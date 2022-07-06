@@ -7,6 +7,13 @@ Included in: Uppy v3.0.0-beta
 
 - @uppy/transloadit: remove IE 10 hack (Antoine du Hamel / #3777)
 
+## 2.3.2
+
+Released: 2022-07-06
+Included in: Uppy v2.12.2
+
+- @uppy/locales,@uppy/transloadit: Fix undefined error in in onTusError (Merlijn Vos / #3848)
+
 ## 2.3.1
 
 Released: 2022-06-09

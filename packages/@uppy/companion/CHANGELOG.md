@@ -8,6 +8,15 @@ Included in: Uppy v3.0.0-beta
 - @uppy/companion: remove `searchProviders` wrapper & move `s3` options (Merlijn Vos / #3781)
 - @uppy/companion: remove support for EOL versions of Node.js (Antoine du Hamel / #3784)
 
+## 3.7.0
+
+Released: 2022-07-06
+Included in: Uppy v2.12.2
+
+- @uppy/companion: Getkey safe behavior (Mikael Finstad / #3592)
+- @uppy/companion: doc: fix Google Drive example (Antoine du Hamel / #3855)
+- @uppy/companion: build an ARM64 container (Stuart Auld / #3841)
+
 ## 3.6.0
 
 Released: 2022-05-30

@@ -24,6 +24,7 @@ import generateSignatureIfSecret from './generateSignatureIfSecret.js'
 const {
   VITE_UPLOADER : UPLOADER,
   VITE_COMPANION_URL : COMPANION_URL,
+  VITE_COMPANION_ALLOWED_HOSTS : companionAllowedHosts,
   VITE_TUS_ENDPOINT : TUS_ENDPOINT,
   VITE_XHR_ENDPOINT : XHR_ENDPOINT,
   VITE_TRANSLOADIT_KEY : TRANSLOADIT_KEY,
@@ -75,18 +76,19 @@ export default () => {
       proudlyDisplayPoweredByUppy: true,
       note: '2 files, images and video only',
     })
-    // .use(GoogleDrive, { target: Dashboard, companionUrl: COMPANION_URL })
-    // .use(Instagram, { target: Dashboard, companionUrl: COMPANION_URL })
-    // .use(Dropbox, { target: Dashboard, companionUrl: COMPANION_URL })
-    // .use(Box, { target: Dashboard, companionUrl: COMPANION_URL })
-    // .use(Facebook, { target: Dashboard, companionUrl: COMPANION_URL })
-    // .use(OneDrive, { target: Dashboard, companionUrl: COMPANION_URL })
-    // .use(Zoom, { target: Dashboard, companionUrl: COMPANION_URL })
-    // .use(Url, { target: Dashboard, companionUrl: COMPANION_URL })
-    // .use(Unsplash, { target: Dashboard, companionUrl: COMPANION_URL })
+    // .use(GoogleDrive, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })
+    // .use(Instagram, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })
+    // .use(Dropbox, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })
+    // .use(Box, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })
+    // .use(Facebook, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })
+    // .use(OneDrive, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })
+    // .use(Zoom, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })
+    // .use(Url, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })
+    // .use(Unsplash, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })
     .use(RemoteSources, {
       companionUrl: COMPANION_URL,
       sources: ['Box', 'Dropbox', 'Facebook', 'GoogleDrive', 'Instagram', 'OneDrive', 'Unsplash', 'Url'],
+      companionAllowedHosts,
     })
     .use(Webcam, {
       target: Dashboard,
