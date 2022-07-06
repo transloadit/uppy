@@ -1,7 +1,7 @@
 {
   "name": "uppy",
   "description": "Extensible JavaScript file upload widget with support for drag&drop, resumable uploads, previews, restrictions, file processing/encoding, remote providers like Instagram, Dropbox, Google Drive, S3 and more :dog:",
-  "version": "3.0.0-beta.1",
+  "version": "3.0.0",
   "license": "MIT",
   "main": "index.mjs",
   "module": "index.mjs",
@@ -74,6 +74,5 @@
     "regenerator-runtime": "0.13.9",
     "resize-observer-polyfill": "^1.5.1",
     "whatwg-fetch": "^3.6.2"
-  },
-  "stableVersion": "2.11.0"
+  }
 }
