@@ -1,5 +1,19 @@
 # @uppy/companion
 
+## 4.0.0-beta.1
+
+Released: 2022-07-06
+Included in: Uppy v3.0.0-beta.2
+
+- @uppy/companion: remove deprecated duplicated metrics (Mikael Finstad / #3833)
+- @uppy/companion: Companion 3 default to no s3 acl (Mikael Finstad / #3826)
+- @uppy/companion: rewrite companion.app() to return an object (Mikael Finstad / #3827)
+- @uppy/companion: remove companion provider compat api (Mikael Finstad / #3828)
+- @uppy/companion: rewrite code for node >=14 (Mikael Finstad / #3829)
+- @uppy/companion: remove chunkSize backwards compatibility (Mikael Finstad / #3830)
+- @uppy/companion: Companion: make `emitSuccess` and `emitError` private (Mikael Finstad / #3832)
+- @uppy/companion: do not use a default upload protocol (Mikael Finstad / #3834)
+
 ## 4.0.0-beta
 
 Released: 2022-05-30
