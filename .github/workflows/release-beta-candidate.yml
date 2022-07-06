@@ -7,7 +7,7 @@ env:
   BETA_BRANCH: 3.x
 
 jobs:
-  prepare-release:
+  prepare-beta-release:
     name: Prepare release candidate Pull Request
     runs-on: ubuntu-latest
     steps:
@@ -34,7 +34,7 @@ jobs:
       - name: Install dependencies
         run: corepack yarn install --immutable
       - name: Bump candidate packages version
-        run: corepack yarn version apply --all --json | jq -s > releases.json
+        run: corepack yarn version apply --all --prerelease=beta.%n --json | jq -s > releases.json
       - name: Prepare changelog
         run: corepack yarn workspace @uppy-dev/release update-changelogs releases.json | xargs git add
       - name: Update CDN URLs

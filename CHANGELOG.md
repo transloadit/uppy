@@ -84,6 +84,29 @@ Released: 2022-05-30
 - @uppy/transloadit: remove IE 10 hack (Antoine du Hamel / #3777)
 
 
+## 2.12.2
+
+Released: 2022-07-06
+
+| Package              | Version | Package              | Version |
+| -------------------- | ------- | -------------------- | ------- |
+| @uppy/companion      |   3.7.0 | @uppy/transloadit    |   2.3.2 |
+| @uppy/locales        |   2.1.1 | @uppy/robodog        |   2.8.2 |
+| @uppy/provider-views |   2.1.2 | uppy                 |  2.12.2 |
+
+- @uppy/provider-views: improve logging (Mikael Finstad / #3638)
+- docs: de-dupe companion dev docs (Mikael Finstad / #3852)
+- @uppy/companion: Getkey safe behavior (Mikael Finstad / #3592)
+- website: fix broken links (YukeshShr / #3861)
+- @uppy/companion: doc: fix Google Drive example (Antoine du Hamel / #3855)
+- @uppy/locales,@uppy/transloadit: Fix undefined error in in onTusError (Merlijn Vos / #3848)
+- @uppy/companion: build an ARM64 container (Stuart Auld / #3841)
+- @uppy/locales: Add missing translations and reorder nl_NL locale (Kasper Meinema / #3839)
+- docs: Fix typo in aws-s3-multipart.md (Ikko Ashimine / #3838)
+- meta: do not rebase when preparing beta candidates (Antoine du Hamel)
+- meta: fix hard-coded branch name in release script (Antoine du Hamel)
+
+
 ## 2.12.1
 
 Released: 2022-06-09

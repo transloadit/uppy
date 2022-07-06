@@ -1,5 +1,12 @@
 # @uppy/provider-views
 
+## 2.1.2
+
+Released: 2022-07-06
+Included in: Uppy v2.12.2
+
+- @uppy/provider-views: improve logging (Mikael Finstad / #3638)
+
 ## 2.1.1
 
 Released: 2022-05-30
