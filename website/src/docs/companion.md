@@ -576,47 +576,4 @@ See also [example code with a custom provider](https://github.com/transloadit/up
 
 ## Development
 
-1\. To set up Companion for local development, please clone the Uppy repo and install, like so:
-
-```bash
-git clone https://github.com/transloadit/uppy
-cd uppy
-yarn install
-```
-
-2\. Configure your environment variables by copying the `env.example.sh` file to `env.sh` and edit it to its correct values.
-
-```bash
-cp env.example.sh env.sh
-$EDITOR env.sh
-```
-
-3\. To start the server, run:
-
-```bash
-yarn run start:companion
-```
-
-This would get the Companion instance running on `http://localhost:3020`. It uses [nodemon](https://github.com/remy/nodemon) so it will automatically restart when files are changed.
-
-## Live example
-
-An example server is running at <https://companion.uppy.io>, which is deployed with [Kubernetes](https://github.com/transloadit/uppy/blob/main/packages/%40uppy/companion/KUBERNETES.md)
-
-## How the Authentication and Token mechanism works
-
-This section describes how Authentication works between Companion and Providers. While this behaviour is the same for all Providers (Dropbox, Instagram, Google Drive, etc.), we are going to be referring to Dropbox in place of any Provider throughout this section.
-
-The following steps describe the actions that take place when a user Authenticates and Uploads from Dropbox through Companion:
-
-* The visitor to a website with Uppy clicks `Connect to Dropbox`.
-* Uppy sends a request to Companion, which in turn sends an OAuth request to Dropbox (Requires that OAuth credentials from Dropbox have been added to Companion).
-* Dropbox asks the visitor to log in, and whether the Website should be allowed to access your files
-* If the visitor agrees, Companion will receive a token from Dropbox, with which we can temporarily download files.
-* Companion encrypts the token with a secret key and sends the encrypted token to Uppy (client)
-* Every time the visitor clicks on a folder in Uppy, it asks Companion for the new list of files, with this question, the token (still encrypted by Companion) is sent along.
-* Companion decrypts the token, requests the list of files from Dropbox and sends it to Uppy.
-* When a file is selected for upload, Companion receives the token again according to this procedure, decrypts it again, and thereby downloads the file from Dropbox.
-* As the bytes arrive, Companion uploads the bytes to the final destination (depending on the configuration: Apache, a Tus server, S3 bucket, etc).
-* Companion reports progress to Uppy, as if it were a local upload.
-* Completed!
+See [CONTRIBUTING.md](/.github/CONTRIBUTING.md#companion)
