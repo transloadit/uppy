@@ -1,5 +1,13 @@
 # @uppy/locales
 
+## 2.1.1
+
+Released: 2022-07-06
+Included in: Uppy v2.12.2
+
+- @uppy/locales,@uppy/transloadit: Fix undefined error in in onTusError (Merlijn Vos / #3848)
+- @uppy/locales: Add missing translations and reorder nl_NL locale (Kasper Meinema / #3839)
+
 ## 2.1.0
 
 Released: 2022-05-14
