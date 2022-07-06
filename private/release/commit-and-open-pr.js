@@ -1,7 +1,7 @@
 import { spawnSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 import prompts from 'prompts'
-import { REPO_NAME, REPO_OWNER } from './config.js'
+import { REPO_NAME, REPO_OWNER, TARGET_BRANCH } from './config.js'
 
 function runProcessOrThrow (...args) {
   const cp = spawnSync(...args)
@@ -81,6 +81,7 @@ export default async function commit (spawnOptions, STABLE_HEAD, ...files) {
     }
   }
 
+  const mergeSha = getContentFromProcessSync('git', ['rev-parse', 'HEAD'], spawnOptions)
   runProcessOrThrow('git', ['cherry-pick', releaseSha], spawnOptions)
   const sha = getContentFromProcessSync('git', ['rev-parse', 'HEAD'], spawnOptions)
 
@@ -91,6 +92,7 @@ export default async function commit (spawnOptions, STABLE_HEAD, ...files) {
   console.log(`Please run \`git push ${remote} ${sha}:refs/heads/release-beta\`.`)
   console.log(`An automation will kick off and open a release candidate PR 
     on the GitHub repository. Do not merge it manually! Review the PR (you may need to close and
-    re-open so the CI and test will run on it). If everything looks good, approve the PR — 
+    re-open so the CI and test will run on it). If everything looks good, run
+    \`git push ${mergeSha}:refs/heads/${TARGET_BRANCH}\`, and approve the PR — 
     this will publish updated packages to npm, then the PR will be merged.`)
 }

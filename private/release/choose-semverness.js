@@ -104,7 +104,7 @@ export default async function pickSemverness (
         { title: 'Minor', value: 'minor' },
         { title: 'Major', value: 'major' },
       ],
-      initial: 0,
+      initial: 4,
     })
 
     if (!response.value) {
