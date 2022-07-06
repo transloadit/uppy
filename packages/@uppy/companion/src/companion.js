@@ -4,7 +4,7 @@ const Grant = require('grant').express()
 const merge = require('lodash.merge')
 const cookieParser = require('cookie-parser')
 const interceptor = require('express-interceptor')
-const uuid = require('uuid')
+const { randomUUID } = require('node:crypto')
 
 const grantConfig = require('./config/grant')()
 const providerManager = require('./server/provider')
@@ -62,9 +62,6 @@ module.exports.app = (optionsArg = {}) => {
   validateConfig(optionsArg)
 
   const options = merge({}, defaultOptions, optionsArg)
-
-  // todo remove in next major and default to the safer getKey instead
-  if (options.providerOptions.s3.getKey === defaultOptions.providerOptions.s3.getKey) process.emitWarning('The current default getKey implementation is not safe because it will cause files with the same name to be overwritten and should be avoided. Please use the environment variable COMPANION_S3_GETKEY_SAFE_BEHAVIOR=true (standalone) or provide your own getKey implementation instead')
 
   const providers = providerManager.getDefaultProviders()
   const searchProviders = providerManager.getSearchProviders()
@@ -133,7 +130,7 @@ module.exports.app = (optionsArg = {}) => {
     jobs.startCleanUpJob(options.filePath)
   }
 
-  const processId = uuid.v4()
+  const processId = randomUUID()
 
   jobs.startPeriodicPingJob({
     urls: options.periodicPingUrls,

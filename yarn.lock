@@ -8842,10 +8842,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:12.12.27":
-  version: 12.12.27
-  resolution: "@types/node@npm:12.12.27"
-  checksum: 9088bfc2e5b47cfcb5d0988004e4a4c0dfdeac4fbfa5814876b9e112f406f5f3842a84b5c3a1e6a3a66176371bb85ee909e0201726730dd9f8fa57b179a3408c
+"@types/node@npm:18.0.3":
+  version: 18.0.3
+  resolution: "@types/node@npm:18.0.3"
+  checksum: 5dec59fbbc1186c808b53df1ca717dad034dbd6a901c75f5b052c845618b531b05f27217122c6254db99529a68618e4cfc534ae3dbf4e88754e9e572df80defa
   languageName: node
   linkType: hard
 
@@ -9136,13 +9136,6 @@ __metadata:
   version: 2.0.6
   resolution: "@types/unist@npm:2.0.6"
   checksum: 25cb860ff10dde48b54622d58b23e66214211a61c84c0f15f88d38b61aa1b53d4d46e42b557924a93178c501c166aa37e28d7f6d994aba13d24685326272d5db
-  languageName: node
-  linkType: hard
-
-"@types/uuid@npm:3.4.7":
-  version: 3.4.7
-  resolution: "@types/uuid@npm:3.4.7"
-  checksum: 58e3d21c1f3414545d9e4b5b4ca9f9c626cb1085322ed73ec46aba129cf4cce9525261a978dbd2de30f04116cdaaf126bb9f840ab96006ed57d739c66e220328
   languageName: node
   linkType: hard
 
@@ -10033,10 +10026,9 @@ __metadata:
     "@types/lodash.merge": 4.6.6
     "@types/morgan": 1.7.37
     "@types/ms": 0.7.31
-    "@types/node": 12.12.27
+    "@types/node": 18.0.3
     "@types/react": ^17.0.13
     "@types/request": 2.48.4
-    "@types/uuid": 3.4.7
     "@types/webpack": ^5.28.0
     "@types/ws": 6.0.4
     atob: 2.1.2
@@ -10080,7 +10072,6 @@ __metadata:
     supertest: 3.4.2
     tus-js-client: 2.1.1
     typescript: ~4.4
-    uuid: 8.1.0
     validator: ^12.1.0
     ws: 6.2.2
   bin:
@@ -39869,15 +39860,6 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   bin:
     uuid: ./bin/uuid
   checksum: 8793629d2799f500aeea9fcd0aec6c4e9fbcc4d62ed42159ad96be345c3fffac1bbf61a23e18e2782600884fee05e6d4012ce4b70d0037c8e987533ae6a77870
-  languageName: node
-  linkType: hard
-
-"uuid@npm:8.1.0":
-  version: 8.1.0
-  resolution: "uuid@npm:8.1.0"
-  bin:
-    uuid: dist/bin/uuid
-  checksum: 4fc4f12e5c704947cce132df07e6e8a20ca34dcbba4a5aef7a24cf76e0e13830cf7cdd69035a916caf2a00fa011876ceabc098d01f5827adc174ca5defdc8c99
   languageName: node
   linkType: hard
 
