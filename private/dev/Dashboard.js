@@ -24,6 +24,7 @@ import generateSignatureIfSecret from './generateSignatureIfSecret.js'
 const {
   VITE_UPLOADER : UPLOADER,
   VITE_COMPANION_URL : COMPANION_URL,
+  VITE_COMPANION_ALLOWED_HOSTS : companionAllowedHosts,
   VITE_TUS_ENDPOINT : TUS_ENDPOINT,
   VITE_XHR_ENDPOINT : XHR_ENDPOINT,
   VITE_TRANSLOADIT_KEY : TRANSLOADIT_KEY,
@@ -54,8 +55,6 @@ async function getAssemblyOptions () {
 // Rest is implementation! Obviously edit as necessary...
 
 export default () => {
-  const companionAllowedHosts = import.meta.env.VITE_COMPANION_ALLOWED_HOSTS
-
   const uppyDashboard = new Uppy({
     logger: Uppy.debugLogger,
     meta: {
