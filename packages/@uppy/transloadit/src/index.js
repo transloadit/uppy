@@ -731,7 +731,7 @@ export default class Transloadit extends BasePlugin {
   }
 
   #onTusError = (file, err) => {
-    this.#closeAssemblyIfExists(file.transloadit?.assembly)
+    this.#closeAssemblyIfExists(file?.transloadit?.assembly)
     if (err?.message?.startsWith('tus: ')) {
       const endpoint = err.originalRequest?.getUnderlyingObject()?.responseURL
       this.client.submitError(err, { endpoint, type: 'TUS_ERROR' })
