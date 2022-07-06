@@ -1,5 +1,14 @@
 # @uppy/companion
 
+## 3.7.0
+
+Released: 2022-07-06
+Included in: Uppy v2.12.2
+
+- @uppy/companion: Getkey safe behavior (Mikael Finstad / #3592)
+- @uppy/companion: doc: fix Google Drive example (Antoine du Hamel / #3855)
+- @uppy/companion: build an ARM64 container (Stuart Auld / #3841)
+
 ## 3.6.0
 
 Released: 2022-05-30
