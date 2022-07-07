@@ -30,7 +30,7 @@ function validateParams (params) {
  */
 function dedupe (list) {
   const dedupeMap = Object.create(null)
-  for (const { fileIDs, options } of list) {
+  for (const { fileIDs, options } of list.filter(Boolean)) {
     const id = JSON.stringify(options)
     if (id in dedupeMap) {
       dedupeMap[id].fileIDArrays.push(fileIDs)
@@ -62,9 +62,13 @@ class AssemblyOptions {
    * Get Assembly options for a file.
    */
   async #getAssemblyOptions (file) {
-    const options = this.opts
+    if (file == null) return undefined
 
+    const options = this.opts
     const assemblyOptions = await options.getAssemblyOptions(file, options)
+
+    if (file == null) return undefined
+
     if (Array.isArray(assemblyOptions.fields)) {
       assemblyOptions.fields = Object.fromEntries(
         assemblyOptions.fields.map((fieldName) => [fieldName, file.meta[fieldName]]),
