@@ -69,12 +69,10 @@ const getConfigFromEnv = () => {
         key: process.env.COMPANION_UNSPLASH_KEY,
         secret: process.env.COMPANION_UNSPLASH_SECRET,
       },
-      s3: {
-        getKey: (req, filename) => `${crypto.randomUUID()}-${filename}`,
-      },
     },
     s3: {
       key: process.env.COMPANION_AWS_KEY,
+      getKey: (req, filename) => `${crypto.randomUUID()}-${filename}`,
       secret: getSecret('COMPANION_AWS_SECRET'),
       bucket: process.env.COMPANION_AWS_BUCKET,
       endpoint: process.env.COMPANION_AWS_ENDPOINT,
