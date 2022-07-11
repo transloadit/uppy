@@ -300,7 +300,7 @@ export default class Transloadit extends BasePlugin {
    */
   #onFileUploadURLAvailable = (rawFile) => {
     const file = this.uppy.getFile(rawFile.id)
-    if (!file || !file.transloadit || !file.transloadit.assembly) {
+    if (!file?.transloadit?.assembly) {
       return
     }
 
@@ -829,7 +829,7 @@ export default class Transloadit extends BasePlugin {
 
   getAssemblyFiles (assemblyID) {
     return this.uppy.getFiles().filter((file) => {
-      return file && file.transloadit && file.transloadit.assembly === assemblyID
+      return file?.transloadit?.assembly === assemblyID
     })
   }
 }
