@@ -67,6 +67,9 @@ class AssemblyOptions {
     const options = this.opts
     const assemblyOptions = await options.getAssemblyOptions(file, options)
 
+    // We check if the file is present here again, because it could had been
+    // removed during the await, e.g. if the user hit cancel while we were
+    // waiting for the options.
     if (file == null) return undefined
 
     if (Array.isArray(assemblyOptions.fields)) {
