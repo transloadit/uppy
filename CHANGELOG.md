@@ -12,6 +12,20 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 2.12.3
+
+Released: 2022-07-11
+
+| Package           | Version | Package           | Version |
+| ----------------- | ------- | ----------------- | ------- |
+| @uppy/transloadit |   2.3.3 | uppy              |  2.12.3 |
+| @uppy/robodog     |   2.8.3 |                   |         |
+
+- @uppy/transloadit: fix TypeError when file is cancelled asynchronously (Antoine du Hamel / #3872)
+- @uppy/robodog,@uppy/transloadit: use modern syntax to simplify code (Antoine du Hamel / #3873)
+- meta: fix `release-beta` automation (Antoine du Hamel)
+
+
 ## 2.12.2
 
 Released: 2022-07-06
