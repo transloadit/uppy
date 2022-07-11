@@ -1,5 +1,12 @@
 # @uppy/robodog
 
+## 2.8.3
+
+Released: 2022-07-11
+Included in: Uppy v2.12.3
+
+- @uppy/robodog,@uppy/transloadit: use modern syntax to simplify code (Antoine du Hamel / #3873)
+
 ## 2.8.0
 
 Released: 2022-06-07

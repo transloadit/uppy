@@ -1,5 +1,13 @@
 # @uppy/transloadit
 
+## 2.3.3
+
+Released: 2022-07-11
+Included in: Uppy v2.12.3
+
+- @uppy/transloadit: fix TypeError when file is cancelled asynchronously (Antoine du Hamel / #3872)
+- @uppy/robodog,@uppy/transloadit: use modern syntax to simplify code (Antoine du Hamel / #3873)
+
 ## 2.3.2
 
 Released: 2022-07-06
