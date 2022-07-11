@@ -121,6 +121,16 @@ uppy.on('file-editor:complete', (updatedFile) => {
 })
 ```
 
+### file-editor:cancel
+
+Emitted when `uninstall` is called.
+
+```js
+uppy.on('file-editor:cancel', (file) => {
+  console.log(file)
+})
+```
+
 ### `locale: {}`
 
 ```js
