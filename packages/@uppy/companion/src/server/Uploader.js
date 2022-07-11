@@ -1,6 +1,6 @@
 // eslint-disable-next-line max-classes-per-file
 const tus = require('tus-js-client')
-const uuid = require('uuid')
+const { randomUUID } = require('node:crypto')
 const isObject = require('isobject')
 const validator = require('validator')
 const request = require('request')
@@ -153,7 +153,7 @@ class Uploader {
     validateOptions(options)
 
     this.options = options
-    this.token = uuid.v4()
+    this.token = randomUUID()
     this.fileName = `${Uploader.FILE_NAME_PREFIX}-${this.token}`
     this.options.metadata = sanitizeMetadata(this.options.metadata)
     this.options.fieldname = this.options.fieldname || DEFAULT_FIELD_NAME
