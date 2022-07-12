@@ -59,7 +59,8 @@ class FileCard extends Component {
   }
 
   handleCancel = () => {
-    const file = this.props.files[this.props.fileCardFor]
+    const { currentImage } = this.getPluginState()
+    const file = this.uppy.getFile(currentImage.id)
     this.props.uppy.emit('file-editor:cancel', file)
     this.props.toggleFileCard(false)
   }
