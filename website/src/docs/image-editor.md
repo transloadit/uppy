@@ -123,7 +123,7 @@ uppy.on('file-editor:complete', (updatedFile) => {
 
 ### file-editor:cancel
 
-Emitted when `uninstall` is called.
+Emitted when `uninstall` is called or when the current image editing changes are discarded.
 
 ```js
 uppy.on('file-editor:cancel', (file) => {
