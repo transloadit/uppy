@@ -1,5 +1,5 @@
-const fs = require('fs')
-const qs = require('querystring')
+const fs = require('node:fs')
+const qs = require('node:querystring')
 
 const fixtures = require('../fixtures').providers
 

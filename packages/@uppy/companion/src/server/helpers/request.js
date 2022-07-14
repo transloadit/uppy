@@ -1,8 +1,8 @@
 // eslint-disable-next-line max-classes-per-file
-const http = require('http')
-const https = require('https')
-const { URL } = require('url')
-const dns = require('dns')
+const http = require('node:http')
+const https = require('node:https')
+const { URL } = require('node:url')
+const dns = require('node:dns')
 const request = require('request')
 const ipaddr = require('ipaddr.js')
 

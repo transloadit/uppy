@@ -3,7 +3,7 @@
 jest.mock('tus-js-client')
 
 const intoStream = require('into-stream')
-const fs = require('fs')
+const fs = require('node:fs')
 const nock = require('nock')
 
 const Uploader = require('../../src/server/Uploader')

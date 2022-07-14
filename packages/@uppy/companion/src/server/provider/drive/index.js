@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 const request = require('request')
 const purest = require('purest')({ request })
-const { promisify } = require('util')
+const { promisify } = require('node:util')
 
 const Provider = require('../Provider')
 const logger = require('../../logger')

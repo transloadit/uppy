@@ -1,7 +1,7 @@
-const fs = require('fs')
+const fs = require('node:fs')
 const merge = require('lodash.merge')
 const stripIndent = require('common-tags/lib/stripIndent')
-const crypto = require('crypto')
+const crypto = require('node:crypto')
 
 const utils = require('../server/helpers/utils')
 const logger = require('../server/logger')

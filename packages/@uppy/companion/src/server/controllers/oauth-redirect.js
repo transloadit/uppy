@@ -1,5 +1,5 @@
-const qs = require('querystring')
-const { URL } = require('url')
+const qs = require('node:querystring')
+const { URL } = require('node:url')
 const { hasMatch } = require('../helpers/utils')
 const oAuthState = require('../helpers/oauth-state')
 

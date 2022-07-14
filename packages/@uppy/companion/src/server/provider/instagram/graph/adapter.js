@@ -1,4 +1,4 @@
-const querystring = require('querystring')
+const querystring = require('node:querystring')
 
 const MEDIA_TYPES = Object.freeze({
   video: 'VIDEO',

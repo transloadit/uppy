@@ -1,10 +1,10 @@
 const chalk = require('chalk')
 const babel = require('@babel/core')
 const t = require('@babel/types')
-const { promisify } = require('util')
+const { promisify } = require('node:util')
 const glob = promisify(require('glob'))
-const fs = require('fs')
-const path = require('path')
+const fs = require('node:fs')
+const path = require('node:path')
 
 const { mkdir, stat, writeFile } = fs.promises
 

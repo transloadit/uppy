@@ -32,6 +32,7 @@ module.exports = {
     // extra:
     'compat',
     'jsdoc',
+    'unicorn',
   ],
   parser: '@babel/eslint-parser',
   parserOptions: {
@@ -73,6 +74,7 @@ module.exports = {
     'node/handle-callback-err': 'error',
     'prefer-destructuring': 'error',
     'prefer-spread': 'error',
+    'unicorn/prefer-node-protocol': 'error',
 
     // transloadit rules we would like to enforce in the future
     // but will require separate PRs to gradually get there

@@ -79,7 +79,7 @@
     "@types/lodash.merge": "4.6.6",
     "@types/morgan": "1.7.37",
     "@types/ms": "0.7.31",
-    "@types/node": "18.0.3",
+    "@types/node": "^18.0.3",
     "@types/react": "^17.0.13",
     "@types/request": "2.48.4",
     "@types/webpack": "^5.28.0",

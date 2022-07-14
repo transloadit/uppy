@@ -1,6 +1,6 @@
 /* eslint-disable compat/compat */
-const http = require('http')
-const qs = require('querystring')
+const http = require('node:http')
+const qs = require('node:querystring')
 const e = require('he').encode
 
 /**

@@ -1,5 +1,5 @@
 const request = require('request')
-const { promisify } = require('util')
+const { promisify } = require('node:util')
 
 const SearchProvider = require('../SearchProvider')
 const { getURLMeta } = require('../../helpers/request')
