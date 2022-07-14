@@ -218,7 +218,12 @@ export default class Transloadit extends BasePlugin {
         updatedFiles[file.id] = this.#attachAssemblyMetadata(file, status)
       })
 
-      this.uppy.setState({ files: updatedFiles })
+      this.uppy.setState({
+        files: {
+          ...this.uppy.getState().files,
+          ...updatedFiles,
+        },
+      })
 
       const fileRemovedHandler = (fileRemoved, reason) => {
         if (reason === 'cancel-all') {
