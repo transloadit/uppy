@@ -2,6 +2,7 @@ describe('Dashboard with Transloadit', () => {
   beforeEach(() => {
     cy.visit('/dashboard-transloadit')
     cy.get('.uppy-Dashboard-input').as('file-input')
+    cy.intercept('/assemblies').as('createAssemblies')
     cy.intercept('/assemblies/*').as('assemblies')
     cy.intercept('/resumable/*').as('resumable')
   })
@@ -40,6 +41,23 @@ describe('Dashboard with Transloadit', () => {
 
     cy.window().then(({ uppy }) => {
       expect(Object.values(uppy.getPlugin('Transloadit').activeAssemblies).some((a: any) => a.pollInterval)).to.equal(false)
+    })
+  })
+
+  it('should not emit error if upload is cancelled right away', () => {
+    cy.get('@file-input').attachFile('images/cat.jpg')
+    cy.get('.uppy-StatusBar-actionBtn--upload').click()
+
+    const handler = cy.spy()
+
+    cy.window().then(({ uppy }) => {
+      const { files } = uppy.getState()
+      uppy.on('upload-error', handler)
+
+      const [fileID] = Object.keys(files)
+      uppy.removeFile(fileID)
+      uppy.removeFile(fileID)
+      cy.wait('@createAssemblies').then(() => expect(handler).not.to.be.called)
     })
   })
 })
