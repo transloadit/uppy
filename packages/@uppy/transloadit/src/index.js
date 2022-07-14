@@ -212,17 +212,19 @@ export default class Transloadit extends BasePlugin {
         },
       })
 
-      const { files } = this.uppy.getState()
+      const files = this.uppy.getFiles() // []
       const updatedFiles = {}
-      fileIDs.forEach((id) => {
-        updatedFiles[id] = this.#attachAssemblyMetadata(this.uppy.getFile(id), status)
+      files.forEach((file) => {
+        updatedFiles[file.id] = this.#attachAssemblyMetadata(file, status)
       })
+
       this.uppy.setState({
         files: {
-          ...files,
+          ...this.uppy.getState().files,
           ...updatedFiles,
         },
       })
+
       const fileRemovedHandler = (fileRemoved, reason) => {
         if (reason === 'cancel-all') {
           assembly.close()
@@ -253,7 +255,7 @@ export default class Transloadit extends BasePlugin {
     })
   }
 
-  #createAssemblyWatcher (assemblyID, fileIDs, uploadID) {
+  #createAssemblyWatcher (assemblyID, uploadID) {
   // AssemblyWatcher tracks completion states of all Assemblies in this upload.
     const watcher = new AssemblyWatcher(this.uppy, assemblyID)
 
@@ -497,10 +499,7 @@ export default class Transloadit extends BasePlugin {
       // Set up the assembly watchers again for all the ongoing uploads.
       Object.keys(uploadsAssemblies).forEach((uploadID) => {
         const assemblyIDs = uploadsAssemblies[uploadID]
-        const fileIDsInUpload = assemblyIDs.flatMap((assemblyID) => {
-          return this.getAssemblyFiles(assemblyID).map((file) => file.id)
-        })
-        this.#createAssemblyWatcher(assemblyIDs, fileIDsInUpload, uploadID)
+        this.#createAssemblyWatcher(assemblyIDs, uploadID)
       })
 
       const allAssemblyIDs = Object.keys(assemblies)
@@ -586,16 +585,16 @@ export default class Transloadit extends BasePlugin {
   }
 
   #prepareUpload = (fileIDs, uploadID) => {
-    // Only use files without errors
-    const filteredFileIDs = fileIDs.filter((file) => !file.error)
-
-    const files = filteredFileIDs.map(fileID => {
-      const file = this.uppy.getFile(fileID)
-      this.uppy.emit('preprocess-progress', file, {
-        mode: 'indeterminate',
-        message: this.i18n('creatingAssembly'),
-      })
-      return file
+    const files = fileIDs.map(id => this.uppy.getFile(id))
+    const filesWithoutErrors = files.filter((file) => {
+      if (!file.error) {
+        this.uppy.emit('preprocess-progress', file, {
+          mode: 'indeterminate',
+          message: this.i18n('creatingAssembly'),
+        })
+        return true
+      }
+      return false
     })
 
     // eslint-disable-next-line no-shadow
@@ -630,19 +629,19 @@ export default class Transloadit extends BasePlugin {
       },
     })
 
-    const assemblyOptions = new AssemblyOptions(files, this.opts)
+    const assemblyOptions = new AssemblyOptions(filesWithoutErrors, this.opts)
 
     return assemblyOptions.build()
       .then((assemblies) => Promise.all(assemblies.map(createAssembly)))
       .then((createdAssemblies) => {
         const assemblyIDs = createdAssemblies.map(assembly => assembly.status.assembly_id)
-        this.#createAssemblyWatcher(assemblyIDs, filteredFileIDs, uploadID)
+        this.#createAssemblyWatcher(assemblyIDs, uploadID)
         return Promise.all(createdAssemblies.map(assembly => this.#connectAssembly(assembly)))
       })
       // If something went wrong before any Assemblies could be created,
       // clear all processing state.
       .catch((err) => {
-        files.forEach((file) => {
+        filesWithoutErrors.forEach((file) => {
           this.uppy.emit('preprocess-complete', file)
           this.uppy.emit('upload-error', file, err)
         })
