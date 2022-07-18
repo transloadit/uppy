@@ -185,7 +185,6 @@ async function injectGhStars () {
 
 async function injectMarkdown () {
   const sources = {
-    '.github/ISSUE_TEMPLATE/integration_help.md': 'src/_template/integration_help.md',
     '.github/CONTRIBUTING.md': 'src/_template/contributing.md',
   }
 
