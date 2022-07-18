@@ -1,4 +1,4 @@
-const querystring = require('querystring')
+const querystring = require('node:querystring')
 
 exports.isFolder = (item) => {
   if (item.remoteItem) {

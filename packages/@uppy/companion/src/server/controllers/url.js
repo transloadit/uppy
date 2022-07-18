@@ -1,6 +1,6 @@
 const router = require('express').Router
 const request = require('request')
-const { URL } = require('url')
+const { URL } = require('node:url')
 const validator = require('validator')
 
 const { startDownUpload } = require('../helpers/upload')

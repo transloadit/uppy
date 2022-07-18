@@ -1,5 +1,5 @@
 const ms = require('ms')
-const fs = require('fs')
+const fs = require('node:fs')
 const { isURL } = require('validator')
 const logger = require('../server/logger')
 

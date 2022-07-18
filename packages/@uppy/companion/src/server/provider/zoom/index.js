@@ -1,4 +1,4 @@
-const { promisify } = require('util')
+const { promisify } = require('node:util')
 const request = require('request')
 const moment = require('moment-timezone')
 const purest = require('purest')({ request })

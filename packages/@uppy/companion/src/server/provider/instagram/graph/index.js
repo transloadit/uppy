@@ -1,6 +1,6 @@
 const request = require('request')
 const purest = require('purest')({ request })
-const { promisify } = require('util')
+const { promisify } = require('node:util')
 
 const Provider = require('../../Provider')
 const { getURLMeta } = require('../../../helpers/request')

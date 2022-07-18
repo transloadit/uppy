@@ -23,7 +23,7 @@
 
 const { glob } = require('multi-glob')
 const chalk = require('chalk')
-const path = require('path')
+const path = require('node:path')
 const notifier = require('node-notifier')
 
 const esbuild = require('esbuild')
