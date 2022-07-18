@@ -12,6 +12,23 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 2.13.0
+
+Released: 2022-07-18
+
+| Package            | Version | Package            | Version |
+| ------------------ | ------- | ------------------ | ------- |
+| @uppy/dashboard    |   2.4.0 | @uppy/robodog      |   2.9.0 |
+| @uppy/image-editor |   1.4.0 | uppy               |  2.13.0 |
+| @uppy/transloadit  |   2.3.4 |                    |         |
+
+- @uppy/transloadit: fix outdated file ids and incorrect usage of files (Merlijn Vos / #3886)
+- @uppy/image-editor: remove beta notice (Merlijn Vos / #3877)
+- meta: Fix broken links in _posts/2019-08-1.3.md (YukeshShr / #3884)
+- meta: Fix broken link in _posts/2017-03-0.15.md (YukeshShr / #3883)
+- @uppy/image-editor: Add image editor cancel event (James R T / #3875)
+
+
 ## 2.12.3
 
 Released: 2022-07-11
