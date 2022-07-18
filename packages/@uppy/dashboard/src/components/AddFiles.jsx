@@ -48,17 +48,8 @@ class AddFiles extends Component {
   }
 
   renderHiddenCameraInput = (type, refCallback) => {
-    let accept
-    switch (type) {
-      case 'photo':
-        accept = 'image/*'
-        break
-      case 'video':
-        accept = 'video/*'
-        break
-      default:
-        break
-    }
+    const typeToAccept = { photo: 'image/*', video: 'video/*' }
+    const accept = typeToAccept[type]
 
     return (
       <input
