@@ -38,6 +38,7 @@ module.exports = () => {
     },
     zoom: {
       transport: 'session',
+      scope: ['user:read:admin', 'user_profile', 'recording:read:admin', 'meeting:read:admin'],
       authorize_url: 'https://zoom.us/oauth/authorize',
       access_url: 'https://zoom.us/oauth/token',
       callback: '/zoom/callback',
