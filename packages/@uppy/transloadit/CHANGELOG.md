@@ -1,5 +1,12 @@
 # @uppy/transloadit
 
+## 2.3.4
+
+Released: 2022-07-18
+Included in: Uppy v2.13.0
+
+- @uppy/transloadit: fix outdated file ids and incorrect usage of files (Merlijn Vos / #3886)
+
 ## 2.3.3
 
 Released: 2022-07-11
