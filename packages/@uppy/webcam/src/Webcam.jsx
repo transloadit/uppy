@@ -97,7 +97,7 @@ export default class Webcam extends UIPlugin {
       preferredImageMimeType: null,
       preferredVideoMimeType: null,
       showRecordingLength: false,
-      mobileNativeCamera: false,
+      mobileNativeCamera: isMobile(),
     }
 
     this.opts = { ...defaultOptions, ...opts }
@@ -590,7 +590,7 @@ export default class Webcam extends UIPlugin {
   }
 
   install () {
-    if (this.opts.mobileNativeCamera && isMobile()) {
+    if (this.opts.mobileNativeCamera) {
       this.uppy.getPlugin('Dashboard').setOptions({
         mobileNativeCamera: true,
       })

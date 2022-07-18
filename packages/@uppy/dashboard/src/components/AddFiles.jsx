@@ -10,11 +10,11 @@ class AddFiles extends Component {
   }
 
   triggerVideoCameraInputClick = () => {
-    this.mobilePhotoFileInput.click()
+    this.mobileVideoFileInput.click()
   }
 
   triggerPhotoCameraInputClick = () => {
-    this.mobileVideoFileInput.click()
+    this.mobilePhotoFileInput.click()
   }
 
   onFileInputChange = (event) => {
