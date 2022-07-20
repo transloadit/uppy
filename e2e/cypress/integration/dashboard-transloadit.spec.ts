@@ -54,9 +54,7 @@ describe('Dashboard with Transloadit', () => {
       const { files } = uppy.getState()
       uppy.removeFiles(Object.keys(files))
 
-      // Let's wait 500ms to ensure that polling won't start asynchronously.
-      // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(500).then(() => {
+      cy.wait('@createAssemblies').then(() => {
         expect(Object.values(uppy.getPlugin('Transloadit').activeAssemblies).some((a: any) => a.pollInterval)).to.equal(false)
       })
     })
