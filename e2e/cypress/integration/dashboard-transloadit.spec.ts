@@ -44,6 +44,24 @@ describe('Dashboard with Transloadit', () => {
     })
   })
 
+  it('should close assembly polling when all individual files have been cancelled', () => {
+    cy.get('@file-input').attachFile(['images/cat.jpg', 'images/traffic.jpg'])
+    cy.get('.uppy-StatusBar-actionBtn--upload').click()
+
+    cy.window().then(({ uppy }) => {
+      expect(Object.values(uppy.getPlugin('Transloadit').activeAssemblies).every((a: any) => a.pollInterval)).to.equal(true)
+
+      const { files } = uppy.getState()
+      uppy.removeFiles(Object.keys(files))
+
+      // Let's wait 500ms to ensure that polling won't start asynchronously.
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.wait(500).then(() => {
+        expect(Object.values(uppy.getPlugin('Transloadit').activeAssemblies).some((a: any) => a.pollInterval)).to.equal(false)
+      })
+    })
+  })
+
   it('should not emit error if upload is cancelled right away', () => {
     cy.get('@file-input').attachFile('images/cat.jpg')
     cy.get('.uppy-StatusBar-actionBtn--upload').click()

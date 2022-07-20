@@ -213,6 +213,10 @@ export default class Transloadit extends BasePlugin {
       })
 
       const files = this.uppy.getFiles() // []
+      if (files.length === 0) {
+        assembly.close()
+        return assembly
+      }
       const updatedFiles = {}
       files.forEach((file) => {
         updatedFiles[file.id] = this.#attachAssemblyMetadata(file, status)
