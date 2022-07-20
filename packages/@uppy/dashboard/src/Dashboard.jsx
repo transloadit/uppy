@@ -90,11 +90,12 @@ export default class Dashboard extends UIPlugin {
       showSelectedFiles: true,
       showRemoveButtonAfterComplete: false,
       browserBackButtonClose: false,
+      showNativePhotoCameraButton: false,
+      showNativeVideoCameraButton: false,
       theme: 'light',
       autoOpenFileEditor: false,
       disabled: false,
       disableLocalFiles: false,
-      mobileNativeCamera: false,
     }
 
     // merge default options with the ones set by user
@@ -968,7 +969,8 @@ export default class Dashboard extends UIPlugin {
       maxNumberOfFiles: this.uppy.opts.restrictions.maxNumberOfFiles,
       requiredMetaFields: this.uppy.opts.restrictions.requiredMetaFields,
       showSelectedFiles: this.opts.showSelectedFiles,
-      mobileNativeCamera: this.opts.mobileNativeCamera,
+      showNativePhotoCameraButton: this.opts.showNativePhotoCameraButton,
+      showNativeVideoCameraButton: this.opts.showNativeVideoCameraButton,
       handleCancelRestore: this.handleCancelRestore,
       handleRequestThumbnail: this.handleRequestThumbnail,
       handleCancelThumbnail: this.handleCancelThumbnail,

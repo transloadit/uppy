@@ -97,6 +97,8 @@ uppy.use(Dashboard, {
   onRequestCloseModal: () => this.closeModal(),
   showSelectedFiles: true,
   showRemoveButtonAfterComplete: false,
+  showNativePhotoCameraButton: false,
+  showNativeVideoCameraButton: false,
   locale: defaultLocale,
   browserBackButtonClose: false,
   theme: 'light',

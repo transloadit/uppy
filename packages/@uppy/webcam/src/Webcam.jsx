@@ -51,6 +51,11 @@ function getMediaDevices () {
   // eslint-disable-next-line compat/compat
   return navigator.mediaDevices
 }
+
+function isModeAvailable (modes, mode) {
+  return modes.indexOf(mode) !== -1
+}
+
 /**
  * Webcam
  */
@@ -590,9 +595,12 @@ export default class Webcam extends UIPlugin {
   }
 
   install () {
-    if (this.opts.mobileNativeCamera) {
+    const { mobileNativeCamera, modes } = this.opts
+
+    if (mobileNativeCamera) {
       this.uppy.getPlugin('Dashboard').setOptions({
-        mobileNativeCamera: true,
+        showNativeVideoCameraButton: isModeAvailable(modes, 'video-only') || isModeAvailable(modes, 'video-audio'),
+        showNativePhotoCameraButton: isModeAvailable(modes, 'picture'),
       })
       return
     }

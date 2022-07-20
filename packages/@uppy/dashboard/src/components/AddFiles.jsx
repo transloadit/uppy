@@ -234,12 +234,14 @@ class AddFiles extends Component {
     )
   }
 
-  renderSourcesList = (acquirers, disableLocalFiles, mobileNativeCamera) => {
+  renderSourcesList = (acquirers, disableLocalFiles) => {
+    const { showNativePhotoCameraButton, showNativeVideoCameraButton } = this.props
+
     return (
       <div className="uppy-Dashboard-AddFiles-list" role="tablist">
         {!disableLocalFiles && this.renderMyDeviceAcquirer()}
-        {!disableLocalFiles && mobileNativeCamera && this.renderPhotoCamera()}
-        {!disableLocalFiles && mobileNativeCamera && this.renderVideoCamera()}
+        {!disableLocalFiles && showNativePhotoCameraButton && this.renderPhotoCamera()}
+        {!disableLocalFiles && showNativeVideoCameraButton && this.renderVideoCamera()}
         {acquirers.length > 0 && this.renderAcquirers(acquirers)}
       </div>
     )
@@ -273,14 +275,16 @@ class AddFiles extends Component {
   }
 
   render () {
+    const { showNativePhotoCameraButton, showNativeVideoCameraButton } = this.props
+
     return (
       <div className="uppy-Dashboard-AddFiles">
         {this.renderHiddenInput(false, (ref) => { this.fileInput = ref })}
         {this.renderHiddenInput(true, (ref) => { this.folderInput = ref })}
-        {this.renderHiddenCameraInput('photo', (ref) => { this.mobilePhotoFileInput = ref })}
-        {this.renderHiddenCameraInput('video', (ref) => { this.mobileVideoFileInput = ref })}
+        {showNativePhotoCameraButton && this.renderHiddenCameraInput('photo', (ref) => { this.mobilePhotoFileInput = ref })}
+        {showNativeVideoCameraButton && this.renderHiddenCameraInput('video', (ref) => { this.mobileVideoFileInput = ref })}
         {this.renderDropPasteBrowseTagline()}
-        {this.renderSourcesList(this.props.acquirers, this.props.disableLocalFiles, this.props.mobileNativeCamera)}
+        {this.renderSourcesList(this.props.acquirers, this.props.disableLocalFiles)}
         <div className="uppy-Dashboard-AddFiles-info">
           {this.props.note && <div className="uppy-Dashboard-note">{this.props.note}</div>}
           {this.props.proudlyDisplayPoweredByUppy && this.renderPoweredByUppy(this.props)}

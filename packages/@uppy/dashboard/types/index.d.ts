@@ -48,6 +48,8 @@ export interface DashboardOptions extends Options {
   showProgressDetails?: boolean
   showSelectedFiles?: boolean
   showRemoveButtonAfterComplete?: boolean
+  showNativePhotoCameraButton?: boolean
+  showNativeVideoCameraButton?: boolean
   target?: PluginTarget
   theme?: 'auto' | 'dark' | 'light'
   trigger?: string
