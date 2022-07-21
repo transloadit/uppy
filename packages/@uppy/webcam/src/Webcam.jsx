@@ -102,7 +102,7 @@ export default class Webcam extends UIPlugin {
       preferredImageMimeType: null,
       preferredVideoMimeType: null,
       showRecordingLength: false,
-      mobileNativeCamera: isMobile(),
+      mobileNativeCamera: isMobile({ tablet: true }),
     }
 
     this.opts = { ...defaultOptions, ...opts }
