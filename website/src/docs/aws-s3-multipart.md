@@ -109,13 +109,12 @@ A function that generates a batch of signed URLs for the specified part numbers.
 
 * `uploadId` - The UploadID of this Multipart upload.
 * `key` - The object key in the S3 bucket.
-* `partNumbers` - An array of indices of this part in the file (`PartNumber` in S3 terminology). Note that part numbers are _not_ zero-based.
-* `chunks` - A Javascript object with the part numbers as keys and the Blob data for each part as the value.
+* `parts` - An array of objects with the part number and chunk (`Array<{ number: number, chunk: blob }>`). `number` can’t be zero.
 
 `prepareUploadParts` should return a `Promise` with an `Object` with keys:
 
 * `presignedUrls` - A JavaScript object with the part numbers as keys and the presigned URL for each part as the value.
-* `headers` - **(Optional)** Custom headers that should be sent to the S3 presigned URL.
+* `headers` - **(Optional)** Custom headers to send along with every part request (`{ 1: { 'Content-MD5': 'hash' }}`). These are part indexed too so you can for instance send the MD5 hash validation for every part to S3.
 
 An example of what the return value should look like:
 
@@ -126,7 +125,11 @@ An example of what the return value should look like:
     "2": "https://bucket.region.amazonaws.com/path/to/file.jpg?partNumber=2&...",
     "3": "https://bucket.region.amazonaws.com/path/to/file.jpg?partNumber=3&..."
   },
-  "headers": { "some-header": "value" }
+  "headers": { 
+    "1": { "Content-MD5": "foo" },
+    "2": { "Content-MD5": "bar" },
+    "3": { "Content-MD5": "baz" }
+  }
 }
 ```
 
