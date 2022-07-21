@@ -85,7 +85,7 @@ export default {
       1: 'Missing required meta fields: %{fields}.',
     },
     // Used for native device camera buttons on mobile
-    takePicture: 'Take Picture',
-    recordVideo: 'Record Video',
+    takePictureBtn: 'Take Picture',
+    recordVideoBtn: 'Record Video',
   },
 }
