@@ -8,7 +8,7 @@ import SubmitButton from './SubmitButton.jsx'
 import DiscardButton from './DiscardButton.jsx'
 
 function isModeAvailable (modes, mode) {
-  return modes.indexOf(mode) !== -1
+  return modes.includes(mode)
 }
 
 class CameraScreen extends Component {
