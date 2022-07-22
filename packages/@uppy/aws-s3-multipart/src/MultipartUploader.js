@@ -198,7 +198,7 @@ class MultipartUploader {
 
     if (chunkIndexes.length === 0) return
 
-    this.#prepareUploadParts(chunkIndexes).then((result) => {
+    return this.#prepareUploadParts(chunkIndexes).then((result) => {
       const { presignedUrls, headers } = result
 
       chunkIndexes.forEach((index) => {
