@@ -190,11 +190,12 @@ export default class Transloadit extends BasePlugin {
       fields: options.fields,
       expectedFiles: fileIDs.length,
       signature: options.signature,
-    }).then((newAssembly) => {
+    }).then(async (newAssembly) => {
       const files = this.uppy.getFiles().filter(({ id }) => fileIDs.includes(id))
       if (files.length !== fileIDs.length) {
         if (files.length === 0) {
           // All files have been removed, cancelling.
+          await this.client.cancelAssembly(newAssembly)
           return null
         }
         // At least one file has been removed.
@@ -236,11 +237,13 @@ export default class Transloadit extends BasePlugin {
       const fileRemovedHandler = (fileRemoved, reason) => {
         if (reason === 'cancel-all') {
           assembly.close()
+          this.client.cancelAssembly(newAssembly).catch(() => { /* ignore potential errors */ })
           this.uppy.off(fileRemovedHandler)
         } else if (fileRemoved.id in updatedFiles) {
           delete updatedFiles[fileRemoved.id]
           if (Object.keys(updatedFiles).length === 0) {
             assembly.close()
+            this.client.cancelAssembly(newAssembly).catch(() => { /* ignore potential errors */ })
             this.uppy.off(fileRemovedHandler)
           }
         }

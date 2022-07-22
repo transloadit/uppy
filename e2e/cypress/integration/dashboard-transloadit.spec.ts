@@ -80,6 +80,22 @@ describe('Dashboard with Transloadit', () => {
     })
   })
 
+  it('should complete upload if one gets cancelled in middle', () => {
+    cy.get('@file-input').attachFile(['images/cat.jpg', 'images/traffic.jpg'])
+    cy.get('.uppy-StatusBar-actionBtn--upload').click()
+
+    cy.wait('@createAssemblies')
+    cy.wait('@resumable')
+
+    cy.window().then(({ uppy }) => {
+      const { files } = uppy.getState()
+      const [fileID] = Object.keys(files)
+      uppy.removeFile(fileID)
+
+      cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Complete')
+    })
+  })
+
   it('should not emit error if upload is cancelled right away', () => {
     cy.get('@file-input').attachFile('images/cat.jpg')
     cy.get('.uppy-StatusBar-actionBtn--upload').click()
