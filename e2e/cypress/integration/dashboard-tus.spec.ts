@@ -10,14 +10,14 @@ type Tus = BaseTus & {
 describe('Dashboard with Tus', () => {
   beforeEach(() => {
     cy.visit('/dashboard-tus')
-    cy.get('.uppy-Dashboard-input').as('file-input')
+    cy.get('.uppy-Dashboard-input:first').as('file-input')
     cy.intercept('/files/*').as('tus')
     cy.intercept('http://localhost:3020/url/*').as('url')
     cy.intercept('http://localhost:3020/search/unsplash/*').as('unsplash')
   })
 
   it('should upload cat image successfully', () => {
-    cy.get('@file-input').attachFile('images/cat.jpg')
+    cy.get('@file-input').selectFile('cypress/fixtures/images/cat.jpg', { force:true })
     cy.get('.uppy-StatusBar-actionBtn--upload').click()
 
     cy.wait('@tus')
@@ -26,7 +26,7 @@ describe('Dashboard with Tus', () => {
   })
 
   it('should start exponential backoff when receiving HTTP 429', () => {
-    cy.get('@file-input').attachFile(['images/baboon.png'])
+    cy.get('@file-input').selectFile('cypress/fixtures/images/baboon.png', { force:true })
     cy.get('.uppy-StatusBar-actionBtn--upload').click()
 
     cy.intercept(
