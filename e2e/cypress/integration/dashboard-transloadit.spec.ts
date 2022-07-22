@@ -44,18 +44,38 @@ describe('Dashboard with Transloadit', () => {
     })
   })
 
-  it('should close assembly polling when all individual files have been cancelled', () => {
+  it('should not create assembly when all individual files have been cancelled', () => {
     cy.get('@file-input').attachFile(['images/cat.jpg', 'images/traffic.jpg'])
     cy.get('.uppy-StatusBar-actionBtn--upload').click()
 
     cy.window().then(({ uppy }) => {
-      expect(Object.values(uppy.getPlugin('Transloadit').activeAssemblies).every((a: any) => a.pollInterval)).to.equal(true)
+      expect(Object.values(uppy.getPlugin('Transloadit').activeAssemblies).length).to.equal(0)
 
       const { files } = uppy.getState()
       uppy.removeFiles(Object.keys(files))
 
       cy.wait('@createAssemblies').then(() => {
         expect(Object.values(uppy.getPlugin('Transloadit').activeAssemblies).some((a: any) => a.pollInterval)).to.equal(false)
+      })
+    })
+  })
+
+  it('should create assembly if there is still one file to upload', () => {
+    cy.get('@file-input').attachFile(['images/cat.jpg', 'images/traffic.jpg'])
+    cy.get('.uppy-StatusBar-actionBtn--upload').click()
+
+    cy.window().then(({ uppy }) => {
+      expect(Object.values(uppy.getPlugin('Transloadit').activeAssemblies).length).to.equal(0)
+
+      const { files } = uppy.getState()
+      const [fileID] = Object.keys(files)
+      uppy.removeFile(fileID)
+
+      cy.wait('@createAssemblies').then(() => {
+        expect(Object.values(uppy.getPlugin('Transloadit').activeAssemblies).some((a: any) => a.pollInterval)).to.equal(true)
+        cy.wait('@resumable')
+
+        cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Complete')
       })
     })
   })

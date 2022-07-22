@@ -191,6 +191,15 @@ export default class Transloadit extends BasePlugin {
       expectedFiles: fileIDs.length,
       signature: options.signature,
     }).then((newAssembly) => {
+      const files = this.uppy.getFiles().filter(({ id }) => fileIDs.includes(id))
+      if (files.length !== fileIDs.length) {
+        if (files.length === 0) {
+          // All files have been removed, cancelling.
+          return null
+        }
+        // At least one file has been removed.
+      }
+
       const assembly = new Assembly(newAssembly, this.#rateLimitedQueue)
       const { status } = assembly
       const assemblyID = status.assembly_id
@@ -212,11 +221,6 @@ export default class Transloadit extends BasePlugin {
         },
       })
 
-      const files = this.uppy.getFiles() // []
-      if (files.length === 0) {
-        assembly.close()
-        return assembly
-      }
       const updatedFiles = {}
       files.forEach((file) => {
         updatedFiles[file.id] = this.#attachAssemblyMetadata(file, status)
@@ -637,7 +641,8 @@ export default class Transloadit extends BasePlugin {
 
     return assemblyOptions.build()
       .then((assemblies) => Promise.all(assemblies.map(createAssembly)))
-      .then((createdAssemblies) => {
+      .then((maybeCreatedAssemblies) => {
+        const createdAssemblies = maybeCreatedAssemblies.filter(Boolean)
         const assemblyIDs = createdAssemblies.map(assembly => assembly.status.assembly_id)
         this.#createAssemblyWatcher(assemblyIDs, uploadID)
         return Promise.all(createdAssemblies.map(assembly => this.#connectAssembly(assembly)))
