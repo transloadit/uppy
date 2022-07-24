@@ -20,9 +20,8 @@ function httpHeaderSafeJson (v) {
     })
 }
 
-const adaptData = (res, email, buildURL) => ({
-  username: email,
-  items: adapter.getItemSubList(res).map((item) => ({
+function adaptData (res, email, buildURL) {
+  const items = adapter.getItemSubList(res).map((item) => ({
     isFolder: adapter.isFolder(item),
     icon: adapter.getItemIcon(item),
     name: adapter.getItemName(item),
@@ -32,9 +31,15 @@ const adaptData = (res, email, buildURL) => ({
     requestPath: adapter.getItemRequestPath(item),
     modifiedDate: adapter.getItemModifiedDate(item),
     size: adapter.getItemSize(item),
-  })),
-  nextPagePath: adapter.getNextPagePath(res),
-})
+  }))
+  items.sort((a, b) => a.name.localeCompare(b.name, 'en-US', { numeric: true }))
+
+  return {
+    username: email,
+    items,
+    nextPagePath: adapter.getNextPagePath(res),
+  }
+}
 
 /**
  * Adapter for API https://www.dropbox.com/developers/documentation/http/documentation
