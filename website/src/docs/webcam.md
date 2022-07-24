@@ -159,9 +159,11 @@ If no preferred image mime type is given, the Webcam plugin will prefer types li
 
 ### `mobileNativeCamera`
 
-Replaces Uppy’s custom camera UI on mobile with “Take Picture” and / or “Record Video” buttons (depending on [`modes`](#modes) option) that open native device UI for pictures / video (`Function: boolean` || `boolean`, default: `isMobile()`).
+Replaces Uppy’s custom camera UI on mobile and tablet with the native device camera (`Function: boolean` || `boolean`, default: `isMobile()`).
 
-Set to a boolean to forcefully enable / disable this feature, or a function which returns a boolean. By default we use the [`is-mobile`](https://github.com/juliangruber/is-mobile) package.
+This will show the “Take Picture” and / or “Record Video” buttons, which ones show depends on the [`modes`](#modes) option.
+
+You can set a boolean to forcefully enable / disable this feature, or a function which returns a boolean. By default we use the [`is-mobile`](https://github.com/juliangruber/is-mobile) package.
 
 ### `locale: {}`
 
