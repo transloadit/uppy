@@ -1,7 +1,6 @@
 /**
  * @module provider
  */
-// @ts-ignore
 const purestConfig = require('@purest/providers')
 const dropbox = require('./dropbox')
 const box = require('./box')
@@ -83,7 +82,6 @@ module.exports.getProviderMiddleware = (providers, needsProviderCredentials) => 
     let ProviderClass = providers[providerName]
     if (ProviderClass && validOptions(req.companion.options)) {
       // TODO remove this legacy provider compatibility when we release a new major
-      // @ts-ignore
       if (ProviderClass.version !== 2) ProviderClass = wrapLegacyProvider(ProviderClass)
 
       req.companion.provider = new ProviderClass({ providerName, config: purestConfig })

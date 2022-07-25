@@ -1,5 +1,4 @@
 const express = require('express')
-// @ts-ignore
 const Grant = require('grant').express()
 const merge = require('lodash.merge')
 const cookieParser = require('cookie-parser')
