@@ -45,8 +45,8 @@
     "access": "public"
   },
   "devDependencies": {
-    "@jest/globals": "^28.1.0",
-    "resize-observer-polyfill": "^1.5.1"
+    "resize-observer-polyfill": "^1.5.1",
+    "vitest": "^0.19.1"
   },
   "stableVersion": "0.1.0"
 }

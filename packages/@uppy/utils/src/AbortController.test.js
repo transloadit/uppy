@@ -1,4 +1,4 @@
-import { describe, expect, it, jest } from '@jest/globals'
+import { describe, expect, it, jest } from 'vitest'
 import { AbortController, AbortSignal } from './AbortController.js'
 
 function flushInstantTimeouts () {

@@ -1,4 +1,4 @@
-import { describe, expect, it } from '@jest/globals'
+import { describe, expect, it } from 'vitest'
 import dataURItoFile from './dataURItoFile.js'
 import sampleImageDataURI from './sampleImageDataURI.js'
 

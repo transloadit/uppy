@@ -31,7 +31,7 @@
     "preact": "^10.5.13"
   },
   "devDependencies": {
-    "@jest/globals": "^27.4.2"
+    "vitest": "^0.19.1"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^"

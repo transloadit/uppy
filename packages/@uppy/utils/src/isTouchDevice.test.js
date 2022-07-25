@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, xit } from '@jest/globals'
+import { afterEach, beforeEach, describe, expect, xit } from 'vitest'
 import isTouchDevice from './isTouchDevice.js'
 
 describe('isTouchDevice', () => {

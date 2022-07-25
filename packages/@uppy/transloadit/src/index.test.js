@@ -1,7 +1,6 @@
-import { describe, expect, it } from '@jest/globals'
+import { describe, expect, it } from 'vitest'
 import Core from '@uppy/core'
 import Transloadit from './index.js'
-import 'whatwg-fetch'
 
 describe('Transloadit', () => {
   it('Throws errors if options are missing', () => {

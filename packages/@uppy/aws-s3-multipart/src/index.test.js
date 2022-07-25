@@ -1,6 +1,5 @@
-import { beforeEach, describe, expect, it, jest } from '@jest/globals'
+import { beforeEach, describe, expect, it, jest } from 'vitest'
 
-import 'whatwg-fetch'
 import nock from 'nock'
 import Core from '@uppy/core'
 import AwsS3Multipart from './index.js'

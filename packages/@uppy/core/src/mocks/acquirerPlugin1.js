@@ -1,4 +1,4 @@
-import { jest } from '@jest/globals' // eslint-disable-line import/no-extraneous-dependencies
+import { jest } from 'vitest' // eslint-disable-line import/no-extraneous-dependencies
 import UIPlugin from '../UIPlugin.js'
 
 export default class TestSelector1 extends UIPlugin {

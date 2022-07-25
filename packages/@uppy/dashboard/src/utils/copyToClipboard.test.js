@@ -1,4 +1,4 @@
-import { describe, xit, expect } from '@jest/globals'
+import { describe, xit, expect } from 'vitest'
 import copyToClipboard from './copyToClipboard.js'
 
 describe('copyToClipboard', () => {

@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, it, expect, jest, xit } from '@jest/globals'
+import { afterEach, beforeEach, describe, it, expect, jest, xit } from 'vitest'
 import { UIPlugin } from '@uppy/core'
 import emitter from 'namespace-emitter'
 import ThumbnailGeneratorPlugin from './index.js'

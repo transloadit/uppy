@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, jest, describe, it, expect } from '@jest/globals'
+import { afterEach, beforeEach, jest, describe, it, expect } from 'vitest'
 import UppySocket from './Socket.js'
 
 describe('Socket', () => {

@@ -1,4 +1,4 @@
-import { describe, expect, it, jest } from '@jest/globals'
+import { describe, expect, it, jest } from 'vitest'
 import { RateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
 import Assembly from './Assembly.js'
 

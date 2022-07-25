@@ -1,4 +1,4 @@
-import { describe, expect, it } from '@jest/globals'
+import { describe, expect, it } from 'vitest'
 import Uppy from '@uppy/core'
 import Webcam from '../lib/index.js'
 

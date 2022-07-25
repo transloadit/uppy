@@ -28,8 +28,8 @@
     "tus-js-client": "^2.1.1"
   },
   "peerDependencies": {
-    "@jest/globals": "^27.4.2",
-    "@uppy/core": "workspace:^"
+    "@uppy/core": "workspace:^",
+    "vitest": "^0.19.1"
   },
   "stableVersion": "2.4.0"
 }

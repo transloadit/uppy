@@ -1,4 +1,4 @@
-import { jest, describe, it, expect } from '@jest/globals'
+import { jest, describe, it, expect } from 'vitest'
 import nock from 'nock'
 import Core from '@uppy/core'
 import XHRUpload from './index.js'

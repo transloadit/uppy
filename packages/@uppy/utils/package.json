@@ -22,7 +22,7 @@
     "lodash.throttle": "^4.1.1"
   },
   "devDependencies": {
-    "@jest/globals": "^27.4.2"
+    "vitest": "^0.19.1"
   },
   "stableVersion": "4.1.0"
 }

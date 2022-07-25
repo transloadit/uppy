@@ -24,8 +24,8 @@
     "nanoid": "^3.1.25"
   },
   "devDependencies": {
-    "@jest/globals": "^27.4.2",
-    "redux": "4.0.5"
+    "redux": "4.0.5",
+    "vitest": "^0.19.1"
   },
   "stableVersion": "2.1.0"
 }

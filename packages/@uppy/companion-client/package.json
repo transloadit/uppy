@@ -26,7 +26,7 @@
     "namespace-emitter": "^2.0.1"
   },
   "devDependencies": {
-    "@jest/globals": "^27.4.2"
+    "vitest": "^0.19.1"
   },
   "stableVersion": "2.2.0"
 }

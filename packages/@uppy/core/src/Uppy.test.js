@@ -1,5 +1,5 @@
 /* eslint no-console: "off", no-restricted-syntax: "off" */
-import { afterEach, beforeEach, describe, expect, it, jest, xit } from '@jest/globals'
+import { afterEach, beforeEach, describe, expect, it, jest, xit } from 'vitest'
 
 import fs from 'node:fs'
 import prettierBytes from '@transloadit/prettier-bytes'

@@ -30,8 +30,8 @@
     "nanoid": "^3.1.25"
   },
   "devDependencies": {
-    "@jest/globals": "^27.4.2",
-    "nock": "^13.1.0"
+    "nock": "^13.1.0",
+    "vitest": "^0.19.1"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^"
