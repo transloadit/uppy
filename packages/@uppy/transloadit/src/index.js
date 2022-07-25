@@ -199,6 +199,7 @@ export default class Transloadit extends BasePlugin {
           return null
         }
         // At least one file has been removed.
+        await this.client.updateAssembly(newAssembly, fileIDs.length - files.length)
       }
 
       const assembly = new Assembly(newAssembly, this.#rateLimitedQueue)

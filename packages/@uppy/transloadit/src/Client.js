@@ -20,6 +20,11 @@ export default class Client {
     this.#fetchWithNetworkError = this.opts.rateLimitedQueue.wrapPromiseFunction(fetchWithNetworkError)
   }
 
+  /**
+   * @param  {RequestInfo | URL} input
+   * @param  {RequestInit} init
+   * @returns {Promise<any>}
+   */
   #fetchJSON (...args) {
     return this.#fetchWithNetworkError(...args).then(response => {
       if (response.status === 429) {
@@ -124,6 +129,24 @@ export default class Client {
     const url = `${assembly.assembly_ssl_url}/add_file?${qs}`
     return this.#fetchJSON(url, { method: 'post', headers: this.#headers })
       .catch((err) => this.#reportError(err, { assembly, file, url, type: 'API_ERROR' }))
+  }
+
+  /**
+   * Cancel a running Assembly.
+   *
+   * @param {object} assembly
+   */
+  updateAssembly (assembly, finishedFiles) {
+    const url = new URL(assembly.assembly_ssl_url)
+    url.path = '/update_assemblies'
+    const body = JSON.stringify({
+      assembly_updates: [{
+        assemblyId: assembly.assembly_id,
+        finishedFiles,
+      }],
+    })
+    return this.#fetchJSON(url, { method: 'post', headers: this.#headers, body })
+      .catch((err) => this.#reportError(err, { url, type: 'API_ERROR' }))
   }
 
   /**
