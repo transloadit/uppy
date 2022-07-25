@@ -18,6 +18,7 @@ module.exports = (server) => {
   // or when connection fails while an upload is on-going and,
   // client attempts to reconnect.
   wss.on('connection', (ws, req) => {
+    // @ts-ignore
     const fullPath = req.url
     // the token identifies which ongoing upload's progress, the socket
     // connection wishes to listen to.

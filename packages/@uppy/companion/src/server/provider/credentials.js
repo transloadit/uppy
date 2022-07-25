@@ -1,4 +1,5 @@
 const request = require('request')
+// @ts-ignore
 const atob = require('atob')
 const { htmlEscape } = require('escape-goat')
 const logger = require('../logger')

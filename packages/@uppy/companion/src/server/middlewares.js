@@ -1,4 +1,5 @@
 const cors = require('cors')
+// @ts-ignore
 const promBundle = require('express-prom-bundle')
 
 // @ts-ignore
@@ -140,6 +141,7 @@ exports.metrics = ({ path = undefined } = {}) => {
 
   // Add version as a prometheus gauge
   const versionGauge = new promClient.Gauge({ name: 'companion_version', help: 'npm version as an integer' })
+  // @ts-ignore
   const numberVersion = Number(version.replace(/\D/g, ''))
   versionGauge.set(numberVersion)
   return metricsMiddleware
