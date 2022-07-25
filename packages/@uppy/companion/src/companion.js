@@ -156,8 +156,5 @@ module.exports.app = (optionsArg = {}) => {
     processId,
   })
 
-  // todo split emitter from app in next major
-  // @ts-ignore
-  app.companionEmitter = emitter
-  return app
+  return Object.assign(app, { companionEmitter: emitter })
 }
