@@ -45,7 +45,7 @@ module.exports = (redisUrl, redisPubSubScope) => {
       return handler(...args)
     }
 
-    let  handlersByThisEventName = handlersByEvent.get(eventName)
+    let handlersByThisEventName = handlersByEvent.get(eventName)
     if (handlersByThisEventName == null) {
       handlersByThisEventName = new WeakMap()
       handlersByEvent.set(eventName, handlersByThisEventName)
