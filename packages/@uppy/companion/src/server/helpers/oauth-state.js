@@ -1,5 +1,4 @@
 const crypto = require('node:crypto')
-// @ts-ignore
 const atob = require('atob')
 const { encrypt, decrypt } = require('./utils')
 

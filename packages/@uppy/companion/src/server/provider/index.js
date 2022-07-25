@@ -1,7 +1,6 @@
 /**
  * @module provider
  */
-// @ts-ignore
 const purestConfig = require('@purest/providers')
 const dropbox = require('./dropbox')
 const box = require('./box')
