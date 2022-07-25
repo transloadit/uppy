@@ -945,7 +945,7 @@ uppy.on('upload-error', (file, error, response) => {
 
 Fired when an upload has been retried (after an error, for example).
 
-> ⚠️ Note that this method is event is not triggered when the user retries all uploads, it will trigger the `retry-all` event intstead.
+> ⚠️ This event is not triggered when the user retries all uploads, it will trigger the `retry-all` event instead.
 
 **Parameters**
 
