@@ -1,14 +1,14 @@
 describe('Dashboard with Transloadit', () => {
   beforeEach(() => {
     cy.visit('/dashboard-transloadit')
-    cy.get('.uppy-Dashboard-input').as('file-input')
+    cy.get('.uppy-Dashboard-input:first').as('file-input')
     cy.intercept('/assemblies').as('createAssemblies')
     cy.intercept('/assemblies/*').as('assemblies')
     cy.intercept('/resumable/*').as('resumable')
   })
 
   it('should upload cat image successfully', () => {
-    cy.get('@file-input').attachFile('images/cat.jpg')
+    cy.get('@file-input').selectFile('cypress/fixtures/images/cat.jpg', { force:true })
     cy.get('.uppy-StatusBar-actionBtn--upload').click()
 
     cy.wait('@assemblies')
@@ -18,7 +18,7 @@ describe('Dashboard with Transloadit', () => {
   })
 
   it('should close assembly polling when cancelled', () => {
-    cy.get('@file-input').attachFile(['images/cat.jpg', 'images/traffic.jpg'])
+    cy.get('@file-input').selectFile(['cypress/fixtures/images/cat.jpg', 'cypress/fixtures/images/traffic.jpg'], { force:true })
     cy.get('.uppy-StatusBar-actionBtn--upload').click()
 
     cy.intercept({
@@ -45,7 +45,7 @@ describe('Dashboard with Transloadit', () => {
   })
 
   it('should not emit error if upload is cancelled right away', () => {
-    cy.get('@file-input').attachFile('images/cat.jpg')
+    cy.get('@file-input').selectFile('cypress/fixtures/images/cat.jpg', { force:true })
     cy.get('.uppy-StatusBar-actionBtn--upload').click()
 
     const handler = cy.spy()
