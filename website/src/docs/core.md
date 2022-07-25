@@ -943,7 +943,9 @@ uppy.on('upload-error', (file, error, response) => {
 
 ### `upload-retry`
 
-Fired when an upload has been retried (after an error, for example).
+Fired when an upload has been retried (after an error, for example). This is not fired when the user click on retry-all.
+
+> ⚠️ Note that this method is event is not triggered when the user retry all uploads. (it trigger a retry-all event)
 
 **Parameters**
 
@@ -954,6 +956,22 @@ Fired when an upload has been retried (after an error, for example).
 ```js
 uppy.on('upload-retry', (fileID) => {
   console.log('upload retried:', fileID)
+})
+```
+
+### `retry-all`
+
+Fired when all failed uploads are retried
+
+**Parameters**
+
+* `fileIDs` - Arrays of IDs of the files being retried.
+
+**Example**
+
+```js
+uppy.on('upload-retry', (fileIDs) => {
+  console.log('upload retried:', fileIDs)
 })
 ```
 
