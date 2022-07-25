@@ -340,7 +340,7 @@ class Uploader {
       size,
       companionOptions: req.companion.options,
       pathPrefix: `${req.companion.options.filePath}`,
-      storage: redis.client(),
+      storage: redis.client()?.v4,
       s3: req.companion.s3Client ? {
         client: req.companion.s3Client,
         options: req.companion.options.s3,

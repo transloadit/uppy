@@ -12,7 +12,7 @@ const { STORAGE_PREFIX, shortenToken } = require('./Uploader')
  */
 module.exports = (server) => {
   const wss = new SocketServer({ server })
-  const redisClient = redis.client()
+  const redisClient = redis.client()?.v4
 
   // A new connection is usually created when an upload begins,
   // or when connection fails while an upload is on-going and,
@@ -37,13 +37,12 @@ module.exports = (server) => {
     // if the redisClient is available, then we attempt to check the storage
     // if we have any already stored progress data on the upload.
     if (redisClient) {
-      redisClient.get(`${STORAGE_PREFIX}:${token}`, (err, data) => {
-        if (err) logger.error(err, 'socket.redis.error', shortenToken(token))
+      redisClient.get(`${STORAGE_PREFIX}:${token}`).then((data) => {
         if (data) {
           const dataObj = JSON.parse(data.toString())
           if (dataObj.action) sendProgress(dataObj)
         }
-      })
+      }).catch((err) => logger.error(err, 'socket.redis.error', shortenToken(token)))
     }
 
     emitter().emit(`connection:${token}`)
