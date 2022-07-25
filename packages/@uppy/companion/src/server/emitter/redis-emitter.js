@@ -1,4 +1,5 @@
 const redis = require('redis')
+const { EventEmitter } = require('node:events')
 
 /**
  * This module simulates the builtin events.EventEmitter but with the use of redis.
@@ -7,6 +8,7 @@ const redis = require('redis')
  */
 module.exports = (redisUrl, redisPubSubScope) => {
   const prefix = redisPubSubScope ? `${redisPubSubScope}:` : ''
+  const getPrefixedEventName = (eventName) => `${prefix}${eventName}`
   const publisher = redis.createClient({ url: redisUrl })
   let subscriber
 
@@ -15,65 +17,72 @@ module.exports = (redisUrl, redisPubSubScope) => {
     return subscriber.connect()
   })
 
-  const errorHandlers = new Set()
-  function errorHandler (err) {
-    if (errorHandlers.size === 0) {
-      Promise.reject(err) // trigger unhandled rejection if there are no error handlers.
-    }
-    for (const handler of errorHandlers) {
-      handler(err)
-    }
-  }
-  let runWhenConnected = (fn) => {
-    connectedPromise.then(fn).catch(errorHandler)
-  }
-  connectedPromise.then(() => {
-    runWhenConnected = fn => fn().catch(errorHandler)
-  }, (err) => {
-    runWhenConnected = () => errorHandler(err)
-  })
+  const handlersByEvent = new Map()
 
-  function on (eventName, handler) {
-    function pMessageHandler (message, _channel, pattern) {
-      if (prefix + eventName === pattern) {
-        let jsonMsg = message
-        try {
-          jsonMsg = JSON.parse(message)
-        } catch (ex) {
-          if (typeof errorHandler === 'function') {
-            return errorHandler(`Invalid JSON received! Channel: ${eventName} Message: ${message}`)
-          }
-        }
-        return handler(jsonMsg, _channel)
+  const errorEmitter = new EventEmitter()
+  const handleError = (err) => errorEmitter.emit('error', err)
+
+  connectedPromise.catch((err) => handleError(err))
+
+  async function runWhenConnected (fn) {
+    try {
+      await connectedPromise
+      await fn()
+    } catch (err) {
+      handleError(err)
+    }
+  }
+
+  function addListener (eventName, handler, _once = false) {
+    function actualHandler (message) {
+      if (_once) removeListener(eventName, handler)
+      let args
+      try {
+        args = JSON.parse(message)
+      } catch (ex) {
+        return handleError(new Error(`Invalid JSON received! Channel: ${eventName} Message: ${message}`))
       }
-      return undefined
+      return handler(...args)
     }
 
-    runWhenConnected(() => subscriber.pSubscribe(prefix + eventName, pMessageHandler))
+    if (!handlersByEvent.get(eventName)) handlersByEvent.set(eventName, new Map())
+    const handlersByThisEventName = handlersByEvent.get(eventName)
+    handlersByThisEventName.set(handler, actualHandler)
+
+    runWhenConnected(() => subscriber.pSubscribe(getPrefixedEventName(eventName), actualHandler))
   }
 
   /**
-   * Add a one-off event listener
+   * Add an event listener
    *
    * @param {string} eventName name of the event
-   * @param {Function} handler the handler of the event
+   * @param {any} handler the handler of the event
+   */
+  function on (eventName, handler) {
+    if (eventName === 'error') return errorEmitter.on('error', handler)
+
+    return addListener(eventName, handler)
+  }
+
+  /**
+   * Add an event listener (will be triggered at most once)
+   *
+   * @param {string} eventName name of the event
+   * @param {any} handler the handler of the event
    */
   function once (eventName, handler) {
-    const actualHandler = (message) => {
-      handler(message)
-      removeListener(eventName, actualHandler)
-    }
-    on(eventName, actualHandler)
+    if (eventName === 'error') return errorEmitter.once('error', handler)
+
+    return addListener(eventName, handler, true)
   }
 
   /**
    * Announce the occurence of an event
    *
    * @param {string} eventName name of the event
-   * @param {object} message the message to pass along with the event
    */
-  function emit (eventName, message) {
-    runWhenConnected(() => publisher.publish(prefix + eventName, message))
+  function emit (eventName, ...args) {
+    runWhenConnected(() => publisher.publish(getPrefixedEventName(eventName), JSON.stringify(args)))
   }
 
   /**
@@ -83,7 +92,19 @@ module.exports = (redisUrl, redisPubSubScope) => {
    * @param {any} handler the handler of the event to remove
    */
   function removeListener (eventName, handler) {
-    runWhenConnected(() => subscriber.pUnsubscribe(`${prefix}${eventName}`, handler))
+    if (eventName === 'error') return errorEmitter.removeListener('error', handler)
+
+    return runWhenConnected(() => {
+      const handlersByThisEventName = handlersByEvent.get(eventName)
+      if (!handlersByThisEventName) return undefined
+
+      const actualHandler = handlersByThisEventName.get(handler)
+      if (!actualHandler) return undefined
+      handlersByThisEventName.delete(handler)
+      if (handlersByThisEventName.size === 0) handlersByEvent.delete(eventName)
+
+      return subscriber.pUnsubscribe(getPrefixedEventName(eventName), actualHandler)
+    })
   }
 
   /**
@@ -92,7 +113,12 @@ module.exports = (redisUrl, redisPubSubScope) => {
    * @param {string} eventName name of the event
    */
   function removeAllListeners (eventName) {
-    runWhenConnected(() => subscriber.pUnsubscribe(`${prefix}${eventName}`))
+    if (eventName === 'error') return errorEmitter.removeAllListeners(eventName)
+
+    return runWhenConnected(() => {
+      handlersByEvent.delete(eventName)
+      return subscriber.pUnsubscribe(getPrefixedEventName(eventName))
+    })
   }
 
   return {

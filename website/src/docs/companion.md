@@ -42,7 +42,7 @@ If you don’t have a Node.js project with a `package.json` you might want to in
 
 ### Prerequisite
 
-Since v2, you now need to be running `node.js >= v10.20.1` to use Companion. Please see [Migrating v1 to v2](#Migrating-v1-to-v2)
+Since Companion v4, you now need to be running `node.js >= v16.14.0` to use Companion.
 
 Unfortunately, Windows is not a supported platform right now. It may work, and we’re happy to accept improvements in this area, but we can’t provide support.
 

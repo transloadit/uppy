@@ -4,13 +4,10 @@ const { randomUUID } = require('node:crypto')
 const isObject = require('isobject')
 const validator = require('validator')
 const request = require('request')
-const { pipeline: pipelineCb } = require('node:stream')
+const { pipeline } = require('node:stream/promises')
 const { join } = require('node:path')
 const fs = require('node:fs')
-const { promisify } = require('node:util')
-
-// TODO move to `require('streams/promises').pipeline` when dropping support for Node.js 14.x.
-const pipeline = promisify(pipelineCb)
+const { once } = require('node:events')
 
 const { createReadStream, createWriteStream, ReadStream } = fs
 const { stat, unlink } = fs.promises
@@ -340,7 +337,7 @@ class Uploader {
       size,
       companionOptions: req.companion.options,
       pathPrefix: `${req.companion.options.filePath}`,
-      storage: redis.client(),
+      storage: redis.client()?.v4,
       s3: req.companion.s3Client ? {
         client: req.companion.s3Client,
         options: req.companion.options.s3,
@@ -361,35 +358,21 @@ class Uploader {
   async awaitReady (timeout) {
     logger.debug('waiting for socket connection', 'uploader.socket.wait', this.shortToken)
 
-    // TODO: replace the Promise constructor call when dropping support for Node.js <16 with
-    // await once(emitter, eventName, timeout && { signal: AbortSignal.timeout(timeout) })
-    await new Promise((resolve, reject) => {
-      const eventName = `connection:${this.token}`
-      let timer
-      let onEvent
+    // todo use AbortSignal.timeout(timeout) once supported by jest
+    function createAbortSignal (ms) {
+      const controller = new AbortController()
+      setTimeout(() => controller.abort(), ms)
+      return controller.signal
+    }
 
-      function cleanup () {
-        emitter().removeListener(eventName, onEvent)
-        clearTimeout(timer)
-      }
-
-      if (timeout) {
-        // Need to timeout after a while, or we could leak emitters
-        timer = setTimeout(() => {
-          cleanup()
-          reject(new Error('Timed out waiting for socket connection'))
-        }, timeout)
-      }
-
-      onEvent = () => {
-        cleanup()
-        resolve()
-      }
-
-      emitter().once(eventName, onEvent)
-    })
-
-    logger.debug('socket connection received', 'uploader.socket.wait', this.shortToken)
+    const eventName = `connection:${this.token}`
+    try {
+      await once(emitter(), eventName, timeout && { signal: createAbortSignal(timeout) })
+      logger.debug('socket connection received', 'uploader.socket.wait', this.shortToken)
+    } catch (err) {
+      if (err.code === 'ABORT_ERR') throw new Error('Timed out waiting for socket connection')
+      throw err
+    }
   }
 
   /**
