@@ -94,6 +94,7 @@
     "lib/"
   ],
   "jest": {
+    "testEnvironment": "node",
     "testTimeout": 10000,
     "automock": false,
     "collectCoverage": true,

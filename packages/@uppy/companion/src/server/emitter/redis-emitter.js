@@ -45,8 +45,11 @@ module.exports = (redisUrl, redisPubSubScope) => {
       return handler(...args)
     }
 
-    if (!handlersByEvent.get(eventName)) handlersByEvent.set(eventName, new Map())
-    const handlersByThisEventName = handlersByEvent.get(eventName)
+    let  handlersByThisEventName = handlersByEvent.get(eventName)
+    if (handlersByThisEventName == null) {
+      handlersByThisEventName = new WeakMap()
+      handlersByEvent.set(eventName, handlersByThisEventName)
+    }
     handlersByThisEventName.set(handler, actualHandler)
 
     runWhenConnected(() => subscriber.pSubscribe(getPrefixedEventName(eventName), actualHandler))
@@ -96,10 +99,11 @@ module.exports = (redisUrl, redisPubSubScope) => {
 
     return runWhenConnected(() => {
       const handlersByThisEventName = handlersByEvent.get(eventName)
-      if (!handlersByThisEventName) return undefined
+      if (handlersByThisEventName == null) return undefined
 
       const actualHandler = handlersByThisEventName.get(handler)
-      if (!actualHandler) return undefined
+      if (actualHandler == null) return undefined
+
       handlersByThisEventName.delete(handler)
       if (handlersByThisEventName.size === 0) handlersByEvent.delete(eventName)
 
