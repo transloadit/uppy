@@ -4235,14 +4235,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@es-joy/jsdoccomment@npm:0.12.0":
-  version: 0.12.0
-  resolution: "@es-joy/jsdoccomment@npm:0.12.0"
+"@es-joy/jsdoccomment@npm:~0.22.1":
+  version: 0.22.2
+  resolution: "@es-joy/jsdoccomment@npm:0.22.2"
   dependencies:
-    comment-parser: 1.2.4
+    comment-parser: 1.3.1
     esquery: ^1.4.0
-    jsdoc-type-pratt-parser: 2.0.0
-  checksum: 24e1cda9004d64259466bfe10448c58bcc57392a7eeb29ff32d157e0aaa15b14425e7a4b9490234fbaeca23a62f8d151970943501882aee70caca4384a3560fa
+    jsdoc-type-pratt-parser: ~2.2.5
+  checksum: 21c9f5b49ac5dce8086c759dba84f2d8e7dcf4f24b55bc1a110390c6b1d8ad0dde48ce5757662a00c7066ca50cea8e3d52f533504f7c0c3a839574db3e40bee5
   languageName: node
   linkType: hard
 
@@ -6459,6 +6459,62 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@redis/bloom@npm:1.0.2":
+  version: 1.0.2
+  resolution: "@redis/bloom@npm:1.0.2"
+  peerDependencies:
+    "@redis/client": ^1.0.0
+  checksum: 4872e7e5e4ff03d63349ca88d3164d487f62805651ada91924de2592995993401c98a01cb93bff8d71e9a2e54985b2485b6cb0e084a7e8b1283e2ebb8bc4b833
+  languageName: node
+  linkType: hard
+
+"@redis/client@npm:1.2.0":
+  version: 1.2.0
+  resolution: "@redis/client@npm:1.2.0"
+  dependencies:
+    cluster-key-slot: 1.1.0
+    generic-pool: 3.8.2
+    yallist: 4.0.0
+  checksum: 098a550a6728d9d3babb432a1c32f1678cbda5ad7fa3d59316fc334be42ef05d778fc4cf2e3d873a34817447870a5fc0486e62793698a279404b3b086ba7422e
+  languageName: node
+  linkType: hard
+
+"@redis/graph@npm:1.0.1":
+  version: 1.0.1
+  resolution: "@redis/graph@npm:1.0.1"
+  peerDependencies:
+    "@redis/client": ^1.0.0
+  checksum: 72e485efa416bdff10420f6e13c9cb4e1e5c70752e5172717adf62fc1d4d9ba12e708229fd87876f3a93270ff74c4bcd4d916987438dc36a94f7f12c9785fa44
+  languageName: node
+  linkType: hard
+
+"@redis/json@npm:1.0.3":
+  version: 1.0.3
+  resolution: "@redis/json@npm:1.0.3"
+  peerDependencies:
+    "@redis/client": ^1.0.0
+  checksum: 26a7003c2fbacfa5998671e3a301cb2285432bf90f237adedcf76c0be0d379528e6710d469a8ea93c04bbd22951f9c2f41d460dbd79e85856f199248c4a250d5
+  languageName: node
+  linkType: hard
+
+"@redis/search@npm:1.0.6":
+  version: 1.0.6
+  resolution: "@redis/search@npm:1.0.6"
+  peerDependencies:
+    "@redis/client": ^1.0.0
+  checksum: 5c776143520b11ae2e49a05e7fe3df514a01460f2be90759b15e4f097bf4a985784c48c2184ac2c275ced3ec5a0c77b208a4d46a50161d1ad6025e3ab2990aa7
+  languageName: node
+  linkType: hard
+
+"@redis/time-series@npm:1.0.3":
+  version: 1.0.3
+  resolution: "@redis/time-series@npm:1.0.3"
+  peerDependencies:
+    "@redis/client": ^1.0.0
+  checksum: 4d11518185dd15f31c5b4a433902e53a3ebc24614a0221080ab12abf4f6fc60b3db00a71a83de7b4b10f11077de611dc1c273274573646d63481d40ca246f82d
+  languageName: node
+  linkType: hard
+
 "@request/api@npm:^0.6.0":
   version: 0.6.0
   resolution: "@request/api@npm:0.6.0"
@@ -8413,15 +8469,27 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/connect-redis@npm:0.0.17":
-  version: 0.0.17
-  resolution: "@types/connect-redis@npm:0.0.17"
+"@types/connect-redis@npm:0.0.18":
+  version: 0.0.18
+  resolution: "@types/connect-redis@npm:0.0.18"
   dependencies:
     "@types/express": "*"
     "@types/express-session": "*"
     "@types/ioredis": "*"
-    "@types/redis": "*"
-  checksum: ad8d02d49755ccb2a0efe098f4b7ad836798531bea20ee92d8b8ec839f71c25ab2b7cd859aacd2a7d58b49ba5fecda3ac2d1b6359c8ea3914c7b33e18de723b0
+    "@types/redis": ^2.8.0
+  checksum: d65f0e4686cf482c3d580ebaba49817102578ed7cec1dd754132b097b320c7d1baae6b0e47a653b282b177d96807306fd59bb3b1af0a3875e6177fe4fb6d161b
+  languageName: node
+  linkType: hard
+
+"@types/connect-redis@patch:@types/connect-redis@npm:0.0.18#.yarn/patches/@types-connect-redis-npm-0.0.18-4fd2b614d3::locator=%40uppy-dev%2Fbuild%40workspace%3A.":
+  version: 0.0.18
+  resolution: "@types/connect-redis@patch:@types/connect-redis@npm%3A0.0.18#.yarn/patches/@types-connect-redis-npm-0.0.18-4fd2b614d3::version=0.0.18&hash=df5a6e&locator=%40uppy-dev%2Fbuild%40workspace%3A."
+  dependencies:
+    "@types/express": "*"
+    "@types/express-session": "*"
+    "@types/ioredis": "*"
+    "@types/redis": ^2.8.0
+  checksum: 69f32b862305197678b77002ce36e6d45018cf54f66475338dfa0defc3aa89d66c9007693557778a414bbbdd388f67483702598e96c401fc2d1e974a87dce80f
   languageName: node
   linkType: hard
 
@@ -8967,7 +9035,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/redis@npm:2":
+"@types/redis@npm:^2.8.0":
   version: 2.8.32
   resolution: "@types/redis@npm:2.8.32"
   dependencies:
@@ -9295,7 +9363,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/experimental-utils@npm:5.6.0, @typescript-eslint/experimental-utils@npm:^5.0.0":
+"@typescript-eslint/experimental-utils@npm:5.6.0":
   version: 5.6.0
   resolution: "@typescript-eslint/experimental-utils@npm:5.6.0"
   dependencies:
@@ -9338,6 +9406,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@typescript-eslint/scope-manager@npm:5.30.7":
+  version: 5.30.7
+  resolution: "@typescript-eslint/scope-manager@npm:5.30.7"
+  dependencies:
+    "@typescript-eslint/types": 5.30.7
+    "@typescript-eslint/visitor-keys": 5.30.7
+  checksum: 434ce7a13a8f3bffae2af2b7fe19bab6e490c78114584212519f50cd1b91fbdcddc8ad93bdb3cacdc8cecca5a8c5d2eb606557e66bd3fcd9d3040846846c22ff
+  languageName: node
+  linkType: hard
+
 "@typescript-eslint/scope-manager@npm:5.6.0":
   version: 5.6.0
   resolution: "@typescript-eslint/scope-manager@npm:5.6.0"
@@ -9352,6 +9430,13 @@ __metadata:
   version: 5.3.0
   resolution: "@typescript-eslint/types@npm:5.3.0"
   checksum: 23abd7b953ec96d4ea78046b92e6ed4a67a3dfa3bfd4e90eb646769ff5124cd8ff237eb8da8c7b74bc944cbd770ce4bdded48f2595793be65ed55c1b8771e29c
+  languageName: node
+  linkType: hard
+
+"@typescript-eslint/types@npm:5.30.7":
+  version: 5.30.7
+  resolution: "@typescript-eslint/types@npm:5.30.7"
+  checksum: 2f6345bf0e2e9f392c1f62a5f96c630d4565574230a000508d923444229e51c1a05e07cef042935ca30f4f35755dbf3871b8b9da808911f578d63e6a4b897b79
   languageName: node
   linkType: hard
 
@@ -9380,6 +9465,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@typescript-eslint/typescript-estree@npm:5.30.7":
+  version: 5.30.7
+  resolution: "@typescript-eslint/typescript-estree@npm:5.30.7"
+  dependencies:
+    "@typescript-eslint/types": 5.30.7
+    "@typescript-eslint/visitor-keys": 5.30.7
+    debug: ^4.3.4
+    globby: ^11.1.0
+    is-glob: ^4.0.3
+    semver: ^7.3.7
+    tsutils: ^3.21.0
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  checksum: 7cff83a9b9c91a89bcbb677d539b7122b2a423a66f575364858b4635d7e53a25b9329cd20a5adfb732758a41d1c6801d4bfa3eb798a192f351aafb11eedc58b6
+  languageName: node
+  linkType: hard
+
 "@typescript-eslint/typescript-estree@npm:5.6.0":
   version: 5.6.0
   resolution: "@typescript-eslint/typescript-estree@npm:5.6.0"
@@ -9398,6 +9501,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@typescript-eslint/utils@npm:^5.10.0":
+  version: 5.30.7
+  resolution: "@typescript-eslint/utils@npm:5.30.7"
+  dependencies:
+    "@types/json-schema": ^7.0.9
+    "@typescript-eslint/scope-manager": 5.30.7
+    "@typescript-eslint/types": 5.30.7
+    "@typescript-eslint/typescript-estree": 5.30.7
+    eslint-scope: ^5.1.1
+    eslint-utils: ^3.0.0
+  peerDependencies:
+    eslint: ^6.0.0 || ^7.0.0 || ^8.0.0
+  checksum: 77b0baf069f70290214294d74fdf7c46a7ddeab322ef53f65766b0c8e59f0e6f8074beb19233be34faca5beb390ac1b932dd1c983337355674c4437b4b1e2b44
+  languageName: node
+  linkType: hard
+
 "@typescript-eslint/visitor-keys@npm:5.3.0":
   version: 5.3.0
   resolution: "@typescript-eslint/visitor-keys@npm:5.3.0"
@@ -9405,6 +9524,16 @@ __metadata:
     "@typescript-eslint/types": 5.3.0
     eslint-visitor-keys: ^3.0.0
   checksum: 5c2be2c4540da9f7e1186a4f1fcca7411615f327c4476bf07853727c610d5b66990c7b3037b277310d0ebfc2f1548c2ff01ed1c535176ae6171f10a3de968a34
+  languageName: node
+  linkType: hard
+
+"@typescript-eslint/visitor-keys@npm:5.30.7":
+  version: 5.30.7
+  resolution: "@typescript-eslint/visitor-keys@npm:5.30.7"
+  dependencies:
+    "@typescript-eslint/types": 5.30.7
+    eslint-visitor-keys: ^3.3.0
+  checksum: f322972aeda3143d4c24826436357937131f7fbad102d48cfa6dfca70ac245f93b20cf7beb5f1809bda4fe8f454676a6cabf8f73e39af6724076f2b2c213ee80
   languageName: node
   linkType: hard
 
@@ -9478,13 +9607,13 @@ __metadata:
     eslint-plugin-compat: ^4.0.0
     eslint-plugin-cypress: ^2.12.1
     eslint-plugin-import: ^2.25.2
-    eslint-plugin-jest: ^25.0.0
-    eslint-plugin-jsdoc: ^37.0.0
+    eslint-plugin-jest: ^26.0.0
+    eslint-plugin-jsdoc: ^38.0.0
     eslint-plugin-jsx-a11y: ^6.4.1
     eslint-plugin-markdown: ^2.2.0
     eslint-plugin-node: ^11.1.0
     eslint-plugin-prefer-import: ^0.0.1
-    eslint-plugin-promise: ^5.1.1
+    eslint-plugin-promise: ^6.0.0
     eslint-plugin-react: ^7.22.0
     eslint-plugin-react-hooks: ^4.2.0
     eslint-plugin-unicorn: ^43.0.0
@@ -10011,7 +10140,7 @@ __metadata:
   dependencies:
     "@purest/providers": 1.0.1
     "@types/compression": 1.7.0
-    "@types/connect-redis": 0.0.17
+    "@types/connect-redis": 0.0.18
     "@types/cookie-parser": 1.4.2
     "@types/cors": 2.8.6
     "@types/eslint": ^8.2.0
@@ -10030,7 +10159,7 @@ __metadata:
     body-parser: 1.19.0
     chalk: 2.4.2
     common-tags: 1.8.0
-    connect-redis: 4.0.3
+    connect-redis: 6.1.3
     cookie-parser: 1.4.6
     cors: ^2.8.5
     escape-goat: 3.0.0
@@ -10054,11 +10183,10 @@ __metadata:
     morgan: 1.10.0
     ms: 2.1.2
     nock: ^13.1.3
-    node-redis-pubsub: ^5.0.0
     node-schedule: 1.3.2
     prom-client: 12.0.0
     purest: 3.1.0
-    redis: 3.1.1
+    redis: 4.2.0
     request: 2.88.2
     semver: 6.3.0
     serialize-error: ^2.1.0
@@ -11876,7 +12004,7 @@ __metadata:
     "@uppy/webcam": "workspace:*"
     eslint: ^8.0.0
     eslint-plugin-import: ^2.22.1
-    eslint-plugin-jsdoc: ^37.0.0
+    eslint-plugin-jsdoc: ^38.0.0
     eslint-plugin-prefer-arrow: ^1.2.3
     jasmine-core: ~3.6.0
     jasmine-spec-reporter: ~5.0.0
@@ -15051,6 +15179,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"cluster-key-slot@npm:1.1.0":
+  version: 1.1.0
+  resolution: "cluster-key-slot@npm:1.1.0"
+  checksum: fc953c75209b1ef9088081bab4e40a0b2586491c974ab93460569c014515ca5a2e31c043f185285e177007162fc353d07836d98f570c171dbe055775430e495b
+  languageName: node
+  linkType: hard
+
 "co@npm:^4.6.0":
   version: 4.6.0
   resolution: "co@npm:4.6.0"
@@ -15268,17 +15403,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"comment-parser@npm:1.2.4":
-  version: 1.2.4
-  resolution: "comment-parser@npm:1.2.4"
-  checksum: 36ac280bce4c472fac22b3ec4d8aebb4d3d7c22c6808c70174f4deabee3b82144db66f8bd61eca9c514a6d0f12f6087ddab99e7d531e660d0da793b4730fd445
-  languageName: node
-  linkType: hard
-
-"comment-parser@npm:1.3.0":
-  version: 1.3.0
-  resolution: "comment-parser@npm:1.3.0"
-  checksum: e7b41b8a5f3d8b974e5b4bd8796acd41ec6635989f2a402bbf13098ad459c0598275a7b75b98d29c48d8f0b340a828d1a5d6948c8cf65ab41ae7e00040fb082a
+"comment-parser@npm:1.3.1":
+  version: 1.3.1
+  resolution: "comment-parser@npm:1.3.1"
+  checksum: 421e6a113a3afd548500e7174ab46a2049dccf92e82bbaa3b209031b1bdf97552aabfa1ae2a120c0b62df17e1ba70e0d8b05d68504fee78e1ef974c59bcfe718
   languageName: node
   linkType: hard
 
@@ -15450,10 +15578,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"connect-redis@npm:4.0.3":
-  version: 4.0.3
-  resolution: "connect-redis@npm:4.0.3"
-  checksum: fdd984cea74e32001bcfcb52cc86ffa0606aba0720e8d1aaac8562284ad421788dc7fa11027f7d02b74a093b453433eb9e43ac4141f11b43f742267da0150906
+"connect-redis@npm:6.1.3":
+  version: 6.1.3
+  resolution: "connect-redis@npm:6.1.3"
+  checksum: 1f61616e2ae7ad097b6553e45d683eeb309ac2e601ac49d721c6c0069fd96fbcfb46ee1c0e210b264b720dcd385201d30ff55ccf5deb11ee1529810890561b58
   languageName: node
   linkType: hard
 
@@ -16838,13 +16966,6 @@ __metadata:
   version: 1.2.1
   resolution: "denodeify@npm:1.2.1"
   checksum: a85c8f7fce5626e311edd897c27ad571b29393c4a739dc29baee48328e09edd82364ff697272dd612462c67e48b4766389642b5bdfaea0dc114b7c6a276c0eae
-  languageName: node
-  linkType: hard
-
-"denque@npm:^1.5.0":
-  version: 1.5.1
-  resolution: "denque@npm:1.5.1"
-  checksum: 4375ad19d5cea99f90effa82a8cecdaa10f4eb261fbcd7e47cd753ff2737f037aac8f7f4e031cc77f3966314c491c86a0d3b20c128aeee57f791b4662c45108e
   languageName: node
   linkType: hard
 
@@ -18953,39 +19074,38 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-jest@npm:^25.0.0":
-  version: 25.3.0
-  resolution: "eslint-plugin-jest@npm:25.3.0"
+"eslint-plugin-jest@npm:^26.0.0":
+  version: 26.6.0
+  resolution: "eslint-plugin-jest@npm:26.6.0"
   dependencies:
-    "@typescript-eslint/experimental-utils": ^5.0.0
+    "@typescript-eslint/utils": ^5.10.0
   peerDependencies:
-    "@typescript-eslint/eslint-plugin": ^4.0.0 || ^5.0.0
+    "@typescript-eslint/eslint-plugin": ^5.0.0
     eslint: ^6.0.0 || ^7.0.0 || ^8.0.0
   peerDependenciesMeta:
     "@typescript-eslint/eslint-plugin":
       optional: true
     jest:
       optional: true
-  checksum: d801c166f528392fbb0234e34b893e97c24a7be049744f2d23b1702bce6202d5f0760886a591f884ffa82c7e01a2b06134e86da991bfa568ca5a90311e5f452e
+  checksum: 5dd60820d5618175e7203b077788476a6f697316b53d77c4bb7037b32073f3d5d539a72dec910eb3f8eedc97c3b28600ba35c5d3bf8c687ade765bb2d0dc77d2
   languageName: node
   linkType: hard
 
-"eslint-plugin-jsdoc@npm:^37.0.0":
-  version: 37.1.0
-  resolution: "eslint-plugin-jsdoc@npm:37.1.0"
+"eslint-plugin-jsdoc@npm:^38.0.0":
+  version: 38.1.6
+  resolution: "eslint-plugin-jsdoc@npm:38.1.6"
   dependencies:
-    "@es-joy/jsdoccomment": 0.12.0
-    comment-parser: 1.3.0
-    debug: ^4.3.3
+    "@es-joy/jsdoccomment": ~0.22.1
+    comment-parser: 1.3.1
+    debug: ^4.3.4
     escape-string-regexp: ^4.0.0
     esquery: ^1.4.0
-    jsdoc-type-pratt-parser: ^2.0.0
     regextras: ^0.8.0
     semver: ^7.3.5
     spdx-expression-parse: ^3.0.1
   peerDependencies:
     eslint: ^7.0.0 || ^8.0.0
-  checksum: a38de941e971519446d188f4d5893f34326552b316607f897d024813ee24893ec5e22544945a33eddeb251c5e48f546677dda4143973ee4198bf2ff5b35d5edb
+  checksum: 600dac3a9b81ac6fcb62a30a30e83a85a003ca3ecfe5376d99a1042ba703cfdf3ef404413c74a75f61c2a77e6cc7435628cfc51d80081108a67965ac238d14b4
   languageName: node
   linkType: hard
 
@@ -19054,12 +19174,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-promise@npm:^5.1.1":
-  version: 5.2.0
-  resolution: "eslint-plugin-promise@npm:5.2.0"
+"eslint-plugin-promise@npm:^6.0.0":
+  version: 6.0.0
+  resolution: "eslint-plugin-promise@npm:6.0.0"
   peerDependencies:
-    eslint: ^7.0.0
-  checksum: 5d6b2d28408c5afde6386942862427af3d83c9a130eb2555bb54b26a1761914e2c7326aca1be26dd3fee6405e65a2ee9432a4526147e5962545060ea0ef64058
+    eslint: ^7.0.0 || ^8.0.0
+  checksum: 7e761507c51267b77e4ad710e7c8938aa4f8f69b975886034e57497a1816e9527eda364e25aac03d1b4e0df2e738ba98e49ad075d028824fcfea533a1419751c
   languageName: node
   linkType: hard
 
@@ -21085,6 +21205,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"generic-pool@npm:3.8.2":
+  version: 3.8.2
+  resolution: "generic-pool@npm:3.8.2"
+  checksum: f549077d90265e5e4d32a2410205b357ec61cf73d17861f1013637984390e09fe7bf537129a2c6ed30ae57662a57c8d54194f80046408d3349836330f422dbde
+  languageName: node
+  linkType: hard
+
 "gensync@npm:^1.0.0-beta.1, gensync@npm:^1.0.0-beta.2":
   version: 1.0.0-beta.2
   resolution: "gensync@npm:1.0.0-beta.2"
@@ -21470,7 +21597,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"globby@npm:^11.0.2":
+"globby@npm:^11.0.2, globby@npm:^11.1.0":
   version: 11.1.0
   resolution: "globby@npm:11.1.0"
   dependencies:
@@ -25264,10 +25391,10 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   languageName: node
   linkType: hard
 
-"jsdoc-type-pratt-parser@npm:2.0.0, jsdoc-type-pratt-parser@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "jsdoc-type-pratt-parser@npm:2.0.0"
-  checksum: 0e49e7e10a1ef047aa2cfcce9b5102214b9f8b5294593beba09bf825b115345c9efba153c422a6a649bbe0dca9aa5b4c8d34dca21e74ad42bd2252d7ecbda92d
+"jsdoc-type-pratt-parser@npm:~2.2.5":
+  version: 2.2.5
+  resolution: "jsdoc-type-pratt-parser@npm:2.2.5"
+  checksum: 47d68147fae7fe4343e0c1d47cbf55d2d963696e0583a1d398846be06df2df8e149e34a6304e04b6c148839600234e99a860bc712af829fac557fe7e5cd82141
   languageName: node
   linkType: hard
 
@@ -29230,15 +29357,6 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
     uuid: ^8.3.0
     which: ^2.0.2
   checksum: 7db1683003f6aaa4324959dfa663cd56e301ccc0165977a9e7737989ffe3b4763297f9fc85f44d0662b63a4fd85516eda43411b492a4d2fae207afb23773f912
-  languageName: node
-  linkType: hard
-
-"node-redis-pubsub@npm:^5.0.0":
-  version: 5.0.0
-  resolution: "node-redis-pubsub@npm:5.0.0"
-  dependencies:
-    redis: ^3.0.0
-  checksum: c151ee55e0e394ef23d1f79bb1c45c3e848741270677f6136c72e1f2dd452d97cffa2b30b1fd36cf7ee478f5208e64e1d553421c16af714cdd2a297bd0ec1639
   languageName: node
   linkType: hard
 
@@ -33517,50 +33635,17 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   languageName: node
   linkType: hard
 
-"redis-commands@npm:^1.7.0":
-  version: 1.7.0
-  resolution: "redis-commands@npm:1.7.0"
-  checksum: d1ff7fbcb5e54768c77f731f1d49679d2a62c3899522c28addb4e2e5813aea8bcac3f22519d71d330224c3f2937f935dfc3d8dc65e90db0f5fe22dc2c1515aa7
-  languageName: node
-  linkType: hard
-
-"redis-errors@npm:^1.0.0, redis-errors@npm:^1.2.0":
-  version: 1.2.0
-  resolution: "redis-errors@npm:1.2.0"
-  checksum: f28ac2692113f6f9c222670735aa58aeae413464fd58ccf3fce3f700cae7262606300840c802c64f2b53f19f65993da24dc918afc277e9e33ac1ff09edb394f4
-  languageName: node
-  linkType: hard
-
-"redis-parser@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "redis-parser@npm:3.0.0"
+"redis@npm:4.2.0":
+  version: 4.2.0
+  resolution: "redis@npm:4.2.0"
   dependencies:
-    redis-errors: ^1.0.0
-  checksum: 89290ae530332f2ae37577647fa18208d10308a1a6ba750b9d9a093e7398f5e5253f19855b64c98757f7129cccce958e4af2573fdc33bad41405f87f1943459a
-  languageName: node
-  linkType: hard
-
-"redis@npm:3.1.1":
-  version: 3.1.1
-  resolution: "redis@npm:3.1.1"
-  dependencies:
-    denque: ^1.5.0
-    redis-commands: ^1.7.0
-    redis-errors: ^1.2.0
-    redis-parser: ^3.0.0
-  checksum: 85a0735d66570397f15d7ca2d23a7279ed540fcb74479254722da117801ee09675c8048eae8cde8cbeb92dc06df19ef8d74773ca1333788ff69d75386a3f38fc
-  languageName: node
-  linkType: hard
-
-"redis@npm:^3.0.0":
-  version: 3.1.2
-  resolution: "redis@npm:3.1.2"
-  dependencies:
-    denque: ^1.5.0
-    redis-commands: ^1.7.0
-    redis-errors: ^1.2.0
-    redis-parser: ^3.0.0
-  checksum: baec42198626b22d2dfc063b6a6f30394daee994c21f380e58ecf91c3edee333c4e32907c30f082fe66d2177695f7b2567902eef399ecb22da3e199ea6363a30
+    "@redis/bloom": 1.0.2
+    "@redis/client": 1.2.0
+    "@redis/graph": 1.0.1
+    "@redis/json": 1.0.3
+    "@redis/search": 1.0.6
+    "@redis/time-series": 1.0.3
+  checksum: 6c35b56c6b685e82973c5698c5736c07ccbc59f3bc18d8de61e45ead2df4b8fc82062e5618452f4d3f8c23f02ff8c0b847c8d6a681f909c403a0fb96adcc2b98
   languageName: node
   linkType: hard
 
@@ -41711,6 +41796,13 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   languageName: node
   linkType: hard
 
+"yallist@npm:4.0.0, yallist@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "yallist@npm:4.0.0"
+  checksum: 343617202af32df2a15a3be36a5a8c0c8545208f3d3dfbc6bb7c3e3b7e8c6f8e7485432e4f3b88da3031a6e20afa7c711eded32ddfb122896ac5d914e75848d5
+  languageName: node
+  linkType: hard
+
 "yallist@npm:^2.1.2":
   version: 2.1.2
   resolution: "yallist@npm:2.1.2"
@@ -41722,13 +41814,6 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   version: 3.1.1
   resolution: "yallist@npm:3.1.1"
   checksum: 48f7bb00dc19fc635a13a39fe547f527b10c9290e7b3e836b9a8f1ca04d4d342e85714416b3c2ab74949c9c66f9cebb0473e6bc353b79035356103b47641285d
-  languageName: node
-  linkType: hard
-
-"yallist@npm:^4.0.0":
-  version: 4.0.0
-  resolution: "yallist@npm:4.0.0"
-  checksum: 343617202af32df2a15a3be36a5a8c0c8545208f3d3dfbc6bb7c3e3b7e8c6f8e7485432e4f3b88da3031a6e20afa7c711eded32ddfb122896ac5d914e75848d5
   languageName: node
   linkType: hard
 
