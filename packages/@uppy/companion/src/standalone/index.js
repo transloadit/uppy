@@ -176,7 +176,6 @@ module.exports = function server (inputCompanionOptions = {}) {
     return res.status(404).json({ message: 'Not Found' })
   })
 
-  // @ts-ignore
   app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
     if (app.get('env') === 'production') {
       // if the error is a URIError from the requested URL we only log the error message
