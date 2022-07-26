@@ -678,7 +678,7 @@ class Uppy {
       }
 
       const { capabilities } = this.getState()
-      if (newFileIDs.length !== currentUploads[uploadID].fileIDs.leagth
+      if (newFileIDs.length !== currentUploads[uploadID].fileIDs.length
           && !capabilities.individualCancellation) {
         throw new Error('individualCancellation is disabled')
       }
