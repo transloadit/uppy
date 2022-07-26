@@ -135,7 +135,7 @@ export default class Client {
    * Update the number of expected files in an already created assembly.
    *
    * @param {object} assembly
-   * @param {number} newNumberOfExpectedFiles
+   * @param {number} tus_num_expected_upload_files
    */
   updateAssembly (assembly, tus_num_expected_upload_files) {
     const url = new URL(assembly.assembly_ssl_url)
