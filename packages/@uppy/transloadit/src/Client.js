@@ -135,14 +135,16 @@ export default class Client {
    * Cancel a running Assembly.
    *
    * @param {object} assembly
+   * @param {number} newNumberOfExpectedFiles
    */
-  updateAssembly (assembly, finishedFiles) {
+  updateAssembly (assembly, newNumberOfExpectedFiles) {
     const url = new URL(assembly.assembly_ssl_url)
-    url.path = '/update_assemblies'
+    url.pathname = '/update_assemblies'
     const body = JSON.stringify({
       assembly_updates: [{
-        assemblyId: assembly.assembly_id,
-        finishedFiles,
+        ...assembly,
+        // TODO: fix it, this is not working.
+        newNumberOfExpectedFiles,
       }],
     })
     return this.#fetchJSON(url, { method: 'post', headers: this.#headers, body })

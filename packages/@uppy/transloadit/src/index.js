@@ -246,6 +246,9 @@ export default class Transloadit extends BasePlugin {
             assembly.close()
             this.client.cancelAssembly(newAssembly).catch(() => { /* ignore potential errors */ })
             this.uppy.off(fileRemovedHandler)
+          } else {
+            this.client.updateAssembly(newAssembly, Object.keys(updatedFiles).length)
+              .catch(() => { /* ignore potential errors */ })
           }
         }
       }
