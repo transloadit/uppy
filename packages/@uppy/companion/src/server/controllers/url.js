@@ -93,7 +93,7 @@ const meta = async (req, res) => {
     return res.json(urlMeta)
   } catch (err) {
     logger.error(err, 'controller.url.meta.error', req.id)
-    return res.status(err.status || 500).json({ message: err.message || 'failed to fetch URL metadata' })
+    return res.status(err.status || 500).json({ message: 'failed to fetch URL metadata' })
   }
 }
 
@@ -124,7 +124,7 @@ const get = async (req, res) => {
 
   function onUnhandledError (err) {
     logger.error(err, 'controller.url.error', req.id)
-    res.status(err.status || 500).json({ message: err.message || 'failed to fetch URL metadata' })
+    res.status(err.status || 500).json({ message: 'failed to fetch URL metadata' })
   }
 
   startDownUpload({ req, res, getSize, download, onUnhandledError })
