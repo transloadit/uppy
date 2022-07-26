@@ -27,7 +27,7 @@
   "dependencies": {
     "@uppy/companion-client": "workspace:^",
     "@uppy/utils": "workspace:^",
-    "nanoid": "^3.1.25"
+    "nanoid": "^4.0.0"
   },
   "devDependencies": {
     "@jest/globals": "^27.4.2",
