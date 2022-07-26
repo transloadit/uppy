@@ -137,14 +137,13 @@ export default class Client {
    * @param {object} assembly
    * @param {number} newNumberOfExpectedFiles
    */
-  updateAssembly (assembly, newNumberOfExpectedFiles) {
+  updateAssembly (assembly, tus_num_expected_upload_files) {
     const url = new URL(assembly.assembly_ssl_url)
     url.pathname = '/update_assemblies'
     const body = JSON.stringify({
       assembly_updates: [{
         ...assembly,
-        // TODO: fix it, this is not working.
-        newNumberOfExpectedFiles,
+        tus_num_expected_upload_files,
       }],
     })
     return this.#fetchJSON(url, { method: 'post', headers: this.#headers, body })

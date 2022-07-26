@@ -60,7 +60,8 @@ describe('Dashboard with Transloadit', () => {
     })
   })
 
-  it('should create assembly if there is still one file to upload', () => {
+  // Not working, the upstream changes have not landed yet.
+  it.skip('should create assembly if there is still one file to upload', () => {
     cy.get('@file-input').attachFile(['images/cat.jpg', 'images/traffic.jpg'])
     cy.get('.uppy-StatusBar-actionBtn--upload').click()
 
@@ -73,14 +74,13 @@ describe('Dashboard with Transloadit', () => {
 
       cy.wait('@createAssemblies').then(() => {
         cy.wait('@resumable')
-        // expect(Object.values(uppy.getPlugin('Transloadit').activeAssemblies).some((a: any) => a.pollInterval)).to.equal(true)
-
         cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Complete')
       })
     })
   })
 
-  it('should complete upload if one gets cancelled mid-flight', () => {
+  // Not working, the upstream changes have not landed yet.
+  it.skip('should complete upload if one gets cancelled mid-flight', () => {
     cy.get('@file-input').attachFile(['images/cat.jpg', 'images/traffic.jpg'])
     cy.get('.uppy-StatusBar-actionBtn--upload').click()
 
