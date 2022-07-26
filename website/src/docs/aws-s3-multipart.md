@@ -114,7 +114,7 @@ A function that generates a batch of signed URLs for the specified part numbers.
 `prepareUploadParts` should return a `Promise` with an `Object` with keys:
 
 * `presignedUrls` - A JavaScript object with the part numbers as keys and the presigned URL for each part as the value.
-* `headers` - **(Optional)** Custom headers to send along with every request per part (`{ 1: { 'Content-MD5': 'hash' }}`). These are indexed (1-based) by part number too so you can for instance send the MD5 hash validation for each part to S3.
+* `headers` - **(Optional)** Custom headers to send along with every request per part (`{ 1: { 'Content-MD5': 'hash' }}`). These are (1-based) indexed by part number too so you can for instance send the MD5 hash validation for each part to S3.
 
 An example of what the return value should look like:
 
