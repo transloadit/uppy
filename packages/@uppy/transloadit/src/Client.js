@@ -132,7 +132,7 @@ export default class Client {
   }
 
   /**
-   * Cancel a running Assembly.
+   * Update the number of expected files in an already created assembly.
    *
    * @param {object} assembly
    * @param {number} newNumberOfExpectedFiles
