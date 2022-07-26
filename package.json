@@ -163,7 +163,7 @@
     "test:locale-packs:warnings": "yarn workspace @uppy-dev/locale-pack test warnings",
     "test:type": "yarn workspaces foreach -piv --include '@uppy/*' --exclude '@uppy/{angular,react-native,locales,companion,provider-views,robodog,svelte}' exec tsd",
     "test:unit": "yarn run build:lib && NODE_OPTIONS=--experimental-vm-modules jest --env jsdom",
-    "test:watch": "jest --env jsdom --watch",
+    "test:watch": "NODE_OPTIONS=--experimental-vm-modules jest --env jsdom --watch --no-coverage",
     "test:size": "yarn build:lib && size-limit --why",
     "test": "npm-run-all lint test:locale-packs:unused test:locale-packs:warnings test:unit test:type test:companion",
     "uploadcdn": "yarn node ./bin/upload-to-cdn.js",
