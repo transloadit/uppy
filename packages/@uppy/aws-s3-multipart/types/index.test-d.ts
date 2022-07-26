@@ -21,7 +21,7 @@ import type { AwsS3Part } from '..'
       expectType<UppyFile>(file)
       expectType<string>(partData.uploadId)
       expectType<string>(partData.key)
-      expectType<Record<number, Blob>>(partData.parts)
+      expectType<Array<{number: number, chunk: Blob}>>(partData.parts)
       return { presignedUrls: {} }
     },
     abortMultipartUpload (file, opts) {
