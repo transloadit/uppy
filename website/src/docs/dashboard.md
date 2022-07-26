@@ -81,7 +81,7 @@ uppy.use(Dashboard, {
   hideCancelButton: false,
   hideProgressAfterFinish: false,
   doneButtonHandler: () => {
-    this.uppy.reset()
+    this.uppy.cancelAll()
     this.requestCloseModal()
   },
   note: null,
@@ -196,7 +196,7 @@ This option is passed to the StatusBar, and will render a “Done” button in p
 
 ```js
 const doneButtonHandler = () => {
-  this.uppy.reset()
+  this.uppy.cancelAll()
   this.requestCloseModal()
 }
 ```

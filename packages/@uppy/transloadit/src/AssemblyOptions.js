@@ -115,7 +115,3 @@ class AssemblyOptions {
 
 export default AssemblyOptions
 export { validateParams }
-
-// Backward compatibility: we want `validateParams` to keep being a static
-// method of `AssemblyOptions` to avoid a breaking change.
-AssemblyOptions.validateParams = validateParams // TODO: remove this line on the next major

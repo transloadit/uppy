@@ -73,7 +73,7 @@ export default class Dashboard extends UIPlugin {
       hidePauseResumeButton: false,
       hideProgressAfterFinish: false,
       doneButtonHandler: () => {
-        this.uppy.reset()
+        this.uppy.cancelAll()
         this.requestCloseModal()
       },
       note: null,

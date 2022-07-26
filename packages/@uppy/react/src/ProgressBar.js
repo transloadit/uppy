@@ -10,6 +10,8 @@ import nonHtmlPropsHaveChanged from './nonHtmlPropsHaveChanged.js'
  */
 
 class ProgressBar extends Component {
+  #htmlProps
+
   componentDidMount () {
     this.installPlugin()
   }
@@ -51,15 +53,16 @@ class ProgressBar extends Component {
     uppy.removePlugin(this.plugin)
   }
 
+  [Symbol.for('htmlProps')] () { return this.#htmlProps }
+
   render () {
-    // TODO: stop exposing `validProps` as a public property and rename it to `htmlProps`
-    this.validProps = getHTMLProps(this.props)
+    this.#htmlProps = getHTMLProps(this.props)
     return h('div', {
       className: 'uppy-Container',
       ref: (container) => {
         this.container = container
       },
-      ...this.validProps,
+      ...this.#htmlProps,
     })
   }
 }

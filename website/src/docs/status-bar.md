@@ -113,7 +113,7 @@ If passed a function, Status Bar will render a “Done” button in place of pau
 
 ```js
 const doneButtonHandler = () => {
-  this.uppy.reset()
+  this.uppy.cancelAll()
   this.requestCloseModal()
 }
 ```

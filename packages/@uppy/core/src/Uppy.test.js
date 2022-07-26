@@ -5,6 +5,7 @@ import fs from 'node:fs'
 import prettierBytes from '@transloadit/prettier-bytes'
 import Core from '../lib/index.js'
 import UIPlugin from '../lib/UIPlugin.js'
+import { debugLogger } from '../lib/loggers.js'
 import AcquirerPlugin1 from './mocks/acquirerPlugin1.js'
 import AcquirerPlugin2 from './mocks/acquirerPlugin2.js'
 import InvalidPlugin from './mocks/invalidPlugin.js'
@@ -203,7 +204,7 @@ describe('src/Core', () => {
     })
   })
 
-  it('should reset when the reset method is called', () => {
+  it('should cancel all when the `cancelAll` method is called', () => {
     // use DeepFrozenStore in some tests to make sure we are not mutating things
     const core = new Core({
       store: DeepFrozenStore(),
@@ -215,7 +216,7 @@ describe('src/Core', () => {
     core.on('state-update', coreStateUpdateEventMock)
     core.setState({ foo: 'bar', totalProgress: 30 })
 
-    core.reset()
+    core.cancelAll()
 
     expect(coreCancelEventMock).toHaveBeenCalledWith({ reason: 'user' }, undefined, undefined, undefined, undefined, undefined)
     expect(coreStateUpdateEventMock.mock.calls.length).toEqual(2)
@@ -959,7 +960,7 @@ describe('src/Core', () => {
       )
     })
 
-    it('allows new files again with allowMultipleUploadBatches: false after reset() was called', async () => {
+    it('allows new files again with allowMultipleUploadBatches: false after cancelAll() was called', async () => {
       const core = new Core({ allowMultipleUploadBatches: false })
 
       core.addFile({
@@ -970,7 +971,7 @@ describe('src/Core', () => {
       })
       await expect(core.upload()).resolves.toBeDefined()
 
-      core.reset()
+      core.cancelAll()
 
       core.addFile({
         source: 'jest',
@@ -2023,7 +2024,7 @@ describe('src/Core', () => {
       console.error = jest.fn()
 
       const core = new Core({
-        logger: Core.debugLogger,
+        logger: debugLogger,
       })
 
       core.log('test test')
