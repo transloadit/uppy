@@ -12,6 +12,29 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 2.13.1
+
+Released: 2022-07-27
+
+| Package              | Version | Package              | Version |
+| -------------------- | ------- | -------------------- | ------- |
+| @uppy/companion      |   3.7.1 | @uppy/remote-sources |   0.1.1 |
+| @uppy/compressor     |   0.3.1 | @uppy/transloadit    |   2.3.5 |
+| @uppy/core           |   2.3.2 | @uppy/robodog        |   2.9.1 |
+| @uppy/dashboard      |   2.4.1 | uppy                 |  2.13.1 |
+| @uppy/image-editor   |   1.4.1 |                      |         |
+
+- @uppy/compressor: fix upload causing meta name to reset (Justin / #3890)
+- @uppy/transloadit: cancel assemblies when all its files have been removed (Antoine du Hamel / #3893)
+- e2e: Add retries for flaky e2e test (Merlijn Vos / #3915)
+- @uppy/dashboard,@uppy/image-editor,@uppy/remote-sources: Fix `uppy.close()` crashes when remote-sources or image-editor is installed (Merlijn Vos / #3914)
+- @uppy/core: Add missing type for retry-all event (Luc Boissaye / #3901)
+- @uppy/companion: Companion app type (Mikael Finstad / #3899)
+- e2e: upgrade to Cypress 10 (Antoine du Hamel / #3896)
+- meta: Fix website build (Murderlon)
+- meta: Create new issue templates (Merlijn Vos / #3879)
+
+
 ## 2.13.0
 
 Released: 2022-07-18

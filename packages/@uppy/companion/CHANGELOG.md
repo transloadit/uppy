@@ -1,5 +1,12 @@
 # @uppy/companion
 
+## 3.7.1
+
+Released: 2022-07-27
+Included in: Uppy v2.13.1
+
+- @uppy/companion: Companion app type (Mikael Finstad / #3899)
+
 ## 3.7.0
 
 Released: 2022-07-06
