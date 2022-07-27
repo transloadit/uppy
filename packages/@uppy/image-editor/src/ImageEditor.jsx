@@ -122,9 +122,11 @@ export default class ImageEditor extends UIPlugin {
 
   uninstall () {
     const { currentImage } = this.getPluginState()
-    const file = this.uppy.getFile(currentImage.id)
-    this.uppy.emit('file-editor:cancel', file)
 
+    if (currentImage) {
+      const file = this.uppy.getFile(currentImage.id)
+      this.uppy.emit('file-editor:cancel', file)
+    }
     this.unmount()
   }
 
