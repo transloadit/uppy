@@ -6,6 +6,12 @@ Released: 2022-06-09
 Included in: Uppy v3.0.0-beta.1
 
 - @uppy/core,@uppy/dashboard: fix types for some events (Antoine du Hamel / #3812)
+## 2.4.1
+
+Released: 2022-07-27
+Included in: Uppy v2.13.1
+
+- @uppy/dashboard,@uppy/image-editor,@uppy/remote-sources: Fix `uppy.close()` crashes when remote-sources or image-editor is installed (Merlijn Vos / #3914)
 
 ## 2.3.0
 

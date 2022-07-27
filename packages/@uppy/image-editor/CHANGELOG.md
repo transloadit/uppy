@@ -1,5 +1,20 @@
 # @uppy/image-editor
 
+## 1.4.1
+
+Released: 2022-07-27
+Included in: Uppy v2.13.1
+
+- @uppy/dashboard,@uppy/image-editor,@uppy/remote-sources: Fix `uppy.close()` crashes when remote-sources or image-editor is installed (Merlijn Vos / #3914)
+
+## 1.4.0
+
+Released: 2022-07-18
+Included in: Uppy v2.13.0
+
+- @uppy/image-editor: remove beta notice (Merlijn Vos / #3877)
+- @uppy/image-editor: Add image editor cancel event (James R T / #3875)
+
 ## 1.3.0
 
 Released: 2022-05-30

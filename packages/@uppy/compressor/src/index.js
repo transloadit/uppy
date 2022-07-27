@@ -60,7 +60,7 @@ export default class Compressor extends BasePlugin {
             size,
             data: compressedBlob,
           })
-          this.uppy.setFileMeta(file.id, { name, type })
+          this.uppy.setFileMeta(file.id, { type })
           compressedFiles.push(file)
         } catch (err) {
           this.uppy.log(`[Image Compressor] Failed to compress ${file.id}:`, 'warning')

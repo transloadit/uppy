@@ -190,7 +190,18 @@ export default class Transloadit extends BasePlugin {
       fields: options.fields,
       expectedFiles: fileIDs.length,
       signature: options.signature,
-    }).then((newAssembly) => {
+    }).then(async (newAssembly) => {
+      const files = this.uppy.getFiles().filter(({ id }) => fileIDs.includes(id))
+      if (files.length !== fileIDs.length) {
+        if (files.length === 0) {
+          // All files have been removed, cancelling.
+          await this.client.cancelAssembly(newAssembly)
+          return null
+        }
+        // At least one file has been removed.
+        await this.client.updateNumberOfFilesInAssembly(newAssembly, files.length)
+      }
+
       const assembly = new Assembly(newAssembly, this.#rateLimitedQueue)
       const { status } = assembly
       const assemblyID = status.assembly_id
@@ -212,26 +223,33 @@ export default class Transloadit extends BasePlugin {
         },
       })
 
-      const { files } = this.uppy.getState()
       const updatedFiles = {}
-      fileIDs.forEach((id) => {
-        updatedFiles[id] = this.#attachAssemblyMetadata(this.uppy.getFile(id), status)
+      files.forEach((file) => {
+        updatedFiles[file.id] = this.#attachAssemblyMetadata(file, status)
       })
+
       this.uppy.setState({
         files: {
-          ...files,
+          ...this.uppy.getState().files,
           ...updatedFiles,
         },
       })
+
       const fileRemovedHandler = (fileRemoved, reason) => {
         if (reason === 'cancel-all') {
           assembly.close()
+          this.client.cancelAssembly(newAssembly).catch(() => { /* ignore potential errors */ })
           this.uppy.off(fileRemovedHandler)
         } else if (fileRemoved.id in updatedFiles) {
           delete updatedFiles[fileRemoved.id]
-          if (Object.keys(updatedFiles).length === 0) {
+          const nbOfRemainingFiles = Object.keys(updatedFiles).length
+          if (nbOfRemainingFiles === 0) {
             assembly.close()
+            this.client.cancelAssembly(newAssembly).catch(() => { /* ignore potential errors */ })
             this.uppy.off(fileRemovedHandler)
+          } else {
+            this.client.updateNumberOfFilesInAssembly(newAssembly, nbOfRemainingFiles)
+              .catch(() => { /* ignore potential errors */ })
           }
         }
       }
@@ -253,7 +271,7 @@ export default class Transloadit extends BasePlugin {
     })
   }
 
-  #createAssemblyWatcher (assemblyID, fileIDs, uploadID) {
+  #createAssemblyWatcher (assemblyID, uploadID) {
   // AssemblyWatcher tracks completion states of all Assemblies in this upload.
     const watcher = new AssemblyWatcher(this.uppy, assemblyID)
 
@@ -300,7 +318,7 @@ export default class Transloadit extends BasePlugin {
    */
   #onFileUploadURLAvailable = (rawFile) => {
     const file = this.uppy.getFile(rawFile.id)
-    if (!file || !file.transloadit || !file.transloadit.assembly) {
+    if (!file?.transloadit?.assembly) {
       return
     }
 
@@ -497,10 +515,7 @@ export default class Transloadit extends BasePlugin {
       // Set up the assembly watchers again for all the ongoing uploads.
       Object.keys(uploadsAssemblies).forEach((uploadID) => {
         const assemblyIDs = uploadsAssemblies[uploadID]
-        const fileIDsInUpload = assemblyIDs.flatMap((assemblyID) => {
-          return this.getAssemblyFiles(assemblyID).map((file) => file.id)
-        })
-        this.#createAssemblyWatcher(assemblyIDs, fileIDsInUpload, uploadID)
+        this.#createAssemblyWatcher(assemblyIDs, uploadID)
       })
 
       const allAssemblyIDs = Object.keys(assemblies)
@@ -586,16 +601,16 @@ export default class Transloadit extends BasePlugin {
   }
 
   #prepareUpload = (fileIDs, uploadID) => {
-    // Only use files without errors
-    const filteredFileIDs = fileIDs.filter((file) => !file.error)
-
-    const files = filteredFileIDs.map(fileID => {
-      const file = this.uppy.getFile(fileID)
-      this.uppy.emit('preprocess-progress', file, {
-        mode: 'indeterminate',
-        message: this.i18n('creatingAssembly'),
-      })
-      return file
+    const files = fileIDs.map(id => this.uppy.getFile(id))
+    const filesWithoutErrors = files.filter((file) => {
+      if (!file.error) {
+        this.uppy.emit('preprocess-progress', file, {
+          mode: 'indeterminate',
+          message: this.i18n('creatingAssembly'),
+        })
+        return true
+      }
+      return false
     })
 
     // eslint-disable-next-line no-shadow
@@ -630,19 +645,20 @@ export default class Transloadit extends BasePlugin {
       },
     })
 
-    const assemblyOptions = new AssemblyOptions(files, this.opts)
+    const assemblyOptions = new AssemblyOptions(filesWithoutErrors, this.opts)
 
     return assemblyOptions.build()
       .then((assemblies) => Promise.all(assemblies.map(createAssembly)))
-      .then((createdAssemblies) => {
+      .then((maybeCreatedAssemblies) => {
+        const createdAssemblies = maybeCreatedAssemblies.filter(Boolean)
         const assemblyIDs = createdAssemblies.map(assembly => assembly.status.assembly_id)
-        this.#createAssemblyWatcher(assemblyIDs, filteredFileIDs, uploadID)
+        this.#createAssemblyWatcher(assemblyIDs, uploadID)
         return Promise.all(createdAssemblies.map(assembly => this.#connectAssembly(assembly)))
       })
       // If something went wrong before any Assemblies could be created,
       // clear all processing state.
       .catch((err) => {
-        files.forEach((file) => {
+        filesWithoutErrors.forEach((file) => {
           this.uppy.emit('preprocess-complete', file)
           this.uppy.emit('upload-error', file, err)
         })
@@ -829,7 +845,7 @@ export default class Transloadit extends BasePlugin {
 
   getAssemblyFiles (assemblyID) {
     return this.uppy.getFiles().filter((file) => {
-      return file && file.transloadit && file.transloadit.assembly === assemblyID
+      return file?.transloadit?.assembly === assemblyID
     })
   }
 }

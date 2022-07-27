@@ -6,6 +6,27 @@ Released: 2022-05-30
 Included in: Uppy v3.0.0-beta
 
 - @uppy/transloadit: remove IE 10 hack (Antoine du Hamel / #3777)
+## 2.3.5
+
+Released: 2022-07-27
+Included in: Uppy v2.13.1
+
+- @uppy/transloadit: cancel assemblies when all its files have been removed (Antoine du Hamel / #3893)
+
+## 2.3.4
+
+Released: 2022-07-18
+Included in: Uppy v2.13.0
+
+- @uppy/transloadit: fix outdated file ids and incorrect usage of files (Merlijn Vos / #3886)
+
+## 2.3.3
+
+Released: 2022-07-11
+Included in: Uppy v2.12.3
+
+- @uppy/transloadit: fix TypeError when file is cancelled asynchronously (Antoine du Hamel / #3872)
+- @uppy/robodog,@uppy/transloadit: use modern syntax to simplify code (Antoine du Hamel / #3873)
 
 ## 2.3.2
 

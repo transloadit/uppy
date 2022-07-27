@@ -105,6 +105,58 @@ Released: 2022-05-30
 - @uppy/companion: remove support for EOL versions of Node.js (Antoine du Hamel / #3784)
 - @uppy/react: refactor to ESM (Antoine du Hamel / #3780)
 - @uppy/transloadit: remove IE 10 hack (Antoine du Hamel / #3777)
+## 2.13.1
+
+Released: 2022-07-27
+
+| Package              | Version | Package              | Version |
+| -------------------- | ------- | -------------------- | ------- |
+| @uppy/companion      |   3.7.1 | @uppy/remote-sources |   0.1.1 |
+| @uppy/compressor     |   0.3.1 | @uppy/transloadit    |   2.3.5 |
+| @uppy/core           |   2.3.2 | @uppy/robodog        |   2.9.1 |
+| @uppy/dashboard      |   2.4.1 | uppy                 |  2.13.1 |
+| @uppy/image-editor   |   1.4.1 |                      |         |
+
+- @uppy/compressor: fix upload causing meta name to reset (Justin / #3890)
+- @uppy/transloadit: cancel assemblies when all its files have been removed (Antoine du Hamel / #3893)
+- e2e: Add retries for flaky e2e test (Merlijn Vos / #3915)
+- @uppy/dashboard,@uppy/image-editor,@uppy/remote-sources: Fix `uppy.close()` crashes when remote-sources or image-editor is installed (Merlijn Vos / #3914)
+- @uppy/core: Add missing type for retry-all event (Luc Boissaye / #3901)
+- @uppy/companion: Companion app type (Mikael Finstad / #3899)
+- e2e: upgrade to Cypress 10 (Antoine du Hamel / #3896)
+- meta: Fix website build (Murderlon)
+- meta: Create new issue templates (Merlijn Vos / #3879)
+
+
+## 2.13.0
+
+Released: 2022-07-18
+
+| Package            | Version | Package            | Version |
+| ------------------ | ------- | ------------------ | ------- |
+| @uppy/dashboard    |   2.4.0 | @uppy/robodog      |   2.9.0 |
+| @uppy/image-editor |   1.4.0 | uppy               |  2.13.0 |
+| @uppy/transloadit  |   2.3.4 |                    |         |
+
+- @uppy/transloadit: fix outdated file ids and incorrect usage of files (Merlijn Vos / #3886)
+- @uppy/image-editor: remove beta notice (Merlijn Vos / #3877)
+- meta: Fix broken links in _posts/2019-08-1.3.md (YukeshShr / #3884)
+- meta: Fix broken link in _posts/2017-03-0.15.md (YukeshShr / #3883)
+- @uppy/image-editor: Add image editor cancel event (James R T / #3875)
+
+
+## 2.12.3
+
+Released: 2022-07-11
+
+| Package           | Version | Package           | Version |
+| ----------------- | ------- | ----------------- | ------- |
+| @uppy/transloadit |   2.3.3 | uppy              |  2.12.3 |
+| @uppy/robodog     |   2.8.3 |                   |         |
+
+- @uppy/transloadit: fix TypeError when file is cancelled asynchronously (Antoine du Hamel / #3872)
+- @uppy/robodog,@uppy/transloadit: use modern syntax to simplify code (Antoine du Hamel / #3873)
+- meta: fix `release-beta` automation (Antoine du Hamel)
 
 
 ## 2.12.2

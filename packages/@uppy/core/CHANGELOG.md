@@ -6,6 +6,12 @@ Released: 2022-06-09
 Included in: Uppy v3.0.0-beta.1
 
 - @uppy/core,@uppy/dashboard: fix types for some events (Antoine du Hamel / #3812)
+## 2.3.2
+
+Released: 2022-07-27
+Included in: Uppy v2.13.1
+
+- @uppy/core: Add missing type for retry-all event (Luc Boissaye / #3901)
 
 ## 2.3.1
 
