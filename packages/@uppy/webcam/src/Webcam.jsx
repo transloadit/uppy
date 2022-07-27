@@ -3,6 +3,7 @@ import { h } from 'preact'
 import { UIPlugin } from '@uppy/core'
 import getFileTypeExtension from '@uppy/utils/lib/getFileTypeExtension'
 import mimeTypes from '@uppy/utils/lib/mimeTypes'
+import isMobile from 'is-mobile'
 import canvasToBlob from '@uppy/utils/lib/canvasToBlob'
 import supportsMediaRecorder from './supportsMediaRecorder.js'
 import CameraIcon from './CameraIcon.jsx'
@@ -50,6 +51,11 @@ function getMediaDevices () {
   // eslint-disable-next-line compat/compat
   return navigator.mediaDevices
 }
+
+function isModeAvailable (modes, mode) {
+  return modes.includes(mode)
+}
+
 /**
  * Webcam
  */
@@ -96,6 +102,7 @@ export default class Webcam extends UIPlugin {
       preferredImageMimeType: null,
       preferredVideoMimeType: null,
       showRecordingLength: false,
+      mobileNativeCamera: isMobile({ tablet: true }),
     }
 
     this.opts = { ...defaultOptions, ...opts }
@@ -588,6 +595,16 @@ export default class Webcam extends UIPlugin {
   }
 
   install () {
+    const { mobileNativeCamera, modes } = this.opts
+
+    if (mobileNativeCamera) {
+      this.uppy.getPlugin('Dashboard').setOptions({
+        showNativeVideoCameraButton: isModeAvailable(modes, 'video-only') || isModeAvailable(modes, 'video-audio'),
+        showNativePhotoCameraButton: isModeAvailable(modes, 'picture'),
+      })
+      return
+    }
+
     this.setPluginState({
       cameraReady: false,
       recordingLengthSeconds: 0,
