@@ -20,6 +20,11 @@ export default class Client {
     this.#fetchWithNetworkError = this.opts.rateLimitedQueue.wrapPromiseFunction(fetchWithNetworkError)
   }
 
+  /**
+   * @param  {RequestInfo | URL} input
+   * @param  {RequestInit} init
+   * @returns {Promise<any>}
+   */
   #fetchJSON (...args) {
     return this.#fetchWithNetworkError(...args).then(response => {
       if (response.status === 429) {
@@ -124,6 +129,25 @@ export default class Client {
     const url = `${assembly.assembly_ssl_url}/add_file?${qs}`
     return this.#fetchJSON(url, { method: 'post', headers: this.#headers })
       .catch((err) => this.#reportError(err, { assembly, file, url, type: 'API_ERROR' }))
+  }
+
+  /**
+   * Update the number of expected files in an already created assembly.
+   *
+   * @param {object} assembly
+   * @param {number} num_expected_upload_files
+   */
+  updateNumberOfFilesInAssembly (assembly, num_expected_upload_files) {
+    const url = new URL(assembly.assembly_ssl_url)
+    url.pathname = '/update_assemblies'
+    const body = JSON.stringify({
+      assembly_updates: [{
+        assembly_id: assembly.assembly_id,
+        num_expected_upload_files,
+      }],
+    })
+    return this.#fetchJSON(url, { method: 'post', headers: this.#headers, body })
+      .catch((err) => this.#reportError(err, { url, type: 'API_ERROR' }))
   }
 
   /**

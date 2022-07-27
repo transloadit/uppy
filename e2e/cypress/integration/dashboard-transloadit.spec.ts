@@ -44,6 +44,58 @@ describe('Dashboard with Transloadit', () => {
     })
   })
 
+  it('should not create assembly when all individual files have been cancelled', () => {
+    cy.get('@file-input').attachFile(['images/cat.jpg', 'images/traffic.jpg'])
+    cy.get('.uppy-StatusBar-actionBtn--upload').click()
+
+    cy.window().then(({ uppy }) => {
+      expect(Object.values(uppy.getPlugin('Transloadit').activeAssemblies).length).to.equal(0)
+
+      const { files } = uppy.getState()
+      uppy.removeFiles(Object.keys(files))
+
+      cy.wait('@createAssemblies').then(() => {
+        expect(Object.values(uppy.getPlugin('Transloadit').activeAssemblies).some((a: any) => a.pollInterval)).to.equal(false)
+      })
+    })
+  })
+
+  // Not working, the upstream changes have not landed yet.
+  it.skip('should create assembly if there is still one file to upload', () => {
+    cy.get('@file-input').attachFile(['images/cat.jpg', 'images/traffic.jpg'])
+    cy.get('.uppy-StatusBar-actionBtn--upload').click()
+
+    cy.window().then(({ uppy }) => {
+      expect(Object.values(uppy.getPlugin('Transloadit').activeAssemblies).length).to.equal(0)
+
+      const { files } = uppy.getState()
+      const [fileID] = Object.keys(files)
+      uppy.removeFile(fileID)
+
+      cy.wait('@createAssemblies').then(() => {
+        cy.wait('@resumable')
+        cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Complete')
+      })
+    })
+  })
+
+  // Not working, the upstream changes have not landed yet.
+  it.skip('should complete upload if one gets cancelled mid-flight', () => {
+    cy.get('@file-input').attachFile(['images/cat.jpg', 'images/traffic.jpg'])
+    cy.get('.uppy-StatusBar-actionBtn--upload').click()
+
+    cy.wait('@createAssemblies')
+    cy.wait('@resumable')
+
+    cy.window().then(({ uppy }) => {
+      const { files } = uppy.getState()
+      const [fileID] = Object.keys(files)
+      uppy.removeFile(fileID)
+
+      cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Complete')
+    })
+  })
+
   it('should not emit error if upload is cancelled right away', () => {
     cy.get('@file-input').selectFile('cypress/fixtures/images/cat.jpg', { force:true })
     cy.get('.uppy-StatusBar-actionBtn--upload').click()

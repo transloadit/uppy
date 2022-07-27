@@ -1,6 +1,7 @@
 /* eslint no-console: "off", no-restricted-syntax: "off" */
 import { afterEach, beforeEach, describe, expect, it, jest, xit } from '@jest/globals'
 
+import assert from 'node:assert'
 import fs from 'node:fs'
 import prettierBytes from '@transloadit/prettier-bytes'
 import Core from '../lib/index.js'
@@ -261,6 +262,117 @@ describe('src/Core', () => {
 
     expect(core.getState().currentUploads[id]).toBeUndefined()
     expect(Object.keys(core.getState().files).length).toEqual(0)
+  })
+
+  it('should allow remove all uploads when individualCancellation is disabled', () => {
+    const core = new Core()
+
+    const { capabilities } = core.getState()
+    core.setState({
+      capabilities: {
+        ...capabilities,
+        individualCancellation: false,
+      },
+    })
+
+    core.addFile({
+      source: 'jest',
+      name: 'foo1.jpg',
+      type: 'image/jpeg',
+      data: new File([sampleImage], { type: 'image/jpeg' }),
+    })
+
+    core.addFile({
+      source: 'jest',
+      name: 'foo2.jpg',
+      type: 'image/jpeg',
+      data: new File([sampleImage], { type: 'image/jpeg' }),
+    })
+
+    const fileIDs = Object.keys(core.getState().files)
+    const id = core[Symbol.for('uppy test: createUpload')](fileIDs)
+
+    expect(core.getState().currentUploads[id]).toBeDefined()
+    expect(Object.keys(core.getState().files).length).toEqual(2)
+
+    core.removeFiles(fileIDs)
+
+    expect(core.getState().currentUploads[id]).toBeUndefined()
+    expect(Object.keys(core.getState().files).length).toEqual(0)
+  })
+
+  it('should disallow remove one upload when individualCancellation is disabled', () => {
+    const core = new Core()
+
+    const { capabilities } = core.getState()
+    core.setState({
+      capabilities: {
+        ...capabilities,
+        individualCancellation: false,
+      },
+    })
+
+    core.addFile({
+      source: 'jest',
+      name: 'foo1.jpg',
+      type: 'image/jpeg',
+      data: new File([sampleImage], { type: 'image/jpeg' }),
+    })
+
+    core.addFile({
+      source: 'jest',
+      name: 'foo2.jpg',
+      type: 'image/jpeg',
+      data: new File([sampleImage], { type: 'image/jpeg' }),
+    })
+
+    const fileIDs = Object.keys(core.getState().files)
+    const id = core[Symbol.for('uppy test: createUpload')](fileIDs)
+
+    expect(core.getState().currentUploads[id]).toBeDefined()
+    expect(Object.keys(core.getState().files).length).toEqual(2)
+
+    assert.throws(() => core.removeFile(fileIDs[0]), /individualCancellation is disabled/)
+
+    expect(core.getState().currentUploads[id]).toBeDefined()
+    expect(Object.keys(core.getState().files).length).toEqual(2)
+  })
+
+  it('should allow remove one upload when individualCancellation is enabled', () => {
+    const core = new Core()
+
+    const { capabilities } = core.getState()
+    core.setState({
+      capabilities: {
+        ...capabilities,
+        individualCancellation: true,
+      },
+    })
+
+    core.addFile({
+      source: 'jest',
+      name: 'foo1.jpg',
+      type: 'image/jpeg',
+      data: new File([sampleImage], { type: 'image/jpeg' }),
+    })
+
+    core.addFile({
+      source: 'jest',
+      name: 'foo2.jpg',
+      type: 'image/jpeg',
+      data: new File([sampleImage], { type: 'image/jpeg' }),
+    })
+
+    const fileIDs = Object.keys(core.getState().files)
+    const id = core[Symbol.for('uppy test: createUpload')](fileIDs)
+
+    expect(core.getState().currentUploads[id]).toBeDefined()
+    expect(Object.keys(core.getState().files).length).toEqual(2)
+
+    core.removeFile(fileIDs[0])
+
+    expect(core.getState().currentUploads[id]).toBeDefined()
+    expect(Object.keys(core.getState().files).length).toEqual(1)
   })
 
   it('should close, reset and uninstall when the close method is called', () => {

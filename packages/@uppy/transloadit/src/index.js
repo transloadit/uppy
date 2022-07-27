@@ -190,7 +190,18 @@ export default class Transloadit extends BasePlugin {
       fields: options.fields,
       expectedFiles: fileIDs.length,
       signature: options.signature,
-    }).then((newAssembly) => {
+    }).then(async (newAssembly) => {
+      const files = this.uppy.getFiles().filter(({ id }) => fileIDs.includes(id))
+      if (files.length !== fileIDs.length) {
+        if (files.length === 0) {
+          // All files have been removed, cancelling.
+          await this.client.cancelAssembly(newAssembly)
+          return null
+        }
+        // At least one file has been removed.
+        await this.client.updateNumberOfFilesInAssembly(newAssembly, files.length)
+      }
+
       const assembly = new Assembly(newAssembly, this.#rateLimitedQueue)
       const { status } = assembly
       const assemblyID = status.assembly_id
@@ -212,7 +223,6 @@ export default class Transloadit extends BasePlugin {
         },
       })
 
-      const files = this.uppy.getFiles() // []
       const updatedFiles = {}
       files.forEach((file) => {
         updatedFiles[file.id] = this.#attachAssemblyMetadata(file, status)
@@ -228,12 +238,18 @@ export default class Transloadit extends BasePlugin {
       const fileRemovedHandler = (fileRemoved, reason) => {
         if (reason === 'cancel-all') {
           assembly.close()
+          this.client.cancelAssembly(newAssembly).catch(() => { /* ignore potential errors */ })
           this.uppy.off(fileRemovedHandler)
         } else if (fileRemoved.id in updatedFiles) {
           delete updatedFiles[fileRemoved.id]
-          if (Object.keys(updatedFiles).length === 0) {
+          const nbOfRemainingFiles = Object.keys(updatedFiles).length
+          if (nbOfRemainingFiles === 0) {
             assembly.close()
+            this.client.cancelAssembly(newAssembly).catch(() => { /* ignore potential errors */ })
             this.uppy.off(fileRemovedHandler)
+          } else {
+            this.client.updateNumberOfFilesInAssembly(newAssembly, nbOfRemainingFiles)
+              .catch(() => { /* ignore potential errors */ })
           }
         }
       }
@@ -633,7 +649,8 @@ export default class Transloadit extends BasePlugin {
 
     return assemblyOptions.build()
       .then((assemblies) => Promise.all(assemblies.map(createAssembly)))
-      .then((createdAssemblies) => {
+      .then((maybeCreatedAssemblies) => {
+        const createdAssemblies = maybeCreatedAssemblies.filter(Boolean)
         const assemblyIDs = createdAssemblies.map(assembly => assembly.status.assembly_id)
         this.#createAssemblyWatcher(assemblyIDs, uploadID)
         return Promise.all(createdAssemblies.map(assembly => this.#connectAssembly(assembly)))
