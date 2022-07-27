@@ -59,7 +59,7 @@ export default async function commit (spawnOptions, STABLE_HEAD, ...files) {
       await prompts({
         type: 'toggle',
         name: 'value',
-        message: 'Fix the conflict before continuing. Ready?',
+        message: 'Fix the conflicts, and stage the files. Ready?',
         initial: true,
         active: 'yes',
         inactive: 'yes',
