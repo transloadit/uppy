@@ -1,5 +1,12 @@
 # @uppy/core
 
+## 2.3.2
+
+Released: 2022-07-27
+Included in: Uppy v2.13.1
+
+- @uppy/core: Add missing type for retry-all event (Luc Boissaye / #3901)
+
 ## 2.3.1
 
 Released: 2022-06-07

@@ -1,5 +1,12 @@
 # @uppy/transloadit
 
+## 2.3.5
+
+Released: 2022-07-27
+Included in: Uppy v2.13.1
+
+- @uppy/transloadit: cancel assemblies when all its files have been removed (Antoine du Hamel / #3893)
+
 ## 2.3.4
 
 Released: 2022-07-18
