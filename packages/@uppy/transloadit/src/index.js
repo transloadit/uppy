@@ -199,7 +199,7 @@ export default class Transloadit extends BasePlugin {
           return null
         }
         // At least one file has been removed.
-        await this.client.updateAssembly(newAssembly, fileIDs.length - files.length)
+        await this.client.updateNumberOfFilesInAssembly(newAssembly, fileIDs.length - files.length)
       }
 
       const assembly = new Assembly(newAssembly, this.#rateLimitedQueue)
@@ -247,7 +247,7 @@ export default class Transloadit extends BasePlugin {
             this.client.cancelAssembly(newAssembly).catch(() => { /* ignore potential errors */ })
             this.uppy.off(fileRemovedHandler)
           } else {
-            this.client.updateAssembly(newAssembly, Object.keys(updatedFiles).length)
+            this.client.updateNumberOfFilesInAssembly(newAssembly, Object.keys(updatedFiles).length)
               .catch(() => { /* ignore potential errors */ })
           }
         }

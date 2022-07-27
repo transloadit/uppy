@@ -135,15 +135,15 @@ export default class Client {
    * Update the number of expected files in an already created assembly.
    *
    * @param {object} assembly
-   * @param {number} tus_num_expected_upload_files
+   * @param {number} num_expected_upload_files
    */
-  updateAssembly (assembly, tus_num_expected_upload_files) {
+  updateNumberOfFilesInAssembly (assembly, num_expected_upload_files) {
     const url = new URL(assembly.assembly_ssl_url)
     url.pathname = '/update_assemblies'
     const body = JSON.stringify({
       assembly_updates: [{
-        ...assembly,
-        tus_num_expected_upload_files,
+        assembly_id: assembly.assembly_id,
+        num_expected_upload_files,
       }],
     })
     return this.#fetchJSON(url, { method: 'post', headers: this.#headers, body })
