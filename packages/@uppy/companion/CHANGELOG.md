@@ -1,5 +1,15 @@
 # @uppy/companion
 
+## 4.0.0-beta.2
+
+Released: 2022-07-27
+Included in: Uppy v3.0.0-beta.3
+
+- @uppy/companion: update minimal supported Node.js version in the docs (Antoine du Hamel / #3902)
+- @uppy/companion: upgrade `redis` to version 4.x (Antoine du Hamel / #3589)
+- @uppy/companion: remove unnecessary ts-ignores (Mikael Finstad / #3900)
+- @uppy/companion: remove `COMPANION_S3_GETKEY_SAFE_BEHAVIOR` env variable (Antoine du Hamel / #3869)
+
 ## 4.0.0-beta.1
 
 Released: 2022-07-06
@@ -21,6 +31,7 @@ Included in: Uppy v3.0.0-beta
 
 - @uppy/companion: remove `searchProviders` wrapper & move `s3` options (Merlijn Vos / #3781)
 - @uppy/companion: remove support for EOL versions of Node.js (Antoine du Hamel / #3784)
+
 ## 3.7.1
 
 Released: 2022-07-27

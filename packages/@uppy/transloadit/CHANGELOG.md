@@ -6,6 +6,7 @@ Released: 2022-05-30
 Included in: Uppy v3.0.0-beta
 
 - @uppy/transloadit: remove IE 10 hack (Antoine du Hamel / #3777)
+
 ## 2.3.5
 
 Released: 2022-07-27

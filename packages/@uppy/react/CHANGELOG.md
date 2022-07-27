@@ -1,5 +1,12 @@
 # @uppy/react
 
+## 3.0.0-beta.2
+
+Released: 2022-07-27
+Included in: Uppy v3.0.0-beta.3
+
+- @uppy/react: Fix exports in propTypes.js to fix website build (Murderlon)
+
 ## 3.0.0-beta
 
 Released: 2022-05-30

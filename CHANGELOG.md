@@ -12,6 +12,34 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 3.0.0-beta.3
+
+Released: 2022-07-27
+
+| Package                |      Version | Package                |      Version |
+| ---------------------- | ------------ | ---------------------- | ------------ |
+| @uppy/aws-s3           | 3.0.0-beta.2 | @uppy/react            | 3.0.0-beta.2 |
+| @uppy/aws-s3-multipart | 3.0.0-beta.2 | @uppy/remote-sources   | 1.0.0-beta.2 |
+| @uppy/companion        | 4.0.0-beta.2 | @uppy/store-redux      | 3.0.0-beta.2 |
+| @uppy/compressor       | 1.0.0-beta.2 | @uppy/transloadit      | 3.0.0-beta.3 |
+| @uppy/core             | 3.0.0-beta.2 | @uppy/webcam           | 3.0.0-beta.2 |
+| @uppy/dashboard        | 3.0.0-beta.2 | @uppy/xhr-upload       | 3.0.0-beta.2 |
+| @uppy/image-editor     | 2.0.0-beta.2 | @uppy/robodog          | 3.0.0-beta.3 |
+| @uppy/locales          | 3.0.0-beta.3 | uppy                   | 3.0.0-beta.3 |
+
+- @uppy/react: Fix exports in propTypes.js to fix website build (Murderlon)
+- @uppy/dashboard,@uppy/webcam: Add support for `mobileNativeCamera` option to Webcam and Dashboard (Artur Paikin / #3844)
+- @uppy/aws-s3-multipart: make `headers` part indexed too in `prepareUploadParts` (Merlijn Vos / #3895)
+- @uppy/aws-s3,@uppy/core,@uppy/dashboard,@uppy/store-redux,@uppy/xhr-upload: upgrade `nanoid` to v4 (Antoine du Hamel / #3904)
+- @uppy/companion: update minimal supported Node.js version in the docs (Antoine du Hamel / #3902)
+- @uppy/companion: upgrade `redis` to version 4.x (Antoine du Hamel / #3589)
+- @uppy/companion: remove unnecessary ts-ignores (Mikael Finstad / #3900)
+- meta: use `node:` protocol when using Node.js built-in core modules (Antoine du Hamel / #3871)
+- meta: upgrade to Vite v3 (Antoine du Hamel / #3882)
+- @uppy/companion: remove `COMPANION_S3_GETKEY_SAFE_BEHAVIOR` env variable (Antoine du Hamel / #3869)
+- meta: fix release script for major beta versions (Antoine du Hamel)
+
+
 ## 3.0.0-beta.2
 
 Released: 2022-07-06
@@ -105,6 +133,8 @@ Released: 2022-05-30
 - @uppy/companion: remove support for EOL versions of Node.js (Antoine du Hamel / #3784)
 - @uppy/react: refactor to ESM (Antoine du Hamel / #3780)
 - @uppy/transloadit: remove IE 10 hack (Antoine du Hamel / #3777)
+
+
 ## 2.13.1
 
 Released: 2022-07-27
