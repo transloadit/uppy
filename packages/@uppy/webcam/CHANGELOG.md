@@ -1,5 +1,12 @@
 # @uppy/webcam
 
+## 3.0.0-beta.2
+
+Released: 2022-07-27
+Included in: Uppy v3.0.0-beta.3
+
+- @uppy/dashboard,@uppy/webcam: Add support for `mobileNativeCamera` option to Webcam and Dashboard (Artur Paikin / #3844)
+
 ## 2.2.1
 
 Released: 2022-05-30
