@@ -125,6 +125,7 @@ en_US.strings = {
   recording: 'Recording',
   recordingLength: 'Recording length %{recording_length}',
   recordingStoppedMaxSize: 'Recording stopped because the file size is about to exceed the limit',
+  recordVideoBtn: 'Record Video',
   recoveredAllFiles: 'We restored all files. You can now resume the upload.',
   recoveredXFiles: {
     '0': 'We could not fully recover 1 file. Please re-select it and resume the upload.',
@@ -161,6 +162,7 @@ en_US.strings = {
   streamPassive: 'Stream passive',
   submitRecordedFile: 'Submit recorded file',
   takePicture: 'Take a picture',
+  takePictureBtn: 'Take Picture',
   timedOut: 'Upload stalled for %{seconds} seconds, aborting.',
   upload: 'Upload',
   uploadComplete: 'Upload complete',

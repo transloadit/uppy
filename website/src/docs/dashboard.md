@@ -97,6 +97,8 @@ uppy.use(Dashboard, {
   onRequestCloseModal: () => this.closeModal(),
   showSelectedFiles: true,
   showRemoveButtonAfterComplete: false,
+  showNativePhotoCameraButton: false,
+  showNativeVideoCameraButton: false,
   locale: defaultLocale,
   browserBackButtonClose: false,
   theme: 'light',
@@ -421,6 +423,9 @@ export default {
       0: 'Missing required meta field: %{fields}.',
       1: 'Missing required meta fields: %{fields}.',
     },
+    // Used for native device camera buttons on mobile
+    takePictureBtn: 'Take Picture',
+    recordVideoBtn: 'Record Video',
   },
 }
 ```
