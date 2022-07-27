@@ -133,6 +133,8 @@ Released: 2022-05-30
 - @uppy/companion: remove support for EOL versions of Node.js (Antoine du Hamel / #3784)
 - @uppy/react: refactor to ESM (Antoine du Hamel / #3780)
 - @uppy/transloadit: remove IE 10 hack (Antoine du Hamel / #3777)
+
+
 ## 2.13.1
 
 Released: 2022-07-27

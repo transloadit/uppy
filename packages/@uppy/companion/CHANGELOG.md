@@ -31,6 +31,7 @@ Included in: Uppy v3.0.0-beta
 
 - @uppy/companion: remove `searchProviders` wrapper & move `s3` options (Merlijn Vos / #3781)
 - @uppy/companion: remove support for EOL versions of Node.js (Antoine du Hamel / #3784)
+
 ## 3.7.1
 
 Released: 2022-07-27
