@@ -8,7 +8,66 @@ category: "Docs"
 
 These cover all the major Uppy versions and how to migrate to them.
 
-## Migrate to 2.0.0
+## Migrate from Uppy 2.x to 3.x
+
+### Uppy is pure ESM
+
+Following the footsteps of many packages, we now only ship [ECMAScript Modules](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules) (ESM). Uppy can’t be `require()`’d from CommonJS.
+
+Before Uppy 3.x, you could use `require` or `import` as we shipped CommonJS:
+
+<!-- eslint-disable no-restricted-globals -->
+
+```js
+const Uppy = require('@uppy/core')
+const Dashboard = require('@uppy/dashboard')
+```
+
+Now Uppy can only be `import`’ed:
+
+```js
+import Uppy from '@uppy/core'
+import Dashboard from '@uppy/dashboard'
+```
+
+Refer to the [Pure ESM package](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c) gist for added information and help.
+
+## Migrate from Companion 3.x to 4.x
+
+### Minimum required Node.js version is v14.19.0
+
+Aligning with the Node.js [Long Term Support (LTS) schedule](https://nodejs.org/en/about/releases/) and to use modern syntax features.
+
+### `companion.app()` returns `{ app, emitter }` instead of `app`
+
+Companion 3.x provides the emitter as `companionEmitter` on `app`. As of 4.x, an object is returned with `app` (express middleware) and `emitter` (event emitter). This provides more flexibility in the future and follows best practices.
+
+### Removed compatibility for legacy Custom Provider implementations
+
+[Custom Provider](https://uppy.io/docs/companion/#Adding-custom-providers) implementations must use the Promise API, instead of the callback API.
+
+### Default to no ACL for AWS S3
+
+Default to no [ACL](https://docs.aws.amazon.com/AmazonS3/latest/userguide/acl-overview.html) for S3 uploads. Before the default was `public-read` but AWS now discourages ACLs. The environment variable `COMPANION_AWS_DISABLE_ACL` is also removed, instead Companion only uses `COMPANION_AWS_ACL`.
+
+### `protocol` sent from Uppy in any `get` request is now required (before it would default to Multipart).
+
+If you use any official Uppy plugins, then no migration is needed. For custom plugins that talk to Companion, make to send along the `protocol` header with a value of `multipart`, `s3Multipart`, or `tus`.
+
+### `emitSuccess` and `emitError` are now private methods on the `Uploader` class.
+
+It’s unlikely you’re using this, but it’s technically a breaking change.
+In general, don’t depend on implicitly internal methods, use exposed APIs instead.
+
+### Removed `chunkSize` backwards compatibility for AWS S3 Multipart
+
+`chunkSize` option will now be used as `partSize` in AWS multipart. Before only valid values would be respected. Invalid values would be ignored. Now any value will be passed on to the AWS SDK, possibly throwing an error on invalid values.
+
+### Removed backwards compatibility for `/metrics` endpoint
+
+TODO @mifi
+
+## Migrate from Uppy 1.x to 2.x
 
 ### New bundle requires manual polyfilling
 
@@ -247,7 +306,7 @@ Uppy 1.0 will continue to receive bug fixes for three more months (until <time d
 
 We hope you’ll waste no time in taking Uppy 2.0 out for a walk. When you do, please let us know what you thought of it on [Reddit](https://www.reddit.com/r/javascript/comments/penbr7/uppy_file_uploader_20_smaller_and_faster_modular/), [HN](https://news.ycombinator.com/item?id=28359287), ProductHunt, or [Twitter](https://twitter.com/uppy_io/status/1432399270846603264). We’re howling at the moon to hear from you!
 
-## Migrating Companion v1 to v2
+## Migrate from Companion 1.x to 2.x
 
 ### Prerequisite
 
