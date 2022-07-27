@@ -55,4 +55,7 @@ export {
   uppy,
   locale,
   dashboard,
+  plugins,
+  metaFields,
+  cssSize,
 }
