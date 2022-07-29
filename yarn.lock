@@ -10498,11 +10498,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/tus@workspace:packages/@uppy/tus"
   dependencies:
+    "@jest/globals": ^27.4.2
     "@uppy/companion-client": "workspace:^"
     "@uppy/utils": "workspace:^"
     tus-js-client: ^2.1.1
   peerDependencies:
-    "@jest/globals": ^27.4.2
     "@uppy/core": "workspace:^"
   languageName: unknown
   linkType: soft
