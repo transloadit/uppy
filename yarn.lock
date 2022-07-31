@@ -9186,11 +9186,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/tus@workspace:packages/@uppy/tus"
   dependencies:
+    "@jest/globals": ^28.0.0
     "@uppy/companion-client": "workspace:^"
     "@uppy/utils": "workspace:^"
     tus-js-client: ^3.0.0
   peerDependencies:
-    "@jest/globals": ^28.0.0
     "@uppy/core": "workspace:^"
   languageName: unknown
   linkType: soft
