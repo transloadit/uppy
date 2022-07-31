@@ -27,8 +27,10 @@
     "@uppy/utils": "workspace:^",
     "tus-js-client": "^2.1.1"
   },
+  "devDependencies": {
+    "@jest/globals": "^27.4.2"
+  },
   "peerDependencies": {
-    "@jest/globals": "^27.4.2",
     "@uppy/core": "workspace:^"
   }
 }
