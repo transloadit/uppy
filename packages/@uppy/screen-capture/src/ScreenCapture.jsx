@@ -2,7 +2,7 @@ import { h } from 'preact'
 import { UIPlugin } from '@uppy/core'
 import getFileTypeExtension from '@uppy/utils/lib/getFileTypeExtension'
 import ScreenRecIcon from './ScreenRecIcon.jsx'
-import CaptureScreen from './CaptureScreen.jsx'
+import RecorderScreen from './RecorderScreen.jsx'
 
 import packageJson from '../package.json'
 import locale from './locale.js'
@@ -392,7 +392,7 @@ export default class ScreenCapture extends UIPlugin {
     }
 
     return (
-      <CaptureScreen
+      <RecorderScreen
         {...recorderState} // eslint-disable-line react/jsx-props-no-spreading
         onStartRecording={this.startRecording}
         onStopRecording={this.stopRecording}
