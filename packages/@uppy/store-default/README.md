@@ -18,7 +18,7 @@ import Uppy from '@uppy/core'
 import DefaultStore from '@uppy/store-default'
 
 const uppy = new Uppy({
-  store: DefaultStore(),
+  store: new DefaultStore(),
 })
 ```
 
