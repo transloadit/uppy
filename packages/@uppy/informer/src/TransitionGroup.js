@@ -264,17 +264,10 @@ class TransitionGroup extends Component {
   render ({ childFactory, transitionLeave, transitionName, transitionAppear, transitionEnter, transitionLeaveTimeout, transitionEnterTimeout, transitionAppearTimeout, component, ...props }, { children }) {
     // TODO: we could get rid of the need for the wrapper node
     // by cloning a single child
-    const childrenToRender = []
-    for (const key in children) {
-      if (children.hasOwnProperty(key)) {
-        const child = children[key]
-        if (child) {
-          const ref = linkRef(this, key),
-            el = cloneElement(childFactory(child), { ref, key })
-          childrenToRender.push(el)
-        }
-      }
-    }
+    const childrenToRender = Object.values(children).filter(Boolean).map(child => {
+      const ref = linkRef(this, key);
+      return cloneElement(childFactory(child), { ref, key })
+    })
 
     return h(component, props, childrenToRender)
   }
