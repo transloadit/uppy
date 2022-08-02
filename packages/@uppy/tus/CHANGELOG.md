@@ -1,5 +1,12 @@
 # @uppy/tus
 
+## 2.4.2
+
+Released: 2022-08-02
+Included in: Uppy v2.13.2
+
+- @uppy/tus: fix dependencies (Antoine du Hamel / #3923)
+
 ## 2.4.1
 
 Released: 2022-06-07
