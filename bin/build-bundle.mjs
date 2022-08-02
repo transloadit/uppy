@@ -20,6 +20,7 @@ function buildBundle (srcFile, bundleFile, { minify = true, standalone = '', plu
       js: '"use strict";',
     },
     minify,
+    keepNames: true,
     plugins,
     target,
   }).then(() => {
