@@ -5,7 +5,7 @@ import getSpeed from '@uppy/utils/lib/getSpeed'
 import getBytesRemaining from '@uppy/utils/lib/getBytesRemaining'
 import getTextDirection from '@uppy/utils/lib/getTextDirection'
 import statusBarStates from './StatusBarStates.js'
-import StatusBarUI from './StatusBar.jsx'
+import StatusBarUI from './StatusBarUI.jsx'
 
 import packageJson from '../package.json'
 import locale from './locale.js'

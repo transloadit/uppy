@@ -1,4 +1,3 @@
-// TODO: rename this file to StatusBarUI>jsx on the next major.
 import { h } from 'preact'
 import classNames from 'classnames'
 import statusBarStates from './StatusBarStates.js'
