@@ -10,8 +10,6 @@ import nonHtmlPropsHaveChanged from './nonHtmlPropsHaveChanged.js'
  */
 
 class ProgressBar extends Component {
-  #htmlProps
-
   componentDidMount () {
     this.installPlugin()
   }
@@ -21,7 +19,7 @@ class ProgressBar extends Component {
     if (prevProps.uppy !== this.props.uppy) {
       this.uninstallPlugin(prevProps)
       this.installPlugin()
-    } else if (nonHtmlPropsHaveChanged(this, prevProps)) {
+    } else if (nonHtmlPropsHaveChanged(this.props, prevProps)) {
       const options = { ...this.props, target: this.container }
       delete options.uppy
       this.plugin.setOptions(options)
@@ -53,16 +51,13 @@ class ProgressBar extends Component {
     uppy.removePlugin(this.plugin)
   }
 
-  [Symbol.for('htmlProps')] () { return this.#htmlProps }
-
   render () {
-    this.#htmlProps = getHTMLProps(this.props)
     return h('div', {
       className: 'uppy-Container',
       ref: (container) => {
         this.container = container
       },
-      ...this.#htmlProps,
+      ...getHTMLProps(this.props),
     })
   }
 }

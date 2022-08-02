@@ -20,7 +20,7 @@ class DashboardModal extends Component {
     if (prevProps.uppy !== uppy) {
       this.uninstallPlugin(prevProps)
       this.installPlugin()
-    } else if (nonHtmlPropsHaveChanged(this, prevProps)) {
+    } else if (nonHtmlPropsHaveChanged(this.props, prevProps)) {
       const options = { ...this.props, onRequestCloseModal: onRequestClose }
       delete options.uppy
       this.plugin.setOptions(options)
