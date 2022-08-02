@@ -1,5 +1,12 @@
 # @uppy/transloadit
 
+## 2.3.6
+
+Released: 2022-08-02
+Included in: Uppy v2.13.2
+
+- @uppy/transloadit: send `assembly-cancelled` only once (Antoine du Hamel / #3937)
+
 ## 2.3.5
 
 Released: 2022-07-27

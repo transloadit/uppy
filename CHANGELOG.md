@@ -12,6 +12,26 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 2.13.2
+
+Released: 2022-08-02
+
+| Package           | Version | Package           | Version |
+| ----------------- | ------- | ----------------- | ------- |
+| @uppy/transloadit |   2.3.6 | @uppy/robodog     |   2.9.2 |
+| @uppy/tus         |   2.4.2 | uppy              |  2.13.2 |
+
+- @uppy/transloadit: send `assembly-cancelled` only once (Antoine du Hamel / #3937)
+- meta: `keepNames` in bundle (Antoine du Hamel / #3926)
+- meta: e2e: fix Transloadit test suite with Cypress 10 (Antoine du Hamel / #3936)
+- meta: Bump guzzlehttp/guzzle from 7.4.1 to 7.4.5 in /examples/aws-presigned-url (dependabot[bot] / #3842)
+- @uppy/tus: fix dependencies (Antoine du Hamel / #3923)
+- meta: doc: fix linter failure in `image-editor.md` (Antoine du Hamel / #3924)
+- meta: doc: Fix typo in image-editor.md (Ikko Ashimine / #3921)
+- @uppy/robodog: Fix Robodog CDN url in readme.md (Artur Paikin / #3922)
+- website: Docs and header fix (Artur Paikin / #3920)
+
+
 ## 2.13.1
 
 Released: 2022-07-27
