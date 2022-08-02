@@ -1,5 +1,3 @@
-// TODO: rename this file to StatusBar.jsx on the next major.
-
 import { UIPlugin } from '@uppy/core'
 import getSpeed from '@uppy/utils/lib/getSpeed'
 import getBytesRemaining from '@uppy/utils/lib/getBytesRemaining'
