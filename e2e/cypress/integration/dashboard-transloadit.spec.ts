@@ -45,7 +45,7 @@ describe('Dashboard with Transloadit', () => {
   })
 
   it('should not create assembly when all individual files have been cancelled', () => {
-    cy.get('@file-input').attachFile(['images/cat.jpg', 'images/traffic.jpg'])
+    cy.get('@file-input').selectFile(['cypress/fixtures/images/cat.jpg', 'cypress/fixtures/images/traffic.jpg'], { force: true })
     cy.get('.uppy-StatusBar-actionBtn--upload').click()
 
     cy.window().then(({ uppy }) => {
@@ -62,7 +62,7 @@ describe('Dashboard with Transloadit', () => {
 
   // Not working, the upstream changes have not landed yet.
   it.skip('should create assembly if there is still one file to upload', () => {
-    cy.get('@file-input').attachFile(['images/cat.jpg', 'images/traffic.jpg'])
+    cy.get('@file-input').selectFile(['cypress/fixtures/images/cat.jpg', 'cypress/fixtures/images/traffic.jpg'], { force:true })
     cy.get('.uppy-StatusBar-actionBtn--upload').click()
 
     cy.window().then(({ uppy }) => {
@@ -81,7 +81,7 @@ describe('Dashboard with Transloadit', () => {
 
   // Not working, the upstream changes have not landed yet.
   it.skip('should complete upload if one gets cancelled mid-flight', () => {
-    cy.get('@file-input').attachFile(['images/cat.jpg', 'images/traffic.jpg'])
+    cy.get('@file-input').selectFile(['cypress/fixtures/images/cat.jpg', 'cypress/fixtures/images/traffic.jpg'], { force:true })
     cy.get('.uppy-StatusBar-actionBtn--upload').click()
 
     cy.wait('@createAssemblies')
