@@ -18,6 +18,8 @@ describe('Dashboard with Transloadit', () => {
   })
 
   it('should close assembly polling when cancelled', () => {
+    const spy = cy.spy()
+
     cy.get('@file-input').selectFile(['cypress/fixtures/images/cat.jpg', 'cypress/fixtures/images/traffic.jpg'], { force:true })
     cy.get('.uppy-StatusBar-actionBtn--upload').click()
 
@@ -30,17 +32,60 @@ describe('Dashboard with Transloadit', () => {
       { statusCode: 204, body: {} },
     )
     cy.intercept(
-      { method: 'DELETE', pathname: '/resumable/files/*', times: 1 },
+      { method: 'DELETE', pathname: '/resumable/files/*', times: 2 },
       { statusCode: 204, body: {} },
-    )
+    ).as('fileDeletion')
+    cy.intercept(
+      { method: 'DELETE', pathname: '/assemblies/*', times: 1 },
+    ).as('assemblyDeletion')
     cy.wait('@assemblyPolling')
     cy.window().then(({ uppy }) => {
+      uppy.on('transloadit:assembly-cancelled', spy)
       expect(Object.values(uppy.getPlugin('Transloadit').activeAssemblies).every((a: any) => a.pollInterval)).to.equal(true)
     })
     cy.get('button[data-cy=cancel]').click()
 
     cy.window().then(({ uppy }) => {
       expect(Object.values(uppy.getPlugin('Transloadit').activeAssemblies).some((a: any) => a.pollInterval)).to.equal(false)
+    })
+    cy.wait('@assemblyDeletion').then(() => {
+      expect(spy).to.be.calledOnce
+    })
+  })
+
+  it('should close assembly polling when all files are removed', () => {
+    const spy = cy.stub()
+
+    cy.get('@file-input').selectFile(['cypress/fixtures/images/cat.jpg', 'cypress/fixtures/images/traffic.jpg'], { force:true })
+    cy.get('.uppy-StatusBar-actionBtn--upload').click()
+
+    cy.intercept({
+      method: 'GET',
+      url: '/assemblies/*',
+    }).as('assemblyPolling')
+    cy.intercept(
+      { method: 'PATCH', pathname: '/files/*', times: 1 },
+      { statusCode: 204, body: {} },
+    )
+    cy.intercept(
+      { method: 'DELETE', pathname: '/resumable/files/*', times: 2 },
+      { statusCode: 204, body: {} },
+    ).as('fileDeletion')
+    cy.intercept(
+      { method: 'DELETE', pathname: '/assemblies/*', times: 1 },
+    ).as('assemblyDeletion')
+    cy.wait('@assemblyPolling')
+    cy.window().then(({ uppy }) => {
+      uppy.on('transloadit:assembly-cancelled', spy)
+      expect(Object.values(uppy.getPlugin('Transloadit').activeAssemblies).every((a: any) => a.pollInterval)).to.equal(true)
+
+      const { files } = uppy.getState()
+      uppy.removeFiles(Object.keys(files))
+
+      cy.wait('@assemblyDeletion').then(() => {
+        expect(Object.values(uppy.getPlugin('Transloadit').activeAssemblies).some((a: any) => a.pollInterval)).to.equal(false)
+        expect(spy).to.be.calledOnce
+      })
     })
   })
 
