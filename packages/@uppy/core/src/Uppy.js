@@ -677,6 +677,12 @@ class Uppy {
         return
       }
 
+      const { capabilities } = this.getState()
+      if (newFileIDs.length !== currentUploads[uploadID].fileIDs.length
+          && !capabilities.individualCancellation) {
+        throw new Error('individualCancellation is disabled')
+      }
+
       updatedUploads[uploadID] = {
         ...currentUploads[uploadID],
         fileIDs: newFileIDs,

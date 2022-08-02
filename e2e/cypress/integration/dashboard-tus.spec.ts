@@ -10,14 +10,14 @@ type Tus = BaseTus & {
 describe('Dashboard with Tus', () => {
   beforeEach(() => {
     cy.visit('/dashboard-tus')
-    cy.get('.uppy-Dashboard-input').as('file-input')
+    cy.get('.uppy-Dashboard-input:first').as('file-input')
     cy.intercept('/files/*').as('tus')
     cy.intercept('http://localhost:3020/url/*').as('url')
     cy.intercept('http://localhost:3020/search/unsplash/*').as('unsplash')
   })
 
   it('should upload cat image successfully', () => {
-    cy.get('@file-input').attachFile('images/cat.jpg')
+    cy.get('@file-input').selectFile('cypress/fixtures/images/cat.jpg', { force:true })
     cy.get('.uppy-StatusBar-actionBtn--upload').click()
 
     cy.wait('@tus')
@@ -25,24 +25,32 @@ describe('Dashboard with Tus', () => {
     cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Complete')
   })
 
-  it('should start exponential backoff when receiving HTTP 429', () => {
-    cy.get('@file-input').attachFile(['images/baboon.png'])
-    cy.get('.uppy-StatusBar-actionBtn--upload').click()
+  it(
+    'should start exponential backoff when receiving HTTP 429',
+    {
+      retries: {
+        runMode: 3, // retry flaky test
+      },
+    },
+    () => {
+      cy.get('@file-input').selectFile('cypress/fixtures/images/baboon.png', { force:true })
+      cy.get('.uppy-StatusBar-actionBtn--upload').click()
 
-    cy.intercept(
-      { method: 'PATCH', pathname: '/files/*', times: 2 },
-      { statusCode: 429, body: {} },
-    ).as('patch')
+      cy.intercept(
+        { method: 'PATCH', pathname: '/files/*', times: 2 },
+        { statusCode: 429, body: {} },
+      ).as('patch')
 
-    cy.wait('@patch')
-    cy.wait('@patch')
+      cy.wait('@patch')
+      cy.wait('@patch')
 
-    cy.window().then(({ uppy }) => {
-      expect(uppy.getPlugin<Tus>('Tus').requests.isPaused).to.equal(true)
-      cy.wait('@tus')
-      cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Complete')
-    })
-  })
+      cy.window().then(({ uppy }) => {
+        expect(uppy.getPlugin<Tus>('Tus').requests.isPaused).to.equal(true)
+        cy.wait('@tus')
+        cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Complete')
+      })
+    },
+  )
 
   it('should upload remote image with URL plugin', () => {
     cy.get('[data-cy="Url"]').click()

@@ -6,7 +6,7 @@
   "scripts": {
     "client:start": "parcel clients/index.html",
     "cypress:open": "cypress open",
-    "cypress:headless": "cypress run --record",
+    "cypress:headless": "cypress run",
     "generate-test": "yarn node generate-test.mjs"
   },
   "dependencies": {
@@ -45,8 +45,7 @@
     "@uppy/zoom": "workspace:^"
   },
   "devDependencies": {
-    "cypress": "^9.0.0",
-    "cypress-file-upload": "^5.0.8",
+    "cypress": "^10.0.0",
     "deep-freeze": "^0.0.1",
     "parcel": "^2.0.1",
     "prompts": "^2.4.2",

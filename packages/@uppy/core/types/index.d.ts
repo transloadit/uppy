@@ -216,6 +216,7 @@ export type UploadCompleteCallback<TMeta> = (result: UploadResult<TMeta>) => voi
 export type ErrorCallback = (error: Error) => void;
 export type UploadErrorCallback<TMeta> = (file: UppyFile<TMeta> | undefined, error: Error, response?: ErrorResponse) => void;
 export type UploadRetryCallback = (fileID: string) => void;
+export type RetryAllCallback = (fileIDs: string[]) => void;
 export type RestrictionFailedCallback<TMeta> = (file: UppyFile<TMeta> | undefined, error: Error) => void;
 
 export interface UppyEventMap<TMeta = Record<string, unknown>> {
@@ -231,6 +232,7 @@ export interface UppyEventMap<TMeta = Record<string, unknown>> {
   'error': ErrorCallback
   'upload-error': UploadErrorCallback<TMeta>
   'upload-retry': UploadRetryCallback
+  'retry-all': RetryAllCallback
   'info-visible': GenericEventCallback
   'info-hidden': GenericEventCallback
   'cancel-all': GenericEventCallback

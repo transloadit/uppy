@@ -22,13 +22,13 @@ function uglierBytes (text) {
 describe('dashboard-compressor', () => {
   beforeEach(() => {
     cy.visit('/dashboard-compressor')
-    cy.get('.uppy-Dashboard-input').as('file-input')
+    cy.get('.uppy-Dashboard-input:first').as('file-input')
   })
 
   it('should compress images', () => {
     const sizeBeforeCompression = []
 
-    cy.get('@file-input').attachFile(['images/cat.jpg', 'images/traffic.jpg'])
+    cy.get('@file-input').selectFile(['cypress/fixtures/images/cat.jpg', 'cypress/fixtures/images/traffic.jpg'], { force:true })
 
     cy.get('.uppy-Dashboard-Item-statusSize').each((element) => {
       const text = element.text()

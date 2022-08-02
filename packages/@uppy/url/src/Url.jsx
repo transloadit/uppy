@@ -106,8 +106,8 @@ export default class Url extends UIPlugin {
   }
 
   async addFile (protocollessUrl, optionalMeta = undefined) {
-    const url = this.addProtocolToURL(protocollessUrl)
-    if (!this.checkIfCorrectURL(url)) {
+    const url = addProtocolToURL(protocollessUrl)
+    if (!checkIfCorrectURL(url)) {
       this.uppy.log(`[URL] Incorrect URL entered: ${url}`)
       this.uppy.info(this.i18n('enterCorrectUrl'), 'error', 4000)
       return undefined
@@ -119,7 +119,7 @@ export default class Url extends UIPlugin {
       const tagFile = {
         meta: optionalMeta,
         source: this.id,
-        name: this.getFileNameFromUrl(url),
+        name: getFileNameFromUrl(url),
         type: meta.type,
         data: {
           size: meta.size,
@@ -187,8 +187,6 @@ export default class Url extends UIPlugin {
   }
 }
 
-// TODO: remove from prototype in the next major.
-Url.prototype.addProtocolToURL = addProtocolToURL
+// This is defined outside of the class body because it's not using `this`, but
+// we still want it available on the prototype so the Dashboard can access it.
 Url.prototype.canHandleRootDrop = canHandleRootDrop
-Url.prototype.checkIfCorrectURL = checkIfCorrectURL
-Url.prototype.getFileNameFromUrl = getFileNameFromUrl

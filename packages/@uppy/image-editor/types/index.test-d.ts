@@ -16,4 +16,8 @@ import ImageEditor from '..'
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const fileName = file.name
   })
+  uppy.on('file-editor:cancel', (file) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const fileName = file.name
+  })
 }

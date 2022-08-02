@@ -1,5 +1,12 @@
 # @uppy/aws-s3-multipart
 
+## 3.0.0-beta.2
+
+Released: 2022-07-27
+Included in: Uppy v3.0.0-beta.3
+
+- @uppy/aws-s3-multipart: make `headers` part indexed too in `prepareUploadParts` (Merlijn Vos / #3895)
+
 ## 2.4.1
 
 Released: 2022-06-07

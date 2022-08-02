@@ -1,7 +1,7 @@
 {
   "name": "@uppy/webcam",
   "description": "Uppy plugin that takes photos or records videos using the device's camera.",
-  "version": "3.0.0-beta.1",
+  "version": "3.0.0-beta.2",
   "license": "MIT",
   "main": "lib/index.js",
   "style": "dist/style.min.css",
@@ -28,6 +28,7 @@
   },
   "dependencies": {
     "@uppy/utils": "workspace:^",
+    "is-mobile": "^3.1.1",
     "preact": "^10.5.13"
   },
   "devDependencies": {

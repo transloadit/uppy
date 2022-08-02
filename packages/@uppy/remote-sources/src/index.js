@@ -70,7 +70,9 @@ export default class RemoteSources extends BasePlugin {
         throw new Error(`Invalid plugin: "${pluginId}" is not one of: ${formatter.format(pluginNames)}.`)
       }
       this.uppy.use(plugin, optsForRemoteSourcePlugin)
-      this.#installedPlugins.add(plugin)
+      // `plugin` is a class, but we want to track the instance object
+      // so we have to do `getPlugin` here.
+      this.#installedPlugins.add(this.uppy.getPlugin(pluginId))
     })
   }
 
