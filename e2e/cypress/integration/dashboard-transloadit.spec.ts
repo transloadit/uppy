@@ -1,3 +1,9 @@
+const FLAKY = {
+  retries: {
+    runMode: 3, // retry flaky test
+  },
+}
+
 describe('Dashboard with Transloadit', () => {
   beforeEach(() => {
     cy.visit('/dashboard-transloadit')
@@ -17,7 +23,7 @@ describe('Dashboard with Transloadit', () => {
     cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Complete')
   })
 
-  it('should close assembly polling when cancelled', () => {
+  it('should close assembly polling when cancelled', FLAKY, () => {
     const spy = cy.spy()
 
     cy.get('@file-input').selectFile(['cypress/fixtures/images/cat.jpg', 'cypress/fixtures/images/traffic.jpg'], { force:true })
@@ -53,8 +59,8 @@ describe('Dashboard with Transloadit', () => {
     })
   })
 
-  it('should close assembly polling when all files are removed', () => {
-    const spy = cy.stub()
+  it('should close assembly polling when all files are removed', FLAKY, () => {
+    const spy = cy.spy()
 
     cy.get('@file-input').selectFile(['cypress/fixtures/images/cat.jpg', 'cypress/fixtures/images/traffic.jpg'], { force:true })
     cy.get('.uppy-StatusBar-actionBtn--upload').click()
