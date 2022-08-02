@@ -1,16 +1,14 @@
 import { describe, expect, it } from '@jest/globals'
+import assert from 'node:assert'
 import DefaultStore from './index.js'
 
 describe('DefaultStore', () => {
-  it('can be created with or without new', () => {
-    let store = DefaultStore()
-    expect(typeof store).toBe('object')
-    store = new DefaultStore()
-    expect(typeof store).toBe('object')
+  it('cannot be created without new', () => {
+    assert.throws(() => DefaultStore(), /TypeError/)
   })
 
   it('merges in state using `setState`', () => {
-    const store = DefaultStore()
+    const store = new DefaultStore()
     expect(store.getState()).toEqual({})
 
     store.setState({
@@ -31,7 +29,7 @@ describe('DefaultStore', () => {
       expect([prevState, nextState, patch]).toEqual(expected)
     }
 
-    const store = DefaultStore()
+    const store = new DefaultStore()
     store.subscribe(listener)
 
     expected = [{}, { a: 1, b: 2 }, { a: 1, b: 2 }]

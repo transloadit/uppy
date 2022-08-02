@@ -21,7 +21,7 @@ type anyObject = Record<string, unknown>
 }
 
 {
-  const store = DefaultStore()
+  const store = new DefaultStore()
   new Uppy({ store }) // eslint-disable-line no-new
 }
 

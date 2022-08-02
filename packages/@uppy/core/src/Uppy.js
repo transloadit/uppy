@@ -65,7 +65,7 @@ class Uppy {
       meta: {},
       onBeforeFileAdded: (currentFile) => currentFile,
       onBeforeUpload: (files) => files,
-      store: DefaultStore(),
+      store: new DefaultStore(),
       logger: justErrorsLogger,
       infoTimeout: 5000,
     }
