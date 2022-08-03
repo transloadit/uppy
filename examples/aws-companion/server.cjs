@@ -1,5 +1,6 @@
 const fs = require('node:fs')
 const path = require('node:path')
+const crypto = require('node:crypto')
 const companion = require('@uppy/companion')
 
 require('dotenv').config({ path: path.join(__dirname, '..', '..', '.env') })
