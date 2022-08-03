@@ -31,6 +31,7 @@ But, it didn’t come with its own set of new problems:
 
 * It tries to do the exact same, but it looks like a different product
 * It’s confusing for users whether they want to use Robodog or Uppy directly.
+* Robodog is more ergonomic because it’s limited. When you hit such a limit, you need to refactor everything to Uppy with plugins.
 * Documentation is scarce, and the trade offs are unclear
 * It’s not marketed, you need to stumble on it in the docs.
 * Extra maintenance burden
@@ -47,7 +48,7 @@ We also made a couple of changes which are technically breaking, but unlikely to
 #### `@uppy/core`
 
 * Remove `AggregateError` polyfill.
-  * reason: it's supported by most modern browsers, it [can be polyfilled by the user](https://github.com/transloadit/uppy/pull/3532#discussion_r818602636).
+  * reason: it’s supported by most modern browsers and [can be polyfilled by the user](https://github.com/transloadit/uppy/pull/3532#discussion_r818602636) if needed.
   * migrate: install a `AggregateError` polyfill or use `core-js`.
 * Remove `reset()` method.
   * reason: it’s a duplicate of `cancelAll`, but with a less intention revealing name.
@@ -59,26 +60,26 @@ We also made a couple of changes which are technically breaking, but unlikely to
 #### `@uppy/aws-s3-multipart`
 
 * Remove `client` getter and setter.
-  * reason: internal usage only
-  * migrate: use exposed options only
+  * reason: internal usage only.
+  * migrate: use exposed options only.
 
 #### `@uppy/react`
 
 * Don’t expose `validProps` on the exported components.
-  * reason: internal usage only
-  * migrate: use exposed options only
+  * reason: internal usage only.
+  * migrate: use exposed options only.
 
 #### `@uppy/store-redux`
 
 * Remove backwards compatible exports (static properties on `ReduxStore`). Exports, such as `reducer`, used to also be accesible on the `ReduxStore` export. This has now been removed.
-  * reason: transition to ESM
-  * migrate: use named imports
+  * reason: transition to ESM.
+  * migrate: use named imports.
 
 #### `@uppy/thumbnail-generator`
 
 * Remove `rotateImage`, `protect`, and `canvasToBlob` from plugin prototype.
-  * reason: internal usage only
-  * migrate: use exposed options only
+  * reason: internal usage only.
+  * migrate: use exposed options only.
 
 ## Migrate from Companion 3.x to 4.x
 
