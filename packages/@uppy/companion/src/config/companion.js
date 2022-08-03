@@ -89,10 +89,10 @@ const validateConfig = (companionOptions) => {
   const { providerOptions, periodicPingUrls } = companionOptions
 
   if (providerOptions) {
-    const deprecatedOptions = { microsoft: 'onedrive', google: 'drive' }
-    Object.keys(deprecatedOptions).forEach((deprected) => {
-      if (providerOptions[deprected]) {
-        throw new Error(`The Provider option "${deprected}" is no longer supported. Please use the option "${deprecatedOptions[deprected]}" instead.`)
+    const deprecatedOptions = { microsoft: 'providerOptions.onedrive', google: 'providerOptions.drive', s3: 's3' }
+    Object.keys(deprecatedOptions).forEach((deprecated) => {
+      if (Object.prototype.hasOwnProperty.call(providerOptions, deprecated)) {
+        throw new Error(`The Provider option "providerOptions.${deprecated}" is no longer supported. Please use the option "${deprecatedOptions[deprecated]}" instead.`)
       }
     })
   }
