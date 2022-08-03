@@ -21,7 +21,24 @@ If are already using ESM yourself, or are using the CDN builds, nothing changes 
 If you are using CommonJS, you might need to add some tooling for everything to work, or you might
 want to refactor your codebase to ESM – refer to
 the [Pure ESM package](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c)
-gist for additional information and help on how to do that.
+gist for added information and help on how to do that.
+
+### Robodog is deprecated
+
+Uppy is flexible and extensible through plugins. But the integration code could sometimes be daunting. This is what brought [Robodog](/docs/robodog/) to life. An alternative with the same features, but with a more ergonomic and minimal API.
+
+But, it didn’t come with its own set of new problems:
+
+* It tries to do the exact same, but it looks like a different product
+* It’s confusing for users whether they want to use Robodog or Uppy directly.
+* Documentation is scarce, and the trade offs are unclear
+* It’s not marketed, you need to stumble on it in the docs.
+* Extra maintenance burden
+* Extra hosting effort and costs
+
+This has now led us to deprecating Robodog and embrace Uppy for its strong suits; modularity and flexibility. At the same time, we also introduced something to take away some repetitive integration code: [`@uppy/remote-sources`](/docs/remote-sources).
+
+To migrate from Robodog to Uppy plugins, go through the [list of plugins](/docs/plugins/) and install and use the ones you need.
 
 ## Migrate from Companion 3.x to 4.x
 
