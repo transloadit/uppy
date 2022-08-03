@@ -89,7 +89,7 @@ StatusBar.propTypes = {
   hideAfterFinish: PropTypes.bool,
   doneButtonHandler: PropTypes.func,
 }
-// Must be kept in sync with @uppy/status-bar/src/_StatusBar.jsx.
+// Must be kept in sync with @uppy/status-bar/src/StatusBar.jsx.
 StatusBar.defaultProps = {
   hideUploadButton: false,
   hideRetryButton: false,

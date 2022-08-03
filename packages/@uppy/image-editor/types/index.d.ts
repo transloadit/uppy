@@ -34,10 +34,12 @@ export default ImageEditor
 
 export type FileEditorStartCallback<TMeta> = (file: UppyFile<TMeta>) => void;
 export type FileEditorCompleteCallback<TMeta> = (updatedFile: UppyFile<TMeta>) => void;
+export type FileEditorCancelCallback<TMeta> = (file: UppyFile<TMeta>) => void;
 
 declare module '@uppy/core' {
   export interface UppyEventMap<TMeta> {
     'file-editor:start' : FileEditorStartCallback<TMeta>
     'file-editor:complete': FileEditorCompleteCallback<TMeta>
+    'file-editor:cancel': FileEditorCancelCallback<TMeta>
   }
 }

@@ -17,17 +17,12 @@ class TransloaditFormResult extends BasePlugin {
   }
 
   getAssemblyStatuses (fileIDs) {
-    const assemblyIds = []
-    fileIDs.forEach((fileID) => {
-      const file = this.uppy.getFile(fileID)
-      const assembly = file.transloadit && file.transloadit.assembly
-      if (assembly && assemblyIds.indexOf(assembly) === -1) {
-        assemblyIds.push(assembly)
-      }
-    })
+    const assemblyIds = new Set(
+      fileIDs.map(fileID => this.uppy.getFile(fileID)?.transloadit?.assembly).filter(Boolean),
+    )
 
     const tl = this.uppy.getPlugin(this.opts.transloaditPluginId || 'Transloadit')
-    return assemblyIds.map((id) => tl.getAssembly(id))
+    return Array.from(assemblyIds, (id) => tl.getAssembly(id))
   }
 
   handleUpload (fileIDs) {
