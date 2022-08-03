@@ -19,7 +19,7 @@ class ProgressBar extends Component {
     if (prevProps.uppy !== this.props.uppy) {
       this.uninstallPlugin(prevProps)
       this.installPlugin()
-    } else if (nonHtmlPropsHaveChanged(this, prevProps)) {
+    } else if (nonHtmlPropsHaveChanged(this.props, prevProps)) {
       const options = { ...this.props, target: this.container }
       delete options.uppy
       this.plugin.setOptions(options)
@@ -52,14 +52,12 @@ class ProgressBar extends Component {
   }
 
   render () {
-    // TODO: stop exposing `validProps` as a public property and rename it to `htmlProps`
-    this.validProps = getHTMLProps(this.props)
     return h('div', {
       className: 'uppy-Container',
       ref: (container) => {
         this.container = container
       },
-      ...this.validProps,
+      ...getHTMLProps(this.props),
     })
   }
 }

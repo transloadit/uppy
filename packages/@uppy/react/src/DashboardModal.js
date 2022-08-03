@@ -20,7 +20,7 @@ class DashboardModal extends Component {
     if (prevProps.uppy !== uppy) {
       this.uninstallPlugin(prevProps)
       this.installPlugin()
-    } else if (nonHtmlPropsHaveChanged(this, prevProps)) {
+    } else if (nonHtmlPropsHaveChanged(this.props, prevProps)) {
       const options = { ...this.props, onRequestCloseModal: onRequestClose }
       delete options.uppy
       this.plugin.setOptions(options)
@@ -135,14 +135,12 @@ class DashboardModal extends Component {
   }
 
   render () {
-    // TODO: stop exposing `validProps` as a public property and rename it to `htmlProps`
-    this.validProps = getHTMLProps(this.props)
     return h('div', {
       className: 'uppy-Container',
       ref: (container) => {
         this.container = container
       },
-      ...this.validProps,
+      ...getHTMLProps(this.props),
     })
   }
 }

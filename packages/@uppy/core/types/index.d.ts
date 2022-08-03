@@ -217,8 +217,6 @@ export type ErrorCallback = (error: Error) => void;
 export type UploadErrorCallback<TMeta> = (file: UppyFile<TMeta> | undefined, error: Error, response?: ErrorResponse) => void;
 export type UploadRetryCallback = (fileID: string) => void;
 export type RetryAllCallback = (fileIDs: string[]) => void;
-
-// TODO: reverse the order in the next major version
 export type RestrictionFailedCallback<TMeta> = (file: UppyFile<TMeta> | undefined, error: Error) => void;
 
 export interface UppyEventMap<TMeta = Record<string, unknown>> {
@@ -348,8 +346,6 @@ export class Uppy {
   retryUpload<TMeta extends IndexedObject<any> = Record<string, unknown>>(
     fileID: string
   ): Promise<UploadResult<TMeta>>
-
-  reset(): void
 
   getID(): string
 

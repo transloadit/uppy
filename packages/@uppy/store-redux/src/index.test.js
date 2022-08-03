@@ -10,7 +10,7 @@ describe('ReduxStore', () => {
 
   it('can be created with named or default import', () => {
     const r = createStore()
-    let store = new ReduxStore.ReduxStore({ store: r })
+    let store = new ReduxStore({ store: r })
     expect(typeof store).toBe('object')
     store = new ReduxStore({ store: r })
     expect(typeof store).toBe('object')

@@ -93,7 +93,6 @@ const meta = async (req, res) => {
     return res.json(urlMeta)
   } catch (err) {
     logger.error(err, 'controller.url.meta.error', req.id)
-    // @todo send more meaningful error message and status code to client if possible
     return res.status(err.status || 500).json({ message: 'failed to fetch URL metadata' })
   }
 }
@@ -125,7 +124,6 @@ const get = async (req, res) => {
 
   function onUnhandledError (err) {
     logger.error(err, 'controller.url.error', req.id)
-    // @todo send more meaningful error message and status code to client if possible
     res.status(err.status || 500).json({ message: 'failed to fetch URL metadata' })
   }
 
