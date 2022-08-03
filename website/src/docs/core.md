@@ -89,13 +89,13 @@ With this option set to `false`, users can upload some files, and you can listen
 
 An object of methods that are called with debug information from [`uppy.log`](/docs/uppy/#uppy-log).
 
-Set `logger: Uppy.debugLogger` to get debug info output to the browser console:
+Set `logger: debugLogger` to get debug info output to the browser console:
 
 ```js
 import Uppy from '@uppy/core'
 
 const uppy = new Uppy({
-  logger: Uppy.debugLogger,
+  logger: debugLogger,
 })
 ```
 
@@ -111,7 +111,7 @@ const nullLogger = {
 }
 ```
 
-`logger: Uppy.debugLogger` looks like this:
+`logger: debugLogger` looks like this:
 
 ```js
 const debugLogger = {
