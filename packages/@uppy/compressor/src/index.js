@@ -51,13 +51,14 @@ export default class Compressor extends BasePlugin {
           const compressedSavingsSize = file.data.size - compressedBlob.size
           this.uppy.log(`[Image Compressor] Image ${file.id} compressed by ${prettierBytes(compressedSavingsSize)}`)
           totalCompressedSize += compressedSavingsSize
+          console.log('YOOOO', compressedBlob)
           const { name, type, size } = compressedBlob
-          const { extension } = getFileNameAndExtension(name)
+          const extension = name && getFileNameAndExtension(name).extension
           this.uppy.setFileState(file.id, {
-            name,
-            extension,
-            type,
-            size,
+            ...(name && { name }),
+            ...(extension && { extension }),
+            ...(type && { type }),
+            ...(size && { size }),
             data: compressedBlob,
           })
           this.uppy.setFileMeta(file.id, { type })
