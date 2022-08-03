@@ -9,6 +9,9 @@ category: "File Processing"
 tagline: "user friendly abstraction to do file processing with Transloadit"
 ---
 
+> **Warning**
+> Robodog has been deprecated, its usage is no longer recommended.
+
 [Transloadit][transloadit] is a service that helps you handle file uploads, resize, crop and watermark your images, make GIFs, transcode your videos, extract thumbnails, generate audio waveforms, and so much more. In short, [Transloadit][transloadit] is the Swiss Army Knife for your files.
 
 Robodog is an Uppy-based library that helps you talk to the Transloadit API. It includes a modal UI file picker with support for imports from third-party services, integration with HTML forms, and more. Because it’s based on Uppy, you can add any existing Uppy plugin to add more functionality.
@@ -31,8 +34,8 @@ import '@uppy/robodog/dist/robodog.css'
 If you are not using a bundler, you can also import Robodog using an HTML script tag.
 
 ```html
-<link rel="stylesheet" href="https://releases.transloadit.com/uppy/robodog/v3.0.0-beta.4/robodog.min.css">
-<script src="https://releases.transloadit.com/uppy/robodog/v3.0.0-beta.4/robodog.min.js"></script>
+<link rel="stylesheet" href="https://releases.transloadit.com/uppy/robodog/v2.9.2/robodog.min.css">
+<script src="https://releases.transloadit.com/uppy/robodog/v2.9.2/robodog.min.js"></script>
 <!-- you can now use: window.Robodog.pick() -->
 ```
 

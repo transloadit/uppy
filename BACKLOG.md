@@ -12,8 +12,8 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] Some not too breaking breaking changes. Go through TODOs (@arturi, @aduh95, @Murderlon)
 - [ ] Companion breaking changes, like S3 keys (@mifi)
 - [x] New remote-sources preset
-- [ ] Deprecate Robodog
-  - [ ] Remove from 3.x branch (@aduh95)
+- [x] Deprecate Robodog
+  - [x] Remove from 3.x branch (@aduh95)
   - [ ] Update docs that refer to Robodog (@arturi)
   - [ ] Update Transloadit.com examples and docs to use @uppy/transloadit + @uppy/remote-sources plugins instead of @uppy/robodog (@arturi)
 

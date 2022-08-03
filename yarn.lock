@@ -8815,35 +8815,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/robodog@workspace:packages/@uppy/robodog":
-  version: 0.0.0-use.local
-  resolution: "@uppy/robodog@workspace:packages/@uppy/robodog"
-  dependencies:
-    "@uppy/audio": "workspace:^"
-    "@uppy/box": "workspace:^"
-    "@uppy/core": "workspace:^"
-    "@uppy/dashboard": "workspace:^"
-    "@uppy/dropbox": "workspace:^"
-    "@uppy/facebook": "workspace:^"
-    "@uppy/form": "workspace:^"
-    "@uppy/google-drive": "workspace:^"
-    "@uppy/instagram": "workspace:^"
-    "@uppy/onedrive": "workspace:^"
-    "@uppy/screen-capture": "workspace:^"
-    "@uppy/status-bar": "workspace:^"
-    "@uppy/transloadit": "workspace:^"
-    "@uppy/unsplash": "workspace:^"
-    "@uppy/url": "workspace:^"
-    "@uppy/utils": "workspace:^"
-    "@uppy/webcam": "workspace:^"
-    abortcontroller-polyfill: ^1.7.3
-    core-js: ~3.24.0
-    md-gum-polyfill: ^1.0.0
-    resize-observer-polyfill: ^1.5.1
-    whatwg-fetch: ^3.6.2
-  languageName: unknown
-  linkType: soft
-
 "@uppy/screen-capture@workspace:^, @uppy/screen-capture@workspace:packages/@uppy/screen-capture":
   version: 0.0.0-use.local
   resolution: "@uppy/screen-capture@workspace:packages/@uppy/screen-capture"

@@ -65,6 +65,5 @@ const files = await globby([
 
 await updateVersions(files, [
   'uppy',
-  '@uppy/robodog',
   '@uppy/locales',
 ])

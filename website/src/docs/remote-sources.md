@@ -8,6 +8,9 @@ category: "Miscellaneous"
 tagline: "Uppy plugin that includes all remote sources that Uppy+Companion offer, like Instagram, Google Drive, Dropox, Box, Unsplash, Url etc"
 ---
 
+> **Warning**
+> Robodog has been deprecated, its usage is no longer recommended.
+
 `@uppy/remote-sources` is a preset plugin to add all the available remote sources, such Instagram, Google Drive, Dropbox, and others to Uppy Dashboard in one package.
 
 > Note: Remote Sources requires Dashboard and automatically installs all its plugins to it.

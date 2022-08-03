@@ -132,7 +132,6 @@ The ⓒ mark means that [`@uppy/companion`](https://uppy.io/docs/companion), a s
 
 ### File Processing
 
-* [`Robodog`](https://uppy.io/docs/robodog/) — user friendly abstraction to do file processing with Transloadit
 * [`Transloadit`](https://uppy.io/docs/transloadit/) — support for [Transloadit](http://transloadit.com)’s robust file uploading and encoding backend
 
 ### Miscellaneous
