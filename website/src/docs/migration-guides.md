@@ -43,8 +43,6 @@ To migrate from Robodog to Uppy plugins, go through the [list of plugins](/docs/
 
 ### Smaller breaking changes
 
-We also made a couple of changes which are technically breaking, but unlikely to be so for most users (making something internal private, for instance).
-
 #### `@uppy/core`
 
 * Remove `AggregateError` polyfill.
@@ -59,6 +57,9 @@ We also made a couple of changes which are technically breaking, but unlikely to
 
 #### `@uppy/aws-s3-multipart`
 
+* Make `headers` inside the return value of [`prepareUploadParts`](/docs/aws-s3-multipart/#prepareUploadParts-file-partData) part-indexed too.
+  * reason: allow custom headers to be set per part. See this [issue](https://github.com/transloadit/uppy/issues/3881) for details.
+  * migrate: make headers part indexed like `presignedUrls`: `{ "headers": { "1": { "Content-MD5": "foo" } }}`.
 * Remove `client` getter and setter.
   * reason: internal usage only.
   * migrate: use exposed options only.
