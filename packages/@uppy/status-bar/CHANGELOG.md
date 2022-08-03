@@ -1,5 +1,12 @@
 # @uppy/status-bar
 
+## 3.0.0-beta.2
+
+Released: 2022-08-03
+Included in: Uppy v3.0.0-beta.4
+
+- @uppy/status-bar: rename internal modules (Antoine du Hamel / #3929)
+
 ## 2.2.1
 
 Released: 2022-05-30

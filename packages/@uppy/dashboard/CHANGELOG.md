@@ -1,5 +1,12 @@
 # @uppy/dashboard
 
+## 3.0.0-beta.3
+
+Released: 2022-08-03
+Included in: Uppy v3.0.0-beta.4
+
+- @uppy/dashboard: change `copyToClipboard` signature (Antoine du Hamel / #3933)
+
 ## 3.0.0-beta.2
 
 Released: 2022-07-27

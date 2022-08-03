@@ -1,5 +1,12 @@
 # @uppy/aws-s3-multipart
 
+## 3.0.0-beta.3
+
+Released: 2022-08-03
+Included in: Uppy v3.0.0-beta.4
+
+- @uppy/aws-s3-multipart: Correctly handle errors for `prepareUploadParts` (Merlijn Vos / #3912)
+
 ## 3.0.0-beta.2
 
 Released: 2022-07-27
