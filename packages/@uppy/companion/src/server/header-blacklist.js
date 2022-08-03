@@ -49,7 +49,7 @@ const isForbiddenHeader = (header) => {
 }
 
 module.exports = (headers) => {
-  if (headers == null || typeof headers !== 'object') {
+  if (headers == null || typeof headers !== 'object' || Array.isArray(headers)) {
     return {}
   }
 
