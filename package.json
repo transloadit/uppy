@@ -154,7 +154,7 @@
     "test:unit": "yarn run build:lib && NODE_OPTIONS=--experimental-vm-modules jest --env jsdom",
     "test:watch": "NODE_OPTIONS=--experimental-vm-modules jest --env jsdom --watch --no-coverage",
     "test:size": "yarn build:lib && size-limit --why",
-    "test": "npm-run-all lint test:locale-packs:unused test:locale-packs:warnings test:unit test:type test:companion",
+    "test": "npm-run-all lint test:locale-packs:unused test:unit test:type test:companion",
     "uploadcdn": "yarn node ./bin/upload-to-cdn.js",
     "version": "yarn node ./bin/after-version-bump.js",
     "watch:css": "onchange 'packages/{@uppy/,}*/src/*.scss' --initial --verbose -- yarn run build:css",
