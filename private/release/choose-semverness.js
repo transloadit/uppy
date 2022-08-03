@@ -93,7 +93,7 @@ export default async function pickSemverness (
       )}.`,
     )
 
-    const response = 'major'
+    const response = { value: 'major' }
 
     if (!response.value) {
       console.log('Skipping.')
