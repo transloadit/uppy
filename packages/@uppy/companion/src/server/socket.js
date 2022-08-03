@@ -1,4 +1,4 @@
-const SocketServer = require('ws').Server
+const SocketServer = require('ws').WebSocketServer
 const { jsonStringify } = require('./helpers/utils')
 const emitter = require('./emitter')
 const redis = require('./redis')
