@@ -2,6 +2,8 @@ const fs = require('node:fs')
 const path = require('node:path')
 const budo = require('budo')
 const router = require('router')
+const crypto = require('node:crypto')
+
 const companion = require('../../packages/@uppy/companion')
 
 /**
@@ -32,7 +34,7 @@ const { app: companionApp } = companion.app({
     s3: {
       // This is the crucial part; set an endpoint template for the service you want to use.
       endpoint: 'https://{region}.digitaloceanspaces.com',
-      getKey: (req, filename) => `uploads/${filename}`,
+      getKey: (req, filename) => `${crypto.randomUUID()}-${filename}`,
 
       key: process.env.COMPANION_AWS_KEY,
       secret: process.env.COMPANION_AWS_SECRET,
