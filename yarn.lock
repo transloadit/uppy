@@ -10192,7 +10192,7 @@ __metadata:
     serialize-error: ^2.1.0
     serialize-javascript: ^6.0.0
     supertest: 3.4.2
-    tus-js-client: 2.1.1
+    tus-js-client: ^3.0.0
     typescript: ~4.4
     validator: ^12.1.0
     ws: 6.2.2
@@ -10621,7 +10621,7 @@ __metadata:
   dependencies:
     "@uppy/companion-client": "workspace:^"
     "@uppy/utils": "workspace:^"
-    tus-js-client: ^2.1.1
+    tus-js-client: ^3.0.0
   peerDependencies:
     "@jest/globals": ^27.4.2
     "@uppy/core": "workspace:^"
@@ -14166,14 +14166,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"buffer-from@npm:^0.1.1":
-  version: 0.1.2
-  resolution: "buffer-from@npm:0.1.2"
-  checksum: 50a1fa5da97d2081b7d945483c8967d3b89a096fa585eb55000bb2100e827c647c9370280ec9bd057da8f9fa5abc1d3b764228851a31fa8a67f659f70c0052d8
-  languageName: node
-  linkType: hard
-
-"buffer-from@npm:^1.0.0":
+"buffer-from@npm:^1.0.0, buffer-from@npm:^1.1.2":
   version: 1.1.2
   resolution: "buffer-from@npm:1.1.2"
   checksum: 0448524a562b37d4d7ed9efd91685a5b77a50672c556ea254ac9a6d30e3403a517d8981f10e565db24e8339413b43c97ca2951f10e399c6125a0d8911f5679bb
@@ -25331,10 +25324,10 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   languageName: node
   linkType: hard
 
-"js-base64@npm:^2.4.9, js-base64@npm:^2.6.1":
-  version: 2.6.4
-  resolution: "js-base64@npm:2.6.4"
-  checksum: 5f4084078d6c46f8529741d110df84b14fac3276b903760c21fa8cc8521370d607325dfe1c1a9fbbeaae1ff8e602665aaeef1362427d8fef704f9e3659472ce8
+"js-base64@npm:^3.7.2":
+  version: 3.7.2
+  resolution: "js-base64@npm:3.7.2"
+  checksum: 573f28e9a27c3df60096d4d3f551bcb4fcb6d49161cf83396e9bad9b76f94736a70bb70b8808fe834dff2a388f76604ba09d6e153bbf181646e407720139fa5b
   languageName: node
   linkType: hard
 
@@ -32774,13 +32767,14 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   languageName: node
   linkType: hard
 
-"proper-lockfile@npm:^2.0.1":
-  version: 2.0.1
-  resolution: "proper-lockfile@npm:2.0.1"
+"proper-lockfile@npm:^4.1.2":
+  version: 4.1.2
+  resolution: "proper-lockfile@npm:4.1.2"
   dependencies:
-    graceful-fs: ^4.1.2
-    retry: ^0.10.0
-  checksum: 3cadc4fb7139e521df5ef63b54693fa26b22ad130728f32e768c4a360791ba3ba294b0ad389388ba91db89e34895ecad16a67a02202302cb7e42216f3c906526
+    graceful-fs: ^4.2.4
+    retry: ^0.12.0
+    signal-exit: ^3.0.2
+  checksum: 00078ee6a61c216a56a6140c7d2a98c6c733b3678503002dc073ab8beca5d50ca271de4c85fca13b9b8ee2ff546c36674d1850509b84a04a5d0363bcb8638939
   languageName: node
   linkType: hard
 
@@ -38869,32 +38863,18 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   languageName: node
   linkType: hard
 
-"tus-js-client@npm:2.1.1":
-  version: 2.1.1
-  resolution: "tus-js-client@npm:2.1.1"
+"tus-js-client@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "tus-js-client@npm:3.0.0"
   dependencies:
-    buffer-from: ^0.1.1
-    combine-errors: ^3.0.3
-    js-base64: ^2.4.9
-    lodash.throttle: ^4.1.1
-    proper-lockfile: ^2.0.1
-    url-parse: ^1.4.3
-  checksum: eeda62ae82ccdc5566466bcf8da4b1f3058734e95d19e7c32bb1b58cf9ceb9d5ce1add0b6e48d0f5639193164ffbea897bd97ee2c51f66d630c513a78d3a1ea9
-  languageName: node
-  linkType: hard
-
-"tus-js-client@npm:^2.1.1":
-  version: 2.3.0
-  resolution: "tus-js-client@npm:2.3.0"
-  dependencies:
-    buffer-from: ^0.1.1
+    buffer-from: ^1.1.2
     combine-errors: ^3.0.3
     is-stream: ^2.0.0
-    js-base64: ^2.6.1
+    js-base64: ^3.7.2
     lodash.throttle: ^4.1.1
-    proper-lockfile: ^2.0.1
-    url-parse: ^1.4.3
-  checksum: 7ae23e92a771418a8117440f56c143d10bbfb5236ab1ab2c37ba65122375008e72f930cee7b685254ca81dbc470daa542635dd861b7105ca9997e8b37b3c02ad
+    proper-lockfile: ^4.1.2
+    url-parse: ^1.5.7
+  checksum: dda7921a0d55f3a15535590adb6eb98edfbf6c88dfbcad9bf1013cfa16bc2244fb937ad1d6bc05f34005ee103da31ccbae5ca650d46dc23d6e653946994c9015
   languageName: node
   linkType: hard
 
@@ -39976,13 +39956,23 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   languageName: node
   linkType: hard
 
-"url-parse@npm:^1.4.3, url-parse@npm:^1.4.4":
+"url-parse@npm:^1.4.4":
   version: 1.5.3
   resolution: "url-parse@npm:1.5.3"
   dependencies:
     querystringify: ^2.1.1
     requires-port: ^1.0.0
   checksum: c6b32fff835e43f3b1b4150239f459744f0ab1a908841dbfecbfc79bf67f4d6c8d9af1841d0c6d814d45bfa08525cc29312a0bef31db7aa894306b3db07e4ee0
+  languageName: node
+  linkType: hard
+
+"url-parse@npm:^1.5.7":
+  version: 1.5.10
+  resolution: "url-parse@npm:1.5.10"
+  dependencies:
+    querystringify: ^2.1.1
+    requires-port: ^1.0.0
+  checksum: fbdba6b1d83336aca2216bbdc38ba658d9cfb8fc7f665eb8b17852de638ff7d1a162c198a8e4ed66001ddbf6c9888d41e4798912c62b4fd777a31657989f7bdf
   languageName: node
   linkType: hard
 
