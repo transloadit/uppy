@@ -198,19 +198,22 @@ class MultipartUploader {
 
     if (chunkIndexes.length === 0) return
 
-    return this.#prepareUploadParts(chunkIndexes).then((result) => {
-      const { presignedUrls, headers } = result
-
-      chunkIndexes.forEach((index) => {
-        const partNumber = index + 1
-        const prePreparedPart = { url: presignedUrls[partNumber], headers: headers?.[partNumber] }
-        this.#uploadPartRetryable(index, prePreparedPart).then(() => {
-          this.#uploadParts()
-        }, (err) => {
-          this.#onError(err)
-        })
-      })
-    })
+    this.#prepareUploadPartsRetryable(chunkIndexes).then(
+      ({ presignedUrls, headers }) => {
+        for (const index of chunkIndexes) {
+          const partNumber = index + 1
+          const prePreparedPart = {
+            url: presignedUrls[partNumber],
+            headers: headers?.[partNumber],
+          }
+          this.#uploadPartRetryable(index, prePreparedPart).then(
+            () => this.#uploadParts(),
+            (err) => this.#onError(err),
+          )
+        }
+      },
+      (err) => this.#onError(err),
+    )
   }
 
   #retryable ({ before, attempt, after }) {
@@ -247,7 +250,7 @@ class MultipartUploader {
     })
   }
 
-  async #prepareUploadParts (chunkIndexes) {
+  async #prepareUploadPartsRetryable (chunkIndexes) {
     chunkIndexes.forEach((i) => {
       this.chunkState[i].busy = true
     })

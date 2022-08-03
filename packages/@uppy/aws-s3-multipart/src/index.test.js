@@ -185,41 +185,41 @@ describe('AwsS3Multipart', () => {
   })
 
   describe('MultipartUploader', () => {
-    let core
-    let awsS3Multipart
-
-    beforeEach(() => {
-      core = new Core()
-      core.use(AwsS3Multipart, {
-        createMultipartUpload: jest.fn(() => {
-          return {
-            uploadId: '6aeb1980f3fc7ce0b5454d25b71992',
-            key: 'test/upload/multitest.dat',
-          }
-        }),
-        completeMultipartUpload: jest.fn(async () => ({ location: 'test' })),
-        abortMultipartUpload: jest.fn(),
-        prepareUploadParts: jest
-          .fn(async () => {
-            const presignedUrls = {}
-            const possiblePartNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-
-            possiblePartNumbers.forEach((partNumber) => {
-              presignedUrls[
-                partNumber
-              ] = `https://bucket.s3.us-east-2.amazonaws.com/test/upload/multitest.dat?partNumber=${partNumber}&uploadId=6aeb1980f3fc7ce0b5454d25b71992&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIATEST%2F20210729%2Fus-east-2%2Fs3%2Faws4_request&X-Amz-Date=20210729T014044Z&X-Amz-Expires=600&X-Amz-SignedHeaders=host&X-Amz-Signature=test`
-            })
-
-            return { presignedUrls }
-          })
-          // This runs first and only once
-          // eslint-disable-next-line prefer-promise-reject-errors
-          .mockImplementationOnce(() => Promise.reject({ source: { status: 500 } })),
-      })
-      awsS3Multipart = core.getPlugin('AwsS3Multipart')
+    const createMultipartUpload = jest.fn(() => {
+      return {
+        uploadId: '6aeb1980f3fc7ce0b5454d25b71992',
+        key: 'test/upload/multitest.dat',
+      }
     })
 
+    const prepareUploadParts = jest
+      .fn(async () => {
+        const presignedUrls = {}
+        const possiblePartNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+        possiblePartNumbers.forEach((partNumber) => {
+          presignedUrls[
+            partNumber
+          ] = `https://bucket.s3.us-east-2.amazonaws.com/test/upload/multitest.dat?partNumber=${partNumber}&uploadId=6aeb1980f3fc7ce0b5454d25b71992&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIATEST%2F20210729%2Fus-east-2%2Fs3%2Faws4_request&X-Amz-Date=20210729T014044Z&X-Amz-Expires=600&X-Amz-SignedHeaders=host&X-Amz-Signature=test`
+        })
+
+        return { presignedUrls }
+      })
+
+    afterEach(() => jest.clearAllMocks())
+
     it('retries prepareUploadParts when it fails once', async () => {
+      const core = new Core()
+        .use(AwsS3Multipart, {
+          createMultipartUpload,
+          completeMultipartUpload: jest.fn(async () => ({ location: 'test' })),
+          abortMultipartUpload: jest.fn(),
+          prepareUploadParts:
+          prepareUploadParts
+          // eslint-disable-next-line prefer-promise-reject-errors
+            .mockImplementationOnce(() => Promise.reject({ source: { status: 500 } })),
+        })
+      const awsS3Multipart = core.getPlugin('AwsS3Multipart')
       const fileSize = 5 * MB + 1 * MB
 
       core.addFile({
@@ -234,6 +234,37 @@ describe('AwsS3Multipart', () => {
       await core.upload()
 
       expect(awsS3Multipart.opts.prepareUploadParts.mock.calls.length).toEqual(2)
+    })
+
+    it('calls `upload-error` when prepareUploadParts fails after all retries', async () => {
+      const core = new Core()
+        .use(AwsS3Multipart, {
+          retryDelays: [100],
+          createMultipartUpload,
+          completeMultipartUpload: jest.fn(async () => ({ location: 'test' })),
+          abortMultipartUpload: jest.fn(),
+          prepareUploadParts: prepareUploadParts
+            // eslint-disable-next-line prefer-promise-reject-errors
+            .mockImplementation(() => Promise.reject({ source: { status: 500 } })),
+        })
+      const awsS3Multipart = core.getPlugin('AwsS3Multipart')
+      const fileSize = 5 * MB + 1 * MB
+      const mock = jest.fn()
+      core.on('upload-error', mock)
+
+      core.addFile({
+        source: 'jest',
+        name: 'multitest.dat',
+        type: 'application/octet-stream',
+        data: new File([new Uint8Array(fileSize)], {
+          type: 'application/octet-stream',
+        }),
+      })
+
+      await expect(core.upload()).rejects.toEqual({ source: { status: 500 } })
+
+      expect(awsS3Multipart.opts.prepareUploadParts.mock.calls.length).toEqual(2)
+      expect(mock.mock.calls.length).toEqual(1)
     })
   })
 
