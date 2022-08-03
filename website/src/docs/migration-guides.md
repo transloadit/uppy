@@ -12,39 +12,33 @@ These cover all the major Uppy versions and how to migrate to them.
 
 ### Uppy is pure ESM
 
-Following the footsteps of many packages, we now only ship [ECMAScript Modules](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules) (ESM). Uppy can’t be `require()`’d from CommonJS.
+Following the footsteps of many packages, we now only ship Uppy core and its plugins as
+[ECMAScript Modules](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules) (ESM).
+On Uppy 2.x, we were shipping CommonJS.
 
-Before Uppy 3.x, you could use `require` or `import` as we shipped CommonJS:
+If are already using ESM yourself, or are using the CDN builds, nothing changes for you!
 
-<!-- eslint-disable no-restricted-globals -->
-
-```js
-const Uppy = require('@uppy/core')
-const Dashboard = require('@uppy/dashboard')
-```
-
-Now Uppy can only be `import`’ed:
-
-```js
-import Uppy from '@uppy/core'
-import Dashboard from '@uppy/dashboard'
-```
-
-Refer to the [Pure ESM package](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c) gist for added information and help.
+If you are using CommonJS, you might need to add some tooling for everything to work, or you might
+want to refactor your codebase to ESM – refer to
+the [Pure ESM package](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c)
+gist for additional information and help on how to do that.
 
 ## Migrate from Companion 3.x to 4.x
 
-### Minimum required Node.js version is v14.19.0
+### Minimum required Node.js version is v14.20.0
 
 Aligning with the Node.js [Long Term Support (LTS) schedule](https://nodejs.org/en/about/releases/) and to use modern syntax features.
 
 ### `companion.app()` returns `{ app, emitter }` instead of `app`
 
-Companion 3.x provides the emitter as `companionEmitter` on `app`. As of 4.x, an object is returned with `app` (express middleware) and `emitter` (event emitter). This provides more flexibility in the future and follows best practices.
+Companion 3.x provides the emitter as `companionEmitter` on `app`. As of 4.x, an object is returned
+with an `app` property (express middleware) and an `emitter` property (event emitter). This
+provides more flexibility in the future and follows best practices.
 
 ### Removed compatibility for legacy Custom Provider implementations
 
-[Custom Provider](https://uppy.io/docs/companion/#Adding-custom-providers) implementations must use the Promise API, instead of the callback API.
+[Custom Provider](https://uppy.io/docs/companion/#Adding-custom-providers)
+implementations must use the Promise API. The callback API is no longer supported.
 
 ### Default to no ACL for AWS S3
 
