@@ -12,6 +12,36 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 3.0.0-beta.4
+
+Released: 2022-08-03
+
+| Package                |      Version | Package                |      Version |
+| ---------------------- | ------------ | ---------------------- | ------------ |
+| @uppy/aws-s3-multipart | 3.0.0-beta.3 | @uppy/screen-capture   | 3.0.0-beta.2 |
+| @uppy/companion        | 4.0.0-beta.3 | @uppy/status-bar       | 3.0.0-beta.2 |
+| @uppy/core             | 3.0.0-beta.3 | @uppy/store-default    | 3.0.0-beta.2 |
+| @uppy/dashboard        | 3.0.0-beta.3 | @uppy/transloadit      | 3.0.0-beta.4 |
+| @uppy/drop-target      | 2.0.0-beta.2 | @uppy/tus              | 3.0.0-beta.2 |
+| @uppy/informer         | 3.0.0-beta.2 | @uppy/url              | 3.0.0-beta.2 |
+| @uppy/react            | 3.0.0-beta.3 | @uppy/robodog          | 3.0.0-beta.4 |
+| @uppy/remote-sources   | 1.0.0-beta.3 | uppy                   | 3.0.0-beta.4 |
+
+- @uppy/companion,@uppy/tus: Upgrade tus-js-client to 3.0.0 (Merlijn Vos / #3942)
+- meta: fix release script (Antoine du Hamel)
+- @uppy/aws-s3-multipart: Correctly handle errors for `prepareUploadParts` (Merlijn Vos / #3912)
+- @uppy/store-default: export the class, don't expose `.callbacks` (Antoine du Hamel / #3928)
+- @uppy/remote-sources: do not rely on `.name` property (Antoine du Hamel / #3941)
+- @uppy/screen-capture: fix TODOs (Antoine du Hamel / #3930)
+- @uppy/status-bar: rename internal modules (Antoine du Hamel / #3929)
+- @uppy/transloadit: remove static properties in favor of exports (Antoine du Hamel / #3927)
+- @uppy/informer: simplify `render` method (Antoine du Hamel / #3931)
+- @uppy/url: remove private methods from public API (Antoine du Hamel / #3934)
+- @uppy/dashboard: change `copyToClipboard` signature (Antoine du Hamel / #3933)
+- @uppy/drop-target: remove `isFileTransfer` from the public API (Antoine du Hamel / #3932)
+- meta: improve beta release script (Antoine du Hamel)
+
+
 ## 3.0.0-beta.3
 
 Released: 2022-07-27

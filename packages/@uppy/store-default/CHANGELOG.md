@@ -1,5 +1,12 @@
 # @uppy/store-default
 
+## 3.0.0-beta.2
+
+Released: 2022-08-03
+Included in: Uppy v3.0.0-beta.4
+
+- @uppy/store-default: export the class, don't expose `.callbacks` (Antoine du Hamel / #3928)
+
 ## 2.1.0
 
 Released: 2022-05-30

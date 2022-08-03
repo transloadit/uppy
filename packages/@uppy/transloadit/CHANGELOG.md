@@ -1,5 +1,12 @@
 # @uppy/transloadit
 
+## 3.0.0-beta.4
+
+Released: 2022-08-03
+Included in: Uppy v3.0.0-beta.4
+
+- @uppy/transloadit: remove static properties in favor of exports (Antoine du Hamel / #3927)
+
 ## 3.0.0-beta
 
 Released: 2022-05-30
