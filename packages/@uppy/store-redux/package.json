@@ -25,6 +25,6 @@
   },
   "devDependencies": {
     "@jest/globals": "^27.4.2",
-    "redux": "4.0.5"
+    "redux": "^4.0.0"
   }
 }

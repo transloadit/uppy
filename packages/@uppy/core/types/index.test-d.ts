@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { expectError, expectType } from 'tsd'
 import DefaultStore from '@uppy/store-default'
+// eslint-disable-next-line import/no-named-as-default
 import Uppy, { UIPlugin } from '..'
 import type { UploadedUppyFile, FailedUppyFile, PluginOptions, UppyFile, SuccessResponse } from '..'
 
