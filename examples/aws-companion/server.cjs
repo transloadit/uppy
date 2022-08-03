@@ -1,18 +1,24 @@
 const fs = require('node:fs')
 const path = require('node:path')
-const companion = require('../../packages/@uppy/companion')
+const crypto = require('node:crypto')
+const companion = require('@uppy/companion')
+
+require('dotenv').config({ path: path.join(__dirname, '..', '..', '.env') })
 const app = require('express')()
 
 const DATA_DIR = path.join(__dirname, 'tmp')
 
 app.use(require('cors')({
-  origin: true,
+  origin: 'http://localhost:3000',
+  methods: ['GET', 'POST', 'OPTIONS'],
   credentials: true,
 }))
 app.use(require('cookie-parser')())
 app.use(require('body-parser').json())
 app.use(require('express-session')({
   secret: 'hello planet',
+  saveUninitialized: false,
+  resave: false,
 }))
 
 const options = {
@@ -21,14 +27,14 @@ const options = {
       key: process.env.COMPANION_GOOGLE_KEY,
       secret: process.env.COMPANION_GOOGLE_SECRET,
     },
-    s3: {
-      getKey: (req, filename) => `whatever/${Math.random().toString(32).slice(2)}/${filename}`,
-      key: process.env.COMPANION_AWS_KEY,
-      secret: process.env.COMPANION_AWS_SECRET,
-      bucket: process.env.COMPANION_AWS_BUCKET,
-      region: process.env.COMPANION_AWS_REGION,
-      endpoint: process.env.COMPANION_AWS_ENDPOINT,
-    },
+  },
+  s3: {
+    getKey: (req, filename) => `${crypto.randomUUID()}-${filename}`,
+    key: process.env.COMPANION_AWS_KEY,
+    secret: process.env.COMPANION_AWS_SECRET,
+    bucket: process.env.COMPANION_AWS_BUCKET,
+    region: process.env.COMPANION_AWS_REGION,
+    endpoint: process.env.COMPANION_AWS_ENDPOINT,
   },
   server: { host: 'localhost:3020' },
   filePath: DATA_DIR,
