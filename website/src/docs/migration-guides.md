@@ -46,14 +46,14 @@ We also made a couple of changes which are technically breaking, but unlikely to
 
 #### `@uppy/core`
 
-* Remove `AggregateError` polyfill
-  * reason: [should be polyfilled by the user](https://github.com/transloadit/uppy/pull/3532#discussion_r818602636)
-  * migrate: install a `AggregateError` polyfill or use `core-js`
-* Remove `reset()` method
-  * reason: it’s a duplicate of `cancelAll`, but with a less intention revealing name
-  * migrate: use `cancelAll`
+* Remove `AggregateError` polyfill.
+  * reason: it's supported by most modern browsers, it [can be polyfilled by the user](https://github.com/transloadit/uppy/pull/3532#discussion_r818602636).
+  * migrate: install a `AggregateError` polyfill or use `core-js`.
+* Remove `reset()` method.
+  * reason: it’s a duplicate of `cancelAll`, but with a less intention revealing name.
+  * migrate: use `cancelAll`.
 * Remove backwards compatible exports (static properties on `Uppy`). Exports, such as `debugLogger`, used to also be accesible on the `Uppy` export. This has now been removed.
-  * reason: transition to ESM
+  * reason: transition to ESM.
   * migrate: import the `Uppy` class by default and/or use named exports for everything else.
 
 #### `@uppy/aws-s3-multipart`
