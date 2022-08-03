@@ -93,6 +93,14 @@ Companion 3.x provides the emitter as `companionEmitter` on `app`. As of 4.x, an
 with an `app` property (express middleware) and an `emitter` property (event emitter). This
 provides more flexibility in the future and follows best practices.
 
+### Removed `searchProviders` wrapper object inside `providerOptions`
+
+To use [`@uppy/unsplash`](/docs/unsplash), you had to configure Unsplash in Companion inside `providerOptions.searchProviders`. This is redundant, Unsplash is a provider as well so we removed the wrapper object.
+
+### Moved the `s3` options out of `providerOptions`
+
+To use AWS S3 for storage, you configured the `s3` object inside `providerOptions`. But as S3 is not a provider but a destination. To avoid confusion we moved the `s3` settings to the root settings object.
+
 ### Removed compatibility for legacy Custom Provider implementations
 
 [Custom Provider](https://uppy.io/docs/companion/#Adding-custom-providers)
