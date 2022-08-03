@@ -1,7 +1,6 @@
 // eslint-disable-next-line max-classes-per-file
 const tus = require('tus-js-client')
 const { randomUUID } = require('node:crypto')
-const isObject = require('isobject')
 const validator = require('validator')
 const request = require('request')
 const { pipeline: pipelineCb } = require('node:stream')
@@ -78,17 +77,17 @@ function validateOptions (options) {
   }
 
   // validate fieldname
-  if (options.fieldname && typeof options.fieldname !== 'string') {
+  if (options.fieldname != null && typeof options.fieldname !== 'string') {
     throw new ValidationError('fieldname must be a string')
   }
 
   // validate metadata
-  if (options.metadata != null) {
-    if (!isObject(options.metadata)) throw new ValidationError('metadata must be an object')
+  if (options.metadata != null && typeof options.metadata !== 'object') {
+    throw new ValidationError('metadata must be an object')
   }
 
   // validate headers
-  if (options.headers && !isObject(options.headers)) {
+  if (options.headers != null && typeof options.headers !== 'object') {
     throw new ValidationError('headers must be an object')
   }
 
