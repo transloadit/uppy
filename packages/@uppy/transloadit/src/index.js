@@ -238,14 +238,13 @@ export default class Transloadit extends BasePlugin {
       const fileRemovedHandler = (fileRemoved, reason) => {
         if (reason === 'cancel-all') {
           assembly.close()
-          this.client.cancelAssembly(newAssembly).catch(() => { /* ignore potential errors */ })
           this.uppy.off(fileRemovedHandler)
         } else if (fileRemoved.id in updatedFiles) {
           delete updatedFiles[fileRemoved.id]
           const nbOfRemainingFiles = Object.keys(updatedFiles).length
           if (nbOfRemainingFiles === 0) {
             assembly.close()
-            this.client.cancelAssembly(newAssembly).catch(() => { /* ignore potential errors */ })
+            this.#cancelAssembly(newAssembly).catch(() => { /* ignore potential errors */ })
             this.uppy.off(fileRemovedHandler)
           } else {
             this.client.updateNumberOfFilesInAssembly(newAssembly, nbOfRemainingFiles)

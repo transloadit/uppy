@@ -15,7 +15,7 @@ tagline: "Uppy plugin that includes all remote sources that Uppy+Companion offer
 ```js
 import Uppy from '@uppy/core'
 import Dashbaord from '@uppy/dashboard'
-import RemoteSources from '@uppy/compressor'
+import RemoteSources from '@uppy/remote-sources'
 
 const uppy = new Uppy()
 uppy.use(Dashboard)

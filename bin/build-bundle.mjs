@@ -18,6 +18,7 @@ function buildBundle (srcFile, bundleFile, { minify = true, standalone = '', plu
     outfile: bundleFile,
     platform: 'browser',
     minify,
+    keepNames: true,
     plugins,
     target,
     format,
