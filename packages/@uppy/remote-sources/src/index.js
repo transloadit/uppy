@@ -13,6 +13,7 @@ import Zoom from '@uppy/zoom'
 import packageJson from '../package.json'
 
 const availablePlugins = {
+  // Using a null-prototype object to avoid prototype pollution.
   __proto__: null,
   Box,
   Dropbox,
