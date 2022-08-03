@@ -40,6 +40,46 @@ This has now led us to deprecating Robodog and embrace Uppy for its strong suits
 
 To migrate from Robodog to Uppy plugins, go through the [list of plugins](/docs/plugins/) and install and use the ones you need.
 
+### Smaller breaking changes
+
+We also made a couple of changes which are technically breaking, but unlikely to be so for most users (making something internal private, for instance).
+
+#### `@uppy/core`
+
+* Remove `AggregateError` polyfill
+  * reason: [should be polyfilled by the user](https://github.com/transloadit/uppy/pull/3532#discussion_r818602636)
+  * migrate: install a `AggregateError` polyfill or use `core-js`
+* Remove `reset()` method
+  * reason: it’s a duplicate of `cancelAll`, but with a less intention revealing name
+  * migrate: use `cancelAll`
+* Remove backwards compatible exports (static properties on `Uppy`). Exports, such as `debugLogger`, used to also be accesible on the `Uppy` export. This has now been removed.
+  * reason: transition to ESM
+  * migrate: import the `Uppy` class by default and/or use named exports for everything else.
+
+#### `@uppy/aws-s3-multipart`
+
+* Remove `client` getter and setter.
+  * reason: internal usage only
+  * migrate: use exposed options only
+
+#### `@uppy/react`
+
+* Don’t expose `validProps` on the exported components.
+  * reason: internal usage only
+  * migrate: use exposed options only
+
+#### `@uppy/store-redux`
+
+* Remove backwards compatible exports (static properties on `ReduxStore`). Exports, such as `reducer`, used to also be accesible on the `ReduxStore` export. This has now been removed.
+  * reason: transition to ESM
+  * migrate: use named imports
+
+#### `@uppy/thumbnail-generator`
+
+* Remove `rotateImage`, `protect`, and `canvasToBlob` from plugin prototype.
+  * reason: internal usage only
+  * migrate: use exposed options only
+
 ## Migrate from Companion 3.x to 4.x
 
 ### Minimum required Node.js version is v14.20.0
