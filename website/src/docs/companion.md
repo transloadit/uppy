@@ -326,7 +326,7 @@ const options = {
     },
   },
   s3: {
-    getKey: (req, filename, metadata) => filename,
+    getKey: (req, filename, metadata) => `${crypto.randomUUID()}-${filename}`,
     key: '***',
     secret: '***',
     bucket: 'bucket-name',
@@ -453,24 +453,26 @@ Get the key name for a file. The key is the file path to which the file will be 
 * `filename`, the original name of the uploaded file;
 * `metadata`, user-provided metadata for the file. See the [`@uppy/aws-s3`](https://uppy.io/docs/aws-s3/#metaFields) docs. The `@uppy/aws-s3-multipart` plugin unconditionally sends all metadata fields, so they all are available here.
 
+If your bucket is public, you should include a cryptographically random token in the uploaded name for security (hence the default `crypto.randomUUID()`).
+
 This function should return a string `key`. The `req` parameter can be used to upload to a user-specific folder in your bucket, for example:
 
 ```js
 app.use(authenticationMiddleware)
 app.use(companion.app({
   s3: {
-    getKey: (req, filename, metadata) => `${req.user.id}/${filename}`,
+    getKey: (req, filename, metadata) => `${req.user.id}/${crypto.randomUUID()}-${filename}`,
     /* auth options */
   },
 }))
 ```
 
-The default implementation returns the `filename`, so all files will be uploaded to the root of the bucket as their original file name.
+The default implementation uploads all files to the root of the bucket as their original file name, prefixed with a random UUID.
 
 ```js
 app.use(companion.app({
   s3: {
-    getKey: (req, filename, metadata) => filename,
+    getKey: (req, filename, metadata) => `${crypto.randomUUID()}-${filename}`,
   },
 }))
 ```

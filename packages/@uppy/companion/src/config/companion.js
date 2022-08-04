@@ -2,6 +2,7 @@ const ms = require('ms')
 const fs = require('node:fs')
 const { isURL } = require('validator')
 const logger = require('../server/logger')
+const { defaultGetKey } = require('../server/helpers/utils')
 
 const defaultOptions = {
   server: {
@@ -13,7 +14,7 @@ const defaultOptions = {
     endpoint: 'https://{service}.{region}.amazonaws.com',
     conditions: [],
     useAccelerateEndpoint: false,
-    getKey: (req, filename) => filename,
+    getKey: defaultGetKey,
     expires: ms('5 minutes') / 1000,
   },
   allowLocalUrls: false,
