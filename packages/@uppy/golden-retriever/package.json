@@ -30,6 +30,5 @@
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^"
-  },
-  "stableVersion": "2.1.0"
+  }
 }

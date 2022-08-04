@@ -21,6 +21,5 @@
   },
   "publishConfig": {
     "access": "public"
-  },
-  "stableVersion": "0.4.8"
+  }
 }

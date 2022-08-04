@@ -37,6 +37,5 @@
   "files": [
     "src",
     "dist"
-  ],
-  "stableVersion": "1.0.8"
+  ]
 }

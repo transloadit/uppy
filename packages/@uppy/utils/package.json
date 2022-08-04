@@ -23,6 +23,5 @@
   },
   "devDependencies": {
     "@jest/globals": "^27.4.2"
-  },
-  "stableVersion": "4.1.0"
+  }
 }

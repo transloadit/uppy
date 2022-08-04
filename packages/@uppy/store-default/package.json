@@ -21,6 +21,5 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/transloadit/uppy.git"
-  },
-  "stableVersion": "2.1.0"
+  }
 }

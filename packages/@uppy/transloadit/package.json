@@ -41,6 +41,5 @@
   "devDependencies": {
     "@jest/globals": "^27.4.2",
     "whatwg-fetch": "^3.6.2"
-  },
-  "stableVersion": "2.3.0"
+  }
 }

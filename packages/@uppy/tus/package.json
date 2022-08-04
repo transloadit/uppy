@@ -30,6 +30,5 @@
   "peerDependencies": {
     "@jest/globals": "^27.4.2",
     "@uppy/core": "workspace:^"
-  },
-  "stableVersion": "2.4.0"
+  }
 }

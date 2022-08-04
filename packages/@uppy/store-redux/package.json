@@ -26,6 +26,5 @@
   "devDependencies": {
     "@jest/globals": "^27.4.2",
     "redux": "4.0.5"
-  },
-  "stableVersion": "2.1.0"
+  }
 }
