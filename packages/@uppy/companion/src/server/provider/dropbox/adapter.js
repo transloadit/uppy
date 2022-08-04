@@ -1,10 +1,6 @@
 const mime = require('mime-types')
 const querystring = require('node:querystring')
 
-exports.getUsername = (data) => {
-  return data.user_email
-}
-
 exports.isFolder = (item) => {
   return item['.tag'] === 'folder'
 }

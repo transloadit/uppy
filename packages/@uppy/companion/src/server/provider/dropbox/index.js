@@ -20,6 +20,27 @@ function httpHeaderSafeJson (v) {
     })
 }
 
+function adaptData (res, email, buildURL) {
+  const items = adapter.getItemSubList(res).map((item) => ({
+    isFolder: adapter.isFolder(item),
+    icon: adapter.getItemIcon(item),
+    name: adapter.getItemName(item),
+    mimeType: adapter.getMimeType(item),
+    id: adapter.getItemId(item),
+    thumbnail: buildURL(adapter.getItemThumbnailUrl(item), true),
+    requestPath: adapter.getItemRequestPath(item),
+    modifiedDate: adapter.getItemModifiedDate(item),
+    size: adapter.getItemSize(item),
+  }))
+  items.sort((a, b) => a.name.localeCompare(b.name, 'en-US', { numeric: true }))
+
+  return {
+    username: email,
+    items,
+    nextPagePath: adapter.getNextPagePath(res),
+  }
+}
+
 /**
  * Adapter for API https://www.dropbox.com/developers/documentation/http/documentation
  */
@@ -39,77 +60,48 @@ class DropBox extends Provider {
     return 'dropbox'
   }
 
-  _userInfo ({ token }, done) {
-    this.client
+  async _userInfo ({ token }) {
+    const client = this.client
       .post('users/get_current_account')
       .options({ version: '2' })
       .auth(token)
-      .request(done)
+    return promisify(client.request.bind(client))()
   }
 
   /**
-   * Makes 2 requests in parallel - 1. to get files, 2. to get user email
-   * it then waits till both requests are done before proceeding with the callback
    *
    * @param {object} options
-   * @param {Function} done
    */
-  _list (options, done) {
-    let userInfoDone = false
-    let statsDone = false
-    let userInfo
-    let stats
-    let reqErr
-    const finishReq = () => {
-      if (reqErr) {
-        logger.error(reqErr, 'provider.dropbox.list.error')
-        done(reqErr)
-      } else {
-        stats.body.user_email = userInfo.body.email
-        done(null, this.adaptData(stats.body, options.companion))
-      }
+  async list (options) {
+    try {
+      const responses = await Promise.all([
+        this._stats(options),
+        this._userInfo(options),
+      ])
+      responses.forEach((response) => {
+        if (response.statusCode !== 200) throw this._error(null, response)
+      })
+      const [{ body: stats }, { body: { email } }] = responses
+      return adaptData(stats, email, options.companion.buildURL)
+    } catch (err) {
+      logger.error(err, 'provider.dropbox.list.error')
+      throw err
     }
-
-    this.stats(options, (err, resp) => {
-      statsDone = true
-      stats = resp
-      if (err || resp.statusCode !== 200) {
-        err = this._error(err, resp)
-      }
-      reqErr = reqErr || err
-      if (userInfoDone) {
-        finishReq()
-      }
-    })
-
-    this._userInfo(options, (err, resp) => {
-      userInfoDone = true
-      userInfo = resp
-      if (err || resp.statusCode !== 200) {
-        err = this._error(err, resp)
-      }
-
-      reqErr = reqErr || err
-      if (statsDone) {
-        finishReq()
-      }
-    })
   }
 
-  stats ({ directory, query, token }, done) {
+  async _stats ({ directory, query, token }) {
     if (query.cursor) {
-      this.client
+      const client = this.client
         .post('files/list_folder/continue')
         .options({ version: '2' })
         .auth(token)
         .json({
           cursor: query.cursor,
         })
-        .request(done)
-      return
+      return promisify(client.request.bind(client))()
     }
 
-    this.client
+    const client = this.client
       .post('files/list_folder')
       .options({ version: '2' })
       .qs(query)
@@ -118,7 +110,8 @@ class DropBox extends Provider {
         path: `${directory || ''}`,
         include_non_downloadable_files: false,
       })
-      .request(done)
+
+    return promisify(client.request.bind(client))()
   }
 
   async download ({ id, token }) {
@@ -160,57 +153,37 @@ class DropBox extends Provider {
     }
   }
 
-  _size ({ id, token }, done) {
-    return this.client
+  async size ({ id, token }) {
+    const client = this.client
       .post('files/get_metadata')
       .options({ version: '2' })
       .auth(token)
       .json({ path: id })
-      .request((err, resp, body) => {
-        if (err || resp.statusCode !== 200) {
-          err = this._error(err, resp)
-          logger.error(err, 'provider.dropbox.size.error')
-          return done(err)
-        }
-        done(null, parseInt(body.size, 10))
-      })
+
+    try {
+      const resp = await promisify(client.request.bind(client))()
+      if (resp.statusCode !== 200) throw this._error(null, resp)
+      return parseInt(resp.body.size, 10)
+    } catch (err) {
+      logger.error(err, 'provider.dropbox.size.error')
+      throw err
+    }
   }
 
-  _logout ({ token }, done) {
-    return this.client
+  async logout ({ token }) {
+    const client = this.client
       .post('auth/token/revoke')
       .options({ version: '2' })
       .auth(token)
-      .request((err, resp) => {
-        if (err || resp.statusCode !== 200) {
-          logger.error(err, 'provider.dropbox.logout.error')
-          done(this._error(err, resp))
-          return
-        }
-        done(null, { revoked: true })
-      })
-  }
 
-  adaptData (res, companion) {
-    const data = { username: adapter.getUsername(res), items: [] }
-    const items = adapter.getItemSubList(res)
-    items.forEach((item) => {
-      data.items.push({
-        isFolder: adapter.isFolder(item),
-        icon: adapter.getItemIcon(item),
-        name: adapter.getItemName(item),
-        mimeType: adapter.getMimeType(item),
-        id: adapter.getItemId(item),
-        thumbnail: companion.buildURL(adapter.getItemThumbnailUrl(item), true),
-        requestPath: adapter.getItemRequestPath(item),
-        modifiedDate: adapter.getItemModifiedDate(item),
-        size: adapter.getItemSize(item),
-      })
-    })
-
-    data.nextPagePath = adapter.getNextPagePath(res)
-
-    return data
+    try {
+      const resp = await promisify(client.request.bind(client))()
+      if (resp.statusCode !== 200) throw this._error(null, resp)
+      return { revoked: true }
+    } catch (err) {
+      logger.error(err, 'provider.dropbox.logout.error')
+      throw err
+    }
   }
 
   _error (err, resp) {
@@ -224,8 +197,6 @@ class DropBox extends Provider {
   }
 }
 
-DropBox.prototype.list = promisify(DropBox.prototype._list)
-DropBox.prototype.size = promisify(DropBox.prototype._size)
-DropBox.prototype.logout = promisify(DropBox.prototype._logout)
+DropBox.version = 2
 
 module.exports = DropBox
