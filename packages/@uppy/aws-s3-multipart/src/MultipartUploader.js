@@ -415,12 +415,10 @@ class MultipartUploader {
   #abortUpload () {
     this.abortController.abort()
 
-    this.createdPromise.then(() => {
-      this.options.abortMultipartUpload({
-        key: this.key,
-        uploadId: this.uploadId,
-      })
-    }, () => {
+    this.createdPromise.then(() => this.options.abortMultipartUpload({
+      key: this.key,
+      uploadId: this.uploadId,
+    })).catch(() => {
       // if the creation failed we do not need to abort
     })
   }
