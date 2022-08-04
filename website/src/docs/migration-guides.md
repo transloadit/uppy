@@ -8,6 +8,85 @@ category: "Docs"
 
 These cover all the major Uppy versions and how to migrate to them.
 
+## Migrate from Robodog to Uppy plugins
+
+Uppy is flexible and extensible through plugins. But the integration code could sometimes be daunting. This is what brought [Robodog](/docs/robodog/) to life. An alternative with the same features, but with a more ergonomic and minimal API.
+
+But, it didn’t come with its own set of new problems:
+
+* It tries to do the exact same, but it looks like a different product
+* It’s confusing for users whether they want to use Robodog or Uppy directly.
+* Robodog is more ergonomic because it’s limited. When you hit such a limit, you need to refactor everything to Uppy with plugins.
+* Documentation is scarce, and the trade offs are unclear
+* It’s not marketed, you need to stumble on it in the docs.
+* Extra maintenance burden
+* Extra hosting effort and costs
+
+This has now led us to deprecating Robodog and embrace Uppy for its strong suits; modularity and flexibility. At the same time, we also introduced something to take away some repetitive integration code: [`@uppy/remote-sources`](/docs/remote-sources).
+
+To mimic the Robodog implementation with all its features, you can use the code snippet below. But chances are Robodog did more than you need so feel free to remove things or go through the [list of plugins](/docs/plugins/) and install and use the ones you need.
+
+```js
+import Uppy from '@uppy/core'
+import Dashboard from '@uppy/dashboard'
+import RemoteSources from '@uppy/remote-sources'
+import Webcam from '@uppy/webcam'
+import ScreenCapture from '@uppy/screen-capture'
+import GoldenRetriever from '@uppy/golden-retriever'
+import ImageEditor from '@uppy/image-editor'
+import Audio from '@uppy/audio'
+import Transloadit from '@uppy/transloadit'
+
+import '@uppy/core/dist/style.css'
+import '@uppy/dashboard/dist/style.css'
+import '@uppy/audio/dist/style.css'
+import '@uppy/screen-capture/dist/style.css'
+import '@uppy/image-editor/dist/style.css'
+
+const {
+  COMPANION_URL,
+  COMPANION_ALLOWED_HOSTS,
+  TRANSLOADIT_SERVICE_URL,
+  TRANSLOADIT_KEY,
+  TRANSLOADIT_SECRET,
+} = import.meta.env
+
+new Uppy()
+  .use(Dashboard, {
+    inline: true,
+    target: '#app',
+    showProgressDetails: true,
+    proudlyDisplayPoweredByUppy: true,
+  })
+  .use(RemoteSources, {
+    companionUrl: COMPANION_URL,
+    companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
+  })
+  .use(Webcam, {
+    target: Dashboard,
+    showVideoSourceDropdown: true,
+    showRecordingLength: true,
+  })
+  .use(Audio, {
+    target: Dashboard,
+    showRecordingLength: true,
+  })
+  .use(ScreenCapture, { target: Dashboard })
+  .use(ImageEditor, { target: Dashboard })
+  .use(Transloadit, {
+    service: TRANSLOADIT_SERVICE_URL,
+    async getAssemblyOptions (file) {
+      // This is where you configure your auth key, auth secret, and template ID
+      // https://uppy.io/docs/transloadit/#getAssemblyOptions-file
+      //
+      // It is important to set the secret in production:
+      // https://transloadit.com/docs/topics/signature-authentication/
+      const response = await fetch('/some-endpoint')
+      return response.json()
+    },
+  })
+```
+
 ## Migrate from Uppy 2.x to 3.x
 
 ### Uppy is pure ESM
@@ -25,21 +104,7 @@ gist for added information and help on how to do that.
 
 ### Robodog is deprecated
 
-Uppy is flexible and extensible through plugins. But the integration code could sometimes be daunting. This is what brought [Robodog](/docs/robodog/) to life. An alternative with the same features, but with a more ergonomic and minimal API.
-
-But, it didn’t come with its own set of new problems:
-
-* It tries to do the exact same, but it looks like a different product
-* It’s confusing for users whether they want to use Robodog or Uppy directly.
-* Robodog is more ergonomic because it’s limited. When you hit such a limit, you need to refactor everything to Uppy with plugins.
-* Documentation is scarce, and the trade offs are unclear
-* It’s not marketed, you need to stumble on it in the docs.
-* Extra maintenance burden
-* Extra hosting effort and costs
-
-This has now led us to deprecating Robodog and embrace Uppy for its strong suits; modularity and flexibility. At the same time, we also introduced something to take away some repetitive integration code: [`@uppy/remote-sources`](/docs/remote-sources).
-
-To migrate from Robodog to Uppy plugins, go through the [list of plugins](/docs/plugins/) and install and use the ones you need.
+See the [Robodog migration guide](#Migrate-from-Robodog-to-Uppy-plugins).
 
 ### Smaller breaking changes
 
