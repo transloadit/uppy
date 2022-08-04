@@ -40,7 +40,7 @@ export default class ReduxDevTools extends UIPlugin {
         // Implement monitors actions
         switch (message.payload.type) {
           case 'RESET':
-            this.uppy.reset()
+            this.uppy.cancelAll()
             return
           case 'IMPORT_STATE': {
             const { computedStates } = message.payload.nextLiftedState

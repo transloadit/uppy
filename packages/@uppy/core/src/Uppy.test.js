@@ -1,10 +1,12 @@
 /* eslint no-console: "off", no-restricted-syntax: "off" */
 import { afterEach, beforeEach, describe, expect, it, jest, xit } from '@jest/globals'
 
+import assert from 'node:assert'
 import fs from 'node:fs'
 import prettierBytes from '@transloadit/prettier-bytes'
 import Core from '../lib/index.js'
 import UIPlugin from '../lib/UIPlugin.js'
+import { debugLogger } from '../lib/loggers.js'
 import AcquirerPlugin1 from './mocks/acquirerPlugin1.js'
 import AcquirerPlugin2 from './mocks/acquirerPlugin2.js'
 import InvalidPlugin from './mocks/invalidPlugin.js'
@@ -203,7 +205,7 @@ describe('src/Core', () => {
     })
   })
 
-  it('should reset when the reset method is called', () => {
+  it('should cancel all when the `cancelAll` method is called', () => {
     // use DeepFrozenStore in some tests to make sure we are not mutating things
     const core = new Core({
       store: DeepFrozenStore(),
@@ -215,7 +217,7 @@ describe('src/Core', () => {
     core.on('state-update', coreStateUpdateEventMock)
     core.setState({ foo: 'bar', totalProgress: 30 })
 
-    core.reset()
+    core.cancelAll()
 
     expect(coreCancelEventMock).toHaveBeenCalledWith({ reason: 'user' }, undefined, undefined, undefined, undefined, undefined)
     expect(coreStateUpdateEventMock.mock.calls.length).toEqual(2)
@@ -261,6 +263,117 @@ describe('src/Core', () => {
 
     expect(core.getState().currentUploads[id]).toBeUndefined()
     expect(Object.keys(core.getState().files).length).toEqual(0)
+  })
+
+  it('should allow remove all uploads when individualCancellation is disabled', () => {
+    const core = new Core()
+
+    const { capabilities } = core.getState()
+    core.setState({
+      capabilities: {
+        ...capabilities,
+        individualCancellation: false,
+      },
+    })
+
+    core.addFile({
+      source: 'jest',
+      name: 'foo1.jpg',
+      type: 'image/jpeg',
+      data: new File([sampleImage], { type: 'image/jpeg' }),
+    })
+
+    core.addFile({
+      source: 'jest',
+      name: 'foo2.jpg',
+      type: 'image/jpeg',
+      data: new File([sampleImage], { type: 'image/jpeg' }),
+    })
+
+    const fileIDs = Object.keys(core.getState().files)
+    const id = core[Symbol.for('uppy test: createUpload')](fileIDs)
+
+    expect(core.getState().currentUploads[id]).toBeDefined()
+    expect(Object.keys(core.getState().files).length).toEqual(2)
+
+    core.removeFiles(fileIDs)
+
+    expect(core.getState().currentUploads[id]).toBeUndefined()
+    expect(Object.keys(core.getState().files).length).toEqual(0)
+  })
+
+  it('should disallow remove one upload when individualCancellation is disabled', () => {
+    const core = new Core()
+
+    const { capabilities } = core.getState()
+    core.setState({
+      capabilities: {
+        ...capabilities,
+        individualCancellation: false,
+      },
+    })
+
+    core.addFile({
+      source: 'jest',
+      name: 'foo1.jpg',
+      type: 'image/jpeg',
+      data: new File([sampleImage], { type: 'image/jpeg' }),
+    })
+
+    core.addFile({
+      source: 'jest',
+      name: 'foo2.jpg',
+      type: 'image/jpeg',
+      data: new File([sampleImage], { type: 'image/jpeg' }),
+    })
+
+    const fileIDs = Object.keys(core.getState().files)
+    const id = core[Symbol.for('uppy test: createUpload')](fileIDs)
+
+    expect(core.getState().currentUploads[id]).toBeDefined()
+    expect(Object.keys(core.getState().files).length).toEqual(2)
+
+    assert.throws(() => core.removeFile(fileIDs[0]), /individualCancellation is disabled/)
+
+    expect(core.getState().currentUploads[id]).toBeDefined()
+    expect(Object.keys(core.getState().files).length).toEqual(2)
+  })
+
+  it('should allow remove one upload when individualCancellation is enabled', () => {
+    const core = new Core()
+
+    const { capabilities } = core.getState()
+    core.setState({
+      capabilities: {
+        ...capabilities,
+        individualCancellation: true,
+      },
+    })
+
+    core.addFile({
+      source: 'jest',
+      name: 'foo1.jpg',
+      type: 'image/jpeg',
+      data: new File([sampleImage], { type: 'image/jpeg' }),
+    })
+
+    core.addFile({
+      source: 'jest',
+      name: 'foo2.jpg',
+      type: 'image/jpeg',
+      data: new File([sampleImage], { type: 'image/jpeg' }),
+    })
+
+    const fileIDs = Object.keys(core.getState().files)
+    const id = core[Symbol.for('uppy test: createUpload')](fileIDs)
+
+    expect(core.getState().currentUploads[id]).toBeDefined()
+    expect(Object.keys(core.getState().files).length).toEqual(2)
+
+    core.removeFile(fileIDs[0])
+
+    expect(core.getState().currentUploads[id]).toBeDefined()
+    expect(Object.keys(core.getState().files).length).toEqual(1)
   })
 
   it('should close, reset and uninstall when the close method is called', () => {
@@ -896,7 +1009,12 @@ describe('src/Core', () => {
       core.addFile({ source: 'jest', name: 'bar.jpg', type: 'image/jpeg', data: new Uint8Array() })
       core.addFile({ source: 'file3', name: 'file3.jpg', type: 'image/jpeg', data: new Uint8Array() })
 
-      return expect(core.upload()).resolves.toMatchSnapshot()
+      // uploadID is random, we don't want randomness in the snapshot
+      const validateNanoID = r => (
+        typeof r.uploadID === 'string' && r.uploadID.length === 21 ? ({ ...r, uploadID: 'cjd09qwxb000dlql4tp4doz8h' }) : r
+      )
+
+      return expect(core.upload().then(validateNanoID)).resolves.toMatchSnapshot()
     })
 
     it('should not upload if onBeforeUpload returned false', () => {
@@ -954,7 +1072,7 @@ describe('src/Core', () => {
       )
     })
 
-    it('allows new files again with allowMultipleUploadBatches: false after reset() was called', async () => {
+    it('allows new files again with allowMultipleUploadBatches: false after cancelAll() was called', async () => {
       const core = new Core({ allowMultipleUploadBatches: false })
 
       core.addFile({
@@ -965,7 +1083,7 @@ describe('src/Core', () => {
       })
       await expect(core.upload()).resolves.toBeDefined()
 
-      core.reset()
+      core.cancelAll()
 
       core.addFile({
         source: 'jest',
@@ -2018,7 +2136,7 @@ describe('src/Core', () => {
       console.error = jest.fn()
 
       const core = new Core({
-        logger: Core.debugLogger,
+        logger: debugLogger,
       })
 
       core.log('test test')

@@ -1,10 +1,8 @@
-const React = require('react')
-const PropTypes = require('prop-types')
-const uppyPropType = require('./propTypes').uppy
+import { createElement as h, Component } from 'react'
+import PropTypes from 'prop-types'
+import { uppy as uppyPropType } from './propTypes.js'
 
-const h = React.createElement
-
-class UppyWrapper extends React.Component {
+class UppyWrapper extends Component {
   constructor (props) {
     super(props)
 
@@ -16,7 +14,8 @@ class UppyWrapper extends React.Component {
   }
 
   componentDidUpdate (prevProps) {
-    if (prevProps.uppy !== this.props.uppy) {
+    const { uppy } = this.props
+    if (prevProps.uppy !== uppy) {
       this.uninstallPlugin(prevProps)
       this.installPlugin()
     }
@@ -27,17 +26,18 @@ class UppyWrapper extends React.Component {
   }
 
   installPlugin () {
-    const plugin = this.props.uppy
-      .getPlugin(this.props.plugin)
+    const { plugin, uppy } = this.props
+    const pluginObj = uppy
+      .getPlugin(plugin)
 
-    plugin.mount(this.container, plugin)
+    pluginObj.mount(this.container, pluginObj)
   }
 
-  uninstallPlugin (props = this.props) {
-    const plugin = props.uppy
-      .getPlugin(this.props.plugin)
-
-    plugin.unmount()
+  uninstallPlugin ({ uppy } = this.props) {
+    const { plugin } = this.props
+    uppy
+      .getPlugin(plugin)
+      .unmount()
   }
 
   refContainer (container) {
@@ -50,8 +50,8 @@ class UppyWrapper extends React.Component {
 }
 
 UppyWrapper.propTypes = {
-  uppy: uppyPropType,
+  uppy: uppyPropType.isRequired,
   plugin: PropTypes.string.isRequired,
 }
 
-module.exports = UppyWrapper
+export default UppyWrapper

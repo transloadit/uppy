@@ -53,7 +53,8 @@ const uppyOptions = {
   debug: true,
 }
 
-app.use(companion.app(uppyOptions))
+const { app: companionApp } = companion.app(uppyOptions)
+app.use(companionApp)
 
 // handle 404
 app.use((req, res) => {

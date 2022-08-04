@@ -1,5 +1,12 @@
 # @uppy/store-redux
 
+## 3.0.0-beta.2
+
+Released: 2022-07-27
+Included in: Uppy v3.0.0-beta.3
+
+- @uppy/aws-s3,@uppy/core,@uppy/dashboard,@uppy/store-redux,@uppy/xhr-upload: upgrade `nanoid` to v4 (Antoine du Hamel / #3904)
+
 ## 2.1.0
 
 Released: 2022-05-30

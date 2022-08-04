@@ -1,6 +1,6 @@
 const chalk = require('chalk')
 const escapeStringRegexp = require('escape-string-regexp')
-const util = require('util')
+const util = require('node:util')
 const { ProviderApiError, ProviderAuthError } = require('./provider/error')
 
 const valuesToMask = []

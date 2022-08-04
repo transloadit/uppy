@@ -1,7 +1,9 @@
-const fs = require('fs')
-const path = require('path')
+const fs = require('node:fs')
+const path = require('node:path')
 const budo = require('budo')
 const router = require('router')
+const crypto = require('node:crypto')
+
 const companion = require('../../packages/@uppy/companion')
 
 /**
@@ -27,12 +29,12 @@ const app = router()
 app.use(require('cors')())
 app.use(require('body-parser').json())
 
-app.use('/companion', companion.app({
+const { app: companionApp } = companion.app({
   providerOptions: {
     s3: {
       // This is the crucial part; set an endpoint template for the service you want to use.
       endpoint: 'https://{region}.digitaloceanspaces.com',
-      getKey: (req, filename) => `uploads/${filename}`,
+      getKey: (req, filename) => `${crypto.randomUUID()}-${filename}`,
 
       key: process.env.COMPANION_AWS_KEY,
       secret: process.env.COMPANION_AWS_SECRET,
@@ -41,7 +43,9 @@ app.use('/companion', companion.app({
     },
   },
   server: { serverUrl: `localhost:${PORT}` },
-}))
+})
+
+app.use('/companion', companionApp)
 
 // Serve the built CSS file.
 app.get('/uppy.min.css', (req, res) => {

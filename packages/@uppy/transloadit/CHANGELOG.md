@@ -1,5 +1,33 @@
 # @uppy/transloadit
 
+## 3.0.0-beta.4
+
+Released: 2022-08-03
+Included in: Uppy v3.0.0-beta.4
+
+- @uppy/transloadit: remove static properties in favor of exports (Antoine du Hamel / #3927)
+
+## 3.0.0-beta
+
+Released: 2022-05-30
+Included in: Uppy v3.0.0-beta
+
+- @uppy/transloadit: remove IE 10 hack (Antoine du Hamel / #3777)
+
+## 2.3.6
+
+Released: 2022-08-02
+Included in: Uppy v2.13.2
+
+- @uppy/transloadit: send `assembly-cancelled` only once (Antoine du Hamel / #3937)
+
+## 2.3.5
+
+Released: 2022-07-27
+Included in: Uppy v2.13.1
+
+- @uppy/transloadit: cancel assemblies when all its files have been removed (Antoine du Hamel / #3893)
+
 ## 2.3.4
 
 Released: 2022-07-18

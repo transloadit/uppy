@@ -1,9 +1,9 @@
 {
   "name": "uppy",
   "description": "Extensible JavaScript file upload widget with support for drag&drop, resumable uploads, previews, restrictions, file processing/encoding, remote providers like Instagram, Dropbox, Google Drive, S3 and more :dog:",
-  "version": "2.13.0",
+  "version": "3.0.0-beta.4",
   "license": "MIT",
-  "main": "index.js",
+  "main": "index.mjs",
   "module": "index.mjs",
   "unpkg": "dist/uppy.min.js",
   "style": "dist/uppy.min.css",
@@ -54,7 +54,6 @@
     "@uppy/progress-bar": "workspace:^",
     "@uppy/provider-views": "workspace:^",
     "@uppy/redux-dev-tools": "workspace:^",
-    "@uppy/remote-sources": "workspace:^",
     "@uppy/screen-capture": "workspace:^",
     "@uppy/status-bar": "workspace:^",
     "@uppy/store-default": "workspace:^",
@@ -76,7 +75,5 @@
     "resize-observer-polyfill": "^1.5.1",
     "whatwg-fetch": "^3.6.2"
   },
-  "publishConfig": {
-    "access": "public"
-  }
+  "stableVersion": "2.11.0"
 }

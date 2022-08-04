@@ -90,11 +90,3 @@ export function middleware () {
 }
 
 export default ReduxStore
-
-// Backward compatibility: we want these to keep being available as static
-// properties of `ReduxStore` to avoid a breaking change.
-// TODO: remove these in the next semver-major.
-ReduxStore.ReduxStore = ReduxStore
-ReduxStore.STATE_UPDATE = STATE_UPDATE
-ReduxStore.reducer = reducer
-ReduxStore.middleware = middleware

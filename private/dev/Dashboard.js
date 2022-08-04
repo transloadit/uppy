@@ -1,6 +1,6 @@
 // The @uppy/ dependencies are resolved from source
 /* eslint-disable import/no-extraneous-dependencies */
-import Uppy from '@uppy/core'
+import Uppy, { debugLogger } from '@uppy/core'
 import Dashboard from '@uppy/dashboard'
 import RemoteSources from '@uppy/remote-sources'
 import Webcam from '@uppy/webcam'
@@ -56,7 +56,7 @@ async function getAssemblyOptions () {
 
 export default () => {
   const uppyDashboard = new Uppy({
-    logger: Uppy.debugLogger,
+    logger: debugLogger,
     meta: {
       username: 'John',
       license: 'Creative Commons',

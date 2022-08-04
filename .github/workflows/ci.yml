@@ -13,12 +13,10 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [12.x, 14.x, 16.x, 17.x]
+        node-version: [14.x, 16.x, 18.x]
     steps:
       - name: Checkout sources
         uses: actions/checkout@v3
-      - name: Install Corepack if needed
-        run: corepack -v || npm install -g corepack
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(corepack yarn config get cacheFolder)"

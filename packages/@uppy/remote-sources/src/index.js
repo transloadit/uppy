@@ -12,7 +12,9 @@ import Zoom from '@uppy/zoom'
 
 import packageJson from '../package.json'
 
-const availablePlugins = [
+const availablePlugins = {
+  // Using a null-prototype object to avoid prototype pollution.
+  __proto__: null,
   Box,
   Dropbox,
   Facebook,
@@ -22,7 +24,7 @@ const availablePlugins = [
   Unsplash,
   Url,
   Zoom,
-]
+}
 
 export default class RemoteSources extends BasePlugin {
   static VERSION = packageJson.version
@@ -35,16 +37,7 @@ export default class RemoteSources extends BasePlugin {
     this.type = 'acquirer'
 
     const defaultOptions = {
-      sources: [
-        'Box',
-        'Dropbox',
-        'Facebook',
-        'GoogleDrive',
-        'Instagram',
-        'OneDrive',
-        'Unsplash',
-        'Url',
-      ],
+      sources: Object.keys(availablePlugins),
       target: Dashboard,
     }
     this.opts = { ...defaultOptions, ...opts }
@@ -63,14 +56,16 @@ export default class RemoteSources extends BasePlugin {
   install () {
     this.opts.sources.forEach((pluginId) => {
       const optsForRemoteSourcePlugin = { ...this.opts, sources: undefined }
-      const plugin = availablePlugins.find(p => p.name === pluginId)
+      const plugin = availablePlugins[pluginId]
       if (plugin == null) {
-        const pluginNames = availablePlugins.map(p => p.name)
+        const pluginNames = Object.keys(availablePlugins)
         const formatter = new Intl.ListFormat('en', { style: 'long', type: 'disjunction' })
         throw new Error(`Invalid plugin: "${pluginId}" is not one of: ${formatter.format(pluginNames)}.`)
       }
       this.uppy.use(plugin, optsForRemoteSourcePlugin)
-      this.#installedPlugins.add(plugin)
+      // `plugin` is a class, but we want to track the instance object
+      // so we have to do `getPlugin` here.
+      this.#installedPlugins.add(this.uppy.getPlugin(pluginId))
     })
   }
 

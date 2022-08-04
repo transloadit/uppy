@@ -261,4 +261,4 @@ const getHTMLProps = (props) => {
   )
 }
 
-module.exports = getHTMLProps
+export default getHTMLProps

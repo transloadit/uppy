@@ -1,7 +1,6 @@
 import { h, Component } from 'preact'
 
-// TODO: rename this class to StopWatch in the next major.
-class Stopwatch extends Component {
+class StopWatch extends Component {
   constructor (props) {
     super(props)
     this.state = { elapsedTime: 0 }
@@ -105,4 +104,4 @@ class Stopwatch extends Component {
   }
 }
 
-export default Stopwatch
+export default StopWatch

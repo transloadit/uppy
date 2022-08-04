@@ -65,7 +65,7 @@ class Uppy {
       meta: {},
       onBeforeFileAdded: (currentFile) => currentFile,
       onBeforeUpload: (files) => files,
-      store: DefaultStore(),
+      store: new DefaultStore(),
       logger: justErrorsLogger,
       infoTimeout: 5000,
     }
@@ -677,6 +677,12 @@ class Uppy {
         return
       }
 
+      const { capabilities } = this.getState()
+      if (newFileIDs.length !== currentUploads[uploadID].fileIDs.length
+          && !capabilities.individualCancellation) {
+        throw new Error('individualCancellation is disabled')
+      }
+
       updatedUploads[uploadID] = {
         ...currentUploads[uploadID],
         fileIDs: newFileIDs,
@@ -835,11 +841,6 @@ class Uppy {
       forceAllowNewUpload: true, // create new upload even if allowNewUpload: false
     })
     return this.#runUpload(uploadID)
-  }
-
-  // todo remove in next major. what is the point of the reset method when we have cancelAll or vice versa?
-  reset (...args) {
-    this.cancelAll(...args)
   }
 
   logout () {

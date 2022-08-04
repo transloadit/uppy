@@ -51,10 +51,8 @@ export default class DropTarget extends BasePlugin {
     }
   }
 
-  isFileTransfer = isFileTransfer // TODO: expose this as a static instead (or don't expose it at all) in the next major.
-
   handleDrop = async (event) => {
-    if (!this.isFileTransfer(event)) {
+    if (!isFileTransfer(event)) {
       return
     }
 
@@ -97,7 +95,7 @@ export default class DropTarget extends BasePlugin {
   }
 
   handleDragOver = (event) => {
-    if (!this.isFileTransfer(event)) {
+    if (!isFileTransfer(event)) {
       return
     }
 
@@ -116,7 +114,7 @@ export default class DropTarget extends BasePlugin {
   }
 
   handleDragLeave = (event) => {
-    if (!this.isFileTransfer(event)) {
+    if (!isFileTransfer(event)) {
       return
     }
 

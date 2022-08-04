@@ -1,5 +1,12 @@
 # @uppy/screen-capture
 
+## 3.0.0-beta.2
+
+Released: 2022-08-03
+Included in: Uppy v3.0.0-beta.4
+
+- @uppy/screen-capture: fix TODOs (Antoine du Hamel / #3930)
+
 ## 2.1.1
 
 Released: 2022-05-30

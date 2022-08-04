@@ -53,7 +53,7 @@ export default class Dashboard extends UIPlugin {
 
     this.defaultLocale = locale
 
-    // set default options
+    // set default options, must be kept in sync with packages/@uppy/react/src/DashboardModal.js
     const defaultOptions = {
       target: 'body',
       metaFields: [],
@@ -73,7 +73,7 @@ export default class Dashboard extends UIPlugin {
       hidePauseResumeButton: false,
       hideProgressAfterFinish: false,
       doneButtonHandler: () => {
-        this.uppy.reset()
+        this.uppy.cancelAll()
         this.requestCloseModal()
       },
       note: null,
@@ -90,6 +90,8 @@ export default class Dashboard extends UIPlugin {
       showSelectedFiles: true,
       showRemoveButtonAfterComplete: false,
       browserBackButtonClose: false,
+      showNativePhotoCameraButton: false,
+      showNativeVideoCameraButton: false,
       theme: 'light',
       autoOpenFileEditor: false,
       disabled: false,
@@ -967,6 +969,8 @@ export default class Dashboard extends UIPlugin {
       maxNumberOfFiles: this.uppy.opts.restrictions.maxNumberOfFiles,
       requiredMetaFields: this.uppy.opts.restrictions.requiredMetaFields,
       showSelectedFiles: this.opts.showSelectedFiles,
+      showNativePhotoCameraButton: this.opts.showNativePhotoCameraButton,
+      showNativeVideoCameraButton: this.opts.showNativeVideoCameraButton,
       handleCancelRestore: this.handleCancelRestore,
       handleRequestThumbnail: this.handleRequestThumbnail,
       handleCancelThumbnail: this.handleCancelThumbnail,

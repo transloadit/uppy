@@ -26,7 +26,7 @@ exports.config = {
   },
   onPrepare () {
     require('ts-node').register({
-      project: require('path').join(__dirname, './tsconfig.json'),
+      project: require('node:path').join(__dirname, './tsconfig.json'),
     })
     // eslint-disable-next-line no-undef
     jasmine.getEnv().addReporter(new SpecReporter({

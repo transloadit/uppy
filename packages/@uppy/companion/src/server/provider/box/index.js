@@ -1,6 +1,6 @@
 const request = require('request')
 const purest = require('purest')({ request })
-const { promisify } = require('util')
+const { promisify } = require('node:util')
 
 const Provider = require('../Provider')
 const logger = require('../../logger')
@@ -215,8 +215,6 @@ class Box extends Provider {
     return err
   }
 }
-
-Box.version = 2
 
 Box.prototype.list = promisify(Box.prototype._list)
 Box.prototype.size = promisify(Box.prototype._size)

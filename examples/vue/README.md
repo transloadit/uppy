@@ -1,21 +1,11 @@
-# uppy-vue
+# Vue 2 example
 
-## Project setup
+You’re browsing the documentation for Vue v2.x and earlier. Check out
+[Vue 3 example](../vue3/) for new projects.
 
-    npm install
+To run the example, from the root directory of this repo, run the following commands:
 
-### Compiles and hot-reloads for development
-
-    npm run serve
-
-### Compiles and minifies for production
-
-    npm run build
-
-### Lints and fixes files
-
-    npm run lint
-
-### Customize configuration
-
-See [Configuration Reference](https://cli.vuejs.org/config/).
+```sh
+corepack yarn install
+corepack yarn workspace @uppy-example/vue2 dev
+```

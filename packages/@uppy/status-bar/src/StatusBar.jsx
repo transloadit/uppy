@@ -1,241 +1,220 @@
-// TODO: rename this file to StatusBarUI>jsx on the next major.
-import { h } from 'preact'
-import classNames from 'classnames'
+import { UIPlugin } from '@uppy/core'
+import getSpeed from '@uppy/utils/lib/getSpeed'
+import getBytesRemaining from '@uppy/utils/lib/getBytesRemaining'
+import getTextDirection from '@uppy/utils/lib/getTextDirection'
 import statusBarStates from './StatusBarStates.js'
-import calculateProcessingProgress from './calculateProcessingProgress.js'
+import StatusBarUI from './StatusBarUI.jsx'
 
-import {
-  UploadBtn,
-  RetryBtn,
-  CancelBtn,
-  PauseResumeButton,
-  DoneBtn,
-  ProgressBarProcessing,
-  ProgressBarError,
-  ProgressBarUploading,
-  ProgressBarComplete,
-} from './Components.jsx'
+import packageJson from '../package.json'
+import locale from './locale.js'
 
-const {
-  STATE_ERROR,
-  STATE_WAITING,
-  STATE_PREPROCESSING,
-  STATE_UPLOADING,
-  STATE_POSTPROCESSING,
-  STATE_COMPLETE,
-} = statusBarStates
-
-// TODO: rename the function to StatusBarUI on the next major.
-export default function StatusBar (props) {
-  const {
-    newFiles,
-    allowNewUpload,
-    isUploadInProgress,
-    isAllPaused,
-    resumableUploads,
-    error,
-    hideUploadButton,
-    hidePauseResumeButton,
-    hideCancelButton,
-    hideRetryButton,
-    recoveredState,
-    uploadState,
-    totalProgress,
-    files,
-    supportsUploadProgress,
-    hideAfterFinish,
-    isSomeGhost,
-    doneButtonHandler,
-    isUploadStarted,
-    i18n,
-    startUpload,
-    uppy,
-    isAllComplete,
-    showProgressDetails,
-    numUploads,
-    complete,
-    totalSize,
-    totalETA,
-    totalUploadedSize,
-  } = props
-
-  function getProgressValue () {
-    switch (uploadState) {
-      case STATE_POSTPROCESSING:
-      case STATE_PREPROCESSING: {
-        const progress = calculateProcessingProgress(files)
-
-        if (progress.mode === 'determinate') {
-          return progress.value * 100
-        }
-        return totalProgress
-      }
-      case STATE_ERROR: {
-        return null
-      }
-      case STATE_UPLOADING: {
-        if (!supportsUploadProgress) {
-          return null
-        }
-        return totalProgress
-      }
-      default:
-        return totalProgress
-    }
-  }
-
-  function getIsIndeterminate () {
-    switch (uploadState) {
-      case STATE_POSTPROCESSING:
-      case STATE_PREPROCESSING: {
-        const { mode } = calculateProcessingProgress(files)
-        return mode === 'indeterminate'
-      }
-      case STATE_UPLOADING: {
-        if (!supportsUploadProgress) {
-          return true
-        }
-        return false
-      }
-      default:
-        return false
-    }
-  }
-
-  function getIsHidden () {
-    if (recoveredState) {
-      return false
-    }
-
-    switch (uploadState) {
-      case STATE_WAITING:
-        return hideUploadButton || newFiles === 0
-      case STATE_COMPLETE:
-        return hideAfterFinish
-      default:
-        return false
-    }
-  }
-
-  const progressValue = getProgressValue()
-
-  const isHidden = getIsHidden()
-
-  const width = progressValue ?? 100
-
-  const showUploadBtn = !error
-    && newFiles
-    && !isUploadInProgress
-    && !isAllPaused
-    && allowNewUpload
-    && !hideUploadButton
-
-  const showCancelBtn = !hideCancelButton
-    && uploadState !== STATE_WAITING
-    && uploadState !== STATE_COMPLETE
-
-  const showPauseResumeBtn = resumableUploads
-    && !hidePauseResumeButton
-    && uploadState === STATE_UPLOADING
-
-  const showRetryBtn = error && !isAllComplete && !hideRetryButton
-
-  const showDoneBtn = doneButtonHandler && uploadState === STATE_COMPLETE
-
-  const progressClassNames = classNames('uppy-StatusBar-progress', {
-    'is-indeterminate': getIsIndeterminate(),
+function getTotalSpeed (files) {
+  let totalSpeed = 0
+  files.forEach((file) => {
+    totalSpeed += getSpeed(file.progress)
   })
+  return totalSpeed
+}
 
-  const statusBarClassNames = classNames(
-    'uppy-StatusBar',
-    `is-${uploadState}`,
-    { 'has-ghosts': isSomeGhost },
-  )
+function getTotalETA (files) {
+  const totalSpeed = getTotalSpeed(files)
+  if (totalSpeed === 0) {
+    return 0
+  }
 
-  return (
-    <div className={statusBarClassNames} aria-hidden={isHidden}>
-      <div
-        className={progressClassNames}
-        style={{ width: `${width}%` }}
-        role="progressbar"
-        aria-label={`${width}%`}
-        aria-valuetext={`${width}%`}
-        aria-valuemin="0"
-        aria-valuemax="100"
-        aria-valuenow={progressValue}
-      />
+  const totalBytesRemaining = files.reduce((total, file) => {
+    return total + getBytesRemaining(file.progress)
+  }, 0)
 
-      {(() => {
-        switch (uploadState) {
-          case STATE_PREPROCESSING:
-          case STATE_POSTPROCESSING:
-            return <ProgressBarProcessing progress={calculateProcessingProgress(files)} />
-          case STATE_COMPLETE:
-            return <ProgressBarComplete i18n={i18n} />
-          case STATE_ERROR:
-            return (
-              <ProgressBarError
-                error={error}
-                i18n={i18n}
-                numUploads={numUploads}
-                complete={complete}
-              />
-            )
-          case STATE_UPLOADING:
-            return (
-              <ProgressBarUploading
-                i18n={i18n}
-                supportsUploadProgress={supportsUploadProgress}
-                totalProgress={totalProgress}
-                showProgressDetails={showProgressDetails}
-                isUploadStarted={isUploadStarted}
-                isAllComplete={isAllComplete}
-                isAllPaused={isAllPaused}
-                newFiles={newFiles}
-                numUploads={numUploads}
-                complete={complete}
-                totalUploadedSize={totalUploadedSize}
-                totalSize={totalSize}
-                totalETA={totalETA}
-                startUpload={startUpload}
-              />
-            )
-          default:
-            return null
-        }
-      })()}
+  return Math.round((totalBytesRemaining / totalSpeed) * 10) / 10
+}
 
-      <div className="uppy-StatusBar-actions">
-        {recoveredState || showUploadBtn ? (
-          <UploadBtn
-            newFiles={newFiles}
-            isUploadStarted={isUploadStarted}
-            recoveredState={recoveredState}
-            i18n={i18n}
-            isSomeGhost={isSomeGhost}
-            startUpload={startUpload}
-            uploadState={uploadState}
-          />
-        ) : null}
+function getUploadingState (error, isAllComplete, recoveredState, files) {
+  if (error && !isAllComplete) {
+    return statusBarStates.STATE_ERROR
+  }
 
-        {showRetryBtn ? <RetryBtn i18n={i18n} uppy={uppy} /> : null}
+  if (isAllComplete) {
+    return statusBarStates.STATE_COMPLETE
+  }
 
-        {showPauseResumeBtn ? (
-          <PauseResumeButton
-            isAllPaused={isAllPaused}
-            i18n={i18n}
-            isAllComplete={isAllComplete}
-            resumableUploads={resumableUploads}
-            uppy={uppy}
-          />
-        ) : null}
+  if (recoveredState) {
+    return statusBarStates.STATE_WAITING
+  }
 
-        {showCancelBtn ? <CancelBtn i18n={i18n} uppy={uppy} /> : null}
+  let state = statusBarStates.STATE_WAITING
+  const fileIDs = Object.keys(files)
+  for (let i = 0; i < fileIDs.length; i++) {
+    const { progress } = files[fileIDs[i]]
+    // If ANY files are being uploaded right now, show the uploading state.
+    if (progress.uploadStarted && !progress.uploadComplete) {
+      return statusBarStates.STATE_UPLOADING
+    }
+    // If files are being preprocessed AND postprocessed at this time, we show the
+    // preprocess state. If any files are being uploaded we show uploading.
+    if (progress.preprocess && state !== statusBarStates.STATE_UPLOADING) {
+      state = statusBarStates.STATE_PREPROCESSING
+    }
+    // If NO files are being preprocessed or uploaded right now, but some files are
+    // being postprocessed, show the postprocess state.
+    if (
+      progress.postprocess
+      && state !== statusBarStates.STATE_UPLOADING
+      && state !== statusBarStates.STATE_PREPROCESSING
+    ) {
+      state = statusBarStates.STATE_POSTPROCESSING
+    }
+  }
+  return state
+}
 
-        {showDoneBtn ? (
-          <DoneBtn i18n={i18n} doneButtonHandler={doneButtonHandler} />
-        ) : null}
-      </div>
-    </div>
-  )
+/**
+ * StatusBar: renders a status bar with upload/pause/resume/cancel/retry buttons,
+ * progress percentage and time remaining.
+ */
+export default class StatusBar extends UIPlugin {
+  static VERSION = packageJson.version
+
+  constructor (uppy, opts) {
+    super(uppy, opts)
+    this.id = this.opts.id || 'StatusBar'
+    this.title = 'StatusBar'
+    this.type = 'progressindicator'
+
+    this.defaultLocale = locale
+
+    // set default options, must be kept in sync with @uppy/react/src/StatusBar.js
+    const defaultOptions = {
+      target: 'body',
+      hideUploadButton: false,
+      hideRetryButton: false,
+      hidePauseResumeButton: false,
+      hideCancelButton: false,
+      showProgressDetails: false,
+      hideAfterFinish: true,
+      doneButtonHandler: null,
+    }
+
+    this.opts = { ...defaultOptions, ...opts }
+
+    this.i18nInit()
+
+    this.render = this.render.bind(this)
+    this.install = this.install.bind(this)
+  }
+
+  startUpload = () => {
+    const { recoveredState } = this.uppy.getState()
+
+    if (recoveredState) {
+      this.uppy.emit('restore-confirmed')
+      return undefined
+    }
+
+    return this.uppy.upload().catch(() => {
+      // Error logged in Core
+    })
+  }
+
+  render (state) {
+    const {
+      capabilities,
+      files,
+      allowNewUpload,
+      totalProgress,
+      error,
+      recoveredState,
+    } = state
+
+    const {
+      newFiles,
+      startedFiles,
+      completeFiles,
+      inProgressNotPausedFiles,
+
+      isUploadStarted,
+      isAllComplete,
+      isAllErrored,
+      isAllPaused,
+      isUploadInProgress,
+      isSomeGhost,
+    } = this.uppy.getObjectOfFilesPerState()
+
+    // If some state was recovered, we want to show Upload button/counter
+    // for all the files, because in this case it’s not an Upload button,
+    // but “Confirm Restore Button”
+    const newFilesOrRecovered = recoveredState
+      ? Object.values(files)
+      : newFiles
+    const totalETA = getTotalETA(inProgressNotPausedFiles)
+    const resumableUploads = !!capabilities.resumableUploads
+    const supportsUploadProgress = capabilities.uploadProgress !== false
+
+    let totalSize = 0
+    let totalUploadedSize = 0
+
+    startedFiles.forEach((file) => {
+      totalSize += file.progress.bytesTotal || 0
+      totalUploadedSize += file.progress.bytesUploaded || 0
+    })
+
+    return StatusBarUI({
+      error,
+      uploadState: getUploadingState(
+        error,
+        isAllComplete,
+        recoveredState,
+        state.files || {},
+      ),
+      allowNewUpload,
+      totalProgress,
+      totalSize,
+      totalUploadedSize,
+      isAllComplete: false,
+      isAllPaused,
+      isAllErrored,
+      isUploadStarted,
+      isUploadInProgress,
+      isSomeGhost,
+      recoveredState,
+      complete: completeFiles.length,
+      newFiles: newFilesOrRecovered.length,
+      numUploads: startedFiles.length,
+      totalETA,
+      files,
+      i18n: this.i18n,
+      uppy: this.uppy,
+      startUpload: this.startUpload,
+      doneButtonHandler: this.opts.doneButtonHandler,
+      resumableUploads,
+      supportsUploadProgress,
+      showProgressDetails: this.opts.showProgressDetails,
+      hideUploadButton: this.opts.hideUploadButton,
+      hideRetryButton: this.opts.hideRetryButton,
+      hidePauseResumeButton: this.opts.hidePauseResumeButton,
+      hideCancelButton: this.opts.hideCancelButton,
+      hideAfterFinish: this.opts.hideAfterFinish,
+      isTargetDOMEl: this.isTargetDOMEl,
+    })
+  }
+
+  onMount () {
+    // Set the text direction if the page has not defined one.
+    const element = this.el
+    const direction = getTextDirection(element)
+    if (!direction) {
+      element.dir = 'ltr'
+    }
+  }
+
+  install () {
+    const { target } = this.opts
+    if (target) {
+      this.mount(target, this)
+    }
+  }
+
+  uninstall () {
+    this.unmount()
+  }
 }

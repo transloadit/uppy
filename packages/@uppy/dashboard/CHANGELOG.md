@@ -1,5 +1,34 @@
 # @uppy/dashboard
 
+## 3.0.0-beta.3
+
+Released: 2022-08-03
+Included in: Uppy v3.0.0-beta.4
+
+- @uppy/dashboard: change `copyToClipboard` signature (Antoine du Hamel / #3933)
+
+## 3.0.0-beta.2
+
+Released: 2022-07-27
+Included in: Uppy v3.0.0-beta.3
+
+- @uppy/dashboard,@uppy/webcam: Add support for `mobileNativeCamera` option to Webcam and Dashboard (Artur Paikin / #3844)
+- @uppy/aws-s3,@uppy/core,@uppy/dashboard,@uppy/store-redux,@uppy/xhr-upload: upgrade `nanoid` to v4 (Antoine du Hamel / #3904)
+
+## 3.0.0-beta.1
+
+Released: 2022-06-09
+Included in: Uppy v3.0.0-beta.1
+
+- @uppy/core,@uppy/dashboard: fix types for some events (Antoine du Hamel / #3812)
+
+## 2.4.1
+
+Released: 2022-07-27
+Included in: Uppy v2.13.1
+
+- @uppy/dashboard,@uppy/image-editor,@uppy/remote-sources: Fix `uppy.close()` crashes when remote-sources or image-editor is installed (Merlijn Vos / #3914)
+
 ## 2.3.0
 
 Released: 2022-05-30

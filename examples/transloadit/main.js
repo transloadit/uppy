@@ -1,4 +1,4 @@
-const { inspect } = require('util')
+const { inspect } = require('node:util')
 const robodog = require('@uppy/robodog')
 
 const TRANSLOADIT_KEY = '35c1aed03f5011e982b6afe82599b6a0'

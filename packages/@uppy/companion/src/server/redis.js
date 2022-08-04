@@ -1,5 +1,6 @@
 const redis = require('redis')
-const merge = require('lodash.merge')
+
+const logger = require('./logger')
 
 let redisClient
 
@@ -11,7 +12,18 @@ let redisClient
  */
 function createClient (opts) {
   if (!redisClient) {
-    redisClient = redis.createClient(opts)
+    // todo remove legacyMode when fixed: https://github.com/tj/connect-redis/issues/361
+    redisClient = redis.createClient({ ...opts, legacyMode: true })
+
+    ;(async () => {
+      try {
+        // fire and forget.
+        // any requests made on the client before connection is established will be auto-queued by node-redis
+        await redisClient.connect()
+      } catch (err) {
+        logger.error(err.message, 'redis.error')
+      }
+    })()
   }
 
   return redisClient
@@ -22,5 +34,5 @@ module.exports.client = (companionOptions) => {
     return redisClient
   }
 
-  return createClient(merge({ url: companionOptions.redisUrl }, companionOptions.redisOptions))
+  return createClient({ ...companionOptions.redisOptions, url: companionOptions.redisUrl })
 }

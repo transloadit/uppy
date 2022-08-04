@@ -1,8 +1,7 @@
-const fs = require('fs')
+const fs = require('node:fs')
 const merge = require('lodash.merge')
 const stripIndent = require('common-tags/lib/stripIndent')
-const crypto = require('crypto')
-const uuid = require('uuid') // TODO: migrate to `crypto.getRandomUUID` when removing support for Node.js <14.
+const crypto = require('node:crypto')
 
 const utils = require('../server/helpers/utils')
 const logger = require('../server/logger')
@@ -29,7 +28,7 @@ const getConfigFromEnv = () => {
   const domains = process.env.COMPANION_DOMAINS || process.env.COMPANION_DOMAIN || null
   const validHosts = domains ? domains.split(',') : []
 
-  const envConfig = {
+  return {
     providerOptions: {
       drive: {
         key: process.env.COMPANION_GOOGLE_KEY,
@@ -66,25 +65,22 @@ const getConfigFromEnv = () => {
         verificationToken: getSecret('COMPANION_ZOOM_VERIFICATION_TOKEN'),
         credentialsURL: process.env.COMPANION_ZOOM_KEYS_ENDPOINT,
       },
-      // TODO: remove the redundant searchProviders warpper in next major version
-      searchProviders: {
-        unsplash: {
-          key: process.env.COMPANION_UNSPLASH_KEY,
-          secret: process.env.COMPANION_UNSPLASH_SECRET,
-        },
+      unsplash: {
+        key: process.env.COMPANION_UNSPLASH_KEY,
+        secret: process.env.COMPANION_UNSPLASH_SECRET,
       },
-      // TODO: move s3 out of providerOptions, it's a destination, not a source
-      s3: {
-        key: process.env.COMPANION_AWS_KEY,
-        secret: getSecret('COMPANION_AWS_SECRET'),
-        bucket: process.env.COMPANION_AWS_BUCKET,
-        endpoint: process.env.COMPANION_AWS_ENDPOINT,
-        region: process.env.COMPANION_AWS_REGION,
-        useAccelerateEndpoint:
-          process.env.COMPANION_AWS_USE_ACCELERATE_ENDPOINT === 'true',
-        expires: parseInt(process.env.COMPANION_AWS_EXPIRES || '300', 10),
-        acl: process.env.COMPANION_AWS_DISABLE_ACL === 'true' ? null : (process.env.COMPANION_AWS_ACL || 'public-read'), // todo default to no ACL in next major and remove COMPANION_AWS_DISABLE_ACL
-      },
+    },
+    s3: {
+      key: process.env.COMPANION_AWS_KEY,
+      getKey: utils.defaultGetKey,
+      secret: getSecret('COMPANION_AWS_SECRET'),
+      bucket: process.env.COMPANION_AWS_BUCKET,
+      endpoint: process.env.COMPANION_AWS_ENDPOINT,
+      region: process.env.COMPANION_AWS_REGION,
+      useAccelerateEndpoint:
+      process.env.COMPANION_AWS_USE_ACCELERATE_ENDPOINT === 'true',
+      expires: parseInt(process.env.COMPANION_AWS_EXPIRES || '300', 10),
+      acl: process.env.COMPANION_AWS_ACL,
     },
     server: {
       host: process.env.COMPANION_DOMAIN,
@@ -118,14 +114,8 @@ const getConfigFromEnv = () => {
     chunkSize: process.env.COMPANION_CHUNK_SIZE ? parseInt(process.env.COMPANION_CHUNK_SIZE, 10) : undefined,
     clientSocketConnectTimeout: process.env.COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT
       ? parseInt(process.env.COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT, 10) : undefined,
+    metrics: process.env.COMPANION_HIDE_METRICS !== 'true',
   }
-
-  // todo remove COMPANION_S3_GETKEY_SAFE_BEHAVIOR in next major and use this getKey implementation instead by default
-  if (process.env.COMPANION_S3_GETKEY_SAFE_BEHAVIOR === 'true') {
-    envConfig.providerOptions.s3.getKey = (req, filename) => `${uuid.v4()}-${filename}`
-  }
-
-  return envConfig
 }
 
 /**
@@ -199,11 +189,6 @@ exports.buildHelpfulStartupMessage = (companionOptions) => {
   const buildURL = utils.getURLBuilder(companionOptions)
   const callbackURLs = []
   Object.keys(companionOptions.providerOptions).forEach((providerName) => {
-    // s3 does not need redirect_uris
-    if (providerName === 's3') {
-      return
-    }
-
     callbackURLs.push(buildURL(`/connect/${providerName}/redirect`, true))
   })
 

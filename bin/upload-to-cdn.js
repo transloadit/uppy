@@ -21,9 +21,9 @@
 //
 //  - Kevin van Zonneveld <kevin@transloadit.com>
 
-const path = require('path')
-const { pipeline, finished } = require('stream/promises')
-const { readFile } = require('fs/promises')
+const path = require('node:path')
+const { pipeline, finished } = require('node:stream/promises')
+const { readFile } = require('node:fs/promises')
 const AWS = require('aws-sdk')
 const packlist = require('npm-packlist')
 const tar = require('tar')

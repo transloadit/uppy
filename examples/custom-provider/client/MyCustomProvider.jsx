@@ -1,9 +1,13 @@
-const { UIPlugin } = require('@uppy/core')
-const { Provider } = require('@uppy/companion-client')
-const { ProviderViews } = require('@uppy/provider-views')
-const { h } = require('preact')
+/** @jsx h */
 
-module.exports = class MyCustomProvider extends UIPlugin {
+import { UIPlugin } from '@uppy/core'
+import { Provider } from '@uppy/companion-client'
+import { ProviderViews } from '@uppy/provider-views'
+import { h } from 'preact'
+
+const defaultOptions = {}
+
+export default class MyCustomProvider extends UIPlugin {
   constructor (uppy, opts) {
     super(uppy, opts)
     this.type = 'acquirer'
@@ -28,15 +32,14 @@ module.exports = class MyCustomProvider extends UIPlugin {
         pluginNameMyUnsplash: 'MyUnsplash',
       },
     }
-    this.i18nInit()
-    this.title = this.i18n('MyUnsplash')
-
-    this.files = []
-    this.onFirstRender = this.onFirstRender.bind(this)
-    this.render = this.render.bind(this)
 
     // merge default options with the ones set by user
-    this.opts = { ...opts }
+    this.opts = { ...defaultOptions, ...opts }
+
+    this.i18nInit()
+    this.title = this.i18n('pluginNameMyUnsplash')
+
+    this.files = []
   }
 
   install () {

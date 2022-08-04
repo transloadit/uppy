@@ -1,5 +1,12 @@
 # @uppy/url
 
+## 3.0.0-beta.2
+
+Released: 2022-08-03
+Included in: Uppy v3.0.0-beta.4
+
+- @uppy/url: remove private methods from public API (Antoine du Hamel / #3934)
+
 ## 2.2.0
 
 Released: 2022-06-07

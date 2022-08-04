@@ -1,5 +1,12 @@
 # @uppy/robodog
 
+## 2.9.2
+
+Released: 2022-08-02
+Included in: Uppy v2.13.2
+
+- @uppy/robodog: Fix Robodog CDN url in readme.md (Artur Paikin / #3922)
+
 ## 2.8.3
 
 Released: 2022-07-11

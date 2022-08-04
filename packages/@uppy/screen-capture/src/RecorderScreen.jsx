@@ -1,4 +1,3 @@
-// TODO: rename this file to RecorderScreen.jsx in the next major.
 /* eslint-disable react/jsx-props-no-spreading */
 import { h, Component } from 'preact'
 import RecordButton from './RecordButton.jsx'

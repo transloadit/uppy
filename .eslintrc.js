@@ -32,6 +32,7 @@ module.exports = {
     // extra:
     'compat',
     'jsdoc',
+    'unicorn',
   ],
   parser: '@babel/eslint-parser',
   parserOptions: {
@@ -73,6 +74,7 @@ module.exports = {
     'node/handle-callback-err': 'error',
     'prefer-destructuring': 'error',
     'prefer-spread': 'error',
+    'unicorn/prefer-node-protocol': 'error',
 
     // transloadit rules we would like to enforce in the future
     // but will require separate PRs to gradually get there
@@ -122,7 +124,7 @@ module.exports = {
     'jsdoc/check-examples': 'off', // cannot yet be supported for ESLint 8, see https://github.com/eslint/eslint/issues/14745
     'jsdoc/check-param-names': ['warn'],
     'jsdoc/check-syntax': ['warn'],
-    'jsdoc/check-tag-names': 'error',
+    'jsdoc/check-tag-names': ['error', { jsxTags: true }],
     'jsdoc/check-types': 'error',
     'jsdoc/newline-after-description': 'error',
     'jsdoc/valid-types': 'error',
@@ -189,8 +191,10 @@ module.exports = {
       files: [
         '*.mjs',
         'e2e/clients/**/*.js',
+        'examples/aws-companion/*.js',
         'examples/aws-presigned-url/*.js',
         'examples/bundled/*.js',
+        'examples/custom-provider/client/*.js',
         'private/dev/*.js',
         'private/release/*.js',
         'private/remark-lint-uppy/*.js',
@@ -220,6 +224,7 @@ module.exports = {
         'packages/@uppy/onedrive/src/**/*.js',
         'packages/@uppy/progress-bar/src/**/*.js',
         'packages/@uppy/provider-views/src/**/*.js',
+        'packages/@uppy/react/src/**/*.js',
         'packages/@uppy/redux-dev-tools/src/**/*.js',
         'packages/@uppy/remote-sources/src/**/*.js',
         'packages/@uppy/screen-capture/src/**/*.js',
@@ -248,6 +253,8 @@ module.exports = {
       },
       rules: {
         'import/named': 'off', // Disabled because that rule tries and fails to parse JSX dependencies.
+        'import/no-named-as-default': 'off', // Disabled because that rule tries and fails to parse JSX dependencies.
+        'import/no-named-as-default-member': 'off', // Disabled because that rule tries and fails to parse JSX dependencies.
         'no-restricted-globals': [
           'error',
           {
@@ -272,6 +279,16 @@ module.exports = {
           },
         ],
         'import/extensions': ['error', 'ignorePackages'],
+      },
+    },
+    {
+      files: ['packages/uppy/*.mjs'],
+      rules: {
+        'import/first': 'off',
+        'import/newline-after-import': 'off',
+        'import/no-extraneous-dependencies': ['error', {
+          devDependencies: true,
+        }],
       },
     },
     {
@@ -347,7 +364,8 @@ module.exports = {
       files: [
         'bin/**.js',
         'bin/**.mjs',
-        'examples/**/*.js',
+        'examples/**/*.config.js',
+        'examples/**/*.cjs',
         'packages/@uppy/companion/test/**/*.js',
         'test/**/*.js',
         'test/**/*.ts',

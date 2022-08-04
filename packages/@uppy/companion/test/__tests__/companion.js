@@ -36,7 +36,7 @@ describe('validate upload data', () => {
         protocol: 'tusInvalid',
       })
       .expect(400)
-      .then((res) => expect(res.body.message).toBe('unsupported protocol specified'))
+      .then((res) => expect(res.body.message).toBe('please specify a valid protocol'))
   })
 
   test('invalid upload fieldname gets rejected', () => {
