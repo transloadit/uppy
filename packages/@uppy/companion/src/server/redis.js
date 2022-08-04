@@ -15,6 +15,8 @@ function createClient (opts) {
     // todo remove legacyMode when fixed: https://github.com/tj/connect-redis/issues/361
     redisClient = redis.createClient({ ...opts, legacyMode: true })
 
+    redisClient.on('error', err => logger.error('redis error', err))
+
     ;(async () => {
       try {
         // fire and forget.
