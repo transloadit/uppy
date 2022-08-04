@@ -12,12 +12,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           branch: release
-      - name: Rebase
-        run: |
-          git fetch origin HEAD --depth=1
-          git config --global user.email "actions@github.com"
-          git config --global user.name "GitHub Actions"
-          git rebase FETCH_HEAD
+          fetch-depth: 2
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(corepack yarn config get cacheFolder)"
@@ -50,18 +45,20 @@ jobs:
           jq -r 'map(.cwd) | join("\n")' < releases.json | awk '{ print "git add " $0 "/package.json" }' | sh
       - name: Commit
         run: |
-          echo "Release: uppy@$(jq -r 'map(select(.ident == "uppy"))[0].newVersion' < releases.json)" > commitMessage
+          echo "Release: uppy@$(jq -r 'map(select(.ident == "uppy"))[0].newVersion' < releases.json) (Maintenance)" > commitMessage
           echo >> commitMessage
           echo "This is a release candidate for the following packages:" >> commitMessage
           echo >> commitMessage
           jq -r 'map("- `"+.ident+"`: "+.oldVersion+" -> "+.newVersion) | join("\n") ' < releases.json >> commitMessage
+          git config --global user.email "actions@github.com"
+          git config --global user.name "GitHub Actions"
           git commit -n --amend --file commitMessage
       - name: Open Pull Request
         id: pr_opening
         run: |
           git push origin HEAD:release-candidate
           gh api repos/${{ github.repository }}/pulls \
-            -F base="$(gh api /repos/${{ github.repository }} | jq -r .default_branch)" \
+            -F base="2.x" \
             -F head="release-candidate" \
             -F title="$(head -1 commitMessage)" \
             -F body="$(git --no-pager diff HEAD^ -- CHANGELOG.md | awk '{ if( substr($0,0,1) == "+" && $1 != "+##" && $1 != "+Released:" && $1 != "+++" ) { print substr($0,2) } }')" \

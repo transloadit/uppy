@@ -62,7 +62,7 @@ jobs:
         id: uppyVersion
         run: jq -r '"##[set-output name=version;]"+.version' < packages/uppy/package.json
       - name: Create GitHub release
-        run: gh release create uppy@${{ steps.uppyVersion.outputs.version }} -t "Uppy ${{ steps.uppyVersion.outputs.version }}" -F CHANGELOG.diff.md
+        run: gh release create uppy@${{ steps.uppyVersion.outputs.version }} -t "Uppy ${{ steps.uppyVersion.outputs.version }} (Maintenance)" -F CHANGELOG.diff.md
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload `uppy` to CDN
