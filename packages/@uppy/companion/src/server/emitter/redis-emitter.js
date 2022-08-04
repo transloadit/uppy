@@ -1,6 +1,8 @@
 const redis = require('redis')
 const { EventEmitter } = require('node:events')
 
+const logger = require('../logger')
+
 /**
  * This module simulates the builtin events.EventEmitter but with the use of redis.
  * This is useful for when companion is running on multiple instances and events need
@@ -10,10 +12,12 @@ module.exports = (redisUrl, redisPubSubScope) => {
   const prefix = redisPubSubScope ? `${redisPubSubScope}:` : ''
   const getPrefixedEventName = (eventName) => `${prefix}${eventName}`
   const publisher = redis.createClient({ url: redisUrl })
+  publisher.on('error', err => logger.error('publisher redis error', err))
   let subscriber
 
   const connectedPromise = publisher.connect().then(() => {
     subscriber = publisher.duplicate()
+    subscriber.on('error', err => logger.error('subscriber redis error', err))
     return subscriber.connect()
   })
 
