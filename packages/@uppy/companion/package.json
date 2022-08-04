@@ -64,7 +64,7 @@
     "serialize-javascript": "^6.0.0",
     "tus-js-client": "^3.0.0",
     "validator": "^12.1.0",
-    "ws": "6.2.2"
+    "ws": "8.8.1"
   },
   "devDependencies": {
     "@types/compression": "1.7.0",
