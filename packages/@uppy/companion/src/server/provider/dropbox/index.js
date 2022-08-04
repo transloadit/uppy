@@ -60,7 +60,7 @@ class DropBox extends Provider {
     return 'dropbox'
   }
 
-  async _userInfo ({ token }) {
+  async #userInfo ({ token }) {
     const client = this.client
       .post('users/get_current_account')
       .options({ version: '2' })
@@ -75,11 +75,11 @@ class DropBox extends Provider {
   async list (options) {
     try {
       const responses = await Promise.all([
-        this._stats(options),
-        this._userInfo(options),
+        this.#stats(options),
+        this.#userInfo(options),
       ])
       responses.forEach((response) => {
-        if (response.statusCode !== 200) throw this._error(null, response)
+        if (response.statusCode !== 200) throw this.#error(null, response)
       })
       const [{ body: stats }, { body: { email } }] = responses
       return adaptData(stats, email, options.companion.buildURL)
@@ -89,7 +89,7 @@ class DropBox extends Provider {
     }
   }
 
-  async _stats ({ directory, query, token }) {
+  async #stats ({ directory, query, token }) {
     if (query.cursor) {
       const client = this.client
         .post('files/list_folder/continue')
@@ -127,7 +127,7 @@ class DropBox extends Provider {
         .auth(token)
         .request()
 
-      return await requestStream(req, async (res) => this._error(null, res))
+      return await requestStream(req, async (res) => this.#error(null, res))
     } catch (err) {
       logger.error(err, 'provider.dropbox.download.error')
       throw err
@@ -146,7 +146,7 @@ class DropBox extends Provider {
         .auth(token)
         .request()
 
-      return await requestStream(req, (resp) => this._error(null, resp))
+      return await requestStream(req, (resp) => this.#error(null, resp))
     } catch (err) {
       logger.error(err, 'provider.dropbox.thumbnail.error')
       throw err
@@ -162,7 +162,7 @@ class DropBox extends Provider {
 
     try {
       const resp = await promisify(client.request.bind(client))()
-      if (resp.statusCode !== 200) throw this._error(null, resp)
+      if (resp.statusCode !== 200) throw this.#error(null, resp)
       return parseInt(resp.body.size, 10)
     } catch (err) {
       logger.error(err, 'provider.dropbox.size.error')
@@ -178,7 +178,7 @@ class DropBox extends Provider {
 
     try {
       const resp = await promisify(client.request.bind(client))()
-      if (resp.statusCode !== 200) throw this._error(null, resp)
+      if (resp.statusCode !== 200) throw this.#error(null, resp)
       return { revoked: true }
     } catch (err) {
       logger.error(err, 'provider.dropbox.logout.error')
@@ -186,7 +186,7 @@ class DropBox extends Provider {
     }
   }
 
-  _error (err, resp) {
+  #error (err, resp) {
     if (resp) {
       const fallbackMessage = `request to ${this.authProvider} returned ${resp.statusCode}`
       const errMsg = (resp.body || {}).error_summary ? resp.body.error_summary : fallbackMessage
@@ -196,7 +196,5 @@ class DropBox extends Provider {
     return err
   }
 }
-
-DropBox.version = 2
 
 module.exports = DropBox
