@@ -20,7 +20,7 @@
     "@tsconfig/svelte": "^1.0.10",
     "rollup": "^2.60.2",
     "rollup-plugin-svelte": "^7.0.0",
-    "svelte": "^3.31.0",
+    "svelte": "^3.49.0",
     "svelte-check": "^1.6.0",
     "svelte-preprocess": "^4.6.1"
   },
