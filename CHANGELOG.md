@@ -22,6 +22,9 @@ Released: 2022-08-04
 | @uppy/compressor       |   0.3.2 | uppy                   |  2.13.3 |
 | @uppy/utils            |   4.1.1 |                        |         |
 
+This release mark the transition of Uppy 2.x to maintenance mode. Consider
+upgrading to the latest version of Uppy to get the latest features.
+
 - meta: fork branch in preparation for LTS (Antoine du Hamel)
 - @uppy/aws-s3-multipart: ignore exception inside `abortMultipartUpload` (Antoine du Hamel / #3950)
 - @uppy/utils: modernize `getDroppedFiles` (Antoine du Hamel / #3534)
