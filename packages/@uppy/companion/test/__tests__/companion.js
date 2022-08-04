@@ -170,7 +170,7 @@ it('periodically pings', (done) => {
     COMPANION_PERIODIC_PING_INTERVAL: '10',
     COMPANION_PERIODIC_PING_COUNT: '1',
   })
-}, 1000)
+}, 3000)
 
 it('respects allowLocalUrls', async () => {
   const server = getServer()

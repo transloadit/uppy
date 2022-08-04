@@ -44,6 +44,7 @@
     "express-prom-bundle": "6.3.0",
     "express-request-id": "1.4.1",
     "express-session": "1.17.1",
+    "got": "^12.3.0",
     "grant": "4.7.0",
     "helmet": "^4.6.0",
     "ipaddr.js": "^2.0.1",
@@ -107,7 +108,7 @@
     "deploy": "kubectl apply -f infra/kube/companion-kube.yml",
     "prepublishOnly": "yarn run build",
     "start": "node ./lib/standalone/start-server.js",
-    "test": "jest"
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest"
   },
   "engines": {
     "node": "^14.19.0 || ^16.15.0 || >=18.0.0"

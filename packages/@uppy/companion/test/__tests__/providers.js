@@ -23,6 +23,8 @@ const OAUTH_STATE = 'some-cool-nice-encrytpion'
 const providers = require('../../src/server/provider').getDefaultProviders()
 
 const providerNames = Object.keys(providers)
+// todo remove once all providers are ported
+const newProviderNames = ['dropbox', 'box']
 const AUTH_PROVIDERS = {
   drive: 'google',
   onedrive: 'microsoft',
@@ -51,25 +53,73 @@ afterAll(() => {
   nock.restore()
 })
 
-describe('set i-am header', () => {
-  test.each(providerNames)('set i-am header in response (%s)', (providerName) => {
-    const providerFixtures = fixtures.providers[providerName].expects
-    return request(authServer)
-      .get(`/${providerName}/list/${providerFixtures.listPath || ''}`)
-      .set('uppy-auth-token', token)
-      .expect(200)
-      .then((res) => expect(res.header['i-am']).toBe('http://localhost:3020'))
-  })
-})
-
 describe('list provider files', () => {
   test.each(providerNames)('list files for %s', (providerName) => {
+    if (newProviderNames.includes(providerName)) {
+      nock('https://api.dropboxapi.com').post('/2/users/get_current_account').reply(200, () => ({
+        name: {
+          given_name: 'Franz',
+          surname: 'Ferdinand',
+          familiar_name: 'Franz',
+          display_name: 'Franz Ferdinand (Personal)',
+          abbreviated_name: 'FF',
+        },
+        email: defaults.USERNAME,
+        email_verified: true,
+        disabled: false,
+        locale: 'en',
+        referral_link: 'https://db.tt/ZITNuhtI',
+        is_paired: true,
+      }))
+      nock('https://api.dropboxapi.com').post('/2/files/list_folder').reply(200, () => ({
+        entries: [
+          {
+            '.tag': 'file',
+            name: defaults.ITEM_NAME,
+            id: defaults.ITEM_ID,
+            client_modified: '2015-05-12T15:50:38Z',
+            server_modified: '2015-05-12T15:50:38Z',
+            rev: 'a1c10ce0dd78',
+            size: defaults.FILE_SIZE,
+            path_lower: '/homework/math/prime_numbers.txt',
+            path_display: '/Homework/math/Prime_Numbers.txt',
+            is_downloadable: true,
+            has_explicit_shared_members: false,
+            content_hash: 'e3b0c44298fc1c149afbf41e4649b934ca49',
+            file_lock_info: {
+              is_lockholder: true,
+              lockholder_name: 'Imaginary User',
+              created: '2015-05-12T15:50:38Z',
+            },
+          },
+        ],
+        cursor: 'ZtkX9_EHj3x7PMkVuFIhwKYXEpwpLwyxp9vMKomUhllil9q7eWiAu',
+        has_more: false,
+      }))
+
+      nock('https://api.box.com').get('/2.0/users/me').reply(200, () => ({
+        login: defaults.USERNAME,
+      }))
+      nock('https://api.box.com').get('/2.0/folders/0/items?fields=id%2Cmodified_at%2Cname%2Cpermissions%2Csize%2Ctype').reply(200, () => ({
+        entries: [
+          {
+            type: 'file',
+            name: defaults.ITEM_NAME,
+            id: defaults.ITEM_ID,
+            modified_at: '2015-05-12T15:50:38Z',
+            size: defaults.FILE_SIZE,
+          },
+        ],
+      }))
+    }
+
     const providerFixtures = fixtures.providers[providerName].expects
     return request(authServer)
       .get(`/${providerName}/list/${providerFixtures.listPath || ''}`)
       .set('uppy-auth-token', token)
       .expect(200)
       .then((res) => {
+        expect(res.header['i-am']).toBe('http://localhost:3020')
         expect(res.body.username).toBe(fixtures.defaults.USERNAME)
 
         const items = [...res.body.items]
@@ -99,6 +149,14 @@ describe('list provider files', () => {
 
 describe('download provider file', () => {
   test.each(providerNames)('specified file gets downloaded from %s', (providerName) => {
+    if (newProviderNames.includes(providerName)) {
+      nock('https://api.dropboxapi.com').post('/2/files/get_metadata').reply(200, () => ({ size: defaults.FILE_SIZE }))
+      nock('https://content.dropboxapi.com').post('/2/files/download').reply(200, () => ({}))
+
+      nock('https://api.box.com').get(`/2.0/files/${defaults.ITEM_ID}`).reply(200, () => ({ size: defaults.FILE_SIZE }))
+      nock('https://api.box.com').get(`/2.0/files/${defaults.ITEM_ID}/content`).reply(200, () => ({ size: defaults.FILE_SIZE }))
+    }
+
     const providerFixtures = fixtures.providers[providerName].expects
     return request(authServer)
       .post(`/${providerName}/get/${providerFixtures.itemRequestPath || fixtures.defaults.ITEM_ID}`)
@@ -127,6 +185,11 @@ describe('connect to provider', () => {
 
 describe('logout of provider', () => {
   test.each(providerNames)('logout of %s', (providerName) => {
+    if (newProviderNames.includes(providerName)) {
+      nock('https://api.dropboxapi.com').post('/2/auth/token/revoke').reply(200, () => ({}))
+      nock('https://api.box.com').post('/oauth2/revoke').reply(200, () => ({}))
+    }
+
     return request(authServer)
       .get(`/${providerName}/logout/`)
       .set('uppy-auth-token', token)

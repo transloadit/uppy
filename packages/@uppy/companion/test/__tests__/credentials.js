@@ -1,9 +1,9 @@
 /* global jest:false, test:false, expect:false, describe:false */
 
+const { remoteZoomKey: mockRemoteZoomKey, remoteZoomSecret: mockRemoteZoomSecret, remoteZoomVerificationToken: mockRemoteZoomVerificationToken } = require('../fixtures/zoom').expects
+
 // mocking request module used to fetch custom oauth credentials
 jest.mock('request', () => {
-  const { remoteZoomKey, remoteZoomSecret, remoteZoomVerificationToken } = require('../fixtures/zoom').expects
-
   return {
     post: (url, options, done) => {
       if (url === 'http://localhost:2111/zoom-keys') {
@@ -18,9 +18,9 @@ jest.mock('request', () => {
 
         const respBody = {
           credentials: {
-            key: remoteZoomKey,
-            secret: remoteZoomSecret,
-            verificationToken: remoteZoomVerificationToken,
+            key: mockRemoteZoomKey,
+            secret: mockRemoteZoomSecret,
+            verificationToken: mockRemoteZoomVerificationToken,
           },
         }
         return done(null, { statusCode: 200, body: respBody }, respBody)

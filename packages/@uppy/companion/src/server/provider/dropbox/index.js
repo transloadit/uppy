@@ -1,12 +1,12 @@
-const request = require('request')
-const purest = require('purest')({ request })
-const { promisify } = require('node:util')
-
 const Provider = require('../Provider')
 const logger = require('../../logger')
 const adapter = require('./adapter')
 const { ProviderApiError, ProviderAuthError } = require('../error')
-const { requestStream } = require('../../helpers/utils')
+const { prepareStream } = require('../../helpers/utils')
+
+// todo jest is broken now with esm https://github.com/facebook/jest/issues/13008
+// degrade got version?
+const gotPromise = import('got')
 
 // From https://www.dropbox.com/developers/reference/json-encoding:
 //
@@ -41,6 +41,28 @@ function adaptData (res, email, buildURL) {
   }
 }
 
+const getClient = async ({ token }) => (await gotPromise).got.extend({
+  prefixUrl: 'https://api.dropboxapi.com/2',
+  headers: {
+    authorization: `Bearer ${token}`,
+  },
+})
+
+async function list ({ directory, query, token }) {
+  if (query.cursor) {
+    const client = await getClient({ token })
+    return client.post('files/list_folder/continue', { json: { cursor: query.cursor }, responseType: 'json' }).json()
+  }
+
+  const client = await getClient({ token })
+  return client.post('files/list_folder', { searchParams: query, json: { path: `${directory || ''}`, include_non_downloadable_files: false }, responseType: 'json' }).json()
+}
+
+async function userInfo ({ token }) {
+  const client = await getClient({ token })
+  return client.post('users/get_current_account', { responseType: 'json' }).json()
+}
+
 /**
  * Adapter for API https://www.dropbox.com/developers/documentation/http/documentation
  */
@@ -48,10 +70,6 @@ class DropBox extends Provider {
   constructor (options) {
     super(options)
     this.authProvider = DropBox.authProvider
-    this.client = purest({
-      ...options,
-      provider: DropBox.authProvider,
-    })
     // needed for the thumbnails fetched via companion
     this.needsCookieAuth = true
   }
@@ -60,137 +78,91 @@ class DropBox extends Provider {
     return 'dropbox'
   }
 
-  async #userInfo ({ token }) {
-    const client = this.client
-      .post('users/get_current_account')
-      .options({ version: '2' })
-      .auth(token)
-    return promisify(client.request.bind(client))()
-  }
-
   /**
    *
    * @param {object} options
    */
   async list (options) {
-    try {
+    return this.withErrorHandling('provider.dropbox.list.error', async () => {
       const responses = await Promise.all([
-        this.#stats(options),
-        this.#userInfo(options),
+        list(options),
+        userInfo(options),
       ])
-      responses.forEach((response) => {
-        if (response.statusCode !== 200) throw this.#error(null, response)
-      })
-      const [{ body: stats }, { body: { email } }] = responses
+      // @ts-ignore
+      const [stats, { email }] = responses
       return adaptData(stats, email, options.companion.buildURL)
-    } catch (err) {
-      logger.error(err, 'provider.dropbox.list.error')
-      throw err
-    }
-  }
-
-  async #stats ({ directory, query, token }) {
-    if (query.cursor) {
-      const client = this.client
-        .post('files/list_folder/continue')
-        .options({ version: '2' })
-        .auth(token)
-        .json({
-          cursor: query.cursor,
-        })
-      return promisify(client.request.bind(client))()
-    }
-
-    const client = this.client
-      .post('files/list_folder')
-      .options({ version: '2' })
-      .qs(query)
-      .auth(token)
-      .json({
-        path: `${directory || ''}`,
-        include_non_downloadable_files: false,
-      })
-
-    return promisify(client.request.bind(client))()
+    })
   }
 
   async download ({ id, token }) {
-    try {
-      const req = this.client
-        .post('https://content.dropboxapi.com/2/files/download')
-        .options({
-          version: '2',
-          headers: {
-            'Dropbox-API-Arg': httpHeaderSafeJson({ path: `${id}` }),
-          },
-        })
-        .auth(token)
-        .request()
+    return this.withErrorHandling('provider.dropbox.download.error', async () => {
+      const client = await getClient({ token })
+      const stream = client.stream.post('files/download', {
+        prefixUrl: 'https://content.dropboxapi.com/2',
+        headers: {
+          'Dropbox-API-Arg': httpHeaderSafeJson({ path: String(id) }),
+        },
+        body: Buffer.alloc(0), // if not, it will hang waiting for the writable stream
+        responseType: 'json',
+      })
 
-      return await requestStream(req, async (res) => this.#error(null, res))
-    } catch (err) {
-      logger.error(err, 'provider.dropbox.download.error')
-      throw err
-    }
+      await prepareStream(stream)
+      return { stream }
+    })
   }
 
   async thumbnail ({ id, token }) {
-    try {
-      const req = this.client
-        .post('https://content.dropboxapi.com/2/files/get_thumbnail_v2')
-        .options({
-          headers: {
-            'Dropbox-API-Arg': httpHeaderSafeJson({ resource: { '.tag': 'path', path: `${id}` }, size: 'w256h256' }),
-          },
-        })
-        .auth(token)
-        .request()
+    return this.withErrorHandling('provider.dropbox.thumbnail.error', async () => {
+      const client = await getClient({ token })
+      const stream = client.stream.post('files/get_thumbnail_v2', {
+        prefixUrl: 'https://content.dropboxapi.com/2',
+        headers: { 'Dropbox-API-Arg': httpHeaderSafeJson({ resource: { '.tag': 'path', path: `${id}` }, size: 'w256h256' }) },
+        body: Buffer.alloc(0),
+        responseType: 'json',
+      })
 
-      return await requestStream(req, (resp) => this.#error(null, resp))
-    } catch (err) {
-      logger.error(err, 'provider.dropbox.thumbnail.error')
-      throw err
-    }
+      await prepareStream(stream)
+      return { stream }
+    })
   }
 
   async size ({ id, token }) {
-    const client = this.client
-      .post('files/get_metadata')
-      .options({ version: '2' })
-      .auth(token)
-      .json({ path: id })
-
-    try {
-      const resp = await promisify(client.request.bind(client))()
-      if (resp.statusCode !== 200) throw this.#error(null, resp)
-      return parseInt(resp.body.size, 10)
-    } catch (err) {
-      logger.error(err, 'provider.dropbox.size.error')
-      throw err
-    }
+    return this.withErrorHandling('provider.dropbox.size.error', async () => {
+      const client = await getClient({ token })
+      const { size } = await client.post('files/get_metadata', { json: { path: id }, responseType: 'json' }).json()
+      return parseInt(size, 10)
+    })
   }
 
   async logout ({ token }) {
-    const client = this.client
-      .post('auth/token/revoke')
-      .options({ version: '2' })
-      .auth(token)
-
-    try {
-      const resp = await promisify(client.request.bind(client))()
-      if (resp.statusCode !== 200) throw this.#error(null, resp)
+    return this.withErrorHandling('provider.dropbox.logout.error', async () => {
+      const client = await getClient({ token })
+      await client.post('auth/token/revoke', { responseType: 'json' })
       return { revoked: true }
+    })
+  }
+
+  // todo reuse
+  async withErrorHandling (tag, fn) {
+    try {
+      return await fn()
     } catch (err) {
-      logger.error(err, 'provider.dropbox.logout.error')
-      throw err
+      const err2 = this.#convertError(err)
+      logger.error(err2, tag)
+      throw err2
     }
   }
 
-  #error (err, resp) {
-    if (resp) {
-      const fallbackMessage = `request to ${this.authProvider} returned ${resp.statusCode}`
-      const errMsg = (resp.body || {}).error_summary ? resp.body.error_summary : fallbackMessage
-      return resp.statusCode === 401 ? new ProviderAuthError() : new ProviderApiError(errMsg, resp.statusCode)
+  #convertError (err) {
+    const { response } = err
+    if (response) {
+      const fallbackMessage = `request to ${this.authProvider} returned ${response.statusCode}`
+      let errMsg
+      if (typeof response.body === 'object' && response.body.error_summary) errMsg = response.body.error_summary
+      else if (typeof response.body === 'string') errMsg = response.body
+      else errMsg = fallbackMessage
+
+      return response.statusCode === 401 ? new ProviderAuthError() : new ProviderApiError(errMsg, response.statusCode)
     }
 
     return err
