@@ -1795,20 +1795,11 @@ describe('src/Core', () => {
         size: 270733,
       }
 
-      const validateRestrictions1 = core.validateRestrictions(newFile)
-      const validateRestrictions2 = core2.validateRestrictions(newFile)
-
-      expect(validateRestrictions1).toMatchObject(
-        {
-          result: false,
-          reason: 'This file is smaller than the allowed size of 293 KB',
-        },
+      expect(() => core.validateRestrictions(newFile)).toThrow(
+        'This file is smaller than the allowed size of 293 KB',
       )
-      expect(validateRestrictions2).toMatchObject(
-        {
-          result: false,
-          reason: 'You can only upload: image/png',
-        },
+      expect(() => core2.validateRestrictions(newFile)).toThrow(
+        'You can only upload: image/png',
       )
     })
 

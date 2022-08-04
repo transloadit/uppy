@@ -390,14 +390,7 @@ class Uppy {
   }
 
   validateRestrictions (file, files = this.getFiles()) {
-    // TODO: directly return the Restriction error in next major version.
-    // we create RestrictionError's just to discard immediately, which doesn't make sense.
-    try {
-      this.#restricter.validate(file, files)
-      return { result: true }
-    } catch (err) {
-      return { result: false, reason: err.message }
-    }
+    return this.#restricter.validate(file, files)
   }
 
   #checkRequiredMetaFieldsOnFile (file) {

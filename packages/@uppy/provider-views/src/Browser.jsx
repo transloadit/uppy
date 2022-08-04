@@ -101,10 +101,16 @@ function Browser (props) {
               })}
 
               {files.map((file) => {
-                const validated = validateRestrictions(
-                  remoteFileObjToLocal(file),
-                  [...uppyFiles, ...currentSelection],
-                )
+                let validated
+                try {
+                  validateRestrictions(
+                    remoteFileObjToLocal(file),
+                    [...uppyFiles, ...currentSelection],
+                  )
+                  validated = { result: true }
+                } catch (err) {
+                  validated = { result: false, reason: err.message }
+                }
 
                 return Item({
                   id: file.id,
