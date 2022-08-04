@@ -213,11 +213,12 @@ describe('AwsS3Multipart', () => {
         .use(AwsS3Multipart, {
           createMultipartUpload,
           completeMultipartUpload: jest.fn(async () => ({ location: 'test' })),
-          abortMultipartUpload: jest.fn(),
+          // eslint-disable-next-line no-throw-literal
+          abortMultipartUpload: jest.fn(() => { throw 'should ignore' }),
           prepareUploadParts:
-          prepareUploadParts
-          // eslint-disable-next-line prefer-promise-reject-errors
-            .mockImplementationOnce(() => Promise.reject({ source: { status: 500 } })),
+            prepareUploadParts
+              // eslint-disable-next-line prefer-promise-reject-errors
+              .mockImplementationOnce(() => Promise.reject({ source: { status: 500 } })),
         })
       const awsS3Multipart = core.getPlugin('AwsS3Multipart')
       const fileSize = 5 * MB + 1 * MB
