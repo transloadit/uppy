@@ -2,11 +2,10 @@
 export { default as Core, debugLogger } from '@uppy/core'
 
 // Utilities
-export { default as server } from '@uppy/companion-client'
-/* eslint-disable */
-import ProviderView from '@uppy/provider-views'
-export var views = { ProviderView }
-/* eslint-enable */
+export * as server from '@uppy/companion-client'
+
+import * as ProviderView from '@uppy/provider-views'
+export const views = { ProviderView }
 
 // Stores
 export { default as DefaultStore } from '@uppy/store-default'

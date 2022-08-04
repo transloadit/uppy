@@ -1,6 +1,6 @@
 const request = require('request')
 const purest = require('purest')({ request })
-const { promisify } = require('util')
+const { promisify } = require('node:util')
 
 const Provider = require('../Provider')
 const { getURLMeta } = require('../../helpers/request')
@@ -186,8 +186,6 @@ class Facebook extends Provider {
     return err
   }
 }
-
-Facebook.version = 2
 
 Facebook.prototype.list = promisify(Facebook.prototype._list)
 Facebook.prototype.size = promisify(Facebook.prototype._size)

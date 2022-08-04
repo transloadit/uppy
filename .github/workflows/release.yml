@@ -41,7 +41,7 @@ jobs:
       - name: Login to NPM
         run: corepack yarn config set npmAuthToken ${{ toJSON(secrets.NPM_TOKEN) }}
       - name: Publish to NPM
-        run: corepack yarn workspaces foreach --no-private npm publish --access public --tolerate-republish
+        run: corepack yarn workspaces foreach --no-private npm publish --access public --tag next --tolerate-republish
       - name: Merge PR
         id: merge
         run: |
@@ -62,7 +62,7 @@ jobs:
         id: uppyVersion
         run: jq -r '"##[set-output name=version;]"+.version' < packages/uppy/package.json
       - name: Create GitHub release
-        run: gh release create uppy@${{ steps.uppyVersion.outputs.version }} -t "Uppy ${{ steps.uppyVersion.outputs.version }}" -F CHANGELOG.diff.md
+        run: gh release create uppy@${{ steps.uppyVersion.outputs.version }} -t "Uppy ${{ steps.uppyVersion.outputs.version }}" -F CHANGELOG.diff.md --prerelease
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload `uppy` to CDN
@@ -84,8 +84,8 @@ jobs:
         run: gh api -X DELETE repos/${{ github.repository }}/git/refs/heads/release-candidate || echo "Already deleted"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Remove release branch
-        run: gh api -X DELETE repos/${{ github.repository }}/git/refs/heads/release
+      - name: Remove release-beta branch
+        run: gh api -X DELETE repos/${{ github.repository }}/git/refs/heads/release-beta
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Disable Release workflow

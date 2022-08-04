@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 const request = require('request')
 const purest = require('purest')({ request })
-const { promisify } = require('util')
+const { promisify } = require('node:util')
 
 const Provider = require('../Provider')
 const logger = require('../../logger')
@@ -289,8 +289,6 @@ class Drive extends Provider {
     return err
   }
 }
-
-Drive.version = 2
 
 Drive.prototype.logout = promisify(Drive.prototype._logout)
 

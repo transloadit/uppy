@@ -2,9 +2,9 @@
 // We fire our own build-examples.js and tell it which example to build -
 // that script then writes temporary js files
 // which we return via the callback.
-const { exec } = require('child_process')
-const path = require('path')
-const fs = require('fs')
+const { exec } = require('node:child_process')
+const path = require('node:path')
+const fs = require('node:fs')
 const uuid = require('uuid')
 
 const webRoot = path.dirname(path.dirname(__dirname))

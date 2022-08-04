@@ -81,7 +81,7 @@ uppy.use(Dashboard, {
   hideCancelButton: false,
   hideProgressAfterFinish: false,
   doneButtonHandler: () => {
-    this.uppy.reset()
+    this.uppy.cancelAll()
     this.requestCloseModal()
   },
   note: null,
@@ -97,6 +97,8 @@ uppy.use(Dashboard, {
   onRequestCloseModal: () => this.closeModal(),
   showSelectedFiles: true,
   showRemoveButtonAfterComplete: false,
+  showNativePhotoCameraButton: false,
+  showNativeVideoCameraButton: false,
   locale: defaultLocale,
   browserBackButtonClose: false,
   theme: 'light',
@@ -196,7 +198,7 @@ This option is passed to the StatusBar, and will render a “Done” button in p
 
 ```js
 const doneButtonHandler = () => {
-  this.uppy.reset()
+  this.uppy.cancelAll()
   this.requestCloseModal()
 }
 ```
@@ -421,6 +423,9 @@ export default {
       0: 'Missing required meta field: %{fields}.',
       1: 'Missing required meta fields: %{fields}.',
     },
+    // Used for native device camera buttons on mobile
+    takePictureBtn: 'Take Picture',
+    recordVideoBtn: 'Record Video',
   },
 }
 ```

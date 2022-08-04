@@ -348,20 +348,6 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
     })
   })
 
-  describe('canvasToBlob', () => {
-    it('should use canvas.toBlob if available', () => {
-      const core = new MockCore()
-      const plugin = new ThumbnailGeneratorPlugin(core)
-      const canvas = {
-        toBlob: jest.fn(),
-      }
-      plugin.canvasToBlob(canvas, 'type', 90)
-      expect(canvas.toBlob).toHaveBeenCalledTimes(1)
-      expect(canvas.toBlob.mock.calls[0][1]).toEqual('type')
-      expect(canvas.toBlob.mock.calls[0][2]).toEqual(90)
-    })
-  })
-
   describe('downScaleInSteps', () => {
     let originalDocumentCreateElement
     let originalURLCreateObjectURL

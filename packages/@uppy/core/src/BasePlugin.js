@@ -75,8 +75,6 @@ export default class BasePlugin {
     throw new Error('Extend the render method to add your plugin to a DOM element')
   }
 
-  // TODO: remove in the next major version. It's not feasible to
-  // try to use plugins with other frameworks.
   // eslint-disable-next-line class-methods-use-this
   update () {}
 

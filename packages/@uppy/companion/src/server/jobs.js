@@ -1,7 +1,7 @@
 const schedule = require('node-schedule')
-const fs = require('fs')
-const path = require('path')
-const { promisify } = require('util')
+const fs = require('node:fs')
+const path = require('node:path')
+const { promisify } = require('node:util')
 const request = require('request')
 
 const { FILE_NAME_PREFIX } = require('./Uploader')

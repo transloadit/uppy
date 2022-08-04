@@ -1,10 +1,15 @@
+const { mkdtempSync } = require('node:fs')
+const os = require('node:os')
+const path = require('node:path')
+
+require('dotenv').config({ path: path.join(__dirname, '..', '..', '..', '.env') })
 const express = require('express')
 // the ../../../packages is just to use the local version
 // instead of the npm version—in a real app use `require('@uppy/companion')`
 const bodyParser = require('body-parser')
 const session = require('express-session')
-const uppy = require('../../../packages/@uppy/companion')
-const MyCustomProvider = require('./customprovider')
+const uppy = require('@uppy/companion')
+const MyCustomProvider = require('./CustomProvider.cjs')
 
 const app = express()
 
@@ -29,8 +34,8 @@ const ACCESS_URL = 'https://unsplash.com/oauth/token'
 const uppyOptions = {
   providerOptions: {
     drive: {
-      key: 'your google drive key',
-      secret: 'your google drive secret',
+      key: process.env.COMPANION_GOOGLE_KEY,
+      secret: process.env.COMPANION_GOOGLE_SECRET,
     },
   },
   customProviders: {
@@ -40,8 +45,8 @@ const uppyOptions = {
         authorize_url: AUTHORIZE_URL,
         access_url: ACCESS_URL,
         oauth: 2,
-        key: 'your unsplash key here',
-        secret: 'your unsplash secret here',
+        key: process.env.COMPANION_UNSPLASH_KEY,
+        secret: process.env.COMPANION_UNSPLASH_SECRET,
       },
       // you provider class/module:
       module: MyCustomProvider,
@@ -51,12 +56,12 @@ const uppyOptions = {
     host: 'localhost:3020',
     protocol: 'http',
   },
-  filePath: './output',
+  filePath: mkdtempSync(path.join(os.tmpdir(), 'companion-')),
   secret: 'some-secret',
   debug: true,
 }
 
-app.use(uppy.app(uppyOptions))
+app.use(uppy.app(uppyOptions).app)
 
 // handle 404
 app.use((req, res) => {

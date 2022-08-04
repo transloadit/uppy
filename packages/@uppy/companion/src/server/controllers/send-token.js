@@ -1,4 +1,4 @@
-const { URL } = require('url')
+const { URL } = require('node:url')
 const serialize = require('serialize-javascript')
 
 const tokenService = require('../helpers/jwt')

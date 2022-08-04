@@ -1,4 +1,3 @@
-const isObject = require('isobject')
 const logger = require('./logger')
 
 /**
@@ -50,7 +49,7 @@ const isForbiddenHeader = (header) => {
 }
 
 module.exports = (headers) => {
-  if (!isObject(headers)) {
+  if (headers == null || typeof headers !== 'object' || Array.isArray(headers)) {
     return {}
   }
 

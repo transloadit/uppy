@@ -1,5 +1,5 @@
 const mime = require('mime-types')
-const querystring = require('querystring')
+const querystring = require('node:querystring')
 
 exports.getUsername = (data) => {
   return data.user_email

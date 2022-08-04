@@ -1,4 +1,4 @@
-const querystring = require('querystring')
+const querystring = require('node:querystring')
 
 exports.isFolder = (item) => { // eslint-disable-line no-unused-vars
   return false

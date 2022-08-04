@@ -1,5 +1,4 @@
 const cors = require('cors')
-// @ts-ignore
 const promBundle = require('express-prom-bundle')
 
 // @ts-ignore
@@ -69,14 +68,14 @@ exports.cookieAuthToken = (req, res, next) => {
 }
 
 exports.loadSearchProviderToken = (req, res, next) => {
-  const { searchProviders } = req.companion.options.providerOptions
+  const { providerOptions } = req.companion.options
   const providerName = req.params.searchProviderName
-  if (!searchProviders || !searchProviders[providerName] || !searchProviders[providerName].key) {
+  if (!providerOptions[providerName] || !providerOptions[providerName].key) {
     logger.info(`unconfigured credentials for ${providerName}`, 'searchtoken.load.unset', req.id)
     return res.sendStatus(501)
   }
 
-  req.companion.providerToken = searchProviders[providerName].key
+  req.companion.providerToken = providerOptions[providerName].key
   next()
 }
 
@@ -84,9 +83,8 @@ exports.cors = (options = {}) => (req, res, next) => {
   // HTTP headers are not case sensitive, and express always handles them in lower case, so that's why we lower case them.
   // I believe that HTTP verbs are case sensitive, and should be uppercase.
 
-  // TODO: Move to optional chaining when we drop Node.js v12.x support
   const existingExposeHeaders = res.get('Access-Control-Expose-Headers')
-  const exposeHeadersSet = new Set(existingExposeHeaders && existingExposeHeaders.split(',').map(method => method.trim().toLowerCase()))
+  const exposeHeadersSet = new Set(existingExposeHeaders?.split(',')?.map((method) => method.trim().toLowerCase()))
 
   // exposed so it can be accessed for our custom uppy client preflight
   exposeHeadersSet.add('access-control-allow-headers')
@@ -111,7 +109,7 @@ exports.cors = (options = {}) => (req, res, next) => {
     : allowedHeaders)
 
   const existingAllowMethods = res.get('Access-Control-Allow-Methods')
-  const allowMethodsSet = new Set(existingAllowMethods && existingAllowMethods.split(',').map(method => method.trim().toUpperCase()))
+  const allowMethodsSet = new Set(existingAllowMethods?.split(',')?.map((method) => method.trim().toUpperCase()))
   // Needed for basic operation:
   allowMethodsSet.add('GET').add('POST').add('OPTIONS').add('DELETE')
 
@@ -141,7 +139,6 @@ exports.metrics = ({ path = undefined } = {}) => {
 
   // Add version as a prometheus gauge
   const versionGauge = new promClient.Gauge({ name: 'companion_version', help: 'npm version as an integer' })
-  // @ts-ignore
   const numberVersion = Number(version.replace(/\D/g, ''))
   versionGauge.set(numberVersion)
   return metricsMiddleware

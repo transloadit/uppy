@@ -1,7 +1,7 @@
 {
   "name": "@uppy/compressor",
   "description": "Uppy plugin that compresses images before upload, saving up to 60% in size",
-  "version": "0.3.1",
+  "version": "1.0.0-beta.2",
   "license": "MIT",
   "main": "lib/index.js",
   "style": "dist/style.min.css",
@@ -34,5 +34,6 @@
   },
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "stableVersion": "0.3.0"
 }

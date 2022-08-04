@@ -1,1 +1,1 @@
-export { default } from './_StatusBar.jsx'
+export { default } from './StatusBar.jsx'

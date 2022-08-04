@@ -1,7 +1,7 @@
 {
   "name": "@uppy/dashboard",
   "description": "Universal UI plugin for Uppy.",
-  "version": "2.4.1",
+  "version": "3.0.0-beta.3",
   "license": "MIT",
   "main": "lib/index.js",
   "style": "dist/style.min.css",
@@ -33,7 +33,7 @@
     "is-shallow-equal": "^1.0.1",
     "lodash.debounce": "^4.0.8",
     "memoize-one": "^5.0.4",
-    "nanoid": "^3.1.25",
+    "nanoid": "^4.0.0",
     "preact": "^10.5.13"
   },
   "devDependencies": {
@@ -44,5 +44,6 @@
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^"
-  }
+  },
+  "stableVersion": "2.3.0"
 }

@@ -1,7 +1,7 @@
 const Prism = require('prismjs')
 const entities = require('he')
-const { readFile } = require('fs/promises')
-const path = require('path')
+const { readFile } = require('node:fs/promises')
+const path = require('node:path')
 
 // oof
 // I think this is the way to add Prism components that it doesn't include

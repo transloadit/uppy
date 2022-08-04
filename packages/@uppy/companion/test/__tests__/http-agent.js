@@ -1,8 +1,8 @@
 /* global test:false, expect:false, describe:false, */
 
 const request = require('request')
-const http = require('http')
-const https = require('https')
+const http = require('node:http')
+const https = require('node:https')
 const { getProtectedHttpAgent, getRedirectEvaluator, FORBIDDEN_IP_ADDRESS } = require('../../src/server/helpers/request')
 
 describe('test getRedirectEvaluator', () => {

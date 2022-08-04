@@ -119,7 +119,7 @@ describe('Dashboard with Transloadit', () => {
   })
 
   it('should not create assembly when all individual files have been cancelled', () => {
-    cy.get('@file-input').selectFile(['cypress/fixtures/images/cat.jpg', 'cypress/fixtures/images/traffic.jpg'], { force: true })
+    cy.get('@file-input').selectFile(['cypress/fixtures/images/cat.jpg', 'cypress/fixtures/images/traffic.jpg'], { force:true })
     cy.get('.uppy-StatusBar-actionBtn--upload').click()
 
     cy.window().then(({ uppy }) => {

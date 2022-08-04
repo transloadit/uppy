@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-    <!-- <HelloWorld msg="Welcome to Uppy Vue Demo"/> -->
     <h1>Welcome to Uppy Vue Demo!</h1>
     <h2>Inline Dashboard</h2>
     <label>

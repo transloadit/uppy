@@ -33,6 +33,4 @@ class SearchProvider {
   }
 }
 
-SearchProvider.version = 1
-
 module.exports = SearchProvider

@@ -1,4 +1,4 @@
-const crypto = require('crypto')
+const crypto = require('node:crypto')
 
 /**
  *
@@ -164,3 +164,5 @@ module.exports.requestStream = async (req, convertResponseToError) => {
 
   return { stream: resp }
 }
+
+module.exports.defaultGetKey = (req, filename) => `${crypto.randomUUID()}-${filename}`

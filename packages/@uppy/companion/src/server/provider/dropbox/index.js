@@ -1,6 +1,6 @@
 const request = require('request')
 const purest = require('purest')({ request })
-const { promisify } = require('util')
+const { promisify } = require('node:util')
 
 const Provider = require('../Provider')
 const logger = require('../../logger')
@@ -223,8 +223,6 @@ class DropBox extends Provider {
     return err
   }
 }
-
-DropBox.version = 2
 
 DropBox.prototype.list = promisify(DropBox.prototype._list)
 DropBox.prototype.size = promisify(DropBox.prototype._size)

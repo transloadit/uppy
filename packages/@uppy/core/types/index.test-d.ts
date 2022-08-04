@@ -21,7 +21,7 @@ type anyObject = Record<string, unknown>
 }
 
 {
-  const store = DefaultStore()
+  const store = new DefaultStore()
   new Uppy({ store }) // eslint-disable-line no-new
 }
 
@@ -104,8 +104,8 @@ type anyObject = Record<string, unknown>
   })
 
   // Separate event handlers
-  const handleUpload = (file: UppyFile<Meta>) => {
-    const meta = file.meta.myCustomMetadata
+  const handleUpload = (file?: UppyFile<Meta>) => {
+    const meta = file?.meta.myCustomMetadata
   }
 
   uppy.off<'upload-success', Meta>('upload-success', handleUpload)
@@ -114,7 +114,7 @@ type anyObject = Record<string, unknown>
     body?: { someValue: string }
   }
 
-  const onUploadSuccess = async (file: UppyFile<Meta, any>, response: CustomResponse) => {
+  const onUploadSuccess = async (file: UppyFile<Meta, any> | undefined, response: CustomResponse) => {
     const res = response.body?.someValue
   }
   uppy.on<'upload-success', Meta>('upload-success', onUploadSuccess)
