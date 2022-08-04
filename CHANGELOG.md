@@ -12,6 +12,23 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 2.13.3
+
+Released: 2022-08-04
+
+| Package                | Version | Package                | Version |
+| ---------------------- | ------- | ---------------------- | ------- |
+| @uppy/aws-s3-multipart |   2.4.2 | @uppy/robodog          |   2.9.3 |
+| @uppy/compressor       |   0.3.2 | uppy                   |  2.13.3 |
+| @uppy/utils            |   4.1.1 |                        |         |
+
+- meta: fork branch in preparation for LTS (Antoine du Hamel)
+- @uppy/aws-s3-multipart: ignore exception inside `abortMultipartUpload` (Antoine du Hamel / #3950)
+- @uppy/utils: modernize `getDroppedFiles` (Antoine du Hamel / #3534)
+- @uppy/compressor: Fix Compressor being broken when no name is in the compressed blob (Artur Paikin / #3947)
+- e2e: mark tests as flaky (Antoine du Hamel / #3940)
+
+
 ## 2.13.2
 
 Released: 2022-08-02
