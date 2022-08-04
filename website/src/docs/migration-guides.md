@@ -189,7 +189,9 @@ In general, don’t depend on implicitly internal methods, use exposed APIs inst
 
 ### Removed backwards compatibility for `/metrics` endpoint
 
-TODO @mifi
+The `metrics` option is a boolean flag to tell Companion whether to provide an endpoint `/metrics` with Prometheus metrics. Metrics will now always be served under `options.server.path`. Before v4.x, it would always be served under the root.
+
+For example: if `{ options: { metrics: true, server: { path: '/companion' }}}`, metrics will now be served under `/companion/metrics`. In v3.x, the metrics would be served under `/metrics`.
 
 ## Migrate from Uppy 1.x to 2.x
 
