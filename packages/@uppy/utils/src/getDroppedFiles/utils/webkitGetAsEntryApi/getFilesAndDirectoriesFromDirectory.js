@@ -13,9 +13,9 @@ export default function getFilesAndDirectoriesFromDirectory (directoryReader, ol
       // According to the FileSystem API spec, getFilesAndDirectoriesFromDirectory()
       // must be called until it calls the onSuccess with an empty array.
       if (entries.length) {
-        setTimeout(() => {
+        queueMicrotask(() => {
           getFilesAndDirectoriesFromDirectory(directoryReader, newEntries, logDropError, { onSuccess })
-        }, 0)
+        })
       // Done iterating this particular directory
       } else {
         onSuccess(newEntries)
