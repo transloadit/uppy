@@ -390,7 +390,12 @@ class Uppy {
   }
 
   validateRestrictions (file, files = this.getFiles()) {
-    return this.#restricter.validate(file, files)
+    try {
+      this.#restricter.validate(file, files)
+    } catch (err) {
+      return err
+    }
+    return null
   }
 
   #checkRequiredMetaFieldsOnFile (file) {

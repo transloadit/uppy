@@ -51,15 +51,10 @@ export default class SharedHandler {
       // reduce it to only contain files that pass restrictions
       for (const item of currentSelection) {
         const { uppy } = this.plugin
-        let restrictionError
-        try {
-          uppy.validateRestrictions(
-            remoteFileObjToLocal(item),
-            [...uppy.getFiles(), ...reducedCurrentSelection],
-          )
-        } catch (err) {
-          restrictionError = err
-        }
+        const restrictionError = uppy.validateRestrictions(
+          remoteFileObjToLocal(item),
+          [...uppy.getFiles(), ...reducedCurrentSelection],
+        )
 
         if (!restrictionError) {
           reducedCurrentSelection.push(item)

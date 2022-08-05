@@ -1795,12 +1795,11 @@ describe('src/Core', () => {
         size: 270733,
       }
 
-      expect(() => core.validateRestrictions(newFile)).toThrow(
-        'This file is smaller than the allowed size of 293 KB',
-      )
-      expect(() => core2.validateRestrictions(newFile)).toThrow(
-        'You can only upload: image/png',
-      )
+      const validateRestrictions1 = core.validateRestrictions(newFile)
+      const validateRestrictions2 = core2.validateRestrictions(newFile)
+
+      expect(validateRestrictions1.message).toEqual('This file is smaller than the allowed size of 293 KB')
+      expect(validateRestrictions2.message).toEqual('You can only upload: image/png')
     })
 
     it('should emit `restriction-failed` event when some rule is violated', () => {
