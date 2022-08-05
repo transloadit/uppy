@@ -1,25 +1,25 @@
-const Uppy = require('@uppy/core')
-const Dashboard = require('@uppy/dashboard')
-const GoogleDrive = require('@uppy/google-drive')
-const Dropbox = require('@uppy/dropbox')
-const Instagram = require('@uppy/instagram')
-const Facebook = require('@uppy/facebook')
-const OneDrive = require('@uppy/onedrive')
-const Zoom = require('@uppy/zoom')
-const Unsplash = require('@uppy/unsplash')
-const Box = require('@uppy/box')
-const ImageEditor = require('@uppy/image-editor')
-const Url = require('@uppy/url')
-const Webcam = require('@uppy/webcam')
-const Audio = require('@uppy/audio')
-const ScreenCapture = require('@uppy/screen-capture')
-const Tus = require('@uppy/tus')
-const DropTarget = require('@uppy/drop-target')
-const GoldenRetriever = require('@uppy/golden-retriever')
-const Compressor = require('@uppy/compressor')
-const localeList = require('../locale_list.json')
+import Uppy from '@uppy/core'
+import Dashboard from '@uppy/dashboard'
+import GoogleDrive from '@uppy/google-drive'
+import Dropbox from '@uppy/dropbox'
+import Instagram from '@uppy/instagram'
+import Facebook from '@uppy/facebook'
+import OneDrive from '@uppy/onedrive'
+import Zoom from '@uppy/zoom'
+import Unsplash from '@uppy/unsplash'
+import Box from '@uppy/box'
+import ImageEditor from '@uppy/image-editor'
+import Url from '@uppy/url'
+import Webcam from '@uppy/webcam'
+import Audio from '@uppy/audio'
+import ScreenCapture from '@uppy/screen-capture'
+import Tus from '@uppy/tus'
+import DropTarget from '@uppy/drop-target'
+import GoldenRetriever from '@uppy/golden-retriever'
+import Compressor from '@uppy/compressor'
+import localeList from '../locale_list.json'
 
-const COMPANION = require('../env')
+import COMPANION from '../env.js'
 
 const RTL_LOCALES = ['ar_SA', 'fa_IR', 'he_IL']
 

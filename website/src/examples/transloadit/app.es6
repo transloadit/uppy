@@ -1,11 +1,11 @@
-const Uppy = require('@uppy/core')
-const Dashboard = require('@uppy/dashboard')
-const Webcam = require('@uppy/webcam')
-const Transloadit = require('@uppy/transloadit')
-const Instagram = require('@uppy/instagram')
-const Facebook = require('@uppy/facebook')
-const Zoom = require('@uppy/zoom')
-const COMPANION = require('../env')
+import Uppy from '@uppy/core'
+import Dashboard from '@uppy/dashboard'
+import Webcam from '@uppy/webcam'
+import Transloadit from '@uppy/transloadit'
+import Instagram from '@uppy/instagram'
+import Facebook from '@uppy/facebook'
+import Zoom from '@uppy/zoom'
+import COMPANION from '../env.js'
 
 const enc = new TextEncoder('utf-8')
 async  function sha1 (secret, body) {
