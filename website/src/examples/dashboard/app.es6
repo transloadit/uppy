@@ -1,4 +1,4 @@
-import Uppy from '@uppy/core'
+import Uppy, { debugLogger } from '@uppy/core'
 import Dashboard from '@uppy/dashboard'
 import GoogleDrive from '@uppy/google-drive'
 import Dropbox from '@uppy/dropbox'
@@ -37,7 +37,7 @@ function uppyInit () {
   const opts = window.uppyOptions
 
   const uppy = new Uppy({
-    logger: Uppy.debugLogger,
+    logger: debugLogger,
   })
 
   uppy.use(Tus, { endpoint: 'https://tusd.tusdemo.net/files/' })
