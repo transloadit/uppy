@@ -1,10 +1,10 @@
 /* eslint-env browser */
-const marked = require('marked')
-const dragdrop = require('drag-drop')
+import marked from 'marked'
+import dragdrop from 'drag-drop'
 // Add Robodog JS. It is advisable to install Robodog from npm/yarn.
 // But for experimenting, you can use also Transloadit’s CDN, Edgly:
 // <script src="https://releases.transloadit.com/uppy/robodog/v3.0.0-beta.4/robodog.min.js"></script>
-const robodog = require('@uppy/robodog')
+import robodog from '@uppy/robodog'
 
 const TRANSLOADIT_EXAMPLE_KEY = '35c1aed03f5011e982b6afe82599b6a0'
 const TRANSLOADIT_EXAMPLE_TEMPLATE = '0b2ee2bc25dc43619700c2ce0a75164a'
