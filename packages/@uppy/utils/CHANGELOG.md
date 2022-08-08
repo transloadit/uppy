@@ -1,5 +1,12 @@
 # @uppy/utils
 
+## 4.1.1
+
+Released: 2022-08-08
+Included in: Uppy v2.13.3
+
+- @uppy/utils: modernize `getDroppedFiles` (Antoine du Hamel / #3534)
+
 ## 4.1.0
 
 Released: 2022-05-30
