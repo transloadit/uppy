@@ -14,13 +14,10 @@ Uppy is flexible and extensible through plugins. But the integration code could 
 
 But, it didn’t come with its own set of new problems:
 
-* It tries to do the exact same, but it looks like a different product
+* It tries to do the exact same, but it looks like a different product.
 * It’s confusing for users whether they want to use Robodog or Uppy directly.
-* Robodog is more ergonomic because it’s limited. When you hit such a limit, you need to refactor everything to Uppy with plugins.
-* Documentation is scarce, and the trade offs are unclear
-* It’s not marketed, you need to stumble on it in the docs.
-* Extra maintenance burden
-* Extra hosting effort and costs
+* Robodog is more ergonomic because it’s limited. When you hit such a limit, you
+  need to refactor everything to Uppy with plugins.
 
 This has now led us to deprecating Robodog and embrace Uppy for its strong suits; modularity and flexibility. At the same time, we also introduced something to take away some repetitive integration code: [`@uppy/remote-sources`](/docs/remote-sources).
 
