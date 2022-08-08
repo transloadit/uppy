@@ -278,18 +278,18 @@ class MultipartUploader {
   #uploadPartRetryable (index, prePreparedPart) {
     return this.#retryable({
       before: () => {
+        this.chunkState[index].busy = true
         this.partsInProgress += 1
       },
       attempt: () => this.#uploadPart(index, prePreparedPart),
       after: () => {
+        this.chunkState[index].busy = false
         this.partsInProgress -= 1
       },
     })
   }
 
   #uploadPart (index, prePreparedPart) {
-    this.chunkState[index].busy = true
-
     const valid = typeof prePreparedPart?.url === 'string'
     if (!valid) {
       throw new TypeError('AwsS3/Multipart: Got incorrect result for `prePreparedPart`, expected an object `{ url }`.')
@@ -297,7 +297,6 @@ class MultipartUploader {
 
     const { url, headers } = prePreparedPart
     if (this.#aborted()) {
-      this.chunkState[index].busy = false
       throw createAbortError()
     }
 
@@ -359,14 +358,12 @@ class MultipartUploader {
 
     xhr.addEventListener('abort', () => {
       cleanup()
-      this.chunkState[index].busy = false
 
       defer.reject(createAbortError())
     })
 
     xhr.addEventListener('load', (ev) => {
       cleanup()
-      this.chunkState[index].busy = false
 
       if (ev.target.status < 200 || ev.target.status >= 300) {
         const error = new Error('Non 2xx')
@@ -394,7 +391,6 @@ class MultipartUploader {
 
     xhr.addEventListener('error', (ev) => {
       cleanup()
-      this.chunkState[index].busy = false
 
       const error = new Error('Unknown error')
       error.source = ev.target
