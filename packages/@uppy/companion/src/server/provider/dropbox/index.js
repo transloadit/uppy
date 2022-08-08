@@ -1,12 +1,10 @@
+const got = require('got').default
+
 const Provider = require('../Provider')
 const logger = require('../../logger')
 const adapter = require('./adapter')
 const { ProviderApiError, ProviderAuthError } = require('../error')
 const { prepareStream } = require('../../helpers/utils')
-
-// todo jest is broken now with esm https://github.com/facebook/jest/issues/13008
-// degrade got version?
-const gotPromise = import('got')
 
 // From https://www.dropbox.com/developers/reference/json-encoding:
 //
@@ -41,7 +39,7 @@ function adaptData (res, email, buildURL) {
   }
 }
 
-const getClient = async ({ token }) => (await gotPromise).got.extend({
+const getClient = async ({ token }) => got.extend({
   prefixUrl: 'https://api.dropboxapi.com/2',
   headers: {
     authorization: `Bearer ${token}`,

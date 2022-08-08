@@ -44,7 +44,7 @@
     "express-prom-bundle": "6.3.0",
     "express-request-id": "1.4.1",
     "express-session": "1.17.1",
-    "got": "^12.3.0",
+    "got": "11",
     "grant": "4.7.0",
     "helmet": "^4.6.0",
     "ipaddr.js": "^2.0.1",

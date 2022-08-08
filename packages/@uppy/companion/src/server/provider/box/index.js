@@ -1,3 +1,5 @@
+const got = require('got').default
+
 const Provider = require('../Provider')
 const logger = require('../../logger')
 const adapter = require('./adapter')
@@ -7,9 +9,7 @@ const { prepareStream } = require('../../helpers/utils')
 const BOX_FILES_FIELDS = 'id,modified_at,name,permissions,size,type'
 const BOX_THUMBNAIL_SIZE = 256
 
-const gotPromise = import('got')
-
-const getClient = async ({ token }) => (await gotPromise).got.extend({
+const getClient = async ({ token }) => got.extend({
   prefixUrl: 'https://api.box.com/2.0',
   headers: {
     authorization: `Bearer ${token}`,
