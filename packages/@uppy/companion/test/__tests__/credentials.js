@@ -1,39 +1,9 @@
-/* global jest:false, test:false, expect:false, describe:false */
-
-const { remoteZoomKey: mockRemoteZoomKey, remoteZoomSecret: mockRemoteZoomSecret, remoteZoomVerificationToken: mockRemoteZoomVerificationToken } = require('../fixtures/zoom').expects
-
-// mocking request module used to fetch custom oauth credentials
-jest.mock('request', () => {
-  return {
-    post: (url, options, done) => {
-      if (url === 'http://localhost:2111/zoom-keys') {
-        const { body } = options
-        if (body.provider !== 'zoom') {
-          return done(new Error('wrong provider'))
-        }
-
-        if (body.parameters !== 'ZOOM-CREDENTIALS-PARAMS') {
-          return done(new Error('wrong params'))
-        }
-
-        const respBody = {
-          credentials: {
-            key: mockRemoteZoomKey,
-            secret: mockRemoteZoomSecret,
-            verificationToken: mockRemoteZoomVerificationToken,
-          },
-        }
-        return done(null, { statusCode: 200, body: respBody }, respBody)
-      }
-
-      done(new Error('unsupported request with mock function'))
-    },
-  }
-})
-
 const request = require('supertest')
+const nock = require('nock')
 const tokenService = require('../../src/server/helpers/jwt')
 const { getServer } = require('../mockserver')
+
+const { remoteZoomKey: mockRemoteZoomKey, remoteZoomSecret: mockRemoteZoomSecret, remoteZoomVerificationToken: mockRemoteZoomVerificationToken } = require('../fixtures/zoom').expects
 
 const authServer = getServer({ COMPANION_ZOOM_KEYS_ENDPOINT: 'http://localhost:2111/zoom-keys' })
 const authData = {
@@ -41,7 +11,33 @@ const authData = {
 }
 const token = tokenService.generateEncryptedToken(authData, process.env.COMPANION_SECRET)
 
+afterAll(() => {
+  nock.cleanAll()
+  nock.restore()
+})
+
 describe('providers requests with remote oauth keys', () => {
+  // mocking request module used to fetch custom oauth credentials
+  nock('http://localhost:2111')
+    .post('/zoom-keys')
+    .reply((uri, { provider, parameters }) => {
+      if (provider !== 'zoom' || parameters !== 'ZOOM-CREDENTIALS-PARAMS') {
+        return [400]
+      }
+      return [
+        200,
+        {
+          credentials: {
+            key: mockRemoteZoomKey,
+            secret: mockRemoteZoomSecret,
+            verificationToken: mockRemoteZoomVerificationToken,
+          },
+        },
+      ]
+    }).persist()
+
+  nock('https://zoom.us').post('/oauth/revoke?token=token+value').reply(200, { status: 'success' })
+
   test('zoom logout with remote oauth keys happy path', () => {
     const params = { params: 'ZOOM-CREDENTIALS-PARAMS' }
     const encodedParams = Buffer.from(JSON.stringify(params), 'binary').toString('base64')

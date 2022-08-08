@@ -1,11 +1,20 @@
-/* global test:false, describe:false */
-
+const nock = require('nock')
 const request = require('supertest')
 const { getServer } = require('../mockserver')
 
 const authServer = getServer()
 
+afterAll(() => {
+  nock.cleanAll()
+  nock.restore()
+})
+
 describe('handle deauthorization callback', () => {
+  nock('https://api.zoom.us')
+    .post('/oauth/data/compliance')
+    .reply(() => [200])
+    .persist()
+
   test('providers without support for callback endpoint', () => {
     return request(authServer)
       .post('/dropbox/deauthorization/callback')
