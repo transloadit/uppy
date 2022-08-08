@@ -1,5 +1,13 @@
 # @uppy/aws-s3-multipart
 
+## 2.4.2
+
+Released: 2022-08-08
+Included in: Uppy v2.13.3
+
+- @uppy/aws-s3-multipart: Fix race condition in `#uploadParts` (Morgan Zolob / #3955)
+- @uppy/aws-s3-multipart: ignore exception inside `abortMultipartUpload` (Antoine du Hamel / #3950)
+
 ## 2.4.1
 
 Released: 2022-06-07

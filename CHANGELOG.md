@@ -12,6 +12,30 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 2.13.3
+
+Released: 2022-08-08
+
+| Package                | Version | Package                | Version |
+| ---------------------- | ------- | ---------------------- | ------- |
+| @uppy/aws-s3-multipart |   2.4.2 | @uppy/robodog          |   2.9.3 |
+| @uppy/compressor       |   0.3.2 | uppy                   |  2.13.3 |
+| @uppy/utils            |   4.1.1 |                        |         |
+
+This release marks the transition of Uppy 2.x to maintenance mode. The team is
+now focused on working Uppy 3.0.0 releases, and plan to not land any new feature
+on the 2.x release line. We are committed on backporting bug fixes that affects
+the deprecated Robodog package and its dependencies for at least one year, we
+encourage Robodog users to migrate away from Robodog to Uppy plugins.
+
+- @uppy/aws-s3-multipart: Fix race condition in `#uploadParts` (Morgan Zolob / #3955)
+- meta: fork branch in preparation for LTS (Antoine du Hamel)
+- @uppy/aws-s3-multipart: ignore exception inside `abortMultipartUpload` (Antoine du Hamel / #3950)
+- @uppy/utils: modernize `getDroppedFiles` (Antoine du Hamel / #3534)
+- @uppy/compressor: Fix Compressor being broken when no name is in the compressed blob (Artur Paikin / #3947)
+- e2e: mark tests as flaky (Antoine du Hamel / #3940)
+
+
 ## 2.13.2
 
 Released: 2022-08-02
