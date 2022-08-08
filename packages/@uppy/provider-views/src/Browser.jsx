@@ -101,7 +101,7 @@ function Browser (props) {
               })}
 
               {files.map((file) => {
-                const validated = validateRestrictions(
+                const restrictionError = validateRestrictions(
                   remoteFileObjToLocal(file),
                   [...uppyFiles, ...currentSelection],
                 )
@@ -119,8 +119,8 @@ function Browser (props) {
                   viewType,
                   i18n,
                   type: 'file',
-                  isDisabled: !validated.result && !isChecked(file),
-                  restrictionReason: validated.reason,
+                  isDisabled: restrictionError && !isChecked(file),
+                  restrictionError,
                 })
               })}
             </ul>
