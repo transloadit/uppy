@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-const getTimeStamp = require('@uppy/utils/lib/getTimeStamp')
+import getTimeStamp from '@uppy/utils/lib/getTimeStamp'
 
 // Swallow all logs, except errors.
 // default if logger is not set or debug: false
@@ -17,7 +17,7 @@ const debugLogger = {
   error: (...args) => console.error(`[Uppy] [${getTimeStamp()}]`, ...args),
 }
 
-module.exports = {
+export {
   justErrorsLogger,
   debugLogger,
 }

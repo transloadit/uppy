@@ -1,4 +1,5 @@
-const truncateString = require('./truncateString')
+import { describe, expect, it } from '@jest/globals'
+import truncateString from './truncateString.js'
 
 describe('truncateString', () => {
   it('should truncate the string to the length', () => {

@@ -77,6 +77,4 @@ class Provider {
   }
 }
 
-Provider.version = 1
-
 module.exports = Provider

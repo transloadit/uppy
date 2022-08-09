@@ -1,6 +1,29 @@
 import React from 'react'
 import { StyleSheet, View, Text } from 'react-native'
-import { FlatGrid } from 'react-native-super-grid'
+import { FlatGrid } from 'react-native-super-grid' // eslint-disable-line import/no-unresolved
+
+const styles = StyleSheet.create({
+  gridView: {
+    marginTop: 20,
+    flex: 1,
+  },
+  itemContainer: {
+    justifyContent: 'flex-end',
+    borderRadius: 5,
+    padding: 10,
+    height: 150,
+  },
+  itemName: {
+    fontSize: 16,
+    color: '#fff',
+    fontWeight: '600',
+  },
+  itemCode: {
+    fontWeight: '600',
+    fontSize: 12,
+    color: '#fff',
+  },
+})
 
 // test grid, can be used for instagram
 export default class Example extends React.Component {
@@ -36,26 +59,3 @@ export default class Example extends React.Component {
     )
   }
 }
-
-const styles = StyleSheet.create({
-  gridView: {
-    marginTop: 20,
-    flex: 1,
-  },
-  itemContainer: {
-    justifyContent: 'flex-end',
-    borderRadius: 5,
-    padding: 10,
-    height: 150,
-  },
-  itemName: {
-    fontSize: 16,
-    color: '#fff',
-    fontWeight: '600',
-  },
-  itemCode: {
-    fontWeight: '600',
-    fontSize: 12,
-    color: '#fff',
-  },
-})

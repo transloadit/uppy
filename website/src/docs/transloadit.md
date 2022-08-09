@@ -302,10 +302,8 @@ Limit the amount of uploads going on at the same time. Setting this to `0` means
 
 ### `locale: {}`
 
-<!-- eslint-disable no-restricted-globals, no-multiple-empty-lines -->
-
 ```js
-module.exports = {
+export default {
   strings: {
     // Shown while Assemblies are being created for an upload.
     creatingAssembly: 'Preparing upload...',
@@ -316,7 +314,6 @@ module.exports = {
     encoding: 'Encoding...',
   },
 }
-
 ```
 
 ## Errors

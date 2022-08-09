@@ -21,9 +21,9 @@
 //
 //  - Kevin van Zonneveld <kevin@transloadit.com>
 
-const path = require('path')
-const { pipeline, finished } = require('stream/promises')
-const { readFile } = require('fs/promises')
+const path = require('node:path')
+const { pipeline, finished } = require('node:stream/promises')
+const { readFile } = require('node:fs/promises')
 const AWS = require('aws-sdk')
 const packlist = require('npm-packlist')
 const tar = require('tar')
@@ -106,7 +106,7 @@ async function main (packageName, version) {
   // version should only be a positional arg and semver string
   // this deals with usage like `npm run uploadcdn uppy -- --force`
   // where we force push a local build
-  if (version && version.startsWith('-')) version = undefined
+  if (version?.startsWith('-')) version = undefined // eslint-disable-line no-param-reassign
 
   const s3 = new AWS.S3({
     credentials: new AWS.Credentials({
@@ -118,7 +118,7 @@ async function main (packageName, version) {
 
   const remote = !!version
   if (!remote) {
-    // eslint-disable-next-line import/no-dynamic-require
+    // eslint-disable-next-line import/no-dynamic-require, global-require, no-param-reassign
     version = require(`../packages/${packageName}/package.json`).version
   }
 

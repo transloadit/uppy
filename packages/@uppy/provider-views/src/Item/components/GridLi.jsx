@@ -4,12 +4,13 @@ function GridListItem (props) {
   const {
     className,
     isDisabled,
-    restrictionReason,
+    restrictionError,
     isChecked,
     title,
     itemIconEl,
     showTitles,
     toggleCheckbox,
+    recordShiftKeyPress,
     id,
     children,
   } = props
@@ -17,7 +18,7 @@ function GridListItem (props) {
   return (
     <li
       className={className}
-      title={isDisabled ? restrictionReason : null}
+      title={isDisabled ? restrictionError?.message : null}
     >
       <input
         type="checkbox"
@@ -25,6 +26,7 @@ function GridListItem (props) {
           isChecked ? 'uppy-ProviderBrowserItem-checkbox--is-checked' : ''
         } uppy-ProviderBrowserItem-checkbox--grid`}
         onChange={toggleCheckbox}
+        onKeyDown={recordShiftKeyPress}
         name="listitem"
         id={id}
         checked={isChecked}

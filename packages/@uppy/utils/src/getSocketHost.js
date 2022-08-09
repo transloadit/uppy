@@ -1,4 +1,4 @@
-module.exports = function getSocketHost (url) {
+export default function getSocketHost (url) {
   // get the host domain
   const regex = /^(?:https?:\/\/|\/\/)?(?:[^@\n]+@)?(?:www\.)?([^\n]+)/i
   const host = regex.exec(url)[1]

@@ -1,5 +1,41 @@
 # @uppy/core
 
+## 3.0.0-beta.2
+
+Released: 2022-07-27
+Included in: Uppy v3.0.0-beta.3
+
+- @uppy/aws-s3,@uppy/core,@uppy/dashboard,@uppy/store-redux,@uppy/xhr-upload: upgrade `nanoid` to v4 (Antoine du Hamel / #3904)
+
+## 3.0.0-beta.1
+
+Released: 2022-06-09
+Included in: Uppy v3.0.0-beta.1
+
+- @uppy/core,@uppy/dashboard: fix types for some events (Antoine du Hamel / #3812)
+
+## 2.3.2
+
+Released: 2022-07-27
+Included in: Uppy v2.13.1
+
+- @uppy/core: Add missing type for retry-all event (Luc Boissaye / #3901)
+
+## 2.3.1
+
+Released: 2022-06-07
+Included in: Uppy v2.12.0
+
+- @uppy/core: fix `TypeError` when file was deleted (Antoine du Hamel / #3811)
+
+## 2.3.0
+
+Released: 2022-05-30
+Included in: Uppy v2.11.0
+
+- @uppy/angular,@uppy/audio,@uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/box,@uppy/core,@uppy/dashboard,@uppy/drag-drop,@uppy/dropbox,@uppy/facebook,@uppy/file-input,@uppy/form,@uppy/golden-retriever,@uppy/google-drive,@uppy/image-editor,@uppy/informer,@uppy/instagram,@uppy/onedrive,@uppy/progress-bar,@uppy/react,@uppy/redux-dev-tools,@uppy/robodog,@uppy/screen-capture,@uppy/status-bar,@uppy/store-default,@uppy/store-redux,@uppy/thumbnail-generator,@uppy/transloadit,@uppy/tus,@uppy/unsplash,@uppy/url,@uppy/vue,@uppy/webcam,@uppy/xhr-upload,@uppy/zoom: doc: update bundler recommendation (Antoine du Hamel / #3763)
+- @uppy/core: refactor to ESM (Antoine du Hamel / #3744)
+
 ## 2.2.0
 
 Released: 2022-05-14

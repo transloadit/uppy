@@ -25,7 +25,7 @@ module.exports = function karma (config) {
       suppressAll: true, // removes the duplicated traces
     },
     coverageReporter: {
-      dir: require('path').join(__dirname, './coverage/angular-example'),
+      dir: require('node:path').join(__dirname, './coverage/angular-example'),
       subdir: '.',
       reporters: [
         { type: 'html' },

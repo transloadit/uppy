@@ -1,28 +1,32 @@
 {
   "name": "@uppy-example/custom-provider",
   "version": "0.0.0",
+  "type": "module",
   "dependencies": {
-    "@babel/core": "^7.2.2",
     "@uppy/companion-client": "workspace:*",
     "@uppy/core": "workspace:*",
     "@uppy/dashboard": "workspace:*",
     "@uppy/google-drive": "workspace:*",
     "@uppy/provider-views": "workspace:*",
     "@uppy/tus": "workspace:*",
-    "babelify": "^10.0.0",
+    "preact": "^10.5.13"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "devDependencies": {
+    "@uppy/companion": "workspace:*",
     "body-parser": "^1.18.2",
-    "budo": "^11.3.2",
+    "dotenv": "^16.0.1",
     "express": "^4.16.2",
     "express-session": "^1.15.6",
     "npm-run-all": "^4.1.2",
-    "preact": "^10.5.13",
-    "request": "2.88.2"
+    "vite": "^3.0.0"
   },
   "private": true,
   "scripts": {
-    "copy": "cp ../../packages/uppy/dist/uppy.min.css .",
-    "start": "npm-run-all --serial copy --parallel start:*",
-    "start:client": "budo client/main.js:bundle.js -- -t babelify",
-    "start:server": "node server/index.js"
+    "start": "npm-run-all --parallel start:server start:client",
+    "start:client": "vite",
+    "start:server": "node server/index.cjs"
   }
 }

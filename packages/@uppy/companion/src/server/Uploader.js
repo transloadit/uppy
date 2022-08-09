@@ -1,13 +1,12 @@
 // eslint-disable-next-line max-classes-per-file
 const tus = require('tus-js-client')
-const uuid = require('uuid')
-const isObject = require('isobject')
+const { randomUUID } = require('node:crypto')
 const validator = require('validator')
 const request = require('request')
-const { pipeline: pipelineCb } = require('stream')
-const { join } = require('path')
-const fs = require('fs')
-const { promisify } = require('util')
+const { pipeline: pipelineCb } = require('node:stream')
+const { join } = require('node:path')
+const fs = require('node:fs')
+const { promisify } = require('node:util')
 
 // TODO move to `require('streams/promises').pipeline` when dropping support for Node.js 14.x.
 const pipeline = promisify(pipelineCb)
@@ -78,24 +77,23 @@ function validateOptions (options) {
   }
 
   // validate fieldname
-  if (options.fieldname && typeof options.fieldname !== 'string') {
+  if (options.fieldname != null && typeof options.fieldname !== 'string') {
     throw new ValidationError('fieldname must be a string')
   }
 
   // validate metadata
-  if (options.metadata != null) {
-    if (!isObject(options.metadata)) throw new ValidationError('metadata must be an object')
+  if (options.metadata != null && typeof options.metadata !== 'object') {
+    throw new ValidationError('metadata must be an object')
   }
 
   // validate headers
-  if (options.headers && !isObject(options.headers)) {
+  if (options.headers != null && typeof options.headers !== 'object') {
     throw new ValidationError('headers must be an object')
   }
 
   // validate protocol
-  // @todo this validation should not be conditional once the protocol field is mandatory
-  if (options.protocol && !Object.keys(PROTOCOLS).some((key) => PROTOCOLS[key] === options.protocol)) {
-    throw new ValidationError('unsupported protocol specified')
+  if (options.protocol == null || !Object.keys(PROTOCOLS).some((key) => PROTOCOLS[key] === options.protocol)) {
+    throw new ValidationError('please specify a valid protocol')
   }
 
   // s3 uploads don't require upload destination
@@ -154,7 +152,7 @@ class Uploader {
     validateOptions(options)
 
     this.options = options
-    this.token = uuid.v4()
+    this.token = randomUUID()
     this.fileName = `${Uploader.FILE_NAME_PREFIX}-${this.token}`
     this.options.metadata = sanitizeMetadata(this.options.metadata)
     this.options.fieldname = this.options.fieldname || DEFAULT_FIELD_NAME
@@ -208,8 +206,7 @@ class Uploader {
   }
 
   async _uploadByProtocol () {
-    // @todo a default protocol should not be set. We should ensure that the user specifies their protocol.
-    const protocol = this.options.protocol || PROTOCOLS.multipart
+    const { protocol } = this.options
 
     switch (protocol) {
       case PROTOCOLS.multipart:
@@ -295,7 +292,7 @@ class Uploader {
       const ret = await this.uploadStream(stream)
       if (!ret) return
       const { url, extraData } = ret
-      this.emitSuccess(url, extraData)
+      this.#emitSuccess(url, extraData)
     } catch (err) {
       if (err instanceof AbortError) {
         logger.error('Aborted upload', 'uploader.aborted', this.shortToken)
@@ -303,7 +300,7 @@ class Uploader {
       }
       // console.log(err)
       logger.error(err, 'uploader.error', this.shortToken)
-      this.emitError(err)
+      this.#emitError(err)
     } finally {
       emitter().removeAllListeners(`pause:${this.token}`)
       emitter().removeAllListeners(`resume:${this.token}`)
@@ -342,10 +339,10 @@ class Uploader {
       size,
       companionOptions: req.companion.options,
       pathPrefix: `${req.companion.options.filePath}`,
-      storage: redis.client(),
+      storage: redis.client()?.v4,
       s3: req.companion.s3Client ? {
         client: req.companion.s3Client,
-        options: req.companion.options.providerOptions.s3,
+        options: req.companion.options.s3,
       } : null,
       chunkSize: req.companion.options.chunkSize,
     }
@@ -400,7 +397,11 @@ class Uploader {
    */
   saveState (state) {
     if (!this.storage) return
-    this.storage.set(`${Uploader.STORAGE_PREFIX}:${this.token}`, jsonStringify(state))
+    // make sure the keys get cleaned up.
+    // https://github.com/transloadit/uppy/issues/3748
+    const keyExpirySec = 60 * 60 * 24
+    const redisKey = `${Uploader.STORAGE_PREFIX}:${this.token}`
+    this.storage.set(redisKey, jsonStringify(state), 'EX', keyExpirySec)
   }
 
   /**
@@ -456,7 +457,7 @@ class Uploader {
    * @param {string} url
    * @param {object} extraData
    */
-  emitSuccess (url, extraData) {
+  #emitSuccess (url, extraData) {
     const emitData = {
       action: 'success',
       payload: { ...extraData, complete: true, url },
@@ -469,9 +470,10 @@ class Uploader {
    *
    * @param {Error} err
    */
-  emitError (err) {
+  #emitError (err) {
     // delete stack to avoid sending server info to client
-    // todo remove also extraData from serializedErr in next major
+    // todo remove also extraData from serializedErr in next major,
+    // see PR discussion https://github.com/transloadit/uppy/pull/3832
     const { stack, ...serializedErr } = serializeError(err)
     const dataToEmit = {
       action: 'error',
@@ -632,18 +634,9 @@ class Uploader {
     const filename = this.uploadFileName
     const { client, options } = this.options.s3
 
-    function getPartSize (chunkSize) {
-      // backwards compatibility https://github.com/transloadit/uppy/pull/3511#issuecomment-1050797935
-      // requires min 5MiB and max 5GiB partSize
-      // todo remove this logic in the next major semver
-      if (chunkSize == null || chunkSize >= 5368709120 || chunkSize <= 5242880) return undefined
-      return chunkSize
-    }
-
     const params = {
       Bucket: options.bucket,
       Key: options.getKey(null, filename, this.options.metadata),
-      ACL: options.acl,
       ContentType: this.options.metadata.type,
       Metadata: this.options.metadata,
       Body: stream,
@@ -652,7 +645,8 @@ class Uploader {
     if (options.acl != null) params.ACL = options.acl
 
     const upload = client.upload(params, {
-      partSize: getPartSize(this.options.chunkSize),
+      // using chunkSize as partSize too, see https://github.com/transloadit/uppy/pull/3511
+      partSize: this.options.chunkSize,
     })
 
     upload.on('httpUploadProgress', ({ loaded, total }) => {

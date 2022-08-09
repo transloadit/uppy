@@ -1,7 +1,7 @@
-const Uppy = require('@uppy/core')
-const DragDrop = require('@uppy/drag-drop')
-const ProgressBar = require('@uppy/progress-bar')
-const Tus = require('@uppy/tus')
+import Uppy from '@uppy/core'
+import DragDrop from '@uppy/drag-drop'
+import ProgressBar from '@uppy/progress-bar'
+import Tus from '@uppy/tus'
 
 // Function for displaying uploaded files
 const onUploadSuccess = (elForUploadedFiles) => (file, response) => {

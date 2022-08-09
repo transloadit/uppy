@@ -8,5 +8,7 @@ module.exports = {
   form,
   pick,
   upload,
+  // We need to keep the require here because we're using `babel-plugin-inline-package-json`.
+  // eslint-disable-next-line global-require
   VERSION: require('../package.json').version,
 }

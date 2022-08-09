@@ -18,7 +18,7 @@ function getExpiration (future) {
  *
  * @param {string | undefined} secret
  * @param {object} params
- * @returns {{ params: string, signature?: string }}
+ * @returns {Promise<{ params: string, signature?: string }>}
  */
 export default async function generateSignatureIfSecret (secret, params) {
   let signature

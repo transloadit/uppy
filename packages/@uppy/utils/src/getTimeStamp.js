@@ -11,7 +11,7 @@ function pad (number) {
 /**
  * Returns a timestamp in the format of `hours:minutes:seconds`
  */
-module.exports = function getTimeStamp () {
+export default function getTimeStamp () {
   const date = new Date()
   const hours = pad(date.getHours())
   const minutes = pad(date.getMinutes())

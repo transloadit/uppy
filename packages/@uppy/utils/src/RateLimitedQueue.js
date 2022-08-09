@@ -2,7 +2,7 @@ function createCancelError () {
   return new Error('Cancelled')
 }
 
-class RateLimitedQueue {
+export class RateLimitedQueue {
   #activeRequests = 0
 
   #queuedHandlers = []
@@ -224,7 +224,4 @@ class RateLimitedQueue {
   get isPaused () { return this.#paused }
 }
 
-module.exports = {
-  RateLimitedQueue,
-  internalRateLimitedQueue: Symbol('__queue'),
-}
+export const internalRateLimitedQueue = Symbol('__queue')

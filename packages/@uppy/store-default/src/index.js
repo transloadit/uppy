@@ -1,12 +1,14 @@
+import packageJson from '../package.json'
 /**
  * Default store that keeps state in a simple object.
  */
 class DefaultStore {
-  static VERSION = require('../package.json').version
+  static VERSION = packageJson.version
+
+  #callbacks = new Set()
 
   constructor () {
     this.state = {}
-    this.callbacks = []
   }
 
   getState () {
@@ -22,23 +24,17 @@ class DefaultStore {
   }
 
   subscribe (listener) {
-    this.callbacks.push(listener)
+    this.#callbacks.add(listener)
     return () => {
-      // Remove the listener.
-      this.callbacks.splice(
-        this.callbacks.indexOf(listener),
-        1,
-      )
+      this.#callbacks.delete(listener)
     }
   }
 
   #publish (...args) {
-    this.callbacks.forEach((listener) => {
+    this.#callbacks.forEach((listener) => {
       listener(...args)
     })
   }
 }
 
-module.exports = function defaultStore () {
-  return new DefaultStore()
-}
+export default DefaultStore

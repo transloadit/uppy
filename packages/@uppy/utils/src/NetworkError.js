@@ -8,4 +8,4 @@ class NetworkError extends Error {
   }
 }
 
-module.exports = NetworkError
+export default NetworkError

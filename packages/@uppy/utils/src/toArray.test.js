@@ -1,4 +1,5 @@
-const toArray = require('./toArray')
+import { describe, expect, it } from '@jest/globals'
+import toArray from './toArray.js'
 
 describe('toArray', () => {
   it('should convert a array-like object into an array', () => {

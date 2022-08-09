@@ -44,11 +44,17 @@ The `<ProgressBar />` component supports all [`@uppy/progress-bar`][] options as
 import React from 'react'
 import { ProgressBar } from '@uppy/react'
 
-  <ProgressBar
-    uppy={uppy}
-    fixed
-    hideAfterFinish
-  />
+export default function MyComponent (props) {
+  const { uppy } = props
+  return (
+    <ProgressBar
+      // assuming `props.uppy` contains an Uppy instance:
+      uppy={uppy}
+      fixed
+      hideAfterFinish
+    />
+  )
+}
 ```
 
 [`@uppy/progress-bar`]: /docs/progress-bar/

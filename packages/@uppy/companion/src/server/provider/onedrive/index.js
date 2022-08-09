@@ -1,6 +1,6 @@
 const request = require('request')
 const purest = require('purest')({ request })
-const { promisify } = require('util')
+const { promisify } = require('node:util')
 
 const Provider = require('../Provider')
 const logger = require('../../logger')
@@ -37,6 +37,9 @@ class OneDrive extends Provider {
    * it then waits till both requests are done before proceeding with the callback
    *
    * @param {object} options
+   * @param {string} options.directory
+   * @param {any} options.query
+   * @param {string} options.token
    * @param {Function} done
    */
   _list ({ directory, query, token }, done) {
@@ -141,8 +144,6 @@ class OneDrive extends Provider {
     return err
   }
 }
-
-OneDrive.version = 2
 
 OneDrive.prototype.list = promisify(OneDrive.prototype._list)
 OneDrive.prototype.size = promisify(OneDrive.prototype._size)

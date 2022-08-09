@@ -1,33 +1,29 @@
 /* eslint no-console: "off", no-restricted-syntax: "off" */
-const fs = require('fs')
-const path = require('path')
-const prettierBytes = require('@transloadit/prettier-bytes')
-const Core = require('./index')
-const UIPlugin = require('./UIPlugin')
-const AcquirerPlugin1 = require('./mocks/acquirerPlugin1')
-const AcquirerPlugin2 = require('./mocks/acquirerPlugin2')
-const InvalidPlugin = require('./mocks/invalidPlugin')
-const InvalidPluginWithoutId = require('./mocks/invalidPluginWithoutId')
-const InvalidPluginWithoutType = require('./mocks/invalidPluginWithoutType')
-const DeepFrozenStore = require('../../../../e2e/cypress/fixtures/DeepFrozenStore.js')
+import { afterEach, beforeEach, describe, expect, it, jest, xit } from '@jest/globals'
 
-jest.mock('nanoid/non-secure', () => {
-  return { nanoid: () => 'cjd09qwxb000dlql4tp4doz8h' }
-})
-jest.mock('@uppy/utils/lib/findDOMElement', () => {
-  return () => null
-})
+import assert from 'node:assert'
+import fs from 'node:fs'
+import prettierBytes from '@transloadit/prettier-bytes'
+import Core from '../lib/index.js'
+import UIPlugin from '../lib/UIPlugin.js'
+import { debugLogger } from '../lib/loggers.js'
+import AcquirerPlugin1 from './mocks/acquirerPlugin1.js'
+import AcquirerPlugin2 from './mocks/acquirerPlugin2.js'
+import InvalidPlugin from './mocks/invalidPlugin.js'
+import InvalidPluginWithoutId from './mocks/invalidPluginWithoutId.js'
+import InvalidPluginWithoutType from './mocks/invalidPluginWithoutType.js'
+import DeepFrozenStore from '../../../../e2e/cypress/fixtures/DeepFrozenStore.mjs'
 
-const sampleImage = fs.readFileSync(path.join(__dirname, '../../../../e2e/cypress/fixtures/images/image.jpg'))
+const sampleImage = fs.readFileSync(new URL('../../../../e2e/cypress/fixtures/images/image.jpg', import.meta.url))
 
 describe('src/Core', () => {
-  const RealCreateObjectUrl = global.URL.createObjectURL
+  const RealCreateObjectUrl = globalThis.URL.createObjectURL
   beforeEach(() => {
-    global.URL.createObjectURL = jest.fn().mockReturnValue('newUrl')
+    globalThis.URL.createObjectURL = jest.fn().mockReturnValue('newUrl')
   })
 
   afterEach(() => {
-    global.URL.createObjectURL = RealCreateObjectUrl
+    globalThis.URL.createObjectURL = RealCreateObjectUrl
   })
 
   it('should expose a class', () => {
@@ -209,7 +205,7 @@ describe('src/Core', () => {
     })
   })
 
-  it('should reset when the reset method is called', () => {
+  it('should cancel all when the `cancelAll` method is called', () => {
     // use DeepFrozenStore in some tests to make sure we are not mutating things
     const core = new Core({
       store: DeepFrozenStore(),
@@ -221,7 +217,7 @@ describe('src/Core', () => {
     core.on('state-update', coreStateUpdateEventMock)
     core.setState({ foo: 'bar', totalProgress: 30 })
 
-    core.reset()
+    core.cancelAll()
 
     expect(coreCancelEventMock).toHaveBeenCalledWith({ reason: 'user' }, undefined, undefined, undefined, undefined, undefined)
     expect(coreStateUpdateEventMock.mock.calls.length).toEqual(2)
@@ -267,6 +263,117 @@ describe('src/Core', () => {
 
     expect(core.getState().currentUploads[id]).toBeUndefined()
     expect(Object.keys(core.getState().files).length).toEqual(0)
+  })
+
+  it('should allow remove all uploads when individualCancellation is disabled', () => {
+    const core = new Core()
+
+    const { capabilities } = core.getState()
+    core.setState({
+      capabilities: {
+        ...capabilities,
+        individualCancellation: false,
+      },
+    })
+
+    core.addFile({
+      source: 'jest',
+      name: 'foo1.jpg',
+      type: 'image/jpeg',
+      data: new File([sampleImage], { type: 'image/jpeg' }),
+    })
+
+    core.addFile({
+      source: 'jest',
+      name: 'foo2.jpg',
+      type: 'image/jpeg',
+      data: new File([sampleImage], { type: 'image/jpeg' }),
+    })
+
+    const fileIDs = Object.keys(core.getState().files)
+    const id = core[Symbol.for('uppy test: createUpload')](fileIDs)
+
+    expect(core.getState().currentUploads[id]).toBeDefined()
+    expect(Object.keys(core.getState().files).length).toEqual(2)
+
+    core.removeFiles(fileIDs)
+
+    expect(core.getState().currentUploads[id]).toBeUndefined()
+    expect(Object.keys(core.getState().files).length).toEqual(0)
+  })
+
+  it('should disallow remove one upload when individualCancellation is disabled', () => {
+    const core = new Core()
+
+    const { capabilities } = core.getState()
+    core.setState({
+      capabilities: {
+        ...capabilities,
+        individualCancellation: false,
+      },
+    })
+
+    core.addFile({
+      source: 'jest',
+      name: 'foo1.jpg',
+      type: 'image/jpeg',
+      data: new File([sampleImage], { type: 'image/jpeg' }),
+    })
+
+    core.addFile({
+      source: 'jest',
+      name: 'foo2.jpg',
+      type: 'image/jpeg',
+      data: new File([sampleImage], { type: 'image/jpeg' }),
+    })
+
+    const fileIDs = Object.keys(core.getState().files)
+    const id = core[Symbol.for('uppy test: createUpload')](fileIDs)
+
+    expect(core.getState().currentUploads[id]).toBeDefined()
+    expect(Object.keys(core.getState().files).length).toEqual(2)
+
+    assert.throws(() => core.removeFile(fileIDs[0]), /individualCancellation is disabled/)
+
+    expect(core.getState().currentUploads[id]).toBeDefined()
+    expect(Object.keys(core.getState().files).length).toEqual(2)
+  })
+
+  it('should allow remove one upload when individualCancellation is enabled', () => {
+    const core = new Core()
+
+    const { capabilities } = core.getState()
+    core.setState({
+      capabilities: {
+        ...capabilities,
+        individualCancellation: true,
+      },
+    })
+
+    core.addFile({
+      source: 'jest',
+      name: 'foo1.jpg',
+      type: 'image/jpeg',
+      data: new File([sampleImage], { type: 'image/jpeg' }),
+    })
+
+    core.addFile({
+      source: 'jest',
+      name: 'foo2.jpg',
+      type: 'image/jpeg',
+      data: new File([sampleImage], { type: 'image/jpeg' }),
+    })
+
+    const fileIDs = Object.keys(core.getState().files)
+    const id = core[Symbol.for('uppy test: createUpload')](fileIDs)
+
+    expect(core.getState().currentUploads[id]).toBeDefined()
+    expect(Object.keys(core.getState().files).length).toEqual(2)
+
+    core.removeFile(fileIDs[0])
+
+    expect(core.getState().currentUploads[id]).toBeDefined()
+    expect(Object.keys(core.getState().files).length).toEqual(1)
   })
 
   it('should close, reset and uninstall when the close method is called', () => {
@@ -902,7 +1009,12 @@ describe('src/Core', () => {
       core.addFile({ source: 'jest', name: 'bar.jpg', type: 'image/jpeg', data: new Uint8Array() })
       core.addFile({ source: 'file3', name: 'file3.jpg', type: 'image/jpeg', data: new Uint8Array() })
 
-      return expect(core.upload()).resolves.toMatchSnapshot()
+      // uploadID is random, we don't want randomness in the snapshot
+      const validateNanoID = r => (
+        typeof r.uploadID === 'string' && r.uploadID.length === 21 ? ({ ...r, uploadID: 'cjd09qwxb000dlql4tp4doz8h' }) : r
+      )
+
+      return expect(core.upload().then(validateNanoID)).resolves.toMatchSnapshot()
     })
 
     it('should not upload if onBeforeUpload returned false', () => {
@@ -960,7 +1072,7 @@ describe('src/Core', () => {
       )
     })
 
-    it('allows new files again with allowMultipleUploadBatches: false after reset() was called', async () => {
+    it('allows new files again with allowMultipleUploadBatches: false after cancelAll() was called', async () => {
       const core = new Core({ allowMultipleUploadBatches: false })
 
       core.addFile({
@@ -971,7 +1083,7 @@ describe('src/Core', () => {
       })
       await expect(core.upload()).resolves.toBeDefined()
 
-      core.reset()
+      core.cancelAll()
 
       core.addFile({
         source: 'jest',
@@ -1098,7 +1210,7 @@ describe('src/Core', () => {
         source: 'jest',
         name: 'empty.dat',
         type: 'application/octet-stream',
-        data: new File([Buffer.alloc(1000)], { type: 'application/octet-stream' }),
+        data: new File([new Uint8Array(1000)], { type: 'application/octet-stream' }),
       })
 
       expect(core.getFiles()).toHaveLength(2)
@@ -1692,18 +1804,8 @@ describe('src/Core', () => {
       const validateRestrictions1 = core.validateRestrictions(newFile)
       const validateRestrictions2 = core2.validateRestrictions(newFile)
 
-      expect(validateRestrictions1).toMatchObject(
-        {
-          result: false,
-          reason: 'This file is smaller than the allowed size of 293 KB',
-        },
-      )
-      expect(validateRestrictions2).toMatchObject(
-        {
-          result: false,
-          reason: 'You can only upload: image/png',
-        },
-      )
+      expect(validateRestrictions1.message).toEqual('This file is smaller than the allowed size of 293 KB')
+      expect(validateRestrictions2.message).toEqual('You can only upload: image/png')
     })
 
     it('should emit `restriction-failed` event when some rule is violated', () => {
@@ -1716,7 +1818,7 @@ describe('src/Core', () => {
       const restrictionsViolatedEventMock = jest.fn()
       const file = {
         name: 'test.jpg',
-        data: new Blob([Buffer.alloc(2 * maxFileSize)]),
+        data: new Blob([new Uint8Array(2 * maxFileSize)]),
       }
       const errorMessage = core.i18n('exceedsSize', { file: file.name, size: prettierBytes(maxFileSize) })
       try {
@@ -1766,11 +1868,11 @@ describe('src/Core', () => {
   })
 
   describe('updateOnlineStatus', () => {
-    const RealNavigatorOnline = global.window.navigator.onLine
+    const RealNavigatorOnline = globalThis.window.navigator.onLine
 
     function mockNavigatorOnline (status) {
       Object.defineProperty(
-        global.window.navigator,
+        globalThis.window.navigator,
         'onLine',
         {
           value: status,
@@ -1780,7 +1882,7 @@ describe('src/Core', () => {
     }
 
     afterEach(() => {
-      global.window.navigator.onLine = RealNavigatorOnline
+      globalThis.window.navigator.onLine = RealNavigatorOnline
     })
 
     it('should emit the correct event based on whether there is a network connection', () => {
@@ -2024,7 +2126,7 @@ describe('src/Core', () => {
       console.error = jest.fn()
 
       const core = new Core({
-        logger: Core.debugLogger,
+        logger: debugLogger,
       })
 
       core.log('test test')

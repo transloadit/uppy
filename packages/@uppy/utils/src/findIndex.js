@@ -3,4 +3,4 @@
  * @param {Function} predicate
  * @returns {number}
  */
-module.exports = Function.prototype.call.bind(Array.prototype.findIndex)
+export default Function.prototype.call.bind(Array.prototype.findIndex)

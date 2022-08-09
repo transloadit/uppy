@@ -27,7 +27,7 @@ describe('XHRUpload', () => {
       })
       core.addFile({
         name: 'test.jpg',
-        data: new Blob([Buffer.alloc(8192)]),
+        data: new Blob([new Uint8Array(8192)]),
       })
 
       return core.upload().then(() => {
@@ -65,7 +65,7 @@ describe('XHRUpload', () => {
       })
       core.addFile({
         name: 'test.jpg',
-        data: new Blob([Buffer.alloc(8192)]),
+        data: new Blob([new Uint8Array(8192)]),
       })
 
       return core.upload().then(result => {
@@ -102,7 +102,7 @@ describe('XHRUpload', () => {
       })
       core.addFile({
         name: 'test.jpg',
-        data: new Blob([Buffer.alloc(8192)]),
+        data: new Blob([new Uint8Array(8192)]),
       })
 
       await core.upload()

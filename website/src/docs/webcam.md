@@ -72,6 +72,7 @@ uppy.use(Webcam, {
   showRecordingLength: false,
   preferredVideoMimeType: null,
   preferredImageMimeType: null,
+  mobileNativeCamera: isMobile(),
   locale: {},
 })
 ```
@@ -156,9 +157,15 @@ Set the preferred mime type for images, for example `'image/png'`. If the browse
 
 If no preferred image mime type is given, the Webcam plugin will prefer types listed in the [`allowedFileTypes` restriction](/docs/uppy/#restrictions), if any.
 
-### `locale: {}`
+### `mobileNativeCamera`
 
-<!-- eslint-disable no-restricted-globals, no-multiple-empty-lines -->
+Replaces Uppy’s custom camera UI on mobile and tablet with the native device camera (`Function: boolean` || `boolean`, default: `isMobile()`).
+
+This will show the “Take Picture” and / or “Record Video” buttons, which ones show depends on the [`modes`](#modes) option.
+
+You can set a boolean to forcefully enable / disable this feature, or a function which returns a boolean. By default we use the [`is-mobile`](https://github.com/juliangruber/is-mobile) package.
+
+### `locale: {}`
 
 ```js
 export default {
@@ -189,5 +196,4 @@ export default {
     allowAccessDescription: 'In order to take pictures or record video with your camera, please allow camera access for this site.',
   },
 }
-
 ```

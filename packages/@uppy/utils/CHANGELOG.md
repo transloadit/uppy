@@ -1,5 +1,12 @@
 # @uppy/utils
 
+## 4.1.0
+
+Released: 2022-05-30
+Included in: Uppy v2.11.0
+
+- @uppy/utils: refactor to ESM (Antoine du Hamel / #3721)
+
 ## 4.0.7
 
 Released: 2022-04-27

@@ -1,5 +1,5 @@
 const mime = require('mime-types')
-const querystring = require('querystring')
+const querystring = require('node:querystring')
 
 exports.isFolder = (item) => {
   return item.type === 'folder'

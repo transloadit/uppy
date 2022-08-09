@@ -43,6 +43,7 @@ export default class Compressor extends BasePlugin {
 
   async prepareUpload (fileIDs) {
     let totalCompressedSize = 0
+    const compressedFiles = []
     const compressAndApplyResult = this.#RateLimitedQueue.wrapPromiseFunction(
       async (file) => {
         try {
@@ -51,15 +52,16 @@ export default class Compressor extends BasePlugin {
           this.uppy.log(`[Image Compressor] Image ${file.id} compressed by ${prettierBytes(compressedSavingsSize)}`)
           totalCompressedSize += compressedSavingsSize
           const { name, type, size } = compressedBlob
-          const { extension } = getFileNameAndExtension(name)
+          const extension = name && getFileNameAndExtension(name).extension
           this.uppy.setFileState(file.id, {
-            name,
-            extension,
-            type,
-            size,
+            ...(name && { name }),
+            ...(extension && { extension }),
+            ...(type && { type }),
+            ...(size && { size }),
             data: compressedBlob,
           })
-          this.uppy.setFileMeta(file.id, { name, type })
+          this.uppy.setFileMeta(file.id, { type })
+          compressedFiles.push(file)
         } catch (err) {
           this.uppy.log(`[Image Compressor] Failed to compress ${file.id}:`, 'warning')
           this.uppy.log(err, 'warning')
@@ -98,7 +100,7 @@ export default class Compressor extends BasePlugin {
     // while waiting for all the files to complete pre-processing.
     await Promise.all(promises)
 
-    this.uppy.emit('compressor:complete')
+    this.uppy.emit('compressor:complete', compressedFiles)
 
     // Only show informer if Compressor mananged to save at least a kilobyte
     if (totalCompressedSize > 1024) {

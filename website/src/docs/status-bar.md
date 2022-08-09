@@ -113,14 +113,12 @@ If passed a function, Status Bar will render a “Done” button in place of pau
 
 ```js
 const doneButtonHandler = () => {
-  this.uppy.reset()
+  this.uppy.cancelAll()
   this.requestCloseModal()
 }
 ```
 
 ### `locale: {}`
-
-<!-- eslint-disable no-restricted-globals, no-multiple-empty-lines -->
 
 ```js
 export default {
@@ -172,7 +170,6 @@ export default {
     showErrorDetails: 'Show error details',
   },
 }
-
 ```
 
 [`@uppy/file-input`]: /docs/file-input

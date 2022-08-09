@@ -17,7 +17,7 @@ function encodeFilename (name) {
  * @param {object} file
  * @returns {string} the fileID
  */
-module.exports = function generateFileID (file) {
+export default function generateFileID (file) {
   // It's tempting to do `[items].filter(Boolean).join('-')` here, but that
   // is slower! simple string concatenation is fast
 

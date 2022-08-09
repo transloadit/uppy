@@ -1,4 +1,4 @@
-const { promisify } = require('util')
+const { promisify } = require('node:util')
 const request = require('request')
 const moment = require('moment-timezone')
 const purest = require('purest')({ request })
@@ -338,8 +338,6 @@ class Zoom extends Provider {
     return done(error)
   }
 }
-
-Zoom.version = 2
 
 Zoom.prototype.list = promisify(Zoom.prototype._list)
 Zoom.prototype.size = promisify(Zoom.prototype._size)

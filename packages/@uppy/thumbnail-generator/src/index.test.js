@@ -1,4 +1,4 @@
-import { describe, it, expect, jest } from '@jest/globals'
+import { afterEach, beforeEach, describe, it, expect, jest, xit } from '@jest/globals'
 import { UIPlugin } from '@uppy/core'
 import emitter from 'namespace-emitter'
 import ThumbnailGeneratorPlugin from './index.js'
@@ -345,20 +345,6 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
       const core = new MockCore()
       const plugin = new ThumbnailGeneratorPlugin(core)
       expect(resize(plugin, { width: 200, height: 100 }, 50, 42)).toEqual({ width: 50, height: 25 })
-    })
-  })
-
-  describe('canvasToBlob', () => {
-    it('should use canvas.toBlob if available', () => {
-      const core = new MockCore()
-      const plugin = new ThumbnailGeneratorPlugin(core)
-      const canvas = {
-        toBlob: jest.fn(),
-      }
-      plugin.canvasToBlob(canvas, 'type', 90)
-      expect(canvas.toBlob).toHaveBeenCalledTimes(1)
-      expect(canvas.toBlob.mock.calls[0][1]).toEqual('type')
-      expect(canvas.toBlob.mock.calls[0][2]).toEqual(90)
     })
   })
 

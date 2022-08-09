@@ -26,10 +26,10 @@ You can also use a third-party store:
 To use a store, pass an instance to the [`store` option](/docs/uppy#store-defaultstore) in the Uppy constructor:
 
 ```js
-import defaultStore from '@uppy/store-default'
+import DefaultStore from '@uppy/store-default'
 
 const uppy = new Uppy({
-  store: defaultStore(),
+  store: new DefaultStore(),
 })
 ```
 
@@ -111,7 +111,7 @@ An Uppy store is an object with three methods.
 The default store implementation, for example, looks a bit like this:
 
 ```js
-function defaultStore () {
+function createDefaultStore () {
   let state = {}
   const listeners = new Set()
 

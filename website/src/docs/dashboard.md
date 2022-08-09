@@ -81,7 +81,7 @@ uppy.use(Dashboard, {
   hideCancelButton: false,
   hideProgressAfterFinish: false,
   doneButtonHandler: () => {
-    this.uppy.reset()
+    this.uppy.cancelAll()
     this.requestCloseModal()
   },
   note: null,
@@ -97,6 +97,8 @@ uppy.use(Dashboard, {
   onRequestCloseModal: () => this.closeModal(),
   showSelectedFiles: true,
   showRemoveButtonAfterComplete: false,
+  showNativePhotoCameraButton: false,
+  showNativeVideoCameraButton: false,
   locale: defaultLocale,
   browserBackButtonClose: false,
   theme: 'light',
@@ -196,7 +198,7 @@ This option is passed to the StatusBar, and will render a “Done” button in p
 
 ```js
 const doneButtonHandler = () => {
-  this.uppy.reset()
+  this.uppy.cancelAll()
   this.requestCloseModal()
 }
 ```
@@ -334,10 +336,8 @@ Dashboard ships with the `ThumbnailGenerator` plugin that adds small resized ima
 
 ### `locale: {}`
 
-<!-- eslint-disable no-restricted-globals, no-multiple-empty-lines -->
-
 ```js
-module.exports = {
+export default {
   strings: {
     // When `inline: false`, used as the screen reader label for the button that closes the modal.
     closeModal: 'Close Modal',
@@ -423,9 +423,11 @@ module.exports = {
       0: 'Missing required meta field: %{fields}.',
       1: 'Missing required meta fields: %{fields}.',
     },
+    // Used for native device camera buttons on mobile
+    takePictureBtn: 'Take Picture',
+    recordVideoBtn: 'Record Video',
   },
 }
-
 ```
 
 ### `theme: 'light'`

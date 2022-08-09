@@ -11,10 +11,11 @@ function ListItem (props) {
   const {
     className,
     isDisabled,
-    restrictionReason,
+    restrictionError,
     isCheckboxDisabled,
     isChecked,
     toggleCheckbox,
+    recordShiftKeyPress,
     type,
     id,
     itemIconEl,
@@ -27,13 +28,14 @@ function ListItem (props) {
   return (
     <li
       className={className}
-      title={isDisabled ? restrictionReason : null}
+      title={isDisabled ? restrictionError?.message : null}
     >
       {!isCheckboxDisabled ? (
         <input
           type="checkbox"
           className={`uppy-u-reset uppy-ProviderBrowserItem-checkbox ${isChecked ? 'uppy-ProviderBrowserItem-checkbox--is-checked' : ''}`}
           onChange={toggleCheckbox}
+          onKeyDown={recordShiftKeyPress}
           // for the <label/>
           name="listitem"
           id={id}

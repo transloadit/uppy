@@ -1,7 +1,6 @@
 /* eslint-disable max-classes-per-file, class-methods-use-this */
-/* global AggregateError */
-const prettierBytes = require('@transloadit/prettier-bytes')
-const match = require('mime-match')
+import prettierBytes from '@transloadit/prettier-bytes'
+import match from 'mime-match'
 
 const defaultOptions = {
   maxFileSize: null,
@@ -15,17 +14,6 @@ const defaultOptions = {
 
 class RestrictionError extends Error {
   isRestriction = true
-}
-
-if (typeof AggregateError === 'undefined') {
-  // eslint-disable-next-line no-global-assign
-  // TODO: remove this "polyfill" in the next major.
-  globalThis.AggregateError = class AggregateError extends Error {
-    constructor (errors, message) {
-      super(message)
-      this.errors = errors
-    }
-  }
 }
 
 class Restricter {
@@ -108,12 +96,10 @@ class Restricter {
   getMissingRequiredMetaFields (file) {
     const error = new RestrictionError(this.i18n('missingRequiredMetaFieldOnFile', { fileName: file.name }))
     const { requiredMetaFields } = this.getOpts().restrictions
-    // TODO: migrate to Object.hasOwn in the next major.
-    const own = Object.prototype.hasOwnProperty
     const missingFields = []
 
     for (const field of requiredMetaFields) {
-      if (!own.call(file.meta, field) || file.meta[field] === '') {
+      if (!Object.hasOwn(file.meta, field) || file.meta[field] === '') {
         missingFields.push(field)
       }
     }
@@ -122,4 +108,4 @@ class Restricter {
   }
 }
 
-module.exports = { Restricter, defaultOptions, RestrictionError }
+export { Restricter, defaultOptions, RestrictionError }

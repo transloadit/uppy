@@ -1,10 +1,21 @@
-const { nanoid } = require('nanoid/non-secure')
+import { nanoid } from 'nanoid/non-secure'
+
+import packageJson from '../package.json'
 
 // Redux action name.
-const STATE_UPDATE = 'uppy/STATE_UPDATE'
+export const STATE_UPDATE = 'uppy/STATE_UPDATE'
 
 // Pluck Uppy state from the Redux store in the default location.
 const defaultSelector = (id) => (state) => state.uppy[id]
+
+function getPatch (prev, next) {
+  const nextKeys = Object.keys(next)
+  const patch = {}
+  nextKeys.forEach((k) => {
+    if (prev[k] !== next[k]) patch[k] = next[k]
+  })
+  return patch
+}
 
 /**
  * Redux store.
@@ -15,8 +26,8 @@ const defaultSelector = (id) => (state) => state.uppy[id]
  * @param {Function} opts.selector - Function, `(state) => uppyState`, to pluck state from the Redux store.
  *    Defaults to retrieving `state.uppy[opts.id]`. Override if you placed Uppy state elsewhere in the Redux store.
  */
-class ReduxStore {
-  static VERSION = require('../package.json').version
+export class ReduxStore {
+  static VERSION = packageJson.version
 
   #id
 
@@ -63,16 +74,7 @@ class ReduxStore {
   }
 }
 
-function getPatch (prev, next) {
-  const nextKeys = Object.keys(next)
-  const patch = {}
-  nextKeys.forEach((k) => {
-    if (prev[k] !== next[k]) patch[k] = next[k]
-  })
-  return patch
-}
-
-function reducer (state = {}, action) {
+export function reducer (state = {}, action) {
   if (action.type === STATE_UPDATE) {
     const newState = { ...state[action.id], ...action.payload }
     return { ...state, [action.id]: newState }
@@ -80,15 +82,11 @@ function reducer (state = {}, action) {
   return state
 }
 
-function middleware () {
+export function middleware () {
   // Do nothing, at the moment.
   return () => (next) => (action) => {
     next(action)
   }
 }
 
-module.exports = ReduxStore
-module.exports.ReduxStore = ReduxStore
-module.exports.STATE_UPDATE = STATE_UPDATE
-module.exports.reducer = reducer
-module.exports.middleware = middleware
+export default ReduxStore

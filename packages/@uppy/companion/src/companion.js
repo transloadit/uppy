@@ -1,10 +1,9 @@
 const express = require('express')
-// @ts-ignore
 const Grant = require('grant').express()
 const merge = require('lodash.merge')
 const cookieParser = require('cookie-parser')
 const interceptor = require('express-interceptor')
-const uuid = require('uuid')
+const { randomUUID } = require('node:crypto')
 
 const grantConfig = require('./config/grant')()
 const providerManager = require('./server/provider')
@@ -13,7 +12,6 @@ const s3 = require('./server/controllers/s3')
 const url = require('./server/controllers/url')
 const createEmitter = require('./server/emitter')
 const redis = require('./server/redis')
-const { getURLBuilder } = require('./server/helpers/utils')
 const jobs = require('./server/jobs')
 const logger = require('./server/logger')
 const middlewares = require('./server/middlewares')
@@ -57,12 +55,13 @@ module.exports.socket = require('./server/socket')
  * Entry point into initializing the Companion app.
  *
  * @param {object} optionsArg
- * @returns {import('express').Express}
+ * @returns {{ app: import('express').Express, emitter: any }}}
  */
 module.exports.app = (optionsArg = {}) => {
   validateConfig(optionsArg)
 
   const options = merge({}, defaultOptions, optionsArg)
+
   const providers = providerManager.getDefaultProviders()
   const searchProviders = providerManager.getSearchProviders()
   providerManager.addProviderOptions(options, grantConfig)
@@ -77,7 +76,7 @@ module.exports.app = (optionsArg = {}) => {
 
   // create singleton redis client
   if (options.redisUrl) {
-    redis.client(merge({ url: options.redisUrl }, options.redisOptions || {}))
+    redis.client(options)
   }
   const emitter = createEmitter(options.redisUrl, options.redisPubSubScope)
 
@@ -85,17 +84,6 @@ module.exports.app = (optionsArg = {}) => {
 
   if (options.metrics) {
     app.use(middlewares.metrics({ path: options.server.path }))
-
-    // backward compatibility
-    // TODO remove in next major semver
-    if (options.server.path) {
-      const buildUrl = getURLBuilder(options)
-      app.get('/metrics', (req, res) => {
-        process.emitWarning('/metrics is deprecated when specifying a path to companion')
-        const metricsUrl = buildUrl('/metrics', true)
-        res.redirect(metricsUrl)
-      })
-    }
   }
 
   app.use(cookieParser()) // server tokens are added to cookies
@@ -117,7 +105,7 @@ module.exports.app = (optionsArg = {}) => {
 
   // add uppy options to the request object so it can be accessed by subsequent handlers.
   app.use('*', middlewares.getCompanionMiddleware(options))
-  app.use('/s3', s3(options.providerOptions.s3))
+  app.use('/s3', s3(options.s3))
   app.use('/url', url())
 
   app.post('/:providerName/preauth', middlewares.hasSessionAndProvider, controllers.preauth)
@@ -141,7 +129,7 @@ module.exports.app = (optionsArg = {}) => {
     jobs.startCleanUpJob(options.filePath)
   }
 
-  const processId = uuid.v4()
+  const processId = randomUUID()
 
   jobs.startPeriodicPingJob({
     urls: options.periodicPingUrls,
@@ -152,8 +140,5 @@ module.exports.app = (optionsArg = {}) => {
     processId,
   })
 
-  // todo split emitter from app in next major
-  // @ts-ignore
-  app.companionEmitter = emitter
-  return app
+  return { app, emitter }
 }

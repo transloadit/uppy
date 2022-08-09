@@ -6,16 +6,16 @@
  * @param {Function} logDropError
  * @param {Function} callback - called with ([ all files and directories in that directoryReader ])
  */
-module.exports = function getFilesAndDirectoriesFromDirectory (directoryReader, oldEntries, logDropError, { onSuccess }) {
+export default function getFilesAndDirectoriesFromDirectory (directoryReader, oldEntries, logDropError, { onSuccess }) {
   directoryReader.readEntries(
     (entries) => {
       const newEntries = [...oldEntries, ...entries]
       // According to the FileSystem API spec, getFilesAndDirectoriesFromDirectory()
       // must be called until it calls the onSuccess with an empty array.
       if (entries.length) {
-        setTimeout(() => {
+        queueMicrotask(() => {
           getFilesAndDirectoriesFromDirectory(directoryReader, newEntries, logDropError, { onSuccess })
-        }, 0)
+        })
       // Done iterating this particular directory
       } else {
         onSuccess(newEntries)

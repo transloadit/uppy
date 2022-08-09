@@ -1,4 +1,4 @@
-const querystring = require('querystring')
+const querystring = require('node:querystring')
 
 // @todo use the "about" endpoint to get the username instead
 // see: https://developers.google.com/drive/api/v2/reference/about/get

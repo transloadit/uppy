@@ -1,4 +1,5 @@
-const { AbortController, AbortSignal } = require('./AbortController')
+import { describe, expect, it, jest } from '@jest/globals'
+import { AbortController, AbortSignal } from './AbortController.js'
 
 function flushInstantTimeouts () {
   return new Promise(resolve => setTimeout(resolve, 0))

@@ -3,7 +3,7 @@
  *
  * @returns {boolean}
  */
-module.exports = function isDragDropSupported () {
+export default function isDragDropSupported () {
   const div = document.body
 
   if (!('draggable' in div) || !('ondragstart' in div && 'ondrop' in div)) {

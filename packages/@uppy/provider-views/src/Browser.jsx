@@ -21,6 +21,7 @@ function Browser (props) {
     showBreadcrumbs,
     isChecked,
     toggleCheckbox,
+    recordShiftKeyPress,
     handleScroll,
     showTitles,
     i18n,
@@ -91,6 +92,7 @@ function Browser (props) {
                   getItemIcon: () => folder.icon,
                   isChecked: isChecked(folder),
                   toggleCheckbox: (event) => toggleCheckbox(event, folder),
+                  recordShiftKeyPress,
                   type: 'folder',
                   isDisabled: isChecked(folder)?.loading,
                   isCheckboxDisabled: folder.id === VIRTUAL_SHARED_DIR,
@@ -99,7 +101,7 @@ function Browser (props) {
               })}
 
               {files.map((file) => {
-                const validated = validateRestrictions(
+                const restrictionError = validateRestrictions(
                   remoteFileObjToLocal(file),
                   [...uppyFiles, ...currentSelection],
                 )
@@ -111,13 +113,14 @@ function Browser (props) {
                   getItemIcon: () => file.icon,
                   isChecked: isChecked(file),
                   toggleCheckbox: (event) => toggleCheckbox(event, file),
+                  recordShiftKeyPress,
                   columns,
                   showTitles,
                   viewType,
                   i18n,
                   type: 'file',
-                  isDisabled: !validated.result && !isChecked(file),
-                  restrictionReason: validated.reason,
+                  isDisabled: restrictionError && !isChecked(file),
+                  restrictionError,
                 })
               })}
             </ul>

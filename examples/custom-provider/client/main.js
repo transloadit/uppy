@@ -1,8 +1,11 @@
-const Uppy = require('@uppy/core')
-const GoogleDrive = require('@uppy/google-drive')
-const Tus = require('@uppy/tus')
-const Dashboard = require('@uppy/dashboard')
-const MyCustomProvider = require('./MyCustomProvider')
+import Uppy from '@uppy/core'
+import GoogleDrive from '@uppy/google-drive'
+import Tus from '@uppy/tus'
+import Dashboard from '@uppy/dashboard'
+import MyCustomProvider from './MyCustomProvider.jsx'
+
+import '@uppy/core/dist/style.css'
+import '@uppy/dashboard/dist/style.css'
 
 const uppy = new Uppy({
   debug: true,

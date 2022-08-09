@@ -1,6 +1,6 @@
 const request = require('request')
 const purest = require('purest')({ request })
-const { promisify } = require('util')
+const { promisify } = require('node:util')
 
 const Provider = require('../../Provider')
 const { getURLMeta } = require('../../../helpers/request')
@@ -168,8 +168,6 @@ class Instagram extends Provider {
     return err
   }
 }
-
-Instagram.version = 2
 
 Instagram.prototype.list = promisify(Instagram.prototype._list)
 Instagram.prototype.size = promisify(Instagram.prototype._size)

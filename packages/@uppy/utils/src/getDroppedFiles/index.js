@@ -1,5 +1,5 @@
-const webkitGetAsEntryApi = require('./utils/webkitGetAsEntryApi/index')
-const fallbackApi = require('./utils/fallbackApi')
+import webkitGetAsEntryApi from './utils/webkitGetAsEntryApi/index.js'
+import fallbackApi from './utils/fallbackApi.js'
 
 /**
  * Returns a promise that resolves to the array of dropped files (if a folder is
@@ -15,11 +15,16 @@ const fallbackApi = require('./utils/fallbackApi')
  *
  * @returns {Promise} - Array<File>
  */
-module.exports = function getDroppedFiles (dataTransfer, { logDropError = () => {} } = {}) {
+export default async function getDroppedFiles (dataTransfer, { logDropError = () => {} } = {}) {
   // Get all files from all subdirs. Works (at least) in Chrome, Mozilla, and Safari
-  if (dataTransfer.items?.[0] && 'webkitGetAsEntry' in dataTransfer.items[0]) {
-    return webkitGetAsEntryApi(dataTransfer, logDropError)
+  try {
+    const accumulator = []
+    for await (const file of webkitGetAsEntryApi(dataTransfer, logDropError)) {
+      accumulator.push(file)
+    }
+    return accumulator
   // Otherwise just return all first-order files
+  } catch {
+    return fallbackApi(dataTransfer)
   }
-  return fallbackApi(dataTransfer)
 }

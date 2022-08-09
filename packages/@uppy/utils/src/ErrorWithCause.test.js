@@ -1,6 +1,7 @@
-const ErrorWithCause = require('./ErrorWithCause')
-const NetworkError = require('./NetworkError')
-const isNetworkError = require('./isNetworkError')
+import { describe, expect, it } from '@jest/globals'
+import ErrorWithCause from './ErrorWithCause.js'
+import NetworkError from './NetworkError.js'
+import isNetworkError from './isNetworkError.js'
 
 describe('ErrorWithCause', () => {
   it('should support a `{ cause }` option', () => {

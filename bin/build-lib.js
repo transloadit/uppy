@@ -1,10 +1,10 @@
 const chalk = require('chalk')
 const babel = require('@babel/core')
 const t = require('@babel/types')
-const { promisify } = require('util')
+const { promisify } = require('node:util')
 const glob = promisify(require('glob'))
-const fs = require('fs')
-const path = require('path')
+const fs = require('node:fs')
+const path = require('node:path')
 
 const { mkdir, stat, writeFile } = fs.promises
 
@@ -19,12 +19,6 @@ const META_FILES = [
   'package-lock.json',
   'yarn.lock',
   'bin/build-lib.js',
-]
-
-// Rollup uses get-form-data's ES modules build, and rollup-plugin-commonjs automatically resolves `.default`.
-// So, if we are being built using rollup, this require() won't have a `.default` property.
-const esPackagesThatNeedSpecialTreatmentForRollupInterop = [
-  'get-form-data',
 ]
 
 function lastModified (file, createParentDir = false) {
@@ -54,29 +48,18 @@ async function isTypeModule (file) {
     // in case it hasn't been done before.
     await mkdir(path.join(packageFolder, 'lib'), { recursive: true })
   }
-  if (typeModule) {
-    await writeFile(path.join(packageFolder, 'lib', 'package.json'), '{"type":"commonjs"}')
-  }
   moduleTypeCache.set(packageFolder, typeModule)
   versionCache.set(packageFolder, version)
   return typeModule
 }
 
 // eslint-disable-next-line no-shadow
-function ExportAllDeclaration (path) {
+function transformJSXImportsToJS (path) {
   const { value } = path.node.source
   if (value.endsWith('.jsx') && (value.startsWith('./') || value.startsWith('../'))) {
     // Rewrite .jsx imports to .js:
     path.node.source.value = value.slice(0, -1) // eslint-disable-line no-param-reassign
   }
-
-  path.replaceWith(
-    t.assignmentExpression(
-      '=',
-      t.memberExpression(t.identifier('module'), t.identifier('exports')),
-      t.callExpression(t.identifier('require'), [path.node.source]),
-    ),
-  )
 }
 
 async function buildLib () {
@@ -103,18 +86,12 @@ async function buildLib () {
       }
     }
 
-    const plugins = await isTypeModule(file) ? [['@babel/plugin-transform-modules-commonjs', {
-      importInterop: 'none',
-    }], {
+    const plugins = await isTypeModule(file) ? [{
       visitor: {
         // eslint-disable-next-line no-shadow
         ImportDeclaration (path) {
-          let { value } = path.node.source
-          if (value.endsWith('.jsx') && (value.startsWith('./') || value.startsWith('../'))) {
-            // Rewrite .jsx imports to .js:
-            value = path.node.source.value = value.slice(0, -1) // eslint-disable-line no-param-reassign,no-multi-assign
-          }
-          if (PACKAGE_JSON_IMPORT.test(value)
+          transformJSXImportsToJS(path)
+          if (PACKAGE_JSON_IMPORT.test(path.node.source.value)
               && path.node.specifiers.length === 1
               && path.node.specifiers[0].type === 'ImportDefaultSpecifier') {
             // Vendor-in version number from package.json files:
@@ -128,106 +105,14 @@ async function buildLib () {
                   ]))]),
               )
             }
-          } else if (path.node.specifiers[0].type === 'ImportDefaultSpecifier') {
-            const [{ local }, ...otherSpecifiers] = path.node.specifiers
-            if (otherSpecifiers.length === 1 && otherSpecifiers[0].type === 'ImportNamespaceSpecifier') {
-              // import defaultVal, * as namespaceImport from '@uppy/package'
-              // is transformed into:
-              // const defaultVal = require('@uppy/package'); const namespaceImport = defaultVal
-              path.insertAfter(
-                t.variableDeclaration('const', [
-                  t.variableDeclarator(
-                    otherSpecifiers[0].local,
-                    local,
-                  ),
-                ]),
-              )
-            } else if (otherSpecifiers.length !== 0) {
-              // import defaultVal, { exportedVal as importedName, other } from '@uppy/package'
-              // is transformed into:
-              // const defaultVal = require('@uppy/package'); const { exportedVal: importedName, other } = defaultVal
-              path.insertAfter(t.variableDeclaration('const', [t.variableDeclarator(
-                t.objectPattern(
-                  otherSpecifiers.map(specifier => t.objectProperty(
-                    t.identifier(specifier.imported.name),
-                    specifier.local,
-                  )),
-                ),
-                local,
-              )]))
-            }
-
-            let requireCall = t.callExpression(t.identifier('require'), [
-              t.stringLiteral(value),
-            ])
-            if (esPackagesThatNeedSpecialTreatmentForRollupInterop.includes(value)) {
-              requireCall = t.logicalExpression('||', t.memberExpression(requireCall, t.identifier('default')), requireCall)
-            }
-            path.replaceWith(
-              t.variableDeclaration('const', [
-                t.variableDeclarator(
-                  local,
-                  requireCall,
-                ),
-              ]),
-            )
           }
         },
-        ExportAllDeclaration,
-        // eslint-disable-next-line no-shadow,consistent-return
+
+        ExportAllDeclaration: transformJSXImportsToJS,
+        // eslint-disable-next-line no-shadow
         ExportNamedDeclaration (path) {
           if (path.node.source != null) {
-            if (path.node.specifiers.length !== 1 || path.node.specifiers[0].local.name !== 'default') throw new Error('unsupported export named declaration')
-
-            if (path.node.specifiers[0].exported.name === 'default') return ExportAllDeclaration(path)
-
-            let { value } = path.node.source
-            if (value.endsWith('.jsx') && (value.startsWith('./') || value.startsWith('../'))) {
-              // Rewrite .jsx imports to .js:
-              value = path.node.source.value = value.slice(0, -1) // eslint-disable-line no-param-reassign,no-multi-assign
-            }
-
-            let requireCall = t.callExpression(t.identifier('require'), [
-              t.stringLiteral(value),
-            ])
-            if (esPackagesThatNeedSpecialTreatmentForRollupInterop.includes(value)) {
-              requireCall = t.logicalExpression('||', t.memberExpression(requireCall, t.identifier('default')), requireCall)
-            }
-
-            const { exported } = path.node.specifiers[0]
-            path.insertBefore(
-              t.variableDeclaration('const', [
-                t.variableDeclarator(
-                  exported,
-                  requireCall,
-                ),
-              ]),
-            )
-            path.replaceWith(
-              t.exportNamedDeclaration(null, [t.exportSpecifier(exported, exported)]),
-            )
-          }
-        },
-        // eslint-disable-next-line no-shadow
-        ExportDefaultDeclaration (path) {
-          const moduleExports =  t.memberExpression(t.identifier('module'), t.identifier('exports'))
-          if (!t.isDeclaration(path.node.declaration)) {
-            path.replaceWith(
-              t.assignmentExpression('=', moduleExports, path.node.declaration),
-            )
-          } else if (path.node.declaration.id != null) {
-            const { id } = path.node.declaration
-            path.insertBefore(path.node.declaration)
-            path.replaceWith(
-              t.assignmentExpression('=', moduleExports, id),
-            )
-          } else {
-            const id = t.identifier('_default')
-            path.node.declaration.id = id // eslint-disable-line no-param-reassign
-            path.insertBefore(path.node.declaration)
-            path.replaceWith(
-              t.assignmentExpression('=', moduleExports, id),
-            )
+            transformJSXImportsToJS(path)
           }
         },
       },

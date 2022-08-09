@@ -1,7 +1,7 @@
-const getFileNameAndExtension = require('./getFileNameAndExtension')
-const mimeTypes = require('./mimeTypes')
+import getFileNameAndExtension from './getFileNameAndExtension.js'
+import mimeTypes from './mimeTypes.js'
 
-module.exports = function getFileType (file) {
+export default function getFileType (file) {
   if (file.type) return file.type
 
   const fileExtension = file.name ? getFileNameAndExtension(file.name).extension?.toLowerCase() : null

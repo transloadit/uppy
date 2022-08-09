@@ -2,14 +2,19 @@ import { h } from 'preact'
 import { UIPlugin } from '@uppy/core'
 import getFileTypeExtension from '@uppy/utils/lib/getFileTypeExtension'
 import ScreenRecIcon from './ScreenRecIcon.jsx'
-import CaptureScreen from './CaptureScreen.jsx'
+import RecorderScreen from './RecorderScreen.jsx'
 
 import packageJson from '../package.json'
 import locale from './locale.js'
 
+// Check if screen capturing is supported.
+// mediaDevices is supprted on mobile Safari, getDisplayMedia is not
+function isScreenRecordingSupported () {
+  return window.MediaRecorder && navigator.mediaDevices?.getDisplayMedia // eslint-disable-line compat/compat
+}
+
 // Adapted from: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
 function getMediaDevices () {
-  // check if screen capturing is supported
   return window.MediaRecorder && navigator.mediaDevices // eslint-disable-line compat/compat
 }
 
@@ -79,8 +84,7 @@ export default class ScreenCapture extends UIPlugin {
   }
 
   install () {
-    // Return if browser doesn’t support getDisplayMedia and
-    if (!this.mediaDevices) {
+    if (!isScreenRecordingSupported()) {
       this.uppy.log('Screen recorder access is not supported', 'error')
       return null
     }
@@ -388,7 +392,7 @@ export default class ScreenCapture extends UIPlugin {
     }
 
     return (
-      <CaptureScreen
+      <RecorderScreen
         {...recorderState} // eslint-disable-line react/jsx-props-no-spreading
         onStartRecording={this.startRecording}
         onStopRecording={this.stopRecording}

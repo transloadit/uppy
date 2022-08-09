@@ -21,7 +21,7 @@ Robodog can be downloaded from npm:
 npm install @uppy/robodog
 ```
 
-Then, with a bundler such as [webpack][webpack] or [Browserify][browserify], do:
+Then, with a bundler such as [Vite](https://vitejs.dev/), [Parcel](https://parceljs.org/), or [Rollup](https://rollupjs.org), do:
 
 ```js
 import robodog from '@uppy/robodog'
@@ -31,8 +31,8 @@ import '@uppy/robodog/dist/robodog.css'
 If you are not using a bundler, you can also import Robodog using an HTML script tag.
 
 ```html
-<link rel="stylesheet" href="https://releases.transloadit.com/uppy/robodog/v2.6.0/robodog.min.css">
-<script src="https://releases.transloadit.com/uppy/robodog/v2.6.0/robodog.min.js"></script>
+<link rel="stylesheet" href="https://releases.transloadit.com/uppy/robodog/v3.0.0-beta.4/robodog.min.css">
+<script src="https://releases.transloadit.com/uppy/robodog/v3.0.0-beta.4/robodog.min.js"></script>
 <!-- you can now use: window.Robodog.pick() -->
 ```
 
@@ -113,7 +113,3 @@ resultPromise.then((bundle) => {
 <a class="MoreButton" href="/docs/robodog/upload">View Documentation</a>
 
 [transloadit]: https://transloadit.com/
-
-[browserify]: https://browserify.org
-
-[webpack]: https://webpack.js.org

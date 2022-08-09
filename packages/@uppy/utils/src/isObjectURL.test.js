@@ -1,4 +1,5 @@
-const isObjectURL = require('./isObjectURL')
+import { describe, expect, it } from '@jest/globals'
+import isObjectURL from './isObjectURL.js'
 
 describe('isObjectURL', () => {
   it('should return true if the specified url is an object url', () => {

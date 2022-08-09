@@ -1,4 +1,5 @@
-const findIndex = require('./findIndex')
+import { describe, expect, it } from '@jest/globals'
+import findIndex from './findIndex.js'
 
 describe('findIndex', () => {
   it('should return index of an object in an array, that matches a predicate', () => {

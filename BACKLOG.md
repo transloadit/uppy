@@ -7,18 +7,22 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 
 ## `3.0.0`
 
-- [ ] Switch to ES Modules (ESM)
-- [ ] @uppy/image-editor: Remove silly hack to work around non-ESM.
-- [ ] Consider updating the name of @uppy/aws-s3 and @uppy/aws-s3-multipart to reflect it also supports Google Cloud Storage, Wasabi, and other cloud providers. 
-- [ ] Consider fixing all locale files to follow the bcp-47 standard (nl_NL --> nl-NL)
-- [ ] Some not too breaking breaking changes. Go through TODOs
-- [ ] Companion breaking changes, like S3 keys
-- [ ] New presets, deprecate Robodog
+- [x] Switch to ES Modules (ESM)
+- [x] @uppy/image-editor: Remove silly hack to work around non-ESM.
+- [ ] Some not too breaking breaking changes. Go through TODOs (@arturi, @aduh95, @Murderlon)
+- [ ] Companion breaking changes, like S3 keys (@mifi)
+- [x] New remote-sources preset
+- [ ] Deprecate Robodog
+  - [ ] Remove from 3.x branch (@aduh95)
+  - [ ] Update docs that refer to Robodog (@arturi)
+  - [ ] Update Transloadit.com examples and docs to use @uppy/transloadit + @uppy/remote-sources plugins instead of @uppy/robodog (@arturi)
 
 ## `4.0.0`
 
 - [ ] core: change the preprocessing --> uploading flow to allow for files to start uploading right away after their preprocessing step has finished. See #1738 (@goto-but-stop)
 - [ ] companion: add more reliable tests to catch edge cases in companion. For example testing that oauth works for multiple companion instances that use a master Oauth domain.
+- [ ] Consider updating the name of @uppy/aws-s3 and @uppy/aws-s3-multipart to reflect it also supports Google Cloud Storage, Wasabi, and other cloud providers.
+- [ ] Consider fixing all locale files to follow the bcp-47 standard (nl_NL --> nl-NL)
 
 ## Unplanned
 
@@ -26,7 +30,6 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 
 - [ ] Make sure Uppy works well in VR
 - [ ] normalize file names when uploading from iOS? Can we do it with meta data? date? `image-${index}`? #678
-- [ ] robodog: Simplify Robodog — yes to easy few lines of code Transloadit experience, but currently it’s hard to choose between modes, decide what you need.
 - [ ] Can Uppy upload a lot of files at once? Seems to fail now: https://github.com/transloadit/uppy/issues/3313 (@aduh95, @Murderlon)
 - [ ] Consider how we can make Uppy smaller. Replace some packages with smaller alternatives. Talk about Socket.io again (@aduh95)
 - [ ] Better events — more data, consistency, naming (@Murderlon)
@@ -56,14 +59,13 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] Giphy image search (on top of Unsplash plugin) ()
 - [ ] Image search (via Google or Bing or DuckDuckGo): use duckduckgo-images-api or Google Search API (@arturi)
 - [ ] Vimeo #2872
-- [ ] box: add to https://uppy.io/examples/dashboard/ (@mifi)
 
 ### Miscellaneous
 
 - [ ] goldenretriever: make it work with aws multipart https://community.transloadit.com/t/resumable-aws-s3-multipart-integration/14888 (@goto-bus-stop)
 - [ ] provider: add sorting (by date) #254
 - [ ] qa: add one integration test (or add to existing test) that uses more exotic (tus) options such as `useFastRemoteRetry` or `removeFingerprintOnSuccess` https://github.com/transloadit/uppy/issues/1327 (@arturi, @ifedapoolarewaju)
-- [ ] react: Add a React Hook to manage an Uppy instance https://github.com/transloadit/uppy/pull/1247#issuecomment-458063951 (@goto-bus-stop)
+- [x] react: Add a React Hook to manage an Uppy instance https://github.com/transloadit/uppy/pull/1247#issuecomment-458063951 (@goto-bus-stop)
 - [ ] rn: Uppy React Native works with Expo, now let's make it work without
 - [ ] rn: Uppy React Native works with Url Plugin, now let's make it work with Instagram
 - [ ] security: consider iframe / more security for Transloadit/Uppy integration widget and Uppy itself. Page can’t get files from Google Drive if its an iframe

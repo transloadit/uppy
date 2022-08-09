@@ -1,7 +1,9 @@
-require('whatwg-fetch')
-const nock = require('nock')
-const Core = require('@uppy/core')
-const AwsS3Multipart = require('.')
+import { beforeEach, describe, expect, it, jest } from '@jest/globals'
+
+import 'whatwg-fetch'
+import nock from 'nock'
+import Core from '@uppy/core'
+import AwsS3Multipart from './index.js'
 
 const KB = 1024
 const MB = KB * KB
@@ -52,15 +54,14 @@ describe('AwsS3Multipart', () => {
         }),
         completeMultipartUpload: jest.fn(async () => ({ location: 'test' })),
         abortMultipartUpload: jest.fn(),
-        prepareUploadParts: jest.fn(async () => {
+        prepareUploadParts: jest.fn(async (file, { parts }) => {
           const presignedUrls = {}
-          const possiblePartNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-          possiblePartNumbers.forEach((partNumber) => {
+          parts.forEach(({ number }) => {
             presignedUrls[
-              partNumber
-            ] = `https://bucket.s3.us-east-2.amazonaws.com/test/upload/multitest.dat?partNumber=${partNumber}&uploadId=6aeb1980f3fc7ce0b5454d25b71992&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIATEST%2F20210729%2Fus-east-2%2Fs3%2Faws4_request&X-Amz-Date=20210729T014044Z&X-Amz-Expires=600&X-Amz-SignedHeaders=host&X-Amz-Signature=test`
+              number
+            ] = `https://bucket.s3.us-east-2.amazonaws.com/test/upload/multitest.dat?partNumber=${number}&uploadId=6aeb1980f3fc7ce0b5454d25b71992&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIATEST%2F20210729%2Fus-east-2%2Fs3%2Faws4_request&X-Amz-Date=20210729T014044Z&X-Amz-Expires=600&X-Amz-SignedHeaders=host&X-Amz-Signature=test`
           })
-          return { presignedUrls }
+          return { presignedUrls, headers: { 1: { 'Content-MD5': 'foo' } } }
         }),
       })
       awsS3Multipart = core.getPlugin('AwsS3Multipart')
@@ -70,32 +71,39 @@ describe('AwsS3Multipart', () => {
       const scope = nock(
         'https://bucket.s3.us-east-2.amazonaws.com',
       ).defaultReplyHeaders({
+        'access-control-allow-headers': '*',
         'access-control-allow-method': 'PUT',
         'access-control-allow-origin': '*',
-        'access-control-expose-headers': 'ETag',
+        'access-control-expose-headers': 'ETag, Content-MD5',
       })
       // 6MB file will give us 2 chunks, so there will be 2 PUT and 2 OPTIONS
       // calls to the presigned URL from 1 prepareUploadParts calls
       const fileSize = 5 * MB + 1 * MB
 
       scope
-        .options((uri) => uri.includes('test/upload/multitest.dat'))
-        .reply(200, '')
+        .options((uri) => uri.includes('test/upload/multitest.dat?partNumber=1'))
+        .reply(function replyFn () {
+          expect(this.req.headers['access-control-request-headers']).toEqual('Content-MD5')
+          return [200, '']
+        })
       scope
-        .options((uri) => uri.includes('test/upload/multitest.dat'))
-        .reply(200, '')
+        .options((uri) => uri.includes('test/upload/multitest.dat?partNumber=2'))
+        .reply(function replyFn () {
+          expect(this.req.headers['access-control-request-headers']).toBeUndefined()
+          return [200, '']
+        })
       scope
-        .put((uri) => uri.includes('test/upload/multitest.dat'))
+        .put((uri) => uri.includes('test/upload/multitest.dat?partNumber=1'))
         .reply(200, '', { ETag: 'test1' })
       scope
-        .put((uri) => uri.includes('test/upload/multitest.dat'))
+        .put((uri) => uri.includes('test/upload/multitest.dat?partNumber=2'))
         .reply(200, '', { ETag: 'test2' })
 
       core.addFile({
         source: 'jest',
         name: 'multitest.dat',
         type: 'application/octet-stream',
-        data: new File([Buffer.alloc(fileSize)], {
+        data: new File([new Uint8Array(fileSize)], {
           type: 'application/octet-stream',
         }),
       })
@@ -113,6 +121,7 @@ describe('AwsS3Multipart', () => {
       const scope = nock(
         'https://bucket.s3.us-east-2.amazonaws.com',
       ).defaultReplyHeaders({
+        'access-control-allow-headers': '*',
         'access-control-allow-method': 'PUT',
         'access-control-allow-origin': '*',
         'access-control-expose-headers': 'ETag',
@@ -136,18 +145,19 @@ describe('AwsS3Multipart', () => {
         source: 'jest',
         name: 'multitest.dat',
         type: 'application/octet-stream',
-        data: new File([Buffer.alloc(fileSize)], {
+        data: new File([new Uint8Array(fileSize)], {
           type: 'application/octet-stream',
         }),
       })
 
       await core.upload()
 
-      function validatePartData ({ partNumbers, chunks }, expected) {
-        expect(partNumbers).toEqual(expected)
-        partNumbers.forEach(partNumber => {
-          expect(chunks[partNumber]).toBeDefined()
-        })
+      function validatePartData ({ parts }, expected) {
+        expect(parts.map((part) => part.number)).toEqual(expected)
+
+        for (const part of parts) {
+          expect(part.chunk).toBeDefined()
+        }
       }
 
       expect(awsS3Multipart.opts.prepareUploadParts.mock.calls.length).toEqual(3)
@@ -171,51 +181,127 @@ describe('AwsS3Multipart', () => {
         { ETag: 'test', PartNumber: 10 },
       ])
     })
-  })
 
-  describe('MultipartUploader', () => {
-    let core
-    let awsS3Multipart
+    it('Keeps chunks marked as busy through retries until they complete', async () => {
+      const scope = nock(
+        'https://bucket.s3.us-east-2.amazonaws.com',
+      ).defaultReplyHeaders({
+        'access-control-allow-headers': '*',
+        'access-control-allow-method': 'PUT',
+        'access-control-allow-origin': '*',
+        'access-control-expose-headers': 'ETag',
+      })
 
-    beforeEach(() => {
-      core = new Core()
-      core.use(AwsS3Multipart, {
-        createMultipartUpload: jest.fn(() => {
+      const fileSize = 50 * MB
+
+      scope
+        .options((uri) => uri.includes('test/upload/multitest.dat'))
+        .reply(200, '')
+      scope
+        .put((uri) => uri.includes('test/upload/multitest.dat') && !uri.includes('partNumber=7'))
+        .reply(200, '', { ETag: 'test' })
+
+      // Fail the part 7 upload once, then let it succeed
+      let calls = 0
+      scope
+        .put((uri) => uri.includes('test/upload/multitest.dat') && uri.includes('partNumber=7'))
+        .reply(() => (calls++ === 0 ? [500] : [200, '', { ETag: 'test' }]))
+
+      scope.persist()
+
+      // Spy on the busy/done state of the test chunk (part 7, chunk index 6)
+      let busySpy
+      let doneSpy
+      awsS3Multipart.setOptions({
+        createMultipartUpload: jest.fn((file) => {
+          const multipartUploader = awsS3Multipart.uploaders[file.id]
+          const testChunkState = multipartUploader.chunkState[6]
+          let busy = false
+          let done = false
+          busySpy = jest.fn((value) => { busy = value })
+          doneSpy = jest.fn((value) => { done = value })
+          Object.defineProperty(testChunkState, 'busy', { get: () => busy, set: busySpy })
+          Object.defineProperty(testChunkState, 'done', { get: () => done, set: doneSpy })
+
           return {
             uploadId: '6aeb1980f3fc7ce0b5454d25b71992',
             key: 'test/upload/multitest.dat',
           }
         }),
-        completeMultipartUpload: jest.fn(async () => ({ location: 'test' })),
-        abortMultipartUpload: jest.fn(),
-        prepareUploadParts: jest
-          .fn(async () => {
-            const presignedUrls = {}
-            const possiblePartNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-
-            possiblePartNumbers.forEach((partNumber) => {
-              presignedUrls[
-                partNumber
-              ] = `https://bucket.s3.us-east-2.amazonaws.com/test/upload/multitest.dat?partNumber=${partNumber}&uploadId=6aeb1980f3fc7ce0b5454d25b71992&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIATEST%2F20210729%2Fus-east-2%2Fs3%2Faws4_request&X-Amz-Date=20210729T014044Z&X-Amz-Expires=600&X-Amz-SignedHeaders=host&X-Amz-Signature=test`
-            })
-
-            return { presignedUrls }
-          })
-          // This runs first and only once
-          // eslint-disable-next-line prefer-promise-reject-errors
-          .mockImplementationOnce(() => Promise.reject({ source: { status: 500 } })),
       })
-      awsS3Multipart = core.getPlugin('AwsS3Multipart')
+
+      core.addFile({
+        source: 'jest',
+        name: 'multitest.dat',
+        type: 'application/octet-stream',
+        data: new File([new Uint8Array(fileSize)], {
+          type: 'application/octet-stream',
+        }),
+      })
+
+      await core.upload()
+
+      // The chunk should be marked as done once
+      expect(doneSpy.mock.calls.length).toEqual(1)
+      expect(doneSpy.mock.calls[0][0]).toEqual(true)
+
+      // Any changes that set busy to false should only happen after the chunk has been marked done,
+      // otherwise a race condition occurs (see PR #3955)
+      const doneCallOrderNumber = doneSpy.mock.invocationCallOrder[0]
+      for (const [index, callArgs] of busySpy.mock.calls.entries()) {
+        if (callArgs[0] === false) {
+          expect(busySpy.mock.invocationCallOrder[index]).toBeGreaterThan(doneCallOrderNumber)
+        }
+      }
+
+      expect(awsS3Multipart.opts.prepareUploadParts.mock.calls.length).toEqual(3)
+    })
+  })
+
+  describe('MultipartUploader', () => {
+    const createMultipartUpload = jest.fn(() => {
+      return {
+        uploadId: '6aeb1980f3fc7ce0b5454d25b71992',
+        key: 'test/upload/multitest.dat',
+      }
     })
 
+    const prepareUploadParts = jest
+      .fn(async () => {
+        const presignedUrls = {}
+        const possiblePartNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+        possiblePartNumbers.forEach((partNumber) => {
+          presignedUrls[
+            partNumber
+          ] = `https://bucket.s3.us-east-2.amazonaws.com/test/upload/multitest.dat?partNumber=${partNumber}&uploadId=6aeb1980f3fc7ce0b5454d25b71992&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIATEST%2F20210729%2Fus-east-2%2Fs3%2Faws4_request&X-Amz-Date=20210729T014044Z&X-Amz-Expires=600&X-Amz-SignedHeaders=host&X-Amz-Signature=test`
+        })
+
+        return { presignedUrls }
+      })
+
+    afterEach(() => jest.clearAllMocks())
+
     it('retries prepareUploadParts when it fails once', async () => {
+      const core = new Core()
+        .use(AwsS3Multipart, {
+          createMultipartUpload,
+          completeMultipartUpload: jest.fn(async () => ({ location: 'test' })),
+          // eslint-disable-next-line no-throw-literal
+          abortMultipartUpload: jest.fn(() => { throw 'should ignore' }),
+          prepareUploadParts:
+            prepareUploadParts
+              // eslint-disable-next-line prefer-promise-reject-errors
+              .mockImplementationOnce(() => Promise.reject({ source: { status: 500 } })),
+        })
+      const awsS3Multipart = core.getPlugin('AwsS3Multipart')
       const fileSize = 5 * MB + 1 * MB
 
       core.addFile({
         source: 'jest',
         name: 'multitest.dat',
         type: 'application/octet-stream',
-        data: new File([Buffer.alloc(fileSize)], {
+        data: new File([new Uint8Array(fileSize)], {
           type: 'application/octet-stream',
         }),
       })
@@ -223,6 +309,68 @@ describe('AwsS3Multipart', () => {
       await core.upload()
 
       expect(awsS3Multipart.opts.prepareUploadParts.mock.calls.length).toEqual(2)
+    })
+
+    it('calls `upload-error` when prepareUploadParts fails after all retries', async () => {
+      const core = new Core()
+        .use(AwsS3Multipart, {
+          retryDelays: [100],
+          createMultipartUpload,
+          completeMultipartUpload: jest.fn(async () => ({ location: 'test' })),
+          abortMultipartUpload: jest.fn(),
+          prepareUploadParts: prepareUploadParts
+            // eslint-disable-next-line prefer-promise-reject-errors
+            .mockImplementation(() => Promise.reject({ source: { status: 500 } })),
+        })
+      const awsS3Multipart = core.getPlugin('AwsS3Multipart')
+      const fileSize = 5 * MB + 1 * MB
+      const mock = jest.fn()
+      core.on('upload-error', mock)
+
+      core.addFile({
+        source: 'jest',
+        name: 'multitest.dat',
+        type: 'application/octet-stream',
+        data: new File([new Uint8Array(fileSize)], {
+          type: 'application/octet-stream',
+        }),
+      })
+
+      await expect(core.upload()).rejects.toEqual({ source: { status: 500 } })
+
+      expect(awsS3Multipart.opts.prepareUploadParts.mock.calls.length).toEqual(2)
+      expect(mock.mock.calls.length).toEqual(1)
+    })
+  })
+
+  describe('dynamic companionHeader', () => {
+    let core
+    let awsS3Multipart
+    const oldToken = 'old token'
+    const newToken = 'new token'
+
+    beforeEach(() => {
+      core = new Core()
+      core.use(AwsS3Multipart, {
+        companionHeaders: {
+          authorization: oldToken,
+        },
+      })
+      awsS3Multipart = core.getPlugin('AwsS3Multipart')
+    })
+
+    it('companionHeader is updated before uploading file', async () => {
+      awsS3Multipart.setOptions({
+        companionHeaders: {
+          authorization: newToken,
+        },
+      })
+
+      await core.upload()
+
+      const client = awsS3Multipart[Symbol.for('uppy test: getClient')]()
+
+      expect(client[Symbol.for('uppy test: getCompanionHeaders')]().authorization).toEqual(newToken)
     })
   })
 })

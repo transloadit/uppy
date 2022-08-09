@@ -42,7 +42,6 @@ module.exports.generateEncryptedToken = (payload, secret) => {
  */
 module.exports.verifyEncryptedToken = (token, secret) => {
   try {
-    // @ts-ignore
     return module.exports.verifyToken(decrypt(token, secret), secret)
   } catch (err) {
     return { err }

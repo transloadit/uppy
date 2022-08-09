@@ -25,10 +25,10 @@
   "pre-commit": "lint:staged",
   "license": "MIT",
   "engines": {
-    "node": "^v14.17.0 || >=v16.0.0",
-    "yarn": "3.1.0"
+    "node": "^16.15.0 || >=18.0.0",
+    "yarn": "3.2.1"
   },
-  "packageManager": "yarn@3.1.0",
+  "packageManager": "yarn@3.2.1",
   "workspaces": [
     "examples/*",
     "packages/@uppy/*",
@@ -77,15 +77,16 @@
     "eslint-plugin-compat": "^4.0.0",
     "eslint-plugin-cypress": "^2.12.1",
     "eslint-plugin-import": "^2.25.2",
-    "eslint-plugin-jest": "^25.0.0",
-    "eslint-plugin-jsdoc": "^37.0.0",
+    "eslint-plugin-jest": "^26.0.0",
+    "eslint-plugin-jsdoc": "^38.0.0",
     "eslint-plugin-jsx-a11y": "^6.4.1",
     "eslint-plugin-markdown": "^2.2.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prefer-import": "^0.0.1",
-    "eslint-plugin-promise": "^5.1.1",
+    "eslint-plugin-promise": "^6.0.0",
     "eslint-plugin-react": "^7.22.0",
     "eslint-plugin-react-hooks": "^4.2.0",
+    "eslint-plugin-unicorn": "^43.0.0",
     "events.once": "^2.0.2",
     "exorcist": "^2.0.0",
     "fakefile": "^1.0.0",
@@ -121,7 +122,8 @@
     "temp-write": "^5.0.0",
     "tsd": "^0.17.0",
     "typescript": "~4.4",
-    "verdaccio": "^5.1.1"
+    "verdaccio": "^5.1.1",
+    "vue-template-compiler": "workspace:*"
   },
   "scripts": {
     "build:bundle": "yarn node ./bin/build-bundle.mjs",
@@ -156,14 +158,12 @@
     "e2e:generate": "yarn workspace e2e generate-test",
     "test:companion": "yarn workspace @uppy/companion test",
     "test:companion:watch": "yarn workspace @uppy/companion test --watch",
-    "test:endtoend:local": "yarn workspace @uppy-tests/end2end test:endtoend:local",
-    "test:endtoend": "yarn workspace @uppy-tests/end2end test:endtoend",
     "test:locale-packs": "yarn locale-packs:unused && yarn locale-packs:warnings",
     "test:locale-packs:unused": "yarn workspace @uppy-dev/locale-pack test unused",
     "test:locale-packs:warnings": "yarn workspace @uppy-dev/locale-pack test warnings",
     "test:type": "yarn workspaces foreach -piv --include '@uppy/*' --exclude '@uppy/{angular,react-native,locales,companion,provider-views,robodog,svelte}' exec tsd",
     "test:unit": "yarn run build:lib && NODE_OPTIONS=--experimental-vm-modules jest --env jsdom",
-    "test:watch": "jest --env jsdom --watch",
+    "test:watch": "NODE_OPTIONS=--experimental-vm-modules jest --env jsdom --watch --no-coverage",
     "test:size": "yarn build:lib && size-limit --why",
     "test": "npm-run-all lint test:locale-packs:unused test:locale-packs:warnings test:unit test:type test:companion",
     "uploadcdn": "yarn node ./bin/upload-to-cdn.js",
@@ -200,12 +200,11 @@
     ]
   },
   "resolutions": {
-    "@types/redis": "2",
+    "@types/connect-redis@0.0.18": "patch:@types/connect-redis@npm:0.0.18#.yarn/patches/@types-connect-redis-npm-0.0.18-4fd2b614d3",
     "@types/eslint@^7.2.13": "^8.2.0",
     "@types/react": "^17",
     "@types/webpack-dev-server": "^4",
     "npm-auth-to-token@1.0.0": "patch:npm-auth-to-token@npm:1.0.0#.yarn/patches/npm-auth-to-token-npm-1.0.0-c288ce201f",
-    "babel-plugin-transform-commonjs@1.1.6": "patch:babel-plugin-transform-commonjs@npm:1.1.6#.yarn/patches/babel-plugin-transform-commonjs-npm-1.1.6-0007fa2809",
     "exifr": "patch:exifr@npm:7.1.3#.yarn/patches/exifr-npm-7.1.3-e3f1c7a57d"
   }
 }

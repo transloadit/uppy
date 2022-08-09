@@ -1,5 +1,12 @@
 # @uppy/drop-target
 
+## 2.0.0-beta.2
+
+Released: 2022-08-03
+Included in: Uppy v3.0.0-beta.4
+
+- @uppy/drop-target: remove `isFileTransfer` from the public API (Antoine du Hamel / #3932)
+
 ## 1.1.3
 
 Released: 2022-04-27

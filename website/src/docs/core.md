@@ -89,13 +89,13 @@ With this option set to `false`, users can upload some files, and you can listen
 
 An object of methods that are called with debug information from [`uppy.log`](/docs/uppy/#uppy-log).
 
-Set `logger: Uppy.debugLogger` to get debug info output to the browser console:
+Set `logger: debugLogger` to get debug info output to the browser console:
 
 ```js
 import Uppy from '@uppy/core'
 
 const uppy = new Uppy({
-  logger: Uppy.debugLogger,
+  logger: debugLogger,
 })
 ```
 
@@ -111,7 +111,7 @@ const nullLogger = {
 }
 ```
 
-`logger: Uppy.debugLogger` looks like this:
+`logger: debugLogger` looks like this:
 
 ```js
 const debugLogger = {
@@ -277,10 +277,8 @@ const uppy = new Uppy({
 
 ### `locale: {}`
 
-<!-- eslint-disable no-restricted-globals, no-multiple-empty-lines -->
-
 ```js
-module.exports = {
+export default {
   strings: {
     addBulkFilesFailed: {
       0: 'Failed to add %{smart_count} file due to an internal error',
@@ -338,7 +336,6 @@ module.exports = {
     },
   },
 }
-
 ```
 
 ### `store: defaultStore()`
@@ -673,7 +670,7 @@ uppy.getPlugin('Dashboard').setOptions({
 })
 ```
 
-### `uppy.reset({ reason = 'user' })` (alias `uppy.cancelAll()`)
+### `uppy.cancelAll({ reason = 'user' })`
 
 Stop all uploads in progress and clear file selection, set progress to 0. More or less, it returns things to the way they were before any user input.
 
@@ -683,7 +680,7 @@ Stop all uploads in progress and clear file selection, set progress to 0. More o
 
 ### `uppy.close({ reason = 'user' })`
 
-Uninstall all plugins and close down this Uppy instance. Also runs `uppy.reset()` before uninstalling.
+Uninstall all plugins and close down this Uppy instance. Also runs `uppy.cancelAll()` before uninstalling.
 
 * `reason` - Same as the `reason` option for `cancelAll`
 
