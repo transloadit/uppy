@@ -100,8 +100,12 @@ export default class MiniXHRUpload {
   }
 
   #addEventHandlerForFile (eventName, fileID, eventHandler) {
-    this.uploaderEvents[fileID].on(eventName, (targetFileID) => {
-      if (fileID === targetFileID) eventHandler()
+    this.uploaderEvents[fileID].on(eventName, (fileOrID) => {
+      // TODO (major): refactor Uppy events to consistently send file objects (or consistently IDs)
+      // We created a generic `addEventListenerForFile` but not all events
+      // use file IDs, some use files, so we need to do this weird check.
+      const id = fileOrID?.id ?? fileOrID
+      if (fileID === id) eventHandler()
     })
   }
 
