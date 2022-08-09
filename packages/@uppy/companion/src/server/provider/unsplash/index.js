@@ -2,9 +2,8 @@ const got = require('got').default
 
 const SearchProvider = require('../SearchProvider')
 const { getURLMeta } = require('../../helpers/request')
-const logger = require('../../logger')
 const adaptData = require('./adapter')
-const { ProviderApiError } = require('../error')
+const { withProviderErrorHandling } = require('../providerErrors')
 const { prepareStream } = require('../../helpers/utils')
 
 const BASE_URL = 'https://api.unsplash.com'
@@ -59,31 +58,13 @@ class Unsplash extends SearchProvider {
     })
   }
 
-  // todo reuse
   async #withErrorHandling (tag, fn) {
-    try {
-      return await fn()
-    } catch (err) {
-      const err2 = this.#convertError(err)
-      logger.error(err2, tag)
-      throw err2
-    }
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  #convertError (err) {
-    const { response } = err
-    if (response) {
-      const fallbackMessage = `request to Unsplash returned ${response.statusCode}`
-      let errMsg
-      if (typeof response.body === 'object' && response.body.errors) errMsg = String(response.body.errors)
-      else if (typeof response.body === 'string') errMsg = response.body
-      else errMsg = fallbackMessage
-
-      return new ProviderApiError(errMsg, response.statusCode)
-    }
-
-    return err
+    return withProviderErrorHandling({
+      fn,
+      tag,
+      providerName: 'Unsplash',
+      getJsonErrorMessage: (body) => body?.errors && String(body.errors),
+    })
   }
 }
 

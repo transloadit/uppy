@@ -3,7 +3,7 @@ const got = require('got').default
 const Provider = require('../Provider')
 const logger = require('../../logger')
 const { VIRTUAL_SHARED_DIR, adaptData, isShortcut, isGsuiteFile, getGsuiteExportType } = require('./adapter')
-const { ProviderApiError, ProviderAuthError } = require('../error')
+const { withProviderErrorHandling } = require('../providerErrors')
 const { prepareStream } = require('../../helpers/utils')
 
 const DRIVE_FILE_FIELDS = 'kind,id,imageMediaMetadata,name,mimeType,ownedByMe,permissions(role,emailAddress),size,modifiedTime,iconLink,thumbnailLink,teamDriveId,videoMediaMetadata,shortcutDetails(targetId,targetMimeType)'
@@ -158,28 +158,13 @@ class Drive extends Provider {
   }
 
   async #withErrorHandling (tag, fn) {
-    try {
-      return await fn()
-    } catch (err) {
-      const err2 = this.#convertError(err)
-      logger.error(err2, tag)
-      throw err2
-    }
-  }
-
-  #convertError (err) {
-    const { response } = err
-
-    if (response) {
-      const fallbackMessage = `request to ${this.authProvider} returned ${response.statusCode}`
-      let errMsg
-      if (typeof response.body === 'object' && response.body.error?.message) errMsg = response.body.error.message
-      else if (typeof response.body === 'string') errMsg = response.body
-      else errMsg = fallbackMessage
-
-      return response.statusCode === 401 ? new ProviderAuthError() : new ProviderApiError(errMsg, response.statusCode)
-    }
-    return err
+    return withProviderErrorHandling({
+      fn,
+      tag,
+      providerName: this.authProvider,
+      isAuthError: (response) => response.statusCode === 401,
+      getJsonErrorMessage: (body) => body?.error?.message,
+    })
   }
 }
 

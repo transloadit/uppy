@@ -4,7 +4,7 @@ const Provider = require('../Provider')
 const { getURLMeta } = require('../../helpers/request')
 const logger = require('../../logger')
 const { adaptData, sortImages } = require('./adapter')
-const { ProviderApiError, ProviderAuthError } = require('../error')
+const { withProviderErrorHandling } = require('../providerErrors')
 const { prepareStream } = require('../../helpers/utils')
 
 const getClient = ({ token }) => got.extend({
@@ -86,35 +86,14 @@ class Facebook extends Provider {
     })
   }
 
-  // todo reuse
   async #withErrorHandling (tag, fn) {
-    try {
-      return await fn()
-    } catch (err) {
-      const err2 = this.#convertError(err)
-      logger.error(err2, tag)
-      throw err2
-    }
-  }
-
-  #convertError (err) {
-    const { response } = err
-    if (response) {
-      if (response.statusCode === 190) {
-        // Invalid OAuth 2.0 Access Token
-        return new ProviderAuthError()
-      }
-
-      const fallbackMessage = `request to ${this.authProvider} returned ${response.statusCode}`
-      let errMsg
-      if (typeof response.body === 'object' && response.body.error?.message) errMsg = response.body.error.message
-      else if (typeof response.body === 'string') errMsg = response.body
-      else errMsg = fallbackMessage
-
-      return new ProviderApiError(errMsg, response.statusCode)
-    }
-
-    return err
+    return withProviderErrorHandling({
+      fn,
+      tag,
+      providerName: this.authProvider,
+      isAuthError: (response) => response.statusCode === 190, // Invalid OAuth 2.0 Access Token
+      getJsonErrorMessage: (body) => body?.error?.message,
+    })
   }
 }
 

@@ -2,8 +2,9 @@ const request = require('supertest')
 const nock = require('nock')
 const tokenService = require('../../src/server/helpers/jwt')
 const { getServer } = require('../mockserver')
+const { nockZoomRevoke } = require('../fixtures/zoom')
 
-const { remoteZoomKey: mockRemoteZoomKey, remoteZoomSecret: mockRemoteZoomSecret, remoteZoomVerificationToken: mockRemoteZoomVerificationToken } = require('../fixtures/zoom').expects
+const { remoteZoomKey, remoteZoomSecret, remoteZoomVerificationToken } = require('../fixtures/zoom').expects
 
 const authServer = getServer({ COMPANION_ZOOM_KEYS_ENDPOINT: 'http://localhost:2111/zoom-keys' })
 const authData = {
@@ -21,32 +22,32 @@ describe('providers requests with remote oauth keys', () => {
   nock('http://localhost:2111')
     .post('/zoom-keys')
     .reply((uri, { provider, parameters }) => {
-      if (provider !== 'zoom' || parameters !== 'ZOOM-CREDENTIALS-PARAMS') {
-        return [400]
-      }
-      return [
-        200,
-        {
-          credentials: {
-            key: mockRemoteZoomKey,
-            secret: mockRemoteZoomSecret,
-            verificationToken: mockRemoteZoomVerificationToken,
-          },
+      if (provider !== 'zoom' || parameters !== 'ZOOM-CREDENTIALS-PARAMS') return [400]
+
+      return [200, {
+        credentials: {
+          key: remoteZoomKey,
+          secret: remoteZoomSecret,
+          verificationToken: remoteZoomVerificationToken,
         },
-      ]
+      }]
     }).persist()
 
-  nock('https://zoom.us').post('/oauth/revoke?token=token+value').reply(200, { status: 'success' })
+  test('zoom logout with remote oauth keys happy path', async () => {
+    nockZoomRevoke({ key: remoteZoomKey, secret: remoteZoomSecret })
 
-  test('zoom logout with remote oauth keys happy path', () => {
     const params = { params: 'ZOOM-CREDENTIALS-PARAMS' }
     const encodedParams = Buffer.from(JSON.stringify(params), 'binary').toString('base64')
-    return request(authServer)
+    const res = await request(authServer)
       .get('/zoom/logout/')
       .set('uppy-auth-token', token)
       .set('uppy-credentials-params', encodedParams)
       .expect(200)
-      .then((res) => expect(res.body.ok).toBe(true))
+
+    expect(res.body).toMatchObject({
+      ok: true,
+      revoked: true,
+    })
   })
 
   test('zoom logout with wrong credentials params', () => {
@@ -56,7 +57,6 @@ describe('providers requests with remote oauth keys', () => {
       .get('/zoom/logout/')
       .set('uppy-auth-token', token)
       .set('uppy-credentials-params', encodedParams)
-      // todo: handle failures differently to return 400 for this case instead
-      .expect(500)
+      .expect(424)
   })
 })

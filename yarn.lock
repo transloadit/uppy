@@ -6310,22 +6310,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@purest/config@npm:^1.0.0":
-  version: 1.0.1
-  resolution: "@purest/config@npm:1.0.1"
-  dependencies:
-    extend: ^3.0.0
-  checksum: 6157935ffd11fa942c462473480ca3f47ba099d3ef53066c143a050d801efe247994c3beced14da9071ed0064761ba45870927e3c8d824daff106c52f9dedd77
-  languageName: node
-  linkType: hard
-
-"@purest/providers@npm:1.0.1":
-  version: 1.0.1
-  resolution: "@purest/providers@npm:1.0.1"
-  checksum: ea5585f0948d438feb0fe6998e981990934ced66bcf1ac640583ccc9ec38000fa813cb671160ebe5b48e3f447eff7807ad4f8b9e44d742f83ef360cde848dc48
-  languageName: node
-  linkType: hard
-
 "@react-native-community/cli-debugger-ui@npm:^4.13.1":
   version: 4.13.1
   resolution: "@react-native-community/cli-debugger-ui@npm:4.13.1"
@@ -6519,24 +6503,6 @@ __metadata:
   peerDependencies:
     "@redis/client": ^1.0.0
   checksum: 4d11518185dd15f31c5b4a433902e53a3ebc24614a0221080ab12abf4f6fc60b3db00a71a83de7b4b10f11077de611dc1c273274573646d63481d40ca246f82d
-  languageName: node
-  linkType: hard
-
-"@request/api@npm:^0.6.0":
-  version: 0.6.0
-  resolution: "@request/api@npm:0.6.0"
-  dependencies:
-    "@request/interface": ^0.1.0
-    deep-copy: ^1.1.2
-    extend: ^3.0.0
-  checksum: 0fbc4d368c71eca08997922c8a6c958b78b3879006d42eb3696a72b373967ed1ce9f8f037c4072faa9c2e641b98320f4864fb9db1d37a69cd4e4af96fe5c44de
-  languageName: node
-  linkType: hard
-
-"@request/interface@npm:^0.1.0":
-  version: 0.1.0
-  resolution: "@request/interface@npm:0.1.0"
-  checksum: a167275a54bafb3f228dba63cd3bbbb31871e2868d53838881248f21c42a41bd88fb6aca26855edee5ab3bb1eccb4e13799eb2365917e491aa0a54146c5c3d60
   languageName: node
   linkType: hard
 
@@ -10196,7 +10162,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/companion@workspace:packages/@uppy/companion"
   dependencies:
-    "@purest/providers": 1.0.1
     "@types/compression": 1.7.0
     "@types/connect-redis": 0.0.18
     "@types/cookie-parser": 1.4.2
@@ -10227,6 +10192,7 @@ __metadata:
     express-prom-bundle: 6.3.0
     express-request-id: 1.4.1
     express-session: 1.17.1
+    form-data: ^3.0.0
     got: 11
     grant: 4.7.0
     helmet: ^4.6.0
@@ -10243,9 +10209,7 @@ __metadata:
     nock: ^13.1.3
     node-schedule: 1.3.2
     prom-client: 12.0.0
-    purest: 3.1.0
     redis: 4.2.0
-    request: 2.88.2
     semver: 6.3.0
     serialize-error: ^2.1.0
     serialize-javascript: ^6.0.0
@@ -16895,13 +16859,6 @@ __metadata:
   version: 0.7.0
   resolution: "dedent@npm:0.7.0"
   checksum: 87de191050d9a40dd70cad01159a0bcf05ecb59750951242070b6abf9569088684880d00ba92a955b4058804f16eeaf91d604f283929b4f614d181cd7ae633d2
-  languageName: node
-  linkType: hard
-
-"deep-copy@npm:^1.1.2":
-  version: 1.4.2
-  resolution: "deep-copy@npm:1.4.2"
-  checksum: 24ba7db4a9d44800c68659dae0068b681c43be0512c75e700710c3d18776e4c41f7dbd83eed6370bcfc1594c60f84d8798f4058f965ab457ea0232db821f0a4e
   languageName: node
   linkType: hard
 
@@ -33547,17 +33504,6 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   languageName: node
   linkType: hard
 
-"purest@npm:3.1.0":
-  version: 3.1.0
-  resolution: "purest@npm:3.1.0"
-  dependencies:
-    "@purest/config": ^1.0.0
-    "@request/api": ^0.6.0
-    extend: ^3.0.0
-  checksum: 76d723fe820aa236b46ee2a9d928bfaa37fe2a9b4da0495049a6972535a7ac04eb90ee4e01c3051c0d4f49b57c895a3e0bf4f9560caa2aefb5ec10a3314f4db9
-  languageName: node
-  linkType: hard
-
 "q@npm:1.4.1":
   version: 1.4.1
   resolution: "q@npm:1.4.1"
@@ -35077,7 +35023,7 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   languageName: node
   linkType: hard
 
-"request@npm:2.88.2, request@npm:^2.74.0, request@npm:^2.83.0, request@npm:^2.87.0, request@npm:^2.88.0, request@npm:^2.88.2":
+"request@npm:^2.74.0, request@npm:^2.83.0, request@npm:^2.87.0, request@npm:^2.88.0, request@npm:^2.88.2":
   version: 2.88.2
   resolution: "request@npm:2.88.2"
   dependencies:

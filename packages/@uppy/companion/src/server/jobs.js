@@ -2,7 +2,7 @@ const schedule = require('node-schedule')
 const fs = require('node:fs')
 const path = require('node:path')
 const { promisify } = require('node:util')
-const request = require('request')
+const got = require('got').default
 
 const { FILE_NAME_PREFIX } = require('./Uploader')
 const logger = require('./logger')
@@ -65,12 +65,7 @@ async function runPeriodicPing ({ urls, payload, requestTimeout }) {
   // Run requests in parallel
   await Promise.all(urls.map(async (url) => {
     try {
-      // TODO rewrite to use a non-deprecated request library
-      const opts = { url, timeout: requestTimeout }
-      opts.body = payload
-      opts.json = true
-      const response = await promisify(request.post)(opts)
-      if (response.statusCode !== 200) throw new Error(`Status code was ${response.statusCode}`)
+      await got.post(url, { json: payload, timeout: { request: requestTimeout } })
     } catch (err) {
       logger.warn(err, 'jobs.periodic.ping')
     }

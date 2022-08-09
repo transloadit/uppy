@@ -2,19 +2,13 @@ const got = require('got').default
 const moment = require('moment-timezone')
 
 const Provider = require('../Provider')
-const logger = require('../../logger')
 const { initializeData, adaptData } = require('./adapter')
-const { ProviderApiError, ProviderAuthError } = require('../error')
-const { prepareStream } = require('../../helpers/utils')
+const { withProviderErrorHandling } = require('../providerErrors')
+const { prepareStream, getBasicAuthHeader } = require('../../helpers/utils')
 
 const BASE_URL = 'https://zoom.us/v2'
 const PAGE_SIZE = 300
 const DEAUTH_EVENT_NAME = 'app_deauthorized'
-
-function getBasicAuthHeader (key, secret) {
-  const base64 = Buffer.from(`${key}:${secret}`, 'binary').toString('base64')
-  return `Basic ${base64}`
-}
 
 const getClient = ({ token }) => got.extend({
   prefixUrl: BASE_URL,
@@ -163,40 +157,19 @@ class Zoom extends Provider {
     })
   }
 
-  // todo reuse
   async #withErrorHandling (tag, fn) {
-    try {
-      return await fn()
-    } catch (err) {
-      const err2 = this.#convertError(err)
-      logger.error(err2, tag)
-      throw err2
-    }
-  }
+    const authErrorCodes = [
+      124, // expired token
+      401,
+    ]
 
-  #convertError (err) {
-    const { response } = err
-    if (response) {
-      const authErrorCodes = [
-        124, // expired token
-        401,
-      ]
-
-      if (authErrorCodes.includes(response.statusCode)) {
-        // Invalid OAuth 2.0 Access Token
-        return new ProviderAuthError()
-      }
-
-      const fallbackMessage = `request to ${this.authProvider} returned ${response.statusCode}`
-      let errMsg
-      if (typeof response.body === 'object' && response.body?.message) errMsg = response.body.message
-      else if (typeof response.body === 'string') errMsg = response.body
-      else errMsg = fallbackMessage
-
-      return new ProviderApiError(errMsg, response.statusCode)
-    }
-
-    return err
+    return withProviderErrorHandling({
+      fn,
+      tag,
+      providerName: this.authProvider,
+      isAuthError: (response) => authErrorCodes.includes(response.statusCode),
+      getJsonErrorMessage: (body) => body?.message,
+    })
   }
 }
 
