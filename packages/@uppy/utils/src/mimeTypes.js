@@ -11,6 +11,7 @@ export default {
   svg: 'image/svg+xml',
   jpg: 'image/jpeg',
   png: 'image/png',
+  webp: 'image/webp',
   gif: 'image/gif',
   heic: 'image/heic',
   heif: 'image/heif',
