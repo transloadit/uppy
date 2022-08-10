@@ -58,7 +58,9 @@ class Unsplash extends SearchProvider {
     })
   }
 
+  // eslint-disable-next-line class-methods-use-this
   async #withErrorHandling (tag, fn) {
+    // @ts-ignore
     return withProviderErrorHandling({
       fn,
       tag,
