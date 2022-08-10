@@ -106,7 +106,7 @@
     "deploy": "kubectl apply -f infra/kube/companion-kube.yml",
     "prepublishOnly": "yarn run build",
     "start": "node ./lib/standalone/start-server.js",
-    "test": "NODE_OPTIONS=--experimental-vm-modules jest"
+    "test": "jest"
   },
   "engines": {
     "node": "^14.19.0 || ^16.15.0 || >=18.0.0"
