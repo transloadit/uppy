@@ -1,6 +1,6 @@
 import type BaseTus from '@uppy/tus'
 
-import { interceptCompanionUrlRequest, interceptCompanionUnsplashRequest, runRemoteUrlImageUploadTest, runRemoteUnsplashUploadTest } from './util.mjs'
+import { interceptCompanionUrlRequest, interceptCompanionUnsplashRequest, runRemoteUrlImageUploadTest, runRemoteUnsplashUploadTest } from './reusable-tests'
 
 type Tus = BaseTus & {
   requests: { isPaused: boolean }
