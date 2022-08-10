@@ -366,6 +366,7 @@ export default class XHRUpload extends BasePlugin {
       const client = new Client(this.uppy, file.remote.providerOptions)
       client.post(file.remote.url, {
         ...file.remote.body,
+        protocol: 'multipart',
         endpoint: opts.endpoint,
         size: file.data.size,
         fieldname: opts.fieldName,
