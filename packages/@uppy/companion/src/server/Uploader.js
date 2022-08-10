@@ -207,7 +207,8 @@ class Uploader {
   }
 
   async _uploadByProtocol () {
-    // @todo a default protocol should not be set. We should ensure that the user specifies their protocol.
+    // todo a default protocol should not be set. We should ensure that the user specifies their protocol.
+    // after we drop old versions of uppy client we can remove this
     const protocol = this.options.protocol || PROTOCOLS.multipart
 
     switch (protocol) {
