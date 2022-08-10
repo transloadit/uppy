@@ -99,7 +99,8 @@ const validateConfig = (companionOptions) => {
   }
 
   if (companionOptions.uploadUrls == null || companionOptions.uploadUrls.length === 0) {
-    logger.warn('Running without uploadUrls specified is a security risk if running in production', 'startup.uploadUrls')
+    if (process.env.NODE_ENV === 'production') throw new Error('uploadUrls is required')
+    logger.error('Running without uploadUrls is a security risk and Companion will refuse to start up when running in production (NODE_ENV=production)', 'startup.uploadUrls')
   }
 
   if (periodicPingUrls != null && (
