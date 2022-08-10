@@ -574,4 +574,4 @@ See also [example code with a custom provider](https://github.com/transloadit/up
 
 ## Development
 
-See [CONTRIBUTING.md](/.github/CONTRIBUTING.md#companion)
+See [CONTRIBUTING.md](/docs/contributing.html#Companion)
