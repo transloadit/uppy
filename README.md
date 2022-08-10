@@ -194,7 +194,8 @@ bundle, so no need to include anything additionally:
 Having no JavaScript beats having a lot of it, so that’s a fair question! Running an uploading & encoding business for ten years though we found that in cases, the file input leaves some to be desired:
 
 * We received complaints about broken uploads and found that resumable uploads are important, especially for big files and to be inclusive towards people on poorer connections (we also launched [tus.io](https://tus.io) to attack that problem). Uppy uploads can survive network outages and browser crashes or accidental navigate-aways.
-* Uppy supports editing meta information before uploading (such as cropping of images).
+* Uppy supports editing meta information before uploading
+* Uppy allows cropping images before uploading
 * There’s the situation where people are using their mobile devices and want to upload on the go, but they have their picture on Instagram, files in Dropbox or a plain file URL from anywhere on the open web. Uppy allows to pick files from those and push it to the destination without downloading it to your mobile device first.
 * Accurate upload progress reporting is an issue on many platforms.
 * Some file validation — size, type, number of files — can be done on the client with Uppy.
