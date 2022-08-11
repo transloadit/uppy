@@ -1,6 +1,6 @@
-describe('dashboard-aws', () => {
+describe('Dashboard with @uppy/aws-s3-multipart', () => {
   beforeEach(() => {
-    cy.visit('/dashboard-aws')
+    cy.visit('/dashboard-aws-multipart')
     cy.get('.uppy-Dashboard-input:first').as('file-input')
   })
 
