@@ -48,6 +48,12 @@ To start the testing suite run:
 
     yarn e2e
 
+This will run Cypress in watch-mode, and it will pick up and rebuild any changes to JS files. If you need to change other files (like CSS for example), you need to run the respective `yarn build:*` scripts.
+
+Alternatively the following command is the same as the above, except it doesn't run `build` first:
+
+    yarn e2e:skip-build
+
 To generate the boilerplate for a new test run:
 
     yarn e2e:generate
