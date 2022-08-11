@@ -92,8 +92,9 @@ function validateOptions (options) {
   }
 
   // validate protocol
-  if (options.protocol == null || !Object.keys(PROTOCOLS).some((key) => PROTOCOLS[key] === options.protocol)) {
-    throw new ValidationError('please specify a valid protocol')
+  // @todo this validation should not be conditional once the protocol field is mandatory
+  if (options.protocol && !Object.keys(PROTOCOLS).some((key) => PROTOCOLS[key] === options.protocol)) {
+    throw new ValidationError('unsupported protocol specified')
   }
 
   // s3 uploads don't require upload destination
@@ -206,7 +207,9 @@ class Uploader {
   }
 
   async _uploadByProtocol () {
-    const { protocol } = this.options
+    // todo a default protocol should not be set. We should ensure that the user specifies their protocol.
+    // after we drop old versions of uppy client we can remove this
+    const protocol = this.options.protocol || PROTOCOLS.multipart
 
     switch (protocol) {
       case PROTOCOLS.multipart:
