@@ -1,7 +1,7 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const session = require('express-session')
-const companion = require('../../../packages/@uppy/companion')
+const companion = require('../../../packages/@uppy/companion/src/companion')
 
 const app = express()
 
