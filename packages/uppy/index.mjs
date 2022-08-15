@@ -1,5 +1,5 @@
 // Core
-export { default as Core, debugLogger } from '@uppy/core'
+export { default as Uppy, debugLogger } from '@uppy/core'
 
 // Utilities
 export * as server from '@uppy/companion-client'

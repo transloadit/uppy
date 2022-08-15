@@ -25,10 +25,6 @@ const sendErrorToConsole = originalErr => err => {
   console.error(error, originalErr)
 }
 
-const COMPANION = 'https://api2.transloadit.com/companion'
-// Regex matching acceptable postMessage() origins for authentication feedback from companion.
-const ALLOWED_COMPANION_PATTERN = /\.transloadit\.com$/
-// Regex used to check if a Companion address is run by Transloadit.
 const TL_COMPANION = /https?:\/\/api2(?:-\w+)?\.transloadit\.com\/companion/
 
 /**
@@ -36,6 +32,11 @@ const TL_COMPANION = /https?:\/\/api2(?:-\w+)?\.transloadit\.com\/companion/
  */
 export default class Transloadit extends BasePlugin {
   static VERSION = packageJson.version
+
+  static COMPANION = 'https://api2.transloadit.com/companion'
+
+  // Regex matching acceptable postMessage() origins for authentication feedback from companion.
+  static ALLOWED_COMPANION_PATTERN = /\.transloadit\.com$/
 
   #rateLimitedQueue
 
@@ -847,10 +848,4 @@ export default class Transloadit extends BasePlugin {
       return file?.transloadit?.assembly === assemblyID
     })
   }
-}
-
-export {
-  ALLOWED_COMPANION_PATTERN,
-  COMPANION,
-  ALLOWED_COMPANION_PATTERN as COMPANION_PATTERN,
 }
