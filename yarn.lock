@@ -10477,7 +10477,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/remote-sources@workspace:packages/@uppy/remote-sources":
+"@uppy/remote-sources@workspace:^, @uppy/remote-sources@workspace:packages/@uppy/remote-sources":
   version: 0.0.0-use.local
   resolution: "@uppy/remote-sources@workspace:packages/@uppy/remote-sources"
   dependencies:
@@ -40354,6 +40354,7 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
     "@uppy/progress-bar": "workspace:^"
     "@uppy/provider-views": "workspace:^"
     "@uppy/redux-dev-tools": "workspace:^"
+    "@uppy/remote-sources": "workspace:^"
     "@uppy/screen-capture": "workspace:^"
     "@uppy/status-bar": "workspace:^"
     "@uppy/store-default": "workspace:^"
