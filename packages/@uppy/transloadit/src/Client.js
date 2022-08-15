@@ -1,4 +1,4 @@
-import fetchWithNetworkError from '@uppy/utils/lib/fetchWithNetworkError'
+import fetchWithNetworkError from '@uppy/utils/lib/fetchWithNetworkError.js'
 
 const ASSEMBLIES_ENDPOINT = '/assemblies'
 

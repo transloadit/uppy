@@ -1,5 +1,5 @@
-import toArray from '@uppy/utils/lib/toArray'
-import FOCUSABLE_ELEMENTS from '@uppy/utils/lib/FOCUSABLE_ELEMENTS'
+import toArray from '@uppy/utils/lib/toArray.js'
+import FOCUSABLE_ELEMENTS from '@uppy/utils/lib/FOCUSABLE_ELEMENTS.js'
 import getActiveOverlayEl from './getActiveOverlayEl.js'
 
 function focusOnFirstNode (event, nodes) {

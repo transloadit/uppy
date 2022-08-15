@@ -4,7 +4,7 @@
 
 import 'core-js'
 import 'whatwg-fetch'
-import 'abortcontroller-polyfill/dist/polyfill-patch-fetch'
+import 'abortcontroller-polyfill/dist/polyfill-patch-fetch.js'
 // Order matters: AbortController needs fetch which needs Promise.
 
 import 'md-gum-polyfill'
@@ -13,6 +13,6 @@ import ResizeObserver from 'resize-observer-polyfill'
 if (typeof window.ResizeObserver !== 'function') window.ResizeObserver = ResizeObserver
 
 // Needed for Babel
-import 'regenerator-runtime/runtime'
+import 'regenerator-runtime/runtime.js'
 
 import './bundle.mjs'

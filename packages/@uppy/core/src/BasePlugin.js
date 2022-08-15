@@ -7,7 +7,7 @@
  * See `Plugin` for the extended version with Preact rendering for interfaces.
  */
 
-import Translator from '@uppy/utils/lib/Translator'
+import Translator from '@uppy/utils/lib/Translator.js'
 
 export default class BasePlugin {
   constructor (uppy, opts = {}) {

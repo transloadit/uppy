@@ -1,4 +1,4 @@
-import ErrorWithCause from '@uppy/utils/lib/ErrorWithCause'
+import ErrorWithCause from '@uppy/utils/lib/ErrorWithCause.js'
 
 /**
  * Check that Assembly parameters are present and include all required fields.

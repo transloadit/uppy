@@ -1,5 +1,5 @@
 import debounce from 'lodash.debounce'
-import FOCUSABLE_ELEMENTS from '@uppy/utils/lib/FOCUSABLE_ELEMENTS'
+import FOCUSABLE_ELEMENTS from '@uppy/utils/lib/FOCUSABLE_ELEMENTS.js'
 import getActiveOverlayEl from './getActiveOverlayEl.js'
 
 /*

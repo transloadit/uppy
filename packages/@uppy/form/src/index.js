@@ -1,6 +1,6 @@
-import BasePlugin from '@uppy/core/lib/BasePlugin'
-import findDOMElement from '@uppy/utils/lib/findDOMElement'
-import toArray from '@uppy/utils/lib/toArray'
+import BasePlugin from '@uppy/core/lib/BasePlugin.js'
+import findDOMElement from '@uppy/utils/lib/findDOMElement.js'
+import toArray from '@uppy/utils/lib/toArray.js'
 
 import getFormData from 'get-form-data'
 

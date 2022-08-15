@@ -1,5 +1,5 @@
 import { describe, expect, it, jest } from '@jest/globals'
-import { RateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
+import { RateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue.js'
 import Assembly from './Assembly.js'
 
 describe('Transloadit/Assembly', () => {

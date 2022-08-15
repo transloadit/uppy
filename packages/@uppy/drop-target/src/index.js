@@ -1,6 +1,6 @@
-import BasePlugin from '@uppy/core/lib/BasePlugin'
-import getDroppedFiles from '@uppy/utils/lib/getDroppedFiles'
-import toArray from '@uppy/utils/lib/toArray'
+import BasePlugin from '@uppy/core/lib/BasePlugin.js'
+import getDroppedFiles from '@uppy/utils/lib/getDroppedFiles.js'
+import toArray from '@uppy/utils/lib/toArray.js'
 
 import packageJson from '../package.json'
 

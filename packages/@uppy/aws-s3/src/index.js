@@ -25,8 +25,8 @@
  * the XHRUpload code, but at least it's not horrifically broken :)
  */
 
-import BasePlugin from '@uppy/core/lib/BasePlugin'
-import { RateLimitedQueue, internalRateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
+import BasePlugin from '@uppy/core/lib/BasePlugin.js'
+import { RateLimitedQueue, internalRateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue.js'
 import { RequestClient } from '@uppy/companion-client'
 
 import packageJson from '../package.json'

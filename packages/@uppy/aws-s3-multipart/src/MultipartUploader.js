@@ -1,5 +1,5 @@
-import { AbortController, createAbortError } from '@uppy/utils/lib/AbortController'
-import delay from '@uppy/utils/lib/delay'
+import { AbortController, createAbortError } from '@uppy/utils/lib/AbortController.js'
+import delay from '@uppy/utils/lib/delay.js'
 
 const MB = 1024 * 1024
 

@@ -282,7 +282,7 @@ Below is a full example of a [small plugin](https://github.com/arturi/uppy-plugi
 
 ```js
 import { UIPlugin } from '@uppy/core'
-import Translator from '@uppy/utils/lib/Translator'
+import Translator from '@uppy/utils/lib/Translator.js'
 import Compressor from 'compressorjs/dist/compressor.esm.js'
 
 class UppyImageCompressor extends UIPlugin {

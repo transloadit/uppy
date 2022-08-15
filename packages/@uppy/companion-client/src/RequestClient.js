@@ -1,7 +1,7 @@
 'use strict'
 
-import fetchWithNetworkError from '@uppy/utils/lib/fetchWithNetworkError'
-import ErrorWithCause from '@uppy/utils/lib/ErrorWithCause'
+import fetchWithNetworkError from '@uppy/utils/lib/fetchWithNetworkError.js'
+import ErrorWithCause from '@uppy/utils/lib/ErrorWithCause.js'
 import AuthError from './AuthError.js'
 
 import packageJson from '../package.json'

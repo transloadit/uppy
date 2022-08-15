@@ -1,14 +1,15 @@
 /* eslint-disable max-classes-per-file */
 /* global AggregateError */
 
-import Translator from '@uppy/utils/lib/Translator'
+import Translator from '@uppy/utils/lib/Translator.js'
 import ee from 'namespace-emitter'
-import { nanoid } from 'nanoid/non-secure'
+// nanoid is using an export map, we must not use any extension.
+import { nanoid } from 'nanoid/non-secure' // eslint-disable-line import/extensions
 import throttle from 'lodash.throttle'
 import DefaultStore from '@uppy/store-default'
-import getFileType from '@uppy/utils/lib/getFileType'
-import getFileNameAndExtension from '@uppy/utils/lib/getFileNameAndExtension'
-import generateFileID from '@uppy/utils/lib/generateFileID'
+import getFileType from '@uppy/utils/lib/getFileType.js'
+import getFileNameAndExtension from '@uppy/utils/lib/getFileNameAndExtension.js'
+import generateFileID from '@uppy/utils/lib/generateFileID.js'
 import supportsUploadProgress from './supportsUploadProgress.js'
 import getFileName from './getFileName.js'
 import { justErrorsLogger, debugLogger } from './loggers.js'

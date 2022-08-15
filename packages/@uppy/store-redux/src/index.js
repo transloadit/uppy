@@ -1,4 +1,5 @@
-import { nanoid } from 'nanoid/non-secure'
+// nanoid is using an export map, we must not use any extension.
+import { nanoid } from 'nanoid/non-secure' // eslint-disable-line import/extensions
 
 import packageJson from '../package.json'
 

@@ -1,8 +1,8 @@
 import Emitter from 'component-emitter'
 import { io } from 'socket.io-client'
-import has from '@uppy/utils/lib/hasProperty'
-import NetworkError from '@uppy/utils/lib/NetworkError'
-import fetchWithNetworkError from '@uppy/utils/lib/fetchWithNetworkError'
+import has from '@uppy/utils/lib/hasProperty.js'
+import NetworkError from '@uppy/utils/lib/NetworkError.js'
+import fetchWithNetworkError from '@uppy/utils/lib/fetchWithNetworkError.js'
 import parseUrl from './parseUrl.js'
 
 const ASSEMBLY_UPLOADING = 'ASSEMBLY_UPLOADING'

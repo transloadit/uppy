@@ -1,6 +1,6 @@
 import { BasePlugin } from '@uppy/core'
-import { RateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
-import getFileNameAndExtension from '@uppy/utils/lib/getFileNameAndExtension'
+import { RateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue.js'
+import getFileNameAndExtension from '@uppy/utils/lib/getFileNameAndExtension.js'
 import prettierBytes from '@transloadit/prettier-bytes'
 import CompressorJS from 'compressorjs/dist/compressor.common.js'
 import locale from './locale.js'

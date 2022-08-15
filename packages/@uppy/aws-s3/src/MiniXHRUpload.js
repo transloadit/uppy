@@ -1,13 +1,14 @@
-import { nanoid } from 'nanoid/non-secure'
+// nanoid is using an export map, we must not use any extension.
+import { nanoid } from 'nanoid/non-secure' // eslint-disable-line import/extensions
 import { Provider, RequestClient, Socket } from '@uppy/companion-client'
-import emitSocketProgress from '@uppy/utils/lib/emitSocketProgress'
-import getSocketHost from '@uppy/utils/lib/getSocketHost'
-import EventTracker from '@uppy/utils/lib/EventTracker'
-import ProgressTimeout from '@uppy/utils/lib/ProgressTimeout'
-import ErrorWithCause from '@uppy/utils/lib/ErrorWithCause'
-import NetworkError from '@uppy/utils/lib/NetworkError'
-import isNetworkError from '@uppy/utils/lib/isNetworkError'
-import { internalRateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
+import emitSocketProgress from '@uppy/utils/lib/emitSocketProgress.js'
+import getSocketHost from '@uppy/utils/lib/getSocketHost.js'
+import EventTracker from '@uppy/utils/lib/EventTracker.js'
+import ProgressTimeout from '@uppy/utils/lib/ProgressTimeout.js'
+import ErrorWithCause from '@uppy/utils/lib/ErrorWithCause.js'
+import NetworkError from '@uppy/utils/lib/NetworkError.js'
+import isNetworkError from '@uppy/utils/lib/isNetworkError.js'
+import { internalRateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue.js'
 
 // See XHRUpload
 function buildResponseError (xhr, error) {

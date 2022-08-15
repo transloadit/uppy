@@ -1,4 +1,4 @@
-import remoteFileObjToLocal from '@uppy/utils/lib/remoteFileObjToLocal'
+import remoteFileObjToLocal from '@uppy/utils/lib/remoteFileObjToLocal.js'
 
 export default class SharedHandler {
   constructor (plugin) {

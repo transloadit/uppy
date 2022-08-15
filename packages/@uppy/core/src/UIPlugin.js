@@ -1,6 +1,6 @@
 import { render } from 'preact'
-import findDOMElement from '@uppy/utils/lib/findDOMElement'
-import getTextDirection from '@uppy/utils/lib/getTextDirection'
+import findDOMElement from '@uppy/utils/lib/findDOMElement.js'
+import getTextDirection from '@uppy/utils/lib/getTextDirection.js'
 
 import BasePlugin from './BasePlugin.js'
 

@@ -1,6 +1,6 @@
-import getFileType from '@uppy/utils/lib/getFileType'
-import isPreviewSupported from '@uppy/utils/lib/isPreviewSupported'
-import generateFileID from '@uppy/utils/lib/generateFileID'
+import getFileType from '@uppy/utils/lib/getFileType.js'
+import isPreviewSupported from '@uppy/utils/lib/isPreviewSupported.js'
+import generateFileID from '@uppy/utils/lib/generateFileID.js'
 
 // TODO: now that we have a shared `View` class,
 // `SharedHandler` could be cleaned up and moved into here

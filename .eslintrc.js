@@ -279,7 +279,7 @@ module.exports = {
             message: 'Use import instead',
           },
         ],
-        'import/extensions': ['error', 'ignorePackages'],
+        'import/extensions': ['error', 'always'],
       },
     },
     {
