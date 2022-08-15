@@ -77,7 +77,6 @@ glob(srcPattern, (err, files) => {
           config: { root: path.join(__dirname, '..') },
         }),
       ],
-      external: ['@uppy/robodog'],
     })).catch(onError) // eslint-disable-line no-use-before-define
   })
 })

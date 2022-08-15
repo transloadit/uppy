@@ -14,7 +14,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [x] New remote-sources preset
 - [x] Deprecate Robodog
   - [x] Remove from 3.x branch (@aduh95)
-  - [ ] Update docs that refer to Robodog (@arturi)
+  - [x] Update docs that refer to Robodog (@arturi)
   - [ ] Update Transloadit.com examples and docs to use @uppy/transloadit + @uppy/remote-sources plugins instead of @uppy/robodog (@arturi)
 
 ## `4.0.0`
