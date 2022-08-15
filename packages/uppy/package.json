@@ -53,6 +53,7 @@
     "@uppy/onedrive": "workspace:^",
     "@uppy/progress-bar": "workspace:^",
     "@uppy/provider-views": "workspace:^",
+    "@uppy/remote-sources": "workspace:^",
     "@uppy/redux-dev-tools": "workspace:^",
     "@uppy/screen-capture": "workspace:^",
     "@uppy/status-bar": "workspace:^",

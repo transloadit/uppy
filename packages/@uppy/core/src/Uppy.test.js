@@ -1254,7 +1254,7 @@ describe('src/Core', () => {
           foo: 'bar',
         },
       })
-      expect(core.state.meta).toMatchObject({
+      expect(core.getState().meta).toMatchObject({
         foo: 'bar',
       })
 
