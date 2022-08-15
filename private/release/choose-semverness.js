@@ -3,7 +3,6 @@
 import { createWriteStream, mkdirSync, readFileSync } from 'node:fs'
 import { spawnSync } from 'node:child_process'
 
-import prompts from 'prompts'
 import { TARGET_BRANCH } from './config.js'
 
 const ROOT = new  URL('../../', import.meta.url)
@@ -27,6 +26,7 @@ function maxSemverness (a, b) {
 export default async function pickSemverness (
   spawnOptions,
   LAST_RELEASE_COMMIT,
+  STABLE_BRANCH_MERGE_BASE_RANGE,
   releaseFileUrl,
   packagesList,
 ) {
@@ -56,7 +56,29 @@ export default async function pickSemverness (
       spawnOptions,
     )
     if (stdout.length === 0) {
-      console.log(`No commits since last release for ${name}, skipping.`)
+      // eslint-disable-next-line no-shadow
+      const { stdout } = spawnSync(
+        'git',
+        [
+          '--no-pager',
+          'log',
+          '--format=- %s',
+          STABLE_BRANCH_MERGE_BASE_RANGE,
+          '--',
+          location,
+        ],
+        spawnOptions,
+      )
+      if (stdout.length === 0) {
+        console.log(`No commits since last release for ${name}, skipping.`)
+      } else {
+        console.log(`Some commits have landed on the stable branch since last release for ${name}.`)
+        releaseFile.write(`  ${JSON.stringify(name)}: major\n`)
+        uppySemverness = 'major'
+        if (robodogDeps.includes(name)) {
+          robodogSemverness = 'major'
+        }
+      }
       continue
     }
     console.log('\n')
@@ -71,19 +93,7 @@ export default async function pickSemverness (
       )}.`,
     )
 
-    const response = await prompts({
-      type: 'select',
-      name: 'value',
-      message: `What should be the semverness of next ${name} release?`,
-      choices: [
-        { title: 'Pre-release', value: 'prerelease' },
-        { title: 'Skip this package', value: '' },
-        { title: 'Patch', value: 'patch' },
-        { title: 'Minor', value: 'minor' },
-        { title: 'Major', value: 'major' },
-      ],
-      initial: 2,
-    })
+    const response = { value: 'major' }
 
     if (!response.value) {
       console.log('Skipping.')
@@ -131,19 +141,7 @@ export default async function pickSemverness (
         )}.`,
       )
 
-      const response = await prompts({
-        type: 'select',
-        name: 'value',
-        message: `What should be the semverness of next @uppy/robodog release?`,
-        choices: [
-          { title: 'Pre-release', value: 'prerelease' },
-          { title: 'Skip this package', value: '', disabled: robodogSemverness != null },
-          { title: 'Patch', value: 'patch', disabled: robodogSemverness === 'minor' || robodogSemverness === 'major' },
-          { title: 'Minor', value: 'minor', disabled: robodogSemverness === 'major' },
-          { title: 'Major', value: 'major' },
-        ],
-        initial: 2,
-      })
+      const response = 'major'
 
       releaseFile.write(`  "@uppy/robodog": ${response.value}\n`)
     }
