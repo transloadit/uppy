@@ -1,5 +1,12 @@
 # @uppy/locales
 
+## 3.0.0-beta.4
+
+Released: 2022-08-16
+Included in: Uppy v3.0.0-beta.5
+
+- @uppy/locales: Add compressor string translation to Japanese locale (kenken / #3963)
+
 ## 2.1.1
 
 Released: 2022-07-06

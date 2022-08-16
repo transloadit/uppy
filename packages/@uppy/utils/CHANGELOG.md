@@ -1,5 +1,13 @@
 # @uppy/utils
 
+## 5.0.0-beta.1
+
+Released: 2022-08-16
+Included in: Uppy v3.0.0-beta.5
+
+- @uppy/utils: Fix webp mimetype (Merlijn Vos / #3961)
+- @uppy/utils: modernize `getDroppedFiles` (Antoine du Hamel / #3534)
+
 ## 4.1.0
 
 Released: 2022-05-30
