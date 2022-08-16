@@ -24,7 +24,7 @@ app.get('/', (req, res) => {
 })
 
 // initialize uppy
-const uppyOptions = {
+const companionOptions = {
   providerOptions: {
     drive: {
       key: 'your google key',
@@ -53,7 +53,7 @@ const uppyOptions = {
   debug: true,
 }
 
-const { app: companionApp } = companion.app(uppyOptions)
+const { app: companionApp } = companion.app(companionOptions)
 app.use(companionApp)
 
 // handle 404
