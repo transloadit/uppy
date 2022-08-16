@@ -217,7 +217,7 @@ export default class Tus extends BasePlugin {
 
         let userProvidedPromise
         if (typeof opts.onBeforeRequest === 'function') {
-          userProvidedPromise = opts.onBeforeRequest(req)
+          userProvidedPromise = opts.onBeforeRequest(req, file)
         }
 
         if (hasProperty(queuedRequest, 'shouldBeRequeued')) {
