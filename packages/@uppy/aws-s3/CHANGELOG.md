@@ -1,5 +1,12 @@
 # @uppy/aws-s3
 
+## 3.0.0-beta.3
+
+Released: 2022-08-16
+Included in: Uppy v3.0.0-beta.5
+
+- @uppy/aws-s3: Export AwsS3UploadParameters & AwsS3Options interfaces (Antonina Vertsinskaya / #3956)
+
 ## 3.0.0-beta.2
 
 Released: 2022-07-27
