@@ -47,6 +47,18 @@
     "./lib/secondsToTime": "./lib/secondsToTime.js",
     "./lib/settle": "./lib/settle.js",
     "./lib/toArray": "./lib/toArray.js",
+    "./lib/FOCUSABLE_ELEMENTS": "./lib/FOCUSABLE_ELEMENTS.js",
+    "./lib/AbortController": "./lib/AbortController.js",
+    "./lib/getTextDirection": "./lib/getTextDirection.js",
+    "./lib/NetworkError": "./lib/NetworkError.js",
+    "./lib/isNetworkError": "./lib/isNetworkError.js",
+    "./lib/truncateString": "./lib/truncateString.js",
+    "./lib/remoteFileObjToLocal": "./lib/remoteFileObjToLocal.js",
+    "./lib/fetchWithNetworkError": "./lib/fetchWithNetworkError.js",
+    "./lib/ErrorWithCause": "./lib/ErrorWithCause.js",
+    "./lib/delay": "./lib/delay.js",
+    "./lib/hasProperty": "./lib/hasProperty.js",
+    "./lib/mimeTypes": "./lib/mimeTypes.js",
     "./lib/getDroppedFiles": "./lib/getDroppedFiles/index.js"
   },
   "dependencies": {
