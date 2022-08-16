@@ -87,7 +87,7 @@ export default () => {
     // .use(Unsplash, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })
     .use(RemoteSources, {
       companionUrl: COMPANION_URL,
-      sources: ['Box', 'Dropbox', 'Facebook', 'GoogleDrive', 'Instagram', 'OneDrive', 'Unsplash', 'Url'],
+      sources: ['Box', 'Dropbox', 'Facebook', 'GoogleDrive', 'Instagram', 'OneDrive', 'Unsplash', 'Zoom', 'Url'],
       companionAllowedHosts,
     })
     .use(Webcam, {

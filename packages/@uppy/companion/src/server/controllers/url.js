@@ -1,10 +1,9 @@
 const router = require('express').Router
-const request = require('request')
-const { URL } = require('node:url')
 const validator = require('validator')
 
 const { startDownUpload } = require('../helpers/upload')
-const { getURLMeta, getRedirectEvaluator, getProtectedHttpAgent } = require('../helpers/request')
+const { prepareStream } = require('../helpers/utils')
+const { getURLMeta, getProtectedGot } = require('../helpers/request')
 const logger = require('../logger')
 
 /**
@@ -46,32 +45,15 @@ const validateURL = (url, ignoreTld) => {
  * @returns {Promise}
  */
 const downloadURL = async (url, blockLocalIPs, traceId) => {
-  const opts = {
-    uri: url,
-    method: 'GET',
-    followRedirect: getRedirectEvaluator(url, blockLocalIPs),
-    agentClass: getProtectedHttpAgent((new URL(url)).protocol, blockLocalIPs),
+  try {
+    const protectedGot = getProtectedGot({ url, blockLocalIPs })
+    const stream = protectedGot.stream.get(url, { responseType: 'json' })
+    await prepareStream(stream)
+    return stream
+  } catch (err) {
+    logger.error(err, 'controller.url.download.error', traceId)
+    throw err
   }
-
-  return new Promise((resolve, reject) => {
-    const req = request(opts)
-      .on('response', (resp) => {
-        if (resp.statusCode >= 300) {
-          req.abort() // No need to keep request
-          reject(new Error(`URL server responded with status: ${resp.statusCode}`))
-          return
-        }
-
-        // Don't allow any more data to flow yet.
-        // https://github.com/request/request/issues/1990#issuecomment-184712275
-        resp.pause()
-        resolve(resp)
-      })
-      .on('error', (err) => {
-        logger.error(err, 'controller.url.download.error', traceId)
-        reject(err)
-      })
-  })
 }
 
 /**

@@ -2,11 +2,12 @@
 const tus = require('tus-js-client')
 const { randomUUID } = require('node:crypto')
 const validator = require('validator')
-const request = require('request')
+const got = require('got').default
 const { pipeline: pipelineCb } = require('node:stream')
 const { join } = require('node:path')
 const fs = require('node:fs')
 const { promisify } = require('node:util')
+const FormData = require('form-data')
 
 // TODO move to `require('streams/promises').pipeline` when dropping support for Node.js 14.x.
 const pipeline = promisify(pipelineCb)
@@ -557,6 +558,18 @@ class Uploader {
       throw new Error('No multipart endpoint set')
     }
 
+    function getRespObj (response) {
+      // remove browser forbidden headers
+      const { 'set-cookie': deleted, 'set-cookie2': deleted2, ...responseHeaders } = response.headers
+
+      return {
+        responseText: response.body,
+        status: response.statusCode,
+        statusText: response.statusMessage,
+        headers: responseHeaders,
+      }
+    }
+
     // upload progress
     let bytesUploaded = 0
     stream.on('data', (data) => {
@@ -564,66 +577,55 @@ class Uploader {
       this.onProgress(bytesUploaded, undefined)
     })
 
-    const httpMethod = (this.options.httpMethod || '').toLowerCase() === 'put' ? 'put' : 'post'
-    const headers = headerSanitize(this.options.headers)
-    const reqOptions = { url: this.options.endpoint, headers, encoding: null }
-    const runRequest = request[httpMethod]
+    const url = this.options.endpoint
+    const reqOptions = {
+      headers: headerSanitize(this.options.headers),
+    }
 
     if (this.options.useFormData) {
-      reqOptions.formData = {
-        ...this.options.metadata,
-        [this.options.fieldname]: {
-          value: stream,
-          options: {
-            filename: this.uploadFileName,
-            contentType: this.options.metadata.type,
-            knownLength: this.size,
-          },
-        },
-      }
+      // todo refactor once upgraded to got 12
+      const formData = new FormData()
+
+      Object.entries(this.options.metadata).forEach(([key, value]) => formData.append(key, value))
+
+      formData.append(this.options.fieldname, stream, {
+        filename: this.uploadFileName,
+        contentType: this.options.metadata.type,
+        knownLength: this.size,
+      })
+
+      reqOptions.body = formData
     } else {
       reqOptions.headers['content-length'] = this.size
       reqOptions.body = stream
     }
 
-    const { response, body } = await new Promise((resolve, reject) => {
-      runRequest(reqOptions, (error, response2, body2) => {
-        if (error) {
-          logger.error(error, 'upload.multipart.error')
-          reject(error)
-          return
-        }
+    try {
+      const httpMethod = (this.options.httpMethod || '').toLowerCase() === 'put' ? 'put' : 'post'
+      const runRequest = got[httpMethod]
 
-        resolve({ response: response2, body: body2 })
-      })
-    })
+      const response = await runRequest(url, reqOptions)
 
-    // remove browser forbidden headers
-    delete response.headers['set-cookie']
-    delete response.headers['set-cookie2']
+      if (bytesUploaded !== this.size) {
+        const errMsg = `uploaded only ${bytesUploaded} of ${this.size} with status: ${response.statusCode}`
+        logger.error(errMsg, 'upload.multipart.mismatch.error')
+        throw new Error(errMsg)
+      }
 
-    const respObj = {
-      responseText: body.toString(),
-      status: response.statusCode,
-      statusText: response.statusMessage,
-      headers: response.headers,
+      return {
+        url: null,
+        extraData: { response: getRespObj(response), bytesUploaded },
+      }
+    } catch (err) {
+      logger.error(err, 'upload.multipart.error')
+      const statusCode = err.response?.statusCode
+      if (statusCode != null) {
+        throw Object.assign(new Error(err.statusMessage), {
+          extraData: getRespObj(err.response),
+        })
+      }
+      throw new Error('Unknown multipart upload error')
     }
-
-    if (response.statusCode >= 400) {
-      logger.error(`upload failed with status: ${response.statusCode}`, 'upload.multipart.error')
-      const err = new Error(response.statusMessage)
-      // @ts-ignore
-      err.extraData = respObj
-      throw err
-    }
-
-    if (bytesUploaded !== this.size) {
-      const errMsg = `uploaded only ${bytesUploaded} of ${this.size} with status: ${response.statusCode}`
-      logger.error(errMsg, 'upload.multipart.mismatch.error')
-      throw new Error(errMsg)
-    }
-
-    return { url: null, extraData: { response: respObj, bytesUploaded } }
   }
 
   /**

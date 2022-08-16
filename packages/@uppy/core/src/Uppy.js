@@ -55,10 +55,6 @@ class Uppy {
     const defaultOptions = {
       id: 'uppy',
       autoProceed: false,
-      /**
-       * @deprecated The method should not be used
-       */
-      allowMultipleUploads: true,
       allowMultipleUploadBatches: true,
       debug: false,
       restrictions: defaultRestrictionOptions,
@@ -180,16 +176,6 @@ class Uppy {
    */
   getState () {
     return this.store.getState()
-  }
-
-  /**
-   * Back compat for when uppy.state is used instead of uppy.getState().
-   *
-   * @deprecated
-   */
-  get state () {
-    // Here, state is a non-enumerable property.
-    return this.getState()
   }
 
   /**

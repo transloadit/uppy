@@ -1,45 +1,50 @@
 const querystring = require('node:querystring')
 
-exports.isFolder = (item) => {
+const isFolder = (item) => {
   return !!item.type
 }
 
-exports.getItemIcon = (item) => {
-  if (exports.isFolder(item)) {
+exports.sortImages = (images) => {
+  // sort in ascending order of dimension
+  return images.slice().sort((a, b) => a.width - b.width)
+}
+
+const getItemIcon = (item) => {
+  if (isFolder(item)) {
     return 'folder'
   }
   return exports.sortImages(item.images)[0].source
 }
 
-exports.getItemSubList = (item) => {
+const getItemSubList = (item) => {
   return item.data
 }
 
-exports.getItemName = (item) => {
+const getItemName = (item) => {
   return item.name || `${item.id} ${item.created_time}`
 }
 
-exports.getMimeType = (item) => {
-  return exports.isFolder(item) ? null : 'image/jpeg'
+const getMimeType = (item) => {
+  return isFolder(item) ? null : 'image/jpeg'
 }
 
-exports.getItemId = (item) => {
+const getItemId = (item) => {
   return `${item.id}`
 }
 
-exports.getItemRequestPath = (item) => {
+const getItemRequestPath = (item) => {
   return `${item.id}`
 }
 
-exports.getItemModifiedDate = (item) => {
+const getItemModifiedDate = (item) => {
   return item.created_time
 }
 
-exports.getItemThumbnailUrl = (item) => {
-  return exports.isFolder(item) ? null : exports.sortImages(item.images)[0].source
+const getItemThumbnailUrl = (item) => {
+  return isFolder(item) ? null : exports.sortImages(item.images)[0].source
 }
 
-exports.getNextPagePath = (data, currentQuery, currentPath) => {
+const getNextPagePath = (data, currentQuery, currentPath) => {
   if (!data.paging || !data.paging.cursors) {
     return null
   }
@@ -48,7 +53,23 @@ exports.getNextPagePath = (data, currentQuery, currentPath) => {
   return `${currentPath || ''}?${querystring.stringify(query)}`
 }
 
-exports.sortImages = (images) => {
-  // sort in ascending order of dimension
-  return images.slice().sort((a, b) => a.width - b.width)
+exports.adaptData = (res, username, directory, currentQuery) => {
+  const data = { username, items: [] }
+  const items = getItemSubList(res)
+  items.forEach((item) => {
+    data.items.push({
+      isFolder: isFolder(item),
+      icon: getItemIcon(item),
+      name: getItemName(item),
+      mimeType: getMimeType(item),
+      size: null,
+      id: getItemId(item),
+      thumbnail: getItemThumbnailUrl(item),
+      requestPath: getItemRequestPath(item),
+      modifiedDate: getItemModifiedDate(item),
+    })
+  })
+
+  data.nextPagePath = getNextPagePath(res, currentQuery, directory)
+  return data
 }

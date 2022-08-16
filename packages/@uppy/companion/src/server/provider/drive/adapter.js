@@ -2,7 +2,7 @@ const querystring = require('node:querystring')
 
 // @todo use the "about" endpoint to get the username instead
 // see: https://developers.google.com/drive/api/v2/reference/about/get
-exports.getUsername = (data) => {
+const getUsername = (data) => {
   for (const item of data.files) {
     if (item.ownedByMe && item.permissions) {
       for (const permission of item.permissions) {
@@ -15,20 +15,28 @@ exports.getUsername = (data) => {
   return undefined
 }
 
-exports.isFolder = (item) => {
-  return item.mimeType === 'application/vnd.google-apps.folder' || exports.isSharedDrive(item)
+exports.isGsuiteFile = (mimeType) => {
+  return mimeType && mimeType.startsWith('application/vnd.google')
+}
+
+const isSharedDrive = (item) => {
+  return item.kind === 'drive#drive'
+}
+
+const isFolder = (item) => {
+  return item.mimeType === 'application/vnd.google-apps.folder' || isSharedDrive(item)
 }
 
 exports.isShortcut = (mimeType) => {
   return mimeType === 'application/vnd.google-apps.shortcut'
 }
 
-exports.getItemSize = (item) => {
+const getItemSize = (item) => {
   return parseInt(item.size, 10)
 }
 
-exports.getItemIcon = (item) => {
-  if (exports.isSharedDrive(item)) {
+const getItemIcon = (item) => {
+  if (isSharedDrive(item)) {
     const size = '=w16-h16-n'
     const sizeParamRegex = /=[-whncsp0-9]*$/
     return item.backgroundImageLink.match(sizeParamRegex)
@@ -44,7 +52,7 @@ exports.getItemIcon = (item) => {
   return item.iconLink
 }
 
-exports.getItemSubList = (item) => {
+const getItemSubList = (item) => {
   const allowedGSuiteTypes = [
     'application/vnd.google-apps.document',
     'application/vnd.google-apps.drawing',
@@ -55,11 +63,11 @@ exports.getItemSubList = (item) => {
   ]
 
   return item.files.filter((i) => {
-    return exports.isFolder(i) || !exports.isGsuiteFile(i.mimeType) || allowedGSuiteTypes.includes(i.mimeType)
+    return isFolder(i) || !exports.isGsuiteFile(i.mimeType) || allowedGSuiteTypes.includes(i.mimeType)
   })
 }
 
-exports.getItemName = (item) => {
+const getItemName = (item) => {
   const extensionMaps = {
     'application/vnd.google-apps.document': '.docx',
     'application/vnd.google-apps.drawing': '.png',
@@ -76,52 +84,6 @@ exports.getItemName = (item) => {
   return item.name ? item.name : '/'
 }
 
-function getMimeType (mimeType) {
-  if (exports.isGsuiteFile(mimeType)) {
-    return exports.getGsuiteExportType(mimeType)
-  }
-  return mimeType
-}
-
-exports.getMimeType = (item) => {
-  if (exports.isShortcut(item.mimeType)) {
-    return getMimeType(item.shortcutDetails.targetMimeType)
-  }
-  return getMimeType(item.mimeType)
-}
-
-exports.getItemId = (item) => {
-  return item.id
-}
-
-exports.getItemRequestPath = (item) => {
-  return item.id
-}
-
-exports.getItemModifiedDate = (item) => {
-  return item.modifiedTime
-}
-
-exports.getItemThumbnailUrl = (item) => {
-  return item.thumbnailLink
-}
-
-exports.isSharedDrive = (item) => {
-  return item.kind === 'drive#drive'
-}
-
-exports.getNextPagePath = (data, currentQuery, currentPath) => {
-  if (!data.nextPageToken) {
-    return null
-  }
-  const query = { ...currentQuery, cursor: data.nextPageToken }
-  return `${currentPath}?${querystring.stringify(query)}`
-}
-
-exports.isGsuiteFile = (mimeType) => {
-  return mimeType && mimeType.startsWith('application/vnd.google')
-}
-
 exports.getGsuiteExportType = (mimeType) => {
   const typeMaps = {
     'application/vnd.google-apps.document': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
@@ -134,16 +96,106 @@ exports.getGsuiteExportType = (mimeType) => {
   return typeMaps[mimeType] || 'application/pdf'
 }
 
-exports.getImageHeight = (item) => item.imageMediaMetadata && item.imageMediaMetadata.height
+function getMimeType2 (mimeType) {
+  if (exports.isGsuiteFile(mimeType)) {
+    return exports.getGsuiteExportType(mimeType)
+  }
+  return mimeType
+}
 
-exports.getImageWidth = (item) => item.imageMediaMetadata && item.imageMediaMetadata.width
+const getMimeType = (item) => {
+  if (exports.isShortcut(item.mimeType)) {
+    return getMimeType2(item.shortcutDetails.targetMimeType)
+  }
+  return getMimeType2(item.mimeType)
+}
 
-exports.getImageRotation = (item) => item.imageMediaMetadata && item.imageMediaMetadata.rotation
+const getItemId = (item) => {
+  return item.id
+}
 
-exports.getImageDate = (item) => item.imageMediaMetadata && item.imageMediaMetadata.date
+const getItemRequestPath = (item) => {
+  return item.id
+}
 
-exports.getVideoHeight = (item) => item.videoMediaMetadata && item.videoMediaMetadata.height
+const getItemModifiedDate = (item) => {
+  return item.modifiedTime
+}
 
-exports.getVideoWidth = (item) => item.videoMediaMetadata && item.videoMediaMetadata.width
+const getItemThumbnailUrl = (item) => {
+  return item.thumbnailLink
+}
 
-exports.getVideoDurationMillis = (item) => item.videoMediaMetadata && item.videoMediaMetadata.durationMillis
+const getNextPagePath = (data, currentQuery, currentPath) => {
+  if (!data.nextPageToken) {
+    return null
+  }
+  const query = { ...currentQuery, cursor: data.nextPageToken }
+  return `${currentPath}?${querystring.stringify(query)}`
+}
+
+const getImageHeight = (item) => item.imageMediaMetadata && item.imageMediaMetadata.height
+
+const getImageWidth = (item) => item.imageMediaMetadata && item.imageMediaMetadata.width
+
+const getImageRotation = (item) => item.imageMediaMetadata && item.imageMediaMetadata.rotation
+
+const getImageDate = (item) => item.imageMediaMetadata && item.imageMediaMetadata.date
+
+const getVideoHeight = (item) => item.videoMediaMetadata && item.videoMediaMetadata.height
+
+const getVideoWidth = (item) => item.videoMediaMetadata && item.videoMediaMetadata.width
+
+const getVideoDurationMillis = (item) => item.videoMediaMetadata && item.videoMediaMetadata.durationMillis
+
+// Hopefully this name will not be used by Google
+exports.VIRTUAL_SHARED_DIR = 'shared-with-me'
+
+exports.adaptData = (listFilesResp, sharedDrivesResp, directory, query, showSharedWithMe) => {
+  const adaptItem = (item) => ({
+    isFolder: isFolder(item),
+    icon: getItemIcon(item),
+    name: getItemName(item),
+    mimeType: getMimeType(item),
+    id: getItemId(item),
+    thumbnail: getItemThumbnailUrl(item),
+    requestPath: getItemRequestPath(item),
+    modifiedDate: getItemModifiedDate(item),
+    size: getItemSize(item),
+    custom: {
+      isSharedDrive: isSharedDrive(item),
+      imageHeight: getImageHeight(item),
+      imageWidth: getImageWidth(item),
+      imageRotation: getImageRotation(item),
+      imageDateTime: getImageDate(item),
+      videoHeight: getVideoHeight(item),
+      videoWidth: getVideoWidth(item),
+      videoDurationMillis: getVideoDurationMillis(item),
+    },
+  })
+
+  const items = getItemSubList(listFilesResp)
+  const sharedDrives = sharedDrivesResp ? sharedDrivesResp.drives || [] : []
+
+  // “Shared with me” is a list of shared documents,
+  // not the same as sharedDrives
+  const virtualItem = showSharedWithMe && ({
+    isFolder: true,
+    icon: 'folder',
+    name: 'Shared with me',
+    mimeType: 'application/vnd.google-apps.folder',
+    id: exports.VIRTUAL_SHARED_DIR,
+    requestPath: exports.VIRTUAL_SHARED_DIR,
+  })
+
+  const adaptedItems = [
+    ...(virtualItem ? [virtualItem] : []), // shared folder first
+    ...([...sharedDrives, ...items].map(adaptItem)),
+  ]
+
+  return {
+    username: getUsername(listFilesResp),
+    items: adaptedItems,
+    nextPagePath: getNextPagePath(listFilesResp, query, directory),
+  }
+}

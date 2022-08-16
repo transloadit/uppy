@@ -1,45 +1,46 @@
 const querystring = require('node:querystring')
 
-exports.isFolder = (item) => { // eslint-disable-line no-unused-vars
+const isFolder = (item) => { // eslint-disable-line no-unused-vars
   return false
 }
 
-exports.getItemIcon = (item) => {
+const getItemIcon = (item) => {
   return item.urls.thumb
 }
 
-exports.getItemSubList = (item) => {
+const getItemSubList = (item) => {
   return item.results
 }
 
-exports.getItemName = (item) => {
+const getItemName = (item) => {
   const description = item.description || item.alt_description
   if (description) {
     return `${description.replace(/^([\S\s]{27})[\S\s]{3,}/, '$1...')}.jpg`
   }
+  return undefined
 }
 
-exports.getMimeType = (item) => { // eslint-disable-line no-unused-vars
+const getMimeType = (item) => { // eslint-disable-line no-unused-vars
   return 'image/jpeg'
 }
 
-exports.getItemId = (item) => {
+const getItemId = (item) => {
   return `${item.id}`
 }
 
-exports.getItemRequestPath = (item) => {
+const getItemRequestPath = (item) => {
   return `${item.id}`
 }
 
-exports.getItemModifiedDate = (item) => {
+const getItemModifiedDate = (item) => {
   return item.created_at
 }
 
-exports.getItemThumbnailUrl = (item) => {
+const getItemThumbnailUrl = (item) => {
   return item.urls.thumb
 }
 
-exports.getNextPageQuery = (currentQuery) => {
+const getNextPageQuery = (currentQuery) => {
   const newCursor = Number.parseInt(currentQuery.cursor || 1, 10) + 1
   const query = {
     ...currentQuery,
@@ -50,6 +51,34 @@ exports.getNextPageQuery = (currentQuery) => {
   return querystring.stringify(query)
 }
 
-exports.getAuthor = (item) => {
+const getAuthor = (item) => {
   return { name: item.user.name, url: item.user.links.html }
+}
+
+module.exports = (body, currentQuery) => {
+  const { total_pages: pagesCount } = body
+  const { cursor, q } = currentQuery
+  const currentPage = Number(cursor || 1)
+  const hasNextPage = currentPage < pagesCount
+  const subList = getItemSubList(body) || []
+
+  return {
+    searchedFor: q,
+    username: null,
+    items: subList.map((item) => ({
+      isFolder: isFolder(item),
+      icon: getItemIcon(item),
+      name: getItemName(item),
+      mimeType: getMimeType(item),
+      id: getItemId(item),
+      thumbnail: getItemThumbnailUrl(item),
+      requestPath: getItemRequestPath(item),
+      modifiedDate: getItemModifiedDate(item),
+      author: getAuthor(item),
+      size: null,
+    })),
+    nextPageQuery: hasNextPage
+      ? getNextPageQuery(currentQuery)
+      : null,
+  }
 }
