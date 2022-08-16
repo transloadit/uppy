@@ -294,6 +294,10 @@ declare module '@uppy/utils/lib/fetchWithNetworkError' {
 }
 
 declare module '@uppy/utils/lib/ErrorWithCause' {
+  interface ErrorOptions {
+    cause?: unknown;
+  }
+
   export default class ErrorWithCause extends Error {
     cause: any
 
