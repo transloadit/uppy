@@ -227,11 +227,11 @@ describe('list provider files', () => {
   })
 
   test('onedrive', async () => {
-    nock('https://graph.microsoft.com').get('/me').reply(200, {
+    nock('https://graph.microsoft.com').get('/v1.0/me').reply(200, {
       userPrincipalName: defaults.USERNAME,
       mail: defaults.USERNAME,
     })
-    nock('https://graph.microsoft.com').get('/me/drive/root/children?%24expand=thumbnails').reply(200, {
+    nock('https://graph.microsoft.com').get('/v1.0/me/drive/root/children?%24expand=thumbnails').reply(200, {
       value: [
         {
           createdDateTime: '2020-01-31T15:40:26.197Z',
@@ -354,10 +354,10 @@ describe('provider file gets downloaded from', () => {
   })
 
   test('onedrive', async () => {
-    nock('https://graph.microsoft.com').get(`/drives/DUMMY-DRIVE-ID/items/${defaults.ITEM_ID}`).reply(200, {
+    nock('https://graph.microsoft.com').get(`/v1.0/drives/DUMMY-DRIVE-ID/items/${defaults.ITEM_ID}`).reply(200, {
       size: defaults.FILE_SIZE,
     })
-    nock('https://graph.microsoft.com').get(`/drives/DUMMY-DRIVE-ID/items/${defaults.ITEM_ID}/content`).reply(200, {})
+    nock('https://graph.microsoft.com').get(`/v1.0/drives/DUMMY-DRIVE-ID/items/${defaults.ITEM_ID}/content`).reply(200, {})
     await runTest('onedrive')
   })
 

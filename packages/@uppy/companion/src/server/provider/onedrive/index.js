@@ -7,7 +7,7 @@ const { withProviderErrorHandling } = require('../providerErrors')
 const { prepareStream } = require('../../helpers/utils')
 
 const getClient = ({ token }) => got.extend({
-  prefixUrl: 'https://graph.microsoft.com',
+  prefixUrl: 'https://graph.microsoft.com/v1.0',
   headers: {
     authorization: `Bearer ${token}`,
   },
