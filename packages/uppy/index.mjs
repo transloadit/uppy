@@ -50,4 +50,7 @@ export { default as GoldenRetriever } from '@uppy/golden-retriever'
 export { default as ReduxDevTools } from '@uppy/redux-dev-tools'
 export { default as ThumbnailGenerator } from '@uppy/thumbnail-generator'
 
+export { COMPANION as TRANSLOADIT_COMPANION } from '@uppy/transloadit'
+export { ALLOWED_COMPANION_PATTERN as TRANSLOADIT_ALLOWED_COMPANION_PATTERN } from '@uppy/transloadit'
+
 export const locales = {}
