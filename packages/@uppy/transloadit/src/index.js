@@ -1,7 +1,7 @@
 import hasProperty from '@uppy/utils/lib/hasProperty'
 import ErrorWithCause from '@uppy/utils/lib/ErrorWithCause'
 import { RateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
-import BasePlugin from '@uppy/core/lib/BasePlugin'
+import BasePlugin from '@uppy/core/lib/BasePlugin.js'
 import Tus from '@uppy/tus'
 import Assembly from './Assembly.js'
 import Client from './Client.js'

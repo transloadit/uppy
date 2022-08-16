@@ -3,7 +3,6 @@
   "description": "Shared utility functions for Uppy Core and plugins maintained by the Uppy team.",
   "version": "5.0.0-beta",
   "license": "MIT",
-  "main": "lib/index.js",
   "types": "types/index.d.ts",
   "type": "module",
   "keywords": [
@@ -17,6 +16,37 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/transloadit/uppy.git"
+  },
+  "exports": {
+    "./lib/Translator":"./lib/Translator.js",
+    "./lib/EventTracker":"./lib/EventTracker.js",
+    "./lib/ProgressTimeout":"./lib/ProgressTimeout.js",
+    "./lib/RateLimitedQueue":"./lib/RateLimitedQueue.js",
+    "./lib/canvasToBlob":"./lib/canvasToBlob.js",
+    "./lib/dataURItoBlob":"./lib/dataURItoBlob.js",
+    "./lib/dataURItoFile":"./lib/dataURItoFile.js",
+    "./lib/emitSocketProgress":"./lib/emitSocketProgress.js",
+    "./lib/findAllDOMElements":"./lib/findAllDOMElements.js",
+    "./lib/findDOMElement":"./lib/findDOMElement.js",
+    "./lib/generateFileID":"./lib/generateFileID.js",
+    "./lib/getBytesRemaining":"./lib/getBytesRemaining.js",
+    "./lib/getETA":"./lib/getETA.js",
+    "./lib/getFileNameAndExtension":"./lib/getFileNameAndExtension.js",
+    "./lib/getFileType":"./lib/getFileType.js",
+    "./lib/getFileTypeExtension":"./lib/getFileTypeExtension.js",
+    "./lib/getSocketHost":"./lib/getSocketHost.js",
+    "./lib/getSpeed":"./lib/getSpeed.js",
+    "./lib/getTimeStamp":"./lib/getTimeStamp.js",
+    "./lib/isDOMElement":"./lib/isDOMElement.js",
+    "./lib/isObjectURL":"./lib/isObjectURL.js",
+    "./lib/isDragDropSupported":"./lib/isDragDropSupported.js",
+    "./lib/isPreviewSupported":"./lib/isPreviewSupported.js",
+    "./lib/isTouchDevice":"./lib/isTouchDevice.js",
+    "./lib/prettyETA":"./lib/prettyETA.js",
+    "./lib/secondsToTime":"./lib/secondsToTime.js",
+    "./lib/settle":"./lib/settle.js",
+    "./lib/toArray":"./lib/toArray.js",
+    "./lib/getDroppedFiles":"./lib/getDroppedFiles/index.js"
   },
   "dependencies": {
     "lodash.throttle": "^4.1.1"
