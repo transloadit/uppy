@@ -1,5 +1,19 @@
 # @uppy/companion
 
+## 4.0.0-beta.4
+
+Released: 2022-08-16
+Included in: Uppy v3.0.0-beta.5
+
+- @uppy/companion: Companion: bring back default upload protocol (Mikael Finstad / #3967)
+- @uppy/companion: enforce usage of uploadUrls (Mikael Finstad / #3965)
+- @uppy/companion: fix crash if redis disconnects (Mikael Finstad / #3954)
+- @uppy/companion: upgrade `ws` version (Antoine du Hamel / #3949)
+- @uppy/companion: sort Dropbox response & refactor to async/await (Mikael Finstad / #3897)
+- @uppy/companion: fix default getKey for non-standalone too (Mikael Finstad / #3945)
+- @uppy/companion: remove `isobject` from dependencies (Antoine du Hamel / #3948)
+- @uppy/companion: show deprecation message when using legacy s3 options (Antoine du Hamel / #3944)
+
 ## 4.0.0-beta.3
 
 Released: 2022-08-03

@@ -1,5 +1,14 @@
 # @uppy/aws-s3-multipart
 
+## 3.0.0-beta.4
+
+Released: 2022-08-16
+Included in: Uppy v3.0.0-beta.5
+
+- @uppy/aws-s3-multipart: Fix when using Companion (Merlijn Vos / #3969)
+- @uppy/aws-s3-multipart: Fix race condition in `#uploadParts` (Morgan Zolob / #3955)
+- @uppy/aws-s3-multipart: ignore exception inside `abortMultipartUpload` (Antoine du Hamel / #3950)
+
 ## 3.0.0-beta.3
 
 Released: 2022-08-03
