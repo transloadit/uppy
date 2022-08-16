@@ -56,9 +56,12 @@ You can use this plugin together with Transloadit’s hosted Companion service t
 To do so each provider plugin must be configured with Transloadit’s Companion URLs:
 
 ```js
+import { COMPANION_URL, COMPANION_ALLOWED_HOSTS } from '@uppy/transloadit'
+import Dropbox from '@uppy/dropbox'
+
 uppy.use(Dropbox, {
-  companionUrl: Transloadit.COMPANION,
-  companionAllowedHosts: Transloadit.COMPANION_PATTERN,
+  companionUrl: COMPANION_URL,
+  companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
 })
 ```
 
@@ -67,9 +70,12 @@ This will already work. Transloadit’s OAuth applications are used to authentic
 To solve that, you can use your own OAuth keys with Transloadit’s hosted Companion servers by using Transloadit Template Credentials. [Create a Template Credential][template-credentials] on the Transloadit site. Select “Companion OAuth” for the service, and enter the key and secret for the provider you want to use. Then you can pass the name of the new credentials to that provider:
 
 ```js
+import { COMPANION_URL, COMPANION_ALLOWED_HOSTS } from '@uppy/transloadit'
+import Dropbox from '@uppy/dropbox'
+
 uppy.use(Dropbox, {
-  companionUrl: Transloadit.COMPANION,
-  companionAllowedHosts: Transloadit.COMPANION_PATTERN,
+  companionUrl: COMPANION_URL,
+  companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
   companionKeysParams: {
     key: 'YOUR_TRANSLOADIT_API_KEY',
     credentialsName: 'my_companion_dropbox_creds',
@@ -77,23 +83,22 @@ uppy.use(Dropbox, {
 })
 ```
 
-## Properties
+## Static exports
 
-### `Transloadit.COMPANION`
+### `COMPANION_URL`
 
 The main endpoint for Transloadit’s hosted companions. You can use this constant in remote provider options, like so:
 
 ```js
 import Dropbox from '@uppy/dropbox'
-import Transloadit from '@uppy/transloadit'
+import { COMPANION_URL } from '@uppy/transloadit'
 
 uppy.use(Dropbox, {
-  companionUrl: Transloadit.COMPANION,
-  companionAllowedHosts: Transloadit.COMPANION_PATTERN,
+  companionUrl: COMPANION_URL,
 })
 ```
 
-When using `Transloadit.COMPANION`, you should also configure [`companionAllowedHosts: Transloadit.COMPANION_PATTERN`](#Transloadit-COMPANION-PATTERN).
+When using `COMPANION_URL`, you should also configure [`companionAllowedHosts: COMPANION_ALLOWED_HOSTS`](#COMPANION_ALLOWED_HOSTS).
 
 The value of this constant is `https://api2.transloadit.com/companion`. If you are using a custom [`service`](#service) option, you should also set a custom host option in your provider plugins, by taking a Transloadit API url and appending `/companion`:
 
@@ -103,19 +108,18 @@ uppy.use(Dropbox, {
 })
 ```
 
-### `Transloadit.COMPANION_PATTERN`
+### `COMPANION_ALLOWED_HOSTS`
 
 A RegExp pattern matching Transloadit’s hosted companion endpoints. The pattern is used in remote provider `companionAllowedHosts` options, to make sure that third party authentication messages cannot be faked by an attacker’s page, but can only originate from Transloadit’s servers.
 
-Use it whenever you use `companionUrl: Transloadit.COMPANION`, like so:
+Use it whenever you use `companionUrl: COMPANION_URL`, like so:
 
 ```js
 import Dropbox from '@uppy/dropbox'
-import Transloadit from '@uppy/transloadit'
+import { COMPANION_ALLOWED_HOSTS } from '@uppy/transloadit'
 
 uppy.use(Dropbox, {
-  companionUrl: Transloadit.COMPANION,
-  companionAllowedHosts: Transloadit.COMPANION_PATTERN,
+  companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
 })
 ```
 

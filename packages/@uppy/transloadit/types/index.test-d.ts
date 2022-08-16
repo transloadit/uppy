@@ -1,10 +1,12 @@
 import { expectError, expectType } from 'tsd'
 import Uppy from '@uppy/core'
 import type { UppyFile } from '@uppy/core'
-import Transloadit from '..'
+import Transloadit, { COMPANION_ALLOWED_HOSTS, COMPANION_URL } from '..'
 
 expectType<string>(Transloadit.COMPANION)
+expectType<string>(COMPANION_URL)
 expectType<RegExp>(Transloadit.COMPANION_PATTERN)
+expectType<RegExp>(COMPANION_ALLOWED_HOSTS)
 
 const validParams = {
   auth: { key: 'not so secret key' },
