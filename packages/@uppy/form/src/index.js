@@ -1,4 +1,4 @@
-import BasePlugin from '@uppy/core/lib/BasePlugin'
+import BasePlugin from '@uppy/core/lib/BasePlugin.js'
 import findDOMElement from '@uppy/utils/lib/findDOMElement'
 import toArray from '@uppy/utils/lib/toArray'
 
