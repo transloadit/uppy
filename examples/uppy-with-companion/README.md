@@ -8,6 +8,7 @@ To run this example, make sure you've correctly installed the **repository root*
 
 ```bash
 corepack yarn install
+corepack yarn build
 ```
 
 That will also install the dependencies for this example.
