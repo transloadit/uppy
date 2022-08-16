@@ -1,4 +1,4 @@
-import BasePlugin from '@uppy/core/lib/BasePlugin'
+import BasePlugin from '@uppy/core/lib/BasePlugin.js'
 import { nanoid } from 'nanoid/non-secure'
 import { Provider, RequestClient, Socket } from '@uppy/companion-client'
 import emitSocketProgress from '@uppy/utils/lib/emitSocketProgress'

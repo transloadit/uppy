@@ -35,5 +35,8 @@
       }
     }
   },
-  "defaultProject": "@uppy/angular"
+  "defaultProject": "@uppy/angular",
+  "cli": {
+    "analytics": false
+  }
 }

@@ -4,8 +4,7 @@
  * @param {object} res
  */
 async function thumbnail (req, res, next) {
-  const { providerName } = req.params
-  const { id } = req.params
+  const { providerName, id } = req.params
   const token = req.companion.providerTokens[providerName]
   const { provider } = req.companion
 

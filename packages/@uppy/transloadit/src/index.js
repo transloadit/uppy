@@ -1,7 +1,7 @@
 import hasProperty from '@uppy/utils/lib/hasProperty'
 import ErrorWithCause from '@uppy/utils/lib/ErrorWithCause'
 import { RateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
-import BasePlugin from '@uppy/core/lib/BasePlugin'
+import BasePlugin from '@uppy/core/lib/BasePlugin.js'
 import Tus from '@uppy/tus'
 import Assembly from './Assembly.js'
 import Client from './Client.js'
@@ -25,9 +25,9 @@ const sendErrorToConsole = originalErr => err => {
   console.error(error, originalErr)
 }
 
-const COMPANION = 'https://api2.transloadit.com/companion'
+const COMPANION_URL = 'https://api2.transloadit.com/companion'
 // Regex matching acceptable postMessage() origins for authentication feedback from companion.
-const ALLOWED_COMPANION_PATTERN = /\.transloadit\.com$/
+const COMPANION_ALLOWED_HOSTS = /\.transloadit\.com$/
 // Regex used to check if a Companion address is run by Transloadit.
 const TL_COMPANION = /https?:\/\/api2(?:-\w+)?\.transloadit\.com\/companion/
 
@@ -36,6 +36,12 @@ const TL_COMPANION = /https?:\/\/api2(?:-\w+)?\.transloadit\.com\/companion/
  */
 export default class Transloadit extends BasePlugin {
   static VERSION = packageJson.version
+
+  /** @deprecated */
+  static COMPANION = COMPANION_URL
+
+  /** @deprecated */
+  static COMPANION_PATTERN = COMPANION_ALLOWED_HOSTS
 
   #rateLimitedQueue
 
@@ -850,7 +856,6 @@ export default class Transloadit extends BasePlugin {
 }
 
 export {
-  ALLOWED_COMPANION_PATTERN,
-  COMPANION,
-  ALLOWED_COMPANION_PATTERN as COMPANION_PATTERN,
+  COMPANION_URL,
+  COMPANION_ALLOWED_HOSTS,
 }

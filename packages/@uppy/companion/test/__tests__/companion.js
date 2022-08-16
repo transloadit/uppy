@@ -1,17 +1,31 @@
-/* global jest:false, test:false, expect:false, describe:false */
-
-const mockOauthState = require('../mockoauthstate')()
-const { version } = require('../../package.json')
-
-jest.mock('tus-js-client')
-jest.mock('purest')
-jest.mock('../../src/server/helpers/oauth-state', () => ({
-  ...jest.requireActual('../../src/server/helpers/oauth-state'),
-  ...mockOauthState,
-}))
-
 const nock = require('nock')
 const request = require('supertest')
+
+const mockOauthState = require('../mockoauthstate')
+const { version } = require('../../package.json')
+const { nockGoogleDownloadFile } = require('../fixtures/drive')
+
+jest.mock('tus-js-client')
+jest.mock('../../src/server/helpers/oauth-state', () => ({
+  ...jest.requireActual('../../src/server/helpers/oauth-state'),
+  ...mockOauthState(),
+}))
+
+const fakeLocalhost = 'localhost.com'
+
+jest.mock('node:dns', () => {
+  const actual = jest.requireActual('node:dns')
+  return {
+    ...actual,
+    lookup: (hostname, options, callback) => {
+      if (fakeLocalhost === hostname) {
+        return callback(null, '127.0.0.1', 4)
+      }
+      return actual.lookup(hostname, options, callback)
+    },
+  }
+})
+
 const tokenService = require('../../src/server/helpers/jwt')
 const { getServer } = require('../mockserver')
 
@@ -25,8 +39,15 @@ const authData = {
 const token = tokenService.generateEncryptedToken(authData, process.env.COMPANION_SECRET)
 const OAUTH_STATE = 'some-cool-nice-encrytpion'
 
+afterAll(() => {
+  nock.cleanAll()
+  nock.restore()
+})
+
 describe('validate upload data', () => {
   test('invalid upload protocol gets rejected', () => {
+    nockGoogleDownloadFile()
+
     return request(authServer)
       .post('/drive/get/DUMMY-FILE-ID')
       .set('uppy-auth-token', token)
@@ -40,6 +61,8 @@ describe('validate upload data', () => {
   })
 
   test('invalid upload fieldname gets rejected', () => {
+    nockGoogleDownloadFile()
+
     return request(authServer)
       .post('/drive/get/DUMMY-FILE-ID')
       .set('uppy-auth-token', token)
@@ -54,6 +77,8 @@ describe('validate upload data', () => {
   })
 
   test('invalid upload metadata gets rejected', () => {
+    nockGoogleDownloadFile()
+
     return request(authServer)
       .post('/drive/get/DUMMY-FILE-ID')
       .set('uppy-auth-token', token)
@@ -68,6 +93,8 @@ describe('validate upload data', () => {
   })
 
   test('invalid upload headers get rejected', () => {
+    nockGoogleDownloadFile()
+
     return request(authServer)
       .post('/drive/get/DUMMY-FILE-ID')
       .set('uppy-auth-token', token)
@@ -82,6 +109,8 @@ describe('validate upload data', () => {
   })
 
   test('invalid upload HTTP Method gets rejected', () => {
+    nockGoogleDownloadFile()
+
     return request(authServer)
       .post('/drive/get/DUMMY-FILE-ID')
       .set('uppy-auth-token', token)
@@ -96,6 +125,8 @@ describe('validate upload data', () => {
   })
 
   test('valid upload data is allowed - tus', () => {
+    nockGoogleDownloadFile({ times: 2 })
+
     return request(authServer)
       .post('/drive/get/DUMMY-FILE-ID')
       .set('uppy-auth-token', token)
@@ -116,6 +147,8 @@ describe('validate upload data', () => {
   })
 
   test('valid upload data is allowed - s3-multipart', () => {
+    nockGoogleDownloadFile({ times: 2 })
+
     return request(authServer)
       .post('/drive/get/DUMMY-FILE-ID')
       .set('uppy-auth-token', token)
@@ -170,22 +203,20 @@ it('periodically pings', (done) => {
     COMPANION_PERIODIC_PING_INTERVAL: '10',
     COMPANION_PERIODIC_PING_COUNT: '1',
   })
-}, 1000)
+}, 3000)
 
-it('respects allowLocalUrls', async () => {
+async function runUrlMetaTest (url) {
   const server = getServer()
-  const url = 'http://localhost/'
 
-  let res
-
-  res = await request(server)
+  return request(server)
     .post('/url/meta')
     .send({ url })
-    .expect(400)
+}
 
-  expect(res.body).toEqual({ error: 'Invalid request body' })
+async function runUrlGetTest (url) {
+  const server = getServer()
 
-  res = await request(server)
+  return request(server)
     .post('/url/get')
     .send({
       fileId: url,
@@ -195,12 +226,24 @@ it('respects allowLocalUrls', async () => {
       size: null,
       url,
     })
-    .expect(400)
+}
 
+it('respects allowLocalUrls, localhost', async () => {
+  let res = await runUrlMetaTest('http://localhost/')
+  expect(res.statusCode).toBe(400)
   expect(res.body).toEqual({ error: 'Invalid request body' })
-}, 1000)
 
-afterAll(() => {
-  nock.cleanAll()
-  nock.restore()
+  res = await runUrlGetTest('http://localhost/')
+  expect(res.statusCode).toBe(400)
+  expect(res.body).toEqual({ error: 'Invalid request body' })
+})
+
+it('respects allowLocalUrls, valid hostname that resolves to localhost', async () => {
+  let res = await runUrlMetaTest(`http://${fakeLocalhost}/`)
+  expect(res.statusCode).toBe(500)
+  expect(res.body).toEqual({ message: 'failed to fetch URL metadata' })
+
+  res = await runUrlGetTest(`http://${fakeLocalhost}/`)
+  expect(res.statusCode).toBe(500)
+  expect(res.body).toEqual({ message: 'failed to fetch URL metadata' })
 })

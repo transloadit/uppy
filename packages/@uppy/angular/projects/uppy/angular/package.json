@@ -22,8 +22,8 @@
     "prepublishOnly": "rm -fr * && cp -r ../../dist/angular .."
   },
   "peerDependencies": {
-    "@angular/common": ">= 11",
-    "@angular/core": ">= 11",
+    "@angular/common": ">= 11 < 14",
+    "@angular/core": ">= 11 < 14",
     "@uppy/core": ">=1",
     "@uppy/dashboard": "workspace:^",
     "@uppy/drag-drop": "workspace:^",

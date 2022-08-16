@@ -1,6 +1,6 @@
 const querystring = require('node:querystring')
 
-exports.isFolder = (item) => {
+const isFolder = (item) => {
   if (item.remoteItem) {
     return !!item.remoteItem.folder
   }
@@ -8,54 +8,76 @@ exports.isFolder = (item) => {
   return !!item.folder
 }
 
-exports.getItemSize = (item) => {
+const getItemSize = (item) => {
   return item.size
 }
 
-exports.getItemIcon = (item) => {
-  return exports.isFolder(item) ? 'folder' : exports.getItemThumbnailUrl(item)
+const getItemThumbnailUrl = (item) => {
+  return item.thumbnails[0] ? item.thumbnails[0].medium.url : null
 }
 
-exports.getItemSubList = (item) => {
+const getItemIcon = (item) => {
+  return isFolder(item) ? 'folder' : getItemThumbnailUrl(item)
+}
+
+const getItemSubList = (item) => {
   return item.value
 }
 
-exports.getItemName = (item) => {
+const getItemName = (item) => {
   return item.name || ''
 }
 
-exports.getMimeType = (item) => {
+const getMimeType = (item) => {
   return item.file ? item.file.mimeType : null
 }
 
-exports.getItemId = (item) => {
+const getItemId = (item) => {
   if (item.remoteItem) {
     return item.remoteItem.id
   }
   return item.id
 }
 
-exports.getItemRequestPath = (item) => {
+const getItemRequestPath = (item) => {
   let query = `?driveId=${item.parentReference.driveId}`
   if (item.remoteItem) {
     query = `?driveId=${item.remoteItem.parentReference.driveId}`
   }
-  return exports.getItemId(item) + query
+  return getItemId(item) + query
 }
 
-exports.getItemModifiedDate = (item) => {
+const getItemModifiedDate = (item) => {
   return item.lastModifiedDateTime
 }
 
-exports.getItemThumbnailUrl = (item) => {
-  return item.thumbnails[0] ? item.thumbnails[0].medium.url : null
-}
-
-exports.getNextPagePath = (data) => {
+const getNextPagePath = (data) => {
   if (!data['@odata.nextLink']) {
     return null
   }
 
   const query = { cursor: querystring.parse(data['@odata.nextLink']).$skiptoken }
   return `?${querystring.stringify(query)}`
+}
+
+module.exports = (res, username) => {
+  const data = { username, items: [] }
+  const items = getItemSubList(res)
+  items.forEach((item) => {
+    data.items.push({
+      isFolder: isFolder(item),
+      icon: getItemIcon(item),
+      name: getItemName(item),
+      mimeType: getMimeType(item),
+      id: getItemId(item),
+      thumbnail: getItemThumbnailUrl(item),
+      requestPath: getItemRequestPath(item),
+      modifiedDate: getItemModifiedDate(item),
+      size: getItemSize(item),
+    })
+  })
+
+  data.nextPagePath = getNextPagePath(res)
+
+  return data
 }

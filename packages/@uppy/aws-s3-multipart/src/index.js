@@ -1,4 +1,4 @@
-import BasePlugin from '@uppy/core/lib/BasePlugin'
+import BasePlugin from '@uppy/core/lib/BasePlugin.js'
 import { Socket, Provider, RequestClient } from '@uppy/companion-client'
 import EventTracker from '@uppy/utils/lib/EventTracker'
 import emitSocketProgress from '@uppy/utils/lib/emitSocketProgress'

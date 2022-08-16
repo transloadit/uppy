@@ -1,50 +1,72 @@
 const mime = require('mime-types')
 const querystring = require('node:querystring')
 
-exports.isFolder = (item) => {
+const isFolder = (item) => {
   return item.type === 'folder'
 }
 
-exports.getItemSize = (item) => {
+const getItemSize = (item) => {
   return item.size
 }
 
-exports.getItemIcon = (item) => {
+const getItemIcon = (item) => {
   return item.type
 }
 
-exports.getItemSubList = (item) => {
+const getItemSubList = (item) => {
   return item.entries
 }
 
-exports.getItemName = (item) => {
+const getItemName = (item) => {
   return item.name || ''
 }
 
-exports.getMimeType = (item) => {
-  return mime.lookup(exports.getItemName(item)) || null
+const getMimeType = (item) => {
+  return mime.lookup(getItemName(item)) || null
 }
 
-exports.getItemId = (item) => {
+const getItemId = (item) => {
   return item.id
 }
 
-exports.getItemRequestPath = (item) => {
+const getItemRequestPath = (item) => {
   return item.id
 }
 
-exports.getItemModifiedDate = (item) => {
+const getItemModifiedDate = (item) => {
   return item.modified_at
 }
 
-exports.getItemThumbnailUrl = (item) => {
-  return `/box/thumbnail/${exports.getItemRequestPath(item)}`
+const getItemThumbnailUrl = (item) => {
+  return `/box/thumbnail/${getItemRequestPath(item)}`
 }
 
-exports.getNextPagePath = (data) => {
+const getNextPagePath = (data) => {
   if (data.total_count < data.limit || data.offset + data.limit > data.total_count) {
     return null
   }
   const query = { cursor: data.offset + data.limit }
   return `?${querystring.stringify(query)}`
+}
+
+module.exports = function adaptData (res, username, companion) {
+  const data = { username, items: [] }
+  const items = getItemSubList(res)
+  items.forEach((item) => {
+    data.items.push({
+      isFolder: isFolder(item),
+      icon: getItemIcon(item),
+      name: getItemName(item),
+      mimeType: getMimeType(item),
+      id: getItemId(item),
+      thumbnail: companion.buildURL(getItemThumbnailUrl(item), true),
+      requestPath: getItemRequestPath(item),
+      modifiedDate: getItemModifiedDate(item),
+      size: getItemSize(item),
+    })
+  })
+
+  data.nextPagePath = getNextPagePath(res)
+
+  return data
 }
