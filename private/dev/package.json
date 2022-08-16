@@ -11,8 +11,8 @@
   },
   "devDependencies": {
     "autoprefixer": "^10.2.6",
-    "postcss-dir-pseudo-class": "^5.0.0",
-    "postcss-logical": "^4.0.2",
+    "postcss-dir-pseudo-class": "^6.0.0",
+    "postcss-logical": "^5.0.0",
     "vite": "^3.0.0"
   },
   "private": true,

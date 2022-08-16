@@ -236,7 +236,7 @@ it('respects allowLocalUrls, localhost', async () => {
   res = await runUrlGetTest('http://localhost/')
   expect(res.statusCode).toBe(400)
   expect(res.body).toEqual({ error: 'Invalid request body' })
-}, 1000)
+})
 
 it('respects allowLocalUrls, valid hostname that resolves to localhost', async () => {
   let res = await runUrlMetaTest(`http://${fakeLocalhost}/`)
@@ -246,4 +246,4 @@ it('respects allowLocalUrls, valid hostname that resolves to localhost', async (
   res = await runUrlGetTest(`http://${fakeLocalhost}/`)
   expect(res.statusCode).toBe(500)
   expect(res.body).toEqual({ message: 'failed to fetch URL metadata' })
-}, 1000)
+})

@@ -9,9 +9,9 @@
     "test": "yarn node test.mjs"
   },
   "dependencies": {
-    "chalk": "^4.1.2",
+    "chalk": "^5.0.0",
     "dedent": "^0.7.0",
-    "glob": "^7.2.0",
+    "glob": "^8.0.0",
     "mdast-util-heading-range": "^3.1.0",
     "remark": "^14.0.1",
     "remark-frontmatter": "^4.0.1"

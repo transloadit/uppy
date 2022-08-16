@@ -1,0 +1,12 @@
+diff --git a/package.json b/package.json
+index 60279c24a08b808ffbf7dc64a038272bddb6785d..71cb8aa038daeeb7edf43564ed78a219003a0c99 100644
+--- a/package.json
++++ b/package.json
+@@ -9,6 +9,7 @@
+ 	"umd:main": "dist/preact.umd.js",
+ 	"unpkg": "dist/preact.min.js",
+ 	"source": "src/index.js",
++	"type": "module",
+ 	"exports": {
+ 		".": {
+ 			"types": "./src/index.d.ts",

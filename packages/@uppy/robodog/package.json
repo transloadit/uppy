@@ -48,7 +48,7 @@
   },
   "devDependencies": {
     "abortcontroller-polyfill": "^1.7.3",
-    "core-js": "~3.19.3",
+    "core-js": "~3.24.0",
     "md-gum-polyfill": "^1.0.0",
     "resize-observer-polyfill": "^1.5.1",
     "whatwg-fetch": "^3.6.2"
