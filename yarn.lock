@@ -10020,6 +10020,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy-example/uppy-with-companion@workspace:examples/uppy-with-companion"
   dependencies:
+    "@uppy/companion": "workspace:*"
     body-parser: ^1.18.2
     express: ^4.16.2
     express-session: ^1.15.6
