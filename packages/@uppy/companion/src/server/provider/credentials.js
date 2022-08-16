@@ -1,4 +1,4 @@
-const request = require('request')
+const got = require('got').default
 const atob = require('atob')
 const { htmlEscape } = require('escape-goat')
 const logger = require('../logger')
@@ -12,30 +12,18 @@ const Provider = require('./Provider')
  * @param {string} providerName
  * @param {object|null} credentialRequestParams - null asks for default credentials.
  */
-function fetchKeys (url, providerName, credentialRequestParams) {
-  return new Promise((resolve, reject) => {
-    const options = {
-      body: {
-        provider: providerName,
-        parameters: credentialRequestParams,
-      },
-      json: true,
-    }
-    request.post(url, options, (requestErr, resp, body) => {
-      if (requestErr) {
-        logger.error(requestErr, 'credentials.fetch.fail')
-        return reject(requestErr)
-      }
+async function fetchKeys (url, providerName, credentialRequestParams) {
+  try {
+    const { credentials } = await got.post(url, {
+      json: { provider: providerName, parameters: credentialRequestParams },
+    }).json()
 
-      if (resp.statusCode !== 200 || !body.credentials) {
-        const err = new Error(`received status: ${resp.statusCode} with no credentials`)
-        logger.error(err, 'credentials.fetch.fail')
-        return reject(err)
-      }
-
-      return resolve(body.credentials)
-    })
-  })
+    if (!credentials) throw new Error('Received no remote credentials')
+    return credentials
+  } catch (err) {
+    logger.error(err, 'credentials.fetch.fail')
+    throw err
+  }
 }
 
 /**

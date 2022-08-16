@@ -100,7 +100,7 @@ The following steps describe the actions that take place when a user Authenticat
 
 ### Instagram integration
 
-Even though facebook [allows using](https://developers.facebook.com/blog/post/2018/06/08/enforce-https-facebook-login/) http://localhost in dev mode, Instagram doesn’t seem to support that, and seems to need a publically available domain name with HTTPS.
+Even though facebook [allows using](https://developers.facebook.com/blog/post/2018/06/08/enforce-https-facebook-login/) http://localhost in dev mode, Instagram doesn’t seem to support that, and seems to need a publically available domain name with HTTPS. So we will tunnel requests to localhost using `ngrok`.
 
 Make sure that you are using a development facebook app at <https://developers.facebook.com/apps>
 
@@ -108,6 +108,8 @@ Go to “Instagram Basic Display” and find `Instagram App ID` and `Instagram A
 
     COMPANION_INSTAGRAM_KEY="Instagram App ID"
     COMPANION_INSTAGRAM_SECRET="Instagram App Secret"
+
+**Note!** `ngrok` seems to be blocked by Instagram now, so you may have to find an alternative.
 
 Run
 
@@ -135,6 +137,14 @@ Go to your instagram account at <https://www.instagram.com/accounts/manage_acces
 Tester invites -> Accept
 
 Now you should be able to test the Instagram integration.
+
+## Zoom
+
+See above Instagram instructions for setting up a tunnel, but replace `instagram` with `zoom` in the URL. Note that **you also have to add the OAuth redirect URL to `OAuth allow list`** in the Zoom Oauth app settings or it will not work.
+
+Add the following scopes: `recording:read`, `user:read`, `user_info:read`
+
+To test recording a meeting, you need to sign up for a Zoom Pro trial (can be cancelled later), for example using their iOS app.
 
 ## Releases
 

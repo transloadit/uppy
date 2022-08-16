@@ -65,7 +65,7 @@ class Provider {
    * @returns {Promise}
    */
   async deauthorizationCallback (options) { // eslint-disable-line no-unused-vars
-    // @todo consider doing something like cb(new NotImplementedError()) instead
+    // @todo consider doing something like throw new NotImplementedError() instead
     throw new Error('method not implemented')
   }
 

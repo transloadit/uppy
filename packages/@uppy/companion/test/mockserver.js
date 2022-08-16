@@ -1,6 +1,8 @@
 const express = require('express')
 const session = require('express-session')
 
+const { expects: { localZoomKey, localZoomSecret, localZoomVerificationToken } } = require('./fixtures/zoom')
+
 const defaultEnv = {
   NODE_ENV: 'test',
   COMPANION_PORT: 3020,
@@ -10,7 +12,7 @@ const defaultEnv = {
   COMPANION_HIDE_WELCOME: 'false',
 
   COMPANION_STREAMING_UPLOAD: 'true',
-  COMPANION_ALLOW_LOCAL_URLS : 'false',
+  COMPANION_ALLOW_LOCAL_URLS: 'false',
 
   COMPANION_PROTOCOL: 'http',
   COMPANION_DATADIR: './test/output',
@@ -28,9 +30,9 @@ const defaultEnv = {
   COMPANION_INSTAGRAM_KEY: 'instagram_key',
   COMPANION_INSTAGRAM_SECRET: 'instagram_secret',
 
-  COMPANION_ZOOM_KEY: 'zoom_key',
-  COMPANION_ZOOM_SECRET: 'zoom_secret',
-  COMPANION_ZOOM_VERIFICATION_TOKEN: 'zoom_verfication_token',
+  COMPANION_ZOOM_KEY: localZoomKey,
+  COMPANION_ZOOM_SECRET: localZoomSecret,
+  COMPANION_ZOOM_VERIFICATION_TOKEN: localZoomVerificationToken,
 
   COMPANION_PATH: '',
 

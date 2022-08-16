@@ -3,8 +3,8 @@ const http = require('node:http')
 const https = require('node:https')
 const { URL } = require('node:url')
 const dns = require('node:dns')
-const request = require('request')
 const ipaddr = require('ipaddr.js')
+const got = require('got').default
 
 const logger = require('../logger')
 
@@ -17,16 +17,15 @@ const isDisallowedIP = (ipAddress) => ipaddr.parse(ipAddress).range() !== 'unica
 
 module.exports.FORBIDDEN_IP_ADDRESS = FORBIDDEN_IP_ADDRESS
 
-module.exports.getRedirectEvaluator = (rawRequestURL, blockPrivateIPs) => {
+module.exports.getRedirectEvaluator = (rawRequestURL, isEnabled) => {
   const requestURL = new URL(rawRequestURL)
-  return (res) => {
-    if (!blockPrivateIPs) {
-      return true
-    }
+
+  return ({ headers }) => {
+    if (!isEnabled) return true
 
     let redirectURL = null
     try {
-      redirectURL = new URL(res.headers.location, requestURL)
+      redirectURL = new URL(headers.location, requestURL)
     } catch (err) {
       return false
     }
@@ -87,15 +86,29 @@ class HttpsAgent extends https.Agent {
  * Returns http Agent that will prevent requests to private IPs (to preven SSRF)
  *
  * @param {string} protocol http or http: or https: or https protocol needed for the request
- * @param {boolean} blockPrivateIPs if set to false, this protection will be disabled
  */
-module.exports.getProtectedHttpAgent = (protocol, blockPrivateIPs) => {
-  if (blockPrivateIPs) {
-    return protocol.startsWith('https') ? HttpsAgent : HttpAgent
+module.exports.getProtectedHttpAgent = (protocol) => {
+  return protocol.startsWith('https') ? HttpsAgent : HttpAgent
+}
+
+function getProtectedGot ({ url, blockLocalIPs }) {
+  const httpAgent = new (module.exports.getProtectedHttpAgent('http'))()
+  const httpsAgent = new (module.exports.getProtectedHttpAgent('https'))()
+
+  const redirectEvaluator = module.exports.getRedirectEvaluator(url, blockLocalIPs)
+
+  const beforeRedirect = (options, response) => {
+    const allowRedirect = redirectEvaluator(response)
+    if (!allowRedirect) {
+      throw new Error(`Redirect evaluator does not allow the redirect to ${response.headers.location}`)
+    }
   }
 
-  return protocol.startsWith('https') ? https.Agent : http.Agent
+  // @ts-ignore
+  return got.extend({ hooks: { beforeRedirect: [beforeRedirect] }, agent: { http: httpAgent, https: httpsAgent } })
 }
+
+module.exports.getProtectedGot = getProtectedGot
 
 /**
  * Gets the size and content type of a url's content
@@ -105,31 +118,30 @@ module.exports.getProtectedHttpAgent = (protocol, blockPrivateIPs) => {
  * @returns {Promise<{type: string, size: number}>}
  */
 exports.getURLMeta = async (url, blockLocalIPs = false) => {
-  const requestWithMethod = async (method) => new Promise((resolve, reject) => {
-    const opts = {
-      uri: url,
-      method,
-      followRedirect: exports.getRedirectEvaluator(url, blockLocalIPs),
-      agentClass: exports.getProtectedHttpAgent((new URL(url)).protocol, blockLocalIPs),
-    }
+  async function requestWithMethod (method) {
+    const protectedGot = getProtectedGot({ url, blockLocalIPs })
+    const stream = protectedGot.stream(url, { method, throwHttpErrors: false })
 
-    const req = request(opts, (err) => {
-      if (err) reject(err)
-    })
-    req.on('response', (response) => {
-      // Can be undefined for unknown length URLs, e.g. transfer-encoding: chunked
-      const contentLength = parseInt(response.headers['content-length'], 10)
+    return new Promise((resolve, reject) => (
+      stream
+        .on('response', (response) => {
+          // Can be undefined for unknown length URLs, e.g. transfer-encoding: chunked
+          const contentLength = parseInt(response.headers['content-length'], 10)
 
-      // No need to get the rest of the response, as we only want header (not really relevant for HEAD, but why not)
-      req.abort()
+          // No need to get the rest of the response, as we only want header (not really relevant for HEAD, but why not)
+          stream.destroy()
 
-      resolve({
-        type: response.headers['content-type'],
-        size: Number.isNaN(contentLength) ? null : contentLength,
-        statusCode: response.statusCode,
-      })
-    })
-  })
+          resolve({
+            type: response.headers['content-type'],
+            size: Number.isNaN(contentLength) ? null : contentLength,
+            statusCode: response.statusCode,
+          })
+        })
+        .on('error', (err) => {
+          reject(err)
+        })
+    ))
+  }
 
   // We prefer to use a HEAD request, as it doesn't download the content. If the URL doesn't
   // support HEAD, or doesn't follow the spec and provide the correct Content-Length, we
@@ -140,6 +152,7 @@ exports.getURLMeta = async (url, blockLocalIPs = false) => {
   // (e.g. HEAD doesn't work on signed S3 URLs)
   // We look for status codes in the 400 and 500 ranges here, as 3xx errors are
   // unlikely to have to do with our choice of method
+  // todo add unit test for this
   if (urlMeta.statusCode >= 400 || urlMeta.size === 0 || urlMeta.size == null) {
     urlMeta = await requestWithMethod('GET')
   }
