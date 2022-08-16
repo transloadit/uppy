@@ -238,12 +238,82 @@ declare module '@uppy/utils/lib/toArray' {
   export default toArray
 }
 
+declare module '@uppy/utils/lib/AbortController' {
+  export const AbortController: typeof globalThis.AbortController
+  export const AbortSignal: typeof globalThis.AbortSignal
+  export function createAbortError(message?: string): DOMException
+}
+
 declare module '@uppy/utils/lib/getDroppedFiles' {
   function getDroppedFiles (
     dataTransfer: DataTransfer,
     options?: Record<string, unknown>
   ): Promise<File[]>
   export default getDroppedFiles
+}
+
+declare module '@uppy/utils/lib/getTextDirection' {
+  function getTextDirection (element: Node): string|undefined
+  export default getTextDirection
+}
+
+declare module '@uppy/utils/lib/isNetworkError' {
+  export default function isNetworkError (xhr: any): boolean
+
+}
+
+declare module '@uppy/utils/lib/NetworkError' {
+  class NetworkError extends Error {
+    readonly cause: any
+
+    readonly isNetworkError: true
+
+    readonly request?: XMLHttpRequest
+
+    constructor (error: any, xhr?: XMLHttpRequest)
+  }
+
+  export default NetworkError
+}
+
+declare module '@uppy/utils/lib/FOCUSABLE_ELEMENTS' {
+  const exports: string[]
+  export default exports
+}
+
+declare module '@uppy/utils/lib/truncateString' {
+  export default function truncateString (string: string, maxLength: number): string
+}
+
+declare module '@uppy/utils/lib/remoteFileObjToLocal' {
+  export default function remoteFileObjToLocal (file: object): Record<string, unknown>
+}
+
+declare module '@uppy/utils/lib/fetchWithNetworkError' {
+  export default function fetchWithNetworkError (...options: unknown[]): Promise<Response>
+}
+
+declare module '@uppy/utils/lib/ErrorWithCause' {
+  export default class ErrorWithCause extends Error {
+    cause: any
+
+    isNetworkError?: true
+
+    constructor (message: string, options?: ErrorOptions)
+  }
+}
+
+declare module '@uppy/utils/lib/delay' {
+  export default function delay (ms:number, opts?: {signal: AbortSignal}): Promise<void>
+}
+
+declare module '@uppy/utils/lib/hasProperty' {
+  export default function has (object: any, key: string): boolean
+}
+
+declare module '@uppy/utils/lib/mimeTypes' {
+  const exports: Record<string, string>
+  export default exports
 }
 
 declare module '@uppy/utils' {
