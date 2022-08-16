@@ -21,7 +21,7 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
-    "@transloadit/prettier-bytes": "0.0.7",
+    "@transloadit/prettier-bytes": "0.0.9",
     "@uppy/store-default": "workspace:^",
     "@uppy/utils": "workspace:^",
     "lodash.throttle": "^4.1.1",

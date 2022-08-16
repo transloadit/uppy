@@ -14,7 +14,7 @@
     "chalk": "2.4.2",
     "cssnano": "^5.0.6",
     "drag-drop": "^4.2.0",
-    "esbuild": "^0.14.3",
+    "esbuild": "^0.15.3",
     "esbuild-plugin-alias": "^0.2.1",
     "esbuild-plugin-babel": "^0.2.3",
     "glob": "^7.2.0",
