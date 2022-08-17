@@ -11,7 +11,9 @@ import {
 import { AppComponent } from './app.component'
 
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [
+    AppComponent
+  ],
   imports: [
     BrowserModule,
     UppyAngularDashboardModule,
@@ -23,6 +25,4 @@ import { AppComponent } from './app.component'
   providers: [],
   bootstrap: [AppComponent],
 })
-class AppModule {}
-
-export { AppModule }
+export class AppModule { }
