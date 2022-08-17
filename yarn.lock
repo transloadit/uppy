@@ -8625,6 +8625,8 @@ __metadata:
 "@uppy/angular@workspace:*, @uppy/angular@workspace:packages/@uppy/angular/projects/uppy/angular":
   version: 0.0.0-use.local
   resolution: "@uppy/angular@workspace:packages/@uppy/angular/projects/uppy/angular"
+  dependencies:
+    tslib: ^2.0.0
   peerDependencies:
     "@angular/common": ">= 11"
     "@angular/core": ">= 11"
@@ -8634,7 +8636,6 @@ __metadata:
     "@uppy/progress-bar": "workspace:^"
     "@uppy/status-bar": "workspace:^"
     "@uppy/utils": "workspace:^"
-    tslib: ^2.0.0
   languageName: unknown
   linkType: soft
 
@@ -10346,7 +10347,7 @@ __metadata:
     typescript: ~4.6
     zone.js: ~0.11.4
   peerDependencies:
-    "@uppy/core": ">=1"
+    "@uppy/core": "workspace:^"
   languageName: unknown
   linkType: soft
 
