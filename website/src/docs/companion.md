@@ -361,13 +361,15 @@ const options = {
 
 3. **secret(recommended)** - A secret string which Companion uses to generate authorization tokens. You should generate a long random string for this.
 
-4. **redisUrl(optional)** - URL to running Redis server. If this is set, the state of uploads would be stored temporarily. This helps for resumed uploads after a browser crash from the client. The stored upload would be sent back to the client on reconnection.
+4. **streamingUpload(recommended)** - A boolean flag to tell Companion whether to enable streaming uploads. If enabled, it will lead to _faster uploads_ because companion will start uploading at the same time as downloading using `stream.pipe`. If `false`, files will be fully downloaded first, then uploaded. Defaults to `false`, but we recommended enabling it, especially if you’re expecting to upload large files. In future versions the default might change to `true`.
 
-5. **redisOptions(optional)** - An object of [options supported by redis client](https://www.npmjs.com/package/redis#options-object-properties). This option can be used in place of `redisUrl`.
+5. **redisUrl(optional)** - URL to running Redis server. If this is set, the state of uploads would be stored temporarily. This helps for resumed uploads after a browser crash from the client. The stored upload would be sent back to the client on reconnection.
 
-6. **redisPubSubScope(optional)** - Use a scope for the companion events at the Redis server. Setting this option will prefix all events with the name provided and a colon.
+6. **redisOptions(optional)** - An object of [options supported by redis client](https://www.npmjs.com/package/redis#options-object-properties). This option can be used in place of `redisUrl`.
 
-7. **server(optional)** - An object with details, mainly used to carry out oauth authentication from any of the enabled providers above. Though it’s optional, it’s required if you would be enabling any of the supported providers. The following are the server options you may set:
+7. **redisPubSubScope(optional)** - Use a scope for the companion events at the Redis server. Setting this option will prefix all events with the name provided and a colon.
+
+8. **server(optional)** - An object with details, mainly used to carry out oauth authentication from any of the enabled providers above. Though it’s optional, it’s required if you would be enabling any of the supported providers. The following are the server options you may set:
 
 * `protocol` - `http | https` - even though companion itself always runs as http, you may want to set this to `https` if you are running a reverse https proxy in front of companion.
 * `host` (required) - your server’s publically facing hostname (for example `example.com`).
@@ -376,19 +378,17 @@ const options = {
 * `implicitPath` - if the URL’s path in your reverse proxy is different from your Companion path in your express app, then you need to set this path as `implicitPath`. So if your Companion URL is `example.com/mypath/companion`. Where the path `/mypath` is defined in your NGINX server, while `/companion` is set in your express app. Then you need to set the option `implicitPath` to `/mypath`, and set the `path` option to `/companion`.
 * `validHosts` - if you are setting an `oauthDomain`, you need to set a list of valid hosts, so the oauth handler can validate the host of the Uppy instance requesting the authentication. This is essentially a list of valid domains running your Companion instances. The list may also contain regex patterns. e.g `['sub2.example.com', 'sub3.example.com', '(\\w+).example.com']`
 
-8. **sendSelfEndpoint(optional)** - This is essentially the same as the `server.host + server.path` attributes. The major reason for this attribute is that, when set, it adds the value as the `i-am` header of every request response.
+9. **sendSelfEndpoint(optional)** - This is essentially the same as the `server.host + server.path` attributes. The major reason for this attribute is that, when set, it adds the value as the `i-am` header of every request response.
 
-9. **providerOptions(optional)** - An object containing credentials (`key` and `secret`) for each provider you would like to enable. Please see [the list of supported providers](#Supported-providers).
+10. **providerOptions(optional)** - An object containing credentials (`key` and `secret`) for each provider you would like to enable. Please see [the list of supported providers](#Supported-providers).
 
-10. **customProviders(optional)** - This option enables you to add custom providers along with the already supported providers. See [Adding Custom Providers](#Adding-custom-providers) for more information.
+11. **customProviders(optional)** - This option enables you to add custom providers along with the already supported providers. See [Adding Custom Providers](#Adding-custom-providers) for more information.
 
-11. **debug(optional)** - A boolean flag to tell Companion whether to log useful debug information while running.
+12. **debug(optional)** - A boolean flag to tell Companion whether to log useful debug information while running.
 
-12. **logClientVersion(optional)** - A boolean flag to tell Companion whether to log its version upon startup.
+13. **logClientVersion(optional)** - A boolean flag to tell Companion whether to log its version upon startup.
 
-13. **metrics(optional)** - A boolean flag to tell Companion whether to provide an endpoint `/metrics` with Prometheus metrics.
-
-14. **streamingUpload(optional)** - A boolean flag to tell Companion whether to enable streaming uploads. If enabled, it will lead to _faster uploads_ because companion will start uploading at the same time as downloading using `stream.pipe`. If `false`, files will be fully downloaded first, then uploaded. Defaults to `false`. Do **not** set it to `true` if you have a [custom Companion provider](#adding-custom-providers) that does not use the new async/stream API.
+14. **metrics(optional)** - A boolean flag to tell Companion whether to provide an endpoint `/metrics` with Prometheus metrics.
 
 15. **maxFileSize(optional)** - If this value is set, companion will limit the maximum file size to process. If unset, it will process files without any size limit (this is the default).
 
