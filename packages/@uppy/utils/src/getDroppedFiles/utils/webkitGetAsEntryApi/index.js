@@ -41,10 +41,15 @@ async function* createPromiseToAddFileOrParseDirectory (entry) {
 }
 
 export default async function* getFilesFromDataTransfer (dataTransfer, logDropError) {
-  for (const item of dataTransfer.items) {
+  const entries = await Promise.all(Array.from(dataTransfer.items, async item => {
     const lastResortFile = item.getAsFile() // Chromium bug, see https://github.com/transloadit/uppy/issues/3505.
     const entry = await item.getAsFileSystemHandle?.()
       ?? getAsFileSystemHandleFromEntry(item.webkitGetAsEntry(), logDropError)
+
+    return { lastResortFile, entry }
+  }))
+
+  for (const { lastResortFile, entry } of entries) {
     // :entry can be null when we drop the url e.g.
     if (entry != null) {
       try {
