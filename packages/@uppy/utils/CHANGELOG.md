@@ -1,5 +1,12 @@
 # @uppy/utils
 
+## 4.1.2
+
+Released: 2022-08-17
+Included in: Uppy v2.13.4
+
+- @uppy/utils: fix drop of multiple files on Chromium browsers (Antoine du Hamel / #3998)
+
 ## 4.1.1
 
 Released: 2022-08-08

@@ -1,5 +1,12 @@
 # @uppy/tus
 
+## 2.4.3
+
+Released: 2022-08-17
+Included in: Uppy v2.13.4
+
+- @uppy/tus: add file argument to `onBeforeRequest` (Merlijn Vos / #3984)
+
 ## 2.4.2
 
 Released: 2022-08-02

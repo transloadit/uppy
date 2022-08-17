@@ -12,6 +12,40 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 2.13.4
+
+Released: 2022-08-17
+
+| Package                   | Version | Package                   | Version |
+| ------------------------- | ------- | ------------------------- | ------- |
+| @uppy/audio               |   0.3.3 | @uppy/progress-bar        |   2.1.2 |
+| @uppy/aws-s3              |   2.2.2 | @uppy/provider-views      |   2.1.3 |
+| @uppy/aws-s3-multipart    |   2.4.3 | @uppy/react               |   2.2.3 |
+| @uppy/box                 |   1.0.8 | @uppy/redux-dev-tools     |   2.1.1 |
+| @uppy/companion           |   3.7.2 | @uppy/remote-sources      |   0.1.2 |
+| @uppy/companion-client    |   2.2.2 | @uppy/screen-capture      |   2.1.2 |
+| @uppy/compressor          |   0.3.3 | @uppy/status-bar          |   2.2.2 |
+| @uppy/core                |   2.3.3 | @uppy/store-default       |   2.1.1 |
+| @uppy/dashboard           |   2.4.2 | @uppy/store-redux         |   2.1.1 |
+| @uppy/drag-drop           |   2.1.2 | @uppy/svelte              |   1.0.9 |
+| @uppy/drop-target         |   1.1.4 | @uppy/thumbnail-generator |   2.2.1 |
+| @uppy/dropbox             |   2.0.8 | @uppy/transloadit         |   2.3.7 |
+| @uppy/facebook            |   2.0.8 | @uppy/tus                 |   2.4.3 |
+| @uppy/file-input          |   2.1.2 | @uppy/unsplash            |   2.1.1 |
+| @uppy/form                |   2.0.7 | @uppy/url                 |   2.2.1 |
+| @uppy/golden-retriever    |   2.1.1 | @uppy/utils               |   4.1.2 |
+| @uppy/google-drive        |   2.1.2 | @uppy/vue                 |   0.4.9 |
+| @uppy/image-editor        |   1.4.2 | @uppy/webcam              |   2.2.2 |
+| @uppy/informer            |   2.1.1 | @uppy/xhr-upload          |   2.1.3 |
+| @uppy/instagram           |   2.1.2 | @uppy/zoom                |   1.1.2 |
+| @uppy/locales             |   2.1.2 | uppy                      |  2.13.4 |
+| @uppy/onedrive            |   2.1.2 |                           |         |
+
+- @uppy/tus: add file argument to `onBeforeRequest` (Merlijn Vos / #3984)
+- meta: add CI to `2.x` branch (Antoine du Hamel)
+- @uppy/utils: fix drop of multiple files on Chromium browsers (Antoine du Hamel / #3998)
+
+
 ## 2.13.3
 
 Released: 2022-08-08
