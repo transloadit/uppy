@@ -59,7 +59,8 @@
     "./lib/delay": "./lib/delay.js",
     "./lib/hasProperty": "./lib/hasProperty.js",
     "./lib/mimeTypes": "./lib/mimeTypes.js",
-    "./lib/getDroppedFiles": "./lib/getDroppedFiles/index.js"
+    "./lib/getDroppedFiles": "./lib/getDroppedFiles/index.js",
+    "./src/microtip.scss": "./src/microtip.scss"
   },
   "dependencies": {
     "lodash.throttle": "^4.1.1"
