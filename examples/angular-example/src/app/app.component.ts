@@ -38,10 +38,6 @@ import GoogleDrive from '@uppy/google-drive'
 
   `,
   styleUrls: [
-    '../../../../packages/@uppy/core/dist/style.min.css',
-    '../../../../packages/@uppy/drag-drop/dist/style.min.css',
-    '../../../../packages/@uppy/progress-bar/dist/style.min.css',
-    '../../../../packages/@uppy/dashboard/dist/style.min.css',
   ],
 })
 export class AppComponent implements OnInit {
