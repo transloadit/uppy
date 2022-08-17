@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, 2.x ]
   pull_request:
     # We want all branches so we configure types to be the GH default again
     types: [ opened, synchronize, reopened ]

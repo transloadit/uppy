@@ -1,7 +1,7 @@
 name: End-to-end tests
 on:
   push:
-    branches: [ main ]
+    branches: [ main, 2.x ]
   pull_request_target:
     types: [ opened, synchronize, reopened, labeled ]
   pull_request:
