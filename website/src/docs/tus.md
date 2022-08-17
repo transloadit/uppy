@@ -37,7 +37,7 @@ const { Tus } = Uppy
 
 ## Options
 
-**Note**: all options are passed to `tus-js-client` and we document the ones here that we added or changed. This means you can also pass functions like [`onBeforeRequest`](https://github.com/tus/tus-js-client/blob/master/docs/api.md#onbeforerequest) and [`onAfterResponse`](https://github.com/tus/tus-js-client/blob/master/docs/api.md#onafterresponse).
+**Note**: all options are passed to `tus-js-client` and we document the ones here that we added or changed. This means you can also pass functions like [`onAfterResponse`](https://github.com/tus/tus-js-client/blob/master/docs/api.md#onafterresponse).
 
 We recommended taking a look at the [API reference](https://github.com/tus/tus-js-client/blob/master/docs/api.md) from `tus-js-client` to know what is supported.
 
@@ -90,6 +90,10 @@ Whether the POST method should be used instead of PATCH for transfering file chu
 When uploading a chunk fails, automatically try again after the millisecond intervals specified in this array. By default, we first retry instantly; if that fails, we retry after 1 second; if that fails, we retry after 3 seconds, etc.
 
 Set to `null` to disable automatic retries, and fail instantly if any chunk fails to upload.
+
+### `onBeforeRequest(req, file)`
+
+Behaves like the [`onBeforeRequest`](https://github.com/tus/tus-js-client/blob/master/docs/api.md#onbeforerequest) function from `tus-js-client` but with the added `file` argument.
 
 ### `onShouldRetry: (err, retryAttempt, options, next) => next(err)`
 
