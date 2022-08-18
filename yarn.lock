@@ -8333,7 +8333,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy-example/bundled@workspace:examples/bundled"
   dependencies:
-    "@babel/core": ^7.4.4
     "@uppy/core": "workspace:*"
     "@uppy/dashboard": "workspace:*"
     "@uppy/google-drive": "workspace:*"
