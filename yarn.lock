@@ -8608,16 +8608,14 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy-example/xhr-bundle@workspace:examples/xhr-bundle"
   dependencies:
-    "@babel/core": ^7.2.2
     "@uppy/core": "workspace:*"
     "@uppy/dashboard": "workspace:*"
     "@uppy/xhr-upload": "workspace:*"
-    babelify: ^10.0.0
-    budo: ^11.6.1
     cors: ^2.8.5
     express: ^4.16.4
     multer: ^1.4.1
     npm-run-all: ^4.1.5
+    vite: ^3.0.0
   languageName: unknown
   linkType: soft
 
