@@ -195,6 +195,8 @@ module.exports = {
         'examples/aws-presigned-url/*.js',
         'examples/bundled/*.js',
         'examples/custom-provider/client/*.js',
+        'examples/multiple-instances/*.js',
+        'examples/transloadit-markdown-bin/*.js',
         'examples/xhr-bundle/*.js',
         'private/dev/*.js',
         'private/release/*.js',

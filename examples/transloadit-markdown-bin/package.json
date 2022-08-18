@@ -1,0 +1,22 @@
+{
+  "name": "@uppy-example/transloadit-markdown-bin",
+  "version": "0.0.0",
+  "type": "module",
+  "dependencies": {
+    "@uppy/core": "workspace:*",
+    "@uppy/dashboard": "workspace:*",
+    "@uppy/drop-target": "workspace:*",
+    "@uppy/image-editor": "workspace:*",
+    "@uppy/remote-sources": "workspace:*",
+    "@uppy/transloadit": "workspace:*",
+    "@uppy/webcam": "workspace:*",
+    "marked": "^4.0.18"
+  },
+  "devDependencies": {
+    "vite": "^3.0.0"
+  },
+  "private": true,
+  "scripts": {
+    "start": "vite"
+  }
+}
