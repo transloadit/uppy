@@ -15,7 +15,7 @@ The `<DragDrop />` component wraps the [`@uppy/drag-drop`](/docs/drag-drop/) plu
 Install from NPM:
 
 ```shell
-npm install @uppy/react
+npm install @uppy/react @uppy/drag-drop @uppy/core
 ```
 
 ```js
