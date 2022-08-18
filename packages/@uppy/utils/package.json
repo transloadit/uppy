@@ -1,7 +1,7 @@
 {
   "name": "@uppy/utils",
   "description": "Shared utility functions for Uppy Core and plugins maintained by the Uppy team.",
-  "version": "5.0.0-beta",
+  "version": "5.0.0-beta.1",
   "license": "MIT",
   "types": "types/index.d.ts",
   "type": "module",
@@ -59,7 +59,8 @@
     "./lib/delay": "./lib/delay.js",
     "./lib/hasProperty": "./lib/hasProperty.js",
     "./lib/mimeTypes": "./lib/mimeTypes.js",
-    "./lib/getDroppedFiles": "./lib/getDroppedFiles/index.js"
+    "./lib/getDroppedFiles": "./lib/getDroppedFiles/index.js",
+    "./src/microtip.scss": "./src/microtip.scss"
   },
   "dependencies": {
     "lodash.throttle": "^4.1.1"

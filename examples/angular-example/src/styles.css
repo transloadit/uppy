@@ -1,3 +1,5 @@
 /* You can add global styles to this file, and also import other style files */
-@import '../../../packages/@uppy/core/dist/style.css';
-@import '../../../packages/@uppy/dashboard/dist/style.css';
+@import '@uppy/core/dist/style.css';
+@import '@uppy/dashboard/dist/style.css';
+@import '@uppy/drag-drop/dist/style.css';
+@import '@uppy/progress-bar/dist/style.css';

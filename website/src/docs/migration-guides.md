@@ -41,11 +41,11 @@ If you’re using Uppy from a CDN, we now provide two bundles: one for up-to-dat
 
 ```html
 <!-- Modern browsers (recommended) -->
-<script src="https://releases.transloadit.com/uppy/v3.0.0-beta.4/uppy.min.js"></script>
+<script src="https://releases.transloadit.com/uppy/v3.0.0-beta.5/uppy.min.js"></script>
 
 <!-- Legacy browsers (IE11+) -->
-<script nomodule src="https://releases.transloadit.com/uppy/v3.0.0-beta.4/uppy.legacy.min.js"></script>
-<script type="module">import "https://releases.transloadit.com/uppy/v3.0.0-beta.4/uppy.min.js";</script>
+<script nomodule src="https://releases.transloadit.com/uppy/v3.0.0-beta.5/uppy.legacy.min.js"></script>
+<script type="module">import "https://releases.transloadit.com/uppy/v3.0.0-beta.5/uppy.min.js";</script>
 ```
 
 Please note that while you may be able to get 2.0 to work in IE11 this way, we do not officially support it anymore.

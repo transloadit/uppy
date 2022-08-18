@@ -67,7 +67,7 @@ const uppy = new Uppy({ autoProceed: false })
 $ npm install @uppy/core @uppy/dashboard @uppy/tus
 ```
 
-Add CSS [uppy.min.css](https://releases.transloadit.com/uppy/v3.0.0-beta.4/uppy.min.css), either to your HTML page’s `<head>` or include in JS, if your bundler of choice supports it.
+Add CSS [uppy.min.css](https://releases.transloadit.com/uppy/v3.0.0-beta.5/uppy.min.css), either to your HTML page’s `<head>` or include in JS, if your bundler of choice supports it.
 
 Alternatively, you can also use a pre-built bundle from Transloadit’s CDN: Edgly. In that case `Uppy` will attach itself to the global `window.Uppy` object.
 
@@ -75,10 +75,10 @@ Alternatively, you can also use a pre-built bundle from Transloadit’s CDN: Edg
 
 ```html
 <!-- 1. Add CSS to `<head>` -->
-<link href="https://releases.transloadit.com/uppy/v3.0.0-beta.4/uppy.min.css" rel="stylesheet">
+<link href="https://releases.transloadit.com/uppy/v3.0.0-beta.5/uppy.min.css" rel="stylesheet">
 
 <!-- 2. Add JS before the closing `</body>` -->
-<script src="https://releases.transloadit.com/uppy/v3.0.0-beta.4/uppy.min.js"></script>
+<script src="https://releases.transloadit.com/uppy/v3.0.0-beta.5/uppy.min.js"></script>
 
 <!-- 3. Initialize -->
 <div class="UppyDragDrop"></div>
@@ -184,7 +184,7 @@ If you’re using Uppy from CDN, those polyfills are already included in the leg
 bundle, so no need to include anything additionally:
 
 ```html
-<script src="https://releases.transloadit.com/uppy/v3.0.0-beta.4/uppy.legacy.min.js"></script>
+<script src="https://releases.transloadit.com/uppy/v3.0.0-beta.5/uppy.legacy.min.js"></script>
 ```
 
 ## FAQ
@@ -472,4 +472,3 @@ We use Browserstack for manual testing <a href="https://www.browserstack.com" ta
 ## License
 
 [The MIT License](LICENSE).
-E).

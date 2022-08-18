@@ -2,14 +2,15 @@
   "name": "@uppy-example/bundled",
   "version": "0.0.0",
   "dependencies": {
-    "@babel/core": "^7.4.4",
     "@uppy/core": "workspace:*",
     "@uppy/dashboard": "workspace:*",
     "@uppy/google-drive": "workspace:*",
     "@uppy/instagram": "workspace:*",
     "@uppy/tus": "workspace:*",
     "@uppy/url": "workspace:*",
-    "@uppy/webcam": "workspace:*",
+    "@uppy/webcam": "workspace:*"
+  },
+  "devDependencies": {
     "parcel": "^2.0.0"
   },
   "private": true,

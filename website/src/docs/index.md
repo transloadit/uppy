@@ -19,12 +19,12 @@ Here’s the simplest example html page with Uppy (it uses a CDN bundle, while w
   <head>
     <meta charset="utf-8">
     <title>Uppy</title>
-    <link href="https://releases.transloadit.com/uppy/v3.0.0-beta.4/uppy.min.css" rel="stylesheet">
+    <link href="https://releases.transloadit.com/uppy/v3.0.0-beta.5/uppy.min.css" rel="stylesheet">
   </head>
   <body>
     <div id="drag-drop-area"></div>
 
-    <script src="https://releases.transloadit.com/uppy/v3.0.0-beta.4/uppy.min.js"></script>
+    <script src="https://releases.transloadit.com/uppy/v3.0.0-beta.5/uppy.min.js"></script>
     <script>
       var uppy = new Uppy.Core()
         .use(Uppy.Dashboard, {
@@ -118,13 +118,13 @@ You can also use a pre-built bundle from Transloadit’s CDN: Edgly. `Uppy` will
 1\. Add a script at the bottom of the closing `</body>` tag:
 
 ```html
-<script src="https://releases.transloadit.com/uppy/v3.0.0-beta.4/uppy.min.js"></script>
+<script src="https://releases.transloadit.com/uppy/v3.0.0-beta.5/uppy.min.js"></script>
 ```
 
 2\. Add CSS to `<head>`:
 
 ```html
-<link href="https://releases.transloadit.com/uppy/v3.0.0-beta.4/uppy.min.css" rel="stylesheet">
+<link href="https://releases.transloadit.com/uppy/v3.0.0-beta.5/uppy.min.css" rel="stylesheet">
 ```
 
 3\. Initialize at the bottom of the closing `</body>` tag:
@@ -181,5 +181,5 @@ export * from '@uppy/core'
 If you’re using Uppy from CDN, those polyfills are already included in the bundle, no need to include anything additionally:
 
 ```html
-<script src="https://releases.transloadit.com/uppy/v3.0.0-beta.4/uppy.min.js"></script>
+<script src="https://releases.transloadit.com/uppy/v3.0.0-beta.5/uppy.min.js"></script>
 ```

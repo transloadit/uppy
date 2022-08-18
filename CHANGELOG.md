@@ -12,6 +12,62 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 3.0.0-beta.5
+
+Released: 2022-08-16
+
+| Package                   |      Version | Package                   |      Version |
+| ------------------------- | ------------ | ------------------------- | ------------ |
+| @uppy/audio               | 1.0.0-beta.2 | @uppy/progress-bar        | 3.0.0-beta.2 |
+| @uppy/aws-s3              | 3.0.0-beta.3 | @uppy/provider-views      | 3.0.0-beta.3 |
+| @uppy/aws-s3-multipart    | 3.0.0-beta.4 | @uppy/react               | 3.0.0-beta.4 |
+| @uppy/box                 | 2.0.0-beta.2 | @uppy/redux-dev-tools     | 3.0.0-beta.2 |
+| @uppy/companion           | 4.0.0-beta.4 | @uppy/remote-sources      | 1.0.0-beta.4 |
+| @uppy/companion-client    | 3.0.0-beta.2 | @uppy/screen-capture      | 3.0.0-beta.3 |
+| @uppy/compressor          | 1.0.0-beta.3 | @uppy/status-bar          | 3.0.0-beta.3 |
+| @uppy/core                | 3.0.0-beta.4 | @uppy/store-default       | 3.0.0-beta.3 |
+| @uppy/dashboard           | 3.0.0-beta.4 | @uppy/store-redux         | 3.0.0-beta.3 |
+| @uppy/drag-drop           | 3.0.0-beta.2 | @uppy/svelte              | 2.0.0-beta.2 |
+| @uppy/drop-target         | 2.0.0-beta.3 | @uppy/thumbnail-generator | 3.0.0-beta.2 |
+| @uppy/dropbox             | 3.0.0-beta.2 | @uppy/transloadit         | 3.0.0-beta.5 |
+| @uppy/facebook            | 3.0.0-beta.2 | @uppy/tus                 | 3.0.0-beta.3 |
+| @uppy/file-input          | 3.0.0-beta.2 | @uppy/unsplash            | 3.0.0-beta.2 |
+| @uppy/form                | 3.0.0-beta.2 | @uppy/url                 | 3.0.0-beta.3 |
+| @uppy/golden-retriever    | 3.0.0-beta.2 | @uppy/utils               | 5.0.0-beta.1 |
+| @uppy/google-drive        | 3.0.0-beta.2 | @uppy/vue                 | 1.0.0-beta.2 |
+| @uppy/image-editor        | 2.0.0-beta.3 | @uppy/webcam              | 3.0.0-beta.3 |
+| @uppy/informer            | 3.0.0-beta.3 | @uppy/xhr-upload          | 3.0.0-beta.3 |
+| @uppy/instagram           | 3.0.0-beta.2 | @uppy/zoom                | 2.0.0-beta.2 |
+| @uppy/locales             | 3.0.0-beta.4 | uppy                      | 3.0.0-beta.5 |
+| @uppy/onedrive            | 3.0.0-beta.2 |                           |              |
+
+- meta: prepare release workflow for beta versions (Antoine du Hamel)
+- @uppy/provider-views: Reset filter input correctly in provider views (Merlijn Vos / #3978)
+- @uppy/aws-s3-multipart: Fix when using Companion (Merlijn Vos / #3969)
+- @uppy/companion: Companion: bring back default upload protocol (Mikael Finstad / #3967)
+- meta: Update CONTRIBUTING.md (Mikael Finstad / #3966)
+- meta: fix contributing link (Mikael Finstad / #3968)
+- @uppy/companion: enforce usage of uploadUrls (Mikael Finstad / #3965)
+- @uppy/utils: Fix webp mimetype (Merlijn Vos / #3961)
+- @uppy/locales: Add compressor string translation to Japanese locale (kenken / #3963)
+- meta: Fix statement about cropping images in README.md (Mikael Finstad / #3964)
+- @uppy/aws-s3-multipart: Fix race condition in `#uploadParts` (Morgan Zolob / #3955)
+- @uppy/provider-views: core validateRestrictions: return error directly vs the result/reason obj (Artur Paikin / #3951)
+- @uppy/aws-s3: Export AwsS3UploadParameters & AwsS3Options interfaces (Antonina Vertsinskaya / #3956)
+- website: convert all website examples to ESM (Antoine du Hamel / #3957)
+- @uppy/companion: fix crash if redis disconnects (Mikael Finstad / #3954)
+- @uppy/companion: upgrade `ws` version (Antoine du Hamel / #3949)
+- @uppy/companion: sort Dropbox response & refactor to async/await (Mikael Finstad / #3897)
+- @uppy/utils: modernize `getDroppedFiles` (Antoine du Hamel / #3534)
+- @uppy/companion: fix default getKey for non-standalone too (Mikael Finstad / #3945)
+- @uppy/aws-s3-multipart: ignore exception inside `abortMultipartUpload` (Antoine du Hamel / #3950)
+- @uppy/companion: remove `isobject` from dependencies (Antoine du Hamel / #3948)
+- @uppy/compressor: Fix Compressor being broken when no name is in the compressed blob (Artur Paikin / #3947)
+- @uppy/core,@uppy/react: Fix all breaking todo comments for 3.0 (Merlijn Vos / #3907)
+- @uppy/companion: show deprecation message when using legacy s3 options (Antoine du Hamel / #3944)
+- example: fix aws-companion example (Antoine du Hamel / #3850)
+
+
 ## 3.0.0-beta.4
 
 Released: 2022-08-03
