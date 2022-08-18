@@ -1,5 +1,12 @@
 # @uppy/compressor
 
+## 1.0.0-beta.3
+
+Released: 2022-08-16
+Included in: Uppy v3.0.0-beta.5
+
+- @uppy/compressor: Fix Compressor being broken when no name is in the compressed blob (Artur Paikin / #3947)
+
 ## 0.3.1
 
 Released: 2022-07-27

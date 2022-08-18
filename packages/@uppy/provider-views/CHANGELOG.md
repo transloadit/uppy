@@ -1,5 +1,13 @@
 # @uppy/provider-views
 
+## 3.0.0-beta.3
+
+Released: 2022-08-16
+Included in: Uppy v3.0.0-beta.5
+
+- @uppy/provider-views: Reset filter input correctly in provider views (Merlijn Vos / #3978)
+- @uppy/provider-views: core validateRestrictions: return error directly vs the result/reason obj (Artur Paikin / #3951)
+
 ## 2.1.2
 
 Released: 2022-07-06

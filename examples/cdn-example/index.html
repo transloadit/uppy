@@ -4,7 +4,7 @@
     <title></title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link href="https://releases.transloadit.com/uppy/v3.0.0-beta.4/uppy.min.css" rel="stylesheet" />
+    <link href="https://releases.transloadit.com/uppy/v3.0.0-beta.5/uppy.min.css" rel="stylesheet" />
   </head>
   <body>
     <noscript>You need JavaScript enabled for this example to work.</noscript>
@@ -12,13 +12,13 @@
 
     <script type="module">
       import {
-        Core,
+        Uppy,
         Dashboard,
         Webcam,
         Tus,
-      } from "https://releases.transloadit.com/uppy/v3.0.0-beta.4/uppy.min.mjs";
+      } from "https://releases.transloadit.com/uppy/v3.0.0-beta.5/uppy.min.mjs";
 
-      const uppy = new Core.Uppy({ debug: true, autoProceed: false })
+      const uppy = new Uppy({ debug: true, autoProceed: false })
         .use(Dashboard, { trigger: "#uppyModalOpener" })
         .use(Webcam, { target: Dashboard })
         .use(Tus, { endpoint: "https://tusd.tusdemo.net/files/" });
@@ -29,11 +29,11 @@
     </script>
 
     <!-- To support older browsers, you can use the legacy bundle which adds a global `Uppy` object.  -->
-    <script nomodule src="https://releases.transloadit.com/uppy/v3.0.0-beta.4/uppy.legacy.min.js"></script>
+    <script nomodule src="https://releases.transloadit.com/uppy/v3.0.0-beta.5/uppy.legacy.min.js"></script>
     <script nomodule>
       {
-        const { Core, Dashboard, Webcam, Tus } = Uppy;
-        const uppy = new Core.Uppy({ debug: true, autoProceed: false })
+        const { Dashboard, Webcam, Tus } = Uppy;
+        const uppy = new Uppy.Uppy({ debug: true, autoProceed: false })
           .use(Dashboard, { trigger: "#uppyModalOpener" })
           .use(Webcam, { target: Dashboard })
           .use(Tus, { endpoint: "https://tusd.tusdemo.net/files/" });
