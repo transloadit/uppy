@@ -1,4 +1,6 @@
-# Uppy with Svelte
+# Uppy Markdown Editor
+
+This example uses Uppy to handle images in a markdown editor.
 
 ## Run it
 
@@ -9,8 +11,10 @@ corepack yarn install
 corepack yarn build
 ```
 
+That will also install the dependencies for this example.
+
 Then, again in the **repository root**, start this example by doing:
 
 ```sh
-corepack yarn workspace @uppy-example/svelte-app dev
+corepack yarn workspace @uppy-example/transloadit-markdown-bin start
 ```

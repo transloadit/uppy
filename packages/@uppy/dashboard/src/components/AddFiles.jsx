@@ -151,7 +151,7 @@ class AddFiles extends Component {
     return (
       <button
         type="button"
-        className="uppy-u-reset uppy-Dashboard-browse"
+        className="uppy-u-reset uppy-c-btn uppy-Dashboard-browse"
         onClick={onClickFn}
         data-uppy-super-focusable={numberOfAcquirers === 0}
       >

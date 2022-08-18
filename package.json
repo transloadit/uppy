@@ -17,11 +17,6 @@
       "@uppy-dev/remark-lint-uppy"
     ]
   },
-  "size-limit": [
-    {
-      "path": "packages/uppy/index.js"
-    }
-  ],
   "pre-commit": "lint:staged",
   "license": "MIT",
   "engines": {
@@ -51,8 +46,6 @@
     "@babel/preset-env": "^7.14.7",
     "@babel/register": "^7.10.5",
     "@babel/types": "^7.17.0",
-    "@size-limit/preset-big-lib": "^8.0.0",
-    "@size-limit/webpack-why": "^8.0.0",
     "@types/jasmine": "file:./private/@types/jasmine",
     "@types/jasminewd2": "file:./private/@types/jasmine",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
@@ -103,7 +96,6 @@
     "remark-cli": "^11.0.0",
     "resolve": "^1.17.0",
     "sass": "^1.29.0",
-    "size-limit": "^8.0.0",
     "start-server-and-test": "^1.14.0",
     "stylelint": "^14.0.0",
     "stylelint-config-rational-order": "^0.1.2",
@@ -153,7 +145,6 @@
     "test:type": "yarn workspaces foreach -piv --include '@uppy/*' --exclude '@uppy/{angular,react-native,locales,companion,provider-views,robodog,svelte}' exec tsd",
     "test:unit": "yarn run build:lib && NODE_OPTIONS=--experimental-vm-modules jest --env jsdom",
     "test:watch": "NODE_OPTIONS=--experimental-vm-modules jest --env jsdom --watch --no-coverage",
-    "test:size": "yarn build:lib && size-limit --why",
     "test": "npm-run-all lint test:locale-packs:unused test:unit test:type test:companion",
     "uploadcdn": "yarn node ./bin/upload-to-cdn.js",
     "version": "yarn node ./bin/after-version-bump.js",

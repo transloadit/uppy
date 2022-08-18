@@ -196,6 +196,7 @@ module.exports = {
         'examples/bundled/*.js',
         'examples/custom-provider/client/*.js',
         'examples/multiple-instances/*.js',
+        'examples/transloadit-markdown-bin/*.js',
         'private/dev/*.js',
         'private/release/*.js',
         'private/remark-lint-uppy/*.js',
