@@ -156,8 +156,8 @@
   }
 
   @media #{$screen-medium} {
-    width: 750px;
-    height: 550px;
+    width: 650px;
+    height: 500px;
   }
 
   .uppy-Dashboard--modal & {
@@ -431,9 +431,10 @@
 .uppy-DashboardTab-btn {
   @include clear-focus;
 
-  display: flex;
+  // display: flex;
   flex-direction: row;
   align-items: center;
+  justify-content: left;
   width: 100%;
   height: 100%;
   padding: 12px 15px;
@@ -498,7 +499,7 @@
   .uppy-size--md & {
     margin-top: 8px;
     margin-bottom: 0;
-    font-size: 11px;
+    font-size: 12px;
     line-height: 15px;
   }
 }
@@ -784,6 +785,7 @@
 
   .uppy-size--md & {
     max-width: 480px;
+    padding: 0 35px;
     margin-top: 5px;
     font-weight: 400;
     font-size: 25px;
