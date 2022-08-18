@@ -44,7 +44,7 @@ export default class View {
   }
 
   clearSelection () {
-    this.plugin.setPluginState({ currentSelection: [] })
+    this.plugin.setPluginState({ currentSelection: [], filterInput: '' })
   }
 
   cancelPicking () {

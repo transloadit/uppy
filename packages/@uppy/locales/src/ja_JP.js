@@ -24,6 +24,8 @@ ja_JP.strings = {
   closeModal: 'モーダルを閉じる',
   companionError: 'Companionとの接続に失敗しました',
   complete: '完了しました',
+  compressingImages: '画像を圧縮中...',
+  compressedX: '画像圧縮により%{size}を節約しました',
   connectedToInternet: 'インターネットに接続しました',
   copyLink: 'リンクをコピー',
   copyLinkToClipboardFallback: '以下のURLをコピー',

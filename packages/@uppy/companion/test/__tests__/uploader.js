@@ -20,13 +20,10 @@ process.env.COMPANION_DATADIR = './test/output'
 process.env.COMPANION_DOMAIN = 'localhost:3020'
 const { companionOptions } = standalone()
 
-const protocol = 'tus'
-
 describe('uploader with tus protocol', () => {
   test('uploader respects uploadUrls', async () => {
     const opts = {
       endpoint: 'http://localhost/files',
-      protocol,
       companionOptions: { ...companionOptions, uploadUrls: [/^http:\/\/url.myendpoint.com\//] },
     }
 
@@ -36,7 +33,6 @@ describe('uploader with tus protocol', () => {
   test('uploader respects uploadUrls, valid', async () => {
     const opts = {
       endpoint: 'http://url.myendpoint.com/files',
-      protocol,
       companionOptions: { ...companionOptions, uploadUrls: [/^http:\/\/url.myendpoint.com\//] },
     }
 
@@ -47,7 +43,6 @@ describe('uploader with tus protocol', () => {
   test('uploader respects uploadUrls, localhost', async () => {
     const opts = {
       endpoint: 'http://localhost:1337/',
-      protocol,
       companionOptions: { ...companionOptions, uploadUrls: [/^http:\/\/localhost:1337\//] },
     }
 
@@ -231,7 +226,6 @@ describe('uploader with tus protocol', () => {
     const opts = {
       companionOptions,
       endpoint: 'http://localhost',
-      protocol,
     }
 
     // eslint-disable-next-line no-new
@@ -253,7 +247,6 @@ describe('uploader with tus protocol', () => {
   test('uploader respects maxFileSize correctly', async () => {
     const opts = {
       endpoint: 'http://url.myendpoint.com/files',
-      protocol,
       companionOptions: { ...companionOptions, maxFileSize: 100 },
       size: 99,
     }

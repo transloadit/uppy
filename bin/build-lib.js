@@ -1,4 +1,3 @@
-const chalk = require('chalk')
 const babel = require('@babel/core')
 const t = require('@babel/types')
 const { promisify } = require('node:util')
@@ -118,7 +117,8 @@ async function buildLib () {
       },
     }] : undefined
     const { code, map } = await babel.transformFileAsync(file, { sourceMaps: true, plugins })
-    await Promise.all([
+    const [{ default: chalk }] = await Promise.all([
+      import('chalk'),
       writeFile(libFile, code),
       writeFile(`${libFile}.map`, JSON.stringify(map)),
     ])

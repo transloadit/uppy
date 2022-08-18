@@ -357,9 +357,9 @@ const options = {
 
 1. **filePath(required)** - Full path to the directory to which provider files will be downloaded temporarily.
 
-2. **secret(recommended)** - A secret string which Companion uses to generate authorization tokens. You should generate a long random string for this.
+2. **uploadUrls(required)** - An allowlist (array) of strings (exact URLs) or regular expressions. Companion will only accept uploads to these URLs. This ensures that your Companion instance is only allowed to upload to your trusted servers and prevents [SSRF](https://en.wikipedia.org/wiki/Server-side_request_forgery) attacks.
 
-3. **uploadUrls(recommended)** - An allowlist (array) of strings (exact URLs) or regular expressions. If specified, Companion will only accept uploads to these URLs. This is needed to make sure a Companion instance is only allowed to upload to your servers. **Omitting this leaves your system open to potential [SSRF](https://en.wikipedia.org/wiki/Server-side_request_forgery) attacks, and may throw an error in future `@uppy/companion` releases.**
+3. **secret(recommended)** - A secret string which Companion uses to generate authorization tokens. You should generate a long random string for this.
 
 4. **redisUrl(optional)** - URL to running Redis server. If this is set, the state of uploads would be stored temporarily. This helps for resumed uploads after a browser crash from the client. The stored upload would be sent back to the client on reconnection.
 
@@ -574,4 +574,4 @@ See also [example code with a custom provider](https://github.com/transloadit/up
 
 ## Development
 
-See [CONTRIBUTING.md](/.github/CONTRIBUTING.md#companion)
+See [CONTRIBUTING.md](/docs/contributing.html#Companion)

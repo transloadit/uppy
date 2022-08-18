@@ -63,7 +63,7 @@ const methods = [
             loose: false,
             targets: { ie:11 },
             useBuiltIns: 'entry',
-            corejs: { version: '3.15', proposals: true },
+            corejs: { version: '3.24', proposals: true },
           }]],
         },
       })],

@@ -54,13 +54,12 @@ describe('AwsS3Multipart', () => {
         }),
         completeMultipartUpload: jest.fn(async () => ({ location: 'test' })),
         abortMultipartUpload: jest.fn(),
-        prepareUploadParts: jest.fn(async () => {
+        prepareUploadParts: jest.fn(async (file, { parts }) => {
           const presignedUrls = {}
-          const possiblePartNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-          possiblePartNumbers.forEach((partNumber) => {
+          parts.forEach(({ number }) => {
             presignedUrls[
-              partNumber
-            ] = `https://bucket.s3.us-east-2.amazonaws.com/test/upload/multitest.dat?partNumber=${partNumber}&uploadId=6aeb1980f3fc7ce0b5454d25b71992&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIATEST%2F20210729%2Fus-east-2%2Fs3%2Faws4_request&X-Amz-Date=20210729T014044Z&X-Amz-Expires=600&X-Amz-SignedHeaders=host&X-Amz-Signature=test`
+              number
+            ] = `https://bucket.s3.us-east-2.amazonaws.com/test/upload/multitest.dat?partNumber=${number}&uploadId=6aeb1980f3fc7ce0b5454d25b71992&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIATEST%2F20210729%2Fus-east-2%2Fs3%2Faws4_request&X-Amz-Date=20210729T014044Z&X-Amz-Expires=600&X-Amz-SignedHeaders=host&X-Amz-Signature=test`
           })
           return { presignedUrls, headers: { 1: { 'Content-MD5': 'foo' } } }
         }),
@@ -181,6 +180,81 @@ describe('AwsS3Multipart', () => {
         { ETag: 'test', PartNumber: 9 },
         { ETag: 'test', PartNumber: 10 },
       ])
+    })
+
+    it('Keeps chunks marked as busy through retries until they complete', async () => {
+      const scope = nock(
+        'https://bucket.s3.us-east-2.amazonaws.com',
+      ).defaultReplyHeaders({
+        'access-control-allow-headers': '*',
+        'access-control-allow-method': 'PUT',
+        'access-control-allow-origin': '*',
+        'access-control-expose-headers': 'ETag',
+      })
+
+      const fileSize = 50 * MB
+
+      scope
+        .options((uri) => uri.includes('test/upload/multitest.dat'))
+        .reply(200, '')
+      scope
+        .put((uri) => uri.includes('test/upload/multitest.dat') && !uri.includes('partNumber=7'))
+        .reply(200, '', { ETag: 'test' })
+
+      // Fail the part 7 upload once, then let it succeed
+      let calls = 0
+      scope
+        .put((uri) => uri.includes('test/upload/multitest.dat') && uri.includes('partNumber=7'))
+        .reply(() => (calls++ === 0 ? [500] : [200, '', { ETag: 'test' }]))
+
+      scope.persist()
+
+      // Spy on the busy/done state of the test chunk (part 7, chunk index 6)
+      let busySpy
+      let doneSpy
+      awsS3Multipart.setOptions({
+        createMultipartUpload: jest.fn((file) => {
+          const multipartUploader = awsS3Multipart.uploaders[file.id]
+          const testChunkState = multipartUploader.chunkState[6]
+          let busy = false
+          let done = false
+          busySpy = jest.fn((value) => { busy = value })
+          doneSpy = jest.fn((value) => { done = value })
+          Object.defineProperty(testChunkState, 'busy', { get: () => busy, set: busySpy })
+          Object.defineProperty(testChunkState, 'done', { get: () => done, set: doneSpy })
+
+          return {
+            uploadId: '6aeb1980f3fc7ce0b5454d25b71992',
+            key: 'test/upload/multitest.dat',
+          }
+        }),
+      })
+
+      core.addFile({
+        source: 'jest',
+        name: 'multitest.dat',
+        type: 'application/octet-stream',
+        data: new File([new Uint8Array(fileSize)], {
+          type: 'application/octet-stream',
+        }),
+      })
+
+      await core.upload()
+
+      // The chunk should be marked as done once
+      expect(doneSpy.mock.calls.length).toEqual(1)
+      expect(doneSpy.mock.calls[0][0]).toEqual(true)
+
+      // Any changes that set busy to false should only happen after the chunk has been marked done,
+      // otherwise a race condition occurs (see PR #3955)
+      const doneCallOrderNumber = doneSpy.mock.invocationCallOrder[0]
+      for (const [index, callArgs] of busySpy.mock.calls.entries()) {
+        if (callArgs[0] === false) {
+          expect(busySpy.mock.invocationCallOrder[index]).toBeGreaterThan(doneCallOrderNumber)
+        }
+      }
+
+      expect(awsS3Multipart.opts.prepareUploadParts.mock.calls.length).toEqual(3)
     })
   })
 

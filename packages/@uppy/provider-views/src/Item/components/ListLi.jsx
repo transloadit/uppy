@@ -11,7 +11,7 @@ function ListItem (props) {
   const {
     className,
     isDisabled,
-    restrictionReason,
+    restrictionError,
     isCheckboxDisabled,
     isChecked,
     toggleCheckbox,
@@ -28,7 +28,7 @@ function ListItem (props) {
   return (
     <li
       className={className}
-      title={isDisabled ? restrictionReason : null}
+      title={isDisabled ? restrictionError?.message : null}
     >
       {!isCheckboxDisabled ? (
         <input

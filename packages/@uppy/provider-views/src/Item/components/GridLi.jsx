@@ -4,7 +4,7 @@ function GridListItem (props) {
   const {
     className,
     isDisabled,
-    restrictionReason,
+    restrictionError,
     isChecked,
     title,
     itemIconEl,
@@ -18,7 +18,7 @@ function GridListItem (props) {
   return (
     <li
       className={className}
-      title={isDisabled ? restrictionReason : null}
+      title={isDisabled ? restrictionError?.message : null}
     >
       <input
         type="checkbox"

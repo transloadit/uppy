@@ -60,13 +60,11 @@ These controllers are generalized to work for any provider. The provider specifi
 
 To add a new provider to Companion, you need to do two things: add the provider config to `config/grant.js`, and then create a new file in `server/providers` that describes how to interface with the provider’s API.
 
-We are using a library called [purest](https://github.com/simov/purest) to make it easier to interface with third party APIs. Instead of dealing with each single provider’s client library/SDK, we use Purest, a “generic REST API client library” that gives us a consistent, “generic” API to interface with any provider. This makes life a lot easier.
+We are using a library called [got](https://github.com/sindresorhus/got) to make it easier to interface with third party APIs.
 
 Since each API works differently, we need to describe how to `download` and `list` files from the provider in a file within `server/providers`. The name of the file should be the same as what endpoint it will use. For example, `server/providers/foobar.js` if the client requests a list of files from `https://our-server/foobar/list`.
 
 **Note:** As of right now, you only need to implement `YourProvider.prototype.list` and `YourProvider.prototype.download` for each provider, I believe. `stats` seems to be used by Dropbox to get a list of files, so that’s required there, but `upload` is optional unless you all decide to allow uploading to third parties. I got that code from an example.
-
-This whole approach was inspired by an example from `purest 2.x`. Keep in mind that we’re using `3.x`, so the API is different, but here is the example for reference: <https://github.com/simov/purest/tree/2.x/examples/storage>
 
 ## WebSockets
 

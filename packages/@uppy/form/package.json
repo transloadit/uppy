@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "@uppy/utils": "workspace:^",
-    "get-form-data": "^2.0.0"
+    "get-form-data": "^3.0.0"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^"

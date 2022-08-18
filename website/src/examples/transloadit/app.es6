@@ -1,11 +1,10 @@
-const Uppy = require('@uppy/core')
-const Dashboard = require('@uppy/dashboard')
-const Webcam = require('@uppy/webcam')
-const Transloadit = require('@uppy/transloadit')
-const Instagram = require('@uppy/instagram')
-const Facebook = require('@uppy/facebook')
-const Zoom = require('@uppy/zoom')
-const COMPANION = require('../env')
+import Uppy from '@uppy/core'
+import Dashboard from '@uppy/dashboard'
+import Webcam from '@uppy/webcam'
+import Transloadit, { COMPANION_ALLOWED_HOSTS, COMPANION_URL } from '@uppy/transloadit'
+import Instagram from '@uppy/instagram'
+import Facebook from '@uppy/facebook'
+import Zoom from '@uppy/zoom'
 
 const enc = new TextEncoder('utf-8')
 async  function sha1 (secret, body) {
@@ -125,20 +124,20 @@ function initUppy (opts = {}) {
     })
     .use(Instagram, {
       target: Dashboard,
-      companionUrl: 'https://api2.transloadit.com/companion',
-      companionAllowedHosts: Transloadit.COMPANION_PATTERN,
+      companionUrl: COMPANION_URL,
+      companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
     })
     .use(Facebook, {
       target: Dashboard,
-      companionUrl: COMPANION,
+      companionUrl: COMPANION_URL,
     })
     .use(Webcam, { target: Dashboard, modes: ['picture'] })
 
   if (zoomMode) {
     uppy.use(Zoom, {
       target: Dashboard,
-      companionUrl: 'https://api2.transloadit.com/companion',
-      companionAllowedHosts: Transloadit.COMPANION_PATTERN,
+      companionUrl: COMPANION_URL,
+      companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
     })
   }
 

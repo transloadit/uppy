@@ -55,10 +55,6 @@ class Uppy {
     const defaultOptions = {
       id: 'uppy',
       autoProceed: false,
-      /**
-       * @deprecated The method should not be used
-       */
-      allowMultipleUploads: true,
       allowMultipleUploadBatches: true,
       debug: false,
       restrictions: defaultRestrictionOptions,
@@ -180,16 +176,6 @@ class Uppy {
    */
   getState () {
     return this.store.getState()
-  }
-
-  /**
-   * Back compat for when uppy.state is used instead of uppy.getState().
-   *
-   * @deprecated
-   */
-  get state () {
-    // Here, state is a non-enumerable property.
-    return this.getState()
   }
 
   /**
@@ -390,14 +376,12 @@ class Uppy {
   }
 
   validateRestrictions (file, files = this.getFiles()) {
-    // TODO: directly return the Restriction error in next major version.
-    // we create RestrictionError's just to discard immediately, which doesn't make sense.
     try {
       this.#restricter.validate(file, files)
-      return { result: true }
     } catch (err) {
-      return { result: false, reason: err.message }
+      return err
     }
+    return null
   }
 
   #checkRequiredMetaFieldsOnFile (file) {
