@@ -12,13 +12,13 @@
 
     <script type="module">
       import {
-        Core,
+        Uppy,
         Dashboard,
         Webcam,
         Tus,
       } from "https://releases.transloadit.com/uppy/v3.0.0-beta.5/uppy.min.mjs";
 
-      const uppy = new Core.Uppy({ debug: true, autoProceed: false })
+      const uppy = new Uppy({ debug: true, autoProceed: false })
         .use(Dashboard, { trigger: "#uppyModalOpener" })
         .use(Webcam, { target: Dashboard })
         .use(Tus, { endpoint: "https://tusd.tusdemo.net/files/" });
@@ -32,8 +32,8 @@
     <script nomodule src="https://releases.transloadit.com/uppy/v3.0.0-beta.5/uppy.legacy.min.js"></script>
     <script nomodule>
       {
-        const { Core, Dashboard, Webcam, Tus } = Uppy;
-        const uppy = new Core.Uppy({ debug: true, autoProceed: false })
+        const { Dashboard, Webcam, Tus } = Uppy;
+        const uppy = new Uppy.Uppy({ debug: true, autoProceed: false })
           .use(Dashboard, { trigger: "#uppyModalOpener" })
           .use(Webcam, { target: Dashboard })
           .use(Tus, { endpoint: "https://tusd.tusdemo.net/files/" });
