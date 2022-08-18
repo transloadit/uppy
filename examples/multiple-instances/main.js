@@ -2,6 +2,7 @@ import Uppy from '@uppy/core'
 import Dashboard from '@uppy/dashboard'
 import GoldenRetriever from '@uppy/golden-retriever'
 
+import '@uppy/core/dist/style.css'
 import '@uppy/dashboard/dist/style.css'
 
 // Initialise two Uppy instances with the GoldenRetriever plugin,
