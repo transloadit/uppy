@@ -8392,12 +8392,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy-example/multiple-instances@workspace:examples/multiple-instances"
   dependencies:
-    "@babel/core": ^7.4.4
     "@uppy/core": "workspace:*"
     "@uppy/dashboard": "workspace:*"
     "@uppy/golden-retriever": "workspace:*"
-    babelify: ^10.0.0
-    budo: ^11.6.1
+    vite: ^3.0.0
   languageName: unknown
   linkType: soft
 
