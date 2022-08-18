@@ -8279,15 +8279,19 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy-example/transloadit-textarea@workspace:examples/transloadit-textarea":
+"@uppy-example/transloadit-markdown-bin@workspace:examples/transloadit-markdown-bin":
   version: 0.0.0-use.local
-  resolution: "@uppy-example/transloadit-textarea@workspace:examples/transloadit-textarea"
+  resolution: "@uppy-example/transloadit-markdown-bin@workspace:examples/transloadit-markdown-bin"
   dependencies:
-    "@uppy/robodog": "workspace:*"
-    browserify: ^16.5.2
-    drag-drop: ^4.2.0
-    ecstatic: ^4.1.4
-    marked: ^0.7.0
+    "@uppy/core": "workspace:*"
+    "@uppy/dashboard": "workspace:*"
+    "@uppy/drop-target": "workspace:*"
+    "@uppy/image-editor": "workspace:*"
+    "@uppy/remote-sources": "workspace:*"
+    "@uppy/transloadit": "workspace:*"
+    "@uppy/webcam": "workspace:*"
+    marked: ^4.0.18
+    vite: ^3.0.0
   languageName: unknown
   linkType: soft
 
@@ -8578,7 +8582,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/drop-target@workspace:^, @uppy/drop-target@workspace:packages/@uppy/drop-target":
+"@uppy/drop-target@workspace:*, @uppy/drop-target@workspace:^, @uppy/drop-target@workspace:packages/@uppy/drop-target":
   version: 0.0.0-use.local
   resolution: "@uppy/drop-target@workspace:packages/@uppy/drop-target"
   dependencies:
@@ -8661,7 +8665,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/image-editor@workspace:^, @uppy/image-editor@workspace:packages/@uppy/image-editor":
+"@uppy/image-editor@workspace:*, @uppy/image-editor@workspace:^, @uppy/image-editor@workspace:packages/@uppy/image-editor":
   version: 0.0.0-use.local
   resolution: "@uppy/image-editor@workspace:packages/@uppy/image-editor"
   dependencies:
@@ -8783,7 +8787,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/remote-sources@workspace:^, @uppy/remote-sources@workspace:packages/@uppy/remote-sources":
+"@uppy/remote-sources@workspace:*, @uppy/remote-sources@workspace:^, @uppy/remote-sources@workspace:packages/@uppy/remote-sources":
   version: 0.0.0-use.local
   resolution: "@uppy/remote-sources@workspace:packages/@uppy/remote-sources"
   dependencies:
@@ -11872,7 +11876,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"browserify@npm:^16.2.3, browserify@npm:^16.5.2":
+"browserify@npm:^16.2.3":
   version: 16.5.2
   resolution: "browserify@npm:16.5.2"
   dependencies:
@@ -12713,13 +12717,6 @@ __metadata:
   version: 0.0.2
   resolution: "charenc@npm:0.0.2"
   checksum: 81dcadbe57e861d527faf6dd3855dc857395a1c4d6781f4847288ab23cffb7b3ee80d57c15bba7252ffe3e5e8019db767757ee7975663ad2ca0939bb8fcaf2e5
-  languageName: node
-  linkType: hard
-
-"charset@npm:^1.0.1":
-  version: 1.0.1
-  resolution: "charset@npm:1.0.1"
-  checksum: adf747e7bc76c0e47dbfbb555ef376f5adb2e67cad35718f19a2d02e27589345ccaf3c6170c185d2cc82298241f8478cdcdcab8be8ec429bf56807885f3c5300
   languageName: node
   linkType: hard
 
@@ -15389,22 +15386,6 @@ __metadata:
   dependencies:
     safe-buffer: ^5.0.1
   checksum: 207f9ab1c2669b8e65540bce29506134613dd5f122cccf1e6a560f4d63f2732d427d938f8481df175505aad94583bcb32c688737bb39a6df0625f903d6d93c03
-  languageName: node
-  linkType: hard
-
-"ecstatic@npm:^4.1.4":
-  version: 4.1.4
-  resolution: "ecstatic@npm:4.1.4"
-  dependencies:
-    charset: ^1.0.1
-    he: ^1.1.1
-    mime: ^2.4.1
-    minimist: ^1.1.0
-    on-finished: ^2.3.0
-    url-join: ^4.0.0
-  bin:
-    ecstatic: lib/bin.js
-  checksum: f1b1343ab6d84867effb48505ede0a1044c1a2fe2620702179e790a111a989781215892fb3f5885e9ab7529cbcf2634efb26e5245dff47c976918ec4631ba2d5
   languageName: node
   linkType: hard
 
@@ -19681,7 +19662,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"he@npm:^1.1.1, he@npm:^1.2.0":
+"he@npm:^1.2.0":
   version: 1.2.0
   resolution: "he@npm:1.2.0"
   bin:
@@ -24372,7 +24353,7 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   languageName: node
   linkType: hard
 
-"marked@npm:^4.0.12":
+"marked@npm:^4.0.12, marked@npm:^4.0.18":
   version: 4.0.18
   resolution: "marked@npm:4.0.18"
   bin:
@@ -36188,13 +36169,6 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   version: 0.1.0
   resolution: "urix@npm:0.1.0"
   checksum: 4c076ecfbf3411e888547fe844e52378ab5ada2d2f27625139011eada79925e77f7fbf0e4016d45e6a9e9adb6b7e64981bd49b22700c7c401c5fc15f423303b3
-  languageName: node
-  linkType: hard
-
-"url-join@npm:^4.0.0":
-  version: 4.0.1
-  resolution: "url-join@npm:4.0.1"
-  checksum: f74e868bf25dbc8be6a8d7237d4c36bb5b6c62c72e594d5ab1347fe91d6af7ccd9eb5d621e30152e4da45c2e9a26bec21390e911ab54a62d4d82e76028374ee5
   languageName: node
   linkType: hard
 
