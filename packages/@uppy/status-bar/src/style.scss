@@ -341,6 +341,11 @@
   [data-uppy-theme="dark"] & {
     @include blue-border-focus--dark;
   }
+
+  .uppy-StatusBar.is-preprocessing &, 
+  .uppy-StatusBar.is-postprocessing & {
+    display: none;
+  }
 }
 
 .uppy-StatusBar-actionBtn--done {
