@@ -1,17 +1,27 @@
 {
-  "name": "@uppy-example/react-example",
+  "name": "@uppy-example/react",
   "version": "0.0.0",
+  "type": "module",
   "dependencies": {
-    "@babel/core": "^7.4.5",
-    "@babel/preset-react": "^7.0.0",
-    "babelify": "^10.0.0",
-    "budo": "^11.6.2",
-    "react": "^16.8.6",
-    "react-dom": "^16.8.6"
+    "@uppy/core": "workspace:*",
+    "@uppy/dashboard": "workspace:*",
+    "@uppy/drag-drop": "workspace:*",
+    "@uppy/file-input": "workspace:*",
+    "@uppy/google-drive": "workspace:*",
+    "@uppy/progress-bar": "workspace:*",
+    "@uppy/react": "workspace:*",
+    "@uppy/tus": "workspace:*",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
   },
   "private": true,
   "scripts": {
-    "css": "cp ../../packages/uppy/dist/uppy.min.css .",
-    "start": "yarn run css && budo main.js:bundle.js -- -r react:react -r react-dom:react-dom -t babelify"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview --port 5050"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^2.0.0",
+    "vite": "^3.0.0"
   }
 }
