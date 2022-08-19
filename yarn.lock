@@ -8148,17 +8148,13 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy-example/node-xhr@workspace:examples/node-xhr"
   dependencies:
-    "@babel/core": ^7.4.4
     "@uppy/core": "workspace:*"
     "@uppy/dashboard": "workspace:*"
     "@uppy/webcam": "workspace:*"
     "@uppy/xhr-upload": "workspace:*"
-    babelify: ^10.0.0
-    budo: ^11.3.2
-    cookie-parser: ^1.4.6
-    cors: ^2.8.4
-    formidable: ^1.2.1
+    formidable: ^3.2.4
     npm-run-all: ^4.1.3
+    vite: ^3.0.0
   languageName: unknown
   linkType: soft
 
@@ -18504,6 +18500,17 @@ __metadata:
     once: 1.4.0
     qs: 6.9.3
   checksum: b35445444e7b6f6f3cacbadd5e6fadd6b5b2e83162e7c41fa22586df584cc515bbd1ee0dc2b701ce031fcb000d71769bc77bd0958db8a89a0ceb8b2227bdc695
+  languageName: node
+  linkType: hard
+
+"formidable@npm:^3.2.4":
+  version: 3.2.4
+  resolution: "formidable@npm:3.2.4"
+  dependencies:
+    dezalgo: 1.0.3
+    hexoid: 1.0.0
+    once: 1.4.0
+  checksum: 23df0f9e1d5eca3546dc56764a56dc402d0156d6a9c900c6e1f071812eeaf12637e5e368a34106f65522356d6080336b7f793b75bebbfff18950bed1d6ae92d4
   languageName: node
   linkType: hard
 
