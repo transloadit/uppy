@@ -439,9 +439,9 @@ class Uppy {
     // we normalize it to match Uppy file object
     if (!fileDescriptor.data && !fileDescriptor.isRemote) {
       fileDescriptor = {
-        name: fileDescriptor?.name,
-        type: fileDescriptor?.type,
-        size: fileDescriptor?.size,
+        name: fileDescriptor.name,
+        type: fileDescriptor.type,
+        size: fileDescriptor.size,
         data: fileDescriptor,
       }
     }
