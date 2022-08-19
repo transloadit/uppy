@@ -42,7 +42,6 @@ const store = configureStore({
   enhancers: [enhancer],
   middleware: (getDefaultMiddleware) => getDefaultMiddleware({
     serializableCheck: {
-      // Ignore these action types
       ignoredActions: [uppyReduxStore.STATE_UPDATE],
       ignoreState: true,
     },
