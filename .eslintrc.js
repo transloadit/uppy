@@ -195,6 +195,7 @@ module.exports = {
         'examples/aws-presigned-url/*.js',
         'examples/bundled/*.js',
         'examples/custom-provider/client/*.js',
+        'examples/digitalocean-spaces/*.js',
         'examples/multiple-instances/*.js',
         'examples/node-xhr/*.js',
         'examples/php-xhr/*.js',
