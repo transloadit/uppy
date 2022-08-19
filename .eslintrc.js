@@ -198,6 +198,7 @@ module.exports = {
         'examples/multiple-instances/*.js',
         'examples/node-xhr/*.js',
         'examples/php-xhr/*.js',
+        'examples/python-xhr/*.js',
         'examples/transloadit-markdown-bin/*.js',
         'examples/xhr-bundle/*.js',
         'private/dev/*.js',
