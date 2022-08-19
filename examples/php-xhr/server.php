@@ -18,14 +18,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit(0);
 }
 
-if ($_POST && !empty($_FILES["files"])) {
-    $target_dir = './uploads/';
-    $target_file = $target_dir . basename($_FILES['files']['name'][0]);
+if ($_POST && !empty($_FILES["file"])) {
+    $target_dir = __DIR__ . DIRECTORY_SEPARATOR . 'uploads';
+    $target_file = $target_dir . DIRECTORY_SEPARATOR . basename($_FILES['file']['name']);
     try {
-        if (move_uploaded_file($_FILES['files']['tmp_name'][0], $target_file)) {
+        if (move_uploaded_file($_FILES['file']['tmp_name'], $target_file)) {
             header('Access-Control-Allow-Origin: *');
             header('Content-type: application/json');
-            $data = ['url' => $target_file, 'message' => 'The file ' . basename($_FILES['files']['name'][0]) . ' has been uploaded.'];
+            $data = ['url' => $target_file, 'message' => 'The file ' . basename($_FILES['file']['name']) . ' has been uploaded.'];
             http_response_code(201);
             echo json_encode($data);
         } else {
