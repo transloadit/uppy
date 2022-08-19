@@ -434,6 +434,18 @@ class Uppy {
    * The `files` value is passed in because it may be updated by the caller without updating the store.
    */
   #checkAndCreateFileStateObject (files, fileDescriptor) {
+    // Uppy expects files in { name, type, size, data } format.
+    // If the actual File object is passed from input[type=file] or drag-drop,
+    // we normalize it to match Uppy file object
+    if (!fileDescriptor.data && !fileDescriptor.isRemote) {
+      fileDescriptor = {
+        name: fileDescriptor?.name,
+        type: fileDescriptor?.type,
+        size: fileDescriptor?.size,
+        data: fileDescriptor,
+      }
+    }
+
     const fileType = getFileType(fileDescriptor)
     const fileName = getFileName(fileType, fileDescriptor)
     const fileExtension = getFileNameAndExtension(fileName).extension
