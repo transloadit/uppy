@@ -3,8 +3,9 @@
   "version": "0.0.0",
   "scripts": {
     "build": "rollup -c",
-    "dev": "rollup -c -w",
-    "start": "sirv public",
+    "start:client": "rollup -c -w",
+    "start:server": "node ./server.mjs",
+    "start": "npm-run-all --parallel start:client start:server",
     "validate": "svelte-check"
   },
   "devDependencies": {
@@ -13,6 +14,7 @@
     "@rollup/plugin-node-resolve": "^13.0.0",
     "@rollup/plugin-typescript": "^8.0.0",
     "@tsconfig/svelte": "^1.0.0",
+    "npm-run-all": "^4.1.5",
     "postcss": "^8.2.1",
     "postcss-import": "^13.0.0",
     "postcss-load-config": "^3.0.0",
@@ -32,6 +34,7 @@
     "@uppy/svelte": "workspace:*",
     "@uppy/webcam": "workspace:*",
     "@uppy/xhr-upload": "workspace:*",
+    "formidable": "^2.0.1",
     "sirv-cli": "^1.0.0"
   },
   "private": true
