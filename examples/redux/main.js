@@ -1,9 +1,14 @@
-const { createStore, compose, combineReducers, applyMiddleware } = require('redux')
-const logger = require('redux-logger').default
-const Uppy = require('@uppy/core')
-const uppyReduxStore = require('@uppy/store-redux')
-const Dashboard = require('@uppy/dashboard')
-const Tus = require('@uppy/tus')
+import { compose, combineReducers, applyMiddleware } from 'redux'
+import { configureStore } from '@reduxjs/toolkit'
+import logger from 'redux-logger'
+import Uppy from '@uppy/core'
+import ReduxStore from '@uppy/store-redux'
+import * as uppyReduxStore from '@uppy/store-redux'
+import Dashboard from '@uppy/dashboard'
+import Tus from '@uppy/tus'
+
+import '@uppy/core/dist/style.css'
+import '@uppy/dashboard/dist/style.css'
 
 function counter (state = 0, action) {
   switch (action.type) {
@@ -32,7 +37,17 @@ if (typeof __REDUX_DEVTOOLS_EXTENSION__ !== 'undefined') {
   enhancer = compose(enhancer, __REDUX_DEVTOOLS_EXTENSION__())
 }
 
-const store = createStore(reducer, enhancer)
+const store = configureStore({
+  reducer,
+  enhancers: [enhancer],
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware({
+    serializableCheck: {
+      // Ignore these action types
+      ignoredActions: [uppyReduxStore.STATE_UPDATE],
+      ignoreState: true,
+    },
+  }),
+})
 
 // Counter example from https://github.com/reactjs/redux/blob/master/examples/counter-vanilla/index.html
 const valueEl = document.querySelector('#value')
@@ -62,11 +77,11 @@ document.querySelector('#incrementAsync').onclick = () => {
 // Uppy using the same store
 const uppy = new Uppy({
   id: 'redux',
-  store: uppyReduxStore({ store }),
+  store: new ReduxStore({ store }),
   // If we had placed our `reducer` elsewhere in Redux, eg. under an `uppy` key in the state for a profile page,
   // we'd do something like:
   //
-  // store: uppyReduxStore({
+  // store: new ReduxStore({
   //   store: store,
   //   id: 'avatar',
   //   selector: state => state.pages.profile.uppy
@@ -79,5 +94,3 @@ uppy.use(Dashboard, {
   width: 400,
 })
 uppy.use(Tus, { endpoint: 'https://tusd.tusdemo.net/' })
-
-window.uppy = uppy

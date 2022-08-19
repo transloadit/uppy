@@ -5066,6 +5066,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@reduxjs/toolkit@npm:^1.8.4":
+  version: 1.8.4
+  resolution: "@reduxjs/toolkit@npm:1.8.4"
+  dependencies:
+    immer: ^9.0.7
+    redux: ^4.1.2
+    redux-thunk: ^2.4.1
+    reselect: ^4.1.5
+  peerDependencies:
+    react: ^16.9.0 || ^17.0.0 || ^18
+    react-redux: ^7.2.1 || ^8.0.2
+  peerDependenciesMeta:
+    react:
+      optional: true
+    react-redux:
+      optional: true
+  checksum: 2ed7ee22bc84f0a2370ca2746513ece4593b8310c16c89e1ccf43ce23dcb83d7c4f4773d78049b68b4e92b3c5bee641e8081faf3947371be6b004ebba8142a51
+  languageName: node
+  linkType: hard
+
 "@rollup/plugin-commonjs@npm:^22.0.0":
   version: 22.0.2
   resolution: "@rollup/plugin-commonjs@npm:22.0.2"
@@ -8133,15 +8153,14 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy-example/redux@workspace:examples/redux"
   dependencies:
-    "@babel/core": ^7.4.4
+    "@reduxjs/toolkit": ^1.8.4
     "@uppy/core": "workspace:*"
     "@uppy/dashboard": "workspace:*"
     "@uppy/store-redux": "workspace:*"
     "@uppy/tus": "workspace:*"
-    babelify: ^10.0.0
-    budo: ^11.6.1
     redux: ^4.1.2
     redux-logger: ^3.0.6
+    vite: ^3.0.0
   languageName: unknown
   linkType: soft
 
@@ -20385,6 +20404,13 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   languageName: node
   linkType: hard
 
+"immer@npm:^9.0.7":
+  version: 9.0.15
+  resolution: "immer@npm:9.0.15"
+  checksum: 92e3d63e810e3c3c2bb61b70c45443e37ef983ad12924e3edaf03725ae5979618f5b473439bb3bb4a8c4769f25132f18dec10ea15c40f0b20da5691ff96ff611
+  languageName: node
+  linkType: hard
+
 "immutable@npm:^3":
   version: 3.8.2
   resolution: "immutable@npm:3.8.2"
@@ -30222,6 +30248,15 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   languageName: node
   linkType: hard
 
+"redux-thunk@npm:^2.4.1":
+  version: 2.4.1
+  resolution: "redux-thunk@npm:2.4.1"
+  peerDependencies:
+    redux: ^4
+  checksum: af5abb425fb9dccda02e5f387d6f3003997f62d906542a3d35fc9420088f550dc1a018bdc246c7d23ee852b4d4ab8b5c64c5be426e45a328d791c4586a3c6b6e
+  languageName: node
+  linkType: hard
+
 "redux@npm:^4.0.0, redux@npm:^4.1.2":
   version: 4.2.0
   resolution: "redux@npm:4.2.0"
@@ -30983,6 +31018,13 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   version: 3.0.1
   resolution: "reselect@npm:3.0.1"
   checksum: c7ce544bae92db2dc6e768bc2dcc1248f9a21ada22ab5906c5e3c472e1dbc5f080889e5a715b8a2535e652d74c599dd090f5a68bcbe7e6f88053b7599ef4e8d3
+  languageName: node
+  linkType: hard
+
+"reselect@npm:^4.1.5":
+  version: 4.1.6
+  resolution: "reselect@npm:4.1.6"
+  checksum: 3ea1058422904063ec93c8f4693fe33dcb2178bbf417ace8db5b2c797a5875cf357d9308d11ed3942ee22507dd34ecfbf1f3a21340a4f31c206cab1d36ceef31
   languageName: node
   linkType: hard
 
