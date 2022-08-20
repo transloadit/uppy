@@ -25,7 +25,8 @@ function onrequest (req, res) {
 
   function onbody (body) {
     const fields = qs.parse(body)
-    const assemblies = JSON.parse(fields.transloadit)
+    console.log({ fields })
+    const assemblies = JSON.parse(fields.uppyResult)
 
     res.setHeader('content-type', 'text/html')
     res.write(Header())
