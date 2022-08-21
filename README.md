@@ -83,7 +83,7 @@ Alternatively, you can also use a pre-built bundle from Transloadit’s CDN: Edg
 <!-- 3. Initialize -->
 <div class="UppyDragDrop"></div>
 <script>
-  var uppy = new Uppy.Core()
+  var uppy = new Uppy.Uppy()
   uppy.use(Uppy.DragDrop, { target: '.UppyDragDrop' })
   uppy.use(Uppy.Tus, { endpoint: '//tusd.tusdemo.net/files/' })
 </script>
