@@ -793,7 +793,7 @@ export default class Transloadit extends BasePlugin {
         // so it can't just reuse the same tus.Upload instance server-side.
         useFastRemoteRetry: false,
         // Only send Assembly metadata to the tus endpoint.
-        metaFields: ['assembly_url', 'filename', 'fieldname'],
+        allowedMetaFields: ['assembly_url', 'filename', 'fieldname'],
         // Pass the limit option to @uppy/tus
         limit: this.opts.limit,
         rateLimitedQueue: this.#rateLimitedQueue,
