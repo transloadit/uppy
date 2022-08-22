@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "build": "rollup -c",
+    "serve": "sirv public",
     "start:client": "rollup -c -w",
     "start:server": "node ./server.mjs",
     "start": "npm-run-all --parallel start:client start:server",
