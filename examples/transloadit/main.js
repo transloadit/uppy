@@ -162,9 +162,13 @@ const dashboardModal = new Uppy({
   })
 
 dashboardModal.on('complete', ({ transloadit, successful, failed }) => {
-  console.log(transloadit)
-  console.log(successful)
-  console.error(failed)
+  if (failed?.length !== 0) {
+    // eslint-disable-next-line no-console
+    console.error('it failed', failed)
+  } else {
+    // eslint-disable-next-line no-console
+    console.log('success', { transloadit, successful })
+  }
 })
 
 function openModal () {
