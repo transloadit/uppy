@@ -8,7 +8,244 @@ category: "Docs"
 
 These cover all the major Uppy versions and how to migrate to them.
 
-## Migrate to 2.0.0
+## Migrate from Robodog to Uppy plugins
+
+Uppy is flexible and extensible through plugins. But the integration code could sometimes be daunting. This is what brought [Robodog](/docs/robodog/) to life. An alternative with the same features, but with a more ergonomic and minimal API.
+
+But, it didn’t come with its own set of new problems:
+
+* It tries to do the exact same, but it looks like a different product.
+* It’s confusing for users whether they want to use Robodog or Uppy directly.
+* Robodog is more ergonomic because it’s limited. When you hit such a limit, you
+  need to refactor everything to Uppy with plugins.
+
+This has now led us to deprecating Robodog and embrace Uppy for its strong suits; modularity and flexibility. At the same time, we also introduced something to take away some repetitive integration code: [`@uppy/remote-sources`](/docs/remote-sources).
+
+To mimic the Robodog implementation with all its features, you can use the code snippet below. But chances are Robodog did more than you need so feel free to remove things or go through the [list of plugins](/docs/plugins/) and install and use the ones you need.
+
+You can also checkout how we migrated the Robodog example ourselves in this [commit](https://github.com/transloadit/uppy/commit/089aaed615c77bafaf905e291b6b4e82aaeb2f6f).
+
+```js
+import Uppy from '@uppy/core'
+import Dashboard from '@uppy/dashboard'
+import RemoteSources from '@uppy/remote-sources'
+import Webcam from '@uppy/webcam'
+import ScreenCapture from '@uppy/screen-capture'
+import GoldenRetriever from '@uppy/golden-retriever'
+import ImageEditor from '@uppy/image-editor'
+import Audio from '@uppy/audio'
+import Transloadit from '@uppy/transloadit'
+
+import '@uppy/core/dist/style.css'
+import '@uppy/dashboard/dist/style.css'
+import '@uppy/audio/dist/style.css'
+import '@uppy/screen-capture/dist/style.css'
+import '@uppy/image-editor/dist/style.css'
+
+const {
+  COMPANION_URL,
+  COMPANION_ALLOWED_HOSTS,
+  TRANSLOADIT_SERVICE_URL,
+} = import.meta.env
+
+new Uppy()
+  .use(Dashboard, {
+    inline: true,
+    target: '#app',
+    showProgressDetails: true,
+    proudlyDisplayPoweredByUppy: true,
+  })
+  .use(RemoteSources, {
+    companionUrl: COMPANION_URL,
+    companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
+  })
+  .use(Webcam, {
+    target: Dashboard,
+    showVideoSourceDropdown: true,
+    showRecordingLength: true,
+  })
+  .use(Audio, {
+    target: Dashboard,
+    showRecordingLength: true,
+  })
+  .use(ScreenCapture, { target: Dashboard })
+  .use(ImageEditor, { target: Dashboard })
+  .use(Transloadit, {
+    service: TRANSLOADIT_SERVICE_URL,
+    async getAssemblyOptions (file) {
+      // This is where you configure your auth key, auth secret, and template ID
+      // https://uppy.io/docs/transloadit/#getAssemblyOptions-file
+      //
+      // It is important to set the secret in production:
+      // https://transloadit.com/docs/topics/signature-authentication/
+      const response = await fetch('/some-endpoint')
+      return response.json()
+    },
+  })
+```
+
+## Migrate from Uppy 2.x to 3.x
+
+### Uppy is pure ESM
+
+Following the footsteps of many packages, we now only ship Uppy core and its plugins as
+[ECMAScript Modules](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules) (ESM).
+On Uppy 2.x, we were shipping CommonJS.
+
+If are already using ESM yourself, or are using the CDN builds, nothing changes for you!
+
+If you are using CommonJS, you might need to add some tooling for everything to work, or you might
+want to refactor your codebase to ESM – refer to
+the [Pure ESM package](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c)
+gist for added information and help on how to do that.
+
+### Robodog is deprecated
+
+See the [Robodog migration guide](#Migrate-from-Robodog-to-Uppy-plugins).
+
+### `@uppy/core`
+
+#### Remove `AggregateError` polyfill.
+
+It’s supported by most modern browsers and [can be polyfilled by the user](https://github.com/transloadit/uppy/pull/3532#discussion_r818602636) if needed.
+
+To migrate: install a `AggregateError` polyfill or use `core-js`.
+
+#### Remove `reset()` method.
+
+It’s a duplicate of `cancelAll`, but with a less intention revealing name.
+
+To migrate: use `cancelAll`.
+
+#### Remove backwards compatible exports (static properties on `Uppy`)\`
+
+`Uppy`, `UIPlugin`, `BasePlugin`, and `debugLogger` used to also be accessible on the `Uppy` export. This has now been removed due to the transition to ESM.
+
+To migrate: import the `Uppy` class by default and/or use named exports for everything else.
+
+#### `uppy.validateRestrictions()` now returns a `RestrictionError`
+
+This method used to return `{ result: false, reason: err.message }`, but that felt strange as it tries to mimic an error. Instead it now return a `RestrictionError`, which is extended `Error` class.
+
+To migrate: check the return value, if it’s defined you have an error, otherwise all went well. Note that the error is `return`’ed, it’s not `throw`’n, so you don’t have to `catch` it.
+
+#### `@uppy/transloadit`
+
+Remove export of `ALLOWED_COMPANION_PATTERN`, `COMPANION`, and `COMPANION_PATTERN` in favor of `COMPANION_URL` and `COMPANION_ALLOWED_HOSTS`. This is to have more intention revealing names, `COMPANION` sounds like the Companion instance, `COMPANION_URL` makes it more clear that it’s a URL.
+
+These are properties can now be imported and used for remote sources plugins when using Transloadit:
+
+```js
+import { COMPANION_URL, COMPANION_ALLOWED_HOSTS } from '@uppy/transloadit'
+
+// ...
+uppy.use(Dropbox, {
+  companionUrl: COMPANION_URL,
+  companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
+})
+```
+
+#### `@uppy/aws-s3-multipart`
+
+##### Make `headers` inside the return value of [`prepareUploadParts`](/docs/aws-s3-multipart/#prepareUploadParts-file-partData) part-indexed too.
+
+This is to allow custom headers to be set per part. See this [issue](https://github.com/transloadit/uppy/issues/3881) for details.
+
+To migrate: make headers part indexed like `presignedUrls`: `{ "headers": { "1": { "Content-MD5": "foo" } }}`.
+
+##### Remove `client` getter and setter.
+
+It’s internal usage only.
+
+To migrate: use exposed options only.
+
+#### `@uppy/tus/`, `@uppy/aws-s3`, `@uppy/xhr-upload`
+
+Rename `metaFields` option to `allowedMetaFields`. Counter intuitively, `metaFields` is for _filtering_ which `metaFields` to send along with the request, not for adding extra meta fields to a request. As a lot of people were confused by this, and the name overlaps with the [`metaFields` option from Dashboard](/docs/dashboard/#metaFields), we renamed it.
+
+To migrate: use `allowedMetaFields`.
+
+#### `@uppy/react`
+
+##### Uppy dependencies have become peer dependencies
+
+`@uppy/dashboard`, `@uppy/drag-drop`, `@uppy/file-input`, `@uppy/progress-bar`, and `@uppy/status-bar` are now peer dependencies. This means you don’t install all these packages if you only need one.
+
+To migrate: install only the packages you need. If you use the Dashboard component, you need `@uppy/dashboard`, and so onwards.
+
+##### Don’t expose `validProps` on the exported components.
+
+It’s internal usage only.
+
+To migrate: use exposed options only.
+
+#### `@uppy/vue`
+
+`@uppy/dashboard`, `@uppy/drag-drop`, `@uppy/file-input`, `@uppy/progress-bar`, and `@uppy/status-bar` are now peer dependencies. This means you don’t install all these packages if you only need one.
+
+To migrate: install only the packages you need. If you use the Dashboard component, you need `@uppy/dashboard`, and so onwards.
+
+#### `@uppy/store-redux`
+
+Remove backwards compatible exports (static properties on `ReduxStore`). Exports, such as `reducer`, used to also be accessible on the `ReduxStore` export. This has now been removed due to the transition to ESM.
+
+To migrate: use named imports.
+
+#### `@uppy/thumbnail-generator`
+
+Remove `rotateImage`, `protect`, and `canvasToBlob` from the plugin prototype. They are internal usage only.
+
+To migrate: use exposed options only.
+
+## Migrate from Companion 3.x to 4.x
+
+### Minimum required Node.js version is v14.20.0
+
+Aligning with the Node.js [Long Term Support (LTS) schedule](https://nodejs.org/en/about/releases/) and to use modern syntax features.
+
+### `companion.app()` returns `{ app, emitter }` instead of `app`
+
+Companion 3.x provides the emitter as `companionEmitter` on `app`. As of 4.x, an object is returned
+with an `app` property (express middleware) and an `emitter` property (event emitter). This
+provides more flexibility in the future and follows best practices.
+
+### Removed `searchProviders` wrapper object inside `providerOptions`
+
+To use [`@uppy/unsplash`](/docs/unsplash), you had to configure Unsplash in Companion inside `providerOptions.searchProviders`. This is redundant, Unsplash is a provider as well so we removed the wrapper object.
+
+### Moved the `s3` options out of `providerOptions`
+
+To use AWS S3 for storage, you configured the `s3` object inside `providerOptions`. But as S3 is not a provider but a destination. To avoid confusion we moved the `s3` settings to the root settings object.
+
+### Removed compatibility for legacy Custom Provider implementations
+
+[Custom Provider](https://uppy.io/docs/companion/#Adding-custom-providers)
+implementations must use the Promise API. The callback API is no longer supported.
+
+### Default to no ACL for AWS S3
+
+Default to no [ACL](https://docs.aws.amazon.com/AmazonS3/latest/userguide/acl-overview.html) for S3 uploads. Before the default was `public-read` but AWS now discourages ACLs. The environment variable `COMPANION_AWS_DISABLE_ACL` is also removed, instead Companion only uses `COMPANION_AWS_ACL`.
+
+### `protocol` sent from Uppy in any `get` request is now required (before it would default to Multipart).
+
+If you use any official Uppy plugins, then no migration is needed. For custom plugins that talk to Companion, make to send along the `protocol` header with a value of `multipart`, `s3Multipart`, or `tus`.
+
+### `emitSuccess` and `emitError` are now private methods on the `Uploader` class.
+
+It’s unlikely you’re using this, but it’s technically a breaking change.
+In general, don’t depend on implicitly internal methods, use exposed APIs instead.
+
+### Removed `chunkSize` backwards compatibility for AWS S3 Multipart
+
+`chunkSize` option will now be used as `partSize` in AWS multipart. Before only valid values would be respected. Invalid values would be ignored. Now any value will be passed on to the AWS SDK, possibly throwing an error on invalid values.
+
+### Removed backwards compatibility for `/metrics` endpoint
+
+The `metrics` option is a boolean flag to tell Companion whether to provide an endpoint `/metrics` with Prometheus metrics. Metrics will now always be served under `options.server.path`. Before v4.x, it would always be served under the root.
+
+For example: if `{ options: { metrics: true, server: { path: '/companion' }}}`, metrics will now be served under `/companion/metrics`. In v3.x, the metrics would be served under `/metrics`.
+
+## Migrate from Uppy 1.x to 2.x
 
 ### New bundle requires manual polyfilling
 
@@ -247,7 +484,7 @@ Uppy 1.0 will continue to receive bug fixes for three more months (until <time d
 
 We hope you’ll waste no time in taking Uppy 2.0 out for a walk. When you do, please let us know what you thought of it on [Reddit](https://www.reddit.com/r/javascript/comments/penbr7/uppy_file_uploader_20_smaller_and_faster_modular/), [HN](https://news.ycombinator.com/item?id=28359287), ProductHunt, or [Twitter](https://twitter.com/uppy_io/status/1432399270846603264). We’re howling at the moon to hear from you!
 
-## Migrating Companion v1 to v2
+## Migrate from Companion 1.x to 2.x
 
 ### Prerequisite
 
