@@ -12,7 +12,7 @@ export interface AwsS3UploadParameters {
 export interface AwsS3Options extends PluginOptions {
     companionUrl?: string
     getUploadParameters?: (file: UppyFile) => MaybePromise<AwsS3UploadParameters>
-    metaFields?: string[]
+    allowedMetaFields?: string[] | null
     timeout?: number
     limit?: number
 }

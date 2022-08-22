@@ -81,6 +81,10 @@ export default class Tus extends BasePlugin {
     /** @type {import("..").TusOptions} */
     this.opts = { ...defaultOptions, ...opts }
 
+    if (opts?.allowedMetaFields === undefined && 'metaFields' in this.opts) {
+      throw new Error('The `metaFields` option has been renamed to `allowedMetaFields`.')
+    }
+
     if ('autoRetry' in opts) {
       throw new Error('The `autoRetry` option was deprecated and has been removed.')
     }
@@ -344,11 +348,11 @@ export default class Tus extends BasePlugin {
 
       /** @type {Record<string, string>} */
       const meta = {}
-      const metaFields = Array.isArray(opts.metaFields)
-        ? opts.metaFields
+      const allowedMetaFields = Array.isArray(opts.allowedMetaFields)
+        ? opts.allowedMetaFields
         // Send along all fields by default.
         : Object.keys(file.meta)
-      metaFields.forEach((item) => {
+      allowedMetaFields.forEach((item) => {
         meta[item] = file.meta[item]
       })
 
