@@ -23,6 +23,8 @@ This has now led us to deprecating Robodog and embrace Uppy for its strong suits
 
 To mimic the Robodog implementation with all its features, you can use the code snippet below. But chances are Robodog did more than you need so feel free to remove things or go through the [list of plugins](/docs/plugins/) and install and use the ones you need.
 
+You can also checkout how we migrated the Robodog example ourselves in this [commit](https://github.com/transloadit/uppy/commit/089aaed615c77bafaf905e291b6b4e82aaeb2f6f).
+
 ```js
 import Uppy from '@uppy/core'
 import Dashboard from '@uppy/dashboard'
@@ -81,8 +83,6 @@ new Uppy()
     },
   })
 ```
-
-Checkout how we did it on [our own Robodog example](https://github.com/transloadit/uppy/commit/089aaed615c77bafaf905e291b6b4e82aaeb2f6f).
 
 ## Migrate from Uppy 2.x to 3.x
 
