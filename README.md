@@ -75,9 +75,7 @@ Alternatively, you can also use a pre-built bundle from Transloadit’s CDN: Edg
 <!-- 1. Add CSS to `<head>` -->
 <link href="https://releases.transloadit.com/uppy/v3.0.0-beta.5/uppy.min.css" rel="stylesheet">
 
-<!-- 2. Add JS before the closing `</body>` -->
-
-<!-- 3. Initialize -->
+<!-- 2. Initialize -->
 <div id="files-drag-drop"></div>
 <script type="module">
   import { Uppy, Dashboard, Tus } from "https://releases.transloadit.com/uppy/v3.0.0-beta.5/uppy.min.mjs"
