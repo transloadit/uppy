@@ -82,8 +82,8 @@ function FormFields (fields) {
       try {
         value = JSON.stringify(
           JSON.parse(value),
-          null, 
-          2
+          null,
+          2,
         )
         isValueJSON = true
       } catch {
