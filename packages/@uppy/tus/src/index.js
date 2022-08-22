@@ -81,7 +81,7 @@ export default class Tus extends BasePlugin {
     /** @type {import("..").TusOptions} */
     this.opts = { ...defaultOptions, ...opts }
 
-    if (opts?.allowedMetaFields === undefined && 'metaFields' in opts) {
+    if (opts?.allowedMetaFields === undefined && 'metaFields' in this.opts) {
       throw new Error('The `metaFields` option has been renamed to `allowedMetaFields`.')
     }
 

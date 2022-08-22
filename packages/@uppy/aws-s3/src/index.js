@@ -122,7 +122,7 @@ export default class AwsS3 extends BasePlugin {
 
     this.opts = { ...defaultOptions, ...opts }
 
-    if (opts?.allowedMetaFields === undefined && 'metaFields' in opts) {
+    if (opts?.allowedMetaFields === undefined && 'metaFields' in this.opts) {
       throw new Error('The `metaFields` option has been renamed to `allowedMetaFields`.')
     }
 
