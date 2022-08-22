@@ -157,6 +157,12 @@ It’s internal usage only.
 
 To migrate: use exposed options only.
 
+#### `@uppy/tus/`, `@uppy/aws-s3`, `@uppy/xhr-upload`
+
+Rename `metaFields` option to `allowedMetaFields`. Counter intuitively, `metaFields` is for _filtering_ which `metaFields` to send along with the request, not for adding extra meta fields to a request. As a lot of people were confused by this, and the name overlaps with the [`metaFields` option from Dashboard](/docs/dashboard/#metaFields), we renamed it.
+
+To migrate: use `allowedMetaFields`.
+
 #### `@uppy/react`
 
 Don’t expose `validProps` on the exported components. They are internal usage only.
