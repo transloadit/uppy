@@ -30,15 +30,13 @@ Code used in the above example:
 ```js
 import Uppy from '@uppy/core'
 import Dashboard from '@uppy/dashboard'
-import GoogleDrive from '@uppy/google-drive'
-import Instagram from '@uppy/instagram'
+import RemoteSources from '@uppy/remote-sources'
 import Webcam from '@uppy/webcam'
 import Tus from '@uppy/tus'
 
-const uppy = new Uppy({ autoProceed: false })
+const uppy = new Uppy()
   .use(Dashboard, { trigger: '#select-files' })
-  .use(GoogleDrive, { target: Dashboard, companionUrl: 'https://companion.uppy.io' })
-  .use(Instagram, { target: Dashboard, companionUrl: 'https://companion.uppy.io' })
+  .use(RemoteSources, { companionUrl: 'https://companion.uppy.io' })
   .use(Webcam, { target: Dashboard })
   .use(Tus, { endpoint: 'https://tusd.tusdemo.net/files/' })
   .on('complete', (result) => {
