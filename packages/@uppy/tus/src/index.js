@@ -256,7 +256,7 @@ export default class Tus extends BasePlugin {
         }
 
         this.resetUploaderReferences(file.id)
-        queuedRequest.abort()
+        queuedRequest?.abort()
 
         this.uppy.emit('upload-error', file, err)
 
