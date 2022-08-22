@@ -21,7 +21,7 @@ Released: 2022-08-22
 | @uppy/angular             |   0.4.0 | @uppy/progress-bar        |   3.0.0 |
 | @uppy/audio               |   1.0.0 | @uppy/provider-views      |   3.0.0 |
 | @uppy/aws-s3              |   3.0.0 | @uppy/react               |   3.0.0 |
-| @uppy/aws-s3-multipart    |   3.0.0 | @uppy/react-native        |   1.0.0 |
+| @uppy/aws-s3-multipart    |   3.0.0 | @uppy/react-native        |   0.4.0 |
 | @uppy/box                 |   2.0.0 | @uppy/redux-dev-tools     |   3.0.0 |
 | @uppy/companion           |   4.0.0 | @uppy/remote-sources      |   1.0.0 |
 | @uppy/companion-client    |   3.0.0 | @uppy/screen-capture      |   3.0.0 |

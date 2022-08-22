@@ -1,7 +1,7 @@
 {
   "name": "@uppy/react-native",
   "description": "React Native Uppy UI components",
-  "version": "1.0.0",
+  "version": "0.4.0",
   "main": "file-picker/index.js",
   "license": "MIT",
   "keywords": [
