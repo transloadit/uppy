@@ -124,6 +124,10 @@ export default class XHRUpload extends BasePlugin {
       throw new Error('`opts.formData` must be true when `opts.bundle` is enabled.')
     }
 
+    if ('metaFields' in opts) {
+      throw new Error('The `metaFields` option has been renamed to `allowedMetaFields`.')
+    }
+
     this.uploaderEvents = Object.create(null)
   }
 

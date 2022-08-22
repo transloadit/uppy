@@ -122,6 +122,10 @@ export default class AwsS3 extends BasePlugin {
 
     this.opts = { ...defaultOptions, ...opts }
 
+    if ('metaFields' in opts) {
+      throw new Error('The `metaFields` option has been renamed to `allowedMetaFields`.')
+    }
+
     // TODO: remove i18n once we can depend on XHRUpload instead of MiniXHRUpload
     this.i18nInit()
 

@@ -81,6 +81,10 @@ export default class Tus extends BasePlugin {
     /** @type {import("..").TusOptions} */
     this.opts = { ...defaultOptions, ...opts }
 
+    if ('metaFields' in opts) {
+      throw new Error('The `metaFields` option has been renamed to `allowedMetaFields`.')
+    }
+
     if ('autoRetry' in opts) {
       throw new Error('The `autoRetry` option was deprecated and has been removed.')
     }
