@@ -21,7 +21,7 @@ Uppy is a sleek, modular JavaScript file uploader that integrates seamlessly wit
 
 <a href="https://transloadit.com" target="_blank"><img width="185" src="https://github.com/transloadit/uppy/raw/main/assets/developed-by-transloadit.png"></a>
 
-Uppy is being developed by the folks at [Transloadit](https://transloadit.com), a versatile file encoding service.
+Uppy is being developed by the folks at [Transloadit](https://transloadit.com), a versatile API to handle any file in your app.
 
 ## Example
 
@@ -31,6 +31,7 @@ Code used in the above example:
 import Uppy from '@uppy/core'
 import Dashboard from '@uppy/dashboard'
 import RemoteSources from '@uppy/remote-sources'
+import ImageEditor from '@uppy/image-editor'
 import Webcam from '@uppy/webcam'
 import Tus from '@uppy/tus'
 
@@ -38,6 +39,7 @@ const uppy = new Uppy()
   .use(Dashboard, { trigger: '#select-files' })
   .use(RemoteSources, { companionUrl: 'https://companion.uppy.io' })
   .use(Webcam, { target: Dashboard })
+  .use(ImageEditor, { target: Dashboard })
   .use(Tus, { endpoint: 'https://tusd.tusdemo.net/files/' })
   .on('complete', (result) => {
     console.log('Upload result:', result)
