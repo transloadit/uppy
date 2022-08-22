@@ -1,24 +1,18 @@
 /* eslint-env browser */
 import marked from 'marked'
 import dragdrop from 'drag-drop'
-// Add Robodog JS. It is advisable to install Robodog from npm/yarn.
-// But for experimenting, you can use also Transloadit’s CDN, Edgly:
-// <script src="https://releases.transloadit.com/uppy/robodog/v3.0.0-beta.4/robodog.min.js"></script>
-import robodog from '@uppy/robodog'
+import Uppy from '@uppy/core'
+import Dashboard from '@uppy/dashboard'
+import Transloadit from '@uppy/transloadit'
+import RemoteSources from '@uppy/remote-sources'
+import Webcam from '@uppy/webcam'
+import ImageEditor from '@uppy/image-editor'
 
 const TRANSLOADIT_EXAMPLE_KEY = '35c1aed03f5011e982b6afe82599b6a0'
 const TRANSLOADIT_EXAMPLE_TEMPLATE = '0b2ee2bc25dc43619700c2ce0a75164a'
 
 /**
  * A textarea for markdown text, with support for file attachments.
- *
- * ## Usage
- *
- * ```js
- * const element = document.querySelector('textarea')
- * const mdtxt = new MarkdownTextarea(element)
- * mdtxt.install()
- * ```
  */
 class MarkdownTextarea {
   constructor (element) {
@@ -43,19 +37,45 @@ class MarkdownTextarea {
     wrapper.appendChild(element)
     wrapper.appendChild(this.uploadLine)
 
-    this.setupUploadLine()
     this.setupTextareaDrop()
+    this.setupUppy()
+  }
+
+  setupUppy = () => {
+    this.uppy = new Uppy({ autoProceed: true })
+      .use(Transloadit, {
+        waitForEncoding: true,
+        params: {
+          auth: { key: TRANSLOADIT_EXAMPLE_KEY },
+          template_id: TRANSLOADIT_EXAMPLE_TEMPLATE,
+        },
+      })
+      .use(Dashboard, { closeAfterFinish: true, trigger: '.form-upload' })
+      .use(ImageEditor, { target: Dashboard })
+      .use(Webcam, { target: Dashboard })
+      .use(RemoteSources, {
+        companionUrl: 'https://api2.transloadit.com/companion',
+      })
+
+    this.uppy.on('complete', (result) => {
+      const { successful, failed, transloadit } = result
+      if (successful.length !== 0) {
+        this.insertAttachments(
+          matchFilesAndThumbs(transloadit[0].results),
+        )
+      } else {
+        failed.forEach(error => {
+          console.error(error)
+          this.reportUploadError(error)
+        })
+      }
+      this.uppy.cancelAll()
+    })
   }
 
   setupTextareaDrop () {
     dragdrop(this.element, (files) => {
       this.uploadFiles(files)
-    })
-  }
-
-  setupUploadLine () {
-    this.uploadLine.addEventListener('click', () => {
-      this.pickFiles()
     })
   }
 
@@ -87,53 +107,16 @@ class MarkdownTextarea {
     })
   }
 
-  uploadFiles (files) {
-    robodog.upload(files, {
-      waitForEncoding: true,
-      params: {
-        auth: { key: TRANSLOADIT_EXAMPLE_KEY },
-        template_id: TRANSLOADIT_EXAMPLE_TEMPLATE,
-      },
-    }).then((result) => {
-      if (result === null) return
-      this.insertAttachments(
-        // eslint-disable-next-line no-use-before-define
-        matchFilesAndThumbs(result.results),
-      )
-    }).catch((err) => {
-      console.error(err)
-      this.reportUploadError(err)
+  uploadFiles = (files) => {
+    const filesForUppy = files.map(file => {
+      return {
+        data: file,
+        type: file.type,
+        name: file.name,
+        meta: file.meta || {},
+      }
     })
-  }
-
-  pickFiles () {
-    robodog.pick({
-      waitForEncoding: true,
-      params: {
-        auth: { key: TRANSLOADIT_EXAMPLE_KEY },
-        template_id: TRANSLOADIT_EXAMPLE_TEMPLATE,
-      },
-      providers: [
-        'webcam',
-        'url',
-        'instagram',
-        'google-drive',
-        'dropbox',
-        'box',
-        'unsplash',
-        'audio',
-        'screen-capture',
-      ],
-    }).then((result) => {
-      if (result === null) return
-      this.insertAttachments(
-        // eslint-disable-next-line no-use-before-define
-        matchFilesAndThumbs(result.results),
-      )
-    }).catch((err) => {
-      console.error(err)
-      this.reportUploadError(err)
-    })
+    this.uppy.addFiles(filesForUppy)
   }
 }
 
@@ -170,17 +153,19 @@ function matchFilesAndThumbs (results) {
   const filesById = {}
   const thumbsById = {}
 
-  results.forEach((result) => {
-    if (result.stepName === 'thumbnails') {
-      thumbsById[result.original_id] = result
-    } else {
-      filesById[result.original_id] = result
-    }
-  })
+  for (const [stepName, result] of Object.entries(results)) {
+    result.forEach(result => {
+      if (stepName === 'thumbnails') {
+        thumbsById[result.original_id] = result
+      } else {
+        filesById[result.original_id] = result
+      }
+    })
+  }
 
   return Object.keys(filesById).map((key) => ({
-    file : filesById[key],
-    thumb : thumbsById[key],
+    file: filesById[key],
+    thumb: thumbsById[key],
   }))
 }
 
