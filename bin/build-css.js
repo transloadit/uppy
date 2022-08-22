@@ -65,14 +65,11 @@ async function compileCSS () {
 
     const outdir = path.join(path.dirname(file), '../dist')
     // Save the `uppy` package's CSS as `uppy.css`,
-    // `@uppy/robodog` as `robodog.css`,
     // the rest as `style.css`.
     // const outfile = path.join(outdir, outdir.includes(path.normalize('packages/uppy/')) ? 'uppy.css' : 'style.css')
     let outfile = path.join(outdir, 'style.css')
     if (outdir.includes(path.normalize('packages/uppy/'))) {
       outfile = path.join(outdir, 'uppy.css')
-    } else if (outdir.includes(path.normalize('packages/@uppy/robodog/'))) {
-      outfile = path.join(outdir, 'robodog.css')
     }
     await mkdir(outdir, { recursive: true })
     await writeFile(outfile, postcssResult.css)

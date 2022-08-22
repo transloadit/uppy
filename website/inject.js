@@ -12,7 +12,6 @@ const glob = require('glob')
 
 const webRoot = __dirname
 const uppyRoot = path.join(__dirname, '../packages/uppy')
-const robodogRoot = path.join(__dirname, '../packages/@uppy/robodog')
 const localesRoot = path.join(__dirname, '../packages/@uppy/locales')
 
 const configPath = path.join(webRoot, '/themes/uppy/_config.yml')
@@ -35,7 +34,6 @@ const defaultConfig = {
 const packages = [
   // Bundles
   'uppy',
-  '@uppy/robodog',
   // Integrations
   '@uppy/react',
   // Core
@@ -139,7 +137,6 @@ async function injectBundles () {
   ])
   const cmds = [
     `cp -vfR ${path.join(uppyRoot, '/dist/*')} ${sourceUppy}`,
-    `cp -vfR ${path.join(robodogRoot, '/dist/*')} ${sourceUppy}`,
     `cp -vfR ${path.join(localesRoot, '/dist/*')} ${sourceUppyLocales}`,
   ].join(' && ')
 

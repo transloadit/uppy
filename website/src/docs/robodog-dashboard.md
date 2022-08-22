@@ -7,6 +7,9 @@ order: 4
 category: "File Processing"
 ---
 
+> **Warning**
+> Robodog has been deprecated, its usage is no longer recommended.
+
 Add the [Dashboard UI][dashboard] to your page, all wired up and ready to go! This is a wrapper around the [Transloadit][transloadit] and [Dashboard][dashboard] plugins. Unlike the [File Picker][file picker] API, this Dashboard is embedded directly into the page. Users can upload many files after another.
 
 ```html
