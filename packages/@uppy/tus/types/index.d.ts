@@ -17,7 +17,7 @@ type TusUploadOptions = Pick<UploadOptions, Exclude<keyof UploadOptions,
 type Next = (err: Error | undefined, retryAttempt?: number, options?: TusOptions) => boolean
 
 export interface TusOptions extends PluginOptions, TusUploadOptions {
-    metaFields?: string[] | null
+    allowedMetaFields?: string[] | null
     limit?: number
     useFastRemoteRetry?: boolean
     withCredentials?: boolean

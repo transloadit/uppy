@@ -344,11 +344,11 @@ export default class Tus extends BasePlugin {
 
       /** @type {Record<string, string>} */
       const meta = {}
-      const metaFields = Array.isArray(opts.metaFields)
-        ? opts.metaFields
+      const allowedMetaFields = Array.isArray(opts.allowedMetaFields)
+        ? opts.allowedMetaFields
         // Send along all fields by default.
         : Object.keys(file.meta)
-      metaFields.forEach((item) => {
+      allowedMetaFields.forEach((item) => {
         meta[item] = file.meta[item]
       })
 
