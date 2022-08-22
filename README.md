@@ -78,7 +78,6 @@ Alternatively, you can also use a pre-built bundle from Transloadit’s CDN: Edg
 <link href="https://releases.transloadit.com/uppy/v3.0.0-beta.5/uppy.min.css" rel="stylesheet">
 
 <!-- 2. Add JS before the closing `</body>` -->
-<script src="https://releases.transloadit.com/uppy/v3.0.0-beta.5/uppy.min.js"></script>
 
 <!-- 3. Initialize -->
 <div id="files-drag-drop"></div>
