@@ -8749,17 +8749,28 @@ __metadata:
   resolution: "@uppy/react@workspace:packages/@uppy/react"
   dependencies:
     "@types/react": ^18.0.8
-    "@uppy/dashboard": "workspace:^"
-    "@uppy/drag-drop": "workspace:^"
-    "@uppy/file-input": "workspace:^"
-    "@uppy/progress-bar": "workspace:^"
-    "@uppy/status-bar": "workspace:^"
     "@uppy/utils": "workspace:^"
     prop-types: ^15.6.1
     react: ^18.1.0
   peerDependencies:
     "@uppy/core": "workspace:^"
+    "@uppy/dashboard": "workspace:^"
+    "@uppy/drag-drop": "workspace:^"
+    "@uppy/file-input": "workspace:^"
+    "@uppy/progress-bar": "workspace:^"
+    "@uppy/status-bar": "workspace:^"
     react: ^16.0.0 || ^17.0.0 || ^18.0.0
+  peerDependenciesMeta:
+    "@uppy/dashboard":
+      optional: true
+    "@uppy/drag-drop":
+      optional: true
+    "@uppy/file-input":
+      optional: true
+    "@uppy/progress-bar":
+      optional: true
+    "@uppy/status-bar":
+      optional: true
   languageName: unknown
   linkType: soft
 
