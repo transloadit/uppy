@@ -437,7 +437,7 @@ class Uppy {
     // Uppy expects files in { name, type, size, data } format.
     // If the actual File object is passed from input[type=file] or drag-drop,
     // we normalize it to match Uppy file object
-    if (!fileDescriptor.data && !fileDescriptor.isRemote) {
+    if (fileDescriptor instanceof File) {
       fileDescriptor = {
         name: fileDescriptor.name,
         type: fileDescriptor.type,
