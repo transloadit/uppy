@@ -115,6 +115,22 @@ See the [Robodog migration guide](#Migrate-from-Robodog-to-Uppy-plugins).
   * reason: transition to ESM.
   * migrate: import the `Uppy` class by default and/or use named exports for everything else.
 
+#### `@uppy/transloadit`
+
+Remove export of `ALLOWED_COMPANION_PATTERN`, `COMPANION`, and `COMPANION_PATTERN` in favor of `COMPANION_URL` and `COMPANION_ALLOWED_HOSTS`. This is to have more intention revealing names, `COMPANION` sounds like the Companion instance, `COMPANION_URL` makes it more clear that it’s a URL.
+
+These are properties can now be imported and used for remote sources plugins when using Transloadit:
+
+```js
+import { COMPANION_URL, COMPANION_ALLOWED_HOSTS } from '@uppy/transloadit'
+
+// ...
+uppy.use(Dropbox, {
+  companionUrl: COMPANION_URL,
+  companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
+})
+```
+
 #### `@uppy/aws-s3-multipart`
 
 * Make `headers` inside the return value of [`prepareUploadParts`](/docs/aws-s3-multipart/#prepareUploadParts-file-partData) part-indexed too.
