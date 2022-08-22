@@ -21,7 +21,7 @@
   },
   "private": true,
   "scripts": {
-    "start:server": "node server.cjs",
+    "start:server": "node server.js",
     "start:client": "vite",
     "start": "npm-run-all --parallel start:server start:client"
   }
