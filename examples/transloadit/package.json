@@ -2,16 +2,32 @@
   "name": "@uppy-example/transloadit",
   "version": "0.0.0",
   "dependencies": {
-    "@babel/core": "^7.4.4",
-    "@uppy/robodog": "workspace:*",
-    "babelify": "^10.0.0",
-    "budo": "^11.3.2",
+    "@uppy/core": "workspace:*",
+    "@uppy/dashboard": "workspace:*",
+    "@uppy/drop-target": "workspace:*",
+    "@uppy/form": "workspace:*",
+    "@uppy/image-editor": "workspace:*",
+    "@uppy/progress-bar": "workspace:*",
+    "@uppy/remote-sources": "workspace:*",
+    "@uppy/transloadit": "workspace:*",
+    "@uppy/webcam": "workspace:*",
     "express": "^4.16.4",
     "he": "^1.2.0"
   },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^22.0.0",
+    "@rollup/plugin-node-resolve": "^13.0.0",
+    "npm-run-all": "^4.1.5",
+    "rollup": "^2.60.2",
+    "rollup-plugin-css-only": "^3.0.0",
+    "rollup-plugin-livereload": "^2.0.0",
+    "rollup-plugin-terser": "^7.0.0"
+  },
   "private": true,
   "scripts": {
-    "css": "cp ../../packages/uppy/dist/uppy.min.css .",
-    "start": "yarn run css && (node server & budo main.js:bundle.js -- -t babelify & wait)"
+    "serve": "sirv .",
+    "start:server": "node server.cjs",
+    "start:client": "rollup -c -w",
+    "start": "npm-run-all --parallel start:server start:client"
   }
 }

@@ -25,7 +25,8 @@ function onrequest (req, res) {
 
   function onbody (body) {
     const fields = qs.parse(body)
-    const assemblies = JSON.parse(fields.transloadit)
+    const result = JSON.parse(fields.uppyResult)
+    const assemblies = result[0].transloadit
 
     res.setHeader('content-type', 'text/html')
     res.write(Header())
@@ -76,9 +77,33 @@ function FormFields (fields) {
 
   function Field ([name, value]) {
     if (name === 'transloadit') return ''
+    let isValueJSON = false
+    if (value.startsWith('{') || value.startsWith('[')) {
+      try {
+        value = JSON.stringify(
+          JSON.parse(value),
+          null,
+          2,
+        )
+        isValueJSON = true
+      } catch {
+        // Nothing
+      }
+    }
+
+    const prettyValue = isValueJSON ? `
+        <details open>
+          <code>
+            <pre style="max-width: 100%; max-height: 400px; white-space: pre-wrap; overflow: auto;">${e(value)}</pre>
+          </code>
+        </details>
+      ` : e(value)
+
     return `
       <dt>${e(name)}</dt>
-      <dd>${e(value)}</dd>
+      <dd>
+        ${prettyValue}
+      </dd>
     `
   }
 }
