@@ -10,7 +10,7 @@ export interface XHRUploadOptions extends PluginOptions {
     bundle?: boolean
     formData?: boolean
     headers?: Headers | ((file: UppyFile) => Headers)
-    metaFields?: string[]
+    allowedMetaFields?: string[] | null
     fieldName?: string
     timeout?: number
     responseUrlFieldName?: string
