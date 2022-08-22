@@ -67,9 +67,9 @@ When [`formData`](#formData-true) is set to true, this is used as the form field
 name for the file to be uploaded. It defaults to `'files[]'` if `bundle` option
 is set to `true`, otherwise it defaults to `'file'`.
 
-### `metaFields: null`
+### `allowedMetaFields: null`
 
-Pass an array of field names to limit the metadata fields that will be sent to the endpoint as form fields.
+Pass an array of field names to limit the metadata fields that will be added to uploads as [Tus Metadata](https://tus.io/protocols/resumable-upload.html#upload-metadata).
 
 * Set this to `['name']` to only send the `name` field.
 * Set this to `null` (the default) to send _all_ metadata fields.

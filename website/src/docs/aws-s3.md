@@ -66,12 +66,13 @@ uppy.use(AwsS3, {
 
 Custom headers that should be sent along to [Companion][companion docs] on every request.
 
-### `metaFields: []`
+### `allowedMetaFields: null`
 
-Pass an array of field names to specify the metadata fields that should be stored in S3 as Object Metadata. This takes values from each file’s `file.meta` property.
+Pass an array of field names to limit the metadata fields that will be added to uploads as [Tus Metadata](https://tus.io/protocols/resumable-upload.html#upload-metadata).
 
-* Set this to `['name']` to only send the name field.
-* Set this to an empty array `[]` (the default) to not send any fields.
+* Set this to `['name']` to only send the `name` field.
+* Set this to `null` (the default) to send _all_ metadata fields.
+* Set this to an empty array `[]` to not send any fields.
 
 ### `getUploadParameters(file)`
 
