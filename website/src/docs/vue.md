@@ -13,10 +13,9 @@ Note: _All plugin names are in kebab-case for the HTML element, and in CamelCase
 
 ## Installation
 
-All Vue components are provided through the `@uppy/vue` package. Not that those
-components rely on external packages that are not longer provided with
-`@uppy/vue` (such as `@uppy/core`, `@uppy/dashboard`, `@uppy/drag-drop`,
-`@uppy/file-input`, `@uppy/progress-bar`, `@uppy/status-bar`).
+All Vue components are provided through the `@uppy/vue` package, note that the
+underling Uppy plugin is no longer provided and you would need to install it
+explicitly. See [Usage](#usage) for more info.
 
 Install from NPM:
 
