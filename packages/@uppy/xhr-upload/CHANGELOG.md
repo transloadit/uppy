@@ -1,5 +1,12 @@
 # @uppy/xhr-upload
 
+## 3.0.0
+
+Released: 2022-08-22
+Included in: Uppy v3.0.0
+
+- @uppy/aws-s3,@uppy/tus,@uppy/xhr-upload: @uppy/tus, @uppy/xhr-upload, @uppy/aws-s3: `metaFields` -> `allowedMetaFields` (Merlijn Vos / #4023)
+
 ## 3.0.0-beta.2
 
 Released: 2022-07-27

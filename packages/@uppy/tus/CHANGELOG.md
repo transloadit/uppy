@@ -1,5 +1,15 @@
 # @uppy/tus
 
+## 3.0.0
+
+Released: 2022-08-22
+Included in: Uppy v3.0.0
+
+- @uppy/aws-s3,@uppy/tus,@uppy/xhr-upload: @uppy/tus, @uppy/xhr-upload, @uppy/aws-s3: `metaFields` -> `allowedMetaFields` (Merlijn Vos / #4023)
+- @uppy/tus: avoid crashing when Tus client reports an error (Antoine du Hamel / #4019)
+- @uppy/tus: fix dependencies (Antoine du Hamel / #3923)
+- @uppy/tus: add file argument to `onBeforeRequest` (Merlijn Vos / #3984)
+
 ## 3.0.0-beta.2
 
 Released: 2022-08-03

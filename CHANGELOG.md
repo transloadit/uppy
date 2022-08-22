@@ -12,6 +12,74 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 3.0.0
+
+Released: 2022-08-22
+
+| Package                   | Version | Package                   | Version |
+| ------------------------- | ------- | ------------------------- | ------- |
+| @uppy/angular             |   0.4.0 | @uppy/progress-bar        |   3.0.0 |
+| @uppy/audio               |   1.0.0 | @uppy/provider-views      |   3.0.0 |
+| @uppy/aws-s3              |   3.0.0 | @uppy/react               |   3.0.0 |
+| @uppy/aws-s3-multipart    |   3.0.0 | @uppy/react-native        |   1.0.0 |
+| @uppy/box                 |   2.0.0 | @uppy/redux-dev-tools     |   3.0.0 |
+| @uppy/companion           |   4.0.0 | @uppy/remote-sources      |   1.0.0 |
+| @uppy/companion-client    |   3.0.0 | @uppy/screen-capture      |   3.0.0 |
+| @uppy/compressor          |   1.0.0 | @uppy/status-bar          |   3.0.0 |
+| @uppy/core                |   3.0.0 | @uppy/store-default       |   3.0.0 |
+| @uppy/dashboard           |   3.0.0 | @uppy/store-redux         |   3.0.0 |
+| @uppy/drag-drop           |   3.0.0 | @uppy/svelte              |   2.0.0 |
+| @uppy/drop-target         |   2.0.0 | @uppy/thumbnail-generator |   3.0.0 |
+| @uppy/dropbox             |   3.0.0 | @uppy/transloadit         |   3.0.0 |
+| @uppy/facebook            |   3.0.0 | @uppy/tus                 |   3.0.0 |
+| @uppy/file-input          |   3.0.0 | @uppy/unsplash            |   3.0.0 |
+| @uppy/form                |   3.0.0 | @uppy/url                 |   3.0.0 |
+| @uppy/golden-retriever    |   3.0.0 | @uppy/utils               |   5.0.0 |
+| @uppy/google-drive        |   3.0.0 | @uppy/vue                 |   1.0.0 |
+| @uppy/image-editor        |   2.0.0 | @uppy/webcam              |   3.0.0 |
+| @uppy/informer            |   3.0.0 | @uppy/xhr-upload          |   3.0.0 |
+| @uppy/instagram           |   3.0.0 | @uppy/zoom                |   2.0.0 |
+| @uppy/locales             |   3.0.0 | uppy                      |   3.0.0 |
+| @uppy/onedrive            |   3.0.0 |                           |         |
+
+- docs: Use RemoteSources in readme example (Artur Paikin / #4030)
+- docs: Add migration guide for Uppy 3.x, Companion 4.x, and Robodog (Merlijn Vos / #3913)
+- example: upgrade React example to use React 18 (Antoine du Hamel / #4002)
+- meta: fix linter failures (Antoine du Hamel / #4029)
+- @uppy/vue: move `@uppy/` packages to peer dependencies (Antoine du Hamel / #4024)
+- @uppy/robodog: remove package (Antoine du Hamel / #3946)
+- example: migrate `digitalocean-spaces` to ESM (Antoine du Hamel / #4015)
+- example: replace Robodog example with Transloadit + RemoteSources + Form (Antoine du Hamel / #4027)
+- website: replace Robodog example with Uppy plugins (Artur Paikin / #4026)
+- @uppy/aws-s3,@uppy/tus,@uppy/xhr-upload: @uppy/tus, @uppy/xhr-upload, @uppy/aws-s3: `metaFields` -> `allowedMetaFields` (Merlijn Vos / #4023)
+- example: showcase migration out of Robodog (Antoine du Hamel / #4021)
+- example: fix Svelte dev mode (Antoine du Hamel / #4025)
+- example: fix docs and env for Vite examples (Antoine du Hamel / #4018)
+- @uppy/tus: avoid crashing when Tus client reports an error (Antoine du Hamel / #4019)
+- @uppy/react: move `@uppy/` packages to peer dependencies (Antoine du Hamel / #4004)
+- @uppy/core: core: uppy.addFile should accept browser File objects (Artur Paikin / #4020)
+- example: fix svelte example (Antoine du Hamel / #4017)
+- example: migrate `python-xhr` to ESM (Antoine du Hamel / #4010)
+- example: migrate `php-xhr` to ESM (Antoine du Hamel / #4009)
+- example: migrate `node-xhr` to ESM (Antoine du Hamel / #4008)
+- example: migrate `xhr-bundle` to ESM (Antoine du Hamel / #4012)
+- example: migrate `multiple-instances` to ESM (Antoine du Hamel / #4007)
+- example: replace `transloadit-textarea` with `transloadit-markdown-bin` (Antoine du Hamel / #4013)
+- example: add README to Svelte example (Antoine du Hamel / #4011)
+- build: Remove size-limit for now (Artur Paikin / #4003)
+- @uppy/core,@uppy/dashboard,@uppy/status-bar: Style tweaks: use all: initial + other resets (Artur Paikin / #3983)
+- @uppy/aws-s3: aws-s3: fix incorrect comparison for `file-removed` (Merlijn Vos / #3962)
+- example: update to new CDN export names (Antoine du Hamel / #4006)
+- example: fix dependencies of `bundled` example (Antoine du Hamel / #4005)
+- @uppy/tus: fix dependencies (Antoine du Hamel / #3923)
+- @uppy/tus: add file argument to `onBeforeRequest` (Merlijn Vos / #3984)
+- @uppy/utils: fix drop of multiple files on Chromium browsers (Antoine du Hamel / #3998)
+- @uppy/angular: upgrade to Angular 14 (Antoine du Hamel / #3997)
+- example: update Angular example to v14 (Antoine du Hamel / #3996)
+- @uppy/utils: Fix @uppy/utils microtip.scss export (Merlijn Vos / #3995)
+- docs: Companion: make streaming upload recommended & other docs tweaks (Mikael Finstad / #3994)
+
+
 ## 3.0.0-beta.5
 
 Released: 2022-08-16
