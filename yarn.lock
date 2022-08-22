@@ -8966,16 +8966,27 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/vue@workspace:packages/@uppy/vue"
   dependencies:
+    shallow-equal: ^1.2.1
+    vue: ^2.6.14
+  peerDependencies:
+    "@uppy/core": "workspace:^"
     "@uppy/dashboard": "workspace:^"
     "@uppy/drag-drop": "workspace:^"
     "@uppy/file-input": "workspace:^"
     "@uppy/progress-bar": "workspace:^"
     "@uppy/status-bar": "workspace:^"
-    shallow-equal: ^1.2.1
-    vue: ^2.6.14
-  peerDependencies:
-    "@uppy/core": "workspace:^"
     vue: ">=2.6.11"
+  peerDependenciesMeta:
+    "@uppy/dashboard":
+      optional: true
+    "@uppy/drag-drop":
+      optional: true
+    "@uppy/file-input":
+      optional: true
+    "@uppy/progress-bar":
+      optional: true
+    "@uppy/status-bar":
+      optional: true
   languageName: unknown
   linkType: soft
 
