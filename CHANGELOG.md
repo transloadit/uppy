@@ -16,6 +16,9 @@ In the current stage we aim to release a new version at least every month.
 
 Released: 2022-08-22
 
+**Migration guides:**
+https://uppy.io/docs/migration-guides.html
+
 | Package                   | Version | Package                   | Version |
 | ------------------------- | ------- | ------------------------- | ------- |
 | @uppy/angular             |   0.4.0 | @uppy/progress-bar        |   3.0.0 |
@@ -79,35 +82,9 @@ Released: 2022-08-22
 - @uppy/utils: Fix @uppy/utils microtip.scss export (Merlijn Vos / #3995)
 - docs: Companion: make streaming upload recommended & other docs tweaks (Mikael Finstad / #3994)
 
-
-## 3.0.0-beta.5
+### 3.0.0-beta.5
 
 Released: 2022-08-16
-
-| Package                   |      Version | Package                   |      Version |
-| ------------------------- | ------------ | ------------------------- | ------------ |
-| @uppy/audio               | 1.0.0-beta.2 | @uppy/progress-bar        | 3.0.0-beta.2 |
-| @uppy/aws-s3              | 3.0.0-beta.3 | @uppy/provider-views      | 3.0.0-beta.3 |
-| @uppy/aws-s3-multipart    | 3.0.0-beta.4 | @uppy/react               | 3.0.0-beta.4 |
-| @uppy/box                 | 2.0.0-beta.2 | @uppy/redux-dev-tools     | 3.0.0-beta.2 |
-| @uppy/companion           | 4.0.0-beta.4 | @uppy/remote-sources      | 1.0.0-beta.4 |
-| @uppy/companion-client    | 3.0.0-beta.2 | @uppy/screen-capture      | 3.0.0-beta.3 |
-| @uppy/compressor          | 1.0.0-beta.3 | @uppy/status-bar          | 3.0.0-beta.3 |
-| @uppy/core                | 3.0.0-beta.4 | @uppy/store-default       | 3.0.0-beta.3 |
-| @uppy/dashboard           | 3.0.0-beta.4 | @uppy/store-redux         | 3.0.0-beta.3 |
-| @uppy/drag-drop           | 3.0.0-beta.2 | @uppy/svelte              | 2.0.0-beta.2 |
-| @uppy/drop-target         | 2.0.0-beta.3 | @uppy/thumbnail-generator | 3.0.0-beta.2 |
-| @uppy/dropbox             | 3.0.0-beta.2 | @uppy/transloadit         | 3.0.0-beta.5 |
-| @uppy/facebook            | 3.0.0-beta.2 | @uppy/tus                 | 3.0.0-beta.3 |
-| @uppy/file-input          | 3.0.0-beta.2 | @uppy/unsplash            | 3.0.0-beta.2 |
-| @uppy/form                | 3.0.0-beta.2 | @uppy/url                 | 3.0.0-beta.3 |
-| @uppy/golden-retriever    | 3.0.0-beta.2 | @uppy/utils               | 5.0.0-beta.1 |
-| @uppy/google-drive        | 3.0.0-beta.2 | @uppy/vue                 | 1.0.0-beta.2 |
-| @uppy/image-editor        | 2.0.0-beta.3 | @uppy/webcam              | 3.0.0-beta.3 |
-| @uppy/informer            | 3.0.0-beta.3 | @uppy/xhr-upload          | 3.0.0-beta.3 |
-| @uppy/instagram           | 3.0.0-beta.2 | @uppy/zoom                | 2.0.0-beta.2 |
-| @uppy/locales             | 3.0.0-beta.4 | uppy                      | 3.0.0-beta.5 |
-| @uppy/onedrive            | 3.0.0-beta.2 |                           |              |
 
 - meta: prepare release workflow for beta versions (Antoine du Hamel)
 - @uppy/provider-views: Reset filter input correctly in provider views (Merlijn Vos / #3978)
@@ -135,21 +112,9 @@ Released: 2022-08-16
 - @uppy/companion: show deprecation message when using legacy s3 options (Antoine du Hamel / #3944)
 - example: fix aws-companion example (Antoine du Hamel / #3850)
 
-
-## 3.0.0-beta.4
+### 3.0.0-beta.4
 
 Released: 2022-08-03
-
-| Package                |      Version | Package                |      Version |
-| ---------------------- | ------------ | ---------------------- | ------------ |
-| @uppy/aws-s3-multipart | 3.0.0-beta.3 | @uppy/screen-capture   | 3.0.0-beta.2 |
-| @uppy/companion        | 4.0.0-beta.3 | @uppy/status-bar       | 3.0.0-beta.2 |
-| @uppy/core             | 3.0.0-beta.3 | @uppy/store-default    | 3.0.0-beta.2 |
-| @uppy/dashboard        | 3.0.0-beta.3 | @uppy/transloadit      | 3.0.0-beta.4 |
-| @uppy/drop-target      | 2.0.0-beta.2 | @uppy/tus              | 3.0.0-beta.2 |
-| @uppy/informer         | 3.0.0-beta.2 | @uppy/url              | 3.0.0-beta.2 |
-| @uppy/react            | 3.0.0-beta.3 | @uppy/robodog          | 3.0.0-beta.4 |
-| @uppy/remote-sources   | 1.0.0-beta.3 | uppy                   | 3.0.0-beta.4 |
 
 - @uppy/companion,@uppy/tus: Upgrade tus-js-client to 3.0.0 (Merlijn Vos / #3942)
 - meta: fix release script (Antoine du Hamel)
@@ -165,21 +130,9 @@ Released: 2022-08-03
 - @uppy/drop-target: remove `isFileTransfer` from the public API (Antoine du Hamel / #3932)
 - meta: improve beta release script (Antoine du Hamel)
 
-
-## 3.0.0-beta.3
+### 3.0.0-beta.3
 
 Released: 2022-07-27
-
-| Package                |      Version | Package                |      Version |
-| ---------------------- | ------------ | ---------------------- | ------------ |
-| @uppy/aws-s3           | 3.0.0-beta.2 | @uppy/react            | 3.0.0-beta.2 |
-| @uppy/aws-s3-multipart | 3.0.0-beta.2 | @uppy/remote-sources   | 1.0.0-beta.2 |
-| @uppy/companion        | 4.0.0-beta.2 | @uppy/store-redux      | 3.0.0-beta.2 |
-| @uppy/compressor       | 1.0.0-beta.2 | @uppy/transloadit      | 3.0.0-beta.3 |
-| @uppy/core             | 3.0.0-beta.2 | @uppy/webcam           | 3.0.0-beta.2 |
-| @uppy/dashboard        | 3.0.0-beta.2 | @uppy/xhr-upload       | 3.0.0-beta.2 |
-| @uppy/image-editor     | 2.0.0-beta.2 | @uppy/robodog          | 3.0.0-beta.3 |
-| @uppy/locales          | 3.0.0-beta.3 | uppy                   | 3.0.0-beta.3 |
 
 - @uppy/react: Fix exports in propTypes.js to fix website build (Murderlon)
 - @uppy/dashboard,@uppy/webcam: Add support for `mobileNativeCamera` option to Webcam and Dashboard (Artur Paikin / #3844)
@@ -193,16 +146,9 @@ Released: 2022-07-27
 - @uppy/companion: remove `COMPANION_S3_GETKEY_SAFE_BEHAVIOR` env variable (Antoine du Hamel / #3869)
 - meta: fix release script for major beta versions (Antoine du Hamel)
 
-
-## 3.0.0-beta.2
+### 3.0.0-beta.2
 
 Released: 2022-07-06
-
-| Package              |      Version | Package              |      Version |
-| -------------------- | ------------ | -------------------- | ------------ |
-| @uppy/companion      | 4.0.0-beta.1 | @uppy/transloadit    | 3.0.0-beta.2 |
-| @uppy/locales        | 3.0.0-beta.2 | @uppy/robodog        | 3.0.0-beta.2 |
-| @uppy/provider-views | 3.0.0-beta.2 | uppy                 | 3.0.0-beta.2 |
 
 - example: fix `custom-provider` example (Antoine du Hamel / #3854)
 - example: fix Vue3 example (Antoine du Hamel / #3774)
@@ -216,69 +162,18 @@ Released: 2022-07-06
 - @uppy/companion: Companion: make `emitSuccess` and `emitError` private (Mikael Finstad / #3832)
 - @uppy/companion: do not use a default upload protocol (Mikael Finstad / #3834)
 
-
-## 3.0.0-beta.1
+### 3.0.0-beta.1
 
 Released: 2022-06-09
-
-| Package                   |      Version | Package                   |      Version |
-| ------------------------- | ------------ | ------------------------- | ------------ |
-| uppy                      | 3.0.0-beta.1 | @uppy/google-drive        | 3.0.0-beta.1 |
-| @uppy/audio               | 1.0.0-beta.1 | @uppy/informer            | 3.0.0-beta.1 |
-| @uppy/box                 | 2.0.0-beta.1 | @uppy/instagram           | 3.0.0-beta.1 |
-| @uppy/compressor          | 1.0.0-beta.1 | @uppy/locales             | 3.0.0-beta.1 |
-| @uppy/drop-target         | 2.0.0-beta.1 | @uppy/onedrive            | 3.0.0-beta.1 |
-| @uppy/image-editor        | 2.0.0-beta.1 | @uppy/progress-bar        | 3.0.0-beta.1 |
-| @uppy/remote-sources      | 1.0.0-beta.1 | @uppy/provider-views      | 3.0.0-beta.1 |
-| @uppy/svelte              | 2.0.0-beta.1 | @uppy/react               | 3.0.0-beta.1 |
-| @uppy/vue                 | 1.0.0-beta.1 | @uppy/redux-dev-tools     | 3.0.0-beta.1 |
-| @uppy/zoom                | 2.0.0-beta.1 | @uppy/robodog             | 3.0.0-beta.1 |
-| @uppy/aws-s3              | 3.0.0-beta.1 | @uppy/screen-capture      | 3.0.0-beta.1 |
-| @uppy/aws-s3-multipart    | 3.0.0-beta.1 | @uppy/status-bar          | 3.0.0-beta.1 |
-| @uppy/companion-client    | 3.0.0-beta.1 | @uppy/store-default       | 3.0.0-beta.1 |
-| @uppy/core                | 3.0.0-beta.1 | @uppy/store-redux         | 3.0.0-beta.1 |
-| @uppy/dashboard           | 3.0.0-beta.1 | @uppy/thumbnail-generator | 3.0.0-beta.1 |
-| @uppy/drag-drop           | 3.0.0-beta.1 | @uppy/transloadit         | 3.0.0-beta.1 |
-| @uppy/dropbox             | 3.0.0-beta.1 | @uppy/tus                 | 3.0.0-beta.1 |
-| @uppy/facebook            | 3.0.0-beta.1 | @uppy/unsplash            | 3.0.0-beta.1 |
-| @uppy/file-input          | 3.0.0-beta.1 | @uppy/url                 | 3.0.0-beta.1 |
-| @uppy/form                | 3.0.0-beta.1 | @uppy/webcam              | 3.0.0-beta.1 |
-| @uppy/golden-retriever    | 3.0.0-beta.1 | @uppy/xhr-upload          | 3.0.0-beta.1 |
 
 - meta: improve release process for beta branch (Antoine du Hamel / #3809)
 - uppy: refactor to ESM (Antoine du Hamel / #3807)
 - @uppy/core,@uppy/dashboard: fix types for some events (Antoine du Hamel / #3812)
 - example: update Vue2 example (Antoine du Hamel / #3802)
 
-
-## 3.0.0-beta
+### 3.0.0-beta
 
 Released: 2022-05-30
-
-| Package                   |    Version | Package                   |    Version |
-| ------------------------- | ---------- | ------------------------- | ---------- |
-| @uppy/audio               | 3.0.0-beta | @uppy/progress-bar        | 3.0.0-beta |
-| @uppy/aws-s3              | 3.0.0-beta | @uppy/provider-views      | 3.0.0-beta |
-| @uppy/aws-s3-multipart    | 3.0.0-beta | @uppy/react               | 3.0.0-beta |
-| @uppy/box                 | 3.0.0-beta | @uppy/redux-dev-tools     | 3.0.0-beta |
-| @uppy/companion           | 4.0.0-beta | @uppy/robodog             | 3.0.0-beta |
-| @uppy/companion-client    | 3.0.0-beta | @uppy/screen-capture      | 3.0.0-beta |
-| @uppy/compressor          | 3.0.0-beta | @uppy/status-bar          | 3.0.0-beta |
-| @uppy/core                | 3.0.0-beta | @uppy/store-default       | 3.0.0-beta |
-| @uppy/dashboard           | 3.0.0-beta | @uppy/store-redux         | 3.0.0-beta |
-| @uppy/drag-drop           | 3.0.0-beta | @uppy/svelte              | 3.0.0-beta |
-| @uppy/drop-target         | 3.0.0-beta | @uppy/thumbnail-generator | 3.0.0-beta |
-| @uppy/dropbox             | 3.0.0-beta | @uppy/transloadit         | 3.0.0-beta |
-| @uppy/facebook            | 3.0.0-beta | @uppy/tus                 | 3.0.0-beta |
-| @uppy/file-input          | 3.0.0-beta | @uppy/unsplash            | 3.0.0-beta |
-| @uppy/form                | 3.0.0-beta | @uppy/url                 | 3.0.0-beta |
-| @uppy/golden-retriever    | 3.0.0-beta | @uppy/utils               | 5.0.0-beta |
-| @uppy/google-drive        | 3.0.0-beta | @uppy/vue                 | 3.0.0-beta |
-| @uppy/image-editor        | 3.0.0-beta | @uppy/webcam              | 3.0.0-beta |
-| @uppy/informer            | 3.0.0-beta | @uppy/xhr-upload          | 3.0.0-beta |
-| @uppy/instagram           | 3.0.0-beta | @uppy/zoom                | 3.0.0-beta |
-| @uppy/locales             | 3.0.0-beta | uppy                      | 3.0.0-beta |
-| @uppy/onedrive            | 3.0.0-beta |                           |            |
 
 - meta: temporary adjust release script for the beta (Antoine du Hamel)
 - meta: disable ESM to CJS transform in dist files (Antoine du Hamel / #3773)
@@ -287,7 +182,6 @@ Released: 2022-05-30
 - @uppy/companion: remove support for EOL versions of Node.js (Antoine du Hamel / #3784)
 - @uppy/react: refactor to ESM (Antoine du Hamel / #3780)
 - @uppy/transloadit: remove IE 10 hack (Antoine du Hamel / #3777)
-
 
 ## 2.13.2
 
