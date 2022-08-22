@@ -111,9 +111,12 @@ See the [Robodog migration guide](#Migrate-from-Robodog-to-Uppy-plugins).
 * Remove `reset()` method.
   * reason: it’s a duplicate of `cancelAll`, but with a less intention revealing name.
   * migrate: use `cancelAll`.
-* Remove backwards compatible exports (static properties on `Uppy`). Exports, such as `debugLogger`, used to also be accesible on the `Uppy` export. This has now been removed.
+* Remove backwards compatible exports (static properties on `Uppy`). Exports, such as `debugLogger`, used to also be accessible on the `Uppy` export. This has now been removed.
   * reason: transition to ESM.
   * migrate: import the `Uppy` class by default and/or use named exports for everything else.
+* `uppy.validateRestrictions()` now returns a `RestrictionError`, which is an extended `Error` class, instead of `{ result: false, reason: err.message }`.
+  * reason: best practises, this method should return `null` or an error instead of trying to mimic an error with `result: false`.
+  * migrate: check the return value, if it’s defined you have an error, otherwise all went well. Note that the error is `return`’ed, it’s not `throw`’n.
 
 #### `@uppy/transloadit`
 
