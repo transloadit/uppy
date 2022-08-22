@@ -78,14 +78,15 @@ Alternatively, you can also use a pre-built bundle from Transloadit’s CDN: Edg
 <link href="https://releases.transloadit.com/uppy/v3.0.0-beta.5/uppy.min.css" rel="stylesheet">
 
 <!-- 2. Add JS before the closing `</body>` -->
-<script src="https://releases.transloadit.com/uppy/v3.0.0-beta.5/uppy.min.js"></script>
 
 <!-- 3. Initialize -->
-<div class="UppyDragDrop"></div>
-<script>
-  var uppy = new Uppy.Core()
-  uppy.use(Uppy.DragDrop, { target: '.UppyDragDrop' })
-  uppy.use(Uppy.Tus, { endpoint: '//tusd.tusdemo.net/files/' })
+<div id="files-drag-drop"></div>
+<script type="module">
+  import { Uppy, Dashboard, Tus } from "https://releases.transloadit.com/uppy/v3.0.0-beta.5/uppy.min.mjs"
+
+  const uppy = new Uppy()
+  uppy.use(Dashboard, { target: '#files-drag-drop' })
+  uppy.use(Tus, { endpoint: 'https://tusd.tusdemo.net/files/' })
 </script>
 ```
 
@@ -210,10 +211,6 @@ Not all apps need all these features. An `<input type="file">` is fine in many s
 Transloadit’s team is small and we have a shared ambition to make a living from open source. By giving away projects like [tus.io](https://tus.io) and [Uppy](https://uppy.io), we’re hoping to advance the state of the art, make life a tiny little bit better for everyone and in doing so have rewarding jobs and get some eyes on our commercial service: [a content ingestion & processing platform](https://transloadit.com).
 
 Our thinking is that if only a fraction of our open source userbase can see the appeal of hosted versions straight from the source, that could already be enough to sustain our work. So far this is working out! We’re able to dedicate 80% of our time to open source and haven’t gone bankrupt yet. :D
-
-### Does Uppy support React?
-
-Yep, we have Uppy React components, please see [Uppy React docs](https://uppy.io/docs/react/).
 
 ### Does Uppy support S3 uploads?
 
