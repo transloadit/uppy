@@ -200,6 +200,7 @@ module.exports = {
         'examples/node-xhr/*.js',
         'examples/php-xhr/*.js',
         'examples/python-xhr/*.js',
+        'examples/react-example/*.js',
         'examples/transloadit/*.js',
         'examples/transloadit-markdown-bin/*.js',
         'examples/xhr-bundle/*.js',

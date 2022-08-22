@@ -1,11 +1,17 @@
 /* eslint-disable */
-const React = require('react')
-const Uppy = require('@uppy/core')
-const Tus = require('@uppy/tus')
-const GoogleDrive = require('@uppy/google-drive')
-const { Dashboard, DashboardModal, DragDrop, ProgressBar, FileInput } = require('@uppy/react')
+import React from'react'
+import Uppy from'@uppy/core'
+import Tus from'@uppy/tus'
+import GoogleDrive from'@uppy/google-drive'
+import { Dashboard, DashboardModal, DragDrop, ProgressBar, FileInput } from'@uppy/react'
 
-module.exports = class App extends React.Component {
+import '@uppy/core/dist/style.css'
+import '@uppy/dashboard/dist/style.css'
+import '@uppy/drag-drop/dist/style.css'
+import '@uppy/file-input/dist/style.css'
+import '@uppy/progress-bar/dist/style.css'
+
+export default class App extends React.Component {
   constructor (props) {
     super(props)
 

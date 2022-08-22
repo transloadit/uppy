@@ -596,7 +596,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/core@npm:>=7.2.2, @babel/core@npm:^7.0.0, @babel/core@npm:^7.1.0, @babel/core@npm:^7.11.6, @babel/core@npm:^7.12.10, @babel/core@npm:^7.12.3, @babel/core@npm:^7.14.3, @babel/core@npm:^7.14.6, @babel/core@npm:^7.17.2, @babel/core@npm:^7.17.5, @babel/core@npm:^7.17.9, @babel/core@npm:^7.4.4, @babel/core@npm:^7.4.5":
+"@babel/core@npm:>=7.2.2, @babel/core@npm:^7.0.0, @babel/core@npm:^7.1.0, @babel/core@npm:^7.11.6, @babel/core@npm:^7.12.10, @babel/core@npm:^7.12.3, @babel/core@npm:^7.14.3, @babel/core@npm:^7.14.6, @babel/core@npm:^7.17.2, @babel/core@npm:^7.17.5, @babel/core@npm:^7.17.9, @babel/core@npm:^7.18.10, @babel/core@npm:^7.4.4":
   version: 7.18.10
   resolution: "@babel/core@npm:7.18.10"
   dependencies:
@@ -1839,7 +1839,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/plugin-transform-react-jsx-self@npm:^7.0.0":
+"@babel/plugin-transform-react-jsx-self@npm:^7.0.0, @babel/plugin-transform-react-jsx-self@npm:^7.18.6":
   version: 7.18.6
   resolution: "@babel/plugin-transform-react-jsx-self@npm:7.18.6"
   dependencies:
@@ -1850,7 +1850,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/plugin-transform-react-jsx-source@npm:^7.0.0":
+"@babel/plugin-transform-react-jsx-source@npm:^7.0.0, @babel/plugin-transform-react-jsx-source@npm:^7.18.6":
   version: 7.18.6
   resolution: "@babel/plugin-transform-react-jsx-source@npm:7.18.6"
   dependencies:
@@ -1861,7 +1861,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/plugin-transform-react-jsx@npm:^7.0.0, @babel/plugin-transform-react-jsx@npm:^7.10.4, @babel/plugin-transform-react-jsx@npm:^7.12.12, @babel/plugin-transform-react-jsx@npm:^7.18.6":
+"@babel/plugin-transform-react-jsx@npm:^7.0.0, @babel/plugin-transform-react-jsx@npm:^7.10.4, @babel/plugin-transform-react-jsx@npm:^7.12.12, @babel/plugin-transform-react-jsx@npm:^7.18.10, @babel/plugin-transform-react-jsx@npm:^7.18.6":
   version: 7.18.10
   resolution: "@babel/plugin-transform-react-jsx@npm:7.18.10"
   dependencies:
@@ -2296,7 +2296,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/preset-react@npm:^7.0.0, @babel/preset-react@npm:^7.12.10":
+"@babel/preset-react@npm:^7.12.10":
   version: 7.18.6
   resolution: "@babel/preset-react@npm:7.18.6"
   dependencies:
@@ -4042,18 +4042,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nrwl/cli@npm:14.5.7":
-  version: 14.5.7
-  resolution: "@nrwl/cli@npm:14.5.7"
+"@nrwl/cli@npm:14.5.8":
+  version: 14.5.8
+  resolution: "@nrwl/cli@npm:14.5.8"
   dependencies:
-    nx: 14.5.7
-  checksum: 071d3dec21a478272da7c161a9ed9502276c30f4eb587fcaa9668b7a1f81def8a814c277cf92c2b70f2558ef299ee08771499f1fd07df0b9d6720f01c7d45f6c
+    nx: 14.5.8
+  checksum: 4fd72c4da62f96a3b57764bf0ffba2501ccf772c3c573c598d9f4722f25f97c13bf092b07d247c17a6dd9585076a132b972f530a8e7c8703bbaa1003c75d95ca
   languageName: node
   linkType: hard
 
 "@nrwl/devkit@npm:^14.2.4":
-  version: 14.5.7
-  resolution: "@nrwl/devkit@npm:14.5.7"
+  version: 14.5.8
+  resolution: "@nrwl/devkit@npm:14.5.8"
   dependencies:
     "@phenomnomnominal/tsquery": 4.1.1
     ejs: ^3.1.7
@@ -4062,18 +4062,18 @@ __metadata:
     tslib: ^2.3.0
   peerDependencies:
     nx: ">= 13.10 <= 15"
-  checksum: 4275f11c6894159c236a54bed514ad617103ae6a7fe626a912986c374bb3440a467269f81e29b5df6cea10498cbc9ff3ea641040bf9577bc4caf8356b2d0fe08
+  checksum: c497db4189f36c2ee28368bb25b6f753e67ded16de3669c51617580771f69964e045c1b661232f5780541fb9510bac4d5a653350437adfaf2e2c8477f4743640
   languageName: node
   linkType: hard
 
-"@nrwl/tao@npm:14.5.7":
-  version: 14.5.7
-  resolution: "@nrwl/tao@npm:14.5.7"
+"@nrwl/tao@npm:14.5.8":
+  version: 14.5.8
+  resolution: "@nrwl/tao@npm:14.5.8"
   dependencies:
-    nx: 14.5.7
+    nx: 14.5.8
   bin:
     tao: index.js
-  checksum: ce20762f9c01283b1593e35a5c6d080537c743b7f73c2891a5a0a2b22e6526895833ca33d447b05dbdc0d8e4da0ae2c391fb8da4418d658f500f703f8f0dac88
+  checksum: 4d8c22373f1cca3a54d1e4c4c5edc4c0be8e7e57c867fcb9f63356947970d910e56c1701d7d5842e59d34871fbe51073408f9d4e39ae16adfcd732fda76cb10a
   languageName: node
   linkType: hard
 
@@ -4327,74 +4327,74 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@parcel/css-darwin-arm64@npm:1.12.2":
-  version: 1.12.2
-  resolution: "@parcel/css-darwin-arm64@npm:1.12.2"
+"@parcel/css-darwin-arm64@npm:1.13.0":
+  version: 1.13.0
+  resolution: "@parcel/css-darwin-arm64@npm:1.13.0"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
 
-"@parcel/css-darwin-x64@npm:1.12.2":
-  version: 1.12.2
-  resolution: "@parcel/css-darwin-x64@npm:1.12.2"
+"@parcel/css-darwin-x64@npm:1.13.0":
+  version: 1.13.0
+  resolution: "@parcel/css-darwin-x64@npm:1.13.0"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
 
-"@parcel/css-linux-arm-gnueabihf@npm:1.12.2":
-  version: 1.12.2
-  resolution: "@parcel/css-linux-arm-gnueabihf@npm:1.12.2"
+"@parcel/css-linux-arm-gnueabihf@npm:1.13.0":
+  version: 1.13.0
+  resolution: "@parcel/css-linux-arm-gnueabihf@npm:1.13.0"
   conditions: os=linux & cpu=arm
   languageName: node
   linkType: hard
 
-"@parcel/css-linux-arm64-gnu@npm:1.12.2":
-  version: 1.12.2
-  resolution: "@parcel/css-linux-arm64-gnu@npm:1.12.2"
+"@parcel/css-linux-arm64-gnu@npm:1.13.0":
+  version: 1.13.0
+  resolution: "@parcel/css-linux-arm64-gnu@npm:1.13.0"
   conditions: os=linux & cpu=arm64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@parcel/css-linux-arm64-musl@npm:1.12.2":
-  version: 1.12.2
-  resolution: "@parcel/css-linux-arm64-musl@npm:1.12.2"
+"@parcel/css-linux-arm64-musl@npm:1.13.0":
+  version: 1.13.0
+  resolution: "@parcel/css-linux-arm64-musl@npm:1.13.0"
   conditions: os=linux & cpu=arm64 & libc=musl
   languageName: node
   linkType: hard
 
-"@parcel/css-linux-x64-gnu@npm:1.12.2":
-  version: 1.12.2
-  resolution: "@parcel/css-linux-x64-gnu@npm:1.12.2"
+"@parcel/css-linux-x64-gnu@npm:1.13.0":
+  version: 1.13.0
+  resolution: "@parcel/css-linux-x64-gnu@npm:1.13.0"
   conditions: os=linux & cpu=x64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@parcel/css-linux-x64-musl@npm:1.12.2":
-  version: 1.12.2
-  resolution: "@parcel/css-linux-x64-musl@npm:1.12.2"
+"@parcel/css-linux-x64-musl@npm:1.13.0":
+  version: 1.13.0
+  resolution: "@parcel/css-linux-x64-musl@npm:1.13.0"
   conditions: os=linux & cpu=x64 & libc=musl
   languageName: node
   linkType: hard
 
-"@parcel/css-win32-x64-msvc@npm:1.12.2":
-  version: 1.12.2
-  resolution: "@parcel/css-win32-x64-msvc@npm:1.12.2"
+"@parcel/css-win32-x64-msvc@npm:1.13.0":
+  version: 1.13.0
+  resolution: "@parcel/css-win32-x64-msvc@npm:1.13.0"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
 
 "@parcel/css@npm:^1.12.2":
-  version: 1.12.2
-  resolution: "@parcel/css@npm:1.12.2"
+  version: 1.13.0
+  resolution: "@parcel/css@npm:1.13.0"
   dependencies:
-    "@parcel/css-darwin-arm64": 1.12.2
-    "@parcel/css-darwin-x64": 1.12.2
-    "@parcel/css-linux-arm-gnueabihf": 1.12.2
-    "@parcel/css-linux-arm64-gnu": 1.12.2
-    "@parcel/css-linux-arm64-musl": 1.12.2
-    "@parcel/css-linux-x64-gnu": 1.12.2
-    "@parcel/css-linux-x64-musl": 1.12.2
-    "@parcel/css-win32-x64-msvc": 1.12.2
+    "@parcel/css-darwin-arm64": 1.13.0
+    "@parcel/css-darwin-x64": 1.13.0
+    "@parcel/css-linux-arm-gnueabihf": 1.13.0
+    "@parcel/css-linux-arm64-gnu": 1.13.0
+    "@parcel/css-linux-arm64-musl": 1.13.0
+    "@parcel/css-linux-x64-gnu": 1.13.0
+    "@parcel/css-linux-x64-musl": 1.13.0
+    "@parcel/css-win32-x64-msvc": 1.13.0
     detect-libc: ^1.0.3
   dependenciesMeta:
     "@parcel/css-darwin-arm64":
@@ -4413,7 +4413,7 @@ __metadata:
       optional: true
     "@parcel/css-win32-x64-msvc":
       optional: true
-  checksum: b96d703f599f2273964ff527ba1f40f90289ed4f0439fc7562af5546fedc51d8f9926e6c22956f2f1756c673aeca32eb6f05d1a84006aa190406c4fc4a9589de
+  checksum: 97f319baeec4d628bc84fd293cc048645d66f31c370fad9f1537cd775291e1ac56b3892daeee4d4a2cf9b39653cdfed2e19a63d8d051f6d7279683ae3becbf7f
   languageName: node
   linkType: hard
 
@@ -6625,11 +6625,11 @@ __metadata:
   linkType: hard
 
 "@swc/helpers@npm:^0.4.2":
-  version: 0.4.7
-  resolution: "@swc/helpers@npm:0.4.7"
+  version: 0.4.8
+  resolution: "@swc/helpers@npm:0.4.8"
   dependencies:
     tslib: ^2.4.0
-  checksum: 6538bc14f0b7f3054f53db5f00c52ffb7fa949c27983a6c86986222beabee355dbc4565b8788510bd326ffced6244adada9ff07985d7202e8bb71a81e12cacd1
+  checksum: 2a3c6a520c3dc03c14f547bcdfa838bbe82933ad1183820626eb907e3300ed4d19863dafbfc0f2205bf722ac5d3b4c0481971f2043b5a91ce0c5d5086da205cc
   languageName: node
   linkType: hard
 
@@ -6939,12 +6939,12 @@ __metadata:
   linkType: hard
 
 "@types/eslint@npm:*, @types/eslint@npm:^8.2.0":
-  version: 8.4.5
-  resolution: "@types/eslint@npm:8.4.5"
+  version: 8.4.6
+  resolution: "@types/eslint@npm:8.4.6"
   dependencies:
     "@types/estree": "*"
     "@types/json-schema": "*"
-  checksum: 428b0c971a50adb0d08621e76f21b284580a0052a31341a0e6d553f72b54cd0142d549aa1497c7e3bc56e9f6bcc27286e66e0216e1ba76d1a5ecd2279c40bc8c
+  checksum: bfaf27b00031b2238139003965475d023306119e467947f7a43a41e380918e365618e2ae6a6ae638697f6421a6bb1571db078695ff5e548f23618000b38acd23
   languageName: node
   linkType: hard
 
@@ -7216,9 +7216,9 @@ __metadata:
   linkType: hard
 
 "@types/lodash@npm:*, @types/lodash@npm:^4.14.167":
-  version: 4.14.183
-  resolution: "@types/lodash@npm:4.14.183"
-  checksum: 9c754dc7a2e5f26f9c67e494cffbe5447135a4e30eb2fcbc9da05dd5fa5fbf8579059bcf15014307c1c5d1c6d1b7870860618990d96abee9389d8cb79b3ac93c
+  version: 4.14.184
+  resolution: "@types/lodash@npm:4.14.184"
+  checksum: 6d9a4d67f7f9d0ec3fd21174f3dd3d00629dc1227eb469450eace53adbc1f7e2330699c28d0fe093e5f0fef0f0e763098be1f779268857213224af082b62be21
   languageName: node
   linkType: hard
 
@@ -7288,23 +7288,23 @@ __metadata:
   linkType: hard
 
 "@types/node@npm:*, @types/node@npm:>= 8, @types/node@npm:>=10.0.0, @types/node@npm:^18.0.0, @types/node@npm:^18.0.3":
-  version: 18.7.6
-  resolution: "@types/node@npm:18.7.6"
-  checksum: 5122988c325eda8d1f5cbe4494916036aae1758f9d5bb2d8139a800b8bad1540fbb167cd3c759da9a5cb4600cd3507609ac7969747113c1549a3e4320a17b1a9
+  version: 18.7.9
+  resolution: "@types/node@npm:18.7.9"
+  checksum: 691ea1b734c0a39c4fe03c104fed18e0148bda6f2504dd341f84be8153d28e74d8114198d2d064ab7fdd2ece3ee16c60b78eea0101fb004f6e4595a631bc3839
   languageName: node
   linkType: hard
 
 "@types/node@npm:^14.0.10 || ^16.0.0, @types/node@npm:^14.14.20 || ^16.0.0":
-  version: 16.11.49
-  resolution: "@types/node@npm:16.11.49"
-  checksum: 05545ee49da3b783ab77cddca45db6f4d47861c2bb148a17b774688e1082f20f27177591d140923724bcd8643b32291203f6f1eadba397e394232d4a1e28e07a
+  version: 16.11.52
+  resolution: "@types/node@npm:16.11.52"
+  checksum: eb688bff28015f1399264b7aa347d5f40e165d438306bd5884d78993671c5e43b7849b8ddc74b91bf7c7b73e15ba54fc56ea1db2118b0e3f59f9fabd2adc7fe7
   languageName: node
   linkType: hard
 
 "@types/node@npm:^14.14.31":
-  version: 14.18.24
-  resolution: "@types/node@npm:14.18.24"
-  checksum: 631b86787a2110048bcd45d2555e6b9265594a6c65bcdc9947004cbdf1b4b9c8f84b7f0c4f03e4b0b1d24fd821c8d39b931073e21832c8c29dc74de060efd11d
+  version: 14.18.25
+  resolution: "@types/node@npm:14.18.25"
+  checksum: 8d4e3fcf0e2c90d5a2da61f336b754455fa025a4705f55f8d1be1d19fcd32e7e3af9e04f08d497032cebc59f84ea8c0bb4431390100b1d799d4d0d2c5d501cca
   languageName: node
   linkType: hard
 
@@ -8183,19 +8183,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy-example/react-example@workspace:examples/react-example":
-  version: 0.0.0-use.local
-  resolution: "@uppy-example/react-example@workspace:examples/react-example"
-  dependencies:
-    "@babel/core": ^7.4.5
-    "@babel/preset-react": ^7.0.0
-    babelify: ^10.0.0
-    budo: ^11.6.2
-    react: ^16.8.6
-    react-dom: ^16.8.6
-  languageName: unknown
-  linkType: soft
-
 "@uppy-example/react-native-expo@workspace:examples/react-native-expo":
   version: 0.0.0-use.local
   resolution: "@uppy-example/react-native-expo@workspace:examples/react-native-expo"
@@ -8213,6 +8200,25 @@ __metadata:
     preact-render-to-string: ^5.1.0
     react: ^16.8.6
     react-native: ~0.63.4
+  languageName: unknown
+  linkType: soft
+
+"@uppy-example/react@workspace:examples/react-example":
+  version: 0.0.0-use.local
+  resolution: "@uppy-example/react@workspace:examples/react-example"
+  dependencies:
+    "@uppy/core": "workspace:*"
+    "@uppy/dashboard": "workspace:*"
+    "@uppy/drag-drop": "workspace:*"
+    "@uppy/file-input": "workspace:*"
+    "@uppy/google-drive": "workspace:*"
+    "@uppy/progress-bar": "workspace:*"
+    "@uppy/react": "workspace:*"
+    "@uppy/tus": "workspace:*"
+    "@vitejs/plugin-react": ^2.0.0
+    react: ^18.0.0
+    react-dom: ^18.0.0
+    vite: ^3.0.0
   languageName: unknown
   linkType: soft
 
@@ -8608,7 +8614,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/file-input@workspace:^, @uppy/file-input@workspace:packages/@uppy/file-input":
+"@uppy/file-input@workspace:*, @uppy/file-input@workspace:^, @uppy/file-input@workspace:packages/@uppy/file-input":
   version: 0.0.0-use.local
   resolution: "@uppy/file-input@workspace:packages/@uppy/file-input"
   dependencies:
@@ -8750,7 +8756,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/react@workspace:packages/@uppy/react":
+"@uppy/react@workspace:*, @uppy/react@workspace:packages/@uppy/react":
   version: 0.0.0-use.local
   resolution: "@uppy/react@workspace:packages/@uppy/react"
   dependencies:
@@ -9018,6 +9024,23 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@vitejs/plugin-react@npm:^2.0.0":
+  version: 2.0.1
+  resolution: "@vitejs/plugin-react@npm:2.0.1"
+  dependencies:
+    "@babel/core": ^7.18.10
+    "@babel/plugin-transform-react-jsx": ^7.18.10
+    "@babel/plugin-transform-react-jsx-development": ^7.18.6
+    "@babel/plugin-transform-react-jsx-self": ^7.18.6
+    "@babel/plugin-transform-react-jsx-source": ^7.18.6
+    magic-string: ^0.26.2
+    react-refresh: ^0.14.0
+  peerDependencies:
+    vite: ^3.0.0
+  checksum: 90702768ee34bd7e5021398ab827c682cfe1ebfce0988a532a678b664d80b9ad991d1c24f81045626b811c9aa2aae7d9d0fd563db5c6b7b8fd36c8eecdfc04b9
+  languageName: node
+  linkType: hard
+
 "@vitejs/plugin-vue@npm:^3.0.0":
   version: 3.0.3
   resolution: "@vitejs/plugin-vue@npm:3.0.3"
@@ -9168,14 +9191,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vue/compiler-sfc@npm:2.7.8":
-  version: 2.7.8
-  resolution: "@vue/compiler-sfc@npm:2.7.8"
+"@vue/compiler-sfc@npm:2.7.9":
+  version: 2.7.9
+  resolution: "@vue/compiler-sfc@npm:2.7.9"
   dependencies:
     "@babel/parser": ^7.18.4
     postcss: ^8.4.14
     source-map: ^0.6.1
-  checksum: da0b4b0866224fe2aee376a88c25914da4e73ba9e11e7aa2ed240b99897735b4a988e951dcae9c8f0843216c5a97050bf16e1bb04bf65541444a8bdfedc35b38
+  checksum: ef9f608060cc8b3cea8e540b956acca8c7a98cc855f65b374d68d3d73de88ea674775647acf3894a7c34a3fc84f4f8418226bb738f19ad6ebfba072a8f8c5d34
   languageName: node
   linkType: hard
 
@@ -10875,8 +10898,8 @@ __metadata:
   linkType: hard
 
 "aws-sdk@npm:^2.1038.0":
-  version: 2.1197.0
-  resolution: "aws-sdk@npm:2.1197.0"
+  version: 2.1199.0
+  resolution: "aws-sdk@npm:2.1199.0"
   dependencies:
     buffer: 4.9.2
     events: 1.1.1
@@ -10888,7 +10911,7 @@ __metadata:
     util: ^0.12.4
     uuid: 8.0.0
     xml2js: 0.4.19
-  checksum: 110b89c4781ad5b1f1e5c4edd05cfc11e00db37f34d982fbc52609481547e115008cd471141c2538ca53692545c25e0015cd279f5b443c8453e4b15fd260db48
+  checksum: a101ac207369dc9b6f96424ac6ae5b38354741dc5cd6c885a82d53dbe203b011f8aa100b34e061b218ab9a3f74c6316f12ea3a2002c42c1e11ce69db497fa8a9
   languageName: node
   linkType: hard
 
@@ -12012,7 +12035,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"budo@npm:^11.6.1, budo@npm:^11.6.2":
+"budo@npm:^11.6.1":
   version: 11.7.0
   resolution: "budo@npm:11.7.0"
   dependencies:
@@ -12513,9 +12536,9 @@ __metadata:
   linkType: hard
 
 "caniuse-lite@npm:^1.0.0, caniuse-lite@npm:^1.0.30001109, caniuse-lite@npm:^1.0.30001304, caniuse-lite@npm:^1.0.30001370, caniuse-lite@npm:^1.0.30001373":
-  version: 1.0.30001378
-  resolution: "caniuse-lite@npm:1.0.30001378"
-  checksum: 19f1774da1f62d393ddde55dc091eb3e4f5c5b0ce43f9a9d20e75307a0f329cf8591c836a35a9f6f9fd7c27db7a75e0682245a194acec2e2ba1bc25ef1c3300c
+  version: 1.0.30001381
+  resolution: "caniuse-lite@npm:1.0.30001381"
+  checksum: c6de3370eaa47239618da8cc26188c71f0ca63fd0448459bda91a7b0cb71fd72e692359cd48b8315b9741ee380481f764215d5fa20a425ae768dbbe1eee2b44a
   languageName: node
   linkType: hard
 
@@ -13153,7 +13176,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"colord@npm:^2.9.1, colord@npm:^2.9.2":
+"colord@npm:^2.9.1, colord@npm:^2.9.3":
   version: 2.9.3
   resolution: "colord@npm:2.9.3"
   checksum: 95d909bfbcfd8d5605cbb5af56f2d1ce2b323990258fd7c0d2eb0e6d3bb177254d7fb8213758db56bb4ede708964f78c6b992b326615f81a18a6aaf11d64c650
@@ -15398,9 +15421,9 @@ __metadata:
   linkType: hard
 
 "electron-to-chromium@npm:^1.4.202":
-  version: 1.4.224
-  resolution: "electron-to-chromium@npm:1.4.224"
-  checksum: c28eeab10e073af51aa1de2199cc4d40a42c1052f870b926fb97449c690dc29f167f6ffdf44d501ce3ab283aac8a70f2e1e5714e55d9454ae447904b82ae8b26
+  version: 1.4.225
+  resolution: "electron-to-chromium@npm:1.4.225"
+  checksum: 54b5c5550e33ce5df1d2ab71543b9dc24e4dd55dc4650b29cc19b2911b932b072317e662ce3236c500a498ad69e90d2ceebe2433a772e53a337e97bd53cc7dc9
   languageName: node
   linkType: hard
 
@@ -16746,8 +16769,8 @@ __metadata:
   linkType: hard
 
 "eslint-plugin-jest@npm:^26.0.0":
-  version: 26.8.3
-  resolution: "eslint-plugin-jest@npm:26.8.3"
+  version: 26.8.7
+  resolution: "eslint-plugin-jest@npm:26.8.7"
   dependencies:
     "@typescript-eslint/utils": ^5.10.0
   peerDependencies:
@@ -16758,7 +16781,7 @@ __metadata:
       optional: true
     jest:
       optional: true
-  checksum: 3fd8dd06e4b293caf9a06a8767731e7f9fd0e74cae2f5f820484ab01a7435cab340bdcc41295bff71c0448fc92345830a399848acb4aec481e3abbfeebe14e2d
+  checksum: 4e5e0c781ef48ae7d757123bce3ed28c384f02f3d4cf88d616932c075b625c10f298e905bee988876f62f6688e8e11d0b8ce235fd4b3f6c7006a8725375eac58
   languageName: node
   linkType: hard
 
@@ -18290,9 +18313,9 @@ __metadata:
   linkType: hard
 
 "flatted@npm:^3.1.0, flatted@npm:^3.2.6":
-  version: 3.2.6
-  resolution: "flatted@npm:3.2.6"
-  checksum: 33b87aa88dfa40ca6ee31d7df61712bbbad3d3c05c132c23e59b9b61d34631b337a18ff2b8dc5553acdc871ec72b741e485f78969cf006124a3f57174de29a0e
+  version: 3.2.7
+  resolution: "flatted@npm:3.2.7"
+  checksum: 427633049d55bdb80201c68f7eb1cbd533e03eac541f97d3aecab8c5526f12a20ccecaeede08b57503e772c769e7f8680b37e8d482d1e5f8d7e2194687f9ea35
   languageName: node
   linkType: hard
 
@@ -23107,12 +23130,12 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   linkType: hard
 
 "keyv@npm:^4.0.0":
-  version: 4.3.3
-  resolution: "keyv@npm:4.3.3"
+  version: 4.4.1
+  resolution: "keyv@npm:4.4.1"
   dependencies:
     compress-brotli: ^1.3.8
     json-buffer: 3.0.1
-  checksum: bcc946eeec3407fb3b42d831ce985357162113c5f07a8c45c12ede39704ba2d99be4c3dded76d2d2d2a2366627e42440bdde24393216164156928399949c12a1
+  checksum: efce046d161381121b727e9d753deeaad4ce06a98db6d68442cf1542a3731a46f461d0834fa1937c6ce7b27c807fe7892d4de3074440f4d3dff01ac4c7b32692
   languageName: node
   linkType: hard
 
@@ -24144,7 +24167,7 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   languageName: node
   linkType: hard
 
-"magic-string@npm:0.26.2, magic-string@npm:^0.26.0, magic-string@npm:^0.26.1":
+"magic-string@npm:0.26.2, magic-string@npm:^0.26.0, magic-string@npm:^0.26.1, magic-string@npm:^0.26.2":
   version: 0.26.2
   resolution: "magic-string@npm:0.26.2"
   dependencies:
@@ -24334,11 +24357,11 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   linkType: hard
 
 "marked@npm:^4.0.12, marked@npm:^4.0.18":
-  version: 4.0.18
-  resolution: "marked@npm:4.0.18"
+  version: 4.0.19
+  resolution: "marked@npm:4.0.19"
   bin:
     marked: bin/marked.js
-  checksum: a13e886d5059a8500a6fd552feecc16e18fc3636aa491fce372384b1fdea67e323d67ac49f7618f6977e66ca96e39f27400eb5c1273d5ee9c2301e8c33e90dce
+  checksum: 0521f3c6a06a078b91ec5b6754f939e7be1a621e1a7c1e85d4e6a4eb7848e798275566b38dea05ea8a57e85d557fbc9edad4f3fa3e8b494a371133b9ba2fb720
   languageName: node
   linkType: hard
 
@@ -26788,12 +26811,12 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   languageName: node
   linkType: hard
 
-"nx@npm:14.5.7, nx@npm:^14.2.4":
-  version: 14.5.7
-  resolution: "nx@npm:14.5.7"
+"nx@npm:14.5.8, nx@npm:^14.2.4":
+  version: 14.5.8
+  resolution: "nx@npm:14.5.8"
   dependencies:
-    "@nrwl/cli": 14.5.7
-    "@nrwl/tao": 14.5.7
+    "@nrwl/cli": 14.5.8
+    "@nrwl/tao": 14.5.8
     "@parcel/watcher": 2.0.4
     chalk: 4.1.0
     chokidar: ^3.5.1
@@ -26832,7 +26855,7 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
       optional: true
   bin:
     nx: bin/nx.js
-  checksum: 457f1186a118abaa5f6676314e43c219a96f33c51c2bbdaa473fed91207534b45a77d60916d6e6ef6f1d766b411e00aab9eac8fac8f212675599d16aa35064b1
+  checksum: d7a6454ed0f8a326cfff9c77aacc7c2669603fe508848f07ea139c651196af8f54fa85201be29f82f5bdb001bea58a4bd917e5ae349ef07de654a6c6d480769f
   languageName: node
   linkType: hard
 
@@ -30127,7 +30150,7 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   languageName: node
   linkType: hard
 
-"react-dom@npm:^16.14.0, react-dom@npm:^16.8.6":
+"react-dom@npm:^16.14.0":
   version: 16.14.0
   resolution: "react-dom@npm:16.14.0"
   dependencies:
@@ -30141,7 +30164,7 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   languageName: node
   linkType: hard
 
-"react-dom@npm:^18.1.0":
+"react-dom@npm:^18.0.0, react-dom@npm:^18.1.0":
   version: 18.2.0
   resolution: "react-dom@npm:18.2.0"
   dependencies:
@@ -30260,6 +30283,13 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   languageName: node
   linkType: hard
 
+"react-refresh@npm:^0.14.0":
+  version: 0.14.0
+  resolution: "react-refresh@npm:0.14.0"
+  checksum: dc69fa8c993df512f42dd0f1b604978ae89bd747c0ed5ec595c0cc50d535fb2696619ccd98ae28775cc01d0a7c146a532f0f7fb81dc22e1977c242a4912312f4
+  languageName: node
+  linkType: hard
+
 "react-refresh@npm:^0.4.0":
   version: 0.4.3
   resolution: "react-refresh@npm:0.4.3"
@@ -30295,7 +30325,7 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   languageName: node
   linkType: hard
 
-"react@npm:^18.1.0":
+"react@npm:^18.0.0, react@npm:^18.1.0":
   version: 18.2.0
   resolution: "react@npm:18.2.0"
   dependencies:
@@ -31761,8 +31791,8 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   linkType: hard
 
 "rollup@npm:^2.45.1, rollup@npm:^2.60.2, rollup@npm:^2.70.2":
-  version: 2.78.0
-  resolution: "rollup@npm:2.78.0"
+  version: 2.78.1
+  resolution: "rollup@npm:2.78.1"
   dependencies:
     fsevents: ~2.3.2
   dependenciesMeta:
@@ -31770,7 +31800,7 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
       optional: true
   bin:
     rollup: dist/bin/rollup
-  checksum: 01b5a7ae082d2a14201c973ee973099f0899cc87b65063d5ca5a77c05eeefb3b51e14b1346cf1a0fc879ac2cbb87239d4f960917bfc30b7c52f5dce50a7f56e7
+  checksum: 9034814383ca5bdb4bea6d499270aeb31cdb0bb884f81b0c6a1d19c63cc973f040e6ee09b7af8a7169dd231c090f4b44ef8b99c4bfdf884aceeb3dcefb8cfa14
   languageName: node
   linkType: hard
 
@@ -32013,15 +32043,15 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   linkType: hard
 
 "sass@npm:^1.29.0, sass@npm:^1.32.8":
-  version: 1.54.4
-  resolution: "sass@npm:1.54.4"
+  version: 1.54.5
+  resolution: "sass@npm:1.54.5"
   dependencies:
     chokidar: ">=3.0.0 <4.0.0"
     immutable: ^4.0.0
     source-map-js: ">=0.6.2 <2.0.0"
   bin:
     sass: sass.js
-  checksum: bb6aead09764de450a02b9a66e4ee538f0ba6bc8f2fc3905c71b2c302b5f47e089b510b86cfa7ef2d4139c210c8abf99fe157e7a5bd356c057f10d29e6c4b44c
+  checksum: ba7a65aa7508419468547c8de4d59e537bec874f52823f501663dc98d80dfd2d374e8ea73a31200db7f510b8816c925edf89728c9b36889f4e6673d3e94ec100
   languageName: node
   linkType: hard
 
@@ -33903,12 +33933,12 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   linkType: hard
 
 "stylelint@npm:^14.0.0":
-  version: 14.10.0
-  resolution: "stylelint@npm:14.10.0"
+  version: 14.11.0
+  resolution: "stylelint@npm:14.11.0"
   dependencies:
     "@csstools/selector-specificity": ^2.0.2
     balanced-match: ^2.0.0
-    colord: ^2.9.2
+    colord: ^2.9.3
     cosmiconfig: ^7.0.1
     css-functions-list: ^3.1.0
     debug: ^4.3.4
@@ -33943,10 +33973,10 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
     svg-tags: ^1.0.0
     table: ^6.8.0
     v8-compile-cache: ^2.3.0
-    write-file-atomic: ^4.0.1
+    write-file-atomic: ^4.0.2
   bin:
     stylelint: bin/stylelint.js
-  checksum: e0c9f80064e02fdca253001650506d1ddc89bcfbbc86b2245ed90faa03ec4616239e179000c5fd288f6cae079463b2b724790872cf78fbeb08a68803eaf465fd
+  checksum: 23fe2cb55453551f004b01a732e0aff82d8d98d0ac1f4c95c1d605f0fbd0f09d9079fc8d07c9da2796d6287985167a6c59791d7b1af2c4e8a1caa08dd591b980
   languageName: node
   linkType: hard
 
@@ -35853,13 +35883,13 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   languageName: node
   linkType: hard
 
-"unist-util-visit-parents@npm:^5.0.0":
-  version: 5.1.0
-  resolution: "unist-util-visit-parents@npm:5.1.0"
+"unist-util-visit-parents@npm:^5.1.1":
+  version: 5.1.1
+  resolution: "unist-util-visit-parents@npm:5.1.1"
   dependencies:
     "@types/unist": ^2.0.0
     unist-util-is: ^5.0.0
-  checksum: 7c413dbb3dfcb679109fa8f0965d9abf117c3c53fa7b8823f68cac0ea53adbe98c1ce954d36c034e086c966b48b1d44d42c85f7bf6b42a032f728ac338929513
+  checksum: c699d18f5b26461dee37612b84c243fd5457c98f4c0540d9ba8bee05062aece5f3b4fb1af6b07423ce6750d8926e8c01fc2b1a4de1e54925ef6795c177ed8e18
   languageName: node
   linkType: hard
 
@@ -35895,13 +35925,13 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   linkType: hard
 
 "unist-util-visit@npm:^4.0.0":
-  version: 4.1.0
-  resolution: "unist-util-visit@npm:4.1.0"
+  version: 4.1.1
+  resolution: "unist-util-visit@npm:4.1.1"
   dependencies:
     "@types/unist": ^2.0.0
     unist-util-is: ^5.0.0
-    unist-util-visit-parents: ^5.0.0
-  checksum: 3521abee2ed4535092aac073d05f46255475c89781b8e9d8c951a473d91b5d6e4d5912ae4a68a4c1cf17a42ed0108cb93103c7f5c736977529969997451363fb
+    unist-util-visit-parents: ^5.1.1
+  checksum: c4a63734b0a5b439c62d20901bb472bdafdbbcd80c383e254aedeb98b23d0bae815a331e776ce7d63ea3c8018a54318abb8709d07cdf7dd094f79b2f07bb39f0
   languageName: node
   linkType: hard
 
@@ -36592,8 +36622,8 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   linkType: hard
 
 "vite@npm:^3.0.0":
-  version: 3.0.8
-  resolution: "vite@npm:3.0.8"
+  version: 3.0.9
+  resolution: "vite@npm:3.0.9"
   dependencies:
     esbuild: ^0.14.47
     fsevents: ~2.3.2
@@ -36619,7 +36649,7 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
       optional: true
   bin:
     vite: bin/vite.js
-  checksum: ec3f57d52f2bf28f2f89898053c2156f025a108a95e9308ce6580f43d8fdaae866f7988afa8207a8c8509069d3a0b50ee79b9a8050590a825f4b7771646c2755
+  checksum: 6341aa43579ae45f8a383bdc0c5041dea3dff98f14e0a546d6d884a864134b00082246a28d1de8adff0ce0dd92b468c7ade8f972ffe1ed97258671d63e0f16f7
   languageName: node
   linkType: hard
 
@@ -36667,12 +36697,12 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   linkType: hard
 
 "vue-template-compiler@npm:^2.6.14":
-  version: 2.7.8
-  resolution: "vue-template-compiler@npm:2.7.8"
+  version: 2.7.9
+  resolution: "vue-template-compiler@npm:2.7.9"
   dependencies:
     de-indent: ^1.0.2
     he: ^1.2.0
-  checksum: e0886488f46055c6e8f59c57fdcc624d1b241aaa0995977482381124a4bf602142743bb6127cf13fa8b04e4c1070253c7aa9b77abc158cf7ab988b223cddbf24
+  checksum: 4d7aa55f42279b2030a258b08653c3c435abdb9693f2a2db73fe052fd358485805a977c2b9d601889a958ebdd2697ed425af1fbf38e49e4f5a1c3ba37384a9ba
   languageName: node
   linkType: hard
 
@@ -36690,12 +36720,12 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   linkType: hard
 
 "vue@npm:^2.6.14":
-  version: 2.7.8
-  resolution: "vue@npm:2.7.8"
+  version: 2.7.9
+  resolution: "vue@npm:2.7.9"
   dependencies:
-    "@vue/compiler-sfc": 2.7.8
+    "@vue/compiler-sfc": 2.7.9
     csstype: ^3.1.0
-  checksum: 45fc85a13fc027798ad859fe4a5509b54217ae2f129240fc349a799bd4dbc6848ef8fa9968ab7ef7afcb954735882dbfdeb746673aa3f051e4d7ae555c213a1b
+  checksum: a89bdc3d56c8d5ba3b291ee2a20637b9d1585b870fe0120e706aa607fdf06022280c1066ed0932b4ac6c47948c069ae1be6fd895679da165d79836fd63937441
   languageName: node
   linkType: hard
 
@@ -37534,7 +37564,7 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   languageName: node
   linkType: hard
 
-"write-file-atomic@npm:^4.0.1":
+"write-file-atomic@npm:^4.0.1, write-file-atomic@npm:^4.0.2":
   version: 4.0.2
   resolution: "write-file-atomic@npm:4.0.2"
   dependencies:
