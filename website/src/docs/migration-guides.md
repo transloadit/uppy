@@ -82,6 +82,8 @@ new Uppy()
   })
 ```
 
+Checkout how we did it on [our own Robodog example](https://github.com/transloadit/uppy/commit/089aaed615c77bafaf905e291b6b4e82aaeb2f6f).
+
 ## Migrate from Uppy 2.x to 3.x
 
 ### Uppy is pure ESM
