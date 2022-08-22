@@ -7,5 +7,6 @@ To run the example, from the root directory of this repo, run the following comm
 
 ```sh
 corepack yarn install
+corepack yarn build
 corepack yarn workspace @uppy-example/vue2 dev
 ```
