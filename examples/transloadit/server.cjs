@@ -1,7 +1,11 @@
+#!/usr/bin/env node
+
 /* eslint-disable compat/compat */
-const http = require('node:http')
-const qs = require('node:querystring')
-const e = require('he').encode
+import http from 'node:http'
+import qs from 'node:querystring'
+import he from 'he'
+
+const e = he.encode
 
 /**
  * A very haxxor server that outputs some of the data it receives in a POST form parameter.
@@ -17,12 +21,6 @@ function onrequest (req, res) {
     return
   }
 
-  let body = ''
-  req.on('data', (chunk) => { body += chunk })
-  req.on('end', () => {
-    onbody(body)
-  })
-
   function onbody (body) {
     const fields = qs.parse(body)
     const result = JSON.parse(fields.uppyResult)
@@ -35,6 +33,14 @@ function onrequest (req, res) {
       res.write(AssemblyResult(assembly))
     })
     res.end(Footer())
+  }
+
+  {
+    let body = ''
+    req.on('data', (chunk) => { body += chunk })
+    req.on('end', () => {
+      onbody(body)
+    })
   }
 }
 
@@ -82,8 +88,8 @@ function FormFields (fields) {
       try {
         value = JSON.stringify(
           JSON.parse(value),
-          null,
-          2,
+          null, 
+          2
         )
         isValueJSON = true
       } catch {
