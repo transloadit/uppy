@@ -31,15 +31,6 @@ const TEMPLATE_ID = 'bbc273f69e0c4694a5a9d1b587abc1bc'
  * Form
  */
 
-// Robodog supported automatically replacing <input type="file"> elements
-// Now we do it manually:
-const button = document.createElement('button')
-button.type = 'button'
-button.innerText = 'Select files'
-button.id = 'select-files'
-const fileInput = document.querySelector('#test-form input[type=file]')
-fileInput.replaceWith(button)
-
 const formUppy = new Uppy({
   debug: true,
   autoProceed: true,
@@ -48,7 +39,7 @@ const formUppy = new Uppy({
   },
 })
   .use(Dashboard, {
-    trigger: '#select-files',
+    trigger: '#uppy-select-files',
     closeAfterFinish: true,
     note: 'Only PNG files please!',
   })
@@ -56,6 +47,7 @@ const formUppy = new Uppy({
   .use(Form, {
     target: '#test-form',
     fields: ['message'],
+    // submitOnSuccess: true,
     addResultToForm: true,
   })
   .use(Transloadit, {
@@ -77,12 +69,10 @@ formUppy.on('upload-error', (file, err) => {
 })
 
 formUppy.on('complete', ({ transloadit }) => {
-  const btn = document.getElementById('select-files')
-  const form = document.getElementById('test-form')
+  const btn = document.getElementById('uppy-select-files')
   btn.hidden = true
-  const selectedFiles = document.createElement('uppy-form-selected-files')
+  const selectedFiles = document.getElementById('uppy-form-selected-files')
   selectedFiles.textContent = `selected files: ${Object.keys(transloadit[0].results).length}`
-  form.appendChild(selectedFiles)
 })
 
 window.formUppy = formUppy
@@ -172,11 +162,9 @@ const dashboardModal = new Uppy({
   })
 
 dashboardModal.on('complete', ({ transloadit, successful, failed }) => {
-  if (failed?.length !== 0) {
-    console.error('it failed', failed)
-  } else {
-    console.log('success', { transloadit, successful })
-  }
+  console.log(transloadit)
+  console.log(successful)
+  console.error(failed)
 })
 
 function openModal () {
@@ -202,7 +190,7 @@ const uppyWithoutUI = new Uppy({
       template_id: TEMPLATE_ID,
     },
   })
-  .use(ProgressBar, { target: '#upload-result' })
+  .use(ProgressBar, { target: '#upload-progress' })
 
 window.doUpload = (event) => {
   const resultEl = document.querySelector('#upload-result')
@@ -212,14 +200,14 @@ window.doUpload = (event) => {
   uppyWithoutUI.upload()
 
   uppyWithoutUI.on('complete', ({ transloadit }) => {
-    const resizedUrl = transloadit[0].results['resize'][0]['ssl_url']
-    const img = document.createElement('img')
-    img.src = resizedUrl
-    document.getElementById('upload-result').appendChild(img)
-
     resultEl.classList.remove('hidden')
     errorEl.classList.add('hidden')
     resultEl.textContent = JSON.stringify(transloadit[0].results, null, 2)
+
+    const resizedUrl = transloadit[0].results['resize'][0]['ssl_url']
+    const img = document.createElement('img')
+    img.src = resizedUrl
+    document.getElementById('upload-result-image').appendChild(img)
   })
 
   uppyWithoutUI.on('error', (err) => {

@@ -1,10 +1,7 @@
-# Robodog
+# Transloadit example
 
-This example shows all the different Robodog APIs in action on a single page.
-Robodog has been deprecated, so this example shows how to replicate Robodog
-features without using it. If you are new with Uppy, this example is probably
-not for you, as it is specifically aimed for Robodog users looking to migrate
-out of it.
+This example shows how to make advantage of Uppy API to upload files to
+[Transloadit](https://transloadit.com/).
 
 ## Run it
 
