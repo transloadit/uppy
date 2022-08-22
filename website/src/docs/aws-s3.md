@@ -68,7 +68,7 @@ Custom headers that should be sent along to [Companion][companion docs] on every
 
 ### `allowedMetaFields: null`
 
-Pass an array of field names to limit the metadata fields that will be added to uploads as [Tus Metadata](https://tus.io/protocols/resumable-upload.html#upload-metadata).
+Pass an array of field names to limit the metadata fields that will be added to upload as query parameters.
 
 * Set this to `['name']` to only send the `name` field.
 * Set this to `null` (the default) to send _all_ metadata fields.
