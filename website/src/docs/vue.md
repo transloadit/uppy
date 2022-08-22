@@ -7,13 +7,16 @@ order: 0
 category: "Other Integrations"
 ---
 
-Uppy provides [Vue][] components for the included UI plugins.
+Uppy provides [Vue][] components for some Uppy UI plugins.
 
 Note: _All plugin names are in kebab-case for the HTML element, and in CamelCase for the JavaScript imports, following Vue conventions_
 
 ## Installation
 
-All Vue components are provided through the `@uppy/vue` package
+All Vue components are provided through the `@uppy/vue` package. Not that those
+components rely on external packages that are not longer provided with
+`@uppy/vue` (such as `@uppy/core`, `@uppy/dashboard`, `@uppy/drag-drop`,
+`@uppy/file-input`, `@uppy/progress-bar`, `@uppy/status-bar`).
 
 Install from NPM:
 
