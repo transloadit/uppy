@@ -61,6 +61,13 @@ jobs:
         env:
           NUMBER: ${{ github.event.pull_request.number }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: videos-and-screenshots
+          path: |
+            e2e/cypress/videos/
+            e2e/cypress/screenshots/
       - name: Remove 'safe to test' label
         # Remove the 'safe to test' label to ensure next commit needs approval before re-running this.
         if: always() && github.event.pull_request && contains(github.event.pull_request.labels.*.name, 'safe to test')
