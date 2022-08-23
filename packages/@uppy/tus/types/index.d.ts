@@ -1,9 +1,10 @@
-import type { PluginOptions, BasePlugin } from '@uppy/core'
-import type { UploadOptions } from 'tus-js-client'
+import type { PluginOptions, BasePlugin, UppyFile } from '@uppy/core'
+import type { UploadOptions, HttpRequest } from 'tus-js-client'
 
 type TusUploadOptions = Pick<UploadOptions, Exclude<keyof UploadOptions,
   | 'fingerprint'
   | 'metadata'
+  | 'onBeforeRequest'
   | 'onProgress'
   | 'onChunkComplete'
   | 'onShouldRetry'
@@ -16,11 +17,12 @@ type TusUploadOptions = Pick<UploadOptions, Exclude<keyof UploadOptions,
 type Next = (err: Error | undefined, retryAttempt?: number, options?: TusOptions) => boolean
 
 export interface TusOptions extends PluginOptions, TusUploadOptions {
-    metaFields?: string[] | null
+    allowedMetaFields?: string[] | null
     limit?: number
     useFastRemoteRetry?: boolean
     withCredentials?: boolean
     onShouldRetry?: (err: Error | undefined, retryAttempt: number, options: TusOptions, next: Next) => boolean
+    onBeforeRequest?: (req: HttpRequest, file: UppyFile) => Promise<void>
   }
 
 declare class Tus extends BasePlugin<TusOptions> {}

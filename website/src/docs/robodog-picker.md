@@ -7,6 +7,9 @@ order: 1
 category: "File Processing"
 ---
 
+> **Warning**
+> Robodog has been deprecated, its usage is no longer recommended.
+
 Show a modal UI that allows users to pick files from their device and from the web. It uploads files to Transloadit for processing.
 
 ```js

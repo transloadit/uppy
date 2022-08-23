@@ -1,5 +1,5 @@
 // Core
-export { default as Core, debugLogger } from '@uppy/core'
+export { default as Uppy, debugLogger } from '@uppy/core'
 
 // Utilities
 export * as server from '@uppy/companion-client'
@@ -49,5 +49,10 @@ export { default as Form } from '@uppy/form'
 export { default as GoldenRetriever } from '@uppy/golden-retriever'
 export { default as ReduxDevTools } from '@uppy/redux-dev-tools'
 export { default as ThumbnailGenerator } from '@uppy/thumbnail-generator'
+
+// Special hack for Transloadit static exports
+import Transloadit, { COMPANION_URL, COMPANION_ALLOWED_HOSTS } from '@uppy/transloadit'
+Transloadit.COMPANION_URL = COMPANION_URL
+Transloadit.COMPANION_ALLOWED_HOSTS = COMPANION_ALLOWED_HOSTS
 
 export const locales = {}

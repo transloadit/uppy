@@ -1,7 +1,7 @@
 {
   "name": "@uppy/status-bar",
   "description": "A progress bar for Uppy, with many bells and whistles.",
-  "version": "3.0.0-beta.2",
+  "version": "3.0.0",
   "license": "MIT",
   "main": "lib/index.js",
   "style": "dist/style.min.css",
@@ -27,7 +27,7 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
-    "@transloadit/prettier-bytes": "0.0.7",
+    "@transloadit/prettier-bytes": "0.0.9",
     "@uppy/utils": "workspace:^",
     "classnames": "^2.2.6",
     "lodash.throttle": "^4.1.1",

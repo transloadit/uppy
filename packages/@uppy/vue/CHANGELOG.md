@@ -1,5 +1,12 @@
 # @uppy/vue
 
+## 1.0.0
+
+Released: 2022-08-22
+Included in: Uppy v3.0.0
+
+- @uppy/vue: move `@uppy/` packages to peer dependencies (Antoine du Hamel / #4024)
+
 ## 0.4.8
 
 Released: 2022-05-30

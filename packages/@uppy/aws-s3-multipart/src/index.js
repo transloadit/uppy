@@ -1,4 +1,4 @@
-import BasePlugin from '@uppy/core/lib/BasePlugin'
+import BasePlugin from '@uppy/core/lib/BasePlugin.js'
 import { Socket, Provider, RequestClient } from '@uppy/companion-client'
 import EventTracker from '@uppy/utils/lib/EventTracker'
 import emitSocketProgress from '@uppy/utils/lib/emitSocketProgress'
@@ -112,11 +112,12 @@ export default class AwsS3Multipart extends BasePlugin {
       .then(assertServerError)
   }
 
-  prepareUploadParts (file, { key, uploadId, partNumbers }) {
+  prepareUploadParts (file, { key, uploadId, parts }) {
     this.assertHost('prepareUploadParts')
 
     const filename = encodeURIComponent(key)
-    return this.#client.get(`s3/multipart/${uploadId}/batch?key=${filename}&partNumbers=${partNumbers.join(',')}`)
+    const partNumbers = parts.map((part) => part.number).join(',')
+    return this.#client.get(`s3/multipart/${uploadId}/batch?key=${filename}&partNumbers=${partNumbers}`)
       .then(assertServerError)
   }
 

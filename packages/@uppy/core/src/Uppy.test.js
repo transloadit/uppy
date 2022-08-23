@@ -736,6 +736,14 @@ describe('src/Core', () => {
       expect(fileAddedEventMock.mock.calls[0][0]).toEqual(newFile)
     })
 
+    it('should add a file from a File object', () => {
+      const fileData = new File([sampleImage], { type: 'image/jpeg' })
+      const core = new Core()
+
+      const fileId = core.addFile(fileData)
+      expect(core.getFile(fileId).id).toEqual(fileId)
+    })
+
     it('should not allow a file that does not meet the restrictions', () => {
       const core = new Core({
         restrictions: {
@@ -1254,7 +1262,7 @@ describe('src/Core', () => {
           foo: 'bar',
         },
       })
-      expect(core.state.meta).toMatchObject({
+      expect(core.getState().meta).toMatchObject({
         foo: 'bar',
       })
 
@@ -1264,7 +1272,7 @@ describe('src/Core', () => {
         },
       })
 
-      expect(core.state.meta).toMatchObject({
+      expect(core.getState().meta).toMatchObject({
         foo: 'bar',
         beep: 'boop',
       })

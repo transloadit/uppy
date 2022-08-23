@@ -1,7 +1,6 @@
 /**
  * @module provider
  */
-const purestConfig = require('@purest/providers')
 const dropbox = require('./dropbox')
 const box = require('./box')
 const drive = require('./drive')
@@ -17,31 +16,6 @@ const { getCredentialsResolver } = require('./credentials')
 const Provider = require('./Provider')
 // eslint-disable-next-line
 const SearchProvider = require('./SearchProvider')
-
-// leave here for now until Purest Providers gets updated with Zoom provider
-purestConfig.zoom = {
-  'https://zoom.us/': {
-    __domain: {
-      auth: {
-        auth: { bearer: '[0]' },
-      },
-    },
-    '[version]/{endpoint}': {
-      __path: {
-        alias: '__default',
-        version: 'v2',
-      },
-    },
-    'oauth/revoke': {
-      __path: {
-        alias: 'logout',
-        auth: {
-          auth: { basic: '[0]' },
-        },
-      },
-    },
-  },
-}
 
 /**
  *
@@ -80,7 +54,7 @@ module.exports.getProviderMiddleware = (providers, needsProviderCredentials) => 
   const middleware = (req, res, next, providerName) => {
     const ProviderClass = providers[providerName]
     if (ProviderClass && validOptions(req.companion.options)) {
-      req.companion.provider = new ProviderClass({ providerName, config: purestConfig })
+      req.companion.provider = new ProviderClass({ providerName })
 
       if (needsProviderCredentials) {
         req.companion.getProviderCredentials = getCredentialsResolver(providerName, req.companion.options, req)

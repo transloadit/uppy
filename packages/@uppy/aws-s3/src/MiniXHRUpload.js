@@ -25,11 +25,11 @@ function setTypeInBlob (file) {
 }
 
 function addMetadata (formData, meta, opts) {
-  const metaFields = Array.isArray(opts.metaFields)
-    ? opts.metaFields
+  const allowedMetaFields = Array.isArray(opts.allowedMetaFields)
+    ? opts.allowedMetaFields
     // Send along all fields by default.
     : Object.keys(meta)
-  metaFields.forEach((item) => {
+  allowedMetaFields.forEach((item) => {
     formData.append(item, meta[item])
   })
 }
@@ -100,8 +100,12 @@ export default class MiniXHRUpload {
   }
 
   #addEventHandlerForFile (eventName, fileID, eventHandler) {
-    this.uploaderEvents[fileID].on(eventName, (targetFileID) => {
-      if (fileID === targetFileID) eventHandler()
+    this.uploaderEvents[fileID].on(eventName, (fileOrID) => {
+      // TODO (major): refactor Uppy events to consistently send file objects (or consistently IDs)
+      // We created a generic `addEventListenerForFile` but not all events
+      // use file IDs, some use files, so we need to do this weird check.
+      const id = fileOrID?.id ?? fileOrID
+      if (fileID === id) eventHandler()
     })
   }
 
@@ -251,8 +255,8 @@ export default class MiniXHRUpload {
     const opts = this.#getOptions(file)
     const Client = file.remote.providerOptions.provider ? Provider : RequestClient
     const client = new Client(this.uppy, file.remote.providerOptions)
-    const metaFields = Array.isArray(opts.metaFields)
-      ? opts.metaFields
+    const allowedMetaFields = Array.isArray(opts.allowedMetaFields)
+      ? opts.allowedMetaFields
       // Send along all fields by default.
       : Object.keys(file.meta)
 
@@ -263,10 +267,11 @@ export default class MiniXHRUpload {
 
     const res = await client.post(file.remote.url, {
       ...file.remote.body,
+      protocol: 'multipart',
       endpoint: opts.endpoint,
       size: file.data.size,
       fieldname: opts.fieldName,
-      metadata: Object.fromEntries(metaFields.map(name => [name, file.meta[name]])),
+      metadata: Object.fromEntries(allowedMetaFields.map(name => [name, file.meta[name]])),
       httpMethod: opts.method,
       useFormData: opts.formData,
       headers: opts.headers,

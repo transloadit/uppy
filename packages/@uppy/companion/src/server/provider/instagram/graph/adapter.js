@@ -8,15 +8,15 @@ const MEDIA_TYPES = Object.freeze({
 
 const isVideo = (item) => item.media_type === MEDIA_TYPES.video
 
-exports.isFolder = (item) => { // eslint-disable-line no-unused-vars
+const isFolder = (item) => { // eslint-disable-line no-unused-vars
   return false
 }
 
-exports.getItemIcon = (item) => {
+const getItemIcon = (item) => {
   return isVideo(item) ? item.thumbnail_url : item.media_url
 }
 
-exports.getItemSubList = (item) => {
+const getItemSubList = (item) => {
   const newItems = []
   item.data.forEach((subItem) => {
     if (subItem.media_type === MEDIA_TYPES.carousel) {
@@ -28,29 +28,50 @@ exports.getItemSubList = (item) => {
   return newItems
 }
 
-exports.getItemName = (item, index) => {
+const getItemName = (item, index) => {
   const ext = isVideo(item) ? 'mp4' : 'jpeg'
   // adding index, so the name is unique
   return `Instagram ${item.timestamp}${index}.${ext}`
 }
 
-exports.getMimeType = (item) => {
+const getMimeType = (item) => {
   return isVideo(item) ? 'video/mp4' : 'image/jpeg'
 }
 
-exports.getItemId = (item) => item.id
+const getItemId = (item) => item.id
 
-exports.getItemRequestPath = (item) => item.id
+const getItemRequestPath = (item) => item.id
 
-exports.getItemModifiedDate = (item) => item.timestamp
+const getItemModifiedDate = (item) => item.timestamp
 
-exports.getItemThumbnailUrl = (item) => exports.getItemIcon(item)
+const getItemThumbnailUrl = (item) => getItemIcon(item)
 
-exports.getNextPagePath = (data, currentQuery, currentPath) => {
+const getNextPagePath = (data, currentQuery, currentPath) => {
   if (!data.paging || !data.paging.cursors) {
     return null
   }
 
   const query = { ...currentQuery, cursor: data.paging.cursors.after }
   return `${currentPath || ''}?${querystring.stringify(query)}`
+}
+
+module.exports = (res, username, directory, currentQuery) => {
+  const data = { username, items: [] }
+  const items = getItemSubList(res)
+  items.forEach((item, i) => {
+    data.items.push({
+      isFolder: isFolder(item),
+      icon: getItemIcon(item),
+      name: getItemName(item, i),
+      mimeType: getMimeType(item),
+      id: getItemId(item),
+      size: null,
+      thumbnail: getItemThumbnailUrl(item),
+      requestPath: getItemRequestPath(item),
+      modifiedDate: getItemModifiedDate(item),
+    })
+  })
+
+  data.nextPagePath = getNextPagePath(res, currentQuery, directory)
+  return data
 }

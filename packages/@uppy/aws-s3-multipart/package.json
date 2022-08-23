@@ -1,7 +1,7 @@
 {
   "name": "@uppy/aws-s3-multipart",
   "description": "Upload to Amazon S3 with Uppy and S3's Multipart upload strategy",
-  "version": "3.0.0-beta.3",
+  "version": "3.0.0",
   "license": "MIT",
   "main": "lib/index.js",
   "type": "module",
@@ -28,7 +28,7 @@
     "@uppy/utils": "workspace:^"
   },
   "devDependencies": {
-    "@jest/globals": "^27.4.2",
+    "@jest/globals": "^28.0.0",
     "nock": "^13.1.0",
     "whatwg-fetch": "3.6.2"
   },

@@ -1,4 +1,4 @@
-import BasePlugin from '@uppy/core/lib/BasePlugin'
+import BasePlugin from '@uppy/core/lib/BasePlugin.js'
 import { nanoid } from 'nanoid/non-secure'
 import { Provider, RequestClient, Socket } from '@uppy/companion-client'
 import emitSocketProgress from '@uppy/utils/lib/emitSocketProgress'
@@ -63,7 +63,7 @@ export default class XHRUpload extends BasePlugin {
       formData: true,
       fieldName: opts.bundle ? 'files[]' : 'file',
       method: 'post',
-      metaFields: null,
+      allowedMetaFields: null,
       responseUrlFieldName: 'url',
       bundle: false,
       headers: {},
@@ -124,6 +124,10 @@ export default class XHRUpload extends BasePlugin {
       throw new Error('`opts.formData` must be true when `opts.bundle` is enabled.')
     }
 
+    if (opts?.allowedMetaFields === undefined && 'metaFields' in this.opts) {
+      throw new Error('The `metaFields` option has been renamed to `allowedMetaFields`.')
+    }
+
     this.uploaderEvents = Object.create(null)
   }
 
@@ -161,11 +165,11 @@ export default class XHRUpload extends BasePlugin {
 
   // eslint-disable-next-line class-methods-use-this
   addMetadata (formData, meta, opts) {
-    const metaFields = Array.isArray(opts.metaFields)
-      ? opts.metaFields
+    const allowedMetaFields = Array.isArray(opts.allowedMetaFields)
+      ? opts.allowedMetaFields
       : Object.keys(meta) // Send along all fields by default.
 
-    metaFields.forEach((item) => {
+    allowedMetaFields.forEach((item) => {
       formData.append(item, meta[item])
     })
   }
@@ -353,12 +357,12 @@ export default class XHRUpload extends BasePlugin {
       this.uppy.emit('upload-started', file)
 
       const fields = {}
-      const metaFields = Array.isArray(opts.metaFields)
-        ? opts.metaFields
+      const allowedMetaFields = Array.isArray(opts.allowedMetaFields)
+        ? opts.allowedMetaFields
         // Send along all fields by default.
         : Object.keys(file.meta)
 
-      metaFields.forEach((name) => {
+      allowedMetaFields.forEach((name) => {
         fields[name] = file.meta[name]
       })
 
@@ -366,6 +370,7 @@ export default class XHRUpload extends BasePlugin {
       const client = new Client(this.uppy, file.remote.providerOptions)
       client.post(file.remote.url, {
         ...file.remote.body,
+        protocol: 'multipart',
         endpoint: opts.endpoint,
         size: file.data.size,
         fieldname: opts.fieldName,

@@ -7,13 +7,15 @@ order: 0
 category: "Other Integrations"
 ---
 
-Uppy provides [Vue][] components for the included UI plugins.
+Uppy provides [Vue][] components for some Uppy UI plugins.
 
 Note: _All plugin names are in kebab-case for the HTML element, and in CamelCase for the JavaScript imports, following Vue conventions_
 
 ## Installation
 
-All Vue components are provided through the `@uppy/vue` package
+All Vue components are provided through the `@uppy/vue` package, note that the
+underling Uppy plugin is no longer provided and you would need to install it
+explicitly. See [Usage](#usage) for more info.
 
 Install from NPM:
 
@@ -64,13 +66,14 @@ export default {
 </script>
 ```
 
-The following plugins are available as Vue component wrappers:
+The following plugins are available as Vue component wrappers (you need to
+install each package separately):
 
-* `<dashboard />` - renders an inline `@uppy/dashboard`
-* `<dashboard-modal />` - renders a `@uppy/dashboard` modal
-* `<drag-drop />` - renders a `@uppy/drag-drop` area
-* `<progress-bar />` - renders a `@uppy/progress-bar`
-* `<status-bar />` - renders a `@uppy/status-bar`
+* `<dashboard />` - renders an inline [`@uppy/dashboard`][].
+* `<dashboard-modal />` - renders a [`@uppy/dashboard`][] modal.
+* `<drag-drop />` - renders a [`@uppy/drag-drop`][] area.
+* `<progress-bar />` - renders a [`@uppy/progress-bar`][].
+* `<status-bar />` - renders a [`@uppy/status-bar`][].
 
 Each component takes a `props` prop that will be passed to the UI Plugin. Both `@uppy/dashboard` based plugins also take a `plugins` array as a props, making it easier to add your plugins.
 
@@ -195,6 +198,14 @@ Import general Core styles from `@uppy/core/dist/style.css` first, then add the 
 #### Props
 
 The `<status-bar />` component supports all `@uppy/status-bar` options to be passed as an object on the `props` prop. An Uppy instance must be provided in the `:uppy=''` prop.
+
+[`@uppy/dashboard`]: /docs/dashboard
+
+[`@uppy/drag-drop`]: /docs/drag-drop
+
+[`@uppy/progress-bar`]: /docs/progress-bar
+
+[`@uppy/status-bar`]: /docs/status-bar
 
 [`@uppy/webcam`]: /docs/webcam/
 

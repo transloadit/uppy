@@ -121,13 +121,16 @@ export type TransloaditOptions = TransloaditOptionsBase &
         }
       | AssemblyOptions)
 
-declare class Transloadit extends BasePlugin<TransloaditOptions> {
+export default class Transloadit extends BasePlugin<TransloaditOptions> {
+  /** @deprecated */
   static COMPANION: string
 
+  /** @deprecated */
   static COMPANION_PATTERN: RegExp
 }
 
-export default Transloadit
+export const COMPANION_URL: string
+export const COMPANION_ALLOWED_HOSTS: RegExp
 
 // Events
 

@@ -1,7 +1,11 @@
+#!/usr/bin/env node
+
 /* eslint-disable compat/compat */
-const http = require('node:http')
-const qs = require('node:querystring')
-const e = require('he').encode
+import http from 'node:http'
+import qs from 'node:querystring'
+import he from 'he'
+
+const e = he.encode
 
 /**
  * A very haxxor server that outputs some of the data it receives in a POST form parameter.
@@ -17,15 +21,10 @@ function onrequest (req, res) {
     return
   }
 
-  let body = ''
-  req.on('data', (chunk) => { body += chunk })
-  req.on('end', () => {
-    onbody(body)
-  })
-
   function onbody (body) {
     const fields = qs.parse(body)
-    const assemblies = JSON.parse(fields.transloadit)
+    const result = JSON.parse(fields.uppyResult)
+    const assemblies = result[0].transloadit
 
     res.setHeader('content-type', 'text/html')
     res.write(Header())
@@ -34,6 +33,14 @@ function onrequest (req, res) {
       res.write(AssemblyResult(assembly))
     })
     res.end(Footer())
+  }
+
+  {
+    let body = ''
+    req.on('data', (chunk) => { body += chunk })
+    req.on('end', () => {
+      onbody(body)
+    })
   }
 }
 
@@ -76,9 +83,34 @@ function FormFields (fields) {
 
   function Field ([name, value]) {
     if (name === 'transloadit') return ''
+    let isValueJSON = false
+    if (value.startsWith('{') || value.startsWith('[')) {
+      try {
+        // eslint-disable-next-line no-param-reassign
+        value = JSON.stringify(
+          JSON.parse(value),
+          null,
+          2,
+        )
+        isValueJSON = true
+      } catch {
+        // Nothing
+      }
+    }
+
+    const prettyValue = isValueJSON ? `
+        <details open>
+          <code>
+            <pre style="max-width: 100%; max-height: 400px; white-space: pre-wrap; overflow: auto;">${e(value)}</pre>
+          </code>
+        </details>
+      ` : e(value)
+
     return `
       <dt>${e(name)}</dt>
-      <dd>${e(value)}</dd>
+      <dd>
+        ${prettyValue}
+      </dd>
     `
   }
 }

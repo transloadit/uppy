@@ -119,7 +119,7 @@ export default class ProviderView extends View {
 
         this.username = res.username || this.username
         this.#updateFilesAndFolders(res, files, folders)
-        this.plugin.setPluginState({ directories: updatedDirectories })
+        this.plugin.setPluginState({ directories: updatedDirectories, filterInput: '' })
       },
       this.handleError,
     )
@@ -155,6 +155,7 @@ export default class ProviderView extends View {
             files: [],
             folders: [],
             directories: [],
+            filterInput: '',
           }
           this.plugin.setPluginState(newState)
         }
@@ -209,7 +210,7 @@ export default class ProviderView extends View {
         loading: false,
         files: ids,
       }
-      this.plugin.setPluginState({ selectedFolders: folders })
+      this.plugin.setPluginState({ selectedFolders: folders, filterInput: '' })
 
       let message
 

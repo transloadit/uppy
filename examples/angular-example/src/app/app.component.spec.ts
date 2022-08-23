@@ -25,7 +25,7 @@ describe('AppComponent', () => {
   it('should render title', () => {
     const fixture = TestBed.createComponent(AppComponent)
     fixture.detectChanges()
-    const compiled = fixture.nativeElement
-    expect(compiled.textContent).toContain('Uppy Angular Example')
+    const compiled = fixture.nativeElement as HTMLElement
+    expect(compiled.querySelector('.content span')?.textContent).toContain('angular-example app is running!')
   })
 })

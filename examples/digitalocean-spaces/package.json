@@ -1,19 +1,21 @@
 {
   "name": "@uppy-example/digitalocean-spaces",
   "version": "0.0.0",
+  "type": "module",
   "dependencies": {
-    "@babel/core": "^7.2.2",
     "@uppy/aws-s3": "workspace:*",
     "@uppy/core": "workspace:*",
     "@uppy/dashboard": "workspace:*",
-    "babelify": "^10.0.0",
     "body-parser": "^1.18.3",
-    "budo": "^11.6.1",
-    "cors": "^2.8.5",
-    "router": "^1.3.3"
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {
+    "dotenv": "^16.0.1",
+    "express": "^4.16.2",
+    "vite": "^3.0.0"
   },
   "private": true,
   "scripts": {
-    "start": "node ./server.js"
+    "start": "node ./server.cjs"
   }
 }

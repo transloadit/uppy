@@ -15,7 +15,7 @@ The `<FileInput />` component wraps the [`@uppy/file-input`](/docs/file-input/) 
 Install from NPM:
 
 ```shell
-npm install @uppy/react
+npm install @uppy/react @uppy/file-input @uppy/core
 ```
 
 ```js

@@ -55,10 +55,6 @@ class Uppy {
     const defaultOptions = {
       id: 'uppy',
       autoProceed: false,
-      /**
-       * @deprecated The method should not be used
-       */
-      allowMultipleUploads: true,
       allowMultipleUploadBatches: true,
       debug: false,
       restrictions: defaultRestrictionOptions,
@@ -180,16 +176,6 @@ class Uppy {
    */
   getState () {
     return this.store.getState()
-  }
-
-  /**
-   * Back compat for when uppy.state is used instead of uppy.getState().
-   *
-   * @deprecated
-   */
-  get state () {
-    // Here, state is a non-enumerable property.
-    return this.getState()
   }
 
   /**
@@ -448,6 +434,18 @@ class Uppy {
    * The `files` value is passed in because it may be updated by the caller without updating the store.
    */
   #checkAndCreateFileStateObject (files, fileDescriptor) {
+    // Uppy expects files in { name, type, size, data } format.
+    // If the actual File object is passed from input[type=file] or drag-drop,
+    // we normalize it to match Uppy file object
+    if (fileDescriptor instanceof File) {
+      fileDescriptor = {
+        name: fileDescriptor.name,
+        type: fileDescriptor.type,
+        size: fileDescriptor.size,
+        data: fileDescriptor,
+      }
+    }
+
     const fileType = getFileType(fileDescriptor)
     const fileName = getFileName(fileType, fileDescriptor)
     const fileExtension = getFileNameAndExtension(fileName).extension

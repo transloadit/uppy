@@ -4,8 +4,6 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Uppy example: Multiple instances</title>
-  </head>
-  <body>
     <style>
       main {
         display: flex;
@@ -14,6 +12,8 @@
       }
       h1 { text-align: center }
     </style>
+  </head>
+  <body>
     <main>
       <div>
         <h1>Instance A</h1>
@@ -24,8 +24,8 @@
         <div id="b"></div>
       </div>
     </main>
+    <noscript>This app requires JavaScript to be enabled.</noscript>
 
-    <link href="uppy.min.css" rel="stylesheet">
-    <script src="bundle.js"></script>
+    <script src="./main.js" type="module"></script>
   </body>
 </html>

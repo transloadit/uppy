@@ -1,5 +1,20 @@
 # @uppy/core
 
+## 3.0.0
+
+Released: 2022-08-22
+Included in: Uppy v3.0.0
+
+- @uppy/core: core: uppy.addFile should accept browser File objects (Artur Paikin / #4020)
+- @uppy/core,@uppy/dashboard,@uppy/status-bar: Style tweaks: use all: initial + other resets (Artur Paikin / #3983)
+
+## 3.0.0-beta.4
+
+Released: 2022-08-16
+Included in: Uppy v3.0.0-beta.5
+
+- @uppy/core,@uppy/react: Fix all breaking todo comments for 3.0 (Merlijn Vos / #3907)
+
 ## 3.0.0-beta.2
 
 Released: 2022-07-27

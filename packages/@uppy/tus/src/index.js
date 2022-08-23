@@ -1,4 +1,4 @@
-import BasePlugin from '@uppy/core/lib/BasePlugin'
+import BasePlugin from '@uppy/core/lib/BasePlugin.js'
 import * as tus from 'tus-js-client'
 import { Provider, RequestClient, Socket } from '@uppy/companion-client'
 import emitSocketProgress from '@uppy/utils/lib/emitSocketProgress'
@@ -80,6 +80,10 @@ export default class Tus extends BasePlugin {
     // merge default options with the ones set by user
     /** @type {import("..").TusOptions} */
     this.opts = { ...defaultOptions, ...opts }
+
+    if (opts?.allowedMetaFields === undefined && 'metaFields' in this.opts) {
+      throw new Error('The `metaFields` option has been renamed to `allowedMetaFields`.')
+    }
 
     if ('autoRetry' in opts) {
       throw new Error('The `autoRetry` option was deprecated and has been removed.')
@@ -217,7 +221,7 @@ export default class Tus extends BasePlugin {
 
         let userProvidedPromise
         if (typeof opts.onBeforeRequest === 'function') {
-          userProvidedPromise = opts.onBeforeRequest(req)
+          userProvidedPromise = opts.onBeforeRequest(req, file)
         }
 
         if (hasProperty(queuedRequest, 'shouldBeRequeued')) {
@@ -256,7 +260,7 @@ export default class Tus extends BasePlugin {
         }
 
         this.resetUploaderReferences(file.id)
-        queuedRequest.abort()
+        queuedRequest?.abort()
 
         this.uppy.emit('upload-error', file, err)
 
@@ -344,11 +348,11 @@ export default class Tus extends BasePlugin {
 
       /** @type {Record<string, string>} */
       const meta = {}
-      const metaFields = Array.isArray(opts.metaFields)
-        ? opts.metaFields
+      const allowedMetaFields = Array.isArray(opts.allowedMetaFields)
+        ? opts.allowedMetaFields
         // Send along all fields by default.
         : Object.keys(file.meta)
-      metaFields.forEach((item) => {
+      allowedMetaFields.forEach((item) => {
         meta[item] = file.meta[item]
       })
 
