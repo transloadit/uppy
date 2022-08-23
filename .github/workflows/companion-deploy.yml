@@ -3,7 +3,7 @@ name: Companion Deploy
 on:
   push:
     tags:
-      - '@uppy/companion*'
+      - '@uppy/companion@*'
 
 jobs:
   docker:
