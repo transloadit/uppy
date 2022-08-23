@@ -5,7 +5,7 @@ on:
   push:
     branches: [main]
     tags:
-      - '@uppy/companion*'
+      - '@uppy/companion@*'
 
 jobs:
   docker:
