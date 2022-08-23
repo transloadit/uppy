@@ -5,7 +5,7 @@ on:
   push:
     branches: [main]
     paths:
-    - 'packages/@uppy/companion/**'
+    - 'packages/@uppy/companion/CHANGELOG.md'
 
 jobs:
   docker:
