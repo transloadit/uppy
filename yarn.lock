@@ -619,32 +619,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/eslint-parser@npm:^7.11.3":
-  version: 7.18.9
-  resolution: "@babel/eslint-parser@npm:7.18.9"
-  dependencies:
-    eslint-scope: ^5.1.1
-    eslint-visitor-keys: ^2.1.0
-    semver: ^6.3.0
-  peerDependencies:
-    "@babel/core": ">=7.11.0"
-    eslint: ^7.5.0 || ^8.0.0
-  checksum: ddbe0f9425c61a23069280948c0ad9cd4d6d46087cbc6386dd407a3ae6365c62e20f401ea42608aba21fcc2142b8d3d0878eb2f2192a7e5adbe355bdbc215aad
-  languageName: node
-  linkType: hard
-
-"@babel/eslint-plugin@npm:^7.11.3":
-  version: 7.18.10
-  resolution: "@babel/eslint-plugin@npm:7.18.10"
-  dependencies:
-    eslint-rule-composer: ^0.3.0
-  peerDependencies:
-    "@babel/eslint-parser": ">=7.11.0"
-    eslint: ">=7.5.0"
-  checksum: 9fa301e2064de4336bf99df052438006b296f0f9dbc08cad7d1918604d59c19d2893cf1872846bd8d3577d5347e33d0cfb452f4f40141962a551726bba8c2025
-  languageName: node
-  linkType: hard
-
 "@babel/generator@npm:7.18.7":
   version: 7.18.7
   resolution: "@babel/generator@npm:7.18.7"
@@ -7902,8 +7876,6 @@ __metadata:
   dependencies:
     "@babel/cli": ^7.14.5
     "@babel/core": ^7.14.6
-    "@babel/eslint-parser": ^7.11.3
-    "@babel/eslint-plugin": ^7.11.3
     "@babel/plugin-proposal-nullish-coalescing-operator": ^7.14.5
     "@babel/plugin-proposal-optional-chaining": ^7.16.0
     "@babel/plugin-transform-modules-commonjs": ^7.16.8
@@ -16934,13 +16906,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-rule-composer@npm:^0.3.0":
-  version: 0.3.0
-  resolution: "eslint-rule-composer@npm:0.3.0"
-  checksum: c2f57cded8d1c8f82483e0ce28861214347e24fd79fd4144667974cd334d718f4ba05080aaef2399e3bbe36f7d6632865110227e6b176ed6daa2d676df9281b1
-  languageName: node
-  linkType: hard
-
 "eslint-rule-docs@npm:^1.1.5":
   version: 1.1.235
   resolution: "eslint-rule-docs@npm:1.1.235"
@@ -17005,7 +16970,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-visitor-keys@npm:^2.0.0, eslint-visitor-keys@npm:^2.1.0":
+"eslint-visitor-keys@npm:^2.0.0":
   version: 2.1.0
   resolution: "eslint-visitor-keys@npm:2.1.0"
   checksum: e3081d7dd2611a35f0388bbdc2f5da60b3a3c5b8b6e928daffff7391146b434d691577aa95064c8b7faad0b8a680266bcda0a42439c18c717b80e6718d7e267d
