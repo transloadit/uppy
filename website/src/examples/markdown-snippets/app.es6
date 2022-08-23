@@ -11,6 +11,27 @@ import ImageEditor from '@uppy/image-editor'
 const TRANSLOADIT_EXAMPLE_KEY = '35c1aed03f5011e982b6afe82599b6a0'
 const TRANSLOADIT_EXAMPLE_TEMPLATE = '0b2ee2bc25dc43619700c2ce0a75164a'
 
+function matchFilesAndThumbs (results) {
+  const filesById = {}
+  const thumbsById = {}
+
+  for (const [stepName, result] of Object.entries(results)) {
+    // eslint-disable-next-line no-shadow
+    result.forEach(result => {
+      if (stepName === 'thumbnails') {
+        thumbsById[result.original_id] = result
+      } else {
+        filesById[result.original_id] = result
+      }
+    })
+  }
+
+  return Object.keys(filesById).map((key) => ({
+    file: filesById[key],
+    thumb: thumbsById[key],
+  }))
+}
+
 /**
  * A textarea for markdown text, with support for file attachments.
  */
@@ -147,26 +168,6 @@ function loadSnippets () {
     const { title, text } = JSON.parse(localStorage[`snippet_${id}`])
     renderSnippet(title, text)
   }
-}
-
-function matchFilesAndThumbs (results) {
-  const filesById = {}
-  const thumbsById = {}
-
-  for (const [stepName, result] of Object.entries(results)) {
-    result.forEach(result => {
-      if (stepName === 'thumbnails') {
-        thumbsById[result.original_id] = result
-      } else {
-        filesById[result.original_id] = result
-      }
-    })
-  }
-
-  return Object.keys(filesById).map((key) => ({
-    file: filesById[key],
-    thumb: thumbsById[key],
-  }))
 }
 
 document.querySelector('#new').addEventListener('submit', (event) => {

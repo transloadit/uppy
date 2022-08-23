@@ -6,16 +6,17 @@ const upload = multer({
   storage: multer.memoryStorage(),
 })
 
-app.use(cors())
-app.post('/upload', upload.array('files'), uploadRoute)
-
-app.listen(9967)
-
 function uploadRoute (req, res) {
   res.json({
     files: req.files.map((file) => {
+      // eslint-disable-next-line no-param-reassign
       delete file.buffer
       return file
     }),
   })
 }
+
+app.use(cors())
+app.post('/upload', upload.array('files'), uploadRoute)
+
+app.listen(9967)
