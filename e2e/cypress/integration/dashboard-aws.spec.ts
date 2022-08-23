@@ -9,5 +9,8 @@ describe('Dashboard with @uppy/aws-s3', () => {
     cy.get('.uppy-StatusBar-actionBtn--upload').click()
 
     cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Complete')
+    cy.window().then(({ uppy }) => {
+      uppy.on('error', err => cy.task('log', String(err)))
+    })
   })
 })
