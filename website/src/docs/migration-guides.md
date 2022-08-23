@@ -34,19 +34,13 @@ import ScreenCapture from '@uppy/screen-capture'
 import GoldenRetriever from '@uppy/golden-retriever'
 import ImageEditor from '@uppy/image-editor'
 import Audio from '@uppy/audio'
-import Transloadit from '@uppy/transloadit'
+import Transloadit, { COMPANION_URL, COMPANION_ALLOWED_HOSTS } from '@uppy/transloadit'
 
 import '@uppy/core/dist/style.css'
 import '@uppy/dashboard/dist/style.css'
 import '@uppy/audio/dist/style.css'
 import '@uppy/screen-capture/dist/style.css'
 import '@uppy/image-editor/dist/style.css'
-
-const {
-  COMPANION_URL,
-  COMPANION_ALLOWED_HOSTS,
-  TRANSLOADIT_SERVICE_URL,
-} = import.meta.env
 
 new Uppy()
   .use(Dashboard, {
@@ -71,7 +65,7 @@ new Uppy()
   .use(ScreenCapture, { target: Dashboard })
   .use(ImageEditor, { target: Dashboard })
   .use(Transloadit, {
-    service: TRANSLOADIT_SERVICE_URL,
+    service: 'https://api2.transloadit.com',
     async getAssemblyOptions (file) {
       // This is where you configure your auth key, auth secret, and template ID
       // https://uppy.io/docs/transloadit/#getAssemblyOptions-file
@@ -88,16 +82,11 @@ new Uppy()
 
 ### Uppy is pure ESM
 
-Following the footsteps of many packages, we now only ship Uppy core and its plugins as
-[ECMAScript Modules](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules) (ESM).
-On Uppy 2.x, we were shipping CommonJS.
+Following the footsteps of many packages, we now only ship Uppy core and its plugins as [ECMAScript Modules](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules) (ESM). On Uppy 2.x, we were shipping CommonJS.
 
 If are already using ESM yourself, or are using the CDN builds, nothing changes for you!
 
-If you are using CommonJS, you might need to add some tooling for everything to work, or you might
-want to refactor your codebase to ESM – refer to
-the [Pure ESM package](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c)
-gist for added information and help on how to do that.
+If you are using CommonJS, you might need to add some tooling for everything to work, or you might want to refactor your codebase to ESM – refer to the [Pure ESM package](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c) gist for added information and help on how to do that.
 
 ### Robodog is deprecated
 

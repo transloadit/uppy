@@ -60,6 +60,7 @@
     "./lib/hasProperty": "./lib/hasProperty.js",
     "./lib/mimeTypes": "./lib/mimeTypes.js",
     "./lib/getDroppedFiles": "./lib/getDroppedFiles/index.js",
+    "./lib/FOCUSABLE_ELEMENTS.js": "./lib/FOCUSABLE_ELEMENTS.js",
     "./src/microtip.scss": "./src/microtip.scss"
   },
   "dependencies": {
