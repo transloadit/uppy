@@ -19,6 +19,7 @@ function serve () {
   return {
     writeBundle () {
       if (server) return
+      // eslint-disable-next-line global-require
       server = require('node:child_process').spawn('npm', ['run', 'serve', '--', '--dev'], {
         stdio: ['ignore', 'inherit', 'inherit'],
         shell: true,

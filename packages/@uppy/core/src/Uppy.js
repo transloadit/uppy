@@ -438,6 +438,7 @@ class Uppy {
     // If the actual File object is passed from input[type=file] or drag-drop,
     // we normalize it to match Uppy file object
     if (fileDescriptor instanceof File) {
+      // eslint-disable-next-line no-param-reassign
       fileDescriptor = {
         name: fileDescriptor.name,
         type: fileDescriptor.type,

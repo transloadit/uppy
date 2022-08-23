@@ -21,8 +21,7 @@ export default class Client {
   }
 
   /**
-   * @param  {RequestInfo | URL} input
-   * @param  {RequestInit} init
+   * @param  {[RequestInfo | URL, RequestInit]} args
    * @returns {Promise<any>}
    */
   #fetchJSON (...args) {
