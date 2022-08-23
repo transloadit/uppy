@@ -46,6 +46,7 @@
   },
   "devDependencies": {
     "cypress": "^10.0.0",
+    "cypress-terminal-report": "^4.1.2",
     "deep-freeze": "^0.0.1",
     "parcel": "^2.0.1",
     "prompts": "^2.4.2",

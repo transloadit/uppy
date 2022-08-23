@@ -4919,6 +4919,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@parcel/transformer-vue@npm:2.7.0":
+  version: 2.7.0
+  resolution: "@parcel/transformer-vue@npm:2.7.0"
+  dependencies:
+    "@parcel/diagnostic": 2.7.0
+    "@parcel/plugin": 2.7.0
+    "@parcel/source-map": ^2.0.0
+    "@parcel/utils": 2.7.0
+    "@vue/compiler-sfc": ^3.2.27
+    consolidate: ^0.16.0
+    nullthrows: ^1.1.1
+    semver: ^5.7.1
+  checksum: 564c98af47091b2a74e4419884429e66f82cda8ec589193d96c637eb670766ba8d21d1deef16c672bd2907783b7c4659ef53ae62e938da1245406b3c74edcc94
+  languageName: node
+  linkType: hard
+
 "@parcel/types@npm:2.7.0":
   version: 2.7.0
   resolution: "@parcel/types@npm:2.7.0"
@@ -7911,6 +7927,7 @@ __metadata:
     "@babel/preset-env": ^7.14.7
     "@babel/register": ^7.10.5
     "@babel/types": ^7.17.0
+    "@parcel/transformer-vue": 2.7.0
     "@types/jasmine": "file:./private/@types/jasmine"
     "@types/jasminewd2": "file:./private/@types/jasmine"
     "@typescript-eslint/eslint-plugin": ^5.0.0
@@ -9202,7 +9219,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vue/compiler-sfc@npm:3.2.37":
+"@vue/compiler-sfc@npm:3.2.37, @vue/compiler-sfc@npm:^3.2.27":
   version: 3.2.37
   resolution: "@vue/compiler-sfc@npm:3.2.37"
   dependencies:
@@ -14296,6 +14313,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"cypress-terminal-report@npm:^4.1.2":
+  version: 4.1.2
+  resolution: "cypress-terminal-report@npm:4.1.2"
+  dependencies:
+    chalk: ^4.0.0
+    fs-extra: ^10.1.0
+    semver: ^7.3.5
+    tv4: ^1.3.0
+  peerDependencies:
+    cypress: ">=4.10.0"
+  checksum: e9ca354db3557969c87cd30d93646292d2166740d5f76995e5463779690845f51f7764e4ed405f86c46d685d8969b1dbf54d18518b4d7e08cddb60928c0825a5
+  languageName: node
+  linkType: hard
+
 "cypress@npm:^10.0.0":
   version: 10.6.0
   resolution: "cypress@npm:10.6.0"
@@ -15334,6 +15365,7 @@ __metadata:
     "@uppy/xhr-upload": "workspace:^"
     "@uppy/zoom": "workspace:^"
     cypress: ^10.0.0
+    cypress-terminal-report: ^4.1.2
     deep-freeze: ^0.0.1
     parcel: ^2.0.1
     prompts: ^2.4.2
@@ -35202,6 +35234,13 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
     proper-lockfile: ^4.1.2
     url-parse: ^1.5.7
   checksum: dda7921a0d55f3a15535590adb6eb98edfbf6c88dfbcad9bf1013cfa16bc2244fb937ad1d6bc05f34005ee103da31ccbae5ca650d46dc23d6e653946994c9015
+  languageName: node
+  linkType: hard
+
+"tv4@npm:^1.3.0":
+  version: 1.3.0
+  resolution: "tv4@npm:1.3.0"
+  checksum: 075096cf3bc2db5727650e16717a343954625c5fde6b2bb5553c86a9a5ca7b9fd287c0f5ab7ac03094f39e982fe9288dc715c7223a90e1684fd2263460a74bbd
   languageName: node
   linkType: hard
 
