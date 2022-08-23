@@ -131,6 +131,7 @@ module.exports = {
       files: [
         '*.jsx',
         'packages/@uppy/react-native/**/*.js',
+        'examples/react-native-expo/**/*.js',
       ],
       parserOptions: {
         sourceType: 'module',
