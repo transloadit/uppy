@@ -21,6 +21,6 @@ import './commands'
 
 // eslint-disable-next-line
 // @ts-ignore
-import fn from  'cypress-terminal-report/src/installLogsCollector'
+import fn from  'cypress-terminal-report/src/installLogsCollector.js'
 
 fn()

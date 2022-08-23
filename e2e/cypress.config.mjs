@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { defineConfig } from 'cypress'
 // eslint-disable-next-line import/no-extraneous-dependencies
-import terminalReport from 'cypress-terminal-report/src/installLogsPrinter'
+import terminalReport from 'cypress-terminal-report/src/installLogsPrinter.js'
 
 export default defineConfig({
   defaultCommandTimeout: 16000,

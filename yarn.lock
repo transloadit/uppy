@@ -4919,6 +4919,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@parcel/transformer-vue@npm:2.7.0":
+  version: 2.7.0
+  resolution: "@parcel/transformer-vue@npm:2.7.0"
+  dependencies:
+    "@parcel/diagnostic": 2.7.0
+    "@parcel/plugin": 2.7.0
+    "@parcel/source-map": ^2.0.0
+    "@parcel/utils": 2.7.0
+    "@vue/compiler-sfc": ^3.2.27
+    consolidate: ^0.16.0
+    nullthrows: ^1.1.1
+    semver: ^5.7.1
+  checksum: 564c98af47091b2a74e4419884429e66f82cda8ec589193d96c637eb670766ba8d21d1deef16c672bd2907783b7c4659ef53ae62e938da1245406b3c74edcc94
+  languageName: node
+  linkType: hard
+
 "@parcel/types@npm:2.7.0":
   version: 2.7.0
   resolution: "@parcel/types@npm:2.7.0"
@@ -7911,6 +7927,7 @@ __metadata:
     "@babel/preset-env": ^7.14.7
     "@babel/register": ^7.10.5
     "@babel/types": ^7.17.0
+    "@parcel/transformer-vue": 2.7.0
     "@types/jasmine": "file:./private/@types/jasmine"
     "@types/jasminewd2": "file:./private/@types/jasmine"
     "@typescript-eslint/eslint-plugin": ^5.0.0
@@ -9202,7 +9219,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vue/compiler-sfc@npm:3.2.37":
+"@vue/compiler-sfc@npm:3.2.37, @vue/compiler-sfc@npm:^3.2.27":
   version: 3.2.37
   resolution: "@vue/compiler-sfc@npm:3.2.37"
   dependencies:

@@ -46,6 +46,7 @@
     "@babel/preset-env": "^7.14.7",
     "@babel/register": "^7.10.5",
     "@babel/types": "^7.17.0",
+    "@parcel/transformer-vue": "2.7.0",
     "@types/jasmine": "file:./private/@types/jasmine",
     "@types/jasminewd2": "file:./private/@types/jasmine",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
