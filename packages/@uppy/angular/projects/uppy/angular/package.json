@@ -25,8 +25,8 @@
     "tslib": "^2.0.0"
   },
   "peerDependencies": {
-    "@angular/common": ">= 11",
-    "@angular/core": ">= 11",
+    "@angular/common": ">= 14",
+    "@angular/core": ">= 14",
     "@uppy/core": "workspace:^",
     "@uppy/dashboard": "workspace:^",
     "@uppy/drag-drop": "workspace:^",
