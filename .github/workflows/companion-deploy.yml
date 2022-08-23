@@ -1,9 +1,7 @@
 name: Companion Deploy
 
-
 on:
   push:
-    branches: [main]
     tags:
       - '@uppy/companion*'
 
