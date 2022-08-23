@@ -4,8 +4,8 @@ name: Companion Deploy
 on:
   push:
     branches: [main]
-    paths:
-    - 'packages/@uppy/companion/CHANGELOG.md'
+    tags:
+      - '@uppy/companion*'
 
 jobs:
   docker:
