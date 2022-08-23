@@ -4,7 +4,7 @@ order: 10
 title: "Transloadit"
 module: "@uppy/transloadit"
 permalink: docs/transloadit/
-category: "File Processing"
+category: "Destinations"
 tagline: "manipulate and transcode uploaded files using the <a href='https://transloadit.com'>transloadit.com</a> service"
 ---
 
