@@ -5,7 +5,7 @@
   "main": "lib/companion.js",
   "types": "lib/companion.d.ts",
   "author": "Transloadit.com",
-  "license": "ISC",
+  "license": "MIT",
   "homepage": "https://github.com/transloadit/uppy#readme",
   "repository": {
     "type": "git",
