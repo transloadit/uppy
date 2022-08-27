@@ -72,7 +72,7 @@ const getConfigFromEnv = () => {
     },
     s3: {
       key: process.env.COMPANION_AWS_KEY,
-      getKey: utils.defaultGetKey,
+      getKey: process.env.COMPANION_S3_GETKEY_UNSAFE_BEHAVIOR === 'true' ? utils.unsafeGetKey : utils.defaultGetKey,
       secret: getSecret('COMPANION_AWS_SECRET'),
       bucket: process.env.COMPANION_AWS_BUCKET,
       endpoint: process.env.COMPANION_AWS_ENDPOINT,
