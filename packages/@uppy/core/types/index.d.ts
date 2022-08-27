@@ -21,7 +21,7 @@ export type FileProgress = UppyUtils.FileProgress;
 export type FileRemoveReason = 'removed-by-user' | 'cancel-all';
 
 // Replace the `meta` property type with one that allows omitting internal metadata addFile() will add that
-type UppyFileWithoutMeta<TMeta, TBody> = OmitKey<
+type UppyFileWithoutMeta<TMeta extends IndexedObject<any>, TBody extends IndexedObject<any>> = OmitKey<
   UppyFile<TMeta, TBody>,
   'meta'
 >
@@ -36,17 +36,23 @@ export type Store = UppyUtils.Store
 
 export type InternalMetadata = UppyUtils.InternalMetadata
 
-export interface UploadedUppyFile<TMeta, TBody> extends UppyFile<TMeta, TBody> {
+export interface UploadedUppyFile<
+    TMeta extends IndexedObject<any>,
+    TBody extends IndexedObject<any>
+  > extends UppyFile<TMeta, TBody> {
   uploadURL: string
 }
 
-export interface FailedUppyFile<TMeta, TBody> extends UppyFile<TMeta, TBody> {
+export interface FailedUppyFile<
+    TMeta extends IndexedObject<any>,
+    TBody extends IndexedObject<any>
+  > extends UppyFile<TMeta, TBody> {
   error: string
 }
 
 export interface AddFileOptions<
-  TMeta = IndexedObject<any>,
-  TBody = IndexedObject<any>
+    TMeta extends IndexedObject<any> = IndexedObject<any>,
+    TBody extends IndexedObject<any> = IndexedObject<any>
   > extends Partial<UppyFileWithoutMeta<TMeta, TBody>> {
   // `.data` is the only required property here.
   data: Blob | File
@@ -204,22 +210,27 @@ export interface SuccessResponse {
 }
 
 export type GenericEventCallback = () => void;
-export type FileAddedCallback<TMeta> = (file: UppyFile<TMeta>) => void;
-export type FilesAddedCallback<TMeta> = (files: UppyFile<TMeta>[]) => void;
-export type FileRemovedCallback<TMeta> = (file: UppyFile<TMeta>, reason: FileRemoveReason) => void;
+export type FileAddedCallback<TMeta extends IndexedObject<any>> = (file: UppyFile<TMeta>) => void;
+export type FilesAddedCallback<TMeta extends IndexedObject<any>> = (files: UppyFile<TMeta>[]) => void;
+export type FileRemovedCallback<TMeta extends IndexedObject<any>> =
+  (file: UppyFile<TMeta>, reason: FileRemoveReason) => void;
 export type UploadCallback = (data: { id: string, fileIDs: string[] }) => void;
 export type ProgressCallback = (progress: number) => void;
-export type PreProcessCompleteCallback<TMeta> = (file: UppyFile<TMeta> | undefined) => void;
-export type UploadProgressCallback<TMeta> = (file: UppyFile<TMeta> | undefined, progress: FileProgress) => void;
-export type UploadSuccessCallback<TMeta> = (file: UppyFile<TMeta> | undefined, response: SuccessResponse) => void
-export type UploadCompleteCallback<TMeta> = (result: UploadResult<TMeta>) => void
+export type PreProcessCompleteCallback<TMeta extends IndexedObject<any>> = (file: UppyFile<TMeta> | undefined) => void;
+export type UploadProgressCallback<TMeta extends IndexedObject<any>> =
+  (file: UppyFile<TMeta> | undefined, progress: FileProgress) => void;
+export type UploadSuccessCallback<TMeta extends IndexedObject<any>> =
+  (file: UppyFile<TMeta> | undefined, response: SuccessResponse) => void
+export type UploadCompleteCallback<TMeta extends IndexedObject<any>> = (result: UploadResult<TMeta>) => void
 export type ErrorCallback = (error: Error) => void;
-export type UploadErrorCallback<TMeta> = (file: UppyFile<TMeta> | undefined, error: Error, response?: ErrorResponse) => void;
+export type UploadErrorCallback<TMeta extends IndexedObject<any>> =
+  (file: UppyFile<TMeta> | undefined, error: Error, response?: ErrorResponse) => void;
 export type UploadRetryCallback = (fileID: string) => void;
 export type RetryAllCallback = (fileIDs: string[]) => void;
-export type RestrictionFailedCallback<TMeta> = (file: UppyFile<TMeta> | undefined, error: Error) => void;
+export type RestrictionFailedCallback<TMeta extends IndexedObject<any>> =
+  (file: UppyFile<TMeta> | undefined, error: Error) => void;
 
-export interface UppyEventMap<TMeta = Record<string, unknown>> {
+export interface UppyEventMap<TMeta extends IndexedObject<any> = Record<string, unknown>> {
   'file-added': FileAddedCallback<TMeta>
   'files-added': FilesAddedCallback<TMeta>
   'file-removed': FileRemovedCallback<TMeta>
@@ -349,7 +360,7 @@ export class Uppy {
 
   getID(): string
 
-  use<TOptions, TInstance extends UIPlugin | BasePlugin<TOptions>>(
+  use<TOptions, TInstance extends UIPlugin | BasePlugin>(
     pluginClass: new (uppy: this, opts: TOptions) => TInstance,
     opts?: TOptions
   ): this
