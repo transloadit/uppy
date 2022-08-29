@@ -12428,9 +12428,9 @@ __metadata:
   linkType: hard
 
 "caniuse-lite@npm:^1.0.0, caniuse-lite@npm:^1.0.30001109, caniuse-lite@npm:^1.0.30001304, caniuse-lite@npm:^1.0.30001370, caniuse-lite@npm:^1.0.30001373":
-  version: 1.0.30001383
-  resolution: "caniuse-lite@npm:1.0.30001383"
-  checksum: 1830129858510163f6acfbeaf258e0a84061091901ea349ee12541cc04997a25dc17d0ba731e8518711d87f0e08fee2a762aa89264d86be5f329300d0ff9d421
+  version: 1.0.30001384
+  resolution: "caniuse-lite@npm:1.0.30001384"
+  checksum: 396f3fc70555e71202754dd2821311a5713294d6fb1a82713bf476d9da4a3530bc893fb4eb3c124a0ad545e0af225cdb9d1fd7f25236714e695157e82e395001
   languageName: node
   linkType: hard
 
@@ -16465,8 +16465,8 @@ __metadata:
   linkType: hard
 
 "eslint-plugin-jest@npm:^26.0.0":
-  version: 26.8.7
-  resolution: "eslint-plugin-jest@npm:26.8.7"
+  version: 26.9.0
+  resolution: "eslint-plugin-jest@npm:26.9.0"
   dependencies:
     "@typescript-eslint/utils": ^5.10.0
   peerDependencies:
@@ -16477,7 +16477,7 @@ __metadata:
       optional: true
     jest:
       optional: true
-  checksum: 4e5e0c781ef48ae7d757123bce3ed28c384f02f3d4cf88d616932c075b625c10f298e905bee988876f62f6688e8e11d0b8ce235fd4b3f6c7006a8725375eac58
+  checksum: 6d5fd5c95368f1ca2640389aeb7ce703d6202493c3ec6bdedb4eaca37233710508b0c75829e727765a16fd27029a466d34202bc7f2811c752038ccbbce224400
   languageName: node
   linkType: hard
 
@@ -27726,8 +27726,8 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   linkType: hard
 
 "pdfjs-dist@npm:^2.12.313":
-  version: 2.15.349
-  resolution: "pdfjs-dist@npm:2.15.349"
+  version: 2.16.105
+  resolution: "pdfjs-dist@npm:2.16.105"
   dependencies:
     dommatrix: ^1.0.3
     web-streams-polyfill: ^3.2.1
@@ -27736,7 +27736,7 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   peerDependenciesMeta:
     worker-loader:
       optional: true
-  checksum: 494745eb183e572f22271f6f3bc9b4a0adbf54fd4a2bf058878f96d3579bee03092a4eac0d010a0753b9d06854b9c97b8121c7bb14732609f9defd61f78b80f4
+  checksum: 16ad2fa0ff8404fefd1a3e83f92ef1a594fcc4d3ff65512f801365c8f06d300d4a38023a867994f0b964a8e146773e6dcc9988c7c1a791917eb6371d5bd72863
   languageName: node
   linkType: hard
 
@@ -33892,8 +33892,8 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   linkType: hard
 
 "svelte-check@npm:^2.0.0":
-  version: 2.8.1
-  resolution: "svelte-check@npm:2.8.1"
+  version: 2.9.0
+  resolution: "svelte-check@npm:2.9.0"
   dependencies:
     "@jridgewell/trace-mapping": ^0.3.9
     chokidar: ^3.4.1
@@ -33907,7 +33907,7 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
     svelte: ^3.24.0
   bin:
     svelte-check: bin/svelte-check
-  checksum: 52499866e4145084be8998be3fcddcd95963e1860e508358b1cede8031be54a99dc79cb338f8ab4a260af753112fe16169b10880ddb5177c2741c4ab6046f539
+  checksum: b224177e553d4d0ba1e5e2b438b2674a30530cde636849828757868555af36de902aa114db356f0e954e24d85da225441b5248e3e3b0090f8d757794bbcd610d
   languageName: node
   linkType: hard
 
@@ -34046,9 +34046,9 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   linkType: hard
 
 "synchronous-promise@npm:^2.0.15":
-  version: 2.0.15
-  resolution: "synchronous-promise@npm:2.0.15"
-  checksum: 6079a6acd37d02eb76f250dc7ce09009151744901b320a8cfbba056b015c3d7cbf4e7467458f2d27c6393634f68521b241ea9e35fd9640f8fb59342740550472
+  version: 2.0.16
+  resolution: "synchronous-promise@npm:2.0.16"
+  checksum: 1a3e5dfa9e3b913452366e182d4cae5c2ffb9de8c9753ecb602539a298e82ab82de951a0b0ecd86b2e2e237b1236eb5e82964c8ce13b2d23f7ecd52767a2b74d
   languageName: node
   linkType: hard
 

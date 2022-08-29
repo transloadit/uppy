@@ -493,8 +493,10 @@ module.exports = {
       ],
       rules: {
         'import/prefer-default-export': 'off',
+        'indent': 'off', // https://github.com/typescript-eslint/typescript-eslint/issues/1824#issuecomment-957559729
         '@typescript-eslint/no-explicit-any': 'off',
         '@typescript-eslint/no-namespace': 'off',
+        '@typescript-eslint/indent': 'off', // TODO: try to reenable that rule on the next @typescript-eslint update.
       },
     },
     {
