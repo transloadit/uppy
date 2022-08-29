@@ -185,7 +185,6 @@
     "@types/eslint@^7.2.13": "^8.2.0",
     "@types/react": "^17",
     "@types/webpack-dev-server": "^4",
-    "exifr": "patch:exifr@npm:7.1.3#.yarn/patches/exifr-npm-7.1.3-e3f1c7a57d",
     "preact": "patch:preact@npm:10.10.0#.yarn/patches/preact-npm-10.10.0-dd04de05e8.patch"
   }
 }
