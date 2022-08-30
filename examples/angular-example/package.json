@@ -1,5 +1,5 @@
 {
-  "name": "angular-example",
+  "name": "@uppy-example/angular",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
