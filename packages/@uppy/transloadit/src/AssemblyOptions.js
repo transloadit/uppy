@@ -68,7 +68,6 @@ class AssemblyOptions {
     const assemblyOptions = typeof options.assemblyOptions === 'function'
       ? await options.assemblyOptions(file, options)
       : options.assemblyOptions
-    console.log(assemblyOptions)
 
     // We check if the file is present here again, because it could had been
     // removed during the await, e.g. if the user hit cancel while we were

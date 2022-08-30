@@ -117,6 +117,7 @@ export type TransloaditOptions = Options &
   (
     | {
         assemblyOptions?: AssemblyOptions | ((file: UppyFile) => Promise<AssemblyOptions>)
+        /** @deprecated use `assemblyOptions` instead */
         getAssemblyOptions?: never
         /** @deprecated use `assemblyOptions` instead */
         params?: never
