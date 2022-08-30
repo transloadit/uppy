@@ -4,7 +4,7 @@
   "svelte": "src/index.js",
   "module": "dist/index.mjs",
   "main": "dist/index.js",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "scripts": {
     "build": "rollup -c",
     "prepublishOnly": "yarn run build",

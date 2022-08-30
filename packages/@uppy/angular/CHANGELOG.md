@@ -1,5 +1,13 @@
 # @uppy/angular
 
+## 0.4.1
+
+Released: 2022-08-30
+Included in: Uppy v3.0.1
+
+- @uppy/angular: fix compiler warning (Antoine du Hamel / #4064)
+- @uppy/angular: fix peer dependencies (Antoine du Hamel / #4035)
+
 ## 0.4.0
 
 Released: 2022-08-22
