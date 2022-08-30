@@ -40,11 +40,10 @@
         "dot-notation": "error",
         "import/no-unresolved": "off",
         "import/prefer-default-export": "off",
-        "indent": "warn",
+        "indent": "error",
         "no-empty-function": "off",
         "no-shadow": "error",
         "no-unused-expressions": "error",
-        "no-unused-vars": "warn",
         "no-use-before-define": "off",
         "quotes": "error",
         "semi": ["error", "never"]
