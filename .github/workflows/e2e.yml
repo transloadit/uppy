@@ -1,11 +1,11 @@
 name: End-to-end tests
 on:
   push:
-    branches: [ main, 2.x ]
+    branches: [main, 2.x]
   pull_request_target:
-    types: [ opened, synchronize, reopened, labeled ]
+    types: [opened, synchronize, reopened, labeled]
   pull_request:
-    types: [ opened, synchronize, reopened ]
+    types: [opened, synchronize, reopened]
     paths:
       - .github/workflows/e2e.yml
 
@@ -32,12 +32,23 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
+
+      - name: create cache folder for Cypress
+        id: cypress-cache-dir-path
+        run: echo "::set-output name=dir::$(mktemp -d)"
+      - uses: actions/cache@v3
+        with:
+          path: ${{ steps.cypress-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-cypress
       - name: Install Node.js
         uses: actions/setup-node@v3
         with:
           node-version: lts/*
       - name: Install dependencies
         run: corepack yarn install --immutable
+        env:
+          # https://docs.cypress.io/guides/references/advanced-installation#Binary-cache
+          CYPRESS_CACHE_FOLDER: ${{ steps.cypress-cache-dir-path.outputs.dir }}
       - name: Build Uppy packages
         run: corepack yarn build
       - name: Run end-to-end browser tests
@@ -50,6 +61,8 @@ jobs:
           VITE_TRANSLOADIT_TEMPLATE: ${{secrets.TRANSLOADIT_TEMPLATE}}
           VITE_TRANSLOADIT_SERVICE_URL: ${{secrets.TRANSLOADIT_SERVICE_URL}}
           CYPRESS_RECORD_KEY: ${{secrets.CYPRESS_RECORD_KEY}}
+          # https://docs.cypress.io/guides/references/advanced-installation#Binary-cache
+          CYPRESS_CACHE_FOLDER: ${{ steps.cypress-cache-dir-path.outputs.dir }}
       - name: Remove 'pending end-to-end tests' label
         # Remove the 'pending end-to-end tests' label if tests ran successfully
         if: github.event.pull_request && contains(github.event.pull_request.labels.*.name, 'pending end-to-end tests')

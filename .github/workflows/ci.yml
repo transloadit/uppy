@@ -37,7 +37,10 @@ jobs:
         # More recent versions of Corepack are not compatible with Node.js 12.x.
         run: npm install -f -g corepack@0.10.0
       - name: Install dependencies
-        run: corepack yarn install --immutable
+        run: corepack yarn workspaces focus $(corepack yarn workspaces list --json | jq -r .name | awk '/^@uppy-example/{ next } { if ($0!="uppy.io") print $0 }')
+        env:
+          # https://docs.cypress.io/guides/references/advanced-installation#Skipping-installation
+          CYPRESS_INSTALL_BINARY: 0
       - name: Run tests
         run: corepack yarn run test:unit
 
@@ -63,7 +66,8 @@ jobs:
         with:
           node-version: lts/*
       - name: Install dependencies
-        run: corepack yarn install --immutable
+        # List all projects that use a custom ESLint config:
+        run: corepack yarn workspaces focus @uppy/angular angular-example @uppy-example/react-native-expo @uppy/react-native @uppy-dev/build
       - name: Run linter
         run: corepack yarn run lint
 
@@ -89,7 +93,7 @@ jobs:
         with:
           node-version: lts/*
       - name: Install dependencies
-        run: corepack yarn install --immutable
+        run: corepack yarn workspaces focus @uppy-dev/build
       - name: Run linter
         run: corepack yarn run lint:markdown
 
@@ -115,7 +119,10 @@ jobs:
         with:
           node-version: lts/*
       - name: Install dependencies
-        run: corepack yarn install --immutable
+        run: corepack yarn workspaces focus $(corepack yarn workspaces list --json | jq -r .name | awk '/^@uppy-example/{ next } { if ($0!="uppy.io") print $0 }')
+        env:
+          # https://docs.cypress.io/guides/references/advanced-installation#Skipping-installation
+          CYPRESS_INSTALL_BINARY: 0
         # Need to do a bunch of work to generate the locale typings 🙃
       - name: Prepare type declarations
         run: |
