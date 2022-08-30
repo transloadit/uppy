@@ -93,12 +93,12 @@ interface AssemblyParameters {
   template_id?: string
   steps?: { [step: string]: Record<string, unknown> }
   notify_url?: string
-  fields?: { [name: string]: number | string }
 }
 
 interface AssemblyOptions {
   params?: AssemblyParameters
   fields?: { [name: string]: number | string }
+  // TODO (major): move signature into params.auth.
   signature?: string
 }
 
