@@ -7946,6 +7946,51 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@uppy-example/angular@workspace:examples/angular-example":
+  version: 0.0.0-use.local
+  resolution: "@uppy-example/angular@workspace:examples/angular-example"
+  dependencies:
+    "@angular-devkit/build-angular": ^14.1.2
+    "@angular-eslint/builder": ^14.0.2
+    "@angular-eslint/eslint-plugin": ^14.0.2
+    "@angular-eslint/eslint-plugin-template": ^14.0.2
+    "@angular-eslint/schematics": ^14.0.2
+    "@angular-eslint/template-parser": ^14.0.2
+    "@angular/animations": ^14.1.0
+    "@angular/cli": ~14.2.0
+    "@angular/common": ^14.1.0
+    "@angular/compiler": ^14.1.0
+    "@angular/compiler-cli": ^14.1.0
+    "@angular/core": ^14.1.0
+    "@angular/forms": ^14.1.0
+    "@angular/platform-browser": ^14.1.0
+    "@angular/platform-browser-dynamic": ^14.1.0
+    "@angular/router": ^14.1.0
+    "@types/jasmine": ~4.0.0
+    "@uppy/angular": "workspace:*"
+    "@uppy/core": "workspace:*"
+    "@uppy/drag-drop": "workspace:*"
+    "@uppy/google-drive": "workspace:*"
+    "@uppy/progress-bar": "workspace:*"
+    "@uppy/tus": "workspace:*"
+    "@uppy/webcam": "workspace:*"
+    eslint: ^8.0.0
+    eslint-plugin-import: ^2.22.1
+    eslint-plugin-jsdoc: ^39.0.0
+    eslint-plugin-prefer-arrow: ^1.2.3
+    jasmine-core: ~4.2.0
+    karma: ~6.4.0
+    karma-chrome-launcher: ~3.1.0
+    karma-coverage: ~2.2.0
+    karma-jasmine: ~5.1.0
+    karma-jasmine-html-reporter: ~2.0.0
+    rxjs: ~7.5.0
+    tslib: ^2.3.0
+    typescript: ~4.8
+    zone.js: ~0.11.4
+  languageName: unknown
+  linkType: soft
+
 "@uppy-example/aws-companion@workspace:examples/aws-companion":
   version: 0.0.0-use.local
   resolution: "@uppy-example/aws-companion@workspace:examples/aws-companion"
@@ -9917,51 +9962,6 @@ __metadata:
   checksum: 9d4e15b94641643a9385b2841b4cb2bcf4e8e2f741ea4bd475c93ad7bab261ad4ed827a32e9c549b38b98759c4526c173ae4e6dde8caeb75ee5cebedc9863762
   languageName: node
   linkType: hard
-
-"angular-example@workspace:examples/angular-example":
-  version: 0.0.0-use.local
-  resolution: "angular-example@workspace:examples/angular-example"
-  dependencies:
-    "@angular-devkit/build-angular": ^14.1.2
-    "@angular-eslint/builder": ^14.0.2
-    "@angular-eslint/eslint-plugin": ^14.0.2
-    "@angular-eslint/eslint-plugin-template": ^14.0.2
-    "@angular-eslint/schematics": ^14.0.2
-    "@angular-eslint/template-parser": ^14.0.2
-    "@angular/animations": ^14.1.0
-    "@angular/cli": ~14.2.0
-    "@angular/common": ^14.1.0
-    "@angular/compiler": ^14.1.0
-    "@angular/compiler-cli": ^14.1.0
-    "@angular/core": ^14.1.0
-    "@angular/forms": ^14.1.0
-    "@angular/platform-browser": ^14.1.0
-    "@angular/platform-browser-dynamic": ^14.1.0
-    "@angular/router": ^14.1.0
-    "@types/jasmine": ~4.0.0
-    "@uppy/angular": "workspace:*"
-    "@uppy/core": "workspace:*"
-    "@uppy/drag-drop": "workspace:*"
-    "@uppy/google-drive": "workspace:*"
-    "@uppy/progress-bar": "workspace:*"
-    "@uppy/tus": "workspace:*"
-    "@uppy/webcam": "workspace:*"
-    eslint: ^8.0.0
-    eslint-plugin-import: ^2.22.1
-    eslint-plugin-jsdoc: ^39.0.0
-    eslint-plugin-prefer-arrow: ^1.2.3
-    jasmine-core: ~4.2.0
-    karma: ~6.4.0
-    karma-chrome-launcher: ~3.1.0
-    karma-coverage: ~2.2.0
-    karma-jasmine: ~5.1.0
-    karma-jasmine-html-reporter: ~2.0.0
-    rxjs: ~7.5.0
-    tslib: ^2.3.0
-    typescript: ~4.8
-    zone.js: ~0.11.4
-  languageName: unknown
-  linkType: soft
 
 "angular@workspace:packages/@uppy/angular":
   version: 0.0.0-use.local
