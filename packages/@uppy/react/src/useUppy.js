@@ -17,9 +17,7 @@ export default function useUppy (factory) {
 
   useEffect(() => {
     return () => {
-      if (uppy.current) {
-        uppy.current.close({ reason: 'unmount' })
-      }
+      uppy.current?.close({ reason: 'unmount' })
       uppy.current = undefined
     }
   }, [uppy])
