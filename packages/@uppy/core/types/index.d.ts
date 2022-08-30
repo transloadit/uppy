@@ -360,7 +360,7 @@ export class Uppy {
 
   getID(): string
 
-  use<TOptions, TInstance extends UIPlugin | BasePlugin>(
+  use<TOptions extends PluginOptions, TInstance extends UIPlugin | BasePlugin<TOptions>>(
     pluginClass: new (uppy: this, opts: TOptions) => TInstance,
     opts?: TOptions
   ): this
