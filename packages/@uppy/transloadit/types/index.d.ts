@@ -116,7 +116,7 @@ interface Options extends PluginOptions {
 export type TransloaditOptions = Options &
   (
     | {
-        assemblyOptions?: AssemblyOptions | ((file: UppyFile) => Promise<AssemblyOptions>)
+        assemblyOptions?: AssemblyOptions | ((file: UppyFile) => Promise<AssemblyOptions> | AssemblyOptions)
         /** @deprecated use `assemblyOptions` instead */
         getAssemblyOptions?: never
         /** @deprecated use `assemblyOptions` instead */
