@@ -65,7 +65,8 @@ uppy.use(Webcam, {
   ],
   mirror: true,
   showVideoSourceDropdown: false,
-  facingMode: 'user', // @TODO: remove in the next major
+  /** @deprecated Use `videoConstraints.facingMode` instead. */
+  facingMode: 'user',
   videoConstraints: {
     facingMode: 'user',
   },
