@@ -1,5 +1,12 @@
 # @uppy/react
 
+## 3.0.1
+
+Released: 2022-08-30
+Included in: Uppy v3.0.1
+
+- @uppy/react: useUppy: fix unmount on NextJS dev mode (Matt Jesuele / #4062)
+
 ## 3.0.0
 
 Released: 2022-08-22

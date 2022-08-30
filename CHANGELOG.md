@@ -12,6 +12,46 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 3.0.1
+
+Released: 2022-08-30
+
+| Package                   | Version | Package                   | Version |
+| ------------------------- | ------- | ------------------------- | ------- |
+| @uppy/angular             |   0.4.1 | @uppy/store-default       |   3.0.1 |
+| @uppy/audio               |   1.0.1 | @uppy/store-redux         |   3.0.1 |
+| @uppy/aws-s3              |   3.0.1 | @uppy/svelte              |   3.0.0 |
+| @uppy/aws-s3-multipart    |   3.0.1 | @uppy/thumbnail-generator |   3.0.1 |
+| @uppy/companion           |   4.0.1 | @uppy/transloadit         |   3.0.1 |
+| @uppy/companion-client    |   3.0.1 | @uppy/tus                 |   3.0.1 |
+| @uppy/core                |   3.0.1 | @uppy/utils               |   5.0.1 |
+| @uppy/dashboard           |   3.0.1 | @uppy/webcam              |   3.1.0 |
+| @uppy/react               |   3.0.1 | @uppy/xhr-upload          |   3.0.1 |
+| @uppy/remote-sources      |   1.0.1 | uppy                      |   3.0.1 |
+
+- @uppy/dashboard,@uppy/webcam: add nativeCameraFacingMode to Webcam and Dashboard (Artur Paikin / #4047)
+- meta: upgrade to Jest 29 (Antoine du Hamel / #4049)
+- @uppy/svelte: update peer dependencies (Antoine du Hamel / #4065)
+- @uppy/react: useUppy: fix unmount on NextJS dev mode (Matt Jesuele / #4062)
+- @uppy/vue: fix missing component in docs (Antoine du Hamel / #4063)
+- @uppy/angular: fix compiler warning (Antoine du Hamel / #4064)
+- meta: improve CI npm install time (Antoine du Hamel / #4058)
+- meta: example: fix Angular example package name (Antoine du Hamel / #4060)
+- meta: upgrade to TypeScript 4.8 (Antoine du Hamel / #4048)
+- @uppy/core,@uppy/dashboard,@uppy/thumbnail-generator: update definition type files for TS 4.8 compatibility (Antoine du Hamel / #4055)
+- @uppy/transloadit: improve deprecation notice (Antoine du Hamel / #4056)
+- @uppy/thumbnail-generator: fix `exifr` import (Antoine du Hamel / #4054)
+- @uppy/utils: fix `relativePath` when drag&dropping a folder (Antoine du Hamel / #4043)
+- @uppy/companion: Fix Companion license (Merlijn Vos / #4044)
+- e2e: add tests for AWS (Antoine du Hamel / #3665)
+- meta: Only publish Companion to Dockerhub on release (Merlijn Vos / #4037)
+- meta: fix linter warnings (Antoine du Hamel / #4039)
+- @uppy/utils: Post-release website fixes (Merlijn Vos / #4038)
+- @uppy/angular: fix peer dependencies (Antoine du Hamel / #4035)
+- meta: uppy.io homepage: Add Tus (Artur Paikin)
+- meta: Fix uppy.io homepage example (Artur Paikin)
+
+
 ## 3.0.0
 
 Released: 2022-08-22
