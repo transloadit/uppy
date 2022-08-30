@@ -1,4 +1,4 @@
-import type { PluginOptions, UIPlugin, PluginTarget, UppyFile, GenericEventCallback } from '@uppy/core'
+import type { PluginOptions, UIPlugin, PluginTarget, UppyFile, IndexedObject } from '@uppy/core'
 import type { StatusBarLocale } from '@uppy/status-bar'
 import type { ThumbnailOptions } from '@uppy/thumbnail-generator'
 import DashboardLocale from './generatedLocale'
@@ -86,8 +86,8 @@ export default Dashboard
 
 // Events
 
-export type DashboardFileEditStartCallback<TMeta> = (file?: UppyFile<TMeta>) => void;
-export type DashboardFileEditCompleteCallback<TMeta> = (file?: UppyFile<TMeta>) => void;
+export type DashboardFileEditStartCallback<TMeta extends IndexedObject<any>> = (file?: UppyFile<TMeta>) => void;
+export type DashboardFileEditCompleteCallback<TMeta extends IndexedObject<any>> = (file?: UppyFile<TMeta>) => void;
 declare module '@uppy/core' {
   export interface UppyEventMap<TMeta> {
     'dashboard:modal-open': GenericEventCallback
