@@ -107,7 +107,9 @@ class AssemblyOptions {
 
     if (options.alwaysRunAssembly) {
       // No files, just generate one Assembly
-      const assemblyOptions = await options.assemblyOptions(null, options)
+      const assemblyOptions = typeof options.assemblyOptions === 'function'
+        ? await options.assemblyOptions()
+        : options.assemblyOptions
 
       validateParams(assemblyOptions.params)
       return [{

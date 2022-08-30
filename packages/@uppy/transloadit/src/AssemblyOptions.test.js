@@ -89,7 +89,7 @@ describe('Transloadit/AssemblyOptions', () => {
     const options = new AssemblyOptions([], {
       alwaysRunAssembly: true,
       async assemblyOptions (file) {
-        expect(file).toBe(null)
+        expect(file).toBe(undefined)
         return {
           params: {
             auth: { key: 'fake key' },
