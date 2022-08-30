@@ -12,6 +12,19 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 2.13.5
+
+Released: 2022-08-30
+
+| Package       | Version | Package       | Version |
+| ------------- | ------- | ------------- | ------- |
+| @uppy/tus     |   2.4.4 | @uppy/robodog |   2.9.4 |
+| @uppy/utils   |   4.1.3 | uppy          |  2.13.5 |
+
+- @uppy/utils: fix `relativePath` when drag&dropping a folder (Antoine du Hamel / #4043)
+- @uppy/tus: avoid crashing when Tus client reports an error (Antoine du Hamel / #4019)
+
+
 ## 2.13.4
 
 Released: 2022-08-17

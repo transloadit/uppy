@@ -1,5 +1,12 @@
 # @uppy/utils
 
+## 4.1.3
+
+Released: 2022-08-30
+Included in: Uppy v2.13.5
+
+- @uppy/utils: fix `relativePath` when drag&dropping a folder (Antoine du Hamel / #4043)
+
 ## 4.1.2
 
 Released: 2022-08-17
