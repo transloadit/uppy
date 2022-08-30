@@ -1,5 +1,12 @@
 # @uppy/tus
 
+## 2.4.4
+
+Released: 2022-08-30
+Included in: Uppy v2.13.5
+
+- @uppy/tus: avoid crashing when Tus client reports an error (Antoine du Hamel / #4019)
+
 ## 2.4.3
 
 Released: 2022-08-17
