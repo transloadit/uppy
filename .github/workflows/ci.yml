@@ -63,7 +63,7 @@ jobs:
           node-version: lts/*
       - name: Install dependencies
         # List all projects that use a custom ESLint config:
-        run: corepack yarn workspaces focus @uppy/angular angular-example @uppy-example/react-native-expo @uppy/react-native @uppy-dev/build
+        run: corepack yarn workspaces focus @uppy/angular @uppy-example/angular @uppy-example/react-native-expo @uppy/react-native @uppy-dev/build
       - name: Run linter
         run: corepack yarn run lint
 
