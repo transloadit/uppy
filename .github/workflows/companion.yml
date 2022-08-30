@@ -33,6 +33,9 @@ jobs:
           node-version: ${{matrix.node-version}}
       - name: Install dependencies
         run: corepack yarn install --immutable
+        env:
+          # https://docs.cypress.io/guides/references/advanced-installation#Skipping-installation
+          CYPRESS_INSTALL_BINARY: 0
       - name: Run tests
         run: corepack yarn run test:companion
 
