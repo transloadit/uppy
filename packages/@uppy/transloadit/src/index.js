@@ -60,20 +60,26 @@ export default class Transloadit extends BasePlugin {
       waitForMetadata: false,
       alwaysRunAssembly: false,
       importFromUploadURLs: false,
+      /** @deprecated use `assemblyOptions` instead */
       signature: null,
+      /** @deprecated use `assemblyOptions` instead */
       params: null,
+      /** @deprecated use `assemblyOptions` instead */
       fields: {},
+      /** @deprecated use `assemblyOptions` instead */
       getAssemblyOptions: defaultGetAssemblyOptions,
       limit: 20,
       retryDelays: [7_000, 10_000, 15_000, 20_000],
     }
 
     this.opts = { ...defaultOptions, ...opts }
+    // TODO: move this into `defaultOptions` once we remove the deprecated options
+    this.opts.assemblyOptions = opts.assemblyOptions ?? this.opts.getAssemblyOptions
     this.#rateLimitedQueue = new RateLimitedQueue(this.opts.limit)
 
     this.i18nInit()
 
-    const hasCustomAssemblyOptions = this.opts.getAssemblyOptions !== defaultOptions.getAssemblyOptions
+    const hasCustomAssemblyOptions = this.opts.assemblyOptions !== defaultOptions.assemblyOptions
     if (this.opts.params) {
       validateParams(this.opts.params)
     } else if (!hasCustomAssemblyOptions) {

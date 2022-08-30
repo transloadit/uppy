@@ -65,7 +65,10 @@ class AssemblyOptions {
     if (file == null) return undefined
 
     const options = this.opts
-    const assemblyOptions = await options.getAssemblyOptions(file, options)
+    const assemblyOptions = typeof options.assemblyOptions === 'function'
+      ? await options.assemblyOptions(file, options)
+      : options.assemblyOptions
+    console.log(assemblyOptions)
 
     // We check if the file is present here again, because it could had been
     // removed during the await, e.g. if the user hit cancel while we were
@@ -105,7 +108,7 @@ class AssemblyOptions {
 
     if (options.alwaysRunAssembly) {
       // No files, just generate one Assembly
-      const assemblyOptions = await options.getAssemblyOptions(null, options)
+      const assemblyOptions = await options.assemblyOptions(null, options)
 
       validateParams(assemblyOptions.params)
       return [{
