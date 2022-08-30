@@ -168,6 +168,12 @@ It’s internal usage only.
 
 To migrate: use exposed options only.
 
+#### `@uppy/svelte`
+
+`@uppy/dashboard`, `@uppy/drag-drop`, `@uppy/progress-bar`, and `@uppy/status-bar` are now peer dependencies. This means you don’t install all these packages if you only need one.
+
+To migrate: install only the packages you need. If you use the Dashboard component, you need `@uppy/dashboard`, and so onwards.
+
 #### `@uppy/vue`
 
 `@uppy/dashboard`, `@uppy/drag-drop`, `@uppy/file-input`, `@uppy/progress-bar`, and `@uppy/status-bar` are now peer dependencies. This means you don’t install all these packages if you only need one.
