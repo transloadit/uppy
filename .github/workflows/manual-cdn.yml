@@ -30,6 +30,9 @@ jobs:
           node-version: lts/*
       - name: Install dependencies
         run: corepack yarn install --immutable
+        env:
+          # https://docs.cypress.io/guides/references/advanced-installation#Skipping-installation
+          CYPRESS_INSTALL_BINARY: 0
       - name: Build before publishing
         run: corepack yarn run build
       - name: Upload `${{ github.event.inputs.name }}` to CDN
