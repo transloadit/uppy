@@ -92,27 +92,29 @@ If you are using CommonJS, you might need to add some tooling for everything to 
 
 See the [Robodog migration guide](#Migrate-from-Robodog-to-Uppy-plugins).
 
-### `@uppy/core`
+### Uppy packages
 
-#### Remove `AggregateError` polyfill.
+#### `@uppy/core`
+
+##### Remove `AggregateError` polyfill.
 
 It’s supported by most modern browsers and [can be polyfilled by the user](https://github.com/transloadit/uppy/pull/3532#discussion_r818602636) if needed.
 
 To migrate: install a `AggregateError` polyfill or use `core-js`.
 
-#### Remove `reset()` method.
+##### Remove `reset()` method.
 
 It’s a duplicate of `cancelAll`, but with a less intention revealing name.
 
 To migrate: use `cancelAll`.
 
-#### Remove backwards compatible exports (static properties on `Uppy`)\`
+##### Remove backwards compatible exports (static properties on `Uppy`)\`
 
 `Uppy`, `UIPlugin`, `BasePlugin`, and `debugLogger` used to also be accessible on the `Uppy` export. This has now been removed due to the transition to ESM.
 
 To migrate: import the `Uppy` class by default and/or use named exports for everything else.
 
-#### `uppy.validateRestrictions()` now returns a `RestrictionError`
+##### `uppy.validateRestrictions()` now returns a `RestrictionError`
 
 This method used to return `{ result: false, reason: err.message }`, but that felt strange as it tries to mimic an error. Instead it now return a `RestrictionError`, which is extended `Error` class.
 
@@ -185,6 +187,10 @@ To migrate: use named imports.
 Remove `rotateImage`, `protect`, and `canvasToBlob` from the plugin prototype. They are internal usage only.
 
 To migrate: use exposed options only.
+
+### Known issues
+
+* [`ERESOLVE could not resolve` on npm install](https://github.com/transloadit/uppy/issues/4057).
 
 ## Migrate from Companion 3.x to 4.x
 
