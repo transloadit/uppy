@@ -64,15 +64,15 @@ uppy.use(Webcam, {
     'picture',
   ],
   mirror: true,
+  showVideoSourceDropdown: false,
+  facingMode: 'user', // @TODO: remove in the next major
   videoConstraints: {
     facingMode: 'user',
-    width: { min: 720, ideal: 1280, max: 1920 },
-    height: { min: 480, ideal: 800, max: 1080 },
   },
-  showRecordingLength: false,
-  preferredVideoMimeType: null,
   preferredImageMimeType: null,
-  mobileNativeCamera: isMobile(),
+  preferredVideoMimeType: null,
+  showRecordingLength: false,
+  mobileNativeCamera: isMobile({ tablet: true }),
   locale: {},
 })
 ```
