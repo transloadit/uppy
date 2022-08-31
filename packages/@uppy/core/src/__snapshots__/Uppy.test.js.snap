@@ -12,21 +12,21 @@ Uppy plugins must have unique \`id\` options. See https://uppy.io/docs/plugins/#
 `;
 
 exports[`src/Core uploading a file should only upload files that are not already assigned to another upload id 1`] = `
-Object {
-  "failed": Array [],
-  "successful": Array [
-    Object {
+{
+  "failed": [],
+  "successful": [
+    {
       "data": Uint8Array [],
       "extension": "jpg",
       "id": "uppy-foo/jpg-1e-image/jpeg",
       "isRemote": false,
-      "meta": Object {
+      "meta": {
         "name": "foo.jpg",
         "type": "image/jpeg",
       },
       "name": "foo.jpg",
       "preview": undefined,
-      "progress": Object {
+      "progress": {
         "bytesTotal": null,
         "bytesUploaded": 0,
         "percentage": 0,
@@ -38,18 +38,18 @@ Object {
       "source": "jest",
       "type": "image/jpeg",
     },
-    Object {
+    {
       "data": Uint8Array [],
       "extension": "jpg",
       "id": "uppy-bar/jpg-1e-image/jpeg",
       "isRemote": false,
-      "meta": Object {
+      "meta": {
         "name": "bar.jpg",
         "type": "image/jpeg",
       },
       "name": "bar.jpg",
       "preview": undefined,
-      "progress": Object {
+      "progress": {
         "bytesTotal": null,
         "bytesUploaded": 0,
         "percentage": 0,

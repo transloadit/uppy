@@ -115,12 +115,16 @@ export default class AwsS3 extends BasePlugin {
     const defaultOptions = {
       timeout: 30 * 1000,
       limit: 0,
-      metaFields: [], // have to opt in
+      allowedMetaFields: [], // have to opt in
       getUploadParameters: this.getUploadParameters.bind(this),
       companionHeaders: {},
     }
 
     this.opts = { ...defaultOptions, ...opts }
+
+    if (opts?.allowedMetaFields === undefined && 'metaFields' in this.opts) {
+      throw new Error('The `metaFields` option has been renamed to `allowedMetaFields`.')
+    }
 
     // TODO: remove i18n once we can depend on XHRUpload instead of MiniXHRUpload
     this.i18nInit()
@@ -144,7 +148,7 @@ export default class AwsS3 extends BasePlugin {
     const filename = file.meta.name
     const { type } = file.meta
     const metadata = Object.fromEntries(
-      this.opts.metaFields
+      this.opts.allowedMetaFields
         .filter(key => file.meta[key] != null)
         .map(key => [`metadata[${key}]`, file.meta[key].toString()]),
     )
@@ -198,7 +202,7 @@ export default class AwsS3 extends BasePlugin {
           method,
           formData: method.toLowerCase() === 'post',
           endpoint: url,
-          metaFields: fields ? Object.keys(fields) : [],
+          allowedMetaFields: fields ? Object.keys(fields) : [],
         }
 
         if (headers) {

@@ -7,6 +7,9 @@ order: 2
 category: "File Processing"
 ---
 
+> **Warning**
+> Robodog has been deprecated, its usage is no longer recommended.
+
 Add resumable uploads and Transloadit’s processing to your existing HTML upload forms. Selected files will be uploaded to Transloadit, and the Assembly information will be submitted to your form endpoint.
 
 ```html

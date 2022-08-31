@@ -1,5 +1,12 @@
 # @uppy/companion
 
+## 4.0.1
+
+Released: 2022-08-30
+Included in: Uppy v3.0.1
+
+- @uppy/companion: Fix Companion license (Merlijn Vos / #4044)
+
 ## 4.0.0-beta.4
 
 Released: 2022-08-16

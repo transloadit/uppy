@@ -125,7 +125,7 @@ new Uppy().use(Tus, {
 })
 ```
 
-### `metaFields: null`
+### `allowedMetaFields: null`
 
 Pass an array of field names to limit the metadata fields that will be added to uploads as [Tus Metadata](https://tus.io/protocols/resumable-upload.html#upload-metadata).
 

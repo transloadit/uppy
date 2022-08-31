@@ -37,10 +37,10 @@ const TL_COMPANION = /https?:\/\/api2(?:-\w+)?\.transloadit\.com\/companion/
 export default class Transloadit extends BasePlugin {
   static VERSION = packageJson.version
 
-  /** @deprecated */
+  /** @deprecated use `import { COMPANION_URL } from '@uppy/transloadit'` instead. */
   static COMPANION = COMPANION_URL
 
-  /** @deprecated */
+  /** @deprecated use `import { COMPANION_ALLOWED_HOSTS } from '@uppy/transloadit'` instead. */
   static COMPANION_PATTERN = COMPANION_ALLOWED_HOSTS
 
   #rateLimitedQueue
@@ -793,7 +793,7 @@ export default class Transloadit extends BasePlugin {
         // so it can't just reuse the same tus.Upload instance server-side.
         useFastRemoteRetry: false,
         // Only send Assembly metadata to the tus endpoint.
-        metaFields: ['assembly_url', 'filename', 'fieldname'],
+        allowedMetaFields: ['assembly_url', 'filename', 'fieldname'],
         // Pass the limit option to @uppy/tus
         limit: this.opts.limit,
         rateLimitedQueue: this.#rateLimitedQueue,

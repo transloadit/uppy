@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "build": "rollup -c",
+    "serve": "sirv public",
     "start:client": "rollup -c -w",
     "start:server": "node ./server.mjs",
     "start": "npm-run-all --parallel start:client start:server",
@@ -27,7 +28,7 @@
     "svelte-check": "^1.6.0",
     "svelte-preprocess": "^4.6.1",
     "tslib": "^2.0.0",
-    "typescript": "~4.7"
+    "typescript": "~4.8"
   },
   "dependencies": {
     "@uppy/core": "workspace:*",

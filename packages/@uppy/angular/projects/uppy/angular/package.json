@@ -1,7 +1,7 @@
 {
   "name": "@uppy/angular",
   "description": "Angular component wrappers around Uppy's official UI plugins.",
-  "version": "0.3.1",
+  "version": "0.4.1",
   "license": "MIT",
   "homepage": "https://uppy.io",
   "keywords": [
@@ -25,8 +25,8 @@
     "tslib": "^2.0.0"
   },
   "peerDependencies": {
-    "@angular/common": ">= 11",
-    "@angular/core": ">= 11",
+    "@angular/common": ">= 14",
+    "@angular/core": ">= 14",
     "@uppy/core": "workspace:^",
     "@uppy/dashboard": "workspace:^",
     "@uppy/drag-drop": "workspace:^",

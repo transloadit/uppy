@@ -1,4 +1,4 @@
-import { describe, expect, it } from '@jest/globals'
+import { afterAll, beforeAll, describe, expect, it } from '@jest/globals'
 import resizeObserverPolyfill from 'resize-observer-polyfill'
 import Core from '@uppy/core'
 import Dashboard from '@uppy/dashboard'

@@ -1,5 +1,21 @@
 # @uppy/utils
 
+## 5.0.1
+
+Released: 2022-08-30
+Included in: Uppy v3.0.1
+
+- @uppy/utils: fix `relativePath` when drag&dropping a folder (Antoine du Hamel / #4043)
+- @uppy/utils: Post-release website fixes (Merlijn Vos / #4038)
+
+## 5.0.0
+
+Released: 2022-08-22
+Included in: Uppy v3.0.0
+
+- @uppy/utils: fix drop of multiple files on Chromium browsers (Antoine du Hamel / #3998)
+- @uppy/utils: Fix @uppy/utils microtip.scss export (Merlijn Vos / #3995)
+
 ## 5.0.0-beta.1
 
 Released: 2022-08-16

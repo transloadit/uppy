@@ -1,9 +1,10 @@
 const fs = require('node:fs')
 const path = require('node:path')
-const budo = require('budo')
-const router = require('router')
 const crypto = require('node:crypto')
 
+require('dotenv').config({ path: path.join(__dirname, '..', '..', '.env') })
+
+const app = require('express')()
 const companion = require('../../packages/@uppy/companion')
 
 /**
@@ -22,44 +23,38 @@ if (!process.env.COMPANION_AWS_BUCKET) throw new Error('Missing Space name, plea
 
 // Prepare the server.
 const PORT = process.env.PORT || 3452
+const host = `localhost:${PORT}`
 
-const app = router()
+const DATA_DIR = path.join(__dirname, 'tmp')
+
+fs.mkdirSync(DATA_DIR, { recursive: true })
 
 // Set up the /params endpoint that will create signed URLs for us.
 app.use(require('cors')())
 app.use(require('body-parser').json())
 
 const { app: companionApp } = companion.app({
-  providerOptions: {
-    s3: {
-      // This is the crucial part; set an endpoint template for the service you want to use.
-      endpoint: 'https://{region}.digitaloceanspaces.com',
-      getKey: (req, filename) => `${crypto.randomUUID()}-${filename}`,
+  s3: {
+    // This is the crucial part; set an endpoint template for the service you want to use.
+    endpoint: 'https://{region}.digitaloceanspaces.com',
+    getKey: (req, filename) => `${crypto.randomUUID()}-${filename}`,
 
-      key: process.env.COMPANION_AWS_KEY,
-      secret: process.env.COMPANION_AWS_SECRET,
-      bucket: process.env.COMPANION_AWS_BUCKET,
-      region: process.env.COMPANION_AWS_REGION,
-    },
+    key: process.env.COMPANION_AWS_KEY,
+    secret: process.env.COMPANION_AWS_SECRET,
+    bucket: process.env.COMPANION_AWS_BUCKET,
+    region: process.env.COMPANION_AWS_REGION,
   },
-  server: { serverUrl: `localhost:${PORT}` },
+  server: { host },
+  filePath: DATA_DIR,
+  secret: 'blah blah',
+  debug: true,
 })
 
 app.use('/companion', companionApp)
 
-// Serve the built CSS file.
-app.get('/uppy.min.css', (req, res) => {
-  res.setHeader('content-type', 'text/css')
-  fs.createReadStream(path.join('../../packages/uppy/dist/uppy.min.css')).pipe(res)
-})
-
-// Start the development server, budo.
-budo(path.join(__dirname, 'main.js'), {
-  live: true,
-  stream: process.stdout,
-  port: PORT,
-  middleware: app,
-  browserify: {
-    transform: ['babelify'],
-  },
+require('vite').createServer({ clearScreen: false, server:{ middlewareMode: true } }).then(({ middlewares }) => {
+  app.use(middlewares)
+  app.listen(PORT, () => {
+    console.log(`Listening on http://localhost:${PORT}/...`)
+  })
 })

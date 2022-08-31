@@ -64,15 +64,16 @@ uppy.use(Webcam, {
     'picture',
   ],
   mirror: true,
+  showVideoSourceDropdown: false,
+  /** @deprecated Use `videoConstraints.facingMode` instead. */
+  facingMode: 'user',
   videoConstraints: {
     facingMode: 'user',
-    width: { min: 720, ideal: 1280, max: 1920 },
-    height: { min: 480, ideal: 800, max: 1080 },
   },
-  showRecordingLength: false,
-  preferredVideoMimeType: null,
   preferredImageMimeType: null,
-  mobileNativeCamera: isMobile(),
+  preferredVideoMimeType: null,
+  showRecordingLength: false,
+  mobileNativeCamera: isMobile({ tablet: true }),
   locale: {},
 })
 ```

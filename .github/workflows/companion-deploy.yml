@@ -1,11 +1,9 @@
 name: Companion Deploy
 
-
 on:
   push:
-    branches: [main]
-    paths:
-    - 'packages/@uppy/companion/**'
+    tags:
+      - '@uppy/companion@*'
 
 jobs:
   docker:

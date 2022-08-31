@@ -15,7 +15,7 @@ The `<ProgressBar />` component wraps the [`@uppy/progress-bar`][] plugin.
 Install from NPM:
 
 ```shell
-npm install @uppy/react
+npm install @uppy/react @uppy/progress-bar @uppy/core
 ```
 
 ```js

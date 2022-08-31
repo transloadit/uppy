@@ -32,7 +32,6 @@ function buildBundle (srcFile, bundleFile, { minify = true, standalone = '', plu
 }
 
 await fs.mkdir(new URL('./uppy/dist', PACKAGES_ROOT), { recursive: true })
-await fs.mkdir(new URL('./@uppy/robodog/dist', PACKAGES_ROOT), { recursive: true })
 await fs.mkdir(new URL('./@uppy/locales/dist', PACKAGES_ROOT), { recursive: true })
 
 const methods = [
@@ -68,11 +67,6 @@ const methods = [
         },
       })],
     },
-  ),
-  buildBundle(
-    './packages/@uppy/robodog/bundle.js',
-    './packages/@uppy/robodog/dist/robodog.min.js',
-    { standalone: 'Robodog' },
   ),
 ]
 

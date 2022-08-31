@@ -33,5 +33,8 @@ describe('dashboard-ui', () => {
     cy.get('.uppy-Dashboard-Item-previewImg')
       .should('have.length', 3)
       .each((element) => expect(element).attr('src').to.include('blob:'))
+    cy.window().then(({ uppy }) => {
+      expect(JSON.stringify(uppy.getFiles().map(file => file.meta.relativePath))).to.be.equal('[null,null,null,null]')
+    })
   })
 })

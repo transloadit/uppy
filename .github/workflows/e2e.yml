@@ -32,12 +32,23 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
+
+      - name: create cache folder for Cypress
+        id: cypress-cache-dir-path
+        run: echo "::set-output name=dir::$(mktemp -d)"
+      - uses: actions/cache@v3
+        with:
+          path: ${{ steps.cypress-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-cypress
       - name: Install Node.js
         uses: actions/setup-node@v3
         with:
           node-version: lts/*
       - name: Install dependencies
         run: corepack yarn install --immutable
+        env:
+          # https://docs.cypress.io/guides/references/advanced-installation#Binary-cache
+          CYPRESS_CACHE_FOLDER: ${{ steps.cypress-cache-dir-path.outputs.dir }}
       - name: Build Uppy packages
         run: corepack yarn build
       - name: Run end-to-end browser tests
@@ -45,11 +56,26 @@ jobs:
         env:
           COMPANION_UNSPLASH_KEY: ${{secrets.COMPANION_UNSPLASH_KEY}}
           COMPANION_UNSPLASH_SECRET: ${{secrets.COMPANION_UNSPLASH_SECRET}}
+          VITE_COMPANION_URL: http://localhost:3020
           VITE_TRANSLOADIT_KEY: ${{secrets.TRANSLOADIT_KEY}}
           VITE_TRANSLOADIT_SECRET: ${{secrets.TRANSLOADIT_SECRET}}
           VITE_TRANSLOADIT_TEMPLATE: ${{secrets.TRANSLOADIT_TEMPLATE}}
           VITE_TRANSLOADIT_SERVICE_URL: ${{secrets.TRANSLOADIT_SERVICE_URL}}
-          CYPRESS_RECORD_KEY: ${{secrets.CYPRESS_RECORD_KEY}}
+          COMPANION_AWS_KEY: ${{secrets.COMPANION_AWS_KEY}}
+          COMPANION_AWS_SECRET: ${{secrets.COMPANION_AWS_SECRET}}
+          COMPANION_AWS_BUCKET: ${{secrets.COMPANION_AWS_BUCKET}}
+          COMPANION_AWS_REGION: ${{secrets.COMPANION_AWS_REGION}}
+          COMPANION_AWS_DISABLE_ACL: 'true'
+          # https://docs.cypress.io/guides/references/advanced-installation#Binary-cache
+          CYPRESS_CACHE_FOLDER: ${{ steps.cypress-cache-dir-path.outputs.dir }}
+      - name: Upload videos in case of failure
+        uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: videos-and-screenshots
+          path: |
+            e2e/cypress/videos/
+            e2e/cypress/screenshots/
       - name: Remove 'pending end-to-end tests' label
         # Remove the 'pending end-to-end tests' label if tests ran successfully
         if: github.event.pull_request && contains(github.event.pull_request.labels.*.name, 'pending end-to-end tests')
