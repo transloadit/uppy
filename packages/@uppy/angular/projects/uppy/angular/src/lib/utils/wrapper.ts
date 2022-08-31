@@ -11,7 +11,7 @@ export abstract class UppyAngularWrapper<PluginType extends UIPlugin  = UIPlugin
     private options: any;
     plugin: PluginType | undefined;
 
-    onMount(defaultOptions: Record<string, unknown>, plugin: new (uppy: Uppy, opts: Record<string, unknown>) => UIPlugin) {
+    onMount(defaultOptions: Record<string, unknown>, plugin: new (uppy: Uppy, opts?: Record<string, unknown>) => UIPlugin) {
       this.options = {
         ...defaultOptions,
         ...this.props,
