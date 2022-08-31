@@ -53,37 +53,39 @@ describe('Dashboard with Transloadit', () => {
   it('should emit one assembly-cancelled event when cancelled', FLAKY, () => {
     const spy = cy.spy()
 
-    cy.window().then(({ uppy }) => uppy.on('transloadit:assembly-cancelled', spy))
+    cy.window().then(({ uppy }) => {
+      uppy.on('transloadit:assembly-cancelled', spy)
 
-    cy.get('@file-input').selectFile(['cypress/fixtures/images/cat.jpg', 'cypress/fixtures/images/traffic.jpg'], { force:true })
-    cy.get('.uppy-StatusBar-actionBtn--upload').click()
+      cy.get('@file-input').selectFile(['cypress/fixtures/images/cat.jpg', 'cypress/fixtures/images/traffic.jpg'], { force:true })
+      cy.get('.uppy-StatusBar-actionBtn--upload').click()
 
-    cy.intercept({
-      method: 'GET',
-      url: '/assemblies/*',
-    }).as('assemblyPolling')
-    cy.intercept(
-      { method: 'PATCH', pathname: '/files/*', times: 1 },
-      { statusCode: 204, body: {} },
-    )
-    cy.intercept(
-      { method: 'DELETE', pathname: '/resumable/files/*', times: 2 },
-      { statusCode: 204, body: {} },
-    ).as('fileDeletion')
-    cy.intercept(
-      { method: 'DELETE', pathname: '/assemblies/*', times: 1 },
-    ).as('assemblyDeletion')
+      cy.intercept({
+        method: 'GET',
+        url: '/assemblies/*',
+      }).as('assemblyPolling')
+      cy.intercept(
+        { method: 'PATCH', pathname: '/files/*', times: 1 },
+        { statusCode: 204, body: {} },
+      )
+      cy.intercept(
+        { method: 'DELETE', pathname: '/resumable/files/*', times: 2 },
+        { statusCode: 204, body: {} },
+      ).as('fileDeletion')
+      cy.intercept(
+        { method: 'DELETE', pathname: '/assemblies/*', times: 1 },
+      ).as('assemblyDeletion')
 
-    cy.wait('@assemblyPolling').then(() => {
-      cy.get('button[data-cy=cancel]').click()
+      cy.wait('@assemblyPolling').then(() => {
+        cy.get('button[data-cy=cancel]').click()
 
-      cy.wait('@assemblyDeletion').then(() => {
-        expect(spy).to.be.calledOnce
+        cy.wait('@assemblyDeletion').then(() => {
+          expect(spy).to.be.calledOnce
+        })
       })
     })
   })
 
-  it.only('should close assembly polling when all files are removed', FLAKY, () => {
+  it('should close assembly polling when all files are removed', FLAKY, () => {
     const spy = cy.spy()
 
     cy.window().then(({ uppy }) => {
