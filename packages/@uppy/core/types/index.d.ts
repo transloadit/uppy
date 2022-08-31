@@ -365,7 +365,7 @@ export class Uppy {
   getID(): string
 
   use<TOptions extends PluginOptions, TInstance extends UIPlugin | BasePlugin<TOptions>>(
-    pluginClass: new (uppy: this, opts: TOptions) => TInstance,
+    pluginClass: new (uppy: this, opts?: TOptions) => TInstance,
     opts?: TOptions
   ): this
 
