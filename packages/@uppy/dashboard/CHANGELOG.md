@@ -1,5 +1,13 @@
 # @uppy/dashboard
 
+## 3.0.1
+
+Released: 2022-08-30
+Included in: Uppy v3.0.1
+
+- @uppy/dashboard,@uppy/webcam: add nativeCameraFacingMode to Webcam and Dashboard (Artur Paikin / #4047)
+- @uppy/core,@uppy/dashboard,@uppy/thumbnail-generator: update definition type files for TS 4.8 compatibility (Antoine du Hamel / #4055)
+
 ## 3.0.0
 
 Released: 2022-08-22

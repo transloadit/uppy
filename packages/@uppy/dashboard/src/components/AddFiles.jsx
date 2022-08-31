@@ -47,7 +47,7 @@ class AddFiles extends Component {
     )
   }
 
-  renderHiddenCameraInput = (type, refCallback) => {
+  renderHiddenCameraInput = (type, nativeCameraFacingMode, refCallback) => {
     const typeToAccept = { photo: 'image/*', video: 'video/*' }
     const accept = typeToAccept[type]
 
@@ -60,7 +60,7 @@ class AddFiles extends Component {
         type="file"
         name={`camera-${type}`}
         onChange={this.onFileInputChange}
-        capture="user"
+        capture={nativeCameraFacingMode}
         accept={accept}
         ref={refCallback}
       />
@@ -275,14 +275,18 @@ class AddFiles extends Component {
   }
 
   render () {
-    const { showNativePhotoCameraButton, showNativeVideoCameraButton } = this.props
+    const {
+      showNativePhotoCameraButton,
+      showNativeVideoCameraButton,
+      nativeCameraFacingMode,
+    } = this.props
 
     return (
       <div className="uppy-Dashboard-AddFiles">
         {this.renderHiddenInput(false, (ref) => { this.fileInput = ref })}
         {this.renderHiddenInput(true, (ref) => { this.folderInput = ref })}
-        {showNativePhotoCameraButton && this.renderHiddenCameraInput('photo', (ref) => { this.mobilePhotoFileInput = ref })}
-        {showNativeVideoCameraButton && this.renderHiddenCameraInput('video', (ref) => { this.mobileVideoFileInput = ref })}
+        {showNativePhotoCameraButton && this.renderHiddenCameraInput('photo', nativeCameraFacingMode, (ref) => { this.mobilePhotoFileInput = ref })}
+        {showNativeVideoCameraButton && this.renderHiddenCameraInput('video', nativeCameraFacingMode, (ref) => { this.mobileVideoFileInput = ref })}
         {this.renderDropPasteBrowseTagline()}
         {this.renderSourcesList(this.props.acquirers, this.props.disableLocalFiles)}
         <div className="uppy-Dashboard-AddFiles-info">

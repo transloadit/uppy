@@ -12,6 +12,9 @@ export interface WebcamOptions extends PluginOptions {
     onBeforeSnapshot?: () => Promise<void>
     countdown?: number | boolean
     mirror?: boolean
+    /**
+     * @deprecated Use `videoConstraints.facingMode` instead.
+     */
     facingMode?: string
     showVideoSourceDropdown?: boolean
     modes?: WebcamMode[]

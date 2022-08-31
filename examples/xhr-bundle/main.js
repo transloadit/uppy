@@ -20,6 +20,6 @@ uppy.use(Dashboard, {
 uppy.use(XHRUpload, {
   bundle: true,
   endpoint: 'http://localhost:9967/upload',
-  metaFields: ['something'],
+  allowedMetaFields: ['something'],
   fieldName: 'files',
 })

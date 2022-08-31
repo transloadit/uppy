@@ -1,7 +1,7 @@
 {
   "name": "@uppy/remote-sources",
   "description": "Uppy plugin that includes all remote sources that Uppy+Companion offer, like Instagram, Google Drive, Dropox, Box, Unsplash, Url etc",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "license": "MIT",
   "main": "lib/index.js",
   "types": "types/index.d.ts",
@@ -45,7 +45,7 @@
     "access": "public"
   },
   "devDependencies": {
-    "@jest/globals": "^28.1.0",
+    "@jest/globals": "^29.0.0",
     "resize-observer-polyfill": "^1.5.1"
   }
 }

@@ -971,6 +971,7 @@ export default class Dashboard extends UIPlugin {
       showSelectedFiles: this.opts.showSelectedFiles,
       showNativePhotoCameraButton: this.opts.showNativePhotoCameraButton,
       showNativeVideoCameraButton: this.opts.showNativeVideoCameraButton,
+      nativeCameraFacingMode: this.opts.nativeCameraFacingMode,
       handleCancelRestore: this.handleCancelRestore,
       handleRequestThumbnail: this.handleRequestThumbnail,
       handleCancelThumbnail: this.handleCancelThumbnail,
