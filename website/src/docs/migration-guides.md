@@ -191,6 +191,7 @@ To migrate: use exposed options only.
 ### Known issues
 
 * [`ERESOLVE could not resolve` on npm install](https://github.com/transloadit/uppy/issues/4057).
+* [@uppy/svelte reports a broken dependency with the Vite bundler](https://github.com/transloadit/uppy/issues/4069).
 
 ## Migrate from Companion 3.x to 4.x
 
