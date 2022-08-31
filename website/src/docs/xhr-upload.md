@@ -261,7 +261,7 @@ By default, all metadata is sent, including Uppy’s default `name` and `type` m
 ```js
 uppy.use(XHRUpload, {
   // Only send our own `size` metadata field.
-  metaFields: ['size'],
+  allowedMetaFields: ['size'],
 })
 ```
 
