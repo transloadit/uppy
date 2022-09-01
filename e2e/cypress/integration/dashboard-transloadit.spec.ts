@@ -72,7 +72,10 @@ describe('Dashboard with Transloadit', () => {
       cy.wait('@assemblyPolling').then(() => {
         cy.get('button[data-cy=cancel]').click()
 
-        cy.wait('@assemblyDeletion').then(() => {
+        // Unfortunately, waiting on a network request somehow often results in a race condition.
+        // We just want to know wether this is called or not, so waiting for 2 sec to be sure.
+        // eslint-disable-next-line cypress/no-unnecessary-waiting
+        cy.wait(2000).then(() => {
           expect(spy).to.be.calledOnce
         })
       })
