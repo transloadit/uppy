@@ -1,5 +1,13 @@
 # @uppy/thumbnail-generator
 
+## 3.0.1
+
+Released: 2022-08-30
+Included in: Uppy v3.0.1
+
+- @uppy/core,@uppy/dashboard,@uppy/thumbnail-generator: update definition type files for TS 4.8 compatibility (Antoine du Hamel / #4055)
+- @uppy/thumbnail-generator: fix `exifr` import (Antoine du Hamel / #4054)
+
 ## 2.2.0
 
 Released: 2022-05-30

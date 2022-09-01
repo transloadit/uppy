@@ -32,7 +32,7 @@ jobs:
         with:
           node-version: ${{matrix.node-version}}
       - name: Install dependencies
-        run: corepack yarn install --immutable
+        run: corepack yarn workspaces focus @uppy/companion
       - name: Run tests
         run: corepack yarn run test:companion
 

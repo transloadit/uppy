@@ -8,7 +8,7 @@
 		return new Uppy().use(Webcam).use(XHRUpload, {
 			bundle: true,
 			endpoint: 'http://localhost:9967/upload',
-			metaFields: ['something'],
+			allowedMetaFields: ['something'],
 			fieldName: 'files',
 		})
 	}

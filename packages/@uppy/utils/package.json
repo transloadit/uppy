@@ -1,7 +1,7 @@
 {
   "name": "@uppy/utils",
   "description": "Shared utility functions for Uppy Core and plugins maintained by the Uppy team.",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "license": "MIT",
   "types": "types/index.d.ts",
   "type": "module",
@@ -67,6 +67,6 @@
     "lodash.throttle": "^4.1.1"
   },
   "devDependencies": {
-    "@jest/globals": "^27.4.2"
+    "@jest/globals": "^29.0.0"
   }
 }

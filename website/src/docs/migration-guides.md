@@ -118,7 +118,7 @@ This method used to return `{ result: false, reason: err.message }`, but that fe
 
 To migrate: check the return value, if it’s defined you have an error, otherwise all went well. Note that the error is `return`’ed, it’s not `throw`’n, so you don’t have to `catch` it.
 
-#### `@uppy/transloadit`
+### `@uppy/transloadit`
 
 Remove export of `ALLOWED_COMPANION_PATTERN`, `COMPANION`, and `COMPANION_PATTERN` in favor of `COMPANION_URL` and `COMPANION_ALLOWED_HOSTS`. This is to have more intention revealing names, `COMPANION` sounds like the Companion instance, `COMPANION_URL` makes it more clear that it’s a URL.
 
@@ -134,57 +134,68 @@ uppy.use(Dropbox, {
 })
 ```
 
-#### `@uppy/aws-s3-multipart`
+### `@uppy/aws-s3-multipart`
 
-##### Make `headers` inside the return value of [`prepareUploadParts`](/docs/aws-s3-multipart/#prepareUploadParts-file-partData) part-indexed too.
+#### Make `headers` inside the return value of [`prepareUploadParts`](/docs/aws-s3-multipart/#prepareUploadParts-file-partData) part-indexed too.
 
 This is to allow custom headers to be set per part. See this [issue](https://github.com/transloadit/uppy/issues/3881) for details.
 
 To migrate: make headers part indexed like `presignedUrls`: `{ "headers": { "1": { "Content-MD5": "foo" } }}`.
 
-##### Remove `client` getter and setter.
+#### Remove `client` getter and setter.
 
 It’s internal usage only.
 
 To migrate: use exposed options only.
 
-#### `@uppy/tus/`, `@uppy/aws-s3`, `@uppy/xhr-upload`
+### `@uppy/tus/`, `@uppy/aws-s3`, `@uppy/xhr-upload`
 
 Rename `metaFields` option to `allowedMetaFields`. Counter intuitively, `metaFields` is for _filtering_ which `metaFields` to send along with the request, not for adding extra meta fields to a request. As a lot of people were confused by this, and the name overlaps with the [`metaFields` option from Dashboard](/docs/dashboard/#metaFields), we renamed it.
 
 To migrate: use `allowedMetaFields`.
 
-#### `@uppy/react`
+### `@uppy/react`
 
-##### Uppy dependencies have become peer dependencies
+#### Uppy dependencies have become peer dependencies
 
 `@uppy/dashboard`, `@uppy/drag-drop`, `@uppy/file-input`, `@uppy/progress-bar`, and `@uppy/status-bar` are now peer dependencies. This means you don’t install all these packages if you only need one.
 
 To migrate: install only the packages you need. If you use the Dashboard component, you need `@uppy/dashboard`, and so onwards.
 
-##### Don’t expose `validProps` on the exported components.
+#### Don’t expose `validProps` on the exported components.
 
 It’s internal usage only.
 
 To migrate: use exposed options only.
 
-#### `@uppy/vue`
+### `@uppy/svelte`
+
+`@uppy/dashboard`, `@uppy/drag-drop`, `@uppy/progress-bar`, and `@uppy/status-bar` are now peer dependencies. This means you don’t install all these packages if you only need one.
+
+To migrate: install only the packages you need. If you use the Dashboard component, you need `@uppy/dashboard`, and so onwards.
+
+### `@uppy/vue`
 
 `@uppy/dashboard`, `@uppy/drag-drop`, `@uppy/file-input`, `@uppy/progress-bar`, and `@uppy/status-bar` are now peer dependencies. This means you don’t install all these packages if you only need one.
 
 To migrate: install only the packages you need. If you use the Dashboard component, you need `@uppy/dashboard`, and so onwards.
 
-#### `@uppy/store-redux`
+### `@uppy/store-redux`
 
 Remove backwards compatible exports (static properties on `ReduxStore`). Exports, such as `reducer`, used to also be accessible on the `ReduxStore` export. This has now been removed due to the transition to ESM.
 
 To migrate: use named imports.
 
-#### `@uppy/thumbnail-generator`
+### `@uppy/thumbnail-generator`
 
 Remove `rotateImage`, `protect`, and `canvasToBlob` from the plugin prototype. They are internal usage only.
 
 To migrate: use exposed options only.
+
+### Known issues
+
+* [`ERESOLVE could not resolve` on npm install](https://github.com/transloadit/uppy/issues/4057).
+* [@uppy/svelte reports a broken dependency with the Vite bundler](https://github.com/transloadit/uppy/issues/4069).
 
 ## Migrate from Companion 3.x to 4.x
 
@@ -267,11 +278,11 @@ If you’re using Uppy from a CDN, we now provide two bundles: one for up-to-dat
 
 ```html
 <!-- Modern browsers (recommended) -->
-<script src="https://releases.transloadit.com/uppy/v3.0.0/uppy.min.js"></script>
+<script src="https://releases.transloadit.com/uppy/v3.0.1/uppy.min.js"></script>
 
 <!-- Legacy browsers (IE11+) -->
-<script nomodule src="https://releases.transloadit.com/uppy/v3.0.0/uppy.legacy.min.js"></script>
-<script type="module">import "https://releases.transloadit.com/uppy/v3.0.0/uppy.min.js";</script>
+<script nomodule src="https://releases.transloadit.com/uppy/v3.0.1/uppy.legacy.min.js"></script>
+<script type="module">import "https://releases.transloadit.com/uppy/v3.0.1/uppy.min.js";</script>
 ```
 
 Please note that while you may be able to get 2.0 to work in IE11 this way, we do not officially support it anymore.

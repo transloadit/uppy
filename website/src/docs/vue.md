@@ -72,6 +72,7 @@ install each package separately):
 * `<dashboard />` - renders an inline [`@uppy/dashboard`][].
 * `<dashboard-modal />` - renders a [`@uppy/dashboard`][] modal.
 * `<drag-drop />` - renders a [`@uppy/drag-drop`][] area.
+* `<file-input />` - renders a [`@uppy/file-input`][] area.
 * `<progress-bar />` - renders a [`@uppy/progress-bar`][].
 * `<status-bar />` - renders a [`@uppy/status-bar`][].
 
@@ -202,6 +203,8 @@ The `<status-bar />` component supports all `@uppy/status-bar` options to be pas
 [`@uppy/dashboard`]: /docs/dashboard
 
 [`@uppy/drag-drop`]: /docs/drag-drop
+
+[`@uppy/file-input`]: /docs/file-input
 
 [`@uppy/progress-bar`]: /docs/progress-bar
 

@@ -8,7 +8,7 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 corepack yarn install
 corepack yarn build
 corepack yarn workspace @uppy/angular prepublishOnly
-corepack yarn workspace angular-example ng serve
+corepack yarn workspace @uppy-example/angular ng serve
 ```
 
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.

@@ -98,7 +98,8 @@ export default class Webcam extends UIPlugin {
       ],
       mirror: true,
       showVideoSourceDropdown: false,
-      facingMode: 'user',
+      facingMode: 'user', // @TODO: remove in the next major
+      videoConstraints: undefined,
       preferredImageMimeType: null,
       preferredVideoMimeType: null,
       showRecordingLength: false,
@@ -595,12 +596,13 @@ export default class Webcam extends UIPlugin {
   }
 
   install () {
-    const { mobileNativeCamera, modes } = this.opts
+    const { mobileNativeCamera, modes, facingMode, videoConstraints } = this.opts
 
     if (mobileNativeCamera) {
       this.uppy.getPlugin('Dashboard').setOptions({
         showNativeVideoCameraButton: isModeAvailable(modes, 'video-only') || isModeAvailable(modes, 'video-audio'),
         showNativePhotoCameraButton: isModeAvailable(modes, 'picture'),
+        nativeCameraFacingMode: videoConstraints?.facingMode || facingMode,
       })
       return
     }

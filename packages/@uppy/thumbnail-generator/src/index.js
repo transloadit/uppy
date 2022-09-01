@@ -2,7 +2,7 @@ import { UIPlugin } from '@uppy/core'
 import dataURItoBlob from '@uppy/utils/lib/dataURItoBlob'
 import isObjectURL from '@uppy/utils/lib/isObjectURL'
 import isPreviewSupported from '@uppy/utils/lib/isPreviewSupported'
-import { rotation } from 'exifr/dist/mini.umd.js'
+import { rotation } from 'exifr/dist/mini.esm.mjs'
 
 import locale from './locale.js'
 import packageJson from '../package.json'
