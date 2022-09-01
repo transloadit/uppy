@@ -99,9 +99,7 @@ export default class Webcam extends UIPlugin {
       mirror: true,
       showVideoSourceDropdown: false,
       facingMode: 'user', // @TODO: remove in the next major
-      videoConstraints: {
-        facingMode: 'user',
-      },
+      videoConstraints: undefined,
       preferredImageMimeType: null,
       preferredVideoMimeType: null,
       showRecordingLength: false,
