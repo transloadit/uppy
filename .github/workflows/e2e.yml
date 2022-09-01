@@ -16,14 +16,9 @@ on:
       - 'examples/**'
       - 'private/**'
       - 'website/**'
+      - .github/workflows/e2e.yml
   pull_request:
     types: [ opened, synchronize, reopened ]
-    paths-ignore:
-      - '**.md'
-      - '**.d.ts'
-      - 'examples/**'
-      - 'private/**'
-      - 'website/**'
     paths:
       - .github/workflows/e2e.yml
 
