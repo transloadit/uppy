@@ -1,9 +1,3 @@
-const FLAKY = {
-  retries: {
-    runMode: 3, // retry flaky test
-  },
-}
-
 describe('Dashboard with Transloadit', () => {
   beforeEach(() => {
     cy.visit('/dashboard-transloadit')
@@ -50,7 +44,7 @@ describe('Dashboard with Transloadit', () => {
     })
   })
 
-  it('should emit one assembly-cancelled event when cancelled', FLAKY, () => {
+  it('should emit one assembly-cancelled event when cancelled', () => {
     const spy = cy.spy()
 
     cy.window().then(({ uppy }) => {
@@ -85,7 +79,7 @@ describe('Dashboard with Transloadit', () => {
     })
   })
 
-  it('should close assembly polling when all files are removed', FLAKY, () => {
+  it('should close assembly polling when all files are removed', () => {
     const spy = cy.spy()
 
     cy.window().then(({ uppy }) => {
