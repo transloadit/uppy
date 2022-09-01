@@ -2,8 +2,21 @@ name: End-to-end tests
 on:
   push:
     branches: [main, 2.x]
+    paths-ignore:
+      - "**.md"
+      - "**.d.ts"
+      - "examples/**"
+      - "private/**"
+      - "website/**"
   pull_request_target:
     types: [opened, synchronize, reopened, labeled]
+    paths-ignore:
+      - "**.md"
+      - "**.d.ts"
+      - "examples/**"
+      - "private/**"
+      - "website/**"
+      - .github/workflows/e2e.yml
   pull_request:
     types: [opened, synchronize, reopened]
     paths:
