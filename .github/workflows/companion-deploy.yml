@@ -37,7 +37,7 @@ jobs:
           context: .
           platforms: linux/amd64,linux/arm64
           file: Dockerfile
-          tags: ${{ env.GITHUB_REF }}
+          tags: ${{ github.ref_name }}
           labels: ${{ steps.docker_meta.outputs.labels }}
 
   heroku:
