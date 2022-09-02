@@ -592,7 +592,7 @@ uppy.setState({
 })
 ```
 
-State in Uppy is considered to be immutable. When updating values, make sure not mutate them, but instead create copies. See [Redux docs](http://redux.js.org/docs/recipes/UsingObjectSpreadOperator.html) for more info on this. Here is an example from Uppy.Core that updates progress for a particular file in state:
+State in Uppy is considered to be immutable. When updating values, make sure not mutate them, but instead create copies. See [Redux docs](http://redux.js.org/docs/recipes/UsingObjectSpreadOperator.html) for more info on this. Here is an example that updates progress for a particular file in state:
 
 ```js
 // We use Object.assign({}, obj) to create a copy of `obj`.
