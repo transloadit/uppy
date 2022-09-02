@@ -44,7 +44,11 @@ describe('Dashboard with Transloadit', () => {
     })
   })
 
-  it('should emit one assembly-cancelled event when cancelled', () => {
+  // Too flaky at the moment. Arguably, this is not the right place
+  // as this is doing white box testing (testing internal state).
+  // But E2e is more about black box testing, you don’t care about the internals, only the result.
+  // May make more sense to turn this into a unit test.
+  it.skip('should emit one assembly-cancelled event when cancelled', () => {
     const spy = cy.spy()
 
     cy.window().then(({ uppy }) => {
