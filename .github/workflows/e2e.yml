@@ -16,7 +16,7 @@ on:
       - 'examples/**'
       - 'private/**'
       - 'website/**'
-      - .github/workflows/e2e.yml
+      - '.github/workflows/**'
   pull_request:
     types: [ opened, synchronize, reopened ]
     paths:
