@@ -50,13 +50,24 @@ jobs:
           npm i --save-dev
           @rollup/plugin-commonjs @rollup/plugin-node-resolve
           rollup@${{matrix.rollup-version}}
-      - name: Bundle
+      - name: Create Rollup config file
         run: >-
-          npx rollup
-          --failAfterWarnings --validate
-          --plugin @rollup/plugin-commonjs
-          --plugin @rollup/plugin-node-resolve
-          index.mjs > /dev/null
+          echo '
+          import { cjs } from "@rollup/plugin-cjs";
+          import { nodeResolve } from "@rollup/plugin-node-resolve";
+
+          export default {
+            input: "./index.mjs",
+            output: {
+              file: "/dev/null",
+            }
+            plugins: [
+              cjs(),
+              nodeResolve({ browser: true, exportConditions: ["browser"] }),
+            ],
+          };' > rollup.config.js
+      - name: Bundle
+        run: npx rollup -c
   webpack:
     needs: isolate_uppy
     name: Webpack
