@@ -7,7 +7,7 @@ on:
     types: [ opened, synchronize, reopened ]
     paths:
       - yarn.lock
-      - 'packages/@uppy/companion'
+      - 'packages/@uppy/companion/**'
 
 jobs:
   test:

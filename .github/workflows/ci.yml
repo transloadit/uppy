@@ -10,7 +10,7 @@ on:
       - 'examples/**'
       - 'private/**'
       - 'website/**'
-      - .github/workflows/*
+      - '.github/workflows/**'
 
 jobs:
   unit_tests:
