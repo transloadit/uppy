@@ -60,7 +60,7 @@ jobs:
             input: "./index.mjs",
             output: {
               file: "/dev/null",
-            }
+            },
             plugins: [
               cjs(),
               nodeResolve({ browser: true, exportConditions: ["browser"] }),
