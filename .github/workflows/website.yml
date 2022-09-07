@@ -6,6 +6,7 @@ on:
     paths:
       - yarn.lock
       - 'website/**'
+      - '.github/workflows/website.yml'
 
 jobs:
   deploy:

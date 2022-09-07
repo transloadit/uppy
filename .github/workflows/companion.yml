@@ -8,6 +8,7 @@ on:
     paths:
       - yarn.lock
       - 'packages/@uppy/companion/**'
+      - '.github/workflows/companion.yml'
 
 jobs:
   test:
