@@ -8,6 +8,8 @@ on:
       - 'examples/**'
       - 'private/**'
       - 'website/**'
+      - '.github/**'
+      - '!.github/workflows/e2e.yml'
   pull_request_target:
     types: [ opened, synchronize, reopened, labeled ]
     paths-ignore:
@@ -16,7 +18,7 @@ on:
       - 'examples/**'
       - 'private/**'
       - 'website/**'
-      - '.github/workflows/**'
+      - '.github/**'
   pull_request:
     types: [ opened, synchronize, reopened ]
     paths:

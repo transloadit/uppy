@@ -10,7 +10,8 @@ on:
       - 'examples/**'
       - 'private/**'
       - 'website/**'
-      - '.github/workflows/**'
+      - '.github/**'
+      - '!.github/workflows/ci.yml'
 
 jobs:
   unit_tests:
