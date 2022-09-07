@@ -53,7 +53,7 @@ jobs:
       - name: Create Rollup config file
         run: >-
           echo '
-          import { cjs } from "@rollup/plugin-cjs";
+          import { cjs } from "@rollup/plugin-commonjs";
           import { nodeResolve } from "@rollup/plugin-node-resolve";
 
           export default {
