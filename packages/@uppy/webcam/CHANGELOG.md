@@ -7,6 +7,13 @@ Included in: Uppy v3.0.1
 
 - @uppy/dashboard,@uppy/webcam: add nativeCameraFacingMode to Webcam and Dashboard (Artur Paikin / #4047)
 
+## 3.0.0
+
+Released: 2022-08-22
+Included in: Uppy v3.0.0
+
+- Switch to ESM
+
 ## 3.0.0-beta.2
 
 Released: 2022-07-27
