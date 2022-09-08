@@ -1638,6 +1638,33 @@ describe('src/Core', () => {
       }
     })
 
+    it('should not enforce the maxNumberOfFiles rule for ghost files', () => {
+      const core = new Core({
+        restrictions: {
+          maxNumberOfFiles: 1,
+        },
+      })
+
+      expect(() => {
+        // add 1 ghost file
+        const fileId1 = core.addFile({
+          source: 'jest',
+          name: 'foo1.jpg',
+          type: 'image/jpeg',
+          data: new File([sampleImage], { type: 'image/jpeg' }),
+        })
+        core.setFileState(fileId1, { isGhost: true })
+
+        // add another file
+        core.addFile({
+          source: 'jest',
+          name: 'foo2.jpg',
+          type: 'image/jpeg',
+          data: new File([sampleImage], { type: 'image/jpeg' }),
+        })
+      }).not.toThrowError()
+    })
+
     xit('should enforce the minNumberOfFiles rule', () => { })
 
     it('should enforce the allowedFileTypes rule', () => {

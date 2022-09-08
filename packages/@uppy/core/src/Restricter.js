@@ -45,8 +45,11 @@ class Restricter {
   validate (file, files) {
     const { maxFileSize, minFileSize, maxTotalFileSize, maxNumberOfFiles, allowedFileTypes } = this.getOpts().restrictions
 
-    if (maxNumberOfFiles && files.length + 1 > maxNumberOfFiles) {
-      throw new RestrictionError(`${this.i18n('youCanOnlyUploadX', { smart_count: maxNumberOfFiles })}`)
+    if (maxNumberOfFiles) {
+      const nonGhostFiles = files.filter(f => !f.isGhost)
+      if (nonGhostFiles.length + 1 > maxNumberOfFiles) {
+        throw new RestrictionError(`${this.i18n('youCanOnlyUploadX', { smart_count: maxNumberOfFiles })}`)
+      }
     }
 
     if (allowedFileTypes) {
