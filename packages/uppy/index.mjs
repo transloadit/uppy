@@ -1,6 +1,13 @@
 // Core
 export { default as Uppy, debugLogger } from '@uppy/core'
 
+/**
+ * @deprecated Use `Uppy` instead of `Core`
+ */
+export function Core () {
+  throw new Error('Core has been renamed to Uppy')
+}
+
 // Utilities
 export * as server from '@uppy/companion-client'
 
