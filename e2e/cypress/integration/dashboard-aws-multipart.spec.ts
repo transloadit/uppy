@@ -5,9 +5,12 @@ describe('Dashboard with @uppy/aws-s3-multipart', () => {
   })
 
   it('should upload cat image successfully', () => {
-    cy.get('@file-input').selectFile(['cypress/fixtures/images/cat.jpg', 'cypress/fixtures/images/traffic.jpg'], { force:true })
-    cy.get('.uppy-StatusBar-actionBtn--upload').click()
+    cy.get('@file-input').selectFile('cypress/fixtures/images/cat.jpg', { force:true })
 
-    cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Complete')
+    cy.get('.uppy-StatusBar-actionBtn--upload').click().then(() => {
+      cy.wait(['@assemblies', '@resumable']).then(() => {
+        cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Complete')
+      })
+    })
   })
 })

@@ -18,11 +18,12 @@ describe('Dashboard with Tus', () => {
   })
 
   it('should upload cat image successfully', () => {
-    cy.get('@file-input').selectFile('cypress/fixtures/images/cat.jpg', { force: true })
-    cy.get('.uppy-StatusBar-actionBtn--upload').click()
+    cy.get('@file-input').selectFile('cypress/fixtures/images/cat.jpg', { force:true })
 
-    cy.wait('@tus').then(() => {
-      cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Complete')
+    cy.get('.uppy-StatusBar-actionBtn--upload').click().then(() => {
+      cy.wait(['@assemblies', '@resumable']).then(() => {
+        cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Complete')
+      })
     })
   })
 
