@@ -13,6 +13,8 @@ describe('Dashboard with Tus', () => {
     cy.visit('/dashboard-tus')
     cy.get('.uppy-Dashboard-input:first').as('file-input')
     cy.intercept('/files/*').as('tus')
+    cy.intercept({ method: 'POST', pathname: '/files' }).as('post')
+    cy.intercept({ method: 'PATCH', pathname: '/files/*' }).as('patch')
     interceptCompanionUrlRequest()
     interceptCompanionUnsplashRequest()
   })
@@ -21,7 +23,7 @@ describe('Dashboard with Tus', () => {
     cy.get('@file-input').selectFile('cypress/fixtures/images/cat.jpg', { force:true })
 
     cy.get('.uppy-StatusBar-actionBtn--upload').click().then(() => {
-      cy.wait(['@assemblies', '@resumable']).then(() => {
+      cy.wait(['@post', '@patch']).then(() => {
         cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Complete')
       })
     })

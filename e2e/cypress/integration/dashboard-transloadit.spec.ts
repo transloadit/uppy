@@ -17,7 +17,7 @@ describe('Dashboard with Transloadit', () => {
     })
   })
 
-  it.only('should close assembly polling when cancelled', () => {
+  it('should close assembly polling when cancelled', () => {
     cy.intercept({
       method: 'GET',
       url: '/assemblies/*',
