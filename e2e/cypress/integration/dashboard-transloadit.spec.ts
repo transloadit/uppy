@@ -92,7 +92,7 @@ describe('Dashboard with Transloadit', () => {
     })
   })
 
-  it('should close assembly polling when all files are removed', () => {
+  it.skip('should close assembly polling when all files are removed', () => {
     const spy = cy.spy()
 
     cy.window().then(({ uppy }) => {
