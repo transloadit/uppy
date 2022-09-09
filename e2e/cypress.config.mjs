@@ -5,6 +5,9 @@ import installLogsPrinter from 'cypress-terminal-report/src/installLogsPrinter.j
 
 export default defineConfig({
   defaultCommandTimeout: 16000,
+  retries: {
+    runMode: 3,
+  },
 
   e2e: {
     baseUrl: 'http://localhost:1234',
