@@ -67,58 +67,7 @@ jobs:
       - name: Build Uppy packages
         run: corepack yarn build
       - name: Run end-to-end browser tests
-        run: >
-          corepack yarn run e2e:ci &&
-          corepack yarn run e2e:ci &&
-          corepack yarn run e2e:ci &&
-          corepack yarn run e2e:ci &&
-          corepack yarn run e2e:ci &&
-          corepack yarn run e2e:ci &&
-          corepack yarn run e2e:ci &&
-          corepack yarn run e2e:ci &&
-          corepack yarn run e2e:ci &&
-          corepack yarn run e2e:ci &&
-          corepack yarn run e2e:ci &&
-          corepack yarn run e2e:ci &&
-          corepack yarn run e2e:ci &&
-          corepack yarn run e2e:ci &&
-          corepack yarn run e2e:ci &&
-          corepack yarn run e2e:ci &&
-          corepack yarn run e2e:ci &&
-          corepack yarn run e2e:ci &&
-          corepack yarn run e2e:ci &&
-          corepack yarn run e2e:ci &&
-          corepack yarn run e2e:ci &&
-          corepack yarn run e2e:ci &&
-          corepack yarn run e2e:ci &&
-          corepack yarn run e2e:ci &&
-          corepack yarn run e2e:ci &&
-          corepack yarn run e2e:ci &&
-          corepack yarn run e2e:ci &&
-          corepack yarn run e2e:ci &&
-          corepack yarn run e2e:ci &&
-          corepack yarn run e2e:ci &&
-          corepack yarn run e2e:ci &&
-          corepack yarn run e2e:ci &&
-          corepack yarn run e2e:ci &&
-          corepack yarn run e2e:ci &&
-          corepack yarn run e2e:ci &&
-          corepack yarn run e2e:ci &&
-          corepack yarn run e2e:ci &&
-          corepack yarn run e2e:ci &&
-          corepack yarn run e2e:ci &&
-          corepack yarn run e2e:ci &&
-          corepack yarn run e2e:ci &&
-          corepack yarn run e2e:ci &&
-          corepack yarn run e2e:ci &&
-          corepack yarn run e2e:ci &&
-          corepack yarn run e2e:ci &&
-          corepack yarn run e2e:ci &&
-          corepack yarn run e2e:ci &&
-          corepack yarn run e2e:ci &&
-          corepack yarn run e2e:ci &&
-          corepack yarn run e2e:ci &&
-          corepack yarn run e2e:ci
+        run: corepack yarn run e2e:ci
         env:
           COMPANION_UNSPLASH_KEY: ${{secrets.COMPANION_UNSPLASH_KEY}}
           COMPANION_UNSPLASH_SECRET: ${{secrets.COMPANION_UNSPLASH_SECRET}}
