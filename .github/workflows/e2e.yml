@@ -2,8 +2,23 @@ name: End-to-end tests
 on:
   push:
     branches: [ main ]
+    paths-ignore:
+      - '**.md'
+      - '**.d.ts'
+      - 'examples/**'
+      - 'private/**'
+      - 'website/**'
+      - '.github/**'
+      - '!.github/workflows/e2e.yml'
   pull_request_target:
     types: [ opened, synchronize, reopened, labeled ]
+    paths-ignore:
+      - '**.md'
+      - '**.d.ts'
+      - 'examples/**'
+      - 'private/**'
+      - 'website/**'
+      - '.github/**'
   pull_request:
     types: [ opened, synchronize, reopened ]
     paths:
@@ -33,7 +48,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
 
-      - name: create cache folder for Cypress
+      - name: Create cache folder for Cypress
         id: cypress-cache-dir-path
         run: echo "::set-output name=dir::$(mktemp -d)"
       - uses: actions/cache@v3
