@@ -13,6 +13,7 @@ Released: 2022-08-22
 Included in: Uppy v3.0.0
 
 - @uppy/react: move `@uppy/` packages to peer dependencies (Antoine du Hamel / #4004)
+- Switch to ESM
 
 ## 3.0.0-beta.4
 

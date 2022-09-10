@@ -15,6 +15,7 @@ Included in: Uppy v3.0.0
 
 - @uppy/utils: fix drop of multiple files on Chromium browsers (Antoine du Hamel / #3998)
 - @uppy/utils: Fix @uppy/utils microtip.scss export (Merlijn Vos / #3995)
+- Switch to ESM
 
 ## 5.0.0-beta.1
 

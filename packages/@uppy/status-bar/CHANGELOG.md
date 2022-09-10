@@ -6,6 +6,7 @@ Released: 2022-08-22
 Included in: Uppy v3.0.0
 
 - @uppy/core,@uppy/dashboard,@uppy/status-bar: Style tweaks: use all: initial + other resets (Artur Paikin / #3983)
+- Switch to ESM
 
 ## 3.0.0-beta.2
 

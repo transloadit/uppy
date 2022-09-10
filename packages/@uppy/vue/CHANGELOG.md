@@ -6,6 +6,7 @@ Released: 2022-08-22
 Included in: Uppy v3.0.0
 
 - @uppy/vue: move `@uppy/` packages to peer dependencies (Antoine du Hamel / #4024)
+- Switch to ESM
 
 ## 0.4.8
 
