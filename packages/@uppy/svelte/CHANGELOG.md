@@ -6,6 +6,7 @@ Released: 2022-08-30
 Included in: Uppy v3.0.1
 
 - @uppy/svelte: update peer dependencies (Antoine du Hamel / #4065)
+- Switch to ESM
 
 ## 1.0.7
 

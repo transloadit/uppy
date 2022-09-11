@@ -9,6 +9,7 @@ Included in: Uppy v3.0.0
 - @uppy/tus: avoid crashing when Tus client reports an error (Antoine du Hamel / #4019)
 - @uppy/tus: fix dependencies (Antoine du Hamel / #3923)
 - @uppy/tus: add file argument to `onBeforeRequest` (Merlijn Vos / #3984)
+- Switch to ESM
 
 ## 3.0.0-beta.2
 

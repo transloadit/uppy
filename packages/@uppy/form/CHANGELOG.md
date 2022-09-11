@@ -13,3 +13,9 @@ Released: 2022-04-27
 Included in: Uppy v2.9.4
 
 - @uppy/form: refactor to ESM (Antoine du Hamel / #3654)
+## 3.0.0
+
+Released: 2022-08-22
+Included in: Uppy v3.0.0
+
+- Switch to ESM
