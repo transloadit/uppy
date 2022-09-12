@@ -6,6 +6,12 @@ on:
   pull_request:
     # We want all branches so we configure types to be the GH default again
     types: [ opened, synchronize, reopened ]
+    paths-ignore:
+      - 'examples/**'
+      - 'private/**'
+      - 'website/**'
+      - '.github/**'
+      - '!.github/workflows/ci.yml'
 
 jobs:
   unit_tests:

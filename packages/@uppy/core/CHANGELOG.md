@@ -14,6 +14,7 @@ Included in: Uppy v3.0.0
 
 - @uppy/core: core: uppy.addFile should accept browser File objects (Artur Paikin / #4020)
 - @uppy/core,@uppy/dashboard,@uppy/status-bar: Style tweaks: use all: initial + other resets (Artur Paikin / #3983)
+- Switch to ESM
 
 ## 3.0.0-beta.4
 

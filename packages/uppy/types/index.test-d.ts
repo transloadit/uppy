@@ -1,7 +1,7 @@
 import * as Uppy from '..';
 
 (() => {
-  const uppy = new Uppy.Core({ autoProceed: false })
+  const uppy = new Uppy.Uppy({ autoProceed: false })
   uppy.use(Uppy.Dashboard, { trigger: '#up_load_file_01' })
   uppy.use(Uppy.DragDrop, { target: '#ttt' })
   uppy.use(Uppy.XHRUpload, {
@@ -15,7 +15,7 @@ import * as Uppy from '..';
 })();
 
 (() => {
-  new Uppy.Core({ autoProceed: false })
+  new Uppy.Uppy({ autoProceed: false })
     .use(Uppy.Dashboard, { trigger: '#select-files' })
     .use(Uppy.GoogleDrive, { target: Uppy.Dashboard, companionUrl: 'https://companion.uppy.io' })
     .use(Uppy.Instagram, { target: Uppy.Dashboard, companionUrl: 'https://companion.uppy.io' })
@@ -29,7 +29,7 @@ import * as Uppy from '..';
 })();
 
 (() => {
-  const uppy = new Uppy.Core()
+  const uppy = new Uppy.Uppy()
   uppy.use(Uppy.DragDrop, { target: '.UppyDragDrop' })
   uppy.use(Uppy.Tus, { endpoint: '//tusd.tusdemo.net/files/' })
 })()

@@ -7,6 +7,13 @@ Included in: Uppy v3.0.1
 
 - @uppy/companion: Fix Companion license (Merlijn Vos / #4044)
 
+## 4.0.0
+
+Released: 2022-08-22
+Included in: Uppy v3.0.0
+
+- Switch to ESM
+
 ## 4.0.0-beta.4
 
 Released: 2022-08-16

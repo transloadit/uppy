@@ -1,5 +1,12 @@
 # @uppy/compressor
 
+## 1.0.0
+
+Released: 2022-08-22
+Included in: Uppy v3.0.0
+
+- Switch to ESM
+
 ## 1.0.0-beta.3
 
 Released: 2022-08-16

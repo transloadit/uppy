@@ -7,6 +7,7 @@ Included in: Uppy v3.0.0
 
 - @uppy/aws-s3,@uppy/tus,@uppy/xhr-upload: @uppy/tus, @uppy/xhr-upload, @uppy/aws-s3: `metaFields` -> `allowedMetaFields` (Merlijn Vos / #4023)
 - @uppy/aws-s3: aws-s3: fix incorrect comparison for `file-removed` (Merlijn Vos / #3962)
+- Switch to ESM
 
 ## 3.0.0-beta.3
 
