@@ -109,6 +109,8 @@ jobs:
         run: npm i --save-dev parcel@${{matrix.webpack-version}}
       - name: Create index.html
         run: echo '<!doctype html><html><head><script type="module" src="./index.mjs"></script></head></html>' > index.html
+      - name: Override `package.json` to avoid interferences
+        run: echo '{}' > package.json
       - name: Bundle
         run: npx parcel build index.html
 
