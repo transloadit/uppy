@@ -38,6 +38,25 @@ function debounce (fn) {
 class UIPlugin extends BasePlugin {
   #updateUI
 
+  getTargetPlugin (target) {
+    let targetPlugin
+    if (typeof target === 'object' && target instanceof UIPlugin) {
+      // Targeting a plugin *instance*
+      targetPlugin = target
+    } else if (typeof target === 'function') {
+      // Targeting a plugin type
+      const Target = target
+      // Find the target plugin instance.
+      this.uppy.iteratePlugins(p => {
+        if (p instanceof Target) {
+          targetPlugin = p
+        }
+      })
+    }
+
+    return targetPlugin
+  }
+
   /**
    * Check if supplied `target` is a DOM element or an `object`.
    * If it’s an object — target is a plugin, and we search `plugins`
@@ -87,20 +106,7 @@ class UIPlugin extends BasePlugin {
       return this.el
     }
 
-    let targetPlugin
-    if (typeof target === 'object' && target instanceof UIPlugin) {
-      // Targeting a plugin *instance*
-      targetPlugin = target
-    } else if (typeof target === 'function') {
-      // Targeting a plugin type
-      const Target = target
-      // Find the target plugin instance.
-      this.uppy.iteratePlugins(p => {
-        if (p instanceof Target) {
-          targetPlugin = p
-        }
-      })
-    }
+    const targetPlugin = this.getTargetPlugin(target)
 
     if (targetPlugin) {
       this.uppy.log(`Installing ${callerPluginName} to ${targetPlugin.id}`)

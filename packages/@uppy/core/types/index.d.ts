@@ -103,6 +103,8 @@ export class UIPlugin<TOptions extends PluginOptions = DefaultPluginOptions> ext
 
   update(state?: Record<string, unknown>): void
 
+  getTargetPlugin(target: PluginTarget): UIPlugin | undefined
+
   // eslint-disable-next-line no-use-before-define
   mount(target: PluginTarget, plugin: typeof UIPlugin): void
 
