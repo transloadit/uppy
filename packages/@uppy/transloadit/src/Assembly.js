@@ -36,6 +36,8 @@ class TransloaditAssembly extends Emitter {
 
   #previousFetchStatusStillPending = false
 
+  #sse
+
   constructor (assembly, rateLimitedQueue) {
     super()
 
@@ -53,6 +55,7 @@ class TransloaditAssembly extends Emitter {
   }
 
   connect () {
+    this.#connectServerEvent()
     this.#connectSocket()
     this.#beginPolling()
   }
@@ -60,6 +63,49 @@ class TransloaditAssembly extends Emitter {
   #onFinished () {
     this.emit('finished')
     this.close()
+  }
+
+  #connectServerEvent () {
+    this.#sse = new EventSource(this.status.assembly_ssl_url)
+
+    this.#sse.addEventListener('open', () => {
+      if (this.socket) {
+        this.socket.disconnect()
+        this.socket = null
+      }
+      clearInterval(this.pollInterval)
+      this.pollInterval = null
+    })
+
+    /*
+     * This will listen only for events
+     * similar to the following:
+     *
+     * event: notice
+     * data: useful data
+     * id: someid
+     */
+    this.#sse.addEventListener('notice', (e) => {
+      console.log(e.data)
+    })
+
+    /*
+     * Similarly, this will listen for events
+     * with the field event: update
+     */
+    this.#sse.addEventListener('update', (e) => {
+      console.log(e.data)
+    })
+
+    /*
+     * The event "message" is a special case, as it
+     * will capture events without an event field
+     * as well as events that have the specific type
+     * other event type.
+     */
+    this.#sse.addEventListener('message', (e) => {
+      console.log(e.data)
+    })
   }
 
   #connectSocket () {
@@ -262,6 +308,10 @@ class TransloaditAssembly extends Emitter {
    */
   close () {
     this.closed = true
+    if (this.#sse) {
+      this.#sse.close()
+      this.#sse = null
+    }
     if (this.socket) {
       this.socket.disconnect()
       this.socket = null
