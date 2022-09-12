@@ -128,8 +128,10 @@ jobs:
         run: tar -xzf uppy-${{ github.sha }}.tar.gz --strip-components 1
       - name: Add Vite as a dev dependency
         run: npm i --save-dev vite@${{matrix.webpack-version}}
+      - name: Create index.html
+        run: echo '<!doctype html><html><head><script type="module" src="./main.mjs"></script></head></html>' > index.html
       - name: Bundle
-        run: npx vite build main.js
+        run: npx vite build
     
   # ESBuild: We are already testing it when generating the actual bundle.
   # Browserify: doesn't support ESM.
