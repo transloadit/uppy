@@ -281,8 +281,12 @@ class Uploader {
     } finally {
       logger.debug('cleanup', this.shortToken)
       if (this.readStream && !this.readStream.destroyed) this.readStream.destroy()
-      if (this.tmpPath) unlink(this.tmpPath).catch(() => {})
+      await this.tryDeleteTmpPath()
     }
+  }
+
+  tryDeleteTmpPath () {
+    if (this.tmpPath) unlink(this.tmpPath).catch(() => {})
   }
 
   /**

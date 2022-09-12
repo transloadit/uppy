@@ -65,7 +65,7 @@ describe('uploader with tus protocol', () => {
     const uploadToken = uploader.token
     expect(uploadToken).toBeTruthy()
 
-    let progressReceived = 0
+    let firstReceivedProgress
 
     const onProgress = jest.fn()
     const onUploadSuccess = jest.fn()
@@ -80,14 +80,14 @@ describe('uploader with tus protocol', () => {
     // emulate socket connection
     socketClient.connect(uploadToken)
     socketClient.onProgress(uploadToken, (message) => {
-      progressReceived = message.payload.bytesUploaded
+      if (firstReceivedProgress == null) firstReceivedProgress = message.payload.bytesUploaded
       onProgress(message)
     })
     socketClient.onUploadSuccess(uploadToken, onUploadSuccess)
     await promise
     await uploader.tryUploadStream(stream)
 
-    expect(progressReceived).toBe(fileContent.length)
+    expect(firstReceivedProgress).toBe(8)
 
     expect(onProgress).toHaveBeenLastCalledWith(expect.objectContaining({
       payload: expect.objectContaining({
@@ -118,6 +118,15 @@ describe('uploader with tus protocol', () => {
     }
 
     const uploader = new Uploader(opts)
+    uploader.tryDeleteTmpPath = async () => {
+      // validate that the tmp file has been downloaded and saved into the file path
+      // must do it before it gets deleted
+      const fileInfo = fs.statSync(uploader.tmpPath)
+      expect(fileInfo.isFile()).toBe(true)
+      expect(fileInfo.size).toBe(fileContent.length)
+
+      return uploader.tryDeleteTmpPath()
+    }
     const uploadToken = uploader.token
     expect(uploadToken).toBeTruthy()
 
@@ -134,27 +143,18 @@ describe('uploader with tus protocol', () => {
         })
       })
 
-      let progressReceived = 0
+      let firstReceivedProgress
+
       // emulate socket connection
       socketClient.connect(uploadToken)
       socketClient.onProgress(uploadToken, (message) => {
-        // validate that the file has been downloaded and saved into the file path
-        try {
-          progressReceived = message.payload.bytesUploaded
-
-          if (progressReceived === fileContent.length) {
-            const fileInfo = fs.statSync(uploader.tmpPath)
-            expect(fileInfo.isFile()).toBe(true)
-            expect(fileInfo.size).toBe(fileContent.length)
-            expect(message.payload.bytesTotal).toBe(fileContent.length)
-          }
-        } catch (err) {
-          reject(err)
-        }
+        if (firstReceivedProgress == null) firstReceivedProgress = message.payload.bytesUploaded
       })
       socketClient.onUploadSuccess(uploadToken, (message) => {
         try {
-          expect(progressReceived).toBe(fileContent.length)
+          expect(message.payload.bytesTotal).toBe(fileContent.length)
+
+          expect(firstReceivedProgress).toBe(8192)
           // see __mocks__/tus-js-client.js
           expect(message.payload.url).toBe('https://tus.endpoint/files/foo-bar')
         } catch (err) {
