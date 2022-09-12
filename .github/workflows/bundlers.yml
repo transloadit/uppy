@@ -110,7 +110,7 @@ jobs:
       - name: Create index.html
         run: echo '<!doctype html><html><head><script type="module" src="./index.mjs"></script></head></html>' > index.html
       - name: Bundle
-        run: npx parcel build
+        run: npx parcel build index.html
 
   vite:
     needs: isolate_uppy
