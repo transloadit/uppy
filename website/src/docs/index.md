@@ -25,7 +25,7 @@ Here’s the simplest example html page with Uppy (it uses a CDN bundle, while w
     <div id="drag-drop-area"></div>
 
     <script>
-      import {Uppy, Dashbaord, Tus} from "https://releases.transloadit.com/uppy/v3.0.1/uppy.min.js"
+      import {Uppy, Dashboard, Tus} from "https://releases.transloadit.com/uppy/v3.0.1/uppy.min.js"
       var uppy = new Uppy()
         .use(Dashboard, {
           inline: true,
