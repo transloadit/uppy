@@ -108,7 +108,7 @@ jobs:
       - name: Add Parcel as a dev dependency
         run: npm i --save-dev parcel@${{matrix.webpack-version}}
       - name: Create index.html
-        run: echo '<!doctype html><html><head><script type="module" src="./main.mjs"></script></head></html>' > index.html
+        run: echo '<!doctype html><html><head><script type="module" src="./index.mjs"></script></head></html>' > index.html
       - name: Bundle
         run: npx parcel
 
@@ -129,7 +129,7 @@ jobs:
       - name: Add Vite as a dev dependency
         run: npm i --save-dev vite@${{matrix.webpack-version}}
       - name: Create index.html
-        run: echo '<!doctype html><html><head><script type="module" src="./main.mjs"></script></head></html>' > index.html
+        run: echo '<!doctype html><html><head><script type="module" src="./index.mjs"></script></head></html>' > index.html
       - name: Bundle
         run: npx vite build
     
