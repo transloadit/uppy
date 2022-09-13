@@ -1,4 +1,7 @@
-name: Companion Deploy
+# N.B.: This won't run on releases because of
+# https://docs.github.com/en/actions/using-workflows/triggering-a-workflow#triggering-a-workflow-from-a-workflow.
+# However, we have a companion deploy that's part of the release.yml workflow.
+name: Companion Edge Deploy
 
 on:
   push:
@@ -10,7 +13,7 @@ on:
 
 jobs:
   npm:
-    name: Upload npm tarball
+    name: Generate npm tarball
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources

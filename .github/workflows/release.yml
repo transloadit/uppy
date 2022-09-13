@@ -101,6 +101,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+  # See also companion-deploy.yml
   docker:
     name: DockerHub
     needs: release
@@ -118,6 +119,7 @@ jobs:
         with:
           images: transloadit/companion
           tags: |
+            type=edge
             type=semver,pattern={{version}},value=${{ needs.release.outputs.companionWasReleased }}
             # set latest tag for default branch
             type=raw,value=latest,enable=true
