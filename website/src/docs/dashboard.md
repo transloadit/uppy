@@ -508,6 +508,14 @@ uppy.on('dashboard:modal-open', () => {
 
 Fired when the Dashboard modal is closed.
 
+### `dashboard:show-panel`
+
+**Parameters:**
+
+* `id` — The unique identifier of the plugin that is being shown
+
+Fired when a user clicks on a specific source plugin in the Dashboard
+
 ### `dashboard:file-edit-start`
 
 **Parameters:**

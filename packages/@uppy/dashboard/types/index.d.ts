@@ -88,11 +88,13 @@ export default Dashboard
 
 export type DashboardFileEditStartCallback<TMeta extends IndexedObject<any>> = (file?: UppyFile<TMeta>) => void;
 export type DashboardFileEditCompleteCallback<TMeta extends IndexedObject<any>> = (file?: UppyFile<TMeta>) => void;
+export type DashboardShowPlanelCallback = (id: UIPlugin<DashboardOptions>['id']) => void;
 declare module '@uppy/core' {
   export interface UppyEventMap<TMeta> {
     'dashboard:modal-open': GenericEventCallback
     'dashboard:modal-closed': GenericEventCallback
-    'dashboard:file-edit-state': DashboardFileEditStartCallback<TMeta>
+    'dashboard:show-panel': DashboardShowPlanelCallback
+    'dashboard:file-edit-start': DashboardFileEditStartCallback<TMeta>
     'dashboard:file-edit-complete': DashboardFileEditCompleteCallback<TMeta>
   }
 }
