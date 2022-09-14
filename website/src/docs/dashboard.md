@@ -514,7 +514,7 @@ Fired when the Dashboard modal is closed.
 
 * `id` — The unique identifier of the plugin that is being shown
 
-Fired when a user clicks on a specific source plugin in the Dashboard
+Fired when a user clicks on a source plugin, such as Webcam or Google Drive, in the Dashboard.
 
 ### `dashboard:file-edit-start`
 
