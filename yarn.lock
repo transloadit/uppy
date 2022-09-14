@@ -8387,6 +8387,7 @@ __metadata:
     jest: ^29.0.0
     jsonwebtoken: 8.5.1
     lodash.merge: ^4.6.2
+    lodash.throttle: ^4.1.1
     mime-types: 2.1.35
     moment: ^2.29.2
     moment-timezone: ^0.5.31

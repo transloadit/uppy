@@ -5,6 +5,8 @@ on:
     branches: [ main ]
     paths-ignore:
       - '**.md'
+      - 'assets/**'
+      - 'e2e/**'
       - 'examples/**'
       - 'private/**'
       - 'website/**'
@@ -15,6 +17,8 @@ on:
     types: [ opened, synchronize, reopened ]
     paths-ignore:
       - '**.md'
+      - 'assets/**'
+      - 'e2e/**'
       - 'examples/**'
       - 'private/**'
       - 'website/**'
