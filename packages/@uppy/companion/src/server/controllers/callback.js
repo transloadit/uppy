@@ -6,6 +6,7 @@ const serialize = require('serialize-javascript')
 const tokenService = require('../helpers/jwt')
 const logger = require('../logger')
 const oAuthState = require('../helpers/oauth-state')
+const emitter = require('../emitter')
 
 const closePageHtml = (origin) => `
   <!DOCTYPE html>
@@ -47,5 +48,9 @@ module.exports = function callback (req, res, next) { // eslint-disable-line no-
   logger.debug(grant.response, 'callback.oauth.resp', req.id)
   const state = oAuthState.getDynamicStateFromRequest(req)
   const origin = state && oAuthState.getFromState(state, 'origin', req.companion.options.secret)
+  const token = oAuthState.getFromState(state, 'callbackToken', req.companion.options.secret)
+  logger.debug('callbackToken', token)
+  emitter().emit(token, { action: 'token', payload: { error: true }  })
+
   return res.status(400).send(closePageHtml(origin))
 }

@@ -3,6 +3,8 @@ module.exports = () => {
     generateState: () => 'some-cool-nice-encrytpion',
     addToState: () => 'some-cool-nice-encrytpion',
     getFromState: (state, key) => {
+      if (key === 'callbackToken') return 'client-token'
+
       if (state === 'state-with-invalid-instance-url') {
         return 'http://localhost:3452'
       }

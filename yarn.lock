@@ -8628,6 +8628,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/provider-views@workspace:packages/@uppy/provider-views"
   dependencies:
+    "@uppy/companion-client": "workspace:^"
     "@uppy/utils": "workspace:^"
     classnames: ^2.2.6
     preact: ^10.5.13
@@ -34991,7 +34992,7 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
 
 "typescript@patch:typescript@*#~builtin<compat/typescript>, typescript@patch:typescript@^4.0.3#~builtin<compat/typescript>, typescript@patch:typescript@^4.6.2#~builtin<compat/typescript>, typescript@patch:typescript@~4.8#~builtin<compat/typescript>":
   version: 4.8.2
-  resolution: "typescript@patch:typescript@npm%3A4.8.2#~builtin<compat/typescript>::version=4.8.2&hash=f456af"
+  resolution: "typescript@patch:typescript@npm%3A4.8.2#~builtin<compat/typescript>::version=4.8.2&hash=7ad353"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver

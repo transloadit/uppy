@@ -29,6 +29,7 @@ module.exports = (server) => {
      * @param {{action: string, payload: object}} data
      */
     function sendProgress (data) {
+      logger.info('Sending to token', token, ' progress info')
       ws.send(jsonStringify(data), (err) => {
         if (err) logger.error(err, 'socket.progress.error', shortenToken(token))
       })
