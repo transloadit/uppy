@@ -113,7 +113,7 @@ export default class GoldenRetriever extends BasePlugin {
 
     // If all files have been removed by the user, clear recovery state
     if (Object.keys(filesToSave).length === 0) {
-      if (this.uppy.getState().recoveredState) {
+      if (this.uppy.getState().recoveredState !== null) {
         this.uppy.setState({ recoveredState: null })
         MetaDataStore.cleanup(this.uppy.opts.id)
       }
