@@ -183,6 +183,8 @@ export default class Dashboard extends UIPlugin {
       activePickerPanel,
       activeOverlayType: 'PickerPanel',
     })
+
+    this.uppy.emit('dashboard:show-panel', id)
   }
 
   canEditFile = (file) => {

@@ -52,9 +52,13 @@ import Dashboard from '..'
     onDragLeave: (event) => event.clientX,
   })
 
-  uppy.on('dashboard:file-edit-state', (file) => {
+  uppy.on('dashboard:file-edit-start', (file) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const fileName = file?.name
+  })
+  uppy.on('dashboard:show-panel', (id) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const pluginId = id
   })
 }
 

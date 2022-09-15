@@ -7,6 +7,8 @@ jobs:
   release:
     name: Publish releases
     if: ${{ github.event.review.state == 'approved' && github.event.sender.login == github.event.pull_request.assignee.login && github.event.pull_request.head.ref == 'release-candidate' }}
+    outputs:
+      companionWasReleased: ${{ steps.checkIfCompanionWasReleased.outputs.version }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
@@ -78,6 +80,9 @@ jobs:
         env:
           EDGLY_KEY: ${{secrets.EDGLY_KEY}}
           EDGLY_SECRET: ${{secrets.EDGLY_SECRET}}
+      - name: Check if Companion was released
+        id: checkIfCompanionWasReleased
+        run: git diff --exit-code --quiet HEAD^ -- packages/@uppy/companion/package.json || echo "::set-output name=version::$(jq .version < packages/@uppy/companion/package.json)"
       - name: Remove release-candidate branch
         run: gh api -X DELETE repos/${{ github.repository }}/git/refs/heads/release-candidate || echo "Already deleted"
         env:
@@ -95,3 +100,61 @@ jobs:
         run: gh pr comment ${{ github.event.pull_request.number }} --body "Release job failed, please take action."
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # See also companion-deploy.yml
+  docker:
+    name: DockerHub
+    needs: release
+    if: ${{ needs.release.outputs.companionWasReleased }}
+    runs-on: ubuntu-latest
+    env:
+      DOCKER_BUILDKIT: 0
+      COMPOSE_DOCKER_CLI_BUILD: 0
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v3
+      - name: Docker meta
+        id: docker_meta
+        uses: docker/metadata-action@v4
+        with:
+          images: transloadit/companion
+          tags: |
+            type=edge
+            type=semver,pattern={{version}},value=${{ needs.release.outputs.companionWasReleased }}
+            # set latest tag for default branch
+            type=raw,value=latest,enable=true
+      - uses: docker/setup-qemu-action@v2
+      - uses: docker/setup-buildx-action@v2
+      - name: Log in to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{secrets.DOCKER_USERNAME}}
+          password: ${{secrets.DOCKER_PASSWORD}}
+      - name: Build and push
+        uses: docker/build-push-action@v3
+        with:
+          push: true
+          context: .
+          platforms: linux/amd64,linux/arm64
+          file: Dockerfile
+          tags: ${{ steps.docker_meta.outputs.tags }}
+          labels: ${{ steps.docker_meta.outputs.labels }}
+
+  heroku:
+    name: Heroku
+    needs: release
+    if: ${{ needs.release.outputs.companionWasReleased }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v3
+      - name: Alter dockerfile
+        run: |
+          sed -i 's/^EXPOSE 3020$/EXPOSE $PORT/g' Dockerfile
+      - name: Deploy to heroku
+        uses: akhileshns/heroku-deploy@v3.12.12
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: companion-demo
+          heroku_email: ${{secrets.HEROKU_EMAIL}}
+          usedocker: true
