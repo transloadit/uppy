@@ -32,7 +32,9 @@
   transform: translateX(-50%);
 
   @media screen and (min-width: 768px) {
-    padding-top: 0;
+    .uppy-size--md & {
+      padding-top: 0;
+    }
   }
 }
 
@@ -71,16 +73,20 @@
   height: 38px;
 
   @media screen and (min-width: 768px) {
-    position: static !important;
-    height: auto;
+    .uppy-size--md & {
+      position: static !important;
+      height: auto;
+    }
   }
 }
 
 .uppy-ImageCropper-range {
   @media screen and (min-width: 768px) {
-    width: 180px;
-    margin-right: 15px;
-    margin-left: 5px;
+    .uppy-size--md & {
+      width: 180px;
+      margin-right: 15px;
+      margin-left: 5px;
+    }
   }
 }
 
