@@ -163,16 +163,9 @@ export default class GoldenRetriever extends BasePlugin {
     }
 
     return this.ServiceWorkerStore.list().then((blobs) => {
-      const files = this.uppy.getFiles()
-      const localFilesOnly = files.filter((file) => {
-        // maybe && !file.progress.uploadComplete
-        return !file.isRemote
-      })
-
       const numberOfFilesRecovered = Object.keys(blobs).length
-      const numberOfFilesTryingToRecover = localFilesOnly.length
 
-      if (numberOfFilesRecovered === numberOfFilesTryingToRecover) {
+      if (numberOfFilesRecovered > 0) {
         this.uppy.log(`[GoldenRetriever] Successfully recovered ${numberOfFilesRecovered} blobs from Service Worker!`)
         return blobs
       }
