@@ -31,10 +31,8 @@
   background-color: rgba($black, 0.6);
   transform: translateX(-50%);
 
-  @media screen and (min-width: 768px) {
-    .uppy-size--md & {
-      padding-top: 0;
-    }
+  .uppy-size--md & {
+    padding-top: 0;
   }
 }
 
@@ -72,22 +70,16 @@
   left: 10px;
   height: 38px;
 
-  @media screen and (min-width: 768px) {
-    .uppy-size--md & {
-      position: static !important;
-      height: auto;
-    }
+  .uppy-size--md & {
+    position: static !important;
+    height: auto;
   }
 }
 
-.uppy-ImageCropper-range {
-  @media screen and (min-width: 768px) {
-    .uppy-size--md & {
-      width: 180px;
-      margin-right: 15px;
-      margin-left: 5px;
-    }
-  }
+.uppy-size--md .uppy-ImageCropper-range {
+  width: 180px;
+  margin-right: 15px;
+  margin-left: 5px;
 }
 
 // Cropper overrides
