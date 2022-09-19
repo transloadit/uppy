@@ -113,10 +113,10 @@ export default class GoldenRetriever extends BasePlugin {
 
     // If all files have been removed by the user, clear recovery state
     if (Object.keys(filesToSave).length === 0) {
-      if (this.uppy.getState().recoveredState) {
+      if (this.uppy.getState().recoveredState !== null) {
         this.uppy.setState({ recoveredState: null })
-        MetaDataStore.cleanup(this.uppy.opts.id)
       }
+      MetaDataStore.cleanup(this.uppy.opts.id)
       return
     }
 
@@ -362,6 +362,9 @@ export default class GoldenRetriever extends BasePlugin {
     this.uppy.on('file-added', this.addBlobToStores)
     this.uppy.on('file-editor:complete', this.replaceBlobInStores)
     this.uppy.on('file-removed', this.removeBlobFromStores)
+    // TODO: the `state-update` is bad practise. It fires on any state change in Uppy
+    // or any state change in any of the plugins. We should to able to only listen
+    // for the state changes we need, somehow.
     this.uppy.on('state-update', this.saveFilesStateToLocalStorage)
     this.uppy.on('restore-confirmed', this.handleRestoreConfirmed)
     this.uppy.on('restore-canceled', this.abortRestore)
