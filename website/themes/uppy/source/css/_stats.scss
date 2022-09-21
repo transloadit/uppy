@@ -41,10 +41,13 @@ a.Stats-package {
 }
 
 .on-the-githubs {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
   @include clearfix;
+
   > li {
     @include clearfix;
-    list-style-type: none;
     margin: 0;
     padding: 12px 0;
     position: relative;
