@@ -12,6 +12,17 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 3.1.1
+
+Released: 2022-09-25
+
+| Package         | Version | Package         | Version |
+| --------------- | ------- | --------------- | ------- |
+| @uppy/companion |   4.0.3 | uppy            |   3.1.1 |
+
+- meta: Fix Companion release deploy (Antoine du Hamel)
+
+
 ## 3.1.0
 
 Released: 2022-09-25
