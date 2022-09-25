@@ -1,6 +1,6 @@
 # N.B.: This won't run on releases because of
 # https://docs.github.com/en/actions/using-workflows/triggering-a-workflow#triggering-a-workflow-from-a-workflow.
-# However, we have a companion deploy that's part of the release.yml workflow.
+# However, we also have a companion deploy that's part of the release.yml workflow.
 name: Companion Edge Deploy
 
 on:
@@ -9,7 +9,7 @@ on:
     paths:
       - yarn.lock
       - 'packages/@uppy/companion/**'
-      - '.github/workflows/companion.yml'
+      - '.github/workflows/companion-deploy.yml'
 
 jobs:
   npm:
