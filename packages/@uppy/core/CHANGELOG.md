@@ -1,5 +1,14 @@
 # @uppy/core
 
+## 2.3.4
+
+Released: 2022-09-25
+Included in: Uppy v2.13.6
+
+- @uppy/core: Fix `Restrictor` counts ghost files against `maxNumberOfFiles` (Andrew McIntee / #4078)
+- @uppy/core: fix types (Antoine du Hamel / #4072)
+- @uppy/core,@uppy/dashboard,@uppy/thumbnail-generator: update definition type files for TS 4.8 compatibility (Antoine du Hamel / #4055)
+
 ## 2.3.2
 
 Released: 2022-07-27

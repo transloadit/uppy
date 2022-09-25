@@ -1,5 +1,12 @@
 # @uppy/dashboard
 
+## 2.4.3
+
+Released: 2022-09-25
+Included in: Uppy v2.13.6
+
+- @uppy/core,@uppy/dashboard,@uppy/thumbnail-generator: update definition type files for TS 4.8 compatibility (Antoine du Hamel / #4055)
+
 ## 2.4.1
 
 Released: 2022-07-27

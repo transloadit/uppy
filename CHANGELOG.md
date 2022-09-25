@@ -12,6 +12,29 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 2.13.6
+
+Released: 2022-09-25
+
+| Package                   | Version | Package                   | Version |
+| ------------------------- | ------- | ------------------------- | ------- |
+| @uppy/angular             |   0.3.2 | @uppy/thumbnail-generator |   2.2.2 |
+| @uppy/core                |   2.3.4 | @uppy/robodog             |   2.9.5 |
+| @uppy/dashboard           |   2.4.3 | uppy                      |  2.13.6 |
+| @uppy/golden-retriever    |   2.1.2 |                           |         |
+
+- @uppy/golden-retriever: Fix endless webcam re-render with Golden Retriever (Merlijn Vos / #4111)
+- meta: run CI when modifying workflow files (Antoine du Hamel / #4091)
+- meta: limit the number of unnecessary CI runs (Antoine du Hamel / #4086)
+- meta: fix typo in `e2e.yml` (Antoine du Hamel)
+- meta: Restrict e2e CI runs (Merlijn Vos / #4075)
+- @uppy/core: Fix `Restrictor` counts ghost files against `maxNumberOfFiles` (Andrew McIntee / #4078)
+- meta: improve CI npm install time (Antoine du Hamel / #4058)
+- meta: fix Node.js 12.x CI (Antoine du Hamel)
+- @uppy/core: fix types (Antoine du Hamel / #4072)
+- @uppy/core,@uppy/dashboard,@uppy/thumbnail-generator: update definition type files for TS 4.8 compatibility (Antoine du Hamel / #4055)
+
+
 ## 2.13.5
 
 Released: 2022-08-30
