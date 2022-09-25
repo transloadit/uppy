@@ -1,5 +1,12 @@
 # @uppy/golden-retriever
 
+## 2.1.2
+
+Released: 2022-09-25
+Included in: Uppy v2.13.6
+
+- @uppy/golden-retriever: Fix endless webcam re-render with Golden Retriever (Merlijn Vos / #4111)
+
 ## 2.1.0
 
 Released: 2022-05-30

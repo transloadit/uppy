@@ -1,5 +1,12 @@
 # @uppy/thumbnail-generator
 
+## 2.2.2
+
+Released: 2022-09-25
+Included in: Uppy v2.13.6
+
+- @uppy/core,@uppy/dashboard,@uppy/thumbnail-generator: update definition type files for TS 4.8 compatibility (Antoine du Hamel / #4055)
+
 ## 2.2.0
 
 Released: 2022-05-30
