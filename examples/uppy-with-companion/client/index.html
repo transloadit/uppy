@@ -4,13 +4,13 @@
     <title></title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://releases.transloadit.com/uppy/v3.1.0/uppy.min.css" rel="stylesheet">
+    <link href="https://releases.transloadit.com/uppy/v3.1.1/uppy.min.css" rel="stylesheet">
   </head>
   <body>
     <button id="uppyModalOpener">Open Modal</button>
     <noscript>This web page requires JavaScript to work properly.</noscript>
     <script type="module">
-      import { Uppy, Dashboard, Instagram, GoogleDrive, Tus } from "https://releases.transloadit.com/uppy/v3.1.0/uppy.min.mjs"
+      import { Uppy, Dashboard, Instagram, GoogleDrive, Tus } from "https://releases.transloadit.com/uppy/v3.1.1/uppy.min.mjs"
 
       const uppy = new Uppy({debug: true, autoProceed: false})
         .use(Dashboard, { trigger: '#uppyModalOpener' })
