@@ -82,7 +82,7 @@ jobs:
           EDGLY_SECRET: ${{secrets.EDGLY_SECRET}}
       - name: Check if Companion was released
         id: checkIfCompanionWasReleased
-        run: git diff --exit-code --quiet HEAD^ -- packages/@uppy/companion/package.json || echo "::set-output name=version::$(jq .version < packages/@uppy/companion/package.json)"
+        run: git diff --exit-code --quiet HEAD^ -- packages/@uppy/companion/package.json || echo "::set-output name=version::$(jq -r .version < packages/@uppy/companion/package.json)"
       - name: Remove release-candidate branch
         run: gh api -X DELETE repos/${{ github.repository }}/git/refs/heads/release-candidate || echo "Already deleted"
         env:
