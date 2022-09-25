@@ -12,6 +12,72 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 3.1.0
+
+Released: 2022-09-25
+
+| Package                   | Version | Package                   | Version |
+| ------------------------- | ------- | ------------------------- | ------- |
+| @uppy/angular             |   0.4.2 | @uppy/onedrive            |   3.0.1 |
+| @uppy/audio               |   1.0.2 | @uppy/progress-bar        |   3.0.1 |
+| @uppy/aws-s3              |   3.0.2 | @uppy/provider-views      |   3.0.1 |
+| @uppy/aws-s3-multipart    |   3.0.2 | @uppy/react               |   3.0.2 |
+| @uppy/box                 |   2.0.1 | @uppy/redux-dev-tools     |   3.0.1 |
+| @uppy/companion           |   4.0.2 | @uppy/remote-sources      |   1.0.2 |
+| @uppy/companion-client    |   3.0.2 | @uppy/screen-capture      |   3.0.1 |
+| @uppy/compressor          |   1.0.1 | @uppy/status-bar          |   3.0.1 |
+| @uppy/core                |   3.0.2 | @uppy/store-default       |   3.0.2 |
+| @uppy/dashboard           |   3.1.0 | @uppy/store-redux         |   3.0.2 |
+| @uppy/drag-drop           |   3.0.1 | @uppy/svelte              |   3.0.1 |
+| @uppy/drop-target         |   2.0.1 | @uppy/thumbnail-generator |   3.0.2 |
+| @uppy/dropbox             |   3.0.1 | @uppy/transloadit         |   3.0.2 |
+| @uppy/facebook            |   3.0.1 | @uppy/tus                 |   3.0.2 |
+| @uppy/file-input          |   3.0.1 | @uppy/unsplash            |   3.0.1 |
+| @uppy/form                |   3.0.1 | @uppy/url                 |   3.0.1 |
+| @uppy/golden-retriever    |   3.0.1 | @uppy/utils               |   5.0.2 |
+| @uppy/google-drive        |   3.0.1 | @uppy/vue                 |   1.0.1 |
+| @uppy/image-editor        |   2.0.1 | @uppy/webcam              |   3.2.0 |
+| @uppy/informer            |   3.0.1 | @uppy/xhr-upload          |   3.0.2 |
+| @uppy/instagram           |   3.0.1 | @uppy/zoom                |   2.0.1 |
+| @uppy/locales             |   3.0.1 | uppy                      |   3.1.0 |
+
+- meta: Fix companion-deploy-yml (Mikael Finstad)
+- website: fix tag for Activity Feed (Livia Medeiros / #4118)
+- @uppy/golden-retriever: fix condition to load files from service worker (Merlijn Vos / #4115)
+- website: remove references to the deleted `disc.html` page (Antoine du Hamel / #4119)
+- @uppy/locales: Create uz_UZ (Ozodbek1405 / #4114)
+- @uppy/golden-retriever: Fix endless webcam re-render with Golden Retriever (Merlijn Vos / #4111)
+- @uppy/image-editor: image-editor: fix controls in small Dashboard (Livia Medeiros / #4113)
+- website: add “what is Uppy” to the blog post (Artur Paikin)
+- meta: fix Companion deploy (Antoine du Hamel / #4095)
+- @uppy/dashboard: add dashboard:show-panel event (Jon-Pierre Sanchez / #4108)
+- website: Small post fixes (Artur Paikin)
+- @uppy/companion: Companion throttle progress by time (Mikael Finstad / #4101)
+- meta: skip a few more unnecessary CI runs (Antoine du Hamel / #4106)
+- meta: resolve e2e flakiness (Merlijn Vos / #4077)
+- meta: run linters on almost every PRs (Antoine du Hamel / #4105)
+- website: 3.0 blog post tweaks (Merlijn Vos / #4104)
+- meta: Fix linter warnings in 3.0 post (Murderlon)
+- website: Add 3.0 blog post (Artur Paikin / #4046)
+- website: fix ESM import in example (Livia Medeiros / #4103)
+- doc: Update "Dashboard typo" (Laban / #4096)
+- @uppy/audio,@uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/box,@uppy/companion-client,@uppy/companion,@uppy/compressor,@uppy/core,@uppy/dashboard,@uppy/drag-drop,@uppy/drop-target,@uppy/dropbox,@uppy/facebook,@uppy/file-input,@uppy/form,@uppy/golden-retriever,@uppy/google-drive,@uppy/image-editor,@uppy/informer,@uppy/instagram,@uppy/locales,@uppy/onedrive,@uppy/progress-bar,@uppy/provider-views,@uppy/react,@uppy/redux-dev-tools,@uppy/remote-sources,@uppy/screen-capture,@uppy/status-bar,@uppy/store-default,@uppy/store-redux,@uppy/svelte,@uppy/thumbnail-generator,@uppy/transloadit,@uppy/tus,@uppy/unsplash,@uppy/url,@uppy/utils,@uppy/vue,@uppy/webcam,@uppy/xhr-upload,@uppy/zoom: add missing entries to changelog for individual packages (Antoine du Hamel / #4092)
+- meta: ci: add GHA to tryout bundling Uppy with popular bundlers (Antoine du Hamel / #4084)
+- @uppy/core: Fix `Restrictor` counts ghost files against `maxNumberOfFiles` (Andrew McIntee / #4078)
+- uppy: add a decoy `Core` export to warn users about the renaming (Antoine du Hamel / #4085)
+- meta: run CI when modifying workflow files (Antoine du Hamel / #4091)
+- meta: limit the number of unnecessary CI runs (Antoine du Hamel / #4086)
+- meta: Update remote-sources.md (heocoi / #4087)
+- uppy: remove all remaining occurrences of `Uppy.Core` (Antoine du Hamel / #4082)
+- meta: fix typo in `e2e.yml` (Antoine du Hamel)
+- meta: Restrict e2e CI runs (Merlijn Vos / #4075)
+- @uppy/webcam: Set default videoConstraints (Artur Paikin / #4070)
+- @uppy/angular: Fix angular build error (Murderlon)
+- website: add `Known issues` section on Migration Guide (Antoine du Hamel / #4066)
+- @uppy/core: fix types (Antoine du Hamel / #4072)
+- doc: remove use of deprecated `metaFields` option (Antoine du Hamel / #4073)
+
+
 ## 3.0.1
 
 Released: 2022-08-30
