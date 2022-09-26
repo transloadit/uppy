@@ -50,6 +50,8 @@ export default class XHRUpload extends BasePlugin {
   // eslint-disable-next-line global-require
   static VERSION = packageJson.version
 
+  #queueRequestSocketToken
+
   constructor (uppy, opts) {
     super(uppy, opts)
     this.type = 'uploader'
@@ -129,6 +131,7 @@ export default class XHRUpload extends BasePlugin {
     }
 
     this.uploaderEvents = Object.create(null)
+    this.#queueRequestSocketToken = this.requests.wrapPromiseFunction(this.#requestSocketToken)
   }
 
   getOptions (file) {
@@ -351,111 +354,121 @@ export default class XHRUpload extends BasePlugin {
     })
   }
 
-  uploadRemote (file) {
+  #requestSocketToken = async (file) => {
     const opts = this.getOptions(file)
-    return new Promise((resolve, reject) => {
+    const Client = file.remote.providerOptions.provider ? Provider : RequestClient
+    const client = new Client(this.uppy, file.remote.providerOptions)
+    const allowedMetaFields = Array.isArray(opts.allowedMetaFields)
+      ? opts.allowedMetaFields
+      // Send along all fields by default.
+      : Object.keys(file.meta)
+    const res = await client.post(file.remote.url, {
+      ...file.remote.body,
+      protocol: 'multipart',
+      endpoint: opts.endpoint,
+      size: file.data.size,
+      fieldname: opts.fieldName,
+      metadata: Object.fromEntries(allowedMetaFields.map(name => [name, file.meta[name]])),
+      httpMethod: opts.method,
+      useFormData: opts.formData,
+      headers: opts.headers,
+    })
+    return res.token
+  }
+
+  async uploadRemote (file) {
+    try {
       this.uppy.emit('upload-started', file)
+      if (file.serverToken) {
+        return this.connectToServerSocket(file)
+      }
+      const serverToken = await this.#queueRequestSocketToken(file)
 
-      const fields = {}
-      const allowedMetaFields = Array.isArray(opts.allowedMetaFields)
-        ? opts.allowedMetaFields
-        // Send along all fields by default.
-        : Object.keys(file.meta)
+      this.uppy.setFileState(file.id, { serverToken })
+      return this.connectToServerSocket(this.uppy.getFile(file.id))
+    } catch (err) {
+      this.uppy.emit('upload-error', file, err)
+      throw err
+    }
+  }
 
-      allowedMetaFields.forEach((name) => {
-        fields[name] = file.meta[name]
+  connectToServerSocket (file) {
+    return new Promise((resolve, reject) => {
+      const opts = this.getOptions(file)
+      const token = file.serverToken
+      const host = getSocketHost(file.remote.companionUrl)
+      const socket = new Socket({ target: `${host}/api/${token}` })
+      this.uploaderEvents[file.id] = new EventTracker(this.uppy)
+      let queuedRequest
+
+      this.onFileRemove(file.id, () => {
+        socket.send('cancel', {})
+        queuedRequest.abort()
+        resolve(`upload ${file.id} was removed`)
       })
 
-      const Client = file.remote.providerOptions.provider ? Provider : RequestClient
-      const client = new Client(this.uppy, file.remote.providerOptions)
-      client.post(file.remote.url, {
-        ...file.remote.body,
-        protocol: 'multipart',
-        endpoint: opts.endpoint,
-        size: file.data.size,
-        fieldname: opts.fieldName,
-        metadata: fields,
-        httpMethod: opts.method,
-        useFormData: opts.formData,
-        headers: opts.headers,
-      }).then((res) => {
-        const { token } = res
-        const host = getSocketHost(file.remote.companionUrl)
-        const socket = new Socket({ target: `${host}/api/${token}`, autoOpen: false })
-        this.uploaderEvents[file.id] = new EventTracker(this.uppy)
-        let queuedRequest
-
-        this.onFileRemove(file.id, () => {
+      this.onCancelAll(file.id, ({ reason } = {}) => {
+        if (reason === 'user') {
           socket.send('cancel', {})
           queuedRequest.abort()
-          resolve(`upload ${file.id} was removed`)
-        })
-
-        this.onCancelAll(file.id, ({ reason } = {}) => {
-          if (reason === 'user') {
-            socket.send('cancel', {})
-            queuedRequest.abort()
-          }
-          resolve(`upload ${file.id} was canceled`)
-        })
-
-        this.onRetry(file.id, () => {
-          socket.send('pause', {})
-          socket.send('resume', {})
-        })
-
-        this.onRetryAll(file.id, () => {
-          socket.send('pause', {})
-          socket.send('resume', {})
-        })
-
-        socket.on('progress', (progressData) => emitSocketProgress(this, progressData, file))
-
-        socket.on('success', (data) => {
-          const body = opts.getResponseData(data.response.responseText, data.response)
-          const uploadURL = body[opts.responseUrlFieldName]
-
-          const uploadResp = {
-            status: data.response.status,
-            body,
-            uploadURL,
-          }
-
-          this.uppy.emit('upload-success', file, uploadResp)
-          queuedRequest.done()
-          if (this.uploaderEvents[file.id]) {
-            this.uploaderEvents[file.id].remove()
-            this.uploaderEvents[file.id] = null
-          }
-          return resolve()
-        })
-
-        socket.on('error', (errData) => {
-          const resp = errData.response
-          const error = resp
-            ? opts.getResponseError(resp.responseText, resp)
-            : Object.assign(new Error(errData.error.message), { cause: errData.error })
-          this.uppy.emit('upload-error', file, error)
-          queuedRequest.done()
-          if (this.uploaderEvents[file.id]) {
-            this.uploaderEvents[file.id].remove()
-            this.uploaderEvents[file.id] = null
-          }
-          reject(error)
-        })
-
-        queuedRequest = this.requests.run(() => {
-          socket.open()
-          if (file.isPaused) {
-            socket.send('pause', {})
-          }
-
-          return () => socket.close()
-        })
-      }).catch((err) => {
-        this.uppy.emit('upload-error', file, err)
-        reject(err)
+        }
+        resolve(`upload ${file.id} was canceled`)
       })
+
+      this.onRetry(file.id, () => {
+        socket.send('pause', {})
+        socket.send('resume', {})
+      })
+
+      this.onRetryAll(file.id, () => {
+        socket.send('pause', {})
+        socket.send('resume', {})
+      })
+
+      socket.on('progress', (progressData) => emitSocketProgress(this, progressData, file))
+
+      socket.on('success', (data) => {
+        const body = opts.getResponseData(data.response.responseText, data.response)
+        const uploadURL = body[opts.responseUrlFieldName]
+
+        const uploadResp = {
+          status: data.response.status,
+          body,
+          uploadURL,
+        }
+
+        this.uppy.emit('upload-success', file, uploadResp)
+        queuedRequest.done()
+        if (this.uploaderEvents[file.id]) {
+          this.uploaderEvents[file.id].remove()
+          this.uploaderEvents[file.id] = null
+        }
+        return resolve()
+      })
+
+      socket.on('error', (errData) => {
+        const resp = errData.response
+        const error = resp
+          ? opts.getResponseError(resp.responseText, resp)
+          : Object.assign(new Error(errData.error.message), { cause: errData.error })
+        this.uppy.emit('upload-error', file, error)
+        queuedRequest.done()
+        if (this.uploaderEvents[file.id]) {
+          this.uploaderEvents[file.id].remove()
+          this.uploaderEvents[file.id] = null
+        }
+        reject(error)
+      })
+
+      queuedRequest = this.requests.run(() => {
+        if (file.isPaused) {
+          socket.send('pause', {})
+        }
+
+        return () => socket.close()
+      })
+    }).catch((err) => {
+      this.uppy.emit('upload-error', file, err)
     })
   }
 
