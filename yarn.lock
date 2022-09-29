@@ -6993,8 +6993,8 @@ __metadata:
 
 "@types/jasmine@file:./private/@types/jasmine::locator=%40uppy-dev%2Fbuild%40workspace%3A.":
   version: 0.0.0
-  resolution: "@types/jasmine@file:./private/@types/jasmine#./private/@types/jasmine::hash=917119&locator=%40uppy-dev%2Fbuild%40workspace%3A."
-  checksum: cc86c9a338a6943da64fb636e13bdc8f2e41922ae62c3cfd95525b0a0965a28ecd7545173773f2b61a3c30ae70c8eeb9a725eb71fd9006a07a8733ecbac849b9
+  resolution: "@types/jasmine@file:./private/@types/jasmine#./private/@types/jasmine::hash=cf2699&locator=%40uppy-dev%2Fbuild%40workspace%3A."
+  checksum: f8900f2d42d5c061a69cebc73bc83950095b354964834ab459dbd144a006f4afa0ffc436cfd5c0e74522f5752a7e30d60e1c6c2f69a184f59a749df405a54cdc
   languageName: node
   linkType: hard
 
@@ -7007,8 +7007,8 @@ __metadata:
 
 "@types/jasminewd2@file:./private/@types/jasmine::locator=%40uppy-dev%2Fbuild%40workspace%3A.":
   version: 0.0.0
-  resolution: "@types/jasminewd2@file:./private/@types/jasmine#./private/@types/jasmine::hash=fe65e0&locator=%40uppy-dev%2Fbuild%40workspace%3A."
-  checksum: 028a3a54e144661b64d14b439c585db2ade1a22ba4b21de85cb469afd2f1bf5e78079ab3f3e5c058ed4146e7cef5300e27c8d176d9f168222d88576671608135
+  resolution: "@types/jasminewd2@file:./private/@types/jasmine#./private/@types/jasmine::hash=17481a&locator=%40uppy-dev%2Fbuild%40workspace%3A."
+  checksum: ccc420c3ba7580cc562cb093705871265a961bce06bc366365fb32f9f73b276900d07ceb08591e4974bd40f766acc442145e78a70a0cf41a6dc1621999965073
   languageName: node
   linkType: hard
 
@@ -8199,6 +8199,17 @@ __metadata:
     he: ^1.2.0
     npm-run-all: ^4.1.5
     vite: ^3.0.0
+  languageName: unknown
+  linkType: soft
+
+"@uppy-example/uppy-s3-example@workspace:examples/uppy-s3-example":
+  version: 0.0.0-use.local
+  resolution: "@uppy-example/uppy-s3-example@workspace:examples/uppy-s3-example"
+  dependencies:
+    aws-sdk: ^2.1225.0
+    body-parser: ^1.20.0
+    dotenv: ^16.0.2
+    express: ^4.18.1
   languageName: unknown
   linkType: soft
 
@@ -10771,6 +10782,24 @@ __metadata:
     uuid: 8.0.0
     xml2js: 0.4.19
   checksum: 488fdf0c57c3b431adbdb8ab70a55955001a060aa9afda1b1cc67b398850dbf763dbd6782c9e68e46a6ac008c266aa9b0f7f389668bf765b1b8161433afd7681
+  languageName: node
+  linkType: hard
+
+"aws-sdk@npm:^2.1225.0":
+  version: 2.1225.0
+  resolution: "aws-sdk@npm:2.1225.0"
+  dependencies:
+    buffer: 4.9.2
+    events: 1.1.1
+    ieee754: 1.1.13
+    jmespath: 0.16.0
+    querystring: 0.2.0
+    sax: 1.2.1
+    url: 0.10.3
+    util: ^0.12.4
+    uuid: 8.0.0
+    xml2js: 0.4.19
+  checksum: 4483fad82f3cf27540b6beeedbb0c3dd8d8e00751cbd1c7f996bc28822d052879db24b2a646ae1add561112051e0f68705ad77eaa16e13f12d51feb67d8094b1
   languageName: node
   linkType: hard
 
@@ -15030,6 +15059,13 @@ __metadata:
   version: 16.0.1
   resolution: "dotenv@npm:16.0.1"
   checksum: f459ffce07b977b7f15d8cc4ee69cdff77d4dd8c5dc8c85d2d485ee84655352c2415f9dd09d42b5b5985ced3be186130871b34e2f3e2569ebc72fbc2e8096792
+  languageName: node
+  linkType: hard
+
+"dotenv@npm:^16.0.2":
+  version: 16.0.3
+  resolution: "dotenv@npm:16.0.3"
+  checksum: afcf03f373d7a6d62c7e9afea6328e62851d627a4e73f2e12d0a8deae1cd375892004f3021883f8aec85932cd2834b091f568ced92b4774625b321db83b827f8
   languageName: node
   linkType: hard
 
