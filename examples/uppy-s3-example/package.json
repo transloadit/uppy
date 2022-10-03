@@ -7,7 +7,7 @@
     "start": "node index.js"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "aws-sdk": "^2.1225.0",
     "body-parser": "^1.20.0",
