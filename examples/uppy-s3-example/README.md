@@ -8,7 +8,7 @@ This README file starts with AWS as this one need to be resolved first.
 
 It's assumed that you are familiar with AWS, at least, with the storage service (S3) and users & policies (IAM).
 
-These instructions are not fit for production. It's a bit too much permissive. But tightening the security is out of the scope here.
+These instructions are not fit for production but tightening the security is out of the scope here.
 
 ## S3 Setup
 
