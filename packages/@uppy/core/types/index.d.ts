@@ -20,6 +20,10 @@ export type FileProgress = UppyUtils.FileProgress;
 
 export type FileRemoveReason = 'removed-by-user' | 'cancel-all';
 
+export type CancelReason = 'user' | 'unmount';
+
+export type CloseReason = 'user' | 'unmount'
+
 // Replace the `meta` property type with one that allows omitting internal metadata addFile() will add that
 type UppyFileWithoutMeta<TMeta, TBody> = OmitKey<
   UppyFile<TMeta, TBody>,
@@ -341,7 +345,7 @@ export class Uppy {
     UploadResult<TMeta>
   >
 
-  cancelAll(): void
+  cancelAll(options?: { reason?: CancelReason }): void
 
   retryUpload<TMeta extends IndexedObject<any> = Record<string, unknown>>(
     fileID: string
@@ -360,7 +364,7 @@ export class Uppy {
 
   removePlugin(instance: UIPlugin | BasePlugin): void
 
-  close(): void
+  close(options?: { reason?: CloseReason }): void
 
   logout(): void
 
