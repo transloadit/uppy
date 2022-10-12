@@ -35,7 +35,6 @@ export abstract class UppyAngularWrapper<PluginType extends UIPlugin  = UIPlugin
     }
 
     uninstall(uppy = this.uppy): void {
-        console.log('Uninstalling...')
         uppy.removePlugin(this.plugin!);
     }
 
