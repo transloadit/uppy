@@ -78,33 +78,43 @@ class TransloaditAssembly extends Emitter {
     })
 
     /*
-     * This will listen only for events
-     * similar to the following:
-     *
-     * event: notice
-     * data: useful data
-     * id: someid
-     */
-    this.#sse.addEventListener('notice', (e) => {
-      console.log(e.data)
-    })
-
-    /*
-     * Similarly, this will listen for events
-     * with the field event: update
-     */
-    this.#sse.addEventListener('update', (e) => {
-      console.log(e.data)
-    })
-
-    /*
      * The event "message" is a special case, as it
      * will capture events without an event field
      * as well as events that have the specific type
      * other event type.
      */
     this.#sse.addEventListener('message', (e) => {
-      console.log(e.data)
+      if (e.data === 'assembly_finished') {
+        this.#onFinished()
+      }
+
+      if (e.data.startsWith('assembly_upload_finished:')) {
+        const file = JSON.parse(e.data.slice('assembly_upload_finished:'.length))
+        this.emit('upload', file)
+        this.status.uploads.push(file)
+      }
+
+      if (e.data === 'assembly_uploading_finished') {
+        this.emit('executing')
+      }
+
+      if (e.data === 'assembly_upload_meta_data_extracted') {
+        this.emit('metadata')
+        this.#fetchStatus({ diff: false })
+      }
+
+      if (e.data.startsWith('assembly_result_finished:')) {
+        const [stepName, result] = JSON.parse(e.data.slice('assembly_result_finished:'.length))
+        this.emit('result', stepName, result)
+        ;(this.status.results[stepName] ??= []).push(result)
+      }
+
+      if (e.data === 'assembly_error') {
+        const err = null
+        this.#onError(err)
+        // Refetch for updated status code
+        this.#fetchStatus({ diff: false })
+      }
     })
   }
 
@@ -148,10 +158,7 @@ class TransloaditAssembly extends Emitter {
 
     socket.on('assembly_result_finished', (stepName, result) => {
       this.emit('result', stepName, result)
-      if (!this.status.results[stepName]) {
-        this.status.results[stepName] = []
-      }
-      this.status.results[stepName].push(result)
+      ;(this.status.results[stepName] ??= []).push(result)
     })
 
     socket.on('assembly_error', (err) => {
