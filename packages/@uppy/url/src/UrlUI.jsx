@@ -12,15 +12,15 @@ class UrlUI extends Component {
   }
 
   handleKeyPress (ev) {
-    const { addFile } = this.props
     if (ev.keyCode === 13) {
-      addFile(this.input.value)
+      this.handleSubmit()
     }
   }
 
-  handleClick () {
+  handleSubmit () {
     const { addFile } = this.props
-    addFile(this.input.value)
+    const preparedValue = this.input.value.trim()
+    addFile(preparedValue)
   }
 
   render () {
@@ -39,7 +39,7 @@ class UrlUI extends Component {
         <button
           className="uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-Url-importButton"
           type="button"
-          onClick={this.handleClick}
+          onClick={this.handleSubmit}
         >
           {i18n('import')}
         </button>
