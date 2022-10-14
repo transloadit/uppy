@@ -24,7 +24,6 @@ module.exports = (companionOptions) => {
       signatureVersion: 'v4',
       endpoint: s3.endpoint,
       region: s3.region,
-      ...rawClientOptions,
     }
 
     if (s3.useAccelerateEndpoint && s3.bucket != null) {
