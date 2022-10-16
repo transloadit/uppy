@@ -50,6 +50,6 @@ corepack yarn workspace @uppy-example/uppy-s3-example start
 
 Dashboard demo should now be available at http://localhost:8080.
 
-You have also a Drag & Drop demo on http://localhost:8080/drag
+You have also a Drag & Drop demo on http://localhost:8080/drag.
 
 *Feel free to check how the demo works and feel free to open an issue.*
