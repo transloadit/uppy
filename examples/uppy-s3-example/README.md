@@ -12,10 +12,43 @@ These instructions are not fit for production but tightening the security is out
 
 ## S3 Setup
 
-- Create new S3 bucket in AWS
-- You need to enable ACLs on the bucket.![](res/s3-acls.png)
-- Make the S3 bucket public![](res/s3-public.png)
-- Add CORS configuration.![](res/s3-cors.png)
+- Create new S3 bucket in AWS.
+- Add a bucket policy.
+```{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "PublicAccess",
+            "Effect": "Allow",
+            "Principal": "*",
+            "Action": "s3:GetObject",
+            "Resource": "arn:aws:s3:::uppy-s3-example/*"
+        }
+    ]
+}
+```
+
+- Make the S3 bucket public.
+- Add CORS configuration.
+```[
+    {
+        "AllowedHeaders": [
+            "*"
+        ],
+        "AllowedMethods": [
+            "GET",
+            "PUT",
+            "HEAD",
+            "POST",
+            "DELETE"
+        ],
+        "AllowedOrigins": [
+            "*"
+        ],
+        "ExposeHeaders": []
+    }
+]
+```
 
 ## AWS Credentials
 
@@ -23,8 +56,22 @@ You may use existing AWS credentials or create a new user in the IAM page.
 
 - Make sure you setup the AWS credentials properly and write down the Access Key ID and Secret Access Key.
 - You may configure AWS S3 credentials using [environment variables](https://docs.aws.amazon.com/sdk-for-javascript/v3/developer-guide/loading-node-credentials-environment.html) or a [credentials file in `~/.aws/credentials`](https://docs.aws.amazon.com/sdk-for-javascript/v3/developer-guide/setting-credentials-node.html).
-- You will need at least `PutObject` and `PutObjectAcl` permissions.![](res/s3-iam.png)
-
+- You will need at least `PutObject` and `PutObjectAcl` permissions.
+```{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": [
+                "s3:PutObject",
+                "s3:PutObjectAcl"
+            ],
+            "Resource": "arn:aws:s3:::uppy-s3-example/*"
+        }
+    ]
+}
+```
 # Install
 
 Download this code or clone repository into a folder and install dependencies:
