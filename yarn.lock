@@ -7959,9 +7959,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy-example/aws-presigned-url@workspace:examples/aws-presigned-url":
+"@uppy-example/aws-php@workspace:examples/aws-php":
   version: 0.0.0-use.local
-  resolution: "@uppy-example/aws-presigned-url@workspace:examples/aws-presigned-url"
+  resolution: "@uppy-example/aws-php@workspace:examples/aws-php"
   dependencies:
     "@uppy/aws-s3": "workspace:*"
     "@uppy/core": "workspace:*"

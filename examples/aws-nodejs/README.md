@@ -12,7 +12,7 @@ These instructions are not fit for production but tightening the security is out
 
 ## S3 Setup
 
-- Create new S3 bucket in AWS.
+- Create new S3 bucket in AWS (e.g. `aws-nodejs`).
 - Add a bucket policy.
 ```{
     "Version": "2012-10-17",
@@ -22,7 +22,7 @@ These instructions are not fit for production but tightening the security is out
             "Effect": "Allow",
             "Principal": "*",
             "Action": "s3:GetObject",
-            "Resource": "arn:aws:s3:::uppy-s3-example/*"
+            "Resource": "arn:aws:s3:::aws-nodejs/*"
         }
     ]
 }
@@ -67,7 +67,7 @@ You may use existing AWS credentials or create a new user in the IAM page.
                 "s3:PutObject",
                 "s3:PutObjectAcl"
             ],
-            "Resource": "arn:aws:s3:::uppy-s3-example/*"
+            "Resource": "arn:aws:s3:::aws-nodejs/*"
         }
     ]
 }
@@ -83,7 +83,7 @@ corepack yarn install
 Add a `.env` file to the root directory and define the S3 bucket name and port variables like the example below:
 
 ```
-S3_BUCKET=uppy-s3-example
+S3_BUCKET=aws-nodejs
 PORT=8080
 ```
 
@@ -92,7 +92,7 @@ PORT=8080
 Start the application:
 
 ```bash
-corepack yarn workspace @uppy-example/uppy-s3-example start
+corepack yarn workspace @uppy-example/aws-nodejs start
 ```
 
 Dashboard demo should now be available at http://localhost:8080.
