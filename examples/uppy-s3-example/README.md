@@ -33,7 +33,7 @@ Download this code or clone repository into a folder and install dependencies:
 corepack yarn install
 ```
 
-Add a .env file to the directory and define the S3 bucket name and port variables like the example below:
+Add a `.env` file to the root directory and define the S3 bucket name and port variables like the example below:
 
 ```
 S3_BUCKET=uppy-s3-example
