@@ -63,9 +63,9 @@
     "serialize-error": "^2.1.0",
     "serialize-javascript": "^6.0.0",
     "tus-js-client": "^3.0.0",
+    "uuid": "8.1.0",
     "validator": "^13.0.0",
     "ws": "8.8.1",
-    "uuid": "8.1.0",
     "ytdl-core": "^4.9.2"
   },
   "devDependencies": {
