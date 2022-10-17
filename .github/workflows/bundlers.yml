@@ -65,7 +65,7 @@ jobs:
               cjs(),
               nodeResolve({ browser: true, exportConditions: ["browser"] }),
             ],
-          };' > rollup.config.js
+          };' > rollup.config.mjs
       - name: Bundle
         run: npx rollup -c
   webpack:
