@@ -100,7 +100,10 @@ if (page.series) {
         <script src="//ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> 
         <script src="//kvz.github.io/on-the-githubs/js/jquery.on-the-githubs.min.js"></script>
         <script type="text/javascript">
-          $('.on-the-githubs').onthegithubs();
+          {
+            const $placeholder = $('.activity-feed');
+            $('<ul>', { class: 'on-the-githubs', data: $placeholder.data() }).replaceAll($placeholder).onthegithubs();
+          }
         </script>
       <% } %>
       <script src="/js/common.js"></script>

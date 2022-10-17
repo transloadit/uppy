@@ -82,13 +82,14 @@ const uppy = new Uppy().use(Webcam);
 </script>
 ```
 
-The following plugins are available as Svelte component wrappers:
+The following plugins are available as Svelte component wrappers (you need to
+install each package separately):
 
-* `<Dashboard />` - renders an inline `@uppy/dashboard`
-* `<DashboardModal />` - renders a `@uppy/dashboard` modal
-* `<DragDrop />` - renders a `@uppy/drag-drop` area
-* `<ProgressBar />` - renders a `@uppy/progress-bar`
-* `<StatusBar />` - renders a `@uppy/status-bar`
+* `<Dashboard />` - renders an inline [`@uppy/dashboard`][].
+* `<DashboardModal />` - renders a [`@uppy/dashboard`][] modal.
+* `<DragDrop />` - renders a [`@uppy/drag-drop`][] area.
+* `<ProgressBar />` - renders a [`@uppy/progress-bar`][].
+* `<StatusBar />` - renders a [`@uppy/status-bar`][].
 
 Each component takes a `props` prop that will be passed to the UI Plugin. Both `@uppy/dashboard` based plugins also take a `plugins` array as a props, make it easier to add your plugins.
 
@@ -221,6 +222,14 @@ Import general Core styles from `@uppy/core/dist/style.css` first, then add the 
 #### Props
 
 The `<StatusBar />` component supports all `@uppy/status-bar` options to be passed as an object on the `props` prop. An Uppy instance must be provided in the `uppy={}` prop.
+
+[`@uppy/dashboard`]: /docs/dashboard
+
+[`@uppy/drag-drop`]: /docs/drag-drop
+
+[`@uppy/progress-bar`]: /docs/progress-bar
+
+[`@uppy/status-bar`]: /docs/status-bar
 
 [`@uppy/webcam`]: /docs/webcam/
 

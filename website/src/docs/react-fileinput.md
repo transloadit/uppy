@@ -15,7 +15,7 @@ The `<FileInput />` component wraps the [`@uppy/file-input`](/docs/file-input/) 
 Install from NPM:
 
 ```shell
-npm install @uppy/react
+npm install @uppy/react @uppy/file-input @uppy/core
 ```
 
 ```js
@@ -44,10 +44,15 @@ The `<FileInput />` component supports all [FileInput](/docs/file-input/) option
 import React from 'react'
 import { FileInput } from '@uppy/react'
 
-  <FileInput
-    // assuming `this.uppy` contains an Uppy instance:
-    uppy={this.uppy}
-    pretty
-    inputName="files[]"
-  />
+export default function MyComponent (props) {
+  const { uppy } = props
+  return (
+    <FileInput
+    // assuming `props.uppy` contains an Uppy instance:
+      uppy={uppy}
+      pretty
+      inputName="files[]"
+    />
+  )
+}
 ```

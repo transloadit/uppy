@@ -1,24 +1,31 @@
-const pl_PL = {}
+const pl_PL = {
+  pluralize (n) {
+    if (n === 1) {
+      return 0
+    }
+    return 1
+  },
+}
 
 pl_PL.strings = {
   addBulkFilesFailed: {
-    '0': 'Dodanie %{smart_count} pliku nie powiodło się powodu błędu',
-    '1': 'Dodanie %{smart_count} plików nie powiodło się z powodu błędów',
+    '0': 'Dodawanie %{smart_count} pliku nie powiodło się z powodu błędu',
+    '1': 'Dodawanie %{smart_count} plików nie powiodło się z powodu błędów',
   },
   addMore: 'Dodaj więcej',
   addMoreFiles: 'Dodaj więcej plików',
   addingMoreFiles: 'Dodawanie kolejnych plików',
-  allowAccessDescription: 'Aby zrobić zdjęcie lub nagrać filmik z użyciem wbudowanego aparatu, zezwól stronie na dostęp do tego urządzenia',
+  allowAccessDescription: 'Aby zrobić zdjęcie lub nagrać filmik z użyciem wbudowanego aparatu, zezwól stronie na dostęp do aparatu',
   allowAccessTitle: 'Zezwól na dostęp do aparatu',
   authenticateWith: 'Połącz z %{pluginName}',
   authenticateWithTitle: 'Zaloguj się do %{pluginName} aby wybrać pliki',
   back: 'Wstecz',
   browse: 'Wybierz',
-  browseFiles: 'Wybierz',
+  browseFiles: 'Przeglądaj pliki',
   cancel: 'Anuluj',
-  cancelUpload: 'Anuluj wysyłkę',
+  cancelUpload: 'Anuluj przesyłanie',
   chooseFiles: 'Wybierz pliki',
-  closeModal: 'Zamknij okno',
+  closeModal: 'Zamknij',
   companionError: 'Połączenie z serwisem nie powiodło się',
   companionUnauthorizeHint: 'Aby wylogować się z konta %{provider}, przejdź pod adres %{url}',
   complete: 'Ukończono',
@@ -29,17 +36,17 @@ pl_PL.strings = {
   creatingAssembly: 'Przygotowywanie wysyłania...',
   creatingAssemblyFailed: 'Transloadit: Niepowodzenie przy tworzeniu zbioru',
   dashboardTitle: 'Przesyłanie plików',
-  dashboardWindowTitle: 'Okno przesyłania plików (Naciśnij escape aby zamknąć)',
-  dataUploadedOfTotal: '%{complete} z %{total}',
+  dashboardWindowTitle: 'Okno przesyłania plików (Naciśnij ESC aby zamknąć)',
+  dataUploadedOfTotal: 'Przesłano %{complete} z %{total}',
   done: 'Ukończono',
-  dropHereOr: 'Upuść pliku tutaj albo %{browse}',
+  dropHereOr: 'Upuść plik tutaj albo %{browse}',
   dropHint: 'Upuść swoje pliki tutaj',
   dropPasteBoth: 'Upuść pliki tutaj, wklej, albo %{browse}',
   dropPasteFiles: 'Upuść pliki tutaj, wklej, albo %{browse}',
-  dropPasteFolders: 'Upuść pliki tutaj, wklej, albo %{browse}',
+  dropPasteFolders: 'Upuść foldery tutaj, wklej, albo %{browse}',
   dropPasteImportBoth: 'Upuść pliki tutaj, wklej, %{browse} albo zaimportuj z',
   dropPasteImportFiles: 'Upuść pliki tutaj, wklej, %{browse} albo zaimportuj z',
-  dropPasteImportFolders: 'Upuść pliki tutaj, wklej, %{browse} albo zaimportuj z',
+  dropPasteImportFolders: 'Upuść foldery tutaj, wklej, %{browse} albo zaimportuj z',
   editFile: 'Edytuj plik',
   editing: 'Edycja %{file}',
   emptyFolderAdded: 'Z pustego folderu nie zostały dodane żadne pliki',
@@ -56,11 +63,11 @@ pl_PL.strings = {
     '2': 'wysłano %{complete} z %{smart_count} plików',
   },
   filter: 'Filtr',
-  finishEditingFile: 'Zakończ edycję pliku',
+  finishEditingFile: 'Zakończ edycję',
   folderAdded: {
-    '0': 'Dodano %{smart_count} plik z %{folder}',
-    '1': 'Dodano %{smart_count} plików z %{folder}',
-    '2': 'Dodano %{smart_count} plików z %{folder}',
+    '0': 'Dodano %{smart_count} plik z folderu %{folder}',
+    '1': 'Dodano %{smart_count} plików z folderu %{folder}',
+    '2': 'Dodano %{smart_count} plików z folderu %{folder}',
   },
   generatingThumbnails: 'Generowanie miniaturek...',
   import: 'Importuj',
@@ -69,12 +76,12 @@ pl_PL.strings = {
   logOut: 'Wyloguj',
   myDevice: 'Moje urządzenie',
   noDuplicates: 'Nie można dodać i zduplikować pliku \'%{fileName}\', już istnieje',
-  noFilesFound: 'W tym miejscu brakuje plików lub katalogów',
+  noFilesFound: 'Nie znaleziono plików',
   noInternetConnection: 'Brak połączenia z Internetem',
-  noMoreFilesAllowed: 'Nie można dodać nowych plików: trwa wysyłka',
+  noMoreFilesAllowed: 'Nie można dodać nowych plików: trwa przesyłanie',
   openFolderNamed: 'Otwórz folder %{name}',
   pause: 'Wstrzymaj',
-  pauseUpload: 'Wstrzymaj wysyłkę',
+  pauseUpload: 'Wstrzymaj przesyłanie',
   paused: 'Wstrzymano',
   poweredBy: 'Dostarczane przez %{uppy}',
   processingXFiles: {
@@ -86,9 +93,9 @@ pl_PL.strings = {
   removeFile: 'Usuń filtr',
   resetFilter: 'Zresetuj filtr',
   resume: 'Wznów',
-  resumeUpload: 'Wznów wysyłkę',
+  resumeUpload: 'Wznów przesyłanie',
   retry: 'Ponów próbę',
-  retryUpload: 'Ponów próbę wysyłki',
+  retryUpload: 'Ponów próbę przesyłania',
   saveChanges: 'Zapisz zmiany',
   selectFileNamed: 'Wybierz plik %{name}',
   selectX: {
@@ -100,7 +107,7 @@ pl_PL.strings = {
   startRecording: 'Zacznij nagrywanie wideo',
   stopRecording: 'Zatrzymaj nagrywanie wideo',
   takePicture: 'Zrób zdjęcie',
-  timedOut: 'Wysyłka wstrzymana przez %{seconds} sekund, przerywanie.',
+  timedOut: 'Przesyłanie wstrzymane przez %{seconds} sekund, przerywanie przesyłania.',
   unselectFileNamed: 'Odznacz plik %{name}',
   upload: 'Wgrywanie',
   uploadComplete: 'Wgrywanie ukończone',
@@ -146,15 +153,8 @@ pl_PL.strings = {
   },
 }
 
-pl_PL.pluralize = function pluralize (n) {
-  if (n === 1) {
-    return 0
-  }
-  return 1
+if (typeof Uppy !== 'undefined') {
+  globalThis.Uppy.locales.pl_PL = pl_PL
 }
 
-if (typeof window !== 'undefined' && typeof window.Uppy !== 'undefined') {
-  window.Uppy.locales.pl_PL = pl_PL
-}
-
-module.exports = pl_PL
+export default pl_PL

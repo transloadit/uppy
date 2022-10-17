@@ -1,4 +1,4 @@
-module.exports = function parseUrl (url) {
+export default function parseUrl (url) {
   const scheme = /^\w+:\/\//.exec(url)
   let i = 0
   if (scheme) {

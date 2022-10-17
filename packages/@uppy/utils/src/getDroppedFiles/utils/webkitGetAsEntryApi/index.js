@@ -1,56 +1,66 @@
-const toArray = require('../../../toArray')
-const getRelativePath = require('./getRelativePath')
-const getFilesAndDirectoriesFromDirectory = require('./getFilesAndDirectoriesFromDirectory')
+import getFilesAndDirectoriesFromDirectory from './getFilesAndDirectoriesFromDirectory.js'
 
-module.exports = function webkitGetAsEntryApi (dataTransfer, logDropError) {
-  const files = []
-
-  const rootPromises = []
-
-  /**
-   * Returns a resolved promise, when :files array is enhanced
-   *
-   * @param {(FileSystemFileEntry|FileSystemDirectoryEntry)} entry
-   * @returns {Promise} - empty promise that resolves when :files is enhanced with a file
-   */
-  const createPromiseToAddFileOrParseDirectory = (entry) => new Promise((resolve) => {
-    // This is a base call
-    if (entry.isFile) {
-      // Creates a new File object which can be used to read the file.
-      entry.file(
-        (file) => {
-          // eslint-disable-next-line no-param-reassign
-          file.relativePath = getRelativePath(entry)
-          files.push(file)
-          resolve()
-        },
-        // Make sure we resolve on error anyway, it's fine if only one file couldn't be read!
-        (error) => {
-          logDropError(error)
-          resolve()
-        },
-      )
-      // This is a recursive call
-    } else if (entry.isDirectory) {
+/**
+ * Interop between deprecated webkitGetAsEntry and standard getAsFileSystemHandle.
+ */
+function getAsFileSystemHandleFromEntry (entry, logDropError) {
+  if (entry == null) return entry
+  return {
+    // eslint-disable-next-line no-nested-ternary
+    kind: entry.isFile ? 'file' : entry.isDirectory ? 'directory' : undefined,
+    name: entry.name,
+    getFile () {
+      return new Promise((resolve, reject) => entry.file(resolve, reject))
+    },
+    async* values () {
+      // If the file is a directory.
       const directoryReader = entry.createReader()
-      getFilesAndDirectoriesFromDirectory(directoryReader, [], logDropError, {
-        onSuccess: (entries) => resolve(Promise.all(
-          entries.map(createPromiseToAddFileOrParseDirectory),
-        )),
+      const entries = await new Promise(resolve => {
+        getFilesAndDirectoriesFromDirectory(directoryReader, [], logDropError, {
+          onSuccess: (dirEntries) => resolve(dirEntries.map(file => getAsFileSystemHandleFromEntry(file, logDropError))),
+        })
       })
-    }
-  })
+      yield* entries
+    },
+  }
+}
 
+async function* createPromiseToAddFileOrParseDirectory (entry, relativePath) {
   // For each dropped item, - make sure it's a file/directory, and start deepening in!
-  toArray(dataTransfer.items)
-    .forEach((item) => {
-      const entry = item.webkitGetAsEntry()
-      // :entry can be null when we drop the url e.g.
-      if (entry) {
-        rootPromises.push(createPromiseToAddFileOrParseDirectory(entry))
-      }
-    })
+  if (entry.kind === 'file') {
+    const file = await entry.getFile()
+    if (file !== null) {
+      file.relativePath = relativePath ? `${relativePath}/${entry.name}` : null
+      yield file
+    }
+  } else if (entry.kind === 'directory') {
+    for await (const handle of entry.values()) {
+      yield* createPromiseToAddFileOrParseDirectory(handle, `${relativePath}/${entry.name}`)
+    }
+  }
+}
 
-  return Promise.all(rootPromises)
-    .then(() => files)
+export default async function* getFilesFromDataTransfer (dataTransfer, logDropError) {
+  const entries = await Promise.all(Array.from(dataTransfer.items, async item => {
+    const lastResortFile = item.getAsFile() // Chromium bug, see https://github.com/transloadit/uppy/issues/3505.
+    const entry = await item.getAsFileSystemHandle?.()
+      ?? getAsFileSystemHandleFromEntry(item.webkitGetAsEntry(), logDropError)
+
+    return { lastResortFile, entry }
+  }))
+
+  for (const { lastResortFile, entry } of entries) {
+    // :entry can be null when we drop the url e.g.
+    if (entry != null) {
+      try {
+        yield* createPromiseToAddFileOrParseDirectory(entry, '')
+      } catch (err) {
+        if (lastResortFile) {
+          yield lastResortFile
+        } else {
+          logDropError(err)
+        }
+      }
+    }
+  }
 }

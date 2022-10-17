@@ -1,16 +1,17 @@
-const BasePlugin = require('@uppy/core/lib/BasePlugin')
-const { nanoid } = require('nanoid/non-secure')
-const { Provider, RequestClient, Socket } = require('@uppy/companion-client')
-const emitSocketProgress = require('@uppy/utils/lib/emitSocketProgress')
-const getSocketHost = require('@uppy/utils/lib/getSocketHost')
-const settle = require('@uppy/utils/lib/settle')
-const EventTracker = require('@uppy/utils/lib/EventTracker')
-const ProgressTimeout = require('@uppy/utils/lib/ProgressTimeout')
-const { RateLimitedQueue, internalRateLimitedQueue } = require('@uppy/utils/lib/RateLimitedQueue')
-const NetworkError = require('@uppy/utils/lib/NetworkError')
-const isNetworkError = require('@uppy/utils/lib/isNetworkError')
+import BasePlugin from '@uppy/core/lib/BasePlugin.js'
+import { nanoid } from 'nanoid/non-secure'
+import { Provider, RequestClient, Socket } from '@uppy/companion-client'
+import emitSocketProgress from '@uppy/utils/lib/emitSocketProgress'
+import getSocketHost from '@uppy/utils/lib/getSocketHost'
+import settle from '@uppy/utils/lib/settle'
+import EventTracker from '@uppy/utils/lib/EventTracker'
+import ProgressTimeout from '@uppy/utils/lib/ProgressTimeout'
+import { RateLimitedQueue, internalRateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
+import NetworkError from '@uppy/utils/lib/NetworkError'
+import isNetworkError from '@uppy/utils/lib/isNetworkError'
 
-const locale = require('./locale')
+import packageJson from '../package.json'
+import locale from './locale.js'
 
 function buildResponseError (xhr, err) {
   let error = err
@@ -45,9 +46,11 @@ function setTypeInBlob (file) {
   return dataWithUpdatedType
 }
 
-module.exports = class XHRUpload extends BasePlugin {
+export default class XHRUpload extends BasePlugin {
   // eslint-disable-next-line global-require
-  static VERSION = require('../package.json').version
+  static VERSION = packageJson.version
+
+  #queueRequestSocketToken
 
   constructor (uppy, opts) {
     super(uppy, opts)
@@ -62,7 +65,7 @@ module.exports = class XHRUpload extends BasePlugin {
       formData: true,
       fieldName: opts.bundle ? 'files[]' : 'file',
       method: 'post',
-      metaFields: null,
+      allowedMetaFields: null,
       responseUrlFieldName: 'url',
       bundle: false,
       headers: {},
@@ -71,14 +74,7 @@ module.exports = class XHRUpload extends BasePlugin {
       withCredentials: false,
       responseType: '',
       /**
-       * @typedef respObj
-       * @property {string} responseText
-       * @property {number} status
-       * @property {string} statusText
-       * @property {object.<string, string>} headers
-       *
        * @param {string} responseText the response body string
-       * @param {XMLHttpRequest | respObj} response the response object (XHR or similar)
        */
       getResponseData (responseText) {
         let parsedResponse = {}
@@ -92,7 +88,7 @@ module.exports = class XHRUpload extends BasePlugin {
       },
       /**
        *
-       * @param {string} responseText the response body string
+       * @param {string} _ the response body string
        * @param {XMLHttpRequest | respObj} response the response object (XHR or similar)
        */
       getResponseError (_, response) {
@@ -130,7 +126,12 @@ module.exports = class XHRUpload extends BasePlugin {
       throw new Error('`opts.formData` must be true when `opts.bundle` is enabled.')
     }
 
+    if (opts?.allowedMetaFields === undefined && 'metaFields' in this.opts) {
+      throw new Error('The `metaFields` option has been renamed to `allowedMetaFields`.')
+    }
+
     this.uploaderEvents = Object.create(null)
+    this.#queueRequestSocketToken = this.requests.wrapPromiseFunction(this.#requestSocketToken)
   }
 
   getOptions (file) {
@@ -167,11 +168,11 @@ module.exports = class XHRUpload extends BasePlugin {
 
   // eslint-disable-next-line class-methods-use-this
   addMetadata (formData, meta, opts) {
-    const metaFields = Array.isArray(opts.metaFields)
-      ? opts.metaFields
+    const allowedMetaFields = Array.isArray(opts.allowedMetaFields)
+      ? opts.allowedMetaFields
       : Object.keys(meta) // Send along all fields by default.
 
-    metaFields.forEach((item) => {
+    allowedMetaFields.forEach((item) => {
       formData.append(item, meta[item])
     })
   }
@@ -226,6 +227,7 @@ module.exports = class XHRUpload extends BasePlugin {
 
       const xhr = new XMLHttpRequest()
       this.uploaderEvents[file.id] = new EventTracker(this.uppy)
+      let queuedRequest
 
       const timer = new ProgressTimeout(opts.timeout, () => {
         xhr.abort()
@@ -256,7 +258,7 @@ module.exports = class XHRUpload extends BasePlugin {
         }
       })
 
-      xhr.addEventListener('load', (ev) => {
+      xhr.addEventListener('load', () => {
         this.uppy.log(`[XHRUpload] ${id} finished`)
         timer.done()
         queuedRequest.done()
@@ -265,12 +267,12 @@ module.exports = class XHRUpload extends BasePlugin {
           this.uploaderEvents[file.id] = null
         }
 
-        if (opts.validateStatus(ev.target.status, xhr.responseText, xhr)) {
+        if (opts.validateStatus(xhr.status, xhr.responseText, xhr)) {
           const body = opts.getResponseData(xhr.responseText, xhr)
           const uploadURL = body[opts.responseUrlFieldName]
 
           const uploadResp = {
-            status: ev.target.status,
+            status: xhr.status,
             body,
             uploadURL,
           }
@@ -287,7 +289,7 @@ module.exports = class XHRUpload extends BasePlugin {
         const error = buildResponseError(xhr, opts.getResponseError(xhr.responseText, xhr))
 
         const response = {
-          status: ev.target.status,
+          status: xhr.status,
           body,
         }
 
@@ -317,7 +319,7 @@ module.exports = class XHRUpload extends BasePlugin {
         xhr.responseType = opts.responseType
       }
 
-      const queuedRequest = this.requests.run(() => {
+      queuedRequest = this.requests.run(() => {
         this.uppy.emit('upload-started', file)
 
         // When using an authentication system like JWT, the bearer token goes as a header. This
@@ -343,114 +345,130 @@ module.exports = class XHRUpload extends BasePlugin {
         reject(new Error('File removed'))
       })
 
-      this.onCancelAll(file.id, () => {
-        queuedRequest.abort()
+      this.onCancelAll(file.id, ({ reason }) => {
+        if (reason === 'user') {
+          queuedRequest.abort()
+        }
         reject(new Error('Upload cancelled'))
       })
     })
   }
 
-  uploadRemote (file) {
+  #requestSocketToken = async (file) => {
     const opts = this.getOptions(file)
-    return new Promise((resolve, reject) => {
+    const Client = file.remote.providerOptions.provider ? Provider : RequestClient
+    const client = new Client(this.uppy, file.remote.providerOptions)
+    const allowedMetaFields = Array.isArray(opts.allowedMetaFields)
+      ? opts.allowedMetaFields
+      // Send along all fields by default.
+      : Object.keys(file.meta)
+    const res = await client.post(file.remote.url, {
+      ...file.remote.body,
+      protocol: 'multipart',
+      endpoint: opts.endpoint,
+      size: file.data.size,
+      fieldname: opts.fieldName,
+      metadata: Object.fromEntries(allowedMetaFields.map(name => [name, file.meta[name]])),
+      httpMethod: opts.method,
+      useFormData: opts.formData,
+      headers: opts.headers,
+    })
+    return res.token
+  }
+
+  async uploadRemote (file) {
+    try {
       this.uppy.emit('upload-started', file)
+      if (file.serverToken) {
+        return this.connectToServerSocket(file)
+      }
+      const serverToken = await this.#queueRequestSocketToken(file)
 
-      const fields = {}
-      const metaFields = Array.isArray(opts.metaFields)
-        ? opts.metaFields
-        // Send along all fields by default.
-        : Object.keys(file.meta)
+      this.uppy.setFileState(file.id, { serverToken })
+      return this.connectToServerSocket(this.uppy.getFile(file.id))
+    } catch (err) {
+      this.uppy.emit('upload-error', file, err)
+      throw err
+    }
+  }
 
-      metaFields.forEach((name) => {
-        fields[name] = file.meta[name]
+  connectToServerSocket (file) {
+    return new Promise((resolve, reject) => {
+      const opts = this.getOptions(file)
+      const token = file.serverToken
+      const host = getSocketHost(file.remote.companionUrl)
+      const socket = new Socket({ target: `${host}/api/${token}` })
+      this.uploaderEvents[file.id] = new EventTracker(this.uppy)
+      let queuedRequest
+
+      this.onFileRemove(file.id, () => {
+        socket.send('cancel', {})
+        queuedRequest.abort()
+        resolve(`upload ${file.id} was removed`)
       })
 
-      const Client = file.remote.providerOptions.provider ? Provider : RequestClient
-      const client = new Client(this.uppy, file.remote.providerOptions)
-      client.post(file.remote.url, {
-        ...file.remote.body,
-        endpoint: opts.endpoint,
-        size: file.data.size,
-        fieldname: opts.fieldName,
-        metadata: fields,
-        httpMethod: opts.method,
-        useFormData: opts.formData,
-        headers: opts.headers,
-      }).then((res) => {
-        const { token } = res
-        const host = getSocketHost(file.remote.companionUrl)
-        const socket = new Socket({ target: `${host}/api/${token}`, autoOpen: false })
-        this.uploaderEvents[file.id] = new EventTracker(this.uppy)
-
-        this.onFileRemove(file.id, () => {
+      this.onCancelAll(file.id, ({ reason } = {}) => {
+        if (reason === 'user') {
           socket.send('cancel', {})
           queuedRequest.abort()
-          resolve(`upload ${file.id} was removed`)
-        })
-
-        this.onCancelAll(file.id, () => {
-          socket.send('cancel', {})
-          queuedRequest.abort()
-          resolve(`upload ${file.id} was canceled`)
-        })
-
-        this.onRetry(file.id, () => {
-          socket.send('pause', {})
-          socket.send('resume', {})
-        })
-
-        this.onRetryAll(file.id, () => {
-          socket.send('pause', {})
-          socket.send('resume', {})
-        })
-
-        socket.on('progress', (progressData) => emitSocketProgress(this, progressData, file))
-
-        socket.on('success', (data) => {
-          const body = opts.getResponseData(data.response.responseText, data.response)
-          const uploadURL = body[opts.responseUrlFieldName]
-
-          const uploadResp = {
-            status: data.response.status,
-            body,
-            uploadURL,
-          }
-
-          this.uppy.emit('upload-success', file, uploadResp)
-          queuedRequest.done()
-          if (this.uploaderEvents[file.id]) {
-            this.uploaderEvents[file.id].remove()
-            this.uploaderEvents[file.id] = null
-          }
-          return resolve()
-        })
-
-        socket.on('error', (errData) => {
-          const resp = errData.response
-          const error = resp
-            ? opts.getResponseError(resp.responseText, resp)
-            : Object.assign(new Error(errData.error.message), { cause: errData.error })
-          this.uppy.emit('upload-error', file, error)
-          queuedRequest.done()
-          if (this.uploaderEvents[file.id]) {
-            this.uploaderEvents[file.id].remove()
-            this.uploaderEvents[file.id] = null
-          }
-          reject(error)
-        })
-
-        const queuedRequest = this.requests.run(() => {
-          socket.open()
-          if (file.isPaused) {
-            socket.send('pause', {})
-          }
-
-          return () => socket.close()
-        })
-      }).catch((err) => {
-        this.uppy.emit('upload-error', file, err)
-        reject(err)
+        }
+        resolve(`upload ${file.id} was canceled`)
       })
+
+      this.onRetry(file.id, () => {
+        socket.send('pause', {})
+        socket.send('resume', {})
+      })
+
+      this.onRetryAll(file.id, () => {
+        socket.send('pause', {})
+        socket.send('resume', {})
+      })
+
+      socket.on('progress', (progressData) => emitSocketProgress(this, progressData, file))
+
+      socket.on('success', (data) => {
+        const body = opts.getResponseData(data.response.responseText, data.response)
+        const uploadURL = body[opts.responseUrlFieldName]
+
+        const uploadResp = {
+          status: data.response.status,
+          body,
+          uploadURL,
+        }
+
+        this.uppy.emit('upload-success', file, uploadResp)
+        queuedRequest.done()
+        if (this.uploaderEvents[file.id]) {
+          this.uploaderEvents[file.id].remove()
+          this.uploaderEvents[file.id] = null
+        }
+        return resolve()
+      })
+
+      socket.on('error', (errData) => {
+        const resp = errData.response
+        const error = resp
+          ? opts.getResponseError(resp.responseText, resp)
+          : Object.assign(new Error(errData.error.message), { cause: errData.error })
+        this.uppy.emit('upload-error', file, error)
+        queuedRequest.done()
+        if (this.uploaderEvents[file.id]) {
+          this.uploaderEvents[file.id].remove()
+          this.uploaderEvents[file.id] = null
+        }
+        reject(error)
+      })
+
+      queuedRequest = this.requests.run(() => {
+        if (file.isPaused) {
+          socket.send('pause', {})
+        }
+
+        return () => socket.close()
+      })
+    }).catch((err) => {
+      this.uppy.emit('upload-error', file, err)
     })
   }
 
@@ -467,18 +485,18 @@ module.exports = class XHRUpload extends BasePlugin {
 
       const xhr = new XMLHttpRequest()
 
+      const emitError = (error) => {
+        files.forEach((file) => {
+          this.uppy.emit('upload-error', file, error)
+        })
+      }
+
       const timer = new ProgressTimeout(this.opts.timeout, () => {
         xhr.abort()
         const error = new Error(this.i18n('timedOut', { seconds: Math.ceil(this.opts.timeout / 1000) }))
         emitError(error)
         reject(error)
       })
-
-      const emitError = (error) => {
-        files.forEach((file) => {
-          this.uppy.emit('upload-error', file, error)
-        })
-      }
 
       xhr.upload.addEventListener('loadstart', () => {
         this.uppy.log('[XHRUpload] started uploading bundle')
@@ -493,7 +511,7 @@ module.exports = class XHRUpload extends BasePlugin {
         files.forEach((file) => {
           this.uppy.emit('upload-progress', file, {
             uploader: this,
-            bytesUploaded: ev.loaded / ev.total * file.size,
+            bytesUploaded: (ev.loaded / ev.total) * file.size,
             bytesTotal: file.size,
           })
         })
@@ -528,7 +546,8 @@ module.exports = class XHRUpload extends BasePlugin {
         return reject(error)
       })
 
-      this.uppy.on('cancel-all', () => {
+      this.uppy.on('cancel-all', ({ reason } = {}) => {
+        if (reason !== 'user') return
         timer.done()
         xhr.abort()
       })
@@ -590,10 +609,10 @@ module.exports = class XHRUpload extends BasePlugin {
     })
   }
 
-  onCancelAll (fileID, cb) {
-    this.uploaderEvents[fileID].on('cancel-all', () => {
+  onCancelAll (fileID, eventHandler) {
+    this.uploaderEvents[fileID].on('cancel-all', (...args) => {
       if (!this.uppy.getFile(fileID)) return
-      cb()
+      eventHandler(...args)
     })
   }
 

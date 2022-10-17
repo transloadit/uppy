@@ -1,4 +1,5 @@
-const isXml = require('./isXml')
+import { describe, expect, it } from '@jest/globals'
+import isXml from './isXml.js'
 
 describe('AwsS3', () => {
   describe('isXml', () => {

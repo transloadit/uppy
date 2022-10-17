@@ -14,7 +14,7 @@ The `<Dashboard />` component wraps the [`@uppy/dashboard`][] plugin. It only re
 Install from NPM:
 
 ```shell
-npm install @uppy/react
+npm install @uppy/react @uppy/dashboard @uppy/core
 ```
 
 ```js
@@ -59,8 +59,8 @@ function Uploader () {
       .use(Webcam, { id: 'MyWebcam' }) // `id` is… "MyWebcam"
   }, [])
   React.useEffect(() => {
-    return () => uppy.close()
-  }, [])
+    return () => uppy.close({ reason: 'unmount' })
+  }, [uppy])
 
   return (
     <Dashboard

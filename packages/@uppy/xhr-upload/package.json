@@ -1,10 +1,11 @@
 {
   "name": "@uppy/xhr-upload",
   "description": "Plain and simple classic HTML multipart form uploads with Uppy, as well as uploads using the HTTP PUT method.",
-  "version": "2.0.7",
+  "version": "3.0.2",
   "license": "MIT",
   "main": "lib/index.js",
   "types": "types/index.d.ts",
+  "type": "module",
   "keywords": [
     "file uploader",
     "xhr",
@@ -26,9 +27,10 @@
   "dependencies": {
     "@uppy/companion-client": "workspace:^",
     "@uppy/utils": "workspace:^",
-    "nanoid": "^3.1.25"
+    "nanoid": "^4.0.0"
   },
   "devDependencies": {
+    "@jest/globals": "^29.0.0",
     "nock": "^13.1.0"
   },
   "peerDependencies": {

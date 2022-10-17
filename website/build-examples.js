@@ -23,7 +23,7 @@
 
 const { glob } = require('multi-glob')
 const chalk = require('chalk')
-const path = require('path')
+const path = require('node:path')
 const notifier = require('node-notifier')
 
 const esbuild = require('esbuild')
@@ -77,7 +77,7 @@ glob(srcPattern, (err, files) => {
           config: { root: path.join(__dirname, '..') },
         }),
       ],
-    })).catch(onError)
+    })).catch(onError) // eslint-disable-line no-use-before-define
   })
 })
 

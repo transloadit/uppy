@@ -1,5 +1,111 @@
 # @uppy/companion
 
+## 4.0.2
+
+Released: 2022-09-25
+Included in: Uppy v3.1.0
+
+- @uppy/companion: Companion throttle progress by time (Mikael Finstad / #4101)
+- @uppy/audio,@uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/box,@uppy/companion-client,@uppy/companion,@uppy/compressor,@uppy/core,@uppy/dashboard,@uppy/drag-drop,@uppy/drop-target,@uppy/dropbox,@uppy/facebook,@uppy/file-input,@uppy/form,@uppy/golden-retriever,@uppy/google-drive,@uppy/image-editor,@uppy/informer,@uppy/instagram,@uppy/locales,@uppy/onedrive,@uppy/progress-bar,@uppy/provider-views,@uppy/react,@uppy/redux-dev-tools,@uppy/remote-sources,@uppy/screen-capture,@uppy/status-bar,@uppy/store-default,@uppy/store-redux,@uppy/svelte,@uppy/thumbnail-generator,@uppy/transloadit,@uppy/tus,@uppy/unsplash,@uppy/url,@uppy/utils,@uppy/vue,@uppy/webcam,@uppy/xhr-upload,@uppy/zoom: add missing entries to changelog for individual packages (Antoine du Hamel / #4092)
+
+## 4.0.1
+
+Released: 2022-08-30
+Included in: Uppy v3.0.1
+
+- @uppy/companion: Fix Companion license (Merlijn Vos / #4044)
+
+## 4.0.0
+
+Released: 2022-08-22
+Included in: Uppy v3.0.0
+
+- Switch to ESM
+
+## 4.0.0-beta.4
+
+Released: 2022-08-16
+Included in: Uppy v3.0.0-beta.5
+
+- @uppy/companion: Companion: bring back default upload protocol (Mikael Finstad / #3967)
+- @uppy/companion: enforce usage of uploadUrls (Mikael Finstad / #3965)
+- @uppy/companion: fix crash if redis disconnects (Mikael Finstad / #3954)
+- @uppy/companion: upgrade `ws` version (Antoine du Hamel / #3949)
+- @uppy/companion: sort Dropbox response & refactor to async/await (Mikael Finstad / #3897)
+- @uppy/companion: fix default getKey for non-standalone too (Mikael Finstad / #3945)
+- @uppy/companion: remove `isobject` from dependencies (Antoine du Hamel / #3948)
+- @uppy/companion: show deprecation message when using legacy s3 options (Antoine du Hamel / #3944)
+
+## 4.0.0-beta.3
+
+Released: 2022-08-03
+Included in: Uppy v3.0.0-beta.4
+
+- @uppy/companion,@uppy/tus: Upgrade tus-js-client to 3.0.0 (Merlijn Vos / #3942)
+
+## 4.0.0-beta.2
+
+Released: 2022-07-27
+Included in: Uppy v3.0.0-beta.3
+
+- @uppy/companion: update minimal supported Node.js version in the docs (Antoine du Hamel / #3902)
+- @uppy/companion: upgrade `redis` to version 4.x (Antoine du Hamel / #3589)
+- @uppy/companion: remove unnecessary ts-ignores (Mikael Finstad / #3900)
+- @uppy/companion: remove `COMPANION_S3_GETKEY_SAFE_BEHAVIOR` env variable (Antoine du Hamel / #3869)
+
+## 4.0.0-beta.1
+
+Released: 2022-07-06
+Included in: Uppy v3.0.0-beta.2
+
+- @uppy/companion: remove deprecated duplicated metrics (Mikael Finstad / #3833)
+- @uppy/companion: Companion 3 default to no s3 acl (Mikael Finstad / #3826)
+- @uppy/companion: rewrite companion.app() to return an object (Mikael Finstad / #3827)
+- @uppy/companion: remove companion provider compat api (Mikael Finstad / #3828)
+- @uppy/companion: rewrite code for node >=14 (Mikael Finstad / #3829)
+- @uppy/companion: remove chunkSize backwards compatibility (Mikael Finstad / #3830)
+- @uppy/companion: Companion: make `emitSuccess` and `emitError` private (Mikael Finstad / #3832)
+- @uppy/companion: do not use a default upload protocol (Mikael Finstad / #3834)
+
+## 4.0.0-beta
+
+Released: 2022-05-30
+Included in: Uppy v3.0.0-beta
+
+- @uppy/companion: remove `searchProviders` wrapper & move `s3` options (Merlijn Vos / #3781)
+- @uppy/companion: remove support for EOL versions of Node.js (Antoine du Hamel / #3784)
+
+## 3.7.1
+
+Released: 2022-07-27
+Included in: Uppy v2.13.1
+
+- @uppy/companion: Companion app type (Mikael Finstad / #3899)
+
+## 3.7.0
+
+Released: 2022-07-06
+Included in: Uppy v2.12.2
+
+- @uppy/companion: Getkey safe behavior (Mikael Finstad / #3592)
+- @uppy/companion: doc: fix Google Drive example (Antoine du Hamel / #3855)
+- @uppy/companion: build an ARM64 container (Stuart Auld / #3841)
+
+## 3.6.0
+
+Released: 2022-05-30
+Included in: Uppy v2.11.0
+
+- @uppy/companion: expire redis keys after 1 day (Mikael Finstad / #3771)
+- @uppy/companion: fix some linter warnings (Antoine du Hamel / #3752)
+
+## 3.5.2
+
+Released: 2022-04-27
+Included in: Uppy v2.9.5
+
+- @uppy/companion: Bump moment from 2.29.1 to 2.29.2 (dependabot[bot] / #3635)
+
 ## 3.5.0
 
 Released: 2022-03-24

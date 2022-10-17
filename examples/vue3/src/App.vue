@@ -1,3 +1,7 @@
+<script setup>
+import { Dashboard, DashboardModal, DragDrop, ProgressBar } from '@uppy/vue'
+</script>
+
 <template>
   <div id="app">
     <!-- <HelloWorld msg="Welcome to Uppy Vue Demo"/> -->
@@ -13,7 +17,7 @@
       />
       Show Dashboard
     </label>
-    <dashboard
+    <Dashboard
       v-if="showInlineDashboard"
       :uppy="uppy"
       :props="{
@@ -23,7 +27,7 @@
     <h2>Modal Dashboard</h2>
     <div>
       <button @click="open = true">Show Dashboard</button>
-    <dashboard-modal
+    <DashboardModal
       :uppy="uppy2" 
       :open="open" 
       :props="{
@@ -33,7 +37,7 @@
     </div>
 
     <h2>Drag Drop Area</h2>
-    <drag-drop 
+    <DragDrop 
       :uppy="uppy"
       :props="{
         locale: {
@@ -46,7 +50,7 @@
     />
 
     <h2>Progress Bar</h2>
-    <progress-bar 
+    <ProgressBar 
       :uppy="uppy"
       :props="{
         hideAfterFinish: false
@@ -57,22 +61,19 @@
 
 <script>
 import Uppy from '@uppy/core'
-// import Tus from '@uppy/tus'
-import { Dashboard, DashboardModal, DragDrop, ProgressBar } from '@uppy/vue'
+import Tus from '@uppy/tus'
+import { defineComponent } from 'vue'
 
-export default {
-  name: 'App',
-  components: {
-    Dashboard,
-    DashboardModal,
-    DragDrop,
-    ProgressBar
-  },
+const {
+  VITE_TUS_ENDPOINT: TUS_ENDPOINT,
+} = import.meta.env
+
+export default defineComponent({
   computed: {
-    uppy: () => new Uppy({ id: 'uppy1', autoProceed: true, debug: true }),
-      // .use(Tus, { endpoint: 'https://tusd.tusdemo.net/files/' }),
+    uppy: () => new Uppy({ id: 'uppy1', autoProceed: true, debug: true })
+      .use(Tus, { endpoint: TUS_ENDPOINT }),
     uppy2: () => new Uppy({ id: 'uppy2', autoProceed: false, debug: true })
-      // .use(Tus, { endpoint: 'https://tusd.tusdemo.net/files/' }),
+      .use(Tus, { endpoint: TUS_ENDPOINT }),
   },
   data () {
     return {
@@ -83,14 +84,13 @@ export default {
   methods: {
     handleClose() { this.open = false }
   },
-  
-}
+})
 </script>
+
 <style src='@uppy/core/dist/style.css'></style> 
 <style src='@uppy/dashboard/dist/style.css'></style> 
 <style src='@uppy/drag-drop/dist/style.css'></style> 
 <style src='@uppy/progress-bar/dist/style.css'></style> 
-
 
 <style>
 #app {

@@ -7,6 +7,9 @@ order: 2
 category: "File Processing"
 ---
 
+> **Warning**
+> Robodog has been deprecated, its usage is no longer recommended.
+
 Add resumable uploads and Transloadit’s processing to your existing HTML upload forms. Selected files will be uploaded to Transloadit, and the Assembly information will be submitted to your form endpoint.
 
 ```html
@@ -150,7 +153,7 @@ Make sure to also include the Uppy css file in your `<head>` tag in case you wan
 
 ```html
 <head>
-  <link rel="stylesheet" href="https://releases.transloadit.com/uppy/robodog/v2.5.1/robodog.min.css">
+  <link rel="stylesheet" href="https://releases.transloadit.com/uppy/robodog/v3.0.0-beta.4/robodog.min.css">
 </head>
 ```
 
@@ -162,7 +165,7 @@ Notice how the form is submitted to the inexistant `/uploads` route once all tra
 <html>
   <head>
     <title>Testing Robodog</title>
-    <link rel="stylesheet" href="https://releases.transloadit.com/uppy/robodog/v2.5.1/robodog.min.css">
+    <link rel="stylesheet" href="https://releases.transloadit.com/uppy/robodog/v3.0.0-beta.4/robodog.min.css">
   </head>
   <body>
     <form id="upload-form" action="/uploads" enctype="multipart/form-data" method="POST">
@@ -172,7 +175,7 @@ Notice how the form is submitted to the inexistant `/uploads` route once all tra
       <button type="submit">Upload</button>
     </form>
 
-    <script src="https://releases.transloadit.com/uppy/robodog/v2.5.1/robodog.min.js"></script>
+    <script src="https://releases.transloadit.com/uppy/robodog/v3.0.0-beta.4/robodog.min.js"></script>
     <script type="text/javascript">
     window.Robodog.form('#upload-form', {
       waitForEncoding: true,

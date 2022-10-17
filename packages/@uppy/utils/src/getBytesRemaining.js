@@ -1,3 +1,3 @@
-module.exports = function getBytesRemaining (fileProgress) {
+export default function getBytesRemaining (fileProgress) {
   return fileProgress.bytesTotal - fileProgress.bytesUploaded
 }

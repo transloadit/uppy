@@ -1,5 +1,16 @@
-const formidable = require('formidable')
-const http = require('http')
+#!/usr/bin/env node
+
+/* eslint-disable no-console */
+
+import http from 'node:http'
+import { fileURLToPath } from 'node:url'
+import { mkdir } from 'node:fs/promises'
+
+import formidable from 'formidable'
+
+const UPLOAD_DIR = new URL('./uploads/', import.meta.url)
+
+await mkdir(UPLOAD_DIR, { recursive: true })
 
 http.createServer((req, res) => {
   const headers = {
@@ -17,9 +28,10 @@ http.createServer((req, res) => {
   }
   if (req.url === '/upload' && req.method.toLowerCase() === 'post') {
     // parse a file upload
-    const form = new formidable.IncomingForm()
-    form.uploadDir = './uploads'
-    form.keepExtensions = true
+    const form = formidable({
+      keepExtensions: true,
+      uploadDir: fileURLToPath(UPLOAD_DIR),
+    })
 
     form.parse(req, (err, fields, files) => {
       if (err) {
@@ -28,11 +40,8 @@ http.createServer((req, res) => {
         res.write(JSON.stringify(err))
         return res.end()
       }
-      const file = files['files[]']
-      console.log('saved file to', file.path)
-      console.log('original name', file.name)
-      console.log('type', file.type)
-      console.log('size', file.size)
+      const { file:[{ filepath, originalFilename, mimetype, size }] } = files
+      console.log('saved file', { filepath, originalFilename, mimetype, size })
       res.writeHead(200, headers)
       res.write(JSON.stringify({ fields, files }))
       return res.end()

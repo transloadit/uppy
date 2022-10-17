@@ -1,27 +1,26 @@
-const React = require('react')
-const PropTypes = require('prop-types')
-const StatusBarPlugin = require('@uppy/status-bar')
-const uppyPropType = require('./propTypes').uppy
-const getHTMLProps = require('./getHTMLProps')
-const nonHtmlPropsHaveChanged = require('./nonHtmlPropsHaveChanged')
-
-const h = React.createElement
+import { createElement as h, Component } from 'react'
+import PropTypes from 'prop-types'
+import StatusBarPlugin from '@uppy/status-bar'
+import { uppy as uppyPropType } from './propTypes.js'
+import getHTMLProps from './getHTMLProps.js'
+import nonHtmlPropsHaveChanged from './nonHtmlPropsHaveChanged.js'
 
 /**
  * React component that renders a status bar containing upload progress and speed,
  * processing progress and pause/resume/cancel controls.
  */
 
-class StatusBar extends React.Component {
+class StatusBar extends Component {
   componentDidMount () {
     this.installPlugin()
   }
 
   componentDidUpdate (prevProps) {
+    // eslint-disable-next-line react/destructuring-assignment
     if (prevProps.uppy !== this.props.uppy) {
       this.uninstallPlugin(prevProps)
       this.installPlugin()
-    } else if (nonHtmlPropsHaveChanged(this, prevProps)) {
+    } else if (nonHtmlPropsHaveChanged(this.props, prevProps)) {
       const options = { ...this.props, target: this.container }
       delete options.uppy
       this.plugin.setOptions(options)
@@ -33,10 +32,25 @@ class StatusBar extends React.Component {
   }
 
   installPlugin () {
-    const { uppy } = this.props
+    const {
+      uppy,
+      hideUploadButton,
+      hideRetryButton,
+      hidePauseResumeButton,
+      hideCancelButton,
+      showProgressDetails,
+      hideAfterFinish,
+      doneButtonHandler,
+    } = this.props
     const options = {
       id: 'react:StatusBar',
-      ...this.props,
+      hideUploadButton,
+      hideRetryButton,
+      hidePauseResumeButton,
+      hideCancelButton,
+      showProgressDetails,
+      hideAfterFinish,
+      doneButtonHandler,
       target: this.container,
     }
     delete options.uppy
@@ -53,23 +67,35 @@ class StatusBar extends React.Component {
   }
 
   render () {
-    // TODO: stop exposing `validProps` as a public property and rename it to `htmlProps`
-    this.validProps = getHTMLProps(this.props)
     return h('div', {
+      className: 'uppy-Container',
       ref: (container) => {
         this.container = container
       },
-      ...this.validProps,
+      ...getHTMLProps(this.props),
     })
   }
 }
 
 StatusBar.propTypes = {
-  uppy: uppyPropType,
-  hideAfterFinish: PropTypes.bool,
+  uppy: uppyPropType.isRequired,
+  hideUploadButton: PropTypes.bool,
+  hideRetryButton: PropTypes.bool,
+  hidePauseResumeButton: PropTypes.bool,
+  hideCancelButton: PropTypes.bool,
   showProgressDetails: PropTypes.bool,
+  hideAfterFinish: PropTypes.bool,
+  doneButtonHandler: PropTypes.func,
 }
+// Must be kept in sync with @uppy/status-bar/src/StatusBar.jsx.
 StatusBar.defaultProps = {
+  hideUploadButton: false,
+  hideRetryButton: false,
+  hidePauseResumeButton: false,
+  hideCancelButton: false,
+  showProgressDetails: false,
+  hideAfterFinish: true,
+  doneButtonHandler: null,
 }
 
-module.exports = StatusBar
+export default StatusBar

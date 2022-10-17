@@ -66,12 +66,13 @@ uppy.use(AwsS3, {
 
 Custom headers that should be sent along to [Companion][companion docs] on every request.
 
-### `metaFields: []`
+### `allowedMetaFields: null`
 
-Pass an array of field names to specify the metadata fields that should be stored in S3 as Object Metadata. This takes values from each file’s `file.meta` property.
+Pass an array of field names to limit the metadata fields that will be added to upload as query parameters.
 
-* Set this to `['name']` to only send the name field.
-* Set this to an empty array `[]` (the default) to not send any fields.
+* Set this to `['name']` to only send the `name` field.
+* Set this to `null` (the default) to send _all_ metadata fields.
+* Set this to an empty array `[]` to not send any fields.
 
 ### `getUploadParameters(file)`
 
@@ -115,15 +116,12 @@ This option is useful when uploading to an S3-like service that doesn’t reply 
 
 ### `locale: {}`
 
-<!-- eslint-disable no-restricted-globals, no-multiple-empty-lines -->
-
 ```js
-module.exports = {
+export default  {
   strings: {
     timedOut: 'Upload stalled for %{seconds} seconds, aborting.',
   },
 }
-
 ```
 
 ## S3 Bucket configuration

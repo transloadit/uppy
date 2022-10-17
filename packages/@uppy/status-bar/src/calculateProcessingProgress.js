@@ -1,4 +1,4 @@
-module.exports = function calculateProcessingProgress (files) {
+export default function calculateProcessingProgress (files) {
   const values = []
   let mode
   let message

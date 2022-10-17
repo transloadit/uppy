@@ -43,7 +43,7 @@ In the example above, the `Dashboard` gets rendered into an element with ID `upp
 
 ### `locale: {}`
 
-Same as with Uppy.Core’s setting above, this allows you to override plugin’s locale string, so that instead of `Select files` in English, your users will see `Выберите файлы` in Russian. Example:
+Same as with Uppy’s setting above, this allows you to override plugin’s locale string, so that instead of `Select files` in English, your users will see `Выберите файлы` in Russian. Example:
 
 ```js
 uppy.use(FileInput, {

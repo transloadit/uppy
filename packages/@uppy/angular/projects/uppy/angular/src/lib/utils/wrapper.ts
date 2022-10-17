@@ -11,7 +11,7 @@ export abstract class UppyAngularWrapper<PluginType extends UIPlugin  = UIPlugin
     private options: any;
     plugin: PluginType | undefined;
 
-    onMount(defaultOptions: Record<string, unknown>, plugin: new (uppy: Uppy, opts: Record<string, unknown>) => UIPlugin) {
+    onMount(defaultOptions: Record<string, unknown>, plugin: new (uppy: Uppy, opts?: Record<string, unknown>) => UIPlugin) {
       this.options = {
         ...defaultOptions,
         ...this.props,
@@ -35,7 +35,6 @@ export abstract class UppyAngularWrapper<PluginType extends UIPlugin  = UIPlugin
     }
 
     uninstall(uppy = this.uppy): void {
-        console.log('Uninstalling...')
         uppy.removePlugin(this.plugin!);
     }
 

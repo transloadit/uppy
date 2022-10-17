@@ -1,4 +1,4 @@
-const tus = require('tus-js-client')
+import * as tus from 'tus-js-client'
 
 function isCordova () {
   return typeof window !== 'undefined' && (
@@ -22,7 +22,7 @@ function isReactNative () {
 //
 // For React Native and Cordova, we let tus-js-client’s default
 // fingerprint handling take charge.
-module.exports = function getFingerprint (uppyFileObj) {
+export default function getFingerprint (uppyFileObj) {
   return (file, options) => {
     if (isCordova() || isReactNative()) {
       return tus.defaultOptions.fingerprint(file, options)

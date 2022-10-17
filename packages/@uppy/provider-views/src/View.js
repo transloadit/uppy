@@ -1,12 +1,12 @@
-const getFileType = require('@uppy/utils/lib/getFileType')
-const isPreviewSupported = require('@uppy/utils/lib/isPreviewSupported')
-const generateFileID = require('@uppy/utils/lib/generateFileID')
+import getFileType from '@uppy/utils/lib/getFileType'
+import isPreviewSupported from '@uppy/utils/lib/isPreviewSupported'
+import generateFileID from '@uppy/utils/lib/generateFileID'
 
 // TODO: now that we have a shared `View` class,
 // `SharedHandler` could be cleaned up and moved into here
-const SharedHandler = require('./SharedHandler')
+import SharedHandler from './SharedHandler.js'
 
-module.exports = class View {
+export default class View {
   constructor (plugin, opts) {
     this.plugin = plugin
     this.provider = opts.provider
@@ -44,7 +44,7 @@ module.exports = class View {
   }
 
   clearSelection () {
-    this.plugin.setPluginState({ currentSelection: [] })
+    this.plugin.setPluginState({ currentSelection: [], filterInput: '' })
   }
 
   cancelPicking () {

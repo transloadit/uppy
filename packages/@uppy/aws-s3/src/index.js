@@ -25,13 +25,14 @@
  * the XHRUpload code, but at least it's not horrifically broken :)
  */
 
-const BasePlugin = require('@uppy/core/lib/BasePlugin')
-const { RateLimitedQueue, internalRateLimitedQueue } = require('@uppy/utils/lib/RateLimitedQueue')
-const { RequestClient } = require('@uppy/companion-client')
-const MiniXHRUpload = require('./MiniXHRUpload')
-const isXml = require('./isXml')
+import BasePlugin from '@uppy/core/lib/BasePlugin.js'
+import { RateLimitedQueue, internalRateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
+import { RequestClient } from '@uppy/companion-client'
 
-const locale = require('./locale')
+import packageJson from '../package.json'
+import MiniXHRUpload from './MiniXHRUpload.js'
+import isXml from './isXml.js'
+import locale from './locale.js'
 
 function resolveUrl (origin, link) {
   return new URL(link, origin || undefined).toString()
@@ -94,9 +95,8 @@ function defaultGetResponseError (content, xhr) {
 // warning deduplication flag: see `getResponseData()` XHRUpload option definition
 let warnedSuccessActionStatus = false
 
-module.exports = class AwsS3 extends BasePlugin {
-  // eslint-disable-next-line global-require
-  static VERSION = require('../package.json').version
+export default class AwsS3 extends BasePlugin {
+  static VERSION = packageJson.version
 
   #client
 
@@ -115,11 +115,16 @@ module.exports = class AwsS3 extends BasePlugin {
     const defaultOptions = {
       timeout: 30 * 1000,
       limit: 0,
-      metaFields: [], // have to opt in
+      allowedMetaFields: [], // have to opt in
       getUploadParameters: this.getUploadParameters.bind(this),
+      companionHeaders: {},
     }
 
     this.opts = { ...defaultOptions, ...opts }
+
+    if (opts?.allowedMetaFields === undefined && 'metaFields' in this.opts) {
+      throw new Error('The `metaFields` option has been renamed to `allowedMetaFields`.')
+    }
 
     // TODO: remove i18n once we can depend on XHRUpload instead of MiniXHRUpload
     this.i18nInit()
@@ -127,6 +132,13 @@ module.exports = class AwsS3 extends BasePlugin {
     this.#client = new RequestClient(uppy, opts)
     this.#requests = new RateLimitedQueue(this.opts.limit)
   }
+
+  [Symbol.for('uppy test: getClient')] () { return this.#client }
+
+  // TODO: remove getter and setter for #client on the next major release
+  get client () { return this.#client }
+
+  set client (client) { this.#client = client }
 
   getUploadParameters (file) {
     if (!this.opts.companionUrl) {
@@ -136,7 +148,7 @@ module.exports = class AwsS3 extends BasePlugin {
     const filename = file.meta.name
     const { type } = file.meta
     const metadata = Object.fromEntries(
-      this.opts.metaFields
+      this.opts.allowedMetaFields
         .filter(key => file.meta[key] != null)
         .map(key => [`metadata[${key}]`, file.meta[key].toString()]),
     )
@@ -151,7 +163,7 @@ module.exports = class AwsS3 extends BasePlugin {
      * keep track of `getUploadParameters()` responses
      * so we can cancel the calls individually using just a file ID
      *
-     * @type {object.<string, Promise>}
+     * @type {Record<string, import('@uppy/utils/lib/RateLimitedQueue').AbortablePromise<unknown>>}
      */
     const paramsPromises = Object.create(null)
 
@@ -190,7 +202,7 @@ module.exports = class AwsS3 extends BasePlugin {
           method,
           formData: method.toLowerCase() === 'post',
           endpoint: url,
-          metaFields: fields ? Object.keys(fields) : [],
+          allowedMetaFields: fields ? Object.keys(fields) : [],
         }
 
         if (headers) {
@@ -216,8 +228,14 @@ module.exports = class AwsS3 extends BasePlugin {
     })
   }
 
+  #setCompanionHeaders = () => {
+    this.#client.setCompanionHeaders(this.opts.companionHeaders)
+    return Promise.resolve()
+  }
+
   install () {
     const { uppy } = this
+    uppy.addPreProcessor(this.#setCompanionHeaders)
     uppy.addUploader(this.#handleUpload)
 
     // Get the response data from a successful XMLHttpRequest instance.
@@ -279,6 +297,7 @@ module.exports = class AwsS3 extends BasePlugin {
   }
 
   uninstall () {
+    this.uppy.removePreProcessor(this.#setCompanionHeaders)
     this.uppy.removeUploader(this.#handleUpload)
   }
 }

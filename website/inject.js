@@ -1,8 +1,8 @@
-const fs = require('fs')
-const path = require('path')
+const fs = require('node:fs')
+const path = require('node:path')
 const chalk = require('chalk')
-const { spawn } = require('child_process')
-const readline = require('readline')
+const { spawn } = require('node:child_process')
+const readline = require('node:readline')
 const YAML = require('js-yaml')
 const gzipSize = require('gzip-size')
 const prettierBytes = require('@transloadit/prettier-bytes')
@@ -12,7 +12,6 @@ const glob = require('glob')
 
 const webRoot = __dirname
 const uppyRoot = path.join(__dirname, '../packages/uppy')
-const robodogRoot = path.join(__dirname, '../packages/@uppy/robodog')
 const localesRoot = path.join(__dirname, '../packages/@uppy/locales')
 
 const configPath = path.join(webRoot, '/themes/uppy/_config.yml')
@@ -35,7 +34,6 @@ const defaultConfig = {
 const packages = [
   // Bundles
   'uppy',
-  '@uppy/robodog',
   // Integrations
   '@uppy/react',
   // Core
@@ -72,6 +70,7 @@ const excludes = {
   '@uppy/react': ['react'],
 }
 
+// eslint-disable-next-line no-use-before-define
 inject().catch((err) => {
   console.error(err)
   process.exit(1)
@@ -125,6 +124,7 @@ async function injectSizes (config) {
     }),
   ).then(Object.fromEntries)
 
+  // eslint-disable-next-line no-param-reassign
   config.uppy_bundle_kb_sizes = await sizesPromise
 }
 
@@ -137,7 +137,6 @@ async function injectBundles () {
   ])
   const cmds = [
     `cp -vfR ${path.join(uppyRoot, '/dist/*')} ${sourceUppy}`,
-    `cp -vfR ${path.join(robodogRoot, '/dist/*')} ${sourceUppy}`,
     `cp -vfR ${path.join(localesRoot, '/dist/*')} ${sourceUppyLocales}`,
   ].join(' && ')
 
@@ -164,6 +163,7 @@ async function injectGhStars () {
     opts.auth = process.env.GITHUB_TOKEN
   }
 
+  // eslint-disable-next-line global-require
   const { Octokit } = require('@octokit/rest')
   const octokit = new Octokit(opts)
 
@@ -182,7 +182,6 @@ async function injectGhStars () {
 
 async function injectMarkdown () {
   const sources = {
-    '.github/ISSUE_TEMPLATE/integration_help.md': 'src/_template/integration_help.md',
     '.github/CONTRIBUTING.md': 'src/_template/contributing.md',
   }
 
@@ -214,7 +213,7 @@ function injectLocaleList () {
   const localeList = {}
 
   const localePackagePath = path.join(localesRoot, 'src', '*.js')
-  // eslint-disable-next-line import/no-dynamic-require
+  // eslint-disable-next-line import/no-dynamic-require, global-require
   const localePackageVersion = require(path.join(localesRoot, 'package.json')).version
 
   glob.sync(localePackagePath).forEach((localePath) => {

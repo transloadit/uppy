@@ -12,6 +12,9 @@ export interface WebcamOptions extends PluginOptions {
     onBeforeSnapshot?: () => Promise<void>
     countdown?: number | boolean
     mirror?: boolean
+    /**
+     * @deprecated Use `videoConstraints.facingMode` instead.
+     */
     facingMode?: string
     showVideoSourceDropdown?: boolean
     modes?: WebcamMode[]
@@ -21,6 +24,7 @@ export interface WebcamOptions extends PluginOptions {
     showRecordingLength?: boolean
     preferredImageMimeType?: string
     preferredVideoMimeType?: string
+    mobileNativeCamera?: boolean
 }
 
 declare class Webcam extends UIPlugin<WebcamOptions> {}

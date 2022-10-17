@@ -1,4 +1,14 @@
-const cs_CZ = {}
+const cs_CZ = {
+  pluralize (n) {
+    if (n === 1) {
+      return 0
+    }
+    if (n > 1 && n < 5) {
+      return 1
+    }
+    return 2
+  },
+}
 
 cs_CZ.strings = {
   addMore: 'Přidat další',
@@ -54,10 +64,10 @@ cs_CZ.strings = {
   finishEditingFile: 'Dokončit editaci souboru',
   folderAdded: {
     '0': 'Přidán %{smart_count} soubor z adresáře %{folder}',
-    '1': 'Přidáno %{smart_count} souborů z adresáře %{folder}',
+    '1': 'Přidány %{smart_count} soubory z adresáře %{folder}',
     '2': 'Přidáno %{smart_count} souborů z adresáře %{folder}',
   },
-  generatingThumbnails: 'Vytvářím miniatury...',
+  generatingThumbnails: 'Vytváří se miniatury...',
   import: 'Importovat',
   importFrom: 'Importovat z %{name}',
   loading: 'Nahrávání...',
@@ -71,7 +81,7 @@ cs_CZ.strings = {
   paused: 'Pozastaveno',
   poweredBy: 'Vytvořeno pomocí %{uppy}',
   processingXFiles: {
-    '0': 'Zpracování %{smart_count} souborů',
+    '0': 'Zpracování %{smart_count} souboru',
     '1': 'Zpracování %{smart_count} souborů',
     '2': 'Zpracování %{smart_count} souborů',
   },
@@ -92,7 +102,7 @@ cs_CZ.strings = {
   startRecording: 'Spustit nahrávání videa',
   stopRecording: 'Zastavit nahrávání videa',
   takePicture: 'Pořídit fotografii',
-  timedOut: 'Stav nahrávání se nezměnil %{seconds} sekund, ruším nahrávání.',
+  timedOut: 'Stav nahrávání se nezměnil %{seconds} sekund, nahrávání se ukončuje.',
   unselectFileNamed: 'Zrušit výběr souboru %{name}',
   upload: 'Nahrát',
   uploadComplete: 'Nahrání dokončeno',
@@ -100,53 +110,46 @@ cs_CZ.strings = {
   uploadPaused: 'Nahrání dokončeno',
   uploadXFiles: {
     '0': 'Nahrát %{smart_count} soubor',
-    '1': 'Nahrát %{smart_count} souborů',
+    '1': 'Nahrát %{smart_count} soubory',
     '2': 'Nahrát %{smart_count} souborů',
   },
   uploadXNewFiles: {
     '0': 'Nahrát +%{smart_count} soubor',
-    '1': 'Nahrát +%{smart_count} souborů',
+    '1': 'Nahrát +%{smart_count} soubory',
     '2': 'Nahrát +%{smart_count} souborů',
   },
   uploading: 'Nahrávání',
   uploadingXFiles: {
-    '0': 'Nahrávám %{smart_count} soubor',
-    '1': 'Nahrávám %{smart_count} souborů',
-    '2': 'Nahrávám %{smart_count} souborů',
+    '0': 'Nahrávání %{smart_count} souboru',
+    '1': 'Nahrávání %{smart_count} souborů',
+    '2': 'Nahrávání %{smart_count} souborů',
   },
   xFilesSelected: {
     '0': '%{smart_count} soubor vybrán',
     '1': '%{smart_count} soubory vybrány',
-    '2': '%{smart_count} soubory vybrány',
+    '2': '%{smart_count} souborů vybráno',
   },
   xMoreFilesAdded: {
     '0': '%{smart_count} další soubor přidán',
-    '1': '%{smart_count} dalších souborů přidáno',
+    '1': '%{smart_count} další soubory přidány',
     '2': '%{smart_count} dalších souborů přidáno',
   },
   xTimeLeft: '%{time} zbývá',
   youCanOnlyUploadFileTypes: 'Lze nahrát pouze následující typy souborů: %{types}',
   youCanOnlyUploadX: {
     '0': 'Lze nahrát pouze %{smart_count} soubor',
-    '1': 'Lze nahrát pouze %{smart_count} souborů',
+    '1': 'Lze nahrát pouze %{smart_count} soubory',
     '2': 'Lze nahrát pouze %{smart_count} souborů',
   },
   youHaveToAtLeastSelectX: {
     '0': 'Je třeba vybrat alespoň %{smart_count} soubor',
-    '1': 'Je třeba vybrat alespoň %{smart_count} souborů',
+    '1': 'Je třeba vybrat alespoň %{smart_count} soubory',
     '2': 'Je třeba vybrat alespoň %{smart_count} souborů',
   },
 }
 
-cs_CZ.pluralize = function pluralize (n) {
-  if (n === 1) {
-    return 0
-  }
-  return 1
+if (typeof Uppy !== 'undefined') {
+  globalThis.Uppy.locales.cs_CZ = cs_CZ
 }
 
-if (typeof window !== 'undefined' && typeof window.Uppy !== 'undefined') {
-  window.Uppy.locales.cs_CZ = cs_CZ
-}
-
-module.exports = cs_CZ
+export default cs_CZ

@@ -1,4 +1,8 @@
-const ko_KR = {}
+const ko_KR = {
+  pluralize () {
+    return 0
+  },
+}
 
 ko_KR.strings = {
   addMore: '파일 추가',
@@ -96,12 +100,8 @@ ko_KR.strings = {
   youHaveToAtLeastSelectX: '최소 %{smart_count}개의 파일을 선택해야 합니다',
 }
 
-ko_KR.pluralize = function pluralize () {
-  return 0
+if (typeof Uppy !== 'undefined') {
+  globalThis.Uppy.locales.ko_KR = ko_KR
 }
 
-if (typeof window !== 'undefined' && typeof window.Uppy !== 'undefined') {
-  window.Uppy.locales.ko_KR = ko_KR
-}
-
-module.exports = ko_KR
+export default ko_KR

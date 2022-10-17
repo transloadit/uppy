@@ -1,4 +1,11 @@
-const en_US = {}
+const en_US = {
+  pluralize (count) {
+    if (count === 1) {
+      return 0
+    }
+    return 1
+  },
+}
 
 en_US.strings = {
   addBulkFilesFailed: {
@@ -118,6 +125,7 @@ en_US.strings = {
   recording: 'Recording',
   recordingLength: 'Recording length %{recording_length}',
   recordingStoppedMaxSize: 'Recording stopped because the file size is about to exceed the limit',
+  recordVideoBtn: 'Record Video',
   recoveredAllFiles: 'We restored all files. You can now resume the upload.',
   recoveredXFiles: {
     '0': 'We could not fully recover 1 file. Please re-select it and resume the upload.',
@@ -154,6 +162,7 @@ en_US.strings = {
   streamPassive: 'Stream passive',
   submitRecordedFile: 'Submit recorded file',
   takePicture: 'Take a picture',
+  takePictureBtn: 'Take Picture',
   timedOut: 'Upload stalled for %{seconds} seconds, aborting.',
   upload: 'Upload',
   uploadComplete: 'Upload complete',
@@ -194,15 +203,8 @@ en_US.strings = {
   zoomOut: 'Zoom out',
 }
 
-en_US.pluralize = function pluralize (count) {
-  if (count === 1) {
-    return 0
-  }
-  return 1
+if (typeof Uppy !== 'undefined') {
+  globalThis.Uppy.locales.en_US = en_US
 }
 
-if (typeof window !== 'undefined' && typeof window.Uppy !== 'undefined') {
-  window.Uppy.locales.en_US = en_US
-}
-
-module.exports = en_US
+export default en_US

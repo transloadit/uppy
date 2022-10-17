@@ -1,10 +1,9 @@
-const chalk = require('chalk')
 const babel = require('@babel/core')
 const t = require('@babel/types')
-const { promisify } = require('util')
+const { promisify } = require('node:util')
 const glob = promisify(require('glob'))
-const fs = require('fs')
-const path = require('path')
+const fs = require('node:fs')
+const path = require('node:path')
 
 const { mkdir, stat, writeFile } = fs.promises
 
@@ -48,29 +47,18 @@ async function isTypeModule (file) {
     // in case it hasn't been done before.
     await mkdir(path.join(packageFolder, 'lib'), { recursive: true })
   }
-  if (typeModule) {
-    await writeFile(path.join(packageFolder, 'lib', 'package.json'), '{"type":"commonjs"}')
-  }
   moduleTypeCache.set(packageFolder, typeModule)
   versionCache.set(packageFolder, version)
   return typeModule
 }
 
 // eslint-disable-next-line no-shadow
-function transformExportDeclarations (path) {
+function transformJSXImportsToJS (path) {
   const { value } = path.node.source
-  if (value.endsWith('.jsx') && value.startsWith('./')) {
+  if (value.endsWith('.jsx') && (value.startsWith('./') || value.startsWith('../'))) {
     // Rewrite .jsx imports to .js:
     path.node.source.value = value.slice(0, -1) // eslint-disable-line no-param-reassign
   }
-
-  path.replaceWith(
-    t.assignmentExpression(
-      '=',
-      t.memberExpression(t.identifier('module'), t.identifier('exports')),
-      t.callExpression(t.identifier('require'), [path.node.source]),
-    ),
-  )
 }
 
 async function buildLib () {
@@ -97,18 +85,12 @@ async function buildLib () {
       }
     }
 
-    const plugins = await isTypeModule(file) ? [['@babel/plugin-transform-modules-commonjs', {
-      importInterop: 'none',
-    }], {
+    const plugins = await isTypeModule(file) ? [{
       visitor: {
         // eslint-disable-next-line no-shadow
         ImportDeclaration (path) {
-          let { value } = path.node.source
-          if (value.endsWith('.jsx') && value.startsWith('./')) {
-            // Rewrite .jsx imports to .js:
-            value = path.node.source.value = value.slice(0, -1) // eslint-disable-line no-param-reassign,no-multi-assign
-          }
-          if (PACKAGE_JSON_IMPORT.test(value)
+          transformJSXImportsToJS(path)
+          if (PACKAGE_JSON_IMPORT.test(path.node.source.value)
               && path.node.specifiers.length === 1
               && path.node.specifiers[0].type === 'ImportDefaultSpecifier') {
             // Vendor-in version number from package.json files:
@@ -122,77 +104,21 @@ async function buildLib () {
                   ]))]),
               )
             }
-          } else if (path.node.specifiers[0].type === 'ImportDefaultSpecifier') {
-            const [{ local }, ...otherSpecifiers] = path.node.specifiers
-            if (otherSpecifiers.length === 1 && otherSpecifiers[0].type === 'ImportNamespaceSpecifier') {
-              // import defaultVal, * as namespaceImport from '@uppy/package'
-              // is transformed into:
-              // const defaultVal = require('@uppy/package'); const namespaceImport = defaultVal
-              path.insertAfter(
-                t.variableDeclaration('const', [
-                  t.variableDeclarator(
-                    otherSpecifiers[0].local,
-                    local,
-                  ),
-                ]),
-              )
-            } else if (otherSpecifiers.length !== 0) {
-              // import defaultVal, { exportedVal as importedName, other } from '@uppy/package'
-              // is transformed into:
-              // const defaultVal = require('@uppy/package'); const { exportedVal: importedName, other } = defaultVal
-              path.insertAfter(t.variableDeclaration('const', [t.variableDeclarator(
-                t.objectPattern(
-                  otherSpecifiers.map(specifier => t.objectProperty(
-                    t.identifier(specifier.imported.name),
-                    specifier.local,
-                  )),
-                ),
-                local,
-              )]))
-            }
-            path.replaceWith(
-              t.variableDeclaration('const', [
-                t.variableDeclarator(
-                  local,
-                  t.callExpression(t.identifier('require'), [
-                    t.stringLiteral(value),
-                  ]),
-                ),
-              ]),
-            )
           }
         },
-        ExportAllDeclaration: transformExportDeclarations,
-        // eslint-disable-next-line no-shadow,consistent-return
-        ExportNamedDeclaration (path) {
-          if (path.node.source != null) return transformExportDeclarations(path)
-        },
+
+        ExportAllDeclaration: transformJSXImportsToJS,
         // eslint-disable-next-line no-shadow
-        ExportDefaultDeclaration (path) {
-          const moduleExports =  t.memberExpression(t.identifier('module'), t.identifier('exports'))
-          if (!t.isDeclaration(path.node.declaration)) {
-            path.replaceWith(
-              t.assignmentExpression('=', moduleExports, path.node.declaration),
-            )
-          } else if (path.node.declaration.id != null) {
-            const { id } = path.node.declaration
-            path.insertBefore(path.node.declaration)
-            path.replaceWith(
-              t.assignmentExpression('=', moduleExports, id),
-            )
-          } else {
-            const id = t.identifier('_default')
-            path.node.declaration.id = id // eslint-disable-line no-param-reassign
-            path.insertBefore(path.node.declaration)
-            path.replaceWith(
-              t.assignmentExpression('=', moduleExports, id),
-            )
+        ExportNamedDeclaration (path) {
+          if (path.node.source != null) {
+            transformJSXImportsToJS(path)
           }
         },
       },
     }] : undefined
     const { code, map } = await babel.transformFileAsync(file, { sourceMaps: true, plugins })
-    await Promise.all([
+    const [{ default: chalk }] = await Promise.all([
+      import('chalk'),
       writeFile(libFile, code),
       writeFile(`${libFile}.map`, JSON.stringify(map)),
     ])

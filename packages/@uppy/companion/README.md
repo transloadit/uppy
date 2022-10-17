@@ -36,7 +36,7 @@ app.use(session({ secret: 'some secrety secret' }))
 // be sure to place this anywhere after app.use(bodyParser.json()) and app.use(session({...})
 const options = {
   providerOptions: {
-    google: {
+    drive: {
       key: 'GOOGLE_KEY',
       secret: 'GOOGLE_SECRET',
     },
@@ -48,7 +48,8 @@ const options = {
   filePath: '/path/to/folder/',
 }
 
-app.use(companion.app(options))
+const { app: companionApp } = companion.app(options)
+app.use(companionApp)
 ```
 
 To enable companion socket for realtime feed to the client while upload is going on, you call the `socket` method like so.

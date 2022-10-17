@@ -89,13 +89,13 @@ With this option set to `false`, users can upload some files, and you can listen
 
 An object of methods that are called with debug information from [`uppy.log`](/docs/uppy/#uppy-log).
 
-Set `logger: Uppy.debugLogger` to get debug info output to the browser console:
+Set `logger: debugLogger` to get debug info output to the browser console:
 
 ```js
 import Uppy from '@uppy/core'
 
 const uppy = new Uppy({
-  logger: Uppy.debugLogger,
+  logger: debugLogger,
 })
 ```
 
@@ -111,7 +111,7 @@ const nullLogger = {
 }
 ```
 
-`logger: Uppy.debugLogger` looks like this:
+`logger: debugLogger` looks like this:
 
 ```js
 const debugLogger = {
@@ -277,10 +277,8 @@ const uppy = new Uppy({
 
 ### `locale: {}`
 
-<!-- eslint-disable no-restricted-globals, no-multiple-empty-lines -->
-
 ```js
-module.exports = {
+export default {
   strings: {
     addBulkFilesFailed: {
       0: 'Failed to add %{smart_count} file due to an internal error',
@@ -338,7 +336,6 @@ module.exports = {
     },
   },
 }
-
 ```
 
 ### `store: defaultStore()`
@@ -478,6 +475,10 @@ If `uppy.opts.autoProceed === true`, Uppy will begin uploading automatically whe
 >
 > Sometimes you might need to mark some files as “already uploaded”, so that the user sees them, but they won’t actually be uploaded by Uppy. This can be achieved by [looping through files and setting `uploadComplete: true, uploadStarted: true` on them](https://github.com/transloadit/uppy/issues/1112#issuecomment-432339569)
 
+### `uppy.addFiles(fileObjectArray)`
+
+Add many new files to Uppy’s internal state at once. Like `uppy.addFile`, but mostly intended for UI plugins, to speed up the UIs. See `uppy.addFile` for the example of the file object shape.
+
 ### `uppy.removeFile(fileID)`
 
 Remove a file from Uppy.
@@ -559,10 +560,6 @@ Retry an upload (after an error, for example).
 
 Retry all uploads (after an error, for example).
 
-### `uppy.cancelAll()`
-
-Cancel all uploads, reset progress and remove all files.
-
 ### `uppy.setState(patch)`
 
 Update Uppy’s internal state. Usually, this method is called internally, but in some cases it might be useful to alter something directly, especially when implementing your own plugins.
@@ -595,7 +592,7 @@ uppy.setState({
 })
 ```
 
-State in Uppy is considered to be immutable. When updating values, make sure not mutate them, but instead create copies. See [Redux docs](http://redux.js.org/docs/recipes/UsingObjectSpreadOperator.html) for more info on this. Here is an example from Uppy.Core that updates progress for a particular file in state:
+State in Uppy is considered to be immutable. When updating values, make sure not mutate them, but instead create copies. See [Redux docs](http://redux.js.org/docs/recipes/UsingObjectSpreadOperator.html) for more info on this. Here is an example that updates progress for a particular file in state:
 
 ```js
 // We use Object.assign({}, obj) to create a copy of `obj`.
@@ -673,13 +670,19 @@ uppy.getPlugin('Dashboard').setOptions({
 })
 ```
 
-### `uppy.reset()`
+### `uppy.cancelAll({ reason = 'user' })`
 
 Stop all uploads in progress and clear file selection, set progress to 0. More or less, it returns things to the way they were before any user input.
 
-### `uppy.close()`
+* `reason` - The reason for resetting. Plugins can use this to provide different cleanup behavior. Possible values are:
+  * `user` - The user has closed the Uppy instance
+  * `unmount` - The uppy instance has been closed programatically
 
-Uninstall all plugins and close down this Uppy instance. Also runs `uppy.reset()` before uninstalling.
+### `uppy.close({ reason = 'user' })`
+
+Uninstall all plugins and close down this Uppy instance. Also runs `uppy.cancelAll()` before uninstalling.
+
+* `reason` - Same as the `reason` option for `cancelAll`
 
 ### `uppy.logout()`
 

@@ -1,13 +1,19 @@
-const BasePlugin = require('@uppy/core/lib/BasePlugin')
-const getDroppedFiles = require('@uppy/utils/lib/getDroppedFiles')
-const toArray = require('@uppy/utils/lib/toArray')
+import BasePlugin from '@uppy/core/lib/BasePlugin.js'
+import getDroppedFiles from '@uppy/utils/lib/getDroppedFiles'
+import toArray from '@uppy/utils/lib/toArray'
+
+import packageJson from '../package.json'
+
+function isFileTransfer (event) {
+  return event.dataTransfer.types?.some((type) => type === 'Files') ?? false
+}
 
 /**
  * Drop Target plugin
  *
  */
-module.exports = class DropTarget extends BasePlugin {
-  static VERSION = require('../package.json').version
+export default class DropTarget extends BasePlugin {
+  static VERSION = packageJson.version
 
   constructor (uppy, opts) {
     super(uppy, opts)
@@ -45,13 +51,8 @@ module.exports = class DropTarget extends BasePlugin {
     }
   }
 
-  isFileTransfer = (event) => {
-    const transferTypes = event.dataTransfer.types ?? []
-    return transferTypes.some((type) => type === 'Files')
-  }
-
   handleDrop = async (event) => {
-    if (!this.isFileTransfer(event)) {
+    if (!isFileTransfer(event)) {
       return
     }
 
@@ -94,7 +95,7 @@ module.exports = class DropTarget extends BasePlugin {
   }
 
   handleDragOver = (event) => {
-    if (!this.isFileTransfer(event)) {
+    if (!isFileTransfer(event)) {
       return
     }
 
@@ -104,7 +105,7 @@ module.exports = class DropTarget extends BasePlugin {
     // Add a small (+) icon on drop
     // (and prevent browsers from interpreting this as files being _moved_ into the browser,
     // https://github.com/transloadit/uppy/issues/1978)
-    event.dataTransfer.dropEffect = 'copy'
+    event.dataTransfer.dropEffect = 'copy' // eslint-disable-line no-param-reassign
 
     clearTimeout(this.removeDragOverClassTimeout)
     event.currentTarget.classList.add('uppy-is-drag-over')
@@ -113,7 +114,7 @@ module.exports = class DropTarget extends BasePlugin {
   }
 
   handleDragLeave = (event) => {
-    if (!this.isFileTransfer(event)) {
+    if (!isFileTransfer(event)) {
       return
     }
 

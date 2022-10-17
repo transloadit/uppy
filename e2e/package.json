@@ -45,14 +45,14 @@
     "@uppy/zoom": "workspace:^"
   },
   "devDependencies": {
-    "cypress": "^9.0.0",
-    "cypress-file-upload": "^5.0.8",
+    "cypress": "^10.0.0",
+    "cypress-terminal-report": "^4.1.2",
     "deep-freeze": "^0.0.1",
     "parcel": "^2.0.1",
     "prompts": "^2.4.2",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "typescript": "^4.5.4",
-    "vue": "next"
+    "react": "^18.1.0",
+    "react-dom": "^18.1.0",
+    "typescript": "~4.8",
+    "vue": "^3.2.33"
   }
 }

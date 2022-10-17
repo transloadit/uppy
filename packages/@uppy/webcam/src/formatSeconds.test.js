@@ -1,4 +1,5 @@
-const formatSeconds = require('./formatSeconds')
+import { describe, expect, it } from '@jest/globals'
+import formatSeconds from './formatSeconds.js'
 
 describe('formatSeconds', () => {
   it('should return a value of \'0:43\' when an argument of 43 seconds is supplied', () => {

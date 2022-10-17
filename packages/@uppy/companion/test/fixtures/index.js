@@ -1,11 +1,19 @@
+const box = require('./box')
+const drive = require('./drive')
+const dropbox =  require('./dropbox')
+const instagram = require('./instagram')
+const onedrive = require('./onedrive')
+const facebook = require('./facebook')
+const zoom = require('./zoom')
+
 module.exports.providers = {
-  box: require('./box'),
-  drive: require('./drive'),
-  dropbox: require('./dropbox'),
-  instagram: require('./instagram'),
-  onedrive: require('./onedrive'),
-  facebook: require('./facebook'),
-  zoom: require('./zoom'),
+  box,
+  drive,
+  dropbox,
+  instagram,
+  onedrive,
+  facebook,
+  zoom,
 }
 
 module.exports.defaults = require('./constants')

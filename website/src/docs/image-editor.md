@@ -4,15 +4,13 @@ order: 2
 title: "Image Editor"
 module: "@uppy/image-editor"
 permalink: docs/image-editor/
-category: "File Processing"
+category: "Miscellaneous"
 tagline: "allows users to crop, rotate, zoom and flip images that are added to Uppy"
 ---
 
 `@uppy/image-editor` allows users to crop, rotate, zoom and flip images that are added to Uppy.
 
 Designed to be used with the Dashboard UI (can in theory work without it).
-
-⚠ In beta.
 
 ![Screenshor of the Image Editor plugin UI in Dashboard](https://user-images.githubusercontent.com/1199054/87208710-654db400-c307-11ea-9471-6e3c6582d2a5.png)
 
@@ -91,7 +89,7 @@ Quality of the resulting blob that will be saved in Uppy after editing/cropping.
 ### `cropperOptions`
 
 Image Editor is using the excellent [Cropper.js](https://fengyuanchen.github.io/cropperjs/).
-`cropperOptions` will be directly passed to `Cropper` and therefor can expect the same values as documented
+`cropperOptions` will be directly passed to `Cropper` and thus can expect the same values as documented
 in their [README](https://github.com/fengyuanchen/cropperjs/blob/HEAD/README.md#options),
 with the addition of `croppedCanvasOptions`, which will be passed to [`getCroppedCanvas`](https://github.com/fengyuanchen/cropperjs/blob/HEAD/README.md#getcroppedcanvasoptions).
 
@@ -119,4 +117,31 @@ Emitted after `save(blob)` is called.
 uppy.on('file-editor:complete', (updatedFile) => {
   console.log(updatedFile)
 })
+```
+
+### file-editor:cancel
+
+Emitted when `uninstall` is called or when the current image editing changes are discarded.
+
+```js
+uppy.on('file-editor:cancel', (file) => {
+  console.log(file)
+})
+```
+
+### `locale: {}`
+
+```js
+export default {
+  strings: {
+    revert: 'Revert',
+    rotate: 'Rotate',
+    zoomIn: 'Zoom in',
+    zoomOut: 'Zoom out',
+    flipHorizontal: 'Flip horizontal',
+    aspectRatioSquare: 'Crop square',
+    aspectRatioLandscape: 'Crop landscape (16:9)',
+    aspectRatioPortrait: 'Crop portrait (9:16)',
+  },
+}
 ```

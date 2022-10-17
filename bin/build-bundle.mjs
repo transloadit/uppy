@@ -10,18 +10,18 @@ import babel from 'esbuild-plugin-babel'
 const UPPY_ROOT = new URL('../', import.meta.url)
 const PACKAGES_ROOT = new URL('./packages/', UPPY_ROOT)
 
-function buildBundle (srcFile, bundleFile, { minify = true, standalone = '', plugins, target } = {}) {
+function buildBundle (srcFile, bundleFile, { minify = true, standalone = '', plugins, target, format } = {}) {
   return esbuild.build({
     bundle: true,
     sourcemap: true,
     entryPoints: [srcFile],
     outfile: bundleFile,
-    banner: {
-      js: '"use strict";',
-    },
+    platform: 'browser',
     minify,
+    keepNames: true,
     plugins,
     target,
+    format,
   }).then(() => {
     if (minify) {
       console.info(chalk.green(`✓ Built Minified Bundle [${standalone}]:`), chalk.magenta(bundleFile))
@@ -32,17 +32,21 @@ function buildBundle (srcFile, bundleFile, { minify = true, standalone = '', plu
 }
 
 await fs.mkdir(new URL('./uppy/dist', PACKAGES_ROOT), { recursive: true })
-await fs.mkdir(new URL('./@uppy/robodog/dist', PACKAGES_ROOT), { recursive: true })
 await fs.mkdir(new URL('./@uppy/locales/dist', PACKAGES_ROOT), { recursive: true })
 
 const methods = [
   buildBundle(
-    './packages/uppy/bundle.js',
-    './packages/uppy/dist/uppy.min.js',
-    { standalone: 'Uppy' },
+    './packages/uppy/index.mjs',
+    './packages/uppy/dist/uppy.min.mjs',
+    { standalone: 'Uppy (ESM)', format: 'esm' },
   ),
   buildBundle(
-    './packages/uppy/bundle-legacy.js',
+    './packages/uppy/bundle.mjs',
+    './packages/uppy/dist/uppy.min.js',
+    { standalone: 'Uppy', format: 'iife' },
+  ),
+  buildBundle(
+    './packages/uppy/bundle-legacy.mjs',
     './packages/uppy/dist/uppy.legacy.min.js',
     {
       standalone: 'Uppy (with polyfills)',
@@ -58,16 +62,11 @@ const methods = [
             loose: false,
             targets: { ie:11 },
             useBuiltIns: 'entry',
-            corejs: { version: '3.15', proposals: true },
+            corejs: { version: '3.24', proposals: true },
           }]],
         },
       })],
     },
-  ),
-  buildBundle(
-    './packages/@uppy/robodog/bundle.js',
-    './packages/@uppy/robodog/dist/robodog.min.js',
-    { standalone: 'Robodog' },
   ),
 ]
 
@@ -94,7 +93,7 @@ methods.push(
   ),
 )
 
-Promise.all(methods).then(() => {
+await Promise.all(methods).then(() => {
   console.info(chalk.yellow('✓ JS bundles 🎉'))
 }, (err) => {
   console.error(chalk.red('✗ Error:'), chalk.red(err.message))

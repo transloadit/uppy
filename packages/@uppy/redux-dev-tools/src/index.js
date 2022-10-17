@@ -1,4 +1,6 @@
-const { UIPlugin } = require('@uppy/core')
+import { UIPlugin } from '@uppy/core'
+
+import packageJson from '../package.json'
 
 /* eslint-disable max-len */
 /**
@@ -8,8 +10,8 @@ const { UIPlugin } = require('@uppy/core')
  * and https://github.com/zalmoxisus/mobx-remotedev/blob/master/src/monitorActions.js
  */
 /* eslint-enable max-len */
-module.exports = class ReduxDevTools extends UIPlugin {
-  static VERSION = require('../package.json').version
+export default class ReduxDevTools extends UIPlugin {
+  static VERSION = packageJson.version
 
   constructor (uppy, opts) {
     super(uppy, opts)
@@ -38,7 +40,7 @@ module.exports = class ReduxDevTools extends UIPlugin {
         // Implement monitors actions
         switch (message.payload.type) {
           case 'RESET':
-            this.uppy.reset()
+            this.uppy.cancelAll()
             return
           case 'IMPORT_STATE': {
             const { computedStates } = message.payload.nextLiftedState
@@ -50,6 +52,9 @@ module.exports = class ReduxDevTools extends UIPlugin {
           case 'JUMP_TO_ACTION':
             this.uppy.store.state = { ...this.uppy.getState(), ...JSON.parse(message.state) }
             this.uppy.updateAll(this.uppy.getState())
+            break
+
+          default:
         }
       }
     })

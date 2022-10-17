@@ -6,10 +6,43 @@ import {
   ScrollView,
   TouchableOpacity,
 } from 'react-native'
-import takePicture from './takePicture'
-import selectImage from './selectImage'
-import selectDocument from './selectDocument'
-import Provider from './provider'
+import takePicture from './takePicture.js'
+import selectImage from './selectImage.js'
+import selectDocument from './selectDocument.js'
+import Provider from './provider.js'
+
+const styles = StyleSheet.create({
+  providerList: {
+    flex: 1,
+    marginTop: 22,
+    justifyContent: 'center',
+  },
+  providerButton: {
+    alignItems: 'center',
+    backgroundColor: '#0077cc',
+    marginBottom: 15,
+    marginLeft: 50,
+    marginRight: 50,
+    padding: 10,
+    borderRadius: 5,
+  },
+  providerButtonText: {
+    color: '#fff',
+  },
+  cancelButton: {
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#0077cc',
+    marginBottom: 15,
+    marginLeft: 50,
+    marginRight: 50,
+    padding: 10,
+    borderRadius: 5,
+  },
+  cancelButtonText: {
+    color: '#0077cc',
+  },
+})
 
 export default class UppyReactNativeFilePicker extends React.Component {
   constructor () {
@@ -147,6 +180,7 @@ export default class UppyReactNativeFilePicker extends React.Component {
               })
               this.props.onRequestClose()
             }}
+            // eslint-disable-next-line react/jsx-props-no-spreading
             {...this.props}
           />
         ) : (
@@ -156,36 +190,3 @@ export default class UppyReactNativeFilePicker extends React.Component {
     )
   }
 }
-
-const styles = StyleSheet.create({
-  providerList: {
-    flex: 1,
-    marginTop: 22,
-    justifyContent: 'center',
-  },
-  providerButton: {
-    alignItems: 'center',
-    backgroundColor: '#0077cc',
-    marginBottom: 15,
-    marginLeft: 50,
-    marginRight: 50,
-    padding: 10,
-    borderRadius: 5,
-  },
-  providerButtonText: {
-    color: '#fff',
-  },
-  cancelButton: {
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#0077cc',
-    marginBottom: 15,
-    marginLeft: 50,
-    marginRight: 50,
-    padding: 10,
-    borderRadius: 5,
-  },
-  cancelButtonText: {
-    color: '#0077cc',
-  },
-})

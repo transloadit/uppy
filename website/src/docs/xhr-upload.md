@@ -67,9 +67,9 @@ When [`formData`](#formData-true) is set to true, this is used as the form field
 name for the file to be uploaded. It defaults to `'files[]'` if `bundle` option
 is set to `true`, otherwise it defaults to `'file'`.
 
-### `metaFields: null`
+### `allowedMetaFields: null`
 
-Pass an array of field names to limit the metadata fields that will be sent to the endpoint as form fields.
+Pass an array of field names to limit the metadata fields that will be added to upload.
 
 * Set this to `['name']` to only send the `name` field.
 * Set this to `null` (the default) to send _all_ metadata fields.
@@ -231,16 +231,13 @@ Indicates whether cross-site Access-Control requests should be made using creden
 
 ### `locale: {}`
 
-<!-- eslint-disable no-restricted-globals, no-multiple-empty-lines -->
-
 ```js
-module.exports = {
+export default {
   strings: {
     // Shown in the Informer if an upload is being canceled because it stalled for too long.
     timedOut: 'Upload stalled for %{seconds} seconds, aborting.',
   },
 }
-
 ```
 
 ## POST Parameters / Form Fields
@@ -264,7 +261,7 @@ By default, all metadata is sent, including Uppy’s default `name` and `type` m
 ```js
 uppy.use(XHRUpload, {
   // Only send our own `size` metadata field.
-  metaFields: ['size'],
+  allowedMetaFields: ['size'],
 })
 ```
 

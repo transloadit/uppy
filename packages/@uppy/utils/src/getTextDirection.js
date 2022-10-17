@@ -19,4 +19,4 @@ function getTextDirection (element) {
   return element?.dir
 }
 
-module.exports = getTextDirection
+export default getTextDirection

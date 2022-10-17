@@ -42,7 +42,7 @@ If you don’t have a Node.js project with a `package.json` you might want to in
 
 ### Prerequisite
 
-Since v2, you now need to be running `node.js >= v10.20.1` to use Companion. Please see [Migrating v1 to v2](#Migrating-v1-to-v2)
+Since v4.0.0, you now need to be running Node.js >= v14.19.0 to use Companion.
 
 Unfortunately, Windows is not a supported platform right now. It may work, and we’re happy to accept improvements in this area, but we can’t provide support.
 
@@ -54,7 +54,7 @@ Companion may either be used as a pluggable express app, which you plug into you
 
 ### Plugging into an existing express server
 
-To plug Companion into an existing server, call its `.app` method, passing in an [options](#Options) object as a parameter. This returns a server instance that you can mount on a subpath in your Express or app.
+To plug Companion into an existing server, call its `.app()` method, passing in an [options](#Options) object as a parameter. This returns an object with an `app` property which is a server instance that you can mount on a subpath in your Express or app.
 
 ```js
 import express from 'express'
@@ -88,7 +88,9 @@ const options = {
   filePath: '/path/to/folder/',
 }
 
-app.use('/companion', companion.app(options))
+const { app: companionApp } = companion.app(options)
+
+app.use('/companion', companionApp)
 ```
 
 See [Options](#Options) for valid configuration options.
@@ -105,7 +107,7 @@ This takes your `server` instance as an argument.
 
 #### Events
 
-The object returned by `companion.app()` also has a property `companionEmitter` which is an `EventEmitter` that emits the following events:
+The object returned by `companion.app()` also has a property `emitter` which is an `EventEmitter` that emits the following events:
 
 * `upload-start` - When an upload starts, this event is emitted with an object containing the property `token`, which is a unique ID for the upload.
 * **token** - The event name is the token from `upload-start`. The event has an object with the following properties:
@@ -117,8 +119,7 @@ The object returned by `companion.app()` also has a property `companionEmitter` 
 Example code for using the `EventEmitter` to handle a finished file upload:
 
 ```js
-const companionApp = companion.app(options)
-const { companionEmitter: emitter } = companionApp
+const { app, emitter } = companion.app(options)
 
 emitter.on('upload-start', ({ token }) => {
   console.log('Upload started', token)
@@ -262,7 +263,7 @@ export COMPANION_AWS_USE_ACCELERATE_ENDPOINT="false"
 # to set X-Amz-Expires query param in presigned urls (in seconds, default: 300)
 export COMPANION_AWS_EXPIRES="300"
 # to set a canned ACL for uploaded objects: https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#canned-acl
-export COMPANION_AWS_ACL="public-read"
+export COMPANION_AWS_ACL="private"
 
 # corresponds to the server.oauthDomain option
 export COMPANION_OAUTH_DOMAIN="sub.domain.com"
@@ -323,16 +324,16 @@ const options = {
       key: '***',
       secret: '***',
     },
-    s3: {
-      getKey: (req, filename, metadata) => filename,
-      key: '***',
-      secret: '***',
-      bucket: 'bucket-name',
-      region: 'us-east-1',
-      useAccelerateEndpoint: false, // default: false,
-      expires: 3600, // default: 300 (5 minutes)
-      acl: 'private', // default: public-read
-    },
+  },
+  s3: {
+    getKey: (req, filename, metadata) => `${crypto.randomUUID()}-${filename}`,
+    key: '***',
+    secret: '***',
+    bucket: 'bucket-name',
+    region: 'us-east-1',
+    useAccelerateEndpoint: false, // default: false,
+    expires: 3600, // default: 300 (5 minutes)
+    acl: 'private', // default: none
   },
   server: {
     host: 'localhost:3020', // or yourdomain.com
@@ -356,17 +357,19 @@ const options = {
 
 1. **filePath(required)** - Full path to the directory to which provider files will be downloaded temporarily.
 
-2. **secret(recommended)** - A secret string which Companion uses to generate authorization tokens. You should generate a long random string for this.
+2. **uploadUrls(required)** - An allowlist (array) of strings (exact URLs) or regular expressions. Companion will only accept uploads to these URLs. This ensures that your Companion instance is only allowed to upload to your trusted servers and prevents [SSRF](https://en.wikipedia.org/wiki/Server-side_request_forgery) attacks.
 
-3. **uploadUrls(recommended)** - An allowlist (array) of strings (exact URLs) or regular expressions. If specified, Companion will only accept uploads to these URLs. This is needed to make sure a Companion instance is only allowed to upload to your servers. **Omitting this leaves your system open to potential [SSRF](https://en.wikipedia.org/wiki/Server-side_request_forgery) attacks, and may throw an error in future `@uppy/companion` releases.**
+3. **secret(recommended)** - A secret string which Companion uses to generate authorization tokens. You should generate a long random string for this.
 
-4. **redisUrl(optional)** - URL to running Redis server. If this is set, the state of uploads would be stored temporarily. This helps for resumed uploads after a browser crash from the client. The stored upload would be sent back to the client on reconnection.
+4. **streamingUpload(recommended)** - A boolean flag to tell Companion whether to enable streaming uploads. If enabled, it will lead to _faster uploads_ because companion will start uploading at the same time as downloading using `stream.pipe`. If `false`, files will be fully downloaded first, then uploaded. Defaults to `false`, but we recommended enabling it, especially if you’re expecting to upload large files. In future versions the default might change to `true`.
 
-5. **redisOptions(optional)** - An object of [options supported by redis client](https://www.npmjs.com/package/redis#options-object-properties). This option can be used in place of `redisUrl`.
+5. **redisUrl(optional)** - URL to running Redis server. If this is set, the state of uploads would be stored temporarily. This helps for resumed uploads after a browser crash from the client. The stored upload would be sent back to the client on reconnection.
 
-6. **redisPubSubScope(optional)** - Use a scope for the companion events at the Redis server. Setting this option will prefix all events with the name provided and a colon.
+6. **redisOptions(optional)** - An object of [options supported by redis client](https://www.npmjs.com/package/redis#options-object-properties). This option can be used in place of `redisUrl`.
 
-7. **server(optional)** - An object with details, mainly used to carry out oauth authentication from any of the enabled providers above. Though it’s optional, it’s required if you would be enabling any of the supported providers. The following are the server options you may set:
+7. **redisPubSubScope(optional)** - Use a scope for the companion events at the Redis server. Setting this option will prefix all events with the name provided and a colon.
+
+8. **server(optional)** - An object with details, mainly used to carry out oauth authentication from any of the enabled providers above. Though it’s optional, it’s required if you would be enabling any of the supported providers. The following are the server options you may set:
 
 * `protocol` - `http | https` - even though companion itself always runs as http, you may want to set this to `https` if you are running a reverse https proxy in front of companion.
 * `host` (required) - your server’s publically facing hostname (for example `example.com`).
@@ -375,19 +378,17 @@ const options = {
 * `implicitPath` - if the URL’s path in your reverse proxy is different from your Companion path in your express app, then you need to set this path as `implicitPath`. So if your Companion URL is `example.com/mypath/companion`. Where the path `/mypath` is defined in your NGINX server, while `/companion` is set in your express app. Then you need to set the option `implicitPath` to `/mypath`, and set the `path` option to `/companion`.
 * `validHosts` - if you are setting an `oauthDomain`, you need to set a list of valid hosts, so the oauth handler can validate the host of the Uppy instance requesting the authentication. This is essentially a list of valid domains running your Companion instances. The list may also contain regex patterns. e.g `['sub2.example.com', 'sub3.example.com', '(\\w+).example.com']`
 
-8. **sendSelfEndpoint(optional)** - This is essentially the same as the `server.host + server.path` attributes. The major reason for this attribute is that, when set, it adds the value as the `i-am` header of every request response.
+9. **sendSelfEndpoint(optional)** - This is essentially the same as the `server.host + server.path` attributes. The major reason for this attribute is that, when set, it adds the value as the `i-am` header of every request response.
 
-9. **providerOptions(optional)** - An object containing credentials (`key` and `secret`) for each provider you would like to enable. Please see [the list of supported providers](#Supported-providers).
+10. **providerOptions(optional)** - An object containing credentials (`key` and `secret`) for each provider you would like to enable. Please see [the list of supported providers](#Supported-providers).
 
-10. **customProviders(optional)** - This option enables you to add custom providers along with the already supported providers. See [Adding Custom Providers](#Adding-custom-providers) for more information.
+11. **customProviders(optional)** - This option enables you to add custom providers along with the already supported providers. See [Adding Custom Providers](#Adding-custom-providers) for more information.
 
-11. **debug(optional)** - A boolean flag to tell Companion whether to log useful debug information while running.
+12. **debug(optional)** - A boolean flag to tell Companion whether to log useful debug information while running.
 
-12. **logClientVersion(optional)** - A boolean flag to tell Companion whether to log its version upon startup.
+13. **logClientVersion(optional)** - A boolean flag to tell Companion whether to log its version upon startup.
 
-13. **metrics(optional)** - A boolean flag to tell Companion whether to provide an endpoint `/metrics` with Prometheus metrics.
-
-14. **streamingUpload(optional)** - A boolean flag to tell Companion whether to enable streaming uploads. If enabled, it will lead to _faster uploads_ because companion will start uploading at the same time as downloading using `stream.pipe`. If `false`, files will be fully downloaded first, then uploaded. Defaults to `false`. Do **not** set it to `true` if you have a [custom Companion provider](#adding-custom-providers) that does not use the new async/stream API.
+14. **metrics(optional)** - A boolean flag to tell Companion whether to provide an endpoint `/metrics` with Prometheus metrics.
 
 15. **maxFileSize(optional)** - If this value is set, companion will limit the maximum file size to process. If unset, it will process files without any size limit (this is the default).
 
@@ -417,34 +418,34 @@ Please see [Supported Providers](https://uppy.io/docs/companion/#Supported-provi
 
 Companion comes with signature endpoints for AWS S3. These can be used by the Uppy client to sign requests to upload files directly to S3, without exposing secret S3 keys in the browser. Companion also supports uploading files from providers like Dropbox and Instagram directly into S3.
 
-The S3 features can be configured using the `providerOptions.s3` property.
+The S3 features can be configured using the `s3` property.
 
-#### `providerOptions.s3.key`
+#### `s3.key`
 
 The S3 access key ID. The standalone Companion server populates this with the value of the `COMPANION_AWS_KEY` environment variable by default.
 
-#### `providerOptions.s3.secret`
+#### `s3.secret`
 
 The S3 secret access key. The standalone Companion server populates this with the value of the `COMPANION_AWS_SECRET` environment variable by default.
 
-#### `providerOptions.s3.bucket`
+#### `s3.bucket`
 
 The name of the bucket to store uploaded files in. The standalone Companion server populates this with the value of the `COMPANION_AWS_BUCKET` environment variable by default.
 
-#### `providerOptions.s3.region`
+#### `s3.region`
 
 The datacenter region where the target bucket is located. The standalone Companion server populates this with the value of the `COMPANION_AWS_REGION` environment variable by default.
 
-#### `providerOptions.s3.awsClientOptions`
+#### `s3.awsClientOptions`
 
-You can supply any [S3 option supported by the AWS SDK](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html#constructor-property) in the `providerOptions.s3.awsClientOptions` object, _except for_ the below:
+You can supply any [S3 option supported by the AWS SDK](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html#constructor-property) in the `s3.awsClientOptions` object, _except for_ the below:
 
-* `accessKeyId`. Instead, use the `providerOptions.s3.key` property. This is to make configuration names consistent between different Companion features.
-* `secretAccessKey`. Instead, use the `providerOptions.s3.secret` property. This is to make configuration names consistent between different Companion features.
+* `accessKeyId`. Instead, use the `s3.key` property. This is to make configuration names consistent between different Companion features.
+* `secretAccessKey`. Instead, use the `s3.secret` property. This is to make configuration names consistent between different Companion features.
 
 Be aware that some options may cause wrong behaviour if they conflict with Companion’s assumptions. If you find that a particular option does not work as expected, please [open an issue on the Uppy repository](https://github.com/transloadit/uppy/issues/new) so we can document it here.
 
-#### `providerOptions.s3.getKey(req, filename, metadata)`
+#### `s3.getKey(req, filename, metadata)`
 
 Get the key name for a file. The key is the file path to which the file will be uploaded in your bucket. This option should be a function receiving three arguments:
 
@@ -452,28 +453,26 @@ Get the key name for a file. The key is the file path to which the file will be 
 * `filename`, the original name of the uploaded file;
 * `metadata`, user-provided metadata for the file. See the [`@uppy/aws-s3`](https://uppy.io/docs/aws-s3/#metaFields) docs. The `@uppy/aws-s3-multipart` plugin unconditionally sends all metadata fields, so they all are available here.
 
+If your bucket is public, you should include a cryptographically random token in the uploaded name for security (hence the default `crypto.randomUUID()`).
+
 This function should return a string `key`. The `req` parameter can be used to upload to a user-specific folder in your bucket, for example:
 
 ```js
 app.use(authenticationMiddleware)
-app.use(uppy.app({
-  providerOptions: {
-    s3: {
-      getKey: (req, filename, metadata) => `${req.user.id}/${filename}`,
-      /* auth options */
-    },
+app.use(companion.app({
+  s3: {
+    getKey: (req, filename, metadata) => `${req.user.id}/${crypto.randomUUID()}-${filename}`,
+    /* auth options */
   },
 }))
 ```
 
-The default implementation returns the `filename`, so all files will be uploaded to the root of the bucket as their original file name.
+The default implementation uploads all files to the root of the bucket as their original file name, prefixed with a random UUID.
 
 ```js
-app.use(uppy.app({
-  providerOptions: {
-    s3: {
-      getKey: (req, filename, metadata) => filename,
-    },
+app.use(companion.app({
+  s3: {
+    getKey: (req, filename, metadata) => `${crypto.randomUUID()}-${filename}`,
   },
 }))
 ```
@@ -528,7 +527,6 @@ To work well with Companion, the **module** must be a class with the following m
 The class must also have:
 
 * A unique `authProvider` string property - a lowercased value which typically indicates the name of the provider (e.g “dropbox”).
-* A `static` property `static version = 2`, which is the current version of the Companion Provider API.
 
 See also [example code with a custom provider](https://github.com/transloadit/uppy/blob/main/examples/custom-provider/server).
 
@@ -576,47 +574,4 @@ See also [example code with a custom provider](https://github.com/transloadit/up
 
 ## Development
 
-1\. To set up Companion for local development, please clone the Uppy repo and install, like so:
-
-```bash
-git clone https://github.com/transloadit/uppy
-cd uppy
-yarn install
-```
-
-2\. Configure your environment variables by copying the `env.example.sh` file to `env.sh` and edit it to its correct values.
-
-```bash
-cp env.example.sh env.sh
-$EDITOR env.sh
-```
-
-3\. To start the server, run:
-
-```bash
-yarn run start:companion
-```
-
-This would get the Companion instance running on `http://localhost:3020`. It uses [nodemon](https://github.com/remy/nodemon) so it will automatically restart when files are changed.
-
-## Live example
-
-An example server is running at <https://companion.uppy.io>, which is deployed with [Kubernetes](https://github.com/transloadit/uppy/blob/main/packages/%40uppy/companion/KUBERNETES.md)
-
-## How the Authentication and Token mechanism works
-
-This section describes how Authentication works between Companion and Providers. While this behaviour is the same for all Providers (Dropbox, Instagram, Google Drive, etc.), we are going to be referring to Dropbox in place of any Provider throughout this section.
-
-The following steps describe the actions that take place when a user Authenticates and Uploads from Dropbox through Companion:
-
-* The visitor to a website with Uppy clicks `Connect to Dropbox`.
-* Uppy sends a request to Companion, which in turn sends an OAuth request to Dropbox (Requires that OAuth credentials from Dropbox have been added to Companion).
-* Dropbox asks the visitor to log in, and whether the Website should be allowed to access your files
-* If the visitor agrees, Companion will receive a token from Dropbox, with which we can temporarily download files.
-* Companion encrypts the token with a secret key and sends the encrypted token to Uppy (client)
-* Every time the visitor clicks on a folder in Uppy, it asks Companion for the new list of files, with this question, the token (still encrypted by Companion) is sent along.
-* Companion decrypts the token, requests the list of files from Dropbox and sends it to Uppy.
-* When a file is selected for upload, Companion receives the token again according to this procedure, decrypts it again, and thereby downloads the file from Dropbox.
-* As the bytes arrive, Companion uploads the bytes to the final destination (depending on the configuration: Apache, a Tus server, S3 bucket, etc).
-* Companion reports progress to Uppy, as if it were a local upload.
-* Completed!
+See [CONTRIBUTING.md](/docs/contributing.html#Companion)

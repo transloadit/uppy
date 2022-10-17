@@ -1,9 +1,10 @@
 {
   "name": "@uppy/aws-s3-multipart",
   "description": "Upload to Amazon S3 with Uppy and S3's Multipart upload strategy",
-  "version": "2.2.1",
+  "version": "3.0.2",
   "license": "MIT",
   "main": "lib/index.js",
+  "type": "module",
   "types": "types/index.d.ts",
   "keywords": [
     "file uploader",
@@ -28,6 +29,7 @@
     "firebase": "^8.7.1"
   },
   "devDependencies": {
+    "@jest/globals": "^29.0.0",
     "nock": "^13.1.0",
     "whatwg-fetch": "3.6.2"
   },

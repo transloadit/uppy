@@ -1,6 +1,9 @@
-const Uppy = require('@uppy/core')
-const Dashboard = require('@uppy/dashboard')
-const XHRUpload = require('@uppy/xhr-upload')
+import Uppy from '@uppy/core'
+import Dashboard from '@uppy/dashboard'
+import XHRUpload from '@uppy/xhr-upload'
+
+import '@uppy/core/dist/style.css'
+import '@uppy/dashboard/dist/style.css'
 
 const uppy = new Uppy({
   debug: true,
@@ -17,6 +20,6 @@ uppy.use(Dashboard, {
 uppy.use(XHRUpload, {
   bundle: true,
   endpoint: 'http://localhost:9967/upload',
-  metaFields: ['something'],
+  allowedMetaFields: ['something'],
   fieldName: 'files',
 })

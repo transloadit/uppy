@@ -1,4 +1,4 @@
-module.exports = function settle (promises) {
+export default function settle (promises) {
   const resolutions = []
   const rejections = []
   function resolved (value) {

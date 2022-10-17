@@ -84,10 +84,8 @@ This option correlates to the [RequestCredentials value](https://developer.mozil
 
 ### `locale: {}`
 
-<!-- eslint-disable no-restricted-globals, no-multiple-empty-lines -->
-
 ```js
-module.exports = {
+export default {
   strings: {
     // Label for the "Import" button.
     import: 'Import',
@@ -99,7 +97,6 @@ module.exports = {
     enterCorrectUrl: 'Incorrect URL: Please make sure you are entering a direct link to a file',
   },
 }
-
 ```
 
 ## Methods

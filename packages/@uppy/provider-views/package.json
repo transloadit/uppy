@@ -1,11 +1,12 @@
 {
   "name": "@uppy/provider-views",
   "description": "View library for Uppy remote provider plugins.",
-  "version": "2.0.8",
+  "version": "3.0.1",
   "license": "MIT",
   "main": "lib/index.js",
   "style": "dist/style.min.css",
   "types": "types/index.d.ts",
+  "type": "module",
   "keywords": [
     "file uploader",
     "uppy"

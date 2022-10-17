@@ -15,7 +15,7 @@ The `<ProgressBar />` component wraps the [`@uppy/progress-bar`][] plugin.
 Install from NPM:
 
 ```shell
-npm install @uppy/react
+npm install @uppy/react @uppy/progress-bar @uppy/core
 ```
 
 ```js
@@ -44,11 +44,17 @@ The `<ProgressBar />` component supports all [`@uppy/progress-bar`][] options as
 import React from 'react'
 import { ProgressBar } from '@uppy/react'
 
-  <ProgressBar
-    uppy={uppy}
-    fixed
-    hideAfterFinish
-  />
+export default function MyComponent (props) {
+  const { uppy } = props
+  return (
+    <ProgressBar
+      // assuming `props.uppy` contains an Uppy instance:
+      uppy={uppy}
+      fixed
+      hideAfterFinish
+    />
+  )
+}
 ```
 
 [`@uppy/progress-bar`]: /docs/progress-bar/

@@ -1,41 +1,11 @@
+#!/usr/bin/env node
+
 /* eslint-disable compat/compat */
-const http = require('http')
-const qs = require('querystring')
-const e = require('he').encode
+import http from 'node:http'
+import qs from 'node:querystring'
+import he from 'he'
 
-/**
- * A very haxxor server that outputs some of the data it receives in a POST form parameter.
- */
-
-const server = http.createServer(onrequest)
-server.listen(9967)
-
-function onrequest (req, res) {
-  if (req.url !== '/test') {
-    res.writeHead(404, { 'content-type': 'text/html' })
-    res.end('404')
-    return
-  }
-
-  let body = ''
-  req.on('data', (chunk) => { body += chunk })
-  req.on('end', () => {
-    onbody(body)
-  })
-
-  function onbody (body) {
-    const fields = qs.parse(body)
-    const assemblies = JSON.parse(fields.transloadit)
-
-    res.setHeader('content-type', 'text/html')
-    res.write(Header())
-    res.write(FormFields(fields))
-    assemblies.forEach((assembly) => {
-      res.write(AssemblyResult(assembly))
-    })
-    res.end(Footer())
-  }
-}
+const e = he.encode
 
 function Header () {
   return `
@@ -67,20 +37,76 @@ function Footer () {
 }
 
 function FormFields (fields) {
-  return `
-    <h1>Form Fields</h1>
-    <dl>
-      ${Object.entries(fields).map(Field).join('\n')}
-    </dl>
-  `
-
   function Field ([name, value]) {
     if (name === 'transloadit') return ''
+    let isValueJSON = false
+    if (value.startsWith('{') || value.startsWith('[')) {
+      try {
+        // eslint-disable-next-line no-param-reassign
+        value = JSON.stringify(
+          JSON.parse(value),
+          null,
+          2,
+        )
+        isValueJSON = true
+      } catch {
+        // Nothing
+      }
+    }
+
+    const prettyValue = isValueJSON ? `
+        <details open>
+          <code>
+            <pre style="max-width: 100%; max-height: 400px; white-space: pre-wrap; overflow: auto;">${e(value)}</pre>
+          </code>
+        </details>
+      ` : e(value)
+
     return `
       <dt>${e(name)}</dt>
-      <dd>${e(value)}</dd>
+      <dd>
+        ${prettyValue}
+      </dd>
     `
   }
+
+  return `
+  <h1>Form Fields</h1>
+  <dl>
+    ${Object.entries(fields).map(Field).join('\n')}
+  </dl>
+`
+}
+
+function UploadsList (uploads) {
+  function Upload (upload) {
+    return `<li>${e(upload.name)}</li>`
+  }
+
+  return `
+    <ul>
+      ${uploads.map(Upload).join('\n')}
+    </ul>
+  `
+}
+
+function ResultsList (results) {
+  function Result (result) {
+    return `<li>${e(result.name)} <a href="${result.ssl_url}" target="_blank">View</a></li>`
+  }
+
+  function ResultsSection (stepName) {
+    return `
+    <h2>${e(stepName)}</h2>
+    <ul>
+    ${results[stepName].map(Result).join('\n')}
+    </ul>
+    `
+  }
+
+  return Object.keys(results)
+    .map(ResultsSection)
+    .join('\n')
 }
 
 function AssemblyResult (assembly) {
@@ -91,33 +117,39 @@ function AssemblyResult (assembly) {
   `
 }
 
-function UploadsList (uploads) {
-  return `
-    <ul>
-      ${uploads.map(Upload).join('\n')}
-    </ul>
-  `
+function onrequest (req, res) {
+  if (req.url !== '/test') {
+    res.writeHead(404, { 'content-type': 'text/html' })
+    res.end('404')
+    return
+  }
 
-  function Upload (upload) {
-    return `<li>${e(upload.name)}</li>`
+  function onbody (body) {
+    const fields = qs.parse(body)
+    const result = JSON.parse(fields.uppyResult)
+    const assemblies = result[0].transloadit
+
+    res.setHeader('content-type', 'text/html')
+    res.write(Header())
+    res.write(FormFields(fields))
+    assemblies.forEach((assembly) => {
+      res.write(AssemblyResult(assembly))
+    })
+    res.end(Footer())
+  }
+
+  {
+    let body = ''
+    req.on('data', (chunk) => { body += chunk })
+    req.on('end', () => {
+      onbody(body)
+    })
   }
 }
 
-function ResultsList (results) {
-  return Object.keys(results)
-    .map(ResultsSection)
-    .join('\n')
+/**
+ * A very haxxor server that outputs some of the data it receives in a POST form parameter.
+ */
 
-  function ResultsSection (stepName) {
-    return `
-      <h2>${e(stepName)}</h2>
-      <ul>
-        ${results[stepName].map(Result).join('\n')}
-      </ul>
-    `
-  }
-
-  function Result (result) {
-    return `<li>${e(result.name)} <a href="${result.ssl_url}" target="_blank">View</a></li>`
-  }
-}
+const server = http.createServer(onrequest)
+server.listen(9967)

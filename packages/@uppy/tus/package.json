@@ -1,10 +1,11 @@
 {
   "name": "@uppy/tus",
   "description": "Resumable uploads for Uppy using Tus.io",
-  "version": "2.2.2",
+  "version": "3.0.2",
   "license": "MIT",
   "main": "lib/index.js",
   "types": "types/index.d.ts",
+  "type": "module",
   "keywords": [
     "file uploader",
     "uppy",
@@ -24,7 +25,10 @@
   "dependencies": {
     "@uppy/companion-client": "workspace:^",
     "@uppy/utils": "workspace:^",
-    "tus-js-client": "^2.1.1"
+    "tus-js-client": "^3.0.0"
+  },
+  "devDependencies": {
+    "@jest/globals": "^29.0.0"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^"

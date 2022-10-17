@@ -14,7 +14,7 @@ The `<DashboardModal />` component wraps the [`@uppy/dashboard`][] plugin, allow
 Install from NPM:
 
 ```shell
-npm install @uppy/react
+npm install @uppy/react @uppy/dashboard @uppy/core
 ```
 
 ```js
@@ -88,7 +88,7 @@ class MusicUploadButton extends React.Component {
   }
 
   componentWillUnmount () {
-    this.uppy.close()
+    this.uppy.close({ reason: 'unmount' })
   }
 
   handleOpen () {

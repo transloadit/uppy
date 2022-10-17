@@ -1,15 +1,16 @@
-const Redux = require('redux')
-const ReduxStore = require('./index')
+import { describe, expect, it } from '@jest/globals'
+import Redux from 'redux'
+import { ReduxStore, reducer } from './index.js'
 
 describe('ReduxStore', () => {
   function createStore (reducers = {}) {
-    const reducer = Redux.combineReducers({ ...reducers, uppy: ReduxStore.reducer })
-    return Redux.createStore(reducer)
+    const combinedReducers = Redux.combineReducers({ ...reducers, uppy: reducer })
+    return Redux.createStore(combinedReducers)
   }
 
   it('can be created with named or default import', () => {
     const r = createStore()
-    let store = new ReduxStore.ReduxStore({ store: r })
+    let store = new ReduxStore({ store: r })
     expect(typeof store).toBe('object')
     store = new ReduxStore({ store: r })
     expect(typeof store).toBe('object')
@@ -55,12 +56,12 @@ describe('ReduxStore', () => {
   })
 
   it('fires `subscribe` if state is modified externally (eg redux devtools)', () => {
-    const reducer = Redux.combineReducers({ uppy: ReduxStore.reducer })
+    const combinedReducers = Redux.combineReducers({ uppy: reducer })
     const r = Redux.createStore((state, action) => {
       // Add a `SET` action that can change Uppy state without going through the Uppy reducer or action creator.
       // Emulates Redux Devtools.
       if (action.type === 'SET') return action.payload
-      return reducer(state, action)
+      return combinedReducers(state, action)
     })
 
     let expected = []
@@ -91,10 +92,10 @@ describe('ReduxStore', () => {
   })
 
   it('can mount in a custom state key', () => {
-    const reducer = Redux.combineReducers({
-      hello: ReduxStore.reducer,
+    const combinedReducers = Redux.combineReducers({
+      hello: reducer,
     })
-    const r = Redux.createStore(reducer)
+    const r = Redux.createStore(combinedReducers)
     const store = new ReduxStore({
       store: r,
       id: 'world',

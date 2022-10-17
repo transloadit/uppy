@@ -1,9 +1,10 @@
 {
   "name": "@uppy/facebook",
   "description": "Import files from Facebook, into Uppy.",
-  "version": "2.0.5",
+  "version": "3.0.1",
   "license": "MIT",
   "main": "lib/index.js",
+  "type": "module",
   "types": "types/index.d.ts",
   "keywords": [
     "file uploader",

@@ -8,9 +8,7 @@
  * @param {string} fallbackString
  * @returns {Promise}
  */
-module.exports = function copyToClipboard (textToCopy, fallbackString) {
-  fallbackString = fallbackString || 'Copy the URL below'
-
+export default function copyToClipboard (textToCopy, fallbackString = 'Copy the URL below') {
   return new Promise((resolve) => {
     const textArea = document.createElement('textarea')
     textArea.setAttribute('style', {

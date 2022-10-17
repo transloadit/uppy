@@ -33,59 +33,9 @@
 // Utilities
 
 .uppy-u-reset {
-  top: auto;
-  left: auto;
-  z-index: auto;
-  display: inline;
-  float: none;
-  clear: none;
-  min-width: 0;
-  max-width: none;
-  min-height: 0;
-  max-height: none;
-  margin: 0;
-  padding: 0;
-  overflow: visible;
-  overflow-x: visible;
-  overflow-y: visible;
-  color: inherit;
-  font-weight: normal;
-  font-size: inherit;
-  font-family: inherit;
-  font-style: normal;
-  font-variant: normal;
-  font-stretch: normal;
-  line-height: 1;
-  letter-spacing: normal;
-  white-space: normal;
-  text-align: left;
-  text-transform: none;
-  text-decoration: none;
-  text-indent: 0;
-  text-shadow: none;
-  vertical-align: baseline;
-  hyphens: none;
-  unicode-bidi: normal;
-  list-style: none;
-  empty-cells: show;
-  background: none;
-  border: 0;
-  border: medium none currentColor;
-  border-radius: 0;
-  border-image: none;
-  border-collapse: separate;
-  border-spacing: 0;
-  outline: medium none invert;
-  box-shadow: none;
-  transform: none;
-  transform-origin: 50% 50% 0;
-  transform-style: flat;
-  backface-visibility: visible;
-  visibility: visible;
-  cursor: auto;
-  opacity: 1;
-  transition: none 0s ease 0s;
-  -webkit-appearance: none;
+  all: initial;
+  box-sizing: border-box;
+  appearance: none;
 }
 
 [dir="rtl"] .uppy-u-reset {
@@ -138,14 +88,17 @@
 // Buttons
 
 .uppy-c-btn {
-  display: inline-block;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
   font-weight: 500;
-  font-size: 16px;
+  font-size: inherit;
   font-family: inherit;
+  color: inherit;
   line-height: 1;
   white-space: nowrap;
   text-align: center;
-  vertical-align: middle;
+  // vertical-align: middle;
   transition-duration: 0.3s;
   transition-property: background-color, color;
   user-select: none;
@@ -218,16 +171,5 @@
 
   [data-uppy-theme="dark"] &:hover {
     color: $gray-500;
-  }
-}
-
-.uppy-c-btn--small {
-  padding: 7px 16px;
-  font-size: 0.9em;
-  border-radius: 2px;
-
-  .uppy-size--md & {
-    padding: 8px 10px;
-    border-radius: 2px;
   }
 }

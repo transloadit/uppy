@@ -1,28 +1,25 @@
 /* eslint-disable max-classes-per-file */
 /* global AggregateError */
 
-'use strict'
-
-const Translator = require('@uppy/utils/lib/Translator')
-const ee = require('namespace-emitter')
-const { nanoid } = require('nanoid/non-secure')
-const throttle = require('lodash.throttle')
-const DefaultStore = require('@uppy/store-default')
-const getFileType = require('@uppy/utils/lib/getFileType')
-const getFileNameAndExtension = require('@uppy/utils/lib/getFileNameAndExtension')
-const generateFileID = require('@uppy/utils/lib/generateFileID')
-const supportsUploadProgress = require('./supportsUploadProgress')
-const getFileName = require('./getFileName')
-const { justErrorsLogger, debugLogger } = require('./loggers')
-const {
+import Translator from '@uppy/utils/lib/Translator'
+import ee from 'namespace-emitter'
+import { nanoid } from 'nanoid/non-secure'
+import throttle from 'lodash.throttle'
+import DefaultStore from '@uppy/store-default'
+import getFileType from '@uppy/utils/lib/getFileType'
+import getFileNameAndExtension from '@uppy/utils/lib/getFileNameAndExtension'
+import generateFileID from '@uppy/utils/lib/generateFileID'
+import supportsUploadProgress from './supportsUploadProgress.js'
+import getFileName from './getFileName.js'
+import { justErrorsLogger, debugLogger } from './loggers.js'
+import {
   Restricter,
-  defaultOptions: defaultRestrictionOptions,
+  defaultOptions as defaultRestrictionOptions,
   RestrictionError,
-} = require('./Restricter')
+} from './Restricter.js'
 
-const locale = require('./locale')
-
-// Exported from here.
+import packageJson from '../package.json'
+import locale from './locale.js'
 
 /**
  * Uppy Core module.
@@ -30,8 +27,7 @@ const locale = require('./locale')
  * adds/removes files and metadata.
  */
 class Uppy {
-  // eslint-disable-next-line global-require
-  static VERSION = require('../package.json').version
+  static VERSION = packageJson.version
 
   /** @type {Record<string, BasePlugin[]>} */
   #plugins = Object.create(null)
@@ -59,17 +55,13 @@ class Uppy {
     const defaultOptions = {
       id: 'uppy',
       autoProceed: false,
-      /**
-       * @deprecated The method should not be used
-       */
-      allowMultipleUploads: true,
       allowMultipleUploadBatches: true,
       debug: false,
       restrictions: defaultRestrictionOptions,
       meta: {},
       onBeforeFileAdded: (currentFile) => currentFile,
       onBeforeUpload: (files) => files,
-      store: DefaultStore(),
+      store: new DefaultStore(),
       logger: justErrorsLogger,
       infoTimeout: 5000,
     }
@@ -184,16 +176,6 @@ class Uppy {
    */
   getState () {
     return this.store.getState()
-  }
-
-  /**
-   * Back compat for when uppy.state is used instead of uppy.getState().
-   *
-   * @deprecated
-   */
-  get state () {
-    // Here, state is a non-enumerable property.
-    return this.getState()
   }
 
   /**
@@ -394,14 +376,12 @@ class Uppy {
   }
 
   validateRestrictions (file, files = this.getFiles()) {
-    // TODO: directly return the Restriction error in next major version.
-    // we create RestrictionError's just to discard immediately, which doesn't make sense.
     try {
       this.#restricter.validate(file, files)
-      return { result: true }
     } catch (err) {
-      return { result: false, reason: err.message }
+      return err
     }
+    return null
   }
 
   #checkRequiredMetaFieldsOnFile (file) {
@@ -454,6 +434,19 @@ class Uppy {
    * The `files` value is passed in because it may be updated by the caller without updating the store.
    */
   #checkAndCreateFileStateObject (files, fileDescriptor) {
+    // Uppy expects files in { name, type, size, data } format.
+    // If the actual File object is passed from input[type=file] or drag-drop,
+    // we normalize it to match Uppy file object
+    if (fileDescriptor instanceof File) {
+      // eslint-disable-next-line no-param-reassign
+      fileDescriptor = {
+        name: fileDescriptor.name,
+        type: fileDescriptor.type,
+        size: fileDescriptor.size,
+        data: fileDescriptor,
+      }
+    }
+
     const fileType = getFileType(fileDescriptor)
     const fileName = getFileName(fileType, fileDescriptor)
     const fileExtension = getFileNameAndExtension(fileName).extension
@@ -683,6 +676,12 @@ class Uppy {
         return
       }
 
+      const { capabilities } = this.getState()
+      if (newFileIDs.length !== currentUploads[uploadID].fileIDs.length
+          && !capabilities.individualCancellation) {
+        throw new Error('individualCancellation is disabled')
+      }
+
       updatedUploads[uploadID] = {
         ...currentUploads[uploadID],
         fileIDs: newFileIDs,
@@ -809,21 +808,24 @@ class Uppy {
     return this.#runUpload(uploadID)
   }
 
-  cancelAll () {
-    this.emit('cancel-all')
+  cancelAll ({ reason = 'user' } = {}) {
+    this.emit('cancel-all', { reason })
 
-    const { files } = this.getState()
+    // Only remove existing uploads if user is canceling
+    if (reason === 'user') {
+      const { files } = this.getState()
 
-    const fileIDs = Object.keys(files)
-    if (fileIDs.length) {
-      this.removeFiles(fileIDs, 'cancel-all')
+      const fileIDs = Object.keys(files)
+      if (fileIDs.length) {
+        this.removeFiles(fileIDs, 'cancel-all')
+      }
+
+      this.setState({
+        totalProgress: 0,
+        error: null,
+        recoveredState: null,
+      })
     }
-
-    this.setState({
-      totalProgress: 0,
-      error: null,
-      recoveredState: null,
-    })
   }
 
   retryUpload (fileID) {
@@ -840,10 +842,6 @@ class Uppy {
     return this.#runUpload(uploadID)
   }
 
-  reset () {
-    this.cancelAll()
-  }
-
   logout () {
     this.iteratePlugins(plugin => {
       if (plugin.provider && plugin.provider.logout) {
@@ -853,8 +851,8 @@ class Uppy {
   }
 
   calculateProgress (file, data) {
-    if (!this.getFile(file.id)) {
-      this.log(`Not setting progress for a file that has been removed: ${file.id}`)
+    if (file == null || !this.getFile(file.id)) {
+      this.log(`Not setting progress for a file that has been removed: ${file?.id}`)
       return
     }
 
@@ -969,7 +967,7 @@ class Uppy {
         if (error.details) {
           newError.details += ` ${error.details}`
         }
-        newError.message = this.i18n('failedToUpload', { file: file.name })
+        newError.message = this.i18n('failedToUpload', { file: file?.name })
         this.#informAndEmit(newError)
       } else {
         this.#informAndEmit(error)
@@ -981,8 +979,8 @@ class Uppy {
     })
 
     this.on('upload-started', (file) => {
-      if (!this.getFile(file.id)) {
-        this.log(`Not setting progress for a file that has been removed: ${file.id}`)
+      if (file == null || !this.getFile(file.id)) {
+        this.log(`Not setting progress for a file that has been removed: ${file?.id}`)
         return
       }
       this.setFileState(file.id, {
@@ -999,8 +997,8 @@ class Uppy {
     this.on('upload-progress', this.calculateProgress)
 
     this.on('upload-success', (file, uploadResp) => {
-      if (!this.getFile(file.id)) {
-        this.log(`Not setting progress for a file that has been removed: ${file.id}`)
+      if (file == null || !this.getFile(file.id)) {
+        this.log(`Not setting progress for a file that has been removed: ${file?.id}`)
         return
       }
 
@@ -1032,8 +1030,8 @@ class Uppy {
     })
 
     this.on('preprocess-progress', (file, progress) => {
-      if (!this.getFile(file.id)) {
-        this.log(`Not setting progress for a file that has been removed: ${file.id}`)
+      if (file == null || !this.getFile(file.id)) {
+        this.log(`Not setting progress for a file that has been removed: ${file?.id}`)
         return
       }
       this.setFileState(file.id, {
@@ -1042,8 +1040,8 @@ class Uppy {
     })
 
     this.on('preprocess-complete', (file) => {
-      if (!this.getFile(file.id)) {
-        this.log(`Not setting progress for a file that has been removed: ${file.id}`)
+      if (file == null || !this.getFile(file.id)) {
+        this.log(`Not setting progress for a file that has been removed: ${file?.id}`)
         return
       }
       const files = { ...this.getState().files }
@@ -1054,8 +1052,8 @@ class Uppy {
     })
 
     this.on('postprocess-progress', (file, progress) => {
-      if (!this.getFile(file.id)) {
-        this.log(`Not setting progress for a file that has been removed: ${file.id}`)
+      if (file == null || !this.getFile(file.id)) {
+        this.log(`Not setting progress for a file that has been removed: ${file?.id}`)
         return
       }
       this.setFileState(file.id, {
@@ -1064,8 +1062,8 @@ class Uppy {
     })
 
     this.on('postprocess-complete', (file) => {
-      if (!this.getFile(file.id)) {
-        this.log(`Not setting progress for a file that has been removed: ${file.id}`)
+      if (file == null || !this.getFile(file.id)) {
+        this.log(`Not setting progress for a file that has been removed: ${file?.id}`)
         return
       }
       const files = {
@@ -1236,10 +1234,10 @@ class Uppy {
   /**
    * Uninstall all plugins and close down this Uppy instance.
    */
-  close () {
+  close ({ reason } = {}) {
     this.log(`Closing Uppy instance ${this.opts.id}: removing all files and uninstalling plugins`)
 
-    this.reset()
+    this.cancelAll({ reason })
 
     this.#storeUnsubscribe()
 
@@ -1557,4 +1555,4 @@ class Uppy {
   }
 }
 
-module.exports = Uppy
+export default Uppy

@@ -1,10 +1,10 @@
-const IndexedDBStore = require('./IndexedDBStore')
-const MetaDataStore = require('./MetaDataStore')
+import IndexedDBStore from './IndexedDBStore.js'
+import MetaDataStore from './MetaDataStore.js'
 
 /**
  * Clean old blobs without needing to import all of Uppy.
  */
-module.exports = function cleanup () {
+export default function cleanup () {
   MetaDataStore.cleanup()
   IndexedDBStore.cleanup()
 }

@@ -1,4 +1,8 @@
-const hu_HU = {}
+const hu_HU = {
+  pluralize () {
+    return 0
+  },
+}
 
 hu_HU.contributors = ['nagyv']
 
@@ -139,12 +143,8 @@ hu_HU.strings = {
   openFolderNamed: 'Nyitott mappa %{name}',
 }
 
-hu_HU.pluralize = function pluralize () {
-  return 0
+if (typeof Uppy !== 'undefined') {
+  globalThis.Uppy.locales.hu_HU = hu_HU
 }
 
-if (typeof window !== 'undefined' && typeof window.Uppy !== 'undefined') {
-  window.Uppy.locales.hu_HU = hu_HU
-}
-
-module.exports = hu_HU
+export default hu_HU

@@ -3,6 +3,10 @@ name: Deploy uppy.io
 on:
   push:
     branches: main
+    paths:
+      - yarn.lock
+      - 'website/**'
+      - '.github/workflows/website.yml'
 
 jobs:
   deploy:
@@ -28,6 +32,9 @@ jobs:
           node-version: lts/*
       - name: Install dependencies
         run: corepack yarn install --immutable
+        env:
+          # https://docs.cypress.io/guides/references/advanced-installation#Skipping-installation
+          CYPRESS_INSTALL_BINARY: 0
       - name: Build Uppy
         run: corepack yarn run build
       - name: Build website

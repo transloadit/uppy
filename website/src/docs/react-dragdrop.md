@@ -15,7 +15,7 @@ The `<DragDrop />` component wraps the [`@uppy/drag-drop`](/docs/drag-drop/) plu
 Install from NPM:
 
 ```shell
-npm install @uppy/react
+npm install @uppy/react @uppy/drag-drop @uppy/core
 ```
 
 ```js
@@ -44,20 +44,25 @@ The `<DragDrop />` component supports all [DragDrop](/docs/drag-drop/) options a
 import React from 'react'
 import { DragDrop } from '@uppy/react'
 
-  <DragDrop
-    width="100%"
-    height="100%"
-    note="Images up to 200×200px"
-    // assuming `this.uppy` contains an Uppy instance:
-    uppy={this.uppy}
-    locale={{
-      strings: {
-      // Text to show on the droppable area.
-      // `%{browse}` is replaced with a link that opens the system file selection dialog.
-        dropHereOr: 'Drop here or %{browse}',
-        // Used as the label for the link that opens the system file selection dialog.
-        browse: 'browse',
-      },
-    }}
-  />
+export default function MyComponent (props) {
+  const { uppy } = props
+  return  (
+    <DragDrop
+      width="100%"
+      height="100%"
+      note="Images up to 200×200px"
+    // assuming `props.uppy` contains an Uppy instance:
+      uppy={uppy}
+      locale={{
+        strings: {
+          // Text to show on the droppable area.
+          // `%{browse}` is replaced with a link that opens the system file selection dialog.
+          dropHereOr: 'Drop here or %{browse}',
+          // Used as the label for the link that opens the system file selection dialog.
+          browse: 'browse',
+        },
+      }}
+    />
+  )
+}
 ```

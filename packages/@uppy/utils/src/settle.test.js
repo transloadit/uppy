@@ -1,4 +1,5 @@
-const settle = require('./settle')
+import { describe, expect, it } from '@jest/globals'
+import settle from './settle.js'
 
 describe('settle', () => {
   it('should resolve even if all input promises reject', async () => {

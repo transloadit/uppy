@@ -16,7 +16,7 @@ module.exports = (api) => {
         targets,
         useBuiltIns: false, // Don't add polyfills automatically.
         // We can uncomment the following line if we start adding polyfills to the non-legacy dist files.
-        // corejs: { version: '3.15', proposals: true },
+        // corejs: { version: '3.24', proposals: true },
         modules: false,
       }],
     ],

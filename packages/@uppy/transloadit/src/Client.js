@@ -1,29 +1,14 @@
-const fetchWithNetworkError = require('@uppy/utils/lib/fetchWithNetworkError')
-const NetworkError = require('@uppy/utils/lib/NetworkError')
+import fetchWithNetworkError from '@uppy/utils/lib/fetchWithNetworkError'
 
-function fetchJSON (...args) {
-  return fetchWithNetworkError(...args).then(response => {
-    if (response.status === 429) {
-      // If the server asks the client to rate limit, reschedule the request 2s later.
-      // TODO: there are several instances of rate limiting accross the code base, having one global one could be useful.
-      return new Promise((resolve, reject) => {
-        setTimeout(() => fetchJSON(...args).then(resolve, reject), 2_000)
-      })
-    }
-
-    if (!response.ok) {
-      return Promise.reject(new NetworkError(response.statusText))
-    }
-
-    return response.json()
-  })
-}
+const ASSEMBLIES_ENDPOINT = '/assemblies'
 
 /**
  * A Barebones HTTP API client for Transloadit.
  */
-module.exports = class Client {
+export default class Client {
   #headers = {}
+
+  #fetchWithNetworkError
 
   constructor (opts = {}) {
     this.opts = opts
@@ -31,6 +16,47 @@ module.exports = class Client {
     if (this.opts.client != null) {
       this.#headers['Transloadit-Client'] = this.opts.client
     }
+
+    this.#fetchWithNetworkError = this.opts.rateLimitedQueue.wrapPromiseFunction(fetchWithNetworkError)
+  }
+
+  /**
+   * @param  {[RequestInfo | URL, RequestInit]} args
+   * @returns {Promise<any>}
+   */
+  #fetchJSON (...args) {
+    return this.#fetchWithNetworkError(...args).then(response => {
+      if (response.status === 429) {
+        this.opts.rateLimitedQueue.rateLimit(2_000)
+        return this.#fetchJSON(...args)
+      }
+
+      if (!response.ok) {
+        const serverError = new Error(response.statusText)
+        serverError.statusCode = response.status
+
+        if (!`${args[0]}`.endsWith(ASSEMBLIES_ENDPOINT)) return Promise.reject(serverError)
+
+        // Failed assembly requests should return a more detailed error in JSON.
+        return response.json().then(assembly => {
+          if (!assembly.error) throw serverError
+
+          const error = new Error(assembly.error)
+          error.details = assembly.message
+          error.assembly = assembly
+          if (assembly.assembly_id) {
+            error.details += ` Assembly ID: ${assembly.assembly_id}`
+          }
+          throw error
+        }, err => {
+          // eslint-disable-next-line no-param-reassign
+          err.cause = serverError
+          throw err
+        })
+      }
+
+      return response.json()
+    })
   }
 
   /**
@@ -61,25 +87,12 @@ module.exports = class Client {
     })
     data.append('num_expected_upload_files', expectedFiles)
 
-    const url = new URL('/assemblies', `${this.opts.service}`).href
-    return fetchJSON(url, {
+    const url = new URL(ASSEMBLIES_ENDPOINT, `${this.opts.service}`).href
+    return this.#fetchJSON(url, {
       method: 'post',
       headers: this.#headers,
       body: data,
     })
-      .then((assembly) => {
-        if (assembly.error) {
-          const error = new Error(assembly.error)
-          error.details = assembly.message
-          error.assembly = assembly
-          if (assembly.assembly_id) {
-            error.details += ` Assembly ID: ${assembly.assembly_id}`
-          }
-          throw error
-        }
-
-        return assembly
-      })
       .catch((err) => this.#reportError(err, { url, type: 'API_ERROR' }))
   }
 
@@ -92,7 +105,7 @@ module.exports = class Client {
   reserveFile (assembly, file) {
     const size = encodeURIComponent(file.size)
     const url = `${assembly.assembly_ssl_url}/reserve_file?size=${size}`
-    return fetchJSON(url, { method: 'post', headers: this.#headers })
+    return this.#fetchJSON(url, { method: 'post', headers: this.#headers })
       .catch((err) => this.#reportError(err, { assembly, file, url, type: 'API_ERROR' }))
   }
 
@@ -113,8 +126,27 @@ module.exports = class Client {
 
     const qs = `size=${size}&filename=${filename}&fieldname=${fieldname}&s3Url=${uploadUrl}`
     const url = `${assembly.assembly_ssl_url}/add_file?${qs}`
-    return fetchJSON(url, { method: 'post', headers: this.#headers })
+    return this.#fetchJSON(url, { method: 'post', headers: this.#headers })
       .catch((err) => this.#reportError(err, { assembly, file, url, type: 'API_ERROR' }))
+  }
+
+  /**
+   * Update the number of expected files in an already created assembly.
+   *
+   * @param {object} assembly
+   * @param {number} num_expected_upload_files
+   */
+  updateNumberOfFilesInAssembly (assembly, num_expected_upload_files) {
+    const url = new URL(assembly.assembly_ssl_url)
+    url.pathname = '/update_assemblies'
+    const body = JSON.stringify({
+      assembly_updates: [{
+        assembly_id: assembly.assembly_id,
+        num_expected_upload_files,
+      }],
+    })
+    return this.#fetchJSON(url, { method: 'post', headers: this.#headers, body })
+      .catch((err) => this.#reportError(err, { url, type: 'API_ERROR' }))
   }
 
   /**
@@ -124,7 +156,7 @@ module.exports = class Client {
    */
   cancelAssembly (assembly) {
     const url = assembly.assembly_ssl_url
-    return fetchJSON(url, { method: 'delete', headers: this.#headers })
+    return this.#fetchJSON(url, { method: 'delete', headers: this.#headers })
       .catch((err) => this.#reportError(err, { url, type: 'API_ERROR' }))
   }
 
@@ -134,7 +166,7 @@ module.exports = class Client {
    * @param {string} url The status endpoint of the assembly.
    */
   getAssemblyStatus (url) {
-    return fetchJSON(url, { headers: this.#headers })
+    return this.#fetchJSON(url, { headers: this.#headers })
       .catch((err) => this.#reportError(err, { url, type: 'STATUS_ERROR' }))
   }
 
@@ -143,7 +175,7 @@ module.exports = class Client {
       ? `${err.message} (${err.details})`
       : err.message
 
-    return fetchJSON('https://transloaditstatus.com/client_error', {
+    return this.#fetchJSON('https://transloaditstatus.com/client_error', {
       method: 'post',
       body: JSON.stringify({
         endpoint,

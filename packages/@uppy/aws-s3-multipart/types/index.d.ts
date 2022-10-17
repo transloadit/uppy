@@ -8,9 +8,10 @@ export interface AwsS3Part {
   ETag?: string
 }
 
-interface AwsS3MultipartOptions extends PluginOptions {
+export interface AwsS3MultipartOptions extends PluginOptions {
     companionHeaders?: { [type: string]: string }
     companionUrl?: string
+    companionCookiesRule?: string
     getChunkSize?: (file: UppyFile) => number
     createMultipartUpload?: (
       file: UppyFile
@@ -21,7 +22,7 @@ interface AwsS3MultipartOptions extends PluginOptions {
     ) => MaybePromise<AwsS3Part[]>
     prepareUploadParts?: (
       file: UppyFile,
-      partData: { uploadId: string; key: string; partNumbers: Array<number>; chunks: { [k: number]: Blob } }
+      partData: { uploadId: string; key: string; parts: Array<{ number: number, chunk: Blob }> }
     ) => MaybePromise<{ presignedUrls: { [k: number]: string }, headers?: { [k: string]: string } }>
     abortMultipartUpload?: (
       file: UppyFile,

@@ -1,28 +1,28 @@
 const ms = require('ms')
-const fs = require('fs')
+const fs = require('node:fs')
 const { isURL } = require('validator')
 const logger = require('../server/logger')
+const { defaultGetKey } = require('../server/helpers/utils')
 
 const defaultOptions = {
   server: {
     protocol: 'http',
     path: '',
   },
-  providerOptions: {
-    s3: {
-      acl: 'public-read', // todo default to no ACL in next major
-      endpoint: 'https://{service}.{region}.amazonaws.com',
-      conditions: [],
-      useAccelerateEndpoint: false,
-      getKey: (req, filename) => filename,
-      expires: ms('5 minutes') / 1000,
-    },
+  providerOptions: {},
+  s3: {
+    endpoint: 'https://{service}.{region}.amazonaws.com',
+    conditions: [],
+    useAccelerateEndpoint: false,
+    getKey: defaultGetKey,
+    expires: ms('5 minutes') / 1000,
   },
   allowLocalUrls: false,
   logClientVersion: true,
   periodicPingUrls: [],
   streamingUpload: false,
   clientSocketConnectTimeout: 60000,
+  metrics: true,
 }
 
 /**
@@ -30,7 +30,8 @@ const defaultOptions = {
  */
 function getMaskableSecrets (companionOptions) {
   const secrets = []
-  const { providerOptions, customProviders } = companionOptions
+  const { providerOptions, customProviders, s3 } = companionOptions
+
   Object.keys(providerOptions).forEach((provider) => {
     if (providerOptions[provider].secret) {
       secrets.push(providerOptions[provider].secret)
@@ -43,6 +44,10 @@ function getMaskableSecrets (companionOptions) {
         secrets.push(customProviders[provider].config.secret)
       }
     })
+  }
+
+  if (s3?.secret) {
+    secrets.push(s3.secret)
   }
 
   return secrets
@@ -85,16 +90,17 @@ const validateConfig = (companionOptions) => {
   const { providerOptions, periodicPingUrls } = companionOptions
 
   if (providerOptions) {
-    const deprecatedOptions = { microsoft: 'onedrive', google: 'drive' }
-    Object.keys(deprecatedOptions).forEach((deprected) => {
-      if (providerOptions[deprected]) {
-        throw new Error(`The Provider option "${deprected}" is no longer supported. Please use the option "${deprecatedOptions[deprected]}" instead.`)
+    const deprecatedOptions = { microsoft: 'providerOptions.onedrive', google: 'providerOptions.drive', s3: 's3' }
+    Object.keys(deprecatedOptions).forEach((deprecated) => {
+      if (Object.prototype.hasOwnProperty.call(providerOptions, deprecated)) {
+        throw new Error(`The Provider option "providerOptions.${deprecated}" is no longer supported. Please use the option "${deprecatedOptions[deprecated]}" instead.`)
       }
     })
   }
 
   if (companionOptions.uploadUrls == null || companionOptions.uploadUrls.length === 0) {
-    logger.warn('Running without uploadUrls specified is a security risk if running in production', 'startup.uploadUrls')
+    if (process.env.NODE_ENV === 'production') throw new Error('uploadUrls is required')
+    logger.error('Running without uploadUrls is a security risk and Companion will refuse to start up when running in production (NODE_ENV=production)', 'startup.uploadUrls')
   }
 
   if (periodicPingUrls != null && (

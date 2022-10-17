@@ -1,8 +1,6 @@
 /**
  * @module provider
  */
-// @ts-ignore
-const purestConfig = require('@purest/providers')
 const dropbox = require('./dropbox')
 const box = require('./box')
 const drive = require('./drive')
@@ -18,32 +16,6 @@ const { getCredentialsResolver } = require('./credentials')
 const Provider = require('./Provider')
 // eslint-disable-next-line
 const SearchProvider = require('./SearchProvider')
-const { wrapLegacyProvider } = require('./ProviderCompat')
-
-// leave here for now until Purest Providers gets updated with Zoom provider
-purestConfig.zoom = {
-  'https://zoom.us/': {
-    __domain: {
-      auth: {
-        auth: { bearer: '[0]' },
-      },
-    },
-    '[version]/{endpoint}': {
-      __path: {
-        alias: '__default',
-        version: 'v2',
-      },
-    },
-    'oauth/revoke': {
-      __path: {
-        alias: 'logout',
-        auth: {
-          auth: { basic: '[0]' },
-        },
-      },
-    },
-  },
-}
 
 /**
  *
@@ -80,13 +52,9 @@ module.exports.getProviderMiddleware = (providers, needsProviderCredentials) => 
    * @param {string} providerName
    */
   const middleware = (req, res, next, providerName) => {
-    let ProviderClass = providers[providerName]
+    const ProviderClass = providers[providerName]
     if (ProviderClass && validOptions(req.companion.options)) {
-      // TODO remove this legacy provider compatibility when we release a new major
-      // @ts-ignore
-      if (ProviderClass.version !== 2) ProviderClass = wrapLegacyProvider(ProviderClass)
-
-      req.companion.provider = new ProviderClass({ providerName, config: purestConfig })
+      req.companion.provider = new ProviderClass({ providerName })
 
       if (needsProviderCredentials) {
         req.companion.getProviderCredentials = getCredentialsResolver(providerName, req.companion.options, req)
@@ -188,8 +156,6 @@ module.exports.addProviderOptions = (companionOptions, grantConfig) => {
       } else if (server.path) {
         grantConfig[authProvider].callback = `${server.path}${grantConfig[authProvider].callback}`
       }
-    } else if (!['s3', 'searchProviders'].includes(providerName)) {
-      logger.warn(`skipping one found unsupported provider "${providerName}".`, 'provider.options.skip')
     }
   })
 }

@@ -1,7 +1,8 @@
 // Karma configuration file, see link for more information
 // https://karma-runner.github.io/1.0/config/configuration-file.html
 
-module.exports = function karma (config) {
+/* eslint-disable global-require */
+module.exports = (config) => {
   config.set({
     basePath: '',
     frameworks: ['jasmine', '@angular-devkit/build-angular'],
@@ -25,7 +26,7 @@ module.exports = function karma (config) {
       suppressAll: true, // removes the duplicated traces
     },
     coverageReporter: {
-      dir: require('path').join(__dirname, './coverage/angular-example'),
+      dir: require('node:path').join(__dirname, './coverage/angular-example'),
       subdir: '.',
       reporters: [
         { type: 'html' },

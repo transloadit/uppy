@@ -1,12 +1,15 @@
-const hasProperty = require('@uppy/utils/lib/hasProperty')
-const BasePlugin = require('@uppy/core/lib/BasePlugin')
-const Tus = require('@uppy/tus')
-const Assembly = require('./Assembly')
-const Client = require('./Client')
-const AssemblyOptions = require('./AssemblyOptions')
-const AssemblyWatcher = require('./AssemblyWatcher')
+import hasProperty from '@uppy/utils/lib/hasProperty'
+import ErrorWithCause from '@uppy/utils/lib/ErrorWithCause'
+import { RateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
+import BasePlugin from '@uppy/core/lib/BasePlugin.js'
+import Tus from '@uppy/tus'
+import Assembly from './Assembly.js'
+import Client from './Client.js'
+import AssemblyOptions, { validateParams } from './AssemblyOptions.js'
+import AssemblyWatcher from './AssemblyWatcher.js'
 
-const locale = require('./locale')
+import locale from './locale.js'
+import packageJson from '../package.json'
 
 function defaultGetAssemblyOptions (file, options) {
   return {
@@ -17,23 +20,30 @@ function defaultGetAssemblyOptions (file, options) {
 }
 
 const sendErrorToConsole = originalErr => err => {
-  const error = new Error('Failed to send error to the client')
-  error.cause = err
-  // eslint-ignore-next-line no-console
+  const error = new ErrorWithCause('Failed to send error to the client', { cause: err })
+  // eslint-disable-next-line no-console
   console.error(error, originalErr)
 }
 
-const COMPANION = 'https://api2.transloadit.com/companion'
+const COMPANION_URL = 'https://api2.transloadit.com/companion'
 // Regex matching acceptable postMessage() origins for authentication feedback from companion.
-const ALLOWED_COMPANION_PATTERN = /\.transloadit\.com$/
+const COMPANION_ALLOWED_HOSTS = /\.transloadit\.com$/
 // Regex used to check if a Companion address is run by Transloadit.
 const TL_COMPANION = /https?:\/\/api2(?:-\w+)?\.transloadit\.com\/companion/
 
 /**
  * Upload files to Transloadit using Tus.
  */
-module.exports = class Transloadit extends BasePlugin {
-  static VERSION = require('../package.json').version // eslint-disable-line global-require
+export default class Transloadit extends BasePlugin {
+  static VERSION = packageJson.version
+
+  /** @deprecated use `import { COMPANION_URL } from '@uppy/transloadit'` instead. */
+  static COMPANION = COMPANION_URL
+
+  /** @deprecated use `import { COMPANION_ALLOWED_HOSTS } from '@uppy/transloadit'` instead. */
+  static COMPANION_PATTERN = COMPANION_ALLOWED_HOSTS
+
+  #rateLimitedQueue
 
   constructor (uppy, opts) {
     super(uppy, opts)
@@ -59,22 +69,24 @@ module.exports = class Transloadit extends BasePlugin {
     }
 
     this.opts = { ...defaultOptions, ...opts }
+    this.#rateLimitedQueue = new RateLimitedQueue(this.opts.limit)
 
     this.i18nInit()
 
     const hasCustomAssemblyOptions = this.opts.getAssemblyOptions !== defaultOptions.getAssemblyOptions
     if (this.opts.params) {
-      AssemblyOptions.validateParams(this.opts.params)
+      validateParams(this.opts.params)
     } else if (!hasCustomAssemblyOptions) {
       // Throw the same error that we'd throw if the `params` returned from a
       // `getAssemblyOptions()` function is null.
-      AssemblyOptions.validateParams(null)
+      validateParams(null)
     }
 
     this.client = new Client({
       service: this.opts.service,
       client: this.#getClientVersion(),
       errorReporting: this.opts.errorReporting,
+      rateLimitedQueue: this.#rateLimitedQueue,
     })
     // Contains Assembly instances for in-progress Assemblies.
     this.activeAssemblies = {}
@@ -184,8 +196,19 @@ module.exports = class Transloadit extends BasePlugin {
       fields: options.fields,
       expectedFiles: fileIDs.length,
       signature: options.signature,
-    }).then((newAssembly) => {
-      const assembly = new Assembly(newAssembly)
+    }).then(async (newAssembly) => {
+      const files = this.uppy.getFiles().filter(({ id }) => fileIDs.includes(id))
+      if (files.length !== fileIDs.length) {
+        if (files.length === 0) {
+          // All files have been removed, cancelling.
+          await this.client.cancelAssembly(newAssembly)
+          return null
+        }
+        // At least one file has been removed.
+        await this.client.updateNumberOfFilesInAssembly(newAssembly, files.length)
+      }
+
+      const assembly = new Assembly(newAssembly, this.#rateLimitedQueue)
       const { status } = assembly
       const assemblyID = status.assembly_id
 
@@ -206,26 +229,32 @@ module.exports = class Transloadit extends BasePlugin {
         },
       })
 
-      const { files } = this.uppy.getState()
       const updatedFiles = {}
-      fileIDs.forEach((id) => {
-        updatedFiles[id] = this.#attachAssemblyMetadata(this.uppy.getFile(id), status)
+      files.forEach((file) => {
+        updatedFiles[file.id] = this.#attachAssemblyMetadata(file, status)
       })
+
       this.uppy.setState({
         files: {
-          ...files,
+          ...this.uppy.getState().files,
           ...updatedFiles,
         },
       })
+
       const fileRemovedHandler = (fileRemoved, reason) => {
         if (reason === 'cancel-all') {
           assembly.close()
           this.uppy.off(fileRemovedHandler)
         } else if (fileRemoved.id in updatedFiles) {
           delete updatedFiles[fileRemoved.id]
-          if (Object.keys(updatedFiles).length === 0) {
+          const nbOfRemainingFiles = Object.keys(updatedFiles).length
+          if (nbOfRemainingFiles === 0) {
             assembly.close()
+            this.#cancelAssembly(newAssembly).catch(() => { /* ignore potential errors */ })
             this.uppy.off(fileRemovedHandler)
+          } else {
+            this.client.updateNumberOfFilesInAssembly(newAssembly, nbOfRemainingFiles)
+              .catch(() => { /* ignore potential errors */ })
           }
         }
       }
@@ -236,14 +265,18 @@ module.exports = class Transloadit extends BasePlugin {
       this.uppy.log(`[Transloadit] Created Assembly ${assemblyID}`)
       return assembly
     }).catch((err) => {
-      const error = new Error(`${this.i18n('creatingAssemblyFailed')}: ${err.message}`)
-      error.cause = err
-      // Reject the promise.
-      throw error
+      const wrapped = new ErrorWithCause(`${this.i18n('creatingAssemblyFailed')}: ${err.message}`, { cause: err })
+      if ('details' in err) {
+        wrapped.details = err.details
+      }
+      if ('assembly' in err) {
+        wrapped.assembly = err.assembly
+      }
+      throw wrapped
     })
   }
 
-  #createAssemblyWatcher (assemblyID, fileIDs, uploadID) {
+  #createAssemblyWatcher (assemblyID, uploadID) {
   // AssemblyWatcher tracks completion states of all Assemblies in this upload.
     const watcher = new AssemblyWatcher(this.uppy, assemblyID)
 
@@ -290,7 +323,7 @@ module.exports = class Transloadit extends BasePlugin {
    */
   #onFileUploadURLAvailable = (rawFile) => {
     const file = this.uppy.getFile(rawFile.id)
-    if (!file || !file.transloadit || !file.transloadit.assembly) {
+    if (!file?.transloadit?.assembly) {
       return
     }
 
@@ -401,19 +434,18 @@ module.exports = class Transloadit extends BasePlugin {
   /**
    * When all files are removed, cancel in-progress Assemblies.
    */
-  #onCancelAll = () => {
-    const { uploadsAssemblies } = this.getPluginState()
+  #onCancelAll = async ({ reason } = {}) => {
+    try {
+      if (reason !== 'user') return
 
-    const assemblyIDs = Object.values(uploadsAssemblies).flat(1)
+      const { uploadsAssemblies } = this.getPluginState()
+      const assemblyIDs = Object.values(uploadsAssemblies).flat(1)
+      const assemblies = assemblyIDs.map((assemblyID) => this.getAssembly(assemblyID))
 
-    const cancelPromises = assemblyIDs.map((assemblyID) => {
-      const assembly = this.getAssembly(assemblyID)
-      return this.#cancelAssembly(assembly)
-    })
-
-    Promise.all(cancelPromises).catch((err) => {
+      await Promise.all(assemblies.map((assembly) => this.#cancelAssembly(assembly)))
+    } catch (err) {
       this.uppy.log(err)
-    })
+    }
   }
 
   /**
@@ -488,15 +520,12 @@ module.exports = class Transloadit extends BasePlugin {
       // Set up the assembly watchers again for all the ongoing uploads.
       Object.keys(uploadsAssemblies).forEach((uploadID) => {
         const assemblyIDs = uploadsAssemblies[uploadID]
-        const fileIDsInUpload = assemblyIDs.flatMap((assemblyID) => {
-          return this.getAssemblyFiles(assemblyID).map((file) => file.id)
-        })
-        this.#createAssemblyWatcher(assemblyIDs, fileIDsInUpload, uploadID)
+        this.#createAssemblyWatcher(assemblyIDs, uploadID)
       })
 
       const allAssemblyIDs = Object.keys(assemblies)
       allAssemblyIDs.forEach((id) => {
-        const assembly = new Assembly(assemblies[id])
+        const assembly = new Assembly(assemblies[id], this.#rateLimitedQueue)
         this.#connectAssembly(assembly)
       })
     }
@@ -577,16 +606,16 @@ module.exports = class Transloadit extends BasePlugin {
   }
 
   #prepareUpload = (fileIDs, uploadID) => {
-    // Only use files without errors
-    const filteredFileIDs = fileIDs.filter((file) => !file.error)
-
-    const files = filteredFileIDs.map(fileID => {
-      const file = this.uppy.getFile(fileID)
-      this.uppy.emit('preprocess-progress', file, {
-        mode: 'indeterminate',
-        message: this.i18n('creatingAssembly'),
-      })
-      return file
+    const files = fileIDs.map(id => this.uppy.getFile(id))
+    const filesWithoutErrors = files.filter((file) => {
+      if (!file.error) {
+        this.uppy.emit('preprocess-progress', file, {
+          mode: 'indeterminate',
+          message: this.i18n('creatingAssembly'),
+        })
+        return true
+      }
+      return false
     })
 
     // eslint-disable-next-line no-shadow
@@ -621,19 +650,20 @@ module.exports = class Transloadit extends BasePlugin {
       },
     })
 
-    const assemblyOptions = new AssemblyOptions(files, this.opts)
+    const assemblyOptions = new AssemblyOptions(filesWithoutErrors, this.opts)
 
     return assemblyOptions.build()
       .then((assemblies) => Promise.all(assemblies.map(createAssembly)))
-      .then((createdAssemblies) => {
+      .then((maybeCreatedAssemblies) => {
+        const createdAssemblies = maybeCreatedAssemblies.filter(Boolean)
         const assemblyIDs = createdAssemblies.map(assembly => assembly.status.assembly_id)
-        this.#createAssemblyWatcher(assemblyIDs, filteredFileIDs, uploadID)
+        this.#createAssemblyWatcher(assemblyIDs, uploadID)
         return Promise.all(createdAssemblies.map(assembly => this.#connectAssembly(assembly)))
       })
       // If something went wrong before any Assemblies could be created,
       // clear all processing state.
       .catch((err) => {
-        files.forEach((file) => {
+        filesWithoutErrors.forEach((file) => {
           this.uppy.emit('preprocess-complete', file)
           this.uppy.emit('upload-error', file, err)
         })
@@ -722,7 +752,7 @@ module.exports = class Transloadit extends BasePlugin {
   }
 
   #onTusError = (file, err) => {
-    this.#closeAssemblyIfExists(file.transloadit?.assembly)
+    this.#closeAssemblyIfExists(file?.transloadit?.assembly)
     if (err?.message?.startsWith('tus: ')) {
       const endpoint = err.originalRequest?.getUnderlyingObject()?.responseURL
       this.client.submitError(err, { endpoint, type: 'TUS_ERROR' })
@@ -763,9 +793,10 @@ module.exports = class Transloadit extends BasePlugin {
         // so it can't just reuse the same tus.Upload instance server-side.
         useFastRemoteRetry: false,
         // Only send Assembly metadata to the tus endpoint.
-        metaFields: ['assembly_url', 'filename', 'fieldname'],
+        allowedMetaFields: ['assembly_url', 'filename', 'fieldname'],
         // Pass the limit option to @uppy/tus
         limit: this.opts.limit,
+        rateLimitedQueue: this.#rateLimitedQueue,
         retryDelays: this.opts.retryDelays,
       })
     }
@@ -819,10 +850,12 @@ module.exports = class Transloadit extends BasePlugin {
 
   getAssemblyFiles (assemblyID) {
     return this.uppy.getFiles().filter((file) => {
-      return file && file.transloadit && file.transloadit.assembly === assemblyID
+      return file?.transloadit?.assembly === assemblyID
     })
   }
 }
 
-module.exports.COMPANION = COMPANION
-module.exports.COMPANION_PATTERN = ALLOWED_COMPANION_PATTERN
+export {
+  COMPANION_URL,
+  COMPANION_ALLOWED_HOSTS,
+}

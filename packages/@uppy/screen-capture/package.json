@@ -1,11 +1,12 @@
 {
   "name": "@uppy/screen-capture",
   "description": "Uppy plugin that captures video from display or application.",
-  "version": "2.0.6",
+  "version": "3.0.1",
   "license": "MIT",
   "main": "lib/index.js",
   "style": "dist/style.min.css",
   "types": "types/index.d.ts",
+  "type": "module",
   "keywords": [
     "file uploader",
     "uppy",

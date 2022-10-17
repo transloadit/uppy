@@ -1,6 +1,6 @@
 // Using leading underscore so eslint compat plugin doesn't yell at us.
-import * as _Permissions from 'expo-permissions'
-import * as ImagePicker from 'expo-image-picker'
+import * as _Permissions from 'expo-permissions' // eslint-disable-line import/no-unresolved
+import * as ImagePicker from 'expo-image-picker' // eslint-disable-line import/no-unresolved
 
 function takePictureWithExpo () {
   return _Permissions.askAsync(_Permissions.CAMERA)

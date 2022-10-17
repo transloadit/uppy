@@ -1,4 +1,5 @@
-const AssemblyOptions = require('./AssemblyOptions')
+import { describe, expect, it } from '@jest/globals'
+import AssemblyOptions from './AssemblyOptions.js'
 
 describe('Transloadit/AssemblyOptions', () => {
   it('Validates response from getAssemblyOptions()', async () => {
@@ -19,7 +20,7 @@ describe('Transloadit/AssemblyOptions', () => {
   })
 
   it('Uses different assemblies for different params', async () => {
-    const data = Buffer.alloc(10)
+    const data = new Uint8Array(10)
     data.size = data.byteLength
 
     const options = new AssemblyOptions([
@@ -47,8 +48,8 @@ describe('Transloadit/AssemblyOptions', () => {
   })
 
   it('Should merge files with same parameters into one Assembly', async () => {
-    const data = Buffer.alloc(10)
-    const data2 = Buffer.alloc(20)
+    const data = new Uint8Array(10)
+    const data2 = new Uint8Array(20)
 
     const options = new AssemblyOptions([
       { name: 'a.png', data, size: data.byteLength },

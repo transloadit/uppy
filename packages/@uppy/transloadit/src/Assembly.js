@@ -1,20 +1,9 @@
-const Emitter = require('component-emitter')
-const has = require('@uppy/utils/lib/hasProperty')
-const NetworkError = require('@uppy/utils/lib/NetworkError')
-const fetchWithNetworkError = require('@uppy/utils/lib/fetchWithNetworkError')
-const parseUrl = require('./parseUrl')
-
-// Lazy load socket.io to avoid a console error
-// in IE 10 when the Transloadit plugin is not used.
-// (The console.error call comes from `buffer`. I
-// think we actually don't use that part of socket.io
-// at all…)
-let socketIo
-function requireSocketIo () {
-  // eslint-disable-next-line global-require
-  socketIo ??= require('socket.io-client')
-  return socketIo
-}
+import Emitter from 'component-emitter'
+import { io } from 'socket.io-client'
+import has from '@uppy/utils/lib/hasProperty'
+import NetworkError from '@uppy/utils/lib/NetworkError'
+import fetchWithNetworkError from '@uppy/utils/lib/fetchWithNetworkError'
+import parseUrl from './parseUrl.js'
 
 const ASSEMBLY_UPLOADING = 'ASSEMBLY_UPLOADING'
 const ASSEMBLY_EXECUTING = 'ASSEMBLY_EXECUTING'
@@ -41,7 +30,13 @@ function isStatus (status, test) {
 }
 
 class TransloaditAssembly extends Emitter {
-  constructor (assembly) {
+  #rateLimitedQueue
+
+  #fetchWithNetworkError
+
+  #previousFetchStatusStillPending = false
+
+  constructor (assembly, rateLimitedQueue) {
     super()
 
     // The current assembly status.
@@ -52,6 +47,9 @@ class TransloaditAssembly extends Emitter {
     this.pollInterval = null
     // Whether this assembly has been closed (finished or errored)
     this.closed = false
+
+    this.#rateLimitedQueue = rateLimitedQueue
+    this.#fetchWithNetworkError = rateLimitedQueue.wrapPromiseFunction(fetchWithNetworkError)
   }
 
   connect () {
@@ -66,7 +64,7 @@ class TransloaditAssembly extends Emitter {
 
   #connectSocket () {
     const parsed = parseUrl(this.status.websocket_url)
-    const socket = requireSocketIo().connect(parsed.origin, {
+    const socket = io(parsed.origin, {
       transports: ['websocket'],
       path: parsed.pathname,
     })
@@ -145,15 +143,19 @@ class TransloaditAssembly extends Emitter {
    * 'status'.
    */
   async #fetchStatus ({ diff = true } = {}) {
-    if (this.closed) return
+    if (this.closed || this.#rateLimitedQueue.isPaused || this.#previousFetchStatusStillPending) return
 
     try {
-      const response = await fetchWithNetworkError(this.status.assembly_ssl_url)
+      this.#previousFetchStatusStillPending = true
+      const response = await this.#fetchWithNetworkError(this.status.assembly_ssl_url)
+      this.#previousFetchStatusStillPending = false
 
       if (this.closed) return
 
-      // In case of rate-limiting, ignore the error.
-      if (response.status === 429) return
+      if (response.status === 429) {
+        this.#rateLimitedQueue.rateLimit(2_000)
+        return
+      }
 
       if (!response.ok) {
         this.#onError(new NetworkError(response.statusText))
@@ -269,4 +271,4 @@ class TransloaditAssembly extends Emitter {
   }
 }
 
-module.exports = TransloaditAssembly
+export default TransloaditAssembly

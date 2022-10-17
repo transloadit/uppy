@@ -1,6 +1,7 @@
-const UIPlugin = require('../UIPlugin')
+import { jest } from '@jest/globals' // eslint-disable-line import/no-extraneous-dependencies
+import UIPlugin from '../UIPlugin.js'
 
-module.exports = class TestSelector1 extends UIPlugin {
+export default class TestSelector1 extends UIPlugin {
   constructor (uppy, opts) {
     super(uppy, opts)
     this.type = 'acquirer'

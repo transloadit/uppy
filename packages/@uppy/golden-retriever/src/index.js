@@ -1,8 +1,10 @@
-const throttle = require('lodash.throttle')
-const BasePlugin = require('@uppy/core/lib/BasePlugin')
-const ServiceWorkerStore = require('./ServiceWorkerStore')
-const IndexedDBStore = require('./IndexedDBStore')
-const MetaDataStore = require('./MetaDataStore')
+import throttle from 'lodash.throttle'
+import BasePlugin from '@uppy/core/lib/BasePlugin.js'
+import ServiceWorkerStore from './ServiceWorkerStore.js'
+import IndexedDBStore from './IndexedDBStore.js'
+import MetaDataStore from './MetaDataStore.js'
+
+import packageJson from '../package.json'
 
 /**
  * The GoldenRetriever plugin — restores selected files and resumes uploads
@@ -11,8 +13,8 @@ const MetaDataStore = require('./MetaDataStore')
  * Uses localStorage, IndexedDB and ServiceWorker to do its magic, read more:
  * https://uppy.io/blog/2017/07/golden-retriever/
  */
-module.exports = class GoldenRetriever extends BasePlugin {
-  static VERSION = require('../package.json').version
+export default class GoldenRetriever extends BasePlugin {
+  static VERSION = packageJson.version
 
   constructor (uppy, opts) {
     super(uppy, opts)
@@ -111,7 +113,9 @@ module.exports = class GoldenRetriever extends BasePlugin {
 
     // If all files have been removed by the user, clear recovery state
     if (Object.keys(filesToSave).length === 0) {
-      this.uppy.setState({ recoveredState: null })
+      if (this.uppy.getState().recoveredState !== null) {
+        this.uppy.setState({ recoveredState: null })
+      }
       MetaDataStore.cleanup(this.uppy.opts.id)
       return
     }
@@ -159,16 +163,9 @@ module.exports = class GoldenRetriever extends BasePlugin {
     }
 
     return this.ServiceWorkerStore.list().then((blobs) => {
-      const files = this.uppy.getFiles()
-      const localFilesOnly = files.filter((file) => {
-        // maybe && !file.progress.uploadComplete
-        return !file.isRemote
-      })
-
       const numberOfFilesRecovered = Object.keys(blobs).length
-      const numberOfFilesTryingToRecover = localFilesOnly.length
 
-      if (numberOfFilesRecovered === numberOfFilesTryingToRecover) {
+      if (numberOfFilesRecovered > 0) {
         this.uppy.log(`[GoldenRetriever] Successfully recovered ${numberOfFilesRecovered} blobs from Service Worker!`)
         return blobs
       }
@@ -348,7 +345,6 @@ module.exports = class GoldenRetriever extends BasePlugin {
       })
     } else {
       this.uppy.log('[GoldenRetriever] No files need to be loaded, only restoring processing state...')
-      this.onBlobsLoaded([])
     }
   }
 
@@ -359,6 +355,9 @@ module.exports = class GoldenRetriever extends BasePlugin {
     this.uppy.on('file-added', this.addBlobToStores)
     this.uppy.on('file-editor:complete', this.replaceBlobInStores)
     this.uppy.on('file-removed', this.removeBlobFromStores)
+    // TODO: the `state-update` is bad practise. It fires on any state change in Uppy
+    // or any state change in any of the plugins. We should to able to only listen
+    // for the state changes we need, somehow.
     this.uppy.on('state-update', this.saveFilesStateToLocalStorage)
     this.uppy.on('restore-confirmed', this.handleRestoreConfirmed)
     this.uppy.on('restore-canceled', this.abortRestore)

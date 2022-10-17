@@ -1,9 +1,10 @@
 {
   "name": "@uppy/form",
   "description": "Connect Uppy to an existing HTML <form>.",
-  "version": "2.0.4",
+  "version": "3.0.1",
   "license": "MIT",
   "main": "lib/index.js",
+  "type": "module",
   "types": "types/index.d.ts",
   "keywords": [
     "file uploader",
@@ -21,7 +22,7 @@
   },
   "dependencies": {
     "@uppy/utils": "workspace:^",
-    "get-form-data": "^2.0.0"
+    "get-form-data": "^3.0.0"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^"

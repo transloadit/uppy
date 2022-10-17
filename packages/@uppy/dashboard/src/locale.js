@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   strings: {
     // When `inline: false`, used as the screen reader label for the button that closes the modal.
     closeModal: 'Close Modal',
@@ -84,5 +84,8 @@ module.exports = {
       0: 'Missing required meta field: %{fields}.',
       1: 'Missing required meta fields: %{fields}.',
     },
+    // Used for native device camera buttons on mobile
+    takePictureBtn: 'Take Picture',
+    recordVideoBtn: 'Record Video',
   },
 }
