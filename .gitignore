@@ -19,7 +19,7 @@ dist/
 lib/
 coverage/
 examples/dev/bundle.js
-examples/aws-presigned-url/vendor/*
+examples/aws-php/vendor/*
 test/endtoend/create-react-app/build/
 test/endtoend/create-react-app/coverage/
 uppy-*.tgz
