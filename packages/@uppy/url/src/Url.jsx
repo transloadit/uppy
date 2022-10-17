@@ -7,6 +7,8 @@ import forEachDroppedOrPastedUrl from './utils/forEachDroppedOrPastedUrl.js'
 
 import packageJson from '../package.json'
 import locale from './locale.js'
+const getYouTubeID = require('get-youtube-id');
+const getYoutubeTitle  = require('get-youtube-title');
 
 function UrlIcon () {
   return (
@@ -47,10 +49,21 @@ function checkIfCorrectURL (url) {
   return true
 }
 
-function getFileNameFromUrl (url) {
-  const { pathname } = new URL(url)
-  return pathname.substring(pathname.lastIndexOf('/') + 1)
+async function getFileNameFromUrl (url) {
+  return new Promise((resolve, reject) => {
+    if (url.match(/(http:|https:)?\/\/(www\.)?(youtube.com|youtu.be)\/(watch)?(\?v=)?(\S+)?/)) {
+      const id = getYouTubeID(url, {fuzzy: false});
+      getYoutubeTitle(id, 'AIzaSyCM3w7SKmg25eRBgh4tmjPpXDWED-iFp9Q', function (err, title) {
+        resolve(title)
+      })
+    }
+    else {
+      const { pathname } = new URL(url)
+      resolve(pathname.substring(pathname.lastIndexOf('/') + 1))
+    }
+  })
 }
+
 /**
  * Url
  *
@@ -119,7 +132,7 @@ export default class Url extends UIPlugin {
       const tagFile = {
         meta: optionalMeta,
         source: this.id,
-        name: getFileNameFromUrl(url),
+        name: await getFileNameFromUrl(url),
         type: meta.type,
         data: {
           size: meta.size,
