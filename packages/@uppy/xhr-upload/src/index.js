@@ -131,7 +131,7 @@ export default class XHRUpload extends BasePlugin {
     }
 
     this.uploaderEvents = Object.create(null)
-    this.#queueRequestSocketToken = this.requests.wrapPromiseFunction(this.#requestSocketToken)
+    this.#queueRequestSocketToken = this.requests.wrapPromiseFunction(this.#requestSocketToken, { priority: -1 })
   }
 
   getOptions (file) {
@@ -377,6 +377,7 @@ export default class XHRUpload extends BasePlugin {
   }
 
   async uploadRemote (file) {
+    // TODO: we could rewrite this to use server-sent events instead of creating WebSockets.
     try {
       this.uppy.emit('upload-started', file)
       if (file.serverToken) {
@@ -418,6 +419,7 @@ export default class XHRUpload extends BasePlugin {
 
           this.uppy.emit('upload-success', file, uploadResp)
           queuedRequest.done() // eslint-disable-line no-use-before-define
+          socket.close()
           if (this.uploaderEvents[file.id]) {
             this.uploaderEvents[file.id].remove()
             this.uploaderEvents[file.id] = null
