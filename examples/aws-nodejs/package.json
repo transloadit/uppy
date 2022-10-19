@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node index.js"
   },
+  "private": true,
   "author": "",
   "license": "MIT",
   "dependencies": {
