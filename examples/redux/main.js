@@ -92,4 +92,4 @@ uppy.use(Dashboard, {
   inline: true,
   width: 400,
 })
-uppy.use(Tus, { endpoint: 'https://tusd.tusdemo.net/' })
+uppy.use(Tus, { endpoint: 'https://tusd.tusdemo.net/files/' })
