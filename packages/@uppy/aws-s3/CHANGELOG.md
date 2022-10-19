@@ -1,5 +1,12 @@
 # @uppy/aws-s3
 
+## 2.2.3
+
+Released: 2022-10-19
+Included in: Uppy v2.13.7
+
+- @uppy/aws-s3: fix `Cannot mark a queued request as done` in `MiniXHRUpload` (Antoine du Hamel / #4151)
+
 ## 2.2.1
 
 Released: 2022-06-07

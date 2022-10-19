@@ -12,6 +12,23 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 2.13.7
+
+Released: 2022-10-19
+
+| Package                | Version | Package                | Version |
+| ---------------------- | ------- | ---------------------- | ------- |
+| @uppy/angular          |   0.3.3 | @uppy/tus              |   2.4.5 |
+| @uppy/aws-s3           |   2.2.3 | uppy                   |  2.13.7 |
+| @uppy/golden-retriever |   2.1.3 |                        |         |
+
+- @uppy/core: do not crash if a file is removed before the upload starts (Antoine du Hamel / #4148)
+- @uppy/xhr-upload: fix `Timed out waiting for socket` (Antoine du Hamel / #4150)
+- @uppy/golden-retriever: Fix retry upload with Golden Retriever (Merlijn Vos / #4155)
+- @uppy/aws-s3: fix `Cannot mark a queued request as done` in `MiniXHRUpload` (Antoine du Hamel / #4151)
+- @uppy/angular: remove unnecessary `console.log` call (Antoine du Hamel / #4139)
+
+
 ## 2.13.6
 
 Released: 2022-09-25

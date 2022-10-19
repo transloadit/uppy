@@ -1,5 +1,12 @@
 # @uppy/angular
 
+## 0.3.3
+
+Released: 2022-10-19
+Included in: Uppy v2.13.7
+
+- @uppy/angular: remove unnecessary `console.log` call (Antoine du Hamel / #4139)
+
 ## 0.3.1
 
 Released: 2022-05-30
