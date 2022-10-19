@@ -181,8 +181,8 @@ class Uppy {
   /**
    * Shorthand to set state for a specific file.
    */
-  setFileState (fileID, state, checkIfFileExist = true) {
-    if (checkIfFileExist && !this.getState().files[fileID]) {
+  setFileState (fileID, state) {
+    if (!this.getState().files[fileID]) {
       throw new Error(`Can’t set state for ${fileID} (the file could have been removed)`)
     }
 

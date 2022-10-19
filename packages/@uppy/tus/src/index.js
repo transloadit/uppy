@@ -476,7 +476,7 @@ export default class Tus extends BasePlugin {
 
       if (this.getState().files[file.id]) return undefined
 
-      this.uppy.setFileState(file.id, { serverToken }, false)
+      this.uppy.setFileState(file.id, { serverToken })
       return this.connectToServerSocket(this.uppy.getFile(file.id))
     } catch (err) {
       this.uppy.emit('upload-error', file, err)
