@@ -1,5 +1,13 @@
 # @uppy/companion
 
+## 4.0.4
+
+Released: 2022-10-19
+Included in: Uppy v3.2.0
+
+- @uppy/companion: add workaround for S3 accelerated endpoints (Mikael Finstad / #4140)
+- @uppy/companion: fix error message (Mikael Finstad / #4125)
+
 ## 4.0.2
 
 Released: 2022-09-25
