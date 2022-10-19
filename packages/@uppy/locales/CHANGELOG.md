@@ -1,5 +1,14 @@
 # @uppy/locales
 
+## 3.0.2
+
+Released: 2022-10-19
+Included in: Uppy v3.2.0
+
+- @uppy/locales: Fix duplicate keys in UK_UA.js (Murderlon)
+- @uppy/locales: Add missing Ukrainian locale entries (Andrii Bodnar / #4145)
+- @uppy/locales: Update pl_PL.js (Daniel Kamiński / #4136)
+
 ## 3.0.1
 
 Released: 2022-09-25
