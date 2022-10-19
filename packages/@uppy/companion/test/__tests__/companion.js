@@ -245,5 +245,5 @@ it('respects allowLocalUrls, valid hostname that resolves to localhost', async (
 
   res = await runUrlGetTest(`http://${fakeLocalhost}/`)
   expect(res.statusCode).toBe(500)
-  expect(res.body).toEqual({ message: 'failed to fetch URL metadata' })
+  expect(res.body).toEqual({ message: 'failed to fetch URL' })
 })

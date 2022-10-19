@@ -1,5 +1,12 @@
 # @uppy/angular
 
+## 0.4.2
+
+Released: 2022-09-25
+Included in: Uppy v3.1.0
+
+- @uppy/angular: Fix angular build error (Murderlon)
+
 ## 0.4.1
 
 Released: 2022-08-30
