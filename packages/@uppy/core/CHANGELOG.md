@@ -1,5 +1,13 @@
 # @uppy/core
 
+## 3.0.3
+
+Released: 2022-10-19
+Included in: Uppy v3.2.0
+
+- @uppy/core: do not crash if a file is removed before the upload starts (Antoine du Hamel / #4148)
+- @uppy/core: Fix Uppy.cancelAll and Uppy.close types (Sven Grunewaldt / #4128)
+
 ## 3.0.2
 
 Released: 2022-09-25
