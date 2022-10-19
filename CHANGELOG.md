@@ -12,6 +12,18 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 3.2.1
+
+Released: 2022-10-19
+
+| Package         | Version | Package         | Version |
+| --------------- | ------- | --------------- | ------- |
+| @uppy/companion |   4.0.5 | uppy            |   3.2.1 |
+| @uppy/locales   |   3.0.3 |                 |         |
+
+- meta: fix CDN deploy (Antoine du Hamel)
+
+
 ## 3.2.0
 
 Released: 2022-10-19
