@@ -68,7 +68,7 @@ export default class MiniXHRUpload {
     this.uploaderEvents = Object.create(null)
     this.i18n = opts.i18n
 
-    this.#queueRequestSocketToken = this.requests.wrapPromiseFunction(this.#requestSocketToken)
+    this.#queueRequestSocketToken = this.requests.wrapPromiseFunction(this.#requestSocketToken, { priority: -1 })
   }
 
   #getOptions (file) {
@@ -280,6 +280,7 @@ export default class MiniXHRUpload {
   }
 
   async #uploadRemoteFile (file) {
+    // TODO: we could rewrite this to use server-sent events instead of creating WebSockets.
     try {
       if (file.serverToken) {
         return this.connectToServerSocket(file)
@@ -321,6 +322,7 @@ export default class MiniXHRUpload {
 
           this.uppy.emit('upload-success', file, uploadResp)
           queuedRequest.done() // eslint-disable-line no-use-before-define
+          socket.close()
           if (this.uploaderEvents[file.id]) {
             this.uploaderEvents[file.id].remove()
             this.uploaderEvents[file.id] = null
