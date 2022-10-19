@@ -303,12 +303,11 @@ export default class GoldenRetriever extends BasePlugin {
     // start all uploads again when file blobs are restored
     const { currentUploads } = this.uppy.getState()
     if (currentUploads) {
+      this.uppy.resumeAll()
       Object.keys(currentUploads).forEach((uploadId) => {
         this.uppy.restore(uploadId, currentUploads[uploadId])
       })
-      this.uppy.resumeAll()
     }
-    this.uppy.upload()
     this.uppy.setState({ recoveredState: null })
   }
 
