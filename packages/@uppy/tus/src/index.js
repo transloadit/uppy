@@ -474,6 +474,8 @@ export default class Tus extends BasePlugin {
       }
       const serverToken = await this.#queueRequestSocketToken(file)
 
+      if (this.getState().files[file.id]) return undefined
+
       this.uppy.setFileState(file.id, { serverToken })
       return this.connectToServerSocket(this.uppy.getFile(file.id))
     } catch (err) {

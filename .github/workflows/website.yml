@@ -3,6 +3,10 @@ name: Deploy uppy.io
 on:
   push:
     branches: main
+    paths:
+      - yarn.lock
+      - 'website/**'
+      - '.github/workflows/website.yml'
 
 jobs:
   deploy:

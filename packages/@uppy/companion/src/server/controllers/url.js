@@ -106,7 +106,7 @@ const get = async (req, res) => {
 
   function onUnhandledError (err) {
     logger.error(err, 'controller.url.error', req.id)
-    res.status(err.status || 500).json({ message: 'failed to fetch URL metadata' })
+    res.status(err.status || 500).json({ message: 'failed to fetch URL' })
   }
 
   startDownUpload({ req, res, getSize, download, onUnhandledError })

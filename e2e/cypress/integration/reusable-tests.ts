@@ -8,8 +8,9 @@ export function runRemoteUrlImageUploadTest () {
   cy.get('.uppy-Url-input').type('https://raw.githubusercontent.com/transloadit/uppy/main/e2e/cypress/fixtures/images/cat.jpg')
   cy.get('.uppy-Url-importButton').click()
   cy.get('.uppy-StatusBar-actionBtn--upload').click()
-  cy.wait('@url')
-  cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Complete')
+  cy.wait('@url').then(() => {
+    cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Complete')
+  })
 }
 
 export function runRemoteUnsplashUploadTest () {
@@ -30,6 +31,7 @@ export function runRemoteUnsplashUploadTest () {
     })
   cy.get('.uppy-c-btn-primary').click()
   cy.get('.uppy-StatusBar-actionBtn--upload').click()
-  cy.wait('@unsplash')
-  cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Complete')
+  cy.wait('@unsplash').then(() => {
+    cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Complete')
+  })
 }

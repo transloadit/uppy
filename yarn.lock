@@ -7989,9 +7989,20 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy-example/aws-presigned-url@workspace:examples/aws-presigned-url":
+"@uppy-example/aws-nodejs@workspace:examples/aws-nodejs":
   version: 0.0.0-use.local
-  resolution: "@uppy-example/aws-presigned-url@workspace:examples/aws-presigned-url"
+  resolution: "@uppy-example/aws-nodejs@workspace:examples/aws-nodejs"
+  dependencies:
+    aws-sdk: ^2.1038.0
+    body-parser: ^1.20.0
+    dotenv: ^16.0.0
+    express: ^4.18.1
+  languageName: unknown
+  linkType: soft
+
+"@uppy-example/aws-php@workspace:examples/aws-php":
+  version: 0.0.0-use.local
+  resolution: "@uppy-example/aws-php@workspace:examples/aws-php"
   dependencies:
     "@uppy/aws-s3": "workspace:*"
     "@uppy/core": "workspace:*"
@@ -8416,6 +8427,7 @@ __metadata:
     jest: ^29.0.0
     jsonwebtoken: 8.5.1
     lodash.merge: ^4.6.2
+    lodash.throttle: ^4.1.1
     mime-types: 2.1.35
     moment: ^2.29.2
     moment-timezone: ^0.5.31

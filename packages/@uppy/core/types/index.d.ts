@@ -32,6 +32,8 @@ type LocaleStrings<TNames extends string> = {
 
 type LogLevel = 'info' | 'warning' | 'error'
 
+type CancelOptions = { reason: 'user' | 'unmount' }
+
 export type Store = UppyUtils.Store
 
 export type InternalMetadata = UppyUtils.InternalMetadata
@@ -102,6 +104,8 @@ export class UIPlugin<TOptions extends PluginOptions = DefaultPluginOptions> ext
   constructor(uppy: Uppy, opts?: TOptions)
 
   update(state?: Record<string, unknown>): void
+
+  getTargetPlugin(target: PluginTarget): UIPlugin | undefined
 
   // eslint-disable-next-line no-use-before-define
   mount(target: PluginTarget, plugin: typeof UIPlugin): void
@@ -352,7 +356,7 @@ export class Uppy {
     UploadResult<TMeta>
   >
 
-  cancelAll(): void
+  cancelAll(options: CancelOptions): void
 
   retryUpload<TMeta extends IndexedObject<any> = Record<string, unknown>>(
     fileID: string
@@ -371,7 +375,7 @@ export class Uppy {
 
   removePlugin(instance: UIPlugin | BasePlugin): void
 
-  close(): void
+  close(options: CancelOptions): void
 
   logout(): void
 

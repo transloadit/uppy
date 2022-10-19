@@ -99,6 +99,7 @@ export default class Webcam extends UIPlugin {
       mirror: true,
       showVideoSourceDropdown: false,
       facingMode: 'user', // @TODO: remove in the next major
+      videoConstraints: undefined,
       preferredImageMimeType: null,
       preferredVideoMimeType: null,
       showRecordingLength: false,
@@ -597,8 +598,9 @@ export default class Webcam extends UIPlugin {
   install () {
     const { mobileNativeCamera, modes, facingMode, videoConstraints } = this.opts
 
-    if (mobileNativeCamera) {
-      this.uppy.getPlugin('Dashboard').setOptions({
+    const { target } = this.opts
+    if (mobileNativeCamera && target) {
+      this.getTargetPlugin(target)?.setOptions({
         showNativeVideoCameraButton: isModeAvailable(modes, 'video-only') || isModeAvailable(modes, 'video-audio'),
         showNativePhotoCameraButton: isModeAvailable(modes, 'picture'),
         nativeCameraFacingMode: videoConstraints?.facingMode || facingMode,
@@ -611,7 +613,6 @@ export default class Webcam extends UIPlugin {
       recordingLengthSeconds: 0,
     })
 
-    const { target } = this.opts
     if (target) {
       this.mount(target, this)
     }

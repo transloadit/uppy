@@ -1,0 +1,93 @@
+name: Test different bundlers with Uppy
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    # We want all branches so we configure types to be the GH default again
+    types: [ opened, synchronize, reopened ]
+    paths-ignore:
+      - '**.md'
+      - '**.d.ts'
+      - 'examples/**'
+      - 'private/**'
+      - 'website/**'
+      - '.github/**'
+      - '!.github/workflows/bundlers.yml'
+
+jobs:
+  isolate_uppy:
+    name: Isolate Uppy package
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v3
+      - name: Eject Uppy package from repo
+        run: corepack yarn workspace uppy pack --install-if-needed -o /tmp/uppy-${{ github.sha }}.tar.gz
+      - name: Upload artifact
+        if: success()
+        uses: actions/upload-artifact@v3
+        with:
+          name: uppy-${{ github.sha }}.tar.gz
+          path: /tmp/uppy-${{ github.sha }}.tar.gz
+
+  rollup:
+    needs: isolate_uppy
+    name: Rollup
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        rollup-version: [latest]
+    steps:
+      - name: Download uppy tarball
+        uses: actions/download-artifact@v3
+        with:
+          name: uppy-${{ github.sha }}.tar.gz
+      - name: Extract tarball
+        run: tar -xzf uppy-${{ github.sha }}.tar.gz --strip-components 1
+      - name: Add Rollup as a dev dependency
+        run: >-
+          npm i --save-dev
+          @rollup/plugin-commonjs @rollup/plugin-node-resolve
+          rollup@${{matrix.rollup-version}}
+      - name: Create Rollup config file
+        run: >-
+          echo '
+          import cjs from "@rollup/plugin-commonjs";
+          import { nodeResolve } from "@rollup/plugin-node-resolve";
+
+          export default {
+            input: "./index.mjs",
+            output: {
+              file: "/dev/null",
+            },
+            plugins: [
+              cjs(),
+              nodeResolve({ browser: true, exportConditions: ["browser"] }),
+            ],
+          };' > rollup.config.mjs
+      - name: Bundle
+        run: npx rollup -c
+  webpack:
+    needs: isolate_uppy
+    name: Webpack
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        webpack-version: [latest]
+    steps:
+      - name: Download uppy tarball
+        uses: actions/download-artifact@v3
+        with:
+          name: uppy-${{ github.sha }}.tar.gz
+      - name: Extract tarball
+        run: tar -xzf uppy-${{ github.sha }}.tar.gz --strip-components 1
+      - name: Add Webpack as a dev dependency
+        run: npm i --save-dev webpack-cli webpack@${{matrix.webpack-version}}
+      - name: Create Webpack config file
+        run: echo 'module.exports={mode:"production",target:"web",entry:"./index.mjs"}' > webpack.config.js
+      - name: Bundle
+        run: npx webpack
+  # ESBuild: We are already testing it when generating the actual bundle.
+  # Browserify: doesn't support ESM.
+  # Parcel: We are already testing it with our e2e tests.
