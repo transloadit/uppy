@@ -286,9 +286,9 @@ export default class MiniXHRUpload {
       }
       const serverToken = await this.#queueRequestSocketToken(file)
 
-      if (file.hasBeenRemoved) return undefined
+      if (this.getState().files[file.id]) return undefined
 
-      this.uppy.setFileState(file.id, { serverToken })
+      this.uppy.setFileState(file.id, { serverToken }, false)
       return this.connectToServerSocket(this.uppy.getFile(file.id))
     } catch (err) {
       this.uppy.emit('upload-error', file, err)

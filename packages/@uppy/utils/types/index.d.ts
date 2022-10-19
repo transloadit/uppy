@@ -340,7 +340,6 @@ declare module '@uppy/utils' {
     data: Blob | File
     extension: string
     id: string
-    hasBeenRemoved?: boolean
     isPaused?: boolean
     isRemote: boolean
     meta: InternalMetadata & TMeta

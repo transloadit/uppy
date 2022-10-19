@@ -181,12 +181,9 @@ class Uppy {
   /**
    * Shorthand to set state for a specific file.
    */
-  setFileState (fileID, state, throwIfFileIsNotFound = true) {
-    if (!this.getState().files[fileID]) {
-      if (throwIfFileIsNotFound) {
-        throw new Error(`Can’t set state for ${fileID} (the file could have been removed)`)
-      }
-      return
+  setFileState (fileID, state, checkIfFileExist = true) {
+    if (checkIfFileExist && !this.getState().files[fileID]) {
+      throw new Error(`Can’t set state for ${fileID} (the file could have been removed)`)
     }
 
     this.setState({
@@ -659,7 +656,6 @@ class Uppy {
     fileIDs.forEach((fileID) => {
       if (files[fileID]) {
         removedFiles[fileID] = files[fileID]
-        updatedFiles[fileID].hasBeenRemoved = true
         delete updatedFiles[fileID]
       }
     })
