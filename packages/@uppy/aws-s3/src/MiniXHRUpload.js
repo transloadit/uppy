@@ -294,76 +294,96 @@ export default class MiniXHRUpload {
       const opts = this.#getOptions(file)
       const token = file.serverToken
       const host = getSocketHost(file.remote.companionUrl)
-      const socket = new Socket({ target: `${host}/api/${token}` })
+      let socket
+
+      const createSocket = () => {
+        if (socket != null) return
+
+        socket = new Socket({ target: `${host}/api/${token}` })
+
+        socket.on('progress', (progressData) => emitSocketProgress(this, progressData, file))
+
+        socket.on('success', (data) => {
+          const body = opts.getResponseData(data.response.responseText, data.response)
+          const uploadURL = body[opts.responseUrlFieldName]
+
+          const uploadResp = {
+            status: data.response.status,
+            body,
+            uploadURL,
+            bytesUploaded: data.bytesUploaded,
+          }
+
+          this.uppy.emit('upload-success', file, uploadResp)
+          queuedRequest.done() // eslint-disable-line no-use-before-define
+          if (this.uploaderEvents[file.id]) {
+            this.uploaderEvents[file.id].remove()
+            this.uploaderEvents[file.id] = null
+          }
+          return resolve()
+        })
+
+        socket.on('error', (errData) => {
+          const resp = errData.response
+          const error = resp
+            ? opts.getResponseError(resp.responseText, resp)
+            : new ErrorWithCause(errData.error.message, { cause: errData.error })
+          this.uppy.emit('upload-error', file, error)
+          queuedRequest.done() // eslint-disable-line no-use-before-define
+          if (this.uploaderEvents[file.id]) {
+            this.uploaderEvents[file.id].remove()
+            this.uploaderEvents[file.id] = null
+          }
+          reject(error)
+        })
+      }
       this.uploaderEvents[file.id] = new EventTracker(this.uppy)
 
-      const queuedRequest = this.requests.run(() => {
+      let queuedRequest = this.requests.run(() => {
         if (file.isPaused) {
-          socket.send('pause', {})
+          socket?.send('pause', {})
+        } else {
+          createSocket()
         }
 
         return () => socket.close()
       })
 
       this.#addEventHandlerForFile('file-removed', file.id, () => {
-        socket.send('cancel', {})
+        socket?.send('cancel', {})
         queuedRequest.abort()
         resolve(`upload ${file.id} was removed`)
       })
 
       this.#addEventHandlerIfFileStillExists('cancel-all', file.id, ({ reason } = {}) => {
         if (reason === 'user') {
-          socket.send('cancel', {})
+          socket?.send('cancel', {})
           queuedRequest.abort()
         }
         resolve(`upload ${file.id} was canceled`)
       })
 
-      this.#addEventHandlerForFile('upload-retry', file.id, () => {
-        socket.send('pause', {})
-        socket.send('resume', {})
-      })
-
-      this.#addEventHandlerIfFileStillExists('retry-all', file.id, () => {
-        socket.send('pause', {})
-        socket.send('resume', {})
-      })
-
-      socket.on('progress', (progressData) => emitSocketProgress(this, progressData, file))
-
-      socket.on('success', (data) => {
-        const body = opts.getResponseData(data.response.responseText, data.response)
-        const uploadURL = body[opts.responseUrlFieldName]
-
-        const uploadResp = {
-          status: data.response.status,
-          body,
-          uploadURL,
-          bytesUploaded: data.bytesUploaded,
+      const onRetryRequest = () => {
+        if (socket == null) {
+          queuedRequest.abort()
+        } else {
+          socket.send('pause', {})
+          queuedRequest.done()
         }
+        queuedRequest = this.requests.run(() => {
+          if (!file.isPaused) {
+            if (socket == null) {
+              createSocket()
+            } else {
+              socket.send('resume', {})
+            }
+          }
 
-        this.uppy.emit('upload-success', file, uploadResp)
-        queuedRequest.done()
-        if (this.uploaderEvents[file.id]) {
-          this.uploaderEvents[file.id].remove()
-          this.uploaderEvents[file.id] = null
-        }
-        return resolve()
-      })
-
-      socket.on('error', (errData) => {
-        const resp = errData.response
-        const error = resp
-          ? opts.getResponseError(resp.responseText, resp)
-          : new ErrorWithCause(errData.error.message, { cause: errData.error })
-        this.uppy.emit('upload-error', file, error)
-        queuedRequest.done()
-        if (this.uploaderEvents[file.id]) {
-          this.uploaderEvents[file.id].remove()
-          this.uploaderEvents[file.id] = null
-        }
-        reject(error)
-      })
+          return () => socket.close()
+        })
+      }
+      this.#addEventHandlerForFile('upload-retry', file.id, onRetryRequest)
+      this.#addEventHandlerIfFileStillExists('retry-all', file.id, onRetryRequest)
     }).catch((err) => {
       this.uppy.emit('upload-error', file, err)
       return Promise.reject(err)
