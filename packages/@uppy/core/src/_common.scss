@@ -36,6 +36,8 @@
   all: initial;
   box-sizing: border-box;
   appearance: none;
+  font-family: $font-family-base;
+  line-height: 1;
 }
 
 [dir="rtl"] .uppy-u-reset {
