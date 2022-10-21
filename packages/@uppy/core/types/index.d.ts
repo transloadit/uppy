@@ -356,7 +356,7 @@ export class Uppy {
     UploadResult<TMeta>
   >
 
-  cancelAll(options: CancelOptions): void
+  cancelAll(options?: CancelOptions): void
 
   retryUpload<TMeta extends IndexedObject<any> = Record<string, unknown>>(
     fileID: string
@@ -375,7 +375,7 @@ export class Uppy {
 
   removePlugin(instance: UIPlugin | BasePlugin): void
 
-  close(options: CancelOptions): void
+  close(options?: CancelOptions): void
 
   logout(): void
 
