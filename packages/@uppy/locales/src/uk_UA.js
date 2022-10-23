@@ -196,12 +196,6 @@ uk_UA.strings = {
     '1': 'Завантажити +%{smart_count} файли',
     '2': 'Завантажити +%{smart_count} файлів',
   },
-  uploading: 'Завантаження',
-  uploadingXFiles: {
-    '0': 'Завантажується %{smart_count} файл',
-    '1': 'Завантажується %{smart_count} файли',
-    '2': 'Завантажується %{smart_count} файлів',
-  },
   xFilesSelected: {
     '0': '%{smart_count} файл обрано',
     '1': '%{smart_count} файли обрано',

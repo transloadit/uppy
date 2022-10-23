@@ -347,7 +347,7 @@ uppy.use(AwsS3, {
 })
 ```
 
-See the [aws-presigned-url example in the uppy repository](https://github.com/transloadit/uppy/tree/main/examples/aws-presigned-url) for a small example that implements both the server-side and the client-side.
+See the [aws-php example in the uppy repository](https://github.com/transloadit/uppy/tree/main/examples/aws-php) for a small example that implements both the server-side and the client-side.
 
 ### Retrieving presign parameters of the uploaded file
 

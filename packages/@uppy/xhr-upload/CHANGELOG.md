@@ -1,5 +1,14 @@
 # @uppy/xhr-upload
 
+## 3.0.3
+
+Released: 2022-10-19
+Included in: Uppy v3.2.0
+
+- @uppy/xhr-upload: fix `Timed out waiting for socket` (Antoine du Hamel / #4150)
+- @uppy/aws-s3,@uppy/xhr-upload: fix `Cannot mark a queued request as done` in `MiniXHRUpload` (Antoine du Hamel / #4151)
+- @uppy/xhr-upload: queue requests for socket token for remote files (Daniel Jones / #4123)
+
 ## 3.0.2
 
 Released: 2022-09-25

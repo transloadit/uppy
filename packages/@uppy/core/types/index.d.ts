@@ -105,6 +105,8 @@ export class UIPlugin<TOptions extends PluginOptions = DefaultPluginOptions> ext
 
   update(state?: Record<string, unknown>): void
 
+  getTargetPlugin(target: PluginTarget): UIPlugin | undefined
+
   // eslint-disable-next-line no-use-before-define
   mount(target: PluginTarget, plugin: typeof UIPlugin): void
 
@@ -354,7 +356,7 @@ export class Uppy {
     UploadResult<TMeta>
   >
 
-  cancelAll(options: CancelOptions): void
+  cancelAll(options?: CancelOptions): void
 
   retryUpload<TMeta extends IndexedObject<any> = Record<string, unknown>>(
     fileID: string
@@ -373,7 +375,7 @@ export class Uppy {
 
   removePlugin(instance: UIPlugin | BasePlugin): void
 
-  close(options: CancelOptions): void
+  close(options?: CancelOptions): void
 
   logout(): void
 

@@ -1,0 +1,58 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Uppy</title>
+    <link href="https://releases.transloadit.com/uppy/v3.2.1/uppy.min.css" rel="stylesheet">
+  </head>
+  <body>
+    <div id="drag-drop-area"></div>
+    <script type="module">
+      import { Uppy, Dashboard, AwsS3 } from "https://releases.transloadit.com/uppy/v3.2.1/uppy.min.mjs"
+      var uppy = new Uppy()
+        .use(Dashboard, {
+            inline: true,
+            target: '#drag-drop-area',
+          })
+        .use(AwsS3, {
+          getUploadParameters (file) {
+            // Send a request to our PHP signing endpoint.
+            return fetch('/sign-s3', {
+              method: 'post',
+              // Send and receive JSON.
+              headers: {
+                accept: 'application/json',
+                'content-type': 'application/json',
+              },
+              body: JSON.stringify({
+                filename: file.name,
+                contentType: file.type,
+              }),
+            }).then((response) => {
+              // Parse the JSON response.
+              return response.json()
+            }).then((data) => {
+              // Return an object in the correct shape.
+              return {
+                method: data.method,
+                url: data.url,
+                fields: data.fields, // For presigned PUT uploads, this should be left empty.
+                // Provide content type header required by S3
+                headers: {
+                  'Content-Type': file.type,
+                },
+              }
+            })
+          },
+      });
+
+      uppy.on('complete', (result) => {
+        console.log('Upload complete! We’ve uploaded these files:', result.successful)
+      })
+
+      uppy.on('upload-success', (file, data) => {
+        console.log('Upload success! We’ve uploaded this file:', file.meta['name'])
+      })
+    </script>
+  </body>
+</html>

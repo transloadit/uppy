@@ -12,6 +12,54 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 3.2.1
+
+Released: 2022-10-19
+
+| Package         | Version | Package         | Version |
+| --------------- | ------- | --------------- | ------- |
+| @uppy/companion |   4.0.5 | uppy            |   3.2.1 |
+| @uppy/locales   |   3.0.3 |                 |         |
+
+- meta: fix CDN deploy (Antoine du Hamel)
+
+
+## 3.2.0
+
+Released: 2022-10-19
+
+| Package                | Version | Package                | Version |
+| ---------------------- | ------- | ---------------------- | ------- |
+| @uppy/angular          |   0.4.3 | @uppy/tus              |   3.0.3 |
+| @uppy/aws-s3           |   3.0.3 | @uppy/url              |   3.1.0 |
+| @uppy/companion        |   4.0.4 | @uppy/webcam           |   3.2.1 |
+| @uppy/core             |   3.0.3 | @uppy/xhr-upload       |   3.0.3 |
+| @uppy/golden-retriever |   3.0.2 | uppy                   |   3.2.0 |
+| @uppy/locales          |   3.0.2 |                        |         |
+
+- @uppy/webcam: fix bug when Dashboard is using a custom id (Antoine du Hamel / #4099)
+- @uppy/url: refactor `UrlUI` (Antoine du Hamel / #4143)
+- @uppy/url: trim whitespace around user input (Andrew McIntee / #4143)
+- @uppy/core: do not crash if a file is removed before the upload starts (Antoine du Hamel / #4148)
+- @uppy/xhr-upload: fix `Timed out waiting for socket` (Antoine du Hamel / #4150)
+- @uppy/golden-retriever: Fix retry upload with Golden Retriever (Merlijn Vos / #4155)
+- @uppy/aws-s3,@uppy/xhr-upload: fix `Cannot mark a queued request as done` in `MiniXHRUpload` (Antoine du Hamel / #4151)
+- meta: add a CI check to validate `yarn.lock` (Antoine du Hamel / #4154)
+- meta: fix outdated `yarn.lock` (Antoine du Hamel / #4153)
+- meta: fix `transloadit-xhr` dev example (Antoine du Hamel / #4149)
+- meta: Add example for Uppy with S3 and a Node.js server (Raúl Ibáñez / #4129)
+- @uppy/locales: Fix duplicate keys in UK_UA.js (Murderlon)
+- @uppy/companion: add workaround for S3 accelerated endpoints (Mikael Finstad / #4140)
+- @uppy/locales: Add missing Ukrainian locale entries (Andrii Bodnar / #4145)
+- @uppy/angular: remove unnecessary `console.log` call (Antoine du Hamel / #4139)
+- meta: fix bundlers workflow (Antoine du Hamel / #4144)
+- meta: fix default sources (Mikael Finstad / #4134)
+- @uppy/locales: Update pl_PL.js (Daniel Kamiński / #4136)
+- @uppy/core: Fix Uppy.cancelAll and Uppy.close types (Sven Grunewaldt / #4128)
+- @uppy/companion: fix error message (Mikael Finstad / #4125)
+- @uppy/xhr-upload: queue requests for socket token for remote files (Daniel Jones / #4123)
+
+
 ## 3.1.1
 
 Released: 2022-09-25
@@ -312,7 +360,7 @@ Released: 2022-08-02
 - @uppy/transloadit: send `assembly-cancelled` only once (Antoine du Hamel / #3937)
 - meta: `keepNames` in bundle (Antoine du Hamel / #3926)
 - meta: e2e: fix Transloadit test suite with Cypress 10 (Antoine du Hamel / #3936)
-- meta: Bump guzzlehttp/guzzle from 7.4.1 to 7.4.5 in /examples/aws-presigned-url (dependabot[bot] / #3842)
+- meta: Bump guzzlehttp/guzzle from 7.4.1 to 7.4.5 in /examples/aws-php (dependabot[bot] / #3842)
 - @uppy/tus: fix dependencies (Antoine du Hamel / #3923)
 - meta: doc: fix linter failure in `image-editor.md` (Antoine du Hamel / #3924)
 - meta: doc: Fix typo in image-editor.md (Ikko Ashimine / #3921)
@@ -841,7 +889,7 @@ Released: 2022-01-10
 - @uppy/tus: pause all requests in response to server rate limiting (Antoine du Hamel / #3394)
 - @uppy/transloadit: better defaults for rate limiting (Antoine du Hamel / #3414)
 - @uppy/companion: Fix Companion deploys (kiloreux / #3388)
-- meta: update aws-presigned-url example to use esm (Antoine du Hamel / #3413)
+- meta: update aws-php example to use esm (Antoine du Hamel / #3413)
 - @uppy/image-editor: namespace input range css (Merlijn Vos / #3406)
 - @uppy/screen-capture: Add missing option to the screen capture types (Mustafa Navruz / #3400)
 - @uppy/drag-drop: fix `undefined is not a function` TypeError (Antoine du Hamel / #3397)

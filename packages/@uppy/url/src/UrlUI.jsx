@@ -1,26 +1,20 @@
 import { h, Component } from 'preact'
 
 class UrlUI extends Component {
-  constructor (props) {
-    super(props)
-    this.handleKeyPress = this.handleKeyPress.bind(this)
-    this.handleClick = this.handleClick.bind(this)
-  }
-
   componentDidMount () {
     this.input.value = ''
   }
 
-  handleKeyPress (ev) {
-    const { addFile } = this.props
+  #handleKeyPress = (ev) => {
     if (ev.keyCode === 13) {
-      addFile(this.input.value)
+      this.#handleSubmit()
     }
   }
 
-  handleClick () {
+  #handleSubmit = () => {
     const { addFile } = this.props
-    addFile(this.input.value)
+    const preparedValue = this.input.value.trim()
+    addFile(preparedValue)
   }
 
   render () {
@@ -32,14 +26,14 @@ class UrlUI extends Component {
           type="text"
           aria-label={i18n('enterUrlToImport')}
           placeholder={i18n('enterUrlToImport')}
-          onKeyUp={this.handleKeyPress}
+          onKeyUp={this.#handleKeyPress}
           ref={(input) => { this.input = input }}
           data-uppy-super-focusable
         />
         <button
           className="uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-Url-importButton"
           type="button"
-          onClick={this.handleClick}
+          onClick={this.#handleSubmit}
         >
           {i18n('import')}
         </button>
