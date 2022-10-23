@@ -115,7 +115,7 @@ module.exports.getProtectedGot = getProtectedGot
  *
  * @param {string} url
  * @param {boolean} blockLocalIPs
- * @returns {Promise<{type: string, size: number}>}
+ * @returns {Promise<{type: string, size: number, videoId: string}>}
  */
 exports.getURLMeta = async (url, blockLocalIPs = false) => {
   async function requestWithMethod (method) {
@@ -163,6 +163,6 @@ exports.getURLMeta = async (url, blockLocalIPs = false) => {
     throw new Error(`URL server responded with status: ${urlMeta.statusCode}`)
   }
 
-  const { size, type } = urlMeta
-  return { size, type }
+  const { size, type, videoId } = urlMeta
+  return { size, type, videoId }
 }
