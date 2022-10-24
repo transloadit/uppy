@@ -12,6 +12,18 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 2.13.8
+
+Released: 2022-10-24
+
+| Package      | Version | Package      | Version |
+| ------------ | ------- | ------------ | ------- |
+| @uppy/aws-s3 |   2.2.4 | uppy         |  2.13.8 |
+| @uppy/tus    |   2.4.6 |              |         |
+
+- @uppy/aws-s3,@uppy/tus: replace `this.getState().files` with `this.uppy.getState().files` (Artur Paikin / #4167)
+
+
 ## 2.13.7
 
 Released: 2022-10-19
