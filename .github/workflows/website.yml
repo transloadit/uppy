@@ -7,6 +7,7 @@ on:
       - yarn.lock
       - 'website/**'
       - '.github/workflows/website.yml'
+  workflow_dispatch:
 
 jobs:
   deploy:
