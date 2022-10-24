@@ -67,7 +67,7 @@ const uppy = new Uppy({ autoProceed: false })
 $ npm install @uppy/core @uppy/dashboard @uppy/tus
 ```
 
-Add CSS [uppy.min.css](https://releases.transloadit.com/uppy/v2.13.7/uppy.min.css), either to your HTML page’s `<head>` or include in JS, if your bundler of choice supports it.
+Add CSS [uppy.min.css](https://releases.transloadit.com/uppy/v2.13.8/uppy.min.css), either to your HTML page’s `<head>` or include in JS, if your bundler of choice supports it.
 
 Alternatively, you can also use a pre-built bundle from Transloadit’s CDN: Edgly. In that case `Uppy` will attach itself to the global `window.Uppy` object.
 
@@ -75,10 +75,10 @@ Alternatively, you can also use a pre-built bundle from Transloadit’s CDN: Edg
 
 ```html
 <!-- 1. Add CSS to `<head>` -->
-<link href="https://releases.transloadit.com/uppy/v2.13.7/uppy.min.css" rel="stylesheet">
+<link href="https://releases.transloadit.com/uppy/v2.13.8/uppy.min.css" rel="stylesheet">
 
 <!-- 2. Add JS before the closing `</body>` -->
-<script src="https://releases.transloadit.com/uppy/v2.13.7/uppy.min.js"></script>
+<script src="https://releases.transloadit.com/uppy/v2.13.8/uppy.min.js"></script>
 
 <!-- 3. Initialize -->
 <div class="UppyDragDrop"></div>
@@ -184,7 +184,7 @@ If you’re using Uppy from CDN, those polyfills are already included in the leg
 bundle, so no need to include anything additionally:
 
 ```html
-<script src="https://releases.transloadit.com/uppy/v2.13.7/uppy.legacy.min.js"></script>
+<script src="https://releases.transloadit.com/uppy/v2.13.8/uppy.legacy.min.js"></script>
 ```
 
 ## FAQ
@@ -322,9 +322,9 @@ Use Uppy in your project? [Let us know](https://github.com/transloadit/uppy/issu
 :---: |:---: |:---: |:---: |:---: |:---: |
 [ahmadissa](https://github.com/ahmadissa) |[asmt3](https://github.com/asmt3) |[alexnj](https://github.com/alexnj) |[aalepis](https://github.com/aalepis) |[Dogfalo](https://github.com/Dogfalo) |[tekacs](https://github.com/tekacs) |
 
-[<img alt="functino" src="https://avatars.githubusercontent.com/u/415498?v=4&s=117" width="117">](https://github.com/functino) |[<img alt="AndrwM" src="https://avatars.githubusercontent.com/u/565743?v=4&s=117" width="117">](https://github.com/AndrwM) |[<img alt="radarhere" src="https://avatars.githubusercontent.com/u/3112309?v=4&s=117" width="117">](https://github.com/radarhere) |[<img alt="superandrew213" src="https://avatars.githubusercontent.com/u/13059204?v=4&s=117" width="117">](https://github.com/superandrew213) |[<img alt="andrii-bodnar" src="https://avatars.githubusercontent.com/u/29282228?v=4&s=117" width="117">](https://github.com/andrii-bodnar) |[<img alt="andychongyz" src="https://avatars.githubusercontent.com/u/12697240?v=4&s=117" width="117">](https://github.com/andychongyz) |
+[<img alt="amitport" src="https://avatars.githubusercontent.com/u/1131991?v=4&s=117" width="117">](https://github.com/amitport) |[<img alt="functino" src="https://avatars.githubusercontent.com/u/415498?v=4&s=117" width="117">](https://github.com/functino) |[<img alt="radarhere" src="https://avatars.githubusercontent.com/u/3112309?v=4&s=117" width="117">](https://github.com/radarhere) |[<img alt="superandrew213" src="https://avatars.githubusercontent.com/u/13059204?v=4&s=117" width="117">](https://github.com/superandrew213) |[<img alt="andrii-bodnar" src="https://avatars.githubusercontent.com/u/29282228?v=4&s=117" width="117">](https://github.com/andrii-bodnar) |[<img alt="andychongyz" src="https://avatars.githubusercontent.com/u/12697240?v=4&s=117" width="117">](https://github.com/andychongyz) |
 :---: |:---: |:---: |:---: |:---: |:---: |
-[functino](https://github.com/functino) |[AndrwM](https://github.com/AndrwM) |[radarhere](https://github.com/radarhere) |[superandrew213](https://github.com/superandrew213) |[andrii-bodnar](https://github.com/andrii-bodnar) |[andychongyz](https://github.com/andychongyz) |
+[amitport](https://github.com/amitport) |[functino](https://github.com/functino) |[radarhere](https://github.com/radarhere) |[superandrew213](https://github.com/superandrew213) |[andrii-bodnar](https://github.com/andrii-bodnar) |[andychongyz](https://github.com/andychongyz) |
 
 [<img alt="anthony0030" src="https://avatars.githubusercontent.com/u/13033263?v=4&s=117" width="117">](https://github.com/anthony0030) |[<img alt="tyndria" src="https://avatars.githubusercontent.com/u/17138916?v=4&s=117" width="117">](https://github.com/tyndria) |[<img alt="Abourass" src="https://avatars.githubusercontent.com/u/39917231?v=4&s=117" width="117">](https://github.com/Abourass) |[<img alt="arthurdenner" src="https://avatars.githubusercontent.com/u/13774309?v=4&s=117" width="117">](https://github.com/arthurdenner) |[<img alt="apuyou" src="https://avatars.githubusercontent.com/u/520053?v=4&s=117" width="117">](https://github.com/apuyou) |[<img alt="ash-jc-allen" src="https://avatars.githubusercontent.com/u/39652331?v=4&s=117" width="117">](https://github.com/ash-jc-allen) |
 :---: |:---: |:---: |:---: |:---: |:---: |

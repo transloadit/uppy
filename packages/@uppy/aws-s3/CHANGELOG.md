@@ -1,5 +1,12 @@
 # @uppy/aws-s3
 
+## 2.2.4
+
+Released: 2022-10-24
+Included in: Uppy v2.13.8
+
+- @uppy/aws-s3,@uppy/tus: replace `this.getState().files` with `this.uppy.getState().files` (Artur Paikin / #4167)
+
 ## 2.2.3
 
 Released: 2022-10-19
