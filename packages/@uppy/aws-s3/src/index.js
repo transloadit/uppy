@@ -35,6 +35,9 @@ import isXml from './isXml.js'
 import locale from './locale.js'
 
 function resolveUrl (origin, link) {
+  // Digital oceans don't return the protocal from Location
+  // if we don't adding protocal then new URL will fail with error: Failed to construct 'URL'
+  link = link.startsWith("https://") ? link : `https://${link}`
   return new URL(link, origin || undefined).toString()
 }
 
