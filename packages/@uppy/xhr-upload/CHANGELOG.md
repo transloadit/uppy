@@ -1,5 +1,12 @@
 # @uppy/xhr-upload
 
+## 3.0.4
+
+Released: 2022-10-24
+Included in: Uppy v3.2.2
+
+- @uppy/aws-s3,@uppy/tus,@uppy/xhr-upload: replace `this.getState().files` with `this.uppy.getState().files` (Artur Paikin / #4167)
+
 ## 3.0.3
 
 Released: 2022-10-19

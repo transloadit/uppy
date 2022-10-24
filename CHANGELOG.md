@@ -12,6 +12,21 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 3.2.2
+
+Released: 2022-10-24
+
+| Package              | Version | Package              | Version |
+| -------------------- | ------- | -------------------- | ------- |
+| @uppy/aws-s3         |   3.0.4 | @uppy/tus            |   3.0.4 |
+| @uppy/core           |   3.0.4 | @uppy/xhr-upload     |   3.0.4 |
+| @uppy/provider-views |   3.0.2 | uppy                 |   3.2.2 |
+
+- @uppy/aws-s3,@uppy/tus,@uppy/xhr-upload: replace `this.getState().files` with `this.uppy.getState().files` (Artur Paikin / #4167)
+- @uppy/core: make cancel() and close() arguments optional in types (Merlijn Vos / #4161)
+- @uppy/provider-views: Fix button and input inconsistent font and style (Artur Paikin / #4162)
+
+
 ## 3.2.1
 
 Released: 2022-10-19
