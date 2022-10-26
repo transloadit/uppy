@@ -17,7 +17,7 @@ jobs:
           fetch-depth: 2
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(corepack yarn config get cacheFolder)"
+        run: echo "dir=$(corepack yarn config get cacheFolder)" >> $GITHUB_OUTPUT
 
       - uses: actions/cache@v3
         id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
@@ -53,7 +53,7 @@ jobs:
           gh api -X PUT repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/merge \
             -F merge_method="squash" \
             -F commit_message="$(cat CHANGELOG.diff.md)" \
-            --jq 'if .merged then "##[set-output name=sha;]"+.sha else error("not merged") end'
+            --jq 'if .merged then "sha="+.sha else error("not merged") end' >> $GITHUB_OUTPUT
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Create tags
@@ -65,7 +65,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Get Uppy version number
         id: uppyVersion
-        run: jq -r '"##[set-output name=version;]"+.version' < packages/uppy/package.json
+        run: jq -r '"version="+.version' < packages/uppy/package.json >> $GITHUB_OUTPUT
       - name: Create GitHub release
         run: gh release create uppy@${{ steps.uppyVersion.outputs.version }} -t "Uppy ${{ steps.uppyVersion.outputs.version }}" -F CHANGELOG.diff.md
         env:
@@ -82,7 +82,7 @@ jobs:
           EDGLY_SECRET: ${{secrets.EDGLY_SECRET}}
       - name: Check if Companion was released
         id: checkIfCompanionWasReleased
-        run: git diff --exit-code --quiet HEAD^ -- packages/@uppy/companion/package.json || echo "::set-output name=version::$(jq -r .version < packages/@uppy/companion/package.json)"
+        run: git diff --exit-code --quiet HEAD^ -- packages/@uppy/companion/package.json || echo "version=$(jq -r .version < packages/@uppy/companion/package.json)" >> $GITHUB_OUTPUT
       - name: Remove release-candidate branch
         run: gh api -X DELETE repos/${{ github.repository }}/git/refs/heads/release-candidate || echo "Already deleted"
         env:
