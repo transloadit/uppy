@@ -103,7 +103,7 @@ export default class Tus extends BasePlugin {
 
     this.handleResetProgress = this.handleResetProgress.bind(this)
     this.handleUpload = this.handleUpload.bind(this)
-    this.#queueRequestSocketToken = this.requests.wrapPromiseFunction(this.#requestSocketToken)
+    this.#queueRequestSocketToken = this.requests.wrapPromiseFunction(this.#requestSocketToken, { priority: -1 })
   }
 
   handleResetProgress () {
