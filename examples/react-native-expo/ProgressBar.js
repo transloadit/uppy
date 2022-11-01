@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Text } from 'react-native'
+import { View, Text, StyleSheet } from 'react-native'
 
 const colorGreen = '#0b8600'
 const colorBlue = '#006bb7'
