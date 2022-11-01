@@ -29,39 +29,31 @@ function ensureInt (value) {
 }
 
 class MultipartUploader {
+  #abortController = new AbortController()
+
+  #isPaused = false
+
+  #chunks
+
+  #chunkState
+
+  #file
+
   constructor (file, options) {
     this.options = {
       ...defaultOptions,
       ...options,
     }
     // Use default `getChunkSize` if it was null or something
-    if (!this.options.getChunkSize) {
-      this.options.getChunkSize = defaultOptions.getChunkSize
-    }
+    this.options.getChunkSize ??= defaultOptions.getChunkSize
 
-    this.file = file
-    this.abortController = new AbortController()
+    this.#file = file
 
     this.key = this.options.key || null
     this.uploadId = this.options.uploadId || null
     this.parts = []
 
-    // Do `this.createdPromise.then(OP)` to execute an operation `OP` _only_ if the
-    // upload was created already. That also ensures that the sequencing is right
-    // (so the `OP` definitely happens if the upload is created).
-    //
-    // This mostly exists to make `#abortUpload` work well: only sending the abort request if
-    // the upload was already created, and if the createMultipartUpload request is still in flight,
-    // aborting it immediately after it finishes.
-    this.createdPromise = Promise.reject() // eslint-disable-line prefer-promise-reject-errors
-    this.isPaused = false
-    this.partsInProgress = 0
-    this.chunks = null
-    this.chunkState = null
-
     this.#initChunks()
-
-    this.createdPromise.catch(() => {}) // silence uncaught rejection warning
   }
 
   /**
@@ -72,35 +64,38 @@ class MultipartUploader {
    * @returns {boolean}
    */
   #aborted () {
-    return this.abortController.signal.aborted
+    return this.#abortController.signal.aborted
   }
 
   #initChunks () {
-    const chunks = []
-    const desiredChunkSize = this.options.getChunkSize(this.file)
+    const desiredChunkSize = this.options.getChunkSize(this.#file)
     // at least 5MB per request, at most 10k requests
-    const minChunkSize = Math.max(5 * MB, Math.ceil(this.file.size / 10000))
+    const fileSize = this.#file.size
+    const minChunkSize = Math.max(5 * MB, Math.ceil(fileSize / 10000))
     const chunkSize = Math.max(desiredChunkSize, minChunkSize)
 
     // Upload zero-sized files in one zero-sized chunk
-    if (this.file.size === 0) {
-      chunks.push(this.file)
+    if (this.#file.size === 0) {
+      this.#chunks = [this.#file]
+      this.#chunkState = [this.options.companionComm.uploadChunk(this.#file, 1, this.#file, this.#abortController.signal)]
     } else {
-      for (let i = 0; i < this.file.size; i += chunkSize) {
-        const end = Math.min(this.file.size, i + chunkSize)
-        chunks.push(this.file.slice(i, end))
+      const arraySize = Math.ceil(fileSize / chunkSize)
+      this.#chunks = Array(arraySize)
+      this.#chunkState = Array(arraySize)
+      for (let i = 0; i < fileSize; i += chunkSize) {
+        const end = Math.min(fileSize, i + chunkSize)
+        const chunk = this.#file.slice(i, end)
+        const partNumber = this.#chunks.push(chunk)
+        this.#chunkState[partNumber - 1] = this.options.companionComm.uploadChunk(this.#file, partNumber, chunk,
+          this.#abortController.signal)
       }
     }
-
-    this.chunks = chunks
-    this.chunkState = chunks.map(() => ({
-      uploaded: 0,
-      busy: false,
-      done: false,
-    }))
   }
 
+  get isCompeted () { return Promise.all(this.#chunkState) }
+
   #createUpload () {
+    return Promise.all(this.#chunkState)
     this.createdPromise = Promise.resolve().then(() => this.options.createMultipartUpload())
     return this.createdPromise.then((result) => {
       if (this.#aborted()) throw createAbortError()
@@ -133,7 +128,7 @@ class MultipartUploader {
       parts.forEach((part) => {
         const i = part.PartNumber - 1
 
-        this.chunkState[i] = {
+        this.#chunkState[i] = {
           uploaded: ensureInt(part.Size),
           etag: part.ETag,
           done: true,
@@ -154,71 +149,17 @@ class MultipartUploader {
   }
 
   #uploadParts () {
-    if (this.isPaused) return
+    if (this.#isPaused) return
 
     // All parts are uploaded.
-    if (this.chunkState.every((state) => state.done)) {
+    if (this.#chunkState.every((state) => state.done)) {
       this.#completeUpload()
-      return
     }
-
-    const getChunkIndexes = () => {
-      // For a 100MB file, with the default min chunk size of 5MB and a limit of 10:
-      //
-      // Total 20 parts
-      // ---------
-      // Need 1 is 10
-      // Need 2 is 5
-      // Need 3 is 5
-      const need = this.options.limit - this.partsInProgress
-      const completeChunks = this.chunkState.filter((state) => state.done).length
-      const remainingChunks = this.chunks.length - completeChunks
-      let minNeeded = Math.ceil(this.options.limit / 2)
-      if (minNeeded > remainingChunks) {
-        minNeeded = remainingChunks
-      }
-      if (need < minNeeded) return []
-
-      const chunkIndexes = []
-      for (let i = 0; i < this.chunkState.length; i++) {
-        const state = this.chunkState[i]
-        // eslint-disable-next-line no-continue
-        if (state.done || state.busy) continue
-
-        chunkIndexes.push(i)
-        if (chunkIndexes.length >= need) {
-          break
-        }
-      }
-
-      return chunkIndexes
-    }
-
-    const chunkIndexes = getChunkIndexes()
-
-    if (chunkIndexes.length === 0) return
-
-    this.#prepareUploadPartsRetryable(chunkIndexes).then(
-      ({ presignedUrls, headers }) => {
-        for (const index of chunkIndexes) {
-          const partNumber = index + 1
-          const prePreparedPart = {
-            url: presignedUrls[partNumber],
-            headers: headers?.[partNumber],
-          }
-          this.#uploadPartRetryable(index, prePreparedPart).then(
-            () => this.#uploadParts(),
-            (err) => this.#onError(err),
-          )
-        }
-      },
-      (err) => this.#onError(err),
-    )
   }
 
   #retryable ({ before, attempt, after }) {
     const { retryDelays } = this.options
-    const { signal } = this.abortController
+    const { signal } = this.#abortController
 
     if (before) before()
 
@@ -252,7 +193,7 @@ class MultipartUploader {
 
   async #prepareUploadPartsRetryable (chunkIndexes) {
     chunkIndexes.forEach((i) => {
-      this.chunkState[i].busy = true
+      this.#chunkState[i].busy = true
     })
 
     const result = await this.#retryable({
@@ -261,7 +202,7 @@ class MultipartUploader {
         uploadId: this.uploadId,
         parts: chunkIndexes.map((index) => ({
           number: index + 1, // Use the part number as the index
-          chunk: this.chunks[index],
+          chunk: this.#chunks[index],
         })),
       }),
     })
@@ -278,12 +219,12 @@ class MultipartUploader {
   #uploadPartRetryable (index, prePreparedPart) {
     return this.#retryable({
       before: () => {
-        this.chunkState[index].busy = true
+        this.#chunkState[index].busy = true
         this.partsInProgress += 1
       },
       attempt: () => this.#uploadPart(index, prePreparedPart),
       after: () => {
-        this.chunkState[index].busy = false
+        this.#chunkState[index].busy = false
         this.partsInProgress -= 1
       },
     })
@@ -304,15 +245,15 @@ class MultipartUploader {
   }
 
   #onPartProgress (index, sent) {
-    this.chunkState[index].uploaded = ensureInt(sent)
+    this.#chunkState[index].uploaded = ensureInt(sent)
 
-    const totalUploaded = this.chunkState.reduce((n, c) => n + c.uploaded, 0)
-    this.options.onProgress(totalUploaded, this.file.size)
+    const totalUploaded = this.#chunkState.reduce((n, c) => n + c.uploaded, 0)
+    this.options.onProgress(totalUploaded, this.#file.size)
   }
 
   #onPartComplete (index, etag) {
-    this.chunkState[index].etag = etag
-    this.chunkState[index].done = true
+    this.#chunkState[index].etag = etag
+    this.#chunkState[index].done = true
 
     const part = {
       PartNumber: index + 1,
@@ -324,8 +265,8 @@ class MultipartUploader {
   }
 
   #uploadPartBytes (index, url, headers) {
-    const body = this.chunks[index]
-    const { signal } = this.abortController
+    const body = this.#chunks[index]
+    const { signal } = this.#abortController
 
     let defer
     const promise = new Promise((resolve, reject) => {
@@ -373,7 +314,7 @@ class MultipartUploader {
       }
 
       // This avoids the net::ERR_OUT_OF_MEMORY in Chromium Browsers.
-      this.chunks[index] = null
+      this.#chunks[index] = null
 
       this.#onPartProgress(index, body.size, body.size)
 
@@ -419,7 +360,7 @@ class MultipartUploader {
   }
 
   #abortUpload () {
-    this.abortController.abort()
+    this.#abortController.abort()
 
     this.createdPromise.then(() => this.options.abortMultipartUpload({
       key: this.key,
@@ -438,7 +379,7 @@ class MultipartUploader {
   }
 
   start () {
-    this.isPaused = false
+    this.#isPaused = false
     if (this.uploadId) {
       this.#resumeUpload()
     } else {
@@ -447,11 +388,11 @@ class MultipartUploader {
   }
 
   pause () {
-    this.abortController.abort()
+    this.#abortController.abort()
     // Swap it out for a new controller, because this instance may be resumed later.
-    this.abortController = new AbortController()
+    this.#abortController = new AbortController()
 
-    this.isPaused = true
+    this.#isPaused = true
   }
 
   abort (opts = undefined) {
