@@ -2,7 +2,7 @@
   "name": "@uppy/react-native",
   "description": "React Native Uppy UI components",
   "version": "0.4.0",
-  "main": "file-picker/index.js",
+  "main": "./index.js",
   "license": "MIT",
   "keywords": [
     "file uploader",
@@ -21,6 +21,7 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
+    "@uppy/core": "workspace:*",
     "@uppy/instagram": "workspace:^",
     "@uppy/url": "workspace:^",
     "expo-document-picker": ">=6.0.0",

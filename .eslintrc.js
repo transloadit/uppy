@@ -328,6 +328,14 @@ module.exports = {
         'examples/vue/**/*.js',
         'examples/vue3/**/*.js',
       ],
+      rules: {
+        'no-unused-vars': [
+          'error',
+          {
+            'varsIgnorePattern': 'React',
+          },
+        ],
+      },
       parserOptions: {
         sourceType: 'module',
       },

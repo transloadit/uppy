@@ -10,7 +10,6 @@ website/themes/uppy/source/js/uppy.js
 website/themes/uppy/source/uppy/**
 test/endtoend/*/build
 examples/svelte-example/public/build/
-examples/react-native-expo/
 bundle-legacy.js
 website/src/_posts/201*.md
 website/src/_posts/2020-*.md

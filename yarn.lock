@@ -8898,6 +8898,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/react-native@workspace:packages/@uppy/react-native"
   dependencies:
+    "@uppy/core": "workspace:*"
     "@uppy/instagram": "workspace:^"
     "@uppy/url": "workspace:^"
     expo-document-picker: ">=6.0.0"
@@ -30186,6 +30187,7 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
     "@uppy/core": "workspace:*"
     "@uppy/dashboard": "workspace:*"
     "@uppy/instagram": "workspace:*"
+    "@uppy/react": "workspace:*"
     "@uppy/react-native": "workspace:*"
     "@uppy/tus": "workspace:*"
     "@uppy/url": "workspace:*"
