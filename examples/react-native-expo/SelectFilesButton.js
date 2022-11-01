@@ -1,4 +1,4 @@
-import React from 'react' // eslint-disable-line no-unused-vars
+import React from 'react'
 import { Text, TouchableHighlight, StyleSheet } from 'react-native'
 
 export default function SelectFiles ({ showFilePicker }) {

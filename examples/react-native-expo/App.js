@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { Text, View, Image, StyleSheet } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import Uppy from '@uppy/core'
@@ -25,8 +25,7 @@ export default function App () {
     totalProgress: 0,
   })
 
-  /* eslint-disable */
-  const setState = (newState) => _setState((oldState) => ({ ...oldState, ...newState }))
+  const setState = useCallback((newState) => _setState((oldState) => ({ ...oldState, ...newState })), [])
 
   const uppy = useUppy(() => {
     return new Uppy({ autoProceed: true, debug: true })
@@ -52,7 +51,7 @@ export default function App () {
     })
     uppy.on('complete', (result) => {
       setState({
-        status: 'Upload complete ✅',
+        status: result.successful[0] ? 'Upload complete ✅' : 'Upload errored ❌',
         uploadURL: result.successful[0] ? result.successful[0].uploadURL : null,
         uploadComplete: true,
         uploadStarted: false,
@@ -150,8 +149,8 @@ export default function App () {
 
       {uppy && <FileList uppy={uppy} />}
 
-      {/* <Text>{state.status ? 'Status: ' + state.status : null}</Text>
-      <Text>{state.progress} of {state.total}</Text> */}
+      {state.status && <Text>Status: {state.status}</Text>}
+      <Text>{state.progress} of {state.total}</Text>
     </View>
   )
 }
@@ -159,6 +158,7 @@ export default function App () {
 const styles = StyleSheet.create({
   root: {
     paddingTop: 100,
+    paddingBottom: 20,
     paddingLeft: 50,
     paddingRight: 50,
     flex: 1,
@@ -168,5 +168,5 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     textAlign: 'center',
   },
-  logo: { width: 80, height: 78, marginBottom: 50 }
+  logo: { width: 80, height: 78, marginBottom: 50 },
 })
