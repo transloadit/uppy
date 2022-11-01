@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import { Text, View, Image } from 'react-native'
+import { Text, View, Image, StyleSheet } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import Uppy from '@uppy/core'
 import Tus from '@uppy/tus'
-import { FilePicker, useUppy } from '@uppy/react-native'
+import FilePicker  from '@uppy/react-native'
+import  useUppy  from '@uppy/react/lib/useUppy'
 import FileList from './FileList'
 import PauseResumeButton from './PauseResumeButton'
 import ProgressBar from './ProgressBar'
@@ -102,25 +103,16 @@ export default function App () {
 
   return (
     <View
-      style={{
-        paddingTop: 100,
-        paddingLeft: 50,
-        paddingRight: 50,
-        flex: 1,
-      }}
+      style={styles.root}
     >
       <Text
-        style={{
-          fontSize: 25,
-          marginBottom: 20,
-          textAlign: 'center',
-        }}
+        style={styles.title}
       >
         Uppy in React Native
       </Text>
       <View style={{ alignItems: 'center' }}>
         <Image
-          style={{ width: 80, height: 78, marginBottom: 50 }}
+          style={styles.logo}
           source={require('./assets/uppy-logo.png')}
         />
       </View>
@@ -163,3 +155,18 @@ export default function App () {
     </View>
   )
 }
+
+const styles = StyleSheet.create({
+  root: {
+    paddingTop: 100,
+    paddingLeft: 50,
+    paddingRight: 50,
+    flex: 1,
+  },
+  title: {
+    fontSize: 25,
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  logo: { width: 80, height: 78, marginBottom: 50 }
+})
