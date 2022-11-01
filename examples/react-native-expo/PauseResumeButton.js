@@ -1,20 +1,20 @@
-import React from 'react' // eslint-disable-line no-unused-vars
+import React from 'react'
 import { StyleSheet, Text, TouchableHighlight } from 'react-native'
 
-export default function PauseResumeButton (props) {
-  if (!props.uploadStarted || props.uploadComplete) {
+export default function PauseResumeButton ({ uploadStarted, uploadComplete, isPaused, onPress }) {
+  if (!uploadStarted || uploadComplete) {
     return null
   }
 
   return (
     <TouchableHighlight
-      onPress={props.onPress}
+      onPress={onPress}
       style={styles.button}
     >
       <Text
         style={styles.text}
       >
-        {props.isPaused ? 'Resume' : 'Pause'}
+        {isPaused ? 'Resume' : 'Pause'}
       </Text>
     </TouchableHighlight>
   )

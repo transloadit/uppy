@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { Text, View, AsyncStorage, Image } from 'react-native'
+import { Text, View, Image } from 'react-native'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import Uppy from '@uppy/core'
 import Tus from '@uppy/tus'
 import { FilePicker, useUppy } from '@uppy/react-native'
@@ -57,7 +58,6 @@ export default function App () {
       })
       console.log('Upload complete:', result)
     })
-
     uppy.on('info-visible', () => {
       const { info } = uppy.getState()
       setState({
@@ -65,7 +65,6 @@ export default function App () {
       })
       console.log('uppy-info:', info)
     })
-
     uppy.on('info-hidden', () => {
       setState({
         info: null,

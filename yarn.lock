@@ -5150,6 +5150,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@react-native-async-storage/async-storage@npm:~1.15.0":
+  version: 1.15.17
+  resolution: "@react-native-async-storage/async-storage@npm:1.15.17"
+  dependencies:
+    merge-options: ^3.0.4
+  peerDependencies:
+    react-native: ^0.0.0-0 || 0.60 - 0.67 || 1000.0.0
+  checksum: 4c3dd30f6969bdcb2a5cafd82a8751e69f1c2c48f226c95f389b61246f19645229c178da35147310eee8b17f0f55d64ce3820101fc6f494cd6720cd69b9ad87f
+  languageName: node
+  linkType: hard
+
 "@react-native-community/cli-debugger-ui@npm:^5.0.1":
   version: 5.0.1
   resolution: "@react-native-community/cli-debugger-ui@npm:5.0.1"
@@ -21526,7 +21537,7 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   languageName: node
   linkType: hard
 
-"is-plain-obj@npm:^2.0.0":
+"is-plain-obj@npm:^2.0.0, is-plain-obj@npm:^2.1.0":
   version: 2.1.0
   resolution: "is-plain-obj@npm:2.1.0"
   checksum: cec9100678b0a9fe0248a81743041ed990c2d4c99f893d935545cfbc42876cbe86d207f3b895700c690ad2fa520e568c44afc1605044b535a7820c1d40e38daa
@@ -24694,6 +24705,15 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   version: 1.0.1
   resolution: "merge-descriptors@npm:1.0.1"
   checksum: 5abc259d2ae25bb06d19ce2b94a21632583c74e2a9109ee1ba7fd147aa7362b380d971e0251069f8b3eb7d48c21ac839e21fa177b335e82c76ec172e30c31a26
+  languageName: node
+  linkType: hard
+
+"merge-options@npm:^3.0.4":
+  version: 3.0.4
+  resolution: "merge-options@npm:3.0.4"
+  dependencies:
+    is-plain-obj: ^2.1.0
+  checksum: d86ddb3dd6e85d558dbf25dc944f3527b6bacb944db3fdda6e84a3f59c4e4b85231095f58b835758b9a57708342dee0f8de0dffa352974a48221487fe9f4584f
   languageName: node
   linkType: hard
 
@@ -30184,6 +30204,7 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   resolution: "react-native-expo@workspace:examples/react-native-expo"
   dependencies:
     "@babel/core": ^7.12.9
+    "@react-native-async-storage/async-storage": ~1.15.0
     "@uppy/core": "workspace:*"
     "@uppy/dashboard": "workspace:*"
     "@uppy/instagram": "workspace:*"

@@ -14,18 +14,13 @@ class TusFileReader {
   }
 
   slice (start, end, cb) {
-    end = Math.min(end, this.size)
     const options = {
       encoding: Expo.FileSystem.EncodingTypes.Base64,
-      length: end - start,
+      length: Math.min(end, this.size) - start,
       position: start,
     }
     Expo.FileSystem.readAsStringAsync(this.file.uri, options).then((data) => {
       cb(null, base64.toByteArray(data))
     }).catch(cb)
-  }
-
-  close () {
-
   }
 }
