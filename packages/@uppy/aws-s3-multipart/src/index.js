@@ -5,6 +5,7 @@ import emitSocketProgress from '@uppy/utils/lib/emitSocketProgress'
 import getSocketHost from '@uppy/utils/lib/getSocketHost'
 import { RateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
 
+import { createAbortError } from '@uppy/utils/lib/AbortController'
 import packageJson from '../package.json'
 import MultipartUploader from './MultipartUploader.js'
 
@@ -17,10 +18,52 @@ function assertServerError (res) {
   return res
 }
 
+class CompanionCommunicationQueue {
+  #cache = new WeakMap()
+
+  #createMultipartUpload
+
+  #fetchSignature
+
+  #uploadPartBytes
+
+  constructor (requests, options) {
+    this.#createMultipartUpload = requests.wrapPromiseFunction(options.createMultipartUpload, { priority:-1 })
+    this.#fetchSignature = requests.wrapPromiseFunction(options.signPart)
+    // Requests to Amazon server are not the highest priority because we want the upload to
+    // start as soon we got the signature to limit the risk of the signature expiring.
+    this.#uploadPartBytes = requests.wrapPromiseFunction(options.uploadPartBytes, { priority:Infinity })
+  }
+
+  async getUploadId (file, signal) {
+    if (this.#cache.has(file)) {
+      return this.#cache.get(file)
+    }
+
+    const promise = this.#createMultipartUpload(file, signal).then(async (result) => {
+      this.#cache.set(file, result)
+      return result
+    })
+    this.#cache.set(file, promise)
+    return promise
+  }
+
+  async uploadChunk (file, partNumber, body, signal) {
+    if (signal.aborted) { throw createAbortError('The operation was aborted', { cause: signal.reason }) }
+    const { uploadId, key } = await this.getUploadId(file, signal)
+    if (signal.aborted) { throw createAbortError('The operation was aborted', { cause: signal.reason }) }
+    const signature = await this.#fetchSignature(uploadId, key, partNumber, signal)
+    if (signal.aborted) { throw createAbortError('The operation was aborted', { cause: signal.reason }) }
+    return this.#uploadPartBytes(signature, body, signal)
+  }
+}
+
 export default class AwsS3Multipart extends BasePlugin {
   static VERSION = packageJson.version
 
   #queueRequestSocketToken
+
+  #companionCommunicationQueue
 
   #client
 
@@ -39,6 +82,86 @@ export default class AwsS3Multipart extends BasePlugin {
       prepareUploadParts: this.prepareUploadParts.bind(this),
       abortMultipartUpload: this.abortMultipartUpload.bind(this),
       completeMultipartUpload: this.completeMultipartUpload.bind(this),
+      signPart: async (uploadId, key, partNumber, signal) => {
+        if (signal.aborted) { throw createAbortError('The operation was aborted', { cause: signal.reason }) }
+        const filename = encodeURIComponent(key)
+        return this.#client.get(`s3/multipart/${uploadId}/${partNumber}?key=${filename}`)
+          .then(assertServerError)
+      },
+      uploadPartBytes ({ url }, body, signal) {
+        if (signal.aborted) { throw createAbortError('The operation was aborted', { cause: signal.reason }) }
+        let defer
+        let headers
+        const promise = new Promise((resolve, reject) => {
+          defer = { resolve, reject }
+        })
+
+        const xhr = new XMLHttpRequest()
+        xhr.open('PUT', url, true)
+        if (headers) {
+          Object.keys(headers).forEach((key) => {
+            xhr.setRequestHeader(key, headers[key])
+          })
+        }
+        xhr.responseType = 'text'
+
+        function cleanup () {
+          // eslint-disable-next-line no-use-before-define
+          signal.removeEventListener('abort', onabort)
+        }
+        function onabort () {
+          xhr.abort()
+        }
+        signal.addEventListener('abort', onabort)
+
+        xhr.upload.addEventListener('progress', (ev) => {
+          // if (!ev.lengthComputable) return
+
+          // this.#onPartProgress(index, ev.loaded, ev.total)
+        })
+
+        xhr.addEventListener('abort', () => {
+          cleanup()
+
+          defer.reject(createAbortError())
+        })
+
+        xhr.addEventListener('load', (ev) => {
+          cleanup()
+
+          if (ev.target.status < 200 || ev.target.status >= 300) {
+            const error = new Error('Non 2xx')
+            error.source = ev.target
+            defer.reject(error)
+            return
+          }
+
+          // this.#onPartProgress(index, body.size, body.size)
+
+          // NOTE This must be allowed by CORS.
+          const etag = ev.target.getResponseHeader('ETag')
+
+          if (etag === null) {
+            defer.reject(new Error('AwsS3/Multipart: Could not read the ETag header. This likely means CORS is not configured correctly on the S3 Bucket. See https://uppy.io/docs/aws-s3-multipart#S3-Bucket-Configuration for instructions.'))
+            return
+          }
+
+          // this.#onPartComplete(index, etag)
+          defer.resolve()
+        })
+
+        xhr.addEventListener('error', (ev) => {
+          cleanup()
+
+          const error = new Error('Unknown error')
+          error.source = ev.target
+          defer.reject(error)
+        })
+
+        xhr.send(body)
+
+        return promise
+      },
       companionHeaders: {},
     }
 
@@ -47,6 +170,7 @@ export default class AwsS3Multipart extends BasePlugin {
     this.upload = this.upload.bind(this)
 
     this.requests = new RateLimitedQueue(this.opts.limit)
+    this.#companionCommunicationQueue = new CompanionCommunicationQueue(this.requests, this.opts)
 
     this.uploaders = Object.create(null)
     this.uploaderEvents = Object.create(null)
@@ -90,7 +214,7 @@ export default class AwsS3Multipart extends BasePlugin {
 
     const metadata = {}
 
-    Object.keys(file.meta).forEach(key => {
+    Object.keys(file.meta || {}).forEach(key => {
       if (file.meta[key] != null) {
         metadata[key] = file.meta[key].toString()
       }
@@ -203,6 +327,8 @@ export default class AwsS3Multipart extends BasePlugin {
 
       const upload = new MultipartUploader(file.data, {
         // .bind to pass the file object to each handler.
+        companionComm: this.#companionCommunicationQueue,
+
         createMultipartUpload: this.opts.createMultipartUpload.bind(this, file),
         listParts: this.opts.listParts.bind(this, file),
         prepareUploadParts: this.opts.prepareUploadParts.bind(this, file),
@@ -223,6 +349,7 @@ export default class AwsS3Multipart extends BasePlugin {
 
       this.uploaders[file.id] = upload
       this.uploaderEvents[file.id] = new EventTracker(this.uppy)
+      return upload.isCompeted.then(resolve, reject)
 
       queuedRequest = this.requests.run(() => {
         if (!file.isPaused) {
