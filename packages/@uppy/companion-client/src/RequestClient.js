@@ -142,12 +142,13 @@ export default class RequestClient {
       })
   }
 
-  get (path, skipPostResponse) {
-    const method = 'get'
+  get (path, skipPostResponse, signal) {
+    const method = 'GET'
     return this.preflightAndHeaders(path)
       .then((headers) => fetchWithNetworkError(this.#getUrl(path), {
         method,
         headers,
+        signal,
         credentials: this.opts.companionCookiesRule || 'same-origin',
       }))
       .then(this.#getPostResponseFunc(skipPostResponse))
@@ -155,12 +156,13 @@ export default class RequestClient {
       .catch(this.#errorHandler(method, path))
   }
 
-  post (path, data, skipPostResponse) {
-    const method = 'post'
+  post (path, data, skipPostResponse, signal) {
+    const method = 'POST'
     return this.preflightAndHeaders(path)
       .then((headers) => fetchWithNetworkError(this.#getUrl(path), {
         method,
         headers,
+        signal,
         credentials: this.opts.companionCookiesRule || 'same-origin',
         body: JSON.stringify(data),
       }))
@@ -169,12 +171,13 @@ export default class RequestClient {
       .catch(this.#errorHandler(method, path))
   }
 
-  delete (path, data, skipPostResponse) {
-    const method = 'delete'
+  delete (path, data, skipPostResponse, signal) {
+    const method = 'DELETE'
     return this.preflightAndHeaders(path)
       .then((headers) => fetchWithNetworkError(`${this.hostname}/${path}`, {
         method,
         headers,
+        signal,
         credentials: this.opts.companionCookiesRule || 'same-origin',
         body: data ? JSON.stringify(data) : null,
       }))
