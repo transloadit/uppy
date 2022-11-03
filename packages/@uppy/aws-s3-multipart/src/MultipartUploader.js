@@ -3,12 +3,9 @@ import { AbortController } from '@uppy/utils/lib/AbortController'
 const MB = 1024 * 1024
 
 const defaultOptions = {
-  limit: 6,
-  retryDelays: [0, 1000, 3000, 5000],
   getChunkSize (file) {
     return Math.ceil(file.size / 10000)
   },
-  onStart () {},
   onProgress () {},
   onPartComplete () {},
   onSuccess () {},
@@ -29,8 +26,6 @@ function ensureInt (value) {
 
 class MultipartUploader {
   #abortController = new AbortController()
-
-  #isPaused = false
 
   #chunks
 
@@ -81,7 +76,7 @@ class MultipartUploader {
       }
     }
 
-    this.#chunkState = Array.from(this.#chunks, () => ({ uploaded:0 }))
+    this.#chunkState = Array.from(this.#chunks, () => ({ uploaded: 0 }))
   }
 
   #createUpload () {
@@ -119,7 +114,7 @@ class MultipartUploader {
 
   #abortUpload () {
     this.#abortController.abort()
-    this.options.companionComm.abortFileUpload(this.#file).catch(console.warn)
+    this.options.companionComm.abortFileUpload(this.#file).catch((err) => this.options.log(err))
   }
 
   #onError (err) {
@@ -131,7 +126,6 @@ class MultipartUploader {
   }
 
   start () {
-    this.#isPaused = false
     if (this.#uploadPromise) {
       if (!this.#abortController.signal.aborted) this.#abortController.abort(new Error('restarting upload'))
       this.#abortController = new AbortController()
@@ -145,8 +139,6 @@ class MultipartUploader {
     this.#abortController.abort()
     // Swap it out for a new controller, because this instance may be resumed later.
     this.#abortController = new AbortController()
-
-    this.#isPaused = true
   }
 
   abort (opts = undefined) {
