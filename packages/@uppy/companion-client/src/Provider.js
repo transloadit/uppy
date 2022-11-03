@@ -19,25 +19,23 @@ export default class Provider extends RequestClient {
     this.preAuthToken = null
   }
 
-  headers () {
-    return Promise.all([super.headers(), this.getAuthToken()])
-      .then(([headers, token]) => {
-        const authHeaders = {}
-        if (token) {
-          authHeaders['uppy-auth-token'] = token
-        }
+  async headers () {
+    const [headers, token] = await Promise.all([super.headers(), this.getAuthToken()])
+    const authHeaders = {}
+    if (token) {
+      authHeaders['uppy-auth-token'] = token
+    }
 
-        if (this.companionKeysParams) {
-          authHeaders['uppy-credentials-params'] = btoa(
-            JSON.stringify({ params: this.companionKeysParams }),
-          )
-        }
-        return { ...headers, ...authHeaders }
-      })
+    if (this.companionKeysParams) {
+      authHeaders['uppy-credentials-params'] = btoa(
+        JSON.stringify({ params: this.companionKeysParams }),
+      )
+    }
+    return { ...headers, ...authHeaders }
   }
 
   onReceiveResponse (response) {
-    response = super.onReceiveResponse(response) // eslint-disable-line no-param-reassign
+    super.onReceiveResponse(response)
     const plugin = this.uppy.getPlugin(this.pluginId)
     const oldAuthenticated = plugin.getPluginState().authenticated
     const authenticated = oldAuthenticated ? response.status !== 401 : response.status < 400
