@@ -77,14 +77,14 @@ class HTTPCommunicationQueue {
     throwIfAborted(signal)
     const parts = await Promise.all(chunks.map((chunk, i) => this.uploadChunk(file, i + 1, chunk, signal)))
     throwIfAborted(signal)
-    return this.#sendCompletionRequest(file, { key, uploadId, parts }, signal)
+    return this.#sendCompletionRequest(file, { key, uploadId, parts, signal })
   }
 
   async resumeUploadFile (file, chunks, signal) {
     throwIfAborted(signal)
     const { uploadId, key } = await this.getUploadId(file, signal)
     throwIfAborted(signal)
-    const alreadyUploadedParts = await this.#listParts(file, { uploadId, key }, signal)
+    const alreadyUploadedParts = await this.#listParts(file, { uploadId, key, signal })
     throwIfAborted(signal)
     const parts = await Promise.all(
       chunks
@@ -97,14 +97,14 @@ class HTTPCommunicationQueue {
         }),
     )
     throwIfAborted(signal)
-    return this.#sendCompletionRequest(file, { key, uploadId, parts }, signal)
+    return this.#sendCompletionRequest(file, { key, uploadId, parts, signal })
   }
 
   async uploadChunk (file, partNumber, body, signal) {
     throwIfAborted(signal)
     const { uploadId, key } = await this.getUploadId(file, signal)
     throwIfAborted(signal)
-    const signature = await this.#fetchSignature(uploadId, key, partNumber, signal)
+    const signature = await this.#fetchSignature(file, { uploadId, key, partNumber, body, signal })
     throwIfAborted(signal)
     return {
       PartNumber: partNumber,
@@ -134,10 +134,9 @@ export default class AwsS3Multipart extends BasePlugin {
       retryDelays: [0, 1000, 3000, 5000],
       createMultipartUpload: this.createMultipartUpload.bind(this),
       listParts: this.listParts.bind(this),
-      prepareUploadParts: this.prepareUploadParts.bind(this), // todo this in no longer in use. either implement or remove.
       abortMultipartUpload: this.abortMultipartUpload.bind(this),
       completeMultipartUpload: this.completeMultipartUpload.bind(this),
-      signPart: async (uploadId, key, partNumber, signal) => {
+      signPart: async (file, { uploadId, key, partNumber, signal }) => {
         throwIfAborted(signal)
         const filename = encodeURIComponent(key)
         return this.#client.get(`s3/multipart/${uploadId}/${partNumber}?key=${filename}`, { signal })
@@ -213,6 +212,10 @@ export default class AwsS3Multipart extends BasePlugin {
     }
 
     this.opts = { ...defaultOptions, ...opts }
+    if (opts?.prepareUploadParts != null) {
+      this.opts.signPart = (file, { uploadId, key, partNumber, body, signal }) => opts
+        .prepareUploadParts(null, { uploadId, key, parts: [{ number:partNumber, chunk: body }], signal })
+    }
 
     this.upload = this.upload.bind(this)
 
@@ -279,16 +282,6 @@ export default class AwsS3Multipart extends BasePlugin {
 
     const filename = encodeURIComponent(key)
     return this.#client.get(`s3/multipart/${uploadId}?key=${filename}`, { signal })
-      .then(assertServerError)
-  }
-
-  // todo this is no longer in use. either implement or remove all code, types and docs regarding this
-  prepareUploadParts (file, { key, uploadId, parts }, signal) {
-    this.assertHost('prepareUploadParts')
-
-    const filename = encodeURIComponent(key)
-    const partNumbers = parts.map((part) => part.number).join(',')
-    return this.#client.get(`s3/multipart/${uploadId}/batch?key=${filename}&partNumbers=${partNumbers}`, { signal })
       .then(assertServerError)
   }
 
