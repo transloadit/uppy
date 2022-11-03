@@ -101,6 +101,7 @@ export default class RequestClient {
     The preflight only happens once throughout the life-cycle of a certain
     Companion-client <-> Companion-server pair (allowedHeadersCache).
     Subsequent requests use the cached result of the preflight.
+    However if there is an error retrieving the allowed headers, we will try again next time
   */
   async preflight (path) {
     const allowedHeadersCached = allowedHeadersCache.get(this.hostname)
