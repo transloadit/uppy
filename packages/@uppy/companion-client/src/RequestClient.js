@@ -143,12 +143,6 @@ export default class RequestClient {
     }))
   }
 
-  get = async (path, skipPostResponse) => this.#request({ path, skipPostResponse })
-
-  post = async (path, data, skipPostResponse) => this.#request({ path, method: 'POST', data, skipPostResponse })
-
-  delete = async (path, data, skipPostResponse) => this.#request({ path, method: 'DELETE', data, skipPostResponse })
-
   async #request ({ path, method = 'GET', data, skipPostResponse }) {
     try {
       const headers = await this.preflightAndHeaders(path)
@@ -165,4 +159,10 @@ export default class RequestClient {
       throw new ErrorWithCause(`Could not ${method} ${this.#getUrl(path)}`, { cause: err })
     }
   }
+
+  async get (path, skipPostResponse) { return this.#request({ path, skipPostResponse }) }
+
+  async post (path, data, skipPostResponse) { return this.#request({ path, method: 'POST', data, skipPostResponse }) }
+
+  async delete (path, data, skipPostResponse) { return this.#request({ path, method: 'DELETE', data, skipPostResponse }) }
 }
