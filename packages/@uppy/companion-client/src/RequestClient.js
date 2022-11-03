@@ -96,11 +96,11 @@ export default class RequestClient {
     does not support those headers. In which case, the default preflight would lead to CORS.
     So to avoid those errors, we do preflight ourselves, to see what headers the Companion server
     we are communicating with allows. And based on that, companion-client knows what headers to
-    send and what headers to not send
+    send and what headers to not send.
 
-    the preflight only happens once throughout the life-cycle of a certain
+    The preflight only happens once throughout the life-cycle of a certain
     Companion-client <-> Companion-server pair (allowedHeadersCache).
-    Subsequent requests use the cached result of the preflight
+    Subsequent requests use the cached result of the preflight.
   */
   async preflight (path) {
     const allowedHeaders = allowedHeadersCache.get(this.hostname)
@@ -115,7 +115,9 @@ export default class RequestClient {
 
         this.uppy.log(`[CompanionClient] adding allowed preflight headers to companion cache: ${this.hostname} ${header}`)
 
-        return header.split(',').map((headerName) => headerName.trim().toLowerCase())
+        const allowedHeaders = header.split(',').map((headerName) => headerName.trim().toLowerCase())
+        allowedHeadersCache.set(this.hostname, allowedHeaders)
+        return allowedHeaders
       } catch (err) {
         this.uppy.log(`[CompanionClient] unable to make preflight request ${err}`, 'warning')
         return undefined
@@ -126,13 +128,13 @@ export default class RequestClient {
 
     const allowedHeadersNew = await promise
     const fallbackAllowedHeaders = ['accept', 'content-type', 'uppy-auth-token']
-    return allowedHeadersNew != null ? allowedHeadersNew : fallbackAllowedHeaders
+    return allowedHeadersNew ?? fallbackAllowedHeaders
   }
 
   async preflightAndHeaders (path) {
     const [allowedHeaders, headers] = await Promise.all([this.preflight(path), this.headers()])
     // filter to keep only allowed Headers
-    Object.fromEntries(Object.entries(headers).filter(([header]) => {
+    return Object.fromEntries(Object.entries(headers).filter(([header]) => {
       if (!allowedHeaders.includes(header.toLowerCase())) {
         this.uppy.log(`[CompanionClient] excluding disallowed header ${header}`)
         return false
