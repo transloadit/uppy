@@ -20,6 +20,8 @@ function chunks (list, size) {
 
 export default (props) => {
   const noFiles = props.totalFileCount === 0
+  const singleFile = props.totalFileCount === 1
+
   const dashboardFilesClass = classNames(
     'uppy-Dashboard-files',
     { 'uppy-Dashboard-files--noFiles': noFiles },
@@ -72,7 +74,7 @@ export default (props) => {
     // The `role="presentation` attribute ensures that the list items are properly
     // associated with the `VirtualList` element.
     // We use the first file ID as the key—this should not change across scroll rerenders
-    <div role="presentation" key={row[0]}>
+    <div class="uppy-Dashboard-filesInner" role="presentation" key={row[0]}>
       {row.map((fileID) => (
         <FileItem
           key={fileID}
@@ -87,6 +89,14 @@ export default (props) => {
       ))}
     </div>
   )
+
+  if (singleFile) {
+    return (
+      <div class={dashboardFilesClass}>
+        {renderRow(rows[0])}
+      </div>
+    )
+  }
 
   return (
     <VirtualList

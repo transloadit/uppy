@@ -727,6 +727,13 @@
   }
 }
 
+.uppy-Dashboard--singleFile .uppy-Dashboard-filesInner  {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
 .uppy-Dashboard-dropFilesHereHint {
   position: absolute;
   top: 7px;

@@ -20,6 +20,8 @@ const HEIGHT_MD = 400
 
 export default function Dashboard (props) {
   const noFiles = props.totalFileCount === 0
+  const singleFile = props.totalFileCount === 1
+
   const isSizeMD = props.containerWidth > WIDTH_MD
 
   const dashboardClassName = classNames({
@@ -35,6 +37,7 @@ export default function Dashboard (props) {
     'uppy-size--height-md': props.containerHeight > HEIGHT_MD,
     'uppy-Dashboard--isAddFilesPanelVisible': props.showAddFilesPanel,
     'uppy-Dashboard--isInnerWrapVisible': props.areInsidesReadyToBeVisible,
+    'uppy-Dashboard--singleFile': singleFile,
   })
 
   // Important: keep these in sync with the percent width values in `src/components/FileItem/index.scss`.
