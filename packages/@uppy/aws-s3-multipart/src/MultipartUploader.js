@@ -141,7 +141,7 @@ class MultipartUploader {
     this.#abortController = new AbortController()
   }
 
-  abort (opts) {
+  abort (opts = undefined) {
     if (opts?.really) this.#abortUpload()
     else this.pause()
   }

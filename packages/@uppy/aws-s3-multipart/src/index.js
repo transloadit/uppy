@@ -63,17 +63,18 @@ class HTTPCommunicationQueue {
   }
 
   async abortFileUpload (file) {
-    const result = await this.#cache.get(file)
+    const result = this.#cache.get(file)
     if (result != null) {
       // If the createMultipartUpload request never was made, we don't
       // need to send the abortMultipartUpload request.
-      await this.#abortMultipartUpload(file, result)
+      await this.#abortMultipartUpload(file, await result)
     }
   }
 
   async uploadFile (file, chunks, signal) {
     throwIfAborted(signal)
     const { uploadId, key } = await this.getUploadId(file, signal)
+    throwIfAborted(signal)
     const parts = await Promise.all(chunks.map((chunk, i) => this.uploadChunk(file, i + 1, chunk, signal)))
     throwIfAborted(signal)
     return this.#sendCompletionRequest(file, { key, uploadId, parts }, signal)
@@ -84,6 +85,7 @@ class HTTPCommunicationQueue {
     const { uploadId, key } = await this.getUploadId(file, signal)
     throwIfAborted(signal)
     const alreadyUploadedParts = await this.#listParts(file, { uploadId, key }, signal)
+    throwIfAborted(signal)
     const parts = await Promise.all(
       chunks
         .filter((chunk, i) => alreadyUploadedParts.find(({ PartNumber }) => PartNumber === i + 1) === undefined)
@@ -369,7 +371,7 @@ export default class AwsS3Multipart extends BasePlugin {
         // .bind to pass the file object to each handler.
         companionComm: this.#companionCommunicationQueue,
 
-        log: this.uppy.log.bind(this.uppy),
+        log: (...args) => this.uppy.log(...args),
         getChunkSize: this.opts.getChunkSize ? this.opts.getChunkSize.bind(this) : null,
 
         onProgress,
