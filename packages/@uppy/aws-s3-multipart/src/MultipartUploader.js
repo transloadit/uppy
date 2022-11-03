@@ -35,6 +35,8 @@ class MultipartUploader {
 
   #uploadPromise
 
+  #onError
+
   #onSuccess
 
   #onReject = (err) => this.#onError(err)
@@ -49,6 +51,7 @@ class MultipartUploader {
 
     this.#file = file
     this.#onSuccess = this.options.onSuccess
+    this.#onError = this.options.onError
 
     this.#initChunks()
   }
@@ -85,7 +88,7 @@ class MultipartUploader {
       .then(this.#onSuccess, this.#onReject)
   }
 
-  async #resumeUpload () {
+  #resumeUpload () {
     this.#uploadPromise = this
       .options.companionComm.resumeUploadFile(this.#file, this.#chunks, this.#abortController.signal)
       .then(this.#onSuccess, this.#onReject)
@@ -117,14 +120,6 @@ class MultipartUploader {
     this.options.companionComm.abortFileUpload(this.#file).catch((err) => this.options.log(err))
   }
 
-  #onError (err) {
-    if (err && err.name === 'AbortError') {
-      return
-    }
-
-    this.options.onError(err)
-  }
-
   start () {
     if (this.#uploadPromise) {
       if (!this.#abortController.signal.aborted) this.#abortController.abort(new Error('restarting upload'))
@@ -136,6 +131,12 @@ class MultipartUploader {
   }
 
   pause () {
+    const onError = this.#onError
+    // We expect an AbortError to be thrown, which can be ignored.
+    this.#onError = (err) => (err?.name === 'AbortError' ? null : onError(err))
+    // Using setTimeout here to give time to the promises to reject.
+    setTimeout(() => { this.#onError = onError })
+
     this.#abortController.abort()
     // Swap it out for a new controller, because this instance may be resumed later.
     this.#abortController = new AbortController()
