@@ -103,8 +103,8 @@ export default class RequestClient {
     Subsequent requests use the cached result of the preflight.
   */
   async preflight (path) {
-    const allowedHeaders = allowedHeadersCache.get(this.hostname)
-    if (allowedHeaders != null) return allowedHeaders
+    const allowedHeadersCached = allowedHeadersCache.get(this.hostname)
+    if (allowedHeadersCached != null) return allowedHeadersCached
 
     const promise = (async () => {
       try {
@@ -141,8 +141,6 @@ export default class RequestClient {
       }
       return true
     }))
-
-    return headers
   }
 
   get = async (path, skipPostResponse) => this.#request({ path, skipPostResponse })
