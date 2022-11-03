@@ -115,9 +115,7 @@ export default class RequestClient {
 
         this.uppy.log(`[CompanionClient] adding allowed preflight headers to companion cache: ${this.hostname} ${header}`)
 
-        const allowedHeaders = header.split(',').map((headerName) => headerName.trim().toLowerCase())
-        allowedHeadersCache.set(this.hostname, allowedHeaders)
-        return allowedHeaders
+        return header.split(',').map((headerName) => headerName.trim().toLowerCase())
       } catch (err) {
         this.uppy.log(`[CompanionClient] unable to make preflight request ${err}`, 'warning')
         return undefined
@@ -125,8 +123,11 @@ export default class RequestClient {
     })()
 
     allowedHeadersCache.set(this.hostname, promise)
-
     const allowedHeadersNew = await promise
+    // If the user gets a network error or similar, we should try preflight again next time,
+    // or else we might get incorrect behaviour
+    allowedHeadersCache.set(this.hostname, allowedHeadersNew)
+
     const fallbackAllowedHeaders = ['accept', 'content-type', 'uppy-auth-token']
     return allowedHeadersNew ?? fallbackAllowedHeaders
   }
