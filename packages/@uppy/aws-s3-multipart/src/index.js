@@ -402,7 +402,7 @@ export default class AwsS3Multipart extends BasePlugin {
         if (isPaused) {
           upload.pause()
         } else {
-          upload.resume()
+          upload.start()
         }
       })
 
