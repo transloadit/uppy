@@ -86,12 +86,18 @@ class HTTPCommunicationQueue {
     throwIfAborted(signal)
     const alreadyUploadedParts = await this.#listParts(file, { uploadId, key }, signal)
     throwIfAborted(signal)
-    const parts = await Promise.all(
+    const notYetUploadedParts = await Promise.all(
       chunks
         .filter((chunk, i) => alreadyUploadedParts.find(({ PartNumber }) => PartNumber === i + 1) === undefined)
         .map((chunk, i) => this.uploadChunk(file, i + 1, chunk, signal)),
     )
     throwIfAborted(signal)
+    // Parts MUST be ordered in the completion request, concatenating both arrays would fail.
+    const parts = chunks.map((_, i) => ({
+      PartNumber: i + 1,
+      ETag: (notYetUploadedParts.find(({ PartNumber }) => PartNumber === i + 1)
+          ?? alreadyUploadedParts.find(({ PartNumber }) => PartNumber === i + 1)).ETag,
+    }))
     return this.#sendCompletionRequest(file, { key, uploadId, parts }, signal)
   }
 
