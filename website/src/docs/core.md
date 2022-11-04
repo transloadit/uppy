@@ -595,9 +595,9 @@ uppy.setState({
 State in Uppy is considered to be immutable. When updating values, make sure not mutate them, but instead create copies. See [Redux docs](http://redux.js.org/docs/recipes/UsingObjectSpreadOperator.html) for more info on this. Here is an example that updates progress for a particular file in state:
 
 ```js
-// We use Object.assign({}, obj) to create a copy of `obj`.
+// We use the spread operator to create a copy of the files object.
 const updatedFiles = { ...uppy.getState().files }
-// We use Object.assign({}, obj, update) to create an altered copy of `obj`.
+// We use the spread operator to create a copy of the files object.
 const updatedFile = {
   ...updatedFiles[fileID],
   progress: {
