@@ -514,7 +514,7 @@ Get an array of all [File Objects][] that have been added to Uppy.
 ```js
 import prettierBytes from '@transloadit/prettier-bytes'
 
-const items = uppy.getFiles().map(() => `<li>${file.name} - ${prettierBytes(file.size)}</li>`).join('')
+const items = uppy.getFiles().map((file) => `<li>${file.name} - ${prettierBytes(file.size)}</li>`).join('')
 document.querySelector('.file-list').innerHTML = `<ul>${items}</ul>`
 ```
 
