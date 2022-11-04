@@ -112,13 +112,18 @@ export default class RequestClient {
         const response = await fetch(this.#getUrl(path), { method: 'OPTIONS' })
 
         const header = response.headers.get('access-control-allow-headers')
-        if (header == null) return undefined
+        if (header == null) return void allowedHeadersCache.set(this.hostname, fallbackAllowedHeaders)
 
         this.uppy.log(`[CompanionClient] adding allowed preflight headers to companion cache: ${this.hostname} ${header}`)
 
-        return header.split(',').map((headerName) => headerName.trim().toLowerCase())
+        const allowedHeaders = header.split(',').map((headerName) => headerName.trim().toLowerCase())
+        allowedHeadersCache.set(this.hostname, allowedHeaders)
+        return allowedHeaders
       } catch (err) {
         this.uppy.log(`[CompanionClient] unable to make preflight request ${err}`, 'warning')
+        // If the user gets a network error or similar, we should try preflight
+        // again next time, or else we might get incorrect behaviour.
+        allowedHeadersCache.delete(this.hostname)
         return undefined
       }
     })()
