@@ -15,6 +15,11 @@
   [data-uppy-theme="dark"] & {
     color: $gray-200;
   }
+
+  .uppy-size--md.uppy-Dashboard--singleFile & {
+    font-size: 14px;
+    line-height: 1.4;
+  }
 }
 
 .uppy-Dashboard-Item-fileName {
