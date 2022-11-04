@@ -64,7 +64,7 @@ const uppy = new Uppy()
 ## Installation
 
 ```bash
-$ npm install @uppy/core @uppy/dashboard @uppy/tus
+npm install @uppy/core @uppy/dashboard @uppy/tus
 ```
 
 Add CSS [uppy.min.css](https://releases.transloadit.com/uppy/v3.2.2/uppy.min.css), either to your HTML page’s `<head>` or include in JS, if your bundler of choice supports it.
