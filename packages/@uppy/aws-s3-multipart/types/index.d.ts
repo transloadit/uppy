@@ -32,7 +32,6 @@ export interface AwsS3MultipartOptions extends PluginOptions {
       file: UppyFile,
       opts: { uploadId: string; key: string; parts: AwsS3Part[] }
     ) => MaybePromise<{ location?: string }>
-    timeout?: number
     limit?: number
     retryDelays?: number[] | null
 }
