@@ -622,7 +622,12 @@ Update the state for a single file. This is mostly useful for plugins that may w
 `fileID` is the string file ID. `state` is an object that will be merged into the file’s state object.
 
 ```js
-uppy.getPlugin('Url').addFile('path/to/remote-file.jpg')
+uppy.getFiles().forEach(file => {
+  // Mark all files as uploaded and complete.
+  uppy.setFileState(file.id, {  
+    progress: { uploadComplete: true, uploadStarted: true } 
+  })
+})
 ```
 
 ### `uppy.setMeta(data)`
