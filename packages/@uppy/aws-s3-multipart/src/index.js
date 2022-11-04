@@ -37,7 +37,7 @@ class HTTPCommunicationQueue {
 
   #sendCompletionRequest
 
-  constructor (requests, options) {
+  constructor (requests, options, retryDelaysIterator) {
     this.#abortMultipartUpload = requests.wrapPromiseFunction(options.abortMultipartUpload)
     this.#createMultipartUpload = requests.wrapPromiseFunction(options.createMultipartUpload, { priority:-1 })
     this.#fetchSignature = requests.wrapPromiseFunction(options.signPart)
@@ -45,7 +45,39 @@ class HTTPCommunicationQueue {
     this.#sendCompletionRequest = requests.wrapPromiseFunction(options.completeMultipartUpload)
     // Requests to Amazon server are the highest priority because we want the upload to
     // start as soon we got the signature to limit the risk of the signature expiring.
-    this.#uploadPartBytes = requests.wrapPromiseFunction(options.uploadPartBytes, { priority:Infinity })
+    const uploadPartBytes = requests.wrapPromiseFunction(options.uploadPartBytes, { priority:Infinity })
+    this.#uploadPartBytes = async (...args) => {
+      for (;;) {
+        try {
+          return await uploadPartBytes(...args)
+        } catch (err) {
+          const status = err?.source?.status
+          if (status == null) {
+            throw err
+          } else if (status === 429) {
+            // HTTP 429 Too Many Requests => to avoid the whole download to fail, pause all requests.
+            if (!requests.isPaused) {
+              const next = retryDelaysIterator?.next()
+              if (next == null || next.done) {
+                throw err
+              }
+              requests.rateLimit(next.value)
+            }
+          } else if (status > 400 && status < 500 && status !== 409) {
+            // HTTP 4xx, the server won't send anything, it's doesn't make sense to retry
+            throw err
+          } else if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+            // The navigator is offline, let's wait for it to come back online.
+            if (!requests.isPaused) {
+              requests.pause()
+              window.addEventListener('online', () => {
+                requests.resume()
+              }, { once: true })
+            }
+          }
+        }
+      }
+    }
   }
 
   async getUploadId (file, signal) {
@@ -142,72 +174,7 @@ export default class AwsS3Multipart extends BasePlugin {
         return this.#client.get(`s3/multipart/${uploadId}/${partNumber}?key=${filename}`, { signal })
           .then(assertServerError)
       },
-      async uploadPartBytes ({ url, headers }, body, signal) {
-        throwIfAborted(signal)
-
-        return new Promise((resolve, reject) => {
-          const xhr = new XMLHttpRequest()
-          xhr.open('PUT', url, true)
-          if (headers) {
-            Object.keys(headers).forEach((key) => {
-              xhr.setRequestHeader(key, headers[key])
-            })
-          }
-          xhr.responseType = 'text'
-
-          function onabort () {
-            xhr.abort()
-          }
-          function cleanup () {
-            signal.removeEventListener('abort', onabort)
-          }
-          signal.addEventListener('abort', onabort)
-
-          xhr.upload.addEventListener('progress', body.onProgress)
-
-          xhr.addEventListener('abort', () => {
-            cleanup()
-
-            reject(createAbortError())
-          })
-
-          xhr.addEventListener('load', (ev) => {
-            cleanup()
-
-            if (ev.target.status < 200 || ev.target.status >= 300) {
-              const error = new Error('Non 2xx')
-              error.source = ev.target
-              reject(error)
-              return
-            }
-
-            body.onProgress?.(body.size)
-
-            // NOTE This must be allowed by CORS.
-            const etag = ev.target.getResponseHeader('ETag')
-
-            if (etag === null) {
-              reject(new Error('AwsS3/Multipart: Could not read the ETag header. This likely means CORS is not configured correctly on the S3 Bucket. See https://uppy.io/docs/aws-s3-multipart#S3-Bucket-Configuration for instructions.'))
-              return
-            }
-
-            body.onPartComplete?.(etag)
-            resolve({
-              ETag: etag,
-            })
-          })
-
-          xhr.addEventListener('error', (ev) => {
-            cleanup()
-
-            const error = new Error('Unknown error')
-            error.source = ev.target
-            reject(error)
-          })
-
-          xhr.send(body)
-        })
-      },
+      uploadPartBytes: AwsS3Multipart.uploadPartBytes,
       companionHeaders: {},
     }
 
@@ -219,8 +186,13 @@ export default class AwsS3Multipart extends BasePlugin {
 
     this.upload = this.upload.bind(this)
 
-    this.requests = new RateLimitedQueue(this.opts.limit)
-    this.#companionCommunicationQueue = new HTTPCommunicationQueue(this.requests, this.opts)
+    /**
+     * Simultaneous upload limiting is shared across all uploads with this plugin.
+     *
+     * @type {RateLimitedQueue}
+     */
+    this.requests = this.opts.rateLimitedQueue ?? new RateLimitedQueue(this.opts.limit)
+    this.#companionCommunicationQueue = new HTTPCommunicationQueue(this.requests, this.opts, this.opts.retryDelays?.values())
 
     this.uploaders = Object.create(null)
     this.uploaderEvents = Object.create(null)
@@ -301,6 +273,73 @@ export default class AwsS3Multipart extends BasePlugin {
     const uploadIdEnc = encodeURIComponent(uploadId)
     return this.#client.delete(`s3/multipart/${uploadIdEnc}?key=${filename}`, undefined, { signal })
       .then(assertServerError)
+  }
+
+  static async uploadPartBytes ({ url, headers }, body, signal) {
+    throwIfAborted(signal)
+
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest()
+      xhr.open('PUT', url, true)
+      if (headers) {
+        Object.keys(headers).forEach((key) => {
+          xhr.setRequestHeader(key, headers[key])
+        })
+      }
+      xhr.responseType = 'text'
+
+      function onabort () {
+        xhr.abort()
+      }
+      function cleanup () {
+        signal.removeEventListener('abort', onabort)
+      }
+      signal.addEventListener('abort', onabort)
+
+      xhr.upload.addEventListener('progress', body.onProgress)
+
+      xhr.addEventListener('abort', () => {
+        cleanup()
+
+        reject(createAbortError())
+      })
+
+      xhr.addEventListener('load', (ev) => {
+        cleanup()
+
+        if (ev.target.status < 200 || ev.target.status >= 300) {
+          const error = new Error('Non 2xx')
+          error.source = ev.target
+          reject(error)
+          return
+        }
+
+        body.onProgress?.(body.size)
+
+        // NOTE This must be allowed by CORS.
+        const etag = ev.target.getResponseHeader('ETag')
+
+        if (etag === null) {
+          reject(new Error('AwsS3/Multipart: Could not read the ETag header. This likely means CORS is not configured correctly on the S3 Bucket. See https://uppy.io/docs/aws-s3-multipart#S3-Bucket-Configuration for instructions.'))
+          return
+        }
+
+        body.onPartComplete?.(etag)
+        resolve({
+          ETag: etag,
+        })
+      })
+
+      xhr.addEventListener('error', (ev) => {
+        cleanup()
+
+        const error = new Error('Unknown error')
+        error.source = ev.target
+        reject(error)
+      })
+
+      xhr.send(body)
+    })
   }
 
   uploadFile (file) {
