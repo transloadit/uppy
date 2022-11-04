@@ -624,8 +624,8 @@ Update the state for a single file. This is mostly useful for plugins that may w
 ```js
 uppy.getFiles().forEach(file => {
   // Mark all files as uploaded and complete.
-  uppy.setFileState(file.id, {  
-    progress: { uploadComplete: true, uploadStarted: true } 
+  uppy.setFileState(file.id, {
+    progress: { uploadComplete: true, uploadStarted: true },
   })
 })
 ```
