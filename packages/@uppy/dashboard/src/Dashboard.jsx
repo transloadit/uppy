@@ -21,8 +21,6 @@ const memoize = memoizeOne.default || memoizeOne
 const TAB_KEY = 9
 const ESC_KEY = 27
 
-const LARGE_AMOUNT_OF_FILES = 8
-
 function createPromise () {
   const o = {}
   o.promise = new Promise((resolve, reject) => {
@@ -63,7 +61,7 @@ export default class Dashboard extends UIPlugin {
       inline: false,
       width: 750,
       height: 550,
-      thumbnailWidth: 500,
+      thumbnailWidth: 280,
       thumbnailType: 'image/jpeg',
       waitForThumbnailsBeforeUpload: false,
       defaultPickerIcon,
@@ -661,7 +659,6 @@ export default class Dashboard extends UIPlugin {
 
   handleRequestThumbnail = (file) => {
     if (!this.opts.waitForThumbnailsBeforeUpload) {
-      this.requestSmallerThumbnailsForLargeAmountOfFiles()
       this.uppy.emit('thumbnail:request', file)
     }
   }
@@ -708,24 +705,21 @@ export default class Dashboard extends UIPlugin {
     this.uppy.emit('restore-canceled')
   }
 
-  requestSmallerThumbnailsForLargeAmountOfFiles = () => {
-    console.log('_____FOR THUMBNAIL:')
-    console.log(this.uppy.getFiles().length)
-    // const shouldRequestLargeThumbnail = files.length === 1 && this.uppy.getFiles().length === 0
-    const shouldRequestSmallerThumbnails = (this.uppy.getFiles().length) >= LARGE_AMOUNT_OF_FILES
-    console.log('shouldRequestSmallerThumbnails', shouldRequestSmallerThumbnails)
+  #generateLargeThumbnailIfSingleFile = () => {
+    if (this.opts.disableThumbnailGenerator) {
+      return
+    }
 
-    if (shouldRequestSmallerThumbnails) {
-      console.log('Back to small THUMBNAIL')
-      this.uppy.getPlugin(`${this.id}:ThumbnailGenerator`)?.setOptions({
-        thumbnailWidth: 280,
+    const LARGE_THUMBNAIL = 600
+    const files = this.uppy.getFiles()
+
+    if (files.length === 1) {
+      const thumbnailGenerator = this.uppy.getPlugin(`${this.id}:ThumbnailGenerator`)
+      thumbnailGenerator?.setOptions({ thumbnailWidth: LARGE_THUMBNAIL })
+      const fileForThumbnail = { ...files[0], preview: undefined }
+      thumbnailGenerator.requestThumbnail(fileForThumbnail).then(() => {
+        thumbnailGenerator?.setOptions({ thumbnailWidth: this.opts.thumbnailWidth })
       })
-      this.smallThumbnailMode = true
-    } else if (this.smallThumbnailMode) {
-      this.uppy.getPlugin(`${this.id}:ThumbnailGenerator`)?.setOptions({
-        thumbnailWidth: this.opts.thumbnailWidth,
-      })
-      this.smallThumbnailMode = false
     }
   }
 
@@ -756,8 +750,8 @@ export default class Dashboard extends UIPlugin {
     this.uppy.on('file-editor:complete', this.hideAllPanels)
     this.uppy.on('complete', this.handleComplete)
 
-    this.uppy.on('files-added')
-    this.uppy.on('file-removed')
+    this.uppy.on('files-added', this.#generateLargeThumbnailIfSingleFile)
+    this.uppy.on('file-removed', this.#generateLargeThumbnailIfSingleFile)
 
     // ___Why fire on capture?
     //    Because this.ifFocusedOnUppyRecently needs to change before onUpdate() fires.
