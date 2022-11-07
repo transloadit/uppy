@@ -46,6 +46,7 @@ describe('AwsS3Multipart', () => {
     beforeEach(() => {
       core = new Core()
       core.use(AwsS3Multipart, {
+        limit: 0,
         createMultipartUpload: jest.fn(() => {
           return {
             uploadId: '6aeb1980f3fc7ce0b5454d25b71992',
