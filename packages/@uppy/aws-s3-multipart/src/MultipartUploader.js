@@ -71,6 +71,8 @@ class MultipartUploader {
     // Upload zero-sized files in one zero-sized chunk
     if (this.#data.size === 0) {
       this.#chunks = [this.#data]
+      this.#data.onProgress = this.#onPartProgress(0)
+      this.#data.onComplete = this.#onPartComplete(0)
     } else {
       const arraySize = Math.ceil(fileSize / chunkSize)
       this.#chunks = Array(arraySize)
@@ -84,7 +86,7 @@ class MultipartUploader {
       }
     }
 
-    this.#chunkState = Array.from(this.#chunks, () => ({ uploaded: 0 }))
+    this.#chunkState = this.#chunks.map(() => ({ uploaded: 0 }))
   }
 
   #createUpload () {

@@ -183,7 +183,7 @@ describe('AwsS3Multipart', () => {
       ])
     })
 
-    it.skip('Keeps chunks marked as busy through retries until they complete', async () => {
+    it('Keeps chunks marked as busy through retries until they complete', async () => {
       const scope = nock(
         'https://bucket.s3.us-east-2.amazonaws.com',
       ).defaultReplyHeaders({
@@ -214,6 +214,7 @@ describe('AwsS3Multipart', () => {
       let busySpy
       let doneSpy
       awsS3Multipart.setOptions({
+        retryDelays: [10],
         createMultipartUpload: jest.fn((file) => {
           const multipartUploader = awsS3Multipart.uploaders[file.id]
           const testChunkState = multipartUploader.chunkState[6]
@@ -255,7 +256,7 @@ describe('AwsS3Multipart', () => {
         }
       }
 
-      expect(awsS3Multipart.opts.prepareUploadParts.mock.calls.length).toEqual(3)
+      expect(awsS3Multipart.opts.prepareUploadParts.mock.calls.length).toEqual(10)
     })
   })
 
@@ -309,7 +310,7 @@ describe('AwsS3Multipart', () => {
     it('calls `upload-error` when uploadPartBytes fails after all retries', async () => {
       const core = new Core()
         .use(AwsS3Multipart, {
-          retryDelays: [100],
+          retryDelays: [10],
           createMultipartUpload,
           completeMultipartUpload: jest.fn(async () => ({ location: 'test' })),
           abortMultipartUpload: jest.fn(),

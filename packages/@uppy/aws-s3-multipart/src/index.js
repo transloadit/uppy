@@ -37,15 +37,16 @@ class HTTPCommunicationQueue {
 
   #uploadPartBytes
 
+  #rawUploadPartBytes
+
   #retryDelayIterator
 
   #requests
 
   #sendCompletionRequest
 
-  constructor (requests, options, retryDelaysIterator) {
+  constructor (requests, options) {
     this.#requests = requests
-    this.#retryDelayIterator = retryDelaysIterator
     this.setOptions(options)
   }
 
@@ -67,11 +68,20 @@ class HTTPCommunicationQueue {
     if ('completeMultipartUpload' in options) {
       this.#sendCompletionRequest = requests.wrapPromiseFunction(options.completeMultipartUpload)
     }
-    // Requests to Amazon server are the highest priority because we want the upload to
-    // start as soon we got the signature to limit the risk of the signature expiring.
-    if ('uploadPartBytes' in options) {
+
+    const isMutatingRetryDelay = 'retryDelays' in options
+    if (isMutatingRetryDelay) {
+      this.#retryDelayIterator = options.retryDelays?.values()
+    }
+    const isMutatingUploadPartBytes = 'uploadPartBytes' in options
+    if (isMutatingUploadPartBytes) {
+      this.#rawUploadPartBytes = options.uploadPartBytes
+    }
+    if (isMutatingUploadPartBytes || isMutatingRetryDelay) {
       const retryDelaysIterator = this.#retryDelayIterator
-      const uploadPartBytes = requests.wrapPromiseFunction(options.uploadPartBytes, { priority:Infinity })
+      // Requests to Amazon server are the highest priority because we want the upload to
+      // start as soon we got the signature to limit the risk of the signature expiring.
+      const uploadPartBytes = requests.wrapPromiseFunction(this.#rawUploadPartBytes, { priority:Infinity })
       this.#uploadPartBytes = async (...args) => {
         for (;;) {
           try {
@@ -226,7 +236,7 @@ export default class AwsS3Multipart extends BasePlugin {
      * @type {RateLimitedQueue}
      */
     this.requests = this.opts.rateLimitedQueue ?? new RateLimitedQueue(this.opts.limit)
-    this.#companionCommunicationQueue = new HTTPCommunicationQueue(this.requests, this.opts, this.opts.retryDelays?.values())
+    this.#companionCommunicationQueue = new HTTPCommunicationQueue(this.requests, this.opts)
 
     this.uploaders = Object.create(null)
     this.uploaderEvents = Object.create(null)
@@ -384,7 +394,7 @@ export default class AwsS3Multipart extends BasePlugin {
           return
         }
 
-        body.onPartComplete?.(etag)
+        body.onComplete?.(etag)
         resolve({
           ETag: etag,
         })
