@@ -24,6 +24,8 @@ function ensureInt (value) {
   throw new TypeError('Expected a number')
 }
 
+const pausingUploadReason = Symbol('pausing upload, not an actual error')
+
 class MultipartUploader {
   #abortController = new AbortController()
 
@@ -39,7 +41,7 @@ class MultipartUploader {
 
   #onSuccess
 
-  #onReject = (err) => this.#onError(err)
+  #onReject = (err) => (err?.cause === pausingUploadReason ? null : this.#onError(err))
 
   constructor (file, options) {
     this.options = {
@@ -122,7 +124,7 @@ class MultipartUploader {
 
   start () {
     if (this.#uploadPromise) {
-      if (!this.#abortController.signal.aborted) this.#abortController.abort(new Error('restarting upload'))
+      if (!this.#abortController.signal.aborted) this.#abortController.abort(pausingUploadReason)
       this.#abortController = new AbortController()
       this.#resumeUpload()
     } else {
@@ -137,7 +139,7 @@ class MultipartUploader {
     // Using setTimeout here to give time to the promises to reject.
     setTimeout(() => { this.#onError = onError })
 
-    this.#abortController.abort()
+    this.#abortController.abort(pausingUploadReason)
     // Swap it out for a new controller, because this instance may be resumed later.
     this.#abortController = new AbortController()
   }
