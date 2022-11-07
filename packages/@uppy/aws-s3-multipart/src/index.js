@@ -273,6 +273,10 @@ export default class AwsS3Multipart extends BasePlugin {
     this.assertHost('signPart')
     throwIfAborted(signal)
 
+    if (uploadId == null || key == null || partNumber == null) {
+      throw new Error('Cannot sign without a key, an uploadId, and a partNumber')
+    }
+
     const filename = encodeURIComponent(key)
     return this.#client.get(`s3/multipart/${uploadId}/${partNumber}?key=${filename}`, { signal })
       .then(assertServerError)
@@ -289,6 +293,10 @@ export default class AwsS3Multipart extends BasePlugin {
 
   static async uploadPartBytes ({ url, headers }, body, signal) {
     throwIfAborted(signal)
+
+    if (url == null) {
+      throw new Error('Cannot upload to an undefined URL')
+    }
 
     return new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest()
@@ -477,6 +485,10 @@ export default class AwsS3Multipart extends BasePlugin {
     if (file.tus) {
       // Install file-specific upload overrides.
       Object.assign(opts, file.tus)
+    }
+
+    if (file.remove.url == null) {
+      throw new Error('Cannot connect to an undefined URL')
     }
 
     const res = await client.post(file.remote.url, {
