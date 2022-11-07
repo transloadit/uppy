@@ -110,6 +110,8 @@ class MultipartUploader {
   }
 
   #onPartComplete = (index) => (etag) => {
+    // This avoids the net::ERR_OUT_OF_MEMORY in Chromium Browsers.
+    this.#chunks[index] = null
     this.#chunkState[index].etag = etag
     this.#chunkState[index].done = true
 
