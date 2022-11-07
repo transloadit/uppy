@@ -107,12 +107,17 @@ export default class RequestClient {
     const allowedHeadersCached = allowedHeadersCache.get(this.hostname)
     if (allowedHeadersCached != null) return allowedHeadersCached
 
+    const fallbackAllowedHeaders = ['accept', 'content-type', 'uppy-auth-token']
+
     const promise = (async () => {
       try {
         const response = await fetch(this.#getUrl(path), { method: 'OPTIONS' })
 
         const header = response.headers.get('access-control-allow-headers')
-        if (header == null) return void allowedHeadersCache.set(this.hostname, fallbackAllowedHeaders)
+        if (header == null) {
+          allowedHeadersCache.set(this.hostname, fallbackAllowedHeaders)
+          return undefined
+        }
 
         this.uppy.log(`[CompanionClient] adding allowed preflight headers to companion cache: ${this.hostname} ${header}`)
 
@@ -130,11 +135,6 @@ export default class RequestClient {
 
     allowedHeadersCache.set(this.hostname, promise)
     const allowedHeadersNew = await promise
-    // If the user gets a network error or similar, we should try preflight again next time,
-    // or else we might get incorrect behaviour
-    allowedHeadersCache.set(this.hostname, allowedHeadersNew)
-
-    const fallbackAllowedHeaders = ['accept', 'content-type', 'uppy-auth-token']
     return allowedHeadersNew ?? fallbackAllowedHeaders
   }
 
