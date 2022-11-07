@@ -33,6 +33,8 @@ class MultipartUploader {
 
   #chunkState
 
+  #data
+
   #file
 
   #uploadPromise
@@ -43,7 +45,7 @@ class MultipartUploader {
 
   #onReject = (err) => (err?.cause === pausingUploadReason ? null : this.#onError(err))
 
-  constructor (file, options) {
+  constructor (data, options) {
     this.options = {
       ...defaultOptions,
       ...options,
@@ -51,7 +53,8 @@ class MultipartUploader {
     // Use default `getChunkSize` if it was null or something
     this.options.getChunkSize ??= defaultOptions.getChunkSize
 
-    this.#file = file
+    this.#data = data
+    this.#file = options.file
     this.#onSuccess = this.options.onSuccess
     this.#onError = this.options.onError
 
@@ -59,22 +62,22 @@ class MultipartUploader {
   }
 
   #initChunks () {
-    const desiredChunkSize = this.options.getChunkSize(this.#file)
+    const desiredChunkSize = this.options.getChunkSize(this.#data)
     // at least 5MB per request, at most 10k requests
-    const fileSize = this.#file.size
+    const fileSize = this.#data.size
     const minChunkSize = Math.max(5 * MB, Math.ceil(fileSize / 10000))
     const chunkSize = Math.max(desiredChunkSize, minChunkSize)
 
     // Upload zero-sized files in one zero-sized chunk
-    if (this.#file.size === 0) {
-      this.#chunks = [this.#file]
+    if (this.#data.size === 0) {
+      this.#chunks = [this.#data]
     } else {
       const arraySize = Math.ceil(fileSize / chunkSize)
       this.#chunks = Array(arraySize)
       let j = 0
       for (let i = 0; i < fileSize; i += chunkSize) {
         const end = Math.min(fileSize, i + chunkSize)
-        const chunk = this.#file.slice(i, end)
+        const chunk = this.#data.slice(i, end)
         chunk.onProgress = this.#onPartProgress(j)
         chunk.onComplete = this.#onPartComplete(j)
         this.#chunks[j++] = chunk
@@ -103,7 +106,7 @@ class MultipartUploader {
     this.#chunkState[index].uploaded = ensureInt(sent)
 
     const totalUploaded = this.#chunkState.reduce((n, c) => n + c.uploaded, 0)
-    this.options.onProgress(totalUploaded, this.#file.size)
+    this.options.onProgress(totalUploaded, this.#data.size)
   }
 
   #onPartComplete = (index) => (etag) => {
@@ -147,6 +150,11 @@ class MultipartUploader {
   abort (opts = undefined) {
     if (opts?.really) this.#abortUpload()
     else this.pause()
+  }
+
+  // TODO: remove this in the next major
+  get chunkState () {
+    return this.#chunkState
   }
 }
 

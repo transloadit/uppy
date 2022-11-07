@@ -37,44 +37,76 @@ class HTTPCommunicationQueue {
 
   #uploadPartBytes
 
+  #retryDelayIterator
+
+  #requests
+
   #sendCompletionRequest
 
   constructor (requests, options, retryDelaysIterator) {
-    this.#abortMultipartUpload = requests.wrapPromiseFunction(options.abortMultipartUpload)
-    this.#createMultipartUpload = requests.wrapPromiseFunction(options.createMultipartUpload, { priority:-1 })
-    this.#fetchSignature = requests.wrapPromiseFunction(options.signPart)
-    this.#listParts = requests.wrapPromiseFunction(options.listParts)
-    this.#sendCompletionRequest = requests.wrapPromiseFunction(options.completeMultipartUpload)
+    this.#requests = requests
+    this.#retryDelayIterator = retryDelaysIterator
+    this.setOptions(options)
+  }
+
+  setOptions (options) {
+    const requests = this.#requests
+
+    if ('abortMultipartUpload' in options) {
+      this.#abortMultipartUpload = requests.wrapPromiseFunction(options.abortMultipartUpload)
+    }
+    if ('createMultipartUpload' in options) {
+      this.#createMultipartUpload = requests.wrapPromiseFunction(options.createMultipartUpload, { priority:-1 })
+    }
+    if ('signPart' in options) {
+      this.#fetchSignature = requests.wrapPromiseFunction(options.signPart)
+    }
+    if ('listParts' in options) {
+      this.#listParts = requests.wrapPromiseFunction(options.listParts)
+    }
+    if ('completeMultipartUpload' in options) {
+      this.#sendCompletionRequest = requests.wrapPromiseFunction(options.completeMultipartUpload)
+    }
     // Requests to Amazon server are the highest priority because we want the upload to
     // start as soon we got the signature to limit the risk of the signature expiring.
-    const uploadPartBytes = requests.wrapPromiseFunction(options.uploadPartBytes, { priority:Infinity })
-    this.#uploadPartBytes = async (...args) => {
-      for (;;) {
-        try {
-          return await uploadPartBytes(...args)
-        } catch (err) {
-          const status = err?.source?.status
-          if (status == null) {
-            throw err
-          } else if (status === 429) {
+    if ('uploadPartBytes' in options) {
+      const retryDelaysIterator = this.#retryDelayIterator
+      const uploadPartBytes = requests.wrapPromiseFunction(options.uploadPartBytes, { priority:Infinity })
+      this.#uploadPartBytes = async (...args) => {
+        for (;;) {
+          try {
+            return await uploadPartBytes(...args)
+          } catch (err) {
+            const status = err?.source?.status
+            if (status == null) {
+              throw err
+            } else if (status === 429) {
             // HTTP 429 Too Many Requests => to avoid the whole download to fail, pause all requests.
-            if (!requests.isPaused) {
+              if (!requests.isPaused) {
+                const next = retryDelaysIterator?.next()
+                if (next == null || next.done) {
+                  throw err
+                }
+                requests.rateLimit(next.value)
+              }
+            } else if (status > 400 && status < 500 && status !== 409) {
+            // HTTP 4xx, the server won't send anything, it's doesn't make sense to retry
+              throw err
+            } else if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+            // The navigator is offline, let's wait for it to come back online.
+              if (!requests.isPaused) {
+                requests.pause()
+                window.addEventListener('online', () => {
+                  requests.resume()
+                }, { once: true })
+              }
+            } else {
+              // Other error code means the request can be retried later.
               const next = retryDelaysIterator?.next()
               if (next == null || next.done) {
                 throw err
               }
-              requests.rateLimit(next.value)
-            }
-          } else if (status > 400 && status < 500 && status !== 409) {
-            // HTTP 4xx, the server won't send anything, it's doesn't make sense to retry
-            throw err
-          } else if (typeof navigator !== 'undefined' && navigator.onLine === false) {
-            // The navigator is offline, let's wait for it to come back online.
-            if (!requests.isPaused) {
-              requests.pause()
-              window.addEventListener('online', () => {
-                requests.resume()
-              }, { once: true })
+              await new Promise(resolve => setTimeout(resolve, next.value))
             }
           }
         }
@@ -83,23 +115,23 @@ class HTTPCommunicationQueue {
   }
 
   async getUploadId (file, signal) {
-    const cachedResult = this.#cache.get(file)
+    const cachedResult = this.#cache.get(file.data)
     if (cachedResult != null) {
       return cachedResult
     }
 
     const promise = this.#createMultipartUpload(file, signal).then(async (result) => {
-      fileOnStart.get(file)(result)
-      fileOnStart.delete(file)
-      this.#cache.set(file, result)
+      fileOnStart.get(file.data)?.(result)
+      fileOnStart.delete(file.data)
+      this.#cache.set(file.data, result)
       return result
     })
-    this.#cache.set(file, promise)
+    this.#cache.set(file.data, promise)
     return promise
   }
 
   async abortFileUpload (file) {
-    const result = this.#cache.get(file)
+    const result = this.#cache.get(file.data)
     if (result != null) {
       // If the createMultipartUpload request never was made, we don't
       // need to send the abortMultipartUpload request.
@@ -179,8 +211,11 @@ export default class AwsS3Multipart extends BasePlugin {
 
     this.opts = { ...defaultOptions, ...opts }
     if (opts?.prepareUploadParts != null) {
-      this.opts.signPart = (file, { uploadId, key, partNumber, body, signal }) => opts
-        .prepareUploadParts(file, { uploadId, key, parts: [{ number:partNumber, chunk: body }], signal })
+      this.opts.signPart = async (file, { uploadId, key, partNumber, body, signal }) => {
+        const { presignedUrls, headers } = await opts
+          .prepareUploadParts(file, { uploadId, key, parts: [{ number:partNumber, chunk: body }], signal })
+        return { url: presignedUrls?.[partNumber], headers: headers?.[partNumber] }
+      }
     }
 
     this.upload = this.upload.bind(this)
@@ -201,6 +236,11 @@ export default class AwsS3Multipart extends BasePlugin {
   }
 
   [Symbol.for('uppy test: getClient')] () { return this.#client }
+
+  setOptions (newOptions) {
+    this.#companionCommunicationQueue.setOptions(newOptions)
+    return super.setOptions(newOptions)
+  }
 
   /**
    * Clean up all references for a file's upload: the MultipartUploader instance,
@@ -432,6 +472,8 @@ export default class AwsS3Multipart extends BasePlugin {
         onError,
         onSuccess,
         onPartComplete,
+
+        file,
 
         ...file.s3Multipart,
       })
