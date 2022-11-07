@@ -241,7 +241,7 @@ declare module '@uppy/utils/lib/toArray' {
 declare module '@uppy/utils/lib/AbortController' {
   export const AbortController: typeof globalThis.AbortController
   export const AbortSignal: typeof globalThis.AbortSignal
-  export function createAbortError(message?: string): DOMException
+  export function createAbortError(message?: string, options?: ErrorOptions): DOMException
 }
 
 declare module '@uppy/utils/lib/getDroppedFiles' {
