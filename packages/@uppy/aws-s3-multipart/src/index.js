@@ -19,7 +19,7 @@ function assertServerError (res) {
 }
 
 function throwIfAborted (signal) {
-  if (signal.aborted) { throw createAbortError('The operation was aborted', { cause: signal.reason }) }
+  if (signal?.aborted) { throw createAbortError('The operation was aborted', { cause: signal.reason }) }
 }
 
 const fileOnStart = new WeakMap()
