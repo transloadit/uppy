@@ -22,6 +22,8 @@ function throwIfAborted (signal) {
   if (signal.aborted) { throw createAbortError('The operation was aborted', { cause: signal.reason }) }
 }
 
+const fileOnStart = new WeakMap()
+
 class HTTPCommunicationQueue {
   #cache = new WeakMap()
 
@@ -87,6 +89,8 @@ class HTTPCommunicationQueue {
     }
 
     const promise = this.#createMultipartUpload(file, signal).then(async (result) => {
+      fileOnStart.get(file)(result)
+      fileOnStart.delete(file)
       this.#cache.set(file, result)
       return result
     })
@@ -344,9 +348,7 @@ export default class AwsS3Multipart extends BasePlugin {
 
   uploadFile (file) {
     return new Promise((resolve, reject) => {
-      // todo no longer in use, either implement or remove
-      /*
-      const onStart = (data) => {
+      fileOnStart.set(file.data, (data) => {
         const cFile = this.uppy.getFile(file.id)
         this.uppy.setFileState(file.id, {
           s3Multipart: {
@@ -355,7 +357,7 @@ export default class AwsS3Multipart extends BasePlugin {
             uploadId: data.uploadId,
           },
         })
-      } */
+      })
 
       const onProgress = (bytesUploaded, bytesTotal) => {
         this.uppy.emit('upload-progress', file, {
