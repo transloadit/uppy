@@ -172,12 +172,7 @@ export default class AwsS3Multipart extends BasePlugin {
       listParts: this.listParts.bind(this),
       abortMultipartUpload: this.abortMultipartUpload.bind(this),
       completeMultipartUpload: this.completeMultipartUpload.bind(this),
-      signPart: async (file, { uploadId, key, partNumber, signal }) => {
-        throwIfAborted(signal)
-        const filename = encodeURIComponent(key)
-        return this.#client.get(`s3/multipart/${uploadId}/${partNumber}?key=${filename}`, { signal })
-          .then(assertServerError)
-      },
+      signPart: this.signPart.bind(this),
       uploadPartBytes: AwsS3Multipart.uploadPartBytes,
       companionHeaders: {},
     }
@@ -185,7 +180,7 @@ export default class AwsS3Multipart extends BasePlugin {
     this.opts = { ...defaultOptions, ...opts }
     if (opts?.prepareUploadParts != null) {
       this.opts.signPart = (file, { uploadId, key, partNumber, body, signal }) => opts
-        .prepareUploadParts(null, { uploadId, key, parts: [{ number:partNumber, chunk: body }], signal })
+        .prepareUploadParts(file, { uploadId, key, parts: [{ number:partNumber, chunk: body }], signal })
     }
 
     this.upload = this.upload.bind(this)
@@ -229,6 +224,7 @@ export default class AwsS3Multipart extends BasePlugin {
     }
   }
 
+  // TODO: make this a private method in the next major
   assertHost (method) {
     if (!this.opts.companionUrl) {
       throw new Error(`Expected a \`companionUrl\` option containing a Companion address, or if you are not using Companion, a custom \`${method}\` implementation.`)
@@ -237,6 +233,7 @@ export default class AwsS3Multipart extends BasePlugin {
 
   createMultipartUpload (file, signal) {
     this.assertHost('createMultipartUpload')
+    throwIfAborted(signal)
 
     const metadata = {}
 
@@ -255,6 +252,7 @@ export default class AwsS3Multipart extends BasePlugin {
 
   listParts (file, { key, uploadId }, signal) {
     this.assertHost('listParts')
+    throwIfAborted(signal)
 
     const filename = encodeURIComponent(key)
     return this.#client.get(`s3/multipart/${uploadId}?key=${filename}`, { signal })
@@ -263,10 +261,20 @@ export default class AwsS3Multipart extends BasePlugin {
 
   completeMultipartUpload (file, { key, uploadId, parts }, signal) {
     this.assertHost('completeMultipartUpload')
+    throwIfAborted(signal)
 
     const filename = encodeURIComponent(key)
     const uploadIdEnc = encodeURIComponent(uploadId)
     return this.#client.post(`s3/multipart/${uploadIdEnc}/complete?key=${filename}`, { parts }, { signal })
+      .then(assertServerError)
+  }
+
+  signPart (file, { uploadId, key, partNumber, signal }) {
+    this.assertHost('signPart')
+    throwIfAborted(signal)
+
+    const filename = encodeURIComponent(key)
+    return this.#client.get(`s3/multipart/${uploadId}/${partNumber}?key=${filename}`, { signal })
       .then(assertServerError)
   }
 
