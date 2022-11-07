@@ -22,7 +22,7 @@ function throwIfAborted (signal) {
   if (signal?.aborted) { throw createAbortError('The operation was aborted', { cause: signal.reason }) }
 }
 
-const fileOnStart = new WeakMap()
+const stateUpdaterMap = new WeakMap()
 
 class HTTPCommunicationQueue {
   #cache = new WeakMap()
@@ -131,8 +131,8 @@ class HTTPCommunicationQueue {
     }
 
     const promise = this.#createMultipartUpload(file, signal).then(async (result) => {
-      fileOnStart.get(file.data)?.(result)
-      fileOnStart.delete(file.data)
+      stateUpdaterMap.get(file.data)?.(file, result)
+      stateUpdaterMap.delete(file.data)
       this.#cache.set(file.data, result)
       return result
     })
@@ -412,18 +412,20 @@ export default class AwsS3Multipart extends BasePlugin {
     })
   }
 
+  #setS3MultipartState = (file, { key, uploadId }) => {
+    const cFile = this.uppy.getFile(file.id)
+    this.uppy.setFileState(file.id, {
+      s3Multipart: {
+        ...cFile.s3Multipart,
+        key,
+        uploadId,
+      },
+    })
+  }
+
   uploadFile (file) {
     return new Promise((resolve, reject) => {
-      fileOnStart.set(file.data, (data) => {
-        const cFile = this.uppy.getFile(file.id)
-        this.uppy.setFileState(file.id, {
-          s3Multipart: {
-            ...cFile.s3Multipart,
-            key: data.key,
-            uploadId: data.uploadId,
-          },
-        })
-      })
+      stateUpdaterMap.set(file.data, this.#setS3MultipartState)
 
       const onProgress = (bytesUploaded, bytesTotal) => {
         this.uppy.emit('upload-progress', file, {
