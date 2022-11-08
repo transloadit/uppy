@@ -182,7 +182,7 @@ export default class RequestClient {
     return this.#request({ ...options, path, method: 'POST', data })
   }
 
-  async delete (path, data, options = undefined) {
+  async delete (path, data = undefined, options) {
     // TODO: remove boolean support for options that was added for backward compatibility.
     // eslint-disable-next-line no-param-reassign
     if (typeof options === 'boolean') options = { skipPostResponse: options }

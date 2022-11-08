@@ -33,17 +33,17 @@ export class RequestClient {
   get<T = unknown> (path: string, options?: RequestOptions): Promise<T>
 
   /** @deprecated use option bag instead */
-  get<T = unknown> (path: string, skipPostResponse?: boolean): Promise<T>
+  get<T = unknown> (path: string, skipPostResponse: boolean): Promise<T>
 
   post<T = unknown> (path: string, data: Record<string, unknown>, options?: RequestOptions): Promise<T>
 
   /** @deprecated use option bag instead */
-  post<T = unknown> (path: string, data: Record<string, unknown>, skipPostResponse?: boolean): Promise<T>
+  post<T = unknown> (path: string, data: Record<string, unknown>, skipPostResponse: boolean): Promise<T>
 
-  delete<T = unknown> (path: string, data: Record<string, unknown>, options?: RequestOptions): Promise<T>
+  delete<T = unknown> (path: string, data?: Record<string, unknown>, options?: RequestOptions): Promise<T>
 
   /** @deprecated use option bag instead */
-  delete<T = unknown> (path: string, data: Record<string, unknown>, skipPostResponse?: boolean): Promise<T>
+  delete<T = unknown> (path: string, data: Record<string, unknown>, skipPostResponse: boolean): Promise<T>
 }
 
 /**
