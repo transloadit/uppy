@@ -4,7 +4,7 @@ import delay from '@uppy/utils/lib/delay'
 const MB = 1024 * 1024
 
 const defaultOptions = {
-  limit: 1,
+  limit: 6,
   retryDelays: [0, 1000, 3000, 5000],
   getChunkSize (file) {
     return Math.ceil(file.size / 10000)

@@ -32,7 +32,7 @@ export default class AwsS3Multipart extends BasePlugin {
     this.#client = new RequestClient(uppy, opts)
 
     const defaultOptions = {
-      limit: 0,
+      limit: 6,
       retryDelays: [0, 1000, 3000, 5000],
       createMultipartUpload: this.createMultipartUpload.bind(this),
       listParts: this.listParts.bind(this),
