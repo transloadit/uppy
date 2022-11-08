@@ -10,20 +10,27 @@ export interface TokenStorage {
   removeItem: (key: string) => Promise<void>
 }
 
+type CompanionHeaders = Record<string, unknown>
 export interface RequestClientOptions {
   companionUrl: string
-  companionHeaders?: Record<string, unknown>
+  companionHeaders?: CompanionHeaders
   companionCookiesRule?: RequestCredentials
 }
 
 export class RequestClient {
   constructor (uppy: Uppy, opts: RequestClientOptions)
 
-  get (path: string): Promise<any>
+  readonly hostname: string
 
-  post (path: string, data: Record<string, unknown>): Promise<any>
+  setCompanionHeaders(headers: CompanionHeaders): void
 
-  delete (path: string, data: Record<string, unknown>): Promise<any>
+  get<T = unknown> (path: string, skipPostResponse?: boolean, signal?: AbortSignal): Promise<T>
+
+  post<T = unknown> (path: string, data: Record<string, unknown>, skipPostResponse?: boolean,
+                     signal?: AbortSignal): Promise<T>
+
+  delete<T = unknown> (path: string, data: Record<string, unknown>, skipPostResponse?: boolean,
+                       signal?: AbortSignal): Promise<T>
 }
 
 /**

@@ -150,11 +150,12 @@ export default class RequestClient {
     }))
   }
 
-  async #request ({ path, method = 'GET', data, skipPostResponse }) {
+  async #request ({ path, method = 'GET', data, skipPostResponse, signal }) {
     try {
       const headers = await this.preflightAndHeaders(path)
       const response = await fetchWithNetworkError(this.#getUrl(path), {
         method,
+        signal,
         headers,
         credentials: this.opts.companionCookiesRule || 'same-origin',
         body: data ? JSON.stringify(data) : null,
@@ -167,9 +168,9 @@ export default class RequestClient {
     }
   }
 
-  async get (path, skipPostResponse) { return this.#request({ path, skipPostResponse }) }
+  async get (path, skipPostResponse, signal) { return this.#request({ path, skipPostResponse, signal }) }
 
-  async post (path, data, skipPostResponse) { return this.#request({ path, method: 'POST', data, skipPostResponse }) }
+  async post (path, data, skipPostResponse, signal) { return this.#request({ path, method: 'POST', data, skipPostResponse, signal }) }
 
-  async delete (path, data, skipPostResponse) { return this.#request({ path, method: 'DELETE', data, skipPostResponse }) }
+  async delete (path, data, skipPostResponse, signal) { return this.#request({ path, method: 'DELETE', data, skipPostResponse, signal }) }
 }
