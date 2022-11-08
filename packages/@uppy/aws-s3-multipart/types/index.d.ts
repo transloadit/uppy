@@ -22,12 +22,12 @@ export interface AwsS3MultipartOptions extends PluginOptions {
     ) => MaybePromise<AwsS3Part[]>
     signPart?: (
       file: UppyFile,
-      opts: { uploadId: string; key: string; partNumber: number; body:Blob, signal: AbortSignal }
+      opts: { uploadId: string; key: string; partNumber: number; body: Blob, signal: AbortSignal }
     ) => MaybePromise<AwsS3Part>
     /** @deprecated Use signPart instead */
     prepareUploadParts?: (
       file: UppyFile,
-      partData: { uploadId: string; key: string; parts: Array<{ number: number, chunk: Blob }>, signal: AbortSignal }
+      partData: { uploadId: string; key: string; parts: [{ number: number, chunk: Blob }], signal: AbortSignal }
     ) => MaybePromise<{ presignedUrls: { [k: number]: string }, headers?: { [k: string]: string } }>
     abortMultipartUpload?: (
       file: UppyFile,
