@@ -1,4 +1,3 @@
-import classNames from 'classnames'
 import { h } from 'preact'
 import FileItem from './FileItem/index.jsx'
 import VirtualList from './VirtualList.jsx'
@@ -19,14 +18,6 @@ function chunks (list, size) {
 }
 
 export default (props) => {
-  const noFiles = props.totalFileCount === 0
-  const singleFile = props.totalFileCount === 1
-
-  const dashboardFilesClass = classNames(
-    'uppy-Dashboard-files',
-    { 'uppy-Dashboard-files--noFiles': noFiles },
-  )
-
   // It's not great that this is hardcoded!
   // It's ESPECIALLY not great that this is checking against `itemsPerRow`!
   const rowHeight = props.itemsPerRow === 1
@@ -55,7 +46,7 @@ export default (props) => {
     isWide: props.isWide,
     metaFields: props.metaFields,
     recoveredState: props.recoveredState,
-    singleFile,
+    singleFile: props.singleFile,
     // callbacks
     toggleFileCard: props.toggleFileCard,
     handleRequestThumbnail: props.handleRequestThumbnail,
@@ -91,9 +82,9 @@ export default (props) => {
     </div>
   )
 
-  if (singleFile) {
+  if (props.singleFile) {
     return (
-      <div class={dashboardFilesClass}>
+      <div class="uppy-Dashboard-files">
         {renderRow(rows[0])}
       </div>
     )
@@ -101,7 +92,7 @@ export default (props) => {
 
   return (
     <VirtualList
-      class={dashboardFilesClass}
+      class="uppy-Dashboard-files"
       role="list"
       data={rows}
       renderRow={renderRow}
