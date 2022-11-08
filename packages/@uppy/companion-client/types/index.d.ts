@@ -10,18 +10,18 @@ export interface TokenStorage {
   removeItem: (key: string) => Promise<void>
 }
 
-type CompanionHeaders = Record<string, unknown>
+type CompanionHeaders = Record<string, string>
+
 export interface RequestClientOptions {
   companionUrl: string
   companionHeaders?: CompanionHeaders
   companionCookiesRule?: RequestCredentials
 }
 
-// TODO: remove boolean support for options that was added for backward compatibility.
 type RequestOptions = {
   skipPostResponse?: boolean,
   signal?: AbortSignal,
-} | boolean
+}
 
 export class RequestClient {
   constructor (uppy: Uppy, opts: RequestClientOptions)
@@ -32,9 +32,18 @@ export class RequestClient {
 
   get<T = unknown> (path: string, options?: RequestOptions): Promise<T>
 
+  /** @deprecated use option bag instead */
+  get<T = unknown> (path: string, skipPostResponse?: boolean): Promise<T>
+
   post<T = unknown> (path: string, data: Record<string, unknown>, options?: RequestOptions): Promise<T>
 
+  /** @deprecated use option bag instead */
+  post<T = unknown> (path: string, data: Record<string, unknown>, skipPostResponse?: boolean): Promise<T>
+
   delete<T = unknown> (path: string, data: Record<string, unknown>, options?: RequestOptions): Promise<T>
+
+  /** @deprecated use option bag instead */
+  delete<T = unknown> (path: string, data: Record<string, unknown>, skipPostResponse?: boolean): Promise<T>
 }
 
 /**
