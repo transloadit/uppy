@@ -150,11 +150,12 @@ export default class RequestClient {
     }))
   }
 
-  async #request ({ path, method = 'GET', data, skipPostResponse }) {
+  async #request ({ path, method = 'GET', data, skipPostResponse, signal }) {
     try {
       const headers = await this.preflightAndHeaders(path)
       const response = await fetchWithNetworkError(this.#getUrl(path), {
         method,
+        signal,
         headers,
         credentials: this.opts.companionCookiesRule || 'same-origin',
         body: data ? JSON.stringify(data) : null,
@@ -167,9 +168,24 @@ export default class RequestClient {
     }
   }
 
-  async get (path, skipPostResponse) { return this.#request({ path, skipPostResponse }) }
+  async get (path, options = undefined) {
+    // TODO: remove boolean support for options that was added for backward compatibility.
+    // eslint-disable-next-line no-param-reassign
+    if (typeof options === 'boolean') options = { skipPostResponse: options }
+    return this.#request({ ...options, path })
+  }
 
-  async post (path, data, skipPostResponse) { return this.#request({ path, method: 'POST', data, skipPostResponse }) }
+  async post (path, data, options = undefined) {
+    // TODO: remove boolean support for options that was added for backward compatibility.
+    // eslint-disable-next-line no-param-reassign
+    if (typeof options === 'boolean') options = { skipPostResponse: options }
+    return this.#request({ ...options, path, method: 'POST', data })
+  }
 
-  async delete (path, data, skipPostResponse) { return this.#request({ path, method: 'DELETE', data, skipPostResponse }) }
+  async delete (path, data = undefined, options) {
+    // TODO: remove boolean support for options that was added for backward compatibility.
+    // eslint-disable-next-line no-param-reassign
+    if (typeof options === 'boolean') options = { skipPostResponse: options }
+    return this.#request({ ...options, path, method: 'DELETE', data })
+  }
 }
