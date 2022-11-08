@@ -45,7 +45,6 @@ The maximum amount of chunks to upload simultaneously. You should set the limit 
 
 Because HTTP/1.1 limits the number of concurrent requests to one origin to 6, it’s recommended to always set a limit of 6 or smaller for all your uploads, or to not override the default.
 
-For example, with a 50MB file and a `limit` of 5 we end up with 10 chunks. 1 of these are presigned in one batch, then 1, then 1, etc. for a total of 10 round trips to the server via [`signPart()`][] plus one request through `createMultipartUpload` and one through `sendCompletionRequest` and 10 requests sent to AWS via the presigned URLs generated.
 
 ### `retryDelays: [0, 1000, 3000, 5000]`
 

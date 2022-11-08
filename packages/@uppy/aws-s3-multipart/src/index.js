@@ -82,6 +82,9 @@ class HTTPCommunicationQueue {
       // Requests to Amazon server are the highest priority because we want the upload to
       // start as soon we got the signature to limit the risk of the signature expiring.
       const uploadPartBytes = requests.wrapPromiseFunction(this.#rawUploadPartBytes, { priority:Infinity })
+      // TODO: we currently only retry the PUT but we also want to retry the signing request.
+      // TODO: this retry logic is taken out of Tus. We should have a centralized place for retrying,
+      // perhaps the rate limited queue, and dedupe all plugins with that.
       this.#uploadPartBytes = async (...args) => {
         for (;;) {
           try {
