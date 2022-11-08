@@ -17,6 +17,12 @@ export interface RequestClientOptions {
   companionCookiesRule?: RequestCredentials
 }
 
+// TODO: remove boolean support for options that was added for backward compatibility.
+type RequestOptions = {
+  skipPostResponse?: boolean,
+  signal?: AbortSignal,
+} | boolean
+
 export class RequestClient {
   constructor (uppy: Uppy, opts: RequestClientOptions)
 
@@ -24,13 +30,11 @@ export class RequestClient {
 
   setCompanionHeaders(headers: CompanionHeaders): void
 
-  get<T = unknown> (path: string, skipPostResponse?: boolean, signal?: AbortSignal): Promise<T>
+  get<T = unknown> (path: string, options?: RequestOptions): Promise<T>
 
-  post<T = unknown> (path: string, data: Record<string, unknown>, skipPostResponse?: boolean,
-                     signal?: AbortSignal): Promise<T>
+  post<T = unknown> (path: string, data: Record<string, unknown>, options?: RequestOptions): Promise<T>
 
-  delete<T = unknown> (path: string, data: Record<string, unknown>, skipPostResponse?: boolean,
-                       signal?: AbortSignal): Promise<T>
+  delete<T = unknown> (path: string, data: Record<string, unknown>, options?: RequestOptions): Promise<T>
 }
 
 /**

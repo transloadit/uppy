@@ -168,9 +168,24 @@ export default class RequestClient {
     }
   }
 
-  async get (path, skipPostResponse, signal) { return this.#request({ path, skipPostResponse, signal }) }
+  async get (path, options = undefined) {
+    // TODO: remove boolean support for options that was added for backward compatibility.
+    // eslint-disable-next-line no-param-reassign
+    if (typeof options === 'boolean') options = { skipPostResponse: options }
+    return this.#request({ ...options, path })
+  }
 
-  async post (path, data, skipPostResponse, signal) { return this.#request({ path, method: 'POST', data, skipPostResponse, signal }) }
+  async post (path, data, options = undefined) {
+    // TODO: remove boolean support for options that was added for backward compatibility.
+    // eslint-disable-next-line no-param-reassign
+    if (typeof options === 'boolean') options = { skipPostResponse: options }
+    return this.#request({ ...options, path, method: 'POST', data })
+  }
 
-  async delete (path, data, skipPostResponse, signal) { return this.#request({ path, method: 'DELETE', data, skipPostResponse, signal }) }
+  async delete (path, data, options = undefined) {
+    // TODO: remove boolean support for options that was added for backward compatibility.
+    // eslint-disable-next-line no-param-reassign
+    if (typeof options === 'boolean') options = { skipPostResponse: options }
+    return this.#request({ ...options, path, method: 'DELETE', data })
+  }
 }
