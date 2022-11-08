@@ -94,7 +94,7 @@ class HTTPCommunicationQueue {
             if (status == null) {
               throw err
             } else if (status === 429) {
-            // HTTP 429 Too Many Requests => to avoid the whole download to fail, pause all requests.
+              // HTTP 429 Too Many Requests => to avoid the whole download to fail, pause all requests.
               if (!requests.isPaused) {
                 const next = retryDelaysIterator?.next()
                 if (next == null || next.done) {
@@ -103,10 +103,10 @@ class HTTPCommunicationQueue {
                 requests.rateLimit(next.value)
               }
             } else if (status > 400 && status < 500 && status !== 409) {
-            // HTTP 4xx, the server won't send anything, it's doesn't make sense to retry
+              // HTTP 4xx, the server won't send anything, it's doesn't make sense to retry
               throw err
             } else if (typeof navigator !== 'undefined' && navigator.onLine === false) {
-            // The navigator is offline, let's wait for it to come back online.
+              // The navigator is offline, let's wait for it to come back online.
               if (!requests.isPaused) {
                 requests.pause()
                 window.addEventListener('online', () => {
@@ -223,10 +223,10 @@ export default class AwsS3Multipart extends BasePlugin {
     }
 
     this.opts = { ...defaultOptions, ...opts }
-    if (opts?.prepareUploadParts != null) {
+    if (opts?.prepareUploadParts != null && opts.signPart == null) {
       this.opts.signPart = async (file, { uploadId, key, partNumber, body, signal }) => {
         const { presignedUrls, headers } = await opts
-          .prepareUploadParts(file, { uploadId, key, parts: [{ number:partNumber, chunk: body }], signal })
+          .prepareUploadParts(file, { uploadId, key, parts: [{ number: partNumber, chunk: body }], signal })
         return { url: presignedUrls?.[partNumber], headers: headers?.[partNumber] }
       }
     }
