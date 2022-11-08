@@ -7,6 +7,9 @@ const renderFileName = (props) => {
   const { author, name } = props.file.meta
 
   function getMaxNameLength () {
+    if (props.singleFile) {
+      return 200
+    }
     if (props.containerWidth <= 352) {
       return 35
     }

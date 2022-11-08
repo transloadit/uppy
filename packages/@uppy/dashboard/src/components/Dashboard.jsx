@@ -138,6 +138,7 @@ export default function Dashboard (props) {
             <FileList
               // eslint-disable-next-line react/jsx-props-no-spreading
               {...props}
+              singleFile={singleFile}
               itemsPerRow={itemsPerRow}
             />
           ) : (

@@ -1,5 +1,13 @@
 .uppy-Dashboard-Item-fileInfo {
   padding-inline-end: 5px;
+
+  .uppy-Dashboard--singleFile & {
+    padding-inline-end: 10px;
+  }
+
+  .uppy-size--md.uppy-Dashboard--singleFile & {
+    padding-inline-end: 15px;
+  }
 }
 
 .uppy-Dashboard-Item-name {

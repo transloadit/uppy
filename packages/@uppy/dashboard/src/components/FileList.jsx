@@ -55,6 +55,7 @@ export default (props) => {
     isWide: props.isWide,
     metaFields: props.metaFields,
     recoveredState: props.recoveredState,
+    singleFile,
     // callbacks
     toggleFileCard: props.toggleFileCard,
     handleRequestThumbnail: props.handleRequestThumbnail,
