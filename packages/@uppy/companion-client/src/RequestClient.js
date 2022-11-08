@@ -106,12 +106,7 @@ export default class RequestClient {
   */
   async preflight (path) {
     const allowedHeadersCached = allowedHeadersCache.get(this.hostname)
-    if (allowedHeadersCached != null) {
-      // The cache may contain a promise that will resolve to undefined if the
-      // fetch call fails. In that case, we want to retry sending a preflight response.
-      const cachedResult = await allowedHeadersCached
-      if (cachedResult != null)  return cachedResult
-    }
+    if (allowedHeadersCached != null) return allowedHeadersCached
 
     const fallbackAllowedHeaders = ['accept', 'content-type', 'uppy-auth-token']
 
@@ -134,14 +129,13 @@ export default class RequestClient {
         this.uppy.log(`[CompanionClient] unable to make preflight request ${err}`, 'warning')
         // If the user gets a network error or similar, we should try preflight
         // again next time, or else we might get incorrect behaviour.
-        allowedHeadersCache.delete(this.hostname)
-        return undefined
+        allowedHeadersCache.delete(this.hostname) // re-fetch next time
+        return fallbackAllowedHeaders
       }
     })()
 
     allowedHeadersCache.set(this.hostname, promise)
-    const allowedHeadersNew = await promise
-    return allowedHeadersNew ?? fallbackAllowedHeaders
+    return promise
   }
 
   async preflightAndHeaders (path) {
