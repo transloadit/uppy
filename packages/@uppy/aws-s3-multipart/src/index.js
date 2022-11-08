@@ -22,8 +22,6 @@ function throwIfAborted (signal) {
   if (signal?.aborted) { throw createAbortError('The operation was aborted', { cause: signal.reason }) }
 }
 
-const stateUpdaterMap = new WeakMap()
-
 class HTTPCommunicationQueue {
   #cache = new WeakMap()
 
@@ -43,10 +41,13 @@ class HTTPCommunicationQueue {
 
   #requests
 
+  #setS3MultipartState
+
   #sendCompletionRequest
 
-  constructor (requests, options) {
+  constructor (requests, options, setS3MultipartState) {
     this.#requests = requests
+    this.#setS3MultipartState = setS3MultipartState
     this.setOptions(options)
   }
 
@@ -134,8 +135,7 @@ class HTTPCommunicationQueue {
     }
 
     const promise = this.#createMultipartUpload(file, signal).then(async (result) => {
-      stateUpdaterMap.get(file.data)?.(file, result)
-      stateUpdaterMap.delete(file.data)
+      this.#setS3MultipartState(file, result)
       this.#cache.set(file.data, result)
       return result
     })
@@ -239,7 +239,7 @@ export default class AwsS3Multipart extends BasePlugin {
      * @type {RateLimitedQueue}
      */
     this.requests = this.opts.rateLimitedQueue ?? new RateLimitedQueue(this.opts.limit)
-    this.#companionCommunicationQueue = new HTTPCommunicationQueue(this.requests, this.opts)
+    this.#companionCommunicationQueue = new HTTPCommunicationQueue(this.requests, this.opts, this.#setS3MultipartState)
 
     this.uploaders = Object.create(null)
     this.uploaderEvents = Object.create(null)
@@ -428,8 +428,6 @@ export default class AwsS3Multipart extends BasePlugin {
 
   uploadFile (file) {
     return new Promise((resolve, reject) => {
-      stateUpdaterMap.set(file.data, this.#setS3MultipartState)
-
       const onProgress = (bytesUploaded, bytesTotal) => {
         this.uppy.emit('upload-progress', file, {
           uploader: this,
