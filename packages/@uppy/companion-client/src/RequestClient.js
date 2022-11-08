@@ -16,16 +16,17 @@ async function handleJSONResponse (res) {
     throw new AuthError()
   }
 
-  // todo why is 300 considered success?
-  // shouldn't we use res.ok?
-  if (res.status >= 200 && res.status <= 300) {
-    return res.json()
+  const jsonPromise = res.json()
+  if (res.ok) {
+    return jsonPromise
   }
 
   let errMsg = `Failed request with status: ${res.status}. ${res.statusText}`
-  const errData = await res.json()
-  errMsg = errData.message ? `${errMsg} message: ${errData.message}` : errMsg
-  errMsg = errData.requestId ? `${errMsg} request-Id: ${errData.requestId}` : errMsg
+  try {
+    const errData = await jsonPromise
+    errMsg = errData.message ? `${errMsg} message: ${errData.message}` : errMsg
+    errMsg = errData.requestId ? `${errMsg} request-Id: ${errData.requestId}` : errMsg
+  } catch { /* if the response contains invalid JSON, let's ignore the error */ }
   throw new Error(errMsg)
 }
 
