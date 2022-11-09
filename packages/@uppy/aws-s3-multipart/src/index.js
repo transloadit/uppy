@@ -31,6 +31,8 @@ class HTTPCommunicationQueue {
 
   #fetchSignature
 
+  #getUploadParameters
+
   #listParts
 
   #previousRetryDelay
@@ -74,6 +76,9 @@ class HTTPCommunicationQueue {
     }
     if ('uploadPartBytes' in options) {
       this.#uploadPartBytes = requests.wrapPromiseFunction(options.uploadPartBytes, { priority:Infinity })
+    }
+    if ('getUploadParameters' in options) {
+      this.#getUploadParameters = requests.wrapPromiseFunction(options.getUploadParameters)
     }
   }
 
@@ -190,8 +195,31 @@ class HTTPCommunicationQueue {
     await this.#abortMultipartUpload(file, awaitedResult)
   }
 
+  async #nonMultipartUpload (file, signal) {
+    const filename = file.meta.name
+    const { type } = file.meta
+    const metadata = undefined // TODO: add `allowedMetaFields` option to S3 multipart?
+
+    const query = new URLSearchParams({ filename, type, ...metadata })
+    const {
+      method = 'post',
+      url,
+      fields,
+      headers,
+    } = await this.#getUploadParameters(`s3/params?${query}`, { signal }).abortOn(signal)
+
+    const data = new FormData()
+    Object.entries(fields).forEach(([key, value]) => data.set(key, value))
+    data.set('file', file.data)
+
+    return this.#uploadPartBytes({ url, headers, method }, data, signal).abortOn(signal)
+  }
+
   async uploadFile (file, chunks, signal) {
     throwIfAborted(signal)
+    if (chunks.length === 1) {
+      return this.#nonMultipartUpload(file, signal)
+    }
     const { uploadId, key } = await this.getUploadId(file, signal)
     throwIfAborted(signal)
     try {
@@ -206,6 +234,9 @@ class HTTPCommunicationQueue {
 
   async resumeUploadFile (file, chunks, signal) {
     throwIfAborted(signal)
+    if (chunks.length === 1) {
+      return this.#nonMultipartUpload(file, signal)
+    }
     const { uploadId, key } = await this.getUploadId(file, signal)
     throwIfAborted(signal)
     const alreadyUploadedParts = await this.#listParts(file, { uploadId, key, signal }).abortOn(signal)
@@ -276,6 +307,7 @@ export default class AwsS3Multipart extends BasePlugin {
       completeMultipartUpload: this.completeMultipartUpload.bind(this),
       signPart: this.signPart.bind(this),
       uploadPartBytes: AwsS3Multipart.uploadPartBytes,
+      getUploadParameters: (...args) => this.#client.get(...args),
       companionHeaders: {},
     }
 
@@ -397,7 +429,7 @@ export default class AwsS3Multipart extends BasePlugin {
       .then(assertServerError)
   }
 
-  static async uploadPartBytes ({ signature: { url, expires, headers }, body, onProgress, onComplete, signal }) {
+  static async uploadPartBytes ({ signature: { url, expires, headers, method = 'PUT' }, body, onProgress, onComplete, signal }) {
     throwIfAborted(signal)
 
     if (url == null) {
@@ -406,7 +438,7 @@ export default class AwsS3Multipart extends BasePlugin {
 
     return new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest()
-      xhr.open('PUT', url, true)
+      xhr.open(method, url, true)
       if (headers) {
         Object.keys(headers).forEach((key) => {
           xhr.setRequestHeader(key, headers[key])
