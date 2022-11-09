@@ -23,27 +23,27 @@ function throwIfAborted (signal) {
 }
 
 class HTTPCommunicationQueue {
-  #cache = new WeakMap()
-
   #abortMultipartUpload
+
+  #cache = new WeakMap()
 
   #createMultipartUpload
 
   #fetchSignature
 
+  #handleError
+
   #listParts
-
-  #uploadPartBytes
-
-  #rawUploadPartBytes
-
-  #retryDelayIterator
 
   #requests
 
-  #setS3MultipartState
+  #retryDelayIterator
 
   #sendCompletionRequest
+
+  #setS3MultipartState
+
+  #uploadPartBytes
 
   constructor (requests, options, setS3MultipartState) {
     this.#requests = requests
@@ -73,58 +73,55 @@ class HTTPCommunicationQueue {
     const isMutatingRetryDelay = 'retryDelays' in options
     if (isMutatingRetryDelay) {
       this.#retryDelayIterator = options.retryDelays?.values()
+      // TODO: this retry logic is taken out of Tus. We should have a centralized place for retrying,
+      // perhaps the rate limited queue, and dedupe all plugins with that.
+      this.#handleError = async (err) => {
+        const status = err?.source?.status
+        if (status == null) {
+          throw err
+        } else if (status === 403 && err.message === 'Request has expired') {
+          if (!requests.isPaused) {
+            const next = this.#retryDelayIterator?.next()
+            if (next == null || next.done) {
+              throw err
+            }
+            // No need to stop the other requests, we just want to lower the limit.
+            requests.rateLimit(0)
+            await new Promise(resolve => setTimeout(resolve, next.value))
+          }
+        } else if (status === 429) {
+          // HTTP 429 Too Many Requests => to avoid the whole download to fail, pause all requests.
+          if (!requests.isPaused) {
+            const next = this.#retryDelayIterator?.next()
+            if (next == null || next.done) {
+              throw err
+            }
+            requests.rateLimit(next.value)
+          }
+        } else if (status > 400 && status < 500 && status !== 409) {
+          // HTTP 4xx, the server won't send anything, it's doesn't make sense to retry
+          throw err
+        } else if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+          // The navigator is offline, let's wait for it to come back online.
+          if (!requests.isPaused) {
+            requests.pause()
+            window.addEventListener('online', () => {
+              requests.resume()
+            }, { once: true })
+          }
+        } else {
+          // Other error code means the request can be retried later.
+          const next = this.#retryDelayIterator?.next()
+          if (next == null || next.done) {
+            throw err
+          }
+          await new Promise(resolve => setTimeout(resolve, next.value))
+        }
+      }
     }
     const isMutatingUploadPartBytes = 'uploadPartBytes' in options
     if (isMutatingUploadPartBytes) {
-      this.#rawUploadPartBytes = options.uploadPartBytes
-    }
-    if (isMutatingUploadPartBytes || isMutatingRetryDelay) {
-      const retryDelaysIterator = this.#retryDelayIterator
-      // Requests to Amazon server are the highest priority because we want the upload to
-      // start as soon we got the signature to limit the risk of the signature expiring.
-      const uploadPartBytes = requests.wrapPromiseFunction(this.#rawUploadPartBytes, { priority:Infinity })
-      // TODO: we currently only retry the PUT but we also want to retry the signing request.
-      // TODO: this retry logic is taken out of Tus. We should have a centralized place for retrying,
-      // perhaps the rate limited queue, and dedupe all plugins with that.
-      this.#uploadPartBytes = async (...args) => {
-        for (;;) {
-          try {
-            return await uploadPartBytes(...args)
-          } catch (err) {
-            const status = err?.source?.status
-            if (status == null) {
-              throw err
-            } else if (status === 429) {
-              // HTTP 429 Too Many Requests => to avoid the whole download to fail, pause all requests.
-              if (!requests.isPaused) {
-                const next = retryDelaysIterator?.next()
-                if (next == null || next.done) {
-                  throw err
-                }
-                requests.rateLimit(next.value)
-              }
-            } else if (status > 400 && status < 500 && status !== 409) {
-              // HTTP 4xx, the server won't send anything, it's doesn't make sense to retry
-              throw err
-            } else if (typeof navigator !== 'undefined' && navigator.onLine === false) {
-              // The navigator is offline, let's wait for it to come back online.
-              if (!requests.isPaused) {
-                requests.pause()
-                window.addEventListener('online', () => {
-                  requests.resume()
-                }, { once: true })
-              }
-            } else {
-              // Other error code means the request can be retried later.
-              const next = retryDelaysIterator?.next()
-              if (next == null || next.done) {
-                throw err
-              }
-              await new Promise(resolve => setTimeout(resolve, next.value))
-            }
-          }
-        }
-      }
+      this.#uploadPartBytes = requests.wrapPromiseFunction(options.uploadPartBytes, { priority:Infinity })
     }
   }
 
@@ -185,11 +182,17 @@ class HTTPCommunicationQueue {
     throwIfAborted(signal)
     const { uploadId, key } = await this.getUploadId(file, signal)
     throwIfAborted(signal)
-    const signature = await this.#fetchSignature(file, { uploadId, key, partNumber, body, signal })
-    throwIfAborted(signal)
-    return {
-      PartNumber: partNumber,
-      ...await this.#uploadPartBytes(signature, body, signal),
+    for (;;) {
+      try {
+        const signature = await this.#fetchSignature(file, { uploadId, key, partNumber, body, signal })
+        throwIfAborted(signal)
+        return {
+          PartNumber: partNumber,
+          ...await this.#uploadPartBytes(signature, body, signal),
+        }
+      } catch (err) {
+        await this.#handleError(err)
+      }
     }
   }
 }
@@ -344,7 +347,7 @@ export default class AwsS3Multipart extends BasePlugin {
       .then(assertServerError)
   }
 
-  static async uploadPartBytes ({ url, headers }, body, signal) {
+  static async uploadPartBytes ({ url, expires, headers }, body, signal) {
     throwIfAborted(signal)
 
     if (url == null) {
@@ -360,6 +363,9 @@ export default class AwsS3Multipart extends BasePlugin {
         })
       }
       xhr.responseType = 'text'
+      if (typeof expires === 'number') {
+        xhr.timeout = expires * 1000
+      }
 
       function onabort () {
         xhr.abort()
@@ -377,10 +383,22 @@ export default class AwsS3Multipart extends BasePlugin {
         reject(createAbortError())
       })
 
+      xhr.addEventListener('timeout', () => {
+        cleanup()
+
+        const error = new Error('Request has expired')
+        error.source = { status: 403 }
+        reject(error)
+      })
       xhr.addEventListener('load', (ev) => {
         cleanup()
 
-        if (ev.target.status < 200 || ev.target.status >= 300) {
+        if (ev.target.status === 403 && ev.target.responseText.includes('<Message>Request has expired</Message>')) {
+          const error = new Error('Request has expired')
+          error.source = ev.target
+          reject(error)
+          return
+        } if (ev.target.status < 200 || ev.target.status >= 300) {
           const error = new Error('Non 2xx')
           error.source = ev.target
           reject(error)
