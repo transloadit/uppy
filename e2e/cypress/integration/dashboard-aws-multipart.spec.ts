@@ -3,7 +3,7 @@ describe('Dashboard with @uppy/aws-s3-multipart', () => {
     cy.visit('/dashboard-aws-multipart')
     cy.get('.uppy-Dashboard-input:first').as('file-input')
     cy.intercept({ method: 'POST', pathname: '/s3/multipart' }).as('post')
-    cy.intercept({ method: 'GET', pathname: '/s3/multipart/*/batch' }).as('get')
+    cy.intercept({ method: 'GET', pathname: '/s3/multipart/*/1' }).as('get')
     cy.intercept({ method: 'PUT' }).as('put')
   })
 
