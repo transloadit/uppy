@@ -783,6 +783,9 @@ export default class Dashboard extends UIPlugin {
     this.uppy.off('file-editor:complete', this.hideAllPanels)
     this.uppy.off('complete', this.handleComplete)
 
+    this.uppy.off('files-added', this.#generateLargeThumbnailIfSingleFile)
+    this.uppy.off('file-removed', this.#generateLargeThumbnailIfSingleFile)
+
     document.removeEventListener('focus', this.recordIfFocusedOnUppyRecently)
     document.removeEventListener('click', this.recordIfFocusedOnUppyRecently)
 
