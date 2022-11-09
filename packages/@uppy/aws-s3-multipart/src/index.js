@@ -31,8 +31,6 @@ class HTTPCommunicationQueue {
 
   #fetchSignature
 
-  #handleError
-
   #listParts
 
   #requests
@@ -69,59 +67,59 @@ class HTTPCommunicationQueue {
     if ('completeMultipartUpload' in options) {
       this.#sendCompletionRequest = requests.wrapPromiseFunction(options.completeMultipartUpload)
     }
-
-    const isMutatingRetryDelay = 'retryDelays' in options
-    if (isMutatingRetryDelay) {
+    if ('retryDelays' in options) {
       this.#retryDelayIterator = options.retryDelays?.values()
-      // TODO: this retry logic is taken out of Tus. We should have a centralized place for retrying,
-      // perhaps the rate limited queue, and dedupe all plugins with that.
-      this.#handleError = async (err) => {
-        const status = err?.source?.status
-        if (status == null) {
-          throw err
-        } else if (status === 403 && err.message === 'Request has expired') {
-          if (!requests.isPaused) {
-            const next = this.#retryDelayIterator?.next()
-            if (next == null || next.done) {
-              throw err
-            }
-            // No need to stop the other requests, we just want to lower the limit.
-            requests.rateLimit(0)
-            await new Promise(resolve => setTimeout(resolve, next.value))
-          }
-        } else if (status === 429) {
-          // HTTP 429 Too Many Requests => to avoid the whole download to fail, pause all requests.
-          if (!requests.isPaused) {
-            const next = this.#retryDelayIterator?.next()
-            if (next == null || next.done) {
-              throw err
-            }
-            requests.rateLimit(next.value)
-          }
-        } else if (status > 400 && status < 500 && status !== 409) {
-          // HTTP 4xx, the server won't send anything, it's doesn't make sense to retry
-          throw err
-        } else if (typeof navigator !== 'undefined' && navigator.onLine === false) {
-          // The navigator is offline, let's wait for it to come back online.
-          if (!requests.isPaused) {
-            requests.pause()
-            window.addEventListener('online', () => {
-              requests.resume()
-            }, { once: true })
-          }
-        } else {
-          // Other error code means the request can be retried later.
-          const next = this.#retryDelayIterator?.next()
-          if (next == null || next.done) {
-            throw err
-          }
-          await new Promise(resolve => setTimeout(resolve, next.value))
-        }
-      }
     }
-    const isMutatingUploadPartBytes = 'uploadPartBytes' in options
-    if (isMutatingUploadPartBytes) {
+    if ('uploadPartBytes' in options) {
       this.#uploadPartBytes = requests.wrapPromiseFunction(options.uploadPartBytes, { priority:Infinity })
+    }
+  }
+
+  async #handleError (err) {
+    const requests = this.#requests
+    const status = err?.source?.status
+
+    // TODO: this retry logic is taken out of Tus. We should have a centralized place for retrying,
+    // perhaps the rate limited queue, and dedupe all plugins with that.
+    if (status == null) {
+      throw err
+    } else if (status === 403 && err.message === 'Request has expired') {
+      if (!requests.isPaused) {
+        const next = this.#retryDelayIterator?.next()
+        if (next == null || next.done) {
+          throw err
+        }
+        // No need to stop the other requests, we just want to lower the limit.
+        requests.rateLimit(0)
+        await new Promise(resolve => setTimeout(resolve, next.value))
+      }
+    } else if (status === 429) {
+      // HTTP 429 Too Many Requests => to avoid the whole download to fail, pause all requests.
+      if (!requests.isPaused) {
+        const next = this.#retryDelayIterator?.next()
+        if (next == null || next.done) {
+          throw err
+        }
+        requests.rateLimit(next.value)
+      }
+    } else if (status > 400 && status < 500 && status !== 409) {
+      // HTTP 4xx, the server won't send anything, it's doesn't make sense to retry
+      throw err
+    } else if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+      // The navigator is offline, let's wait for it to come back online.
+      if (!requests.isPaused) {
+        requests.pause()
+        window.addEventListener('online', () => {
+          requests.resume()
+        }, { once: true })
+      }
+    } else {
+      // Other error code means the request can be retried later.
+      const next = this.#retryDelayIterator?.next()
+      if (next == null || next.done) {
+        throw err
+      }
+      await new Promise(resolve => setTimeout(resolve, next.value))
     }
   }
 
