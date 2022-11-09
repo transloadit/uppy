@@ -75,19 +75,20 @@ class HTTPCommunicationQueue {
     }
   }
 
-  async #handleError (err) {
+  async #shouldRetry (err) {
     const requests = this.#requests
     const status = err?.source?.status
 
     // TODO: this retry logic is taken out of Tus. We should have a centralized place for retrying,
     // perhaps the rate limited queue, and dedupe all plugins with that.
     if (status == null) {
-      throw err
-    } else if (status === 403 && err.message === 'Request has expired') {
+      return false
+    }
+    if (status === 403 && err.message === 'Request has expired') {
       if (!requests.isPaused) {
         const next = this.#retryDelayIterator?.next()
         if (next == null || next.done) {
-          throw err
+          return false
         }
         // No need to stop the other requests, we just want to lower the limit.
         requests.rateLimit(0)
@@ -98,13 +99,13 @@ class HTTPCommunicationQueue {
       if (!requests.isPaused) {
         const next = this.#retryDelayIterator?.next()
         if (next == null || next.done) {
-          throw err
+          return false
         }
         requests.rateLimit(next.value)
       }
     } else if (status > 400 && status < 500 && status !== 409) {
       // HTTP 4xx, the server won't send anything, it's doesn't make sense to retry
-      throw err
+      return false
     } else if (typeof navigator !== 'undefined' && navigator.onLine === false) {
       // The navigator is offline, let's wait for it to come back online.
       if (!requests.isPaused) {
@@ -117,10 +118,11 @@ class HTTPCommunicationQueue {
       // Other error code means the request can be retried later.
       const next = this.#retryDelayIterator?.next()
       if (next == null || next.done) {
-        throw err
+        return false
       }
       await new Promise(resolve => setTimeout(resolve, next.value))
     }
+    return true
   }
 
   async getUploadId (file, signal) {
@@ -189,7 +191,7 @@ class HTTPCommunicationQueue {
           ...await this.#uploadPartBytes(signature, body, signal),
         }
       } catch (err) {
-        await this.#handleError(err)
+        if (!await this.#shouldRetry(err)) throw err
       }
     }
   }
