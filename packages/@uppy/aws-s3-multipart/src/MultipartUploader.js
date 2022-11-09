@@ -140,12 +140,6 @@ class MultipartUploader {
   }
 
   pause () {
-    const onError = this.#onError
-    // We expect an AbortError to be thrown, which can be ignored.
-    this.#onError = (err) => (err?.name === 'AbortError' ? null : onError(err))
-    // Using setTimeout here to give time to the promises to reject.
-    setTimeout(() => { this.#onError = onError })
-
     this.#abortController.abort(pausingUploadReason)
     // Swap it out for a new controller, because this instance may be resumed later.
     this.#abortController = new AbortController()
