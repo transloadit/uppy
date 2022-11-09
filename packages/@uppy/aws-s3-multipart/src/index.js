@@ -22,15 +22,6 @@ function throwIfAborted (signal) {
   if (signal?.aborted) { throw createAbortError('The operation was aborted', { cause: signal.reason }) }
 }
 
-function abortable (promise, signal) {
-  const abortPromise = () => promise.abort(signal.reason)
-  signal.addEventListener('abort', abortPromise, { once:true })
-  const removeAbortListener = () => { signal.removeEventListener('abort', abortPromise) }
-  promise.then(removeAbortListener, removeAbortListener)
-
-  return promise
-}
-
 class HTTPCommunicationQueue {
   #abortMultipartUpload
 
@@ -172,14 +163,14 @@ class HTTPCommunicationQueue {
     throwIfAborted(signal)
     const parts = await Promise.all(chunks.map((chunk, i) => this.uploadChunk(file, i + 1, chunk, signal)))
     throwIfAborted(signal)
-    return abortable(this.#sendCompletionRequest(file, { key, uploadId, parts, signal }), signal)
+    return this.#sendCompletionRequest(file, { key, uploadId, parts, signal }).abortOn(signal)
   }
 
   async resumeUploadFile (file, chunks, signal) {
     throwIfAborted(signal)
     const { uploadId, key } = await this.getUploadId(file, signal)
     throwIfAborted(signal)
-    const alreadyUploadedParts = await abortable(this.#listParts(file, { uploadId, key, signal }), signal)
+    const alreadyUploadedParts = await this.#listParts(file, { uploadId, key, signal }).abortOn(signal)
     throwIfAborted(signal)
     const parts = await Promise.all(
       chunks
@@ -192,7 +183,7 @@ class HTTPCommunicationQueue {
         }),
     )
     throwIfAborted(signal)
-    return abortable(this.#sendCompletionRequest(file, { key, uploadId, parts, signal }), signal)
+    return this.#sendCompletionRequest(file, { key, uploadId, parts, signal }).abortOn(signal)
   }
 
   async uploadChunk (file, partNumber, body, signal) {
@@ -200,12 +191,12 @@ class HTTPCommunicationQueue {
     const { uploadId, key } = await this.getUploadId(file, signal)
     throwIfAborted(signal)
     for (;;) {
-      const signature = await abortable(this.#fetchSignature(file, { uploadId, key, partNumber, body, signal }), signal)
+      const signature = await this.#fetchSignature(file, { uploadId, key, partNumber, body, signal }).abortOn(signal)
       throwIfAborted(signal)
       try {
         return {
           PartNumber: partNumber,
-          ...await abortable(this.#uploadPartBytes(signature, body, signal), signal),
+          ...await this.#uploadPartBytes(signature, body, signal).abortOn(signal),
         }
       } catch (err) {
         if (!await this.#shouldRetry(err)) throw err
