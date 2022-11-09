@@ -66,6 +66,7 @@
   overflow: hidden;
   outline: 1px solid #39f;
   outline-color: rgba(51, 153, 255, 0.75);
+  background: repeating-conic-gradient(rgba(0, 0, 0, 0.5) 0% 25%, rgba(255, 255, 255, 0.5) 0% 50%) 50% / 16px 16px;
 }
 
 .cropper-dashed {
