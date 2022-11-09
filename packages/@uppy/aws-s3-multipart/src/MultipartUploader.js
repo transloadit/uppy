@@ -62,20 +62,21 @@ class MultipartUploader {
   }
 
   #initChunks () {
-    const desiredChunkSize = this.options.getChunkSize(this.#data)
-    // at least 5MB per request, at most 10k requests
     const fileSize = this.#data.size
-    const minChunkSize = Math.max(5 * MB, Math.ceil(fileSize / 10000))
-    const chunkSize = Math.max(desiredChunkSize, minChunkSize)
 
     // Upload zero-sized files in one zero-sized chunk
-    if (this.#data.size === 0) {
+    if (this.#data.size === 0 || fileSize >> 10 >> 10 < 100) {
       this.#chunks = [{
         getData: () => this.#data,
         onProgress: this.#onPartProgress(0),
         onComplete: this.#onPartComplete(0),
       }]
     } else {
+      const desiredChunkSize = this.options.getChunkSize(this.#data)
+      // at least 5MB per request, at most 10k requests
+      const minChunkSize = Math.max(5 * MB, Math.ceil(fileSize / 10000))
+      const chunkSize = Math.max(desiredChunkSize, minChunkSize)
+
       const arraySize = Math.ceil(fileSize / chunkSize)
       this.#chunks = Array(arraySize)
 
