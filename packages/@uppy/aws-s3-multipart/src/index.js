@@ -181,9 +181,9 @@ class HTTPCommunicationQueue {
     const { uploadId, key } = await this.getUploadId(file, signal)
     throwIfAborted(signal)
     for (;;) {
+      const signature = await this.#fetchSignature(file, { uploadId, key, partNumber, body, signal })
+      throwIfAborted(signal)
       try {
-        const signature = await this.#fetchSignature(file, { uploadId, key, partNumber, body, signal })
-        throwIfAborted(signal)
         return {
           PartNumber: partNumber,
           ...await this.#uploadPartBytes(signature, body, signal),
