@@ -178,6 +178,10 @@ jobs:
           path: /tmp/
       - name: Extract tarball
         run: tar -xzf /tmp/packages/uppy-${{ github.sha }}.tgz --strip-components 1
+      - name: Fix package.json to work with Parcel
+        run: |
+          jq '. + { main: "index.cjs" }' < package.json > p.json
+          mv p.json package.json
       - name: Add ESBuild as a dev dependency
         run: npm i --save-dev esbuild@${{matrix.bundler-version}}
       - name: Bundle
