@@ -5,7 +5,7 @@
 Released: 2022-11-10
 Included in: Uppy v3.3.0
 
-- @uppy/dashboard: Dashboard: Single file mode (Artur Paikin / #4188)
+- @uppy/dashboard: Single file mode (Artur Paikin / #4188)
 
 ## 3.1.0
 
