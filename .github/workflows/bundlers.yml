@@ -22,7 +22,27 @@ jobs:
     steps:
       - name: Checkout sources
         uses: actions/checkout@v3
-      - run: mkdir -p /tmp/artifacts
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "dir=$(corepack yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+      - uses: actions/cache@v3
+        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: lts/*
+      - name: Install dependencies
+        run: corepack yarn workspaces focus $(corepack yarn workspaces list --json | jq -r .name | awk '/^@uppy-example/{ next } { if ($0!="uppy.io") print $0 }')
+        env:
+          # https://docs.cypress.io/guides/references/advanced-installation#Skipping-installation
+          CYPRESS_INSTALL_BINARY: 0
+      - name: Build lib
+        run: corepack yarn run build:lib
       - name: Make Uppy bundle use local version
         run: |
           node <<'EOF'
