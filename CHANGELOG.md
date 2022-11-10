@@ -12,6 +12,40 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 3.3.0
+
+Released: 2022-11-10
+
+| Package                | Version | Package                | Version |
+| ---------------------- | ------- | ---------------------- | ------- |
+| @uppy/angular          |   0.5.0 | @uppy/image-editor     |   2.1.0 |
+| @uppy/aws-s3-multipart |   3.1.0 | @uppy/locales          |   3.0.4 |
+| @uppy/companion        |   4.1.0 | @uppy/tus              |   3.0.5 |
+| @uppy/companion-client |   3.1.0 | @uppy/utils            |   5.1.0 |
+| @uppy/dashboard        |   3.2.0 | uppy                   |   3.3.0 |
+
+- @uppy/companion: change default S3 expiry from 300 to 800 seconds (Merlijn Vos / #4206)
+- @uppy/dashboard: Single file mode (Artur Paikin / #4188)
+- @uppy/locales: Fix UZ locale (Merlijn Vos / #4178)
+- @uppy/utils: update typings for `RateLimitedQueue` (Antoine du Hamel / #4204)
+- @uppy/aws-s3-multipart: empty the queue when pausing (Antoine du Hamel / #4203)
+- @uppy/image-editor: add checkered background (Livia Medeiros / #4194)
+- @uppy/aws-s3-multipart: refactor rate limiting approach (Antoine du Hamel / #4187)
+- @uppy/companion: send expiry time along side S3 signed requests (Antoine du Hamel / #4202)
+- @uppy/companion-client: add support for `AbortSignal` (Antoine du Hamel / #4201)
+- @uppy/companion-client: prevent preflight race condition (Mikael Finstad / #4182)
+- @uppy/aws-s3-multipart: change limit to 6 (Antoine du Hamel / #4199)
+- @uppy/utils: add `cause` support for `AbortError`s (Antoine du Hamel / #4198)
+- meta: Fix bad example for setFileState (Tim Whitney / #4191)
+- meta: Update code example for getFiles (Tim Whitney / #4189)
+- meta: Fix issue with outdated comment. (Tim Whitney / #4192)
+- @uppy/aws-s3-multipart: remove unused `timeout` option (Antoine du Hamel / #4186)
+- meta: Remove dollar sign from command for easier copy/pasting (Youssef Victor / #4180)
+- @uppy/aws-s3-multipart,@uppy/tus: fix `Timed out waiting for socket` (Antoine du Hamel / #4177)
+- meta: Add note about facebook approval (Mikael Finstad / #4172)
+- meta: add a manual deploy for website (Antoine du Hamel / #4171)
+
+
 ## 3.2.2
 
 Released: 2022-10-24

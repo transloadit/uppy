@@ -1,5 +1,13 @@
 # @uppy/companion
 
+## 4.1.0
+
+Released: 2022-11-10
+Included in: Uppy v3.3.0
+
+- @uppy/companion: change default S3 expiry from 300 to 800 seconds (Merlijn Vos / #4206)
+- @uppy/companion: send expiry time along side S3 signed requests (Antoine du Hamel / #4202)
+
 ## 4.0.4
 
 Released: 2022-10-19

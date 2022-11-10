@@ -1,5 +1,13 @@
 # @uppy/utils
 
+## 5.1.0
+
+Released: 2022-11-10
+Included in: Uppy v3.3.0
+
+- @uppy/utils: update typings for `RateLimitedQueue` (Antoine du Hamel / #4204)
+- @uppy/utils: add `cause` support for `AbortError`s (Antoine du Hamel / #4198)
+
 ## 5.0.2
 
 Released: 2022-09-25

@@ -1,5 +1,12 @@
 # @uppy/tus
 
+## 3.0.5
+
+Released: 2022-11-10
+Included in: Uppy v3.3.0
+
+- @uppy/aws-s3-multipart,@uppy/tus: fix `Timed out waiting for socket` (Antoine du Hamel / #4177)
+
 ## 3.0.4
 
 Released: 2022-10-24
