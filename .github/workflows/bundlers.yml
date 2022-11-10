@@ -46,13 +46,13 @@ jobs:
       - name: Make Uppy bundle use local version
         run: |
           node <<'EOF'
-            const pkg = require('./packages/uppy/package.json')
+            const pkg = require('./packages/uppy/package.json');
             for(const key of Object.keys(pkg.dependencies)) {
               if (key.startsWith('@uppy/')) {
-                pkg.dependencies[key] = `/tmp/packages/${key.replace('/', '-')}-${{ github.sha }}.tgz`
+                pkg.dependencies[key] = `/tmp/packages/${key.replace('/', '-')}-${{ github.sha }}.tgz`;
               }
             }
-            require('node:fs').writeFileSync('./packages/uppy/package.json', JSON.stringify(pkg))
+            require('node:fs').writeFileSync('./packages/uppy/package.json', JSON.stringify(pkg));
           EOF
       - name: Eject public packages from repo
         run: mkdir /tmp/artifacts && corepack yarn workspaces foreach --no-private pack --install-if-needed -o /tmp/artifacts/%s-${{ github.sha }}.tgz
@@ -140,12 +140,16 @@ jobs:
         run: echo '<!doctype html><html><head><script type="module" src="./index.mjs"></script></head></html>' > index.html
       - name: Fix package.json to work with Parcel
         run: |
-          jq '. + { main: "index.cjs", source: "index.html" }' < package.json > p.json
-          mv p.json package.json
+          node <<'EOF'
+            const pkg = require('./package.json');
+            delete pkg.main
+            delete pkg.types
+            require('node:fs').writeFileSync('./package.json', JSON.stringify(pkg));
+          EOF
       - name: Add Parcel as a dev dependency
         run: npm i --save-dev parcel@${{matrix.bundler-version}}
       - name: Bundle
-        run: npx parcel build
+        run: npx parcel build index.html
 
   vite:
     needs: isolate_uppy
