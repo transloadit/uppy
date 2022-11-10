@@ -22,14 +22,26 @@ jobs:
     steps:
       - name: Checkout sources
         uses: actions/checkout@v3
-      - name: Eject Uppy package from repo
-        run: corepack yarn workspace uppy pack --install-if-needed -o /tmp/uppy-${{ github.sha }}.tar.gz
+      - run: mkdir -p /tmp/artifacts
+      - name: Make Uppy bundle use local version
+        run: |
+          node <<'EOF'
+            const pkg = require('./packages/uppy/package.json')
+            for(const key of Object.keys(pkg.dependencies)) {
+              if (key.startsWith('@uppy/')) {
+                pkg.dependencies[key] = `/tmp/artifacts/${key.replace('/', '-')}-${{ github.sha }}tar.gz`
+              }
+            }
+            require('node:fs').writeFileSync('./packages/uppy/package.json', JSON.stringify(pkg))
+          EOF
+      - name: Eject public packages from repo
+        run: corepack yarn workspaces foreach --no-private pack --install-if-needed -o /tmp/artifacts/%s-${{ github.sha }}.tgz
       - name: Upload artifact
         if: success()
         uses: actions/upload-artifact@v3
         with:
-          name: uppy-${{ github.sha }}.tar.gz
-          path: /tmp/uppy-${{ github.sha }}.tar.gz
+          name: packages
+          path: /tmp/artifacts/
 
   rollup:
     needs: isolate_uppy
@@ -42,9 +54,9 @@ jobs:
       - name: Download uppy tarball
         uses: actions/download-artifact@v3
         with:
-          name: uppy-${{ github.sha }}.tar.gz
+          path: /tmp/artifacts/
       - name: Extract tarball
-        run: tar -xzf uppy-${{ github.sha }}.tar.gz --strip-components 1
+        run: tar -xzf /tmp/artifacts/uppy-${{ github.sha }}.tar.gz --strip-components 1
       - name: Add Rollup as a dev dependency
         run: >-
           npm i --save-dev
@@ -79,7 +91,7 @@ jobs:
       - name: Download uppy tarball
         uses: actions/download-artifact@v3
         with:
-          name: uppy-${{ github.sha }}.tar.gz
+          path: /tmp/artifacts/
       - name: Extract tarball
         run: tar -xzf uppy-${{ github.sha }}.tar.gz --strip-components 1
       - name: Add Webpack as a dev dependency
