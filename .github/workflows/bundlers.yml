@@ -75,7 +75,6 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           path: /tmp/
-      - run: ls /tmp/packages/
       - name: Extract tarball
         run: tar -xzf /tmp/packages/uppy-${{ github.sha }}.tgz --strip-components 1
       - name: Add Rollup as a dev dependency
@@ -83,7 +82,6 @@ jobs:
           npm i --save-dev
           @rollup/plugin-commonjs @rollup/plugin-node-resolve
           rollup@${{matrix.rollup-version}}
-      - run: ls node_modules/@uppy
       - name: Create Rollup config file
         run: >-
           echo '
@@ -118,7 +116,6 @@ jobs:
         run: tar -xzf /tmp/packages/uppy-${{ github.sha }}.tgz --strip-components 1
       - name: Add Webpack as a dev dependency
         run: npm i --save-dev webpack-cli webpack@${{matrix.webpack-version}}
-      - run: ls node_modules/@uppy
       - name: Create Webpack config file
         run: echo 'module.exports={mode:"production",target:"web",entry:"./index.mjs"}' > webpack.config.js
       - name: Bundle
