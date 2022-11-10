@@ -69,7 +69,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        rollup-version: [latest]
+        bundler-version: [latest]
     steps:
       - name: Download uppy tarball
         uses: actions/download-artifact@v3
@@ -81,7 +81,7 @@ jobs:
         run: >-
           npm i --save-dev
           @rollup/plugin-commonjs @rollup/plugin-node-resolve
-          rollup@${{matrix.rollup-version}}
+          rollup@${{matrix.bundler-version}}
       - name: Create Rollup config file
         run: >-
           echo '
@@ -107,7 +107,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        webpack-version: [latest]
+        bundler-version: [latest]
     steps:
       - name: Download uppy tarball
         uses: actions/download-artifact@v3
@@ -116,7 +116,7 @@ jobs:
       - name: Extract tarball
         run: tar -xzf /tmp/packages/uppy-${{ github.sha }}.tgz --strip-components 1
       - name: Add Webpack as a dev dependency
-        run: npm i --save-dev webpack-cli webpack@${{matrix.webpack-version}}
+        run: npm i --save-dev webpack-cli webpack@${{matrix.bundler-version}}
       - name: Create Webpack config file
         run: echo 'module.exports={mode:"production",target:"web",entry:"./index.mjs"}' > webpack.config.js
       - name: Bundle
@@ -128,7 +128,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        webpack-version: [latest]
+        bundler-version: [latest]
     steps:
       - name: Download uppy tarball
         uses: actions/download-artifact@v3
@@ -137,11 +137,9 @@ jobs:
       - name: Extract tarball
         run: tar -xzf /tmp/packages/uppy-${{ github.sha }}.tgz --strip-components 1
       - name: Add Parcel as a dev dependency
-        run: npm i --save-dev parcel@${{matrix.webpack-version}} buffer
+        run: npm i --save-dev parcel@${{matrix.bundler-version}}
       - name: Create index.html
         run: echo '<!doctype html><html><head><script type="module" src="./index.mjs"></script></head></html>' > index.html
-      - name: Override `package.json` to avoid interferences
-        run: echo '{}' > package.json
       - name: Bundle
         run: npx parcel build index.html
 
@@ -151,7 +149,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        webpack-version: [latest]
+        bundler-version: [latest]
     steps:
       - name: Download uppy tarball
         uses: actions/download-artifact@v3
@@ -160,7 +158,7 @@ jobs:
       - name: Extract tarball
         run: tar -xzf /tmp/packages/uppy-${{ github.sha }}.tgz --strip-components 1
       - name: Add Vite as a dev dependency
-        run: npm i --save-dev vite@${{matrix.webpack-version}}
+        run: npm i --save-dev vite@${{matrix.bundler-version}}
       - name: Create index.html
         run: echo '<!doctype html><html><head><script type="module" src="./index.mjs"></script></head></html>' > index.html
       - name: Bundle
@@ -168,11 +166,11 @@ jobs:
 
   esbuild:
     needs: isolate_uppy
-    name: Vite
+    name: ESBuild
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        webpack-version: [latest]
+        bundler-version: [latest]
     steps:
       - name: Download uppy tarball
         uses: actions/download-artifact@v3
@@ -181,7 +179,7 @@ jobs:
       - name: Extract tarball
         run: tar -xzf /tmp/packages/uppy-${{ github.sha }}.tgz --strip-components 1
       - name: Add ESBuild as a dev dependency
-        run: npm i --save-dev esbuild@${{matrix.webpack-version}}
+        run: npm i --save-dev esbuild@${{matrix.bundler-version}}
       - name: Bundle
         run: npx esbuild index.mjs --bundle --outfile=/dev/null
     
