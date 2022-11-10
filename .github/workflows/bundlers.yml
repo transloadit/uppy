@@ -29,7 +29,7 @@ jobs:
             const pkg = require('./packages/uppy/package.json')
             for(const key of Object.keys(pkg.dependencies)) {
               if (key.startsWith('@uppy/')) {
-                pkg.dependencies[key] = `/tmp/packages/${key.replace('/', '-')}-${{ github.sha }}tar.gz`
+                pkg.dependencies[key] = `/tmp/packages/${key.replace('/', '-')}-${{ github.sha }}.tgz`
               }
             }
             require('node:fs').writeFileSync('./packages/uppy/package.json', JSON.stringify(pkg))
@@ -57,7 +57,7 @@ jobs:
           path: /tmp/
       - run: ls /tmp/packages/
       - name: Extract tarball
-        run: tar -xzf /tmp/packages/uppy-${{ github.sha }}.tar.gz --strip-components 1
+        run: tar -xzf /tmp/packages/uppy-${{ github.sha }}.tgz --strip-components 1
       - name: Add Rollup as a dev dependency
         run: >-
           npm i --save-dev
@@ -94,7 +94,7 @@ jobs:
         with:
           path: /tmp/
       - name: Extract tarball
-        run: tar -xzf /tmp/packages/uppy-${{ github.sha }}.tar.gz --strip-components 1
+        run: tar -xzf /tmp/packages/uppy-${{ github.sha }}.tgz --strip-components 1
       - name: Add Webpack as a dev dependency
         run: npm i --save-dev webpack-cli webpack@${{matrix.webpack-version}}
       - name: Create Webpack config file
