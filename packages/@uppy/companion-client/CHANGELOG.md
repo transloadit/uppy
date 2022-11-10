@@ -1,5 +1,13 @@
 # @uppy/companion-client
 
+## 3.1.0
+
+Released: 2022-11-10
+Included in: Uppy v3.3.0
+
+- @uppy/companion-client: add support for `AbortSignal` (Antoine du Hamel / #4201)
+- @uppy/companion-client: prevent preflight race condition (Mikael Finstad / #4182)
+
 ## 3.0.2
 
 Released: 2022-09-25

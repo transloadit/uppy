@@ -1,5 +1,12 @@
 # @uppy/angular
 
+## 0.5.0
+
+Released: 2022-11-10
+Included in: Uppy v3.3.0
+
+- @uppy/angular: fixup! @uppy/utils: add `cause` support for `AbortError`s (Antoine du Hamel / #4198)
+
 ## 0.4.3
 
 Released: 2022-10-19

@@ -1,5 +1,12 @@
 # @uppy/locales
 
+## 3.0.4
+
+Released: 2022-11-10
+Included in: Uppy v3.3.0
+
+- @uppy/locales: Fix UZ locale (Merlijn Vos / #4178)
+
 ## 3.0.2
 
 Released: 2022-10-19
