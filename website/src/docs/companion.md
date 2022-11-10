@@ -260,8 +260,8 @@ export COMPANION_AWS_BUCKET="YOUR AWS S3 BUCKET"
 export COMPANION_AWS_REGION="AWS REGION"
 # to enable S3 Transfer Acceleration (default: false)
 export COMPANION_AWS_USE_ACCELERATE_ENDPOINT="false"
-# to set X-Amz-Expires query param in presigned urls (in seconds, default: 300)
-export COMPANION_AWS_EXPIRES="300"
+# to set X-Amz-Expires query param in presigned urls (in seconds, default: 800)
+export COMPANION_AWS_EXPIRES="800"
 # to set a canned ACL for uploaded objects: https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#canned-acl
 export COMPANION_AWS_ACL="private"
 

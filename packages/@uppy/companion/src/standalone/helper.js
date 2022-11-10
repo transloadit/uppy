@@ -79,7 +79,7 @@ const getConfigFromEnv = () => {
       region: process.env.COMPANION_AWS_REGION,
       useAccelerateEndpoint:
       process.env.COMPANION_AWS_USE_ACCELERATE_ENDPOINT === 'true',
-      expires: parseInt(process.env.COMPANION_AWS_EXPIRES || '300', 10),
+      expires: parseInt(process.env.COMPANION_AWS_EXPIRES || '800', 10),
       acl: process.env.COMPANION_AWS_ACL,
     },
     server: {
