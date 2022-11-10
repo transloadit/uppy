@@ -55,7 +55,7 @@ jobs:
             require('node:fs').writeFileSync('./packages/uppy/package.json', JSON.stringify(pkg))
           EOF
       - name: Eject public packages from repo
-        run: corepack yarn workspaces foreach --no-private pack --install-if-needed -o /tmp/artifacts/%s-${{ github.sha }}.tgz
+        run: mkdir /tmp/artifacts && corepack yarn workspaces foreach --no-private pack --install-if-needed -o /tmp/artifacts/%s-${{ github.sha }}.tgz
       - name: Upload artifact
         if: success()
         uses: actions/upload-artifact@v3
