@@ -136,20 +136,19 @@ jobs:
           path: /tmp/
       - name: Extract tarball
         run: tar -xzf /tmp/packages/uppy-${{ github.sha }}.tgz --strip-components 1
-      - name: Create index.html
-        run: echo '<!doctype html><html><head><script type="module" src="./index.mjs"></script></head></html>' > index.html
       - name: Fix package.json to work with Parcel
         run: |
           node <<'EOF'
             const pkg = require('./package.json');
             delete pkg.main
             delete pkg.types
+            pkg.module = 'output.mjs'
             require('node:fs').writeFileSync('./package.json', JSON.stringify(pkg));
           EOF
       - name: Add Parcel as a dev dependency
         run: npm i --save-dev parcel@${{matrix.bundler-version}}
       - name: Bundle
-        run: npx parcel build index.html
+        run: npx parcel build index.mjs
 
   vite:
     needs: isolate_uppy
