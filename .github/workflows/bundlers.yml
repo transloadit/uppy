@@ -137,7 +137,7 @@ jobs:
       - name: Extract tarball
         run: tar -xzf /tmp/packages/uppy-${{ github.sha }}.tgz --strip-components 1
       - name: Add Parcel as a dev dependency
-        run: npm i --save-dev parcel@${{matrix.webpack-version}}
+        run: npm i --save-dev parcel@${{matrix.webpack-version}} buffer
       - name: Create index.html
         run: echo '<!doctype html><html><head><script type="module" src="./index.mjs"></script></head></html>' > index.html
       - name: Override `package.json` to avoid interferences
