@@ -3,18 +3,17 @@ name: Test different bundlers with Uppy
 on:
   push:
     branches: [ main ]
-    # Ideally we would want to run this workflow only on release commits since
-    # that workflow relies on versions of Uppy plugins that have been released
-    # on npm, but because we are using a workflow to merge the release PRs, no
-    # workflow is being run on release commits.
   pull_request:
     # We want all branches so we configure types to be the GH default again
     types: [ opened, synchronize, reopened ]
-    paths:
-      # Because we extract the Uppy package from the repo, all the changes
-      # outside of it would have no effect on this workflow.
-      - 'packages/uppy/**'
-      - '.github/workflows/bundlers.yml'
+    paths-ignore:
+      - '**.md'
+      - '**.d.ts'
+      - 'examples/**'
+      - 'private/**'
+      - 'website/**'
+      - '.github/**'
+      - '!.github/workflows/bundlers.yml'
 
 jobs:
   isolate_uppy:
@@ -134,9 +133,9 @@ jobs:
       - name: Download uppy tarball
         uses: actions/download-artifact@v3
         with:
-          name: uppy-${{ github.sha }}.tar.gz
+          path: /tmp/
       - name: Extract tarball
-        run: tar -xzf uppy-${{ github.sha }}.tar.gz --strip-components 1
+        run: tar -xzf /tmp/packages/uppy-${{ github.sha }}.tgz --strip-components 1
       - name: Add Parcel as a dev dependency
         run: npm i --save-dev parcel@${{matrix.webpack-version}}
       - name: Create index.html
@@ -157,9 +156,9 @@ jobs:
       - name: Download uppy tarball
         uses: actions/download-artifact@v3
         with:
-          name: uppy-${{ github.sha }}.tar.gz
+          path: /tmp/
       - name: Extract tarball
-        run: tar -xzf uppy-${{ github.sha }}.tar.gz --strip-components 1
+        run: tar -xzf /tmp/packages/uppy-${{ github.sha }}.tgz --strip-components 1
       - name: Add Vite as a dev dependency
         run: npm i --save-dev vite@${{matrix.webpack-version}}
       - name: Create index.html
