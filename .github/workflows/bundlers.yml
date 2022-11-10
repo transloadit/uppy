@@ -165,6 +165,24 @@ jobs:
         run: echo '<!doctype html><html><head><script type="module" src="./index.mjs"></script></head></html>' > index.html
       - name: Bundle
         run: npx vite build
+
+  esbuild:
+    needs: isolate_uppy
+    name: Vite
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        webpack-version: [latest]
+    steps:
+      - name: Download uppy tarball
+        uses: actions/download-artifact@v3
+        with:
+          path: /tmp/
+      - name: Extract tarball
+        run: tar -xzf /tmp/packages/uppy-${{ github.sha }}.tgz --strip-components 1
+      - name: Add ESBuild as a dev dependency
+        run: npm i --save-dev esbuild@${{matrix.webpack-version}}
+      - name: Bundle
+        run: npx esbuild index.mjs --bundle --outfile=/dev/null
     
-  # ESBuild: We are already testing it when generating the actual bundle.
   # Browserify: doesn't support ESM.
