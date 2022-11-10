@@ -705,6 +705,24 @@ export default class Dashboard extends UIPlugin {
     this.uppy.emit('restore-canceled')
   }
 
+  #generateLargeThumbnailIfSingleFile = () => {
+    if (this.opts.disableThumbnailGenerator) {
+      return
+    }
+
+    const LARGE_THUMBNAIL = 600
+    const files = this.uppy.getFiles()
+
+    if (files.length === 1) {
+      const thumbnailGenerator = this.uppy.getPlugin(`${this.id}:ThumbnailGenerator`)
+      thumbnailGenerator?.setOptions({ thumbnailWidth: LARGE_THUMBNAIL })
+      const fileForThumbnail = { ...files[0], preview: undefined }
+      thumbnailGenerator.requestThumbnail(fileForThumbnail).then(() => {
+        thumbnailGenerator?.setOptions({ thumbnailWidth: this.opts.thumbnailWidth })
+      })
+    }
+  }
+
   #openFileEditorWhenFilesAdded = (files) => {
     const firstFile = files[0]
     if (this.canEditFile(firstFile)) {
@@ -731,6 +749,9 @@ export default class Dashboard extends UIPlugin {
     this.uppy.on('dashboard:modal-closed', this.hideAllPanels)
     this.uppy.on('file-editor:complete', this.hideAllPanels)
     this.uppy.on('complete', this.handleComplete)
+
+    this.uppy.on('files-added', this.#generateLargeThumbnailIfSingleFile)
+    this.uppy.on('file-removed', this.#generateLargeThumbnailIfSingleFile)
 
     // ___Why fire on capture?
     //    Because this.ifFocusedOnUppyRecently needs to change before onUpdate() fires.
@@ -761,6 +782,9 @@ export default class Dashboard extends UIPlugin {
     this.uppy.off('dashboard:modal-closed', this.hideAllPanels)
     this.uppy.off('file-editor:complete', this.hideAllPanels)
     this.uppy.off('complete', this.handleComplete)
+
+    this.uppy.off('files-added', this.#generateLargeThumbnailIfSingleFile)
+    this.uppy.off('file-removed', this.#generateLargeThumbnailIfSingleFile)
 
     document.removeEventListener('focus', this.recordIfFocusedOnUppyRecently)
     document.removeEventListener('click', this.recordIfFocusedOnUppyRecently)

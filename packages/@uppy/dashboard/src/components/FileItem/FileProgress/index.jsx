@@ -40,7 +40,7 @@ function ProgressIndicatorButton (props) {
   return (
     <div className="uppy-Dashboard-Item-progress">
       <button
-        className="uppy-u-reset uppy-Dashboard-Item-progressIndicator"
+        className="uppy-u-reset uppy-c-btn uppy-Dashboard-Item-progressIndicator"
         type="button"
         aria-label={progressIndicatorTitle(props)}
         title={progressIndicatorTitle(props)}
