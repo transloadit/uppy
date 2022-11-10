@@ -24,18 +24,17 @@ Released: 2022-11-10
 | @uppy/companion-client |   3.1.0 | @uppy/utils            |   5.1.0 |
 | @uppy/dashboard        |   3.2.0 | uppy                   |   3.3.0 |
 
-- @uppy/companion: Companion: change default S3 expiry from 300 to 800 seconds (Merlijn Vos / #4206)
-- @uppy/dashboard: Dashboard: Single file mode (Artur Paikin / #4188)
+- @uppy/companion: change default S3 expiry from 300 to 800 seconds (Merlijn Vos / #4206)
+- @uppy/dashboard: Single file mode (Artur Paikin / #4188)
 - @uppy/locales: Fix UZ locale (Merlijn Vos / #4178)
 - @uppy/utils: update typings for `RateLimitedQueue` (Antoine du Hamel / #4204)
 - @uppy/aws-s3-multipart: empty the queue when pausing (Antoine du Hamel / #4203)
-- @uppy/image-editor: image-editor: add checkered background (Livia Medeiros / #4194)
+- @uppy/image-editor: add checkered background (Livia Medeiros / #4194)
 - @uppy/aws-s3-multipart: refactor rate limiting approach (Antoine du Hamel / #4187)
 - @uppy/companion: send expiry time along side S3 signed requests (Antoine du Hamel / #4202)
 - @uppy/companion-client: add support for `AbortSignal` (Antoine du Hamel / #4201)
 - @uppy/companion-client: prevent preflight race condition (Mikael Finstad / #4182)
 - @uppy/aws-s3-multipart: change limit to 6 (Antoine du Hamel / #4199)
-- @uppy/angular: fixup! @uppy/utils: add `cause` support for `AbortError`s (Antoine du Hamel / #4198)
 - @uppy/utils: add `cause` support for `AbortError`s (Antoine du Hamel / #4198)
 - meta: Fix bad example for setFileState (Tim Whitney / #4191)
 - meta: Update code example for getFiles (Tim Whitney / #4189)
