@@ -8,7 +8,7 @@ Included in: Uppy v3.3.0
 - @uppy/aws-s3-multipart: empty the queue when pausing (Antoine du Hamel / #4203)
 - @uppy/aws-s3-multipart: refactor rate limiting approach (Antoine du Hamel / #4187)
 - @uppy/aws-s3-multipart: change limit to 6 (Antoine du Hamel / #4199)
-- @uppy/aws-s3-multipart: @aws-s3-multipart: remove unused `timeout` option (Antoine du Hamel / #4186)
+- @uppy/aws-s3-multipart: remove unused `timeout` option (Antoine du Hamel / #4186)
 - @uppy/aws-s3-multipart,@uppy/tus: fix `Timed out waiting for socket` (Antoine du Hamel / #4177)
 
 ## 3.0.2

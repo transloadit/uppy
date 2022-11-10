@@ -39,7 +39,7 @@ Released: 2022-11-10
 - meta: Fix bad example for setFileState (Tim Whitney / #4191)
 - meta: Update code example for getFiles (Tim Whitney / #4189)
 - meta: Fix issue with outdated comment. (Tim Whitney / #4192)
-- @uppy/aws-s3-multipart: @aws-s3-multipart: remove unused `timeout` option (Antoine du Hamel / #4186)
+- @uppy/aws-s3-multipart: remove unused `timeout` option (Antoine du Hamel / #4186)
 - meta: Remove dollar sign from command for easier copy/pasting (Youssef Victor / #4180)
 - @uppy/aws-s3-multipart,@uppy/tus: fix `Timed out waiting for socket` (Antoine du Hamel / #4177)
 - meta: Add note about facebook approval (Mikael Finstad / #4172)
