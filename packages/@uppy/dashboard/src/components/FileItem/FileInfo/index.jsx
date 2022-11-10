@@ -7,6 +7,9 @@ const renderFileName = (props) => {
   const { author, name } = props.file.meta
 
   function getMaxNameLength () {
+    if (props.singleFile) {
+      return 200
+    }
     if (props.containerWidth <= 352) {
       return 35
     }
@@ -78,7 +81,7 @@ const ErrorButton = ({ file, onClick }) => {
   if (file.error) {
     return (
       <button
-        className="uppy-u-reset uppy-Dashboard-Item-errorDetails"
+        className="uppy-u-reset uppy-c-btn uppy-Dashboard-Item-errorDetails"
         aria-label={file.error}
         data-microtip-position="bottom"
         data-microtip-size="medium"

@@ -514,7 +514,7 @@ Get an array of all [File Objects][] that have been added to Uppy.
 ```js
 import prettierBytes from '@transloadit/prettier-bytes'
 
-const items = uppy.getFiles().map(() => `<li>${file.name} - ${prettierBytes(file.size)}</li>`).join('')
+const items = uppy.getFiles().map((file) => `<li>${file.name} - ${prettierBytes(file.size)}</li>`).join('')
 document.querySelector('.file-list').innerHTML = `<ul>${items}</ul>`
 ```
 
@@ -595,9 +595,9 @@ uppy.setState({
 State in Uppy is considered to be immutable. When updating values, make sure not mutate them, but instead create copies. See [Redux docs](http://redux.js.org/docs/recipes/UsingObjectSpreadOperator.html) for more info on this. Here is an example that updates progress for a particular file in state:
 
 ```js
-// We use Object.assign({}, obj) to create a copy of `obj`.
+// We use the spread operator to create a copy of the files object.
 const updatedFiles = { ...uppy.getState().files }
-// We use Object.assign({}, obj, update) to create an altered copy of `obj`.
+// We use the spread operator to create a copy of the files object.
 const updatedFile = {
   ...updatedFiles[fileID],
   progress: {
@@ -622,7 +622,12 @@ Update the state for a single file. This is mostly useful for plugins that may w
 `fileID` is the string file ID. `state` is an object that will be merged into the file’s state object.
 
 ```js
-uppy.getPlugin('Url').addFile('path/to/remote-file.jpg')
+uppy.getFiles().forEach(file => {
+  // Mark all files as uploaded and complete.
+  uppy.setFileState(file.id, {
+    progress: { uploadComplete: true, uploadStarted: true },
+  })
+})
 ```
 
 ### `uppy.setMeta(data)`

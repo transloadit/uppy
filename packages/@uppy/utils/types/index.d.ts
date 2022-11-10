@@ -55,6 +55,7 @@ declare module '@uppy/utils/lib/RateLimitedQueue' {
     export type AbortFunction = () => void
     export interface AbortablePromise<T> extends Promise<T> {
       abort(): void
+      abortOn(signal: AbortSignal): this
     }
     export type QueueEntry = {
       abort: () => void,
@@ -68,10 +69,18 @@ declare module '@uppy/utils/lib/RateLimitedQueue' {
   export class RateLimitedQueue {
     constructor(limit: number)
 
+    readonly isPaused: boolean
+
     run(
       fn: () => RateLimitedQueue.AbortFunction,
       queueOptions?: RateLimitedQueue.QueueOptions
     ): RateLimitedQueue.QueueEntry
+
+    rateLimit(duration: number): void
+
+    pause(duration?: number): void
+
+    resume(): void
 
     wrapPromiseFunction(
       fn: () => (...args: any[]) => Promise<any>,
@@ -241,7 +250,7 @@ declare module '@uppy/utils/lib/toArray' {
 declare module '@uppy/utils/lib/AbortController' {
   export const AbortController: typeof globalThis.AbortController
   export const AbortSignal: typeof globalThis.AbortSignal
-  export function createAbortError(message?: string): DOMException
+  export function createAbortError(message?: string, options?: ErrorOptions): DOMException
 }
 
 declare module '@uppy/utils/lib/getDroppedFiles' {

@@ -727,6 +727,13 @@
   }
 }
 
+.uppy-Dashboard--singleFile .uppy-Dashboard-filesInner  {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
 .uppy-Dashboard-dropFilesHereHint {
   position: absolute;
   top: 7px;
@@ -867,12 +874,21 @@ a.uppy-Dashboard-poweredBy {
     width: 100%;
     height: 100%;
   }
+
+  .uppy-Dashboard--singleFile & {
+    width: 90px;
+    height: 90px;
+  }
 }
 
 .uppy-Dashboard-Item-previewIconWrap {
   position: relative;
   height: 76px;
   max-height: 75%;
+
+  .uppy-Dashboard--singleFile & {
+    height: 176px;
+  }
 }
 
 .uppy-Dashboard-Item-previewIconBg {

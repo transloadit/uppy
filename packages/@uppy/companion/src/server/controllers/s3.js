@@ -204,7 +204,7 @@ module.exports = function s3 (config) {
         next(err)
         return
       }
-      res.json({ url })
+      res.json({ url, expires: config.expires })
     })
   }
 

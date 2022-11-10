@@ -1,5 +1,29 @@
 # @uppy/companion
 
+## 4.1.0
+
+Released: 2022-11-10
+Included in: Uppy v3.3.0
+
+- @uppy/companion: change default S3 expiry from 300 to 800 seconds (Merlijn Vos / #4206)
+- @uppy/companion: send expiry time along side S3 signed requests (Antoine du Hamel / #4202)
+
+## 4.0.4
+
+Released: 2022-10-19
+Included in: Uppy v3.2.0
+
+- @uppy/companion: add workaround for S3 accelerated endpoints (Mikael Finstad / #4140)
+- @uppy/companion: fix error message (Mikael Finstad / #4125)
+
+## 4.0.2
+
+Released: 2022-09-25
+Included in: Uppy v3.1.0
+
+- @uppy/companion: Companion throttle progress by time (Mikael Finstad / #4101)
+- @uppy/audio,@uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/box,@uppy/companion-client,@uppy/companion,@uppy/compressor,@uppy/core,@uppy/dashboard,@uppy/drag-drop,@uppy/drop-target,@uppy/dropbox,@uppy/facebook,@uppy/file-input,@uppy/form,@uppy/golden-retriever,@uppy/google-drive,@uppy/image-editor,@uppy/informer,@uppy/instagram,@uppy/locales,@uppy/onedrive,@uppy/progress-bar,@uppy/provider-views,@uppy/react,@uppy/redux-dev-tools,@uppy/remote-sources,@uppy/screen-capture,@uppy/status-bar,@uppy/store-default,@uppy/store-redux,@uppy/svelte,@uppy/thumbnail-generator,@uppy/transloadit,@uppy/tus,@uppy/unsplash,@uppy/url,@uppy/utils,@uppy/vue,@uppy/webcam,@uppy/xhr-upload,@uppy/zoom: add missing entries to changelog for individual packages (Antoine du Hamel / #4092)
+
 ## 4.0.1
 
 Released: 2022-08-30

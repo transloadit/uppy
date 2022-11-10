@@ -20,12 +20,25 @@ module.exports = (companionOptions) => {
       throw new Error('Found unsupported `providerOptions.s3.awsClientOptions.accessKeyId` or `providerOptions.s3.awsClientOptions.secretAccessKey` configuration. Please use the `providerOptions.s3.key` and `providerOptions.s3.secret` options instead.')
     }
 
-    const s3ClientOptions = {
+    let s3ClientOptions = {
       signatureVersion: 'v4',
       endpoint: s3.endpoint,
       region: s3.region,
-      // backwards compat
-      useAccelerateEndpoint: s3.useAccelerateEndpoint,
+    }
+
+    if (s3.useAccelerateEndpoint && s3.bucket != null) {
+      s3ClientOptions = {
+        ...s3ClientOptions,
+        useAccelerateEndpoint: true,
+        s3BucketEndpoint: true,
+        // This is a workaround for lacking support for useAccelerateEndpoint in createPresignedPost
+        // See https://github.com/transloadit/uppy/issues/4135#issuecomment-1276450023
+        endpoint: `https://${s3.bucket}.s3-accelerate.amazonaws.com/`,
+      }
+    }
+
+    s3ClientOptions = {
+      ...s3ClientOptions,
       ...rawClientOptions,
     }
 

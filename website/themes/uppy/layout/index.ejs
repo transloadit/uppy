@@ -174,7 +174,7 @@
 <section class="IndexActivity">
   <h2>Activity Feed</h2>
 
-  <div class="on-the-githubs" data-event-source="repos/transloadit/uppy">Loading...</div>
+  <noscript class="activity-feed" data-event-source="repos/transloadit/uppy">You need JavaScript to display the activity feed.</noscript>
 </section>
 
 <section>
@@ -187,10 +187,10 @@
   <p>© <%- date(Date.now(), 'YYYY') %> <a href="https://transloadit.com" target="_blank">Transloadit</a></p>
 </footer>
 
-<link href="https://releases.transloadit.com/uppy/v3.0.1/uppy.min.css" rel="stylesheet">
+<link href="https://releases.transloadit.com/uppy/v3.3.0/uppy.min.css" rel="stylesheet">
 
 <script type="module">
-  import { Uppy, Dashboard, RemoteSources, Webcam, ImageEditor, Audio, ScreenCapture, Tus } from "https://releases.transloadit.com/uppy/v3.0.1/uppy.min.mjs"
+  import { Uppy, Dashboard, RemoteSources, Webcam, ImageEditor, Audio, ScreenCapture, Tus } from "https://releases.transloadit.com/uppy/v3.3.0/uppy.min.mjs"
   window.addEventListener('DOMContentLoaded', function() {
     const TUS_ENDPOINT = 'https://tusd.tusdemo.net/files/'
     let COMPANION_ENDPOINT = 'http://localhost:3020'

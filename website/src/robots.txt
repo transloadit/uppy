@@ -1,2 +1,1 @@
 User-agent: *
-Disallow: /disc.html

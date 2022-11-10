@@ -35,6 +35,10 @@ Install from NPM:
 npm install @uppy/facebook
 ```
 
+## OAuth
+
+You need to set up OAuth in your Facebook app for Companion to be able to connect to users’ Facebook accounts. You have to enable “Advanced Access” for the `user_photos` permission. A precondition of that is “Business Verification” which involves setting up a Meta Business Account and submitting documents to prove business ownership.
+
 ## CSS
 
 Dashboard plugin is recommended as a container to all Provider plugins, including Facebook. If you are using Dashboard, it [comes with all the necessary styles](/docs/dashboard/#CSS) for Facebook as well.

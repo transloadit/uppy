@@ -61,7 +61,7 @@ function ListItem (props) {
         // button to open a folder
         <button
           type="button"
-          className="uppy-u-reset uppy-ProviderBrowserItem-inner"
+          className="uppy-u-reset uppy-c-btn uppy-ProviderBrowserItem-inner"
           onClick={handleFolderClick}
           aria-label={i18n('openFolderNamed', { name: title })}
         >
