@@ -22,14 +22,46 @@ jobs:
     steps:
       - name: Checkout sources
         uses: actions/checkout@v3
-      - name: Eject Uppy package from repo
-        run: corepack yarn workspace uppy pack --install-if-needed -o /tmp/uppy-${{ github.sha }}.tar.gz
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "dir=$(corepack yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+      - uses: actions/cache@v3
+        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: lts/*
+      - name: Install dependencies
+        run: corepack yarn workspaces focus $(corepack yarn workspaces list --json | jq -r .name | awk '/^@uppy-example/{ next } { if ($0!="uppy.io") print $0 }')
+        env:
+          # https://docs.cypress.io/guides/references/advanced-installation#Skipping-installation
+          CYPRESS_INSTALL_BINARY: 0
+      - name: Build lib
+        run: corepack yarn run build:lib
+      - name: Make Uppy bundle use local version
+        run: |
+          node <<'EOF'
+            const pkg = require('./packages/uppy/package.json')
+            for(const key of Object.keys(pkg.dependencies)) {
+              if (key.startsWith('@uppy/')) {
+                pkg.dependencies[key] = `/tmp/packages/${key.replace('/', '-')}-${{ github.sha }}.tgz`
+              }
+            }
+            require('node:fs').writeFileSync('./packages/uppy/package.json', JSON.stringify(pkg))
+          EOF
+      - name: Eject public packages from repo
+        run: mkdir /tmp/artifacts && corepack yarn workspaces foreach --no-private pack --install-if-needed -o /tmp/artifacts/%s-${{ github.sha }}.tgz
       - name: Upload artifact
         if: success()
         uses: actions/upload-artifact@v3
         with:
-          name: uppy-${{ github.sha }}.tar.gz
-          path: /tmp/uppy-${{ github.sha }}.tar.gz
+          name: packages
+          path: /tmp/artifacts/
 
   rollup:
     needs: isolate_uppy
@@ -42,9 +74,9 @@ jobs:
       - name: Download uppy tarball
         uses: actions/download-artifact@v3
         with:
-          name: uppy-${{ github.sha }}.tar.gz
+          path: /tmp/
       - name: Extract tarball
-        run: tar -xzf uppy-${{ github.sha }}.tar.gz --strip-components 1
+        run: tar -xzf /tmp/packages/uppy-${{ github.sha }}.tgz --strip-components 1
       - name: Add Rollup as a dev dependency
         run: >-
           npm i --save-dev
@@ -79,9 +111,9 @@ jobs:
       - name: Download uppy tarball
         uses: actions/download-artifact@v3
         with:
-          name: uppy-${{ github.sha }}.tar.gz
+          path: /tmp/
       - name: Extract tarball
-        run: tar -xzf uppy-${{ github.sha }}.tar.gz --strip-components 1
+        run: tar -xzf /tmp/packages/uppy-${{ github.sha }}.tgz --strip-components 1
       - name: Add Webpack as a dev dependency
         run: npm i --save-dev webpack-cli webpack@${{matrix.webpack-version}}
       - name: Create Webpack config file
