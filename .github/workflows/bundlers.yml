@@ -55,6 +55,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           path: /tmp/artifacts/
+      - run: ls /tmp/artifacts/
       - name: Extract tarball
         run: tar -xzf /tmp/artifacts/uppy-${{ github.sha }}.tar.gz --strip-components 1
       - name: Add Rollup as a dev dependency
