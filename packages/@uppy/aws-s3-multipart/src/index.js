@@ -568,7 +568,7 @@ export default class AwsS3Multipart extends BasePlugin {
       Object.assign(opts, file.tus)
     }
 
-    if (file.remove.url == null) {
+    if (file.remote.url == null) {
       throw new Error('Cannot connect to an undefined URL')
     }
 
