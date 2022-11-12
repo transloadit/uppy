@@ -8,9 +8,7 @@
     "types": [],
     "lib": [
       "dom",
-      "es2018",
-      "ES2021.Promise",
-      "ES2022.Error"
+      "es2018"
     ]
   },
   "angularCompilerOptions": {
