@@ -33,6 +33,8 @@ class HTTPCommunicationQueue {
 
   #listParts
 
+  #previousRetryDelay
+
   #requests
 
   #retryDelayIterator
@@ -86,13 +88,19 @@ class HTTPCommunicationQueue {
     }
     if (status === 403 && err.message === 'Request has expired') {
       if (!requests.isPaused) {
-        const next = this.#retryDelayIterator?.next()
-        if (next == null || next.done) {
-          return false
+        // We don't want to exhaust the retryDelayIterator as long as there are
+        // more than one request in parallel, to give slower connection a chance
+        // to catch up with the expiry set in Companion.
+        if (requests.limit === 1 || this.#previousRetryDelay == null) {
+          const next = this.#retryDelayIterator?.next()
+          if (next == null || next.done) {
+            return false
+          }
+          this.#previousRetryDelay = next.value
         }
         // No need to stop the other requests, we just want to lower the limit.
         requests.rateLimit(0)
-        await new Promise(resolve => setTimeout(resolve, next.value))
+        await new Promise(resolve => setTimeout(resolve, this.#previousRetryDelay))
       }
     } else if (status === 429) {
       // HTTP 429 Too Many Requests => to avoid the whole download to fail, pause all requests.
