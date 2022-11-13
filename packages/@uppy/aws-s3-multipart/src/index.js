@@ -302,7 +302,7 @@ export default class AwsS3Multipart extends BasePlugin {
     throwIfAborted(signal)
 
     const metadata = Object.fromEntries(
-      (this.opts.allowedMetaFields ?? file.meta)
+      (this.opts.allowedMetaFields ?? Object.keys(file.meta))
         .filter(key => file.meta[key] != null)
         .map(key => [`metadata[${key}]`, String(file.meta[key])]),
     )
