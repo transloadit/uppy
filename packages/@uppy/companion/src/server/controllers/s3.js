@@ -63,6 +63,7 @@ module.exports = function s3 (config) {
         method: 'post',
         url: data.url,
         fields: data.fields,
+        expires: config.expires,
       })
     })
   }
