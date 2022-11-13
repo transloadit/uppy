@@ -43,6 +43,8 @@ class MultipartUploader {
 
   #onSuccess
 
+  #shouldUseMultipart
+
   #onReject = (err) => (err?.cause === pausingUploadReason ? null : this.#onError(err))
 
   constructor (data, options) {
@@ -57,21 +59,18 @@ class MultipartUploader {
     this.#file = options.file
     this.#onSuccess = this.options.onSuccess
     this.#onError = this.options.onError
+    this.#shouldUseMultipart = this.options.shouldUseMultipart
 
     this.#initChunks()
   }
 
   #initChunks () {
     const fileSize = this.#data.size
+    const shouldUseMultipart = typeof this.#shouldUseMultipart === 'function'
+      ? this.#shouldUseMultipart(this.#file, fileSize)
+      : Boolean(this.#shouldUseMultipart)
 
-    // Upload zero-sized files in one zero-sized chunk
-    if (this.#data.size === 0 || fileSize >> 10 >> 10 < 100) {
-      this.#chunks = [{
-        getData: () => this.#data,
-        onProgress: this.#onPartProgress(0),
-        onComplete: this.#onPartComplete(0),
-      }]
-    } else {
+    if (shouldUseMultipart) {
       const desiredChunkSize = this.options.getChunkSize(this.#data)
       // at least 5MB per request, at most 10k requests
       const minChunkSize = Math.max(5 * MB, Math.ceil(fileSize / 10000))
@@ -95,6 +94,10 @@ class MultipartUploader {
           onComplete: this.#onPartComplete(j),
         }
       }
+    } else {
+      this.#chunks = [this.#data]
+      this.#data.onProgress = this.#onPartProgress(0)
+      this.#data.onComplete = this.#onPartComplete(0)
     }
 
     this.#chunkState = this.#chunks.map(() => ({ uploaded: 0 }))
