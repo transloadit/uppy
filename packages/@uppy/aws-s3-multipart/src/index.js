@@ -301,11 +301,11 @@ export default class AwsS3Multipart extends BasePlugin {
     this.assertHost('createMultipartUpload')
     throwIfAborted(signal)
 
-    const metadata = Object.fromEntries(
+    const metadata = file.meta ? Object.fromEntries(
       (this.opts.allowedMetaFields ?? Object.keys(file.meta))
         .filter(key => file.meta[key] != null)
         .map(key => [`metadata[${key}]`, String(file.meta[key])]),
-    )
+    ) : {}
 
     return this.#client.post('s3/multipart', {
       filename: file.name,
