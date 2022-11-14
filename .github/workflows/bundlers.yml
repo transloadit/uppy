@@ -46,13 +46,13 @@ jobs:
       - name: Make Uppy bundle use local version
         run: |
           node <<'EOF'
-            const pkg = require('./packages/uppy/package.json')
+            const pkg = require('./packages/uppy/package.json');
             for(const key of Object.keys(pkg.dependencies)) {
               if (key.startsWith('@uppy/')) {
-                pkg.dependencies[key] = `/tmp/packages/${key.replace('/', '-')}-${{ github.sha }}.tgz`
+                pkg.dependencies[key] = `/tmp/packages/${key.replace('/', '-')}-${{ github.sha }}.tgz`;
               }
             }
-            require('node:fs').writeFileSync('./packages/uppy/package.json', JSON.stringify(pkg))
+            require('node:fs').writeFileSync('./packages/uppy/package.json', JSON.stringify(pkg));
           EOF
       - name: Eject public packages from repo
         run: mkdir /tmp/artifacts && corepack yarn workspaces foreach --no-private pack --install-if-needed -o /tmp/artifacts/%s-${{ github.sha }}.tgz
@@ -69,7 +69,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        rollup-version: [latest]
+        bundler-version: [latest]
     steps:
       - name: Download uppy tarball
         uses: actions/download-artifact@v3
@@ -81,7 +81,7 @@ jobs:
         run: >-
           npm i --save-dev
           @rollup/plugin-commonjs @rollup/plugin-node-resolve
-          rollup@${{matrix.rollup-version}}
+          rollup@${{matrix.bundler-version}}
       - name: Create Rollup config file
         run: >-
           echo '
@@ -100,13 +100,14 @@ jobs:
           };' > rollup.config.mjs
       - name: Bundle
         run: npx rollup -c
+
   webpack:
     needs: isolate_uppy
     name: Webpack
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        webpack-version: [latest]
+        bundler-version: [latest]
     steps:
       - name: Download uppy tarball
         uses: actions/download-artifact@v3
@@ -115,11 +116,78 @@ jobs:
       - name: Extract tarball
         run: tar -xzf /tmp/packages/uppy-${{ github.sha }}.tgz --strip-components 1
       - name: Add Webpack as a dev dependency
-        run: npm i --save-dev webpack-cli webpack@${{matrix.webpack-version}}
+        run: npm i --save-dev webpack-cli webpack@${{matrix.bundler-version}}
       - name: Create Webpack config file
         run: echo 'module.exports={mode:"production",target:"web",entry:"./index.mjs"}' > webpack.config.js
       - name: Bundle
         run: npx webpack
-  # ESBuild: We are already testing it when generating the actual bundle.
+
+  parcel:
+    needs: isolate_uppy
+    name: Parcel
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        bundler-version: [latest]
+    steps:
+      - name: Download uppy tarball
+        uses: actions/download-artifact@v3
+        with:
+          path: /tmp/
+      - name: Extract tarball
+        run: tar -xzf /tmp/packages/uppy-${{ github.sha }}.tgz --strip-components 1
+      - name: Fix package.json to work with Parcel
+        run: |
+          node <<'EOF'
+            const pkg = require('./package.json');
+            delete pkg.main
+            delete pkg.types
+            pkg.module = 'output.mjs'
+            require('node:fs').writeFileSync('./package.json', JSON.stringify(pkg));
+          EOF
+      - name: Add Parcel as a dev dependency
+        run: npm i --save-dev parcel@${{matrix.bundler-version}}
+      - name: Bundle
+        run: npx parcel build index.mjs
+
+  vite:
+    needs: isolate_uppy
+    name: Vite
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        bundler-version: [latest]
+    steps:
+      - name: Download uppy tarball
+        uses: actions/download-artifact@v3
+        with:
+          path: /tmp/
+      - name: Extract tarball
+        run: tar -xzf /tmp/packages/uppy-${{ github.sha }}.tgz --strip-components 1
+      - name: Add Vite as a dev dependency
+        run: npm i --save-dev vite@${{matrix.bundler-version}}
+      - name: Create index.html
+        run: echo '<!doctype html><html><head><script type="module" src="./index.mjs"></script></head></html>' > index.html
+      - name: Bundle
+        run: npx vite build
+
+  esbuild:
+    needs: isolate_uppy
+    name: ESBuild
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        bundler-version: [latest]
+    steps:
+      - name: Download uppy tarball
+        uses: actions/download-artifact@v3
+        with:
+          path: /tmp/
+      - name: Extract tarball
+        run: tar -xzf /tmp/packages/uppy-${{ github.sha }}.tgz --strip-components 1
+      - name: Add ESBuild as a dev dependency
+        run: npm i --save-dev esbuild@${{matrix.bundler-version}}
+      - name: Bundle
+        run: npx esbuild index.mjs --bundle --outfile=/dev/null
+    
   # Browserify: doesn't support ESM.
-  # Parcel: We are already testing it with our e2e tests.
