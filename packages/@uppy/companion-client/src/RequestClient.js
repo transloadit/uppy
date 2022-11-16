@@ -115,7 +115,7 @@ export default class RequestClient {
         const response = await fetch(this.#getUrl(path), { method: 'OPTIONS' })
 
         const header = response.headers.get('access-control-allow-headers')
-        if (header == null) {
+        if (header == null || header === '*') {
           allowedHeadersCache.set(this.hostname, fallbackAllowedHeaders)
           return fallbackAllowedHeaders
         }
