@@ -51,20 +51,20 @@ import React, { useState, useEffect } from 'react'
 import Uppy from '@uppy/core'
 import { Dashboard } from '@uppy/react'
 
-function Component ({ restrictions }) {
-  const [uppy, setUppy] = useState(() => new Uppy({ restrictions }))
+const uppy = new Uppy()
 
+function Component ({ restrictions }) {
   useEffect(() => {
     // Change @uppy/core options
     uppy.setOptions({ restrictions })
 
     // Or change some plugin dynamically
-    // uppy.getPlugin('SomePlugin').setOptions({ /* options */ })
+    uppy.getPlugin('SomePlugin').setOptions({ /* options */ })
 
     return () => {
       uppy.close({ reason: 'unmount' })
     }
-  }, [uppy, restrictions])
+  }, [restrictions])
 
   return <Dashboard uppy={uppy} />
 }
