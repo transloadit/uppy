@@ -1,5 +1,12 @@
 # @uppy/companion
 
+## 4.1.1
+
+Released: 2022-11-16
+Included in: Uppy v3.3.1
+
+- @uppy/companion: send expire info for non-multipart uploads (Antoine du Hamel / #4214)
+
 ## 4.1.0
 
 Released: 2022-11-10
