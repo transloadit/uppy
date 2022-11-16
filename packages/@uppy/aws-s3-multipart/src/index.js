@@ -96,6 +96,12 @@ class HTTPCommunicationQueue {
           if (next == null || next.done) {
             return false
           }
+          // If there are more than 1 request done in parallel, the RLQ limit is
+          // decreased and the failed request is requeued after waiting for a bit.
+          // If there is only one request in parallel, the limit can't be
+          // decreased, so we iterate over `retryDelayIterator` as we do for
+          // other failures.
+          // `#previousRetryDelay` caches the value so we can re-use it next time.
           this.#previousRetryDelay = next.value
         }
         // No need to stop the other requests, we just want to lower the limit.
