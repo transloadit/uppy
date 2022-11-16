@@ -19,10 +19,6 @@ Install from NPM:
 npm install @uppy/react
 ```
 
-## CSS
-
-Make sure to also include the necessary CSS files for each Uppy React component you are using. Follow links for individual components docs below for details on that.
-
 ## Usage
 
 The components can be used with either [React][] or API-compatible alternatives such as [Preact][].
@@ -31,47 +27,54 @@ Instead of adding a UI plugin to an Uppy instance with `.use()`, the Uppy instan
 All other props are passed as options to the plugin.
 
 ```js
-import React from 'react'
+import React, { useEffect } from 'react'
 import Uppy from '@uppy/core'
-import Tus from '@uppy/tus'
-import { DragDrop } from '@uppy/react'
+import { Dashboard } from '@uppy/react'
 
-const uppy = new Uppy({
-  meta: { type: 'avatar' },
-  restrictions: { maxNumberOfFiles: 1 },
-  autoProceed: true,
-})
+const uppy = new Uppy()
 
-uppy.use(Tus, { endpoint: '/upload' })
+function Component () {
+  useEffect(() => {
+    return () => {
+      uppy.close({ reason: 'unmount' })
+    }
+  }, [])
 
-uppy.on('complete', (result) => {
-  const url = result.successful[0].uploadURL
-  store.dispatch({
-    type: 'SET_USER_AVATAR_URL',
-    payload: { url },
-  })
-})
-
-const AvatarPicker = ({ currentAvatar }) => {
-  return (
-    <div>
-      <img src={currentAvatar} alt="Current Avatar" />
-      <DragDrop
-        uppy={uppy}
-        locale={{
-          strings: {
-            // Text to show on the droppable area.
-            // `%{browse}` is replaced with a link that opens the system file selection dialog.
-            dropHereOr: 'Drop here or %{browse}',
-            // Used as the label for the link that opens the system file selection dialog.
-            browse: 'browse',
-          },
-        }}
-      />
-    </div>
-  )
+  return <Dashboard uppy={uppy} />
 }
 ```
+
+### Dynamic options
+
+```js
+import React, { useState, useEffect } from 'react'
+import Uppy from '@uppy/core'
+import { Dashboard } from '@uppy/react'
+
+function Component ({ restrictions }) {
+  const [uppy, setUppy] = useState(() => new Uppy({ restrictions }))
+
+  useEffect(() => {
+    // Change @uppy/core options
+    uppy.setOptions({ restrictions })
+
+    // Or change some plugin dynamically
+    // uppy.getPlugin('SomePlugin').setOptions({ /* options */ })
+
+    return () => {
+      uppy.close({ reason: 'unmount' })
+    }
+  }, [uppy, restrictions])
+
+  return <Dashboard uppy={uppy} />
+}
+```
+
+## CSS
+
+Make sure to also include the necessary CSS files for each Uppy React component you are using. Follow links for individual components docs below for details on that.
+
+## Components
 
 The following plugins are available as React component wrappers (you need to
 install each package separately):
