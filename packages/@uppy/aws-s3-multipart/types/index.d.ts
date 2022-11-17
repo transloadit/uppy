@@ -7,6 +7,10 @@ export interface AwsS3Part {
   Size?: number
   ETag?: string
 }
+export interface AwsS3SignedPart {
+  url: string
+  headers?: Record<string, string>
+}
 
 export interface AwsS3MultipartOptions extends PluginOptions {
     companionHeaders?: { [type: string]: string }
@@ -23,7 +27,7 @@ export interface AwsS3MultipartOptions extends PluginOptions {
     signPart?: (
       file: UppyFile,
       opts: { uploadId: string; key: string; partNumber: number; body: Blob, signal: AbortSignal }
-    ) => MaybePromise<AwsS3Part>
+    ) => MaybePromise<AwsS3SignedPart>
     /** @deprecated Use signPart instead */
     prepareUploadParts?: (
       file: UppyFile,
