@@ -252,6 +252,7 @@ module.exports = {
         'packages/@uppy/webcam/src/**/*.js',
         'packages/@uppy/xhr-upload/src/**/*.js',
         'packages/@uppy/zoom/src/**/*.js',
+        'packages/@uppy/mini/src/**/*.js',
         'website/src/examples/*/*.es6',
       ],
       parser: 'espree',

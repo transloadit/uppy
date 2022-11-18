@@ -8611,6 +8611,17 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@uppy/mini@workspace:packages/@uppy/mini":
+  version: 0.0.0-use.local
+  resolution: "@uppy/mini@workspace:packages/@uppy/mini"
+  dependencies:
+    "@uppy/utils": "workspace:^"
+    preact: ^10.5.13
+  peerDependencies:
+    "@uppy/core": "workspace:^"
+  languageName: unknown
+  linkType: soft
+
 "@uppy/onedrive@workspace:^, @uppy/onedrive@workspace:packages/@uppy/onedrive":
   version: 0.0.0-use.local
   resolution: "@uppy/onedrive@workspace:packages/@uppy/onedrive"
