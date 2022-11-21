@@ -486,6 +486,25 @@ app.use(companion.app({
 
 We have [a detailed guide on running Companion in Kubernetes](https://github.com/transloadit/uppy/blob/main/packages/%40uppy/companion/KUBERNETES.md) for you, that’s how we run our example server at <https://companion.uppy.io>.
 
+### Running many instances
+
+Two ways of running many concurrent Companion instances.
+
+#### Separate domain names
+
+One option is to run many instances with each instance having its own (sub)domain name. With this setup, the Companion client in Uppy will direct requests to companion in a way so that all requests of a particular upload will always be sent to the same instance. You would then also typically configure a single instance (one domain name) to handle all OAuth authentication requests, so that you only need to specify a single OAuth callback URL. See also `oauthDomain` and `validHosts`
+
+#### Behind a load balancer
+
+The other option is to set up a load balancer in front of many Companion instances. Then Uppys companion client will only see a single domain name and send all requests to the load balancer, which will then distribute them evenly between Companion instances. The companion instances will then coordinate their messages and events over Redis so that any instance can serve the client’s requests. Note that sticky sessions are **not** needed with this setup. Here are some requirements for this setup:
+
+* The instances need to be connected to the same Redis server.
+* You need to set `COMPANION_SECRET` to the same value on both servers.
+* if you use the `companionKeysParams` feature (Transloadit), you also need `COMPANION_PREAUTH_SECRET` to be the same on each instance.
+* All other configuration needs to be the same, except if you’re running many instances on the same machine, then `COMPANION_PORT` should be different for each instance.
+
+For more information about this setup [see this issue](https://github.com/transloadit/uppy/issues/3538).
+
 ### Adding custom providers
 
 As of now, Companion supports the [providers listed here](https://uppy.io/docs/companion/#Supported-providers) out of the box, but you may also choose to add your own custom providers. You can do this by passing the `customProviders` option when calling the Uppy `app` method. The custom provider is expected to support Oauth 1 or 2 for authentication/authorization.
