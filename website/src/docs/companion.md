@@ -295,6 +295,11 @@ export COMPANION_PERIODIC_PING_URLS="https://example.com/ping1,https://example.c
 export COMPANION_PERIODIC_PING_INTERVAL=60000
 # corresponds to the periodicPingStaticPayload option (JSON string)
 export COMPANION_PERIODIC_PING_STATIC_JSON_PAYLOAD="{\"static\":\"data\"}"
+
+# If you need to use `companionKeysParams` (custom OAuth credentials at request time),
+# set this variable to a strong randomly generated secret.
+# See also https://github.com/transloadit/uppy/pull/2622
+COMPANION_PREAUTH_SECRET="preauth secret"
 ```
 
 See [`.env.example`](https://github.com/transloadit/uppy/blob/main/.env.example) for an example environment configuration file.
