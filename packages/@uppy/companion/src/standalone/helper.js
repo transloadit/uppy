@@ -9,13 +9,28 @@ const logger = require('../server/logger')
 const { version } = require('../../package.json')
 
 /**
- * Reads all companion configuration set via environment variables
- * and via the config file path
+ * Tries to read the secret from a file if the according environment variable is set.
+ * Otherwise it falls back to the standard secret environment variable.
  *
- * @returns {object}
+ * @param {string} baseEnvVar
+ *
+ * @returns {string}
  */
-exports.getCompanionOptions = (options = {}) => {
-  return merge({}, getConfigFromEnv(), getConfigFromFile(), options)
+const getSecret = (baseEnvVar) => {
+  const secretFile = process.env[`${baseEnvVar}_FILE`]
+  return secretFile
+    ? fs.readFileSync(secretFile).toString()
+    : process.env[baseEnvVar]
+}
+
+/**
+ * Auto-generates server secret
+ *
+ * @returns {string}
+ */
+const generateSecret = () => {
+  logger.warn('auto-generating server secret because none was specified', 'startup.secret')
+  return crypto.randomBytes(64).toString('hex')
 }
 
 /**
@@ -119,45 +134,6 @@ const getConfigFromEnv = () => {
 }
 
 /**
- * Tries to read the secret from a file if the according environment variable is set.
- * Otherwise it falls back to the standard secret environment variable.
- *
- * @param {string} baseEnvVar
- *
- * @returns {string}
- */
-const getSecret = (baseEnvVar) => {
-  const secretFile = process.env[`${baseEnvVar}_FILE`]
-  return secretFile
-    ? fs.readFileSync(secretFile).toString()
-    : process.env[baseEnvVar]
-}
-
-/**
- * Auto-generates server secret
- *
- * @returns {string}
- */
-const generateSecret = () => {
-  logger.warn('auto-generating server secret because none was specified', 'startup.secret')
-  return crypto.randomBytes(64).toString('hex')
-}
-
-/**
- * Loads the config from a file and returns it as an object
- *
- * @returns {object}
- */
-const getConfigFromFile = () => {
-  const path = getConfigPath()
-  if (!path) return {}
-
-  const rawdata = fs.readFileSync(getConfigPath())
-  // @ts-ignore
-  return JSON.parse(rawdata)
-}
-
-/**
  * Returns the config path specified via cli arguments
  *
  * @returns {string}
@@ -175,6 +151,30 @@ const getConfigPath = () => {
   }
 
   return configPath
+}
+
+/**
+ * Loads the config from a file and returns it as an object
+ *
+ * @returns {object}
+ */
+const getConfigFromFile = () => {
+  const path = getConfigPath()
+  if (!path) return {}
+
+  const rawdata = fs.readFileSync(getConfigPath())
+  // @ts-ignore
+  return JSON.parse(rawdata)
+}
+
+/**
+ * Reads all companion configuration set via environment variables
+ * and via the config file path
+ *
+ * @returns {object}
+ */
+exports.getCompanionOptions = (options = {}) => {
+  return merge({}, getConfigFromEnv(), getConfigFromFile(), options)
 }
 
 /**
