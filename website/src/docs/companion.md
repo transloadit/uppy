@@ -488,7 +488,11 @@ We have [a detailed guide on running Companion in Kubernetes](https://github.com
 
 ### Running many instances
 
-Two ways of running many concurrent Companion instances. It is always recommended to run at least two instances in production, so that if the Node.js event loop gets blocked by one or more requests, it doesn’t also block all other requests (due to Node.js single threaded nature.)
+Two ways of running many concurrent Companion instances.
+
+In our experience Companion will saturate network interface cards before other resources on commodity virtual servers (`c5d.2xlarge` for instance). We recommend running at least two instances in production, so that if the Node.js event loop gets blocked by one or more requests (due to a bug or spike in traffic), it doesn’t also block or slow down all other requests as well (due to Node.js single threaded nature.) As an example for scale, one OSS enterprise customer of Transloadit that self-hosts Companion to power an education service that is deployed by virtually all universities globally, deploys 7 Companion instances, their previous solution ran on 35 instances I believe.
+
+But as always it depends and your mileage may vary, so we recommend to add observability. You can let Prometheus crawl the /metrics endpoint and graph that with Grafana for instance.
 
 #### Separate endpoints
 
