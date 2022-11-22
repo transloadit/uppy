@@ -1,9 +1,7 @@
 import Emitter from 'component-emitter'
-import { io } from 'socket.io-client'
 import has from '@uppy/utils/lib/hasProperty'
 import NetworkError from '@uppy/utils/lib/NetworkError'
 import fetchWithNetworkError from '@uppy/utils/lib/fetchWithNetworkError'
-import parseUrl from './parseUrl.js'
 
 const ASSEMBLY_UPLOADING = 'ASSEMBLY_UPLOADING'
 const ASSEMBLY_EXECUTING = 'ASSEMBLY_EXECUTING'
@@ -41,8 +39,7 @@ class TransloaditAssembly extends Emitter {
 
     // The current assembly status.
     this.status = assembly
-    // The socket.io connection.
-    this.socket = null
+
     // The interval timer for full status updates.
     this.pollInterval = null
     // Whether this assembly has been closed (finished or errored)
@@ -53,68 +50,7 @@ class TransloaditAssembly extends Emitter {
   }
 
   connect () {
-    this.#connectSocket()
     this.#beginPolling()
-  }
-
-  #onFinished () {
-    this.emit('finished')
-    this.close()
-  }
-
-  #connectSocket () {
-    const parsed = parseUrl(this.status.websocket_url)
-    const socket = io(parsed.origin, {
-      transports: ['websocket'],
-      path: parsed.pathname,
-    })
-
-    socket.on('connect', () => {
-      socket.emit('assembly_connect', {
-        id: this.status.assembly_id,
-      })
-
-      this.emit('connect')
-    })
-
-    socket.on('connect_error', () => {
-      socket.disconnect()
-      this.socket = null
-    })
-
-    socket.on('assembly_finished', () => {
-      this.#onFinished()
-    })
-
-    socket.on('assembly_upload_finished', (file) => {
-      this.emit('upload', file)
-      this.status.uploads.push(file)
-    })
-
-    socket.on('assembly_uploading_finished', () => {
-      this.emit('executing')
-    })
-
-    socket.on('assembly_upload_meta_data_extracted', () => {
-      this.emit('metadata')
-      this.#fetchStatus({ diff: false })
-    })
-
-    socket.on('assembly_result_finished', (stepName, result) => {
-      this.emit('result', stepName, result)
-      if (!this.status.results[stepName]) {
-        this.status.results[stepName] = []
-      }
-      this.status.results[stepName].push(result)
-    })
-
-    socket.on('assembly_error', (err) => {
-      this.#onError(err)
-      // Refetch for updated status code
-      this.#fetchStatus({ diff: false })
-    })
-
-    this.socket = socket
   }
 
   #onError (err) {
