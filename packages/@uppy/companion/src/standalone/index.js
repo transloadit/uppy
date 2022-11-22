@@ -11,25 +11,15 @@ const connectRedis = require('connect-redis')
 const logger = require('../server/logger')
 const redis = require('../server/redis')
 const companion = require('../companion')
-const { hasProtocol, getCompanionOptions, buildHelpfulStartupMessage } = require('./helper')
+const { getCompanionOptions, buildHelpfulStartupMessage } = require('./helper')
 
 /**
  * Configures an Express app for running Companion standalone
  *
  * @returns {object}
  */
-module.exports = function server (inputCompanionOptions = {}) {
-  let corsOrigins
-  if (process.env.COMPANION_CLIENT_ORIGINS) {
-    corsOrigins = process.env.COMPANION_CLIENT_ORIGINS
-      .split(',')
-      .map((url) => (hasProtocol(url) ? url : `${process.env.COMPANION_PROTOCOL || 'http'}://${url}`))
-  } else if (process.env.COMPANION_CLIENT_ORIGINS_REGEX) {
-    corsOrigins = new RegExp(process.env.COMPANION_CLIENT_ORIGINS_REGEX)
-  }
-
-  const moreCompanionOptions = { ...inputCompanionOptions, corsOrigins }
-  const companionOptions = getCompanionOptions(moreCompanionOptions)
+module.exports = function server (inputCompanionOptions) {
+  const companionOptions = getCompanionOptions(inputCompanionOptions)
 
   const app = express()
 

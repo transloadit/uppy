@@ -34,6 +34,26 @@ const generateSecret = () => {
 }
 
 /**
+ *
+ * @param {string} url
+ */
+const hasProtocol = (url) => {
+  return url.startsWith('http://') || url.startsWith('https://')
+}
+
+function getCorsOrigins () {
+  if (process.env.COMPANION_CLIENT_ORIGINS) {
+    return process.env.COMPANION_CLIENT_ORIGINS
+      .split(',')
+      .map((url) => (hasProtocol(url) ? url : `${process.env.COMPANION_PROTOCOL || 'http'}://${url}`))
+  }
+  if (process.env.COMPANION_CLIENT_ORIGINS_REGEX) {
+    return new RegExp(process.env.COMPANION_CLIENT_ORIGINS_REGEX)
+  }
+  return undefined
+}
+
+/**
  * Loads the config from environment variables
  *
  * @returns {object}
@@ -130,6 +150,7 @@ const getConfigFromEnv = () => {
     clientSocketConnectTimeout: process.env.COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT
       ? parseInt(process.env.COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT, 10) : undefined,
     metrics: process.env.COMPANION_HIDE_METRICS !== 'true',
+    corsOrigins: getCorsOrigins(),
   }
 }
 
@@ -175,14 +196,6 @@ const getConfigFromFile = () => {
  */
 exports.getCompanionOptions = (options = {}) => {
   return merge({}, getConfigFromEnv(), getConfigFromFile(), options)
-}
-
-/**
- *
- * @param {string} url
- */
-exports.hasProtocol = (url) => {
-  return url.startsWith('http://') || url.startsWith('https://')
 }
 
 exports.buildHelpfulStartupMessage = (companionOptions) => {
