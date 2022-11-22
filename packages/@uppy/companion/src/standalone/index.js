@@ -11,7 +11,7 @@ const connectRedis = require('connect-redis')
 const logger = require('../server/logger')
 const redis = require('../server/redis')
 const companion = require('../companion')
-const { getCompanionOptions, buildHelpfulStartupMessage } = require('./helper')
+const { getCompanionOptions, generateSecret, buildHelpfulStartupMessage } = require('./helper')
 
 /**
  * Configures an Express app for running Companion standalone
@@ -20,6 +20,11 @@ const { getCompanionOptions, buildHelpfulStartupMessage } = require('./helper')
  */
 module.exports = function server (inputCompanionOptions) {
   const companionOptions = getCompanionOptions(inputCompanionOptions)
+
+  companion.setLoggerProcessName(companionOptions)
+
+  if (!companionOptions.secret) companionOptions.secret = generateSecret()
+  if (!companionOptions.preAuthSecret) companionOptions.preAuthSecret = generateSecret()
 
   const app = express()
 

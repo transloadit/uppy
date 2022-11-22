@@ -191,6 +191,8 @@ export COMPANION_PATH="/SERVER/PATH/TO/WHERE/COMPANION/LIVES"
 export COMPANION_HIDE_WELCOME="true"
 # disables the metrics page, defaults to false
 export COMPANION_HIDE_METRICS="true"
+# prefix all log entries with this value - useful for multiple instances
+export COMPANION_LOGGER_PROCESS_NAME="companion"
 
 # use this in place of COMPANION_PATH if the server path should not be
 # handled by the express.js app, but maybe by an external server configuration

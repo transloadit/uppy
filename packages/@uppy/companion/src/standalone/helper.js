@@ -28,7 +28,7 @@ const getSecret = (baseEnvVar) => {
  *
  * @returns {string}
  */
-const generateSecret = () => {
+exports.generateSecret = () => {
   logger.warn('auto-generating server secret because none was specified', 'startup.secret')
   return crypto.randomBytes(64).toString('hex')
 }
@@ -139,8 +139,8 @@ const getConfigFromEnv = () => {
     redisOptions: {},
     sendSelfEndpoint: process.env.COMPANION_SELF_ENDPOINT,
     uploadUrls: uploadUrls ? uploadUrls.split(',') : null,
-    secret: getSecret('COMPANION_SECRET') || generateSecret(),
-    preAuthSecret: getSecret('COMPANION_PREAUTH_SECRET') || generateSecret(),
+    secret: getSecret('COMPANION_SECRET'),
+    preAuthSecret: getSecret('COMPANION_PREAUTH_SECRET'),
     allowLocalUrls: process.env.COMPANION_ALLOW_LOCAL_URLS === 'true',
     // cookieDomain is kind of a hack to support distributed systems. This should be improved but we never got so far.
     cookieDomain: process.env.COMPANION_COOKIE_DOMAIN,
@@ -150,6 +150,7 @@ const getConfigFromEnv = () => {
     clientSocketConnectTimeout: process.env.COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT
       ? parseInt(process.env.COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT, 10) : undefined,
     metrics: process.env.COMPANION_HIDE_METRICS !== 'true',
+    loggerProcessName: process.env.COMPANION_LOGGER_PROCESS_NAME,
     corsOrigins: getCorsOrigins(),
   }
 }
