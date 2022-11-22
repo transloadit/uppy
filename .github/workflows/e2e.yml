@@ -80,7 +80,6 @@ jobs:
           COMPANION_AWS_SECRET: ${{secrets.COMPANION_AWS_SECRET}}
           COMPANION_AWS_BUCKET: ${{secrets.COMPANION_AWS_BUCKET}}
           COMPANION_AWS_REGION: ${{secrets.COMPANION_AWS_REGION}}
-          COMPANION_AWS_DISABLE_ACL: 'true'
           # https://docs.cypress.io/guides/references/advanced-installation#Binary-cache
           CYPRESS_CACHE_FOLDER: ${{ steps.cypress-cache-dir-path.outputs.dir }}
       - name: Upload videos in case of failure
