@@ -11,7 +11,7 @@ const connectRedis = require('connect-redis')
 const logger = require('../server/logger')
 const redis = require('../server/redis')
 const companion = require('../companion')
-const helper = require('./helper')
+const { hasProtocol, getCompanionOptions, buildHelpfulStartupMessage } = require('./helper')
 
 /**
  * Configures an Express app for running Companion standalone
@@ -23,13 +23,13 @@ module.exports = function server (inputCompanionOptions = {}) {
   if (process.env.COMPANION_CLIENT_ORIGINS) {
     corsOrigins = process.env.COMPANION_CLIENT_ORIGINS
       .split(',')
-      .map((url) => (helper.hasProtocol(url) ? url : `${process.env.COMPANION_PROTOCOL || 'http'}://${url}`))
+      .map((url) => (hasProtocol(url) ? url : `${process.env.COMPANION_PROTOCOL || 'http'}://${url}`))
   } else if (process.env.COMPANION_CLIENT_ORIGINS_REGEX) {
     corsOrigins = new RegExp(process.env.COMPANION_CLIENT_ORIGINS_REGEX)
   }
 
   const moreCompanionOptions = { ...inputCompanionOptions, corsOrigins }
-  const companionOptions = helper.getCompanionOptions(moreCompanionOptions)
+  const companionOptions = getCompanionOptions(moreCompanionOptions)
 
   const app = express()
 
@@ -98,6 +98,7 @@ module.exports = function server (inputCompanionOptions = {}) {
       const { query, censored } = censorQuery(rawQuery)
       return censored ? `${parsed.href.split('?')[0]}?${qs.stringify(query)}` : parsed.href
     }
+    return undefined
   })
 
   router.use(bodyParser.json())
@@ -140,7 +141,7 @@ module.exports = function server (inputCompanionOptions = {}) {
   if (process.env.COMPANION_HIDE_WELCOME !== 'true') {
     router.get('/', (req, res) => {
       res.setHeader('Content-Type', 'text/plain')
-      res.send(helper.buildHelpfulStartupMessage(companionOptions))
+      res.send(buildHelpfulStartupMessage(companionOptions))
     })
   }
 
