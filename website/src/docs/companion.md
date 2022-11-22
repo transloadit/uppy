@@ -503,8 +503,6 @@ The other option is to set up a load balancer in front of many Companion instanc
 * if you use the `companionKeysParams` feature (Transloadit), you also need `COMPANION_PREAUTH_SECRET` to be the same on each instance.
 * All other configuration needs to be the same, except if you’re running many instances on the same machine, then `COMPANION_PORT` should be different for each instance.
 
-For more information about this setup [see this issue](https://github.com/transloadit/uppy/issues/3538).
-
 ### Adding custom providers
 
 As of now, Companion supports the [providers listed here](https://uppy.io/docs/companion/#Supported-providers) out of the box, but you may also choose to add your own custom providers. You can do this by passing the `customProviders` option when calling the Uppy `app` method. The custom provider is expected to support Oauth 1 or 2 for authentication/authorization.
