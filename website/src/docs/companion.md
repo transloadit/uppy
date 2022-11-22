@@ -488,11 +488,15 @@ We have [a detailed guide on running Companion in Kubernetes](https://github.com
 
 ### Running many instances
 
-Two ways of running many concurrent Companion instances.
+Two ways of running many concurrent Companion instances. It is always recommended to run at least two instances in production, so that if the Node.js event loop gets blocked by one or more requests, it doesn’t also block all other requests (due to Node.js single threaded nature.)
 
 #### Separate endpoints
 
-One option is to run many instances with each instance having its own unique endpoint. This could be on separate ports, (sub)domain names, or IPs. With this setup, the Companion client in Uppy will direct requests to companion in a way so that all requests of a particular upload will always be sent to the same endpoint, and hence process. You would then also typically configure a single instance (one endpoint) to handle all OAuth authentication requests, so that you only need to specify a single OAuth callback URL. See also `oauthDomain` and `validHosts`
+One option is to run many instances with each instance having its own unique endpoint. This could be on separate ports, (sub)domain names, or IPs. With this setup, you can either
+1. Implement your own logic that will direct each upload to a specific Companion endpoint by setting the `companionUrl` option
+2. Setting the Companion option `COMPANION_SELF_ENDPOINT`. This option will cause Companion to respond with a special `i-am` HTTP header containing the value from `COMPANION_SELF_ENDPOINT`. When Uppy’s Companion client sees this header, it will pin all requests for the upload to this endpoint.
+
+In either case, you would then also typically configure a single Companion instance (one endpoint) to handle all OAuth authentication requests, so that you only need to specify a single OAuth callback URL. See also `oauthDomain` and `validHosts`.
 
 #### Behind a load balancer
 
