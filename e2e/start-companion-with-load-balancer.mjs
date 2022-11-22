@@ -21,14 +21,22 @@ function createLoadBalancer (baseUrls) {
   const server = http.createServer((req, res) => {
     const target = getTarget()
     // console.log('req', req.method, target, req.url)
-    proxy.web(req, res, { target })
+    proxy.web(req, res, { target }, (err) => {
+      console.error('Load balancer faield to proxy request', err.message)
+      res.statusCode = 500
+      res.end()
+    })
     i++
   })
 
   server.on('upgrade', (req, socket, head) => {
     const target = getTarget()
     // console.log('upgrade', target, req.url)
-    proxy.ws(req, socket, head, { target })
+    proxy.ws(req, socket, head, { target }, (err) => {
+      console.error('Load balancer faield to proxy websocket', err.message)
+      console.error(err)
+      socket.destroy()
+    })
     i++
   })
 
