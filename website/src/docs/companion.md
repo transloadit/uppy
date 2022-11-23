@@ -488,23 +488,24 @@ We have [a detailed guide on running Companion in Kubernetes](https://github.com
 
 ### Running many instances
 
-Two ways of running many concurrent Companion instances.
 
-In our experience Companion will saturate network interface cards before other resources on commodity virtual servers (`c5d.2xlarge` for instance). We recommend running at least two instances in production, so that if the Node.js event loop gets blocked by one or more requests (due to a bug or spike in traffic), it doesn’t also block or slow down all other requests as well (due to Node.js single threaded nature.) As an example for scale, one OSS enterprise customer of Transloadit that self-hosts Companion to power an education service that is deployed by virtually all universities globally, deploys 7 Companion instances, their earlier solution ran on 35 instances I believe.
+In our experience Companion will saturate network interface cards before other resources on commodity virtual servers (`c5d.2xlarge` for instance). We recommend running at least two instances in production, so that if the Node.js event loop gets blocked by one or more requests (due to a bug or spike in traffic), it doesn’t also block or slow down all other requests as well (as Node.js is single threaded).
 
-But as always it depends and your mileage may vary, so we recommend to add observability. You can let Prometheus crawl the /metrics endpoint and graph that with Grafana for instance.
+As an example for scale, one enterprise customer of Transloadit, who self-hosts Companion to power an education service that is used by many universities globally, deploys 7 Companion instances. Their earlier solution ran on 35 instances I believe.
+
+Your mileage may vary, so we recommend to add observability. You can let Prometheus crawl the `/metrics` endpoint and graph that with Grafana for instance.
 
 #### Separate endpoints
 
 One option is to run many instances with each instance having its own unique endpoint. This could be on separate ports, (sub)domain names, or IPs. With this setup, you can either
 1. Implement your own logic that will direct each upload to a specific Companion endpoint by setting the `companionUrl` option
-2. Setting the Companion option `COMPANION_SELF_ENDPOINT`. This option will cause Companion to respond with a special `i-am` HTTP header containing the value from `COMPANION_SELF_ENDPOINT`. When Uppy’s Companion client sees this header, it will pin all requests for the upload to this endpoint.
+2. Setting the Companion option `COMPANION_SELF_ENDPOINT`. This option will cause Companion to respond with a `i-am` HTTP header containing the value from `COMPANION_SELF_ENDPOINT`. When Uppy’s sees this header, it will pin all requests for the upload to this endpoint.
 
 In either case, you would then also typically configure a single Companion instance (one endpoint) to handle all OAuth authentication requests, so that you only need to specify a single OAuth callback URL. See also `oauthDomain` and `validHosts`.
 
-#### Behind a load balancer
+#### Using a load balancer
 
-The other option is to set up a load balancer in front of many Companion instances. Then Uppy’s companion client will only see a single endpoint and send all requests to the associated load balancer, which will then distribute them between Companion instances. The companion instances will then coordinate their messages and events over Redis so that any instance can serve the client’s requests. Note that sticky sessions are **not** needed with this setup. Here are some requirements for this setup:
+The other option is to set up a load balancer in front of many Companion instances. Then Uppy will only see a single endpoint and send all requests to the associated load balancer, which will then distribute them between Companion instances. The companion instances coordinate their messages and events over Redis so that any instance can serve the client’s requests. Note that sticky sessions are **not** needed with this setup. Here are the requirements for this setup:
 
 * The instances need to be connected to the same Redis server.
 * You need to set `COMPANION_SECRET` to the same value on both servers.
