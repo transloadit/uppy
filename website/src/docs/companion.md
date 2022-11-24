@@ -489,13 +489,13 @@ We have [a detailed guide on running Companion in Kubernetes](https://github.com
 ### Running many instances
 
 
-In our experience Companion will saturate network interface cards before other resources on commodity virtual servers (`c5d.2xlarge` for instance). We recommend running at least two instances in production, so that if the Node.js event loop gets blocked by one or more requests (due to a bug or spike in traffic), it doesn’t also block or slow down all other requests as well (as Node.js is single threaded).
+We recommend running at least two instances in production, so that if the Node.js event loop gets blocked by one or more requests (due to a bug or spike in traffic), it doesn’t also block or slow down all other requests as well (as Node.js is single threaded).
 
-As an example for scale, one enterprise customer of Transloadit, who self-hosts Companion to power an education service that is used by many universities globally, deploys 7 Companion instances. Their earlier solution ran on 35 instances I believe.
+As an example for scale, one enterprise customer of Transloadit, who self-hosts Companion to power an education service that is used by many universities globally, deploys 7 Companion instances. Their earlier solution ran on 35 instances. In our general experience Companion will saturate network interface cards before other resources on commodity virtual servers (`c5d.2xlarge` for instance).
 
 Your mileage may vary, so we recommend to add observability. You can let Prometheus crawl the `/metrics` endpoint and graph that with Grafana for instance.
 
-#### Separate endpoints
+#### Using unique endpoints
 
 One option is to run many instances with each instance having its own unique endpoint. This could be on separate ports, (sub)domain names, or IPs. With this setup, you can either
 1. Implement your own logic that will direct each upload to a specific Companion endpoint by setting the `companionUrl` option
