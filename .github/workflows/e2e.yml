@@ -2,8 +2,23 @@ name: End-to-end tests
 on:
   push:
     branches: [ main ]
+    paths-ignore:
+      - '**.md'
+      - '**.d.ts'
+      - 'examples/**'
+      - 'private/**'
+      - 'website/**'
+      - '.github/**'
+      - '!.github/workflows/e2e.yml'
   pull_request_target:
     types: [ opened, synchronize, reopened, labeled ]
+    paths-ignore:
+      - '**.md'
+      - '**.d.ts'
+      - 'examples/**'
+      - 'private/**'
+      - 'website/**'
+      - '.github/**'
   pull_request:
     types: [ opened, synchronize, reopened ]
     paths:
@@ -23,7 +38,7 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(corepack yarn config get cacheFolder)"
+        run: echo "dir=$(corepack yarn config get cacheFolder)" >> $GITHUB_OUTPUT
 
       - uses: actions/cache@v3
         id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
@@ -32,12 +47,23 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
+
+      - name: Create cache folder for Cypress
+        id: cypress-cache-dir-path
+        run: echo "dir=$(mktemp -d)" >> $GITHUB_OUTPUT
+      - uses: actions/cache@v3
+        with:
+          path: ${{ steps.cypress-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-cypress
       - name: Install Node.js
         uses: actions/setup-node@v3
         with:
           node-version: lts/*
       - name: Install dependencies
         run: corepack yarn install --immutable
+        env:
+          # https://docs.cypress.io/guides/references/advanced-installation#Binary-cache
+          CYPRESS_CACHE_FOLDER: ${{ steps.cypress-cache-dir-path.outputs.dir }}
       - name: Build Uppy packages
         run: corepack yarn build
       - name: Run end-to-end browser tests
@@ -55,6 +81,8 @@ jobs:
           COMPANION_AWS_BUCKET: ${{secrets.COMPANION_AWS_BUCKET}}
           COMPANION_AWS_REGION: ${{secrets.COMPANION_AWS_REGION}}
           COMPANION_AWS_DISABLE_ACL: 'true'
+          # https://docs.cypress.io/guides/references/advanced-installation#Binary-cache
+          CYPRESS_CACHE_FOLDER: ${{ steps.cypress-cache-dir-path.outputs.dir }}
       - name: Upload videos in case of failure
         uses: actions/upload-artifact@v3
         if: failure()

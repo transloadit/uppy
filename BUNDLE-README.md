@@ -1,7 +1,7 @@
 # Uppy
 
 Hi, thanks for trying out the bundled version of the Uppy File Uploader. You can use
-this from a CDN (`<script src="https://releases.transloadit.com/uppy/v3.0.0/uppy.min.js"></script>`) or bundle it with your webapp.
+this from a CDN (`<script src="https://releases.transloadit.com/uppy/v3.3.0/uppy.min.js"></script>`) or bundle it with your webapp.
 
 Note that the recommended way to use Uppy is to install it with yarn/npm and use a
 bundler like Webpack so that you can create a smaller custom build with only the
@@ -28,13 +28,13 @@ Now you can create an HTML file, for example `./upload.html`, with the following
   </div>
 </body>
 
-<script src="./js/uppy/uppy.min.js"></script>
-<script>
-  var uppy = new Uppy.Core({
+<script type="module">
+  import {Uppy, Dashboard, Tus} from "./js/uppy/uppy.min.mjs"
+  var uppy = new Uppy({
     debug      : true,
     autoProceed: false,
   })
-    .use(Uppy.Dashboard, {
+    .use(Dashboard, {
       browserBackButtonClose: false,
       height                : 470,
       inline                : false,
@@ -47,7 +47,7 @@ Now you can create an HTML file, for example `./upload.html`, with the following
         { id: 'caption', name: 'Caption', placeholder: 'describe what the image is about' }
       ]
     })
-    .use(Uppy.Tus, { endpoint: 'https://tusd.tusdemo.net/files/' })
+    .use(Tus, { endpoint: 'https://tusd.tusdemo.net/files/' })
     .on('upload-success', function (file, response) {
       var url      = response.uploadURL
       var fileName = file.name

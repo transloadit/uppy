@@ -153,10 +153,10 @@ export type TransloaditOptions = Options &
   )
 
 export default class Transloadit extends BasePlugin<TransloaditOptions> {
-  /** @deprecated */
+  /** @deprecated use `import { COMPANION_URL } from '@uppy/transloadit'` instead. */
   static COMPANION: string
 
-  /** @deprecated */
+  /** @deprecated use `import { COMPANION_ALLOWED_HOSTS } from '@uppy/transloadit'` instead. */
   static COMPANION_PATTERN: RegExp
 }
 

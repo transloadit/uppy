@@ -1,5 +1,36 @@
 # @uppy/core
 
+## 3.0.4
+
+Released: 2022-10-24
+Included in: Uppy v3.2.2
+
+- @uppy/core: make cancel() and close() arguments optional in types (Merlijn Vos / #4161)
+
+## 3.0.3
+
+Released: 2022-10-19
+Included in: Uppy v3.2.0
+
+- @uppy/core: do not crash if a file is removed before the upload starts (Antoine du Hamel / #4148)
+- @uppy/core: Fix Uppy.cancelAll and Uppy.close types (Sven Grunewaldt / #4128)
+
+## 3.0.2
+
+Released: 2022-09-25
+Included in: Uppy v3.1.0
+
+- @uppy/audio,@uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/box,@uppy/companion-client,@uppy/companion,@uppy/compressor,@uppy/core,@uppy/dashboard,@uppy/drag-drop,@uppy/drop-target,@uppy/dropbox,@uppy/facebook,@uppy/file-input,@uppy/form,@uppy/golden-retriever,@uppy/google-drive,@uppy/image-editor,@uppy/informer,@uppy/instagram,@uppy/locales,@uppy/onedrive,@uppy/progress-bar,@uppy/provider-views,@uppy/react,@uppy/redux-dev-tools,@uppy/remote-sources,@uppy/screen-capture,@uppy/status-bar,@uppy/store-default,@uppy/store-redux,@uppy/svelte,@uppy/thumbnail-generator,@uppy/transloadit,@uppy/tus,@uppy/unsplash,@uppy/url,@uppy/utils,@uppy/vue,@uppy/webcam,@uppy/xhr-upload,@uppy/zoom: add missing entries to changelog for individual packages (Antoine du Hamel / #4092)
+- @uppy/core: Fix `Restrictor` counts ghost files against `maxNumberOfFiles` (Andrew McIntee / #4078)
+- @uppy/core: fix types (Antoine du Hamel / #4072)
+
+## 3.0.1
+
+Released: 2022-08-30
+Included in: Uppy v3.0.1
+
+- @uppy/core,@uppy/dashboard,@uppy/thumbnail-generator: update definition type files for TS 4.8 compatibility (Antoine du Hamel / #4055)
+
 ## 3.0.0
 
 Released: 2022-08-22
@@ -7,6 +38,7 @@ Included in: Uppy v3.0.0
 
 - @uppy/core: core: uppy.addFile should accept browser File objects (Artur Paikin / #4020)
 - @uppy/core,@uppy/dashboard,@uppy/status-bar: Style tweaks: use all: initial + other resets (Artur Paikin / #3983)
+- Switch to ESM
 
 ## 3.0.0-beta.4
 

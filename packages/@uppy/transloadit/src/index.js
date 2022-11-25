@@ -37,10 +37,10 @@ const TL_COMPANION = /https?:\/\/api2(?:-\w+)?\.transloadit\.com\/companion/
 export default class Transloadit extends BasePlugin {
   static VERSION = packageJson.version
 
-  /** @deprecated */
+  /** @deprecated use `import { COMPANION_URL } from '@uppy/transloadit'` instead. */
   static COMPANION = COMPANION_URL
 
-  /** @deprecated */
+  /** @deprecated use `import { COMPANION_ALLOWED_HOSTS } from '@uppy/transloadit'` instead. */
   static COMPANION_PATTERN = COMPANION_ALLOWED_HOSTS
 
   #rateLimitedQueue

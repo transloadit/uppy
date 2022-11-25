@@ -1,0 +1,193 @@
+name: Test different bundlers with Uppy
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    # We want all branches so we configure types to be the GH default again
+    types: [ opened, synchronize, reopened ]
+    paths-ignore:
+      - '**.md'
+      - '**.d.ts'
+      - 'examples/**'
+      - 'private/**'
+      - 'website/**'
+      - '.github/**'
+      - '!.github/workflows/bundlers.yml'
+
+jobs:
+  isolate_uppy:
+    name: Isolate Uppy package
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v3
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "dir=$(corepack yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+      - uses: actions/cache@v3
+        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: lts/*
+      - name: Install dependencies
+        run: corepack yarn workspaces focus $(corepack yarn workspaces list --json | jq -r .name | awk '/^@uppy-example/{ next } { if ($0!="uppy.io") print $0 }')
+        env:
+          # https://docs.cypress.io/guides/references/advanced-installation#Skipping-installation
+          CYPRESS_INSTALL_BINARY: 0
+      - name: Build lib
+        run: corepack yarn run build:lib
+      - name: Make Uppy bundle use local version
+        run: |
+          node <<'EOF'
+            const pkg = require('./packages/uppy/package.json');
+            for(const key of Object.keys(pkg.dependencies)) {
+              if (key.startsWith('@uppy/')) {
+                pkg.dependencies[key] = `/tmp/packages/${key.replace('/', '-')}-${{ github.sha }}.tgz`;
+              }
+            }
+            require('node:fs').writeFileSync('./packages/uppy/package.json', JSON.stringify(pkg));
+          EOF
+      - name: Eject public packages from repo
+        run: mkdir /tmp/artifacts && corepack yarn workspaces foreach --no-private pack --install-if-needed -o /tmp/artifacts/%s-${{ github.sha }}.tgz
+      - name: Upload artifact
+        if: success()
+        uses: actions/upload-artifact@v3
+        with:
+          name: packages
+          path: /tmp/artifacts/
+
+  rollup:
+    needs: isolate_uppy
+    name: Rollup
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        bundler-version: [latest]
+    steps:
+      - name: Download uppy tarball
+        uses: actions/download-artifact@v3
+        with:
+          path: /tmp/
+      - name: Extract tarball
+        run: tar -xzf /tmp/packages/uppy-${{ github.sha }}.tgz --strip-components 1
+      - name: Add Rollup as a dev dependency
+        run: >-
+          npm i --save-dev
+          @rollup/plugin-commonjs @rollup/plugin-node-resolve
+          rollup@${{matrix.bundler-version}}
+      - name: Create Rollup config file
+        run: >-
+          echo '
+          import cjs from "@rollup/plugin-commonjs";
+          import { nodeResolve } from "@rollup/plugin-node-resolve";
+
+          export default {
+            input: "./index.mjs",
+            output: {
+              file: "/dev/null",
+            },
+            plugins: [
+              cjs(),
+              nodeResolve({ browser: true, exportConditions: ["browser"] }),
+            ],
+          };' > rollup.config.mjs
+      - name: Bundle
+        run: npx rollup -c
+
+  webpack:
+    needs: isolate_uppy
+    name: Webpack
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        bundler-version: [latest]
+    steps:
+      - name: Download uppy tarball
+        uses: actions/download-artifact@v3
+        with:
+          path: /tmp/
+      - name: Extract tarball
+        run: tar -xzf /tmp/packages/uppy-${{ github.sha }}.tgz --strip-components 1
+      - name: Add Webpack as a dev dependency
+        run: npm i --save-dev webpack-cli webpack@${{matrix.bundler-version}}
+      - name: Create Webpack config file
+        run: echo 'module.exports={mode:"production",target:"web",entry:"./index.mjs"}' > webpack.config.js
+      - name: Bundle
+        run: npx webpack
+
+  parcel:
+    needs: isolate_uppy
+    name: Parcel
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        bundler-version: [latest]
+    steps:
+      - name: Download uppy tarball
+        uses: actions/download-artifact@v3
+        with:
+          path: /tmp/
+      - name: Extract tarball
+        run: tar -xzf /tmp/packages/uppy-${{ github.sha }}.tgz --strip-components 1
+      - name: Fix package.json to work with Parcel
+        run: |
+          node <<'EOF'
+            const pkg = require('./package.json');
+            delete pkg.main
+            delete pkg.types
+            pkg.module = 'output.mjs'
+            require('node:fs').writeFileSync('./package.json', JSON.stringify(pkg));
+          EOF
+      - name: Add Parcel as a dev dependency
+        run: npm i --save-dev parcel@${{matrix.bundler-version}}
+      - name: Bundle
+        run: npx parcel build index.mjs
+
+  vite:
+    needs: isolate_uppy
+    name: Vite
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        bundler-version: [latest]
+    steps:
+      - name: Download uppy tarball
+        uses: actions/download-artifact@v3
+        with:
+          path: /tmp/
+      - name: Extract tarball
+        run: tar -xzf /tmp/packages/uppy-${{ github.sha }}.tgz --strip-components 1
+      - name: Add Vite as a dev dependency
+        run: npm i --save-dev vite@${{matrix.bundler-version}}
+      - name: Create index.html
+        run: echo '<!doctype html><html><head><script type="module" src="./index.mjs"></script></head></html>' > index.html
+      - name: Bundle
+        run: npx vite build
+
+  esbuild:
+    needs: isolate_uppy
+    name: ESBuild
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        bundler-version: [latest]
+    steps:
+      - name: Download uppy tarball
+        uses: actions/download-artifact@v3
+        with:
+          path: /tmp/
+      - name: Extract tarball
+        run: tar -xzf /tmp/packages/uppy-${{ github.sha }}.tgz --strip-components 1
+      - name: Add ESBuild as a dev dependency
+        run: npm i --save-dev esbuild@${{matrix.bundler-version}}
+      - name: Bundle
+        run: npx esbuild index.mjs --bundle --outfile=/dev/null
+    
+  # Browserify: doesn't support ESM.

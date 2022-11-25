@@ -12,6 +12,220 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 3.3.0
+
+Released: 2022-11-10
+
+| Package                | Version | Package                | Version |
+| ---------------------- | ------- | ---------------------- | ------- |
+| @uppy/angular          |   0.5.0 | @uppy/image-editor     |   2.1.0 |
+| @uppy/aws-s3-multipart |   3.1.0 | @uppy/locales          |   3.0.4 |
+| @uppy/companion        |   4.1.0 | @uppy/tus              |   3.0.5 |
+| @uppy/companion-client |   3.1.0 | @uppy/utils            |   5.1.0 |
+| @uppy/dashboard        |   3.2.0 | uppy                   |   3.3.0 |
+
+- @uppy/companion: change default S3 expiry from 300 to 800 seconds (Merlijn Vos / #4206)
+- @uppy/dashboard: Single file mode (Artur Paikin / #4188)
+- @uppy/locales: Fix UZ locale (Merlijn Vos / #4178)
+- @uppy/utils: update typings for `RateLimitedQueue` (Antoine du Hamel / #4204)
+- @uppy/aws-s3-multipart: empty the queue when pausing (Antoine du Hamel / #4203)
+- @uppy/image-editor: add checkered background (Livia Medeiros / #4194)
+- @uppy/aws-s3-multipart: refactor rate limiting approach (Antoine du Hamel / #4187)
+- @uppy/companion: send expiry time along side S3 signed requests (Antoine du Hamel / #4202)
+- @uppy/companion-client: add support for `AbortSignal` (Antoine du Hamel / #4201)
+- @uppy/companion-client: prevent preflight race condition (Mikael Finstad / #4182)
+- @uppy/aws-s3-multipart: change limit to 6 (Antoine du Hamel / #4199)
+- @uppy/utils: add `cause` support for `AbortError`s (Antoine du Hamel / #4198)
+- meta: Fix bad example for setFileState (Tim Whitney / #4191)
+- meta: Update code example for getFiles (Tim Whitney / #4189)
+- meta: Fix issue with outdated comment. (Tim Whitney / #4192)
+- @uppy/aws-s3-multipart: remove unused `timeout` option (Antoine du Hamel / #4186)
+- meta: Remove dollar sign from command for easier copy/pasting (Youssef Victor / #4180)
+- @uppy/aws-s3-multipart,@uppy/tus: fix `Timed out waiting for socket` (Antoine du Hamel / #4177)
+- meta: Add note about facebook approval (Mikael Finstad / #4172)
+- meta: add a manual deploy for website (Antoine du Hamel / #4171)
+
+
+## 3.2.2
+
+Released: 2022-10-24
+
+| Package              | Version | Package              | Version |
+| -------------------- | ------- | -------------------- | ------- |
+| @uppy/aws-s3         |   3.0.4 | @uppy/tus            |   3.0.4 |
+| @uppy/core           |   3.0.4 | @uppy/xhr-upload     |   3.0.4 |
+| @uppy/provider-views |   3.0.2 | uppy                 |   3.2.2 |
+
+- @uppy/aws-s3,@uppy/tus,@uppy/xhr-upload: replace `this.getState().files` with `this.uppy.getState().files` (Artur Paikin / #4167)
+- @uppy/core: make cancel() and close() arguments optional in types (Merlijn Vos / #4161)
+- @uppy/provider-views: Fix button and input inconsistent font and style (Artur Paikin / #4162)
+
+
+## 3.2.1
+
+Released: 2022-10-19
+
+| Package         | Version | Package         | Version |
+| --------------- | ------- | --------------- | ------- |
+| @uppy/companion |   4.0.5 | uppy            |   3.2.1 |
+| @uppy/locales   |   3.0.3 |                 |         |
+
+- meta: fix CDN deploy (Antoine du Hamel)
+
+
+## 3.2.0
+
+Released: 2022-10-19
+
+| Package                | Version | Package                | Version |
+| ---------------------- | ------- | ---------------------- | ------- |
+| @uppy/angular          |   0.4.3 | @uppy/tus              |   3.0.3 |
+| @uppy/aws-s3           |   3.0.3 | @uppy/url              |   3.1.0 |
+| @uppy/companion        |   4.0.4 | @uppy/webcam           |   3.2.1 |
+| @uppy/core             |   3.0.3 | @uppy/xhr-upload       |   3.0.3 |
+| @uppy/golden-retriever |   3.0.2 | uppy                   |   3.2.0 |
+| @uppy/locales          |   3.0.2 |                        |         |
+
+- @uppy/webcam: fix bug when Dashboard is using a custom id (Antoine du Hamel / #4099)
+- @uppy/url: refactor `UrlUI` (Antoine du Hamel / #4143)
+- @uppy/url: trim whitespace around user input (Andrew McIntee / #4143)
+- @uppy/core: do not crash if a file is removed before the upload starts (Antoine du Hamel / #4148)
+- @uppy/xhr-upload: fix `Timed out waiting for socket` (Antoine du Hamel / #4150)
+- @uppy/golden-retriever: Fix retry upload with Golden Retriever (Merlijn Vos / #4155)
+- @uppy/aws-s3,@uppy/xhr-upload: fix `Cannot mark a queued request as done` in `MiniXHRUpload` (Antoine du Hamel / #4151)
+- meta: add a CI check to validate `yarn.lock` (Antoine du Hamel / #4154)
+- meta: fix outdated `yarn.lock` (Antoine du Hamel / #4153)
+- meta: fix `transloadit-xhr` dev example (Antoine du Hamel / #4149)
+- meta: Add example for Uppy with S3 and a Node.js server (Raúl Ibáñez / #4129)
+- @uppy/locales: Fix duplicate keys in UK_UA.js (Murderlon)
+- @uppy/companion: add workaround for S3 accelerated endpoints (Mikael Finstad / #4140)
+- @uppy/locales: Add missing Ukrainian locale entries (Andrii Bodnar / #4145)
+- @uppy/angular: remove unnecessary `console.log` call (Antoine du Hamel / #4139)
+- meta: fix bundlers workflow (Antoine du Hamel / #4144)
+- meta: fix default sources (Mikael Finstad / #4134)
+- @uppy/locales: Update pl_PL.js (Daniel Kamiński / #4136)
+- @uppy/core: Fix Uppy.cancelAll and Uppy.close types (Sven Grunewaldt / #4128)
+- @uppy/companion: fix error message (Mikael Finstad / #4125)
+- @uppy/xhr-upload: queue requests for socket token for remote files (Daniel Jones / #4123)
+
+
+## 3.1.1
+
+Released: 2022-09-25
+
+| Package         | Version | Package         | Version |
+| --------------- | ------- | --------------- | ------- |
+| @uppy/companion |   4.0.3 | uppy            |   3.1.1 |
+
+- meta: Fix Companion release deploy (Antoine du Hamel)
+
+
+## 3.1.0
+
+Released: 2022-09-25
+
+| Package                   | Version | Package                   | Version |
+| ------------------------- | ------- | ------------------------- | ------- |
+| @uppy/angular             |   0.4.2 | @uppy/onedrive            |   3.0.1 |
+| @uppy/audio               |   1.0.2 | @uppy/progress-bar        |   3.0.1 |
+| @uppy/aws-s3              |   3.0.2 | @uppy/provider-views      |   3.0.1 |
+| @uppy/aws-s3-multipart    |   3.0.2 | @uppy/react               |   3.0.2 |
+| @uppy/box                 |   2.0.1 | @uppy/redux-dev-tools     |   3.0.1 |
+| @uppy/companion           |   4.0.2 | @uppy/remote-sources      |   1.0.2 |
+| @uppy/companion-client    |   3.0.2 | @uppy/screen-capture      |   3.0.1 |
+| @uppy/compressor          |   1.0.1 | @uppy/status-bar          |   3.0.1 |
+| @uppy/core                |   3.0.2 | @uppy/store-default       |   3.0.2 |
+| @uppy/dashboard           |   3.1.0 | @uppy/store-redux         |   3.0.2 |
+| @uppy/drag-drop           |   3.0.1 | @uppy/svelte              |   3.0.1 |
+| @uppy/drop-target         |   2.0.1 | @uppy/thumbnail-generator |   3.0.2 |
+| @uppy/dropbox             |   3.0.1 | @uppy/transloadit         |   3.0.2 |
+| @uppy/facebook            |   3.0.1 | @uppy/tus                 |   3.0.2 |
+| @uppy/file-input          |   3.0.1 | @uppy/unsplash            |   3.0.1 |
+| @uppy/form                |   3.0.1 | @uppy/url                 |   3.0.1 |
+| @uppy/golden-retriever    |   3.0.1 | @uppy/utils               |   5.0.2 |
+| @uppy/google-drive        |   3.0.1 | @uppy/vue                 |   1.0.1 |
+| @uppy/image-editor        |   2.0.1 | @uppy/webcam              |   3.2.0 |
+| @uppy/informer            |   3.0.1 | @uppy/xhr-upload          |   3.0.2 |
+| @uppy/instagram           |   3.0.1 | @uppy/zoom                |   2.0.1 |
+| @uppy/locales             |   3.0.1 | uppy                      |   3.1.0 |
+
+- meta: Fix companion-deploy-yml (Mikael Finstad)
+- website: fix tag for Activity Feed (Livia Medeiros / #4118)
+- @uppy/golden-retriever: fix condition to load files from service worker (Merlijn Vos / #4115)
+- website: remove references to the deleted `disc.html` page (Antoine du Hamel / #4119)
+- @uppy/locales: Create uz_UZ (Ozodbek1405 / #4114)
+- @uppy/golden-retriever: Fix endless webcam re-render with Golden Retriever (Merlijn Vos / #4111)
+- @uppy/image-editor: image-editor: fix controls in small Dashboard (Livia Medeiros / #4113)
+- website: add “what is Uppy” to the blog post (Artur Paikin)
+- meta: fix Companion deploy (Antoine du Hamel / #4095)
+- @uppy/dashboard: add dashboard:show-panel event (Jon-Pierre Sanchez / #4108)
+- website: Small post fixes (Artur Paikin)
+- @uppy/companion: Companion throttle progress by time (Mikael Finstad / #4101)
+- meta: skip a few more unnecessary CI runs (Antoine du Hamel / #4106)
+- meta: resolve e2e flakiness (Merlijn Vos / #4077)
+- meta: run linters on almost every PRs (Antoine du Hamel / #4105)
+- website: 3.0 blog post tweaks (Merlijn Vos / #4104)
+- meta: Fix linter warnings in 3.0 post (Murderlon)
+- website: Add 3.0 blog post (Artur Paikin / #4046)
+- website: fix ESM import in example (Livia Medeiros / #4103)
+- doc: Update "Dashboard typo" (Laban / #4096)
+- @uppy/audio,@uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/box,@uppy/companion-client,@uppy/companion,@uppy/compressor,@uppy/core,@uppy/dashboard,@uppy/drag-drop,@uppy/drop-target,@uppy/dropbox,@uppy/facebook,@uppy/file-input,@uppy/form,@uppy/golden-retriever,@uppy/google-drive,@uppy/image-editor,@uppy/informer,@uppy/instagram,@uppy/locales,@uppy/onedrive,@uppy/progress-bar,@uppy/provider-views,@uppy/react,@uppy/redux-dev-tools,@uppy/remote-sources,@uppy/screen-capture,@uppy/status-bar,@uppy/store-default,@uppy/store-redux,@uppy/svelte,@uppy/thumbnail-generator,@uppy/transloadit,@uppy/tus,@uppy/unsplash,@uppy/url,@uppy/utils,@uppy/vue,@uppy/webcam,@uppy/xhr-upload,@uppy/zoom: add missing entries to changelog for individual packages (Antoine du Hamel / #4092)
+- meta: ci: add GHA to tryout bundling Uppy with popular bundlers (Antoine du Hamel / #4084)
+- @uppy/core: Fix `Restrictor` counts ghost files against `maxNumberOfFiles` (Andrew McIntee / #4078)
+- uppy: add a decoy `Core` export to warn users about the renaming (Antoine du Hamel / #4085)
+- meta: run CI when modifying workflow files (Antoine du Hamel / #4091)
+- meta: limit the number of unnecessary CI runs (Antoine du Hamel / #4086)
+- meta: Update remote-sources.md (heocoi / #4087)
+- uppy: remove all remaining occurrences of `Uppy.Core` (Antoine du Hamel / #4082)
+- meta: fix typo in `e2e.yml` (Antoine du Hamel)
+- meta: Restrict e2e CI runs (Merlijn Vos / #4075)
+- @uppy/webcam: Set default videoConstraints (Artur Paikin / #4070)
+- @uppy/angular: Fix angular build error (Murderlon)
+- website: add `Known issues` section on Migration Guide (Antoine du Hamel / #4066)
+- @uppy/core: fix types (Antoine du Hamel / #4072)
+- doc: remove use of deprecated `metaFields` option (Antoine du Hamel / #4073)
+
+
+## 3.0.1
+
+Released: 2022-08-30
+
+| Package                   | Version | Package                   | Version |
+| ------------------------- | ------- | ------------------------- | ------- |
+| @uppy/angular             |   0.4.1 | @uppy/store-default       |   3.0.1 |
+| @uppy/audio               |   1.0.1 | @uppy/store-redux         |   3.0.1 |
+| @uppy/aws-s3              |   3.0.1 | @uppy/svelte              |   3.0.0 |
+| @uppy/aws-s3-multipart    |   3.0.1 | @uppy/thumbnail-generator |   3.0.1 |
+| @uppy/companion           |   4.0.1 | @uppy/transloadit         |   3.0.1 |
+| @uppy/companion-client    |   3.0.1 | @uppy/tus                 |   3.0.1 |
+| @uppy/core                |   3.0.1 | @uppy/utils               |   5.0.1 |
+| @uppy/dashboard           |   3.0.1 | @uppy/webcam              |   3.1.0 |
+| @uppy/react               |   3.0.1 | @uppy/xhr-upload          |   3.0.1 |
+| @uppy/remote-sources      |   1.0.1 | uppy                      |   3.0.1 |
+
+- @uppy/dashboard,@uppy/webcam: add nativeCameraFacingMode to Webcam and Dashboard (Artur Paikin / #4047)
+- meta: upgrade to Jest 29 (Antoine du Hamel / #4049)
+- @uppy/svelte: update peer dependencies (Antoine du Hamel / #4065)
+- @uppy/react: useUppy: fix unmount on NextJS dev mode (Matt Jesuele / #4062)
+- @uppy/vue: fix missing component in docs (Antoine du Hamel / #4063)
+- @uppy/angular: fix compiler warning (Antoine du Hamel / #4064)
+- meta: improve CI npm install time (Antoine du Hamel / #4058)
+- meta: example: fix Angular example package name (Antoine du Hamel / #4060)
+- meta: upgrade to TypeScript 4.8 (Antoine du Hamel / #4048)
+- @uppy/core,@uppy/dashboard,@uppy/thumbnail-generator: update definition type files for TS 4.8 compatibility (Antoine du Hamel / #4055)
+- @uppy/transloadit: improve deprecation notice (Antoine du Hamel / #4056)
+- @uppy/thumbnail-generator: fix `exifr` import (Antoine du Hamel / #4054)
+- @uppy/utils: fix `relativePath` when drag&dropping a folder (Antoine du Hamel / #4043)
+- @uppy/companion: Fix Companion license (Merlijn Vos / #4044)
+- e2e: add tests for AWS (Antoine du Hamel / #3665)
+- meta: Only publish Companion to Dockerhub on release (Merlijn Vos / #4037)
+- meta: fix linter warnings (Antoine du Hamel / #4039)
+- @uppy/utils: Post-release website fixes (Merlijn Vos / #4038)
+- @uppy/angular: fix peer dependencies (Antoine du Hamel / #4035)
+- meta: uppy.io homepage: Add Tus (Artur Paikin)
+- meta: Fix uppy.io homepage example (Artur Paikin)
+
+
 ## 3.0.0
 
 Released: 2022-08-22
@@ -195,7 +409,7 @@ Released: 2022-08-02
 - @uppy/transloadit: send `assembly-cancelled` only once (Antoine du Hamel / #3937)
 - meta: `keepNames` in bundle (Antoine du Hamel / #3926)
 - meta: e2e: fix Transloadit test suite with Cypress 10 (Antoine du Hamel / #3936)
-- meta: Bump guzzlehttp/guzzle from 7.4.1 to 7.4.5 in /examples/aws-presigned-url (dependabot[bot] / #3842)
+- meta: Bump guzzlehttp/guzzle from 7.4.1 to 7.4.5 in /examples/aws-php (dependabot[bot] / #3842)
 - @uppy/tus: fix dependencies (Antoine du Hamel / #3923)
 - meta: doc: fix linter failure in `image-editor.md` (Antoine du Hamel / #3924)
 - meta: doc: Fix typo in image-editor.md (Ikko Ashimine / #3921)
@@ -724,7 +938,7 @@ Released: 2022-01-10
 - @uppy/tus: pause all requests in response to server rate limiting (Antoine du Hamel / #3394)
 - @uppy/transloadit: better defaults for rate limiting (Antoine du Hamel / #3414)
 - @uppy/companion: Fix Companion deploys (kiloreux / #3388)
-- meta: update aws-presigned-url example to use esm (Antoine du Hamel / #3413)
+- meta: update aws-php example to use esm (Antoine du Hamel / #3413)
 - @uppy/image-editor: namespace input range css (Merlijn Vos / #3406)
 - @uppy/screen-capture: Add missing option to the screen capture types (Mustafa Navruz / #3400)
 - @uppy/drag-drop: fix `undefined is not a function` TypeError (Antoine du Hamel / #3397)

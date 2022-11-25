@@ -113,7 +113,9 @@ export default class GoldenRetriever extends BasePlugin {
 
     // If all files have been removed by the user, clear recovery state
     if (Object.keys(filesToSave).length === 0) {
-      this.uppy.setState({ recoveredState: null })
+      if (this.uppy.getState().recoveredState !== null) {
+        this.uppy.setState({ recoveredState: null })
+      }
       MetaDataStore.cleanup(this.uppy.opts.id)
       return
     }
@@ -161,16 +163,9 @@ export default class GoldenRetriever extends BasePlugin {
     }
 
     return this.ServiceWorkerStore.list().then((blobs) => {
-      const files = this.uppy.getFiles()
-      const localFilesOnly = files.filter((file) => {
-        // maybe && !file.progress.uploadComplete
-        return !file.isRemote
-      })
-
       const numberOfFilesRecovered = Object.keys(blobs).length
-      const numberOfFilesTryingToRecover = localFilesOnly.length
 
-      if (numberOfFilesRecovered === numberOfFilesTryingToRecover) {
+      if (numberOfFilesRecovered > 0) {
         this.uppy.log(`[GoldenRetriever] Successfully recovered ${numberOfFilesRecovered} blobs from Service Worker!`)
         return blobs
       }
@@ -301,12 +296,11 @@ export default class GoldenRetriever extends BasePlugin {
     // start all uploads again when file blobs are restored
     const { currentUploads } = this.uppy.getState()
     if (currentUploads) {
+      this.uppy.resumeAll()
       Object.keys(currentUploads).forEach((uploadId) => {
         this.uppy.restore(uploadId, currentUploads[uploadId])
       })
-      this.uppy.resumeAll()
     }
-    this.uppy.upload()
     this.uppy.setState({ recoveredState: null })
   }
 
@@ -350,7 +344,6 @@ export default class GoldenRetriever extends BasePlugin {
       })
     } else {
       this.uppy.log('[GoldenRetriever] No files need to be loaded, only restoring processing state...')
-      this.onBlobsLoaded([])
     }
   }
 
@@ -361,6 +354,9 @@ export default class GoldenRetriever extends BasePlugin {
     this.uppy.on('file-added', this.addBlobToStores)
     this.uppy.on('file-editor:complete', this.replaceBlobInStores)
     this.uppy.on('file-removed', this.removeBlobFromStores)
+    // TODO: the `state-update` is bad practise. It fires on any state change in Uppy
+    // or any state change in any of the plugins. We should to able to only listen
+    // for the state changes we need, somehow.
     this.uppy.on('state-update', this.saveFilesStateToLocalStorage)
     this.uppy.on('restore-confirmed', this.handleRestoreConfirmed)
     this.uppy.on('restore-canceled', this.abortRestore)

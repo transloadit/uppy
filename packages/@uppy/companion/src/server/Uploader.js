@@ -8,6 +8,7 @@ const { join } = require('node:path')
 const fs = require('node:fs')
 const { promisify } = require('node:util')
 const FormData = require('form-data')
+const throttle = require('lodash.throttle')
 
 // TODO move to `require('streams/promises').pipeline` when dropping support for Node.js 14.x.
 const pipeline = promisify(pipelineCb)
@@ -165,7 +166,6 @@ class Uploader {
 
     this.uploadStopped = false
 
-    this.emittedProgress = {}
     this.storage = options.storage
     this._paused = false
 
@@ -281,8 +281,12 @@ class Uploader {
     } finally {
       logger.debug('cleanup', this.shortToken)
       if (this.readStream && !this.readStream.destroyed) this.readStream.destroy()
-      if (this.tmpPath) unlink(this.tmpPath).catch(() => {})
+      await this.tryDeleteTmpPath()
     }
+  }
+
+  tryDeleteTmpPath () {
+    if (this.tmpPath) unlink(this.tmpPath).catch(() => {})
   }
 
   /**
@@ -408,6 +412,17 @@ class Uploader {
     this.storage.set(redisKey, jsonStringify(state), 'EX', keyExpirySec)
   }
 
+  throttledEmitProgress = throttle((dataToEmit) => {
+    const { bytesUploaded, bytesTotal, progress } = dataToEmit.payload
+    logger.debug(
+      `${bytesUploaded} ${bytesTotal} ${progress}%`,
+      'uploader.total.progress',
+      this.shortToken,
+    )
+    this.saveState(dataToEmit)
+    emitter().emit(this.token, dataToEmit)
+  }, 1000, { trailing: false })
+
   /**
    *
    * @param {number} [bytesUploaded]
@@ -428,11 +443,6 @@ class Uploader {
     if (bytesTotal > 0) percentage = Math.min(Math.max(0, ((combinedBytes / bytesTotal) * 100)), 100)
 
     const formattedPercentage = percentage.toFixed(2)
-    logger.debug(
-      `${combinedBytes} ${bytesTotal} ${formattedPercentage}%`,
-      'uploader.total.progress',
-      this.shortToken,
-    )
 
     if (this._paused || this.uploadStopped) {
       return
@@ -443,17 +453,10 @@ class Uploader {
       action: 'progress',
       payload,
     }
-    this.saveState(dataToEmit)
 
-    const isEqual = (p1, p2) => (p1.progress === p2.progress
-      && p1.bytesUploaded === p2.bytesUploaded
-      && p1.bytesTotal === p2.bytesTotal)
-
-    // avoid flooding the client with progress events.
-    if (!isEqual(this.emittedProgress, payload)) {
-      this.emittedProgress = payload
-      emitter().emit(this.token, dataToEmit)
-    }
+    // avoid flooding the client (and log) with progress events.
+    // flooding will cause reduced performance and possibly network issues
+    this.throttledEmitProgress(dataToEmit)
   }
 
   /**

@@ -14,7 +14,7 @@ tagline: "Uppy plugin that includes all remote sources that Uppy+Companion offer
 
 ```js
 import Uppy from '@uppy/core'
-import Dashbaord from '@uppy/dashboard'
+import Dashboard from '@uppy/dashboard'
 import RemoteSources from '@uppy/remote-sources'
 
 const uppy = new Uppy()
@@ -46,7 +46,7 @@ A unique identifier for this plugin (`string`, default: `RemoteSources`).
 
 ### `sources`
 
-List of remote sources that will be enabled (`array`, default: `['Box', 'Dropbox', 'Facebook', 'GoogleDrive','Instagram', 'OneDrive', 'Unsplash', 'Url']`).
+List of remote sources that will be enabled (`array`, default: `['Box', 'Dropbox', 'Facebook', 'GoogleDrive','Instagram', 'OneDrive', 'Unsplash', 'Url', 'Zoom']`).
 
 You don’t need to specify them manually or change them, but if you want to alter the order in which they appear in the Dashboard, or disable some sources, this option is for you.
 

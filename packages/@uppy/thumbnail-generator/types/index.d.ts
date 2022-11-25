@@ -1,4 +1,4 @@
-import type { PluginOptions, UIPlugin, UppyFile } from '@uppy/core'
+import type { IndexedObject, PluginOptions, UIPlugin, UppyFile } from '@uppy/core'
 
 import ThumbnailGeneratorLocale from './generatedLocale'
 
@@ -20,7 +20,7 @@ export default ThumbnailGenerator
 
 // Events
 
-export type ThumbnailGeneratedCallback<TMeta> = (
+export type ThumbnailGeneratedCallback<TMeta extends IndexedObject<any>> = (
   file: UppyFile<TMeta>,
   preview: string
 ) => void

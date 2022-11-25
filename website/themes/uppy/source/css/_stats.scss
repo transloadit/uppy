@@ -42,9 +42,16 @@ a.Stats-package {
 
 .on-the-githubs {
   @include clearfix;
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+
+  &:empty::before {
+    content: "Loading...";
+  }
+
   > li {
     @include clearfix;
-    list-style-type: none;
     margin: 0;
     padding: 12px 0;
     position: relative;

@@ -1,5 +1,34 @@
 # @uppy/angular
 
+## 0.5.0
+
+Released: 2022-11-10
+Included in: Uppy v3.3.0
+
+- @uppy/angular,@uppy/utils: add `cause` support for `AbortError`s (Antoine du Hamel / #4198)
+
+## 0.4.3
+
+Released: 2022-10-19
+Included in: Uppy v3.2.0
+
+- @uppy/angular: remove unnecessary `console.log` call (Antoine du Hamel / #4139)
+
+## 0.4.2
+
+Released: 2022-09-25
+Included in: Uppy v3.1.0
+
+- @uppy/angular: Fix angular build error (Murderlon)
+
+## 0.4.1
+
+Released: 2022-08-30
+Included in: Uppy v3.0.1
+
+- @uppy/angular: fix compiler warning (Antoine du Hamel / #4064)
+- @uppy/angular: fix peer dependencies (Antoine du Hamel / #4035)
+
 ## 0.4.0
 
 Released: 2022-08-22

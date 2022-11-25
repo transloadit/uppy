@@ -1,5 +1,5 @@
 {
-  "name": "angular-example",
+  "name": "@uppy-example/angular",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
@@ -36,7 +36,7 @@
     "@angular-eslint/eslint-plugin-template": "^14.0.2",
     "@angular-eslint/schematics": "^14.0.2",
     "@angular-eslint/template-parser": "^14.0.2",
-    "@angular/cli": "~14.1.2",
+    "@angular/cli": "~14.2.0",
     "@angular/compiler-cli": "^14.1.0",
     "@types/jasmine": "~4.0.0",
     "eslint": "^8.0.0",
@@ -49,6 +49,6 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.0.0",
-    "typescript": "~4.7"
+    "typescript": "~4.8"
   }
 }
