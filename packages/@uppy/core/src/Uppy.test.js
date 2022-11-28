@@ -1194,7 +1194,7 @@ describe('src/Core', () => {
       const fileId = Object.keys(core.getState().files)[0]
       expect(core.getFile(fileId).name).toEqual('foo.jpg')
 
-      expect(core.getFile('non existant file')).toEqual(undefined)
+      expect(core.getFile('non existent file')).toEqual(undefined)
     })
   })
 
