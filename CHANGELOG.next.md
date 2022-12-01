@@ -1,0 +1,3 @@
+- meta: @uppy/transloadit: introduce `assemblyOptions`, deprecate other options (Merlijn Vos / #4059)
+- meta: @uppy/core: fix typo in Uppy.test.js (Ikko Ashimine / #4235)
+- meta: @uppy/aws-s3-multipart: fix singPart type (Stefan Schonert / #4224)
