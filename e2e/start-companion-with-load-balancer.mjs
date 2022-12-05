@@ -59,7 +59,7 @@ const startCompanion = ({ name, port }) => execa('nodemon', [
   },
 })
 
-const hosts = Array(numInstances).fill().map((unused, index) => {
+const hosts = Array.from({ length: numInstances }, (_, index) => {
   const port = companionStartPort + index
   return { index, port }
 })
@@ -73,6 +73,6 @@ try {
   loadBalancer = createLoadBalancer(hosts.map(({ port }) => `http://localhost:${port}`))
   await Promise.all(companions)
 } finally {
-  if (loadBalancer) loadBalancer.close()
+  loadBalancer?.close()
   companions.forEach((companion) => companion.kill())
 }

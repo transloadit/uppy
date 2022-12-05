@@ -38,7 +38,7 @@ exports.generateSecret = () => {
  * @param {string} url
  */
 const hasProtocol = (url) => {
-  return url.startsWith('http://') || url.startsWith('https://')
+  return url.startsWith('https://') || url.startsWith('http://')
 }
 
 function getCorsOrigins () {
