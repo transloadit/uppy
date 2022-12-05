@@ -1,0 +1,57 @@
+import Uppy, { debugLogger } from '@uppy/core'
+import Dashboard from '@uppy/dashboard'
+import RemoteSources from '@uppy/google-drive'
+import ImageEditor from '@uppy/image-editor'
+import Form from '@uppy/form'
+import Webcam from '@uppy/webcam'
+import Audio from '@uppy/audio'
+import ScreenCapture from '@uppy/screen-capture'
+import Tus from '@uppy/tus'
+import DropTarget from '@uppy/drop-target'
+import Compressor from '@uppy/compressor'
+
+import "@uppy/core/dist/style.css"
+import "@uppy/dashboard/dist/style.css"
+import "@uppy/audio/dist/style.css"
+import "@uppy/screen-capture/dist/style.css"
+import "@uppy/image-editor/dist/style.css"
+
+const COMPANION_URL = "http://companion.uppy.io"
+const COMPANION_ALLOWED_HOSTS = ['https://my-site.com']
+
+const uppy = new Uppy({ logger: debugLogger })
+  // The main UI that shows files, progress and holds all plugins
+  .use(Dashboard, {
+    target: '.DashboardContainer',
+    inline: true,
+    height: 470,
+    metaFields: [
+      { id: 'name', name: 'Name', placeholder: 'file name' },
+      { id: 'caption', name: 'Caption', placeholder: 'add description' },
+    ],
+    note: 'Images and video only, 2–3 files, up to 1 MB',
+  })
+  // All remote services like Instagram and Google Drive in one package
+  .use(RemoteSources, {
+    // You can manually specify `sources` here, by default all available are included. 
+    // See docs: https://uppy.io/docs/remote-sources/#sources.
+    companionUrl: COMPANION_URL,
+    companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
+  })
+  .use(Webcam, { target: Dashboard })
+  .use(Audio, { target: Dashboard, showRecordingLength: true })
+  .use(ScreenCapture, { target: Dashboard })
+  .use(Form, { target: '#upload-form' })
+  .use(ImageEditor, { target: Dashboard })
+  // Allow dropping files on any element or the whole document
+  .use(DropTarget, { target: document.body })
+  // Optimize images
+  .use(Compressor)
+  // Upload
+  .use(Tus, { endpoint: 'https://tusd.tusdemo.net/files/' })
+
+uppy.on('complete', result => {
+  console.log('successful files:', result.successful)
+  console.log('failed files:', result.failed)
+})
+
