@@ -10,7 +10,14 @@ import Tus from '@uppy/tus'
 import DropTarget from '@uppy/drop-target'
 import Compressor from '@uppy/compressor'
 
-import COMPANION from '../env.js'
+import "@uppy/core/dist/style.css"
+import "@uppy/dashboard/dist/style.css"
+import "@uppy/audio/dist/style.css"
+import "@uppy/screen-capture/dist/style.css"
+import "@uppy/image-editor/dist/style.css"
+
+const COMPANION_URL = "http://companion.uppy.io"
+const COMPANION_ALLOWED_HOSTS = ['https://my-site.com']
 
 const uppy = new Uppy({ logger: debugLogger })
   // The main UI that shows files, progress and holds all plugins
@@ -24,13 +31,12 @@ const uppy = new Uppy({ logger: debugLogger })
     ],
     note: 'Images and video only, 2–3 files, up to 1 MB',
   })
-  // All remote servies like Instagram and Google Drive in one package
+  // All remote services like Instagram and Google Drive in one package
   .use(RemoteSources, {
-    companionUrl: COMPANION.URL,
-    companionAllowedHosts: COMPANION.AllowedHosts,
-    // You don’t have to manually specify this, 
-    // all enabled by default, but you can pick and choose if you like
-    sources: ['Box', 'Dropbox', 'Facebook', 'GoogleDrive', 'Instagram', 'OneDrive', 'Unsplash', 'Zoom', 'Url'],
+    // You can manually specify `sources` here, by default all available are included. 
+    // See docs: https://uppy.io/docs/remote-sources/#sources.
+    companionUrl: COMPANION_URL,
+    companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
   })
   .use(Webcam, { target: Dashboard })
   .use(Audio, { target: Dashboard, showRecordingLength: true })
