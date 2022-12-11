@@ -556,6 +556,22 @@ Resume all uploads. Will only work if resumable upload plugin, such as [Tus](/do
 
 Retry an upload (after an error, for example).
 
+```js
+uppy.on('error', (error) => {
+  // Display the error on the UI.
+  errorBox.textContent = error
+  retryButton.disabled = false
+})
+
+retryButton.addEventListener('click', () => {
+  uppy.getFiles().forEach(file => {
+    if ('error' in file.error) {
+      uppy.retryUpload(file.id)
+    }
+  })
+})
+```
+
 ### `uppy.retryAll()`
 
 Retry all uploads (after an error, for example).
