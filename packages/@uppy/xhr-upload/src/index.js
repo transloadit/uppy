@@ -230,11 +230,8 @@ export default class XHRUpload extends BasePlugin {
       let queuedRequest
 
       const timer = new ProgressTimeout(opts.timeout, () => {
-        xhr.abort()
-        queuedRequest.done()
         const error = new Error(this.i18n('timedOut', { seconds: Math.ceil(opts.timeout / 1000) }))
-        this.uppy.emit('upload-error', file, error)
-        reject(error)
+        this.uppy.emit('upload-stalled', file, error)
       })
 
       const id = nanoid()
