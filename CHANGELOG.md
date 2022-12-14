@@ -12,6 +12,27 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 3.3.1
+
+Released: 2022-11-16
+
+| Package                | Version | Package                | Version |
+| ---------------------- | ------- | ---------------------- | ------- |
+| @uppy/angular          |   0.5.1 | @uppy/companion-client |   3.1.1 |
+| @uppy/aws-s3-multipart |   3.1.1 | @uppy/utils            |   5.1.1 |
+| @uppy/companion        |   4.1.1 | uppy                   |   3.3.1 |
+
+- @uppy/aws-s3-multipart: handle slow connections better (Antoine du Hamel / #4213)
+- @uppy/companion-client: treat `*` the same as missing header (Antoine du Hamel / #4221)
+- @uppy/utils: fix types (Antoine du Hamel / #4212)
+- @uppy/companion: send expire info for non-multipart uploads (Antoine du Hamel / #4214)
+- docs: fix `allowedMetaFields` documentation (Antoine du Hamel / #4216)
+- meta: add more bundlers for automated testing (Antoine du Hamel / #4100)
+- @uppy/aws-s3-multipart: Fix typo in url check (Christian Franke / #4211)
+- meta: use current version of packages when testing bundlers (Antoine du Hamel / #4208)
+- meta: do not use the set-output command in workflows (Antoine du Hamel / #4175)
+
+
 ## 3.3.0
 
 Released: 2022-11-10

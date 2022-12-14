@@ -71,9 +71,9 @@ is set to `true`, otherwise it defaults to `'file'`.
 
 Pass an array of field names to limit the metadata fields that will be added to upload.
 
+* Set this to an empty array `[]` to not send any fields.
 * Set this to `['name']` to only send the `name` field.
 * Set this to `null` (the default) to send _all_ metadata fields.
-* Set this to an empty array `[]` to not send any fields.
 
 If the [`formData`](#formData-true) option is set to false, `metaFields` is ignored.
 

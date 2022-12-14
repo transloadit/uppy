@@ -1,5 +1,12 @@
 # @uppy/companion-client
 
+## 3.1.1
+
+Released: 2022-11-16
+Included in: Uppy v3.3.1
+
+- @uppy/companion-client: treat `*` the same as missing header (Antoine du Hamel / #4221)
+
 ## 3.1.0
 
 Released: 2022-11-10

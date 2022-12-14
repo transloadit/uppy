@@ -48,6 +48,25 @@ function dedupe (list) {
   }))
 }
 
+async function getAssemblyOptions (file, options) {
+  const assemblyOptions = typeof options.assemblyOptions === 'function'
+    ? await options.assemblyOptions(file, options)
+    : options.assemblyOptions
+
+  validateParams(assemblyOptions.params)
+
+  return assemblyOptions
+}
+
+function getFields (file, assemblyOptions) {
+  if (Array.isArray(assemblyOptions.fields)) {
+    return Object.fromEntries(
+      assemblyOptions.fields.map((fieldName) => [fieldName, file.meta[fieldName]]),
+    )
+  }
+  return {}
+}
+
 /**
  * Turn Transloadit plugin options and a list of files into a list of Assembly
  * options.
@@ -56,36 +75,6 @@ class AssemblyOptions {
   constructor (files, opts) {
     this.files = files
     this.opts = opts
-  }
-
-  /**
-   * Get Assembly options for a file.
-   */
-  async #getAssemblyOptions (file) {
-    if (file == null) return undefined
-
-    const options = this.opts
-    const assemblyOptions = await options.getAssemblyOptions(file, options)
-
-    // We check if the file is present here again, because it could had been
-    // removed during the await, e.g. if the user hit cancel while we were
-    // waiting for the options.
-    if (file == null) return undefined
-
-    if (Array.isArray(assemblyOptions.fields)) {
-      assemblyOptions.fields = Object.fromEntries(
-        assemblyOptions.fields.map((fieldName) => [fieldName, file.meta[fieldName]]),
-      )
-    } else if (assemblyOptions.fields == null) {
-      assemblyOptions.fields = {}
-    }
-
-    validateParams(assemblyOptions.params)
-
-    return {
-      fileIDs: [file.id],
-      options: assemblyOptions,
-    }
   }
 
   /**
@@ -99,19 +88,36 @@ class AssemblyOptions {
 
     if (this.files.length > 0) {
       return Promise.all(
-        this.files.map((file) => this.#getAssemblyOptions(file)),
+        this.files.map(async (file) => {
+          if (file == null) return undefined
+
+          const assemblyOptions = await getAssemblyOptions(file, options)
+
+          // We check if the file is present here again, because it could had been
+          // removed during the await, e.g. if the user hit cancel while we were
+          // waiting for the options.
+          if (file == null) return undefined
+
+          assemblyOptions.fields = getFields(file, assemblyOptions)
+
+          return {
+            fileIDs: [file.id],
+            options: assemblyOptions,
+          }
+        }),
       ).then(dedupe)
     }
 
     if (options.alwaysRunAssembly) {
       // No files, just generate one Assembly
-      const assemblyOptions = await options.getAssemblyOptions(null, options)
+      const assemblyOptions = await getAssemblyOptions(null, options)
 
-      validateParams(assemblyOptions.params)
-      return [{
-        fileIDs: this.files.map((file) => file.id),
-        options: assemblyOptions,
-      }]
+      return [
+        {
+          fileIDs: this.files.map((file) => file.id),
+          options: assemblyOptions,
+        },
+      ]
     }
 
     // If there are no files and we do not `alwaysRunAssembly`,

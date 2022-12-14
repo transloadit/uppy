@@ -2,11 +2,11 @@ import { describe, expect, it } from '@jest/globals'
 import AssemblyOptions from './AssemblyOptions.js'
 
 describe('Transloadit/AssemblyOptions', () => {
-  it('Validates response from getAssemblyOptions()', async () => {
+  it('Validates response from assemblyOptions()', async () => {
     const options = new AssemblyOptions([
       { name: 'testfile' },
     ], {
-      getAssemblyOptions: (file) => {
+      assemblyOptions: (file) => {
         expect(file.name).toBe('testfile')
         return {
           params: '{"some":"json"}',
@@ -29,7 +29,7 @@ describe('Transloadit/AssemblyOptions', () => {
       { name: 'c.png', data },
       { name: 'd.png', data },
     ], {
-      getAssemblyOptions: (file) => ({
+      assemblyOptions: (file) => ({
         params: {
           auth: { key: 'fake key' },
           steps: {
@@ -57,7 +57,7 @@ describe('Transloadit/AssemblyOptions', () => {
       { name: 'c.png', data, size: data.byteLength },
       { name: 'd.png', data: data2, size: data2.byteLength },
     ], {
-      getAssemblyOptions: (file) => ({
+      assemblyOptions: (file) => ({
         params: {
           auth: { key: 'fake key' },
           steps: {
@@ -77,7 +77,7 @@ describe('Transloadit/AssemblyOptions', () => {
 
   it('Does not create an Assembly if no files are being uploaded', async () => {
     const options = new AssemblyOptions([], {
-      getAssemblyOptions () {
+      assemblyOptions () {
         throw new Error('should not create Assembly')
       },
     })
@@ -88,7 +88,7 @@ describe('Transloadit/AssemblyOptions', () => {
   it('Creates an Assembly if no files are being uploaded but `alwaysRunAssembly` is enabled', async () => {
     const options = new AssemblyOptions([], {
       alwaysRunAssembly: true,
-      getAssemblyOptions (file) {
+      async assemblyOptions (file) {
         expect(file).toBe(null)
         return {
           params: {
@@ -122,7 +122,7 @@ describe('Transloadit/AssemblyOptions', () => {
       params: {
         auth: { key: 'fake key' },
       },
-      getAssemblyOptions: defaultGetAssemblyOptions,
+      assemblyOptions: defaultGetAssemblyOptions,
     })
 
     const assemblies = await options.build()

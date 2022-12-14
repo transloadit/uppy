@@ -1,5 +1,13 @@
 # @uppy/aws-s3-multipart
 
+## 3.1.1
+
+Released: 2022-11-16
+Included in: Uppy v3.3.1
+
+- @uppy/aws-s3-multipart: handle slow connections better (Antoine du Hamel / #4213)
+- @uppy/aws-s3-multipart: Fix typo in url check (Christian Franke / #4211)
+
 ## 3.1.0
 
 Released: 2022-11-10

@@ -248,6 +248,8 @@ declare module '@uppy/utils/lib/toArray' {
 }
 
 declare module '@uppy/utils/lib/AbortController' {
+  import type { ErrorOptions } from '@uppy/utils/lib/ErrorWithCause'
+
   export const AbortController: typeof globalThis.AbortController
   export const AbortSignal: typeof globalThis.AbortSignal
   export function createAbortError(message?: string, options?: ErrorOptions): DOMException
