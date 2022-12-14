@@ -950,6 +950,15 @@ uppy.on('upload-error', (file, error, response) => {
 
 Fired when an upload is seemingly stalled. Use this event to display a message on the UI to tell the user they might want to retry the upload.
 
+```js
+uppy.on('upload-stalled', () => {
+  stallWarning.hidden = false
+  uppy.once('progress', () => {
+    stallWarning.hidden = true
+  })
+})
+```
+
 ### `upload-retry`
 
 Fired when an upload has been retried (after an error, for example).
