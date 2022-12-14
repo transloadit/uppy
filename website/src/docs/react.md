@@ -26,21 +26,18 @@ The components can be used with either [React][] or API-compatible alternatives 
 Instead of adding a UI plugin to an Uppy instance with `.use()`, the Uppy instance can be passed into components as an `uppy` prop.
 All other props are passed as options to the plugin.
 
+You have to pass the IDs of your `use`d plugins to the `plugins` array props so Dashboard knows it needs to render them.
+
 ```js
 import React, { useEffect } from 'react'
 import Uppy from '@uppy/core'
+import Webcam from '@uppy/webcam'
 import { Dashboard } from '@uppy/react'
 
-const uppy = new Uppy()
+const uppy = new Uppy().use(Webcam)
 
 function Component () {
-  useEffect(() => {
-    return () => {
-      uppy.close({ reason: 'unmount' })
-    }
-  }, [])
-
-  return <Dashboard uppy={uppy} />
+  return <Dashboard uppy={uppy} plugins={['Webcam']} />
 }
 ```
 
@@ -53,18 +50,14 @@ import { Dashboard } from '@uppy/react'
 
 const uppy = new Uppy()
 
-function Component ({ restrictions }) {
+function Component ({ maxFileSize }) {
   useEffect(() => {
     // Change @uppy/core options
-    uppy.setOptions({ restrictions })
+    uppy.setOptions({ restrictions: { maxFileSize } })
 
     // Or change some plugin dynamically
     uppy.getPlugin('SomePlugin').setOptions({ /* options */ })
-
-    return () => {
-      uppy.close({ reason: 'unmount' })
-    }
-  }, [restrictions])
+  }, [maxFileSize])
 
   return <Dashboard uppy={uppy} />
 }
