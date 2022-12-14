@@ -211,10 +211,8 @@ The field name containing a publically accessible location of the uploaded file 
 
 ### `timeout: 30_000`
 
-When no upload progress events have been received for this amount of
-milliseconds, send a `'upload-stalled'` event.
-Note that unlike the [`XMLHttpRequest.timeout`][XHR.timeout] property, this is a
-timer between progress events: the total upload can take longer than this value.
+When no upload progress events have been received for this amount of milliseconds, send a `'upload-stalled'` event.
+Note that unlike the [`XMLHttpRequest.timeout`][XHR.timeout] property, this is a timer between progress events: the total upload can take longer than this value.
 Set to `0` to disable this check.
 
 The default for the timeout is 30 seconds.
