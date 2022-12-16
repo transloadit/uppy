@@ -120,7 +120,8 @@ module.exports = function server (inputCompanionOptions = {}) {
   if (companionOptions.redisUrl) {
     const RedisStore = connectRedis(session)
     const redisClient = redis.client(companionOptions)
-    sessionOptions.store = new RedisStore({ client: redisClient })
+    // todo next major: change default prefix to something like "companion:"
+    sessionOptions.store = new RedisStore({ client: redisClient, prefix: process.env.REDIS_EXPRESS_SESSION_PREFIX || 'sess:' })
   }
 
   if (process.env.COMPANION_COOKIE_DOMAIN) {
