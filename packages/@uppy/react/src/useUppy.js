@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react'
 import { Uppy as UppyCore } from '@uppy/core'
 
 /**
- * @deprecated Initialize Uppy outside of the component or with `useState` and `useEffect` (see docs)
+ * @deprecated Initialize Uppy outside of the component.
  */
 export default function useUppy (factory) {
   if (typeof factory !== 'function') {

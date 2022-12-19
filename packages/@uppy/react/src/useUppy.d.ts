@@ -1,7 +1,7 @@
 import type Uppy from '@uppy/core'
 
 /**
- * @deprecated Initialize Uppy outside of the component or with `useState` and `useEffect` (see docs)
+ * @deprecated Initialize Uppy outside of the component.
  */
 declare function useUppy(factory: () => Uppy): Uppy
 

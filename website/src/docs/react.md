@@ -21,12 +21,17 @@ npm install @uppy/react
 
 ## Usage
 
+`@uppy/react` exposes component wrappers for `Dashboard`, `DragDrop`, and all other UI elements.
 The components can be used with either [React][] or API-compatible alternatives such as [Preact][].
 
-Instead of adding a UI plugin to an Uppy instance with `.use()`, the Uppy instance can be passed into components as an `uppy` prop.
-All other props are passed as options to the plugin.
+A couple things to keep in mind when using Uppy with React:
 
-You have to pass the IDs of your `use`d plugins to the `plugins` array props so Dashboard knows it needs to render them.
+* Instead of adding a UI plugin to an Uppy instance with `.use()`, the Uppy instance can be passed into components as an `uppy` prop.
+* All other props are passed as options to the plugin.
+* The Uppy instance should **not** live inside the component but outside of it.
+* You have to pass the IDs of your `use`d plugins to the `plugins` array props so Dashboard knows it needs to render them.
+
+Here is a basic example:
 
 ```js
 import React, { useEffect } from 'react'
@@ -38,28 +43,6 @@ const uppy = new Uppy().use(Webcam)
 
 function Component () {
   return <Dashboard uppy={uppy} plugins={['Webcam']} />
-}
-```
-
-### Dynamic options
-
-```js
-import React, { useState, useEffect } from 'react'
-import Uppy from '@uppy/core'
-import { Dashboard } from '@uppy/react'
-
-const uppy = new Uppy()
-
-function Component ({ maxFileSize }) {
-  useEffect(() => {
-    // Change @uppy/core options
-    uppy.setOptions({ restrictions: { maxFileSize } })
-
-    // Or change some plugin dynamically
-    uppy.getPlugin('SomePlugin').setOptions({ /* options */ })
-  }, [maxFileSize])
-
-  return <Dashboard uppy={uppy} />
 }
 ```
 
