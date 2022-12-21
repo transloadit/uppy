@@ -952,7 +952,7 @@ Fired when an upload is seemingly stalled. Use this event to display a message o
 
 ```js
 uppy.on('upload-stalled', () => {
-  stallWarning.hidden = false
+  uppy.info(`Your upload "${file.meta.name}" has not made any progress for ${timeout} seconds. You may want to retry it.`, 'warning')
   uppy.once('progress', () => {
     stallWarning.hidden = true
   })
