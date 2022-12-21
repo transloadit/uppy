@@ -161,7 +161,7 @@ Here’s a list of polyfills you’ll need to include to make Uppy work in older
 * [resize-observer-polyfill](https://github.com/que-etc/resize-observer-polyfill)
 * [whatwg-fetch](https://github.com/github/fetch)
 
-If you’re using a bundler, you need import them before Uppy:
+If you’re using a bundler, you need to import them before Uppy:
 
 ```js
 import 'core-js'
