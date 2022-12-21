@@ -951,11 +951,15 @@ uppy.on('upload-error', (file, error, response) => {
 Fired when an upload is seemingly stalled. Use this event to display a message on the UI to tell the user they might want to retry the upload.
 
 ```js
-uppy.on('upload-stalled', () => {
-  uppy.info(`Your upload "${file.meta.name}" has not made any progress for ${timeout} seconds. You may want to retry it.`, 'warning')
-  uppy.once('progress', () => {
-    uppy.info('The upload is no longer stalled')
-  })
+uppy.on('upload-stalled', (error, files) => {
+  console.log(error, files)
+  const uploadProgressHandler = (file) => {
+    if (files.includes(file)) {
+      uppy.info('The upload is no longer stalled')
+      uppy.off('upload-progress', uploadProgressHandler)
+    }
+  }
+  uppy.on('upload-progress', uploadProgressHandler)
 })
 ```
 

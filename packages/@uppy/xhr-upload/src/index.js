@@ -231,7 +231,7 @@ export default class XHRUpload extends BasePlugin {
 
       const timer = new ProgressTimeout(opts.timeout, () => {
         const error = new Error(this.i18n('uploadStalled', { seconds: Math.ceil(opts.timeout / 1000) }))
-        this.uppy.emit('upload-stalled', error, file)
+        this.uppy.emit('upload-stalled', error, [file])
       })
 
       const id = nanoid()
@@ -514,7 +514,7 @@ export default class XHRUpload extends BasePlugin {
 
       const timer = new ProgressTimeout(this.opts.timeout, () => {
         const error = new Error(this.i18n('uploadStalled', { seconds: Math.ceil(this.opts.timeout / 1000) }))
-        this.uppy.emit('upload-stalled', error)
+        this.uppy.emit('upload-stalled', error, files)
       })
 
       xhr.upload.addEventListener('loadstart', () => {
