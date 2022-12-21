@@ -125,6 +125,7 @@ fr_FR.strings = {
   uploadComplete: 'Téléchargement terminé',
   uploadFailed: 'Le téléchargement a échoué',
   uploadPaused: 'Téléchargement mis en pause',
+  uploadStalled: 'Téléchargement bloqué depuis %{seconds} secondes. Il est peut-être nécessaire de recommencer l\'opération.',
   uploadXFiles: {
     '0': 'Télécharger %{smart_count} fichier',
     '1': 'Télécharger %{smart_count} fichiers',
