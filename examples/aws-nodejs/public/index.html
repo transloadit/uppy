@@ -15,41 +15,41 @@
       import { Uppy, Dashboard, AwsS3Multipart, AwsS3 } from "https://releases.transloadit.com/uppy/v3.3.1/uppy.min.mjs"
       {
         const uppy = new Uppy()
-        .use(Dashboard, {
-          inline: true,
-          target: '#aws-non-multipart',
-        })
-        .use(AwsS3, {
-          getUploadParameters (file) {
-            // Send a request to our Express.js signing endpoint.
-            return fetch('/sign-s3', {
-              method: 'post',
-              // Send and receive JSON.
-              headers: {
-                accept: 'application/json',
-                'content-type': 'application/json',
-              },
-              body: JSON.stringify({
-                filename: file.name,
-                contentType: file.type,
-              }),
-            }).then((response) => {
-              // Parse the JSON response.
-              return response.json()
-            }).then((data) => {
-              // Return an object in the correct shape.
-              return {
-                method: data.method,
-                url: data.url,
-                fields: data.fields, // For presigned PUT uploads, this should be left empty.
-                // Provide content type header required by S3
+          .use(Dashboard, {
+            inline: true,
+            target: '#aws-non-multipart',
+          })
+          .use(AwsS3, {
+            getUploadParameters (file) {
+              // Send a request to our Express.js signing endpoint.
+              return fetch('/sign-s3', {
+                method: 'post',
+                // Send and receive JSON.
                 headers: {
-                  'Content-Type': file.type,
+                  accept: 'application/json',
+                  'content-type': 'application/json',
                 },
-              }
-            })
-          },
-        });
+                body: JSON.stringify({
+                  filename: file.name,
+                  contentType: file.type,
+                }),
+              }).then((response) => {
+                // Parse the JSON response.
+                return response.json()
+              }).then((data) => {
+                // Return an object in the correct shape.
+                return {
+                  method: data.method,
+                  url: data.url,
+                  fields: data.fields, // For presigned PUT uploads, this should be left empty.
+                  // Provide content type header required by S3
+                  headers: {
+                    'Content-Type': file.type,
+                  },
+                }
+              })
+            },
+          });
         
         uppy.on('complete', (result) => {
           console.log('Upload complete! We’ve uploaded these files:', result.successful)
@@ -61,13 +61,13 @@
       }
       {
         const uppy = new Uppy()
-        .use(Dashboard, {
-          inline: true,
-          target: '#aws-multipart',
-        })
-        .use(AwsS3Multipart, {
-          companionUrl: window.origin,
-        })
+          .use(Dashboard, {
+            inline: true,
+            target: '#aws-multipart',
+          })
+          .use(AwsS3Multipart, {
+            companionUrl: window.origin,
+          })
         
         uppy.on('complete', (result) => {
           console.log('Upload complete! We’ve uploaded these files:', result.successful)
