@@ -948,7 +948,7 @@ uppy.on('upload-error', (file, error, response) => {
 
 ### `upload-stalled`
 
-Fired when an upload is seemingly stalled. Use this event to display a message on the UI to tell the user they might want to retry the upload.
+Fired when an upload has not received any progress in some time (in `@uppy/xhr-upload`, the delay is defined by the `timeout` option). Use this event to display a message on the UI to tell the user they might want to retry the upload.
 
 ```js
 uppy.on('upload-stalled', (error, files) => {
