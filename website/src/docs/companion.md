@@ -356,7 +356,7 @@ const options = {
   periodicPingStaticPayload: { static: 'payload' },
   corsOrigins: true,
 }
-````
+```
 
 1. **filePath(required)** - Full path to the directory to which provider files will be downloaded temporarily.
 
