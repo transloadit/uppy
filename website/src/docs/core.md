@@ -952,14 +952,14 @@ Fired when an upload has not received any progress in some time (in `@uppy/xhr-u
 
 ```js
 uppy.on('upload-stalled', (error, files) => {
-  console.log(error, files)
-  const uploadProgressHandler = (file) => {
+  console.log('upload seems stalled', error, files)
+  const noLongerStalledEventHandler = (file) => {
     if (files.includes(file)) {
-      uppy.info('The upload is no longer stalled')
-      uppy.off('upload-progress', uploadProgressHandler)
+      console.log('upload is no longer stalled')
+      uppy.off('upload-progress', noLongerStalledEventHandler)
     }
   }
-  uppy.on('upload-progress', uploadProgressHandler)
+  uppy.on('upload-progress', noLongerStalledEventHandler)
 })
 ```
 
