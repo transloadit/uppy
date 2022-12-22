@@ -38,6 +38,7 @@ export default [
         'submit',
         'type',
         'validate',
+        'however',
       ],
     })
     .use(retextSyntaxMentions),
