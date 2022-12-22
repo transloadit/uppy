@@ -131,6 +131,42 @@ app.get('/s3/multipart/:uploadId/:partNumber', (req, res, next) => {
   })
 })
 
+app.get('/s3/multipart/:uploadId', (req, res, next) => {
+  const client = getS3Client()
+  const { uploadId } = req.params
+  const { key } = req.query
+
+  if (typeof key !== 'string') {
+    return res.status(400).json({ error: 's3: the object key must be passed as a query parameter. For example: "?key=abc.jpg"' })
+  }
+
+  const parts = []
+  listPartsPage(0)
+
+  function listPartsPage (startAt) {
+    client.listParts({
+      Bucket: process.env.COMPANION_AWS_BUCKET,
+      Key: key,
+      UploadId: uploadId,
+      PartNumberMarker: startAt,
+    }, (err, data) => {
+      if (err) {
+        next(err)
+        return
+      }
+
+      parts.push(...data.Parts)
+
+      if (data.IsTruncated) {
+        // Get the next page.
+        listPartsPage(data.NextPartNumberMarker)
+      } else {
+        res.json(parts)
+      }
+    })
+  }
+})
+
 function isValidPart (part) {
   return part && typeof part === 'object' && typeof part.PartNumber === 'number' && typeof part.ETag === 'string'
 }

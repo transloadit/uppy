@@ -20,10 +20,10 @@
             target: '#aws-non-multipart',
           })
           .use(AwsS3, {
-            getUploadParameters (file) {
+            async getUploadParameters (file) {
               // Send a request to our Express.js signing endpoint.
-              return fetch('/sign-s3', {
-                method: 'post',
+              const response = await fetch('/sign-s3', {
+                method: 'POST',
                 // Send and receive JSON.
                 headers: {
                   accept: 'application/json',
@@ -33,21 +33,23 @@
                   filename: file.name,
                   contentType: file.type,
                 }),
-              }).then((response) => {
-                // Parse the JSON response.
-                return response.json()
-              }).then((data) => {
-                // Return an object in the correct shape.
-                return {
-                  method: data.method,
-                  url: data.url,
-                  fields: data.fields, // For presigned PUT uploads, this should be left empty.
-                  // Provide content type header required by S3
-                  headers: {
-                    'Content-Type': file.type,
-                  },
-                }
               })
+
+              if (!response.ok) throw new Error('Unsuccessful request', { cause: response })
+
+              // Parse the JSON response.
+              const data = await response.json()
+
+              // Return an object in the correct shape.
+              return {
+                method: data.method,
+                url: data.url,
+                fields: data.fields, // For presigned PUT uploads, this should be left empty.
+                // Provide content type header required by S3
+                headers: {
+                  'Content-Type': file.type,
+                },
+              }
             },
           });
         
@@ -66,7 +68,118 @@
             target: '#aws-multipart',
           })
           .use(AwsS3Multipart, {
-            companionUrl: window.origin,
+            async createMultipartUpload(file, signal) {
+              if (signal?.aborted) {
+                const err = new DOMException('The operation was aborted', 'AbortError')
+                Object.defineProperty(err, 'cause', { __proto__: null, configurable: true, writable: true, value: signal.reason })
+                throw err
+              }
+
+              const metadata = {}
+
+              Object.keys(file.meta || {}).forEach(key => {
+                if (file.meta[key] != null) {
+                  metadata[key] = file.meta[key].toString()
+                }
+              })
+
+              const response = await fetch('/s3/multipart', {
+                method: 'POST',
+                // Send and receive JSON.
+                headers: {
+                  accept: 'application/json',
+                  'content-type': 'application/json',
+                },
+                body: JSON.stringify({
+                  filename: file.name,
+                  type: file.type,
+                  metadata,
+                }),
+                signal,
+              })
+
+              if (!response.ok) throw new Error('Unsuccessful request', { cause: response })
+
+              // Parse the JSON response.
+              const data = await response.json()
+
+              return data
+            },
+
+            async abortMultipartUpload (file, { key, uploadId }, signal) {
+              const filename = encodeURIComponent(key)
+              const uploadIdEnc = encodeURIComponent(uploadId)
+              const response = await fetch(`/s3/multipart/${uploadIdEnc}?key=${filename}`, {
+                method: 'DELETE',
+                signal,
+              })
+              
+              if (!response.ok) throw new Error('Unsuccessful request', { cause: response })
+            },
+
+            async signPart (file, { uploadId, key, partNumber, signal }) {
+              if (signal?.aborted) {
+                const err = new DOMException('The operation was aborted', 'AbortError')
+                Object.defineProperty(err, 'cause', { __proto__: null, configurable: true, writable: true, value: signal.reason })
+                throw err
+              }
+
+              if (uploadId == null || key == null || partNumber == null) {
+                throw new Error('Cannot sign without a key, an uploadId, and a partNumber')
+              }
+
+              const filename = encodeURIComponent(key)
+              const response = await fetch(`/s3/multipart/${uploadId}/${partNumber}?key=${filename}`, { signal })
+
+              if (!response.ok) throw new Error('Unsuccessful request', { cause: response })
+
+              const data = await response.json()
+
+              return data
+            },
+
+            async listParts (file, { key, uploadId }, signal) {
+              if (signal?.aborted) {
+                const err = new DOMException('The operation was aborted', 'AbortError')
+                Object.defineProperty(err, 'cause', { __proto__: null, configurable: true, writable: true, value: signal.reason })
+                throw err
+              }
+
+              const filename = encodeURIComponent(key)
+              const response = await fetch(`/s3/multipart/${uploadId}?key=${filename}`, { signal })
+
+              if (!response.ok) throw new Error('Unsuccessful request', { cause: response })
+
+              const data = await response.json()
+
+              return data
+            },
+
+            async completeMultipartUpload (file, { key, uploadId, parts }, signal) {
+              if (signal?.aborted) {
+                const err = new DOMException('The operation was aborted', 'AbortError')
+                Object.defineProperty(err, 'cause', { __proto__: null, configurable: true, writable: true, value: signal.reason })
+                throw err
+              }
+
+              const filename = encodeURIComponent(key)
+              const uploadIdEnc = encodeURIComponent(uploadId)
+              const response = await fetch(`s3/multipart/${uploadIdEnc}/complete?key=${filename}`, {
+                method: 'POST',
+                headers: {
+                  accept: 'application/json',
+                  'content-type': 'application/json',
+                },
+                body: JSON.stringify({ parts }),
+                signal,
+              })
+
+              if (!response.ok) throw new Error('Unsuccessful request', { cause: response })
+
+              const data = await response.json()
+
+              return data
+            }
           })
         
         uppy.on('complete', (result) => {
