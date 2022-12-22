@@ -300,10 +300,6 @@ export COMPANION_PERIODIC_PING_STATIC_JSON_PAYLOAD="{\"static\":\"data\"}"
 export COMPANION_REDIS_EXPRESS_SESSION_PREFIX="sess:"
 ```
 
-when merged https://github.com/transloadit/uppy/pull/4249
-
-````
-
 See [`.env.example`](https://github.com/transloadit/uppy/blob/main/.env.example) for an example environment configuration file.
 
 ### Options
