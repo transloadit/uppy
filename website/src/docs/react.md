@@ -29,7 +29,8 @@ A couple things to keep in mind when using Uppy with React:
 * Instead of adding a UI plugin to an Uppy instance with `.use()`, the Uppy instance can be passed into components as an `uppy` prop.
 * All other props are passed as options to the plugin.
 * The Uppy instance should **not** live inside the component but outside of it.
-* You have to pass the IDs of your `use`d plugins to the `plugins` array props so Dashboard knows it needs to render them.
+* You have to pass the IDs of your `use`d plugins to the `plugins` array prop so Dashboard knows it needs to render them.
+* An Uppy instance can’t be used by multiple components. Make sure you are using a unique Uppy instance per component.
 
 Here is a basic example:
 
