@@ -9059,8 +9059,8 @@ __metadata:
     "@uppy/core": "workspace:*"
     "@uppy/instagram": "workspace:^"
     "@uppy/url": "workspace:^"
-    expo-document-picker: ">=6.0.0"
-    expo-image-picker: ">=6.0.0"
+    expo-document-picker: ^10.3.0
+    expo-image-picker: ^13.3.1
     expo-permissions: ">=6.0.0"
     react-native-super-grid: "*"
   peerDependencies:
@@ -17551,7 +17551,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"expo-document-picker@npm:>=6.0.0":
+"expo-document-picker@npm:^10.3.0":
   version: 10.3.0
   resolution: "expo-document-picker@npm:10.3.0"
   dependencies:
@@ -17603,7 +17603,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"expo-image-picker@npm:>=6.0.0":
+"expo-image-picker@npm:^13.3.1":
   version: 13.3.1
   resolution: "expo-image-picker@npm:13.3.1"
   dependencies:
