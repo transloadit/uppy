@@ -45,7 +45,6 @@ The maximum amount of chunks to upload simultaneously. You should set the limit 
 
 Because HTTP/1.1 limits the number of concurrent requests to one origin to 6, it’s recommended to always set a limit of 6 or smaller for all your uploads, or to not override the default.
 
-
 ### `retryDelays: [0, 1000, 3000, 5000]`
 
 `retryDelays` are the intervals in milliseconds used to retry a failed chunk.
@@ -69,6 +68,14 @@ This will be used by the default implementations of the upload-related functions
 ### `companionCookiesRule: 'same-origin'`
 
 This option correlates to the [RequestCredentials value](https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials), which tells the plugin whether to send cookies to [Companion](/docs/companion).
+
+### `allowedMetaFields: null`
+
+Pass an array of field names to limit the metadata fields that will be added to upload as query parameters.
+
+* Set this to `['name']` to only send the `name` field.
+* Set this to `null` (the default) to send _all_ metadata fields.
+* Set this to an empty array `[]` to not send any fields.
 
 ### `getChunkSize(file)`
 
