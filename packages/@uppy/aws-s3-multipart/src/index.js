@@ -236,6 +236,8 @@ export default class AwsS3Multipart extends BasePlugin {
     this.#client = new RequestClient(uppy, opts)
 
     const defaultOptions = {
+      // TODO: this is currently opt-in for backward compat, switch to opt-out in the next major
+      allowedMetaFields: null,
       limit: 6,
       retryDelays: [0, 1000, 3000, 5000],
       createMultipartUpload: this.createMultipartUpload.bind(this),
@@ -313,13 +315,11 @@ export default class AwsS3Multipart extends BasePlugin {
     this.assertHost('createMultipartUpload')
     throwIfAborted(signal)
 
-    const metadata = {}
-
-    Object.keys(file.meta || {}).forEach(key => {
-      if (file.meta[key] != null) {
-        metadata[key] = file.meta[key].toString()
-      }
-    })
+    const metadata = file.meta ? Object.fromEntries(
+      (this.opts.allowedMetaFields ?? Object.keys(file.meta))
+        .filter(key => file.meta[key] != null)
+        .map(key => [`metadata[${key}]`, String(file.meta[key])]),
+    ) : {}
 
     return this.#client.post('s3/multipart', {
       filename: file.name,

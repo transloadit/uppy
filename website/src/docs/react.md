@@ -19,59 +19,39 @@ Install from NPM:
 npm install @uppy/react
 ```
 
+## Usage
+
+`@uppy/react` exposes component wrappers for `Dashboard`, `DragDrop`, and all other UI elements.
+The components can be used with either [React][] or API-compatible alternatives such as [Preact][].
+
+A couple things to keep in mind when using Uppy with React:
+
+* Instead of adding a UI plugin to an Uppy instance with `.use()`, the Uppy instance can be passed into components as an `uppy` prop.
+* All other props are passed as options to the plugin.
+* The Uppy instance should **not** live inside the component but outside of it.
+* You have to pass the IDs of your `use`d plugins to the `plugins` array prop so Dashboard knows it needs to render them.
+* An Uppy instance can’t be used by more than one component. Make sure you are using a unique Uppy instance per component.
+
+Here is a basic example:
+
+```js
+import React, { useEffect } from 'react'
+import Uppy from '@uppy/core'
+import Webcam from '@uppy/webcam'
+import { Dashboard } from '@uppy/react'
+
+const uppy = new Uppy().use(Webcam)
+
+function Component () {
+  return <Dashboard uppy={uppy} plugins={['Webcam']} />
+}
+```
+
 ## CSS
 
 Make sure to also include the necessary CSS files for each Uppy React component you are using. Follow links for individual components docs below for details on that.
 
-## Usage
-
-The components can be used with either [React][] or API-compatible alternatives such as [Preact][].
-
-Instead of adding a UI plugin to an Uppy instance with `.use()`, the Uppy instance can be passed into components as an `uppy` prop.
-All other props are passed as options to the plugin.
-
-```js
-import React from 'react'
-import Uppy from '@uppy/core'
-import Tus from '@uppy/tus'
-import { DragDrop } from '@uppy/react'
-
-const uppy = new Uppy({
-  meta: { type: 'avatar' },
-  restrictions: { maxNumberOfFiles: 1 },
-  autoProceed: true,
-})
-
-uppy.use(Tus, { endpoint: '/upload' })
-
-uppy.on('complete', (result) => {
-  const url = result.successful[0].uploadURL
-  store.dispatch({
-    type: 'SET_USER_AVATAR_URL',
-    payload: { url },
-  })
-})
-
-const AvatarPicker = ({ currentAvatar }) => {
-  return (
-    <div>
-      <img src={currentAvatar} alt="Current Avatar" />
-      <DragDrop
-        uppy={uppy}
-        locale={{
-          strings: {
-            // Text to show on the droppable area.
-            // `%{browse}` is replaced with a link that opens the system file selection dialog.
-            dropHereOr: 'Drop here or %{browse}',
-            // Used as the label for the link that opens the system file selection dialog.
-            browse: 'browse',
-          },
-        }}
-      />
-    </div>
-  )
-}
-```
+## Components
 
 The following plugins are available as React component wrappers (you need to
 install each package separately):
