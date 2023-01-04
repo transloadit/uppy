@@ -17,6 +17,7 @@ const defaultEnv = {
   COMPANION_PROTOCOL: 'http',
   COMPANION_DATADIR: './test/output',
   COMPANION_SECRET: 'secret',
+  COMPANION_PREAUTH_SECRET: 'different secret',
 
   COMPANION_DROPBOX_KEY: 'dropbox_key',
   COMPANION_DROPBOX_SECRET: 'dropbox_secret',

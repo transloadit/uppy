@@ -10,20 +10,40 @@ export interface TokenStorage {
   removeItem: (key: string) => Promise<void>
 }
 
+type CompanionHeaders = Record<string, string>
+
 export interface RequestClientOptions {
   companionUrl: string
-  companionHeaders?: Record<string, unknown>
+  companionHeaders?: CompanionHeaders
   companionCookiesRule?: RequestCredentials
+}
+
+type RequestOptions = {
+  skipPostResponse?: boolean,
+  signal?: AbortSignal,
 }
 
 export class RequestClient {
   constructor (uppy: Uppy, opts: RequestClientOptions)
 
-  get (path: string): Promise<any>
+  readonly hostname: string
 
-  post (path: string, data: Record<string, unknown>): Promise<any>
+  setCompanionHeaders(headers: CompanionHeaders): void
 
-  delete (path: string, data: Record<string, unknown>): Promise<any>
+  get<T = unknown> (path: string, options?: RequestOptions): Promise<T>
+
+  /** @deprecated use option bag instead */
+  get<T = unknown> (path: string, skipPostResponse: boolean): Promise<T>
+
+  post<T = unknown> (path: string, data: Record<string, unknown>, options?: RequestOptions): Promise<T>
+
+  /** @deprecated use option bag instead */
+  post<T = unknown> (path: string, data: Record<string, unknown>, skipPostResponse: boolean): Promise<T>
+
+  delete<T = unknown> (path: string, data?: Record<string, unknown>, options?: RequestOptions): Promise<T>
+
+  /** @deprecated use option bag instead */
+  delete<T = unknown> (path: string, data: Record<string, unknown>, skipPostResponse: boolean): Promise<T>
 }
 
 /**

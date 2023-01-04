@@ -35,6 +35,11 @@ import isXml from './isXml.js'
 import locale from './locale.js'
 
 function resolveUrl (origin, link) {
+  // DigitalOcean doesn’t return the protocol from Location
+  // without it, the `new URL` constructor will fail
+  if (!origin && !link.startsWith('https://') && !link.startsWith('http://')) {
+    link = `https://${link}` // eslint-disable-line no-param-reassign
+  }
   return new URL(link, origin || undefined).toString()
 }
 

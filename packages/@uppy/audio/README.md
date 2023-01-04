@@ -12,7 +12,7 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 
 ```js
 import Uppy from '@uppy/core'
-import Webcam from '@uppy/audio'
+import Audio from '@uppy/audio'
 
 const uppy = new Uppy()
 uppy.use(Audio)

@@ -1,5 +1,12 @@
 # @uppy/core
 
+## 3.0.4
+
+Released: 2022-10-24
+Included in: Uppy v3.2.2
+
+- @uppy/core: make cancel() and close() arguments optional in types (Merlijn Vos / #4161)
+
 ## 3.0.3
 
 Released: 2022-10-19

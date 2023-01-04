@@ -30,6 +30,21 @@
     opacity: 1;
   }
 
+  .uppy-size--md &,
+  .uppy-Dashboard--singleFile & {
+    position: absolute;
+    top: -8px;
+    z-index: $zIndex-3;
+    width: 18px;
+    height: 18px;
+    padding: 0;
+    inset-inline-end: -8px;
+
+    &:focus {
+      border-radius: 50%;
+    }
+  }
+
   [data-uppy-theme="dark"] & {
     color: $gray-700;
   }
@@ -40,7 +55,7 @@
 }
 
 // Only for mobile screens
-.uppy-Dashboard:not(.uppy-size--md) {
+.uppy-Dashboard:not(.uppy-size--md):not(.uppy-Dashboard--singleFile) {
   // Vertically center Edit&Remove buttons on mobile
   .uppy-Dashboard-Item-actionWrapper {
     display: flex;
@@ -69,20 +84,6 @@
 
     &:focus {
       border-radius: 3px;
-    }
-  }
-  // Remove button is in the top right corner
-  .uppy-Dashboard-Item-action--remove {
-    position: absolute;
-    top: -8px;
-    z-index: $zIndex-3;
-    width: 18px;
-    height: 18px;
-    padding: 0;
-    inset-inline-end: -8px;
-
-    &:focus {
-      border-radius: 50%;
     }
   }
 }

@@ -129,9 +129,9 @@ new Uppy().use(Tus, {
 
 Pass an array of field names to limit the metadata fields that will be added to uploads as [Tus Metadata](https://tus.io/protocols/resumable-upload.html#upload-metadata).
 
+* Set this to an empty array `[]` to not send any fields.
 * Set this to `['name']` to only send the `name` field.
 * Set this to `null` (the default) to send _all_ metadata fields.
-* Set this to an empty array `[]` to not send any fields.
 
 ### `limit: 5`
 

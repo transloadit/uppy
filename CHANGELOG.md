@@ -12,6 +12,76 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 3.3.1
+
+Released: 2022-11-16
+
+| Package                | Version | Package                | Version |
+| ---------------------- | ------- | ---------------------- | ------- |
+| @uppy/angular          |   0.5.1 | @uppy/companion-client |   3.1.1 |
+| @uppy/aws-s3-multipart |   3.1.1 | @uppy/utils            |   5.1.1 |
+| @uppy/companion        |   4.1.1 | uppy                   |   3.3.1 |
+
+- @uppy/aws-s3-multipart: handle slow connections better (Antoine du Hamel / #4213)
+- @uppy/companion-client: treat `*` the same as missing header (Antoine du Hamel / #4221)
+- @uppy/utils: fix types (Antoine du Hamel / #4212)
+- @uppy/companion: send expire info for non-multipart uploads (Antoine du Hamel / #4214)
+- docs: fix `allowedMetaFields` documentation (Antoine du Hamel / #4216)
+- meta: add more bundlers for automated testing (Antoine du Hamel / #4100)
+- @uppy/aws-s3-multipart: Fix typo in url check (Christian Franke / #4211)
+- meta: use current version of packages when testing bundlers (Antoine du Hamel / #4208)
+- meta: do not use the set-output command in workflows (Antoine du Hamel / #4175)
+
+
+## 3.3.0
+
+Released: 2022-11-10
+
+| Package                | Version | Package                | Version |
+| ---------------------- | ------- | ---------------------- | ------- |
+| @uppy/angular          |   0.5.0 | @uppy/image-editor     |   2.1.0 |
+| @uppy/aws-s3-multipart |   3.1.0 | @uppy/locales          |   3.0.4 |
+| @uppy/companion        |   4.1.0 | @uppy/tus              |   3.0.5 |
+| @uppy/companion-client |   3.1.0 | @uppy/utils            |   5.1.0 |
+| @uppy/dashboard        |   3.2.0 | uppy                   |   3.3.0 |
+
+- @uppy/companion: change default S3 expiry from 300 to 800 seconds (Merlijn Vos / #4206)
+- @uppy/dashboard: Single file mode (Artur Paikin / #4188)
+- @uppy/locales: Fix UZ locale (Merlijn Vos / #4178)
+- @uppy/utils: update typings for `RateLimitedQueue` (Antoine du Hamel / #4204)
+- @uppy/aws-s3-multipart: empty the queue when pausing (Antoine du Hamel / #4203)
+- @uppy/image-editor: add checkered background (Livia Medeiros / #4194)
+- @uppy/aws-s3-multipart: refactor rate limiting approach (Antoine du Hamel / #4187)
+- @uppy/companion: send expiry time along side S3 signed requests (Antoine du Hamel / #4202)
+- @uppy/companion-client: add support for `AbortSignal` (Antoine du Hamel / #4201)
+- @uppy/companion-client: prevent preflight race condition (Mikael Finstad / #4182)
+- @uppy/aws-s3-multipart: change limit to 6 (Antoine du Hamel / #4199)
+- @uppy/utils: add `cause` support for `AbortError`s (Antoine du Hamel / #4198)
+- meta: Fix bad example for setFileState (Tim Whitney / #4191)
+- meta: Update code example for getFiles (Tim Whitney / #4189)
+- meta: Fix issue with outdated comment. (Tim Whitney / #4192)
+- @uppy/aws-s3-multipart: remove unused `timeout` option (Antoine du Hamel / #4186)
+- meta: Remove dollar sign from command for easier copy/pasting (Youssef Victor / #4180)
+- @uppy/aws-s3-multipart,@uppy/tus: fix `Timed out waiting for socket` (Antoine du Hamel / #4177)
+- meta: Add note about facebook approval (Mikael Finstad / #4172)
+- meta: add a manual deploy for website (Antoine du Hamel / #4171)
+
+
+## 3.2.2
+
+Released: 2022-10-24
+
+| Package              | Version | Package              | Version |
+| -------------------- | ------- | -------------------- | ------- |
+| @uppy/aws-s3         |   3.0.4 | @uppy/tus            |   3.0.4 |
+| @uppy/core           |   3.0.4 | @uppy/xhr-upload     |   3.0.4 |
+| @uppy/provider-views |   3.0.2 | uppy                 |   3.2.2 |
+
+- @uppy/aws-s3,@uppy/tus,@uppy/xhr-upload: replace `this.getState().files` with `this.uppy.getState().files` (Artur Paikin / #4167)
+- @uppy/core: make cancel() and close() arguments optional in types (Merlijn Vos / #4161)
+- @uppy/provider-views: Fix button and input inconsistent font and style (Artur Paikin / #4162)
+
+
 ## 3.2.1
 
 Released: 2022-10-19

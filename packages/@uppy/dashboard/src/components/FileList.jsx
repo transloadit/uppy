@@ -1,4 +1,3 @@
-import classNames from 'classnames'
 import { h } from 'preact'
 import FileItem from './FileItem/index.jsx'
 import VirtualList from './VirtualList.jsx'
@@ -19,12 +18,6 @@ function chunks (list, size) {
 }
 
 export default (props) => {
-  const noFiles = props.totalFileCount === 0
-  const dashboardFilesClass = classNames(
-    'uppy-Dashboard-files',
-    { 'uppy-Dashboard-files--noFiles': noFiles },
-  )
-
   // It's not great that this is hardcoded!
   // It's ESPECIALLY not great that this is checking against `itemsPerRow`!
   const rowHeight = props.itemsPerRow === 1
@@ -53,6 +46,7 @@ export default (props) => {
     isWide: props.isWide,
     metaFields: props.metaFields,
     recoveredState: props.recoveredState,
+    singleFile: props.singleFile,
     // callbacks
     toggleFileCard: props.toggleFileCard,
     handleRequestThumbnail: props.handleRequestThumbnail,
@@ -72,7 +66,7 @@ export default (props) => {
     // The `role="presentation` attribute ensures that the list items are properly
     // associated with the `VirtualList` element.
     // We use the first file ID as the key—this should not change across scroll rerenders
-    <div role="presentation" key={row[0]}>
+    <div class="uppy-Dashboard-filesInner" role="presentation" key={row[0]}>
       {row.map((fileID) => (
         <FileItem
           key={fileID}
@@ -88,9 +82,17 @@ export default (props) => {
     </div>
   )
 
+  if (props.singleFile) {
+    return (
+      <div class="uppy-Dashboard-files">
+        {renderRow(rows[0])}
+      </div>
+    )
+  }
+
   return (
     <VirtualList
-      class={dashboardFilesClass}
+      class="uppy-Dashboard-files"
       role="list"
       data={rows}
       renderRow={renderRow}

@@ -260,8 +260,8 @@ export COMPANION_AWS_BUCKET="YOUR AWS S3 BUCKET"
 export COMPANION_AWS_REGION="AWS REGION"
 # to enable S3 Transfer Acceleration (default: false)
 export COMPANION_AWS_USE_ACCELERATE_ENDPOINT="false"
-# to set X-Amz-Expires query param in presigned urls (in seconds, default: 300)
-export COMPANION_AWS_EXPIRES="300"
+# to set X-Amz-Expires query param in presigned urls (in seconds, default: 800)
+export COMPANION_AWS_EXPIRES="800"
 # to set a canned ACL for uploaded objects: https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#canned-acl
 export COMPANION_AWS_ACL="private"
 
@@ -295,6 +295,11 @@ export COMPANION_PERIODIC_PING_URLS="https://example.com/ping1,https://example.c
 export COMPANION_PERIODIC_PING_INTERVAL=60000
 # corresponds to the periodicPingStaticPayload option (JSON string)
 export COMPANION_PERIODIC_PING_STATIC_JSON_PAYLOAD="{\"static\":\"data\"}"
+
+# If you need to use `companionKeysParams` (custom OAuth credentials at request time),
+# set this variable to a strong randomly generated secret.
+# See also https://github.com/transloadit/uppy/pull/2622
+COMPANION_PREAUTH_SECRET="preauth secret"
 ```
 
 See [`.env.example`](https://github.com/transloadit/uppy/blob/main/.env.example) for an example environment configuration file.
@@ -480,6 +485,32 @@ app.use(companion.app({
 ### Running in Kubernetes
 
 We have [a detailed guide on running Companion in Kubernetes](https://github.com/transloadit/uppy/blob/main/packages/%40uppy/companion/KUBERNETES.md) for you, that’s how we run our example server at <https://companion.uppy.io>.
+
+### Running many instances
+
+
+We recommend running at least two instances in production, so that if the Node.js event loop gets blocked by one or more requests (due to a bug or spike in traffic), it doesn’t also block or slow down all other requests as well (as Node.js is single threaded).
+
+As an example for scale, one enterprise customer of Transloadit, who self-hosts Companion to power an education service that is used by many universities globally, deploys 7 Companion instances. Their earlier solution ran on 35 instances. In our general experience Companion will saturate network interface cards before other resources on commodity virtual servers (`c5d.2xlarge` for instance).
+
+Your mileage may vary, so we recommend to add observability. You can let Prometheus crawl the `/metrics` endpoint and graph that with Grafana for instance.
+
+#### Using unique endpoints
+
+One option is to run many instances with each instance having its own unique endpoint. This could be on separate ports, (sub)domain names, or IPs. With this setup, you can either
+1. Implement your own logic that will direct each upload to a specific Companion endpoint by setting the `companionUrl` option
+2. Setting the Companion option `COMPANION_SELF_ENDPOINT`. This option will cause Companion to respond with a `i-am` HTTP header containing the value from `COMPANION_SELF_ENDPOINT`. When Uppy’s sees this header, it will pin all requests for the upload to this endpoint.
+
+In either case, you would then also typically configure a single Companion instance (one endpoint) to handle all OAuth authentication requests, so that you only need to specify a single OAuth callback URL. See also `oauthDomain` and `validHosts`.
+
+#### Using a load balancer
+
+The other option is to set up a load balancer in front of many Companion instances. Then Uppy will only see a single endpoint and send all requests to the associated load balancer, which will then distribute them between Companion instances. The companion instances coordinate their messages and events over Redis so that any instance can serve the client’s requests. Note that sticky sessions are **not** needed with this setup. Here are the requirements for this setup:
+
+* The instances need to be connected to the same Redis server.
+* You need to set `COMPANION_SECRET` to the same value on both servers.
+* if you use the `companionKeysParams` feature (Transloadit), you also need `COMPANION_PREAUTH_SECRET` to be the same on each instance.
+* All other configuration needs to be the same, except if you’re running many instances on the same machine, then `COMPANION_PORT` should be different for each instance.
 
 ### Adding custom providers
 
