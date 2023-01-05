@@ -48,6 +48,7 @@ function createLoadBalancer (baseUrls) {
 const startCompanion = ({ name, port }) => execa('nodemon', [
   '--watch', 'packages/@uppy/companion/src', '--exec', 'node', '-r', 'dotenv/config', './packages/@uppy/companion/src/standalone/start-server.js',
 ], {
+  cwd: new URL('../', import.meta.url),
   stdio: 'inherit',
   env: {
     // Note: these env variables will override anything set in .env
