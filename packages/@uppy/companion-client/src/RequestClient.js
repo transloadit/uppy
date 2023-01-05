@@ -40,9 +40,9 @@ export default class RequestClient {
 
   constructor (uppy, opts) {
     this.uppy = uppy
-    this.opts = opts
+    this.opts = opts ?? {}
     this.onReceiveResponse = this.onReceiveResponse.bind(this)
-    this.#companionHeaders = opts?.companionHeaders
+    this.#companionHeaders = opts?.backendHeaders ?? opts?.companionHeaders
   }
 
   setCompanionHeaders (headers) {
@@ -53,7 +53,7 @@ export default class RequestClient {
 
   get hostname () {
     const { companion } = this.uppy.getState()
-    const host = this.opts.companionUrl
+    const host = this.opts.backendURL ?? this.opts.companionUrl
     return stripSlash(companion && companion[host] ? companion[host] : host)
   }
 
@@ -73,7 +73,7 @@ export default class RequestClient {
   onReceiveResponse ({ headers }) {
     const state = this.uppy.getState()
     const companion = state.companion || {}
-    const host = this.opts.companionUrl
+    const host = this.opts.backendURL ?? this.opts.companionUrl
 
     // Store the self-identified domain name for the Companion instance we just hit.
     if (headers.has('i-am') && headers.get('i-am') !== companion[host]) {
@@ -84,10 +84,7 @@ export default class RequestClient {
   }
 
   #getUrl (url) {
-    if (/^(https?:|)\/\//.test(url)) {
-      return url
-    }
-    return `${this.hostname}/${url}`
+    return new URL(url, this.hostname).href
   }
 
   /*
@@ -157,7 +154,7 @@ export default class RequestClient {
         method,
         signal,
         headers,
-        credentials: this.opts.companionCookiesRule || 'same-origin',
+        credentials: this.opts.backendCookieRule || this.opts.companionCookiesRule || 'same-origin',
         body: data ? JSON.stringify(data) : null,
       })
       if (!skipPostResponse) this.onReceiveResponse(response)

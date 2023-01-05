@@ -13,9 +13,16 @@ export interface TokenStorage {
 type CompanionHeaders = Record<string, string>
 
 export interface RequestClientOptions {
+  /** @deprecated use `backendURL` instead. */
   companionUrl: string
+  /** @deprecated use `backendHeaders` instead. */
   companionHeaders?: CompanionHeaders
+  /** @deprecated use `backendCookiesRule` instead. */
   companionCookiesRule?: RequestCredentials
+
+  backendURL: string
+  backendHeaders?: CompanionHeaders
+  backendCookiesRule?: RequestCredentials
 }
 
 type RequestOptions = {
