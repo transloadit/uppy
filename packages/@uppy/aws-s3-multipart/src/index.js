@@ -246,7 +246,8 @@ export default class AwsS3Multipart extends BasePlugin {
       completeMultipartUpload: this.completeMultipartUpload.bind(this),
       signPart: this.signPart.bind(this),
       uploadPartBytes: AwsS3Multipart.uploadPartBytes,
-      companionHeaders: {},
+      backendHeaders: {},
+      backendEndpoint: '/s3/multipart',
     }
 
     this.opts = { ...defaultOptions, ...opts }
@@ -306,8 +307,9 @@ export default class AwsS3Multipart extends BasePlugin {
 
   // TODO: make this a private method in the next major
   assertHost (method) {
-    if (!this.opts.companionUrl) {
-      throw new Error(`Expected a \`companionUrl\` option containing a Companion address, or if you are not using Companion, a custom \`${method}\` implementation.`)
+    const backendURL = this.opts.backendURL ?? this.opts.companionUrl
+    if (!backendURL) {
+      throw new Error(`Please provide a \`backendURL\` option, or a custom \`${method}\` implementation.`)
     }
   }
 
@@ -318,10 +320,10 @@ export default class AwsS3Multipart extends BasePlugin {
     const metadata = file.meta ? Object.fromEntries(
       (this.opts.allowedMetaFields ?? Object.keys(file.meta))
         .filter(key => file.meta[key] != null)
-        .map(key => [`metadata[${key}]`, String(file.meta[key])]),
+        .map(key => [key, String(file.meta[key])]),
     ) : {}
 
-    return this.#client.post('s3/multipart', {
+    return this.#client.post(this.opts.backendEndpoint, {
       filename: file.name,
       type: file.type,
       metadata,
@@ -333,7 +335,7 @@ export default class AwsS3Multipart extends BasePlugin {
     throwIfAborted(signal)
 
     const filename = encodeURIComponent(key)
-    return this.#client.get(`s3/multipart/${uploadId}?key=${filename}`, { signal })
+    return this.#client.get(`${this.opts.backendEndpoint}/${uploadId}?key=${filename}`, { signal })
       .then(assertServerError)
   }
 
@@ -343,7 +345,7 @@ export default class AwsS3Multipart extends BasePlugin {
 
     const filename = encodeURIComponent(key)
     const uploadIdEnc = encodeURIComponent(uploadId)
-    return this.#client.post(`s3/multipart/${uploadIdEnc}/complete?key=${filename}`, { parts }, { signal })
+    return this.#client.post(`${this.opts.backendEndpoint}/${uploadIdEnc}/complete?key=${filename}`, { parts }, { signal })
       .then(assertServerError)
   }
 
@@ -356,7 +358,7 @@ export default class AwsS3Multipart extends BasePlugin {
     }
 
     const filename = encodeURIComponent(key)
-    return this.#client.get(`s3/multipart/${uploadId}/${partNumber}?key=${filename}`, { signal })
+    return this.#client.get(`${this.opts.backendEndpoint}/${uploadId}/${partNumber}?key=${filename}`, { signal })
       .then(assertServerError)
   }
 
@@ -365,7 +367,7 @@ export default class AwsS3Multipart extends BasePlugin {
 
     const filename = encodeURIComponent(key)
     const uploadIdEnc = encodeURIComponent(uploadId)
-    return this.#client.delete(`s3/multipart/${uploadIdEnc}?key=${filename}`, undefined, { signal })
+    return this.#client.delete(`${this.opts.backendEndpoint}/${uploadIdEnc}?key=${filename}`, undefined, { signal })
       .then(assertServerError)
   }
 

@@ -14,12 +14,14 @@
     <script type="module">
       import { Uppy, Dashboard, AwsS3Multipart, AwsS3 } from "https://releases.transloadit.com/uppy/v3.3.1/uppy.min.mjs"
       {
+        const allowedMetaFields = ['name']
         const uppy = new Uppy()
           .use(Dashboard, {
             inline: true,
             target: '#aws-non-multipart',
           })
           .use(AwsS3, {
+            allowedMetaFields,
             async getUploadParameters (file) {
               // Send a request to our Express.js signing endpoint.
               const response = await fetch('/sign-s3', {
@@ -62,12 +64,21 @@
         })
       }
       {
+        const allowedMetaFields = ['name']
         const uppy = new Uppy()
           .use(Dashboard, {
             inline: true,
             target: '#aws-multipart',
           })
           .use(AwsS3Multipart, {
+            allowedMetaFields,
+
+            // If your server configuration follows the same paths as Companion,
+            // you can specify only those two options:
+            backendURL: window.origin,
+            backendEndpoint: '/s3/multipart',
+
+            // Otherwise, you can provide a custom implementation for each step:
             async createMultipartUpload(file, signal) {
               if (signal?.aborted) {
                 const err = new DOMException('The operation was aborted', 'AbortError')
@@ -75,13 +86,11 @@
                 throw err
               }
 
-              const metadata = {}
-
-              Object.keys(file.meta || {}).forEach(key => {
-                if (file.meta[key] != null) {
-                  metadata[key] = file.meta[key].toString()
-                }
-              })
+              const metadata = file.meta ? Object.fromEntries(
+                allowedMetaFields
+                  .filter(key => file.meta[key] != null)
+                  .map(key => [key, String(file.meta[key])]),
+              ) : {}
 
               const response = await fetch('/s3/multipart', {
                 method: 'POST',
@@ -155,7 +164,7 @@
               return data
             },
 
-            async completeMultipartUpload (file, { key, uploadId, parts }, signal) {
+            async _completeMultipartUpload (file, { key, uploadId, parts }, signal) {
               if (signal?.aborted) {
                 const err = new DOMException('The operation was aborted', 'AbortError')
                 Object.defineProperty(err, 'cause', { __proto__: null, configurable: true, writable: true, value: signal.reason })
