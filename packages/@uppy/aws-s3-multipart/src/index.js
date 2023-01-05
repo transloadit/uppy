@@ -318,7 +318,7 @@ export default class AwsS3Multipart extends BasePlugin {
     const metadata = file.meta ? Object.fromEntries(
       (this.opts.allowedMetaFields ?? Object.keys(file.meta))
         .filter(key => file.meta[key] != null)
-        .map(key => [`metadata[${key}]`, String(file.meta[key])]),
+        .map(key => [key, String(file.meta[key])]),
     ) : {}
 
     return this.#client.post('s3/multipart', {
