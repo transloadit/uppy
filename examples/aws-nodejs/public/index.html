@@ -2,36 +2,44 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Uppy</title>
+    <title>Uppy – AWS upload example</title>
     <link href="https://releases.transloadit.com/uppy/v3.3.1/uppy.min.css" rel="stylesheet">
   </head>
   <body>
-    <div id="drag-drop-area"></div>
+    <h1>AWS upload example</h1>
+    <h2>AWS S3 (non multipart)</h2>
+    <div id="aws-non-multipart"></div>
+    <h2>AWS S3 multipart</h2>
+    <div id="aws-multipart"></div>
     <script type="module">
-      import { Uppy, Dashboard, AwsS3 } from "https://releases.transloadit.com/uppy/v3.3.1/uppy.min.mjs"
-      var uppy = new Uppy()
-        .use(Dashboard, {
+      import { Uppy, Dashboard, AwsS3Multipart, AwsS3 } from "https://releases.transloadit.com/uppy/v3.3.1/uppy.min.mjs"
+      {
+        const uppy = new Uppy()
+          .use(Dashboard, {
             inline: true,
-            target: '#drag-drop-area',
+            target: '#aws-non-multipart',
           })
-        .use(AwsS3, {
-          getUploadParameters (file) {
-            // Send a request to our PHP signing endpoint.
-            return fetch('/sign-s3', {
-              method: 'post',
-              // Send and receive JSON.
-              headers: {
-                accept: 'application/json',
-                'content-type': 'application/json',
-              },
-              body: JSON.stringify({
-                filename: file.name,
-                contentType: file.type,
-              }),
-            }).then((response) => {
+          .use(AwsS3, {
+            async getUploadParameters (file) {
+              // Send a request to our Express.js signing endpoint.
+              const response = await fetch('/sign-s3', {
+                method: 'POST',
+                // Send and receive JSON.
+                headers: {
+                  accept: 'application/json',
+                  'content-type': 'application/json',
+                },
+                body: JSON.stringify({
+                  filename: file.name,
+                  contentType: file.type,
+                }),
+              })
+
+              if (!response.ok) throw new Error('Unsuccessful request', { cause: response })
+
               // Parse the JSON response.
-              return response.json()
-            }).then((data) => {
+              const data = await response.json()
+
               // Return an object in the correct shape.
               return {
                 method: data.method,
@@ -42,17 +50,146 @@
                   'Content-Type': file.type,
                 },
               }
-            })
-          },
-      });
+            },
+          });
+        
+        uppy.on('complete', (result) => {
+          console.log('Upload complete! We’ve uploaded these files:', result.successful)
+        })
+        
+        uppy.on('upload-success', (file, data) => {
+          console.log('Upload success! We’ve uploaded this file:', file.meta['name'])
+        })
+      }
+      {
+        const uppy = new Uppy()
+          .use(Dashboard, {
+            inline: true,
+            target: '#aws-multipart',
+          })
+          .use(AwsS3Multipart, {
+            async createMultipartUpload(file, signal) {
+              if (signal?.aborted) {
+                const err = new DOMException('The operation was aborted', 'AbortError')
+                Object.defineProperty(err, 'cause', { __proto__: null, configurable: true, writable: true, value: signal.reason })
+                throw err
+              }
 
-      uppy.on('complete', (result) => {
-        console.log('Upload complete! We’ve uploaded these files:', result.successful)
-      })
+              const metadata = {}
 
-      uppy.on('upload-success', (file, data) => {
-        console.log('Upload success! We’ve uploaded this file:', file.meta['name'])
-      })
+              Object.keys(file.meta || {}).forEach(key => {
+                if (file.meta[key] != null) {
+                  metadata[key] = file.meta[key].toString()
+                }
+              })
+
+              const response = await fetch('/s3/multipart', {
+                method: 'POST',
+                // Send and receive JSON.
+                headers: {
+                  accept: 'application/json',
+                  'content-type': 'application/json',
+                },
+                body: JSON.stringify({
+                  filename: file.name,
+                  type: file.type,
+                  metadata,
+                }),
+                signal,
+              })
+
+              if (!response.ok) throw new Error('Unsuccessful request', { cause: response })
+
+              // Parse the JSON response.
+              const data = await response.json()
+
+              return data
+            },
+
+            async abortMultipartUpload (file, { key, uploadId }, signal) {
+              const filename = encodeURIComponent(key)
+              const uploadIdEnc = encodeURIComponent(uploadId)
+              const response = await fetch(`/s3/multipart/${uploadIdEnc}?key=${filename}`, {
+                method: 'DELETE',
+                signal,
+              })
+              
+              if (!response.ok) throw new Error('Unsuccessful request', { cause: response })
+            },
+
+            async signPart (file, { uploadId, key, partNumber, signal }) {
+              if (signal?.aborted) {
+                const err = new DOMException('The operation was aborted', 'AbortError')
+                Object.defineProperty(err, 'cause', { __proto__: null, configurable: true, writable: true, value: signal.reason })
+                throw err
+              }
+
+              if (uploadId == null || key == null || partNumber == null) {
+                throw new Error('Cannot sign without a key, an uploadId, and a partNumber')
+              }
+
+              const filename = encodeURIComponent(key)
+              const response = await fetch(`/s3/multipart/${uploadId}/${partNumber}?key=${filename}`, { signal })
+
+              if (!response.ok) throw new Error('Unsuccessful request', { cause: response })
+
+              const data = await response.json()
+
+              return data
+            },
+
+            async listParts (file, { key, uploadId }, signal) {
+              if (signal?.aborted) {
+                const err = new DOMException('The operation was aborted', 'AbortError')
+                Object.defineProperty(err, 'cause', { __proto__: null, configurable: true, writable: true, value: signal.reason })
+                throw err
+              }
+
+              const filename = encodeURIComponent(key)
+              const response = await fetch(`/s3/multipart/${uploadId}?key=${filename}`, { signal })
+
+              if (!response.ok) throw new Error('Unsuccessful request', { cause: response })
+
+              const data = await response.json()
+
+              return data
+            },
+
+            async completeMultipartUpload (file, { key, uploadId, parts }, signal) {
+              if (signal?.aborted) {
+                const err = new DOMException('The operation was aborted', 'AbortError')
+                Object.defineProperty(err, 'cause', { __proto__: null, configurable: true, writable: true, value: signal.reason })
+                throw err
+              }
+
+              const filename = encodeURIComponent(key)
+              const uploadIdEnc = encodeURIComponent(uploadId)
+              const response = await fetch(`s3/multipart/${uploadIdEnc}/complete?key=${filename}`, {
+                method: 'POST',
+                headers: {
+                  accept: 'application/json',
+                  'content-type': 'application/json',
+                },
+                body: JSON.stringify({ parts }),
+                signal,
+              })
+
+              if (!response.ok) throw new Error('Unsuccessful request', { cause: response })
+
+              const data = await response.json()
+
+              return data
+            }
+          })
+        
+        uppy.on('complete', (result) => {
+          console.log('Upload complete! We’ve uploaded these files:', result.successful)
+        })
+        
+        uppy.on('upload-success', (file, data) => {
+          console.log('Upload success! We’ve uploaded this file:', file.meta['name'])
+        })
+      }
     </script>
   </body>
 </html>

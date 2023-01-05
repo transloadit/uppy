@@ -4,6 +4,7 @@
   "description": "Uppy for AWS S3 with a custom Node.js backend for signing URLs",
   "main": "index.js",
   "scripts": {
+    "dev": "node --watch index.js",
     "start": "node index.js"
   },
   "private": true,
