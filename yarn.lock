@@ -9061,7 +9061,6 @@ __metadata:
     "@uppy/url": "workspace:^"
     expo-document-picker: ^10.3.0
     expo-image-picker: ^13.3.1
-    expo-permissions: ">=6.0.0"
     react-native-super-grid: "*"
   peerDependencies:
     expo: ">=33.0.0"
@@ -17647,15 +17646,6 @@ __metadata:
     compare-versions: ^3.4.0
     invariant: ^2.2.4
   checksum: 92bd05c15a6f1c65dbb89e993f6672e40e3d8f34702faf238a71eea15ca816d4aeb6216ff2eafb5151e7d14e1e373a823b90e085f421304751566f5e776855d8
-  languageName: node
-  linkType: hard
-
-"expo-permissions@npm:>=6.0.0":
-  version: 13.2.0
-  resolution: "expo-permissions@npm:13.2.0"
-  peerDependencies:
-    expo: "*"
-  checksum: a2707239e2294f5e9435e35b75e94f0fadd98cae681de772fa7c3d9604fd825c10743c80c667be509b400134ce3d809984cf52ffebf2e1819211a74d7521b92a
   languageName: node
   linkType: hard
 
