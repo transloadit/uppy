@@ -189,8 +189,8 @@ declare module '@uppy/utils/lib/getSocketHost' {
 
 declare module '@uppy/utils/lib/getSpeed' {
   function getSpeed (progress: {
-    bytesTotal: number
     bytesUploaded: number
+    uploadStarted: number
   }): number
   export default getSpeed
 }
