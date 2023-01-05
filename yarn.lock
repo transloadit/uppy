@@ -8515,6 +8515,32 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@uppy-example/react-native-expo@workspace:examples/react-native-expo":
+  version: 0.0.0-use.local
+  resolution: "@uppy-example/react-native-expo@workspace:examples/react-native-expo"
+  dependencies:
+    "@babel/core": ^7.12.9
+    "@react-native-async-storage/async-storage": ~1.15.0
+    "@uppy/core": "workspace:*"
+    "@uppy/dashboard": "workspace:*"
+    "@uppy/instagram": "workspace:*"
+    "@uppy/react": "workspace:*"
+    "@uppy/react-native": "workspace:*"
+    "@uppy/tus": "workspace:*"
+    "@uppy/url": "workspace:*"
+    "@uppy/xhr-upload": "workspace:*"
+    base64-js: ^1.3.0
+    expo: ~43.0.2
+    expo-file-system: ~13.0.3
+    expo-status-bar: ~1.1.0
+    preact-render-to-string: ^5.1.0
+    react: 17.0.1
+    react-dom: 17.0.1
+    react-native: 0.64.3
+    react-native-web: 0.17.1
+  languageName: unknown
+  linkType: soft
+
 "@uppy-example/react@workspace:examples/react-example":
   version: 0.0.0-use.local
   resolution: "@uppy-example/react@workspace:examples/react-example"
@@ -30209,32 +30235,6 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   checksum: 545d1e416be5bd0bc27a9bc4d58719317577fbcb38f80082857142f4946ba336df3f5fa3e87137709691acd809ee46e1f52834648399cb50219a70f441d6e6a3
   languageName: node
   linkType: hard
-
-"react-native-expo@workspace:examples/react-native-expo":
-  version: 0.0.0-use.local
-  resolution: "react-native-expo@workspace:examples/react-native-expo"
-  dependencies:
-    "@babel/core": ^7.12.9
-    "@react-native-async-storage/async-storage": ~1.15.0
-    "@uppy/core": "workspace:*"
-    "@uppy/dashboard": "workspace:*"
-    "@uppy/instagram": "workspace:*"
-    "@uppy/react": "workspace:*"
-    "@uppy/react-native": "workspace:*"
-    "@uppy/tus": "workspace:*"
-    "@uppy/url": "workspace:*"
-    "@uppy/xhr-upload": "workspace:*"
-    base64-js: ^1.3.0
-    expo: ~43.0.2
-    expo-file-system: ~13.0.3
-    expo-status-bar: ~1.1.0
-    preact-render-to-string: ^5.1.0
-    react: 17.0.1
-    react-dom: 17.0.1
-    react-native: 0.64.3
-    react-native-web: 0.17.1
-  languageName: unknown
-  linkType: soft
 
 "react-native-super-grid@npm:*":
   version: 4.6.1
