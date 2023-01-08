@@ -11,6 +11,9 @@ on:
     paths:
       - yarn.lock
 
+env:
+  YARN_ENABLE_GLOBAL_CACHE: false
+
 jobs:
   lint_lockfile:
     name: Lint yarn.lock

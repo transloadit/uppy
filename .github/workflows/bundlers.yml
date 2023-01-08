@@ -15,9 +15,12 @@ on:
       - '.github/**'
       - '!.github/workflows/bundlers.yml'
 
+env:
+  YARN_ENABLE_GLOBAL_CACHE: false
+
 jobs:
   isolate_uppy:
-    name: Isolate Uppy package
+    name: Isolate Uppy packages
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources

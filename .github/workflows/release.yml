@@ -3,6 +3,9 @@ on:
   pull_request_review:
     types: [submitted]
 
+env:
+  YARN_ENABLE_GLOBAL_CACHE: false
+
 jobs:
   release:
     name: Publish releases
@@ -43,10 +46,10 @@ jobs:
         run: corepack yarn run build
       - name: Hack to allow the publish of the Angular package
         run: corepack yarn workspace @uppy/angular prepublishOnly
-      - name: Login to NPM
-        run: corepack yarn config set npmAuthToken ${{ toJSON(secrets.NPM_TOKEN) }}
-      - name: Publish to NPM
+      - name: Publish to the npm registry
         run: corepack yarn workspaces foreach --no-private npm publish --access public --tolerate-republish
+        env:
+          YARN_NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Merge PR
         id: merge
         run: |

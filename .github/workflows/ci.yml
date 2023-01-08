@@ -25,6 +25,9 @@ on:
       - '.github/**'
       - '!.github/workflows/ci.yml'
 
+env:
+  YARN_ENABLE_GLOBAL_CACHE: false
+
 jobs:
   unit_tests:
     name: Unit tests
