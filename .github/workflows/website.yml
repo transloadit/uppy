@@ -9,6 +9,9 @@ on:
       - '.github/workflows/website.yml'
   workflow_dispatch:
 
+env:
+  YARN_ENABLE_GLOBAL_CACHE: false
+
 jobs:
   deploy:
     name: Deploy

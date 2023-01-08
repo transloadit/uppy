@@ -13,6 +13,9 @@ on:
       - '.github/**'
       - '!.github/workflows/linters.yml'
 
+env:
+  YARN_ENABLE_GLOBAL_CACHE: false
+
 jobs:
   lint_js:
     name: Lint JavaScript/TypeScript

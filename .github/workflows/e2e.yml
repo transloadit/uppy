@@ -26,6 +26,9 @@ on:
 
 concurrency: ${{ github.workflow }}--${{ github.ref }}
 
+env:
+  YARN_ENABLE_GLOBAL_CACHE: false
+
 jobs:
   e2e:
     if: ${{ !github.event.pull_request || (contains(github.event.pull_request.labels.*.name, 'safe to test') && github.event.pull_request.state == 'open') || (github.event.pull_request.head.repo.full_name == github.repository && github.event.event_name != 'labeled') }}

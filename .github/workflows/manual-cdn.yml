@@ -7,6 +7,9 @@ on:
         required: true
         default: "uppy"
 
+env:
+  YARN_ENABLE_GLOBAL_CACHE: false
+
 jobs:
   upload:
     runs-on: ubuntu-latest
