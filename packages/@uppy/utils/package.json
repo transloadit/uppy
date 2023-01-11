@@ -64,7 +64,7 @@
     "./src/microtip.scss": "./src/microtip.scss"
   },
   "dependencies": {
-    "lodash.throttle": "^4.1.1"
+    "lodash": "^4.17.21"
   },
   "devDependencies": {
     "@jest/globals": "^29.0.0"

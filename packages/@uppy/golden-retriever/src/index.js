@@ -1,4 +1,4 @@
-import throttle from 'lodash.throttle'
+import throttle from 'lodash/throttle'
 import BasePlugin from '@uppy/core/lib/BasePlugin.js'
 import ServiceWorkerStore from './ServiceWorkerStore.js'
 import IndexedDBStore from './IndexedDBStore.js'

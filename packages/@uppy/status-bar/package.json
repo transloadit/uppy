@@ -30,7 +30,7 @@
     "@transloadit/prettier-bytes": "0.0.9",
     "@uppy/utils": "workspace:^",
     "classnames": "^2.2.6",
-    "lodash.throttle": "^4.1.1",
+    "lodash": "^4.17.21",
     "preact": "^10.5.13"
   },
   "peerDependencies": {

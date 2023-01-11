@@ -7522,16 +7522,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash.merge@npm:4.6.6":
-  version: 4.6.6
-  resolution: "@types/lodash.merge@npm:4.6.6"
-  dependencies:
-    "@types/lodash": "*"
-  checksum: 62ec56f14b3077f7174497856e9b277db811943cd11b1d67d2a8e51a1803bd49319e8aaf62e745c696af972354a575dbb8a85d3aecf4ae774caf062dc31ac46e
+"@types/lodash@npm:4.14.191":
+  version: 4.14.191
+  resolution: "@types/lodash@npm:4.14.191"
+  checksum: ba0d5434e10690869f32d5ea49095250157cae502f10d57de0a723fd72229ce6c6a4979576f0f13e0aa9fbe3ce2457bfb9fa7d4ec3d6daba56730a51906d1491
   languageName: node
   linkType: hard
 
-"@types/lodash@npm:*, @types/lodash@npm:^4.14.167":
+"@types/lodash@npm:^4.14.167":
   version: 4.14.184
   resolution: "@types/lodash@npm:4.14.184"
   checksum: 6d9a4d67f7f9d0ec3fd21174f3dd3d00629dc1227eb469450eace53adbc1f7e2330699c28d0fe093e5f0fef0f0e763098be1f779268857213224af082b62be21
@@ -8797,7 +8795,7 @@ __metadata:
     "@types/eslint": ^8.2.0
     "@types/express-session": 1.17.3
     "@types/jsonwebtoken": 8.3.7
-    "@types/lodash.merge": 4.6.6
+    "@types/lodash": 4.14.191
     "@types/morgan": 1.7.37
     "@types/ms": 0.7.31
     "@types/node": ^18.0.3
@@ -8828,8 +8826,7 @@ __metadata:
     ipaddr.js: ^2.0.1
     jest: ^29.0.0
     jsonwebtoken: 8.5.1
-    lodash.merge: ^4.6.2
-    lodash.throttle: ^4.1.1
+    lodash: ^4.17.21
     mime-types: 2.1.35
     moment: ^2.29.2
     moment-timezone: ^0.5.31
@@ -8874,7 +8871,7 @@ __metadata:
     "@transloadit/prettier-bytes": 0.0.9
     "@uppy/store-default": "workspace:^"
     "@uppy/utils": "workspace:^"
-    lodash.throttle: ^4.1.1
+    lodash: ^4.17.21
     mime-match: ^1.0.2
     namespace-emitter: ^2.0.1
     nanoid: ^4.0.0
@@ -8896,7 +8893,7 @@ __metadata:
     "@uppy/utils": "workspace:^"
     classnames: ^2.2.6
     is-shallow-equal: ^1.0.1
-    lodash.debounce: ^4.0.8
+    lodash: ^4.17.21
     memoize-one: ^6.0.0
     nanoid: ^4.0.0
     preact: ^10.5.13
@@ -8981,7 +8978,7 @@ __metadata:
   dependencies:
     "@transloadit/prettier-bytes": 0.0.9
     "@uppy/utils": "workspace:^"
-    lodash.throttle: ^4.1.1
+    lodash: ^4.17.21
   peerDependencies:
     "@uppy/core": "workspace:^"
   languageName: unknown
@@ -9172,7 +9169,7 @@ __metadata:
     "@transloadit/prettier-bytes": 0.0.9
     "@uppy/utils": "workspace:^"
     classnames: ^2.2.6
-    lodash.throttle: ^4.1.1
+    lodash: ^4.17.21
     preact: ^10.5.13
   peerDependencies:
     "@uppy/core": "workspace:^"
@@ -9291,7 +9288,7 @@ __metadata:
   resolution: "@uppy/utils@workspace:packages/@uppy/utils"
   dependencies:
     "@jest/globals": ^29.0.0
-    lodash.throttle: ^4.1.1
+    lodash: ^4.17.21
   languageName: unknown
   linkType: soft
 

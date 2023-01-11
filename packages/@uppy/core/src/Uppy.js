@@ -4,7 +4,7 @@
 import Translator from '@uppy/utils/lib/Translator'
 import ee from 'namespace-emitter'
 import { nanoid } from 'nanoid/non-secure'
-import throttle from 'lodash.throttle'
+import throttle from 'lodash/throttle'
 import DefaultStore from '@uppy/store-default'
 import getFileType from '@uppy/utils/lib/getFileType'
 import getFileNameAndExtension from '@uppy/utils/lib/getFileNameAndExtension'

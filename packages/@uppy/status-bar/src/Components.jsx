@@ -1,6 +1,6 @@
 import { h } from 'preact'
 import classNames from 'classnames'
-import throttle from 'lodash.throttle'
+import throttle from 'lodash/throttle'
 import prettierBytes from '@transloadit/prettier-bytes'
 import prettyETA from '@uppy/utils/lib/prettyETA'
 

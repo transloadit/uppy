@@ -31,7 +31,7 @@
     "@uppy/utils": "workspace:^",
     "classnames": "^2.2.6",
     "is-shallow-equal": "^1.0.1",
-    "lodash.debounce": "^4.0.8",
+    "lodash": "^4.17.21",
     "memoize-one": "^6.0.0",
     "nanoid": "^4.0.0",
     "preact": "^10.5.13"

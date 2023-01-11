@@ -1,5 +1,5 @@
 const fs = require('node:fs')
-const merge = require('lodash.merge')
+const merge = require('lodash/merge')
 const stripIndent = require('common-tags/lib/stripIndent')
 const crypto = require('node:crypto')
 
