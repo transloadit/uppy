@@ -1,4 +1,4 @@
-### Run companion on kuberenetes
+### Run companion on kubernetes
 
 You can use our docker container to run companion on kubernetes with the following configuration.
 
