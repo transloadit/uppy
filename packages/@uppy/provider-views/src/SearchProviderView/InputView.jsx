@@ -9,6 +9,7 @@ export default ({ i18n, search }) => {
   }
   const handleKeyPress = (ev) => {
     if (ev.keyCode === 13) {
+      ev.preventDefault()
       validateAndSearch()
     }
   }
@@ -20,7 +21,7 @@ export default ({ i18n, search }) => {
         type="search"
         aria-label={i18n('enterTextToSearch')}
         placeholder={i18n('enterTextToSearch')}
-        onKeyUp={handleKeyPress}
+        onKeyDown={handleKeyPress}
         ref={(input_) => { input = input_ }}
         data-uppy-super-focusable
       />

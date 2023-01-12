@@ -7,6 +7,7 @@ class UrlUI extends Component {
 
   #handleKeyPress = (ev) => {
     if (ev.keyCode === 13) {
+      ev.preventDefault()
       this.#handleSubmit()
     }
   }
@@ -26,7 +27,7 @@ class UrlUI extends Component {
           type="text"
           aria-label={i18n('enterUrlToImport')}
           placeholder={i18n('enterUrlToImport')}
-          onKeyUp={this.#handleKeyPress}
+          onKeyDown={this.#handleKeyPress}
           ref={(input) => { this.input = input }}
           data-uppy-super-focusable
         />
