@@ -185,7 +185,7 @@ export COMPANION_DATADIR="PATH/TO/DOWNLOAD/DIRECTORY"
 export COMPANION_PROTOCOL="YOUR SERVER PROTOCOL"
 # the port on which to start the server, defaults to 3020
 export COMPANION_PORT="YOUR SERVER PORT"
-# corresponds to the server.port option, defaults to ''
+# corresponds to the server.path option, defaults to ''
 export COMPANION_PATH="/SERVER/PATH/TO/WHERE/COMPANION/LIVES"
 # disables the welcome page, defaults to false
 export COMPANION_HIDE_WELCOME="true"
