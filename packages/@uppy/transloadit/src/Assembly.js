@@ -1,9 +1,7 @@
 import Emitter from 'component-emitter'
-import { io } from 'socket.io-client'
 import has from '@uppy/utils/lib/hasProperty'
 import NetworkError from '@uppy/utils/lib/NetworkError'
 import fetchWithNetworkError from '@uppy/utils/lib/fetchWithNetworkError'
-import parseUrl from './parseUrl.js'
 
 const ASSEMBLY_UPLOADING = 'ASSEMBLY_UPLOADING'
 const ASSEMBLY_EXECUTING = 'ASSEMBLY_EXECUTING'
@@ -43,8 +41,6 @@ class TransloaditAssembly extends Emitter {
 
     // The current assembly status.
     this.status = assembly
-    // The socket.io connection.
-    this.socket = null
     // The interval timer for full status updates.
     this.pollInterval = null
     // Whether this assembly has been closed (finished or errored)
@@ -56,7 +52,6 @@ class TransloaditAssembly extends Emitter {
 
   connect () {
     this.#connectServerEvent()
-    this.#connectSocket()
     this.#beginPolling()
   }
 
@@ -69,10 +64,6 @@ class TransloaditAssembly extends Emitter {
     this.#sse = new EventSource(this.status.assembly_ssl_url)
 
     this.#sse.addEventListener('open', () => {
-      if (this.socket) {
-        this.socket.disconnect()
-        this.socket = null
-      }
       clearInterval(this.pollInterval)
       this.pollInterval = null
     })
@@ -118,58 +109,6 @@ class TransloaditAssembly extends Emitter {
     })
   }
 
-  #connectSocket () {
-    const parsed = parseUrl(this.status.websocket_url)
-    const socket = io(parsed.origin, {
-      transports: ['websocket'],
-      path: parsed.pathname,
-    })
-
-    socket.on('connect', () => {
-      socket.emit('assembly_connect', {
-        id: this.status.assembly_id,
-      })
-
-      this.emit('connect')
-    })
-
-    socket.on('connect_error', () => {
-      socket.disconnect()
-      this.socket = null
-    })
-
-    socket.on('assembly_finished', () => {
-      this.#onFinished()
-    })
-
-    socket.on('assembly_upload_finished', (file) => {
-      this.emit('upload', file)
-      this.status.uploads.push(file)
-    })
-
-    socket.on('assembly_uploading_finished', () => {
-      this.emit('executing')
-    })
-
-    socket.on('assembly_upload_meta_data_extracted', () => {
-      this.emit('metadata')
-      this.#fetchStatus({ diff: false })
-    })
-
-    socket.on('assembly_result_finished', (stepName, result) => {
-      this.emit('result', stepName, result)
-      ;(this.status.results[stepName] ??= []).push(result)
-    })
-
-    socket.on('assembly_error', (err) => {
-      this.#onError(err)
-      // Refetch for updated status code
-      this.#fetchStatus({ diff: false })
-    })
-
-    this.socket = socket
-  }
-
   #onError (err) {
     this.emit('error', Object.assign(new Error(err.message), err))
     this.close()
@@ -177,20 +116,18 @@ class TransloaditAssembly extends Emitter {
 
   /**
    * Begin polling for assembly status changes. This sends a request to the
-   * assembly status endpoint every so often, if the socket is not connected.
-   * If the socket connection fails or takes a long time, we won't miss any
+   * assembly status endpoint every so often, if SSE connection failed.
+   * If the SSE connection fails or takes a long time, we won't miss any
    * events.
    */
   #beginPolling () {
     this.pollInterval = setInterval(() => {
-      if (!this.socket || !this.socket.connected) {
-        this.#fetchStatus()
-      }
+      this.#fetchStatus()
     }, 2000)
   }
 
   /**
-   * Reload assembly status. Useful if the socket doesn't work.
+   * Reload assembly status. Useful if SSE doesn't work.
    *
    * Pass `diff: false` to avoid emitting diff events, instead only emitting
    * 'status'.
@@ -272,10 +209,10 @@ class TransloaditAssembly extends Emitter {
     const nowExecuting = isStatus(nextStatus, ASSEMBLY_EXECUTING)
       && !isStatus(prevStatus, ASSEMBLY_EXECUTING)
     if (nowExecuting) {
-      // Without WebSockets, this is our only way to tell if uploading finished.
+      // Without SSE, this is our only way to tell if uploading finished.
       // Hence, we emit this just before the 'upload's and before the 'metadata'
       // event for the most intuitive ordering, corresponding to the _usual_
-      // ordering (if not guaranteed) that you'd get on the WebSocket.
+      // ordering (if not guaranteed) that you'd get on SSE.
       this.emit('executing')
     }
 
@@ -318,10 +255,6 @@ class TransloaditAssembly extends Emitter {
     if (this.#sse) {
       this.#sse.close()
       this.#sse = null
-    }
-    if (this.socket) {
-      this.socket.disconnect()
-      this.socket = null
     }
     clearInterval(this.pollInterval)
     this.pollInterval = null
