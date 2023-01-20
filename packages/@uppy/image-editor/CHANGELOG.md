@@ -1,5 +1,12 @@
 # @uppy/image-editor
 
+## 2.1.0
+
+Released: 2022-11-10
+Included in: Uppy v3.3.0
+
+- @uppy/image-editor: add checkered background (Livia Medeiros / #4194)
+
 ## 2.0.1
 
 Released: 2022-09-25

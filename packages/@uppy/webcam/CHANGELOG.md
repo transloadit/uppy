@@ -1,5 +1,12 @@
 # @uppy/webcam
 
+## 3.2.1
+
+Released: 2022-10-19
+Included in: Uppy v3.2.0
+
+- @uppy/webcam: fix bug when Dashboard is using a custom id (Antoine du Hamel / #4099)
+
 ## 3.2.0
 
 Released: 2022-09-25

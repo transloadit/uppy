@@ -5,6 +5,7 @@ import emitSocketProgress from '@uppy/utils/lib/emitSocketProgress'
 import getSocketHost from '@uppy/utils/lib/getSocketHost'
 import { RateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
 
+import { createAbortError } from '@uppy/utils/lib/AbortController'
 import packageJson from '../package.json'
 import MultipartUploader from './MultipartUploader.js'
 
@@ -17,10 +18,213 @@ function assertServerError (res) {
   return res
 }
 
+function throwIfAborted (signal) {
+  if (signal?.aborted) { throw createAbortError('The operation was aborted', { cause: signal.reason }) }
+}
+
+class HTTPCommunicationQueue {
+  #abortMultipartUpload
+
+  #cache = new WeakMap()
+
+  #createMultipartUpload
+
+  #fetchSignature
+
+  #listParts
+
+  #previousRetryDelay
+
+  #requests
+
+  #retryDelayIterator
+
+  #sendCompletionRequest
+
+  #setS3MultipartState
+
+  #uploadPartBytes
+
+  constructor (requests, options, setS3MultipartState) {
+    this.#requests = requests
+    this.#setS3MultipartState = setS3MultipartState
+    this.setOptions(options)
+  }
+
+  setOptions (options) {
+    const requests = this.#requests
+
+    if ('abortMultipartUpload' in options) {
+      this.#abortMultipartUpload = requests.wrapPromiseFunction(options.abortMultipartUpload)
+    }
+    if ('createMultipartUpload' in options) {
+      this.#createMultipartUpload = requests.wrapPromiseFunction(options.createMultipartUpload, { priority:-1 })
+    }
+    if ('signPart' in options) {
+      this.#fetchSignature = requests.wrapPromiseFunction(options.signPart)
+    }
+    if ('listParts' in options) {
+      this.#listParts = requests.wrapPromiseFunction(options.listParts)
+    }
+    if ('completeMultipartUpload' in options) {
+      this.#sendCompletionRequest = requests.wrapPromiseFunction(options.completeMultipartUpload)
+    }
+    if ('retryDelays' in options) {
+      this.#retryDelayIterator = options.retryDelays?.values()
+    }
+    if ('uploadPartBytes' in options) {
+      this.#uploadPartBytes = requests.wrapPromiseFunction(options.uploadPartBytes, { priority:Infinity })
+    }
+  }
+
+  async #shouldRetry (err) {
+    const requests = this.#requests
+    const status = err?.source?.status
+
+    // TODO: this retry logic is taken out of Tus. We should have a centralized place for retrying,
+    // perhaps the rate limited queue, and dedupe all plugins with that.
+    if (status == null) {
+      return false
+    }
+    if (status === 403 && err.message === 'Request has expired') {
+      if (!requests.isPaused) {
+        // We don't want to exhaust the retryDelayIterator as long as there are
+        // more than one request in parallel, to give slower connection a chance
+        // to catch up with the expiry set in Companion.
+        if (requests.limit === 1 || this.#previousRetryDelay == null) {
+          const next = this.#retryDelayIterator?.next()
+          if (next == null || next.done) {
+            return false
+          }
+          // If there are more than 1 request done in parallel, the RLQ limit is
+          // decreased and the failed request is requeued after waiting for a bit.
+          // If there is only one request in parallel, the limit can't be
+          // decreased, so we iterate over `retryDelayIterator` as we do for
+          // other failures.
+          // `#previousRetryDelay` caches the value so we can re-use it next time.
+          this.#previousRetryDelay = next.value
+        }
+        // No need to stop the other requests, we just want to lower the limit.
+        requests.rateLimit(0)
+        await new Promise(resolve => setTimeout(resolve, this.#previousRetryDelay))
+      }
+    } else if (status === 429) {
+      // HTTP 429 Too Many Requests => to avoid the whole download to fail, pause all requests.
+      if (!requests.isPaused) {
+        const next = this.#retryDelayIterator?.next()
+        if (next == null || next.done) {
+          return false
+        }
+        requests.rateLimit(next.value)
+      }
+    } else if (status > 400 && status < 500 && status !== 409) {
+      // HTTP 4xx, the server won't send anything, it's doesn't make sense to retry
+      return false
+    } else if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+      // The navigator is offline, let's wait for it to come back online.
+      if (!requests.isPaused) {
+        requests.pause()
+        window.addEventListener('online', () => {
+          requests.resume()
+        }, { once: true })
+      }
+    } else {
+      // Other error code means the request can be retried later.
+      const next = this.#retryDelayIterator?.next()
+      if (next == null || next.done) {
+        return false
+      }
+      await new Promise(resolve => setTimeout(resolve, next.value))
+    }
+    return true
+  }
+
+  async getUploadId (file, signal) {
+    const cachedResult = this.#cache.get(file.data)
+    if (cachedResult != null) {
+      return cachedResult
+    }
+
+    const promise = this.#createMultipartUpload(file, signal)
+
+    const abortPromise = () => {
+      promise.abort(signal.reason)
+      this.#cache.delete(file.data)
+    }
+    signal.addEventListener('abort', abortPromise, { once: true })
+    this.#cache.set(file.data, promise)
+    promise.then(async (result) => {
+      signal.removeEventListener('abort', abortPromise)
+      this.#setS3MultipartState(file, result)
+      this.#cache.set(file.data, result)
+    }, () => { signal.removeEventListener('abort', abortPromise) })
+
+    return promise
+  }
+
+  async abortFileUpload (file) {
+    const result = this.#cache.get(file.data)
+    if (result != null) {
+      // If the createMultipartUpload request never was made, we don't
+      // need to send the abortMultipartUpload request.
+      await this.#abortMultipartUpload(file, await result)
+    }
+  }
+
+  async uploadFile (file, chunks, signal) {
+    throwIfAborted(signal)
+    const { uploadId, key } = await this.getUploadId(file, signal)
+    throwIfAborted(signal)
+    const parts = await Promise.all(chunks.map((chunk, i) => this.uploadChunk(file, i + 1, chunk, signal)))
+    throwIfAborted(signal)
+    return this.#sendCompletionRequest(file, { key, uploadId, parts, signal }).abortOn(signal)
+  }
+
+  async resumeUploadFile (file, chunks, signal) {
+    throwIfAborted(signal)
+    const { uploadId, key } = await this.getUploadId(file, signal)
+    throwIfAborted(signal)
+    const alreadyUploadedParts = await this.#listParts(file, { uploadId, key, signal }).abortOn(signal)
+    throwIfAborted(signal)
+    const parts = await Promise.all(
+      chunks
+        .map((chunk, i) => {
+          const partNumber = i + 1
+          const alreadyUploadedInfo = alreadyUploadedParts.find(({ PartNumber }) => PartNumber === partNumber)
+          return alreadyUploadedInfo == null
+            ? this.uploadChunk(file, partNumber, chunk, signal)
+            : { PartNumber: partNumber, ETag: alreadyUploadedInfo.ETag }
+        }),
+    )
+    throwIfAborted(signal)
+    return this.#sendCompletionRequest(file, { key, uploadId, parts, signal }).abortOn(signal)
+  }
+
+  async uploadChunk (file, partNumber, body, signal) {
+    throwIfAborted(signal)
+    const { uploadId, key } = await this.getUploadId(file, signal)
+    throwIfAborted(signal)
+    for (;;) {
+      const signature = await this.#fetchSignature(file, { uploadId, key, partNumber, body, signal }).abortOn(signal)
+      throwIfAborted(signal)
+      try {
+        return {
+          PartNumber: partNumber,
+          ...await this.#uploadPartBytes(signature, body, signal).abortOn(signal),
+        }
+      } catch (err) {
+        if (!await this.#shouldRetry(err)) throw err
+      }
+    }
+  }
+}
+
 export default class AwsS3Multipart extends BasePlugin {
   static VERSION = packageJson.version
 
   #queueRequestSocketToken
+
+  #companionCommunicationQueue
 
   #client
 
@@ -32,31 +236,51 @@ export default class AwsS3Multipart extends BasePlugin {
     this.#client = new RequestClient(uppy, opts)
 
     const defaultOptions = {
-      timeout: 30 * 1000,
-      limit: 0,
+      // TODO: this is currently opt-in for backward compat, switch to opt-out in the next major
+      allowedMetaFields: null,
+      limit: 6,
       retryDelays: [0, 1000, 3000, 5000],
       createMultipartUpload: this.createMultipartUpload.bind(this),
       listParts: this.listParts.bind(this),
-      prepareUploadParts: this.prepareUploadParts.bind(this),
       abortMultipartUpload: this.abortMultipartUpload.bind(this),
       completeMultipartUpload: this.completeMultipartUpload.bind(this),
+      signPart: this.signPart.bind(this),
+      uploadPartBytes: AwsS3Multipart.uploadPartBytes,
       companionHeaders: {},
     }
 
     this.opts = { ...defaultOptions, ...opts }
+    if (opts?.prepareUploadParts != null && opts.signPart == null) {
+      this.opts.signPart = async (file, { uploadId, key, partNumber, body, signal }) => {
+        const { presignedUrls, headers } = await opts
+          .prepareUploadParts(file, { uploadId, key, parts: [{ number: partNumber, chunk: body }], signal })
+        return { url: presignedUrls?.[partNumber], headers: headers?.[partNumber] }
+      }
+    }
 
     this.upload = this.upload.bind(this)
 
-    this.requests = new RateLimitedQueue(this.opts.limit)
+    /**
+     * Simultaneous upload limiting is shared across all uploads with this plugin.
+     *
+     * @type {RateLimitedQueue}
+     */
+    this.requests = this.opts.rateLimitedQueue ?? new RateLimitedQueue(this.opts.limit)
+    this.#companionCommunicationQueue = new HTTPCommunicationQueue(this.requests, this.opts, this.#setS3MultipartState)
 
     this.uploaders = Object.create(null)
     this.uploaderEvents = Object.create(null)
     this.uploaderSockets = Object.create(null)
 
-    this.#queueRequestSocketToken = this.requests.wrapPromiseFunction(this.#requestSocketToken)
+    this.#queueRequestSocketToken = this.requests.wrapPromiseFunction(this.#requestSocketToken, { priority: -1 })
   }
 
   [Symbol.for('uppy test: getClient')] () { return this.#client }
+
+  setOptions (newOptions) {
+    this.#companionCommunicationQueue.setOptions(newOptions)
+    return super.setOptions(newOptions)
+  }
 
   /**
    * Clean up all references for a file's upload: the MultipartUploader instance,
@@ -80,80 +304,170 @@ export default class AwsS3Multipart extends BasePlugin {
     }
   }
 
+  // TODO: make this a private method in the next major
   assertHost (method) {
     if (!this.opts.companionUrl) {
       throw new Error(`Expected a \`companionUrl\` option containing a Companion address, or if you are not using Companion, a custom \`${method}\` implementation.`)
     }
   }
 
-  createMultipartUpload (file) {
+  createMultipartUpload (file, signal) {
     this.assertHost('createMultipartUpload')
+    throwIfAborted(signal)
 
-    const metadata = {}
-
-    Object.keys(file.meta).forEach(key => {
-      if (file.meta[key] != null) {
-        metadata[key] = file.meta[key].toString()
-      }
-    })
+    const metadata = file.meta ? Object.fromEntries(
+      (this.opts.allowedMetaFields ?? Object.keys(file.meta))
+        .filter(key => file.meta[key] != null)
+        .map(key => [key, String(file.meta[key])]),
+    ) : {}
 
     return this.#client.post('s3/multipart', {
       filename: file.name,
       type: file.type,
       metadata,
-    }).then(assertServerError)
+    }, { signal }).then(assertServerError)
   }
 
-  listParts (file, { key, uploadId }) {
+  listParts (file, { key, uploadId }, signal) {
     this.assertHost('listParts')
+    throwIfAborted(signal)
 
     const filename = encodeURIComponent(key)
-    return this.#client.get(`s3/multipart/${uploadId}?key=${filename}`)
+    return this.#client.get(`s3/multipart/${uploadId}?key=${filename}`, { signal })
       .then(assertServerError)
   }
 
-  prepareUploadParts (file, { key, uploadId, parts }) {
-    this.assertHost('prepareUploadParts')
-
-    const filename = encodeURIComponent(key)
-    const partNumbers = parts.map((part) => part.number).join(',')
-    return this.#client.get(`s3/multipart/${uploadId}/batch?key=${filename}&partNumbers=${partNumbers}`)
-      .then(assertServerError)
-  }
-
-  completeMultipartUpload (file, { key, uploadId, parts }) {
+  completeMultipartUpload (file, { key, uploadId, parts }, signal) {
     this.assertHost('completeMultipartUpload')
+    throwIfAborted(signal)
 
     const filename = encodeURIComponent(key)
     const uploadIdEnc = encodeURIComponent(uploadId)
-    return this.#client.post(`s3/multipart/${uploadIdEnc}/complete?key=${filename}`, { parts })
+    return this.#client.post(`s3/multipart/${uploadIdEnc}/complete?key=${filename}`, { parts }, { signal })
       .then(assertServerError)
   }
 
-  abortMultipartUpload (file, { key, uploadId }) {
+  signPart (file, { uploadId, key, partNumber, signal }) {
+    this.assertHost('signPart')
+    throwIfAborted(signal)
+
+    if (uploadId == null || key == null || partNumber == null) {
+      throw new Error('Cannot sign without a key, an uploadId, and a partNumber')
+    }
+
+    const filename = encodeURIComponent(key)
+    return this.#client.get(`s3/multipart/${uploadId}/${partNumber}?key=${filename}`, { signal })
+      .then(assertServerError)
+  }
+
+  abortMultipartUpload (file, { key, uploadId }, signal) {
     this.assertHost('abortMultipartUpload')
 
     const filename = encodeURIComponent(key)
     const uploadIdEnc = encodeURIComponent(uploadId)
-    return this.#client.delete(`s3/multipart/${uploadIdEnc}?key=${filename}`)
+    return this.#client.delete(`s3/multipart/${uploadIdEnc}?key=${filename}`, undefined, { signal })
       .then(assertServerError)
+  }
+
+  static async uploadPartBytes ({ url, expires, headers }, body, signal) {
+    throwIfAborted(signal)
+
+    if (url == null) {
+      throw new Error('Cannot upload to an undefined URL')
+    }
+
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest()
+      xhr.open('PUT', url, true)
+      if (headers) {
+        Object.keys(headers).forEach((key) => {
+          xhr.setRequestHeader(key, headers[key])
+        })
+      }
+      xhr.responseType = 'text'
+      if (typeof expires === 'number') {
+        xhr.timeout = expires * 1000
+      }
+
+      function onabort () {
+        xhr.abort()
+      }
+      function cleanup () {
+        signal.removeEventListener('abort', onabort)
+      }
+      signal.addEventListener('abort', onabort)
+
+      xhr.upload.addEventListener('progress', body.onProgress)
+
+      xhr.addEventListener('abort', () => {
+        cleanup()
+
+        reject(createAbortError())
+      })
+
+      xhr.addEventListener('timeout', () => {
+        cleanup()
+
+        const error = new Error('Request has expired')
+        error.source = { status: 403 }
+        reject(error)
+      })
+      xhr.addEventListener('load', (ev) => {
+        cleanup()
+
+        if (ev.target.status === 403 && ev.target.responseText.includes('<Message>Request has expired</Message>')) {
+          const error = new Error('Request has expired')
+          error.source = ev.target
+          reject(error)
+          return
+        } if (ev.target.status < 200 || ev.target.status >= 300) {
+          const error = new Error('Non 2xx')
+          error.source = ev.target
+          reject(error)
+          return
+        }
+
+        body.onProgress?.(body.size)
+
+        // NOTE This must be allowed by CORS.
+        const etag = ev.target.getResponseHeader('ETag')
+
+        if (etag === null) {
+          reject(new Error('AwsS3/Multipart: Could not read the ETag header. This likely means CORS is not configured correctly on the S3 Bucket. See https://uppy.io/docs/aws-s3-multipart#S3-Bucket-Configuration for instructions.'))
+          return
+        }
+
+        body.onComplete?.(etag)
+        resolve({
+          ETag: etag,
+        })
+      })
+
+      xhr.addEventListener('error', (ev) => {
+        cleanup()
+
+        const error = new Error('Unknown error')
+        error.source = ev.target
+        reject(error)
+      })
+
+      xhr.send(body)
+    })
+  }
+
+  #setS3MultipartState = (file, { key, uploadId }) => {
+    const cFile = this.uppy.getFile(file.id)
+    this.uppy.setFileState(file.id, {
+      s3Multipart: {
+        ...cFile.s3Multipart,
+        key,
+        uploadId,
+      },
+    })
   }
 
   uploadFile (file) {
     return new Promise((resolve, reject) => {
-      let queuedRequest
-
-      const onStart = (data) => {
-        const cFile = this.uppy.getFile(file.id)
-        this.uppy.setFileState(file.id, {
-          s3Multipart: {
-            ...cFile.s3Multipart,
-            key: data.key,
-            uploadId: data.uploadId,
-          },
-        })
-      }
-
       const onProgress = (bytesUploaded, bytesTotal) => {
         this.uppy.emit('upload-progress', file, {
           uploader: this,
@@ -166,7 +480,6 @@ export default class AwsS3Multipart extends BasePlugin {
         this.uppy.log(err)
         this.uppy.emit('upload-error', file, err)
 
-        queuedRequest.done()
         this.resetUploaderReferences(file.id)
         reject(err)
       }
@@ -180,14 +493,13 @@ export default class AwsS3Multipart extends BasePlugin {
           uploadURL: result.location,
         }
 
-        queuedRequest.done()
         this.resetUploaderReferences(file.id)
 
         const cFile = this.uppy.getFile(file.id)
         this.uppy.emit('upload-success', cFile || file, uploadResp)
 
         if (result.location) {
-          this.uppy.log(`Download ${uploadObject.file.name} from ${result.location}`)
+          this.uppy.log(`Download ${file.name} from ${result.location}`)
         }
 
         resolve(uploadObject)
@@ -204,47 +516,33 @@ export default class AwsS3Multipart extends BasePlugin {
 
       const upload = new MultipartUploader(file.data, {
         // .bind to pass the file object to each handler.
-        createMultipartUpload: this.opts.createMultipartUpload.bind(this, file),
-        listParts: this.opts.listParts.bind(this, file),
-        prepareUploadParts: this.opts.prepareUploadParts.bind(this, file),
-        completeMultipartUpload: this.opts.completeMultipartUpload.bind(this, file),
-        abortMultipartUpload: this.opts.abortMultipartUpload.bind(this, file),
+        companionComm: this.#companionCommunicationQueue,
+
+        log: (...args) => this.uppy.log(...args),
         getChunkSize: this.opts.getChunkSize ? this.opts.getChunkSize.bind(this) : null,
 
-        onStart,
         onProgress,
         onError,
         onSuccess,
         onPartComplete,
 
-        limit: this.opts.limit || 5,
-        retryDelays: this.opts.retryDelays || [],
+        file,
+
         ...file.s3Multipart,
       })
 
       this.uploaders[file.id] = upload
       this.uploaderEvents[file.id] = new EventTracker(this.uppy)
 
-      queuedRequest = this.requests.run(() => {
-        if (!file.isPaused) {
-          upload.start()
-        }
-        // Don't do anything here, the caller will take care of cancelling the upload itself
-        // using resetUploaderReferences(). This is because resetUploaderReferences() has to be
-        // called when this request is still in the queue, and has not been started yet, too. At
-        // that point this cancellation function is not going to be called.
-        return () => {}
-      })
-
       this.onFileRemove(file.id, (removed) => {
-        queuedRequest.abort()
+        upload.abort()
         this.resetUploaderReferences(file.id, { abort: true })
         resolve(`upload ${removed.id} was removed`)
       })
 
       this.onCancelAll(file.id, ({ reason } = {}) => {
         if (reason === 'user') {
-          queuedRequest.abort()
+          upload.abort()
           this.resetUploaderReferences(file.id, { abort: true })
         }
         resolve(`upload ${file.id} was canceled`)
@@ -252,38 +550,23 @@ export default class AwsS3Multipart extends BasePlugin {
 
       this.onFilePause(file.id, (isPaused) => {
         if (isPaused) {
-          // Remove this file from the queue so another file can start in its place.
-          queuedRequest.abort()
           upload.pause()
         } else {
-          // Resuming an upload should be queued, else you could pause and then
-          // resume a queued upload to make it skip the queue.
-          queuedRequest.abort()
-          queuedRequest = this.requests.run(() => {
-            upload.start()
-            return () => {}
-          })
+          upload.start()
         }
       })
 
       this.onPauseAll(file.id, () => {
-        queuedRequest.abort()
         upload.pause()
       })
 
       this.onResumeAll(file.id, () => {
-        queuedRequest.abort()
-        if (file.error) {
-          upload.abort()
-        }
-        queuedRequest = this.requests.run(() => {
-          upload.start()
-          return () => {}
-        })
+        upload.start()
       })
 
       // Don't double-emit upload-started for Golden Retriever-restored files that were already started
       if (!file.progress.uploadStarted || !file.isRestored) {
+        upload.start()
         this.uppy.emit('upload-started', file)
       }
     })
@@ -297,6 +580,10 @@ export default class AwsS3Multipart extends BasePlugin {
     if (file.tus) {
       // Install file-specific upload overrides.
       Object.assign(opts, file.tus)
+    }
+
+    if (file.remote.url == null) {
+      throw new Error('Cannot connect to an undefined URL')
     }
 
     const res = await client.post(file.remote.url, {
@@ -330,7 +617,7 @@ export default class AwsS3Multipart extends BasePlugin {
     }
   }
 
-  connectToServerSocket (file) {
+  async connectToServerSocket (file) {
     return new Promise((resolve, reject) => {
       let queuedRequest
 
@@ -435,8 +722,8 @@ export default class AwsS3Multipart extends BasePlugin {
     })
   }
 
-  upload (fileIDs) {
-    if (fileIDs.length === 0) return Promise.resolve()
+  async upload (fileIDs) {
+    if (fileIDs.length === 0) return undefined
 
     const promises = fileIDs.map((id) => {
       const file = this.uppy.getFile(id)
@@ -451,7 +738,6 @@ export default class AwsS3Multipart extends BasePlugin {
 
   #setCompanionHeaders = () => {
     this.#client.setCompanionHeaders(this.opts.companionHeaders)
-    return Promise.resolve()
   }
 
   onFileRemove (fileID, cb) {
@@ -463,7 +749,6 @@ export default class AwsS3Multipart extends BasePlugin {
   onFilePause (fileID, cb) {
     this.uploaderEvents[fileID].on('upload-pause', (targetFileID, isPaused) => {
       if (fileID === targetFileID) {
-        // const isPaused = this.uppy.pauseResume(fileID)
         cb(isPaused)
       }
     })

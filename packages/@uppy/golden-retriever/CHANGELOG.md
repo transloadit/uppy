@@ -1,5 +1,12 @@
 # @uppy/golden-retriever
 
+## 3.0.2
+
+Released: 2022-10-19
+Included in: Uppy v3.2.0
+
+- @uppy/golden-retriever: Fix retry upload with Golden Retriever (Merlijn Vos / #4155)
+
 ## 3.0.1
 
 Released: 2022-09-25

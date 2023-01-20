@@ -11,6 +11,9 @@ on:
       - 'packages/@uppy/companion/**'
       - '.github/workflows/companion-deploy.yml'
 
+env:
+  YARN_ENABLE_GLOBAL_CACHE: false
+
 jobs:
   npm:
     name: Generate npm tarball

@@ -145,7 +145,7 @@ export default () => {
       uppyDashboard.use(XHRUpload, {
         method: 'POST',
         endpoint: `${TRANSLOADIT_SERVICE_URL}/assemblies`,
-        metaFields: ['params'],
+        allowedMetaFields: ['params'],
         bundle: true,
       })
       break

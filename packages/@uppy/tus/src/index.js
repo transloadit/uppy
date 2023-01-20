@@ -103,7 +103,7 @@ export default class Tus extends BasePlugin {
 
     this.handleResetProgress = this.handleResetProgress.bind(this)
     this.handleUpload = this.handleUpload.bind(this)
-    this.#queueRequestSocketToken = this.requests.wrapPromiseFunction(this.#requestSocketToken)
+    this.#queueRequestSocketToken = this.requests.wrapPromiseFunction(this.#requestSocketToken, { priority: -1 })
   }
 
   handleResetProgress () {
@@ -473,6 +473,8 @@ export default class Tus extends BasePlugin {
         return this.connectToServerSocket(file)
       }
       const serverToken = await this.#queueRequestSocketToken(file)
+
+      if (!this.uppy.getState().files[file.id]) return undefined
 
       this.uppy.setFileState(file.id, { serverToken })
       return this.connectToServerSocket(this.uppy.getFile(file.id))

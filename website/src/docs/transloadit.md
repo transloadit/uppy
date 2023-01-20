@@ -127,41 +127,124 @@ The value of this constant covers _all_ Transloadit’s Companion servers, so it
 
 ## Options
 
-The `@uppy/transloadit` plugin has the following configurable options:
+### `id`
 
-### `id: 'Transloadit'`
-
-A unique identifier for this plugin. It defaults to `'Transloadit'`.
+A unique identifier for this plugin (`string`, default: `'Transloadit'`).
 
 ### `service`
 
-The Transloadit API URL to use. It defaults to `https://api2.transloadit.com`, which will try to route traffic efficiently based on the location of your users. You can set this to something like `https://api2-us-east-1.transloadit.com` if you want to use a particular region.
+The Transloadit API URL to use (`string`, default: `https://api2.transloadit.com`).
 
-### `params`
+The default will try to route traffic efficiently based on the location of your users. You could for instance set it to `https://api2-us-east-1.transloadit.com` if you need the traffic to stay inside a particular region.
 
-The Assembly parameters to use for the upload. See the Transloadit documentation on [Assembly Instructions](https://transloadit.com/docs/#14-assembly-instructions) for further information. `params` should be a plain JavaScript object, or a JSON string if you are using the [`signature`](#signature) option.
+### `limit`
 
-The `auth.key` Assembly parameter is required. You can also use the `steps` or `template_id` options here as described in the Transloadit documentation.
+Limit the amount of uploads going on at the same time (`number`, default: `5`).
+
+Setting this to `0` means no limit on concurrent uploads, but we recommend a value between `5` and `20`. This option is passed through to the [`@uppy/tus`](/docs/upload-strategies/tus) plugin, which this plugin uses internally.
+
+### `assemblyOptions`
+
+Configure the [Assembly Instructions](https://transloadit.com/docs/topics/assembly-instructions/), the fields to send along to the assembly, and authentication (`object | function`, default: `null`).
+
+The object you can pass or return from a function has this structure:
+
+```json
+{
+  "params": {
+    "auth": { "key": "key-from-transloadit" },
+    "template_id": "id-from-transloadit",
+    "steps": {
+      // Overruling Template at runtime
+    },
+    "notify_url": "https://your-domain.com/assembly-status",
+  },
+  "signature": "generated-signature",
+  "fields": {
+    // Dynamic or static fields to send along to the assembly
+  },
+}
+```
+
+* `params` is used to authenticate with Transloadit and using your desired [template](https://transloadit.com/docs/topics/templates/).
+  * `auth.key` _(required)_ is your authentication key which you can find on the “Credentials” page of your account.
+  * `template_id` _(required)_ is the unique identifier to use the right template from your account.
+  * `steps` _(optional)_ can be used to [overrule Templates at runtime](https://transloadit.com/docs/topics/templates/#overruling-templates-at-runtime).
+    A typical use case might be changing the storage path on the fly based on the session user id. For most use cases, we recommend to let your Templates handle dynamic cases (they can accept `fields` and execute arbitrary JavaScript as well), and not pass in `steps` from a browser. The template editor also has extra validations and context.
+  * `notify_url` _(optional)_ is a pingback with the assembly status as JSON. For instance, if you don’t want to block the user experience by letting them wait for your template to complete with [`waitForEncoding`](#waitForEncoding), but you do want to want to asynchrounously have an update, you can provide an URL which will be “pinged” with the assembly status.
+* `signature` _(optional, but recommended)_ is a cryptographic signature to provide further trust in unstrusted environments. Refer to “[Signature Authentication”](https://transloadit.com/docs/topics/signature-authentication/) for more information.
+* `fields` _(optional)_ can be used to to send along key/value pairs, which can be [used dynamically in your template](https://transloadit.com/docs/topics/assembly-instructions/#form-fields-in-instructions).
+
+> When you go to production always make sure to set the `signature`.
+> **Not using [Signature Authentication](https://transloadit.com/docs/topics/signature-authentication/) can be a security risk**.
+> Signature Authentication is a security measure that can prevent outsiders from tampering with your Assembly Instructions.
+> While Signature Authentication is not implemented (yet),
+> we recommend to enable `allow_steps_override` in your Templates to avoid outsiders being able to pass in any Instructions and storage targets on your behalf.
+
+**Example as a function**
+
+A custom `assemblyOptions()` option should return an object or a promise for an object.
 
 ```js
 uppy.use(Transloadit, {
-  params: {
-    auth: { key: 'YOUR_TRANSLOADIT_KEY' },
-    steps: {
-      encode: {
-        robot: '/video/encode',
-        use: {
-          steps: [':original'],
-          fields: ['file_input_field2'],
-        },
-        preset: 'iphone',
+  assemblyOptions (file) {
+    return {
+      params: {
+        auth: { key: 'TRANSLOADIT_AUTH_KEY_HERE' },
+        template_id: 'xyz',
       },
-    },
+      fields: {
+        caption: file.meta.caption,
+      },
+    }
   },
 })
 ```
 
-<a id="waitForEncoding"></a>
+The `${fields.caption}` variable will be available in the Assembly spawned from Template `xyz`. You can use this to dynamically watermark images for example.
+
+`assemblyOptions()` may also return a Promise, so it could retrieve signed Assembly parameters from a server. For example, assuming an endpoint `/transloadit-params` that responds with a JSON object with `{ params, signature }` properties:
+
+```js
+uppy.use(Transloadit, {
+  async assemblyOptions (file) {
+    const res = await fetch('/transloadit-params')
+    return response.json()
+  },
+})
+```
+
+**Example as an object**
+
+If you don’t need to change anything dynamically, you can also pass an object directly.
+
+```js
+uppy.use(Transloadit, {
+  assemblyOptions: {
+    params: { auth: { key: 'transloadit-key' } },
+  },
+})
+```
+
+**Example with @uppy/form**
+
+Combine the `assemblyOptions()` option with the [Form](/docs/form) plugin to pass user input from a `<form>` to a Transloadit Assembly:
+
+```js
+// This will add form field values to each file's `.meta` object:
+uppy.use(Form, { getMetaFromForm: true })
+uppy.use(Transloadit, {
+  getAssemblyOptions (file) {
+    return {
+      params: { /* ... */ },
+      // Pass through the fields you need:
+      fields: {
+        message: file.meta.message,
+      },
+    }
+  },
+})
+```
 
 ### `waitForEncoding: false`
 
@@ -210,100 +293,6 @@ For this to work, the upload plugin must assign a publically accessible `uploadU
 
 When set to true, always create and run an Assembly when `uppy.upload()` is called, even if no files were selected. This allows running Assemblies that do not receive files, but instead use a robot like [`/s3/import`](https://transloadit.com/docs/transcoding/#s3-import) to download the files from elsewhere, for example, for a bulk transcoding job.
 
-### `signature`
-
-An optional signature for the Assembly parameters. See the Transloadit documentation on [Signature Authentication](https://transloadit.com/docs/#26-signature-authentication) for further information.
-
-If a `signature` is provided, `params` should be a JSON string instead of a JavaScript object, as otherwise the generated JSON in the browser may be different from the JSON string that was used to generate the signature.
-
-### `fields`
-
-An object of form fields to send along to the Assembly. Keys are field names, and values are field values. See also the Transloadit documentation on [Form Fields In Instructions](https://transloadit.com/docs/#23-form-fields-in-instructions).
-
-```js
-uppy.use(Transloadit, {
-  // ...
-  fields: {
-    message: 'This is a form field',
-  },
-})
-```
-
-You can also pass an array of field names to send global or file metadata along to the Assembly. Global metadata is set using the [`meta` option](/docs/uppy/#meta) in the Uppy constructor, or using the [`setMeta` method](/docs/uppy/#uppy-setMeta-data). File metadata is set using the [`setFileMeta`](/docs/uppy/#uppy-setFileMeta-fileID-data) method. The [Form](/docs/form) plugin also sets global metadata based on the values of `<input />`s in the form, providing a handy way to use values from HTML form fields:
-
-```js
-uppy.use(Form, { target: 'form#upload-form', getMetaFromForm: true })
-uppy.use(Transloadit, {
-  fields: ['field_name', 'other_field_name'],
-  params: { /* ... */ },
-})
-```
-
-Form fields can also be computed dynamically using custom logic, by using the [`getAssemblyOptions(file)`](/docs/transloadit/#getAssemblyOptions-file) option.
-
-### `getAssemblyOptions(file)`
-
-While `params`, `signature`, and `fields` must be determined ahead of time, the `getAssemblyOptions` allows using dynamically generated values for these options. This way, it’s possible to use different Assembly parameters for different files, or to use some user input in an Assembly.
-
-A custom `getAssemblyOptions()` option should return an object or a Promise for an object with properties `{ params, signature, fields }`. For example, to add a field with some user-provided data from the `MetaData` plugin:
-
-```js
-uppy.use(MetaData, {
-  fields: [
-    { id: 'caption' },
-  ],
-})
-uppy.use(Transloadit, {
-  getAssemblyOptions (file) {
-    return {
-      params: {
-        auth: { key: 'TRANSLOADIT_AUTH_KEY_HERE' },
-        template_id: 'xyz',
-      },
-      fields: {
-        caption: file.meta.caption,
-      },
-    }
-  },
-})
-```
-
-Now, the `${fields.caption}` variable will be available in the Assembly template.
-
-Combine the `getAssemblyOptions()` option with the [Form](/docs/form) plugin to pass user input from a `<form>` to a Transloadit Assembly:
-
-```js
-// This will add form field values to each file's `.meta` object:
-uppy.use(Form, { getMetaFromForm: true })
-uppy.use(Transloadit, {
-  getAssemblyOptions (file) {
-    return {
-      params: { /* ... */ },
-      // Pass through the fields you need:
-      fields: {
-        message: file.meta.message,
-      },
-    }
-  },
-})
-```
-
-`getAssemblyOptions()` may also return a Promise, so it could retrieve signed Assembly parameters from a server. For example, assuming an endpoint `/transloadit-params` that responds with a JSON object with `{ params, signature }` properties:
-
-```js
-uppy.use(Transloadit, {
-  getAssemblyOptions (file) {
-    return fetch('/transloadit-params').then((response) => {
-      return response.json()
-    })
-  },
-})
-```
-
-### `limit: 0`
-
-Limit the amount of uploads going on at the same time. Setting this to `0` means no limit on concurrent uploads. This option is passed through to the [`@uppy/tus`](/docs/tus) plugin that Transloadit plugin uses internally.
-
 ### `locale: {}`
 
 ```js
@@ -319,6 +308,12 @@ export default {
   },
 }
 ```
+
+### Deprecated options
+
+`getAssemblyOptions`, `params`, `signature`, and `fields`  have been deprecated in favor of [`assemblyOptions`](#assemblyoptions), which we now recommend for all use cases. You can still use these options, but they will be removed in the next major version.
+
+You can view the old docs for them [here](https://github.com/transloadit/uppy/blob/ff32dde1fd71af6dd5cd1927a1408dba36ab5329/website/src/docs/transloadit.md?plain=1).
 
 ## Errors
 

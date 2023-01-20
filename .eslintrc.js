@@ -192,7 +192,7 @@ module.exports = {
         '*.mjs',
         'e2e/clients/**/*.js',
         'examples/aws-companion/*.js',
-        'examples/aws-presigned-url/*.js',
+        'examples/aws-php/*.js',
         'examples/bundled/*.js',
         'examples/custom-provider/client/*.js',
         'examples/digitalocean-spaces/*.js',
@@ -328,6 +328,14 @@ module.exports = {
         'examples/vue/**/*.js',
         'examples/vue3/**/*.js',
       ],
+      rules: {
+        'no-unused-vars': [
+          'error',
+          {
+            'varsIgnorePattern': 'React',
+          },
+        ],
+      },
       parserOptions: {
         sourceType: 'module',
       },

@@ -66,13 +66,13 @@ uppy.use(AwsS3, {
 
 Custom headers that should be sent along to [Companion][companion docs] on every request.
 
-### `allowedMetaFields: null`
+### `allowedMetaFields: []`
 
 Pass an array of field names to limit the metadata fields that will be added to upload as query parameters.
 
+* Set this to an empty array `[]` to not send any fields (this is the default).
 * Set this to `['name']` to only send the `name` field.
-* Set this to `null` (the default) to send _all_ metadata fields.
-* Set this to an empty array `[]` to not send any fields.
+* Set this to `null` to send _all_ metadata fields.
 
 ### `getUploadParameters(file)`
 
@@ -347,7 +347,7 @@ uppy.use(AwsS3, {
 })
 ```
 
-See the [aws-presigned-url example in the uppy repository](https://github.com/transloadit/uppy/tree/main/examples/aws-presigned-url) for a small example that implements both the server-side and the client-side.
+See the [aws-php example in the uppy repository](https://github.com/transloadit/uppy/tree/main/examples/aws-php) for a small example that implements both the server-side and the client-side.
 
 ### Retrieving presign parameters of the uploaded file
 

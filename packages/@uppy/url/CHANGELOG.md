@@ -1,5 +1,13 @@
 # @uppy/url
 
+## 3.1.0
+
+Released: 2022-10-19
+Included in: Uppy v3.2.0
+
+- @uppy/url: refactor `UrlUI` (Antoine du Hamel / #4143)
+- @uppy/url: trim whitespace around user input (Andrew McIntee / #4143)
+
 ## 3.0.1
 
 Released: 2022-09-25

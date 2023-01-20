@@ -1,36 +1,37 @@
-import React from 'react' // eslint-disable-line no-unused-vars
+import React from 'react'
 import { StyleSheet, View, FlatList, Text, Image } from 'react-native'
 
 import getFileTypeIcon from '@uppy/dashboard/lib/utils/getFileTypeIcon.js'
-import truncateString from '@uppy/dashboard/lib/utils/truncateString.js'
 import renderStringFromJSX from 'preact-render-to-string'
 
-// function truncateString (str) {
-//   const maxChars = 20
-//   if (str.length > maxChars) {
-//     return str.substring(0, 25) + '...'
-//   }
+const fileIcon = require('./assets/file-icon.png')
 
-//   return str
-// }
+const truncateString = (str) => {
+  const maxChars = 20
+  if (str.length > maxChars) {
+    return `${str.substring(0, 25)}...`
+  }
+
+  return str
+}
 
 function FileIcon () {
   return (
     <View style={styles.itemIconContainer}>
       <Image
         style={styles.itemIcon}
-        source={require('./assets/file-icon.png')}
+        source={fileIcon}
       />
     </View>
   )
 }
 
-function UppyDashboardFileIcon (props) {
-  const icon = renderStringFromJSX(getFileTypeIcon(props.type).icon)
+function UppyDashboardFileIcon ({ type }) {
+  const icon = renderStringFromJSX(getFileTypeIcon(type).icon)
   if (!icon) {
     return <FileIcon />
   }
-  const { color } = getFileTypeIcon(props.type)
+  const { color } = getFileTypeIcon(type)
   return (
     <View
       style={{
@@ -43,8 +44,8 @@ function UppyDashboardFileIcon (props) {
   )
 }
 
-export default function FileList (props) {
-  const uppyFiles = props.uppy.state.files
+export default function FileList ({ uppy }) {
+  const uppyFiles = uppy.store.state.files
   const uppyFilesArray = Object.keys(uppyFiles).map((id) => uppyFiles[id])
 
   return (
@@ -80,6 +81,8 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     flex: 1,
     justifyContent: 'center',
+    alignItems:'center',
+    marginRight: -25,
   },
   item: {
     width: 100,

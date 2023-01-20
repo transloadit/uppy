@@ -39,15 +39,15 @@ const { AwsS3Multipart } = Uppy
 
 The `@uppy/aws-s3-multipart` plugin has the following configurable options:
 
-### `limit: 5`
+### `limit: 6`
 
-The maximum amount of chunks to upload simultaneously. This affects [`prepareUploadParts()`](#prepareUploadParts-file-partData) as well; after the initial batch of `limit` parts is presigned, a minimum of `limit / 2` rounded up will be presigned at a time. You should set the limit carefully. Setting it to a value too high could cause issues where the presigned URLs begin to expire before the chunks they are for start uploading. Too low and you will end up with a lot of extra round trips to your server (or Companion) than necessary to presign URLs. If the default chunk size of 5MB is used, a `limit` between 5 and 15 is recommended.
+The maximum amount of chunks to upload simultaneously. You should set the limit carefully. Setting it to a value too high could cause issues where the presigned URLs begin to expire before the chunks they are for start uploading. Too low and you will end up with a lot of extra round trips to your server (or Companion) than necessary to presign URLs. If the default chunk size of 5MB is used, a `limit` between 5 and 6 is recommended.
 
-For example, with a 50MB file and a `limit` of 5 we end up with 10 chunks. 5 of these are presigned in one batch, then 3, then 2, for a total of 3 round trips to the server via [`prepareUploadParts()`](#prepareUploadParts-file-partData) and 10 requests sent to AWS via the presigned URLs generated.
+Because HTTP/1.1 limits the number of concurrent requests to one origin to 6, it’s recommended to always set a limit of 6 or smaller for all your uploads, or to not override the default.
 
 ### `retryDelays: [0, 1000, 3000, 5000]`
 
-`retryDelays` are the intervals in milliseconds used to retry a failed chunk as well as [`prepareUploadParts`](#prepareUploadParts-file-partData).
+`retryDelays` are the intervals in milliseconds used to retry a failed chunk.
 
 By default, we first retry instantly; if that fails, we retry after 1 second; if that fails, we retry after 3 seconds, etc.
 
@@ -69,11 +69,19 @@ This will be used by the default implementations of the upload-related functions
 
 This option correlates to the [RequestCredentials value](https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials), which tells the plugin whether to send cookies to [Companion](/docs/companion).
 
+### `allowedMetaFields: null`
+
+Pass an array of field names to limit the metadata fields that will be added to upload as query parameters.
+
+* Set this to `['name']` to only send the `name` field.
+* Set this to `null` (the default) to send _all_ metadata fields.
+* Set this to an empty array `[]` to not send any fields.
+
 ### `getChunkSize(file)`
 
 A function that returns the minimum chunk size to use when uploading the given file.
 
-The S3 Multipart plugin uploads files in chunks. Chunks are sent in batches to have presigned URLs generated via ([`prepareUploadParts()`](#prepareUploadParts-file-partData)). To reduce the amount of requests for large files, you can choose a larger chunk size, at the cost of having to re-upload more data if one chunk fails to upload.
+The S3 Multipart plugin uploads files in chunks. Chunks are sent one by one to have presigned URLs generated via [`signPart()`][]. To reduce the amount of requests for large files, you can choose a larger chunk size, at the cost of having to re-upload more data if one chunk fails to upload.
 
 S3 requires a minimum chunk size of 5MB, and supports at most 10,000 chunks per multipart upload. If `getChunkSize()` returns a size that’s too small, Uppy will increase it to S3’s minimum requirements.
 
@@ -105,11 +113,14 @@ The default implementation calls out to Companion’s S3 signing endpoints.
 
 ### `prepareUploadParts(file, partData)`
 
+> This option is deprecated. Use [`signPart()`][] instead.
+
 A function that generates a batch of signed URLs for the specified part numbers. Receives the `file` object from Uppy’s state. The `partData` argument is an object with keys:
 
 * `uploadId` - The UploadID of this Multipart upload.
 * `key` - The object key in the S3 bucket.
-* `parts` - An array of objects with the part number and chunk (`Array<{ number: number, chunk: blob }>`). `number` can’t be zero.
+* `parts` - An array containing a single object with the part number and chunk (`Array<{ number: number, chunk: blob }>`). `number` can’t be zero.
+* `signal` – An `AbortSignal` that may be used to abort an ongoing request.
 
 `prepareUploadParts` should return a `Promise` with an `Object` with keys:
 
@@ -122,26 +133,36 @@ An example of what the return value should look like:
 {
   "presignedUrls": {
     "1": "https://bucket.region.amazonaws.com/path/to/file.jpg?partNumber=1&...",
-    "2": "https://bucket.region.amazonaws.com/path/to/file.jpg?partNumber=2&...",
-    "3": "https://bucket.region.amazonaws.com/path/to/file.jpg?partNumber=3&..."
   },
   "headers": { 
     "1": { "Content-MD5": "foo" },
-    "2": { "Content-MD5": "bar" },
-    "3": { "Content-MD5": "baz" }
   }
 }
 ```
 
-If an error occured, reject the `Promise` with an `Object` with the following keys:
+### `signPart(file, partData)`
 
-<!-- eslint-disable -->
+A function that generates a signed URL for the specified part number. The `partData` argument is an object with the keys:
+
+* `uploadId` - The UploadID of this Multipart upload.
+* `key` - The object key in the S3 bucket.
+* `partNumber` - can’t be zero.
+* `body` – The data that will be signed.
+* `signal` – An `AbortSignal` that may be used to abort an ongoing request.
+
+This function should return a object, or a promise that resolves to an object, with the following keys:
+
+* `url` – the presigned URL, as a `string`.
+* `headers` – **(Optional)** Custom headers to send along with the request to S3 endpoint.
+
+An example of what the return value should look like:
 
 ```json
-{ "source": { "status": 500 } }
+{
+  "url": "https://bucket.region.amazonaws.com/path/to/file.jpg?partNumber=1&...",
+  "headers": { "Content-MD5": "foo" }
+}
 ```
-
-`status` is the HTTP code and is required for determining whether to retry the request. `prepareUploadParts` will be retried if the code is `0`, `409`, `423`, or between `500` and `600`.
 
 ### `abortMultipartUpload(file, { uploadId, key })`
 
@@ -195,3 +216,5 @@ While the AWS S3 plugin uses `POST` requests when uploading files to an S3 bucke
   }
 ]
 ```
+
+[`signPart()`]: #signPart-file-partData

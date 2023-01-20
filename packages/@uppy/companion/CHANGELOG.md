@@ -1,5 +1,28 @@
 # @uppy/companion
 
+## 4.1.1
+
+Released: 2022-11-16
+Included in: Uppy v3.3.1
+
+- @uppy/companion: send expire info for non-multipart uploads (Antoine du Hamel / #4214)
+
+## 4.1.0
+
+Released: 2022-11-10
+Included in: Uppy v3.3.0
+
+- @uppy/companion: change default S3 expiry from 300 to 800 seconds (Merlijn Vos / #4206)
+- @uppy/companion: send expiry time along side S3 signed requests (Antoine du Hamel / #4202)
+
+## 4.0.4
+
+Released: 2022-10-19
+Included in: Uppy v3.2.0
+
+- @uppy/companion: add workaround for S3 accelerated endpoints (Mikael Finstad / #4140)
+- @uppy/companion: fix error message (Mikael Finstad / #4125)
+
 ## 4.0.2
 
 Released: 2022-09-25

@@ -1,0 +1,19 @@
+{
+  "name": "@uppy-example/aws-nodejs",
+  "version": "1.0.0",
+  "description": "Uppy for AWS S3 with a custom Node.js backend for signing URLs",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node --watch index.js",
+    "start": "node index.js"
+  },
+  "private": true,
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "aws-sdk": "^2.1038.0",
+    "body-parser": "^1.20.0",
+    "dotenv": "^16.0.0",
+    "express": "^4.18.1"
+  }
+}
