@@ -9072,6 +9072,7 @@ __metadata:
   dependencies:
     "@uppy/utils": "workspace:^"
     classnames: ^2.2.6
+    nanoid: ^4.0.0
     preact: ^10.5.13
   peerDependencies:
     "@uppy/core": "workspace:^"
@@ -9280,6 +9281,7 @@ __metadata:
   dependencies:
     "@uppy/companion-client": "workspace:^"
     "@uppy/utils": "workspace:^"
+    nanoid: ^4.0.0
     preact: ^10.5.13
   peerDependencies:
     "@uppy/core": "workspace:^"

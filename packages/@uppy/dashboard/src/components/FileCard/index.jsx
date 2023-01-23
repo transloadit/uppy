@@ -1,6 +1,6 @@
-import {  h, Component  } from 'preact'
+import { h, Component } from 'preact'
 import classNames from 'classnames'
-import {  nanoid  } from 'nanoid/non-secure'
+import { nanoid } from 'nanoid/non-secure'
 import getFileTypeIcon from '../../utils/getFileTypeIcon.jsx'
 import ignoreEvent from '../../utils/ignoreEvent.js'
 import FilePreview from '../FilePreview.jsx'
@@ -26,8 +26,7 @@ class FileCard extends Component {
     this.form.id = nanoid()
   }
 
-  // TODO(aduh95): move this to `UNSAFE_componentWillMount` when updating to Preact X+.
-  componentWillMount () { // eslint-disable-line react/no-deprecated
+  componentDidMount () { // eslint-disable-line react/no-deprecated
     this.form.addEventListener('submit', this.handleSave)
     document.body.appendChild(this.form)
   }
@@ -52,8 +51,8 @@ class FileCard extends Component {
     }))
   }
 
-  handleSave = (e) => {
-    e.preventDefault()
+  handleSave = (ev) => {
+    ev.preventDefault()
     const fileID = this.props.fileCardFor
     this.props.saveFileCard(this.state.formState, fileID)
   }
@@ -62,15 +61,6 @@ class FileCard extends Component {
     const file = this.props.files[this.props.fileCardFor]
     this.props.uppy.emit('file-editor:cancel', file)
     this.props.toggleFileCard(false)
-  }
-
-  saveOnEnter = (ev) => {
-    if (ev.keyCode === 13) {
-      ev.stopPropagation()
-      ev.preventDefault()
-      const file = this.props.files[this.props.fileCardFor]
-      this.props.saveFileCard(this.state.formState, file.id)
-    }
   }
 
   renderMetaFields = () => {
@@ -102,11 +92,6 @@ class FileCard extends Component {
                 required={required}
                 value={this.state.formState[field.id]}
                 placeholder={field.placeholder}
-                // If `form` attribute is not supported, we need to capture pressing Enter to avoid bubbling in case Uppy is
-                // embedded inside a <form>.
-                onKeyUp={'form' in HTMLInputElement.prototype ? undefined : this.saveOnEnter}
-                onKeyDown={'form' in HTMLInputElement.prototype ? undefined : this.saveOnEnter}
-                onKeyPress={'form' in HTMLInputElement.prototype ? undefined : this.saveOnEnter}
                 onInput={ev => this.updateMeta(ev.target.value, field.id)}
                 data-uppy-super-focusable
               />
@@ -162,7 +147,6 @@ class FileCard extends Component {
                   this.handleSave(event)
                   this.props.openFileEditor(file)
                 }}
-                form={this.form.id}
               >
                 {this.props.i18n('editFile')}
               </button>
@@ -178,8 +162,7 @@ class FileCard extends Component {
               className="uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-Dashboard-FileCard-actionsBtn"
               // If `form` attribute is supported, we want a submit button to trigger the form validation.
               // Otherwise, fallback to a classic button with a onClick event handler.
-              type={'form' in HTMLButtonElement.prototype ? 'submit' : 'button'}
-              onClick={'form' in HTMLButtonElement.prototype ? undefined : this.handleSave}
+              type="submit"
               form={this.form.id}
             >
               {this.props.i18n('saveChanges')}

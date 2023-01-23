@@ -1,17 +1,27 @@
 import { h } from 'preact'
+import { useEffect } from 'preact/hooks'
+import { nanoid } from 'nanoid/non-secure'
 
 export default ({ i18n, search }) => {
   let input
-  const validateAndSearch = () => {
+  const validateAndSearch = (ev) => {
+    ev.preventDefault()
     if (input.value) {
       search(input.value)
     }
   }
-  const handleKeyPress = (ev) => {
-    if (ev.keyCode === 13) {
-      validateAndSearch()
+
+  const form = document.createElement('form')
+  form.id = nanoid()
+
+  useEffect(() => {
+    form.addEventListener('submit', validateAndSearch)
+    document.body.appendChild(form)
+    return () => {
+      form.removeEventListener('submit', validateAndSearch)
+      document.body.removeChild(form)
     }
-  }
+  })
 
   return (
     <div className="uppy-SearchProvider">
@@ -20,14 +30,14 @@ export default ({ i18n, search }) => {
         type="search"
         aria-label={i18n('enterTextToSearch')}
         placeholder={i18n('enterTextToSearch')}
-        onKeyUp={handleKeyPress}
         ref={(input_) => { input = input_ }}
         data-uppy-super-focusable
+        form={form.id}
       />
       <button
         className="uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-SearchProvider-searchButton"
-        type="button"
-        onClick={validateAndSearch}
+        type="submit"
+        form={form.id}
       >
         {i18n('searchImages')}
       </button>
