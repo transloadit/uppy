@@ -45,7 +45,7 @@
     "express-session": "1.17.3",
     "form-data": "^3.0.0",
     "got": "11",
-    "grant": "4.7.0",
+    "grant": "5.4.21",
     "helmet": "^4.6.0",
     "ipaddr.js": "^2.0.1",
     "jsonwebtoken": "8.5.1",

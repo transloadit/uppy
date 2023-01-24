@@ -1,5 +1,5 @@
 const express = require('express')
-const Grant = require('grant').express()
+const Grant = require('grant').default.express()
 const merge = require('lodash.merge')
 const cookieParser = require('cookie-parser')
 const interceptor = require('express-interceptor')
