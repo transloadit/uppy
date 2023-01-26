@@ -296,6 +296,9 @@ export COMPANION_PERIODIC_PING_INTERVAL=60000
 # corresponds to the periodicPingStaticPayload option (JSON string)
 export COMPANION_PERIODIC_PING_STATIC_JSON_PAYLOAD="{\"static\":\"data\"}"
 
+# Set a custom prefix for redis keys created by [connect-redis](https://github.com/tj/connect-redis). Defaults to `sess:`. Sessions are used for storing authentication state and for allowing thumbnails to be loaded by the browser via Companion. You might want to change this because if you run a redis with many different apps in the same redis server, it's hard to know where `sess:` comes from and it might collide with other apps. **Note:** in the future ,we plan and changing the default to `companion:` and possibly remove this option.
+export COMPANION_REDIS_EXPRESS_SESSION_PREFIX="sess:"
+
 # If you need to use `companionKeysParams` (custom OAuth credentials at request time),
 # set this variable to a strong randomly generated secret.
 # See also https://github.com/transloadit/uppy/pull/2622
