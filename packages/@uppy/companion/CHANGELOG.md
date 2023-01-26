@@ -1,5 +1,14 @@
 # @uppy/companion
 
+## 4.2.0
+
+Released: 2023-01-26
+Included in: Uppy v3.4.0
+
+- @uppy/companion: allow customizing express session prefix (Mikael Finstad / #4249)
+- @uppy/companion: Fix typo in KUBERNETES.md (Collin Allen / #4277)
+- @uppy/companion: document how to run many instances (Mikael Finstad / #4227)
+
 ## 4.1.1
 
 Released: 2022-11-16

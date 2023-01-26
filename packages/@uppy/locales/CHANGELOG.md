@@ -1,5 +1,12 @@
 # @uppy/locales
 
+## 3.0.5
+
+Released: 2023-01-26
+Included in: Uppy v3.4.0
+
+- @uppy/locales: update zh_TW.js (5idereal / #4270)
+
 ## 3.0.4
 
 Released: 2022-11-10

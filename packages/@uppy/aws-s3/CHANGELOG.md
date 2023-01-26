@@ -1,5 +1,12 @@
 # @uppy/aws-s3
 
+## 3.0.5
+
+Released: 2023-01-26
+Included in: Uppy v3.4.0
+
+- @uppy/aws-s3: fix: add https:// to digital oceans link (Le Gia Hoang / #4165)
+
 ## 3.0.4
 
 Released: 2022-10-24

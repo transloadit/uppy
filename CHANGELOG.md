@@ -12,6 +12,45 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 3.4.0
+
+Released: 2023-01-26
+
+| Package                | Version | Package                | Version |
+| ---------------------- | ------- | ---------------------- | ------- |
+| @uppy/audio            |   1.0.3 | @uppy/locales          |   3.0.5 |
+| @uppy/aws-s3           |   3.0.5 | @uppy/react            |   3.1.0 |
+| @uppy/aws-s3-multipart |   3.1.2 | @uppy/react-native     |   0.5.0 |
+| @uppy/companion        |   4.2.0 | @uppy/transloadit      |   3.1.0 |
+| @uppy/core             |   3.0.5 | @uppy/utils            |   5.1.2 |
+| @uppy/dashboard        |   3.2.1 | uppy                   |   3.4.0 |
+
+- @uppy/utils: better fallbacks for the drag & drop API (Antoine du Hamel / #4260)
+- @uppy/core: fix metafields validation when used as function (Merlijn Vos / #4276)
+- @uppy/companion: allow customizing express session prefix (Mikael Finstad / #4249)
+- meta: Fix comment about COMPANION_PATH (Collin Allen / #4279)
+- @uppy/companion: Fix typo in KUBERNETES.md (Collin Allen / #4277)
+- @uppy/locales: update zh_TW.js (5idereal / #4270)
+- meta: ci: make sure Yarn's global cache is disabled (Antoine du Hamel / #4268)
+- @uppy/aws-s3-multipart: fix metadata shape (Antoine du Hamel / #4267)
+- meta: example: add multipart support to `aws-nodejs` (Antoine du Hamel / #4257)
+- @uppy/react-native: example: revive React Native example (Giacomo Cerquone / #4164)
+- @uppy/utils: Fix getSpeed type (referenced `bytesTotal` instead of `uploadStarted`) (Pascal Wengerter / #4263)
+- @uppy/companion: document how to run many instances (Mikael Finstad / #4227)
+- @uppy/aws-s3-multipart: add support for `allowedMetaFields` option (Antoine du Hamel / #4215)
+- meta: Fix indentation in generate-test.mjs (Youssef Victor / #4181)
+- @uppy/react: deprecate `useUppy` (Merlijn Vos / #4223)
+- meta: fix typo in README.md (Fuad Herac / #4254)
+- meta: Don’t close stale issues automatically (Artur Paikin / #4246)
+- meta: upgrade to Vite 4 and ESBuild 0.16 (Antoine du Hamel / #4243)
+- @uppy/audio: @uppy/audio fix typo in readme (elliotsayes / #4240)
+- @uppy/aws-s3: fix: add https:// to digital oceans link (Le Gia Hoang / #4165)
+- website: Simplify Dashboard code sample (Artur Paikin / #4197)
+- @uppy/transloadit: introduce `assemblyOptions`, deprecate other options (Merlijn Vos / #4059)
+- @uppy/core: fix typo in Uppy.test.js (Ikko Ashimine / #4235)
+- @uppy/aws-s3-multipart: fix singPart type (Stefan Schonert / #4224)
+
+
 ## 3.3.1
 
 Released: 2022-11-16
