@@ -1,5 +1,13 @@
 # @uppy/core
 
+## 3.0.5
+
+Released: 2023-01-26
+Included in: Uppy v3.4.0
+
+- @uppy/core: fix metafields validation when used as function (Merlijn Vos / #4276)
+- @uppy/core: fix typo in Uppy.test.js (Ikko Ashimine / #4235)
+
 ## 3.0.4
 
 Released: 2022-10-24

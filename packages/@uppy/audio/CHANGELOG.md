@@ -1,5 +1,12 @@
 # @uppy/audio
 
+## 1.0.3
+
+Released: 2023-01-26
+Included in: Uppy v3.4.0
+
+- @uppy/audio: @uppy/audio fix typo in readme (elliotsayes / #4240)
+
 ## 1.0.2
 
 Released: 2022-09-25
