@@ -88,7 +88,9 @@
 }
 
 .uppy-Dashboard-Item-errorMessageBtn {
+  font-size: 11px;
   text-decoration: underline;
+  color: darken($red, 15%);
   cursor: pointer;
   font-weight: 500;
 }
