@@ -25,19 +25,19 @@ function getAsFileSystemHandleFromEntry (entry, logDropError) {
   }
 }
 
-async function* createPromiseToAddFileOrParseDirectory (entry, relativePath) {
+async function* createPromiseToAddFileOrParseDirectory (entry, relativePath, lastResortFile = undefined) {
   // For each dropped item, - make sure it's a file/directory, and start deepening in!
   if (entry.kind === 'file') {
     const file = await entry.getFile()
     if (file !== null) {
       file.relativePath = relativePath ? `${relativePath}/${entry.name}` : null
       yield file
-    }
+    } else if (lastResortFile != null) yield lastResortFile
   } else if (entry.kind === 'directory') {
     for await (const handle of entry.values()) {
       yield* createPromiseToAddFileOrParseDirectory(handle, `${relativePath}/${entry.name}`)
     }
-  }
+  } else if (lastResortFile != null) yield lastResortFile
 }
 
 export default async function* getFilesFromDataTransfer (dataTransfer, logDropError) {
@@ -53,14 +53,14 @@ export default async function* getFilesFromDataTransfer (dataTransfer, logDropEr
     // :entry can be null when we drop the url e.g.
     if (entry != null) {
       try {
-        yield* createPromiseToAddFileOrParseDirectory(entry, '')
+        yield* createPromiseToAddFileOrParseDirectory(entry, '', lastResortFile)
       } catch (err) {
-        if (lastResortFile) {
+        if (lastResortFile != null) {
           yield lastResortFile
         } else {
           logDropError(err)
         }
       }
-    }
+    } else if (lastResortFile != null) yield lastResortFile
   }
 }
