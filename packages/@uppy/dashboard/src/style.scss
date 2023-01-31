@@ -198,6 +198,13 @@
   fill: #9f9f9f;
 }
 
+// Disallow clicking on all interactive elements
+.uppy-Dashboard--isDisabled .uppy-Dashboard-innerWrap {
+  button, a, input, select, textarea {
+    pointer-events: none;
+  }
+}
+
 .uppy-Dashboard--modal .uppy-Dashboard-inner {
   position: fixed;
   top: 35px;
