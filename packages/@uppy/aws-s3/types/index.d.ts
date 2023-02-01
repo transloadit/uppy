@@ -10,6 +10,7 @@ export interface AwsS3UploadParameters {
 }
 
 export interface AwsS3Options extends PluginOptions {
+    companionHeaders?: { [type: string]: string }
     companionUrl?: string
     getUploadParameters?: (file: UppyFile) => MaybePromise<AwsS3UploadParameters>
     allowedMetaFields?: string[] | null
