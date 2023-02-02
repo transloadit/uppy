@@ -21,6 +21,10 @@ const { getCredentialsOverrideMiddleware } = require('./server/provider/credenti
 // @ts-ignore
 const { version } = require('../package.json')
 
+function setLoggerProcessName ({ loggerProcessName }) {
+  if (loggerProcessName != null) logger.setProcessName(loggerProcessName)
+}
+
 // intercepts grantJS' default response error when something goes
 // wrong during oauth process.
 const interceptGrantErrorResponse = interceptor((req, res) => {
@@ -51,6 +55,8 @@ const interceptGrantErrorResponse = interceptor((req, res) => {
 module.exports.errors = { ProviderApiError, ProviderAuthError }
 module.exports.socket = require('./server/socket')
 
+module.exports.setLoggerProcessName = setLoggerProcessName
+
 /**
  * Entry point into initializing the Companion app.
  *
@@ -58,6 +64,8 @@ module.exports.socket = require('./server/socket')
  * @returns {{ app: import('express').Express, emitter: any }}}
  */
 module.exports.app = (optionsArg = {}) => {
+  setLoggerProcessName(optionsArg)
+
   validateConfig(optionsArg)
 
   const options = merge({}, defaultOptions, optionsArg)
