@@ -8822,7 +8822,7 @@ __metadata:
     express-session: 1.17.3
     form-data: ^3.0.0
     got: 11
-    grant: 4.7.0
+    grant: 5.4.21
     helmet: ^4.6.0
     into-stream: ^6.0.0
     ipaddr.js: ^2.0.1
@@ -10931,7 +10931,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"asn1.js@npm:^5.2.0":
+"asn1.js@npm:^5.2.0, asn1.js@npm:^5.3.0":
   version: 5.4.1
   resolution: "asn1.js@npm:5.4.1"
   dependencies:
@@ -13784,6 +13784,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"cookie-signature@npm:^1.1.0":
+  version: 1.2.0
+  resolution: "cookie-signature@npm:1.2.0"
+  checksum: d11f56f909733695d989511bf0e1dd874220d818b9d118945dce3c275fa50adfb3f6984354de0f5eefdc9347951a22ba3545230a762576019d23c16055b12d4c
+  languageName: node
+  linkType: hard
+
 "cookie@npm:0.4.1":
   version: 0.4.1
   resolution: "cookie@npm:0.4.1"
@@ -13791,7 +13798,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cookie@npm:0.4.2, cookie@npm:~0.4.1":
+"cookie@npm:0.4.2, cookie@npm:^0.4.1, cookie@npm:~0.4.1":
   version: 0.4.2
   resolution: "cookie@npm:0.4.2"
   checksum: a00833c998bedf8e787b4c342defe5fa419abd96b32f4464f718b91022586b8f1bafbddd499288e75c037642493c83083da426c6a9080d309e3bd90fd11baa9b
@@ -15676,7 +15683,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"elliptic@npm:^6.5.3":
+"elliptic@npm:^6.5.3, elliptic@npm:^6.5.4":
   version: 6.5.4
   resolution: "elliptic@npm:6.5.4"
   dependencies:
@@ -19418,14 +19425,27 @@ __metadata:
   languageName: node
   linkType: hard
 
-"grant@npm:4.7.0":
-  version: 4.7.0
-  resolution: "grant@npm:4.7.0"
+"grant@npm:5.4.21":
+  version: 5.4.21
+  resolution: "grant@npm:5.4.21"
   dependencies:
-    qs: ^6.9.1
-    request-compose: ^1.2.1
-    request-oauth: 0.0.3
-  checksum: e704628c1e51dec914db7a1c06ec377c40ad7543ce65fa394f465269eec64a6f51cf836571ee77f2b0ac2f987171f7ba20aca679557cac8b53dfa6cc197834f8
+    cookie: ^0.4.1
+    cookie-signature: ^1.1.0
+    jwk-to-pem: ^2.0.5
+    jws: ^4.0.0
+    qs: ^6.10.2
+    request-compose: ^2.1.4
+    request-oauth: ^1.0.1
+  dependenciesMeta:
+    cookie:
+      optional: true
+    cookie-signature:
+      optional: true
+    jwk-to-pem:
+      optional: true
+    jws:
+      optional: true
+  checksum: 06e36704cc06da824c4d9458c14aa8c7c6764d58054defc061901efd90e14498f2bfb9b472401d8b70308ac061ccf6fbbbafae5493098359ec94491261c59f2b
   languageName: node
   linkType: hard
 
@@ -23019,6 +23039,28 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   languageName: node
   linkType: hard
 
+"jwa@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "jwa@npm:2.0.0"
+  dependencies:
+    buffer-equal-constant-time: 1.0.1
+    ecdsa-sig-formatter: 1.0.11
+    safe-buffer: ^5.0.1
+  checksum: 8f00b71ad5fe94cb55006d0d19202f8f56889109caada2f7eeb63ca81755769ce87f4f48101967f398462e3b8ae4faebfbd5a0269cb755dead5d63c77ba4d2f1
+  languageName: node
+  linkType: hard
+
+"jwk-to-pem@npm:^2.0.5":
+  version: 2.0.5
+  resolution: "jwk-to-pem@npm:2.0.5"
+  dependencies:
+    asn1.js: ^5.3.0
+    elliptic: ^6.5.4
+    safe-buffer: ^5.0.1
+  checksum: 14a8f518e9f81876a0f45233288fd1b611777d4d0fc317b8cd4b4e19602c305e537dc45d44476263667d950664a7ddf3c7a218a39b6b1f5e53e4ad53a44822ef
+  languageName: node
+  linkType: hard
+
 "jws@npm:^3.2.2":
   version: 3.2.2
   resolution: "jws@npm:3.2.2"
@@ -23026,6 +23068,16 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
     jwa: ^1.4.1
     safe-buffer: ^5.0.1
   checksum: f0213fe5b79344c56cd443428d8f65c16bf842dc8cb8f5aed693e1e91d79c20741663ad6eff07a6d2c433d1831acc9814e8d7bada6a0471fbb91d09ceb2bf5c2
+  languageName: node
+  linkType: hard
+
+"jws@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "jws@npm:4.0.0"
+  dependencies:
+    jwa: ^2.0.0
+    safe-buffer: ^5.0.1
+  checksum: d68d07aa6d1b8cb35c363a9bd2b48f15064d342a5d9dc18a250dbbce8dc06bd7e4792516c50baa16b8d14f61167c19e851fd7f66b59ecc68b7f6a013759765f7
   languageName: node
   linkType: hard
 
@@ -26973,14 +27025,7 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   languageName: node
   linkType: hard
 
-"oauth-sign@npm:^0.8.2":
-  version: 0.8.2
-  resolution: "oauth-sign@npm:0.8.2"
-  checksum: dcf2a5d810c1e75e2a4bcd5be6f809444ddc3b7076e9bfc9d489094f708d45b544308ef0c37c8e8479ad51d2e2e2052fc5fc6b6ebf95570468d0046e08d53599
-  languageName: node
-  linkType: hard
-
-"oauth-sign@npm:~0.9.0":
+"oauth-sign@npm:^0.9.0, oauth-sign@npm:~0.9.0":
   version: 0.9.0
   resolution: "oauth-sign@npm:0.9.0"
   checksum: 8f5497a127967866a3c67094c21efd295e46013a94e6e828573c62220e9af568cc1d2d04b16865ba583e430510fa168baf821ea78f355146d8ed7e350fc44c64
@@ -29955,7 +30000,7 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   languageName: node
   linkType: hard
 
-"qs@npm:^6.10.0, qs@npm:^6.10.3, qs@npm:^6.5.1, qs@npm:^6.9.1":
+"qs@npm:^6.10.0, qs@npm:^6.10.2, qs@npm:^6.10.3, qs@npm:^6.9.6":
   version: 6.11.0
   resolution: "qs@npm:6.11.0"
   dependencies:
@@ -31253,21 +31298,21 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   languageName: node
   linkType: hard
 
-"request-compose@npm:^1.2.1":
-  version: 1.2.3
-  resolution: "request-compose@npm:1.2.3"
-  checksum: 4c8ad27f489e9dac8c1becf82145bb08508cd5d35e3848e60ce48a6c91a9969241e5a36417e7770ada11b9041130554f7736adf815bdf8e2875e01c41344c0b0
+"request-compose@npm:^2.1.4":
+  version: 2.1.6
+  resolution: "request-compose@npm:2.1.6"
+  checksum: cf43642a5b7821f90f7101bdf69ae8f32dcc81d1724790736f7852cada8df81fbafb055d3f2e3b9cf77c4d1113985c0c9b3fa4024ac4038571f1c60ecba6f19a
   languageName: node
   linkType: hard
 
-"request-oauth@npm:0.0.3":
-  version: 0.0.3
-  resolution: "request-oauth@npm:0.0.3"
+"request-oauth@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "request-oauth@npm:1.0.1"
   dependencies:
-    oauth-sign: ^0.8.2
-    qs: ^6.5.1
-    uuid: ^3.2.1
-  checksum: 318544933a9ca2e44527b8f610f24d1895967544d1fb65d5a51d2f57c7de684ddd54b4662d6c61c0965143e654c50ef02d7e1470bdd4ce133ba81100a3fbc47c
+    oauth-sign: ^0.9.0
+    qs: ^6.9.6
+    uuid: ^8.3.2
+  checksum: e7d7f2223b3ab7de651ccf6b0b6960ebdc09c144fa06011395dc98032ef5ac3b085e5a4e3e745375034ae6c6209f8ab9c39cddccd042a263fe297018208dd602
   languageName: node
   linkType: hard
 
@@ -36424,7 +36469,7 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   languageName: node
   linkType: hard
 
-"uuid@npm:^3.2.1, uuid@npm:^3.3.2, uuid@npm:^3.4.0":
+"uuid@npm:^3.3.2, uuid@npm:^3.4.0":
   version: 3.4.0
   resolution: "uuid@npm:3.4.0"
   bin:
