@@ -23,6 +23,7 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
+    "@uppy/aws-s3-multipart": "workspace:^",
     "@uppy/companion-client": "workspace:^",
     "@uppy/utils": "workspace:^",
     "@uppy/xhr-upload": "workspace:^",
