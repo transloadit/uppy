@@ -191,6 +191,7 @@
     filter: grayscale(100%);
     user-select: none;
     pointer-events: none;
+    cursor: not-allowed;
   }
 }
 
@@ -202,6 +203,7 @@
 .uppy-Dashboard--isDisabled .uppy-Dashboard-innerWrap {
   button, a, input, select, textarea {
     pointer-events: none;
+    cursor: not-allowed;
   }
 }
 

@@ -44,6 +44,8 @@ function defaultPickerIcon () {
 export default class Dashboard extends UIPlugin {
   static VERSION = packageJson.version
 
+  #disabledNodes = null
+
   constructor (uppy, opts) {
     super(uppy, opts)
     this.id = this.opts.id || 'Dashboard'
@@ -461,23 +463,12 @@ export default class Dashboard extends UIPlugin {
 
   disableAllFocusableElements = (disable) => {
     const focusableNodes = toArray(this.el.querySelectorAll(FOCUSABLE_ELEMENTS))
+      .filter(node => !node.classList.contains('uppy-Dashboard-close'))
     if (disable) {
-      focusableNodes.forEach((node) => {
-        // save previous tabindex in a data-attribute, to restore when enabling
-        const currentTabIndex = node.getAttribute('tabindex')
-        if (currentTabIndex) {
-          node.dataset.inertTabindex = currentTabIndex // eslint-disable-line no-param-reassign
-        }
-        node.setAttribute('tabindex', '-1')
-      })
-    } else {
-      focusableNodes.forEach((node) => {
-        if ('inertTabindex' in node.dataset) {
-          node.setAttribute('tabindex', node.dataset.inertTabindex)
-        } else {
-          node.removeAttribute('tabindex')
-        }
-      })
+      this.#disabledNodes = [...focusableNodes]
+      focusableNodes.forEach((node) => node.setAttribute('disabled', ''))
+    } else if (this.#disabledNodes) {
+      this.#disabledNodes.forEach(node => node.removeAttribute('disabled'))
     }
     this.dashboardIsDisabled = disable
   }
