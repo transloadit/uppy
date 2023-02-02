@@ -28,8 +28,8 @@
   ],
   "bin": "./bin/companion",
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.257.0",
     "atob": "2.1.2",
-    "aws-sdk": "^2.1038.0",
     "body-parser": "1.20.0",
     "chalk": "4.1.2",
     "common-tags": "1.8.2",
