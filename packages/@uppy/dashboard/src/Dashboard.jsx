@@ -462,14 +462,21 @@ export default class Dashboard extends UIPlugin {
   }
 
   disableAllFocusableElements = (disable) => {
-    const focusableNodes = toArray(this.el.querySelectorAll(FOCUSABLE_ELEMENTS))
+    const focusableNodes = this.#disabledNodes ?? toArray(this.el.querySelectorAll(FOCUSABLE_ELEMENTS))
       .filter(node => !node.classList.contains('uppy-Dashboard-close'))
-    if (disable) {
-      this.#disabledNodes = [...focusableNodes]
-      focusableNodes.forEach((node) => node.setAttribute('disabled', ''))
-    } else if (this.#disabledNodes) {
-      this.#disabledNodes.forEach(node => node.removeAttribute('disabled'))
+
+    for (const node of focusableNodes) {
+      node.disabled = disable
     }
+
+    // Elements with `disabled` attr won’t match FOCUSABLE_ELEMENTS,
+    // so we store them separately
+    if (disable) {
+      this.#disabledNodes = focusableNodes
+    } else {
+      this.#disabledNodes = null
+    }
+
     this.dashboardIsDisabled = disable
   }
 
