@@ -8,7 +8,6 @@ import toArray from '@uppy/utils/lib/toArray'
 import getDroppedFiles from '@uppy/utils/lib/getDroppedFiles'
 import { nanoid } from 'nanoid/non-secure'
 import memoizeOne from 'memoize-one'
-import FOCUSABLE_ELEMENTS from '@uppy/utils/lib/FOCUSABLE_ELEMENTS'
 import * as trapFocus from './utils/trapFocus.js'
 import createSuperFocus from './utils/createSuperFocus.js'
 import DashboardUI from './components/Dashboard.jsx'
@@ -462,17 +461,28 @@ export default class Dashboard extends UIPlugin {
   }
 
   disableAllFocusableElements = (disable) => {
-    const focusableNodes = this.#disabledNodes ?? toArray(this.el.querySelectorAll(FOCUSABLE_ELEMENTS))
+    const NODES_TO_DISABLE = [
+      'a[href]',
+      'input:not([disabled])',
+      'select:not([disabled])',
+      'textarea:not([disabled])',
+      'button:not([disabled])',
+    ]
+
+    const nodesToDisable = this.#disabledNodes ?? toArray(this.el.querySelectorAll(NODES_TO_DISABLE))
       .filter(node => !node.classList.contains('uppy-Dashboard-close'))
 
-    for (const node of focusableNodes) {
-      node.disabled = disable
+    for (const node of nodesToDisable) {
+      // Links can’t have `disabled` attr, so we use `aria-disabled` for a11y
+      if (node.tagName === 'A') {
+        node.setAttribute('aria-disabled', disable)
+      } else {
+        node.disabled = disable
+      }
     }
 
-    // Elements with `disabled` attr won’t match FOCUSABLE_ELEMENTS,
-    // so we store them separately
     if (disable) {
-      this.#disabledNodes = focusableNodes
+      this.#disabledNodes = nodesToDisable
     } else {
       this.#disabledNodes = null
     }

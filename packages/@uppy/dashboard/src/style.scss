@@ -190,7 +190,6 @@
     opacity: 0.6;
     filter: grayscale(100%);
     user-select: none;
-    pointer-events: none;
     cursor: not-allowed;
   }
 }
@@ -200,8 +199,8 @@
 }
 
 // Disallow clicking on all interactive elements
-.uppy-Dashboard--isDisabled .uppy-Dashboard-innerWrap {
-  button, a, input, select, textarea {
+.uppy-Dashboard--isDisabled {
+  [disabled], [aria-disabled] {
     pointer-events: none;
     cursor: not-allowed;
   }
