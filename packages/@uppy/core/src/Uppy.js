@@ -972,6 +972,19 @@ class Uppy {
       }
     })
 
+    let uploadStalledWarningRecentlyEmitted
+    this.on('upload-stalled', (error, files) => {
+      const { message } = error
+      const details = files.map(file => file.meta.name).join(', ')
+      if (!uploadStalledWarningRecentlyEmitted) {
+        this.info({ message, details }, 'warning', this.opts.infoTimeout)
+        uploadStalledWarningRecentlyEmitted = setTimeout(() => {
+          uploadStalledWarningRecentlyEmitted = null
+        }, this.opts.infoTimeout)
+      }
+      this.log(`${message} ${details}`.trim(), 'warning')
+    })
+
     this.on('upload', () => {
       this.setState({ error: null })
     })
