@@ -300,8 +300,9 @@ export default class AwsS3Multipart extends BasePlugin {
       // TODO: this is currently opt-in for backward compat, switch to opt-out in the next major
       allowedMetaFields: null,
       limit: 6,
+      shouldUseMultipart: true, // In the next major, the default should be switched as the following:
       // eslint-disable-next-line no-bitwise
-      shouldUseMultipart: (file, fileSize) => fileSize >> 10 >> 10 > 100,
+      // shouldUseMultipart: (file, fileSize) => fileSize >> 10 >> 10 > 100,
       retryDelays: [0, 1000, 3000, 5000],
       createMultipartUpload: this.createMultipartUpload.bind(this),
       listParts: this.listParts.bind(this),
