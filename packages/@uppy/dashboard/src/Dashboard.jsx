@@ -460,7 +460,7 @@ export default class Dashboard extends UIPlugin {
     }
   }
 
-  disableAllFocusableElements = (disable) => {
+  disableInteractiveElements = (disable) => {
     const NODES_TO_DISABLE = [
       'a[href]',
       'input:not([disabled])',
@@ -842,12 +842,12 @@ export default class Dashboard extends UIPlugin {
 
   afterUpdate = () => {
     if (this.opts.disabled && !this.dashboardIsDisabled) {
-      this.disableAllFocusableElements(true)
+      this.disableInteractiveElements(true)
       return
     }
 
     if (!this.opts.disabled && this.dashboardIsDisabled) {
-      this.disableAllFocusableElements(false)
+      this.disableInteractiveElements(false)
     }
 
     this.superFocusOnEachUpdate()
@@ -955,7 +955,7 @@ export default class Dashboard extends UIPlugin {
       activePickerPanel: pluginState.activePickerPanel,
       showFileEditor: pluginState.showFileEditor,
       saveFileEditor: this.saveFileEditor,
-      disableAllFocusableElements: this.disableAllFocusableElements,
+      disableInteractiveElements: this.disableInteractiveElements,
       animateOpenClose: this.opts.animateOpenClose,
       isClosing: pluginState.isClosing,
       progressindicators,
