@@ -160,8 +160,7 @@ class AddFiles extends Component {
     )
   }
 
-  renderDropPasteBrowseTagline = () => {
-    const numberOfAcquirers = this.props.acquirers.length
+  renderDropPasteBrowseTagline = (numberOfAcquirers) => {
     const browseFiles = this.renderBrowseButton(this.props.i18n('browseFiles'), this.triggerFileInputClick)
     const browseFolders = this.renderBrowseButton(this.props.i18n('browseFolders'), this.triggerFolderInputClick)
 
@@ -237,13 +236,40 @@ class AddFiles extends Component {
   renderSourcesList = (acquirers, disableLocalFiles) => {
     const { showNativePhotoCameraButton, showNativeVideoCameraButton } = this.props
 
+    let list = []
+
+    const myDeviceKey = 'myDevice'
+
+    if (!disableLocalFiles) {
+      list.push({ key: myDeviceKey, elements: this.renderMyDeviceAcquirer() })
+      if (showNativePhotoCameraButton) list.push({ key: 'nativePhotoCameraButton', elements: this.renderPhotoCamera() })
+      if (showNativeVideoCameraButton) list.push({ key: 'nativePhotoCameraButton', elements: this.renderVideoCamera() })
+    }
+    list.push(...acquirers.map((acquirer) => ({ key: acquirer.id, elements: this.renderAcquirer(acquirer) })))
+
+    // doesn't make sense to show only a lonely "My Device"
+    const hasOnlyMyDevice = list.length === 1 && list[0].key === myDeviceKey
+    if (hasOnlyMyDevice) list = []
+
+    // Group last two buttons, so we don’t end up with
+    // just one button on a new line
+    const listWithoutLastTwo = [...list]
+    const lastTwo = listWithoutLastTwo.splice(list.length - 2, list.length)
+
+    const renderList = (l) => l.map(({ key, elements }) => <Fragment key={key}>{elements}</Fragment>)
+
     return (
-      <div className="uppy-Dashboard-AddFiles-list" role="tablist">
-        {!disableLocalFiles && this.renderMyDeviceAcquirer()}
-        {!disableLocalFiles && showNativePhotoCameraButton && this.renderPhotoCamera()}
-        {!disableLocalFiles && showNativeVideoCameraButton && this.renderVideoCamera()}
-        {acquirers.length > 0 && this.renderAcquirers(acquirers)}
-      </div>
+      <>
+        {this.renderDropPasteBrowseTagline(list.length)}
+
+        <div className="uppy-Dashboard-AddFiles-list" role="tablist">
+          {renderList(listWithoutLastTwo)}
+
+          <span role="presentation" style={{ 'white-space': 'nowrap' }}>
+            {renderList(lastTwo)}
+          </span>
+        </div>
+      </>
     )
   }
 
@@ -287,7 +313,6 @@ class AddFiles extends Component {
         {this.renderHiddenInput(true, (ref) => { this.folderInput = ref })}
         {showNativePhotoCameraButton && this.renderHiddenCameraInput('photo', nativeCameraFacingMode, (ref) => { this.mobilePhotoFileInput = ref })}
         {showNativeVideoCameraButton && this.renderHiddenCameraInput('video', nativeCameraFacingMode, (ref) => { this.mobileVideoFileInput = ref })}
-        {this.renderDropPasteBrowseTagline()}
         {this.renderSourcesList(this.props.acquirers, this.props.disableLocalFiles)}
         <div className="uppy-Dashboard-AddFiles-info">
           {this.props.note && <div className="uppy-Dashboard-note">{this.props.note}</div>}
