@@ -259,7 +259,7 @@ class AddFiles extends Component {
     const renderList = (l) => l.map(({ key, elements }) => <Fragment key={key}>{elements}</Fragment>)
 
     return (
-      <>
+      <Fragment>
         {this.renderDropPasteBrowseTagline(list.length)}
 
         <div className="uppy-Dashboard-AddFiles-list" role="tablist">
@@ -269,7 +269,7 @@ class AddFiles extends Component {
             {renderList(lastTwo)}
           </span>
         </div>
-      </>
+      </Fragment>
     )
   }
 
