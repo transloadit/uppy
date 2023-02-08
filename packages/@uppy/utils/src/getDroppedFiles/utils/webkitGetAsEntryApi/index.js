@@ -48,7 +48,7 @@ export default async function* getFilesFromDataTransfer (dataTransfer, logDropEr
     // https://github.com/transloadit/uppy/issues/4133
     if (window.isSecureContext && item.getAsFileSystemHandle != null) entry = await item.getAsFileSystemHandle()
     // fallback
-    if (entry == null) entry = getAsFileSystemHandleFromEntry(item.webkitGetAsEntry(), logDropError)
+    entry ??= getAsFileSystemHandleFromEntry(item.webkitGetAsEntry(), logDropError)
 
     return { lastResortFile, entry }
   }))
