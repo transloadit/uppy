@@ -43,8 +43,12 @@ async function* createPromiseToAddFileOrParseDirectory (entry, relativePath, las
 export default async function* getFilesFromDataTransfer (dataTransfer, logDropError) {
   const entries = await Promise.all(Array.from(dataTransfer.items, async item => {
     const lastResortFile = item.getAsFile() // Chromium bug, see https://github.com/transloadit/uppy/issues/3505.
-    const entry = await item.getAsFileSystemHandle?.()
-      ?? getAsFileSystemHandleFromEntry(item.webkitGetAsEntry(), logDropError)
+    let entry
+    // IMPORTANT: Need to check isSecureContext *first* or else Chrome will crash when running in HTTP:
+    // https://github.com/transloadit/uppy/issues/4133
+    if (window.isSecureContext && item.getAsFileSystemHandle != null) entry = await item.getAsFileSystemHandle()
+    // fallback
+    if (entry == null) entry = getAsFileSystemHandleFromEntry(item.webkitGetAsEntry(), logDropError)
 
     return { lastResortFile, entry }
   }))
