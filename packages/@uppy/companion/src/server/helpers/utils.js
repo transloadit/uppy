@@ -142,7 +142,16 @@ module.exports.decrypt = (encrypted, secret) => {
   return decrypted
 }
 
-module.exports.defaultGetKey = (req, filename) => `${crypto.randomUUID()}-${filename}`
+module.exports.defaultGetKey = (req, filename) => `${getS3Prefix()}${crypto.randomUUID()}-${filename}`
+
+/**
+ * Get the S3 prefix from the environment variable.
+ *
+ * @returns {string}
+ */
+function getS3Prefix () {
+  return `${process.env.COMPANION_S3_PREFIX}/ || ''`
+}
 
 module.exports.prepareStream = async (stream) => new Promise((resolve, reject) => (
   stream
