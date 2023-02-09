@@ -372,7 +372,7 @@ class Uppy {
       this.emit('error', error)
     }
     this.info({ message, details }, 'error', this.opts.infoTimeout)
-    this.log(`${message} ${details}`.trim(), 'error')
+    this.log(error, 'warning')
   }
 
   validateRestrictions (file, files = this.getFiles()) {

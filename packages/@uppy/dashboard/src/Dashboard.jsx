@@ -407,10 +407,7 @@ export default class Dashboard extends UIPlugin {
     // Emits first event on initialization.
     this.resizeObserver = new ResizeObserver((entries) => {
       const uppyDashboardInnerEl = entries[0]
-
       const { width, height } = uppyDashboardInnerEl.contentRect
-
-      this.uppy.log(`[Dashboard] resized: ${width} / ${height}`, 'debug')
 
       this.setPluginState({
         containerWidth: width,
@@ -430,7 +427,7 @@ export default class Dashboard extends UIPlugin {
         // and it's not due to the modal being closed
         && !isModalAndClosed
       ) {
-        this.uppy.log("[Dashboard] resize event didn't fire on time: defaulted to mobile layout", 'debug')
+        this.uppy.log('[Dashboard] resize event didn’t fire on time: defaulted to mobile layout', 'warning')
 
         this.setPluginState({
           areInsidesReadyToBeVisible: true,
