@@ -16,6 +16,8 @@ import ImageEditor from '@uppy/image-editor'
 import DropTarget from '@uppy/drop-target'
 import Audio from '@uppy/audio'
 import Compressor from '@uppy/compressor'
+import Mini from '@uppy/mini'
+
 /* eslint-enable import/no-extraneous-dependencies */
 
 import generateSignatureIfSecret from './generateSignatureIfSecret.js'
@@ -41,7 +43,7 @@ console.log(import.meta.env)
 
 const RESTORE = false
 
-async function getAssemblyOptions () {
+async function getAssemblyOptions (file) {
   return generateSignatureIfSecret(TRANSLOADIT_SECRET, {
     auth: {
       key: TRANSLOADIT_KEY,
@@ -49,6 +51,9 @@ async function getAssemblyOptions () {
     // It's more secure to use a template_id and enable
     // Signature Authentication
     template_id: TRANSLOADIT_TEMPLATE,
+    fields: {
+      id: file.id,
+    },
   })
 }
 
@@ -75,6 +80,10 @@ export default () => {
       showProgressDetails: true,
       proudlyDisplayPoweredByUppy: true,
       note: '2 files, images and video only',
+      autoOpenFileEditor: true,
+    })
+    .use(Mini, {
+      target: '#mini-here',
     })
     // .use(GoogleDrive, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })
     // .use(Instagram, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })
@@ -171,6 +180,6 @@ export default () => {
     }
   })
 
-  const modalTrigger = document.querySelector('#pick-files')
-  if (modalTrigger) modalTrigger.click()
+  // const modalTrigger = document.querySelector('#pick-files')
+  // if (modalTrigger) modalTrigger.click()
 }

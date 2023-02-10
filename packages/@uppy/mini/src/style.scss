@@ -1,0 +1,161 @@
+@import '@uppy/core/src/_utils.scss';
+@import '@uppy/core/src/_variables.scss';
+
+.uppy-Mini {
+  position: relative;
+  display: inline-block;
+}
+
+  .uppy-Mini--complete .uppy-Mini-bar {
+    color: #fff;
+    border: 1px solid transparent;
+  }
+
+.uppy-Mini-bar {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgb(224, 224, 224);
+  padding: 9px 14px;
+  border-radius: 10px;
+  display: inline-block;
+}
+
+.uppy-Mini-progress {
+  position: absolute;
+  height: 100%;
+  top: 0;
+  left: 0;
+  transition: all .2s;
+  background: linear-gradient(-15deg, #0974f1 0%, #9fccfa 100% );  
+  opacity: 0.7;
+  z-index: 5;
+}
+
+  .uppy-Mini-progress--complete {
+    // background: linear-gradient(-15deg, #ccff33 0%, #004b23 100%);
+    background: #65A30D;
+  }
+
+.uppy-Mini-browse {
+  display: inline-block;
+  color: inherit;
+  cursor: pointer;
+  border-bottom: 1px solid #ccc;
+}
+
+.uppy-Mini-remove {
+  cursor: pointer;
+  position: relative;
+  left: 5px;
+}
+
+.uppy-Mini-selected {
+  display: flex;
+  align-items: center;
+  position: relative;
+  z-index: 10;
+}
+
+.uppy-Mini-selected img {
+  margin-right: 8px;
+  border-radius: 5px;
+  height: 30px;
+  object-fit: cover;
+}
+
+.uppy-Mini-selectedName {
+  font-size: 0.8em;
+  line-height: 1.3;
+  max-width: 320px;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-right: 6px;
+}
+
+.uppy-Mini-sources {
+  display: block;
+  width: 180px;
+  height: 250px;
+  overflow: hidden;
+  background-color: $white;
+  border-radius: 10px;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  position: absolute;
+  top: 35px;
+  left: 50%;
+  font-size: 12px;
+  z-index: 15;
+}
+
+.uppy-Mini-sources li {
+  display: block;
+  font-size: 10px;
+}
+
+.uppy-Mini-sourcesList {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.uppy-Mini-sourcesList::-webkit-scrollbar {
+  display: none;
+}
+
+.uppy-Mini-sources li:hover {
+  background-color: rgb(226, 226, 226);
+}
+
+.uppy-Mini-sources button {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  padding: 8px;
+}
+
+.uppy-Mini-sources svg {
+  width: 15px;
+  height: 15px;
+  margin-right: 5px;
+}
+
+.btn-close {
+	overflow: hidden;
+	position: relative;
+	border: none;
+	padding: 0;
+	width: 1em; 
+  height: 1em;
+	border-radius: 50%;
+	background: rgb(0, 0, 0, 0.8);
+	color: #fff;
+	font: inherit;
+	text-indent: 100%;
+	cursor: pointer;
+	
+	&:focus {
+		outline: solid 0 transparent;
+		box-shadow: 0 0 0 2px #8ed0f9;
+	}
+	
+	&:hover {
+    background: rgb(0, 0, 0, 1);
+	}
+	
+	&:before, &:after {
+		position: absolute;
+		top: 18%; 
+    left: calc(50% - .05em);
+		width: .085em; 
+    height: 60%;
+		border-radius: .125em;
+		transform: rotate(45deg);
+		background: currentcolor;
+		content: ''
+	}
+	
+	&:after { transform: rotate(-45deg); }
+}

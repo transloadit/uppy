@@ -170,6 +170,8 @@ export default class Dashboard extends UIPlugin {
     }
 
     this.setPluginState(update)
+
+    this.uppy.emit('dashboard:hide-all-panels')
   }
 
   showPanel = (id) => {
@@ -724,6 +726,7 @@ export default class Dashboard extends UIPlugin {
     const firstFile = files[0]
     if (this.canEditFile(firstFile)) {
       this.openFileEditor(firstFile)
+      setTimeout(this.openModal, 4)
     }
   }
 
