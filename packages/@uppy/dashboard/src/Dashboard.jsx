@@ -467,6 +467,7 @@ export default class Dashboard extends UIPlugin {
       'select:not([disabled])',
       'textarea:not([disabled])',
       'button:not([disabled])',
+      '[role="button"]:not([disabled])',
     ]
 
     const nodesToDisable = this.#disabledNodes ?? toArray(this.el.querySelectorAll(NODES_TO_DISABLE))
