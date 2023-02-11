@@ -8,7 +8,6 @@ import toArray from '@uppy/utils/lib/toArray'
 import getDroppedFiles from '@uppy/utils/lib/getDroppedFiles'
 import { nanoid } from 'nanoid/non-secure'
 import memoizeOne from 'memoize-one'
-import FOCUSABLE_ELEMENTS from '@uppy/utils/lib/FOCUSABLE_ELEMENTS'
 import * as trapFocus from './utils/trapFocus.js'
 import createSuperFocus from './utils/createSuperFocus.js'
 import DashboardUI from './components/Dashboard.jsx'
@@ -43,6 +42,8 @@ function defaultPickerIcon () {
  */
 export default class Dashboard extends UIPlugin {
   static VERSION = packageJson.version
+
+  #disabledNodes = null
 
   constructor (uppy, opts) {
     super(uppy, opts)
@@ -456,26 +457,34 @@ export default class Dashboard extends UIPlugin {
     }
   }
 
-  disableAllFocusableElements = (disable) => {
-    const focusableNodes = toArray(this.el.querySelectorAll(FOCUSABLE_ELEMENTS))
-    if (disable) {
-      focusableNodes.forEach((node) => {
-        // save previous tabindex in a data-attribute, to restore when enabling
-        const currentTabIndex = node.getAttribute('tabindex')
-        if (currentTabIndex) {
-          node.dataset.inertTabindex = currentTabIndex // eslint-disable-line no-param-reassign
-        }
-        node.setAttribute('tabindex', '-1')
-      })
-    } else {
-      focusableNodes.forEach((node) => {
-        if ('inertTabindex' in node.dataset) {
-          node.setAttribute('tabindex', node.dataset.inertTabindex)
-        } else {
-          node.removeAttribute('tabindex')
-        }
-      })
+  disableInteractiveElements = (disable) => {
+    const NODES_TO_DISABLE = [
+      'a[href]',
+      'input:not([disabled])',
+      'select:not([disabled])',
+      'textarea:not([disabled])',
+      'button:not([disabled])',
+      '[role="button"]:not([disabled])',
+    ]
+
+    const nodesToDisable = this.#disabledNodes ?? toArray(this.el.querySelectorAll(NODES_TO_DISABLE))
+      .filter(node => !node.classList.contains('uppy-Dashboard-close'))
+
+    for (const node of nodesToDisable) {
+      // Links can’t have `disabled` attr, so we use `aria-disabled` for a11y
+      if (node.tagName === 'A') {
+        node.setAttribute('aria-disabled', disable)
+      } else {
+        node.disabled = disable
+      }
     }
+
+    if (disable) {
+      this.#disabledNodes = nodesToDisable
+    } else {
+      this.#disabledNodes = null
+    }
+
     this.dashboardIsDisabled = disable
   }
 
@@ -831,12 +840,12 @@ export default class Dashboard extends UIPlugin {
 
   afterUpdate = () => {
     if (this.opts.disabled && !this.dashboardIsDisabled) {
-      this.disableAllFocusableElements(true)
+      this.disableInteractiveElements(true)
       return
     }
 
     if (!this.opts.disabled && this.dashboardIsDisabled) {
-      this.disableAllFocusableElements(false)
+      this.disableInteractiveElements(false)
     }
 
     this.superFocusOnEachUpdate()
@@ -944,7 +953,7 @@ export default class Dashboard extends UIPlugin {
       activePickerPanel: pluginState.activePickerPanel,
       showFileEditor: pluginState.showFileEditor,
       saveFileEditor: this.saveFileEditor,
-      disableAllFocusableElements: this.disableAllFocusableElements,
+      disableInteractiveElements: this.disableInteractiveElements,
       animateOpenClose: this.opts.animateOpenClose,
       isClosing: pluginState.isClosing,
       progressindicators,
