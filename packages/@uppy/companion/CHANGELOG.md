@@ -1,5 +1,12 @@
 # @uppy/companion
 
+## 4.3.0
+
+Released: 2023-02-13
+Included in: Uppy v3.5.0
+
+- @uppy/companion: @uppy/companion upgrade grant dependency (Scott Bessler / #4286)
+
 ## 4.2.0
 
 Released: 2023-01-26

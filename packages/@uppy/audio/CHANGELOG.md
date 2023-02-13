@@ -1,5 +1,12 @@
 # @uppy/audio
 
+## 1.0.4
+
+Released: 2023-02-13
+Included in: Uppy v3.5.0
+
+- @uppy/audio,@uppy/core,@uppy/dashboard,@uppy/screen-capture: Warn more instead of erroring (Artur Paikin / #4302)
+
 ## 1.0.3
 
 Released: 2023-01-26
