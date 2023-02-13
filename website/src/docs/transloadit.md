@@ -10,10 +10,6 @@ tagline: "manipulate and transcode uploaded files using the <a href='https://tra
 
 The `@uppy/transloadit` plugin can be used to upload files to [Transloadit](https://transloadit.com/) for all kinds of processing, such as transcoding video, resizing images, zipping/unzipping, [and much more](https://transloadit.com/services/).
 
-> If you’re okay to trade some flexibility for ergonomics, consider using
-> the [Robodog](/docs/robodog/) Plugin instead, which is a higher-level abstraction for
-> encoding files with Uppy and Transloadit.
-
 <a class="TryButton" href="/examples/transloadit/">Try it live</a>
 
 ```js
