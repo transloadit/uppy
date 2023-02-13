@@ -97,7 +97,7 @@ interface AssemblyParameters {
 
 interface AssemblyOptions {
   params?: AssemblyParameters
-  fields?: { [name: string]: number | string }
+  fields?: { [name: string]: number | string } | string[]
   // TODO (major): move signature into params.auth.
   signature?: string
 }
@@ -143,7 +143,7 @@ export type TransloaditOptions = Options &
         /** @deprecated use `assemblyOptions` instead */
         params?: AssemblyParameters
         /** @deprecated use `assemblyOptions` instead */
-        fields?: { [name: string]: number | string }
+        fields?: { [name: string]: number | string } | string[]
         /** @deprecated use `assemblyOptions` instead */
         signature?: string
         /** @deprecated use `assemblyOptions` instead */
