@@ -5,19 +5,11 @@ import BasePlugin from '@uppy/core/lib/BasePlugin.js'
 import Tus from '@uppy/tus'
 import Assembly from './Assembly.js'
 import Client from './Client.js'
-import AssemblyOptions, { validateParams } from './AssemblyOptions.js'
+import AssemblyOptions from './AssemblyOptions.js'
 import AssemblyWatcher from './AssemblyWatcher.js'
 
 import locale from './locale.js'
 import packageJson from '../package.json'
-
-function defaultGetAssemblyOptions (file, options) {
-  return {
-    params: options.params,
-    signature: options.signature,
-    fields: options.fields,
-  }
-}
 
 const sendErrorToConsole = originalErr => err => {
   const error = new ErrorWithCause('Failed to send error to the client', { cause: err })
@@ -67,25 +59,23 @@ export default class Transloadit extends BasePlugin {
       /** @deprecated use `assemblyOptions` instead */
       fields: null,
       /** @deprecated use `assemblyOptions` instead */
-      getAssemblyOptions: defaultGetAssemblyOptions,
+      getAssemblyOptions: null,
       limit: 20,
       retryDelays: [7_000, 10_000, 15_000, 20_000],
     }
 
     this.opts = { ...defaultOptions, ...opts }
-    // TODO: move this into `defaultOptions` once we remove the deprecated options
-    this.opts.assemblyOptions = opts.assemblyOptions ?? this.opts.getAssemblyOptions
+
+    // TODO: remove this fallback in the next major
+    this.opts.assemblyOptions ??= this.opts.getAssemblyOptions ?? {
+      params: this.opts.params,
+      signature: this.opts.signature,
+      fields: this.opts.fields,
+    }
+
     this.#rateLimitedQueue = new RateLimitedQueue(this.opts.limit)
 
     this.i18nInit()
-
-    if (this.opts.assemblyOptions !== defaultOptions.getAssemblyOptions) {
-      const { params, fields, signature } = opts
-      if (params != null || fields != null || signature != null) {
-        validateParams(params)
-        this.opts.assemblyOptions = { params, signature, fields }
-      }
-    }
 
     this.client = new Client({
       service: this.opts.service,
