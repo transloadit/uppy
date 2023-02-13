@@ -12,6 +12,30 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 3.5.0
+
+Released: 2023-02-13
+
+| Package              | Version | Package              | Version |
+| -------------------- | ------- | -------------------- | ------- |
+| @uppy/audio          |   1.0.4 | @uppy/screen-capture |   3.0.2 |
+| @uppy/companion      |   4.3.0 | @uppy/transloadit    |   3.1.1 |
+| @uppy/core           |   3.0.6 | @uppy/xhr-upload     |   3.1.0 |
+| @uppy/dashboard      |   3.2.2 | uppy                 |   3.5.0 |
+| @uppy/locales        |   3.0.6 |                      |         |
+
+- @uppy/transloadit: fix `assemblyOptions` option (Antoine du Hamel / #4316)
+- meta: Remove Robodog advice, since it is deprecated (Artur Paikin)
+- @uppy/dashboard: fix dashboard acquirers list (Mikael Finstad / #4306)
+- @uppy/dashboard: Dashboard: disallow clicking on buttons and links in Dashboard disabled mode (Artur Paikin / #4292)
+- @uppy/audio,@uppy/core,@uppy/dashboard,@uppy/screen-capture: Warn more instead of erroring (Artur Paikin / #4302)
+- @uppy/locales: Update de_DE.js (Jörn Velten / #4297)
+- meta: use load balancer for companion in e2e tests (Mikael Finstad / #4228)
+- @uppy/companion: @uppy/companion upgrade grant dependency (Scott Bessler / #4286)
+- @uppy/xhr-upload: add `'upload-stalled'` event (Antoine du Hamel / #4247)
+- @uppy/locales: minor enhancements and typo fixes for the hungarian translation (KergeKacsa / #4282)
+
+
 ## 3.4.0
 
 Released: 2023-01-26

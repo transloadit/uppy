@@ -1,5 +1,13 @@
 # @uppy/locales
 
+## 3.0.6
+
+Released: 2023-02-13
+Included in: Uppy v3.5.0
+
+- @uppy/locales: Update de_DE.js (Jörn Velten / #4297)
+- @uppy/locales: minor enhancements and typo fixes for the hungarian translation (KergeKacsa / #4282)
+
 ## 3.0.5
 
 Released: 2023-01-26
