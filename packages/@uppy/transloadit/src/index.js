@@ -65,7 +65,7 @@ export default class Transloadit extends BasePlugin {
       /** @deprecated use `assemblyOptions` instead */
       params: null,
       /** @deprecated use `assemblyOptions` instead */
-      fields: {},
+      fields: null,
       /** @deprecated use `assemblyOptions` instead */
       getAssemblyOptions: defaultGetAssemblyOptions,
       limit: 20,
@@ -79,13 +79,12 @@ export default class Transloadit extends BasePlugin {
 
     this.i18nInit()
 
-    const hasCustomAssemblyOptions = this.opts.assemblyOptions !== defaultOptions.getAssemblyOptions
-    if (this.opts.params) {
-      validateParams(this.opts.params)
-    } else if (!hasCustomAssemblyOptions) {
-      // Throw the same error that we'd throw if the `params` returned from a
-      // `getAssemblyOptions()` function is null.
-      validateParams(null)
+    if (this.opts.assemblyOptions !== defaultOptions.getAssemblyOptions) {
+      const { params, fields, signature } = opts
+      if (params != null || fields != null || signature != null) {
+        validateParams(params)
+        this.opts.assemblyOptions = { params, signature, fields }
+      }
     }
 
     this.client = new Client({
