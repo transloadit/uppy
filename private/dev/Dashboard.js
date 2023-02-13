@@ -41,7 +41,7 @@ console.log(import.meta.env)
 
 const RESTORE = false
 
-async function getAssemblyOptions () {
+async function assemblyOptions () {
   return generateSignatureIfSecret(TRANSLOADIT_SECRET, {
     auth: {
       key: TRANSLOADIT_KEY,
@@ -124,7 +124,7 @@ export default () => {
       uppyDashboard.use(Transloadit, {
         service: TRANSLOADIT_SERVICE_URL,
         waitForEncoding: true,
-        getAssemblyOptions,
+        assemblyOptions,
       })
       break
     case 'transloadit-s3':
@@ -132,7 +132,7 @@ export default () => {
       uppyDashboard.use(Transloadit, {
         waitForEncoding: true,
         importFromUploadURLs: true,
-        getAssemblyOptions,
+        assemblyOptions,
       })
       break
     case 'transloadit-xhr':

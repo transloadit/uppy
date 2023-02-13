@@ -79,7 +79,7 @@ export default class Transloadit extends BasePlugin {
 
     this.i18nInit()
 
-    const hasCustomAssemblyOptions = this.opts.assemblyOptions !== defaultOptions.assemblyOptions
+    const hasCustomAssemblyOptions = this.opts.assemblyOptions !== defaultOptions.getAssemblyOptions
     if (this.opts.params) {
       validateParams(this.opts.params)
     } else if (!hasCustomAssemblyOptions) {
