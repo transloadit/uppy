@@ -5,7 +5,7 @@ import BasePlugin from '@uppy/core/lib/BasePlugin.js'
 import Tus from '@uppy/tus'
 import Assembly from './Assembly.js'
 import Client from './Client.js'
-import AssemblyOptions from './AssemblyOptions.js'
+import AssemblyOptions, { validateParams } from './AssemblyOptions.js'
 import AssemblyWatcher from './AssemblyWatcher.js'
 
 import locale from './locale.js'
@@ -71,6 +71,11 @@ export default class Transloadit extends BasePlugin {
       params: this.opts.params,
       signature: this.opts.signature,
       fields: this.opts.fields,
+    }
+
+    // TODO: remove this check in the next major (validating params when creating the assembly should be enough)
+    if (opts?.params != null && opts.getAssemblyOptions == null && opts.assemblyOptions == null) {
+      validateParams(this.opts.assemblyOptions.params)
     }
 
     this.#rateLimitedQueue = new RateLimitedQueue(this.opts.limit)
