@@ -142,7 +142,7 @@ module.exports.decrypt = (encrypted, secret) => {
   return decrypted
 }
 
-module.exports.defaultGetKey = (req, filename, prefix) => `${prefix || ''}${crypto.randomUUID()}-${filename}`
+module.exports.defaultGetKey = (req, filename) => `${crypto.randomUUID()}-${filename}`
 
 module.exports.prepareStream = async (stream) => new Promise((resolve, reject) => (
   stream
