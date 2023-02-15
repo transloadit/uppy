@@ -266,6 +266,8 @@ export COMPANION_AWS_USE_ACCELERATE_ENDPOINT="false"
 export COMPANION_AWS_EXPIRES="800"
 # to set a canned ACL for uploaded objects: https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#canned-acl
 export COMPANION_AWS_ACL="private"
+# to set an optional prefix for all uploaded keys
+export COMPANION_AWS_PREFIX="optional/prefix/"
 
 # corresponds to the server.oauthDomain option
 export COMPANION_OAUTH_DOMAIN="sub.domain.com"
@@ -493,7 +495,6 @@ We have [a detailed guide on running Companion in Kubernetes](https://github.com
 
 ### Running many instances
 
-
 We recommend running at least two instances in production, so that if the Node.js event loop gets blocked by one or more requests (due to a bug or spike in traffic), it doesn’t also block or slow down all other requests as well (as Node.js is single threaded).
 
 As an example for scale, one enterprise customer of Transloadit, who self-hosts Companion to power an education service that is used by many universities globally, deploys 7 Companion instances. Their earlier solution ran on 35 instances. In our general experience Companion will saturate network interface cards before other resources on commodity virtual servers (`c5d.2xlarge` for instance).
@@ -503,6 +504,7 @@ Your mileage may vary, so we recommend to add observability. You can let Prometh
 #### Using unique endpoints
 
 One option is to run many instances with each instance having its own unique endpoint. This could be on separate ports, (sub)domain names, or IPs. With this setup, you can either
+
 1. Implement your own logic that will direct each upload to a specific Companion endpoint by setting the `companionUrl` option
 2. Setting the Companion option `COMPANION_SELF_ENDPOINT`. This option will cause Companion to respond with a `i-am` HTTP header containing the value from `COMPANION_SELF_ENDPOINT`. When Uppy’s sees this header, it will pin all requests for the upload to this endpoint.
 
