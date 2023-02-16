@@ -191,12 +191,12 @@ export interface State<
     | UploadedUppyFile<TMeta, TBody>
     | FailedUppyFile<TMeta, TBody>
   }
-  info?: {
+  info?: Array<{
     isHidden: boolean
-    type: string
+    type: LogLevel
     message: string
-    details: string
-  }
+    details: string | null
+  }>
   plugins?: IndexedObject<any>
   totalProgress: number
 }
