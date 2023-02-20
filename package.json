@@ -27,7 +27,7 @@
   "workspaces": [
     "examples/*",
     "packages/@uppy/*",
-    "packages/@uppy/angular/projects/uppy/*",
+    "packages/@upp",
     "packages/uppy",
     "private/*",
     "test/endtoend",
