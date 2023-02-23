@@ -7,6 +7,7 @@ const tokenService = require('./helpers/jwt')
 const logger = require('./logger')
 const getS3Client = require('./s3-client')
 const { getURLBuilder } = require('./helpers/utils')
+const { isSearchProvider } = require('./provider/Provider')
 
 exports.hasSessionAndProvider = (req, res, next) => {
   if (!req.session || !req.body) {
@@ -22,20 +23,37 @@ exports.hasSessionAndProvider = (req, res, next) => {
   return next()
 }
 
-exports.hasSearchQuery = (req, res, next) => {
-  if (typeof req.query.q !== 'string') {
-    logger.debug('search request has no search query', 'search.query.check', req.id)
+exports.hasCredentialsProvider = (req, res, next) => {
+  if (!req.companion.getProviderCredentials) {
+    logger.debug('Provider is does not use auth.', null, req.id)
     return res.sendStatus(400)
   }
 
   return next()
 }
 
+exports.hasSearchQuery = (req, res, next) => {
+  if (isSearchProvider(req)) {
+    if (typeof req.query.q !== 'string') {
+      logger.debug('search request has no search query', 'search.query.check', req.id)
+      return res.sendStatus(400)
+    }
+  }
+
+  return next()
+}
+
 exports.verifyToken = (req, res, next) => {
+  if (isSearchProvider(req)) {
+    next()
+    return
+  }
+
   const token = req.companion.authToken
   if (token == null) {
     logger.info('cannot auth token', 'token.verify.unset', req.id)
-    return res.sendStatus(401)
+    res.sendStatus(401)
+    return
   }
   const { providerName } = req.params
   const { err, payload } = tokenService.verifyEncryptedToken(token, req.companion.options.secret)
@@ -43,7 +61,8 @@ exports.verifyToken = (req, res, next) => {
     if (err) {
       logger.error(err.message, 'token.verify.error', req.id)
     }
-    return res.sendStatus(401)
+    res.sendStatus(401)
+    return
   }
   req.companion.providerTokens = payload
   req.companion.providerToken = payload[providerName]
@@ -68,14 +87,18 @@ exports.cookieAuthToken = (req, res, next) => {
 }
 
 exports.loadSearchProviderToken = (req, res, next) => {
-  const { providerOptions } = req.companion.options
-  const providerName = req.params.searchProviderName
-  if (!providerOptions[providerName] || !providerOptions[providerName].key) {
-    logger.info(`unconfigured credentials for ${providerName}`, 'searchtoken.load.unset', req.id)
-    return res.sendStatus(501)
+  if (isSearchProvider(req)) {
+    const { providerOptions } = req.companion.options
+    const { providerName } = req.params
+    if (!providerOptions[providerName] || !providerOptions[providerName].key) {
+      logger.info(`unconfigured credentials for ${providerName}`, 'searchtoken.load.unset', req.id)
+      res.sendStatus(501)
+      return
+    }
+
+    req.companion.providerToken = providerOptions[providerName].key
   }
 
-  req.companion.providerToken = providerOptions[providerName].key
   next()
 }
 

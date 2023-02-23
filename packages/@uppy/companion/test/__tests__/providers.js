@@ -18,6 +18,7 @@ const defaults = require('../fixtures/constants')
 
 const tokenService = require('../../src/server/helpers/jwt')
 const { getServer } = require('../mockserver')
+const { noAuthProvider } = require('../../src/server/provider/Provider')
 
 // todo don't share server between tests. rewrite to not use env variables
 const authServer = getServer({ COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT: '0' })
@@ -373,7 +374,9 @@ describe('connect to provider', () => {
   test.each(providerNames)('connect to %s via grant.js endpoint', (providerName) => {
     const authProvider = AUTH_PROVIDERS[providerName] || providerName
 
-    return request(authServer)
+    if (authProvider.authProvider === noAuthProvider) return
+
+    request(authServer)
       .get(`/${providerName}/connect?foo=bar`)
       .set('uppy-auth-token', token)
       .expect(302)

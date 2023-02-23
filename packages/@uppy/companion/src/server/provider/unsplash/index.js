@@ -1,6 +1,6 @@
 const got = require('got').default
 
-const SearchProvider = require('../SearchProvider')
+const Provider = require('../Provider')
 const { getURLMeta } = require('../../helpers/request')
 const adaptData = require('./adapter')
 const { withProviderErrorHandling } = require('../providerErrors')
@@ -20,7 +20,7 @@ const getPhotoMeta = async (client, id) => client.get(`photos/${id}`, { response
 /**
  * Adapter for API https://api.unsplash.com
  */
-class Unsplash extends SearchProvider {
+class Unsplash extends Provider {
   async list ({ token, query = { cursor: null, q: null } }) {
     return this.#withErrorHandling('provider.unsplash.list.error', async () => {
       const qs = { per_page: 40, query: query.q }

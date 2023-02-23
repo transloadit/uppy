@@ -1,3 +1,5 @@
+const noAuthProvider = ''
+
 /**
  * Provider interface defines the specifications of any provider implementation
  */
@@ -24,7 +26,8 @@ class Provider {
    * @param {object} options
    * @returns {Promise}
    */
-  async list (options) { // eslint-disable-line no-unused-vars
+  // eslint-disable-next-line class-methods-use-this,no-unused-vars
+  async list (options) {
     throw new Error('method not implemented')
   }
 
@@ -34,7 +37,8 @@ class Provider {
    * @param {object} options
    * @returns {Promise}
    */
-  async download (options) { // eslint-disable-line no-unused-vars
+  // eslint-disable-next-line class-methods-use-this,no-unused-vars
+  async download (options) {
     throw new Error('method not implemented')
   }
 
@@ -44,7 +48,8 @@ class Provider {
    * @param {object} options
    * @returns {Promise}
    */
-  async thumbnail (options) { // eslint-disable-line no-unused-vars
+  // eslint-disable-next-line class-methods-use-this,no-unused-vars
+  async thumbnail (options) {
     throw new Error('method not implemented')
   }
 
@@ -54,7 +59,8 @@ class Provider {
    * @param {object} options
    * @returns {Promise}
    */
-  async size (options) { // eslint-disable-line no-unused-vars
+  // eslint-disable-next-line class-methods-use-this,no-unused-vars
+  async size (options) {
     throw new Error('method not implemented')
   }
 
@@ -64,7 +70,8 @@ class Provider {
    * @param {object} options
    * @returns {Promise}
    */
-  async deauthorizationCallback (options) { // eslint-disable-line no-unused-vars
+  // eslint-disable-next-line class-methods-use-this,no-unused-vars
+  async deauthorizationCallback (options) {
     // @todo consider doing something like throw new NotImplementedError() instead
     throw new Error('method not implemented')
   }
@@ -73,8 +80,11 @@ class Provider {
    * @returns {string}
    */
   static get authProvider () {
-    return ''
+    return noAuthProvider
   }
 }
 
 module.exports = Provider
+module.exports.noAuthProvider = noAuthProvider
+
+module.exports.isSearchProvider = (req) => req.companion.providerClass.authProvider === noAuthProvider

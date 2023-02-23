@@ -71,7 +71,7 @@ module.exports.app = (optionsArg = {}) => {
   const options = merge({}, defaultOptions, optionsArg)
 
   const providers = providerManager.getDefaultProviders()
-  const searchProviders = providerManager.getSearchProviders()
+
   providerManager.addProviderOptions(options, grantConfig)
 
   const { customProviders } = options
@@ -116,22 +116,23 @@ module.exports.app = (optionsArg = {}) => {
   app.use('/s3', s3(options.s3))
   app.use('/url', url())
 
-  app.post('/:providerName/preauth', middlewares.hasSessionAndProvider, controllers.preauth)
-  app.get('/:providerName/connect', middlewares.hasSessionAndProvider, controllers.connect)
-  app.get('/:providerName/redirect', middlewares.hasSessionAndProvider, controllers.redirect)
-  app.get('/:providerName/callback', middlewares.hasSessionAndProvider, controllers.callback)
-  app.post('/:providerName/deauthorization/callback', middlewares.hasSessionAndProvider, controllers.deauthorizationCallback)
-  app.get('/:providerName/logout', middlewares.hasSessionAndProvider, middlewares.gentleVerifyToken, controllers.logout)
-  app.get('/:providerName/send-token', middlewares.hasSessionAndProvider, middlewares.verifyToken, controllers.sendToken)
-  app.get('/:providerName/list/:id?', middlewares.hasSessionAndProvider, middlewares.verifyToken, controllers.list)
-  app.post('/:providerName/get/:id', middlewares.hasSessionAndProvider, middlewares.verifyToken, controllers.get)
-  app.get('/:providerName/thumbnail/:id', middlewares.hasSessionAndProvider, middlewares.cookieAuthToken, middlewares.verifyToken, controllers.thumbnail)
-  // @ts-ignore Type instantiation is excessively deep and possibly infinite.
-  app.get('/search/:searchProviderName/list', middlewares.hasSearchQuery, middlewares.loadSearchProviderToken, controllers.list)
-  app.post('/search/:searchProviderName/get/:id', middlewares.loadSearchProviderToken, controllers.get)
+  app.post('/:providerName/preauth', middlewares.hasSessionAndProvider, middlewares.hasCredentialsProvider, controllers.preauth)
+  app.get('/:providerName/connect', middlewares.hasSessionAndProvider, middlewares.hasCredentialsProvider, controllers.connect)
+  app.get('/:providerName/redirect', middlewares.hasSessionAndProvider, middlewares.hasCredentialsProvider, controllers.redirect)
+  app.get('/:providerName/callback', middlewares.hasSessionAndProvider, middlewares.hasCredentialsProvider, controllers.callback)
+  app.post('/:providerName/deauthorization/callback', middlewares.hasSessionAndProvider, middlewares.hasCredentialsProvider, controllers.deauthorizationCallback)
+  app.get('/:providerName/logout', middlewares.hasSessionAndProvider, middlewares.hasCredentialsProvider, middlewares.gentleVerifyToken, controllers.logout)
+  app.get('/:providerName/send-token', middlewares.hasSessionAndProvider, middlewares.hasCredentialsProvider, middlewares.verifyToken, controllers.sendToken)
 
-  app.param('providerName', providerManager.getProviderMiddleware(providers, true))
-  app.param('searchProviderName', providerManager.getProviderMiddleware(searchProviders))
+  app.get('/:providerName/list/:id?', middlewares.hasSessionAndProvider, middlewares.loadSearchProviderToken, middlewares.verifyToken, middlewares.hasSearchQuery, controllers.list)
+  app.get('/search/:providerName/list', middlewares.hasSessionAndProvider, middlewares.loadSearchProviderToken, middlewares.verifyToken, middlewares.hasSearchQuery, controllers.list)
+
+  app.post('/:providerName/get/:id', middlewares.hasSessionAndProvider, middlewares.loadSearchProviderToken, middlewares.verifyToken, controllers.get)
+  app.post('/search/:providerName/get/:id', middlewares.hasSessionAndProvider, middlewares.loadSearchProviderToken, middlewares.verifyToken, controllers.get)
+
+  app.get('/:providerName/thumbnail/:id', middlewares.hasCredentialsProvider, middlewares.hasSessionAndProvider, middlewares.cookieAuthToken, middlewares.verifyToken, controllers.thumbnail)
+
+  app.param('providerName', providerManager.getProviderMiddleware(providers))
 
   if (app.get('env') !== 'test') {
     jobs.startCleanUpJob(options.filePath)
