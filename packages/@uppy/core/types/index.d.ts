@@ -108,7 +108,7 @@ export class UIPlugin<TOptions extends PluginOptions = DefaultPluginOptions> ext
   getTargetPlugin(target: PluginTarget): UIPlugin | undefined
 
   // eslint-disable-next-line no-use-before-define
-  mount(target: PluginTarget, plugin: typeof UIPlugin): void
+  mount(target: PluginTarget, plugin: UIPlugin): void
 
   render(state: Record<string, unknown>): void
 
@@ -126,6 +126,7 @@ export type PluginTarget =
   | Element
   | typeof BasePlugin
   | typeof UIPlugin
+  | BasePlugin
 
 export interface Locale<TNames extends string = string> {
   strings: LocaleStrings<TNames>
