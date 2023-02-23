@@ -68,7 +68,7 @@ module.exports.getProtectedHttpAgent = ({ protocol, blockLocalIPs }) => {
 
   class HttpAgent extends http.Agent {
     createConnection (options, callback) {
-      if (isBlocked(options.host)) {
+      if (isBlocked(options)) {
         callback(new Error(FORBIDDEN_IP_ADDRESS))
         return undefined
       }
@@ -79,7 +79,7 @@ module.exports.getProtectedHttpAgent = ({ protocol, blockLocalIPs }) => {
 
   class HttpsAgent extends https.Agent {
     createConnection (options, callback) {
-      if (isBlocked(options.host)) {
+      if (isBlocked(options)) {
         callback(new Error(FORBIDDEN_IP_ADDRESS))
         return undefined
       }
