@@ -9,6 +9,7 @@ const got = require('got').default
 const logger = require('../logger')
 
 const FORBIDDEN_IP_ADDRESS = 'Forbidden IP address'
+const FORBIDDEN_RESOLVED_IP_ADDRESS = 'Forbidden resolved IP address'
 
 // Example scary IPs that should return false (ipv6-to-ipv4 mapped):
 // ::FFFF:127.0.0.1
@@ -16,6 +17,7 @@ const FORBIDDEN_IP_ADDRESS = 'Forbidden IP address'
 const isDisallowedIP = (ipAddress) => ipaddr.parse(ipAddress).range() !== 'unicast'
 
 module.exports.FORBIDDEN_IP_ADDRESS = FORBIDDEN_IP_ADDRESS
+module.exports.FORBIDDEN_RESOLVED_IP_ADDRESS = FORBIDDEN_RESOLVED_IP_ADDRESS
 
 module.exports.getRedirectEvaluator = (rawRequestURL, isEnabled) => {
   const requestURL = new URL(rawRequestURL)
@@ -55,7 +57,7 @@ module.exports.getProtectedHttpAgent = ({ protocol, blockLocalIPs }) => {
       const toValidate = Array.isArray(addresses) ? addresses : [{ address: addresses }]
       for (const record of toValidate) {
         if (blockLocalIPs && isDisallowedIP(record.address)) {
-          callback(new Error(FORBIDDEN_IP_ADDRESS), addresses, maybeFamily)
+          callback(new Error(FORBIDDEN_RESOLVED_IP_ADDRESS), addresses, maybeFamily)
           return
         }
       }
