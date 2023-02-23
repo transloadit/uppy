@@ -116,21 +116,23 @@ module.exports.app = (optionsArg = {}) => {
   app.use('/s3', s3(options.s3))
   app.use('/url', url())
 
-  app.post('/:providerName/preauth', middlewares.hasSessionAndProvider, middlewares.hasCredentialsProvider, controllers.preauth)
-  app.get('/:providerName/connect', middlewares.hasSessionAndProvider, middlewares.hasCredentialsProvider, controllers.connect)
-  app.get('/:providerName/redirect', middlewares.hasSessionAndProvider, middlewares.hasCredentialsProvider, controllers.redirect)
-  app.get('/:providerName/callback', middlewares.hasSessionAndProvider, middlewares.hasCredentialsProvider, controllers.callback)
-  app.post('/:providerName/deauthorization/callback', middlewares.hasSessionAndProvider, middlewares.hasCredentialsProvider, controllers.deauthorizationCallback)
-  app.get('/:providerName/logout', middlewares.hasSessionAndProvider, middlewares.hasCredentialsProvider, middlewares.gentleVerifyToken, controllers.logout)
-  app.get('/:providerName/send-token', middlewares.hasSessionAndProvider, middlewares.hasCredentialsProvider, middlewares.verifyToken, controllers.sendToken)
+  app.post('/:providerName/preauth', middlewares.hasSessionAndProvider, middlewares.hasOAuthProvider, controllers.preauth)
+  app.get('/:providerName/connect', middlewares.hasSessionAndProvider, middlewares.hasOAuthProvider, controllers.connect)
+  app.get('/:providerName/redirect', middlewares.hasSessionAndProvider, middlewares.hasOAuthProvider, controllers.redirect)
+  app.get('/:providerName/callback', middlewares.hasSessionAndProvider, middlewares.hasOAuthProvider, controllers.callback)
+  app.post('/:providerName/deauthorization/callback', middlewares.hasSessionAndProvider, middlewares.hasOAuthProvider, controllers.deauthorizationCallback)
+  app.get('/:providerName/logout', middlewares.hasSessionAndProvider, middlewares.hasOAuthProvider, middlewares.gentleVerifyToken, controllers.logout)
+  app.get('/:providerName/send-token', middlewares.hasSessionAndProvider, middlewares.hasOAuthProvider, middlewares.verifyToken, controllers.sendToken)
 
-  app.get('/:providerName/list/:id?', middlewares.hasSessionAndProvider, middlewares.loadSearchProviderToken, middlewares.verifyToken, middlewares.hasSearchQuery, controllers.list)
-  app.get('/search/:providerName/list', middlewares.hasSessionAndProvider, middlewares.loadSearchProviderToken, middlewares.verifyToken, middlewares.hasSearchQuery, controllers.list)
+  app.get('/:providerName/list/:id?', middlewares.hasSessionAndProvider, middlewares.verifyToken, controllers.list)
+  // backwards compat:
+  app.get('/search/:providerName/list', middlewares.hasSessionAndProvider, middlewares.verifyToken, controllers.list)
 
-  app.post('/:providerName/get/:id', middlewares.hasSessionAndProvider, middlewares.loadSearchProviderToken, middlewares.verifyToken, controllers.get)
-  app.post('/search/:providerName/get/:id', middlewares.hasSessionAndProvider, middlewares.loadSearchProviderToken, middlewares.verifyToken, controllers.get)
+  app.post('/:providerName/get/:id', middlewares.hasSessionAndProvider, middlewares.verifyToken, controllers.get)
+  // backwards compat:
+  app.post('/search/:providerName/get/:id', middlewares.hasSessionAndProvider, middlewares.verifyToken, controllers.get)
 
-  app.get('/:providerName/thumbnail/:id', middlewares.hasCredentialsProvider, middlewares.hasSessionAndProvider, middlewares.cookieAuthToken, middlewares.verifyToken, controllers.thumbnail)
+  app.get('/:providerName/thumbnail/:id', middlewares.hasSessionAndProvider, middlewares.hasOAuthProvider, middlewares.cookieAuthToken, middlewares.verifyToken, controllers.thumbnail)
 
   app.param('providerName', providerManager.getProviderMiddleware(providers))
 

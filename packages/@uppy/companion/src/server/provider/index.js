@@ -15,7 +15,7 @@ const { getCredentialsResolver } = require('./credentials')
 // eslint-disable-next-line
 const Provider = require('./Provider')
 
-const { noAuthProvider } = Provider
+const { isOAuthProvider } = Provider
 
 /**
  *
@@ -56,8 +56,7 @@ module.exports.getProviderMiddleware = (providers) => {
       req.companion.provider = new ProviderClass({ providerName })
       req.companion.providerClass = ProviderClass
 
-      const needsProviderCredentials = ProviderClass.authProvider !== noAuthProvider
-      if (needsProviderCredentials) {
+      if (isOAuthProvider(ProviderClass.authProvider)) {
         req.companion.getProviderCredentials = getCredentialsResolver(providerName, req.companion.options, req)
       }
     } else {
@@ -92,8 +91,7 @@ module.exports.addCustomProviders = (customProviders, providers, grantConfig) =>
 
     providers[providerName] = customProvider.module
 
-    const needsProviderCredentials = customProvider.module.authProvider !== noAuthProvider
-    if (needsProviderCredentials) {
+    if (isOAuthProvider(customProvider.module.authProvider)) {
       grantConfig[providerName] = {
         ...customProvider.config,
         // todo: consider setting these options from a universal point also used
@@ -128,7 +126,7 @@ module.exports.addProviderOptions = (companionOptions, grantConfig) => {
   const keys = Object.keys(providerOptions).filter((key) => key !== 'server')
   keys.forEach((providerName) => {
     const authProvider = providerNameToAuthName(providerName, companionOptions)
-    if (authProvider !== noAuthProvider && grantConfig[authProvider]) {
+    if (isOAuthProvider(authProvider) && grantConfig[authProvider]) {
       // explicitly add providerOptions so users don't override other providerOptions.
       grantConfig[authProvider].key = providerOptions[providerName].key
       grantConfig[authProvider].secret = providerOptions[providerName].secret

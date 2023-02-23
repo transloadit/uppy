@@ -77,6 +77,8 @@ class Provider {
   }
 
   /**
+   * Name of the OAuth provider. Return empty string if no OAuth provider is needed.
+   *
    * @returns {string}
    */
   static get authProvider () {
@@ -87,4 +89,5 @@ class Provider {
 module.exports = Provider
 module.exports.noAuthProvider = noAuthProvider
 
-module.exports.isSearchProvider = (req) => req.companion.providerClass.authProvider === noAuthProvider
+// OAuth providers are those that have a `static authProvider` set. It means they require OAuth authentication to work
+module.exports.isOAuthProvider = (authProvider) => authProvider !== noAuthProvider

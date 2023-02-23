@@ -7,7 +7,7 @@ const tokenService = require('./helpers/jwt')
 const logger = require('./logger')
 const getS3Client = require('./s3-client')
 const { getURLBuilder } = require('./helpers/utils')
-const { isSearchProvider } = require('./provider/Provider')
+const { isOAuthProvider } = require('./provider/Provider')
 
 exports.hasSessionAndProvider = (req, res, next) => {
   if (!req.session || !req.body) {
@@ -23,32 +23,38 @@ exports.hasSessionAndProvider = (req, res, next) => {
   return next()
 }
 
-exports.hasCredentialsProvider = (req, res, next) => {
-  if (!req.companion.getProviderCredentials) {
-    logger.debug('Provider is does not use auth.', null, req.id)
+const isOAuthProviderReq = (req) => isOAuthProvider(req.companion.providerClass.authProvider)
+
+/**
+ * Middleware can be used to verify that the current request is to an OAuth provider
+ * This is because not all requests are supported by non-oauth providers (formerly known as SearchProviders)
+ */
+exports.hasOAuthProvider = (req, res, next) => {
+  if (!isOAuthProviderReq(req)) {
+    logger.debug('Provider does not support OAuth.', null, req.id)
     return res.sendStatus(400)
   }
 
   return next()
 }
 
-exports.hasSearchQuery = (req, res, next) => {
-  if (isSearchProvider(req)) {
-    if (typeof req.query.q !== 'string') {
-      logger.debug('search request has no search query', 'search.query.check', req.id)
-      return res.sendStatus(400)
-    }
-  }
-
-  return next()
-}
-
 exports.verifyToken = (req, res, next) => {
-  if (isSearchProvider(req)) {
+  // for non oauth providers, we just load the static key from options
+  if (!isOAuthProviderReq(req)) {
+    const { providerOptions } = req.companion.options
+    const { providerName } = req.params
+    if (!providerOptions[providerName] || !providerOptions[providerName].key) {
+      logger.info(`unconfigured credentials for ${providerName}`, 'non.oauth.token.load.unset', req.id)
+      res.sendStatus(501)
+      return
+    }
+
+    req.companion.providerToken = providerOptions[providerName].key
     next()
     return
   }
 
+  // Ok, OAuth provider, we fetch the token:
   const token = req.companion.authToken
   if (token == null) {
     logger.info('cannot auth token', 'token.verify.unset', req.id)
@@ -84,22 +90,6 @@ exports.gentleVerifyToken = (req, res, next) => {
 exports.cookieAuthToken = (req, res, next) => {
   req.companion.authToken = req.cookies[`uppyAuthToken--${req.companion.provider.authProvider}`]
   return next()
-}
-
-exports.loadSearchProviderToken = (req, res, next) => {
-  if (isSearchProvider(req)) {
-    const { providerOptions } = req.companion.options
-    const { providerName } = req.params
-    if (!providerOptions[providerName] || !providerOptions[providerName].key) {
-      logger.info(`unconfigured credentials for ${providerName}`, 'searchtoken.load.unset', req.id)
-      res.sendStatus(501)
-      return
-    }
-
-    req.companion.providerToken = providerOptions[providerName].key
-  }
-
-  next()
 }
 
 exports.cors = (options = {}) => (req, res, next) => {
