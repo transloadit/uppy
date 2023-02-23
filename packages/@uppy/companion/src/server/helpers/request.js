@@ -46,7 +46,7 @@ module.exports.getRedirectEvaluator = (rawRequestURL, isEnabled) => {
 /**
  * Returns http Agent that will prevent requests to private IPs (to preven SSRF)
  */
-module.exports.getProtectedHttpAgent = ({ protocol, blockLocalIPs }) => {
+const getProtectedHttpAgent = ({ protocol, blockLocalIPs }) => {
   function dnsLookup (hostname, options, callback) {
     dns.lookup(hostname, options, (err, addresses, maybeFamily) => {
       if (err) {
@@ -94,8 +94,10 @@ module.exports.getProtectedHttpAgent = ({ protocol, blockLocalIPs }) => {
 }
 
 function getProtectedGot ({ url, blockLocalIPs }) {
-  const httpAgent = new (module.exports.getProtectedHttpAgent({ protocol: 'http', blockLocalIPs }))()
-  const httpsAgent = new (module.exports.getProtectedHttpAgent({ protocol: 'https', blockLocalIPs }))()
+  const HttpAgent = getProtectedHttpAgent({ protocol: 'http', blockLocalIPs })
+  const HttpsAgent = getProtectedHttpAgent({ protocol: 'https', blockLocalIPs })
+  const httpAgent = new HttpAgent()
+  const httpsAgent = new HttpsAgent()
 
   const redirectEvaluator = module.exports.getRedirectEvaluator(url, blockLocalIPs)
 
