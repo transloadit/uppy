@@ -215,7 +215,7 @@ export default class Audio extends UIPlugin {
     } catch (err) {
       // Logging the error, exept restrictions, which is handled in Core
       if (!err.isRestriction) {
-        this.uppy.log(err, 'error')
+        this.uppy.log(err, 'warning')
       }
     }
   }

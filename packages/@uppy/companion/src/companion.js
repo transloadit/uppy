@@ -1,5 +1,5 @@
 const express = require('express')
-const Grant = require('grant').express()
+const Grant = require('grant').default.express()
 const merge = require('lodash.merge')
 const cookieParser = require('cookie-parser')
 const interceptor = require('express-interceptor')
@@ -20,6 +20,10 @@ const { ProviderApiError, ProviderAuthError } = require('./server/provider/error
 const { getCredentialsOverrideMiddleware } = require('./server/provider/credentials')
 // @ts-ignore
 const { version } = require('../package.json')
+
+function setLoggerProcessName ({ loggerProcessName }) {
+  if (loggerProcessName != null) logger.setProcessName(loggerProcessName)
+}
 
 // intercepts grantJS' default response error when something goes
 // wrong during oauth process.
@@ -51,6 +55,8 @@ const interceptGrantErrorResponse = interceptor((req, res) => {
 module.exports.errors = { ProviderApiError, ProviderAuthError }
 module.exports.socket = require('./server/socket')
 
+module.exports.setLoggerProcessName = setLoggerProcessName
+
 /**
  * Entry point into initializing the Companion app.
  *
@@ -58,6 +64,8 @@ module.exports.socket = require('./server/socket')
  * @returns {{ app: import('express').Express, emitter: any }}}
  */
 module.exports.app = (optionsArg = {}) => {
+  setLoggerProcessName(optionsArg)
+
   validateConfig(optionsArg)
 
   const options = merge({}, defaultOptions, optionsArg)

@@ -1,5 +1,12 @@
 # @uppy/xhr-upload
 
+## 3.1.0
+
+Released: 2023-02-13
+Included in: Uppy v3.5.0
+
+- @uppy/xhr-upload: add `'upload-stalled'` event (Antoine du Hamel / #4247)
+
 ## 3.0.4
 
 Released: 2022-10-24

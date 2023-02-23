@@ -1,5 +1,19 @@
 # @uppy/transloadit
 
+## 3.1.1
+
+Released: 2023-02-13
+Included in: Uppy v3.5.0
+
+- @uppy/transloadit: fix `assemblyOptions` option (Antoine du Hamel / #4316)
+
+## 3.1.0
+
+Released: 2023-01-26
+Included in: Uppy v3.4.0
+
+- @uppy/transloadit: introduce `assemblyOptions`, deprecate other options (Merlijn Vos / #4059)
+
 ## 3.0.2
 
 Released: 2022-09-25

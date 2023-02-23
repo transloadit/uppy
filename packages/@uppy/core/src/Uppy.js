@@ -372,7 +372,7 @@ class Uppy {
       this.emit('error', error)
     }
     this.info({ message, details }, 'error', this.opts.infoTimeout)
-    this.log(`${message} ${details}`.trim(), 'error')
+    this.log(error, 'warning')
   }
 
   validateRestrictions (file, files = this.getFiles()) {
@@ -970,6 +970,19 @@ class Uppy {
       } else {
         this.#informAndEmit(error)
       }
+    })
+
+    let uploadStalledWarningRecentlyEmitted
+    this.on('upload-stalled', (error, files) => {
+      const { message } = error
+      const details = files.map(file => file.meta.name).join(', ')
+      if (!uploadStalledWarningRecentlyEmitted) {
+        this.info({ message, details }, 'warning', this.opts.infoTimeout)
+        uploadStalledWarningRecentlyEmitted = setTimeout(() => {
+          uploadStalledWarningRecentlyEmitted = null
+        }, this.opts.infoTimeout)
+      }
+      this.log(`${message} ${details}`.trim(), 'warning')
     })
 
     this.on('upload', () => {

@@ -1,7 +1,7 @@
 {
   "name": "@uppy/audio",
   "description": "Uppy plugin that records audio using the device’s microphone.",
-  "version": "1.0.2",
+  "version": "1.0.4",
   "license": "MIT",
   "main": "lib/index.js",
   "style": "dist/style.min.css",

@@ -190,12 +190,20 @@
     opacity: 0.6;
     filter: grayscale(100%);
     user-select: none;
-    pointer-events: none;
+    cursor: not-allowed;
   }
 }
 
 .uppy-Dashboard--isDisabled .uppy-ProviderIconBg {
   fill: #9f9f9f;
+}
+
+// Disallow clicking on all interactive elements
+.uppy-Dashboard--isDisabled {
+  [disabled], [aria-disabled] {
+    pointer-events: none;
+    cursor: not-allowed;
+  }
 }
 
 .uppy-Dashboard--modal .uppy-Dashboard-inner {

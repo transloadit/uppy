@@ -946,6 +946,23 @@ uppy.on('upload-error', (file, error, response) => {
 })
 ```
 
+### `upload-stalled`
+
+Fired when an upload has not received any progress in some time (in `@uppy/xhr-upload`, the delay is defined by the `timeout` option). Use this event to display a message on the UI to tell the user they might want to retry the upload.
+
+```js
+uppy.on('upload-stalled', (error, files) => {
+  console.log('upload seems stalled', error, files)
+  const noLongerStalledEventHandler = (file) => {
+    if (files.includes(file)) {
+      console.log('upload is no longer stalled')
+      uppy.off('upload-progress', noLongerStalledEventHandler)
+    }
+  }
+  uppy.on('upload-progress', noLongerStalledEventHandler)
+})
+```
+
 ### `upload-retry`
 
 Fired when an upload has been retried (after an error, for example).
