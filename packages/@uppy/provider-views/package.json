@@ -23,7 +23,8 @@
     "@uppy/utils": "workspace:^",
     "classnames": "^2.2.6",
     "nanoid": "^4.0.0",
-    "preact": "^10.5.13"
+    "preact": "^10.5.13",
+    "lodash.debounce": "^4.0.8"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^"
