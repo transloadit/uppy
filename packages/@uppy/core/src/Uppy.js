@@ -233,15 +233,22 @@ class Uppy {
     }
     const files = { ...this.getState().files }
     const updatedFiles = {}
+
     Object.keys(files).forEach(fileID => {
-      const updatedFile = { ...files[fileID] }
-      updatedFile.progress = { ...updatedFile.progress, ...defaultProgress }
-      updatedFiles[fileID] = updatedFile
+      updatedFiles[fileID] = {
+        ...files[fileID],
+        progress: {
+          ...files[fileID].progress, ...defaultProgress,
+        },
+      }
     })
 
     this.setState({
       files: updatedFiles,
       totalProgress: 0,
+      allowNewUpload: true,
+      error: null,
+      recoveredState: null,
     })
 
     this.emit('reset-progress')
