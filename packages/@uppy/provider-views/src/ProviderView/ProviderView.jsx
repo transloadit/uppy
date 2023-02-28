@@ -162,9 +162,9 @@ export default class ProviderView extends View {
       }).catch(this.handleError)
   }
 
-  filterQuery (e) {
+  filterQuery (input) {
     const state = this.plugin.getPluginState()
-    this.plugin.setPluginState({ ...state, filterInput: e ? e.target.value : '' })
+    this.plugin.setPluginState({ ...state, filterInput: input })
   }
 
   /**
@@ -359,6 +359,7 @@ export default class ProviderView extends View {
       username: this.username,
       getNextFolder: this.getNextFolder,
       getFolder: this.getFolder,
+      filterInput,
       filterItems: this.sharedHandler.filterItems,
       filterQuery: this.filterQuery,
       logout: this.logout,

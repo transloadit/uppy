@@ -5,6 +5,8 @@ import classNames from 'classnames'
 import remoteFileObjToLocal from '@uppy/utils/lib/remoteFileObjToLocal'
 
 import Filter from './Filter.jsx'
+import SearchFilterInput from './SearchFilterInput.jsx'
+
 import FooterActions from './FooterActions.jsx'
 import Item from './Item/index.jsx'
 
@@ -13,6 +15,7 @@ const VIRTUAL_SHARED_DIR = 'shared-with-me'
 function Browser (props) {
   const {
     currentSelection,
+    clearSearch,
     folders,
     files,
     uppyFiles,
@@ -27,8 +30,12 @@ function Browser (props) {
     i18n,
     validateRestrictions,
     showFilter,
+    isLoading,
     filterQuery,
     filterInput,
+    search,
+    searchTerm,
+    showSearch,
     getNextFolder,
     cancel,
     done,
@@ -44,16 +51,18 @@ function Browser (props) {
         `uppy-ProviderBrowser-viewType--${viewType}`,
       )}
     >
-      <div className="uppy-ProviderBrowser-header">
-        <div
-          className={classNames(
-            'uppy-ProviderBrowser-headerBar',
-            !showBreadcrumbs && 'uppy-ProviderBrowser-headerBar--simple',
-          )}
-        >
-          {headerComponent}
+      {headerComponent && (
+        <div className="uppy-ProviderBrowser-header">
+          <div
+            className={classNames(
+              'uppy-ProviderBrowser-headerBar',
+              !showBreadcrumbs && 'uppy-ProviderBrowser-headerBar--simple',
+            )}
+          >
+            {headerComponent}
+          </div>
         </div>
-      </div>
+      )}
 
       {showFilter && (
         <Filter
@@ -63,7 +72,28 @@ function Browser (props) {
         />
       )}
 
+      {showSearch && (
+        <div class="uppy-ProviderBrowser-search">
+          <SearchFilterInput
+            search={search}
+            searchTerm={searchTerm}
+            clearSearch={clearSearch}
+            inputLabel={i18n('search')}
+            inputCSSClassName="uppy-ProviderBrowser-searchInput"
+            searchOnInput
+          />
+        </div>
+      )}
+
       {(() => {
+        if (isLoading) {
+          return (
+            <div className="uppy-Provider-loading">
+              <span>{i18n('loading')}</span>
+            </div>
+          )
+        }
+
         if (!folders.length && !files.length) {
           return (
             <div className="uppy-Provider-empty">

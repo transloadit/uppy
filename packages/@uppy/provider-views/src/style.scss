@@ -212,11 +212,34 @@
   align-items: center;
   width: 100%;
   height: 30px;
+  background-color: $white;
   margin-top: 10px;
   margin-bottom: 5px;
-  background-color: $white;
+  padding-left: 8px;
+  padding-right: 8px;
 
   [data-uppy-theme="dark"] & {
+    background-color: $gray-900;
+  }
+}
+
+.uppy-ProviderBrowser-filterInput {
+  z-index: $zIndex-2;
+  width: 100%;
+  height: 30px;
+  // margin: 0 8px;
+  font-size: 12px;
+  font-family: $font-family-base;
+  line-height: 1.4;
+  background-color: transparent;
+  border: 0;
+  border-radius: 4px;
+  outline: 0;
+  padding-inline-start: 27px;
+  padding-inline-end: 27px;
+
+  [data-uppy-theme="dark"] & {
+    color: $gray-200;
     background-color: $gray-900;
   }
 }
@@ -228,26 +251,6 @@
   height: 12px;
   color: $gray-400;
   inset-inline-start: 16px;
-}
-
-.uppy-ProviderBrowser-filterInput {
-  z-index: $zIndex-2;
-  width: 100%;
-  height: 30px;
-  margin: 0 8px;
-  font-size: 12px;
-  font-family: $font-family-base;
-  line-height: 1.4;
-  background-color: transparent;
-  border: 0;
-  border-radius: 4px;
-  outline: 0;
-  padding-inline-start: 27px;
-
-  [data-uppy-theme="dark"] & {
-    color: $gray-200;
-    background-color: $gray-900;
-  }
 }
 
 .uppy-ProviderBrowser-filterInput:focus {
@@ -264,6 +267,27 @@
   opacity: 1;
 }
 
+.uppy-ProviderBrowser-filterReset {
+  @include blue-border-focus;
+  border-radius: 3px;
+  position: absolute;
+  z-index: $zIndex-3;
+  width: 22px;
+  height: 22px;
+  padding: 6px;
+  color: $gray-500;
+  cursor: pointer;
+  inset-inline-end: 16px;
+
+  &:hover {
+    color: $gray-600;
+  }
+
+  svg {
+    vertical-align: text-top;
+  }
+}
+
 // Search
 
 .uppy-ProviderBrowser-search {
@@ -272,8 +296,10 @@
   align-items: center;
   width: 100%;
   height: 30px;
-  margin-top: 2px;
-  margin-bottom: 2px;
+  padding-left: 8px;
+  padding-right: 8px;
+  margin-top: 15px;
+  margin-bottom: 15px;
 }
 
 .uppy-ProviderBrowser-searchInput {
@@ -288,7 +314,12 @@
   border-radius: 4px;
   outline: 0;
   padding-inline-start: 30px;
+  padding-inline-end: 30px;
   color: $gray-800;
+
+  &::-webkit-search-cancel-button {
+    display: none;   
+  }
 
   [data-uppy-theme="dark"] & {
     color: $gray-200;
@@ -298,7 +329,7 @@
 
 .uppy-ProviderBrowser-searchInput:focus {
   background-color: $gray-300;
-  outline: 0;
+  border: 0;
 
   [data-uppy-theme="dark"] & {
     background-color: $gray-800;
@@ -311,7 +342,7 @@
   width: 12px;
   height: 12px;
   color: $gray-600;
-  inset-inline-start: 10px;
+  inset-inline-start: 16px;
 }
 
 .uppy-ProviderBrowser-searchInput::placeholder {
