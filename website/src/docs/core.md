@@ -1004,6 +1004,13 @@ Fired when “info” message should be hidden in the UI. See [`info-visible`](#
 
 Fired when [`uppy.cancelAll()`]() is called, all uploads are canceled, files removed and progress is reset.
 
+```javascript
+uppy.on('cancel-all', (event) => {
+  const { id, reason } = event
+  console.log(`uppy id: ${id}, reason: ${reason}`)
+})
+```
+
 ### `restriction-failed`
 
 Fired when a file violates certain restrictions when added. This event is providing another choice for those who want to customize the behavior of file upload restrictions.

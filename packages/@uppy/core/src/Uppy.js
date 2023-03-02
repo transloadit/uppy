@@ -807,7 +807,7 @@ class Uppy {
   }
 
   cancelAll ({ reason = 'user' } = {}) {
-    this.emit('cancel-all', { reason })
+    this.emit('cancel-all', { id: this.opts['id'], reason })
 
     // Only remove existing uploads if user is canceling
     if (reason === 'user') {
