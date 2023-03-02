@@ -1619,6 +1619,10 @@ describe('src/Core', () => {
         uploadStarted: null,
       })
       expect(core.getState().totalProgress).toEqual(0)
+      expect(core.getState().allowNewUpload).toEqual(true)
+      expect(core.getState().error).toEqual(null)
+      expect(core.getState().recoveredState).toEqual(null)
+
       expect(resetProgressEvent.mock.calls.length).toEqual(1)
     })
   })
