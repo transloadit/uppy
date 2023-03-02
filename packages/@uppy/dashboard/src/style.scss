@@ -493,11 +493,6 @@
   overflow: hidden;
   vertical-align: text-top;
   transition: transform ease-in-out 0.15s;
-  margin-inline-end: 10px;
-
-  .uppy-size--md & {
-    margin-inline-end: 0;
-  }
 }
 
 .uppy-DashboardTab-inner {
@@ -509,6 +504,16 @@
   border-radius: 8px;
   background-color: #fff;
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.14);
+  margin-inline-end: 10px;
+
+  .uppy-size--md & {
+    margin-inline-end: 0;
+  }
+
+  [data-uppy-theme="dark"] & {
+    background-color: #323232;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
+  }
 }
 
 .uppy-DashboardTab-name {
@@ -520,18 +525,6 @@
     margin-bottom: 0;
     font-size: 12px;
     line-height: 15px;
-  }
-}
-
-// On SVG sizing: https://sarasoueidan.com/blog/svg-style-inheritance-and-FOUSVG/
-.uppy-DashboardTab svg {
-  width: 23px;
-  height: 23px;
-  vertical-align: middle;
-
-  .uppy-size--md & {
-    width: 30px;
-    height: 30px;
   }
 }
 
