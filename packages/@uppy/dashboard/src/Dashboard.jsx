@@ -750,6 +750,7 @@ export default class Dashboard extends UIPlugin {
     this.startListeningToResize()
     document.addEventListener('paste', this.handlePasteOnBody)
 
+    this.uppy.on('plugin-added', this.#autoDiscoverPlugins)
     this.uppy.on('plugin-remove', this.removeTarget)
     this.uppy.on('file-added', this.hideAllPanels)
     this.uppy.on('dashboard:modal-closed', this.hideAllPanels)
@@ -783,6 +784,7 @@ export default class Dashboard extends UIPlugin {
     document.removeEventListener('paste', this.handlePasteOnBody)
 
     window.removeEventListener('popstate', this.handlePopState, false)
+    this.uppy.off('plugin-added', this.#autoDiscoverPlugins)
     this.uppy.off('plugin-remove', this.removeTarget)
     this.uppy.off('file-added', this.hideAllPanels)
     this.uppy.off('dashboard:modal-closed', this.hideAllPanels)
@@ -1015,10 +1017,34 @@ export default class Dashboard extends UIPlugin {
     })
   }
 
-  discoverProviderPlugins = () => {
-    this.uppy.iteratePlugins((plugin) => {
-      if (plugin && !plugin.target && plugin.opts && plugin.opts.target === this.constructor) {
-        this.addTarget(plugin)
+  // discoverProviderPlugins = () => {
+  //   this.uppy.iteratePlugins((plugin) => {
+  //     if (plugin && !plugin.target && plugin.opts && plugin.opts.target === this.constructor) {
+  //       console.log('plugin', plugin.id)
+  //       this.addTarget(plugin)
+  //     }
+  //   })
+  // }
+
+  #addSpecifiedPlugins = () => {
+    const plugins = this.opts.plugins || []
+
+    plugins.forEach((pluginID) => {
+      const plugin = this.uppy.getPlugin(pluginID)
+      if (plugin) {
+        plugin.mount(this, plugin)
+      }
+    })
+  }
+
+  #autoDiscoverPlugins = () => {
+    const typesAllowed = ['acquirer', 'editor']
+    this.uppy.iteratePlugins(plugin => {
+      if (plugin && !plugin.opts?.target && typesAllowed.includes(plugin.type)) {
+        const pluginAlreadyAdded = this.getPluginState().targets.some(
+          installedPlugin => plugin.id === installedPlugin.id,
+        )
+        if (!pluginAlreadyAdded) this.addTarget(plugin)
       }
     })
   }
@@ -1054,15 +1080,6 @@ export default class Dashboard extends UIPlugin {
     if (target) {
       this.mount(target, this)
     }
-
-    const plugins = this.opts.plugins || []
-
-    plugins.forEach((pluginID) => {
-      const plugin = this.uppy.getPlugin(pluginID)
-      if (plugin) {
-        plugin.mount(this, plugin)
-      }
-    })
 
     if (!this.opts.disableStatusBar) {
       this.uppy.use(StatusBar, {
@@ -1111,7 +1128,9 @@ export default class Dashboard extends UIPlugin {
       this.darkModeMediaQuery.addListener(this.handleSystemDarkModeChange)
     }
 
-    this.discoverProviderPlugins()
+    // this.discoverProviderPlugins()
+    this.#addSpecifiedPlugins()
+    this.#autoDiscoverPlugins()
     this.initEvents()
   }
 

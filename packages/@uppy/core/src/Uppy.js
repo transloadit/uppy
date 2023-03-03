@@ -1187,6 +1187,8 @@ class Uppy {
     }
     plugin.install()
 
+    this.emit('plugin-added', plugin)
+
     return this
   }
 
