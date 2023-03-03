@@ -1,5 +1,4 @@
 import { BasePlugin } from '@uppy/core'
-import Dashboard from '@uppy/dashboard'
 import Dropbox from '@uppy/dropbox'
 import GoogleDrive from '@uppy/google-drive'
 import Instagram from '@uppy/instagram'
@@ -38,7 +37,6 @@ export default class RemoteSources extends BasePlugin {
 
     const defaultOptions = {
       sources: Object.keys(availablePlugins),
-      target: Dashboard,
     }
     this.opts = { ...defaultOptions, ...opts }
 
