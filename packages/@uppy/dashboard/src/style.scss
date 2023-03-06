@@ -528,6 +528,46 @@
   }
 }
 
+.uppy-DashboardTab-iconBox {
+  color: #0061d5;
+
+  [data-uppy-theme="dark"] & {
+    color: $gray-200;
+  }
+}
+
+.uppy-DashboardTab-iconDropbox {
+  color: #0061fe;
+
+  [data-uppy-theme="dark"] & {
+    color: $gray-200;
+  }
+}
+
+.uppy-DashboardTab-iconUnsplash {
+  color: #111;
+
+  [data-uppy-theme="dark"] & {
+    color: $gray-200;
+  }
+}
+
+.uppy-DashboardTab-iconScreenRec {
+  color: #2c3e50;
+
+  [data-uppy-theme="dark"] & {
+    color: $gray-200;
+  }
+}
+
+.uppy-DashboardTab-iconAudio {
+  color: #8030a3;
+
+  [data-uppy-theme="dark"] & {
+    color: #bf6ee3;
+  }
+}
+
 .uppy-Dashboard-input {
   position: absolute;
   z-index: -1;
