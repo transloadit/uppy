@@ -12,6 +12,18 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 3.6.1
+
+Released: 2023-03-07
+
+| Package         | Version | Package         | Version |
+| --------------- | ------- | --------------- | ------- |
+| @uppy/core      |   3.1.1 | uppy            |   3.6.1 |
+| @uppy/dashboard |   3.3.1 |                 |         |
+
+- @uppy/dashboard: Fix low-contrast hover styles (Alexander Zaytsev / #4347)
+
+
 ## 3.6.0
 
 Released: 2023-03-07
