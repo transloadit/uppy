@@ -1,5 +1,12 @@
 # @uppy/dashboard
 
+## 3.3.1
+
+Released: 2023-03-07
+Included in: Uppy v3.6.1
+
+- @uppy/dashboard: Fix low-contrast hover styles (Alexander Zaytsev / #4347)
+
 ## 3.3.0
 
 Released: 2023-03-07
