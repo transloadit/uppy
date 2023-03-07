@@ -1,5 +1,12 @@
 # @uppy/locales
 
+## 3.0.7
+
+Released: 2023-03-07
+Included in: Uppy v3.6.0
+
+- @uppy/locales: add missing entries after build (Murderlon)
+
 ## 3.0.6
 
 Released: 2023-02-13

@@ -12,6 +12,33 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 3.6.0
+
+Released: 2023-03-07
+
+| Package              | Version | Package              | Version |
+| -------------------- | ------- | -------------------- | ------- |
+| @uppy/audio          |   1.1.0 | @uppy/onedrive       |   3.1.0 |
+| @uppy/box            |   2.1.0 | @uppy/provider-views |   3.1.0 |
+| @uppy/core           |   3.1.0 | @uppy/screen-capture |   3.1.0 |
+| @uppy/dashboard      |   3.3.0 | @uppy/unsplash       |   3.1.0 |
+| @uppy/dropbox        |   3.1.0 | @uppy/url            |   3.2.0 |
+| @uppy/facebook       |   3.1.0 | @uppy/utils          |   5.1.3 |
+| @uppy/google-drive   |   3.1.0 | @uppy/webcam         |   3.3.0 |
+| @uppy/image-editor   |   2.1.1 | @uppy/zoom           |   2.1.0 |
+| @uppy/instagram      |   3.1.0 | uppy                 |   3.6.0 |
+| @uppy/locales        |   3.0.7 |                      |         |
+
+- @uppy/locales: add missing entries after build (Murderlon)
+- @uppy/dashboard: update provider icon style (Alexander Zaytsev / #4345)
+- @uppy/core: fix uppy.resetProgress() (Artur Paikin / #4337)
+- @uppy/core: fix some types (Antoine du Hamel / #4332)
+- @uppy/core: Fixed type of State.info to match reality being an array of info objects (Marc Bennewitz / #4321)
+- @uppy/image-editor: Fix TypeScript error in image-editor types (Matthias Kunnen / #4334)
+- meta: improve `importFromUploadURLs` docs (Mikael Finstad / #4323)
+- @uppy/utils: workaround chrome crash (Mikael Finstad / #4310)
+
+
 ## 3.5.0
 
 Released: 2023-02-13

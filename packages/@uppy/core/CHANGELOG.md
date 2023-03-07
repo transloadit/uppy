@@ -1,5 +1,14 @@
 # @uppy/core
 
+## 3.1.0
+
+Released: 2023-03-07
+Included in: Uppy v3.6.0
+
+- @uppy/core: fix uppy.resetProgress() (Artur Paikin / #4337)
+- @uppy/core: fix some types (Antoine du Hamel / #4332)
+- @uppy/core: Fixed type of State.info to match reality being an array of info objects (Marc Bennewitz / #4321)
+
 ## 3.0.6
 
 Released: 2023-02-13
