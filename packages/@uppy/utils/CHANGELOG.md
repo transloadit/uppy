@@ -1,5 +1,12 @@
 # @uppy/utils
 
+## 5.1.3
+
+Released: 2023-03-07
+Included in: Uppy v3.6.0
+
+- @uppy/utils: workaround chrome crash (Mikael Finstad / #4310)
+
 ## 5.1.2
 
 Released: 2023-01-26

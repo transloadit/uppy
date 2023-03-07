@@ -1,5 +1,12 @@
 # @uppy/dashboard
 
+## 3.3.0
+
+Released: 2023-03-07
+Included in: Uppy v3.6.0
+
+- @uppy/dashboard: update provider icon style (Alexander Zaytsev / #4345)
+
 ## 3.2.2
 
 Released: 2023-02-13
