@@ -1,98 +1,104 @@
-import { h, Component } from 'preact'
+import { h } from 'preact'
+import { useEffect, useState, useCallback } from 'preact/hooks'
 import classNames from 'classnames'
 import { nanoid } from 'nanoid/non-secure'
 import getFileTypeIcon from '../../utils/getFileTypeIcon.jsx'
 import ignoreEvent from '../../utils/ignoreEvent.js'
 import FilePreview from '../FilePreview.jsx'
 
-class FileCard extends Component {
-  form = document.createElement('form')
+export default (props) => {
+  const {
+    uppy,
+    files,
+    fileCardFor,
+    toggleFileCard,
+    saveFileCard,
+    metaFields,
+    requiredMetaFields,
+    openFileEditor,
+    i18n,
+    i18nArray,
+    className,
+    canEditFile,
+  } = props
 
-  constructor (props) {
-    super(props)
-
-    const file = this.props.files[this.props.fileCardFor]
-    const metaFields = this.getMetaFields() || []
-
-    const storedMetaData = {}
-    metaFields.forEach((field) => {
-      storedMetaData[field.id] = file.meta[field.id] || ''
-    })
-
-    this.state = {
-      formState: storedMetaData,
-    }
-
-    this.form.id = nanoid()
+  const getMetaFields = () => {
+    return typeof metaFields === 'function'
+      ? metaFields(files[fileCardFor])
+      : metaFields
   }
 
-  componentDidMount () { // eslint-disable-line react/no-deprecated
-    this.form.addEventListener('submit', this.handleSave)
-    document.body.appendChild(this.form)
-  }
+  const file = files[fileCardFor]
+  const computedMetaFields = getMetaFields() ?? []
+  const showEditButton = canEditFile(file)
 
-  componentWillUnmount () {
-    this.form.removeEventListener('submit', this.handleSave)
-    document.body.removeChild(this.form)
-  }
+  const storedMetaData = {}
+  computedMetaFields.forEach((field) => {
+    storedMetaData[field.id] = file.meta[field.id] ?? ''
+  })
 
-  getMetaFields () {
-    return typeof this.props.metaFields === 'function'
-      ? this.props.metaFields(this.props.files[this.props.fileCardFor])
-      : this.props.metaFields
-  }
+  const [formState, setFormState] = useState(storedMetaData)
 
-  updateMeta = (newVal, name) => {
-    this.setState(({ formState }) => ({
-      formState: {
-        ...formState,
-        [name]: newVal,
-      },
-    }))
-  }
-
-  handleSave = (ev) => {
+  const handleSave = useCallback((ev) => {
     ev.preventDefault()
-    const fileID = this.props.fileCardFor
-    this.props.saveFileCard(this.state.formState, fileID)
+    saveFileCard(formState, fileCardFor)
+  }, [saveFileCard, formState, fileCardFor])
+
+  const updateMeta = (newVal, name) => {
+    setFormState({ [name]: newVal })
   }
 
-  handleCancel = () => {
-    const file = this.props.files[this.props.fileCardFor]
-    this.props.uppy.emit('file-editor:cancel', file)
-    this.props.toggleFileCard(false)
+  const handleCancel = () => {
+    uppy.emit('file-editor:cancel', file)
+    toggleFileCard(false)
   }
 
-  renderMetaFields = () => {
-    const metaFields = this.getMetaFields() || []
+  const [form] = useState(() => {
+    const formEl = document.createElement('form')
+    formEl.setAttribute('tabindex', '-1')
+    formEl.id = nanoid()
+    return formEl
+  })
+
+  useEffect(() => {
+    document.body.appendChild(form)
+    return () => document.body.removeChild(form)
+  }, [form])
+
+  useEffect(() => {
+    form.addEventListener('submit', handleSave)
+    return () => form.removeEventListener('submit', handleSave)
+  }, [form, handleSave])
+
+  const renderMetaFields = () => {
     const fieldCSSClasses = {
       text: 'uppy-u-reset uppy-c-textInput uppy-Dashboard-FileCard-input',
     }
 
-    return metaFields.map((field) => {
+    return computedMetaFields.map((field) => {
       const id = `uppy-Dashboard-FileCard-input-${field.id}`
-      const required = this.props.requiredMetaFields.includes(field.id)
+      const required = requiredMetaFields.includes(field.id)
       return (
         <fieldset key={field.id} className="uppy-Dashboard-FileCard-fieldset">
           <label className="uppy-Dashboard-FileCard-label" htmlFor={id}>{field.name}</label>
           {field.render !== undefined
             ? field.render({
-              value: this.state.formState[field.id],
-              onChange: (newVal) => this.updateMeta(newVal, field.id),
+              value: formState[field.id],
+              onChange: (newVal) => updateMeta(newVal, field.id),
               fieldCSSClasses,
               required,
-              form: this.form.id,
+              form: form.id,
             }, h)
             : (
               <input
                 className={fieldCSSClasses.text}
                 id={id}
-                form={this.form.id}
+                form={form.id}
                 type={field.type || 'text'}
                 required={required}
-                value={this.state.formState[field.id]}
+                value={formState[field.id]}
                 placeholder={field.placeholder}
-                onInput={ev => this.updateMeta(ev.target.value, field.id)}
+                onInput={ev => updateMeta(ev.target.value, field.id)}
                 data-uppy-super-focusable
               />
             )}
@@ -101,85 +107,78 @@ class FileCard extends Component {
     })
   }
 
-  render () {
-    const file = this.props.files[this.props.fileCardFor]
-    const showEditButton = this.props.canEditFile(file)
+  return (
+    <div
+      className={classNames('uppy-Dashboard-FileCard', className)}
+      data-uppy-panelType="FileCard"
+      onDragOver={ignoreEvent}
+      onDragLeave={ignoreEvent}
+      onDrop={ignoreEvent}
+      onPaste={ignoreEvent}
+    >
+      <div className="uppy-DashboardContent-bar">
+        <div className="uppy-DashboardContent-title" role="heading" aria-level="1">
+          {i18nArray('editing', {
+            file: <span className="uppy-DashboardContent-titleFile">{file.meta ? file.meta.name : file.name}</span>,
+          })}
+        </div>
+        <button
+          className="uppy-DashboardContent-back"
+          type="button"
+          form={form.id}
+          title={i18n('finishEditingFile')}
+          onClick={handleCancel}
+        >
+          {i18n('cancel')}
+        </button>
+      </div>
 
-    return (
-      <div
-        className={classNames('uppy-Dashboard-FileCard', this.props.className)}
-        data-uppy-panelType="FileCard"
-        onDragOver={ignoreEvent}
-        onDragLeave={ignoreEvent}
-        onDrop={ignoreEvent}
-        onPaste={ignoreEvent}
-      >
-        <div className="uppy-DashboardContent-bar">
-          <div className="uppy-DashboardContent-title" role="heading" aria-level="1">
-            {this.props.i18nArray('editing', {
-              file: <span className="uppy-DashboardContent-titleFile">{file.meta ? file.meta.name : file.name}</span>,
-            })}
-          </div>
+      <div className="uppy-Dashboard-FileCard-inner">
+        <div className="uppy-Dashboard-FileCard-preview" style={{ backgroundColor: getFileTypeIcon(file.type).color }}>
+          <FilePreview file={file} />
+          {showEditButton
+            && (
+            <button
+              type="button"
+              className="uppy-u-reset uppy-c-btn uppy-Dashboard-FileCard-edit"
+              onClick={(event) => {
+                // When opening the image editor we want to save any meta fields changes.
+                // Otherwise it's confusing for the user to click save in the editor,
+                // but the changes here are discarded. This bypasses validation,
+                // but we are okay with that.
+                handleSave(event)
+                openFileEditor(file)
+              }}
+            >
+              {i18n('editFile')}
+            </button>
+            )}
+        </div>
+
+        <div className="uppy-Dashboard-FileCard-info">
+          {renderMetaFields()}
+        </div>
+
+        <div className="uppy-Dashboard-FileCard-actions">
           <button
-            className="uppy-DashboardContent-back"
-            type="button"
-            form={this.form.id}
-            title={this.props.i18n('finishEditingFile')}
-            onClick={this.handleCancel}
+            className="uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-Dashboard-FileCard-actionsBtn"
+            // If `form` attribute is supported, we want a submit button to trigger the form validation.
+            // Otherwise, fallback to a classic button with a onClick event handler.
+            type="submit"
+            form={form.id}
           >
-            {this.props.i18n('cancel')}
+            {i18n('saveChanges')}
+          </button>
+          <button
+            className="uppy-u-reset uppy-c-btn uppy-c-btn-link uppy-Dashboard-FileCard-actionsBtn"
+            type="button"
+            onClick={handleCancel}
+            form={form.id}
+          >
+            {i18n('cancel')}
           </button>
         </div>
-
-        <div className="uppy-Dashboard-FileCard-inner">
-          <div className="uppy-Dashboard-FileCard-preview" style={{ backgroundColor: getFileTypeIcon(file.type).color }}>
-            <FilePreview file={file} />
-            {showEditButton
-              && (
-              <button
-                type="button"
-                className="uppy-u-reset uppy-c-btn uppy-Dashboard-FileCard-edit"
-                onClick={(event) => {
-                  // When opening the image editor we want to save any meta fields changes.
-                  // Otherwise it's confusing for the user to click save in the editor,
-                  // but the changes here are discarded. This bypasses validation,
-                  // but we are okay with that.
-                  this.handleSave(event)
-                  this.props.openFileEditor(file)
-                }}
-              >
-                {this.props.i18n('editFile')}
-              </button>
-              )}
-          </div>
-
-          <div className="uppy-Dashboard-FileCard-info">
-            {this.renderMetaFields()}
-          </div>
-
-          <div className="uppy-Dashboard-FileCard-actions">
-            <button
-              className="uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-Dashboard-FileCard-actionsBtn"
-              // If `form` attribute is supported, we want a submit button to trigger the form validation.
-              // Otherwise, fallback to a classic button with a onClick event handler.
-              type="submit"
-              form={this.form.id}
-            >
-              {this.props.i18n('saveChanges')}
-            </button>
-            <button
-              className="uppy-u-reset uppy-c-btn uppy-c-btn-link uppy-Dashboard-FileCard-actionsBtn"
-              type="button"
-              onClick={this.handleCancel}
-              form={this.form.id}
-            >
-              {this.props.i18n('cancel')}
-            </button>
-          </div>
-        </div>
       </div>
-    )
-  }
+    </div>
+  )
 }
-
-export default FileCard
