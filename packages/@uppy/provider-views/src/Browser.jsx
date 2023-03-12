@@ -1,12 +1,8 @@
 import { h } from 'preact'
 
 import classNames from 'classnames'
-
 import remoteFileObjToLocal from '@uppy/utils/lib/remoteFileObjToLocal'
-
-import Filter from './Filter.jsx'
 import SearchFilterInput from './SearchFilterInput.jsx'
-
 import FooterActions from './FooterActions.jsx'
 import Item from './Item/index.jsx'
 
@@ -15,7 +11,6 @@ const VIRTUAL_SHARED_DIR = 'shared-with-me'
 function Browser (props) {
   const {
     currentSelection,
-    clearSearch,
     folders,
     files,
     uppyFiles,
@@ -29,17 +24,19 @@ function Browser (props) {
     showTitles,
     i18n,
     validateRestrictions,
-    showFilter,
     isLoading,
-    filterQuery,
-    filterInput,
+    showSearchFilter,
     search,
     searchTerm,
-    showSearch,
+    clearSearch,
+    searchOnInput,
+    searchInputLabel,
+    clearSearchLabel,
     getNextFolder,
     cancel,
     done,
     columns,
+    noResultsLabel,
   } = props
 
   const selected = currentSelection.length
@@ -64,23 +61,16 @@ function Browser (props) {
         </div>
       )}
 
-      {showFilter && (
-        <Filter
-          i18n={i18n}
-          filterQuery={filterQuery}
-          filterInput={filterInput}
-        />
-      )}
-
-      {showSearch && (
-        <div class="uppy-ProviderBrowser-search">
+      {showSearchFilter && (
+        <div class="uppy-ProviderBrowser-searchFilter">
           <SearchFilterInput
             search={search}
             searchTerm={searchTerm}
             clearSearch={clearSearch}
-            inputLabel={i18n('search')}
-            inputCSSClassName="uppy-ProviderBrowser-searchInput"
-            searchOnInput
+            inputLabel={searchInputLabel}
+            clearSearchLabel={clearSearchLabel}
+            inputCSSClassName="uppy-ProviderBrowser-searchFilterInput"
+            searchOnInput={searchOnInput}
           />
         </div>
       )}
@@ -97,7 +87,7 @@ function Browser (props) {
         if (!folders.length && !files.length) {
           return (
             <div className="uppy-Provider-empty">
-              {i18n('noFilesFound')}
+              {noResultsLabel}
             </div>
           )
         }

@@ -62,14 +62,6 @@ export default class SearchProviderView extends View {
     // Nothing.
   }
 
-  clearSearch () {
-    this.plugin.setPluginState({
-      currentSelection: [],
-      files: [],
-      searchTerm: null,
-    })
-  }
-
   resetPluginState () {
     this.plugin.setPluginState(this.defaultState)
   }
@@ -99,6 +91,14 @@ export default class SearchProviderView extends View {
       },
       this.handleError,
     )
+  }
+
+  clearSearch () {
+    this.plugin.setPluginState({
+      currentSelection: [],
+      files: [],
+      searchTerm: null,
+    })
   }
 
   async handleScroll (event) {
@@ -151,14 +151,21 @@ export default class SearchProviderView extends View {
       handleScroll: this.handleScroll,
       done: this.donePicking,
       cancel: this.cancelPicking,
+
+      // For SearchFilterInput component
+      showSearchFilter: targetViewOptions.showFilter,
       search: this.search,
-      searchTerm,
       clearSearch: this.clearSearch,
+      searchTerm,
+      searchOnInput: false,
+      searchInputLabel: i18n('search'),
+      clearSearchLabel: i18n('resetSearch'),
+
+      noResultsLabel: i18n('noSearchResults'),
       title: this.plugin.title,
       viewType: targetViewOptions.viewType,
       showTitles: targetViewOptions.showTitles,
       showFilter: targetViewOptions.showFilter,
-      showSearch: true, // temp remove
       isLoading: loading,
       showBreadcrumbs: targetViewOptions.showBreadcrumbs,
       pluginIcon: this.plugin.icon,
