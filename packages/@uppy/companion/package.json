@@ -110,7 +110,7 @@
     "test": "NODE_OPTIONS=--experimental-vm-modules jest"
   },
   "engines": {
-    "node": "^14.19.0 || ^16.15.0 || >=18.0.0"
+    "node": "^16.15.0 || >=18.0.0"
   },
   "installConfig": {
     "hoistingLimits": "workspaces"
