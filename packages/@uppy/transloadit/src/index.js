@@ -293,10 +293,12 @@ export default class Transloadit extends BasePlugin {
       const files = this.getAssemblyFiles(id)
       files.forEach((file) => {
       // TODO Maybe make a postprocess-error event here?
+
         this.uppy.emit('upload-error', file, error)
 
         this.uppy.emit('postprocess-complete', file)
       })
+      this.uppy.emit('error', error)
     })
 
     this.assemblyWatchers[uploadID] = watcher
@@ -572,6 +574,7 @@ export default class Transloadit extends BasePlugin {
       this.#onFileUploadComplete(id, file)
     })
     assembly.on('error', (error) => {
+      console.log('ASSEMBLY ON ERROR', error)
       error.assembly = assembly.status // eslint-disable-line no-param-reassign
       this.uppy.emit('transloadit:assembly-error', assembly.status, error)
     })
