@@ -1,5 +1,3 @@
-const noAuthProvider = ''
-
 /**
  * Provider interface defines the specifications of any provider implementation
  */
@@ -82,12 +80,10 @@ class Provider {
    * @returns {string}
    */
   static get authProvider () {
-    return noAuthProvider
+    return undefined
   }
 }
 
 module.exports = Provider
-module.exports.noAuthProvider = noAuthProvider
-
 // OAuth providers are those that have a `static authProvider` set. It means they require OAuth authentication to work
-module.exports.isOAuthProvider = (authProvider) => authProvider !== noAuthProvider
+module.exports.isOAuthProvider = (authProvider) => authProvider != null
