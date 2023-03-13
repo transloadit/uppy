@@ -173,6 +173,7 @@ en_US.strings = {
     '1': 'Uploading %{smart_count} files',
   },
   uploadPaused: 'Upload paused',
+  uploadStalled: 'Upload has not made any progress for %{seconds} seconds. You may want to retry it.',
   uploadXFiles: {
     '0': 'Upload %{smart_count} file',
     '1': 'Upload %{smart_count} files',
