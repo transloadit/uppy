@@ -9,7 +9,8 @@
     "allowJs": true,
     "checkJs": true,
     "noEmitOnError": true,
-    "moduleResolution": "node16"
+    "moduleResolution": "node16",
+    "esModuleInterop": true,
   },
   "include": [
     "src/**/*"
