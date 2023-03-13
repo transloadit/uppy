@@ -41,24 +41,24 @@ describe('test protected request Agent', () => {
   test('allows URLs without IP addresses', async () => {
     nock('https://transloadit.com').get('/').reply(200)
     const url = 'https://transloadit.com'
-    await getProtectedGot({ url, blockLocalIPs: true }).get(url)
+    await (await getProtectedGot({ url, blockLocalIPs: true })).get(url)
   })
 
   test('blocks private http IP address', async () => {
     const url = 'http://172.20.10.4:8090'
-    const promise = getProtectedGot({ url, blockLocalIPs: true }).get(url)
+    const promise = (await getProtectedGot({ url, blockLocalIPs: true })).get(url)
     await expect(promise).rejects.toThrow(new Error(FORBIDDEN_IP_ADDRESS))
   })
 
   test('blocks private https IP address', async () => {
     const url = 'https://172.20.10.4:8090'
-    const promise = getProtectedGot({ url, blockLocalIPs: true }).get(url)
+    const promise = (await getProtectedGot({ url, blockLocalIPs: true })).get(url)
     await expect(promise).rejects.toThrow(new Error(FORBIDDEN_IP_ADDRESS))
   })
 
   test('blocks localhost IP address', async () => {
     const url = 'http://127.0.0.1:8090'
-    const promise = getProtectedGot({ url, blockLocalIPs: true }).get(url)
+    const promise = (await getProtectedGot({ url, blockLocalIPs: true })).get(url)
     await expect(promise).rejects.toThrow(new Error(FORBIDDEN_IP_ADDRESS))
   })
 })

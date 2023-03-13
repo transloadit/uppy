@@ -1,4 +1,3 @@
-const got = require('got').default
 const moment = require('moment-timezone')
 
 const Provider = require('../Provider')
@@ -6,11 +5,13 @@ const { initializeData, adaptData } = require('./adapter')
 const { withProviderErrorHandling } = require('../providerErrors')
 const { prepareStream, getBasicAuthHeader } = require('../../helpers/utils')
 
+const got = require('../../got')
+
 const BASE_URL = 'https://zoom.us/v2'
 const PAGE_SIZE = 300
 const DEAUTH_EVENT_NAME = 'app_deauthorized'
 
-const getClient = ({ token }) => got.extend({
+const getClient = async ({ token }) => (await got).extend({
   prefixUrl: BASE_URL,
   headers: {
     authorization: `Bearer ${token}`,
@@ -49,7 +50,7 @@ class Zoom extends Provider {
       const { cursor, from, to } = query
       const meetingId = options.directory || ''
 
-      const client = getClient({ token })
+      const client = await getClient({ token })
       const user = await client.get('users/me', { responseType: 'json' }).json()
 
       const { timezone } = user
@@ -91,7 +92,7 @@ class Zoom extends Provider {
       // cc files don't have an ID or size
       const { recordingStart, recordingId: fileId } = query
 
-      const client = getClient({ token })
+      const client = await getClient({ token })
 
       const foundFile = await findFile({ client, meetingId, fileId, recordingStart })
       const url = foundFile?.download_url
@@ -105,7 +106,7 @@ class Zoom extends Provider {
 
   async size ({ id: meetingId, token, query }) {
     return this.#withErrorHandling('provider.zoom.size.error', async () => {
-      const client = getClient({ token })
+      const client = await getClient({ token })
       const { recordingStart, recordingId: fileId } = query
 
       const foundFile = await findFile({ client, meetingId, fileId, recordingStart })
@@ -118,7 +119,7 @@ class Zoom extends Provider {
     return this.#withErrorHandling('provider.zoom.logout.error', async () => {
       const { key, secret } = await companion.getProviderCredentials()
 
-      const { status } = await got.post('https://zoom.us/oauth/revoke', {
+      const { status } = await (await got).post('https://zoom.us/oauth/revoke', {
         searchParams: { token },
         headers: { Authorization: getBasicAuthHeader(key, secret) },
         responseType: 'json',
@@ -141,7 +142,7 @@ class Zoom extends Provider {
         return { data: {}, status: 400 }
       }
 
-      await got.post('https://api.zoom.us/oauth/data/compliance', {
+      await (await got).post('https://api.zoom.us/oauth/data/compliance', {
         headers: { Authorization: getBasicAuthHeader(key, secret) },
         json: {
           client_id: key,
