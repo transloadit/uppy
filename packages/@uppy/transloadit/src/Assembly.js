@@ -108,10 +108,10 @@ class TransloaditAssembly extends Emitter {
       this.status.results[stepName].push(result)
     })
 
-    socket.on('assembly_error', (err) => {
-      this.#onError(err)
+    socket.on('assembly_error', (event) => {
       // Refetch for updated status code
       this.#fetchStatus({ diff: false })
+      this.#onError(new Error(event.error))
     })
 
     this.socket = socket
