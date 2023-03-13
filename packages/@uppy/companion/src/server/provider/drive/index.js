@@ -1,17 +1,17 @@
-const got = require('got').default
-
 const Provider = require('../Provider')
 const logger = require('../../logger')
 const { VIRTUAL_SHARED_DIR, adaptData, isShortcut, isGsuiteFile, getGsuiteExportType } = require('./adapter')
 const { withProviderErrorHandling } = require('../providerErrors')
 const { prepareStream } = require('../../helpers/utils')
 
+const got = require('../../got')
+
 const DRIVE_FILE_FIELDS = 'kind,id,imageMediaMetadata,name,mimeType,ownedByMe,permissions(role,emailAddress),size,modifiedTime,iconLink,thumbnailLink,teamDriveId,videoMediaMetadata,shortcutDetails(targetId,targetMimeType)'
 const DRIVE_FILES_FIELDS = `kind,nextPageToken,incompleteSearch,files(${DRIVE_FILE_FIELDS})`
 // using wildcard to get all 'drive' fields because specifying fields seems no to work for the /drives endpoint
 const SHARED_DRIVE_FIELDS = '*'
 
-const getClient = ({ token }) => got.extend({
+const getClient = async ({ token }) => (await got).extend({
   prefixUrl: 'https://www.googleapis.com/drive/v3',
   headers: {
     authorization: `Bearer ${token}`,
@@ -19,7 +19,7 @@ const getClient = ({ token }) => got.extend({
 })
 
 async function getStats ({ id, token }) {
-  const client = getClient({ token })
+  const client = await getClient({ token })
 
   const getStatsInner = async (statsOfId) => (
     client.get(`files/${encodeURIComponent(statsOfId)}`, { searchParams: { fields: DRIVE_FILE_FIELDS, supportsAllDrives: true }, responseType: 'json' }).json()
@@ -54,7 +54,7 @@ class Drive extends Provider {
       const isRoot = directory === 'root'
       const isVirtualSharedDirRoot = directory === VIRTUAL_SHARED_DIR
 
-      const client = getClient({ token })
+      const client = await getClient({ token })
 
       async function fetchSharedDrives (pageToken = null) {
         const shouldListSharedDrives = isRoot && !query.cursor
@@ -106,7 +106,7 @@ class Drive extends Provider {
 
   async download ({ id: idIn, token }) {
     return this.#withErrorHandling('provider.drive.download.error', async () => {
-      const client = getClient({ token })
+      const client = await getClient({ token })
 
       const { mimeType, id } = await getStats({ id: idIn, token })
 
@@ -148,7 +148,7 @@ class Drive extends Provider {
 
   logout ({ token }) {
     return this.#withErrorHandling('provider.drive.logout.error', async () => {
-      await got.post('https://accounts.google.com/o/oauth2/revoke', {
+      await (await got).post('https://accounts.google.com/o/oauth2/revoke', {
         searchParams: { token },
         responseType: 'json',
       })

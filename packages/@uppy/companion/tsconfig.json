@@ -8,7 +8,9 @@
     "sourceMap": false,
     "allowJs": true,
     "checkJs": true,
-    "noEmitOnError": true
+    "noEmitOnError": true,
+    "moduleResolution": "node16",
+    "esModuleInterop": true,
   },
   "include": [
     "src/**/*"

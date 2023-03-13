@@ -46,7 +46,7 @@ const validateURL = (url, ignoreTld) => {
  */
 const downloadURL = async (url, blockLocalIPs, traceId) => {
   try {
-    const protectedGot = getProtectedGot({ url, blockLocalIPs })
+    const protectedGot = await getProtectedGot({ url, blockLocalIPs })
     const stream = protectedGot.stream.get(url, { responseType: 'json' })
     await prepareStream(stream)
     return stream
