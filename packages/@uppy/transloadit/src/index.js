@@ -574,7 +574,6 @@ export default class Transloadit extends BasePlugin {
       this.#onFileUploadComplete(id, file)
     })
     assembly.on('error', (error) => {
-      console.log('ASSEMBLY ON ERROR', error)
       error.assembly = assembly.status // eslint-disable-line no-param-reassign
       this.uppy.emit('transloadit:assembly-error', assembly.status, error)
     })
