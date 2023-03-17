@@ -41,6 +41,7 @@ data:
   COMPANION_AWS_SECRET: "YOUR AWS SECRET"
   COMPANION_AWS_BUCKET: "YOUR AWS S3 BUCKET"
   COMPANION_AWS_REGION: "AWS REGION"
+  COMPANION_AWS_PREFIX: "AWS PREFIX"
   COMPANION_OAUTH_DOMAIN: "sub.domain.com"
   COMPANION_UPLOAD_URLS: "http://tusd.tusdemo.net/files/,https://tusd.tusdemo.net/files/"
 kind: Secret
