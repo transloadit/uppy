@@ -1,6 +1,8 @@
 import getFileType from '@uppy/utils/lib/getFileType'
 import isPreviewSupported from '@uppy/utils/lib/isPreviewSupported'
+import getSocketHost from '@uppy/utils/lib/getSocketHost'
 import generateFileID from '@uppy/utils/lib/generateFileID'
+import { Socket } from '@uppy/companion-client'
 
 // TODO: now that we have a shared `View` class,
 // `SharedHandler` could be cleaned up and moved into here
@@ -10,6 +12,13 @@ export default class View {
   constructor (plugin, opts) {
     this.plugin = plugin
     this.provider = opts.provider
+
+    const host = getSocketHost(this.provider.opts.companionUrl)
+    this.wssToken = crypto.randomUUID()
+    this.socket = new Socket({
+      target: `${host}/api/${this.wssToken}`,
+    })
+
     this.sharedHandler = new SharedHandler(plugin)
 
     this.isHandlingScroll = false

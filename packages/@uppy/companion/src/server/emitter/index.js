@@ -11,7 +11,7 @@ let emitter
 module.exports = (redisUrl, redisPubSubScope) => {
   if (!emitter) {
     emitter = redisUrl ? redisEmitter(redisUrl, redisPubSubScope) : nodeEmitter()
+    Object.assign(emitter, { __TEST__: Math.random() })
   }
-
   return emitter
 }

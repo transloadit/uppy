@@ -1,6 +1,7 @@
 /* global jest:false, test:false, expect:false, describe:false */
 
 const mockOauthState = require('../mockoauthstate')()
+const mockEmitter = require('../../src/server/emitter/default-emitter')()
 
 const request = require('supertest')
 const tokenService = require('../../src/server/helpers/jwt')
@@ -10,6 +11,9 @@ jest.mock('../../src/server/helpers/oauth-state', () => ({
   ...jest.requireActual('../../src/server/helpers/oauth-state'),
   ...mockOauthState,
 }))
+
+// singleton the instance for event emmiter
+jest.mock('../../src/server/emitter/index.js', () => () => mockEmitter)
 
 const authServer = getServer()
 const authData = {
@@ -29,26 +33,33 @@ describe('test authentication callback', () => {
   })
 
   test('the token gets sent via cookie and html', () => {
-    // see mock ../../src/server/helpers/oauth-state above for state values
-    return request(authServer)
-      .get(`/dropbox/send-token?uppyAuthToken=${token}&state=state-with-newer-version`)
-      .expect(200)
-      .expect((res) => {
-        const authToken = res.header['set-cookie'][0].split(';')[0].split('uppyAuthToken--dropbox=')[1]
-        expect(authToken).toEqual(token)
-        const body = `
+    const callbackToken = mockOauthState.getFromState('state=state-with-newer-version', 'callbackToken')
+    return new Promise((resolve) => {
+      mockEmitter.on(callbackToken, (data) => {
+        expect(data.payload.token)
+        resolve()
+      })
+
+      return request(authServer)
+        .get(`/dropbox/send-token?uppyAuthToken=${token}&state=state-with-newer-version`)
+        .expect(200)
+        .expect((res) => {
+          const authToken = res.header['set-cookie'][0].split(';')[0].split('uppyAuthToken--dropbox=')[1]
+          expect(authToken).toEqual(token)
+          const body = `
     <!DOCTYPE html>
     <html>
     <head>
         <meta charset="utf-8" />
         <script>
-          window.opener.postMessage({"token":"${token}"}, "http:\\u002F\\u002Flocalhost:3020")
+          if (window.opener) window.opener.postMessage({"token":"${token}"}, "http:\\u002F\\u002Flocalhost:3020")
           window.close()
         </script>
     </head>
     <body></body>
     </html>`
-        expect(res.text).toBe(body)
-      })
+          expect(res.text).toBe(body)
+        })
+    })
   })
 })

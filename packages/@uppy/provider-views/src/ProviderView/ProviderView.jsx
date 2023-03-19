@@ -238,12 +238,13 @@ export default class ProviderView extends View {
   async handleAuth () {
     await this.provider.ensurePreAuth()
 
-    const authState = btoa(JSON.stringify({ origin: getOrigin() }))
+    const authState = btoa(JSON.stringify({ origin: getOrigin(), callbackToken: this.wssToken }))
+
     const clientVersion = `@uppy/provider-views=${ProviderView.VERSION}`
     const link = this.provider.authUrl({ state: authState, uppyVersions: clientVersion })
 
     const authWindow = window.open(link, '_blank')
-    const handleToken = (e) => {
+    const handlePostMessageToken = (e) => {
       if (e.source !== authWindow) {
         this.plugin.uppy.log('rejecting event from unknown source')
         return
@@ -255,8 +256,12 @@ export default class ProviderView extends View {
       // Check if it's a string before doing the JSON.parse to maintain support
       // for older Companion versions that used object references
       const data = typeof e.data === 'string' ? JSON.parse(e.data) : e.data
+      window.removeEventListener('message', handlePostMessageToken)
+      handleToken(data)
+    }
 
-      if (data.error) {
+    const handleToken = ({ token, error }) => {
+      if (error) {
         this.plugin.uppy.log('auth aborted', 'warning')
         const { uppy } = this.plugin
         const message = uppy.i18n('authAborted')
@@ -264,17 +269,17 @@ export default class ProviderView extends View {
         return
       }
 
-      if (!data.token) {
+      if (!token) {
         this.plugin.uppy.log('did not receive token from auth window', 'error')
         return
       }
-
       authWindow.close()
-      window.removeEventListener('message', handleToken)
-      this.provider.setAuthToken(data.token)
+      this.provider.setAuthToken(token)
       this.preFirstRender()
     }
-    window.addEventListener('message', handleToken)
+
+    window.addEventListener('message', handlePostMessageToken)
+    this.socket.once('token', handleToken)
   }
 
   async handleScroll (event) {
