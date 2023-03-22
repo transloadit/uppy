@@ -107,6 +107,8 @@
     "vue-template-compiler": "workspace:*"
   },
   "scripts": {
+    "start:companion": "bash bin/companion.sh",
+    "start:companion:with-loadbalancer": "e2e/start-companion-with-load-balancer.mjs",
     "build:bundle": "yarn node ./bin/build-bundle.mjs",
     "build:clean": "rm -rf packages/*/lib packages/@uppy/*/lib packages/*/dist packages/@uppy/*/dist",
     "build:companion": "yarn workspace @uppy/companion build",
@@ -115,7 +117,7 @@
     "build:angular": "yarn workspace angular build:release",
     "build:js": "npm-run-all build:lib build:companion build:locale-pack build:svelte build:angular build:bundle",
     "build:lib": "yarn node ./bin/build-lib.js",
-    "build:locale-pack": "yarn workspace @uppy-dev/locale-pack build && eslint packages/@uppy/locales/src/en_US.js --fix && yarn workspace @uppy-dev/locale-pack test unused",
+    "build:locale-pack": "yarn workspace @uppy-dev/locale-pack test unused",
     "build": "npm-run-all --parallel build:js build:css --serial size",
     "contributors:save": "yarn node ./bin/update-contributors.mjs",
     "dev:with-companion": "npm-run-all --parallel start:companion dev",
