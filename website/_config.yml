@@ -3,7 +3,7 @@
 ## Source: https://github.com/tommy351/hexo/
 
 # Theme
-root_domain: uppy.io
+root_domain: transloadit.github.io
 
 # Site
 title: Uppy
@@ -27,8 +27,8 @@ language: English
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
-url: https://uppy.io
-root: /
+url: https://transloadit.github.io/uppy
+root: /uppy/
 permalink: blog/:year/:month/:title/
 tag_dir: tags
 archive_dir: archives

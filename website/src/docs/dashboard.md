@@ -213,7 +213,7 @@ See also `disableStatusBar` option, which can hide the progress and upload butto
 
 ### `showRemoveButtonAfterComplete: false`
 
-Sometimes you might want to let users remove an uploaded file. Enabling this option only shows the remove `X` button in the Dashboard UI, but to actually send a request you should listen to [`file-removed`](https://uppy.io/docs/uppy/#file-removed) event and add your logic there.
+Sometimes you might want to let users remove an uploaded file. Enabling this option only shows the remove `X` button in the Dashboard UI, but to actually send a request you should listen to [`file-removed`](/uppy/docs/uppy/#file-removed) event and add your logic there.
 
 ```js
 uppy.on('file-removed', (file, reason) => {
@@ -231,7 +231,7 @@ Optionally, specify a string of text that explains something about the upload fo
 
 ### `metaFields: []`
 
-An array of UI field objects, or a function that takes a [File Object](https://uppy.io/docs/uppy/#File-Objects) and returns an array of UI field objects, that will be shown when a user clicks the “edit” button on that file. Configuring this enables the “edit” button on file cards. Each object requires:
+An array of UI field objects, or a function that takes a [File Object](/uppy/docs/uppy/#File-Objects) and returns an array of UI field objects, that will be shown when a user clicks the “edit” button on that file. Configuring this enables the “edit” button on file cards. Each object requires:
 
 * `id`, the name of the meta field. Note: this will also be used in CSS/HTML as part of the `id` attribute, so it’s better to [avoid using characters like periods, semicolons, etc](https://stackoverflow.com/a/79022).
 * `name`, the label shown in the interface.
@@ -432,7 +432,7 @@ export default {
 
 ### `theme: 'light'`
 
-Uppy Dashboard supports “Dark Mode”. You can try it live on [the Dashboard example page](https://uppy.io/examples/dashboard/).
+Uppy Dashboard supports “Dark Mode”. You can try it live on [the Dashboard example page](/uppy/examples/dashboard/).
 
 It supports the following values:
 
@@ -520,7 +520,7 @@ Fired when a user clicks on a source plugin, such as Webcam or Google Drive, in 
 
 **Parameters:**
 
-* `file` — The [File Object](https://uppy.io/docs/uppy/#File-Objects) representing the file that was opened for editing.
+* `file` — The [File Object](/uppy/docs/uppy/#File-Objects) representing the file that was opened for editing.
 
 Fired when the user clicks “edit” icon next to a file in the Dashboard. The FileCard panel is then open with file metadata available for editing.
 
@@ -528,7 +528,7 @@ Fired when the user clicks “edit” icon next to a file in the Dashboard. The 
 
 **Parameters:**
 
-* `file` — The [File Object](https://uppy.io/docs/uppy/#File-Objects) representing the file that was edited.
+* `file` — The [File Object](/uppy/docs/uppy/#File-Objects) representing the file that was edited.
 
 Fired when the user finished editing the file metadata.
 

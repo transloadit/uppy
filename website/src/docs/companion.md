@@ -424,7 +424,7 @@ For example, if your Companion server is hosted on `https://my.companion.server.
 
 `https://my.companion.server.com/onedrive/redirect`
 
-Please see [Supported Providers](https://uppy.io/docs/companion/#Supported-providers) for a list of all Providers and their corresponding names.
+Please see [Supported Providers](/uppy/docs/companion/#Supported-providers) for a list of all Providers and their corresponding names.
 
 ### S3 options
 
@@ -463,7 +463,7 @@ Get the key name for a file. The key is the file path to which the file will be 
 
 * `req`, the HTTP request, for _regular_ S3 uploads using the `@uppy/aws-s3` plugin. This parameter is _not_ available for multipart uploads using the `@uppy/aws-s3-multipart` plugin;
 * `filename`, the original name of the uploaded file;
-* `metadata`, user-provided metadata for the file. See the [`@uppy/aws-s3`](https://uppy.io/docs/aws-s3/#metaFields) docs. The `@uppy/aws-s3-multipart` plugin unconditionally sends all metadata fields, so they all are available here.
+* `metadata`, user-provided metadata for the file. See the [`@uppy/aws-s3`](/uppy/docs/aws-s3/#metaFields) docs. The `@uppy/aws-s3-multipart` plugin unconditionally sends all metadata fields, so they all are available here.
 
 If your bucket is public, you should include a cryptographically random token in the uploaded name for security (hence the default `crypto.randomUUID()`).
 
@@ -521,7 +521,7 @@ The other option is to set up a load balancer in front of many Companion instanc
 
 ### Adding custom providers
 
-As of now, Companion supports the [providers listed here](https://uppy.io/docs/companion/#Supported-providers) out of the box, but you may also choose to add your own custom providers. You can do this by passing the `customProviders` option when calling the Uppy `app` method. The custom provider is expected to support Oauth 1 or 2 for authentication/authorization.
+As of now, Companion supports the [providers listed here](/uppy/docs/companion/#Supported-providers) out of the box, but you may also choose to add your own custom providers. You can do this by passing the `customProviders` option when calling the Uppy `app` method. The custom provider is expected to support Oauth 1 or 2 for authentication/authorization.
 
 ```javascript
 import providerModule from './path/to/provider/module'

@@ -110,7 +110,7 @@ Set to `0` to disable limiting.
 
 > This is an advanced option intended for use with _almost_ S3-compatible storage solutions.
 
-Customize response handling once an upload is completed. This passes the function through to @uppy/xhr-upload, see its [documentation](https://uppy.io/docs/xhr-upload/#getResponseData-responseText-response) for API details.
+Customize response handling once an upload is completed. This passes the function through to @uppy/xhr-upload, see its [documentation](/uppy/docs/xhr-upload/#getResponseData-responseText-response) for API details.
 
 This option is useful when uploading to an S3-like service that doesn’t reply with an XML document, but with something else such as JSON.
 

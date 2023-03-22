@@ -5,7 +5,7 @@ author: ife
 published: false
 ---
 
-In this post we will be going through a step by step tutorial on how to develop, and add custom [providers](https://uppy.io/docs/providers/) to Uppy and Companion. For the purpose of this tutorial we will be building a custom provider for [Unsplash](https://unsplash.com/).
+In this post we will be going through a step by step tutorial on how to develop, and add custom [providers](/uppy/docs/providers/) to Uppy and Companion. For the purpose of this tutorial we will be building a custom provider for [Unsplash](https://unsplash.com/).
 
 <!--more-->
 
@@ -15,7 +15,7 @@ In this post we will be going through a step by step tutorial on how to develop,
 >
 > They work tightly with [Companion](https://www.npmjs.com/package/@uppy/companion) — Uppy's server-to-server communication handler between your server and file storage providers.
 
-Read more on [Provider Plugins](https://uppy.io/docs/providers/).
+Read more on [Provider Plugins](/uppy/docs/providers/).
 
 
 Creating a custom provider composes of two parts; **Custom Companion Provider** and **Custom Uppy Plugin**
@@ -146,7 +146,7 @@ Click "New Application" to create a new application. For the sake of this tutori
 
 Back to our project directory, we are going to create a `server/customprovider.js` file. This will contain the code that implements the Unsplash provider.
 
-According to [the docs](https://uppy.io/docs/companion/#Adding-custom-providers), we need to create a class that implements the methods `list`, `download`, and `size`.
+According to [the docs](/uppy/docs/companion/#Adding-custom-providers), we need to create a class that implements the methods `list`, `download`, and `size`.
 
 The constructor of our class will look something like this:
 
@@ -211,7 +211,7 @@ _adaptData (res) {
 }
 ```
 
-the method makes an http request to the unsplash API based on the documentation to [list collections](https://unsplash.com/documentation#list-collections) and [list collection's photos](https://unsplash.com/documentation#get-a-collections-photos). The `_adaptData` method exists to help us conform to [the list data](https://uppy.io/docs/companion/#list-data)
+the method makes an http request to the unsplash API based on the documentation to [list collections](https://unsplash.com/documentation#list-collections) and [list collection's photos](https://unsplash.com/documentation#get-a-collections-photos). The `_adaptData` method exists to help us conform to [the list data](/uppy/docs/companion/#list-data)
 
 Our `size` method will look something like this:
 
@@ -417,7 +417,7 @@ You can find your unsplash API key on your Unsplash [app dashboard](https://unsp
 
 Now we need to implement the client part of this. To do this we need to implement an Uppy Plugin.
 
-First, we'll create a `client/MyCustomProvider.js` file. Following the instructions [here](https://uppy.io/docs/writing-plugins/), our Uppy Plugin (aka `client/MyCustomProvider.js` file) could look something like this:
+First, we'll create a `client/MyCustomProvider.js` file. Following the instructions [here](/uppy/docs/writing-plugins/), our Uppy Plugin (aka `client/MyCustomProvider.js` file) could look something like this:
 
 ```js
 const { UIPlugin } = require('@uppy/core')

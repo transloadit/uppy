@@ -8,7 +8,7 @@ category: "Miscellaneous"
 tagline: "restore files and continue uploading after a page refresh or a browser crash"
 ---
 
-The `@uppy/golden-retriever` plugin saves selected files in your browser cache, so that if the browser crashes, Uppy can restore everything and continue uploading as if nothing happened. You can read more about it [on our blog](https://uppy.io/blog/2017/07/golden-retriever/).
+The `@uppy/golden-retriever` plugin saves selected files in your browser cache, so that if the browser crashes, Uppy can restore everything and continue uploading as if nothing happened. You can read more about it [on our blog](/uppy/blog/2017/07/golden-retriever/).
 
 The Golden Retriever uses LocalStorage to store file metadata and Uppy state, and IndexedDB for small files. It also uses a Service Worker for _all_ files because, unlike IndexedDB, a Service Worker can keep large files. Service Worker storage is _quite_ temporary though, and doesn’t persist across browser crashes or restarts. It works well, however, for accidental refreshes or closed tabs.
 
