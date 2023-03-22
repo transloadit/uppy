@@ -8122,7 +8122,11 @@ __metadata:
   resolution: "@uppy-dev/locale-pack@workspace:private/locale-pack"
   dependencies:
     chalk: ^5.0.0
+    dedent: ^0.7.0
     glob: ^8.0.0
+    mdast-util-heading-range: ^3.1.0
+    remark: ^14.0.1
+    remark-frontmatter: ^4.0.1
   languageName: unknown
   linkType: soft
 
@@ -23356,6 +23360,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"mdast-util-heading-range@npm:^3.1.0":
+  version: 3.1.0
+  resolution: "mdast-util-heading-range@npm:3.1.0"
+  dependencies:
+    "@types/mdast": ^3.0.0
+    "@types/unist": ^2.0.0
+    mdast-util-to-string: ^3.0.0
+  checksum: c0f9892cdd36ab88b368f636270e7e846edc3c923a395b6ae49913e99c88cdff9eb5b2b131a9f20e8a78d22aff66e0523acda630721f30d8e32159ca6d35ac5d
+  languageName: node
+  linkType: hard
+
 "mdast-util-heading-style@npm:^2.0.0":
   version: 2.0.0
   resolution: "mdast-util-heading-style@npm:2.0.0"
@@ -29418,7 +29433,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"remark-frontmatter@npm:^4.0.0":
+"remark-frontmatter@npm:^4.0.0, remark-frontmatter@npm:^4.0.1":
   version: 4.0.1
   resolution: "remark-frontmatter@npm:4.0.1"
   dependencies:
@@ -29814,7 +29829,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"remark@npm:^14.0.0":
+"remark@npm:^14.0.0, remark@npm:^14.0.1":
   version: 14.0.2
   resolution: "remark@npm:14.0.2"
   dependencies:
