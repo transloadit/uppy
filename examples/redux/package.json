@@ -3,16 +3,16 @@
   "version": "0.0.0",
   "type": "module",
   "dependencies": {
-    "@reduxjs/toolkit": "^1.8.4",
+    "@reduxjs/toolkit": "^1.9.3",
     "@uppy/core": "workspace:*",
     "@uppy/dashboard": "workspace:*",
     "@uppy/store-redux": "workspace:*",
     "@uppy/tus": "workspace:*",
-    "redux": "^4.1.2",
+    "redux": "^4.2.1",
     "redux-logger": "^3.0.6"
   },
   "devDependencies": {
-    "vite": "^3.0.0"
+    "vite": "^4.0.0"
   },
   "private": true,
   "scripts": {
