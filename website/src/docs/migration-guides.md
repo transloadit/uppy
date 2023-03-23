@@ -68,7 +68,7 @@ new Uppy()
     service: 'https://api2.transloadit.com',
     async getAssemblyOptions (file) {
       // This is where you configure your auth key, auth secret, and template ID
-      // https://uppy.io/docs/transloadit/#getAssemblyOptions-file
+      // /uppy/docs/transloadit/#getAssemblyOptions-file
       //
       // It is important to set the secret in production:
       // https://transloadit.com/docs/topics/signature-authentication/
@@ -219,7 +219,7 @@ To use AWS S3 for storage, you configured the `s3` object inside `providerOption
 
 ### Removed compatibility for legacy Custom Provider implementations
 
-[Custom Provider](https://uppy.io/docs/companion/#Adding-custom-providers)
+[Custom Provider](/uppy/docs/companion/#Adding-custom-providers)
 implementations must use the Promise API. The callback API is no longer supported.
 
 ### Default to no ACL for AWS S3
@@ -352,7 +352,7 @@ const otherUppy = Uppy() // incorrect, will throw.
 
 ### Rename `allowMultipleUploads` to `allowMultipleUploadBatches`
 
-[`allowMultipleUploadBatches`](https://uppy.io/docs/uppy/#allowMultipleUploadBatches-true) means allowing several calls to [`.upload()`](https://uppy.io/docs/uppy/#uppy-upload), in other words, a user can add more files after already having uploaded some.
+[`allowMultipleUploadBatches`](/uppy/docs/uppy/#allowMultipleUploadBatches-true) means allowing several calls to [`.upload()`](/uppy/docs/uppy/#uppy-upload), in other words, a user can add more files after already having uploaded some.
 
 <!--retext-simplify ignore multiple-->
 
@@ -464,9 +464,9 @@ uppy.on('dashboard:file-edit-start', (file) => {
 
 ### Changes to pre-signing URLs for [`@uppy/aws-s3-multipart`][aws-s3-multipart]
 
-See the Uppy 2.0.0 announcement post about the batch [pre-signing URLs change](https://uppy.io/blog/2021/08/2.0/#Batch-pre-signing-URLs-for-AWS-S3-Multipart).
+See the Uppy 2.0.0 announcement post about the batch [pre-signing URLs change](/uppy/blog/2021/08/2.0/#Batch-pre-signing-URLs-for-AWS-S3-Multipart).
 
-`prepareUploadPart` has been renamed to [`prepareUploadParts`](https://uppy.io/docs/aws-s3-multipart/#prepareUploadParts-file-partData) (plural). See the documentation link on how to use this function.
+`prepareUploadPart` has been renamed to [`prepareUploadParts`](/uppy/docs/aws-s3-multipart/#prepareUploadParts-file-partData) (plural). See the documentation link on how to use this function.
 
 ### Removed the `.run` method from [`@uppy/core`][core]
 
@@ -492,7 +492,7 @@ Since v2, you now need to be running `node.js >= v10.20.1` to use Companion.
 
 ### ProviderOptions
 
-In v2 the `google` and `microsoft` [providerOptions](https://uppy.io/docs/companion/#Options) have been changed to `drive` and `onedrive` respectively.
+In v2 the `google` and `microsoft` [providerOptions](/uppy/docs/companion/#Options) have been changed to `drive` and `onedrive` respectively.
 
 ### OAuth Redirect URIs
 

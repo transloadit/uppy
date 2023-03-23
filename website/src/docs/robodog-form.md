@@ -272,4 +272,4 @@ As for the options that are unavailable:
 | `onDisconnect` | Not available, use something like [`is-offline`](https://www.npmjs.com/package/is-offline) |
 | `onReconnect` | Not available, use something like [`is-offline`](https://www.npmjs.com/package/is-offline) |
 
-[transloadit plugin]: https://uppy.io/docs/transloadit/
+[transloadit plugin]: /uppy/docs/transloadit/

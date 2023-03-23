@@ -33,4 +33,4 @@ Companion 1.x will continue to receive security patches until March 1, 2021.
 
 ## Migrating from Companion 1.x to 2.x
 
-Given the breaking changes, we've created a [migration tutorial for upgrading from Companion v1 to v2](https://uppy.io/docs/companion/#Migrating-v1-to-v2).
+Given the breaking changes, we've created a [migration tutorial for upgrading from Companion v1 to v2](/uppy/docs/companion/#Migrating-v1-to-v2).
