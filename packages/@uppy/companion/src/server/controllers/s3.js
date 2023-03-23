@@ -348,7 +348,8 @@ module.exports = function s3 (config) {
     .get('/multipart/:uploadId', getUploadedParts)
     .get('/multipart/:uploadId/batch', batchSignPartsUpload)
     .get('/multipart/:uploadId/:partNumber', signPartUpload)
-    .post('/multipart/:uploadId/complete', express.json(), completeMultipartUpload)
+    // limit 1mb because maybe large upload with a lot of parts, see https://github.com/transloadit/uppy/issues/1945
+    .post('/multipart/:uploadId/complete', express.json({ limit: '1mb' }), completeMultipartUpload)
     .delete('/multipart/:uploadId', abortMultipartUpload)
 }
 
