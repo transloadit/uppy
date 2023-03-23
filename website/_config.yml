@@ -8,9 +8,9 @@ root_domain: transloadit.github.io
 # Site
 title: Uppy
 subtitle: "Almost as cute as a puppy"
-logo_large: /images/logos/uppy-dog-full.svg
-logo_medium: /images/logos/uppy-logo-2019.svg
-logo_icon: /images/logos/uppy-dog-head-arrow.png
+logo_large: /uppy/images/logos/uppy-dog-full.svg
+logo_medium: /uppy/images/logos/uppy-logo-2019.svg
+logo_icon: /uppy/images/logos/uppy-dog-head-arrow.png
 description: >
   Uppy fetches files locally and from remote places like Dropbox or Instagram.
   With its seamless integration, reliability and ease of use,

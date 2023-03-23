@@ -13,7 +13,7 @@ category: "React"
 
 Make sure to check out the example in [examples/react-native-expo](https://github.com/transloadit/uppy/tree/main/examples/react-native-expo).
 
-<img width="400" src="/images/2019-04-11-react-native-ui-1.png">
+<img width="400" src="/uppy/images/2019-04-11-react-native-ui-1.png">
 
 ## Installation
 

@@ -6,7 +6,7 @@ author: arturi
 
 For the past six months, we have been working hard on uppy.io. We feel that it is high time we gave you a look behind the scenes: what are we working on, and why.
 
-<img src="/images/blog/uppy-begins/uppy-dashboard.jpg">
+<img src="/uppy/images/blog/uppy-begins/uppy-dashboard.jpg">
 
 The way uploading works has not changed in a meaningful way since the days of our trusty old 56 kbit/s modems. Of course, files have gotten bigger and speeds have increased, but that is more or less all there is to say. If it were up to us – and we hope it is – that is all about to change.
 

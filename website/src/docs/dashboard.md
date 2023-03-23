@@ -288,7 +288,7 @@ uppy.use(Dashboard, {
 })
 ```
 
-![](/images/uppy-dashboard-meta-fields.jpg)
+![](/uppy/images/uppy-dashboard-meta-fields.jpg)
 
 Note that this metadata will only be set on a file object if it’s entered by the user. If the user doesn’t edit a file’s metadata, it will not have default values; instead everything will be `undefined`. If you want to set a certain meta field to each file regardless of user actions, set [`meta` in the Uppy constructor options](/docs/uppy/#meta).
 
@@ -440,7 +440,7 @@ It supports the following values:
 * `dark`
 * `auto` — will respect the user’s system settings and switch automatically
 
-![Uppy dark mode screenshot](/images/uppy-dashboard-dark-mar-2020.png)
+![Uppy dark mode screenshot](/uppy/images/uppy-dashboard-dark-mar-2020.png)
 
 ### `autoOpenFileEditor: false`
 

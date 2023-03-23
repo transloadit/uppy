@@ -69,7 +69,7 @@ resultPromise.then((bundle) => {
 })
 ```
 
-<img src="/images/temp-robodog-demo.gif" alt="Robodog File Picker Demo GIF">
+<img src="/uppy/images/temp-robodog-demo.gif" alt="Robodog File Picker Demo GIF">
 
 <a class="MoreButton" href="/docs/robodog/picker">View Documentation</a>
 

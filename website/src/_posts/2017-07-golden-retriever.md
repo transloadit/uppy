@@ -2,7 +2,7 @@
 title: "The Golden Retriever: Making uploads survive browser crashes"
 date: 2017-07-31
 author: arturi
-image: "http://uppy.io/images/blog/golden-retriever/uppy-team-kong.jpg"
+image: "http://uppy.io/uppy/images/blog/golden-retriever/uppy-team-kong.jpg"
 published: true
 ---
 
@@ -22,7 +22,7 @@ If action games have had checkpoints since 1687 — why can’t file uploaders? 
 
 First off, let’s show you a demo 📹 of Uppy surviving a browser crash and picking up right where we left it:
 
-<figure class="wide"><video alt="Demo video showing the Golden Retriever file restoring plugin in action" controls><source src="/images/blog/golden-retriever/uppy-golden-retriever-crash-demo-2.mp4" type="video/mp4">Your browser does not support the video tag, you can <a href="/images/blog/golden-retriever/uppy-golden-retriever-crash-demo-2.mp4">download the video</a> to watch it.</video></figure>
+<figure class="wide"><video alt="Demo video showing the Golden Retriever file restoring plugin in action" controls><source src="/uppy/images/blog/golden-retriever/uppy-golden-retriever-crash-demo-2.mp4" type="video/mp4">Your browser does not support the video tag, you can <a href="/uppy/images/blog/golden-retriever/uppy-golden-retriever-crash-demo-2.mp4">download the video</a> to watch it.</video></figure>
 
 <a name="uppy"></a>
 
@@ -34,7 +34,7 @@ For those of you who are new here, Uppy is the next-gen open source file uploade
 
 Our core team is spread across three continents and five cities, and most of us have never met in person, with the majority of communication happening in GitHub and Slack. Just last week, we got together in Berlin for a crazy week of pink limo rides, Indian food and Mario Kart 64. More on that on the [Transloadit blog](https://transloadit.com/blog/2017/08/team-meetup-2017/).
 
-<figure class="wide"><img src="/images/blog/golden-retriever/uppy-team-kong.jpg"></figure>
+<figure class="wide"><img src="/uppy/images/blog/golden-retriever/uppy-team-kong.jpg"></figure>
 
 While enjoying some world-famous-in-Germany “Flammkuchen”, we were thinking about even more ways to make file uploading better (yes, we really can’t stop thinking about that). We then sat together in one room for a few days of hacking and came up with something neat. 
 
@@ -42,13 +42,13 @@ While enjoying some world-famous-in-Germany “Flammkuchen”, we were thinking 
 
 Uppy has a new friend to play with. Meet the Golden Retriever, our file recovery plugin:
 
-<center><img src="/images/blog/golden-retriever/catch-fail-2.gif" alt="Golden Retriever failing to catch something" title="Good try, girl!"></center>
+<center><img src="/uppy/images/blog/golden-retriever/catch-fail-2.gif" alt="Golden Retriever failing to catch something" title="Good try, girl!"></center>
 
 As you can see, we’re not yet fully done with training her, but we’re getting there! 😄
 
 But wait, we can hear you think, didn't [tus.io](https://tus.io) already make resumable uploads possible? Yes indeed, and it does an awesome job at recovering from poor network conditions. However, if your browser suddenly decided to crash, Uppy would have no idea about what it was doing before, and you would have to re-select and edit your files all over. 
 
-<center><img src="/images/blog/golden-retriever/no-idea-dog-3.gif" alt="Dog has no idea what he is doing" title="Keep trying, buddy!"></center>
+<center><img src="/uppy/images/blog/golden-retriever/no-idea-dog-3.gif" alt="Dog has no idea what he is doing" title="Keep trying, buddy!"></center>
 
 For those cases, our Golden Retriever now comes to the rescue! It saves Uppy’s memory (state) in browser cache with every move you make. This means that when Uppy suddenly crashes for whatever reason, our plugin will be able to retrieve this memory upon restart, and offer to resume where you left off. Sounds simple enough right? So why hasn't anybody attempted this before?
 
@@ -80,7 +80,7 @@ In some cases (very large files or a complete browser crash), we won’t be able
 
 Our current idea is that we could present the user with “ghost files” for these edge cases, and ask them to re-add such files. Here’s an early mockup, but we would love more feedback on this:
 
-<img src="/images/blog/golden-retriever/desktop-ghost.png" alt="Design mockup with ghosts" title="Design mockup with ghosts">
+<img src="/uppy/images/blog/golden-retriever/desktop-ghost.png" alt="Design mockup with ghosts" title="Design mockup with ghosts">
 
 For the remaining cases, if an upload was already in progress before the crash/refresh, and especially if it was resumable (via [tus](https://tus.io), for example), Golden Retriever just picks up from where it all went south. Our Golden Retriever will also clean up after herself: when files are successfully uploaded, or you decide to delete them, they will be removed from all “permanent” storages.
 
