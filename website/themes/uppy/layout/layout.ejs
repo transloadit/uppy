@@ -53,7 +53,7 @@ if (page.series) {
         <button class="MainHeader-menuBtn js-MenuBtn"></button>
 
         <span id="logo" class="MainLogo">
-          <a class="MainLogo-link" href="/"><%- config.title %></a>
+          <a class="MainLogo-link" href="/uppy/"><%- config.title %></a>
           <!-- Was used for 1.0, we can re-use for 2.0 or major announcements -->
           <!-- <a class="MainLogo-announcement" href="/blog/2019/04/1.0/">
             1.0
@@ -91,7 +91,7 @@ if (page.series) {
       <%- partial('partials/analytics') %>
 
       <% if (!isIndex) { %>
-        <script src="/js/smooth-scroll.min.js"></script>
+        <script src="/uppy/js/smooth-scroll.min.js"></script>
         <!-- Place this tag in your head or just before your close body tag. -->
         <script async defer src="https://buttons.github.io/buttons.js"></script>
       <% } else { %>
@@ -104,7 +104,7 @@ if (page.series) {
           }
         </script>
       <% } %>
-      <script src="/js/common.js"></script>
+      <script src="/uppy/js/common.js"></script>
 
       <!-- Twitter follow button script -->
       <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
