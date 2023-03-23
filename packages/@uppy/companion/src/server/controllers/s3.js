@@ -1,4 +1,4 @@
-const router = require('express').Router
+const express = require('express')
 
 module.exports = function s3 (config) {
   if (typeof config.acl !== 'string' && config.acl != null) {
@@ -342,13 +342,13 @@ module.exports = function s3 (config) {
     })
   }
 
-  return router()
+  return express.Router()
     .get('/params', getUploadParameters)
-    .post('/multipart', createMultipartUpload)
+    .post('/multipart', express.json(), createMultipartUpload)
     .get('/multipart/:uploadId', getUploadedParts)
     .get('/multipart/:uploadId/batch', batchSignPartsUpload)
     .get('/multipart/:uploadId/:partNumber', signPartUpload)
-    .post('/multipart/:uploadId/complete', completeMultipartUpload)
+    .post('/multipart/:uploadId/complete', express.json(), completeMultipartUpload)
     .delete('/multipart/:uploadId', abortMultipartUpload)
 }
 
