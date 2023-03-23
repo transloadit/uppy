@@ -11,14 +11,6 @@ import AssemblyWatcher from './AssemblyWatcher.js'
 import locale from './locale.js'
 import packageJson from '../package.json'
 
-function defaultGetAssemblyOptions (file, options) {
-  return {
-    params: options.params,
-    signature: options.signature,
-    fields: options.fields,
-  }
-}
-
 const sendErrorToConsole = originalErr => err => {
   const error = new ErrorWithCause('Failed to send error to the client', { cause: err })
   // eslint-disable-next-line no-console
@@ -60,27 +52,35 @@ export default class Transloadit extends BasePlugin {
       waitForMetadata: false,
       alwaysRunAssembly: false,
       importFromUploadURLs: false,
+      /** @deprecated use `assemblyOptions` instead */
       signature: null,
+      /** @deprecated use `assemblyOptions` instead */
       params: null,
-      fields: {},
-      getAssemblyOptions: defaultGetAssemblyOptions,
+      /** @deprecated use `assemblyOptions` instead */
+      fields: null,
+      /** @deprecated use `assemblyOptions` instead */
+      getAssemblyOptions: null,
       limit: 20,
       retryDelays: [7_000, 10_000, 15_000, 20_000],
     }
 
     this.opts = { ...defaultOptions, ...opts }
+
+    // TODO: remove this fallback in the next major
+    this.opts.assemblyOptions ??= this.opts.getAssemblyOptions ?? {
+      params: this.opts.params,
+      signature: this.opts.signature,
+      fields: this.opts.fields,
+    }
+
+    // TODO: remove this check in the next major (validating params when creating the assembly should be enough)
+    if (opts?.params != null && opts.getAssemblyOptions == null && opts.assemblyOptions == null) {
+      validateParams(this.opts.assemblyOptions.params)
+    }
+
     this.#rateLimitedQueue = new RateLimitedQueue(this.opts.limit)
 
     this.i18nInit()
-
-    const hasCustomAssemblyOptions = this.opts.getAssemblyOptions !== defaultOptions.getAssemblyOptions
-    if (this.opts.params) {
-      validateParams(this.opts.params)
-    } else if (!hasCustomAssemblyOptions) {
-      // Throw the same error that we'd throw if the `params` returned from a
-      // `getAssemblyOptions()` function is null.
-      validateParams(null)
-    }
 
     this.client = new Client({
       service: this.opts.service,

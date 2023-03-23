@@ -329,6 +329,14 @@ module.exports = {
         'examples/vue/**/*.js',
         'examples/vue3/**/*.js',
       ],
+      rules: {
+        'no-unused-vars': [
+          'error',
+          {
+            'varsIgnorePattern': 'React',
+          },
+        ],
+      },
       parserOptions: {
         sourceType: 'module',
       },
@@ -519,8 +527,8 @@ module.exports = {
       extends: ['plugin:cypress/recommended'],
     },
     {
-      files: ['e2e/**/*.ts', 'e2e/**/*.js', 'e2e/**/*.jsx'],
-      rules: { 'import/no-extraneous-dependencies': 'off', 'no-unused-expressions': 'off' },
+      files: ['e2e/**/*.ts', 'e2e/**/*.js', 'e2e/**/*.jsx', 'e2e/**/*.mjs'],
+      rules: { 'import/no-extraneous-dependencies': 'off', 'no-unused-expressions': 'off', 'no-console': 'off' },
     },
   ],
 }

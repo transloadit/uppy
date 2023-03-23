@@ -3,6 +3,9 @@ on:
   pull_request_review:
     types: [submitted]
 
+env:
+  YARN_ENABLE_GLOBAL_CACHE: false
+
 jobs:
   release:
     name: Publish releases
@@ -17,7 +20,7 @@ jobs:
           fetch-depth: 2
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(corepack yarn config get cacheFolder)"
+        run: echo "dir=$(corepack yarn config get cacheFolder)" >> $GITHUB_OUTPUT
 
       - uses: actions/cache@v3
         id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
@@ -43,17 +46,17 @@ jobs:
         run: corepack yarn run build
       - name: Hack to allow the publish of the Angular package
         run: corepack yarn workspace @uppy/angular prepublishOnly
-      - name: Login to NPM
-        run: corepack yarn config set npmAuthToken ${{ toJSON(secrets.NPM_TOKEN) }}
-      - name: Publish to NPM
+      - name: Publish to the npm registry
         run: corepack yarn workspaces foreach --no-private npm publish --access public --tolerate-republish
+        env:
+          YARN_NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Merge PR
         id: merge
         run: |
           gh api -X PUT repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/merge \
             -F merge_method="squash" \
             -F commit_message="$(cat CHANGELOG.diff.md)" \
-            --jq 'if .merged then "##[set-output name=sha;]"+.sha else error("not merged") end'
+            --jq 'if .merged then "sha="+.sha else error("not merged") end' >> $GITHUB_OUTPUT
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Create tags
@@ -65,7 +68,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Get Uppy version number
         id: uppyVersion
-        run: jq -r '"##[set-output name=version;]"+.version' < packages/uppy/package.json
+        run: jq -r '"version="+.version' < packages/uppy/package.json >> $GITHUB_OUTPUT
       - name: Create GitHub release
         run: gh release create uppy@${{ steps.uppyVersion.outputs.version }} -t "Uppy ${{ steps.uppyVersion.outputs.version }}" -F CHANGELOG.diff.md
         env:
@@ -82,7 +85,7 @@ jobs:
           EDGLY_SECRET: ${{secrets.EDGLY_SECRET}}
       - name: Check if Companion was released
         id: checkIfCompanionWasReleased
-        run: git diff --exit-code --quiet HEAD^ -- packages/@uppy/companion/package.json || echo "::set-output name=version::$(jq -r .version < packages/@uppy/companion/package.json)"
+        run: git diff --exit-code --quiet HEAD^ -- packages/@uppy/companion/package.json || echo "version=$(jq -r .version < packages/@uppy/companion/package.json)" >> $GITHUB_OUTPUT
       - name: Remove release-candidate branch
         run: gh api -X DELETE repos/${{ github.repository }}/git/refs/heads/release-candidate || echo "Already deleted"
         env:
@@ -139,22 +142,3 @@ jobs:
           file: Dockerfile
           tags: ${{ steps.docker_meta.outputs.tags }}
           labels: ${{ steps.docker_meta.outputs.labels }}
-
-  heroku:
-    name: Heroku
-    needs: release
-    if: ${{ needs.release.outputs.companionWasReleased }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout sources
-        uses: actions/checkout@v3
-      - name: Alter dockerfile
-        run: |
-          sed -i 's/^EXPOSE 3020$/EXPOSE $PORT/g' Dockerfile
-      - name: Deploy to heroku
-        uses: akhileshns/heroku-deploy@v3.12.12
-        with:
-          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
-          heroku_app_name: companion-demo
-          heroku_email: ${{secrets.HEROKU_EMAIL}}
-          usedocker: true

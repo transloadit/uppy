@@ -1,33 +1,37 @@
-import React from 'react' // eslint-disable-line no-unused-vars
-import { View, Text } from 'react-native'
+import React from 'react'
+import { View, Text, StyleSheet } from 'react-native'
 
-export default function ProgressBar (props) {
-  const { progress } = props
+const colorGreen = '#0b8600'
+const colorBlue = '#006bb7'
 
-  const colorGreen = '#0b8600'
-  const colorBlue = '#006bb7'
-
+export default function ProgressBar ({ progress }) {
   return (
-    <View style={{
-      marginTop: 15,
-      marginBottom: 15,
-    }}
-    >
+    <View style={styles.root}>
       <View
-        style={{
-          height: 5,
-          overflow: 'hidden',
-          backgroundColor: '#dee1e3',
-        }}
+        style={styles.wrapper}
       >
-        <View style={{
-          height: 5,
+        <View style={[styles.bar, {
           backgroundColor: progress === 100 ? colorGreen : colorBlue,
           width: `${progress}%`,
-        }}
+        }]}
         />
       </View>
       <Text>{progress ? `${progress}%` : null}</Text>
     </View>
   )
 }
+
+const styles = StyleSheet.create({
+  root: {
+    marginTop: 15,
+    marginBottom: 15,
+  },
+  wrapper:{
+    height: 5,
+    overflow: 'hidden',
+    backgroundColor: '#dee1e3',
+  },
+  bar: {
+    height: 5,
+  },
+})

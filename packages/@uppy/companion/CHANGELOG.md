@@ -1,5 +1,36 @@
 # @uppy/companion
 
+## 4.3.0
+
+Released: 2023-02-13
+Included in: Uppy v3.5.0
+
+- @uppy/companion: @uppy/companion upgrade grant dependency (Scott Bessler / #4286)
+
+## 4.2.0
+
+Released: 2023-01-26
+Included in: Uppy v3.4.0
+
+- @uppy/companion: allow customizing express session prefix (Mikael Finstad / #4249)
+- @uppy/companion: Fix typo in KUBERNETES.md (Collin Allen / #4277)
+- @uppy/companion: document how to run many instances (Mikael Finstad / #4227)
+
+## 4.1.1
+
+Released: 2022-11-16
+Included in: Uppy v3.3.1
+
+- @uppy/companion: send expire info for non-multipart uploads (Antoine du Hamel / #4214)
+
+## 4.1.0
+
+Released: 2022-11-10
+Included in: Uppy v3.3.0
+
+- @uppy/companion: change default S3 expiry from 300 to 800 seconds (Merlijn Vos / #4206)
+- @uppy/companion: send expiry time along side S3 signed requests (Antoine du Hamel / #4202)
+
 ## 4.0.4
 
 Released: 2022-10-19

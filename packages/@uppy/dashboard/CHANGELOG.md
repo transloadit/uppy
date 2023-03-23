@@ -1,5 +1,35 @@
 # @uppy/dashboard
 
+## 3.3.1
+
+Released: 2023-03-07
+Included in: Uppy v3.6.1
+
+- @uppy/dashboard: Fix low-contrast hover styles (Alexander Zaytsev / #4347)
+
+## 3.3.0
+
+Released: 2023-03-07
+Included in: Uppy v3.6.0
+
+- @uppy/dashboard: update provider icon style (Alexander Zaytsev / #4345)
+
+## 3.2.2
+
+Released: 2023-02-13
+Included in: Uppy v3.5.0
+
+- @uppy/dashboard: fix dashboard acquirers list (Mikael Finstad / #4306)
+- @uppy/dashboard: Dashboard: disallow clicking on buttons and links in Dashboard disabled mode (Artur Paikin / #4292)
+- @uppy/audio,@uppy/core,@uppy/dashboard,@uppy/screen-capture: Warn more instead of erroring (Artur Paikin / #4302)
+
+## 3.2.0
+
+Released: 2022-11-10
+Included in: Uppy v3.3.0
+
+- @uppy/dashboard: Single file mode (Artur Paikin / #4188)
+
 ## 3.1.0
 
 Released: 2022-09-25

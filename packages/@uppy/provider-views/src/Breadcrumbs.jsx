@@ -7,7 +7,7 @@ const Breadcrumb = (props) => {
     <Fragment>
       <button
         type="button"
-        className="uppy-u-reset"
+        className="uppy-u-reset uppy-c-btn"
         onClick={getFolder}
       >
         {title}

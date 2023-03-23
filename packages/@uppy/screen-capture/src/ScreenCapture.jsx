@@ -85,7 +85,7 @@ export default class ScreenCapture extends UIPlugin {
 
   install () {
     if (!isScreenRecordingSupported()) {
-      this.uppy.log('Screen recorder access is not supported', 'error')
+      this.uppy.log('Screen recorder access is not supported', 'warning')
       return null
     }
 
@@ -192,8 +192,8 @@ export default class ScreenCapture extends UIPlugin {
       .catch((err) => {
         if (err.name === 'NotAllowedError') {
           this.uppy.info(this.i18n('micDisabled'), 'error', 5000)
+          this.uppy.log(this.i18n('micDisabled'), 'warning')
         }
-
         return false
       })
   }
@@ -316,7 +316,7 @@ export default class ScreenCapture extends UIPlugin {
     } catch (err) {
       // Logging the error, exept restrictions, which is handled in Core
       if (!err.isRestriction) {
-        this.uppy.log(err, 'error')
+        this.uppy.log(err, 'warning')
       }
     }
   }

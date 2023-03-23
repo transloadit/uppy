@@ -1,5 +1,33 @@
 # @uppy/aws-s3-multipart
 
+## 3.1.2
+
+Released: 2023-01-26
+Included in: Uppy v3.4.0
+
+- @uppy/aws-s3-multipart: fix metadata shape (Antoine du Hamel / #4267)
+- @uppy/aws-s3-multipart: add support for `allowedMetaFields` option (Antoine du Hamel / #4215)
+- @uppy/aws-s3-multipart: fix singPart type (Stefan Schonert / #4224)
+
+## 3.1.1
+
+Released: 2022-11-16
+Included in: Uppy v3.3.1
+
+- @uppy/aws-s3-multipart: handle slow connections better (Antoine du Hamel / #4213)
+- @uppy/aws-s3-multipart: Fix typo in url check (Christian Franke / #4211)
+
+## 3.1.0
+
+Released: 2022-11-10
+Included in: Uppy v3.3.0
+
+- @uppy/aws-s3-multipart: empty the queue when pausing (Antoine du Hamel / #4203)
+- @uppy/aws-s3-multipart: refactor rate limiting approach (Antoine du Hamel / #4187)
+- @uppy/aws-s3-multipart: change limit to 6 (Antoine du Hamel / #4199)
+- @uppy/aws-s3-multipart: remove unused `timeout` option (Antoine du Hamel / #4186)
+- @uppy/aws-s3-multipart,@uppy/tus: fix `Timed out waiting for socket` (Antoine du Hamel / #4177)
+
 ## 3.0.2
 
 Released: 2022-09-25

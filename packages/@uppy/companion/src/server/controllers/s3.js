@@ -63,6 +63,7 @@ module.exports = function s3 (config) {
         method: 'post',
         url: data.url,
         fields: data.fields,
+        expires: config.expires,
       })
     })
   }
@@ -204,7 +205,7 @@ module.exports = function s3 (config) {
         next(err)
         return
       }
-      res.json({ url })
+      res.json({ url, expires: config.expires })
     })
   }
 

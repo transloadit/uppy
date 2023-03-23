@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-/* eslint-disable no-console, import/no-extraneous-dependencies */
 import prompts from 'prompts'
 import fs from 'node:fs/promises'
 
@@ -89,7 +88,7 @@ const homeUrl = new URL('clients/index.html', import.meta.url)
 const home = await fs.readFile(homeUrl, 'utf8')
 const newHome = home.replace(
   '</ul>',
-  `\t<li><a href="${name}/index.html">${name}</a></li>\n\t\t\t</ul>`,
+  `  <li><a href="${name}/index.html">${name}</a></li>\n      </ul>`,
 )
 await fs.writeFile(homeUrl, newHome)
 

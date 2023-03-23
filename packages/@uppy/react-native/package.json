@@ -1,7 +1,7 @@
 {
   "name": "@uppy/react-native",
   "description": "React Native Uppy UI components",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "main": "file-picker/index.js",
   "license": "MIT",
   "keywords": [
@@ -21,16 +21,16 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
+    "@uppy/core": "workspace:*",
     "@uppy/instagram": "workspace:^",
-    "@uppy/url": "workspace:^"
+    "@uppy/url": "workspace:^",
+    "expo-document-picker": "^10.3.0",
+    "expo-image-picker": "^13.3.1",
+    "react-native-super-grid": "*"
   },
   "peerDependencies": {
     "expo": ">=33.0.0",
-    "expo-document-picker": ">=6.0.0",
-    "expo-image-picker": ">=6.0.0",
-    "expo-permissions": ">=6.0.0",
     "react": "^16.0.0 || ^17.0.0 || ^18.0.0",
-    "react-native": "*",
-    "react-native-super-grid": "*"
+    "react-native": "*"
   }
 }

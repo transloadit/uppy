@@ -1,5 +1,16 @@
-function createCancelError () {
-  return new Error('Cancelled')
+function createCancelError (cause) {
+  return new Error('Cancelled', { cause })
+}
+
+function abortOn (signal) {
+  if (signal != null) {
+    const abortPromise = () => this.abort(signal.reason)
+    signal.addEventListener('abort', abortPromise, { once: true })
+    const removeAbortListener = () => { signal.removeEventListener('abort', abortPromise) }
+    this.then(removeAbortListener, removeAbortListener)
+  }
+
+  return this
 }
 
 export class RateLimitedQueue {
@@ -39,11 +50,11 @@ export class RateLimitedQueue {
     }
 
     return {
-      abort: () => {
+      abort: (cause) => {
         if (done) return
         done = true
         this.#activeRequests -= 1
-        cancelActive()
+        cancelActive(cause)
         this.#queueNext()
       },
 
@@ -146,15 +157,16 @@ export class RateLimitedQueue {
             }
           })
 
-          return () => {
-            cancelError = createCancelError()
+          return (cause) => {
+            cancelError = createCancelError(cause)
           }
         }, queueOptions)
       })
 
-      outerPromise.abort = () => {
-        queuedRequest.abort()
+      outerPromise.abort = (cause) => {
+        queuedRequest.abort(cause)
       }
+      outerPromise.abortOn = abortOn
 
       return outerPromise
     }

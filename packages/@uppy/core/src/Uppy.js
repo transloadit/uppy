@@ -233,15 +233,22 @@ class Uppy {
     }
     const files = { ...this.getState().files }
     const updatedFiles = {}
+
     Object.keys(files).forEach(fileID => {
-      const updatedFile = { ...files[fileID] }
-      updatedFile.progress = { ...updatedFile.progress, ...defaultProgress }
-      updatedFiles[fileID] = updatedFile
+      updatedFiles[fileID] = {
+        ...files[fileID],
+        progress: {
+          ...files[fileID].progress, ...defaultProgress,
+        },
+      }
     })
 
     this.setState({
       files: updatedFiles,
       totalProgress: 0,
+      allowNewUpload: true,
+      error: null,
+      recoveredState: null,
     })
 
     this.emit('reset-progress')
@@ -372,7 +379,7 @@ class Uppy {
       this.emit('error', error)
     }
     this.info({ message, details }, 'error', this.opts.infoTimeout)
-    this.log(`${message} ${details}`.trim(), 'error')
+    this.log(error, 'warning')
   }
 
   validateRestrictions (file, files = this.getFiles()) {
@@ -970,6 +977,19 @@ class Uppy {
       } else {
         this.#informAndEmit(error)
       }
+    })
+
+    let uploadStalledWarningRecentlyEmitted
+    this.on('upload-stalled', (error, files) => {
+      const { message } = error
+      const details = files.map(file => file.meta.name).join(', ')
+      if (!uploadStalledWarningRecentlyEmitted) {
+        this.info({ message, details }, 'warning', this.opts.infoTimeout)
+        uploadStalledWarningRecentlyEmitted = setTimeout(() => {
+          uploadStalledWarningRecentlyEmitted = null
+        }, this.opts.infoTimeout)
+      }
+      this.log(`${message} ${details}`.trim(), 'warning')
     })
 
     this.on('upload', () => {

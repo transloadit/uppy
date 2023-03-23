@@ -1,5 +1,34 @@
 # @uppy/locales
 
+## 3.0.7
+
+Released: 2023-03-07
+Included in: Uppy v3.6.0
+
+- @uppy/locales: add missing entries after build (Murderlon)
+
+## 3.0.6
+
+Released: 2023-02-13
+Included in: Uppy v3.5.0
+
+- @uppy/locales: Update de_DE.js (Jörn Velten / #4297)
+- @uppy/locales: minor enhancements and typo fixes for the hungarian translation (KergeKacsa / #4282)
+
+## 3.0.5
+
+Released: 2023-01-26
+Included in: Uppy v3.4.0
+
+- @uppy/locales: update zh_TW.js (5idereal / #4270)
+
+## 3.0.4
+
+Released: 2022-11-10
+Included in: Uppy v3.3.0
+
+- @uppy/locales: Fix UZ locale (Merlijn Vos / #4178)
+
 ## 3.0.2
 
 Released: 2022-10-19

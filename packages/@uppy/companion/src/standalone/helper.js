@@ -9,14 +9,58 @@ const logger = require('../server/logger')
 const { version } = require('../../package.json')
 
 /**
- * Reads all companion configuration set via environment variables
- * and via the config file path
+ * Tries to read the secret from a file if the according environment variable is set.
+ * Otherwise it falls back to the standard secret environment variable.
  *
- * @returns {object}
+ * @param {string} baseEnvVar
+ *
+ * @returns {string}
  */
-exports.getCompanionOptions = (options = {}) => {
-  return merge({}, getConfigFromEnv(), getConfigFromFile(), options)
+const getSecret = (baseEnvVar) => {
+  const secretFile = process.env[`${baseEnvVar}_FILE`]
+  return secretFile
+    ? fs.readFileSync(secretFile).toString()
+    : process.env[baseEnvVar]
 }
+
+/**
+ * Auto-generates server secret
+ *
+ * @returns {string}
+ */
+exports.generateSecret = () => {
+  logger.warn('auto-generating server secret because none was specified', 'startup.secret')
+  return crypto.randomBytes(64).toString('hex')
+}
+
+/**
+ *
+ * @param {string} url
+ */
+const hasProtocol = (url) => {
+  return url.startsWith('https://') || url.startsWith('http://')
+}
+
+function getCorsOrigins () {
+  if (process.env.COMPANION_CLIENT_ORIGINS) {
+    return process.env.COMPANION_CLIENT_ORIGINS
+      .split(',')
+      .map((url) => (hasProtocol(url) ? url : `${process.env.COMPANION_PROTOCOL || 'http'}://${url}`))
+  }
+  if (process.env.COMPANION_CLIENT_ORIGINS_REGEX) {
+    return new RegExp(process.env.COMPANION_CLIENT_ORIGINS_REGEX)
+  }
+  return undefined
+}
+
+const s3Prefix = process.env.COMPANION_AWS_PREFIX || ''
+
+/**
+ * Default getKey for Companion standalone variant
+ *
+ * @returns {string}
+ */
+const defaultStandaloneGetKey = (...args) => `${s3Prefix}${utils.defaultGetKey(...args)}`
 
 /**
  * Loads the config from environment variables
@@ -72,14 +116,14 @@ const getConfigFromEnv = () => {
     },
     s3: {
       key: process.env.COMPANION_AWS_KEY,
-      getKey: utils.defaultGetKey,
+      getKey: defaultStandaloneGetKey,
       secret: getSecret('COMPANION_AWS_SECRET'),
       bucket: process.env.COMPANION_AWS_BUCKET,
       endpoint: process.env.COMPANION_AWS_ENDPOINT,
       region: process.env.COMPANION_AWS_REGION,
       useAccelerateEndpoint:
       process.env.COMPANION_AWS_USE_ACCELERATE_ENDPOINT === 'true',
-      expires: parseInt(process.env.COMPANION_AWS_EXPIRES || '300', 10),
+      expires: parseInt(process.env.COMPANION_AWS_EXPIRES || '800', 10),
       acl: process.env.COMPANION_AWS_ACL,
     },
     server: {
@@ -104,8 +148,8 @@ const getConfigFromEnv = () => {
     redisOptions: {},
     sendSelfEndpoint: process.env.COMPANION_SELF_ENDPOINT,
     uploadUrls: uploadUrls ? uploadUrls.split(',') : null,
-    secret: getSecret('COMPANION_SECRET') || generateSecret(),
-    preAuthSecret: getSecret('COMPANION_PREAUTH_SECRET') || generateSecret(),
+    secret: getSecret('COMPANION_SECRET'),
+    preAuthSecret: getSecret('COMPANION_PREAUTH_SECRET'),
     allowLocalUrls: process.env.COMPANION_ALLOW_LOCAL_URLS === 'true',
     // cookieDomain is kind of a hack to support distributed systems. This should be improved but we never got so far.
     cookieDomain: process.env.COMPANION_COOKIE_DOMAIN,
@@ -115,46 +159,9 @@ const getConfigFromEnv = () => {
     clientSocketConnectTimeout: process.env.COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT
       ? parseInt(process.env.COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT, 10) : undefined,
     metrics: process.env.COMPANION_HIDE_METRICS !== 'true',
+    loggerProcessName: process.env.COMPANION_LOGGER_PROCESS_NAME,
+    corsOrigins: getCorsOrigins(),
   }
-}
-
-/**
- * Tries to read the secret from a file if the according environment variable is set.
- * Otherwise it falls back to the standard secret environment variable.
- *
- * @param {string} baseEnvVar
- *
- * @returns {string}
- */
-const getSecret = (baseEnvVar) => {
-  const secretFile = process.env[`${baseEnvVar}_FILE`]
-  return secretFile
-    ? fs.readFileSync(secretFile).toString()
-    : process.env[baseEnvVar]
-}
-
-/**
- * Auto-generates server secret
- *
- * @returns {string}
- */
-const generateSecret = () => {
-  logger.warn('auto-generating server secret because none was specified', 'startup.secret')
-  return crypto.randomBytes(64).toString('hex')
-}
-
-/**
- * Loads the config from a file and returns it as an object
- *
- * @returns {object}
- */
-const getConfigFromFile = () => {
-  const path = getConfigPath()
-  if (!path) return {}
-
-  const rawdata = fs.readFileSync(getConfigPath())
-  // @ts-ignore
-  return JSON.parse(rawdata)
 }
 
 /**
@@ -178,11 +185,27 @@ const getConfigPath = () => {
 }
 
 /**
+ * Loads the config from a file and returns it as an object
  *
- * @param {string} url
+ * @returns {object}
  */
-exports.hasProtocol = (url) => {
-  return url.startsWith('http://') || url.startsWith('https://')
+const getConfigFromFile = () => {
+  const path = getConfigPath()
+  if (!path) return {}
+
+  const rawdata = fs.readFileSync(getConfigPath())
+  // @ts-ignore
+  return JSON.parse(rawdata)
+}
+
+/**
+ * Reads all companion configuration set via environment variables
+ * and via the config file path
+ *
+ * @returns {object}
+ */
+exports.getCompanionOptions = (options = {}) => {
+  return merge({}, getConfigFromEnv(), getConfigFromFile(), options)
 }
 
 exports.buildHelpfulStartupMessage = (companionOptions) => {

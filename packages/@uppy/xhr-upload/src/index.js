@@ -230,11 +230,8 @@ export default class XHRUpload extends BasePlugin {
       let queuedRequest
 
       const timer = new ProgressTimeout(opts.timeout, () => {
-        xhr.abort()
-        queuedRequest.done()
-        const error = new Error(this.i18n('timedOut', { seconds: Math.ceil(opts.timeout / 1000) }))
-        this.uppy.emit('upload-error', file, error)
-        reject(error)
+        const error = new Error(this.i18n('uploadStalled', { seconds: Math.ceil(opts.timeout / 1000) }))
+        this.uppy.emit('upload-stalled', error, [file])
       })
 
       const id = nanoid()
@@ -385,7 +382,7 @@ export default class XHRUpload extends BasePlugin {
       }
       const serverToken = await this.#queueRequestSocketToken(file)
 
-      if (this.getState().files[file.id]) return undefined
+      if (!this.uppy.getState().files[file.id]) return undefined
 
       this.uppy.setFileState(file.id, { serverToken })
       return this.connectToServerSocket(this.uppy.getFile(file.id))
@@ -516,10 +513,8 @@ export default class XHRUpload extends BasePlugin {
       }
 
       const timer = new ProgressTimeout(this.opts.timeout, () => {
-        xhr.abort()
-        const error = new Error(this.i18n('timedOut', { seconds: Math.ceil(this.opts.timeout / 1000) }))
-        emitError(error)
-        reject(error)
+        const error = new Error(this.i18n('uploadStalled', { seconds: Math.ceil(this.opts.timeout / 1000) }))
+        this.uppy.emit('upload-stalled', error, files)
       })
 
       xhr.upload.addEventListener('loadstart', () => {

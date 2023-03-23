@@ -26,6 +26,9 @@ on:
 
 concurrency: ${{ github.workflow }}--${{ github.ref }}
 
+env:
+  YARN_ENABLE_GLOBAL_CACHE: false
+
 jobs:
   e2e:
     if: ${{ !github.event.pull_request || (contains(github.event.pull_request.labels.*.name, 'safe to test') && github.event.pull_request.state == 'open') || (github.event.pull_request.head.repo.full_name == github.repository && github.event.event_name != 'labeled') }}
@@ -38,7 +41,7 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(corepack yarn config get cacheFolder)"
+        run: echo "dir=$(corepack yarn config get cacheFolder)" >> $GITHUB_OUTPUT
 
       - uses: actions/cache@v3
         id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
@@ -50,7 +53,7 @@ jobs:
 
       - name: Create cache folder for Cypress
         id: cypress-cache-dir-path
-        run: echo "::set-output name=dir::$(mktemp -d)"
+        run: echo "dir=$(mktemp -d)" >> $GITHUB_OUTPUT
       - uses: actions/cache@v3
         with:
           path: ${{ steps.cypress-cache-dir-path.outputs.dir }}
@@ -59,6 +62,12 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: lts/*
+
+      - name: Start Redis
+        uses: supercharge/redis-github-action@1.4.0
+        with:
+          redis-version: 7
+
       - name: Install dependencies
         run: corepack yarn install --immutable
         env:
@@ -69,18 +78,21 @@ jobs:
       - name: Run end-to-end browser tests
         run: corepack yarn run e2e:ci
         env:
+          COMPANION_DATADIR: ./output
+          COMPANION_DOMAIN: localhost:3020
+          COMPANION_PROTOCOL: http
+          COMPANION_REDIS_URL: redis://localhost:6379
           COMPANION_UNSPLASH_KEY: ${{secrets.COMPANION_UNSPLASH_KEY}}
           COMPANION_UNSPLASH_SECRET: ${{secrets.COMPANION_UNSPLASH_SECRET}}
+          COMPANION_AWS_KEY: ${{secrets.COMPANION_AWS_KEY}}
+          COMPANION_AWS_SECRET: ${{secrets.COMPANION_AWS_SECRET}}
+          COMPANION_AWS_BUCKET: ${{secrets.COMPANION_AWS_BUCKET}}
+          COMPANION_AWS_REGION: ${{secrets.COMPANION_AWS_REGION}}
           VITE_COMPANION_URL: http://localhost:3020
           VITE_TRANSLOADIT_KEY: ${{secrets.TRANSLOADIT_KEY}}
           VITE_TRANSLOADIT_SECRET: ${{secrets.TRANSLOADIT_SECRET}}
           VITE_TRANSLOADIT_TEMPLATE: ${{secrets.TRANSLOADIT_TEMPLATE}}
           VITE_TRANSLOADIT_SERVICE_URL: ${{secrets.TRANSLOADIT_SERVICE_URL}}
-          COMPANION_AWS_KEY: ${{secrets.COMPANION_AWS_KEY}}
-          COMPANION_AWS_SECRET: ${{secrets.COMPANION_AWS_SECRET}}
-          COMPANION_AWS_BUCKET: ${{secrets.COMPANION_AWS_BUCKET}}
-          COMPANION_AWS_REGION: ${{secrets.COMPANION_AWS_REGION}}
-          COMPANION_AWS_DISABLE_ACL: 'true'
           # https://docs.cypress.io/guides/references/advanced-installation#Binary-cache
           CYPRESS_CACHE_FOLDER: ${{ steps.cypress-cache-dir-path.outputs.dir }}
       - name: Upload videos in case of failure

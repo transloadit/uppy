@@ -108,7 +108,7 @@ export class UIPlugin<TOptions extends PluginOptions = DefaultPluginOptions> ext
   getTargetPlugin(target: PluginTarget): UIPlugin | undefined
 
   // eslint-disable-next-line no-use-before-define
-  mount(target: PluginTarget, plugin: typeof UIPlugin): void
+  mount(target: PluginTarget, plugin: UIPlugin): void
 
   render(state: Record<string, unknown>): void
 
@@ -126,6 +126,7 @@ export type PluginTarget =
   | Element
   | typeof BasePlugin
   | typeof UIPlugin
+  | BasePlugin
 
 export interface Locale<TNames extends string = string> {
   strings: LocaleStrings<TNames>
@@ -191,12 +192,12 @@ export interface State<
     | UploadedUppyFile<TMeta, TBody>
     | FailedUppyFile<TMeta, TBody>
   }
-  info?: {
+  info?: Array<{
     isHidden: boolean
-    type: string
+    type: LogLevel
     message: string
-    details: string
-  }
+    details: string | null
+  }>
   plugins?: IndexedObject<any>
   totalProgress: number
 }
@@ -356,7 +357,7 @@ export class Uppy {
     UploadResult<TMeta>
   >
 
-  cancelAll(options: CancelOptions): void
+  cancelAll(options?: CancelOptions): void
 
   retryUpload<TMeta extends IndexedObject<any> = Record<string, unknown>>(
     fileID: string
@@ -375,7 +376,7 @@ export class Uppy {
 
   removePlugin(instance: UIPlugin | BasePlugin): void
 
-  close(options: CancelOptions): void
+  close(options?: CancelOptions): void
 
   logout(): void
 

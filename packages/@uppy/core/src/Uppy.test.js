@@ -1194,7 +1194,7 @@ describe('src/Core', () => {
       const fileId = Object.keys(core.getState().files)[0]
       expect(core.getFile(fileId).name).toEqual('foo.jpg')
 
-      expect(core.getFile('non existant file')).toEqual(undefined)
+      expect(core.getFile('non existent file')).toEqual(undefined)
     })
   })
 
@@ -1619,6 +1619,10 @@ describe('src/Core', () => {
         uploadStarted: null,
       })
       expect(core.getState().totalProgress).toEqual(0)
+      expect(core.getState().allowNewUpload).toEqual(true)
+      expect(core.getState().error).toEqual(null)
+      expect(core.getState().recoveredState).toEqual(null)
+
       expect(resetProgressEvent.mock.calls.length).toEqual(1)
     })
   })

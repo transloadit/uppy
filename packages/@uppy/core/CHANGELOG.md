@@ -1,5 +1,36 @@
 # @uppy/core
 
+## 3.1.0
+
+Released: 2023-03-07
+Included in: Uppy v3.6.0
+
+- @uppy/core: fix uppy.resetProgress() (Artur Paikin / #4337)
+- @uppy/core: fix some types (Antoine du Hamel / #4332)
+- @uppy/core: Fixed type of State.info to match reality being an array of info objects (Marc Bennewitz / #4321)
+
+## 3.0.6
+
+Released: 2023-02-13
+Included in: Uppy v3.5.0
+
+- @uppy/audio,@uppy/core,@uppy/dashboard,@uppy/screen-capture: Warn more instead of erroring (Artur Paikin / #4302)
+
+## 3.0.5
+
+Released: 2023-01-26
+Included in: Uppy v3.4.0
+
+- @uppy/core: fix metafields validation when used as function (Merlijn Vos / #4276)
+- @uppy/core: fix typo in Uppy.test.js (Ikko Ashimine / #4235)
+
+## 3.0.4
+
+Released: 2022-10-24
+Included in: Uppy v3.2.2
+
+- @uppy/core: make cancel() and close() arguments optional in types (Merlijn Vos / #4161)
+
 ## 3.0.3
 
 Released: 2022-10-19

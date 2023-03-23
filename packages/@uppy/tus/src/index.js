@@ -103,7 +103,7 @@ export default class Tus extends BasePlugin {
 
     this.handleResetProgress = this.handleResetProgress.bind(this)
     this.handleUpload = this.handleUpload.bind(this)
-    this.#queueRequestSocketToken = this.requests.wrapPromiseFunction(this.#requestSocketToken)
+    this.#queueRequestSocketToken = this.requests.wrapPromiseFunction(this.#requestSocketToken, { priority: -1 })
   }
 
   handleResetProgress () {
@@ -474,7 +474,7 @@ export default class Tus extends BasePlugin {
       }
       const serverToken = await this.#queueRequestSocketToken(file)
 
-      if (this.getState().files[file.id]) return undefined
+      if (!this.uppy.getState().files[file.id]) return undefined
 
       this.uppy.setFileState(file.id, { serverToken })
       return this.connectToServerSocket(this.uppy.getFile(file.id))
@@ -496,7 +496,7 @@ export default class Tus extends BasePlugin {
     return new Promise((resolve, reject) => {
       const token = file.serverToken
       const host = getSocketHost(file.remote.companionUrl)
-      const socket = new Socket({ target: `${host}/api/${token}` })
+      const socket = new Socket({ target: `${host}/api/${token}`, autoOpen: false })
       this.uploaderSockets[file.id] = socket
       this.uploaderEvents[file.id] = new EventTracker(this.uppy)
 
@@ -519,8 +519,10 @@ export default class Tus extends BasePlugin {
           // resume a queued upload to make it skip the queue.
           queuedRequest.abort()
           queuedRequest = this.requests.run(() => {
+            socket.open()
             socket.send('resume', {})
-            return () => {}
+
+            return () => socket.close()
           })
         }
       })
@@ -545,8 +547,10 @@ export default class Tus extends BasePlugin {
           socket.send('pause', {})
         }
         queuedRequest = this.requests.run(() => {
+          socket.open()
           socket.send('resume', {})
-          return () => {}
+
+          return () => socket.close()
         })
       })
 
@@ -607,15 +611,17 @@ export default class Tus extends BasePlugin {
       queuedRequest = this.requests.run(() => {
         if (file.isPaused) {
           socket.send('pause', {})
+        } else {
+          socket.open()
         }
 
-        // Don't do anything here, the caller will take care of cancelling the upload itself
+        // Just close the socket here, the caller will take care of cancelling the upload itself
         // using resetUploaderReferences(). This is because resetUploaderReferences() has to be
         // called when this request is still in the queue, and has not been started yet, too. At
         // that point this cancellation function is not going to be called.
         // Also, we need to remove the request from the queue _without_ destroying everything
         // related to this upload to handle pauses.
-        return () => {}
+        return () => socket.close()
       })
     })
   }

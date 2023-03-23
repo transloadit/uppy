@@ -1,4 +1,4 @@
-### Run companion on kuberenetes
+### Run companion on kubernetes
 
 You can use our docker container to run companion on kubernetes with the following configuration.
 
@@ -28,6 +28,7 @@ data:
   COMPANION_STREAMING_UPLOAD: true
   COMPANION_REDIS_URL: redis://:superSecretPassword@uppy-redis.uppy.svc.cluster.local:6379
   COMPANION_SECRET: "shh!Issa Secret!"
+  COMPANION_PREAUTH_SECRET: "another secret"
   COMPANION_DROPBOX_KEY: "YOUR DROPBOX KEY"
   COMPANION_DROPBOX_SECRET: "YOUR DROPBOX SECRET"
   COMPANION_BOX_KEY: "YOUR BOX KEY"
@@ -40,6 +41,7 @@ data:
   COMPANION_AWS_SECRET: "YOUR AWS SECRET"
   COMPANION_AWS_BUCKET: "YOUR AWS S3 BUCKET"
   COMPANION_AWS_REGION: "AWS REGION"
+  COMPANION_AWS_PREFIX: "AWS PREFIX"
   COMPANION_OAUTH_DOMAIN: "sub.domain.com"
   COMPANION_UPLOAD_URLS: "http://tusd.tusdemo.net/files/,https://tusd.tusdemo.net/files/"
 kind: Secret

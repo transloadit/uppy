@@ -24,6 +24,8 @@ export default class UppySocket {
   [Symbol.for('uppy test: getQueued')] () { return this.#queued }
 
   open () {
+    if (this.#socket != null) return
+
     this.#socket = new WebSocket(this.opts.target)
 
     this.#socket.onopen = () => {
@@ -37,6 +39,7 @@ export default class UppySocket {
 
     this.#socket.onclose = () => {
       this.#isOpen = false
+      this.#socket = null
     }
 
     this.#socket.onmessage = this.#handleMessage

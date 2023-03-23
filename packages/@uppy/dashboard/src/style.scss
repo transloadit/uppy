@@ -146,7 +146,7 @@
   position: relative;
   max-width: 100%;
   max-height: 100%;
-  background-color: $gray-50;
+  background-color: $gray-100;
   border: 1px solid $gray-200;
   border-radius: 5px;
   outline: none;
@@ -190,12 +190,20 @@
     opacity: 0.6;
     filter: grayscale(100%);
     user-select: none;
-    pointer-events: none;
+    cursor: not-allowed;
   }
 }
 
 .uppy-Dashboard--isDisabled .uppy-ProviderIconBg {
   fill: #9f9f9f;
+}
+
+// Disallow clicking on all interactive elements
+.uppy-Dashboard--isDisabled {
+  [disabled], [aria-disabled] {
+    pointer-events: none;
+    cursor: not-allowed;
+  }
 }
 
 .uppy-Dashboard--modal .uppy-Dashboard-inner {
@@ -462,7 +470,7 @@
 }
 
 .uppy-DashboardTab-btn:hover {
-  background-color: $gray-100--highlighted;
+  background-color: $gray-200--highlighted;
 
   [data-uppy-theme="dark"] & {
     background-color: $gray-800;
@@ -485,15 +493,35 @@
   overflow: hidden;
   vertical-align: text-top;
   transition: transform ease-in-out 0.15s;
+}
+
+.uppy-DashboardTab-inner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background-color: #fff;
+  box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.1),
+              0 1px 2px 0 rgba(0, 0, 0, 0.1),
+              0 2px 3px 0 rgba(0, 0, 0, 0.02);
   margin-inline-end: 10px;
 
   .uppy-size--md & {
     margin-inline-end: 0;
   }
+
+  [data-uppy-theme="dark"] & {
+    background-color: #323232;
+    box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.2),
+                0 1px 2px 0 rgba(0, 0, 0, 0.2),
+                0 2px 3px 0 rgba(0, 0, 0, 0.08);
+  }
 }
 
 .uppy-DashboardTab-name {
-  font-weight: 500;
+  font-weight: 400;
   font-size: 14px;
 
   .uppy-size--md & {
@@ -504,15 +532,51 @@
   }
 }
 
-// On SVG sizing: https://sarasoueidan.com/blog/svg-style-inheritance-and-FOUSVG/
-.uppy-DashboardTab svg {
-  width: 23px;
-  height: 23px;
-  vertical-align: middle;
+.uppy-DashboardTab-iconMyDevice {
+  color: $blue;
 
-  .uppy-size--md & {
-    width: 30px;
-    height: 30px;
+  [data-uppy-theme="dark"] & {
+    color: $highlight--dark;
+  }
+}
+
+.uppy-DashboardTab-iconBox {
+  color: #0061d5;
+
+  [data-uppy-theme="dark"] & {
+    color: $gray-200;
+  }
+}
+
+.uppy-DashboardTab-iconDropbox {
+  color: #0061fe;
+
+  [data-uppy-theme="dark"] & {
+    color: $gray-200;
+  }
+}
+
+.uppy-DashboardTab-iconUnsplash {
+  color: #111;
+
+  [data-uppy-theme="dark"] & {
+    color: $gray-200;
+  }
+}
+
+.uppy-DashboardTab-iconScreenRec {
+  color: #2c3e50;
+
+  [data-uppy-theme="dark"] & {
+    color: $gray-200;
+  }
+}
+
+.uppy-DashboardTab-iconAudio {
+  color: #8030a3;
+
+  [data-uppy-theme="dark"] & {
+    color: #bf6ee3;
   }
 }
 
@@ -727,6 +791,13 @@
   }
 }
 
+.uppy-Dashboard--singleFile .uppy-Dashboard-filesInner  {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
 .uppy-Dashboard-dropFilesHereHint {
   position: absolute;
   top: 7px;
@@ -788,7 +859,7 @@
     padding: 0 35px;
     margin-top: 5px;
     font-weight: 400;
-    font-size: 25px;
+    font-size: 21px;
     text-align: center;
   }
 
@@ -820,7 +891,6 @@
 
   .uppy-size--md & {
     max-width: 600px;
-    font-size: 15px;
     line-height: 1.35;
   }
 
@@ -867,12 +937,21 @@ a.uppy-Dashboard-poweredBy {
     width: 100%;
     height: 100%;
   }
+
+  .uppy-Dashboard--singleFile & {
+    width: 90px;
+    height: 90px;
+  }
 }
 
 .uppy-Dashboard-Item-previewIconWrap {
   position: relative;
   height: 76px;
   max-height: 75%;
+
+  .uppy-Dashboard--singleFile & {
+    height: 176px;
+  }
 }
 
 .uppy-Dashboard-Item-previewIconBg {
