@@ -10,15 +10,15 @@ This example supports the [Redux Devtools extension](https://github.com/zalmoxis
 
 To run this example, make sure you've correctly installed the **repository root**:
 
-```bash
-npm install
-npm run build
+```sh
+corepack yarn install
+corepack yarn build
 ```
 
 That will also install the dependencies for this example.
 
 Then, again in the **repository root**, start this example by doing:
 
-```bash
-npm run example redux
+```sh
+corepack yarn workspace @uppy-example/redux start
 ```
