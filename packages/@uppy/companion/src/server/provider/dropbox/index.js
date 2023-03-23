@@ -73,6 +73,7 @@ class DropBox extends Provider {
         prefixUrl: 'https://content.dropboxapi.com/2',
         headers: {
           'Dropbox-API-Arg': httpHeaderSafeJson({ path: String(id) }),
+          Connection: 'keep-alive', // important because https://github.com/transloadit/uppy/issues/4357
         },
         body: Buffer.alloc(0), // if not, it will hang waiting for the writable stream
         responseType: 'json',

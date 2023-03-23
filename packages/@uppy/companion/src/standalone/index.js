@@ -116,7 +116,7 @@ module.exports = function server (inputCompanionOptions) {
   if (companionOptions.redisUrl) {
     const RedisStore = connectRedis(session)
     const redisClient = redis.client(companionOptions)
-    // todo next major: change default prefix to something like "companion:" and possibly remove this option
+    // todo next major: change default prefix to something like "companion-session:" and possibly remove this option
     sessionOptions.store = new RedisStore({ client: redisClient, prefix: process.env.COMPANION_REDIS_EXPRESS_SESSION_PREFIX || 'sess:' })
   }
 

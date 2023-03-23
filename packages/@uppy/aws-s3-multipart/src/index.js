@@ -623,7 +623,7 @@ export default class AwsS3Multipart extends BasePlugin {
 
       const token = file.serverToken
       const host = getSocketHost(file.remote.companionUrl)
-      const socket = new Socket({ target: `${host}/api/${token}` })
+      const socket = new Socket({ target: `${host}/api/${token}`, autoOpen: false })
       this.uploaderSockets[file.id] = socket
       this.uploaderEvents[file.id] = new EventTracker(this.uppy)
 
@@ -644,8 +644,9 @@ export default class AwsS3Multipart extends BasePlugin {
           // resume a queued upload to make it skip the queue.
           queuedRequest.abort()
           queuedRequest = this.requests.run(() => {
+            socket.open()
             socket.send('resume', {})
-            return () => {}
+            return () => socket.close()
           })
         }
       })
@@ -670,7 +671,10 @@ export default class AwsS3Multipart extends BasePlugin {
           socket.send('pause', {})
         }
         queuedRequest = this.requests.run(() => {
+          socket.open()
           socket.send('resume', {})
+
+          return () => socket.close()
         })
       })
 
@@ -715,9 +719,11 @@ export default class AwsS3Multipart extends BasePlugin {
       queuedRequest = this.requests.run(() => {
         if (file.isPaused) {
           socket.send('pause', {})
+        } else {
+          socket.open()
         }
 
-        return () => {}
+        return () => socket.close()
       })
     })
   }
