@@ -85,7 +85,7 @@ export default function getIconByMime (fileType) {
   // Image
   if (fileTypeGeneral === 'image') {
     return {
-      color: '#686de0',
+      color: '#fff',
       icon: iconImage(),
     }
   }
