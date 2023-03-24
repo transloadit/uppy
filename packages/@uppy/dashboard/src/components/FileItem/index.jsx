@@ -102,11 +102,12 @@ export default class FileItem extends Component {
             id={this.props.id}
             acquirers={this.props.acquirers}
             containerWidth={this.props.containerWidth}
+            containerHeight={this.props.containerHeight}
             i18n={this.props.i18n}
             toggleAddFilesPanel={this.props.toggleAddFilesPanel}
             toggleFileCard={this.props.toggleFileCard}
             metaFields={this.props.metaFields}
-            singleFile={this.props.singleFile}
+            isSingleFile={this.props.isSingleFile}
           />
           <Buttons
             file={file}
