@@ -595,6 +595,8 @@ export default class AwsS3Multipart extends BasePlugin {
     return res.token
   }
 
+  // NOTE! Keep this duplicated code in sync with other plugins
+  // TODO we should probably abstract this into a common function
   async uploadRemote (file) {
     this.resetUploaderReferences(file.id)
 
@@ -605,13 +607,16 @@ export default class AwsS3Multipart extends BasePlugin {
 
     try {
       if (file.serverToken) {
-        return this.connectToServerSocket(file)
+        return await this.connectToServerSocket(file)
       }
       const serverToken = await this.#queueRequestSocketToken(file)
 
+      if (!this.uppy.getState().files[file.id]) return undefined
+
       this.uppy.setFileState(file.id, { serverToken })
-      return this.connectToServerSocket(this.uppy.getFile(file.id))
+      return await this.connectToServerSocket(this.uppy.getFile(file.id))
     } catch (err) {
+      this.uppy.setFileState(file.id, { serverToken: undefined })
       this.uppy.emit('upload-error', file, err)
       throw err
     }
