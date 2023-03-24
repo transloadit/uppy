@@ -50,14 +50,14 @@
   }
 
   .uppy-Dashboard--singleFile & {
-    display: block;
+    display: flex;
+    flex-direction: column;
     width: 100%;
     max-width: 400px;
-    height: auto;
+    height: 100%;
     border-bottom: 0;
     position: relative;
-    padding: 0;
-    margin: 10px;
+    padding: 15px;
   }
 }
 
@@ -87,6 +87,11 @@
     background-position: 50% 50%;
     background-size: 40px;
   }
+
+  .uppy-Dashboard--singleFile & {
+    background-position: 50% 50%;
+    background-size: 30%;
+  }
 }
 
 .uppy-Dashboard-Item-preview {
@@ -94,12 +99,10 @@
   position: relative;
 
   // @media only mobile
-  .uppy-Dashboard:not(.uppy-size--md):not(.uppy-Dashboard--singleFile) & {
-    flex-grow: 0;
-    flex-shrink: 0;
-    width: 50px;
-    height: 50px;
-  }
+  flex-grow: 0;
+  flex-shrink: 0;
+  width: 50px;
+  height: 50px;
 
   // @media bigger than .md
   .uppy-size--md & {
@@ -117,7 +120,12 @@
 
   .uppy-Dashboard--singleFile & {
     width: 100%;
-    height: 270px;
+    max-height: 75%;
+    flex-grow: 1;
+  }
+
+  .uppy-Dashboard--singleFile.uppy-size--md & {
+    max-height: 100%;
   }
 }
 
@@ -132,9 +140,13 @@
   .uppy-size--md &,
   .uppy-Dashboard--singleFile & {
     align-items: flex-start;
-    width: 100%;
     padding: 0;
     padding-top: 9px;
+  }
+
+  .uppy-Dashboard--singleFile & {
+    width: 100%;
+    flex-grow: 0;
   }
 }
 

@@ -11,7 +11,8 @@
   border-radius: 3px;
   box-shadow: 0 0 2px 0 rgba($black, 0.4);
 
-  .uppy-size--md & {
+  .uppy-size--md &,
+  .uppy-Dashboard--singleFile & {
     box-shadow: 0 1px 2px rgba($black, 0.15);
   }
 }
@@ -54,5 +55,9 @@
   // Fixes file previews being partially invisible in safari (for some pics only).
   // (https://stackoverflow.com/a/27971913/3192470)
   transform: translateZ(0);
+
+  .uppy-Dashboard--singleFile & {
+    object-fit: contain;
+  }
 }
 // ...uppy-Dashboard-Item-previewInnerWrap|
