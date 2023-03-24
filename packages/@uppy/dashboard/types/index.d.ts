@@ -26,6 +26,7 @@ export interface DashboardOptions extends Options {
   animateOpenClose?: boolean
   browserBackButtonClose?: boolean
   closeAfterFinish?: boolean
+  centerSingleFile?: boolean
   closeModalOnClickOutside?: boolean
   disableInformer?: boolean
   disablePageScrollWhenModalOpen?: boolean

@@ -80,6 +80,7 @@ export default class Dashboard extends UIPlugin {
       note: null,
       closeModalOnClickOutside: false,
       closeAfterFinish: false,
+      centerSingleFile: true,
       disableStatusBar: false,
       disableInformer: false,
       disableThumbnailGenerator: false,
@@ -422,7 +423,8 @@ export default class Dashboard extends UIPlugin {
     this.makeDashboardInsidesVisibleAnywayTimeout = setTimeout(() => {
       const pluginState = this.getPluginState()
       const isModalAndClosed = !this.opts.inline && pluginState.isHidden
-      if (
+      if (// We might want to enable this in the future
+
         // if ResizeObserver hasn't yet fired,
         !pluginState.areInsidesReadyToBeVisible
         // and it's not due to the modal being closed
@@ -1004,6 +1006,7 @@ export default class Dashboard extends UIPlugin {
       showNativePhotoCameraButton: this.opts.showNativePhotoCameraButton,
       showNativeVideoCameraButton: this.opts.showNativeVideoCameraButton,
       nativeCameraFacingMode: this.opts.nativeCameraFacingMode,
+      centerSingleFile: this.opts.centerSingleFile,
       handleCancelRestore: this.handleCancelRestore,
       handleRequestThumbnail: this.handleRequestThumbnail,
       handleCancelThumbnail: this.handleCancelThumbnail,
