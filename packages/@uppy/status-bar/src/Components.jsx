@@ -17,6 +17,7 @@ function UploadBtn (props) {
     i18n,
     uploadState,
     isSomeGhost,
+    isLoadingFiles,
     startUpload,
   } = props
 
@@ -41,7 +42,7 @@ function UploadBtn (props) {
       className={uploadBtnClassNames}
       aria-label={i18n('uploadXFiles', { smart_count: newFiles })}
       onClick={startUpload}
-      disabled={isSomeGhost}
+      disabled={isSomeGhost || isLoadingFiles}
       data-uppy-super-focusable
     >
       {uploadBtnText}

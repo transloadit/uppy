@@ -324,7 +324,7 @@ class Uppy {
   }
 
   getObjectOfFilesPerState () {
-    const { files: filesObject, totalProgress, error } = this.getState()
+    const { files: filesObject, totalProgress, error, selectedFolders } = this.getState()
     const files = Object.values(filesObject)
     const inProgressFiles = files.filter(({ progress }) => !progress.uploadComplete && progress.uploadStarted)
     const newFiles =  files.filter((file) => !file.progress.uploadStarted)
@@ -337,6 +337,7 @@ class Uppy {
     const erroredFiles = files.filter((file) => file.error)
     const inProgressNotPausedFiles = inProgressFiles.filter((file) => !file.isPaused)
     const processingFiles = files.filter((file) => file.progress.preprocess || file.progress.postprocess)
+    const isLoadingFiles = Object.values(selectedFolders).some((folder) => folder.isLoading)
 
     return {
       newFiles,
@@ -348,6 +349,7 @@ class Uppy {
       inProgressFiles,
       inProgressNotPausedFiles,
       processingFiles,
+      isLoadingFiles,
 
       isUploadStarted: uploadStartedFiles.length > 0,
       isAllComplete: totalProgress === 100
