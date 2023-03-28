@@ -216,7 +216,7 @@ class Uppy {
 
     if (newOpts.locale) {
       this.iteratePlugins((plugin) => {
-        plugin.setOptions()
+        plugin.setOptions(newOpts)
       })
     }
 
