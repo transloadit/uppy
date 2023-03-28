@@ -10,8 +10,8 @@ const { getURLBuilder } = require('./helpers/utils')
 const { isOAuthProvider } = require('./provider/Provider')
 
 exports.hasSessionAndProvider = (req, res, next) => {
-  if (!req.session || !req.body) {
-    logger.debug('No session/body attached to req object. Exiting dispatcher.', null, req.id)
+  if (!req.session) {
+    logger.debug('No session attached to req object. Exiting dispatcher.', null, req.id)
     return res.sendStatus(400)
   }
 
@@ -32,6 +32,24 @@ const isOAuthProviderReq = (req) => isOAuthProvider(req.companion.providerClass.
 exports.hasOAuthProvider = (req, res, next) => {
   if (!isOAuthProviderReq(req)) {
     logger.debug('Provider does not support OAuth.', null, req.id)
+    return res.sendStatus(400)
+  }
+
+  return next()
+}
+
+exports.hasBody = (req, res, next) => {
+  if (!req.body) {
+    logger.debug('No body attached to req object. Exiting dispatcher.', null, req.id)
+    return res.sendStatus(400)
+  }
+
+  return next()
+}
+
+exports.hasSearchQuery = (req, res, next) => {
+  if (typeof req.query.q !== 'string') {
+    logger.debug('search request has no search query', 'search.query.check', req.id)
     return res.sendStatus(400)
   }
 

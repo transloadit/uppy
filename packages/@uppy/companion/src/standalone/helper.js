@@ -53,6 +53,15 @@ function getCorsOrigins () {
   return undefined
 }
 
+const s3Prefix = process.env.COMPANION_AWS_PREFIX || ''
+
+/**
+ * Default getKey for Companion standalone variant
+ *
+ * @returns {string}
+ */
+const defaultStandaloneGetKey = (...args) => `${s3Prefix}${utils.defaultGetKey(...args)}`
+
 /**
  * Loads the config from environment variables
  *
@@ -107,7 +116,7 @@ const getConfigFromEnv = () => {
     },
     s3: {
       key: process.env.COMPANION_AWS_KEY,
-      getKey: utils.defaultGetKey,
+      getKey: defaultStandaloneGetKey,
       secret: getSecret('COMPANION_AWS_SECRET'),
       bucket: process.env.COMPANION_AWS_BUCKET,
       endpoint: process.env.COMPANION_AWS_ENDPOINT,

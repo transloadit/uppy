@@ -17,11 +17,7 @@ export default class Zoom extends UIPlugin {
     this.title = this.opts.title || 'Zoom'
     this.icon = () => (
       <svg aria-hidden="true" focusable="false" width="32" height="32" viewBox="0 0 32 32">
-        <rect className="uppy-ProviderIconBg" width="32" height="32" rx="16" fill="#0E71EB" />
-        <g fill="none" fillRule="evenodd">
-          <path fill="#fff" d="M29,31H14c-1.657,0-3-1.343-3-3V17h15c1.657,0,3,1.343,3,3V31z" style={{ transform: 'translate(-5px, -5px) scale(0.9)' }} />
-          <polygon fill="#fff" points="37,31 31,27 31,21 37,17" style={{ transform: 'translate(-5px, -5px) scale(0.9)' }} />
-        </g>
+        <path d="M24.5 11.125l-2.75 2.063c-.473.353-.75.91-.75 1.5v3.124c0 .59.277 1.147.75 1.5l2.75 2.063a.938.938 0 001.5-.75v-8.75a.938.938 0 00-1.5-.75zm-4.75 9.5c0 1.035-.84 1.875-1.875 1.875H9.75A3.75 3.75 0 016 18.75v-6.875C6 10.84 6.84 10 7.875 10H16a3.75 3.75 0 013.75 3.75v6.875z" fill="#2E8CFF" fill-rule="evenodd" />
       </svg>
     )
 
