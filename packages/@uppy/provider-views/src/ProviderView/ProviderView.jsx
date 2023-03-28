@@ -1,4 +1,5 @@
 import { h } from 'preact'
+import pMap from 'p-map'
 
 import AuthView from './AuthView.jsx'
 import Header from './Header.jsx'
@@ -58,7 +59,6 @@ export default class ProviderView extends View {
     this.logout = this.logout.bind(this)
     this.handleAuth = this.handleAuth.bind(this)
     this.handleScroll = this.handleScroll.bind(this)
-    this.listAllFiles = this.listAllFiles.bind(this)
     this.donePicking = this.donePicking.bind(this)
 
     // Visual
@@ -173,20 +173,9 @@ export default class ProviderView extends View {
    * Uses separated state while folder contents are being fetched and
    * mantains list of selected folders, which are separated from files.
    */
-  addFolder (folder) {
-    const folderId = this.providerFileToId(folder)
-    const folders = { ...this.plugin.getPluginState().selectedFolders }
-
-    if (folderId in folders && folders[folderId].loading) {
-      return
-    }
-
-    folders[folderId] = { loading: true, files: [] }
-
-    this.plugin.setPluginState({ selectedFolders: { ...folders } })
-
-    // eslint-disable-next-line consistent-return
-    return this.listAllFiles(folder.requestPath).then((files) => {
+  async addFolder (folder) {
+    try {
+      const files = await this.recursivelyListAllFiles(folder.requestPath)
       let count = 0
 
       // If the same folder is added again, we don't want to send
@@ -204,13 +193,7 @@ export default class ProviderView extends View {
         files.forEach((file) => this.addFile(file))
       }
 
-      const ids = files.map(this.providerFileToId)
-
-      folders[folderId] = {
-        loading: false,
-        files: ids,
-      }
-      this.plugin.setPluginState({ selectedFolders: folders, filterInput: '' })
+      this.plugin.setPluginState({ filterInput: '' })
 
       let message
 
@@ -227,12 +210,9 @@ export default class ProviderView extends View {
       }
 
       this.plugin.uppy.info(message)
-    }).catch((e) => {
-      const selectedFolders = { ...this.plugin.getPluginState().selectedFolders }
-      delete selectedFolders[folderId]
-      this.plugin.setPluginState({ selectedFolders })
-      this.handleError(e)
-    })
+    } catch (err) {
+      this.handleError(err)
+    }
   }
 
   async handleAuth () {
@@ -296,20 +276,26 @@ export default class ProviderView extends View {
     }
   }
 
-  async listAllFiles (path, files = null) {
-    files = files || [] // eslint-disable-line no-param-reassign
-    const res = await this.provider.list(path)
-    res.items.forEach((item) => {
-      if (!item.isFolder) {
-        files.push(item)
-      } else {
-        this.addFolder(item)
-      }
-    })
-    const moreFiles = res.nextPagePath
-    if (moreFiles) {
-      return this.listAllFiles(moreFiles, files)
+  async recursivelyListAllFiles (path, files = []) {
+    for (;;) {
+      let curPath = path
+      const res = await this.provider.list(curPath)
+
+      // limit concurrency (because what if we have a folder with 1000 folders inside!)
+      // todo this might still lead to a memory run-off
+      await pMap(res.items, async (item) => {
+        if (item.isFolder) {
+          await this.recursivelyListAllFiles(item.requestPath, files)
+        } else {
+          files.push(item)
+        }
+      }, { concurrency: 10 })
+
+      // need to repeat this call until there are no more pages
+      if (!res.nextPagePath) break
+      curPath = res.nextPagePath
     }
+
     return files
   }
 
@@ -363,7 +349,6 @@ export default class ProviderView extends View {
       filterQuery: this.filterQuery,
       logout: this.logout,
       handleScroll: this.handleScroll,
-      listAllFiles: this.listAllFiles,
       done: this.donePicking,
       cancel: this.cancelPicking,
       headerComponent: Header(headerProps),
