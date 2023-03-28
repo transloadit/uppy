@@ -1,4 +1,4 @@
-/* global jest:false, test:false, expect:false, describe:false, beforeEach:false */
+/* global test:false, expect:false, describe:false, beforeEach:false */
 
 const providerManager = require('../../src/server/provider')
 const { getCompanionOptions } = require('../../src/standalone/helper')
@@ -148,7 +148,7 @@ describe('Test Custom Provider options', () => {
           key: 'foo_key',
           secret: 'foo_secret',
         },
-        module: jest.mock(),
+        module: { authProvider: 'some_provider' },
       },
     }, providers, grantConfig)
 
