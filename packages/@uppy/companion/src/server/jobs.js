@@ -105,7 +105,7 @@ exports.startPeriodicPingJob = async ({ urls, interval = 60000, count, staticPay
 
     try {
       requesting = true
-      const payload = { version, processId, ...staticPayload }
+      const payload = { version, processId, service: 'companion', ...staticPayload }
       await runPeriodicPing({ urls, payload, requestTimeout })
     } finally {
       requesting = false
