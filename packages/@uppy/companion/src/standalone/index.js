@@ -2,7 +2,6 @@ const express = require('express')
 const qs = require('node:querystring')
 const helmet = require('helmet')
 const morgan = require('morgan')
-const bodyParser = require('body-parser')
 const { URL } = require('node:url')
 const session = require('express-session')
 const addRequestId = require('express-request-id')()
@@ -95,9 +94,6 @@ module.exports = function server (inputCompanionOptions) {
     }
     return undefined
   })
-
-  router.use(bodyParser.json())
-  router.use(bodyParser.urlencoded({ extended: false }))
 
   // Use helmet to secure Express headers
   router.use(helmet.frameguard())

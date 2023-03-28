@@ -1,4 +1,4 @@
-const router = require('express').Router
+const express = require('express')
 const validator = require('validator')
 
 const { startDownUpload } = require('../helpers/upload')
@@ -112,6 +112,6 @@ const get = async (req, res) => {
   startDownUpload({ req, res, getSize, download, onUnhandledError })
 }
 
-module.exports = () => router()
-  .post('/meta', meta)
-  .post('/get', get)
+module.exports = () => express.Router()
+  .post('/meta', express.json(), meta)
+  .post('/get', express.json(), get)

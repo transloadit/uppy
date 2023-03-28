@@ -9,13 +9,22 @@ const getS3Client = require('./s3-client')
 const { getURLBuilder } = require('./helpers/utils')
 
 exports.hasSessionAndProvider = (req, res, next) => {
-  if (!req.session || !req.body) {
-    logger.debug('No session/body attached to req object. Exiting dispatcher.', null, req.id)
+  if (!req.session) {
+    logger.debug('No session attached to req object. Exiting dispatcher.', null, req.id)
     return res.sendStatus(400)
   }
 
   if (!req.companion.provider) {
     logger.debug('No provider/provider-handler found. Exiting dispatcher.', null, req.id)
+    return res.sendStatus(400)
+  }
+
+  return next()
+}
+
+exports.hasBody = (req, res, next) => {
+  if (!req.body) {
+    logger.debug('No body attached to req object. Exiting dispatcher.', null, req.id)
     return res.sendStatus(400)
   }
 
