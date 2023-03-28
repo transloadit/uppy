@@ -56,7 +56,6 @@ export default function StatusBar (props) {
     totalSize,
     totalETA,
     totalUploadedSize,
-    isLoadingFiles,
   } = props
 
   function getProgressValue () {
@@ -215,7 +214,6 @@ export default function StatusBar (props) {
             isSomeGhost={isSomeGhost}
             startUpload={startUpload}
             uploadState={uploadState}
-            isLoadingFiles={isLoadingFiles}
           />
         ) : null}
 

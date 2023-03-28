@@ -138,7 +138,6 @@ export default class StatusBar extends UIPlugin {
       isAllPaused,
       isUploadInProgress,
       isSomeGhost,
-      isLoadingFiles,
     } = this.uppy.getObjectOfFilesPerState()
 
     // If some state was recovered, we want to show Upload button/counter
@@ -177,7 +176,6 @@ export default class StatusBar extends UIPlugin {
       isUploadStarted,
       isUploadInProgress,
       isSomeGhost,
-      isLoadingFiles,
       recoveredState,
       complete: completeFiles.length,
       newFiles: newFilesOrRecovered.length,
