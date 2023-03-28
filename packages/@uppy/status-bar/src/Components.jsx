@@ -16,7 +16,7 @@ function UploadBtn (props) {
     recoveredState,
     i18n,
     uploadState,
-    isSomeGhost,
+    isDisabled,
     startUpload,
   } = props
 
@@ -28,7 +28,7 @@ function UploadBtn (props) {
     {
       'uppy-c-btn-primary': uploadState === statusBarStates.STATE_WAITING,
     },
-    { 'uppy-StatusBar-actionBtn--disabled': isSomeGhost },
+    { 'uppy-StatusBar-actionBtn--disabled': isDisabled },
   )
 
   const uploadBtnText = newFiles && isUploadStarted && !recoveredState
@@ -41,7 +41,7 @@ function UploadBtn (props) {
       className={uploadBtnClassNames}
       aria-label={i18n('uploadXFiles', { smart_count: newFiles })}
       onClick={startUpload}
-      disabled={isSomeGhost}
+      disabled={isDisabled}
       data-uppy-super-focusable
     >
       {uploadBtnText}

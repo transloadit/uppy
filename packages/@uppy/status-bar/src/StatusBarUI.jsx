@@ -138,8 +138,14 @@ export default function StatusBar (props) {
     && uploadState === STATE_UPLOADING
 
   const showRetryBtn = error && !isAllComplete && !hideRetryButton
-
   const showDoneBtn = doneButtonHandler && uploadState === STATE_COMPLETE
+
+  let arePluginsLoading = false
+  uppy.iteratePlugins((plugin) => {
+    if (plugin.getPluginState().loading) {
+      arePluginsLoading = true
+    }
+  })
 
   const progressClassNames = classNames('uppy-StatusBar-progress', {
     'is-indeterminate': getIsIndeterminate(),
@@ -211,7 +217,7 @@ export default function StatusBar (props) {
             isUploadStarted={isUploadStarted}
             recoveredState={recoveredState}
             i18n={i18n}
-            isSomeGhost={isSomeGhost}
+            isDisabled={isSomeGhost || arePluginsLoading}
             startUpload={startUpload}
             uploadState={uploadState}
           />
