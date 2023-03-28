@@ -167,54 +167,6 @@ export default class ProviderView extends View {
     this.plugin.setPluginState({ ...state, filterInput: e ? e.target.value : '' })
   }
 
-  /**
-   * Adds all files found inside of specified folder.
-   *
-   * Uses separated state while folder contents are being fetched and
-   * mantains list of selected folders, which are separated from files.
-   */
-  async addFolder (folder) {
-    try {
-      const files = await this.recursivelyListAllFiles(folder.requestPath)
-      let count = 0
-
-      // If the same folder is added again, we don't want to send
-      // X amount of duplicate file notifications, we want to say
-      // the folder was already added. This checks if all files are duplicate,
-      // if that's the case, we don't add the files.
-      files.forEach(file => {
-        const id = this.providerFileToId(file)
-        if (!this.plugin.uppy.checkIfFileAlreadyExists(id)) {
-          count++
-        }
-      })
-
-      if (count > 0) {
-        files.forEach((file) => this.addFile(file))
-      }
-
-      this.plugin.setPluginState({ filterInput: '' })
-
-      let message
-
-      if (count === 0) {
-        message = this.plugin.uppy.i18n('folderAlreadyAdded', {
-          folder: folder.name,
-        })
-      } else if (files.length) {
-        message = this.plugin.uppy.i18n('folderAdded', {
-          smart_count: count, folder: folder.name,
-        })
-      } else {
-        message = this.plugin.uppy.i18n('emptyFolderAdded')
-      }
-
-      this.plugin.uppy.info(message)
-    } catch (err) {
-      this.handleError(err)
-    }
-  }
-
   async handleAuth () {
     await this.provider.ensurePreAuth()
 
@@ -301,14 +253,65 @@ export default class ProviderView extends View {
 
   donePicking () {
     const { currentSelection } = this.plugin.getPluginState()
-    const promises = currentSelection.map((file) => {
-      if (file.isFolder) {
-        return this.addFolder(file)
-      }
-      return this.addFile(file)
-    })
 
-    this.sharedHandler.loaderWrapper(Promise.all(promises), () => {
+    const addSelection = async () => {
+      try {
+        const allFiles = []
+        const foldersAdded = []
+
+        // eslint-disable-next-line no-unreachable-loop
+        for (const file of currentSelection) {
+          if (file.isFolder) {
+            const folder = file
+            const filesInFolder = await this.recursivelyListAllFiles(folder.requestPath)
+            allFiles.push(...filesInFolder)
+
+            let numNewFiles = 0
+
+            // If the same folder is added again, we don't want to send
+            // X amount of duplicate file notifications, we want to say
+            // the folder was already added. This checks if all files are duplicate,
+            // if that's the case, we don't add the files.
+            filesInFolder.forEach((fileInFolder) => {
+              const id = this.providerFileToId(fileInFolder)
+              if (!this.plugin.uppy.checkIfFileAlreadyExists(id)) {
+                numNewFiles++
+              }
+            })
+
+            foldersAdded.push({ numNewFiles, name: folder.name })
+          } else {
+            await this.addFile(file)
+          }
+        }
+
+        allFiles.forEach((file) => this.addFile(file))
+
+        this.plugin.setPluginState({ filterInput: '' })
+
+        let message
+
+        for (const { name, numNewFiles } of foldersAdded) {
+          if (numNewFiles === 0) {
+            message = this.plugin.uppy.i18n('folderAlreadyAdded', {
+              folder: name,
+            })
+          } else if (numNewFiles) {
+            message = this.plugin.uppy.i18n('folderAdded', {
+              smart_count: numNewFiles, folder: name,
+            })
+          } else {
+            message = this.plugin.uppy.i18n('emptyFolderAdded')
+          }
+
+          this.plugin.uppy.info(message)
+        }
+      } catch (err) {
+        this.handleError(err)
+      }
+    }
+
+    this.sharedHandler.loaderWrapper(addSelection(), () => {
       this.clearSelection()
     }, () => {})
   }
