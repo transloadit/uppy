@@ -122,8 +122,8 @@ module.exports.app = (optionsArg = {}) => {
   app.post('/:providerName/preauth', express.json(), express.urlencoded({ extended: false }), middlewares.hasSessionAndProvider, middlewares.hasBody, middlewares.hasOAuthProvider, controllers.preauth)
   app.get('/:providerName/connect', middlewares.hasSessionAndProvider, middlewares.hasOAuthProvider, controllers.connect)
   app.get('/:providerName/redirect', middlewares.hasSessionAndProvider, middlewares.hasOAuthProvider, controllers.redirect)
-  app.get('/:providerName/callback', express.json(), middlewares.hasSessionAndProvider, middlewares.hasBody, middlewares.hasOAuthProvider, controllers.callback)
-  app.post('/:providerName/deauthorization/callback', middlewares.hasSessionAndProvider, middlewares.hasOAuthProvider, controllers.deauthorizationCallback)
+  app.get('/:providerName/callback', middlewares.hasSessionAndProvider, middlewares.hasOAuthProvider, controllers.callback)
+  app.post('/:providerName/deauthorization/callback', express.json(), middlewares.hasSessionAndProvider, middlewares.hasBody, middlewares.hasOAuthProvider, controllers.deauthorizationCallback)
   app.get('/:providerName/logout', middlewares.hasSessionAndProvider, middlewares.hasOAuthProvider, middlewares.gentleVerifyToken, controllers.logout)
   app.get('/:providerName/send-token', middlewares.hasSessionAndProvider, middlewares.hasOAuthProvider, middlewares.verifyToken, controllers.sendToken)
 
