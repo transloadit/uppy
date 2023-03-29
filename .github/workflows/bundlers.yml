@@ -85,7 +85,7 @@ jobs:
           npm i --save-dev
           @rollup/plugin-commonjs @rollup/plugin-node-resolve
           rollup@${{matrix.bundler-version}}
-      - name: npx rollup --version
+      - run: npx rollup --version
       - name: Create Rollup config file
         run: >-
           echo '
