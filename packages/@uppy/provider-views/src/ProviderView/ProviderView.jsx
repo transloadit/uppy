@@ -281,9 +281,9 @@ export default class ProviderView extends View {
             }
           })
 
-          foldersAdded.push({ numNewFiles, name: folder.name })
+          foldersAdded.push({ numFiles: filesInFolder.length, numNewFiles, name: folder.name })
         } else {
-          await this.addFile(file)
+          this.addFile(file)
         }
       }
 
@@ -293,17 +293,17 @@ export default class ProviderView extends View {
 
       let message
 
-      for (const { name, numNewFiles } of foldersAdded) {
-        if (numNewFiles === 0) {
+      for (const { name, numFiles, numNewFiles } of foldersAdded) {
+        if (numFiles === 0) {
+          message = this.plugin.uppy.i18n('emptyFolderAdded')
+        } else if (numNewFiles === 0) {
           message = this.plugin.uppy.i18n('folderAlreadyAdded', {
             folder: name,
           })
-        } else if (numNewFiles) {
+        } else {
           message = this.plugin.uppy.i18n('folderAdded', {
             smart_count: numNewFiles, folder: name,
           })
-        } else {
-          message = this.plugin.uppy.i18n('emptyFolderAdded')
         }
 
         this.plugin.uppy.info(message)
