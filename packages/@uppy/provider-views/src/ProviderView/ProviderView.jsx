@@ -291,9 +291,8 @@ export default class ProviderView extends View {
 
       this.plugin.setPluginState({ filterInput: '' })
 
-      let message
-
       for (const { name, numFiles, numNewFiles } of foldersAdded) {
+        let message
         if (numFiles === 0) {
           message = this.plugin.uppy.i18n('emptyFolderAdded')
         } else if (numNewFiles === 0) {
@@ -307,8 +306,9 @@ export default class ProviderView extends View {
         }
 
         this.plugin.uppy.info(message)
-        this.clearSelection()
       }
+
+      this.clearSelection()
     } catch (err) {
       this.handleError(err)
     } finally {
