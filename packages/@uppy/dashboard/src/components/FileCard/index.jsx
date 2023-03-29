@@ -5,8 +5,9 @@ import { nanoid } from 'nanoid/non-secure'
 import getFileTypeIcon from '../../utils/getFileTypeIcon.jsx'
 import ignoreEvent from '../../utils/ignoreEvent.js'
 import FilePreview from '../FilePreview.jsx'
+import RenderMetaFields from './RenderMetaFields.jsx'
 
-export default (props) => {
+export default function FileCard (props) {
   const {
     uppy,
     files,
@@ -62,50 +63,12 @@ export default (props) => {
 
   useEffect(() => {
     document.body.appendChild(form)
-    return () => document.body.removeChild(form)
-  }, [form])
-
-  useEffect(() => {
     form.addEventListener('submit', handleSave)
-    return () => form.removeEventListener('submit', handleSave)
-  }, [form, handleSave])
-
-  const renderMetaFields = () => {
-    const fieldCSSClasses = {
-      text: 'uppy-u-reset uppy-c-textInput uppy-Dashboard-FileCard-input',
+    return () => {
+      form.removeEventListener('submit', handleSave)
+      document.body.removeChild(form)
     }
-
-    return computedMetaFields.map((field) => {
-      const id = `uppy-Dashboard-FileCard-input-${field.id}`
-      const required = requiredMetaFields.includes(field.id)
-      return (
-        <fieldset key={field.id} className="uppy-Dashboard-FileCard-fieldset">
-          <label className="uppy-Dashboard-FileCard-label" htmlFor={id}>{field.name}</label>
-          {field.render !== undefined
-            ? field.render({
-              value: formState[field.id],
-              onChange: (newVal) => updateMeta(newVal, field.id),
-              fieldCSSClasses,
-              required,
-              form: form.id,
-            }, h)
-            : (
-              <input
-                className={fieldCSSClasses.text}
-                id={id}
-                form={form.id}
-                type={field.type || 'text'}
-                required={required}
-                value={formState[field.id]}
-                placeholder={field.placeholder}
-                onInput={ev => updateMeta(ev.target.value, field.id)}
-                data-uppy-super-focusable
-              />
-            )}
-        </fieldset>
-      )
-    })
-  }
+  }, [form, handleSave])
 
   return (
     <div
@@ -115,7 +78,7 @@ export default (props) => {
       onDragLeave={ignoreEvent}
       onDrop={ignoreEvent}
       onPaste={ignoreEvent}
-    >
+    >const
       <div className="uppy-DashboardContent-bar">
         <div className="uppy-DashboardContent-title" role="heading" aria-level="1">
           {i18nArray('editing', {
@@ -156,7 +119,13 @@ export default (props) => {
         </div>
 
         <div className="uppy-Dashboard-FileCard-info">
-          {renderMetaFields()}
+          <RenderMetaFields
+            computedMetaFields={computedMetaFields}
+            requiredMetaFields={requiredMetaFields}
+            updateMeta={updateMeta}
+            form={form}
+            formState={formState}
+          />
         </div>
 
         <div className="uppy-Dashboard-FileCard-actions">

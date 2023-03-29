@@ -3,7 +3,7 @@ import { useEffect, useState, useCallback } from 'preact/hooks'
 import { nanoid } from 'nanoid/non-secure'
 // import debounce from 'lodash.debounce'
 
-export default (props) => {
+export default function SearchFilterInput (props) {
   const {
     search,
     searchOnInput,
@@ -44,12 +44,11 @@ export default (props) => {
 
   useEffect(() => {
     document.body.appendChild(form)
-    return () => document.body.removeChild(form)
-  }, [form])
-
-  useEffect(() => {
     form.addEventListener('submit', validateAndSearch)
-    return () => form.removeEventListener('submit', validateAndSearch)
+    return () => {
+      form.removeEventListener('submit', validateAndSearch)
+      document.body.removeChild(form)
+    }
   }, [form, validateAndSearch])
 
   return (
