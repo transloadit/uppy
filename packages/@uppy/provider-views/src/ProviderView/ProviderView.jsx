@@ -233,22 +233,23 @@ export default class ProviderView extends View {
   }
 
   async recursivelyListAllFiles (path, files = []) {
-    for (;;) {
-      let curPath = path
+    let curPath = path
+
+    // need to repeat the list call until there are no more pages
+    while (curPath) {
       const res = await this.provider.list(curPath)
 
       // limit concurrency (because what if we have a folder with 1000 folders inside!)
       // todo this might still lead to a memory run-off
       await pMap(res.items, async (item) => {
         if (item.isFolder) {
+          // recursively call self for folder
           await this.recursivelyListAllFiles(item.requestPath, files)
         } else {
           files.push(item)
         }
       }, { concurrency: 10 })
 
-      // need to repeat this call until there are no more pages
-      if (!res.nextPagePath) break
       curPath = res.nextPagePath
     }
 
