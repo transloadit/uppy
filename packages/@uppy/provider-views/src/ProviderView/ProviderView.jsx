@@ -232,19 +232,24 @@ export default class ProviderView extends View {
     }
   }
 
-  async recursivelyListAllFiles (path, files = []) {
-    let curPath = path
+  async recursivelyListAllFiles (folder, files = []) {
+    let curPath = folder.requestPath
 
     // need to repeat the list call until there are no more pages
     while (curPath) {
       const res = await this.provider.list(curPath)
+
+      const numSubFolders = res.items.filter((item) => item.isFolder).length
+      if (numSubFolders > 0) {
+        this.setLoading(this.plugin.uppy.i18n('traversingSubfolders', { numSubFolders, folder: folder.name }))
+      }
 
       // limit concurrency (because what if we have a folder with 1000 folders inside!)
       // todo this might still lead to a memory run-off
       await pMap(res.items, async (item) => {
         if (item.isFolder) {
           // recursively call self for folder
-          await this.recursivelyListAllFiles(item.requestPath, files)
+          await this.recursivelyListAllFiles(item, files)
         } else {
           files.push(item)
         }
@@ -268,7 +273,7 @@ export default class ProviderView extends View {
       for (const file of currentSelection) {
         if (file.isFolder) {
           const folder = file
-          const filesInFolder = await this.recursivelyListAllFiles(folder.requestPath)
+          const filesInFolder = await this.recursivelyListAllFiles(folder)
 
           // If the same folder is added again, we don't want to send
           // X amount of duplicate file notifications, we want to say
@@ -369,7 +374,7 @@ export default class ProviderView extends View {
     if (loading) {
       return (
         <CloseWrapper onUnmount={this.clearSelection}>
-          <LoaderView i18n={this.plugin.uppy.i18n} />
+          <LoaderView i18n={this.plugin.uppy.i18n} loading={loading} />
         </CloseWrapper>
       )
     }
