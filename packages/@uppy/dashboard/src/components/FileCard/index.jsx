@@ -78,7 +78,7 @@ export default function FileCard (props) {
       onDragLeave={ignoreEvent}
       onDrop={ignoreEvent}
       onPaste={ignoreEvent}
-    >const
+    >
       <div className="uppy-DashboardContent-bar">
         <div className="uppy-DashboardContent-title" role="heading" aria-level="1">
           {i18nArray('editing', {
