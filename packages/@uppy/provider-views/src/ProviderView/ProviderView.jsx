@@ -1,5 +1,4 @@
 import { h } from 'preact'
-import pMap from 'p-map'
 
 import { generateFileId2 } from '@uppy/core/src/Uppy.js'
 
@@ -232,28 +231,24 @@ export default class ProviderView extends View {
     }
   }
 
-  async recursivelyListAllFiles (path, files = []) {
+  async* recursivelyListAllFiles (path) {
     let curPath = path
 
     // need to repeat the list call until there are no more pages
     while (curPath) {
       const res = await this.provider.list(curPath)
 
-      // limit concurrency (because what if we have a folder with 1000 folders inside!)
-      // todo this might still lead to a memory run-off
-      await pMap(res.items, async (item) => {
+      for (const item of res.items) {
         if (item.isFolder) {
           // recursively call self for folder
-          await this.recursivelyListAllFiles(item.requestPath, files)
+          yield* this.recursivelyListAllFiles(item.requestPath)
         } else {
-          files.push(item)
+          yield item
         }
-      }, { concurrency: 10 })
+      }
 
       curPath = res.nextPagePath
     }
-
-    return files
   }
 
   async donePicking () {
@@ -261,53 +256,49 @@ export default class ProviderView extends View {
     try {
       const { currentSelection } = this.plugin.getPluginState()
 
-      const allFiles = []
-      const foldersAdded = []
+      const messages = []
 
       // eslint-disable-next-line no-unreachable-loop
       for (const file of currentSelection) {
         if (file.isFolder) {
-          const folder = file
-          const filesInFolder = await this.recursivelyListAllFiles(folder.requestPath)
-
-          // If the same folder is added again, we don't want to send
-          // X amount of duplicate file notifications, we want to say
-          // the folder was already added. This checks if all files are duplicate,
-          // if that's the case, we don't add the files.
-          const newFilesInFolder = filesInFolder.filter((fileInFolder) => {
+          const { requestPath, name } = file
+          let isEmpty = true
+          let numNewFiles = 0
+          for await (const fileInFolder of this.recursivelyListAllFiles(requestPath)) {
             const tagFile = this.getTagFile(fileInFolder)
             const id = generateFileId2(tagFile)
-            return !this.plugin.uppy.checkIfFileAlreadyExists(id)
-          })
+            // If the same folder is added again, we don't want to send
+            // X amount of duplicate file notifications, we want to say
+            // the folder was already added. This checks if all files are duplicate,
+            // if that's the case, we don't add the files.
+            if (!this.plugin.uppy.checkIfFileAlreadyExists(id)) {
+              this.addFile(fileInFolder)
+              numNewFiles++
+            }
+            isEmpty = false
+          }
 
-          allFiles.push(...newFilesInFolder)
+          let message
+          if (isEmpty) {
+            message = this.plugin.uppy.i18n('emptyFolderAdded')
+          } else if (numNewFiles === 0) {
+            message = this.plugin.uppy.i18n('folderAlreadyAdded', {
+              folder: name,
+            })
+          } else {
+            message = this.plugin.uppy.i18n('folderAdded', {
+              smart_count: numNewFiles, folder: name,
+            })
+          }
 
-          foldersAdded.push({ numFiles: filesInFolder.length, numNewFiles: newFilesInFolder.length, name: folder.name })
+          messages.push(message)
         } else {
-          allFiles.push(file)
+          this.addFile(file)
         }
       }
-
-      allFiles.forEach((file) => this.addFile(file))
 
       this.plugin.setPluginState({ filterInput: '' })
-
-      for (const { name, numFiles, numNewFiles } of foldersAdded) {
-        let message
-        if (numFiles === 0) {
-          message = this.plugin.uppy.i18n('emptyFolderAdded')
-        } else if (numNewFiles === 0) {
-          message = this.plugin.uppy.i18n('folderAlreadyAdded', {
-            folder: name,
-          })
-        } else {
-          message = this.plugin.uppy.i18n('folderAdded', {
-            smart_count: numNewFiles, folder: name,
-          })
-        }
-
-        this.plugin.uppy.info(message)
-      }
+      messages.forEach(message => this.plugin.uppy.info(message))
 
       this.clearSelection()
     } catch (err) {
