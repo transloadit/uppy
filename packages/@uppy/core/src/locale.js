@@ -49,7 +49,6 @@ export default {
     enterTextToSearch: 'Enter text to search for images',
     search: 'Search',
     emptyFolderAdded: 'No files were added from empty folder',
-    traversingSubfolders: 'Traversing %{numSubFolders} subfolder(s) inside "%{folder}"',
     folderAlreadyAdded: 'The folder "%{folder}" was already added',
     folderAdded: {
       0: 'Added %{smart_count} file from %{folder}',

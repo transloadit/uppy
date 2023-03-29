@@ -166,7 +166,7 @@ export default class SearchProviderView extends View {
     if (loading) {
       return (
         <CloseWrapper onUnmount={this.clearSelection}>
-          <LoaderView i18n={this.plugin.uppy.i18n} loading={loading} />
+          <LoaderView i18n={this.plugin.uppy.i18n} />
         </CloseWrapper>
       )
     }
