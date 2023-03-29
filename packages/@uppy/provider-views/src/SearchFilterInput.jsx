@@ -13,7 +13,7 @@ export default function SearchFilterInput (props) {
     clearSearchLabel,
     buttonLabel,
     clearSearch,
-    inpuClassName,
+    inputClassName,
     buttonCSSClassName,
   } = props
   const [searchText, setSearchText] = useState(searchTerm ?? '')
@@ -54,7 +54,7 @@ export default function SearchFilterInput (props) {
   return (
     <Fragment>
       <input
-        className={`uppy-u-reset ${inpuClassName}`}
+        className={`uppy-u-reset ${inputClassName}`}
         type="search"
         aria-label={inputLabel}
         placeholder={inputLabel}

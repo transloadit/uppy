@@ -183,7 +183,7 @@ export default class SearchProviderView extends View {
               clearSelection={this.clearSelection}
               inputLabel={i18n('enterTextToSearch')}
               buttonLabel={i18n('searchImages')}
-              inpuClassName="uppy-c-textInput uppy-SearchProvider-input"
+              inputClassName="uppy-c-textInput uppy-SearchProvider-input"
               buttonCSSClassName="uppy-SearchProvider-searchButton"
               showButton
             />
