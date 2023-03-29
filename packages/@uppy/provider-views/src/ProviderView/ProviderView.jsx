@@ -1,6 +1,8 @@
 import { h } from 'preact'
 import pMap from 'p-map'
 
+import { generateFileId2 } from '@uppy/core/src/Uppy.js'
+
 import AuthView from './AuthView.jsx'
 import Header from './Header.jsx'
 import Browser from '../Browser.jsx'
@@ -266,22 +268,20 @@ export default class ProviderView extends View {
         if (file.isFolder) {
           const folder = file
           const filesInFolder = await this.recursivelyListAllFiles(folder.requestPath)
-          allFiles.push(...filesInFolder)
-
-          let numNewFiles = 0
 
           // If the same folder is added again, we don't want to send
           // X amount of duplicate file notifications, we want to say
           // the folder was already added. This checks if all files are duplicate,
           // if that's the case, we don't add the files.
-          filesInFolder.forEach((fileInFolder) => {
-            const id = this.providerFileToId(fileInFolder)
-            if (!this.plugin.uppy.checkIfFileAlreadyExists(id)) {
-              numNewFiles++
-            }
+          const newFilesInFolder = filesInFolder.filter((fileInFolder) => {
+            const tagFile = this.getTagFile(fileInFolder)
+            const id = generateFileId2(tagFile)
+            return !this.plugin.uppy.checkIfFileAlreadyExists(id)
           })
 
-          foldersAdded.push({ numFiles: filesInFolder.length, numNewFiles, name: folder.name })
+          allFiles.push(...newFilesInFolder)
+
+          foldersAdded.push({ numFiles: filesInFolder.length, numNewFiles: newFilesInFolder.length, name: folder.name })
         } else {
           allFiles.push(file)
         }
@@ -307,7 +307,6 @@ export default class ProviderView extends View {
         }
 
         this.plugin.uppy.info(message)
-
         this.clearSelection()
       }
     } catch (err) {

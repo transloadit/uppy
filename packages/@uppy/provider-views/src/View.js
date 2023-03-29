@@ -3,6 +3,14 @@ import isPreviewSupported from '@uppy/utils/lib/isPreviewSupported'
 import generateFileID from '@uppy/utils/lib/generateFileID'
 import remoteFileObjToLocal from '@uppy/utils/lib/remoteFileObjToLocal'
 
+function providerFileToId (file) {
+  return generateFileID({
+    data: file,
+    name: file.name || file.id,
+    type: file.mimetype,
+  })
+}
+
 export default class View {
   constructor (plugin, opts) {
     this.plugin = plugin
@@ -15,15 +23,6 @@ export default class View {
     this.addFile = this.addFile.bind(this)
     this.clearSelection = this.clearSelection.bind(this)
     this.cancelPicking = this.cancelPicking.bind(this)
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  providerFileToId (file) {
-    return generateFileID({
-      data: file,
-      name: file.name || file.id,
-      type: file.mimetype,
-    })
   }
 
   preFirstRender () {
@@ -66,9 +65,10 @@ export default class View {
     uppy.info({ message, details: error.toString() }, 'error', 5000)
   }
 
-  addFile (file) {
+  // todo document what is a "tagFile" or get rid of this concept
+  getTagFile (file) {
     const tagFile = {
-      id: this.providerFileToId(file),
+      id: providerFileToId(file), // todo what's this used for? can be removed?
       source: this.plugin.id,
       data: file,
       name: file.name || file.id,
@@ -100,6 +100,12 @@ export default class View {
       if (file.author.name != null) tagFile.meta.authorName = String(file.author.name)
       if (file.author.url) tagFile.meta.authorUrl = file.author.url
     }
+
+    return tagFile
+  }
+
+  addFile (file) {
+    const tagFile = this.getTagFile(file)
 
     this.plugin.uppy.log('Adding remote file')
 
