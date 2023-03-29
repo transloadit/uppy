@@ -164,6 +164,7 @@ en_US.strings = {
   takePicture: 'Take a picture',
   takePictureBtn: 'Take Picture',
   timedOut: 'Upload stalled for %{seconds} seconds, aborting.',
+  traversingSubfolders: 'Traversing %{numSubFolders} subfolder(s) inside "%{folder}"',
   upload: 'Upload',
   uploadComplete: 'Upload complete',
   uploadFailed: 'Upload failed',
