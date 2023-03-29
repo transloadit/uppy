@@ -100,29 +100,31 @@ export default class ProviderView extends View {
    * @param  {string} id Folder id
    * @returns {Promise}   Folders/files in folder
    */
-  getFolder (id, name) {
-    return this.loaderWrapper(
-      this.provider.list(id),
-      (res) => {
-        const folders = []
-        const files = []
-        let updatedDirectories
+  async getFolder (id, name) {
+    this.setLoading(true)
+    try {
+      const res = await this.provider.list(id)
+      const folders = []
+      const files = []
+      let updatedDirectories
 
-        const state = this.plugin.getPluginState()
-        const index = state.directories.findIndex((dir) => id === dir.id)
+      const state = this.plugin.getPluginState()
+      const index = state.directories.findIndex((dir) => id === dir.id)
 
-        if (index !== -1) {
-          updatedDirectories = state.directories.slice(0, index + 1)
-        } else {
-          updatedDirectories = state.directories.concat([{ id, title: name }])
-        }
+      if (index !== -1) {
+        updatedDirectories = state.directories.slice(0, index + 1)
+      } else {
+        updatedDirectories = state.directories.concat([{ id, title: name }])
+      }
 
-        this.username = res.username || this.username
-        this.#updateFilesAndFolders(res, files, folders)
-        this.plugin.setPluginState({ directories: updatedDirectories, filterInput: '' })
-      },
-      this.handleError,
-    )
+      this.username = res.username || this.username
+      this.#updateFilesAndFolders(res, files, folders)
+      this.plugin.setPluginState({ directories: updatedDirectories, filterInput: '' })
+    } catch (err) {
+      this.handleError(err)
+    } finally {
+      this.setLoading(false)
+    }
   }
 
   /**
@@ -251,69 +253,68 @@ export default class ProviderView extends View {
     return files
   }
 
-  donePicking () {
-    const { currentSelection } = this.plugin.getPluginState()
+  async donePicking () {
+    this.setLoading(true)
+    try {
+      const { currentSelection } = this.plugin.getPluginState()
 
-    const addSelection = async () => {
-      try {
-        const allFiles = []
-        const foldersAdded = []
+      const allFiles = []
+      const foldersAdded = []
 
-        // eslint-disable-next-line no-unreachable-loop
-        for (const file of currentSelection) {
-          if (file.isFolder) {
-            const folder = file
-            const filesInFolder = await this.recursivelyListAllFiles(folder.requestPath)
-            allFiles.push(...filesInFolder)
+      // eslint-disable-next-line no-unreachable-loop
+      for (const file of currentSelection) {
+        if (file.isFolder) {
+          const folder = file
+          const filesInFolder = await this.recursivelyListAllFiles(folder.requestPath)
+          allFiles.push(...filesInFolder)
 
-            let numNewFiles = 0
+          let numNewFiles = 0
 
-            // If the same folder is added again, we don't want to send
-            // X amount of duplicate file notifications, we want to say
-            // the folder was already added. This checks if all files are duplicate,
-            // if that's the case, we don't add the files.
-            filesInFolder.forEach((fileInFolder) => {
-              const id = this.providerFileToId(fileInFolder)
-              if (!this.plugin.uppy.checkIfFileAlreadyExists(id)) {
-                numNewFiles++
-              }
-            })
+          // If the same folder is added again, we don't want to send
+          // X amount of duplicate file notifications, we want to say
+          // the folder was already added. This checks if all files are duplicate,
+          // if that's the case, we don't add the files.
+          filesInFolder.forEach((fileInFolder) => {
+            const id = this.providerFileToId(fileInFolder)
+            if (!this.plugin.uppy.checkIfFileAlreadyExists(id)) {
+              numNewFiles++
+            }
+          })
 
-            foldersAdded.push({ numNewFiles, name: folder.name })
-          } else {
-            await this.addFile(file)
-          }
+          foldersAdded.push({ numNewFiles, name: folder.name })
+        } else {
+          await this.addFile(file)
         }
-
-        allFiles.forEach((file) => this.addFile(file))
-
-        this.plugin.setPluginState({ filterInput: '' })
-
-        let message
-
-        for (const { name, numNewFiles } of foldersAdded) {
-          if (numNewFiles === 0) {
-            message = this.plugin.uppy.i18n('folderAlreadyAdded', {
-              folder: name,
-            })
-          } else if (numNewFiles) {
-            message = this.plugin.uppy.i18n('folderAdded', {
-              smart_count: numNewFiles, folder: name,
-            })
-          } else {
-            message = this.plugin.uppy.i18n('emptyFolderAdded')
-          }
-
-          this.plugin.uppy.info(message)
-        }
-      } catch (err) {
-        this.handleError(err)
       }
-    }
 
-    this.loaderWrapper(addSelection(), () => {
-      this.clearSelection()
-    }, () => {})
+      allFiles.forEach((file) => this.addFile(file))
+
+      this.plugin.setPluginState({ filterInput: '' })
+
+      let message
+
+      for (const { name, numNewFiles } of foldersAdded) {
+        if (numNewFiles === 0) {
+          message = this.plugin.uppy.i18n('folderAlreadyAdded', {
+            folder: name,
+          })
+        } else if (numNewFiles) {
+          message = this.plugin.uppy.i18n('folderAdded', {
+            smart_count: numNewFiles, folder: name,
+          })
+        } else {
+          message = this.plugin.uppy.i18n('emptyFolderAdded')
+        }
+
+        this.plugin.uppy.info(message)
+
+        this.clearSelection()
+      }
+    } catch (err) {
+      this.handleError(err)
+    } finally {
+      this.setLoading(false)
+    }
   }
 
   render (state, viewOptions = {}) {

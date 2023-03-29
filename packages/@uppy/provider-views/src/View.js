@@ -190,15 +190,7 @@ export default class View {
     return currentSelection.some((item) => item.id === file.id)
   }
 
-  loaderWrapper = (promise, then, catch_) => {
-    promise
-      .then((result) => {
-        this.plugin.setPluginState({ loading: false })
-        then(result)
-      }).catch((err) => {
-        this.plugin.setPluginState({ loading: false })
-        catch_(err)
-      })
-    this.plugin.setPluginState({ loading: true })
+  setLoading (loading) {
+    this.plugin.setPluginState({ loading })
   }
 }

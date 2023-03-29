@@ -79,20 +79,22 @@ export default class SearchProviderView extends View {
     })
   }
 
-  search (query) {
+  async search (query) {
     const { searchTerm } = this.plugin.getPluginState()
     if (query && query === searchTerm) {
       // no need to search again as this is the same as the previous search
-      return undefined
+      return
     }
 
-    return this.loaderWrapper(
-      this.provider.search(query),
-      (res) => {
-        this.#updateFilesAndInputMode(res, [])
-      },
-      this.handleError,
-    )
+    this.setLoading(true)
+    try {
+      const res = await this.provider.search(query)
+      this.#updateFilesAndInputMode(res, [])
+    } catch (err) {
+      this.handleError(err)
+    } finally {
+      this.setLoading(false)
+    }
   }
 
   triggerSearchInput () {
@@ -120,11 +122,8 @@ export default class SearchProviderView extends View {
 
   donePicking () {
     const { currentSelection } = this.plugin.getPluginState()
-    const promises = currentSelection.map((file) => this.addFile(file))
-
-    this.loaderWrapper(Promise.all(promises), () => {
-      this.clearSelection()
-    }, () => {})
+    currentSelection.forEach((file) => this.addFile(file))
+    this.clearSelection()
   }
 
   render (state, viewOptions = {}) {
