@@ -283,7 +283,7 @@ export default class ProviderView extends View {
 
           foldersAdded.push({ numFiles: filesInFolder.length, numNewFiles, name: folder.name })
         } else {
-          this.addFile(file)
+          allFiles.push(file)
         }
       }
 
