@@ -101,7 +101,7 @@ export default class ProviderView extends View {
    * @returns {Promise}   Folders/files in folder
    */
   getFolder (id, name) {
-    return this.sharedHandler.loaderWrapper(
+    return this.loaderWrapper(
       this.provider.list(id),
       (res) => {
         const folders = []
@@ -311,7 +311,7 @@ export default class ProviderView extends View {
       }
     }
 
-    this.sharedHandler.loaderWrapper(addSelection(), () => {
+    this.loaderWrapper(addSelection(), () => {
       this.clearSelection()
     }, () => {})
   }
@@ -325,7 +325,7 @@ export default class ProviderView extends View {
 
     const targetViewOptions = { ...this.opts, ...viewOptions }
     const { files, folders, filterInput, loading, currentSelection } = this.plugin.getPluginState()
-    const { isChecked, toggleCheckbox, recordShiftKeyPress, filterItems } = this.sharedHandler
+    const { isChecked, toggleCheckbox, recordShiftKeyPress, filterItems } = this
     const hasInput = filterInput !== ''
     const headerProps = {
       showBreadcrumbs: targetViewOptions.showBreadcrumbs,
@@ -348,7 +348,6 @@ export default class ProviderView extends View {
       username: this.username,
       getNextFolder: this.getNextFolder,
       getFolder: this.getFolder,
-      filterItems: this.sharedHandler.filterItems,
       filterQuery: this.filterQuery,
       logout: this.logout,
       handleScroll: this.handleScroll,

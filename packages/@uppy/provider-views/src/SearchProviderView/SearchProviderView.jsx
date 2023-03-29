@@ -86,7 +86,7 @@ export default class SearchProviderView extends View {
       return undefined
     }
 
-    return this.sharedHandler.loaderWrapper(
+    return this.loaderWrapper(
       this.provider.search(query),
       (res) => {
         this.#updateFilesAndInputMode(res, [])
@@ -122,7 +122,7 @@ export default class SearchProviderView extends View {
     const { currentSelection } = this.plugin.getPluginState()
     const promises = currentSelection.map((file) => this.addFile(file))
 
-    this.sharedHandler.loaderWrapper(Promise.all(promises), () => {
+    this.loaderWrapper(Promise.all(promises), () => {
       this.clearSelection()
     }, () => {})
   }
@@ -136,7 +136,7 @@ export default class SearchProviderView extends View {
 
     const targetViewOptions = { ...this.opts, ...viewOptions }
     const { files, folders, filterInput, loading, currentSelection } = this.plugin.getPluginState()
-    const { isChecked, toggleCheckbox, filterItems } = this.sharedHandler
+    const { isChecked, toggleCheckbox, filterItems } = this
     const hasInput = filterInput !== ''
 
     const browserProps = {
