@@ -69,7 +69,7 @@ function Browser (props) {
             clearSearch={clearSearch}
             inputLabel={searchInputLabel}
             clearSearchLabel={clearSearchLabel}
-            inputCSSClassName="uppy-ProviderBrowser-searchFilterInput"
+            inpuClassName="uppy-ProviderBrowser-searchFilterInput"
             searchOnInput={searchOnInput}
           />
         </div>
