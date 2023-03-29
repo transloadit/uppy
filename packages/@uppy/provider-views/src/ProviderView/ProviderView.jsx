@@ -232,8 +232,8 @@ export default class ProviderView extends View {
     }
   }
 
-  async recursivelyListAllFiles (path, files = []) {
-    let curPath = path
+  async recursivelyListAllFiles (folder, files = []) {
+    let curPath = folder.requestPath
 
     // need to repeat the list call until there are no more pages
     while (curPath) {
@@ -244,11 +244,15 @@ export default class ProviderView extends View {
       await pMap(res.items, async (item) => {
         if (item.isFolder) {
           // recursively call self for folder
-          await this.recursivelyListAllFiles(item.requestPath, files)
+          await this.recursivelyListAllFiles(item, files)
         } else {
           files.push(item)
         }
       }, { concurrency: 10 })
+
+      if (files.length > 0) {
+        this.setLoading(this.plugin.uppy.i18n('addedNumFiles', { numFiles: files.length }))
+      }
 
       curPath = res.nextPagePath
     }
@@ -268,7 +272,7 @@ export default class ProviderView extends View {
       for (const file of currentSelection) {
         if (file.isFolder) {
           const folder = file
-          const filesInFolder = await this.recursivelyListAllFiles(folder.requestPath)
+          const filesInFolder = await this.recursivelyListAllFiles(folder)
 
           // If the same folder is added again, we don't want to send
           // X amount of duplicate file notifications, we want to say
@@ -369,7 +373,7 @@ export default class ProviderView extends View {
     if (loading) {
       return (
         <CloseWrapper onUnmount={this.clearSelection}>
-          <LoaderView i18n={this.plugin.uppy.i18n} />
+          <LoaderView i18n={this.plugin.uppy.i18n} loading={loading} />
         </CloseWrapper>
       )
     }

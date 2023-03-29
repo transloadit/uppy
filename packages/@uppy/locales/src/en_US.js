@@ -12,6 +12,7 @@ en_US.strings = {
     '0': 'Failed to add %{smart_count} file due to an internal error',
     '1': 'Failed to add %{smart_count} files due to internal errors',
   },
+  addedNumFiles: 'Added %{numFiles} files',
   addingMoreFiles: 'Adding more files',
   addMore: 'Add more',
   addMoreFiles: 'Add more files',
