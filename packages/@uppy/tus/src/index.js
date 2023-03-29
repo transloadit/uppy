@@ -456,6 +456,8 @@ export default class Tus extends BasePlugin {
     return res.token
   }
 
+  // NOTE! Keep this duplicated code in sync with other plugins
+  // TODO we should probably abstract this into a common function
   /**
    * @param {UppyFile} file for use with upload
    * @returns {Promise<void>}
@@ -470,15 +472,16 @@ export default class Tus extends BasePlugin {
 
     try {
       if (file.serverToken) {
-        return this.connectToServerSocket(file)
+        return await this.connectToServerSocket(file)
       }
       const serverToken = await this.#queueRequestSocketToken(file)
 
       if (!this.uppy.getState().files[file.id]) return undefined
 
       this.uppy.setFileState(file.id, { serverToken })
-      return this.connectToServerSocket(this.uppy.getFile(file.id))
+      return await this.connectToServerSocket(this.uppy.getFile(file.id))
     } catch (err) {
+      this.uppy.setFileState(file.id, { serverToken: undefined })
       this.uppy.emit('upload-error', file, err)
       throw err
     }
@@ -492,11 +495,11 @@ export default class Tus extends BasePlugin {
    *
    * @param {UppyFile} file
    */
-  connectToServerSocket (file) {
+  async connectToServerSocket (file) {
     return new Promise((resolve, reject) => {
       const token = file.serverToken
       const host = getSocketHost(file.remote.companionUrl)
-      const socket = new Socket({ target: `${host}/api/${token}` })
+      const socket = new Socket({ target: `${host}/api/${token}`, autoOpen: false })
       this.uploaderSockets[file.id] = socket
       this.uploaderEvents[file.id] = new EventTracker(this.uppy)
 
@@ -519,8 +522,10 @@ export default class Tus extends BasePlugin {
           // resume a queued upload to make it skip the queue.
           queuedRequest.abort()
           queuedRequest = this.requests.run(() => {
+            socket.open()
             socket.send('resume', {})
-            return () => {}
+
+            return () => socket.close()
           })
         }
       })
@@ -545,8 +550,10 @@ export default class Tus extends BasePlugin {
           socket.send('pause', {})
         }
         queuedRequest = this.requests.run(() => {
+          socket.open()
           socket.send('resume', {})
-          return () => {}
+
+          return () => socket.close()
         })
       })
 
@@ -607,15 +614,17 @@ export default class Tus extends BasePlugin {
       queuedRequest = this.requests.run(() => {
         if (file.isPaused) {
           socket.send('pause', {})
+        } else {
+          socket.open()
         }
 
-        // Don't do anything here, the caller will take care of cancelling the upload itself
+        // Just close the socket here, the caller will take care of cancelling the upload itself
         // using resetUploaderReferences(). This is because resetUploaderReferences() has to be
         // called when this request is still in the queue, and has not been started yet, too. At
         // that point this cancellation function is not going to be called.
         // Also, we need to remove the request from the queue _without_ destroying everything
         // related to this upload to handle pauses.
-        return () => {}
+        return () => socket.close()
       })
     })
   }

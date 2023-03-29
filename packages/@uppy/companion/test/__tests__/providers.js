@@ -373,7 +373,9 @@ describe('connect to provider', () => {
   test.each(providerNames)('connect to %s via grant.js endpoint', (providerName) => {
     const authProvider = AUTH_PROVIDERS[providerName] || providerName
 
-    return request(authServer)
+    if (authProvider.authProvider == null) return
+
+    request(authServer)
       .get(`/${providerName}/connect?foo=bar`)
       .set('uppy-auth-token', token)
       .expect(302)

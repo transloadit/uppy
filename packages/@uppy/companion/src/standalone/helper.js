@@ -53,6 +53,15 @@ function getCorsOrigins () {
   return undefined
 }
 
+const s3Prefix = process.env.COMPANION_AWS_PREFIX || ''
+
+/**
+ * Default getKey for Companion standalone variant
+ *
+ * @returns {string}
+ */
+const defaultStandaloneGetKey = (...args) => `${s3Prefix}${utils.defaultGetKey(...args)}`
+
 /**
  * Loads the config from environment variables
  *
@@ -107,7 +116,7 @@ const getConfigFromEnv = () => {
     },
     s3: {
       key: process.env.COMPANION_AWS_KEY,
-      getKey: utils.defaultGetKey,
+      getKey: defaultStandaloneGetKey,
       secret: getSecret('COMPANION_AWS_SECRET'),
       bucket: process.env.COMPANION_AWS_BUCKET,
       endpoint: process.env.COMPANION_AWS_ENDPOINT,
@@ -134,6 +143,7 @@ const getConfigFromEnv = () => {
       ? parseInt(process.env.COMPANION_PERIODIC_PING_COUNT, 10) : undefined,
     filePath: process.env.COMPANION_DATADIR,
     redisUrl: process.env.COMPANION_REDIS_URL,
+    redisPubSubScope: process.env.COMPANION_REDIS_PUBSUB_SCOPE,
     // adding redisOptions to keep all companion options easily visible
     //  redisOptions refers to https://www.npmjs.com/package/redis#options-object-properties
     redisOptions: {},

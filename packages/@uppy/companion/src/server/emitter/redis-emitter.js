@@ -84,7 +84,7 @@ module.exports = (redisUrl, redisPubSubScope) => {
   }
 
   /**
-   * Announce the occurence of an event
+   * Announce the occurrence of an event
    *
    * @param {string} eventName name of the event
    */

@@ -14,8 +14,8 @@ const logger = require('../logger')
 const { getCredentialsResolver } = require('./credentials')
 // eslint-disable-next-line
 const Provider = require('./Provider')
-// eslint-disable-next-line
-const SearchProvider = require('./SearchProvider')
+
+const { isOAuthProvider } = Provider
 
 /**
  *
@@ -40,10 +40,9 @@ const providerNameToAuthName = (name, options) => { // eslint-disable-line no-un
  * adds the desired provider module to the request object,
  * based on the providerName parameter specified
  *
- * @param {Record<string, (typeof Provider) | typeof SearchProvider>} providers
- * @param {boolean} [needsProviderCredentials]
+ * @param {Record<string, typeof Provider>} providers
  */
-module.exports.getProviderMiddleware = (providers, needsProviderCredentials) => {
+module.exports.getProviderMiddleware = (providers) => {
   /**
    *
    * @param {object} req
@@ -55,8 +54,9 @@ module.exports.getProviderMiddleware = (providers, needsProviderCredentials) => 
     const ProviderClass = providers[providerName]
     if (ProviderClass && validOptions(req.companion.options)) {
       req.companion.provider = new ProviderClass({ providerName })
+      req.companion.providerClass = ProviderClass
 
-      if (needsProviderCredentials) {
+      if (isOAuthProvider(ProviderClass.authProvider)) {
         req.companion.getProviderCredentials = getCredentialsResolver(providerName, req.companion.options, req)
       }
     } else {
@@ -72,16 +72,9 @@ module.exports.getProviderMiddleware = (providers, needsProviderCredentials) => 
  * @returns {Record<string, typeof Provider>}
  */
 module.exports.getDefaultProviders = () => {
-  const providers = { dropbox, box, drive, facebook, onedrive, zoom, instagram }
+  const providers = { dropbox, box, drive, facebook, onedrive, zoom, instagram, unsplash }
 
   return providers
-}
-
-/**
- * @returns {Record<string, typeof SearchProvider>}
- */
-module.exports.getSearchProviders = () => {
-  return { unsplash }
 }
 
 /**
@@ -97,13 +90,16 @@ module.exports.addCustomProviders = (customProviders, providers, grantConfig) =>
     const customProvider = customProviders[providerName]
 
     providers[providerName] = customProvider.module
-    grantConfig[providerName] = {
-      ...customProvider.config,
-      // todo: consider setting these options from a universal point also used
-      // by official providers. It'll prevent these from getting left out if the
-      // requirement changes.
-      callback: `/${providerName}/callback`,
-      transport: 'session',
+
+    if (isOAuthProvider(customProvider.module.authProvider)) {
+      grantConfig[providerName] = {
+        ...customProvider.config,
+        // todo: consider setting these options from a universal point also used
+        // by official providers. It'll prevent these from getting left out if the
+        // requirement changes.
+        callback: `/${providerName}/callback`,
+        transport: 'session',
+      }
     }
   })
 }
@@ -130,7 +126,7 @@ module.exports.addProviderOptions = (companionOptions, grantConfig) => {
   const keys = Object.keys(providerOptions).filter((key) => key !== 'server')
   keys.forEach((providerName) => {
     const authProvider = providerNameToAuthName(providerName, companionOptions)
-    if (authProvider && grantConfig[authProvider]) {
+    if (isOAuthProvider(authProvider) && grantConfig[authProvider]) {
       // explicitly add providerOptions so users don't override other providerOptions.
       grantConfig[authProvider].key = providerOptions[providerName].key
       grantConfig[authProvider].secret = providerOptions[providerName].secret

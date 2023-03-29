@@ -9,6 +9,7 @@ const got = require('got').default
 const logger = require('../logger')
 
 const FORBIDDEN_IP_ADDRESS = 'Forbidden IP address'
+const FORBIDDEN_RESOLVED_IP_ADDRESS = 'Forbidden resolved IP address'
 
 // Example scary IPs that should return false (ipv6-to-ipv4 mapped):
 // ::FFFF:127.0.0.1
@@ -16,6 +17,7 @@ const FORBIDDEN_IP_ADDRESS = 'Forbidden IP address'
 const isDisallowedIP = (ipAddress) => ipaddr.parse(ipAddress).range() !== 'unicast'
 
 module.exports.FORBIDDEN_IP_ADDRESS = FORBIDDEN_IP_ADDRESS
+module.exports.FORBIDDEN_RESOLVED_IP_ADDRESS = FORBIDDEN_RESOLVED_IP_ADDRESS
 
 module.exports.getRedirectEvaluator = (rawRequestURL, isEnabled) => {
   const requestURL = new URL(rawRequestURL)
@@ -41,59 +43,61 @@ module.exports.getRedirectEvaluator = (rawRequestURL, isEnabled) => {
   }
 }
 
-function dnsLookup (hostname, options, callback) {
-  dns.lookup(hostname, options, (err, addresses, maybeFamily) => {
-    if (err) {
-      callback(err, addresses, maybeFamily)
-      return
-    }
-
-    const toValidate = Array.isArray(addresses) ? addresses : [{ address: addresses }]
-    for (const record of toValidate) {
-      if (isDisallowedIP(record.address)) {
-        callback(new Error(FORBIDDEN_IP_ADDRESS), addresses, maybeFamily)
-        return
-      }
-    }
-
-    callback(err, addresses, maybeFamily)
-  })
-}
-
-class HttpAgent extends http.Agent {
-  createConnection (options, callback) {
-    if (ipaddr.isValid(options.host) && isDisallowedIP(options.host)) {
-      callback(new Error(FORBIDDEN_IP_ADDRESS))
-      return undefined
-    }
-    // @ts-ignore
-    return super.createConnection({ ...options, lookup: dnsLookup }, callback)
-  }
-}
-
-class HttpsAgent extends https.Agent {
-  createConnection (options, callback) {
-    if (ipaddr.isValid(options.host) && isDisallowedIP(options.host)) {
-      callback(new Error(FORBIDDEN_IP_ADDRESS))
-      return undefined
-    }
-    // @ts-ignore
-    return super.createConnection({ ...options, lookup: dnsLookup }, callback)
-  }
-}
-
 /**
  * Returns http Agent that will prevent requests to private IPs (to preven SSRF)
- *
- * @param {string} protocol http or http: or https: or https protocol needed for the request
  */
-module.exports.getProtectedHttpAgent = (protocol) => {
+const getProtectedHttpAgent = ({ protocol, blockLocalIPs }) => {
+  function dnsLookup (hostname, options, callback) {
+    dns.lookup(hostname, options, (err, addresses, maybeFamily) => {
+      if (err) {
+        callback(err, addresses, maybeFamily)
+        return
+      }
+
+      const toValidate = Array.isArray(addresses) ? addresses : [{ address: addresses }]
+      for (const record of toValidate) {
+        if (blockLocalIPs && isDisallowedIP(record.address)) {
+          callback(new Error(FORBIDDEN_RESOLVED_IP_ADDRESS), addresses, maybeFamily)
+          return
+        }
+      }
+
+      callback(err, addresses, maybeFamily)
+    })
+  }
+
+  const isBlocked = (options) => ipaddr.isValid(options.host) && blockLocalIPs && isDisallowedIP(options.host)
+
+  class HttpAgent extends http.Agent {
+    createConnection (options, callback) {
+      if (isBlocked(options)) {
+        callback(new Error(FORBIDDEN_IP_ADDRESS))
+        return undefined
+      }
+      // @ts-ignore
+      return super.createConnection({ ...options, lookup: dnsLookup }, callback)
+    }
+  }
+
+  class HttpsAgent extends https.Agent {
+    createConnection (options, callback) {
+      if (isBlocked(options)) {
+        callback(new Error(FORBIDDEN_IP_ADDRESS))
+        return undefined
+      }
+      // @ts-ignore
+      return super.createConnection({ ...options, lookup: dnsLookup }, callback)
+    }
+  }
+
   return protocol.startsWith('https') ? HttpsAgent : HttpAgent
 }
 
 function getProtectedGot ({ url, blockLocalIPs }) {
-  const httpAgent = new (module.exports.getProtectedHttpAgent('http'))()
-  const httpsAgent = new (module.exports.getProtectedHttpAgent('https'))()
+  const HttpAgent = getProtectedHttpAgent({ protocol: 'http', blockLocalIPs })
+  const HttpsAgent = getProtectedHttpAgent({ protocol: 'https', blockLocalIPs })
+  const httpAgent = new HttpAgent()
+  const httpsAgent = new HttpsAgent()
 
   const redirectEvaluator = module.exports.getRedirectEvaluator(url, blockLocalIPs)
 
