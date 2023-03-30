@@ -257,6 +257,7 @@ export default class ProviderView extends View {
       const { currentSelection } = this.plugin.getPluginState()
 
       const messages = []
+      const newFiles = []
 
       // eslint-disable-next-line no-unreachable-loop
       for (const file of currentSelection) {
@@ -264,6 +265,7 @@ export default class ProviderView extends View {
           const { requestPath, name } = file
           let isEmpty = true
           let numNewFiles = 0
+
           for await (const fileInFolder of this.recursivelyListAllFiles(requestPath)) {
             const tagFile = this.getTagFile(fileInFolder)
             const id = generateFileId2(tagFile)
@@ -272,7 +274,7 @@ export default class ProviderView extends View {
             // the folder was already added. This checks if all files are duplicate,
             // if that's the case, we don't add the files.
             if (!this.plugin.uppy.checkIfFileAlreadyExists(id)) {
-              this.addFile(fileInFolder)
+              newFiles.push(fileInFolder)
               numNewFiles++
             }
             isEmpty = false
@@ -293,9 +295,16 @@ export default class ProviderView extends View {
 
           messages.push(message)
         } else {
-          this.addFile(file)
+          newFiles.push(file)
         }
       }
+
+      // Note: this.addFile must be only run once we are done fetching all files,
+      // because it will cause the loading screen to disappear,
+      // and that will allow the user to start the upload, so we need to make sure we have
+      // finished all async operations before we add any file
+      // see https://github.com/transloadit/uppy/pull/4384
+      newFiles.forEach((file) => this.addFile(file))
 
       this.plugin.setPluginState({ filterInput: '' })
       messages.forEach(message => this.plugin.uppy.info(message))
