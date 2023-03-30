@@ -1,16 +1,15 @@
 import { h } from 'preact'
 
-import SearchInput from './InputView.jsx'
+import SearchFilterInput from '../SearchFilterInput.jsx'
 import Browser from '../Browser.jsx'
-import LoaderView from '../Loader.jsx'
-import Header from './Header.jsx'
 import CloseWrapper from '../CloseWrapper.js'
 import View from '../View.js'
 
 import packageJson from '../../package.json'
 
 /**
- * Class to easily generate generic views for Provider plugins
+ * SearchProviderView, used for Unsplash and future image search providers.
+ * Extends generic View, shared with regular providers like Google Drive and Instagram.
  */
 export default class SearchProviderView extends View {
   static VERSION = packageJson.version
@@ -35,7 +34,8 @@ export default class SearchProviderView extends View {
 
     // Logic
     this.search = this.search.bind(this)
-    this.triggerSearchInput = this.triggerSearchInput.bind(this)
+    this.clearSearch = this.clearSearch.bind(this)
+    this.resetPluginState = this.resetPluginState.bind(this)
     this.addFile = this.addFile.bind(this)
     this.handleScroll = this.handleScroll.bind(this)
     this.donePicking = this.donePicking.bind(this)
@@ -43,8 +43,7 @@ export default class SearchProviderView extends View {
     // Visual
     this.render = this.render.bind(this)
 
-    // Set default state for the plugin
-    this.plugin.setPluginState({
+    this.defaultState = {
       isInputMode: true,
       files: [],
       folders: [],
@@ -52,7 +51,10 @@ export default class SearchProviderView extends View {
       filterInput: '',
       currentSelection: [],
       searchTerm: null,
-    })
+    }
+
+    // Set default state for the plugin
+    this.plugin.setPluginState(this.defaultState)
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -60,19 +62,15 @@ export default class SearchProviderView extends View {
     // Nothing.
   }
 
-  clearSelection () {
-    this.plugin.setPluginState({
-      currentSelection: [],
-      isInputMode: true,
-      files: [],
-      searchTerm: null,
-    })
+  resetPluginState () {
+    this.plugin.setPluginState(this.defaultState)
   }
 
   #updateFilesAndInputMode (res, files) {
     this.nextPageQuery = res.nextPageQuery
     res.items.forEach((item) => { files.push(item) })
     this.plugin.setPluginState({
+      currentSelection: [],
       isInputMode: false,
       files,
       searchTerm: res.searchedFor,
@@ -95,8 +93,12 @@ export default class SearchProviderView extends View {
     )
   }
 
-  triggerSearchInput () {
-    this.plugin.setPluginState({ isInputMode: true })
+  clearSearch () {
+    this.plugin.setPluginState({
+      currentSelection: [],
+      files: [],
+      searchTerm: null,
+    })
   }
 
   async handleScroll (event) {
@@ -123,12 +125,13 @@ export default class SearchProviderView extends View {
     const promises = currentSelection.map((file) => this.addFile(file))
 
     this.sharedHandler.loaderWrapper(Promise.all(promises), () => {
-      this.clearSelection()
+      this.resetPluginState()
     }, () => {})
   }
 
   render (state, viewOptions = {}) {
     const { didFirstRender, isInputMode, searchTerm } = this.plugin.getPluginState()
+    const { i18n } = this.plugin.uppy
 
     if (!didFirstRender) {
       this.preFirstRender()
@@ -148,43 +151,49 @@ export default class SearchProviderView extends View {
       handleScroll: this.handleScroll,
       done: this.donePicking,
       cancel: this.cancelPicking,
-      headerComponent: Header({
-        search: this.search,
-        i18n: this.plugin.uppy.i18n,
-        searchTerm,
-      }),
+
+      // For SearchFilterInput component
+      showSearchFilter: targetViewOptions.showFilter,
+      search: this.search,
+      clearSearch: this.clearSearch,
+      searchTerm,
+      searchOnInput: false,
+      searchInputLabel: i18n('search'),
+      clearSearchLabel: i18n('resetSearch'),
+
+      noResultsLabel: i18n('noSearchResults'),
       title: this.plugin.title,
       viewType: targetViewOptions.viewType,
       showTitles: targetViewOptions.showTitles,
       showFilter: targetViewOptions.showFilter,
+      isLoading: loading,
       showBreadcrumbs: targetViewOptions.showBreadcrumbs,
       pluginIcon: this.plugin.icon,
-      i18n: this.plugin.uppy.i18n,
+      i18n,
       uppyFiles: this.plugin.uppy.getFiles(),
       validateRestrictions: (...args) => this.plugin.uppy.validateRestrictions(...args),
     }
 
-    if (loading) {
-      return (
-        <CloseWrapper onUnmount={this.clearSelection}>
-          <LoaderView i18n={this.plugin.uppy.i18n} />
-        </CloseWrapper>
-      )
-    }
-
     if (isInputMode) {
       return (
-        <CloseWrapper onUnmount={this.clearSelection}>
-          <SearchInput
-            search={this.search}
-            i18n={this.plugin.uppy.i18n}
-          />
+        <CloseWrapper onUnmount={this.resetPluginState}>
+          <div className="uppy-SearchProvider">
+            <SearchFilterInput
+              search={this.search}
+              clearSelection={this.clearSelection}
+              inputLabel={i18n('enterTextToSearch')}
+              buttonLabel={i18n('searchImages')}
+              inputClassName="uppy-c-textInput uppy-SearchProvider-input"
+              buttonCSSClassName="uppy-SearchProvider-searchButton"
+              showButton
+            />
+          </div>
         </CloseWrapper>
       )
     }
 
     return (
-      <CloseWrapper onUnmount={this.clearSelection}>
+      <CloseWrapper onUnmount={this.resetPluginState}>
         {/* eslint-disable-next-line react/jsx-props-no-spreading */}
         <Browser {...browserProps} />
       </CloseWrapper>
