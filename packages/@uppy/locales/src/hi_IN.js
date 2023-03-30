@@ -15,7 +15,8 @@ hi_IN.strings = {
   aspectRatioPortrait: 'पोर्ट्रेट क्रॉप करें (9:16)',
   aspectRatioSquare: 'वर्ग क्रॉप करें',
   authenticateWith: '%{pluginName} से कनेक्ट करें',
-  authenticateWithTitle: '%{pluginName} के साथ सत्यापित करें ताकि फ़ाइलें चुन सकें',
+  authenticateWithTitle:
+    '%{pluginName} के साथ सत्यापित करें ताकि फ़ाइलें चुन सकें',
   back: 'वापस',
   backToSearch: 'खोज पर वापस जाएं',
   browse: 'ब्राउज़ करें',
@@ -26,7 +27,8 @@ hi_IN.strings = {
   chooseFiles: 'फ़ाइलें चुनें',
   closeModal: 'मोडल बंद करें',
   companionError: 'कंपैनियन के साथ कनेक्शन विफल',
-  companionUnauthorizeHint: 'अपने %{provider} खाते को अनधिकृत करने के लिए, कृपया %{url} पर जाएँ',
+  companionUnauthorizeHint:
+    'अपने %{provider} खाते को अनधिकृत करने के लिए, कृपया %{url} पर जाएँ',
   complete: 'पूरा हो गया',
   connectedToInternet: 'इंटरनेट से जुड़ा हुआ',
   copyLink: 'लिंक कॉपी करें',
@@ -46,18 +48,22 @@ hi_IN.strings = {
   dropPasteFolders: 'यहाँ फ़ाइलें ड्रॉप करें या %{browseFolders}',
   dropPasteImportBoth:
     'यहां फ़ाइलें ड्रॉप करें, %{browseFiles}, %{browseFolders} या इससे आयात करें:',
-  dropPasteImportFiles: 'यहां फ़ाइलें ड्रॉप करें, %{browseFiles} या इससे आयात करें:',
-  dropPasteImportFolders: 'यहां फ़ाइलें ड्रॉप करें, %{browseFolders} या इससे आयात करें:',
+  dropPasteImportFiles:
+    'यहां फ़ाइलें ड्रॉप करें, %{browseFiles} या इससे आयात करें:',
+  dropPasteImportFolders:
+    'यहां फ़ाइलें ड्रॉप करें, %{browseFolders} या इससे आयात करें:',
   editFile: 'फ़ाइल संपादित करें',
   editing: 'संपादन %{file}',
   emptyFolderAdded: 'खाली फ़ोल्डर से कोई फ़ाइलें नहीं जोड़ी गईं',
   encoding: 'एन्कोडिंग...',
-  enterCorrectUrl: 'गलत यूआरएल: कृपया सुनिश्चित करें कि आप एक फ़ाइल के सीधे लिंक दर्ज कर रहे हैं',
+  enterCorrectUrl:
+    'गलत यूआरएल: कृपया सुनिश्चित करें कि आप एक फ़ाइल के सीधे लिंक दर्ज कर रहे हैं',
   enterTextToSearch: 'छवियाँ खोजने के लिए टेक्स्ट दर्ज करें',
   enterUrlToImport: 'फ़ाइल आयात करने के लिए यूआरएल दर्ज करें',
   exceedsSize: '%{file} की अधिकतम अनुमति देने वाले आकार को पार करता है',
   exceedsSize2: '%{backwardsCompat} %{size}',
-  failedToFetch: 'Companion इस URL को लाने में विफल रहा, कृपया सुनिश्चित करें कि यह सही है',
+  failedToFetch:
+    'Companion इस URL को लाने में विफल रहा, कृपया सुनिश्चित करें कि यह सही है',
   failedToUpload: '%{file} अपलोड करने में विफल रहा',
   fileSource: 'फ़ाइल स्रोत: %{name}',
   filesUploadedOfTotal: {
@@ -83,7 +89,8 @@ hi_IN.strings = {
   noCameraDescription:
     'तस्वीरें लेने या वीडियो रिकॉर्ड करने के लिए, कृपया कैमरा डिवाइस कनेक्ट करें',
   noCameraTitle: 'कैमरा उपलब्ध नहीं है',
-  noDuplicates: "डुप्लिकेट फ़ाइल '%{fileName}' नहीं जोड़ सकते, यह पहले से मौजूद है",
+  noDuplicates:
+    "डुप्लिकेट फ़ाइल '%{fileName}' नहीं जोड़ सकते, यह पहले से मौजूद है",
   noFilesFound: 'यहां आपके पास कोई फ़ाइल या फ़ोल्डर नहीं है',
   noInternetConnection: 'इंटरनेट कनेक्शन नहीं',
   noNewAlreadyUploading: 'नई फ़ाइलें नहीं जोड़ सकते: पहले से अपलोड कर रहे हैं',
@@ -100,7 +107,8 @@ hi_IN.strings = {
   reSelect: 'पुनः-चुनें',
   recording: 'रिकॉर्डिंग',
   recordingLength: 'रिकॉर्डिंग की लंबाई %{recording_length}',
-  recordingStoppedMaxSize: 'रिकॉर्डिंग रोक दी गई क्योंकि फ़ाइल का आकार सीमा को पार करने वाला है',
+  recordingStoppedMaxSize:
+    'रिकॉर्डिंग रोक दी गई क्योंकि फ़ाइल का आकार सीमा को पार करने वाला है',
   recoveredAllFiles:
     'हमने सभी फ़ाइलों को पुनर्स्थापित कर दिया है। अब आप अपलोड को फिर से शुरू कर सकते हैं।',
   recoveredXFiles: {
@@ -135,7 +143,8 @@ hi_IN.strings = {
   submitRecordedFile: 'रिकॉर्ड की गई फ़ाइल सबमिट करें',
   takePicture: 'एक तस्वीर लें',
   timedOut: 'अपलोड %{seconds} सेकंड के लिए अवरुद्ध हुआ, निरस्त कर रहा है।',
-  unselectAllFilesFromFolderNamed: 'फ़ोल्डर %{name} से सभी फ़ाइलों को अचयनित करें',
+  unselectAllFilesFromFolderNamed:
+    'फ़ोल्डर %{name} से सभी फ़ाइलों को अचयनित करें',
   unselectFileNamed: 'फ़ाइल %{name} को अचयनित करें',
   upload: 'अपलोड',
   uploadComplete: 'अपलोड पूरा हुआ',
@@ -183,8 +192,8 @@ hi_IN.pluralize = function (count) {
   return 1
 }
 
-if (typeof window !== 'undefined' && typeof window.Uppy !== 'undefined') {
-  window.Uppy.locales.hi_IN = hi_IN
+if (typeof Uppy !== 'undefined') {
+  globalThis.Uppy.locales.gl_ES = hi_IN
 }
 
-module.exports = hi_IN
+export default hi_IN
