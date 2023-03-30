@@ -2,8 +2,8 @@ const hi_IN = {}
 
 hi_IN.strings = {
   addBulkFilesFailed: {
-    0: 'आंतरिक त्रुटि के कारण %{smart_count} फ़ाइल जोड़ने में विफल',
-    1: 'आंतरिक त्रुटियों के कारण %{smart_count} फ़ाइलें जोड़ने में विफल',
+    '0': 'आंतरिक त्रुटि के कारण %{smart_count} फ़ाइल जोड़ने में विफल',
+    '1': 'आंतरिक त्रुटियों के कारण %{smart_count} फ़ाइलें जोड़ने में विफल',
   },
   addMore: 'और जोड़ें',
   addMoreFiles: 'और अधिक फ़ाइलें जोड़ें',
@@ -61,15 +61,15 @@ hi_IN.strings = {
   failedToUpload: '%{file} अपलोड करने में विफल रहा',
   fileSource: 'फ़ाइल स्रोत: %{name}',
   filesUploadedOfTotal: {
-    0: '%{complete} का %{smart_count} फ़ाइल अपलोड किया गया',
-    1: '%{complete} के %{smart_count} फ़ाइलें अपलोड की गईं',
+    '0': '%{complete} का %{smart_count} फ़ाइल अपलोड किया गया',
+    '1': '%{complete} के %{smart_count} फ़ाइलें अपलोड की गईं',
   },
   filter: 'फ़िल्टर',
   finishEditingFile: 'फ़ाइल संपादित करना समाप्त करें',
   flipHorizontal: 'क्षैतिज पलटें',
   folderAdded: {
-    0: '%{folder} से %{smart_count} फ़ाइल जोड़ी गई',
-    1: '%{folder} से %{smart_count} फ़ाइलें जोड़ी गई',
+    '0': '%{folder} से %{smart_count} फ़ाइल जोड़ी गई',
+    '1': '%{folder} से %{smart_count} फ़ाइलें जोड़ी गई',
   },
   generatingThumbnails: 'थंबनेल उत्पन्न कर रहा है...',
   import: 'आयात',
@@ -94,8 +94,8 @@ hi_IN.strings = {
   poweredBy: 'प्रायोजित द्वारा',
   poweredBy2: '%{backwardsCompat} %{uppy}',
   processingXFiles: {
-    0: '%{smart_count} फ़ाइल को प्रोसेस कर रहा है',
-    1: '%{smart_count} फ़ाइलें प्रोसेस कर रहा है',
+    '0': '%{smart_count} फ़ाइल को प्रोसेस कर रहा है',
+    '1': '%{smart_count} फ़ाइलें प्रोसेस कर रहा है',
   },
   reSelect: 'पुनः-चुनें',
   recording: 'रिकॉर्डिंग',
@@ -104,8 +104,8 @@ hi_IN.strings = {
   recoveredAllFiles:
     'हमने सभी फ़ाइलों को पुनर्स्थापित कर दिया है। अब आप अपलोड को फिर से शुरू कर सकते हैं।',
   recoveredXFiles: {
-    0: 'हम 1 फ़ाइल को पूरी तरह से वसूल नहीं कर सके। कृपया इसे फिर से चुनें और अपलोड जारी रखें।',
-    1: 'हम %{smart_count} फ़ाइलों को पूरी तरह से वसूल नहीं कर सके। कृपया उन्हें फिर से चुनें और अपलोड जारी रखें।',
+    '0': 'हम 1 फ़ाइल को पूरी तरह से वसूल नहीं कर सके। कृपया इसे फिर से चुनें और अपलोड जारी रखें।',
+    '1': 'हम %{smart_count} फ़ाइलों को पूरी तरह से वसूल नहीं कर सके। कृपया उन्हें फिर से चुनें और अपलोड जारी रखें।',
   },
   removeFile: 'फ़ाइल हटाएँ',
   resetFilter: 'फ़िल्टर रीसेट करें',
@@ -121,8 +121,8 @@ hi_IN.strings = {
   selectAllFilesFromFolderNamed: 'फ़ोल्डर %{name} से सभी फ़ाइलें चुनें',
   selectFileNamed: 'फ़ाइल %{name} चुनें',
   selectX: {
-    0: '%{smart_count} चुनें',
-    1: '%{smart_count} चुनें',
+    '0': '%{smart_count} चुनें',
+    '1': '%{smart_count} चुनें',
   },
   sessionRestored: 'सत्र बहाल',
   smile: 'मुस्कराइए!',
@@ -142,35 +142,35 @@ hi_IN.strings = {
   uploadFailed: 'अपलोड विफल',
   uploadPaused: 'अपलोड रुका हुआ',
   uploadXFiles: {
-    0: '%{smart_count} फ़ाइल अपलोड करें',
-    1: '%{smart_count} फ़ाइलें अपलोड करें',
+    '0': '%{smart_count} फ़ाइल अपलोड करें',
+    '1': '%{smart_count} फ़ाइलें अपलोड करें',
   },
   uploadXNewFiles: {
-    0: '+%{smart_count} फ़ाइल अपलोड करें',
-    1: '+%{smart_count} फ़ाइलें अपलोड करें',
+    '0': '+%{smart_count} फ़ाइल अपलोड करें',
+    '1': '+%{smart_count} फ़ाइलें अपलोड करें',
   },
   uploading: 'अपलोड हो रहा है',
   uploadingXFiles: {
-    0: '%{smart_count} फ़ाइल अपलोड हो रही है',
-    1: '%{smart_count} फ़ाइलें अपलोड कर रहे हैं',
+    '0': '%{smart_count} फ़ाइल अपलोड हो रही है',
+    '1': '%{smart_count} फ़ाइलें अपलोड कर रहे हैं',
   },
   xFilesSelected: {
-    0: '%{smart_count} फ़ाइल चयनित',
-    1: '%{smart_count} फ़ाइलें चयनित',
+    '0': '%{smart_count} फ़ाइल चयनित',
+    '1': '%{smart_count} फ़ाइलें चयनित',
   },
   xMoreFilesAdded: {
-    0: '%{smart_count} और फ़ाइल जोड़ी गई',
-    1: '%{smart_count} और फ़ाइलें जोड़ी गई',
+    '0': '%{smart_count} और फ़ाइल जोड़ी गई',
+    '1': '%{smart_count} और फ़ाइलें जोड़ी गई',
   },
   xTimeLeft: '%{time} शेष',
   youCanOnlyUploadFileTypes: 'आप केवल %{types} अपलोड कर सकते हैं',
   youCanOnlyUploadX: {
-    0: 'आप केवल %{smart_count} फ़ाइल अपलोड कर सकते हैं',
-    1: 'आप केवल %{smart_count} फ़ाइलें अपलोड कर सकते हैं',
+    '0': 'आप केवल %{smart_count} फ़ाइल अपलोड कर सकते हैं',
+    '1': 'आप केवल %{smart_count} फ़ाइलें अपलोड कर सकते हैं',
   },
   youHaveToAtLeastSelectX: {
-    0: 'आपको कम से कम %{smart_count} फ़ाइल का चयन करना होगा',
-    1: 'आपको कम से कम %{smart_count} फ़ाइलें चुननी होंगी',
+    '0': 'आपको कम से कम %{smart_count} फ़ाइल का चयन करना होगा',
+    '1': 'आपको कम से कम %{smart_count} फ़ाइलें चुननी होंगी',
   },
   zoomIn: 'ज़ूम इन',
   zoomOut: 'ज़ूम आउट',
