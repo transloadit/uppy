@@ -6,7 +6,7 @@ index 054944f5478a0a5cf7b6b8791950c595f956157b..06a4fe2719605eb42c5ee795101c21cf
  	"umd:main": "dist/debug.umd.js",
  	"source": "src/index.js",
  	"license": "MIT",
-+    "type": "module",
++	"type": "module",
  	"mangle": {
  		"regex": "^(?!_renderer)^_"
  	},
@@ -18,7 +18,7 @@ index 09b04a77690bdfba01083939ff9eaf987dd50bcb..92c159fbb3cf312c6674202085fb237d
  	"source": "src/index.js",
  	"license": "MIT",
  	"types": "src/index.d.ts",
-+    "type": "module",
++	"type": "module",
  	"peerDependencies": {
  		"preact": "^10.0.0"
  	},
@@ -30,7 +30,7 @@ index 74807025bf3de273ebada2cd355428a2c972503d..98501726ffbfe55ffa09928e56a9dcaf
  	"source": "src/index.js",
  	"license": "MIT",
  	"types": "src/index.d.ts",
-+    "type": "module",
++	"type": "module",
  	"scripts": {
  		"build": "microbundle build --raw",
  		"dev": "microbundle watch --raw --format cjs",
@@ -42,7 +42,7 @@ index 7a4027831223f16519a74e3028c34f2f8f5f011a..6b58d17dbacce81894467ef43c0a8e24
  	"source": "src/index.js",
  	"types": "src/index.d.ts",
  	"license": "MIT",
-+    "type": "module",
++	"type": "module",
  	"peerDependencies": {
  		"preact": "^10.0.0"
  	},
@@ -54,7 +54,7 @@ index 60279c24a08b808ffbf7dc64a038272bddb6785d..088f35fb2c92f2e9b7248557857af283
  	"umd:main": "dist/preact.umd.js",
  	"unpkg": "dist/preact.min.js",
  	"source": "src/index.js",
-+  	"type": "module",
++	"type": "module",
  	"exports": {
  		".": {
  			"types": "./src/index.d.ts",
