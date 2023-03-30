@@ -1,15 +1,6 @@
 import getFileType from '@uppy/utils/lib/getFileType'
 import isPreviewSupported from '@uppy/utils/lib/isPreviewSupported'
-import generateFileID from '@uppy/utils/lib/generateFileID'
 import remoteFileObjToLocal from '@uppy/utils/lib/remoteFileObjToLocal'
-
-function providerFileToId (file) {
-  return generateFileID({
-    data: file,
-    name: file.name || file.id,
-    type: file.mimetype,
-  })
-}
 
 export default class View {
   constructor (plugin, opts) {
@@ -68,7 +59,7 @@ export default class View {
   // todo document what is a "tagFile" or get rid of this concept
   getTagFile (file) {
     const tagFile = {
-      id: providerFileToId(file), // todo what's this used for? can be removed?
+      id: file.id,
       source: this.plugin.id,
       data: file,
       name: file.name || file.id,
