@@ -36,7 +36,6 @@ export default class SearchProviderView extends View {
     this.search = this.search.bind(this)
     this.clearSearch = this.clearSearch.bind(this)
     this.resetPluginState = this.resetPluginState.bind(this)
-    this.addFile = this.addFile.bind(this)
     this.handleScroll = this.handleScroll.bind(this)
     this.donePicking = this.donePicking.bind(this)
 
@@ -124,7 +123,7 @@ export default class SearchProviderView extends View {
 
   donePicking () {
     const { currentSelection } = this.plugin.getPluginState()
-    currentSelection.forEach((file) => this.addFile(file))
+    this.addFiles(currentSelection)
     this.resetPluginState()
   }
 

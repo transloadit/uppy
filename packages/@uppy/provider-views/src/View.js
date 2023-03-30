@@ -11,7 +11,6 @@ export default class View {
 
     this.preFirstRender = this.preFirstRender.bind(this)
     this.handleError = this.handleError.bind(this)
-    this.addFile = this.addFile.bind(this)
     this.clearSelection = this.clearSelection.bind(this)
     this.cancelPicking = this.cancelPicking.bind(this)
   }
@@ -95,20 +94,10 @@ export default class View {
     return tagFile
   }
 
-  addFile (file) {
-    const tagFile = this.getTagFile(file)
-
-    this.plugin.uppy.log('Adding remote file')
-
-    try {
-      this.plugin.uppy.addFile(tagFile)
-      return true
-    } catch (err) {
-      if (!err.isRestriction) {
-        this.plugin.uppy.log(err)
-      }
-      return false
-    }
+  addFiles (files) {
+    this.plugin.uppy.log('Adding remote files')
+    const tagFiles = files.map((file) => this.getTagFile(file))
+    this.plugin.uppy.addFiles(tagFiles)
   }
 
   filterItems = (items) => {

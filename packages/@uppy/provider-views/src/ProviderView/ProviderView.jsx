@@ -303,12 +303,12 @@ export default class ProviderView extends View {
         }
       }
 
-      // Note: this.addFile must be only run once we are done fetching all files,
+      // Note: this.addFiles must be only run once we are done fetching all files,
       // because it will cause the loading screen to disappear,
       // and that will allow the user to start the upload, so we need to make sure we have
       // finished all async operations before we add any file
       // see https://github.com/transloadit/uppy/pull/4384
-      newFiles.forEach((file) => this.addFile(file))
+      this.addFiles(newFiles)
 
       this.plugin.setPluginState({ filterInput: '' })
       messages.forEach(message => this.plugin.uppy.info(message))
