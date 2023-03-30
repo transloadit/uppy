@@ -95,12 +95,6 @@ export default class View {
     return tagFile
   }
 
-  addFiles (files) {
-    this.plugin.uppy.log('Adding remote files')
-    const tagFiles = files.map((file) => this.getTagFile(file))
-    this.plugin.uppy.addFiles(tagFiles)
-  }
-
   filterItems = (items) => {
     const state = this.plugin.getPluginState()
     if (!state.filterInput || state.filterInput === '') {
