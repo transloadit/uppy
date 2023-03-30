@@ -193,7 +193,7 @@ hi_IN.pluralize = function (count) {
 }
 
 if (typeof Uppy !== 'undefined') {
-  globalThis.Uppy.locales.gl_ES = hi_IN
+  globalThis.Uppy.locales.hi_IN = hi_IN
 }
 
 export default hi_IN
