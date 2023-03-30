@@ -1,6 +1,6 @@
 import { h } from 'preact'
 
-import { generateFileId2 } from '@uppy/core/src/Uppy.js'
+import { generateFileIdWithType } from '@uppy/core/src/Uppy.js'
 
 import AuthView from './AuthView.jsx'
 import Header from './Header.jsx'
@@ -272,7 +272,7 @@ export default class ProviderView extends View {
 
           for await (const fileInFolder of this.recursivelyListAllFiles(requestPath)) {
             const tagFile = this.getTagFile(fileInFolder)
-            const id = generateFileId2(tagFile)
+            const id = generateFileIdWithType(tagFile)
             // If the same folder is added again, we don't want to send
             // X amount of duplicate file notifications, we want to say
             // the folder was already added. This checks if all files are duplicate,

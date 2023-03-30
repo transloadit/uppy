@@ -458,7 +458,7 @@ class Uppy {
     const fileName = getFileName(fileType, fileDescriptor)
     const fileExtension = getFileNameAndExtension(fileName).extension
     const isRemote = Boolean(fileDescriptor.isRemote)
-    const id = generateFileId2(fileDescriptor)
+    const id = generateFileIdWithType(fileDescriptor)
 
     if (this.checkIfFileAlreadyExists(id)) {
       const error = new RestrictionError(this.i18n('noDuplicates', { fileName }))
@@ -1570,8 +1570,7 @@ class Uppy {
   }
 }
 
-// todo come up with a better name or remove the need for two different generators
-export function generateFileId2 (file) {
+export function generateFileIdWithType (file) {
   const fileType = getFileType(file)
 
   return generateFileID({
