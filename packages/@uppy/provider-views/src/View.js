@@ -76,6 +76,7 @@ export default class View {
         },
         providerOptions: this.provider.opts,
         providerName: this.provider.name,
+        provider: this.provider.provider,
       },
     }
 
