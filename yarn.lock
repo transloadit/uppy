@@ -27601,8 +27601,8 @@ __metadata:
 
 "preact@patch:preact@npm:10.10.0#.yarn/patches/preact-npm-10.10.0-dd04de05e8.patch::locator=%40uppy-dev%2Fbuild%40workspace%3A.":
   version: 10.10.0
-  resolution: "preact@patch:preact@npm%3A10.10.0#.yarn/patches/preact-npm-10.10.0-dd04de05e8.patch::version=10.10.0&hash=a66388&locator=%40uppy-dev%2Fbuild%40workspace%3A."
-  checksum: f610d7f206e8cd71739023c3dbeae13fcaf9f9e6488295e2ae28f71c615d216c9b1d8b2fa2d616a629276948ee58a8d16fe77b8b7bc2e8d4aee1101e3336fe2b
+  resolution: "preact@patch:preact@npm%3A10.10.0#.yarn/patches/preact-npm-10.10.0-dd04de05e8.patch::version=10.10.0&hash=a56aef&locator=%40uppy-dev%2Fbuild%40workspace%3A."
+  checksum: 1db4e7dbac78ef3b55a930e441bc30d26e68752043933b746c1190f979cd18dd43d7f6c593de221ff3e492b40d405612ce8f5874334055e30d673ae19f234e0d
   languageName: node
   linkType: hard
 
