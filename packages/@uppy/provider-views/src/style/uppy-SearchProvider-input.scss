@@ -21,6 +21,10 @@
   .uppy-size--md & {
     margin-bottom: 20px;
   }
+
+  &::-webkit-search-cancel-button {
+    display: none;   
+  }
 }
 
 .uppy-SearchProvider-searchButton {

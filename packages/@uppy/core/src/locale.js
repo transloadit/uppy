@@ -30,6 +30,7 @@ export default {
     connectedToInternet: 'Connected to the Internet',
     // Strings for remote providers
     noFilesFound: 'You have no files or folders here',
+    noSearchResults: 'Unfortunately, there are no results for this search',
     selectX: {
       0: 'Select %{smart_count}',
       1: 'Select %{smart_count}',
@@ -48,6 +49,7 @@ export default {
     searchImages: 'Search for images',
     enterTextToSearch: 'Enter text to search for images',
     search: 'Search',
+    resetSearch: 'Reset search',
     emptyFolderAdded: 'No files were added from empty folder',
     folderAlreadyAdded: 'The folder "%{folder}" was already added',
     folderAdded: {
