@@ -53,6 +53,7 @@ export default class ProviderView extends View {
 
     // Logic
     this.filterQuery = this.filterQuery.bind(this)
+    this.clearFilter = this.clearFilter.bind(this)
     this.getFolder = this.getFolder.bind(this)
     this.getNextFolder = this.getNextFolder.bind(this)
     this.logout = this.logout.bind(this)
@@ -162,9 +163,12 @@ export default class ProviderView extends View {
       }).catch(this.handleError)
   }
 
-  filterQuery (e) {
-    const state = this.plugin.getPluginState()
-    this.plugin.setPluginState({ ...state, filterInput: e ? e.target.value : '' })
+  filterQuery (input) {
+    this.plugin.setPluginState({ filterInput: input })
+  }
+
+  clearFilter () {
+    this.plugin.setPluginState({ filterInput: '' })
   }
 
   /**
@@ -329,6 +333,7 @@ export default class ProviderView extends View {
 
   render (state, viewOptions = {}) {
     const { authenticated, didFirstRender } = this.plugin.getPluginState()
+    const { i18n } = this.plugin.uppy
 
     if (!didFirstRender) {
       this.preFirstRender()
@@ -346,7 +351,7 @@ export default class ProviderView extends View {
       title: this.plugin.title,
       logout: this.logout,
       username: this.username,
-      i18n: this.plugin.uppy.i18n,
+      i18n,
     }
 
     const browserProps = {
@@ -360,7 +365,17 @@ export default class ProviderView extends View {
       getNextFolder: this.getNextFolder,
       getFolder: this.getFolder,
       filterItems: this.sharedHandler.filterItems,
-      filterQuery: this.filterQuery,
+
+      // For SearchFilterInput component
+      showSearchFilter: targetViewOptions.showFilter,
+      search: this.filterQuery,
+      clearSearch: this.clearFilter,
+      searchTerm: filterInput,
+      searchOnInput: true,
+      searchInputLabel: i18n('filter'),
+      clearSearchLabel: i18n('resetFilter'),
+
+      noResultsLabel: i18n('noFilesFound'),
       logout: this.logout,
       handleScroll: this.handleScroll,
       listAllFiles: this.listAllFiles,
@@ -370,7 +385,6 @@ export default class ProviderView extends View {
       title: this.plugin.title,
       viewType: targetViewOptions.viewType,
       showTitles: targetViewOptions.showTitles,
-      showFilter: targetViewOptions.showFilter,
       showBreadcrumbs: targetViewOptions.showBreadcrumbs,
       pluginIcon: this.plugin.icon,
       i18n: this.plugin.uppy.i18n,

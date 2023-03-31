@@ -47,6 +47,7 @@ export default class Unsplash extends UIPlugin {
     this.view = new SearchProviderViews(this, {
       provider: this.provider,
       viewType: 'unsplash',
+      showFilter: true,
     })
 
     const { target } = this.opts
