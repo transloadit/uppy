@@ -8,7 +8,7 @@ import throttle from 'lodash.throttle'
 import DefaultStore from '@uppy/store-default'
 import getFileType from '@uppy/utils/lib/getFileType'
 import getFileNameAndExtension from '@uppy/utils/lib/getFileNameAndExtension'
-import generateFileID from '@uppy/utils/lib/generateFileID'
+import { getSafeFileId } from '@uppy/utils/lib/generateFileID'
 import supportsUploadProgress from './supportsUploadProgress.js'
 import getFileName from './getFileName.js'
 import { justErrorsLogger, debugLogger } from './loggers.js'
@@ -1568,26 +1568,6 @@ class Uppy {
         throw err
       })
   }
-}
-
-// If the provider has a stable, unique ID, then we can use that to identify the file.
-// Then we don't have to generate our own ID, and we can add the same file many times if needed (different path)
-function hasFileStableId (file) {
-  if (!file.isRemote || !file.remote) return false
-  // These are the providers that it seems like have stable IDs for their files. The other's I haven't checked yet.
-  const stableIdProviders = new Set(['box', 'dropbox', 'drive', 'facebook', 'unsplash'])
-  return stableIdProviders.has(file.remote.provider)
-}
-
-export function getSafeFileId (file) {
-  if (hasFileStableId(file)) return file.id
-
-  const fileType = getFileType(file)
-
-  return generateFileID({
-    ...file,
-    type: fileType,
-  })
 }
 
 export default Uppy

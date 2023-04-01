@@ -1,6 +1,6 @@
 import { h } from 'preact'
 
-import { getSafeFileId } from '@uppy/core/lib/Uppy.js'
+import { getSafeFileId } from '@uppy/utils/lib/generateFileID'
 
 import AuthView from './AuthView.jsx'
 import Header from './Header.jsx'
