@@ -50,12 +50,18 @@ jobs:
         run: |
           node <<'EOF'
             const pkg = require('./packages/uppy/package.json');
-            for(const key of Object.keys(pkg.dependencies)) {
-              if (key.startsWith('@uppy/')) {
-                pkg.dependencies[key] = `/tmp/packages/${key.replace('/', '-')}-${{ github.sha }}.tgz`;
+            pkg.overrides = {};
+            (async () => {
+              for await (const { name } of await require('node:fs/promises').opendir('./packages/@uppy/')) {
+                pkg.overrides["@uppy/" + name] = `/tmp/packages/@uppy-${name}-${{ github.sha }}.tgz`;
               }
-            }
-            require('node:fs').writeFileSync('./packages/uppy/package.json', JSON.stringify(pkg));
+              for(const key of Object.keys(pkg.dependencies)) {
+                if (key in pkg.overrides) {
+                  pkg.dependencies[key] = pkg.overrides[key];
+                }
+              }
+              require('node:fs').writeFileSync('./packages/uppy/package.json', JSON.stringify(pkg));
+            })();
           EOF
       - name: Eject public packages from repo
         run: mkdir /tmp/artifacts && corepack yarn workspaces foreach --no-private pack --install-if-needed -o /tmp/artifacts/%s-${{ github.sha }}.tgz
