@@ -30,7 +30,7 @@ function getTotalETA (files) {
 }
 
 function getUploadingState (error, isAllComplete, recoveredState, files) {
-  if (error && !isAllComplete) {
+  if (error) {
     return statusBarStates.STATE_ERROR
   }
 

@@ -167,7 +167,9 @@
 .uppy-Dashboard-Item-errorDetails {
   position: relative;
   top: 0;
-  display: inline-block;
+  // display: inline-block;
+  // vertical-align: middle;
+  flex-shrink: 0;
   width: 13px;
   height: 13px;
   color: $white;
@@ -175,7 +177,6 @@
   font-size: 10px;
   line-height: 12px;
   text-align: center;
-  vertical-align: middle;
   background-color: $gray-500;
   border-radius: 50%;
   border: none;
