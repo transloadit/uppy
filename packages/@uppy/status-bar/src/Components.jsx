@@ -1,4 +1,5 @@
 import { h } from 'preact'
+import { useCallback } from 'preact/hooks'
 import classNames from 'classnames'
 import throttle from 'lodash.throttle'
 import prettierBytes from '@transloadit/prettier-bytes'
@@ -283,11 +284,6 @@ function UploadNewlyAddedFiles (props) {
   )
 }
 
-const ThrottledProgressDetails = throttle(ProgressDetails, 500, {
-  leading: true,
-  trailing: true,
-})
-
 function ProgressBarUploading (props) {
   const {
     i18n,
@@ -305,6 +301,12 @@ function ProgressBarUploading (props) {
     totalETA,
     startUpload,
   } = props
+
+  const ThrottledProgressDetails = useCallback(() => throttle(ProgressDetails, 500, {
+    leading: true,
+    trailing: true,
+  }), [])
+
   const showUploadNewlyAddedFiles = newFiles && isUploadStarted
 
   if (!isUploadStarted || isAllComplete) {
