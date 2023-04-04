@@ -1,5 +1,3 @@
-/* global jest:false, test:false, describe:false, expect:false */
-
 const { cors } = require('../../src/server/middlewares')
 
 function testWithMock ({ corsOptions, get = () => {}, origin = 'https://localhost:1234' } = {}) {

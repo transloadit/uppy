@@ -172,7 +172,7 @@ es_MX.strings = {
   zoomOut: 'Alejar',
 }
 
-es_MX.pluralize = function (count) {
+es_MX.pluralize = (count) => {
   if (count === 1) {
     return 0
   }

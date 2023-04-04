@@ -28,13 +28,15 @@ module.exports = function s3 (config) {
     const client = req.companion.s3Client
 
     if (!client || typeof config.bucket !== 'string') {
-      return res.status(400).json({ error: 'This Companion server does not support uploading to S3' })
+      res.status(400).json({ error: 'This Companion server does not support uploading to S3' })
+      return
     }
 
     const metadata = req.query.metadata || {}
     const key = config.getKey(req, req.query.filename, metadata)
     if (typeof key !== 'string') {
-      return res.status(500).json({ error: 'S3 uploads are misconfigured: filename returned from `getKey` must be a string' })
+      res.status(500).json({ error: 'S3 uploads are misconfigured: filename returned from `getKey` must be a string' })
+      return
     }
 
     const fields = {
@@ -45,8 +47,8 @@ module.exports = function s3 (config) {
 
     if (config.acl != null) fields.acl = config.acl
 
-    Object.keys(metadata).forEach((key) => {
-      fields[`x-amz-meta-${key}`] = metadata[key]
+    Object.keys(metadata).forEach((metadataKey) => {
+      fields[`x-amz-meta-${metadataKey}`] = metadata[metadataKey]
     })
 
     client.createPresignedPost({
@@ -88,10 +90,12 @@ module.exports = function s3 (config) {
     const key = config.getKey(req, req.body.filename, req.body.metadata || {})
     const { type, metadata } = req.body
     if (typeof key !== 'string') {
-      return res.status(500).json({ error: 's3: filename returned from `getKey` must be a string' })
+      res.status(500).json({ error: 's3: filename returned from `getKey` must be a string' })
+      return
     }
     if (typeof type !== 'string') {
-      return res.status(400).json({ error: 's3: content type must be a string' })
+      res.status(400).json({ error: 's3: content type must be a string' })
+      return
     }
 
     const params = {
@@ -135,11 +139,11 @@ module.exports = function s3 (config) {
     const { key } = req.query
 
     if (typeof key !== 'string') {
-      return res.status(400).json({ error: 's3: the object key must be passed as a query parameter. For example: "?key=abc.jpg"' })
+      res.status(400).json({ error: 's3: the object key must be passed as a query parameter. For example: "?key=abc.jpg"' })
+      return
     }
 
     let parts = []
-    listPartsPage(0)
 
     function listPartsPage (startAt) {
       client.listParts({
@@ -159,14 +163,11 @@ module.exports = function s3 (config) {
           // Get the next page.
           listPartsPage(data.NextPartNumberMarker)
         } else {
-          done()
+          res.json(parts)
         }
       })
     }
-
-    function done () {
-      res.json(parts)
-    }
+    listPartsPage(0)
   }
 
   /**
@@ -187,10 +188,12 @@ module.exports = function s3 (config) {
     const { key } = req.query
 
     if (typeof key !== 'string') {
-      return res.status(400).json({ error: 's3: the object key must be passed as a query parameter. For example: "?key=abc.jpg"' })
+      res.status(400).json({ error: 's3: the object key must be passed as a query parameter. For example: "?key=abc.jpg"' })
+      return
     }
     if (!parseInt(partNumber, 10)) {
-      return res.status(400).json({ error: 's3: the part number must be a number between 1 and 10000.' })
+      res.status(400).json({ error: 's3: the part number must be a number between 1 and 10000.' })
+      return
     }
 
     client.getSignedUrl('uploadPart', {
@@ -229,19 +232,20 @@ module.exports = function s3 (config) {
     const { key, partNumbers } = req.query
 
     if (typeof key !== 'string') {
-      return res.status(400).json({ error: 's3: the object key must be passed as a query parameter. For example: "?key=abc.jpg"' })
+      res.status(400).json({ error: 's3: the object key must be passed as a query parameter. For example: "?key=abc.jpg"' })
+      return
     }
 
     if (typeof partNumbers !== 'string') {
-      return res.status(400).json({ error: 's3: the part numbers must be passed as a comma separated query parameter. For example: "?partNumbers=4,6,7,21"' })
+      res.status(400).json({ error: 's3: the part numbers must be passed as a comma separated query parameter. For example: "?partNumbers=4,6,7,21"' })
+      return
     }
 
     const partNumbersArray = partNumbers.split(',')
-    partNumbersArray.forEach((partNumber) => {
-      if (!parseInt(partNumber, 10)) {
-        return res.status(400).json({ error: 's3: the part numbers must be a number between 1 and 10000.' })
-      }
-    })
+    if (!partNumbersArray.every((partNumber) => parseInt(partNumber, 10))) {
+      res.status(400).json({ error: 's3: the part numbers must be a number between 1 and 10000.' })
+      return
+    }
 
     Promise.all(
       partNumbersArray.map((partNumber) => {
@@ -282,7 +286,8 @@ module.exports = function s3 (config) {
     const { key } = req.query
 
     if (typeof key !== 'string') {
-      return res.status(400).json({ error: 's3: the object key must be passed as a query parameter. For example: "?key=abc.jpg"' })
+      res.status(400).json({ error: 's3: the object key must be passed as a query parameter. For example: "?key=abc.jpg"' })
+      return
     }
 
     client.abortMultipartUpload({
@@ -318,10 +323,15 @@ module.exports = function s3 (config) {
     const { parts } = req.body
 
     if (typeof key !== 'string') {
-      return res.status(400).json({ error: 's3: the object key must be passed as a query parameter. For example: "?key=abc.jpg"' })
+      res.status(400).json({ error: 's3: the object key must be passed as a query parameter. For example: "?key=abc.jpg"' })
+      return
     }
-    if (!Array.isArray(parts) || !parts.every(isValidPart)) {
-      return res.status(400).json({ error: 's3: `parts` must be an array of {ETag, PartNumber} objects.' })
+    if (
+      !Array.isArray(parts)
+      || !parts.every(part => typeof part === 'object' && typeof part?.PartNumber === 'number' && typeof part.ETag === 'string')
+    ) {
+      res.status(400).json({ error: 's3: `parts` must be an array of {ETag, PartNumber} objects.' })
+      return
     }
 
     client.completeMultipartUpload({
@@ -351,8 +361,4 @@ module.exports = function s3 (config) {
     // limit 1mb because maybe large upload with a lot of parts, see https://github.com/transloadit/uppy/issues/1945
     .post('/multipart/:uploadId/complete', express.json({ limit: '1mb' }), completeMultipartUpload)
     .delete('/multipart/:uploadId', abortMultipartUpload)
-}
-
-function isValidPart (part) {
-  return part && typeof part === 'object' && typeof part.PartNumber === 'number' && typeof part.ETag === 'string'
 }

@@ -62,6 +62,7 @@ module.exports.getServer = (extraEnv) => {
   // todo rewrite companion to not use global state
   // https://github.com/transloadit/uppy/issues/3284
   jest.resetModules()
+  // eslint-disable-next-line global-require
   const standalone = require('../src/standalone')
   const authServer = express()
 

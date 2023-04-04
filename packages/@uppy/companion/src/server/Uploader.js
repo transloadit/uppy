@@ -532,8 +532,10 @@ class Uploader {
           // previously made to providers. Deleting the field would prevent it from getting leaked
           // to the frontend etc.
           // @ts-ignore
+          // eslint-disable-next-line no-param-reassign
           delete error.originalRequest
           // @ts-ignore
+          // eslint-disable-next-line no-param-reassign
           delete error.originalResponse
           reject(error)
         },

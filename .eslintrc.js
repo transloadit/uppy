@@ -53,8 +53,15 @@ module.exports = {
       ignore: svgPresentationAttributes,
     }],
 
+    // Special rules for CI:
+    ...(process.env.CI && {
+      // Some imports are available only after a full build, which we don't do on CI.
+      'import/no-unresolved': 'off',
+    }),
+
     // rules we want to enforce
     'array-callback-return': 'error',
+    'func-names': 'error',
     'implicit-arrow-linebreak': 'error',
     'import/no-dynamic-require': 'error',
     'import/no-extraneous-dependencies': 'error',
@@ -76,25 +83,8 @@ module.exports = {
     'prefer-spread': 'error',
     'unicorn/prefer-node-protocol': 'error',
 
-    // transloadit rules we would like to enforce in the future
-    // but will require separate PRs to gradually get there
-    // and so the meantime: just warn
-    'class-methods-use-this': ['warn'],
-    'consistent-return': ['warn'],
-    'default-case': ['warn'],
-    'global-require': ['warn'],
-    'import/no-unresolved': ['warn'],
-    'import/order': ['warn'],
-    'no-mixed-operators': ['warn'],
-    'no-param-reassign': ['warn'],
-    'no-redeclare': ['warn'],
-    'no-shadow': ['warn'],
-    'no-use-before-define': ['warn', { 'functions': false }],
-    'radix': ['warn'],
     'react/button-has-type': 'error',
-    'react/destructuring-assignment': ['warn'],
     'react/forbid-prop-types': 'error',
-    'react/jsx-props-no-spreading': ['warn'],
     'react/no-access-state-in-setstate': 'error',
     'react/no-array-index-key': 'error',
     'react/no-deprecated': 'error',
@@ -122,8 +112,8 @@ module.exports = {
     // jsdoc
     'jsdoc/check-alignment': 'error',
     'jsdoc/check-examples': 'off', // cannot yet be supported for ESLint 8, see https://github.com/eslint/eslint/issues/14745
-    'jsdoc/check-param-names': ['warn'],
-    'jsdoc/check-syntax': ['warn'],
+    'jsdoc/check-param-names': 'error',
+    'jsdoc/check-syntax': 'error',
     'jsdoc/check-tag-names': ['error', { jsxTags: true }],
     'jsdoc/check-types': 'error',
     'jsdoc/newline-after-description': 'error',
@@ -253,7 +243,6 @@ module.exports = {
         'packages/@uppy/webcam/src/**/*.js',
         'packages/@uppy/xhr-upload/src/**/*.js',
         'packages/@uppy/zoom/src/**/*.js',
-        'website/src/examples/*/*.es6',
       ],
       parser: 'espree',
       parserOptions: {
@@ -361,18 +350,8 @@ module.exports = {
     },
     {
       files: [
-        'website/src/examples/*/*.es6',
-      ],
-      rules: {
-        'import/no-extraneous-dependencies': 'off',
-        'no-console': 'off',
-      },
-    },
-    {
-      files: [
         '*.test.js',
         'test/endtoend/*.js',
-        'website/*.js',
         'bin/**.js',
       ],
       rules: {
@@ -383,8 +362,8 @@ module.exports = {
       files: [
         'bin/**.js',
         'bin/**.mjs',
-        'examples/**/*.config.js',
         'examples/**/*.cjs',
+        'examples/**/*.js',
         'packages/@uppy/companion/test/**/*.js',
         'test/**/*.js',
         'test/**/*.ts',
@@ -392,8 +371,6 @@ module.exports = {
         '*.test-d.ts',
         'postcss.config.js',
         '.eslintrc.js',
-        'website/*.js',
-        'website/**/*.js',
         'private/**/*.js',
       ],
       rules: {
@@ -412,15 +389,6 @@ module.exports = {
       rules: {
         camelcase: ['off'],
         'quote-props': ['error', 'as-needed', { 'numbers': true }],
-      },
-    },
-
-    {
-      files: [
-        'website/themes/uppy/source/js/*.js',
-      ],
-      rules: {
-        'prefer-const': ['off'],
       },
     },
 

@@ -8,8 +8,8 @@ const semver = require('semver')
  * @returns {boolean}
  */
 exports.gte = (v1, v2) => {
-  v1 = semver.coerce(v1).version
-  v2 = semver.coerce(v2).version
-
-  return semver.gte(v1, v2)
+  return semver.gte(
+    semver.coerce(v1).version,
+    semver.coerce(v2).version,
+  )
 }
