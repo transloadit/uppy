@@ -53,6 +53,11 @@ module.exports = {
       ignore: svgPresentationAttributes,
     }],
 
+    // Special rules for CI:
+    ...(process.env.CI && {
+      'import/no-unresolved': ['error', { ignore: ['^@uppy/'] }],
+    }),
+
     // rules we want to enforce
     'array-callback-return': 'error',
     'implicit-arrow-linebreak': 'error',
