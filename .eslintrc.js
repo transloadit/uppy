@@ -55,7 +55,7 @@ module.exports = {
 
     // Special rules for CI:
     ...(process.env.CI && {
-      'import/no-unresolved': ['error', { ignore: ['^@uppy/'] }],
+      'import/no-unresolved': ['error', { ignore: ['^[^.]'] }],
     }),
 
     // rules we want to enforce
