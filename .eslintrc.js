@@ -61,6 +61,7 @@ module.exports = {
 
     // rules we want to enforce
     'array-callback-return': 'error',
+    'func-names': 'error',
     'implicit-arrow-linebreak': 'error',
     'import/no-dynamic-require': 'error',
     'import/no-extraneous-dependencies': 'error',
