@@ -1,5 +1,12 @@
 # @uppy/transloadit
 
+## 3.1.2
+
+Released: 2023-04-04
+Included in: Uppy v3.7.0
+
+- @uppy/transloadit: fix socket error message (Artur Paikin / #4352)
+
 ## 3.1.1
 
 Released: 2023-02-13

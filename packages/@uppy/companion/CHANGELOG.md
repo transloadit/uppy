@@ -1,5 +1,19 @@
 # @uppy/companion
 
+## 4.4.0
+
+Released: 2023-04-04
+Included in: Uppy v3.7.0
+
+- @uppy/companion: add `service: 'companion'` to periodic ping (Mikael Finstad / #4383)
+- @uppy/companion: add connection keep-alive to dropbox (Mikael Finstad / #4365)
+- @uppy/companion: add missing env variable for standalone option (Mikael Finstad / #4382)
+- @uppy/companion: add S3 prefix env variable (Mikael Finstad / #4320)
+- @uppy/companion: allow local ips when testing (Mikael Finstad / #4328)
+- @uppy/companion: fix typo in redis-emitter.js (Ikko Eltociear Ashimine / #4362)
+- @uppy/companion: merge Provider/SearchProvider (Mikael Finstad / #4330)
+- @uppy/companion: only body parse when needed & increased body size for s3 (Mikael Finstad / #4372)
+
 ## 4.3.0
 
 Released: 2023-02-13

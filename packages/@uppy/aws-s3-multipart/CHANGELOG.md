@@ -1,5 +1,13 @@
 # @uppy/aws-s3-multipart
 
+## 3.1.3
+
+Released: 2023-04-04
+Included in: Uppy v3.7.0
+
+- @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/tus,@uppy/xhr-upload: make sure that we reset serverToken when an upload fails (Mikael Finstad / #4376)
+- @uppy/aws-s3-multipart: do not auto-open sockets, clean them up on abort (Antoine du Hamel)
+
 ## 3.1.2
 
 Released: 2023-01-26
