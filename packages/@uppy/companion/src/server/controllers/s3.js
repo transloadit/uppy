@@ -144,7 +144,6 @@ module.exports = function s3 (config) {
     }
 
     let parts = []
-    listPartsPage(0)
 
     function listPartsPage (startAt) {
       client.listParts({
@@ -164,14 +163,11 @@ module.exports = function s3 (config) {
           // Get the next page.
           listPartsPage(data.NextPartNumberMarker)
         } else {
-          done()
+          res.json(parts)
         }
       })
     }
-
-    function done () {
-      res.json(parts)
-    }
+    listPartsPage(0)
   }
 
   /**
@@ -330,7 +326,10 @@ module.exports = function s3 (config) {
       res.status(400).json({ error: 's3: the object key must be passed as a query parameter. For example: "?key=abc.jpg"' })
       return
     }
-    if (!Array.isArray(parts) || !parts.every(isValidPart)) {
+    if (
+      !Array.isArray(parts)
+      || !parts.every(part => typeof part === 'object' && typeof part?.PartNumber === 'number' && typeof part.ETag === 'string')
+    ) {
       res.status(400).json({ error: 's3: `parts` must be an array of {ETag, PartNumber} objects.' })
       return
     }
@@ -362,8 +361,4 @@ module.exports = function s3 (config) {
     // limit 1mb because maybe large upload with a lot of parts, see https://github.com/transloadit/uppy/issues/1945
     .post('/multipart/:uploadId/complete', express.json({ limit: '1mb' }), completeMultipartUpload)
     .delete('/multipart/:uploadId', abortMultipartUpload)
-}
-
-function isValidPart (part) {
-  return part && typeof part === 'object' && typeof part.PartNumber === 'number' && typeof part.ETag === 'string'
 }

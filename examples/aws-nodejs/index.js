@@ -142,7 +142,6 @@ app.get('/s3/multipart/:uploadId', (req, res, next) => {
   }
 
   const parts = []
-  listPartsPage(0)
 
   function listPartsPage (startAt) {
     client.listParts({
@@ -166,6 +165,7 @@ app.get('/s3/multipart/:uploadId', (req, res, next) => {
       }
     })
   }
+  listPartsPage(0)
 })
 
 function isValidPart (part) {
