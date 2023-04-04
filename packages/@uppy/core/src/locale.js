@@ -51,6 +51,7 @@ export default {
     search: 'Search',
     resetSearch: 'Reset search',
     emptyFolderAdded: 'No files were added from empty folder',
+    addedNumFiles: 'Added %{numFiles} files',
     folderAlreadyAdded: 'The folder "%{folder}" was already added',
     folderAdded: {
       0: 'Added %{smart_count} file from %{folder}',

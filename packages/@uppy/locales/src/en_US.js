@@ -62,6 +62,7 @@ en_US.strings = {
   editFileWithFilename: 'Edit file %{file}',
   editing: 'Editing %{file}',
   emptyFolderAdded: 'No files were added from empty folder',
+  addedNumFiles: 'Added %{numFiles} files',
   encoding: 'Encoding...',
   enterCorrectUrl: 'Incorrect URL: Please make sure you are entering a direct link to a file',
   enterTextToSearch: 'Enter text to search for images',
