@@ -10,17 +10,6 @@ const logger = require('./logger')
 // TODO rewrite to use require('timers/promises').setTimeout when we support newer node versions
 const sleep = promisify(setTimeout)
 
-/**
- * Runs a function every 24 hours, to clean up stale, upload related files.
- *
- * @param {string} dirPath path to the directory which you want to clean
- */
-exports.startCleanUpJob = (dirPath) => {
-  logger.info('starting clean up job', 'jobs.cleanup.start')
-  // run once a day
-  schedule.scheduleJob('0 23 * * *', () => cleanUpFinishedUploads(dirPath))
-}
-
 const cleanUpFinishedUploads = (dirPath) => {
   logger.info(`running clean up job for path: ${dirPath}`, 'jobs.cleanup.progress.read')
   fs.readdir(dirPath, (err, files) => {
@@ -40,12 +29,12 @@ const cleanUpFinishedUploads = (dirPath) => {
       }
       const fullPath = path.join(dirPath, file)
 
-      fs.stat(fullPath, (err, stats) => {
+      fs.stat(fullPath, (err2, stats) => {
         const twelveHoursAgo = 12 * 60 * 60 * 1000
-        if (err) {
+        if (err2) {
           // we still delete the file if we can't get the stats
           // but we also log the error
-          logger.error(err, 'jobs.cleanup.stat.error')
+          logger.error(err2, 'jobs.cleanup.stat.error')
         // @ts-ignore
         } else if (((new Date()) - stats.mtime) < twelveHoursAgo) {
           logger.info(`skipping file ${file}`, 'jobs.cleanup.skip')
@@ -53,12 +42,23 @@ const cleanUpFinishedUploads = (dirPath) => {
         }
 
         logger.info(`deleting file ${file}`, 'jobs.cleanup.progress.delete')
-        fs.unlink(fullPath, (err) => {
-          if (err) logger.error(err, 'jobs.cleanup.delete.error')
+        fs.unlink(fullPath, (err3) => {
+          if (err3) logger.error(err3, 'jobs.cleanup.delete.error')
         })
       })
     })
   })
+}
+
+/**
+ * Runs a function every 24 hours, to clean up stale, upload related files.
+ *
+ * @param {string} dirPath path to the directory which you want to clean
+ */
+exports.startCleanUpJob = (dirPath) => {
+  logger.info('starting clean up job', 'jobs.cleanup.start')
+  // run once a day
+  schedule.scheduleJob('0 23 * * *', () => cleanUpFinishedUploads(dirPath))
 }
 
 async function runPeriodicPing ({ urls, payload, requestTimeout }) {

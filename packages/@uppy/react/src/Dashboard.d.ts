@@ -1,6 +1,6 @@
 import * as React from 'react'
 import type { DashboardOptions } from '@uppy/dashboard'
-import { Omit, WithBaseUppyProps } from './CommonTypes'
+import type { Omit, WithBaseUppyProps } from './CommonTypes'
 
 // This type is mapped into `DashboardProps` below so IntelliSense doesn't display this big mess of nested types
 type DashboardPropsInner = Omit<

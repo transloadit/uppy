@@ -1,0 +1,10 @@
+jq -r '"gh api /repos/{owner}/{repo}/git/refs -f ref=\"refs/tags/"+.name+"@"+.version+"\" -f sha=d25149d71a4e412daa38d40530316344864ed43c"' < packages/@uppy/angular/projects/uppy/angular/package.json
+jq -r '"gh api /repos/{owner}/{repo}/git/refs -f ref=\"refs/tags/"+.name+"@"+.version+"\" -f sha=d25149d71a4e412daa38d40530316344864ed43c"' < packages/@uppy/aws-s3/package.json
+jq -r '"gh api /repos/{owner}/{repo}/git/refs -f ref=\"refs/tags/"+.name+"@"+.version+"\" -f sha=d25149d71a4e412daa38d40530316344864ed43c"' < packages/@uppy/companion/package.json
+jq -r '"gh api /repos/{owner}/{repo}/git/refs -f ref=\"refs/tags/"+.name+"@"+.version+"\" -f sha=d25149d71a4e412daa38d40530316344864ed43c"' < packages/@uppy/core/package.json
+jq -r '"gh api /repos/{owner}/{repo}/git/refs -f ref=\"refs/tags/"+.name+"@"+.version+"\" -f sha=d25149d71a4e412daa38d40530316344864ed43c"' < packages/@uppy/golden-retriever/package.json
+jq -r '"gh api /repos/{owner}/{repo}/git/refs -f ref=\"refs/tags/"+.name+"@"+.version+"\" -f sha=d25149d71a4e412daa38d40530316344864ed43c"' < packages/@uppy/locales/package.json
+jq -r '"gh api /repos/{owner}/{repo}/git/refs -f ref=\"refs/tags/"+.name+"@"+.version+"\" -f sha=d25149d71a4e412daa38d40530316344864ed43c"' < packages/@uppy/tus/package.json
+jq -r '"gh api /repos/{owner}/{repo}/git/refs -f ref=\"refs/tags/"+.name+"@"+.version+"\" -f sha=d25149d71a4e412daa38d40530316344864ed43c"' < packages/@uppy/url/package.json
+jq -r '"gh api /repos/{owner}/{repo}/git/refs -f ref=\"refs/tags/"+.name+"@"+.version+"\" -f sha=d25149d71a4e412daa38d40530316344864ed43c"' < packages/@uppy/webcam/package.json
+jq -r '"gh api /repos/{owner}/{repo}/git/refs -f ref=\"refs/tags/"+.name+"@"+.version+"\" -f sha=d25149d71a4e412daa38d40530316344864ed43c"' < packages/@uppy/xhr-upload/package.json

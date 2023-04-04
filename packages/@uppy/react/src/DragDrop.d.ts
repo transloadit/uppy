@@ -1,5 +1,5 @@
 import type { DragDropOptions } from '@uppy/drag-drop'
-import { ToUppyProps } from './CommonTypes'
+import type { ToUppyProps } from './CommonTypes'
 
 export type DragDropProps = ToUppyProps<DragDropOptions>  & React.BaseHTMLAttributes<HTMLDivElement>
 

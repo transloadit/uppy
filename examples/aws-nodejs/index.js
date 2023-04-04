@@ -137,7 +137,8 @@ app.get('/s3/multipart/:uploadId', (req, res, next) => {
   const { key } = req.query
 
   if (typeof key !== 'string') {
-    return res.status(400).json({ error: 's3: the object key must be passed as a query parameter. For example: "?key=abc.jpg"' })
+    res.status(400).json({ error: 's3: the object key must be passed as a query parameter. For example: "?key=abc.jpg"' })
+    return
   }
 
   const parts = []

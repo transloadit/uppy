@@ -1,5 +1,3 @@
-/* global jest:false, test:false, expect:false, describe:false */
-
 const nock = require('nock')
 const request = require('supertest')
 

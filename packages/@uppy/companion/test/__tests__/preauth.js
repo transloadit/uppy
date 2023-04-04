@@ -1,5 +1,3 @@
-/* global jest:false, test:false, expect:false, describe:false */
-
 jest.mock('../../src/server/helpers/jwt', () => {
   return {
     generateToken: () => {},

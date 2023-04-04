@@ -23,7 +23,7 @@ exports.jsonStringify = (data) => {
     if (typeof value === 'object' && value !== null) {
       if (cache.indexOf(value) !== -1) {
         // Circular reference found, discard key
-        return
+        return undefined
       }
       cache.push(value)
     }
@@ -90,8 +90,7 @@ function urlEncode (unencoded) {
 }
 
 function urlDecode (encoded) {
-  encoded = encoded.replace(/-/g, '+').replace(/_/g, '/').replace(/~/g, '=')
-  return encoded
+  return encoded.replace(/-/g, '+').replace(/_/g, '/').replace(/~/g, '=')
 }
 
 /**

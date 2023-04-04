@@ -1,5 +1,5 @@
 import type { DashboardOptions } from '@uppy/dashboard'
-import { Omit, ToUppyProps } from './CommonTypes'
+import type { Omit, ToUppyProps } from './CommonTypes'
 
 // This type is mapped into `DashboardModalProps` below so IntelliSense doesn't display this big mess of nested types
 type DashboardModalPropsInner = {

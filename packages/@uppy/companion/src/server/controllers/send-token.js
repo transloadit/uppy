@@ -44,7 +44,8 @@ module.exports = function sendToken (req, res, next) {
     const allowedClients = req.companion.options.clients
     // if no preset clients then allow any client
     if (!allowedClients || hasMatch(origin, allowedClients) || hasMatch((new URL(origin)).host, allowedClients)) {
-      return res.send(htmlContent(uppyAuthToken, origin))
+      res.send(htmlContent(uppyAuthToken, origin))
+      return
     }
   }
   next()
