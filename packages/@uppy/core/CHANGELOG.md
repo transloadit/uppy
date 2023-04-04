@@ -1,5 +1,12 @@
 # @uppy/core
 
+## 3.1.2
+
+Released: 2023-04-04
+Included in: Uppy v3.7.0
+
+- @uppy/core: fix bug with `setOptions` (Nguyễn bảo Trung / #4350)
+
 ## 3.1.0
 
 Released: 2023-03-07

@@ -12,6 +12,54 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 3.7.0
+
+Released: 2023-04-04
+
+| Package                | Version | Package                | Version |
+| ---------------------- | ------- | ---------------------- | ------- |
+| @uppy/aws-s3           |   3.0.6 | @uppy/status-bar       |   3.1.0 |
+| @uppy/aws-s3-multipart |   3.1.3 | @uppy/transloadit      |   3.1.2 |
+| @uppy/companion        |   4.4.0 | @uppy/tus              |   3.0.6 |
+| @uppy/companion-client |   3.1.2 | @uppy/unsplash         |   3.2.0 |
+| @uppy/core             |   3.1.2 | @uppy/url              |   3.3.0 |
+| @uppy/dashboard        |   3.3.2 | @uppy/utils            |   5.2.0 |
+| @uppy/locales          |   3.1.0 | @uppy/xhr-upload       |   3.1.1 |
+| @uppy/provider-views   |   3.2.0 | uppy                   |   3.7.0 |
+| @uppy/react            |   3.1.1 |                        |         |
+
+- @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/tus,@uppy/xhr-upload: make sure that we reset serverToken when an upload fails (Mikael Finstad / #4376)
+- @uppy/aws-s3-multipart: do not auto-open sockets, clean them up on abort (Antoine du Hamel)
+- @uppy/aws-s3: Update types (Minh Hieu / #4294)
+- @uppy/companion-client: do not open socket more than once (Artur Paikin)
+- @uppy/companion: add `service: 'companion'` to periodic ping (Mikael Finstad / #4383)
+- @uppy/companion: add connection keep-alive to dropbox (Mikael Finstad / #4365)
+- @uppy/companion: add missing env variable for standalone option (Mikael Finstad / #4382)
+- @uppy/companion: add S3 prefix env variable (Mikael Finstad / #4320)
+- @uppy/companion: allow local ips when testing (Mikael Finstad / #4328)
+- @uppy/companion: fix typo in redis-emitter.js (Ikko Eltociear Ashimine / #4362)
+- @uppy/companion: merge Provider/SearchProvider (Mikael Finstad / #4330)
+- @uppy/companion: only body parse when needed & increased body size for s3 (Mikael Finstad / #4372)
+- @uppy/core: fix bug with `setOptions` (Nguyễn bảo Trung / #4350)
+- @uppy/locales: locales: add es_MX (Kevin van Zonneveld / #4393)
+- @uppy/locales: locales: add hi_IN (Kevin van Zonneveld / #4391)
+- @uppy/provider-views: fix race condition when adding folders (Mikael Finstad / #4384)
+- @uppy/provider-views: UI: Use form attribite with a form in doc root to prevent outer form submit (Artur Paikin / #4283)
+- @uppy/transloadit: fix socket error message (Artur Paikin / #4352)
+- @uppy/tus: do not auto-open sockets, clean them up on abort (Antoine du Hamel)
+- meta: add version info in the bundlers CI (Antoine du Hamel / #4386)
+- meta: deploy to Heroku on every companion commit (Mikael Finstad / #4367)
+- meta: example: migrate `redux` to ESM (Antoine du Hamel / #4158)
+- meta: fix all ESLint warnings and turn them into errors (Antoine du Hamel / #4398)
+- meta: fixup! website: update links to work under the new URL (Antoine du Hamel / #4371)
+- meta: remove duplicate outdated OSS support docs (Mikael Finstad, Artur Paikin / #4364)
+- meta: use overrides to make sure no uppy package is fetch from npm (Antoine du Hamel / #4395)
+- website: add a deprecation notice and a link to the new website (Antoine du Hamel / #4370)
+- website: fix home page (Antoine du Hamel)
+- website: Remove the website (Merlijn Vos / #4369)
+- website: update links to work under the new URL (Antoine du Hamel / #4371)
+
+
 ## 3.6.1
 
 Released: 2023-03-07
