@@ -25,18 +25,6 @@ test/endtoend/create-react-app/coverage/
 uppy-*.tgz
 generatedLocale.d.ts
 
-website/db.json
-website/*.log
-website/node_modules/
-website/public/
-website/.deploy*/
-website/src/_drafts
-website/themes/uppy/source/uppy/
-website/themes/uppy/_config.yml
-website/src/_template/list_of_locale_packs.md
-website/src/examples/locale_list.json
-website/themes/uppy/layout/partials/generated_stargazers.ejs
-
 **/output/*
 !output/.keep
 examples/dev/file.txt

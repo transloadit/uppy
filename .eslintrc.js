@@ -253,7 +253,6 @@ module.exports = {
         'packages/@uppy/webcam/src/**/*.js',
         'packages/@uppy/xhr-upload/src/**/*.js',
         'packages/@uppy/zoom/src/**/*.js',
-        'website/src/examples/*/*.es6',
       ],
       parser: 'espree',
       parserOptions: {
@@ -361,18 +360,8 @@ module.exports = {
     },
     {
       files: [
-        'website/src/examples/*/*.es6',
-      ],
-      rules: {
-        'import/no-extraneous-dependencies': 'off',
-        'no-console': 'off',
-      },
-    },
-    {
-      files: [
         '*.test.js',
         'test/endtoend/*.js',
-        'website/*.js',
         'bin/**.js',
       ],
       rules: {
@@ -383,8 +372,8 @@ module.exports = {
       files: [
         'bin/**.js',
         'bin/**.mjs',
-        'examples/**/*.config.js',
         'examples/**/*.cjs',
+        'examples/**/*.js',
         'packages/@uppy/companion/test/**/*.js',
         'test/**/*.js',
         'test/**/*.ts',
@@ -392,8 +381,6 @@ module.exports = {
         '*.test-d.ts',
         'postcss.config.js',
         '.eslintrc.js',
-        'website/*.js',
-        'website/**/*.js',
         'private/**/*.js',
       ],
       rules: {
@@ -412,15 +399,6 @@ module.exports = {
       rules: {
         camelcase: ['off'],
         'quote-props': ['error', 'as-needed', { 'numbers': true }],
-      },
-    },
-
-    {
-      files: [
-        'website/themes/uppy/source/js/*.js',
-      ],
-      rules: {
-        'prefer-const': ['off'],
       },
     },
 
