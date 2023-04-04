@@ -55,7 +55,8 @@ module.exports = {
 
     // Special rules for CI:
     ...(process.env.CI && {
-      'import/no-unresolved': ['error', { ignore: ['^[^.]'] }],
+      // Some imports are available only after a full build, which we don't do on CI.
+      'import/no-unresolved': 'warn',
     }),
 
     // rules we want to enforce
