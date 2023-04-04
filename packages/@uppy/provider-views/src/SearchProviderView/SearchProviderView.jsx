@@ -36,7 +36,6 @@ export default class SearchProviderView extends View {
     this.search = this.search.bind(this)
     this.clearSearch = this.clearSearch.bind(this)
     this.resetPluginState = this.resetPluginState.bind(this)
-    this.addFile = this.addFile.bind(this)
     this.handleScroll = this.handleScroll.bind(this)
     this.donePicking = this.donePicking.bind(this)
 
@@ -77,20 +76,22 @@ export default class SearchProviderView extends View {
     })
   }
 
-  search (query) {
+  async search (query) {
     const { searchTerm } = this.plugin.getPluginState()
     if (query && query === searchTerm) {
       // no need to search again as this is the same as the previous search
-      return undefined
+      return
     }
 
-    return this.sharedHandler.loaderWrapper(
-      this.provider.search(query),
-      (res) => {
-        this.#updateFilesAndInputMode(res, [])
-      },
-      this.handleError,
-    )
+    this.setLoading(true)
+    try {
+      const res = await this.provider.search(query)
+      this.#updateFilesAndInputMode(res, [])
+    } catch (err) {
+      this.handleError(err)
+    } finally {
+      this.setLoading(false)
+    }
   }
 
   clearSearch () {
@@ -122,11 +123,9 @@ export default class SearchProviderView extends View {
 
   donePicking () {
     const { currentSelection } = this.plugin.getPluginState()
-    const promises = currentSelection.map((file) => this.addFile(file))
-
-    this.sharedHandler.loaderWrapper(Promise.all(promises), () => {
-      this.resetPluginState()
-    }, () => {})
+    this.plugin.uppy.log('Adding remote search provider files')
+    this.plugin.uppy.addFiles(currentSelection.map((file) => this.getTagFile(file)))
+    this.resetPluginState()
   }
 
   render (state, viewOptions = {}) {
@@ -139,7 +138,7 @@ export default class SearchProviderView extends View {
 
     const targetViewOptions = { ...this.opts, ...viewOptions }
     const { files, folders, filterInput, loading, currentSelection } = this.plugin.getPluginState()
-    const { isChecked, toggleCheckbox, filterItems } = this.sharedHandler
+    const { isChecked, toggleCheckbox, filterItems } = this
     const hasInput = filterInput !== ''
 
     const browserProps = {

@@ -8,7 +8,7 @@ import throttle from 'lodash.throttle'
 import DefaultStore from '@uppy/store-default'
 import getFileType from '@uppy/utils/lib/getFileType'
 import getFileNameAndExtension from '@uppy/utils/lib/getFileNameAndExtension'
-import generateFileID from '@uppy/utils/lib/generateFileID'
+import { getSafeFileId } from '@uppy/utils/lib/generateFileID'
 import supportsUploadProgress from './supportsUploadProgress.js'
 import getFileName from './getFileName.js'
 import { justErrorsLogger, debugLogger } from './loggers.js'
@@ -458,12 +458,9 @@ class Uppy {
     const fileName = getFileName(fileType, fileDescriptor)
     const fileExtension = getFileNameAndExtension(fileName).extension
     const isRemote = Boolean(fileDescriptor.isRemote)
-    const fileID = generateFileID({
-      ...fileDescriptor,
-      type: fileType,
-    })
+    const id = getSafeFileId(fileDescriptor)
 
-    if (this.checkIfFileAlreadyExists(fileID)) {
+    if (this.checkIfFileAlreadyExists(id)) {
       const error = new RestrictionError(this.i18n('noDuplicates', { fileName }))
       this.#informAndEmit(error, fileDescriptor)
       throw error
@@ -478,7 +475,7 @@ class Uppy {
 
     let newFile = {
       source: fileDescriptor.source || '',
-      id: fileID,
+      id,
       name: fileName,
       extension: fileExtension || '',
       meta: {

@@ -55,6 +55,9 @@ async function assemblyOptions () {
 // Rest is implementation! Obviously edit as necessary...
 
 export default () => {
+  const restrictions = undefined
+  // const restrictions = { requiredMetaFields: ['caption'], maxNumberOfFiles: 3 }
+
   const uppyDashboard = new Uppy({
     logger: debugLogger,
     meta: {
@@ -62,7 +65,7 @@ export default () => {
       license: 'Creative Commons',
     },
     allowMultipleUploadBatches: false,
-    // restrictions: { requiredMetaFields: ['caption'] },
+    restrictions,
   })
     .use(Dashboard, {
       trigger: '#pick-files',
@@ -74,7 +77,7 @@ export default () => {
       ],
       showProgressDetails: true,
       proudlyDisplayPoweredByUppy: true,
-      note: '2 files, images and video only',
+      note: `${JSON.stringify(restrictions)}`,
     })
     // .use(GoogleDrive, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })
     // .use(Instagram, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })
