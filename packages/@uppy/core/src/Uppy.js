@@ -516,6 +516,17 @@ class Uppy {
       throw err
     }
 
+    // Users are asked to re-select recovered files without data,
+    // and to keep the progress, meta and everthing else, we only replace said data
+    if (files[newFile.id] && files[newFile.id].isGhost) {
+      newFile = {
+        ...files[newFile.id],
+        data: fileDescriptor.data,
+        isGhost: false,
+      }
+      this.log(`Replaced the blob in the restored ghost file: ${newFile.name}, ${newFile.id}`)
+    }
+
     return newFile
   }
 
@@ -545,18 +556,7 @@ class Uppy {
     this.#assertNewUploadAllowed(file)
 
     const { files } = this.getState()
-    let newFile = this.#checkAndCreateFileStateObject(files, file)
-
-    // Users are asked to re-select recovered files without data,
-    // and to keep the progress, meta and everthing else, we only replace said data
-    if (files[newFile.id] && files[newFile.id].isGhost) {
-      newFile = {
-        ...files[newFile.id],
-        data: file.data,
-        isGhost: false,
-      }
-      this.log(`Replaced the blob in the restored ghost file: ${newFile.name}, ${newFile.id}`)
-    }
+    const newFile = this.#checkAndCreateFileStateObject(files, file)
 
     this.setState({
       files: {
@@ -590,17 +590,8 @@ class Uppy {
     const errors = []
     for (let i = 0; i < fileDescriptors.length; i++) {
       try {
-        let newFile = this.#checkAndCreateFileStateObject(files, fileDescriptors[i])
-        // Users are asked to re-select recovered files without data,
-        // and to keep the progress, meta and everthing else, we only replace said data
-        if (files[newFile.id] && files[newFile.id].isGhost) {
-          newFile = {
-            ...files[newFile.id],
-            data: fileDescriptors[i].data,
-            isGhost: false,
-          }
-          this.log(`Replaced blob in a ghost file: ${newFile.name}, ${newFile.id}`)
-        }
+        const newFile = this.#checkAndCreateFileStateObject(files, fileDescriptors[i])
+
         files[newFile.id] = newFile
         newFiles.push(newFile)
       } catch (err) {
