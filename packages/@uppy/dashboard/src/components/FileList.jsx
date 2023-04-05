@@ -1,4 +1,5 @@
 import { h } from 'preact'
+import { useMemo } from 'preact/hooks'
 import FileItem from './FileItem/index.jsx'
 import VirtualList from './VirtualList.jsx'
 
@@ -17,50 +18,28 @@ function chunks (list, size) {
   return chunked
 }
 
-export default (props) => {
+export default ({
+  id, error, i18n, uppy, files, acquirers, resumableUploads, hideRetryButton, hidePauseResumeButton, hideCancelButton,
+  showLinkToFileUploadResult, showRemoveButtonAfterComplete, isWide, metaFields, singleFile, toggleFileCard,
+  handleRequestThumbnail, handleCancelThumbnail, recoveredState, individualCancellation, itemsPerRow, openFileEditor,
+  canEditFile, toggleAddFilesPanel,
+}) => {
   // It's not great that this is hardcoded!
   // It's ESPECIALLY not great that this is checking against `itemsPerRow`!
-  const rowHeight = props.itemsPerRow === 1
+  const rowHeight = itemsPerRow === 1
     // Mobile
     ? 71
     // 190px height + 2 * 5px margin
     : 200
 
-  const fileProps = {
-    // FIXME This is confusing, it's actually the Dashboard's plugin ID
-    id: props.id,
-    error: props.error,
-    // TODO move this to context
-    i18n: props.i18n,
-    uppy: props.uppy,
-    // features
-    acquirers: props.acquirers,
-    resumableUploads: props.resumableUploads,
-    individualCancellation: props.individualCancellation,
-    // visual options
-    hideRetryButton: props.hideRetryButton,
-    hidePauseResumeButton: props.hidePauseResumeButton,
-    hideCancelButton: props.hideCancelButton,
-    showLinkToFileUploadResult: props.showLinkToFileUploadResult,
-    showRemoveButtonAfterComplete: props.showRemoveButtonAfterComplete,
-    isWide: props.isWide,
-    metaFields: props.metaFields,
-    recoveredState: props.recoveredState,
-    singleFile: props.singleFile,
-    // callbacks
-    toggleFileCard: props.toggleFileCard,
-    handleRequestThumbnail: props.handleRequestThumbnail,
-    handleCancelThumbnail: props.handleCancelThumbnail,
-  }
-
-  const sortByGhostComesFirst = (file1, file2) => {
-    return props.files[file2].isGhost - props.files[file1].isGhost
-  }
-
   // Sort files by file.isGhost, ghost files first, only if recoveredState is present
-  const files = Object.keys(props.files)
-  if (props.recoveredState) files.sort(sortByGhostComesFirst)
-  const rows = chunks(files, props.itemsPerRow)
+  const rows = useMemo(() => {
+    const sortByGhostComesFirst = (file1, file2) => files[file2].isGhost - files[file1].isGhost
+
+    const fileIds = Object.keys(files)
+    if (recoveredState) fileIds.sort(sortByGhostComesFirst)
+    return chunks(fileIds, itemsPerRow)
+  }, [files, itemsPerRow, recoveredState])
 
   const renderRow = (row) => (
     // The `role="presentation` attribute ensures that the list items are properly
@@ -70,19 +49,41 @@ export default (props) => {
       {row.map((fileID) => (
         <FileItem
           key={fileID}
-          uppy={props.uppy}
-          {...fileProps} // eslint-disable-line react/jsx-props-no-spreading
+          uppy={uppy}
+          // FIXME This is confusing, it's actually the Dashboard's plugin ID
+          id={id}
+          error={error}
+          // TODO move this to context
+          i18n={i18n}
+          // features
+          acquirers={acquirers}
+          resumableUploads={resumableUploads}
+          individualCancellation={individualCancellation}
+          // visual options
+          hideRetryButton={hideRetryButton}
+          hidePauseResumeButton={hidePauseResumeButton}
+          hideCancelButton={hideCancelButton}
+          showLinkToFileUploadResult={showLinkToFileUploadResult}
+          showRemoveButtonAfterComplete={showRemoveButtonAfterComplete}
+          isWide={isWide}
+          metaFields={metaFields}
+          recoveredState={recoveredState}
+          singleFile={singleFile}
+          // callbacks
+          toggleFileCard={toggleFileCard}
+          handleRequestThumbnail={handleRequestThumbnail}
+          handleCancelThumbnail={handleCancelThumbnail}
           role="listitem"
-          openFileEditor={props.openFileEditor}
-          canEditFile={props.canEditFile}
-          toggleAddFilesPanel={props.toggleAddFilesPanel}
-          file={props.files[fileID]}
+          openFileEditor={openFileEditor}
+          canEditFile={canEditFile}
+          toggleAddFilesPanel={toggleAddFilesPanel}
+          file={files[fileID]}
         />
       ))}
     </div>
   )
 
-  if (props.singleFile) {
+  if (singleFile) {
     return (
       <div class="uppy-Dashboard-files">
         {renderRow(rows[0])}

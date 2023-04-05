@@ -136,8 +136,28 @@ export default function Dashboard (props) {
 
           {showFileList ? (
             <FileList
-              // eslint-disable-next-line react/jsx-props-no-spreading
-              {...props}
+              id={props.id}
+              error={props.error}
+              i18n={props.i18n}
+              uppy={props.uppy}
+              files={props.files}
+              acquirers={props.acquirers}
+              resumableUploads={props.resumableUploads}
+              hideRetryButton={props.hideRetryButton}
+              hidePauseResumeButton={props.hidePauseResumeButton}
+              hideCancelButton={props.hideCancelButton}
+              showLinkToFileUploadResult={props.showLinkToFileUploadResult}
+              showRemoveButtonAfterComplete={props.showRemoveButtonAfterComplete}
+              isWide={props.isWide}
+              metaFields={props.metaFields}
+              toggleFileCard={props.toggleFileCard}
+              handleRequestThumbnail={props.handleRequestThumbnail}
+              handleCancelThumbnail={props.handleCancelThumbnail}
+              recoveredState={props.recoveredState}
+              individualCancellation={props.individualCancellation}
+              openFileEditor={props.openFileEditor}
+              canEditFile={props.canEditFile}
+              toggleAddFilesPanel={props.toggleAddFilesPanel}
               singleFile={singleFile}
               itemsPerRow={itemsPerRow}
             />
