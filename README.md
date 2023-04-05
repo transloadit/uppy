@@ -1,6 +1,6 @@
 # [Uppy](https://uppy.io)
 
-<img src="https://uppy.io/images/logos/uppy-logo-2019.svg" width="120" alt="Uppy logo: a superman puppy in a pink suit" align="right">
+<img src="https://uppy.io/img/logo.svg" width="120" alt="Uppy logo: a smiling puppy above a pink upwards arrow" align="right">
 
 <a href="https://www.npmjs.com/package/uppy"><img src="https://img.shields.io/npm/v/uppy.svg?style=flat-square"></a>
 
