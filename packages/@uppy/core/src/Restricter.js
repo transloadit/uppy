@@ -30,15 +30,36 @@ class Restricter {
     }
   }
 
-  validate (file, files) {
-    const { maxFileSize, minFileSize, maxTotalFileSize, maxNumberOfFiles, allowedFileTypes } = this.getOpts().restrictions
+  validateTotals (existingFiles, newFiles) {
+    const { maxTotalFileSize, maxNumberOfFiles } = this.getOpts().restrictions
 
     if (maxNumberOfFiles) {
-      const nonGhostFiles = files.filter(f => !f.isGhost)
-      if (nonGhostFiles.length + 1 > maxNumberOfFiles) {
+      const nonGhostFiles = existingFiles.filter(f => !f.isGhost)
+      if (nonGhostFiles.length + newFiles.length > maxNumberOfFiles) {
         throw new RestrictionError(`${this.i18n('youCanOnlyUploadX', { smart_count: maxNumberOfFiles })}`)
       }
     }
+
+    if (maxTotalFileSize) {
+      let totalFilesSize = existingFiles.reduce((total, f) => (total + f.size), 0)
+
+      for (const newFile of newFiles) {
+        if (newFile.size != null) { // We can't check maxTotalFileSize if the size is unknown.
+          totalFilesSize += newFile.size
+
+          if (totalFilesSize > maxTotalFileSize) {
+            throw new RestrictionError(this.i18n('exceedsSize', {
+              size: prettierBytes(maxTotalFileSize),
+              file: newFile.name,
+            }))
+          }
+        }
+      }
+    }
+  }
+
+  validate (file) {
+    const { maxFileSize, minFileSize, allowedFileTypes } = this.getOpts().restrictions
 
     if (allowedFileTypes) {
       const isCorrectFileType = allowedFileTypes.some((type) => {
@@ -58,18 +79,6 @@ class Restricter {
       if (!isCorrectFileType) {
         const allowedFileTypesString = allowedFileTypes.join(', ')
         throw new RestrictionError(this.i18n('youCanOnlyUploadFileTypes', { types: allowedFileTypesString }))
-      }
-    }
-
-    // We can't check maxTotalFileSize if the size is unknown.
-    if (maxTotalFileSize && file.size != null) {
-      const totalFilesSize = files.reduce((total, f) => (total + f.size), file.size)
-
-      if (totalFilesSize > maxTotalFileSize) {
-        throw new RestrictionError(this.i18n('exceedsSize', {
-          size: prettierBytes(maxTotalFileSize),
-          file: file.name,
-        }))
       }
     }
 

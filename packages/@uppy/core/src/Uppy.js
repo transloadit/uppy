@@ -384,7 +384,8 @@ class Uppy {
 
   validateRestrictions (file, files = this.getFiles()) {
     try {
-      this.#restricter.validate(file, files)
+      this.#restricter.validate(file)
+      this.#restricter.validateTotals(files, [file])
     } catch (err) {
       return err
     }
@@ -508,13 +509,7 @@ class Uppy {
       newFile = onBeforeFileAddedResult
     }
 
-    try {
-      const filesArray = Object.keys(files).map(i => files[i])
-      this.#restricter.validate(newFile, filesArray)
-    } catch (err) {
-      this.#informAndEmit(err, newFile)
-      throw err
-    }
+    this.#restricter.validate(newFile)
 
     // Users are asked to re-select recovered files without data,
     // and to keep the progress, meta and everthing else, we only replace said data
@@ -556,7 +551,16 @@ class Uppy {
     this.#assertNewUploadAllowed(file)
 
     const { files } = this.getState()
-    const newFile = this.#checkAndCreateFileStateObject(files, file)
+
+    let newFile
+
+    try {
+      newFile = this.#checkAndCreateFileStateObject(files, file)
+      this.#restricter.validateTotals(Object.values(files), [newFile])
+    } catch (err) {
+      this.#informAndEmit(err, file)
+      throw err
+    }
 
     this.setState({
       files: {
@@ -589,36 +593,47 @@ class Uppy {
     const newFiles = []
     const errors = []
     for (let i = 0; i < fileDescriptors.length; i++) {
+      const fileDescriptor = fileDescriptors[i]
       try {
-        const newFile = this.#checkAndCreateFileStateObject(files, fileDescriptors[i])
+        const newFile = this.#checkAndCreateFileStateObject(files, fileDescriptor)
 
         files[newFile.id] = newFile
         newFiles.push(newFile)
       } catch (err) {
+        this.#informAndEmit(err, fileDescriptor)
         if (!err.isRestriction) {
           errors.push(err)
         }
       }
     }
 
-    this.setState({ files })
+    try {
+      this.#restricter.validateTotals(Object.values(this.getState().files), newFiles)
 
-    newFiles.forEach((newFile) => {
-      this.emit('file-added', newFile)
-    })
+      this.setState({ files })
 
-    this.emit('files-added', newFiles)
-
-    if (newFiles.length > 5) {
-      this.log(`Added batch of ${newFiles.length} files`)
-    } else {
-      Object.keys(newFiles).forEach(fileID => {
-        this.log(`Added file: ${newFiles[fileID].name}\n id: ${newFiles[fileID].id}\n type: ${newFiles[fileID].type}`)
+      newFiles.forEach((newFile) => {
+        this.emit('file-added', newFile)
       })
-    }
 
-    if (newFiles.length > 0) {
-      this.#startIfAutoProceed()
+      this.emit('files-added', newFiles)
+
+      if (newFiles.length > 5) {
+        this.log(`Added batch of ${newFiles.length} files`)
+      } else {
+        Object.keys(newFiles).forEach(fileID => {
+          this.log(`Added file: ${newFiles[fileID].name}\n id: ${newFiles[fileID].id}\n type: ${newFiles[fileID].type}`)
+        })
+      }
+
+      if (newFiles.length > 0) {
+        this.#startIfAutoProceed()
+      }
+    } catch (err) {
+      this.#informAndEmit(err, fileDescriptors[0])
+      if (!err.isRestriction) {
+        errors.push(err)
+      }
     }
 
     if (errors.length > 0) {
