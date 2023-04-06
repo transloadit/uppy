@@ -384,8 +384,7 @@ class Uppy {
 
   validateRestrictions (file, files = this.getFiles()) {
     try {
-      this.#restricter.validate(file)
-      this.#restricter.validateTotals(files, [file])
+      this.#restricter.validate(files, [file])
     } catch (err) {
       return err
     }
@@ -498,7 +497,7 @@ class Uppy {
       preview: fileDescriptor.preview,
     }
 
-    const onBeforeFileAddedResult = this.opts.onBeforeFileAdded(newFile, files)
+    const onBeforeFileAddedResult = this.opts.onBeforeFileAdded(newFile, { ...files })
 
     if (onBeforeFileAddedResult === false) {
       // Don’t show UI info for this error, as it should be done by the developer
@@ -509,7 +508,7 @@ class Uppy {
       newFile = onBeforeFileAddedResult
     }
 
-    this.#restricter.validate(newFile)
+    this.#restricter.validateSingleFile(newFile)
 
     // Users are asked to re-select recovered files without data,
     // and to keep the progress, meta and everthing else, we only replace said data
@@ -517,7 +516,7 @@ class Uppy {
       newFile = {
         ...files[newFile.id],
         data: fileDescriptor.data,
-        isGhost: false,
+        isGhost: false, // todo document why we do this
       }
       this.log(`Replaced the blob in the restored ghost file: ${newFile.name}, ${newFile.id}`)
     }
@@ -539,6 +538,47 @@ class Uppy {
     }
   }
 
+  #checkAndCreateFileStateObjects (filesToAdd) {
+    const { files: existingFiles } = this.getState()
+
+    // create a copy of the files object only once
+    const newFilesState = { ...existingFiles }
+    const validFilesToAdd = []
+    const errors = []
+
+    for (const fileToAdd of filesToAdd) {
+      try {
+        const newFile = this.#checkAndCreateFileStateObject(newFilesState, fileToAdd)
+
+        newFilesState[newFile.id] = newFile
+        validFilesToAdd.push(newFile)
+      } catch (err) {
+        this.#informAndEmit(err, fileToAdd)
+        errors.push(err)
+      }
+    }
+
+    try {
+      this.#restricter.validateAggregateRestrictions(Object.values(existingFiles), validFilesToAdd)
+    } catch (err) {
+      this.#informAndEmit(err, filesToAdd[0])
+      errors.push(err)
+
+      // If we have any aggregate error, don't allow adding this batch
+      return {
+        newFilesState: existingFiles,
+        validFilesToAdd: [],
+        errors,
+      }
+    }
+
+    return {
+      newFilesState,
+      validFilesToAdd,
+      errors,
+    }
+  }
+
   /**
    * Add a new file to `state.files`. This will run `onBeforeFileAdded`,
    * try to guess file type in a clever way, check file against restrictions,
@@ -550,32 +590,21 @@ class Uppy {
   addFile (file) {
     this.#assertNewUploadAllowed(file)
 
-    const { files } = this.getState()
+    const { newFilesState, validFilesToAdd, errors } = this.#checkAndCreateFileStateObjects([file])
 
-    let newFile
+    if (errors.length > 0) throw errors[0]
 
-    try {
-      newFile = this.#checkAndCreateFileStateObject(files, file)
-      this.#restricter.validateTotals(Object.values(files), [newFile])
-    } catch (err) {
-      this.#informAndEmit(err, file)
-      throw err
-    }
+    const [validFileToAdd] = validFilesToAdd
 
-    this.setState({
-      files: {
-        ...files,
-        [newFile.id]: newFile,
-      },
-    })
+    this.setState({ files: newFilesState })
 
-    this.emit('file-added', newFile)
-    this.emit('files-added', [newFile])
-    this.log(`Added file: ${newFile.name}, ${newFile.id}, mime type: ${newFile.type}`)
+    this.emit('file-added', validFileToAdd)
+    this.emit('files-added', validFilesToAdd)
+    this.log(`Added file: ${validFileToAdd.name}, ${validFileToAdd.id}, mime type: ${validFileToAdd.type}`)
 
     this.#startIfAutoProceed()
 
-    return newFile.id
+    return validFileToAdd.id
   }
 
   /**
@@ -588,70 +617,46 @@ class Uppy {
   addFiles (fileDescriptors) {
     this.#assertNewUploadAllowed()
 
-    // create a copy of the files object only once
-    const files = { ...this.getState().files }
-    const newFiles = []
-    const errors = []
-    for (let i = 0; i < fileDescriptors.length; i++) {
-      const fileDescriptor = fileDescriptors[i]
-      try {
-        const newFile = this.#checkAndCreateFileStateObject(files, fileDescriptor)
+    const { newFilesState, validFilesToAdd, errors } = this.#checkAndCreateFileStateObjects(fileDescriptors)
 
-        files[newFile.id] = newFile
-        newFiles.push(newFile)
-      } catch (err) {
-        this.#informAndEmit(err, fileDescriptor)
-        if (!err.isRestriction) {
-          errors.push(err)
-        }
-      }
-    }
+    const nonRestrictionErrors = errors.filter((error) => !error.isRestriction)
 
-    try {
-      this.#restricter.validateTotals(Object.values(this.getState().files), newFiles)
+    this.setState({ files: newFilesState })
 
-      this.setState({ files })
+    validFilesToAdd.forEach((file) => {
+      this.emit('file-added', file)
+    })
 
-      newFiles.forEach((newFile) => {
-        this.emit('file-added', newFile)
+    this.emit('files-added', validFilesToAdd)
+
+    if (validFilesToAdd.length > 5) {
+      this.log(`Added batch of ${validFilesToAdd.length} files`)
+    } else {
+      Object.values(validFilesToAdd).forEach((file) => {
+        this.log(`Added file: ${file.name}\n id: ${file.id}\n type: ${file.type}`)
       })
-
-      this.emit('files-added', newFiles)
-
-      if (newFiles.length > 5) {
-        this.log(`Added batch of ${newFiles.length} files`)
-      } else {
-        Object.keys(newFiles).forEach(fileID => {
-          this.log(`Added file: ${newFiles[fileID].name}\n id: ${newFiles[fileID].id}\n type: ${newFiles[fileID].type}`)
-        })
-      }
-
-      if (newFiles.length > 0) {
-        this.#startIfAutoProceed()
-      }
-    } catch (err) {
-      this.#informAndEmit(err, fileDescriptors[0])
-      if (!err.isRestriction) {
-        errors.push(err)
-      }
     }
 
-    if (errors.length > 0) {
+    if (validFilesToAdd.length > 0) {
+      this.#startIfAutoProceed()
+    }
+
+    if (nonRestrictionErrors.length > 0) {
       let message = 'Multiple errors occurred while adding files:\n'
-      errors.forEach((subError) => {
+      nonRestrictionErrors.forEach((subError) => {
         message += `\n * ${subError.message}`
       })
 
       this.info({
-        message: this.i18n('addBulkFilesFailed', { smart_count: errors.length }),
+        message: this.i18n('addBulkFilesFailed', { smart_count: nonRestrictionErrors.length }),
         details: message,
       }, 'error', this.opts.infoTimeout)
 
       if (typeof AggregateError === 'function') {
-        throw new AggregateError(errors, message)
+        throw new AggregateError(nonRestrictionErrors, message)
       } else {
         const err = new Error(message)
-        err.errors = errors
+        err.errors = nonRestrictionErrors
         throw err
       }
     }

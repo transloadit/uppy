@@ -30,12 +30,13 @@ class Restricter {
     }
   }
 
-  validateTotals (existingFiles, newFiles) {
+  // Because these operations are slow, we cannot run them for every file (if we are adding multiple files)
+  validateAggregateRestrictions (existingFiles, addingFiles) {
     const { maxTotalFileSize, maxNumberOfFiles } = this.getOpts().restrictions
 
     if (maxNumberOfFiles) {
       const nonGhostFiles = existingFiles.filter(f => !f.isGhost)
-      if (nonGhostFiles.length + newFiles.length > maxNumberOfFiles) {
+      if (nonGhostFiles.length + addingFiles.length > maxNumberOfFiles) {
         throw new RestrictionError(`${this.i18n('youCanOnlyUploadX', { smart_count: maxNumberOfFiles })}`)
       }
     }
@@ -43,14 +44,14 @@ class Restricter {
     if (maxTotalFileSize) {
       let totalFilesSize = existingFiles.reduce((total, f) => (total + f.size), 0)
 
-      for (const newFile of newFiles) {
-        if (newFile.size != null) { // We can't check maxTotalFileSize if the size is unknown.
-          totalFilesSize += newFile.size
+      for (const addingFile of addingFiles) {
+        if (addingFile.size != null) { // We can't check maxTotalFileSize if the size is unknown.
+          totalFilesSize += addingFile.size
 
           if (totalFilesSize > maxTotalFileSize) {
             throw new RestrictionError(this.i18n('exceedsSize', {
               size: prettierBytes(maxTotalFileSize),
-              file: newFile.name,
+              file: addingFile.name,
             }))
           }
         }
@@ -58,7 +59,7 @@ class Restricter {
     }
   }
 
-  validate (file) {
+  validateSingleFile (file) {
     const { maxFileSize, minFileSize, allowedFileTypes } = this.getOpts().restrictions
 
     if (allowedFileTypes) {
@@ -96,6 +97,13 @@ class Restricter {
         size: prettierBytes(minFileSize),
       }))
     }
+  }
+
+  validate (existingFiles, addingFiles) {
+    addingFiles.forEach((addingFile) => {
+      this.validateSingleFile(addingFile)
+    })
+    this.validateAggregateRestrictions(existingFiles, addingFiles)
   }
 
   validateMinNumberOfFiles (files) {
