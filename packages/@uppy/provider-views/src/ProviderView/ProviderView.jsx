@@ -301,6 +301,9 @@ export default class ProviderView extends View {
               folder: name,
             })
           } else {
+            // TODO we don't really know at this point whether any files were actually added
+            // (only later after addFiles has been called) so we should probably rewrite this.
+            // Example: If all files fail to add due to restriction error, it will still say "Added 100 files from folder"
             message = this.plugin.uppy.i18n('folderAdded', {
               smart_count: numNewFiles, folder: name,
             })

@@ -16,6 +16,7 @@ import {
   Restricter,
   defaultOptions as defaultRestrictionOptions,
   RestrictionError,
+  FileRestrictionError,
 } from './Restricter.js'
 
 import packageJson from '../package.json'
@@ -362,24 +363,29 @@ class Uppy {
 
   /*
   * @constructs
-  * @param { Error } error
+  * @param { Error[] } errors
   * @param { undefined } file
   */
   /*
   * @constructs
   * @param { RestrictionError } error
-  * @param { UppyFile | undefined } file
   */
-  #informAndEmit (error, file) {
-    const { message, details = '' } = error
+  #informAndEmit (errors) {
+    for (const error of errors) {
+      const { file, isRestriction } = error
 
-    if (error.isRestriction) {
-      this.emit('restriction-failed', file, error)
-    } else {
-      this.emit('error', error)
+      if (isRestriction) {
+        this.emit('restriction-failed', file, error)
+      } else {
+        this.emit('error', error)
+      }
+      this.log(error, 'warning')
     }
-    this.info({ message, details }, 'error', this.opts.infoTimeout)
-    this.log(error, 'warning')
+
+    // don't flood the user: only show the first 5 toasts
+    errors.filter((error) => error.isUserFacing).slice(0, 5).forEach(({ message, details = '' }) => {
+      this.info({ message, details }, 'error', this.opts.infoTimeout)
+    })
   }
 
   validateRestrictions (file, files = this.getFiles()) {
@@ -417,8 +423,8 @@ class Uppy {
     const { allowNewUpload } = this.getState()
 
     if (allowNewUpload === false) {
-      const error = new RestrictionError(this.i18n('noMoreFilesAllowed'))
-      this.#informAndEmit(error, file)
+      const error = new FileRestrictionError(this.i18n('noMoreFilesAllowed'), { file })
+      this.#informAndEmit([error])
       throw error
     }
   }
@@ -461,9 +467,7 @@ class Uppy {
     const id = getSafeFileId(fileDescriptor)
 
     if (this.checkIfFileAlreadyExists(id)) {
-      const error = new RestrictionError(this.i18n('noDuplicates', { fileName }))
-      this.#informAndEmit(error, fileDescriptor)
-      throw error
+      throw new FileRestrictionError(this.i18n('noDuplicates', { fileName }), { file: fileDescriptor })
     }
 
     const meta = fileDescriptor.meta || {}
@@ -501,9 +505,7 @@ class Uppy {
 
     if (onBeforeFileAddedResult === false) {
       // Don’t show UI info for this error, as it should be done by the developer
-      const error = new RestrictionError('Cannot add the file because onBeforeFileAdded returned false.')
-      this.emit('restriction-failed', fileDescriptor, error)
-      throw error
+      throw new FileRestrictionError('Cannot add the file because onBeforeFileAdded returned false.', { isUserFacing: false, file: fileDescriptor })
     } else if (typeof onBeforeFileAddedResult === 'object' && onBeforeFileAddedResult !== null) {
       newFile = onBeforeFileAddedResult
     }
@@ -553,7 +555,6 @@ class Uppy {
         newFilesState[newFile.id] = newFile
         validFilesToAdd.push(newFile)
       } catch (err) {
-        this.#informAndEmit(err, fileToAdd)
         errors.push(err)
       }
     }
@@ -561,7 +562,6 @@ class Uppy {
     try {
       this.#restricter.validateAggregateRestrictions(Object.values(existingFiles), validFilesToAdd)
     } catch (err) {
-      this.#informAndEmit(err, filesToAdd[0])
       errors.push(err)
 
       // If we have any aggregate error, don't allow adding this batch
@@ -592,6 +592,9 @@ class Uppy {
 
     const { newFilesState, validFilesToAdd, errors } = this.#checkAndCreateFileStateObjects([file])
 
+    const restrictionErrors = errors.filter((error) => error.isRestriction)
+    this.#informAndEmit(restrictionErrors)
+
     if (errors.length > 0) throw errors[0]
 
     const [validFileToAdd] = validFilesToAdd
@@ -620,6 +623,8 @@ class Uppy {
     const { newFilesState, validFilesToAdd, errors } = this.#checkAndCreateFileStateObjects(fileDescriptors)
 
     const nonRestrictionErrors = errors.filter((error) => !error.isRestriction)
+    const restrictionErrors = errors.filter((error) => error.isRestriction)
+    this.#informAndEmit(restrictionErrors)
 
     this.setState({ files: newFilesState })
 
@@ -976,14 +981,15 @@ class Uppy {
 
       if (typeof error === 'object' && error.message) {
         const newError = new Error(error.message)
+        newError.isUserFacing = true // todo maybe don't do this with all errors?
         newError.details = error.message
         if (error.details) {
           newError.details += ` ${error.details}`
         }
         newError.message = this.i18n('failedToUpload', { file: file?.name })
-        this.#informAndEmit(newError)
+        this.#informAndEmit([newError])
       } else {
-        this.#informAndEmit(error)
+        this.#informAndEmit([error])
       }
     })
 
@@ -1542,7 +1548,7 @@ class Uppy {
     return Promise.resolve()
       .then(() => this.#restricter.validateMinNumberOfFiles(files))
       .catch((err) => {
-        this.#informAndEmit(err)
+        this.#informAndEmit([err])
         throw err
       })
       .then(() => {
