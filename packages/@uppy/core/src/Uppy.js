@@ -382,10 +382,19 @@ class Uppy {
       this.log(error, 'warning')
     }
 
-    // don't flood the user: only show the first 5 toasts
-    errors.filter((error) => error.isUserFacing).slice(0, 5).forEach(({ message, details = '' }) => {
+    const userFacingErrors = errors.filter((error) => error.isUserFacing)
+
+    // don't flood the user: only show the first 4 toasts
+    const maxNumToShow = 4
+    const firstErrors = userFacingErrors.slice(0, maxNumToShow)
+    const additionalErrors = userFacingErrors.slice(maxNumToShow)
+    firstErrors.forEach(({ message, details = '' }) => {
       this.info({ message, details }, 'error', this.opts.infoTimeout)
     })
+
+    if (additionalErrors.length > 0) {
+      this.info({ message: this.i18n('additionalRestrictionsFailed', { count: additionalErrors.length }) })
+    }
   }
 
   validateRestrictions (file, files = this.getFiles()) {
@@ -423,7 +432,10 @@ class Uppy {
     const { allowNewUpload } = this.getState()
 
     if (allowNewUpload === false) {
-      const error = new FileRestrictionError(this.i18n('noMoreFilesAllowed'), { file })
+      const error = file != null
+        ? new FileRestrictionError(this.i18n('noMoreFilesAllowed'), { file })
+        : new RestrictionError(this.i18n('noMoreFilesAllowed'))
+
       this.#informAndEmit([error])
       throw error
     }
@@ -440,35 +452,23 @@ class Uppy {
 
   /**
    * Create a file state object based on user-provided `addFile()` options.
-   *
-   * Note this is extremely side-effectful and should only be done when a file state object
-   * will be added to state immediately afterward!
-   *
-   * The `files` value is passed in because it may be updated by the caller without updating the store.
    */
-  #checkAndCreateFileStateObject (files, fileDescriptor) {
+  #transformFile (fileDescriptorOrFile) {
     // Uppy expects files in { name, type, size, data } format.
     // If the actual File object is passed from input[type=file] or drag-drop,
     // we normalize it to match Uppy file object
-    if (fileDescriptor instanceof File) {
-      // eslint-disable-next-line no-param-reassign
-      fileDescriptor = {
-        name: fileDescriptor.name,
-        type: fileDescriptor.type,
-        size: fileDescriptor.size,
-        data: fileDescriptor,
-      }
-    }
+    const fileDescriptor = fileDescriptorOrFile instanceof File ? {
+      name: fileDescriptorOrFile.name,
+      type: fileDescriptorOrFile.type,
+      size: fileDescriptorOrFile.size,
+      data: fileDescriptorOrFile,
+    } : fileDescriptorOrFile
 
     const fileType = getFileType(fileDescriptor)
     const fileName = getFileName(fileType, fileDescriptor)
     const fileExtension = getFileNameAndExtension(fileName).extension
     const isRemote = Boolean(fileDescriptor.isRemote)
     const id = getSafeFileId(fileDescriptor)
-
-    if (this.checkIfFileAlreadyExists(id)) {
-      throw new FileRestrictionError(this.i18n('noDuplicates', { fileName }), { file: fileDescriptor })
-    }
 
     const meta = fileDescriptor.meta || {}
     meta.name = fileName
@@ -477,7 +477,7 @@ class Uppy {
     // `null` means the size is unknown.
     const size = Number.isFinite(fileDescriptor.data.size) ? fileDescriptor.data.size : null
 
-    let newFile = {
+    return {
       source: fileDescriptor.source || '',
       id,
       name: fileName,
@@ -500,30 +500,6 @@ class Uppy {
       remote: fileDescriptor.remote || '',
       preview: fileDescriptor.preview,
     }
-
-    const onBeforeFileAddedResult = this.opts.onBeforeFileAdded(newFile, files)
-
-    if (onBeforeFileAddedResult === false) {
-      // Don’t show UI info for this error, as it should be done by the developer
-      throw new FileRestrictionError('Cannot add the file because onBeforeFileAdded returned false.', { isUserFacing: false, file: fileDescriptor })
-    } else if (typeof onBeforeFileAddedResult === 'object' && onBeforeFileAddedResult !== null) {
-      newFile = onBeforeFileAddedResult
-    }
-
-    this.#restricter.validateSingleFile(newFile)
-
-    // Users are asked to re-select recovered files without data,
-    // and to keep the progress, meta and everthing else, we only replace said data
-    if (files[newFile.id]?.isGhost) {
-      newFile = {
-        ...files[newFile.id],
-        data: fileDescriptor.data,
-        isGhost: false, // todo document why we do this
-      }
-      this.log(`Replaced the blob in the restored ghost file: ${newFile.name}, ${newFile.id}`)
-    }
-
-    return newFile
   }
 
   // Schedule an upload if `autoProceed` is enabled.
@@ -540,19 +516,48 @@ class Uppy {
     }
   }
 
-  #checkAndCreateFileStateObjects (filesToAdd) {
+  #checkAndUpdateFileState (filesToAdd) {
     const { files: existingFiles } = this.getState()
 
     // create a copy of the files object only once
-    const newFilesState = { ...existingFiles }
+    const nextFilesState = { ...existingFiles }
     const validFilesToAdd = []
     const errors = []
 
     for (const fileToAdd of filesToAdd) {
       try {
-        const newFile = this.#checkAndCreateFileStateObject(newFilesState, fileToAdd)
+        let newFile = this.#transformFile(fileToAdd)
 
-        newFilesState[newFile.id] = newFile
+        // If a file has been recovered (Golden Retriever), but we were unable to recover its data (probably too large),
+        // users are asked to re-select these half-recovered files and then this method will be called again.
+        // In order to keep the progress, meta and everthing else, we keep the existing file,
+        // but we replace `data`, and we remove `isGhost`, because the file is no longer a ghost now
+        if (existingFiles[newFile.id]?.isGhost) {
+          const { isGhost, ...existingFileState } = existingFiles[newFile.id]
+          newFile = {
+            ...existingFileState,
+            data: fileToAdd.data,
+          }
+          this.log(`Replaced the blob in the restored ghost file: ${newFile.name}, ${newFile.id}`)
+        }
+
+        if (this.checkIfFileAlreadyExists(newFile.id)) {
+          throw new FileRestrictionError(this.i18n('noDuplicates', { fileName: newFile.name }), { file: fileToAdd })
+        }
+
+        const onBeforeFileAddedResult = this.opts.onBeforeFileAdded(newFile, nextFilesState)
+
+        if (onBeforeFileAddedResult === false) {
+          // Don’t show UI info for this error, as it should be done by the developer
+          throw new FileRestrictionError('Cannot add the file because onBeforeFileAdded returned false.', { isUserFacing: false, file: fileToAdd })
+        } else if (typeof onBeforeFileAddedResult === 'object' && onBeforeFileAddedResult !== null) {
+          newFile = onBeforeFileAddedResult
+        }
+
+        this.#restricter.validateSingleFile(newFile)
+
+        // need to add it to the new local state immediately, so we can use the state to validate the next files too
+        nextFilesState[newFile.id] = newFile
         validFilesToAdd.push(newFile)
       } catch (err) {
         errors.push(err)
@@ -560,20 +565,22 @@ class Uppy {
     }
 
     try {
+      // need to run this separately because it's much more slow, so if we run it inside the for-loop it will be very slow
+      // when many files are added
       this.#restricter.validateAggregateRestrictions(Object.values(existingFiles), validFilesToAdd)
     } catch (err) {
       errors.push(err)
 
       // If we have any aggregate error, don't allow adding this batch
       return {
-        newFilesState: existingFiles,
+        nextFilesState: existingFiles,
         validFilesToAdd: [],
         errors,
       }
     }
 
     return {
-      newFilesState,
+      nextFilesState,
       validFilesToAdd,
       errors,
     }
@@ -590,24 +597,24 @@ class Uppy {
   addFile (file) {
     this.#assertNewUploadAllowed(file)
 
-    const { newFilesState, validFilesToAdd, errors } = this.#checkAndCreateFileStateObjects([file])
+    const { nextFilesState, validFilesToAdd, errors } = this.#checkAndUpdateFileState([file])
 
     const restrictionErrors = errors.filter((error) => error.isRestriction)
     this.#informAndEmit(restrictionErrors)
 
     if (errors.length > 0) throw errors[0]
 
-    const [validFileToAdd] = validFilesToAdd
+    this.setState({ files: nextFilesState })
 
-    this.setState({ files: newFilesState })
+    const [firstValidFileToAdd] = validFilesToAdd
 
-    this.emit('file-added', validFileToAdd)
+    this.emit('file-added', firstValidFileToAdd)
     this.emit('files-added', validFilesToAdd)
-    this.log(`Added file: ${validFileToAdd.name}, ${validFileToAdd.id}, mime type: ${validFileToAdd.type}`)
+    this.log(`Added file: ${firstValidFileToAdd.name}, ${firstValidFileToAdd.id}, mime type: ${firstValidFileToAdd.type}`)
 
     this.#startIfAutoProceed()
 
-    return validFileToAdd.id
+    return firstValidFileToAdd.id
   }
 
   /**
@@ -620,13 +627,15 @@ class Uppy {
   addFiles (fileDescriptors) {
     this.#assertNewUploadAllowed()
 
-    const { newFilesState, validFilesToAdd, errors } = this.#checkAndCreateFileStateObjects(fileDescriptors)
+    const { nextFilesState, validFilesToAdd, errors } = this.#checkAndUpdateFileState(fileDescriptors)
 
-    const nonRestrictionErrors = errors.filter((error) => !error.isRestriction)
     const restrictionErrors = errors.filter((error) => error.isRestriction)
     this.#informAndEmit(restrictionErrors)
 
-    this.setState({ files: newFilesState })
+    const nonRestrictionErrors = errors.filter((error) => !error.isRestriction)
+
+    // todo shouldn't we only setState if we are not throwing an error? (see below)
+    this.setState({ files: nextFilesState })
 
     validFilesToAdd.forEach((file) => {
       this.emit('file-added', file)
