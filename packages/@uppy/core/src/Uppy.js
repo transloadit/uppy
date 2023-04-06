@@ -513,7 +513,7 @@ class Uppy {
 
     // Users are asked to re-select recovered files without data,
     // and to keep the progress, meta and everthing else, we only replace said data
-    if (files[newFile.id] && files[newFile.id].isGhost) {
+    if (files[newFile.id]?.isGhost) {
       newFile = {
         ...files[newFile.id],
         data: fileDescriptor.data,
