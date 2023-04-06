@@ -684,8 +684,10 @@ describe('src/Core', () => {
   describe('adding a file', () => {
     it('should call onBeforeFileAdded if it was specified in the options when initialising the class', () => {
       const onBeforeFileAdded = jest.fn()
+
       const core = new Core({
-        onBeforeFileAdded,
+        // need to capture a snapshot of files, because files will change in the next tick, thus failing the expect below
+        onBeforeFileAdded: (file, files) => onBeforeFileAdded(file, { ...files }),
       })
 
       core.addFile({

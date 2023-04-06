@@ -501,7 +501,7 @@ class Uppy {
       preview: fileDescriptor.preview,
     }
 
-    const onBeforeFileAddedResult = this.opts.onBeforeFileAdded(newFile, { ...files })
+    const onBeforeFileAddedResult = this.opts.onBeforeFileAdded(newFile, files)
 
     if (onBeforeFileAddedResult === false) {
       // Don’t show UI info for this error, as it should be done by the developer
