@@ -183,17 +183,25 @@ export default class ThumbnailGenerator extends UIPlugin {
       aspect = img.height / img.width
     }
 
+    let targetWidth = width
+    let targetHeight = height
+
+    // Thumbnail shouldn’t be enlarged / upscaled, only reduced.
+    // If img is already smaller than width/height, leave it as is.
+    if (img.width < width) targetWidth = img.width
+    if (img.height < height) targetHeight = img.height
+
     if (width != null) {
       return {
-        width,
-        height: Math.round(width / aspect),
+        width: targetWidth,
+        height: Math.round(targetWidth / aspect),
       }
     }
 
     if (height != null) {
       return {
-        width: Math.round(height * aspect),
-        height,
+        width: Math.round(targetHeight * aspect),
+        height: targetHeight,
       }
     }
 
