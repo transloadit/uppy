@@ -161,6 +161,9 @@ export default class ThumbnailGenerator extends UIPlugin {
 
     return Promise.all([onload, orientationPromise])
       .then(([image, orientation]) => {
+        const originalImageDimensions = { width: image.width, height: image.height }
+        this.uppy.setFileMeta(file.id, { dimensions: originalImageDimensions })
+
         const dimensions = this.getProportionalDimensions(image, targetWidth, targetHeight, orientation.deg)
         const rotatedImage = rotateImage(image, orientation)
         const resizedImage = this.resizeImage(rotatedImage, dimensions.width, dimensions.height)
