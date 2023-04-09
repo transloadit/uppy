@@ -653,6 +653,8 @@ export default class Dashboard extends UIPlugin {
       }
     }
 
+    this.uppy.log('[Dashboard] Processing dropped files')
+
     // Add all dropped files
     const files = await getDroppedFiles(event.dataTransfer, { logDropError })
     if (files.length > 0) {

@@ -1430,7 +1430,7 @@ describe('src/Core', () => {
       const promise = new Promise((resolve) => { proceedUpload = resolve })
       const finishPromise = new Promise((resolve) => { finishUpload = resolve })
       core.addUploader(async ([id]) => {
-        core.emit('upload-started', core.getFile(id))
+        core.emit('upload-start', [core.getFile(id)])
         await promise
         core.emit('upload-progress', core.getFile(id), {
           bytesTotal: 3456,
@@ -1450,7 +1450,11 @@ describe('src/Core', () => {
       core.calculateTotalProgress()
 
       const uploadPromise = core.upload()
-      await new Promise((resolve) => core.once('upload-started', resolve))
+      await Promise.all([
+        new Promise((resolve) => core.once('upload-start', resolve)),
+        // todo backward compat: remove in next major
+        new Promise((resolve) => core.once('upload-started', resolve)),
+      ])
 
       expect(core.getFiles()[0].size).toBeNull()
       expect(core.getFiles()[0].progress).toMatchObject({
@@ -1493,7 +1497,7 @@ describe('src/Core', () => {
       const core = new Core()
 
       core.once('file-added', (file) => {
-        core.emit('upload-started', file)
+        core.emit('upload-start', [file])
         core.emit('upload-progress', file, {
           bytesTotal: 3456,
           bytesUploaded: 1234,
@@ -1507,7 +1511,7 @@ describe('src/Core', () => {
       })
 
       core.once('file-added', (file) => {
-        core.emit('upload-started', file)
+        core.emit('upload-start', [file])
         core.emit('upload-progress', file, {
           bytesTotal: null,
           bytesUploaded: null,

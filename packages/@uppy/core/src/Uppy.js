@@ -179,6 +179,23 @@ class Uppy {
     return this.store.getState()
   }
 
+  patchFilesState (filesWithNewState) {
+    const existingFilesState = this.getState().files
+
+    this.setState({
+      files: {
+        ...existingFilesState,
+        ...Object.fromEntries(Object.entries(filesWithNewState).map(([fileID, newFileState]) => ([
+          fileID,
+          {
+            ...existingFilesState[fileID],
+            ...newFileState,
+          },
+        ]))),
+      },
+    })
+  }
+
   /**
    * Shorthand to set state for a specific file.
    */
@@ -187,9 +204,7 @@ class Uppy {
       throw new Error(`Can’t set state for ${fileID} (the file could have been removed)`)
     }
 
-    this.setState({
-      files: { ...this.getState().files, [fileID]: { ...this.getState().files[fileID], ...state } },
-    })
+    this.patchFilesState({ [fileID]: state })
   }
 
   i18nInit () {
@@ -322,6 +337,10 @@ class Uppy {
   getFiles () {
     const { files } = this.getState()
     return Object.values(files)
+  }
+
+  getFilesByIds (ids) {
+    return ids.map((id) => this.getFile(id))
   }
 
   getObjectOfFilesPerState () {
@@ -1019,20 +1038,35 @@ class Uppy {
       this.setState({ error: null })
     })
 
-    this.on('upload-started', (file) => {
-      if (file == null || !this.getFile(file.id)) {
-        this.log(`Not setting progress for a file that has been removed: ${file?.id}`)
-        return
-      }
-      this.setFileState(file.id, {
-        progress: {
-          uploadStarted: Date.now(),
-          uploadComplete: false,
-          percentage: 0,
-          bytesUploaded: 0,
-          bytesTotal: file.size,
-        },
+    const onUploadStarted = (files) => {
+      const filesFiltered = files.filter((file) => {
+        const exists = (file != null && this.getFile(file.id))
+        if (!exists) this.log(`Not setting progress for a file that has been removed: ${file?.id}`)
+        return exists
       })
+
+      const filesState = Object.fromEntries(filesFiltered.map((file) => ([
+        file.id,
+        {
+          progress: {
+            uploadStarted: Date.now(),
+            uploadComplete: false,
+            percentage: 0,
+            bytesUploaded: 0,
+            bytesTotal: file.size,
+          },
+        },
+      ])))
+
+      this.patchFilesState(filesState)
+    }
+
+    this.on('upload-start', (files) => {
+      files.forEach((file) => {
+        // todo backward compat, remove this event in a next major
+        this.emit('upload-started', file)
+      })
+      onUploadStarted(files)
     })
 
     this.on('upload-progress', this.calculateProgress)
@@ -1441,9 +1475,12 @@ class Uppy {
    * @private
    */
   async #runUpload (uploadID) {
-    let { currentUploads } = this.getState()
-    let currentUpload = currentUploads[uploadID]
-    const restoreStep = currentUpload.step || 0
+    const getCurrentUpload = () => {
+      const { currentUploads } = this.getState()
+      return currentUploads[uploadID]
+    }
+
+    let currentUpload = getCurrentUpload()
 
     const steps = [
       ...this.#preProcessors,
@@ -1451,31 +1488,30 @@ class Uppy {
       ...this.#postProcessors,
     ]
     try {
-      for (let step = restoreStep; step < steps.length; step++) {
+      for (let step = currentUpload.step || 0; step < steps.length; step++) {
         if (!currentUpload) {
           break
         }
         const fn = steps[step]
 
-        const updatedUpload = {
-          ...currentUpload,
-          step,
-        }
-
         this.setState({
           currentUploads: {
-            ...currentUploads,
-            [uploadID]: updatedUpload,
+            ...this.getState().currentUploads,
+            [uploadID]: {
+              ...currentUpload,
+              step,
+            },
           },
         })
 
+        const { fileIDs } = currentUpload
+
         // TODO give this the `updatedUpload` object as its only parameter maybe?
         // Otherwise when more metadata may be added to the upload this would keep getting more parameters
-        await fn(updatedUpload.fileIDs, uploadID)
+        await fn(fileIDs, uploadID)
 
         // Update currentUpload value in case it was modified asynchronously.
-        currentUploads = this.getState().currentUploads
-        currentUpload = currentUploads[uploadID]
+        currentUpload = getCurrentUpload()
       }
     } catch (err) {
       this.#removeUpload(uploadID)
@@ -1507,8 +1543,7 @@ class Uppy {
       await this.addResultData(uploadID, { successful, failed, uploadID })
 
       // Update currentUpload value in case it was modified asynchronously.
-      currentUploads = this.getState().currentUploads
-      currentUpload = currentUploads[uploadID]
+      currentUpload = getCurrentUpload()
     }
     // Emit completion events.
     // This is in a separate function so that the `currentUploads` variable

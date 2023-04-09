@@ -28,6 +28,7 @@
 import BasePlugin from '@uppy/core/lib/BasePlugin.js'
 import { RateLimitedQueue, internalRateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
 import { RequestClient } from '@uppy/companion-client'
+import { filterNonFailedFiles, filterFilesToEmitUploadStarted } from '@uppy/utils/lib/fileFilters'
 
 import packageJson from '../package.json'
 import MiniXHRUpload from './MiniXHRUpload.js'
@@ -163,7 +164,7 @@ export default class AwsS3 extends BasePlugin {
       .then(assertServerError)
   }
 
-  #handleUpload = (fileIDs) => {
+  #handleUpload = async (fileIDs) => {
     /**
      * keep track of `getUploadParameters()` responses
      * so we can cancel the calls individually using just a file ID
@@ -178,10 +179,11 @@ export default class AwsS3 extends BasePlugin {
     }
     this.uppy.on('file-removed', onremove)
 
-    fileIDs.forEach((id) => {
-      const file = this.uppy.getFile(id)
-      this.uppy.emit('upload-started', file)
-    })
+    const files = this.uppy.getFilesByIds(fileIDs)
+
+    const filesFiltered = filterNonFailedFiles(files)
+    const filesToEmit = filterFilesToEmitUploadStarted(filesFiltered)
+    this.uppy.emit('upload-start', filesToEmit)
 
     const getUploadParameters = this.#requests.wrapPromiseFunction((file) => {
       return this.opts.getUploadParameters(file)

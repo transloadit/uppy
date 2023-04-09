@@ -4,7 +4,7 @@ import EventTracker from '@uppy/utils/lib/EventTracker'
 import emitSocketProgress from '@uppy/utils/lib/emitSocketProgress'
 import getSocketHost from '@uppy/utils/lib/getSocketHost'
 import { RateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
-
+import { filterNonFailedFiles, filterFilesToEmitUploadStarted } from '@uppy/utils/lib/fileFilters'
 import { createAbortError } from '@uppy/utils/lib/AbortController'
 import packageJson from '../package.json'
 import MultipartUploader from './MultipartUploader.js'
@@ -200,17 +200,23 @@ class HTTPCommunicationQueue {
     return this.#sendCompletionRequest(file, { key, uploadId, parts, signal }).abortOn(signal)
   }
 
-  async uploadChunk (file, partNumber, body, signal) {
+  async uploadChunk (file, partNumber, chunk, signal) {
     throwIfAborted(signal)
     const { uploadId, key } = await this.getUploadId(file, signal)
     throwIfAborted(signal)
     for (;;) {
-      const signature = await this.#fetchSignature(file, { uploadId, key, partNumber, body, signal }).abortOn(signal)
+      const chunkData = chunk.getData()
+      const { onProgress, onComplete } = chunk
+
+      const signature = await this.#fetchSignature(file, {
+        uploadId, key, partNumber, body: chunkData, signal,
+      }).abortOn(signal)
+
       throwIfAborted(signal)
       try {
         return {
           PartNumber: partNumber,
-          ...await this.#uploadPartBytes(signature, body, signal).abortOn(signal),
+          ...await this.#uploadPartBytes({ signature, body: chunkData, onProgress, onComplete, signal }).abortOn(signal),
         }
       } catch (err) {
         if (!await this.#shouldRetry(err)) throw err
@@ -257,8 +263,6 @@ export default class AwsS3Multipart extends BasePlugin {
         return { url: presignedUrls?.[partNumber], headers: headers?.[partNumber] }
       }
     }
-
-    this.upload = this.upload.bind(this)
 
     /**
      * Simultaneous upload limiting is shared across all uploads with this plugin.
@@ -369,7 +373,7 @@ export default class AwsS3Multipart extends BasePlugin {
       .then(assertServerError)
   }
 
-  static async uploadPartBytes ({ url, expires, headers }, body, signal) {
+  static async uploadPartBytes ({ signature: { url, expires, headers }, body, onProgress, onComplete, signal }) {
     throwIfAborted(signal)
 
     if (url == null) {
@@ -397,7 +401,7 @@ export default class AwsS3Multipart extends BasePlugin {
       }
       signal.addEventListener('abort', onabort)
 
-      xhr.upload.addEventListener('progress', body.onProgress)
+      xhr.upload.addEventListener('progress', onProgress)
 
       xhr.addEventListener('abort', () => {
         cleanup()
@@ -427,7 +431,7 @@ export default class AwsS3Multipart extends BasePlugin {
           return
         }
 
-        body.onProgress?.(body.size)
+        onProgress?.(body.size)
 
         // NOTE This must be allowed by CORS.
         const etag = ev.target.getResponseHeader('ETag')
@@ -437,7 +441,7 @@ export default class AwsS3Multipart extends BasePlugin {
           return
         }
 
-        body.onComplete?.(etag)
+        onComplete?.(etag)
         resolve({
           ETag: etag,
         })
@@ -466,8 +470,10 @@ export default class AwsS3Multipart extends BasePlugin {
     })
   }
 
-  uploadFile (file) {
+  #uploadFile (file) {
     return new Promise((resolve, reject) => {
+      const getFile = () => this.uppy.getFile(file.id) || file
+
       const onProgress = (bytesUploaded, bytesTotal) => {
         this.uppy.emit('upload-progress', file, {
           uploader: this,
@@ -485,7 +491,6 @@ export default class AwsS3Multipart extends BasePlugin {
       }
 
       const onSuccess = (result) => {
-        const uploadObject = upload // eslint-disable-line no-use-before-define
         const uploadResp = {
           body: {
             ...result,
@@ -495,23 +500,17 @@ export default class AwsS3Multipart extends BasePlugin {
 
         this.resetUploaderReferences(file.id)
 
-        const cFile = this.uppy.getFile(file.id)
-        this.uppy.emit('upload-success', cFile || file, uploadResp)
+        this.uppy.emit('upload-success', getFile(), uploadResp)
 
         if (result.location) {
           this.uppy.log(`Download ${file.name} from ${result.location}`)
         }
 
-        resolve(uploadObject)
+        resolve()
       }
 
       const onPartComplete = (part) => {
-        const cFile = this.uppy.getFile(file.id)
-        if (!cFile) {
-          return
-        }
-
-        this.uppy.emit('s3-multipart:part-uploaded', cFile, part)
+        this.uppy.emit('s3-multipart:part-uploaded', getFile(), part)
       }
 
       const upload = new MultipartUploader(file.data, {
@@ -564,11 +563,7 @@ export default class AwsS3Multipart extends BasePlugin {
         upload.start()
       })
 
-      // Don't double-emit upload-started for Golden Retriever-restored files that were already started
-      if (!file.progress.uploadStarted || !file.isRestored) {
-        upload.start()
-        this.uppy.emit('upload-started', file)
-      }
+      upload.start()
     })
   }
 
@@ -597,13 +592,8 @@ export default class AwsS3Multipart extends BasePlugin {
 
   // NOTE! Keep this duplicated code in sync with other plugins
   // TODO we should probably abstract this into a common function
-  async uploadRemote (file) {
+  async #uploadRemote (file) {
     this.resetUploaderReferences(file.id)
-
-    // Don't double-emit upload-started for Golden Retriever-restored files that were already started
-    if (!file.progress.uploadStarted || !file.isRestored) {
-      this.uppy.emit('upload-started', file)
-    }
 
     try {
       if (file.serverToken) {
@@ -733,15 +723,20 @@ export default class AwsS3Multipart extends BasePlugin {
     })
   }
 
-  async upload (fileIDs) {
+  #upload = async (fileIDs) => {
     if (fileIDs.length === 0) return undefined
 
-    const promises = fileIDs.map((id) => {
-      const file = this.uppy.getFile(id)
+    const files = this.uppy.getFilesByIds(fileIDs)
+
+    const filesFiltered = filterNonFailedFiles(files)
+    const filesToEmit = filterFilesToEmitUploadStarted(filesFiltered)
+    this.uppy.emit('upload-start', filesToEmit)
+
+    const promises = filesFiltered.map((file) => {
       if (file.isRemote) {
-        return this.uploadRemote(file)
+        return this.#uploadRemote(file)
       }
-      return this.uploadFile(file)
+      return this.#uploadFile(file)
     })
 
     return Promise.all(promises)
@@ -810,7 +805,7 @@ export default class AwsS3Multipart extends BasePlugin {
       },
     })
     this.uppy.addPreProcessor(this.#setCompanionHeaders)
-    this.uppy.addUploader(this.upload)
+    this.uppy.addUploader(this.#upload)
   }
 
   uninstall () {
@@ -822,6 +817,6 @@ export default class AwsS3Multipart extends BasePlugin {
       },
     })
     this.uppy.removePreProcessor(this.#setCompanionHeaders)
-    this.uppy.removeUploader(this.upload)
+    this.uppy.removeUploader(this.#upload)
   }
 }
