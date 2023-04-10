@@ -1,6 +1,6 @@
 import { h } from 'preact'
 // eslint-disable-next-line import/no-unresolved
-import PQueue from 'p-queue/dist' // https://github.com/sindresorhus/p-queue/issues/145
+import PQueue from 'p-queue'
 
 import { getSafeFileId } from '@uppy/utils/lib/generateFileID'
 
