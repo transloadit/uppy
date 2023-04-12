@@ -10,6 +10,7 @@ cd uppy
 ```
 
 We are using [Corepack][] to manage version of [Yarn][]. Corepack comes pre-installed with Node.js >=16.x, or can be installed through `npm`. You can run `corepack enable` to install a `yarn` executable in your `$PATH`, or prefix all yarn commands with `corepack yarn`.
+Please note that sudo may be required to run `corepack enable` if you are encountering permission issues.
 
 ```sh
 corepack -v || npm i -g corepack
