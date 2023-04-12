@@ -653,27 +653,6 @@ class Uppy {
 
     const nonRestrictionErrors = errors.filter((error) => !error.isRestriction)
 
-    // todo shouldn't we only setState if we are not throwing an error? (see below)
-    this.setState({ files: nextFilesState })
-
-    validFilesToAdd.forEach((file) => {
-      this.emit('file-added', file)
-    })
-
-    this.emit('files-added', validFilesToAdd)
-
-    if (validFilesToAdd.length > 5) {
-      this.log(`Added batch of ${validFilesToAdd.length} files`)
-    } else {
-      Object.values(validFilesToAdd).forEach((file) => {
-        this.log(`Added file: ${file.name}\n id: ${file.id}\n type: ${file.type}`)
-      })
-    }
-
-    if (validFilesToAdd.length > 0) {
-      this.#startIfAutoProceed()
-    }
-
     if (nonRestrictionErrors.length > 0) {
       let message = 'Multiple errors occurred while adding files:\n'
       nonRestrictionErrors.forEach((subError) => {
@@ -693,6 +672,28 @@ class Uppy {
         throw err
       }
     }
+
+    // OK, we haven't thrown an error, we can start emitting/updating state now:
+
+    validFilesToAdd.forEach((file) => {
+      this.emit('file-added', file)
+    })
+
+    this.emit('files-added', validFilesToAdd)
+
+    if (validFilesToAdd.length > 5) {
+      this.log(`Added batch of ${validFilesToAdd.length} files`)
+    } else {
+      Object.values(validFilesToAdd).forEach((file) => {
+        this.log(`Added file: ${file.name}\n id: ${file.id}\n type: ${file.type}`)
+      })
+    }
+
+    if (validFilesToAdd.length > 0) {
+      this.#startIfAutoProceed()
+    }
+
+    this.setState({ files: nextFilesState })
   }
 
   removeFiles (fileIDs, reason) {
