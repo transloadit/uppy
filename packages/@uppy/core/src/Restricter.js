@@ -13,19 +13,13 @@ const defaultOptions = {
 }
 
 class RestrictionError extends Error {
-  constructor (message, { isUserFacing = true } = {}) {
+  constructor (message, { isUserFacing = true, file } = {}) {
     super(message)
     this.isUserFacing = isUserFacing
+    if (file != null) this.file = file // only some restriction errors are related to a particular file
   }
 
   isRestriction = true
-}
-
-class FileRestrictionError extends RestrictionError {
-  constructor (message, { file, ...opts }) {
-    super(message, opts)
-    this.file = file
-  }
 }
 
 class Restricter {
@@ -91,13 +85,13 @@ class Restricter {
 
       if (!isCorrectFileType) {
         const allowedFileTypesString = allowedFileTypes.join(', ')
-        throw new FileRestrictionError(this.i18n('youCanOnlyUploadFileTypes', { types: allowedFileTypesString }), { file })
+        throw new RestrictionError(this.i18n('youCanOnlyUploadFileTypes', { types: allowedFileTypesString }), { file })
       }
     }
 
     // We can't check maxFileSize if the size is unknown.
     if (maxFileSize && file.size != null && file.size > maxFileSize) {
-      throw new FileRestrictionError(this.i18n('exceedsSize', {
+      throw new RestrictionError(this.i18n('exceedsSize', {
         size: prettierBytes(maxFileSize),
         file: file.name,
       }), { file })
@@ -105,7 +99,7 @@ class Restricter {
 
     // We can't check minFileSize if the size is unknown.
     if (minFileSize && file.size != null && file.size < minFileSize) {
-      throw new FileRestrictionError(this.i18n('inferiorSize', {
+      throw new RestrictionError(this.i18n('inferiorSize', {
         size: prettierBytes(minFileSize),
       }), { file })
     }
@@ -140,4 +134,4 @@ class Restricter {
   }
 }
 
-export { Restricter, defaultOptions, RestrictionError, FileRestrictionError }
+export { Restricter, defaultOptions, RestrictionError }

@@ -16,7 +16,6 @@ import {
   Restricter,
   defaultOptions as defaultRestrictionOptions,
   RestrictionError,
-  FileRestrictionError,
 } from './Restricter.js'
 
 import packageJson from '../package.json'
@@ -451,10 +450,7 @@ class Uppy {
     const { allowNewUpload } = this.getState()
 
     if (allowNewUpload === false) {
-      const error = file != null
-        ? new FileRestrictionError(this.i18n('noMoreFilesAllowed'), { file })
-        : new RestrictionError(this.i18n('noMoreFilesAllowed'))
-
+      const error = new RestrictionError(this.i18n('noMoreFilesAllowed'), { file })
       this.#informAndEmit([error])
       throw error
     }
@@ -561,14 +557,14 @@ class Uppy {
         }
 
         if (this.checkIfFileAlreadyExists(newFile.id)) {
-          throw new FileRestrictionError(this.i18n('noDuplicates', { fileName: newFile.name }), { file: fileToAdd })
+          throw new RestrictionError(this.i18n('noDuplicates', { fileName: newFile.name }), { file: fileToAdd })
         }
 
         const onBeforeFileAddedResult = this.opts.onBeforeFileAdded(newFile, nextFilesState)
 
         if (onBeforeFileAddedResult === false) {
           // Don’t show UI info for this error, as it should be done by the developer
-          throw new FileRestrictionError('Cannot add the file because onBeforeFileAdded returned false.', { isUserFacing: false, file: fileToAdd })
+          throw new RestrictionError('Cannot add the file because onBeforeFileAdded returned false.', { isUserFacing: false, file: fileToAdd })
         } else if (typeof onBeforeFileAddedResult === 'object' && onBeforeFileAddedResult !== null) {
           newFile = onBeforeFileAddedResult
         }
