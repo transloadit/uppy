@@ -669,7 +669,9 @@ class Uppy {
       }
     }
 
-    // OK, we haven't thrown an error, we can start emitting/updating state now:
+    // OK, we haven't thrown an error, we can start updating state and emitting events now:
+
+    this.setState({ files: nextFilesState })
 
     validFilesToAdd.forEach((file) => {
       this.emit('file-added', file)
@@ -688,8 +690,6 @@ class Uppy {
     if (validFilesToAdd.length > 0) {
       this.#startIfAutoProceed()
     }
-
-    this.setState({ files: nextFilesState })
   }
 
   removeFiles (fileIDs, reason) {
