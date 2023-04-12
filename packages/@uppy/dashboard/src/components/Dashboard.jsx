@@ -45,7 +45,7 @@ export default function Dashboard (props) {
     'uppy-Dashboard--isAddFilesPanelVisible': props.showAddFilesPanel,
     'uppy-Dashboard--isInnerWrapVisible': props.areInsidesReadyToBeVisible,
     // Only enable “centered single file” mode when Dashboard is tall enough
-    'uppy-Dashboard--singleFile': props.centerSingleFile && isSingleFile && isSizeHeightMD,
+    'uppy-Dashboard--singleFile': props.singleFileFullScreen && isSingleFile && isSizeHeightMD,
   })
 
   // Important: keep these in sync with the percent width values in `src/components/FileItem/index.scss`.
