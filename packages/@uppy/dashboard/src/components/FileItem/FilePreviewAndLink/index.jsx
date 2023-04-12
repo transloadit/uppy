@@ -5,7 +5,7 @@ import getFileTypeIcon from '../../../utils/getFileTypeIcon.jsx'
 
 export default function FilePreviewAndLink (props) {
   const { file, i18n, toggleFileCard, metaFields, showLinkToFileUploadResult } = props
-  const white = '#fff'
+  const white = 'rgba(255, 255, 255, 0.5)'
   const previewBackgroundColor = file.preview ? white : getFileTypeIcon(props.file.type).color
 
   return (
