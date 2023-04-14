@@ -123,7 +123,7 @@ export default class View {
     const { folders, files } = this.plugin.getPluginState()
     const items = this.filterItems(folders.concat(files))
     // Shift-clicking selects a single consecutive list of items
-    // starting at the previous click and deselects everything else.
+    // starting at the previous click.
     if (this.lastCheckbox && this.isShiftKeyPressed) {
       const { currentSelection } = this.plugin.getPluginState()
       const prevIndex = items.indexOf(this.lastCheckbox)
