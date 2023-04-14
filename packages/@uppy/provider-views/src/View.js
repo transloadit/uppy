@@ -125,29 +125,30 @@ export default class View {
     // Shift-clicking selects a single consecutive list of items
     // starting at the previous click and deselects everything else.
     if (this.lastCheckbox && this.isShiftKeyPressed) {
+      const { currentSelection } = this.plugin.getPluginState()
       const prevIndex = items.indexOf(this.lastCheckbox)
       const currentIndex = items.indexOf(file)
-      const currentSelection = (prevIndex < currentIndex)
+      const newSelection = (prevIndex < currentIndex)
         ? items.slice(prevIndex, currentIndex + 1)
         : items.slice(currentIndex, prevIndex + 1)
-      const reducedCurrentSelection = []
+      const reducedNewSelection = []
 
       // Check restrictions on each file in currentSelection,
       // reduce it to only contain files that pass restrictions
-      for (const item of currentSelection) {
+      for (const item of newSelection) {
         const { uppy } = this.plugin
         const restrictionError = uppy.validateRestrictions(
           remoteFileObjToLocal(item),
-          [...uppy.getFiles(), ...reducedCurrentSelection],
+          [...uppy.getFiles(), ...reducedNewSelection],
         )
 
         if (!restrictionError) {
-          reducedCurrentSelection.push(item)
+          reducedNewSelection.push(item)
         } else {
           uppy.info({ message: restrictionError.message }, 'error', uppy.opts.infoTimeout)
         }
       }
-      this.plugin.setPluginState({ currentSelection: reducedCurrentSelection })
+      this.plugin.setPluginState({ currentSelection: [...new Set([...currentSelection, ...reducedNewSelection])] })
       return
     }
 

@@ -33,6 +33,7 @@ function GridListItem (props) {
         className={checkBoxClassName}
         onChange={toggleCheckbox}
         onKeyDown={recordShiftKeyPress}
+        onMouseDown={recordShiftKeyPress}
         name="listitem"
         id={id}
         checked={isChecked}
