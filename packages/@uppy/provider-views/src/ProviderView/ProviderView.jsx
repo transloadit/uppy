@@ -280,6 +280,7 @@ export default class ProviderView extends View {
             if (!this.plugin.uppy.checkIfFileAlreadyExists(id)) {
               newFiles.push(fileInFolder)
               numNewFiles++
+              this.setLoading(this.plugin.uppy.i18n('addedNumFiles', { numFiles: numNewFiles }))
             }
             isEmpty = false
           }
@@ -384,7 +385,7 @@ export default class ProviderView extends View {
     if (loading) {
       return (
         <CloseWrapper onUnmount={this.clearSelection}>
-          <LoaderView i18n={this.plugin.uppy.i18n} />
+          <LoaderView i18n={this.plugin.uppy.i18n} loading={loading} />
         </CloseWrapper>
       )
     }
