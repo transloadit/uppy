@@ -1,5 +1,13 @@
 # @uppy/provider-views
 
+## 3.2.0
+
+Released: 2023-04-04
+Included in: Uppy v3.7.0
+
+- @uppy/provider-views: fix race condition when adding folders (Mikael Finstad / #4384)
+- @uppy/provider-views: UI: Use form attribite with a form in doc root to prevent outer form submit (Artur Paikin / #4283)
+
 ## 3.0.2
 
 Released: 2022-10-24

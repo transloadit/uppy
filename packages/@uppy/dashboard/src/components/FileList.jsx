@@ -20,9 +20,9 @@ function chunks (list, size) {
 
 export default ({
   id, error, i18n, uppy, files, acquirers, resumableUploads, hideRetryButton, hidePauseResumeButton, hideCancelButton,
-  showLinkToFileUploadResult, showRemoveButtonAfterComplete, isWide, metaFields, singleFile, toggleFileCard,
+  showLinkToFileUploadResult, showRemoveButtonAfterComplete, isWide, metaFields, isSingleFile, toggleFileCard,
   handleRequestThumbnail, handleCancelThumbnail, recoveredState, individualCancellation, itemsPerRow, openFileEditor,
-  canEditFile, toggleAddFilesPanel,
+  canEditFile, toggleAddFilesPanel, containerWidth, containerHeight,
 }) => {
   // It's not great that this is hardcoded!
   // It's ESPECIALLY not great that this is checking against `itemsPerRow`!
@@ -68,7 +68,9 @@ export default ({
           isWide={isWide}
           metaFields={metaFields}
           recoveredState={recoveredState}
-          singleFile={singleFile}
+          isSingleFile={isSingleFile}
+          containerWidth={containerWidth}
+          containerHeight={containerHeight}
           // callbacks
           toggleFileCard={toggleFileCard}
           handleRequestThumbnail={handleRequestThumbnail}
@@ -83,7 +85,7 @@ export default ({
     </div>
   )
 
-  if (singleFile) {
+  if (isSingleFile) {
     return (
       <div class="uppy-Dashboard-files">
         {renderRow(rows[0])}

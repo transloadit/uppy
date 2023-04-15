@@ -1,5 +1,13 @@
 # @uppy/locales
 
+## 3.1.0
+
+Released: 2023-04-04
+Included in: Uppy v3.7.0
+
+- @uppy/locales: locales: add es_MX (Kevin van Zonneveld / #4393)
+- @uppy/locales: locales: add hi_IN (Kevin van Zonneveld / #4391)
+
 ## 3.0.7
 
 Released: 2023-03-07
