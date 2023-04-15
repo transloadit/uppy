@@ -46,7 +46,9 @@ export default (props) => {
     isWide: props.isWide,
     metaFields: props.metaFields,
     recoveredState: props.recoveredState,
-    singleFile: props.singleFile,
+    isSingleFile: props.isSingleFile,
+    containerWidth: props.containerWidth,
+    containerHeight: props.containerHeight,
     // callbacks
     toggleFileCard: props.toggleFileCard,
     handleRequestThumbnail: props.handleRequestThumbnail,
@@ -82,7 +84,7 @@ export default (props) => {
     </div>
   )
 
-  if (props.singleFile) {
+  if (props.isSingleFile) {
     return (
       <div class="uppy-Dashboard-files">
         {renderRow(rows[0])}

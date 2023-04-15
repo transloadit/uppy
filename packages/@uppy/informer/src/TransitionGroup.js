@@ -159,7 +159,7 @@ class TransitionGroup extends Component {
 
     const component = this.refs[key]
 
-    if (component.componentWillAppear) {
+    if (component?.componentWillAppear) {
       component.componentWillAppear(this._handleDoneAppearing.bind(this, key))
     } else {
       this._handleDoneAppearing(key)
@@ -168,7 +168,7 @@ class TransitionGroup extends Component {
 
   _handleDoneAppearing (key) {
     const component = this.refs[key]
-    if (component.componentDidAppear) {
+    if (component?.componentDidAppear) {
       component.componentDidAppear()
     }
 
@@ -188,7 +188,7 @@ class TransitionGroup extends Component {
 
     const component = this.refs[key]
 
-    if (component.componentWillEnter) {
+    if (component?.componentWillEnter) {
       component.componentWillEnter(this._handleDoneEntering.bind(this, key))
     } else {
       this._handleDoneEntering(key)
@@ -197,7 +197,7 @@ class TransitionGroup extends Component {
 
   _handleDoneEntering (key) {
     const component = this.refs[key]
-    if (component.componentDidEnter) {
+    if (component?.componentDidEnter) {
       component.componentDidEnter()
     }
 
@@ -223,7 +223,7 @@ class TransitionGroup extends Component {
     this.currentlyTransitioningKeys[key] = true
 
     const component = this.refs[key]
-    if (component.componentWillLeave) {
+    if (component?.componentWillLeave) {
       component.componentWillLeave(this._handleDoneLeaving.bind(this, key))
     } else {
       // Note that this is somewhat dangerous b/c it calls setState()
@@ -243,7 +243,7 @@ class TransitionGroup extends Component {
 
     const component = this.refs[key]
 
-    if (component.componentDidLeave) {
+    if (component?.componentDidLeave) {
       component.componentDidLeave()
     }
 
