@@ -3,12 +3,12 @@ import { nanoid } from 'nanoid/non-secure'
 import { Provider, RequestClient, Socket } from '@uppy/companion-client'
 import emitSocketProgress from '@uppy/utils/lib/emitSocketProgress'
 import getSocketHost from '@uppy/utils/lib/getSocketHost'
-import settle from '@uppy/utils/lib/settle'
 import EventTracker from '@uppy/utils/lib/EventTracker'
 import ProgressTimeout from '@uppy/utils/lib/ProgressTimeout'
 import { RateLimitedQueue, internalRateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
 import NetworkError from '@uppy/utils/lib/NetworkError'
 import isNetworkError from '@uppy/utils/lib/isNetworkError'
+import { filterNonFailedFiles, filterFilesToEmitUploadStarted } from '@uppy/utils/lib/fileFilters'
 
 import packageJson from '../package.json'
 import locale from './locale.js'
@@ -113,8 +113,6 @@ export default class XHRUpload extends BasePlugin {
     this.opts = { ...defaultOptions, ...opts }
     this.i18nInit()
 
-    this.handleUpload = this.handleUpload.bind(this)
-
     // Simultaneous upload limiting is shared across all uploads with this plugin.
     if (internalRateLimitedQueue in this.opts) {
       this.requests = this.opts[internalRateLimitedQueue]
@@ -214,13 +212,11 @@ export default class XHRUpload extends BasePlugin {
     return formPost
   }
 
-  upload (file, current, total) {
+  async #upload (file, current, total) {
     const opts = this.getOptions(file)
 
     this.uppy.log(`uploading ${current} of ${total}`)
     return new Promise((resolve, reject) => {
-      this.uppy.emit('upload-started', file)
-
       const data = opts.formData
         ? this.createFormDataUpload(file, opts)
         : file.data
@@ -317,8 +313,6 @@ export default class XHRUpload extends BasePlugin {
       }
 
       queuedRequest = this.requests.run(() => {
-        this.uppy.emit('upload-started', file)
-
         // When using an authentication system like JWT, the bearer token goes as a header. This
         // header needs to be fresh each time the token is refreshed so computing and setting the
         // headers just before the upload starts enables this kind of authentication to work properly.
@@ -375,10 +369,9 @@ export default class XHRUpload extends BasePlugin {
 
   // NOTE! Keep this duplicated code in sync with other plugins
   // TODO we should probably abstract this into a common function
-  async uploadRemote (file) {
+  async #uploadRemote (file) {
     // TODO: we could rewrite this to use server-sent events instead of creating WebSockets.
     try {
-      this.uppy.emit('upload-started', file)
       if (file.serverToken) {
         return await this.connectToServerSocket(file)
       }
@@ -496,7 +489,7 @@ export default class XHRUpload extends BasePlugin {
     })
   }
 
-  uploadBundle (files) {
+  #uploadBundle (files) {
     return new Promise((resolve, reject) => {
       const { endpoint } = this.opts
       const { method } = this.opts
@@ -587,27 +580,19 @@ export default class XHRUpload extends BasePlugin {
       })
 
       xhr.send(formData)
-
-      files.forEach((file) => {
-        this.uppy.emit('upload-started', file)
-      })
     })
   }
 
-  uploadFiles (files) {
-    const promises = files.map((file, i) => {
+  async #uploadFiles (files) {
+    await Promise.allSettled(files.map((file, i) => {
       const current = parseInt(i, 10) + 1
       const total = files.length
 
-      if (file.error) {
-        return Promise.reject(new Error(file.error))
-      } if (file.isRemote) {
-        return this.uploadRemote(file, current, total)
+      if (file.isRemote) {
+        return this.#uploadRemote(file, current, total)
       }
-      return this.upload(file, current, total)
-    })
-
-    return settle(promises)
+      return this.#upload(file, current, total)
+    }))
   }
 
   onFileRemove (fileID, cb) {
@@ -638,10 +623,10 @@ export default class XHRUpload extends BasePlugin {
     })
   }
 
-  handleUpload (fileIDs) {
+  #handleUpload = async (fileIDs) => {
     if (fileIDs.length === 0) {
       this.uppy.log('[XHRUpload] No files to upload!')
-      return Promise.resolve()
+      return
     }
 
     // No limit configured by the user, and no RateLimitedQueue passed in by a "parent" plugin
@@ -654,11 +639,15 @@ export default class XHRUpload extends BasePlugin {
     }
 
     this.uppy.log('[XHRUpload] Uploading...')
-    const files = fileIDs.map((fileID) => this.uppy.getFile(fileID))
+    const files = this.uppy.getFilesByIds(fileIDs)
+
+    const filesFiltered = filterNonFailedFiles(files)
+    const filesToEmit = filterFilesToEmitUploadStarted(filesFiltered)
+    this.uppy.emit('upload-start', filesToEmit)
 
     if (this.opts.bundle) {
       // if bundle: true, we don’t support remote uploads
-      const isSomeFileRemote = files.some(file => file.isRemote)
+      const isSomeFileRemote = filesFiltered.some(file => file.isRemote)
       if (isSomeFileRemote) {
         throw new Error('Can’t upload remote files when the `bundle: true` option is set')
       }
@@ -667,10 +656,10 @@ export default class XHRUpload extends BasePlugin {
         throw new TypeError('`headers` may not be a function when the `bundle: true` option is set')
       }
 
-      return this.uploadBundle(files)
+      await this.#uploadBundle(filesFiltered)
+    } else {
+      await this.#uploadFiles(filesFiltered)
     }
-
-    return this.uploadFiles(files).then(() => null)
   }
 
   install () {
@@ -684,7 +673,7 @@ export default class XHRUpload extends BasePlugin {
       })
     }
 
-    this.uppy.addUploader(this.handleUpload)
+    this.uppy.addUploader(this.#handleUpload)
   }
 
   uninstall () {
@@ -698,6 +687,6 @@ export default class XHRUpload extends BasePlugin {
       })
     }
 
-    this.uppy.removeUploader(this.handleUpload)
+    this.uppy.removeUploader(this.#handleUpload)
   }
 }

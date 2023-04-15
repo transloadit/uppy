@@ -81,6 +81,7 @@ en_US.strings = {
     '0': 'Added %{smart_count} file from %{folder}',
     '1': 'Added %{smart_count} files from %{folder}',
   },
+  additionalRestrictionsFailed: '%{count} additional restrictions were not fulfilled',
   folderAlreadyAdded: 'The folder "%{folder}" was already added',
   generatingThumbnails: 'Generating thumbnails...',
   import: 'Import',

@@ -40,6 +40,7 @@ console.log(import.meta.env)
 // DEV CONFIG: enable or disable Golden Retriever
 
 const RESTORE = false
+const COMPRESS = false
 
 async function assemblyOptions () {
   return generateSignatureIfSecret(TRANSLOADIT_SECRET, {
@@ -108,7 +109,10 @@ export default () => {
     .use(DropTarget, {
       target: document.body,
     })
-    .use(Compressor)
+
+  if (COMPRESS) {
+    uppyDashboard.use(Compressor)
+  }
 
   switch (UPLOADER) {
     case 'tus':
