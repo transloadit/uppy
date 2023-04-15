@@ -1,4 +1,6 @@
 import { h } from 'preact'
+// eslint-disable-next-line import/no-unresolved
+import PQueue from 'p-queue'
 
 import { getSafeFileId } from '@uppy/utils/lib/generateFileID'
 
@@ -235,23 +237,23 @@ export default class ProviderView extends View {
     }
   }
 
-  async* recursivelyListAllFiles (path) {
+  async recursivelyListAllFiles (path, queue, onFiles) {
     let curPath = path
 
-    // need to repeat the list call until there are no more pages
     while (curPath) {
       const res = await this.provider.list(curPath)
-
-      for (const item of res.items) {
-        if (item.isFolder) {
-          // recursively call self for folder
-          yield* this.recursivelyListAllFiles(item.requestPath)
-        } else {
-          yield item
-        }
-      }
-
       curPath = res.nextPagePath
+
+      const files = res.items.filter((item) => !item.isFolder)
+      const folders = res.items.filter((item) => item.isFolder)
+
+      onFiles(files)
+
+      // recursively queue call to self for each folder
+      const promises = folders.map(async (folder) => queue.add(async () => (
+        this.recursivelyListAllFiles(folder.requestPath, queue, onFiles)
+      )))
+      await Promise.all(promises) // in case we get an error
     }
   }
 
@@ -263,27 +265,33 @@ export default class ProviderView extends View {
       const messages = []
       const newFiles = []
 
-      // eslint-disable-next-line no-unreachable-loop
       for (const file of currentSelection) {
         if (file.isFolder) {
           const { requestPath, name } = file
           let isEmpty = true
           let numNewFiles = 0
 
-          for await (const fileInFolder of this.recursivelyListAllFiles(requestPath)) {
-            const tagFile = this.getTagFile(fileInFolder)
-            const id = getSafeFileId(tagFile)
-            // If the same folder is added again, we don't want to send
-            // X amount of duplicate file notifications, we want to say
-            // the folder was already added. This checks if all files are duplicate,
-            // if that's the case, we don't add the files.
-            if (!this.plugin.uppy.checkIfFileAlreadyExists(id)) {
-              newFiles.push(fileInFolder)
-              numNewFiles++
-              this.setLoading(this.plugin.uppy.i18n('addedNumFiles', { numFiles: numNewFiles }))
+          const queue = new PQueue({ concurrency: 6 })
+
+          const onFiles = (files) => {
+            for (const newFile of files) {
+              const tagFile = this.getTagFile(newFile)
+              const id = getSafeFileId(tagFile)
+              // If the same folder is added again, we don't want to send
+              // X amount of duplicate file notifications, we want to say
+              // the folder was already added. This checks if all files are duplicate,
+              // if that's the case, we don't add the files.
+              if (!this.plugin.uppy.checkIfFileAlreadyExists(id)) {
+                newFiles.push(newFile)
+                numNewFiles++
+                this.setLoading(this.plugin.uppy.i18n('addedNumFiles', { numFiles: numNewFiles }))
+              }
+              isEmpty = false
             }
-            isEmpty = false
           }
+
+          await this.recursivelyListAllFiles(requestPath, queue, onFiles)
+          await queue.onIdle()
 
           let message
           if (isEmpty) {
