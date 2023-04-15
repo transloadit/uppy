@@ -29,7 +29,16 @@ async function list ({ directory, query, token }) {
     return getClient({ token }).post('files/list_folder/continue', { json: { cursor: query.cursor }, responseType: 'json' }).json()
   }
 
-  return getClient({ token }).post('files/list_folder', { searchParams: query, json: { path: `${directory || ''}`, include_non_downloadable_files: false }, responseType: 'json' }).json()
+  return getClient({ token }).post('files/list_folder', {
+    searchParams: query,
+    json: {
+      path: `${directory || ''}`,
+      include_non_downloadable_files: false,
+      // min=1, max=2000 (default: 500): The maximum number of results to return per request.
+      limit: 2000,
+    },
+    responseType: 'json',
+  }).json()
 }
 
 async function userInfo ({ token }) {
