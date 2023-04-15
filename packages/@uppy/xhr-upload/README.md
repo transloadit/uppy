@@ -18,7 +18,7 @@ import Uppy from '@uppy/core'
 import XHRUpload from '@uppy/xhr-upload'
 
 const uppy = new Uppy()
-uppy.use(Uppy, {
+uppy.use(XHRUpload, {
   // Options
 })
 ```
