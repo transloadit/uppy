@@ -1,5 +1,13 @@
 # @uppy/core
 
+## 3.2.0
+
+Released: 2023-04-18
+Included in: Uppy v3.8.0
+
+- @uppy/core: improve performance of validating & uploading files (Mikael Finstad / #4402)
+- @uppy/core,@uppy/locales,@uppy/provider-views: User feedback adding recursive folders take 2 (Mikael Finstad / #4399)
+
 ## 3.1.2
 
 Released: 2023-04-04

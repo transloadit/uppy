@@ -12,6 +12,46 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 3.8.0
+
+Released: 2023-04-18
+
+| Package                   | Version | Package                   | Version |
+| ------------------------- | ------- | ------------------------- | ------- |
+| @uppy/angular             |   0.5.2 | @uppy/progress-bar        |   3.0.2 |
+| @uppy/audio               |   1.1.1 | @uppy/provider-views      |   3.3.0 |
+| @uppy/aws-s3              |   3.1.0 | @uppy/react               |   3.1.2 |
+| @uppy/aws-s3-multipart    |   3.2.0 | @uppy/react-native        |   0.5.1 |
+| @uppy/box                 |   2.1.1 | @uppy/redux-dev-tools     |   3.0.2 |
+| @uppy/companion           |   4.5.0 | @uppy/remote-sources      |   1.0.3 |
+| @uppy/companion-client    |   3.1.3 | @uppy/screen-capture      |   3.1.1 |
+| @uppy/compressor          |   1.0.2 | @uppy/status-bar          |   3.1.1 |
+| @uppy/core                |   3.2.0 | @uppy/store-default       |   3.0.3 |
+| @uppy/dashboard           |   3.4.0 | @uppy/store-redux         |   3.0.3 |
+| @uppy/drag-drop           |   3.0.2 | @uppy/svelte              |   3.0.2 |
+| @uppy/dropbox             |   3.1.1 | @uppy/thumbnail-generator |   3.0.3 |
+| @uppy/facebook            |   3.1.1 | @uppy/transloadit         |   3.1.3 |
+| @uppy/file-input          |   3.0.2 | @uppy/tus                 |   3.1.0 |
+| @uppy/form                |   3.0.2 | @uppy/unsplash            |   3.2.1 |
+| @uppy/golden-retriever    |   3.0.3 | @uppy/url                 |   3.3.1 |
+| @uppy/google-drive        |   3.1.1 | @uppy/utils               |   5.3.0 |
+| @uppy/image-editor        |   2.1.2 | @uppy/vue                 |   1.0.2 |
+| @uppy/informer            |   3.0.2 | @uppy/webcam              |   3.3.1 |
+| @uppy/instagram           |   3.1.1 | @uppy/xhr-upload          |   3.2.0 |
+| @uppy/locales             |   3.2.0 | @uppy/zoom                |   2.1.1 |
+| @uppy/onedrive            |   3.1.1 | uppy                      |   3.8.0 |
+
+- @uppy/companion: increase max limits for remote file list operations (Mikael Finstad / #4417)
+- @uppy/xhr-upload: fix type in README.md (Top Master / #4416)
+- @uppy/core: improve performance of validating & uploading files (Mikael Finstad / #4402)
+- @uppy/provider-views: Concurrent file listing (Mikael Finstad / #4401)
+- @uppy/core,@uppy/locales,@uppy/provider-views: User feedback adding recursive folders take 2 (Mikael Finstad / #4399)
+- @uppy/dashboard: Single File Mode: fix layout and make optional (Artur Paikin / #4374)
+- @uppy/informer: add a check in `TransitionGroup` when component is null (Juan Belej / #4410)
+- meta: Fix logos in all the readmes (Artur Paikin / #4407)
+- meta: fix logo in readme (Kid / #4403)
+
+
 ## 3.7.0
 
 Released: 2023-04-04

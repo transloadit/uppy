@@ -1,5 +1,12 @@
 # @uppy/informer
 
+## 3.0.2
+
+Released: 2023-04-18
+Included in: Uppy v3.8.0
+
+- @uppy/informer: add a check in `TransitionGroup` when component is null (Juan Belej / #4410)
+
 ## 3.0.1
 
 Released: 2022-09-25

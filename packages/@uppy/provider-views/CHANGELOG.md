@@ -1,5 +1,13 @@
 # @uppy/provider-views
 
+## 3.3.0
+
+Released: 2023-04-18
+Included in: Uppy v3.8.0
+
+- @uppy/provider-views: Concurrent file listing (Mikael Finstad / #4401)
+- @uppy/core,@uppy/locales,@uppy/provider-views: User feedback adding recursive folders take 2 (Mikael Finstad / #4399)
+
 ## 3.2.0
 
 Released: 2023-04-04

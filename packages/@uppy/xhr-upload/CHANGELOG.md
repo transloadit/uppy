@@ -1,5 +1,12 @@
 # @uppy/xhr-upload
 
+## 3.2.0
+
+Released: 2023-04-18
+Included in: Uppy v3.8.0
+
+- @uppy/xhr-upload: fix type in README.md (Top Master / #4416)
+
 ## 3.1.1
 
 Released: 2023-04-04

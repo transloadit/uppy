@@ -1,5 +1,12 @@
 # @uppy/companion
 
+## 4.5.0
+
+Released: 2023-04-18
+Included in: Uppy v3.8.0
+
+- @uppy/companion: increase max limits for remote file list operations (Mikael Finstad / #4417)
+
 ## 4.4.0
 
 Released: 2023-04-04
