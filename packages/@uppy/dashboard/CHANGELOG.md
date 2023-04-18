@@ -1,5 +1,12 @@
 # @uppy/dashboard
 
+## 3.4.0
+
+Released: 2023-04-18
+Included in: Uppy v3.8.0
+
+- @uppy/dashboard: Single File Mode: fix layout and make optional (Artur Paikin / #4374)
+
 ## 3.3.1
 
 Released: 2023-03-07
