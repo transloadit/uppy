@@ -48,25 +48,29 @@ module.exports.verifyEncryptedToken = (token, secret) => {
   }
 }
 
-const addToCookies = (res, token, companionOptions, authProvider, prefix) => {
-  const cookieOptions = {
-    maxAge: 1000 * EXPIRY, // would expire after one day (24 hrs)
+const getCookieName = (authProvider) => `uppyAuthToken--${authProvider}`
+
+function getCookieOptions (companionOptions) {
+  const ret = {
+    maxAge: 1000 * EXPIRY,
     httpOnly: true,
   }
 
   // Fix to show thumbnails on Chrome
   // https://community.transloadit.com/t/dropbox-and-box-thumbnails-returning-401-unauthorized/15781/2
   if (companionOptions.server && companionOptions.server.protocol === 'https') {
-    cookieOptions.sameSite = 'none'
-    cookieOptions.secure = true
+    ret.sameSite = 'none'
+    ret.secure = true
   }
 
   if (companionOptions.cookieDomain) {
-    cookieOptions.domain = companionOptions.cookieDomain
+    ret.domain = companionOptions.cookieDomain
   }
-  // send signed token to client.
-  res.cookie(`${prefix}--${authProvider}`, token, cookieOptions)
+
+  return ret
 }
+
+module.exports.getCookieOptions = getCookieOptions
 
 /**
  *
@@ -76,7 +80,10 @@ const addToCookies = (res, token, companionOptions, authProvider, prefix) => {
  * @param {string} authProvider
  */
 module.exports.addToCookies = (res, token, companionOptions, authProvider) => {
-  addToCookies(res, token, companionOptions, authProvider, 'uppyAuthToken')
+  const cookieOptions = getCookieOptions(companionOptions)
+
+  // send signed token to client.
+  res.cookie(getCookieName(authProvider), token, cookieOptions)
 }
 
 /**
@@ -86,14 +93,10 @@ module.exports.addToCookies = (res, token, companionOptions, authProvider) => {
  * @param {string} authProvider
  */
 module.exports.removeFromCookies = (res, companionOptions, authProvider) => {
-  const cookieOptions = {
-    maxAge: 1000 * EXPIRY, // would expire after one day (24 hrs)
-    httpOnly: true,
-  }
+  // https://expressjs.com/en/api.html
+  // Web browsers and other compliant clients will only clear the cookie if the given options is
+  // identical to those given to res.cookie(), excluding expires and maxAge.
+  const cookieOptions = getCookieOptions(companionOptions)
 
-  if (companionOptions.cookieDomain) {
-    cookieOptions.domain = companionOptions.cookieDomain
-  }
-
-  res.clearCookie(`uppyAuthToken--${authProvider}`, cookieOptions)
+  res.clearCookie(getCookieName(authProvider), cookieOptions)
 }
