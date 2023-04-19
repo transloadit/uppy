@@ -154,15 +154,37 @@ export default class DragDrop extends UIPlugin {
     )
   }
 
-  handleSelectChange = (ev) => {
+  handleSelectChange = async (ev) => {
     const selected = ev.target.value
     if (selected === 'myDevice') {
       this.fileInputRef.click()
       return
     }
+    await this.lazyLoadDashboard()
+
     const dashboard = this.uppy.getPlugin('Dashboard')
     dashboard.showPanel(selected)
     dashboard.openModal()
+  }
+
+  lazyLoadDashboard = async () => {
+    const dashboardAlreadyLoaded = this.uppy.getPlugin('Dashboard')
+    if (!dashboardAlreadyLoaded) {
+      const Dashboard = await import('@uppy/dashboard')
+      this.uppy.use(Dashboard.default, {
+        trigger: '#pick-files',
+        // inline: true,
+        target: '.foo',
+        metaFields: [
+          { id: 'license', name: 'License', placeholder: 'specify license' },
+          { id: 'caption', name: 'Caption', placeholder: 'add caption' },
+        ],
+        showProgressDetails: true,
+        proudlyDisplayPoweredByUppy: true,
+        note: '2 files, images and video only',
+        autoOpenFileEditor: true,
+      })
+    }
   }
 
   toggleSourcesDropdown = () => {
@@ -186,18 +208,47 @@ export default class DragDrop extends UIPlugin {
     )
   }
 
-  renderSourcesDropdown () {
+  lazyLoadPlugin = async (ev) => {
+    const selectedPlugin = ev.target.value
+    let selectedPluginInstance
+
+    switch (selectedPlugin) {
+      case 'Audio':
+        selectedPluginInstance = await import(`@uppy/audio`)
+        break
+      default:
+        break
+    }
+
+    await this.lazyLoadDashboard()
     const dashboard = this.uppy.getPlugin('Dashboard')
-    const dashboardPlugins = dashboard
-      .getPluginState().targets
-      .filter(plugin => plugin.type === 'acquirer')
-      .map(plugin => {
-        const { icon } = this.uppy.getPlugin(plugin.id)
-        return {
-          ...plugin,
-          icon: icon || dashboard.opts.defaultPickerIcon,
-        }
-      })
+    // const selectedPluginInstance = await import(`@uppy/${selectedPlugin.toLowerCase()}`)
+    const pluginAlreadyExists = this.uppy.getPlugin(selectedPlugin)
+
+    if (!pluginAlreadyExists) {
+      this.uppy.use(
+        selectedPluginInstance.default,
+        { target: dashboard },
+      )
+    }
+
+    dashboard.showPanel(selectedPlugin)
+    dashboard.openModal()
+  }
+
+  renderSourcesDropdown () {
+    // const dashboard = this.uppy.getPlugin('Dashboard')
+    // const dashboardPlugins = dashboard
+    //   .getPluginState().targets
+    //   .filter(plugin => plugin.type === 'acquirer')
+    //   .map(plugin => {
+    //     const { icon } = this.uppy.getPlugin(plugin.id)
+    //     return {
+    //       ...plugin,
+    //       icon: icon || dashboard.opts.defaultPickerIcon,
+    //     }
+    //   })
+    const dashboardPlugins = this.opts.sources
 
     return (
       <div
@@ -207,6 +258,17 @@ export default class DragDrop extends UIPlugin {
         ref={(dom) => { this.sourcesDropdown = dom }}
       >
         <ul class="uppy-u-reset uppy-Mini-sourcesList">
+          {/* <li class="uppy-u-reset">
+            <button
+              class="uppy-u-reset"
+              type="button"
+              value="Audio"
+              onClick={this.lazyLoadPlugin}
+            >
+              {myDeviceIcon}
+              Audio
+            </button>
+          </li> */}
           <li class="uppy-u-reset">
             <button
               class="uppy-u-reset"
@@ -224,11 +286,11 @@ export default class DragDrop extends UIPlugin {
                 <button
                   class="uppy-u-reset"
                   type="button"
-                  value={plugin.id}
-                  onClick={this.handleSelectChange}
+                  value={plugin}
+                  onClick={this.lazyLoadPlugin}
                 >
-                  {plugin.icon()}
-                  {plugin.name}
+                  {/* {plugin.icon()} */}
+                  {plugin}
                 </button>
               </li>
             )

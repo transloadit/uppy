@@ -1,20 +1,20 @@
 // The @uppy/ dependencies are resolved from source
 /* eslint-disable import/no-extraneous-dependencies */
 import Uppy, { debugLogger } from '@uppy/core'
-import Dashboard from '@uppy/dashboard'
-import RemoteSources from '@uppy/remote-sources'
-import Webcam from '@uppy/webcam'
-import ScreenCapture from '@uppy/screen-capture'
+// import Dashboard from '@uppy/dashboard'
+// import RemoteSources from '@uppy/remote-sources'
+// import Webcam from '@uppy/webcam'
+// import ScreenCapture from '@uppy/screen-capture'
 import GoldenRetriever from '@uppy/golden-retriever'
 import Tus from '@uppy/tus'
 import AwsS3 from '@uppy/aws-s3'
 import AwsS3Multipart from '@uppy/aws-s3-multipart'
 import XHRUpload from '@uppy/xhr-upload'
 import Transloadit from '@uppy/transloadit'
-import Form from '@uppy/form'
-import ImageEditor from '@uppy/image-editor'
+// import Form from '@uppy/form'
+// import ImageEditor from '@uppy/image-editor'
 import DropTarget from '@uppy/drop-target'
-import Audio from '@uppy/audio'
+// import Audio from '@uppy/audio'
 import Compressor from '@uppy/compressor'
 import Mini from '@uppy/mini'
 
@@ -26,7 +26,7 @@ import generateSignatureIfSecret from './generateSignatureIfSecret.js'
 const {
   VITE_UPLOADER : UPLOADER,
   VITE_COMPANION_URL : COMPANION_URL,
-  VITE_COMPANION_ALLOWED_HOSTS : companionAllowedHosts,
+  // VITE_COMPANION_ALLOWED_HOSTS : companionAllowedHosts,
   VITE_TUS_ENDPOINT : TUS_ENDPOINT,
   VITE_XHR_ENDPOINT : XHR_ENDPOINT,
   VITE_TRANSLOADIT_KEY : TRANSLOADIT_KEY,
@@ -69,21 +69,22 @@ export default () => {
     allowMultipleUploadBatches: false,
     // restrictions: { requiredMetaFields: ['caption'] },
   })
-    .use(Dashboard, {
-      trigger: '#pick-files',
-      // inline: true,
-      target: '.foo',
-      metaFields: [
-        { id: 'license', name: 'License', placeholder: 'specify license' },
-        { id: 'caption', name: 'Caption', placeholder: 'add caption' },
-      ],
-      showProgressDetails: true,
-      proudlyDisplayPoweredByUppy: true,
-      note: '2 files, images and video only',
-      autoOpenFileEditor: true,
-    })
+    // .use(Dashboard, {
+    //   trigger: '#pick-files',
+    //   // inline: true,
+    //   target: '.foo',
+    //   metaFields: [
+    //     { id: 'license', name: 'License', placeholder: 'specify license' },
+    //     { id: 'caption', name: 'Caption', placeholder: 'add caption' },
+    //   ],
+    //   showProgressDetails: true,
+    //   proudlyDisplayPoweredByUppy: true,
+    //   note: '2 files, images and video only',
+    //   autoOpenFileEditor: true,
+    // })
     .use(Mini, {
       target: '#mini-here',
+      sources: ['Audio'],
     })
     // .use(GoogleDrive, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })
     // .use(Instagram, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })
@@ -94,23 +95,23 @@ export default () => {
     // .use(Zoom, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })
     // .use(Url, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })
     // .use(Unsplash, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })
-    .use(RemoteSources, {
-      companionUrl: COMPANION_URL,
-      sources: ['Box', 'Dropbox', 'Facebook', 'GoogleDrive', 'Instagram', 'OneDrive', 'Unsplash', 'Zoom', 'Url'],
-      companionAllowedHosts,
-    })
-    .use(Webcam, {
-      target: Dashboard,
-      showVideoSourceDropdown: true,
-      showRecordingLength: true,
-    })
-    .use(Audio, {
-      target: Dashboard,
-      showRecordingLength: true,
-    })
-    .use(ScreenCapture, { target: Dashboard })
-    .use(Form, { target: '#upload-form' })
-    .use(ImageEditor, { target: Dashboard })
+    // .use(RemoteSources, {
+    //   companionUrl: COMPANION_URL,
+    //   sources: ['Box', 'Dropbox', 'Facebook', 'GoogleDrive', 'Instagram', 'OneDrive', 'Unsplash', 'Zoom', 'Url'],
+    //   companionAllowedHosts,
+    // })
+    // .use(Webcam, {
+    //   target: Dashboard,
+    //   showVideoSourceDropdown: true,
+    //   showRecordingLength: true,
+    // })
+    // .use(Audio, {
+    //   target: Dashboard,
+    //   showRecordingLength: true,
+    // })
+    // .use(ScreenCapture, { target: Dashboard })
+    // .use(Form, { target: '#upload-form' })
+    // .use(ImageEditor, { target: Dashboard })
     .use(DropTarget, {
       target: document.body,
     })
