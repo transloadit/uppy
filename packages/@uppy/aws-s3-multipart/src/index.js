@@ -140,9 +140,14 @@ class HTTPCommunicationQueue {
   }
 
   async getUploadId (file, signal) {
-    const cachedResult = this.#cache.get(file.data)
-    if (cachedResult != null) {
-      return cachedResult
+    let cachedResult
+    while ((cachedResult = this.#cache.get(file.data)) != null) {
+      try {
+        return await cachedResult
+      } catch {
+        // In case of failure, we want to ignore the cached error.
+        // At this point, either there's a new cached value, or we'll exit the loop a create a new one.
+      }
     }
 
     const promise = this.#createMultipartUpload(file, signal)
@@ -157,27 +162,43 @@ class HTTPCommunicationQueue {
       signal.removeEventListener('abort', abortPromise)
       this.#setS3MultipartState(file, result)
       this.#cache.set(file.data, result)
-    }, () => { signal.removeEventListener('abort', abortPromise) })
+    }, () => {
+      signal.removeEventListener('abort', abortPromise)
+      this.#cache.delete(file.data)
+    })
 
     return promise
   }
 
   async abortFileUpload (file) {
     const result = this.#cache.get(file.data)
-    if (result != null) {
+    if (result == null) {
       // If the createMultipartUpload request never was made, we don't
       // need to send the abortMultipartUpload request.
-      await this.#abortMultipartUpload(file, await result)
+      return
     }
+    let awaitedResult
+    try {
+      awaitedResult = await result
+    } catch {
+      // If the cached result rejects, there's nothing to abort.
+      return
+    }
+    await this.#abortMultipartUpload(file, awaitedResult)
   }
 
   async uploadFile (file, chunks, signal) {
     throwIfAborted(signal)
     const { uploadId, key } = await this.getUploadId(file, signal)
     throwIfAborted(signal)
-    const parts = await Promise.all(chunks.map((chunk, i) => this.uploadChunk(file, i + 1, chunk, signal)))
-    throwIfAborted(signal)
-    return this.#sendCompletionRequest(file, { key, uploadId, parts, signal }).abortOn(signal)
+    try {
+      const parts = await Promise.all(chunks.map((chunk, i) => this.uploadChunk(file, i + 1, chunk, signal)))
+      throwIfAborted(signal)
+      return await this.#sendCompletionRequest(file, { key, uploadId, parts, signal }).abortOn(signal)
+    } catch (err) {
+      this.#cache.delete(file.data)
+      throw err
+    }
   }
 
   async resumeUploadFile (file, chunks, signal) {
