@@ -55,7 +55,7 @@ describe('Dashboard with @uppy/aws-s3-multipart', () => {
         ETag: 'W/"222-GXE2wLoMKDihw3wxZFH1APdUjHM"',
       },
     }).as('put3')
-    cy.intercept('POST', '/s3/multipart/mocked-new-uploadId-example/complete?key=mocked-key-example', { forceNetworkError: true}).as('post3')
+    cy.intercept('POST', '/s3/multipart/mocked-new-uploadId-example/complete?key=mocked-key-example', { forceNetworkError: true }).as('post3')
     cy.get('.uppy-StatusBar-actions > .uppy-c-btn').click()
     cy.wait(['@post2', '@get3', '@put3', '@post3'])
     cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Upload failed')

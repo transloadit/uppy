@@ -26,7 +26,7 @@ import installLogsCollector from  'cypress-terminal-report/src/installLogsCollec
 installLogsCollector()
 
 Cypress.on('uncaught:exception', () => {
-    // returning false here prevents Cypress from
-    // failing the test
-    return false
-  })
+  // returning false here prevents Cypress from
+  // failing the test
+  return false
+})
