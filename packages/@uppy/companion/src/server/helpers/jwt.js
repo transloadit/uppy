@@ -48,11 +48,9 @@ module.exports.verifyEncryptedToken = (token, secret) => {
   }
 }
 
-const getCookieName = (authProvider) => `uppyAuthToken--${authProvider}`
-
-function getCookieOptions (companionOptions) {
+const addToCookies = (res, token, companionOptions, authProvider, prefix) => {
   const cookieOptions = {
-    maxAge: 1000 * EXPIRY,
+    maxAge: 1000 * EXPIRY, // would expire after one day (24 hrs)
     httpOnly: true,
   }
 
@@ -66,11 +64,9 @@ function getCookieOptions (companionOptions) {
   if (companionOptions.cookieDomain) {
     cookieOptions.domain = companionOptions.cookieDomain
   }
-
-  return cookieOptions
+  // send signed token to client.
+  res.cookie(`${prefix}--${authProvider}`, token, cookieOptions)
 }
-
-module.exports.getCookieOptions = getCookieOptions
 
 /**
  *
@@ -80,10 +76,7 @@ module.exports.getCookieOptions = getCookieOptions
  * @param {string} authProvider
  */
 module.exports.addToCookies = (res, token, companionOptions, authProvider) => {
-  const cookieOptions = getCookieOptions(companionOptions)
-
-  // send signed token to client.
-  res.cookie(getCookieName(authProvider), token, cookieOptions)
+  addToCookies(res, token, companionOptions, authProvider, 'uppyAuthToken')
 }
 
 /**
@@ -93,10 +86,14 @@ module.exports.addToCookies = (res, token, companionOptions, authProvider) => {
  * @param {string} authProvider
  */
 module.exports.removeFromCookies = (res, companionOptions, authProvider) => {
-  // https://expressjs.com/en/api.html
-  // Web browsers and other compliant clients will only clear the cookie if the given options is
-  // identical to those given to res.cookie(), excluding expires and maxAge.
-  const cookieOptions = getCookieOptions(companionOptions)
+  const cookieOptions = {
+    maxAge: 1000 * EXPIRY, // would expire after one day (24 hrs)
+    httpOnly: true,
+  }
 
-  res.clearCookie(getCookieName(authProvider), cookieOptions)
+  if (companionOptions.cookieDomain) {
+    cookieOptions.domain = companionOptions.cookieDomain
+  }
+
+  res.clearCookie(`uppyAuthToken--${authProvider}`, cookieOptions)
 }
