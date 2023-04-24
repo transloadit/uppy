@@ -10,6 +10,7 @@ jest.mock('../../src/server/helpers/jwt', () => {
     },
     addToCookies: () => {},
     removeFromCookies: () => {},
+    getCookieOptions: () => {},
   }
 })
 

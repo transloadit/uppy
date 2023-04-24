@@ -48,9 +48,11 @@ module.exports.verifyEncryptedToken = (token, secret) => {
   }
 }
 
-const addToCookies = (res, token, companionOptions, authProvider, prefix) => {
+const getCookieName = (authProvider) => `uppyAuthToken--${authProvider}`
+
+function getCookieOptions (companionOptions) {
   const cookieOptions = {
-    maxAge: 1000 * EXPIRY, // would expire after one day (24 hrs)
+    maxAge: 1000 * EXPIRY,
     httpOnly: true,
   }
 
@@ -64,9 +66,11 @@ const addToCookies = (res, token, companionOptions, authProvider, prefix) => {
   if (companionOptions.cookieDomain) {
     cookieOptions.domain = companionOptions.cookieDomain
   }
-  // send signed token to client.
-  res.cookie(`${prefix}--${authProvider}`, token, cookieOptions)
+
+  return cookieOptions
 }
+
+module.exports.getCookieOptions = getCookieOptions
 
 /**
  *
@@ -76,7 +80,10 @@ const addToCookies = (res, token, companionOptions, authProvider, prefix) => {
  * @param {string} authProvider
  */
 module.exports.addToCookies = (res, token, companionOptions, authProvider) => {
-  addToCookies(res, token, companionOptions, authProvider, 'uppyAuthToken')
+  const cookieOptions = getCookieOptions(companionOptions)
+
+  // send signed token to client.
+  res.cookie(getCookieName(authProvider), token, cookieOptions)
 }
 
 /**
@@ -86,14 +93,10 @@ module.exports.addToCookies = (res, token, companionOptions, authProvider) => {
  * @param {string} authProvider
  */
 module.exports.removeFromCookies = (res, companionOptions, authProvider) => {
-  const cookieOptions = {
-    maxAge: 1000 * EXPIRY, // would expire after one day (24 hrs)
-    httpOnly: true,
-  }
+  // https://expressjs.com/en/api.html
+  // Web browsers and other compliant clients will only clear the cookie if the given options is
+  // identical to those given to res.cookie(), excluding expires and maxAge.
+  const cookieOptions = getCookieOptions(companionOptions)
 
-  if (companionOptions.cookieDomain) {
-    cookieOptions.domain = companionOptions.cookieDomain
-  }
-
-  res.clearCookie(`uppyAuthToken--${authProvider}`, cookieOptions)
+  res.clearCookie(getCookieName(authProvider), cookieOptions)
 }
