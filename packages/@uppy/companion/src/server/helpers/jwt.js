@@ -51,7 +51,7 @@ module.exports.verifyEncryptedToken = (token, secret) => {
 const getCookieName = (authProvider) => `uppyAuthToken--${authProvider}`
 
 function getCookieOptions (companionOptions) {
-  const ret = {
+  const cookieOptions = {
     maxAge: 1000 * EXPIRY,
     httpOnly: true,
   }
@@ -59,15 +59,15 @@ function getCookieOptions (companionOptions) {
   // Fix to show thumbnails on Chrome
   // https://community.transloadit.com/t/dropbox-and-box-thumbnails-returning-401-unauthorized/15781/2
   if (companionOptions.server && companionOptions.server.protocol === 'https') {
-    ret.sameSite = 'none'
-    ret.secure = true
+    cookieOptions.sameSite = 'none'
+    cookieOptions.secure = true
   }
 
   if (companionOptions.cookieDomain) {
-    ret.domain = companionOptions.cookieDomain
+    cookieOptions.domain = companionOptions.cookieDomain
   }
 
-  return ret
+  return cookieOptions
 }
 
 module.exports.getCookieOptions = getCookieOptions
