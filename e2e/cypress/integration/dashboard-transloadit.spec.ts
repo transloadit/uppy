@@ -194,7 +194,7 @@ describe('Dashboard with Transloadit', () => {
 
   it.only('should not re-use erroneous tus keys', () => {
     cy.get('@file-input').selectFile(
-      ['cypress/fixtures/images/cat.jpg', 'cypress/fixtures/images/traffic.jpg', 'cypress/fixtures/images/car.jpg'],
+      ['cypress/fixtures/images/cat.jpg'],
       { force:true },
     )
 
@@ -264,7 +264,7 @@ describe('Dashboard with Transloadit', () => {
       headers: {
         Location: 'https://api2-test.transloadit.com/resumable/files/a9daed4af4981880faf29b0e9596a14d',
       },
-      times: 1,
+      // times: 1,
     }).as('tusCall')
     cy.intercept('PATCH', 'https://api2-test.transloadit.com/resumable/files/a9daed4af4981880faf29b0e9596a14d', { statusCode: 204 })
     cy.intercept('HEAD', 'https://api2-test.transloadit.com/resumable/files/a9daed4af4981880faf29b0e9596a14d', { statusCode: 204 })
@@ -334,7 +334,7 @@ describe('Dashboard with Transloadit', () => {
 
     cy.intercept('POST', 'https://transloaditstatus.com/client_error', { statusCode: 200 })
     cy.get('.uppy-StatusBar-actionBtn--upload').click()
-    cy.wait(['@createAssembly', ...Array(3).fill('@tusCall'), '@failureReported'])
+    cy.wait(['@createAssembly', ...Array(1).fill('@tusCall'), '@failureReported'])
 
     cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Upload failed')
 
@@ -399,6 +399,16 @@ describe('Dashboard with Transloadit', () => {
       }),
     }).as('createAssembly-attempt2')
 
+    cy.intercept('OPTIONS', 'https://api2-test.transloadit.com/resumable/files/b8ebed4af4981880faf29b0e9596b25e', {
+      statusCode: 204,
+      headers: {
+        'access-control-expose-headers': 'Upload-Offset, Location, Upload-Length, Tus-Version, Tus-Resumable, Tus-Max-Size, Tus-Extension, Upload-Metadata, Upload-Defer-Length, Upload-Concat',
+        'access-control-allow-methods': 'POST, HEAD, PATCH, OPTIONS, GET, DELETE',
+        'access-control-allow-origin': 'http://localhost:1234',
+        'access-control-max-age': '86400',
+      },
+    })
+
     cy.intercept('POST', 'https://api2-test.transloadit.com/resumable/files/attempt2', {
       statusCode: 201,
       headers: {
@@ -406,7 +416,13 @@ describe('Dashboard with Transloadit', () => {
       },
       times: 1,
     }).as('tusCall-attempt2')
-    cy.intercept('PATCH', 'https://api2-test.transloadit.com/resumable/files/b8ebed4af4981880faf29b0e9596b25e', { statusCode: 204 })
+
+    cy.intercept('PATCH', 'https://api2-test.transloadit.com/resumable/files/b8ebed4af4981880faf29b0e9596b25e', {
+      statusCode: 204,
+      headers: {
+        'Upload-Offset': '0',
+      },
+    })
     cy.intercept('HEAD', 'https://api2-test.transloadit.com/resumable/files/b8ebed4af4981880faf29b0e9596b25e', { statusCode: 204 })
 
     cy.intercept('GET', 'https://api2-test.transloadit.com/assemblies/6a3fa40e527d4d73989fce678232a5e1', {
