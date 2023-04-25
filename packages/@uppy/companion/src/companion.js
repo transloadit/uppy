@@ -71,7 +71,7 @@ module.exports.app = (optionsArg = {}) => {
   const options = merge({}, defaultOptions, optionsArg)
 
   const providers = providerManager.getDefaultProviders()
-  const searchProviders = providerManager.getSearchProviders()
+
   providerManager.addProviderOptions(options, grantConfig)
 
   const { customProviders } = options
@@ -97,8 +97,11 @@ module.exports.app = (optionsArg = {}) => {
   app.use(cookieParser()) // server tokens are added to cookies
 
   app.use(interceptGrantErrorResponse)
+
   // override provider credentials at request time
-  app.use('/connect/:authProvider/:override?', getCredentialsOverrideMiddleware(providers, options))
+  // Making `POST` request to the `/connect/:provider/:override?` route requires a form body parser middleware:
+  // See https://github.com/simov/grant#dynamic-http
+  app.use('/connect/:authProvider/:override?', express.urlencoded({ extended: false }), getCredentialsOverrideMiddleware(providers, options))
   app.use(Grant(grantConfig))
 
   app.use((req, res, next) => {
@@ -116,22 +119,25 @@ module.exports.app = (optionsArg = {}) => {
   app.use('/s3', s3(options.s3))
   app.use('/url', url())
 
-  app.post('/:providerName/preauth', middlewares.hasSessionAndProvider, controllers.preauth)
-  app.get('/:providerName/connect', middlewares.hasSessionAndProvider, controllers.connect)
-  app.get('/:providerName/redirect', middlewares.hasSessionAndProvider, controllers.redirect)
-  app.get('/:providerName/callback', middlewares.hasSessionAndProvider, controllers.callback)
-  app.post('/:providerName/deauthorization/callback', middlewares.hasSessionAndProvider, controllers.deauthorizationCallback)
-  app.get('/:providerName/logout', middlewares.hasSessionAndProvider, middlewares.gentleVerifyToken, controllers.logout)
-  app.get('/:providerName/send-token', middlewares.hasSessionAndProvider, middlewares.verifyToken, controllers.sendToken)
-  app.get('/:providerName/list/:id?', middlewares.hasSessionAndProvider, middlewares.verifyToken, controllers.list)
-  app.post('/:providerName/get/:id', middlewares.hasSessionAndProvider, middlewares.verifyToken, controllers.get)
-  app.get('/:providerName/thumbnail/:id', middlewares.hasSessionAndProvider, middlewares.cookieAuthToken, middlewares.verifyToken, controllers.thumbnail)
-  // @ts-ignore Type instantiation is excessively deep and possibly infinite.
-  app.get('/search/:searchProviderName/list', middlewares.hasSearchQuery, middlewares.loadSearchProviderToken, controllers.list)
-  app.post('/search/:searchProviderName/get/:id', middlewares.loadSearchProviderToken, controllers.get)
+  app.post('/:providerName/preauth', express.json(), express.urlencoded({ extended: false }), middlewares.hasSessionAndProvider, middlewares.hasBody, middlewares.hasOAuthProvider, controllers.preauth)
+  app.get('/:providerName/connect', middlewares.hasSessionAndProvider, middlewares.hasOAuthProvider, controllers.connect)
+  app.get('/:providerName/redirect', middlewares.hasSessionAndProvider, middlewares.hasOAuthProvider, controllers.redirect)
+  app.get('/:providerName/callback', middlewares.hasSessionAndProvider, middlewares.hasOAuthProvider, controllers.callback)
+  app.post('/:providerName/deauthorization/callback', express.json(), middlewares.hasSessionAndProvider, middlewares.hasBody, middlewares.hasOAuthProvider, controllers.deauthorizationCallback)
+  app.get('/:providerName/logout', middlewares.hasSessionAndProvider, middlewares.hasOAuthProvider, middlewares.gentleVerifyToken, controllers.logout)
+  app.get('/:providerName/send-token', middlewares.hasSessionAndProvider, middlewares.hasOAuthProvider, middlewares.verifyToken, controllers.sendToken)
 
-  app.param('providerName', providerManager.getProviderMiddleware(providers, true))
-  app.param('searchProviderName', providerManager.getProviderMiddleware(searchProviders))
+  app.get('/:providerName/list/:id?', middlewares.hasSessionAndProvider, middlewares.verifyToken, controllers.list)
+  // backwards compat:
+  app.get('/search/:providerName/list', middlewares.hasSessionAndProvider, middlewares.verifyToken, controllers.list)
+
+  app.post('/:providerName/get/:id', express.json(), middlewares.hasSessionAndProvider, middlewares.verifyToken, controllers.get)
+  // backwards compat:
+  app.post('/search/:providerName/get/:id', express.json(), middlewares.hasSessionAndProvider, middlewares.verifyToken, controllers.get)
+
+  app.get('/:providerName/thumbnail/:id', middlewares.hasSessionAndProvider, middlewares.hasOAuthProvider, middlewares.cookieAuthToken, middlewares.verifyToken, controllers.thumbnail)
+
+  app.param('providerName', providerManager.getProviderMiddleware(providers))
 
   if (app.get('env') !== 'test') {
     jobs.startCleanUpJob(options.filePath)

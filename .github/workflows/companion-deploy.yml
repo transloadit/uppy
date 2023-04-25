@@ -65,3 +65,20 @@ jobs:
           file: Dockerfile
           tags: ${{ steps.docker_meta.outputs.tags }}
           labels: ${{ steps.docker_meta.outputs.labels }}
+
+  heroku:
+    name: Heroku
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v3
+      - name: Alter dockerfile
+        run: |
+          sed -i 's/^EXPOSE 3020$/EXPOSE $PORT/g' Dockerfile
+      - name: Deploy to heroku
+        uses: akhileshns/heroku-deploy@v3.12.12
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: companion-demo
+          heroku_email: ${{secrets.HEROKU_EMAIL}}
+          usedocker: true

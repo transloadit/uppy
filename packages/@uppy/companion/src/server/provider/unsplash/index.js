@@ -1,10 +1,11 @@
 const got = require('got').default
 
-const SearchProvider = require('../SearchProvider')
+const Provider = require('../Provider')
 const { getURLMeta } = require('../../helpers/request')
 const adaptData = require('./adapter')
 const { withProviderErrorHandling } = require('../providerErrors')
 const { prepareStream } = require('../../helpers/utils')
+const { ProviderApiError } = require('../error')
 
 const BASE_URL = 'https://api.unsplash.com'
 
@@ -20,8 +21,12 @@ const getPhotoMeta = async (client, id) => client.get(`photos/${id}`, { response
 /**
  * Adapter for API https://api.unsplash.com
  */
-class Unsplash extends SearchProvider {
+class Unsplash extends Provider {
   async list ({ token, query = { cursor: null, q: null } }) {
+    if (typeof query.q !== 'string') {
+      throw new ProviderApiError('Search query missing', 400)
+    }
+
     return this.#withErrorHandling('provider.unsplash.list.error', async () => {
       const qs = { per_page: 40, query: query.q }
       if (query.cursor) qs.page = query.cursor

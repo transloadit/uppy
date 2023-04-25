@@ -3,12 +3,12 @@ import * as tus from 'tus-js-client'
 import { Provider, RequestClient, Socket } from '@uppy/companion-client'
 import emitSocketProgress from '@uppy/utils/lib/emitSocketProgress'
 import getSocketHost from '@uppy/utils/lib/getSocketHost'
-import settle from '@uppy/utils/lib/settle'
 import EventTracker from '@uppy/utils/lib/EventTracker'
 import NetworkError from '@uppy/utils/lib/NetworkError'
 import isNetworkError from '@uppy/utils/lib/isNetworkError'
 import { RateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
 import hasProperty from '@uppy/utils/lib/hasProperty'
+import { filterNonFailedFiles, filterFilesToEmitUploadStarted } from '@uppy/utils/lib/fileFilters'
 import getFingerprint from './getFingerprint.js'
 
 import packageJson from '../package.json'
@@ -102,7 +102,6 @@ export default class Tus extends BasePlugin {
     this.uploaderSockets = Object.create(null)
 
     this.handleResetProgress = this.handleResetProgress.bind(this)
-    this.handleUpload = this.handleUpload.bind(this)
     this.#queueRequestSocketToken = this.requests.wrapPromiseFunction(this.#requestSocketToken, { priority: -1 })
   }
 
@@ -183,7 +182,7 @@ export default class Tus extends BasePlugin {
    * @param {UppyFile} file for use with upload
    * @returns {Promise<void>}
    */
-  upload (file) {
+  #upload (file) {
     this.resetUploaderReferences(file.id)
 
     // Create a new tus upload
@@ -191,8 +190,6 @@ export default class Tus extends BasePlugin {
       let queuedRequest
       let qRequest
       let upload
-
-      this.uppy.emit('upload-started', file)
 
       const opts = {
         ...this.opts,
@@ -456,29 +453,27 @@ export default class Tus extends BasePlugin {
     return res.token
   }
 
+  // NOTE! Keep this duplicated code in sync with other plugins
+  // TODO we should probably abstract this into a common function
   /**
    * @param {UppyFile} file for use with upload
    * @returns {Promise<void>}
    */
-  async uploadRemote (file) {
+  async #uploadRemote (file) {
     this.resetUploaderReferences(file.id)
-
-    // Don't double-emit upload-started for Golden Retriever-restored files that were already started
-    if (!file.progress.uploadStarted || !file.isRestored) {
-      this.uppy.emit('upload-started', file)
-    }
 
     try {
       if (file.serverToken) {
-        return this.connectToServerSocket(file)
+        return await this.connectToServerSocket(file)
       }
       const serverToken = await this.#queueRequestSocketToken(file)
 
       if (!this.uppy.getState().files[file.id]) return undefined
 
       this.uppy.setFileState(file.id, { serverToken })
-      return this.connectToServerSocket(this.uppy.getFile(file.id))
+      return await this.connectToServerSocket(this.uppy.getFile(file.id))
     } catch (err) {
+      this.uppy.setFileState(file.id, { serverToken: undefined })
       this.uppy.emit('upload-error', file, err)
       throw err
     }
@@ -492,11 +487,11 @@ export default class Tus extends BasePlugin {
    *
    * @param {UppyFile} file
    */
-  connectToServerSocket (file) {
+  async connectToServerSocket (file) {
     return new Promise((resolve, reject) => {
       const token = file.serverToken
       const host = getSocketHost(file.remote.companionUrl)
-      const socket = new Socket({ target: `${host}/api/${token}` })
+      const socket = new Socket({ target: `${host}/api/${token}`, autoOpen: false })
       this.uploaderSockets[file.id] = socket
       this.uploaderEvents[file.id] = new EventTracker(this.uppy)
 
@@ -519,8 +514,10 @@ export default class Tus extends BasePlugin {
           // resume a queued upload to make it skip the queue.
           queuedRequest.abort()
           queuedRequest = this.requests.run(() => {
+            socket.open()
             socket.send('resume', {})
-            return () => {}
+
+            return () => socket.close()
           })
         }
       })
@@ -545,8 +542,10 @@ export default class Tus extends BasePlugin {
           socket.send('pause', {})
         }
         queuedRequest = this.requests.run(() => {
+          socket.open()
           socket.send('resume', {})
-          return () => {}
+
+          return () => socket.close()
         })
       })
 
@@ -607,15 +606,17 @@ export default class Tus extends BasePlugin {
       queuedRequest = this.requests.run(() => {
         if (file.isPaused) {
           socket.send('pause', {})
+        } else {
+          socket.open()
         }
 
-        // Don't do anything here, the caller will take care of cancelling the upload itself
+        // Just close the socket here, the caller will take care of cancelling the upload itself
         // using resetUploaderReferences(). This is because resetUploaderReferences() has to be
         // called when this request is still in the queue, and has not been started yet, too. At
         // that point this cancellation function is not going to be called.
         // Also, we need to remove the request from the queue _without_ destroying everything
         // related to this upload to handle pauses.
-        return () => {}
+        return () => socket.close()
       })
     })
   }
@@ -721,39 +722,29 @@ export default class Tus extends BasePlugin {
   /**
    * @param {(UppyFile | FailedUppyFile)[]} files
    */
-  uploadFiles (files) {
-    const promises = files.map((file, i) => {
+  async #uploadFiles (files) {
+    const filesFiltered = filterNonFailedFiles(files)
+    const filesToEmit = filterFilesToEmitUploadStarted(filesFiltered)
+    this.uppy.emit('upload-start', filesToEmit)
+
+    await Promise.allSettled(filesFiltered.map((file, i) => {
       const current = i + 1
       const total = files.length
 
-      if ('error' in file && file.error) {
-        return Promise.reject(new Error(file.error))
-      } if (file.isRemote) {
-        // We emit upload-started here, so that it's also emitted for files
-        // that have to wait due to the `limit` option.
-        // Don't double-emit upload-started for Golden Retriever-restored files that were already started
-        if (!file.progress.uploadStarted || !file.isRestored) {
-          this.uppy.emit('upload-started', file)
-        }
-        return this.uploadRemote(file, current, total)
+      if (file.isRemote) {
+        return this.#uploadRemote(file, current, total)
       }
-      // Don't double-emit upload-started for Golden Retriever-restored files that were already started
-      if (!file.progress.uploadStarted || !file.isRestored) {
-        this.uppy.emit('upload-started', file)
-      }
-      return this.upload(file, current, total)
-    })
-
-    return settle(promises)
+      return this.#upload(file, current, total)
+    }))
   }
 
   /**
    * @param {string[]} fileIDs
    */
-  handleUpload (fileIDs) {
+  #handleUpload = async (fileIDs) => {
     if (fileIDs.length === 0) {
       this.uppy.log('[Tus] No files to upload')
-      return Promise.resolve()
+      return
     }
 
     if (this.opts.limit === 0) {
@@ -764,17 +755,16 @@ export default class Tus extends BasePlugin {
     }
 
     this.uppy.log('[Tus] Uploading...')
-    const filesToUpload = fileIDs.map((fileID) => this.uppy.getFile(fileID))
+    const filesToUpload = this.uppy.getFilesByIds(fileIDs)
 
-    return this.uploadFiles(filesToUpload)
-      .then(() => null)
+    await this.#uploadFiles(filesToUpload)
   }
 
   install () {
     this.uppy.setState({
       capabilities: { ...this.uppy.getState().capabilities, resumableUploads: true },
     })
-    this.uppy.addUploader(this.handleUpload)
+    this.uppy.addUploader(this.#handleUpload)
 
     this.uppy.on('reset-progress', this.handleResetProgress)
   }
@@ -783,6 +773,6 @@ export default class Tus extends BasePlugin {
     this.uppy.setState({
       capabilities: { ...this.uppy.getState().capabilities, resumableUploads: false },
     })
-    this.uppy.removeUploader(this.handleUpload)
+    this.uppy.removeUploader(this.#handleUpload)
   }
 }

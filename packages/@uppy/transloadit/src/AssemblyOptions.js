@@ -59,12 +59,16 @@ async function getAssemblyOptions (file, options) {
 }
 
 function getFields (file, assemblyOptions) {
-  if (Array.isArray(assemblyOptions.fields)) {
+  const { fields } = assemblyOptions
+  if (fields == null) {
+    return {}
+  }
+  if (Array.isArray(fields)) {
     return Object.fromEntries(
-      assemblyOptions.fields.map((fieldName) => [fieldName, file.meta[fieldName]]),
+      fields.map((fieldName) => [fieldName, file.meta[fieldName]]),
     )
   }
-  return {}
+  return fields
 }
 
 /**

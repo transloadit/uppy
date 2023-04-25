@@ -1,4 +1,5 @@
 import { h } from 'preact'
+import classNames from 'classnames'
 
 function GridListItem (props) {
   const {
@@ -15,6 +16,13 @@ function GridListItem (props) {
     children,
   } = props
 
+  const checkBoxClassName = classNames(
+    'uppy-u-reset',
+    'uppy-ProviderBrowserItem-checkbox',
+    'uppy-ProviderBrowserItem-checkbox--grid',
+    { 'uppy-ProviderBrowserItem-checkbox--is-checked': isChecked },
+  )
+
   return (
     <li
       className={className}
@@ -22,9 +30,7 @@ function GridListItem (props) {
     >
       <input
         type="checkbox"
-        className={`uppy-u-reset uppy-ProviderBrowserItem-checkbox ${
-          isChecked ? 'uppy-ProviderBrowserItem-checkbox--is-checked' : ''
-        } uppy-ProviderBrowserItem-checkbox--grid`}
+        className={checkBoxClassName}
         onChange={toggleCheckbox}
         onKeyDown={recordShiftKeyPress}
         name="listitem"
@@ -38,13 +44,9 @@ function GridListItem (props) {
         aria-label={title}
         className="uppy-u-reset uppy-ProviderBrowserItem-inner"
       >
-        <span className="uppy-ProviderBrowserItem-inner-relative">
-          {itemIconEl}
-
-          {showTitles && title}
-
-          {children}
-        </span>
+        {itemIconEl}
+        {showTitles && title}
+        {children}
       </label>
     </li>
   )

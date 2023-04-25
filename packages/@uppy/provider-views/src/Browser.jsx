@@ -1,10 +1,8 @@
 import { h } from 'preact'
 
 import classNames from 'classnames'
-
 import remoteFileObjToLocal from '@uppy/utils/lib/remoteFileObjToLocal'
-
-import Filter from './Filter.jsx'
+import SearchFilterInput from './SearchFilterInput.jsx'
 import FooterActions from './FooterActions.jsx'
 import Item from './Item/index.jsx'
 
@@ -26,13 +24,19 @@ function Browser (props) {
     showTitles,
     i18n,
     validateRestrictions,
-    showFilter,
-    filterQuery,
-    filterInput,
+    isLoading,
+    showSearchFilter,
+    search,
+    searchTerm,
+    clearSearch,
+    searchOnInput,
+    searchInputLabel,
+    clearSearchLabel,
     getNextFolder,
     cancel,
     done,
     columns,
+    noResultsLabel,
   } = props
 
   const selected = currentSelection.length
@@ -44,30 +48,46 @@ function Browser (props) {
         `uppy-ProviderBrowser-viewType--${viewType}`,
       )}
     >
-      <div className="uppy-ProviderBrowser-header">
-        <div
-          className={classNames(
-            'uppy-ProviderBrowser-headerBar',
-            !showBreadcrumbs && 'uppy-ProviderBrowser-headerBar--simple',
-          )}
-        >
-          {headerComponent}
+      {headerComponent && (
+        <div className="uppy-ProviderBrowser-header">
+          <div
+            className={classNames(
+              'uppy-ProviderBrowser-headerBar',
+              !showBreadcrumbs && 'uppy-ProviderBrowser-headerBar--simple',
+            )}
+          >
+            {headerComponent}
+          </div>
         </div>
-      </div>
+      )}
 
-      {showFilter && (
-        <Filter
-          i18n={i18n}
-          filterQuery={filterQuery}
-          filterInput={filterInput}
-        />
+      {showSearchFilter && (
+        <div class="uppy-ProviderBrowser-searchFilter">
+          <SearchFilterInput
+            search={search}
+            searchTerm={searchTerm}
+            clearSearch={clearSearch}
+            inputLabel={searchInputLabel}
+            clearSearchLabel={clearSearchLabel}
+            inputClassName="uppy-ProviderBrowser-searchFilterInput"
+            searchOnInput={searchOnInput}
+          />
+        </div>
       )}
 
       {(() => {
+        if (isLoading) {
+          return (
+            <div className="uppy-Provider-loading">
+              <span>{i18n('loading')}</span>
+            </div>
+          )
+        }
+
         if (!folders.length && !files.length) {
           return (
             <div className="uppy-Provider-empty">
-              {i18n('noFilesFound')}
+              {noResultsLabel}
             </div>
           )
         }

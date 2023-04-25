@@ -12,6 +12,7 @@ en_US.strings = {
     '0': 'Failed to add %{smart_count} file due to an internal error',
     '1': 'Failed to add %{smart_count} files due to internal errors',
   },
+  addedNumFiles: 'Added %{numFiles} file(s)',
   addingMoreFiles: 'Adding more files',
   addMore: 'Add more',
   addMoreFiles: 'Add more files',
@@ -80,6 +81,7 @@ en_US.strings = {
     '0': 'Added %{smart_count} file from %{folder}',
     '1': 'Added %{smart_count} files from %{folder}',
   },
+  additionalRestrictionsFailed: '%{count} additional restrictions were not fulfilled',
   folderAlreadyAdded: 'The folder "%{folder}" was already added',
   generatingThumbnails: 'Generating thumbnails...',
   import: 'Import',
@@ -173,6 +175,7 @@ en_US.strings = {
     '1': 'Uploading %{smart_count} files',
   },
   uploadPaused: 'Upload paused',
+  uploadStalled: 'Upload has not made any progress for %{seconds} seconds. You may want to retry it.',
   uploadXFiles: {
     '0': 'Upload %{smart_count} file',
     '1': 'Upload %{smart_count} files',

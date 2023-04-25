@@ -1,5 +1,26 @@
 # @uppy/xhr-upload
 
+## 3.2.0
+
+Released: 2023-04-18
+Included in: Uppy v3.8.0
+
+- @uppy/xhr-upload: fix type in README.md (Top Master / #4416)
+
+## 3.1.1
+
+Released: 2023-04-04
+Included in: Uppy v3.7.0
+
+- @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/tus,@uppy/xhr-upload: make sure that we reset serverToken when an upload fails (Mikael Finstad / #4376)
+
+## 3.1.0
+
+Released: 2023-02-13
+Included in: Uppy v3.5.0
+
+- @uppy/xhr-upload: add `'upload-stalled'` event (Antoine du Hamel / #4247)
+
 ## 3.0.4
 
 Released: 2022-10-24

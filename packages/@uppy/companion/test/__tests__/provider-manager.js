@@ -1,5 +1,3 @@
-/* global jest:false, test:false, expect:false, describe:false, beforeEach:false */
-
 const providerManager = require('../../src/server/provider')
 const { getCompanionOptions } = require('../../src/standalone/helper')
 const { setDefaultEnv } = require('../mockserver')
@@ -10,6 +8,7 @@ let companionOptions
 describe('Test Provider options', () => {
   beforeEach(() => {
     setDefaultEnv()
+    // eslint-disable-next-line global-require
     grantConfig = require('../../src/config/grant')()
     companionOptions = getCompanionOptions()
   })
@@ -148,7 +147,7 @@ describe('Test Custom Provider options', () => {
           key: 'foo_key',
           secret: 'foo_secret',
         },
-        module: jest.mock(),
+        module: { authProvider: 'some_provider' },
       },
     }, providers, grantConfig)
 

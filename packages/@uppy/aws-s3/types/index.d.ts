@@ -1,4 +1,3 @@
-import type { RequestClientOptions } from '@uppy/companion-client'
 import type { PluginOptions, BasePlugin, UppyFile } from '@uppy/core'
 
 type MaybePromise<T> = T | Promise<T>
@@ -10,8 +9,9 @@ export interface AwsS3UploadParameters {
     headers?: { [type: string]: string }
 }
 
-type Parent = PluginOptions & Partial<RequestClientOptions>
-export interface AwsS3Options extends Parent {
+export interface AwsS3Options extends PluginOptions {
+    companionHeaders?: { [type: string]: string }
+    companionUrl?: string
     getUploadParameters?: (file: UppyFile) => MaybePromise<AwsS3UploadParameters>
     allowedMetaFields?: string[] | null
     /** @deprecated future versions of this plugin will use the Expires value from the backend */

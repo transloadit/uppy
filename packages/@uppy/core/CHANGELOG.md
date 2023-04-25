@@ -1,5 +1,36 @@
 # @uppy/core
 
+## 3.2.0
+
+Released: 2023-04-18
+Included in: Uppy v3.8.0
+
+- @uppy/core: improve performance of validating & uploading files (Mikael Finstad / #4402)
+- @uppy/core,@uppy/locales,@uppy/provider-views: User feedback adding recursive folders take 2 (Mikael Finstad / #4399)
+
+## 3.1.2
+
+Released: 2023-04-04
+Included in: Uppy v3.7.0
+
+- @uppy/core: fix bug with `setOptions` (Nguyễn bảo Trung / #4350)
+
+## 3.1.0
+
+Released: 2023-03-07
+Included in: Uppy v3.6.0
+
+- @uppy/core: fix uppy.resetProgress() (Artur Paikin / #4337)
+- @uppy/core: fix some types (Antoine du Hamel / #4332)
+- @uppy/core: Fixed type of State.info to match reality being an array of info objects (Marc Bennewitz / #4321)
+
+## 3.0.6
+
+Released: 2023-02-13
+Included in: Uppy v3.5.0
+
+- @uppy/audio,@uppy/core,@uppy/dashboard,@uppy/screen-capture: Warn more instead of erroring (Artur Paikin / #4302)
+
 ## 3.0.5
 
 Released: 2023-01-26

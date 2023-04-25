@@ -1,5 +1,13 @@
 # @uppy/aws-s3
 
+## 3.0.6
+
+Released: 2023-04-04
+Included in: Uppy v3.7.0
+
+- @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/tus,@uppy/xhr-upload: make sure that we reset serverToken when an upload fails (Mikael Finstad / #4376)
+- @uppy/aws-s3: Update types (Minh Hieu / #4294)
+
 ## 3.0.5
 
 Released: 2023-01-26

@@ -10,10 +10,9 @@ describe('Dashboard with Transloadit', () => {
   it('should upload cat image successfully', () => {
     cy.get('@file-input').selectFile('cypress/fixtures/images/cat.jpg', { force:true })
 
-    cy.get('.uppy-StatusBar-actionBtn--upload').click().then(() => {
-      cy.wait(['@assemblies', '@resumable']).then(() => {
-        cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Complete')
-      })
+    cy.get('.uppy-StatusBar-actionBtn--upload').click()
+    cy.wait(['@assemblies', '@resumable']).then(() => {
+      cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Complete')
     })
   })
 
@@ -31,17 +30,16 @@ describe('Dashboard with Transloadit', () => {
       cy.get('@file-input').selectFile(
         ['cypress/fixtures/images/cat.jpg', 'cypress/fixtures/images/traffic.jpg', 'cypress/fixtures/images/car.jpg'],
         { force:true },
-      ).then(() => {
-        cy.get('.uppy-StatusBar-actionBtn--upload').click().then(() => {
-          cy.wait(['@createAssemblies']).then(() => {
-            expect(Object.values(uppy.getPlugin('Transloadit').activeAssemblies).every((a: any) => a.pollInterval)).to.equal(true)
+      )
+      cy.get('.uppy-StatusBar-actionBtn--upload').click()
 
-            uppy.cancelAll()
+      cy.wait(['@createAssemblies']).then(() => {
+        expect(Object.values(uppy.getPlugin('Transloadit').activeAssemblies).every((a: any) => a.pollInterval)).to.equal(true)
 
-            cy.wait(['@delete']).then(() => {
-              expect(Object.values(uppy.getPlugin('Transloadit').activeAssemblies).some((a: any) => a.pollInterval)).to.equal(false)
-            })
-          })
+        uppy.cancelAll()
+
+        cy.wait(['@delete']).then(() => {
+          expect(Object.values(uppy.getPlugin('Transloadit').activeAssemblies).some((a: any) => a.pollInterval)).to.equal(false)
         })
       })
     })
@@ -75,20 +73,15 @@ describe('Dashboard with Transloadit', () => {
         { method: 'DELETE', pathname: '/assemblies/*', times: 1 },
       ).as('assemblyDeletion')
 
-      cy.get('.uppy-StatusBar-actionBtn--upload').click().then(() => {
-        cy.wait('@assemblyPolling').then(() => {
-          cy.get('button[data-cy=cancel]').click().then(() => {
-            cy.wait('@assemblyDeletion').then(() => {
-              // Unfortunately, waiting on a network request somehow often results in a race condition.
-              // We just want to know wether this is called or not, so waiting for 2 sec to be sure.
-              // eslint-disable-next-line cypress/no-unnecessary-waiting
-              cy.wait(2000).then(() => {
-                expect(spy).to.be.calledOnce
-              })
-            })
-          })
-        })
-      })
+      cy.get('.uppy-StatusBar-actionBtn--upload').click()
+      cy.wait('@assemblyPolling')
+      cy.get('button[data-cy=cancel]').click()
+      cy.wait('@assemblyDeletion')
+      // Unfortunately, waiting on a network request somehow often results in a race condition.
+      // We just want to know wether this is called or not, so waiting for 2 sec to be sure.
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.wait(2000)
+      expect(spy).to.be.calledOnce
     })
   })
 
@@ -116,18 +109,16 @@ describe('Dashboard with Transloadit', () => {
         { method: 'DELETE', pathname: '/assemblies/*', times: 1 },
       ).as('assemblyDeletion')
 
-      cy.get('.uppy-StatusBar-actionBtn--upload').click().then(() => {
-        cy.wait('@assemblyPolling').then(() => {
-          expect(Object.values(uppy.getPlugin('Transloadit').activeAssemblies).every((a: any) => a.pollInterval)).to.equal(true)
+      cy.get('.uppy-StatusBar-actionBtn--upload').click()
+      cy.wait('@assemblyPolling')
+      expect(Object.values(uppy.getPlugin('Transloadit').activeAssemblies).every((a: any) => a.pollInterval)).to.equal(true)
 
-          const { files } = uppy.getState()
-          uppy.removeFiles(Object.keys(files))
+      const { files } = uppy.getState()
+      uppy.removeFiles(Object.keys(files))
 
-          cy.wait('@assemblyDeletion').then(() => {
-            expect(Object.values(uppy.getPlugin('Transloadit').activeAssemblies).some((a: any) => a.pollInterval)).to.equal(false)
-            expect(spy).to.be.calledOnce
-          })
-        })
+      cy.wait('@assemblyDeletion').then(() => {
+        expect(Object.values(uppy.getPlugin('Transloadit').activeAssemblies).some((a: any) => a.pollInterval)).to.equal(false)
+        expect(spy).to.be.calledOnce
       })
     })
   })
