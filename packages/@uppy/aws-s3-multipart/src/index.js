@@ -141,6 +141,9 @@ class HTTPCommunicationQueue {
 
   async getUploadId (file, signal) {
     let cachedResult
+    // As the cache is updated asynchronously, there could be a race condition
+    // where we just miss a new result so we loop here until we get nothing back,
+    // at which point it's out turn to create a new cache entry.
     while ((cachedResult = this.#cache.get(file.data)) != null) {
       try {
         return await cachedResult
