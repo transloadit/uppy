@@ -1,4 +1,3 @@
-import type { RequestClientOptions } from '@uppy/companion-client'
 import type { PluginOptions, BasePlugin, UppyFile } from '@uppy/core'
 
 type MaybePromise<T> = T | Promise<T>
@@ -13,8 +12,10 @@ export interface AwsS3SignedPart {
   headers?: Record<string, string>
 }
 
-type Parent = PluginOptions & Partial<RequestClientOptions>
-export interface AwsS3MultipartOptions extends Parent {
+export interface AwsS3MultipartOptions extends PluginOptions {
+    companionHeaders?: { [type: string]: string }
+    companionUrl?: string
+    companionCookiesRule?: string
     allowedMetaFields?: string[] | null
     getChunkSize?: (file: UppyFile) => number
     createMultipartUpload?: (
