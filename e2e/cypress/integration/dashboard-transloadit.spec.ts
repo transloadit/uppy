@@ -192,19 +192,11 @@ describe('Dashboard with Transloadit', () => {
     })
   })
 
-  it.only('should not re-use erroneous tus keys', () => {
-    cy.get('@file-input').selectFile(
-      ['cypress/fixtures/images/cat.jpg'],
-      { force:true },
-    )
-
-    // FIRST ATTEMPT
-    cy.intercept('POST', 'https://api2.transloadit.com/assemblies', {
-      statusCode: 200,
-      body: JSON.stringify({
-        ok:'ASSEMBLY_UPLOADING',
-        message:'The Assembly is still in the process of being uploaded.',
-        assembly_id:'500e56004f4347a288194edd7c7a0ae1',
+  it('should not re-use erroneous tus keys', () => {
+    function createAssemblyStatus ({ message, assembly_id, bytes_expected, ...other }) {
+      return {
+        message,
+        assembly_id,
         parent_id:null,
         account_id:'deadbeef',
         account_name:'foo',
@@ -212,14 +204,14 @@ describe('Dashboard with Transloadit', () => {
         template_id:null,
         template_name:null,
         instance:'test.transloadit.com',
-        assembly_url:'http://api2.test.transloadit.com/assemblies/500e56004f4347a288194edd7c7a0ae1',
-        assembly_ssl_url:'https://api2-test.transloadit.com/assemblies/500e56004f4347a288194edd7c7a0ae1',
+        assembly_url:`http://api2.test.transloadit.com/assemblies/${assembly_id}`,
+        assembly_ssl_url:`https://api2-test.transloadit.com/assemblies/${assembly_id}`,
         uppyserver_url:'https://api2-test.transloadit.com/companion/',
         companion_url:'https://api2-test.transloadit.com/companion/',
         websocket_url:'about:blank',
         tus_url:'https://api2-test.transloadit.com/resumable/files/',
         bytes_received:0,
-        bytes_expected:263871,
+        bytes_expected,
         upload_duration:0.162,
         client_agent:null,
         client_ip:null,
@@ -256,18 +248,36 @@ describe('Dashboard with Transloadit', () => {
         uploads:[],
         results:{},
         build_id:'4765326956',
-        status_endpoint:'https://api2-test.transloadit.com/assemblies/500e56004f4347a288194edd7c7a0ae1',
-      }),
+        status_endpoint:`https://api2-test.transloadit.com/assemblies/${assembly_id}`,
+        ...other,
+      }
+    }
+    cy.get('@file-input').selectFile(
+      ['cypress/fixtures/images/cat.jpg'],
+      { force:true },
+    )
+
+    // SETUP for FIRST ATTEMPT (error response from Transloadit backend)
+    const assemblyIDAttempt1 = '500e56004f4347a288194edd7c7a0ae1'
+    const tusIDAttempt1 = 'a9daed4af4981880faf29b0e9596a14d'
+    cy.intercept('POST', 'https://api2.transloadit.com/assemblies', {
+      statusCode: 200,
+      body: JSON.stringify(createAssemblyStatus({
+        ok:'ASSEMBLY_UPLOADING',
+        message:'The Assembly is still in the process of being uploaded.',
+        assembly_id:assemblyIDAttempt1,
+        bytes_expected:263871,
+      })),
     }).as('createAssembly')
 
     cy.intercept('POST', 'https://api2-test.transloadit.com/resumable/files/', {
       statusCode: 201,
       headers: {
-        Location: 'https://api2-test.transloadit.com/resumable/files/a9daed4af4981880faf29b0e9596a14d',
+        Location: `https://api2-test.transloadit.com/resumable/files/${tusIDAttempt1}`,
       },
       times: 1,
     }).as('tusCall')
-    cy.intercept('PATCH', 'https://api2-test.transloadit.com/resumable/files/a9daed4af4981880faf29b0e9596a14d', {
+    cy.intercept('PATCH', `https://api2-test.transloadit.com/resumable/files/${tusIDAttempt1}`, {
       statusCode: 204,
       headers: {
         'Upload-Length': '263871',
@@ -275,141 +285,43 @@ describe('Dashboard with Transloadit', () => {
       },
       times: 1,
     })
-    cy.intercept('HEAD', 'https://api2-test.transloadit.com/resumable/files/a9daed4af4981880faf29b0e9596a14d', { statusCode: 204 })
+    cy.intercept('HEAD', `https://api2-test.transloadit.com/resumable/files/${tusIDAttempt1}`, { statusCode: 204 })
 
-    // ERROR
-    cy.intercept('GET', 'https://api2-test.transloadit.com/assemblies/500e56004f4347a288194edd7c7a0ae1', {
+    cy.intercept('GET', `https://api2-test.transloadit.com/assemblies/${assemblyIDAttempt1}`, {
       statusCode: 200,
-      body: JSON.stringify({
+      body: JSON.stringify(createAssemblyStatus({
         error:'INVALID_FILE_META_DATA',
         http_code:400,
-        message:'We could not parse the meta data for the file rce-poc-transloadit.eps.',
-        reason:'The image you provided seems to be malicious.',
-        msg:'We could not parse the meta data for the file rce-poc-transloadit.eps.',
+        message:'Whatever error message from Transloadit backend',
+        reason:'Whatever reason',
+        msg:'Whatever error from Transloadit backend',
         assembly_id:'500e56004f4347a288194edd7c7a0ae1',
-        parent_id:null,
-        account_id:'deadbeef',
-        account_name:'foo',
-        account_slug:'foo',
-        template_id:null,
-        template_name:null,
-        instance:'test.transloadit.com',
-        assembly_url:'http://api2.test.transloadit.com/assemblies/500e56004f4347a288194edd7c7a0ae1',
-        assembly_ssl_url:'https://api2-test.transloadit.com/assemblies/500e56004f4347a288194edd7c7a0ae1',
-        uppyserver_url:'https://api2-test.transloadit.com/companion/',
-        companion_url:'https://api2-test.transloadit.com/companion/',
-        websocket_url:'about:blank',
-        tus_url:'https://api2-test.transloadit.com/resumable/files/',
-        bytes_received:7687,
-        bytes_expected:7687,
-        upload_duration:1.247,
-        client_agent:null,
-        client_ip:null,
-        client_referer:null,
-        transloadit_client:'uppy-core:3.2.0,uppy-transloadit:3.1.3,uppy-tus:3.1.0,uppy-dropbox:3.1.1,uppy-box:2.1.1,uppy-facebook:3.1.1,uppy-google-drive:3.1.1,uppy-instagram:3.1.1,uppy-onedrive:3.1.1,uppy-zoom:2.1.1,uppy-url:3.3.1',
-        start_date:'2023/04/24 10:00:43 GMT',
-        upload_meta_data_extracted:false,
-        warnings:[],
-        is_infinite:false,
-        has_dupe_jobs:false,
-        execution_start:'2023/04/24 10:00:44 GMT',
-        execution_duration:0.431,
-        queue_duration:0.161,
-        jobs_queue_duration:0,
-        notify_start:null,
-        notify_url:null,
-        notify_response_code:null,
-        notify_response_data:null,
-        notify_duration:null,
-        last_job_completed:null,
-        fields:{},
-        running_jobs:[],
-        bytes_usage:0,
-        executing_jobs:['image'],
-        started_jobs:['image:::original'],
-        parent_assembly_status:null,
-        params:'',
-        template:null,
-        merged_params:'',
-        expected_tus_uploads:1,
-        started_tus_uploads:1,
-        finished_tus_uploads:1,
-        tus_uploads:[{}],
-        uploads:[{}],
-        results:{},
-        build_id:'4765326956',
-      }),
+        bytes_expected:263871,
+      })),
     }).as('failureReported')
 
     cy.intercept('POST', 'https://transloaditstatus.com/client_error', {
       statusCode: 200,
       body: '{}',
     })
-    cy.get('.uppy-StatusBar-actionBtn--upload').click()
-    cy.wait(['@createAssembly', ...Array(1).fill('@tusCall'), '@failureReported'])
 
+    // FIRST ATTEMPT
+    cy.get('.uppy-StatusBar-actionBtn--upload').click()
+    cy.wait(['@createAssembly', '@tusCall', '@failureReported'])
     cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Upload failed')
 
-    // SECOND ATTEMPT
+    // SETUP for SECOND ATTEMPT
+    const assemblyIDAttempt2 = '6a3fa40e527d4d73989fce678232a5e1'
+    const tusIDAttempt2 = 'b8ebed4af4981880faf29b0e9596b25e'
     cy.intercept('POST', 'https://api2.transloadit.com/assemblies', {
       statusCode: 200,
-      body: JSON.stringify({
+      body: JSON.stringify(createAssemblyStatus({
         ok:'ASSEMBLY_UPLOADING',
         message:'The Assembly is still in the process of being uploaded.',
-        assembly_id:'6a3fa40e527d4d73989fce678232a5e1',
-        parent_id:null,
-        account_id:'deadbeef',
-        account_name:'foo',
-        account_slug:'foo',
-        template_id:null,
-        template_name:null,
-        instance:'test.transloadit.com',
-        assembly_url:'http://api2.test.transloadit.com/assemblies/6a3fa40e527d4d73989fce678232a5e1',
-        assembly_ssl_url:'https://api2-test.transloadit.com/assemblies/6a3fa40e527d4d73989fce678232a5e1',
-        uppyserver_url:'https://api2-test.transloadit.com/companion/',
-        companion_url:'https://api2-test.transloadit.com/companion/',
-        websocket_url:'about:blank',
+        assembly_id:assemblyIDAttempt2,
         tus_url:'https://api2-test.transloadit.com/resumable/files/attempt2',
-        bytes_received:0,
         bytes_expected:263871,
-        upload_duration:0.162,
-        client_agent:null,
-        client_ip:null,
-        client_referer:null,
-        transloadit_client:'uppy-core:3.2.0,uppy-transloadit:3.1.3,uppy-tus:3.1.0,uppy-dropbox:3.1.1,uppy-box:2.1.1,uppy-facebook:3.1.1,uppy-google-drive:3.1.1,uppy-instagram:3.1.1,uppy-onedrive:3.1.1,uppy-zoom:2.1.1,uppy-url:3.3.1',
-        start_date: new Date().toISOString(),
-        upload_meta_data_extracted:false,
-        warnings:[],
-        is_infinite:false,
-        has_dupe_jobs:false,
-        execution_start:null,
-        execution_duration:null,
-        queue_duration:0.009,
-        jobs_queue_duration:0,
-        notify_start:null,
-        notify_url:null,
-        notify_response_code:null,
-        notify_response_data:null,
-        notify_duration:null,
-        last_job_completed:null,
-        fields:{},
-        running_jobs:[],
-        bytes_usage:0,
-        executing_jobs:[],
-        started_jobs:[],
-        parent_assembly_status:null,
-        params:'{}',
-        template:null,
-        merged_params:'{}',
-        expected_tus_uploads:1,
-        started_tus_uploads:0,
-        finished_tus_uploads:0,
-        tus_uploads:[],
-        uploads:[],
-        results:{},
-        build_id:'4765326956',
-        status_endpoint:'https://api2-test.transloadit.com/assemblies/6a3fa40e527d4d73989fce678232a5e1',
-      }),
+      })),
     }).as('createAssembly-attempt2')
 
     cy.intercept('POST', 'https://api2-test.transloadit.com/resumable/files/attempt2', {
@@ -417,12 +329,12 @@ describe('Dashboard with Transloadit', () => {
       headers: {
         'Upload-Length': '263871',
         'Upload-Offset': '0',
-        Location: 'https://api2-test.transloadit.com/resumable/files/b8ebed4af4981880faf29b0e9596b25e',
+        Location: `https://api2-test.transloadit.com/resumable/files/${tusIDAttempt2}`,
       },
       times: 1,
     }).as('tusCall-attempt2')
 
-    cy.intercept('PATCH', 'https://api2-test.transloadit.com/resumable/files/b8ebed4af4981880faf29b0e9596b25e', {
+    cy.intercept('PATCH', `https://api2-test.transloadit.com/resumable/files/${tusIDAttempt2}`, {
       statusCode: 204,
       headers: {
         'Upload-Length': '263871',
@@ -431,71 +343,23 @@ describe('Dashboard with Transloadit', () => {
       },
       times: 1,
     })
-    cy.intercept('HEAD', 'https://api2-test.transloadit.com/resumable/files/b8ebed4af4981880faf29b0e9596b25e', { statusCode: 204 })
+    cy.intercept('HEAD', `https://api2-test.transloadit.com/resumable/files/${tusIDAttempt2}`, { statusCode: 204 })
 
-    cy.intercept('GET', 'https://api2-test.transloadit.com/assemblies/6a3fa40e527d4d73989fce678232a5e1', {
+    cy.intercept('GET', `https://api2-test.transloadit.com/assemblies/${assemblyIDAttempt2}`, {
       statusCode: 200,
-      body: JSON.stringify({
+      body: JSON.stringify(createAssemblyStatus({
         ok:'ASSEMBLY_COMPLETED',
         http_code:200,
         message:'The Assembly was successfully completed.',
-        assembly_id:'6a3fa40e527d4d73989fce678232a5e1',
-        parent_id:null,
-        account_id:'deadbeef',
-        account_name:'foo',
-        account_slug:'foo',
-        template_id:null,
-        template_name:null,
-        instance:'test.transloadit.com',
-        assembly_url:'http://api2.test.transloadit.com/assemblies/6a3fa40e527d4d73989fce678232a5e1',
-        assembly_ssl_url:'https://api2-test.transloadit.com/assemblies/6a3fa40e527d4d73989fce678232a5e1',
-        uppyserver_url:'https://api2-test.transloadit.com/companion/',
-        companion_url:'https://api2-test.transloadit.com/companion/',
-        websocket_url:'about:blank',
-        tus_url:'https://api2-test.transloadit.com/resumable/files/',
+        assembly_id:assemblyIDAttempt2,
         bytes_received:263871,
         bytes_expected:263871,
-        upload_duration:0.901,
-        client_agent:null,
-        client_ip:null,
-        client_referer:null,
-        transloadit_client:'uppy-core:3.2.0,uppy-transloadit:3.1.3,uppy-tus:3.1.0,uppy-dropbox:3.1.1,uppy-box:2.1.1,uppy-facebook:3.1.1,uppy-google-drive:3.1.1,uppy-instagram:3.1.1,uppy-onedrive:3.1.1,uppy-zoom:2.1.1,uppy-url:3.3.1',
-        start_date:'2023/04/24 10:01:05 GMT',
-        upload_meta_data_extracted:true,
-        warnings:[],
-        is_infinite:false,
-        has_dupe_jobs:false,
-        execution_start:'2023/04/24 10:01:06 GMT',
-        execution_duration:0.926,
-        queue_duration:0.172,
-        jobs_queue_duration:0,
-        notify_start:null,
-        notify_url:null,
-        notify_response_code:null,
-        notify_response_data:null,
-        notify_duration:null,
-        last_job_completed:'2023/04/24 10:01:07 GMT',
-        fields:{},
-        running_jobs:[],
-        bytes_usage:12199,
-        executing_jobs:[],
-        started_jobs:['image:::original'],
-        parent_assembly_status:null,
-        params:'',
-        template:null,
-        merged_params:'',
-        expected_tus_uploads:1,
-        started_tus_uploads:1,
-        finished_tus_uploads:1,
-        tus_uploads:[{}],
-        uploads:[{}],
-        results:{ image:[{}] },
-        build_id:'4765326956',
-      }),
+      })),
     }).as('assemblyCompleted-attempt2')
 
+    // SECOND ATTEMPT
     cy.get('.uppy-StatusBar-actions > .uppy-c-btn').click()
-    cy.wait(['@createAssembly-attempt2', ...Array(1).fill('@tusCall-attempt2'), '@assemblyCompleted-attempt2'])
+    cy.wait(['@createAssembly-attempt2', '@tusCall-attempt2', '@assemblyCompleted-attempt2'])
     cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Complete')
   })
 })
