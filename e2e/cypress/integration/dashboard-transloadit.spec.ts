@@ -198,6 +198,7 @@ describe('Dashboard with Transloadit', () => {
       { force:true },
     )
 
+    // FIRST ATTEMPT
     cy.intercept('POST', 'https://api2.transloadit.com/assemblies', {
       statusCode: 200,
       body: JSON.stringify({
@@ -215,10 +216,10 @@ describe('Dashboard with Transloadit', () => {
         assembly_ssl_url:'https://api2-test.transloadit.com/assemblies/500e56004f4347a288194edd7c7a0ae1',
         uppyserver_url:'https://api2-test.transloadit.com/companion/',
         companion_url:'https://api2-test.transloadit.com/companion/',
-        websocket_url:'https://api2-test.transloadit.com/ws20103',
+        websocket_url:'about:blank',
         tus_url:'https://api2-test.transloadit.com/resumable/files/',
         bytes_received:0,
-        bytes_expected:999,
+        bytes_expected:263871,
         upload_duration:0.162,
         client_agent:null,
         client_ip:null,
@@ -248,7 +249,7 @@ describe('Dashboard with Transloadit', () => {
         params:'{}',
         template:null,
         merged_params:'{}',
-        expected_tus_uploads:2,
+        expected_tus_uploads:1,
         started_tus_uploads:0,
         finished_tus_uploads:0,
         tus_uploads:[],
@@ -264,11 +265,19 @@ describe('Dashboard with Transloadit', () => {
       headers: {
         Location: 'https://api2-test.transloadit.com/resumable/files/a9daed4af4981880faf29b0e9596a14d',
       },
-      // times: 1,
+      times: 1,
     }).as('tusCall')
-    cy.intercept('PATCH', 'https://api2-test.transloadit.com/resumable/files/a9daed4af4981880faf29b0e9596a14d', { statusCode: 204 })
+    cy.intercept('PATCH', 'https://api2-test.transloadit.com/resumable/files/a9daed4af4981880faf29b0e9596a14d', {
+      statusCode: 204,
+      headers: {
+        'Upload-Length': '263871',
+        'Upload-Offset': '263871',
+      },
+      times: 1,
+    })
     cy.intercept('HEAD', 'https://api2-test.transloadit.com/resumable/files/a9daed4af4981880faf29b0e9596a14d', { statusCode: 204 })
 
+    // ERROR
     cy.intercept('GET', 'https://api2-test.transloadit.com/assemblies/500e56004f4347a288194edd7c7a0ae1', {
       statusCode: 200,
       body: JSON.stringify({
@@ -289,7 +298,7 @@ describe('Dashboard with Transloadit', () => {
         assembly_ssl_url:'https://api2-test.transloadit.com/assemblies/500e56004f4347a288194edd7c7a0ae1',
         uppyserver_url:'https://api2-test.transloadit.com/companion/',
         companion_url:'https://api2-test.transloadit.com/companion/',
-        websocket_url:'https://api2-test.transloadit.com/ws20103',
+        websocket_url:'about:blank',
         tus_url:'https://api2-test.transloadit.com/resumable/files/',
         bytes_received:7687,
         bytes_expected:7687,
@@ -322,22 +331,26 @@ describe('Dashboard with Transloadit', () => {
         params:'',
         template:null,
         merged_params:'',
-        expected_tus_uploads:2,
-        started_tus_uploads:2,
-        finished_tus_uploads:2,
-        tus_uploads:[{}, {}],
+        expected_tus_uploads:1,
+        started_tus_uploads:1,
+        finished_tus_uploads:1,
+        tus_uploads:[{}],
         uploads:[{}],
         results:{},
         build_id:'4765326956',
       }),
     }).as('failureReported')
 
-    cy.intercept('POST', 'https://transloaditstatus.com/client_error', { statusCode: 200 })
+    cy.intercept('POST', 'https://transloaditstatus.com/client_error', {
+      statusCode: 200,
+      body: '{}',
+    })
     cy.get('.uppy-StatusBar-actionBtn--upload').click()
     cy.wait(['@createAssembly', ...Array(1).fill('@tusCall'), '@failureReported'])
 
     cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Upload failed')
 
+    // SECOND ATTEMPT
     cy.intercept('POST', 'https://api2.transloadit.com/assemblies', {
       statusCode: 200,
       body: JSON.stringify({
@@ -355,10 +368,10 @@ describe('Dashboard with Transloadit', () => {
         assembly_ssl_url:'https://api2-test.transloadit.com/assemblies/6a3fa40e527d4d73989fce678232a5e1',
         uppyserver_url:'https://api2-test.transloadit.com/companion/',
         companion_url:'https://api2-test.transloadit.com/companion/',
-        websocket_url:'https://api2-test.transloadit.com/ws20103',
+        websocket_url:'about:blank',
         tus_url:'https://api2-test.transloadit.com/resumable/files/attempt2',
         bytes_received:0,
-        bytes_expected:999,
+        bytes_expected:263871,
         upload_duration:0.162,
         client_agent:null,
         client_ip:null,
@@ -388,7 +401,7 @@ describe('Dashboard with Transloadit', () => {
         params:'{}',
         template:null,
         merged_params:'{}',
-        expected_tus_uploads:2,
+        expected_tus_uploads:1,
         started_tus_uploads:0,
         finished_tus_uploads:0,
         tus_uploads:[],
@@ -399,19 +412,11 @@ describe('Dashboard with Transloadit', () => {
       }),
     }).as('createAssembly-attempt2')
 
-    cy.intercept('OPTIONS', 'https://api2-test.transloadit.com/resumable/files/b8ebed4af4981880faf29b0e9596b25e', {
-      statusCode: 204,
-      headers: {
-        'access-control-expose-headers': 'Upload-Offset, Location, Upload-Length, Tus-Version, Tus-Resumable, Tus-Max-Size, Tus-Extension, Upload-Metadata, Upload-Defer-Length, Upload-Concat',
-        'access-control-allow-methods': 'POST, HEAD, PATCH, OPTIONS, GET, DELETE',
-        'access-control-allow-origin': 'http://localhost:1234',
-        'access-control-max-age': '86400',
-      },
-    })
-
     cy.intercept('POST', 'https://api2-test.transloadit.com/resumable/files/attempt2', {
       statusCode: 201,
       headers: {
+        'Upload-Length': '263871',
+        'Upload-Offset': '0',
         Location: 'https://api2-test.transloadit.com/resumable/files/b8ebed4af4981880faf29b0e9596b25e',
       },
       times: 1,
@@ -420,8 +425,11 @@ describe('Dashboard with Transloadit', () => {
     cy.intercept('PATCH', 'https://api2-test.transloadit.com/resumable/files/b8ebed4af4981880faf29b0e9596b25e', {
       statusCode: 204,
       headers: {
-        'Upload-Offset': '0',
+        'Upload-Length': '263871',
+        'Upload-Offset': '263871',
+        'Tus-Resumable': '1.0.0',
       },
+      times: 1,
     })
     cy.intercept('HEAD', 'https://api2-test.transloadit.com/resumable/files/b8ebed4af4981880faf29b0e9596b25e', { statusCode: 204 })
 
@@ -443,10 +451,10 @@ describe('Dashboard with Transloadit', () => {
         assembly_ssl_url:'https://api2-test.transloadit.com/assemblies/6a3fa40e527d4d73989fce678232a5e1',
         uppyserver_url:'https://api2-test.transloadit.com/companion/',
         companion_url:'https://api2-test.transloadit.com/companion/',
-        websocket_url:'https://api2-test.transloadit.com/ws20094',
+        websocket_url:'about:blank',
         tus_url:'https://api2-test.transloadit.com/resumable/files/',
-        bytes_received:5335,
-        bytes_expected:5335,
+        bytes_received:263871,
+        bytes_expected:263871,
         upload_duration:0.901,
         client_agent:null,
         client_ip:null,
@@ -484,10 +492,10 @@ describe('Dashboard with Transloadit', () => {
         results:{ image:[{}] },
         build_id:'4765326956',
       }),
-    }).as('assemblyCompleted')
+    }).as('assemblyCompleted-attempt2')
 
     cy.get('.uppy-StatusBar-actions > .uppy-c-btn').click()
-    cy.wait(['@createAssembly-attempt2', ...Array(3).fill('@tusCall-attempt2'), '@assemblyCompleted'])
+    cy.wait(['@createAssembly-attempt2', ...Array(1).fill('@tusCall-attempt2'), '@assemblyCompleted-attempt2'])
     cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Complete')
   })
 })
