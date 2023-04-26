@@ -14,6 +14,7 @@ export interface AwsS3Options extends PluginOptions {
     companionUrl?: string
     getUploadParameters?: (file: UppyFile) => MaybePromise<AwsS3UploadParameters>
     allowedMetaFields?: string[] | null
+    /** @deprecated future versions of this plugin will use the Expires value from the backend */
     timeout?: number
     limit?: number
 }
