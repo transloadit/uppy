@@ -214,7 +214,13 @@ class HTTPCommunicationQueue {
 
     const { onProgress, onComplete } = chunk
 
-    return this.#uploadPartBytes({ signature: { url, headers, method }, body: data, onProgress, onComplete, signal }).abortOn(signal)
+    return this.#uploadPartBytes({
+      signature: { url, headers, method },
+      body: data,
+      onProgress,
+      onComplete,
+      signal,
+    }).abortOn(signal)
   }
 
   async uploadFile (file, chunks, signal) {
