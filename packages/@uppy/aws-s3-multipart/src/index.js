@@ -195,7 +195,7 @@ class HTTPCommunicationQueue {
     await this.#abortMultipartUpload(file, awaitedResult)
   }
 
-  async #nonMultipartUpload (file, signal) {
+  async #nonMultipartUpload (file, chunk, signal) {
     const filename = file.meta.name
     const { type } = file.meta
     const metadata = undefined // TODO: add `allowedMetaFields` option to S3 multipart?
@@ -210,15 +210,17 @@ class HTTPCommunicationQueue {
 
     const data = new FormData()
     Object.entries(fields).forEach(([key, value]) => data.set(key, value))
-    data.set('file', file.data)
+    data.set('file', chunk.getData())
 
-    return this.#uploadPartBytes({ url, headers, method }, data, signal).abortOn(signal)
+    const { onProgress, onComplete } = chunk
+
+    return this.#uploadPartBytes({ signature: { url, headers, method }, body: data, onProgress, onComplete, signal }).abortOn(signal)
   }
 
   async uploadFile (file, chunks, signal) {
     throwIfAborted(signal)
-    if (chunks.length === 1) {
-      return this.#nonMultipartUpload(file, signal)
+    if (chunks.length === 1 && chunks[0].shouldUseMultipart) {
+      return this.#nonMultipartUpload(file, chunks[0], signal)
     }
     const { uploadId, key } = await this.getUploadId(file, signal)
     throwIfAborted(signal)
@@ -235,7 +237,7 @@ class HTTPCommunicationQueue {
   async resumeUploadFile (file, chunks, signal) {
     throwIfAborted(signal)
     if (chunks.length === 1) {
-      return this.#nonMultipartUpload(file, signal)
+      return this.#nonMultipartUpload(file, chunks[0], signal)
     }
     const { uploadId, key } = await this.getUploadId(file, signal)
     throwIfAborted(signal)

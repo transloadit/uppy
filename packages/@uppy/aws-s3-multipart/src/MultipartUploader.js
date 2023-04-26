@@ -92,12 +92,16 @@ class MultipartUploader {
           getData,
           onProgress: this.#onPartProgress(j),
           onComplete: this.#onPartComplete(j),
+          shouldUseMultipart: false,
         }
       }
     } else {
-      this.#chunks = [this.#data]
-      this.#data.onProgress = this.#onPartProgress(0)
-      this.#data.onComplete = this.#onPartComplete(0)
+      this.#chunks = [{
+        getData: () => this.#data,
+        onProgress: this.#onPartProgress(0),
+        onComplete: this.#onPartComplete(0),
+        shouldUseMultipart: true,
+      }]
     }
 
     this.#chunkState = this.#chunks.map(() => ({ uploaded: 0 }))
