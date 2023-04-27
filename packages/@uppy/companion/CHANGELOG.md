@@ -1,5 +1,42 @@
 # @uppy/companion
 
+## 4.5.0
+
+Released: 2023-04-18
+Included in: Uppy v3.8.0
+
+- @uppy/companion: increase max limits for remote file list operations (Mikael Finstad / #4417)
+
+## 4.4.0
+
+Released: 2023-04-04
+Included in: Uppy v3.7.0
+
+- @uppy/companion: add `service: 'companion'` to periodic ping (Mikael Finstad / #4383)
+- @uppy/companion: add connection keep-alive to dropbox (Mikael Finstad / #4365)
+- @uppy/companion: add missing env variable for standalone option (Mikael Finstad / #4382)
+- @uppy/companion: add S3 prefix env variable (Mikael Finstad / #4320)
+- @uppy/companion: allow local ips when testing (Mikael Finstad / #4328)
+- @uppy/companion: fix typo in redis-emitter.js (Ikko Eltociear Ashimine / #4362)
+- @uppy/companion: merge Provider/SearchProvider (Mikael Finstad / #4330)
+- @uppy/companion: only body parse when needed & increased body size for s3 (Mikael Finstad / #4372)
+
+## 4.3.0
+
+Released: 2023-02-13
+Included in: Uppy v3.5.0
+
+- @uppy/companion: @uppy/companion upgrade grant dependency (Scott Bessler / #4286)
+
+## 4.2.0
+
+Released: 2023-01-26
+Included in: Uppy v3.4.0
+
+- @uppy/companion: allow customizing express session prefix (Mikael Finstad / #4249)
+- @uppy/companion: Fix typo in KUBERNETES.md (Collin Allen / #4277)
+- @uppy/companion: document how to run many instances (Mikael Finstad / #4227)
+
 ## 4.1.1
 
 Released: 2022-11-16

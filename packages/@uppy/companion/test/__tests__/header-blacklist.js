@@ -1,5 +1,3 @@
-/* global test:false, expect:false, describe:false, */
-
 const headerSanitize = require('../../src/server/header-blacklist')
 
 describe('Header black-list testing', () => {

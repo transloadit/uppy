@@ -1,5 +1,20 @@
 # @uppy/utils
 
+## 5.1.3
+
+Released: 2023-03-07
+Included in: Uppy v3.6.0
+
+- @uppy/utils: workaround chrome crash (Mikael Finstad / #4310)
+
+## 5.1.2
+
+Released: 2023-01-26
+Included in: Uppy v3.4.0
+
+- @uppy/utils: better fallbacks for the drag & drop API (Antoine du Hamel / #4260)
+- @uppy/utils: Fix getSpeed type (referenced `bytesTotal` instead of `uploadStarted`) (Pascal Wengerter / #4263)
+
 ## 5.1.1
 
 Released: 2022-11-16

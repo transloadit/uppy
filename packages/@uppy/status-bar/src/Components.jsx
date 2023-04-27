@@ -57,7 +57,7 @@ function RetryBtn (props) {
       type="button"
       className="uppy-u-reset uppy-c-btn uppy-StatusBar-actionBtn uppy-StatusBar-actionBtn--retry"
       aria-label={i18n('retryUpload')}
-      onClick={() => uppy.retryAll()}
+      onClick={() => uppy.retryAll().catch(() => { /* Error reported and handled via an event */ })}
       data-uppy-super-focusable
     >
       <svg

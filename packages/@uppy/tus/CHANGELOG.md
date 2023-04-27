@@ -1,5 +1,13 @@
 # @uppy/tus
 
+## 3.0.6
+
+Released: 2023-04-04
+Included in: Uppy v3.7.0
+
+- @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/tus,@uppy/xhr-upload: make sure that we reset serverToken when an upload fails (Mikael Finstad / #4376)
+- @uppy/tus: do not auto-open sockets, clean them up on abort (Antoine du Hamel)
+
 ## 3.0.5
 
 Released: 2022-11-10

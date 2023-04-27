@@ -70,19 +70,29 @@ class MultipartUploader {
 
     // Upload zero-sized files in one zero-sized chunk
     if (this.#data.size === 0) {
-      this.#chunks = [this.#data]
-      this.#data.onProgress = this.#onPartProgress(0)
-      this.#data.onComplete = this.#onPartComplete(0)
+      this.#chunks = [{
+        getData: () => this.#data,
+        onProgress: this.#onPartProgress(0),
+        onComplete: this.#onPartComplete(0),
+      }]
     } else {
       const arraySize = Math.ceil(fileSize / chunkSize)
       this.#chunks = Array(arraySize)
-      let j = 0
-      for (let i = 0; i < fileSize; i += chunkSize) {
+
+      for (let i = 0, j = 0; i < fileSize; i += chunkSize, j++) {
         const end = Math.min(fileSize, i + chunkSize)
-        const chunk = this.#data.slice(i, end)
-        chunk.onProgress = this.#onPartProgress(j)
-        chunk.onComplete = this.#onPartComplete(j)
-        this.#chunks[j++] = chunk
+
+        // Defer data fetching/slicing until we actually need the data, because it's slow if we have a lot of files
+        const getData = () => {
+          const i2 = i
+          return this.#data.slice(i2, end)
+        }
+
+        this.#chunks[j] = {
+          getData,
+          onProgress: this.#onPartProgress(j),
+          onComplete: this.#onPartComplete(j),
+        }
       }
     }
 

@@ -1,3 +1,4 @@
+// TODO remove (no longer in use)
 export default function settle (promises) {
   const resolutions = []
   const rejections = []

@@ -112,6 +112,7 @@ export default function App () {
       <View style={{ alignItems: 'center' }}>
         <Image
           style={styles.logo}
+          // eslint-disable-next-line global-require
           source={require('./assets/uppy-logo.png')}
         />
       </View>
