@@ -290,14 +290,22 @@ export default class Transloadit extends BasePlugin {
 
     watcher.on('assembly-error', (id, error) => {
       // Clear postprocessing state for all our files.
-      const files = this.getAssemblyFiles(id)
-      files.forEach((file) => {
-      // TODO Maybe make a postprocess-error event here?
+      const filesFromAssembly = this.getAssemblyFiles(id)
+      filesFromAssembly.forEach((file) => {
+        // TODO Maybe make a postprocess-error event here?
 
         this.uppy.emit('upload-error', file, error)
-
         this.uppy.emit('postprocess-complete', file)
       })
+
+      // Reset `tus` key in the file state, so when the upload is retried,
+      // old tus upload is not re-used — Assebmly expects a new upload, can't currently
+      // re-use the old one. See: https://github.com/transloadit/uppy/issues/4412
+      // and `onReceiveUploadUrl` in @uppy/tus
+      const files = { ...this.uppy.getState().files }
+      filesFromAssembly.forEach(file => delete files[file.id].tus)
+      this.uppy.setState({ files })
+
       this.uppy.emit('error', error)
     })
 
