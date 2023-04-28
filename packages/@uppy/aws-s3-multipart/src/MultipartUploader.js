@@ -92,7 +92,7 @@ class MultipartUploader {
           getData,
           onProgress: this.#onPartProgress(j),
           onComplete: this.#onPartComplete(j),
-          shouldUseMultipart: false,
+          shouldUseMultipart,
         }
       }
     } else {
@@ -100,7 +100,7 @@ class MultipartUploader {
         getData: () => this.#data,
         onProgress: this.#onPartProgress(0),
         onComplete: this.#onPartComplete(0),
-        shouldUseMultipart: true,
+        shouldUseMultipart,
       }]
     }
 
