@@ -208,15 +208,17 @@ class HTTPCommunicationQueue {
       headers,
     } = await this.#getUploadParameters(`s3/params?${query}`, { signal }).abortOn(signal)
 
-    const data = new FormData()
-    Object.entries(fields).forEach(([key, value]) => data.set(key, value))
-    data.set('file', chunk.getData())
+    const formData = new FormData()
+    Object.entries(fields).forEach(([key, value]) => formData.set(key, value))
+    const data = chunk.getData()
+    formData.set('file', data)
 
     const { onProgress, onComplete } = chunk
 
     return this.#uploadPartBytes({
       signature: { url, headers, method },
-      body: data,
+      body: formData,
+      size: data.size,
       onProgress,
       onComplete,
       signal,
@@ -279,7 +281,9 @@ class HTTPCommunicationQueue {
       try {
         return {
           PartNumber: partNumber,
-          ...await this.#uploadPartBytes({ signature, body: chunkData, onProgress, onComplete, signal }).abortOn(signal),
+          ...await this.#uploadPartBytes({
+            signature, body: chunkData, size: chunkData.size, onProgress, onComplete, signal,
+          }).abortOn(signal),
         }
       } catch (err) {
         if (!await this.#shouldRetry(err)) throw err
@@ -440,7 +444,7 @@ export default class AwsS3Multipart extends BasePlugin {
       .then(assertServerError)
   }
 
-  static async uploadPartBytes ({ signature: { url, expires, headers, method = 'PUT' }, body, onProgress, onComplete, signal }) {
+  static async uploadPartBytes ({ signature: { url, expires, headers, method = 'PUT' }, body, size, onProgress, onComplete, signal }) {
     throwIfAborted(signal)
 
     if (url == null) {
@@ -468,7 +472,10 @@ export default class AwsS3Multipart extends BasePlugin {
       }
       signal.addEventListener('abort', onabort)
 
-      xhr.upload.addEventListener('progress', onProgress)
+      xhr.upload.addEventListener('progress', (ev) => {
+        if (!ev.lengthComputable) return
+        onProgress(ev.loaded)
+      })
 
       xhr.addEventListener('abort', () => {
         cleanup()
@@ -498,7 +505,7 @@ export default class AwsS3Multipart extends BasePlugin {
           return
         }
 
-        onProgress?.(body.size)
+        onProgress?.(size)
 
         // NOTE This must be allowed by CORS.
         const etag = ev.target.getResponseHeader('ETag')
