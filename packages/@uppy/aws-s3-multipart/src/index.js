@@ -18,6 +18,14 @@ function assertServerError (res) {
   return res
 }
 
+function getMetadata ({ meta }, options = undefined) {
+  return meta ? Object.fromEntries(
+    (options.allowedMetaFields ?? Object.keys(meta))
+      .filter(key => meta[key] != null)
+      .map(key => [key, String(meta[key])]),
+  ) : {}
+}
+
 function throwIfAborted (signal) {
   if (signal?.aborted) { throw createAbortError('The operation was aborted', { cause: signal.reason }) }
 }
@@ -32,6 +40,8 @@ class HTTPCommunicationQueue {
   #fetchSignature
 
   #getUploadParameters
+
+  #getMetadata
 
   #listParts
 
@@ -80,6 +90,8 @@ class HTTPCommunicationQueue {
     if ('getUploadParameters' in options) {
       this.#getUploadParameters = requests.wrapPromiseFunction(options.getUploadParameters)
     }
+
+    this.#getMetadata = getMetadata.bind(options)
   }
 
   async #shouldRetry (err) {
@@ -198,7 +210,7 @@ class HTTPCommunicationQueue {
   async #nonMultipartUpload (file, chunk, signal) {
     const filename = file.meta.name
     const { type } = file.meta
-    const metadata = undefined // TODO: add `allowedMetaFields` option to S3 multipart?
+    const metadata = this.#getMetadata(file)
 
     const query = new URLSearchParams({ filename, type, ...metadata })
     const {
@@ -390,11 +402,7 @@ export default class AwsS3Multipart extends BasePlugin {
     this.assertHost('createMultipartUpload')
     throwIfAborted(signal)
 
-    const metadata = file.meta ? Object.fromEntries(
-      (this.opts.allowedMetaFields ?? Object.keys(file.meta))
-        .filter(key => file.meta[key] != null)
-        .map(key => [key, String(file.meta[key])]),
-    ) : {}
+    const metadata = getMetadata(this.opts, file)
 
     return this.#client.post('s3/multipart', {
       filename: file.name,
