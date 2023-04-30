@@ -18,9 +18,11 @@ function assertServerError (res) {
   return res
 }
 
-function getMetadata ({ meta }, options = undefined) {
+function getMetadata ({ meta, allowedMetaFields }) {
+  const metaFields = allowedMetaFields ?? Object.keys(meta)
+
   return meta ? Object.fromEntries(
-    (options.allowedMetaFields ?? Object.keys(meta))
+    metaFields
       .filter(key => meta[key] != null)
       .map(key => [key, String(meta[key])]),
   ) : {}
@@ -33,6 +35,8 @@ function throwIfAborted (signal) {
 class HTTPCommunicationQueue {
   #abortMultipartUpload
 
+  #options
+
   #cache = new WeakMap()
 
   #createMultipartUpload
@@ -40,8 +44,6 @@ class HTTPCommunicationQueue {
   #fetchSignature
 
   #getUploadParameters
-
-  #getMetadata
 
   #listParts
 
@@ -64,6 +66,8 @@ class HTTPCommunicationQueue {
   }
 
   setOptions (options) {
+    this.#options = options ?? {}
+
     const requests = this.#requests
 
     if ('abortMultipartUpload' in options) {
@@ -90,8 +94,6 @@ class HTTPCommunicationQueue {
     if ('getUploadParameters' in options) {
       this.#getUploadParameters = requests.wrapPromiseFunction(options.getUploadParameters)
     }
-
-    this.#getMetadata = getMetadata.bind(options)
   }
 
   async #shouldRetry (err) {
@@ -210,7 +212,7 @@ class HTTPCommunicationQueue {
   async #nonMultipartUpload (file, chunk, signal) {
     const filename = file.meta.name
     const { type } = file.meta
-    const metadata = this.#getMetadata(file)
+    const metadata = getMetadata({ meta: file.meta, allowedMetaFields: this.#options.allowedMetaFields })
 
     const query = new URLSearchParams({ filename, type, ...metadata })
     const {
@@ -402,7 +404,7 @@ export default class AwsS3Multipart extends BasePlugin {
     this.assertHost('createMultipartUpload')
     throwIfAborted(signal)
 
-    const metadata = getMetadata(this.opts, file)
+    const metadata = getMetadata({ meta: file.meta, allowedMetaFields: this.opts.allowedMetaFields })
 
     return this.#client.post('s3/multipart', {
       filename: file.name,
@@ -481,8 +483,7 @@ export default class AwsS3Multipart extends BasePlugin {
       signal.addEventListener('abort', onabort)
 
       xhr.upload.addEventListener('progress', (ev) => {
-        if (!ev.lengthComputable) return
-        onProgress(ev.loaded)
+        onProgress(ev)
       })
 
       xhr.addEventListener('abort', () => {
@@ -513,7 +514,8 @@ export default class AwsS3Multipart extends BasePlugin {
           return
         }
 
-        onProgress?.(size)
+        // todo make a proper onProgress API (breaking change)
+        onProgress?.({ loaded: size, lengthComputable: true })
 
         // NOTE This must be allowed by CORS.
         const etag = ev.target.getResponseHeader('ETag')

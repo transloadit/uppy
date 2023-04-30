@@ -119,8 +119,10 @@ class MultipartUploader {
       .then(this.#onSuccess, this.#onReject)
   }
 
-  #onPartProgress = (index) => (bytes) => {
-    this.#chunkState[index].uploaded = ensureInt(bytes)
+  #onPartProgress = (index) => (ev) => {
+    if (!ev.lengthComputable) return
+
+    this.#chunkState[index].uploaded = ensureInt(ev.loaded)
 
     const totalUploaded = this.#chunkState.reduce((n, c) => n + c.uploaded, 0)
     this.options.onProgress(totalUploaded, this.#data.size)
