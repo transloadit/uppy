@@ -35,7 +35,7 @@ function throwIfAborted (signal) {
 class HTTPCommunicationQueue {
   #abortMultipartUpload
 
-  #options
+  #allowedMetaFields
 
   #cache = new WeakMap()
 
@@ -66,12 +66,13 @@ class HTTPCommunicationQueue {
   }
 
   setOptions (options) {
-    this.#options = options ?? {}
-
     const requests = this.#requests
 
     if ('abortMultipartUpload' in options) {
       this.#abortMultipartUpload = requests.wrapPromiseFunction(options.abortMultipartUpload)
+    }
+    if ('allowedMetaFields' in options) {
+      this.#allowedMetaFields = options.allowedMetaFields
     }
     if ('createMultipartUpload' in options) {
       this.#createMultipartUpload = requests.wrapPromiseFunction(options.createMultipartUpload, { priority:-1 })
@@ -210,9 +211,9 @@ class HTTPCommunicationQueue {
   }
 
   async #nonMultipartUpload (file, chunk, signal) {
-    const filename = file.meta.name
-    const { type } = file.meta
-    const metadata = getMetadata({ meta: file.meta, allowedMetaFields: this.#options.allowedMetaFields })
+    const { meta } = file
+    const { type, name: filename } = meta
+    const metadata = getMetadata({ meta, allowedMetaFields: this.#allowedMetaFields })
 
     const query = new URLSearchParams({ filename, type, ...metadata })
     const {
