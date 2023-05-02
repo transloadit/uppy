@@ -102,6 +102,7 @@ function defaultGetResponseError (content, xhr) {
 // warning deduplication flag: see `getResponseData()` XHRUpload option definition
 let warnedSuccessActionStatus = false
 
+// TODO deprecate this, will use s3-multipart instead
 export default class AwsS3 extends BasePlugin {
   static VERSION = packageJson.version
 
