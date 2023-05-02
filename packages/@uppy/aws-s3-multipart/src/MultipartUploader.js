@@ -43,6 +43,8 @@ class MultipartUploader {
 
   #onSuccess
 
+  #shouldUseMultipart
+
   #onReject = (err) => (err?.cause === pausingUploadReason ? null : this.#onError(err))
 
   constructor (data, options) {
@@ -57,25 +59,23 @@ class MultipartUploader {
     this.#file = options.file
     this.#onSuccess = this.options.onSuccess
     this.#onError = this.options.onError
+    this.#shouldUseMultipart = this.options.shouldUseMultipart
 
     this.#initChunks()
   }
 
   #initChunks () {
-    const desiredChunkSize = this.options.getChunkSize(this.#data)
-    // at least 5MB per request, at most 10k requests
     const fileSize = this.#data.size
-    const minChunkSize = Math.max(5 * MB, Math.ceil(fileSize / 10000))
-    const chunkSize = Math.max(desiredChunkSize, minChunkSize)
+    const shouldUseMultipart = typeof this.#shouldUseMultipart === 'function'
+      ? this.#shouldUseMultipart(this.#file)
+      : Boolean(this.#shouldUseMultipart)
 
-    // Upload zero-sized files in one zero-sized chunk
-    if (this.#data.size === 0) {
-      this.#chunks = [{
-        getData: () => this.#data,
-        onProgress: this.#onPartProgress(0),
-        onComplete: this.#onPartComplete(0),
-      }]
-    } else {
+    if (shouldUseMultipart) {
+      const desiredChunkSize = this.options.getChunkSize(this.#data)
+      // at least 5MB per request, at most 10k requests
+      const minChunkSize = Math.max(5 * MB, Math.ceil(fileSize / 10000))
+      const chunkSize = Math.max(desiredChunkSize, minChunkSize)
+
       const arraySize = Math.ceil(fileSize / chunkSize)
       this.#chunks = Array(arraySize)
 
@@ -92,8 +92,16 @@ class MultipartUploader {
           getData,
           onProgress: this.#onPartProgress(j),
           onComplete: this.#onPartComplete(j),
+          shouldUseMultipart,
         }
       }
+    } else {
+      this.#chunks = [{
+        getData: () => this.#data,
+        onProgress: this.#onPartProgress(0),
+        onComplete: this.#onPartComplete(0),
+        shouldUseMultipart,
+      }]
     }
 
     this.#chunkState = this.#chunks.map(() => ({ uploaded: 0 }))
@@ -114,8 +122,7 @@ class MultipartUploader {
   #onPartProgress = (index) => (ev) => {
     if (!ev.lengthComputable) return
 
-    const sent = ev.loaded
-    this.#chunkState[index].uploaded = ensureInt(sent)
+    this.#chunkState[index].uploaded = ensureInt(ev.loaded)
 
     const totalUploaded = this.#chunkState.reduce((n, c) => n + c.uploaded, 0)
     this.options.onProgress(totalUploaded, this.#data.size)
