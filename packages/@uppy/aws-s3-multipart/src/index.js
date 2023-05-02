@@ -18,14 +18,20 @@ function assertServerError (res) {
   return res
 }
 
-function getMetadata ({ meta, allowedMetaFields }) {
+function getAllowedMetadata ({ meta, allowedMetaFields, querify = false }) {
   const metaFields = allowedMetaFields ?? Object.keys(meta)
 
-  return meta ? Object.fromEntries(
+  if (!meta) return {}
+
+  return Object.fromEntries(
     metaFields
       .filter(key => meta[key] != null)
-      .map(key => [key, String(meta[key])]),
-  ) : {}
+      .map((key) => {
+        const realKey = querify ? `metadata[${key}]` : key
+        const value = String(meta[key])
+        return [realKey, value]
+      }),
+  )
 }
 
 function throwIfAborted (signal) {
@@ -213,7 +219,7 @@ class HTTPCommunicationQueue {
   async #nonMultipartUpload (file, chunk, signal) {
     const { meta } = file
     const { type, name: filename } = meta
-    const metadata = getMetadata({ meta, allowedMetaFields: this.#allowedMetaFields })
+    const metadata = getAllowedMetadata({ meta, allowedMetaFields: this.#allowedMetaFields, querify: true })
 
     const query = new URLSearchParams({ filename, type, ...metadata })
     const {
@@ -405,7 +411,7 @@ export default class AwsS3Multipart extends BasePlugin {
     this.assertHost('createMultipartUpload')
     throwIfAborted(signal)
 
-    const metadata = getMetadata({ meta: file.meta, allowedMetaFields: this.opts.allowedMetaFields })
+    const metadata = getAllowedMetadata({ meta: file.meta, allowedMetaFields: this.opts.allowedMetaFields })
 
     return this.#client.post('s3/multipart', {
       filename: file.name,
