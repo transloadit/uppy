@@ -67,7 +67,7 @@ class MultipartUploader {
   #initChunks () {
     const fileSize = this.#data.size
     const shouldUseMultipart = typeof this.#shouldUseMultipart === 'function'
-      ? this.#shouldUseMultipart(this.#file, fileSize)
+      ? this.#shouldUseMultipart(this.#file)
       : Boolean(this.#shouldUseMultipart)
 
     if (shouldUseMultipart) {
