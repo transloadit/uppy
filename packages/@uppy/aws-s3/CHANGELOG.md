@@ -1,5 +1,12 @@
 # @uppy/aws-s3
 
+## 3.1.1
+
+Released: 2023-05-02
+Included in: Uppy v3.9.0
+
+- @uppy/aws-s3: deprecate `timeout` option (Antoine du Hamel / #4298)
+
 ## 3.0.6
 
 Released: 2023-04-04

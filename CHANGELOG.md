@@ -12,6 +12,26 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 3.9.0
+
+Released: 2023-05-02
+
+| Package                | Version | Package                | Version |
+| ---------------------- | ------- | ---------------------- | ------- |
+| @uppy/aws-s3           |   3.1.1 | @uppy/status-bar       |   3.1.2 |
+| @uppy/aws-s3-multipart |   3.3.0 | @uppy/transloadit      |   3.1.4 |
+| @uppy/locales          |   3.2.1 | uppy                   |   3.9.0 |
+
+- @uppy/aws-s3-multipart: allowedMetaFields: null means “include all” (Artur Paikin / #4437)
+- @uppy/aws-s3-multipart: add `shouldUseMultipart ` option (Antoine du Hamel / #4205)
+- @uppy/transloadit: Reset `tus` key in the file on error, so retried files are re-uploaded (Artur Paikin / #4421)
+- meta: commit build file that was modified (Antoine du Hamel)
+- meta: examples: add CORS settings for DigitalOcean Spaces (Antoine du Hamel / #4428)
+- @uppy/aws-s3: deprecate `timeout` option (Antoine du Hamel / #4298)
+- @uppy/aws-s3-multipart: make retries more robust (Antoine du Hamel / #4424)
+- meta: fix badges on README (Antoine du Hamel / #4419)
+
+
 ## 3.8.0
 
 Released: 2023-04-18

@@ -1,5 +1,14 @@
 # @uppy/aws-s3-multipart
 
+## 3.3.0
+
+Released: 2023-05-02
+Included in: Uppy v3.9.0
+
+- @uppy/aws-s3-multipart: allowedMetaFields: null means “include all” (Artur Paikin / #4437)
+- @uppy/aws-s3-multipart: add `shouldUseMultipart ` option (Antoine du Hamel / #4205)
+- @uppy/aws-s3-multipart: make retries more robust (Antoine du Hamel / #4424)
+
 ## 3.1.3
 
 Released: 2023-04-04
