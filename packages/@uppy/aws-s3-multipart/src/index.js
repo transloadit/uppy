@@ -330,7 +330,8 @@ export default class AwsS3Multipart extends BasePlugin {
     this.#client = new RequestClient(uppy, opts)
 
     const defaultOptions = {
-      // TODO: this is currently opt-in for backward compat, switch to opt-out in the next major
+      // TODO: null here means “include all”, [] means include none.
+      // This is inconsistent with @uppy/aws-s3 and @uppy/transloadit
       allowedMetaFields: null,
       limit: 6,
       shouldUseMultipart: (file) => file.size !== 0, // TODO: Switch default to:
