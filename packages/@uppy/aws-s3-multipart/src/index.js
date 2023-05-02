@@ -21,8 +21,6 @@ function assertServerError (res) {
 function getAllowedMetadata ({ meta, allowedMetaFields, querify = false }) {
   const metaFields = allowedMetaFields ?? Object.keys(meta)
 
-  console.log(metaFields)
-
   if (!meta) return {}
 
   return Object.fromEntries(
