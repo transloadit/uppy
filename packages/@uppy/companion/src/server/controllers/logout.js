@@ -15,17 +15,18 @@ async function logout (req, res, next) {
   }
   const { providerName } = req.params
   const { companion } = req
-  const token = companion.providerTokens ? companion.providerTokens[providerName] : null
+  const tokens = companion.allProvidersTokens ? companion.allProvidersTokens[providerName] : null
 
-  if (!token) {
+  if (!tokens) {
     cleanSession()
     res.json({ ok: true, revoked: false })
     return
   }
 
   try {
-    const data = await companion.provider.logout({ token, companion })
-    delete companion.providerTokens[providerName]
+    const { accessToken } = tokens
+    const data = await companion.provider.logout({ token: accessToken, companion })
+    delete companion.allProvidersTokens[providerName]
     tokenService.removeFromCookies(res, companion.options, companion.provider.authProvider)
     cleanSession()
     res.json({ ok: true, ...data })

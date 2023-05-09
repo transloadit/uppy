@@ -5,11 +5,11 @@ const EXPIRY = 60 * 60 * 24 // one day (24 hrs)
 
 /**
  *
- * @param {*} payload
+ * @param {*} data
  * @param {string} secret
  */
-module.exports.generateToken = (payload, secret) => {
-  return jwt.sign({ data: payload }, secret, { expiresIn: EXPIRY })
+module.exports.generateToken = (data, secret) => {
+  return jwt.sign({ data }, secret, { expiresIn: EXPIRY })
 }
 
 /**
@@ -18,12 +18,8 @@ module.exports.generateToken = (payload, secret) => {
  * @param {string} secret
  */
 module.exports.verifyToken = (token, secret) => {
-  try {
-    // @ts-ignore
-    return { payload: jwt.verify(token, secret, {}).data }
-  } catch (err) {
-    return { err }
-  }
+  // @ts-ignore
+  return jwt.verify(token, secret, {}).data
 }
 
 /**
@@ -37,15 +33,32 @@ module.exports.generateEncryptedToken = (payload, secret) => {
 
 /**
  *
+ * @param {*} payload
+ * @param {string} secret
+ */
+module.exports.generateEncryptedAuthToken = (payload, secret) => {
+  return module.exports.generateEncryptedToken(JSON.stringify(payload), secret)
+}
+
+/**
+ *
  * @param {string} token
  * @param {string} secret
  */
 module.exports.verifyEncryptedToken = (token, secret) => {
-  try {
-    return module.exports.verifyToken(decrypt(token, secret), secret)
-  } catch (err) {
-    return { err }
-  }
+  const ret = module.exports.verifyToken(decrypt(token, secret), secret)
+  if (!ret) throw new Error('No payload')
+  return ret
+}
+
+/**
+ *
+ * @param {string} token
+ * @param {string} secret
+ */
+module.exports.verifyEncryptedAuthToken = (token, secret) => {
+  const json = module.exports.verifyEncryptedToken(token, secret)
+  return JSON.parse(json)
 }
 
 const addToCookies = (res, token, companionOptions, authProvider, prefix) => {

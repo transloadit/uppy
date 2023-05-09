@@ -12,10 +12,10 @@ jest.mock('../../src/server/helpers/oauth-state', () => ({
 
 const authServer = getServer()
 const authData = {
-  dropbox: 'token value',
-  drive: 'token value',
+  dropbox: { accessToken: 'token value' },
+  drive: { accessToken: 'token value' },
 }
-const token = tokenService.generateEncryptedToken(authData, process.env.COMPANION_SECRET)
+const token = tokenService.generateEncryptedAuthToken(authData, process.env.COMPANION_SECRET)
 
 describe('test authentication callback', () => {
   test('authentication callback redirects to send-token url', () => {

@@ -1,10 +1,10 @@
 const { errorToResponse } = require('../provider/error')
 
 async function list ({ query, params, companion }, res, next) {
-  const token = companion.providerToken
+  const { accessToken } = companion.providerTokens
 
   try {
-    const data = await companion.provider.list({ companion, token, directory: params.id, query })
+    const data = await companion.provider.list({ companion, token: accessToken, directory: params.id, query })
     res.json(data)
   } catch (err) {
     const errResp = errorToResponse(err)

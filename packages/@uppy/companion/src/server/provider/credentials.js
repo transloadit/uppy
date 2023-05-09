@@ -69,7 +69,7 @@ async function fetchProviderKeys (providerName, companionOptions, credentialRequ
  * @returns {import('express').RequestHandler}
  */
 exports.getCredentialsOverrideMiddleware = (providers, companionOptions) => {
-  return (req, res, next) => {
+  return async (req, res, next) => {
     const { authProvider, override } = req.params
     const [providerName] = Object.keys(providers).filter((name) => providers[name].authProvider === authProvider)
     if (!providerName) {
@@ -97,13 +97,17 @@ exports.getCredentialsOverrideMiddleware = (providers, companionOptions) => {
       return
     }
 
-    const { err, payload } = tokenService.verifyEncryptedToken(preAuthToken, companionOptions.preAuthSecret)
-    if (err || !payload) {
+    let payload
+    try {
+      payload = tokenService.verifyEncryptedToken(preAuthToken, companionOptions.preAuthSecret)
+    } catch (err) {
       next()
       return
     }
 
-    fetchProviderKeys(providerName, companionOptions, payload).then((credentials) => {
+    try {
+      const credentials = await fetchProviderKeys(providerName, companionOptions, payload)
+
       res.locals.grant = {
         dynamic: {
           key: credentials.key,
@@ -116,7 +120,7 @@ exports.getCredentialsOverrideMiddleware = (providers, companionOptions) => {
       }
 
       next()
-    }).catch((keyErr) => {
+    } catch (keyErr) {
       // TODO we should return an html page here that can communicate the error
       // back to the Uppy client, just like /send-token does
       res.send(`
@@ -134,7 +138,7 @@ exports.getCredentialsOverrideMiddleware = (providers, companionOptions) => {
         </body>
         </html>
       `)
-    })
+    }
   }
 }
 

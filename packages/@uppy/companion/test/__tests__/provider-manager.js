@@ -52,6 +52,9 @@ describe('Test Provider options', () => {
       authorize_url: 'https://www.dropbox.com/oauth2/authorize',
       access_url: 'https://api.dropbox.com/oauth2/token',
       callback: '/dropbox/callback',
+      custom_params: {
+        token_access_type: 'offline',
+      },
     })
 
     expect(grantConfig.box).toEqual({
