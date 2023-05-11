@@ -190,7 +190,6 @@ export default class Transloadit extends BasePlugin {
 
   #createAssembly (fileIDs, uploadID, options) {
     this.uppy.log('[Transloadit] Create Assembly')
-    console.log('create assembly')
 
     return this.client.createAssembly({
       params: options.params,
