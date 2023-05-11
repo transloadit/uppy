@@ -27,7 +27,7 @@
 
 import UploaderPlugin from '@uppy/core/lib/UploaderPlugin.js'
 import { RateLimitedQueue, internalRateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
-import { RequestClient } from '@uppy/companion-client'
+import { RequestClient, Provider } from '@uppy/companion-client'
 import { filterNonFailedFiles, filterFilesToEmitUploadStarted } from '@uppy/utils/lib/fileFilters'
 
 import packageJson from '../package.json'
@@ -138,6 +138,8 @@ export default class AwsS3 extends UploaderPlugin {
 
     this.#client = new RequestClient(uppy, opts)
     this.#requests = new RateLimitedQueue(this.opts.limit)
+
+    this.queueRequestSocketToken = this.#requests.wrapPromiseFunction(this.#requestSocketToken, { priority: -1 })
   }
 
   [Symbol.for('uppy test: getClient')] () { return this.#client }
@@ -245,8 +247,32 @@ export default class AwsS3 extends UploaderPlugin {
     return this.#uploader.connectToServerSocket(file)
   }
 
-  queueRequestSocketToken (file) {
-    return this.#uploader.queueRequestSocketToken(file)
+  #requestSocketToken = async (file) => {
+    const opts = this.#uploader.getOptions(file)
+    const Client = file.remote.providerOptions.provider ? Provider : RequestClient
+    const client = new Client(this.uppy, file.remote.providerOptions)
+    const allowedMetaFields = Array.isArray(opts.allowedMetaFields)
+      ? opts.allowedMetaFields
+      // Send along all fields by default.
+      : Object.keys(file.meta)
+
+    if (file.tus) {
+      // Install file-specific upload overrides.
+      Object.assign(opts, file.tus)
+    }
+
+    const res = await client.post(file.remote.url, {
+      ...file.remote.body,
+      protocol: 'multipart',
+      endpoint: opts.endpoint,
+      size: file.data.size,
+      fieldname: opts.fieldName,
+      metadata: Object.fromEntries(allowedMetaFields.map(name => [name, file.meta[name]])),
+      httpMethod: opts.method,
+      useFormData: opts.formData,
+      headers: opts.headers,
+    })
+    return res.token
   }
 
   uploadFile (id, current, total) {

@@ -1,5 +1,5 @@
 import { nanoid } from 'nanoid/non-secure'
-import { Provider, RequestClient, Socket } from '@uppy/companion-client'
+import { Socket } from '@uppy/companion-client'
 import emitSocketProgress from '@uppy/utils/lib/emitSocketProgress'
 import getSocketHost from '@uppy/utils/lib/getSocketHost'
 import EventTracker from '@uppy/utils/lib/EventTracker'
@@ -53,8 +53,6 @@ function createFormDataUpload (file, opts) {
 const createBareUpload = file => file.data
 
 export default class MiniXHRUpload {
-  queueRequestSocketToken
-
   constructor (uppy, opts) {
     this.uppy = uppy
     this.opts = {
@@ -67,11 +65,9 @@ export default class MiniXHRUpload {
     this.requests = opts[internalRateLimitedQueue]
     this.uploaderEvents = Object.create(null)
     this.i18n = opts.i18n
-
-    this.queueRequestSocketToken = this.requests.wrapPromiseFunction(this.#requestSocketToken, { priority: -1 })
   }
 
-  #getOptions (file) {
+  getOptions (file) {
     const { uppy } = this
 
     const overrides = uppy.getState().xhrUpload
@@ -106,7 +102,7 @@ export default class MiniXHRUpload {
   }
 
   uploadLocalFile (file, current, total) {
-    const opts = this.#getOptions(file)
+    const opts = this.getOptions(file)
 
     this.uppy.log(`uploading ${current} of ${total}`)
     return new Promise((resolve, reject) => {
@@ -241,37 +237,9 @@ export default class MiniXHRUpload {
     })
   }
 
-  #requestSocketToken = async (file) => {
-    const opts = this.#getOptions(file)
-    const Client = file.remote.providerOptions.provider ? Provider : RequestClient
-    const client = new Client(this.uppy, file.remote.providerOptions)
-    const allowedMetaFields = Array.isArray(opts.allowedMetaFields)
-      ? opts.allowedMetaFields
-      // Send along all fields by default.
-      : Object.keys(file.meta)
-
-    if (file.tus) {
-      // Install file-specific upload overrides.
-      Object.assign(opts, file.tus)
-    }
-
-    const res = await client.post(file.remote.url, {
-      ...file.remote.body,
-      protocol: 'multipart',
-      endpoint: opts.endpoint,
-      size: file.data.size,
-      fieldname: opts.fieldName,
-      metadata: Object.fromEntries(allowedMetaFields.map(name => [name, file.meta[name]])),
-      httpMethod: opts.method,
-      useFormData: opts.formData,
-      headers: opts.headers,
-    })
-    return res.token
-  }
-
   async connectToServerSocket (file) {
     return new Promise((resolve, reject) => {
-      const opts = this.#getOptions(file)
+      const opts = this.getOptions(file)
       const token = file.serverToken
       const host = getSocketHost(file.remote.companionUrl)
       let socket
