@@ -1,4 +1,4 @@
-import BasePlugin from '@uppy/core/lib/BasePlugin.js'
+import UploaderPlugin from '@uppy/core/lib/UploaderPlugin.js'
 import { Socket, Provider, RequestClient } from '@uppy/companion-client'
 import EventTracker from '@uppy/utils/lib/EventTracker'
 import emitSocketProgress from '@uppy/utils/lib/emitSocketProgress'
@@ -313,10 +313,10 @@ class HTTPCommunicationQueue {
   }
 }
 
-export default class AwsS3Multipart extends BasePlugin {
+export default class AwsS3Multipart extends UploaderPlugin {
   static VERSION = packageJson.version
 
-  #queueRequestSocketToken
+  queueRequestSocketToken
 
   #companionCommunicationQueue
 
@@ -369,7 +369,7 @@ export default class AwsS3Multipart extends BasePlugin {
     this.uploaderEvents = Object.create(null)
     this.uploaderSockets = Object.create(null)
 
-    this.#queueRequestSocketToken = this.requests.wrapPromiseFunction(this.#requestSocketToken, { priority: -1 })
+    this.queueRequestSocketToken = this.requests.wrapPromiseFunction(this.#requestSocketToken, { priority: -1 })
   }
 
   [Symbol.for('uppy test: getClient')] () { return this.#client }
@@ -683,28 +683,6 @@ export default class AwsS3Multipart extends BasePlugin {
     return res.token
   }
 
-  // NOTE! Keep this duplicated code in sync with other plugins
-  // TODO we should probably abstract this into a common function
-  async #uploadRemote (file) {
-    this.resetUploaderReferences(file.id)
-
-    try {
-      if (file.serverToken) {
-        return await this.connectToServerSocket(file)
-      }
-      const serverToken = await this.#queueRequestSocketToken(file)
-
-      if (!this.uppy.getState().files[file.id]) return undefined
-
-      this.uppy.setFileState(file.id, { serverToken })
-      return await this.connectToServerSocket(this.uppy.getFile(file.id))
-    } catch (err) {
-      this.uppy.setFileState(file.id, { serverToken: undefined })
-      this.uppy.emit('upload-error', file, err)
-      throw err
-    }
-  }
-
   async connectToServerSocket (file) {
     return new Promise((resolve, reject) => {
       let queuedRequest
@@ -827,7 +805,8 @@ export default class AwsS3Multipart extends BasePlugin {
 
     const promises = filesFiltered.map((file) => {
       if (file.isRemote) {
-        return this.#uploadRemote(file)
+        this.resetUploaderReferences(file.id)
+        return this.uploadRemoteFile(file)
       }
       return this.#uploadFile(file)
     })

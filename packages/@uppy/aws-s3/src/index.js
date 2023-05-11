@@ -25,7 +25,7 @@
  * the XHRUpload code, but at least it's not horrifically broken :)
  */
 
-import BasePlugin from '@uppy/core/lib/BasePlugin.js'
+import UploaderPlugin from '@uppy/core/lib/UploaderPlugin.js'
 import { RateLimitedQueue, internalRateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
 import { RequestClient } from '@uppy/companion-client'
 import { filterNonFailedFiles, filterFilesToEmitUploadStarted } from '@uppy/utils/lib/fileFilters'
@@ -102,7 +102,7 @@ function defaultGetResponseError (content, xhr) {
 let warnedSuccessActionStatus = false
 
 // TODO deprecate this, will use s3-multipart instead
-export default class AwsS3 extends BasePlugin {
+export default class AwsS3 extends UploaderPlugin {
   static VERSION = packageJson.version
 
   #client
@@ -239,6 +239,24 @@ export default class AwsS3 extends BasePlugin {
   #setCompanionHeaders = () => {
     this.#client.setCompanionHeaders(this.opts.companionHeaders)
     return Promise.resolve()
+  }
+
+  connectToServerSocket (file) {
+    return this.#uploader.connectToServerSocket(file)
+  }
+
+  queueRequestSocketToken (file) {
+    return this.#uploader.queueRequestSocketToken(file)
+  }
+
+  uploadFile (id, current, total) {
+    const file = this.uppy.getFile(id)
+    if (file.error) {
+      throw new Error(file.error)
+    } else if (file.isRemote) {
+      return this.uploadRemoteFile(file, current, total)
+    }
+    return this.#uploader.uploadLocalFile(file, current, total)
   }
 
   install () {

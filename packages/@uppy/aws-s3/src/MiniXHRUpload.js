@@ -53,7 +53,7 @@ function createFormDataUpload (file, opts) {
 const createBareUpload = file => file.data
 
 export default class MiniXHRUpload {
-  #queueRequestSocketToken
+  queueRequestSocketToken
 
   constructor (uppy, opts) {
     this.uppy = uppy
@@ -68,7 +68,7 @@ export default class MiniXHRUpload {
     this.uploaderEvents = Object.create(null)
     this.i18n = opts.i18n
 
-    this.#queueRequestSocketToken = this.requests.wrapPromiseFunction(this.#requestSocketToken, { priority: -1 })
+    this.queueRequestSocketToken = this.requests.wrapPromiseFunction(this.#requestSocketToken, { priority: -1 })
   }
 
   #getOptions (file) {
@@ -89,16 +89,6 @@ export default class MiniXHRUpload {
     return opts
   }
 
-  uploadFile (id, current, total) {
-    const file = this.uppy.getFile(id)
-    if (file.error) {
-      throw new Error(file.error)
-    } else if (file.isRemote) {
-      return this.#uploadRemoteFile(file, current, total)
-    }
-    return this.#uploadLocalFile(file, current, total)
-  }
-
   #addEventHandlerForFile (eventName, fileID, eventHandler) {
     this.uploaderEvents[fileID].on(eventName, (fileOrID) => {
       // TODO (major): refactor Uppy events to consistently send file objects (or consistently IDs)
@@ -115,7 +105,7 @@ export default class MiniXHRUpload {
     })
   }
 
-  #uploadLocalFile (file, current, total) {
+  uploadLocalFile (file, current, total) {
     const opts = this.#getOptions(file)
 
     this.uppy.log(`uploading ${current} of ${total}`)
@@ -277,27 +267,6 @@ export default class MiniXHRUpload {
       headers: opts.headers,
     })
     return res.token
-  }
-
-  // NOTE! Keep this duplicated code in sync with other plugins
-  // TODO we should probably abstract this into a common function
-  async #uploadRemoteFile (file) {
-    // TODO: we could rewrite this to use server-sent events instead of creating WebSockets.
-    try {
-      if (file.serverToken) {
-        return await this.connectToServerSocket(file)
-      }
-      const serverToken = await this.#queueRequestSocketToken(file)
-
-      if (!this.uppy.getState().files[file.id]) return undefined
-
-      this.uppy.setFileState(file.id, { serverToken })
-      return await this.connectToServerSocket(this.uppy.getFile(file.id))
-    } catch (err) {
-      this.uppy.setFileState(file.id, { serverToken: undefined })
-      this.uppy.emit('upload-error', file, err)
-      throw err
-    }
   }
 
   async connectToServerSocket (file) {
