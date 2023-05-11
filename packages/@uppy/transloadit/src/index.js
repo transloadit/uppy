@@ -190,6 +190,7 @@ export default class Transloadit extends BasePlugin {
 
   #createAssembly (fileIDs, uploadID, options) {
     this.uppy.log('[Transloadit] Create Assembly')
+    console.log('create assembly')
 
     return this.client.createAssembly({
       params: options.params,
@@ -242,16 +243,21 @@ export default class Transloadit extends BasePlugin {
       })
 
       const fileRemovedHandler = (fileRemoved, reason) => {
+        const inProgress = ['ASSEMBLY_EXECUTING', 'ASSEMBLY_UPLOADING']
+        if (!inProgress.includes(assembly.status.ok)) {
+          this.uppy.off('file-removed', fileRemovedHandler)
+          return
+        }
         if (reason === 'cancel-all') {
           assembly.close()
-          this.uppy.off(fileRemovedHandler)
+          this.uppy.off('file-removed', fileRemovedHandler)
         } else if (fileRemoved.id in updatedFiles) {
           delete updatedFiles[fileRemoved.id]
           const nbOfRemainingFiles = Object.keys(updatedFiles).length
           if (nbOfRemainingFiles === 0) {
             assembly.close()
             this.#cancelAssembly(newAssembly).catch(() => { /* ignore potential errors */ })
-            this.uppy.off(fileRemovedHandler)
+            this.uppy.off('file-removed', fileRemovedHandler)
           } else {
             this.client.updateNumberOfFilesInAssembly(newAssembly, nbOfRemainingFiles)
               .catch(() => { /* ignore potential errors */ })
