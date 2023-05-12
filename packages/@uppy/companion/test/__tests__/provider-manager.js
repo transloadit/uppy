@@ -76,6 +76,9 @@ describe('Test Provider options', () => {
         'https://www.googleapis.com/auth/drive.readonly',
       ],
       callback: '/drive/callback',
+      custom_params: {
+        access_type: 'offline',
+      },
     })
     expect(grantConfig.zoom).toEqual({
       key: 'zoom_key',
