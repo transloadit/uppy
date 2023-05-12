@@ -56,9 +56,11 @@ module.exports.verifyEncryptedToken = (token, secret) => {
  * @param {string} token
  * @param {string} secret
  */
-module.exports.verifyEncryptedAuthToken = (token, secret) => {
+module.exports.verifyEncryptedAuthToken = (token, secret, providerName) => {
   const json = module.exports.verifyEncryptedToken(token, secret)
-  return JSON.parse(json)
+  const tokens = JSON.parse(json)
+  if (!tokens[providerName]) throw new Error(`Missing token payload for provider ${providerName}`)
+  return tokens
 }
 
 const addToCookies = (res, token, companionOptions, authProvider, prefix) => {

@@ -83,8 +83,7 @@ exports.verifyToken = (req, res, next) => {
   }
   const { providerName } = req.params
   try {
-    const payload = tokenService.verifyEncryptedAuthToken(token, req.companion.options.secret)
-    if (!payload[providerName]) throw new Error(`Missing token payload for provider ${providerName}`)
+    const payload = tokenService.verifyEncryptedAuthToken(token, req.companion.options.secret, providerName)
     req.companion.allProvidersTokens = payload
     req.companion.providerTokens = payload[providerName]
   } catch (err) {
@@ -100,8 +99,9 @@ exports.gentleVerifyToken = (req, res, next) => {
   const { providerName } = req.params
   if (req.companion.authToken) {
     try {
-      const payload = tokenService.verifyEncryptedAuthToken(req.companion.authToken, req.companion.options.secret)
-      if (!payload[providerName]) throw new Error(`Missing token payload for provider ${providerName} (gentle)`)
+      const payload = tokenService.verifyEncryptedAuthToken(
+        req.companion.authToken, req.companion.options.secret, providerName,
+      )
       req.companion.allProvidersTokens = payload
     } catch (err) {
       logger.error(err.message, 'token.gentle.verify.error', req.id)
