@@ -4,6 +4,8 @@
 //
 // We could try removing this file when we upgrade to 4.1 :)
 
+import { bool } from 'aws-sdk/clients/signer'
+
 export class ProviderApiError extends Error {
   constructor(message: string, statusCode: number)
 }
@@ -12,3 +14,5 @@ export class ProviderAuthError extends ProviderApiError {
 }
 
 export function errorToResponse(anyError: Error): { code: number, message: string }
+
+export function respondWithError(anyError: Error, res: any): bool

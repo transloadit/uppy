@@ -1,5 +1,5 @@
 const tokenService = require('../helpers/jwt')
-const { errorToResponse } = require('../provider/error')
+const { respondWithError } = require('../provider/error')
 
 /**
  *
@@ -31,11 +31,7 @@ async function logout (req, res, next) {
     cleanSession()
     res.json({ ok: true, ...data })
   } catch (err) {
-    const errResp = errorToResponse(err)
-    if (errResp) {
-      res.status(errResp.code).json({ message: errResp.message })
-      return
-    }
+    if (respondWithError(err, res)) return
     next(err)
   }
 }
