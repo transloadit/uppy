@@ -20,16 +20,17 @@ async function withProviderErrorHandling ({ fn, tag, providerName, isAuthError =
   } catch (err) {
     const { response } = err
 
+    let err2 = err
+
     if (response) {
       // @ts-ignore
-      if (isAuthError(response)) return new ProviderAuthError()
-
-      return new ProviderApiError(getErrorMessage(response), response.statusCode)
+      if (isAuthError(response)) err2 = new ProviderAuthError()
+      else err2 = new ProviderApiError(getErrorMessage(response), response.statusCode)
     }
 
-    logger.error(err, tag)
+    logger.error(err2, tag)
 
-    throw err
+    throw err2
   }
 }
 
