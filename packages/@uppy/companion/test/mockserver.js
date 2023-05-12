@@ -50,6 +50,8 @@ function updateEnv (env) {
 
 module.exports.setDefaultEnv = () => updateEnv(defaultEnv)
 
+module.exports.grantToken = 'fake token'
+
 module.exports.getServer = (extraEnv) => {
   const env = {
     ...defaultEnv,
@@ -69,7 +71,7 @@ module.exports.getServer = (extraEnv) => {
   authServer.use(session({ secret: 'grant', resave: true, saveUninitialized: true }))
   authServer.all('*/callback', (req, res, next) => {
     req.session.grant = {
-      response: { access_token: 'fake token' },
+      response: { access_token: module.exports.grantToken },
     }
     next()
   })

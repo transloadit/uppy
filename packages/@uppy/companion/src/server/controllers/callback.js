@@ -50,5 +50,8 @@ module.exports = function callback (req, res, next) { // eslint-disable-line no-
   const uppyAuthToken = tokenService.generateEncryptedAuthToken(
     req.companion.allProvidersTokens, req.companion.options.secret,
   )
+
+  tokenService.addToCookiesIfNeeded(req, res, uppyAuthToken)
+
   return res.redirect(req.companion.buildURL(`/${providerName}/send-token?uppyAuthToken=${uppyAuthToken}`, true))
 }

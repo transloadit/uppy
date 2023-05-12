@@ -28,6 +28,7 @@ module.exports.verifyToken = (token, secret) => {
  * @param {string} secret
  */
 module.exports.generateEncryptedToken = (payload, secret) => {
+  // return payload // for easier debugging
   return encrypt(module.exports.generateToken(payload, secret), secret)
 }
 
@@ -83,15 +84,11 @@ const addToCookies = (res, token, companionOptions, authProvider, prefix) => {
   res.cookie(`${prefix}--${authProvider}`, token, cookieOptions)
 }
 
-/**
- *
- * @param {object} res
- * @param {string} token
- * @param {object} companionOptions
- * @param {string} authProvider
- */
-module.exports.addToCookies = (res, token, companionOptions, authProvider) => {
-  addToCookies(res, token, companionOptions, authProvider, 'uppyAuthToken')
+module.exports.addToCookiesIfNeeded = (req, res, uppyAuthToken) => {
+  // some providers need the token in cookies for thumbnail/image requests
+  if (req.companion.provider.needsCookieAuth) {
+    addToCookies(res, uppyAuthToken, req.companion.options, req.companion.provider.authProvider, 'uppyAuthToken')
+  }
 }
 
 /**

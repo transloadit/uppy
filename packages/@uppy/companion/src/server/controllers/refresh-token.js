@@ -39,6 +39,8 @@ async function refreshToken (req, res, next) {
       req.companion.allProvidersTokens, req.companion.options.secret,
     )
 
+    tokenService.addToCookiesIfNeeded(req, res, uppyAuthToken)
+
     res.send({ uppyAuthToken })
   } catch (err) {
     if (respondWithError(err, res)) return

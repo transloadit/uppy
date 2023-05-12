@@ -4,7 +4,7 @@ jest.mock('../../src/server/helpers/jwt', () => {
     verifyToken: () => {},
     generateEncryptedToken: () => 'dummy token',
     verifyEncryptedToken: () => '',
-    addToCookies: () => {},
+    addToCookiesIfNeeded: () => {},
     removeFromCookies: () => {},
   }
 })
