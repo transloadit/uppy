@@ -105,6 +105,8 @@ let warnedSuccessActionStatus = false
 export default class AwsS3 extends UploaderPlugin {
   static VERSION = packageJson.version
 
+  queueRequestSocketToken
+
   #client
 
   #requests

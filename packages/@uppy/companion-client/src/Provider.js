@@ -20,7 +20,7 @@ export default class Provider extends RequestClient {
   }
 
   async headers () {
-    const [headers, token] = await Promise.all([super.headers(), this.getAuthToken()])
+    const [headers, token] = await Promise.all([super.headers(), this.#getAuthToken()])
     const authHeaders = {}
     if (token) {
       authHeaders['uppy-auth-token'] = token
@@ -43,11 +43,11 @@ export default class Provider extends RequestClient {
     return response
   }
 
-  setAuthToken (token) {
+  async setAuthToken (token) {
     return this.uppy.getPlugin(this.pluginId).storage.setItem(this.tokenKey, token)
   }
 
-  getAuthToken () {
+  async #getAuthToken () {
     return this.uppy.getPlugin(this.pluginId).storage.getItem(this.tokenKey)
   }
 
