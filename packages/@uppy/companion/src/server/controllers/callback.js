@@ -41,7 +41,7 @@ module.exports = function callback (req, res, next) { // eslint-disable-line no-
     return res.status(400).send(closePageHtml(origin))
   }
 
-  req.companion.allProvidersTokens ||= {}
+  if (!req.companion.allProvidersTokens) req.companion.allProvidersTokens = {}
   req.companion.allProvidersTokens[providerName] = {
     accessToken: grant.response.access_token,
     refreshToken: grant.response.refresh_token, // might be undefined for some providers
