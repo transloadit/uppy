@@ -1,5 +1,12 @@
 # @uppy/transloadit
 
+## 3.1.5
+
+Released: 2023-05-15
+Included in: Uppy v3.9.1
+
+- @uppy/transloadit: clean up event listener to prevent cancelled assemblies (Merlijn Vos / #4447)
+
 ## 3.1.4
 
 Released: 2023-05-02
