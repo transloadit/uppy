@@ -12,6 +12,17 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 3.9.1
+
+Released: 2023-05-15
+
+| Package           | Version | Package           | Version |
+| ----------------- | ------- | ----------------- | ------- |
+| @uppy/transloadit |   3.1.5 | uppy              |   3.9.1 |
+
+- @uppy/transloadit: clean up event listener to prevent cancelled assemblies (Merlijn Vos / #4447)
+
+
 ## 3.9.0
 
 Released: 2023-05-02
