@@ -1,5 +1,5 @@
 import { UIPlugin } from '@uppy/core'
-import getSpeed from '@uppy/utils/lib/getSpeed'
+import emaFilter from '@uppy/utils/lib/emaFilter'
 import getBytesRemaining from '@uppy/utils/lib/getBytesRemaining'
 import getTextDirection from '@uppy/utils/lib/getTextDirection'
 import statusBarStates from './StatusBarStates.js'
@@ -8,25 +8,56 @@ import StatusBarUI from './StatusBarUI.jsx'
 import packageJson from '../package.json'
 import locale from './locale.js'
 
-function getTotalSpeed (files) {
-  let totalSpeed = 0
-  files.forEach((file) => {
-    totalSpeed += getSpeed(file.progress)
-  })
-  return totalSpeed
-}
+const speedFilterHalfLife = 2
+const ETAFilterHalfLife = 2
 
-function getTotalETA (files) {
-  const totalSpeed = getTotalSpeed(files)
-  if (totalSpeed === 0) {
+let previousTotalBytes = 0
+function getCurrentSpeed (files, dt) {
+  const totalBytes = files.reduce((total, file) => {
+    return total + file.progress.bytesUploaded
+  }, 0)
+  if (totalBytes === 0) {
     return 0
   }
+  const newlyUploadedBytes = totalBytes - previousTotalBytes
+  previousTotalBytes = totalBytes
+  return newlyUploadedBytes / dt
+}
+
+let previousSpeed = null
+function getInstantETA (files, dt) {
+  const currentSpeed = getCurrentSpeed(files, dt)
+  if (currentSpeed === 0) {
+    return 0
+  }
+
+  let filteredSpeed = currentSpeed
+  if (previousSpeed !== null) {
+    filteredSpeed = emaFilter(currentSpeed, previousSpeed, speedFilterHalfLife, dt)
+  }
+  previousSpeed = currentSpeed
 
   const totalBytesRemaining = files.reduce((total, file) => {
     return total + getBytesRemaining(file.progress)
   }, 0)
+  return (totalBytesRemaining / filteredSpeed)
+}
 
-  return Math.round((totalBytesRemaining / totalSpeed) * 10) / 10
+let previousFilteredValue = null
+let lastUpdateTime = null
+function getFilteredETA (files) {
+  const time = Date.now() / 1000
+  const dt = time - lastUpdateTime
+
+  let etaValue = getInstantETA(files, dt)
+
+  if (previousFilteredValue !== null) {
+    etaValue = emaFilter(etaValue, Math.max(previousFilteredValue - dt, 0), ETAFilterHalfLife, dt)
+  }
+
+  previousFilteredValue = etaValue
+  lastUpdateTime = time
+  return Math.round(10 * etaValue) / 10
 }
 
 function getUploadingState (error, isAllComplete, recoveredState, files) {
@@ -146,7 +177,7 @@ export default class StatusBar extends UIPlugin {
     const newFilesOrRecovered = recoveredState
       ? Object.values(files)
       : newFiles
-    const totalETA = getTotalETA(inProgressNotPausedFiles)
+    const totalETA = getFilteredETA(inProgressNotPausedFiles)
     const resumableUploads = !!capabilities.resumableUploads
     const supportsUploadProgress = capabilities.uploadProgress !== false
 
