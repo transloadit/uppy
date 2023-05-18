@@ -97,7 +97,7 @@ export default class StatusBar extends UIPlugin {
       return 0
     }
 
-    const dt = Date.now() - this.#lastUpdateTime
+    const dt = performance.now() - this.#lastUpdateTime
     if (dt === 0) {
       return Math.round((this.#previousETA ?? 0) / 100) / 10
     }
@@ -122,7 +122,7 @@ export default class StatusBar extends UIPlugin {
       ? instantETA
       : emaFilter(instantETA, updatedPreviousETA, ETAFilterHalfLife, dt)
     this.#previousETA = filteredETA
-    this.#lastUpdateTime = Date.now()
+    this.#lastUpdateTime = performance.now()
 
     return Math.round(filteredETA / 100) / 10
   }
@@ -134,7 +134,7 @@ export default class StatusBar extends UIPlugin {
       this.uppy.emit('restore-confirmed')
       return undefined
     }
-    this.#lastUpdateTime = Date.now()
+    this.#lastUpdateTime = performance.now()
     this.#previousUploadedBytes = 0
     this.#previousSpeed = null
     this.#previousETA = null
