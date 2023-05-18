@@ -57,11 +57,14 @@ export default class RequestClient {
     return stripSlash(companion && companion[host] ? companion[host] : host)
   }
 
-  async headers () {
+  async headers (emptyRequest = false) {
     const defaultHeaders = {
       Accept: 'application/json',
-      'Content-Type': 'application/json',
-      'Uppy-Versions': `@uppy/companion-client=${RequestClient.VERSION}`,
+      ...(emptyRequest ? undefined : {
+        // Passing those headers on requests with no data forces browsers to first make a preflight request.
+        'Content-Type':  'application/json',
+        'Uppy-Versions': `@uppy/companion-client=${RequestClient.VERSION}`,
+      }),
     }
 
     return {
@@ -138,8 +141,8 @@ export default class RequestClient {
     return promise
   }
 
-  async preflightAndHeaders (path) {
-    const [allowedHeaders, headers] = await Promise.all([this.preflight(path), this.headers()])
+  async preflightAndHeaders (path, emptyRequest) {
+    const [allowedHeaders, headers] = await Promise.all([this.preflight(path), this.headers(emptyRequest)])
     // filter to keep only allowed Headers
     return Object.fromEntries(Object.entries(headers).filter(([header]) => {
       if (!allowedHeaders.includes(header.toLowerCase())) {
@@ -152,7 +155,7 @@ export default class RequestClient {
 
   async #request ({ path, method = 'GET', data, skipPostResponse, signal }) {
     try {
-      const headers = await this.preflightAndHeaders(path)
+      const headers = await this.preflightAndHeaders(path, !data)
       const response = await fetchWithNetworkError(this.#getUrl(path), {
         method,
         signal,
