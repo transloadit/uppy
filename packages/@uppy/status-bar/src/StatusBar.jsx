@@ -1,6 +1,5 @@
 import { UIPlugin } from '@uppy/core'
 import emaFilter from '@uppy/utils/lib/emaFilter'
-import getBytesRemaining from '@uppy/utils/lib/getBytesRemaining'
 import getTextDirection from '@uppy/utils/lib/getTextDirection'
 import statusBarStates from './StatusBarStates.js'
 import StatusBarUI from './StatusBarUI.jsx'
@@ -8,56 +7,56 @@ import StatusBarUI from './StatusBarUI.jsx'
 import packageJson from '../package.json'
 import locale from './locale.js'
 
-const speedFilterHalfLife = 2
-const ETAFilterHalfLife = 2
+const speedFilterHalfLife = 2000
+const ETAFilterHalfLife = 2000
 
-let previousTotalBytes = 0
-function getCurrentSpeed (files, dt) {
-  const totalBytes = files.reduce((total, file) => {
-    return total + file.progress.bytesUploaded
-  }, 0)
-  if (totalBytes === 0) {
-    return 0
+function* generateSmoothETA (uploadStarted) {
+  let totalBytes = yield 0 // we wait for the first render
+  let lastUpdateTime = uploadStarted
+  let previousUploadedBytes = 0
+  let previousSpeed
+  let previousETA
+  while (true) {
+    const dt = Date.now() - lastUpdateTime
+    if (dt === 0) {
+      totalBytes = yield Math.round((previousETA ?? 0) / 100) / 10
+      continue // eslint-disable-line no-continue
+    }
+
+    if (totalBytes.total === 0) {
+      totalBytes = yield 0
+      continue // eslint-disable-line no-continue
+    }
+    totalBytes.remaining = totalBytes.total - totalBytes.uploaded
+    if (totalBytes.remaining === 0) {
+      totalBytes = yield 0
+      continue // eslint-disable-line no-continue
+    }
+
+    const uploadedBytesSinceLastTick = totalBytes.uploaded - previousUploadedBytes
+    previousUploadedBytes = totalBytes.uploaded
+    // uploadedBytesSinceLastTick can be negative in some cases (packet loss?)
+    // in which case, we wait for next tick to update ETA.
+    if (uploadedBytesSinceLastTick <= 0) {
+      totalBytes = yield Math.round((previousETA ?? 0) / 100) / 10
+      continue // eslint-disable-line no-continue
+    }
+    const currentSpeed = uploadedBytesSinceLastTick / dt
+    const filteredSpeed = previousSpeed == null
+      ? currentSpeed
+      : emaFilter(currentSpeed, previousSpeed, speedFilterHalfLife, dt)
+    previousSpeed = filteredSpeed
+    const instantETA = totalBytes.remaining / filteredSpeed
+
+    const updatedPreviousETA = Math.max(previousETA - dt, 0)
+    const filteredETA = previousETA == null
+      ? instantETA
+      : emaFilter(instantETA, updatedPreviousETA, ETAFilterHalfLife, dt)
+    previousETA = filteredETA
+    lastUpdateTime = Date.now()
+
+    totalBytes = yield Math.round(filteredETA / 100) / 10
   }
-  const newlyUploadedBytes = totalBytes - previousTotalBytes
-  previousTotalBytes = totalBytes
-  return newlyUploadedBytes / dt
-}
-
-let previousSpeed = null
-function getInstantETA (files, dt) {
-  const currentSpeed = getCurrentSpeed(files, dt)
-  if (currentSpeed === 0) {
-    return 0
-  }
-
-  let filteredSpeed = currentSpeed
-  if (previousSpeed !== null) {
-    filteredSpeed = emaFilter(currentSpeed, previousSpeed, speedFilterHalfLife, dt)
-  }
-  previousSpeed = currentSpeed
-
-  const totalBytesRemaining = files.reduce((total, file) => {
-    return total + getBytesRemaining(file.progress)
-  }, 0)
-  return (totalBytesRemaining / filteredSpeed)
-}
-
-let previousFilteredValue = null
-let lastUpdateTime = null
-function getFilteredETA (files) {
-  const time = Date.now() / 1000
-  const dt = time - lastUpdateTime
-
-  let etaValue = getInstantETA(files, dt)
-
-  if (previousFilteredValue !== null) {
-    etaValue = emaFilter(etaValue, Math.max(previousFilteredValue - dt, 0), ETAFilterHalfLife, dt)
-  }
-
-  previousFilteredValue = etaValue
-  lastUpdateTime = time
-  return Math.round(10 * etaValue) / 10
 }
 
 function getUploadingState (error, isAllComplete, recoveredState, files) {
@@ -106,6 +105,8 @@ function getUploadingState (error, isAllComplete, recoveredState, files) {
 export default class StatusBar extends UIPlugin {
   static VERSION = packageJson.version
 
+  #etaGenerator
+
   constructor (uppy, opts) {
     super(uppy, opts)
     this.id = this.opts.id || 'StatusBar'
@@ -141,7 +142,7 @@ export default class StatusBar extends UIPlugin {
       this.uppy.emit('restore-confirmed')
       return undefined
     }
-
+    this.#etaGenerator = generateSmoothETA(Date.now())
     return this.uppy.upload().catch(() => {
       // Error logged in Core
     })
@@ -161,7 +162,6 @@ export default class StatusBar extends UIPlugin {
       newFiles,
       startedFiles,
       completeFiles,
-      inProgressNotPausedFiles,
 
       isUploadStarted,
       isAllComplete,
@@ -177,7 +177,6 @@ export default class StatusBar extends UIPlugin {
     const newFilesOrRecovered = recoveredState
       ? Object.values(files)
       : newFiles
-    const totalETA = getFilteredETA(inProgressNotPausedFiles)
     const resumableUploads = !!capabilities.resumableUploads
     const supportsUploadProgress = capabilities.uploadProgress !== false
 
@@ -188,6 +187,11 @@ export default class StatusBar extends UIPlugin {
       totalSize += file.progress.bytesTotal || 0
       totalUploadedSize += file.progress.bytesUploaded || 0
     })
+    const totalETA = totalSize && this.#etaGenerator.next({
+      uploaded: totalUploadedSize,
+      total: totalSize,
+      remaining: totalSize - totalUploadedSize,
+    }).value
 
     return StatusBarUI({
       error,
