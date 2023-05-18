@@ -180,12 +180,13 @@
   color: $gray-400;
 }
 
-.uppy-Webcam-title {
+.uppy-Root .uppy-Webcam-title {
   max-width: 500px;
   margin: 0;
   margin-bottom: 5px;
   padding: 0 15px;
   color: $gray-800;
+  font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", "Segoe UI Symbol", "Segoe UI Emoji", "Apple Color Emoji", Roboto, Helvetica, Arial, sans-serif;
   font-weight: 400;
   font-size: 22px;
   line-height: 1.35;
