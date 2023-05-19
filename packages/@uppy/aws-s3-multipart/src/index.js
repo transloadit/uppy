@@ -334,15 +334,7 @@ export default class AwsS3Multipart extends BasePlugin {
       completeMultipartUpload: this.completeMultipartUpload.bind(this),
       signPart: this.signPart.bind(this),
       uploadPartBytes: AwsS3Multipart.uploadPartBytes,
-      getUploadParameters: (file, options) => {
-        const { meta } = file
-        const { type, name: filename } = meta
-        const metadata = getAllowedMetadata({ meta, allowedMetaFields: this.opts.allowedMetaFields, querify: true })
-
-        const query = new URLSearchParams({ filename, type, ...metadata })
-
-        return this.#client.get(`s3/params?${query}`, options)
-      },
+      getUploadParameters: this.getUploadParameters.bind(this),
       companionHeaders: {},
     }
 
@@ -458,6 +450,16 @@ export default class AwsS3Multipart extends BasePlugin {
     const uploadIdEnc = encodeURIComponent(uploadId)
     return this.#client.delete(`s3/multipart/${uploadIdEnc}?key=${filename}`, undefined, { signal })
       .then(assertServerError)
+  }
+
+  getUploadParameters (file, options) {
+    const { meta } = file
+    const { type, name: filename } = meta
+    const metadata = getAllowedMetadata({ meta, allowedMetaFields: this.opts.allowedMetaFields, querify: true })
+
+    const query = new URLSearchParams({ filename, type, ...metadata })
+
+    return this.#client.get(`s3/params?${query}`, options)
   }
 
   static async uploadPartBytes ({ signature: { url, expires, headers, method = 'POST' }, body, size = body.size, onProgress, onComplete, signal }) {
