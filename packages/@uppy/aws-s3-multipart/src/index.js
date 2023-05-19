@@ -462,7 +462,7 @@ export default class AwsS3Multipart extends BasePlugin {
     return this.#client.get(`s3/params?${query}`, options)
   }
 
-  static async uploadPartBytes ({ signature: { url, expires, headers, method = 'POST' }, body, size = body.size, onProgress, onComplete, signal }) {
+  static async uploadPartBytes ({ signature: { url, expires, headers, method = 'PUT' }, body, size = body.size, onProgress, onComplete, signal }) {
     throwIfAborted(signal)
 
     if (url == null) {
