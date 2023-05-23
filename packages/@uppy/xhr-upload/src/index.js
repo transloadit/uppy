@@ -171,9 +171,11 @@ export default class XHRUpload extends BasePlugin {
       : Object.keys(meta) // Send along all fields by default.
 
     allowedMetaFields.forEach((item) => {
-      Array.isArray(meta[item]) 
-        ? meta[item].forEach(subItem => formData.append(item, subItem)) 
-        : formData.append(item, meta[item]);
+      if (Array.isArray(meta[item])) {
+        meta[item].forEach(subItem => formData.append(item, subItem))
+      } else {
+        formData.append(item, meta[item])
+      }
     })
   }
 
