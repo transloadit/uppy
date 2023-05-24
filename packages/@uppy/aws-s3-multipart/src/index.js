@@ -18,6 +18,22 @@ function assertServerError (res) {
   return res
 }
 
+function getAllowedMetadata ({ meta, allowedMetaFields, querify = false }) {
+  const metaFields = allowedMetaFields ?? Object.keys(meta)
+
+  if (!meta) return {}
+
+  return Object.fromEntries(
+    metaFields
+      .filter(key => meta[key] != null)
+      .map((key) => {
+        const realKey = querify ? `metadata[${key}]` : key
+        const value = String(meta[key])
+        return [realKey, value]
+      }),
+  )
+}
+
 function throwIfAborted (signal) {
   if (signal?.aborted) { throw createAbortError('The operation was aborted', { cause: signal.reason }) }
 }
@@ -25,11 +41,15 @@ function throwIfAborted (signal) {
 class HTTPCommunicationQueue {
   #abortMultipartUpload
 
+  #allowedMetaFields
+
   #cache = new WeakMap()
 
   #createMultipartUpload
 
   #fetchSignature
+
+  #getUploadParameters
 
   #listParts
 
@@ -57,6 +77,9 @@ class HTTPCommunicationQueue {
     if ('abortMultipartUpload' in options) {
       this.#abortMultipartUpload = requests.wrapPromiseFunction(options.abortMultipartUpload)
     }
+    if ('allowedMetaFields' in options) {
+      this.#allowedMetaFields = options.allowedMetaFields
+    }
     if ('createMultipartUpload' in options) {
       this.#createMultipartUpload = requests.wrapPromiseFunction(options.createMultipartUpload, { priority:-1 })
     }
@@ -74,6 +97,9 @@ class HTTPCommunicationQueue {
     }
     if ('uploadPartBytes' in options) {
       this.#uploadPartBytes = requests.wrapPromiseFunction(options.uploadPartBytes, { priority:Infinity })
+    }
+    if ('getUploadParameters' in options) {
+      this.#getUploadParameters = requests.wrapPromiseFunction(options.getUploadParameters)
     }
   }
 
@@ -190,8 +216,41 @@ class HTTPCommunicationQueue {
     await this.#abortMultipartUpload(file, awaitedResult)
   }
 
+  async #nonMultipartUpload (file, chunk, signal) {
+    const { meta } = file
+    const { type, name: filename } = meta
+    const metadata = getAllowedMetadata({ meta, allowedMetaFields: this.#allowedMetaFields, querify: true })
+
+    const query = new URLSearchParams({ filename, type, ...metadata })
+    const {
+      method = 'post',
+      url,
+      fields,
+      headers,
+    } = await this.#getUploadParameters(`s3/params?${query}`, { signal }).abortOn(signal)
+
+    const formData = new FormData()
+    Object.entries(fields).forEach(([key, value]) => formData.set(key, value))
+    const data = chunk.getData()
+    formData.set('file', data)
+
+    const { onProgress, onComplete } = chunk
+
+    return this.#uploadPartBytes({
+      signature: { url, headers, method },
+      body: formData,
+      size: data.size,
+      onProgress,
+      onComplete,
+      signal,
+    }).abortOn(signal)
+  }
+
   async uploadFile (file, chunks, signal) {
     throwIfAborted(signal)
+    if (chunks.length === 1 && !chunks[0].shouldUseMultipart) {
+      return this.#nonMultipartUpload(file, chunks[0], signal)
+    }
     const { uploadId, key } = await this.getUploadId(file, signal)
     throwIfAborted(signal)
     try {
@@ -206,6 +265,9 @@ class HTTPCommunicationQueue {
 
   async resumeUploadFile (file, chunks, signal) {
     throwIfAborted(signal)
+    if (chunks.length === 1) {
+      return this.#nonMultipartUpload(file, chunks[0], signal)
+    }
     const { uploadId, key } = await this.getUploadId(file, signal)
     throwIfAborted(signal)
     const alreadyUploadedParts = await this.#listParts(file, { uploadId, key, signal }).abortOn(signal)
@@ -240,7 +302,9 @@ class HTTPCommunicationQueue {
       try {
         return {
           PartNumber: partNumber,
-          ...await this.#uploadPartBytes({ signature, body: chunkData, onProgress, onComplete, signal }).abortOn(signal),
+          ...await this.#uploadPartBytes({
+            signature, body: chunkData, size: chunkData.size, onProgress, onComplete, signal,
+          }).abortOn(signal),
         }
       } catch (err) {
         if (!await this.#shouldRetry(err)) throw err
@@ -266,9 +330,13 @@ export default class AwsS3Multipart extends BasePlugin {
     this.#client = new RequestClient(uppy, opts)
 
     const defaultOptions = {
-      // TODO: this is currently opt-in for backward compat, switch to opt-out in the next major
+      // TODO: null here means “include all”, [] means include none.
+      // This is inconsistent with @uppy/aws-s3 and @uppy/transloadit
       allowedMetaFields: null,
       limit: 6,
+      shouldUseMultipart: (file) => file.size !== 0, // TODO: Switch default to:
+      // eslint-disable-next-line no-bitwise
+      // shouldUseMultipart: (file) => file.size >> 10 >> 10 > 100,
       retryDelays: [0, 1000, 3000, 5000],
       createMultipartUpload: this.createMultipartUpload.bind(this),
       listParts: this.listParts.bind(this),
@@ -276,6 +344,7 @@ export default class AwsS3Multipart extends BasePlugin {
       completeMultipartUpload: this.completeMultipartUpload.bind(this),
       signPart: this.signPart.bind(this),
       uploadPartBytes: AwsS3Multipart.uploadPartBytes,
+      getUploadParameters: (...args) => this.#client.get(...args),
       companionHeaders: {},
     }
 
@@ -343,11 +412,7 @@ export default class AwsS3Multipart extends BasePlugin {
     this.assertHost('createMultipartUpload')
     throwIfAborted(signal)
 
-    const metadata = file.meta ? Object.fromEntries(
-      (this.opts.allowedMetaFields ?? Object.keys(file.meta))
-        .filter(key => file.meta[key] != null)
-        .map(key => [key, String(file.meta[key])]),
-    ) : {}
+    const metadata = getAllowedMetadata({ meta: file.meta, allowedMetaFields: this.opts.allowedMetaFields })
 
     return this.#client.post('s3/multipart', {
       filename: file.name,
@@ -397,7 +462,7 @@ export default class AwsS3Multipart extends BasePlugin {
       .then(assertServerError)
   }
 
-  static async uploadPartBytes ({ signature: { url, expires, headers }, body, onProgress, onComplete, signal }) {
+  static async uploadPartBytes ({ signature: { url, expires, headers, method = 'PUT' }, body, size = body.size, onProgress, onComplete, signal }) {
     throwIfAborted(signal)
 
     if (url == null) {
@@ -406,7 +471,7 @@ export default class AwsS3Multipart extends BasePlugin {
 
     return new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest()
-      xhr.open('PUT', url, true)
+      xhr.open(method, url, true)
       if (headers) {
         Object.keys(headers).forEach((key) => {
           xhr.setRequestHeader(key, headers[key])
@@ -425,7 +490,9 @@ export default class AwsS3Multipart extends BasePlugin {
       }
       signal.addEventListener('abort', onabort)
 
-      xhr.upload.addEventListener('progress', onProgress)
+      xhr.upload.addEventListener('progress', (ev) => {
+        onProgress(ev)
+      })
 
       xhr.addEventListener('abort', () => {
         cleanup()
@@ -455,7 +522,8 @@ export default class AwsS3Multipart extends BasePlugin {
           return
         }
 
-        onProgress?.(body.size)
+        // todo make a proper onProgress API (breaking change)
+        onProgress?.({ loaded: size, lengthComputable: true })
 
         // NOTE This must be allowed by CORS.
         const etag = ev.target.getResponseHeader('ETag')
@@ -550,6 +618,7 @@ export default class AwsS3Multipart extends BasePlugin {
         onPartComplete,
 
         file,
+        shouldUseMultipart: this.opts.shouldUseMultipart,
 
         ...file.s3Multipart,
       })

@@ -1,5 +1,19 @@
 # @uppy/transloadit
 
+## 3.1.5
+
+Released: 2023-05-15
+Included in: Uppy v3.9.1
+
+- @uppy/transloadit: clean up event listener to prevent cancelled assemblies (Merlijn Vos / #4447)
+
+## 3.1.4
+
+Released: 2023-05-02
+Included in: Uppy v3.9.0
+
+- @uppy/transloadit: Reset `tus` key in the file on error, so retried files are re-uploaded (Artur Paikin / #4421)
+
 ## 3.1.2
 
 Released: 2023-04-04

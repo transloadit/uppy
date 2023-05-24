@@ -241,17 +241,26 @@ export default class Transloadit extends BasePlugin {
         },
       })
 
+      // TODO: this should not live inside a `file-removed` event but somewhere more deterministic.
+      // Such as inside the function where the assembly has succeeded or cancelled.
+      // For the use case of cancelling the assembly when needed, we should try to do that with just `cancel-all`.
       const fileRemovedHandler = (fileRemoved, reason) => {
+        // If the assembly has successfully completed, we do not need these checks.
+        // Otherwise we may cancel an assembly after it already succeeded
+        if (assembly.status?.ok === 'ASSEMBLY_COMPLETED') {
+          this.uppy.off('file-removed', fileRemovedHandler)
+          return
+        }
         if (reason === 'cancel-all') {
           assembly.close()
-          this.uppy.off(fileRemovedHandler)
+          this.uppy.off('file-removed', fileRemovedHandler)
         } else if (fileRemoved.id in updatedFiles) {
           delete updatedFiles[fileRemoved.id]
           const nbOfRemainingFiles = Object.keys(updatedFiles).length
           if (nbOfRemainingFiles === 0) {
             assembly.close()
             this.#cancelAssembly(newAssembly).catch(() => { /* ignore potential errors */ })
-            this.uppy.off(fileRemovedHandler)
+            this.uppy.off('file-removed', fileRemovedHandler)
           } else {
             this.client.updateNumberOfFilesInAssembly(newAssembly, nbOfRemainingFiles)
               .catch(() => { /* ignore potential errors */ })
