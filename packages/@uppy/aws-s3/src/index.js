@@ -113,7 +113,8 @@ export default class AwsS3 extends BasePlugin {
   #uploader
 
   constructor (uppy, opts) {
-    if (opts?.shouldUseMultipart != null && opts.shouldUseMultipart !== false) {
+    // Opt-in to using the multipart plugin, which is going to be the only S3 plugin as of the next semver.
+    if (opts?.shouldUseMultipart != null) {
       return new AwsS3Multipart(uppy, opts)
     }
     super(uppy, opts)
