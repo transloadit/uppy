@@ -41,8 +41,6 @@ function throwIfAborted (signal) {
 class HTTPCommunicationQueue {
   #abortMultipartUpload
 
-  #allowedMetaFields
-
   #cache = new WeakMap()
 
   #createMultipartUpload
@@ -76,9 +74,6 @@ class HTTPCommunicationQueue {
 
     if ('abortMultipartUpload' in options) {
       this.#abortMultipartUpload = requests.wrapPromiseFunction(options.abortMultipartUpload)
-    }
-    if ('allowedMetaFields' in options) {
-      this.#allowedMetaFields = options.allowedMetaFields
     }
     if ('createMultipartUpload' in options) {
       this.#createMultipartUpload = requests.wrapPromiseFunction(options.createMultipartUpload, { priority:-1 })
@@ -217,17 +212,12 @@ class HTTPCommunicationQueue {
   }
 
   async #nonMultipartUpload (file, chunk, signal) {
-    const { meta } = file
-    const { type, name: filename } = meta
-    const metadata = getAllowedMetadata({ meta, allowedMetaFields: this.#allowedMetaFields, querify: true })
-
-    const query = new URLSearchParams({ filename, type, ...metadata })
     const {
       method = 'post',
       url,
       fields,
       headers,
-    } = await this.#getUploadParameters(`s3/params?${query}`, { signal }).abortOn(signal)
+    } = await this.#getUploadParameters(file, { signal }).abortOn(signal)
 
     const formData = new FormData()
     Object.entries(fields).forEach(([key, value]) => formData.set(key, value))
@@ -344,7 +334,7 @@ export default class AwsS3Multipart extends BasePlugin {
       completeMultipartUpload: this.completeMultipartUpload.bind(this),
       signPart: this.signPart.bind(this),
       uploadPartBytes: AwsS3Multipart.uploadPartBytes,
-      getUploadParameters: (...args) => this.#client.get(...args),
+      getUploadParameters: this.getUploadParameters.bind(this),
       companionHeaders: {},
     }
 
@@ -460,6 +450,16 @@ export default class AwsS3Multipart extends BasePlugin {
     const uploadIdEnc = encodeURIComponent(uploadId)
     return this.#client.delete(`s3/multipart/${uploadIdEnc}?key=${filename}`, undefined, { signal })
       .then(assertServerError)
+  }
+
+  getUploadParameters (file, options) {
+    const { meta } = file
+    const { type, name: filename } = meta
+    const metadata = getAllowedMetadata({ meta, allowedMetaFields: this.opts.allowedMetaFields, querify: true })
+
+    const query = new URLSearchParams({ filename, type, ...metadata })
+
+    return this.#client.get(`s3/params?${query}`, options)
   }
 
   static async uploadPartBytes ({ signature: { url, expires, headers, method = 'PUT' }, body, size = body.size, onProgress, onComplete, signal }) {
