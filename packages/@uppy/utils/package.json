@@ -26,6 +26,7 @@
     "./lib/canvasToBlob": "./lib/canvasToBlob.js",
     "./lib/dataURItoBlob": "./lib/dataURItoBlob.js",
     "./lib/dataURItoFile": "./lib/dataURItoFile.js",
+    "./lib/emaFilter": "./lib/emaFilter.js",
     "./lib/emitSocketProgress": "./lib/emitSocketProgress.js",
     "./lib/findAllDOMElements": "./lib/findAllDOMElements.js",
     "./lib/findDOMElement": "./lib/findDOMElement.js",
