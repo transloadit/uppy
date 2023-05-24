@@ -6055,9 +6055,9 @@ __metadata:
   linkType: hard
 
 "@sideway/formula@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "@sideway/formula@npm:3.0.0"
-  checksum: 8ae26a0ed6bc84f7310be6aae6eb9d81e97f382619fc69025d346871a707eaab0fa38b8c857e3f0c35a19923de129f42d35c50b8010c928d64aab41578580ec4
+  version: 3.0.1
+  resolution: "@sideway/formula@npm:3.0.1"
+  checksum: e4beeebc9dbe2ff4ef0def15cec0165e00d1612e3d7cea0bc9ce5175c3263fc2c818b679bd558957f49400ee7be9d4e5ac90487e1625b4932e15c4aa7919c57a
   languageName: node
   linkType: hard
 
@@ -7991,8 +7991,8 @@ __metadata:
 
 "@types/jasmine@file:./private/@types/jasmine::locator=%40uppy-dev%2Fbuild%40workspace%3A.":
   version: 0.0.0
-  resolution: "@types/jasmine@file:./private/@types/jasmine#./private/@types/jasmine::hash=917119&locator=%40uppy-dev%2Fbuild%40workspace%3A."
-  checksum: cc86c9a338a6943da64fb636e13bdc8f2e41922ae62c3cfd95525b0a0965a28ecd7545173773f2b61a3c30ae70c8eeb9a725eb71fd9006a07a8733ecbac849b9
+  resolution: "@types/jasmine@file:./private/@types/jasmine#./private/@types/jasmine::hash=7d1df7&locator=%40uppy-dev%2Fbuild%40workspace%3A."
+  checksum: dde57c8ba208daf03688444da8b111a0656af60a6ae8d5b3f76e50fb722fb5ba837722c3aedbd5912d9cb39430b6174e3a7d0c39a7820607ae1cb8720e49cb3b
   languageName: node
   linkType: hard
 
@@ -8005,8 +8005,8 @@ __metadata:
 
 "@types/jasminewd2@file:./private/@types/jasmine::locator=%40uppy-dev%2Fbuild%40workspace%3A.":
   version: 0.0.0
-  resolution: "@types/jasminewd2@file:./private/@types/jasmine#./private/@types/jasmine::hash=fe65e0&locator=%40uppy-dev%2Fbuild%40workspace%3A."
-  checksum: 028a3a54e144661b64d14b439c585db2ade1a22ba4b21de85cb469afd2f1bf5e78079ab3f3e5c058ed4146e7cef5300e27c8d176d9f168222d88576671608135
+  resolution: "@types/jasminewd2@file:./private/@types/jasmine#./private/@types/jasmine::hash=1bd8c2&locator=%40uppy-dev%2Fbuild%40workspace%3A."
+  checksum: 179a1034b7211ca7394d5e8ad0962edf01c645ae28f244984f201c4f4dc7f376f230c041a5335ef8a3cf9ce62a463ca25420d4a4f3601f2c199f645055bfb275
   languageName: node
   linkType: hard
 
