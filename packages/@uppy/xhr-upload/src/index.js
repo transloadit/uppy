@@ -172,8 +172,8 @@ export default class XHRUpload extends BasePlugin {
 
     allowedMetaFields.forEach((item) => {
       if (Array.isArray(meta[item])) {
-        // In this case we don't need to transform `item` as a form value name,
-        // because it is already an array-like variable, for example `item[]` and it won't be overrided
+        // In this case we don't transform `item` to add brackets, it's up to
+        // the user to add the brackets so it won't be overridden.
         meta[item].forEach(subItem => formData.append(item, subItem))
       } else {
         formData.append(item, meta[item])
