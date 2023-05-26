@@ -28,7 +28,9 @@
   ],
   "bin": "./bin/companion",
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.257.0",
+    "@aws-sdk/client-s3": "^3.338.0",
+    "@aws-sdk/s3-presigned-post": "^3.338.0",
+    "@aws-sdk/s3-request-presigner": "^3.338.0",
     "atob": "2.1.2",
     "body-parser": "1.20.0",
     "chalk": "4.1.2",
