@@ -20,7 +20,7 @@ module.exports = (companionOptions) => {
     }
 
     let s3ClientOptions = {
-      endpoint: s3.endpoint,
+      endpoint: s3.endpoint.replace(/{service}/, 's3').replace(/{region}/, s3.region),
       region: s3.region,
     }
 
