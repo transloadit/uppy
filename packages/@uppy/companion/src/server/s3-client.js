@@ -20,8 +20,12 @@ module.exports = (companionOptions) => {
     }
 
     let s3ClientOptions = {
-      endpoint: s3.endpoint.replace(/{service}/, 's3').replace(/{region}/, s3.region),
+      endpoint: s3.endpoint,
       region: s3.region,
+    }
+    if (typeof s3.endpoint === 'string') {
+      // TODO: deprecate those replacements in favor of what AWS SDK supports out of the box.
+      s3ClientOptions.endpoint = s3.endpoint.replace(/{service}/, 's3').replace(/{region}/, s3.region)
     }
 
     if (s3.useAccelerateEndpoint && s3.bucket != null) {
