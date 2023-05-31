@@ -42,8 +42,9 @@ export default {
     filter: 'Filter',
     resetFilter: 'Reset filter',
     loading: 'Loading...',
-    authenticateWithTitle:
-      'Please authenticate with %{pluginName} to select files',
+    loadingX: 'Loading (%{numFiles})...',
+    loadAllFilesFolders: 'Load all files and folders',
+    authenticateWithTitle: 'Please authenticate with %{pluginName} to select files',
     authenticateWith: 'Connect to %{pluginName}',
     signInWithGoogle: 'Sign in with Google',
     searchImages: 'Search for images',

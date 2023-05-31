@@ -63,6 +63,7 @@ export default class ProviderView extends View {
     this.logout = this.logout.bind(this)
     this.handleAuth = this.handleAuth.bind(this)
     this.handleScroll = this.handleScroll.bind(this)
+    this.loadAllPages = this.loadAllPages.bind(this)
     this.donePicking = this.donePicking.bind(this)
 
     // Visual
@@ -237,6 +238,26 @@ export default class ProviderView extends View {
     }
   }
 
+  async loadAllPages () {
+    this.isLoadingAllPages = true
+    let path = this.nextPagePath || false
+    let loadedItems = 0
+    try {
+      while (path && this.isLoadingAllPages) {
+        const response = await this.provider.list(path)
+        path = response.nextPagePath
+        loadedItems += response.items.length
+        const { files, folders } = this.plugin.getPluginState()
+        this.plugin.setPluginState({ loadedItemsProgress: loadedItems })
+        this.#updateFilesAndFolders(response, files, folders)
+      }
+    } catch (error) {
+      this.handleError(error)
+    }
+    this.plugin.setPluginState({ loadedItemsProgress: null })
+    this.isLoadingAllPages = false
+  }
+
   async recursivelyListAllFiles (path, queue, onFiles) {
     let curPath = path
 
@@ -343,7 +364,7 @@ export default class ProviderView extends View {
     }
 
     const targetViewOptions = { ...this.opts, ...viewOptions }
-    const { files, folders, filterInput, loading, currentSelection } = this.plugin.getPluginState()
+    const { files, folders, filterInput, loading, currentSelection, loadedItemsProgress } = this.plugin.getPluginState()
     const { isChecked, toggleCheckbox, recordShiftKeyPress, filterItems } = this
     const hasInput = filterInput !== ''
     const headerProps = {
@@ -380,6 +401,9 @@ export default class ProviderView extends View {
       noResultsLabel: i18n('noFilesFound'),
       logout: this.logout,
       handleScroll: this.handleScroll,
+      loadAllPages: this.loadAllPages,
+      loadedItemsProgress,
+      hasMorePages: this.nextPagePath || false,
       done: this.donePicking,
       cancel: this.cancelPicking,
       headerComponent: Header(headerProps),

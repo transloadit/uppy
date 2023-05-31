@@ -360,3 +360,28 @@
     border-top: 1px solid $gray-800;
   }
 }
+
+.uppy-ProviderBrowser-footer--centered {
+  justify-content: center;
+}
+
+.uppy-ProviderBrowser-spinner {
+  animation-name: uppy-ProviderBrowser-spinnerAnimation;
+  animation-duration: 1s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  fill: $blue;
+  margin-inline-end: 10px;
+  position: relative;
+  top: 2px;
+}
+
+@keyframes uppy-ProviderBrowser-spinnerAnimation {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}

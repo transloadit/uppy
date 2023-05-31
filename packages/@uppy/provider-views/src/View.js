@@ -8,6 +8,7 @@ export default class View {
     this.provider = opts.provider
 
     this.isHandlingScroll = false
+    this.isLoadingAllPages = false
 
     this.preFirstRender = this.preFirstRender.bind(this)
     this.handleError = this.handleError.bind(this)
@@ -29,7 +30,11 @@ export default class View {
   }
 
   clearSelection () {
-    this.plugin.setPluginState({ currentSelection: [], filterInput: '' })
+    this.plugin.setPluginState({
+      currentSelection: [],
+      filterInput: '',
+    })
+    this.isLoadingAllPages = false
   }
 
   cancelPicking () {

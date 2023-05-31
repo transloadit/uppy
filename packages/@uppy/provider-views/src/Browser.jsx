@@ -21,6 +21,9 @@ function Browser (props) {
     toggleCheckbox,
     recordShiftKeyPress,
     handleScroll,
+    loadAllPages,
+    loadedItemsProgress,
+    hasMorePages,
     showTitles,
     i18n,
     validateRestrictions,
@@ -40,6 +43,7 @@ function Browser (props) {
   } = props
 
   const selected = currentSelection.length
+  const showFooter = selected > 0 || hasMorePages
 
   return (
     <div
@@ -148,12 +152,15 @@ function Browser (props) {
         )
       })()}
 
-      {selected > 0 && (
+      {showFooter && (
         <FooterActions
           selected={selected}
           done={done}
           cancel={cancel}
           i18n={i18n}
+          loadAllPages={loadAllPages}
+          loadedItemsProgress={loadedItemsProgress}
+          viewType={viewType}
         />
       )}
     </div>
