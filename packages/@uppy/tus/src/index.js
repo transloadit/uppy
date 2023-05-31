@@ -517,7 +517,7 @@ export default class Tus extends BasePlugin {
             socket.open()
             socket.send('resume', {})
 
-            return () => socket.close()
+            return () => {}
           })
         }
       })
@@ -545,7 +545,7 @@ export default class Tus extends BasePlugin {
           socket.open()
           socket.send('resume', {})
 
-          return () => socket.close()
+          return () => {}
         })
       })
 
@@ -616,7 +616,7 @@ export default class Tus extends BasePlugin {
         // that point this cancellation function is not going to be called.
         // Also, we need to remove the request from the queue _without_ destroying everything
         // related to this upload to handle pauses.
-        return () => socket.close()
+        return () => {}
       })
     })
   }
