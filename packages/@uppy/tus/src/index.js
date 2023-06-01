@@ -599,7 +599,7 @@ export default class Tus extends BasePlugin {
         this.uppy.emit('upload-success', file, uploadResp)
         this.resetUploaderReferences(file.id)
         queuedRequest.done()
-
+        socket.close()
         resolve()
       })
 

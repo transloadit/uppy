@@ -734,7 +734,7 @@ export default class AwsS3Multipart extends BasePlugin {
           queuedRequest = this.requests.run(() => {
             socket.open()
             socket.send('resume', {})
-            return () => socket.close()
+            return () => {}
           })
         }
       })
@@ -762,7 +762,7 @@ export default class AwsS3Multipart extends BasePlugin {
           socket.open()
           socket.send('resume', {})
 
-          return () => socket.close()
+          return () => {}
         })
       })
 
@@ -790,6 +790,7 @@ export default class AwsS3Multipart extends BasePlugin {
         this.uppy.emit('upload-error', file, new Error(errData.error))
         this.resetUploaderReferences(file.id)
         queuedRequest.done()
+        socket.close()
         reject(new Error(errData.error))
       })
 
@@ -801,6 +802,7 @@ export default class AwsS3Multipart extends BasePlugin {
         this.uppy.emit('upload-success', file, uploadResp)
         this.resetUploaderReferences(file.id)
         queuedRequest.done()
+        socket.close()
         resolve()
       })
 
@@ -811,7 +813,7 @@ export default class AwsS3Multipart extends BasePlugin {
           socket.open()
         }
 
-        return () => socket.close()
+        return () => {}
       })
     })
   }
