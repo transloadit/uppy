@@ -1,6 +1,6 @@
 import BasePlugin from '@uppy/core/lib/BasePlugin.js'
 import { Socket, Provider, RequestClient } from '@uppy/companion-client'
-import EventTracker from '@uppy/utils/lib/EventTracker'
+import EventManager from '@uppy/utils/lib/EventManager'
 import emitSocketProgress from '@uppy/utils/lib/emitSocketProgress'
 import getSocketHost from '@uppy/utils/lib/getSocketHost'
 import { RateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
@@ -624,7 +624,7 @@ export default class AwsS3Multipart extends BasePlugin {
       })
 
       this.uploaders[file.id] = upload
-      this.uploaderEvents[file.id] = new EventTracker(this.uppy)
+      this.uploaderEvents[file.id] = new EventManager(this.uppy)
 
       this.onFileRemove(file.id, (removed) => {
         upload.abort()
@@ -713,7 +713,7 @@ export default class AwsS3Multipart extends BasePlugin {
       const host = getSocketHost(file.remote.companionUrl)
       const socket = new Socket({ target: `${host}/api/${token}`, autoOpen: false })
       this.uploaderSockets[file.id] = socket
-      this.uploaderEvents[file.id] = new EventTracker(this.uppy)
+      this.uploaderEvents[file.id] = new EventManager(this.uppy)
 
       this.onFileRemove(file.id, () => {
         queuedRequest.abort()

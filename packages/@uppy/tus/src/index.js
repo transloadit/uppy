@@ -3,7 +3,7 @@ import * as tus from 'tus-js-client'
 import { Provider, RequestClient, Socket } from '@uppy/companion-client'
 import emitSocketProgress from '@uppy/utils/lib/emitSocketProgress'
 import getSocketHost from '@uppy/utils/lib/getSocketHost'
-import EventTracker from '@uppy/utils/lib/EventTracker'
+import EventManager from '@uppy/utils/lib/EventManager'
 import NetworkError from '@uppy/utils/lib/NetworkError'
 import isNetworkError from '@uppy/utils/lib/isNetworkError'
 import { RateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
@@ -153,22 +153,22 @@ export default class Tus extends BasePlugin {
    * A lot can happen during an upload, so this is quite hard to follow!
    * - First, the upload is started. If the file was already paused by the time the upload starts, nothing should happen.
    *   If the `limit` option is used, the upload must be queued onto the `this.requests` queue.
-   *   When an upload starts, we store the tus.Upload instance, and an EventTracker instance that manages the event listeners
+   *   When an upload starts, we store the tus.Upload instance, and an EventManager instance that manages the event listeners
    *   for pausing, cancellation, removal, etc.
    * - While the upload is in progress, it may be paused or cancelled.
    *   Pausing aborts the underlying tus.Upload, and removes the upload from the `this.requests` queue. All other state is
    *   maintained.
    *   Cancelling removes the upload from the `this.requests` queue, and completely aborts the upload-- the `tus.Upload`
-   *   instance is aborted and discarded, the EventTracker instance is destroyed (removing all listeners).
+   *   instance is aborted and discarded, the EventManager instance is destroyed (removing all listeners).
    *   Resuming the upload uses the `this.requests` queue as well, to prevent selectively pausing and resuming uploads from
    *   bypassing the limit.
-   * - After completing an upload, the tus.Upload and EventTracker instances are cleaned up, and the upload is marked as done
+   * - After completing an upload, the tus.Upload and EventManager instances are cleaned up, and the upload is marked as done
    *   in the `this.requests` queue.
    * - When an upload completed with an error, the same happens as on successful completion, but the `upload()` promise is
    *   rejected.
    *
    * When working on this function, keep in mind:
-   *  - When an upload is completed or cancelled for any reason, the tus.Upload and EventTracker instances need to be cleaned
+   *  - When an upload is completed or cancelled for any reason, the tus.Upload and EventManager instances need to be cleaned
    *    up using this.resetUploaderReferences().
    *  - When an upload is cancelled or paused, for any reason, it needs to be removed from the `this.requests` queue using
    *    `queuedRequest.abort()`.
@@ -361,7 +361,7 @@ export default class Tus extends BasePlugin {
 
       upload = new tus.Upload(file.data, uploadOptions)
       this.uploaders[file.id] = upload
-      this.uploaderEvents[file.id] = new EventTracker(this.uppy)
+      this.uploaderEvents[file.id] = new EventManager(this.uppy)
 
       // eslint-disable-next-line prefer-const
       qRequest = () => {
@@ -493,7 +493,7 @@ export default class Tus extends BasePlugin {
       const host = getSocketHost(file.remote.companionUrl)
       const socket = new Socket({ target: `${host}/api/${token}`, autoOpen: false })
       this.uploaderSockets[file.id] = socket
-      this.uploaderEvents[file.id] = new EventTracker(this.uppy)
+      this.uploaderEvents[file.id] = new EventManager(this.uppy)
 
       let queuedRequest
 

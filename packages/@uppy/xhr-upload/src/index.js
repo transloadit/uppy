@@ -3,7 +3,7 @@ import { nanoid } from 'nanoid/non-secure'
 import { Provider, RequestClient, Socket } from '@uppy/companion-client'
 import emitSocketProgress from '@uppy/utils/lib/emitSocketProgress'
 import getSocketHost from '@uppy/utils/lib/getSocketHost'
-import EventTracker from '@uppy/utils/lib/EventTracker'
+import EventManager from '@uppy/utils/lib/EventManager'
 import ProgressTimeout from '@uppy/utils/lib/ProgressTimeout'
 import { RateLimitedQueue, internalRateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
 import NetworkError from '@uppy/utils/lib/NetworkError'
@@ -228,7 +228,7 @@ export default class XHRUpload extends BasePlugin {
         : file.data
 
       const xhr = new XMLHttpRequest()
-      this.uploaderEvents[file.id] = new EventTracker(this.uppy)
+      this.uploaderEvents[file.id] = new EventManager(this.uppy)
       let queuedRequest
 
       const timer = new ProgressTimeout(opts.timeout, () => {
@@ -442,7 +442,7 @@ export default class XHRUpload extends BasePlugin {
           reject(error)
         })
       }
-      this.uploaderEvents[file.id] = new EventTracker(this.uppy)
+      this.uploaderEvents[file.id] = new EventManager(this.uppy)
 
       let queuedRequest = this.requests.run(() => {
         if (file.isPaused) {
