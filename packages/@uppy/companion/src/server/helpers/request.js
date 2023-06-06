@@ -132,7 +132,6 @@ exports.getURLMeta = async (url, blockLocalIPs = false) => {
       stream
         .on('response', (response) => {
           // Can be undefined for unknown length URLs, e.g. transfer-encoding: chunked
-          console.log(response.request)
           const contentLength = parseInt(response.headers['content-length'], 10)
           const filename = response.headers['content-disposition']
             ? contentDisposition.parse(response.headers['content-disposition']).parameters.filename
