@@ -48,7 +48,7 @@ function dedupe (list) {
   }))
 }
 
-async function getAssemblyOptions (file, options) {
+export async function getAssemblyOptions (file, options) {
   const assemblyOptions = typeof options.assemblyOptions === 'function'
     ? await options.assemblyOptions(file, options)
     : options.assemblyOptions
