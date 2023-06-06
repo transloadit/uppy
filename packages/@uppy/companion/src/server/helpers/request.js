@@ -173,6 +173,6 @@ exports.getURLMeta = async (url, blockLocalIPs = false) => {
     throw new Error(`URL server responded with status: ${urlMeta.statusCode}`)
   }
 
-  const { name, size, type  } = urlMeta
+  const { name, size, type } = urlMeta
   return { name, size, type }
 }
