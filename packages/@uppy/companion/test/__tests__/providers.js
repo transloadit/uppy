@@ -85,6 +85,10 @@ describe('list provider files', () => {
         expect(item.size).toBe(thisOrThat(providerFixtures.itemSize, defaults.FILE_SIZE))
         expect(item.requestPath).toBe(providerFixtures.itemRequestPath || defaults.ITEM_ID)
         expect(item.icon).toBe(providerFixtures.itemIcon || defaults.THUMBNAIL_URL)
+
+        if (providerName === 'onedrive') {
+          expect(item.directoryPath).toBe(providerFixtures.directoryPath)
+        }
       })
   }
 

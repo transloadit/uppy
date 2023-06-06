@@ -40,11 +40,18 @@ const getItemId = (item) => {
 }
 
 const getItemRequestPath = (item) => {
+  // consists of the item id and the drive id if given
   let query = `?driveId=${item.parentReference.driveId}`
   if (item.remoteItem) {
     query = `?driveId=${item.remoteItem.parentReference.driveId}`
   }
   return getItemId(item) + query
+}
+
+const getDirectoryPath = (item) => {
+  // absolute path to the directory the item is located in
+  const strippedPath = item.parentReference?.path?.replace(/^\/drive\/root:/, '')
+  return strippedPath === '' ? '/' : strippedPath
 }
 
 const getItemModifiedDate = (item) => {
@@ -74,6 +81,7 @@ module.exports = (res, username) => {
       requestPath: getItemRequestPath(item),
       modifiedDate: getItemModifiedDate(item),
       size: getItemSize(item),
+      directoryPath: getDirectoryPath(item),
     })
   })
 
