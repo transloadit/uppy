@@ -150,6 +150,7 @@ export default class RequestClient {
     }))
   }
 
+  /** @protected */
   async request ({ path, method = 'GET', data, skipPostResponse, signal }) {
     try {
       const headers = await this.preflightAndHeaders(path)
