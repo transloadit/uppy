@@ -316,8 +316,6 @@ class HTTPCommunicationQueue {
 export default class AwsS3Multipart extends UploaderPlugin {
   static VERSION = packageJson.version
 
-  queueRequestSocketToken
-
   #companionCommunicationQueue
 
   #client
@@ -369,7 +367,7 @@ export default class AwsS3Multipart extends UploaderPlugin {
     this.uploaderEvents = Object.create(null)
     this.uploaderSockets = Object.create(null)
 
-    this.queueRequestSocketToken = this.requests.wrapPromiseFunction(this.#requestSocketToken, { priority: -1 })
+    this.setQueueRequestSocketToken(this.requests.wrapPromiseFunction(this.#requestSocketToken, { priority: -1 }))
   }
 
   [Symbol.for('uppy test: getClient')] () { return this.#client }

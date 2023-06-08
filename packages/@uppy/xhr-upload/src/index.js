@@ -50,8 +50,6 @@ export default class XHRUpload extends UploaderPlugin {
   // eslint-disable-next-line global-require
   static VERSION = packageJson.version
 
-  queueRequestSocketToken
-
   constructor (uppy, opts) {
     super(uppy, opts)
     this.type = 'uploader'
@@ -129,7 +127,7 @@ export default class XHRUpload extends UploaderPlugin {
     }
 
     this.uploaderEvents = Object.create(null)
-    this.queueRequestSocketToken = this.requests.wrapPromiseFunction(this.#requestSocketToken, { priority: -1 })
+    this.setQueueRequestSocketToken(this.requests.wrapPromiseFunction(this.#requestSocketToken, { priority: -1 }))
   }
 
   getOptions (file) {

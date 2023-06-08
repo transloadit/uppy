@@ -105,8 +105,6 @@ let warnedSuccessActionStatus = false
 export default class AwsS3 extends UploaderPlugin {
   static VERSION = packageJson.version
 
-  queueRequestSocketToken
-
   #client
 
   #requests
@@ -141,7 +139,7 @@ export default class AwsS3 extends UploaderPlugin {
     this.#client = new RequestClient(uppy, opts)
     this.#requests = new RateLimitedQueue(this.opts.limit)
 
-    this.queueRequestSocketToken = this.#requests.wrapPromiseFunction(this.#requestSocketToken, { priority: -1 })
+    this.setQueueRequestSocketToken(this.#requests.wrapPromiseFunction(this.#requestSocketToken, { priority: -1 }))
   }
 
   [Symbol.for('uppy test: getClient')] () { return this.#client }

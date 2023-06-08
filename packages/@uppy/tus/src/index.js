@@ -57,8 +57,6 @@ export default class Tus extends UploaderPlugin {
 
   #retryDelayIterator
 
-  queueRequestSocketToken
-
   /**
    * @param {Uppy} uppy
    * @param {TusOptions} opts
@@ -102,7 +100,7 @@ export default class Tus extends UploaderPlugin {
     this.uploaderSockets = Object.create(null)
 
     this.handleResetProgress = this.handleResetProgress.bind(this)
-    this.queueRequestSocketToken = this.requests.wrapPromiseFunction(this.#requestSocketToken, { priority: -1 })
+    this.setQueueRequestSocketToken(this.requests.wrapPromiseFunction(this.#requestSocketToken, { priority: -1 }))
   }
 
   handleResetProgress () {
