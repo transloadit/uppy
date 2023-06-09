@@ -1,7 +1,5 @@
 import { interceptCompanionUrlRequest, interceptCompanionUnsplashRequest, runRemoteUrlImageUploadTest, runRemoteUnsplashUploadTest } from './reusable-tests'
 
-const interceptCompanionUrlRequest = () => cy.intercept('http://localhost:3020/url/*').as('url')
-
 describe('Dashboard with XHR', () => {
   beforeEach(() => {
     cy.visit('/dashboard-xhr')
