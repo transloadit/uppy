@@ -51,7 +51,7 @@ function dedupe (list) {
 export async function getAssemblyOptions (file, options) {
   const assemblyOptions = typeof options.assemblyOptions === 'function'
     ? await options.assemblyOptions(file, options)
-    : options.assemblyOptions
+    : options.assemblyOptions ?? options
 
   validateParams(assemblyOptions.params)
 
