@@ -25,7 +25,7 @@ export default {
     },
     {
       file: pkg.main,
-      format: 'umd',
+      format: 'esm',
       name,
       globals,
     },
@@ -36,7 +36,9 @@ export default {
       preprocess: preprocess(),
     }),
     resolve({
-      resolveOnly: ['svelte'],
+      browser: true,
+      exportConditions: ['svelte'],
+      extensions: ['.svelte']
     }),
   ],
 }
