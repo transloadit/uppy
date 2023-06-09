@@ -134,6 +134,9 @@ exports.getURLMeta = async (url, blockLocalIPs = false) => {
         .on('response', (response) => {
           // Can be undefined for unknown length URLs, e.g. transfer-encoding: chunked
           const contentLength = parseInt(response.headers['content-length'], 10)
+          // If Content-Disposition with file name is missing, fallback to the URL path for the name,
+          // but if multiple files are served via query params like foo.com?file=file-1, foo.com?file=file-2,
+          // we add random string to avoid duplicate files
           const filename = response.headers['content-disposition']
             ? contentDisposition.parse(response.headers['content-disposition']).parameters.filename
             : `${path.basename(response.request.requestUrl)}-${randomUUID()}`
