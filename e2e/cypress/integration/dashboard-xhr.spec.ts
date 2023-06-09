@@ -35,8 +35,6 @@ describe('Dashboard with XHR', () => {
   })
 
   it('should return correct file name even when Companion doesnt supply it', () => {
-    // cy.intercept('http://localhost:3020/url/*').as('url')
-
     cy.intercept('POST', 'http://localhost:3020/url/meta', {
       statusCode: 200,
       headers: {},
