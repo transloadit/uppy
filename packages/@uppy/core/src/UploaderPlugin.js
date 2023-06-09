@@ -4,8 +4,8 @@ export default class UploaderPlugin extends BasePlugin {
   #queueRequestSocketToken
 
   /** @protected */
-  setQueueRequestSocketToken (token) {
-    this.#queueRequestSocketToken = token
+  setQueueRequestSocketToken (fn) {
+    this.#queueRequestSocketToken = fn
   }
 
   async uploadRemoteFile (file) {
