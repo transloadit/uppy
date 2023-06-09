@@ -8764,7 +8764,6 @@ __metadata:
     aws-sdk: ^2.1038.0
     babel-jest: ^29.0.0
     babel-plugin-inline-package-json: ^2.0.0
-    buffer: ^5.5.0
     chalk: ^5.0.0
     concat-stream: ^2.0.0
     core-js: ~3.24.0
