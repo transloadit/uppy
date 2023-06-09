@@ -14,7 +14,7 @@ const requestListener = (req, res) => {
     case '/file-no-headers':
       break
     default:
-      response.writeHead(404).end('Unhandled request')
+      res.writeHead(404).end('Unhandled request')
   }
 
   res.end()
