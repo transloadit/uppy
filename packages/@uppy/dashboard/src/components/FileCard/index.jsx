@@ -46,7 +46,10 @@ export default function FileCard (props) {
   }, [saveFileCard, formState, fileCardFor])
 
   const updateMeta = (newVal, name) => {
-    setFormState({ [name]: newVal })
+    setFormState({
+      ...formState,
+      [name]: newVal,
+    })
   }
 
   const handleCancel = () => {
