@@ -8,7 +8,7 @@
     "@uppy/golden-retriever": "workspace:*"
   },
   "devDependencies": {
-    "vite": "^4.0.5"
+    "vite": "^4.0.0"
   },
   "private": true,
   "scripts": {
