@@ -5,7 +5,7 @@ function rfc2047Encode (data) {
   data = `${data}`
   // eslint-disable-next-line no-control-regex
   if (/^[\x00-\x7F]*$/.test(data)) return data // we return ASCII as is
-  return `=?UTF-8?B?${Buffer.from(data).toString('base64')}?=` // We encore non-ASCII strings
+  return `=?UTF-8?B?${Buffer.from(data).toString('base64')}?=` // We encode non-ASCII strings
 }
 
 module.exports = function s3 (config) {
