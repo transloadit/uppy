@@ -4,13 +4,12 @@
   "version": "0.0.0",
   "description": "Extensible JavaScript file upload widget with support for drag&drop, resumable uploads, previews, restrictions, file processing/encoding, remote providers like Instagram, Dropbox, Google Drive, S3 and more :dog:",
   "lint-staged": {
-    "*.js": "eslint --fix",
-    "*.jsx": "eslint --fix",
+    "*.{js,mjs,cjs,jsx}": "eslint --fix",
+    "*.{ts,mts,cts,tsx}": "eslint --fix",
     "*.md": [
       "remark --silently-ignore -i .remarkignore -foq",
       "eslint --fix"
-    ],
-    "*.ts": "eslint --fix"
+    ]
   },
   "remarkConfig": {
     "plugins": [
@@ -61,7 +60,7 @@
     "core-js": "~3.24.0",
     "cssnano": "^5.0.6",
     "dotenv": "^16.0.0",
-    "esbuild": "^0.16.1",
+    "esbuild": "^0.17.1",
     "esbuild-plugin-babel": "^0.2.3",
     "eslint": "^8.0.0",
     "eslint-config-transloadit": "^2.0.0",
@@ -172,6 +171,7 @@
     "@types/eslint@^7.2.13": "^8.2.0",
     "@types/react": "^17",
     "@types/webpack-dev-server": "^4",
-    "preact": "patch:preact@npm:10.10.0#.yarn/patches/preact-npm-10.10.0-dd04de05e8.patch"
+    "preact": "patch:preact@npm:10.10.0#.yarn/patches/preact-npm-10.10.0-dd04de05e8.patch",
+    "pre-commit": "patch:pre-commit@npm:1.2.2#.yarn/patches/pre-commit-npm-1.2.2-f30af83877.patch"
   }
 }
