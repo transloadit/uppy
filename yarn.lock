@@ -7991,8 +7991,8 @@ __metadata:
 
 "@types/jasmine@file:./private/@types/jasmine::locator=%40uppy-dev%2Fbuild%40workspace%3A.":
   version: 0.0.0
-  resolution: "@types/jasmine@file:./private/@types/jasmine#./private/@types/jasmine::hash=7d1df7&locator=%40uppy-dev%2Fbuild%40workspace%3A."
-  checksum: dde57c8ba208daf03688444da8b111a0656af60a6ae8d5b3f76e50fb722fb5ba837722c3aedbd5912d9cb39430b6174e3a7d0c39a7820607ae1cb8720e49cb3b
+  resolution: "@types/jasmine@file:./private/@types/jasmine#./private/@types/jasmine::hash=917119&locator=%40uppy-dev%2Fbuild%40workspace%3A."
+  checksum: cc86c9a338a6943da64fb636e13bdc8f2e41922ae62c3cfd95525b0a0965a28ecd7545173773f2b61a3c30ae70c8eeb9a725eb71fd9006a07a8733ecbac849b9
   languageName: node
   linkType: hard
 
@@ -8005,8 +8005,8 @@ __metadata:
 
 "@types/jasminewd2@file:./private/@types/jasmine::locator=%40uppy-dev%2Fbuild%40workspace%3A.":
   version: 0.0.0
-  resolution: "@types/jasminewd2@file:./private/@types/jasmine#./private/@types/jasmine::hash=1bd8c2&locator=%40uppy-dev%2Fbuild%40workspace%3A."
-  checksum: 179a1034b7211ca7394d5e8ad0962edf01c645ae28f244984f201c4f4dc7f376f230c041a5335ef8a3cf9ce62a463ca25420d4a4f3601f2c199f645055bfb275
+  resolution: "@types/jasminewd2@file:./private/@types/jasmine#./private/@types/jasmine::hash=fe65e0&locator=%40uppy-dev%2Fbuild%40workspace%3A."
+  checksum: 028a3a54e144661b64d14b439c585db2ade1a22ba4b21de85cb469afd2f1bf5e78079ab3f3e5c058ed4146e7cef5300e27c8d176d9f168222d88576671608135
   languageName: node
   linkType: hard
 
