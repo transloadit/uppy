@@ -8721,6 +8721,7 @@ __metadata:
     eslint-plugin-jsdoc: ^40.0.0
     eslint-plugin-jsx-a11y: ^6.4.1
     eslint-plugin-markdown: ^3.0.0
+    eslint-plugin-no-only-tests: ^3.1.0
     eslint-plugin-node: ^11.1.0
     eslint-plugin-prefer-import: ^0.0.1
     eslint-plugin-promise: ^6.0.0
@@ -16850,6 +16851,13 @@ __metadata:
   peerDependencies:
     eslint: ^6.0.0 || ^7.0.0 || ^8.0.0
   checksum: ea9e8613cffcf7decbc2de0c900a83553ccdccfb6d90187e5d461a457a403d2634585a8c165cc4adf52c86f3b910161f33b1f24a46f296c4a577d2547780c997
+  languageName: node
+  linkType: hard
+
+"eslint-plugin-no-only-tests@npm:^3.1.0":
+  version: 3.1.0
+  resolution: "eslint-plugin-no-only-tests@npm:3.1.0"
+  checksum: 2a5de82f3a732dbd46792661dd0f8546cf819f76d8828968166dee35741e8039904ba473dafe1eed585f401a496d260c2c38354bb887c94bd4ced0ddca00fb62
   languageName: node
   linkType: hard
 
