@@ -14,7 +14,7 @@ describe('Dashboard with @uppy/aws-s3-multipart', () => {
     cy.wait(['@post', '@get', '@put'])
     cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Complete')
   })
-  it.only('should upload Russian poem image successfully', () => {
+  it('should upload Russian poem image successfully', () => {
     const fileName = '١٠ كم мест для Нью-Йорке.pdf'
     cy.get('@file-input').selectFile(`cypress/fixtures/images/${fileName}`, { force:true })
 
