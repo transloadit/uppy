@@ -5,7 +5,7 @@ import BasePlugin from '@uppy/core/lib/BasePlugin.js'
 import Tus from '@uppy/tus'
 import Assembly from './Assembly.js'
 import Client from './Client.js'
-import AssemblyOptions, { validateParams, getAssemblyOptions } from './AssemblyOptions.js'
+import AssemblyOptions, { getAssemblyOptions, validateParams } from './AssemblyOptions.js'
 import AssemblyWatcher from './AssemblyWatcher.js'
 
 import locale from './locale.js'
@@ -191,8 +191,10 @@ export default class Transloadit extends BasePlugin {
   #createAssembly (fileIDs, uploadID, options) {
     this.uppy.log('[Transloadit] Create Assembly')
 
-    const createAssembly = assemblyOptions => this.client.createAssembly(assemblyOptions)
-    return getAssemblyOptions(fileIDs, options).then(createAssembly).then(async (newAssembly) => {
+    return getAssemblyOptions(fileIDs, options).then(assemblyOptions => this.client.createAssembly({
+      ...assemblyOptions,
+      expectedFiles: fileIDs.length,
+    })).then(async (newAssembly) => {
       const files = this.uppy.getFiles().filter(({ id }) => fileIDs.includes(id))
       if (files.length !== fileIDs.length) {
         if (files.length === 0) {
