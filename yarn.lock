@@ -7932,8 +7932,8 @@ __metadata:
 
 "@types/jasmine@file:./private/@types/jasmine::locator=%40uppy-dev%2Fbuild%40workspace%3A.":
   version: 0.0.0
-  resolution: "@types/jasmine@file:./private/@types/jasmine#./private/@types/jasmine::hash=917119&locator=%40uppy-dev%2Fbuild%40workspace%3A."
-  checksum: cc86c9a338a6943da64fb636e13bdc8f2e41922ae62c3cfd95525b0a0965a28ecd7545173773f2b61a3c30ae70c8eeb9a725eb71fd9006a07a8733ecbac849b9
+  resolution: "@types/jasmine@file:./private/@types/jasmine#./private/@types/jasmine::hash=7d1df7&locator=%40uppy-dev%2Fbuild%40workspace%3A."
+  checksum: dde57c8ba208daf03688444da8b111a0656af60a6ae8d5b3f76e50fb722fb5ba837722c3aedbd5912d9cb39430b6174e3a7d0c39a7820607ae1cb8720e49cb3b
   languageName: node
   linkType: hard
 
@@ -7946,8 +7946,8 @@ __metadata:
 
 "@types/jasminewd2@file:./private/@types/jasmine::locator=%40uppy-dev%2Fbuild%40workspace%3A.":
   version: 0.0.0
-  resolution: "@types/jasminewd2@file:./private/@types/jasmine#./private/@types/jasmine::hash=fe65e0&locator=%40uppy-dev%2Fbuild%40workspace%3A."
-  checksum: 028a3a54e144661b64d14b439c585db2ade1a22ba4b21de85cb469afd2f1bf5e78079ab3f3e5c058ed4146e7cef5300e27c8d176d9f168222d88576671608135
+  resolution: "@types/jasminewd2@file:./private/@types/jasmine#./private/@types/jasmine::hash=1bd8c2&locator=%40uppy-dev%2Fbuild%40workspace%3A."
+  checksum: 179a1034b7211ca7394d5e8ad0962edf01c645ae28f244984f201c4f4dc7f376f230c041a5335ef8a3cf9ce62a463ca25420d4a4f3601f2c199f645055bfb275
   languageName: node
   linkType: hard
 
@@ -13834,9 +13834,9 @@ __metadata:
   linkType: hard
 
 "cookiejar@npm:^2.1.3":
-  version: 2.1.3
-  resolution: "cookiejar@npm:2.1.3"
-  checksum: 88259983ebc52ceb23cdacfa48762b6a518a57872eff1c7ed01d214fff5cf492e2660d7d5c04700a28f1787a76811df39e8639f8e17670b3cf94ecd86e161f07
+  version: 2.1.4
+  resolution: "cookiejar@npm:2.1.4"
+  checksum: c4442111963077dc0e5672359956d6556a195d31cbb35b528356ce5f184922b99ac48245ac05ed86cf993f7df157c56da10ab3efdadfed79778a0d9b1b092d5b
   languageName: node
   linkType: hard
 
