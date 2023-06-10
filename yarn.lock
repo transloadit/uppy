@@ -28505,7 +28505,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pre-commit@npm:^1.2.2":
+"pre-commit@npm:1.2.2":
   version: 1.2.2
   resolution: "pre-commit@npm:1.2.2"
   dependencies:
@@ -28513,6 +28513,17 @@ __metadata:
     spawn-sync: ^1.0.15
     which: 1.2.x
   checksum: b604716647a620796a3827ad1b45d68bd22407803845053ee6b788ceaac120c3ac00bf97c1f06256b6a68bc785d94dbad87e16a45e3dd7191e1f72dedcf4215c
+  languageName: node
+  linkType: hard
+
+"pre-commit@patch:pre-commit@npm:1.2.2#.yarn/patches/pre-commit-npm-1.2.2-f30af83877.patch::locator=%40uppy-dev%2Fbuild%40workspace%3A.":
+  version: 1.2.2
+  resolution: "pre-commit@patch:pre-commit@npm%3A1.2.2#.yarn/patches/pre-commit-npm-1.2.2-f30af83877.patch::version=1.2.2&hash=b54a30&locator=%40uppy-dev%2Fbuild%40workspace%3A."
+  dependencies:
+    cross-spawn: ^5.0.1
+    spawn-sync: ^1.0.15
+    which: 1.2.x
+  checksum: b7a00f569f72ae4a330533423aa4b1599faba9a0af5e96dfbfb210e4383378a5bc142de1db8223325cc98315a24794008eb21a067881488da988edc47656d54f
   languageName: node
   linkType: hard
 
