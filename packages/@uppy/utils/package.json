@@ -20,7 +20,8 @@
   "exports": {
     "./package.json": "./package.json",
     "./lib/Translator": "./lib/Translator.js",
-    "./lib/EventTracker": "./lib/EventTracker.js",
+    "./lib/EventTracker": "./lib/EventManager.js",
+    "./lib/EventManager": "./lib/EventManager.js",
     "./lib/ProgressTimeout": "./lib/ProgressTimeout.js",
     "./lib/RateLimitedQueue": "./lib/RateLimitedQueue.js",
     "./lib/canvasToBlob": "./lib/canvasToBlob.js",
