@@ -498,8 +498,8 @@ export default class Tus extends BasePlugin {
       let queuedRequest
 
       this.onFileRemove(file.id, () => {
-        queuedRequest.abort()
         socket.send('cancel', {})
+        queuedRequest.abort()
         this.resetUploaderReferences(file.id)
         resolve(`upload ${file.id} was removed`)
       })
@@ -507,8 +507,8 @@ export default class Tus extends BasePlugin {
       this.onPause(file.id, (isPaused) => {
         if (isPaused) {
           // Remove this file from the queue so another file can start in its place.
-          queuedRequest.abort()
           socket.send('pause', {})
+          queuedRequest.abort()
         } else {
           // Resuming an upload should be queued, else you could pause and then
           // resume a queued upload to make it skip the queue.
@@ -517,20 +517,20 @@ export default class Tus extends BasePlugin {
             socket.open()
             socket.send('resume', {})
 
-            return () => socket.close()
+            return () => {}
           })
         }
       })
 
       this.onPauseAll(file.id, () => {
-        queuedRequest.abort()
         socket.send('pause', {})
+        queuedRequest.abort()
       })
 
       this.onCancelAll(file.id, ({ reason } = {}) => {
         if (reason === 'user') {
-          queuedRequest.abort()
           socket.send('cancel', {})
+          queuedRequest.abort()
           this.resetUploaderReferences(file.id)
         }
         resolve(`upload ${file.id} was canceled`)
@@ -545,7 +545,7 @@ export default class Tus extends BasePlugin {
           socket.open()
           socket.send('resume', {})
 
-          return () => socket.close()
+          return () => {}
         })
       })
 
@@ -599,7 +599,7 @@ export default class Tus extends BasePlugin {
         this.uppy.emit('upload-success', file, uploadResp)
         this.resetUploaderReferences(file.id)
         queuedRequest.done()
-
+        socket.close()
         resolve()
       })
 
@@ -616,7 +616,7 @@ export default class Tus extends BasePlugin {
         // that point this cancellation function is not going to be called.
         // Also, we need to remove the request from the queue _without_ destroying everything
         // related to this upload to handle pauses.
-        return () => socket.close()
+        return () => {}
       })
     })
   }

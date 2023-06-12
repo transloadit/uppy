@@ -716,8 +716,8 @@ export default class AwsS3Multipart extends BasePlugin {
       this.uploaderEvents[file.id] = new EventManager(this.uppy)
 
       this.onFileRemove(file.id, () => {
-        queuedRequest.abort()
         socket.send('cancel', {})
+        queuedRequest.abort()
         this.resetUploaderReferences(file.id, { abort: true })
         resolve(`upload ${file.id} was removed`)
       })
@@ -725,8 +725,8 @@ export default class AwsS3Multipart extends BasePlugin {
       this.onFilePause(file.id, (isPaused) => {
         if (isPaused) {
           // Remove this file from the queue so another file can start in its place.
-          queuedRequest.abort()
           socket.send('pause', {})
+          queuedRequest.abort()
         } else {
           // Resuming an upload should be queued, else you could pause and then
           // resume a queued upload to make it skip the queue.
@@ -734,20 +734,22 @@ export default class AwsS3Multipart extends BasePlugin {
           queuedRequest = this.requests.run(() => {
             socket.open()
             socket.send('resume', {})
-            return () => socket.close()
+            return () => {}
           })
         }
       })
 
       this.onPauseAll(file.id, () => {
-        queuedRequest.abort()
+        // First send the message, then call .abort,
+        // just to make sure socket is not closed, which .abort used to do
         socket.send('pause', {})
+        queuedRequest.abort()
       })
 
       this.onCancelAll(file.id, ({ reason } = {}) => {
         if (reason === 'user') {
-          queuedRequest.abort()
           socket.send('cancel', {})
+          queuedRequest.abort()
           this.resetUploaderReferences(file.id)
         }
         resolve(`upload ${file.id} was canceled`)
@@ -762,7 +764,7 @@ export default class AwsS3Multipart extends BasePlugin {
           socket.open()
           socket.send('resume', {})
 
-          return () => socket.close()
+          return () => {}
         })
       })
 
@@ -789,6 +791,7 @@ export default class AwsS3Multipart extends BasePlugin {
       socket.on('error', (errData) => {
         this.uppy.emit('upload-error', file, new Error(errData.error))
         this.resetUploaderReferences(file.id)
+        socket.close()
         queuedRequest.done()
         reject(new Error(errData.error))
       })
@@ -800,6 +803,7 @@ export default class AwsS3Multipart extends BasePlugin {
 
         this.uppy.emit('upload-success', file, uploadResp)
         this.resetUploaderReferences(file.id)
+        socket.close()
         queuedRequest.done()
         resolve()
       })
@@ -811,7 +815,7 @@ export default class AwsS3Multipart extends BasePlugin {
           socket.open()
         }
 
-        return () => socket.close()
+        return () => {}
       })
     })
   }

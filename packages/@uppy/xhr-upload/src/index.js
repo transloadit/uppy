@@ -435,6 +435,7 @@ export default class XHRUpload extends BasePlugin {
             : Object.assign(new Error(errData.error.message), { cause: errData.error })
           this.uppy.emit('upload-error', file, error)
           queuedRequest.done() // eslint-disable-line no-use-before-define
+          socket.close()
           if (this.uploaderEvents[file.id]) {
             this.uploaderEvents[file.id].remove()
             this.uploaderEvents[file.id] = null
@@ -451,11 +452,12 @@ export default class XHRUpload extends BasePlugin {
           createSocket()
         }
 
-        return () => socket.close()
+        return () => {}
       })
 
       this.onFileRemove(file.id, () => {
         socket?.send('cancel', {})
+        socket.close()
         queuedRequest.abort()
         resolve(`upload ${file.id} was removed`)
       })
@@ -464,6 +466,7 @@ export default class XHRUpload extends BasePlugin {
         if (reason === 'user') {
           socket?.send('cancel', {})
           queuedRequest.abort()
+          // socket.close()
         }
         resolve(`upload ${file.id} was canceled`)
       })
@@ -472,19 +475,13 @@ export default class XHRUpload extends BasePlugin {
         if (socket == null) {
           queuedRequest.abort()
         } else {
-          socket.send('pause', {})
           queuedRequest.done()
         }
         queuedRequest = this.requests.run(() => {
-          if (!file.isPaused) {
-            if (socket == null) {
-              createSocket()
-            } else {
-              socket.send('resume', {})
-            }
+          if (socket == null) {
+            createSocket()
           }
-
-          return () => socket.close()
+          return () => {}
         })
       }
       this.onRetry(file.id, onRetryRequest)
