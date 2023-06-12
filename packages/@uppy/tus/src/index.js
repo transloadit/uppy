@@ -498,8 +498,8 @@ export default class Tus extends BasePlugin {
       let queuedRequest
 
       this.onFileRemove(file.id, () => {
-        queuedRequest.abort()
         socket.send('cancel', {})
+        queuedRequest.abort()
         this.resetUploaderReferences(file.id)
         resolve(`upload ${file.id} was removed`)
       })
@@ -507,8 +507,8 @@ export default class Tus extends BasePlugin {
       this.onPause(file.id, (isPaused) => {
         if (isPaused) {
           // Remove this file from the queue so another file can start in its place.
-          queuedRequest.abort()
           socket.send('pause', {})
+          queuedRequest.abort()
         } else {
           // Resuming an upload should be queued, else you could pause and then
           // resume a queued upload to make it skip the queue.
@@ -523,14 +523,14 @@ export default class Tus extends BasePlugin {
       })
 
       this.onPauseAll(file.id, () => {
-        queuedRequest.abort()
         socket.send('pause', {})
+        queuedRequest.abort()
       })
 
       this.onCancelAll(file.id, ({ reason } = {}) => {
         if (reason === 'user') {
-          queuedRequest.abort()
           socket.send('cancel', {})
+          queuedRequest.abort()
           this.resetUploaderReferences(file.id)
         }
         resolve(`upload ${file.id} was canceled`)
