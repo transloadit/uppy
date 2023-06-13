@@ -831,6 +831,7 @@ export default class AwsS3Multipart extends BasePlugin {
 
     const promises = filesFiltered.map((file) => {
       if (file.isRemote) {
+        this.#setResumableUploadsCapability(false)
         return this.#uploadRemote(file)
       }
       return this.#uploadFile(file)
@@ -893,26 +894,26 @@ export default class AwsS3Multipart extends BasePlugin {
     })
   }
 
-  install () {
+  #setResumableUploadsCapability = (boolean) => {
     const { capabilities } = this.uppy.getState()
     this.uppy.setState({
       capabilities: {
         ...capabilities,
-        resumableUploads: true,
+        resumableUploads: boolean,
       },
     })
+  }
+
+  install () {
+    this.#setResumableUploadsCapability(true)
+
     this.uppy.addPreProcessor(this.#setCompanionHeaders)
     this.uppy.addUploader(this.#upload)
   }
 
   uninstall () {
-    const { capabilities } = this.uppy.getState()
-    this.uppy.setState({
-      capabilities: {
-        ...capabilities,
-        resumableUploads: false,
-      },
-    })
+    this.#setResumableUploadsCapability(false)
+
     this.uppy.removePreProcessor(this.#setCompanionHeaders)
     this.uppy.removeUploader(this.#upload)
   }
