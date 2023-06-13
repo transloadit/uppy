@@ -1,6 +1,6 @@
 const fr_FR = {
   pluralize (n) {
-    if (n === 1) {
+    if (n <= 1) {
       return 0
     }
     return 1
@@ -41,7 +41,7 @@ fr_FR.strings = {
   creatingAssembly: 'Préparation du téléversement…',
   creatingAssemblyFailed: 'Transloadit: Impossible de créer Assembly',
   dashboardTitle: 'Téléverseur de fichiers',
-  dashboardWindowTitle: 'Fenêtre de téléversement de fichiers (Appuyez sur la touche d’échappement pour fermer)',
+  dashboardWindowTitle: 'Fenêtre de téléversement de fichiers (Appuyez sur la touche Échap pour fermer)',
   dataUploadedOfTotal: '%{complete} sur %{total}',
   done: 'Terminé',
   dropHereOr: 'Déposer les fichiers ici ou %{browse}',
@@ -66,14 +66,12 @@ fr_FR.strings = {
   filesUploadedOfTotal: {
     '0': '%{complete} sur %{smart_count} fichier téléversé',
     '1': '%{complete} sur %{smart_count} fichiers téléversés',
-    '2': '%{complete} sur %{smart_count} fichiers téléversés',
   },
   filter: 'Filtrer',
   finishEditingFile: 'Terminer l’édition du fichier',
   folderAdded: {
     '0': '%{smart_count} fichier ajouté de %{folder}',
     '1': '%{smart_count} fichiers ajoutés de %{folder}',
-    '2': '%{smart_count} fichiers ajoutés de %{folder}',
   },
   generatingThumbnails: 'Génération des vignettes…',
   import: 'Importer',
@@ -94,7 +92,6 @@ fr_FR.strings = {
   processingXFiles: {
     '0': 'Traitement de %{smart_count} fichier',
     '1': 'Traitement de %{smart_count} fichiers',
-    '2': 'Traitement de %{smart_count} fichiers',
   },
   recording: 'Enregistrement',
   recordingLength: 'Durée d’enregistrement %{recording_length}',
@@ -111,7 +108,6 @@ fr_FR.strings = {
   selectX: {
     '0': 'Sélectionner %{smart_count}',
     '1': 'Sélectionner %{smart_count}',
-    '2': 'Sélectionner %{smart_count}',
   },
   smile: 'Souriez !',
   startRecording: 'Commencer l’enregistrement vidéo',
@@ -130,40 +126,33 @@ fr_FR.strings = {
   uploadXFiles: {
     '0': 'Téléverser %{smart_count} fichier',
     '1': 'Téléverser %{smart_count} fichiers',
-    '2': 'Téléverser %{smart_count} fichiers',
   },
   uploadXNewFiles: {
     '0': 'Téléverser +%{smart_count} fichier',
     '1': 'Téléverser +%{smart_count} fichiers',
-    '2': 'Téléverser +%{smart_count} fichiers',
   },
   uploading: 'Téléversement en cours',
   uploadingXFiles: {
     '0': 'Téléversement de %{smart_count} fichier',
     '1': 'Téléversement de %{smart_count} fichiers',
-    '2': 'Téléversement de %{smart_count} fichiers',
   },
   xFilesSelected: {
     '0': '%{smart_count} fichier sélectionné',
     '1': '%{smart_count} fichiers sélectionnés',
-    '2': '%{smart_count} fichiers sélectionnés',
   },
   xMoreFilesAdded: {
     '0': '%{smart_count} autre fichier ajouté',
     '1': '%{smart_count} autres fichiers ajoutés',
-    '2': '%{smart_count} autres fichiers ajoutés',
   },
   xTimeLeft: '%{time} restantes',
   youCanOnlyUploadFileTypes: 'Vous pouvez seulement téléverser: %{types}',
   youCanOnlyUploadX: {
     '0': 'Vous pouvez seulement téléverser %{smart_count} fichier',
     '1': 'Vous pouvez seulement téléverser %{smart_count} fichiers',
-    '2': 'Vous pouvez seulement téléverser %{smart_count} fichiers',
   },
   youHaveToAtLeastSelectX: {
     '0': 'Vous devez sélectionner au moins %{smart_count} fichier',
     '1': 'Vous devez sélectionner au moins %{smart_count} fichiers',
-    '2': 'Vous devez sélectionner au moins %{smart_count} fichiers',
   },
 }
 
