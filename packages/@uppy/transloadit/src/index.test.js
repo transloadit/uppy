@@ -1,3 +1,4 @@
+import assert from 'node:assert'
 import { describe, expect, it } from '@jest/globals'
 import Core from '@uppy/core'
 import Transloadit from './index.js'
@@ -83,5 +84,36 @@ describe('Transloadit', () => {
       expect(err.message).toBe('Transloadit: Could not create Assembly: VIDEO_ENCODE_VALIDATION')
       expect(uppy.getFile(fileID).progress.uploadStarted).toBe(null)
     })
+  })
+
+  it('Can start an assembly with no files and no fields', () => {
+    const uppy = new Core({
+      autoProceed: false,
+    })
+    uppy.use(Transloadit, {
+      alwaysRunAssembly: true,
+      params: {
+        auth: { key: 'some auth key string' },
+        template_id: 'some template id string',
+      },
+    })
+
+    return assert.rejects(uppy.upload(), /GET_ACCOUNT_UNKNOWN_AUTH_KEY/)
+  })
+
+  it('Can start an assembly with no files and some fields', () => {
+    const uppy = new Core({
+      autoProceed: false,
+    })
+    uppy.use(Transloadit, {
+      alwaysRunAssembly: true,
+      params: {
+        auth: { key: 'some auth key string' },
+        template_id: 'some template id string',
+      },
+      fields: ['hasOwnProperty'],
+    })
+
+    return assert.rejects(uppy.upload(), /GET_ACCOUNT_UNKNOWN_AUTH_KEY/)
   })
 })
