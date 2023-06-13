@@ -41,7 +41,7 @@ fr_FR.strings = {
   creatingAssembly: 'Préparation du téléversement…',
   creatingAssemblyFailed: 'Transloadit: Impossible de créer Assembly',
   dashboardTitle: 'Téléverseur de fichiers',
-  dashboardWindowTitle: 'Fenêtre de téléversement de fichiers (Appuyez sur la touche Échap pour fermer)',
+  dashboardWindowTitle: 'Fenêtre de téléversement de fichiers (Appuyez sur Échap pour fermer)',
   dataUploadedOfTotal: '%{complete} sur %{total}',
   done: 'Terminé',
   dropHereOr: 'Déposer les fichiers ici ou %{browse}',
