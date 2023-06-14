@@ -122,7 +122,7 @@ module.exports = function s3 (config) {
       }
       res.json({
         key: data.Key,
-        uploadId: data.UploadId,
+        uploadId: encodeURIComponent(data.UploadId),
       })
     })
   }
@@ -345,7 +345,7 @@ module.exports = function s3 (config) {
     client.completeMultipartUpload({
       Bucket: config.bucket,
       Key: key,
-      UploadId: uploadId,
+      UploadId: decodeURIComponent(uploadId),
       MultipartUpload: {
         Parts: parts,
       },
