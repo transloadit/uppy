@@ -1,4 +1,5 @@
-import assert from 'node:assert'
+import { createServer } from 'node:http'
+import { once } from 'node:events'
 import { describe, expect, it } from '@jest/globals'
 import Core from '@uppy/core'
 import Transloadit from './index.js'
@@ -86,11 +87,19 @@ describe('Transloadit', () => {
     })
   })
 
-  it('Can start an assembly with no files and no fields', () => {
+  it('Can start an assembly with no files and no fields', async () => {
+    const server = createServer((req, res) => {
+      res.setHeader('Access-Control-Allow-Origin', '*')
+      res.setHeader('Access-Control-Allow-Headers', '*')
+      res.setHeader('Content-Type', 'application/json')
+      res.end('{"websocket_url":"about:blank"}')
+    }).listen()
+    await once(server, 'listening')
     const uppy = new Core({
       autoProceed: false,
     })
     uppy.use(Transloadit, {
+      service: `http://localhost:${server.address().port}`,
       alwaysRunAssembly: true,
       params: {
         auth: { key: 'some auth key string' },
@@ -98,14 +107,23 @@ describe('Transloadit', () => {
       },
     })
 
-    return assert.rejects(uppy.upload(), /GET_ACCOUNT_UNKNOWN_AUTH_KEY/)
+    await uppy.upload()
+    server.close()
   })
 
-  it('Can start an assembly with no files and some fields', () => {
+  it('Can start an assembly with no files and some fields', async () => {
+    const server = createServer((req, res) => {
+      res.setHeader('Access-Control-Allow-Origin', '*')
+      res.setHeader('Access-Control-Allow-Headers', '*')
+      res.setHeader('Content-Type', 'application/json')
+      res.end('{"websocket_url":"about:blank"}')
+    }).listen()
+    await once(server, 'listening')
     const uppy = new Core({
       autoProceed: false,
     })
     uppy.use(Transloadit, {
+      service: `http://localhost:${server.address().port}`,
       alwaysRunAssembly: true,
       params: {
         auth: { key: 'some auth key string' },
@@ -114,6 +132,7 @@ describe('Transloadit', () => {
       fields: ['hasOwnProperty'],
     })
 
-    return assert.rejects(uppy.upload(), /GET_ACCOUNT_UNKNOWN_AUTH_KEY/)
+    await uppy.upload()
+    server.close()
   })
 })
