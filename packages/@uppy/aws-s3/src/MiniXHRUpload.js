@@ -91,10 +91,25 @@ export default class MiniXHRUpload {
 
   uploadFile (id, current, total) {
     const file = this.uppy.getFile(id)
+    this.uppy.log(`uploading ${current} of ${total}`)
+
     if (file.error) {
       throw new Error(file.error)
     } else if (file.isRemote) {
-      return this.#uploadRemoteFile(file, current, total)
+      const controller = new AbortController()
+
+      const removedHandler = (removedFile) => {
+        if (removedFile.id === file.id) controller.abort()
+      }
+      this.uppy.on('file-removed', removedHandler)
+
+      const uploadPromise = this.#uploadRemoteFile(file, { signal: controller.signal })
+
+      this.requests.run(() => {
+        this.uppy.off('file-removed', removedHandler)
+      }, { priority: -1 })
+
+      return uploadPromise
     }
     return this.#uploadLocalFile(file, current, total)
   }
@@ -115,10 +130,9 @@ export default class MiniXHRUpload {
     })
   }
 
-  #uploadLocalFile (file, current, total) {
+  #uploadLocalFile (file) {
     const opts = this.#getOptions(file)
 
-    this.uppy.log(`uploading ${current} of ${total}`)
     return new Promise((resolve, reject) => {
       // This is done in index.js in the S3 plugin.
       // this.uppy.emit('upload-started', file)
@@ -281,22 +295,26 @@ export default class MiniXHRUpload {
 
   // NOTE! Keep this duplicated code in sync with other plugins
   // TODO we should probably abstract this into a common function
-  async #uploadRemoteFile (file) {
+  async #uploadRemoteFile (file, options) {
     // TODO: we could rewrite this to use server-sent events instead of creating WebSockets.
     try {
       if (file.serverToken) {
         return await this.connectToServerSocket(file)
       }
-      const serverToken = await this.#queueRequestSocketToken(file)
+      const serverToken = await this.#queueRequestSocketToken(file, options).abortOn(options?.signal)
 
       if (!this.uppy.getState().files[file.id]) return undefined
 
       this.uppy.setFileState(file.id, { serverToken })
       return await this.connectToServerSocket(this.uppy.getFile(file.id))
     } catch (err) {
-      this.uppy.setFileState(file.id, { serverToken: undefined })
-      this.uppy.emit('upload-error', file, err)
-      throw err
+      if (err?.cause?.name !== 'AbortError') {
+        this.uppy.setFileState(file.id, { serverToken: undefined })
+        this.uppy.emit('upload-error', file, err)
+        throw err
+      }
+      // The file upload was aborted, it’s not an error
+      return undefined
     }
   }
 

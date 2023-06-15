@@ -431,7 +431,7 @@ export default class Tus extends BasePlugin {
     })
   }
 
-  #requestSocketToken = async (file) => {
+  #requestSocketToken = async (file, options) => {
     const Client = file.remote.providerOptions.provider ? Provider : RequestClient
     const client = new Client(this.uppy, file.remote.providerOptions)
     const opts = { ...this.opts }
@@ -449,7 +449,7 @@ export default class Tus extends BasePlugin {
       size: file.data.size,
       headers: opts.headers,
       metadata: file.meta,
-    })
+    }, options)
     return res.token
   }
 
@@ -459,23 +459,27 @@ export default class Tus extends BasePlugin {
    * @param {UppyFile} file for use with upload
    * @returns {Promise<void>}
    */
-  async #uploadRemote (file) {
+  async #uploadRemote (file, options) {
     this.resetUploaderReferences(file.id)
 
     try {
       if (file.serverToken) {
         return await this.connectToServerSocket(file)
       }
-      const serverToken = await this.#queueRequestSocketToken(file)
+      const serverToken = await this.#queueRequestSocketToken(file, options).abortOn(options?.signal)
 
       if (!this.uppy.getState().files[file.id]) return undefined
 
       this.uppy.setFileState(file.id, { serverToken })
       return await this.connectToServerSocket(this.uppy.getFile(file.id))
     } catch (err) {
-      this.uppy.setFileState(file.id, { serverToken: undefined })
-      this.uppy.emit('upload-error', file, err)
-      throw err
+      if (err?.cause?.name !== 'AbortError') {
+        this.uppy.setFileState(file.id, { serverToken: undefined })
+        this.uppy.emit('upload-error', file, err)
+        throw err
+      }
+      // The file upload was aborted, it’s not an error
+      return undefined
     }
   }
 
@@ -732,7 +736,20 @@ export default class Tus extends BasePlugin {
       const total = files.length
 
       if (file.isRemote) {
-        return this.#uploadRemote(file, current, total)
+        const controller = new AbortController()
+
+        const removedHandler = (removedFile) => {
+          if (removedFile.id === file.id) controller.abort()
+        }
+        this.uppy.on('file-removed', removedHandler)
+
+        const uploadPromise = this.#uploadRemote(file, { signal: controller.signal })
+
+        this.requests.run(() => {
+          this.uppy.off('file-removed', removedHandler)
+        }, { priority: -1 })
+
+        return uploadPromise
       }
       return this.#upload(file, current, total)
     }))
