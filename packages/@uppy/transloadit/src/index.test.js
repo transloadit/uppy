@@ -109,7 +109,7 @@ describe('Transloadit', () => {
 
     await uppy.upload()
     server.closeAllConnections()
-    server.close()
+    await new Promise(resolve => server.close(resolve))
   })
 
   it('Can start an assembly with no files and some fields', async () => {
@@ -135,6 +135,6 @@ describe('Transloadit', () => {
 
     await uppy.upload()
     server.closeAllConnections()
-    server.close()
+    await new Promise(resolve => server.close(resolve))
   })
 })
