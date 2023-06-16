@@ -605,9 +605,9 @@ export default class XHRUpload extends BasePlugin {
 
         const uploadPromise = this.#uploadRemote(file, { signal: controller.signal })
 
-        this.requests.run(() => {
+        this.requests.wrapSyncFunction(() => {
           this.uppy.off('file-removed', removedHandler)
-        }, { priority: -1 })
+        }, { priority: -1 })()
 
         return uploadPromise
       }

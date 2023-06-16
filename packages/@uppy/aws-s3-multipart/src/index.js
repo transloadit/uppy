@@ -845,9 +845,9 @@ export default class AwsS3Multipart extends BasePlugin {
 
         const uploadPromise = this.#uploadRemote(file, { signal: controller.signal })
 
-        this.requests.run(() => {
+        this.requests.wrapSyncFunction(() => {
           this.uppy.off('file-removed', removedHandler)
-        }, { priority: -1 })
+        }, { priority: -1 })()
 
         return uploadPromise
       }
