@@ -87,52 +87,52 @@ describe('Transloadit', () => {
     })
   })
 
-  it('Can start an assembly with no files and no fields', async () => {
-    const server = createServer((req, res) => {
-      res.setHeader('Access-Control-Allow-Origin', '*')
-      res.setHeader('Access-Control-Allow-Headers', '*')
-      res.setHeader('Content-Type', 'application/json')
-      res.end('{"websocket_url":"about:blank"}')
-    }).listen()
-    await once(server, 'listening')
-    const uppy = new Core({
-      autoProceed: false,
-    })
-    uppy.use(Transloadit, {
-      service: `http://localhost:${server.address().port}`,
-      alwaysRunAssembly: true,
-      params: {
-        auth: { key: 'some auth key string' },
-        template_id: 'some template id string',
-      },
+  describe('deprecated fields options tests', () => {
+    let server
+    beforeEach(() => {
+      server?.close?.()
+      server = createServer((req, res) => {
+        res.setHeader('Access-Control-Allow-Origin', '*')
+        res.setHeader('Access-Control-Allow-Headers', '*')
+        res.setHeader('Content-Type', 'application/json')
+        res.end('{"websocket_url":"about:blank"}')
+      }).listen()
+      return once(server, 'listening')
     })
 
-    await uppy.upload()
-    server.close()
-  })
+    afterEach((done) => { server.closeAllConnections(); server.close(done) })
 
-  it('Can start an assembly with no files and some fields', async () => {
-    const server = createServer((req, res) => {
-      res.setHeader('Access-Control-Allow-Origin', '*')
-      res.setHeader('Access-Control-Allow-Headers', '*')
-      res.setHeader('Content-Type', 'application/json')
-      res.end('{"websocket_url":"about:blank"}')
-    }).listen()
-    await once(server, 'listening')
-    const uppy = new Core({
-      autoProceed: false,
-    })
-    uppy.use(Transloadit, {
-      service: `http://localhost:${server.address().port}`,
-      alwaysRunAssembly: true,
-      params: {
-        auth: { key: 'some auth key string' },
-        template_id: 'some template id string',
-      },
-      fields: ['hasOwnProperty'],
+    it('Can start an assembly with no files and no fields', async () => {
+      const uppy = new Core({
+        autoProceed: false,
+      })
+      uppy.use(Transloadit, {
+        service: `http://localhost:${server.address().port}`,
+        alwaysRunAssembly: true,
+        params: {
+          auth: { key: 'some auth key string' },
+          template_id: 'some template id string',
+        },
+      })
+
+      await uppy.upload()
     })
 
-    await uppy.upload()
-    server.close()
+    it('Can start an assembly with no files and some fields', async () => {
+      const uppy = new Core({
+        autoProceed: false,
+      })
+      uppy.use(Transloadit, {
+        service: `http://localhost:${server.address().port}`,
+        alwaysRunAssembly: true,
+        params: {
+          auth: { key: 'some auth key string' },
+          template_id: 'some template id string',
+        },
+        fields: ['hasOwnProperty'],
+      })
+
+      await uppy.upload()
+    })
   })
 })
