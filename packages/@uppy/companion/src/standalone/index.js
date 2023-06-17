@@ -11,6 +11,7 @@ const logger = require('../server/logger')
 const redis = require('../server/redis')
 const companion = require('../companion')
 const { getCompanionOptions, generateSecret, buildHelpfulStartupMessage } = require('./helper')
+const { getCookieOptions } = require('../server/helpers/jwt')
 
 /**
  * Configures an Express app for running Companion standalone
@@ -116,12 +117,7 @@ module.exports = function server (inputCompanionOptions) {
     sessionOptions.store = new RedisStore({ client: redisClient, prefix: process.env.COMPANION_REDIS_EXPRESS_SESSION_PREFIX || 'sess:' })
   }
 
-  if (process.env.COMPANION_COOKIE_DOMAIN) {
-    sessionOptions.cookie = {
-      domain: process.env.COMPANION_COOKIE_DOMAIN,
-      maxAge: 24 * 60 * 60 * 1000, // 1 day
-    }
-  }
+  sessionOptions.cookie = getCookieOptions(companionOptions)
 
   // Session is used for grant redirects, so that we don't need to expose secret tokens in URLs
   // See https://github.com/transloadit/uppy/pull/1668
