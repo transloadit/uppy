@@ -47,7 +47,7 @@ class MultipartUploader {
 
   #onReject = (err) => (err?.cause === pausingUploadReason ? null : this.#onError(err))
 
-  maxMultipartParts = 10000
+  maxMultipartParts = 10_000
 
   minPartSize = 5 * MB
 
