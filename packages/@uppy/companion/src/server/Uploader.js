@@ -665,6 +665,7 @@ class Uploader {
       params,
       // using chunkSize as partSize too, see https://github.com/transloadit/uppy/pull/3511
       partSize: this.options.chunkSize,
+      leavePartsOnError: true, // https://github.com/aws/aws-sdk-js-v3/issues/2311
     })
 
     upload.on('httpUploadProgress', ({ loaded, total }) => {
