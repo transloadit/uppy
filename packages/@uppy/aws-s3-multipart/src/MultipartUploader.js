@@ -74,7 +74,7 @@ class MultipartUploader {
       let arraySize, chunkSize
       if (fileSize < 5 * MB) {
         // At least 5MB per request:
-        chunkSize = 5 * MB;
+        chunkSize = 5 * MB
         arraySize = 1
       } else {
         chunkSize = Math.max(this.options.getChunkSize(this.#data), 5 * MB)
