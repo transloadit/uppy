@@ -8,7 +8,7 @@ const { join } = require('node:path')
 const fs = require('node:fs')
 const { promisify } = require('node:util')
 const FormData = require('form-data')
-const throttle = require('lodash.throttle')
+const throttle = require('lodash/throttle')
 
 // TODO move to `require('streams/promises').pipeline` when dropping support for Node.js 14.x.
 const pipeline = promisify(pipelineCb)
