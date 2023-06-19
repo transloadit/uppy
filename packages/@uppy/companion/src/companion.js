@@ -1,6 +1,6 @@
 const express = require('express')
 const Grant = require('grant').default.express()
-const merge = require('lodash/merge')
+const merge = require('lodash/merge.js')
 const cookieParser = require('cookie-parser')
 const interceptor = require('express-interceptor')
 const { randomUUID } = require('node:crypto')
