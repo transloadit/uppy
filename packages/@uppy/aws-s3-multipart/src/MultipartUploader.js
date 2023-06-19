@@ -71,12 +71,21 @@ class MultipartUploader {
       : Boolean(this.#shouldUseMultipart)
 
     if (shouldUseMultipart) {
-      const desiredChunkSize = this.options.getChunkSize(this.#data)
-      // At least 5MB per request:
-      const chunkSize = Math.max(desiredChunkSize, 5 * MB)
+      let arraySize, chunkSize
+      if (fileSize < 5 * MB) {
+        // At least 5MB per request:
+        chunkSize = 5 * MB;
+        arraySize = 1
+      } else {
+        chunkSize = Math.max(this.options.getChunkSize(this.#data), 5 * MB)
+        arraySize = Math.floor(fileSize / chunkSize)
 
-      // At most 10k requests per file:
-      const arraySize = Math.min(Math.floor(fileSize / chunkSize), 10_000)
+        // At most 10k requests per file:
+        if (arraySize > 10_000) {
+          arraySize = 10_000
+          chunkSize = fileSize / 10_000
+        }
+      }
       this.#chunks = Array(arraySize)
 
       for (let i = 0, j = 0; i < fileSize; i += chunkSize, j++) {
