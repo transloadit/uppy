@@ -188,14 +188,12 @@ export default class Transloadit extends BasePlugin {
     return newFile
   }
 
-  #createAssembly (fileIDs, uploadID, options) {
+  #createAssembly (fileIDs, uploadID, assemblyOptions) {
     this.uppy.log('[Transloadit] Create Assembly')
 
     return this.client.createAssembly({
-      params: options.params,
-      fields: options.fields,
+      ...assemblyOptions,
       expectedFiles: fileIDs.length,
-      signature: options.signature,
     }).then(async (newAssembly) => {
       const files = this.uppy.getFiles().filter(({ id }) => fileIDs.includes(id))
       if (files.length !== fileIDs.length) {
