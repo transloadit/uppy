@@ -3,7 +3,7 @@ import * as tus from 'tus-js-client'
 import { Provider, RequestClient, Socket } from '@uppy/companion-client'
 import emitSocketProgress from '@uppy/utils/lib/emitSocketProgress'
 import getSocketHost from '@uppy/utils/lib/getSocketHost'
-import EventTracker from '@uppy/utils/lib/EventTracker'
+import EventManager from '@uppy/utils/lib/EventManager'
 import NetworkError from '@uppy/utils/lib/NetworkError'
 import isNetworkError from '@uppy/utils/lib/isNetworkError'
 import { RateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
@@ -153,22 +153,22 @@ export default class Tus extends BasePlugin {
    * A lot can happen during an upload, so this is quite hard to follow!
    * - First, the upload is started. If the file was already paused by the time the upload starts, nothing should happen.
    *   If the `limit` option is used, the upload must be queued onto the `this.requests` queue.
-   *   When an upload starts, we store the tus.Upload instance, and an EventTracker instance that manages the event listeners
+   *   When an upload starts, we store the tus.Upload instance, and an EventManager instance that manages the event listeners
    *   for pausing, cancellation, removal, etc.
    * - While the upload is in progress, it may be paused or cancelled.
    *   Pausing aborts the underlying tus.Upload, and removes the upload from the `this.requests` queue. All other state is
    *   maintained.
    *   Cancelling removes the upload from the `this.requests` queue, and completely aborts the upload-- the `tus.Upload`
-   *   instance is aborted and discarded, the EventTracker instance is destroyed (removing all listeners).
+   *   instance is aborted and discarded, the EventManager instance is destroyed (removing all listeners).
    *   Resuming the upload uses the `this.requests` queue as well, to prevent selectively pausing and resuming uploads from
    *   bypassing the limit.
-   * - After completing an upload, the tus.Upload and EventTracker instances are cleaned up, and the upload is marked as done
+   * - After completing an upload, the tus.Upload and EventManager instances are cleaned up, and the upload is marked as done
    *   in the `this.requests` queue.
    * - When an upload completed with an error, the same happens as on successful completion, but the `upload()` promise is
    *   rejected.
    *
    * When working on this function, keep in mind:
-   *  - When an upload is completed or cancelled for any reason, the tus.Upload and EventTracker instances need to be cleaned
+   *  - When an upload is completed or cancelled for any reason, the tus.Upload and EventManager instances need to be cleaned
    *    up using this.resetUploaderReferences().
    *  - When an upload is cancelled or paused, for any reason, it needs to be removed from the `this.requests` queue using
    *    `queuedRequest.abort()`.
@@ -361,7 +361,7 @@ export default class Tus extends BasePlugin {
 
       upload = new tus.Upload(file.data, uploadOptions)
       this.uploaders[file.id] = upload
-      this.uploaderEvents[file.id] = new EventTracker(this.uppy)
+      this.uploaderEvents[file.id] = new EventManager(this.uppy)
 
       // eslint-disable-next-line prefer-const
       qRequest = () => {
@@ -431,7 +431,7 @@ export default class Tus extends BasePlugin {
     })
   }
 
-  #requestSocketToken = async (file) => {
+  #requestSocketToken = async (file, options) => {
     const Client = file.remote.providerOptions.provider ? Provider : RequestClient
     const client = new Client(this.uppy, file.remote.providerOptions)
     const opts = { ...this.opts }
@@ -449,7 +449,7 @@ export default class Tus extends BasePlugin {
       size: file.data.size,
       headers: opts.headers,
       metadata: file.meta,
-    })
+    }, options)
     return res.token
   }
 
@@ -459,23 +459,27 @@ export default class Tus extends BasePlugin {
    * @param {UppyFile} file for use with upload
    * @returns {Promise<void>}
    */
-  async #uploadRemote (file) {
+  async #uploadRemote (file, options) {
     this.resetUploaderReferences(file.id)
 
     try {
       if (file.serverToken) {
         return await this.connectToServerSocket(file)
       }
-      const serverToken = await this.#queueRequestSocketToken(file)
+      const serverToken = await this.#queueRequestSocketToken(file, options).abortOn(options?.signal)
 
       if (!this.uppy.getState().files[file.id]) return undefined
 
       this.uppy.setFileState(file.id, { serverToken })
       return await this.connectToServerSocket(this.uppy.getFile(file.id))
     } catch (err) {
-      this.uppy.setFileState(file.id, { serverToken: undefined })
-      this.uppy.emit('upload-error', file, err)
-      throw err
+      if (err?.cause?.name !== 'AbortError') {
+        this.uppy.setFileState(file.id, { serverToken: undefined })
+        this.uppy.emit('upload-error', file, err)
+        throw err
+      }
+      // The file upload was aborted, it’s not an error
+      return undefined
     }
   }
 
@@ -493,13 +497,13 @@ export default class Tus extends BasePlugin {
       const host = getSocketHost(file.remote.companionUrl)
       const socket = new Socket({ target: `${host}/api/${token}`, autoOpen: false })
       this.uploaderSockets[file.id] = socket
-      this.uploaderEvents[file.id] = new EventTracker(this.uppy)
+      this.uploaderEvents[file.id] = new EventManager(this.uppy)
 
       let queuedRequest
 
       this.onFileRemove(file.id, () => {
-        queuedRequest.abort()
         socket.send('cancel', {})
+        queuedRequest.abort()
         this.resetUploaderReferences(file.id)
         resolve(`upload ${file.id} was removed`)
       })
@@ -507,8 +511,8 @@ export default class Tus extends BasePlugin {
       this.onPause(file.id, (isPaused) => {
         if (isPaused) {
           // Remove this file from the queue so another file can start in its place.
-          queuedRequest.abort()
           socket.send('pause', {})
+          queuedRequest.abort()
         } else {
           // Resuming an upload should be queued, else you could pause and then
           // resume a queued upload to make it skip the queue.
@@ -517,20 +521,20 @@ export default class Tus extends BasePlugin {
             socket.open()
             socket.send('resume', {})
 
-            return () => socket.close()
+            return () => {}
           })
         }
       })
 
       this.onPauseAll(file.id, () => {
-        queuedRequest.abort()
         socket.send('pause', {})
+        queuedRequest.abort()
       })
 
       this.onCancelAll(file.id, ({ reason } = {}) => {
         if (reason === 'user') {
-          queuedRequest.abort()
           socket.send('cancel', {})
+          queuedRequest.abort()
           this.resetUploaderReferences(file.id)
         }
         resolve(`upload ${file.id} was canceled`)
@@ -545,7 +549,7 @@ export default class Tus extends BasePlugin {
           socket.open()
           socket.send('resume', {})
 
-          return () => socket.close()
+          return () => {}
         })
       })
 
@@ -599,7 +603,7 @@ export default class Tus extends BasePlugin {
         this.uppy.emit('upload-success', file, uploadResp)
         this.resetUploaderReferences(file.id)
         queuedRequest.done()
-
+        socket.close()
         resolve()
       })
 
@@ -616,7 +620,7 @@ export default class Tus extends BasePlugin {
         // that point this cancellation function is not going to be called.
         // Also, we need to remove the request from the queue _without_ destroying everything
         // related to this upload to handle pauses.
-        return () => socket.close()
+        return () => {}
       })
     })
   }
@@ -732,7 +736,20 @@ export default class Tus extends BasePlugin {
       const total = files.length
 
       if (file.isRemote) {
-        return this.#uploadRemote(file, current, total)
+        const controller = new AbortController()
+
+        const removedHandler = (removedFile) => {
+          if (removedFile.id === file.id) controller.abort()
+        }
+        this.uppy.on('file-removed', removedHandler)
+
+        const uploadPromise = this.#uploadRemote(file, { signal: controller.signal })
+
+        this.requests.wrapSyncFunction(() => {
+          this.uppy.off('file-removed', removedHandler)
+        }, { priority: -1 })()
+
+        return uploadPromise
       }
       return this.#upload(file, current, total)
     }))

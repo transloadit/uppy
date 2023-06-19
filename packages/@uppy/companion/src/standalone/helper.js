@@ -41,11 +41,13 @@ const hasProtocol = (url) => {
   return url.startsWith('https://') || url.startsWith('http://')
 }
 
+const companionProtocol = process.env.COMPANION_PROTOCOL || 'http'
+
 function getCorsOrigins () {
   if (process.env.COMPANION_CLIENT_ORIGINS) {
     return process.env.COMPANION_CLIENT_ORIGINS
       .split(',')
-      .map((url) => (hasProtocol(url) ? url : `${process.env.COMPANION_PROTOCOL || 'http'}://${url}`))
+      .map((url) => (hasProtocol(url) ? url : `${companionProtocol}://${url}`))
   }
   if (process.env.COMPANION_CLIENT_ORIGINS_REGEX) {
     return new RegExp(process.env.COMPANION_CLIENT_ORIGINS_REGEX)
@@ -128,7 +130,7 @@ const getConfigFromEnv = () => {
     },
     server: {
       host: process.env.COMPANION_DOMAIN,
-      protocol: process.env.COMPANION_PROTOCOL,
+      protocol: companionProtocol,
       path: process.env.COMPANION_PATH,
       implicitPath: process.env.COMPANION_IMPLICIT_PATH,
       oauthDomain: process.env.COMPANION_OAUTH_DOMAIN,
@@ -213,7 +215,7 @@ exports.buildHelpfulStartupMessage = (companionOptions) => {
   const buildURL = utils.getURLBuilder(companionOptions)
   const callbackURLs = []
   Object.keys(companionOptions.providerOptions).forEach((providerName) => {
-    callbackURLs.push(buildURL(`/connect/${providerName}/redirect`, true))
+    callbackURLs.push(buildURL(`/${providerName}/redirect`, true))
   })
 
   return stripIndent`
@@ -227,7 +229,8 @@ exports.buildHelpfulStartupMessage = (companionOptions) => {
     While you did an awesome job on getting Companion running, this is just the welcome
     message, so let's talk about the places that really matter:
 
-    - Be sure to add ${callbackURLs.join(', ')} as your Oauth redirect uris on their corresponding developer interfaces.
+    - Be sure to add the following URLs as your Oauth redirect uris on their corresponding developer interfaces:
+        ${callbackURLs.join(', ')}
     - The URL ${buildURL('/metrics', true)} is available for  statistics to keep Companion running smoothly
     - https://github.com/transloadit/uppy/issues - report your bugs here
 

@@ -1,5 +1,13 @@
 const express = require('express')
 
+function rfc2047Encode (data) {
+  // eslint-disable-next-line no-param-reassign
+  data = `${data}`
+  // eslint-disable-next-line no-control-regex
+  if (/^[\x00-\x7F]*$/.test(data)) return data // we return ASCII as is
+  return `=?UTF-8?B?${Buffer.from(data).toString('base64')}?=` // We encode non-ASCII strings
+}
+
 module.exports = function s3 (config) {
   if (typeof config.acl !== 'string' && config.acl != null) {
     throw new TypeError('s3: The `acl` option must be a string or null')
@@ -102,7 +110,7 @@ module.exports = function s3 (config) {
       Bucket: config.bucket,
       Key: key,
       ContentType: type,
-      Metadata: metadata,
+      Metadata: Object.fromEntries(Object.entries(metadata).map(entry => entry.map(rfc2047Encode))),
     }
 
     if (config.acl != null) params.ACL = config.acl

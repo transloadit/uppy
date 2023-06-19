@@ -55,20 +55,16 @@ async function getAssemblyOptions (file, options) {
 
   validateParams(assemblyOptions.params)
 
-  return assemblyOptions
-}
-
-function getFields (file, assemblyOptions) {
   const { fields } = assemblyOptions
-  if (fields == null) {
-    return {}
-  }
   if (Array.isArray(fields)) {
-    return Object.fromEntries(
+    assemblyOptions.fields = file == null ? {} : Object.fromEntries(
       fields.map((fieldName) => [fieldName, file.meta[fieldName]]),
     )
+  } else if (fields == null) {
+    assemblyOptions.fields = {}
   }
-  return fields
+
+  return assemblyOptions
 }
 
 /**
@@ -102,8 +98,6 @@ class AssemblyOptions {
           // waiting for the options.
           if (file == null) return undefined
 
-          assemblyOptions.fields = getFields(file, assemblyOptions)
-
           return {
             fileIDs: [file.id],
             options: assemblyOptions,
@@ -118,7 +112,7 @@ class AssemblyOptions {
 
       return [
         {
-          fileIDs: this.files.map((file) => file.id),
+          fileIDs: [],
           options: assemblyOptions,
         },
       ]

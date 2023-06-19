@@ -284,8 +284,6 @@ export class Uppy {
 
   getState<TMeta extends IndexedObject<any> = Record<string, unknown>>(): State<TMeta>
 
-  readonly state: State
-
   setFileState(fileID: string, state: Record<string, unknown>): void
 
   resetProgress(): void

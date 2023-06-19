@@ -124,6 +124,7 @@ export default class ProviderView extends View {
       this.username = res.username || this.username
       this.#updateFilesAndFolders(res, files, folders)
       this.plugin.setPluginState({ directories: updatedDirectories, filterInput: '' })
+      this.lastCheckbox = undefined
     } catch (err) {
       this.handleError(err)
     } finally {

@@ -89,15 +89,6 @@ class Uppy {
 
     this.i18nInit()
 
-    // ___Why throttle at 500ms?
-    //    - We must throttle at >250ms for superfocus in Dashboard to work well
-    //    (because animation takes 0.25s, and we want to wait for all animations to be over before refocusing).
-    //    [Practical Check]: if thottle is at 100ms, then if you are uploading a file,
-    //    and click 'ADD MORE FILES', - focus won't activate in Firefox.
-    //    - We must throttle at around >500ms to avoid performance lags.
-    //    [Practical Check] Firefox, try to upload a big file for a prolonged period of time. Laptop will start to heat up.
-    this.calculateProgress = throttle(this.calculateProgress.bind(this), 500, { leading: true, trailing: true })
-
     this.store = this.opts.store
     this.setState({
       plugins: {},
@@ -893,9 +884,22 @@ class Uppy {
     })
   }
 
-  calculateProgress (file, data) {
-    if (file == null || !this.getFile(file.id)) {
+  // ___Why throttle at 500ms?
+  //    - We must throttle at >250ms for superfocus in Dashboard to work well
+  //    (because animation takes 0.25s, and we want to wait for all animations to be over before refocusing).
+  //    [Practical Check]: if thottle is at 100ms, then if you are uploading a file,
+  //    and click 'ADD MORE FILES', - focus won't activate in Firefox.
+  //    - We must throttle at around >500ms to avoid performance lags.
+  //    [Practical Check] Firefox, try to upload a big file for a prolonged period of time. Laptop will start to heat up.
+  calculateProgress = throttle((file, data) => {
+    const fileInState = this.getFile(file?.id)
+    if (file == null || !fileInState) {
       this.log(`Not setting progress for a file that has been removed: ${file?.id}`)
+      return
+    }
+
+    if (fileInState.progress.percentage === 100) {
+      this.log(`Not setting progress for a file that has been already uploaded: ${file.id}`)
       return
     }
 
@@ -903,7 +907,7 @@ class Uppy {
     const canHavePercentage = Number.isFinite(data.bytesTotal) && data.bytesTotal > 0
     this.setFileState(file.id, {
       progress: {
-        ...this.getFile(file.id).progress,
+        ...fileInState.progress,
         bytesUploaded: data.bytesUploaded,
         bytesTotal: data.bytesTotal,
         percentage: canHavePercentage
@@ -913,7 +917,7 @@ class Uppy {
     })
 
     this.calculateTotalProgress()
-  }
+  }, 500, { leading: true, trailing: true })
 
   calculateTotalProgress () {
     // calculate total progress, using the number of files currently uploading,
