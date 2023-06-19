@@ -277,11 +277,27 @@ export default class AwsS3 extends UploaderPlugin {
 
   uploadFile (id, current, total) {
     const file = this.uppy.getFile(id)
-    if (file.error) {
-      throw new Error(file.error)
-    } else if (file.isRemote) {
-      return this.uploadRemoteFile(file, current, total)
+    this.uppy.log(`uploading ${current} of ${total}`)
+
+    if (file.error) throw new Error(file.error)
+
+    if (file.isRemote) {
+      const controller = new AbortController()
+
+      const removedHandler = (removedFile) => {
+        if (removedFile.id === file.id) controller.abort()
+      }
+      this.uppy.on('file-removed', removedHandler)
+
+      const uploadPromise = this.uploadRemoteFile(file, { signal: controller.signal })
+
+      this.requests.wrapSyncFunction(() => {
+        this.uppy.off('file-removed', removedHandler)
+      }, { priority: -1 })()
+
+      return uploadPromise
     }
+
     return this.#uploader.uploadLocalFile(file, current, total)
   }
 

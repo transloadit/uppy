@@ -77,7 +77,7 @@ exports.getCredentialsOverrideMiddleware = (providers, companionOptions) => {
       return
     }
 
-    if (!companionOptions.providerOptions[providerName].credentialsURL) {
+    if (!companionOptions.providerOptions[providerName]?.credentialsURL) {
       next()
       return
     }

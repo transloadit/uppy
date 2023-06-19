@@ -2,7 +2,7 @@ import { nanoid } from 'nanoid/non-secure'
 import { Socket } from '@uppy/companion-client'
 import emitSocketProgress from '@uppy/utils/lib/emitSocketProgress'
 import getSocketHost from '@uppy/utils/lib/getSocketHost'
-import EventTracker from '@uppy/utils/lib/EventTracker'
+import EventManager from '@uppy/utils/lib/EventManager'
 import ProgressTimeout from '@uppy/utils/lib/ProgressTimeout'
 import ErrorWithCause from '@uppy/utils/lib/ErrorWithCause'
 import NetworkError from '@uppy/utils/lib/NetworkError'
@@ -101,10 +101,9 @@ export default class MiniXHRUpload {
     })
   }
 
-  uploadLocalFile (file, current, total) {
+  uploadLocalFile (file) {
     const opts = this.getOptions(file)
 
-    this.uppy.log(`uploading ${current} of ${total}`)
     return new Promise((resolve, reject) => {
       // This is done in index.js in the S3 plugin.
       // this.uppy.emit('upload-started', file)
@@ -114,7 +113,7 @@ export default class MiniXHRUpload {
         : createBareUpload(file, opts)
 
       const xhr = new XMLHttpRequest()
-      this.uploaderEvents[file.id] = new EventTracker(this.uppy)
+      this.uploaderEvents[file.id] = new EventManager(this.uppy)
 
       const timer = new ProgressTimeout(opts.timeout, () => {
         xhr.abort()
@@ -286,7 +285,7 @@ export default class MiniXHRUpload {
           reject(error)
         })
       }
-      this.uploaderEvents[file.id] = new EventTracker(this.uppy)
+      this.uploaderEvents[file.id] = new EventManager(this.uppy)
 
       let queuedRequest = this.requests.run(() => {
         if (file.isPaused) {

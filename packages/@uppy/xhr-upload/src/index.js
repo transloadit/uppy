@@ -3,7 +3,7 @@ import { nanoid } from 'nanoid/non-secure'
 import { Provider, RequestClient, Socket } from '@uppy/companion-client'
 import emitSocketProgress from '@uppy/utils/lib/emitSocketProgress'
 import getSocketHost from '@uppy/utils/lib/getSocketHost'
-import EventTracker from '@uppy/utils/lib/EventTracker'
+import EventManager from '@uppy/utils/lib/EventManager'
 import ProgressTimeout from '@uppy/utils/lib/ProgressTimeout'
 import { RateLimitedQueue, internalRateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
 import NetworkError from '@uppy/utils/lib/NetworkError'
@@ -169,7 +169,13 @@ export default class XHRUpload extends UploaderPlugin {
       : Object.keys(meta) // Send along all fields by default.
 
     allowedMetaFields.forEach((item) => {
-      formData.append(item, meta[item])
+      if (Array.isArray(meta[item])) {
+        // In this case we don't transform `item` to add brackets, it's up to
+        // the user to add the brackets so it won't be overridden.
+        meta[item].forEach(subItem => formData.append(item, subItem))
+      } else {
+        formData.append(item, meta[item])
+      }
     })
   }
 
@@ -220,7 +226,7 @@ export default class XHRUpload extends UploaderPlugin {
         : file.data
 
       const xhr = new XMLHttpRequest()
-      this.uploaderEvents[file.id] = new EventTracker(this.uppy)
+      this.uploaderEvents[file.id] = new EventManager(this.uppy)
       let queuedRequest
 
       const timer = new ProgressTimeout(opts.timeout, () => {
@@ -343,7 +349,7 @@ export default class XHRUpload extends UploaderPlugin {
     })
   }
 
-  #requestSocketToken = async (file) => {
+  #requestSocketToken = async (file, options) => {
     const opts = this.getOptions(file)
     const Client = file.remote.providerOptions.provider ? Provider : RequestClient
     const client = new Client(this.uppy, file.remote.providerOptions)
@@ -361,7 +367,7 @@ export default class XHRUpload extends UploaderPlugin {
       httpMethod: opts.method,
       useFormData: opts.formData,
       headers: opts.headers,
-    })
+    }, options)
     return res.token
   }
 
@@ -406,6 +412,7 @@ export default class XHRUpload extends UploaderPlugin {
             : Object.assign(new Error(errData.error.message), { cause: errData.error })
           this.uppy.emit('upload-error', file, error)
           queuedRequest.done() // eslint-disable-line no-use-before-define
+          socket.close()
           if (this.uploaderEvents[file.id]) {
             this.uploaderEvents[file.id].remove()
             this.uploaderEvents[file.id] = null
@@ -413,7 +420,7 @@ export default class XHRUpload extends UploaderPlugin {
           reject(error)
         })
       }
-      this.uploaderEvents[file.id] = new EventTracker(this.uppy)
+      this.uploaderEvents[file.id] = new EventManager(this.uppy)
 
       let queuedRequest = this.requests.run(() => {
         if (file.isPaused) {
@@ -422,11 +429,12 @@ export default class XHRUpload extends UploaderPlugin {
           createSocket()
         }
 
-        return () => socket.close()
+        return () => {}
       })
 
       this.onFileRemove(file.id, () => {
         socket?.send('cancel', {})
+        socket.close()
         queuedRequest.abort()
         resolve(`upload ${file.id} was removed`)
       })
@@ -435,6 +443,7 @@ export default class XHRUpload extends UploaderPlugin {
         if (reason === 'user') {
           socket?.send('cancel', {})
           queuedRequest.abort()
+          // socket.close()
         }
         resolve(`upload ${file.id} was canceled`)
       })
@@ -443,19 +452,13 @@ export default class XHRUpload extends UploaderPlugin {
         if (socket == null) {
           queuedRequest.abort()
         } else {
-          socket.send('pause', {})
           queuedRequest.done()
         }
         queuedRequest = this.requests.run(() => {
-          if (!file.isPaused) {
-            if (socket == null) {
-              createSocket()
-            } else {
-              socket.send('resume', {})
-            }
+          if (socket == null) {
+            createSocket()
           }
-
-          return () => socket.close()
+          return () => {}
         })
       }
       this.onRetry(file.id, onRetryRequest)
@@ -566,7 +569,20 @@ export default class XHRUpload extends UploaderPlugin {
       const total = files.length
 
       if (file.isRemote) {
-        return this.uploadRemoteFile(file, current, total)
+        const controller = new AbortController()
+
+        const removedHandler = (removedFile) => {
+          if (removedFile.id === file.id) controller.abort()
+        }
+        this.uppy.on('file-removed', removedHandler)
+
+        const uploadPromise = this.uploadRemoteFile(file, { signal: controller.signal })
+
+        this.requests.wrapSyncFunction(() => {
+          this.uppy.off('file-removed', removedHandler)
+        }, { priority: -1 })()
+
+        return uploadPromise
       }
       return this.#upload(file, current, total)
     }))

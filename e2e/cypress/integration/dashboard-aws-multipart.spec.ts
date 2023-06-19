@@ -14,6 +14,15 @@ describe('Dashboard with @uppy/aws-s3-multipart', () => {
     cy.wait(['@post', '@get', '@put'])
     cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Complete')
   })
+  it('should upload Russian poem image successfully', () => {
+    const fileName = '١٠ كم мест для Нью-Йорке.pdf'
+    cy.get('@file-input').selectFile(`cypress/fixtures/images/${fileName}`, { force:true })
+
+    cy.get('.uppy-StatusBar-actionBtn--upload').click()
+    cy.wait(['@post', '@get', '@put'])
+    cy.get('.uppy-Dashboard-Item-name').should('contain', fileName)
+    cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Complete')
+  })
 
   it('should handle retry request gracefully',  () => {
     cy.get('@file-input').selectFile('cypress/fixtures/images/cat.jpg', { force:true })

@@ -1,6 +1,6 @@
 import UploaderPlugin from '@uppy/core/lib/UploaderPlugin.js'
 import { Socket, Provider, RequestClient } from '@uppy/companion-client'
-import EventTracker from '@uppy/utils/lib/EventTracker'
+import EventManager from '@uppy/utils/lib/EventManager'
 import emitSocketProgress from '@uppy/utils/lib/emitSocketProgress'
 import getSocketHost from '@uppy/utils/lib/getSocketHost'
 import { RateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
@@ -41,8 +41,6 @@ function throwIfAborted (signal) {
 class HTTPCommunicationQueue {
   #abortMultipartUpload
 
-  #allowedMetaFields
-
   #cache = new WeakMap()
 
   #createMultipartUpload
@@ -76,9 +74,6 @@ class HTTPCommunicationQueue {
 
     if ('abortMultipartUpload' in options) {
       this.#abortMultipartUpload = requests.wrapPromiseFunction(options.abortMultipartUpload)
-    }
-    if ('allowedMetaFields' in options) {
-      this.#allowedMetaFields = options.allowedMetaFields
     }
     if ('createMultipartUpload' in options) {
       this.#createMultipartUpload = requests.wrapPromiseFunction(options.createMultipartUpload, { priority:-1 })
@@ -217,17 +212,12 @@ class HTTPCommunicationQueue {
   }
 
   async #nonMultipartUpload (file, chunk, signal) {
-    const { meta } = file
-    const { type, name: filename } = meta
-    const metadata = getAllowedMetadata({ meta, allowedMetaFields: this.#allowedMetaFields, querify: true })
-
-    const query = new URLSearchParams({ filename, type, ...metadata })
     const {
       method = 'post',
       url,
       fields,
       headers,
-    } = await this.#getUploadParameters(`s3/params?${query}`, { signal }).abortOn(signal)
+    } = await this.#getUploadParameters(file, { signal }).abortOn(signal)
 
     const formData = new FormData()
     Object.entries(fields).forEach(([key, value]) => formData.set(key, value))
@@ -342,7 +332,7 @@ export default class AwsS3Multipart extends UploaderPlugin {
       completeMultipartUpload: this.completeMultipartUpload.bind(this),
       signPart: this.signPart.bind(this),
       uploadPartBytes: AwsS3Multipart.uploadPartBytes,
-      getUploadParameters: (...args) => this.#client.get(...args),
+      getUploadParameters: this.getUploadParameters.bind(this),
       companionHeaders: {},
     }
 
@@ -458,6 +448,16 @@ export default class AwsS3Multipart extends UploaderPlugin {
     const uploadIdEnc = encodeURIComponent(uploadId)
     return this.#client.delete(`s3/multipart/${uploadIdEnc}?key=${filename}`, undefined, { signal })
       .then(assertServerError)
+  }
+
+  getUploadParameters (file, options) {
+    const { meta } = file
+    const { type, name: filename } = meta
+    const metadata = getAllowedMetadata({ meta, allowedMetaFields: this.opts.allowedMetaFields, querify: true })
+
+    const query = new URLSearchParams({ filename, type, ...metadata })
+
+    return this.#client.get(`s3/params?${query}`, options)
   }
 
   static async uploadPartBytes ({ signature: { url, expires, headers, method = 'PUT' }, body, size = body.size, onProgress, onComplete, signal }) {
@@ -622,7 +622,7 @@ export default class AwsS3Multipart extends UploaderPlugin {
       })
 
       this.uploaders[file.id] = upload
-      this.uploaderEvents[file.id] = new EventTracker(this.uppy)
+      this.uploaderEvents[file.id] = new EventManager(this.uppy)
 
       this.onFileRemove(file.id, (removed) => {
         upload.abort()
@@ -658,7 +658,7 @@ export default class AwsS3Multipart extends UploaderPlugin {
     })
   }
 
-  #requestSocketToken = async (file) => {
+  #requestSocketToken = async (file, options) => {
     const Client = file.remote.providerOptions.provider ? Provider : RequestClient
     const client = new Client(this.uppy, file.remote.providerOptions)
     const opts = { ...this.opts }
@@ -677,7 +677,7 @@ export default class AwsS3Multipart extends UploaderPlugin {
       protocol: 's3-multipart',
       size: file.data.size,
       metadata: file.meta,
-    })
+    }, options)
     return res.token
   }
 
@@ -689,11 +689,11 @@ export default class AwsS3Multipart extends UploaderPlugin {
       const host = getSocketHost(file.remote.companionUrl)
       const socket = new Socket({ target: `${host}/api/${token}`, autoOpen: false })
       this.uploaderSockets[file.id] = socket
-      this.uploaderEvents[file.id] = new EventTracker(this.uppy)
+      this.uploaderEvents[file.id] = new EventManager(this.uppy)
 
       this.onFileRemove(file.id, () => {
-        queuedRequest.abort()
         socket.send('cancel', {})
+        queuedRequest.abort()
         this.resetUploaderReferences(file.id, { abort: true })
         resolve(`upload ${file.id} was removed`)
       })
@@ -701,8 +701,8 @@ export default class AwsS3Multipart extends UploaderPlugin {
       this.onFilePause(file.id, (isPaused) => {
         if (isPaused) {
           // Remove this file from the queue so another file can start in its place.
-          queuedRequest.abort()
           socket.send('pause', {})
+          queuedRequest.abort()
         } else {
           // Resuming an upload should be queued, else you could pause and then
           // resume a queued upload to make it skip the queue.
@@ -710,20 +710,22 @@ export default class AwsS3Multipart extends UploaderPlugin {
           queuedRequest = this.requests.run(() => {
             socket.open()
             socket.send('resume', {})
-            return () => socket.close()
+            return () => {}
           })
         }
       })
 
       this.onPauseAll(file.id, () => {
-        queuedRequest.abort()
+        // First send the message, then call .abort,
+        // just to make sure socket is not closed, which .abort used to do
         socket.send('pause', {})
+        queuedRequest.abort()
       })
 
       this.onCancelAll(file.id, ({ reason } = {}) => {
         if (reason === 'user') {
-          queuedRequest.abort()
           socket.send('cancel', {})
+          queuedRequest.abort()
           this.resetUploaderReferences(file.id)
         }
         resolve(`upload ${file.id} was canceled`)
@@ -738,7 +740,7 @@ export default class AwsS3Multipart extends UploaderPlugin {
           socket.open()
           socket.send('resume', {})
 
-          return () => socket.close()
+          return () => {}
         })
       })
 
@@ -765,6 +767,7 @@ export default class AwsS3Multipart extends UploaderPlugin {
       socket.on('error', (errData) => {
         this.uppy.emit('upload-error', file, new Error(errData.error))
         this.resetUploaderReferences(file.id)
+        socket.close()
         queuedRequest.done()
         reject(new Error(errData.error))
       })
@@ -776,6 +779,7 @@ export default class AwsS3Multipart extends UploaderPlugin {
 
         this.uppy.emit('upload-success', file, uploadResp)
         this.resetUploaderReferences(file.id)
+        socket.close()
         queuedRequest.done()
         resolve()
       })
@@ -787,7 +791,7 @@ export default class AwsS3Multipart extends UploaderPlugin {
           socket.open()
         }
 
-        return () => socket.close()
+        return () => {}
       })
     })
   }
@@ -803,8 +807,21 @@ export default class AwsS3Multipart extends UploaderPlugin {
 
     const promises = filesFiltered.map((file) => {
       if (file.isRemote) {
+        const controller = new AbortController()
+
+        const removedHandler = (removedFile) => {
+          if (removedFile.id === file.id) controller.abort()
+        }
+        this.uppy.on('file-removed', removedHandler)
+
         this.resetUploaderReferences(file.id)
-        return this.uploadRemoteFile(file)
+        const uploadPromise = this.uploadRemoteFile(file, { signal: controller.signal })
+
+        this.requests.wrapSyncFunction(() => {
+          this.uppy.off('file-removed', removedHandler)
+        }, { priority: -1 })()
+
+        return uploadPromise
       }
       return this.#uploadFile(file)
     })
