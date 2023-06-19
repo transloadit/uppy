@@ -45,8 +45,8 @@ module.exports = function s3 (config) {
     }
 
     const metadata = req.query.metadata || {}
-    const Key = config.getKey(req, req.query.filename, metadata)
-    if (typeof Key !== 'string') {
+    const key = config.getKey(req, req.query.filename, metadata)
+    if (typeof key !== 'string') {
       res.status(500).json({ error: 'S3 uploads are misconfigured: filename returned from `getKey` must be a string' })
       return
     }
@@ -67,7 +67,7 @@ module.exports = function s3 (config) {
       Expires: config.expires,
       Fields: fields,
       Conditions: config.conditions,
-      Key,
+      Key: key,
     }).then(data => {
       res.json({
         method: 'post',
