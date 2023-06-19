@@ -16,7 +16,7 @@ const validParams = {
   const uppy = new Uppy()
   uppy.use(Transloadit, {
     getAssemblyOptions (file) {
-      expectType<UppyFile>(file)
+      expectType<UppyFile | undefined>(file)
       return { params: validParams }
     },
     waitForEncoding: false,
@@ -39,7 +39,7 @@ const validParams = {
   const uppy = new Uppy()
   uppy.use(Transloadit, {
     async assemblyOptions (file) {
-      expectType<UppyFile>(file)
+      expectType<UppyFile | undefined>(file)
       return { params: validParams }
     },
   })

@@ -9217,16 +9217,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash.merge@npm:4.6.6":
-  version: 4.6.6
-  resolution: "@types/lodash.merge@npm:4.6.6"
-  dependencies:
-    "@types/lodash": "*"
-  checksum: 62ec56f14b3077f7174497856e9b277db811943cd11b1d67d2a8e51a1803bd49319e8aaf62e745c696af972354a575dbb8a85d3aecf4ae774caf062dc31ac46e
+"@types/lodash@npm:4.14.191":
+  version: 4.14.191
+  resolution: "@types/lodash@npm:4.14.191"
+  checksum: ba0d5434e10690869f32d5ea49095250157cae502f10d57de0a723fd72229ce6c6a4979576f0f13e0aa9fbe3ce2457bfb9fa7d4ec3d6daba56730a51906d1491
   languageName: node
   linkType: hard
 
-"@types/lodash@npm:*, @types/lodash@npm:^4.14.167":
+"@types/lodash@npm:^4.14.167":
   version: 4.14.184
   resolution: "@types/lodash@npm:4.14.184"
   checksum: 6d9a4d67f7f9d0ec3fd21174f3dd3d00629dc1227eb469450eace53adbc1f7e2330699c28d0fe093e5f0fef0f0e763098be1f779268857213224af082b62be21
@@ -9937,6 +9935,7 @@ __metadata:
     eslint-plugin-jsdoc: ^40.0.0
     eslint-plugin-jsx-a11y: ^6.4.1
     eslint-plugin-markdown: ^3.0.0
+    eslint-plugin-no-only-tests: ^3.1.0
     eslint-plugin-node: ^11.1.0
     eslint-plugin-prefer-import: ^0.0.1
     eslint-plugin-promise: ^6.0.0
@@ -10521,7 +10520,7 @@ __metadata:
     "@types/eslint": ^8.2.0
     "@types/express-session": 1.17.3
     "@types/jsonwebtoken": 8.3.7
-    "@types/lodash.merge": 4.6.6
+    "@types/lodash": 4.14.191
     "@types/morgan": 1.7.37
     "@types/ms": 0.7.31
     "@types/node": ^18.0.3
@@ -10552,8 +10551,7 @@ __metadata:
     ipaddr.js: ^2.0.1
     jest: ^29.0.0
     jsonwebtoken: 8.5.1
-    lodash.merge: ^4.6.2
-    lodash.throttle: ^4.1.1
+    lodash: ^4.17.21
     mime-types: 2.1.35
     moment: ^2.29.2
     moment-timezone: ^0.5.31
@@ -10598,7 +10596,7 @@ __metadata:
     "@transloadit/prettier-bytes": 0.0.9
     "@uppy/store-default": "workspace:^"
     "@uppy/utils": "workspace:^"
-    lodash.throttle: ^4.1.1
+    lodash: ^4.17.21
     mime-match: ^1.0.2
     namespace-emitter: ^2.0.1
     nanoid: ^4.0.0
@@ -10620,7 +10618,7 @@ __metadata:
     "@uppy/utils": "workspace:^"
     classnames: ^2.2.6
     is-shallow-equal: ^1.0.1
-    lodash.debounce: ^4.0.8
+    lodash: ^4.17.21
     memoize-one: ^6.0.0
     nanoid: ^4.0.0
     preact: ^10.5.13
@@ -10705,7 +10703,7 @@ __metadata:
   dependencies:
     "@transloadit/prettier-bytes": 0.0.9
     "@uppy/utils": "workspace:^"
-    lodash.throttle: ^4.1.1
+    lodash: ^4.17.21
   peerDependencies:
     "@uppy/core": "workspace:^"
   languageName: unknown
@@ -10898,7 +10896,7 @@ __metadata:
     "@transloadit/prettier-bytes": 0.0.9
     "@uppy/utils": "workspace:^"
     classnames: ^2.2.6
-    lodash.throttle: ^4.1.1
+    lodash: ^4.17.21
     preact: ^10.5.13
   peerDependencies:
     "@uppy/core": "workspace:^"
@@ -11018,7 +11016,7 @@ __metadata:
   resolution: "@uppy/utils@workspace:packages/@uppy/utils"
   dependencies:
     "@jest/globals": ^29.0.0
-    lodash.throttle: ^4.1.1
+    lodash: ^4.17.21
   languageName: unknown
   linkType: soft
 
@@ -18089,6 +18087,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"eslint-plugin-no-only-tests@npm:^3.1.0":
+  version: 3.1.0
+  resolution: "eslint-plugin-no-only-tests@npm:3.1.0"
+  checksum: 2a5de82f3a732dbd46792661dd0f8546cf819f76d8828968166dee35741e8039904ba473dafe1eed585f401a496d260c2c38354bb887c94bd4ced0ddca00fb62
+  languageName: node
+  linkType: hard
+
 "eslint-plugin-node@npm:^11.1.0":
   version: 11.1.0
   resolution: "eslint-plugin-node@npm:11.1.0"
@@ -24708,9 +24713,9 @@ __metadata:
   linkType: hard
 
 "luxon@npm:^1.26.0":
-  version: 1.28.0
-  resolution: "luxon@npm:1.28.0"
-  checksum: 5250cb9f138b6048eeb0b3a9044a4ac994d0058f680c72a0da4b6aeaec8612460385639cba2b1052ef6d5564879e9ed144d686f26d9d97b38ab920d82e18281c
+  version: 1.28.1
+  resolution: "luxon@npm:1.28.1"
+  checksum: 2c62999adea79645fd1e931d685f61aeb33eda7f39fbf79b84261a233b62f9590f48336654ee9efd405848bd9e13dc7fe087c701b7126187201a88998dc68b04
   languageName: node
   linkType: hard
 

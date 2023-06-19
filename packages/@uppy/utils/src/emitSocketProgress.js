@@ -1,4 +1,4 @@
-import throttle from 'lodash.throttle'
+import throttle from 'lodash/throttle.js'
 
 function emitSocketProgress (uploader, progressData, file) {
   const { progress, bytesUploaded, bytesTotal } = progressData
