@@ -47,9 +47,9 @@ class MultipartUploader {
 
   #onReject = (err) => (err?.cause === pausingUploadReason ? null : this.#onError(err))
 
-  maxMultipartParts = 10000
+  #maxMultipartParts = 10000
 
-  minPartSize = 5 * MB
+  #minPartSize = 5 * MB
 
   constructor (data, options) {
     this.options = {
@@ -78,15 +78,15 @@ class MultipartUploader {
       ? this.#shouldUseMultipart(this.#file)
       : Boolean(this.#shouldUseMultipart)
 
-    if (shouldUseMultipart && fileSize > this.minPartSize) {
+    if (shouldUseMultipart && fileSize > this.#minPartSize) {
       // At least 5MB per request:
-      let chunkSize = Math.max(this.options.getChunkSize(this.#data), this.minPartSize)
+      let chunkSize = Math.max(this.options.getChunkSize(this.#data), this.#minPartSize)
       let arraySize = Math.floor(fileSize / chunkSize)
 
       // At most 10k requests per file:
-      if (arraySize > this.maxMultipartParts) {
-        arraySize = this.maxMultipartParts
-        chunkSize = fileSize / this.maxMultipartParts
+      if (arraySize > this.#maxMultipartParts) {
+        arraySize = this.#maxMultipartParts
+        chunkSize = fileSize / this.#maxMultipartParts
       }
       this.#chunks = Array(arraySize)
 
