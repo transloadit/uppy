@@ -1,5 +1,13 @@
 # @uppy/aws-s3
 
+## 3.2.0
+
+Released: 2023-06-19
+Included in: Uppy v3.10.0
+
+- @uppy/aws-s3: add `shouldUseMultipart` option (Antoine du Hamel / #4299)
+- @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/tus,@uppy/utils,@uppy/xhr-upload: When file is removed (or all are canceled), controller.abort queued requests (Artur Paikin / #4504)
+
 ## 3.1.1
 
 Released: 2023-05-02

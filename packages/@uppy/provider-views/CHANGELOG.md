@@ -1,5 +1,12 @@
 # @uppy/provider-views
 
+## 3.3.1
+
+Released: 2023-06-19
+Included in: Uppy v3.10.0
+
+- @uppy/provider-views: Fix range selection not resetting and computing correctly (Terence C / #4415)
+
 ## 3.3.0
 
 Released: 2023-04-18
