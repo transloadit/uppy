@@ -45,6 +45,9 @@ export interface AwsS3MultipartOptions extends PluginOptions {
     limit?: number
     shouldUseMultipart?: boolean | ((file: UppyFile) => boolean)
     retryDelays?: number[] | null
+    getUploadParameters?: (
+      file: UppyFile
+    ) => MaybePromise<{ url: string }>
 }
 
 declare class AwsS3Multipart extends BasePlugin<

@@ -300,8 +300,10 @@ export default class Tus extends UploaderPlugin {
             }
             this.requests.rateLimit(next.value)
           }
-        } else if (status > 400 && status < 500 && status !== 409) {
+        } else if (status > 400 && status < 500 && status !== 409 && status !== 423) {
           // HTTP 4xx, the server won't send anything, it's doesn't make sense to retry
+          // HTTP 409 Conflict (happens if the Upload-Offset header does not match the one on the server)
+          // HTTP 423 Locked (happens when a paused download is resumed too quickly)
           return false
         } else if (typeof navigator !== 'undefined' && navigator.onLine === false) {
           // The navigator is offline, let's wait for it to come back online.

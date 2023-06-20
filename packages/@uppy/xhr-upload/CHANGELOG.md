@@ -1,5 +1,14 @@
 # @uppy/xhr-upload
 
+## 3.3.0
+
+Released: 2023-06-19
+Included in: Uppy v3.10.0
+
+- @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/tus,@uppy/utils,@uppy/xhr-upload: When file is removed (or all are canceled), controller.abort queued requests (Artur Paikin / #4504)
+- @uppy/aws-s3-multipart,@uppy/tus,@uppy/xhr-upload: Don't close socket while upload is still in progress (Artur Paikin / #4479)
+- @uppy/xhr-upload: add support for arrays in metadata (Vasiliy Matyushin / #4431)
+
 ## 3.2.0
 
 Released: 2023-04-18

@@ -12,6 +12,56 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 3.10.0
+
+Released: 2023-06-19
+
+| Package                | Version | Package                | Version |
+| ---------------------- | ------- | ---------------------- | ------- |
+| @uppy/aws-s3           |   3.2.0 | @uppy/status-bar       |   3.2.0 |
+| @uppy/aws-s3-multipart |   3.4.0 | @uppy/transloadit      |   3.1.6 |
+| @uppy/companion        |   4.5.1 | @uppy/tus              |   3.1.1 |
+| @uppy/core             |   3.2.1 | @uppy/url              |   3.3.2 |
+| @uppy/dashboard        |   3.4.1 | @uppy/utils            |   5.4.0 |
+| @uppy/golden-retriever |   3.0.4 | @uppy/xhr-upload       |   3.3.0 |
+| @uppy/locales          |   3.2.2 | uppy                   |  3.10.0 |
+| @uppy/provider-views   |   3.3.1 |                        |         |
+
+- @uppy/aws-s3-multipart: fix the chunk size calculation (Antoine du Hamel / #4508)
+- @uppy/aws-s3: add `shouldUseMultipart` option (Antoine du Hamel / #4299)
+- @uppy/companion: switch from aws-sdk v2 to @aws-sdk/* (v3) (Scott Bessler / #4285)
+- @uppy/companion,@uppy/core,@uppy/dashboard,@uppy/golden-retriever,@uppy/status-bar,@uppy/utils: Migrate all lodash' per-method-packages usage to lodash. (LinusMain / #4274)
+- @uppy/core: Don't set late (throttled) progress event on a file that is 100% complete (Artur Paikin / #4507)
+- @uppy/companion: revert randomness from file names (Mikael Finstad / #4509)
+- @uppy/companion: Custom provider fixes (Mikael Finstad / #4498)
+- @uppy/transloadit: ensure `fields` is not nullish when there no uploaded files (Antoine du Hamel / #4487)
+- @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/tus,@uppy/utils,@uppy/xhr-upload: When file is removed (or all are canceled), controller.abort queued requests (Artur Paikin / #4504)
+- @uppy/provider-views: Fix range selection not resetting and computing correctly (Terence C / #4415)
+- meta: disallow use of `.only` in tests (Antoine du Hamel / #4494)
+- @uppy/companion: fix 500 when file name contains non-ASCII chars (Antoine du Hamel / #4493)
+- @uppy/locales: update `fr_FR.js` (Samuel De Backer / #4499)
+- @uppy/aws-s3-multipart,@uppy/tus,@uppy/xhr-upload: Don't close socket while upload is still in progress (Artur Paikin / #4479)
+- meta: bump `luxon` from 1.28.0 to 1.28.1 (dependabot[bot] / #4497)
+- @uppy/utils: rename `EventTracker` -> `EventManager` (Stephen Wooten / #4481)
+- meta: bump cookiejar from 2.1.3 to 2.1.4 (dependabot[bot] / #4496)
+- meta: make `pre-commit` use `corepack yarn` instead of `npm run` (Antoine du Hamel / #4495)
+- meta: bump ua-parser-js from 0.7.31 to 0.7.35 (dependabot[bot] / #4474)
+- meta: bump @sideway/formula from 3.0.0 to 3.0.1 (dependabot[bot] / #4473)
+- meta: bump http-cache-semantics from 4.1.0 to 4.1.1 (dependabot[bot] / #4472)
+- @uppy/companion: Use filename from content-disposition instead of relying on url, with fallback (Artur Paikin / #4489)
+- meta: bump `babel`, `esbuild`, and `vite` (dependabot[bot] / #4485)
+- @uppy/dashboard: include the old state when setting new (Artur Paikin / #4490)
+- @uppy/companion: fix companion implicitpath (Mikael Finstad / #4484)
+- @uppy/companion: fix undefined protocol and example page (Mikael Finstad / #4483)
+- meta: upgrade Cypress 12.9.0 -> 12.14.0 (Antoine du Hamel / #4491)
+- @uppy/core: remove `state` getter from types (Antoine du Hamel / #4477)
+- examples/php-xhr: Added filename sanitation and file size check before saving (neuronet77 / #4432)
+- examples/php-xhr: update PHP dependencies (dependabot[bot])
+- @uppy/xhr-upload: add support for arrays in metadata (Vasiliy Matyushin / #4431)
+- @uppy/status-bar: Filtered ETA (stduhpf / #4458)
+- @uppy/aws-s3-multipart: fix `getUploadParameters` option (Antoine du Hamel / #4465)
+
+
 ## 3.9.1
 
 Released: 2023-05-15

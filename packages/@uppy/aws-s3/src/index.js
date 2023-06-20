@@ -26,6 +26,7 @@
  */
 
 import UploaderPlugin from '@uppy/core/lib/UploaderPlugin.js'
+import AwsS3Multipart from '@uppy/aws-s3-multipart'
 import { RateLimitedQueue, internalRateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
 import { RequestClient, Provider } from '@uppy/companion-client'
 import { filterNonFailedFiles, filterFilesToEmitUploadStarted } from '@uppy/utils/lib/fileFilters'
@@ -112,6 +113,10 @@ export default class AwsS3 extends UploaderPlugin {
   #uploader
 
   constructor (uppy, opts) {
+    // Opt-in to using the multipart plugin, which is going to be the only S3 plugin as of the next semver.
+    if (opts?.shouldUseMultipart != null) {
+      return new AwsS3Multipart(uppy, opts)
+    }
     super(uppy, opts)
     this.type = 'uploader'
     this.id = this.opts.id || 'AwsS3'
@@ -124,6 +129,7 @@ export default class AwsS3 extends UploaderPlugin {
       limit: 0,
       allowedMetaFields: [], // have to opt in
       getUploadParameters: this.getUploadParameters.bind(this),
+      shouldUseMultipart: false,
       companionHeaders: {},
     }
 

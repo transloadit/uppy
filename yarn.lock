@@ -10464,6 +10464,7 @@ __metadata:
   resolution: "@uppy/aws-s3@workspace:packages/@uppy/aws-s3"
   dependencies:
     "@jest/globals": ^29.0.0
+    "@uppy/aws-s3-multipart": "workspace:^"
     "@uppy/companion-client": "workspace:^"
     "@uppy/utils": "workspace:^"
     "@uppy/xhr-upload": "workspace:^"
