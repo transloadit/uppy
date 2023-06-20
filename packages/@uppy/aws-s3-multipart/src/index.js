@@ -855,7 +855,11 @@ export default class AwsS3Multipart extends BasePlugin {
       return this.#uploadFile(file)
     })
 
-    return Promise.all(promises)
+    const upload = await Promise.all(promises)
+    // After the upload is done, another upload may happen with only local files.
+    // We reset the capability so that the next upload can use resumable uploads.
+    this.#setResumableUploadsCapability(true)
+    return upload
   }
 
   #setCompanionHeaders = () => {
