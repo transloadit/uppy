@@ -926,15 +926,20 @@ export default class AwsS3Multipart extends BasePlugin {
     })
   }
 
+  #resetResumableCapability = () => {
+    this.#setResumableUploadsCapability(true)
+  }
+
   install () {
     this.#setResumableUploadsCapability(true)
     this.uppy.addPreProcessor(this.#setCompanionHeaders)
     this.uppy.addUploader(this.#upload)
+    this.uppy.on('cancel-all', this.#resetResumableCapability)
   }
 
   uninstall () {
-    this.#setResumableUploadsCapability(false)
     this.uppy.removePreProcessor(this.#setCompanionHeaders)
     this.uppy.removeUploader(this.#upload)
+    this.uppy.off('cancel-all', this.#resetResumableCapability)
   }
 }
