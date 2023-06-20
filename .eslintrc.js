@@ -32,6 +32,7 @@ module.exports = {
     // extra:
     'compat',
     'jsdoc',
+    'no-only-tests',
     'unicorn',
   ],
   parser: '@babel/eslint-parser',
@@ -496,7 +497,12 @@ module.exports = {
     },
     {
       files: ['e2e/**/*.ts', 'e2e/**/*.js', 'e2e/**/*.jsx', 'e2e/**/*.mjs'],
-      rules: { 'import/no-extraneous-dependencies': 'off', 'no-unused-expressions': 'off', 'no-console': 'off' },
+      rules: {
+        'import/no-extraneous-dependencies': 'off',
+        'no-console': 'off',
+        'no-only-tests/no-only-tests': 'error',
+        'no-unused-expressions': 'off',
+      },
     },
   ],
 }

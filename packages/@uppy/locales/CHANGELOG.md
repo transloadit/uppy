@@ -1,5 +1,12 @@
 # @uppy/locales
 
+## 3.2.2
+
+Released: 2023-06-19
+Included in: Uppy v3.10.0
+
+- @uppy/locales: update `fr_FR.js` (Samuel De Backer / #4499)
+
 ## 3.2.0
 
 Released: 2023-04-18

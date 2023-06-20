@@ -1,4 +1,14 @@
 const express = require('express')
+const {
+  CreateMultipartUploadCommand,
+  ListPartsCommand,
+  UploadPartCommand,
+  AbortMultipartUploadCommand,
+  CompleteMultipartUploadCommand,
+} = require('@aws-sdk/client-s3')
+
+const { createPresignedPost } = require('@aws-sdk/s3-presigned-post')
+const { getSignedUrl } = require('@aws-sdk/s3-request-presigner')
 
 function rfc2047Encode (data) {
   // eslint-disable-next-line no-param-reassign
@@ -32,7 +42,9 @@ module.exports = function s3 (config) {
    *  - fields - Form fields to send along.
    */
   function getUploadParameters (req, res, next) {
-    // @ts-ignore The `companion` property is added by middleware before reaching here.
+    /**
+     * @type {import('@aws-sdk/client-s3').S3Client}
+     */
     const client = req.companion.s3Client
 
     if (!client || typeof config.bucket !== 'string') {
@@ -48,7 +60,6 @@ module.exports = function s3 (config) {
     }
 
     const fields = {
-      key,
       success_action_status: '201',
       'content-type': req.query.type,
     }
@@ -59,23 +70,20 @@ module.exports = function s3 (config) {
       fields[`x-amz-meta-${metadataKey}`] = metadata[metadataKey]
     })
 
-    client.createPresignedPost({
+    createPresignedPost(client, {
       Bucket: config.bucket,
       Expires: config.expires,
       Fields: fields,
       Conditions: config.conditions,
-    }, (err, data) => {
-      if (err) {
-        next(err)
-        return
-      }
+      Key: key,
+    }).then(data => {
       res.json({
         method: 'post',
         url: data.url,
         fields: data.fields,
         expires: config.expires,
       })
-    })
+    }, next)
   }
 
   /**
@@ -93,7 +101,9 @@ module.exports = function s3 (config) {
    *  - uploadId - The ID of this multipart upload, to be used in later requests.
    */
   function createMultipartUpload (req, res, next) {
-    // @ts-ignore The `companion` property is added by middleware before reaching here.
+    /**
+     * @type {import('@aws-sdk/client-s3').S3Client}
+     */
     const client = req.companion.s3Client
     const key = config.getKey(req, req.body.filename, req.body.metadata || {})
     const { type, metadata } = req.body
@@ -115,16 +125,12 @@ module.exports = function s3 (config) {
 
     if (config.acl != null) params.ACL = config.acl
 
-    client.createMultipartUpload(params, (err, data) => {
-      if (err) {
-        next(err)
-        return
-      }
+    client.send(new CreateMultipartUploadCommand(params)).then((data) => {
       res.json({
         key: data.Key,
         uploadId: data.UploadId,
       })
-    })
+    }, next)
   }
 
   /**
@@ -141,7 +147,9 @@ module.exports = function s3 (config) {
    *     - Size - size of this part.
    */
   function getUploadedParts (req, res, next) {
-    // @ts-ignore The `companion` property is added by middleware before reaching here.
+    /**
+     * @type {import('@aws-sdk/client-s3').S3Client}
+     */
     const client = req.companion.s3Client
     const { uploadId } = req.params
     const { key } = req.query
@@ -154,17 +162,12 @@ module.exports = function s3 (config) {
     let parts = []
 
     function listPartsPage (startAt) {
-      client.listParts({
+      client.send(new ListPartsCommand({
         Bucket: config.bucket,
         Key: key,
         UploadId: uploadId,
         PartNumberMarker: startAt,
-      }, (err, data) => {
-        if (err) {
-          next(err)
-          return
-        }
-
+      })).then(data => {
         parts = parts.concat(data.Parts)
 
         if (data.IsTruncated) {
@@ -173,7 +176,7 @@ module.exports = function s3 (config) {
         } else {
           res.json(parts)
         }
-      })
+      }, next)
     }
     listPartsPage(0)
   }
@@ -190,7 +193,9 @@ module.exports = function s3 (config) {
    *  - url - The URL to upload to, including signed query parameters.
    */
   function signPartUpload (req, res, next) {
-    // @ts-ignore The `companion` property is added by middleware before reaching here.
+    /**
+     * @type {import('@aws-sdk/client-s3').S3Client}
+     */
     const client = req.companion.s3Client
     const { uploadId, partNumber } = req.params
     const { key } = req.query
@@ -204,20 +209,15 @@ module.exports = function s3 (config) {
       return
     }
 
-    client.getSignedUrl('uploadPart', {
+    getSignedUrl(client, new UploadPartCommand({
       Bucket: config.bucket,
       Key: key,
       UploadId: uploadId,
       PartNumber: partNumber,
       Body: '',
-      Expires: config.expires,
-    }, (err, url) => {
-      if (err) {
-        next(err)
-        return
-      }
+    }), { expiresIn: config.expires }).then(url => {
       res.json({ url, expires: config.expires })
-    })
+    }, next)
   }
 
   /**
@@ -234,7 +234,9 @@ module.exports = function s3 (config) {
    *                    in an object mapped to part numbers.
    */
   function batchSignPartsUpload (req, res, next) {
-    // @ts-ignore The `companion` property is added by middleware before reaching here.
+    /**
+     * @type {import('@aws-sdk/client-s3').S3Client}
+     */
     const client = req.companion.s3Client
     const { uploadId } = req.params
     const { key, partNumbers } = req.query
@@ -257,14 +259,13 @@ module.exports = function s3 (config) {
 
     Promise.all(
       partNumbersArray.map((partNumber) => {
-        return client.getSignedUrlPromise('uploadPart', {
+        return getSignedUrl(client, new UploadPartCommand({
           Bucket: config.bucket,
           Key: key,
           UploadId: uploadId,
-          PartNumber: partNumber,
+          PartNumber: Number(partNumber),
           Body: '',
-          Expires: config.expires,
-        })
+        }), { expiresIn: config.expires })
       }),
     ).then((urls) => {
       const presignedUrls = Object.create(null)
@@ -272,9 +273,7 @@ module.exports = function s3 (config) {
         presignedUrls[partNumbersArray[index]] = urls[index]
       }
       res.json({ presignedUrls })
-    }).catch((err) => {
-      next(err)
-    })
+    }).catch(next)
   }
 
   /**
@@ -288,7 +287,9 @@ module.exports = function s3 (config) {
    *   Empty.
    */
   function abortMultipartUpload (req, res, next) {
-    // @ts-ignore The `companion` property is added by middleware before reaching here.
+    /**
+     * @type {import('@aws-sdk/client-s3').S3Client}
+     */
     const client = req.companion.s3Client
     const { uploadId } = req.params
     const { key } = req.query
@@ -298,17 +299,11 @@ module.exports = function s3 (config) {
       return
     }
 
-    client.abortMultipartUpload({
+    client.send(new AbortMultipartUploadCommand({
       Bucket: config.bucket,
       Key: key,
       UploadId: uploadId,
-    }, (err) => {
-      if (err) {
-        next(err)
-        return
-      }
-      res.json({})
-    })
+    })).then(() => res.json({}), next)
   }
 
   /**
@@ -324,7 +319,9 @@ module.exports = function s3 (config) {
    *  - location - The full URL to the object in the S3 bucket.
    */
   function completeMultipartUpload (req, res, next) {
-    // @ts-ignore The `companion` property is added by middleware before reaching here.
+    /**
+     * @type {import('@aws-sdk/client-s3').S3Client}
+     */
     const client = req.companion.s3Client
     const { uploadId } = req.params
     const { key } = req.query
@@ -342,22 +339,18 @@ module.exports = function s3 (config) {
       return
     }
 
-    client.completeMultipartUpload({
+    client.send(new CompleteMultipartUploadCommand({
       Bucket: config.bucket,
       Key: key,
       UploadId: uploadId,
       MultipartUpload: {
         Parts: parts,
       },
-    }, (err, data) => {
-      if (err) {
-        next(err)
-        return
-      }
+    })).then(data => {
       res.json({
         location: data.Location,
       })
-    })
+    }, next)
   }
 
   return express.Router()

@@ -660,7 +660,7 @@ export default class AwsS3Multipart extends BasePlugin {
     })
   }
 
-  #requestSocketToken = async (file) => {
+  #requestSocketToken = async (file, options) => {
     const Client = file.remote.providerOptions.provider ? Provider : RequestClient
     const client = new Client(this.uppy, file.remote.providerOptions)
     const opts = { ...this.opts }
@@ -679,29 +679,33 @@ export default class AwsS3Multipart extends BasePlugin {
       protocol: 's3-multipart',
       size: file.data.size,
       metadata: file.meta,
-    })
+    }, options)
     return res.token
   }
 
   // NOTE! Keep this duplicated code in sync with other plugins
   // TODO we should probably abstract this into a common function
-  async #uploadRemote (file) {
+  async #uploadRemote (file, options) {
     this.resetUploaderReferences(file.id)
 
     try {
       if (file.serverToken) {
         return await this.connectToServerSocket(file)
       }
-      const serverToken = await this.#queueRequestSocketToken(file)
+      const serverToken = await this.#queueRequestSocketToken(file, options).abortOn(options?.signal)
 
       if (!this.uppy.getState().files[file.id]) return undefined
 
       this.uppy.setFileState(file.id, { serverToken })
       return await this.connectToServerSocket(this.uppy.getFile(file.id))
     } catch (err) {
-      this.uppy.setFileState(file.id, { serverToken: undefined })
-      this.uppy.emit('upload-error', file, err)
-      throw err
+      if (err?.cause?.name !== 'AbortError') {
+        this.uppy.setFileState(file.id, { serverToken: undefined })
+        this.uppy.emit('upload-error', file, err)
+        throw err
+      }
+      // The file upload was aborted, it’s not an error
+      return undefined
     }
   }
 
@@ -832,7 +836,21 @@ export default class AwsS3Multipart extends BasePlugin {
     const promises = filesFiltered.map((file) => {
       if (file.isRemote) {
         this.#setResumableUploadsCapability(false)
-        return this.#uploadRemote(file)
+        const controller = new AbortController()
+
+        const removedHandler = (removedFile) => {
+          if (removedFile.id === file.id) controller.abort()
+        }
+
+        this.uppy.on('file-removed', removedHandler)
+
+        const uploadPromise = this.#uploadRemote(file, { signal: controller.signal })
+
+        this.requests.wrapSyncFunction(() => {
+          this.uppy.off('file-removed', removedHandler)
+        }, { priority: -1 })()
+
+        return uploadPromise
       }
       return this.#uploadFile(file)
     })
@@ -912,8 +930,6 @@ export default class AwsS3Multipart extends BasePlugin {
   }
 
   uninstall () {
-    this.#setResumableUploadsCapability(false)
-
     this.uppy.removePreProcessor(this.#setCompanionHeaders)
     this.uppy.removeUploader(this.#upload)
   }

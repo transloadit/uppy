@@ -6,7 +6,6 @@ const dns = require('node:dns')
 const ipaddr = require('ipaddr.js')
 const got = require('got').default
 const path = require('node:path')
-const { randomUUID } = require('node:crypto')
 const contentDisposition = require('content-disposition')
 
 const logger = require('../logger')
@@ -139,7 +138,7 @@ exports.getURLMeta = async (url, blockLocalIPs = false) => {
           // we add random string to avoid duplicate files
           const filename = response.headers['content-disposition']
             ? contentDisposition.parse(response.headers['content-disposition']).parameters.filename
-            : `${path.basename(response.request.requestUrl)}-${randomUUID()}`
+            : path.basename(response.request.requestUrl)
 
           // No need to get the rest of the response, as we only want header (not really relevant for HEAD, but why not)
           stream.destroy()

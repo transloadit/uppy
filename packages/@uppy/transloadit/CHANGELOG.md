@@ -1,5 +1,12 @@
 # @uppy/transloadit
 
+## 3.1.6
+
+Released: 2023-06-19
+Included in: Uppy v3.10.0
+
+- @uppy/transloadit: ensure `fields` is not nullish when there no uploaded files (Antoine du Hamel / #4487)
+
 ## 3.1.5
 
 Released: 2023-05-15

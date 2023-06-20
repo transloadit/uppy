@@ -8,7 +8,9 @@ const { join } = require('node:path')
 const fs = require('node:fs')
 const { promisify } = require('node:util')
 const FormData = require('form-data')
-const throttle = require('lodash.throttle')
+const throttle = require('lodash/throttle')
+
+const { Upload } = require('@aws-sdk/lib-storage')
 
 // TODO move to `require('streams/promises').pipeline` when dropping support for Node.js 14.x.
 const pipeline = promisify(pipelineCb)
@@ -642,7 +644,11 @@ class Uploader {
     }
 
     const filename = this.uploadFileName
-    const { client, options } = this.options.s3
+    /**
+     * @type {{client: import('@aws-sdk/client-s3').S3Client, options: Record<string, any>}}
+     */
+    const s3Options = this.options.s3
+    const { client, options } = s3Options
 
     const params = {
       Bucket: options.bucket,
@@ -654,35 +660,31 @@ class Uploader {
 
     if (options.acl != null) params.ACL = options.acl
 
-    const upload = client.upload(params, {
+    const upload = new Upload({
+      client,
+      params,
       // using chunkSize as partSize too, see https://github.com/transloadit/uppy/pull/3511
       partSize: this.options.chunkSize,
+      leavePartsOnError: true, // https://github.com/aws/aws-sdk-js-v3/issues/2311
     })
 
     upload.on('httpUploadProgress', ({ loaded, total }) => {
       this.onProgress(loaded, total)
     })
 
-    return new Promise((resolve, reject) => {
-      upload.send((error, data) => {
-        if (error) {
-          reject(error)
-          return
-        }
-
-        resolve({
-          url: data && data.Location ? data.Location : null,
-          extraData: {
-            response: {
-              responseText: JSON.stringify(data),
-              headers: {
-                'content-type': 'application/json',
-              },
-            },
+    const data = await upload.done()
+    return {
+      // @ts-expect-error For some reason `|| null` is not enough for TS
+      url: data?.Location || null,
+      extraData: {
+        response: {
+          responseText: JSON.stringify(data),
+          headers: {
+            'content-type': 'application/json',
           },
-        })
-      })
-    })
+        },
+      },
+    }
   }
 }
 
