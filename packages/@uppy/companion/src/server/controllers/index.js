@@ -1,3 +1,4 @@
+/* eslint-disable global-require */
 module.exports = {
   callback: require('./callback'),
   deauthorizationCallback: require('./deauth-callback'),

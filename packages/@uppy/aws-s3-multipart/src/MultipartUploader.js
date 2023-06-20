@@ -43,7 +43,13 @@ class MultipartUploader {
 
   #onSuccess
 
+  #shouldUseMultipart
+
   #onReject = (err) => (err?.cause === pausingUploadReason ? null : this.#onError(err))
+
+  #maxMultipartParts = 10_000
+
+  #minPartSize = 5 * MB
 
   constructor (data, options) {
     this.options = {
@@ -57,33 +63,56 @@ class MultipartUploader {
     this.#file = options.file
     this.#onSuccess = this.options.onSuccess
     this.#onError = this.options.onError
+    this.#shouldUseMultipart = this.options.shouldUseMultipart
 
     this.#initChunks()
   }
 
+  // initChunks checks the user preference for using multipart uploads (opts.shouldUseMultipart)
+  // and calculates the optimal part size. When using multipart part uploads every part except for the last has
+  // to be at least 5 MB and there can be no more than 10K parts.
+  // This means we sometimes need to change the preferred part size from the user in order to meet these requirements.
   #initChunks () {
-    const desiredChunkSize = this.options.getChunkSize(this.#data)
-    // at least 5MB per request, at most 10k requests
     const fileSize = this.#data.size
-    const minChunkSize = Math.max(5 * MB, Math.ceil(fileSize / 10000))
-    const chunkSize = Math.max(desiredChunkSize, minChunkSize)
+    const shouldUseMultipart = typeof this.#shouldUseMultipart === 'function'
+      ? this.#shouldUseMultipart(this.#file)
+      : Boolean(this.#shouldUseMultipart)
 
-    // Upload zero-sized files in one zero-sized chunk
-    if (this.#data.size === 0) {
-      this.#chunks = [this.#data]
-      this.#data.onProgress = this.#onPartProgress(0)
-      this.#data.onComplete = this.#onPartComplete(0)
-    } else {
-      const arraySize = Math.ceil(fileSize / chunkSize)
-      this.#chunks = Array(arraySize)
-      let j = 0
-      for (let i = 0; i < fileSize; i += chunkSize) {
-        const end = Math.min(fileSize, i + chunkSize)
-        const chunk = this.#data.slice(i, end)
-        chunk.onProgress = this.#onPartProgress(j)
-        chunk.onComplete = this.#onPartComplete(j)
-        this.#chunks[j++] = chunk
+    if (shouldUseMultipart && fileSize > this.#minPartSize) {
+      // At least 5MB per request:
+      let chunkSize = Math.max(this.options.getChunkSize(this.#data), this.#minPartSize)
+      let arraySize = Math.floor(fileSize / chunkSize)
+
+      // At most 10k requests per file:
+      if (arraySize > this.#maxMultipartParts) {
+        arraySize = this.#maxMultipartParts
+        chunkSize = fileSize / this.#maxMultipartParts
       }
+      this.#chunks = Array(arraySize)
+
+      for (let i = 0, j = 0; i < fileSize; i += chunkSize, j++) {
+        const end = Math.min(fileSize, i + chunkSize)
+
+        // Defer data fetching/slicing until we actually need the data, because it's slow if we have a lot of files
+        const getData = () => {
+          const i2 = i
+          return this.#data.slice(i2, end)
+        }
+
+        this.#chunks[j] = {
+          getData,
+          onProgress: this.#onPartProgress(j),
+          onComplete: this.#onPartComplete(j),
+          shouldUseMultipart,
+        }
+      }
+    } else {
+      this.#chunks = [{
+        getData: () => this.#data,
+        onProgress: this.#onPartProgress(0),
+        onComplete: this.#onPartComplete(0),
+        shouldUseMultipart,
+      }]
     }
 
     this.#chunkState = this.#chunks.map(() => ({ uploaded: 0 }))
@@ -104,8 +133,7 @@ class MultipartUploader {
   #onPartProgress = (index) => (ev) => {
     if (!ev.lengthComputable) return
 
-    const sent = ev.loaded
-    this.#chunkState[index].uploaded = ensureInt(sent)
+    this.#chunkState[index].uploaded = ensureInt(ev.loaded)
 
     const totalUploaded = this.#chunkState.reduce((n, c) => n + c.uploaded, 0)
     this.options.onProgress(totalUploaded, this.#data.size)

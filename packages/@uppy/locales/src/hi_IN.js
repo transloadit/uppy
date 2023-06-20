@@ -185,7 +185,7 @@ hi_IN.strings = {
   zoomOut: 'ज़ूम आउट',
 }
 
-hi_IN.pluralize = function (count) {
+hi_IN.pluralize = (count) => {
   if (count === 1) {
     return 0
   }

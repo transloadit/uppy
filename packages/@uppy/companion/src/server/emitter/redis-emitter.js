@@ -37,6 +37,29 @@ module.exports = (redisUrl, redisPubSubScope) => {
     }
   }
 
+  /**
+   * Remove an event listener
+   *
+   * @param {string} eventName name of the event
+   * @param {any} handler the handler of the event to remove
+   */
+  function removeListener (eventName, handler) {
+    if (eventName === 'error') return errorEmitter.removeListener('error', handler)
+
+    return runWhenConnected(() => {
+      const handlersByThisEventName = handlersByEvent.get(eventName)
+      if (handlersByThisEventName == null) return undefined
+
+      const actualHandler = handlersByThisEventName.get(handler)
+      if (actualHandler == null) return undefined
+
+      handlersByThisEventName.delete(handler)
+      if (handlersByThisEventName.size === 0) handlersByEvent.delete(eventName)
+
+      return subscriber.pUnsubscribe(getPrefixedEventName(eventName), actualHandler)
+    })
+  }
+
   function addListener (eventName, handler, _once = false) {
     function actualHandler (message) {
       if (_once) removeListener(eventName, handler)
@@ -90,29 +113,6 @@ module.exports = (redisUrl, redisPubSubScope) => {
    */
   function emit (eventName, ...args) {
     runWhenConnected(() => publisher.publish(getPrefixedEventName(eventName), JSON.stringify(args)))
-  }
-
-  /**
-   * Remove an event listener
-   *
-   * @param {string} eventName name of the event
-   * @param {any} handler the handler of the event to remove
-   */
-  function removeListener (eventName, handler) {
-    if (eventName === 'error') return errorEmitter.removeListener('error', handler)
-
-    return runWhenConnected(() => {
-      const handlersByThisEventName = handlersByEvent.get(eventName)
-      if (handlersByThisEventName == null) return undefined
-
-      const actualHandler = handlersByThisEventName.get(handler)
-      if (actualHandler == null) return undefined
-
-      handlersByThisEventName.delete(handler)
-      if (handlersByThisEventName.size === 0) handlersByEvent.delete(eventName)
-
-      return subscriber.pUnsubscribe(getPrefixedEventName(eventName), actualHandler)
-    })
   }
 
   /**

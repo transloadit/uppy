@@ -1,4 +1,22 @@
 const express = require('express')
+const {
+  CreateMultipartUploadCommand,
+  ListPartsCommand,
+  UploadPartCommand,
+  AbortMultipartUploadCommand,
+  CompleteMultipartUploadCommand,
+} = require('@aws-sdk/client-s3')
+
+const { createPresignedPost } = require('@aws-sdk/s3-presigned-post')
+const { getSignedUrl } = require('@aws-sdk/s3-request-presigner')
+
+function rfc2047Encode (data) {
+  // eslint-disable-next-line no-param-reassign
+  data = `${data}`
+  // eslint-disable-next-line no-control-regex
+  if (/^[\x00-\x7F]*$/.test(data)) return data // we return ASCII as is
+  return `=?UTF-8?B?${Buffer.from(data).toString('base64')}?=` // We encode non-ASCII strings
+}
 
 module.exports = function s3 (config) {
   if (typeof config.acl !== 'string' && config.acl != null) {
@@ -24,48 +42,48 @@ module.exports = function s3 (config) {
    *  - fields - Form fields to send along.
    */
   function getUploadParameters (req, res, next) {
-    // @ts-ignore The `companion` property is added by middleware before reaching here.
+    /**
+     * @type {import('@aws-sdk/client-s3').S3Client}
+     */
     const client = req.companion.s3Client
 
     if (!client || typeof config.bucket !== 'string') {
-      return res.status(400).json({ error: 'This Companion server does not support uploading to S3' })
+      res.status(400).json({ error: 'This Companion server does not support uploading to S3' })
+      return
     }
 
     const metadata = req.query.metadata || {}
     const key = config.getKey(req, req.query.filename, metadata)
     if (typeof key !== 'string') {
-      return res.status(500).json({ error: 'S3 uploads are misconfigured: filename returned from `getKey` must be a string' })
+      res.status(500).json({ error: 'S3 uploads are misconfigured: filename returned from `getKey` must be a string' })
+      return
     }
 
     const fields = {
-      key,
       success_action_status: '201',
       'content-type': req.query.type,
     }
 
     if (config.acl != null) fields.acl = config.acl
 
-    Object.keys(metadata).forEach((key) => {
-      fields[`x-amz-meta-${key}`] = metadata[key]
+    Object.keys(metadata).forEach((metadataKey) => {
+      fields[`x-amz-meta-${metadataKey}`] = metadata[metadataKey]
     })
 
-    client.createPresignedPost({
+    createPresignedPost(client, {
       Bucket: config.bucket,
       Expires: config.expires,
       Fields: fields,
       Conditions: config.conditions,
-    }, (err, data) => {
-      if (err) {
-        next(err)
-        return
-      }
+      Key: key,
+    }).then(data => {
       res.json({
         method: 'post',
         url: data.url,
         fields: data.fields,
         expires: config.expires,
       })
-    })
+    }, next)
   }
 
   /**
@@ -83,36 +101,36 @@ module.exports = function s3 (config) {
    *  - uploadId - The ID of this multipart upload, to be used in later requests.
    */
   function createMultipartUpload (req, res, next) {
-    // @ts-ignore The `companion` property is added by middleware before reaching here.
+    /**
+     * @type {import('@aws-sdk/client-s3').S3Client}
+     */
     const client = req.companion.s3Client
     const key = config.getKey(req, req.body.filename, req.body.metadata || {})
     const { type, metadata } = req.body
     if (typeof key !== 'string') {
-      return res.status(500).json({ error: 's3: filename returned from `getKey` must be a string' })
+      res.status(500).json({ error: 's3: filename returned from `getKey` must be a string' })
+      return
     }
     if (typeof type !== 'string') {
-      return res.status(400).json({ error: 's3: content type must be a string' })
+      res.status(400).json({ error: 's3: content type must be a string' })
+      return
     }
 
     const params = {
       Bucket: config.bucket,
       Key: key,
       ContentType: type,
-      Metadata: metadata,
+      Metadata: Object.fromEntries(Object.entries(metadata).map(entry => entry.map(rfc2047Encode))),
     }
 
     if (config.acl != null) params.ACL = config.acl
 
-    client.createMultipartUpload(params, (err, data) => {
-      if (err) {
-        next(err)
-        return
-      }
+    client.send(new CreateMultipartUploadCommand(params)).then((data) => {
       res.json({
         key: data.Key,
         uploadId: data.UploadId,
       })
-    })
+    }, next)
   }
 
   /**
@@ -129,44 +147,38 @@ module.exports = function s3 (config) {
    *     - Size - size of this part.
    */
   function getUploadedParts (req, res, next) {
-    // @ts-ignore The `companion` property is added by middleware before reaching here.
+    /**
+     * @type {import('@aws-sdk/client-s3').S3Client}
+     */
     const client = req.companion.s3Client
     const { uploadId } = req.params
     const { key } = req.query
 
     if (typeof key !== 'string') {
-      return res.status(400).json({ error: 's3: the object key must be passed as a query parameter. For example: "?key=abc.jpg"' })
+      res.status(400).json({ error: 's3: the object key must be passed as a query parameter. For example: "?key=abc.jpg"' })
+      return
     }
 
     let parts = []
-    listPartsPage(0)
 
     function listPartsPage (startAt) {
-      client.listParts({
+      client.send(new ListPartsCommand({
         Bucket: config.bucket,
         Key: key,
         UploadId: uploadId,
         PartNumberMarker: startAt,
-      }, (err, data) => {
-        if (err) {
-          next(err)
-          return
-        }
-
+      })).then(data => {
         parts = parts.concat(data.Parts)
 
         if (data.IsTruncated) {
           // Get the next page.
           listPartsPage(data.NextPartNumberMarker)
         } else {
-          done()
+          res.json(parts)
         }
-      })
+      }, next)
     }
-
-    function done () {
-      res.json(parts)
-    }
+    listPartsPage(0)
   }
 
   /**
@@ -181,32 +193,31 @@ module.exports = function s3 (config) {
    *  - url - The URL to upload to, including signed query parameters.
    */
   function signPartUpload (req, res, next) {
-    // @ts-ignore The `companion` property is added by middleware before reaching here.
+    /**
+     * @type {import('@aws-sdk/client-s3').S3Client}
+     */
     const client = req.companion.s3Client
     const { uploadId, partNumber } = req.params
     const { key } = req.query
 
     if (typeof key !== 'string') {
-      return res.status(400).json({ error: 's3: the object key must be passed as a query parameter. For example: "?key=abc.jpg"' })
+      res.status(400).json({ error: 's3: the object key must be passed as a query parameter. For example: "?key=abc.jpg"' })
+      return
     }
     if (!parseInt(partNumber, 10)) {
-      return res.status(400).json({ error: 's3: the part number must be a number between 1 and 10000.' })
+      res.status(400).json({ error: 's3: the part number must be a number between 1 and 10000.' })
+      return
     }
 
-    client.getSignedUrl('uploadPart', {
+    getSignedUrl(client, new UploadPartCommand({
       Bucket: config.bucket,
       Key: key,
       UploadId: uploadId,
       PartNumber: partNumber,
       Body: '',
-      Expires: config.expires,
-    }, (err, url) => {
-      if (err) {
-        next(err)
-        return
-      }
+    }), { expiresIn: config.expires }).then(url => {
       res.json({ url, expires: config.expires })
-    })
+    }, next)
   }
 
   /**
@@ -223,36 +234,38 @@ module.exports = function s3 (config) {
    *                    in an object mapped to part numbers.
    */
   function batchSignPartsUpload (req, res, next) {
-    // @ts-ignore The `companion` property is added by middleware before reaching here.
+    /**
+     * @type {import('@aws-sdk/client-s3').S3Client}
+     */
     const client = req.companion.s3Client
     const { uploadId } = req.params
     const { key, partNumbers } = req.query
 
     if (typeof key !== 'string') {
-      return res.status(400).json({ error: 's3: the object key must be passed as a query parameter. For example: "?key=abc.jpg"' })
+      res.status(400).json({ error: 's3: the object key must be passed as a query parameter. For example: "?key=abc.jpg"' })
+      return
     }
 
     if (typeof partNumbers !== 'string') {
-      return res.status(400).json({ error: 's3: the part numbers must be passed as a comma separated query parameter. For example: "?partNumbers=4,6,7,21"' })
+      res.status(400).json({ error: 's3: the part numbers must be passed as a comma separated query parameter. For example: "?partNumbers=4,6,7,21"' })
+      return
     }
 
     const partNumbersArray = partNumbers.split(',')
-    partNumbersArray.forEach((partNumber) => {
-      if (!parseInt(partNumber, 10)) {
-        return res.status(400).json({ error: 's3: the part numbers must be a number between 1 and 10000.' })
-      }
-    })
+    if (!partNumbersArray.every((partNumber) => parseInt(partNumber, 10))) {
+      res.status(400).json({ error: 's3: the part numbers must be a number between 1 and 10000.' })
+      return
+    }
 
     Promise.all(
       partNumbersArray.map((partNumber) => {
-        return client.getSignedUrlPromise('uploadPart', {
+        return getSignedUrl(client, new UploadPartCommand({
           Bucket: config.bucket,
           Key: key,
           UploadId: uploadId,
-          PartNumber: partNumber,
+          PartNumber: Number(partNumber),
           Body: '',
-          Expires: config.expires,
-        })
+        }), { expiresIn: config.expires })
       }),
     ).then((urls) => {
       const presignedUrls = Object.create(null)
@@ -260,9 +273,7 @@ module.exports = function s3 (config) {
         presignedUrls[partNumbersArray[index]] = urls[index]
       }
       res.json({ presignedUrls })
-    }).catch((err) => {
-      next(err)
-    })
+    }).catch(next)
   }
 
   /**
@@ -276,26 +287,23 @@ module.exports = function s3 (config) {
    *   Empty.
    */
   function abortMultipartUpload (req, res, next) {
-    // @ts-ignore The `companion` property is added by middleware before reaching here.
+    /**
+     * @type {import('@aws-sdk/client-s3').S3Client}
+     */
     const client = req.companion.s3Client
     const { uploadId } = req.params
     const { key } = req.query
 
     if (typeof key !== 'string') {
-      return res.status(400).json({ error: 's3: the object key must be passed as a query parameter. For example: "?key=abc.jpg"' })
+      res.status(400).json({ error: 's3: the object key must be passed as a query parameter. For example: "?key=abc.jpg"' })
+      return
     }
 
-    client.abortMultipartUpload({
+    client.send(new AbortMultipartUploadCommand({
       Bucket: config.bucket,
       Key: key,
       UploadId: uploadId,
-    }, (err) => {
-      if (err) {
-        next(err)
-        return
-      }
-      res.json({})
-    })
+    })).then(() => res.json({}), next)
   }
 
   /**
@@ -311,35 +319,38 @@ module.exports = function s3 (config) {
    *  - location - The full URL to the object in the S3 bucket.
    */
   function completeMultipartUpload (req, res, next) {
-    // @ts-ignore The `companion` property is added by middleware before reaching here.
+    /**
+     * @type {import('@aws-sdk/client-s3').S3Client}
+     */
     const client = req.companion.s3Client
     const { uploadId } = req.params
     const { key } = req.query
     const { parts } = req.body
 
     if (typeof key !== 'string') {
-      return res.status(400).json({ error: 's3: the object key must be passed as a query parameter. For example: "?key=abc.jpg"' })
+      res.status(400).json({ error: 's3: the object key must be passed as a query parameter. For example: "?key=abc.jpg"' })
+      return
     }
-    if (!Array.isArray(parts) || !parts.every(isValidPart)) {
-      return res.status(400).json({ error: 's3: `parts` must be an array of {ETag, PartNumber} objects.' })
+    if (
+      !Array.isArray(parts)
+      || !parts.every(part => typeof part === 'object' && typeof part?.PartNumber === 'number' && typeof part.ETag === 'string')
+    ) {
+      res.status(400).json({ error: 's3: `parts` must be an array of {ETag, PartNumber} objects.' })
+      return
     }
 
-    client.completeMultipartUpload({
+    client.send(new CompleteMultipartUploadCommand({
       Bucket: config.bucket,
       Key: key,
       UploadId: uploadId,
       MultipartUpload: {
         Parts: parts,
       },
-    }, (err, data) => {
-      if (err) {
-        next(err)
-        return
-      }
+    })).then(data => {
       res.json({
         location: data.Location,
       })
-    })
+    }, next)
   }
 
   return express.Router()
@@ -351,8 +362,4 @@ module.exports = function s3 (config) {
     // limit 1mb because maybe large upload with a lot of parts, see https://github.com/transloadit/uppy/issues/1945
     .post('/multipart/:uploadId/complete', express.json({ limit: '1mb' }), completeMultipartUpload)
     .delete('/multipart/:uploadId', abortMultipartUpload)
-}
-
-function isValidPart (part) {
-  return part && typeof part === 'object' && typeof part.PartNumber === 'number' && typeof part.ETag === 'string'
 }

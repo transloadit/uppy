@@ -1,5 +1,12 @@
 # @uppy/golden-retriever
 
+## 3.0.4
+
+Released: 2023-06-19
+Included in: Uppy v3.10.0
+
+- @uppy/companion,@uppy/core,@uppy/dashboard,@uppy/golden-retriever,@uppy/status-bar,@uppy/utils: Migrate all lodash' per-method-packages usage to lodash. (LinusMain / #4274)
+
 ## 3.0.2
 
 Released: 2022-10-19

@@ -43,7 +43,11 @@ export interface AwsS3MultipartOptions extends PluginOptions {
       opts: { uploadId: string; key: string; parts: AwsS3Part[]; signal: AbortSignal }
     ) => MaybePromise<{ location?: string }>
     limit?: number
+    shouldUseMultipart?: boolean | ((file: UppyFile) => boolean)
     retryDelays?: number[] | null
+    getUploadParameters?: (
+      file: UppyFile
+    ) => MaybePromise<{ url: string }>
 }
 
 declare class AwsS3Multipart extends BasePlugin<

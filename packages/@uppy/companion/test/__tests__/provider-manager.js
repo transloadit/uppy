@@ -1,5 +1,3 @@
-/* global test:false, expect:false, describe:false, beforeEach:false */
-
 const providerManager = require('../../src/server/provider')
 const { getCompanionOptions } = require('../../src/standalone/helper')
 const { setDefaultEnv } = require('../mockserver')
@@ -10,6 +8,7 @@ let companionOptions
 describe('Test Provider options', () => {
   beforeEach(() => {
     setDefaultEnv()
+    // eslint-disable-next-line global-require
     grantConfig = require('../../src/config/grant')()
     companionOptions = getCompanionOptions()
   })

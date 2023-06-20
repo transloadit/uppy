@@ -1,5 +1,14 @@
 # @uppy/utils
 
+## 5.4.0
+
+Released: 2023-06-19
+Included in: Uppy v3.10.0
+
+- @uppy/companion,@uppy/core,@uppy/dashboard,@uppy/golden-retriever,@uppy/status-bar,@uppy/utils: Migrate all lodash' per-method-packages usage to lodash. (LinusMain / #4274)
+- @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/tus,@uppy/utils,@uppy/xhr-upload: When file is removed (or all are canceled), controller.abort queued requests (Artur Paikin / #4504)
+- @uppy/utils: rename `EventTracker` -> `EventManager` (Stephen Wooten / #4481)
+
 ## 5.1.3
 
 Released: 2023-03-07

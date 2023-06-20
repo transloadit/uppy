@@ -1,7 +1,7 @@
 import { h } from 'preact'
 import { useCallback } from 'preact/hooks'
 import classNames from 'classnames'
-import throttle from 'lodash.throttle'
+import throttle from 'lodash/throttle.js'
 import prettierBytes from '@transloadit/prettier-bytes'
 import prettyETA from '@uppy/utils/lib/prettyETA'
 
@@ -58,7 +58,7 @@ function RetryBtn (props) {
       type="button"
       className="uppy-u-reset uppy-c-btn uppy-StatusBar-actionBtn uppy-StatusBar-actionBtn--retry"
       aria-label={i18n('retryUpload')}
-      onClick={() => uppy.retryAll()}
+      onClick={() => uppy.retryAll().catch(() => { /* Error reported and handled via an event */ })}
       data-uppy-super-focusable
     >
       <svg

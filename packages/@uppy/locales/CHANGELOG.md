@@ -1,5 +1,27 @@
 # @uppy/locales
 
+## 3.2.2
+
+Released: 2023-06-19
+Included in: Uppy v3.10.0
+
+- @uppy/locales: update `fr_FR.js` (Samuel De Backer / #4499)
+
+## 3.2.0
+
+Released: 2023-04-18
+Included in: Uppy v3.8.0
+
+- @uppy/core,@uppy/locales,@uppy/provider-views: User feedback adding recursive folders take 2 (Mikael Finstad / #4399)
+
+## 3.1.0
+
+Released: 2023-04-04
+Included in: Uppy v3.7.0
+
+- @uppy/locales: locales: add es_MX (Kevin van Zonneveld / #4393)
+- @uppy/locales: locales: add hi_IN (Kevin van Zonneveld / #4391)
+
 ## 3.0.7
 
 Released: 2023-03-07

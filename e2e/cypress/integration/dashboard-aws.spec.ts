@@ -9,10 +9,8 @@ describe('Dashboard with @uppy/aws-s3', () => {
   it('should upload cat image successfully', () => {
     cy.get('@file-input').selectFile('cypress/fixtures/images/cat.jpg', { force:true })
 
-    cy.get('.uppy-StatusBar-actionBtn--upload').click().then(() => {
-      cy.wait(['@post', '@get']).then(() => {
-        cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Complete')
-      })
-    })
+    cy.get('.uppy-StatusBar-actionBtn--upload').click()
+    cy.wait(['@post', '@get'])
+    cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Complete')
   })
 })

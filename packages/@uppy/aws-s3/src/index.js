@@ -26,8 +26,10 @@
  */
 
 import BasePlugin from '@uppy/core/lib/BasePlugin.js'
+import AwsS3Multipart from '@uppy/aws-s3-multipart'
 import { RateLimitedQueue, internalRateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
 import { RequestClient } from '@uppy/companion-client'
+import { filterNonFailedFiles, filterFilesToEmitUploadStarted } from '@uppy/utils/lib/fileFilters'
 
 import packageJson from '../package.json'
 import MiniXHRUpload from './MiniXHRUpload.js'
@@ -100,6 +102,7 @@ function defaultGetResponseError (content, xhr) {
 // warning deduplication flag: see `getResponseData()` XHRUpload option definition
 let warnedSuccessActionStatus = false
 
+// TODO deprecate this, will use s3-multipart instead
 export default class AwsS3 extends BasePlugin {
   static VERSION = packageJson.version
 
@@ -110,6 +113,10 @@ export default class AwsS3 extends BasePlugin {
   #uploader
 
   constructor (uppy, opts) {
+    // Opt-in to using the multipart plugin, which is going to be the only S3 plugin as of the next semver.
+    if (opts?.shouldUseMultipart != null) {
+      return new AwsS3Multipart(uppy, opts)
+    }
     super(uppy, opts)
     this.type = 'uploader'
     this.id = this.opts.id || 'AwsS3'
@@ -122,6 +129,7 @@ export default class AwsS3 extends BasePlugin {
       limit: 0,
       allowedMetaFields: [], // have to opt in
       getUploadParameters: this.getUploadParameters.bind(this),
+      shouldUseMultipart: false,
       companionHeaders: {},
     }
 
@@ -163,7 +171,7 @@ export default class AwsS3 extends BasePlugin {
       .then(assertServerError)
   }
 
-  #handleUpload = (fileIDs) => {
+  #handleUpload = async (fileIDs) => {
     /**
      * keep track of `getUploadParameters()` responses
      * so we can cancel the calls individually using just a file ID
@@ -178,10 +186,11 @@ export default class AwsS3 extends BasePlugin {
     }
     this.uppy.on('file-removed', onremove)
 
-    fileIDs.forEach((id) => {
-      const file = this.uppy.getFile(id)
-      this.uppy.emit('upload-started', file)
-    })
+    const files = this.uppy.getFilesByIds(fileIDs)
+
+    const filesFiltered = filterNonFailedFiles(files)
+    const filesToEmit = filterFilesToEmitUploadStarted(filesFiltered)
+    this.uppy.emit('upload-start', filesToEmit)
 
     const getUploadParameters = this.#requests.wrapPromiseFunction((file) => {
       return this.opts.getUploadParameters(file)

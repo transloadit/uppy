@@ -1,5 +1,40 @@
 # @uppy/companion
 
+## 4.5.1
+
+Released: 2023-06-19
+Included in: Uppy v3.10.0
+
+- @uppy/companion: switch from aws-sdk v2 to @aws-sdk/* (v3) (Scott Bessler / #4285)
+- @uppy/companion,@uppy/core,@uppy/dashboard,@uppy/golden-retriever,@uppy/status-bar,@uppy/utils: Migrate all lodash' per-method-packages usage to lodash. (LinusMain / #4274)
+- @uppy/companion: revert randomness from file names (Mikael Finstad / #4509)
+- @uppy/companion: Custom provider fixes (Mikael Finstad / #4498)
+- @uppy/companion: fix 500 when file name contains non-ASCII chars (Antoine du Hamel / #4493)
+- @uppy/companion: Use filename from content-disposition instead of relying on url, with fallback (Artur Paikin / #4489)
+- @uppy/companion: fix companion implicitpath (Mikael Finstad / #4484)
+- @uppy/companion: fix undefined protocol and example page (Mikael Finstad / #4483)
+
+## 4.5.0
+
+Released: 2023-04-18
+Included in: Uppy v3.8.0
+
+- @uppy/companion: increase max limits for remote file list operations (Mikael Finstad / #4417)
+
+## 4.4.0
+
+Released: 2023-04-04
+Included in: Uppy v3.7.0
+
+- @uppy/companion: add `service: 'companion'` to periodic ping (Mikael Finstad / #4383)
+- @uppy/companion: add connection keep-alive to dropbox (Mikael Finstad / #4365)
+- @uppy/companion: add missing env variable for standalone option (Mikael Finstad / #4382)
+- @uppy/companion: add S3 prefix env variable (Mikael Finstad / #4320)
+- @uppy/companion: allow local ips when testing (Mikael Finstad / #4328)
+- @uppy/companion: fix typo in redis-emitter.js (Ikko Eltociear Ashimine / #4362)
+- @uppy/companion: merge Provider/SearchProvider (Mikael Finstad / #4330)
+- @uppy/companion: only body parse when needed & increased body size for s3 (Mikael Finstad / #4372)
+
 ## 4.3.0
 
 Released: 2023-02-13

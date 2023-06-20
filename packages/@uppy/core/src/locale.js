@@ -51,10 +51,12 @@ export default {
     search: 'Search',
     resetSearch: 'Reset search',
     emptyFolderAdded: 'No files were added from empty folder',
+    addedNumFiles: 'Added %{numFiles} file(s)',
     folderAlreadyAdded: 'The folder "%{folder}" was already added',
     folderAdded: {
       0: 'Added %{smart_count} file from %{folder}',
       1: 'Added %{smart_count} files from %{folder}',
     },
+    additionalRestrictionsFailed: '%{count} additional restrictions were not fulfilled',
   },
 }

@@ -1,5 +1,20 @@
 # @uppy/dashboard
 
+## 3.4.1
+
+Released: 2023-06-19
+Included in: Uppy v3.10.0
+
+- @uppy/companion,@uppy/core,@uppy/dashboard,@uppy/golden-retriever,@uppy/status-bar,@uppy/utils: Migrate all lodash' per-method-packages usage to lodash. (LinusMain / #4274)
+- @uppy/dashboard: include the old state when setting new (Artur Paikin / #4490)
+
+## 3.4.0
+
+Released: 2023-04-18
+Included in: Uppy v3.8.0
+
+- @uppy/dashboard: Single File Mode: fix layout and make optional (Artur Paikin / #4374)
+
 ## 3.3.1
 
 Released: 2023-03-07

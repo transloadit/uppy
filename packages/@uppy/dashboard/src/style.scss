@@ -939,8 +939,10 @@ a.uppy-Dashboard-poweredBy {
   }
 
   .uppy-Dashboard--singleFile & {
-    width: 90px;
-    height: 90px;
+    width: 100%;
+    height: 100%;
+    max-width: 60%;
+    max-height: 60%;
   }
 }
 
@@ -950,7 +952,8 @@ a.uppy-Dashboard-poweredBy {
   max-height: 75%;
 
   .uppy-Dashboard--singleFile & {
-    height: 176px;
+    width: 100%;
+    height: 100%;
   }
 }
 
