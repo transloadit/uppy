@@ -13,11 +13,29 @@
     <div id="aws-multipart"></div>
     <script type="module">
       import { Uppy, Dashboard, AwsS3Multipart, AwsS3 } from "https://releases.transloadit.com/uppy/v3.10.0/uppy.min.mjs"
+      function* serializeSubPart(key, value) {
+        if (typeof value !== "object") {
+          yield [key, value];
+          return;
+        }
+        if (Array.isArray(value)) {
+          for (const val of value) {
+            yield* serializeSubPart(`${key}[]`, val);
+          }
+          return;
+        }
+        for (const [subkey, val] of Object.entries(value)) {
+          yield* serializeSubPart(key ? `${key}[${subkey}]` : subkey, val);
+        }
+      }
+      function serialize(data) {
+        return new URLSearchParams(serializeSubPart(null, data));
+      }
       {
         const uppy = new Uppy()
           .use(Dashboard, {
             inline: true,
-            target: '#aws-non-multipart',
+            target: "#aws-non-multipart",
           })
           .use(AwsS3, {
             async getUploadParameters (file) {
@@ -27,9 +45,8 @@
                 // Send and receive JSON.
                 headers: {
                   accept: 'application/json',
-                  'content-type': 'application/json',
                 },
-                body: JSON.stringify({
+                body: serialize({
                   filename: file.name,
                   contentType: file.type,
                 }),
@@ -65,7 +82,7 @@
         const uppy = new Uppy()
           .use(Dashboard, {
             inline: true,
-            target: '#aws-multipart',
+            target: "#aws-multipart",
           })
           .use(AwsS3Multipart, {
             async createMultipartUpload(file, signal) {
@@ -88,9 +105,8 @@
                 // Send and receive JSON.
                 headers: {
                   accept: 'application/json',
-                  'content-type': 'application/json',
                 },
-                body: JSON.stringify({
+                body: serialize({
                   filename: file.name,
                   type: file.type,
                   metadata,
@@ -168,9 +184,8 @@
                 method: 'POST',
                 headers: {
                   accept: 'application/json',
-                  'content-type': 'application/json',
                 },
-                body: JSON.stringify({ parts }),
+                body: serialize({ parts }),
                 signal,
               })
 
