@@ -51,15 +51,6 @@ app.get('/drag', (req, res) => {
   const htmlPath = path.join(__dirname, 'public', 'drag.html')
   res.sendFile(htmlPath)
 })
-app.get('/sign-on-the-client', (req, res) => {
-  const htmlPath = path.join(__dirname, 'public', 'sign-on-the-client.html')
-  res.sendFile(htmlPath)
-})
-app.get('/createSignedURL.mjs', (req, res) => {
-  const jsPath = path.join(__dirname, 'public', 'createSignedURL.mjs')
-  res.header('Content-Type', 'text/javascript')
-  res.sendFile(jsPath)
-})
 
 app.post('/sign-s3', (req, res, next) => {
   const Key = `${crypto.randomUUID()}-${req.body.filename}`
