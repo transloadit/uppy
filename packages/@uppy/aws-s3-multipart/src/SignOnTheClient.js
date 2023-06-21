@@ -1,4 +1,3 @@
-import BasePlugin from '@uppy/core/lib/BasePlugin.js'
 import { Socket, Provider, RequestClient } from '@uppy/companion-client'
 import EventManager from '@uppy/utils/lib/EventManager'
 import emitSocketProgress from '@uppy/utils/lib/emitSocketProgress'
@@ -6,305 +5,11 @@ import getSocketHost from '@uppy/utils/lib/getSocketHost'
 import { RateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
 import { filterNonFailedFiles, filterFilesToEmitUploadStarted } from '@uppy/utils/lib/fileFilters'
 import { createAbortError } from '@uppy/utils/lib/AbortController'
+import AwsS3Multipart from './index.js'
 import packageJson from '../package.json'
 import MultipartUploader from './MultipartUploader.js'
-import createSignedURL from './createSignedURL.mjs'
 
-function assertServerError (res) {
-  if (res && res.error) {
-    const error = new Error(res.message)
-    Object.assign(error, res.error)
-    throw error
-  }
-  return res
-}
-
-function getAllowedMetadata ({ meta, allowedMetaFields, querify = false }) {
-  const metaFields = allowedMetaFields ?? Object.keys(meta)
-
-  if (!meta) return {}
-
-  return Object.fromEntries(
-    metaFields
-      .filter(key => meta[key] != null)
-      .map((key) => {
-        const realKey = querify ? `metadata[${key}]` : key
-        const value = String(meta[key])
-        return [realKey, value]
-      }),
-  )
-}
-
-function throwIfAborted (signal) {
-  if (signal?.aborted) { throw createAbortError('The operation was aborted', { cause: signal.reason }) }
-}
-
-class HTTPCommunicationQueue {
-  #abortMultipartUpload
-
-  #cache = new WeakMap()
-
-  #createMultipartUpload
-
-  #fetchSignature
-
-  #getUploadParameters
-
-  #listParts
-
-  #previousRetryDelay
-
-  #requests
-
-  #retryDelayIterator
-
-  #sendCompletionRequest
-
-  #setS3MultipartState
-
-  #uploadPartBytes
-
-  constructor (requests, options, setS3MultipartState) {
-    this.#requests = requests
-    this.#setS3MultipartState = setS3MultipartState
-    this.setOptions(options)
-  }
-
-  setOptions (options) {
-    const requests = this.#requests
-
-    if ('abortMultipartUpload' in options) {
-      this.#abortMultipartUpload = requests.wrapPromiseFunction(options.abortMultipartUpload)
-    }
-    if ('createMultipartUpload' in options) {
-      this.#createMultipartUpload = requests.wrapPromiseFunction(options.createMultipartUpload, { priority:-1 })
-    }
-    if ('signPart' in options) {
-      this.#fetchSignature = requests.wrapPromiseFunction(options.signPart)
-    }
-    if ('listParts' in options) {
-      this.#listParts = requests.wrapPromiseFunction(options.listParts)
-    }
-    if ('completeMultipartUpload' in options) {
-      this.#sendCompletionRequest = requests.wrapPromiseFunction(options.completeMultipartUpload)
-    }
-    if ('retryDelays' in options) {
-      this.#retryDelayIterator = options.retryDelays?.values()
-    }
-    if ('uploadPartBytes' in options) {
-      this.#uploadPartBytes = requests.wrapPromiseFunction(options.uploadPartBytes, { priority:Infinity })
-    }
-    if ('getUploadParameters' in options) {
-      this.#getUploadParameters = requests.wrapPromiseFunction(options.getUploadParameters)
-    }
-  }
-
-  async #shouldRetry (err) {
-    const requests = this.#requests
-    const status = err?.source?.status
-
-    // TODO: this retry logic is taken out of Tus. We should have a centralized place for retrying,
-    // perhaps the rate limited queue, and dedupe all plugins with that.
-    if (status == null) {
-      return false
-    }
-    if (status === 403 && err.message === 'Request has expired') {
-      if (!requests.isPaused) {
-        // We don't want to exhaust the retryDelayIterator as long as there are
-        // more than one request in parallel, to give slower connection a chance
-        // to catch up with the expiry set in Companion.
-        if (requests.limit === 1 || this.#previousRetryDelay == null) {
-          const next = this.#retryDelayIterator?.next()
-          if (next == null || next.done) {
-            return false
-          }
-          // If there are more than 1 request done in parallel, the RLQ limit is
-          // decreased and the failed request is requeued after waiting for a bit.
-          // If there is only one request in parallel, the limit can't be
-          // decreased, so we iterate over `retryDelayIterator` as we do for
-          // other failures.
-          // `#previousRetryDelay` caches the value so we can re-use it next time.
-          this.#previousRetryDelay = next.value
-        }
-        // No need to stop the other requests, we just want to lower the limit.
-        requests.rateLimit(0)
-        await new Promise(resolve => setTimeout(resolve, this.#previousRetryDelay))
-      }
-    } else if (status === 429) {
-      // HTTP 429 Too Many Requests => to avoid the whole download to fail, pause all requests.
-      if (!requests.isPaused) {
-        const next = this.#retryDelayIterator?.next()
-        if (next == null || next.done) {
-          return false
-        }
-        requests.rateLimit(next.value)
-      }
-    } else if (status > 400 && status < 500 && status !== 409) {
-      // HTTP 4xx, the server won't send anything, it's doesn't make sense to retry
-      return false
-    } else if (typeof navigator !== 'undefined' && navigator.onLine === false) {
-      // The navigator is offline, let's wait for it to come back online.
-      if (!requests.isPaused) {
-        requests.pause()
-        window.addEventListener('online', () => {
-          requests.resume()
-        }, { once: true })
-      }
-    } else {
-      // Other error code means the request can be retried later.
-      const next = this.#retryDelayIterator?.next()
-      if (next == null || next.done) {
-        return false
-      }
-      await new Promise(resolve => setTimeout(resolve, next.value))
-    }
-    return true
-  }
-
-  async getUploadId (file, signal) {
-    let cachedResult
-    // As the cache is updated asynchronously, there could be a race condition
-    // where we just miss a new result so we loop here until we get nothing back,
-    // at which point it's out turn to create a new cache entry.
-    while ((cachedResult = this.#cache.get(file.data)) != null) {
-      try {
-        return await cachedResult
-      } catch {
-        // In case of failure, we want to ignore the cached error.
-        // At this point, either there's a new cached value, or we'll exit the loop a create a new one.
-      }
-    }
-
-    const promise = this.#createMultipartUpload(file, signal)
-
-    const abortPromise = () => {
-      promise.abort(signal.reason)
-      this.#cache.delete(file.data)
-    }
-    signal.addEventListener('abort', abortPromise, { once: true })
-    this.#cache.set(file.data, promise)
-    promise.then(async (result) => {
-      signal.removeEventListener('abort', abortPromise)
-      this.#setS3MultipartState(file, result)
-      this.#cache.set(file.data, result)
-    }, () => {
-      signal.removeEventListener('abort', abortPromise)
-      this.#cache.delete(file.data)
-    })
-
-    return promise
-  }
-
-  async abortFileUpload (file) {
-    const result = this.#cache.get(file.data)
-    if (result == null) {
-      // If the createMultipartUpload request never was made, we don't
-      // need to send the abortMultipartUpload request.
-      return
-    }
-    let awaitedResult
-    try {
-      awaitedResult = await result
-    } catch {
-      // If the cached result rejects, there's nothing to abort.
-      return
-    }
-    await this.#abortMultipartUpload(file, awaitedResult)
-  }
-
-  async #nonMultipartUpload (file, chunk, signal) {
-    const {
-      method = 'post',
-      url,
-      fields,
-      headers,
-    } = await this.#getUploadParameters(file, { signal }).abortOn(signal)
-
-    const formData = new FormData()
-    Object.entries(fields).forEach(([key, value]) => formData.set(key, value))
-    const data = chunk.getData()
-    formData.set('file', data)
-
-    const { onProgress, onComplete } = chunk
-
-    return this.#uploadPartBytes({
-      signature: { url, headers, method },
-      body: formData,
-      size: data.size,
-      onProgress,
-      onComplete,
-      signal,
-    }).abortOn(signal)
-  }
-
-  async uploadFile (file, chunks, signal) {
-    throwIfAborted(signal)
-    if (chunks.length === 1 && !chunks[0].shouldUseMultipart) {
-      return this.#nonMultipartUpload(file, chunks[0], signal)
-    }
-    const { uploadId, key } = await this.getUploadId(file, signal)
-    throwIfAborted(signal)
-    try {
-      const parts = await Promise.all(chunks.map((chunk, i) => this.uploadChunk(file, i + 1, chunk, signal)))
-      throwIfAborted(signal)
-      return await this.#sendCompletionRequest(file, { key, uploadId, parts, signal }).abortOn(signal)
-    } catch (err) {
-      this.#cache.delete(file.data)
-      throw err
-    }
-  }
-
-  async resumeUploadFile (file, chunks, signal) {
-    throwIfAborted(signal)
-    if (chunks.length === 1) {
-      return this.#nonMultipartUpload(file, chunks[0], signal)
-    }
-    const { uploadId, key } = await this.getUploadId(file, signal)
-    throwIfAborted(signal)
-    const alreadyUploadedParts = await this.#listParts(file, { uploadId, key, signal }).abortOn(signal)
-    throwIfAborted(signal)
-    const parts = await Promise.all(
-      chunks
-        .map((chunk, i) => {
-          const partNumber = i + 1
-          const alreadyUploadedInfo = alreadyUploadedParts.find(({ PartNumber }) => PartNumber === partNumber)
-          return alreadyUploadedInfo == null
-            ? this.uploadChunk(file, partNumber, chunk, signal)
-            : { PartNumber: partNumber, ETag: alreadyUploadedInfo.ETag }
-        }),
-    )
-    throwIfAborted(signal)
-    return this.#sendCompletionRequest(file, { key, uploadId, parts, signal }).abortOn(signal)
-  }
-
-  async uploadChunk (file, partNumber, chunk, signal) {
-    throwIfAborted(signal)
-    const { uploadId, key } = await this.getUploadId(file, signal)
-    throwIfAborted(signal)
-    for (;;) {
-      const chunkData = chunk.getData()
-      const { onProgress, onComplete } = chunk
-
-      const signature = await this.#fetchSignature(file, {
-        uploadId, key, partNumber, body: chunkData, signal,
-      }).abortOn(signal)
-
-      throwIfAborted(signal)
-      try {
-        return {
-          PartNumber: partNumber,
-          ...await this.#uploadPartBytes({
-            signature, body: chunkData, size: chunkData.size, onProgress, onComplete, signal,
-          }).abortOn(signal),
-        }
-      } catch (err) {
-        if (!await this.#shouldRetry(err)) throw err
-      }
-    }
-  }
-}
-
-export default class AwsS3Multipart extends BasePlugin {
+export default class _AwsS3Multipart extends AwsS3Multipart {
   static VERSION = packageJson.version
 
   #queueRequestSocketToken
@@ -325,19 +30,16 @@ export default class AwsS3Multipart extends BasePlugin {
       // This is inconsistent with @uppy/aws-s3 and @uppy/transloadit
       allowedMetaFields: null,
       limit: 6,
-      shouldUseMultipart: (file) => file.size !== 0, // TODO: Switch default to:
       // eslint-disable-next-line no-bitwise
-      // shouldUseMultipart: (file) => file.size >> 10 >> 10 > 100,
+      shouldUseMultipart: (file) => file.size >> 10 >> 10 > 100,
       retryDelays: [0, 1000, 3000, 5000],
       createMultipartUpload: this.createMultipartUpload.bind(this),
       listParts: this.listParts.bind(this),
       abortMultipartUpload: this.abortMultipartUpload.bind(this),
       completeMultipartUpload: this.completeMultipartUpload.bind(this),
-      signPart: opts.getTemporarySecurityCredentials ? this.createSignedURL.bind(this) : this.signPart.bind(this),
+      signPart: this.signPart.bind(this),
       uploadPartBytes: AwsS3Multipart.uploadPartBytes,
-      getUploadParameters: opts.getTemporarySecurityCredentials
-        ? this.createSignedURL.bind(this)
-        : this.getUploadParameters.bind(this),
+      getUploadParameters: this.getUploadParameters.bind(this),
       companionHeaders: {},
     }
 
@@ -401,6 +103,14 @@ export default class AwsS3Multipart extends BasePlugin {
     }
   }
 
+  #credentials
+  async getAWSCredentials (signal) {
+    this.assertHost('getAWSCredentials')
+    throwIfAborted(signal)
+
+    if (this.#credentials?.expires)
+  }
+
   createMultipartUpload (file, signal) {
     this.assertHost('createMultipartUpload')
     throwIfAborted(signal)
@@ -431,51 +141,6 @@ export default class AwsS3Multipart extends BasePlugin {
     const uploadIdEnc = encodeURIComponent(uploadId)
     return this.#client.post(`s3/multipart/${uploadIdEnc}/complete?key=${filename}`, { parts }, { signal })
       .then(assertServerError)
-  }
-
-  /**
-   * @type {Omit<import("../types").AwsS3STSResponse>}
-   */
-  #cachedTemporaryCredentials
-
-  async #getTemporarySecurityCredentials (options) {
-    options?.signal?.throwIfAborted()
-
-    if (this.#cachedTemporaryCredentials == null) {
-      // We do not await it just yet, so concurrent calls do not try to override it:
-      this.#cachedTemporaryCredentials = this.opts.getTemporarySecurityCredentials(options)
-      setTimeout(() => {
-        this.#cachedTemporaryCredentials = null
-      }, (await this.#cachedTemporaryCredentials).credentials.expires)
-      this.#cachedTemporaryCredentials = await this.#cachedTemporaryCredentials
-    }
-
-    return this.#cachedTemporaryCredentials
-  }
-
-  async createSignedURL (file, { uploadId, key, partNumber, signal }) {
-    const data = await this.#getTemporarySecurityCredentials()
-
-    // Return an object in the correct shape.
-    return {
-      method: 'PUT',
-      fields: {},
-      url: `${await createSignedURL({
-        accountKey: data.credentials.AccessKeyId,
-        accountSecret: data.credentials.SecretAccessKey,
-        sessionToken: data.credentials.SessionToken,
-        bucketName: data.bucket,
-        Region: data.region,
-        Key: key,
-        uploadId,
-        partNumber,
-        signal,
-      })}`,
-      // Provide content type header required by S3
-      headers: {
-        'Content-Type': file.type,
-      },
-    }
   }
 
   signPart (file, { uploadId, key, partNumber, signal }) {
@@ -708,7 +373,7 @@ export default class AwsS3Multipart extends BasePlugin {
     })
   }
 
-  #requestSocketToken = async (file, options) => {
+  #requestSocketToken = async (file) => {
     const Client = file.remote.providerOptions.provider ? Provider : RequestClient
     const client = new Client(this.uppy, file.remote.providerOptions)
     const opts = { ...this.opts }
@@ -727,33 +392,29 @@ export default class AwsS3Multipart extends BasePlugin {
       protocol: 's3-multipart',
       size: file.data.size,
       metadata: file.meta,
-    }, options)
+    })
     return res.token
   }
 
   // NOTE! Keep this duplicated code in sync with other plugins
   // TODO we should probably abstract this into a common function
-  async #uploadRemote (file, options) {
+  async #uploadRemote (file) {
     this.resetUploaderReferences(file.id)
 
     try {
       if (file.serverToken) {
         return await this.connectToServerSocket(file)
       }
-      const serverToken = await this.#queueRequestSocketToken(file, options).abortOn(options?.signal)
+      const serverToken = await this.#queueRequestSocketToken(file)
 
       if (!this.uppy.getState().files[file.id]) return undefined
 
       this.uppy.setFileState(file.id, { serverToken })
       return await this.connectToServerSocket(this.uppy.getFile(file.id))
     } catch (err) {
-      if (err?.cause?.name !== 'AbortError') {
-        this.uppy.setFileState(file.id, { serverToken: undefined })
-        this.uppy.emit('upload-error', file, err)
-        throw err
-      }
-      // The file upload was aborted, it’s not an error
-      return undefined
+      this.uppy.setFileState(file.id, { serverToken: undefined })
+      this.uppy.emit('upload-error', file, err)
+      throw err
     }
   }
 
@@ -883,21 +544,7 @@ export default class AwsS3Multipart extends BasePlugin {
 
     const promises = filesFiltered.map((file) => {
       if (file.isRemote) {
-        const controller = new AbortController()
-
-        const removedHandler = (removedFile) => {
-          if (removedFile.id === file.id) controller.abort()
-        }
-
-        this.uppy.on('file-removed', removedHandler)
-
-        const uploadPromise = this.#uploadRemote(file, { signal: controller.signal })
-
-        this.requests.wrapSyncFunction(() => {
-          this.uppy.off('file-removed', removedHandler)
-        }, { priority: -1 })()
-
-        return uploadPromise
+        return this.#uploadRemote(file)
       }
       return this.#uploadFile(file)
     })

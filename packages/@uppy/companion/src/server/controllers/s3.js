@@ -353,7 +353,65 @@ module.exports = function s3 (config) {
     }, next)
   }
 
+  const {
+    STSClient,
+    GetFederationTokenCommand,
+  } = require('@aws-sdk/client-sts')
+
+  const policy = {
+    Version: '2012-10-17',
+    Statement: [
+      {
+        Effect: 'Allow',
+        Action: [
+          's3:PutObject',
+        ],
+        Resource: [
+          `arn:aws:s3:::${process.env.COMPANION_AWS_BUCKET}/*`,
+          `arn:aws:s3:::${process.env.COMPANION_AWS_BUCKET}`,
+        ],
+      },
+    ],
+  }
+
+  let stsClient
+  function getSTSClient () {
+    stsClient ??= new STSClient({
+      region: process.env.COMPANION_AWS_REGION,
+      credentials : {
+        accessKeyId: process.env.COMPANION_AWS_KEY,
+        secretAccessKey: process.env.COMPANION_AWS_SECRET,
+      },
+    })
+    return stsClient
+  }
+
+  function getTemporarySecurityCredentials (req, res, next) {
+    getSTSClient().send(new GetFederationTokenCommand({
+      Name: '123user',
+      // The duration, in seconds, of the role session. The value specified
+      // can range from 900 seconds (15 minutes) up to the maximum session
+      // duration set for the role.
+      DurationSeconds: config.expires,
+      Policy: JSON.stringify(policy),
+    })).then(response => {
+    // Test creating multipart upload from the server — it works
+    // createMultipartUploadYo(response)
+      res.setHeader('Access-Control-Allow-Origin', '*')
+      res.setHeader('Cache-Control', `public,max-age=${config.expires}`)
+      res.json({
+        credentials: {
+          ...response.Credentials,
+          expires: config.expires,
+        },
+        bucket: process.env.COMPANION_AWS_BUCKET,
+        region: process.env.COMPANION_AWS_REGION,
+      })
+    }, next)
+  }
+
   return express.Router()
+    .get('/sts', getTemporarySecurityCredentials)
     .get('/params', getUploadParameters)
     .post('/multipart', express.json(), createMultipartUpload)
     .get('/multipart/:uploadId', getUploadedParts)

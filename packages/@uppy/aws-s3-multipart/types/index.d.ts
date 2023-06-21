@@ -11,6 +11,16 @@ export interface AwsS3SignedPart {
   url: string
   headers?: Record<string, string>
 }
+export interface AwsS3STSResponse {
+  credentials: {
+    AccessKeyId: string
+    SecretAccessKey: string
+    SessionToken: string
+    expires: number
+  }
+  bucket: string
+  region: string
+}
 
 export interface AwsS3MultipartOptions extends PluginOptions {
     companionHeaders?: { [type: string]: string }
@@ -25,6 +35,7 @@ export interface AwsS3MultipartOptions extends PluginOptions {
       file: UppyFile,
       opts: { uploadId: string; key: string; signal: AbortSignal }
     ) => MaybePromise<AwsS3Part[]>
+    getTemporarySecurityCredentials?: () => MaybePromise<AwsS3STSResponse>
     signPart?: (
       file: UppyFile,
       opts: { uploadId: string; key: string; partNumber: number; body: Blob, signal: AbortSignal }
