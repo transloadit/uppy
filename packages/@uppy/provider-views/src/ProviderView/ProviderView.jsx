@@ -105,14 +105,24 @@ export default class ProviderView extends View {
    * @returns {Promise}   Folders/files in folder
    */
   async getFolder (id, name) {
+    const controller = new AbortController()
+    const cancelRequest = () => controller.abort()
+
+    this.plugin.uppy.on('dashboard:close-panel', cancelRequest)
+    this.plugin.uppy.on('cancel-all', cancelRequest)
     this.setLoading(true)
+
     try {
       const folders = []
       const files = []
       let path = this.nextPagePath || id
 
       while (path) {
-        const res = await this.provider.list(path)
+        if (controller.signal.aborted) {
+          break
+        }
+
+        const res = await this.provider.list(path, { signal: controller.signal })
 
         for (const f of res.items) {
           if (f.isFolder) folders.push(f)
@@ -142,6 +152,8 @@ export default class ProviderView extends View {
       this.handleError(err)
     } finally {
       this.setLoading(false)
+      this.plugin.uppy.off('dashboard:close-panel', cancelRequest)
+      this.plugin.uppy.off('cancel-all', cancelRequest)
     }
   }
 

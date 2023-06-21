@@ -172,6 +172,8 @@ export default class Dashboard extends UIPlugin {
     }
 
     this.setPluginState(update)
+
+    this.uppy.emit('dashboard:close-panel', state.activePickerPanel.id)
   }
 
   showPanel = (id) => {
