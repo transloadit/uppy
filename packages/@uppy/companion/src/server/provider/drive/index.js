@@ -6,7 +6,7 @@ const { VIRTUAL_SHARED_DIR, adaptData, isShortcut, isGsuiteFile, getGsuiteExport
 const { withProviderErrorHandling } = require('../providerErrors')
 const { prepareStream } = require('../../helpers/utils')
 
-const DRIVE_FILE_FIELDS = 'kind,id,imageMediaMetadata,name,mimeType,ownedByMe,permissions(role,emailAddress),size,modifiedTime,iconLink,thumbnailLink,teamDriveId,videoMediaMetadata,shortcutDetails(targetId,targetMimeType)'
+const DRIVE_FILE_FIELDS = 'kind,id,imageMediaMetadata,name,mimeType,ownedByMe,size,modifiedTime,iconLink,thumbnailLink,teamDriveId,videoMediaMetadata,shortcutDetails(targetId,targetMimeType)'
 const DRIVE_FILES_FIELDS = `kind,nextPageToken,incompleteSearch,files(${DRIVE_FILE_FIELDS})`
 // using wildcard to get all 'drive' fields because specifying fields seems no to work for the /drives endpoint
 const SHARED_DRIVE_FIELDS = '*'
@@ -82,18 +82,7 @@ class Drive extends Provider {
           fields: DRIVE_FILES_FIELDS,
           pageToken: query.cursor,
           q,
-          // pageSize: The maximum number of files to return per page.
-          // Partial or empty result pages are possible even before the end of the files list has been reached.
-          // Acceptable values are 1 to 1000, inclusive. (Default: 100)
-          //
-          // @TODO:
-          // SAD WARNING: doesn’t work if you have multiple `fields`, defaults to 100 anyway.
-          // Works if we remove `permissions(role,emailAddress)`, which we use to set the email address
-          // of logged in user in the Provider View header on the frontend.
-          // See https://stackoverflow.com/questions/42592125/list-request-page-size-being-ignored
-          //
-          // pageSize: 1000,
-          // pageSize: 10, // can be used for testing pagination if you don't have many files
+          pageSize: 1000,
           orderBy: 'folder,name',
           includeItemsFromAllDrives: true,
           supportsAllDrives: true,
@@ -102,8 +91,13 @@ class Drive extends Provider {
         return client.get('files', { searchParams, responseType: 'json' }).json()
       }
 
-      const [sharedDrives, filesResponse] = await Promise.all([fetchSharedDrives(), fetchFiles()])
-      // console.log({ directory, sharedDrives, filesResponse })
+      async function fetchAbout () {
+        const searchParams = { fields: 'user' }
+
+        return client.get('about', { searchParams, responseType: 'json' }).json()
+      }
+
+      const [sharedDrives, filesResponse, about] = await Promise.all([fetchSharedDrives(), fetchFiles(), fetchAbout()])
 
       return adaptData(
         filesResponse,
@@ -111,6 +105,7 @@ class Drive extends Provider {
         directory,
         query,
         isRoot && !query.cursor, // we can only show it on the first page request, or else we will have duplicates of it
+        about,
       )
     })
   }

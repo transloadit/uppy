@@ -107,13 +107,28 @@ export default class ProviderView extends View {
   async getFolder (id, name) {
     this.setLoading(true)
     try {
-      const res = await this.provider.list(id)
       const folders = []
       const files = []
+      let path = this.nextPagePath || id
+
+      while (path) {
+        const res = await this.provider.list(path)
+
+        for (const f of res.items) {
+          if (f.isFolder) folders.push(f)
+          else files.push(f)
+        }
+
+        path = res.nextPagePath
+        this.username ??= res.username
+        this.setLoading(this.plugin.uppy.i18n('addedNumFiles', { numFiles: files.length + folders.length }))
+      }
+
+      // TODO: what is `directories` used for in state?
       let updatedDirectories
 
       const state = this.plugin.getPluginState()
-      const index = state.directories.findIndex((dir) => id === dir.id)
+      const index = state.directories.findIndex((dir) => path === dir.id)
 
       if (index !== -1) {
         updatedDirectories = state.directories.slice(0, index + 1)
@@ -121,9 +136,7 @@ export default class ProviderView extends View {
         updatedDirectories = state.directories.concat([{ id, title: name }])
       }
 
-      this.username = res.username || this.username
-      this.#updateFilesAndFolders(res, files, folders)
-      this.plugin.setPluginState({ directories: updatedDirectories, filterInput: '' })
+      this.plugin.setPluginState({ files, folders, directories: updatedDirectories, filterInput: '' })
       this.lastCheckbox = undefined
     } catch (err) {
       this.handleError(err)
