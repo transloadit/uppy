@@ -87,8 +87,7 @@ describe('Transloadit', () => {
     })
   })
 
-  // For some reason this test doesn't pass on CI
-  it.skip('Can start an assembly with no files and no fields', async () => {
+  it('Can start an assembly with no files and no fields', async () => {
     const server = createServer((req, res) => {
       res.setHeader('Access-Control-Allow-Origin', '*')
       res.setHeader('Access-Control-Allow-Headers', '*')
@@ -113,8 +112,7 @@ describe('Transloadit', () => {
     await new Promise(resolve => server.close(resolve))
   })
 
-  // For some reason this test doesn't pass on CI
-  it.skip('Can start an assembly with no files and some fields', async () => {
+  it('Can start an assembly with no files and some fields', async () => {
     const server = createServer((req, res) => {
       res.setHeader('Access-Control-Allow-Origin', '*')
       res.setHeader('Access-Control-Allow-Headers', '*')
