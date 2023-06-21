@@ -1009,13 +1009,13 @@ class Uppy {
       errorHandler(error, file, response)
 
       if (typeof error === 'object' && error.message) {
-        const newError = new Error(error.message)
+        this.log(error.message, 'error')
+        const newError = new Error(this.i18n('failedToUpload', { file: file?.name }))
         newError.isUserFacing = true // todo maybe don't do this with all errors?
         newError.details = error.message
         if (error.details) {
           newError.details += ` ${error.details}`
         }
-        newError.message = this.i18n('failedToUpload', { file: file?.name })
         this.#informAndEmit([newError])
       } else {
         this.#informAndEmit([error])
