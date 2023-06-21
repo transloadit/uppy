@@ -230,7 +230,7 @@ export default class AwsS3 extends UploaderPlugin {
           xhrUpload: xhrOpts,
         })
 
-        return this.#uploader.uploadFile(file.id, index, numberOfFiles)
+        return this.uploadFile(file.id, index, numberOfFiles)
       }).catch((error) => {
         delete paramsPromises[id]
 
