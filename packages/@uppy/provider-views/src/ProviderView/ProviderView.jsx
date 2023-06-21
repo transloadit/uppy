@@ -117,11 +117,7 @@ export default class ProviderView extends View {
       const files = []
       let path = this.nextPagePath || id
 
-      while (path) {
-        if (controller.signal.aborted) {
-          break
-        }
-
+      while (path && !controller.signal.aborted) {
         const res = await this.provider.list(path, { signal: controller.signal })
 
         for (const f of res.items) {
