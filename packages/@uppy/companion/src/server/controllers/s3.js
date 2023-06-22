@@ -375,13 +375,15 @@ module.exports = function s3 (config) {
 
   let stsClient
   function getSTSClient () {
-    stsClient ??= new STSClient({
-      region: process.env.COMPANION_AWS_REGION,
-      credentials : {
-        accessKeyId: process.env.COMPANION_AWS_KEY,
-        secretAccessKey: process.env.COMPANION_AWS_SECRET,
-      },
-    })
+    if (stsClient == null) {
+      stsClient = new STSClient({
+        region: process.env.COMPANION_AWS_REGION,
+        credentials : {
+          accessKeyId: process.env.COMPANION_AWS_KEY,
+          secretAccessKey: process.env.COMPANION_AWS_SECRET,
+        },
+      })
+    }
     return stsClient
   }
 

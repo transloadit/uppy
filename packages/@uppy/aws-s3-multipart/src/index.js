@@ -8,7 +8,7 @@ import { filterNonFailedFiles, filterFilesToEmitUploadStarted } from '@uppy/util
 import { createAbortError } from '@uppy/utils/lib/AbortController'
 import packageJson from '../package.json'
 import MultipartUploader from './MultipartUploader.js'
-import createSignedURL from './createSignedURL.mjs'
+import createSignedURL from './createSignedURL.js'
 
 function assertServerError (res) {
   if (res && res.error) {
