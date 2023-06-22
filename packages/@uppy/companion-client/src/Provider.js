@@ -95,10 +95,6 @@ export default class Provider extends RequestClient {
     return this.get(`${this.id}/list/${directory || ''}`, options)
   }
 
-  user (options) {
-    return this.get(`${this.id}/user`, options)
-  }
-
   logout () {
     return this.get(`${this.id}/logout`)
       .then((response) => Promise.all([

@@ -2,14 +2,7 @@ const got = require('got').default
 
 const Provider = require('../Provider')
 const logger = require('../../logger')
-const {
-  VIRTUAL_SHARED_DIR,
-  adaptData,
-  getUsername,
-  isShortcut,
-  isGsuiteFile,
-  getGsuiteExportType,
-} = require('./adapter')
+const { VIRTUAL_SHARED_DIR, adaptData, isShortcut, isGsuiteFile, getGsuiteExportType } = require('./adapter')
 const { withProviderErrorHandling } = require('../providerErrors')
 const { prepareStream } = require('../../helpers/utils')
 
@@ -50,18 +43,6 @@ class Drive extends Provider {
 
   static get authProvider () {
     return 'google'
-  }
-
-  async user (options) {
-    return this.#withErrorHandling('provider.drive.user.error', async () => {
-      const { token } = options
-      const searchParams = { fields: 'user' }
-      const client = getClient({ token })
-
-      const res = await client.get('about', { searchParams, responseType: 'json' }).json()
-
-      return getUsername(res)
-    })
   }
 
   async list (options) {
@@ -112,7 +93,13 @@ class Drive extends Provider {
         return client.get('files', { searchParams, responseType: 'json' }).json()
       }
 
-      const [sharedDrives, filesResponse] = await Promise.all([fetchSharedDrives(), fetchFiles()])
+      async function fetchAbout () {
+        const searchParams = { fields: 'user' }
+
+        return client.get('about', { searchParams, responseType: 'json' }).json()
+      }
+
+      const [sharedDrives, filesResponse, about] = await Promise.all([fetchSharedDrives(), fetchFiles(), fetchAbout()])
 
       return adaptData(
         filesResponse,
@@ -120,6 +107,7 @@ class Drive extends Provider {
         directory,
         query,
         isRoot && !query.cursor, // we can only show it on the first page request, or else we will have duplicates of it
+        about,
       )
     })
   }

@@ -126,10 +126,6 @@ export default class ProviderView extends View {
       const files = []
       let path = id
 
-      if (!this.username) {
-        this.username = await this.provider.user()
-      }
-
       while (path) {
         const res = await this.provider.list(path, { signal: controller.signal })
 
@@ -139,6 +135,7 @@ export default class ProviderView extends View {
         }
 
         path = res.nextPagePath
+        this.username ??= res.username
         this.setLoading(this.plugin.uppy.i18n('addedNumFiles', { numFiles: files.length + folders.length }))
       }
 
@@ -182,7 +179,6 @@ export default class ProviderView extends View {
 
           const newState = {
             authenticated: false,
-            username: null,
             files: [],
             folders: [],
             directories: [],
