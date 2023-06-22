@@ -107,6 +107,15 @@ export default class ProviderView extends View {
   async getFolder (id, name) {
     const controller = new AbortController()
     const cancelRequest = () => controller.abort()
+    const getNewBreadcrumpDirectories = (path) => {
+      const state = this.plugin.getPluginState()
+      const index = state.directories.findIndex((dir) => path === dir.id)
+
+      if (index !== -1) {
+        return state.directories.slice(0, index + 1)
+      }
+      return state.directories.concat([{ id, title: name }])
+    }
 
     this.plugin.uppy.on('dashboard:close-panel', cancelRequest)
     this.plugin.uppy.on('cancel-all', cancelRequest)
@@ -115,9 +124,9 @@ export default class ProviderView extends View {
     try {
       const folders = []
       const files = []
-      let path = this.nextPagePath || id
+      let path = id
 
-      while (path && !controller.signal.aborted) {
+      while (path) {
         const res = await this.provider.list(path, { signal: controller.signal })
 
         for (const f of res.items) {
@@ -130,19 +139,9 @@ export default class ProviderView extends View {
         this.setLoading(this.plugin.uppy.i18n('addedNumFiles', { numFiles: files.length + folders.length }))
       }
 
-      // TODO: what is `directories` used for in state?
-      let updatedDirectories
+      const directories = getNewBreadcrumpDirectories(path)
 
-      const state = this.plugin.getPluginState()
-      const index = state.directories.findIndex((dir) => path === dir.id)
-
-      if (index !== -1) {
-        updatedDirectories = state.directories.slice(0, index + 1)
-      } else {
-        updatedDirectories = state.directories.concat([{ id, title: name }])
-      }
-
-      this.plugin.setPluginState({ files, folders, directories: updatedDirectories, filterInput: '' })
+      this.plugin.setPluginState({ files, folders, directories, filterInput: '' })
       this.lastCheckbox = undefined
     } catch (err) {
       this.handleError(err)
