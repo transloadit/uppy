@@ -1,4 +1,4 @@
-import BasePlugin from '@uppy/core/lib/BasePlugin.js'
+import UploaderPlugin from '@uppy/core/lib/UploaderPlugin.js'
 import { nanoid } from 'nanoid/non-secure'
 import { Provider, RequestClient, Socket } from '@uppy/companion-client'
 import emitSocketProgress from '@uppy/utils/lib/emitSocketProgress'
@@ -46,11 +46,9 @@ function setTypeInBlob (file) {
   return dataWithUpdatedType
 }
 
-export default class XHRUpload extends BasePlugin {
+export default class XHRUpload extends UploaderPlugin {
   // eslint-disable-next-line global-require
   static VERSION = packageJson.version
-
-  #queueRequestSocketToken
 
   constructor (uppy, opts) {
     super(uppy, opts)
@@ -129,7 +127,7 @@ export default class XHRUpload extends BasePlugin {
     }
 
     this.uploaderEvents = Object.create(null)
-    this.#queueRequestSocketToken = this.requests.wrapPromiseFunction(this.#requestSocketToken, { priority: -1 })
+    this.setQueueRequestSocketToken(this.requests.wrapPromiseFunction(this.#requestSocketToken, { priority: -1 }))
   }
 
   getOptions (file) {
@@ -373,31 +371,6 @@ export default class XHRUpload extends BasePlugin {
     return res.token
   }
 
-  // NOTE! Keep this duplicated code in sync with other plugins
-  // TODO we should probably abstract this into a common function
-  async #uploadRemote (file, options) {
-    // TODO: we could rewrite this to use server-sent events instead of creating WebSockets.
-    try {
-      if (file.serverToken) {
-        return await this.connectToServerSocket(file)
-      }
-      const serverToken = await this.#queueRequestSocketToken(file, options).abortOn(options?.signal)
-
-      if (!this.uppy.getState().files[file.id]) return undefined
-
-      this.uppy.setFileState(file.id, { serverToken })
-      return await this.connectToServerSocket(this.uppy.getFile(file.id))
-    } catch (err) {
-      if (err?.cause?.name !== 'AbortError') {
-        this.uppy.setFileState(file.id, { serverToken: undefined })
-        this.uppy.emit('upload-error', file, err)
-        throw err
-      }
-      // The file upload was aborted, it’s not an error
-      return undefined
-    }
-  }
-
   async connectToServerSocket (file) {
     return new Promise((resolve, reject) => {
       const opts = this.getOptions(file)
@@ -603,7 +576,7 @@ export default class XHRUpload extends BasePlugin {
         }
         this.uppy.on('file-removed', removedHandler)
 
-        const uploadPromise = this.#uploadRemote(file, { signal: controller.signal })
+        const uploadPromise = this.uploadRemoteFile(file, { signal: controller.signal })
 
         this.requests.wrapSyncFunction(() => {
           this.uppy.off('file-removed', removedHandler)

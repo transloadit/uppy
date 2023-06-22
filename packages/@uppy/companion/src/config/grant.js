@@ -8,12 +8,14 @@ module.exports = () => {
         'https://www.googleapis.com/auth/drive.readonly',
       ],
       callback: '/drive/callback',
+      custom_params: { access_type : 'offline' },
     },
     dropbox: {
       transport: 'session',
       authorize_url: 'https://www.dropbox.com/oauth2/authorize',
       access_url: 'https://api.dropbox.com/oauth2/token',
       callback: '/dropbox/callback',
+      custom_params: { token_access_type : 'offline' },
     },
     box: {
       transport: 'session',

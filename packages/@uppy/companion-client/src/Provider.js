@@ -8,6 +8,8 @@ const getName = (id) => {
 }
 
 export default class Provider extends RequestClient {
+  #refreshingTokenPromise
+
   constructor (uppy, opts) {
     super(uppy, opts)
     this.provider = opts.provider
@@ -20,7 +22,7 @@ export default class Provider extends RequestClient {
   }
 
   async headers () {
-    const [headers, token] = await Promise.all([super.headers(), this.getAuthToken()])
+    const [headers, token] = await Promise.all([super.headers(), this.#getAuthToken()])
     const authHeaders = {}
     if (token) {
       authHeaders['uppy-auth-token'] = token
@@ -43,12 +45,16 @@ export default class Provider extends RequestClient {
     return response
   }
 
-  setAuthToken (token) {
+  async setAuthToken (token) {
     return this.uppy.getPlugin(this.pluginId).storage.setItem(this.tokenKey, token)
   }
 
-  getAuthToken () {
+  async #getAuthToken () {
     return this.uppy.getPlugin(this.pluginId).storage.getItem(this.tokenKey)
+  }
+
+  async #removeAuthToken () {
+    return this.uppy.getPlugin(this.pluginId).storage.removeItem(this.tokenKey)
   }
 
   /**
@@ -74,8 +80,42 @@ export default class Provider extends RequestClient {
     return `${this.hostname}/${this.id}/connect?${params}`
   }
 
+  refreshTokenUrl () {
+    return `${this.hostname}/${this.id}/refresh-token`
+  }
+
   fileUrl (id) {
     return `${this.hostname}/${this.id}/get/${id}`
+  }
+
+  /** @protected */
+  async request (...args) {
+    await this.#refreshingTokenPromise
+
+    try {
+      // throw Object.assign(new Error(), { isAuthError: true }) // testing simulate access token expired (to refresh token)
+      return await super.request(...args)
+    } catch (err) {
+      if (!err.isAuthError) throw err // only handle auth errors (401 from provider)
+
+      await this.#refreshingTokenPromise
+
+      // Many provider requests may be starting at once, however refresh token should only be called once.
+      // Once a refresh token operation has started, we need all other request to wait for this operation (atomically)
+      this.#refreshingTokenPromise = (async () => {
+        try {
+          const response = await super.request({ path: this.refreshTokenUrl(), method: 'POST' })
+          await this.setAuthToken(response.uppyAuthToken)
+        } finally {
+          this.#refreshingTokenPromise = undefined
+        }
+      })()
+
+      await this.#refreshingTokenPromise
+
+      // now retry the request with our new refresh token
+      return super.request(...args)
+    }
   }
 
   async fetchPreAuthToken () {
@@ -95,12 +135,10 @@ export default class Provider extends RequestClient {
     return this.get(`${this.id}/list/${directory || ''}`)
   }
 
-  logout () {
-    return this.get(`${this.id}/logout`)
-      .then((response) => Promise.all([
-        response,
-        this.uppy.getPlugin(this.pluginId).storage.removeItem(this.tokenKey),
-      ])).then(([response]) => response)
+  async logout () {
+    const response = await this.get(`${this.id}/logout`)
+    await this.#removeAuthToken()
+    return response
   }
 
   static initPlugin (plugin, opts, defaultOpts) {
