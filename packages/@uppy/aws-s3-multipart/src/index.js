@@ -334,9 +334,9 @@ export default class AwsS3Multipart extends BasePlugin {
       abortMultipartUpload: this.abortMultipartUpload.bind(this),
       completeMultipartUpload: this.completeMultipartUpload.bind(this),
       getTemporarySecurityCredentials: false,
-      signPart: opts.getTemporarySecurityCredentials ? this.createSignedURL.bind(this) : this.signPart.bind(this),
+      signPart: opts?.getTemporarySecurityCredentials ? this.createSignedURL.bind(this) : this.signPart.bind(this),
       uploadPartBytes: AwsS3Multipart.uploadPartBytes,
-      getUploadParameters: opts.getTemporarySecurityCredentials
+      getUploadParameters: opts?.getTemporarySecurityCredentials
         ? this.createSignedURL.bind(this)
         : this.getUploadParameters.bind(this),
       companionHeaders: {},
