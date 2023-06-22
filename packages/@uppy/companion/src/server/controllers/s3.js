@@ -366,8 +366,8 @@ module.exports = function s3 (config) {
           's3:PutObject',
         ],
         Resource: [
-          `arn:aws:s3:::${process.env.COMPANION_AWS_BUCKET}/*`,
-          `arn:aws:s3:::${process.env.COMPANION_AWS_BUCKET}`,
+          `arn:aws:s3:::${config.bucket}/*`,
+          `arn:aws:s3:::${config.bucket}`,
         ],
       },
     ],
@@ -377,10 +377,10 @@ module.exports = function s3 (config) {
   function getSTSClient () {
     if (stsClient == null) {
       stsClient = new STSClient({
-        region: process.env.COMPANION_AWS_REGION,
+        region: config.region,
         credentials : {
-          accessKeyId: process.env.COMPANION_AWS_KEY,
-          secretAccessKey: process.env.COMPANION_AWS_SECRET,
+          accessKeyId: config.key,
+          secretAccessKey: config.secret,
         },
       })
     }
