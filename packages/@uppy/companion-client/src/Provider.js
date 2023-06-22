@@ -88,6 +88,7 @@ export default class Provider extends RequestClient {
     return `${this.hostname}/${this.id}/get/${id}`
   }
 
+  /** @protected */
   async request (...args) {
     await this.#refreshingTokenPromise
 
