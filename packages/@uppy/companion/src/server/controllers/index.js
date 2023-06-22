@@ -6,6 +6,7 @@ module.exports = {
   get: require('./get'),
   thumbnail: require('./thumbnail'),
   list: require('./list'),
+  user: require('./user'),
   logout: require('./logout'),
   connect: require('./connect'),
   preauth: require('./preauth'),

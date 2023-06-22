@@ -1,6 +1,6 @@
 const querystring = require('node:querystring')
 
-const getUsername = (data) => {
+exports.getUsername = (data) => {
   return data.user.emailAddress
 }
 
@@ -140,7 +140,7 @@ const getVideoDurationMillis = (item) => item.videoMediaMetadata && item.videoMe
 // Hopefully this name will not be used by Google
 exports.VIRTUAL_SHARED_DIR = 'shared-with-me'
 
-exports.adaptData = (listFilesResp, sharedDrivesResp, directory, query, showSharedWithMe, about) => {
+exports.adaptData = (listFilesResp, sharedDrivesResp, directory, query, showSharedWithMe) => {
   const adaptItem = (item) => ({
     isFolder: isFolder(item),
     icon: getItemIcon(item),
@@ -183,7 +183,6 @@ exports.adaptData = (listFilesResp, sharedDrivesResp, directory, query, showShar
   ]
 
   return {
-    username: getUsername(about),
     items: adaptedItems,
     nextPagePath: getNextPagePath(listFilesResp, query, directory),
   }
