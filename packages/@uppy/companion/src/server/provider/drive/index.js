@@ -101,6 +101,8 @@ class Drive extends Provider {
           fields: DRIVE_FILES_FIELDS,
           pageToken: query.cursor,
           q,
+          // We can only do a page size of 1000 because we do not request permissions in DRIVE_FILES_FIELDS.
+          // Otherwise we are limited to 100. Instead we get the user info from `this.user()`
           pageSize: 1000,
           orderBy: 'folder,name',
           includeItemsFromAllDrives: true,
