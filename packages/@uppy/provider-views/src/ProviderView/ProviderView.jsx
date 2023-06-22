@@ -139,6 +139,9 @@ export default class ProviderView extends View {
         }
 
         path = res.nextPagePath
+        // When a new client connects to an old Companion without support for the /user endpoint (this.provider.user),
+        // we can still find the username in the response of /list.
+        this.username ??= res.username
         this.setLoading(this.plugin.uppy.i18n('addedNumFiles', { numFiles: files.length + folders.length }))
       }
 
