@@ -835,6 +835,7 @@ export default class AwsS3Multipart extends BasePlugin {
 
     const promises = filesFiltered.map((file) => {
       if (file.isRemote) {
+        this.#setResumableUploadsCapability(false)
         const controller = new AbortController()
 
         const removedHandler = (removedFile) => {
@@ -854,7 +855,11 @@ export default class AwsS3Multipart extends BasePlugin {
       return this.#uploadFile(file)
     })
 
-    return Promise.all(promises)
+    const upload = await Promise.all(promises)
+    // After the upload is done, another upload may happen with only local files.
+    // We reset the capability so that the next upload can use resumable uploads.
+    this.#setResumableUploadsCapability(true)
+    return upload
   }
 
   #setCompanionHeaders = () => {
@@ -911,27 +916,30 @@ export default class AwsS3Multipart extends BasePlugin {
     })
   }
 
-  install () {
+  #setResumableUploadsCapability = (boolean) => {
     const { capabilities } = this.uppy.getState()
     this.uppy.setState({
       capabilities: {
         ...capabilities,
-        resumableUploads: true,
+        resumableUploads: boolean,
       },
     })
+  }
+
+  #resetResumableCapability = () => {
+    this.#setResumableUploadsCapability(true)
+  }
+
+  install () {
+    this.#setResumableUploadsCapability(true)
     this.uppy.addPreProcessor(this.#setCompanionHeaders)
     this.uppy.addUploader(this.#upload)
+    this.uppy.on('cancel-all', this.#resetResumableCapability)
   }
 
   uninstall () {
-    const { capabilities } = this.uppy.getState()
-    this.uppy.setState({
-      capabilities: {
-        ...capabilities,
-        resumableUploads: false,
-      },
-    })
     this.uppy.removePreProcessor(this.#setCompanionHeaders)
     this.uppy.removeUploader(this.#upload)
+    this.uppy.off('cancel-all', this.#resetResumableCapability)
   }
 }
