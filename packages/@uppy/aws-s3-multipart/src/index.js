@@ -333,6 +333,7 @@ export default class AwsS3Multipart extends BasePlugin {
       listParts: this.listParts.bind(this),
       abortMultipartUpload: this.abortMultipartUpload.bind(this),
       completeMultipartUpload: this.completeMultipartUpload.bind(this),
+      getTemporarySecurityCredentials: false,
       signPart: opts.getTemporarySecurityCredentials ? this.createSignedURL.bind(this) : this.signPart.bind(this),
       uploadPartBytes: AwsS3Multipart.uploadPartBytes,
       getUploadParameters: opts.getTemporarySecurityCredentials
@@ -439,11 +440,16 @@ export default class AwsS3Multipart extends BasePlugin {
   #cachedTemporaryCredentials
 
   async #getTemporarySecurityCredentials (options) {
-    options?.signal?.throwIfAborted()
+    throwIfAborted(options?.signal)
 
     if (this.#cachedTemporaryCredentials == null) {
       // We do not await it just yet, so concurrent calls do not try to override it:
-      this.#cachedTemporaryCredentials = this.opts.getTemporarySecurityCredentials(options)
+      if (this.opts.getTemporarySecurityCredentials === true) {
+        this.assertHost('getTemporarySecurityCredentials')
+        this.#cachedTemporaryCredentials = this.#client.get('s3/sts', null, options).then(assertServerError)
+      } else {
+        this.#cachedTemporaryCredentials = this.opts.getTemporarySecurityCredentials(options)
+      }
       setTimeout(() => {
         this.#cachedTemporaryCredentials = null
       }, (await this.#cachedTemporaryCredentials).credentials.expires)

@@ -29,7 +29,7 @@
   "bin": "./bin/companion",
   "dependencies": {
     "@aws-sdk/client-s3": "^3.338.0",
-    "@aws-sdk/client-sts": "^3.357.0",
+    "@aws-sdk/client-sts": "^3.338.0",
     "@aws-sdk/lib-storage": "^3.338.0",
     "@aws-sdk/s3-presigned-post": "^3.338.0",
     "@aws-sdk/s3-request-presigner": "^3.338.0",

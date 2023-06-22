@@ -125,13 +125,7 @@ export default () => {
       uppyDashboard.use(AwsS3Multipart, {
         companionUrl: COMPANION_URL,
         limit: 6,
-        async getTemporarySecurityCredentials () {
-          const r = await fetch(new URL('/s3/sts', COMPANION_URL))
-          if (!r.ok) {
-            throw new Error('bad', { cause: r })
-          }
-          return r.json()
-        },
+        getTemporarySecurityCredentials: true,
       })
       break
     case 'xhr':

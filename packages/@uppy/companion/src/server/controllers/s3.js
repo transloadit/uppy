@@ -6,6 +6,10 @@ const {
   AbortMultipartUploadCommand,
   CompleteMultipartUploadCommand,
 } = require('@aws-sdk/client-s3')
+const {
+  STSClient,
+  GetFederationTokenCommand,
+} = require('@aws-sdk/client-sts')
 
 const { createPresignedPost } = require('@aws-sdk/s3-presigned-post')
 const { getSignedUrl } = require('@aws-sdk/s3-request-presigner')
@@ -352,11 +356,6 @@ module.exports = function s3 (config) {
       })
     }, next)
   }
-
-  const {
-    STSClient,
-    GetFederationTokenCommand,
-  } = require('@aws-sdk/client-sts')
 
   const policy = {
     Version: '2012-10-17',
