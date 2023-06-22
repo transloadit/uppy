@@ -435,7 +435,7 @@ export default class AwsS3Multipart extends BasePlugin {
   }
 
   /**
-   * @type {Omit<import("../types").AwsS3STSResponse>}
+   * @type {import("../types").AwsS3STSResponse | Promise<import("../types").AwsS3STSResponse>}
    */
   #cachedTemporaryCredentials
 
