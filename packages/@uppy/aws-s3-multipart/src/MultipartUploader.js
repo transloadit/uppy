@@ -45,6 +45,8 @@ class MultipartUploader {
 
   #shouldUseMultipart
 
+  #isRestoring = false
+
   #onReject = (err) => (err?.cause === pausingUploadReason ? null : this.#onError(err))
 
   #maxMultipartParts = 10_000
@@ -64,6 +66,7 @@ class MultipartUploader {
     this.#onSuccess = this.options.onSuccess
     this.#onError = this.options.onError
     this.#shouldUseMultipart = this.options.shouldUseMultipart
+    this.#isRestoring = 'uploadId' in options
 
     this.#initChunks()
   }
@@ -104,6 +107,12 @@ class MultipartUploader {
           onProgress: this.#onPartProgress(j),
           onComplete: this.#onPartComplete(j),
           shouldUseMultipart,
+        }
+        if (this.#isRestoring) {
+          const size = i + chunkSize > fileSize ? fileSize - i : chunkSize
+          this.#chunks[j].setAsUploaded = () => {
+            this.#chunkState[j].uploaded = size
+          }
         }
       }
     } else {
@@ -161,6 +170,9 @@ class MultipartUploader {
     if (this.#uploadPromise) {
       if (!this.#abortController.signal.aborted) this.#abortController.abort(pausingUploadReason)
       this.#abortController = new AbortController()
+      this.#resumeUpload()
+    } else if (this.#isRestoring) {
+      this.options.companionComm.restoreUploadFile(this.#file, { uploadId: this.options.uploadId, key: this.options.key })
       this.#resumeUpload()
     } else {
       this.#createUpload()
