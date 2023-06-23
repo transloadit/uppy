@@ -7,7 +7,7 @@ import { RateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
 import { filterNonFailedFiles, filterFilesToEmitUploadStarted } from '@uppy/utils/lib/fileFilters'
 import { createAbortError } from '@uppy/utils/lib/AbortController'
 import packageJson from '../package.json'
-import MultipartUploader from './MultipartUploader.js'
+import MultipartUploader, { pausingUploadReason } from './MultipartUploader.js'
 
 function assertServerError (res) {
   if (res && res.error) {
@@ -201,6 +201,9 @@ class HTTPCommunicationQueue {
       // need to send the abortMultipartUpload request.
       return
     }
+    // Remove the cache entry right away for follow-up requests do not try to
+    // use the soon-to-be aborted chached values.
+    this.#cache.delete(file.data)
     let awaitedResult
     try {
       awaitedResult = await result
@@ -248,7 +251,9 @@ class HTTPCommunicationQueue {
       throwIfAborted(signal)
       return await this.#sendCompletionRequest(file, { key, uploadId, parts, signal }).abortOn(signal)
     } catch (err) {
-      this.#cache.delete(file.data)
+      if (err?.cause !== pausingUploadReason && err?.name !== 'AbortError') {
+        this.abortFileUpload(file)
+      }
       throw err
     }
   }
