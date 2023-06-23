@@ -159,7 +159,7 @@ module.exports = function s3 (config) {
       return
     }
 
-    let parts = []
+    const parts = []
 
     function listPartsPage (startAt) {
       client.send(new ListPartsCommand({
@@ -167,18 +167,18 @@ module.exports = function s3 (config) {
         Key: key,
         UploadId: uploadId,
         PartNumberMarker: startAt,
-      })).then(data => {
-        parts = parts.concat(data.Parts)
+      })).then(({ Parts, IsTruncated, NextPartNumberMarker }) => {
+        if (Parts) parts.push(...Parts)
 
-        if (data.IsTruncated) {
+        if (IsTruncated) {
           // Get the next page.
-          listPartsPage(data.NextPartNumberMarker)
+          listPartsPage(NextPartNumberMarker)
         } else {
           res.json(parts)
         }
       }, next)
     }
-    listPartsPage(0)
+    listPartsPage()
   }
 
   /**
