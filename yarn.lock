@@ -9140,8 +9140,8 @@ __metadata:
 
 "@types/jasmine@file:./private/@types/jasmine::locator=%40uppy-dev%2Fbuild%40workspace%3A.":
   version: 0.0.0
-  resolution: "@types/jasmine@file:./private/@types/jasmine#./private/@types/jasmine::hash=917119&locator=%40uppy-dev%2Fbuild%40workspace%3A."
-  checksum: cc86c9a338a6943da64fb636e13bdc8f2e41922ae62c3cfd95525b0a0965a28ecd7545173773f2b61a3c30ae70c8eeb9a725eb71fd9006a07a8733ecbac849b9
+  resolution: "@types/jasmine@file:./private/@types/jasmine#./private/@types/jasmine::hash=7d1df7&locator=%40uppy-dev%2Fbuild%40workspace%3A."
+  checksum: dde57c8ba208daf03688444da8b111a0656af60a6ae8d5b3f76e50fb722fb5ba837722c3aedbd5912d9cb39430b6174e3a7d0c39a7820607ae1cb8720e49cb3b
   languageName: node
   linkType: hard
 
@@ -9154,8 +9154,8 @@ __metadata:
 
 "@types/jasminewd2@file:./private/@types/jasmine::locator=%40uppy-dev%2Fbuild%40workspace%3A.":
   version: 0.0.0
-  resolution: "@types/jasminewd2@file:./private/@types/jasmine#./private/@types/jasmine::hash=fe65e0&locator=%40uppy-dev%2Fbuild%40workspace%3A."
-  checksum: 028a3a54e144661b64d14b439c585db2ade1a22ba4b21de85cb469afd2f1bf5e78079ab3f3e5c058ed4146e7cef5300e27c8d176d9f168222d88576671608135
+  resolution: "@types/jasminewd2@file:./private/@types/jasmine#./private/@types/jasmine::hash=1bd8c2&locator=%40uppy-dev%2Fbuild%40workspace%3A."
+  checksum: 179a1034b7211ca7394d5e8ad0962edf01c645ae28f244984f201c4f4dc7f376f230c041a5335ef8a3cf9ce62a463ca25420d4a4f3601f2c199f645055bfb275
   languageName: node
   linkType: hard
 
@@ -10555,7 +10555,7 @@ __metadata:
     node-schedule: 2.1.0
     prom-client: 14.0.1
     redis: 4.2.0
-    semver: 7.3.7
+    semver: 7.5.2
     serialize-error: ^2.1.0
     serialize-javascript: ^6.0.0
     supertest: 6.2.4
@@ -32423,6 +32423,17 @@ __metadata:
   bin:
     semver: bin/semver.js
   checksum: ba9c7cbbf2b7884696523450a61fee1a09930d888b7a8d7579025ad93d459b2d1949ee5bbfeb188b2be5f4ac163544c5e98491ad6152df34154feebc2cc337c1
+  languageName: node
+  linkType: hard
+
+"semver@npm:7.5.2":
+  version: 7.5.2
+  resolution: "semver@npm:7.5.2"
+  dependencies:
+    lru-cache: ^6.0.0
+  bin:
+    semver: bin/semver.js
+  checksum: 3fdf5d1e6f170fe8bcc41669e31787649af91af7f54f05c71d0865bb7aa27e8b92f68b3e6b582483e2c1c648008bc84249d2cd86301771fe5cbf7621d1fe5375
   languageName: node
   linkType: hard
 
