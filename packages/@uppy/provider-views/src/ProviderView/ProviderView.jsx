@@ -1,6 +1,6 @@
 import { h } from 'preact'
 // eslint-disable-next-line import/no-unresolved
-import PQueue from 'p-queue'
+import PQueue from 'p-queue/dist'
 
 import { getSafeFileId } from '@uppy/utils/lib/generateFileID'
 
@@ -13,12 +13,12 @@ import View from '../View.js'
 
 import packageJson from '../../package.json'
 
-function getOrigin () {
+function getOrigin() {
   // eslint-disable-next-line no-restricted-globals
   return location.origin
 }
 
-function getRegex (value) {
+function getRegex(value) {
   if (typeof value === 'string') {
     return new RegExp(`^${value}$`)
   } if (value instanceof RegExp) {
@@ -26,7 +26,7 @@ function getRegex (value) {
   }
   return undefined
 }
-function isOriginAllowed (origin, allowedOrigin) {
+function isOriginAllowed(origin, allowedOrigin) {
   const patterns = Array.isArray(allowedOrigin) ? allowedOrigin.map(getRegex) : [getRegex(allowedOrigin)]
   return patterns
     .some((pattern) => pattern?.test(origin) || pattern?.test(`${origin}/`)) // allowing for trailing '/'
@@ -42,7 +42,7 @@ export default class ProviderView extends View {
    * @param {object} plugin instance of the plugin
    * @param {object} opts
    */
-  constructor (plugin, opts) {
+  constructor(plugin, opts) {
     super(plugin, opts)
     // set default options
     const defaultOptions = {
@@ -81,11 +81,11 @@ export default class ProviderView extends View {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  tearDown () {
+  tearDown() {
     // Nothing.
   }
 
-  #updateFilesAndFolders (res, files, folders) {
+  #updateFilesAndFolders(res, files, folders) {
     this.nextPagePath = res.nextPagePath
     res.items.forEach((item) => {
       if (item.isFolder) {
@@ -104,7 +104,7 @@ export default class ProviderView extends View {
    * @param  {string} id Folder id
    * @returns {Promise}   Folders/files in folder
    */
-  async getFolder (id, name) {
+  async getFolder(id, name) {
     this.setLoading(true)
     try {
       const res = await this.provider.list(id)
@@ -137,7 +137,7 @@ export default class ProviderView extends View {
    *
    * @param  {object} folder
    */
-  getNextFolder (folder) {
+  getNextFolder(folder) {
     this.getFolder(folder.requestPath, folder.name)
     this.lastCheckbox = undefined
   }
@@ -145,7 +145,7 @@ export default class ProviderView extends View {
   /**
    * Removes session token on client side.
    */
-  logout () {
+  logout() {
     this.provider.logout()
       .then((res) => {
         if (res.ok) {
@@ -169,15 +169,15 @@ export default class ProviderView extends View {
       }).catch(this.handleError)
   }
 
-  filterQuery (input) {
+  filterQuery(input) {
     this.plugin.setPluginState({ filterInput: input })
   }
 
-  clearFilter () {
+  clearFilter() {
     this.plugin.setPluginState({ filterInput: '' })
   }
 
-  async handleAuth () {
+  async handleAuth() {
     await this.provider.ensurePreAuth()
 
     const authState = btoa(JSON.stringify({ origin: getOrigin() }))
@@ -219,7 +219,7 @@ export default class ProviderView extends View {
     window.addEventListener('message', handleToken)
   }
 
-  async handleScroll (event) {
+  async handleScroll(event) {
     const path = this.nextPagePath || null
 
     if (this.shouldHandleScroll(event) && path) {
@@ -238,7 +238,7 @@ export default class ProviderView extends View {
     }
   }
 
-  async recursivelyListAllFiles (path, queue, onFiles) {
+  async recursivelyListAllFiles(path, queue, onFiles) {
     let curPath = path
 
     while (curPath) {
@@ -258,7 +258,7 @@ export default class ProviderView extends View {
     }
   }
 
-  async donePicking () {
+  async donePicking() {
     this.setLoading(true)
     try {
       const { currentSelection } = this.plugin.getPluginState()
@@ -335,7 +335,7 @@ export default class ProviderView extends View {
     }
   }
 
-  render (state, viewOptions = {}) {
+  render(state, viewOptions = {}) {
     const { authenticated, didFirstRender } = this.plugin.getPluginState()
     const { i18n } = this.plugin.uppy
 
