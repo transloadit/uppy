@@ -13,6 +13,10 @@
     <div id="aws-multipart"></div>
     <script type="module">
       import { Uppy, Dashboard, AwsS3Multipart, AwsS3 } from "https://releases.transloadit.com/uppy/v3.10.0/uppy.min.mjs"
+      /**
+       * This generator transforms a deep object into URL-encodable pairs
+       * to work with `URLSearchParams` on the client and `body-parser` on the server.
+       */
       function* serializeSubPart(key, value) {
         if (typeof value !== "object") {
           yield [key, value];
@@ -29,7 +33,11 @@
         }
       }
       function serialize(data) {
-        return new URLSearchParams(serializeSubPart(null, data));
+        // If you want to avoid preflight requests, use URL-encoded syntax:
+        return new URLSearchParams(serializeSubPart(null, data))
+        // If you don't care about additional preflight requests, you can also use:
+        // return JSON.stringify(data)
+        // You'd also have to add `Content-Type` header with value `application/json`.
       }
       {
         const uppy = new Uppy()
