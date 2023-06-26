@@ -106,10 +106,13 @@ export default class ProviderView extends View {
    */
   async getFolder (id, name) {
     const controller = new AbortController()
-    const cancelRequest = () => controller.abort()
-    const getNewBreadcrumpDirectories = (path) => {
+    const cancelRequest = () => {
+      controller.abort()
+      this.clearSelection()
+    }
+    const getNewBreadcrumpDirectories = () => {
       const state = this.plugin.getPluginState()
-      const index = state.directories.findIndex((dir) => path === dir.id)
+      const index = state.directories.findIndex((dir) => id === dir.id)
 
       if (index !== -1) {
         return state.directories.slice(0, index + 1)
@@ -135,6 +138,7 @@ export default class ProviderView extends View {
         }
 
         path = res.nextPagePath
+        this.nextPagePath = res.nextPagePath
         this.username ??= res.username
         this.setLoading(this.plugin.uppy.i18n('addedNumFiles', { numFiles: files.length + folders.length }))
       }
