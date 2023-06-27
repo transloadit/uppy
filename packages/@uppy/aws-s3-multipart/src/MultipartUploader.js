@@ -24,7 +24,7 @@ function ensureInt (value) {
   throw new TypeError('Expected a number')
 }
 
-const pausingUploadReason = Symbol('pausing upload, not an actual error')
+export const pausingUploadReason = Symbol('pausing upload, not an actual error')
 
 class MultipartUploader {
   #abortController = new AbortController()
