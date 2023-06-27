@@ -124,6 +124,7 @@ describe('uploader with tus protocol', () => {
       const fileInfo = fs.statSync(uploader.tmpPath)
       expect(fileInfo.isFile()).toBe(true)
       expect(fileInfo.size).toBe(fileContent.length)
+      return uploader.tryDeleteTmpPath()
     }
     const uploadToken = uploader.token
     expect(uploadToken).toBeTruthy()

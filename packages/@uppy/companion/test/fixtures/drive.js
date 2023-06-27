@@ -17,5 +17,5 @@ module.exports.nockGoogleDownloadFile = ({ times = 1 } = {}) => {
     size: '758051',
   })
   nock('https://www.googleapis.com').get(`/drive/v3/files/${defaults.ITEM_ID}?alt=media&supportsAllDrives=true`).reply(200, {})
-  nock('https://www.googleapis.com').get((uri) => uri.includes('about')).reply(200, {})
+  nock('https://www.googleapis.com').get((uri) => uri.includes('about')).reply(200, { user: { emailAddress: 'john.doe@transloadit.com' } })
 }
