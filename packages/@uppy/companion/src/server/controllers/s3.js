@@ -396,8 +396,6 @@ module.exports = function s3 (config) {
       DurationSeconds: config.expires,
       Policy: JSON.stringify(policy),
     })).then(response => {
-    // Test creating multipart upload from the server — it works
-    // createMultipartUploadYo(response)
       res.setHeader('Access-Control-Allow-Origin', '*')
       res.setHeader('Cache-Control', `public,max-age=${config.expires}`)
       res.json({
