@@ -252,7 +252,7 @@ class HTTPCommunicationQueue {
       return await this.#sendCompletionRequest(file, { key, uploadId, parts, signal }).abortOn(signal)
     } catch (err) {
       if (err?.cause !== pausingUploadReason && err?.name !== 'AbortError') {
-        this.abortFileUpload(file)
+        this.abortFileUpload(file).catch(() => {})
       }
       throw err
     }
