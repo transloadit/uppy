@@ -29,20 +29,32 @@ export const pausingUploadReason = Symbol('pausing upload, not an actual error')
 class MultipartUploader {
   #abortController = new AbortController()
 
+  /** @type {import("../types/chunk").Chunk[]} */
   #chunks
 
+  /** @type {{ uploaded: number, etag?: string, done?: boolean }[]} */
   #chunkState
 
+  /**
+   * The (un-chunked) data to upload.
+   *
+   * @type {Blob}
+   */
   #data
 
+  /** @type {import("@uppy/core").UppyFile} */
   #file
 
-  #uploadPromise
+  /** @type {boolean} */
+  #uploadHasStarted = false
 
+  /** @type {(err?: Error | any) => any} */
   #onError
 
+  /** @type {() => any} */
   #onSuccess
 
+  /** @type {typeof import('../types/index').AwsS3MultipartOptions["shouldUseMultipart"]} */
   #shouldUseMultipart
 
   #onReject = (err) => (err?.cause === pausingUploadReason ? null : this.#onError(err))
@@ -119,13 +131,14 @@ class MultipartUploader {
   }
 
   #createUpload () {
-    this.#uploadPromise = this
+    this
       .options.companionComm.uploadFile(this.#file, this.#chunks, this.#abortController.signal)
       .then(this.#onSuccess, this.#onReject)
+    this.#uploadHasStarted = true
   }
 
   #resumeUpload () {
-    this.#uploadPromise = this
+    this
       .options.companionComm.resumeUploadFile(this.#file, this.#chunks, this.#abortController.signal)
       .then(this.#onSuccess, this.#onReject)
   }
@@ -158,7 +171,7 @@ class MultipartUploader {
   }
 
   start () {
-    if (this.#uploadPromise) {
+    if (this.#uploadHasStarted) {
       if (!this.#abortController.signal.aborted) this.#abortController.abort(pausingUploadReason)
       this.#abortController = new AbortController()
       this.#resumeUpload()
