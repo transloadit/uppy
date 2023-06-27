@@ -48,6 +48,13 @@
             // Files that are more than 100MiB should be uploaded in multiple parts.
             shouldUseMultipart: (file) => file.size > 100 * MiB,
 
+            // ========== Non-Multipart Uploads ==========
+
+            /**
+             * This method tells Uppy how to handle non-multipart uploads.
+             * If for some reason you want to only support multipart uploads,
+             * you don't need to implement it.
+             */
             async getUploadParameters (file) {
               // Send a request to our Express.js signing endpoint.
               const response = await fetch('/sign-s3', {
@@ -77,6 +84,12 @@
                 },
               }
             },
+
+            // ========== Multipart Uploads ==========
+
+            // The following methods are only useful for multipart uploads:
+            // If you are not interested in multipart uploads, you don't need to
+            // implement them (you'd also need to set `shouldUseMultipart: false` though).
 
             async createMultipartUpload(file, signal) {
               if (signal?.aborted) {
