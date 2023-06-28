@@ -239,6 +239,12 @@ class HTTPCommunicationQueue {
     }).abortOn(signal)
   }
 
+  /**
+   * @param {import("@uppy/core").UppyFile} file
+   * @param {import("../types/chunk").Chunk[]} chunks
+   * @param {AbortSignal} signal
+   * @returns {Promise<void>}
+   */
   async uploadFile (file, chunks, signal) {
     throwIfAborted(signal)
     if (chunks.length === 1 && !chunks[0].shouldUseMultipart) {
@@ -281,6 +287,14 @@ class HTTPCommunicationQueue {
     return this.#sendCompletionRequest(file, { key, uploadId, parts, signal }).abortOn(signal)
   }
 
+  /**
+   *
+   * @param {import("@uppy/core").UppyFile} file
+   * @param {number} partNumber
+   * @param {import("../types/chunk").Chunk} chunk
+   * @param {AbortSignal} signal
+   * @returns {Promise<object>}
+   */
   async uploadChunk (file, partNumber, chunk, signal) {
     throwIfAborted(signal)
     const { uploadId, key } = await this.getUploadId(file, signal)
