@@ -118,6 +118,7 @@ describe('uploader with tus protocol', () => {
     }
 
     const uploader = new Uploader(opts)
+    const originalTryDeleteTmpPath = uploader.tryDeleteTmpPath.bind(uploader)
     uploader.tryDeleteTmpPath = async () => {
       // validate that the tmp file has been downloaded and saved into the file path
       // must do it before it gets deleted
@@ -125,7 +126,7 @@ describe('uploader with tus protocol', () => {
       expect(fileInfo.isFile()).toBe(true)
       expect(fileInfo.size).toBe(fileContent.length)
 
-      return uploader.tryDeleteTmpPath()
+      return originalTryDeleteTmpPath()
     }
     const uploadToken = uploader.token
     expect(uploadToken).toBeTruthy()
