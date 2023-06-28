@@ -26,6 +26,12 @@ function ensureInt (value) {
 
 export const pausingUploadReason = Symbol('pausing upload, not an actual error')
 
+/**
+* A MultipartUploader instance is used per file upload to manage the chunk splitting,
+* the S3 multipart upload phase: create, sign, upload, finish, and handling pause/resume.
+* It also determines whether a upload should be done as multipart (`shouldUseMultipart`)
+* or as a regular S3 upload.
+*/
 class MultipartUploader {
   #abortController = new AbortController()
 
@@ -48,10 +54,10 @@ class MultipartUploader {
   /** @type {boolean} */
   #uploadHasStarted = false
 
-  /** @type {(err?: Error | any) => any} */
+  /** @type {(err?: Error | any) => void} */
   #onError
 
-  /** @type {() => any} */
+  /** @type {() => void} */
   #onSuccess
 
   /** @type {typeof import('../types/index').AwsS3MultipartOptions["shouldUseMultipart"]} */
