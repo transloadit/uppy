@@ -93,12 +93,12 @@ class MultipartUploader {
       }
       this.#chunks = Array(arraySize)
 
-      for (let i = 0, j = 0; i < fileSize; i += chunkSize, j++) {
-        const end = Math.min(fileSize, i + chunkSize)
+      for (let offset = 0, j = 0; offset < fileSize; offset += chunkSize, j++) {
+        const end = Math.min(fileSize, offset + chunkSize)
 
         // Defer data fetching/slicing until we actually need the data, because it's slow if we have a lot of files
         const getData = () => {
-          const i2 = i
+          const i2 = offset
           return this.#data.slice(i2, end)
         }
 
@@ -109,7 +109,7 @@ class MultipartUploader {
           shouldUseMultipart,
         }
         if (this.#isRestoring) {
-          const size = i + chunkSize > fileSize ? fileSize - i : chunkSize
+          const size = offset + chunkSize > fileSize ? fileSize - offset : chunkSize
           this.#chunks[j].setAsUploaded = () => {
             this.#chunkState[j].uploaded = size
           }
