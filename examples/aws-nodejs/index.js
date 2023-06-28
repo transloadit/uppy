@@ -40,7 +40,7 @@ function getS3Client () {
   return s3Client
 }
 
-app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: true }), bodyParser.json())
 
 app.get('/', (req, res) => {
   const htmlPath = path.join(__dirname, 'public', 'index.html')

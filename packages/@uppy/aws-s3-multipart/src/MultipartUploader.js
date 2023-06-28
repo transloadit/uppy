@@ -24,25 +24,43 @@ function ensureInt (value) {
   throw new TypeError('Expected a number')
 }
 
-const pausingUploadReason = Symbol('pausing upload, not an actual error')
+export const pausingUploadReason = Symbol('pausing upload, not an actual error')
 
+/**
+ * A MultipartUploader instance is used per file upload to determine whether a
+ * upload should be done as multipart or as a regular S3 upload
+ * (based on the user-provided `shouldUseMultipart` option value) and to manage
+ * the chunk splitting.
+ */
 class MultipartUploader {
   #abortController = new AbortController()
 
+  /** @type {import("../types/chunk").Chunk[]} */
   #chunks
 
+  /** @type {{ uploaded: number, etag?: string, done?: boolean }[]} */
   #chunkState
 
+  /**
+   * The (un-chunked) data to upload.
+   *
+   * @type {Blob}
+   */
   #data
 
+  /** @type {import("@uppy/core").UppyFile} */
   #file
 
-  #uploadPromise
+  /** @type {boolean} */
+  #uploadHasStarted = false
 
+  /** @type {(err?: Error | any) => void} */
   #onError
 
+  /** @type {() => void} */
   #onSuccess
 
+  /** @type {typeof import('../types/index').AwsS3MultipartOptions["shouldUseMultipart"]} */
   #shouldUseMultipart
 
   #isRestoring = false
@@ -128,13 +146,14 @@ class MultipartUploader {
   }
 
   #createUpload () {
-    this.#uploadPromise = this
+    this
       .options.companionComm.uploadFile(this.#file, this.#chunks, this.#abortController.signal)
       .then(this.#onSuccess, this.#onReject)
+    this.#uploadHasStarted = true
   }
 
   #resumeUpload () {
-    this.#uploadPromise = this
+    this
       .options.companionComm.resumeUploadFile(this.#file, this.#chunks, this.#abortController.signal)
       .then(this.#onSuccess, this.#onReject)
   }
@@ -167,7 +186,7 @@ class MultipartUploader {
   }
 
   start () {
-    if (this.#uploadPromise) {
+    if (this.#uploadHasStarted) {
       if (!this.#abortController.signal.aborted) this.#abortController.abort(pausingUploadReason)
       this.#abortController = new AbortController()
       this.#resumeUpload()
