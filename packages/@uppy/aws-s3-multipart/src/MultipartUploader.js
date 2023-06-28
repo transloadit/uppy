@@ -60,10 +60,11 @@ class MultipartUploader {
   /** @type {() => void} */
   #onSuccess
 
-  /** @type {typeof import('../types/index').AwsS3MultipartOptions["shouldUseMultipart"]} */
+  /** @type {import('../types/index').AwsS3MultipartOptions["shouldUseMultipart"]} */
   #shouldUseMultipart
 
-  #isRestoring = false
+  /** @type {boolean} */
+  #isRestoring
 
   #onReject = (err) => (err?.cause === pausingUploadReason ? null : this.#onError(err))
 
@@ -84,6 +85,10 @@ class MultipartUploader {
     this.#onSuccess = this.options.onSuccess
     this.#onError = this.options.onError
     this.#shouldUseMultipart = this.options.shouldUseMultipart
+
+    // When we are restoring an upload, we already have an uploadId. Otherwise
+    // we need to call `createMultipartUpload` to get an `uploadId`.
+    // Non-multipart uploads are not restorable.
     this.#isRestoring = 'uploadId' in options
 
     this.#initChunks()
@@ -128,6 +133,8 @@ class MultipartUploader {
         }
         if (this.#isRestoring) {
           const size = offset + chunkSize > fileSize ? fileSize - offset : chunkSize
+          // setAsUploaded is called by listPart, to keep up-to-date the
+          // quantity of data that is left to actually upload.
           this.#chunks[j].setAsUploaded = () => {
             this.#chunkState[j].uploaded = size
           }
