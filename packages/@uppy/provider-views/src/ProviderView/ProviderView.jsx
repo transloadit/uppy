@@ -110,7 +110,7 @@ export default class ProviderView extends View {
       controller.abort()
       this.clearSelection()
     }
-    const getNewBreadcrumpDirectories = () => {
+    const getNewBreadcrumbsDirectories = () => {
       const state = this.plugin.getPluginState()
       const index = state.directories.findIndex((dir) => id === dir.id)
 
@@ -138,12 +138,11 @@ export default class ProviderView extends View {
         }
 
         path = res.nextPagePath
-        this.nextPagePath = res.nextPagePath
         this.username ??= res.username
         this.setLoading(this.plugin.uppy.i18n('addedNumFiles', { numFiles: files.length + folders.length }))
       }
 
-      const directories = getNewBreadcrumpDirectories(path)
+      const directories = getNewBreadcrumbsDirectories(path)
 
       this.plugin.setPluginState({ files, folders, directories, filterInput: '' })
       this.lastCheckbox = undefined
