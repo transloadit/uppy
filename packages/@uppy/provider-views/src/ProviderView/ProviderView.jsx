@@ -138,7 +138,7 @@ export default class ProviderView extends View {
         }
 
         path = res.nextPagePath
-        this.username ??= res.username
+        if (res.username) this.username = res.username
         this.setLoading(this.plugin.uppy.i18n('addedNumFiles', { numFiles: files.length + folders.length }))
       }
 
