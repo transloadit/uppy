@@ -7,7 +7,7 @@ index ec8a133f3fbea56f4b395c96ca2b27bd4903c62e..d9050e1c504c2a487ab1debff44c3737
      // TODO: remove this ASAP, but it currently causes tests to run really slow
      global.Buffer = Buffer;
 +    global.TextEncoder = TextEncoder;
-+    global.TextEncoder = TextEncoder;
++    global.TextDecoder = TextDecoder;
  
      // Report uncaught errors.
      this.errorEventListener = event => {
