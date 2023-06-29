@@ -32,6 +32,15 @@ function isOriginAllowed (origin, allowedOrigin) {
     .some((pattern) => pattern?.test(origin) || pattern?.test(`${origin}/`)) // allowing for trailing '/'
 }
 
+function formatDirectoryStack (directoryStack) {
+  return directoryStack.slice(1).map((directory) => directory.name).join('/')
+}
+
+function addPath (path, component) {
+  if (path == null || path === '') return component
+  return `${path}/${component}`
+}
+
 /**
  * Class to easily generate generic views for Provider plugins
  */
@@ -85,9 +94,30 @@ export default class ProviderView extends View {
     // Nothing.
   }
 
-  #updateFilesAndFolders (res, files, folders) {
-    this.nextPagePath = res.nextPagePath
-    res.items.forEach((item) => {
+  async #list (requestPath, dirPath) {
+    const { username, nextPagePath, items } = await this.provider.list(requestPath)
+    this.username = username || this.username
+
+    return {
+      items: items.map((item) => ({
+        ...item,
+        dirPath,
+      })),
+      nextPagePath,
+    }
+  }
+
+  async #updateFilesAndFolders (requestPath, directoryStack, filesIn, foldersIn) {
+    const dirPath = formatDirectoryStack(directoryStack)
+
+    const { items, nextPagePath } = await this.#list(requestPath, dirPath)
+
+    this.nextPagePath = nextPagePath
+
+    const files = filesIn ? [...filesIn] : []
+    const folders = foldersIn ? [...foldersIn] : []
+
+    items.forEach((item) => {
       if (item.isFolder) {
         folders.push(item)
       } else {
@@ -99,32 +129,34 @@ export default class ProviderView extends View {
   }
 
   /**
-   * Based on folder ID, fetch a new folder and update it to state
+   * Select a folder based on its id: fetches the folder and then updates state with its contents
+   * TODO rename to something better like selectFolder or navigateToFolder (breaking change?)
    *
-   * @param  {string} id Folder id
+   * @param  {string} requestPath
+   * the path we need to use when sending list request to companion (for some providers it's different from ID)
+   * @param  {string} name used in the UI and to build the dirPath
    * @returns {Promise}   Folders/files in folder
    */
-  async getFolder (id, name) {
+  async getFolder (requestPath, name) {
     this.setLoading(true)
     try {
-      const res = await this.provider.list(id)
-      const folders = []
-      const files = []
-      let updatedDirectories
+      this.lastCheckbox = undefined
 
-      const state = this.plugin.getPluginState()
-      const index = state.directoryStack.findIndex((dir) => id === dir.id)
+      let { directoryStack } = this.plugin.getPluginState()
+
+      const index = directoryStack.findIndex((dir) => requestPath === dir.requestPath)
 
       if (index !== -1) {
-        updatedDirectories = state.directoryStack.slice(0, index + 1)
+        // means we navigated back to a known directory (already in the stack), so cut the stack off there
+        directoryStack = directoryStack.slice(0, index + 1)
       } else {
-        updatedDirectories = state.directoryStack.concat([{ id, title: name }])
+        // we have navigated into a new (unknown) folder, add it to the stack
+        directoryStack = [...directoryStack, { requestPath, name }]
       }
 
-      this.username = res.username || this.username
-      this.#updateFilesAndFolders(res, files, folders)
-      this.plugin.setPluginState({ directoryStack: updatedDirectories, filterInput: '' })
-      this.lastCheckbox = undefined
+      this.plugin.setPluginState({ directoryStack, filterInput: '' })
+
+      await this.#updateFilesAndFolders(requestPath, directoryStack)
     } catch (err) {
       this.handleError(err)
     } finally {
@@ -220,16 +252,14 @@ export default class ProviderView extends View {
   }
 
   async handleScroll (event) {
-    const path = this.nextPagePath || null
+    const requestPath = this.nextPagePath || null
 
-    if (this.shouldHandleScroll(event) && path) {
+    if (this.shouldHandleScroll(event) && requestPath) {
       this.isHandlingScroll = true
 
       try {
-        const response = await this.provider.list(path)
-        const { files, folders } = this.plugin.getPluginState()
-
-        this.#updateFilesAndFolders(response, files, folders)
+        const { directoryStack, files, folders } = this.plugin.getPluginState()
+        await this.#updateFilesAndFolders(requestPath, directoryStack, files, folders)
       } catch (error) {
         this.handleError(error)
       } finally {
@@ -238,11 +268,11 @@ export default class ProviderView extends View {
     }
   }
 
-  async recursivelyListAllFiles (path, queue, onFiles) {
-    let curPath = path
+  async #recursivelyListAllFiles (requestPath, dirPath, queue, onFiles) {
+    let curPath = requestPath
 
     while (curPath) {
-      const res = await this.provider.list(curPath)
+      const res = await this.#list(curPath, dirPath)
       curPath = res.nextPagePath
 
       const files = res.items.filter((item) => !item.isFolder)
@@ -252,7 +282,7 @@ export default class ProviderView extends View {
 
       // recursively queue call to self for each folder
       const promises = folders.map(async (folder) => queue.add(async () => (
-        this.recursivelyListAllFiles(folder.requestPath, queue, onFiles)
+        this.#recursivelyListAllFiles(folder.requestPath, addPath(dirPath, folder.name), queue, onFiles)
       )))
       await Promise.all(promises) // in case we get an error
     }
@@ -266,9 +296,9 @@ export default class ProviderView extends View {
       const messages = []
       const newFiles = []
 
-      for (const file of currentSelection) {
-        if (file.isFolder) {
-          const { requestPath, name } = file
+      for (const item of currentSelection) {
+        if (item.isFolder) {
+          const { requestPath, name, dirPath } = item
           let isEmpty = true
           let numNewFiles = 0
 
@@ -291,7 +321,7 @@ export default class ProviderView extends View {
             }
           }
 
-          await this.recursivelyListAllFiles(requestPath, queue, onFiles)
+          await this.#recursivelyListAllFiles(requestPath, addPath(dirPath, name), queue, onFiles)
           await queue.onIdle()
 
           let message
@@ -312,7 +342,7 @@ export default class ProviderView extends View {
 
           messages.push(message)
         } else {
-          newFiles.push(file)
+          newFiles.push(item)
         }
       }
 

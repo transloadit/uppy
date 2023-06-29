@@ -27,8 +27,8 @@ export default (props) => {
         directoryStack.map((directory, i) => (
           <Breadcrumb
             key={directory.id}
-            getFolder={() => getFolder(directory.id)}
-            title={i === 0 ? title : directory.title}
+            getFolder={() => getFolder(directory.requestPath)}
+            title={i === 0 ? title : directory.name}
             isLast={i + 1 === directoryStack.length}
           />
         ))
