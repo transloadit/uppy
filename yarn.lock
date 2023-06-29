@@ -23292,7 +23292,7 @@ __metadata:
 
 "jest-environment-jsdom@patch:jest-environment-jsdom@npm:29.5.0#.yarn/patches/jest-environment-jsdom-npm-29.5.0-fc600add1e.patch::locator=%40uppy-dev%2Fbuild%40workspace%3A.":
   version: 29.5.0
-  resolution: "jest-environment-jsdom@patch:jest-environment-jsdom@npm%3A29.5.0#.yarn/patches/jest-environment-jsdom-npm-29.5.0-fc600add1e.patch::version=29.5.0&hash=d6ea83&locator=%40uppy-dev%2Fbuild%40workspace%3A."
+  resolution: "jest-environment-jsdom@patch:jest-environment-jsdom@npm%3A29.5.0#.yarn/patches/jest-environment-jsdom-npm-29.5.0-fc600add1e.patch::version=29.5.0&hash=f15c24&locator=%40uppy-dev%2Fbuild%40workspace%3A."
   dependencies:
     "@jest/environment": ^29.5.0
     "@jest/fake-timers": ^29.5.0
@@ -23307,7 +23307,7 @@ __metadata:
   peerDependenciesMeta:
     canvas:
       optional: true
-  checksum: fd560c668fd85e36c4651dca7f4b34e508cb4fdd31f2990703eafb9060bb9d95447ea74ef5f8d54d7e2de6c608bd582dea82c77db68bcfc87dfd7914071906b4
+  checksum: 7a960f9bd2f3b12c8923963dfc2213c10b20e439f1c9fe41cfedb15572d24bdbcf9f594d56ebdac64e57d46710f107d4d9e5150667b37badebf7dbc66e2212a1
   languageName: node
   linkType: hard
 
@@ -36727,7 +36727,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"uuid@npm:8.3.2, uuid@npm:^8.3.2":
+"uuid@npm:8.3.2":
   version: 8.3.2
   resolution: "uuid@npm:8.3.2"
   bin:
@@ -36751,6 +36751,15 @@ __metadata:
   bin:
     uuid: dist/bin/uuid
   checksum: f5b7b5cc28accac68d5c083fd51cca64896639ebd4cca88c6cfb363801aaa83aa439c86dfc8446ea250a7a98d17afd2ad9e88d9d4958c79a412eccb93bae29de
+  languageName: node
+  linkType: hard
+
+"uuid@patch:uuid@npm:8.3.2#.yarn/patches/uuid-npm-8.3.2-eca0baba53.patch::locator=%40uppy-dev%2Fbuild%40workspace%3A.":
+  version: 8.3.2
+  resolution: "uuid@patch:uuid@npm%3A8.3.2#.yarn/patches/uuid-npm-8.3.2-eca0baba53.patch::version=8.3.2&hash=c8ee88&locator=%40uppy-dev%2Fbuild%40workspace%3A."
+  bin:
+    uuid: dist/bin/uuid
+  checksum: 8f3eee60c01a1d53223f8b41cb8cf7cbd2121172f4d4b14f8825a035f770b00df769ea4b87072c1c598bbe34995c6e581794bca6475456ca4e663f5063dc4f34
   languageName: node
   linkType: hard
 
