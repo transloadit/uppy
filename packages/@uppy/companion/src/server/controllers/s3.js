@@ -412,7 +412,7 @@ module.exports = function s3 (config) {
       setTimeout(() => expiryCache.delete(key), config.expires)
       // This is a public unprotected endpoint.
       // If you implement your own custom endpoint with user authentication you
-      // should probably use `private` instead of `public`
+      // should probably use `private` instead of `public`.
       res.setHeader('Cache-Control', `public,max-age=${config.expires - 300}`) // 300s is 5min.
       res.json({
         credentials: response.Credentials,
