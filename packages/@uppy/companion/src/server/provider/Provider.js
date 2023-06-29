@@ -7,6 +7,7 @@ class Provider {
    * @param {object} options
    */
   constructor (options) { // eslint-disable-line no-unused-vars
+    // Some providers might need cookie auth for the thumbnails fetched via companion
     this.needsCookieAuth = false
     return this
   }
@@ -71,6 +72,14 @@ class Provider {
   // eslint-disable-next-line class-methods-use-this,no-unused-vars
   async deauthorizationCallback (options) {
     // @todo consider doing something like throw new NotImplementedError() instead
+    throw new Error('method not implemented')
+  }
+
+  /**
+   * Generate a new access token based on the refresh token
+   */
+  // eslint-disable-next-line class-methods-use-this,no-unused-vars
+  async refreshToken (options) {
     throw new Error('method not implemented')
   }
 

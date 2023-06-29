@@ -1,4 +1,4 @@
-import BasePlugin from '@uppy/core/lib/BasePlugin.js'
+import UploaderPlugin from '@uppy/core/lib/UploaderPlugin.js'
 import * as tus from 'tus-js-client'
 import { Provider, RequestClient, Socket } from '@uppy/companion-client'
 import emitSocketProgress from '@uppy/utils/lib/emitSocketProgress'
@@ -52,12 +52,10 @@ const tusDefaultOptions = {
 /**
  * Tus resumable file uploader
  */
-export default class Tus extends BasePlugin {
+export default class Tus extends UploaderPlugin {
   static VERSION = packageJson.version
 
   #retryDelayIterator
-
-  #queueRequestSocketToken
 
   /**
    * @param {Uppy} uppy
@@ -102,7 +100,7 @@ export default class Tus extends BasePlugin {
     this.uploaderSockets = Object.create(null)
 
     this.handleResetProgress = this.handleResetProgress.bind(this)
-    this.#queueRequestSocketToken = this.requests.wrapPromiseFunction(this.#requestSocketToken, { priority: -1 })
+    this.setQueueRequestSocketToken(this.requests.wrapPromiseFunction(this.#requestSocketToken, { priority: -1 }))
   }
 
   handleResetProgress () {
@@ -455,36 +453,6 @@ export default class Tus extends BasePlugin {
     return res.token
   }
 
-  // NOTE! Keep this duplicated code in sync with other plugins
-  // TODO we should probably abstract this into a common function
-  /**
-   * @param {UppyFile} file for use with upload
-   * @returns {Promise<void>}
-   */
-  async #uploadRemote (file, options) {
-    this.resetUploaderReferences(file.id)
-
-    try {
-      if (file.serverToken) {
-        return await this.connectToServerSocket(file)
-      }
-      const serverToken = await this.#queueRequestSocketToken(file, options).abortOn(options?.signal)
-
-      if (!this.uppy.getState().files[file.id]) return undefined
-
-      this.uppy.setFileState(file.id, { serverToken })
-      return await this.connectToServerSocket(this.uppy.getFile(file.id))
-    } catch (err) {
-      if (err?.cause?.name !== 'AbortError') {
-        this.uppy.setFileState(file.id, { serverToken: undefined })
-        this.uppy.emit('upload-error', file, err)
-        throw err
-      }
-      // The file upload was aborted, it’s not an error
-      return undefined
-    }
-  }
-
   /**
    * See the comment on the upload() method.
    *
@@ -745,7 +713,8 @@ export default class Tus extends BasePlugin {
         }
         this.uppy.on('file-removed', removedHandler)
 
-        const uploadPromise = this.#uploadRemote(file, { signal: controller.signal })
+        this.resetUploaderReferences(file.id)
+        const uploadPromise = this.uploadRemoteFile(file, { signal: controller.signal })
 
         this.requests.wrapSyncFunction(() => {
           this.uppy.off('file-removed', removedHandler)

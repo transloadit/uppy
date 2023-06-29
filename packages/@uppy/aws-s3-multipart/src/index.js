@@ -1,4 +1,4 @@
-import BasePlugin from '@uppy/core/lib/BasePlugin.js'
+import UploaderPlugin from '@uppy/core/lib/UploaderPlugin.js'
 import { Socket, Provider, RequestClient } from '@uppy/companion-client'
 import EventManager from '@uppy/utils/lib/EventManager'
 import emitSocketProgress from '@uppy/utils/lib/emitSocketProgress'
@@ -6,9 +6,10 @@ import getSocketHost from '@uppy/utils/lib/getSocketHost'
 import { RateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
 import { filterNonFailedFiles, filterFilesToEmitUploadStarted } from '@uppy/utils/lib/fileFilters'
 import { createAbortError } from '@uppy/utils/lib/AbortController'
-import packageJson from '../package.json'
-import MultipartUploader from './MultipartUploader.js'
+
+import MultipartUploader, { pausingUploadReason } from './MultipartUploader.js'
 import createSignedURL from './createSignedURL.js'
+import packageJson from '../package.json'
 
 function assertServerError (res) {
   if (res && res.error) {
@@ -202,6 +203,9 @@ class HTTPCommunicationQueue {
       // need to send the abortMultipartUpload request.
       return
     }
+    // Remove the cache entry right away for follow-up requests do not try to
+    // use the soon-to-be aborted chached values.
+    this.#cache.delete(file.data)
     let awaitedResult
     try {
       awaitedResult = await result
@@ -237,6 +241,12 @@ class HTTPCommunicationQueue {
     }).abortOn(signal)
   }
 
+  /**
+   * @param {import("@uppy/core").UppyFile} file
+   * @param {import("../types/chunk").Chunk[]} chunks
+   * @param {AbortSignal} signal
+   * @returns {Promise<void>}
+   */
   async uploadFile (file, chunks, signal) {
     throwIfAborted(signal)
     if (chunks.length === 1 && !chunks[0].shouldUseMultipart) {
@@ -249,14 +259,16 @@ class HTTPCommunicationQueue {
       throwIfAborted(signal)
       return await this.#sendCompletionRequest(file, { key, uploadId, parts, signal }).abortOn(signal)
     } catch (err) {
-      this.#cache.delete(file.data)
+      if (err?.cause !== pausingUploadReason && err?.name !== 'AbortError') {
+        this.abortFileUpload(file).catch(() => {})
+      }
       throw err
     }
   }
 
   async resumeUploadFile (file, chunks, signal) {
     throwIfAborted(signal)
-    if (chunks.length === 1) {
+    if (chunks.length === 1 && !chunks[0].shouldUseMultipart) {
       return this.#nonMultipartUpload(file, chunks[0], signal)
     }
     const { uploadId, key } = await this.getUploadId(file, signal)
@@ -277,6 +289,14 @@ class HTTPCommunicationQueue {
     return this.#sendCompletionRequest(file, { key, uploadId, parts, signal }).abortOn(signal)
   }
 
+  /**
+   *
+   * @param {import("@uppy/core").UppyFile} file
+   * @param {number} partNumber
+   * @param {import("../types/chunk").Chunk} chunk
+   * @param {AbortSignal} signal
+   * @returns {Promise<object>}
+   */
   async uploadChunk (file, partNumber, chunk, signal) {
     throwIfAborted(signal)
     const { uploadId, key } = await this.getUploadId(file, signal)
@@ -304,10 +324,8 @@ class HTTPCommunicationQueue {
   }
 }
 
-export default class AwsS3Multipart extends BasePlugin {
+export default class AwsS3Multipart extends UploaderPlugin {
   static VERSION = packageJson.version
-
-  #queueRequestSocketToken
 
   #companionCommunicationQueue
 
@@ -364,7 +382,7 @@ export default class AwsS3Multipart extends BasePlugin {
     this.uploaderEvents = Object.create(null)
     this.uploaderSockets = Object.create(null)
 
-    this.#queueRequestSocketToken = this.requests.wrapPromiseFunction(this.#requestSocketToken, { priority: -1 })
+    this.setQueueRequestSocketToken(this.requests.wrapPromiseFunction(this.#requestSocketToken, { priority: -1 }))
   }
 
   [Symbol.for('uppy test: getClient')] () { return this.#client }
@@ -753,32 +771,6 @@ export default class AwsS3Multipart extends BasePlugin {
     return res.token
   }
 
-  // NOTE! Keep this duplicated code in sync with other plugins
-  // TODO we should probably abstract this into a common function
-  async #uploadRemote (file, options) {
-    this.resetUploaderReferences(file.id)
-
-    try {
-      if (file.serverToken) {
-        return await this.connectToServerSocket(file)
-      }
-      const serverToken = await this.#queueRequestSocketToken(file, options).abortOn(options?.signal)
-
-      if (!this.uppy.getState().files[file.id]) return undefined
-
-      this.uppy.setFileState(file.id, { serverToken })
-      return await this.connectToServerSocket(this.uppy.getFile(file.id))
-    } catch (err) {
-      if (err?.cause?.name !== 'AbortError') {
-        this.uppy.setFileState(file.id, { serverToken: undefined })
-        this.uppy.emit('upload-error', file, err)
-        throw err
-      }
-      // The file upload was aborted, it’s not an error
-      return undefined
-    }
-  }
-
   async connectToServerSocket (file) {
     return new Promise((resolve, reject) => {
       let queuedRequest
@@ -905,15 +897,16 @@ export default class AwsS3Multipart extends BasePlugin {
 
     const promises = filesFiltered.map((file) => {
       if (file.isRemote) {
+        this.#setResumableUploadsCapability(false)
         const controller = new AbortController()
 
         const removedHandler = (removedFile) => {
           if (removedFile.id === file.id) controller.abort()
         }
-
         this.uppy.on('file-removed', removedHandler)
 
-        const uploadPromise = this.#uploadRemote(file, { signal: controller.signal })
+        this.resetUploaderReferences(file.id)
+        const uploadPromise = this.uploadRemoteFile(file, { signal: controller.signal })
 
         this.requests.wrapSyncFunction(() => {
           this.uppy.off('file-removed', removedHandler)
@@ -924,7 +917,11 @@ export default class AwsS3Multipart extends BasePlugin {
       return this.#uploadFile(file)
     })
 
-    return Promise.all(promises)
+    const upload = await Promise.all(promises)
+    // After the upload is done, another upload may happen with only local files.
+    // We reset the capability so that the next upload can use resumable uploads.
+    this.#setResumableUploadsCapability(true)
+    return upload
   }
 
   #setCompanionHeaders = () => {
@@ -981,27 +978,30 @@ export default class AwsS3Multipart extends BasePlugin {
     })
   }
 
-  install () {
+  #setResumableUploadsCapability = (boolean) => {
     const { capabilities } = this.uppy.getState()
     this.uppy.setState({
       capabilities: {
         ...capabilities,
-        resumableUploads: true,
+        resumableUploads: boolean,
       },
     })
+  }
+
+  #resetResumableCapability = () => {
+    this.#setResumableUploadsCapability(true)
+  }
+
+  install () {
+    this.#setResumableUploadsCapability(true)
     this.uppy.addPreProcessor(this.#setCompanionHeaders)
     this.uppy.addUploader(this.#upload)
+    this.uppy.on('cancel-all', this.#resetResumableCapability)
   }
 
   uninstall () {
-    const { capabilities } = this.uppy.getState()
-    this.uppy.setState({
-      capabilities: {
-        ...capabilities,
-        resumableUploads: false,
-      },
-    })
     this.uppy.removePreProcessor(this.#setCompanionHeaders)
     this.uppy.removeUploader(this.#upload)
+    this.uppy.off('cancel-all', this.#resetResumableCapability)
   }
 }
