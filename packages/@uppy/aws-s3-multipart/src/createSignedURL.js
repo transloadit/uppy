@@ -105,10 +105,10 @@ export default async function createSignedURL ({
   // We are signing on the client, so we expect there's going to be a session token:
   url.searchParams.set('X-Amz-Security-Token', sessionToken)
   url.searchParams.set('X-Amz-SignedHeaders', 'host')
-  url.searchParams.set('X-id', partNumber && uploadId ? 'UploadPart' : 'PutObject')
   // Those two are present only for Multipart Uploads:
   if (partNumber) url.searchParams.set('partNumber', partNumber)
   if (uploadId) url.searchParams.set('uploadId', uploadId)
+  url.searchParams.set('x-id', partNumber && uploadId ? 'UploadPart' : 'PutObject')
 
   // Step 1: Create a canonical request
   const canonical = createCanonicalRequest({
