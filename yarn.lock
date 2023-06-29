@@ -23292,7 +23292,7 @@ __metadata:
 
 "jest-environment-jsdom@patch:jest-environment-jsdom@npm:29.5.0#.yarn/patches/jest-environment-jsdom-npm-29.5.0-fc600add1e.patch::locator=%40uppy-dev%2Fbuild%40workspace%3A.":
   version: 29.5.0
-  resolution: "jest-environment-jsdom@patch:jest-environment-jsdom@npm%3A29.5.0#.yarn/patches/jest-environment-jsdom-npm-29.5.0-fc600add1e.patch::version=29.5.0&hash=f15c24&locator=%40uppy-dev%2Fbuild%40workspace%3A."
+  resolution: "jest-environment-jsdom@patch:jest-environment-jsdom@npm%3A29.5.0#.yarn/patches/jest-environment-jsdom-npm-29.5.0-fc600add1e.patch::version=29.5.0&hash=98a469&locator=%40uppy-dev%2Fbuild%40workspace%3A."
   dependencies:
     "@jest/environment": ^29.5.0
     "@jest/fake-timers": ^29.5.0
@@ -23307,7 +23307,7 @@ __metadata:
   peerDependenciesMeta:
     canvas:
       optional: true
-  checksum: 7a960f9bd2f3b12c8923963dfc2213c10b20e439f1c9fe41cfedb15572d24bdbcf9f594d56ebdac64e57d46710f107d4d9e5150667b37badebf7dbc66e2212a1
+  checksum: f6bf655b106ac8bf8fb6a4213a7dfce767ffde382c5257ed696ec34ac53052f78c2e5f79b04dedce0b956365298b0148b0e7dce6fdfb74be582fa51e5f83a44b
   languageName: node
   linkType: hard
 
@@ -36756,10 +36756,10 @@ __metadata:
 
 "uuid@patch:uuid@npm:8.3.2#.yarn/patches/uuid-npm-8.3.2-eca0baba53.patch::locator=%40uppy-dev%2Fbuild%40workspace%3A.":
   version: 8.3.2
-  resolution: "uuid@patch:uuid@npm%3A8.3.2#.yarn/patches/uuid-npm-8.3.2-eca0baba53.patch::version=8.3.2&hash=c8ee88&locator=%40uppy-dev%2Fbuild%40workspace%3A."
+  resolution: "uuid@patch:uuid@npm%3A8.3.2#.yarn/patches/uuid-npm-8.3.2-eca0baba53.patch::version=8.3.2&hash=9b0db7&locator=%40uppy-dev%2Fbuild%40workspace%3A."
   bin:
     uuid: dist/bin/uuid
-  checksum: 8f3eee60c01a1d53223f8b41cb8cf7cbd2121172f4d4b14f8825a035f770b00df769ea4b87072c1c598bbe34995c6e581794bca6475456ca4e663f5063dc4f34
+  checksum: 7b196d77503070b24669718f06d033de4c84b4ce064153a0770bf5cb2bab364dcc70bf7ee84461f61bdcc11d026fa46dc4b2ef9595ac1749404fb680b2b7c8d3
   languageName: node
   linkType: hard
 

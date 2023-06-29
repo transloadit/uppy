@@ -1,20 +1,12 @@
-diff --git a/dist/esm-browser/package.json b/dist/esm-browser/package.json
-new file mode 100644
-index 0000000000000000000000000000000000000000..089153bcb5adf57dc25f206a9dad3114c9cff80d
---- /dev/null
-+++ b/dist/esm-browser/package.json
-@@ -0,0 +1 @@
-+{"type":"module"}
 diff --git a/package.json b/package.json
-index f0ab3711ee4f490cbf961ebe6283ce2a28b6824b..c22d0848f0c913471f10b415b5785dd1a84b74f0 100644
+index f0ab3711ee4f490cbf961ebe6283ce2a28b6824b..644235a3ef52c974e946403a3fcdd137d01fad0c 100644
 --- a/package.json
 +++ b/package.json
-@@ -25,7 +25,7 @@
+@@ -25,6 +25,7 @@
          "require": "./dist/index.js",
          "import": "./wrapper.mjs"
        },
--      "default": "./dist/esm-browser/index.js"
-+      "default": "./dist/index.js"
++      "jest": "./dist/index.js",
+       "default": "./dist/esm-browser/index.js"
      },
      "./package.json": "./package.json"
-   },
