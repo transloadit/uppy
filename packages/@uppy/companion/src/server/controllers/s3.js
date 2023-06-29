@@ -389,7 +389,7 @@ module.exports = function s3 (config) {
 
   function getTemporarySecurityCredentials (req, res, next) {
     getSTSClient().send(new GetFederationTokenCommand({
-      Name: '123user',
+      Name: 'companion', // not sure what this is used for
       // The duration, in seconds, of the role session. The value specified
       // can range from 900 seconds (15 minutes) up to the maximum session
       // duration set for the role.
