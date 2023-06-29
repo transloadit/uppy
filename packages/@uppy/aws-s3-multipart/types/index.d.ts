@@ -16,7 +16,6 @@ export interface AwsS3STSResponse {
     AccessKeyId: string
     SecretAccessKey: string
     SessionToken: string
-    expires: number
   }
   bucket: string
   region: string
