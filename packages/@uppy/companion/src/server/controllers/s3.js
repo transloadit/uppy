@@ -413,7 +413,7 @@ module.exports = function s3 (config) {
       // This is a public unprotected endpoint.
       // If you implement your own custom endpoint with user authentication you
       // should probably use `private` instead of `public`
-      res.setHeader('Cache-Control', `public,max-age=${config.expires}`)
+      res.setHeader('Cache-Control', `public,max-age=${config.expires - 300}`) // 300s is 5min.
       res.json({
         credentials: response.Credentials,
         bucket: process.env.COMPANION_AWS_BUCKET,
