@@ -387,32 +387,56 @@ module.exports = function s3 (config) {
     return stsClient
   }
 
+  // TODO: this needs to be moved to some central location to be shared with other Companion instances.
+  const expiryCache = new Map()
+
   function getTemporarySecurityCredentials (req, res, next) {
+    const now = Math.floor(performance.now() / 1000)
     getSTSClient().send(new GetFederationTokenCommand({
-      Name: 'companion', // not sure what this is used for
+      // Name of the federated user. The name is used as an identifier for the
+      // temporary security credentials (such as Bob). For example, you can
+      // reference the federated user name in a resource-based policy, such as
+      // in an Amazon S3 bucket policy.
+      // Companion is configured by default as an unprotected public endpoint,
+      // if you implement your own custom endpoint with user authentication you
+      // should probably use different names for each of your users.
+      Name: 'companion',
       // The duration, in seconds, of the role session. The value specified
       // can range from 900 seconds (15 minutes) up to the maximum session
       // duration set for the role.
       DurationSeconds: config.expires,
       Policy: JSON.stringify(policy),
     })).then(response => {
-     // this is a public unprotected endpoint.
-     // if you implement your own custom endpoint with user authentication you should
-     // probably use `private` instead of `public`
+      const key = response.Credentials.SessionToken.slice(0, 50)
+      expiryCache.set(key, config.expires + now)
+      setTimeout(() => expiryCache.delete(key), config.expires)
+      // This is a public unprotected endpoint.
+      // If you implement your own custom endpoint with user authentication you
+      // should probably use `private` instead of `public`
       res.setHeader('Cache-Control', `public,max-age=${config.expires}`)
       res.json({
-        credentials: {
-          ...response.Credentials,
-          expires: config.expires,
-        },
+        credentials: response.Credentials,
         bucket: process.env.COMPANION_AWS_BUCKET,
         region: process.env.COMPANION_AWS_REGION,
       })
     }, next)
   }
 
+  function getTemporarySecurityCredentialsExpiry (req, res) {
+    res.setHeader('Cache-Control', `no-cache`)
+    const { token } = req.params
+    const cache = expiryCache.get(token)
+    if (cache == null) {
+      res.json(0)
+      return
+    }
+    const now = Math.ceil(performance.now() / 1000)
+    res.json(cache - now)
+  }
+
   return express.Router()
     .get('/sts', getTemporarySecurityCredentials)
+    .get('/sts/:token', getTemporarySecurityCredentialsExpiry)
     .get('/params', getUploadParameters)
     .post('/multipart', express.json(), createMultipartUpload)
     .get('/multipart/:uploadId', getUploadedParts)

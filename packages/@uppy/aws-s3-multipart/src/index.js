@@ -334,6 +334,7 @@ export default class AwsS3Multipart extends BasePlugin {
       abortMultipartUpload: this.abortMultipartUpload.bind(this),
       completeMultipartUpload: this.completeMultipartUpload.bind(this),
       getTemporarySecurityCredentials: false,
+      getTemporarySecurityCredentialsExpiry: this.getTemporarySecurityCredentialsExpiry.bind(this),
       signPart: opts?.getTemporarySecurityCredentials ? this.createSignedURL.bind(this) : this.signPart.bind(this),
       uploadPartBytes: AwsS3Multipart.uploadPartBytes,
       getUploadParameters: opts?.getTemporarySecurityCredentials
@@ -450,17 +451,31 @@ export default class AwsS3Multipart extends BasePlugin {
       } else {
         this.#cachedTemporaryCredentials = this.opts.getTemporarySecurityCredentials(options)
       }
-      setTimeout(() => {
-        this.#cachedTemporaryCredentials = null
-      }, (await this.#cachedTemporaryCredentials).credentials.expires)
       this.#cachedTemporaryCredentials = await this.#cachedTemporaryCredentials
     }
 
     return this.#cachedTemporaryCredentials
   }
 
-  async createSignedURL (file, { uploadId, key, partNumber, signal }) {
-    const data = await this.#getTemporarySecurityCredentials()
+  #temporaryCredentialsExpiryCache = { __proto__: null }
+
+  async getTemporarySecurityCredentialsExpiry (credentials, options) {
+    throwIfAborted(options?.signal)
+    const { [credentials.SessionToken]: cachedValue } = this.#temporaryCredentialsExpiryCache
+    if (cachedValue) {
+      return cachedValue - Math.floor(performance.now() / 1000)
+    }
+    this.assertHost('getTemporarySecurityCredentialsExpiry')
+    const res = await this.#client.get(`s3/sts/${credentials.SessionToken.slice(0, 50)}`, null, options).then(assertServerError)
+    this.#temporaryCredentialsExpiryCache[credentials.SessionToken] = res + Math.ceil(performance.now() / 1000)
+    return res
+  }
+
+  async createSignedURL (file, options) {
+    const data = await this.#getTemporarySecurityCredentials(options)
+    const expires = await this.opts.getTemporarySecurityCredentialsExpiry(data.credentials, options)
+
+    const { uploadId, key, partNumber, signal } = options
 
     // Return an object in the correct shape.
     return {
@@ -470,6 +485,7 @@ export default class AwsS3Multipart extends BasePlugin {
         accountKey: data.credentials.AccessKeyId,
         accountSecret: data.credentials.SecretAccessKey,
         sessionToken: data.credentials.SessionToken,
+        expires,
         bucketName: data.bucket,
         Region: data.region,
         Key: key,
