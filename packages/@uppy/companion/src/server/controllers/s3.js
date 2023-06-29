@@ -396,7 +396,9 @@ module.exports = function s3 (config) {
       DurationSeconds: config.expires,
       Policy: JSON.stringify(policy),
     })).then(response => {
-      res.setHeader('Access-Control-Allow-Origin', '*')
+     // this is a public unprotected endpoint.
+     // if you implement your own custom endpoint with user authentication you should
+     // probably use `private` instead of `public`
       res.setHeader('Cache-Control', `public,max-age=${config.expires}`)
       res.json({
         credentials: {
