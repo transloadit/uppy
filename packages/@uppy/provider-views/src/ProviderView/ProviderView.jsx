@@ -73,7 +73,7 @@ export default class ProviderView extends View {
       authenticated: false,
       files: [],
       folders: [],
-      directories: [],
+      directoryStack: [],
       filterInput: '',
       isSearchVisible: false,
       currentSelection: [],
@@ -113,17 +113,17 @@ export default class ProviderView extends View {
       let updatedDirectories
 
       const state = this.plugin.getPluginState()
-      const index = state.directories.findIndex((dir) => id === dir.id)
+      const index = state.directoryStack.findIndex((dir) => id === dir.id)
 
       if (index !== -1) {
-        updatedDirectories = state.directories.slice(0, index + 1)
+        updatedDirectories = state.directoryStack.slice(0, index + 1)
       } else {
-        updatedDirectories = state.directories.concat([{ id, title: name }])
+        updatedDirectories = state.directoryStack.concat([{ id, title: name }])
       }
 
       this.username = res.username || this.username
       this.#updateFilesAndFolders(res, files, folders)
-      this.plugin.setPluginState({ directories: updatedDirectories, filterInput: '' })
+      this.plugin.setPluginState({ directoryStack: updatedDirectories, filterInput: '' })
       this.lastCheckbox = undefined
     } catch (err) {
       this.handleError(err)
@@ -161,7 +161,7 @@ export default class ProviderView extends View {
             authenticated: false,
             files: [],
             folders: [],
-            directories: [],
+            directoryStack: [],
             filterInput: '',
           }
           this.plugin.setPluginState(newState)
@@ -350,7 +350,7 @@ export default class ProviderView extends View {
     const headerProps = {
       showBreadcrumbs: targetViewOptions.showBreadcrumbs,
       getFolder: this.getFolder,
-      directories: this.plugin.getPluginState().directories,
+      directoryStack: this.plugin.getPluginState().directoryStack,
       pluginIcon: this.plugin.icon,
       title: this.plugin.title,
       logout: this.logout,

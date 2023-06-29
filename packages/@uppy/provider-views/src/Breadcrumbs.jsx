@@ -18,18 +18,18 @@ const Breadcrumb = (props) => {
 }
 
 export default (props) => {
-  const { getFolder, title, breadcrumbsIcon, directories } = props
+  const { getFolder, title, breadcrumbsIcon, directoryStack } = props
 
   return (
     <div className="uppy-Provider-breadcrumbs">
       <div className="uppy-Provider-breadcrumbsIcon">{breadcrumbsIcon}</div>
       {
-        directories.map((directory, i) => (
+        directoryStack.map((directory, i) => (
           <Breadcrumb
             key={directory.id}
             getFolder={() => getFolder(directory.id)}
             title={i === 0 ? title : directory.title}
-            isLast={i + 1 === directories.length}
+            isLast={i + 1 === directoryStack.length}
           />
         ))
       }

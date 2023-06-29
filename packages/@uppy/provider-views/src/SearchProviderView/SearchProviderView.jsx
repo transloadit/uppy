@@ -46,7 +46,7 @@ export default class SearchProviderView extends View {
       isInputMode: true,
       files: [],
       folders: [],
-      directories: [],
+      directoryStack: [],
       filterInput: '',
       currentSelection: [],
       searchTerm: null,
