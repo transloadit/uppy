@@ -37,7 +37,7 @@ function formatDirectoryStack (directoryStack) {
 }
 
 function addPath (path, component) {
-  if (path == null || path === '') return component
+  if (!path) return component
   return `${path}/${component}`
 }
 
@@ -94,23 +94,23 @@ export default class ProviderView extends View {
     // Nothing.
   }
 
-  async #list (requestPath, dirPath) {
+  async #list (requestPath, absDirPath) {
     const { username, nextPagePath, items } = await this.provider.list(requestPath)
     this.username = username || this.username
 
     return {
       items: items.map((item) => ({
         ...item,
-        dirPath,
+        absDirPath,
       })),
       nextPagePath,
     }
   }
 
   async #updateFilesAndFolders (requestPath, directoryStack, filesIn, foldersIn) {
-    const dirPath = formatDirectoryStack(directoryStack)
+    const absDirPath = formatDirectoryStack(directoryStack)
 
-    const { items, nextPagePath } = await this.#list(requestPath, dirPath)
+    const { items, nextPagePath } = await this.#list(requestPath, absDirPath)
 
     this.nextPagePath = nextPagePath
 
@@ -134,7 +134,7 @@ export default class ProviderView extends View {
    *
    * @param  {string} requestPath
    * the path we need to use when sending list request to companion (for some providers it's different from ID)
-   * @param  {string} name used in the UI and to build the dirPath
+   * @param  {string} name used in the UI and to build the absDirPath
    * @returns {Promise}   Folders/files in folder
    */
   async getFolder (requestPath, name) {
@@ -268,11 +268,11 @@ export default class ProviderView extends View {
     }
   }
 
-  async #recursivelyListAllFiles (requestPath, dirPath, queue, onFiles) {
+  async #recursivelyListAllFiles ({ requestPath, absDirPath, relDirPath, queue, onFiles }) {
     let curPath = requestPath
 
     while (curPath) {
-      const res = await this.#list(curPath, dirPath)
+      const res = await this.#list(curPath, absDirPath)
       curPath = res.nextPagePath
 
       const files = res.items.filter((item) => !item.isFolder)
@@ -282,7 +282,13 @@ export default class ProviderView extends View {
 
       // recursively queue call to self for each folder
       const promises = folders.map(async (folder) => queue.add(async () => (
-        this.#recursivelyListAllFiles(folder.requestPath, addPath(dirPath, folder.name), queue, onFiles)
+        this.#recursivelyListAllFiles({
+          requestPath: folder.requestPath,
+          absDirPath: addPath(absDirPath, folder.name),
+          relDirPath: addPath(relDirPath, folder.name),
+          queue,
+          onFiles,
+        })
       )))
       await Promise.all(promises) // in case we get an error
     }
@@ -296,9 +302,17 @@ export default class ProviderView extends View {
       const messages = []
       const newFiles = []
 
-      for (const item of currentSelection) {
-        if (item.isFolder) {
-          const { requestPath, name, dirPath } = item
+      for (const selectedItem of currentSelection) {
+        const { requestPath } = selectedItem
+
+        const withRelDirPath = (newItem) => ({
+          ...newItem,
+          // calculate the file's path relative to the user's selected item's path
+          // see https://github.com/transloadit/uppy/pull/4537#issuecomment-1614236655
+          relDirPath: newItem.absDirPath.replace(selectedItem.absDirPath, '').replace(/^\//, ''),
+        })
+
+        if (selectedItem.isFolder) {
           let isEmpty = true
           let numNewFiles = 0
 
@@ -313,7 +327,7 @@ export default class ProviderView extends View {
               // the folder was already added. This checks if all files are duplicate,
               // if that's the case, we don't add the files.
               if (!this.plugin.uppy.checkIfFileAlreadyExists(id)) {
-                newFiles.push(newFile)
+                newFiles.push(withRelDirPath(newFile))
                 numNewFiles++
                 this.setLoading(this.plugin.uppy.i18n('addedNumFiles', { numFiles: numNewFiles }))
               }
@@ -321,7 +335,13 @@ export default class ProviderView extends View {
             }
           }
 
-          await this.#recursivelyListAllFiles(requestPath, addPath(dirPath, name), queue, onFiles)
+          await this.#recursivelyListAllFiles({
+            requestPath,
+            absDirPath: addPath(selectedItem.absDirPath, selectedItem.name),
+            relDirPath: selectedItem.name,
+            queue,
+            onFiles,
+          })
           await queue.onIdle()
 
           let message
@@ -329,20 +349,20 @@ export default class ProviderView extends View {
             message = this.plugin.uppy.i18n('emptyFolderAdded')
           } else if (numNewFiles === 0) {
             message = this.plugin.uppy.i18n('folderAlreadyAdded', {
-              folder: name,
+              folder: selectedItem.name,
             })
           } else {
             // TODO we don't really know at this point whether any files were actually added
             // (only later after addFiles has been called) so we should probably rewrite this.
             // Example: If all files fail to add due to restriction error, it will still say "Added 100 files from folder"
             message = this.plugin.uppy.i18n('folderAdded', {
-              smart_count: numNewFiles, folder: name,
+              smart_count: numNewFiles, folder: selectedItem.name,
             })
           }
 
           messages.push(message)
         } else {
-          newFiles.push(item)
+          newFiles.push(withRelDirPath(selectedItem))
         }
       }
 
