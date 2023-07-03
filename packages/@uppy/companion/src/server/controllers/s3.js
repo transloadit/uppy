@@ -390,6 +390,19 @@ module.exports = function s3 (config) {
   // TODO: this needs to be moved to some central location to be shared with other Companion instances.
   const expiryCache = new Map()
 
+  /**
+   * Create STS credentials with the permission for sending PutObject/UploadPart to the bucket.
+   *
+   * Clients should cache the response and re-use it until they can reasonably
+   * expect uploads to complete before the token expires. To this effect, the
+   * Cache-Control header is set to invalidate the cache 5 minutes before the
+   * token expires.
+   *
+   * Response JSON:
+   * - credentials: the credentials including the SessionToken.
+   * - bucket: the S3 bucket name.
+   * - region: the region where that bucket is stored.
+   */
   function getTemporarySecurityCredentials (req, res, next) {
     const now = Math.floor(performance.now() / 1000)
     getSTSClient().send(new GetFederationTokenCommand({
@@ -407,6 +420,8 @@ module.exports = function s3 (config) {
       DurationSeconds: config.expires,
       Policy: JSON.stringify(policy),
     })).then(response => {
+      // TODO: use a (non-cryptographic?) hash to minimize risks of collisions.
+      //       (maybe https://gist.github.com/raycmorgan/588423?)
       const key = response.Credentials.SessionToken.slice(0, 50)
       expiryCache.set(key, config.expires + now)
       setTimeout(() => expiryCache.delete(key), config.expires)
@@ -416,14 +431,26 @@ module.exports = function s3 (config) {
       res.setHeader('Cache-Control', `public,max-age=${config.expires - 300}`) // 300s is 5min.
       res.json({
         credentials: response.Credentials,
-        bucket: process.env.COMPANION_AWS_BUCKET,
-        region: process.env.COMPANION_AWS_REGION,
+        bucket: config.bucket,
+        region: config.region,
       })
     }, next)
   }
 
+  /**
+   * Returns the time in seconds until STS credentials expire.
+   *
+   * This is useful for clients that find a token in their cache and have no idea when it was created.
+   *
+   * Expected URL parameters:
+   * - token: the 50 first char of the SessionToken. Using oa subset of the token
+   *   ensures that a malicious actor can not use this endpoint to brute force their
+   *   way into getting a valid SessionToken. It increases the risk of collision,
+   *   but if the client gets the wrong expiry value, it's not that big of a deal.
+   * Response: a number (time in seconds until the token expires, or 0 if already expired / not found)
+   */
   function getTemporarySecurityCredentialsExpiry (req, res) {
-    res.setHeader('Cache-Control', `no-cache`)
+    res.setHeader('Cache-Control', `public,max-age=1`) // the result is valid for 1 second only.
     const { token } = req.params
     const cache = expiryCache.get(token)
     if (cache == null) {
