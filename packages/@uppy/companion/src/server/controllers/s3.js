@@ -358,7 +358,7 @@ module.exports = function s3 (config) {
   }
 
   const policy = {
-    Version: '2012-10-17',
+    Version: '2012-10-17', // latest at the time of writing
     Statement: [
       {
         Effect: 'Allow',
