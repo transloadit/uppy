@@ -387,9 +387,6 @@ module.exports = function s3 (config) {
     return stsClient
   }
 
-  // TODO: this needs to be moved to some central location to be shared with other Companion instances.
-  const expiryCache = new Map()
-
   /**
    * Create STS credentials with the permission for sending PutObject/UploadPart to the bucket.
    *
@@ -404,7 +401,6 @@ module.exports = function s3 (config) {
    * - region: the region where that bucket is stored.
    */
   function getTemporarySecurityCredentials (req, res, next) {
-    const now = Math.floor(performance.now() / 1000)
     getSTSClient().send(new GetFederationTokenCommand({
       // Name of the federated user. The name is used as an identifier for the
       // temporary security credentials (such as Bob). For example, you can
@@ -420,11 +416,6 @@ module.exports = function s3 (config) {
       DurationSeconds: config.expires,
       Policy: JSON.stringify(policy),
     })).then(response => {
-      // TODO: use a (non-cryptographic?) hash to minimize risks of collisions.
-      //       (maybe https://gist.github.com/raycmorgan/588423?)
-      const key = response.Credentials.SessionToken.slice(0, 50)
-      expiryCache.set(key, config.expires + now)
-      setTimeout(() => expiryCache.delete(key), config.expires)
       // This is a public unprotected endpoint.
       // If you implement your own custom endpoint with user authentication you
       // should probably use `private` instead of `public`.
@@ -437,33 +428,8 @@ module.exports = function s3 (config) {
     }, next)
   }
 
-  /**
-   * Returns the time in seconds until STS credentials expire.
-   *
-   * This is useful for clients that find a token in their cache and have no idea when it was created.
-   *
-   * Expected URL parameters:
-   * - token: the 50 first char of the SessionToken. Using oa subset of the token
-   *   ensures that a malicious actor can not use this endpoint to brute force their
-   *   way into getting a valid SessionToken. It increases the risk of collision,
-   *   but if the client gets the wrong expiry value, it's not that big of a deal.
-   * Response: a number (time in seconds until the token expires, or 0 if already expired / not found)
-   */
-  function getTemporarySecurityCredentialsExpiry (req, res) {
-    res.setHeader('Cache-Control', `public,max-age=1`) // the result is valid for 1 second only.
-    const { token } = req.params
-    const cache = expiryCache.get(token)
-    if (cache == null) {
-      res.json(0)
-      return
-    }
-    const now = Math.ceil(performance.now() / 1000)
-    res.json(cache - now)
-  }
-
   return express.Router()
     .get('/sts', getTemporarySecurityCredentials)
-    .get('/sts/:token', getTemporarySecurityCredentialsExpiry)
     .get('/params', getUploadParameters)
     .post('/multipart', express.json(), createMultipartUpload)
     .get('/multipart/:uploadId', getUploadedParts)

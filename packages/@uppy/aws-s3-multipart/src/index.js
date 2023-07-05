@@ -20,6 +20,26 @@ function assertServerError (res) {
   return res
 }
 
+/**
+ * Computes the expiry time for a request signed with temporary credentials. If
+ * no expiration was provided, defaults to 604 800s, which is the maximum value
+ * accepted by AWS. This function assumes the client clock is in sync with
+ * Amazon's, which is a requirement for the signature to be validated anyway.
+ *
+ * @param {import('../types/index.js').AwsS3STSResponse['credentials']} credentials
+ * @returns {number}
+ */
+function getExpiry (credentials) {
+  const expirationDate = credentials.Expiration
+  if (expirationDate) {
+    const timeUntilExpiry = Math.floor((new Date(expirationDate) - Date.now()) / 1000)
+    if (timeUntilExpiry > 9) {
+      return timeUntilExpiry
+    }
+  }
+  return 604_800
+}
+
 function getAllowedMetadata ({ meta, allowedMetaFields, querify = false }) {
   const metaFields = allowedMetaFields ?? Object.keys(meta)
 
@@ -352,7 +372,6 @@ export default class AwsS3Multipart extends UploaderPlugin {
       abortMultipartUpload: this.abortMultipartUpload.bind(this),
       completeMultipartUpload: this.completeMultipartUpload.bind(this),
       getTemporarySecurityCredentials: false,
-      getTemporarySecurityCredentialsExpiry: this.getTemporarySecurityCredentialsExpiry.bind(this),
       signPart: opts?.getTemporarySecurityCredentials ? this.createSignedURL.bind(this) : this.signPart.bind(this),
       uploadPartBytes: AwsS3Multipart.uploadPartBytes,
       getUploadParameters: opts?.getTemporarySecurityCredentials
@@ -475,29 +494,16 @@ export default class AwsS3Multipart extends UploaderPlugin {
     return this.#cachedTemporaryCredentials
   }
 
-  #temporaryCredentialsExpiryCache = { __proto__: null }
-
-  async getTemporarySecurityCredentialsExpiry (credentials, options) {
-    throwIfAborted(options?.signal)
-    const { [credentials.SessionToken]: cachedValue } = this.#temporaryCredentialsExpiryCache
-    if (cachedValue) {
-      return cachedValue - Math.floor(performance.now() / 1000)
-    }
-    this.assertHost('getTemporarySecurityCredentialsExpiry')
-    const res = await this.#client.get(`s3/sts/${credentials.SessionToken.slice(0, 50)}`, null, options).then(assertServerError)
-    this.#temporaryCredentialsExpiryCache[credentials.SessionToken] = res + Math.ceil(performance.now() / 1000)
-    return res
-  }
-
   async createSignedURL (file, options) {
     const data = await this.#getTemporarySecurityCredentials(options)
-    const expires = await this.opts.getTemporarySecurityCredentialsExpiry(data.credentials, options)
+    const expires = getExpiry(data.credentials)
 
     const { uploadId, key, partNumber, signal } = options
 
     // Return an object in the correct shape.
     return {
       method: 'PUT',
+      expires,
       fields: {},
       url: `${await createSignedURL({
         accountKey: data.credentials.AccessKeyId,
