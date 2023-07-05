@@ -86,10 +86,10 @@ class MultipartUploader {
     this.#onError = this.options.onError
     this.#shouldUseMultipart = this.options.shouldUseMultipart
 
-    // When we are restoring an upload, we already have an uploadId. Otherwise
-    // we need to call `createMultipartUpload` to get an `uploadId`.
+    // When we are restoring an upload, we already have an UploadId and a Key. Otherwise
+    // we need to call `createMultipartUpload` to get an `uploadId` and a `key`.
     // Non-multipart uploads are not restorable.
-    this.#isRestoring = 'uploadId' in options
+    this.#isRestoring = options.uploadId && options.key
 
     this.#initChunks()
   }

@@ -204,6 +204,7 @@ class HTTPCommunicationQueue {
     // Remove the cache entry right away for follow-up requests do not try to
     // use the soon-to-be aborted chached values.
     this.#cache.delete(file.data)
+    this.#setS3MultipartState(file, Object.create(null))
     let awaitedResult
     try {
       awaitedResult = await result
@@ -258,7 +259,7 @@ class HTTPCommunicationQueue {
       return await this.#sendCompletionRequest(file, { key, uploadId, parts, signal }).abortOn(signal)
     } catch (err) {
       if (err?.cause !== pausingUploadReason && err?.name !== 'AbortError') {
-        this.abortFileUpload(file).catch(() => {})
+        this.abortFileUpload(file).catch(console.warn)
       }
       throw err
     }
