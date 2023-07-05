@@ -11370,7 +11370,6 @@ __metadata:
     "@transloadit/prettier-bytes": 0.0.9
     "@uppy/utils": "workspace:^"
     classnames: ^2.2.6
-    lodash: ^4.17.21
     preact: ^10.5.13
   peerDependencies:
     "@uppy/core": "workspace:^"
@@ -33931,7 +33930,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"start-server-and-test@npm:^1.14.0":
+"start-server-and-test@npm:1.14.0":
   version: 1.14.0
   resolution: "start-server-and-test@npm:1.14.0"
   dependencies:
@@ -33947,6 +33946,25 @@ __metadata:
     start-server-and-test: src/bin/start.js
     start-test: src/bin/start.js
   checksum: 8437f5fc39bb47dd684b94023bab654703abc4890d08f005c3d86df620b2cdaac03f6e3bb21792a93209f1a70c8bb500d82fe4025a356da45fc060f2a80374e1
+  languageName: node
+  linkType: hard
+
+"start-server-and-test@patch:start-server-and-test@npm:1.14.0#.yarn/patches/start-server-and-test-npm-1.14.0-841aa34fdf.patch::locator=%40uppy-dev%2Fbuild%40workspace%3A.":
+  version: 1.14.0
+  resolution: "start-server-and-test@patch:start-server-and-test@npm%3A1.14.0#.yarn/patches/start-server-and-test-npm-1.14.0-841aa34fdf.patch::version=1.14.0&hash=2add03&locator=%40uppy-dev%2Fbuild%40workspace%3A."
+  dependencies:
+    bluebird: 3.7.2
+    check-more-types: 2.24.0
+    debug: 4.3.2
+    execa: 5.1.1
+    lazy-ass: 1.6.0
+    ps-tree: 1.2.0
+    wait-on: 6.0.0
+  bin:
+    server-test: src/bin/start.js
+    start-server-and-test: src/bin/start.js
+    start-test: src/bin/start.js
+  checksum: f69c82aa8fe842e9b36856ba8a350f031c8b1cf4617ac3353a710669cd6555122eac34de4cc73701550f0e498dbaef234d58f022f43509146d9f8fde0878bf4e
   languageName: node
   linkType: hard
 

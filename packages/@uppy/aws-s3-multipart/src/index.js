@@ -226,6 +226,7 @@ class HTTPCommunicationQueue {
     // Remove the cache entry right away for follow-up requests do not try to
     // use the soon-to-be aborted chached values.
     this.#cache.delete(file.data)
+    this.#setS3MultipartState(file, Object.create(null))
     let awaitedResult
     try {
       awaitedResult = await result
@@ -280,10 +281,14 @@ class HTTPCommunicationQueue {
       return await this.#sendCompletionRequest(file, { key, uploadId, parts, signal }).abortOn(signal)
     } catch (err) {
       if (err?.cause !== pausingUploadReason && err?.name !== 'AbortError') {
-        this.abortFileUpload(file).catch(() => {})
+        this.abortFileUpload(file).catch(console.warn)
       }
       throw err
     }
+  }
+
+  restoreUploadFile (file, uploadIdAndKey) {
+    this.#cache.set(file.data, uploadIdAndKey)
   }
 
   async resumeUploadFile (file, chunks, signal) {
@@ -300,9 +305,11 @@ class HTTPCommunicationQueue {
         .map((chunk, i) => {
           const partNumber = i + 1
           const alreadyUploadedInfo = alreadyUploadedParts.find(({ PartNumber }) => PartNumber === partNumber)
-          return alreadyUploadedInfo == null
-            ? this.uploadChunk(file, partNumber, chunk, signal)
-            : { PartNumber: partNumber, ETag: alreadyUploadedInfo.ETag }
+          if (alreadyUploadedInfo == null) {
+            return this.uploadChunk(file, partNumber, chunk, signal)
+          }
+          chunk.setAsUploaded?.()
+          return { PartNumber: partNumber, ETag: alreadyUploadedInfo.ETag }
         }),
     )
     throwIfAborted(signal)

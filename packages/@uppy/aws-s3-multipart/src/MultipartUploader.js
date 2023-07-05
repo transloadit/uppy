@@ -60,8 +60,11 @@ class MultipartUploader {
   /** @type {() => void} */
   #onSuccess
 
-  /** @type {typeof import('../types/index').AwsS3MultipartOptions["shouldUseMultipart"]} */
+  /** @type {import('../types/index').AwsS3MultipartOptions["shouldUseMultipart"]} */
   #shouldUseMultipart
+
+  /** @type {boolean} */
+  #isRestoring
 
   #onReject = (err) => (err?.cause === pausingUploadReason ? null : this.#onError(err))
 
@@ -82,6 +85,11 @@ class MultipartUploader {
     this.#onSuccess = this.options.onSuccess
     this.#onError = this.options.onError
     this.#shouldUseMultipart = this.options.shouldUseMultipart
+
+    // When we are restoring an upload, we already have an UploadId and a Key. Otherwise
+    // we need to call `createMultipartUpload` to get an `uploadId` and a `key`.
+    // Non-multipart uploads are not restorable.
+    this.#isRestoring = options.uploadId && options.key
 
     this.#initChunks()
   }
@@ -108,12 +116,12 @@ class MultipartUploader {
       }
       this.#chunks = Array(arraySize)
 
-      for (let i = 0, j = 0; i < fileSize; i += chunkSize, j++) {
-        const end = Math.min(fileSize, i + chunkSize)
+      for (let offset = 0, j = 0; offset < fileSize; offset += chunkSize, j++) {
+        const end = Math.min(fileSize, offset + chunkSize)
 
         // Defer data fetching/slicing until we actually need the data, because it's slow if we have a lot of files
         const getData = () => {
-          const i2 = i
+          const i2 = offset
           return this.#data.slice(i2, end)
         }
 
@@ -122,6 +130,14 @@ class MultipartUploader {
           onProgress: this.#onPartProgress(j),
           onComplete: this.#onPartComplete(j),
           shouldUseMultipart,
+        }
+        if (this.#isRestoring) {
+          const size = offset + chunkSize > fileSize ? fileSize - offset : chunkSize
+          // setAsUploaded is called by listPart, to keep up-to-date the
+          // quantity of data that is left to actually upload.
+          this.#chunks[j].setAsUploaded = () => {
+            this.#chunkState[j].uploaded = size
+          }
         }
       }
     } else {
@@ -180,6 +196,9 @@ class MultipartUploader {
     if (this.#uploadHasStarted) {
       if (!this.#abortController.signal.aborted) this.#abortController.abort(pausingUploadReason)
       this.#abortController = new AbortController()
+      this.#resumeUpload()
+    } else if (this.#isRestoring) {
+      this.options.companionComm.restoreUploadFile(this.#file, { uploadId: this.options.uploadId, key: this.options.key })
       this.#resumeUpload()
     } else {
       this.#createUpload()
