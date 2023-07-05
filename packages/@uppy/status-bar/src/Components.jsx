@@ -1,6 +1,5 @@
 import { h } from 'preact'
 import classNames from 'classnames'
-import throttle from 'lodash/throttle.js'
 import prettierBytes from '@transloadit/prettier-bytes'
 import prettyETA from '@uppy/utils/lib/prettyETA'
 
@@ -283,13 +282,6 @@ function UploadNewlyAddedFiles (props) {
   )
 }
 
-function ThrottledProgressDetails () {
-  return throttle(ProgressDetails, 500, {
-    leading: true,
-    trailing: true,
-  })
-}
-
 function ProgressBarUploading (props) {
   const {
     i18n,
@@ -320,7 +312,7 @@ function ProgressBarUploading (props) {
     if (!isAllPaused && !showUploadNewlyAddedFiles && showProgressDetails) {
       if (supportsUploadProgress) {
         return (
-          <ThrottledProgressDetails
+          <ProgressDetails
             numUploads={numUploads}
             complete={complete}
             totalUploadedSize={totalUploadedSize}
