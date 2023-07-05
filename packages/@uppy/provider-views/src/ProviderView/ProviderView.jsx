@@ -139,7 +139,7 @@ export default class ProviderView extends View {
 
         path = res.nextPagePath
         if (res.username) this.username = res.username
-        this.setLoading(this.plugin.uppy.i18n('addedNumFiles', { numFiles: files.length + folders.length }))
+        this.setLoading(this.plugin.uppy.i18n('loadedXFiles', { numFiles: files.length + folders.length }))
       }
 
       const directories = getNewBreadcrumbsDirectories(path)
