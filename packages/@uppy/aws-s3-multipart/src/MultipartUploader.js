@@ -89,7 +89,7 @@ class MultipartUploader {
     // When we are restoring an upload, we already have an UploadId and a Key. Otherwise
     // we need to call `createMultipartUpload` to get an `uploadId` and a `key`.
     // Non-multipart uploads are not restorable.
-    this.#isRestoring = options.uploadFile && options.key
+    this.#isRestoring = options.uploadId && options.key
 
     this.#initChunks()
   }
