@@ -36,7 +36,6 @@ export interface AwsS3MultipartOptions extends PluginOptions {
       opts: { uploadId: string; key: string; signal: AbortSignal }
     ) => MaybePromise<AwsS3Part[]>
     getTemporarySecurityCredentials?: boolean | (() => MaybePromise<AwsS3STSResponse>)
-    getTemporarySecurityCredentialsExpiry?: (credentials: AwsS3STSResponse['credentials'], options?: {signal?: AbortSignal}) => MaybePromise<number>
     signPart?: (
       file: UppyFile,
       opts: { uploadId: string; key: string; partNumber: number; body: Blob, signal: AbortSignal }
