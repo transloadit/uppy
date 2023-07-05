@@ -22,12 +22,13 @@ function assertServerError (res) {
 
 /**
  * Computes the expiry time for a request signed with temporary credentials. If
- * no expiration was provided, defaults to 604 800s, which is the maximum value
- * accepted by AWS. This function assumes the client clock is in sync with
- * Amazon's, which is a requirement for the signature to be validated anyway.
+ * no expiration was provided, or an invalid value (e.g. in the past) is
+ * provided, undefined is returned. This function assumes the client clock is in
+ * sync with the remote server, which is a requirement for the signature to be
+ * validated for AWS anyway.
  *
  * @param {import('../types/index.js').AwsS3STSResponse['credentials']} credentials
- * @returns {number}
+ * @returns {number | undefined}
  */
 function getExpiry (credentials) {
   const expirationDate = credentials.Expiration
@@ -37,7 +38,7 @@ function getExpiry (credentials) {
       return timeUntilExpiry
     }
   }
-  return 604_800
+  return undefined
 }
 
 function getAllowedMetadata ({ meta, allowedMetaFields, querify = false }) {
@@ -496,6 +497,16 @@ export default class AwsS3Multipart extends UploaderPlugin {
         this.#cachedTemporaryCredentials = this.opts.getTemporarySecurityCredentials(options)
       }
       this.#cachedTemporaryCredentials = await this.#cachedTemporaryCredentials
+      setTimeout(() => {
+        // At half the time left before expiration, we clear the cache. That's
+        // an arbitrary tradeoff to limit the number of requests made to the
+        // remote while limiting the risk of using an expired token in case the
+        // clocks are not exactly synced.
+        // The HTTP cache should be configured to ensure a client doesn't request
+        // more tokens than it needs, but this timeout provides a second layer of
+        // security in case the HTTP cache is disabled or misconfigured.
+        this.#cachedTemporaryCredentials = null
+      }, (getExpiry(this.#cachedTemporaryCredentials.credentials) || 0) * 500)
     }
 
     return this.#cachedTemporaryCredentials
@@ -503,7 +514,7 @@ export default class AwsS3Multipart extends UploaderPlugin {
 
   async createSignedURL (file, options) {
     const data = await this.#getTemporarySecurityCredentials(options)
-    const expires = getExpiry(data.credentials)
+    const expires = getExpiry(data.credentials) || 604_800 // 604 800 is the max value accepted by AWS.
 
     const { uploadId, key, partNumber, signal } = options
 
