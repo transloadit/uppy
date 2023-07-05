@@ -15,7 +15,7 @@ index ec8a133f3fbea56f4b395c96ca2b27bd4903c62e..dfd3852248f5008f82794ce61e3dca10
      // TODO: remove this ASAP, but it currently causes tests to run really slow
      global.Buffer = Buffer;
  
-+    // JSDOM does not provide the following, thankfully Node.js ship with spec-compliant equivalent:
++    // JSDOM does not provide the following, thankfully Node.js ships with spec-compliant equivalent:
 +    global.TextDecoder = TextDecoder;
 +    global.TextEncoder = TextEncoder;
 +    Object.defineProperty(global, 'crypto', {__proto__:null, value:require('node:crypto').webcrypto});
