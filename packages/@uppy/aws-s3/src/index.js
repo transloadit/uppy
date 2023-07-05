@@ -297,7 +297,7 @@ export default class AwsS3 extends UploaderPlugin {
 
       const uploadPromise = this.uploadRemoteFile(file, { signal: controller.signal })
 
-      this.requests.wrapSyncFunction(() => {
+      this.#requests.wrapSyncFunction(() => {
         this.uppy.off('file-removed', removedHandler)
       }, { priority: -1 })()
 
