@@ -16,33 +16,40 @@ function waitForServiceWorker () {
 }
 
 class ServiceWorkerStore {
+  #ready
+
   constructor (opts) {
-    this.ready = waitForServiceWorker()
+    this.#ready = waitForServiceWorker().then((val) => { this.#ready = val })
     this.name = opts.storeName
   }
 
-  list () {
-    const defer = {}
-    const promise = new Promise((resolve, reject) => {
-      defer.resolve = resolve
-      defer.reject = reject
-    })
+  get ready () {
+    return Promise.resolve(this.#ready)
+  }
 
-    const onMessage = (event) => {
-      if (event.data.store !== this.name) {
-        return
-      }
-      switch (event.data.type) {
-        case 'uppy/ALL_FILES':
-          defer.resolve(event.data.files)
-          navigator.serviceWorker.removeEventListener('message', onMessage)
-          break
-        default:
-          defer.reject()
-      }
-    }
+  // TODO: remove this setter in the next major
+  set ready (val) {
+    this.#ready = val
+  }
 
-    this.ready.then(() => {
+  async list () {
+    await this.#ready
+
+    return new Promise((resolve, reject) => {
+      const onMessage = (event) => {
+        if (event.data.store !== this.name) {
+          return
+        }
+        switch (event.data.type) {
+          case 'uppy/ALL_FILES':
+            resolve(event.data.files)
+            navigator.serviceWorker.removeEventListener('message', onMessage)
+            break
+          default:
+            reject()
+        }
+      }
+
       navigator.serviceWorker.addEventListener('message', onMessage)
 
       navigator.serviceWorker.controller.postMessage({
@@ -50,27 +57,23 @@ class ServiceWorkerStore {
         store: this.name,
       })
     })
-
-    return promise
   }
 
-  put (file) {
-    return this.ready.then(() => {
-      navigator.serviceWorker.controller.postMessage({
-        type: 'uppy/ADD_FILE',
-        store: this.name,
-        file,
-      })
+  async put (file) {
+    await this.#ready
+    navigator.serviceWorker.controller.postMessage({
+      type: 'uppy/ADD_FILE',
+      store: this.name,
+      file,
     })
   }
 
-  delete (fileID) {
-    return this.ready.then(() => {
-      navigator.serviceWorker.controller.postMessage({
-        type: 'uppy/REMOVE_FILE',
-        store: this.name,
-        fileID,
-      })
+  async delete (fileID) {
+    await this.#ready
+    navigator.serviceWorker.controller.postMessage({
+      type: 'uppy/REMOVE_FILE',
+      store: this.name,
+      fileID,
     })
   }
 }

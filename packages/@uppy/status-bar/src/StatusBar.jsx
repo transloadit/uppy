@@ -97,6 +97,8 @@ export default class StatusBar extends UIPlugin {
       return 0
     }
 
+    // When state is restored, lastUpdateTime is still nullish at this point.
+    this.#lastUpdateTime ??= performance.now()
     const dt = performance.now() - this.#lastUpdateTime
     if (dt === 0) {
       return Math.round((this.#previousETA ?? 0) / 100) / 10
@@ -130,14 +132,20 @@ export default class StatusBar extends UIPlugin {
   startUpload = () => {
     const { recoveredState } = this.uppy.getState()
 
+    this.#previousSpeed = null
+    this.#previousETA = null
     if (recoveredState) {
+      this.#previousUploadedBytes = Object.values(recoveredState.files)
+        .reduce((pv, { progress }) => pv + progress.bytesUploaded, 0)
+
+      // We don't set `#lastUpdateTime` at this point because the upload won't
+      // actually resume until the user asks for it.
+
       this.uppy.emit('restore-confirmed')
       return undefined
     }
     this.#lastUpdateTime = performance.now()
     this.#previousUploadedBytes = 0
-    this.#previousSpeed = null
-    this.#previousETA = null
     return this.uppy.upload().catch(() => {
       // Error logged in Core
     })
