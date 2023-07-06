@@ -1,6 +1,11 @@
 const atob = require('atob')
 const oAuthState = require('../helpers/oauth-state')
 
+const queryString = (params, prefix = '') => {
+  const str = new URLSearchParams(params).toString()
+  return str ? `${prefix}${str}` : ''
+}
+
 /**
  * initializes the oAuth flow for a provider.
  *
@@ -27,5 +32,10 @@ module.exports = function connect (req, res) {
     state = oAuthState.addToState(state, { preAuthToken: req.query.uppyPreAuthToken }, secret)
   }
 
-  res.redirect(req.companion.buildURL(`/connect/${req.companion.provider.authProvider}?state=${state}`, true))
+  const providerName = req.companion.provider.authProvider
+  const qs = queryString(Object.fromEntries(
+    req.companion.options.providerOptions[providerName]?.dynamic?.map(p => [p, req.query[p]]) || [],
+  ), '&')
+
+  res.redirect(req.companion.buildURL(`/connect/${providerName}?state=${state}${qs}`, true))
 }

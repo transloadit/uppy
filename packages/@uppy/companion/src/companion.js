@@ -73,6 +73,7 @@ module.exports.app = (optionsArg = {}) => {
   const providers = providerManager.getDefaultProviders()
 
   providerManager.addProviderOptions(options, grantConfig)
+  options.providerOptions = merge(options.providerOptions, grantConfig)
 
   const { customProviders } = options
   if (customProviders) {
