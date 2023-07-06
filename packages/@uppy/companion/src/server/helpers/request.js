@@ -121,6 +121,8 @@ const getProtectedHttpAgent = ({ protocol, blockLocalIPs }) => {
   return protocol.startsWith('https') ? HttpsAgent : HttpAgent
 }
 
+module.exports.getProtectedHttpAgent = getProtectedHttpAgent
+
 function getProtectedGot ({ url, blockLocalIPs }) {
   const HttpAgent = getProtectedHttpAgent({ protocol: 'http', blockLocalIPs })
   const HttpsAgent = getProtectedHttpAgent({ protocol: 'https', blockLocalIPs })
