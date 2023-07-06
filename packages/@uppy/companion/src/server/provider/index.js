@@ -53,7 +53,9 @@ module.exports.getProviderMiddleware = (providers) => {
   const middleware = (req, res, next, providerName) => {
     const ProviderClass = providers[providerName]
     if (ProviderClass && validOptions(req.companion.options)) {
-      req.companion.provider = new ProviderClass({ providerName })
+      const providerOptions = req.companion.options.providerOptions[providerName] || {}
+      const { allowLocalUrls } = req.companion.options
+      req.companion.provider = new ProviderClass({ providerName, providerOptions, allowLocalUrls })
       req.companion.providerClass = ProviderClass
 
       if (isOAuthProvider(ProviderClass.authProvider)) {
