@@ -1,9 +1,9 @@
 import type { PluginOptions, BasePlugin, UppyFile } from '@uppy/core'
 import XHRUploadLocale from './generatedLocale'
 
-  type Headers = {
-    [name: string]: string | number
-  }
+export type Headers = {
+   [name: string]: string | number
+}
 
 export interface XHRUploadOptions extends PluginOptions {
     limit?: number
