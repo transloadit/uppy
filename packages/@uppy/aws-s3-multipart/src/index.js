@@ -53,10 +53,9 @@ class HTTPCommunicationQueue {
 
   setOptions (options) {
     const requests = this.#requests
-    const finalRequests = new RateLimitedQueue(options.limit)
 
     if ('abortMultipartUpload' in options) {
-      this.#abortMultipartUpload = finalRequests.wrapPromiseFunction(options.abortMultipartUpload)
+      this.#abortMultipartUpload = requests.wrapPromiseFunction(options.abortMultipartUpload, { priority:Infinity })
     }
     if ('createMultipartUpload' in options) {
       this.#createMultipartUpload = requests.wrapPromiseFunction(options.createMultipartUpload, { priority:-1 })
@@ -68,7 +67,7 @@ class HTTPCommunicationQueue {
       this.#listParts = requests.wrapPromiseFunction(options.listParts)
     }
     if ('completeMultipartUpload' in options) {
-      this.#sendCompletionRequest = finalRequests.wrapPromiseFunction(options.completeMultipartUpload)
+      this.#sendCompletionRequest = requests.wrapPromiseFunction(options.completeMultipartUpload, { priority:Infinity })
     }
     if ('retryDelays' in options) {
       this.#retryDelayIterator = options.retryDelays?.values()
