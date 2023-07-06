@@ -254,6 +254,12 @@ export default class ProviderView extends View {
   }
 
   async handleAuth () {
+    if (!this.provider.authentication) {
+      this.plugin.setPluginState({ authenticated: true })
+      this.preFirstRender()
+      return
+    }
+
     await this.provider.ensurePreAuth()
 
     const authState = btoa(JSON.stringify({ origin: getOrigin() }))
