@@ -1,5 +1,12 @@
 # @uppy/aws-s3
 
+## 3.2.1
+
+Released: 2023-07-06
+Included in: Uppy v3.11.0
+
+- @uppy/aws-s3: fix remote uploads (Antoine du Hamel / #4546)
+
 ## 3.2.0
 
 Released: 2023-06-19
