@@ -57,7 +57,7 @@ const downloadURL = async (url, blockLocalIPs, traceId) => {
 }
 
 /**
- * Fteches the size and content type of a URL
+ * Fetches the size and content type of a URL
  *
  * @param {object} req expressJS request object
  * @param {object} res expressJS response object
