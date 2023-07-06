@@ -1,3 +1,6 @@
+/**
+ * @type {typeof window.indexedDB}
+ */
 const indexedDB = typeof window !== 'undefined'
   && (window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB || window.OIndexedDB || window.msIndexedDB)
 
@@ -7,8 +10,13 @@ const DB_NAME = 'uppy-blobs'
 const STORE_NAME = 'files' // maybe have a thumbnail store in the future
 const DEFAULT_EXPIRY = 24 * 60 * 60 * 1000 // 24 hours
 const DB_VERSION = 3
+const MiB = 0x10_00_00
 
-// Set default `expires` dates on existing stored blobs.
+/**
+ * Set default `expires` dates on existing stored blobs.
+ *
+ * @param {IDBObjectStore} store
+ */
 function migrateExpiration (store) {
   const request = store.openCursor()
   request.onsuccess = (event) => {
@@ -22,11 +30,21 @@ function migrateExpiration (store) {
   }
 }
 
+/**
+ * @param {string} dbName
+ * @returns {Promise<IDBDatabase>}
+ */
 function connect (dbName) {
   const request = indexedDB.open(dbName, DB_VERSION)
   return new Promise((resolve, reject) => {
     request.onupgradeneeded = (event) => {
+      /**
+       * @type {IDBDatabase}
+       */
       const db = event.target.result
+      /**
+       * @type {IDBTransaction}
+       */
       const { transaction } = event.currentTarget
 
       if (event.oldVersion < 2) {
@@ -54,6 +72,11 @@ function connect (dbName) {
   })
 }
 
+/**
+ * @template T
+ * @param {IDBRequest<T>} request
+ * @returns {Promise<T>}
+ */
 function waitForRequest (request) {
   return new Promise((resolve, reject) => {
     request.onsuccess = (event) => {
@@ -65,29 +88,45 @@ function waitForRequest (request) {
 
 let cleanedUp = false
 class IndexedDBStore {
+  /**
+   * @type {Promise<IDBDatabase> | IDBDatabase}
+   */
+  #ready
+
   constructor (opts) {
     this.opts = {
       dbName: DB_NAME,
       storeName: 'default',
       expires: DEFAULT_EXPIRY, // 24 hours
-      maxFileSize: 10 * 1024 * 1024, // 10 MB
-      maxTotalSize: 300 * 1024 * 1024, // 300 MB
+      maxFileSize: 10 * MiB,
+      maxTotalSize: 300 * MiB,
       ...opts,
     }
 
     this.name = this.opts.storeName
 
-    const createConnection = () => {
-      return connect(this.opts.dbName)
+    const createConnection = async () => {
+      const db = await connect(this.opts.dbName)
+      this.#ready = db
+      return db
     }
 
     if (!cleanedUp) {
       cleanedUp = true
-      this.ready = IndexedDBStore.cleanup()
+      this.#ready = IndexedDBStore.cleanup()
         .then(createConnection, createConnection)
     } else {
-      this.ready = createConnection()
+      this.#ready = createConnection()
     }
+  }
+
+  get ready () {
+    return Promise.resolve(this.#ready)
+  }
+
+  // TODO: remove this setter in the next major
+  set ready (val) {
+    this.#ready = val
   }
 
   key (fileID) {
@@ -97,128 +136,117 @@ class IndexedDBStore {
   /**
    * List all file blobs currently in the store.
    */
-  list () {
-    return this.ready.then((db) => {
-      const transaction = db.transaction([STORE_NAME], 'readonly')
-      const store = transaction.objectStore(STORE_NAME)
-      const request = store.index('store')
-        .getAll(IDBKeyRange.only(this.name))
-      return waitForRequest(request)
-    }).then((files) => {
-      const result = {}
-      files.forEach((file) => {
-        result[file.fileID] = file.data
-      })
-      return result
-    })
+  async list () {
+    const db = await this.#ready
+    const transaction = db.transaction([STORE_NAME], 'readonly')
+    const store = transaction.objectStore(STORE_NAME)
+    const request = store.index('store')
+      .getAll(IDBKeyRange.only(this.name))
+    const files = await waitForRequest(request)
+    return Object.fromEntries(files.map(file => [file.fileID, file.data]))
   }
 
   /**
    * Get one file blob from the store.
    */
-  get (fileID) {
-    return this.ready.then((db) => {
-      const transaction = db.transaction([STORE_NAME], 'readonly')
-      const request = transaction.objectStore(STORE_NAME)
-        .get(this.key(fileID))
-      return waitForRequest(request)
-    }).then((result) => ({
-      id: result.data.fileID,
-      data: result.data.data,
-    }))
+  async get (fileID) {
+    const db = await this.#ready
+    const transaction = db.transaction([STORE_NAME], 'readonly')
+    const request = transaction.objectStore(STORE_NAME)
+      .get(this.key(fileID))
+    const { data } = await waitForRequest(request)
+    return {
+      id: data.fileID,
+      data: data.data,
+    }
   }
 
   /**
    * Get the total size of all stored files.
    *
    * @private
+   * @returns {Promise<number>}
    */
-  getSize () {
-    return this.ready.then((db) => {
-      const transaction = db.transaction([STORE_NAME], 'readonly')
-      const store = transaction.objectStore(STORE_NAME)
-      const request = store.index('store')
-        .openCursor(IDBKeyRange.only(this.name))
-      return new Promise((resolve, reject) => {
-        let size = 0
-        request.onsuccess = (event) => {
-          const cursor = event.target.result
-          if (cursor) {
-            size += cursor.value.data.size
-            cursor.continue()
-          } else {
-            resolve(size)
-          }
+  async getSize () {
+    const db = await this.#ready
+    const transaction = db.transaction([STORE_NAME], 'readonly')
+    const store = transaction.objectStore(STORE_NAME)
+    const request = store.index('store')
+      .openCursor(IDBKeyRange.only(this.name))
+    return new Promise((resolve, reject) => {
+      let size = 0
+      request.onsuccess = (event) => {
+        const cursor = event.target.result
+        if (cursor) {
+          size += cursor.value.data.size
+          cursor.continue()
+        } else {
+          resolve(size)
         }
-        request.onerror = () => {
-          reject(new Error('Could not retrieve stored blobs size'))
-        }
-      })
+      }
+      request.onerror = () => {
+        reject(new Error('Could not retrieve stored blobs size'))
+      }
     })
   }
 
   /**
    * Save a file in the store.
    */
-  put (file) {
+  async put (file) {
     if (file.data.size > this.opts.maxFileSize) {
-      return Promise.reject(new Error('File is too big to store.'))
+      throw new Error('File is too big to store.')
     }
-    return this.getSize().then((size) => {
-      if (size > this.opts.maxTotalSize) {
-        return Promise.reject(new Error('No space left'))
-      }
-      return this.ready
-    }).then((db) => {
-      const transaction = db.transaction([STORE_NAME], 'readwrite')
-      const request = transaction.objectStore(STORE_NAME).add({
-        id: this.key(file.id),
-        fileID: file.id,
-        store: this.name,
-        expires: Date.now() + this.opts.expires,
-        data: file.data,
-      })
-      return waitForRequest(request)
+    const size = await this.getSize()
+    if (size > this.opts.maxTotalSize) {
+      throw new Error('No space left')
+    }
+    const db = this.#ready
+    const transaction = db.transaction([STORE_NAME], 'readwrite')
+    const request = transaction.objectStore(STORE_NAME).add({
+      id: this.key(file.id),
+      fileID: file.id,
+      store: this.name,
+      expires: Date.now() + this.opts.expires,
+      data: file.data,
     })
+    return waitForRequest(request)
   }
 
   /**
    * Delete a file blob from the store.
    */
-  delete (fileID) {
-    return this.ready.then((db) => {
-      const transaction = db.transaction([STORE_NAME], 'readwrite')
-      const request = transaction.objectStore(STORE_NAME)
-        .delete(this.key(fileID))
-      return waitForRequest(request)
-    })
+  async delete (fileID) {
+    const db = await this.#ready
+    const transaction = db.transaction([STORE_NAME], 'readwrite')
+    const request = transaction.objectStore(STORE_NAME)
+      .delete(this.key(fileID))
+    return waitForRequest(request)
   }
 
   /**
    * Delete all stored blobs that have an expiry date that is before Date.now().
    * This is a static method because it deletes expired blobs from _all_ Uppy instances.
    */
-  static cleanup () {
-    return connect(DB_NAME).then((db) => {
-      const transaction = db.transaction([STORE_NAME], 'readwrite')
-      const store = transaction.objectStore(STORE_NAME)
-      const request = store.index('expires')
-        .openCursor(IDBKeyRange.upperBound(Date.now()))
-      return new Promise((resolve, reject) => {
-        request.onsuccess = (event) => {
-          const cursor = event.target.result
-          if (cursor) {
-            cursor.delete() // Ignoring return value … it's not terrible if this goes wrong.
-            cursor.continue()
-          } else {
-            resolve(db)
-          }
+  static async cleanup () {
+    const db = await connect(DB_NAME)
+    const transaction = db.transaction([STORE_NAME], 'readwrite')
+    const store = transaction.objectStore(STORE_NAME)
+    const request = store.index('expires')
+      .openCursor(IDBKeyRange.upperBound(Date.now()))
+    await new Promise((resolve, reject) => {
+      request.onsuccess = (event) => {
+        const cursor = event.target.result
+        if (cursor) {
+          cursor.delete() // Ignoring return value … it's not terrible if this goes wrong.
+          cursor.continue()
+        } else {
+          resolve()
         }
-        request.onerror = reject
-      })
-    }).then((db) => {
-      db.close()
+      }
+      request.onerror = reject
     })
+    db.close()
   }
 }
 

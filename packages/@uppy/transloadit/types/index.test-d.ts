@@ -16,16 +16,12 @@ const validParams = {
   const uppy = new Uppy()
   uppy.use(Transloadit, {
     getAssemblyOptions (file) {
-      expectType<UppyFile>(file)
+      expectType<UppyFile | undefined>(file)
       return { params: validParams }
     },
     waitForEncoding: false,
     waitForMetadata: true,
     importFromUploadURLs: false,
-    params: {
-      auth: { key: 'abc' },
-      steps: {},
-    },
   })
   // Access to both transloadit events and core events
   uppy.on('transloadit:assembly-created', (assembly) => {
@@ -41,13 +37,48 @@ const validParams = {
 
 {
   const uppy = new Uppy()
+  uppy.use(Transloadit, {
+    async assemblyOptions (file) {
+      expectType<UppyFile | undefined>(file)
+      return { params: validParams }
+    },
+  })
+}
+
+{
+  const uppy = new Uppy()
+  uppy.use(Transloadit, {
+    assemblyOptions: { params: validParams },
+  })
+}
+
+{
+  const uppy = new Uppy()
+  expectError(
+    uppy.use(Transloadit, {
+      getAssemblyOptions () {
+        return { params: validParams }
+      },
+      assemblyOptions: { params: validParams },
+    }),
+  )
+}
+
+{
+  const uppy = new Uppy()
+  expectError(
+    uppy.use(Transloadit, {
+      params: validParams,
+      assemblyOptions: { params: validParams },
+    }),
+  )
+}
+
+{
+  const uppy = new Uppy()
   // must be bools
-  expectError(
-    uppy.use(Transloadit, { waitForEncoding: null, params: validParams }),
-  )
-  expectError(
-    uppy.use(Transloadit, { waitForMetadata: null, params: validParams }),
-  )
+  expectError(uppy.use(Transloadit, { waitForEncoding: null, params: validParams }))
+  expectError(uppy.use(Transloadit, { waitForMetadata: null, params: validParams }))
 }
 
 {

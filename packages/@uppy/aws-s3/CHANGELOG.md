@@ -1,5 +1,35 @@
 # @uppy/aws-s3
 
+## 3.2.0
+
+Released: 2023-06-19
+Included in: Uppy v3.10.0
+
+- @uppy/aws-s3: add `shouldUseMultipart` option (Antoine du Hamel / #4299)
+- @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/tus,@uppy/utils,@uppy/xhr-upload: When file is removed (or all are canceled), controller.abort queued requests (Artur Paikin / #4504)
+
+## 3.1.1
+
+Released: 2023-05-02
+Included in: Uppy v3.9.0
+
+- @uppy/aws-s3: deprecate `timeout` option (Antoine du Hamel / #4298)
+
+## 3.0.6
+
+Released: 2023-04-04
+Included in: Uppy v3.7.0
+
+- @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/tus,@uppy/xhr-upload: make sure that we reset serverToken when an upload fails (Mikael Finstad / #4376)
+- @uppy/aws-s3: Update types (Minh Hieu / #4294)
+
+## 3.0.5
+
+Released: 2023-01-26
+Included in: Uppy v3.4.0
+
+- @uppy/aws-s3: fix: add https:// to digital oceans link (Le Gia Hoang / #4165)
+
 ## 3.0.4
 
 Released: 2022-10-24

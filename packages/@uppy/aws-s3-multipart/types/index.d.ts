@@ -7,11 +7,16 @@ export interface AwsS3Part {
   Size?: number
   ETag?: string
 }
+export interface AwsS3SignedPart {
+  url: string
+  headers?: Record<string, string>
+}
 
 export interface AwsS3MultipartOptions extends PluginOptions {
     companionHeaders?: { [type: string]: string }
     companionUrl?: string
     companionCookiesRule?: string
+    allowedMetaFields?: string[] | null
     getChunkSize?: (file: UppyFile) => number
     createMultipartUpload?: (
       file: UppyFile
@@ -23,7 +28,7 @@ export interface AwsS3MultipartOptions extends PluginOptions {
     signPart?: (
       file: UppyFile,
       opts: { uploadId: string; key: string; partNumber: number; body: Blob, signal: AbortSignal }
-    ) => MaybePromise<AwsS3Part>
+    ) => MaybePromise<AwsS3SignedPart>
     /** @deprecated Use signPart instead */
     prepareUploadParts?: (
       file: UppyFile,
@@ -38,7 +43,11 @@ export interface AwsS3MultipartOptions extends PluginOptions {
       opts: { uploadId: string; key: string; parts: AwsS3Part[]; signal: AbortSignal }
     ) => MaybePromise<{ location?: string }>
     limit?: number
+    shouldUseMultipart?: boolean | ((file: UppyFile) => boolean)
     retryDelays?: number[] | null
+    getUploadParameters?: (
+      file: UppyFile
+    ) => MaybePromise<{ url: string }>
 }
 
 declare class AwsS3Multipart extends BasePlugin<

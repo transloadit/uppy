@@ -1,5 +1,3 @@
-/* global jest:false, test:false, expect:false, describe:false, beforeEach:false */
-
 const providerManager = require('../../src/server/provider')
 const { getCompanionOptions } = require('../../src/standalone/helper')
 const { setDefaultEnv } = require('../mockserver')
@@ -10,6 +8,7 @@ let companionOptions
 describe('Test Provider options', () => {
   beforeEach(() => {
     setDefaultEnv()
+    // eslint-disable-next-line global-require
     grantConfig = require('../../src/config/grant')()
     companionOptions = getCompanionOptions()
   })
@@ -53,6 +52,9 @@ describe('Test Provider options', () => {
       authorize_url: 'https://www.dropbox.com/oauth2/authorize',
       access_url: 'https://api.dropbox.com/oauth2/token',
       callback: '/dropbox/callback',
+      custom_params: {
+        token_access_type: 'offline',
+      },
     })
 
     expect(grantConfig.box).toEqual({
@@ -74,6 +76,9 @@ describe('Test Provider options', () => {
         'https://www.googleapis.com/auth/drive.readonly',
       ],
       callback: '/drive/callback',
+      custom_params: {
+        access_type: 'offline',
+      },
     })
     expect(grantConfig.zoom).toEqual({
       key: 'zoom_key',
@@ -148,7 +153,7 @@ describe('Test Custom Provider options', () => {
           key: 'foo_key',
           secret: 'foo_secret',
         },
-        module: jest.mock(),
+        module: { authProvider: 'some_provider' },
       },
     }, providers, grantConfig)
 

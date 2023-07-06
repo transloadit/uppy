@@ -1,5 +1,21 @@
 # @uppy/tus
 
+## 3.1.1
+
+Released: 2023-06-19
+Included in: Uppy v3.10.0
+
+- @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/tus,@uppy/utils,@uppy/xhr-upload: When file is removed (or all are canceled), controller.abort queued requests (Artur Paikin / #4504)
+- @uppy/aws-s3-multipart,@uppy/tus,@uppy/xhr-upload: Don't close socket while upload is still in progress (Artur Paikin / #4479)
+
+## 3.0.6
+
+Released: 2023-04-04
+Included in: Uppy v3.7.0
+
+- @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/tus,@uppy/xhr-upload: make sure that we reset serverToken when an upload fails (Mikael Finstad / #4376)
+- @uppy/tus: do not auto-open sockets, clean them up on abort (Antoine du Hamel)
+
 ## 3.0.5
 
 Released: 2022-11-10

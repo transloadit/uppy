@@ -1,4 +1,8 @@
 import { h } from 'preact'
+// eslint-disable-next-line import/no-unresolved
+import PQueue from 'p-queue'
+
+import { getSafeFileId } from '@uppy/utils/lib/generateFileID'
 
 import AuthView from './AuthView.jsx'
 import Header from './Header.jsx'
@@ -53,12 +57,12 @@ export default class ProviderView extends View {
 
     // Logic
     this.filterQuery = this.filterQuery.bind(this)
+    this.clearFilter = this.clearFilter.bind(this)
     this.getFolder = this.getFolder.bind(this)
     this.getNextFolder = this.getNextFolder.bind(this)
     this.logout = this.logout.bind(this)
     this.handleAuth = this.handleAuth.bind(this)
     this.handleScroll = this.handleScroll.bind(this)
-    this.listAllFiles = this.listAllFiles.bind(this)
     this.donePicking = this.donePicking.bind(this)
 
     // Visual
@@ -100,29 +104,32 @@ export default class ProviderView extends View {
    * @param  {string} id Folder id
    * @returns {Promise}   Folders/files in folder
    */
-  getFolder (id, name) {
-    return this.sharedHandler.loaderWrapper(
-      this.provider.list(id),
-      (res) => {
-        const folders = []
-        const files = []
-        let updatedDirectories
+  async getFolder (id, name) {
+    this.setLoading(true)
+    try {
+      const res = await this.provider.list(id)
+      const folders = []
+      const files = []
+      let updatedDirectories
 
-        const state = this.plugin.getPluginState()
-        const index = state.directories.findIndex((dir) => id === dir.id)
+      const state = this.plugin.getPluginState()
+      const index = state.directories.findIndex((dir) => id === dir.id)
 
-        if (index !== -1) {
-          updatedDirectories = state.directories.slice(0, index + 1)
-        } else {
-          updatedDirectories = state.directories.concat([{ id, title: name }])
-        }
+      if (index !== -1) {
+        updatedDirectories = state.directories.slice(0, index + 1)
+      } else {
+        updatedDirectories = state.directories.concat([{ id, title: name }])
+      }
 
-        this.username = res.username || this.username
-        this.#updateFilesAndFolders(res, files, folders)
-        this.plugin.setPluginState({ directories: updatedDirectories, filterInput: '' })
-      },
-      this.handleError,
-    )
+      this.username = res.username || this.username
+      this.#updateFilesAndFolders(res, files, folders)
+      this.plugin.setPluginState({ directories: updatedDirectories, filterInput: '' })
+      this.lastCheckbox = undefined
+    } catch (err) {
+      this.handleError(err)
+    } finally {
+      this.setLoading(false)
+    }
   }
 
   /**
@@ -162,77 +169,12 @@ export default class ProviderView extends View {
       }).catch(this.handleError)
   }
 
-  filterQuery (e) {
-    const state = this.plugin.getPluginState()
-    this.plugin.setPluginState({ ...state, filterInput: e ? e.target.value : '' })
+  filterQuery (input) {
+    this.plugin.setPluginState({ filterInput: input })
   }
 
-  /**
-   * Adds all files found inside of specified folder.
-   *
-   * Uses separated state while folder contents are being fetched and
-   * mantains list of selected folders, which are separated from files.
-   */
-  addFolder (folder) {
-    const folderId = this.providerFileToId(folder)
-    const folders = { ...this.plugin.getPluginState().selectedFolders }
-
-    if (folderId in folders && folders[folderId].loading) {
-      return
-    }
-
-    folders[folderId] = { loading: true, files: [] }
-
-    this.plugin.setPluginState({ selectedFolders: { ...folders } })
-
-    // eslint-disable-next-line consistent-return
-    return this.listAllFiles(folder.requestPath).then((files) => {
-      let count = 0
-
-      // If the same folder is added again, we don't want to send
-      // X amount of duplicate file notifications, we want to say
-      // the folder was already added. This checks if all files are duplicate,
-      // if that's the case, we don't add the files.
-      files.forEach(file => {
-        const id = this.providerFileToId(file)
-        if (!this.plugin.uppy.checkIfFileAlreadyExists(id)) {
-          count++
-        }
-      })
-
-      if (count > 0) {
-        files.forEach((file) => this.addFile(file))
-      }
-
-      const ids = files.map(this.providerFileToId)
-
-      folders[folderId] = {
-        loading: false,
-        files: ids,
-      }
-      this.plugin.setPluginState({ selectedFolders: folders, filterInput: '' })
-
-      let message
-
-      if (count === 0) {
-        message = this.plugin.uppy.i18n('folderAlreadyAdded', {
-          folder: folder.name,
-        })
-      } else if (files.length) {
-        message = this.plugin.uppy.i18n('folderAdded', {
-          smart_count: count, folder: folder.name,
-        })
-      } else {
-        message = this.plugin.uppy.i18n('emptyFolderAdded')
-      }
-
-      this.plugin.uppy.info(message)
-    }).catch((e) => {
-      const selectedFolders = { ...this.plugin.getPluginState().selectedFolders }
-      delete selectedFolders[folderId]
-      this.plugin.setPluginState({ selectedFolders })
-      this.handleError(e)
-    })
+  clearFilter () {
+    this.plugin.setPluginState({ filterInput: '' })
   }
 
   async handleAuth () {
@@ -296,39 +238,106 @@ export default class ProviderView extends View {
     }
   }
 
-  async listAllFiles (path, files = null) {
-    files = files || [] // eslint-disable-line no-param-reassign
-    const res = await this.provider.list(path)
-    res.items.forEach((item) => {
-      if (!item.isFolder) {
-        files.push(item)
-      } else {
-        this.addFolder(item)
-      }
-    })
-    const moreFiles = res.nextPagePath
-    if (moreFiles) {
-      return this.listAllFiles(moreFiles, files)
+  async recursivelyListAllFiles (path, queue, onFiles) {
+    let curPath = path
+
+    while (curPath) {
+      const res = await this.provider.list(curPath)
+      curPath = res.nextPagePath
+
+      const files = res.items.filter((item) => !item.isFolder)
+      const folders = res.items.filter((item) => item.isFolder)
+
+      onFiles(files)
+
+      // recursively queue call to self for each folder
+      const promises = folders.map(async (folder) => queue.add(async () => (
+        this.recursivelyListAllFiles(folder.requestPath, queue, onFiles)
+      )))
+      await Promise.all(promises) // in case we get an error
     }
-    return files
   }
 
-  donePicking () {
-    const { currentSelection } = this.plugin.getPluginState()
-    const promises = currentSelection.map((file) => {
-      if (file.isFolder) {
-        return this.addFolder(file)
-      }
-      return this.addFile(file)
-    })
+  async donePicking () {
+    this.setLoading(true)
+    try {
+      const { currentSelection } = this.plugin.getPluginState()
 
-    this.sharedHandler.loaderWrapper(Promise.all(promises), () => {
+      const messages = []
+      const newFiles = []
+
+      for (const file of currentSelection) {
+        if (file.isFolder) {
+          const { requestPath, name } = file
+          let isEmpty = true
+          let numNewFiles = 0
+
+          const queue = new PQueue({ concurrency: 6 })
+
+          const onFiles = (files) => {
+            for (const newFile of files) {
+              const tagFile = this.getTagFile(newFile)
+              const id = getSafeFileId(tagFile)
+              // If the same folder is added again, we don't want to send
+              // X amount of duplicate file notifications, we want to say
+              // the folder was already added. This checks if all files are duplicate,
+              // if that's the case, we don't add the files.
+              if (!this.plugin.uppy.checkIfFileAlreadyExists(id)) {
+                newFiles.push(newFile)
+                numNewFiles++
+                this.setLoading(this.plugin.uppy.i18n('addedNumFiles', { numFiles: numNewFiles }))
+              }
+              isEmpty = false
+            }
+          }
+
+          await this.recursivelyListAllFiles(requestPath, queue, onFiles)
+          await queue.onIdle()
+
+          let message
+          if (isEmpty) {
+            message = this.plugin.uppy.i18n('emptyFolderAdded')
+          } else if (numNewFiles === 0) {
+            message = this.plugin.uppy.i18n('folderAlreadyAdded', {
+              folder: name,
+            })
+          } else {
+            // TODO we don't really know at this point whether any files were actually added
+            // (only later after addFiles has been called) so we should probably rewrite this.
+            // Example: If all files fail to add due to restriction error, it will still say "Added 100 files from folder"
+            message = this.plugin.uppy.i18n('folderAdded', {
+              smart_count: numNewFiles, folder: name,
+            })
+          }
+
+          messages.push(message)
+        } else {
+          newFiles.push(file)
+        }
+      }
+
+      // Note: this.plugin.uppy.addFiles must be only run once we are done fetching all files,
+      // because it will cause the loading screen to disappear,
+      // and that will allow the user to start the upload, so we need to make sure we have
+      // finished all async operations before we add any file
+      // see https://github.com/transloadit/uppy/pull/4384
+      this.plugin.uppy.log('Adding remote provider files')
+      this.plugin.uppy.addFiles(newFiles.map((file) => this.getTagFile(file)))
+
+      this.plugin.setPluginState({ filterInput: '' })
+      messages.forEach(message => this.plugin.uppy.info(message))
+
       this.clearSelection()
-    }, () => {})
+    } catch (err) {
+      this.handleError(err)
+    } finally {
+      this.setLoading(false)
+    }
   }
 
   render (state, viewOptions = {}) {
     const { authenticated, didFirstRender } = this.plugin.getPluginState()
+    const { i18n } = this.plugin.uppy
 
     if (!didFirstRender) {
       this.preFirstRender()
@@ -336,7 +345,7 @@ export default class ProviderView extends View {
 
     const targetViewOptions = { ...this.opts, ...viewOptions }
     const { files, folders, filterInput, loading, currentSelection } = this.plugin.getPluginState()
-    const { isChecked, toggleCheckbox, recordShiftKeyPress, filterItems } = this.sharedHandler
+    const { isChecked, toggleCheckbox, recordShiftKeyPress, filterItems } = this
     const hasInput = filterInput !== ''
     const headerProps = {
       showBreadcrumbs: targetViewOptions.showBreadcrumbs,
@@ -346,7 +355,7 @@ export default class ProviderView extends View {
       title: this.plugin.title,
       logout: this.logout,
       username: this.username,
-      i18n: this.plugin.uppy.i18n,
+      i18n,
     }
 
     const browserProps = {
@@ -359,18 +368,25 @@ export default class ProviderView extends View {
       username: this.username,
       getNextFolder: this.getNextFolder,
       getFolder: this.getFolder,
-      filterItems: this.sharedHandler.filterItems,
-      filterQuery: this.filterQuery,
+
+      // For SearchFilterInput component
+      showSearchFilter: targetViewOptions.showFilter,
+      search: this.filterQuery,
+      clearSearch: this.clearFilter,
+      searchTerm: filterInput,
+      searchOnInput: true,
+      searchInputLabel: i18n('filter'),
+      clearSearchLabel: i18n('resetFilter'),
+
+      noResultsLabel: i18n('noFilesFound'),
       logout: this.logout,
       handleScroll: this.handleScroll,
-      listAllFiles: this.listAllFiles,
       done: this.donePicking,
       cancel: this.cancelPicking,
       headerComponent: Header(headerProps),
       title: this.plugin.title,
       viewType: targetViewOptions.viewType,
       showTitles: targetViewOptions.showTitles,
-      showFilter: targetViewOptions.showFilter,
       showBreadcrumbs: targetViewOptions.showBreadcrumbs,
       pluginIcon: this.plugin.icon,
       i18n: this.plugin.uppy.i18n,
@@ -381,7 +397,7 @@ export default class ProviderView extends View {
     if (loading) {
       return (
         <CloseWrapper onUnmount={this.clearSelection}>
-          <LoaderView i18n={this.plugin.uppy.i18n} />
+          <LoaderView i18n={this.plugin.uppy.i18n} loading={loading} />
         </CloseWrapper>
       )
     }

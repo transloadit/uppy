@@ -1,4 +1,4 @@
-const { errorToResponse } = require('../provider/error')
+const { respondWithError } = require('../provider/error')
 
 async function deauthCallback ({ body, companion, headers }, res, next) {
   // we need the provider instance to decide status codes because
@@ -10,11 +10,7 @@ async function deauthCallback ({ body, companion, headers }, res, next) {
     res.status(status || 200).json(data)
     return
   } catch (err) {
-    const errResp = errorToResponse(err)
-    if (errResp) {
-      res.status(errResp.code).json({ message: errResp.message })
-      return
-    }
+    if (respondWithError(err, res)) return
     next(err)
   }
 }

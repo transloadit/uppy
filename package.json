@@ -4,13 +4,12 @@
   "version": "0.0.0",
   "description": "Extensible JavaScript file upload widget with support for drag&drop, resumable uploads, previews, restrictions, file processing/encoding, remote providers like Instagram, Dropbox, Google Drive, S3 and more :dog:",
   "lint-staged": {
-    "*.js": "eslint",
-    "*.jsx": "eslint --fix",
+    "*.{js,mjs,cjs,jsx}": "eslint --fix",
+    "*.{ts,mts,cts,tsx}": "eslint --fix",
     "*.md": [
       "remark --silently-ignore -i .remarkignore -foq",
       "eslint --fix"
-    ],
-    "*.ts": "eslint --fix"
+    ]
   },
   "remarkConfig": {
     "plugins": [
@@ -31,7 +30,6 @@
     "packages/uppy",
     "private/*",
     "test/endtoend",
-    "website",
     "e2e"
   ],
   "devDependencies": {
@@ -46,7 +44,7 @@
     "@babel/preset-env": "^7.14.7",
     "@babel/register": "^7.10.5",
     "@babel/types": "^7.17.0",
-    "@parcel/transformer-vue": "2.7.0",
+    "@parcel/transformer-vue": "2.8.4-nightly.2903+5b901a317",
     "@types/jasmine": "file:./private/@types/jasmine",
     "@types/jasminewd2": "file:./private/@types/jasmine",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
@@ -62,23 +60,24 @@
     "core-js": "~3.24.0",
     "cssnano": "^5.0.6",
     "dotenv": "^16.0.0",
-    "esbuild": "^0.15.1",
+    "esbuild": "^0.17.1",
     "esbuild-plugin-babel": "^0.2.3",
     "eslint": "^8.0.0",
     "eslint-config-transloadit": "^2.0.0",
     "eslint-plugin-compat": "^4.0.0",
     "eslint-plugin-cypress": "^2.12.1",
     "eslint-plugin-import": "^2.25.2",
-    "eslint-plugin-jest": "^26.0.0",
-    "eslint-plugin-jsdoc": "^39.0.0",
+    "eslint-plugin-jest": "^27.0.0",
+    "eslint-plugin-jsdoc": "^40.0.0",
     "eslint-plugin-jsx-a11y": "^6.4.1",
     "eslint-plugin-markdown": "^3.0.0",
+    "eslint-plugin-no-only-tests": "^3.1.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prefer-import": "^0.0.1",
     "eslint-plugin-promise": "^6.0.0",
     "eslint-plugin-react": "^7.22.0",
     "eslint-plugin-react-hooks": "^4.2.0",
-    "eslint-plugin-unicorn": "^43.0.0",
+    "eslint-plugin-unicorn": "^46.0.0",
     "github-contributors-list": "^1.2.4",
     "glob": "^8.0.0",
     "jest": "^29.0.0",
@@ -108,6 +107,8 @@
     "vue-template-compiler": "workspace:*"
   },
   "scripts": {
+    "start:companion": "bash bin/companion.sh",
+    "start:companion:with-loadbalancer": "e2e/start-companion-with-load-balancer.mjs",
     "build:bundle": "yarn node ./bin/build-bundle.mjs",
     "build:clean": "rm -rf packages/*/lib packages/@uppy/*/lib packages/*/dist packages/@uppy/*/dist",
     "build:companion": "yarn workspace @uppy/companion build",
@@ -129,11 +130,9 @@
     "lint": "eslint . --cache",
     "release": "PACKAGES=$(yarn workspaces list --json) yarn workspace @uppy-dev/release interactive",
     "size": "echo 'JS Bundle mingz:' && cat ./packages/uppy/dist/uppy.min.js | gzip | wc -c && echo 'CSS Bundle mingz:' && cat ./packages/uppy/dist/uppy.min.css | gzip | wc -c",
-    "start:companion": "bash bin/companion.sh",
-    "start": "npm-run-all --parallel watch start:companion web:start",
     "e2e": "yarn build && yarn e2e:skip-build",
-    "e2e:skip-build": "npm-run-all --parallel watch:js:lib e2e:client start:companion e2e:cypress",
-    "e2e:ci": "start-server-and-test 'npm-run-all --parallel e2e:client start:companion' '1234|3020' e2e:headless",
+    "e2e:skip-build": "npm-run-all --parallel watch:js:lib e2e:client start:companion:with-loadbalancer e2e:cypress",
+    "e2e:ci": "start-server-and-test 'npm-run-all --parallel e2e:client start:companion:with-loadbalancer' '1234|3020' e2e:headless",
     "e2e:client": "yarn workspace e2e client:start",
     "e2e:cypress": "yarn workspace e2e cypress:open",
     "e2e:headless": "yarn workspace e2e cypress:headless",
@@ -153,19 +152,7 @@
     "watch:js:bundle": "onchange 'packages/{@uppy/,}*/src/**/*.js' --initial --verbose -- yarn run build:bundle",
     "watch:js:lib": "onchange 'packages/{@uppy/,}*/src/**/*.js' --initial --verbose -- yarn run build:lib",
     "watch:js": "npm-run-all --parallel watch:js:bundle watch:js:lib",
-    "watch": "npm-run-all --parallel watch:css watch:js",
-    "web:build-examples": "cd website && node build-examples.js",
-    "web:build": "npm-run-all web:inject-bundles-misc web:generate web:build-examples web:inject-frontpagecodesample",
-    "web:bundle-watch-inject": "onchange 'packages/uppy/dist/**/*.css' 'packages/uppy/dist/**/*.js' --initial --verbose -- yarn run web:inject-bundles-misc",
-    "web:clean": "cd website && touch db.json && yarn run hexo clean",
-    "web:prepare-deploy": "bash ./bin/prepare-web-deploy",
-    "web:generate": "cd website && touch db.json && yarn run hexo generate",
-    "web:inject-bundles-misc": "cd website && node inject.js",
-    "web:inject-frontpagecodesample": "yarn run web:generate && cp -f website/public/frontpage-code-sample.html website/themes/uppy/layout/partials/frontpage-code-sample.html && touch website/themes/uppy/layout/index.ejs",
-    "web:start-server": "cd website && touch db.json && node inject.js && node build-examples.js && yarn run hexo server",
-    "web:start": "yarn run web:start-server",
-    "web:watch-examples": "yarn run web:bundle-watch-inject && yarn run web:watch",
-    "web:watch": "npm-run-all build:lib --parallel watch:css web:watch-examples web:bundle-watch-inject web:start_server"
+    "watch": "npm-run-all --parallel watch:css watch:js"
   },
   "jest": {
     "automock": false,
@@ -185,6 +172,8 @@
     "@types/eslint@^7.2.13": "^8.2.0",
     "@types/react": "^17",
     "@types/webpack-dev-server": "^4",
-    "preact": "patch:preact@npm:10.10.0#.yarn/patches/preact-npm-10.10.0-dd04de05e8.patch"
+    "preact": "patch:preact@npm:10.10.0#.yarn/patches/preact-npm-10.10.0-dd04de05e8.patch",
+    "pre-commit": "patch:pre-commit@npm:1.2.2#.yarn/patches/pre-commit-npm-1.2.2-f30af83877.patch",
+    "start-server-and-test": "patch:start-server-and-test@npm:1.14.0#.yarn/patches/start-server-and-test-npm-1.14.0-841aa34fdf.patch"
   }
 }

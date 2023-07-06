@@ -52,4 +52,13 @@ function errorToResponse (err) {
   return undefined
 }
 
-module.exports = { ProviderAuthError, ProviderApiError, errorToResponse }
+function respondWithError (err, res) {
+  const errResp = errorToResponse(err)
+  if (errResp) {
+    res.status(errResp.code).json({ message: errResp.message })
+    return true
+  }
+  return false
+}
+
+module.exports = { ProviderAuthError, ProviderApiError, errorToResponse, respondWithError }

@@ -18,6 +18,10 @@ const getClient = ({ token }) => got.extend({
   },
 })
 
+const getOauthClient = () => got.extend({
+  prefixUrl: 'https://oauth2.googleapis.com',
+})
+
 async function getStats ({ id, token }) {
   const client = getClient({ token })
 
@@ -82,6 +86,17 @@ class Drive extends Provider {
           fields: DRIVE_FILES_FIELDS,
           pageToken: query.cursor,
           q,
+          // pageSize: The maximum number of files to return per page.
+          // Partial or empty result pages are possible even before the end of the files list has been reached.
+          // Acceptable values are 1 to 1000, inclusive. (Default: 100)
+          //
+          // @TODO:
+          // SAD WARNING: doesn’t work if you have multiple `fields`, defaults to 100 anyway.
+          // Works if we remove `permissions(role,emailAddress)`, which we use to set the email address
+          // of logged in user in the Provider View header on the frontend.
+          // See https://stackoverflow.com/questions/42592125/list-request-page-size-being-ignored
+          //
+          // pageSize: 1000,
           // pageSize: 10, // can be used for testing pagination if you don't have many files
           orderBy: 'folder,name',
           includeItemsFromAllDrives: true,
@@ -154,6 +169,13 @@ class Drive extends Provider {
       })
 
       return { revoked: true }
+    })
+  }
+
+  async refreshToken ({ clientId, clientSecret, refreshToken }) {
+    return this.#withErrorHandling('provider.drive.token.refresh.error', async () => {
+      const { access_token: accessToken } = await getOauthClient().post('token', { form: { refresh_token: refreshToken, grant_type: 'refresh_token', client_id: clientId, client_secret: clientSecret } }).json()
+      return { accessToken }
     })
   }
 

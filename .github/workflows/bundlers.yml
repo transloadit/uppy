@@ -15,9 +15,12 @@ on:
       - '.github/**'
       - '!.github/workflows/bundlers.yml'
 
+env:
+  YARN_ENABLE_GLOBAL_CACHE: false
+
 jobs:
   isolate_uppy:
-    name: Isolate Uppy package
+    name: Isolate Uppy packages
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
@@ -47,12 +50,18 @@ jobs:
         run: |
           node <<'EOF'
             const pkg = require('./packages/uppy/package.json');
-            for(const key of Object.keys(pkg.dependencies)) {
-              if (key.startsWith('@uppy/')) {
-                pkg.dependencies[key] = `/tmp/packages/${key.replace('/', '-')}-${{ github.sha }}.tgz`;
+            pkg.overrides = {};
+            (async () => {
+              for await (const { name } of await require('node:fs/promises').opendir('./packages/@uppy/')) {
+                pkg.overrides["@uppy/" + name] = `/tmp/packages/@uppy-${name}-${{ github.sha }}.tgz`;
               }
-            }
-            require('node:fs').writeFileSync('./packages/uppy/package.json', JSON.stringify(pkg));
+              for(const key of Object.keys(pkg.dependencies)) {
+                if (key in pkg.overrides) {
+                  pkg.dependencies[key] = pkg.overrides[key];
+                }
+              }
+              require('node:fs').writeFileSync('./packages/uppy/package.json', JSON.stringify(pkg));
+            })();
           EOF
       - name: Eject public packages from repo
         run: mkdir /tmp/artifacts && corepack yarn workspaces foreach --no-private pack --install-if-needed -o /tmp/artifacts/%s-${{ github.sha }}.tgz
@@ -82,6 +91,7 @@ jobs:
           npm i --save-dev
           @rollup/plugin-commonjs @rollup/plugin-node-resolve
           rollup@${{matrix.bundler-version}}
+      - run: npx rollup --version
       - name: Create Rollup config file
         run: >-
           echo '
@@ -117,6 +127,7 @@ jobs:
         run: tar -xzf /tmp/packages/uppy-${{ github.sha }}.tgz --strip-components 1
       - name: Add Webpack as a dev dependency
         run: npm i --save-dev webpack-cli webpack@${{matrix.bundler-version}}
+      - run: npx webpack --version
       - name: Create Webpack config file
         run: echo 'module.exports={mode:"production",target:"web",entry:"./index.mjs"}' > webpack.config.js
       - name: Bundle
@@ -147,6 +158,7 @@ jobs:
           EOF
       - name: Add Parcel as a dev dependency
         run: npm i --save-dev parcel@${{matrix.bundler-version}}
+      - run: npx parcel --version
       - name: Bundle
         run: npx parcel build index.mjs
 
@@ -166,6 +178,7 @@ jobs:
         run: tar -xzf /tmp/packages/uppy-${{ github.sha }}.tgz --strip-components 1
       - name: Add Vite as a dev dependency
         run: npm i --save-dev vite@${{matrix.bundler-version}}
+      - run: npx vite --version
       - name: Create index.html
         run: echo '<!doctype html><html><head><script type="module" src="./index.mjs"></script></head></html>' > index.html
       - name: Bundle
@@ -187,6 +200,7 @@ jobs:
         run: tar -xzf /tmp/packages/uppy-${{ github.sha }}.tgz --strip-components 1
       - name: Add ESBuild as a dev dependency
         run: npm i --save-dev esbuild@${{matrix.bundler-version}}
+      - run: npx esbuild --version
       - name: Bundle
         run: npx esbuild index.mjs --bundle --outfile=/dev/null
     

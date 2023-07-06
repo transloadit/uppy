@@ -40,8 +40,9 @@ console.log(import.meta.env)
 // DEV CONFIG: enable or disable Golden Retriever
 
 const RESTORE = false
+const COMPRESS = false
 
-async function getAssemblyOptions () {
+async function assemblyOptions () {
   return generateSignatureIfSecret(TRANSLOADIT_SECRET, {
     auth: {
       key: TRANSLOADIT_KEY,
@@ -55,6 +56,9 @@ async function getAssemblyOptions () {
 // Rest is implementation! Obviously edit as necessary...
 
 export default () => {
+  const restrictions = undefined
+  // const restrictions = { requiredMetaFields: ['caption'], maxNumberOfFiles: 3 }
+
   const uppyDashboard = new Uppy({
     logger: debugLogger,
     meta: {
@@ -62,7 +66,7 @@ export default () => {
       license: 'Creative Commons',
     },
     allowMultipleUploadBatches: false,
-    // restrictions: { requiredMetaFields: ['caption'] },
+    restrictions,
   })
     .use(Dashboard, {
       trigger: '#pick-files',
@@ -74,7 +78,7 @@ export default () => {
       ],
       showProgressDetails: true,
       proudlyDisplayPoweredByUppy: true,
-      note: '2 files, images and video only',
+      note: `${JSON.stringify(restrictions)}`,
     })
     // .use(GoogleDrive, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })
     // .use(Instagram, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })
@@ -105,7 +109,10 @@ export default () => {
     .use(DropTarget, {
       target: document.body,
     })
-    .use(Compressor)
+
+  if (COMPRESS) {
+    uppyDashboard.use(Compressor)
+  }
 
   switch (UPLOADER) {
     case 'tus':
@@ -124,7 +131,7 @@ export default () => {
       uppyDashboard.use(Transloadit, {
         service: TRANSLOADIT_SERVICE_URL,
         waitForEncoding: true,
-        getAssemblyOptions,
+        assemblyOptions,
       })
       break
     case 'transloadit-s3':
@@ -132,7 +139,7 @@ export default () => {
       uppyDashboard.use(Transloadit, {
         waitForEncoding: true,
         importFromUploadURLs: true,
-        getAssemblyOptions,
+        assemblyOptions,
       })
       break
     case 'transloadit-xhr':

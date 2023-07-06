@@ -87,6 +87,10 @@ de_DE.strings = {
   micDisabled: 'Zugriff auf Mikrofon von Benutzer abgelehnt',
   missingRequiredMetaField: 'Fehlende erforderliche Meta-Felder',
   missingRequiredMetaFieldOnFile: 'Fehlende erforderliche Meta-Felder in %{fileName}',
+  missingRequiredMetaFields: {
+    '0': 'Fehlendes erforderliches Meta-Feld: %{fields}.',
+    '1': 'Fehlende erforderliche Meta-Felder: %{fields}.',
+  },
   myDevice: 'Mein Gerät',
   noCameraDescription: 'Bitte Kamera anschließen, um Bilder oder Videos aufzunehmen',
   noCameraTitle: 'Kamera nicht verfügbar',

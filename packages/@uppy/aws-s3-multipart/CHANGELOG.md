@@ -1,5 +1,41 @@
 # @uppy/aws-s3-multipart
 
+## 3.4.0
+
+Released: 2023-06-19
+Included in: Uppy v3.10.0
+
+- @uppy/aws-s3-multipart: fix the chunk size calculation (Antoine du Hamel / #4508)
+- @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/tus,@uppy/utils,@uppy/xhr-upload: When file is removed (or all are canceled), controller.abort queued requests (Artur Paikin / #4504)
+- @uppy/aws-s3-multipart,@uppy/tus,@uppy/xhr-upload: Don't close socket while upload is still in progress (Artur Paikin / #4479)
+- @uppy/aws-s3-multipart: fix `getUploadParameters` option (Antoine du Hamel / #4465)
+
+## 3.3.0
+
+Released: 2023-05-02
+Included in: Uppy v3.9.0
+
+- @uppy/aws-s3-multipart: allowedMetaFields: null means “include all” (Artur Paikin / #4437)
+- @uppy/aws-s3-multipart: add `shouldUseMultipart ` option (Antoine du Hamel / #4205)
+- @uppy/aws-s3-multipart: make retries more robust (Antoine du Hamel / #4424)
+
+## 3.1.3
+
+Released: 2023-04-04
+Included in: Uppy v3.7.0
+
+- @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/tus,@uppy/xhr-upload: make sure that we reset serverToken when an upload fails (Mikael Finstad / #4376)
+- @uppy/aws-s3-multipart: do not auto-open sockets, clean them up on abort (Antoine du Hamel)
+
+## 3.1.2
+
+Released: 2023-01-26
+Included in: Uppy v3.4.0
+
+- @uppy/aws-s3-multipart: fix metadata shape (Antoine du Hamel / #4267)
+- @uppy/aws-s3-multipart: add support for `allowedMetaFields` option (Antoine du Hamel / #4215)
+- @uppy/aws-s3-multipart: fix singPart type (Stefan Schonert / #4224)
+
 ## 3.1.1
 
 Released: 2022-11-16
