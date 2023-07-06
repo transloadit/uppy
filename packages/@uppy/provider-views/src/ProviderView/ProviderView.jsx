@@ -478,6 +478,7 @@ export default class ProviderView extends View {
             handleAuth={this.handleAuth}
             i18n={this.plugin.uppy.i18n}
             i18nArray={this.plugin.uppy.i18nArray}
+            inputs={this.opts.authInputs}
           />
         </CloseWrapper>
       )

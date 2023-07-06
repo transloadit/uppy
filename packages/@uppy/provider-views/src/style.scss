@@ -28,6 +28,28 @@
   color: $gray-500;
 }
 
+.uppy-Provider-authForm {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.uppy-Provider-authForm input {
+  display: block;
+  width: 100%;
+  margin-bottom: 5px;
+}
+
+.uppy-Provider-authForm label span {
+  display: inline-block;
+  margin-bottom: 5px;
+}
+
+.uppy-Provider-authInput {
+  width: 100%;
+  margin-bottom: 15px;
+}
+
 .uppy-Provider-empty {
   color: $gray-500;
 }
