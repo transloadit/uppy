@@ -1,5 +1,10 @@
 const { respondWithError } = require('../provider/error')
 
+/**
+ *
+ * @param {{ query: object, params: object, companion: object }} req
+ * @param {object} res
+ */
 async function list ({ query, params, companion }, res, next) {
   const { accessToken } = companion.providerTokens
 

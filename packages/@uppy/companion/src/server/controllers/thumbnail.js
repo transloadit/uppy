@@ -1,15 +1,15 @@
 /**
  *
- * @param {object} req
+ * @param {{ params: object, companion: object, query: object }} req
  * @param {object} res
  */
-async function thumbnail (req, res, next) {
-  const { providerName, id } = req.params
-  const { accessToken } = req.companion.allProvidersTokens[providerName]
-  const { provider } = req.companion
+async function thumbnail ({ params, companion, query }, res, next) {
+  const { providerName, id } = params
+  const { accessToken } = companion.allProvidersTokens[providerName]
+  const { provider } = companion
 
   try {
-    const { stream } = await provider.thumbnail({ id, token: accessToken })
+    const { stream } = await provider.thumbnail({ id, token: accessToken, query })
     stream.pipe(res)
   } catch (err) {
     if (err.isAuthError) res.sendStatus(401)
