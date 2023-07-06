@@ -7,6 +7,11 @@ const getName = (id) => {
   return id.split('-').map((s) => s.charAt(0).toUpperCase() + s.slice(1)).join(' ')
 }
 
+const queryString = (params, prefix = '?') => {
+  const str = new URLSearchParams(params).toString()
+  return str ? `${prefix}${str}` : ''
+}
+
 export default class Provider extends RequestClient {
   #refreshingTokenPromise
 
@@ -72,20 +77,22 @@ export default class Provider extends RequestClient {
   }
 
   authUrl (queries = {}) {
-    const params = new URLSearchParams(queries)
-    if (this.preAuthToken) {
-      params.set('uppyPreAuthToken', this.preAuthToken)
-    }
-
-    return `${this.hostname}/${this.id}/connect?${params}`
+    const qs = queryString({
+      ...queries,
+      ...this.cutomQueryParams,
+      ...(this.preAuthToken && {
+        uppyPreAuthToken: this.preAuthToken,
+      }),
+    })
+    return `${this.hostname}/${this.id}/connect${qs}`
   }
 
   refreshTokenUrl () {
-    return `${this.hostname}/${this.id}/refresh-token`
+    return `${this.hostname}/${this.id}/refresh-token${queryString(this.cutomQueryParams)}`
   }
 
   fileUrl (id) {
-    return `${this.hostname}/${this.id}/get/${id}`
+    return `${this.hostname}/${this.id}/get/${id}${queryString(this.cutomQueryParams)}`
   }
 
   /** @protected */
@@ -132,11 +139,11 @@ export default class Provider extends RequestClient {
   }
 
   list (directory, options) {
-    return this.get(`${this.id}/list/${directory || ''}`, options)
+    return this.get(`${this.id}/list/${directory || ''}${queryString(this.cutomQueryParams)}`, options)
   }
 
   async logout (options) {
-    const response = await this.get(`${this.id}/logout`, options)
+    const response = await this.get(`${this.id}/logout${queryString(this.cutomQueryParams)}`, options)
     await this.#removeAuthToken()
     return response
   }
