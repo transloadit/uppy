@@ -1,5 +1,15 @@
 # @uppy/companion
 
+## 4.6.0
+
+Released: 2023-07-06
+Included in: Uppy v3.11.0
+
+- @uppy/companion: fix infinite recursion in uploader test (Mikael Finstad / #4536)
+- @uppy/companion: bump semver from 7.3.7 to 7.5.3 (dependabot[bot] / #4529)
+- @uppy/companion: fix part listing in s3 (Antoine du Hamel / #4524)
+- @uppy/companion: implement refresh for authentication tokens (Mikael Finstad / #4448)
+
 ## 4.5.1
 
 Released: 2023-06-19

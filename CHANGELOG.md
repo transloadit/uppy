@@ -12,6 +12,43 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 3.11.0
+
+Released: 2023-07-06
+
+| Package                | Version | Package                | Version |
+| ---------------------- | ------- | ---------------------- | ------- |
+| @uppy/aws-s3           |   3.2.1 | @uppy/golden-retriever |   3.1.0 |
+| @uppy/aws-s3-multipart |   3.4.1 | @uppy/status-bar       |   3.2.1 |
+| @uppy/companion        |   4.6.0 | @uppy/tus              |   3.1.2 |
+| @uppy/companion-client |   3.2.0 | @uppy/xhr-upload       |   3.3.1 |
+| @uppy/core             |   3.3.0 | uppy                   |  3.11.0 |
+
+- @uppy/companion: fix infinite recursion in uploader test (Mikael Finstad / #4536)
+- @uppy/xhr-upload: export `Headers` type (Masum ULU / #4549)
+- @uppy/aws-s3-multipart: increase priority of abort and complete (Stefan Schonert / #4542)
+- @uppy/aws-s3: fix remote uploads (Antoine du Hamel / #4546)
+- meta: use `corepack yarn` instead of `npm` to launch E2E (Antoine du Hamel / #4545)
+- @uppy/aws-s3-multipart: fix upload retry using an outdated ID (Antoine du Hamel / #4544)
+- @uppy/status-bar: remove throttled component (Artur Paikin / #4396)
+- @uppy/aws-s3-multipart: fix Golden Retriever integration (Antoine du Hamel / #4526)
+- examples/aws-nodejs: merge multipart and non-multipart examples (Antoine du Hamel / #4521)
+- @uppy/companion: bump semver from 7.3.7 to 7.5.3 (dependabot[bot] / #4529)
+- @uppy/aws-s3-multipart: add types to internal fields (Antoine du Hamel / #4535)
+- examples/aws-nodejs: update README (Antoine du Hamel / #4534)
+- examples/aws-nodejs: showcase an example without preflight requests (Antoine du Hamel / #4516)
+- @uppy/aws-s3-multipart: fix pause/resume (Antoine du Hamel / #4523)
+- @uppy/status-bar: fix ETA when Uppy recovers its state (Antoine du Hamel / #4525)
+- @uppy/aws-s3-multipart: fix resume single-chunk multipart uploads (Antoine du Hamel / #4528)
+- @uppy/companion: fix part listing in s3 (Antoine du Hamel / #4524)
+- example/aws-php: make it forward-compatible with the next Uppy major (Antoine du Hamel / #4522)
+- @uppy/golden-retriever: refactor to modernize the codebase (Antoine du Hamel / #4520)
+- examples/aws-nodejs: upgrade to AWS-SDK v3 (Antoine du Hamel / #4515)
+- @uppy/companion: implement refresh for authentication tokens (Mikael Finstad / #4448)
+- @uppy/aws-s3-multipart: disable pause/resume for remote uploads in the UI (Artur Paikin / #4500)
+- @uppy/tus: retry on 423 HTTP error code (Antoine du Hamel / #4512)
+
+
 ## 3.10.0
 
 Released: 2023-06-19

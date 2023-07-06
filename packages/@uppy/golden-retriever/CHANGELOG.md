@@ -1,5 +1,12 @@
 # @uppy/golden-retriever
 
+## 3.1.0
+
+Released: 2023-07-06
+Included in: Uppy v3.11.0
+
+- @uppy/golden-retriever: refactor to modernize the codebase (Antoine du Hamel / #4520)
+
 ## 3.0.4
 
 Released: 2023-06-19
