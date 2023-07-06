@@ -7,6 +7,7 @@ const ipaddr = require('ipaddr.js')
 const got = require('got').default
 const path = require('node:path')
 const contentDisposition = require('content-disposition')
+const validator = require('validator')
 
 const logger = require('../logger')
 
@@ -46,7 +47,32 @@ module.exports.getRedirectEvaluator = (rawRequestURL, isEnabled) => {
 }
 
 /**
- * Returns http Agent that will prevent requests to private IPs (to preven SSRF)
+ * Validates that the download URL is secure
+ *
+ * @param {string} url the url to validate
+ * @param {boolean} allowLocalUrls whether to allow local addresses
+ */
+const validateURL = (url, allowLocalUrls) => {
+  if (!url) {
+    return false
+  }
+
+  const validURLOpts = {
+    protocols: ['http', 'https'],
+    require_protocol: true,
+    require_tld: !allowLocalUrls,
+  }
+  if (!validator.isURL(url, validURLOpts)) {
+    return false
+  }
+
+  return true
+}
+
+module.exports.validateURL = validateURL
+
+/**
+ * Returns http Agent that will prevent requests to private IPs (to prevent SSRF)
  */
 const getProtectedHttpAgent = ({ protocol, blockLocalIPs }) => {
   function dnsLookup (hostname, options, callback) {

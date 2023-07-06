@@ -1,33 +1,10 @@
 const express = require('express')
-const validator = require('validator')
 
 const { startDownUpload } = require('../helpers/upload')
 const { prepareStream } = require('../helpers/utils')
+const { validateURL } = require('../helpers/request')
 const { getURLMeta, getProtectedGot } = require('../helpers/request')
 const logger = require('../logger')
-
-/**
- * Validates that the download URL is secure
- *
- * @param {string} url the url to validate
- * @param {boolean} ignoreTld whether to allow local addresses
- */
-const validateURL = (url, ignoreTld) => {
-  if (!url) {
-    return false
-  }
-
-  const validURLOpts = {
-    protocols: ['http', 'https'],
-    require_protocol: true,
-    require_tld: !ignoreTld,
-  }
-  if (!validator.isURL(url, validURLOpts)) {
-    return false
-  }
-
-  return true
-}
 
 /**
  * @callback downloadCallback
