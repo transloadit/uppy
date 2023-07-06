@@ -44,6 +44,7 @@ export default class Box extends UIPlugin {
   install () {
     this.view = new ProviderViews(this, {
       provider: this.provider,
+      loadAllFiles: true,
     })
 
     const { target } = this.opts

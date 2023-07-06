@@ -50,6 +50,7 @@ export default class ProviderView extends View {
       showTitles: true,
       showFilter: true,
       showBreadcrumbs: true,
+      loadAllFiles: false,
     }
 
     // merge default options with the ones set by user
@@ -127,26 +128,32 @@ export default class ProviderView extends View {
     try {
       const folders = []
       const files = []
-      let path = id
+      this.nextPagePath = id
 
-      while (path) {
-        const res = await this.provider.list(path, { signal: controller.signal })
+      do {
+        const res = await this.provider.list(this.nextPagePath, { signal: controller.signal })
 
         for (const f of res.items) {
           if (f.isFolder) folders.push(f)
           else files.push(f)
         }
 
-        path = res.nextPagePath
+        this.nextPagePath = res.nextPagePath
         if (res.username) this.username = res.username
         this.setLoading(this.plugin.uppy.i18n('loadedXFiles', { numFiles: files.length + folders.length }))
-      }
+      } while (
+        this.nextPagePath && this.opts.loadAllFiles
+      )
 
-      const directories = getNewBreadcrumbsDirectories(path)
+      const directories = getNewBreadcrumbsDirectories(this.nextPagePath)
 
       this.plugin.setPluginState({ files, folders, directories, filterInput: '' })
       this.lastCheckbox = undefined
     } catch (err) {
+      if (err.cause?.name === 'AbortError') {
+        // Expected, user clicked “cancel”
+        return
+      }
       this.handleError(err)
     } finally {
       this.setLoading(false)
