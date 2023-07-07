@@ -65,6 +65,13 @@ const s3Prefix = process.env.COMPANION_AWS_PREFIX || ''
 const defaultStandaloneGetKey = (...args) => `${s3Prefix}${utils.defaultGetKey(...args)}`
 
 /**
+ * Default getBucket for Companion standalone variant
+ *
+ * @returns {string|null}
+ */
+const defaultStandaloneGetBucket = (...args) => `${utils.defaultGetBucket(...args)}`
+
+/**
  * Loads the config from environment variables
  *
  * @returns {object}
@@ -119,6 +126,7 @@ const getConfigFromEnv = () => {
     s3: {
       key: process.env.COMPANION_AWS_KEY,
       getKey: defaultStandaloneGetKey,
+      getBucket: defaultStandaloneGetBucket,
       secret: getSecret('COMPANION_AWS_SECRET'),
       bucket: process.env.COMPANION_AWS_BUCKET,
       endpoint: process.env.COMPANION_AWS_ENDPOINT,

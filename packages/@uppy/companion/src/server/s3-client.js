@@ -3,9 +3,10 @@ const { S3Client } = require('@aws-sdk/client-s3')
 /**
  * instantiates the aws-sdk s3 client that will be used for s3 uploads.
  *
+ * @param {object} req the request object
  * @param {object} companionOptions the companion options object
  */
-module.exports = (companionOptions) => {
+module.exports = (req, companionOptions) => {
   let s3Client = null
   if (companionOptions.s3) {
     const { s3 } = companionOptions
@@ -28,14 +29,15 @@ module.exports = (companionOptions) => {
       s3ClientOptions.endpoint = s3.endpoint.replace(/{service}/, 's3').replace(/{region}/, s3.region)
     }
 
-    if (s3.useAccelerateEndpoint && s3.bucket != null) {
+    const bucket = s3.getBucket(req, {}) ?? s3.bucket
+    if (s3.useAccelerateEndpoint && bucket != null) {
       s3ClientOptions = {
         ...s3ClientOptions,
         useAccelerateEndpoint: true,
         bucketEndpoint: true,
         // This is a workaround for lacking support for useAccelerateEndpoint in createPresignedPost
         // See https://github.com/transloadit/uppy/issues/4135#issuecomment-1276450023
-        endpoint: `https://${s3.bucket}.s3-accelerate.amazonaws.com/`,
+        endpoint: `https://${bucket}.s3-accelerate.amazonaws.com/`,
       }
     }
 

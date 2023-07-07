@@ -251,12 +251,12 @@ class HTTPCommunicationQueue {
     if (chunks.length === 1 && !chunks[0].shouldUseMultipart) {
       return this.#nonMultipartUpload(file, chunks[0], signal)
     }
-    const { uploadId, key } = await this.getUploadId(file, signal)
+    const { uploadId, bucket, key } = await this.getUploadId(file, signal)
     throwIfAborted(signal)
     try {
       const parts = await Promise.all(chunks.map((chunk, i) => this.uploadChunk(file, i + 1, chunk, signal)))
       throwIfAborted(signal)
-      return await this.#sendCompletionRequest(file, { key, uploadId, parts, signal }).abortOn(signal)
+      return await this.#sendCompletionRequest(file, { bucket, key, uploadId, parts, signal }).abortOn(signal)
     } catch (err) {
       if (err?.cause !== pausingUploadReason && err?.name !== 'AbortError') {
         this.abortFileUpload(file).catch(console.warn)
@@ -274,7 +274,7 @@ class HTTPCommunicationQueue {
     if (chunks.length === 1 && !chunks[0].shouldUseMultipart) {
       return this.#nonMultipartUpload(file, chunks[0], signal)
     }
-    const { uploadId, key } = await this.getUploadId(file, signal)
+    const { uploadId, bucket, key } = await this.getUploadId(file, signal)
     throwIfAborted(signal)
     const alreadyUploadedParts = await this.#listParts(file, { uploadId, key, signal }).abortOn(signal)
     throwIfAborted(signal)
@@ -291,7 +291,7 @@ class HTTPCommunicationQueue {
         }),
     )
     throwIfAborted(signal)
-    return this.#sendCompletionRequest(file, { key, uploadId, parts, signal }).abortOn(signal)
+    return this.#sendCompletionRequest(file, { bucket, key, uploadId, parts, signal }).abortOn(signal)
   }
 
   /**
@@ -304,14 +304,14 @@ class HTTPCommunicationQueue {
    */
   async uploadChunk (file, partNumber, chunk, signal) {
     throwIfAborted(signal)
-    const { uploadId, key } = await this.getUploadId(file, signal)
+    const { uploadId, bucket, key } = await this.getUploadId(file, signal)
     throwIfAborted(signal)
     for (;;) {
       const chunkData = chunk.getData()
       const { onProgress, onComplete } = chunk
 
       const signature = await this.#fetchSignature(file, {
-        uploadId, key, partNumber, body: chunkData, signal,
+        uploadId, bucket, key, partNumber, body: chunkData, signal,
       }).abortOn(signal)
 
       throwIfAborted(signal)
@@ -435,26 +435,42 @@ export default class AwsS3Multipart extends UploaderPlugin {
     }, { signal }).then(assertServerError)
   }
 
-  listParts (file, { key, uploadId }, signal) {
+  listParts (file, { bucket, key, uploadId }, signal) {
     this.assertHost('listParts')
     throwIfAborted(signal)
 
     const filename = encodeURIComponent(key)
-    return this.#client.get(`s3/multipart/${uploadId}?key=${filename}`, { signal })
+    const searchParams = new URLSearchParams({
+      key: filename,
+    })
+
+    if (typeof bucket === 'string') {
+      searchParams.set('bucket', bucket)
+    }
+
+    return this.#client.get(`s3/multipart/${uploadId}?${searchParams}`, { signal })
       .then(assertServerError)
   }
 
-  completeMultipartUpload (file, { key, uploadId, parts }, signal) {
+  completeMultipartUpload (file, { bucket, key, uploadId, parts }, signal) {
     this.assertHost('completeMultipartUpload')
     throwIfAborted(signal)
 
     const filename = encodeURIComponent(key)
     const uploadIdEnc = encodeURIComponent(uploadId)
-    return this.#client.post(`s3/multipart/${uploadIdEnc}/complete?key=${filename}`, { parts }, { signal })
+    const searchParams = new URLSearchParams({
+      key: filename,
+    })
+
+    if (typeof bucket === 'string') {
+      searchParams.set('bucket', bucket)
+    }
+
+    return this.#client.post(`s3/multipart/${uploadIdEnc}/complete?${searchParams}`, { parts }, { signal })
       .then(assertServerError)
   }
 
-  signPart (file, { uploadId, key, partNumber, signal }) {
+  signPart (file, { uploadId, bucket, key, partNumber, signal }) {
     this.assertHost('signPart')
     throwIfAborted(signal)
 
@@ -463,16 +479,30 @@ export default class AwsS3Multipart extends UploaderPlugin {
     }
 
     const filename = encodeURIComponent(key)
-    return this.#client.get(`s3/multipart/${uploadId}/${partNumber}?key=${filename}`, { signal })
+
+    const searchParams = new URLSearchParams({
+      key: filename,
+    })
+
+    if (typeof bucket === 'string') {
+      searchParams.set('bucket', bucket)
+    }
+
+    return this.#client.get(`s3/multipart/${uploadId}/${partNumber}?${searchParams}`, { signal })
       .then(assertServerError)
   }
 
-  abortMultipartUpload (file, { key, uploadId }, signal) {
+  abortMultipartUpload (file, { bucket, key, uploadId }, signal) {
     this.assertHost('abortMultipartUpload')
 
     const filename = encodeURIComponent(key)
     const uploadIdEnc = encodeURIComponent(uploadId)
-    return this.#client.delete(`s3/multipart/${uploadIdEnc}?key=${filename}`, undefined, { signal })
+    const params = new URLSearchParams({ key: filename });
+    if (typeof bucket === 'string') {
+      params.append('bucket', bucket)
+    }
+
+    return this.#client.delete(`s3/multipart/${uploadIdEnc}?${params}`, undefined, { signal })
       .then(assertServerError)
   }
 
@@ -575,11 +605,12 @@ export default class AwsS3Multipart extends UploaderPlugin {
     })
   }
 
-  #setS3MultipartState = (file, { key, uploadId }) => {
+  #setS3MultipartState = (file, { bucket, key, uploadId }) => {
     const cFile = this.uppy.getFile(file.id)
     this.uppy.setFileState(file.id, {
       s3Multipart: {
         ...cFile.s3Multipart,
+        bucket,
         key,
         uploadId,
       },

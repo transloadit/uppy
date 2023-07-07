@@ -194,7 +194,7 @@ exports.getCompanionMiddleware = (options) => {
     const versionFromQuery = req.query.uppyVersions ? decodeURIComponent(req.query.uppyVersions) : null
     req.companion = {
       options,
-      s3Client: getS3Client(options),
+      s3Client: getS3Client(req, options),
       authToken: req.header('uppy-auth-token') || req.query.uppyAuthToken,
       clientVersion: req.header('uppy-versions') || versionFromQuery || '1.0.0',
       buildURL: getURLBuilder(options),

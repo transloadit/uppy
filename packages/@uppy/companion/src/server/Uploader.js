@@ -651,7 +651,7 @@ class Uploader {
     const { client, options } = s3Options
 
     const params = {
-      Bucket: options.bucket,
+      Bucket: options.getBucket(null, this.options.metadata) ?? options.bucket,
       Key: options.getKey(null, filename, this.options.metadata),
       ContentType: this.options.metadata.type,
       Metadata: this.options.metadata,

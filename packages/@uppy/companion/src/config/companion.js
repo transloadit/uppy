@@ -1,7 +1,7 @@
 const fs = require('node:fs')
 const { isURL } = require('validator')
 const logger = require('../server/logger')
-const { defaultGetKey } = require('../server/helpers/utils')
+const { defaultGetKey, defaultGetBucket } = require('../server/helpers/utils')
 
 const defaultOptions = {
   server: {
@@ -14,6 +14,7 @@ const defaultOptions = {
     conditions: [],
     useAccelerateEndpoint: false,
     getKey: defaultGetKey,
+    getBucket: defaultGetBucket,
     expires: 800, // seconds
   },
   allowLocalUrls: false,
