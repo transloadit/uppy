@@ -112,7 +112,12 @@ class TransloaditAssembly extends Emitter {
     })
 
     this.#sse.addEventListener('assembly_error', (e) => {
-      this.#onError(e.data)
+      try {
+        const error = JSON.parse(e.data)
+        this.#onError(new Error(error.message, { error }))
+      } catch {
+        this.#onError(new Error(e.data))
+      }
       // Refetch for updated status code
       this.#fetchStatus({ diff: false })
     })
