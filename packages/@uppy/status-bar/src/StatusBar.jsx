@@ -130,22 +130,6 @@ export default class StatusBar extends UIPlugin {
   }
 
   startUpload = () => {
-    const { recoveredState } = this.uppy.getState()
-
-    this.#previousSpeed = null
-    this.#previousETA = null
-    if (recoveredState) {
-      this.#previousUploadedBytes = Object.values(recoveredState.files)
-        .reduce((pv, { progress }) => pv + progress.bytesUploaded, 0)
-
-      // We don't set `#lastUpdateTime` at this point because the upload won't
-      // actually resume until the user asks for it.
-
-      this.uppy.emit('restore-confirmed')
-      return undefined
-    }
-    this.#lastUpdateTime = performance.now()
-    this.#previousUploadedBytes = 0
     return this.uppy.upload().catch(() => {
       // Error logged in Core
     })
@@ -245,14 +229,35 @@ export default class StatusBar extends UIPlugin {
     }
   }
 
+  #onUploadStart = () => {
+    const { recoveredState } = this.uppy.getState()
+
+    this.#previousSpeed = null
+    this.#previousETA = null
+    if (recoveredState) {
+      this.#previousUploadedBytes = Object.values(recoveredState.files)
+        .reduce((pv, { progress }) => pv + progress.bytesUploaded, 0)
+
+      // We don't set `#lastUpdateTime` at this point because the upload won't
+      // actually resume until the user asks for it.
+
+      this.uppy.emit('restore-confirmed')
+      return
+    }
+    this.#lastUpdateTime = performance.now()
+    this.#previousUploadedBytes = 0
+  }
+
   install () {
     const { target } = this.opts
     if (target) {
       this.mount(target, this)
     }
+    this.uppy.on('upload', this.#onUploadStart)
   }
 
   uninstall () {
     this.unmount()
+    this.uppy.off('upload', this.#onUploadStart)
   }
 }
