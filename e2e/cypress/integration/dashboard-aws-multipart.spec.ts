@@ -34,8 +34,9 @@ describe('Dashboard with @uppy/aws-s3-multipart', () => {
 
     cy.intercept('POST', '/s3/multipart', { statusCode: 200, times: 1, body: JSON.stringify({ key:'mocked-key-attempt1', uploadId:'mocked-uploadId-attempt1' }) }).as('createMultipartUpload-attempt1')
     cy.intercept('GET', '/s3/multipart/mocked-uploadId-attempt1/1?key=mocked-key-attempt1', { forceNetworkError: true }).as('signPart-fails')
+    cy.intercept('DELETE', '/s3/multipart/mocked-uploadId-attempt1?key=mocked-key-attempt1', { statusCode: 200, body: '{}' }).as('abortAttempt-1')
     cy.get('.uppy-StatusBar-actions > .uppy-c-btn').click()
-    cy.wait(['@createMultipartUpload-attempt1', '@signPart-fails'])
+    cy.wait(['@createMultipartUpload-attempt1', '@signPart-fails', '@abortAttempt-1'])
     cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Upload failed')
 
     cy.intercept('POST', '/s3/multipart', { statusCode: 200, times: 1, body: JSON.stringify({ key:'mocked-key-attempt2', uploadId:'mocked-uploadId-attempt2' }) }).as('createMultipartUpload-attempt2')
@@ -46,9 +47,10 @@ describe('Dashboard with @uppy/aws-s3-multipart', () => {
       },
       body: JSON.stringify({ url:'/put-fail', expires:8 }),
     }).as('signPart-toFail')
+    cy.intercept('DELETE', '/s3/multipart/mocked-uploadId-attempt2?key=mocked-key-attempt2', { statusCode: 200, body: '{}' }).as('abortAttempt-2')
     cy.intercept('PUT', '/put-fail', { forceNetworkError: true }).as('put-fails')
     cy.get('.uppy-StatusBar-actions > .uppy-c-btn').click()
-    cy.wait(['@createMultipartUpload-attempt2', '@signPart-toFail', ...Array(5).fill('@put-fails')], { timeout: 10_000 })
+    cy.wait(['@createMultipartUpload-attempt2', '@signPart-toFail', ...Array(5).fill('@put-fails'), '@abortAttempt-2'], { timeout: 10_000 })
     cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Upload failed')
 
     cy.intercept('GET', '/s3/multipart/mocked-uploadId-attempt2/1?key=mocked-key-attempt2', {
@@ -66,7 +68,7 @@ describe('Dashboard with @uppy/aws-s3-multipart', () => {
     }).as('put-attempt2')
     cy.intercept('POST', '/s3/multipart/mocked-uploadId-attempt2/complete?key=mocked-key-attempt2', { forceNetworkError: true }).as('completeMultipartUpload-fails')
     cy.get('.uppy-StatusBar-actions > .uppy-c-btn').click()
-    cy.wait(['@createMultipartUpload-attempt2', '@signPart-attempt2', '@put-attempt2', '@completeMultipartUpload-fails'])
+    cy.wait(['@createMultipartUpload-attempt2', '@signPart-attempt2', '@put-attempt2', '@completeMultipartUpload-fails', '@abortAttempt-2'])
     cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Upload failed')
 
     cy.intercept('POST', '/s3/multipart', { statusCode: 200, times: 1, body: JSON.stringify({ key:'mocked-key-attempt3', uploadId:'mocked-uploadId-attempt3' }) }).as('createMultipartUpload-attempt3')

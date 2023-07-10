@@ -1,5 +1,18 @@
 # @uppy/aws-s3-multipart
 
+## 3.4.1
+
+Released: 2023-07-06
+Included in: Uppy v3.11.0
+
+- @uppy/aws-s3-multipart: increase priority of abort and complete (Stefan Schonert / #4542)
+- @uppy/aws-s3-multipart: fix upload retry using an outdated ID (Antoine du Hamel / #4544)
+- @uppy/aws-s3-multipart: fix Golden Retriever integration (Antoine du Hamel / #4526)
+- @uppy/aws-s3-multipart: add types to internal fields (Antoine du Hamel / #4535)
+- @uppy/aws-s3-multipart: fix pause/resume (Antoine du Hamel / #4523)
+- @uppy/aws-s3-multipart: fix resume single-chunk multipart uploads (Antoine du Hamel / #4528)
+- @uppy/aws-s3-multipart: disable pause/resume for remote uploads in the UI (Artur Paikin / #4500)
+
 ## 3.4.0
 
 Released: 2023-06-19

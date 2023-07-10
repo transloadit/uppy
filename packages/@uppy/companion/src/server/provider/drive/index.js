@@ -18,6 +18,10 @@ const getClient = ({ token }) => got.extend({
   },
 })
 
+const getOauthClient = () => got.extend({
+  prefixUrl: 'https://oauth2.googleapis.com',
+})
+
 async function getStats ({ id, token }) {
   const client = getClient({ token })
 
@@ -162,6 +166,13 @@ class Drive extends Provider {
       })
 
       return { revoked: true }
+    })
+  }
+
+  async refreshToken ({ clientId, clientSecret, refreshToken }) {
+    return this.#withErrorHandling('provider.drive.token.refresh.error', async () => {
+      const { access_token: accessToken } = await getOauthClient().post('token', { form: { refresh_token: refreshToken, grant_type: 'refresh_token', client_id: clientId, client_secret: clientSecret } }).json()
+      return { accessToken }
     })
   }
 

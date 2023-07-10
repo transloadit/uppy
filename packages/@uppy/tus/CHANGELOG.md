@@ -1,5 +1,12 @@
 # @uppy/tus
 
+## 3.1.2
+
+Released: 2023-07-06
+Included in: Uppy v3.11.0
+
+- @uppy/tus: retry on 423 HTTP error code (Antoine du Hamel / #4512)
+
 ## 3.1.1
 
 Released: 2023-06-19

@@ -25,10 +25,10 @@
  * the XHRUpload code, but at least it's not horrifically broken :)
  */
 
-import BasePlugin from '@uppy/core/lib/BasePlugin.js'
+import UploaderPlugin from '@uppy/core/lib/UploaderPlugin.js'
 import AwsS3Multipart from '@uppy/aws-s3-multipart'
 import { RateLimitedQueue, internalRateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
-import { RequestClient } from '@uppy/companion-client'
+import { RequestClient, Provider } from '@uppy/companion-client'
 import { filterNonFailedFiles, filterFilesToEmitUploadStarted } from '@uppy/utils/lib/fileFilters'
 
 import packageJson from '../package.json'
@@ -103,7 +103,7 @@ function defaultGetResponseError (content, xhr) {
 let warnedSuccessActionStatus = false
 
 // TODO deprecate this, will use s3-multipart instead
-export default class AwsS3 extends BasePlugin {
+export default class AwsS3 extends UploaderPlugin {
   static VERSION = packageJson.version
 
   #client
@@ -144,6 +144,8 @@ export default class AwsS3 extends BasePlugin {
 
     this.#client = new RequestClient(uppy, opts)
     this.#requests = new RateLimitedQueue(this.opts.limit)
+
+    this.setQueueRequestSocketToken(this.#requests.wrapPromiseFunction(this.#requestSocketToken, { priority: -1 }))
   }
 
   [Symbol.for('uppy test: getClient')] () { return this.#client }
@@ -228,7 +230,7 @@ export default class AwsS3 extends BasePlugin {
           xhrUpload: xhrOpts,
         })
 
-        return this.#uploader.uploadFile(file.id, index, numberOfFiles)
+        return this.uploadFile(file.id, index, numberOfFiles)
       }).catch((error) => {
         delete paramsPromises[id]
 
@@ -245,6 +247,64 @@ export default class AwsS3 extends BasePlugin {
   #setCompanionHeaders = () => {
     this.#client.setCompanionHeaders(this.opts.companionHeaders)
     return Promise.resolve()
+  }
+
+  connectToServerSocket (file) {
+    return this.#uploader.connectToServerSocket(file)
+  }
+
+  #requestSocketToken = async (file) => {
+    const opts = this.#uploader.getOptions(file)
+    const Client = file.remote.providerOptions.provider ? Provider : RequestClient
+    const client = new Client(this.uppy, file.remote.providerOptions)
+    const allowedMetaFields = Array.isArray(opts.allowedMetaFields)
+      ? opts.allowedMetaFields
+      // Send along all fields by default.
+      : Object.keys(file.meta)
+
+    if (file.tus) {
+      // Install file-specific upload overrides.
+      Object.assign(opts, file.tus)
+    }
+
+    const res = await client.post(file.remote.url, {
+      ...file.remote.body,
+      protocol: 'multipart',
+      endpoint: opts.endpoint,
+      size: file.data.size,
+      fieldname: opts.fieldName,
+      metadata: Object.fromEntries(allowedMetaFields.map(name => [name, file.meta[name]])),
+      httpMethod: opts.method,
+      useFormData: opts.formData,
+      headers: opts.headers,
+    })
+    return res.token
+  }
+
+  uploadFile (id, current, total) {
+    const file = this.uppy.getFile(id)
+    this.uppy.log(`uploading ${current} of ${total}`)
+
+    if (file.error) throw new Error(file.error)
+
+    if (file.isRemote) {
+      const controller = new AbortController()
+
+      const removedHandler = (removedFile) => {
+        if (removedFile.id === file.id) controller.abort()
+      }
+      this.uppy.on('file-removed', removedHandler)
+
+      const uploadPromise = this.uploadRemoteFile(file, { signal: controller.signal })
+
+      this.#requests.wrapSyncFunction(() => {
+        this.uppy.off('file-removed', removedHandler)
+      }, { priority: -1 })()
+
+      return uploadPromise
+    }
+
+    return this.#uploader.uploadLocalFile(file, current, total)
   }
 
   install () {

@@ -52,6 +52,9 @@ describe('Test Provider options', () => {
       authorize_url: 'https://www.dropbox.com/oauth2/authorize',
       access_url: 'https://api.dropbox.com/oauth2/token',
       callback: '/dropbox/callback',
+      custom_params: {
+        token_access_type: 'offline',
+      },
     })
 
     expect(grantConfig.box).toEqual({
@@ -73,6 +76,9 @@ describe('Test Provider options', () => {
         'https://www.googleapis.com/auth/drive.readonly',
       ],
       callback: '/drive/callback',
+      custom_params: {
+        access_type: 'offline',
+      },
     })
     expect(grantConfig.zoom).toEqual({
       key: 'zoom_key',

@@ -12,3 +12,5 @@ export class ProviderAuthError extends ProviderApiError {
 }
 
 export function errorToResponse(anyError: Error): { code: number, message: string }
+
+export function respondWithError(anyError: Error, res: any): boolean
