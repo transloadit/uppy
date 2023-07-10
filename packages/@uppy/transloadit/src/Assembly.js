@@ -89,12 +89,6 @@ class TransloaditAssembly extends Emitter {
         this.#onFinished()
       }
 
-      if (e.data.startsWith('assembly_upload_finished:')) {
-        const file = JSON.parse(e.data.slice('assembly_upload_finished:'.length))
-        this.emit('upload', file)
-        this.status.uploads.push(file)
-      }
-
       if (e.data === 'assembly_uploading_finished') {
         this.emit('executing')
       }
@@ -103,19 +97,24 @@ class TransloaditAssembly extends Emitter {
         this.emit('metadata')
         this.#fetchStatus({ diff: false })
       }
+    })
 
-      if (e.data.startsWith('assembly_result_finished:')) {
-        const [stepName, result] = JSON.parse(e.data.slice('assembly_result_finished:'.length))
-        this.emit('result', stepName, result)
-        ;(this.status.results[stepName] ??= []).push(result)
-      }
+    this.#sse.addEventListener('assembly_upload_finished', (e) => {
+      const file = e.data
+      this.emit('upload', file)
+      this.status.uploads.push(file)
+    })
 
-      if (e.data === 'assembly_error') {
-        const err = null
-        this.#onError(err)
-        // Refetch for updated status code
-        this.#fetchStatus({ diff: false })
-      }
+    this.#sse.addEventListener('assembly_result_finished', (e) => {
+      const [stepName, result] = JSON.parse(e.data)
+      this.emit('result', stepName, result)
+      ;(this.status.results[stepName] ??= []).push(result)
+    })
+
+    this.#sse.addEventListener('assembly_error', (e) => {
+      this.#onError(e.data)
+      // Refetch for updated status code
+      this.#fetchStatus({ diff: false })
     })
   }
 
