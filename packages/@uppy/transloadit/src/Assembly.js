@@ -69,6 +69,7 @@ class TransloaditAssembly extends Emitter {
     this.#sse = new EventSource(this.status.assembly_ssl_url)
 
     this.#sse.addEventListener('open', () => {
+      // if server side events works, we don't need websockets anymore (it's just a fallback)
       if (this.socket) {
         this.socket.disconnect()
         this.socket = null
