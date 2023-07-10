@@ -1,5 +1,28 @@
 # @uppy/provider-views
 
+## 3.3.1
+
+Released: 2023-06-19
+Included in: Uppy v3.10.0
+
+- @uppy/provider-views: Fix range selection not resetting and computing correctly (Terence C / #4415)
+
+## 3.3.0
+
+Released: 2023-04-18
+Included in: Uppy v3.8.0
+
+- @uppy/provider-views: Concurrent file listing (Mikael Finstad / #4401)
+- @uppy/core,@uppy/locales,@uppy/provider-views: User feedback adding recursive folders take 2 (Mikael Finstad / #4399)
+
+## 3.2.0
+
+Released: 2023-04-04
+Included in: Uppy v3.7.0
+
+- @uppy/provider-views: fix race condition when adding folders (Mikael Finstad / #4384)
+- @uppy/provider-views: UI: Use form attribite with a form in doc root to prevent outer form submit (Artur Paikin / #4283)
+
 ## 3.0.2
 
 Released: 2022-10-24

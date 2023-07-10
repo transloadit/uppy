@@ -81,30 +81,6 @@
     text-align: center;
     border-radius: 4px;
 
-    .uppy.uppy-ProviderBrowserItem-inner-relative {
-      position: relative;
-    }
-
-    .uppy-ProviderBrowserItem-author {
-      position: absolute;
-      display: none;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      background: rgba(black, 0.3);
-      color: white;
-      font-weight: 500;
-      font-size: 12px;
-      margin: 0;
-      padding: 5px;
-      text-decoration: none;
-
-      &:hover {
-        background: rgba(black, 0.4);
-        text-decoration: underline;
-      }
-    }
-
     // Always show the author on touch devices
     // https://www.w3.org/TR/mediaqueries-4/#hover
     @media (hover: none) {
@@ -122,6 +98,26 @@
       height: 100%;
       object-fit: cover;
       border-radius: 4px;
+    }
+  }
+
+  .uppy-ProviderBrowserItem-author {
+    position: absolute;
+    display: none;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(black, 0.3);
+    color: white;
+    font-weight: 500;
+    font-size: 12px;
+    margin: 0;
+    padding: 5px;
+    text-decoration: none;
+
+    &:hover {
+      background: rgba(black, 0.4);
+      text-decoration: underline;
     }
   }
 

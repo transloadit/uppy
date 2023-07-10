@@ -118,6 +118,7 @@ describe('uploader with tus protocol', () => {
     }
 
     const uploader = new Uploader(opts)
+    const originalTryDeleteTmpPath = uploader.tryDeleteTmpPath.bind(uploader)
     uploader.tryDeleteTmpPath = async () => {
       // validate that the tmp file has been downloaded and saved into the file path
       // must do it before it gets deleted
@@ -125,7 +126,7 @@ describe('uploader with tus protocol', () => {
       expect(fileInfo.isFile()).toBe(true)
       expect(fileInfo.size).toBe(fileContent.length)
 
-      return uploader.tryDeleteTmpPath()
+      return originalTryDeleteTmpPath()
     }
     const uploadToken = uploader.token
     expect(uploadToken).toBeTruthy()
@@ -148,13 +149,12 @@ describe('uploader with tus protocol', () => {
       // emulate socket connection
       socketClient.connect(uploadToken)
       socketClient.onProgress(uploadToken, (message) => {
-        if (firstReceivedProgress == null) firstReceivedProgress = message.payload.bytesUploaded
+        if (firstReceivedProgress == null) firstReceivedProgress = message.payload
       })
       socketClient.onUploadSuccess(uploadToken, (message) => {
         try {
-          expect(message.payload.bytesTotal).toBe(fileContent.length)
+          expect(firstReceivedProgress.bytesUploaded).toBe(8192)
 
-          expect(firstReceivedProgress).toBe(8192)
           // see __mocks__/tus-js-client.js
           expect(message.payload.url).toBe('https://tus.endpoint/files/foo-bar')
         } catch (err) {

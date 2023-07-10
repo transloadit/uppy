@@ -92,13 +92,13 @@ interface AssemblyParameters {
   }
   template_id?: string
   steps?: { [step: string]: Record<string, unknown> }
+  fields?: { [name: string]: number | string }
   notify_url?: string
 }
 
 interface AssemblyOptions {
   params?: AssemblyParameters
-  fields?: { [name: string]: number | string }
-  // TODO (major): move signature into params.auth.
+  fields?: { [name: string]: number | string } | string[]
   signature?: string
 }
 
@@ -116,7 +116,7 @@ interface Options extends PluginOptions {
 export type TransloaditOptions = Options &
   (
     | {
-        assemblyOptions?: AssemblyOptions | ((file: UppyFile) => Promise<AssemblyOptions> | AssemblyOptions)
+        assemblyOptions?: AssemblyOptions | ((file?: UppyFile) => Promise<AssemblyOptions> | AssemblyOptions)
         /** @deprecated use `assemblyOptions` instead */
         getAssemblyOptions?: never
         /** @deprecated use `assemblyOptions` instead */
@@ -129,7 +129,7 @@ export type TransloaditOptions = Options &
     | {
         /** @deprecated use `assemblyOptions` instead */
         getAssemblyOptions?: (
-          file: UppyFile
+          file?: UppyFile
         ) => AssemblyOptions | Promise<AssemblyOptions>
         assemblyOptions?: never
         /** @deprecated use `assemblyOptions` instead */
@@ -143,7 +143,7 @@ export type TransloaditOptions = Options &
         /** @deprecated use `assemblyOptions` instead */
         params?: AssemblyParameters
         /** @deprecated use `assemblyOptions` instead */
-        fields?: { [name: string]: number | string }
+        fields?: { [name: string]: number | string } | string[]
         /** @deprecated use `assemblyOptions` instead */
         signature?: string
         /** @deprecated use `assemblyOptions` instead */

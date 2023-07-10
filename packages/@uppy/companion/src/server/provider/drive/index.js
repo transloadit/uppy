@@ -6,7 +6,7 @@ const { VIRTUAL_SHARED_DIR, adaptData, isShortcut, isGsuiteFile, getGsuiteExport
 const { withProviderErrorHandling } = require('../providerErrors')
 const { prepareStream } = require('../../helpers/utils')
 
-const DRIVE_FILE_FIELDS = 'kind,id,imageMediaMetadata,name,mimeType,ownedByMe,permissions(role,emailAddress),size,modifiedTime,iconLink,thumbnailLink,teamDriveId,videoMediaMetadata,shortcutDetails(targetId,targetMimeType)'
+const DRIVE_FILE_FIELDS = 'kind,id,imageMediaMetadata,name,mimeType,ownedByMe,size,modifiedTime,iconLink,thumbnailLink,teamDriveId,videoMediaMetadata,shortcutDetails(targetId,targetMimeType)'
 const DRIVE_FILES_FIELDS = `kind,nextPageToken,incompleteSearch,files(${DRIVE_FILE_FIELDS})`
 // using wildcard to get all 'drive' fields because specifying fields seems no to work for the /drives endpoint
 const SHARED_DRIVE_FIELDS = '*'
@@ -16,6 +16,10 @@ const getClient = ({ token }) => got.extend({
   headers: {
     authorization: `Bearer ${token}`,
   },
+})
+
+const getOauthClient = () => got.extend({
+  prefixUrl: 'https://oauth2.googleapis.com',
 })
 
 async function getStats ({ id, token }) {
@@ -82,7 +86,9 @@ class Drive extends Provider {
           fields: DRIVE_FILES_FIELDS,
           pageToken: query.cursor,
           q,
-          // pageSize: 10, // can be used for testing pagination if you don't have many files
+          // We can only do a page size of 1000 because we do not request permissions in DRIVE_FILES_FIELDS.
+          // Otherwise we are limited to 100. Instead we get the user info from `this.user()`
+          pageSize: 1000,
           orderBy: 'folder,name',
           includeItemsFromAllDrives: true,
           supportsAllDrives: true,
@@ -91,8 +97,13 @@ class Drive extends Provider {
         return client.get('files', { searchParams, responseType: 'json' }).json()
       }
 
-      const [sharedDrives, filesResponse] = await Promise.all([fetchSharedDrives(), fetchFiles()])
-      // console.log({ directory, sharedDrives, filesResponse })
+      async function fetchAbout () {
+        const searchParams = { fields: 'user' }
+
+        return client.get('about', { searchParams, responseType: 'json' }).json()
+      }
+
+      const [sharedDrives, filesResponse, about] = await Promise.all([fetchSharedDrives(), fetchFiles(), fetchAbout()])
 
       return adaptData(
         filesResponse,
@@ -100,6 +111,7 @@ class Drive extends Provider {
         directory,
         query,
         isRoot && !query.cursor, // we can only show it on the first page request, or else we will have duplicates of it
+        about,
       )
     })
   }
@@ -154,6 +166,13 @@ class Drive extends Provider {
       })
 
       return { revoked: true }
+    })
+  }
+
+  async refreshToken ({ clientId, clientSecret, refreshToken }) {
+    return this.#withErrorHandling('provider.drive.token.refresh.error', async () => {
+      const { access_token: accessToken } = await getOauthClient().post('token', { form: { refresh_token: refreshToken, grant_type: 'refresh_token', client_id: clientId, client_secret: clientSecret } }).json()
+      return { accessToken }
     })
   }
 

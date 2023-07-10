@@ -18,7 +18,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --clearScreen false",
     "build": "vite build",
     "preview": "vite preview"
   }

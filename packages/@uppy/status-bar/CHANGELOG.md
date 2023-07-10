@@ -1,5 +1,21 @@
 # @uppy/status-bar
 
+## 3.2.1
+
+Released: 2023-07-06
+Included in: Uppy v3.11.0
+
+- @uppy/status-bar: remove throttled component (Artur Paikin / #4396)
+- @uppy/status-bar: fix ETA when Uppy recovers its state (Antoine du Hamel / #4525)
+
+## 3.2.0
+
+Released: 2023-06-19
+Included in: Uppy v3.10.0
+
+- @uppy/companion,@uppy/core,@uppy/dashboard,@uppy/golden-retriever,@uppy/status-bar,@uppy/utils: Migrate all lodash' per-method-packages usage to lodash. (LinusMain / #4274)
+- @uppy/status-bar: Filtered ETA (stduhpf / #4458)
+
 ## 3.0.1
 
 Released: 2022-09-25

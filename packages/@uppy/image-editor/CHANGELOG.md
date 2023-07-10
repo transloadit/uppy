@@ -1,5 +1,12 @@
 # @uppy/image-editor
 
+## 2.1.1
+
+Released: 2023-03-07
+Included in: Uppy v3.6.0
+
+- @uppy/image-editor: Fix TypeScript error in image-editor types (Matthias Kunnen / #4334)
+
 ## 2.1.0
 
 Released: 2022-11-10

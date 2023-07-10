@@ -68,6 +68,8 @@ function UploadStatus ({
       return i18n('xFilesSelected', { smart_count: newFiles.length })
     case 'complete':
       return i18n('uploadComplete')
+    case 'error':
+      return i18n('error')
     default:
   }
 }

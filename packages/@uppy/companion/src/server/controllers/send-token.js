@@ -1,7 +1,6 @@
 const { URL } = require('node:url')
 const serialize = require('serialize-javascript')
 
-const tokenService = require('../helpers/jwt')
 const { hasMatch } = require('../helpers/utils')
 const oAuthState = require('../helpers/oauth-state')
 
@@ -33,10 +32,6 @@ const htmlContent = (token, origin) => {
  */
 module.exports = function sendToken (req, res, next) {
   const uppyAuthToken = req.companion.authToken
-  // some providers need the token in cookies for thumbnail/image requests
-  if (req.companion.provider.needsCookieAuth) {
-    tokenService.addToCookies(res, uppyAuthToken, req.companion.options, req.companion.provider.authProvider)
-  }
 
   const state = oAuthState.getDynamicStateFromRequest(req)
   if (state) {
@@ -44,7 +39,8 @@ module.exports = function sendToken (req, res, next) {
     const allowedClients = req.companion.options.clients
     // if no preset clients then allow any client
     if (!allowedClients || hasMatch(origin, allowedClients) || hasMatch((new URL(origin)).host, allowedClients)) {
-      return res.send(htmlContent(uppyAuthToken, origin))
+      res.send(htmlContent(uppyAuthToken, origin))
+      return
     }
   }
   next()

@@ -41,7 +41,7 @@
     "@types/jasmine": "~4.0.0",
     "eslint": "^8.0.0",
     "eslint-plugin-import": "^2.22.1",
-    "eslint-plugin-jsdoc": "^39.0.0",
+    "eslint-plugin-jsdoc": "^40.0.0",
     "eslint-plugin-prefer-arrow": "^1.2.3",
     "jasmine-core": "~4.2.0",
     "karma": "~6.4.0",
