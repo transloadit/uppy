@@ -55,7 +55,7 @@ class TransloaditAssembly extends Emitter {
   }
 
   connect () {
-    this.#connectServerEvent()
+    this.#connectServerSentEvents()
     this.#connectSocket()
     this.#beginPolling()
   }
@@ -65,8 +65,8 @@ class TransloaditAssembly extends Emitter {
     this.close()
   }
 
-  #connectServerEvent () {
-    this.#sse = new EventSource(this.status.assembly_ssl_url)
+  #connectServerSentEvents () {
+    this.#sse = new EventSource(`${this.status.websocket_url}?assembly=${this.status.assembly_id}`)
 
     this.#sse.addEventListener('open', () => {
       // if server side events works, we don't need websockets anymore (it's just a fallback)
