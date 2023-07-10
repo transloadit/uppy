@@ -55,6 +55,7 @@ export default class GoogleDrive extends UIPlugin {
   install () {
     this.view = new DriveProviderViews(this, {
       provider: this.provider,
+      loadAllFiles: true,
     })
 
     const { target } = this.opts
