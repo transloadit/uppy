@@ -147,7 +147,7 @@ module.exports.decrypt = (encrypted, secret) => {
 
 module.exports.defaultGetKey = (req, filename) => `${crypto.randomUUID()}-${filename}`
 
-module.exports.defaultGetBucket = () => null
+module.exports.defaultGetBucket = (_) => null
 
 module.exports.prepareStream = async (stream) => new Promise((resolve, reject) => (
   stream
