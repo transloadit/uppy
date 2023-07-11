@@ -2,6 +2,8 @@ import { h } from 'preact'
 
 import classNames from 'classnames'
 import remoteFileObjToLocal from '@uppy/utils/lib/remoteFileObjToLocal'
+import { useMemo } from 'preact/hooks'
+import VirtualList from '@uppy/utils/src/VirtualList.jsx'
 import SearchFilterInput from './SearchFilterInput.jsx'
 import FooterActions from './FooterActions.jsx'
 import Item from './Item/index.jsx'
@@ -40,6 +42,9 @@ function Browser (props) {
   } = props
 
   const selected = currentSelection.length
+  const rowHeight = 35
+
+  const rows = useMemo(() => [...folders, ...files], [folders, files])
 
   return (
     <div
@@ -85,11 +90,7 @@ function Browser (props) {
         }
 
         if (!folders.length && !files.length) {
-          return (
-            <div className="uppy-Provider-empty">
-              {noResultsLabel}
-            </div>
-          )
+          return <div className="uppy-Provider-empty">{noResultsLabel}</div>
         }
 
         return (
@@ -101,48 +102,52 @@ function Browser (props) {
               // making <ul> not focusable for firefox
               tabIndex="-1"
             >
-              {folders.map((folder) => {
-                return Item({
-                  columns,
-                  showTitles,
-                  viewType,
-                  i18n,
-                  id: folder.id,
-                  title: folder.name,
-                  getItemIcon: () => folder.icon,
-                  isChecked: isChecked(folder),
-                  toggleCheckbox: (event) => toggleCheckbox(event, folder),
-                  recordShiftKeyPress,
-                  type: 'folder',
-                  isDisabled: isChecked(folder)?.loading,
-                  isCheckboxDisabled: folder.id === VIRTUAL_SHARED_DIR,
-                  handleFolderClick: () => getNextFolder(folder),
-                })
-              })}
+              <VirtualList
+                role="list"
+                data={rows}
+                renderRow={(f) => {
+                  if (f.isFolder) {
+                    return Item({
+                      columns,
+                      showTitles,
+                      viewType,
+                      i18n,
+                      id: f.id,
+                      title: f.name,
+                      getItemIcon: () => f.icon,
+                      isChecked: isChecked(f),
+                      toggleCheckbox: (event) => toggleCheckbox(event, f),
+                      recordShiftKeyPress,
+                      type: 'folder',
+                      isDisabled: isChecked(f)?.loading,
+                      isCheckboxDisabled: f.id === VIRTUAL_SHARED_DIR,
+                      handleFolderClick: () => getNextFolder(f),
+                    })
+                  }
+                  const restrictionError = validateRestrictions(
+                    remoteFileObjToLocal(f),
+                    [...uppyFiles, ...currentSelection],
+                  )
 
-              {files.map((file) => {
-                const restrictionError = validateRestrictions(
-                  remoteFileObjToLocal(file),
-                  [...uppyFiles, ...currentSelection],
-                )
-
-                return Item({
-                  id: file.id,
-                  title: file.name,
-                  author: file.author,
-                  getItemIcon: () => file.icon,
-                  isChecked: isChecked(file),
-                  toggleCheckbox: (event) => toggleCheckbox(event, file),
-                  recordShiftKeyPress,
-                  columns,
-                  showTitles,
-                  viewType,
-                  i18n,
-                  type: 'file',
-                  isDisabled: restrictionError && !isChecked(file),
-                  restrictionError,
-                })
-              })}
+                  return Item({
+                    id: f.id,
+                    title: f.name,
+                    author: f.author,
+                    getItemIcon: () => f.icon,
+                    isChecked: isChecked(f),
+                    toggleCheckbox: (event) => toggleCheckbox(event, f),
+                    recordShiftKeyPress,
+                    columns,
+                    showTitles,
+                    viewType,
+                    i18n,
+                    type: 'file',
+                    isDisabled: restrictionError && !isChecked(f),
+                    restrictionError,
+                  })
+                }}
+                rowHeight={rowHeight}
+              />
             </ul>
           </div>
         )
