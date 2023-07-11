@@ -64,7 +64,7 @@
     "./lib/getDroppedFiles": "./lib/getDroppedFiles/index.js",
     "./lib/FOCUSABLE_ELEMENTS.js": "./lib/FOCUSABLE_ELEMENTS.js",
     "./lib/fileFilters": "./lib/fileFilters.js",
-    "./lib/VirtualList.jsx": "./lib/VirtualList.jsx",
+    "./lib/VirtualList": "./lib/VirtualList.jsx",
     "./src/microtip.scss": "./src/microtip.scss"
   },
   "dependencies": {
