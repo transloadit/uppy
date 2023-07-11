@@ -64,8 +64,8 @@
     "./lib/getDroppedFiles": "./lib/getDroppedFiles/index.js",
     "./lib/FOCUSABLE_ELEMENTS.js": "./lib/FOCUSABLE_ELEMENTS.js",
     "./lib/fileFilters": "./lib/fileFilters.js",
-    "./src/microtip.scss": "./src/microtip.scss",
-    "./src/VirtualList.jsx": "./src/VirtualList.jsx"
+    "./lib/VirtualList.jsx": "./lib/VirtualList.jsx",
+    "./src/microtip.scss": "./src/microtip.scss"
   },
   "dependencies": {
     "lodash": "^4.17.21",
