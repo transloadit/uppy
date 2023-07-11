@@ -536,7 +536,7 @@ export default class AwsS3Multipart extends UploaderPlugin {
         expires,
         bucketName: data.bucket,
         Region: data.region,
-        Key: key,
+        Key: key ?? `${crypto.randomUUID()}-${file.name}`,
         uploadId,
         partNumber,
         signal,
