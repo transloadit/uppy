@@ -2,6 +2,7 @@
   "compilerOptions": {
     "outDir": "./lib",
     "module": "commonjs",
+    "moduleResolution": "node16",
     "declaration": true,
     "target": "es6",
     "noImplicitAny": false,
