@@ -7,6 +7,26 @@ const getName = (id) => {
   return id.split('-').map((s) => s.charAt(0).toUpperCase() + s.slice(1)).join(' ')
 }
 
+function getOrigin () {
+  // eslint-disable-next-line no-restricted-globals
+  return location.origin
+}
+
+function getRegex (value) {
+  if (typeof value === 'string') {
+    return new RegExp(`^${value}$`)
+  } if (value instanceof RegExp) {
+    return value
+  }
+  return undefined
+}
+
+function isOriginAllowed (origin, allowedOrigin) {
+  const patterns = Array.isArray(allowedOrigin) ? allowedOrigin.map(getRegex) : [getRegex(allowedOrigin)]
+  return patterns
+    .some((pattern) => pattern?.test(origin) || pattern?.test(`${origin}/`)) // allowing for trailing '/'
+}
+
 export default class Provider extends RequestClient {
   #refreshingTokenPromise
 
@@ -19,7 +39,6 @@ export default class Provider extends RequestClient {
     this.tokenKey = `companion-${this.pluginId}-auth-token`
     this.companionKeysParams = this.opts.companionKeysParams
     this.preAuthToken = null
-    this.authentication = opts.authentication ?? true
   }
 
   async headers () {
@@ -73,12 +92,55 @@ export default class Provider extends RequestClient {
   }
 
   authUrl (queries = {}) {
-    const params = new URLSearchParams(queries)
+    const params = new URLSearchParams({
+      state: btoa(JSON.stringify({ origin: getOrigin() })),
+      ...queries,
+    })
     if (this.preAuthToken) {
       params.set('uppyPreAuthToken', this.preAuthToken)
     }
 
     return `${this.hostname}/${this.id}/connect?${params}`
+  }
+
+  async login (queries) {
+    await this.ensurePreAuth()
+
+    return new Promise((resolve, reject) => {
+      const link = this.authUrl(queries)
+      const authWindow = window.open(link, '_blank')
+      const handleToken = (e) => {
+        if (e.source !== authWindow) {
+          reject(new Error('rejecting event from unknown source'))
+        }
+
+        const { companionAllowedHosts } = this.uppy.getPlugin(this.pluginId).opts
+        if (!isOriginAllowed(e.origin, companionAllowedHosts) || e.source !== authWindow) {
+          reject(new Error(`rejecting event from ${e.origin} vs allowed pattern ${companionAllowedHosts}`))
+        }
+
+        // Check if it's a string before doing the JSON.parse to maintain support
+        // for older Companion versions that used object references
+        const data = typeof e.data === 'string' ? JSON.parse(e.data) : e.data
+
+        if (data.error) {
+          const { uppy } = this
+          const message = uppy.i18n('authAborted')
+          uppy.info({ message }, 'warning', 5000)
+          reject(new Error('auth aborted'))
+        }
+
+        if (!data.token) {
+          reject(new Error('did not receive token from auth window'))
+        }
+
+        authWindow.close()
+        window.removeEventListener('message', handleToken)
+        this.setAuthToken(data.token)
+        resolve()
+      }
+      window.addEventListener('message', handleToken)
+    })
   }
 
   refreshTokenUrl () {
@@ -137,9 +199,6 @@ export default class Provider extends RequestClient {
   }
 
   async logout (options) {
-    if (!this.authentication) {
-      return Promise.resolve({ ok: true, revoked: true })
-    }
     const response = await this.get(`${this.id}/logout`, options)
     await this.#removeAuthToken()
     return response
