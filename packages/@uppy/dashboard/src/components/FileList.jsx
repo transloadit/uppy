@@ -1,6 +1,6 @@
 import { h } from 'preact'
 import { useMemo } from 'preact/hooks'
-import VirtualList from '@uppy/utils/src/VirtualList.jsx'
+import VirtualList from '@uppy/utils/lib/VirtualList'
 import FileItem from './FileItem/index.jsx'
 
 function chunks (list, size) {
