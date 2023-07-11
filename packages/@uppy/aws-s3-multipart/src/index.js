@@ -246,16 +246,22 @@ class HTTPCommunicationQueue {
       headers,
     } = await this.#getUploadParameters(file, { signal }).abortOn(signal)
 
-    const formData = new FormData()
-    Object.entries(fields).forEach(([key, value]) => formData.set(key, value))
+    let body
     const data = chunk.getData()
-    formData.set('file', data)
+    if (method === 'post') {
+      const formData = new FormData()
+      Object.entries(fields).forEach(([key, value]) => formData.set(key, value))
+      formData.set('file', data)
+      body = formData
+    } else {
+      body = data
+    }
 
     const { onProgress, onComplete } = chunk
 
     return this.#uploadPartBytes({
       signature: { url, headers, method },
-      body: formData,
+      body,
       size: data.size,
       onProgress,
       onComplete,
