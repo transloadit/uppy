@@ -21,7 +21,8 @@ async function getUserInfo ({ token }) {
 
 async function list ({ directory, query, token }) {
   const rootFolderID = '0'
-  return getClient({ token }).get(`folders/${directory || rootFolderID}/items`, { searchParams: { fields: BOX_FILES_FIELDS, offset: query.cursor }, responseType: 'json' }).json()
+  // https://developer.box.com/reference/resources/items/
+  return getClient({ token }).get(`folders/${directory || rootFolderID}/items`, { searchParams: { fields: BOX_FILES_FIELDS, offset: query.cursor, limit: 1000 }, responseType: 'json' }).json()
 }
 
 /**

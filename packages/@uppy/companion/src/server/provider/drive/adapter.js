@@ -1,18 +1,7 @@
 const querystring = require('node:querystring')
 
-// @todo use the "about" endpoint to get the username instead
-// see: https://developers.google.com/drive/api/v2/reference/about/get
 const getUsername = (data) => {
-  for (const item of data.files) {
-    if (item.ownedByMe && item.permissions) {
-      for (const permission of item.permissions) {
-        if (permission.role === 'owner') {
-          return permission.emailAddress
-        }
-      }
-    }
-  }
-  return undefined
+  return data.user.emailAddress
 }
 
 exports.isGsuiteFile = (mimeType) => {
@@ -151,7 +140,7 @@ const getVideoDurationMillis = (item) => item.videoMediaMetadata && item.videoMe
 // Hopefully this name will not be used by Google
 exports.VIRTUAL_SHARED_DIR = 'shared-with-me'
 
-exports.adaptData = (listFilesResp, sharedDrivesResp, directory, query, showSharedWithMe) => {
+exports.adaptData = (listFilesResp, sharedDrivesResp, directory, query, showSharedWithMe, about) => {
   const adaptItem = (item) => ({
     isFolder: isFolder(item),
     icon: getItemIcon(item),
@@ -194,7 +183,7 @@ exports.adaptData = (listFilesResp, sharedDrivesResp, directory, query, showShar
   ]
 
   return {
-    username: getUsername(listFilesResp),
+    username: getUsername(about),
     items: adaptedItems,
     nextPagePath: getNextPagePath(listFilesResp, query, directory),
   }
