@@ -50,6 +50,7 @@ export default class ProviderView extends View {
       showTitles: true,
       showFilter: true,
       showBreadcrumbs: true,
+      loadAllFiles: false,
     }
 
     // merge default options with the ones set by user
@@ -105,30 +106,59 @@ export default class ProviderView extends View {
    * @returns {Promise}   Folders/files in folder
    */
   async getFolder (id, name) {
-    this.setLoading(true)
-    try {
-      const res = await this.provider.list(id)
-      const folders = []
-      const files = []
-      let updatedDirectories
-
+    const controller = new AbortController()
+    const cancelRequest = () => {
+      controller.abort()
+      this.clearSelection()
+    }
+    const getNewBreadcrumbsDirectories = () => {
       const state = this.plugin.getPluginState()
       const index = state.directories.findIndex((dir) => id === dir.id)
 
       if (index !== -1) {
-        updatedDirectories = state.directories.slice(0, index + 1)
-      } else {
-        updatedDirectories = state.directories.concat([{ id, title: name }])
+        return state.directories.slice(0, index + 1)
       }
+      return state.directories.concat([{ id, title: name }])
+    }
 
-      this.username = res.username || this.username
-      this.#updateFilesAndFolders(res, files, folders)
-      this.plugin.setPluginState({ directories: updatedDirectories, filterInput: '' })
+    this.plugin.uppy.on('dashboard:close-panel', cancelRequest)
+    this.plugin.uppy.on('cancel-all', cancelRequest)
+    this.setLoading(true)
+
+    try {
+      const folders = []
+      const files = []
+      this.nextPagePath = id
+
+      do {
+        const res = await this.provider.list(this.nextPagePath, { signal: controller.signal })
+
+        for (const f of res.items) {
+          if (f.isFolder) folders.push(f)
+          else files.push(f)
+        }
+
+        this.nextPagePath = res.nextPagePath
+        if (res.username) this.username = res.username
+        this.setLoading(this.plugin.uppy.i18n('loadedXFiles', { numFiles: files.length + folders.length }))
+      } while (
+        this.nextPagePath && this.opts.loadAllFiles
+      )
+
+      const directories = getNewBreadcrumbsDirectories(this.nextPagePath)
+
+      this.plugin.setPluginState({ files, folders, directories, filterInput: '' })
       this.lastCheckbox = undefined
     } catch (err) {
+      if (err.cause?.name === 'AbortError') {
+        // Expected, user clicked “cancel”
+        return
+      }
       this.handleError(err)
     } finally {
       this.setLoading(false)
+      this.plugin.uppy.off('dashboard:close-panel', cancelRequest)
+      this.plugin.uppy.off('cancel-all', cancelRequest)
     }
   }
 

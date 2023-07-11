@@ -1,5 +1,5 @@
 name: 🚀 Feature request
-labels: Feature, Triage
+labels: Feature
 description: Suggest an idea
 body:
   - type: checkboxes

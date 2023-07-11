@@ -41,6 +41,7 @@ export default class Dropbox extends UIPlugin {
   install () {
     this.view = new ProviderViews(this, {
       provider: this.provider,
+      loadAllFiles: true,
     })
 
     const { target } = this.opts

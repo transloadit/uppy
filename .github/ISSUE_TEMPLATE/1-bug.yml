@@ -1,5 +1,5 @@
 name: 🐛 Bug report
-labels: Bug, Triage
+labels: Bug
 description: Describe a bug with a project
 body:
   - type: checkboxes
