@@ -6,7 +6,7 @@ export default (props) => {
   if (props.showBreadcrumbs) {
     components.push(Breadcrumbs({
       getFolder: props.getFolder,
-      directoryStack: props.directoryStack,
+      breadcrumbs: props.breadcrumbs,
       breadcrumbsIcon: props.pluginIcon && props.pluginIcon(),
       title: props.title,
     }))

@@ -32,11 +32,11 @@ function isOriginAllowed (origin, allowedOrigin) {
     .some((pattern) => pattern?.test(origin) || pattern?.test(`${origin}/`)) // allowing for trailing '/'
 }
 
-function formatDirectoryStack (directoryStack) {
-  return directoryStack.slice(1).map((directory) => directory.name).join('/')
+function formatBreadcrumbs (breadcrumbs) {
+  return breadcrumbs.slice(1).map((directory) => directory.name).join('/')
 }
 
-function addPath (path, component) {
+function prependPath (path, component) {
   if (!path) return component
   return `${path}/${component}`
 }
@@ -82,7 +82,7 @@ export default class ProviderView extends View {
       authenticated: false,
       files: [],
       folders: [],
-      directoryStack: [],
+      breadcrumbs: [],
       filterInput: '',
       isSearchVisible: false,
       currentSelection: [],
@@ -107,8 +107,8 @@ export default class ProviderView extends View {
     }
   }
 
-  async #listFilesAndFolders ({ requestPath, directoryStack, signal }) {
-    const absDirPath = formatDirectoryStack(directoryStack)
+  async #listFilesAndFolders ({ requestPath, breadcrumbs, signal }) {
+    const absDirPath = formatBreadcrumbs(breadcrumbs)
 
     const { items, nextPagePath } = await this.#list({ requestPath, absDirPath, signal })
 
@@ -151,23 +151,23 @@ export default class ProviderView extends View {
     try {
       this.lastCheckbox = undefined
 
-      let { directoryStack } = this.plugin.getPluginState()
+      let { breadcrumbs } = this.plugin.getPluginState()
 
-      const index = directoryStack.findIndex((dir) => requestPath === dir.requestPath)
+      const index = breadcrumbs.findIndex((dir) => requestPath === dir.requestPath)
 
       if (index !== -1) {
         // means we navigated back to a known directory (already in the stack), so cut the stack off there
-        directoryStack = directoryStack.slice(0, index + 1)
+        breadcrumbs = breadcrumbs.slice(0, index + 1)
       } else {
         // we have navigated into a new (unknown) folder, add it to the stack
-        directoryStack = [...directoryStack, { requestPath, name }]
+        breadcrumbs = [...breadcrumbs, { requestPath, name }]
       }
 
       let files = []
       let folders = []
       do {
         const { files: newFiles, folders: newFolders } = await this.#listFilesAndFolders({
-          requestPath, directoryStack, signal: controller.signal,
+          requestPath, breadcrumbs, signal: controller.signal,
         })
 
         files = [...files, ...newFiles]
@@ -178,7 +178,7 @@ export default class ProviderView extends View {
         this.opts.loadAllFiles && this.nextPagePath
       )
 
-      this.plugin.setPluginState({ folders, files, directoryStack, filterInput: '' })
+      this.plugin.setPluginState({ folders, files, breadcrumbs, filterInput: '' })
     } catch (err) {
       if (err.cause?.name === 'AbortError') {
         // Expected, user clicked “cancel”
@@ -221,7 +221,7 @@ export default class ProviderView extends View {
             authenticated: false,
             files: [],
             folders: [],
-            directoryStack: [],
+            breadcrumbs: [],
             filterInput: '',
           }
           this.plugin.setPluginState(newState)
@@ -286,10 +286,10 @@ export default class ProviderView extends View {
       this.isHandlingScroll = true
 
       try {
-        const { files, folders, directoryStack } = this.plugin.getPluginState()
+        const { files, folders, breadcrumbs } = this.plugin.getPluginState()
 
         const { files: newFiles, folders: newFolders } = await this.#listFilesAndFolders({
-          requestPath, directoryStack,
+          requestPath, breadcrumbs,
         })
 
         const combinedFiles = [...files, ...newFiles]
@@ -320,8 +320,8 @@ export default class ProviderView extends View {
       const promises = folders.map(async (folder) => queue.add(async () => (
         this.#recursivelyListAllFiles({
           requestPath: folder.requestPath,
-          absDirPath: addPath(absDirPath, folder.name),
-          relDirPath: addPath(relDirPath, folder.name),
+          absDirPath: prependPath(absDirPath, folder.name),
+          relDirPath: prependPath(relDirPath, folder.name),
           queue,
           onFiles,
         })
@@ -373,7 +373,7 @@ export default class ProviderView extends View {
 
           await this.#recursivelyListAllFiles({
             requestPath,
-            absDirPath: addPath(selectedItem.absDirPath, selectedItem.name),
+            absDirPath: prependPath(selectedItem.absDirPath, selectedItem.name),
             relDirPath: selectedItem.name,
             queue,
             onFiles,
@@ -436,7 +436,7 @@ export default class ProviderView extends View {
     const headerProps = {
       showBreadcrumbs: targetViewOptions.showBreadcrumbs,
       getFolder: this.getFolder,
-      directoryStack: this.plugin.getPluginState().directoryStack,
+      breadcrumbs: this.plugin.getPluginState().breadcrumbs,
       pluginIcon: this.plugin.icon,
       title: this.plugin.title,
       logout: this.logout,
