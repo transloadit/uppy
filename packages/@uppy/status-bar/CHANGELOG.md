@@ -1,5 +1,13 @@
 # @uppy/status-bar
 
+## 3.2.1
+
+Released: 2023-07-06
+Included in: Uppy v3.11.0
+
+- @uppy/status-bar: remove throttled component (Artur Paikin / #4396)
+- @uppy/status-bar: fix ETA when Uppy recovers its state (Antoine du Hamel / #4525)
+
 ## 3.2.0
 
 Released: 2023-06-19

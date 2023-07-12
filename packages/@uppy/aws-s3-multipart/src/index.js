@@ -73,7 +73,7 @@ class HTTPCommunicationQueue {
     const requests = this.#requests
 
     if ('abortMultipartUpload' in options) {
-      this.#abortMultipartUpload = requests.wrapPromiseFunction(options.abortMultipartUpload)
+      this.#abortMultipartUpload = requests.wrapPromiseFunction(options.abortMultipartUpload, { priority:1 })
     }
     if ('createMultipartUpload' in options) {
       this.#createMultipartUpload = requests.wrapPromiseFunction(options.createMultipartUpload, { priority:-1 })
@@ -85,7 +85,7 @@ class HTTPCommunicationQueue {
       this.#listParts = requests.wrapPromiseFunction(options.listParts)
     }
     if ('completeMultipartUpload' in options) {
-      this.#sendCompletionRequest = requests.wrapPromiseFunction(options.completeMultipartUpload)
+      this.#sendCompletionRequest = requests.wrapPromiseFunction(options.completeMultipartUpload, { priority:1 })
     }
     if ('retryDelays' in options) {
       this.#retryDelayIterator = options.retryDelays?.values()
@@ -204,6 +204,7 @@ class HTTPCommunicationQueue {
     // Remove the cache entry right away for follow-up requests do not try to
     // use the soon-to-be aborted chached values.
     this.#cache.delete(file.data)
+    this.#setS3MultipartState(file, Object.create(null))
     let awaitedResult
     try {
       awaitedResult = await result
@@ -222,16 +223,22 @@ class HTTPCommunicationQueue {
       headers,
     } = await this.#getUploadParameters(file, { signal }).abortOn(signal)
 
-    const formData = new FormData()
-    Object.entries(fields).forEach(([key, value]) => formData.set(key, value))
+    let body
     const data = chunk.getData()
-    formData.set('file', data)
+    if (method === 'post') {
+      const formData = new FormData()
+      Object.entries(fields).forEach(([key, value]) => formData.set(key, value))
+      formData.set('file', data)
+      body = formData
+    } else {
+      body = data
+    }
 
     const { onProgress, onComplete } = chunk
 
     return this.#uploadPartBytes({
       signature: { url, headers, method },
-      body: formData,
+      body,
       size: data.size,
       onProgress,
       onComplete,
@@ -258,10 +265,17 @@ class HTTPCommunicationQueue {
       return await this.#sendCompletionRequest(file, { key, uploadId, parts, signal }).abortOn(signal)
     } catch (err) {
       if (err?.cause !== pausingUploadReason && err?.name !== 'AbortError') {
-        this.abortFileUpload(file).catch(() => {})
+        // We purposefully don't wait for the promise and ignore its status,
+        // because we want the error `err` to bubble up ASAP to report it to the
+        // user. A failure to abort is not that big of a deal anyway.
+        this.abortFileUpload(file)
       }
       throw err
     }
+  }
+
+  restoreUploadFile (file, uploadIdAndKey) {
+    this.#cache.set(file.data, uploadIdAndKey)
   }
 
   async resumeUploadFile (file, chunks, signal) {
@@ -278,9 +292,11 @@ class HTTPCommunicationQueue {
         .map((chunk, i) => {
           const partNumber = i + 1
           const alreadyUploadedInfo = alreadyUploadedParts.find(({ PartNumber }) => PartNumber === partNumber)
-          return alreadyUploadedInfo == null
-            ? this.uploadChunk(file, partNumber, chunk, signal)
-            : { PartNumber: partNumber, ETag: alreadyUploadedInfo.ETag }
+          if (alreadyUploadedInfo == null) {
+            return this.uploadChunk(file, partNumber, chunk, signal)
+          }
+          chunk.setAsUploaded?.()
+          return { PartNumber: partNumber, ETag: alreadyUploadedInfo.ETag }
         }),
     )
     throwIfAborted(signal)

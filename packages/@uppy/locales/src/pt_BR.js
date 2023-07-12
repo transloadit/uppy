@@ -13,6 +13,9 @@ pt_BR.strings = {
   addingMoreFiles: 'Adicionando mais arquivos',
   allowAccessDescription:
     'Para poder tirar fotos e gravar vídeos com sua câmera, por favor permita o acesso a câmera para esse site.',
+  aspectRatioSquare: 'Recortar quadrado',
+  aspectRatioLandscape: 'Recortar paisagem (16:9)',
+  aspectRatioPortrait: 'Recortar retrato (9:16)',
   allowAccessTitle: 'Por favor permita o acesso a sua câmera',
   authenticateWith: 'Conectar com %{pluginName}',
   authenticateWithTitle:
@@ -63,6 +66,7 @@ pt_BR.strings = {
   },
   filter: 'Filtrar',
   finishEditingFile: 'Finalizar edição de arquivo',
+  flipHorizontal: 'Inverter',
   folderAdded: {
     '0': 'Adicionado %{smart_count} arquivo de %{folder}',
     '1': 'Adicionado %{smart_count} arquivos de %{folder}',
@@ -88,6 +92,9 @@ pt_BR.strings = {
   resumeUpload: 'Retomar envio de arquivos',
   retry: 'Tentar novamente',
   retryUpload: 'Tentar enviar novamente',
+  revert: 'Reverter',
+  rotate: 'Girar',
+  save: 'Salvar',
   saveChanges: 'Salvar alterações',
   selectX: {
     '0': 'Selecionar %{smart_count}',
@@ -133,6 +140,8 @@ pt_BR.strings = {
     '0': 'Você precisa selecionar pelo menos %{smart_count} arquivo',
     '1': 'Você precisa selecionar pelo menos %{smart_count} arquivos',
   },
+  zoomIn: 'Aumentar o zoom',
+  zoomOut: 'Diminuir o zoom',
   selectFileNamed: 'Selecione o arquivo %{name}',
   unselectFileNamed: 'Deselecionar arquivo %{name}',
   openFolderNamed: 'Pasta aberta %{name}',

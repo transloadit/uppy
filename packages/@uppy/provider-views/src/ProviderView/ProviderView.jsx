@@ -94,8 +94,8 @@ export default class ProviderView extends View {
     // Nothing.
   }
 
-  async #list (requestPath, absDirPath) {
-    const { username, nextPagePath, items } = await this.provider.list(requestPath)
+  async #list ({ requestPath, absDirPath, signal }) {
+    const { username, nextPagePath, items } = await this.provider.list(requestPath, { signal })
     this.username = username || this.username
 
     return {
@@ -107,15 +107,15 @@ export default class ProviderView extends View {
     }
   }
 
-  async #updateFilesAndFolders (requestPath, directoryStack, filesIn, foldersIn) {
+  async #listFilesAndFolders ({ requestPath, directoryStack, signal }) {
     const absDirPath = formatDirectoryStack(directoryStack)
 
-    const { items, nextPagePath } = await this.#list(requestPath, absDirPath)
+    const { items, nextPagePath } = await this.#list({ requestPath, absDirPath, signal })
 
     this.nextPagePath = nextPagePath
 
-    const files = filesIn ? [...filesIn] : []
-    const folders = foldersIn ? [...foldersIn] : []
+    const files = []
+    const folders = []
 
     items.forEach((item) => {
       if (item.isFolder) {
@@ -125,7 +125,7 @@ export default class ProviderView extends View {
       }
     })
 
-    this.plugin.setPluginState({ folders, files })
+    return { files, folders }
   }
 
   /**
@@ -138,6 +138,15 @@ export default class ProviderView extends View {
    * @returns {Promise}   Folders/files in folder
    */
   async getFolder (requestPath, name) {
+    const controller = new AbortController()
+    const cancelRequest = () => {
+      controller.abort()
+      this.clearSelection()
+    }
+
+    this.plugin.uppy.on('dashboard:close-panel', cancelRequest)
+    this.plugin.uppy.on('cancel-all', cancelRequest)
+
     this.setLoading(true)
     try {
       this.lastCheckbox = undefined
@@ -154,13 +163,32 @@ export default class ProviderView extends View {
         directoryStack = [...directoryStack, { requestPath, name }]
       }
 
-      this.plugin.setPluginState({ directoryStack, filterInput: '' })
+      let files = []
+      let folders = []
+      do {
+        const { files: newFiles, folders: newFolders } = await this.#listFilesAndFolders({
+          requestPath, directoryStack, signal: controller.signal,
+        })
 
-      await this.#updateFilesAndFolders(requestPath, directoryStack)
+        files = [...files, ...newFiles]
+        folders = [...folders, ...newFolders]
+
+        this.setLoading(this.plugin.uppy.i18n('loadedXFiles', { numFiles: files.length + folders.length }))
+      } while (
+        this.opts.loadAllFiles && this.nextPagePath
+      )
+
+      this.plugin.setPluginState({ folders, files, directoryStack, filterInput: '' })
     } catch (err) {
+      if (err.cause?.name === 'AbortError') {
+        // Expected, user clicked “cancel”
+        return
+      }
       this.handleError(err)
     } finally {
       this.setLoading(false)
+      this.plugin.uppy.off('dashboard:close-panel', cancelRequest)
+      this.plugin.uppy.off('cancel-all', cancelRequest)
     }
   }
 
@@ -258,8 +286,16 @@ export default class ProviderView extends View {
       this.isHandlingScroll = true
 
       try {
-        const { directoryStack, files, folders } = this.plugin.getPluginState()
-        await this.#updateFilesAndFolders(requestPath, directoryStack, files, folders)
+        const { files, folders, directoryStack } = this.plugin.getPluginState()
+
+        const { files: newFiles, folders: newFolders } = await this.#listFilesAndFolders({
+          requestPath, directoryStack,
+        })
+
+        const combinedFiles = [...files, ...newFiles]
+        const combinedFolders = [...folders, ...newFolders]
+
+        this.plugin.setPluginState({ folders: combinedFolders, files: combinedFiles })
       } catch (error) {
         this.handleError(error)
       } finally {
@@ -272,7 +308,7 @@ export default class ProviderView extends View {
     let curPath = requestPath
 
     while (curPath) {
-      const res = await this.#list(curPath, absDirPath)
+      const res = await this.#list({ requestPath: curPath, absDirPath })
       curPath = res.nextPagePath
 
       const files = res.items.filter((item) => !item.isFolder)

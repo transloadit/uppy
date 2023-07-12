@@ -20,9 +20,9 @@
   "license": "MIT",
   "engines": {
     "node": "^16.15.0 || >=18.0.0",
-    "yarn": "3.2.1"
+    "yarn": "3.6.1"
   },
-  "packageManager": "yarn@3.2.2+sha224.634d0331703700cabfa9d9389835bd8f7426b0207ed6b74d8d34c81e",
+  "packageManager": "yarn@3.6.1+sha224.679d48a4db29f6beed7fe901a71e56b5e0619cdd615e140d9f33ce92",
   "workspaces": [
     "examples/*",
     "packages/@uppy/*",
@@ -97,10 +97,10 @@
     "resolve": "^1.17.0",
     "sass": "^1.29.0",
     "start-server-and-test": "^1.14.0",
-    "stylelint": "^14.0.0",
+    "stylelint": "^15.0.0",
     "stylelint-config-rational-order": "^0.1.2",
-    "stylelint-config-standard": "^27.0.0",
-    "stylelint-scss": "^4.0.0",
+    "stylelint-config-standard": "^34.0.0",
+    "stylelint-config-standard-scss": "^10.0.0",
     "tar": "^6.1.0",
     "tsd": "^0.22.0",
     "typescript": "~4.8",
@@ -173,6 +173,8 @@
     "@types/react": "^17",
     "@types/webpack-dev-server": "^4",
     "preact": "patch:preact@npm:10.10.0#.yarn/patches/preact-npm-10.10.0-dd04de05e8.patch",
-    "pre-commit": "patch:pre-commit@npm:1.2.2#.yarn/patches/pre-commit-npm-1.2.2-f30af83877.patch"
+    "pre-commit": "patch:pre-commit@npm:1.2.2#.yarn/patches/pre-commit-npm-1.2.2-f30af83877.patch",
+    "start-server-and-test": "patch:start-server-and-test@npm:1.14.0#.yarn/patches/start-server-and-test-npm-1.14.0-841aa34fdf.patch",
+    "stylelint-config-rational-order": "patch:stylelint-config-rational-order@npm%3A0.1.2#./.yarn/patches/stylelint-config-rational-order-npm-0.1.2-d8336e84ed.patch"
   }
 }

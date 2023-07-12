@@ -1,5 +1,12 @@
 # @uppy/xhr-upload
 
+## 3.3.1
+
+Released: 2023-07-06
+Included in: Uppy v3.11.0
+
+- @uppy/xhr-upload: export `Headers` type (Masum ULU / #4549)
+
 ## 3.3.0
 
 Released: 2023-06-19

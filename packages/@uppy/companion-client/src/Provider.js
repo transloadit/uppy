@@ -131,8 +131,8 @@ export default class Provider extends RequestClient {
     }
   }
 
-  list (directory) {
-    return this.get(`${this.id}/list/${directory || ''}`)
+  list (directory, options) {
+    return this.get(`${this.id}/list/${directory || ''}`, options)
   }
 
   async logout () {
