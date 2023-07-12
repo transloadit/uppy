@@ -59,6 +59,7 @@ export default class ProviderView extends View {
       showTitles: true,
       showFilter: true,
       showBreadcrumbs: true,
+      loadAllFiles: false,
     }
 
     // merge default options with the ones set by user
