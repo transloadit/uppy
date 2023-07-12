@@ -265,7 +265,10 @@ class HTTPCommunicationQueue {
       return await this.#sendCompletionRequest(file, { key, uploadId, parts, signal }).abortOn(signal)
     } catch (err) {
       if (err?.cause !== pausingUploadReason && err?.name !== 'AbortError') {
-        this.abortFileUpload(file).catch(console.warn)
+        // We purposefully don't wait for the promise and ignore its status,
+        // because we want the error `err` to bubble up ASAP to report it to the
+        // user. A failure to abort is not that big of a deal anyway.
+        this.abortFileUpload(file)
       }
       throw err
     }
