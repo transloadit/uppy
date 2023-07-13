@@ -1,4 +1,4 @@
-import type { PluginOptions, BasePlugin, UppyFile } from '@uppy/core'
+import type { BasePlugin, UppyFile } from '@uppy/core'
 
 type MaybePromise<T> = T | Promise<T>
 
@@ -22,7 +22,8 @@ export interface AwsS3STSResponse {
   region: string
 }
 
-export interface AwsS3MultipartOptions extends PluginOptions {
+export interface AwsS3MultipartOptions {
+    id?: string
     companionHeaders?: { [type: string]: string }
     companionUrl?: string
     companionCookiesRule?: string
@@ -33,29 +34,24 @@ export interface AwsS3MultipartOptions extends PluginOptions {
     ) => MaybePromise<{ uploadId: string; key: string }>
     listParts?: (
       file: UppyFile,
-      opts: { uploadId: string; key: string; signal: AbortSignal }
+      opts: { uploadId: string; key: string }
     ) => MaybePromise<AwsS3Part[]>
-    getTemporarySecurityCredentials?: boolean | (() => MaybePromise<AwsS3STSResponse>)
     signPart?: (
       file: UppyFile,
-      opts: { uploadId: string; key: string; partNumber: number; body: Blob, signal: AbortSignal }
+      opts: { uploadId: string; key: string; partNumber: number; body: Blob; signal: AbortSignal }
     ) => MaybePromise<AwsS3SignedPart>
-    /** @deprecated Use signPart instead */
-    prepareUploadParts?: (
-      file: UppyFile,
-      partData: { uploadId: string; key: string; parts: [{ number: number, chunk: Blob }], signal: AbortSignal }
-    ) => MaybePromise<{ presignedUrls: { [k: number]: string }, headers?: { [k: string]: string } }>
     abortMultipartUpload?: (
       file: UppyFile,
-      opts: { uploadId: string; key: string; signal: AbortSignal }
+      opts: { uploadId: string; key: string }
     ) => MaybePromise<void>
     completeMultipartUpload?: (
       file: UppyFile,
-      opts: { uploadId: string; key: string; parts: AwsS3Part[]; signal: AbortSignal }
+      opts: { uploadId: string; key: string; parts: AwsS3Part[] }
     ) => MaybePromise<{ location?: string }>
     limit?: number
     shouldUseMultipart?: boolean | ((file: UppyFile) => boolean)
     retryDelays?: number[] | null
+    /** @deprecated this option is currently not used and may be removed in a future version */
     getUploadParameters?: (
       file: UppyFile
     ) => MaybePromise<{ url: string }>

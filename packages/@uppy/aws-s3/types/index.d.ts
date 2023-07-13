@@ -1,5 +1,4 @@
-import { AwsS3MultipartOptions } from '@uppy/aws-s3-multipart'
-import type { BasePlugin } from '@uppy/core'
+import type { BasePlugin, UppyFile } from "@uppy/core"
 
 type MaybePromise<T> = T | Promise<T>
 
@@ -10,8 +9,20 @@ export interface AwsS3UploadParameters {
     headers?: { [type: string]: string }
 }
 
-export interface AwsS3Options extends AwsS3MultipartOptions {
-    /** @deprecated future versions of this plugin will use the Expires value from the backend */
+export interface AwsS3Options {
+    id?: string
+    companionUrl?: string | null
+    companionHeaders?: Record<string, string>
+    allowedMetaFields?: Array<string> | null
+    getUploadParameters?: (file: UppyFile) => MaybePromise<{
+      method: "PUT" | "POST"
+      url: string
+      fields: Record<string, string> | null
+      headers: Record<string, string>
+    }>
+    limit?: number
+    getResponseData?: (responseText: string, response: XMLHttpRequest) => void
+    locale?: { strings: Record<string, string> }
     timeout?: number
 }
 
