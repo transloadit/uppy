@@ -40,6 +40,11 @@ export interface AwsS3MultipartOptions {
       file: UppyFile,
       opts: { uploadId: string; key: string; partNumber: number; body: Blob; signal: AbortSignal }
     ) => MaybePromise<AwsS3SignedPart>
+    /** @deprecated Use signPart instead */
+    prepareUploadParts?: (
+      file: UppyFile,
+      partData: { uploadId: string; key: string; parts: [{ number: number, chunk: Blob }] }
+    ) => MaybePromise<{ presignedUrls: { [k: number]: string }, headers?: Record<number, Record<string, string>> }>
     abortMultipartUpload?: (
       file: UppyFile,
       opts: { uploadId: string; key: string }
