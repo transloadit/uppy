@@ -6,6 +6,10 @@ const {
   AbortMultipartUploadCommand,
   CompleteMultipartUploadCommand,
 } = require('@aws-sdk/client-s3')
+const {
+  STSClient,
+  GetFederationTokenCommand,
+} = require('@aws-sdk/client-sts')
 
 const { createPresignedPost } = require('@aws-sdk/s3-presigned-post')
 const { getSignedUrl } = require('@aws-sdk/s3-request-presigner')
@@ -353,7 +357,79 @@ module.exports = function s3 (config) {
     }, next)
   }
 
+  const policy = {
+    Version: '2012-10-17', // latest at the time of writing
+    Statement: [
+      {
+        Effect: 'Allow',
+        Action: [
+          's3:PutObject',
+        ],
+        Resource: [
+          `arn:aws:s3:::${config.bucket}/*`,
+          `arn:aws:s3:::${config.bucket}`,
+        ],
+      },
+    ],
+  }
+
+  let stsClient
+  function getSTSClient () {
+    if (stsClient == null) {
+      stsClient = new STSClient({
+        region: config.region,
+        credentials : {
+          accessKeyId: config.key,
+          secretAccessKey: config.secret,
+        },
+      })
+    }
+    return stsClient
+  }
+
+  /**
+   * Create STS credentials with the permission for sending PutObject/UploadPart to the bucket.
+   *
+   * Clients should cache the response and re-use it until they can reasonably
+   * expect uploads to complete before the token expires. To this effect, the
+   * Cache-Control header is set to invalidate the cache 5 minutes before the
+   * token expires.
+   *
+   * Response JSON:
+   * - credentials: the credentials including the SessionToken.
+   * - bucket: the S3 bucket name.
+   * - region: the region where that bucket is stored.
+   */
+  function getTemporarySecurityCredentials (req, res, next) {
+    getSTSClient().send(new GetFederationTokenCommand({
+      // Name of the federated user. The name is used as an identifier for the
+      // temporary security credentials (such as Bob). For example, you can
+      // reference the federated user name in a resource-based policy, such as
+      // in an Amazon S3 bucket policy.
+      // Companion is configured by default as an unprotected public endpoint,
+      // if you implement your own custom endpoint with user authentication you
+      // should probably use different names for each of your users.
+      Name: 'companion',
+      // The duration, in seconds, of the role session. The value specified
+      // can range from 900 seconds (15 minutes) up to the maximum session
+      // duration set for the role.
+      DurationSeconds: config.expires,
+      Policy: JSON.stringify(policy),
+    })).then(response => {
+      // This is a public unprotected endpoint.
+      // If you implement your own custom endpoint with user authentication you
+      // should probably use `private` instead of `public`.
+      res.setHeader('Cache-Control', `public,max-age=${config.expires - 300}`) // 300s is 5min.
+      res.json({
+        credentials: response.Credentials,
+        bucket: config.bucket,
+        region: config.region,
+      })
+    }, next)
+  }
+
   return express.Router()
+    .get('/sts', getTemporarySecurityCredentials)
     .get('/params', getUploadParameters)
     .post('/multipart', express.json(), createMultipartUpload)
     .get('/multipart/:uploadId', getUploadedParts)

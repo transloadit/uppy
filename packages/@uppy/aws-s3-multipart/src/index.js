@@ -6,8 +6,10 @@ import getSocketHost from '@uppy/utils/lib/getSocketHost'
 import { RateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
 import { filterNonFailedFiles, filterFilesToEmitUploadStarted } from '@uppy/utils/lib/fileFilters'
 import { createAbortError } from '@uppy/utils/lib/AbortController'
-import packageJson from '../package.json'
+
 import MultipartUploader, { pausingUploadReason } from './MultipartUploader.js'
+import createSignedURL from './createSignedURL.js'
+import packageJson from '../package.json'
 
 function assertServerError (res) {
   if (res && res.error) {
@@ -16,6 +18,27 @@ function assertServerError (res) {
     throw error
   }
   return res
+}
+
+/**
+ * Computes the expiry time for a request signed with temporary credentials. If
+ * no expiration was provided, or an invalid value (e.g. in the past) is
+ * provided, undefined is returned. This function assumes the client clock is in
+ * sync with the remote server, which is a requirement for the signature to be
+ * validated for AWS anyway.
+ *
+ * @param {import('../types/index.js').AwsS3STSResponse['credentials']} credentials
+ * @returns {number | undefined}
+ */
+function getExpiry (credentials) {
+  const expirationDate = credentials.Expiration
+  if (expirationDate) {
+    const timeUntilExpiry = Math.floor((new Date(expirationDate) - Date.now()) / 1000)
+    if (timeUntilExpiry > 9) {
+      return timeUntilExpiry
+    }
+  }
+  return undefined
 }
 
 function getAllowedMetadata ({ meta, allowedMetaFields, querify = false }) {
@@ -365,9 +388,12 @@ export default class AwsS3Multipart extends UploaderPlugin {
       listParts: this.listParts.bind(this),
       abortMultipartUpload: this.abortMultipartUpload.bind(this),
       completeMultipartUpload: this.completeMultipartUpload.bind(this),
-      signPart: this.signPart.bind(this),
+      getTemporarySecurityCredentials: false,
+      signPart: opts?.getTemporarySecurityCredentials ? this.createSignedURL.bind(this) : this.signPart.bind(this),
       uploadPartBytes: AwsS3Multipart.uploadPartBytes,
-      getUploadParameters: this.getUploadParameters.bind(this),
+      getUploadParameters: opts?.getTemporarySecurityCredentials
+        ? this.createSignedURL.bind(this)
+        : this.getUploadParameters.bind(this),
       companionHeaders: {},
     }
 
@@ -461,6 +487,68 @@ export default class AwsS3Multipart extends UploaderPlugin {
     const uploadIdEnc = encodeURIComponent(uploadId)
     return this.#client.post(`s3/multipart/${uploadIdEnc}/complete?key=${filename}`, { parts }, { signal })
       .then(assertServerError)
+  }
+
+  /**
+   * @type {import("../types").AwsS3STSResponse | Promise<import("../types").AwsS3STSResponse>}
+   */
+  #cachedTemporaryCredentials
+
+  async #getTemporarySecurityCredentials (options) {
+    throwIfAborted(options?.signal)
+
+    if (this.#cachedTemporaryCredentials == null) {
+      // We do not await it just yet, so concurrent calls do not try to override it:
+      if (this.opts.getTemporarySecurityCredentials === true) {
+        this.assertHost('getTemporarySecurityCredentials')
+        this.#cachedTemporaryCredentials = this.#client.get('s3/sts', null, options).then(assertServerError)
+      } else {
+        this.#cachedTemporaryCredentials = this.opts.getTemporarySecurityCredentials(options)
+      }
+      this.#cachedTemporaryCredentials = await this.#cachedTemporaryCredentials
+      setTimeout(() => {
+        // At half the time left before expiration, we clear the cache. That's
+        // an arbitrary tradeoff to limit the number of requests made to the
+        // remote while limiting the risk of using an expired token in case the
+        // clocks are not exactly synced.
+        // The HTTP cache should be configured to ensure a client doesn't request
+        // more tokens than it needs, but this timeout provides a second layer of
+        // security in case the HTTP cache is disabled or misconfigured.
+        this.#cachedTemporaryCredentials = null
+      }, (getExpiry(this.#cachedTemporaryCredentials.credentials) || 0) * 500)
+    }
+
+    return this.#cachedTemporaryCredentials
+  }
+
+  async createSignedURL (file, options) {
+    const data = await this.#getTemporarySecurityCredentials(options)
+    const expires = getExpiry(data.credentials) || 604_800 // 604 800 is the max value accepted by AWS.
+
+    const { uploadId, key, partNumber, signal } = options
+
+    // Return an object in the correct shape.
+    return {
+      method: 'PUT',
+      expires,
+      fields: {},
+      url: `${await createSignedURL({
+        accountKey: data.credentials.AccessKeyId,
+        accountSecret: data.credentials.SecretAccessKey,
+        sessionToken: data.credentials.SessionToken,
+        expires,
+        bucketName: data.bucket,
+        Region: data.region,
+        Key: key ?? `${crypto.randomUUID()}-${file.name}`,
+        uploadId,
+        partNumber,
+        signal,
+      })}`,
+      // Provide content type header required by S3
+      headers: {
+        'Content-Type': file.type,
+      },
+    }
   }
 
   signPart (file, { uploadId, key, partNumber, signal }) {
