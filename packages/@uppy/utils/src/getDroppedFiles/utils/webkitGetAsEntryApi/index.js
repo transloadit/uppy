@@ -27,17 +27,19 @@ function getAsFileSystemHandleFromEntry (entry, logDropError) {
 }
 
 async function* createPromiseToAddFileOrParseDirectory (entry, relativePath, lastResortFile = undefined) {
+  const getNextRelativePath = () => `${relativePath}/${entry.name}`
+
   // For each dropped item, - make sure it's a file/directory, and start deepening in!
   if (entry.kind === 'file') {
     const file = await entry.getFile()
     if (file != null) {
-      file.relativePath = relativePath ? `${relativePath}/${entry.name}` : null
+      file.relativePath = relativePath ? getNextRelativePath() : null
       yield file
     } else if (lastResortFile != null) yield lastResortFile
   } else if (entry.kind === 'directory') {
     for await (const handle of entry.values()) {
       // Recurse on the directory, appending the dir name to the relative path
-      yield* createPromiseToAddFileOrParseDirectory(handle, `${relativePath}/${entry.name}`)
+      yield* createPromiseToAddFileOrParseDirectory(handle, relativePath ? getNextRelativePath() : entry.name)
     }
   } else if (lastResortFile != null) yield lastResortFile
 }

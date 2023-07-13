@@ -26,7 +26,7 @@ class GoogleDrive extends UIPlugin {
   onFirstRender () {
     return Promise.all([
       this.provider.fetchPreAuthToken(),
-      this.view.getFolder('root', '/'),
+      this.view.getFolder('root'),
     ])
   }
 
