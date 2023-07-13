@@ -48,8 +48,6 @@ export default class RequestClient {
     this.opts = opts
     this.onReceiveResponse = this.onReceiveResponse.bind(this)
     this.#companionHeaders = opts?.companionHeaders
-    this.uploaderEvents = Object.create(null)
-    this.uploaderSockets = Object.create(null)
   }
 
   setCompanionHeaders (headers) {
@@ -206,15 +204,12 @@ export default class RequestClient {
       const host = getSocketHost(file.remote.companionUrl)
       const socket = new Socket({ target: `${host}/api/${token}`, autoOpen: false })
       const eventManager = new EventManager(this.uppy)
-      this.uploaderSockets[file.id] = socket
-      this.uploaderEvents[file.id] = eventManager
 
       let queuedRequest
 
       eventManager.onFileRemove(file.id, () => {
         socket.send('cancel', {})
         queuedRequest.abort()
-        this.resetUploaderReferences(file.id)
         resolve(`upload ${file.id} was removed`)
       })
 
@@ -245,7 +240,6 @@ export default class RequestClient {
         if (reason === 'user') {
           socket.send('cancel', {})
           queuedRequest.abort()
-          this.resetUploaderReferences(file.id)
         }
         resolve(`upload ${file.id} was canceled`)
       })
@@ -291,7 +285,6 @@ export default class RequestClient {
         // If the remote retry optimisation should not be used,
         // close the socket—this will tell companion to clear state and delete the file.
         if (!this.opts.useFastRemoteRetry) {
-          this.resetUploaderReferences(file.id)
           // Remove the serverToken so that a new one will be created for the retry.
           this.uppy.setFileState(file.id, {
             serverToken: null,
@@ -311,7 +304,6 @@ export default class RequestClient {
         }
 
         this.uppy.emit('upload-success', file, uploadResp)
-        this.resetUploaderReferences(file.id)
         queuedRequest.done()
         socket.close()
         resolve()
@@ -324,25 +316,8 @@ export default class RequestClient {
           socket.open()
         }
 
-        // Just close the socket here, the caller will take care of cancelling the upload itself
-        // using resetUploaderReferences(). This is because resetUploaderReferences() has to be
-        // called when this request is still in the queue, and has not been started yet, too. At
-        // that point this cancellation function is not going to be called.
-        // Also, we need to remove the request from the queue _without_ destroying everything
-        // related to this upload to handle pauses.
         return () => {}
       })
     })
-  }
-
-  resetUploaderReferences (fileID) {
-    if (this.uploaderEvents[fileID]) {
-      this.uploaderEvents[fileID].remove()
-      this.uploaderEvents[fileID] = null
-    }
-    if (this.uploaderSockets[fileID]) {
-      this.uploaderSockets[fileID].close()
-      this.uploaderSockets[fileID] = null
-    }
   }
 }

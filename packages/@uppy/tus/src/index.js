@@ -55,6 +55,8 @@ export default class Tus extends BasePlugin {
 
   #retryDelayIterator
 
+  #queueRequestSocketToken
+
   /**
    * @param {Uppy} uppy
    * @param {TusOptions} opts
@@ -97,7 +99,7 @@ export default class Tus extends BasePlugin {
     this.uploaderEvents = Object.create(null)
 
     this.handleResetProgress = this.handleResetProgress.bind(this)
-    this.setQueueRequestSocketToken(this.requests.wrapPromiseFunction(this.#requestSocketToken, { priority: -1 }))
+    this.#queueRequestSocketToken = this.requests.wrapPromiseFunction(this.#requestSocketToken, { priority: -1 })
   }
 
   handleResetProgress () {
@@ -471,15 +473,7 @@ export default class Tus extends BasePlugin {
     }
   }
 
-  #queueRequestSocketToken
-
-  /** @protected */
-  setQueueRequestSocketToken (fn) {
-    this.#queueRequestSocketToken = fn
-  }
-
   async uploadRemoteFile (file, options = {}) {
-    // TODO: we could rewrite this to use server-sent events instead of creating WebSockets.
     const client = this.#getCompanionClient(file)
     try {
       if (file.serverToken) {
@@ -523,7 +517,6 @@ export default class Tus extends BasePlugin {
         }
         this.uppy.on('file-removed', removedHandler)
 
-        this.resetUploaderReferences(file.id)
         const uploadPromise = this.uploadRemoteFile(file, { signal: controller.signal })
 
         this.requests.wrapSyncFunction(() => {
@@ -532,6 +525,7 @@ export default class Tus extends BasePlugin {
 
         return uploadPromise
       }
+
       return this.#uploadLocalFile(file, current, total)
     }))
   }
