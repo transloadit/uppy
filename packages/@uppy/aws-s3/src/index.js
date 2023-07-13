@@ -144,8 +144,6 @@ export default class AwsS3 extends UploaderPlugin {
 
     this.#client = new RequestClient(uppy, opts)
     this.#requests = new RateLimitedQueue(this.opts.limit)
-
-    this.setQueueRequestSocketToken(this.#requests.wrapPromiseFunction(this.#requestSocketToken, { priority: -1 }))
   }
 
   [Symbol.for('uppy test: getClient')] () { return this.#client }
@@ -249,38 +247,6 @@ export default class AwsS3 extends UploaderPlugin {
     return Promise.resolve()
   }
 
-  connectToServerSocket (file) {
-    return this.#uploader.connectToServerSocket(file)
-  }
-
-  #requestSocketToken = async (file) => {
-    const opts = this.#uploader.getOptions(file)
-    const Client = file.remote.providerOptions.provider ? Provider : RequestClient
-    const client = new Client(this.uppy, file.remote.providerOptions)
-    const allowedMetaFields = Array.isArray(opts.allowedMetaFields)
-      ? opts.allowedMetaFields
-      // Send along all fields by default.
-      : Object.keys(file.meta)
-
-    if (file.tus) {
-      // Install file-specific upload overrides.
-      Object.assign(opts, file.tus)
-    }
-
-    const res = await client.post(file.remote.url, {
-      ...file.remote.body,
-      protocol: 'multipart',
-      endpoint: opts.endpoint,
-      size: file.data.size,
-      fieldname: opts.fieldName,
-      metadata: Object.fromEntries(allowedMetaFields.map(name => [name, file.meta[name]])),
-      httpMethod: opts.method,
-      useFormData: opts.formData,
-      headers: opts.headers,
-    })
-    return res.token
-  }
-
   uploadFile (id, current, total) {
     const file = this.uppy.getFile(id)
     this.uppy.log(`uploading ${current} of ${total}`)
@@ -288,6 +254,9 @@ export default class AwsS3 extends UploaderPlugin {
     if (file.error) throw new Error(file.error)
 
     if (file.isRemote) {
+      // TODO: why do we need to do this? why not always one or the other?
+      const Client = file.remote.providerOptions.provider ? Provider : RequestClient
+      const client = new Client(this.uppy, file.remote.providerOptions)
       const controller = new AbortController()
 
       const removedHandler = (removedFile) => {
@@ -295,7 +264,7 @@ export default class AwsS3 extends UploaderPlugin {
       }
       this.uppy.on('file-removed', removedHandler)
 
-      const uploadPromise = this.uploadRemoteFile(file, { signal: controller.signal })
+      const uploadPromise = client.uploadRemoteFile(file, { signal: controller.signal }, this.#requests)
 
       this.#requests.wrapSyncFunction(() => {
         this.uppy.off('file-removed', removedHandler)
