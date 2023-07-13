@@ -1,5 +1,13 @@
 # @uppy/companion
 
+## 4.7.0
+
+Released: 2023-07-13
+Included in: Uppy v3.12.0
+
+- @uppy/companion: fix esm imports in production/transpiled builds (Dominik Schmidt / #4561)
+- @uppy/box,@uppy/companion,@uppy/dropbox,@uppy/google-drive,@uppy/onedrive,@uppy/provider-views: Load Google Drive / OneDrive lists 5-10x faster & always load all files (Merlijn Vos / #4513)
+
 ## 4.6.0
 
 Released: 2023-07-06
