@@ -25,7 +25,7 @@
  * the XHRUpload code, but at least it's not horrifically broken :)
  */
 
-import UploaderPlugin from '@uppy/core/lib/UploaderPlugin.js'
+import BasePlugin from '@uppy/core/lib/BasePlugin.js'
 import AwsS3Multipart from '@uppy/aws-s3-multipart'
 import { RateLimitedQueue, internalRateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
 import { RequestClient, Provider } from '@uppy/companion-client'
@@ -103,7 +103,7 @@ function defaultGetResponseError (content, xhr) {
 let warnedSuccessActionStatus = false
 
 // TODO deprecate this, will use s3-multipart instead
-export default class AwsS3 extends UploaderPlugin {
+export default class AwsS3 extends BasePlugin {
   static VERSION = packageJson.version
 
   #client
