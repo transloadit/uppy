@@ -2,7 +2,12 @@
 
 import fetchWithNetworkError from '@uppy/utils/lib/fetchWithNetworkError'
 import ErrorWithCause from '@uppy/utils/lib/ErrorWithCause'
+import emitSocketProgress from '@uppy/utils/lib/emitSocketProgress'
+import getSocketHost from '@uppy/utils/lib/getSocketHost'
+import EventManager from '@uppy/utils/lib/EventManager'
+
 import AuthError from './AuthError.js'
+import Socket from './Socket.js'
 
 import packageJson from '../package.json'
 
@@ -43,6 +48,8 @@ export default class RequestClient {
     this.opts = opts
     this.onReceiveResponse = this.onReceiveResponse.bind(this)
     this.#companionHeaders = opts?.companionHeaders
+    this.uploaderEvents = Object.create(null)
+    this.uploaderSockets = Object.create(null)
   }
 
   setCompanionHeaders (headers) {
@@ -188,5 +195,154 @@ export default class RequestClient {
     // eslint-disable-next-line no-param-reassign
     if (typeof options === 'boolean') options = { skipPostResponse: options }
     return this.request({ ...options, path, method: 'DELETE', data })
+  }
+
+  /**
+   * @param {UppyFile} file
+   */
+  async connectToServerSocket (file, requests) {
+    return new Promise((resolve, reject) => {
+      const token = file.serverToken
+      const host = getSocketHost(file.remote.companionUrl)
+      const socket = new Socket({ target: `${host}/api/${token}`, autoOpen: false })
+      const eventManager = new EventManager(this.uppy)
+      this.uploaderSockets[file.id] = socket
+      this.uploaderEvents[file.id] = eventManager
+
+      let queuedRequest
+
+      eventManager.onFileRemove(file.id, () => {
+        socket.send('cancel', {})
+        queuedRequest.abort()
+        this.resetUploaderReferences(file.id)
+        resolve(`upload ${file.id} was removed`)
+      })
+
+      eventManager.onPause(file.id, (isPaused) => {
+        if (isPaused) {
+          // Remove this file from the queue so another file can start in its place.
+          socket.send('pause', {})
+          queuedRequest.abort()
+        } else {
+          // Resuming an upload should be queued, else you could pause and then
+          // resume a queued upload to make it skip the queue.
+          queuedRequest.abort()
+          queuedRequest = requests.run(() => {
+            socket.open()
+            socket.send('resume', {})
+
+            return () => {}
+          })
+        }
+      })
+
+      eventManager.onPauseAll(file.id, () => {
+        socket.send('pause', {})
+        queuedRequest.abort()
+      })
+
+      eventManager.onCancelAll(file.id, ({ reason } = {}) => {
+        if (reason === 'user') {
+          socket.send('cancel', {})
+          queuedRequest.abort()
+          this.resetUploaderReferences(file.id)
+        }
+        resolve(`upload ${file.id} was canceled`)
+      })
+
+      eventManager.onResumeAll(file.id, () => {
+        queuedRequest.abort()
+        if (file.error) {
+          socket.send('pause', {})
+        }
+        queuedRequest = requests.run(() => {
+          socket.open()
+          socket.send('resume', {})
+
+          return () => {}
+        })
+      })
+
+      eventManager.onRetry(file.id, () => {
+        // Only do the retry if the upload is actually in progress;
+        // else we could try to send these messages when the upload is still queued.
+        // We may need a better check for this since the socket may also be closed
+        // for other reasons, like network failures.
+        if (socket.isOpen) {
+          socket.send('pause', {})
+          socket.send('resume', {})
+        }
+      })
+
+      eventManager.onRetryAll(file.id, () => {
+        // See the comment in the onRetry() call
+        if (socket.isOpen) {
+          socket.send('pause', {})
+          socket.send('resume', {})
+        }
+      })
+
+      socket.on('progress', (progressData) => emitSocketProgress(this, progressData, file))
+
+      socket.on('error', (errData) => {
+        const { message } = errData.error
+        const error = Object.assign(new Error(message), { cause: errData.error })
+
+        // If the remote retry optimisation should not be used,
+        // close the socket—this will tell companion to clear state and delete the file.
+        if (!this.opts.useFastRemoteRetry) {
+          this.resetUploaderReferences(file.id)
+          // Remove the serverToken so that a new one will be created for the retry.
+          this.uppy.setFileState(file.id, {
+            serverToken: null,
+          })
+        } else {
+          socket.close()
+        }
+
+        this.uppy.emit('upload-error', file, error)
+        queuedRequest.done()
+        reject(error)
+      })
+
+      socket.on('success', (data) => {
+        const uploadResp = {
+          uploadURL: data.url,
+        }
+
+        this.uppy.emit('upload-success', file, uploadResp)
+        this.resetUploaderReferences(file.id)
+        queuedRequest.done()
+        socket.close()
+        resolve()
+      })
+
+      queuedRequest = requests.run(() => {
+        if (file.isPaused) {
+          socket.send('pause', {})
+        } else {
+          socket.open()
+        }
+
+        // Just close the socket here, the caller will take care of cancelling the upload itself
+        // using resetUploaderReferences(). This is because resetUploaderReferences() has to be
+        // called when this request is still in the queue, and has not been started yet, too. At
+        // that point this cancellation function is not going to be called.
+        // Also, we need to remove the request from the queue _without_ destroying everything
+        // related to this upload to handle pauses.
+        return () => {}
+      })
+    })
+  }
+
+  resetUploaderReferences (fileID) {
+    if (this.uploaderEvents[fileID]) {
+      this.uploaderEvents[fileID].remove()
+      this.uploaderEvents[fileID] = null
+    }
+    if (this.uploaderSockets[fileID]) {
+      this.uploaderSockets[fileID].close()
+      this.uploaderSockets[fileID] = null
+    }
   }
 }
