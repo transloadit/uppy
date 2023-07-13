@@ -379,7 +379,7 @@ export default class Transloadit extends BasePlugin {
     const state = this.getPluginState()
     const file = this.#findFile(uploadedFile)
     if (!file) {
-      this.uppy.log('[Transloadit] Couldn’t file the file, it was likely removed in the process')
+      this.uppy.log('[Transloadit] Couldn’t find the file, it was likely removed in the process')
       return
     }
     this.setPluginState({
