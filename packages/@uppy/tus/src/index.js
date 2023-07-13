@@ -55,8 +55,6 @@ export default class Tus extends BasePlugin {
 
   #retryDelayIterator
 
-  #queueRequestSocketToken
-
   /**
    * @param {Uppy} uppy
    * @param {TusOptions} opts
@@ -99,7 +97,6 @@ export default class Tus extends BasePlugin {
     this.uploaderEvents = Object.create(null)
 
     this.handleResetProgress = this.handleResetProgress.bind(this)
-    this.#queueRequestSocketToken = this.requests.wrapPromiseFunction(this.#requestSocketToken, { priority: -1 })
   }
 
   handleResetProgress () {
@@ -427,33 +424,6 @@ export default class Tus extends BasePlugin {
     })
   }
 
-  #getCompanionClient = (file) => {
-    const Client = file.remote.providerOptions.provider ? Provider : RequestClient
-    const client = new Client(this.uppy, file.remote.providerOptions)
-    return client
-  }
-
-  #requestSocketToken = async (file, options) => {
-    const client = this.#getCompanionClient(file)
-    const opts = { ...this.opts }
-
-    if (file.tus) {
-      // Install file-specific upload overrides.
-      Object.assign(opts, file.tus)
-    }
-
-    const res = await client.post(file.remote.url, {
-      ...file.remote.body,
-      endpoint: opts.endpoint,
-      uploadUrl: opts.uploadUrl,
-      protocol: 'tus',
-      size: file.data.size,
-      headers: opts.headers,
-      metadata: file.meta,
-    }, options)
-    return res.token
-  }
-
   /**
    * Store the uploadUrl on the file options, so that when Golden Retriever
    * restores state, we will continue uploading to the correct URL.
@@ -473,30 +443,6 @@ export default class Tus extends BasePlugin {
     }
   }
 
-  async uploadRemoteFile (file, options = {}) {
-    const client = this.#getCompanionClient(file)
-    try {
-      if (file.serverToken) {
-        return await client.connectToServerSocket(file, this.requests)
-      }
-      const serverToken = await this.#queueRequestSocketToken(file).abortOn(options.signal)
-
-      if (!this.uppy.getState().files[file.id]) return undefined
-
-      this.uppy.setFileState(file.id, { serverToken })
-      return await client.connectToServerSocket(this.uppy.getFile(file.id), this.requests)
-    } catch (err) {
-      if (err?.cause?.name === 'AbortError') {
-        // The file upload was aborted, it’s not an error
-        return undefined
-      }
-
-      this.uppy.setFileState(file.id, { serverToken: undefined })
-      this.uppy.emit('upload-error', file, err)
-      throw err
-    }
-  }
-
   /**
    * @param {(UppyFile | FailedUppyFile)[]} files
    */
@@ -510,6 +456,8 @@ export default class Tus extends BasePlugin {
       const total = files.length
 
       if (file.isRemote) {
+        const Client = file.remote.providerOptions.provider ? Provider : RequestClient
+        const client = new Client(this.uppy, file.remote.providerOptions)
         const controller = new AbortController()
 
         const removedHandler = (removedFile) => {
@@ -517,7 +465,7 @@ export default class Tus extends BasePlugin {
         }
         this.uppy.on('file-removed', removedHandler)
 
-        const uploadPromise = this.uploadRemoteFile(file, { signal: controller.signal })
+        const uploadPromise = client.uploadRemoteFile(file, { signal: controller.signal }, this.requests)
 
         this.requests.wrapSyncFunction(() => {
           this.uppy.off('file-removed', removedHandler)

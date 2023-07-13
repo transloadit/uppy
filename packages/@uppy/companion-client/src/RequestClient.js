@@ -195,6 +195,51 @@ export default class RequestClient {
     return this.request({ ...options, path, method: 'DELETE', data })
   }
 
+  async uploadRemoteFile (file, options = {}, requests) {
+    try {
+      if (file.serverToken) {
+        return await this.connectToServerSocket(file, this.requests)
+      }
+      const queueRequestSocketToken = requests.wrapPromiseFunction(this.#requestSocketToken, { priority: -1 })
+      const serverToken = await queueRequestSocketToken(file).abortOn(options.signal)
+
+      if (!this.uppy.getState().files[file.id]) return undefined
+
+      this.uppy.setFileState(file.id, { serverToken })
+      return await this.connectToServerSocket(this.uppy.getFile(file.id), requests)
+    } catch (err) {
+      if (err?.cause?.name === 'AbortError') {
+        // The file upload was aborted, it’s not an error
+        return undefined
+      }
+
+      this.uppy.setFileState(file.id, { serverToken: undefined })
+      this.uppy.emit('upload-error', file, err)
+      throw err
+    }
+  }
+
+  #requestSocketToken = async (file, options) => {
+    const opts = { ...this.opts }
+
+    if (file.tus) {
+      // Install file-specific upload overrides.
+      Object.assign(opts, file.tus)
+    }
+
+    if (file.remote.url == null) {
+      throw new Error('Cannot connect to an undefined URL')
+    }
+
+    const res = await this.post(file.remote.url, {
+      ...file.remote.body,
+      protocol: 's3-multipart',
+      size: file.data.size,
+      metadata: file.meta,
+    }, options)
+    return res.token
+  }
+
   /**
    * @param {UppyFile} file
    */
