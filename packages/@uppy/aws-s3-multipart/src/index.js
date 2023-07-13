@@ -366,8 +366,6 @@ export default class AwsS3Multipart extends BasePlugin {
 
   #client
 
-  #queueRequestSocketToken
-
   constructor (uppy, opts) {
     super(uppy, opts)
     this.type = 'uploader'
@@ -791,6 +789,7 @@ export default class AwsS3Multipart extends BasePlugin {
 
     const promises = filesFiltered.map((file) => {
       if (file.isRemote) {
+        // TODO: why do we need to do this? why not always one or the other?
         const Client = file.remote.providerOptions.provider ? Provider : RequestClient
         const client = new Client(this.uppy, file.remote.providerOptions)
         this.#setResumableUploadsCapability(false)

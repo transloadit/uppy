@@ -456,6 +456,7 @@ export default class Tus extends BasePlugin {
       const total = files.length
 
       if (file.isRemote) {
+        // TODO: why do we need to do this? why not always one or the other?
         const Client = file.remote.providerOptions.provider ? Provider : RequestClient
         const client = new Client(this.uppy, file.remote.providerOptions)
         const controller = new AbortController()
