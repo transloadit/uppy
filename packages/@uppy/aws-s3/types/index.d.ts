@@ -1,4 +1,4 @@
-import type { BasePlugin, UppyFile } from "@uppy/core"
+import type { BasePlugin, Locale, UppyFile } from '@uppy/core'
 
 type MaybePromise<T> = T | Promise<T>
 
@@ -15,14 +15,14 @@ export interface AwsS3Options {
     companionHeaders?: Record<string, string>
     allowedMetaFields?: Array<string> | null
     getUploadParameters?: (file: UppyFile) => MaybePromise<{
-      method: "PUT" | "POST"
+      method: 'PUT' | 'POST'
       url: string
       fields: Record<string, string> | null
       headers: Record<string, string>
     }>
     limit?: number
     getResponseData?: (responseText: string, response: XMLHttpRequest) => void
-    locale?: { strings: Record<string, string> }
+    locale?: Locale,
     timeout?: number
 }
 
