@@ -171,8 +171,8 @@ export default class ProviderView extends View {
           requestPath, breadcrumbs, signal: controller.signal,
         })
 
-        files = [...files, ...newFiles]
-        folders = [...folders, ...newFolders]
+        files = files.concat(newFiles)
+        folders = folders.concat(newFolders)
 
         this.setLoading(this.plugin.uppy.i18n('loadedXFiles', { numFiles: files.length + folders.length }))
       } while (
@@ -293,8 +293,8 @@ export default class ProviderView extends View {
           requestPath, breadcrumbs,
         })
 
-        const combinedFiles = [...files, ...newFiles]
-        const combinedFolders = [...folders, ...newFolders]
+        const combinedFiles = files.concat(newFiles)
+        const combinedFolders = folders.concat(newFolders)
 
         this.plugin.setPluginState({ folders: combinedFolders, files: combinedFiles })
       } catch (error) {
