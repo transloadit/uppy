@@ -1,5 +1,14 @@
 # @uppy/aws-s3-multipart
 
+## 3.5.0
+
+Released: 2023-07-13
+Included in: Uppy v3.12.0
+
+- @uppy/aws-s3-multipart: add support for signing on the client (Antoine du Hamel / #4519)
+- @uppy/aws-s3-multipart: fix lint warning (Antoine du Hamel / #4569)
+- @uppy/aws-s3-multipart: fix support for non-multipart PUT upload (Antoine du Hamel / #4568)
+
 ## 3.4.1
 
 Released: 2023-07-06
