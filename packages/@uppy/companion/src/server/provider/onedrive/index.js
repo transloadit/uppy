@@ -40,7 +40,8 @@ class OneDrive extends Provider {
   async list ({ directory, query, token }) {
     return this.#withErrorHandling('provider.onedrive.list.error', async () => {
       const path = directory ? `items/${directory}` : 'root'
-      const qs = { $expand: 'thumbnails' }
+      // https://learn.microsoft.com/en-us/graph/query-parameters?tabs=http#top-parameter
+      const qs = { $expand: 'thumbnails', $top: 999 }
       if (query.cursor) {
         qs.$skiptoken = query.cursor
       }

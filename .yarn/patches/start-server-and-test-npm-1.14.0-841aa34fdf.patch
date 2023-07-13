@@ -1,0 +1,13 @@
+diff --git a/src/utils.js b/src/utils.js
+index 1f636c6617a71a68318dc587a1c9e6081020f9aa..b28e840ed08f26a4eadd242a6f541fbaefea0eda 100644
+--- a/src/utils.js
++++ b/src/utils.js
+@@ -112,7 +112,7 @@ const getArguments = cliArgs => {
+ }
+ 
+ function normalizeCommand (command) {
+-  return UTILS.isPackageScriptName(command) ? `npm run ${command}` : command
++  return UTILS.isPackageScriptName(command) ? `corepack yarn ${command}` : command
+ }
+ 
+ /**

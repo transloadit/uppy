@@ -32,11 +32,11 @@ const { getServer } = require('../mockserver')
 // todo don't share server between tests. rewrite to not use env variables
 const authServer = getServer({ COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT: '0' })
 const authData = {
-  dropbox: 'token value',
-  box: 'token value',
-  drive: 'token value',
+  dropbox: { accessToken: 'token value' },
+  box: { accessToken: 'token value' },
+  drive: { accessToken: 'token value' },
 }
-const token = tokenService.generateEncryptedToken(authData, process.env.COMPANION_SECRET)
+const token = tokenService.generateEncryptedAuthToken(authData, process.env.COMPANION_SECRET)
 const OAUTH_STATE = 'some-cool-nice-encrytpion'
 
 afterAll(() => {

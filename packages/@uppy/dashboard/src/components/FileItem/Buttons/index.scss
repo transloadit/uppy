@@ -30,19 +30,24 @@
     opacity: 1;
   }
 
-  .uppy-size--md &,
-  .uppy-Dashboard--singleFile & {
+  .uppy-size--md & {
     position: absolute;
     top: -8px;
+    inset-inline-end: -8px;
     z-index: $zIndex-3;
     width: 18px;
     height: 18px;
     padding: 0;
-    inset-inline-end: -8px;
 
     &:focus {
       border-radius: 50%;
     }
+  }
+
+  .uppy-Dashboard--singleFile.uppy-size--height-md & {
+    position: absolute;
+    inset-inline-end: 8px;
+    top: 8px;
   }
 
   [data-uppy-theme="dark"] & {
@@ -55,7 +60,7 @@
 }
 
 // Only for mobile screens
-.uppy-Dashboard:not(.uppy-size--md):not(.uppy-Dashboard--singleFile) {
+.uppy-Dashboard:not(.uppy-size--md):not(.uppy-Dashboard--singleFile.uppy-size--height-md) {
   // Vertically center Edit&Remove buttons on mobile
   .uppy-Dashboard-Item-actionWrapper {
     display: flex;

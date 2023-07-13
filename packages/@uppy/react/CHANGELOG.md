@@ -1,5 +1,19 @@
 # @uppy/react
 
+## 3.1.3
+
+Released: 2023-07-13
+Included in: Uppy v3.12.0
+
+- @uppy/react: allow `id` from props (Merlijn Vos / #4570)
+
+## 3.1.0
+
+Released: 2023-01-26
+Included in: Uppy v3.4.0
+
+- @uppy/react: deprecate `useUppy` (Merlijn Vos / #4223)
+
 ## 3.0.2
 
 Released: 2022-09-25

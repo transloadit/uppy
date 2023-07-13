@@ -50,6 +50,8 @@ function updateEnv (env) {
 
 module.exports.setDefaultEnv = () => updateEnv(defaultEnv)
 
+module.exports.grantToken = 'fake token'
+
 module.exports.getServer = (extraEnv) => {
   const env = {
     ...defaultEnv,
@@ -62,13 +64,14 @@ module.exports.getServer = (extraEnv) => {
   // todo rewrite companion to not use global state
   // https://github.com/transloadit/uppy/issues/3284
   jest.resetModules()
+  // eslint-disable-next-line global-require
   const standalone = require('../src/standalone')
   const authServer = express()
 
   authServer.use(session({ secret: 'grant', resave: true, saveUninitialized: true }))
   authServer.all('*/callback', (req, res, next) => {
     req.session.grant = {
-      response: { access_token: 'fake token' },
+      response: { access_token: module.exports.grantToken },
     }
     next()
   })

@@ -1,5 +1,29 @@
 # @uppy/utils
 
+## 5.4.0
+
+Released: 2023-06-19
+Included in: Uppy v3.10.0
+
+- @uppy/companion,@uppy/core,@uppy/dashboard,@uppy/golden-retriever,@uppy/status-bar,@uppy/utils: Migrate all lodash' per-method-packages usage to lodash. (LinusMain / #4274)
+- @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/tus,@uppy/utils,@uppy/xhr-upload: When file is removed (or all are canceled), controller.abort queued requests (Artur Paikin / #4504)
+- @uppy/utils: rename `EventTracker` -> `EventManager` (Stephen Wooten / #4481)
+
+## 5.1.3
+
+Released: 2023-03-07
+Included in: Uppy v3.6.0
+
+- @uppy/utils: workaround chrome crash (Mikael Finstad / #4310)
+
+## 5.1.2
+
+Released: 2023-01-26
+Included in: Uppy v3.4.0
+
+- @uppy/utils: better fallbacks for the drag & drop API (Antoine du Hamel / #4260)
+- @uppy/utils: Fix getSpeed type (referenced `bytesTotal` instead of `uploadStarted`) (Pascal Wengerter / #4263)
+
 ## 5.1.1
 
 Released: 2022-11-16

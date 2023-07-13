@@ -23,7 +23,7 @@ exports.jsonStringify = (data) => {
     if (typeof value === 'object' && value !== null) {
       if (cache.indexOf(value) !== -1) {
         // Circular reference found, discard key
-        return
+        return undefined
       }
       cache.push(value)
     }
@@ -41,24 +41,28 @@ module.exports.getURLBuilder = (options) => {
   /**
    * Builds companion targeted url
    *
-   * @param {string} path the tail path of the url
+   * @param {string} subPath the tail path of the url
    * @param {boolean} isExternal if the url is for the external world
    * @param {boolean} [excludeHost] if the server domain and protocol should be included
    */
-  const buildURL = (path, isExternal, excludeHost) => {
-    let url = path
-    // supports for no path specified too
-    if (isExternal) {
-      url = `${options.server.implicitPath || ''}${url}`
+  const buildURL = (subPath, isExternal, excludeHost) => {
+    let path = ''
+
+    if (isExternal && options.server.implicitPath) {
+      path += options.server.implicitPath
     }
 
-    url = `${options.server.path || ''}${url}`
-
-    if (!excludeHost) {
-      url = `${options.server.protocol}://${options.server.host}${url}`
+    if (options.server.path) {
+      path += options.server.path
     }
 
-    return url
+    path += subPath
+
+    if (excludeHost) {
+      return path
+    }
+
+    return `${options.server.protocol}://${options.server.host}${path}`
   }
 
   return buildURL
@@ -90,8 +94,7 @@ function urlEncode (unencoded) {
 }
 
 function urlDecode (encoded) {
-  encoded = encoded.replace(/-/g, '+').replace(/_/g, '/').replace(/~/g, '=')
-  return encoded
+  return encoded.replace(/-/g, '+').replace(/_/g, '/').replace(/~/g, '=')
 }
 
 /**

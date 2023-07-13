@@ -51,7 +51,7 @@ class TransloaditAssembly extends Emitter {
   }
 
   connect () {
-    this.#connectServerEvent()
+    this.#connectServerSentEvents()
     this.#beginPolling()
   }
 
@@ -60,10 +60,15 @@ class TransloaditAssembly extends Emitter {
     this.close()
   }
 
-  #connectServerEvent () {
-    this.#sse = new EventSource(this.status.assembly_ssl_url)
+  #connectServerSentEvents () {
+    this.#sse = new EventSource(`${this.status.websocket_url}?assembly=${this.status.assembly_id}`)
 
     this.#sse.addEventListener('open', () => {
+      // if server side events works, we don't need websockets anymore (it's just a fallback)
+      if (this.socket) {
+        this.socket.disconnect()
+        this.socket = null
+      }
       clearInterval(this.pollInterval)
       this.pollInterval = null
     })
@@ -79,12 +84,6 @@ class TransloaditAssembly extends Emitter {
         this.#onFinished()
       }
 
-      if (e.data.startsWith('assembly_upload_finished:')) {
-        const file = JSON.parse(e.data.slice('assembly_upload_finished:'.length))
-        this.emit('upload', file)
-        this.status.uploads.push(file)
-      }
-
       if (e.data === 'assembly_uploading_finished') {
         this.emit('executing')
       }
@@ -93,24 +92,33 @@ class TransloaditAssembly extends Emitter {
         this.emit('metadata')
         this.#fetchStatus({ diff: false })
       }
+    })
 
-      if (e.data.startsWith('assembly_result_finished:')) {
-        const [stepName, result] = JSON.parse(e.data.slice('assembly_result_finished:'.length))
-        this.emit('result', stepName, result)
-        ;(this.status.results[stepName] ??= []).push(result)
-      }
+    this.#sse.addEventListener('assembly_upload_finished', (e) => {
+      const file = JSON.parse(e.data)
+      this.emit('upload', file)
+      this.status.uploads.push(file)
+    })
 
-      if (e.data === 'assembly_error') {
-        const err = null
-        this.#onError(err)
-        // Refetch for updated status code
-        this.#fetchStatus({ diff: false })
+    this.#sse.addEventListener('assembly_result_finished', (e) => {
+      const [stepName, result] = JSON.parse(e.data)
+      this.emit('result', stepName, result)
+      ;(this.status.results[stepName] ??= []).push(result)
+    })
+
+    this.#sse.addEventListener('assembly_error', (e) => {
+      try {
+        this.#onError(JSON.parse(e.data))
+      } catch {
+        this.#onError({ msg: e.data })
       }
+      // Refetch for updated status code
+      this.#fetchStatus({ diff: false })
     })
   }
 
-  #onError (err) {
-    this.emit('error', Object.assign(new Error(err.message), err))
+  #onError (status) {
+    this.emit('error', Object.assign(new Error(status.msg), status))
     this.close()
   }
 

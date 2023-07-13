@@ -1,6 +1,6 @@
 const Uploader = require('../Uploader')
 const logger = require('../logger')
-const { errorToResponse } = require('../provider/error')
+const { respondWithError } = require('../provider/error')
 
 const { ValidationError } = Uploader
 
@@ -36,11 +36,7 @@ async function startDownUpload ({ req, res, getSize, download, onUnhandledError 
       return
     }
 
-    const errResp = errorToResponse(err)
-    if (errResp) {
-      res.status(errResp.code).json({ message: errResp.message })
-      return
-    }
+    if (respondWithError(err, res)) return
 
     onUnhandledError(err)
   }

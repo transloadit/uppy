@@ -1,6 +1,5 @@
 import { h } from 'preact'
 import classNames from 'classnames'
-import throttle from 'lodash.throttle'
 import prettierBytes from '@transloadit/prettier-bytes'
 import prettyETA from '@uppy/utils/lib/prettyETA'
 
@@ -57,7 +56,7 @@ function RetryBtn (props) {
       type="button"
       className="uppy-u-reset uppy-c-btn uppy-StatusBar-actionBtn uppy-StatusBar-actionBtn--retry"
       aria-label={i18n('retryUpload')}
-      onClick={() => uppy.retryAll()}
+      onClick={() => uppy.retryAll().catch(() => { /* Error reported and handled via an event */ })}
       data-uppy-super-focusable
     >
       <svg
@@ -283,11 +282,6 @@ function UploadNewlyAddedFiles (props) {
   )
 }
 
-const ThrottledProgressDetails = throttle(ProgressDetails, 500, {
-  leading: true,
-  trailing: true,
-})
-
 function ProgressBarUploading (props) {
   const {
     i18n,
@@ -305,6 +299,7 @@ function ProgressBarUploading (props) {
     totalETA,
     startUpload,
   } = props
+
   const showUploadNewlyAddedFiles = newFiles && isUploadStarted
 
   if (!isUploadStarted || isAllComplete) {
@@ -317,7 +312,7 @@ function ProgressBarUploading (props) {
     if (!isAllPaused && !showUploadNewlyAddedFiles && showProgressDetails) {
       if (supportsUploadProgress) {
         return (
-          <ThrottledProgressDetails
+          <ProgressDetails
             numUploads={numUploads}
             complete={complete}
             totalUploadedSize={totalUploadedSize}
