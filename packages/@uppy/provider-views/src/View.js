@@ -52,6 +52,11 @@ export default class View {
       return
     }
 
+    if (error.cause?.name === 'AbortError') {
+      // Expected, user clicked “cancel”
+      return
+    }
+
     uppy.info({ message, details: error.toString() }, 'error', 5000)
   }
 
