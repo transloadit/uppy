@@ -13,6 +13,7 @@ const {
 
 const { createPresignedPost } = require('@aws-sdk/s3-presigned-post')
 const { getSignedUrl } = require('@aws-sdk/s3-request-presigner')
+const logger = require('../logger')
 
 function rfc2047Encode (data) {
   // eslint-disable-next-line no-param-reassign
@@ -22,12 +23,32 @@ function rfc2047Encode (data) {
   return `=?UTF-8?B?${Buffer.from(data).toString('base64')}?=` // We encode non-ASCII strings
 }
 
+function isValidBucket (bucket) {
+  return typeof bucket === 'string' && bucket !== ''
+}
+
+const ERROR_BAD_CONFIG = 'This Companion server does not support uploading to S3'
+const ERROR_BAD_BUCKET = 's3: bucket key must be a string or a function resolving the bucket string'
+
 module.exports = function s3 (config) {
   if (typeof config.acl !== 'string' && config.acl != null) {
     throw new TypeError('s3: The `acl` option must be a string or null')
   }
   if (typeof config.getKey !== 'function') {
     throw new TypeError('s3: The `getKey` option must be a function')
+  }
+
+  function getBucket (req) {
+    return typeof config.bucket === 'function' ? config.bucket(req) : config.bucket
+  }
+
+  function validateBucket (req, res) {
+    const bucket = getBucket(req)
+
+    if (isValidBucket(bucket)) return true
+    logger.error(ERROR_BAD_BUCKET)
+    res.status(400).json({ error: ERROR_BAD_CONFIG })
+    return false
   }
 
   /**
@@ -51,8 +72,10 @@ module.exports = function s3 (config) {
      */
     const client = req.companion.s3Client
 
-    if (!client || typeof config.bucket !== 'string') {
-      res.status(400).json({ error: 'This Companion server does not support uploading to S3' })
+    const bucket = getBucket(req)
+
+    if (!client || !isValidBucket(bucket)) {
+      res.status(400).json({ error: ERROR_BAD_CONFIG })
       return
     }
 
@@ -75,7 +98,7 @@ module.exports = function s3 (config) {
     })
 
     createPresignedPost(client, {
-      Bucket: config.bucket,
+      Bucket: bucket,
       Expires: config.expires,
       Fields: fields,
       Conditions: config.conditions,
@@ -119,9 +142,11 @@ module.exports = function s3 (config) {
       res.status(400).json({ error: 's3: content type must be a string' })
       return
     }
+    const bucket = getBucket(req)
+    if (!validateBucket(req, res)) return
 
     const params = {
-      Bucket: config.bucket,
+      Bucket: bucket,
       Key: key,
       ContentType: type,
       Metadata: Object.fromEntries(Object.entries(metadata).map(entry => entry.map(rfc2047Encode))),
@@ -163,11 +188,14 @@ module.exports = function s3 (config) {
       return
     }
 
+    const bucket = getBucket(req)
+    if (!validateBucket(req, res)) return
+
     const parts = []
 
     function listPartsPage (startAt) {
       client.send(new ListPartsCommand({
-        Bucket: config.bucket,
+        Bucket: bucket,
         Key: key,
         UploadId: uploadId,
         PartNumberMarker: startAt,
@@ -213,8 +241,11 @@ module.exports = function s3 (config) {
       return
     }
 
+    const bucket = getBucket(req)
+    if (!validateBucket(req, res)) return
+
     getSignedUrl(client, new UploadPartCommand({
-      Bucket: config.bucket,
+      Bucket: bucket,
       Key: key,
       UploadId: uploadId,
       PartNumber: partNumber,
@@ -261,10 +292,13 @@ module.exports = function s3 (config) {
       return
     }
 
+    const bucket = getBucket(req)
+    if (!validateBucket(req, res)) return
+
     Promise.all(
       partNumbersArray.map((partNumber) => {
         return getSignedUrl(client, new UploadPartCommand({
-          Bucket: config.bucket,
+          Bucket: bucket,
           Key: key,
           UploadId: uploadId,
           PartNumber: Number(partNumber),
@@ -302,9 +336,11 @@ module.exports = function s3 (config) {
       res.status(400).json({ error: 's3: the object key must be passed as a query parameter. For example: "?key=abc.jpg"' })
       return
     }
+    const bucket = getBucket(req)
+    if (!validateBucket(req, res)) return
 
     client.send(new AbortMultipartUploadCommand({
-      Bucket: config.bucket,
+      Bucket: bucket,
       Key: key,
       UploadId: uploadId,
     })).then(() => res.json({}), next)
@@ -343,8 +379,11 @@ module.exports = function s3 (config) {
       return
     }
 
+    const bucket = getBucket(req)
+    if (!validateBucket(req, res)) return
+
     client.send(new CompleteMultipartUploadCommand({
-      Bucket: config.bucket,
+      Bucket: bucket,
       Key: key,
       UploadId: uploadId,
       MultipartUpload: {
