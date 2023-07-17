@@ -7,7 +7,7 @@ import AwsS3 from '..'
   uppy.use(AwsS3, {
     getUploadParameters (file) {
       expectType<UppyFile>(file)
-      return { method: 'POST', url: '', fields: null, headers: {} }
+      return { method: 'POST', url: '', fields: {}, headers: {} }
     },
   })
 }
