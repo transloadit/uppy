@@ -1,4 +1,4 @@
-import type { BasePlugin, UppyFile } from '@uppy/core'
+import type { BasePlugin, PluginOptions, UppyFile } from '@uppy/core'
 
 type MaybePromise<T> = T | Promise<T>
 
@@ -22,8 +22,7 @@ export interface AwsS3STSResponse {
   region: string
 }
 
-export interface AwsS3MultipartOptions {
-    id?: string
+export interface AwsS3MultipartOptions extends PluginOptions {
     companionHeaders?: { [type: string]: string }
     companionUrl?: string
     companionCookiesRule?: string

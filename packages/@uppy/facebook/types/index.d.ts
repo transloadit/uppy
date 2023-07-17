@@ -1,12 +1,12 @@
-import type { PluginOptions, UIPlugin, PluginTarget } from '@uppy/core'
+import type { PluginTarget, UIPlugin, UIPluginOptions } from '@uppy/core'
 import type { PublicProviderOptions, TokenStorage } from '@uppy/companion-client'
 
-export interface FacebookOptions extends PluginOptions, PublicProviderOptions {
+export interface FacebookOptions extends UIPluginOptions, PublicProviderOptions {
     target?: PluginTarget
     title?: string
     storage?: TokenStorage
 }
 
-declare class Facebook extends UIPlugin<FacebookOptions> {}
+declare class Facebook extends UIPlugin<FacebookOptions> { }
 
 export default Facebook

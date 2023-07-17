@@ -1,4 +1,4 @@
-import type { BasePlugin, Locale, UppyFile } from '@uppy/core'
+import type { BasePlugin, Locale, PluginOptions, UppyFile } from '@uppy/core'
 
 type MaybePromise<T> = T | Promise<T>
 
@@ -9,16 +9,15 @@ export interface AwsS3UploadParameters {
     headers?: { [type: string]: string }
 }
 
-export interface AwsS3Options {
-    id?: string
+export interface AwsS3Options extends PluginOptions {
     companionUrl?: string | null
     companionHeaders?: Record<string, string>
     allowedMetaFields?: Array<string> | null
     getUploadParameters?: (file: UppyFile) => MaybePromise<{
-      method: 'PUT' | 'POST'
+      method?: 'PUT' | 'POST' // defaults to POST
       url: string
-      fields: Record<string, string> | null
-      headers: Record<string, string>
+      fields?: Record<string, string>
+      headers?: Record<string, string>
     }>
     limit?: number
     getResponseData?: (responseText: string, response: XMLHttpRequest) => void

@@ -1,6 +1,6 @@
-import type { PluginOptions, UIPlugin } from '@uppy/core'
+import type { UIPlugin, UIPluginOptions } from '@uppy/core'
 
-type ReduxDevToolsOptions = PluginOptions
+type ReduxDevToolsOptions = UIPluginOptions
 
 declare class ReduxDevTools extends UIPlugin<ReduxDevToolsOptions> {}
 
