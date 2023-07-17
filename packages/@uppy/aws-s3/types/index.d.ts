@@ -14,9 +14,13 @@ export interface AwsS3Options extends PluginOptions {
     companionHeaders?: Record<string, string>
     allowedMetaFields?: Array<string> | null
     getUploadParameters?: (file: UppyFile) => MaybePromise<{
-      method?: 'PUT' | 'POST' // defaults to POST
+      method?: 'POST'
       url: string
       fields?: Record<string, string>
+      headers?: Record<string, string>
+    } | {
+      method: 'PUT'
+      url: string
       headers?: Record<string, string>
     }>
     limit?: number
