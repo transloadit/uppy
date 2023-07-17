@@ -1,5 +1,12 @@
 # @uppy/status-bar
 
+## 3.2.2
+
+Released: 2023-07-13
+Included in: Uppy v3.12.0
+
+- @uppy/status-bar: listen to `upload` event instead of button click (Antoine du Hamel / #4563)
+
 ## 3.2.1
 
 Released: 2023-07-06

@@ -1,5 +1,13 @@
 # @uppy/provider-views
 
+## 3.4.0
+
+Released: 2023-07-13
+Included in: Uppy v3.12.0
+
+- @uppy/provider-views: add support for remote file paths (Mikael Finstad / #4537)
+- @uppy/box,@uppy/companion,@uppy/dropbox,@uppy/google-drive,@uppy/onedrive,@uppy/provider-views: Load Google Drive / OneDrive lists 5-10x faster & always load all files (Merlijn Vos / #4513)
+
 ## 3.3.1
 
 Released: 2023-06-19
