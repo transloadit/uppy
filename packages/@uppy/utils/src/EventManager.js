@@ -22,20 +22,20 @@ export default class EventManager {
     }
   }
 
-  /**
-   * @param {string} fileID
-   * @param {function(string): void} cb
-   */
+  onFilePause (fileID, cb) {
+    this.on('upload-pause', (targetFileID, isPaused) => {
+      if (fileID === targetFileID) {
+        cb(isPaused)
+      }
+    })
+  }
+
   onFileRemove (fileID, cb) {
     this.on('file-removed', (file) => {
       if (fileID === file.id) cb(file.id)
     })
   }
 
-  /**
-   * @param {string} fileID
-   * @param {function(boolean): void} cb
-   */
   onPause (fileID, cb) {
     this.on('upload-pause', (targetFileID, isPaused) => {
       if (fileID === targetFileID) {
@@ -45,10 +45,6 @@ export default class EventManager {
     })
   }
 
-  /**
-   * @param {string} fileID
-   * @param {function(): void} cb
-   */
   onRetry (fileID, cb) {
     this.on('upload-retry', (targetFileID) => {
       if (fileID === targetFileID) {
@@ -57,10 +53,6 @@ export default class EventManager {
     })
   }
 
-  /**
-   * @param {string} fileID
-   * @param {function(): void} cb
-   */
   onRetryAll (fileID, cb) {
     this.on('retry-all', () => {
       if (!this.#uppy.getFile(fileID)) return
@@ -68,10 +60,6 @@ export default class EventManager {
     })
   }
 
-  /**
-   * @param {string} fileID
-   * @param {function(): void} cb
-   */
   onPauseAll (fileID, cb) {
     this.on('pause-all', () => {
       if (!this.#uppy.getFile(fileID)) return
@@ -79,10 +67,6 @@ export default class EventManager {
     })
   }
 
-  /**
-   * @param {string} fileID
-   * @param {function(): void} eventHandler
-   */
   onCancelAll (fileID, eventHandler) {
     this.on('cancel-all', (...args) => {
       if (!this.#uppy.getFile(fileID)) return
@@ -90,10 +74,6 @@ export default class EventManager {
     })
   }
 
-  /**
-   * @param {string} fileID
-   * @param {function(): void} cb
-   */
   onResumeAll (fileID, cb) {
     this.on('resume-all', () => {
       if (!this.#uppy.getFile(fileID)) return
