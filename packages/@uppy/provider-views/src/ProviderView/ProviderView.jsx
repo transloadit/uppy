@@ -95,11 +95,11 @@ export default class ProviderView extends View {
     // Nothing.
   }
 
-  #abortController = undefined
+  #abortController
 
   async #withAbort (op) {
     // prevent multiple requests in parallel from causing race conditions
-    if (this.#abortController != null) this.#abortController.abort()
+    this.#abortController?.abort()
     const abortController = new AbortController()
     this.#abortController = abortController
     const cancelRequest = () => {
