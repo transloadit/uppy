@@ -256,9 +256,9 @@ export default class StatusBar extends UIPlugin {
     this.uppy.on('upload', this.#onUploadStart)
 
     // To cover the use case where the status bar is installed while the upload
-    // has started, we call `onUploadStart` right away.
-    this.#onUploadStart()
-    this.#previousUploadedBytes = Object.values(this.uppy.getState().files)
+    // has started, we set `lastUpdateTime` right away.
+    this.#lastUpdateTime = performance.now()
+    this.#previousUploadedBytes = this.uppy.getFiles()
       .reduce((pv, file) => pv + file.progress.bytesUploaded, 0)
   }
 
