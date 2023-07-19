@@ -1,7 +1,7 @@
 const zh_TW = {
   pluralize () {
-      return 0
-  }
+    return 0
+  },
 }
 
 zh_TW.strings = {
