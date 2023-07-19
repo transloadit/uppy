@@ -318,7 +318,8 @@ class HTTPCommunicationQueue {
           if (alreadyUploadedInfo == null) {
             return this.uploadChunk(file, partNumber, chunk, signal)
           }
-          chunk.setAsUploaded?.()
+          // Already uploaded chunks are set to null. If we are restoring the upload, we need to mark it as already uploaded.
+          chunk?.setAsUploaded?.()
           return { PartNumber: partNumber, ETag: alreadyUploadedInfo.ETag }
         }),
     )

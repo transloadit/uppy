@@ -49,15 +49,16 @@ function createCanonicalRequest ({
   ].join('\n')
 }
 
-const { subtle } = globalThis.crypto
 const ec = new TextEncoder()
 const algorithm = { name: 'HMAC', hash: 'SHA-256' }
 
 async function digest (data) {
+  const { subtle } = globalThis.crypto
   return subtle.digest(algorithm.hash, ec.encode(data))
 }
 
 async function generateHmacKey (secret) {
+  const { subtle } = globalThis.crypto
   return subtle.importKey('raw', typeof secret === 'string' ? ec.encode(secret) : secret, algorithm, false, ['sign'])
 }
 
@@ -71,6 +72,7 @@ function arrayBufferToHexString (arrayBuffer) {
 }
 
 async function hash (key, data) {
+  const { subtle } = globalThis.crypto
   return subtle.sign(algorithm, await generateHmacKey(key), ec.encode(data))
 }
 
