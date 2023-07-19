@@ -401,3 +401,7 @@ If you’re using some kind of more abstract file format (like Svelte), then you
 ```
 
 Then, add this script to the `build:js` script. Try running the `build:js` script and make sure it does not error. It may also be of use to make sure that global dependencies aren’t being used (ex. not having rollup locally and relying on a global install), as these dependencies won’t be present on the machine’s handling building.
+
+## I18n and locales
+
+For more information about how to contribute to translations, [see this page](https://uppy.io/docs/locales/#contributing-a-new-language)
