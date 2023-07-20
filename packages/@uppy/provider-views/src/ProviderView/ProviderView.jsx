@@ -131,10 +131,10 @@ export default class ProviderView extends View {
     }
   }
 
-  async #listFilesAndFolders ({ requestPath, breadcrumbs, signal }) {
+  async #listFilesAndFolders ({ breadcrumbs, signal }) {
     const absDirPath = formatBreadcrumbs(breadcrumbs)
 
-    const { items, nextPagePath } = await this.#list({ requestPath, absDirPath, signal })
+    const { items, nextPagePath } = await this.#list({ requestPath: this.nextPagePath, absDirPath, signal })
 
     this.nextPagePath = nextPagePath
 
@@ -179,11 +179,12 @@ export default class ProviderView extends View {
           breadcrumbs = [...breadcrumbs, { requestPath, name }]
         }
 
+        this.nextPagePath = requestPath
         let files = []
         let folders = []
         do {
           const { files: newFiles, folders: newFolders } = await this.#listFilesAndFolders({
-            requestPath, breadcrumbs, signal,
+            breadcrumbs, signal,
           })
 
           files = files.concat(newFiles)
@@ -295,9 +296,7 @@ export default class ProviderView extends View {
   }
 
   async handleScroll (event) {
-    const requestPath = this.nextPagePath || null
-
-    if (this.shouldHandleScroll(event) && requestPath) {
+    if (this.shouldHandleScroll(event) && this.nextPagePath) {
       this.isHandlingScroll = true
 
       try {
@@ -305,7 +304,7 @@ export default class ProviderView extends View {
           const { files, folders, breadcrumbs } = this.plugin.getPluginState()
 
           const { files: newFiles, folders: newFolders } = await this.#listFilesAndFolders({
-            requestPath, breadcrumbs, signal,
+            breadcrumbs, signal,
           })
 
           const combinedFiles = files.concat(newFiles)
