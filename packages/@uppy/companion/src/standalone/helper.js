@@ -148,7 +148,18 @@ const getConfigFromEnv = () => {
     redisPubSubScope: process.env.COMPANION_REDIS_PUBSUB_SCOPE,
     // adding redisOptions to keep all companion options easily visible
     //  redisOptions refers to https://www.npmjs.com/package/redis#options-object-properties
-    redisOptions: {},
+    redisOptions: (() => {
+      try {
+        if (!process.env.COMPANION_REDIS_OPTIONS) {
+          return undefined
+        }
+        const obj = JSON.parse(process.env.COMPANION_REDIS_OPTIONS)
+        return obj
+      } catch (e) {
+        console.warn('COMPANION_REDIS_OPTIONS parse error', e)
+      }
+      return undefined
+    })(),
     sendSelfEndpoint: process.env.COMPANION_SELF_ENDPOINT,
     uploadUrls: uploadUrls ? uploadUrls.split(',') : null,
     secret: getSecret('COMPANION_SECRET'),
