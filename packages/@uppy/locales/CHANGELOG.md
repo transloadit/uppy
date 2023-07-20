@@ -1,5 +1,12 @@
 # @uppy/locales
 
+## 3.2.4
+
+Released: 2023-07-20
+Included in: Uppy v3.13.0
+
+- @uppy/locales: update zh_TW translation (5idereal / #4583)
+
 ## 3.2.3
 
 Released: 2023-07-13
