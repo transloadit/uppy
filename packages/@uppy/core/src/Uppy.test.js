@@ -702,6 +702,29 @@ describe('src/Core', () => {
       expect(onBeforeFileAdded.mock.calls[0][1]).toEqual({})
     })
 
+    it('should allow uploading duplicate file if explicitly allowed in onBeforeFileAdded', async () => {
+      const core = new Core({ onBeforeFileAdded: () => true })
+      const sameFileBlob = new File([sampleImage], { type: 'image/jpeg' })
+
+      core.addFile({
+        source: 'jest',
+        name: 'foo.jpg',
+        type: 'image/jpeg',
+        data: sameFileBlob,
+      })
+
+      await core.upload()
+
+      expect(() => {
+        core.addFile({
+          source: 'jest',
+          name: 'foo.jpg',
+          type: 'image/jpeg',
+          data: sameFileBlob,
+        })
+      }).not.toThrow()
+    })
+
     it('should add a file', () => {
       const fileData = new File([sampleImage], { type: 'image/jpeg' })
       const fileAddedEventMock = jest.fn()
