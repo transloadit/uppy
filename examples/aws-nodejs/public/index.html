@@ -68,8 +68,8 @@
              * you don't need to implement it.
              */
             async getUploadParameters (file, options) {
-              if (typeof crypto.subtle === 'object') {
-                // If WebCrypto, let's do signing from the client.
+              if (typeof crypto?.subtle === 'object') {
+                // If WebCrypto is available, let's do signing from the client.
                 return uppy.getPlugin('myAWSPlugin').createSignedURL(file, options)
               }
 
