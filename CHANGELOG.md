@@ -12,6 +12,30 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 3.13.0
+
+Released: 2023-07-20
+
+| Package                | Version | Package                | Version |
+| ---------------------- | ------- | ---------------------- | ------- |
+| @uppy/aws-s3-multipart |   3.5.1 | @uppy/provider-views   |   3.4.1 |
+| @uppy/companion-client |   3.2.2 | @uppy/status-bar       |   3.2.3 |
+| @uppy/dashboard        |   3.5.0 | @uppy/utils            |   5.4.2 |
+| @uppy/locales          |   3.2.4 | uppy                   |  3.13.0 |
+
+- meta: Add i18n to CONTRIBUTING.md (Mikael Finstad / #4591)
+- @uppy/provider-views: Add VirtualList to ProviderView (Merlijn Vos / #4566)
+- @uppy/provider-views: fix race conditions with folder loading (Mikael Finstad / #4578)
+- @uppy/status-bar: fix ETA when status bar is installed during upload (Antoine du Hamel / #4588)
+- @uppy/provider-views: fix infinite folder loading  (Mikael Finstad / #4590)
+- meta: examples/aws: client-side signing (Antoine du Hamel / #4463)
+- meta: Bump word-wrap from 1.2.3 to 1.2.4 (dependabot[bot] / #4586)
+- meta: e2e: increase `requestTimeout` to 16s (Antoine du Hamel / #4587)
+- @uppy/locales: update zh_TW translation (5idereal / #4583)
+- @uppy/aws-s3-multipart: fix crash on pause/resume (Merlijn Vos / #4581)
+- @uppy/aws-s3-multipart: do not access `globalThis.crypto` on the top-level (Bryan J Swift / #4584)
+
+
 ## 3.12.0
 
 Released: 2023-07-13

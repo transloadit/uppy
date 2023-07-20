@@ -1,5 +1,12 @@
 # @uppy/status-bar
 
+## 3.2.3
+
+Released: 2023-07-20
+Included in: Uppy v3.13.0
+
+- @uppy/status-bar: fix ETA when status bar is installed during upload (Antoine du Hamel / #4588)
+
 ## 3.2.2
 
 Released: 2023-07-13
