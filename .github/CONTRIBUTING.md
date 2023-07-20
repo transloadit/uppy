@@ -404,4 +404,4 @@ Then, add this script to the `build:js` script. Try running the `build:js` scrip
 
 ## I18n and locales
 
-For more information about how to contribute to translations, [see this page](https://uppy.io/docs/locales/#contributing-a-new-language)
+For more information about how to contribute to translations, see [the `@uppy/locales` contributing guide](https://uppy.io/docs/locales/#contributing-a-new-language).
