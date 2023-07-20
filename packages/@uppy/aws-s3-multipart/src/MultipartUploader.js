@@ -136,6 +136,7 @@ class MultipartUploader {
           // setAsUploaded is called by listPart, to keep up-to-date the
           // quantity of data that is left to actually upload.
           this.#chunks[j].setAsUploaded = () => {
+            this.#chunks[j] = null
             this.#chunkState[j].uploaded = size
           }
         }
