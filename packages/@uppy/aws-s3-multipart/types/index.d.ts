@@ -43,7 +43,7 @@ export interface AwsS3MultipartOptions extends PluginOptions {
     prepareUploadParts?: (
       file: UppyFile,
       partData: { uploadId: string; key: string; parts: [{ number: number, chunk: Blob }] }
-    ) => MaybePromise<{ presignedUrls: { [k: number]: string }, headers?: Record<number, Record<string, string>> }>
+    ) => MaybePromise<{ presignedUrls: Record<number, string>, headers?: Record<number, Record<string, string>> }>
     abortMultipartUpload?: (
       file: UppyFile,
       opts: { uploadId: string; key: string }
