@@ -474,6 +474,7 @@ export default class ProviderView extends View {
       username: this.username,
       getNextFolder: this.getNextFolder,
       getFolder: this.getFolder,
+      loadAllFiles: this.opts.loadAllFiles,
 
       // For SearchFilterInput component
       showSearchFilter: targetViewOptions.showFilter,

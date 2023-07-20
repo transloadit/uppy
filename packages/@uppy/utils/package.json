@@ -64,10 +64,12 @@
     "./lib/getDroppedFiles": "./lib/getDroppedFiles/index.js",
     "./lib/FOCUSABLE_ELEMENTS.js": "./lib/FOCUSABLE_ELEMENTS.js",
     "./lib/fileFilters": "./lib/fileFilters.js",
+    "./lib/VirtualList": "./lib/VirtualList.js",
     "./src/microtip.scss": "./src/microtip.scss"
   },
   "dependencies": {
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "preact": "^10.16.0"
   },
   "devDependencies": {
     "@jest/globals": "^29.0.0"

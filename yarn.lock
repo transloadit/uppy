@@ -11592,6 +11592,7 @@ __metadata:
   dependencies:
     "@jest/globals": ^29.0.0
     lodash: ^4.17.21
+    preact: ^10.16.0
   languageName: unknown
   linkType: soft
 
