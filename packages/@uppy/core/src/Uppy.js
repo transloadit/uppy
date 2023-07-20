@@ -547,7 +547,6 @@ class Uppy {
           this.log(`Replaced the blob in the restored ghost file: ${newFile.name}, ${newFile.id}`)
         }
 
-        console.log('HELLO')
         const onBeforeFileAddedResult = this.opts.onBeforeFileAdded(newFile, nextFilesState)
 
         if (!onBeforeFileAddedResult && this.checkIfFileAlreadyExists(newFile.id)) {
