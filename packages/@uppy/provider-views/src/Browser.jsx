@@ -100,7 +100,6 @@ function Browser (props) {
   } = props
 
   const selected = currentSelection.length
-  const rowHeight = 35
 
   const rows = useMemo(() => [...folders, ...files], [folders, files])
 
@@ -154,27 +153,28 @@ function Browser (props) {
         if (loadAllFiles) {
           return (
             <div className="uppy-ProviderBrowser-body">
-              <VirtualList
-                role="list"
-                data={rows}
-                renderRow={(f) => (
-                  <ListItem
-                    currentSelection={currentSelection}
-                    uppyFiles={uppyFiles}
-                    viewType={viewType}
-                    isChecked={isChecked}
-                    toggleCheckbox={toggleCheckbox}
-                    recordShiftKeyPress={recordShiftKeyPress}
-                    showTitles={showTitles}
-                    i18n={i18n}
-                    validateRestrictions={validateRestrictions}
-                    getNextFolder={getNextFolder}
-                    columns={columns}
-                    f={f}
-                  />
-                )}
-                rowHeight={rowHeight}
-              />
+              <ul className="uppy-ProviderBrowser-list">
+                <VirtualList
+                  data={rows}
+                  renderRow={(f) => (
+                    <ListItem
+                      currentSelection={currentSelection}
+                      uppyFiles={uppyFiles}
+                      viewType={viewType}
+                      isChecked={isChecked}
+                      toggleCheckbox={toggleCheckbox}
+                      recordShiftKeyPress={recordShiftKeyPress}
+                      showTitles={showTitles}
+                      i18n={i18n}
+                      validateRestrictions={validateRestrictions}
+                      getNextFolder={getNextFolder}
+                      columns={columns}
+                      f={f}
+                    />
+                  )}
+                  rowHeight={31}
+                />
+              </ul>
             </div>
           )
         }
