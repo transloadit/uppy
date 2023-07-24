@@ -1,5 +1,13 @@
 # @uppy/transloadit
 
+## 3.2.0
+
+Released: 2023-07-13
+Included in: Uppy v3.12.0
+
+- @uppy/transloadit: fix error message (Antoine du Hamel / #4572)
+- @uppy/transloadit: implement Server-sent event API (Antoine du Hamel / #4098)
+
 ## 3.1.6
 
 Released: 2023-06-19

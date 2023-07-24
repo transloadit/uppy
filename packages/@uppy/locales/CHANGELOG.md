@@ -1,5 +1,20 @@
 # @uppy/locales
 
+## 3.2.4
+
+Released: 2023-07-20
+Included in: Uppy v3.13.0
+
+- @uppy/locales: update zh_TW translation (5idereal / #4583)
+
+## 3.2.3
+
+Released: 2023-07-13
+Included in: Uppy v3.12.0
+
+- @uppy/locales: fix expression and spelling errors in es_ES (Rubén / #4567)
+- @uppy/locales: Add missing pt-BR locales for ImageEditor plugin (Mateus Cruz / #4558)
+
 ## 3.2.2
 
 Released: 2023-06-19

@@ -12,6 +12,62 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 3.13.0
+
+Released: 2023-07-20
+
+| Package                | Version | Package                | Version |
+| ---------------------- | ------- | ---------------------- | ------- |
+| @uppy/aws-s3-multipart |   3.5.1 | @uppy/provider-views   |   3.4.1 |
+| @uppy/companion-client |   3.2.2 | @uppy/status-bar       |   3.2.3 |
+| @uppy/dashboard        |   3.5.0 | @uppy/utils            |   5.4.2 |
+| @uppy/locales          |   3.2.4 | uppy                   |  3.13.0 |
+
+- meta: Add i18n to CONTRIBUTING.md (Mikael Finstad / #4591)
+- @uppy/provider-views: Add VirtualList to ProviderView (Merlijn Vos / #4566)
+- @uppy/provider-views: fix race conditions with folder loading (Mikael Finstad / #4578)
+- @uppy/status-bar: fix ETA when status bar is installed during upload (Antoine du Hamel / #4588)
+- @uppy/provider-views: fix infinite folder loading  (Mikael Finstad / #4590)
+- meta: examples/aws: client-side signing (Antoine du Hamel / #4463)
+- meta: Bump word-wrap from 1.2.3 to 1.2.4 (dependabot[bot] / #4586)
+- meta: e2e: increase `requestTimeout` to 16s (Antoine du Hamel / #4587)
+- @uppy/locales: update zh_TW translation (5idereal / #4583)
+- @uppy/aws-s3-multipart: fix crash on pause/resume (Merlijn Vos / #4581)
+- @uppy/aws-s3-multipart: do not access `globalThis.crypto` on the top-level (Bryan J Swift / #4584)
+
+
+## 3.12.0
+
+Released: 2023-07-13
+
+| Package                | Version | Package                | Version |
+| ---------------------- | ------- | ---------------------- | ------- |
+| @uppy/aws-s3-multipart |   3.5.0 | @uppy/locales          |   3.2.3 |
+| @uppy/box              |   2.1.2 | @uppy/onedrive         |   3.1.2 |
+| @uppy/companion        |   4.7.0 | @uppy/provider-views   |   3.4.0 |
+| @uppy/companion-client |   3.2.1 | @uppy/react            |   3.1.3 |
+| @uppy/core             |   3.3.1 | @uppy/status-bar       |   3.2.2 |
+| @uppy/dashboard        |   3.4.2 | @uppy/transloadit      |   3.2.0 |
+| @uppy/dropbox          |   3.1.2 | @uppy/utils            |   5.4.1 |
+| @uppy/google-drive     |   3.2.0 | uppy                   |  3.12.0 |
+
+- @uppy/transloadit: fix error message (Antoine du Hamel / #4572)
+- @uppy/provider-views: add support for remote file paths (Mikael Finstad / #4537)
+- @uppy/transloadit: implement Server-sent event API (Antoine du Hamel / #4098)
+- @uppy/aws-s3-multipart: add support for signing on the client (Antoine du Hamel / #4519)
+- @uppy/react: allow `id` from props (Merlijn Vos / #4570)
+- @uppy/aws-s3-multipart: fix lint warning (Antoine du Hamel / #4569)
+- @uppy/status-bar: listen to `upload` event instead of button click (Antoine du Hamel / #4563)
+- @uppy/aws-s3-multipart: fix support for non-multipart PUT upload (Antoine du Hamel / #4568)
+- @uppy/companion: fix esm imports in production/transpiled builds (Dominik Schmidt / #4561)
+- @uppy/locales: fix expression and spelling errors in es_ES (Rubén / #4567)
+- meta: upgrade dev dependencies (dependabot\[bot\])
+- meta: Don't use triage label (Artur Paikin / #4552)
+- meta: update Cypress (Antoine du Hamel / #4562)
+- @uppy/box,@uppy/companion,@uppy/dropbox,@uppy/google-drive,@uppy/onedrive,@uppy/provider-views: Load Google Drive / OneDrive lists 5-10x faster & always load all files (Merlijn Vos / #4513)
+- @uppy/locales: Add missing pt-BR locales for ImageEditor plugin (Mateus Cruz / #4558)
+
+
 ## 3.11.0
 
 Released: 2023-07-06

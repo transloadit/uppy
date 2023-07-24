@@ -135,8 +135,8 @@ export default class Provider extends RequestClient {
     return this.get(`${this.id}/list/${directory || ''}`, options)
   }
 
-  async logout () {
-    const response = await this.get(`${this.id}/logout`)
+  async logout (options) {
+    const response = await this.get(`${this.id}/logout`, options)
     await this.#removeAuthToken()
     return response
   }

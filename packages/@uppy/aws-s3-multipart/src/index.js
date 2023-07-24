@@ -84,9 +84,12 @@ class HTTPCommunicationQueue {
 
   #uploadPartBytes
 
-  constructor (requests, options, setS3MultipartState) {
+  #getFile
+
+  constructor (requests, options, setS3MultipartState, getFile) {
     this.#requests = requests
     this.#setS3MultipartState = setS3MultipartState
+    this.#getFile = getFile
     this.setOptions(options)
   }
 
@@ -195,7 +198,7 @@ class HTTPCommunicationQueue {
       }
     }
 
-    const promise = this.#createMultipartUpload(file, signal)
+    const promise = this.#createMultipartUpload(this.#getFile(file), signal)
 
     const abortPromise = () => {
       promise.abort(signal.reason)
@@ -233,7 +236,7 @@ class HTTPCommunicationQueue {
       // If the cached result rejects, there's nothing to abort.
       return
     }
-    await this.#abortMultipartUpload(file, awaitedResult)
+    await this.#abortMultipartUpload(this.#getFile(file), awaitedResult)
   }
 
   async #nonMultipartUpload (file, chunk, signal) {
@@ -242,7 +245,7 @@ class HTTPCommunicationQueue {
       url,
       fields,
       headers,
-    } = await this.#getUploadParameters(file, { signal }).abortOn(signal)
+    } = await this.#getUploadParameters(this.#getFile(file), { signal }).abortOn(signal)
 
     let body
     const data = chunk.getData()
@@ -283,7 +286,10 @@ class HTTPCommunicationQueue {
     try {
       const parts = await Promise.all(chunks.map((chunk, i) => this.uploadChunk(file, i + 1, chunk, signal)))
       throwIfAborted(signal)
-      return await this.#sendCompletionRequest(file, { key, uploadId, parts, signal }).abortOn(signal)
+      return await this.#sendCompletionRequest(
+        this.#getFile(file),
+        { key, uploadId, parts, signal },
+      ).abortOn(signal)
     } catch (err) {
       if (err?.cause !== pausingUploadReason && err?.name !== 'AbortError') {
         // We purposefully don't wait for the promise and ignore its status,
@@ -306,7 +312,10 @@ class HTTPCommunicationQueue {
     }
     const { uploadId, key } = await this.getUploadId(file, signal)
     throwIfAborted(signal)
-    const alreadyUploadedParts = await this.#listParts(file, { uploadId, key, signal }).abortOn(signal)
+    const alreadyUploadedParts = await this.#listParts(
+      this.#getFile(file),
+      { uploadId, key, signal },
+    ).abortOn(signal)
     throwIfAborted(signal)
     const parts = await Promise.all(
       chunks
@@ -316,12 +325,16 @@ class HTTPCommunicationQueue {
           if (alreadyUploadedInfo == null) {
             return this.uploadChunk(file, partNumber, chunk, signal)
           }
-          chunk.setAsUploaded?.()
+          // Already uploaded chunks are set to null. If we are restoring the upload, we need to mark it as already uploaded.
+          chunk?.setAsUploaded?.()
           return { PartNumber: partNumber, ETag: alreadyUploadedInfo.ETag }
         }),
     )
     throwIfAborted(signal)
-    return this.#sendCompletionRequest(file, { key, uploadId, parts, signal }).abortOn(signal)
+    return this.#sendCompletionRequest(
+      this.#getFile(file),
+      { key, uploadId, parts, signal },
+    ).abortOn(signal)
   }
 
   /**
@@ -340,7 +353,7 @@ class HTTPCommunicationQueue {
       const chunkData = chunk.getData()
       const { onProgress, onComplete } = chunk
 
-      const signature = await this.#fetchSignature(file, {
+      const signature = await this.#fetchSignature(this.#getFile(file), {
         uploadId, key, partNumber, body: chunkData, signal,
       }).abortOn(signal)
 
@@ -410,7 +423,12 @@ export default class AwsS3Multipart extends BasePlugin {
      * @type {RateLimitedQueue}
      */
     this.requests = this.opts.rateLimitedQueue ?? new RateLimitedQueue(this.opts.limit)
-    this.#companionCommunicationQueue = new HTTPCommunicationQueue(this.requests, this.opts, this.#setS3MultipartState)
+    this.#companionCommunicationQueue = new HTTPCommunicationQueue(
+      this.requests,
+      this.opts,
+      this.#setS3MultipartState,
+      this.#getFile,
+    )
 
     this.uploaders = Object.create(null)
     this.uploaderEvents = Object.create(null)
@@ -670,6 +688,11 @@ export default class AwsS3Multipart extends BasePlugin {
 
   #setS3MultipartState = (file, { key, uploadId }) => {
     const cFile = this.uppy.getFile(file.id)
+    if (cFile == null) {
+      // file was removed from store
+      return
+    }
+
     this.uppy.setFileState(file.id, {
       s3Multipart: {
         ...cFile.s3Multipart,
@@ -679,10 +702,12 @@ export default class AwsS3Multipart extends BasePlugin {
     })
   }
 
+  #getFile = (file) => {
+    return this.uppy.getFile(file.id) || file
+  }
+
   #uploadLocalFile (file) {
     return new Promise((resolve, reject) => {
-      const getFile = () => this.uppy.getFile(file.id) || file
-
       const onProgress = (bytesUploaded, bytesTotal) => {
         this.uppy.emit('upload-progress', file, {
           uploader: this,
@@ -709,7 +734,7 @@ export default class AwsS3Multipart extends BasePlugin {
 
         this.resetUploaderReferences(file.id)
 
-        this.uppy.emit('upload-success', getFile(), uploadResp)
+        this.uppy.emit('upload-success', this.#getFile(file), uploadResp)
 
         if (result.location) {
           this.uppy.log(`Download ${file.name} from ${result.location}`)
@@ -719,7 +744,7 @@ export default class AwsS3Multipart extends BasePlugin {
       }
 
       const onPartComplete = (part) => {
-        this.uppy.emit('s3-multipart:part-uploaded', getFile(), part)
+        this.uppy.emit('s3-multipart:part-uploaded', this.#getFile(file), part)
       }
 
       const upload = new MultipartUploader(file.data, {
