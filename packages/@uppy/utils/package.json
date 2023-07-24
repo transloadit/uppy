@@ -69,7 +69,7 @@
   },
   "dependencies": {
     "lodash": "^4.17.21",
-    "preact": "^10.16.0"
+    "preact": "^10.5.13"
   },
   "devDependencies": {
     "@jest/globals": "^29.0.0"
