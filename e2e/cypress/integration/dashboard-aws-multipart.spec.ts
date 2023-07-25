@@ -95,4 +95,27 @@ describe('Dashboard with @uppy/aws-s3-multipart', () => {
     cy.wait(['@createMultipartUpload-attempt3', '@signPart-attempt3', '@put-attempt3', '@completeMultipartUpload-attempt3'])
     cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Complete')
   })
+
+  it('should complete when resuming after pause', () => {
+    cy.get('@file-input').selectFile(['cypress/fixtures/images/cat.jpg', 'cypress/fixtures/images/traffic.jpg'], { force: true })
+    cy.get('.uppy-StatusBar-actionBtn--upload').click()
+
+    cy.wait('@post')
+
+    cy.get('button[data-cy=togglePauseResume]').click()
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(300) // Wait an arbitrary amount of time as a user would do.
+    cy.get('button[data-cy=togglePauseResume]').click()
+
+    cy.wait('@get')
+
+    cy.get('button[data-cy=togglePauseResume]').click()
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(300) // Wait an arbitrary amount of time as a user would do.
+    cy.get('button[data-cy=togglePauseResume]').click()
+
+    cy.wait(['@get', '@put'])
+
+    cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Complete')
+  })
 })
