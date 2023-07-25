@@ -247,6 +247,30 @@ export default class AwsS3 extends BasePlugin {
     return Promise.resolve()
   }
 
+  #getCompanionClientArgs = (file) => {
+    const opts = this.#uploader.getOptions(file)
+    const allowedMetaFields = Array.isArray(opts.allowedMetaFields)
+      ? opts.allowedMetaFields
+      // Send along all fields by default.
+      : Object.keys(file.meta)
+    // TODO: do we need tus in aws-s3?
+    if (file.tus) {
+      // Install file-specific upload overrides.
+      Object.assign(opts, file.tus)
+    }
+    return {
+      ...file.remote.body,
+      protocol: 'multipart',
+      endpoint: opts.endpoint,
+      size: file.data.size,
+      fieldname: opts.fieldName,
+      metadata: Object.fromEntries(allowedMetaFields.map(name => [name, file.meta[name]])),
+      httpMethod: opts.method,
+      useFormData: opts.formData,
+      headers: opts.headers,
+    }
+  }
+
   uploadFile (id, current, total) {
     const file = this.uppy.getFile(id)
     this.uppy.log(`uploading ${current} of ${total}`)
@@ -256,7 +280,8 @@ export default class AwsS3 extends BasePlugin {
     if (file.isRemote) {
       // TODO: why do we need to do this? why not always one or the other?
       const Client = file.remote.providerOptions.provider ? Provider : RequestClient
-      const client = new Client(this.uppy, file.remote.providerOptions)
+      const getQueue = () => this.#requests
+      const client = new Client(this.uppy, file.remote.providerOptions, getQueue)
       const controller = new AbortController()
 
       const removedHandler = (removedFile) => {
@@ -264,7 +289,11 @@ export default class AwsS3 extends BasePlugin {
       }
       this.uppy.on('file-removed', removedHandler)
 
-      const uploadPromise = client.uploadRemoteFile(file, { signal: controller.signal }, this.#requests)
+      const uploadPromise = client.uploadRemoteFile(
+        file,
+        this.#getCompanionClientArgs(file),
+        { signal: controller.signal },
+      )
 
       this.#requests.wrapSyncFunction(() => {
         this.uppy.off('file-removed', removedHandler)

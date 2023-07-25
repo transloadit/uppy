@@ -803,6 +803,16 @@ export default class AwsS3Multipart extends BasePlugin {
     })
   }
 
+  // eslint-disable-next-line class-methods-use-this
+  #getCompanionClientArgs (file) {
+    return {
+      ...file.remote.body,
+      protocol: 's3-multipart',
+      size: file.data.size,
+      metadata: file.meta,
+    }
+  }
+
   #upload = async (fileIDs) => {
     if (fileIDs.length === 0) return undefined
 
@@ -816,7 +826,8 @@ export default class AwsS3Multipart extends BasePlugin {
       if (file.isRemote) {
         // TODO: why do we need to do this? why not always one or the other?
         const Client = file.remote.providerOptions.provider ? Provider : RequestClient
-        const client = new Client(this.uppy, file.remote.providerOptions)
+        const getQueue = () => this.requests
+        const client = new Client(this.uppy, file.remote.providerOptions, getQueue)
         this.#setResumableUploadsCapability(false)
         const controller = new AbortController()
 
@@ -825,7 +836,11 @@ export default class AwsS3Multipart extends BasePlugin {
         }
         this.uppy.on('file-removed', removedHandler)
 
-        const uploadPromise = client.uploadRemoteFile(file, { signal: controller.signal }, this.requests)
+        const uploadPromise = client.uploadRemoteFile(
+          file,
+          this.#getCompanionClientArgs(file),
+          { signal: controller.signal },
+        )
 
         this.requests.wrapSyncFunction(() => {
           this.uppy.off('file-removed', removedHandler)

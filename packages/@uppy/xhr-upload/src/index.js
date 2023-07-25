@@ -441,6 +441,25 @@ export default class XHRUpload extends BasePlugin {
     })
   }
 
+  #getCompanionClientArgs (file) {
+    const opts = this.getOptions(file)
+    const allowedMetaFields = Array.isArray(opts.allowedMetaFields)
+      ? opts.allowedMetaFields
+      // Send along all fields by default.
+      : Object.keys(file.meta)
+    return {
+      ...file.remote.body,
+      protocol: 'multipart',
+      endpoint: opts.endpoint,
+      size: file.data.size,
+      fieldname: opts.fieldName,
+      metadata: Object.fromEntries(allowedMetaFields.map(name => [name, file.meta[name]])),
+      httpMethod: opts.method,
+      useFormData: opts.formData,
+      headers: opts.headers,
+    }
+  }
+
   async #uploadFiles (files) {
     await Promise.allSettled(files.map((file, i) => {
       const current = parseInt(i, 10) + 1
@@ -449,7 +468,8 @@ export default class XHRUpload extends BasePlugin {
       if (file.isRemote) {
         // TODO: why do we need to do this? why not always one or the other?
         const Client = file.remote.providerOptions.provider ? Provider : RequestClient
-        const client = new Client(this.uppy, file.remote.providerOptions)
+        const getQueue = () => this.requests
+        const client = new Client(this.uppy, file.remote.providerOptions, getQueue)
         const controller = new AbortController()
 
         const removedHandler = (removedFile) => {
@@ -457,7 +477,11 @@ export default class XHRUpload extends BasePlugin {
         }
         this.uppy.on('file-removed', removedHandler)
 
-        const uploadPromise = client.uploadRemoteFile(file, { signal: controller.signal }, this.requests)
+        const uploadPromise = client.uploadRemoteFile(
+          file,
+          this.#getCompanionClientArgs(file),
+          { signal: controller.signal },
+        )
 
         this.requests.wrapSyncFunction(() => {
           this.uppy.off('file-removed', removedHandler)

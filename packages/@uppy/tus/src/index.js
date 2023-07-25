@@ -443,6 +443,25 @@ export default class Tus extends BasePlugin {
     }
   }
 
+  #getCompanionClientArgs (file) {
+    const opts = { ...this.opts }
+
+    if (file.tus) {
+      // Install file-specific upload overrides.
+      Object.assign(opts, file.tus)
+    }
+
+    return {
+      ...file.remote.body,
+      endpoint: opts.endpoint,
+      uploadUrl: opts.uploadUrl,
+      protocol: 'tus',
+      size: file.data.size,
+      headers: opts.headers,
+      metadata: file.meta,
+    }
+  }
+
   /**
    * @param {(UppyFile | FailedUppyFile)[]} files
    */
@@ -458,7 +477,8 @@ export default class Tus extends BasePlugin {
       if (file.isRemote) {
         // TODO: why do we need to do this? why not always one or the other?
         const Client = file.remote.providerOptions.provider ? Provider : RequestClient
-        const client = new Client(this.uppy, file.remote.providerOptions)
+        const getQueue = () => this.requests
+        const client = new Client(this.uppy, file.remote.providerOptions, getQueue)
         const controller = new AbortController()
 
         const removedHandler = (removedFile) => {
@@ -466,7 +486,11 @@ export default class Tus extends BasePlugin {
         }
         this.uppy.on('file-removed', removedHandler)
 
-        const uploadPromise = client.uploadRemoteFile(file, { signal: controller.signal }, this.requests)
+        const uploadPromise = client.uploadRemoteFile(
+          file,
+          this.#getCompanionClientArgs(file),
+          { signal: controller.signal },
+        )
 
         this.requests.wrapSyncFunction(() => {
           this.uppy.off('file-removed', removedHandler)
