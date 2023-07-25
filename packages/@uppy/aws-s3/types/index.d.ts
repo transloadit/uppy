@@ -21,6 +21,7 @@ export interface AwsS3Options extends PluginOptions {
     } | {
       method: 'PUT'
       url: string
+      fields: never
       headers?: Record<string, string>
     }>
     limit?: number
