@@ -360,6 +360,48 @@ describe('Dashboard with Transloadit', () => {
     // SECOND ATTEMPT
     cy.get('.uppy-StatusBar-actions > .uppy-c-btn').click()
     cy.wait(['@createAssembly-attempt2', '@tusCall-attempt2', '@assemblyCompleted-attempt2'])
+  })
+
+  it('should complete on retry', () => {
+    cy.get('@file-input').selectFile(['images/cat.jpg', 'images/traffic.jpg'], { force: true })
+    cy.get('.uppy-StatusBar-actionBtn--upload').click()
+
+    // returning false here prevents Cypress from failing the test.
+    // Using `new Function` here otherwise Webpack cries like the little bitch it is.
+    // TODO: handle the exception in the code.
+    // Cypress.on(
+    //   'uncaught:exception',
+    //   // eslint-disable-next-line no-new-func
+    //   new Function(`return arguments[1].title !== 'should complete on retry' || arguments[0]?.cause?.cause !== 'Internal Server Error'`),
+    // )
+
+    cy.intercept(
+      { method: 'POST', pathname: '/assemblies', times: 5 },
+      { statusCode: 500, body: {} },
+    )
+
+    cy.get('button[data-cy=retry]').click()
+
+    cy.wait('@assemblies')
+    cy.wait('@resumable')
+
+    cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Complete')
+  })
+
+  it('should complete when resuming after pause', () => {
+    cy.get('@file-input').selectFile(['images/cat.jpg', 'images/traffic.jpg'], { force: true })
+    cy.get('.uppy-StatusBar-actionBtn--upload').click()
+
+    cy.wait('@assemblies')
+
+    cy.get('button[data-cy=togglePauseResume]').click()
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(300) // Wait an arbitrary amount of time as a user would do.
+    cy.get('button[data-cy=togglePauseResume]').click()
+
+    cy.wait('@assemblies')
+    cy.wait('@resumable')
+
     cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Complete')
   })
 })
