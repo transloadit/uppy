@@ -50,7 +50,7 @@ describe('Dashboard with @uppy/aws-s3-multipart', () => {
     cy.intercept('DELETE', '/s3/multipart/mocked-uploadId-attempt2?key=mocked-key-attempt2', { statusCode: 200, body: '{}' }).as('abortAttempt-2')
     cy.intercept('PUT', '/put-fail', { forceNetworkError: true }).as('put-fails')
     cy.get('.uppy-StatusBar-actions > .uppy-c-btn').click()
-    cy.wait(['@createMultipartUpload-attempt2', '@signPart-toFail', ...Array(5).fill('@put-fails'), '@abortAttempt-2'], { timeout: 10_000 })
+    cy.wait(['@createMultipartUpload-attempt2', '@signPart-toFail', ...Array(5).fill('@put-fails'), '@abortAttempt-2'])
     cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Upload failed')
 
     cy.intercept('GET', '/s3/multipart/mocked-uploadId-attempt2/1?key=mocked-key-attempt2', {
