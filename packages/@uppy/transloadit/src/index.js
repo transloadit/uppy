@@ -597,6 +597,10 @@ export default class Transloadit extends BasePlugin {
       this.uppy.emit('transloadit:assembly-executing', assembly.status)
     })
 
+    assembly.on('progress', (details) => {
+      this.uppy.emit('transloadit:progress', details)
+    })
+
     if (this.opts.waitForEncoding) {
       assembly.on('result', (stepName, result) => {
         this.#onResult(id, stepName, result)
