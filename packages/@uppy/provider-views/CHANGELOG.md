@@ -1,5 +1,14 @@
 # @uppy/provider-views
 
+## 3.4.1
+
+Released: 2023-07-20
+Included in: Uppy v3.13.0
+
+- @uppy/provider-views: Add VirtualList to ProviderView (Merlijn Vos / #4566)
+- @uppy/provider-views: fix race conditions with folder loading (Mikael Finstad / #4578)
+- @uppy/provider-views: fix infinite folder loading  (Mikael Finstad / #4590)
+
 ## 3.4.0
 
 Released: 2023-07-13

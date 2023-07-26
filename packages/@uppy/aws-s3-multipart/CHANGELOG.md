@@ -1,5 +1,20 @@
 # @uppy/aws-s3-multipart
 
+## 3.5.2
+
+Released: 2023-07-24
+Included in: Uppy v3.13.1
+
+- @uppy/aws-s3-multipart: refresh file before calling user-defined functions (mjlumetta / #4557)
+
+## 3.5.1
+
+Released: 2023-07-20
+Included in: Uppy v3.13.0
+
+- @uppy/aws-s3-multipart: fix crash on pause/resume (Merlijn Vos / #4581)
+- @uppy/aws-s3-multipart: do not access `globalThis.crypto` on the top-level (Bryan J Swift / #4584)
+
 ## 3.5.0
 
 Released: 2023-07-13
