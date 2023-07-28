@@ -92,7 +92,7 @@ const downloadURL = async (url, blockLocalIPs, traceId) => {
     let videoID;
     let thumbnail = false;
     if (matchYoutubeUrl(url)) {
-      const videoID = ytdl.getURLVideoID(url)
+      videoID = ytdl.getURLVideoID(url)
       // @ts-ignore
       thumbnail = `https://img.youtube.com/vi/${videoID}/default.jpg`
       let info = await ytdl.getInfo(videoID);
