@@ -153,10 +153,9 @@ const getConfigFromEnv = () => {
         if (!process.env.COMPANION_REDIS_OPTIONS) {
           return undefined
         }
-        const obj = JSON.parse(process.env.COMPANION_REDIS_OPTIONS)
-        return obj
+        return JSON.parse(process.env.COMPANION_REDIS_OPTIONS)
       } catch (e) {
-        console.warn('COMPANION_REDIS_OPTIONS parse error', e)
+        logger.warn('COMPANION_REDIS_OPTIONS parse error', e)
       }
       return undefined
     })(),
