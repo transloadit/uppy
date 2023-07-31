@@ -146,7 +146,6 @@ const getConfigFromEnv = () => {
     filePath: process.env.COMPANION_DATADIR,
     redisUrl: process.env.COMPANION_REDIS_URL,
     redisPubSubScope: process.env.COMPANION_REDIS_PUBSUB_SCOPE,
-    // adding redisOptions to keep all companion options easily visible
     //  redisOptions refers to https://www.npmjs.com/package/redis#options-object-properties
     redisOptions: (() => {
       try {
