@@ -447,7 +447,7 @@ export default class Tus extends UploaderPlugin {
       uploadUrl: opts.uploadUrl,
       protocol: 'tus',
       size: file.data.size,
-      headers: opts.headers,
+      headers: (typeof opts.headers === 'function') ? opts.headers(file) : opts.headers,
       metadata: file.meta,
     }, options)
     return res.token
