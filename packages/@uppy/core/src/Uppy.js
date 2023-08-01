@@ -198,7 +198,10 @@ class Uppy {
   }
 
   i18nInit () {
-    const translator = new Translator([this.defaultLocale, this.opts.locale])
+    const translator = new Translator([
+      ...(Array.isArray(this.defaultLocale) ? this.defaultLocale : [this.defaultLocale]),
+      this.opts.locale,
+    ])
     this.i18n = translator.translate.bind(translator)
     this.i18nArray = translator.translateArray.bind(translator)
     this.locale = translator.locale

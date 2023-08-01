@@ -29,7 +29,7 @@ export default class Dropbox extends UIPlugin {
       pluginId: this.id,
     })
 
-    this.defaultLocale = locale
+    this.defaultLocale = [this.provider.defaultLocale, locale]
 
     this.i18nInit()
     this.title = this.i18n('pluginNameDropbox')

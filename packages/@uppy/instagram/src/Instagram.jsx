@@ -28,11 +28,6 @@ export default class Instagram extends UIPlugin {
       </svg>
     )
 
-    this.defaultLocale = locale
-
-    this.i18nInit()
-    this.title = this.i18n('pluginNameInstagram')
-
     this.provider = new Provider(uppy, {
       companionUrl: this.opts.companionUrl,
       companionHeaders: this.opts.companionHeaders,
@@ -41,6 +36,11 @@ export default class Instagram extends UIPlugin {
       provider: 'instagram',
       pluginId: this.id,
     })
+
+    this.defaultLocale = [this.provider.defaultLocale, locale]
+
+    this.i18nInit()
+    this.title = this.i18n('pluginNameInstagram')
 
     this.onFirstRender = this.onFirstRender.bind(this)
     this.render = this.render.bind(this)
