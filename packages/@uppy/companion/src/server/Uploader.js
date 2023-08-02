@@ -412,7 +412,7 @@ class Uploader {
     const keyExpirySec = 60 * 60 * 24
     const redisKey = `${Uploader.STORAGE_PREFIX}:${this.token}`
     this.storage.set(redisKey, jsonStringify(state), {
-    EX: keyExpirySec,
+      EX: keyExpirySec,
     })
   }
 
