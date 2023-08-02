@@ -411,7 +411,6 @@ class Uploader {
     // https://github.com/transloadit/uppy/issues/3748
     const keyExpirySec = 60 * 60 * 24
     const redisKey = `${Uploader.STORAGE_PREFIX}:${this.token}`
-    // this.storage.set(redisKey, jsonStringify(state), 'EX', keyExpirySec)
     this.storage.set(redisKey, jsonStringify(state), {
     EX: keyExpirySec,
     })
