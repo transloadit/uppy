@@ -114,12 +114,14 @@ export default class Provider extends RequestClient {
       const authWindow = window.open(link, '_blank')
       const handleToken = (e) => {
         if (e.source !== authWindow) {
-          reject(new Error('rejecting event from unknown source'))
+          this.uppy.log.warn('ignoring event from unknown source', e)
+          return
         }
 
         const { companionAllowedHosts } = this.uppy.getPlugin(this.pluginId).opts
-        if (!isOriginAllowed(e.origin, companionAllowedHosts) || e.source !== authWindow) {
+        if (!isOriginAllowed(e.origin, companionAllowedHosts)) {
           reject(new Error(`rejecting event from ${e.origin} vs allowed pattern ${companionAllowedHosts}`))
+          return
         }
 
         // Check if it's a string before doing the JSON.parse to maintain support
@@ -131,10 +133,12 @@ export default class Provider extends RequestClient {
           const message = i18n('authAborted')
           this.uppy.info({ message }, 'warning', 5000)
           reject(new Error('auth aborted'))
+          return
         }
 
         if (!data.token) {
           reject(new Error('did not receive token from auth window'))
+          return
         }
 
         authWindow.close()
