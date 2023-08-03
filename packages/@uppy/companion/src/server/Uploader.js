@@ -43,6 +43,15 @@ function exceedsMaxFileSize (maxFileSize, size) {
   return maxFileSize && size && size > maxFileSize
 }
 
+function rfc2047Encode (data) {
+  // eslint-disable-next-line no-param-reassign
+  data = `${data}`
+  // eslint-disable-next-line no-control-regex
+  if (/^[\x00-\x7F]*$/.test(data)) return data // we return ASCII as is
+  return `=?UTF-8?B?${Buffer.from(data).toString('base64')}?=` // We encode non-ASCII strings
+}
+
+
 // TODO remove once we migrate away from form-data
 function sanitizeMetadata (inputMetadata) {
   if (inputMetadata == null) return {}
@@ -129,6 +138,7 @@ function validateOptions (options) {
   }
 }
 
+
 class Uploader {
   /**
    * Uploads file to destination based on the supplied protocol (tus, s3-multipart, multipart)
@@ -208,6 +218,8 @@ class Uploader {
     this.uploadStopped = true
     if (this.readStream) this.readStream.destroy(err)
   }
+
+ 
 
   async _uploadByProtocol () {
     // todo a default protocol should not be set. We should ensure that the user specifies their protocol.
@@ -654,7 +666,7 @@ class Uploader {
       Bucket: options.bucket,
       Key: options.getKey(null, filename, this.options.metadata),
       ContentType: this.options.metadata.type,
-      Metadata: this.options.metadata,
+      Metadata:  Object.fromEntries(Object.entries(this.options.metadata).map(entry => entry.map(rfc2047Encode))),
       Body: stream,
     }
 
