@@ -32,7 +32,7 @@ export default class Box extends UIPlugin {
       pluginId: this.id,
     })
 
-    this.defaultLocale = [this.provider.defaultLocale, locale]
+    this.defaultLocale = locale
 
     this.i18nInit()
     this.title = this.i18n('pluginNameBox')

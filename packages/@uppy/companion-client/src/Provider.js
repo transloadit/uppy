@@ -2,7 +2,6 @@
 
 import RequestClient from './RequestClient.js'
 import * as tokenStorage from './tokenStorage.js'
-import locale from './locale.js'
 
 const getName = (id) => {
   return id.split('-').map((s) => s.charAt(0).toUpperCase() + s.slice(1)).join(' ')
@@ -40,8 +39,6 @@ export default class Provider extends RequestClient {
     this.tokenKey = `companion-${this.pluginId}-auth-token`
     this.companionKeysParams = this.opts.companionKeysParams
     this.preAuthToken = null
-
-    this.defaultLocale = locale
   }
 
   async headers () {
@@ -129,9 +126,9 @@ export default class Provider extends RequestClient {
         const data = typeof e.data === 'string' ? JSON.parse(e.data) : e.data
 
         if (data.error) {
-          const { i18n } = this.uppy.getPlugin(this.pluginId)
-          const message = i18n('authAborted')
-          this.uppy.info({ message }, 'warning', 5000)
+          const { uppy } = this
+          const message = uppy.i18n('authAborted')
+          uppy.info({ message }, 'warning', 5000)
           reject(new Error('auth aborted'))
           return
         }
