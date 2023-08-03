@@ -48,7 +48,9 @@ export default class View {
 
     uppy.log(error.toString())
 
-    if (error.isAuthError) {
+    if (error.isAuthError || error.cause?.name === 'AbortError') {
+      // authError just means we're not authenticated, don't show to user
+      // AbortError means the user has clicked "cancel" on an operation
       return
     }
 

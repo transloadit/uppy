@@ -9456,30 +9456,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/connect-redis@npm:0.0.18":
-  version: 0.0.18
-  resolution: "@types/connect-redis@npm:0.0.18"
-  dependencies:
-    "@types/express": "*"
-    "@types/express-session": "*"
-    "@types/ioredis": "*"
-    "@types/redis": ^2.8.0
-  checksum: d65f0e4686cf482c3d580ebaba49817102578ed7cec1dd754132b097b320c7d1baae6b0e47a653b282b177d96807306fd59bb3b1af0a3875e6177fe4fb6d161b
-  languageName: node
-  linkType: hard
-
-"@types/connect-redis@patch:@types/connect-redis@npm:0.0.18#.yarn/patches/@types-connect-redis-npm-0.0.18-4fd2b614d3::locator=%40uppy-dev%2Fbuild%40workspace%3A.":
-  version: 0.0.18
-  resolution: "@types/connect-redis@patch:@types/connect-redis@npm%3A0.0.18#.yarn/patches/@types-connect-redis-npm-0.0.18-4fd2b614d3::version=0.0.18&hash=060147&locator=%40uppy-dev%2Fbuild%40workspace%3A."
-  dependencies:
-    "@types/express": "*"
-    "@types/express-session": "*"
-    "@types/ioredis": "*"
-    "@types/redis": ^2.8.0
-  checksum: 69f32b862305197678b77002ce36e6d45018cf54f66475338dfa0defc3aa89d66c9007693557778a414bbbdd388f67483702598e96c401fc2d1e974a87dce80f
-  languageName: node
-  linkType: hard
-
 "@types/connect@npm:*":
   version: 3.4.35
   resolution: "@types/connect@npm:3.4.35"
@@ -9591,15 +9567,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/express-session@npm:*":
-  version: 1.17.5
-  resolution: "@types/express-session@npm:1.17.5"
-  dependencies:
-    "@types/express": "*"
-  checksum: f6995f7720a18546bcb10cc707cf8c9c92455eb4319c0c50c57e9b9b10ed20dc379d74d5e4c3323fe4e924238b75e13c97822c9d81a80fa064ddc71654c1059d
-  languageName: node
-  linkType: hard
-
 "@types/express-session@npm:1.17.3":
   version: 1.17.3
   resolution: "@types/express-session@npm:1.17.3"
@@ -9686,15 +9653,6 @@ __metadata:
   dependencies:
     "@types/node": "*"
   checksum: 7a6746d00729b2a9fe9f9dd3453430b099931df879ec8f7a7b5f07b1795f6d99b0512640c45a67390b1e4bacb9401e36824952aeeaf089feba8627a063cf8e00
-  languageName: node
-  linkType: hard
-
-"@types/ioredis@npm:*":
-  version: 4.28.10
-  resolution: "@types/ioredis@npm:4.28.10"
-  dependencies:
-    "@types/node": "*"
-  checksum: 0f2788cf25f490d3b345db8c5f8b8ce3f6c92cc99abcf744c8f974f02b9b3875233b3d22098614c462a0d6c41c523bd655509418ea88eb6249db6652290ce7cf
   languageName: node
   linkType: hard
 
@@ -9995,15 +9953,6 @@ __metadata:
     "@types/scheduler": "*"
     csstype: ^3.0.2
   checksum: e2e8001bb16fdf52dc92dbc2f64c8e49b1c6ab5d5da4725c0f27e3d925939e42b835554fecc306ca6b0951801eb784288b63c924bd703834662bbaccf89cb68a
-  languageName: node
-  linkType: hard
-
-"@types/redis@npm:^2.8.0":
-  version: 2.8.32
-  resolution: "@types/redis@npm:2.8.32"
-  dependencies:
-    "@types/node": "*"
-  checksum: 2b12103e05977941870c9a248f6ea51f4b7ad7e0f16a7403799c2ed1b3e63b60f693c39f9186be0ea02776934c4595ddcd2a5bde41e530aaad42d26449f6a669
   languageName: node
   linkType: hard
 
@@ -10679,6 +10628,7 @@ __metadata:
   resolution: "@uppy-example/aws-nodejs@workspace:examples/aws-nodejs"
   dependencies:
     "@aws-sdk/client-s3": ^3.338.0
+    "@aws-sdk/client-sts": ^3.338.0
     "@aws-sdk/s3-request-presigner": ^3.338.0
     body-parser: ^1.20.0
     dotenv: ^16.0.0
@@ -11089,7 +11039,6 @@ __metadata:
     "@aws-sdk/s3-presigned-post": ^3.338.0
     "@aws-sdk/s3-request-presigner": ^3.338.0
     "@types/compression": 1.7.0
-    "@types/connect-redis": 0.0.18
     "@types/cookie-parser": 1.4.2
     "@types/cors": 2.8.6
     "@types/eslint": ^8.2.0
@@ -11107,7 +11056,7 @@ __metadata:
     body-parser: 1.20.0
     chalk: 4.1.2
     common-tags: 1.8.2
-    connect-redis: 6.1.3
+    connect-redis: 7.1.0
     content-disposition: ^0.5.4
     cookie-parser: 1.4.6
     cors: ^2.8.5
@@ -11591,6 +11540,7 @@ __metadata:
   dependencies:
     "@jest/globals": ^29.0.0
     lodash: ^4.17.21
+    preact: ^10.5.13
   languageName: unknown
   linkType: soft
 
@@ -15581,10 +15531,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"connect-redis@npm:6.1.3":
-  version: 6.1.3
-  resolution: "connect-redis@npm:6.1.3"
-  checksum: 1f61616e2ae7ad097b6553e45d683eeb309ac2e601ac49d721c6c0069fd96fbcfb46ee1c0e210b264b720dcd385201d30ff55ccf5deb11ee1529810890561b58
+"connect-redis@npm:7.1.0":
+  version: 7.1.0
+  resolution: "connect-redis@npm:7.1.0"
+  peerDependencies:
+    express-session: ">=1"
+  checksum: fb493fae8910a2d61e3babd579c6344c56d7d31d67669d9941465ef00eb54ef9c1a35ccfa761136d36fa38d1f82ebe48c2b10888f292d55b4aadb8ecf1fddf34
   languageName: node
   linkType: hard
 
@@ -37422,9 +37374,9 @@ __metadata:
   linkType: hard
 
 "word-wrap@npm:^1.2.3, word-wrap@npm:~1.2.3":
-  version: 1.2.3
-  resolution: "word-wrap@npm:1.2.3"
-  checksum: 30b48f91fcf12106ed3186ae4fa86a6a1842416df425be7b60485de14bec665a54a68e4b5156647dec3a70f25e84d270ca8bc8cd23182ed095f5c7206a938c1f
+  version: 1.2.4
+  resolution: "word-wrap@npm:1.2.4"
+  checksum: 8f1f2e0a397c0e074ca225ba9f67baa23f99293bc064e31355d426ae91b8b3f6b5f6c1fc9ae5e9141178bb362d563f55e62fd8d5c31f2a77e3ade56cb3e35bd1
   languageName: node
   linkType: hard
 

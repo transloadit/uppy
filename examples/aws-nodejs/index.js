@@ -21,11 +21,36 @@ const {
   UploadPartCommand,
 } = require('@aws-sdk/client-s3')
 const { getSignedUrl } = require('@aws-sdk/s3-request-presigner')
+const {
+  STSClient,
+  GetFederationTokenCommand,
+} = require('@aws-sdk/client-sts')
+
+const policy = {
+  Version: '2012-10-17',
+  Statement: [
+    {
+      Effect: 'Allow',
+      Action: [
+        's3:PutObject',
+      ],
+      Resource: [
+        `arn:aws:s3:::${process.env.COMPANION_AWS_BUCKET}/*`,
+        `arn:aws:s3:::${process.env.COMPANION_AWS_BUCKET}`,
+      ],
+    },
+  ],
+}
 
 /**
  * @type {S3Client}
  */
 let s3Client
+
+/**
+ * @type {STSClient}
+ */
+let stsClient
 
 const expiresIn = 900 // Define how long until a S3 signature expires.
 
@@ -40,6 +65,17 @@ function getS3Client () {
   return s3Client
 }
 
+function getSTSClient () {
+  stsClient ??= new STSClient({
+    region: process.env.COMPANION_AWS_REGION,
+    credentials : {
+      accessKeyId: process.env.COMPANION_AWS_KEY,
+      secretAccessKey: process.env.COMPANION_AWS_SECRET,
+    },
+  })
+  return stsClient
+}
+
 app.use(bodyParser.urlencoded({ extended: true }), bodyParser.json())
 
 app.get('/', (req, res) => {
@@ -52,6 +88,26 @@ app.get('/drag', (req, res) => {
   res.sendFile(htmlPath)
 })
 
+app.get('/sts', (req, res, next) => {
+  getSTSClient().send(new GetFederationTokenCommand({
+    Name: '123user',
+    // The duration, in seconds, of the role session. The value specified
+    // can range from 900 seconds (15 minutes) up to the maximum session
+    // duration set for the role.
+    DurationSeconds: expiresIn,
+    Policy: JSON.stringify(policy),
+  })).then(response => {
+    // Test creating multipart upload from the server — it works
+    // createMultipartUploadYo(response)
+    res.setHeader('Access-Control-Allow-Origin', '*')
+    res.setHeader('Cache-Control', `public,max-age=${expiresIn}`)
+    res.json({
+      credentials: response.Credentials,
+      bucket: process.env.COMPANION_AWS_BUCKET,
+      region: process.env.COMPANION_AWS_REGION,
+    })
+  }, next)
+})
 app.post('/sign-s3', (req, res, next) => {
   const Key = `${crypto.randomUUID()}-${req.body.filename}`
   const { contentType } = req.body

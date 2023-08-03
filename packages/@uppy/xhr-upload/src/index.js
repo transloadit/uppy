@@ -366,7 +366,7 @@ export default class XHRUpload extends UploaderPlugin {
       metadata: Object.fromEntries(allowedMetaFields.map(name => [name, file.meta[name]])),
       httpMethod: opts.method,
       useFormData: opts.formData,
-      headers: opts.headers,
+      headers: typeof opts.headers === 'function' ? opts.headers(file) : opts.headers,
     }, options)
     return res.token
   }
