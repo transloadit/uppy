@@ -59,7 +59,7 @@ class Uppy {
       debug: false,
       restrictions: defaultRestrictionOptions,
       meta: {},
-      onBeforeFileAdded: (file, files) => !(file.id in files),
+      onBeforeFileAdded: (file, files) => !Object.hasOwn(files, file.id),
       onBeforeUpload: (files) => files,
       store: new DefaultStore(),
       logger: justErrorsLogger,
