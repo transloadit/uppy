@@ -34,7 +34,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [16.x, 18.x, 20.x]
+        # todo put back?
+        node-version: [16.x, 18.16.0, 20.4.0]
     steps:
       - name: Checkout sources
         uses: actions/checkout@v3

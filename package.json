@@ -168,7 +168,6 @@
     ]
   },
   "resolutions": {
-    "@types/connect-redis@0.0.18": "patch:@types/connect-redis@npm:0.0.18#.yarn/patches/@types-connect-redis-npm-0.0.18-4fd2b614d3",
     "@types/eslint@^7.2.13": "^8.2.0",
     "@types/react": "^17",
     "@types/webpack-dev-server": "^4",
