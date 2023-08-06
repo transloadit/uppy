@@ -12,6 +12,8 @@ const throttle = require('lodash/throttle')
 
 const { Upload } = require('@aws-sdk/lib-storage')
 
+const { rfc2047EncodeMetadata } = require('./helpers/utils')
+
 // TODO move to `require('streams/promises').pipeline` when dropping support for Node.js 14.x.
 const pipeline = promisify(pipelineCb)
 
@@ -41,14 +43,6 @@ const PROTOCOLS = Object.freeze({
 
 function exceedsMaxFileSize (maxFileSize, size) {
   return maxFileSize && size && size > maxFileSize
-}
-
-function rfc2047Encode (data) {
-  // eslint-disable-next-line no-param-reassign
-  data = `${data}`
-  // eslint-disable-next-line no-control-regex
-  if (/^[\x00-\x7F]*$/.test(data)) return data // we return ASCII as is
-  return `=?UTF-8?B?${Buffer.from(data).toString('base64')}?=` // We encode non-ASCII strings
 }
 
 // TODO remove once we migrate away from form-data
@@ -662,7 +656,7 @@ class Uploader {
       Bucket: options.bucket,
       Key: options.getKey(null, filename, this.options.metadata),
       ContentType: this.options.metadata.type,
-      Metadata: Object.fromEntries(Object.entries(this.options.metadata).map(entry => entry.map(rfc2047Encode))),
+      Metadata: rfc2047EncodeMetadata(this.options.metadata),
       Body: stream,
     }
 

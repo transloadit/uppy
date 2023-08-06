@@ -14,13 +14,7 @@ const {
 const { createPresignedPost } = require('@aws-sdk/s3-presigned-post')
 const { getSignedUrl } = require('@aws-sdk/s3-request-presigner')
 
-function rfc2047Encode (data) {
-  // eslint-disable-next-line no-param-reassign
-  data = `${data}`
-  // eslint-disable-next-line no-control-regex
-  if (/^[\x00-\x7F]*$/.test(data)) return data // we return ASCII as is
-  return `=?UTF-8?B?${Buffer.from(data).toString('base64')}?=` // We encode non-ASCII strings
-}
+const { rfc2047EncodeMetadata } = require('../helpers/utils')
 
 module.exports = function s3 (config) {
   if (typeof config.acl !== 'string' && config.acl != null) {
@@ -138,7 +132,7 @@ module.exports = function s3 (config) {
       Bucket: bucket,
       Key: key,
       ContentType: type,
-      Metadata: Object.fromEntries(Object.entries(metadata).map(entry => entry.map(rfc2047Encode))),
+      Metadata: rfc2047EncodeMetadata(metadata),
     }
 
     if (config.acl != null) params.ACL = config.acl
