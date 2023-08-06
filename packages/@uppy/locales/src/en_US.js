@@ -89,6 +89,7 @@ en_US.strings = {
   importFiles: 'Import files from:',
   importFrom: 'Import from %{name}',
   inferiorSize: 'This file is smaller than the allowed size of %{size}',
+  loadedXFiles: 'Loaded %{numFiles} files',
   loading: 'Loading...',
   logOut: 'Log out',
   micDisabled: 'Microphone access denied by user',
