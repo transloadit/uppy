@@ -58,6 +58,7 @@ function RetryBtn (props) {
       aria-label={i18n('retryUpload')}
       onClick={() => uppy.retryAll().catch(() => { /* Error reported and handled via an event */ })}
       data-uppy-super-focusable
+      data-cy="retry"
     >
       <svg
         aria-hidden="true"
@@ -132,6 +133,7 @@ function PauseResumeButton (props) {
       className="uppy-u-reset uppy-StatusBar-actionCircleBtn"
       type="button"
       onClick={togglePauseResume}
+      data-cy="togglePauseResume"
       data-uppy-super-focusable
     >
       <svg

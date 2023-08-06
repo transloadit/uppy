@@ -13,7 +13,7 @@ const root = fileURLToPath(new URL('../../', import.meta.url))
 const leadingLocaleName = 'en_US'
 const mode = process.argv[2]
 const pluginLocaleDependencies = {
-  core: 'provider-views',
+  core: ['provider-views', 'companion-client'],
 }
 
 function getAllFilesPerPlugin (pluginNames) {
@@ -30,9 +30,9 @@ function getAllFilesPerPlugin (pluginNames) {
     filesPerPlugin[name] = getFiles(name)
 
     if (name in pluginLocaleDependencies) {
-      filesPerPlugin[name].push(
-        getFiles(pluginLocaleDependencies[name]),
-      )
+      for (const subDeb of pluginLocaleDependencies[name]) {
+        filesPerPlugin[name].push(...getFiles(subDeb))
+      }
     }
   }
 

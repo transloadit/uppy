@@ -50,7 +50,7 @@ describe('Dashboard with @uppy/aws-s3-multipart', () => {
     cy.intercept('DELETE', '/s3/multipart/mocked-uploadId-attempt2?key=mocked-key-attempt2', { statusCode: 200, body: '{}' }).as('abortAttempt-2')
     cy.intercept('PUT', '/put-fail', { forceNetworkError: true }).as('put-fails')
     cy.get('.uppy-StatusBar-actions > .uppy-c-btn').click()
-    cy.wait(['@createMultipartUpload-attempt2', '@signPart-toFail', ...Array(5).fill('@put-fails'), '@abortAttempt-2'], { timeout: 10_000 })
+    cy.wait(['@createMultipartUpload-attempt2', '@signPart-toFail', ...Array(5).fill('@put-fails'), '@abortAttempt-2'])
     cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Upload failed')
 
     cy.intercept('GET', '/s3/multipart/mocked-uploadId-attempt2/1?key=mocked-key-attempt2', {
@@ -93,6 +93,29 @@ describe('Dashboard with @uppy/aws-s3-multipart', () => {
     }).as('completeMultipartUpload-attempt3')
     cy.get('.uppy-StatusBar-actions > .uppy-c-btn').click()
     cy.wait(['@createMultipartUpload-attempt3', '@signPart-attempt3', '@put-attempt3', '@completeMultipartUpload-attempt3'])
+    cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Complete')
+  })
+
+  it('should complete when resuming after pause', () => {
+    cy.get('@file-input').selectFile(['cypress/fixtures/images/cat.jpg', 'cypress/fixtures/images/traffic.jpg'], { force: true })
+    cy.get('.uppy-StatusBar-actionBtn--upload').click()
+
+    cy.wait('@post')
+
+    cy.get('button[data-cy=togglePauseResume]').click()
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(300) // Wait an arbitrary amount of time as a user would do.
+    cy.get('button[data-cy=togglePauseResume]').click()
+
+    cy.wait('@get')
+
+    cy.get('button[data-cy=togglePauseResume]').click()
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(300) // Wait an arbitrary amount of time as a user would do.
+    cy.get('button[data-cy=togglePauseResume]').click()
+
+    cy.wait(['@get', '@put'])
+
     cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Complete')
   })
 })

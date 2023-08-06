@@ -12,6 +12,20 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 3.13.1
+
+Released: 2023-07-24
+
+| Package                | Version | Package                | Version |
+| ---------------------- | ------- | ---------------------- | ------- |
+| @uppy/aws-s3-multipart |   3.5.2 | uppy                   |  3.13.1 |
+| @uppy/utils            |   5.4.3 |                        |         |
+
+- @uppy/utils: align version of `preact` with the UI plugins (Antoine du Hamel / #4599)
+- @uppy/aws-s3-multipart: refresh file before calling user-defined functions (mjlumetta / #4557)
+- @uppy/utils: align version of `preact` with the UI plugins (Antoine du Hamel / #4599)
+
+
 ## 3.13.0
 
 Released: 2023-07-20

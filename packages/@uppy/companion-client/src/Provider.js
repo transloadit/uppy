@@ -12,6 +12,26 @@ const queryString = (params, prefix = '?') => {
   return str ? `${prefix}${str}` : ''
 }
 
+function getOrigin () {
+  // eslint-disable-next-line no-restricted-globals
+  return location.origin
+}
+
+function getRegex (value) {
+  if (typeof value === 'string') {
+    return new RegExp(`^${value}$`)
+  } if (value instanceof RegExp) {
+    return value
+  }
+  return undefined
+}
+
+function isOriginAllowed (origin, allowedOrigin) {
+  const patterns = Array.isArray(allowedOrigin) ? allowedOrigin.map(getRegex) : [getRegex(allowedOrigin)]
+  return patterns
+    .some((pattern) => pattern?.test(origin) || pattern?.test(`${origin}/`)) // allowing for trailing '/'
+}
+
 export default class Provider extends RequestClient {
   #refreshingTokenPromise
 
@@ -78,6 +98,7 @@ export default class Provider extends RequestClient {
 
   authUrl (queries = {}) {
     const qs = queryString({
+      state: btoa(JSON.stringify({ origin: getOrigin() })),
       ...queries,
       ...this.cutomQueryParams,
       ...(this.preAuthToken && {
@@ -85,6 +106,50 @@ export default class Provider extends RequestClient {
       }),
     })
     return `${this.hostname}/${this.id}/connect${qs}`
+  }
+
+  async login (queries) {
+    await this.ensurePreAuth()
+
+    return new Promise((resolve, reject) => {
+      const link = this.authUrl(queries)
+      const authWindow = window.open(link, '_blank')
+      const handleToken = (e) => {
+        if (e.source !== authWindow) {
+          this.uppy.log.warn('ignoring event from unknown source', e)
+          return
+        }
+
+        const { companionAllowedHosts } = this.uppy.getPlugin(this.pluginId).opts
+        if (!isOriginAllowed(e.origin, companionAllowedHosts)) {
+          reject(new Error(`rejecting event from ${e.origin} vs allowed pattern ${companionAllowedHosts}`))
+          return
+        }
+
+        // Check if it's a string before doing the JSON.parse to maintain support
+        // for older Companion versions that used object references
+        const data = typeof e.data === 'string' ? JSON.parse(e.data) : e.data
+
+        if (data.error) {
+          const { uppy } = this
+          const message = uppy.i18n('authAborted')
+          uppy.info({ message }, 'warning', 5000)
+          reject(new Error('auth aborted'))
+          return
+        }
+
+        if (!data.token) {
+          reject(new Error('did not receive token from auth window'))
+          return
+        }
+
+        authWindow.close()
+        window.removeEventListener('message', handleToken)
+        this.setAuthToken(data.token)
+        resolve()
+      }
+      window.addEventListener('message', handleToken)
+    })
   }
 
   refreshTokenUrl () {
