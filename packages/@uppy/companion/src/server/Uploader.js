@@ -12,6 +12,8 @@ const throttle = require('lodash/throttle')
 
 const { Upload } = require('@aws-sdk/lib-storage')
 
+const { rfc2047EncodeMetadata } = require('./helpers/utils')
+
 // TODO move to `require('streams/promises').pipeline` when dropping support for Node.js 14.x.
 const pipeline = promisify(pipelineCb)
 
@@ -654,7 +656,7 @@ class Uploader {
       Bucket: options.bucket,
       Key: options.getKey(null, filename, this.options.metadata),
       ContentType: this.options.metadata.type,
-      Metadata: this.options.metadata,
+      Metadata: rfc2047EncodeMetadata(this.options.metadata),
       Body: stream,
     }
 
