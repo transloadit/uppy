@@ -33,7 +33,7 @@ export interface AwsS3MultipartOptions extends PluginOptions {
     ) => MaybePromise<{ uploadId: string; key: string }>
     listParts?: (
       file: UppyFile,
-      opts: { uploadId: string; key: string }
+      opts: { uploadId: string; key: string; signal: AbortSignal }
     ) => MaybePromise<AwsS3Part[]>
     signPart?: (
       file: UppyFile,
@@ -46,16 +46,15 @@ export interface AwsS3MultipartOptions extends PluginOptions {
     ) => MaybePromise<{ presignedUrls: Record<number, string>, headers?: Record<number, Record<string, string>> }>
     abortMultipartUpload?: (
       file: UppyFile,
-      opts: { uploadId: string; key: string }
+      opts: { uploadId: string; key: string; signal: AbortSignal }
     ) => MaybePromise<void>
     completeMultipartUpload?: (
       file: UppyFile,
-      opts: { uploadId: string; key: string; parts: AwsS3Part[] }
+      opts: { uploadId: string; key: string; parts: AwsS3Part[]; signal: AbortSignal }
     ) => MaybePromise<{ location?: string }>
     limit?: number
     shouldUseMultipart?: boolean | ((file: UppyFile) => boolean)
     retryDelays?: number[] | null
-    /** @deprecated this option is currently not used and may be removed in a future version */
     getUploadParameters?: (
       file: UppyFile
     ) => MaybePromise<{ url: string }>

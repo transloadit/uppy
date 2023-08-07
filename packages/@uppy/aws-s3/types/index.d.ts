@@ -25,6 +25,7 @@ export interface AwsS3Options extends PluginOptions {
       headers?: Record<string, string>
     }>
     limit?: number
+    /** @deprecated this option will not be supported in future versions of this plugin */
     getResponseData?: (responseText: string, response: XMLHttpRequest) => void
     locale?: Locale,
     timeout?: number
