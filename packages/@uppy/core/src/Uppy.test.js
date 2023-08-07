@@ -713,16 +713,12 @@ describe('src/Core', () => {
         data: sameFileBlob,
       })
 
-      await core.upload()
-
-      expect(() => {
-        core.addFile({
-          source: 'jest',
-          name: 'foo.jpg',
-          type: 'image/jpeg',
-          data: sameFileBlob,
-        })
-      }).not.toThrow()
+      core.addFile({
+        source: 'jest',
+        name: 'foo.jpg',
+        type: 'image/jpeg',
+        data: sameFileBlob,
+      })
     })
 
     it('should add a file', () => {
