@@ -12,13 +12,13 @@ export type AwsS3UploadParameters = {
 } | {
   method: 'PUT'
   url: string
-  fields: never
+  fields?: never
   expires?: number
   headers?: Record<string, string>
 }
 
 interface LegacyAwsS3Options extends PluginOptions {
-  shouldUseMultipart: never
+    shouldUseMultipart?: never
     companionUrl?: string | null
     companionHeaders?: Record<string, string>
     allowedMetaFields?: Array<string> | null

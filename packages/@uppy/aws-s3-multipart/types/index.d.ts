@@ -5,13 +5,13 @@ type MaybePromise<T> = T | Promise<T>
 export type AwsS3UploadParameters = {
   method: 'POST'
   url: string
-  fields?: Record<string, string>
+  fields: Record<string, string>
   expires?: number
   headers?: Record<string, string>
 } | {
   method?: 'PUT'
   url: string
-  fields: never
+  fields?: never
   expires?: number
   headers?: Record<string, string>
 }
@@ -40,7 +40,7 @@ export interface AwsS3STSResponse {
 }
 
 type AWSS3NonMultipartWithCompanionMandatory = {
-  getUploadParameters: never
+  getUploadParameters?: never
 }
 
 type AWSS3NonMultipartWithoutCompanionMandatory = {
@@ -52,21 +52,31 @@ type AWSS3NonMultipartWithCompanion = AWSS3WithCompanion &
                                       AWSS3NonMultipartWithCompanionMandatory &
                                       {
                                         shouldUseMultipart: false
+                                        createMultipartUpload?: never
+                                        listParts?: never
+                                        signPart?: never
+                                        abortMultipartUpload?: never
+                                        completeMultipartUpload?: never
                                       }
 
 type AWSS3NonMultipartWithoutCompanion = AWSS3WithoutCompanion &
                                          AWSS3NonMultipartWithoutCompanionMandatory &
                                          {
                                            shouldUseMultipart: false
+                                           createMultipartUpload?: never
+                                           listParts?: never
+                                           signPart?: never
+                                           abortMultipartUpload?: never
+                                           completeMultipartUpload?: never
                                          }
 
 type AWSS3MultipartWithCompanionMandatory = {
   getChunkSize?: (file: UppyFile) => number
-  createMultipartUpload: never
-  listParts: never
-  signPart: never
-  abortMultipartUpload: never
-  completeMultipartUpload: never
+  createMultipartUpload?: never
+  listParts?: never
+  signPart?: never
+  abortMultipartUpload?: never
+  completeMultipartUpload?: never
 }
 type AWSS3MultipartWithoutCompanionMandatory = {
   getChunkSize?: (file: UppyFile) => number
@@ -93,15 +103,15 @@ type AWSS3MultipartWithoutCompanionMandatory = {
 type AWSS3MultipartWithoutCompanion = AWSS3WithoutCompanion &
                                       AWSS3MultipartWithoutCompanionMandatory &
                                       {
-                                        shouldUseMultipart: true
-                                        getUploadParameters: never
+                                        shouldUseMultipart?: true
+                                        getUploadParameters?: never
                                       }
 
 type AWSS3MultipartWithCompanion = AWSS3WithCompanion &
                                    AWSS3MultipartWithCompanionMandatory &
                                    {
-                                     shouldUseMultipart: true
-                                     getUploadParameters: never
+                                     shouldUseMultipart?: true
+                                     getUploadParameters?: never
                                    }
 
 type AWSS3MaybeMultipartWithCompanion = AWSS3WithCompanion &
@@ -125,9 +135,9 @@ type AWSS3WithCompanion = {
   getTemporarySecurityCredentials?: true
 }
 type AWSS3WithoutCompanion = {
-  companionUrl: never
-  companionHeaders: never
-  companionCookiesRule: never
+  companionUrl?: never
+  companionHeaders?: never
+  companionCookiesRule?: never
   getTemporarySecurityCredentials?: (options?: {signal?: AbortSignal}) => MaybePromise<AwsS3STSResponse>
 }
 
@@ -135,6 +145,11 @@ interface _AwsS3MultipartOptions extends PluginOptions {
     allowedMetaFields?: string[] | null
     limit?: number
     retryDelays?: number[] | null
+    /** @deprecated Use signPart instead */
+    prepareUploadParts?: (
+      file: UppyFile,
+      partData: { uploadId: string; key: string; parts: [{ number: number, chunk: Blob }] }
+    ) => MaybePromise<{ presignedUrls: Record<number, string>, headers?: Record<number, Record<string, string>> }>
 }
 
 export type AwsS3MultipartOptions = _AwsS3MultipartOptions & (AWSS3NonMultipartWithCompanion |
