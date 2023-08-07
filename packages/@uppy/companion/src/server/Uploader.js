@@ -72,8 +72,8 @@ function validateOptions (options) {
       throw new ValidationError('unsupported HTTP METHOD specified')
     }
 
-    const method = options.httpMethod.toLowerCase()
-    if (method !== 'put' && method !== 'post') {
+    const method = options.httpMethod.toUpperCase()
+    if (method !== 'PUT' && method !== 'POST') {
       throw new ValidationError('unsupported HTTP METHOD specified')
     }
   }
@@ -612,7 +612,7 @@ class Uploader {
     }
 
     try {
-      const httpMethod = (this.options.httpMethod || '').toLowerCase() === 'put' ? 'put' : 'post'
+      const httpMethod = (this.options.httpMethod || '').toUpperCase() === 'PUT' ? 'PUT' : 'POST'
       const runRequest = got[httpMethod]
 
       const response = await runRequest(url, reqOptions)

@@ -243,7 +243,7 @@ class HTTPCommunicationQueue {
 
   async #nonMultipartUpload (file, chunk, signal) {
     const {
-      method = 'post',
+      method = 'POST',
       url,
       fields,
       headers,
@@ -251,7 +251,7 @@ class HTTPCommunicationQueue {
 
     let body
     const data = chunk.getData()
-    if (method === 'post') {
+    if (method.toUpperCase() === 'POST') {
       const formData = new FormData()
       Object.entries(fields).forEach(([key, value]) => formData.set(key, value))
       formData.set('file', data)
