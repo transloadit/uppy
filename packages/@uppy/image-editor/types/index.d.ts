@@ -1,4 +1,4 @@
-import type { PluginOptions, UIPlugin, PluginTarget, UppyFile, IndexedObject } from '@uppy/core'
+import type { IndexedObject, PluginTarget, UIPlugin, UIPluginOptions, UppyFile } from '@uppy/core'
 import type Cropper from 'cropperjs'
 import ImageEditorLocale from './generatedLocale'
 
@@ -18,7 +18,7 @@ interface UppyCropperOptions extends Cropper.Options {
   croppedCanvasOptions: Cropper.GetCroppedCanvasOptions
 }
 
-export interface ImageEditorOptions extends PluginOptions {
+export interface ImageEditorOptions extends UIPluginOptions {
   cropperOptions?: UppyCropperOptions
   actions?: Actions
   quality?: number

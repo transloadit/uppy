@@ -1,9 +1,9 @@
-import type { PluginOptions, UIPlugin, PluginTarget } from '@uppy/core'
+import type { PluginTarget, UIPlugin, UIPluginOptions } from '@uppy/core'
 import GeneratedLocale from './generatedLocale'
 
 export type StatusBarLocale = GeneratedLocale
 
-export interface StatusBarOptions extends PluginOptions {
+export interface StatusBarOptions extends UIPluginOptions {
   target?: PluginTarget
   showProgressDetails?: boolean
   hideUploadButton?: boolean

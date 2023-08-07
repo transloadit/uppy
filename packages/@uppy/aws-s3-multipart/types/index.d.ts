@@ -1,4 +1,4 @@
-import type { PluginOptions, BasePlugin, UppyFile } from '@uppy/core'
+import type { BasePlugin, PluginOptions, UppyFile } from '@uppy/core'
 
 type MaybePromise<T> = T | Promise<T>
 
@@ -35,16 +35,15 @@ export interface AwsS3MultipartOptions extends PluginOptions {
       file: UppyFile,
       opts: { uploadId: string; key: string; signal: AbortSignal }
     ) => MaybePromise<AwsS3Part[]>
-    getTemporarySecurityCredentials?: boolean | (() => MaybePromise<AwsS3STSResponse>)
     signPart?: (
       file: UppyFile,
-      opts: { uploadId: string; key: string; partNumber: number; body: Blob, signal: AbortSignal }
+      opts: { uploadId: string; key: string; partNumber: number; body: Blob; signal: AbortSignal }
     ) => MaybePromise<AwsS3SignedPart>
     /** @deprecated Use signPart instead */
     prepareUploadParts?: (
       file: UppyFile,
-      partData: { uploadId: string; key: string; parts: [{ number: number, chunk: Blob }], signal: AbortSignal }
-    ) => MaybePromise<{ presignedUrls: { [k: number]: string }, headers?: { [k: string]: string } }>
+      partData: { uploadId: string; key: string; parts: [{ number: number, chunk: Blob }] }
+    ) => MaybePromise<{ presignedUrls: Record<number, string>, headers?: Record<number, Record<string, string>> }>
     abortMultipartUpload?: (
       file: UppyFile,
       opts: { uploadId: string; key: string; signal: AbortSignal }
