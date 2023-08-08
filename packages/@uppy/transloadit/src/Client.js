@@ -89,7 +89,7 @@ export default class Client {
 
     const url = new URL(ASSEMBLIES_ENDPOINT, `${this.opts.service}`).href
     return this.#fetchJSON(url, {
-      method: 'post',
+      method: 'POST',
       headers: this.#headers,
       body: data,
     })
@@ -105,7 +105,7 @@ export default class Client {
   reserveFile (assembly, file) {
     const size = encodeURIComponent(file.size)
     const url = `${assembly.assembly_ssl_url}/reserve_file?size=${size}`
-    return this.#fetchJSON(url, { method: 'post', headers: this.#headers })
+    return this.#fetchJSON(url, { method: 'POST', headers: this.#headers })
       .catch((err) => this.#reportError(err, { assembly, file, url, type: 'API_ERROR' }))
   }
 
@@ -126,7 +126,7 @@ export default class Client {
 
     const qs = `size=${size}&filename=${filename}&fieldname=${fieldname}&s3Url=${uploadUrl}`
     const url = `${assembly.assembly_ssl_url}/add_file?${qs}`
-    return this.#fetchJSON(url, { method: 'post', headers: this.#headers })
+    return this.#fetchJSON(url, { method: 'POST', headers: this.#headers })
       .catch((err) => this.#reportError(err, { assembly, file, url, type: 'API_ERROR' }))
   }
 
@@ -145,7 +145,7 @@ export default class Client {
         num_expected_upload_files,
       }],
     })
-    return this.#fetchJSON(url, { method: 'post', headers: this.#headers, body })
+    return this.#fetchJSON(url, { method: 'POST', headers: this.#headers, body })
       .catch((err) => this.#reportError(err, { url, type: 'API_ERROR' }))
   }
 
@@ -156,7 +156,7 @@ export default class Client {
    */
   cancelAssembly (assembly) {
     const url = assembly.assembly_ssl_url
-    return this.#fetchJSON(url, { method: 'delete', headers: this.#headers })
+    return this.#fetchJSON(url, { method: 'DELETE', headers: this.#headers })
       .catch((err) => this.#reportError(err, { url, type: 'API_ERROR' }))
   }
 
@@ -176,7 +176,7 @@ export default class Client {
       : err.message
 
     return this.#fetchJSON('https://transloaditstatus.com/client_error', {
-      method: 'post',
+      method: 'POST',
       body: JSON.stringify({
         endpoint,
         instance,

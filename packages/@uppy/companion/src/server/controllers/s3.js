@@ -90,7 +90,7 @@ module.exports = function s3 (config) {
       Key: key,
     }).then(data => {
       res.json({
-        method: 'post',
+        method: 'post', // TODO: switch to the uppercase 'POST' in the next major
         url: data.url,
         fields: data.fields,
         expires: config.expires,
