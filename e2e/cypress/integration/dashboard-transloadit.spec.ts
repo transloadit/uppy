@@ -364,7 +364,6 @@ describe('Dashboard with Transloadit', () => {
 
   it('should complete on retry', () => {
     cy.get('@file-input').selectFile(['cypress/fixtures/images/cat.jpg', 'cypress/fixtures/images/traffic.jpg'], { force: true })
-    cy.get('.uppy-StatusBar-actionBtn--upload').click()
 
     cy.intercept('POST', 'https://transloaditstatus.com/client_error', {
       statusCode: 200,
@@ -376,7 +375,9 @@ describe('Dashboard with Transloadit', () => {
       { statusCode: 500, body: {} },
     ).as('failedAssemblyCreation')
 
+    cy.get('.uppy-StatusBar-actionBtn--upload').click()
     cy.wait('@failedAssemblyCreation')
+
     cy.get('button[data-cy=retry]').click()
 
     cy.wait(['@assemblies', '@resumable'])
