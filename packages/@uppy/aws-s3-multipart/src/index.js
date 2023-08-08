@@ -666,7 +666,13 @@ export default class AwsS3Multipart extends UploaderPlugin {
 
         // NOTE This must be allowed by CORS.
         const etag = ev.target.getResponseHeader('ETag')
+        const location = ev.target.getResponseHeader('Location')
 
+        if (location === null) {
+          // Not being able to read the Location header is not a fatal error.
+          // eslint-disable-next-line no-console
+          console.warn('AwsS3/Multipart: Could not read the Location header. This likely means CORS is not configured correctly on the S3 Bucket. See https://uppy.io/docs/aws-s3-multipart#S3-Bucket-Configuration for instructions.')
+        }
         if (etag === null) {
           reject(new Error('AwsS3/Multipart: Could not read the ETag header. This likely means CORS is not configured correctly on the S3 Bucket. See https://uppy.io/docs/aws-s3-multipart#S3-Bucket-Configuration for instructions.'))
           return
@@ -675,6 +681,7 @@ export default class AwsS3Multipart extends UploaderPlugin {
         onComplete?.(etag)
         resolve({
           ETag: etag,
+          location,
         })
       })
 
