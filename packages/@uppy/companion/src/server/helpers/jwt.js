@@ -15,7 +15,6 @@ const { encrypt, decrypt } = require('./utils')
 // there's no way for them to retry their failed files.
 // With 400 days, there's still a theoretical possibility but very low.
 const EXPIRY = 60 * 60 * 24 * 400
-const EXPIRY_MS = EXPIRY * 1000
 
 /**
  *
@@ -78,14 +77,15 @@ module.exports.verifyEncryptedAuthToken = (token, secret, providerName) => {
   return tokens
 }
 
-const addToCookies = (res, token, companionOptions, authProvider, prefix) => {
+function getCommonCookieOptions ({ companionOptions }) {
   const cookieOptions = {
-    maxAge: EXPIRY_MS,
     httpOnly: true,
   }
 
   // Fix to show thumbnails on Chrome
   // https://community.transloadit.com/t/dropbox-and-box-thumbnails-returning-401-unauthorized/15781/2
+  // Note that sameSite cookies also require secure (which needs https), so thumbnails don't work from localhost
+  // to test locally, you can manually find the URL of the image and open it in a separate browser tab
   if (companionOptions.server && companionOptions.server.protocol === 'https') {
     cookieOptions.sameSite = 'none'
     cookieOptions.secure = true
@@ -94,14 +94,27 @@ const addToCookies = (res, token, companionOptions, authProvider, prefix) => {
   if (companionOptions.cookieDomain) {
     cookieOptions.domain = companionOptions.cookieDomain
   }
+
+  return cookieOptions
+}
+
+const getCookieName = (authProvider) => `uppyAuthToken--${authProvider}`
+
+const addToCookies = (res, token, companionOptions, authProvider) => {
+  const cookieOptions = {
+    ...getCommonCookieOptions({ companionOptions }),
+    maxAge: EXPIRY * 1000,
+    httpOnly: true,
+  }
+
   // send signed token to client.
-  res.cookie(`${prefix}--${authProvider}`, token, cookieOptions)
+  res.cookie(getCookieName(authProvider), token, cookieOptions)
 }
 
 module.exports.addToCookiesIfNeeded = (req, res, uppyAuthToken) => {
   // some providers need the token in cookies for thumbnail/image requests
   if (req.companion.provider.needsCookieAuth) {
-    addToCookies(res, uppyAuthToken, req.companion.options, req.companion.provider.authProvider, 'uppyAuthToken')
+    addToCookies(res, uppyAuthToken, req.companion.options, req.companion.provider.authProvider)
   }
 }
 
@@ -112,14 +125,9 @@ module.exports.addToCookiesIfNeeded = (req, res, uppyAuthToken) => {
  * @param {string} authProvider
  */
 module.exports.removeFromCookies = (res, companionOptions, authProvider) => {
-  const cookieOptions = {
-    maxAge: EXPIRY_MS,
-    httpOnly: true,
-  }
+  // options must be identical to those given to res.cookie(), excluding expires and maxAge.
+  // https://expressjs.com/en/api.html#res.clearCookie
+  const cookieOptions = getCommonCookieOptions({ companionOptions })
 
-  if (companionOptions.cookieDomain) {
-    cookieOptions.domain = companionOptions.cookieDomain
-  }
-
-  res.clearCookie(`uppyAuthToken--${authProvider}`, cookieOptions)
+  res.clearCookie(getCookieName(authProvider), cookieOptions)
 }
