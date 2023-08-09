@@ -431,7 +431,6 @@ export default class ProviderView extends View {
       currentSelection,
       files: hasInput ? filterItems(files) : files,
       folders: hasInput ? filterItems(folders) : folders,
-      username: this.username,
       getNextFolder: this.getNextFolder,
       getFolder: this.getFolder,
       loadAllFiles: this.opts.loadAllFiles,
