@@ -2,6 +2,7 @@
 
 import RequestClient from './RequestClient.js'
 import * as tokenStorage from './tokenStorage.js'
+import AuthError from './AuthError.js'
 
 const getName = (id) => {
   return id.split('-').map((s) => s.charAt(0).toUpperCase() + s.slice(1)).join(' ')
@@ -160,10 +161,10 @@ export default class Provider extends RequestClient {
     await this.#refreshingTokenPromise
 
     try {
-      // throw Object.assign(new Error(), { isAuthError: true }) // testing simulate access token expired (to refresh token)
+      // throw new AuthError() // testing simulate access token expired (to refresh token)
       return await super.request(...args)
     } catch (err) {
-      if (!err.isAuthError) throw err // only handle auth errors (401 from provider)
+      if (!(err instanceof AuthError)) throw err // only handle auth errors (401 from provider)
 
       await this.#refreshingTokenPromise
 

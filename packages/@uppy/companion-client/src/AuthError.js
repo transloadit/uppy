@@ -4,7 +4,7 @@ class AuthError extends Error {
   constructor () {
     super('Authorization required')
     this.name = 'AuthError'
-    this.isAuthError = true
+    this.isAuthError = true // todo remove in next major and pull AuthError into a shared package
   }
 }
 

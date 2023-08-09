@@ -164,7 +164,7 @@ export default class RequestClient {
       if (!skipPostResponse) this.onReceiveResponse(response)
       return handleJSONResponse(response)
     } catch (err) {
-      if (err?.isAuthError) throw err
+      if (err instanceof AuthError) throw err // auth errors must be passed through
       throw new ErrorWithCause(`Could not ${method} ${this.#getUrl(path)}`, { cause: err })
     }
   }
