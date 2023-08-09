@@ -22,8 +22,6 @@ module.exports.getFromState = (state, name, secret) => {
   return decodeState(state, secret)[name]
 }
 
-module.exports.getDynamicStateFromRequest = (req) => {
-  const dynamic = (req.session.grant || {}).dynamic || {}
-  const { state } = dynamic
-  return state
+module.exports.getGrantDynamicFromRequest = (req) => {
+  return req.session.grant?.dynamic ?? {}
 }

@@ -1,10 +1,13 @@
 const jwt = require('jsonwebtoken')
 const { encrypt, decrypt } = require('./utils')
 
-// The Uppy auth token is a (JWT) container around provider OAuth access & refresh tokens.
-// Providers themselves will verify these inner tokens.
+// The Uppy auth token is an encrypted JWT & JSON encoded container.
+// It used to simply contain an OAuth access_token and refresh_token for a specific provider.
+// However now we allow more data to be stored in it. This allows for storing other state or parameters needed for that
+// specific provider, like username, password, host names etc.
+// The different providers APIs themselves will verify these inner tokens through Provider classes.
 // The expiry of the Uppy auth token should be higher than the expiry of the refresh token.
-// Because some refresh tokens never expire, we set the Uppy auth token expiry very high.
+// Because some refresh tokens normally never expire, we set the Uppy auth token expiry very high.
 // Chrome has a maximum cookie expiry of 400 days, so we'll use that (we also store the auth token in a cookie)
 //
 // If the Uppy auth token expiry were set too low (e.g. 24hr), we could risk this situation:
@@ -14,15 +17,21 @@ const { encrypt, decrypt } = require('./utils')
 // even though the provider refresh token would still have been accepted and
 // there's no way for them to retry their failed files.
 // With 400 days, there's still a theoretical possibility but very low.
-const EXPIRY = 60 * 60 * 24 * 400
+const MAX_AGE_REFRESH_TOKEN = 60 * 60 * 24 * 400
+
+const MAX_AGE_24H = 60 * 60 * 24
+
+module.exports.MAX_AGE_24H = MAX_AGE_24H
+module.exports.MAX_AGE_REFRESH_TOKEN = MAX_AGE_REFRESH_TOKEN
 
 /**
  *
  * @param {*} data
  * @param {string} secret
+ * @param {number} maxAge
  */
-const generateToken = (data, secret) => {
-  return jwt.sign({ data }, secret, { expiresIn: EXPIRY })
+const generateToken = (data, secret, maxAge) => {
+  return jwt.sign({ data }, secret, { expiresIn: maxAge })
 }
 
 /**
@@ -40,18 +49,17 @@ const verifyToken = (token, secret) => {
  * @param {*} payload
  * @param {string} secret
  */
-module.exports.generateEncryptedToken = (payload, secret) => {
+module.exports.generateEncryptedToken = (payload, secret, maxAge = MAX_AGE_24H) => {
   // return payload // for easier debugging
-  return encrypt(generateToken(payload, secret), secret)
+  return encrypt(generateToken(payload, secret, maxAge), secret)
 }
 
 /**
- *
  * @param {*} payload
  * @param {string} secret
  */
-module.exports.generateEncryptedAuthToken = (payload, secret) => {
-  return module.exports.generateEncryptedToken(JSON.stringify(payload), secret)
+module.exports.generateEncryptedAuthToken = (payload, secret, maxAge) => {
+  return module.exports.generateEncryptedToken(JSON.stringify(payload), secret, maxAge)
 }
 
 /**
@@ -100,21 +108,26 @@ function getCommonCookieOptions ({ companionOptions }) {
 
 const getCookieName = (authProvider) => `uppyAuthToken--${authProvider}`
 
-const addToCookies = (res, token, companionOptions, authProvider) => {
+const addToCookies = ({ res, token, companionOptions, authProvider, maxAge = MAX_AGE_24H * 1000 }) => {
   const cookieOptions = {
     ...getCommonCookieOptions({ companionOptions }),
-    maxAge: EXPIRY * 1000,
-    httpOnly: true,
+    maxAge,
   }
 
   // send signed token to client.
   res.cookie(getCookieName(authProvider), token, cookieOptions)
 }
 
-module.exports.addToCookiesIfNeeded = (req, res, uppyAuthToken) => {
+module.exports.addToCookiesIfNeeded = (req, res, uppyAuthToken, maxAge) => {
   // some providers need the token in cookies for thumbnail/image requests
   if (req.companion.provider.needsCookieAuth) {
-    addToCookies(res, uppyAuthToken, req.companion.options, req.companion.provider.authProvider)
+    addToCookies({
+      res,
+      token: uppyAuthToken,
+      companionOptions: req.companion.options,
+      authProvider: req.companion.provider.authProvider,
+      maxAge,
+    })
   }
 }
 

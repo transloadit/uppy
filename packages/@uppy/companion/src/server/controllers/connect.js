@@ -1,6 +1,11 @@
 const atob = require('atob')
 const oAuthState = require('../helpers/oauth-state')
 
+const queryString = (params, prefix = '?') => {
+  const str = new URLSearchParams(params).toString()
+  return str ? `${prefix}${str}` : ''
+}
+
 /**
  * initializes the oAuth flow for a provider.
  *
@@ -29,5 +34,17 @@ module.exports = function connect (req, res) {
   }
 
   const state = oAuthState.encodeState(stateObj, secret)
-  res.redirect(req.companion.buildURL(`/connect/${req.companion.provider.authProvider}?state=${state}`, true))
+  const { provider, providerGrantConfig } = req.companion
+
+  // pass along grant's dynamic config (if specified for the provider in its grant config `dynamic` section)
+  const grantDynamicConfig = Object.fromEntries(providerGrantConfig.dynamic?.map(p => [p, req.query[p]]) || [])
+
+  const providerName = provider.authProvider
+  const qs = queryString({
+    ...grantDynamicConfig,
+    state,
+  })
+
+  // Now we redirect to grant's /connect endpoint, see `app.use(Grant(grantConfig))`
+  res.redirect(req.companion.buildURL(`/connect/${providerName}${qs}`, true))
 }

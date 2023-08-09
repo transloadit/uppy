@@ -82,10 +82,10 @@ exports.getCredentialsOverrideMiddleware = (providers, companionOptions) => {
       return
     }
 
-    const dynamic = oAuthState.getDynamicStateFromRequest(req)
+    const grantDynamic = oAuthState.getGrantDynamicFromRequest(req)
     // only use state via session object if user isn't making intial "connect" request.
     // override param indicates subsequent requests from the oauth flow
-    const state = override ? dynamic : req.query.state
+    const state = override ? grantDynamic.state : req.query.state
     if (!state) {
       next()
       return

@@ -42,7 +42,7 @@ const providerNameToAuthName = (name, options) => { // eslint-disable-line no-un
  *
  * @param {Record<string, typeof Provider>} providers
  */
-module.exports.getProviderMiddleware = (providers) => {
+module.exports.getProviderMiddleware = (providers, grantConfig) => {
   /**
    *
    * @param {object} req
@@ -54,12 +54,17 @@ module.exports.getProviderMiddleware = (providers) => {
     const ProviderClass = providers[providerName]
     if (ProviderClass && validOptions(req.companion.options)) {
       const { allowLocalUrls } = req.companion.options
-      req.companion.provider = new ProviderClass({ providerName, allowLocalUrls })
-      req.companion.providerClass = ProviderClass
+      const { authProvider } = ProviderClass
 
-      if (isOAuthProvider(ProviderClass.authProvider)) {
+      let providerGrantConfig
+      if (isOAuthProvider(authProvider)) {
         req.companion.getProviderCredentials = getCredentialsResolver(providerName, req.companion.options, req)
+        providerGrantConfig = grantConfig[authProvider]
+        req.companion.providerGrantConfig = providerGrantConfig
       }
+
+      req.companion.provider = new ProviderClass({ providerName, providerGrantConfig, allowLocalUrls })
+      req.companion.providerClass = ProviderClass
     } else {
       logger.warn('invalid provider options detected. Provider will not be loaded', 'provider.middleware.invalid', req.id)
     }

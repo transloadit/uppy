@@ -242,10 +242,12 @@ export default class ProviderView extends View {
     this.plugin.setPluginState({ filterInput: '' })
   }
 
-  async handleAuth () {
+  async handleAuth (formSubmitEvent) {
+    formSubmitEvent.preventDefault()
+
     const clientVersion = `@uppy/provider-views=${ProviderView.VERSION}`
     try {
-      await this.provider.login({ uppyVersions: clientVersion })
+      await this.provider.login({ uppyVersions: clientVersion, formSubmitEvent })
       this.plugin.setPluginState({ authenticated: true })
       this.preFirstRender()
     } catch (e) {
@@ -477,6 +479,7 @@ export default class ProviderView extends View {
             handleAuth={this.handleAuth}
             i18n={this.plugin.uppy.i18n}
             i18nArray={this.plugin.uppy.i18nArray}
+            renderForm={this.opts.renderAuthForm}
           />
         </CloseWrapper>
       )

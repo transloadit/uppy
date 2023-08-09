@@ -126,6 +126,8 @@ module.exports.app = (optionsArg = {}) => {
   app.get('/:providerName/logout', middlewares.hasSessionAndProvider, middlewares.hasOAuthProvider, middlewares.gentleVerifyToken, controllers.logout)
   app.get('/:providerName/send-token', middlewares.hasSessionAndProvider, middlewares.hasOAuthProvider, middlewares.verifyToken, controllers.sendToken)
 
+  app.post('/:providerName/simple-auth', express.json(), middlewares.hasSessionAndProvider, middlewares.hasBody, middlewares.hasSimpleAuthProvider, controllers.simpleAuth)
+
   app.get('/:providerName/list/:id?', middlewares.hasSessionAndProvider, middlewares.verifyToken, controllers.list)
   // backwards compat:
   app.get('/search/:providerName/list', middlewares.hasSessionAndProvider, middlewares.verifyToken, controllers.list)
@@ -136,7 +138,7 @@ module.exports.app = (optionsArg = {}) => {
 
   app.get('/:providerName/thumbnail/:id', middlewares.hasSessionAndProvider, middlewares.hasOAuthProvider, middlewares.cookieAuthToken, middlewares.verifyToken, controllers.thumbnail)
 
-  app.param('providerName', providerManager.getProviderMiddleware(providers))
+  app.param('providerName', providerManager.getProviderMiddleware(providers, grantConfig))
 
   if (app.get('env') !== 'test') {
     jobs.startCleanUpJob(options.filePath)

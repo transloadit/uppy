@@ -4,12 +4,12 @@
  * @param {object} res
  */
 async function thumbnail (req, res, next) {
-  const { providerName, id } = req.params
-  const { accessToken } = req.companion.allProvidersTokens[providerName]
-  const { provider } = req.companion
+  const { id } = req.params
+  const { provider, providerUserSession } = req.companion
+  const { accessToken } = providerUserSession
 
   try {
-    const { stream } = await provider.thumbnail({ id, token: accessToken })
+    const { stream } = await provider.thumbnail({ id, token: accessToken, providerUserSession })
     res.set('Content-Type', 'image/jpeg')
     stream.pipe(res)
   } catch (err) {

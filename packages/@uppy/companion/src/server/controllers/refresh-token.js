@@ -10,36 +10,31 @@ async function refreshToken (req, res, next) {
 
   const { key: clientId, secret: clientSecret } = req.companion.options.providerOptions[providerName]
 
-  const providerTokens = req.companion.allProvidersTokens[providerName]
+  const { providerUserSession } = req.companion
 
   // not all providers have refresh tokens
-  if (providerTokens.refreshToken == null) {
+  if (providerUserSession.refreshToken == null) {
     res.sendStatus(401)
     return
   }
 
   try {
     const data = await req.companion.provider.refreshToken({
-      clientId, clientSecret, refreshToken: providerTokens.refreshToken,
+      clientId, clientSecret, refreshToken: providerUserSession.refreshToken,
     })
 
-    const newAllProvidersTokens = {
-      ...req.companion.allProvidersTokens,
-      [providerName]: {
-        ...providerTokens,
-        accessToken: data.accessToken,
-      },
+    req.companion.providerUserSession = {
+      ...providerUserSession,
+      accessToken: data.accessToken,
     }
-
-    req.companion.allProvidersTokens = newAllProvidersTokens
-    req.companion.providerTokens = newAllProvidersTokens[providerName]
 
     logger.debug(`Generating refreshed auth token for provider ${providerName}`, null, req.id)
     const uppyAuthToken = tokenService.generateEncryptedAuthToken(
-      req.companion.allProvidersTokens, req.companion.options.secret,
+      { [providerName]: req.companion.providerUserSession },
+      req.companion.options.secret, req.companion.providerClass.authStateExpiry,
     )
 
-    tokenService.addToCookiesIfNeeded(req, res, uppyAuthToken)
+    tokenService.addToCookiesIfNeeded(req, res, uppyAuthToken, req.companion.providerClass.authStateExpiry)
 
     res.send({ uppyAuthToken })
   } catch (err) {

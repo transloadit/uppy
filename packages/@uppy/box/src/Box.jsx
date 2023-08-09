@@ -30,6 +30,7 @@ export default class Box extends UIPlugin {
       companionCookiesRule: this.opts.companionCookiesRule,
       provider: 'box',
       pluginId: this.id,
+      supportsRefreshToken: false,
     })
 
     this.defaultLocale = locale

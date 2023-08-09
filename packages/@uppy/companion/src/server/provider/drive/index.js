@@ -5,6 +5,7 @@ const logger = require('../../logger')
 const { VIRTUAL_SHARED_DIR, adaptData, isShortcut, isGsuiteFile, getGsuiteExportType } = require('./adapter')
 const { withProviderErrorHandling } = require('../providerErrors')
 const { prepareStream } = require('../../helpers/utils')
+const { MAX_AGE_REFRESH_TOKEN } = require('../../helpers/jwt')
 
 const DRIVE_FILE_FIELDS = 'kind,id,imageMediaMetadata,name,mimeType,ownedByMe,size,modifiedTime,iconLink,thumbnailLink,teamDriveId,videoMediaMetadata,shortcutDetails(targetId,targetMimeType)'
 const DRIVE_FILES_FIELDS = `kind,nextPageToken,incompleteSearch,files(${DRIVE_FILE_FIELDS})`
@@ -47,6 +48,10 @@ class Drive extends Provider {
 
   static get authProvider () {
     return 'google'
+  }
+
+  static get authStateExpiry () {
+    return MAX_AGE_REFRESH_TOKEN
   }
 
   async list (options) {

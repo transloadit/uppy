@@ -36,11 +36,37 @@ function GoogleIcon () {
   )
 }
 
-function AuthView (props) {
-  const { pluginName, pluginIcon, i18nArray, handleAuth } = props
+const defaultRenderForm = ({ pluginName, i18nArray }) => {
   // In order to comply with Google's brand we need to create a different button
   // for the Google Drive plugin
   const isGoogleDrive = pluginName === 'Google Drive'
+
+  if (isGoogleDrive) {
+    return (
+      <button
+        type="submit"
+        className="uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-Provider-authBtn uppy-Provider-btn-google"
+        data-uppy-super-focusable
+      >
+        <GoogleIcon />
+        {i18nArray('signInWithGoogle')}
+      </button>
+    )
+  }
+
+  return (
+    <button
+      type="submit"
+      className="uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-Provider-authBtn"
+      data-uppy-super-focusable
+    >
+      {i18nArray('authenticateWith', { pluginName })}
+    </button>
+  )
+}
+
+function AuthView (props) {
+  const { pluginName, pluginIcon, i18nArray, handleAuth, renderForm = defaultRenderForm } = props
 
   const pluginNameComponent = (
     <span className="uppy-Provider-authTitleName">
@@ -56,26 +82,10 @@ function AuthView (props) {
           pluginName: pluginNameComponent,
         })}
       </div>
-      {isGoogleDrive ? (
-        <button
-          type="button"
-          className="uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-Provider-authBtn uppy-Provider-btn-google"
-          onClick={handleAuth}
-          data-uppy-super-focusable
-        >
-          <GoogleIcon />
-          {i18nArray('signInWithGoogle')}
-        </button>
-      ) : (
-        <button
-          type="button"
-          className="uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-Provider-authBtn"
-          onClick={handleAuth}
-          data-uppy-super-focusable
-        >
-          {i18nArray('authenticateWith', { pluginName })}
-        </button>
-      )}
+
+      <form className="uppy-Provider-authForm" onSubmit={handleAuth}>
+        {renderForm({ pluginName, i18nArray })}
+      </form>
     </div>
   )
 }

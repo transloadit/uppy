@@ -28,6 +28,7 @@ export default class Zoom extends UIPlugin {
       companionCookiesRule: this.opts.companionCookiesRule,
       provider: 'zoom',
       pluginId: this.id,
+      supportsRefreshToken: false,
     })
 
     this.defaultLocale = locale

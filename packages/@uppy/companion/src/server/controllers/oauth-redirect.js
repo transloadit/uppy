@@ -16,7 +16,7 @@ module.exports = function oauthRedirect (req, res) {
     return
   }
 
-  const state = oAuthState.getDynamicStateFromRequest(req)
+  const { state } = oAuthState.getGrantDynamicFromRequest(req)
   if (!state) {
     res.status(400).send('Cannot find state in session')
     return

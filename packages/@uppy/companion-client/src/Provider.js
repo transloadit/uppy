@@ -40,6 +40,7 @@ export default class Provider extends RequestClient {
     this.tokenKey = `companion-${this.pluginId}-auth-token`
     this.companionKeysParams = this.opts.companionKeysParams
     this.preAuthToken = null
+    this.supportsRefreshToken = opts.supportsRefreshToken ?? true // todo false in next major
   }
 
   async headers () {
@@ -74,7 +75,7 @@ export default class Provider extends RequestClient {
     return this.uppy.getPlugin(this.pluginId).storage.getItem(this.tokenKey)
   }
 
-  async #removeAuthToken () {
+  async removeAuthToken () {
     return this.uppy.getPlugin(this.pluginId).storage.removeItem(this.tokenKey)
   }
 
@@ -92,11 +93,18 @@ export default class Provider extends RequestClient {
     }
   }
 
-  authUrl (queries = {}) {
+  // eslint-disable-next-line class-methods-use-this
+  authQuery () {
+    return {}
+  }
+
+  authUrl ({ formSubmitEvent, query } = {}) {
     const params = new URLSearchParams({
+      ...query,
       state: btoa(JSON.stringify({ origin: getOrigin() })),
-      ...queries,
+      ...this.authQuery({ formSubmitEvent }),
     })
+
     if (this.preAuthToken) {
       params.set('uppyPreAuthToken', this.preAuthToken)
     }
@@ -104,12 +112,13 @@ export default class Provider extends RequestClient {
     return `${this.hostname}/${this.id}/connect?${params}`
   }
 
-  async login (queries) {
+  async login ({ uppyVersions, formSubmitEvent }) {
     await this.ensurePreAuth()
 
     return new Promise((resolve, reject) => {
-      const link = this.authUrl(queries)
+      const link = this.authUrl({ query: { uppyVersions }, formSubmitEvent })
       const authWindow = window.open(link, '_blank')
+
       const handleToken = (e) => {
         if (e.source !== authWindow) {
           this.uppy.log.warn('ignoring event from unknown source', e)
@@ -164,6 +173,7 @@ export default class Provider extends RequestClient {
       // throw new AuthError() // testing simulate access token expired (to refresh token)
       return await super.request(...args)
     } catch (err) {
+      if (!this.supportsRefreshToken) throw err
       if (!(err instanceof AuthError)) throw err // only handle auth errors (401 from provider)
 
       await this.#refreshingTokenPromise
@@ -205,7 +215,7 @@ export default class Provider extends RequestClient {
 
   async logout (options) {
     const response = await this.get(`${this.id}/logout`, options)
-    await this.#removeAuthToken()
+    await this.removeAuthToken()
     return response
   }
 

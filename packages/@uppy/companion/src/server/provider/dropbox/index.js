@@ -4,6 +4,7 @@ const Provider = require('../Provider')
 const adaptData = require('./adapter')
 const { withProviderErrorHandling } = require('../providerErrors')
 const { prepareStream } = require('../../helpers/utils')
+const { MAX_AGE_REFRESH_TOKEN } = require('../../helpers/jwt')
 
 // From https://www.dropbox.com/developers/reference/json-encoding:
 //
@@ -61,6 +62,10 @@ class DropBox extends Provider {
 
   static get authProvider () {
     return 'dropbox'
+  }
+
+  static get authStateExpiry () {
+    return MAX_AGE_REFRESH_TOKEN
   }
 
   /**
