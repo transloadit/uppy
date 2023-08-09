@@ -9,23 +9,25 @@ const oAuthState = require('../helpers/oauth-state')
  */
 module.exports = function connect (req, res) {
   const { secret } = req.companion.options
-  let state = oAuthState.generateState(secret)
+  const stateObj = oAuthState.generateState()
+
   if (req.query.state) {
-    const origin = JSON.parse(atob(req.query.state))
-    state = oAuthState.addToState(state, origin, secret)
+    const { origin } = JSON.parse(atob(req.query.state))
+    stateObj.origin = origin
   }
 
   if (req.companion.options.server.oauthDomain) {
-    state = oAuthState.addToState(state, { companionInstance: req.companion.buildURL('', true) }, secret)
+    stateObj.companionInstance = req.companion.buildURL('', true)
   }
 
   if (req.companion.clientVersion) {
-    state = oAuthState.addToState(state, { clientVersion: req.companion.clientVersion }, secret)
+    stateObj.clientVersion = req.companion.clientVersion
   }
 
   if (req.query.uppyPreAuthToken) {
-    state = oAuthState.addToState(state, { preAuthToken: req.query.uppyPreAuthToken }, secret)
+    stateObj.preAuthToken = req.query.uppyPreAuthToken
   }
 
+  const state = oAuthState.encodeState(stateObj, secret)
   res.redirect(req.companion.buildURL(`/connect/${req.companion.provider.authProvider}?state=${state}`, true))
 }
