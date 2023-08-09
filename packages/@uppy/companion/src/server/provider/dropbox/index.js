@@ -100,7 +100,7 @@ class DropBox extends Provider {
     return this.#withErrorHandling('provider.dropbox.thumbnail.error', async () => {
       const stream = getClient({ token }).stream.post('files/get_thumbnail_v2', {
         prefixUrl: 'https://content.dropboxapi.com/2',
-        headers: { 'Dropbox-API-Arg': httpHeaderSafeJson({ resource: { '.tag': 'path', path: `${id}` }, size: 'w256h256' }) },
+        headers: { 'Dropbox-API-Arg': httpHeaderSafeJson({ resource: { '.tag': 'path', path: `${id}` }, size: 'w256h256', format: 'jpeg' }) },
         body: Buffer.alloc(0),
         responseType: 'json',
       })

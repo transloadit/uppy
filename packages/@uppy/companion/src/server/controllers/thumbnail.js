@@ -10,6 +10,7 @@ async function thumbnail (req, res, next) {
 
   try {
     const { stream } = await provider.thumbnail({ id, token: accessToken })
+    res.set('Content-Type', 'image/jpeg')
     stream.pipe(res)
   } catch (err) {
     if (err.isAuthError) res.sendStatus(401)
