@@ -1,3 +1,5 @@
+const { respondWithError } = require('../provider/error')
+
 /**
  *
  * @param {object} req
@@ -13,8 +15,8 @@ async function thumbnail (req, res, next) {
     res.set('Content-Type', 'image/jpeg')
     stream.pipe(res)
   } catch (err) {
-    if (err.isAuthError) res.sendStatus(401)
-    else next(err)
+    if (respondWithError(err, res)) return
+    next(err)
   }
 }
 
