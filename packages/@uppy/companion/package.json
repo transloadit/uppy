@@ -48,6 +48,7 @@
     "express-prom-bundle": "6.5.0",
     "express-request-id": "1.4.1",
     "express-session": "1.17.3",
+    "fast-xml-parser": "^4.2.7",
     "form-data": "^3.0.0",
     "got": "11",
     "grant": "5.4.21",
@@ -68,6 +69,7 @@
     "serialize-javascript": "^6.0.0",
     "tus-js-client": "^3.0.0",
     "validator": "^13.0.0",
+    "webdav": "^5.2.3",
     "ws": "8.8.1"
   },
   "devDependencies": {

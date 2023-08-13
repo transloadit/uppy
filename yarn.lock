@@ -4241,6 +4241,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@buttercup/fetch@npm:^0.1.1":
+  version: 0.1.2
+  resolution: "@buttercup/fetch@npm:0.1.2"
+  dependencies:
+    node-fetch: ^3.3.0
+  dependenciesMeta:
+    node-fetch:
+      optional: true
+  checksum: 005ed59a4189183d4ad17c97ccb3558c0d9e2d89411f7d1c4387df7c2a68a0fde889c973e1518ce14f7456306d0bbaeb9e4624b736f578439c5384197c3f4963
+  languageName: node
+  linkType: hard
+
 "@cnakazawa/watch@npm:^1.0.3":
   version: 1.0.4
   resolution: "@cnakazawa/watch@npm:1.0.4"
@@ -11067,6 +11079,7 @@ __metadata:
     express-prom-bundle: 6.5.0
     express-request-id: 1.4.1
     express-session: 1.17.3
+    fast-xml-parser: ^4.2.7
     form-data: ^3.0.0
     got: 11
     grant: 5.4.21
@@ -11092,6 +11105,7 @@ __metadata:
     tus-js-client: ^3.0.0
     typescript: ~4.8
     validator: ^13.0.0
+    webdav: ^5.2.3
     ws: 8.8.1
   bin:
     companion: ./bin/companion
@@ -11579,6 +11593,19 @@ __metadata:
     "@jest/globals": ^29.0.0
     "@uppy/utils": "workspace:^"
     is-mobile: ^3.1.1
+    preact: ^10.5.13
+  peerDependencies:
+    "@uppy/core": "workspace:^"
+  languageName: unknown
+  linkType: soft
+
+"@uppy/webdav@workspace:^, @uppy/webdav@workspace:packages/@uppy/webdav":
+  version: 0.0.0-use.local
+  resolution: "@uppy/webdav@workspace:packages/@uppy/webdav"
+  dependencies:
+    "@uppy/companion-client": "workspace:^"
+    "@uppy/provider-views": "workspace:^"
+    "@uppy/utils": "workspace:^"
     preact: ^10.5.13
   peerDependencies:
     "@uppy/core": "workspace:^"
@@ -13800,6 +13827,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"base-64@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "base-64@npm:1.0.0"
+  checksum: d10b64a1fc9b2c5a5f39f1ce1e6c9d1c5b249222bbfa3a0604c592d90623caf74419983feadd8a170f27dc0c3389704f72faafa3e645aeb56bfc030c93ff074a
+  languageName: node
+  linkType: hard
+
 "base-x@npm:^3.0.8":
   version: 3.0.9
   resolution: "base-x@npm:3.0.9"
@@ -14429,6 +14463,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"byte-length@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "byte-length@npm:1.0.2"
+  checksum: 69e2b00a14a81f675ea9946135c42ee1a1d9f689d5ba1327eb6700fcde2ccacbd09b42f7e514de1d2b763960251d8c790b3d7304a5a1a27b1457e34c129be8c7
+  languageName: node
+  linkType: hard
+
 "bytes@npm:3.0.0":
   version: 3.0.0
   resolution: "bytes@npm:3.0.0"
@@ -14857,6 +14898,13 @@ __metadata:
   version: 0.7.0
   resolution: "chardet@npm:0.7.0"
   checksum: 6fd5da1f5d18ff5712c1e0aed41da200d7c51c28f11b36ee3c7b483f3696dabc08927fc6b227735eb8f0e1215c9a8abd8154637f3eff8cada5959df7f58b024d
+  languageName: node
+  linkType: hard
+
+"charenc@npm:0.0.2":
+  version: 0.0.2
+  resolution: "charenc@npm:0.0.2"
+  checksum: 81dcadbe57e861d527faf6dd3855dc857395a1c4d6781f4847288ab23cffb7b3ee80d57c15bba7252ffe3e5e8019db767757ee7975663ad2ca0939bb8fcaf2e5
   languageName: node
   linkType: hard
 
@@ -15999,6 +16047,13 @@ __metadata:
     shebang-command: ^2.0.0
     which: ^2.0.1
   checksum: 671cc7c7288c3a8406f3c69a3ae2fc85555c04169e9d611def9a675635472614f1c0ed0ef80955d5b6d4e724f6ced67f0ad1bb006c2ea643488fcfef994d7f52
+  languageName: node
+  linkType: hard
+
+"crypt@npm:0.0.2":
+  version: 0.0.2
+  resolution: "crypt@npm:0.0.2"
+  checksum: baf4c7bbe05df656ec230018af8cf7dbe8c14b36b98726939cef008d473f6fe7a4fad906cfea4062c93af516f1550a3f43ceb4d6615329612c6511378ed9fe34
   languageName: node
   linkType: hard
 
@@ -19752,6 +19807,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"fast-xml-parser@npm:^4.2.4, fast-xml-parser@npm:^4.2.7":
+  version: 4.2.7
+  resolution: "fast-xml-parser@npm:4.2.7"
+  dependencies:
+    strnum: ^1.0.5
+  bin:
+    fxparser: src/cli/cli.js
+  checksum: d8b0c9e04756f6c43fa0399428f30149acadae21350e42e26e8fe98e24e6afa6b9b00aa554453795036b00e9fee974a1b556fe2ba18be391d51a9bf1ab790e7c
+  languageName: node
+  linkType: hard
+
 "fastest-levenshtein@npm:^1.0.16":
   version: 1.0.16
   resolution: "fastest-levenshtein@npm:1.0.16"
@@ -21373,6 +21439,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"hot-patcher@npm:^2.0.0":
+  version: 2.0.1
+  resolution: "hot-patcher@npm:2.0.1"
+  checksum: 1f30c5d59ba6dcb2b81485d492dbee9520ac262b1502ed1eeca44a52d92f48f8ebc1055a5e462db344a91f834f7cf19d69a2327158b68be7b4858145a0fc8f83
+  languageName: node
+  linkType: hard
+
 "hpack.js@npm:^2.1.6":
   version: 2.1.6
   resolution: "hpack.js@npm:2.1.6"
@@ -22299,7 +22372,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"is-buffer@npm:^1.1.5":
+"is-buffer@npm:^1.1.5, is-buffer@npm:~1.1.6":
   version: 1.1.6
   resolution: "is-buffer@npm:1.1.6"
   checksum: 4a186d995d8bbf9153b4bd9ff9fd04ae75068fe695d29025d25e592d9488911eeece84eefbd8fa41b8ddcc0711058a71d4c466dcf6f1f6e1d83830052d8ca707
@@ -24364,6 +24437,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"layerr@npm:^0.1.2":
+  version: 0.1.2
+  resolution: "layerr@npm:0.1.2"
+  checksum: db34bae003a8f289c858a7657c260104e40c4fdb6df8d35badbc42dc3ffe7d361c6dbf54f0c91cdaf6f364788b8af432131448dd9a240b82b8b2502b917fa052
+  languageName: node
+  linkType: hard
+
 "lazy-ass@npm:1.6.0, lazy-ass@npm:^1.6.0":
   version: 1.6.0
   resolution: "lazy-ass@npm:1.6.0"
@@ -25466,6 +25546,17 @@ __metadata:
     inherits: ^2.0.1
     safe-buffer: ^5.1.2
   checksum: 098494d885684bcc4f92294b18ba61b7bd353c23147fbc4688c75b45cb8590f5a95fd4584d742415dcc52487f7a1ef6ea611cfa1543b0dc4492fe026357f3f0c
+  languageName: node
+  linkType: hard
+
+"md5@npm:^2.3.0":
+  version: 2.3.0
+  resolution: "md5@npm:2.3.0"
+  dependencies:
+    charenc: 0.0.2
+    crypt: 0.0.2
+    is-buffer: ~1.1.6
+  checksum: a63cacf4018dc9dee08c36e6f924a64ced735b37826116c905717c41cebeb41a522f7a526ba6ad578f9c80f02cb365033ccd67fe186ffbcc1a1faeb75daa9b6e
   languageName: node
   linkType: hard
 
@@ -26709,6 +26800,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"minimatch@npm:^5.1.0":
+  version: 5.1.6
+  resolution: "minimatch@npm:5.1.6"
+  dependencies:
+    brace-expansion: ^2.0.1
+  checksum: 7564208ef81d7065a370f788d337cd80a689e981042cb9a1d0e6580b6c6a8c9279eba80010516e258835a988363f99f54a6f711a315089b8b42694f5da9d0d77
+  languageName: node
+  linkType: hard
+
 "minimatch@npm:~3.0.2, minimatch@npm:~3.0.4":
   version: 3.0.8
   resolution: "minimatch@npm:3.0.8"
@@ -27173,6 +27273,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"nested-property@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "nested-property@npm:4.0.0"
+  checksum: 9c86f2c722429e167876d5becf276139a6aa4b8732b6d9e32de9aa44dfd017702b60614cc87aec961dea47ae50dae0951d5b5f66fc30288f18bf581c16e42ca2
+  languageName: node
+  linkType: hard
+
 "next-tick@npm:^1.1.0":
   version: 1.1.0
   resolution: "next-tick@npm:1.1.0"
@@ -27385,6 +27492,17 @@ __metadata:
     fetch-blob: ^3.1.4
     formdata-polyfill: ^4.0.10
   checksum: e65322431f4897ded04197aa5923eaec63a8d53e00432de4e70a4f7006625c8dc32629c5c35f4fe8ee719a4825544d07bf53f6e146a7265914262f493e8deac1
+  languageName: node
+  linkType: hard
+
+"node-fetch@npm:^3.3.0":
+  version: 3.3.2
+  resolution: "node-fetch@npm:3.3.2"
+  dependencies:
+    data-uri-to-buffer: ^4.0.0
+    fetch-blob: ^3.1.4
+    formdata-polyfill: ^4.0.10
+  checksum: 06a04095a2ddf05b0830a0d5302699704d59bda3102894ea64c7b9d4c865ecdff2d90fd042df7f5bc40337266961cb6183dcc808ea4f3000d024f422b462da92
   languageName: node
   linkType: hard
 
@@ -28848,6 +28966,13 @@ __metadata:
   version: 1.0.7
   resolution: "path-parse@npm:1.0.7"
   checksum: 49abf3d81115642938a8700ec580da6e830dde670be21893c62f4e10bd7dd4c3742ddc603fe24f898cba7eb0c6bc1777f8d9ac14185d34540c6d4d80cd9cae8a
+  languageName: node
+  linkType: hard
+
+"path-posix@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "path-posix@npm:1.0.0"
+  checksum: 4f64ad212de6ad8d0dbfa440cac8b924303c25c30301769ad0501e29e83a5b9d469e8133753f999ad37482c9c8d3511129e4d83db55d2e4b1555b183c9749ae8
   languageName: node
   linkType: hard
 
@@ -36213,6 +36338,7 @@ __metadata:
     "@uppy/unsplash": "workspace:^"
     "@uppy/url": "workspace:^"
     "@uppy/webcam": "workspace:^"
+    "@uppy/webdav": "workspace:^"
     "@uppy/xhr-upload": "workspace:^"
     "@uppy/zoom": "workspace:^"
     abortcontroller-polyfill: ^1.7.3
@@ -36240,6 +36366,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"url-join@npm:^4.0.1":
+  version: 4.0.1
+  resolution: "url-join@npm:4.0.1"
+  checksum: f74e868bf25dbc8be6a8d7237d4c36bb5b6c62c72e594d5ab1347fe91d6af7ccd9eb5d621e30152e4da45c2e9a26bec21390e911ab54a62d4d82e76028374ee5
+  languageName: node
+  linkType: hard
+
 "url-loader@npm:^4.1.1":
   version: 4.1.1
   resolution: "url-loader@npm:4.1.1"
@@ -36257,7 +36390,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"url-parse@npm:^1.4.4, url-parse@npm:^1.5.3, url-parse@npm:^1.5.7":
+"url-parse@npm:^1.4.4, url-parse@npm:^1.5.10, url-parse@npm:^1.5.3, url-parse@npm:^1.5.7":
   version: 1.5.10
   resolution: "url-parse@npm:1.5.10"
   dependencies:
@@ -36908,6 +37041,27 @@ __metadata:
   version: 3.2.1
   resolution: "web-streams-polyfill@npm:3.2.1"
   checksum: b119c78574b6d65935e35098c2afdcd752b84268e18746606af149e3c424e15621b6f1ff0b42b2676dc012fc4f0d313f964b41a4b5031e525faa03997457da02
+  languageName: node
+  linkType: hard
+
+"webdav@npm:^5.2.3":
+  version: 5.2.3
+  resolution: "webdav@npm:5.2.3"
+  dependencies:
+    "@buttercup/fetch": ^0.1.1
+    base-64: ^1.0.0
+    byte-length: ^1.0.2
+    fast-xml-parser: ^4.2.4
+    he: ^1.2.0
+    hot-patcher: ^2.0.0
+    layerr: ^0.1.2
+    md5: ^2.3.0
+    minimatch: ^5.1.0
+    nested-property: ^4.0.0
+    path-posix: ^1.0.0
+    url-join: ^4.0.1
+    url-parse: ^1.5.10
+  checksum: 4821e89843ddb2feffbde367a68ce035669211033520cc575030bf0143b5ff424c43e20c136aeecab39995ce1d158a24de7ff3f00c25dcbd3d334d621f66cbcd
   languageName: node
   linkType: hard
 

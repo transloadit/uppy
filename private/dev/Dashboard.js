@@ -17,6 +17,8 @@ import DropTarget from '@uppy/drop-target'
 import Audio from '@uppy/audio'
 import Compressor from '@uppy/compressor'
 /* eslint-enable import/no-extraneous-dependencies */
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { WebdavOauth, WebdavSimpleAuth } from '@uppy/webdav'
 
 import generateSignatureIfSecret from './generateSignatureIfSecret.js'
 
@@ -80,6 +82,9 @@ export default () => {
       proudlyDisplayPoweredByUppy: true,
       note: `${JSON.stringify(restrictions)}`,
     })
+    .use(WebdavSimpleAuth, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })
+    .use(WebdavOauth, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })
+
     // .use(GoogleDrive, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })
     // .use(Instagram, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })
     // .use(Dropbox, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })

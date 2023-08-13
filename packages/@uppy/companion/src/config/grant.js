@@ -44,5 +44,16 @@ module.exports = () => {
       access_url: 'https://zoom.us/oauth/token',
       callback: '/zoom/callback',
     },
+    webdav: {
+      transport: 'session',
+      // use 'subdomain' for full domain (hostname) similar to mastodon:
+      // https://github.com/simov/grant/blob/6e0692dfdd83edbc4ee82629ba0fe8f986d5879d/config/oauth.json#L631
+      dynamic: ['subdomain'],
+      authorize_url: 'https://[subdomain]/apps/oauth2/authorize',
+      access_url: 'https://[subdomain]/apps/oauth2/api/v1/token',
+      scope: ['profile'],
+      oauth: 2,
+      callback: '/webdav/callback',
+    },
   }
 }
