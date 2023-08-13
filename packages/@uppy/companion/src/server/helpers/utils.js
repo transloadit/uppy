@@ -160,7 +160,12 @@ module.exports.prepareStream = async (stream) => new Promise((resolve, reject) =
       if (err?.request?.options?.responseType === 'json' && typeof err?.response?.body === 'string') {
         try {
           // todo unit test this
-          reject(Object.assign(new Error(), { response: { body: JSON.parse(err.response.body) } }))
+          reject(Object.assign(new Error(), {
+            response: {
+              body: JSON.parse(err.response.body),
+              statusCode: err.response.statusCode,
+            },
+          }))
         } catch (err2) {
           reject(err)
         }
