@@ -112,12 +112,16 @@ export default class Provider extends RequestClient {
     return `${this.hostname}/${this.id}/connect?${params}`
   }
 
-  async login ({ uppyVersions, formSubmitEvent }) {
+  async login ({ uppyVersions, formSubmitEvent, signal }) {
     await this.ensurePreAuth()
+
+    signal.throwIfAborted()
 
     return new Promise((resolve, reject) => {
       const link = this.authUrl({ query: { uppyVersions }, formSubmitEvent })
       const authWindow = window.open(link, '_blank')
+
+      let cleanup
 
       const handleToken = (e) => {
         if (e.source !== authWindow) {
@@ -148,11 +152,18 @@ export default class Provider extends RequestClient {
           return
         }
 
-        authWindow.close()
-        window.removeEventListener('message', handleToken)
+        cleanup()
         this.setAuthToken(data.token)
         resolve()
       }
+
+      cleanup = () => {
+        authWindow.close()
+        window.removeEventListener('message', handleToken)
+        signal.removeEventListener('abort', cleanup)
+      }
+
+      signal.addEventListener('abort', cleanup)
       window.addEventListener('message', handleToken)
     })
   }

@@ -7,7 +7,6 @@ import { getSafeFileId } from '@uppy/utils/lib/generateFileID'
 import AuthView from './AuthView.jsx'
 import Header from './Header.jsx'
 import Browser from '../Browser.jsx'
-import LoaderView from '../Loader.jsx'
 import CloseWrapper from '../CloseWrapper.js'
 import View from '../View.js'
 
@@ -69,7 +68,7 @@ export default class ProviderView extends View {
 
     // Set default state for the plugin
     this.plugin.setPluginState({
-      authenticated: false,
+      authenticated: undefined, // we don't know yet
       files: [],
       folders: [],
       breadcrumbs: [],
@@ -243,15 +242,21 @@ export default class ProviderView extends View {
   }
 
   async handleAuth (formSubmitEvent) {
-    formSubmitEvent.preventDefault()
-
-    const clientVersion = `@uppy/provider-views=${ProviderView.VERSION}`
     try {
-      await this.provider.login({ uppyVersions: clientVersion, formSubmitEvent })
-      this.plugin.setPluginState({ authenticated: true })
-      this.preFirstRender()
-    } catch (e) {
-      this.plugin.uppy.log(`login failed: ${e.message}`)
+      await this.#withAbort(async (signal) => {
+        formSubmitEvent.preventDefault()
+
+        const clientVersion = `@uppy/provider-views=${ProviderView.VERSION}`
+
+        this.setLoading(true)
+        await this.provider.login({ uppyVersions: clientVersion, formSubmitEvent, signal })
+        this.plugin.setPluginState({ authenticated: true })
+        this.preFirstRender()
+      })
+    } catch (err) {
+      this.plugin.uppy.log(`login failed: ${err.message}`)
+    } finally {
+      this.setLoading(false)
     }
   }
 
@@ -460,17 +465,10 @@ export default class ProviderView extends View {
       i18n: this.plugin.uppy.i18n,
       uppyFiles: this.plugin.uppy.getFiles(),
       validateRestrictions: (...args) => this.plugin.uppy.validateRestrictions(...args),
+      isLoading: loading,
     }
 
-    if (loading) {
-      return (
-        <CloseWrapper onUnmount={this.clearSelection}>
-          <LoaderView i18n={this.plugin.uppy.i18n} loading={loading} />
-        </CloseWrapper>
-      )
-    }
-
-    if (!authenticated) {
+    if (authenticated === false) {
       return (
         <CloseWrapper onUnmount={this.clearSelection}>
           <AuthView
@@ -480,6 +478,7 @@ export default class ProviderView extends View {
             i18n={this.plugin.uppy.i18n}
             i18nArray={this.plugin.uppy.i18nArray}
             renderForm={this.opts.renderAuthForm}
+            loading={loading}
           />
         </CloseWrapper>
       )
