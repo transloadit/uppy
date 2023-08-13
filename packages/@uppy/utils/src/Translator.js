@@ -1,5 +1,3 @@
-import has from './hasProperty.js'
-
 function insertReplacement (source, rx, replacement) {
   const newParts = []
   source.forEach((chunk) => {
@@ -62,6 +60,10 @@ function interpolate (phrase, options) {
   return interpolated
 }
 
+const defaultOnMissingKey = (key) => {
+  throw new Error(`missing string: ${key}`)
+}
+
 /**
  * Translates strings with interpolation & pluralization support.
  * Extensible with custom dictionaries and pluralization functions.
@@ -77,7 +79,7 @@ export default class Translator {
   /**
    * @param {object|Array<object>} locales - locale or list of locales.
    */
-  constructor (locales) {
+  constructor (locales, { onMissingKey = defaultOnMissingKey } = {}) {
     this.locale = {
       strings: {},
       pluralize (n) {
@@ -93,7 +95,11 @@ export default class Translator {
     } else {
       this.#apply(locales)
     }
+
+    this.#onMissingKey = onMissingKey
   }
+
+  #onMissingKey
 
   #apply (locale) {
     if (!locale?.strings) {
@@ -124,11 +130,11 @@ export default class Translator {
    * @returns {Array} The translated and interpolated parts, in order.
    */
   translateArray (key, options) {
-    if (!has(this.locale.strings, key)) {
-      throw new Error(`missing string: ${key}`)
+    let string = this.locale.strings[key]
+    if (string == null) {
+      this.#onMissingKey(key)
+      string = key
     }
-
-    const string = this.locale.strings[key]
     const hasPluralForms = typeof string === 'object'
 
     if (hasPluralForms) {

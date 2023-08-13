@@ -198,7 +198,8 @@ class Uppy {
   }
 
   i18nInit () {
-    const translator = new Translator([this.defaultLocale, this.opts.locale])
+    const onMissingKey = (key) => this.log(`Missing i18n string: ${key}`, 'error')
+    const translator = new Translator([this.defaultLocale, this.opts.locale], { onMissingKey })
     this.i18n = translator.translate.bind(translator)
     this.i18nArray = translator.translateArray.bind(translator)
     this.locale = translator.locale
