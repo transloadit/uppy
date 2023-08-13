@@ -242,15 +242,13 @@ export default class ProviderView extends View {
     this.plugin.setPluginState({ filterInput: '' })
   }
 
-  async handleAuth (formSubmitEvent) {
+  async handleAuth (authFormData) {
     try {
       await this.#withAbort(async (signal) => {
-        formSubmitEvent.preventDefault()
-
         const clientVersion = `@uppy/provider-views=${ProviderView.VERSION}`
 
         this.setLoading(true)
-        await this.provider.login({ uppyVersions: clientVersion, formSubmitEvent, signal })
+        await this.provider.login({ uppyVersions: clientVersion, authFormData, signal })
         this.plugin.setPluginState({ authenticated: true })
         this.preFirstRender()
       })
