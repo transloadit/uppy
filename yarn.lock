@@ -11053,6 +11053,7 @@ __metadata:
     "@types/webpack": ^5.28.0
     "@types/ws": 8.5.3
     atob: 2.1.2
+    basic-ftp: ^5.0.3
     body-parser: 1.20.0
     chalk: 4.1.2
     common-tags: 1.8.2
@@ -11216,6 +11217,19 @@ __metadata:
   dependencies:
     "@uppy/utils": "workspace:^"
     get-form-data: ^3.0.0
+  peerDependencies:
+    "@uppy/core": "workspace:^"
+  languageName: unknown
+  linkType: soft
+
+"@uppy/ftp@workspace:^, @uppy/ftp@workspace:packages/@uppy/ftp":
+  version: 0.0.0-use.local
+  resolution: "@uppy/ftp@workspace:packages/@uppy/ftp"
+  dependencies:
+    "@uppy/companion-client": "workspace:^"
+    "@uppy/provider-views": "workspace:^"
+    "@uppy/utils": "workspace:^"
+    preact: ^10.5.13
   peerDependencies:
     "@uppy/core": "workspace:^"
   languageName: unknown
@@ -11579,6 +11593,19 @@ __metadata:
     "@jest/globals": ^29.0.0
     "@uppy/utils": "workspace:^"
     is-mobile: ^3.1.1
+    preact: ^10.5.13
+  peerDependencies:
+    "@uppy/core": "workspace:^"
+  languageName: unknown
+  linkType: soft
+
+"@uppy/webdav@workspace:^, @uppy/webdav@workspace:packages/@uppy/webdav":
+  version: 0.0.0-use.local
+  resolution: "@uppy/webdav@workspace:packages/@uppy/webdav"
+  dependencies:
+    "@uppy/companion-client": "workspace:^"
+    "@uppy/provider-views": "workspace:^"
+    "@uppy/utils": "workspace:^"
     preact: ^10.5.13
   peerDependencies:
     "@uppy/core": "workspace:^"
@@ -13851,6 +13878,13 @@ __metadata:
   dependencies:
     safe-buffer: 5.1.2
   checksum: 3419b805d5dfc518f3a05dcf42aa53aa9ce820e50b6df5097f9e186322e1bc733c36722b624802cd37e791035aa73b828ed814d8362333d42d7f5cd04d7a5e48
+  languageName: node
+  linkType: hard
+
+"basic-ftp@npm:^5.0.3":
+  version: 5.0.3
+  resolution: "basic-ftp@npm:5.0.3"
+  checksum: 8b04e88eb85a64de9311721bb0707c9cd70453eefdd854cab85438e6f46fb6c597ddad57ed1acf0a9ede3c677b14e657f51051688a5f23d6f3ea7b5d9073b850
   languageName: node
   linkType: hard
 
@@ -36193,6 +36227,7 @@ __metadata:
     "@uppy/facebook": "workspace:^"
     "@uppy/file-input": "workspace:^"
     "@uppy/form": "workspace:^"
+    "@uppy/ftp": "workspace:^"
     "@uppy/golden-retriever": "workspace:^"
     "@uppy/google-drive": "workspace:^"
     "@uppy/image-editor": "workspace:^"
@@ -36213,6 +36248,7 @@ __metadata:
     "@uppy/unsplash": "workspace:^"
     "@uppy/url": "workspace:^"
     "@uppy/webcam": "workspace:^"
+    "@uppy/webdav": "workspace:^"
     "@uppy/xhr-upload": "workspace:^"
     "@uppy/zoom": "workspace:^"
     abortcontroller-polyfill: ^1.7.3

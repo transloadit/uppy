@@ -16,7 +16,8 @@ import ImageEditor from '@uppy/image-editor'
 import DropTarget from '@uppy/drop-target'
 import Audio from '@uppy/audio'
 import Compressor from '@uppy/compressor'
-/* eslint-enable import/no-extraneous-dependencies */
+// eslint-disable-next-line class-methods-use-this
+import Ftp from '@uppy/ftp'
 
 import generateSignatureIfSecret from './generateSignatureIfSecret.js'
 
@@ -80,6 +81,7 @@ export default () => {
       proudlyDisplayPoweredByUppy: true,
       note: `${JSON.stringify(restrictions)}`,
     })
+    .use(Ftp, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })
     // .use(GoogleDrive, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })
     // .use(Instagram, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })
     // .use(Dropbox, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })
