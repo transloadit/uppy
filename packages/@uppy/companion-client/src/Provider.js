@@ -1,6 +1,6 @@
 'use strict'
 
-import RequestClient from './RequestClient.js'
+import RequestClient, { authErrorStatusCode } from './RequestClient.js'
 import * as tokenStorage from './tokenStorage.js'
 import AuthError from './AuthError.js'
 
@@ -62,7 +62,7 @@ export default class Provider extends RequestClient {
     super.onReceiveResponse(response)
     const plugin = this.uppy.getPlugin(this.pluginId)
     const oldAuthenticated = plugin.getPluginState().authenticated
-    const authenticated = oldAuthenticated ? response.status !== 401 : response.status < 400
+    const authenticated = oldAuthenticated ? response.status !== authErrorStatusCode : response.status < 400
     plugin.setPluginState({ authenticated })
     return response
   }

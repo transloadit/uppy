@@ -11,8 +11,10 @@ function stripSlash (url) {
   return url.replace(/\/$/, '')
 }
 
+export const authErrorStatusCode = 401
+
 async function handleJSONResponse (res) {
-  if (res.status === 401) {
+  if (res.status === authErrorStatusCode) {
     throw new AuthError()
   }
 
