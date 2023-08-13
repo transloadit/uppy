@@ -16,7 +16,7 @@ const jobs = require('./server/jobs')
 const logger = require('./server/logger')
 const middlewares = require('./server/middlewares')
 const { getMaskableSecrets, defaultOptions, validateConfig } = require('./config/companion')
-const { ProviderApiError, ProviderAuthError } = require('./server/provider/error')
+const { ProviderApiError, ProviderUserError, ProviderAuthError } = require('./server/provider/error')
 const { getCredentialsOverrideMiddleware } = require('./server/provider/credentials')
 // @ts-ignore
 const { version } = require('../package.json')
@@ -52,7 +52,7 @@ const interceptGrantErrorResponse = interceptor((req, res) => {
 })
 
 // make the errors available publicly for custom providers
-module.exports.errors = { ProviderApiError, ProviderAuthError }
+module.exports.errors = { ProviderApiError, ProviderUserError, ProviderAuthError }
 module.exports.socket = require('./server/socket')
 
 module.exports.setLoggerProcessName = setLoggerProcessName

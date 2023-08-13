@@ -1,7 +1,7 @@
 const chalk = require('chalk')
 const escapeStringRegexp = require('escape-string-regexp')
 const util = require('node:util')
-const { ProviderApiError, ProviderAuthError } = require('./provider/error')
+const { ProviderApiError, ProviderUserError, ProviderAuthError } = require('./provider/error')
 
 const valuesToMask = []
 /**
@@ -56,7 +56,7 @@ const log = ({ arg, tag = '', level, traceId = '', color = (message) => message 
   function msgToString () {
     // We don't need to log stack trace on special errors that we ourselves have produced
     // (to reduce log noise)
-    if ((arg instanceof ProviderApiError || arg instanceof ProviderAuthError) && typeof arg.message === 'string') {
+    if ((arg instanceof ProviderApiError || arg instanceof ProviderUserError || arg instanceof ProviderAuthError) && typeof arg.message === 'string') {
       return arg.message
     }
     if (typeof arg === 'string') return arg

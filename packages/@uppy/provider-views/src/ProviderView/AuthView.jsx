@@ -66,7 +66,7 @@ const defaultRenderForm = ({ pluginName, i18nArray }) => {
 }
 
 function AuthView (props) {
-  const { pluginName, pluginIcon, i18nArray, handleAuth, renderForm = defaultRenderForm } = props
+  const { loading, pluginName, pluginIcon, i18nArray, handleAuth, renderForm = defaultRenderForm } = props
 
   const pluginNameComponent = (
     <span className="uppy-Provider-authTitleName">
@@ -84,7 +84,7 @@ function AuthView (props) {
       </div>
 
       <form className="uppy-Provider-authForm" onSubmit={handleAuth}>
-        {renderForm({ pluginName, i18nArray })}
+        {renderForm({ pluginName, i18nArray, loading })}
       </form>
     </div>
   )

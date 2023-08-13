@@ -1,5 +1,7 @@
 'use strict'
 
+import UserFacingApiError from '@uppy/utils/lib/UserFacingApiError'
+
 import fetchWithNetworkError from '@uppy/utils/lib/fetchWithNetworkError'
 import ErrorWithCause from '@uppy/utils/lib/ErrorWithCause'
 import AuthError from './AuthError.js'
@@ -24,11 +26,20 @@ async function handleJSONResponse (res) {
   }
 
   let errMsg = `Failed request with status: ${res.status}. ${res.statusText}`
+  let errData
   try {
-    const errData = await jsonPromise
-    errMsg = errData.message ? `${errMsg} message: ${errData.message}` : errMsg
-    errMsg = errData.requestId ? `${errMsg} request-Id: ${errData.requestId}` : errMsg
-  } catch { /* if the response contains invalid JSON, let's ignore the error */ }
+    errData = await jsonPromise
+  } catch {
+    // if the response contains invalid JSON, let's ignore the error data
+    throw new Error(errMsg)
+  }
+
+  if (res.status >= 400 && res.status <= 499 && errData.message) {
+    throw new UserFacingApiError(errData.message)
+  }
+
+  errMsg = errData.message ? `${errMsg} message: ${errData.message}` : errMsg
+  errMsg = errData.requestId ? `${errMsg} request-Id: ${errData.requestId}` : errMsg
   throw new Error(errMsg)
 }
 
@@ -166,7 +177,7 @@ export default class RequestClient {
       if (!skipPostResponse) this.onReceiveResponse(response)
       return await handleJSONResponse(response)
     } catch (err) {
-      if (err instanceof AuthError) throw err // auth errors must be passed through
+      if (err instanceof AuthError || err instanceof UserFacingApiError) throw err // some errors must be passed through
       throw new ErrorWithCause(`Could not ${method} ${this.#getUrl(path)}`, { cause: err })
     }
   }

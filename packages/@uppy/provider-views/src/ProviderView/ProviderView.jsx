@@ -3,6 +3,7 @@ import { h } from 'preact'
 import PQueue from 'p-queue'
 
 import { getSafeFileId } from '@uppy/utils/lib/generateFileID'
+import UserFacingApiError from '@uppy/utils/lib/UserFacingApiError'
 
 import AuthView from './AuthView.jsx'
 import Header from './Header.jsx'
@@ -254,6 +255,11 @@ export default class ProviderView extends View {
         this.preFirstRender()
       })
     } catch (err) {
+      if (err instanceof UserFacingApiError) {
+        this.plugin.uppy.info({ message: this.plugin.uppy.i18n(err.message) }, 'warning', 5000)
+        return
+      }
+
       this.plugin.uppy.log(`login failed: ${err.message}`)
     } finally {
       this.setLoading(false)

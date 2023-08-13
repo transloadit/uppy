@@ -1,3 +1,4 @@
+/* eslint-disable max-classes-per-file */
 /**
  * ProviderApiError is error returned when an adapter encounters
  * an http error while communication with its corresponding provider
@@ -12,6 +13,16 @@ class ProviderApiError extends Error {
     this.name = 'ProviderApiError'
     this.statusCode = statusCode
     this.isAuthError = false
+  }
+}
+
+class ProviderUserError extends Error {
+  /**
+   * @param {object} json arbitrary JSON.stringify-able object that will be passed to the client
+   */
+  constructor (json) {
+    super('User error')
+    this.json = json
   }
 }
 
@@ -33,20 +44,24 @@ class ProviderAuthError extends ProviderApiError {
  * @param {Error | ProviderApiError} err the error instance to convert to an http json response
  */
 function errorToResponse (err) {
-  if (err instanceof ProviderAuthError && err.isAuthError) {
-    return { code: 401, message: err.message }
+  if (err instanceof ProviderAuthError) {
+    return { code: 401, json: { message: err.message } }
   }
 
   if (err instanceof ProviderApiError) {
     if (err.statusCode >= 500) {
       // bad gateway i.e the provider APIs gateway
-      return { code: 502, message: err.message }
+      return { code: 502, json: { message: err.message } }
     }
 
     if (err.statusCode >= 400) {
       // 424 Failed Dependency
-      return { code: 424, message: err.message }
+      return { code: 424, json: { message: err.message } }
     }
+  }
+
+  if (err instanceof ProviderUserError) {
+    return { code: 400, json: err.json }
   }
 
   return undefined
@@ -55,10 +70,10 @@ function errorToResponse (err) {
 function respondWithError (err, res) {
   const errResp = errorToResponse(err)
   if (errResp) {
-    res.status(errResp.code).json({ message: errResp.message })
+    res.status(errResp.code).json(errResp.json)
     return true
   }
   return false
 }
 
-module.exports = { ProviderAuthError, ProviderApiError, errorToResponse, respondWithError }
+module.exports = { ProviderAuthError, ProviderApiError, ProviderUserError, respondWithError }
