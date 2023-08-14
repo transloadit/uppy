@@ -1,6 +1,6 @@
 # @uppy/box
 
-<img src="https://uppy.io/img/logo.svg" width="120" alt="Uppy logo: a smiling puppy above a pink upwards arrow" align="right">
+<img src="https://uppy.io/img/logo.svg" width="90" alt="Uppy logo: a smiling puppy above a pink upwards arrow" align="right">
 
 [![npm version](https://img.shields.io/npm/v/@uppy/box.svg?style=flat-square)](https://www.npmjs.com/package/@uppy/box)
 ![CI status for Uppy tests](https://github.com/transloadit/uppy/workflows/Tests/badge.svg)

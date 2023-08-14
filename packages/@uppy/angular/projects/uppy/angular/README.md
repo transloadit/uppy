@@ -1,6 +1,6 @@
 # @uppy/angular
 
-<img src="https://uppy.io/img/logo.svg" width="120" alt="Uppy logo: a smiling puppy above a pink upwards arrow" align="right">
+<img src="https://uppy.io/img/logo.svg" width="90" alt="Uppy logo: a smiling puppy above a pink upwards arrow" align="right">
 
 <a href="https://www.npmjs.com/package/@uppy/angular"><img src="https://img.shields.io/npm/v/@uppy/angular.svg?style=flat-square"></a> <a href="https://travis-ci.org/transloadit/uppy"><img src="https://img.shields.io/travis/transloadit/uppy/main.svg?style=flat-square" alt="Build Status"></a>
 
