@@ -1,9 +1,11 @@
 import { h } from 'preact'
-import { useState, useCallback } from 'preact/hooks'
+import { useState, useCallback, useMemo } from 'preact/hooks'
 
 import { UIPlugin } from '@uppy/core'
 import { Provider } from '@uppy/companion-client'
 import { ProviderViews } from '@uppy/provider-views'
+// eslint-disable-next-line import/no-extraneous-dependencies
+import parseUri from 'parse-uri'
 
 import packageJson from '../package.json'
 import locale from './locale.js'
@@ -21,30 +23,39 @@ class FtpProvider extends Provider {
 }
 
 const AuthForm = ({ loading, onAuth }) => {
-  const [host, setHost] = useState('')
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
+  const [ftpInput, setFtpInput] = useState('')
+  const [usernameInput, setUsername] = useState('')
+  const [passwordInput, setPassword] = useState('')
+
+  const parsedUri = useMemo(() => parseUri(ftpInput) || {}, [ftpInput])
+
+  const username = parsedUri.user || usernameInput
+  const password = parsedUri.password || passwordInput
 
   const onSubmit = useCallback((e) => {
     e.preventDefault()
-    onAuth({ host, username, password })
-  }, [host, onAuth, password, username])
+    onAuth({
+      host: parsedUri.host || '',
+      username,
+      password,
+      protocol: parsedUri.protocol,
+    })
+  }, [onAuth, parsedUri.host, parsedUri.protocol, password, username])
 
   return (
     <form onSubmit={onSubmit}>
       <label htmlFor="uppy-Provider-ftp-host">
         <span style={{ display: 'block' }}>FTP host</span>
-        <input disabled={loading} name="host" type="text" autoComplete="off" value={host} onChange={(e) => setHost(e.target.value)} />
+        <input disabled={loading} name="host" type="text" autoComplete="off" value={ftpInput} onChange={(e) => setFtpInput(e.target.value)} />
       </label>
 
       <label htmlFor="uppy-Provider-ftp-username">
         <span style={{ display: 'block' }}>username</span>
-        <input disabled={loading} name="username" type="text" autoComplete="off" value={username} onChange={(e) => setUsername(e.target.value)} />
+        <input disabled={loading || !!parsedUri.user} name="username" type="text" autoComplete="off" value={username} onChange={(e) => setUsername(e.target.value)} />
       </label>
-
       <label htmlFor="uppy-Provider-ftp-password">
         <span style={{ display: 'block' }}>password</span>
-        <input disabled={loading} name="password" type="password" autoComplete="off" value={password} onChange={(e) => setPassword(e.target.value)} />
+        <input disabled={loading || !!parsedUri.password} name="password" type="password" autoComplete="off" value={password} onChange={(e) => setPassword(e.target.value)} />
       </label>
 
       <button disabled={loading} style={{ display: 'block' }} type="submit">Submit</button>

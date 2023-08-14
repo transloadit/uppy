@@ -25,7 +25,9 @@ class FtpProvider extends Provider {
     // const HttpAgentClass = getProtectedHttpAgent({ protocol, blockLocalIPs: !allowLocalUrls })
 
     const client = new ftp.Client()
-    client.ftp.verbose = true
+    // for debugging:
+    // client.ftp.verbose = true
+
     try {
       await client.access({
         host: providerUserSession.host,
@@ -86,6 +88,11 @@ class FtpProvider extends Provider {
     })
   }
 
+  // eslint-disable-next-line class-methods-use-this
+  async size () {
+    return 0 // todo
+  }
+
   // eslint-disable-next-line
   async thumbnail ({ id, providerUserSession }) {
     throw new Error('call to thumbnail is not implemented')
@@ -93,11 +100,17 @@ class FtpProvider extends Provider {
 
   async simpleAuth ({ requestBody: { form } }) {
     try {
+      const { host, username, password } = form
+
+      const protocol = form.protocol || 'ftp'
+      if (!['ftp', 'ftps'].includes(protocol)) throw new ProviderUserError({ message: 'Invalid protocol' })
+
       const providerUserSession = {
-        host: form.host.replace(/^ftp:\/\//, ''),
-        username: form.username,
-        password: form.password,
-        secure: form.secure,
+        host,
+        username,
+        password,
+        secure: protocol === 'ftps',
+        protocol,
       }
 
       // this will verify the credentials
@@ -114,6 +127,9 @@ class FtpProvider extends Provider {
       }
       if (err instanceof ftp.FTPError && [503, 530].includes(err.code)) {
         throw new ProviderUserError({ message: 'Incorrect username or password' })
+      }
+      if (err instanceof ftp.FTPError) {
+        throw new ProviderUserError({ message: err.message })
       }
       throw err
     }
