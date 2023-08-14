@@ -11,8 +11,8 @@ async function thumbnail (req, res, next) {
   const { accessToken } = providerUserSession
 
   try {
-    const { stream } = await provider.thumbnail({ id, token: accessToken, providerUserSession })
-    res.set('Content-Type', 'image/jpeg')
+    const { stream, contentType = 'image/jpeg' } = await provider.thumbnail({ id, token: accessToken, providerUserSession })
+    res.set('Content-Type', contentType)
     stream.pipe(res)
   } catch (err) {
     if (respondWithError(err, res)) return
