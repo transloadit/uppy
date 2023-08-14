@@ -1,13 +1,6 @@
-# [Uppy](https://uppy.io)
+# [Uppy](https://uppy.io) [![uppy on npm](https://img.shields.io/npm/v/uppy.svg?style=flat-square)](https://www.npmjs.com/package/uppy)
 
 <img src="https://uppy.io/img/logo.svg" width="120" alt="Uppy logo: a smiling puppy above a pink upwards arrow" align="right">
-
-<a href="https://www.npmjs.com/package/uppy"><img src="https://img.shields.io/npm/v/uppy.svg?style=flat-square"></a>
-
-| | | | |
-|-|-|-|-|
-| Tests | <img src="https://github.com/transloadit/uppy/workflows/Tests/badge.svg" alt="CI status for Uppy tests"> | <img src="https://github.com/transloadit/uppy/workflows/Companion/badge.svg" alt="CI status for Companion tests"> | <img src="https://github.com/transloadit/uppy/workflows/End-to-end%20tests/badge.svg" alt="CI status for browser tests"> |
-| Deploys | <img src="https://github.com/transloadit/uppy/workflows/Release/badge.svg" alt="CI status for CDN deployment"> | <img src="https://github.com/transloadit/uppy/workflows/Companion%20Deploy/badge.svg" alt="CI status for Companion deployment"> | <img src="https://github.com/transloadit/uppy.io/workflows/Deploy%20to%20GitHub%20Pages/badge.svg" alt="CI status for website deployment"> |
 
 Uppy is a sleek, modular JavaScript file uploader that integrates seamlessly with any application. It’s fast, has a comprehensible API and lets you worry about more important problems than building a file uploader.
 
@@ -22,6 +15,11 @@ Uppy is a sleek, modular JavaScript file uploader that integrates seamlessly wit
 <a href="https://transloadit.com" target="_blank"><img width="185" src="https://github.com/transloadit/uppy/raw/main/assets/developed-by-transloadit.png"></a>
 
 Uppy is being developed by the folks at [Transloadit](https://transloadit.com), a versatile API to handle any file in your app.
+
+| | | | |
+|-|-|-|-|
+| Tests | <img src="https://github.com/transloadit/uppy/workflows/Tests/badge.svg" alt="CI status for Uppy tests"> | <img src="https://github.com/transloadit/uppy/workflows/Companion/badge.svg" alt="CI status for Companion tests"> | <img src="https://github.com/transloadit/uppy/workflows/End-to-end%20tests/badge.svg" alt="CI status for browser tests"> |
+| Deploys | <img src="https://github.com/transloadit/uppy/workflows/Release/badge.svg" alt="CI status for CDN deployment"> | <img src="https://github.com/transloadit/uppy/workflows/Companion%20Deploy/badge.svg" alt="CI status for Companion deployment"> | <img src="https://github.com/transloadit/uppy.io/workflows/Deploy%20to%20GitHub%20Pages/badge.svg" alt="CI status for website deployment"> |
 
 ## Example
 
