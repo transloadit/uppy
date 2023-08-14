@@ -111,9 +111,9 @@ class TransloaditAssembly extends Emitter {
       ;(this.status.results[stepName] ??= []).push(result)
     })
 
-    this.#sse.addEventListener('assembly_progress', (e) => {
+    this.#sse.addEventListener('assembly_execution_progress', (e) => {
       const details = JSON.parse(e.data)
-      this.emit('progress', details)
+      this.emit('execution-progress', details)
     })
 
     this.#sse.addEventListener('assembly_error', (e) => {
@@ -170,8 +170,8 @@ class TransloaditAssembly extends Emitter {
       ;(this.status.results[stepName] ??= []).push(result)
     })
 
-    socket.on('assembly_progress', (details) => {
-      this.emit('progress', details)
+    socket.on('assembly_execution_progress', (details) => {
+      this.emit('execution-progress', details)
     })
 
     socket.on('assembly_error', (status) => {
