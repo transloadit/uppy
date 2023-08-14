@@ -601,6 +601,15 @@ export default class Transloadit extends BasePlugin {
       this.uppy.emit('transloadit:execution-progress', details)
 
       if (details.progress_combined != null) {
+        // TODO: Transloadit emits progress information for the entire Assembly combined
+        // (progress_combined) and for each imported/uploaded file (progress_per_original_file).
+        // Uppy's current design requires progress to be set for each file, which is then
+        // averaged to get the total progress (see calculateProcessingProgress.js).
+        // Therefore, we currently set the combined progres for every file, so that this is
+        // the same value that is displayed to the end user, although we have more accurate
+        // per-file progress as well. We cannot use this here or otherwise progress from
+        // imported files would not be counted towards the total progress because imported
+        // files are not registered with Uppy.
         for (const file of this.uppy.getFiles()) {
           this.uppy.emit('postprocess-progress', file, {
             mode: 'determinate',
