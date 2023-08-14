@@ -479,8 +479,7 @@ export default class ProviderView extends View {
             pluginName={this.plugin.title}
             pluginIcon={pluginIcon}
             handleAuth={this.handleAuth}
-            i18n={this.plugin.uppy.i18n}
-            i18nArray={this.plugin.uppy.i18nArray}
+            i18n={this.plugin.uppy.i18nArray}
             renderForm={this.opts.renderAuthForm}
             loading={loading}
           />
