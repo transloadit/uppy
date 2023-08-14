@@ -599,6 +599,16 @@ export default class Transloadit extends BasePlugin {
 
     assembly.on('execution-progress', (details) => {
       this.uppy.emit('transloadit:execution-progress', details)
+
+      if (details.progress_combined != null) {
+        for (const file of this.uppy.getFiles()) {
+          this.uppy.emit('postprocess-progress', file, {
+            mode: 'determinate',
+            value: details.progress_combined / 100,
+            message: this.i18n('encoding'),
+          })
+        }
+      }
     })
 
     if (this.opts.waitForEncoding) {
