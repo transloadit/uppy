@@ -1,5 +1,13 @@
 # @uppy/provider-views
 
+## 3.5.0
+
+Released: 2023-08-15
+Included in: Uppy v3.14.0
+
+- @uppy/companion-client,@uppy/provider-views: make authentication optional (Dominik Schmidt / #4556)
+- @uppy/provider-views: fix ProviderView error on empty plugin.icon (Dominik Schmidt / #4553)
+
 ## 3.4.1
 
 Released: 2023-07-20

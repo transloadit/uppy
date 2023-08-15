@@ -1,5 +1,12 @@
 # @uppy/status-bar
 
+## 3.2.4
+
+Released: 2023-08-15
+Included in: Uppy v3.14.0
+
+- @uppy/status-bar: e2e: add test for retrying and pausing uploads (Antoine du Hamel / #3599)
+
 ## 3.2.3
 
 Released: 2023-07-20
