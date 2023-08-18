@@ -21,8 +21,6 @@ yarn install || corepack yarn install
 
 [Yarn]: https://yarnpkg.com/
 
-Our website’s examples section is also our playground, please read the [Local Previews](#Local-previews) section to get up and running.
-
 ### Requiring files
 
 * If we are `require()`ing a file from the same subpackage, we can freely use relative imports as long as the required file is under the `src` directory (for example to import `@uppy/dashboard/src/utils/hi.js` from `@uppy/dashboard/src/index.js`, use `require('./utils/hi.js')`).
@@ -148,19 +146,6 @@ To test recording a meeting, you need to sign up for a Zoom Pro trial (can be ca
 
 ## Releases
 
-Before doing a release, check that the examples on the website work:
-
-```bash
-yarn start
-open http://localhost:4000/examples/dashboard
-```
-
-Also check the other examples:
-
-```bash
-yarn workspace <example-name> start
-```
-
 Releases are managed by GitHub Actions, here’s an overview of the process to release a new Uppy version:
 
 * Run `yarn release` on your local machine.
@@ -175,31 +160,6 @@ Releases are managed by GitHub Actions, here’s an overview of the process to r
   * the demos on the homepage work and can import from Google Drive, Instagram, Dropbox, etc.
 
 If you don’t have access to the transloadit.com source code ping @arturi or @goto-bus-stop and we’ll pick it up. :sparkles:
-
-## Website development
-
-We keep the [uppy.io](http://uppy.io) website in `./website` to keep docs and code in sync as we are still iterating at high velocity.
-
-The site is built with [Hexo](http://hexo.io/), and Travis automatically deploys this onto GitHub Pages (it overwrites the `gh-pages` branch with Hexo’s build at every change to `main`). The content is written in Markdown and located in `./website/src`. Feel free to fork & hack!
-
-Even though bundled in this repo, the website is regarded as a separate project. As such, it has its own `package.json` and we aim to keep the surface where the two projects interface as small as possible. `./website/update.js` is called during website builds to inject the Uppy knowledge into the site.
-
-### Local previews
-
-1. `yarn install`
-2. `yarn start`
-3. Go to http://localhost:4000. Your changes in `/website` and `/packages/@uppy` will be watched, your browser will refresh as files change.
-
-Then, to work on, for instance, the XHRUpload example, you would edit the following files:
-
-```bash
-${EDITOR} packages/@uppy/core/src/index.js \
-  packages/@uppy/core/src/Plugin.js \
-  packages/@uppy/xhr-upload/src/index.js \
-  website/src/examples/xhrupload/app.es6
-```
-
-And open <http://localhost:4000/examples/xhrupload/> in your web browser.
 
 ## CSS guidelines
 
@@ -378,7 +338,7 @@ order: 0
 category: "Other Integrations"
 ```
 
-This data is used to generate Uppy’s website. Refer to [the section about running the website locally](#website-previews) if you’d like to see how the docs look on the website.
+This data is used to generate Uppy’s website.
 
 Any change of the documentation that involves a security best practice must substantiated with an external reference. See [#3565](https://github.com/transloadit/uppy/issues/3565).
 
