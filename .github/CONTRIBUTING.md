@@ -9,12 +9,24 @@ git clone https://github.com/transloadit/uppy.git
 cd uppy
 ```
 
-We are using [Corepack][] to manage version of [Yarn][]. Corepack comes pre-installed with Node.js >=16.x, or can be installed through `npm`. You can run `corepack enable` to install a `yarn` executable in your `$PATH`, or prefix all yarn commands with `corepack yarn`.
+We are using [Corepack][] to manage versions of [Yarn][].\
+Corepack comes pre-installed with Node.js >=16.x, or can be installed through `npm`:
 
 ```sh
 corepack -v || npm i -g corepack
-yarn -v || corepack enable
-yarn install || corepack yarn install
+```
+
+You can either run `corepack enable` to install a `yarn` executable in your `$PATH`, and run all `yarn` commands in this guide as they are written:
+
+```sh
+corepack enable
+# e.g. `yarn install`
+```
+
+or prefix all `yarn` commands in this guide with `corepack yarn`:
+
+```sh
+# e.g. `corepack yarn install`
 ```
 
 [Corepack]: https://nodejs.org/api/corepack.html
