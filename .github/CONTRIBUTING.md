@@ -1,4 +1,4 @@
-## Uppy development
+## Contributing to Uppy
 
 Fork the repository into your own account first. See the [GitHub Help](https://help.github.com/articles/fork-a-repo/) article for instructions.
 
@@ -33,52 +33,34 @@ or prefix all `yarn` commands in this guide with `corepack yarn`:
 
 [Yarn]: https://yarnpkg.com/
 
-### Requiring files
+## Development
 
-* If we are `require()`ing a file from the same subpackage, we can freely use relative imports as long as the required file is under the `src` directory (for example to import `@uppy/dashboard/src/utils/hi.js` from `@uppy/dashboard/src/index.js`, use `require('./utils/hi.js')`).
-* But if we want to `require()` some file from another subpackage - we should use global @uppy requires, and they should always be in the form of `@uppy/:packageName/(lib instead of src)/(same path).js`
-
-## Tests
-
-### Unit tests
-
-Unit tests are using Jest and can be run with:
+First of all, install Uppy dependencies:
 
 ```bash
-yarn run test:unit
+yarn install
 ```
 
-### End-to-End tests
+### Basic
 
-We use [Cypress](https://www.cypress.io/) for our e2e test suite. Be sure to checkout “[Writing your first test](https://docs.cypress.io/guides/getting-started/writing-your-first-test#Add-a-test-file)” and the “[Introduction to Cypress](https://docs.cypress.io/guides/core-concepts/introduction-to-cypress#Cypress-Can-Be-Simple-Sometimes)”. You should also be aware of the “[Best Practices](https://docs.cypress.io/guides/references/best-practices)”.
+To run a basic development version of Uppy, run:
 
-To get started make sure you have your `.env` set up. Copy the contents of `.env.example` to a file named `.env` and add the values relevant for the test(s) you are trying to run.
+```bash
+yarn run dev
+```
 
-To start the testing suite run:
-
-    yarn e2e
-
-This will run Cypress in watch-mode, and it will pick up and rebuild any changes to JS files. If you need to change other files (like CSS for example), you need to run the respective `yarn build:*` scripts.
-
-Alternatively the following command is the same as the above, except it doesn’t run `build` first:
-
-    yarn e2e:skip-build
-
-To generate the boilerplate for a new test run:
-
-    yarn e2e:generate
-
-## Development
+and go to http://localhost:5174 (or whatever link the yarn command outputted).\
+As you edit Uppy code, the browser will live reload the changes.
 
 ### Companion
 
-To start the Companion server along with Uppy, run:
+If you’d like to work on features that the basic development version of Uppy doesn’t support, such as Uppy integrations with Instagram/Google Drive/Facebook etc., you need to set up your `.env` file (copy the contents of `.env.example` and adjust them based on what you need to work on), and run:
 
 ```bash
 yarn run dev:with-companion
 ```
 
-or if you only want to run Companion
+Or, if you only want to run the Companion server:
 
 ```bash
 yarn run start:companion
@@ -147,6 +129,41 @@ Go to your instagram account at <https://www.instagram.com/accounts/manage_acces
 Tester invites -> Accept
 
 Now you should be able to test the Instagram integration.
+
+### Requiring files
+
+* If we are `require()`ing a file from the same subpackage, we can freely use relative imports as long as the required file is under the `src` directory (for example to import `@uppy/dashboard/src/utils/hi.js` from `@uppy/dashboard/src/index.js`, use `require('./utils/hi.js')`).
+* But if we want to `require()` some file from another subpackage - we should use global @uppy requires, and they should always be in the form of `@uppy/:packageName/(lib instead of src)/(same path).js`
+
+## Tests
+
+### Unit tests
+
+Unit tests are using Jest and can be run with:
+
+```bash
+yarn run test:unit
+```
+
+### End-to-End tests
+
+We use [Cypress](https://www.cypress.io/) for our e2e test suite. Be sure to checkout “[Writing your first test](https://docs.cypress.io/guides/getting-started/writing-your-first-test#Add-a-test-file)” and the “[Introduction to Cypress](https://docs.cypress.io/guides/core-concepts/introduction-to-cypress#Cypress-Can-Be-Simple-Sometimes)”. You should also be aware of the “[Best Practices](https://docs.cypress.io/guides/references/best-practices)”.
+
+To get started make sure you have your `.env` set up. Copy the contents of `.env.example` to a file named `.env` and add the values relevant for the test(s) you are trying to run.
+
+To start the testing suite run:
+
+    yarn e2e
+
+This will run Cypress in watch-mode, and it will pick up and rebuild any changes to JS files. If you need to change other files (like CSS for example), you need to run the respective `yarn build:*` scripts.
+
+Alternatively the following command is the same as the above, except it doesn’t run `build` first:
+
+    yarn e2e:skip-build
+
+To generate the boilerplate for a new test run:
+
+    yarn e2e:generate
 
 ## Zoom
 
