@@ -26,7 +26,7 @@ corepack enable
 or prefix all `yarn` commands in this guide with `corepack yarn`:
 
 ```sh
-# e.g. `corepack yarn install`
+corepack yarn install
 ```
 
 [Corepack]: https://nodejs.org/api/corepack.html
