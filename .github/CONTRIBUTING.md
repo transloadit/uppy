@@ -23,7 +23,8 @@ corepack enable
 # e.g. `yarn install`
 ```
 
-or prefix all `yarn` commands in this guide with `corepack yarn`:
+or prefix all `yarn` commands in this guide with `corepack yarn` (e.g.
+`corepack yarn install` instead of `yarn install`).
 
 ```sh
 corepack yarn install
