@@ -1,6 +1,30 @@
 import Cropper from 'cropperjs'
 import { h, Component } from 'preact'
 
+// See this cropperjs image to understand how container/image/canavas/cropbox relate to each other.
+// (https://github.com/fengyuanchen/cropperjs/blob/9b528a8baeaae876dc090085e37992a1683c6f34/docs/images/layers.jpg)
+function getCanvasDataThatFitsPerfectlyIntoContainer (containerData, imageData) {
+  const widthRatio = containerData.width / imageData.naturalWidth
+  const heightRatio = containerData.height / imageData.naturalHeight
+
+  const scaleFactor = Math.min(widthRatio, heightRatio)
+
+  const newWidth = imageData.naturalWidth * scaleFactor
+  const newHeight = imageData.naturalHeight * scaleFactor
+
+  const left = (containerData.width - newWidth) / 2
+  const top = (containerData.height - newHeight) / 2
+
+  return {
+    naturalWidth: imageData.naturalWidth,
+    naturalHeight: imageData.naturalHeight,
+    width: newWidth,
+    height: newHeight,
+    left,
+    top,
+  }
+}
+
 export default class Editor extends Component {
   constructor (props) {
     super(props)
@@ -98,7 +122,16 @@ export default class Editor extends Component {
       <button
         type="button"
         className="uppy-u-reset uppy-c-btn"
-        onClick={() => this.cropper.rotate(-90)}
+        onClick={() => {
+          this.cropper.rotate(-90)
+
+          const canvasData = this.cropper.getCanvasData()
+          const containerData = this.cropper.getContainerData()
+
+          const newCanvasData = getCanvasDataThatFitsPerfectlyIntoContainer(containerData, canvasData)
+          this.cropper.setCanvasData(newCanvasData)
+          this.cropper.setCropBoxData(newCanvasData)
+        }}
         aria-label={i18n('rotate')}
         data-microtip-position="top"
       >
