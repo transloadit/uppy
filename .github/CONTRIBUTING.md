@@ -44,7 +44,7 @@ yarn install
 To run a basic development version of Uppy, run:
 
 ```bash
-yarn run dev
+yarn dev
 ```
 
 and go to http://localhost:5174 (or whatever link the yarn command outputted).\
