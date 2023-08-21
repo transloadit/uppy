@@ -140,7 +140,7 @@ Now you should be able to test the Instagram integration.
 Unit tests are using Jest and can be run with:
 
 ```bash
-yarn run test:unit
+yarn test:unit
 ```
 
 ### End-to-End tests
