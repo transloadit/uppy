@@ -17,7 +17,7 @@ export default class ImageEditor extends UIPlugin {
     this.defaultLocale = locale
 
     const defaultCropperOptions = {
-      viewMode: 1,
+      viewMode: 0,
       background: false,
       autoCropArea: 1,
       responsive: true,

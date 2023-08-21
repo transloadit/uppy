@@ -14,9 +14,11 @@
   flex-grow: 1;
 }
 
+// Note that exactly these styles are demanded by cropper
+// (https: //github.com/fengyuanchen/cropperjs#example)
 .uppy-ImageCropper-image {
   display: block;
-  max-height: 400px;
+  max-width: 100%;
 }
 
 .uppy-ImageCropper-controls {
