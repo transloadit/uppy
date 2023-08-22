@@ -24,7 +24,7 @@ const { stat, unlink } = fs.promises
 // @ts-ignore - typescript resolves this this to a hoisted version of
 // serialize-error that ships with a declaration file, we are using a version
 // here that does not have a declaration file
-const serializeError = require('serialize-error')
+const serializeError = require('serialize-error') // eslint-disable-line import/order
 const emitter = require('./emitter')
 const { jsonStringify, hasMatch } = require('./helpers/utils')
 const logger = require('./logger')
