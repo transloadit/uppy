@@ -8,9 +8,9 @@ const path = require('node:path')
 const { mkdir, stat, writeFile } = fs.promises
 
 const PACKAGE_JSON_IMPORT = /^\..*\/package.json$/
-const SOURCE = 'packages/{*,@uppy/*}/src/**/*.js?(x)'
+const SOURCE = 'packages/{*,@uppy/*}/src/**/*.{js,ts}?(x)'
 // Files not to build (such as tests)
-const IGNORE = /\.test\.js$|__mocks__|svelte|angular|companion\//
+const IGNORE = /\.test\.[jt]s$|__mocks__|svelte|angular|companion\//
 // Files that should trigger a rebuild of everything on change
 const META_FILES = [
   'babel.config.js',
@@ -32,32 +32,28 @@ function lastModified (file, createParentDir = false) {
   })
 }
 
-const moduleTypeCache = new Map()
 const versionCache = new Map()
-async function isTypeModule (file) {
-  const packageFolder = file.slice(0, file.indexOf('/src/'))
 
-  const cachedValue = moduleTypeCache.get(packageFolder)
-  if (cachedValue != null) return cachedValue
+async function preparePackage (file) {
+  const packageFolder = file.slice(0, file.indexOf('/src/'))
+  if (versionCache.has(packageFolder)) return
 
   // eslint-disable-next-line import/no-dynamic-require, global-require
-  const { type, version } = require(path.join(__dirname, '..', packageFolder, 'package.json'))
-  const typeModule = type === 'module'
+  const { version } = require(path.join(__dirname, '..', packageFolder, 'package.json'))
   if (process.env.FRESH) {
     // in case it hasn't been done before.
     await mkdir(path.join(packageFolder, 'lib'), { recursive: true })
   }
-  moduleTypeCache.set(packageFolder, typeModule)
   versionCache.set(packageFolder, version)
-  return typeModule
 }
 
+const nonJSImport = /^\.\.?\/.+\.([jt]sx|ts)$/
 // eslint-disable-next-line no-shadow
-function transformJSXImportsToJS (path) {
-  const { value } = path.node.source
-  if (value.endsWith('.jsx') && (value.startsWith('./') || value.startsWith('../'))) {
-    // Rewrite .jsx imports to .js:
-    path.node.source.value = value.slice(0, -1) // eslint-disable-line no-param-reassign
+function rewriteNonJSImportsToJS (path) {
+  const match = nonJSImport.exec(path.node.source.value)
+  if (match) {
+    // eslint-disable-next-line no-param-reassign
+    path.node.source.value = `${match[0].slice(0, -match[1].length)}js`
   }
 }
 
@@ -71,7 +67,8 @@ async function buildLib () {
     if (IGNORE.test(file)) {
       continue
     }
-    const libFile = file.replace('/src/', '/lib/').replace(/\.jsx$/, '.js')
+    await preparePackage(file)
+    const libFile = file.replace('/src/', '/lib/').replace(/\.[jt]sx?$/, '.js')
 
     // on a fresh build, rebuild everything.
     if (!process.env.FRESH) {
@@ -85,16 +82,17 @@ async function buildLib () {
       }
     }
 
-    const plugins = await isTypeModule(file) ? [{
+    const plugins = [{
       visitor: {
         // eslint-disable-next-line no-shadow
         ImportDeclaration (path) {
-          transformJSXImportsToJS(path)
+          rewriteNonJSImportsToJS(path)
           if (PACKAGE_JSON_IMPORT.test(path.node.source.value)
               && path.node.specifiers.length === 1
               && path.node.specifiers[0].type === 'ImportDefaultSpecifier') {
             // Vendor-in version number from package.json files:
             const version = versionCache.get(file.slice(0, file.indexOf('/src/')))
+            console.log({ version })
             if (version != null) {
               const [{ local }] = path.node.specifiers
               path.replaceWith(
@@ -107,15 +105,18 @@ async function buildLib () {
           }
         },
 
-        ExportAllDeclaration: transformJSXImportsToJS,
+        ExportAllDeclaration: rewriteNonJSImportsToJS,
         // eslint-disable-next-line no-shadow
         ExportNamedDeclaration (path) {
           if (path.node.source != null) {
-            transformJSXImportsToJS(path)
+            rewriteNonJSImportsToJS(path)
           }
         },
       },
-    }] : undefined
+    }]
+    const isTSX = file.endsWith('.tsx')
+    if (isTSX || file.endsWith('.ts')) { plugins.push(['@babel/plugin-transform-typescript', { disallowAmbiguousJSXLike: true, isTSX, jsxPragma: 'h' }]) }
+
     const { code, map } = await babel.transformFileAsync(file, { sourceMaps: true, plugins })
     const [{ default: chalk }] = await Promise.all([
       import('chalk'),
