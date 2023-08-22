@@ -3,25 +3,24 @@ import { h, Component } from 'preact'
 
 // See this cropperjs image to understand how container/image/canavas/cropbox relate to each other.
 // (https://github.com/fengyuanchen/cropperjs/blob/9b528a8baeaae876dc090085e37992a1683c6f34/docs/images/layers.jpg)
-function getCanvasDataThatFitsPerfectlyIntoContainer (containerData, imageData) {
-  const widthRatio = containerData.width / imageData.naturalWidth
-  const heightRatio = containerData.height / imageData.naturalHeight
-
+function getCanvasDataThatFitsPerfectlyIntoContainer (containerData, canvasData) {
+  // 1. Scale our canvas as much as possible
+  const widthRatio = containerData.width / canvasData.width
+  const heightRatio = containerData.height / canvasData.height
   const scaleFactor = Math.min(widthRatio, heightRatio)
 
-  const newWidth = imageData.naturalWidth * scaleFactor
-  const newHeight = imageData.naturalHeight * scaleFactor
+  const newWidth = canvasData.width * scaleFactor
+  const newHeight = canvasData.height * scaleFactor
 
-  const left = (containerData.width - newWidth) / 2
-  const top = (containerData.height - newHeight) / 2
+  // 2. Center our canvas
+  const newLeft = (containerData.width - newWidth) / 2
+  const newTop = (containerData.height - newHeight) / 2
 
   return {
-    naturalWidth: imageData.naturalWidth,
-    naturalHeight: imageData.naturalHeight,
     width: newWidth,
     height: newHeight,
-    left,
-    top,
+    left: newLeft,
+    top: newTop,
   }
 }
 
