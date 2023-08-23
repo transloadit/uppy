@@ -53,6 +53,9 @@ export default class Compressor extends BasePlugin {
           totalCompressedSize += compressedSavingsSize
           const { name, type, size } = compressedBlob
           const extension = name && getFileNameAndExtension(name).extension
+          // Name might have been changed in file.meta, so we update only the extension
+          const newMetaName = `${getFileNameAndExtension(file.meta.name).name}.${extension}`
+
           this.uppy.setFileState(file.id, {
             ...(name && { name }),
             ...(extension && { extension }),
@@ -60,7 +63,10 @@ export default class Compressor extends BasePlugin {
             ...(size && { size }),
             data: compressedBlob,
           })
-          this.uppy.setFileMeta(file.id, { type })
+          this.uppy.setFileMeta(file.id, {
+            type,
+            name: newMetaName,
+          })
           compressedFiles.push(file)
         } catch (err) {
           this.uppy.log(`[Image Compressor] Failed to compress ${file.id}:`, 'warning')
