@@ -144,9 +144,9 @@ const getConfigFromEnv = () => {
     periodicPingCount: process.env.COMPANION_PERIODIC_PING_COUNT
       ? parseInt(process.env.COMPANION_PERIODIC_PING_COUNT, 10) : undefined,
     filePath: process.env.COMPANION_DATADIR,
-    redisUrl: process.env.COMPANION_REDIS_URL,
     redisPubSubScope: process.env.COMPANION_REDIS_PUBSUB_SCOPE,
-    //  redisOptions refers to https://www.npmjs.com/package/redis#options-object-properties
+    redisUrl: process.env.COMPANION_REDIS_URL,
+    //  redisOptions refers to https://redis.github.io/ioredis/index.html#RedisOptions
     redisOptions: (() => {
       try {
         if (!process.env.COMPANION_REDIS_OPTIONS) {
