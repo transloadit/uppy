@@ -1,5 +1,12 @@
 # @uppy/companion
 
+## 4.8.1
+
+Released: 2023-08-23
+Included in: Uppy v3.14.1
+
+- @uppy/companion: harden lint rules (Antoine du Hamel / #4641)
+
 ## 4.8.0
 
 Released: 2023-08-15
