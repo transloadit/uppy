@@ -1,3 +1,4 @@
+/* eslint-disable */
 import Cropper from 'cropperjs'
 import { h, Component } from 'preact'
 import getCanvasDataThatFitsPerfectlyIntoContainer from './utils/getCanvasDataThatFitsPerfectlyIntoContainer.js'
@@ -6,7 +7,10 @@ import getScaleFactorThatRemovesDarkCorners from './utils/getScaleFactorThatRemo
 export default class Editor extends Component {
   constructor (props) {
     super(props)
-    this.state = { rotationAngle: 0, rotationDelta: 0 }
+    this.state = {
+      angle90Deg: 0,
+      angleGranular: 0,
+    }
   }
 
   componentDidMount () {
@@ -16,57 +20,60 @@ export default class Editor extends Component {
       opts.cropperOptions,
     )
     storeCropperInstance(this.cropper)
-
-    if (opts.actions.granularRotate) {
-      this.imgElement.addEventListener('crop', (ev) => {
-        const rotationAngle = ev.detail.rotate
-        this.setState({
-          rotationAngle,
-          // 405 == 360 + 45
-          rotationDelta: ((rotationAngle + 405) % 90) - 45,
-        })
-      })
-    }
   }
 
   componentWillUnmount () {
     this.cropper.destroy()
   }
 
-  granularRotateOnChange = (ev) => {
-    const { rotationAngle, rotationDelta } = this.state
-    const pendingRotationDelta = Number(ev.target.value) - rotationDelta
-    cancelAnimationFrame(this.granularRotateOnInputNextFrame)
-    if (pendingRotationDelta !== 0) {
-      const pendingRotationAngle = rotationAngle + pendingRotationDelta
-      this.granularRotateOnInputNextFrame = requestAnimationFrame(() => {
-        this.cropper.rotateTo(pendingRotationAngle)
+  onRotate90Deg = () => {
+    const newAngle = this.state.angle90Deg - 90
+    this.setState({
+      angle90Deg: newAngle,
+      angleGranular: 0,
+    })
 
-        const imageData = this.cropper.getImageData()
-        const scaleFactor = getScaleFactorThatRemovesDarkCorners(imageData)
-        this.cropper.scale(scaleFactor)
-      })
-    }
+    this.cropper.rotateTo(newAngle)
+
+    // Fit into view
+    const canvasData = this.cropper.getCanvasData()
+    const containerData = this.cropper.getContainerData()
+    const newCanvasData = getCanvasDataThatFitsPerfectlyIntoContainer(containerData, canvasData)
+    this.cropper.setCanvasData(newCanvasData)
+    this.cropper.setCropBoxData(newCanvasData)
+  }
+
+  onRotateGranular = (ev) => {
+    const newGranularAngle = Number(ev.target.value)
+    this.setState({ angleGranular: newGranularAngle })
+
+    const newObjectiveAngle = this.state.angle90Deg + newGranularAngle
+
+    this.cropper.rotateTo(newObjectiveAngle)
+    const imageData = this.cropper.getImageData()
+    const scaleFactor = getScaleFactorThatRemovesDarkCorners(imageData)
+    this.cropper.scale(scaleFactor)
   }
 
   renderGranularRotate () {
     const { i18n } = this.props
-    const { rotationDelta, rotationAngle } = this.state
+    const { angleGranular } = this.state
 
     return (
       // eslint-disable-next-line jsx-a11y/label-has-associated-control
       <label
         data-microtip-position="top"
         role="tooltip"
-        aria-label={`${rotationAngle}º`}
+        aria-label={`${angleGranular}º`}
         className="uppy-ImageCropper-rangeWrapper uppy-u-reset"
       >
         <input
           className="uppy-ImageCropper-range uppy-u-reset"
           type="range"
-          onInput={this.granularRotateOnChange}
-          onChange={this.granularRotateOnChange}
-          value={rotationDelta}
+          // TODO do we need both of these events
+          onInput={this.onRotateGranular}
+          onChange={this.onRotateGranular}
+          value={angleGranular}
           min="-45"
           max="44"
           aria-label={i18n('rotate')}
@@ -87,6 +94,7 @@ export default class Editor extends Component {
         onClick={() => {
           this.cropper.reset()
           this.cropper.setAspectRatio(0)
+          this.setState({ angle90Deg: 0, angleGranular: 0 })
         }}
       >
         <svg aria-hidden="true" className="uppy-c-icon" width="24" height="24" viewBox="0 0 24 24">
@@ -104,16 +112,7 @@ export default class Editor extends Component {
       <button
         type="button"
         className="uppy-u-reset uppy-c-btn"
-        onClick={() => {
-          this.cropper.rotate(-90)
-
-          const canvasData = this.cropper.getCanvasData()
-          const containerData = this.cropper.getContainerData()
-
-          const newCanvasData = getCanvasDataThatFitsPerfectlyIntoContainer(containerData, canvasData)
-          this.cropper.setCanvasData(newCanvasData)
-          this.cropper.setCropBoxData(newCanvasData)
-        }}
+        onClick={this.onRotate90Deg}
         aria-label={i18n('rotate')}
         data-microtip-position="top"
       >
