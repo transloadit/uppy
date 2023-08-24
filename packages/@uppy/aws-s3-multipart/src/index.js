@@ -824,10 +824,8 @@ export default class AwsS3Multipart extends BasePlugin {
 
     const promises = filesFiltered.map((file) => {
       if (file.isRemote) {
-        // TODO: why do we need to do this? why not always one or the other?
-        const Client = file.remote.providerOptions.provider ? Provider : RequestClient
         const getQueue = () => this.requests
-        const client = new Client(this.uppy, file.remote.providerOptions, getQueue)
+        const client = new Provider(this.uppy, file.remote.providerOptions, getQueue)
         this.#setResumableUploadsCapability(false)
         const controller = new AbortController()
 

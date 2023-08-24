@@ -253,11 +253,6 @@ export default class AwsS3 extends BasePlugin {
       ? opts.allowedMetaFields
       // Send along all fields by default.
       : Object.keys(file.meta)
-    // TODO: do we need tus in aws-s3?
-    if (file.tus) {
-      // Install file-specific upload overrides.
-      Object.assign(opts, file.tus)
-    }
     return {
       ...file.remote.body,
       protocol: 'multipart',
@@ -278,10 +273,8 @@ export default class AwsS3 extends BasePlugin {
     if (file.error) throw new Error(file.error)
 
     if (file.isRemote) {
-      // TODO: why do we need to do this? why not always one or the other?
-      const Client = file.remote.providerOptions.provider ? Provider : RequestClient
       const getQueue = () => this.#requests
-      const client = new Client(this.uppy, file.remote.providerOptions, getQueue)
+      const client = new Provider(this.uppy, file.remote.providerOptions, getQueue)
       const controller = new AbortController()
 
       const removedHandler = (removedFile) => {
