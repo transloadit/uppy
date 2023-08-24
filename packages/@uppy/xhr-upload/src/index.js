@@ -466,7 +466,8 @@ export default class XHRUpload extends BasePlugin {
       const total = files.length
 
       if (file.isRemote) {
-        // TODO: why do we need to do this? why not always one or the other?
+        // INFO: the url plugin needs to use RequestClient,
+        // while others use Provider
         const Client = file.remote.providerOptions.provider ? Provider : RequestClient
         const getQueue = () => this.requests
         const client = new Client(this.uppy, file.remote.providerOptions, getQueue)
