@@ -1,4 +1,3 @@
-/* eslint-disable */
 import Cropper from 'cropperjs'
 import { h, Component } from 'preact'
 import getCanvasDataThatFitsPerfectlyIntoContainer from './utils/getCanvasDataThatFitsPerfectlyIntoContainer.js'
@@ -27,44 +26,40 @@ export default class Editor extends Component {
   }
 
   onRotate90Deg = () => {
-    const newAngle = this.state.angle90Deg - 90
-
-    const mod = newAngle % 360
-    const normalizedObjectiveAngle = mod < 0 ? mod + 360 : mod
-
-    // Important to reset scale here, or cropper will get confused on further rotations
-    this.cropper.scale(1)
+    // 1. Set state
+    const { angle90Deg } = this.state
+    const newAngle = angle90Deg - 90
     this.setState({
-      angle90Deg: normalizedObjectiveAngle,
+      angle90Deg: newAngle,
       angleGranular: 0,
     })
 
-    console.info({ normalizedObjectiveAngle });
+    // 2. Rotate the image
+    // Important to reset scale here, or cropper will get confused on further rotations
+    this.cropper.scale(1)
+    this.cropper.rotateTo(newAngle)
 
-    this.cropper.rotateTo(normalizedObjectiveAngle)
-
-    // Fit into view
+    // 3. Fit the rotated image into the view
     const canvasData = this.cropper.getCanvasData()
     const containerData = this.cropper.getContainerData()
     const newCanvasData = getCanvasDataThatFitsPerfectlyIntoContainer(containerData, canvasData)
     this.cropper.setCanvasData(newCanvasData)
+
+    // 4. Make cropbox fully wrap the image
     this.cropper.setCropBoxData(newCanvasData)
   }
 
   onRotateGranular = (ev) => {
+    //  1. Set stsate
     const newGranularAngle = Number(ev.target.value)
     this.setState({ angleGranular: newGranularAngle })
 
-    const newObjectiveAngle = this.state.angle90Deg + newGranularAngle
+    // 2. Rotate the image
+    const { angle90Deg } = this.state
+    const newAngle = angle90Deg + newGranularAngle
+    this.cropper.rotateTo(newAngle)
 
-    // Place the value between [0, 360]
-    const mod = newObjectiveAngle % 360
-    const normalizedObjectiveAngle = mod < 0 ? mod + 360 : mod
-
-    console.info({ normalizedObjectiveAngle });
-
-    this.cropper.rotateTo(normalizedObjectiveAngle)
-    // const imageData = this.cropper.getImageData()
+    // 3. Scale the image so that it fits into the cropbox
     const cropboxData = this.cropper.getCropBoxData()
     const scaleFactor = getScaleFactorThatRemovesDarkCorners(cropboxData, newGranularAngle)
     this.cropper.scale(scaleFactor)
