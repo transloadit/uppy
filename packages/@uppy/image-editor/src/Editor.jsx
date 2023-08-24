@@ -28,12 +28,20 @@ export default class Editor extends Component {
 
   onRotate90Deg = () => {
     const newAngle = this.state.angle90Deg - 90
+
+    const mod = newAngle % 360
+    const normalizedObjectiveAngle = mod < 0 ? mod + 360 : mod
+
+    // Important to reset scale here, or cropper will get confused on further rotations
+    this.cropper.scale(1)
     this.setState({
-      angle90Deg: newAngle,
+      angle90Deg: normalizedObjectiveAngle,
       angleGranular: 0,
     })
 
-    this.cropper.rotateTo(newAngle)
+    console.info({ normalizedObjectiveAngle });
+
+    this.cropper.rotateTo(normalizedObjectiveAngle)
 
     // Fit into view
     const canvasData = this.cropper.getCanvasData()
@@ -49,9 +57,16 @@ export default class Editor extends Component {
 
     const newObjectiveAngle = this.state.angle90Deg + newGranularAngle
 
-    this.cropper.rotateTo(newObjectiveAngle)
-    const imageData = this.cropper.getImageData()
-    const scaleFactor = getScaleFactorThatRemovesDarkCorners(imageData)
+    // Place the value between [0, 360]
+    const mod = newObjectiveAngle % 360
+    const normalizedObjectiveAngle = mod < 0 ? mod + 360 : mod
+
+    console.info({ normalizedObjectiveAngle });
+
+    this.cropper.rotateTo(normalizedObjectiveAngle)
+    // const imageData = this.cropper.getImageData()
+    const cropboxData = this.cropper.getCropBoxData()
+    const scaleFactor = getScaleFactorThatRemovesDarkCorners(cropboxData, newGranularAngle)
     this.cropper.scale(scaleFactor)
   }
 
@@ -70,7 +85,6 @@ export default class Editor extends Component {
         <input
           className="uppy-ImageCropper-range uppy-u-reset"
           type="range"
-          // TODO do we need both of these events
           onInput={this.onRotateGranular}
           onChange={this.onRotateGranular}
           value={angleGranular}

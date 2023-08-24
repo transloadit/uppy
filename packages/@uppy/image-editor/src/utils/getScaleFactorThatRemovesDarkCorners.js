@@ -2,19 +2,15 @@ function toRadians (angle) {
   return angle * (Math.PI / 180)
 }
 
-function getScaleFactorThatRemovesDarkCorners (imageData) {
-  let rotation = toRadians(imageData.rotate)
+function getScaleFactorThatRemovesDarkCorners (cropboxData, newGranularAngle) {
+  const rotation = toRadians(newGranularAngle)
 
-  if (rotation < 0) {
-    rotation = 2 * Math.PI - rotation
-  }
-
-  const a = imageData.width
-  const b = imageData.height
+  const a = cropboxData.width
+  const b = cropboxData.height
 
   const scaleFactor = Math.max(
-    (Math.sin(rotation) * a + Math.cos(rotation) * b) / b,
-    (Math.sin(rotation) * b + Math.cos(rotation) * a) / a,
+    (Math.abs(Math.sin(rotation)) * a + Math.abs(Math.cos(rotation)) * b) / b,
+    (Math.abs(Math.sin(rotation)) * b + Math.abs(Math.cos(rotation)) * a) / a,
   )
 
   return scaleFactor
