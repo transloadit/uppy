@@ -1,28 +1,7 @@
 import Cropper from 'cropperjs'
 import { h, Component } from 'preact'
-
-// See this cropperjs image to understand how container/image/canavas/cropbox relate to each other.
-// (https://github.com/fengyuanchen/cropperjs/blob/9b528a8baeaae876dc090085e37992a1683c6f34/docs/images/layers.jpg)
-function getCanvasDataThatFitsPerfectlyIntoContainer (containerData, canvasData) {
-  // 1. Scale our canvas as much as possible
-  const widthRatio = containerData.width / canvasData.width
-  const heightRatio = containerData.height / canvasData.height
-  const scaleFactor = Math.min(widthRatio, heightRatio)
-
-  const newWidth = canvasData.width * scaleFactor
-  const newHeight = canvasData.height * scaleFactor
-
-  // 2. Center our canvas
-  const newLeft = (containerData.width - newWidth) / 2
-  const newTop = (containerData.height - newHeight) / 2
-
-  return {
-    width: newWidth,
-    height: newHeight,
-    left: newLeft,
-    top: newTop,
-  }
-}
+import getCanvasDataThatFitsPerfectlyIntoContainer from './utils/getCanvasDataThatFitsPerfectlyIntoContainer.js'
+import getScaleFactorThatRemovesDarkCorners from './utils/getScaleFactorThatRemovesDarkCorners.js'
 
 export default class Editor extends Component {
   constructor (props) {
@@ -62,6 +41,10 @@ export default class Editor extends Component {
       const pendingRotationAngle = rotationAngle + pendingRotationDelta
       this.granularRotateOnInputNextFrame = requestAnimationFrame(() => {
         this.cropper.rotateTo(pendingRotationAngle)
+
+        const imageData = this.cropper.getImageData()
+        const scaleFactor = getScaleFactorThatRemovesDarkCorners(imageData)
+        this.cropper.scale(scaleFactor)
       })
     }
   }
