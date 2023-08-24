@@ -1,6 +1,6 @@
 import BasePlugin from '@uppy/core/lib/BasePlugin.js'
 import { nanoid } from 'nanoid/non-secure'
-import { Provider } from '@uppy/companion-client'
+import { Provider, RequestClient } from '@uppy/companion-client'
 import EventManager from '@uppy/utils/lib/EventManager'
 import ProgressTimeout from '@uppy/utils/lib/ProgressTimeout'
 import { RateLimitedQueue, internalRateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
@@ -466,8 +466,10 @@ export default class XHRUpload extends BasePlugin {
       const total = files.length
 
       if (file.isRemote) {
+        // TODO: why do we need to do this? why not always one or the other?
+        const Client = file.remote.providerOptions.provider ? Provider : RequestClient
         const getQueue = () => this.requests
-        const client = new Provider(this.uppy, file.remote.providerOptions, getQueue)
+        const client = new Client(this.uppy, file.remote.providerOptions, getQueue)
         const controller = new AbortController()
 
         const removedHandler = (removedFile) => {
