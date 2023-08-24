@@ -1,7 +1,7 @@
-import type { PluginOptions, UIPlugin, PluginTarget } from '@uppy/core'
+import type { PluginTarget, UIPlugin, UIPluginOptions } from '@uppy/core'
 import FileInputLocale from './generatedLocale'
 
-export interface FileInputOptions extends PluginOptions {
+export interface FileInputOptions extends UIPluginOptions {
     target?: PluginTarget
     pretty?: boolean
     inputName?: string

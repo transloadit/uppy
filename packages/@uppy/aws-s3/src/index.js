@@ -82,7 +82,7 @@ function validateParameters (file, params) {
   const methodIsValid = params.method == null || /^p(u|os)t$/i.test(params.method)
 
   if (!methodIsValid) {
-    const err = new TypeError(`AwsS3: got incorrect method from 'getUploadParameters()' for file '${file.name}', expected  'put' or 'post' but got '${params.method}' instead.\nSee https://uppy.io/docs/aws-s3/#getUploadParameters-file for more on the expected format.`)
+    const err = new TypeError(`AwsS3: got incorrect method from 'getUploadParameters()' for file '${file.name}', expected  'PUT' or 'POST' but got '${params.method}' instead.\nSee https://uppy.io/docs/aws-s3/#getUploadParameters-file for more on the expected format.`)
     throw err
   }
 }
@@ -207,14 +207,14 @@ export default class AwsS3 extends BasePlugin {
         validateParameters(file, params)
 
         const {
-          method = 'post',
+          method = 'POST',
           url,
           fields,
           headers,
         } = params
         const xhrOpts = {
           method,
-          formData: method.toLowerCase() === 'post',
+          formData: method.toUpperCase() === 'POST',
           endpoint: url,
           allowedMetaFields: fields ? Object.keys(fields) : [],
         }
@@ -262,7 +262,7 @@ export default class AwsS3 extends BasePlugin {
       metadata: Object.fromEntries(allowedMetaFields.map(name => [name, file.meta[name]])),
       httpMethod: opts.method,
       useFormData: opts.formData,
-      headers: opts.headers,
+      headers: typeof opts.headers === 'function' ? opts.headers(file) : opts.headers,
     }
   }
 

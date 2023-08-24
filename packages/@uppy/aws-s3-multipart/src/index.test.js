@@ -39,6 +39,61 @@ describe('AwsS3Multipart', () => {
     })
   })
 
+  describe('non-multipart upload', () => {
+    it('should handle POST uploads', async () => {
+      const core = new Core()
+      core.use(AwsS3Multipart, {
+        shouldUseMultipart: false,
+        limit: 0,
+        getUploadParameters: () => ({
+          method: 'POST',
+          url: 'https://bucket.s3.us-east-2.amazonaws.com/',
+          fields: {},
+        }),
+      })
+      const scope = nock(
+        'https://bucket.s3.us-east-2.amazonaws.com',
+      ).defaultReplyHeaders({
+        'access-control-allow-headers': '*',
+        'access-control-allow-method': 'POST',
+        'access-control-allow-origin': '*',
+        'access-control-expose-headers': 'ETag, Location',
+      })
+
+      scope.options('/').reply(204, '')
+      scope
+        .post('/')
+        .reply(201, '', { ETag: 'test', Location: 'http://example.com' })
+
+      const fileSize = 1
+
+      core.addFile({
+        source: 'jest',
+        name: 'multitest.dat',
+        type: 'application/octet-stream',
+        data: new File([new Uint8Array(fileSize)], {
+          type: 'application/octet-stream',
+        }),
+      })
+
+      const uploadSuccessHandler = jest.fn()
+      core.on('upload-success', uploadSuccessHandler)
+
+      await core.upload()
+
+      expect(uploadSuccessHandler.mock.calls).toHaveLength(1)
+      expect(uploadSuccessHandler.mock.calls[0][1]).toStrictEqual({
+        body: {
+          ETag: 'test',
+          location: 'http://example.com',
+        },
+        uploadURL: 'http://example.com',
+      })
+
+      scope.done()
+    })
+  })
+
   describe('without companionUrl (custom main functions)', () => {
     let core
     let awsS3Multipart

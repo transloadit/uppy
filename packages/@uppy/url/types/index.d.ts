@@ -1,8 +1,8 @@
-import type { PluginOptions, UIPlugin, PluginTarget, IndexedObject } from '@uppy/core'
 import type { RequestClientOptions } from '@uppy/companion-client'
+import type { IndexedObject, PluginTarget, UIPlugin, UIPluginOptions } from '@uppy/core'
 import UrlLocale from './generatedLocale'
 
-export interface UrlOptions extends PluginOptions, RequestClientOptions {
+export interface UrlOptions extends UIPluginOptions, RequestClientOptions {
     target?: PluginTarget
     title?: string
     locale?: UrlLocale

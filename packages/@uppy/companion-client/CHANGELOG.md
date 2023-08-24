@@ -1,5 +1,12 @@
 # @uppy/companion-client
 
+## 3.3.0
+
+Released: 2023-08-15
+Included in: Uppy v3.14.0
+
+- @uppy/companion-client,@uppy/provider-views: make authentication optional (Dominik Schmidt / #4556)
+
 ## 3.1.2
 
 Released: 2023-04-04

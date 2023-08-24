@@ -27,7 +27,7 @@ async function fetchKeys (url, providerName, credentialRequestParams) {
 }
 
 /**
- * Fetches for a providers OAuth credentials. If the config for thtat provider allows fetching
+ * Fetches for a providers OAuth credentials. If the config for that provider allows fetching
  * of the credentials via http, and the `credentialRequestParams` argument is provided, the oauth
  * credentials will be fetched via http. Otherwise, the credentials provided via companion options
  * will be used instead.

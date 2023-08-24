@@ -1,4 +1,3 @@
-const redis = require('redis')
 const { EventEmitter } = require('node:events')
 
 const logger = require('../logger')
@@ -8,10 +7,10 @@ const logger = require('../logger')
  * This is useful for when companion is running on multiple instances and events need
  * to be distributed across.
  */
-module.exports = (redisUrl, redisPubSubScope) => {
+module.exports = (redisClient, redisPubSubScope) => {
   const prefix = redisPubSubScope ? `${redisPubSubScope}:` : ''
   const getPrefixedEventName = (eventName) => `${prefix}${eventName}`
-  const publisher = redis.createClient({ url: redisUrl })
+  const publisher = redisClient.duplicate()
   publisher.on('error', err => logger.error('publisher redis error', err))
   let subscriber
 

@@ -1,5 +1,12 @@
 # @uppy/utils
 
+## 5.4.3
+
+Released: 2023-07-24
+Included in: Uppy v3.13.1
+
+- @uppy/utils: align version of `preact` with the UI plugins (Antoine du Hamel / #4599)
+
 ## 5.4.0
 
 Released: 2023-06-19

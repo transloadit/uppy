@@ -12,7 +12,7 @@ const { STORAGE_PREFIX, shortenToken } = require('./Uploader')
  */
 module.exports = (server) => {
   const wss = new SocketServer({ server })
-  const redisClient = redis.client()?.v4
+  const redisClient = redis.client()
 
   // A new connection is usually created when an upload begins,
   // or when connection fails while an upload is on-going and,

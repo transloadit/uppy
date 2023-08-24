@@ -8,7 +8,6 @@ async function deauthCallback ({ body, companion, headers }, res, next) {
   try {
     const { data, status } = await companion.provider.deauthorizationCallback({ companion, body, headers })
     res.status(status || 200).json(data)
-    return
   } catch (err) {
     if (respondWithError(err, res)) return
     next(err)
