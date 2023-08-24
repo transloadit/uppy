@@ -30,8 +30,8 @@ function isOriginAllowed (origin, allowedOrigin) {
 export default class Provider extends RequestClient {
   #refreshingTokenPromise
 
-  constructor (uppy, opts) {
-    super(uppy, opts)
+  constructor (uppy, opts, getQueue) {
+    super(uppy, opts, getQueue)
     this.provider = opts.provider
     this.id = this.provider
     this.name = this.opts.name || getName(this.id)
