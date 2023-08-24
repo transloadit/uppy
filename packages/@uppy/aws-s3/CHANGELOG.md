@@ -1,5 +1,12 @@
 # @uppy/aws-s3
 
+## 3.2.3
+
+Released: 2023-08-23
+Included in: Uppy v3.14.1
+
+- @uppy/aws-s3-multipart,@uppy/aws-s3: allow empty objects for `fields` types (Antoine du Hamel / #4631)
+
 ## 3.2.2
 
 Released: 2023-08-15

@@ -70,14 +70,6 @@ type AWSS3NonMultipartWithoutCompanion = AWSS3WithoutCompanion &
                                            completeMultipartUpload?: never
                                          }
 
-type AWSS3MultipartWithCompanionMandatory = {
-  getChunkSize?: (file: UppyFile) => number
-  createMultipartUpload?: never
-  listParts?: never
-  signPart?: never
-  abortMultipartUpload?: never
-  completeMultipartUpload?: never
-}
 type AWSS3MultipartWithoutCompanionMandatory = {
   getChunkSize?: (file: UppyFile) => number
   createMultipartUpload: (
@@ -87,10 +79,6 @@ type AWSS3MultipartWithoutCompanionMandatory = {
     file: UppyFile,
     opts: { uploadId: string; key: string; signal: AbortSignal }
   ) => MaybePromise<AwsS3Part[]>
-  signPart: (
-    file: UppyFile,
-    opts: { uploadId: string; key: string; partNumber: number; body: Blob; signal: AbortSignal }
-  ) => MaybePromise<AwsS3UploadParameters>
   abortMultipartUpload: (
     file: UppyFile,
     opts: { uploadId: string; key: string; signal: AbortSignal }
@@ -99,7 +87,18 @@ type AWSS3MultipartWithoutCompanionMandatory = {
     file: UppyFile,
     opts: { uploadId: string; key: string; parts: AwsS3Part[]; signal: AbortSignal }
   ) => MaybePromise<{ location?: string }>
-}
+} & ({
+  signPart: (
+    file: UppyFile,
+    opts: { uploadId: string; key: string; partNumber: number; body: Blob; signal: AbortSignal }
+  ) => MaybePromise<AwsS3UploadParameters>
+} | {
+  /** @deprecated Use signPart instead */
+  prepareUploadParts: (
+    file: UppyFile,
+    partData: { uploadId: string; key: string; parts: [{ number: number, chunk: Blob }] }
+  ) => MaybePromise<{ presignedUrls: Record<number, string>, headers?: Record<number, Record<string, string>> }>
+})
 type AWSS3MultipartWithoutCompanion = AWSS3WithoutCompanion &
                                       AWSS3MultipartWithoutCompanionMandatory &
                                       {
@@ -108,14 +107,14 @@ type AWSS3MultipartWithoutCompanion = AWSS3WithoutCompanion &
                                       }
 
 type AWSS3MultipartWithCompanion = AWSS3WithCompanion &
-                                   AWSS3MultipartWithCompanionMandatory &
+                                   Partial<AWSS3MultipartWithoutCompanionMandatory> &
                                    {
                                      shouldUseMultipart?: true
                                      getUploadParameters?: never
                                    }
 
 type AWSS3MaybeMultipartWithCompanion = AWSS3WithCompanion &
-                                        AWSS3MultipartWithCompanionMandatory &
+                                        Partial<AWSS3MultipartWithoutCompanionMandatory> &
                                         AWSS3NonMultipartWithCompanionMandatory &
                                         {
                                           shouldUseMultipart: ((file: UppyFile) => boolean)
@@ -145,11 +144,6 @@ interface _AwsS3MultipartOptions extends PluginOptions {
     allowedMetaFields?: string[] | null
     limit?: number
     retryDelays?: number[] | null
-    /** @deprecated Use signPart instead */
-    prepareUploadParts?: (
-      file: UppyFile,
-      partData: { uploadId: string; key: string; parts: [{ number: number, chunk: Blob }] }
-    ) => MaybePromise<{ presignedUrls: Record<number, string>, headers?: Record<number, Record<string, string>> }>
 }
 
 export type AwsS3MultipartOptions = _AwsS3MultipartOptions & (AWSS3NonMultipartWithCompanion |

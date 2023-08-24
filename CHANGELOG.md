@@ -12,6 +12,21 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 3.14.1
+
+Released: 2023-08-23
+
+| Package                | Version | Package                | Version |
+| ---------------------- | ------- | ---------------------- | ------- |
+| @uppy/aws-s3           |   3.2.3 | @uppy/companion        |   4.8.1 |
+| @uppy/aws-s3-multipart |   3.5.4 | uppy                   |  3.14.1 |
+
+- @uppy/aws-s3-multipart: fix types when using deprecated option (Antoine du Hamel / #4634)
+- @uppy/companion: harden lint rules (Antoine du Hamel / #4641)
+- @uppy/aws-s3-multipart,@uppy/aws-s3: allow empty objects for `fields` types (Antoine du Hamel / #4631)
+- meta: upgrade Node.js docker version (Antoine du Hamel / #4630)
+
+
 ## 3.14.0
 
 Released: 2023-08-15
