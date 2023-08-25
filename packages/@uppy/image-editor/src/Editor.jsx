@@ -62,7 +62,9 @@ export default class Editor extends Component {
     // 3. Scale the image so that it fits into the cropbox
     const cropboxData = this.cropper.getCropBoxData()
     const scaleFactor = getScaleFactorThatRemovesDarkCorners(cropboxData, newGranularAngle)
-    this.cropper.scale(scaleFactor)
+    // Preserve flip
+    const scaleFactorX = this.cropper.getImageData().scaleX < 0 ? -scaleFactor : scaleFactor
+    this.cropper.scale(scaleFactorX, scaleFactor)
   }
 
   renderGranularRotate () {
