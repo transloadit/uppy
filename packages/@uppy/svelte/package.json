@@ -4,6 +4,7 @@
   "svelte": "src/index.js",
   "module": "dist/index.mjs",
   "main": "dist/index.js",
+  "type": "module",
   "version": "3.0.2",
   "scripts": {
     "build": "rollup -c",
@@ -19,13 +20,14 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "devDependencies": {
-    "@rollup/plugin-node-resolve": "^13.0.0",
+    "@rollup/plugin-node-resolve": "^15.0.0",
     "@tsconfig/svelte": "^3.0.0",
-    "rollup": "^2.60.2",
+    "rollup": "^3.0.0",
     "rollup-plugin-svelte": "^7.0.0",
     "svelte": "^3.31.0",
     "svelte-check": "^2.0.0",
-    "svelte-preprocess": "^4.6.1"
+    "svelte-preprocess": "^5.0.0",
+    "typescript": "~4.8"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^",
