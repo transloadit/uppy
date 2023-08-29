@@ -14,18 +14,8 @@ Corepack comes pre-installed with Node.js >=16.x, or can be installed through `n
 
 ```sh
 corepack -v || npm i -g corepack
-```
-
-You can either run `corepack enable` to install a `yarn` executable in your `$PATH`, and run all `yarn` commands in this guide as they are written:
-
-```sh
 corepack enable
-# e.g. `yarn install`
 ```
-
-or prefix all `yarn` commands in this guide with `corepack yarn` (e.g.
-`corepack yarn install` instead of `yarn install`).
-
 
 [Corepack]: https://nodejs.org/api/corepack.html
 
