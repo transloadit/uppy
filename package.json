@@ -103,7 +103,7 @@
     "stylelint-config-standard": "^34.0.0",
     "stylelint-config-standard-scss": "^10.0.0",
     "tar": "^6.1.0",
-    "tsd": "^0.22.0",
+    "tsd": "^0.28.0",
     "typescript": "~5.1",
     "vue-template-compiler": "workspace:*"
   },
