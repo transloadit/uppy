@@ -94,11 +94,9 @@ const getProtectedHttpAgent = ({ protocol, blockLocalIPs }) => {
     })
   }
 
-  const isBlocked = (options) => ipaddr.isValid(options.host) && blockLocalIPs && isDisallowedIP(options.host)
-
-  class HttpAgent extends http.Agent {
+  return class HttpAgent extends (protocol.startsWith('https') ? https : http).Agent {
     createConnection (options, callback) {
-      if (isBlocked(options)) {
+      if (ipaddr.isValid(options.host) && blockLocalIPs && isDisallowedIP(options.host)) {
         callback(new Error(FORBIDDEN_IP_ADDRESS))
         return undefined
       }
@@ -106,19 +104,6 @@ const getProtectedHttpAgent = ({ protocol, blockLocalIPs }) => {
       return super.createConnection({ ...options, lookup: dnsLookup }, callback)
     }
   }
-
-  class HttpsAgent extends https.Agent {
-    createConnection (options, callback) {
-      if (isBlocked(options)) {
-        callback(new Error(FORBIDDEN_IP_ADDRESS))
-        return undefined
-      }
-      // @ts-ignore
-      return super.createConnection({ ...options, lookup: dnsLookup }, callback)
-    }
-  }
-
-  return protocol.startsWith('https') ? HttpsAgent : HttpAgent
 }
 
 module.exports.getProtectedHttpAgent = getProtectedHttpAgent
