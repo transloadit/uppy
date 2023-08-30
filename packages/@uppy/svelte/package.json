@@ -25,7 +25,7 @@
     "rollup-plugin-svelte": "^7.0.0",
     "svelte": "^3.31.0",
     "svelte-check": "^2.0.0",
-    "svelte-preprocess": "^4.6.1"
+    "svelte-preprocess": "^5.0.0"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^",
