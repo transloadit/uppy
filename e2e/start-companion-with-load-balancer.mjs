@@ -3,6 +3,7 @@
 import { spawn } from 'node:child_process'
 import http from 'node:http'
 import httpProxy from 'http-proxy'
+import process from 'node:process'
 
 const numInstances = 3
 const lbPort = 3020
@@ -45,9 +46,12 @@ function createLoadBalancer (baseUrls) {
   return server
 }
 
+const isWindows = process.platform === 'win32'
+const isOSX = process.platform === 'darwin'
+
 const startCompanion = ({ name, port }) => {
   const cp = spawn(process.execPath, [
-    '--watch-path', 'packages/@uppy/companion/src', '-r', 'dotenv/config', '--watch', './packages/@uppy/companion/src/standalone/start-server.js',
+    '-r', 'dotenv/config', ...(isWindows || isOSX ? ['--watch-path', 'packages/@uppy/companion/src', '--watch'] : []), './packages/@uppy/companion/src/standalone/start-server.js',
   ], {
     cwd: new URL('../', import.meta.url),
     stdio: 'inherit',
