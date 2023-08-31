@@ -56,7 +56,8 @@ const startCompanion = ({ name, port }) => {
     cwd: new URL('../', import.meta.url),
     stdio: 'inherit',
     env: {
-    // Note: these env variables will override anything set in .env
+      // Note: these env variables will override anything set in .env
+      ...process.env,
       COMPANION_PORT: port,
       COMPANION_SECRET: 'development', // multi instance will not work without secret set
       COMPANION_PREAUTH_SECRET: 'development', // multi instance will not work without secret set
