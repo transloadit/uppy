@@ -42,7 +42,7 @@ const providerNameToAuthName = (name, options) => { // eslint-disable-line no-un
  *
  * @param {Record<string, typeof Provider>} providers
  */
-module.exports.getProviderMiddleware = (providers) => {
+module.exports.getProviderMiddleware = (providers, grantConfig) => {
   /**
    *
    * @param {object} req
@@ -56,6 +56,7 @@ module.exports.getProviderMiddleware = (providers) => {
       const { allowLocalUrls } = req.companion.options
       req.companion.provider = new ProviderClass({ providerName, allowLocalUrls })
       req.companion.providerClass = ProviderClass
+      req.companion.providerGrantConfig = grantConfig[ProviderClass.authProvider]
 
       if (isOAuthProvider(ProviderClass.authProvider)) {
         req.companion.getProviderCredentials = getCredentialsResolver(providerName, req.companion.options, req)
