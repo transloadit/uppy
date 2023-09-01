@@ -94,6 +94,5 @@ jobs:
           corepack yarn run build:lib
           corepack yarn run build:companion
           corepack yarn run build:locale-pack
-          rm tsconfig.json
       - name: Run type tests
         run: corepack yarn run test:type

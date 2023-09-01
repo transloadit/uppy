@@ -1,35 +1,27 @@
 {
   "compilerOptions": {
+    "composite": true,
+    "incremental": true,
     "target": "ESnext",
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "lib": [
-      "dom",
-      "ESnext"
+        "dom",
+        "ESnext"
     ],
     "resolveJsonModule": true,
     "allowImportingTsExtensions": true,
     "allowJs": false,
-    "jsx": "preserve",
     "declaration": true,
-    "emitDeclarationOnly":true,
+    "emitDeclarationOnly": true,
+    "declarationMap": true,
+    "jsx": "preserve",
     "noImplicitAny": true,
     "noImplicitThis": true,
     "strictNullChecks": true,
-    "types": [],
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": false,
     "strictFunctionTypes": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["packages/"],
-  "exclude": [
-    "node_modules/",
-    "packages/@uppy/angular",
-    "packages/@uppy/companion",
-    "packages/@uppy/*/types",
-    "packages/uppy/types",
-    "private/",
-    "bin/",
-  ]
 }

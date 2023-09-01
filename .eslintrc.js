@@ -361,6 +361,7 @@ module.exports = {
         'postcss.config.js',
         '.eslintrc.js',
         'private/**/*.js',
+        'private/**/*.mjs',
       ],
       rules: {
         'no-console': 'off',

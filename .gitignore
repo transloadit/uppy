@@ -17,6 +17,7 @@ yarn-error.log
 
 dist/
 lib/
+tsOut/
 coverage/
 examples/dev/bundle.js
 examples/aws-php/vendor/*
