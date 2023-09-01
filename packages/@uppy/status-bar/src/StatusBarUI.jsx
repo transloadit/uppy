@@ -122,12 +122,11 @@ export default function StatusBar (props) {
 
   const width = progressValue ?? 100
 
-  const showUploadBtn = !error
-    && newFiles
-    && !isUploadInProgress
-    && !isAllPaused
-    && allowNewUpload
-    && !hideUploadButton
+  const showUploadBtn = !hideUploadButton
+    && (
+      (!error && newFiles && !isUploadInProgress && !isAllPaused && allowNewUpload)
+      || recoveredState
+    )
 
   const showCancelBtn = !hideCancelButton
     && uploadState !== STATE_WAITING
@@ -140,6 +139,14 @@ export default function StatusBar (props) {
   const showRetryBtn = error && !isAllComplete && !hideRetryButton
 
   const showDoneBtn = doneButtonHandler && uploadState === STATE_COMPLETE
+
+  const hasActions = (
+    showUploadBtn
+    || showCancelBtn
+    || showPauseResumeBtn
+    || showRetryBtn
+    || showDoneBtn
+  )
 
   const progressClassNames = classNames('uppy-StatusBar-progress', {
     'is-indeterminate': getIsIndeterminate(),
@@ -204,37 +211,39 @@ export default function StatusBar (props) {
         }
       })()}
 
-      <div className="uppy-StatusBar-actions">
-        {recoveredState || showUploadBtn ? (
-          <UploadBtn
-            newFiles={newFiles}
-            isUploadStarted={isUploadStarted}
-            recoveredState={recoveredState}
-            i18n={i18n}
-            isSomeGhost={isSomeGhost}
-            startUpload={startUpload}
-            uploadState={uploadState}
-          />
-        ) : null}
+      {hasActions ? (
+        <div className="uppy-StatusBar-actions">
+          {showUploadBtn ? (
+            <UploadBtn
+              newFiles={newFiles}
+              isUploadStarted={isUploadStarted}
+              recoveredState={recoveredState}
+              i18n={i18n}
+              isSomeGhost={isSomeGhost}
+              startUpload={startUpload}
+              uploadState={uploadState}
+            />
+          ) : null}
 
-        {showRetryBtn ? <RetryBtn i18n={i18n} uppy={uppy} /> : null}
+          {showRetryBtn ? <RetryBtn i18n={i18n} uppy={uppy} /> : null}
 
-        {showPauseResumeBtn ? (
-          <PauseResumeButton
-            isAllPaused={isAllPaused}
-            i18n={i18n}
-            isAllComplete={isAllComplete}
-            resumableUploads={resumableUploads}
-            uppy={uppy}
-          />
-        ) : null}
+          {showPauseResumeBtn ? (
+            <PauseResumeButton
+              isAllPaused={isAllPaused}
+              i18n={i18n}
+              isAllComplete={isAllComplete}
+              resumableUploads={resumableUploads}
+              uppy={uppy}
+            />
+          ) : null}
 
-        {showCancelBtn ? <CancelBtn i18n={i18n} uppy={uppy} /> : null}
+          {showCancelBtn ? <CancelBtn i18n={i18n} uppy={uppy} /> : null}
 
-        {showDoneBtn ? (
-          <DoneBtn i18n={i18n} doneButtonHandler={doneButtonHandler} />
-        ) : null}
-      </div>
+          {showDoneBtn ? (
+            <DoneBtn i18n={i18n} doneButtonHandler={doneButtonHandler} />
+          ) : null}
+        </div>
+      ) : null}
     </div>
   )
 }
