@@ -116,6 +116,7 @@
     "build:svelte": "yarn workspace @uppy/svelte build",
     "build:angular": "yarn workspace angular build",
     "build:js": "npm-run-all build:lib build:companion build:locale-pack build:svelte build:angular build:bundle",
+    "build:ts": "yarn workspaces list --no-private --json | yarn node ./bin/build-ts.mjs",
     "build:lib": "yarn node ./bin/build-lib.js",
     "build:locale-pack": "yarn workspace @uppy-dev/locale-pack build && eslint packages/@uppy/locales/src/en_US.js --fix && yarn workspace @uppy-dev/locale-pack test unused",
     "build": "npm-run-all --parallel build:js build:css --serial size",

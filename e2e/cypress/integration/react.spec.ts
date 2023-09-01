@@ -24,6 +24,8 @@ describe('@uppy/react', () => {
   it('should render Drag & Drop in React and create a thumbail with @uppy/thumbnail-generator', () => {
     const spy = cy.spy()
 
+    // eslint-disable-next-line
+    // @ts-ignore fix me
     cy.window().then(({ uppy }) => uppy.on('thumbnail:generated', spy))
     cy.get('@dragdrop-input').selectFile(['cypress/fixtures/images/cat.jpg', 'cypress/fixtures/images/traffic.jpg'], { force:true })
     // not sure how I can accurately wait for the thumbnail
