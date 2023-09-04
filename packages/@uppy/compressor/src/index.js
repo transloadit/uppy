@@ -2,7 +2,7 @@ import { BasePlugin } from '@uppy/core'
 import { RateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
 import getFileNameAndExtension from '@uppy/utils/lib/getFileNameAndExtension'
 import prettierBytes from '@transloadit/prettier-bytes'
-import CompressorJS from 'compressorjs/dist/compressor.common.js'
+import CompressorJS from 'compressorjs'
 import locale from './locale.js'
 
 export default class Compressor extends BasePlugin {
@@ -54,7 +54,7 @@ export default class Compressor extends BasePlugin {
           const { name, type, size } = compressedBlob
           const { extension } = name && getFileNameAndExtension(name)
           // Name (file.meta.name) might have been changed by user, so we update only the extension
-          const newMetaName = file.meta.name && `${getFileNameAndExtension(file.meta.name).name}.${extension}`
+          const newMetaName = file.meta.name && extension && `${getFileNameAndExtension(file.meta.name).name}.${extension}`
 
           this.uppy.setFileState(file.id, {
             ...(name && { name }),
