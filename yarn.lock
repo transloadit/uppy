@@ -11102,6 +11102,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/compressor@workspace:packages/@uppy/compressor"
   dependencies:
+    "@jest/globals": ^29.0.0
     "@transloadit/prettier-bytes": ^0.0.9
     "@uppy/utils": "workspace:^"
     compressorjs: ^1.1.1
