@@ -1,5 +1,12 @@
 # @uppy/tus
 
+## 3.1.3
+
+Released: 2023-08-15
+Included in: Uppy v3.14.0
+
+- @uppy/aws-s3,@uppy/tus,@uppy/xhr-upload:  Invoke headers function for remote uploads (Dominik Schmidt / #4596)
+
 ## 3.1.2
 
 Released: 2023-07-06

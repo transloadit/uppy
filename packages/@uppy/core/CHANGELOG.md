@@ -1,5 +1,12 @@
 # @uppy/core
 
+## 3.4.0
+
+Released: 2023-08-15
+Included in: Uppy v3.14.0
+
+- @uppy/core: allow duplicate files with onBeforeFileAdded (Merlijn Vos / #4594)
+
 ## 3.2.1
 
 Released: 2023-06-19

@@ -12,6 +12,66 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 3.14.1
+
+Released: 2023-08-23
+
+| Package                | Version | Package                | Version |
+| ---------------------- | ------- | ---------------------- | ------- |
+| @uppy/aws-s3           |   3.2.3 | @uppy/companion        |   4.8.1 |
+| @uppy/aws-s3-multipart |   3.5.4 | uppy                   |  3.14.1 |
+
+- @uppy/aws-s3-multipart: fix types when using deprecated option (Antoine du Hamel / #4634)
+- @uppy/companion: harden lint rules (Antoine du Hamel / #4641)
+- @uppy/aws-s3-multipart,@uppy/aws-s3: allow empty objects for `fields` types (Antoine du Hamel / #4631)
+- meta: upgrade Node.js docker version (Antoine du Hamel / #4630)
+
+
+## 3.14.0
+
+Released: 2023-08-15
+
+| Package                   | Version | Package                   | Version |
+| ------------------------- | ------- | ------------------------- | ------- |
+| @uppy/audio               |   1.1.2 | @uppy/locales             |   3.3.0 |
+| @uppy/aws-s3              |   3.2.2 | @uppy/onedrive            |   3.1.3 |
+| @uppy/aws-s3-multipart    |   3.5.3 | @uppy/progress-bar        |   3.0.3 |
+| @uppy/box                 |   2.1.3 | @uppy/provider-views      |   3.5.0 |
+| @uppy/companion           |   4.8.0 | @uppy/redux-dev-tools     |   3.0.3 |
+| @uppy/companion-client    |   3.3.0 | @uppy/screen-capture      |   3.1.2 |
+| @uppy/core                |   3.4.0 | @uppy/status-bar          |   3.2.4 |
+| @uppy/dashboard           |   3.5.1 | @uppy/thumbnail-generator |   3.0.4 |
+| @uppy/drag-drop           |   3.0.3 | @uppy/transloadit         |   3.2.1 |
+| @uppy/dropbox             |   3.1.3 | @uppy/tus                 |   3.1.3 |
+| @uppy/facebook            |   3.1.2 | @uppy/unsplash            |   3.2.2 |
+| @uppy/file-input          |   3.0.3 | @uppy/url                 |   3.3.3 |
+| @uppy/google-drive        |   3.2.1 | @uppy/webcam              |   3.3.2 |
+| @uppy/image-editor        |   2.1.3 | @uppy/xhr-upload          |   3.3.2 |
+| @uppy/informer            |   3.0.3 | @uppy/zoom                |   2.1.2 |
+| @uppy/instagram           |   3.1.2 | uppy                      |  3.14.0 |
+
+- meta: Readme improvements (Artur Paikin / #4622)
+- @uppy/companion: Fix typos and add env vars to .env.example (Dominik Schmidt / #4624)
+- @uppy/aws-s3-multipart: pass the `uploadURL` back to the caller (Antoine du Hamel / #4614)
+- meta: update to node-18.17.0-alpine,  (odselsevier / #4617)
+- @uppy/aws-s3,@uppy/aws-s3-multipart: update types (Antoine du Hamel / #4611)
+- @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/companion,@uppy/transloadit,@uppy/xhr-upload: use uppercase HTTP method names (Antoine du Hamel / #4612)
+- meta: e2e: fix race condition in transloadit test (Antoine du Hamel / #4616)
+- @uppy/aws-s3,@uppy/aws-s3-multipart: update types (bdirito / #4576)
+- @uppy/core: allow duplicate files with onBeforeFileAdded (Merlijn Vos / #4594)
+- @uppy/companion: make CSRF protection helpers available to providers (Dominik Schmidt / #4554)
+- @uppy/companion: fix Redis key default TTL (Subha Sarkar / #4607)
+- @uppy/companion: Fix Uploader.js metadata normalisation (Subha Sarkar / #4608)
+- @uppy/companion-client,@uppy/provider-views: make authentication optional (Dominik Schmidt / #4556)
+- @uppy/provider-views: fix ProviderView error on empty plugin.icon (Dominik Schmidt / #4553)
+- @uppy/aws-s3,@uppy/tus,@uppy/xhr-upload:  Invoke headers function for remote uploads (Dominik Schmidt / #4596)
+- @uppy/companion: Unify redis initialization (Dominik Schmidt / #4597)
+- meta: lock node-js version on ci (Mikael Finstad / #4606)
+- @uppy/companion: allow dynamic S3 bucket (rmoura-92 / #4579)
+- @uppy/status-bar: e2e: add test for retrying and pausing uploads (Antoine du Hamel / #3599)
+- meta: e2e: remove too short timeout (Antoine du Hamel / #4602)
+
+
 ## 3.13.1
 
 Released: 2023-07-24

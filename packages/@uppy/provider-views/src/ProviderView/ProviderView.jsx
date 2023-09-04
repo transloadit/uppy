@@ -13,25 +13,6 @@ import View from '../View.js'
 
 import packageJson from '../../package.json'
 
-function getOrigin () {
-  // eslint-disable-next-line no-restricted-globals
-  return location.origin
-}
-
-function getRegex (value) {
-  if (typeof value === 'string') {
-    return new RegExp(`^${value}$`)
-  } if (value instanceof RegExp) {
-    return value
-  }
-  return undefined
-}
-function isOriginAllowed (origin, allowedOrigin) {
-  const patterns = Array.isArray(allowedOrigin) ? allowedOrigin.map(getRegex) : [getRegex(allowedOrigin)]
-  return patterns
-    .some((pattern) => pattern?.test(origin) || pattern?.test(`${origin}/`)) // allowing for trailing '/'
-}
-
 function formatBreadcrumbs (breadcrumbs) {
   return breadcrumbs.slice(1).map((directory) => directory.name).join('/')
 }
@@ -39,6 +20,14 @@ function formatBreadcrumbs (breadcrumbs) {
 function prependPath (path, component) {
   if (!path) return component
   return `${path}/${component}`
+}
+
+export function defaultPickerIcon () {
+  return (
+    <svg aria-hidden="true" focusable="false" width="30" height="30" viewBox="0 0 30 30">
+      <path d="M15 30c8.284 0 15-6.716 15-15 0-8.284-6.716-15-15-15C6.716 0 0 6.716 0 15c0 8.284 6.716 15 15 15zm4.258-12.676v6.846h-8.426v-6.846H5.204l9.82-12.364 9.82 12.364H19.26z" />
+    </svg>
+  )
 }
 
 /**
@@ -254,45 +243,14 @@ export default class ProviderView extends View {
   }
 
   async handleAuth () {
-    await this.provider.ensurePreAuth()
-
-    const authState = btoa(JSON.stringify({ origin: getOrigin() }))
     const clientVersion = `@uppy/provider-views=${ProviderView.VERSION}`
-    const link = this.provider.authUrl({ state: authState, uppyVersions: clientVersion })
-
-    const authWindow = window.open(link, '_blank')
-    const handleToken = (e) => {
-      if (e.source !== authWindow) {
-        this.plugin.uppy.log('rejecting event from unknown source')
-        return
-      }
-      if (!isOriginAllowed(e.origin, this.plugin.opts.companionAllowedHosts) || e.source !== authWindow) {
-        this.plugin.uppy.log(`rejecting event from ${e.origin} vs allowed pattern ${this.plugin.opts.companionAllowedHosts}`)
-      }
-
-      // Check if it's a string before doing the JSON.parse to maintain support
-      // for older Companion versions that used object references
-      const data = typeof e.data === 'string' ? JSON.parse(e.data) : e.data
-
-      if (data.error) {
-        this.plugin.uppy.log('auth aborted', 'warning')
-        const { uppy } = this.plugin
-        const message = uppy.i18n('authAborted')
-        uppy.info({ message }, 'warning', 5000)
-        return
-      }
-
-      if (!data.token) {
-        this.plugin.uppy.log('did not receive token from auth window', 'error')
-        return
-      }
-
-      authWindow.close()
-      window.removeEventListener('message', handleToken)
-      this.provider.setAuthToken(data.token)
+    try {
+      await this.provider.login({ uppyVersions: clientVersion })
+      this.plugin.setPluginState({ authenticated: true })
       this.preFirstRender()
+    } catch (e) {
+      this.plugin.uppy.log(`login failed: ${e.message}`)
     }
-    window.addEventListener('message', handleToken)
   }
 
   async handleScroll (event) {
@@ -453,11 +411,13 @@ export default class ProviderView extends View {
     const { files, folders, filterInput, loading, currentSelection } = this.plugin.getPluginState()
     const { isChecked, toggleCheckbox, recordShiftKeyPress, filterItems } = this
     const hasInput = filterInput !== ''
+    const pluginIcon = this.plugin.icon || defaultPickerIcon
+
     const headerProps = {
       showBreadcrumbs: targetViewOptions.showBreadcrumbs,
       getFolder: this.getFolder,
       breadcrumbs: this.plugin.getPluginState().breadcrumbs,
-      pluginIcon: this.plugin.icon,
+      pluginIcon,
       title: this.plugin.title,
       logout: this.logout,
       username: this.username,
@@ -495,7 +455,7 @@ export default class ProviderView extends View {
       viewType: targetViewOptions.viewType,
       showTitles: targetViewOptions.showTitles,
       showBreadcrumbs: targetViewOptions.showBreadcrumbs,
-      pluginIcon: this.plugin.icon,
+      pluginIcon,
       i18n: this.plugin.uppy.i18n,
       uppyFiles: this.plugin.uppy.getFiles(),
       validateRestrictions: (...args) => this.plugin.uppy.validateRestrictions(...args),
@@ -514,7 +474,7 @@ export default class ProviderView extends View {
         <CloseWrapper onUnmount={this.clearSelection}>
           <AuthView
             pluginName={this.plugin.title}
-            pluginIcon={this.plugin.icon}
+            pluginIcon={pluginIcon}
             handleAuth={this.handleAuth}
             i18n={this.plugin.uppy.i18n}
             i18nArray={this.plugin.uppy.i18nArray}

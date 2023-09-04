@@ -1,5 +1,12 @@
 # @uppy/transloadit
 
+## 3.2.1
+
+Released: 2023-08-15
+Included in: Uppy v3.14.0
+
+- @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/companion,@uppy/transloadit,@uppy/xhr-upload: use uppercase HTTP method names (Antoine du Hamel / #4612)
+
 ## 3.2.0
 
 Released: 2023-07-13

@@ -59,7 +59,7 @@ class Uppy {
       debug: false,
       restrictions: defaultRestrictionOptions,
       meta: {},
-      onBeforeFileAdded: (currentFile) => currentFile,
+      onBeforeFileAdded: (file, files) => !Object.hasOwn(files, file.id),
       onBeforeUpload: (files) => files,
       store: new DefaultStore(),
       logger: justErrorsLogger,
@@ -547,11 +547,11 @@ class Uppy {
           this.log(`Replaced the blob in the restored ghost file: ${newFile.name}, ${newFile.id}`)
         }
 
-        if (this.checkIfFileAlreadyExists(newFile.id)) {
+        const onBeforeFileAddedResult = this.opts.onBeforeFileAdded(newFile, nextFilesState)
+
+        if (!onBeforeFileAddedResult && this.checkIfFileAlreadyExists(newFile.id)) {
           throw new RestrictionError(this.i18n('noDuplicates', { fileName: newFile.name }), { file: fileToAdd })
         }
-
-        const onBeforeFileAddedResult = this.opts.onBeforeFileAdded(newFile, nextFilesState)
 
         if (onBeforeFileAddedResult === false) {
           // Don’t show UI info for this error, as it should be done by the developer
