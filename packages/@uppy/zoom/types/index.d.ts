@@ -1,7 +1,7 @@
-import type { PluginOptions, UIPlugin, PluginTarget } from '@uppy/core'
+import type { PluginTarget, UIPlugin, UIPluginOptions } from '@uppy/core'
 import type { TokenStorage, PublicProviderOptions } from '@uppy/companion-client'
 
-interface ZoomOptions extends PluginOptions, PublicProviderOptions {
+interface ZoomOptions extends UIPluginOptions, PublicProviderOptions {
     target?: PluginTarget
     title?: string
     storage?: TokenStorage

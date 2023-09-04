@@ -1,33 +1,10 @@
 const express = require('express')
-const validator = require('validator')
 
 const { startDownUpload } = require('../helpers/upload')
 const { prepareStream } = require('../helpers/utils')
+const { validateURL } = require('../helpers/request')
 const { getURLMeta, getProtectedGot } = require('../helpers/request')
 const logger = require('../logger')
-
-/**
- * Validates that the download URL is secure
- *
- * @param {string} url the url to validate
- * @param {boolean} ignoreTld whether to allow local addresses
- */
-const validateURL = (url, ignoreTld) => {
-  if (!url) {
-    return false
-  }
-
-  const validURLOpts = {
-    protocols: ['http', 'https'],
-    require_protocol: true,
-    require_tld: !ignoreTld,
-  }
-  if (!validator.isURL(url, validURLOpts)) {
-    return false
-  }
-
-  return true
-}
 
 /**
  * @callback downloadCallback
@@ -45,6 +22,8 @@ const validateURL = (url, ignoreTld) => {
  * @returns {Promise}
  */
 const downloadURL = async (url, blockLocalIPs, traceId) => {
+  // TODO in next major, rename all blockLocalIPs to allowLocalUrls and invert the bool, to make it consistent
+  // see discussion https://github.com/transloadit/uppy/pull/4554/files#r1268677162
   try {
     const protectedGot = getProtectedGot({ url, blockLocalIPs })
     const stream = protectedGot.stream.get(url, { responseType: 'json' })
@@ -57,7 +36,7 @@ const downloadURL = async (url, blockLocalIPs, traceId) => {
 }
 
 /**
- * Fteches the size and content type of a URL
+ * Fetches the size and content type of a URL
  *
  * @param {object} req expressJS request object
  * @param {object} res expressJS response object

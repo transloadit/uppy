@@ -1,5 +1,38 @@
 # @uppy/aws-s3-multipart
 
+## 3.5.4
+
+Released: 2023-08-23
+Included in: Uppy v3.14.1
+
+- @uppy/aws-s3-multipart: fix types when using deprecated option (Antoine du Hamel / #4634)
+- @uppy/aws-s3-multipart,@uppy/aws-s3: allow empty objects for `fields` types (Antoine du Hamel / #4631)
+
+## 3.5.3
+
+Released: 2023-08-15
+Included in: Uppy v3.14.0
+
+- @uppy/aws-s3-multipart: pass the `uploadURL` back to the caller (Antoine du Hamel / #4614)
+- @uppy/aws-s3,@uppy/aws-s3-multipart: update types (Antoine du Hamel / #4611)
+- @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/companion,@uppy/transloadit,@uppy/xhr-upload: use uppercase HTTP method names (Antoine du Hamel / #4612)
+- @uppy/aws-s3,@uppy/aws-s3-multipart: update types (bdirito / #4576)
+
+## 3.5.2
+
+Released: 2023-07-24
+Included in: Uppy v3.13.1
+
+- @uppy/aws-s3-multipart: refresh file before calling user-defined functions (mjlumetta / #4557)
+
+## 3.5.1
+
+Released: 2023-07-20
+Included in: Uppy v3.13.0
+
+- @uppy/aws-s3-multipart: fix crash on pause/resume (Merlijn Vos / #4581)
+- @uppy/aws-s3-multipart: do not access `globalThis.crypto` on the top-level (Bryan J Swift / #4584)
+
 ## 3.5.0
 
 Released: 2023-07-13

@@ -12,6 +12,8 @@ const throttle = require('lodash/throttle')
 
 const { Upload } = require('@aws-sdk/lib-storage')
 
+const { rfc2047EncodeMetadata } = require('./helpers/utils')
+
 // TODO move to `require('streams/promises').pipeline` when dropping support for Node.js 14.x.
 const pipeline = promisify(pipelineCb)
 
@@ -22,7 +24,7 @@ const { stat, unlink } = fs.promises
 // @ts-ignore - typescript resolves this this to a hoisted version of
 // serialize-error that ships with a declaration file, we are using a version
 // here that does not have a declaration file
-const serializeError = require('serialize-error')
+const serializeError = require('serialize-error') // eslint-disable-line import/order
 const emitter = require('./emitter')
 const { jsonStringify, hasMatch } = require('./helpers/utils')
 const logger = require('./logger')
@@ -70,8 +72,8 @@ function validateOptions (options) {
       throw new ValidationError('unsupported HTTP METHOD specified')
     }
 
-    const method = options.httpMethod.toLowerCase()
-    if (method !== 'put' && method !== 'post') {
+    const method = options.httpMethod.toUpperCase()
+    if (method !== 'PUT' && method !== 'POST') {
       throw new ValidationError('unsupported HTTP METHOD specified')
     }
   }
@@ -349,7 +351,7 @@ class Uploader {
       size,
       companionOptions: req.companion.options,
       pathPrefix: `${req.companion.options.filePath}`,
-      storage: redis.client()?.v4,
+      storage: redis.client(),
       s3: req.companion.s3Client ? {
         client: req.companion.s3Client,
         options: req.companion.options.s3,
@@ -411,7 +413,9 @@ class Uploader {
     // https://github.com/transloadit/uppy/issues/3748
     const keyExpirySec = 60 * 60 * 24
     const redisKey = `${Uploader.STORAGE_PREFIX}:${this.token}`
-    this.storage.set(redisKey, jsonStringify(state), 'EX', keyExpirySec)
+    this.storage.set(redisKey, jsonStringify(state), {
+      EX: keyExpirySec,
+    })
   }
 
   throttledEmitProgress = throttle((dataToEmit) => {
@@ -608,7 +612,7 @@ class Uploader {
     }
 
     try {
-      const httpMethod = (this.options.httpMethod || '').toLowerCase() === 'put' ? 'put' : 'post'
+      const httpMethod = (this.options.httpMethod || '').toUpperCase() === 'PUT' ? 'put' : 'post'
       const runRequest = got[httpMethod]
 
       const response = await runRequest(url, reqOptions)
@@ -654,7 +658,7 @@ class Uploader {
       Bucket: options.bucket,
       Key: options.getKey(null, filename, this.options.metadata),
       ContentType: this.options.metadata.type,
-      Metadata: this.options.metadata,
+      Metadata: rfc2047EncodeMetadata(this.options.metadata),
       Body: stream,
     }
 

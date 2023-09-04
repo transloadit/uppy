@@ -1,7 +1,7 @@
-import Uppy, { UIPlugin, PluginOptions } from '@uppy/core'
+import Uppy, { UIPlugin, UIPluginOptions } from '@uppy/core'
 import GoogleDrive from '..'
 
-class SomePlugin extends UIPlugin<PluginOptions> {}
+class SomePlugin extends UIPlugin<UIPluginOptions> {}
 
 const uppy = new Uppy()
 uppy.use(GoogleDrive, { companionUrl: '' })

@@ -1,5 +1,25 @@
 # @uppy/companion
 
+## 4.8.1
+
+Released: 2023-08-23
+Included in: Uppy v3.14.1
+
+- @uppy/companion: harden lint rules (Antoine du Hamel / #4641)
+
+## 4.8.0
+
+Released: 2023-08-15
+Included in: Uppy v3.14.0
+
+- @uppy/companion: Fix typos and add env vars to .env.example (Dominik Schmidt / #4624)
+- @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/companion,@uppy/transloadit,@uppy/xhr-upload: use uppercase HTTP method names (Antoine du Hamel / #4612)
+- @uppy/companion: make CSRF protection helpers available to providers (Dominik Schmidt / #4554)
+- @uppy/companion: fix Redis key default TTL (Subha Sarkar / #4607)
+- @uppy/companion: Fix Uploader.js metadata normalisation (Subha Sarkar / #4608)
+- @uppy/companion: Unify redis initialization (Dominik Schmidt / #4597)
+- @uppy/companion: allow dynamic S3 bucket (rmoura-92 / #4579)
+
 ## 4.7.0
 
 Released: 2023-07-13

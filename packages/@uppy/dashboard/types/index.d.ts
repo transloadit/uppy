@@ -1,4 +1,4 @@
-import type { PluginOptions, UIPlugin, PluginTarget, UppyFile, IndexedObject } from '@uppy/core'
+import type { IndexedObject, PluginTarget, UIPlugin, UIPluginOptions, UppyFile } from '@uppy/core'
 import type { StatusBarLocale } from '@uppy/status-bar'
 import type { ThumbnailOptions } from '@uppy/thumbnail-generator'
 import DashboardLocale from './generatedLocale'
@@ -20,7 +20,7 @@ interface MetaField {
   render?: (field: FieldRenderOptions, h: PreactRender) => any
 }
 
-type Options = PluginOptions & ThumbnailOptions
+type Options = UIPluginOptions & ThumbnailOptions
 
 export interface DashboardOptions extends Options {
   animateOpenClose?: boolean

@@ -360,6 +360,44 @@ describe('Dashboard with Transloadit', () => {
     // SECOND ATTEMPT
     cy.get('.uppy-StatusBar-actions > .uppy-c-btn').click()
     cy.wait(['@createAssembly-attempt2', '@tusCall-attempt2', '@assemblyCompleted-attempt2'])
+  })
+
+  it('should complete on retry', () => {
+    cy.get('@file-input').selectFile(['cypress/fixtures/images/cat.jpg', 'cypress/fixtures/images/traffic.jpg'], { force: true })
+
+    cy.intercept('POST', 'https://transloaditstatus.com/client_error', {
+      statusCode: 200,
+      body: '{}',
+    })
+
+    cy.intercept(
+      { method: 'POST', pathname: '/assemblies', times: 1 },
+      { statusCode: 500, body: {} },
+    ).as('failedAssemblyCreation')
+
+    cy.get('.uppy-StatusBar-actionBtn--upload').click()
+    cy.wait('@failedAssemblyCreation')
+
+    cy.get('button[data-cy=retry]').click()
+
+    cy.wait(['@assemblies', '@resumable'])
+
+    cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Complete')
+  })
+
+  it('should complete when resuming after pause', () => {
+    cy.get('@file-input').selectFile(['cypress/fixtures/images/cat.jpg', 'cypress/fixtures/images/traffic.jpg'], { force: true })
+    cy.get('.uppy-StatusBar-actionBtn--upload').click()
+
+    cy.wait('@createAssemblies')
+
+    cy.get('button[data-cy=togglePauseResume]').click()
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(300) // Wait an arbitrary amount of time as a user would do.
+    cy.get('button[data-cy=togglePauseResume]').click()
+
+    cy.wait('@resumable')
+
     cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Complete')
   })
 })

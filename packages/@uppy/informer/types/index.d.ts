@@ -1,6 +1,6 @@
-import type { PluginOptions, UIPlugin, PluginTarget } from '@uppy/core'
+import type { PluginTarget, UIPlugin, UIPluginOptions } from '@uppy/core'
 
-interface InformerOptions extends PluginOptions {
+interface InformerOptions extends UIPluginOptions {
   target?: PluginTarget
 }
 

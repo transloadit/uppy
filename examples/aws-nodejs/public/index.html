@@ -3,13 +3,13 @@
   <head>
     <meta charset="utf-8">
     <title>Uppy – AWS upload example</title>
-    <link href="https://releases.transloadit.com/uppy/v3.12.0/uppy.min.css" rel="stylesheet">
+    <link href="https://releases.transloadit.com/uppy/v3.14.1/uppy.min.css" rel="stylesheet">
   </head>
   <body>
     <h1>AWS upload example</h1>
     <div id="uppy"></div>
     <script type="module">
-      import { Uppy, Dashboard, AwsS3 } from "https://releases.transloadit.com/uppy/v3.12.0/uppy.min.mjs"
+      import { Uppy, Dashboard, AwsS3 } from "https://releases.transloadit.com/uppy/v3.14.1/uppy.min.mjs"
       /**
        * This generator transforms a deep object into URL-encodable pairs
        * to work with `URLSearchParams` on the client and `body-parser` on the server.
@@ -45,8 +45,20 @@
             target: '#uppy',
           })
           .use(AwsS3, {
+            id: 'myAWSPlugin',
+
             // Files that are more than 100MiB should be uploaded in multiple parts.
             shouldUseMultipart: (file) => file.size > 100 * MiB,
+
+            /**
+             * This method tells Uppy how to retrieve a temporary token for signing on the client.
+             * Signing on the client is optional, you can also do the signing from the server.
+             */
+            async getTemporarySecurityCredentials({signal}) {
+                const response = await fetch('/sts', { signal })
+                if (!response.ok) throw new Error('Unsuccessful request', { cause: response })
+                return response.json()
+            },
 
             // ========== Non-Multipart Uploads ==========
 
@@ -55,7 +67,12 @@
              * If for some reason you want to only support multipart uploads,
              * you don't need to implement it.
              */
-            async getUploadParameters (file) {
+            async getUploadParameters (file, options) {
+              if (typeof crypto?.subtle === 'object') {
+                // If WebCrypto is available, let's do signing from the client.
+                return uppy.getPlugin('myAWSPlugin').createSignedURL(file, options)
+              }
+
               // Send a request to our Express.js signing endpoint.
               const response = await fetch('/sign-s3', {
                 method: 'POST',
@@ -66,6 +83,7 @@
                   filename: file.name,
                   contentType: file.type,
                 }),
+                signal: options.signal,
               })
 
               if (!response.ok) throw new Error('Unsuccessful request', { cause: response })
@@ -139,7 +157,14 @@
               if (!response.ok) throw new Error('Unsuccessful request', { cause: response })
             },
 
-            async signPart (file, { uploadId, key, partNumber, signal }) {
+            async signPart (file, options) {
+              if (typeof crypto?.subtle === 'object') {
+                // If WebCrypto, let's do signing from the client.
+                return uppy.getPlugin('myAWSPlugin').createSignedURL(file, options)
+              }
+
+              const { uploadId, key, partNumber, signal } = options
+
               if (signal?.aborted) {
                 const err = new DOMException('The operation was aborted', 'AbortError')
                 Object.defineProperty(err, 'cause', { __proto__: null, configurable: true, writable: true, value: signal.reason })
