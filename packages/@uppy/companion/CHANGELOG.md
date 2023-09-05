@@ -1,5 +1,13 @@
 # @uppy/companion
 
+## 4.8.2
+
+Released: 2023-09-05
+Included in: Uppy v3.15.0
+
+- @uppy/companion: refactor `getProtectedHttpAgent` to make TS happy (Antoine du Hamel / #4654)
+- @uppy/companion: Alias "removeListener" as "off" in Redis emitter (Elliot Dickison / #4647)
+
 ## 4.8.1
 
 Released: 2023-08-23
