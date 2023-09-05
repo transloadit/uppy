@@ -106,6 +106,11 @@ class TransloaditAssembly extends Emitter {
       ;(this.status.results[stepName] ??= []).push(result)
     })
 
+    this.#sse.addEventListener('assembly_execution_progress', (e) => {
+      const details = JSON.parse(e.data)
+      this.emit('execution-progress', details)
+    })
+
     this.#sse.addEventListener('assembly_error', (e) => {
       try {
         this.#onError(JSON.parse(e.data))
