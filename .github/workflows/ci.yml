@@ -35,7 +35,7 @@ jobs:
     strategy:
       matrix:
         # todo put back?
-        node-version: [16.x, 18.16.0, 20.4.0]
+        node-version: [16.x, 18.16.0, 20.6.0]
     steps:
       - name: Checkout sources
         uses: actions/checkout@v3
