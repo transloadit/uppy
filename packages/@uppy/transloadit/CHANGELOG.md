@@ -1,5 +1,13 @@
 # @uppy/transloadit
 
+## 3.3.0
+
+Released: 2023-09-05
+Included in: Uppy v4.0.0
+
+- @uppy/transloadit: Emit assembly progress events (Marius / #4603)
+- @uppy/transloadit: remove Socket.io (Antoine du Hamel / #4281)
+
 ## 3.2.1
 
 Released: 2023-08-15

@@ -1,5 +1,12 @@
 # @uppy/tus
 
+## 3.2.0
+
+Released: 2023-09-05
+Included in: Uppy v4.0.0
+
+- @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/companion-client,@uppy/core,@uppy/tus,@uppy/utils,@uppy/xhr-upload: Move remote file upload logic into companion-client (Merlijn Vos / #4573)
+
 ## 3.1.3
 
 Released: 2023-08-15

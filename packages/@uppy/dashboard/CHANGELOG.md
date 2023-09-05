@@ -1,5 +1,12 @@
 # @uppy/dashboard
 
+## 3.5.2
+
+Released: 2023-09-05
+Included in: Uppy v4.0.0
+
+- @uppy/dashboard: when showAddFilesPanel  is true, aria-hidden should be the opposite (Artur Paikin / #4643)
+
 ## 3.4.1
 
 Released: 2023-06-19

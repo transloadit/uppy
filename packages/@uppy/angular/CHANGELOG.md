@@ -1,5 +1,12 @@
 # @uppy/angular
 
+## 1.0.0
+
+Released: 2023-09-05
+Included in: Uppy v4.0.0
+
+- @uppy/angular: upgrade to Angular 16.x (Antoine du Hamel / #4642)
+
 ## 0.5.0
 
 Released: 2022-11-10
