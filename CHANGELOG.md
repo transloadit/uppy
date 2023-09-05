@@ -12,6 +12,29 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 3.15.0
+
+Released: 2023-09-05
+
+| Package                | Version | Package                | Version |
+| ---------------------- | ------- | ---------------------- | ------- |
+| @uppy/angular          |   0.6.0 | @uppy/dashboard        |   3.5.2 |
+| @uppy/aws-s3           |   3.3.0 | @uppy/transloadit      |   3.3.0 |
+| @uppy/aws-s3-multipart |   3.6.0 | @uppy/tus              |   3.2.0 |
+| @uppy/companion        |   4.8.2 | @uppy/utils            |   5.5.0 |
+| @uppy/companion-client |   3.4.0 | @uppy/xhr-upload       |   3.4.0 |
+| @uppy/core             |   3.5.0 | uppy                   |  3.15.0 |
+
+- @uppy/transloadit: Emit assembly progress events (Marius / #4603)
+- @uppy/transloadit: remove Socket.io (Antoine du Hamel / #4281)
+- meta: example: update Angular example to 16.x (Antoine du Hamel / #4642)
+- @uppy/angular: upgrade to Angular 16.x (Antoine du Hamel / #4642)
+- @uppy/companion: refactor `getProtectedHttpAgent` to make TS happy (Antoine du Hamel / #4654)
+- @uppy/companion: Alias "removeListener" as "off" in Redis emitter (Elliot Dickison / #4647)
+- @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/companion-client,@uppy/core,@uppy/tus,@uppy/utils,@uppy/xhr-upload: Move remote file upload logic into companion-client (Merlijn Vos / #4573)
+- @uppy/dashboard: when showAddFilesPanel  is true, aria-hidden should be the opposite (Artur Paikin / #4643)
+
+
 ## 3.14.1
 
 Released: 2023-08-23
