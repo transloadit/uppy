@@ -1,7 +1,10 @@
 const logger = require('../logger')
-const { ProviderApiError, ProviderAuthError } = require('./error')
+const { ProviderApiError, ProviderUserError, ProviderAuthError } = require('./error')
 
-async function withProviderErrorHandling ({ fn, tag, providerName, isAuthError = () => false, getJsonErrorMessage }) {
+async function withProviderErrorHandling ({
+  // eslint-disable-next-line no-unused-vars
+  fn, tag, providerName, isAuthError = () => false, isUserFacingError = (response) => false, getJsonErrorMessage,
+}) {
   function getErrorMessage (response) {
     if (typeof response.body === 'object') {
       const message = getJsonErrorMessage(response.body)
@@ -25,6 +28,7 @@ async function withProviderErrorHandling ({ fn, tag, providerName, isAuthError =
     if (response) {
       // @ts-ignore
       if (isAuthError(response)) err2 = new ProviderAuthError()
+      if (isUserFacingError(response)) err2 = new ProviderUserError({ message: getErrorMessage(response) })
       else err2 = new ProviderApiError(getErrorMessage(response), response.statusCode)
     }
 

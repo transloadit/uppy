@@ -187,6 +187,13 @@ export default class ProviderView extends View {
         this.plugin.setPluginState({ folders, files, breadcrumbs, filterInput: '' })
       })
     } catch (err) {
+      // This is the first call that happens when the provider view loads, after auth, so it's probably nice to show any
+      // error occurring here to the user.
+      if (err instanceof UserFacingApiError) {
+        this.plugin.uppy.info({ message: this.plugin.uppy.i18n(err.message) }, 'warning', 5000)
+        return
+      }
+
       this.handleError(err)
     } finally {
       this.setLoading(false)
