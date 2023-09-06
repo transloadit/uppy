@@ -26,17 +26,6 @@ const validOptions = (options) => {
 }
 
 /**
- *
- * @param {string} name of the provider
- * @param {{server: object, providerOptions: object}} options
- * @returns {string} the authProvider for this provider
- */
-const providerNameToAuthName = (name, options) => { // eslint-disable-line no-unused-vars
-  const providers = exports.getDefaultProviders()
-  return (providers[name] || {}).authProvider
-}
-
-/**
  * adds the desired provider module to the request object,
  * based on the providerName parameter specified
  *
@@ -97,8 +86,9 @@ module.exports.addCustomProviders = (customProviders, providers, grantConfig) =>
 
     // eslint-disable-next-line no-param-reassign
     providers[providerName] = customProvider.module
+    const { authProvider } = customProvider.module
 
-    if (isOAuthProvider(customProvider.module.authProvider)) {
+    if (isOAuthProvider(authProvider)) {
       // eslint-disable-next-line no-param-reassign
       grantConfig[providerName] = {
         ...customProvider.config,
@@ -116,8 +106,9 @@ module.exports.addCustomProviders = (customProviders, providers, grantConfig) =>
  *
  * @param {{server: object, providerOptions: object}} companionOptions
  * @param {object} grantConfig
+ * @param {Record<string, typeof Provider>} providers
  */
-module.exports.addProviderOptions = (companionOptions, grantConfig) => {
+module.exports.addProviderOptions = (companionOptions, grantConfig, providers) => {
   const { server, providerOptions } = companionOptions
   if (!validOptions({ server })) {
     logger.warn('invalid provider options detected. Providers will not be loaded', 'provider.options.invalid')
@@ -134,7 +125,8 @@ module.exports.addProviderOptions = (companionOptions, grantConfig) => {
   const { oauthDomain } = server
   const keys = Object.keys(providerOptions).filter((key) => key !== 'server')
   keys.forEach((providerName) => {
-    const authProvider = providerNameToAuthName(providerName, companionOptions)
+    const authProvider = providers[providerName]?.authProvider
+
     if (isOAuthProvider(authProvider) && grantConfig[authProvider]) {
       // explicitly add providerOptions so users don't override other providerOptions.
       // eslint-disable-next-line no-param-reassign

@@ -125,7 +125,7 @@ module.exports.addToCookiesIfNeeded = (req, res, uppyAuthToken, maxAge) => {
       res,
       token: uppyAuthToken,
       companionOptions: req.companion.options,
-      authProvider: req.companion.provider.authProvider,
+      authProvider: req.companion.providerClass.authProvider,
       maxAge,
     })
   }

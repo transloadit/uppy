@@ -23,11 +23,6 @@ const getRootPath = (query) => (query.driveId ? `drives/${query.driveId}` : 'me/
  * Adapter for API https://docs.microsoft.com/en-us/onedrive/developer/rest-api/
  */
 class OneDrive extends Provider {
-  constructor (options) {
-    super(options)
-    this.authProvider = OneDrive.authProvider
-  }
-
   static get authProvider () {
     return 'microsoft'
   }
@@ -96,11 +91,12 @@ class OneDrive extends Provider {
     })
   }
 
+  // eslint-disable-next-line class-methods-use-this
   async #withErrorHandling (tag, fn) {
     return withProviderErrorHandling({
       fn,
       tag,
-      providerName: this.authProvider,
+      providerName: OneDrive.authProvider,
       isAuthError: (response) => response.statusCode === 401,
       getJsonErrorMessage: (body) => body?.error?.message,
     })

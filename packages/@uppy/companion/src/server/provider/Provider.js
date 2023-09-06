@@ -122,5 +122,5 @@ class Provider {
 }
 
 module.exports = Provider
-// OAuth providers are those that have a `static authProvider` set. It means they require OAuth authentication to work
+// OAuth providers are those that have an `authProvider` set. It means they require OAuth authentication to work
 module.exports.isOAuthProvider = (authProvider) => typeof authProvider === 'string' && authProvider.length > 0

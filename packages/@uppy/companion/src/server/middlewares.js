@@ -122,7 +122,7 @@ exports.gentleVerifyToken = (req, res, next) => {
 }
 
 exports.cookieAuthToken = (req, res, next) => {
-  req.companion.authToken = req.cookies[`uppyAuthToken--${req.companion.provider.authProvider}`]
+  req.companion.authToken = req.cookies[`uppyAuthToken--${req.companion.providerClass.authProvider}`]
   return next()
 }
 

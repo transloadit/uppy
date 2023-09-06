@@ -34,17 +34,17 @@ module.exports = function connect (req, res) {
   }
 
   const state = oAuthState.encodeState(stateObj, secret)
-  const { provider, providerGrantConfig } = req.companion
+  const { providerClass, providerGrantConfig } = req.companion
 
   // pass along grant's dynamic config (if specified for the provider in its grant config `dynamic` section)
   const grantDynamicConfig = Object.fromEntries(providerGrantConfig.dynamic?.map(p => [p, req.query[p]]) || [])
 
-  const providerName = provider.authProvider
+  const { authProvider } = providerClass
   const qs = queryString({
     ...grantDynamicConfig,
     state,
   })
 
   // Now we redirect to grant's /connect endpoint, see `app.use(Grant(grantConfig))`
-  res.redirect(req.companion.buildURL(`/connect/${providerName}${qs}`, true))
+  res.redirect(req.companion.buildURL(`/connect/${authProvider}${qs}`, true))
 }

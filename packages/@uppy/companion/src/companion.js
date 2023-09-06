@@ -72,12 +72,12 @@ module.exports.app = (optionsArg = {}) => {
 
   const providers = providerManager.getDefaultProviders()
 
-  providerManager.addProviderOptions(options, grantConfig)
-
   const { customProviders } = options
   if (customProviders) {
     providerManager.addCustomProviders(customProviders, providers, grantConfig)
   }
+
+  providerManager.addProviderOptions(options, grantConfig, providers)
 
   // mask provider secrets from log messages
   logger.setMaskables(getMaskableSecrets(options))
