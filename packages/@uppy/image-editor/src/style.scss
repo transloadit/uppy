@@ -15,7 +15,11 @@
 }
 
 .uppy-ImageCropper-image {
+  // Note that exactly these styles are demanded by cropperjs
+  // (https: //github.com/fengyuanchen/cropperjs#example)
   display: block;
+  max-width: 100%;
+  // And this style is required for rendering tall and narrow images
   max-height: 400px;
 }
 

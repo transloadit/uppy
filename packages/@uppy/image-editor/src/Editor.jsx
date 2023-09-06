@@ -1,10 +1,15 @@
 import Cropper from 'cropperjs'
 import { h, Component } from 'preact'
+import getCanvasDataThatFitsPerfectlyIntoContainer from './utils/getCanvasDataThatFitsPerfectlyIntoContainer.js'
+import getScaleFactorThatRemovesDarkCorners from './utils/getScaleFactorThatRemovesDarkCorners.js'
 
 export default class Editor extends Component {
   constructor (props) {
     super(props)
-    this.state = { rotationAngle: 0, rotationDelta: 0 }
+    this.state = {
+      angle90Deg: 0,
+      angleGranular: 0,
+    }
   }
 
   componentDidMount () {
@@ -14,53 +19,72 @@ export default class Editor extends Component {
       opts.cropperOptions,
     )
     storeCropperInstance(this.cropper)
-
-    if (opts.actions.granularRotate) {
-      this.imgElement.addEventListener('crop', (ev) => {
-        const rotationAngle = ev.detail.rotate
-        this.setState({
-          rotationAngle,
-          // 405 == 360 + 45
-          rotationDelta: ((rotationAngle + 405) % 90) - 45,
-        })
-      })
-    }
   }
 
   componentWillUnmount () {
     this.cropper.destroy()
   }
 
-  granularRotateOnChange = (ev) => {
-    const { rotationAngle, rotationDelta } = this.state
-    const pendingRotationDelta = Number(ev.target.value) - rotationDelta
-    cancelAnimationFrame(this.granularRotateOnInputNextFrame)
-    if (pendingRotationDelta !== 0) {
-      const pendingRotationAngle = rotationAngle + pendingRotationDelta
-      this.granularRotateOnInputNextFrame = requestAnimationFrame(() => {
-        this.cropper.rotateTo(pendingRotationAngle)
-      })
-    }
+  onRotate90Deg = () => {
+    // 1. Set state
+    const { angle90Deg } = this.state
+    const newAngle = angle90Deg - 90
+    this.setState({
+      angle90Deg: newAngle,
+      angleGranular: 0,
+    })
+
+    // 2. Rotate the image
+    // Important to reset scale here, or cropper will get confused on further rotations
+    this.cropper.scale(1)
+    this.cropper.rotateTo(newAngle)
+
+    // 3. Fit the rotated image into the view
+    const canvasData = this.cropper.getCanvasData()
+    const containerData = this.cropper.getContainerData()
+    const newCanvasData = getCanvasDataThatFitsPerfectlyIntoContainer(containerData, canvasData)
+    this.cropper.setCanvasData(newCanvasData)
+
+    // 4. Make cropbox fully wrap the image
+    this.cropper.setCropBoxData(newCanvasData)
+  }
+
+  onRotateGranular = (ev) => {
+    //  1. Set stsate
+    const newGranularAngle = Number(ev.target.value)
+    this.setState({ angleGranular: newGranularAngle })
+
+    // 2. Rotate the image
+    const { angle90Deg } = this.state
+    const newAngle = angle90Deg + newGranularAngle
+    this.cropper.rotateTo(newAngle)
+
+    // 3. Scale the image so that it fits into the cropbox
+    const cropboxData = this.cropper.getCropBoxData()
+    const scaleFactor = getScaleFactorThatRemovesDarkCorners(cropboxData, newGranularAngle)
+    // Preserve flip
+    const scaleFactorX = this.cropper.getImageData().scaleX < 0 ? -scaleFactor : scaleFactor
+    this.cropper.scale(scaleFactorX, scaleFactor)
   }
 
   renderGranularRotate () {
     const { i18n } = this.props
-    const { rotationDelta, rotationAngle } = this.state
+    const { angleGranular } = this.state
 
     return (
       // eslint-disable-next-line jsx-a11y/label-has-associated-control
       <label
         data-microtip-position="top"
         role="tooltip"
-        aria-label={`${rotationAngle}º`}
+        aria-label={`${angleGranular}º`}
         className="uppy-ImageCropper-rangeWrapper uppy-u-reset"
       >
         <input
           className="uppy-ImageCropper-range uppy-u-reset"
           type="range"
-          onInput={this.granularRotateOnChange}
-          onChange={this.granularRotateOnChange}
-          value={rotationDelta}
+          onInput={this.onRotateGranular}
+          onChange={this.onRotateGranular}
+          value={angleGranular}
           min="-45"
           max="44"
           aria-label={i18n('rotate')}
@@ -81,6 +105,7 @@ export default class Editor extends Component {
         onClick={() => {
           this.cropper.reset()
           this.cropper.setAspectRatio(0)
+          this.setState({ angle90Deg: 0, angleGranular: 0 })
         }}
       >
         <svg aria-hidden="true" className="uppy-c-icon" width="24" height="24" viewBox="0 0 24 24">
@@ -98,7 +123,7 @@ export default class Editor extends Component {
       <button
         type="button"
         className="uppy-u-reset uppy-c-btn"
-        onClick={() => this.cropper.rotate(-90)}
+        onClick={this.onRotate90Deg}
         aria-label={i18n('rotate')}
         data-microtip-position="top"
       >
