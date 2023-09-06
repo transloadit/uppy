@@ -157,8 +157,8 @@ describe('Test Custom Provider options', () => {
       },
     }, providers, grantConfig)
 
-    expect(grantConfig.foo.key).toBe('foo_key')
-    expect(grantConfig.foo.secret).toBe('foo_secret')
+    expect(grantConfig.some_provider.key).toBe('foo_key')
+    expect(grantConfig.some_provider.secret).toBe('foo_secret')
     expect(providers.foo).toBeTruthy()
   })
 })
