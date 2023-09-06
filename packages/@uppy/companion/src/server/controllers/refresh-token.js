@@ -9,6 +9,7 @@ async function refreshToken (req, res, next) {
   const { providerName } = req.params
 
   const { key: clientId, secret: clientSecret } = req.companion.options.providerOptions[providerName]
+  const { redirect_uri: redirectUri } = req.companion.providerGrantConfig
 
   const providerTokens = req.companion.allProvidersTokens[providerName]
 
@@ -20,7 +21,7 @@ async function refreshToken (req, res, next) {
 
   try {
     const data = await req.companion.provider.refreshToken({
-      clientId, clientSecret, refreshToken: providerTokens.refreshToken,
+      redirectUri, clientId, clientSecret, refreshToken: providerTokens.refreshToken,
     })
 
     const newAllProvidersTokens = {

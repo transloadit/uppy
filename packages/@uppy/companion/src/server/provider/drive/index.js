@@ -171,7 +171,7 @@ class Drive extends Provider {
 
   async refreshToken ({ clientId, clientSecret, refreshToken }) {
     return this.#withErrorHandling('provider.drive.token.refresh.error', async () => {
-      const { access_token: accessToken } = await getOauthClient().post('token', { form: { refresh_token: refreshToken, grant_type: 'refresh_token', client_id: clientId, client_secret: clientSecret } }).json()
+      const { access_token: accessToken } = await getOauthClient().post('token', { responseType: 'json', form: { refresh_token: refreshToken, grant_type: 'refresh_token', client_id: clientId, client_secret: clientSecret } }).json()
       return { accessToken }
     })
   }
@@ -181,7 +181,10 @@ class Drive extends Provider {
       fn,
       tag,
       providerName: this.authProvider,
-      isAuthError: (response) => response.statusCode === 401,
+      isAuthError: (response) => (
+        response.statusCode === 401
+        || (response.statusCode === 400 && response.body?.error === 'invalid_grant') // Refresh token has expired or been revoked
+      ),
       getJsonErrorMessage: (body) => body?.error?.message,
     })
   }
