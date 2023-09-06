@@ -38,6 +38,6 @@ test/output/*
 .DS_Store
 
 # Transpiled
-lib/
+types/
 infra/kube/companion/uppy-env.yaml
 scripts/.tl-deploy-hosts-danger.txt

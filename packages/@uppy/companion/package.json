@@ -2,8 +2,8 @@
   "name": "@uppy/companion",
   "version": "4.8.2",
   "description": "OAuth helper and remote fetcher for Uppy's (https://uppy.io) extensible file upload widget with support for drag&drop, resumable uploads, previews, restrictions, file processing/encoding, remote providers like Dropbox and Google Drive, S3 and more :dog:",
-  "main": "lib/companion.js",
-  "types": "lib/companion.d.ts",
+  "main": "src/companion.js",
+  "types": "types/companion.d.ts",
   "author": "Transloadit.com",
   "license": "MIT",
   "homepage": "https://github.com/transloadit/uppy#readme",
@@ -93,7 +93,8 @@
   },
   "files": [
     "bin/",
-    "lib/"
+    "src/",
+    "types/"
   ],
   "jest": {
     "testEnvironment": "node",
@@ -109,7 +110,7 @@
     "build": "tsc -p .",
     "deploy": "kubectl apply -f infra/kube/companion-kube.yml",
     "prepublishOnly": "yarn run build",
-    "start": "node ./lib/standalone/start-server.js",
+    "start": "node ./src/standalone/start-server.js",
     "test": "jest"
   },
   "engines": {

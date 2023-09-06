@@ -1,5 +1,6 @@
 node_modules
 lib
+/packages/@uppy/companion/types
 dist
 coverage
 test/lib/**
