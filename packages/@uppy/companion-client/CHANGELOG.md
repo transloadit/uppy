@@ -1,5 +1,19 @@
 # @uppy/companion-client
 
+## 3.4.0
+
+Released: 2023-09-05
+Included in: Uppy v3.15.0
+
+- @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/companion-client,@uppy/core,@uppy/tus,@uppy/utils,@uppy/xhr-upload: Move remote file upload logic into companion-client (Merlijn Vos / #4573)
+
+## 3.3.0
+
+Released: 2023-08-15
+Included in: Uppy v3.14.0
+
+- @uppy/companion-client,@uppy/provider-views: make authentication optional (Dominik Schmidt / #4556)
+
 ## 3.1.2
 
 Released: 2023-04-04

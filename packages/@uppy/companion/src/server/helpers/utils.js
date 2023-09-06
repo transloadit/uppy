@@ -126,6 +126,7 @@ module.exports.decrypt = (encrypted, secret) => {
     throw new Error('Invalid encrypted value. Maybe it was generated with an old Companion version?')
   }
 
+  // NOTE: The first 32 characters are the iv, in hex format. The rest is the encrypted string, in base64 format.
   const iv = Buffer.from(encrypted.slice(0, 32), 'hex')
   const encryptionWithoutIv = encrypted.slice(32)
 
