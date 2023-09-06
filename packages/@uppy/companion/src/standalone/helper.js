@@ -173,6 +173,8 @@ const getConfigFromEnv = () => {
     metrics: process.env.COMPANION_HIDE_METRICS !== 'true',
     loggerProcessName: process.env.COMPANION_LOGGER_PROCESS_NAME,
     corsOrigins: getCorsOrigins(),
+    testDynamicOauthCredentials: process.env.COMPANION_TEST_DYNAMIC_OAUTH_CREDENTIALS === 'true',
+    testDynamicOauthCredentialsSecret: process.env.COMPANION_TEST_DYNAMIC_OAUTH_CREDENTIALS_SECRET,
   }
 }
 
