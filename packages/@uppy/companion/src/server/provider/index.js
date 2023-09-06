@@ -90,7 +90,7 @@ module.exports.addCustomProviders = (customProviders, providers, grantConfig) =>
 
     if (isOAuthProvider(authProvider)) {
       // eslint-disable-next-line no-param-reassign
-      grantConfig[providerName] = {
+      grantConfig[authProvider] = {
         ...customProvider.config,
         // todo: consider setting these options from a universal point also used
         // by official providers. It'll prevent these from getting left out if the
