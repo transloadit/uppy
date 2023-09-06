@@ -13,6 +13,10 @@ const getClient = ({ token }) => got.extend({
   },
 })
 
+const getOauthClient = () => got.extend({
+  prefixUrl: 'https://login.live.com',
+})
+
 const getRootPath = (query) => (query.driveId ? `drives/${query.driveId}` : 'me/drive')
 
 /**
@@ -81,7 +85,15 @@ class OneDrive extends Provider {
 
   // eslint-disable-next-line class-methods-use-this
   async logout () {
+    // apparently M$ doesn't support programmatic oauth2 revoke
     return { revoked: false, manual_revoke_url: 'https://account.live.com/consent/Manage' }
+  }
+
+  async refreshToken ({ clientId, clientSecret, refreshToken, redirectUri }) {
+    return this.#withErrorHandling('provider.onedrive.token.refresh.error', async () => {
+      const { access_token: accessToken } = await getOauthClient().post('oauth20_token.srf', { responseType: 'json', form: { refresh_token: refreshToken, grant_type: 'refresh_token', client_id: clientId, client_secret: clientSecret, redirect_uri: redirectUri } }).json()
+      return { accessToken }
+    })
   }
 
   async #withErrorHandling (tag, fn) {
