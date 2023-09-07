@@ -1,5 +1,29 @@
 # @uppy/aws-s3
 
+## 3.3.0
+
+Released: 2023-09-05
+Included in: Uppy v3.15.0
+
+- @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/companion-client,@uppy/core,@uppy/tus,@uppy/utils,@uppy/xhr-upload: Move remote file upload logic into companion-client (Merlijn Vos / #4573)
+
+## 3.2.3
+
+Released: 2023-08-23
+Included in: Uppy v3.14.1
+
+- @uppy/aws-s3-multipart,@uppy/aws-s3: allow empty objects for `fields` types (Antoine du Hamel / #4631)
+
+## 3.2.2
+
+Released: 2023-08-15
+Included in: Uppy v3.14.0
+
+- @uppy/aws-s3,@uppy/aws-s3-multipart: update types (Antoine du Hamel / #4611)
+- @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/companion,@uppy/transloadit,@uppy/xhr-upload: use uppercase HTTP method names (Antoine du Hamel / #4612)
+- @uppy/aws-s3,@uppy/aws-s3-multipart: update types (bdirito / #4576)
+- @uppy/aws-s3,@uppy/tus,@uppy/xhr-upload:  Invoke headers function for remote uploads (Dominik Schmidt / #4596)
+
 ## 3.2.1
 
 Released: 2023-07-06

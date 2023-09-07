@@ -12,7 +12,7 @@ export type AwsS3UploadParameters = {
 } | {
   method: 'PUT'
   url: string
-  fields?: never
+  fields?: Record<string, never>
   expires?: number
   headers?: Record<string, string>
 }

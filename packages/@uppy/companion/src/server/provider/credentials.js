@@ -27,7 +27,7 @@ async function fetchKeys (url, providerName, credentialRequestParams) {
 }
 
 /**
- * Fetches for a providers OAuth credentials. If the config for thtat provider allows fetching
+ * Fetches for a providers OAuth credentials. If the config for that provider allows fetching
  * of the credentials via http, and the `credentialRequestParams` argument is provided, the oauth
  * credentials will be fetched via http. Otherwise, the credentials provided via companion options
  * will be used instead.
@@ -70,42 +70,42 @@ async function fetchProviderKeys (providerName, companionOptions, credentialRequ
  */
 exports.getCredentialsOverrideMiddleware = (providers, companionOptions) => {
   return async (req, res, next) => {
-    const { authProvider, override } = req.params
-    const [providerName] = Object.keys(providers).filter((name) => providers[name].authProvider === authProvider)
-    if (!providerName) {
-      next()
-      return
-    }
-
-    if (!companionOptions.providerOptions[providerName]?.credentialsURL) {
-      next()
-      return
-    }
-
-    const grantDynamic = oAuthState.getGrantDynamicFromRequest(req)
-    // only use state via session object if user isn't making intial "connect" request.
-    // override param indicates subsequent requests from the oauth flow
-    const state = override ? grantDynamic.state : req.query.state
-    if (!state) {
-      next()
-      return
-    }
-
-    const preAuthToken = oAuthState.getFromState(state, 'preAuthToken', companionOptions.secret)
-    if (!preAuthToken) {
-      next()
-      return
-    }
-
-    let payload
     try {
-      payload = tokenService.verifyEncryptedToken(preAuthToken, companionOptions.preAuthSecret)
-    } catch (err) {
-      next()
-      return
-    }
+      const { authProvider, override } = req.params
+      const [providerName] = Object.keys(providers).filter((name) => providers[name].authProvider === authProvider)
+      if (!providerName) {
+        next()
+        return
+      }
 
-    try {
+      if (!companionOptions.providerOptions[providerName]?.credentialsURL) {
+        next()
+        return
+      }
+
+      const grantDynamic = oAuthState.getGrantDynamicFromRequest(req)
+      // only use state via session object if user isn't making intial "connect" request.
+      // override param indicates subsequent requests from the oauth flow
+      const state = override ? grantDynamic.state : req.query.state
+      if (!state) {
+        next()
+        return
+      }
+
+      const preAuthToken = oAuthState.getFromState(state, 'preAuthToken', companionOptions.secret)
+      if (!preAuthToken) {
+        next()
+        return
+      }
+
+      let payload
+      try {
+        payload = tokenService.verifyEncryptedToken(preAuthToken, companionOptions.preAuthSecret)
+      } catch (err) {
+        next()
+        return
+      }
+
       const credentials = await fetchProviderKeys(providerName, companionOptions, payload)
 
       res.locals.grant = {
