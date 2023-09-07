@@ -31,8 +31,8 @@ function isOriginAllowed (origin, allowedOrigin) {
 export default class Provider extends RequestClient {
   #refreshingTokenPromise
 
-  constructor (uppy, opts) {
-    super(uppy, opts)
+  constructor (uppy, opts, getQueue) {
+    super(uppy, opts, getQueue)
     this.provider = opts.provider
     this.id = this.provider
     this.name = this.opts.name || getName(this.id)
@@ -112,7 +112,14 @@ export default class Provider extends RequestClient {
     return `${this.hostname}/${this.id}/connect?${params}`
   }
 
-  async login ({ uppyVersions, authFormData, signal }) {
+  /** @protected */
+  async loginSimpleAuth ({ uppyVersions, authFormData, signal }) {
+    const response = await this.post(`${this.id}/simple-auth`, { form: authFormData }, { qs: { uppyVersions }, signal })
+    this.setAuthToken(response.uppyAuthToken)
+  }
+
+  /** @protected */
+  async loginOAuth ({ uppyVersions, authFormData, signal }) {
     await this.ensurePreAuth()
 
     signal.throwIfAborted()
@@ -166,6 +173,10 @@ export default class Provider extends RequestClient {
       signal.addEventListener('abort', cleanup)
       window.addEventListener('message', handleToken)
     })
+  }
+
+  async login ({ uppyVersions, authFormData, signal }) {
+    return this.loginOAuth({ uppyVersions, authFormData, signal })
   }
 
   refreshTokenUrl () {
