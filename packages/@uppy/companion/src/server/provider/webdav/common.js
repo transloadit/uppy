@@ -95,9 +95,12 @@ class WebdavProvider extends Provider {
 
   // todo implement
   // eslint-disable-next-line
-  async size ({ id, providerUserSession }) {
+  async size ({ id, token, providerUserSession }) {
     return this.withErrorHandling('provider.webdav.size.error', async () => {
-      return 0
+      const username = await this.getUsername({ token, providerUserSession })
+      const client = await this.getClient({ username, token, providerUserSession })
+      const stat = await client.stat(id)
+      return stat.size
     })
   }
 
