@@ -12,8 +12,7 @@ import locale from './locale.js'
 
 class FtpProvider extends Provider {
   async login ({ authFormData, uppyVersions, signal }) {
-    const response = await this.post(`${this.id}/simple-auth`, { form: authFormData }, { qs: { uppyVersions }, signal })
-    this.setAuthToken(response.uppyAuthToken)
+    return this.loginSimpleAuth({ uppyVersions, authFormData, signal })
   }
 
   async logout () {
