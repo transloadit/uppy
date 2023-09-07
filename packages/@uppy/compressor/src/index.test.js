@@ -32,9 +32,13 @@ describe('CompressorPlugin', () => {
     uppy.addFile(file2)
     uppy.addFile(file3)
 
+    // User changed file.meta.name
+    uppy.setFileMeta(uppy.getFiles()[0].id, { name: 'new-name.jpeg' })
+
     return uppy.upload().then(() => {
       const files = uppy.getFiles()
-      expect(files[0].meta.name).toEqual('image-1.webp')
+
+      expect(files[0].meta.name).toEqual('new-name.webp')
       expect(files[0].name).toEqual('image-1.webp')
       expect(files[0].meta.type).toEqual('image/webp')
 
