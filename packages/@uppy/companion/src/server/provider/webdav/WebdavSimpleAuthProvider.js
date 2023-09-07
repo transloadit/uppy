@@ -6,7 +6,7 @@ const logger = require('../../logger')
 const defaultDirectory = '/'
 
 /**
- * Adapter for API https://developer.box.com/reference/
+ * Adapter for WebDAV servers that support simple auth (non-OAuth).
  */
 class WebdavSimpleAuthProvider extends WebdavProvider {
   static get hasSimpleAuth () {

@@ -61,8 +61,8 @@ class WebdavProvider extends Provider {
           isFolder,
           id: requestPath,
           name: item.basename,
-          requestPath, // TODO
-          modifiedDate: item.lastmod, // TODO: convert  'Tue, 04 Jul 2023 13:09:47 GMT' to  ISO 8601
+          requestPath, // TODO FIXME
+          modifiedDate: item.lastmod, // TODO FIXME: convert  'Tue, 04 Jul 2023 13:09:47 GMT' to  ISO 8601
           ...(!isFolder && {
             mimeType: item.mime,
             size: item.size,
@@ -93,7 +93,7 @@ class WebdavProvider extends Provider {
     throw new Error('call to thumbnail is not implemented')
   }
 
-  // todo implement
+  // todo fixme implement
   // eslint-disable-next-line
   async size ({ id, token, providerUserSession }) {
     return this.withErrorHandling('provider.webdav.size.error', async () => {
