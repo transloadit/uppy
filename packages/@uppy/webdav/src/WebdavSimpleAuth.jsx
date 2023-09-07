@@ -10,8 +10,7 @@ import locale from './locale.js'
 
 class WebdavSimpleAuthProvider extends Provider {
   async login ({ authFormData, uppyVersions, signal }) {
-    const response = await this.post(`${this.id}/simple-auth`, { form: authFormData }, { signal, qs: { uppyVersions } })
-    this.setAuthToken(response.uppyAuthToken)
+    return this.loginSimpleAuth({ uppyVersions, authFormData, signal })
   }
 
   async logout () {
