@@ -115,7 +115,7 @@ module.exports.app = (optionsArg = {}) => {
   // add uppy options to the request object so it can be accessed by subsequent handlers.
   app.use('*', middlewares.getCompanionMiddleware(options))
   app.use('/s3', s3(options.s3))
-  app.use('/url', url())
+  if (options.enableUrlEndpoint) app.use('/url', url())
 
   app.post('/:providerName/preauth', express.json(), express.urlencoded({ extended: false }), middlewares.hasSessionAndProvider, middlewares.hasBody, middlewares.hasOAuthProvider, controllers.preauth)
   app.get('/:providerName/connect', middlewares.hasSessionAndProvider, middlewares.hasOAuthProvider, controllers.connect)

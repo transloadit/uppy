@@ -136,6 +136,8 @@ const getConfigFromEnv = () => {
       oauthDomain: process.env.COMPANION_OAUTH_DOMAIN,
       validHosts,
     },
+    // todo next major make this default false
+    enableUrlEndpoint: process.env.COMPANION_ENABLE_URL_ENDPOINT == null || process.env.COMPANION_ENABLE_URL_ENDPOINT === 'true',
     periodicPingUrls: process.env.COMPANION_PERIODIC_PING_URLS ? process.env.COMPANION_PERIODIC_PING_URLS.split(',') : [],
     periodicPingInterval: process.env.COMPANION_PERIODIC_PING_INTERVAL
       ? parseInt(process.env.COMPANION_PERIODIC_PING_INTERVAL, 10) : undefined,
