@@ -9,7 +9,7 @@ git clone https://github.com/transloadit/uppy.git
 cd uppy
 ```
 
-We are using [Corepack][] to manage versions of [Yarn][].\
+We are using [Corepack][] to manage versions of [Yarn][].
 Corepack comes pre-installed with Node.js >=16.x, or can be installed through `npm`:
 
 ```sh
