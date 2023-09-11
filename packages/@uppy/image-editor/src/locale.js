@@ -1,6 +1,6 @@
 export default {
   strings: {
-    revert: 'Cancel',
+    revert: 'Reset',
     rotate: 'Rotate',
     zoomIn: 'Zoom in',
     zoomOut: 'Zoom out',
