@@ -77,7 +77,7 @@ export default class Editor extends Component {
         role="tooltip"
         aria-label={`${angleGranular}º`}
         data-microtip-position="top"
-        className="uppy-ImageCropper-rangeWrapper uppy-u-reset"
+        className="uppy-ImageCropper-rangeWrapper"
       >
         <input
           className="uppy-ImageCropper-range uppy-u-reset"
