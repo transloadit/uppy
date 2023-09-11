@@ -37,6 +37,5 @@
   },
   "devDependencies": {
     "@jest/globals": "^29.0.0",
-    "@uppy/utils": "workspace:^"
   }
 }
