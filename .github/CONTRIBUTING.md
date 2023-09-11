@@ -37,7 +37,7 @@ To run a basic development version of Uppy, run:
 yarn dev
 ```
 
-and go to http://localhost:5174 (or whatever link the yarn command outputted).\
+and go to http://localhost:5174 (or whatever link the yarn command outputted).
 As you edit Uppy code, the browser will live reload the changes.
 
 ### Companion
