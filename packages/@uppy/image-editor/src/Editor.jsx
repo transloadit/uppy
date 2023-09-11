@@ -86,7 +86,7 @@ export default class Editor extends Component {
           onChange={this.onRotateGranular}
           value={angleGranular}
           min="-45"
-          max="44"
+          max="45"
           aria-label={i18n('rotate')}
         />
       </label>
