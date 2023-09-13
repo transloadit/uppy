@@ -51,7 +51,7 @@ export default class Editor extends Component {
   }
 
   onRotateGranular = (ev) => {
-    //  1. Set stsate
+    //  1. Set state
     const newGranularAngle = Number(ev.target.value)
     this.setState({ angleGranular: newGranularAngle })
 
