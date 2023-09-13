@@ -3,8 +3,8 @@
     "composite": true,
     "incremental": true,
     "target": "ESnext",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
     "lib": [
         "dom",
         "ESnext"
@@ -19,6 +19,8 @@
     "noImplicitAny": true,
     "noImplicitThis": true,
     "strictNullChecks": true,
+    "skipLibCheck": true,
+    "verbatimModuleSyntax": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": false,
     "strictFunctionTypes": true,
