@@ -136,7 +136,7 @@ module.exports.app = (optionsArg = {}) => {
 
   app.get('/:providerName/thumbnail/:id', middlewares.hasSessionAndProvider, middlewares.hasOAuthProvider, middlewares.cookieAuthToken, middlewares.verifyToken, controllers.thumbnail)
 
-  app.param('providerName', providerManager.getProviderMiddleware(providers))
+  app.param('providerName', providerManager.getProviderMiddleware(providers, grantConfig))
 
   if (app.get('env') !== 'test') {
     jobs.startCleanUpJob(options.filePath)
