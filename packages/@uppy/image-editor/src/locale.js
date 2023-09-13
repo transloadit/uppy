@@ -1,7 +1,7 @@
 export default {
   strings: {
     revert: 'Reset',
-    rotate: 'Rotate',
+    rotate: 'Rotate 90°',
     zoomIn: 'Zoom in',
     zoomOut: 'Zoom out',
     flipHorizontal: 'Flip',
