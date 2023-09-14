@@ -1,4 +1,4 @@
-## Uppy development
+## Contributing to Uppy
 
 Fork the repository into your own account first. See the [GitHub Help](https://help.github.com/articles/fork-a-repo/) article for instructions.
 
@@ -9,66 +9,46 @@ git clone https://github.com/transloadit/uppy.git
 cd uppy
 ```
 
-We are using [Corepack][] to manage version of [Yarn][]. Corepack comes pre-installed with Node.js >=16.x, or can be installed through `npm`. You can run `corepack enable` to install a `yarn` executable in your `$PATH`, or prefix all yarn commands with `corepack yarn`.
+We are using [Corepack][] to manage versions of [Yarn][].
+Corepack comes pre-installed with Node.js >=16.x, or can be installed through `npm`:
 
 ```sh
 corepack -v || npm i -g corepack
-yarn -v || corepack enable
-yarn install || corepack yarn install
+corepack enable
 ```
 
 [Corepack]: https://nodejs.org/api/corepack.html
 
 [Yarn]: https://yarnpkg.com/
 
-Our website’s examples section is also our playground, please read the [Local Previews](#Local-previews) section to get up and running.
+## Development
 
-### Requiring files
-
-* If we are `require()`ing a file from the same subpackage, we can freely use relative imports as long as the required file is under the `src` directory (for example to import `@uppy/dashboard/src/utils/hi.js` from `@uppy/dashboard/src/index.js`, use `require('./utils/hi.js')`).
-* But if we want to `require()` some file from another subpackage - we should use global @uppy requires, and they should always be in the form of `@uppy/:packageName/(lib instead of src)/(same path).js`
-
-## Tests
-
-### Unit tests
-
-Unit tests are using Jest and can be run with:
+First of all, install Uppy dependencies:
 
 ```bash
-yarn run test:unit
+yarn install
 ```
 
-### End-to-End tests
+### Basic
 
-We use [Cypress](https://www.cypress.io/) for our e2e test suite. Be sure to checkout “[Writing your first test](https://docs.cypress.io/guides/getting-started/writing-your-first-test#Add-a-test-file)” and the “[Introduction to Cypress](https://docs.cypress.io/guides/core-concepts/introduction-to-cypress#Cypress-Can-Be-Simple-Sometimes)”. You should also be aware of the “[Best Practices](https://docs.cypress.io/guides/references/best-practices)”.
+To run a basic development version of Uppy, run:
 
-To get started make sure you have your `.env` set up. Copy the contents of `.env.example` to a file named `.env` and add the values relevant for the test(s) you are trying to run.
+```bash
+yarn dev
+```
 
-To start the testing suite run:
-
-    yarn e2e
-
-This will run Cypress in watch-mode, and it will pick up and rebuild any changes to JS files. If you need to change other files (like CSS for example), you need to run the respective `yarn build:*` scripts.
-
-Alternatively the following command is the same as the above, except it doesn’t run `build` first:
-
-    yarn e2e:skip-build
-
-To generate the boilerplate for a new test run:
-
-    yarn e2e:generate
-
-## Development
+and go to http://localhost:5174 (or whatever link the yarn command outputted).
+As you edit Uppy code, the browser will live reload the changes.
 
 ### Companion
 
-To start the Companion server along with Uppy, run:
+If you’d like to work on features that the basic development version of Uppy doesn’t support, such as Uppy integrations with Instagram/Google Drive/Facebook etc., you need to set up your `.env` file (copy the contents of `.env.example` and adjust them based on what you need to work on), and run:
 
 ```bash
 yarn run dev:with-companion
 ```
 
-or if you only want to run Companion
+Or, if you only want to run the Companion server:
 
 ```bash
 yarn run start:companion
@@ -138,6 +118,41 @@ Tester invites -> Accept
 
 Now you should be able to test the Instagram integration.
 
+### Requiring files
+
+* If we are `require()`ing a file from the same subpackage, we can freely use relative imports as long as the required file is under the `src` directory (for example to import `@uppy/dashboard/src/utils/hi.js` from `@uppy/dashboard/src/index.js`, use `require('./utils/hi.js')`).
+* But if we want to `require()` some file from another subpackage - we should use global @uppy requires, and they should always be in the form of `@uppy/:packageName/(lib instead of src)/(same path).js`
+
+## Tests
+
+### Unit tests
+
+Unit tests are using Jest and can be run with:
+
+```bash
+yarn test:unit
+```
+
+### End-to-End tests
+
+We use [Cypress](https://www.cypress.io/) for our e2e test suite. Be sure to checkout “[Writing your first test](https://docs.cypress.io/guides/getting-started/writing-your-first-test#Add-a-test-file)” and the “[Introduction to Cypress](https://docs.cypress.io/guides/core-concepts/introduction-to-cypress#Cypress-Can-Be-Simple-Sometimes)”. You should also be aware of the “[Best Practices](https://docs.cypress.io/guides/references/best-practices)”.
+
+To get started make sure you have your `.env` set up. Copy the contents of `.env.example` to a file named `.env` and add the values relevant for the test(s) you are trying to run.
+
+To start the testing suite run:
+
+    yarn e2e
+
+This will run Cypress in watch-mode, and it will pick up and rebuild any changes to JS files. If you need to change other files (like CSS for example), you need to run the respective `yarn build:*` scripts.
+
+Alternatively the following command is the same as the above, except it doesn’t run `build` first:
+
+    yarn e2e:skip-build
+
+To generate the boilerplate for a new test run:
+
+    yarn e2e:generate
+
 ## Zoom
 
 See above Instagram instructions for setting up a tunnel, but replace `instagram` with `zoom` in the URL. Note that **you also have to add the OAuth redirect URL to `OAuth allow list`** in the Zoom Oauth app settings or it will not work.
@@ -147,19 +162,6 @@ Add the following scopes: `recording:read`, `user:read`, `user_info:read`
 To test recording a meeting, you need to sign up for a Zoom Pro trial (can be cancelled later), for example using their iOS app.
 
 ## Releases
-
-Before doing a release, check that the examples on the website work:
-
-```bash
-yarn start
-open http://localhost:4000/examples/dashboard
-```
-
-Also check the other examples:
-
-```bash
-yarn workspace <example-name> start
-```
 
 Releases are managed by GitHub Actions, here’s an overview of the process to release a new Uppy version:
 
@@ -175,31 +177,6 @@ Releases are managed by GitHub Actions, here’s an overview of the process to r
   * the demos on the homepage work and can import from Google Drive, Instagram, Dropbox, etc.
 
 If you don’t have access to the transloadit.com source code ping @arturi or @goto-bus-stop and we’ll pick it up. :sparkles:
-
-## Website development
-
-We keep the [uppy.io](http://uppy.io) website in `./website` to keep docs and code in sync as we are still iterating at high velocity.
-
-The site is built with [Hexo](http://hexo.io/), and Travis automatically deploys this onto GitHub Pages (it overwrites the `gh-pages` branch with Hexo’s build at every change to `main`). The content is written in Markdown and located in `./website/src`. Feel free to fork & hack!
-
-Even though bundled in this repo, the website is regarded as a separate project. As such, it has its own `package.json` and we aim to keep the surface where the two projects interface as small as possible. `./website/update.js` is called during website builds to inject the Uppy knowledge into the site.
-
-### Local previews
-
-1. `yarn install`
-2. `yarn start`
-3. Go to http://localhost:4000. Your changes in `/website` and `/packages/@uppy` will be watched, your browser will refresh as files change.
-
-Then, to work on, for instance, the XHRUpload example, you would edit the following files:
-
-```bash
-${EDITOR} packages/@uppy/core/src/index.js \
-  packages/@uppy/core/src/Plugin.js \
-  packages/@uppy/xhr-upload/src/index.js \
-  website/src/examples/xhrupload/app.es6
-```
-
-And open <http://localhost:4000/examples/xhrupload/> in your web browser.
 
 ## CSS guidelines
 
@@ -378,7 +355,7 @@ order: 0
 category: "Other Integrations"
 ```
 
-This data is used to generate Uppy’s website. Refer to [the section about running the website locally](#website-previews) if you’d like to see how the docs look on the website.
+This data is used to generate Uppy’s website.
 
 Any change of the documentation that involves a security best practice must substantiated with an external reference. See [#3565](https://github.com/transloadit/uppy/issues/3565).
 
