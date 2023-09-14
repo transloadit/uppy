@@ -251,7 +251,7 @@ export default class Tus extends BasePlugin {
 
         this.uppy.emit('upload-error', file, err)
         if (typeof opts.onError === 'function') {
-          opts.onError(err);
+          opts.onError(err)
         }
         reject(err)
       }
@@ -259,7 +259,7 @@ export default class Tus extends BasePlugin {
       uploadOptions.onProgress = (bytesUploaded, bytesTotal) => {
         this.onReceiveUploadUrl(file, upload.url)
         if (typeof opts.onProgress === 'function'){
-          opts.onProgress(bytesUploaded, bytesTotal);
+          opts.onProgress(bytesUploaded, bytesTotal)
         }
         this.uppy.emit('upload-progress', file, {
           uploader: this,
@@ -282,7 +282,7 @@ export default class Tus extends BasePlugin {
           this.uppy.log(`Download ${upload.file.name} from ${upload.url}`)
         }
         if (typeof opts.onSuccess === 'function') {
-          opts.onSuccess();
+          opts.onSuccess()
         }
 
         resolve(upload)
