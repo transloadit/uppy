@@ -3,6 +3,8 @@ import Cropper from 'cropperjs'
 import { h, Component } from 'preact'
 import getCanvasDataThatFitsPerfectlyIntoContainer from './utils/getCanvasDataThatFitsPerfectlyIntoContainer.js'
 import getScaleFactorThatRemovesDarkCorners from './utils/getScaleFactorThatRemovesDarkCorners.js'
+import limitCropboxMovementOnMove from './utils/limitCropboxMovementOnMove.js'
+import limitCropboxMovementOnResize from './utils/limitCropboxMovementOnResize.js'
 
 export default class Editor extends Component {
   constructor (props) {
@@ -15,10 +17,29 @@ export default class Editor extends Component {
 
   componentDidMount () {
     const { opts, storeCropperInstance } = this.props
+    let prevCropboxData = null
     this.cropper = new Cropper(
       this.imgElement,
-      opts.cropperOptions,
+      {
+        ...opts.cropperOptions,
+        cropstart: () => {
+          prevCropboxData = this.cropper.getCropBoxData()
+        },
+        cropend: (event) => {
+          const canvasData = this.cropper.getCanvasData()
+          const cropboxData = this.cropper.getCropBoxData()
+
+          if (event.detail.action === 'all') {
+            const newCropboxData = limitCropboxMovementOnMove(canvasData, cropboxData, prevCropboxData)
+            if (newCropboxData) this.cropper.setCropBoxData(newCropboxData)
+          } else {
+            const newCropboxData = limitCropboxMovementOnResize(canvasData, cropboxData, prevCropboxData)
+            if (newCropboxData) this.cropper.setCropBoxData(newCropboxData)
+          }
+        },
+      },
     )
+
     storeCropperInstance(this.cropper)
   }
 
