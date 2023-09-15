@@ -178,6 +178,58 @@ Releases are managed by GitHub Actions, here’s an overview of the process to r
 
 If you don’t have access to the transloadit.com source code ping @arturi or @goto-bus-stop and we’ll pick it up. :sparkles:
 
+### Releasing Companion hotfix patch
+
+First checkout the tag of the version you want to patch:
+```bash
+git checkout @uppy/companion@x.y.z
+```
+Now create a branch for your hotfix:
+```bash
+git checkout -b x.y.z-hotfix
+```
+
+Run yarn to make sure all packages are consistent:
+```bash
+corepack yarn
+```
+
+Now go into companion:
+```bash
+cd packages/@uppy/companion
+```
+
+**Now cherry pick your commits**
+
+```bash
+nano CHANGELOG.md
+git add CHANGELOG.md
+git commit -m 'Update changelog'
+```
+
+Now let's create the version & tag
+```bash
+mkdir -p .git && npm version --workspaces-update=false --tag-version-prefix='@uppy/companion@' patch
+```
+
+Run as a "dry-run":
+
+```bash
+corepack yarn pack
+```
+
+If the previous command succeeded, let's publish!
+
+```bash
+corepack yarn npm publish --access public --tag=none
+```
+
+Now we can push our branch and tags
+
+```bash
+git push && git push --tags
+```
+
 ## CSS guidelines
 
 The CSS standards followed in this project closely resemble those from [Medium’s CSS Guidelines](https://gist.github.com/fat/a47b882eb5f84293c4ed). If something is not mentioned here, follow their guidelines.
