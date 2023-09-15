@@ -108,7 +108,7 @@
   "scripts": {
     "build": "tsc -p .",
     "deploy": "kubectl apply -f infra/kube/companion-kube.yml",
-    "prepublishOnly": "yarn run build",
+    "prepack": "yarn run build",
     "start": "node ./lib/standalone/start-server.js",
     "test": "jest"
   },
