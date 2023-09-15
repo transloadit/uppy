@@ -1,5 +1,9 @@
 # @uppy/companion
 
+## 4.5.2
+
+add missing credentialsURL for box #4681
+
 ## 4.5.1
 
 Released: 2023-06-19
