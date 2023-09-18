@@ -1,5 +1,12 @@
 # @uppy/locales
 
+## 3.3.1
+
+Released: 2023-09-18
+Included in: Uppy v3.16.0
+
+- @uppy/locales: Feature/updating i18n farsi (Parsa Arvaneh / #4638)
+
 ## 3.2.4
 
 Released: 2023-07-20
