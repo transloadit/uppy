@@ -1,5 +1,12 @@
 # @uppy/dashboard
 
+## 3.5.3
+
+Released: 2023-09-18
+Included in: Uppy v3.16.0
+
+- @uppy/dashboard: Make file-editor:cancel event fire when the Image Editor “cancel” button is pressed (Artur Paikin / #4684)
+
 ## 3.5.2
 
 Released: 2023-09-05
