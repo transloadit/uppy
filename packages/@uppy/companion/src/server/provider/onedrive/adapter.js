@@ -1,5 +1,3 @@
-const querystring = require('node:querystring')
-
 const isFolder = (item) => {
   if (item.remoteItem) {
     return !!item.remoteItem.folder
@@ -51,16 +49,19 @@ const getItemModifiedDate = (item) => {
   return item.lastModifiedDateTime
 }
 
-const getNextPagePath = (data) => {
-  if (!data['@odata.nextLink']) {
+const getNextPagePath = ({ res, query: currentQuery, directory }) => {
+  const nextLink = res['@odata.nextLink']
+  if (!nextLink) {
     return null
   }
 
-  const query = { cursor: querystring.parse(data['@odata.nextLink']).$skiptoken }
-  return `?${querystring.stringify(query)}`
+  const skipToken = new URL(nextLink).searchParams.get('$skiptoken')
+
+  const query = { ...currentQuery, cursor: skipToken }
+  return `${directory}?${new URLSearchParams(query).toString()}`
 }
 
-module.exports = (res, username) => {
+module.exports = (res, username, query, directory) => {
   const data = { username, items: [] }
   const items = getItemSubList(res)
   items.forEach((item) => {
@@ -77,7 +78,7 @@ module.exports = (res, username) => {
     })
   })
 
-  data.nextPagePath = getNextPagePath(res)
+  data.nextPagePath = getNextPagePath({ res, query, directory })
 
   return data
 }
