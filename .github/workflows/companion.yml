@@ -56,6 +56,8 @@ jobs:
       DOCKER_BUILDKIT: 0
       COMPOSE_DOCKER_CLI_BUILD: 0
     steps:
+      - name: Checkout sources
+        uses: actions/checkout@v3
       - uses: docker/setup-qemu-action@v3
       - uses: docker/setup-buildx-action@v3
       - name: Build docker image
