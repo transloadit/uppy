@@ -48,3 +48,19 @@ jobs:
         run: corepack yarn run test:companion
       - name: Run type checks in focused workspace
         run: corepack yarn run build:companion
+
+  docker:
+    name: Build docker
+    runs-on: ubuntu-latest
+    env:
+      DOCKER_BUILDKIT: 0
+      COMPOSE_DOCKER_CLI_BUILD: 0
+    steps:
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
+      - name: Build docker image
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          file: Dockerfile
