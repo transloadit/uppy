@@ -16,6 +16,7 @@ const defaultOptions = {
     getKey: defaultGetKey,
     expires: 800, // seconds
   },
+  enableUrlEndpoint: true, // todo next major make this default false
   allowLocalUrls: false,
   logClientVersion: true,
   periodicPingUrls: [],

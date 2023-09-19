@@ -1,5 +1,15 @@
 # @uppy/companion
 
+## 4.9.0
+
+Released: 2023-09-18
+Included in: Uppy v3.16.0
+
+- @uppy/companion: add missing credentialsURL for box (Mikael Finstad / #4681)
+- @uppy/companion: remove s3 endpoints if s3 disabled (Mikael Finstad / #4675)
+- @uppy/companion: Onedrive refresh tokens (Mikael Finstad / #4655)
+- @uppy/companion: catch "invalid initialization vector" instead of crashing (Mikael Finstad / #4661)
+
 ## 4.8.2
 
 Released: 2023-09-05

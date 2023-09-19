@@ -4,6 +4,11 @@ import classNames from 'classnames'
 function EditorPanel (props) {
   const file = props.files[props.fileCardFor]
 
+  const handleCancel = () => {
+    props.uppy.emit('file-editor:cancel', file)
+    props.hideAllPanels()
+  }
+
   return (
     <div
       className={classNames('uppy-DashboardContent-panel', props.className)}
@@ -20,7 +25,7 @@ function EditorPanel (props) {
         <button
           className="uppy-DashboardContent-back"
           type="button"
-          onClick={props.hideAllPanels}
+          onClick={handleCancel}
         >
           {props.i18n('cancel')}
         </button>
