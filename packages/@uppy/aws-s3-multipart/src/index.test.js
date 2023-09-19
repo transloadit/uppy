@@ -426,7 +426,7 @@ describe('AwsS3Multipart', () => {
     })
   })
 
-  describe('dynamic companionHeader using preprocessor', () => {
+  describe('dynamic companionHeader using setOption', () => {
     let core
     let awsS3Multipart
     const newToken = 'new token'
