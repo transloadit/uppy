@@ -187,7 +187,7 @@ export default class RequestClient {
       const response = await fetchWithNetworkError(this.#getUrl(path), {
         method,
         signal,
-        headers: {...headers, ...this.opts.companionHeaders},
+        headers: { ...headers, ...this.#companionHeaders },
         credentials: this.opts.companionCookiesRule || 'same-origin',
         body: data ? JSON.stringify(data) : null,
       })

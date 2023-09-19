@@ -426,6 +426,32 @@ describe('AwsS3Multipart', () => {
     })
   })
 
+  describe('dynamic companionHeader using preprocessor', () => {
+    let core
+    let awsS3Multipart
+    const newToken = 'new token'
+
+    it('companionHeader is updated before uploading file', async () => {
+      core = new Core()
+      core.use(AwsS3Multipart)
+      /* Set up preprocessor */
+      core.addPreProcessor(() => {
+        awsS3Multipart = core.getPlugin('AwsS3Multipart')
+        awsS3Multipart.setOptions({
+          companionHeaders: {
+            authorization: newToken,
+          },
+        })
+      })
+
+      await core.upload()
+
+      const client = awsS3Multipart[Symbol.for('uppy test: getClient')]()
+
+      expect(client[Symbol.for('uppy test: getCompanionHeaders')]().authorization).toEqual(newToken)
+    })
+  })
+
   describe('file metadata across custom main functions', () => {
     let core
     const createMultipartUpload = jest.fn(file => {
