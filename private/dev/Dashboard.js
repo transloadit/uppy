@@ -16,6 +16,7 @@ import ImageEditor from '@uppy/image-editor'
 import DropTarget from '@uppy/drop-target'
 import Audio from '@uppy/audio'
 import Compressor from '@uppy/compressor'
+import GoogleDrive from '@uppy/google-drive'
 /* eslint-enable import/no-extraneous-dependencies */
 
 import generateSignatureIfSecret from './generateSignatureIfSecret.js'
@@ -55,6 +56,25 @@ async function assemblyOptions () {
   })
 }
 
+function getCompanionKeysParams (name) {
+  const {
+    [`VITE_COMPANION_${name}_KEYS_PARAMS_CREDENTIALS_NAME`]: credentialsName,
+    [`VITE_COMPANION_${name}_KEYS_PARAMS_KEY`]: key,
+  } = import.meta.env
+
+  if (credentialsName && key) {
+    // https://github.com/transloadit/uppy/pull/2802#issuecomment-1023093616
+    return {
+      companionKeysParams: {
+        key,
+        credentialsName,
+      },
+    }
+  }
+
+  return {}
+}
+
 // Rest is implementation! Obviously edit as necessary...
 
 export default () => {
@@ -82,7 +102,7 @@ export default () => {
       proudlyDisplayPoweredByUppy: true,
       note: `${JSON.stringify(restrictions)}`,
     })
-    // .use(GoogleDrive, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })
+    .use(GoogleDrive, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts, ...getCompanionKeysParams('GOOGLE_DRIVE') })
     // .use(Instagram, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })
     // .use(Dropbox, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })
     // .use(Box, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })
@@ -93,7 +113,7 @@ export default () => {
     // .use(Unsplash, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })
     .use(RemoteSources, {
       companionUrl: COMPANION_URL,
-      sources: ['Box', 'Dropbox', 'Facebook', 'GoogleDrive', 'Instagram', 'OneDrive', 'Unsplash', 'Zoom', 'Url'],
+      sources: ['Box', 'Dropbox', 'Facebook', 'Instagram', 'OneDrive', 'Unsplash', 'Zoom', 'Url'],
       companionAllowedHosts,
     })
     .use(Webcam, {
