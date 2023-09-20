@@ -24,7 +24,6 @@ import generateSignatureIfSecret from './generateSignatureIfSecret.js'
 const {
   VITE_UPLOADER : UPLOADER,
   VITE_COMPANION_URL : COMPANION_URL,
-  VITE_COMPANION_ALLOWED_HOSTS : companionAllowedHosts,
   VITE_TUS_ENDPOINT : TUS_ENDPOINT,
   VITE_XHR_ENDPOINT : XHR_ENDPOINT,
   VITE_TRANSLOADIT_KEY : TRANSLOADIT_KEY,
@@ -32,6 +31,9 @@ const {
   VITE_TRANSLOADIT_TEMPLATE : TRANSLOADIT_TEMPLATE,
   VITE_TRANSLOADIT_SERVICE_URL : TRANSLOADIT_SERVICE_URL,
 } = import.meta.env
+
+const companionAllowedHosts = import.meta.env.VITE_COMPANION_ALLOWED_HOSTS
+  && new RegExp(import.meta.env.VITE_COMPANION_ALLOWED_HOSTS)
 
 import.meta.env.VITE_TRANSLOADIT_KEY &&= '***' // to avoid leaking secrets in screenshots.
 import.meta.env.VITE_TRANSLOADIT_SECRET &&= '***' // to avoid leaking secrets in screenshots.
