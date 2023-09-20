@@ -58,7 +58,7 @@ const getNextPagePath = ({ res, query: currentQuery, directory }) => {
   const skipToken = new URL(nextLink).searchParams.get('$skiptoken')
 
   const query = { ...currentQuery, cursor: skipToken }
-  return `${directory}?${new URLSearchParams(query).toString()}`
+  return `${directory ?? ''}?${new URLSearchParams(query).toString()}`
 }
 
 module.exports = (res, username, query, directory) => {
