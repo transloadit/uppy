@@ -1,4 +1,3 @@
-/* eslint-disable indent */
 import BasePlugin from '@uppy/core/lib/BasePlugin.js'
 import { Provider, RequestClient } from '@uppy/companion-client'
 import EventManager from '@uppy/utils/lib/EventManager'
