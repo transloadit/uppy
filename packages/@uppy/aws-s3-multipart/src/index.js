@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 import BasePlugin from '@uppy/core/lib/BasePlugin.js'
 import { Provider, RequestClient } from '@uppy/companion-client'
 import EventManager from '@uppy/utils/lib/EventManager'
@@ -76,7 +77,7 @@ class HTTPCommunicationQueue {
 
   #requests
 
-  #retryDelayIterator
+  #retryDelays
 
   #sendCompletionRequest
 
@@ -112,7 +113,7 @@ class HTTPCommunicationQueue {
       this.#sendCompletionRequest = requests.wrapPromiseFunction(options.completeMultipartUpload, { priority:1 })
     }
     if ('retryDelays' in options) {
-      this.#retryDelayIterator = options.retryDelays?.values()
+      this.#retryDelays = options.retryDelays
     }
     if ('uploadPartBytes' in options) {
       this.#uploadPartBytes = requests.wrapPromiseFunction(options.uploadPartBytes, { priority:Infinity })
@@ -122,7 +123,7 @@ class HTTPCommunicationQueue {
     }
   }
 
-  async #shouldRetry (err) {
+  async #shouldRetry (err, retryDelayIterator) {
     const requests = this.#requests
     const status = err?.source?.status
 
@@ -137,7 +138,7 @@ class HTTPCommunicationQueue {
         // more than one request in parallel, to give slower connection a chance
         // to catch up with the expiry set in Companion.
         if (requests.limit === 1 || this.#previousRetryDelay == null) {
-          const next = this.#retryDelayIterator?.next()
+          const next = retryDelayIterator.next()
           if (next == null || next.done) {
             return false
           }
@@ -156,7 +157,7 @@ class HTTPCommunicationQueue {
     } else if (status === 429) {
       // HTTP 429 Too Many Requests => to avoid the whole download to fail, pause all requests.
       if (!requests.isPaused) {
-        const next = this.#retryDelayIterator?.next()
+        const next = retryDelayIterator.next()
         if (next == null || next.done) {
           return false
         }
@@ -175,7 +176,7 @@ class HTTPCommunicationQueue {
       }
     } else {
       // Other error code means the request can be retried later.
-      const next = this.#retryDelayIterator?.next()
+      const next = retryDelayIterator.next()
       if (next == null || next.done) {
         return false
       }
@@ -349,13 +350,37 @@ class HTTPCommunicationQueue {
     throwIfAborted(signal)
     const { uploadId, key } = await this.getUploadId(file, signal)
     throwIfAborted(signal)
+
+    const signatureRetryIterator = this.#retryDelays.values()
+    const chunkRetryIterator = this.#retryDelays.values()
+    const shouldRetrySignature = () => {
+      const next = signatureRetryIterator.next()
+      if (next == null || next.done) {
+        return null
+      }
+      return next.value
+    }
+
     for (;;) {
       const chunkData = chunk.getData()
       const { onProgress, onComplete } = chunk
+      let signature
 
-      const signature = await this.#fetchSignature(this.#getFile(file), {
-        uploadId, key, partNumber, body: chunkData, signal,
-      }).abortOn(signal)
+      try {
+        signature = await this.#fetchSignature(this.#getFile(file), {
+          uploadId, key, partNumber, body: chunkData, signal,
+        }).abortOn(signal)
+      } catch (err) {
+        const timeout = shouldRetrySignature(err)
+        if (timeout == null) {
+          throw err
+        }
+        // TODO: we don't listen for cancel-all to stop these operations it seems
+        // so it might continue in the background even after pressing cancel in the UI
+        await new Promise(resolve => setTimeout(resolve, timeout))
+        // eslint-disable-next-line no-continue
+        continue
+      }
 
       throwIfAborted(signal)
       try {
@@ -366,7 +391,7 @@ class HTTPCommunicationQueue {
           }).abortOn(signal),
         }
       } catch (err) {
-        if (!await this.#shouldRetry(err)) throw err
+        if (!await this.#shouldRetry(err, chunkRetryIterator)) throw err
       }
     }
   }
