@@ -390,7 +390,7 @@ describe('AwsS3Multipart', () => {
 
       await expect(core.upload()).rejects.toEqual({ source: { status: 500 } })
 
-      expect(awsS3Multipart.opts.uploadPartBytes.mock.calls.length).toEqual(2)
+      expect(awsS3Multipart.opts.uploadPartBytes.mock.calls.length).toEqual(3)
       expect(mock.mock.calls.length).toEqual(1)
     })
   })
