@@ -1038,6 +1038,7 @@ export default class Dashboard extends UIPlugin {
   }
 
   #autoDiscoverPlugins = () => {
+    // only these types belong on the Dashboard. we wouldn’t want to try and mount Compressor or Tus for example.
     const typesAllowed = ['acquirer', 'editor']
     this.uppy.iteratePlugins(plugin => {
       if (plugin && !plugin.opts?.target && typesAllowed.includes(plugin.type)) {
