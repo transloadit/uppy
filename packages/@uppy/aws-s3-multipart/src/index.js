@@ -348,7 +348,6 @@ class HTTPCommunicationQueue {
   async uploadChunk (file, partNumber, chunk, signal) {
     throwIfAborted(signal)
     const { uploadId, key } = await this.getUploadId(file, signal)
-    throwIfAborted(signal)
 
     const signatureRetryIterator = this.#retryDelays.values()
     const chunkRetryIterator = this.#retryDelays.values()
