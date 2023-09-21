@@ -218,11 +218,11 @@ class Uploader {
 
     switch (protocol) {
       case PROTOCOLS.multipart:
-        return this._uploadMultipart(this.readStream)
+        return this.#uploadMultipart(this.readStream)
       case PROTOCOLS.s3Multipart:
-        return this._uploadS3Multipart(this.readStream)
+        return this.#uploadS3Multipart(this.readStream)
       case PROTOCOLS.tus:
-        return this._uploadTus(this.readStream)
+        return this.#uploadTus(this.readStream)
       default:
         throw new Error('Invalid protocol')
     }
@@ -502,7 +502,7 @@ class Uploader {
    *
    * @param {any} stream
    */
-  async _uploadTus (stream) {
+  async #uploadTus (stream) {
     const uploader = this
 
     const isFileStream = stream instanceof ReadStream
@@ -564,7 +564,7 @@ class Uploader {
     })
   }
 
-  async _uploadMultipart (stream) {
+  async #uploadMultipart (stream) {
     if (!this.options.endpoint) {
       throw new Error('No multipart endpoint set')
     }
@@ -642,7 +642,7 @@ class Uploader {
   /**
    * Upload the file to S3 using a Multipart upload.
    */
-  async _uploadS3Multipart (stream) {
+  async #uploadS3Multipart (stream) {
     if (!this.options.s3) {
       throw new Error('The S3 client is not configured on this companion instance.')
     }
