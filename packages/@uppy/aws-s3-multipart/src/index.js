@@ -361,6 +361,7 @@ class HTTPCommunicationQueue {
     }
 
     for (;;) {
+      throwIfAborted(signal)
       const chunkData = chunk.getData()
       const { onProgress, onComplete } = chunk
       let signature
@@ -371,11 +372,9 @@ class HTTPCommunicationQueue {
         }).abortOn(signal)
       } catch (err) {
         const timeout = shouldRetrySignature(err)
-        if (timeout == null) {
+        if (timeout == null || signal.aborted) {
           throw err
         }
-        // TODO: we don't listen for cancel-all to stop these operations it seems
-        // so it might continue in the background even after pressing cancel in the UI
         await new Promise(resolve => setTimeout(resolve, timeout))
         // eslint-disable-next-line no-continue
         continue
