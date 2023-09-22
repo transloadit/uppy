@@ -33,7 +33,7 @@ export default class RemoteSources extends BasePlugin {
   constructor (uppy, opts) {
     super(uppy, opts)
     this.id = this.opts.id || 'RemoteSources'
-    this.type = 'acquirer'
+    this.type = 'preset'
 
     const defaultOptions = {
       sources: Object.keys(availablePlugins),
