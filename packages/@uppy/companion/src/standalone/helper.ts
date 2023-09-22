@@ -5,39 +5,28 @@ const crypto = require('node:crypto')
 
 const utils = require('../server/helpers/utils')
 const logger = require('../server/logger')
-// @ts-ignore
 const { version } = require('../../package.json')
 
 /**
  * Tries to read the secret from a file if the according environment variable is set.
  * Otherwise it falls back to the standard secret environment variable.
- *
- * @param {string} baseEnvVar
- *
- * @returns {string}
  */
-const getSecret = (baseEnvVar) => {
+const getSecret = (baseEnvVar: string) => {
   const secretFile = process.env[`${baseEnvVar}_FILE`]
   return secretFile
-    ? fs.readFileSync(secretFile).toString()
+    ? fs.readFileSync(secretFile, 'utf-8')
     : process.env[baseEnvVar]
 }
 
 /**
  * Auto-generates server secret
- *
- * @returns {string}
  */
-exports.generateSecret = () => {
+export const generateSecret = () => {
   logger.warn('auto-generating server secret because none was specified', 'startup.secret')
   return crypto.randomBytes(64).toString('hex')
 }
 
-/**
- *
- * @param {string} url
- */
-const hasProtocol = (url) => {
+const hasProtocol = (url: string) => {
   return url.startsWith('https://') || url.startsWith('http://')
 }
 
@@ -59,15 +48,11 @@ const s3Prefix = process.env.COMPANION_AWS_PREFIX || ''
 
 /**
  * Default getKey for Companion standalone variant
- *
- * @returns {string}
  */
 const defaultStandaloneGetKey = (...args) => `${s3Prefix}${utils.defaultGetKey(...args)}`
 
 /**
  * Loads the config from environment variables
- *
- * @returns {object}
  */
 const getConfigFromEnv = () => {
   const uploadUrls = process.env.COMPANION_UPLOAD_URLS
@@ -182,11 +167,9 @@ const getConfigFromEnv = () => {
 
 /**
  * Returns the config path specified via cli arguments
- *
- * @returns {string}
  */
 const getConfigPath = () => {
-  let configPath
+  let configPath: string
 
   for (let i = process.argv.length - 1; i >= 0; i--) {
     const isConfigFlag = process.argv[i] === '-c' || process.argv[i] === '--config'
@@ -202,29 +185,24 @@ const getConfigPath = () => {
 
 /**
  * Loads the config from a file and returns it as an object
- *
- * @returns {object}
  */
 const getConfigFromFile = () => {
   const path = getConfigPath()
   if (!path) return {}
 
   const rawdata = fs.readFileSync(getConfigPath())
-  // @ts-ignore
   return JSON.parse(rawdata)
 }
 
 /**
  * Reads all companion configuration set via environment variables
  * and via the config file path
- *
- * @returns {object}
  */
-exports.getCompanionOptions = (options = {}) => {
+export const getCompanionOptions = (options = {}) => {
   return merge({}, getConfigFromEnv(), getConfigFromFile(), options)
 }
 
-exports.buildHelpfulStartupMessage = (companionOptions) => {
+export const buildHelpfulStartupMessage = (companionOptions) => {
   const buildURL = utils.getURLBuilder(companionOptions)
   const callbackURLs = []
   Object.keys(companionOptions.providerOptions).forEach((providerName) => {
