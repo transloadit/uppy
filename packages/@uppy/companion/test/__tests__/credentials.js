@@ -8,9 +8,9 @@ const { remoteZoomKey, remoteZoomSecret, remoteZoomVerificationToken } = require
 
 const authServer = getServer({ COMPANION_ZOOM_KEYS_ENDPOINT: 'http://localhost:2111/zoom-keys' })
 const authData = {
-  zoom: 'token value',
+  zoom: { accessToken: 'token value' },
 }
-const token = tokenService.generateEncryptedToken(authData, process.env.COMPANION_SECRET)
+const token = tokenService.generateEncryptedAuthToken(authData, process.env.COMPANION_SECRET)
 
 afterAll(() => {
   nock.cleanAll()

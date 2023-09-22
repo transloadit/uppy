@@ -1,4 +1,4 @@
-import throttle from 'lodash.throttle'
+import throttle from 'lodash/throttle.js'
 import BasePlugin from '@uppy/core/lib/BasePlugin.js'
 import ServiceWorkerStore from './ServiceWorkerStore.js'
 import IndexedDBStore from './IndexedDBStore.js'
@@ -110,9 +110,10 @@ export default class GoldenRetriever extends BasePlugin {
       ...this.getWaitingFiles(),
       ...this.getUploadingFiles(),
     }
+    const fileToSaveEntries = Object.entries(filesToSave)
 
     // If all files have been removed by the user, clear recovery state
-    if (Object.keys(filesToSave).length === 0) {
+    if (fileToSaveEntries.length === 0) {
       if (this.uppy.getState().recoveredState !== null) {
         this.uppy.setState({ recoveredState: null })
       }
@@ -123,22 +124,18 @@ export default class GoldenRetriever extends BasePlugin {
     // We dont’t need to store file.data on local files, because the actual blob will be restored later,
     // and we want to avoid having weird properties in the serialized object.
     // Also adding file.isRestored to all files, since they will be restored from local storage
-    const filesToSaveWithoutData = {}
-    Object.keys(filesToSave).forEach((file) => {
-      if (filesToSave[file].isRemote) {
-        filesToSaveWithoutData[file] = {
-          ...filesToSave[file],
-          isRestored: true,
-        }
-      } else {
-        filesToSaveWithoutData[file] = {
-          ...filesToSave[file],
-          isRestored: true,
-          data: null,
-          preview: null,
-        }
+    const filesToSaveWithoutData = Object.fromEntries(fileToSaveEntries.map(([id, fileInfo]) => [id, fileInfo.isRemote
+      ? {
+        ...fileInfo,
+        isRestored: true,
       }
-    })
+      : {
+        ...fileInfo,
+        isRestored: true,
+        data: null,
+        preview: null,
+      },
+    ]))
 
     const pluginData = {}
     // TODO Find a better way to do this?
@@ -245,16 +242,7 @@ export default class GoldenRetriever extends BasePlugin {
   }
 
   deleteBlobs (fileIDs) {
-    const promises = []
-    fileIDs.forEach((id) => {
-      if (this.ServiceWorkerStore) {
-        promises.push(this.ServiceWorkerStore.delete(id))
-      }
-      if (this.IndexedDBStore) {
-        promises.push(this.IndexedDBStore.delete(id))
-      }
-    })
-    return Promise.all(promises)
+    return Promise.all(fileIDs.map(id => this.ServiceWorkerStore?.delete(id) ?? this.IndexedDBStore?.delete(id)))
   }
 
   addBlobToStores = (file) => {

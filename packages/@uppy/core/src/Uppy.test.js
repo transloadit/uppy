@@ -684,8 +684,10 @@ describe('src/Core', () => {
   describe('adding a file', () => {
     it('should call onBeforeFileAdded if it was specified in the options when initialising the class', () => {
       const onBeforeFileAdded = jest.fn()
+
       const core = new Core({
-        onBeforeFileAdded,
+        // need to capture a snapshot of files, because files will change in the next tick, thus failing the expect below
+        onBeforeFileAdded: (file, files) => onBeforeFileAdded(file, { ...files }),
       })
 
       core.addFile({
@@ -698,6 +700,25 @@ describe('src/Core', () => {
       expect(onBeforeFileAdded.mock.calls.length).toEqual(1)
       expect(onBeforeFileAdded.mock.calls[0][0].name).toEqual('foo.jpg')
       expect(onBeforeFileAdded.mock.calls[0][1]).toEqual({})
+    })
+
+    it('should allow uploading duplicate file if explicitly allowed in onBeforeFileAdded', async () => {
+      const core = new Core({ onBeforeFileAdded: () => true })
+      const sameFileBlob = new File([sampleImage], { type: 'image/jpeg' })
+
+      core.addFile({
+        source: 'jest',
+        name: 'foo.jpg',
+        type: 'image/jpeg',
+        data: sameFileBlob,
+      })
+
+      core.addFile({
+        source: 'jest',
+        name: 'foo.jpg',
+        type: 'image/jpeg',
+        data: sameFileBlob,
+      })
     })
 
     it('should add a file', () => {
@@ -1428,7 +1449,7 @@ describe('src/Core', () => {
       const promise = new Promise((resolve) => { proceedUpload = resolve })
       const finishPromise = new Promise((resolve) => { finishUpload = resolve })
       core.addUploader(async ([id]) => {
-        core.emit('upload-started', core.getFile(id))
+        core.emit('upload-start', [core.getFile(id)])
         await promise
         core.emit('upload-progress', core.getFile(id), {
           bytesTotal: 3456,
@@ -1448,7 +1469,11 @@ describe('src/Core', () => {
       core.calculateTotalProgress()
 
       const uploadPromise = core.upload()
-      await new Promise((resolve) => core.once('upload-started', resolve))
+      await Promise.all([
+        new Promise((resolve) => core.once('upload-start', resolve)),
+        // todo backward compat: remove in next major
+        new Promise((resolve) => core.once('upload-started', resolve)),
+      ])
 
       expect(core.getFiles()[0].size).toBeNull()
       expect(core.getFiles()[0].progress).toMatchObject({
@@ -1491,7 +1516,7 @@ describe('src/Core', () => {
       const core = new Core()
 
       core.once('file-added', (file) => {
-        core.emit('upload-started', file)
+        core.emit('upload-start', [file])
         core.emit('upload-progress', file, {
           bytesTotal: 3456,
           bytesUploaded: 1234,
@@ -1505,7 +1530,7 @@ describe('src/Core', () => {
       })
 
       core.once('file-added', (file) => {
-        core.emit('upload-started', file)
+        core.emit('upload-start', [file])
         core.emit('upload-progress', file, {
           bytesTotal: null,
           bytesUploaded: null,

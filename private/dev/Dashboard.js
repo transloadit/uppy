@@ -16,6 +16,7 @@ import ImageEditor from '@uppy/image-editor'
 import DropTarget from '@uppy/drop-target'
 import Audio from '@uppy/audio'
 import Compressor from '@uppy/compressor'
+import GoogleDrive from '@uppy/google-drive'
 /* eslint-enable import/no-extraneous-dependencies */
 
 import generateSignatureIfSecret from './generateSignatureIfSecret.js'
@@ -24,7 +25,6 @@ import generateSignatureIfSecret from './generateSignatureIfSecret.js'
 const {
   VITE_UPLOADER : UPLOADER,
   VITE_COMPANION_URL : COMPANION_URL,
-  VITE_COMPANION_ALLOWED_HOSTS : companionAllowedHosts,
   VITE_TUS_ENDPOINT : TUS_ENDPOINT,
   VITE_XHR_ENDPOINT : XHR_ENDPOINT,
   VITE_TRANSLOADIT_KEY : TRANSLOADIT_KEY,
@@ -33,6 +33,9 @@ const {
   VITE_TRANSLOADIT_SERVICE_URL : TRANSLOADIT_SERVICE_URL,
 } = import.meta.env
 
+const companionAllowedHosts = import.meta.env.VITE_COMPANION_ALLOWED_HOSTS
+  && new RegExp(import.meta.env.VITE_COMPANION_ALLOWED_HOSTS)
+
 import.meta.env.VITE_TRANSLOADIT_KEY &&= '***' // to avoid leaking secrets in screenshots.
 import.meta.env.VITE_TRANSLOADIT_SECRET &&= '***' // to avoid leaking secrets in screenshots.
 console.log(import.meta.env)
@@ -40,6 +43,7 @@ console.log(import.meta.env)
 // DEV CONFIG: enable or disable Golden Retriever
 
 const RESTORE = false
+const COMPRESS = false
 
 async function assemblyOptions () {
   return generateSignatureIfSecret(TRANSLOADIT_SECRET, {
@@ -52,9 +56,31 @@ async function assemblyOptions () {
   })
 }
 
+function getCompanionKeysParams (name) {
+  const {
+    [`VITE_COMPANION_${name}_KEYS_PARAMS_CREDENTIALS_NAME`]: credentialsName,
+    [`VITE_COMPANION_${name}_KEYS_PARAMS_KEY`]: key,
+  } = import.meta.env
+
+  if (credentialsName && key) {
+    // https://github.com/transloadit/uppy/pull/2802#issuecomment-1023093616
+    return {
+      companionKeysParams: {
+        key,
+        credentialsName,
+      },
+    }
+  }
+
+  return {}
+}
+
 // Rest is implementation! Obviously edit as necessary...
 
 export default () => {
+  const restrictions = undefined
+  // const restrictions = { requiredMetaFields: ['caption'], maxNumberOfFiles: 3 }
+
   const uppyDashboard = new Uppy({
     logger: debugLogger,
     meta: {
@@ -62,7 +88,7 @@ export default () => {
       license: 'Creative Commons',
     },
     allowMultipleUploadBatches: false,
-    // restrictions: { requiredMetaFields: ['caption'] },
+    restrictions,
   })
     .use(Dashboard, {
       trigger: '#pick-files',
@@ -74,9 +100,9 @@ export default () => {
       ],
       showProgressDetails: true,
       proudlyDisplayPoweredByUppy: true,
-      note: '2 files, images and video only',
+      note: `${JSON.stringify(restrictions)}`,
     })
-    // .use(GoogleDrive, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })
+    .use(GoogleDrive, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts, ...getCompanionKeysParams('GOOGLE_DRIVE') })
     // .use(Instagram, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })
     // .use(Dropbox, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })
     // .use(Box, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })
@@ -87,7 +113,7 @@ export default () => {
     // .use(Unsplash, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })
     .use(RemoteSources, {
       companionUrl: COMPANION_URL,
-      sources: ['Box', 'Dropbox', 'Facebook', 'GoogleDrive', 'Instagram', 'OneDrive', 'Unsplash', 'Zoom', 'Url'],
+      sources: ['Box', 'Dropbox', 'Facebook', 'Instagram', 'OneDrive', 'Unsplash', 'Zoom', 'Url'],
       companionAllowedHosts,
     })
     .use(Webcam, {
@@ -105,7 +131,10 @@ export default () => {
     .use(DropTarget, {
       target: document.body,
     })
-    .use(Compressor)
+
+  if (COMPRESS) {
+    uppyDashboard.use(Compressor)
+  }
 
   switch (UPLOADER) {
     case 'tus':
@@ -115,10 +144,10 @@ export default () => {
       uppyDashboard.use(AwsS3, { companionUrl: COMPANION_URL, limit: 6 })
       break
     case 's3-multipart':
-      uppyDashboard.use(AwsS3Multipart, { companionUrl: COMPANION_URL, limit: 6 })
+      uppyDashboard.use(AwsS3Multipart, { companionUrl: COMPANION_URL })
       break
     case 'xhr':
-      uppyDashboard.use(XHRUpload, { endpoint: XHR_ENDPOINT, limit: 6, bundle: true })
+      uppyDashboard.use(XHRUpload, { endpoint: XHR_ENDPOINT, limit: 6, bundle: false })
       break
     case 'transloadit':
       uppyDashboard.use(Transloadit, {

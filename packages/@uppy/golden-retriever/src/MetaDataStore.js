@@ -5,7 +5,7 @@ function findUppyInstances () {
   const instances = []
   for (let i = 0; i < localStorage.length; i++) {
     const key = localStorage.key(i)
-    if (/^uppyState:/.test(key)) {
+    if (key.startsWith('uppyState:')) {
       instances.push(key.slice('uppyState:'.length))
     }
   }
@@ -18,7 +18,7 @@ function findUppyInstances () {
 function maybeParse (str) {
   try {
     return JSON.parse(str)
-  } catch (err) {
+  } catch {
     return null
   }
 }

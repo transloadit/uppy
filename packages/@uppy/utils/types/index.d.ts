@@ -19,8 +19,8 @@ declare module '@uppy/utils/lib/Translator' {
   export default Translator
 }
 
-declare module '@uppy/utils/lib/EventTracker' {
-  namespace EventTracker {
+declare module '@uppy/utils/lib/EventManager' {
+  namespace EventManager {
     export type EventHandler = (...args: any[]) => void
     export interface Emitter {
       on: (event: string, handler: EventHandler) => void
@@ -28,15 +28,15 @@ declare module '@uppy/utils/lib/EventTracker' {
     }
   }
 
-  class EventTracker {
-    constructor (emitter: EventTracker.Emitter)
+  class EventManager {
+    constructor (emitter: EventManager.Emitter)
 
-    on (event: string, handler: EventTracker.EventHandler): void
+    on (event: string, handler: EventManager.EventHandler): void
 
     remove (): void
   }
 
-  export default EventTracker
+  export default EventManager
 }
 
 declare module '@uppy/utils/lib/ProgressTimeout' {

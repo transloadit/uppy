@@ -37,11 +37,8 @@ export default class Audio extends UIPlugin {
     this.id = this.opts.id || 'Audio'
     this.type = 'acquirer'
     this.icon = () => (
-      <svg aria-hidden="true" focusable="false" width="32px" height="32px" viewBox="0 0 32 32">
-        <g fill="none" fill-rule="evenodd">
-          <rect fill="#9B59B6" width="32" height="32" rx="16" />
-          <path d="M16 20c-2.21 0-4-1.71-4-3.818V9.818C12 7.71 13.79 6 16 6s4 1.71 4 3.818v6.364C20 18.29 18.21 20 16 20zm-6.364-7h.637c.351 0 .636.29.636.65v1.95c0 3.039 2.565 5.477 5.6 5.175 2.645-.264 4.582-2.692 4.582-5.407V13.65c0-.36.285-.65.636-.65h.637c.351 0 .636.29.636.65v1.631c0 3.642-2.544 6.888-6.045 7.382v1.387h2.227c.351 0 .636.29.636.65v.65c0 .36-.285.65-.636.65h-6.364a.643.643 0 0 1-.636-.65v-.65c0-.36.285-.65.636-.65h2.227v-1.372C11.637 22.2 9 19.212 9 15.6v-1.95c0-.36.285-.65.636-.65z" fill="#FFF" fill-rule="nonzero" />
-        </g>
+      <svg className="uppy-DashboardTab-iconAudio" aria-hidden="true" focusable="false" width="32px" height="32px" viewBox="0 0 32 32">
+        <path d="M21.143 12.297c.473 0 .857.383.857.857v2.572c0 3.016-2.24 5.513-5.143 5.931v2.64h2.572a.857.857 0 110 1.714H12.57a.857.857 0 110-1.714h2.572v-2.64C12.24 21.24 10 18.742 10 15.726v-2.572a.857.857 0 111.714 0v2.572A4.29 4.29 0 0016 20.01a4.29 4.29 0 004.286-4.285v-2.572c0-.474.384-.857.857-.857zM16 6.5a3 3 0 013 3v6a3 3 0 01-6 0v-6a3 3 0 013-3z" fill="currentcolor" fill-rule="nonzero" />
       </svg>
     )
 

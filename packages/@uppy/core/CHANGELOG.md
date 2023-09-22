@@ -1,5 +1,52 @@
 # @uppy/core
 
+## 3.5.0
+
+Released: 2023-09-05
+Included in: Uppy v3.15.0
+
+- @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/companion-client,@uppy/core,@uppy/tus,@uppy/utils,@uppy/xhr-upload: Move remote file upload logic into companion-client (Merlijn Vos / #4573)
+
+## 3.4.0
+
+Released: 2023-08-15
+Included in: Uppy v3.14.0
+
+- @uppy/core: allow duplicate files with onBeforeFileAdded (Merlijn Vos / #4594)
+
+## 3.2.1
+
+Released: 2023-06-19
+Included in: Uppy v3.10.0
+
+- @uppy/companion,@uppy/core,@uppy/dashboard,@uppy/golden-retriever,@uppy/status-bar,@uppy/utils: Migrate all lodash' per-method-packages usage to lodash. (LinusMain / #4274)
+- @uppy/core: Don't set late (throttled) progress event on a file that is 100% complete (Artur Paikin / #4507)
+- @uppy/core: remove `state` getter from types (Antoine du Hamel / #4477)
+
+## 3.2.0
+
+Released: 2023-04-18
+Included in: Uppy v3.8.0
+
+- @uppy/core: improve performance of validating & uploading files (Mikael Finstad / #4402)
+- @uppy/core,@uppy/locales,@uppy/provider-views: User feedback adding recursive folders take 2 (Mikael Finstad / #4399)
+
+## 3.1.2
+
+Released: 2023-04-04
+Included in: Uppy v3.7.0
+
+- @uppy/core: fix bug with `setOptions` (Nguyễn bảo Trung / #4350)
+
+## 3.1.0
+
+Released: 2023-03-07
+Included in: Uppy v3.6.0
+
+- @uppy/core: fix uppy.resetProgress() (Artur Paikin / #4337)
+- @uppy/core: fix some types (Antoine du Hamel / #4332)
+- @uppy/core: Fixed type of State.info to match reality being an array of info objects (Marc Bennewitz / #4321)
+
 ## 3.0.6
 
 Released: 2023-02-13

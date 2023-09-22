@@ -1,4 +1,3 @@
-const redis = require('redis')
 const { EventEmitter } = require('node:events')
 
 const logger = require('../logger')
@@ -8,10 +7,10 @@ const logger = require('../logger')
  * This is useful for when companion is running on multiple instances and events need
  * to be distributed across.
  */
-module.exports = (redisUrl, redisPubSubScope) => {
+module.exports = (redisClient, redisPubSubScope) => {
   const prefix = redisPubSubScope ? `${redisPubSubScope}:` : ''
   const getPrefixedEventName = (eventName) => `${prefix}${eventName}`
-  const publisher = redis.createClient({ url: redisUrl })
+  const publisher = redisClient.duplicate()
   publisher.on('error', err => logger.error('publisher redis error', err))
   let subscriber
 
@@ -35,6 +34,29 @@ module.exports = (redisUrl, redisPubSubScope) => {
     } catch (err) {
       handleError(err)
     }
+  }
+
+  /**
+   * Remove an event listener
+   *
+   * @param {string} eventName name of the event
+   * @param {any} handler the handler of the event to remove
+   */
+  function removeListener (eventName, handler) {
+    if (eventName === 'error') return errorEmitter.removeListener('error', handler)
+
+    return runWhenConnected(() => {
+      const handlersByThisEventName = handlersByEvent.get(eventName)
+      if (handlersByThisEventName == null) return undefined
+
+      const actualHandler = handlersByThisEventName.get(handler)
+      if (actualHandler == null) return undefined
+
+      handlersByThisEventName.delete(handler)
+      if (handlersByThisEventName.size === 0) handlersByEvent.delete(eventName)
+
+      return subscriber.pUnsubscribe(getPrefixedEventName(eventName), actualHandler)
+    })
   }
 
   function addListener (eventName, handler, _once = false) {
@@ -72,6 +94,16 @@ module.exports = (redisUrl, redisPubSubScope) => {
   }
 
   /**
+   * Remove an event listener
+   *
+   * @param {string} eventName name of the event
+   * @param {any} handler the handler of the event
+   */
+  function off (eventName, handler) {
+    return removeListener(eventName, handler)
+  }
+
+  /**
    * Add an event listener (will be triggered at most once)
    *
    * @param {string} eventName name of the event
@@ -84,35 +116,12 @@ module.exports = (redisUrl, redisPubSubScope) => {
   }
 
   /**
-   * Announce the occurence of an event
+   * Announce the occurrence of an event
    *
    * @param {string} eventName name of the event
    */
   function emit (eventName, ...args) {
     runWhenConnected(() => publisher.publish(getPrefixedEventName(eventName), JSON.stringify(args)))
-  }
-
-  /**
-   * Remove an event listener
-   *
-   * @param {string} eventName name of the event
-   * @param {any} handler the handler of the event to remove
-   */
-  function removeListener (eventName, handler) {
-    if (eventName === 'error') return errorEmitter.removeListener('error', handler)
-
-    return runWhenConnected(() => {
-      const handlersByThisEventName = handlersByEvent.get(eventName)
-      if (handlersByThisEventName == null) return undefined
-
-      const actualHandler = handlersByThisEventName.get(handler)
-      if (actualHandler == null) return undefined
-
-      handlersByThisEventName.delete(handler)
-      if (handlersByThisEventName.size === 0) handlersByEvent.delete(eventName)
-
-      return subscriber.pUnsubscribe(getPrefixedEventName(eventName), actualHandler)
-    })
   }
 
   /**
@@ -131,6 +140,7 @@ module.exports = (redisUrl, redisPubSubScope) => {
 
   return {
     on,
+    off,
     once,
     emit,
     removeListener,

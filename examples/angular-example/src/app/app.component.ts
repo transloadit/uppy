@@ -12,7 +12,7 @@ import GoogleDrive from '@uppy/google-drive'
   <label>
     <input
       type="checkbox"
-      (change)="showInline = $event.target.checked"
+      (change)="showInline = $any($event.target)?.checked"
       [checked]="showInline"
     />
     Show Dashboard
@@ -58,7 +58,7 @@ export class AppComponent implements OnInit {
 
   uppy: Uppy = new Uppy({ debug: true, autoProceed: true })
 
-  ngOnInit(): void {
+  ngOnInit (): void {
     this.uppy
       .use(Webcam)
       .use(Tus, { endpoint: 'https://tusd.tusdemo.net/files/' })

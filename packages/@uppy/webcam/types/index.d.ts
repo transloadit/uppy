@@ -1,4 +1,4 @@
-import type { PluginOptions, UIPlugin, PluginTarget } from '@uppy/core'
+import type { PluginTarget, UIPlugin, UIPluginOptions } from '@uppy/core'
 import WebcamLocale from './generatedLocale'
 
 export type WebcamMode =
@@ -7,7 +7,7 @@ export type WebcamMode =
     | 'audio-only'
     | 'picture'
 
-export interface WebcamOptions extends PluginOptions {
+export interface WebcamOptions extends UIPluginOptions {
     target?: PluginTarget
     onBeforeSnapshot?: () => Promise<void>
     countdown?: number | boolean

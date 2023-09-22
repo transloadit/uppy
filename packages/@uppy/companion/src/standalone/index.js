@@ -2,11 +2,10 @@ const express = require('express')
 const qs = require('node:querystring')
 const helmet = require('helmet')
 const morgan = require('morgan')
-const bodyParser = require('body-parser')
 const { URL } = require('node:url')
 const session = require('express-session')
 const addRequestId = require('express-request-id')()
-const connectRedis = require('connect-redis')
+const RedisStore = require('connect-redis').default
 
 const logger = require('../server/logger')
 const redis = require('../server/redis')
@@ -96,9 +95,6 @@ module.exports = function server (inputCompanionOptions) {
     return undefined
   })
 
-  router.use(bodyParser.json())
-  router.use(bodyParser.urlencoded({ extended: false }))
-
   // Use helmet to secure Express headers
   router.use(helmet.frameguard())
   router.use(helmet.xssFilter())
@@ -113,10 +109,9 @@ module.exports = function server (inputCompanionOptions) {
     saveUninitialized: true,
   }
 
-  if (companionOptions.redisUrl) {
-    const RedisStore = connectRedis(session)
-    const redisClient = redis.client(companionOptions)
-    // todo next major: change default prefix to something like "companion:" and possibly remove this option
+  const redisClient = redis.client(companionOptions)
+  if (redisClient) {
+    // todo next major: change default prefix to something like "companion-session:" and possibly remove this option
     sessionOptions.store = new RedisStore({ client: redisClient, prefix: process.env.COMPANION_REDIS_EXPRESS_SESSION_PREFIX || 'sess:' })
   }
 

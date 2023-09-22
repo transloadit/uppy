@@ -7,7 +7,7 @@ const AddFilesPanel = (props) => {
     <div
       className={classNames('uppy-Dashboard-AddFilesPanel', props.className)}
       data-uppy-panelType="AddFiles"
-      aria-hidden={props.showAddFilesPanel}
+      aria-hidden={!props.showAddFilesPanel}
     >
       <div className="uppy-DashboardContent-bar">
         <div className="uppy-DashboardContent-title" role="heading" aria-level="1">

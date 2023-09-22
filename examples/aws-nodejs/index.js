@@ -11,24 +11,72 @@ const app = express()
 const port = process.env.PORT ?? 8080
 const bodyParser = require('body-parser')
 
-let s3Client
-const aws = require('aws-sdk')
+const {
+  S3Client,
+  AbortMultipartUploadCommand,
+  CompleteMultipartUploadCommand,
+  CreateMultipartUploadCommand,
+  ListPartsCommand,
+  PutObjectCommand,
+  UploadPartCommand,
+} = require('@aws-sdk/client-s3')
+const { getSignedUrl } = require('@aws-sdk/s3-request-presigner')
+const {
+  STSClient,
+  GetFederationTokenCommand,
+} = require('@aws-sdk/client-sts')
 
-const expires = 800 // Define how long until a S3 signature expires.
+const policy = {
+  Version: '2012-10-17',
+  Statement: [
+    {
+      Effect: 'Allow',
+      Action: [
+        's3:PutObject',
+      ],
+      Resource: [
+        `arn:aws:s3:::${process.env.COMPANION_AWS_BUCKET}/*`,
+        `arn:aws:s3:::${process.env.COMPANION_AWS_BUCKET}`,
+      ],
+    },
+  ],
+}
+
+/**
+ * @type {S3Client}
+ */
+let s3Client
+
+/**
+ * @type {STSClient}
+ */
+let stsClient
+
+const expiresIn = 900 // Define how long until a S3 signature expires.
 
 function getS3Client () {
-  s3Client ??= new aws.S3({
-    signatureVersion: 'v4',
+  s3Client ??= new S3Client({
     region: process.env.COMPANION_AWS_REGION,
-    credentials : new aws.Credentials(
-      process.env.COMPANION_AWS_KEY,
-      process.env.COMPANION_AWS_SECRET,
-    ),
+    credentials : {
+      accessKeyId: process.env.COMPANION_AWS_KEY,
+      secretAccessKey: process.env.COMPANION_AWS_SECRET,
+    },
   })
   return s3Client
 }
 
-app.use(bodyParser.json())
+function getSTSClient () {
+  stsClient ??= new STSClient({
+    region: process.env.COMPANION_AWS_REGION,
+    credentials : {
+      accessKeyId: process.env.COMPANION_AWS_KEY,
+      secretAccessKey: process.env.COMPANION_AWS_SECRET,
+    },
+  })
+  return stsClient
+}
+
+app.use(bodyParser.urlencoded({ extended: true }), bodyParser.json())
 
 app.get('/', (req, res) => {
   const htmlPath = path.join(__dirname, 'public', 'index.html')
@@ -40,29 +88,42 @@ app.get('/drag', (req, res) => {
   res.sendFile(htmlPath)
 })
 
-app.post('/sign-s3', (req, res) => {
-  const s3 = getS3Client()
+app.get('/sts', (req, res, next) => {
+  getSTSClient().send(new GetFederationTokenCommand({
+    Name: '123user',
+    // The duration, in seconds, of the role session. The value specified
+    // can range from 900 seconds (15 minutes) up to the maximum session
+    // duration set for the role.
+    DurationSeconds: expiresIn,
+    Policy: JSON.stringify(policy),
+  })).then(response => {
+    // Test creating multipart upload from the server — it works
+    // createMultipartUploadYo(response)
+    res.setHeader('Access-Control-Allow-Origin', '*')
+    res.setHeader('Cache-Control', `public,max-age=${expiresIn}`)
+    res.json({
+      credentials: response.Credentials,
+      bucket: process.env.COMPANION_AWS_BUCKET,
+      region: process.env.COMPANION_AWS_REGION,
+    })
+  }, next)
+})
+app.post('/sign-s3', (req, res, next) => {
   const Key = `${crypto.randomUUID()}-${req.body.filename}`
   const { contentType } = req.body
-  const s3Params = {
+
+  getSignedUrl(getS3Client(), new PutObjectCommand({
     Bucket: process.env.COMPANION_AWS_BUCKET,
     Key,
-    Expires: expires,
     ContentType: contentType,
-  }
-
-  s3.getSignedUrl('putObject', s3Params, (err, data, next) => {
-    if (err) {
-      next(err)
-      return
-    }
-    const returnData = {
-      url: data,
+  }), { expiresIn }).then((url) => {
+    res.setHeader('Access-Control-Allow-Origin', '*')
+    res.json({
+      url,
       method: 'PUT',
-    }
-    res.write(JSON.stringify(returnData))
+    })
     res.end()
-  })
+  }, next)
 })
 
 //  === <S3 Multipart> ===
@@ -86,11 +147,14 @@ app.post('/s3/multipart', (req, res, next) => {
     Metadata: metadata,
   }
 
-  return client.createMultipartUpload(params, (err, data) => {
+  const command = new CreateMultipartUploadCommand(params)
+
+  return client.send(command, (err, data) => {
     if (err) {
       next(err)
       return
     }
+    res.setHeader('Access-Control-Allow-Origin', '*')
     res.json({
       key: data.Key,
       uploadId: data.UploadId,
@@ -104,7 +168,6 @@ function validatePartNumber (partNumber) {
   return Number.isInteger(partNumber) && partNumber >= 1 && partNumber <= 10_000
 }
 app.get('/s3/multipart/:uploadId/:partNumber', (req, res, next) => {
-  const client = getS3Client()
   const { uploadId, partNumber } = req.params
   const { key } = req.query
 
@@ -115,20 +178,16 @@ app.get('/s3/multipart/:uploadId/:partNumber', (req, res, next) => {
     return res.status(400).json({ error: 's3: the object key must be passed as a query parameter. For example: "?key=abc.jpg"' })
   }
 
-  return client.getSignedUrl('uploadPart', {
+  return getSignedUrl(getS3Client(), new UploadPartCommand({
     Bucket: process.env.COMPANION_AWS_BUCKET,
     Key: key,
     UploadId: uploadId,
     PartNumber: partNumber,
     Body: '',
-    Expires: expires,
-  }, (err, url) => {
-    if (err) {
-      next(err)
-      return
-    }
-    res.json({ url, expires })
-  })
+  }), { expiresIn }).then((url) => {
+    res.setHeader('Access-Control-Allow-Origin', '*')
+    res.json({ url, expires: expiresIn })
+  }, next)
 })
 
 app.get('/s3/multipart/:uploadId', (req, res, next) => {
@@ -137,19 +196,19 @@ app.get('/s3/multipart/:uploadId', (req, res, next) => {
   const { key } = req.query
 
   if (typeof key !== 'string') {
-    return res.status(400).json({ error: 's3: the object key must be passed as a query parameter. For example: "?key=abc.jpg"' })
+    res.status(400).json({ error: 's3: the object key must be passed as a query parameter. For example: "?key=abc.jpg"' })
+    return
   }
 
   const parts = []
-  listPartsPage(0)
 
   function listPartsPage (startAt) {
-    client.listParts({
+    client.send(new ListPartsCommand({
       Bucket: process.env.COMPANION_AWS_BUCKET,
       Key: key,
       UploadId: uploadId,
       PartNumberMarker: startAt,
-    }, (err, data) => {
+    }), (err, data) => {
       if (err) {
         next(err)
         return
@@ -165,10 +224,11 @@ app.get('/s3/multipart/:uploadId', (req, res, next) => {
       }
     })
   }
+  listPartsPage(0)
 })
 
 function isValidPart (part) {
-  return part && typeof part === 'object' && typeof part.PartNumber === 'number' && typeof part.ETag === 'string'
+  return part && typeof part === 'object' && Number(part.PartNumber) && typeof part.ETag === 'string'
 }
 app.post('/s3/multipart/:uploadId/complete', (req, res, next) => {
   const client = getS3Client()
@@ -183,18 +243,19 @@ app.post('/s3/multipart/:uploadId/complete', (req, res, next) => {
     return res.status(400).json({ error: 's3: `parts` must be an array of {ETag, PartNumber} objects.' })
   }
 
-  return client.completeMultipartUpload({
+  return client.send(new CompleteMultipartUploadCommand({
     Bucket: process.env.COMPANION_AWS_BUCKET,
     Key: key,
     UploadId: uploadId,
     MultipartUpload: {
       Parts: parts,
     },
-  }, (err, data) => {
+  }), (err, data) => {
     if (err) {
       next(err)
       return
     }
+    res.setHeader('Access-Control-Allow-Origin', '*')
     res.json({
       location: data.Location,
     })
@@ -210,11 +271,11 @@ app.delete('/s3/multipart/:uploadId', (req, res, next) => {
     return res.status(400).json({ error: 's3: the object key must be passed as a query parameter. For example: "?key=abc.jpg"' })
   }
 
-  return client.abortMultipartUpload({
+  return client.send(new AbortMultipartUploadCommand({
     Bucket: process.env.COMPANION_AWS_BUCKET,
     Key: key,
     UploadId: uploadId,
-  }, (err) => {
+  }), (err) => {
     if (err) {
       next(err)
       return

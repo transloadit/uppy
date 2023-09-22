@@ -63,6 +63,9 @@ export interface AddFileOptions<
 
 export interface PluginOptions {
   id?: string
+}
+
+export interface UIPluginOptions extends PluginOptions {
   replaceTargetContent?: boolean
 }
 
@@ -92,7 +95,7 @@ export class BasePlugin<TOptions extends PluginOptions = DefaultPluginOptions> {
   uninstall(): void
 }
 
-export class UIPlugin<TOptions extends PluginOptions = DefaultPluginOptions> extends BasePlugin<TOptions> {
+export class UIPlugin<TOptions extends UIPluginOptions = DefaultPluginOptions> extends BasePlugin<TOptions> {
   id: string
 
   // eslint-disable-next-line no-use-before-define
@@ -283,8 +286,6 @@ export class Uppy {
   setState(patch: Record<string, unknown>): void
 
   getState<TMeta extends IndexedObject<any> = Record<string, unknown>>(): State<TMeta>
-
-  readonly state: State
 
   setFileState(fileID: string, state: Record<string, unknown>): void
 

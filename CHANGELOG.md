@@ -12,6 +12,428 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 3.16.0
+
+Released: 2023-09-18
+
+| Package            | Version | Package            | Version |
+| ------------------ | ------- | ------------------ | ------- |
+| @uppy/companion    |   4.9.0 | @uppy/locales      |   3.3.1 |
+| @uppy/compressor   |   1.0.3 | @uppy/tus          |   3.3.0 |
+| @uppy/dashboard    |   3.5.3 | uppy               |  3.16.0 |
+| @uppy/image-editor |   2.2.0 |                    |         |
+
+- @uppy/tus: Fix: Utilize user-defined onSuccess, onError, and onProgress callbacks in @uppy/tus (choi sung keun / #4674)
+- @uppy/dashboard: Make file-editor:cancel event fire when the Image Editor “cancel” button is pressed (Artur Paikin / #4684)
+- @uppy/companion: add missing credentialsURL for box (Mikael Finstad / #4681)
+- @uppy/companion: remove s3 endpoints if s3 disabled (Mikael Finstad / #4675)
+- meta: use latest Node.js version for tests (Antoine du Hamel / #4662)
+- meta: Improve Contributing.md (Evgenia Karunus / #4633)
+- @uppy/compressor: update file.meta.name after compression, becase format/extension might have changed (Artur Paikin / #4645)
+- @uppy/companion: Onedrive refresh tokens (Mikael Finstad / #4655)
+- @uppy/companion: catch "invalid initialization vector" instead of crashing (Mikael Finstad / #4661)
+- @uppy/image-editor: Improve image rotation (Evgenia Karunus / #4639)
+- @uppy/locales: Feature/updating i18n farsi (Parsa Arvaneh / #4638)
+
+
+## 3.15.0
+
+Released: 2023-09-05
+
+| Package                | Version | Package                | Version |
+| ---------------------- | ------- | ---------------------- | ------- |
+| @uppy/angular          |   0.6.0 | @uppy/dashboard        |   3.5.2 |
+| @uppy/aws-s3           |   3.3.0 | @uppy/transloadit      |   3.3.0 |
+| @uppy/aws-s3-multipart |   3.6.0 | @uppy/tus              |   3.2.0 |
+| @uppy/companion        |   4.8.2 | @uppy/utils            |   5.5.0 |
+| @uppy/companion-client |   3.4.0 | @uppy/xhr-upload       |   3.4.0 |
+| @uppy/core             |   3.5.0 | uppy                   |  3.15.0 |
+
+- @uppy/transloadit: Emit assembly progress events (Marius / #4603)
+- @uppy/transloadit: remove Socket.io (Antoine du Hamel / #4281)
+- meta: example: update Angular example to 16.x (Antoine du Hamel / #4642)
+- @uppy/angular: upgrade to Angular 16.x (Antoine du Hamel / #4642)
+- @uppy/companion: refactor `getProtectedHttpAgent` to make TS happy (Antoine du Hamel / #4654)
+- @uppy/companion: Alias "removeListener" as "off" in Redis emitter (Elliot Dickison / #4647)
+- @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/companion-client,@uppy/core,@uppy/tus,@uppy/utils,@uppy/xhr-upload: Move remote file upload logic into companion-client (Merlijn Vos / #4573)
+- @uppy/dashboard: when showAddFilesPanel  is true, aria-hidden should be the opposite (Artur Paikin / #4643)
+
+
+## 3.14.1
+
+Released: 2023-08-23
+
+| Package                | Version | Package                | Version |
+| ---------------------- | ------- | ---------------------- | ------- |
+| @uppy/aws-s3           |   3.2.3 | @uppy/companion        |   4.8.1 |
+| @uppy/aws-s3-multipart |   3.5.4 | uppy                   |  3.14.1 |
+
+- @uppy/aws-s3-multipart: fix types when using deprecated option (Antoine du Hamel / #4634)
+- @uppy/companion: harden lint rules (Antoine du Hamel / #4641)
+- @uppy/aws-s3-multipart,@uppy/aws-s3: allow empty objects for `fields` types (Antoine du Hamel / #4631)
+- meta: upgrade Node.js docker version (Antoine du Hamel / #4630)
+
+
+## 3.14.0
+
+Released: 2023-08-15
+
+| Package                   | Version | Package                   | Version |
+| ------------------------- | ------- | ------------------------- | ------- |
+| @uppy/audio               |   1.1.2 | @uppy/locales             |   3.3.0 |
+| @uppy/aws-s3              |   3.2.2 | @uppy/onedrive            |   3.1.3 |
+| @uppy/aws-s3-multipart    |   3.5.3 | @uppy/progress-bar        |   3.0.3 |
+| @uppy/box                 |   2.1.3 | @uppy/provider-views      |   3.5.0 |
+| @uppy/companion           |   4.8.0 | @uppy/redux-dev-tools     |   3.0.3 |
+| @uppy/companion-client    |   3.3.0 | @uppy/screen-capture      |   3.1.2 |
+| @uppy/core                |   3.4.0 | @uppy/status-bar          |   3.2.4 |
+| @uppy/dashboard           |   3.5.1 | @uppy/thumbnail-generator |   3.0.4 |
+| @uppy/drag-drop           |   3.0.3 | @uppy/transloadit         |   3.2.1 |
+| @uppy/dropbox             |   3.1.3 | @uppy/tus                 |   3.1.3 |
+| @uppy/facebook            |   3.1.2 | @uppy/unsplash            |   3.2.2 |
+| @uppy/file-input          |   3.0.3 | @uppy/url                 |   3.3.3 |
+| @uppy/google-drive        |   3.2.1 | @uppy/webcam              |   3.3.2 |
+| @uppy/image-editor        |   2.1.3 | @uppy/xhr-upload          |   3.3.2 |
+| @uppy/informer            |   3.0.3 | @uppy/zoom                |   2.1.2 |
+| @uppy/instagram           |   3.1.2 | uppy                      |  3.14.0 |
+
+- meta: Readme improvements (Artur Paikin / #4622)
+- @uppy/companion: Fix typos and add env vars to .env.example (Dominik Schmidt / #4624)
+- @uppy/aws-s3-multipart: pass the `uploadURL` back to the caller (Antoine du Hamel / #4614)
+- meta: update to node-18.17.0-alpine,  (odselsevier / #4617)
+- @uppy/aws-s3,@uppy/aws-s3-multipart: update types (Antoine du Hamel / #4611)
+- @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/companion,@uppy/transloadit,@uppy/xhr-upload: use uppercase HTTP method names (Antoine du Hamel / #4612)
+- meta: e2e: fix race condition in transloadit test (Antoine du Hamel / #4616)
+- @uppy/aws-s3,@uppy/aws-s3-multipart: update types (bdirito / #4576)
+- @uppy/core: allow duplicate files with onBeforeFileAdded (Merlijn Vos / #4594)
+- @uppy/companion: make CSRF protection helpers available to providers (Dominik Schmidt / #4554)
+- @uppy/companion: fix Redis key default TTL (Subha Sarkar / #4607)
+- @uppy/companion: Fix Uploader.js metadata normalisation (Subha Sarkar / #4608)
+- @uppy/companion-client,@uppy/provider-views: make authentication optional (Dominik Schmidt / #4556)
+- @uppy/provider-views: fix ProviderView error on empty plugin.icon (Dominik Schmidt / #4553)
+- @uppy/aws-s3,@uppy/tus,@uppy/xhr-upload:  Invoke headers function for remote uploads (Dominik Schmidt / #4596)
+- @uppy/companion: Unify redis initialization (Dominik Schmidt / #4597)
+- meta: lock node-js version on ci (Mikael Finstad / #4606)
+- @uppy/companion: allow dynamic S3 bucket (rmoura-92 / #4579)
+- @uppy/status-bar: e2e: add test for retrying and pausing uploads (Antoine du Hamel / #3599)
+- meta: e2e: remove too short timeout (Antoine du Hamel / #4602)
+
+
+## 3.13.1
+
+Released: 2023-07-24
+
+| Package                | Version | Package                | Version |
+| ---------------------- | ------- | ---------------------- | ------- |
+| @uppy/aws-s3-multipart |   3.5.2 | uppy                   |  3.13.1 |
+| @uppy/utils            |   5.4.3 |                        |         |
+
+- @uppy/utils: align version of `preact` with the UI plugins (Antoine du Hamel / #4599)
+- @uppy/aws-s3-multipart: refresh file before calling user-defined functions (mjlumetta / #4557)
+- @uppy/utils: align version of `preact` with the UI plugins (Antoine du Hamel / #4599)
+
+
+## 3.13.0
+
+Released: 2023-07-20
+
+| Package                | Version | Package                | Version |
+| ---------------------- | ------- | ---------------------- | ------- |
+| @uppy/aws-s3-multipart |   3.5.1 | @uppy/provider-views   |   3.4.1 |
+| @uppy/companion-client |   3.2.2 | @uppy/status-bar       |   3.2.3 |
+| @uppy/dashboard        |   3.5.0 | @uppy/utils            |   5.4.2 |
+| @uppy/locales          |   3.2.4 | uppy                   |  3.13.0 |
+
+- meta: Add i18n to CONTRIBUTING.md (Mikael Finstad / #4591)
+- @uppy/provider-views: Add VirtualList to ProviderView (Merlijn Vos / #4566)
+- @uppy/provider-views: fix race conditions with folder loading (Mikael Finstad / #4578)
+- @uppy/status-bar: fix ETA when status bar is installed during upload (Antoine du Hamel / #4588)
+- @uppy/provider-views: fix infinite folder loading  (Mikael Finstad / #4590)
+- meta: examples/aws: client-side signing (Antoine du Hamel / #4463)
+- meta: Bump word-wrap from 1.2.3 to 1.2.4 (dependabot[bot] / #4586)
+- meta: e2e: increase `requestTimeout` to 16s (Antoine du Hamel / #4587)
+- @uppy/locales: update zh_TW translation (5idereal / #4583)
+- @uppy/aws-s3-multipart: fix crash on pause/resume (Merlijn Vos / #4581)
+- @uppy/aws-s3-multipart: do not access `globalThis.crypto` on the top-level (Bryan J Swift / #4584)
+
+
+## 3.12.0
+
+Released: 2023-07-13
+
+| Package                | Version | Package                | Version |
+| ---------------------- | ------- | ---------------------- | ------- |
+| @uppy/aws-s3-multipart |   3.5.0 | @uppy/locales          |   3.2.3 |
+| @uppy/box              |   2.1.2 | @uppy/onedrive         |   3.1.2 |
+| @uppy/companion        |   4.7.0 | @uppy/provider-views   |   3.4.0 |
+| @uppy/companion-client |   3.2.1 | @uppy/react            |   3.1.3 |
+| @uppy/core             |   3.3.1 | @uppy/status-bar       |   3.2.2 |
+| @uppy/dashboard        |   3.4.2 | @uppy/transloadit      |   3.2.0 |
+| @uppy/dropbox          |   3.1.2 | @uppy/utils            |   5.4.1 |
+| @uppy/google-drive     |   3.2.0 | uppy                   |  3.12.0 |
+
+- @uppy/transloadit: fix error message (Antoine du Hamel / #4572)
+- @uppy/provider-views: add support for remote file paths (Mikael Finstad / #4537)
+- @uppy/transloadit: implement Server-sent event API (Antoine du Hamel / #4098)
+- @uppy/aws-s3-multipart: add support for signing on the client (Antoine du Hamel / #4519)
+- @uppy/react: allow `id` from props (Merlijn Vos / #4570)
+- @uppy/aws-s3-multipart: fix lint warning (Antoine du Hamel / #4569)
+- @uppy/status-bar: listen to `upload` event instead of button click (Antoine du Hamel / #4563)
+- @uppy/aws-s3-multipart: fix support for non-multipart PUT upload (Antoine du Hamel / #4568)
+- @uppy/companion: fix esm imports in production/transpiled builds (Dominik Schmidt / #4561)
+- @uppy/locales: fix expression and spelling errors in es_ES (Rubén / #4567)
+- meta: upgrade dev dependencies (dependabot\[bot\])
+- meta: Don't use triage label (Artur Paikin / #4552)
+- meta: update Cypress (Antoine du Hamel / #4562)
+- @uppy/box,@uppy/companion,@uppy/dropbox,@uppy/google-drive,@uppy/onedrive,@uppy/provider-views: Load Google Drive / OneDrive lists 5-10x faster & always load all files (Merlijn Vos / #4513)
+- @uppy/locales: Add missing pt-BR locales for ImageEditor plugin (Mateus Cruz / #4558)
+
+
+## 3.11.0
+
+Released: 2023-07-06
+
+| Package                | Version | Package                | Version |
+| ---------------------- | ------- | ---------------------- | ------- |
+| @uppy/aws-s3           |   3.2.1 | @uppy/golden-retriever |   3.1.0 |
+| @uppy/aws-s3-multipart |   3.4.1 | @uppy/status-bar       |   3.2.1 |
+| @uppy/companion        |   4.6.0 | @uppy/tus              |   3.1.2 |
+| @uppy/companion-client |   3.2.0 | @uppy/xhr-upload       |   3.3.1 |
+| @uppy/core             |   3.3.0 | uppy                   |  3.11.0 |
+
+- @uppy/companion: fix infinite recursion in uploader test (Mikael Finstad / #4536)
+- @uppy/xhr-upload: export `Headers` type (Masum ULU / #4549)
+- @uppy/aws-s3-multipart: increase priority of abort and complete (Stefan Schonert / #4542)
+- @uppy/aws-s3: fix remote uploads (Antoine du Hamel / #4546)
+- meta: use `corepack yarn` instead of `npm` to launch E2E (Antoine du Hamel / #4545)
+- @uppy/aws-s3-multipart: fix upload retry using an outdated ID (Antoine du Hamel / #4544)
+- @uppy/status-bar: remove throttled component (Artur Paikin / #4396)
+- @uppy/aws-s3-multipart: fix Golden Retriever integration (Antoine du Hamel / #4526)
+- examples/aws-nodejs: merge multipart and non-multipart examples (Antoine du Hamel / #4521)
+- @uppy/companion: bump semver from 7.3.7 to 7.5.3 (dependabot[bot] / #4529)
+- @uppy/aws-s3-multipart: add types to internal fields (Antoine du Hamel / #4535)
+- examples/aws-nodejs: update README (Antoine du Hamel / #4534)
+- examples/aws-nodejs: showcase an example without preflight requests (Antoine du Hamel / #4516)
+- @uppy/aws-s3-multipart: fix pause/resume (Antoine du Hamel / #4523)
+- @uppy/status-bar: fix ETA when Uppy recovers its state (Antoine du Hamel / #4525)
+- @uppy/aws-s3-multipart: fix resume single-chunk multipart uploads (Antoine du Hamel / #4528)
+- @uppy/companion: fix part listing in s3 (Antoine du Hamel / #4524)
+- example/aws-php: make it forward-compatible with the next Uppy major (Antoine du Hamel / #4522)
+- @uppy/golden-retriever: refactor to modernize the codebase (Antoine du Hamel / #4520)
+- examples/aws-nodejs: upgrade to AWS-SDK v3 (Antoine du Hamel / #4515)
+- @uppy/companion: implement refresh for authentication tokens (Mikael Finstad / #4448)
+- @uppy/aws-s3-multipart: disable pause/resume for remote uploads in the UI (Artur Paikin / #4500)
+- @uppy/tus: retry on 423 HTTP error code (Antoine du Hamel / #4512)
+
+
+## 3.10.0
+
+Released: 2023-06-19
+
+| Package                | Version | Package                | Version |
+| ---------------------- | ------- | ---------------------- | ------- |
+| @uppy/aws-s3           |   3.2.0 | @uppy/status-bar       |   3.2.0 |
+| @uppy/aws-s3-multipart |   3.4.0 | @uppy/transloadit      |   3.1.6 |
+| @uppy/companion        |   4.5.1 | @uppy/tus              |   3.1.1 |
+| @uppy/core             |   3.2.1 | @uppy/url              |   3.3.2 |
+| @uppy/dashboard        |   3.4.1 | @uppy/utils            |   5.4.0 |
+| @uppy/golden-retriever |   3.0.4 | @uppy/xhr-upload       |   3.3.0 |
+| @uppy/locales          |   3.2.2 | uppy                   |  3.10.0 |
+| @uppy/provider-views   |   3.3.1 |                        |         |
+
+- @uppy/aws-s3-multipart: fix the chunk size calculation (Antoine du Hamel / #4508)
+- @uppy/aws-s3: add `shouldUseMultipart` option (Antoine du Hamel / #4299)
+- @uppy/companion: switch from aws-sdk v2 to @aws-sdk/* (v3) (Scott Bessler / #4285)
+- @uppy/companion,@uppy/core,@uppy/dashboard,@uppy/golden-retriever,@uppy/status-bar,@uppy/utils: Migrate all lodash' per-method-packages usage to lodash. (LinusMain / #4274)
+- @uppy/core: Don't set late (throttled) progress event on a file that is 100% complete (Artur Paikin / #4507)
+- @uppy/companion: revert randomness from file names (Mikael Finstad / #4509)
+- @uppy/companion: Custom provider fixes (Mikael Finstad / #4498)
+- @uppy/transloadit: ensure `fields` is not nullish when there no uploaded files (Antoine du Hamel / #4487)
+- @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/tus,@uppy/utils,@uppy/xhr-upload: When file is removed (or all are canceled), controller.abort queued requests (Artur Paikin / #4504)
+- @uppy/provider-views: Fix range selection not resetting and computing correctly (Terence C / #4415)
+- meta: disallow use of `.only` in tests (Antoine du Hamel / #4494)
+- @uppy/companion: fix 500 when file name contains non-ASCII chars (Antoine du Hamel / #4493)
+- @uppy/locales: update `fr_FR.js` (Samuel De Backer / #4499)
+- @uppy/aws-s3-multipart,@uppy/tus,@uppy/xhr-upload: Don't close socket while upload is still in progress (Artur Paikin / #4479)
+- meta: bump `luxon` from 1.28.0 to 1.28.1 (dependabot[bot] / #4497)
+- @uppy/utils: rename `EventTracker` -> `EventManager` (Stephen Wooten / #4481)
+- meta: bump cookiejar from 2.1.3 to 2.1.4 (dependabot[bot] / #4496)
+- meta: make `pre-commit` use `corepack yarn` instead of `npm run` (Antoine du Hamel / #4495)
+- meta: bump ua-parser-js from 0.7.31 to 0.7.35 (dependabot[bot] / #4474)
+- meta: bump @sideway/formula from 3.0.0 to 3.0.1 (dependabot[bot] / #4473)
+- meta: bump http-cache-semantics from 4.1.0 to 4.1.1 (dependabot[bot] / #4472)
+- @uppy/companion: Use filename from content-disposition instead of relying on url, with fallback (Artur Paikin / #4489)
+- meta: bump `babel`, `esbuild`, and `vite` (dependabot[bot] / #4485)
+- @uppy/dashboard: include the old state when setting new (Artur Paikin / #4490)
+- @uppy/companion: fix companion implicitpath (Mikael Finstad / #4484)
+- @uppy/companion: fix undefined protocol and example page (Mikael Finstad / #4483)
+- meta: upgrade Cypress 12.9.0 -> 12.14.0 (Antoine du Hamel / #4491)
+- @uppy/core: remove `state` getter from types (Antoine du Hamel / #4477)
+- examples/php-xhr: Added filename sanitation and file size check before saving (neuronet77 / #4432)
+- examples/php-xhr: update PHP dependencies (dependabot[bot])
+- @uppy/xhr-upload: add support for arrays in metadata (Vasiliy Matyushin / #4431)
+- @uppy/status-bar: Filtered ETA (stduhpf / #4458)
+- @uppy/aws-s3-multipart: fix `getUploadParameters` option (Antoine du Hamel / #4465)
+
+
+## 3.9.1
+
+Released: 2023-05-15
+
+| Package           | Version | Package           | Version |
+| ----------------- | ------- | ----------------- | ------- |
+| @uppy/transloadit |   3.1.5 | uppy              |   3.9.1 |
+
+- @uppy/transloadit: clean up event listener to prevent cancelled assemblies (Merlijn Vos / #4447)
+
+
+## 3.9.0
+
+Released: 2023-05-02
+
+| Package                | Version | Package                | Version |
+| ---------------------- | ------- | ---------------------- | ------- |
+| @uppy/aws-s3           |   3.1.1 | @uppy/status-bar       |   3.1.2 |
+| @uppy/aws-s3-multipart |   3.3.0 | @uppy/transloadit      |   3.1.4 |
+| @uppy/locales          |   3.2.1 | uppy                   |   3.9.0 |
+
+- @uppy/aws-s3-multipart: allowedMetaFields: null means “include all” (Artur Paikin / #4437)
+- @uppy/aws-s3-multipart: add `shouldUseMultipart ` option (Antoine du Hamel / #4205)
+- @uppy/transloadit: Reset `tus` key in the file on error, so retried files are re-uploaded (Artur Paikin / #4421)
+- meta: commit build file that was modified (Antoine du Hamel)
+- meta: examples: add CORS settings for DigitalOcean Spaces (Antoine du Hamel / #4428)
+- @uppy/aws-s3: deprecate `timeout` option (Antoine du Hamel / #4298)
+- @uppy/aws-s3-multipart: make retries more robust (Antoine du Hamel / #4424)
+- meta: fix badges on README (Antoine du Hamel / #4419)
+
+
+## 3.8.0
+
+Released: 2023-04-18
+
+| Package                   | Version | Package                   | Version |
+| ------------------------- | ------- | ------------------------- | ------- |
+| @uppy/angular             |   0.5.2 | @uppy/progress-bar        |   3.0.2 |
+| @uppy/audio               |   1.1.1 | @uppy/provider-views      |   3.3.0 |
+| @uppy/aws-s3              |   3.1.0 | @uppy/react               |   3.1.2 |
+| @uppy/aws-s3-multipart    |   3.2.0 | @uppy/react-native        |   0.5.1 |
+| @uppy/box                 |   2.1.1 | @uppy/redux-dev-tools     |   3.0.2 |
+| @uppy/companion           |   4.5.0 | @uppy/remote-sources      |   1.0.3 |
+| @uppy/companion-client    |   3.1.3 | @uppy/screen-capture      |   3.1.1 |
+| @uppy/compressor          |   1.0.2 | @uppy/status-bar          |   3.1.1 |
+| @uppy/core                |   3.2.0 | @uppy/store-default       |   3.0.3 |
+| @uppy/dashboard           |   3.4.0 | @uppy/store-redux         |   3.0.3 |
+| @uppy/drag-drop           |   3.0.2 | @uppy/svelte              |   3.0.2 |
+| @uppy/dropbox             |   3.1.1 | @uppy/thumbnail-generator |   3.0.3 |
+| @uppy/facebook            |   3.1.1 | @uppy/transloadit         |   3.1.3 |
+| @uppy/file-input          |   3.0.2 | @uppy/tus                 |   3.1.0 |
+| @uppy/form                |   3.0.2 | @uppy/unsplash            |   3.2.1 |
+| @uppy/golden-retriever    |   3.0.3 | @uppy/url                 |   3.3.1 |
+| @uppy/google-drive        |   3.1.1 | @uppy/utils               |   5.3.0 |
+| @uppy/image-editor        |   2.1.2 | @uppy/vue                 |   1.0.2 |
+| @uppy/informer            |   3.0.2 | @uppy/webcam              |   3.3.1 |
+| @uppy/instagram           |   3.1.1 | @uppy/xhr-upload          |   3.2.0 |
+| @uppy/locales             |   3.2.0 | @uppy/zoom                |   2.1.1 |
+| @uppy/onedrive            |   3.1.1 | uppy                      |   3.8.0 |
+
+- @uppy/companion: increase max limits for remote file list operations (Mikael Finstad / #4417)
+- @uppy/xhr-upload: fix type in README.md (Top Master / #4416)
+- @uppy/core: improve performance of validating & uploading files (Mikael Finstad / #4402)
+- @uppy/provider-views: Concurrent file listing (Mikael Finstad / #4401)
+- @uppy/core,@uppy/locales,@uppy/provider-views: User feedback adding recursive folders take 2 (Mikael Finstad / #4399)
+- @uppy/dashboard: Single File Mode: fix layout and make optional (Artur Paikin / #4374)
+- @uppy/informer: add a check in `TransitionGroup` when component is null (Juan Belej / #4410)
+- meta: Fix logos in all the readmes (Artur Paikin / #4407)
+- meta: fix logo in readme (Kid / #4403)
+
+
+## 3.7.0
+
+Released: 2023-04-04
+
+| Package                | Version | Package                | Version |
+| ---------------------- | ------- | ---------------------- | ------- |
+| @uppy/aws-s3           |   3.0.6 | @uppy/status-bar       |   3.1.0 |
+| @uppy/aws-s3-multipart |   3.1.3 | @uppy/transloadit      |   3.1.2 |
+| @uppy/companion        |   4.4.0 | @uppy/tus              |   3.0.6 |
+| @uppy/companion-client |   3.1.2 | @uppy/unsplash         |   3.2.0 |
+| @uppy/core             |   3.1.2 | @uppy/url              |   3.3.0 |
+| @uppy/dashboard        |   3.3.2 | @uppy/utils            |   5.2.0 |
+| @uppy/locales          |   3.1.0 | @uppy/xhr-upload       |   3.1.1 |
+| @uppy/provider-views   |   3.2.0 | uppy                   |   3.7.0 |
+| @uppy/react            |   3.1.1 |                        |         |
+
+- @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/tus,@uppy/xhr-upload: make sure that we reset serverToken when an upload fails (Mikael Finstad / #4376)
+- @uppy/aws-s3-multipart: do not auto-open sockets, clean them up on abort (Antoine du Hamel)
+- @uppy/aws-s3: Update types (Minh Hieu / #4294)
+- @uppy/companion-client: do not open socket more than once (Artur Paikin)
+- @uppy/companion: add `service: 'companion'` to periodic ping (Mikael Finstad / #4383)
+- @uppy/companion: add connection keep-alive to dropbox (Mikael Finstad / #4365)
+- @uppy/companion: add missing env variable for standalone option (Mikael Finstad / #4382)
+- @uppy/companion: add S3 prefix env variable (Mikael Finstad / #4320)
+- @uppy/companion: allow local ips when testing (Mikael Finstad / #4328)
+- @uppy/companion: fix typo in redis-emitter.js (Ikko Eltociear Ashimine / #4362)
+- @uppy/companion: merge Provider/SearchProvider (Mikael Finstad / #4330)
+- @uppy/companion: only body parse when needed & increased body size for s3 (Mikael Finstad / #4372)
+- @uppy/core: fix bug with `setOptions` (Nguyễn bảo Trung / #4350)
+- @uppy/locales: locales: add es_MX (Kevin van Zonneveld / #4393)
+- @uppy/locales: locales: add hi_IN (Kevin van Zonneveld / #4391)
+- @uppy/provider-views: fix race condition when adding folders (Mikael Finstad / #4384)
+- @uppy/provider-views: UI: Use form attribite with a form in doc root to prevent outer form submit (Artur Paikin / #4283)
+- @uppy/transloadit: fix socket error message (Artur Paikin / #4352)
+- @uppy/tus: do not auto-open sockets, clean them up on abort (Antoine du Hamel)
+- meta: add version info in the bundlers CI (Antoine du Hamel / #4386)
+- meta: deploy to Heroku on every companion commit (Mikael Finstad / #4367)
+- meta: example: migrate `redux` to ESM (Antoine du Hamel / #4158)
+- meta: fix all ESLint warnings and turn them into errors (Antoine du Hamel / #4398)
+- meta: fixup! website: update links to work under the new URL (Antoine du Hamel / #4371)
+- meta: remove duplicate outdated OSS support docs (Mikael Finstad, Artur Paikin / #4364)
+- meta: use overrides to make sure no uppy package is fetch from npm (Antoine du Hamel / #4395)
+- website: add a deprecation notice and a link to the new website (Antoine du Hamel / #4370)
+- website: fix home page (Antoine du Hamel)
+- website: Remove the website (Merlijn Vos / #4369)
+- website: update links to work under the new URL (Antoine du Hamel / #4371)
+
+
+## 3.6.1
+
+Released: 2023-03-07
+
+| Package         | Version | Package         | Version |
+| --------------- | ------- | --------------- | ------- |
+| @uppy/core      |   3.1.1 | uppy            |   3.6.1 |
+| @uppy/dashboard |   3.3.1 |                 |         |
+
+- @uppy/dashboard: Fix low-contrast hover styles (Alexander Zaytsev / #4347)
+
+
+## 3.6.0
+
+Released: 2023-03-07
+
+| Package              | Version | Package              | Version |
+| -------------------- | ------- | -------------------- | ------- |
+| @uppy/audio          |   1.1.0 | @uppy/onedrive       |   3.1.0 |
+| @uppy/box            |   2.1.0 | @uppy/provider-views |   3.1.0 |
+| @uppy/core           |   3.1.0 | @uppy/screen-capture |   3.1.0 |
+| @uppy/dashboard      |   3.3.0 | @uppy/unsplash       |   3.1.0 |
+| @uppy/dropbox        |   3.1.0 | @uppy/url            |   3.2.0 |
+| @uppy/facebook       |   3.1.0 | @uppy/utils          |   5.1.3 |
+| @uppy/google-drive   |   3.1.0 | @uppy/webcam         |   3.3.0 |
+| @uppy/image-editor   |   2.1.1 | @uppy/zoom           |   2.1.0 |
+| @uppy/instagram      |   3.1.0 | uppy                 |   3.6.0 |
+| @uppy/locales        |   3.0.7 |                      |         |
+
+- @uppy/locales: add missing entries after build (Murderlon)
+- @uppy/dashboard: update provider icon style (Alexander Zaytsev / #4345)
+- @uppy/core: fix uppy.resetProgress() (Artur Paikin / #4337)
+- @uppy/core: fix some types (Antoine du Hamel / #4332)
+- @uppy/core: Fixed type of State.info to match reality being an array of info objects (Marc Bennewitz / #4321)
+- @uppy/image-editor: Fix TypeScript error in image-editor types (Matthias Kunnen / #4334)
+- meta: improve `importFromUploadURLs` docs (Mikael Finstad / #4323)
+- @uppy/utils: workaround chrome crash (Mikael Finstad / #4310)
+
+
 ## 3.5.0
 
 Released: 2023-02-13

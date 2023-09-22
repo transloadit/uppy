@@ -1,5 +1,56 @@
 # @uppy/locales
 
+## 3.3.1
+
+Released: 2023-09-18
+Included in: Uppy v3.16.0
+
+- @uppy/locales: Feature/updating i18n farsi (Parsa Arvaneh / #4638)
+
+## 3.2.4
+
+Released: 2023-07-20
+Included in: Uppy v3.13.0
+
+- @uppy/locales: update zh_TW translation (5idereal / #4583)
+
+## 3.2.3
+
+Released: 2023-07-13
+Included in: Uppy v3.12.0
+
+- @uppy/locales: fix expression and spelling errors in es_ES (Rubén / #4567)
+- @uppy/locales: Add missing pt-BR locales for ImageEditor plugin (Mateus Cruz / #4558)
+
+## 3.2.2
+
+Released: 2023-06-19
+Included in: Uppy v3.10.0
+
+- @uppy/locales: update `fr_FR.js` (Samuel De Backer / #4499)
+
+## 3.2.0
+
+Released: 2023-04-18
+Included in: Uppy v3.8.0
+
+- @uppy/core,@uppy/locales,@uppy/provider-views: User feedback adding recursive folders take 2 (Mikael Finstad / #4399)
+
+## 3.1.0
+
+Released: 2023-04-04
+Included in: Uppy v3.7.0
+
+- @uppy/locales: locales: add es_MX (Kevin van Zonneveld / #4393)
+- @uppy/locales: locales: add hi_IN (Kevin van Zonneveld / #4391)
+
+## 3.0.7
+
+Released: 2023-03-07
+Included in: Uppy v3.6.0
+
+- @uppy/locales: add missing entries after build (Murderlon)
+
 ## 3.0.6
 
 Released: 2023-02-13

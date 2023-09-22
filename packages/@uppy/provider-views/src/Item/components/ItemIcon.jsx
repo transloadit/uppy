@@ -38,7 +38,7 @@ export default (props) => {
       return <VideoIcon />
     default: {
       const { alt } = props
-      return <img src={itemIconString} alt={alt} />
+      return <img src={itemIconString} alt={alt} loading="lazy" width={16} height={16} />
     }
   }
 }

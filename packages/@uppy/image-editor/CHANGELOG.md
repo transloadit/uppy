@@ -1,5 +1,19 @@
 # @uppy/image-editor
 
+## 2.2.0
+
+Released: 2023-09-18
+Included in: Uppy v3.16.0
+
+- @uppy/image-editor: Improve image rotation (Evgenia Karunus / #4639)
+
+## 2.1.1
+
+Released: 2023-03-07
+Included in: Uppy v3.6.0
+
+- @uppy/image-editor: Fix TypeScript error in image-editor types (Matthias Kunnen / #4334)
+
 ## 2.1.0
 
 Released: 2022-11-10

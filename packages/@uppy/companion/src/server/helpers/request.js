@@ -5,10 +5,14 @@ const { URL } = require('node:url')
 const dns = require('node:dns')
 const ipaddr = require('ipaddr.js')
 const got = require('got').default
+const path = require('node:path')
+const contentDisposition = require('content-disposition')
+const validator = require('validator')
 
 const logger = require('../logger')
 
 const FORBIDDEN_IP_ADDRESS = 'Forbidden IP address'
+const FORBIDDEN_RESOLVED_IP_ADDRESS = 'Forbidden resolved IP address'
 
 // Example scary IPs that should return false (ipv6-to-ipv4 mapped):
 // ::FFFF:127.0.0.1
@@ -16,6 +20,7 @@ const FORBIDDEN_IP_ADDRESS = 'Forbidden IP address'
 const isDisallowedIP = (ipAddress) => ipaddr.parse(ipAddress).range() !== 'unicast'
 
 module.exports.FORBIDDEN_IP_ADDRESS = FORBIDDEN_IP_ADDRESS
+module.exports.FORBIDDEN_RESOLVED_IP_ADDRESS = FORBIDDEN_RESOLVED_IP_ADDRESS
 
 module.exports.getRedirectEvaluator = (rawRequestURL, isEnabled) => {
   const requestURL = new URL(rawRequestURL)
@@ -41,59 +46,73 @@ module.exports.getRedirectEvaluator = (rawRequestURL, isEnabled) => {
   }
 }
 
-function dnsLookup (hostname, options, callback) {
-  dns.lookup(hostname, options, (err, addresses, maybeFamily) => {
-    if (err) {
-      callback(err, addresses, maybeFamily)
-      return
-    }
-
-    const toValidate = Array.isArray(addresses) ? addresses : [{ address: addresses }]
-    for (const record of toValidate) {
-      if (isDisallowedIP(record.address)) {
-        callback(new Error(FORBIDDEN_IP_ADDRESS), addresses, maybeFamily)
-        return
-      }
-    }
-
-    callback(err, addresses, maybeFamily)
-  })
-}
-
-class HttpAgent extends http.Agent {
-  createConnection (options, callback) {
-    if (ipaddr.isValid(options.host) && isDisallowedIP(options.host)) {
-      callback(new Error(FORBIDDEN_IP_ADDRESS))
-      return undefined
-    }
-    // @ts-ignore
-    return super.createConnection({ ...options, lookup: dnsLookup }, callback)
+/**
+ * Validates that the download URL is secure
+ *
+ * @param {string} url the url to validate
+ * @param {boolean} allowLocalUrls whether to allow local addresses
+ */
+const validateURL = (url, allowLocalUrls) => {
+  if (!url) {
+    return false
   }
+
+  const validURLOpts = {
+    protocols: ['http', 'https'],
+    require_protocol: true,
+    require_tld: !allowLocalUrls,
+  }
+  if (!validator.isURL(url, validURLOpts)) {
+    return false
+  }
+
+  return true
 }
 
-class HttpsAgent extends https.Agent {
-  createConnection (options, callback) {
-    if (ipaddr.isValid(options.host) && isDisallowedIP(options.host)) {
-      callback(new Error(FORBIDDEN_IP_ADDRESS))
-      return undefined
-    }
-    // @ts-ignore
-    return super.createConnection({ ...options, lookup: dnsLookup }, callback)
-  }
-}
+module.exports.validateURL = validateURL
 
 /**
- * Returns http Agent that will prevent requests to private IPs (to preven SSRF)
- *
- * @param {string} protocol http or http: or https: or https protocol needed for the request
+ * Returns http Agent that will prevent requests to private IPs (to prevent SSRF)
  */
-module.exports.getProtectedHttpAgent = (protocol) => {
-  return protocol.startsWith('https') ? HttpsAgent : HttpAgent
+const getProtectedHttpAgent = ({ protocol, blockLocalIPs }) => {
+  function dnsLookup (hostname, options, callback) {
+    dns.lookup(hostname, options, (err, addresses, maybeFamily) => {
+      if (err) {
+        callback(err, addresses, maybeFamily)
+        return
+      }
+
+      const toValidate = Array.isArray(addresses) ? addresses : [{ address: addresses }]
+      for (const record of toValidate) {
+        if (blockLocalIPs && isDisallowedIP(record.address)) {
+          callback(new Error(FORBIDDEN_RESOLVED_IP_ADDRESS), addresses, maybeFamily)
+          return
+        }
+      }
+
+      callback(err, addresses, maybeFamily)
+    })
+  }
+
+  return class HttpAgent extends (protocol.startsWith('https') ? https : http).Agent {
+    createConnection (options, callback) {
+      if (ipaddr.isValid(options.host) && blockLocalIPs && isDisallowedIP(options.host)) {
+        callback(new Error(FORBIDDEN_IP_ADDRESS))
+        return undefined
+      }
+      // @ts-ignore
+      return super.createConnection({ ...options, lookup: dnsLookup }, callback)
+    }
+  }
 }
 
+module.exports.getProtectedHttpAgent = getProtectedHttpAgent
+
 function getProtectedGot ({ url, blockLocalIPs }) {
-  const httpAgent = new (module.exports.getProtectedHttpAgent('http'))()
-  const httpsAgent = new (module.exports.getProtectedHttpAgent('https'))()
+  const HttpAgent = getProtectedHttpAgent({ protocol: 'http', blockLocalIPs })
+  const HttpsAgent = getProtectedHttpAgent({ protocol: 'https', blockLocalIPs })
+  const httpAgent = new HttpAgent()
+  const httpsAgent = new HttpsAgent()
 
   const redirectEvaluator = module.exports.getRedirectEvaluator(url, blockLocalIPs)
 
@@ -115,7 +134,7 @@ module.exports.getProtectedGot = getProtectedGot
  *
  * @param {string} url
  * @param {boolean} blockLocalIPs
- * @returns {Promise<{type: string, size: number}>}
+ * @returns {Promise<{name: string, type: string, size: number}>}
  */
 exports.getURLMeta = async (url, blockLocalIPs = false) => {
   async function requestWithMethod (method) {
@@ -127,11 +146,18 @@ exports.getURLMeta = async (url, blockLocalIPs = false) => {
         .on('response', (response) => {
           // Can be undefined for unknown length URLs, e.g. transfer-encoding: chunked
           const contentLength = parseInt(response.headers['content-length'], 10)
+          // If Content-Disposition with file name is missing, fallback to the URL path for the name,
+          // but if multiple files are served via query params like foo.com?file=file-1, foo.com?file=file-2,
+          // we add random string to avoid duplicate files
+          const filename = response.headers['content-disposition']
+            ? contentDisposition.parse(response.headers['content-disposition']).parameters.filename
+            : path.basename(response.request.requestUrl)
 
           // No need to get the rest of the response, as we only want header (not really relevant for HEAD, but why not)
           stream.destroy()
 
           resolve({
+            name: filename,
             type: response.headers['content-type'],
             size: Number.isNaN(contentLength) ? null : contentLength,
             statusCode: response.statusCode,
@@ -163,6 +189,6 @@ exports.getURLMeta = async (url, blockLocalIPs = false) => {
     throw new Error(`URL server responded with status: ${urlMeta.statusCode}`)
   }
 
-  const { size, type } = urlMeta
-  return { size, type }
+  const { name, size, type } = urlMeta
+  return { name, size, type }
 }
