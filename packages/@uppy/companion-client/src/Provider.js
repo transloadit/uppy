@@ -161,22 +161,33 @@ export default class Provider extends RequestClient {
 
     try {
       // throw Object.assign(new Error(), { isAuthError: true }) // testing simulate access token expired (to refresh token)
+      // A better way to test this is for example with Google Drive:
+      // While uploading, go to your google account settings,
+      // "Third-party apps & services", then click "Companion" and "Remove access".
+
       return await super.request(...args)
     } catch (err) {
-      if (!err.isAuthError) throw err // only handle auth errors (401 from provider)
+      // only handle auth errors (401 from provider), and only handle them if we have a (refresh) token
+      if (!err.isAuthError || !(await this.#getAuthToken())) throw err
 
-      await this.#refreshingTokenPromise
-
-      // Many provider requests may be starting at once, however refresh token should only be called once.
-      // Once a refresh token operation has started, we need all other request to wait for this operation (atomically)
-      this.#refreshingTokenPromise = (async () => {
-        try {
-          const response = await super.request({ path: this.refreshTokenUrl(), method: 'POST' })
-          await this.setAuthToken(response.uppyAuthToken)
-        } finally {
-          this.#refreshingTokenPromise = undefined
-        }
-      })()
+      if (this.#refreshingTokenPromise == null) {
+        // Many provider requests may be starting at once, however refresh token should only be called once.
+        // Once a refresh token operation has started, we need all other request to wait for this operation (atomically)
+        this.#refreshingTokenPromise = (async () => {
+          try {
+            const response = await super.request({ path: this.refreshTokenUrl(), method: 'POST' })
+            await this.setAuthToken(response.uppyAuthToken)
+          } catch (refreshTokenErr) {
+            if (refreshTokenErr.isAuthError) {
+              // if refresh-token has failed with auth error, delete token, so we don't keep trying to refresh in future
+              await this.#removeAuthToken()
+            }
+            throw err
+          } finally {
+            this.#refreshingTokenPromise = undefined
+          }
+        })()
+      }
 
       await this.#refreshingTokenPromise
 
