@@ -33,7 +33,7 @@
     "@uppy/drag-drop": "workspace:^",
     "@uppy/progress-bar": "workspace:^",
     "@uppy/status-bar": "workspace:^",
-    "svelte": "^4.0.0"
+    "svelte": "^3.0.0 || ^4.0.0"
   },
   "publishConfig": {
     "access": "public"
