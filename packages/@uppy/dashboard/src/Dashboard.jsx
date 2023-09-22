@@ -1017,15 +1017,6 @@ export default class Dashboard extends UIPlugin {
     })
   }
 
-  // discoverProviderPlugins = () => {
-  //   this.uppy.iteratePlugins((plugin) => {
-  //     if (plugin && !plugin.target && plugin.opts && plugin.opts.target === this.constructor) {
-  //       console.log('plugin', plugin.id)
-  //       this.addTarget(plugin)
-  //     }
-  //   })
-  // }
-
   #addSpecifiedPlugins = () => {
     const plugins = this.opts.plugins || []
 
@@ -1033,12 +1024,15 @@ export default class Dashboard extends UIPlugin {
       const plugin = this.uppy.getPlugin(pluginID)
       if (plugin) {
         plugin.mount(this, plugin)
+      } else {
+        this.uppy.log(`[Uppy] Dashboard could not find plugin '${pluginID}', make sure to uppy.use() the plugins you are specifying`, 'warning')
       }
     })
   }
 
   #autoDiscoverPlugins = () => {
-    // only these types belong on the Dashboard. we wouldn’t want to try and mount Compressor or Tus for example.
+    // Only these types belong on the Dashboard,
+    // we wouldn’t want to try and mount Compressor or Tus, for example.
     const typesAllowed = ['acquirer', 'editor']
     this.uppy.iteratePlugins(plugin => {
       if (plugin && !plugin.opts?.target && typesAllowed.includes(plugin.type)) {
@@ -1129,7 +1123,6 @@ export default class Dashboard extends UIPlugin {
       this.darkModeMediaQuery.addListener(this.handleSystemDarkModeChange)
     }
 
-    // this.discoverProviderPlugins()
     this.#addSpecifiedPlugins()
     this.#autoDiscoverPlugins()
     this.initEvents()
