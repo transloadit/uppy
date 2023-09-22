@@ -1,5 +1,12 @@
 # @uppy/tus
 
+## 3.3.0
+
+Released: 2023-09-18
+Included in: Uppy v3.16.0
+
+- @uppy/tus: Fix: Utilize user-defined onSuccess, onError, and onProgress callbacks in @uppy/tus (choi sung keun / #4674)
+
 ## 3.2.0
 
 Released: 2023-09-05

@@ -12,6 +12,30 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 3.16.0
+
+Released: 2023-09-18
+
+| Package            | Version | Package            | Version |
+| ------------------ | ------- | ------------------ | ------- |
+| @uppy/companion    |   4.9.0 | @uppy/locales      |   3.3.1 |
+| @uppy/compressor   |   1.0.3 | @uppy/tus          |   3.3.0 |
+| @uppy/dashboard    |   3.5.3 | uppy               |  3.16.0 |
+| @uppy/image-editor |   2.2.0 |                    |         |
+
+- @uppy/tus: Fix: Utilize user-defined onSuccess, onError, and onProgress callbacks in @uppy/tus (choi sung keun / #4674)
+- @uppy/dashboard: Make file-editor:cancel event fire when the Image Editor “cancel” button is pressed (Artur Paikin / #4684)
+- @uppy/companion: add missing credentialsURL for box (Mikael Finstad / #4681)
+- @uppy/companion: remove s3 endpoints if s3 disabled (Mikael Finstad / #4675)
+- meta: use latest Node.js version for tests (Antoine du Hamel / #4662)
+- meta: Improve Contributing.md (Evgenia Karunus / #4633)
+- @uppy/compressor: update file.meta.name after compression, becase format/extension might have changed (Artur Paikin / #4645)
+- @uppy/companion: Onedrive refresh tokens (Mikael Finstad / #4655)
+- @uppy/companion: catch "invalid initialization vector" instead of crashing (Mikael Finstad / #4661)
+- @uppy/image-editor: Improve image rotation (Evgenia Karunus / #4639)
+- @uppy/locales: Feature/updating i18n farsi (Parsa Arvaneh / #4638)
+
+
 ## 3.15.0
 
 Released: 2023-09-05

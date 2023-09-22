@@ -439,7 +439,8 @@ export default class AwsS3Multipart extends BasePlugin {
 
   setOptions (newOptions) {
     this.#companionCommunicationQueue.setOptions(newOptions)
-    return super.setOptions(newOptions)
+    super.setOptions(newOptions)
+    this.#setCompanionHeaders()
   }
 
   /**
