@@ -13,6 +13,16 @@ describe('@uppy/react', () => {
       .each((element) => expect(element).attr('src').to.include('blob:'))
   })
 
+  it('should render Dashboard with Remote Sources plugin pack', () => {
+    const sources = ['My Device', 'Google Drive', 'OneDrive', 'Unsplash', 'Zoom', 'Link']
+    cy.get('#dashboard .uppy-DashboardTab-name')
+      .each((item, index, list) => {
+        expect(list).to.have.length(6)
+        // Returns the current element from the loop
+        expect(Cypress.$(item).text()).to.eq(sources[index])
+      })
+  })
+
   it('should render Modal in React and show thumbnails', () => {
     cy.get('#open').click()
     cy.get('@modal-input').selectFile(['cypress/fixtures/images/cat.jpg', 'cypress/fixtures/images/traffic.jpg'], { force:true })
