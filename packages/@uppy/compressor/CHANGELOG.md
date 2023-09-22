@@ -1,5 +1,12 @@
 # @uppy/compressor
 
+## 1.0.3
+
+Released: 2023-09-18
+Included in: Uppy v3.16.0
+
+- @uppy/compressor: update file.meta.name after compression, becase format/extension might have changed (Artur Paikin / #4645)
+
 ## 1.0.1
 
 Released: 2022-09-25

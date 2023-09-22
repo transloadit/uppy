@@ -70,42 +70,44 @@ async function fetchProviderKeys (providerName, companionOptions, credentialRequ
  */
 exports.getCredentialsOverrideMiddleware = (providers, companionOptions) => {
   return async (req, res, next) => {
-    const { authProvider, override } = req.params
-    const [providerName] = Object.keys(providers).filter((name) => providers[name].authProvider === authProvider)
-    if (!providerName) {
-      next()
-      return
-    }
-
-    if (!companionOptions.providerOptions[providerName]?.credentialsURL) {
-      next()
-      return
-    }
-
-    const dynamic = oAuthState.getDynamicStateFromRequest(req)
-    // only use state via session object if user isn't making intial "connect" request.
-    // override param indicates subsequent requests from the oauth flow
-    const state = override ? dynamic : req.query.state
-    if (!state) {
-      next()
-      return
-    }
-
-    const preAuthToken = oAuthState.getFromState(state, 'preAuthToken', companionOptions.secret)
-    if (!preAuthToken) {
-      next()
-      return
-    }
-
-    let payload
     try {
-      payload = tokenService.verifyEncryptedToken(preAuthToken, companionOptions.preAuthSecret)
-    } catch (err) {
-      next()
-      return
-    }
+      const { authProvider, override } = req.params
+      const [providerName] = Object.keys(providers).filter((name) => providers[name].authProvider === authProvider)
+      if (!providerName) {
+        next()
+        return
+      }
 
-    try {
+      if (!companionOptions.providerOptions[providerName]?.credentialsURL) {
+        next()
+        return
+      }
+
+      const dynamicState = oAuthState.getDynamicStateFromRequest(req)
+      // only use state via session object if user isn't making intial "connect" request.
+      // override param indicates subsequent requests from the oauth flow
+      const state = override ? dynamicState : req.query.state
+      if (!state) {
+        next()
+        return
+      }
+
+      // pre auth token is companionKeysParams encoded and encrypted by companion before the oauth flow,
+      // I believe this has been done so that it cannot be modified by the client later.
+      const preAuthToken = oAuthState.getFromState(state, 'preAuthToken', companionOptions.secret)
+      if (!preAuthToken) {
+        next()
+        return
+      }
+
+      let payload
+      try {
+        payload = tokenService.verifyEncryptedToken(preAuthToken, companionOptions.preAuthSecret)
+      } catch (err) {
+        next()
+        return
+      }
+
       const credentials = await fetchProviderKeys(providerName, companionOptions, payload)
 
       res.locals.grant = {
