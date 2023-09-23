@@ -178,12 +178,15 @@ Releases are managed by GitHub Actions, here’s an overview of the process to r
 
 If you don’t have access to the transloadit.com source code ping @arturi or @goto-bus-stop and we’ll pick it up. :sparkles:
 
-### Releasing Companion hotfix patch
+### Releasing hotfix patch
+
+#### Companion hotfix
 
 First checkout the tag of the version you want to patch:
 ```bash
 git checkout @uppy/companion@x.y.z
 ```
+
 Now create a branch for your hotfix:
 ```bash
 git checkout -b x.y.z-hotfix
@@ -194,15 +197,15 @@ Run yarn to make sure all packages are consistent:
 corepack yarn
 ```
 
-Now go into companion:
+Now navigate to the Companion workspace:
 ```bash
 cd packages/@uppy/companion
 ```
 
-**Now cherry pick your commits**
+**Now cherry pick your desired commits**
 
+Next edit `CHANGELOG.md` and then commit it:
 ```bash
-nano CHANGELOG.md
 git add CHANGELOG.md
 git commit -m 'Update changelog'
 ```
@@ -212,7 +215,7 @@ Now let's create the version & tag
 mkdir -p .git && npm version --workspaces-update=false --tag-version-prefix='@uppy/companion@' patch
 ```
 
-Run as a "dry-run":
+Run a "dry-run" first:
 
 ```bash
 corepack yarn pack
@@ -224,11 +227,17 @@ If the previous command succeeded, let's publish!
 corepack yarn npm publish --access public --tag=none
 ```
 
-Now we can push our branch and tags
+Now we can push our branch and tags.
 
 ```bash
 git push && git push --tags
 ```
+
+#### Hotfix other packages
+
+For other Uppy packages, the process should be similar to Companion,
+but hasn't been documented yet. Make sure to remember to run `yarn` as well as building the package first, then you can release it.
+If you do release any other packages, please update this doc.
 
 ## CSS guidelines
 
