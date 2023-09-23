@@ -190,7 +190,7 @@ module.exports.rfc2047EncodeMetadata = (metadata) => (
 module.exports.getBucket = (bucketOrFn, req) => {
   const bucket = typeof bucketOrFn === 'function' ? bucketOrFn(req) : bucketOrFn
 
-  if (!(typeof bucket === 'string' && bucket !== '')) {
+  if (typeof bucket !== 'string' || bucket === '') {
     // This means a misconfiguration or bug
     throw new TypeError('s3: bucket key must be a string or a function resolving the bucket string')
   }
