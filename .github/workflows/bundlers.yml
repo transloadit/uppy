@@ -49,7 +49,7 @@ jobs:
       - name: Make Uppy bundle use local version
         run: node bin/replace-deps.mjs ${{ github.sha }}
       - name: Eject public packages from repo
-        run: mkdir /tmp/artifacts && corepack yarn workspaces foreach --no-private pack --install-if-needed -o /tmp/artifacts/%s-${{ github.sha }}.tgz
+        run: mkdir /tmp/artifacts && for name in $(corepack yarn workspaces list --no-private --json | jq --raw-output .name); do (cd packages/${name} && echo ${name} && corepack yarn pack --install-if-needed -o /tmp/artifacts/${name//\//-}-${{ github.sha }}.tgz); done
       - name: Upload artifact
         if: success()
         uses: actions/upload-artifact@v3
