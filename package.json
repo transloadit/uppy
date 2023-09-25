@@ -170,7 +170,6 @@
     "@types/eslint@^7.2.13": "^8.2.0",
     "@types/react": "^17",
     "@types/webpack-dev-server": "^4",
-    "jest-environment-jsdom": "patch:jest-environment-jsdom@npm:29.5.0#.yarn/patches/jest-environment-jsdom-npm-29.5.0-fc600add1e.patch",
     "pre-commit": "patch:pre-commit@npm:1.2.2#.yarn/patches/pre-commit-npm-1.2.2-f30af83877.patch",
     "preact": "patch:preact@npm:10.10.0#.yarn/patches/preact-npm-10.10.0-dd04de05e8.patch",
     "start-server-and-test": "patch:start-server-and-test@npm:1.14.0#.yarn/patches/start-server-and-test-npm-1.14.0-841aa34fdf.patch",
