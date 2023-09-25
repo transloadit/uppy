@@ -12,39 +12,51 @@ export default class Editor extends Component {
     this.state = {
       angle90Deg: 0,
       angleGranular: 0,
+      prevCropboxData: null,
     }
+    this.storePrevCropboxData = this.storePrevCropboxData.bind(this)
+    this.limitCropboxMovement = this.limitCropboxMovement.bind(this)
   }
 
   componentDidMount () {
     const { opts, storeCropperInstance } = this.props
-    let prevCropboxData = null
     this.cropper = new Cropper(
       this.imgElement,
-      {
-        ...opts.cropperOptions,
-        cropstart: () => {
-          prevCropboxData = this.cropper.getCropBoxData()
-        },
-        cropend: (event) => {
-          const canvasData = this.cropper.getCanvasData()
-          const cropboxData = this.cropper.getCropBoxData()
-
-          if (event.detail.action === 'all') {
-            const newCropboxData = limitCropboxMovementOnMove(canvasData, cropboxData, prevCropboxData)
-            if (newCropboxData) this.cropper.setCropBoxData(newCropboxData)
-          } else {
-            const newCropboxData = limitCropboxMovementOnResize(canvasData, cropboxData, prevCropboxData)
-            if (newCropboxData) this.cropper.setCropBoxData(newCropboxData)
-          }
-        },
-      },
+      opts.cropperOptions,
     )
+
+    this.imgElement.addEventListener('cropstart', this.storePrevCropboxData)
+    this.imgElement.addEventListener('cropend', this.limitCropboxMovement)
 
     storeCropperInstance(this.cropper)
   }
 
   componentWillUnmount () {
     this.cropper.destroy()
+
+    this.imgElement.removeEventListener('cropstart', this.storePrevCropboxData)
+    this.imgElement.removeEventListener('cropend', this.limitCropboxMovement)
+  }
+
+  // eslint-disable-next-line react/sort-comp
+  storePrevCropboxData () {
+    this.setState({ prevCropboxData: this.cropper.getCropBoxData() })
+  }
+
+  limitCropboxMovement (event) {
+    const canvasData = this.cropper.getCanvasData()
+    const cropboxData = this.cropper.getCropBoxData()
+    const { prevCropboxData } = this.state
+
+    // 1. When we grab the cropbox in the middle and move it
+    if (event.detail.action === 'all') {
+      const newCropboxData = limitCropboxMovementOnMove(canvasData, cropboxData, prevCropboxData)
+      if (newCropboxData) this.cropper.setCropBoxData(newCropboxData)
+    // When we stretch the cropbox by one of its sides
+    } else {
+      const newCropboxData = limitCropboxMovementOnResize(canvasData, cropboxData, prevCropboxData)
+      if (newCropboxData) this.cropper.setCropBoxData(newCropboxData)
+    }
   }
 
   onRotate90Deg = () => {
