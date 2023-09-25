@@ -1,5 +1,5 @@
-import { describe, expect, it } from '@jest/globals'
-import getBytesRemaining from './getBytesRemaining.js'
+import { describe, expect, it } from 'vitest'
+import getBytesRemaining from './getBytesRemaining.ts'
 
 describe('getBytesRemaining', () => {
   it('should calculate the bytes remaining given a fileProgress object', () => {

@@ -1,5 +1,5 @@
 import getSpeed from './getSpeed.js'
-import getBytesRemaining from './getBytesRemaining.js'
+import getBytesRemaining from './getBytesRemaining.ts'
 
 export default function getETA (fileProgress) {
   if (!fileProgress.bytesUploaded) return 0

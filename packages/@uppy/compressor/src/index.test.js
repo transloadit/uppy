@@ -1,4 +1,4 @@
-import { describe, expect, it } from '@jest/globals'
+import { describe, expect, it } from 'vitest'
 import Core from '@uppy/core'
 import getFileNameAndExtension from '@uppy/utils/lib/getFileNameAndExtension'
 import fs from 'node:fs'

@@ -72,6 +72,6 @@
     "preact": "^10.5.13"
   },
   "devDependencies": {
-    "@jest/globals": "^29.0.0"
+    "vitest": "^0.34.5"
   }
 }

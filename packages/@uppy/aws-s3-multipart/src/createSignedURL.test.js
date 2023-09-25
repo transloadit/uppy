@@ -1,4 +1,4 @@
-import { describe, it, beforeEach, afterEach } from '@jest/globals'
+import { describe, it, beforeEach, afterEach } from 'vitest'
 import assert from 'node:assert'
 import { S3Client, UploadPartCommand, PutObjectCommand } from '@aws-sdk/client-s3'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
