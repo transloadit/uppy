@@ -91,11 +91,24 @@
 
 .uppy-ImageCropper .cropper-view-box {
   outline: 2px solid #39f;
-  background: repeating-conic-gradient(rgba(0, 0, 0, 0.5) 0% 25%, rgba(255, 255, 255, 0.5) 0% 50%) 50% / 16px 16px;
+
+  // This adds a checkered background to transparent pngs
+  // (see https://github.com/transloadit/uppy/pull/4194).
+  // Cropper handles checkered bgs via the `background: true` option and a `.cropper-bg` css class, however those will span through the entire cropper background, and we only want the checkered background for transparent pngs.
+  background: repeating-conic-gradient(rgba(189, 189, 189, 0.2) 0% 25%, white 0% 50%) 50% / 16px 16px;
+  [data-uppy-theme="dark"] & {
+    background: repeating-conic-gradient(rgb(43, 42, 42) 0% 25%, black 0% 50%) 50%/16px 16px;
+  }
 }
 
 .uppy-ImageCropper .cropper-modal {
-  opacity: 1;
+  opacity: 0.9;
+  background-color: white;
+
+  [data-uppy-theme="dark"] & {
+    opacity: 0.7;
+    background-color: black;
+  }
 }
 
 .uppy-ImageCropper .cropper-face {
