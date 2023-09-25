@@ -1,0 +1,15 @@
+{
+  "extends": "../../../tsconfig.shared",
+  "compilerOptions": {
+    "allowJs": true,
+    "outDir": "./tsOut"
+  },
+  "include": [
+    "./package.json",
+    "./src/**/*.*"
+  ],
+  "exclude": [
+    "./src/**/*.test.*"
+  ],
+  "references": []
+}
