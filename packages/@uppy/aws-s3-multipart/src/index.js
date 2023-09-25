@@ -112,7 +112,7 @@ class HTTPCommunicationQueue {
       this.#sendCompletionRequest = requests.wrapPromiseFunction(options.completeMultipartUpload, { priority:1 })
     }
     if ('retryDelays' in options) {
-      this.#retryDelays = options.retryDelays
+      this.#retryDelays = options.retryDelays ?? []
     }
     if ('uploadPartBytes' in options) {
       this.#uploadPartBytes = requests.wrapPromiseFunction(options.uploadPartBytes, { priority:Infinity })
