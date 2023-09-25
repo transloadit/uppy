@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import assert from 'node:assert'
 import fs from 'node:fs'
+import path from 'node:path'
 import prettierBytes from '@transloadit/prettier-bytes'
 import Core from '../lib/index.js'
 import UIPlugin from '../lib/UIPlugin.js'
@@ -14,7 +15,8 @@ import InvalidPluginWithoutId from './mocks/invalidPluginWithoutId.js'
 import InvalidPluginWithoutType from './mocks/invalidPluginWithoutType.js'
 import DeepFrozenStore from '../../../../e2e/cypress/fixtures/DeepFrozenStore.mjs'
 
-const sampleImage = fs.readFileSync(new URL('../../../../e2e/cypress/fixtures/images/image.jpg', import.meta.url))
+// eslint-disable-next-line no-restricted-globals
+const sampleImage = fs.readFileSync(path.join(__dirname, '../../../../e2e/cypress/fixtures/images/image.jpg'))
 
 describe('src/Core', () => {
   const RealCreateObjectUrl = globalThis.URL.createObjectURL
