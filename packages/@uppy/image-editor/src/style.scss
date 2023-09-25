@@ -34,6 +34,7 @@
   color: $white;
   background-color: rgba($black, 0.6);
   transform: translateX(-50%);
+  border-radius: 5px;
 
   .uppy-size--md & {
     padding-top: 0;
@@ -90,4 +91,13 @@
 
 .uppy-ImageCropper .cropper-view-box {
   outline: 2px solid #39f;
+  background: repeating-conic-gradient(rgba(0, 0, 0, 0.5) 0% 25%, rgba(255, 255, 255, 0.5) 0% 50%) 50% / 16px 16px;
+}
+
+.uppy-ImageCropper .cropper-modal {
+  opacity: 1;
+}
+
+.uppy-ImageCropper .cropper-face {
+  opacity: 0;
 }
