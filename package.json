@@ -80,6 +80,7 @@
     "eslint-plugin-unicorn": "^46.0.0",
     "github-contributors-list": "^1.2.4",
     "glob": "^8.0.0",
+    "jsdom": "^22.1.0",
     "lint-staged": "^13.0.0",
     "mime-types": "^2.1.26",
     "nodemon": "^2.0.8",
