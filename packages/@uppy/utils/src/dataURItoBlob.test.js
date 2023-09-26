@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import dataURItoBlob from './dataURItoBlob.js'
+import dataURItoBlob from './dataURItoBlob.ts'
 import sampleImageDataURI from './sampleImageDataURI.js'
 
 describe('dataURItoBlob', () => {
