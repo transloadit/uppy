@@ -1,7 +1,10 @@
 #!/usr/bin/env node
 
 
-/** This script can be used to convert plugins with ESM source into plugins with TS source. */
+/**
+ * This script can be used to initiate the transition for a plugin from ESM source to
+ * TS source. It will rename the files, update the imports, and add a `tsconfig.json`.
+*/
 import { opendir, readFile, open, writeFile, rm } from 'node:fs/promises'
 import { argv } from 'node:process'
 import { extname } from 'node:path'
