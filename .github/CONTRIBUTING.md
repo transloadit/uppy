@@ -183,45 +183,51 @@ If you don’t have access to the transloadit.com source code ping @arturi or @g
 #### Companion hotfix
 
 First checkout the tag of the version you want to patch:
+
 ```bash
 git checkout @uppy/companion@x.y.z
 ```
 
 Now create a branch for your hotfix:
+
 ```bash
 git checkout -b x.y.z-hotfix
 ```
 
 Run yarn to make sure all packages are consistent:
+
 ```bash
 corepack yarn
 ```
 
 Now navigate to the Companion workspace:
+
 ```bash
 cd packages/@uppy/companion
 ```
 
-**Now cherry pick your desired commits**
+**Now cherry pick your desired commits**.
 
 Next edit `CHANGELOG.md` and then commit it:
+
 ```bash
 git add CHANGELOG.md
 git commit -m 'Update changelog'
 ```
 
-Now let's create the version & tag
+Now let’s create the version & tag:
+
 ```bash
 mkdir -p .git && npm version --workspaces-update=false --tag-version-prefix='@uppy/companion@' patch
 ```
 
-Run a "dry-run" first:
+Run a “dry-run” first:
 
 ```bash
 corepack yarn pack
 ```
 
-If the previous command succeeded, let's publish!
+If the earlier command succeeded, let’s publish!
 
 ```bash
 corepack yarn npm publish --access public --tag=none
@@ -235,8 +241,8 @@ git push && git push --tags
 
 #### Hotfix other packages
 
-For other Uppy packages, the process should be similar to Companion,
-but hasn't been documented yet. Make sure to remember to run `yarn` as well as building the package first, then you can release it.
+For other Uppy packages, the process should be like Companion,
+but hasn’t been documented yet. Make sure to remember to run `yarn` as well as building the package first, then you can release it.
 If you do release any other packages, please update this doc.
 
 ## CSS guidelines
