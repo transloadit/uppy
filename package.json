@@ -53,7 +53,6 @@
     "adm-zip": "^0.5.5",
     "autoprefixer": "^10.2.6",
     "aws-sdk": "^2.1038.0",
-    "babel-jest": "^29.0.0",
     "babel-plugin-inline-package-json": "^2.0.0",
     "chalk": "^5.0.0",
     "concat-stream": "^2.0.0",
@@ -153,19 +152,6 @@
     "watch:js:lib": "onchange 'packages/{@uppy/,}*/src/**/*.js' --initial --verbose -- yarn run build:lib",
     "watch:js": "npm-run-all --parallel watch:js:bundle watch:js:lib",
     "watch": "npm-run-all --parallel watch:css watch:js"
-  },
-  "jest": {
-    "automock": false,
-    "collectCoverage": true,
-    "collectCoverageFrom": [
-      "packages/**/src/**/*.js"
-    ],
-    "testMatch": [
-      "**/packages/**/*.test.js"
-    ],
-    "testPathIgnorePatterns": [
-      "/packages/@uppy/companion/"
-    ]
   },
   "resolutions": {
     "@types/eslint@^7.2.13": "^8.2.0",
