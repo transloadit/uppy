@@ -53,7 +53,6 @@
     "adm-zip": "^0.5.5",
     "autoprefixer": "^10.2.6",
     "aws-sdk": "^2.1038.0",
-    "babel-jest": "^29.0.0",
     "babel-plugin-inline-package-json": "^2.0.0",
     "chalk": "^5.0.0",
     "concat-stream": "^2.0.0",
@@ -80,8 +79,7 @@
     "eslint-plugin-unicorn": "^46.0.0",
     "github-contributors-list": "^1.2.4",
     "glob": "^8.0.0",
-    "jest": "^29.0.0",
-    "jest-environment-jsdom": "^29.0.0",
+    "jsdom": "^22.1.0",
     "lint-staged": "^13.0.0",
     "mime-types": "^2.1.26",
     "nodemon": "^2.0.8",
@@ -104,6 +102,7 @@
     "tar": "^6.1.0",
     "tsd": "^0.28.0",
     "typescript": "~5.1",
+    "vitest": "^0.34.5",
     "vue-template-compiler": "workspace:*"
   },
   "scripts": {
@@ -144,8 +143,8 @@
     "test:locale-packs:unused": "yarn workspace @uppy-dev/locale-pack test unused",
     "test:locale-packs:warnings": "yarn workspace @uppy-dev/locale-pack test warnings",
     "test:type": "yarn workspaces foreach -piv --include '@uppy/*' --exclude '@uppy/{angular,react-native,locales,companion,provider-views,robodog,svelte}' exec tsd",
-    "test:unit": "yarn run build:lib && NODE_OPTIONS=--experimental-vm-modules jest --env jsdom",
-    "test:watch": "NODE_OPTIONS=--experimental-vm-modules jest --env jsdom --watch --no-coverage",
+    "test:unit": "yarn run build:lib && yarn test:watch",
+    "test:watch": "vitest --environment jsdom --dir packages/@uppy",
     "test": "npm-run-all lint test:locale-packs:unused test:unit test:type test:companion",
     "uploadcdn": "yarn node ./bin/upload-to-cdn.js",
     "version": "yarn node ./bin/after-version-bump.js",
@@ -155,25 +154,10 @@
     "watch:js": "npm-run-all --parallel watch:js:bundle watch:js:lib",
     "watch": "npm-run-all --parallel watch:css watch:js"
   },
-  "jest": {
-    "automock": false,
-    "collectCoverage": true,
-    "collectCoverageFrom": [
-      "packages/**/src/**/*.js"
-    ],
-    "testMatch": [
-      "**/packages/**/*.test.js"
-    ],
-    "testPathIgnorePatterns": [
-      "/packages/@uppy/companion/"
-    ]
-  },
   "resolutions": {
     "@types/eslint@^7.2.13": "^8.2.0",
     "@types/react": "^17",
     "@types/webpack-dev-server": "^4",
-    "jest-environment-jsdom": "patch:jest-environment-jsdom@npm:29.5.0#.yarn/patches/jest-environment-jsdom-npm-29.5.0-fc600add1e.patch",
-    "p-queue": "patch:p-queue@npm%3A7.3.4#./.yarn/patches/p-queue-npm-7.3.4-c746a7f1ae.patch",
     "pre-commit": "patch:pre-commit@npm:1.2.2#.yarn/patches/pre-commit-npm-1.2.2-f30af83877.patch",
     "preact": "patch:preact@npm:10.10.0#.yarn/patches/preact-npm-10.10.0-dd04de05e8.patch",
     "start-server-and-test": "patch:start-server-and-test@npm:1.14.0#.yarn/patches/start-server-and-test-npm-1.14.0-841aa34fdf.patch",

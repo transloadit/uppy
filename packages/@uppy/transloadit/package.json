@@ -38,7 +38,7 @@
     "@uppy/core": "workspace:^"
   },
   "devDependencies": {
-    "@jest/globals": "^29.0.0",
+    "vitest": "^0.34.5",
     "whatwg-fetch": "^3.6.2"
   }
 }
