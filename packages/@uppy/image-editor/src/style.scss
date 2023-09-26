@@ -1,6 +1,23 @@
+@use 'inputrange' with (
+  $track-color: rgba(#fff, 0.2),
+  $thumb-color: #fff,
+
+  $thumb-radius: 9px,
+  $thumb-height: 18px,
+  $thumb-width: 18px,
+  $thumb-shadow-size: 0,
+  $thumb-border-width: 0,
+  $thumb-border-color: transparent,
+
+  $track-height: 8px,
+  $track-shadow-size: 0,
+  $track-shadow-blur: 0,
+  $track-shadow-color: transparent,
+  $track-border-width: 0,
+  $track-border-color: transparent,
+);
 @import '@uppy/core/src/_utils.scss';
 @import '@uppy/core/src/_variables.scss';
-@import './inputrange.scss';
 @import './cropper.scss';
 
 .uppy-ImageCropper {
