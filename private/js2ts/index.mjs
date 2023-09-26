@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+
+/** This script can be used to convert plugins with ESM source into plugins with TS source. */
 import { opendir, readFile, open, writeFile, rm } from 'node:fs/promises'
 import { argv } from 'node:process'
 import { extname } from 'node:path'
