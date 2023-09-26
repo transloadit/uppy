@@ -8,15 +8,15 @@ export default function dataURItoBlob (dataURI, opts, toFile) {
   const mimeType = opts.mimeType ?? dataURIData?.[1] ?? 'plain/text'
 
   let data
-  if (dataURIData[2] != null) {
+  if (dataURIData?.[2] != null) {
     const binary = atob(decodeURIComponent(dataURIData[3]))
     const bytes = new Uint8Array(binary.length)
     for (let i = 0; i < binary.length; i++) {
       bytes[i] = binary.charCodeAt(i)
     }
     data = [bytes]
-  } else {
-    data = [decodeURIComponent(dataURIData[3])]
+  } else if (dataURIData?.[3] != null) {
+    data = [decodeURIComponent(dataURIData?.[3])]
   }
 
   // Convert to a File?
