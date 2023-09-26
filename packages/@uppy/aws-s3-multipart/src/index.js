@@ -370,7 +370,7 @@ class HTTPCommunicationQueue {
           uploadId, key, partNumber, body: chunkData, signal,
         }).abortOn(signal)
       } catch (err) {
-        const timeout = shouldRetrySignature(err)
+        const timeout = shouldRetrySignature()
         if (timeout == null || signal.aborted) {
           throw err
         }
