@@ -1,4 +1,4 @@
-import isDOMElement from './isDOMElement.js'
+import isDOMElement from './isDOMElement.ts'
 
 /**
  * Find one or more DOM elements.
