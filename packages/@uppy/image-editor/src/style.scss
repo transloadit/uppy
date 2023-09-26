@@ -3,13 +3,14 @@
   $thumb-color: #fff,
 
   $thumb-radius: 9px,
-  $thumb-height: 18px,
-  $thumb-width: 18px,
+  $thumb-height: 16px,
+  $thumb-width: 16px,
   $thumb-shadow-size: 0,
   $thumb-border-width: 0,
   $thumb-border-color: transparent,
 
-  $track-height: 8px,
+  // If you change this `$track-height`, also change `::-moz-range-track` way below
+  $track-height: 4px,
   $track-shadow-size: 0,
   $track-shadow-blur: 0,
   $track-shadow-color: transparent,
@@ -19,6 +20,11 @@
 @import '@uppy/core/src/_utils.scss';
 @import '@uppy/core/src/_variables.scss';
 @import './cropper.scss';
+
+.uppy-ImageCropper-range::-moz-range-track{
+  // This should be `height: $track-height`, it's inputrange's bug
+  height: 4px;
+}
 
 .uppy-ImageCropper {
   display: flex;
@@ -61,6 +67,7 @@
 .uppy-ImageCropper-controls button {
   width: 35px;
   height: 35px;
+  border-radius: 5px;
 
   svg {
     padding: 3px;
@@ -76,11 +83,11 @@
   }
 
   &:hover {
-    background-color: rgba($blue, 0.8);
+    background-color: rgba(white, 0.5);
   }
 
   &:focus {
-    background-color: rgba($blue, 0.8);
+    background-color: rgba(white, 0.5);
     outline: none;
   }
 }
