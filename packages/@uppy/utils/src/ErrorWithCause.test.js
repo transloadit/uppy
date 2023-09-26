@@ -1,4 +1,4 @@
-import { describe, expect, it } from '@jest/globals'
+import { describe, expect, it } from 'vitest'
 import ErrorWithCause from './ErrorWithCause.js'
 import NetworkError from './NetworkError.js'
 import isNetworkError from './isNetworkError.js'

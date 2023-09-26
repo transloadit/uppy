@@ -1,4 +1,4 @@
-import { describe, expect, it, jest } from '@jest/globals'
+import { describe, expect, it, vi } from 'vitest'
 import { AbortController, AbortSignal } from './AbortController.js'
 
 function flushInstantTimeouts () {
@@ -14,7 +14,7 @@ describe('AbortController', () => {
 
   it('emits "abort" when abort() is called', async () => {
     const controller = new AbortController()
-    const callback = jest.fn()
+    const callback = vi.fn()
 
     controller.signal.addEventListener('abort', callback)
     controller.abort()
@@ -27,8 +27,8 @@ describe('AbortController', () => {
 
   it('add and remove events', async () => {
     const controller = new AbortController()
-    const callback = jest.fn()
-    const callback2 = jest.fn()
+    const callback = vi.fn()
+    const callback2 = vi.fn()
 
     controller.signal.addEventListener('abort', callback)
     controller.signal.addEventListener('abort', callback2)

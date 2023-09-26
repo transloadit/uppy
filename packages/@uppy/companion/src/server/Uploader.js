@@ -514,9 +514,9 @@ class Uploader {
       this.tus = new tus.Upload(stream, {
         endpoint: this.options.endpoint,
         uploadUrl: this.options.uploadUrl,
-        uploadLengthDeferred: false,
+        uploadLengthDeferred: !isFileStream,
         retryDelays: [0, 1000, 3000, 5000],
-        uploadSize: this.size,
+        uploadSize: isFileStream ? this.size : undefined,
         chunkSize,
         headers: headerSanitize(this.options.headers),
         addRequestId: true,

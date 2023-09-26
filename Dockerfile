@@ -5,9 +5,7 @@ RUN if [ "$(uname -m)" == "aarch64" ]; then mkdir -p /usr/local/sbin/ && ln -s /
 
 WORKDIR /app
 
-COPY package.json .yarnrc.yml /app/
-COPY .yarn /app/.yarn
-COPY packages/@uppy/companion /app/packages/@uppy/companion
+COPY . /app/
 
 RUN apk --update add  --virtual native-dep \
   make gcc g++ python3 libgcc libstdc++ git && \

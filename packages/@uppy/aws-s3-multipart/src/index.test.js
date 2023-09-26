@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import 'whatwg-fetch'
 import nock from 'nock'
@@ -68,7 +68,7 @@ describe('AwsS3Multipart', () => {
       const fileSize = 1
 
       core.addFile({
-        source: 'jest',
+        source: 'vi',
         name: 'multitest.dat',
         type: 'application/octet-stream',
         data: new File([new Uint8Array(fileSize)], {
@@ -76,7 +76,7 @@ describe('AwsS3Multipart', () => {
         }),
       })
 
-      const uploadSuccessHandler = jest.fn()
+      const uploadSuccessHandler = vi.fn()
       core.on('upload-success', uploadSuccessHandler)
 
       await core.upload()
@@ -102,15 +102,15 @@ describe('AwsS3Multipart', () => {
       core = new Core()
       core.use(AwsS3Multipart, {
         limit: 0,
-        createMultipartUpload: jest.fn(() => {
+        createMultipartUpload: vi.fn(() => {
           return {
             uploadId: '6aeb1980f3fc7ce0b5454d25b71992',
             key: 'test/upload/multitest.dat',
           }
         }),
-        completeMultipartUpload: jest.fn(async () => ({ location: 'test' })),
-        abortMultipartUpload: jest.fn(),
-        prepareUploadParts: jest.fn(async (file, { parts }) => {
+        completeMultipartUpload: vi.fn(async () => ({ location: 'test' })),
+        abortMultipartUpload: vi.fn(),
+        prepareUploadParts: vi.fn(async (file, { parts }) => {
           const presignedUrls = {}
           parts.forEach(({ number }) => {
             presignedUrls[
@@ -156,7 +156,7 @@ describe('AwsS3Multipart', () => {
         .reply(200, '', { ETag: 'test2' })
 
       core.addFile({
-        source: 'jest',
+        source: 'vi',
         name: 'multitest.dat',
         type: 'application/octet-stream',
         data: new File([new Uint8Array(fileSize)], {
@@ -198,7 +198,7 @@ describe('AwsS3Multipart', () => {
       scope.persist()
 
       core.addFile({
-        source: 'jest',
+        source: 'vi',
         name: 'multitest.dat',
         type: 'application/octet-stream',
         data: new File([new Uint8Array(fileSize)], {
@@ -270,13 +270,13 @@ describe('AwsS3Multipart', () => {
       let doneSpy
       awsS3Multipart.setOptions({
         retryDelays: [10],
-        createMultipartUpload: jest.fn((file) => {
+        createMultipartUpload: vi.fn((file) => {
           const multipartUploader = awsS3Multipart.uploaders[file.id]
           const testChunkState = multipartUploader.chunkState[6]
           let busy = false
           let done = false
-          busySpy = jest.fn((value) => { busy = value })
-          doneSpy = jest.fn((value) => { done = value })
+          busySpy = vi.fn((value) => { busy = value })
+          doneSpy = vi.fn((value) => { done = value })
           Object.defineProperty(testChunkState, 'busy', { get: () => busy, set: busySpy })
           Object.defineProperty(testChunkState, 'done', { get: () => done, set: doneSpy })
 
@@ -288,7 +288,7 @@ describe('AwsS3Multipart', () => {
       })
 
       core.addFile({
-        source: 'jest',
+        source: 'vi',
         name: 'multitest.dat',
         type: 'application/octet-stream',
         data: new File([new Uint8Array(fileSize)], {
@@ -316,29 +316,29 @@ describe('AwsS3Multipart', () => {
   })
 
   describe('MultipartUploader', () => {
-    const createMultipartUpload = jest.fn(() => {
+    const createMultipartUpload = vi.fn(() => {
       return {
         uploadId: '6aeb1980f3fc7ce0b5454d25b71992',
         key: 'test/upload/multitest.dat',
       }
     })
 
-    const signPart = jest
+    const signPart = vi
       .fn(async (file, { partNumber }) => {
         return { url: `https://bucket.s3.us-east-2.amazonaws.com/test/upload/multitest.dat?partNumber=${partNumber}&uploadId=6aeb1980f3fc7ce0b5454d25b71992&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIATEST%2F20210729%2Fus-east-2%2Fs3%2Faws4_request&X-Amz-Date=20210729T014044Z&X-Amz-Expires=600&X-Amz-SignedHeaders=host&X-Amz-Signature=test` }
       })
 
-    const uploadPartBytes = jest.fn()
+    const uploadPartBytes = vi.fn()
 
-    afterEach(() => jest.clearAllMocks())
+    afterEach(() => vi.clearAllMocks())
 
     it('retries uploadPartBytes when it fails once', async () => {
       const core = new Core()
         .use(AwsS3Multipart, {
           createMultipartUpload,
-          completeMultipartUpload: jest.fn(async () => ({ location: 'test' })),
+          completeMultipartUpload: vi.fn(async () => ({ location: 'test' })),
           // eslint-disable-next-line no-throw-literal
-          abortMultipartUpload: jest.fn(() => { throw 'should ignore' }),
+          abortMultipartUpload: vi.fn(() => { throw 'should ignore' }),
           signPart,
           uploadPartBytes:
             uploadPartBytes
@@ -349,7 +349,7 @@ describe('AwsS3Multipart', () => {
       const fileSize = 5 * MB + 1 * MB
 
       core.addFile({
-        source: 'jest',
+        source: 'vi',
         name: 'multitest.dat',
         type: 'application/octet-stream',
         data: new File([new Uint8Array(fileSize)], {
@@ -367,8 +367,8 @@ describe('AwsS3Multipart', () => {
         .use(AwsS3Multipart, {
           retryDelays: [10],
           createMultipartUpload,
-          completeMultipartUpload: jest.fn(async () => ({ location: 'test' })),
-          abortMultipartUpload: jest.fn(),
+          completeMultipartUpload: vi.fn(async () => ({ location: 'test' })),
+          abortMultipartUpload: vi.fn(),
           signPart,
           uploadPartBytes: uploadPartBytes
             // eslint-disable-next-line prefer-promise-reject-errors
@@ -376,11 +376,11 @@ describe('AwsS3Multipart', () => {
         })
       const awsS3Multipart = core.getPlugin('AwsS3Multipart')
       const fileSize = 5 * MB + 1 * MB
-      const mock = jest.fn()
+      const mock = vi.fn()
       core.on('upload-error', mock)
 
       core.addFile({
-        source: 'jest',
+        source: 'vi',
         name: 'multitest.dat',
         type: 'application/octet-stream',
         data: new File([new Uint8Array(fileSize)], {
@@ -454,7 +454,7 @@ describe('AwsS3Multipart', () => {
 
   describe('file metadata across custom main functions', () => {
     let core
-    const createMultipartUpload = jest.fn(file => {
+    const createMultipartUpload = vi.fn(file => {
       core.setFileMeta(file.id, {
         ...file.meta,
         createMultipartUpload: true,
@@ -466,7 +466,7 @@ describe('AwsS3Multipart', () => {
       }
     })
 
-    const signPart = jest.fn((file, partData) => {
+    const signPart = vi.fn((file, partData) => {
       expect(file.meta.createMultipartUpload).toBe(true)
 
       core.setFileMeta(file.id, {
@@ -480,7 +480,7 @@ describe('AwsS3Multipart', () => {
       }
     })
 
-    const listParts = jest.fn((file) => {
+    const listParts = vi.fn((file) => {
       expect(file.meta.createMultipartUpload).toBe(true)
       core.setFileMeta(file.id, {
         ...file.meta,
@@ -495,7 +495,7 @@ describe('AwsS3Multipart', () => {
       }))
     })
 
-    const completeMultipartUpload = jest.fn((file) => {
+    const completeMultipartUpload = vi.fn((file) => {
       expect(file.meta.createMultipartUpload).toBe(true)
       expect(file.meta.signPart).toBe(true)
       for (let i = 1; i <= 10; i++) {
@@ -504,7 +504,7 @@ describe('AwsS3Multipart', () => {
       return {}
     })
 
-    const abortMultipartUpload = jest.fn((file) => {
+    const abortMultipartUpload = vi.fn((file) => {
       expect(file.meta.createMultipartUpload).toBe(true)
       expect(file.meta.signPart).toBe(true)
       expect(file.meta.abortingPart).toBe(5)
@@ -542,7 +542,7 @@ describe('AwsS3Multipart', () => {
 
       const fileSize = 50 * MB
       core.addFile({
-        source: 'jest',
+        source: 'vi',
         name: 'multitest.dat',
         type: 'application/octet-stream',
         data: new File([new Uint8Array(fileSize)], {
@@ -557,7 +557,7 @@ describe('AwsS3Multipart', () => {
     })
 
     it('preserves file metadata if upload is aborted', async () => {
-      const signPartWithAbort = jest.fn((file, partData) => {
+      const signPartWithAbort = vi.fn((file, partData) => {
         expect(file.meta.createMultipartUpload).toBe(true)
         if (partData.partNumber === 5) {
           core.setFileMeta(file.id, {
@@ -601,7 +601,7 @@ describe('AwsS3Multipart', () => {
 
       const fileSize = 50 * MB
       core.addFile({
-        source: 'jest',
+        source: 'vi',
         name: 'multitest.dat',
         type: 'application/octet-stream',
         data: new File([new Uint8Array(fileSize)], {
@@ -616,7 +616,7 @@ describe('AwsS3Multipart', () => {
     })
 
     it('preserves file metadata if upload is paused and resumed', async () => {
-      const completeMultipartUploadAfterPause = jest.fn((file) => {
+      const completeMultipartUploadAfterPause = vi.fn((file) => {
         expect(file.meta.createMultipartUpload).toBe(true)
         expect(file.meta.signPart).toBe(true)
         for (let i = 1; i <= 10; i++) {
@@ -627,7 +627,7 @@ describe('AwsS3Multipart', () => {
         return {}
       })
 
-      const signPartWithPause = jest.fn((file, partData) => {
+      const signPartWithPause = vi.fn((file, partData) => {
         expect(file.meta.createMultipartUpload).toBe(true)
         if (partData.partNumber === 3) {
           core.setFileMeta(file.id, {
@@ -671,7 +671,7 @@ describe('AwsS3Multipart', () => {
 
       const fileSize = 50 * MB
       core.addFile({
-        source: 'jest',
+        source: 'vi',
         name: 'multitest.dat',
         type: 'application/octet-stream',
         data: new File([new Uint8Array(fileSize)], {

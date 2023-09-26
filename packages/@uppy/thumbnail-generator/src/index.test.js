@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, it, expect, jest, xit } from '@jest/globals'
+import { afterEach, beforeEach, describe, it, expect, vi } from 'vitest'
 import { UIPlugin } from '@uppy/core'
 import emitter from 'namespace-emitter'
 import ThumbnailGeneratorPlugin from './index.js'
@@ -45,11 +45,11 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
   describe('install', () => {
     it('should subscribe to uppy file-added event', () => {
       const core = Object.assign(new MockCore(), {
-        on: jest.fn(),
+        on: vi.fn(),
       })
 
       const plugin = new ThumbnailGeneratorPlugin(core)
-      plugin.addToQueue = jest.fn()
+      plugin.addToQueue = vi.fn()
       plugin.install()
 
       expect(core.on).toHaveBeenCalledTimes(4)
@@ -60,12 +60,12 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
   describe('uninstall', () => {
     it('should unsubscribe from uppy file-added event', () => {
       const core = Object.assign(new MockCore(), {
-        on: jest.fn(),
-        off: jest.fn(),
+        on: vi.fn(),
+        off: vi.fn(),
       })
 
       const plugin = new ThumbnailGeneratorPlugin(core)
-      plugin.addToQueue = jest.fn()
+      plugin.addToQueue = vi.fn()
       plugin.install()
 
       expect(core.on).toHaveBeenCalledTimes(4)
@@ -81,7 +81,7 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
     it('should add a new file to the queue and start processing the queue when queueProcessing is false', () => {
       const core = new MockCore()
       const plugin = new ThumbnailGeneratorPlugin(core)
-      plugin.processQueue = jest.fn()
+      plugin.processQueue = vi.fn()
 
       const file = { id: 'bar', type: 'image/jpeg' }
       plugin.queueProcessing = false
@@ -99,7 +99,7 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
     it('should process items in the queue one by one', () => {
       const core = new MockCore()
       const plugin = new ThumbnailGeneratorPlugin(core)
-      plugin.requestThumbnail = jest.fn(() => delay(100))
+      plugin.requestThumbnail = vi.fn(() => delay(100))
       plugin.install()
 
       const file1 = { id: 'bar', type: 'image/jpeg', data: new Blob() }
@@ -137,17 +137,17 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
       const plugin = new ThumbnailGeneratorPlugin(core)
       plugin.install()
 
-      URL.revokeObjectURL = jest.fn(() => null)
+      URL.revokeObjectURL = vi.fn(() => null)
 
       try {
         const file1 = { id: 1, name: 'bar.jpg', type: 'image/jpeg', data: new Blob() }
         const file2 = { id: 2, name: 'bar2.jpg', type: 'image/jpeg', data: new Blob() }
 
-        plugin.createThumbnail = jest.fn(async () => {
+        plugin.createThumbnail = vi.fn(async () => {
           await delay(50)
           return 'blob:http://uppy.io/fake-thumbnail'
         })
-        plugin.setPreviewURL = jest.fn((id, preview) => {
+        plugin.setPreviewURL = vi.fn((id, preview) => {
           if (id === 1) file1.preview = preview
           if (id === 2) file2.preview = preview
         })
@@ -177,8 +177,8 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
   describe('events', () => {
     const core = new MockCore()
     const plugin = new ThumbnailGeneratorPlugin(core)
-    plugin.createThumbnail = jest.fn((file) => delay(100).then(() => `blob:${file.id}.png`))
-    plugin.setPreviewURL = jest.fn()
+    plugin.createThumbnail = vi.fn((file) => delay(100).then(() => `blob:${file.id}.png`))
+    plugin.setPreviewURL = vi.fn()
     plugin.install()
 
     function add (file) {
@@ -219,10 +219,10 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
       const core = new MockCore()
       const plugin = new ThumbnailGeneratorPlugin(core)
 
-      plugin.createThumbnail = jest
+      plugin.createThumbnail = vi
         .fn()
         .mockReturnValue(Promise.resolve('preview'))
-      plugin.setPreviewURL = jest.fn()
+      plugin.setPreviewURL = vi.fn()
 
       const file = { id: 'file1', type: 'image/png', isRemote: false }
       return plugin.requestThumbnail(file).then(() => {
@@ -239,10 +239,10 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
       const core = new MockCore()
       const plugin = new ThumbnailGeneratorPlugin(core)
 
-      plugin.createThumbnail = jest
+      plugin.createThumbnail = vi
         .fn()
         .mockReturnValue(Promise.resolve('preview'))
-      plugin.setPreviewURL = jest.fn()
+      plugin.setPreviewURL = vi.fn()
 
       const file = { id: 'file1', type: 'text/html', isRemote: false }
       return plugin.requestThumbnail(file).then(() => {
@@ -254,10 +254,10 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
       const core = new MockCore()
       const plugin = new ThumbnailGeneratorPlugin(core)
 
-      plugin.createThumbnail = jest
+      plugin.createThumbnail = vi
         .fn()
         .mockReturnValue(Promise.resolve('preview'))
-      plugin.setPreviewURL = jest.fn()
+      plugin.setPreviewURL = vi.fn()
 
       const file = { id: 'file1', type: 'image/png', isRemote: true }
       return plugin.requestThumbnail(file).then(() => {
@@ -269,10 +269,10 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
       const core = new MockCore()
       const plugin = new ThumbnailGeneratorPlugin(core)
 
-      plugin.createThumbnail = jest
+      plugin.createThumbnail = vi
         .fn()
         .mockReturnValue(Promise.resolve('preview'))
-      plugin.setPreviewURL = jest.fn()
+      plugin.setPreviewURL = vi.fn()
 
       const file = { id: 'file1', type: 'image/png', isRemote: false }
       return plugin.requestThumbnail(file).then(() => {
@@ -295,7 +295,7 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
             },
           },
         },
-        setFileState: jest.fn(),
+        setFileState: vi.fn(),
         plugins: {},
       }
       core.state = {
@@ -362,7 +362,7 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
       URL.createObjectURL = originalURLCreateObjectURL
     })
 
-    xit('should scale down the image by the specified number of steps', () => {
+    it.skip('should scale down the image by the specified number of steps', () => {
       const core = new MockCore()
       const plugin = new ThumbnailGeneratorPlugin(core)
       const image = {
@@ -370,14 +370,14 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
         height: 800,
       }
       const context = {
-        drawImage: jest.fn(),
+        drawImage: vi.fn(),
       }
       const canvas = {
         width: 0,
         height: 0,
-        getContext: jest.fn().mockReturnValue(context),
+        getContext: vi.fn().mockReturnValue(context),
       }
-      document.createElement = jest.fn().mockReturnValue(canvas)
+      document.createElement = vi.fn().mockReturnValue(canvas)
       const result = plugin.downScaleInSteps(image, 3)
       const newImage = {
         getContext: canvas.getContext,
@@ -427,14 +427,14 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
         height: 800,
       }
       const context = {
-        drawImage: jest.fn(),
+        drawImage: vi.fn(),
       }
       const canvas = {
         width: 0,
         height: 0,
-        getContext: jest.fn().mockReturnValue(context),
+        getContext: vi.fn().mockReturnValue(context),
       }
-      document.createElement = jest.fn().mockReturnValue(canvas)
+      document.createElement = vi.fn().mockReturnValue(canvas)
 
       const result = plugin.resizeImage(image, 200, 160)
       expect(result).toEqual({
@@ -452,14 +452,14 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
         height: 80,
       }
       const context = {
-        drawImage: jest.fn(),
+        drawImage: vi.fn(),
       }
       const canvas = {
         width: 0,
         height: 0,
-        getContext: jest.fn().mockReturnValue(context),
+        getContext: vi.fn().mockReturnValue(context),
       }
-      document.createElement = jest.fn().mockReturnValue(canvas)
+      document.createElement = vi.fn().mockReturnValue(canvas)
 
       const result = plugin.resizeImage(image, 200, 160)
       expect(result).toEqual({
@@ -490,7 +490,7 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
       })
 
       const plugin = new ThumbnailGeneratorPlugin(core)
-      plugin.addToQueue = jest.fn()
+      plugin.addToQueue = vi.fn()
       plugin.install()
 
       core.emit('restored')
@@ -517,7 +517,7 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
       })
 
       const plugin = new ThumbnailGeneratorPlugin(core)
-      plugin.addToQueue = jest.fn()
+      plugin.addToQueue = vi.fn()
       plugin.install()
 
       core.emit('restored')
