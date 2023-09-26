@@ -30,7 +30,7 @@
     "nanoid": "^4.0.0"
   },
   "devDependencies": {
-    "@jest/globals": "^29.0.0",
+    "vitest": "^0.34.5",
     "whatwg-fetch": "3.6.2"
   },
   "peerDependencies": {

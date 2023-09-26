@@ -37,10 +37,10 @@
     "preact": "^10.5.13"
   },
   "devDependencies": {
-    "@jest/globals": "^29.0.0",
     "@uppy/google-drive": "workspace:^",
     "@uppy/status-bar": "workspace:^",
-    "resize-observer-polyfill": "^1.5.0"
+    "resize-observer-polyfill": "^1.5.0",
+    "vitest": "^0.34.5"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^"

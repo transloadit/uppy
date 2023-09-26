@@ -1,4 +1,4 @@
-import { describe, expect, it, jest } from '@jest/globals'
+import { describe, expect, it, vi } from 'vitest'
 import { RateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
 import Assembly from './Assembly.js'
 
@@ -7,7 +7,7 @@ describe('Transloadit/Assembly', () => {
     function attemptDiff (prev, next) {
       const assembly = new Assembly(prev, new RateLimitedQueue())
       const events = []
-      assembly.emit = jest.fn((name, ...args) => {
+      assembly.emit = vi.fn((name, ...args) => {
         events.push([name, ...args])
       })
 
