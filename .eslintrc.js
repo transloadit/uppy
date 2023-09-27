@@ -54,6 +54,12 @@ module.exports = {
       ignore: svgPresentationAttributes,
     }],
 
+    // Rules that conflict with Prettier
+    'space-before-function-paren': 'off',
+    'nonblock-statement-body-position': 'off',
+    'operator-linebreak': 'off',
+    'implicit-arrow-linebreak': 'off',
+
     // Special rules for CI:
     ...(process.env.CI && {
       // Some imports are available only after a full build, which we don't do on CI.
@@ -63,7 +69,6 @@ module.exports = {
     // rules we want to enforce
     'array-callback-return': 'error',
     'func-names': 'error',
-    'implicit-arrow-linebreak': 'error',
     'import/no-dynamic-require': 'error',
     'import/no-extraneous-dependencies': 'error',
     'max-len': 'error',

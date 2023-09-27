@@ -5,7 +5,11 @@
   "description": "Extensible JavaScript file upload widget with support for drag&drop, resumable uploads, previews, restrictions, file processing/encoding, remote providers like Instagram, Dropbox, Google Drive, S3 and more :dog:",
   "lint-staged": {
     "*.{js,mjs,cjs,jsx}": "eslint --fix",
-    "*.{ts,mts,cts,tsx}": "eslint --fix",
+    "*.{ts,mts,cts,tsx}": [
+      "eslint --fix",
+      "prettier -w"
+    ],
+    "*.{json,yaml,yml,scss,vue}": "prettier -w",
     "*.md": [
       "remark --silently-ignore -i .remarkignore -foq",
       "eslint --fix"
@@ -91,6 +95,7 @@
     "postcss-dir-pseudo-class": "^6.0.0",
     "postcss-logical": "^5.0.0",
     "pre-commit": "^1.2.2",
+    "prettier": "^3.0.3",
     "remark-cli": "^11.0.0",
     "resolve": "^1.17.0",
     "sass": "^1.29.0",
