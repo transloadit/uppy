@@ -7,7 +7,7 @@ export default function dataURItoBlob (dataURI: string, opts: { mimeType: string
   // user may provide mime type, if not get it from data URI
   const mimeType = opts.mimeType ?? dataURIData?.[1] ?? 'plain/text'
 
-  let data: BlobPart[]
+  let data!: BlobPart[] // We add `!` to tell TS we're OK with `data` being not defined when the dataURI is invalid.
   if (dataURIData?.[2] != null) {
     const binary = atob(decodeURIComponent(dataURIData[3]))
     const bytes = new Uint8Array(binary.length)
