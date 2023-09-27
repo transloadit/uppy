@@ -51,7 +51,10 @@ const isOSX = process.platform === 'darwin'
 
 const startCompanion = ({ name, port }) => {
   const cp = spawn(process.execPath, [
-    '-r', 'dotenv/config', ...(isWindows || isOSX ? ['--watch-path', 'packages/@uppy/companion/src', '--watch'] : []), './packages/@uppy/companion/src/standalone/start-server.js',
+    '-r', 'dotenv/config',
+    // Watch mode support is limited to Windows and macOS at the time of writing.
+    ...(isWindows || isOSX ? ['--watch-path', 'packages/@uppy/companion/src', '--watch'] : []),
+    './packages/@uppy/companion/src/standalone/start-server.js',
   ], {
     cwd: new URL('../', import.meta.url),
     stdio: 'inherit',
@@ -65,6 +68,7 @@ const startCompanion = ({ name, port }) => {
       COMPANION_LOGGER_PROCESS_NAME: name,
     },
   })
+  // Adding a `then` property so the return value is awaitable:
   return Object.defineProperty(cp, 'then', {
     __proto__: null,
     writable: true,
