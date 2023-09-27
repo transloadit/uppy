@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import dataURItoFile from './dataURItoFile.js'
+import dataURItoFile from './dataURItoFile.ts'
 import sampleImageDataURI from './sampleImageDataURI.js'
 
 describe('dataURItoFile', () => {
