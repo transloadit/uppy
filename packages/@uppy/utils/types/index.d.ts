@@ -96,7 +96,7 @@ declare module '@uppy/utils/lib/canvasToBlob' {
     canvas: HTMLCanvasElement,
     type: string,
     quality?: number
-  ): Promise<Blob>
+  ): Promise<Blob | null>
   export default canvasToBlob
 }
 
