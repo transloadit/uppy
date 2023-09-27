@@ -17,6 +17,7 @@ export default function dataURItoBlob (dataURI: string, opts: { mimeType: string
     data = [bytes]
   } else if (dataURIData?.[3] != null) {
     data = [decodeURIComponent(dataURIData[3])]
+  }
 
   // Convert to a File?
   if (toFile) {
