@@ -14,13 +14,13 @@ export default function delay (ms: number, opts: { signal: AbortSignal }): Promi
       resolve()
     }, ms)
 
-    function onabort () {
+    function onabort (): void {
       clearTimeout(timeout)
       cleanup() // eslint-disable-line no-use-before-define
       reject(createAbortError())
     }
     opts?.signal?.addEventListener('abort', onabort)
-    function cleanup () {
+    function cleanup (): void {
       opts?.signal?.removeEventListener('abort', onabort)
     }
     return undefined

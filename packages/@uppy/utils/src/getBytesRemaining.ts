@@ -3,6 +3,6 @@ export type FileProgress = {
   bytesUploaded: number
 }
 
-export default function getBytesRemaining (fileProgress: FileProgress) {
+export default function getBytesRemaining (fileProgress: FileProgress): number {
   return fileProgress.bytesTotal - fileProgress.bytesUploaded
 }
