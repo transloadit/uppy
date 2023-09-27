@@ -2,11 +2,8 @@ import isDOMElement from './isDOMElement.ts'
 
 /**
  * Find a DOM element.
- *
- * @param {Node|string} element
- * @returns {Node|null}
  */
-export default function findDOMElement (element, context = document) {
+export default function findDOMElement (element: Node | string, context = document): Node | null {
   if (typeof element === 'string') {
     return context.querySelector(element)
   }
