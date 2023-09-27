@@ -21,8 +21,8 @@ export default function dataURItoBlob (dataURI: string, opts: { mimeType: string
 
   // Convert to a File?
   if (toFile) {
-    return new File([data], opts.name || '', { type: mimeType })
+    return new File(data, opts.name || '', { type: mimeType })
   }
 
-  return new Blob([data], { type: mimeType })
+  return new Blob(data, { type: mimeType })
 }
