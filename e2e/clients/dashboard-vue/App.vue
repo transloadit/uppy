@@ -13,10 +13,10 @@ export default {
     Dashboard,
   },
   computed: {
-    uppy: () => new Uppy()
+    uppy: () => new Uppy(),
   },
 }
 </script>
 
-<style src='@uppy/core/dist/style.css'></style> 
-<style src='@uppy/dashboard/dist/style.css'></style> 
+<style src="@uppy/core/dist/style.css"></style>
+<style src="@uppy/dashboard/dist/style.css"></style>

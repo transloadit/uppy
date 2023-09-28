@@ -4,7 +4,7 @@
 // Version 1.5.2
 // MIT License
 
-@use "sass:math";
+@use 'sass:math';
 
 $track-color: rgba(#fff, 0.2);
 $thumb-color: #fff;
@@ -32,7 +32,9 @@ $contrast: 5%;
 $ie-bottom-track-color: darken($track-color, $contrast);
 
 @mixin shadow($shadow-size, $shadow-blur, $shadow-color) {
-  box-shadow: $shadow-size $shadow-size $shadow-blur $shadow-color, 0 0 $shadow-size lighten($shadow-color, 5%);
+  box-shadow:
+    $shadow-size $shadow-size $shadow-blur $shadow-color,
+    0 0 $shadow-size lighten($shadow-color, 5%);
 }
 
 @mixin track {
@@ -82,7 +84,11 @@ $ie-bottom-track-color: darken($track-color, $contrast);
 
   &::-webkit-slider-runnable-track {
     @include track;
-    @include shadow($track-shadow-size, $track-shadow-blur, $track-shadow-color);
+    @include shadow(
+      $track-shadow-size,
+      $track-shadow-blur,
+      $track-shadow-color
+    );
 
     background: $track-color;
     border: $track-border-width solid $track-border-color;
@@ -92,12 +98,21 @@ $ie-bottom-track-color: darken($track-color, $contrast);
   &::-webkit-slider-thumb {
     @include thumb;
 
-    margin-top: (math.div((-$track-border-width * 2 + $track-height), 2) - math.div($thumb-height, 2));
+    margin-top: (
+      math.div((-$track-border-width * 2 + $track-height), 2) - math.div(
+          $thumb-height,
+          2
+        )
+    );
     -webkit-appearance: none;
   }
 
   &::-moz-range-track {
-    @include shadow($track-shadow-size, $track-shadow-blur, $track-shadow-color);
+    @include shadow(
+      $track-shadow-size,
+      $track-shadow-blur,
+      $track-shadow-color
+    );
     @include track;
 
     height: $track-height;
@@ -120,7 +135,11 @@ $ie-bottom-track-color: darken($track-color, $contrast);
   }
 
   &::-ms-fill-lower {
-    @include shadow($track-shadow-size, $track-shadow-blur, $track-shadow-color);
+    @include shadow(
+      $track-shadow-size,
+      $track-shadow-blur,
+      $track-shadow-color
+    );
 
     background: $ie-bottom-track-color;
     border: $track-border-width solid $track-border-color;
@@ -128,7 +147,11 @@ $ie-bottom-track-color: darken($track-color, $contrast);
   }
 
   &::-ms-fill-upper {
-    @include shadow($track-shadow-size, $track-shadow-blur, $track-shadow-color);
+    @include shadow(
+      $track-shadow-size,
+      $track-shadow-blur,
+      $track-shadow-color
+    );
 
     background: $track-color;
     border: $track-border-width solid $track-border-color;
