@@ -1,6 +1,6 @@
 import * as Uppy from '..'
+// eslint-disable-next-line import/newline-after-import
 ;(() => {
-  // eslint-disable-line import/newline-after-import
   const uppy = new Uppy.Uppy({ autoProceed: false })
   uppy.use(Uppy.Dashboard, { trigger: '#up_load_file_01' })
   uppy.use(Uppy.DragDrop, { target: '#ttt' })
