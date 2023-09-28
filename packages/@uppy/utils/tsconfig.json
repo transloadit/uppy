@@ -4,12 +4,7 @@
     "allowJs": true,
     "outDir": "./tsOut"
   },
-  "include": [
-    "./package.json",
-    "./src/**/*.*"
-  ],
-  "exclude": [
-    "./src/**/*.test.*"
-  ],
+  "include": ["./package.json", "./src/**/*.*"],
+  "exclude": ["./src/**/*.test.*"],
   "references": []
 }

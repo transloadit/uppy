@@ -1,8 +1,8 @@
 const DATA_URL_PATTERN = /^data:([^/]+\/[^,;]+(?:[^,]*?))(;base64)?,([\s\S]*)$/
 
-export default function dataURItoBlob (
+export default function dataURItoBlob(
   dataURI: string,
-  opts: { mimeType?: string, name?: string },
+  opts: { mimeType?: string; name?: string },
   toFile: boolean,
 ): Blob | File {
   // get the base64 data
