@@ -72,12 +72,20 @@ describe('Dashboard with @uppy/aws-s3-multipart', () => {
     cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Upload failed')
 
     cy.intercept('POST', '/s3/multipart', { statusCode: 200, times: 1, body: JSON.stringify({ key:'mocked-key-attempt3', uploadId:'mocked-uploadId-attempt3' }) }).as('createMultipartUpload-attempt3')
-    cy.intercept('GET', '/s3/multipart/mocked-uploadId-attempt3/1?key=mocked-key-attempt3', {
-      statusCode: 200,
-      headers: {
-        ETag: 'ETag-attempt3',
-      },
-      body: JSON.stringify({ url:'/put-success-attempt3', expires:8 }),
+    let intercepted = 0
+    cy.intercept('GET', '/s3/multipart/mocked-uploadId-attempt3/1?key=mocked-key-attempt3', (req) => {
+      if (intercepted++ < 2) {
+        // Ensure that Uppy can recover from at least 2 network errors at this stage.
+        req.destroy()
+        return
+      }
+      req.reply({
+        statusCode: 200,
+        headers: {
+          ETag: 'ETag-attempt3',
+        },
+        body: JSON.stringify({ url:'/put-success-attempt3', expires:8 }),
+      })
     }).as('signPart-attempt3')
     cy.intercept('PUT', '/put-success-attempt3', {
       statusCode: 200,
@@ -92,7 +100,7 @@ describe('Dashboard with @uppy/aws-s3-multipart', () => {
       }),
     }).as('completeMultipartUpload-attempt3')
     cy.get('.uppy-StatusBar-actions > .uppy-c-btn').click()
-    cy.wait(['@createMultipartUpload-attempt3', '@signPart-attempt3', '@put-attempt3', '@completeMultipartUpload-attempt3'])
+    cy.wait(['@createMultipartUpload-attempt3', ...Array(3).fill('@signPart-attempt3'), '@put-attempt3', '@completeMultipartUpload-attempt3'])
     cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Complete')
   })
 
