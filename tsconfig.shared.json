@@ -5,10 +5,7 @@
     "target": "ESnext",
     "module": "ESNext",
     "moduleResolution": "Bundler",
-    "lib": [
-        "dom",
-        "ESnext"
-    ],
+    "lib": ["dom", "ESnext"],
     "resolveJsonModule": true,
     "allowImportingTsExtensions": true,
     "allowJs": false,
@@ -25,5 +22,5 @@
     "allowSyntheticDefaultImports": false,
     "strictFunctionTypes": true,
     "forceConsistentCasingInFileNames": true
-  },
+  }
 }
