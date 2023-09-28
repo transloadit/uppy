@@ -11,7 +11,7 @@
   align-items: center;
   justify-content: center;
 
-  [data-uppy-theme="dark"] & {
+  [data-uppy-theme='dark'] & {
     background-color: $gray-900;
   }
 }
@@ -51,7 +51,7 @@
     font-size: 20px;
   }
 
-  [data-uppy-theme="dark"] & {
+  [data-uppy-theme='dark'] & {
     color: $gray-300;
   }
 }
@@ -60,15 +60,15 @@
   display: flex;
   align-items: center;
   padding: 8px 12px !important;
-  background: #4285F4;
+  background: #4285f4;
 
   &:hover {
-    background-color: darken(#4285F4, 10%);
+    background-color: darken(#4285f4, 10%);
   }
 
   &:focus {
     outline: none;
-    box-shadow: 0 0 0 3px rgba(#4285F4, 0.4);
+    box-shadow: 0 0 0 3px rgba(#4285f4, 0.4);
   }
 
   svg {
@@ -87,7 +87,7 @@
     margin-bottom: 0;
   }
 
-  [data-uppy-theme="dark"] & {
+  [data-uppy-theme='dark'] & {
     color: $gray-200;
   }
 }
@@ -130,7 +130,7 @@
     cursor: pointer;
   }
 
-  [data-uppy-theme="dark"] & {
+  [data-uppy-theme='dark'] & {
     color: $gray-200;
   }
 }
@@ -150,7 +150,7 @@
   color: $gray-800;
   font-weight: 500;
 
-  [data-uppy-theme="dark"] & {
+  [data-uppy-theme='dark'] & {
     color: $gray-200;
   }
 }
@@ -168,7 +168,7 @@
   z-index: $zIndex-2;
   border-bottom: 1px solid $gray-200;
 
-  [data-uppy-theme="dark"] & {
+  [data-uppy-theme='dark'] & {
     border-bottom: 1px solid $gray-800;
   }
 }
@@ -186,7 +186,7 @@
     align-items: center;
   }
 
-  [data-uppy-theme="dark"] & {
+  [data-uppy-theme='dark'] & {
     background-color: $gray-900;
   }
 }
@@ -236,7 +236,7 @@
     display: none;
   }
 
-  [data-uppy-theme="dark"] & {
+  [data-uppy-theme='dark'] & {
     color: $gray-200;
     background-color: $gray-900;
   }
@@ -246,7 +246,7 @@
   background-color: $gray-300;
   border: 0;
 
-  [data-uppy-theme="dark"] & {
+  [data-uppy-theme='dark'] & {
     background-color: $gray-800;
   }
 }
@@ -299,7 +299,7 @@
     text-decoration: underline;
   }
 
-  [data-uppy-theme="dark"] & {
+  [data-uppy-theme='dark'] & {
     color: $gray-200;
   }
 }
@@ -328,7 +328,7 @@
   border-spacing: 0;
   -webkit-overflow-scrolling: touch;
 
-  [data-uppy-theme="dark"] & {
+  [data-uppy-theme='dark'] & {
     background-color: $gray-900;
   }
 
@@ -355,7 +355,7 @@
     margin-inline-end: 8px;
   }
 
-  [data-uppy-theme="dark"] & {
+  [data-uppy-theme='dark'] & {
     background-color: $gray-900;
     border-top: 1px solid $gray-800;
   }

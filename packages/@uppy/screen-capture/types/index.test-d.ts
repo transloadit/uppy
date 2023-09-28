@@ -12,8 +12,10 @@ new Uppy().use(ScreenCapture, {
     video: { displaySurface: 'window' },
   },
 })
-expectError(new Uppy().use(ScreenCapture, {
-  displayMediaConstraints: {
-    video: { displaySurface: 'some nonsense' },
-  },
-}))
+expectError(
+  new Uppy().use(ScreenCapture, {
+    displayMediaConstraints: {
+      video: { displaySurface: 'some nonsense' },
+    },
+  }),
+)
