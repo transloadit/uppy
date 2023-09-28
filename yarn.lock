@@ -8673,14 +8673,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:^17":
-  version: 17.0.49
-  resolution: "@types/react@npm:17.0.49"
+"@types/react@npm:^18.0.0, @types/react@npm:^18.0.8, @types/react@npm:^18.2.23":
+  version: 18.2.23
+  resolution: "@types/react@npm:18.2.23"
   dependencies:
     "@types/prop-types": "*"
     "@types/scheduler": "*"
     csstype: ^3.0.2
-  checksum: e2e8001bb16fdf52dc92dbc2f64c8e49b1c6ab5d5da4725c0f27e3d925939e42b835554fecc306ca6b0951801eb784288b63c924bd703834662bbaccf89cb68a
+  checksum: efb9d1ed1940c0e7ba08a21ffba5e266d8dbbb8fe618cfb97bc902dfc96385fdd8189e3f7f64b4aa13134f8e61947d60560deb23be151253c3a97b0d070897ca
   languageName: node
   linkType: hard
 
@@ -9374,8 +9374,8 @@ __metadata:
     expo-file-system: ~13.0.3
     expo-status-bar: ~1.1.0
     preact-render-to-string: ^5.1.0
-    react: 17.0.1
-    react-dom: 17.0.1
+    react: ^18.1.0
+    react-dom: ^18.1.0
     react-native: 0.64.3
     react-native-web: 0.17.1
   languageName: unknown
@@ -14782,6 +14782,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "e2e@workspace:e2e"
   dependencies:
+    "@types/react": ^18.2.23
     "@uppy/audio": "workspace:^"
     "@uppy/aws-s3": "workspace:^"
     "@uppy/aws-s3-multipart": "workspace:^"
@@ -26689,19 +26690,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:17.0.1":
-  version: 17.0.1
-  resolution: "react-dom@npm:17.0.1"
-  dependencies:
-    loose-envify: ^1.1.0
-    object-assign: ^4.1.1
-    scheduler: ^0.20.1
-  peerDependencies:
-    react: 17.0.1
-  checksum: df2af300dd4f49a5daaccc38f5a307def2a9ae2b7ebffa3dce8fb9986129057696b86a2c94e5ae36133057c69428c500e4ee3bf5884eb44e5632ace8b7ace41f
-  languageName: node
-  linkType: hard
-
 "react-dom@npm:^18.0.0, react-dom@npm:^18.1.0":
   version: 18.2.0
   resolution: "react-dom@npm:18.2.0"
@@ -26845,16 +26833,6 @@ __metadata:
   version: 0.9.0
   resolution: "react-refresh@npm:0.9.0"
   checksum: 6440146176f19402ffb7d66f317e40b1c42c88579b4d439b49021e38be6307c642da3e8732a72e6997b6bb1127db0da92f4aa433da4313ce8ebad0c1efa2ed4a
-  languageName: node
-  linkType: hard
-
-"react@npm:17.0.1":
-  version: 17.0.1
-  resolution: "react@npm:17.0.1"
-  dependencies:
-    loose-envify: ^1.1.0
-    object-assign: ^4.1.1
-  checksum: 83b9df9529a2b489f00a4eaa608fc7d55518b258e046c100344ae068713e43ae64e477a140f87e38cfe75489bcfd26d27fce5818f89f4ec41bdbda7ead4bb426
   languageName: node
   linkType: hard
 
