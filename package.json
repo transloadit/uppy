@@ -9,7 +9,7 @@
       "eslint --fix",
       "prettier -w"
     ],
-    "*.{json,yaml,yml,scss,vue}": "prettier -w",
+    "*.{css,html,json,scss,vue,yaml,yml}": "prettier -w",
     "*.md": [
       "remark --silently-ignore -i .remarkignore -foq",
       "eslint --fix"
