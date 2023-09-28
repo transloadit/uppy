@@ -7,6 +7,7 @@
   "json": {
   },
   "excludes": [
+    "**/angular/**",
     "**/*.js",
     "**/*.jsx",
     "**/*.cjs",
