@@ -4136,6 +4136,48 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@dprint/darwin-arm64@npm:0.41.0":
+  version: 0.41.0
+  resolution: "@dprint/darwin-arm64@npm:0.41.0"
+  conditions: os=darwin & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@dprint/darwin-x64@npm:0.41.0":
+  version: 0.41.0
+  resolution: "@dprint/darwin-x64@npm:0.41.0"
+  conditions: os=darwin & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@dprint/linux-arm64-glibc@npm:0.41.0":
+  version: 0.41.0
+  resolution: "@dprint/linux-arm64-glibc@npm:0.41.0"
+  conditions: os=linux & cpu=arm64 & libc=glibc
+  languageName: node
+  linkType: hard
+
+"@dprint/linux-x64-glibc@npm:0.41.0":
+  version: 0.41.0
+  resolution: "@dprint/linux-x64-glibc@npm:0.41.0"
+  conditions: os=linux & cpu=x64 & libc=glibc
+  languageName: node
+  linkType: hard
+
+"@dprint/linux-x64-musl@npm:0.41.0":
+  version: 0.41.0
+  resolution: "@dprint/linux-x64-musl@npm:0.41.0"
+  conditions: os=linux & cpu=x64 & libc=musl
+  languageName: node
+  linkType: hard
+
+"@dprint/win32-x64@npm:0.41.0":
+  version: 0.41.0
+  resolution: "@dprint/win32-x64@npm:0.41.0"
+  conditions: os=win32 & cpu=x64
+  languageName: node
+  linkType: hard
+
 "@es-joy/jsdoccomment@npm:~0.37.0":
   version: 0.37.0
   resolution: "@es-joy/jsdoccomment@npm:0.37.0"
@@ -9042,6 +9084,7 @@ __metadata:
     core-js: ~3.24.0
     cssnano: ^5.0.6
     dotenv: ^16.0.0
+    dprint: ^0.41.0
     esbuild: ^0.17.1
     esbuild-plugin-babel: ^0.2.3
     eslint: ^8.0.0
@@ -14767,6 +14810,35 @@ __metadata:
   version: 10.0.0
   resolution: "dotenv@npm:10.0.0"
   checksum: f412c5fe8c24fbe313d302d2500e247ba8a1946492db405a4de4d30dd0eb186a88a43f13c958c5a7de303938949c4231c56994f97d05c4bc1f22478d631b4005
+  languageName: node
+  linkType: hard
+
+"dprint@npm:^0.41.0":
+  version: 0.41.0
+  resolution: "dprint@npm:0.41.0"
+  dependencies:
+    "@dprint/darwin-arm64": 0.41.0
+    "@dprint/darwin-x64": 0.41.0
+    "@dprint/linux-arm64-glibc": 0.41.0
+    "@dprint/linux-x64-glibc": 0.41.0
+    "@dprint/linux-x64-musl": 0.41.0
+    "@dprint/win32-x64": 0.41.0
+  dependenciesMeta:
+    "@dprint/darwin-arm64":
+      optional: true
+    "@dprint/darwin-x64":
+      optional: true
+    "@dprint/linux-arm64-glibc":
+      optional: true
+    "@dprint/linux-x64-glibc":
+      optional: true
+    "@dprint/linux-x64-musl":
+      optional: true
+    "@dprint/win32-x64":
+      optional: true
+  bin:
+    dprint: bin.js
+  checksum: 51248c88707201f2fd26d4214b04ebfb4f4510de3b378729b9b6ba9d52b52cd31b0b4603e294ca516bcbd33322fc3b1623078b2fc4d8f37af3fbbefcba187d2b
   languageName: node
   linkType: hard
 

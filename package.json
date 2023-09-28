@@ -59,6 +59,7 @@
     "core-js": "~3.24.0",
     "cssnano": "^5.0.6",
     "dotenv": "^16.0.0",
+    "dprint": "^0.41.0",
     "esbuild": "^0.17.1",
     "esbuild-plugin-babel": "^0.2.3",
     "eslint": "^8.0.0",
