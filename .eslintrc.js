@@ -8,7 +8,7 @@ const svgPresentationAttributes = [
 
 module.exports = {
   root: true,
-  extends: ['transloadit'],
+  extends: ['transloadit', 'prettier'],
   env: {
     es6: true,
     jest: true,
@@ -63,7 +63,6 @@ module.exports = {
     // rules we want to enforce
     'array-callback-return': 'error',
     'func-names': 'error',
-    'implicit-arrow-linebreak': 'error',
     'import/no-dynamic-require': 'error',
     'import/no-extraneous-dependencies': 'error',
     'max-len': 'error',
@@ -142,6 +141,7 @@ module.exports = {
     {
       files: [
         '*.jsx',
+        '*.tsx',
         'packages/@uppy/react-native/**/*.js',
       ],
       parser: 'espree',
@@ -358,6 +358,7 @@ module.exports = {
         'test/**/*.ts',
         '*.test.js',
         '*.test-d.ts',
+        '*.test-d.tsx',
         'postcss.config.js',
         '.eslintrc.js',
         'private/**/*.js',
@@ -481,9 +482,21 @@ module.exports = {
       },
     },
     {
-      files: ['**/react/*.md/*.js', '**/react.md/*.js', '**/react-*.md/*.js'],
+      files: ['**/react/*.md/*.js', '**/react.md/*.js', '**/react-*.md/*.js', '**/react/**/*.test-d.tsx'],
       settings: {
         react: { pragma: 'React' },
+      },
+    },
+    {
+      files: ['**/react/**/*.test-d.tsx'],
+      rules: {
+        'import/extensions': 'off',
+        'import/no-useless-path-segments': 'off',
+        'no-alert': 'off',
+        'no-inner-declarations': 'off',
+        'no-lone-blocks': 'off',
+        'no-unused-expressions': 'off',
+        'no-unused-vars': 'off',
       },
     },
     {

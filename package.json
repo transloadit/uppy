@@ -5,7 +5,12 @@
   "description": "Extensible JavaScript file upload widget with support for drag&drop, resumable uploads, previews, restrictions, file processing/encoding, remote providers like Instagram, Dropbox, Google Drive, S3 and more :dog:",
   "lint-staged": {
     "*.{js,mjs,cjs,jsx}": "eslint --fix",
-    "*.{ts,mts,cts,tsx}": "eslint --fix",
+    "*.{ts,mts,cts,tsx}": [
+      "eslint --fix",
+      "prettier -w",
+      "eslint"
+    ],
+    "*.{css,html,json,scss,vue,yaml,yml}": "prettier -w",
     "*.md": [
       "remark --silently-ignore -i .remarkignore -foq",
       "eslint --fix"
@@ -62,6 +67,7 @@
     "esbuild": "^0.17.1",
     "esbuild-plugin-babel": "^0.2.3",
     "eslint": "^8.0.0",
+    "eslint-config-prettier": "^9.0.0",
     "eslint-config-transloadit": "^2.0.0",
     "eslint-plugin-compat": "^4.0.0",
     "eslint-plugin-cypress": "^2.12.1",
@@ -91,6 +97,7 @@
     "postcss-dir-pseudo-class": "^6.0.0",
     "postcss-logical": "^5.0.0",
     "pre-commit": "^1.2.2",
+    "prettier": "^3.0.3",
     "remark-cli": "^11.0.0",
     "resolve": "^1.17.0",
     "sass": "^1.29.0",
@@ -123,7 +130,7 @@
     "dev:with-companion": "npm-run-all --parallel start:companion dev",
     "dev": "yarn workspace @uppy-dev/dev dev",
     "lint:fix": "yarn run lint -- --fix",
-    "lint:markdown": "remark -f -q . -i .remarkignore",
+    "lint:markdown": "remark -f -q -i .remarkignore . .github/CONTRIBUTING.md",
     "lint:staged": "lint-staged",
     "lint:css": "stylelint ./packages/**/*.scss",
     "lint:css:fix": "stylelint ./packages/**/*.scss --fix",
