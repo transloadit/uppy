@@ -66,6 +66,7 @@
     "esbuild": "^0.17.1",
     "esbuild-plugin-babel": "^0.2.3",
     "eslint": "^8.0.0",
+    "eslint-config-prettier": "^9.0.0",
     "eslint-config-transloadit": "^2.0.0",
     "eslint-plugin-compat": "^4.0.0",
     "eslint-plugin-cypress": "^2.12.1",

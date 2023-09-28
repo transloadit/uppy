@@ -9045,6 +9045,7 @@ __metadata:
     esbuild: ^0.17.1
     esbuild-plugin-babel: ^0.2.3
     eslint: ^8.0.0
+    eslint-config-prettier: ^9.0.0
     eslint-config-transloadit: ^2.0.0
     eslint-plugin-compat: ^4.0.0
     eslint-plugin-cypress: ^2.12.1
@@ -15776,6 +15777,17 @@ __metadata:
     eslint-plugin-react: ^7.21.5
     eslint-plugin-react-hooks: ^4 || ^3 || ^2.3.0 || ^1.7.0
   checksum: ea11cd0006912f7086fb278e03180da4bc2378cf4e93b1dd970775d8e9b50fd11a64209bdc0ed17654d29abe4ccfa19baa4d1e1e5bd3eb660fcf4798ba2810d2
+  languageName: node
+  linkType: hard
+
+"eslint-config-prettier@npm:^9.0.0":
+  version: 9.0.0
+  resolution: "eslint-config-prettier@npm:9.0.0"
+  peerDependencies:
+    eslint: ">=7.0.0"
+  bin:
+    eslint-config-prettier: bin/cli.js
+  checksum: 362e991b6cb343f79362bada2d97c202e5303e6865888918a7445c555fb75e4c078b01278e90be98aa98ae22f8597d8e93d48314bec6824f540f7efcab3ce451
   languageName: node
   linkType: hard
 

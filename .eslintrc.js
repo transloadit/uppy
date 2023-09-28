@@ -8,7 +8,7 @@ const svgPresentationAttributes = [
 
 module.exports = {
   root: true,
-  extends: ['transloadit'],
+  extends: ['transloadit', 'prettier'],
   env: {
     es6: true,
     jest: true,
@@ -53,12 +53,6 @@ module.exports = {
     'react/no-unknown-property': ['error', {
       ignore: svgPresentationAttributes,
     }],
-
-    // Rules that conflict with Prettier
-    'space-before-function-paren': 'off',
-    'nonblock-statement-body-position': 'off',
-    'operator-linebreak': 'off',
-    'implicit-arrow-linebreak': 'off',
 
     // Special rules for CI:
     ...(process.env.CI && {
