@@ -7,7 +7,8 @@
     "*.{js,mjs,cjs,jsx}": "eslint --fix",
     "*.{ts,mts,cts,tsx}": [
       "eslint --fix",
-      "prettier -w"
+      "prettier -w",
+      "eslint"
     ],
     "*.{css,html,json,scss,vue,yaml,yml}": "prettier -w",
     "*.md": [
