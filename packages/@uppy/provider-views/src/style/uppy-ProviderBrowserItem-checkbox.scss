@@ -23,14 +23,14 @@
     cursor: default;
   }
 
-  [data-uppy-theme="dark"] & {
+  [data-uppy-theme='dark'] & {
     background-color: $gray-900;
     border-color: $gray-500;
   }
 }
 
 .uppy-ProviderBrowserItem-checkbox--is-checked {
-  [data-uppy-theme="dark"] & {
+  [data-uppy-theme='dark'] & {
     background-color: $gray-800;
   }
 }

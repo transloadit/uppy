@@ -1,32 +1,39 @@
 <!doctype html>
 <html>
   <head>
-    <meta charset="utf-8">
+    <meta charset="utf-8" />
     <title>Uppy – AWS upload example</title>
-    <link href="https://releases.transloadit.com/uppy/v3.16.0/uppy.min.css" rel="stylesheet">
+    <link
+      href="https://releases.transloadit.com/uppy/v3.17.0/uppy.min.css"
+      rel="stylesheet"
+    />
   </head>
   <body>
     <h1>AWS upload example</h1>
     <div id="uppy"></div>
     <script type="module">
-      import { Uppy, Dashboard, AwsS3 } from "https://releases.transloadit.com/uppy/v3.16.0/uppy.min.mjs"
+      import {
+        Uppy,
+        Dashboard,
+        AwsS3,
+      } from 'https://releases.transloadit.com/uppy/v3.17.0/uppy.min.mjs'
       /**
        * This generator transforms a deep object into URL-encodable pairs
        * to work with `URLSearchParams` on the client and `body-parser` on the server.
        */
       function* serializeSubPart(key, value) {
-        if (typeof value !== "object") {
-          yield [key, value];
-          return;
+        if (typeof value !== 'object') {
+          yield [key, value]
+          return
         }
         if (Array.isArray(value)) {
           for (const val of value) {
-            yield* serializeSubPart(`${key}[]`, val);
+            yield* serializeSubPart(`${key}[]`, val)
           }
-          return;
+          return
         }
         for (const [subkey, val] of Object.entries(value)) {
-          yield* serializeSubPart(key ? `${key}[${subkey}]` : subkey, val);
+          yield* serializeSubPart(key ? `${key}[${subkey}]` : subkey, val)
         }
       }
       function serialize(data) {
@@ -37,7 +44,7 @@
         // You'd also have to add `Content-Type` header with value `application/json`.
       }
       {
-        const MiB = 0x10_00_00;
+        const MiB = 0x10_00_00
 
         const uppy = new Uppy()
           .use(Dashboard, {
@@ -54,10 +61,11 @@
              * This method tells Uppy how to retrieve a temporary token for signing on the client.
              * Signing on the client is optional, you can also do the signing from the server.
              */
-            async getTemporarySecurityCredentials({signal}) {
-                const response = await fetch('/sts', { signal })
-                if (!response.ok) throw new Error('Unsuccessful request', { cause: response })
-                return response.json()
+            async getTemporarySecurityCredentials({ signal }) {
+              const response = await fetch('/sts', { signal })
+              if (!response.ok)
+                throw new Error('Unsuccessful request', { cause: response })
+              return response.json()
             },
 
             // ========== Non-Multipart Uploads ==========
@@ -67,10 +75,12 @@
              * If for some reason you want to only support multipart uploads,
              * you don't need to implement it.
              */
-            async getUploadParameters (file, options) {
+            async getUploadParameters(file, options) {
               if (typeof crypto?.subtle === 'object') {
                 // If WebCrypto is available, let's do signing from the client.
-                return uppy.getPlugin('myAWSPlugin').createSignedURL(file, options)
+                return uppy
+                  .getPlugin('myAWSPlugin')
+                  .createSignedURL(file, options)
               }
 
               // Send a request to our Express.js signing endpoint.
@@ -86,7 +96,8 @@
                 signal: options.signal,
               })
 
-              if (!response.ok) throw new Error('Unsuccessful request', { cause: response })
+              if (!response.ok)
+                throw new Error('Unsuccessful request', { cause: response })
 
               // Parse the JSON response.
               const data = await response.json()
@@ -111,14 +122,22 @@
 
             async createMultipartUpload(file, signal) {
               if (signal?.aborted) {
-                const err = new DOMException('The operation was aborted', 'AbortError')
-                Object.defineProperty(err, 'cause', { __proto__: null, configurable: true, writable: true, value: signal.reason })
+                const err = new DOMException(
+                  'The operation was aborted',
+                  'AbortError',
+                )
+                Object.defineProperty(err, 'cause', {
+                  __proto__: null,
+                  configurable: true,
+                  writable: true,
+                  value: signal.reason,
+                })
                 throw err
               }
 
               const metadata = {}
 
-              Object.keys(file.meta || {}).forEach(key => {
+              Object.keys(file.meta || {}).forEach((key) => {
                 if (file.meta[key] != null) {
                   metadata[key] = file.meta[key].toString()
                 }
@@ -138,7 +157,8 @@
                 signal,
               })
 
-              if (!response.ok) throw new Error('Unsuccessful request', { cause: response })
+              if (!response.ok)
+                throw new Error('Unsuccessful request', { cause: response })
 
               // Parse the JSON response.
               const data = await response.json()
@@ -146,94 +166,148 @@
               return data
             },
 
-            async abortMultipartUpload (file, { key, uploadId }, signal) {
+            async abortMultipartUpload(file, { key, uploadId }, signal) {
               const filename = encodeURIComponent(key)
               const uploadIdEnc = encodeURIComponent(uploadId)
-              const response = await fetch(`/s3/multipart/${uploadIdEnc}?key=${filename}`, {
-                method: 'DELETE',
-                signal,
-              })
-              
-              if (!response.ok) throw new Error('Unsuccessful request', { cause: response })
+              const response = await fetch(
+                `/s3/multipart/${uploadIdEnc}?key=${filename}`,
+                {
+                  method: 'DELETE',
+                  signal,
+                },
+              )
+
+              if (!response.ok)
+                throw new Error('Unsuccessful request', { cause: response })
             },
 
-            async signPart (file, options) {
+            async signPart(file, options) {
               if (typeof crypto?.subtle === 'object') {
                 // If WebCrypto, let's do signing from the client.
-                return uppy.getPlugin('myAWSPlugin').createSignedURL(file, options)
+                return uppy
+                  .getPlugin('myAWSPlugin')
+                  .createSignedURL(file, options)
               }
 
               const { uploadId, key, partNumber, signal } = options
 
               if (signal?.aborted) {
-                const err = new DOMException('The operation was aborted', 'AbortError')
-                Object.defineProperty(err, 'cause', { __proto__: null, configurable: true, writable: true, value: signal.reason })
+                const err = new DOMException(
+                  'The operation was aborted',
+                  'AbortError',
+                )
+                Object.defineProperty(err, 'cause', {
+                  __proto__: null,
+                  configurable: true,
+                  writable: true,
+                  value: signal.reason,
+                })
                 throw err
               }
 
               if (uploadId == null || key == null || partNumber == null) {
-                throw new Error('Cannot sign without a key, an uploadId, and a partNumber')
+                throw new Error(
+                  'Cannot sign without a key, an uploadId, and a partNumber',
+                )
               }
 
               const filename = encodeURIComponent(key)
-              const response = await fetch(`/s3/multipart/${uploadId}/${partNumber}?key=${filename}`, { signal })
+              const response = await fetch(
+                `/s3/multipart/${uploadId}/${partNumber}?key=${filename}`,
+                { signal },
+              )
 
-              if (!response.ok) throw new Error('Unsuccessful request', { cause: response })
+              if (!response.ok)
+                throw new Error('Unsuccessful request', { cause: response })
 
               const data = await response.json()
 
               return data
             },
 
-            async listParts (file, { key, uploadId }, signal) {
+            async listParts(file, { key, uploadId }, signal) {
               if (signal?.aborted) {
-                const err = new DOMException('The operation was aborted', 'AbortError')
-                Object.defineProperty(err, 'cause', { __proto__: null, configurable: true, writable: true, value: signal.reason })
+                const err = new DOMException(
+                  'The operation was aborted',
+                  'AbortError',
+                )
+                Object.defineProperty(err, 'cause', {
+                  __proto__: null,
+                  configurable: true,
+                  writable: true,
+                  value: signal.reason,
+                })
                 throw err
               }
 
               const filename = encodeURIComponent(key)
-              const response = await fetch(`/s3/multipart/${uploadId}?key=${filename}`, { signal })
+              const response = await fetch(
+                `/s3/multipart/${uploadId}?key=${filename}`,
+                { signal },
+              )
 
-              if (!response.ok) throw new Error('Unsuccessful request', { cause: response })
+              if (!response.ok)
+                throw new Error('Unsuccessful request', { cause: response })
 
               const data = await response.json()
 
               return data
             },
 
-            async completeMultipartUpload (file, { key, uploadId, parts }, signal) {
+            async completeMultipartUpload(
+              file,
+              { key, uploadId, parts },
+              signal,
+            ) {
               if (signal?.aborted) {
-                const err = new DOMException('The operation was aborted', 'AbortError')
-                Object.defineProperty(err, 'cause', { __proto__: null, configurable: true, writable: true, value: signal.reason })
+                const err = new DOMException(
+                  'The operation was aborted',
+                  'AbortError',
+                )
+                Object.defineProperty(err, 'cause', {
+                  __proto__: null,
+                  configurable: true,
+                  writable: true,
+                  value: signal.reason,
+                })
                 throw err
               }
 
               const filename = encodeURIComponent(key)
               const uploadIdEnc = encodeURIComponent(uploadId)
-              const response = await fetch(`s3/multipart/${uploadIdEnc}/complete?key=${filename}`, {
-                method: 'POST',
-                headers: {
-                  accept: 'application/json',
+              const response = await fetch(
+                `s3/multipart/${uploadIdEnc}/complete?key=${filename}`,
+                {
+                  method: 'POST',
+                  headers: {
+                    accept: 'application/json',
+                  },
+                  body: serialize({ parts }),
+                  signal,
                 },
-                body: serialize({ parts }),
-                signal,
-              })
+              )
 
-              if (!response.ok) throw new Error('Unsuccessful request', { cause: response })
+              if (!response.ok)
+                throw new Error('Unsuccessful request', { cause: response })
 
               const data = await response.json()
 
               return data
             },
           })
-        
+
         uppy.on('complete', (result) => {
-          console.log('Upload complete! We’ve uploaded these files:', result.successful)
+          console.log(
+            'Upload complete! We’ve uploaded these files:',
+            result.successful,
+          )
         })
-        
+
         uppy.on('upload-success', (file, data) => {
-          console.log('Upload success! We’ve uploaded this file:', file.meta['name'])
+          console.log(
+            'Upload success! We’ve uploaded this file:',
+            file.meta['name'],
+          )
         })
       }
     </script>

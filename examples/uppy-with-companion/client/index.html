@@ -1,21 +1,36 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <title></title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://releases.transloadit.com/uppy/v3.16.0/uppy.min.css" rel="stylesheet">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      href="https://releases.transloadit.com/uppy/v3.17.0/uppy.min.css"
+      rel="stylesheet"
+    />
   </head>
   <body>
     <button id="uppyModalOpener">Open Modal</button>
     <noscript>This web page requires JavaScript to work properly.</noscript>
     <script type="module">
-      import { Uppy, Dashboard, Instagram, GoogleDrive, Tus } from "https://releases.transloadit.com/uppy/v3.16.0/uppy.min.mjs"
+      import {
+        Uppy,
+        Dashboard,
+        Instagram,
+        GoogleDrive,
+        Tus,
+      } from 'https://releases.transloadit.com/uppy/v3.17.0/uppy.min.mjs'
 
-      const uppy = new Uppy({debug: true, autoProceed: false})
+      const uppy = new Uppy({ debug: true, autoProceed: false })
         .use(Dashboard, { trigger: '#uppyModalOpener' })
-        .use(Instagram, { target: Dashboard, companionUrl: 'http://localhost:3020' })
-        .use(GoogleDrive, { target: Dashboard, companionUrl: 'http://localhost:3020' })
+        .use(Instagram, {
+          target: Dashboard,
+          companionUrl: 'http://localhost:3020',
+        })
+        .use(GoogleDrive, {
+          target: Dashboard,
+          companionUrl: 'http://localhost:3020',
+        })
         .use(Tus, { endpoint: 'https://tusd.tusdemo.net/files/' })
 
       uppy.on('success', (fileCount) => {

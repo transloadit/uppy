@@ -11,6 +11,9 @@ export class ProviderAuthError extends ProviderApiError {
   constructor()
 }
 
-export function errorToResponse(anyError: Error): { code: number, message: string }
+export function errorToResponse(anyError: Error): {
+  code: number
+  message: string
+}
 
 export function respondWithError(anyError: Error, res: any): boolean

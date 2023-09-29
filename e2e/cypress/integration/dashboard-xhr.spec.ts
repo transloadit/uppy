@@ -1,4 +1,9 @@
-import { interceptCompanionUrlRequest, interceptCompanionUnsplashRequest, runRemoteUrlImageUploadTest, runRemoteUnsplashUploadTest } from './reusable-tests'
+import {
+  interceptCompanionUrlRequest,
+  interceptCompanionUnsplashRequest,
+  runRemoteUrlImageUploadTest,
+  runRemoteUnsplashUploadTest,
+} from './reusable-tests'
 
 describe('Dashboard with XHR', () => {
   beforeEach(() => {
@@ -14,7 +19,9 @@ describe('Dashboard with XHR', () => {
   it('should return correct file name with URL plugin from remote image with Content-Disposition', () => {
     const fileName = `DALL·E IMG_9078 - 学中文 🤑`
     cy.get('[data-cy="Url"]').click()
-    cy.get('.uppy-Url-input').type('http://localhost:4678/file-with-content-disposition')
+    cy.get('.uppy-Url-input').type(
+      'http://localhost:4678/file-with-content-disposition',
+    )
     cy.get('.uppy-Url-importButton').click()
     cy.wait('@url').then(() => {
       cy.get('.uppy-Dashboard-Item-name').should('contain', fileName)
@@ -40,7 +47,9 @@ describe('Dashboard with XHR', () => {
     }).as('url')
 
     cy.get('[data-cy="Url"]').click()
-    cy.get('.uppy-Url-input').type('http://localhost:4678/file-with-content-disposition')
+    cy.get('.uppy-Url-input').type(
+      'http://localhost:4678/file-with-content-disposition',
+    )
     cy.get('.uppy-Url-importButton').click()
     cy.wait('@url').then(() => {
       cy.get('.uppy-Dashboard-Item-name').should('contain', 'file-with')
