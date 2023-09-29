@@ -7,9 +7,14 @@ body:
     attributes:
       label: Initial checklist
       options:
-        - label: I understand this is a bug report and questions should be posted in the [Community Forum](https://community.transloadit.com/)
+        - label:
+            I understand this is a bug report and questions should be posted in
+            the [Community Forum](https://community.transloadit.com/)
           required: true
-        - label: I searched [issues](https://github.com/transloadit/uppy/issues?q=is%3Aissue) and couldn’t find anything (or linked relevant results below)
+        - label:
+            I searched
+            [issues](https://github.com/transloadit/uppy/issues?q=is%3Aissue)
+            and couldn’t find anything (or linked relevant results below)
           required: true
   - type: input
     id: runnable-example
@@ -28,7 +33,9 @@ body:
     id: steps-to-reproduce
     attributes:
       label: Steps to reproduce
-      description: How did this happen? Please provide a [minimal, reproducible example](https://stackoverflow.com/help/minimal-reproducible-example).
+      description:
+        How did this happen? Please provide a [minimal, reproducible
+        example](https://stackoverflow.com/help/minimal-reproducible-example).
     validations:
       required: true
   - type: textarea

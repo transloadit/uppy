@@ -20,7 +20,9 @@ describe('Dashboard with Tus', () => {
   })
 
   it('should upload cat image successfully', () => {
-    cy.get('@file-input').selectFile('cypress/fixtures/images/cat.jpg', { force:true })
+    cy.get('@file-input').selectFile('cypress/fixtures/images/cat.jpg', {
+      force: true,
+    })
 
     cy.get('.uppy-StatusBar-actionBtn--upload').click()
     cy.wait(['@post', '@patch']).then(() => {
@@ -29,7 +31,9 @@ describe('Dashboard with Tus', () => {
   })
 
   it('should start exponential backoff when receiving HTTP 429', () => {
-    cy.get('@file-input').selectFile('cypress/fixtures/images/baboon.png', { force: true })
+    cy.get('@file-input').selectFile('cypress/fixtures/images/baboon.png', {
+      force: true,
+    })
 
     cy.intercept(
       { method: 'PATCH', pathname: '/files/*', times: 2 },

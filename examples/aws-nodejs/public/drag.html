@@ -1,20 +1,28 @@
 <!doctype html>
 <html>
   <head>
-    <meta charset="utf-8">
+    <meta charset="utf-8" />
     <title>Uppy</title>
-    <link href="https://releases.transloadit.com/uppy/v3.16.0/uppy.min.css" rel="stylesheet">
+    <link
+      href="https://releases.transloadit.com/uppy/v3.17.0/uppy.min.css"
+      rel="stylesheet"
+    />
   </head>
   <body>
     <section class="example">
-    <div id="drag-drop-area"></div>
-    <div class="for-ProgressBar"></div>
-    <div class="uploaded-files">
-      <h5>Uploaded files:</h5>
-      <ol></ol>
-    </div>
+      <div id="drag-drop-area"></div>
+      <div class="for-ProgressBar"></div>
+      <div class="uploaded-files">
+        <h5>Uploaded files:</h5>
+        <ol></ol>
+      </div>
       <script type="module">
-        import {Uppy, DragDrop, ProgressBar, AwsS3 } from "https://releases.transloadit.com/uppy/v3.16.0/uppy.min.mjs"
+        import {
+          Uppy,
+          DragDrop,
+          ProgressBar,
+          AwsS3,
+        } from 'https://releases.transloadit.com/uppy/v3.17.0/uppy.min.mjs'
 
         // Function for displaying uploaded files
         const onUploadSuccess = (elForUploadedFiles) => (file, response) => {
@@ -32,18 +40,21 @@
         }
 
         var uppy = new Uppy({
-            autoProceed: true,
-            restrictions: {
-              maxNumberOfFiles: 10,
-            }
-          })
+          autoProceed: true,
+          restrictions: {
+            maxNumberOfFiles: 10,
+          },
+        })
           .use(DragDrop, {
-              inline: true,
-              target: '#drag-drop-area'
-            })
-          .use(ProgressBar, { target: '.example .for-ProgressBar', hideAfterFinish: true })
+            inline: true,
+            target: '#drag-drop-area',
+          })
+          .use(ProgressBar, {
+            target: '.example .for-ProgressBar',
+            hideAfterFinish: true,
+          })
           .use(AwsS3, {
-            getUploadParameters (file) {
+            getUploadParameters(file) {
               // Send a request to our PHP signing endpoint.
               return fetch('/sign-s3', {
                 method: 'post',
@@ -56,29 +67,37 @@
                   filename: file.name,
                   contentType: file.type,
                 }),
-              }).then((response) => {
-                // Parse the JSON response.
-                return response.json()
-              }).then((data) => {
-                // Return an object in the correct shape.
-                return {
-                  method: data.method,
-                  url: data.url,
-                  fields: data.fields,
-                  // Provide content type header required by S3
-                  headers: {
-                    'Content-Type': file.type,
-                  },
-                }
               })
+                .then((response) => {
+                  // Parse the JSON response.
+                  return response.json()
+                })
+                .then((data) => {
+                  // Return an object in the correct shape.
+                  return {
+                    method: data.method,
+                    url: data.url,
+                    fields: data.fields,
+                    // Provide content type header required by S3
+                    headers: {
+                      'Content-Type': file.type,
+                    },
+                  }
+                })
             },
-        });
+          })
 
         uppy.on('complete', (result) => {
-          console.log('Upload complete! We’ve uploaded these files:', result.successful)
-        });
+          console.log(
+            'Upload complete! We’ve uploaded these files:',
+            result.successful,
+          )
+        })
 
-        uppy.on('upload-success', onUploadSuccess('.example .uploaded-files ol'));
+        uppy.on(
+          'upload-success',
+          onUploadSuccess('.example .uploaded-files ol'),
+        )
       </script>
     </section>
   </body>
