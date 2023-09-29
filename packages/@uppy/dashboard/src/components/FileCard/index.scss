@@ -49,7 +49,7 @@
   min-height: 0;
   border-bottom: 1px solid $gray-200;
 
-  [data-uppy-theme="dark"] & {
+  [data-uppy-theme='dark'] & {
     background-color: $gray-800;
     border-bottom: 0;
   }
@@ -91,7 +91,7 @@
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 
-  [data-uppy-theme="dark"] & {
+  [data-uppy-theme='dark'] & {
     background-color: $gray-900;
   }
 }
@@ -116,7 +116,7 @@
     font-size: 14px;
   }
 
-  [data-uppy-theme="dark"] & {
+  [data-uppy-theme='dark'] & {
     color: $gray-200;
   }
 }
@@ -143,7 +143,7 @@
     height: 65px;
   }
 
-  [data-uppy-theme="dark"] & {
+  [data-uppy-theme='dark'] & {
     background-color: $gray-900;
     border-top: 1px solid $gray-800;
   }

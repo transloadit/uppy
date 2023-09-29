@@ -2,10 +2,7 @@
   "compilerOptions": {
     "target": "esnext",
     "module": "commonjs",
-    "lib": [
-      "dom",
-      "esnext"
-    ],
+    "lib": ["dom", "esnext"],
     "resolveJsonModule": true,
     "allowJs": true,
     "noImplicitAny": true,
@@ -22,7 +19,5 @@
     "packages/*/types/index.d.ts",
     "packages/@uppy/*/types/index.d.ts"
   ],
-  "exclude": [
-    "packages/@uppy/companion"
-  ]
+  "exclude": ["packages/@uppy/companion"]
 }

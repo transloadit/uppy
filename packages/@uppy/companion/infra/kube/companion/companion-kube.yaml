@@ -3,13 +3,13 @@ kind: Service
 metadata:
   name: companion
   namespace: companion
-  labels: 
+  labels:
     app: companion
 spec:
   ports:
-  - port: 80
-    targetPort: 3020
-    protocol: TCP
+    - port: 80
+      targetPort: 3020
+      protocol: TCP
   selector:
     app: companion
 ---
@@ -25,32 +25,32 @@ spec:
   replicas: 2
   updateStrategy:
     type: RollingUpdate
-  serviceName: "companion"
+  serviceName: 'companion'
   template:
     metadata:
       labels:
         app: companion
     spec:
       containers:
-      - image: docker.io/transloadit/companion:latest
-        imagePullPolicy: Always
-        name: companion
-        envFrom:
-        - secretRef:
-            name: companion-env
-        ports:
-        - containerPort: 3020
-        volumeMounts:
-        - name: companion-data
-          mountPath: /mnt/companion-data
+        - image: docker.io/transloadit/companion:latest
+          imagePullPolicy: Always
+          name: companion
+          envFrom:
+            - secretRef:
+                name: companion-env
+          ports:
+            - containerPort: 3020
+          volumeMounts:
+            - name: companion-data
+              mountPath: /mnt/companion-data
   volumeClaimTemplates:
-  - metadata:
-      name: companion-data
-    spec:
-      accessModes: [ "ReadWriteOnce" ]
-      resources:
-        requests:
-          storage: 10Gi
+    - metadata:
+        name: companion-data
+      spec:
+        accessModes: ['ReadWriteOnce']
+        resources:
+          requests:
+            storage: 10Gi
 ---
 apiVersion: extensions/v1beta1
 kind: Ingress
@@ -58,10 +58,10 @@ metadata:
   name: companion
   namespace: companion
   annotations:
-    kubernetes.io/tls-acme: "true"
-    kubernetes.io/ingress.class: "nginx"
-    certmanager.k8s.io/cluster-issuer: "letsencrypt-prod"
-    certmanager.k8s.io/acme-http01-edit-in-place: "true"
+    kubernetes.io/tls-acme: 'true'
+    kubernetes.io/ingress.class: 'nginx'
+    certmanager.k8s.io/cluster-issuer: 'letsencrypt-prod'
+    certmanager.k8s.io/acme-http01-edit-in-place: 'true'
 spec:
   tls:
     - secretName: server-tls
@@ -69,22 +69,22 @@ spec:
         - companion.uppy.io
     - secretName: uppy-tls
       hosts:
-        - server.uppy.io        
+        - server.uppy.io
   rules:
-  - host: companion.uppy.io
-    http:
-      paths:
-      - path: /
-        backend:
-          serviceName: companion
-          servicePort: 80
-  - host: server.uppy.io
-    http:
-      paths:
-      - path: /
-        backend:
-          serviceName: companion
-          servicePort: 80
+    - host: companion.uppy.io
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: companion
+              servicePort: 80
+    - host: server.uppy.io
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: companion
+              servicePort: 80
 ---
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler

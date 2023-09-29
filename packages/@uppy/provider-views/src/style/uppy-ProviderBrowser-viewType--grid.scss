@@ -52,7 +52,7 @@
     .uppy-ProviderBrowserItem-inner {
       background-color: rgba($gray-500, 0.2);
 
-      [data-uppy-theme="dark"] & {
+      [data-uppy-theme='dark'] & {
         background-color: rgba($gray-200, 0.2);
       }
     }
@@ -62,7 +62,7 @@
       height: 30%;
       fill: rgba($black, 0.7);
 
-      [data-uppy-theme="dark"] & {
+      [data-uppy-theme='dark'] & {
         fill: rgba($white, 0.8);
       }
     }
@@ -89,7 +89,7 @@
       }
     }
 
-    [data-uppy-theme="dark"] & {
+    [data-uppy-theme='dark'] & {
       box-shadow: 0 0 0 3px rgba($lightblue, 0.7);
     }
 

@@ -116,7 +116,9 @@ interface Options extends PluginOptions {
 export type TransloaditOptions = Options &
   (
     | {
-        assemblyOptions?: AssemblyOptions | ((file?: UppyFile) => Promise<AssemblyOptions> | AssemblyOptions)
+        assemblyOptions?:
+          | AssemblyOptions
+          | ((file?: UppyFile) => Promise<AssemblyOptions> | AssemblyOptions)
         /** @deprecated use `assemblyOptions` instead */
         getAssemblyOptions?: never
         /** @deprecated use `assemblyOptions` instead */
@@ -129,7 +131,7 @@ export type TransloaditOptions = Options &
     | {
         /** @deprecated use `assemblyOptions` instead */
         getAssemblyOptions?: (
-          file?: UppyFile
+          file?: UppyFile,
         ) => AssemblyOptions | Promise<AssemblyOptions>
         assemblyOptions?: never
         /** @deprecated use `assemblyOptions` instead */
@@ -167,14 +169,17 @@ export const COMPANION_ALLOWED_HOSTS: RegExp
 
 export type TransloaditAssemblyCreatedCallback = (
   assembly: Assembly,
-  fileIDs: string[]
+  fileIDs: string[],
 ) => void
-export type TransloaditUploadedCallback = (file: FileInfo, assembly: Assembly) => void
+export type TransloaditUploadedCallback = (
+  file: FileInfo,
+  assembly: Assembly,
+) => void
 export type TransloaditAssemblyExecutingCallback = (assembly: Assembly) => void
 export type TransloaditResultCallback = (
   stepName: string,
   result: Result,
-  assembly: Assembly
+  assembly: Assembly,
 ) => void
 export type TransloaditCompleteCallback = (assembly: Assembly) => void
 
