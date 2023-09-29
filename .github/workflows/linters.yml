@@ -48,6 +48,8 @@ jobs:
           @uppy-example/react-native-expo @uppy/react-native @uppy-dev/build
       - name: Run linter
         run: corepack yarn run lint
+      - name: Run Prettier
+        run: corepack yarn run format:check-diff
 
   lint_md:
     name: Lint Markdown
