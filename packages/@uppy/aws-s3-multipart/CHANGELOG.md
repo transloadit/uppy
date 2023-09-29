@@ -1,5 +1,13 @@
 # @uppy/aws-s3-multipart
 
+## 3.7.0
+
+Released: 2023-09-29
+Included in: Uppy v3.17.0
+
+- @uppy/aws-s3-multipart: retry signature request (Merlijn Vos / #4691)
+- @uppy/aws-s3-multipart: aws-s3-multipart - call `#setCompanionHeaders` in `setOptions` (jur-ng / #4687)
+
 ## 3.6.0
 
 Released: 2023-09-05
