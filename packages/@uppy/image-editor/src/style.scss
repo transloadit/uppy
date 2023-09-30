@@ -15,7 +15,7 @@
   $track-shadow-blur: 0,
   $track-shadow-color: transparent,
   $track-border-width: 0,
-  $track-border-color: transparent,
+  $track-border-color: transparent
 );
 @import '@uppy/core/src/_utils.scss';
 @import '@uppy/core/src/_variables.scss';
@@ -114,9 +114,14 @@
   // This adds a checkered background to transparent pngs
   // (see https://github.com/transloadit/uppy/pull/4194).
   // Cropper handles checkered bgs via the `background: true` option and a `.cropper-bg` css class, however those will span through the entire cropper background, and we only want the checkered background for transparent pngs.
-  background: repeating-conic-gradient(rgba(189, 189, 189, 0.2) 0% 25%, white 0% 50%) 50% / 16px 16px;
-  [data-uppy-theme="dark"] & {
-    background: repeating-conic-gradient(rgb(43, 42, 42) 0% 25%, black 0% 50%) 50%/16px 16px;
+  background: repeating-conic-gradient(
+      rgba(189, 189, 189, 0.2) 0% 25%,
+      white 0% 50%
+    )
+    50% / 16px 16px;
+  [data-uppy-theme='dark'] & {
+    background: repeating-conic-gradient(rgb(43, 42, 42) 0% 25%, black 0% 50%)
+      50%/16px 16px;
   }
 }
 
@@ -124,7 +129,7 @@
   opacity: 0.9;
   background-color: white;
 
-  [data-uppy-theme="dark"] & {
+  [data-uppy-theme='dark'] & {
     opacity: 0.7;
     background-color: black;
   }
@@ -136,14 +141,15 @@
 
 // Overrides: inputrange.scss
 
-.uppy-ImageCropper-range{
+.uppy-ImageCropper-range {
   &::-moz-range-track {
     // We have to adjust this manually every time we change `$track-height`
     // in the beginning of the file.
     height: 4px;
   }
 
-  &:focus, &:hover {
+  &:focus,
+  &:hover {
     &::-webkit-slider-runnable-track {
       background: rgba(white, 0.5);
     }
