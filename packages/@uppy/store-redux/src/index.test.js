@@ -1,4 +1,4 @@
-import { describe, expect, it } from '@jest/globals'
+import { describe, expect, it } from 'vitest'
 import Redux from 'redux'
 import { ReduxStore, reducer } from './index.js'
 

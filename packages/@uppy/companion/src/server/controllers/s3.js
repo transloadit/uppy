@@ -441,6 +441,10 @@ module.exports = function s3 (config) {
     }, next)
   }
 
+  if (config.bucket == null) {
+    return express.Router() // empty router because s3 is not enabled
+  }
+
   return express.Router()
     .get('/sts', getTemporarySecurityCredentials)
     .get('/params', getUploadParameters)
