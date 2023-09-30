@@ -21,11 +21,6 @@
 @import '@uppy/core/src/_variables.scss';
 @import './cropper.scss';
 
-.uppy-ImageCropper-range::-moz-range-track{
-  // This should be `height: $track-height`, it's inputrange's bug
-  height: 4px;
-}
-
 .uppy-ImageCropper {
   display: flex;
   flex-direction: column;
@@ -106,7 +101,7 @@
   margin-left: 5px;
 }
 
-// Cropper overrides
+// Overrides: cropper.scss
 
 .uppy-ImageCropper .cropper-point {
   width: 8px;
@@ -137,4 +132,29 @@
 
 .uppy-ImageCropper .cropper-face {
   opacity: 0;
+}
+
+// Overrides: inputrange.scss
+
+.uppy-ImageCropper-range{
+  &::-moz-range-track {
+    // We have to adjust this manually every time we change `$track-height`
+    // in the beginning of the file.
+    height: 4px;
+  }
+
+  &:focus, &:hover {
+    &::-webkit-slider-runnable-track {
+      background: rgba(white, 0.5);
+    }
+    &::-ms-fill-lower {
+      background: rgba(white, 0.5);
+    }
+    &::-ms-fill-upper {
+      background: rgba(white, 0.5);
+    }
+    &::-moz-range-track {
+      background: rgba(white, 0.5);
+    }
+  }
 }
