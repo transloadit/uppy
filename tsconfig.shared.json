@@ -19,7 +19,7 @@
     "skipLibCheck": true,
     "verbatimModuleSyntax": true,
     "esModuleInterop": true,
-    "allowSyntheticDefaultImports": false,
+    "allowSyntheticDefaultImports": true,
     "strictFunctionTypes": true,
     "forceConsistentCasingInFileNames": true
   }
