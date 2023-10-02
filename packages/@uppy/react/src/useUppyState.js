@@ -7,11 +7,7 @@ export default function useUppyState(uppy, selector) {
   )
   const getSnapshot = useCallback(
     () => selector(uppy.store.getState()),
-    // Eslint wants to put `uppy.store` as the dependency
-    // but that seems unnecessary as we can be more specific.
-    // `uppy.store` can theoretically never be `undefined`.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [uppy.store.getState, selector],
+    [uppy.store, selector],
   )
 
   const state = useSyncExternalStore(subscribe, getSnapshot)
