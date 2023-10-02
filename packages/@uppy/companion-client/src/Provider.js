@@ -75,7 +75,8 @@ export default class Provider extends RequestClient {
     return this.uppy.getPlugin(this.pluginId).storage.getItem(this.tokenKey)
   }
 
-  async #removeAuthToken () {
+  /** @protected */
+  async removeAuthToken () {
     return this.uppy.getPlugin(this.pluginId).storage.removeItem(this.tokenKey)
   }
 
@@ -213,7 +214,7 @@ export default class Provider extends RequestClient {
           } catch (refreshTokenErr) {
             if (refreshTokenErr.isAuthError) {
               // if refresh-token has failed with auth error, delete token, so we don't keep trying to refresh in future
-              await this.#removeAuthToken()
+              await this.removeAuthToken()
             }
             throw err
           } finally {
@@ -248,7 +249,7 @@ export default class Provider extends RequestClient {
 
   async logout (options) {
     const response = await this.get(`${this.id}/logout`, options)
-    await this.#removeAuthToken()
+    await this.removeAuthToken()
     return response
   }
 
