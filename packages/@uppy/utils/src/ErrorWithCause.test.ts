@@ -13,9 +13,21 @@ describe('ErrorWithCause', () => {
   it('should propagate isNetworkError', () => {
     const regularError = new Error('cause')
     const networkError = new NetworkError('cause')
-    expect(isNetworkError(new ErrorWithCause('message', { cause: networkError }).isNetworkError)).toEqual(true)
-    expect(isNetworkError(new ErrorWithCause('message', { cause: regularError }).isNetworkError)).toEqual(false)
-    expect(isNetworkError(new ErrorWithCause('message', {}).isNetworkError)).toEqual(false)
-    expect(isNetworkError(new ErrorWithCause('message').isNetworkError)).toEqual(false)
+    expect(
+      isNetworkError(
+        new ErrorWithCause('message', { cause: networkError }).isNetworkError,
+      ),
+    ).toEqual(true)
+    expect(
+      isNetworkError(
+        new ErrorWithCause('message', { cause: regularError }).isNetworkError,
+      ),
+    ).toEqual(false)
+    expect(
+      isNetworkError(new ErrorWithCause('message', {}).isNetworkError),
+    ).toEqual(false)
+    expect(
+      isNetworkError(new ErrorWithCause('message').isNetworkError),
+    ).toEqual(false)
   })
 })

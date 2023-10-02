@@ -3,10 +3,9 @@ import hasProperty from './hasProperty.ts'
 class ErrorWithCause extends Error {
   public isNetworkError?: boolean
 
-  constructor(
-    message: Parameters<typeof Error>[0],
-    options: Parameters<typeof Error>[1],
-  ) {
+  public cause: Error['cause']
+
+  constructor(message?: string, options?: ErrorOptions) {
     super(message)
     this.cause = options?.cause
     if (this.cause && hasProperty(this.cause, 'isNetworkError')) {

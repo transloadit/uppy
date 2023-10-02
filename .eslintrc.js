@@ -357,6 +357,7 @@ module.exports = {
         'test/**/*.js',
         'test/**/*.ts',
         '*.test.js',
+        '*.test.ts',
         '*.test-d.ts',
         '*.test-d.tsx',
         'postcss.config.js',
