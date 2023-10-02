@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import emaFilter from './emaFilter.js'
+import emaFilter from './emaFilter.ts'
 
 describe('emaFilter', () => {
   it('should calculate the exponential average', () => {
