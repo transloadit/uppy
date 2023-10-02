@@ -29,13 +29,26 @@ class WebdavSimpleAuthProvider extends WebdavProvider {
       throw new Error('invalid public link url')
     }
 
-    const [baseURL, publicLinkToken] = webdavUrl.split('/s/')
     const { AuthType } = await import('webdav') // eslint-disable-line import/no-unresolved
+
+    // Is this a nextcloud URL? e.g. https://example.com/s/kFy9Lek5sm928xP
+    // they have specific urls that we can identify
+    // todo not sure if this is the right way to support nextcloud and other webdavs
+    if (/\/s\/([^/]+)/.test(webdavUrl)) {
+      const [baseURL, publicLinkToken] = webdavUrl.split('/s/')
+
+      return this.getClientHelper({
+        url: `${baseURL.replace('/index.php', '')}/public.php/webdav/`,
+        authType: AuthType.Password,
+        username: publicLinkToken,
+        password: 'null',
+      })
+    }
+
+    // normal public WebDAV urls
     return this.getClientHelper({
-      url: baseURL.replace(/^\/index.php/, '/public.php/webdav/'),
-      authType: AuthType.Password,
-      username: publicLinkToken,
-      password: 'null',
+      url: webdavUrl,
+      authType: AuthType.None,
     })
   }
 
