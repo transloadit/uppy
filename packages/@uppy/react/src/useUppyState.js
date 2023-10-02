@@ -10,6 +10,5 @@ export default function useUppyState(uppy, selector) {
     [uppy.store, selector],
   )
 
-  const state = useSyncExternalStore(subscribe, getSnapshot)
-  return state
+  return useSyncExternalStore(subscribe, getSnapshot)
 }
