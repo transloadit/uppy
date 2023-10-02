@@ -14,7 +14,7 @@ const {
 const { createPresignedPost } = require('@aws-sdk/s3-presigned-post')
 const { getSignedUrl } = require('@aws-sdk/s3-request-presigner')
 
-const { rfc2047EncodeMetadata } = require('../helpers/utils')
+const { rfc2047EncodeMetadata, getBucket } = require('../helpers/utils')
 
 module.exports = function s3 (config) {
   if (typeof config.acl !== 'string' && config.acl != null) {
@@ -22,16 +22,6 @@ module.exports = function s3 (config) {
   }
   if (typeof config.getKey !== 'function') {
     throw new TypeError('s3: The `getKey` option must be a function')
-  }
-
-  function getBucket (req) {
-    const bucket = typeof config.bucket === 'function' ? config.bucket(req) : config.bucket
-
-    if (!(typeof bucket === 'string' && bucket !== '')) {
-      // This means a misconfiguration or bug
-      throw new TypeError('s3: bucket key must be a string or a function resolving the bucket string')
-    }
-    return bucket
   }
 
   function getS3Client (req, res) {
@@ -62,7 +52,7 @@ module.exports = function s3 (config) {
     const client = getS3Client(req, res)
     if (!client) return
 
-    const bucket = getBucket(req)
+    const bucket = getBucket(config.bucket, req)
 
     const metadata = req.query.metadata || {}
     const key = config.getKey(req, req.query.filename, metadata)
@@ -126,7 +116,7 @@ module.exports = function s3 (config) {
       res.status(400).json({ error: 's3: content type must be a string' })
       return
     }
-    const bucket = getBucket(req)
+    const bucket = getBucket(config.bucket, req)
 
     const params = {
       Bucket: bucket,
@@ -170,7 +160,7 @@ module.exports = function s3 (config) {
       return
     }
 
-    const bucket = getBucket(req)
+    const bucket = getBucket(config.bucket, req)
 
     const parts = []
 
@@ -221,7 +211,7 @@ module.exports = function s3 (config) {
       return
     }
 
-    const bucket = getBucket(req)
+    const bucket = getBucket(config.bucket, req)
 
     getSignedUrl(client, new UploadPartCommand({
       Bucket: bucket,
@@ -270,7 +260,7 @@ module.exports = function s3 (config) {
       return
     }
 
-    const bucket = getBucket(req)
+    const bucket = getBucket(config.bucket, req)
 
     Promise.all(
       partNumbersArray.map((partNumber) => {
@@ -313,7 +303,7 @@ module.exports = function s3 (config) {
       return
     }
 
-    const bucket = getBucket(req)
+    const bucket = getBucket(config.bucket, req)
 
     client.send(new AbortMultipartUploadCommand({
       Bucket: bucket,
@@ -354,7 +344,7 @@ module.exports = function s3 (config) {
       return
     }
 
-    const bucket = getBucket(req)
+    const bucket = getBucket(config.bucket, req)
 
     client.send(new CompleteMultipartUploadCommand({
       Bucket: bucket,
