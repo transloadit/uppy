@@ -24,7 +24,7 @@ const AuthForm = ({ loading, i18n, onAuth }) => {
 
   const onSubmit = useCallback((e) => {
     e.preventDefault()
-    onAuth({ webdavUrl })
+    onAuth({ webdavUrl: webdavUrl.trim() })
   }, [onAuth, webdavUrl])
 
   return (
