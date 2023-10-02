@@ -2,12 +2,7 @@
 import Uppy from '@uppy/core'
 /* eslint-disable-next-line no-unused-vars */
 import React, { useState } from 'react'
-import {
-  Dashboard,
-  DashboardModal,
-  DragDrop,
-  useUppyStateSelector,
-} from '@uppy/react'
+import { Dashboard, DashboardModal, DragDrop, useUppyState } from '@uppy/react'
 import ThumbnailGenerator from '@uppy/thumbnail-generator'
 
 import '@uppy/core/dist/style.css'
@@ -20,7 +15,7 @@ const uppyDragDrop = new Uppy({ id: 'drag-drop' }).use(ThumbnailGenerator)
 
 export default function App () {
   const [open, setOpen] = useState(false)
-  const files = useUppyStateSelector(uppyDashboard, (state) => state.files)
+  const files = useUppyState(uppyDashboard, (state) => state.files)
 
   // drag-drop has no visual output so we test it via the uppy instance
   window.uppy = uppyDragDrop
