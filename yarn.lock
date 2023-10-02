@@ -7731,10 +7731,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tsconfig/svelte@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "@tsconfig/svelte@npm:3.0.0"
-  checksum: 92986428a6aa87d5db9377de65cd7bd6bf73367bc3ec03bb06faba7db2ac51c45470402212914bbc76c00efa08e1116e9d269aea38274e04dbb183705dbb7a09
+"@tsconfig/svelte@npm:^5.0.0":
+  version: 5.0.2
+  resolution: "@tsconfig/svelte@npm:5.0.2"
+  checksum: c16608913db89c8bfc2df805224f12403dd9d2f6f9480cc293e3aae8d1897f3a2de44db14d7c039f0325358e139fb071ec843ee46445a7e10d5265fe48f6ae80
   languageName: node
   linkType: hard
 
@@ -9673,7 +9673,7 @@ __metadata:
   resolution: "@uppy/svelte@workspace:packages/@uppy/svelte"
   dependencies:
     "@rollup/plugin-node-resolve": ^13.0.0
-    "@tsconfig/svelte": ^3.0.0
+    "@tsconfig/svelte": ^5.0.0
     rollup: ^2.60.2
     rollup-plugin-svelte: ^7.0.0
     svelte: ^4.0.0
