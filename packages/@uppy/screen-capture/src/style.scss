@@ -46,7 +46,7 @@
   background-color: $white;
   border-top: 1px solid $gray-200;
 
-  [data-uppy-theme="dark"] & {
+  [data-uppy-theme='dark'] & {
     background-color: $gray-900;
     border-top: 1px solid $gray-800;
   }
@@ -62,7 +62,7 @@
   cursor: pointer;
   transition: all 0.3s;
 
-  [data-uppy-theme="dark"] & {
+  [data-uppy-theme='dark'] & {
     @include blue-border-focus--dark;
   }
 
@@ -130,13 +130,20 @@
 }
 
 .uppy-ScreenCapture-icon--streamActive svg {
-  animation: uppy-ScreenCapture-icon--blink 1s cubic-bezier(0.47, 0, 0.75, 0.72) infinite;
+  animation: uppy-ScreenCapture-icon--blink 1s cubic-bezier(0.47, 0, 0.75, 0.72)
+    infinite;
 }
 
 @keyframes uppy-ScreenCapture-icon--blink {
-  0% { fill: $blue; }
-  50% { fill: $gray-500; }
-  100% { fill: $blue; }
+  0% {
+    fill: $blue;
+  }
+  50% {
+    fill: $gray-500;
+  }
+  100% {
+    fill: $blue;
+  }
 }
 
 .uppy-ScreenCapture-button--video {

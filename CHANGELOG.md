@@ -12,6 +12,71 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 3.17.0
+
+Released: 2023-09-29
+
+| Package                   | Version | Package                   | Version |
+| ------------------------- | ------- | ------------------------- | ------- |
+| @uppy/audio               |   1.1.3 | @uppy/store-default       |   3.0.4 |
+| @uppy/aws-s3              |   3.3.1 | @uppy/store-redux         |   3.0.4 |
+| @uppy/aws-s3-multipart    |   3.7.0 | @uppy/svelte              |   3.1.0 |
+| @uppy/companion           |   4.9.1 | @uppy/thumbnail-generator |   3.0.5 |
+| @uppy/companion-client    |   3.4.1 | @uppy/transloadit         |   3.3.1 |
+| @uppy/compressor          |   1.0.4 | @uppy/tus                 |   3.3.1 |
+| @uppy/core                |   3.5.1 | @uppy/utils               |   5.5.1 |
+| @uppy/dashboard           |   3.5.4 | @uppy/webcam              |   3.3.3 |
+| @uppy/image-editor        |   2.2.1 | @uppy/xhr-upload          |   3.4.1 |
+| @uppy/remote-sources      |   1.0.4 | uppy                      |  3.17.0 |
+
+- meta: add Prettier (Antoine du Hamel / #4707)
+- @uppy/aws-s3-multipart: retry signature request (Merlijn Vos / #4691)
+- meta: update linter config to cover more files (Mikael Finstad / #4706)
+- @uppy/image-editor: ImageEditor.jsx - remove 1px black lines (Evgenia Karunus / #4678)
+- meta: delete `.yarn/releases/yarn-3.4.1.cjs` (Antoine du Hamel)
+- meta: fix linter errors (Antoine du Hamel / #4704)
+- @uppy/utils: test: migrate to Vitest for Uppy core and Uppy plugins (Antoine du Hamel / #4700)
+- meta: run corepack yarn (Mikael Finstad)
+- @uppy/companion: upgrade TS target (Mikael Finstad / #4670)
+- @uppy/companion: use deferred length for tus streams (Mikael Finstad / #4697)
+- @uppy/companion-client: fix a refresh token race condition (Mikael Finstad / #4695)
+- meta: add companion hotfix doc (Mikael Finstad / #4683)
+- meta: run type checks also for companion and add files to docker (Mikael Finstad / #4688)
+- @uppy/svelte: revert breaking change (Antoine du Hamel / #4694)
+- meta: Update yarn.lock (Artur Paikin)
+- @uppy/companion: fix instagram/facebook auth error regression (Mikael Finstad / #4692)
+- @uppy/aws-s3-multipart: aws-s3-multipart - call `#setCompanionHeaders` in `setOptions` (jur-ng / #4687)
+- @uppy/svelte: Upgrade Svelte to 4 (frederikhors / #4652)
+- @uppy/companion: add test endpoint for dynamic oauth creds (Mikael Finstad / #4667)
+- meta: fix VITE_COMPANION_ALLOWED_HOSTS (Mikael Finstad / #4690)
+- @uppy/companion: fix edge case for pagination on root (Mikael Finstad / #4689)
+- @uppy/companion: fix onedrive pagination (Mikael Finstad / #4686)
+
+
+## 3.16.0
+
+Released: 2023-09-18
+
+| Package            | Version | Package            | Version |
+| ------------------ | ------- | ------------------ | ------- |
+| @uppy/companion    |   4.9.0 | @uppy/locales      |   3.3.1 |
+| @uppy/compressor   |   1.0.3 | @uppy/tus          |   3.3.0 |
+| @uppy/dashboard    |   3.5.3 | uppy               |  3.16.0 |
+| @uppy/image-editor |   2.2.0 |                    |         |
+
+- @uppy/tus: Fix: Utilize user-defined onSuccess, onError, and onProgress callbacks in @uppy/tus (choi sung keun / #4674)
+- @uppy/dashboard: Make file-editor:cancel event fire when the Image Editor “cancel” button is pressed (Artur Paikin / #4684)
+- @uppy/companion: add missing credentialsURL for box (Mikael Finstad / #4681)
+- @uppy/companion: remove s3 endpoints if s3 disabled (Mikael Finstad / #4675)
+- meta: use latest Node.js version for tests (Antoine du Hamel / #4662)
+- meta: Improve Contributing.md (Evgenia Karunus / #4633)
+- @uppy/compressor: update file.meta.name after compression, becase format/extension might have changed (Artur Paikin / #4645)
+- @uppy/companion: Onedrive refresh tokens (Mikael Finstad / #4655)
+- @uppy/companion: catch "invalid initialization vector" instead of crashing (Mikael Finstad / #4661)
+- @uppy/image-editor: Improve image rotation (Evgenia Karunus / #4639)
+- @uppy/locales: Feature/updating i18n farsi (Parsa Arvaneh / #4638)
+
+
 ## 3.15.0
 
 Released: 2023-09-05

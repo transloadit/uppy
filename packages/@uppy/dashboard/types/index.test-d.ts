@@ -29,7 +29,7 @@ import Dashboard from '..'
       {
         id: 'public',
         name: 'Public',
-        render ({ value, onChange }, h) {
+        render({ value, onChange }, h) {
           expectType<string>(value)
           expectType<(val: string) => void>(onChange)
           // `h` should be the Preact `h`
@@ -74,21 +74,25 @@ import Dashboard from '..'
       },
     },
   })
-  expectError(uppy.use(Dashboard, {
-    locale: {
-      strings: {
-        somethingThatDoesNotExist: 'wrong',
+  expectError(
+    uppy.use(Dashboard, {
+      locale: {
+        strings: {
+          somethingThatDoesNotExist: 'wrong',
+        },
       },
-    },
-  }))
+    }),
+  )
   const wrongType = 1234
-  expectError(uppy.use(Dashboard, {
-    locale: {
-      strings: {
-        addMoreFiles: wrongType,
+  expectError(
+    uppy.use(Dashboard, {
+      locale: {
+        strings: {
+          addMoreFiles: wrongType,
+        },
       },
-    },
-  }))
+    }),
+  )
 }
 {
   const uppy = new Uppy()

@@ -1,7 +1,7 @@
 {
-    "name": "transloadit/uppy-aws-demo",
-    "type": "project",
-    "require": {
-        "aws/aws-sdk-php": "^3.31"
-    }
+  "name": "transloadit/uppy-aws-demo",
+  "type": "project",
+  "require": {
+    "aws/aws-sdk-php": "^3.31"
+  }
 }
