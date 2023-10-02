@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { AbortController, AbortSignal } from './AbortController.js'
+import { AbortController, AbortSignal } from './AbortController.ts'
 
 function flushInstantTimeouts () {
   return new Promise(resolve => setTimeout(resolve, 0))

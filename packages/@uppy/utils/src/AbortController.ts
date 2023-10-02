@@ -4,10 +4,19 @@ import hasOwnProperty from './hasProperty.ts'
  */
 export const { AbortController } = globalThis
 export const { AbortSignal } = globalThis
-export const createAbortError = (message = 'Aborted', options) => {
+export const createAbortError = (
+  message = 'Aborted',
+  options?: Parameters<typeof Error>[1],
+): DOMException => {
   const err = new DOMException(message, 'AbortError')
   if (options != null && hasOwnProperty(options, 'cause')) {
-    Object.defineProperty(err, 'cause', { __proto__: null, configurable: true, writable: true, value: options.cause })
+    Object.defineProperty(err, 'cause', {
+      // @ts-expect-error TS is drunk
+      __proto__: null,
+      configurable: true,
+      writable: true,
+      value: options.cause,
+    })
   }
   return err
 }
