@@ -115,7 +115,7 @@ module.exports.app = (optionsArg = {}) => {
   // add uppy options to the request object so it can be accessed by subsequent handlers.
   app.use('*', middlewares.getCompanionMiddleware(options))
   app.use('/s3', s3(options.s3))
-  app.use('/url', url())
+  if (options.enableUrlEndpoint) app.use('/url', url())
 
   app.post('/:providerName/preauth', express.json(), express.urlencoded({ extended: false }), middlewares.hasSessionAndProvider, middlewares.hasBody, middlewares.hasOAuthProvider, controllers.preauth)
   app.get('/:providerName/connect', middlewares.hasSessionAndProvider, middlewares.hasOAuthProvider, controllers.connect)
@@ -137,6 +137,27 @@ module.exports.app = (optionsArg = {}) => {
   app.post('/search/:providerName/get/:id', express.json(), middlewares.hasSessionAndProvider, middlewares.verifyToken, controllers.get)
 
   app.get('/:providerName/thumbnail/:id', middlewares.hasSessionAndProvider, middlewares.hasOAuthProvider, middlewares.cookieAuthToken, middlewares.verifyToken, controllers.thumbnail)
+
+  // Used for testing dynamic credentials only, normally this would run on a separate server.
+  if (options.testDynamicOauthCredentials) {
+    app.post('/:providerName/test-dynamic-oauth-credentials', (req, res) => {
+      if (req.query.secret !== options.testDynamicOauthCredentialsSecret) throw new Error('Invalid secret')
+      logger.info('Returning dynamic OAuth2 credentials')
+      const { providerName } = req.params
+      // for simplicity, we just return the normal credentials for the provider, but in a real-world scenario,
+      // we would query based on parameters
+      const { key, secret } = options.providerOptions[providerName]
+      res.send({
+        credentials: {
+          key,
+          secret,
+          redirect_uri: providerManager.getGrantConfigForProvider({
+            providerName, companionOptions: options, grantConfig,
+          })?.redirect_uri,
+        },
+      })
+    })
+  }
 
   app.param('providerName', providerManager.getProviderMiddleware(providers, grantConfig))
 

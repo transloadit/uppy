@@ -1,5 +1,12 @@
 # @uppy/companion-client
 
+## 3.4.1
+
+Released: 2023-09-29
+Included in: Uppy v3.17.0
+
+- @uppy/companion-client: fix a refresh token race condition (Mikael Finstad / #4695)
+
 ## 3.4.0
 
 Released: 2023-09-05

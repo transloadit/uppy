@@ -13,7 +13,7 @@ services:
       - /app/node_modules
       - /mnt/uppy-server-data:/mnt/uppy-server-data
     ports:
-      - "3020:3020"
-    command: "/app/src/standalone/start-server.js --config nodemon.json"
+      - '3020:3020'
+    command: '/app/src/standalone/start-server.js --config nodemon.json'
     env_file:
-     - .env
+      - .env

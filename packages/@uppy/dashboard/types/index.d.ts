@@ -1,17 +1,27 @@
-import type { IndexedObject, PluginTarget, UIPlugin, UIPluginOptions, UppyFile } from '@uppy/core'
+import type {
+  IndexedObject,
+  PluginTarget,
+  UIPlugin,
+  UIPluginOptions,
+  UppyFile,
+} from '@uppy/core'
 import type { StatusBarLocale } from '@uppy/status-bar'
 import type { ThumbnailOptions } from '@uppy/thumbnail-generator'
 import DashboardLocale from './generatedLocale'
 
 type FieldRenderOptions = {
-  value: string,
+  value: string
   onChange: (newVal: string) => void
   fieldCSSClasses: { text: string }
   required: boolean
   form: string
 }
 
-type PreactRender = (node: any, params: Record<string, unknown> | null, ...children: any[]) => any
+type PreactRender = (
+  node: any,
+  params: Record<string, unknown> | null,
+  ...children: any[]
+) => any
 
 interface MetaField {
   id: string
@@ -43,7 +53,7 @@ export interface DashboardOptions extends Options {
   metaFields?: MetaField[] | ((file: UppyFile) => MetaField[])
   note?: string | null
   plugins?: string[]
-  fileManagerSelectionType?: 'files' | 'folders' | 'both';
+  fileManagerSelectionType?: 'files' | 'folders' | 'both'
   proudlyDisplayPoweredByUppy?: boolean
   showLinkToFileUploadResult?: boolean
   showProgressDetails?: boolean
@@ -66,30 +76,34 @@ export interface DashboardOptions extends Options {
 }
 
 declare class Dashboard extends UIPlugin<DashboardOptions> {
-  addTarget (plugin: UIPlugin): HTMLElement
+  addTarget(plugin: UIPlugin): HTMLElement
 
-  hideAllPanels (): void
+  hideAllPanels(): void
 
-  openModal (): void
+  openModal(): void
 
-  closeModal (): void
+  closeModal(): void
 
-  isModalOpen (): boolean
+  isModalOpen(): boolean
 
-  render (state: Record<string, unknown>): void
+  render(state: Record<string, unknown>): void
 
-  install (): void
+  install(): void
 
-  uninstall (): void
+  uninstall(): void
 }
 
 export default Dashboard
 
 // Events
 
-export type DashboardFileEditStartCallback<TMeta extends IndexedObject<any>> = (file?: UppyFile<TMeta>) => void;
-export type DashboardFileEditCompleteCallback<TMeta extends IndexedObject<any>> = (file?: UppyFile<TMeta>) => void;
-export type DashboardShowPlanelCallback = (id: string) => void;
+export type DashboardFileEditStartCallback<TMeta extends IndexedObject<any>> = (
+  file?: UppyFile<TMeta>,
+) => void
+export type DashboardFileEditCompleteCallback<
+  TMeta extends IndexedObject<any>,
+> = (file?: UppyFile<TMeta>) => void
+export type DashboardShowPlanelCallback = (id: string) => void
 declare module '@uppy/core' {
   export interface UppyEventMap<TMeta> {
     'dashboard:modal-open': GenericEventCallback

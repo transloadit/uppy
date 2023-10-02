@@ -12,7 +12,7 @@ const throttle = require('lodash/throttle')
 
 const { Upload } = require('@aws-sdk/lib-storage')
 
-const { rfc2047EncodeMetadata } = require('./helpers/utils')
+const { rfc2047EncodeMetadata, getBucket } = require('./helpers/utils')
 
 // TODO move to `require('streams/promises').pipeline` when dropping support for Node.js 14.x.
 const pipeline = promisify(pipelineCb)
@@ -218,11 +218,11 @@ class Uploader {
 
     switch (protocol) {
       case PROTOCOLS.multipart:
-        return this._uploadMultipart(this.readStream)
+        return this.#uploadMultipart(this.readStream)
       case PROTOCOLS.s3Multipart:
-        return this._uploadS3Multipart(this.readStream)
+        return this.#uploadS3Multipart(this.readStream)
       case PROTOCOLS.tus:
-        return this._uploadTus(this.readStream)
+        return this.#uploadTus(this.readStream)
       default:
         throw new Error('Invalid protocol')
     }
@@ -502,7 +502,7 @@ class Uploader {
    *
    * @param {any} stream
    */
-  async _uploadTus (stream) {
+  async #uploadTus (stream) {
     const uploader = this
 
     const isFileStream = stream instanceof ReadStream
@@ -514,9 +514,9 @@ class Uploader {
       this.tus = new tus.Upload(stream, {
         endpoint: this.options.endpoint,
         uploadUrl: this.options.uploadUrl,
-        uploadLengthDeferred: false,
+        uploadLengthDeferred: !isFileStream,
         retryDelays: [0, 1000, 3000, 5000],
-        uploadSize: this.size,
+        uploadSize: isFileStream ? this.size : undefined,
         chunkSize,
         headers: headerSanitize(this.options.headers),
         addRequestId: true,
@@ -564,7 +564,7 @@ class Uploader {
     })
   }
 
-  async _uploadMultipart (stream) {
+  async #uploadMultipart (stream) {
     if (!this.options.endpoint) {
       throw new Error('No multipart endpoint set')
     }
@@ -642,7 +642,7 @@ class Uploader {
   /**
    * Upload the file to S3 using a Multipart upload.
    */
-  async _uploadS3Multipart (stream) {
+  async #uploadS3Multipart (stream) {
     if (!this.options.s3) {
       throw new Error('The S3 client is not configured on this companion instance.')
     }
@@ -655,7 +655,7 @@ class Uploader {
     const { client, options } = s3Options
 
     const params = {
-      Bucket: options.bucket,
+      Bucket: getBucket(options.bucket),
       Key: options.getKey(null, filename, this.options.metadata),
       ContentType: this.options.metadata.type,
       Metadata: rfc2047EncodeMetadata(this.options.metadata),

@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, xit } from '@jest/globals'
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import isTouchDevice from './isTouchDevice.js'
 
 describe('isTouchDevice', () => {
@@ -15,7 +15,7 @@ describe('isTouchDevice', () => {
     globalThis.window.ontouchstart = RealTouchStart
   })
 
-  xit("should return true if it's a touch device", () => {
+  it.skip("should return true if it's a touch device", () => {
     expect(isTouchDevice()).toEqual(true)
     delete globalThis.window.ontouchstart
     globalThis.navigator.maxTouchPoints = false
