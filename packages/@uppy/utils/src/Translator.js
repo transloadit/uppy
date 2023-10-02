@@ -1,4 +1,4 @@
-import has from './hasProperty.js'
+import has from './hasProperty.ts'
 
 function insertReplacement (source, rx, replacement) {
   const newParts = []

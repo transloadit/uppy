@@ -1,4 +1,4 @@
-import hasOwnProperty from './hasProperty.js'
+import hasOwnProperty from './hasProperty.ts'
 /**
  * Little AbortController proxy module so we can swap out the implementation easily later.
  */

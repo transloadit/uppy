@@ -1,4 +1,4 @@
-import hasProperty from './hasProperty.js'
+import hasProperty from './hasProperty.ts'
 
 class ErrorWithCause extends Error {
   constructor (message, options = {}) {
