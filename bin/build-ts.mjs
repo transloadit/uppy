@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-import { spawn } from 'node:child_process'
-import { once } from 'node:events'
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { execa } from 'execa'
 import { existsSync } from 'node:fs'
 import path from 'node:path'
 import { stdin, env } from 'node:process'
@@ -15,16 +15,11 @@ const argv0 = fromYarn ? [] : ['yarn']
 const cwd = fileURLToPath(new URL('../', import.meta.url))
 
 for await (const line of readLines(stdin)) {
-  const { location, name } = JSON.parse(line)
+  const { location } = JSON.parse(line)
   if (existsSync(path.join(cwd, location, 'tsconfig.json'))) {
-    const cp = spawn(exe, [...argv0, 'tsc', '-p', location], {
+    await execa(exe, [...argv0, 'tsc', '-p', location], {
       stdio: 'inherit',
       cwd,
     })
-    await Promise.race([
-      once(cp, 'error').then(err => Promise.reject(err)),
-      await once(cp, 'exit')
-        .then(([code]) => (code && Promise.reject(new Error(`Non-zero exit code when building "${name}": ${code}`)))),
-    ])
   }
 }

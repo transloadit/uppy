@@ -83,6 +83,7 @@
     "eslint-plugin-react": "^7.22.0",
     "eslint-plugin-react-hooks": "^4.2.0",
     "eslint-plugin-unicorn": "^46.0.0",
+    "execa": "^8.0.1",
     "github-contributors-list": "^1.2.4",
     "glob": "^8.0.0",
     "jsdom": "^22.1.0",
