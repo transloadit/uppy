@@ -5,7 +5,7 @@ name: Companion Edge Deploy
 
 on:
   push:
-    branches: [ 'main' ]
+    branches: ['main']
     paths:
       - yarn.lock
       - 'packages/@uppy/companion/**'
@@ -22,9 +22,15 @@ jobs:
       - name: Checkout sources
         uses: actions/checkout@v3
       - name: Set SHA commit in version
-        run: (cd packages/@uppy/companion && node -e 'const pkg=require("./package.json");pkg.version+="+${{ github.sha }}";fs.writeFileSync("package.json",JSON.stringify(pkg, undefined, 2)+"\n")')
+        run:
+          (cd packages/@uppy/companion && node -e 'const
+          pkg=require("./package.json");pkg.version+="+${{ github.sha
+          }}";fs.writeFileSync("package.json",JSON.stringify(pkg, undefined,
+          2)+"\n")')
       - name: Create Companion tarball
-        run: corepack yarn workspace @uppy/companion pack --install-if-needed -o /tmp/companion-${{ github.sha }}.tar.gz
+        run:
+          corepack yarn workspace @uppy/companion pack --install-if-needed -o
+          /tmp/companion-${{ github.sha }}.tar.gz
       - name: Upload artifact
         if: success()
         uses: actions/upload-artifact@v3

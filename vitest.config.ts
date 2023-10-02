@@ -7,8 +7,6 @@ export default defineConfig({
       '**/angular/**',
       'packages/@uppy/companion/*',
     ],
-    setupFiles: [
-      './private/test/globalSetup.mjs',
-    ],
+    setupFiles: ['./private/test/globalSetup.mjs'],
   },
 })

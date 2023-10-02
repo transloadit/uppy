@@ -1,10 +1,13 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <title></title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link href="https://releases.transloadit.com/uppy/v3.16.0/uppy.min.css" rel="stylesheet" />
+    <link
+      href="https://releases.transloadit.com/uppy/v3.17.0/uppy.min.css"
+      rel="stylesheet"
+    />
   </head>
   <body>
     <noscript>You need JavaScript enabled for this example to work.</noscript>
@@ -16,31 +19,34 @@
         Dashboard,
         Webcam,
         Tus,
-      } from "https://releases.transloadit.com/uppy/v3.16.0/uppy.min.mjs";
+      } from 'https://releases.transloadit.com/uppy/v3.17.0/uppy.min.mjs'
 
       const uppy = new Uppy({ debug: true, autoProceed: false })
-        .use(Dashboard, { trigger: "#uppyModalOpener" })
+        .use(Dashboard, { trigger: '#uppyModalOpener' })
         .use(Webcam, { target: Dashboard })
-        .use(Tus, { endpoint: "https://tusd.tusdemo.net/files/" });
+        .use(Tus, { endpoint: 'https://tusd.tusdemo.net/files/' })
 
-      uppy.on("success", (fileCount) => {
-        console.log(`${fileCount} files uploaded`);
-      });
+      uppy.on('success', (fileCount) => {
+        console.log(`${fileCount} files uploaded`)
+      })
     </script>
 
     <!-- To support older browsers, you can use the legacy bundle which adds a global `Uppy` object.  -->
-    <script nomodule src="https://releases.transloadit.com/uppy/v3.16.0/uppy.legacy.min.js"></script>
+    <script
+      nomodule
+      src="https://releases.transloadit.com/uppy/v3.17.0/uppy.legacy.min.js"
+    ></script>
     <script nomodule>
       {
-        const { Dashboard, Webcam, Tus } = Uppy;
+        const { Dashboard, Webcam, Tus } = Uppy
         const uppy = new Uppy.Uppy({ debug: true, autoProceed: false })
-          .use(Dashboard, { trigger: "#uppyModalOpener" })
+          .use(Dashboard, { trigger: '#uppyModalOpener' })
           .use(Webcam, { target: Dashboard })
-          .use(Tus, { endpoint: "https://tusd.tusdemo.net/files/" });
+          .use(Tus, { endpoint: 'https://tusd.tusdemo.net/files/' })
 
-        uppy.on("success", function (fileCount) {
-          console.log(`${fileCount} files uploaded`);
-        });
+        uppy.on('success', function (fileCount) {
+          console.log(`${fileCount} files uploaded`)
+        })
       }
     </script>
   </body>

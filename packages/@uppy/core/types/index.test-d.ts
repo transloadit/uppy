@@ -3,7 +3,13 @@ import { expectError, expectType } from 'tsd'
 import DefaultStore from '@uppy/store-default'
 // eslint-disable-next-line import/no-named-as-default
 import Uppy, { UIPlugin } from '..'
-import type { UploadedUppyFile, FailedUppyFile, PluginOptions, UppyFile, SuccessResponse } from '..'
+import type {
+  UploadedUppyFile,
+  FailedUppyFile,
+  PluginOptions,
+  UppyFile,
+  SuccessResponse,
+} from '..'
 
 type anyObject = Record<string, unknown>
 
@@ -98,7 +104,7 @@ type anyObject = Record<string, unknown>
   })
 
   // Meta signature
-  type Meta = {myCustomMetadata: string}
+  type Meta = { myCustomMetadata: string }
   uppy.on<'complete', Meta>('complete', (result) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const meta = result.successful[0].meta.myCustomMetadata
@@ -115,7 +121,10 @@ type anyObject = Record<string, unknown>
     body?: { someValue: string }
   }
 
-  const onUploadSuccess = async (file: UppyFile<Meta, any> | undefined, response: CustomResponse) => {
+  const onUploadSuccess = async (
+    file: UppyFile<Meta, any> | undefined,
+    response: CustomResponse,
+  ) => {
     const res = response.body?.someValue
   }
   uppy.on<'upload-success', Meta>('upload-success', onUploadSuccess)
@@ -136,16 +145,23 @@ type anyObject = Record<string, unknown>
   interface TestOptions extends PluginOptions {
     testOption: string
   }
-  class TestPlugin extends UIPlugin<TestOptions> {
-  }
+  class TestPlugin extends UIPlugin<TestOptions> {}
 
   const strict = new Uppy().use(TestPlugin, { testOption: 'hello' })
 
   /* eslint-disable @typescript-eslint/no-non-null-assertion */
-  strict.getPlugin<TestPlugin>('TestPlugin')!.setOptions({ testOption: 'world' })
+  strict
+    .getPlugin<TestPlugin>('TestPlugin')!
+    .setOptions({ testOption: 'world' })
 
-  expectError(strict.getPlugin<TestPlugin>('TestPlugin')!.setOptions({ testOption: 0 }))
+  expectError(
+    strict.getPlugin<TestPlugin>('TestPlugin')!.setOptions({ testOption: 0 }),
+  )
 
-  expectError(strict.getPlugin<TestPlugin>('TestPlugin')!.setOptions({ unknownKey: false }))
+  expectError(
+    strict
+      .getPlugin<TestPlugin>('TestPlugin')!
+      .setOptions({ unknownKey: false }),
+  )
   /* eslint-enable @typescript-eslint/no-non-null-assertion */
 }

@@ -1,5 +1,17 @@
 # @uppy/companion
 
+## 4.9.1
+
+Released: 2023-09-29
+Included in: Uppy v3.17.0
+
+- @uppy/companion: upgrade TS target (Mikael Finstad / #4670)
+- @uppy/companion: use deferred length for tus streams (Mikael Finstad / #4697)
+- @uppy/companion: fix instagram/facebook auth error regression (Mikael Finstad / #4692)
+- @uppy/companion: add test endpoint for dynamic oauth creds (Mikael Finstad / #4667)
+- @uppy/companion: fix edge case for pagination on root (Mikael Finstad / #4689)
+- @uppy/companion: fix onedrive pagination (Mikael Finstad / #4686)
+
 ## 4.9.0
 
 Released: 2023-09-18

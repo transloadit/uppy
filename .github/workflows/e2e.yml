@@ -1,7 +1,7 @@
 name: End-to-end tests
 on:
   push:
-    branches: [ main ]
+    branches: [main]
     paths-ignore:
       - '**.md'
       - '**.d.ts'
@@ -11,7 +11,7 @@ on:
       - '.github/**'
       - '!.github/workflows/e2e.yml'
   pull_request_target:
-    types: [ opened, synchronize, reopened, labeled ]
+    types: [opened, synchronize, reopened, labeled]
     paths-ignore:
       - '**.md'
       - '**.d.ts'
@@ -20,7 +20,7 @@ on:
       - 'website/**'
       - '.github/**'
   pull_request:
-    types: [ opened, synchronize, reopened ]
+    types: [opened, synchronize, reopened]
     paths:
       - .github/workflows/e2e.yml
 
@@ -31,7 +31,12 @@ env:
 
 jobs:
   e2e:
-    if: ${{ !github.event.pull_request || (contains(github.event.pull_request.labels.*.name, 'safe to test') && github.event.pull_request.state == 'open') || (github.event.pull_request.head.repo.full_name == github.repository && github.event.event_name != 'labeled') }}
+    if:
+      ${{ !github.event.pull_request ||
+      (contains(github.event.pull_request.labels.*.name, 'safe to test') &&
+      github.event.pull_request.state == 'open') ||
+      (github.event.pull_request.head.repo.full_name == github.repository &&
+      github.event.event_name != 'labeled') }}
     name: Browser tests
     runs-on: ubuntu-latest
     steps:
@@ -41,7 +46,8 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
-        run: echo "dir=$(corepack yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+        run:
+          echo "dir=$(corepack yarn config get cacheFolder)" >> $GITHUB_OUTPUT
 
       - uses: actions/cache@v3
         id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
@@ -105,14 +111,19 @@ jobs:
             e2e/cypress/screenshots/
       - name: Remove 'pending end-to-end tests' label
         # Remove the 'pending end-to-end tests' label if tests ran successfully
-        if: github.event.pull_request && contains(github.event.pull_request.labels.*.name, 'pending end-to-end tests')
+        if:
+          github.event.pull_request &&
+          contains(github.event.pull_request.labels.*.name, 'pending end-to-end
+          tests')
         run: gh pr edit "$NUMBER" --remove-label 'pending end-to-end tests'
         env:
           NUMBER: ${{ github.event.pull_request.number }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Remove 'safe to test' label
         # Remove the 'safe to test' label to ensure next commit needs approval before re-running this.
-        if: always() && github.event.pull_request && contains(github.event.pull_request.labels.*.name, 'safe to test')
+        if:
+          always() && github.event.pull_request &&
+          contains(github.event.pull_request.labels.*.name, 'safe to test')
         run: gh pr edit "$NUMBER" --remove-label 'safe to test'
         env:
           NUMBER: ${{ github.event.pull_request.number }}
@@ -121,11 +132,18 @@ jobs:
     # Add the 'pending end-to-end tests' label for PRs that come from forks.
     # For those PRs, we want to review the code before running e2e tests.
     # See https://securitylab.github.com/research/github-actions-preventing-pwn-requests/.
-    if: github.event.pull_request.state == 'open' && github.event.pull_request.head.repo.full_name != github.repository && !contains(github.event.pull_request.labels.*.name, 'safe to test') && !contains(github.event.pull_request.labels.*.name, 'pending end-to-end tests')
+    if:
+      github.event.pull_request.state == 'open' &&
+      github.event.pull_request.head.repo.full_name != github.repository &&
+      !contains(github.event.pull_request.labels.*.name, 'safe to test') &&
+      !contains(github.event.pull_request.labels.*.name, 'pending end-to-end
+      tests')
     runs-on: ubuntu-latest
     steps:
       - name: Add label
         env:
           NUMBER: ${{ github.event.pull_request.number }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh pr edit "$NUMBER" --repo ${{ github.repository }} --add-label 'pending end-to-end tests'
+        run:
+          gh pr edit "$NUMBER" --repo ${{ github.repository }} --add-label
+          'pending end-to-end tests'
