@@ -1,7 +1,4 @@
-export type FileProgress = {
-  bytesTotal: number
-  bytesUploaded: number
-}
+import type { FileProgress } from './FileProgress'
 
 export default function getBytesRemaining(fileProgress: FileProgress): number {
   return fileProgress.bytesTotal - fileProgress.bytesUploaded
