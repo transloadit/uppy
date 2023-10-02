@@ -96,7 +96,7 @@ declare module '@uppy/utils/lib/canvasToBlob' {
     canvas: HTMLCanvasElement,
     type: string,
     quality?: number,
-  ): Promise<Blob | null>
+  ): Promise<Blob>
   export default canvasToBlob
 }
 
@@ -345,8 +345,45 @@ declare module '@uppy/utils/lib/mimeTypes' {
 }
 
 declare module '@uppy/utils' {
-  export type { FileProgress } from '../src/FileProgress'
-  export type { UppyFile, InternalMetadata } from '../src/UppyFile'
+  interface IndexedObject<T> {
+    [key: string]: T
+    [key: number]: T
+  }
+  export type InternalMetadata = { name: string; type?: string }
+  export interface FileProgress {
+    uploadStarted: number | null
+    uploadComplete: boolean
+    percentage: number
+    bytesUploaded: number
+    bytesTotal: number
+  }
+  export interface UppyFile<
+    TMeta = IndexedObject<any>,
+    TBody = IndexedObject<any>,
+  > {
+    data: Blob | File
+    extension: string
+    id: string
+    isPaused?: boolean
+    isRemote: boolean
+    meta: InternalMetadata & TMeta
+    name: string
+    preview?: string
+    progress?: FileProgress
+    remote?: {
+      host: string
+      url: string
+      body?: Record<string, unknown>
+    }
+    size: number
+    source?: string
+    type?: string
+    response?: {
+      body: TBody
+      status: number
+      uploadURL: string | undefined
+    }
+  }
   export interface Store {
     getState(): Record<string, unknown>
     setState(patch: Record<string, unknown>): void
