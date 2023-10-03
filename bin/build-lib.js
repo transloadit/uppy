@@ -92,7 +92,6 @@ async function buildLib () {
               && path.node.specifiers[0].type === 'ImportDefaultSpecifier') {
             // Vendor-in version number from package.json files:
             const version = versionCache.get(file.slice(0, file.indexOf('/src/')))
-            console.log({ version })
             if (version != null) {
               const [{ local }] = path.node.specifiers
               path.replaceWith(
