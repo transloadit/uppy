@@ -70,6 +70,8 @@ await writeFile(new URL('./tsconfig.build.json', import.meta.url), `${JSON.strin
   {
     extends: '../../../tsconfig.shared',
     compilerOptions: {
+      "outDir": "./lib",
+      "rootDir": "./src",
       resolveJsonModule: false,
       noImplicitAny: false,
     },

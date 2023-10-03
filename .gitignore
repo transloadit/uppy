@@ -15,10 +15,10 @@ yarn-error.log
 .idea
 .env
 tsconfig.tsbuildinfo
+tsconfig.build.tsbuildinfo
 
 dist/
 lib/
-tsOut/
 coverage/
 examples/dev/bundle.js
 examples/aws-php/vendor/*

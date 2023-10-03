@@ -28,7 +28,7 @@ for await (const line of readLines(stdin)) {
     ])
   }
   if (existsSync(path.join(cwd, location, 'tsconfig.build.json'))) {
-    const cp = spawn(exe, [...argv0, 'tsc', '-p', location, '--build', path.join(cwd, location, 'tsconfig.build.json')], {
+    const cp = spawn(exe, [...argv0, 'tsc', '--build', path.join(cwd, location, 'tsconfig.build.json')], {
       stdio: 'inherit',
       cwd,
     })
