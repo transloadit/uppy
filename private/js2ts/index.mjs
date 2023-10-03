@@ -51,14 +51,12 @@ await tsConfig.writeFile(`${JSON.stringify(
   {
     extends: '../../../tsconfig.shared',
     compilerOptions: {
-      outDir: './tsOut',
+      "emitDeclarationOnly": false,
+      "noEmit": true
     },
     include: [
       './package.json',
-      './src/**/*.*',
-    ],
-    exclude: [
-      './src/**/*.test.*',
+      './src/**/*.',
     ],
     references,
   },
@@ -67,5 +65,22 @@ await tsConfig.writeFile(`${JSON.stringify(
 )}\n`)
 
 await tsConfig.close()
+
+await writeFile(new URL('./tsconfig.build.json', import.meta.url), `${JSON.stringify(
+  {
+    extends: '../../../tsconfig.shared',
+    compilerOptions: {
+      resolveJsonModule: false,
+      noImplicitAny: false,
+    },
+    include: [
+      './src/**/*.',
+    ],
+    exclude: ['./src/**/*.test.ts'],
+    references,
+  },
+  undefined,
+  2,
+)}\n`)
 
 console.log('Done')
