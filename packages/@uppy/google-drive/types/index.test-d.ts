@@ -1,4 +1,4 @@
-import Uppy, { type UIPlugin, type UIPluginOptions } from '@uppy/core'
+import Uppy, { UIPlugin, type UIPluginOptions } from '@uppy/core'
 import GoogleDrive from '..'
 
 class SomePlugin extends UIPlugin<UIPluginOptions> {}
