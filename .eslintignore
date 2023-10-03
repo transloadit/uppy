@@ -6,4 +6,3 @@ test/lib/**
 test/endtoend/*/build
 examples/svelte-example/public/build/
 bundle-legacy.js
-packages/@uppy/*/src/*.d.ts
