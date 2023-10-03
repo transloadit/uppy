@@ -13,6 +13,7 @@ import AcquirerPlugin2 from './mocks/acquirerPlugin2.js'
 import InvalidPlugin from './mocks/invalidPlugin.js'
 import InvalidPluginWithoutId from './mocks/invalidPluginWithoutId.js'
 import InvalidPluginWithoutType from './mocks/invalidPluginWithoutType.js'
+// @ts-ignore trying to import a file from outside the package
 import DeepFrozenStore from '../../../../e2e/cypress/fixtures/DeepFrozenStore.mjs'
 
 // eslint-disable-next-line no-restricted-globals

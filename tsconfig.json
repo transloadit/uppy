@@ -1,7 +1,10 @@
 {
+  "extends": "./tsconfig.shared",
   "compilerOptions": {
-    "allowImportingTsExtensions": true,
+    "allowJs": true,
+    "emitDeclarationOnly": false,
     "noEmit": true
   },
-  "include": ["packages/**/*.test.ts"]
+  "include": ["packages/@uppy/*/src/**/*", "packages/@uppy/*/package.json"],
+  "exclude": ["**/*.test-d.ts", "packages/@uppy/angular/**/*"]
 }
