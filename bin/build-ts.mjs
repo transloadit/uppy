@@ -27,4 +27,15 @@ for await (const line of readLines(stdin)) {
         .then(([code]) => (code && Promise.reject(new Error(`Non-zero exit code when building "${name}": ${code}`)))),
     ])
   }
+  if (existsSync(path.join(cwd, location, 'tsconfig.build.json'))) {
+    const cp = spawn(exe, [...argv0, 'tsc', '--build', path.join(cwd, location, 'tsconfig.build.json')], {
+      stdio: 'inherit',
+      cwd,
+    })
+    await Promise.race([
+      once(cp, 'error').then(err => Promise.reject(err)),
+      await once(cp, 'exit')
+        .then(([code]) => (code && Promise.reject(new Error(`Non-zero exit code when building "${name}": ${code}`)))),
+    ])
+  }
 }

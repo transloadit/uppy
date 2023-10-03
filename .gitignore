@@ -14,10 +14,11 @@ node_modules
 yarn-error.log
 .idea
 .env
+tsconfig.tsbuildinfo
+tsconfig.build.tsbuildinfo
 
 dist/
 lib/
-tsOut/
 coverage/
 examples/dev/bundle.js
 examples/aws-php/vendor/*
@@ -25,7 +26,6 @@ test/endtoend/create-react-app/build/
 test/endtoend/create-react-app/coverage/
 uppy-*.tgz
 generatedLocale.d.ts
-packages/@uppy/*/src/*.d.ts
 
 **/output/*
 !output/.keep

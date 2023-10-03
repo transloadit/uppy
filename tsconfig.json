@@ -1,7 +1,0 @@
-{
-  "compilerOptions": {
-    "allowImportingTsExtensions": true,
-    "noEmit": true
-  },
-  "include": ["packages/**/*.test.ts"]
-}
