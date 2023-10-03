@@ -2,9 +2,9 @@
   "extends": "../../../tsconfig.shared",
   "compilerOptions": {
     "allowJs": true,
-    "outDir": "./tsOut"
+    "emitDeclarationOnly": false,
+    "noEmit": true
   },
-  "include": ["./package.json", "./src/**/*.*"],
-  "exclude": ["./src/**/*.test.*"],
+  "include": ["./package.json", "./types/*.ts"],
   "references": []
 }
