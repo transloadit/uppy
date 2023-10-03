@@ -82,6 +82,7 @@ await writeFile(
         rootDir: './src',
         resolveJsonModule: false,
         noImplicitAny: false,
+        skipLibCheck: true,
       },
       include: ['./src/**/*.'],
       exclude: ['./src/**/*.test.ts'],
