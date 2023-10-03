@@ -12,10 +12,16 @@ export interface TokenStorage {
 
 type CompanionHeaders = Record<string, string>
 
+type CompanionKeys = {
+  key: string
+  credentialsName: string
+}
+
 export interface RequestClientOptions {
   companionUrl: string
   companionHeaders?: CompanionHeaders
   companionCookiesRule?: RequestCredentials
+  companionKeysParams?: CompanionKeys
 }
 
 type RequestOptions = {
