@@ -6,5 +6,9 @@
     "noEmit": true
   },
   "include": ["packages/@uppy/*/src/**/*", "packages/@uppy/*/package.json"],
-  "exclude": ["**/*.test-d.ts", "packages/@uppy/angular/**/*"]
+  "exclude": [
+    "**/*.test-d.ts",
+    "**/src/**/*.test.js",
+    "packages/@uppy/angular/**/*"
+  ]
 }
