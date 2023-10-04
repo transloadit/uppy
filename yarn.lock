@@ -7324,6 +7324,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@transloadit/ts-fly@npm:^0.1.4":
+  version: 0.1.5
+  resolution: "@transloadit/ts-fly@npm:0.1.5"
+  dependencies:
+    pirates: "npm:^4.0.5"
+    sucrase: "npm:^3.32.0"
+  bin:
+    ts-fly: ./bin/ts-fly
+  checksum: 10/efaae2763e5e1942a85798768b235ba9d4dedecc90a24e2063b95887d48006c132943552a2c836f297145b28ab5bed11ec1c48b02c784fccc55bc7a035411806
+  languageName: node
+  linkType: hard
+
 "@trysound/sax@npm:0.2.0":
   version: 0.2.0
   resolution: "@trysound/sax@npm:0.2.0"
@@ -13690,6 +13702,7 @@ __metadata:
   resolution: "e2e@workspace:e2e"
   dependencies:
     "@parcel/transformer-vue": "npm:^2.9.3"
+    "@transloadit/ts-fly": "npm:^0.1.4"
     "@uppy/audio": "workspace:^"
     "@uppy/aws-s3": "workspace:^"
     "@uppy/aws-s3-multipart": "workspace:^"
@@ -24338,7 +24351,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pirates@npm:^4.0.1, pirates@npm:^4.0.4, pirates@npm:^4.0.6":
+"pirates@npm:^4.0.1, pirates@npm:^4.0.4, pirates@npm:^4.0.5, pirates@npm:^4.0.6":
   version: 4.0.6
   resolution: "pirates@npm:4.0.6"
   checksum: 10/d02dda76f4fec1cbdf395c36c11cf26f76a644f9f9a1bfa84d3167d0d3154d5289aacc72677aa20d599bb4a6937a471de1b65c995e2aea2d8687cbcd7e43ea5f
@@ -28523,7 +28536,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sucrase@npm:^3.20.0":
+"sucrase@npm:^3.20.0, sucrase@npm:^3.32.0":
   version: 3.35.0
   resolution: "sucrase@npm:3.35.0"
   dependencies:

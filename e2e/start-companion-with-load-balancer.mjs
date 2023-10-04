@@ -51,10 +51,11 @@ const isOSX = process.platform === 'darwin'
 
 const startCompanion = ({ name, port }) => {
   const cp = spawn(process.execPath, [
+    '-r', '@transloadit/ts-fly',
     '-r', 'dotenv/config',
     // Watch mode support is limited to Windows and macOS at the time of writing.
     ...(isWindows || isOSX ? ['--watch-path', 'packages/@uppy/companion/src', '--watch'] : []),
-    './packages/@uppy/companion/src/standalone/start-server.js',
+    './packages/@uppy/companion/src/standalone/start-server.ts',
   ], {
     cwd: new URL('../', import.meta.url),
     stdio: 'inherit',
