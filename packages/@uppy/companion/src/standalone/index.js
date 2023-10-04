@@ -18,6 +18,7 @@ const { getCompanionOptions, generateSecret, buildHelpfulStartupMessage } = requ
  * @returns {object}
  */
 module.exports = function server (inputCompanionOptions) {
+  /** @type {object} */ // TODO: we need better types for companionOptions
   const companionOptions = getCompanionOptions(inputCompanionOptions)
 
   companion.setLoggerProcessName(companionOptions)
@@ -103,6 +104,7 @@ module.exports = function server (inputCompanionOptions) {
 
   app.disable('x-powered-by')
 
+  /** @type {import('express-session').SessionOptions} */
   const sessionOptions = {
     secret: companionOptions.secret,
     resave: true,

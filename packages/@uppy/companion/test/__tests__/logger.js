@@ -1,5 +1,5 @@
 const chalk = require('chalk')
-const logger = require('../../src/server/logger')
+const logger = require('../../lib/server/logger')
 
 const maskables = ['ToBeMasked1', 'toBeMasked2', 'toBeMasked(And)?Escaped']
 

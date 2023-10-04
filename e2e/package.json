@@ -46,6 +46,7 @@
   },
   "devDependencies": {
     "@parcel/transformer-vue": "2.9.3",
+    "@transloadit/ts-fly": "^0.1.4",
     "cypress": "^13.0.0",
     "cypress-terminal-report": "^5.0.0",
     "deep-freeze": "^0.0.1",

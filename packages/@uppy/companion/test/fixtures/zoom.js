@@ -1,6 +1,6 @@
 const nock = require('nock')
 
-const { getBasicAuthHeader } = require('../../src/server/helpers/utils')
+const { getBasicAuthHeader } = require('../../lib/server/helpers/utils')
 
 module.exports.expects = {
   listPath: 'DUMMY-UUID%3D%3D',

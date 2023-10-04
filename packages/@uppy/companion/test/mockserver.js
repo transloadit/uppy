@@ -65,7 +65,7 @@ module.exports.getServer = (extraEnv) => {
   // https://github.com/transloadit/uppy/issues/3284
   jest.resetModules()
   // eslint-disable-next-line global-require
-  const standalone = require('../src/standalone')
+  const standalone = require('../lib/standalone')
   const authServer = express()
 
   authServer.use(session({ secret: 'grant', resave: true, saveUninitialized: true }))

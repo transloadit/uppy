@@ -2,11 +2,11 @@ const mockOauthState = require('../mockoauthstate')()
 
 // eslint-disable-next-line import/order
 const request = require('supertest')
-const tokenService = require('../../src/server/helpers/jwt')
+const tokenService = require('../../lib/server/helpers/jwt')
 const { getServer, grantToken } = require('../mockserver')
 
-jest.mock('../../src/server/helpers/oauth-state', () => ({
-  ...jest.requireActual('../../src/server/helpers/oauth-state'),
+jest.mock('../../lib/server/helpers/oauth-state', () => ({
+  ...jest.requireActual('../../lib/server/helpers/oauth-state'),
   ...mockOauthState,
 }))
 
@@ -41,7 +41,7 @@ describe('test authentication callback', () => {
   })
 
   test('the token gets sent via html', () => {
-    // see mock ../../src/server/helpers/oauth-state above for state values
+    // see mock ../../lib/server/helpers/oauth-state above for state values
     return request(authServer)
       .get(`/dropbox/send-token?uppyAuthToken=${token}&state=state-with-newer-version`)
       .expect(200)

@@ -1,13 +1,19 @@
+import type { Response as ServerResponse } from 'express'
+
 /**
  * ProviderApiError is error returned when an adapter encounters
  * an http error while communication with its corresponding provider
  */
-class ProviderApiError extends Error {
+export class ProviderApiError extends Error {
+  public statusCode: number
+
+  public isAuthError: boolean
+
   /**
    * @param {string} message error message
    * @param {number} statusCode the http status code from the provider api
    */
-  constructor (message, statusCode) {
+  constructor(message: string, statusCode: number) {
     super(`HTTP ${statusCode}: ${message}`) // Include statusCode to make it easier to debug
     this.name = 'ProviderApiError'
     this.statusCode = statusCode
@@ -19,20 +25,25 @@ class ProviderApiError extends Error {
  * AuthError is error returned when an adapter encounters
  * an authorization error while communication with its corresponding provider
  */
-class ProviderAuthError extends ProviderApiError {
-  constructor () {
+export class ProviderAuthError extends ProviderApiError {
+  constructor() {
     super('invalid access token detected by Provider', 401)
     this.name = 'AuthError'
     this.isAuthError = true
   }
 }
 
+type Response = {
+  code: number
+  message: string
+}
+
 /**
- * Convert an error instance to an http response if possible
- *
- * @param {Error | ProviderApiError} err the error instance to convert to an http json response
+ * Convert an error instance to an HTTP response if possible.
  */
-function errorToResponse (err) {
+export function errorToResponse(
+  err: Error | ProviderApiError,
+): Response | undefined {
   if (err instanceof ProviderAuthError && err.isAuthError) {
     return { code: 401, message: err.message }
   }
@@ -52,7 +63,7 @@ function errorToResponse (err) {
   return undefined
 }
 
-function respondWithError (err, res) {
+export function respondWithError(err: Error, res: ServerResponse): boolean {
   const errResp = errorToResponse(err)
   if (errResp) {
     res.status(errResp.code).json({ message: errResp.message })
@@ -60,5 +71,3 @@ function respondWithError (err, res) {
   }
   return false
 }
-
-module.exports = { ProviderAuthError, ProviderApiError, errorToResponse, respondWithError }

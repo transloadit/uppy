@@ -1,6 +1,6 @@
 const nock = require('nock')
-const { getRedirectEvaluator, FORBIDDEN_IP_ADDRESS, FORBIDDEN_RESOLVED_IP_ADDRESS } = require('../../src/server/helpers/request')
-const { getProtectedGot } = require('../../src/server/helpers/request')
+const { getRedirectEvaluator, FORBIDDEN_IP_ADDRESS, FORBIDDEN_RESOLVED_IP_ADDRESS } = require('../../lib/server/helpers/request')
+const { getProtectedGot } = require('../../lib/server/helpers/request')
 
 describe('test getRedirectEvaluator', () => {
   const httpURL = 'http://uppy.io'

@@ -16,13 +16,13 @@ const { nockGoogleDownloadFile } = require('../fixtures/drive')
 const { nockZoomRecordings, nockZoomRevoke, expects: { localZoomKey, localZoomSecret } } = require('../fixtures/zoom')
 const defaults = require('../fixtures/constants')
 
-const tokenService = require('../../src/server/helpers/jwt')
+const tokenService = require('../../lib/server/helpers/jwt')
 const { getServer } = require('../mockserver')
 
 // todo don't share server between tests. rewrite to not use env variables
 const authServer = getServer({ COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT: '0' })
 const OAUTH_STATE = 'some-cool-nice-encrytpion'
-const providers = require('../../src/server/provider').getDefaultProviders()
+const providers = require('../../lib/server/provider').getDefaultProviders()
 
 const providerNames = Object.keys(providers)
 const AUTH_PROVIDERS = {

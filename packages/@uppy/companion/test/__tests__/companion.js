@@ -26,7 +26,7 @@ jest.mock('node:dns', () => {
   }
 })
 
-const tokenService = require('../../src/server/helpers/jwt')
+const tokenService = require('../../lib/server/helpers/jwt')
 const { getServer } = require('../mockserver')
 
 // todo don't share server between tests. rewrite to not use env variables

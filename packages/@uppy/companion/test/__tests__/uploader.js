@@ -6,10 +6,10 @@ const intoStream = require('into-stream')
 const fs = require('node:fs')
 const nock = require('nock')
 
-const Uploader = require('../../src/server/Uploader')
+const Uploader = require('../../lib/server/Uploader')
 const socketClient = require('../mocksocket')
-const standalone = require('../../src/standalone')
-const Emitter = require('../../src/server/emitter')
+const standalone = require('../../lib/standalone')
+const Emitter = require('../../lib/server/emitter')
 
 afterAll(() => {
   nock.cleanAll()

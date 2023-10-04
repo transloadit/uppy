@@ -1,4 +1,4 @@
-const emitter = require('../src/server/emitter')
+const emitter = require('../lib/server/emitter')
 
 module.exports.connect = (uploadToken) => {
   emitter().emit(`connection:${uploadToken}`)

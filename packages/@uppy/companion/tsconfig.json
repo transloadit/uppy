@@ -2,7 +2,7 @@
   "compilerOptions": {
     "outDir": "./lib",
     "module": "Node16",
-    "moduleResolution": "node16",
+    "moduleResolution": "Node16",
     "declaration": true,
     "target": "es2019",
     "noImplicitAny": false,

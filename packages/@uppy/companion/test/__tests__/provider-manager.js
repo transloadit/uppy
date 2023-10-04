@@ -1,5 +1,5 @@
-const providerManager = require('../../src/server/provider')
-const { getCompanionOptions } = require('../../src/standalone/helper')
+const providerManager = require('../../lib/server/provider')
+const { getCompanionOptions } = require('../../lib/standalone/helper')
 const { setDefaultEnv } = require('../mockserver')
 
 let grantConfig
@@ -9,7 +9,7 @@ describe('Test Provider options', () => {
   beforeEach(() => {
     setDefaultEnv()
     // eslint-disable-next-line global-require
-    grantConfig = require('../../src/config/grant')()
+    grantConfig = require('../../lib/config/grant')()
     companionOptions = getCompanionOptions()
   })
 

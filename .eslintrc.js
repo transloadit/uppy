@@ -332,7 +332,24 @@ module.exports = {
       },
     },
     {
-      files: ['./packages/@uppy/companion/**/*.js'],
+      files: [
+        './packages/@uppy/companion/**/*.js',
+        './packages/@uppy/companion/**/*.ts',
+      ],
+      settings: {
+        'import/resolver': {
+          node: {
+            extensions: ['.js', '.ts'],
+          },
+          typescript: true,
+        },
+        'import/parsers': {
+          '@typescript-eslint/parser': ['.ts'],
+        },
+      },
+      parserOptions: {
+        sourceType: 'script',
+      },
       rules: {
         'no-underscore-dangle': 'off',
       },
@@ -445,7 +462,11 @@ module.exports = {
     },
     {
       files: ['**/*.ts', '**/*.md/*.ts', '**/*.md/*.typescript'],
-      excludedFiles: ['examples/angular-example/**/*.ts', 'packages/@uppy/angular/**/*.ts'],
+      excludedFiles: [
+        'examples/angular-example/**/*.ts',
+        'packages/@uppy/angular/**/*.ts',
+        'packages/@uppy/companion/**/*.ts',
+      ],
       parser: '@typescript-eslint/parser',
       settings: {
         'import/resolver': {
@@ -470,6 +491,23 @@ module.exports = {
       files: ['packages/@uppy/*/src/**/*.ts', 'packages/@uppy/*/src/**/*.tsx'],
       'rules': {
         '@typescript-eslint/explicit-function-return-type': 'error',
+      },
+    },
+    {
+      files: [
+        './packages/@uppy/companion/**/*.ts',
+      ],
+      parser: '@typescript-eslint/parser',
+      plugins: ['@typescript-eslint'],
+      extends: [
+        'eslint:recommended',
+        'plugin:@typescript-eslint/eslint-recommended',
+        'plugin:@typescript-eslint/recommended',
+      ],
+      rules: {
+        '@typescript-eslint/no-var-requires': 'off',
+        'import/prefer-default-export': 'off',
+        'global-require': 'off',
       },
     },
     {
