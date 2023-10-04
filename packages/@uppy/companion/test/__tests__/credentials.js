@@ -1,6 +1,6 @@
 const request = require('supertest')
 const nock = require('nock')
-const tokenService = require('../../src/server/helpers/jwt')
+const tokenService = require('../../lib/server/helpers/jwt')
 const { getServer } = require('../mockserver')
 const { nockZoomRevoke } = require('../fixtures/zoom')
 

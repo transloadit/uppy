@@ -1,6 +1,6 @@
 const nock = require('nock')
-const { FORBIDDEN_IP_ADDRESS } = require('../../src/server/helpers/request')
-const { getProtectedGot } = require('../../src/server/helpers/request')
+const { FORBIDDEN_IP_ADDRESS } = require('../../lib/server/helpers/request')
+const { getProtectedGot } = require('../../lib/server/helpers/request')
 
 afterAll(() => {
   nock.cleanAll()
