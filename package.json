@@ -98,7 +98,6 @@
     "postcss-logical": "^5.0.0",
     "pre-commit": "^1.2.2",
     "prettier": "^3.0.3",
-    "process": "^0.11.10",
     "remark-cli": "^11.0.0",
     "resolve": "^1.17.0",
     "sass": "^1.29.0",
