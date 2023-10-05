@@ -235,6 +235,10 @@ export type ProgressCallback = (progress: number) => void
 export type PreProcessCompleteCallback<TMeta extends IndexedObject<any>> = (
   file: UppyFile<TMeta> | undefined,
 ) => void
+export type UploadPauseCallback = (
+  fileID: UppyFile['id'] | undefined,
+  isPaused: boolean,
+) => void
 export type UploadProgressCallback<TMeta extends IndexedObject<any>> = (
   file: UppyFile<TMeta> | undefined,
   progress: FileProgress,
@@ -253,6 +257,8 @@ export type UploadErrorCallback<TMeta extends IndexedObject<any>> = (
   response?: ErrorResponse,
 ) => void
 export type UploadRetryCallback = (fileID: string) => void
+export type PauseAllCallback = (fileIDs: string[]) => void
+export type ResumeAllCallback = (fileIDs: string[]) => void
 export type RetryAllCallback = (fileIDs: string[]) => void
 export type RestrictionFailedCallback<TMeta extends IndexedObject<any>> = (
   file: UppyFile<TMeta> | undefined,
@@ -262,24 +268,27 @@ export type RestrictionFailedCallback<TMeta extends IndexedObject<any>> = (
 export interface UppyEventMap<
   TMeta extends IndexedObject<any> = Record<string, unknown>,
 > {
-  'file-added': FileAddedCallback<TMeta>
-  'files-added': FilesAddedCallback<TMeta>
-  'file-removed': FileRemovedCallback<TMeta>
-  upload: UploadCallback
-  progress: ProgressCallback
-  'preprocess-complete': PreProcessCompleteCallback<TMeta>
-  'upload-progress': UploadProgressCallback<TMeta>
-  'upload-success': UploadSuccessCallback<TMeta>
+  'cancel-all': GenericEventCallback
   complete: UploadCompleteCallback<TMeta>
   error: ErrorCallback
-  'upload-error': UploadErrorCallback<TMeta>
-  'upload-retry': UploadRetryCallback
-  'retry-all': RetryAllCallback
-  'info-visible': GenericEventCallback
+  'file-added': FileAddedCallback<TMeta>
+  'file-removed': FileRemovedCallback<TMeta>
+  'files-added': FilesAddedCallback<TMeta>
   'info-hidden': GenericEventCallback
-  'cancel-all': GenericEventCallback
-  'restriction-failed': RestrictionFailedCallback<TMeta>
+  'info-visible': GenericEventCallback
+  'pause-all': PauseAllCallback
+  'preprocess-complete': PreProcessCompleteCallback<TMeta>
+  progress: ProgressCallback
   'reset-progress': GenericEventCallback
+  'resume-all': ResumeAllCallback
+  'restriction-failed': RestrictionFailedCallback<TMeta>
+  'retry-all': RetryAllCallback
+  'upload-error': UploadErrorCallback<TMeta>
+  'upload-pause': UploadPauseCallback
+  'upload-progress': UploadProgressCallback<TMeta>
+  'upload-retry': UploadRetryCallback
+  'upload-success': UploadSuccessCallback<TMeta>
+  upload: UploadCallback
 }
 
 export class Uppy {

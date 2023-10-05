@@ -8248,10 +8248,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tsconfig/svelte@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "@tsconfig/svelte@npm:3.0.0"
-  checksum: 92986428a6aa87d5db9377de65cd7bd6bf73367bc3ec03bb06faba7db2ac51c45470402212914bbc76c00efa08e1116e9d269aea38274e04dbb183705dbb7a09
+"@tsconfig/svelte@npm:^5.0.0":
+  version: 5.0.2
+  resolution: "@tsconfig/svelte@npm:5.0.2"
+  checksum: c16608913db89c8bfc2df805224f12403dd9d2f6f9480cc293e3aae8d1897f3a2de44db14d7c039f0325358e139fb071ec843ee46445a7e10d5265fe48f6ae80
   languageName: node
   linkType: hard
 
@@ -9214,7 +9214,7 @@ __metadata:
     stylelint-config-standard-scss: ^10.0.0
     tar: ^6.1.0
     tsd: ^0.22.0
-    typescript: ~4.8
+    typescript: ~5.1
     vitest: ^0.34.5
     vue-template-compiler: "workspace:*"
   languageName: unknown
@@ -10178,7 +10178,7 @@ __metadata:
   resolution: "@uppy/svelte@workspace:packages/@uppy/svelte"
   dependencies:
     "@rollup/plugin-node-resolve": ^13.0.0
-    "@tsconfig/svelte": ^3.0.0
+    "@tsconfig/svelte": ^5.0.0
     rollup: ^2.60.2
     rollup-plugin-svelte: ^7.0.0
     svelte: ^4.0.0
@@ -15025,7 +15025,7 @@ __metadata:
     prompts: ^2.4.2
     react: ^18.1.0
     react-dom: ^18.1.0
-    typescript: ~4.8
+    typescript: ~5.1
     vue: ^3.2.33
   languageName: unknown
   linkType: soft
@@ -16543,10 +16543,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eventemitter3@npm:^4.0.0, eventemitter3@npm:^4.0.7":
+"eventemitter3@npm:^4.0.0":
   version: 4.0.7
   resolution: "eventemitter3@npm:4.0.7"
   checksum: 1875311c42fcfe9c707b2712c32664a245629b42bb0a5a84439762dd0fd637fc54d078155ea83c2af9e0323c9ac13687e03cfba79b03af9f40c89b4960099374
+  languageName: node
+  linkType: hard
+
+"eventemitter3@npm:^5.0.1":
+  version: 5.0.1
+  resolution: "eventemitter3@npm:5.0.1"
+  checksum: 543d6c858ab699303c3c32e0f0f47fc64d360bf73c3daf0ac0b5079710e340d6fe9f15487f94e66c629f5f82cd1a8678d692f3dbb6f6fcd1190e1b97fcad36f8
   languageName: node
   linkType: hard
 
@@ -25317,13 +25324,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"p-queue@npm:^7.3.4":
-  version: 7.3.4
-  resolution: "p-queue@npm:7.3.4"
+"p-queue@npm:7.4.1":
+  version: 7.4.1
+  resolution: "p-queue@npm:7.4.1"
   dependencies:
-    eventemitter3: ^4.0.7
+    eventemitter3: ^5.0.1
     p-timeout: ^5.0.2
-  checksum: a21b8a4dd75f64a4988e4468cc344d1b45132506ddd2c771932d3de446d108ee68713b629e0d3f0809c227bc10eafc613edde6ae741d9f60db89b6031e40921c
+  checksum: 1c6888aa994d399262a9fbdd49c7066f8359732397f7a42ecf03f22875a1d65899797b46413f97e44acc18dddafbcc101eb135c284714c931dbbc83c3967f450
+  languageName: node
+  linkType: hard
+
+"p-queue@patch:p-queue@npm%3A7.4.1#./.yarn/patches/p-queue-npm-7.4.1-e0cf0a6f17.patch::locator=%40uppy-dev%2Fbuild%40workspace%3A.":
+  version: 7.4.1
+  resolution: "p-queue@patch:p-queue@npm%3A7.4.1#./.yarn/patches/p-queue-npm-7.4.1-e0cf0a6f17.patch::version=7.4.1&hash=c7a089&locator=%40uppy-dev%2Fbuild%40workspace%3A."
+  dependencies:
+    eventemitter3: ^5.0.1
+    p-timeout: ^5.0.2
+  checksum: 5bdc72ba72fd1eab609dd52c2b8c41d531b258be1f82ac894e9b77a40bfe5cf7cb63dd05ed5caafdb68943616b805065bd6ee5f085a328f9aa5c91a8b11e5e85
   languageName: node
   linkType: hard
 
