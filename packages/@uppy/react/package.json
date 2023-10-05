@@ -36,7 +36,7 @@
     "@uppy/file-input": "workspace:^",
     "@uppy/progress-bar": "workspace:^",
     "@uppy/status-bar": "workspace:^",
-    "react": "^18.0.0"
+    "react": "^16.0.0 || ^17.0.0 || ^18.0.0"
   },
   "peerDependenciesMeta": {
     "@uppy/dashboard": {
