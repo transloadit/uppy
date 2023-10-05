@@ -4,7 +4,7 @@
   "author": "Merlijn Vos <merlijn@soverin.net>",
   "description": "End-to-end test suite for Uppy",
   "scripts": {
-    "client:start": "parcel --no-autoinstall --lazy clients/index.html",
+    "client:start": "parcel --no-autoinstall clients/index.html",
     "cypress:open": "cypress open",
     "cypress:headless": "cypress run",
     "generate-test": "yarn node generate-test.mjs"
