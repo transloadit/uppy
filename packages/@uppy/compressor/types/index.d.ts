@@ -8,7 +8,9 @@ export interface CompressorOptions extends PluginOptions {
   locale?: CompressorLocale
 }
 
-export type CompressorCompleteCallback<TMeta> = (files: UppyFile<TMeta>[]) => void;
+export type CompressorCompleteCallback<TMeta> = (
+  files: UppyFile<TMeta>[],
+) => void
 
 declare module '@uppy/core' {
   export interface UppyEventMap<TMeta> {

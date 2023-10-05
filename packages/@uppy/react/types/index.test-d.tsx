@@ -1,7 +1,7 @@
-import * as React from "react"
-import Uppy from "@uppy/core"
-import { expectType, expectError } from "tsd"
-import * as components from "../"
+import * as React from 'react'
+import Uppy from '@uppy/core'
+import { expectType, expectError } from 'tsd'
+import * as components from '../'
 
 const { useUppy } = components
 
@@ -16,7 +16,7 @@ const uppy = new Uppy()
 }
 
 {
-  expectError(<components.Dashboard target="body"/>)
+  expectError(<components.Dashboard target="body" />)
 }
 
 // inline option should be removed from proptypes because it is always overridden
@@ -37,9 +37,9 @@ const uppy = new Uppy()
         strings: {
           // Text to show on the droppable area.
           // `%{browse}` is replaced with a link that opens the system file selection dialog.
-          dropHereOr: "Drop here or %{browse}",
+          dropHereOr: 'Drop here or %{browse}',
           // Used as the label for the link that opens the system file selection dialog.
-          browse: "browse",
+          browse: 'browse',
         },
       }}
     />
@@ -54,7 +54,7 @@ const uppy = new Uppy()
       open
       animateOpenClose
       onRequestClose={() => {
-        alert("no")
+        alert('no')
       }}
     />
   )

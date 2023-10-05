@@ -1,11 +1,15 @@
 /* global cy */
 
-export const interceptCompanionUrlRequest = () => cy.intercept('http://localhost:3020/url/*').as('url')
-export const interceptCompanionUnsplashRequest = () => cy.intercept('http://localhost:3020/search/unsplash/*').as('unsplash')
+export const interceptCompanionUrlRequest = () =>
+  cy.intercept('http://localhost:3020/url/*').as('url')
+export const interceptCompanionUnsplashRequest = () =>
+  cy.intercept('http://localhost:3020/search/unsplash/*').as('unsplash')
 
-export function runRemoteUrlImageUploadTest () {
+export function runRemoteUrlImageUploadTest() {
   cy.get('[data-cy="Url"]').click()
-  cy.get('.uppy-Url-input').type('https://raw.githubusercontent.com/transloadit/uppy/main/e2e/cypress/fixtures/images/cat.jpg')
+  cy.get('.uppy-Url-input').type(
+    'https://raw.githubusercontent.com/transloadit/uppy/main/e2e/cypress/fixtures/images/cat.jpg',
+  )
   cy.get('.uppy-Url-importButton').click()
   cy.get('.uppy-StatusBar-actionBtn--upload').click()
   cy.wait('@url').then(() => {
@@ -13,7 +17,7 @@ export function runRemoteUrlImageUploadTest () {
   })
 }
 
-export function runRemoteUnsplashUploadTest () {
+export function runRemoteUnsplashUploadTest() {
   cy.get('[data-cy="Unsplash"]').click()
   cy.get('.uppy-SearchProvider-input').type('book')
   cy.get('.uppy-SearchProvider-searchButton').click()
