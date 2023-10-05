@@ -3,6 +3,9 @@ import { afterAll, beforeAll, describe, it, expect } from '@jest/globals'
 import Core from '@uppy/core'
 import StatusBarPlugin from '@uppy/status-bar'
 import GoogleDrivePlugin from '@uppy/google-drive'
+import WebcamPlugin from '@uppy/webcam'
+import Url from '@uppy/url'
+
 import resizeObserverPolyfill from 'resize-observer-polyfill'
 import DashboardPlugin from '../lib/index.js'
 
@@ -62,6 +65,39 @@ describe('Dashboard', () => {
         plugins: ['GoogleDrive'],
       })
     }).not.toThrow()
+
+    core.close()
+  })
+
+  it('should automatically add plugins which have no target', () => {
+    const core = new Core()
+    core.use(Url, { companionUrl: 'https://companion.uppy.io' })
+    core.use(DashboardPlugin, { inline: false })
+    core.use(WebcamPlugin)
+
+    const dashboardPlugins = core.getState().plugins['Dashboard'].targets
+
+    // two built-in plugins + these ones below
+    expect(dashboardPlugins.length).toEqual(4)
+    expect(dashboardPlugins.some((plugin) => plugin.id === 'Url')).toEqual(true)
+    expect(dashboardPlugins.some((plugin) => plugin.id === 'Webcam')).toEqual(true)
+
+    core.close()
+  })
+
+  it('should not automatically add plugins which have a non-Dashboard target', () => {
+    const core = new Core()
+    WebcamPlugin.prototype.start = () => {}
+    core.use(Url, { companionUrl: 'https://companion.uppy.io' })
+    core.use(DashboardPlugin, { inline: false })
+    core.use(WebcamPlugin, { target: 'body' })
+
+    const dashboardPlugins = core.getState().plugins['Dashboard'].targets
+
+    // two built-in plugins + these ones below
+    expect(dashboardPlugins.length).toEqual(3)
+    expect(dashboardPlugins.some((plugin) => plugin.id === 'Url')).toEqual(true)
+    expect(dashboardPlugins.some((plugin) => plugin.id === 'Webcam')).toEqual(false)
 
     core.close()
   })
