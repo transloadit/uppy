@@ -9,9 +9,13 @@ env:
 jobs:
   release:
     name: Publish releases
-    if: ${{ github.event.review.state == 'approved' && github.event.sender.login == github.event.pull_request.assignee.login && github.event.pull_request.head.ref == 'release-candidate' }}
+    if:
+      ${{ github.event.review.state == 'approved' && github.event.sender.login
+      == github.event.pull_request.assignee.login &&
+      github.event.pull_request.head.ref == 'release-candidate' }}
     outputs:
-      companionWasReleased: ${{ steps.checkIfCompanionWasReleased.outputs.version }}
+      companionWasReleased:
+        ${{ steps.checkIfCompanionWasReleased.outputs.version }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
@@ -20,7 +24,8 @@ jobs:
           fetch-depth: 2
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
-        run: echo "dir=$(corepack yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+        run:
+          echo "dir=$(corepack yarn config get cacheFolder)" >> $GITHUB_OUTPUT
 
       - uses: actions/cache@v3
         id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
@@ -39,7 +44,10 @@ jobs:
           # https://docs.cypress.io/guides/references/advanced-installation#Skipping-installation
           CYPRESS_INSTALL_BINARY: 0
       - name: Get CHANGELOG diff
-        run: git --no-pager diff HEAD^ -- CHANGELOG.md | awk '{ if( substr($0,0,1) == "+" && $1 != "+##" && $1 != "+Released:" && $1 != "+++" ) { print substr($0,2) } }' > CHANGELOG.diff.md
+        run:
+          git --no-pager diff HEAD^ -- CHANGELOG.md | awk '{ if( substr($0,0,1)
+          == "+" && $1 != "+##" && $1 != "+Released:" && $1 != "+++" ) { print
+          substr($0,2) } }' > CHANGELOG.diff.md
       - name: Copy README for `uppy` package
         run: cp README.md packages/uppy/.
       - name: Build before publishing
@@ -47,7 +55,9 @@ jobs:
       - name: Hack to allow the publish of the Angular package
         run: corepack yarn workspace @uppy/angular prepublishOnly
       - name: Publish to the npm registry
-        run: corepack yarn workspaces foreach --no-private npm publish --access public --tolerate-republish
+        run:
+          corepack yarn workspaces foreach --no-private npm publish --access
+          public --tolerate-republish
         env:
           YARN_NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Merge PR
@@ -68,9 +78,13 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Get Uppy version number
         id: uppyVersion
-        run: jq -r '"version="+.version' < packages/uppy/package.json >> $GITHUB_OUTPUT
+        run:
+          jq -r '"version="+.version' < packages/uppy/package.json >>
+          $GITHUB_OUTPUT
       - name: Create GitHub release
-        run: gh release create uppy@${{ steps.uppyVersion.outputs.version }} -t "Uppy ${{ steps.uppyVersion.outputs.version }}" -F CHANGELOG.diff.md
+        run:
+          gh release create uppy@${{ steps.uppyVersion.outputs.version }} -t
+          "Uppy ${{ steps.uppyVersion.outputs.version }}" -F CHANGELOG.diff.md
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload `uppy` to CDN
@@ -79,19 +93,28 @@ jobs:
           EDGLY_KEY: ${{secrets.EDGLY_KEY}}
           EDGLY_SECRET: ${{secrets.EDGLY_SECRET}}
       - name: Upload `@uppy/locales` to CDN if it was released
-        run: git diff --exit-code --quiet HEAD^ -- packages/@uppy/locales/package.json ||corepack yarn run uploadcdn @uppy/locales
+        run:
+          git diff --exit-code --quiet HEAD^ --
+          packages/@uppy/locales/package.json ||corepack yarn run uploadcdn
+          @uppy/locales
         env:
           EDGLY_KEY: ${{secrets.EDGLY_KEY}}
           EDGLY_SECRET: ${{secrets.EDGLY_SECRET}}
       - name: Check if Companion was released
         id: checkIfCompanionWasReleased
-        run: git diff --exit-code --quiet HEAD^ -- packages/@uppy/companion/package.json || echo "version=$(jq -r .version < packages/@uppy/companion/package.json)" >> $GITHUB_OUTPUT
+        run:
+          git diff --exit-code --quiet HEAD^ --
+          packages/@uppy/companion/package.json || echo "version=$(jq -r
+          .version < packages/@uppy/companion/package.json)" >> $GITHUB_OUTPUT
       - name: Remove release-candidate branch
-        run: gh api -X DELETE repos/${{ github.repository }}/git/refs/heads/release-candidate || echo "Already deleted"
+        run:
+          gh api -X DELETE repos/${{ github.repository
+          }}/git/refs/heads/release-candidate || echo "Already deleted"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Remove release branch
-        run: gh api -X DELETE repos/${{ github.repository }}/git/refs/heads/release
+        run:
+          gh api -X DELETE repos/${{ github.repository }}/git/refs/heads/release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Disable Release workflow
@@ -100,7 +123,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: In case of failure
         if: ${{ failure() }}
-        run: gh pr comment ${{ github.event.pull_request.number }} --body "Release job failed, please take action."
+        run:
+          gh pr comment ${{ github.event.pull_request.number }} --body "Release
+          job failed, please take action."
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

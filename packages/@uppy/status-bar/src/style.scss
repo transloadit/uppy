@@ -14,7 +14,7 @@
   background-color: $white;
   transition: height 0.2s;
 
-  [data-uppy-theme="dark"] & {
+  [data-uppy-theme='dark'] & {
     background-color: $gray-900;
   }
 }
@@ -30,12 +30,12 @@
   background-color: $gray-200;
   content: '';
 
-  [data-uppy-theme="dark"] & {
+  [data-uppy-theme='dark'] & {
     background-color: $gray-600;
   }
 }
 
-.uppy-StatusBar[aria-hidden=true] {
+.uppy-StatusBar[aria-hidden='true'] {
   height: 0;
   overflow-y: hidden;
 }
@@ -56,12 +56,12 @@
   color: $red;
 }
 
-.uppy-StatusBar:not([aria-hidden=true]).is-waiting {
+.uppy-StatusBar:not([aria-hidden='true']).is-waiting {
   height: 65px;
   background-color: $white;
   border-top: 1px solid $gray-200;
 
-  [data-uppy-theme="dark"] & {
+  [data-uppy-theme='dark'] & {
     background-color: $gray-900;
     border-top: 1px solid $gray-800;
   }
@@ -72,20 +72,35 @@
   z-index: $zIndex-2;
   height: 2px;
   background-color: $blue;
-  transition: background-color, width 0.3s ease-out;
+  transition:
+    background-color,
+    width 0.3s ease-out;
 
   &.is-indeterminate {
     $stripe-color: rgba(0, 0, 0, 0.3);
 
-    background-image: linear-gradient(45deg, $stripe-color 25%, transparent 25%, transparent 50%, $stripe-color 50%, $stripe-color 75%, transparent 75%, transparent);
+    background-image: linear-gradient(
+      45deg,
+      $stripe-color 25%,
+      transparent 25%,
+      transparent 50%,
+      $stripe-color 50%,
+      $stripe-color 75%,
+      transparent 75%,
+      transparent
+    );
     background-size: 64px 64px;
     animation: uppy-StatusBar-ProgressStripes 1s linear infinite;
   }
 }
 
 @keyframes uppy-StatusBar-ProgressStripes {
-  from { background-position: 0 0; }
-  to { background-position: 64px 0; }
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 64px 0;
+  }
 }
 
 .uppy-StatusBar.is-preprocessing .uppy-StatusBar-progress,
@@ -112,7 +127,7 @@
     padding-inline-start: 15px;
   }
 
-  [data-uppy-theme="dark"] & {
+  [data-uppy-theme='dark'] & {
     color: $gray-200;
   }
 }
@@ -135,7 +150,7 @@
     margin-left: 5px;
   }
 
-  [data-uppy-theme="dark"] & {
+  [data-uppy-theme='dark'] & {
     color: $gray-200;
   }
 }
@@ -148,7 +163,7 @@
   line-height: 1.2;
   white-space: nowrap;
 
-  [data-uppy-theme="dark"] & {
+  [data-uppy-theme='dark'] & {
     color: $gray-400;
   }
 }
@@ -192,12 +207,12 @@
   padding: 0 15px;
   background-color: $gray-50;
 
-  [data-uppy-theme="dark"] & {
+  [data-uppy-theme='dark'] & {
     background-color: $gray-900;
   }
 }
 
-.uppy-StatusBar:not([aria-hidden="true"]).is-waiting.has-ghosts {
+.uppy-StatusBar:not([aria-hidden='true']).is-waiting.has-ghosts {
   flex-direction: column;
   height: 90px;
 
@@ -225,7 +240,7 @@
   cursor: pointer;
   opacity: 0.9;
 
-  [data-uppy-theme="dark"] & {
+  [data-uppy-theme='dark'] & {
     @include blue-border-focus--dark;
   }
 
@@ -257,7 +272,7 @@
 .uppy-StatusBar-actionBtn--disabled {
   opacity: 0.4;
 
-  [data-uppy-theme="dark"] & {
+  [data-uppy-theme='dark'] & {
     opacity: 0.7;
   }
 }
@@ -274,7 +289,7 @@
   border-radius: 8px;
   margin-inline-end: 6px;
 
-  [data-uppy-theme="dark"] & {
+  [data-uppy-theme='dark'] & {
     @include blue-border-focus--dark;
   }
 
@@ -301,11 +316,11 @@
     background-color: darken($green, 5%);
   }
 
-  [data-uppy-theme="dark"] & {
+  [data-uppy-theme='dark'] & {
     background-color: $darkgreen;
   }
 
-  [data-uppy-theme="dark"] &:hover {
+  [data-uppy-theme='dark'] &:hover {
     background-color: darken($darkgreen, 5%);
   }
 }
@@ -315,12 +330,15 @@
   padding: 13px 22px;
 }
 
-.uppy-StatusBar.is-waiting .uppy-StatusBar-actionBtn--upload.uppy-StatusBar-actionBtn--disabled:hover {
+.uppy-StatusBar.is-waiting
+  .uppy-StatusBar-actionBtn--upload.uppy-StatusBar-actionBtn--disabled:hover {
   background-color: $green;
   cursor: not-allowed;
 }
 
-[data-uppy-theme="dark"] .uppy-StatusBar.is-waiting .uppy-StatusBar-actionBtn--upload.uppy-StatusBar-actionBtn--disabled:hover {
+[data-uppy-theme='dark']
+  .uppy-StatusBar.is-waiting
+  .uppy-StatusBar-actionBtn--upload.uppy-StatusBar-actionBtn--disabled:hover {
   background-color: $darkgreen;
 }
 
@@ -338,11 +356,11 @@
   padding-bottom: 1px;
   border-radius: 3px;
 
-  [data-uppy-theme="dark"] & {
+  [data-uppy-theme='dark'] & {
     @include blue-border-focus--dark;
   }
 
-  .uppy-StatusBar.is-preprocessing &, 
+  .uppy-StatusBar.is-preprocessing &,
   .uppy-StatusBar.is-postprocessing & {
     display: none;
   }
@@ -355,7 +373,7 @@
   line-height: 1;
   border-radius: 3px;
 
-  [data-uppy-theme="dark"] & {
+  [data-uppy-theme='dark'] & {
     color: $highlight--dark;
   }
 }
@@ -375,7 +393,7 @@
     font-size: 14px;
   }
 
-  [data-uppy-theme="dark"] & {
+  [data-uppy-theme='dark'] & {
     color: $gray-200;
   }
 }

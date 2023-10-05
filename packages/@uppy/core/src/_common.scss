@@ -15,8 +15,8 @@
 
 // One selector uses the dir attribute declared by the page. If that does not exist, Uppy adds a
 // fallback dir attribute on the root element itself, and we need a second selector to match that.
-[dir="rtl"] .uppy-Root,
-.uppy-Root[dir="rtl"] {
+[dir='rtl'] .uppy-Root,
+.uppy-Root[dir='rtl'] {
   text-align: right;
 }
 
@@ -40,7 +40,7 @@
   line-height: 1;
 }
 
-[dir="rtl"] .uppy-u-reset {
+[dir='rtl'] .uppy-u-reset {
   text-align: right;
 }
 
@@ -65,13 +65,13 @@
     box-shadow: 0 0 0 3px rgba($blue, 0.15);
   }
 
-  [data-uppy-theme="dark"] & {
+  [data-uppy-theme='dark'] & {
     color: $gray-200;
     background-color: $gray-800;
     border-color: $gray-800;
   }
 
-  [data-uppy-theme="dark"] &:focus {
+  [data-uppy-theme='dark'] &:focus {
     border-color: $gray-700;
     box-shadow: none;
   }
@@ -107,7 +107,9 @@
   user-select: none;
 
   // Override right-to-left variant of the uppy-u-reset class
-  [dir="rtl"] & { text-align: center; }
+  [dir='rtl'] & {
+    text-align: center;
+  }
 }
 
 .uppy-c-btn:not(:disabled):not(.disabled) {
@@ -138,7 +140,7 @@
     padding: 13px 22px;
   }
 
-  [data-uppy-theme="dark"] & {
+  [data-uppy-theme='dark'] & {
     color: $gray-200;
 
     @include blue-border-focus--dark;
@@ -166,13 +168,13 @@
     padding: 13px 18px;
   }
 
-  [data-uppy-theme="dark"] & {
+  [data-uppy-theme='dark'] & {
     color: $gray-200;
 
     @include blue-border-focus--dark;
   }
 
-  [data-uppy-theme="dark"] &:hover {
+  [data-uppy-theme='dark'] &:hover {
     color: $gray-500;
   }
 }

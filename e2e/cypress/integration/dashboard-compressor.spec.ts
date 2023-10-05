@@ -1,4 +1,4 @@
-function uglierBytes (text) {
+function uglierBytes(text) {
   const KB = 2 ** 10
   const MB = KB * KB
 
@@ -28,7 +28,13 @@ describe('dashboard-compressor', () => {
   it('should compress images', () => {
     const sizeBeforeCompression = []
 
-    cy.get('@file-input').selectFile(['cypress/fixtures/images/cat.jpg', 'cypress/fixtures/images/traffic.jpg'], { force:true })
+    cy.get('@file-input').selectFile(
+      [
+        'cypress/fixtures/images/cat.jpg',
+        'cypress/fixtures/images/traffic.jpg',
+      ],
+      { force: true },
+    )
 
     cy.get('.uppy-Dashboard-Item-statusSize').each((element) => {
       const text = element.text()
