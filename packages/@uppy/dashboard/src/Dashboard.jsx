@@ -749,7 +749,7 @@ export default class Dashboard extends UIPlugin {
     this.startListeningToResize()
     document.addEventListener('paste', this.handlePasteOnBody)
 
-    this.uppy.on('plugin-added', this.#autoDiscoverPlugins)
+    this.uppy.on('plugin-added', this.#addSupportedPluginIfNoTarget)
     this.uppy.on('plugin-remove', this.removeTarget)
     this.uppy.on('file-added', this.hideAllPanels)
     this.uppy.on('dashboard:modal-closed', this.hideAllPanels)
@@ -781,9 +781,9 @@ export default class Dashboard extends UIPlugin {
 
     this.stopListeningToResize()
     document.removeEventListener('paste', this.handlePasteOnBody)
-
     window.removeEventListener('popstate', this.handlePopState, false)
-    this.uppy.off('plugin-added', this.#autoDiscoverPlugins)
+
+    this.uppy.off('plugin-added', this.#addSupportedPluginIfNoTarget)
     this.uppy.off('plugin-remove', this.removeTarget)
     this.uppy.off('file-added', this.hideAllPanels)
     this.uppy.off('dashboard:modal-closed', this.hideAllPanels)
@@ -1017,7 +1017,7 @@ export default class Dashboard extends UIPlugin {
     })
   }
 
-  #addSpecifiedPlugins = () => {
+  #addSpecifiedPluginsFromOptions = () => {
     const plugins = this.opts.plugins || []
 
     plugins.forEach((pluginID) => {
@@ -1031,17 +1031,23 @@ export default class Dashboard extends UIPlugin {
   }
 
   #autoDiscoverPlugins = () => {
+    console.log('XXX Auto discovering plugins...')
+    this.uppy.iteratePlugins(this.#addSupportedPluginIfNoTarget)
+  }
+
+  #addSupportedPluginIfNoTarget = (plugin) => {
     // Only these types belong on the Dashboard,
     // we wouldn’t want to try and mount Compressor or Tus, for example.
     const typesAllowed = ['acquirer', 'editor']
-    this.uppy.iteratePlugins(plugin => {
-      if (plugin && !plugin.opts?.target && typesAllowed.includes(plugin.type)) {
-        const pluginAlreadyAdded = this.getPluginState().targets.some(
-          installedPlugin => plugin.id === installedPlugin.id,
-        )
-        if (!pluginAlreadyAdded) this.addTarget(plugin)
+    if (plugin && !plugin.opts?.target && typesAllowed.includes(plugin.type)) {
+      const pluginAlreadyAdded = this.getPluginState().targets.some(
+        installedPlugin => plugin.id === installedPlugin.id,
+      )
+      if (!pluginAlreadyAdded) {
+        console.log('XXX Installing...', plugin.id)
+        plugin.mount(this, plugin)
       }
-    })
+    }
   }
 
   install = () => {
@@ -1123,7 +1129,7 @@ export default class Dashboard extends UIPlugin {
       this.darkModeMediaQuery.addListener(this.handleSystemDarkModeChange)
     }
 
-    this.#addSpecifiedPlugins()
+    this.#addSpecifiedPluginsFromOptions()
     this.#autoDiscoverPlugins()
     this.initEvents()
   }
