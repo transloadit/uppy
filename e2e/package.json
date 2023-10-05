@@ -4,7 +4,7 @@
   "author": "Merlijn Vos <merlijn@soverin.net>",
   "description": "End-to-end test suite for Uppy",
   "scripts": {
-    "client:start": "parcel clients/index.html",
+    "client:start": "parcel --no-autoinstall --lazy clients/index.html",
     "cypress:open": "cypress open",
     "cypress:headless": "cypress run",
     "generate-test": "yarn node generate-test.mjs"
@@ -45,11 +45,13 @@
     "@uppy/zoom": "workspace:^"
   },
   "devDependencies": {
+    "@parcel/transformer-vue": "^2.9.3",
     "cypress": "^12.9.0",
     "cypress-terminal-report": "^4.1.2",
     "deep-freeze": "^0.0.1",
     "execa": "^6.1.0",
-    "parcel": "2.0.0-nightly.1278",
+    "parcel": "^2.9.3",
+    "process": "^0.11.10",
     "prompts": "^2.4.2",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
