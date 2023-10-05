@@ -1,3 +1,4 @@
+const { it, test } = require('node:test')
 const request = require('supertest')
 const { getServer } = require('../mockserver')
 

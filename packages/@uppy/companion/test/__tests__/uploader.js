@@ -1,9 +1,13 @@
 'use strict'
 
-jest.mock('tus-js-client')
+require.cache[require.resolve('tus-js-client')] = require('../__mocks__/tus-js-client')
 
-const intoStream = require('into-stream')
 const fs = require('node:fs')
+const path = require('node:path')
+const { Readable } = require('node:stream')
+const { describe, test, after: afterAll } = require('node:test')
+const expect = require('expect').default
+const jest = require('jest-mock')
 const nock = require('nock')
 
 const Uploader = require('../../src/server/Uploader')
@@ -16,9 +20,13 @@ afterAll(() => {
   nock.restore()
 })
 
-process.env.COMPANION_DATADIR = './test/output'
+process.env.COMPANION_DATADIR = path.join(__dirname, '..', 'output')
 process.env.COMPANION_DOMAIN = 'localhost:3020'
 const { companionOptions } = standalone()
+
+function intoStream (buffer) {
+  return Readable.from(buffer, { objectMode: false })
+}
 
 describe('uploader with tus protocol', () => {
   test('uploader respects uploadUrls', async () => {

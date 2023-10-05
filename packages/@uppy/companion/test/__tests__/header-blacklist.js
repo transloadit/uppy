@@ -1,3 +1,5 @@
+const { test, describe } = require('node:test')
+const expect = require('expect').default
 const headerSanitize = require('../../src/server/header-blacklist')
 
 describe('Header black-list testing', () => {

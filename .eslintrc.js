@@ -11,7 +11,7 @@ module.exports = {
   extends: ['transloadit', 'prettier'],
   env: {
     es6: true,
-    jest: true,
+    jest: false,
     node: true,
     // extra:
     browser: true,

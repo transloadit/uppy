@@ -1,3 +1,5 @@
+const { beforeEach, describe, it:test } = require('node:test')
+const expect = require('expect').default
 const providerManager = require('../../src/server/provider')
 const { getCompanionOptions } = require('../../src/standalone/helper')
 const { setDefaultEnv } = require('../mockserver')

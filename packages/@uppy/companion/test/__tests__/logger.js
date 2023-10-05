@@ -1,3 +1,5 @@
+const { it: test, describe, before: beforeAll } = require('node:test')
+const expect = require('expect').default
 const chalk = require('chalk')
 const logger = require('../../src/server/logger')
 

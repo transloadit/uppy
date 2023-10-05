@@ -1,15 +1,44 @@
+const { before: beforeAll, after: afterAll, describe, it } = require('node:test')
+const expect = require('expect').default
 const request = require('supertest')
 const nock = require('nock')
 
-const mockOauthState = require('../mockoauthstate')
+function mock (package, replacer) {
+  const actualPath = require.resolve(package)
+  if (arguments.length === 1) {
+    // eslint-disable-next-line import/no-dynamic-require,global-require
+    require.cache[actualPath] = require(`../__mocks__/${package}`)
+  } else {
+    const Module = require('node:module') // eslint-disable-line global-require
+    require.cache[actualPath] = new Module(actualPath, module)
+    Object.defineProperties(require.cache[actualPath], {
+      exports: {
+        __proto__: null,
+        value: replacer(),
+      },
+      resetFn: { __proto__: null, value: replacer },
+    })
+  }
+}
 
-jest.mock('tus-js-client')
-jest.mock('../../src/server/helpers/request', () => {
+mock('tus-js-client')
+mock('../../src/server/helpers/request', () => {
   return {
     getURLMeta: () => Promise.resolve({ size: 758051 }),
   }
 })
-jest.mock('../../src/server/helpers/oauth-state', () => mockOauthState())
+// eslint-disable-next-line global-require
+mock('../../src/server/helpers/oauth-state', () => require('../mockoauthstate')())
+
+const test = {
+  each (iterable) {
+    return (message, fn) => {
+      for (const val of iterable) {
+        it(message, fn.bind(null, val))
+      }
+    }
+  },
+}
 
 const fixtures = require('../fixtures')
 const { nockGoogleDownloadFile } = require('../fixtures/drive')

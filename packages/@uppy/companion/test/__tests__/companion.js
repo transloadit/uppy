@@ -1,3 +1,6 @@
+const { it, describe, it:test, after:afterAll } = require('node:test')
+const expect = require('expect').default
+
 const nock = require('nock')
 const request = require('supertest')
 
@@ -5,16 +8,34 @@ const mockOauthState = require('../mockoauthstate')
 const { version } = require('../../package.json')
 const { nockGoogleDownloadFile } = require('../fixtures/drive')
 
-jest.mock('tus-js-client')
-jest.mock('../../src/server/helpers/oauth-state', () => ({
-  ...jest.requireActual('../../src/server/helpers/oauth-state'),
-  ...mockOauthState(),
+
+function mock (package, replacer) {
+  const actualPath = require.resolve(package)
+  if (arguments.length === 1) {
+    // eslint-disable-next-line import/no-dynamic-require,global-require
+    require.cache[actualPath] = require(`../__mocks__/${package}`)
+  } else {
+    // eslint-disable-next-line import/no-dynamic-require,global-require
+    const actual = require(package)
+    const Module = require('node:module') // eslint-disable-line global-require
+    require.cache[actualPath] = new Module(actualPath, module)
+    Object.defineProperties(require.cache[actualPath], {
+      exports: {
+        __proto__: null,
+        value: replacer(actual),
+      },
+      resetFn: { __proto__: null, value: replacer.bind(null, actual) },
+    })
+  }
+}
+mock('tus-js-client')
+mock('../../src/server/helpers/oauth-state', (actual) => ({
+  ...actual,
+  ...mockOauthState,
 }))
 
 const fakeLocalhost = 'localhost.com'
-
-jest.mock('node:dns', () => {
-  const actual = jest.requireActual('node:dns')
+mock('node:dns', (actual) => {
   return {
     ...actual,
     lookup: (hostname, options, callback) => {

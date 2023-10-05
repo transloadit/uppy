@@ -1,3 +1,5 @@
+const { describe, test } = require('node:test')
+const expect = require('expect').default
 const mockOauthState = require('../mockoauthstate')()
 
 // eslint-disable-next-line import/order
@@ -5,8 +7,27 @@ const request = require('supertest')
 const tokenService = require('../../src/server/helpers/jwt')
 const { getServer, grantToken } = require('../mockserver')
 
-jest.mock('../../src/server/helpers/oauth-state', () => ({
-  ...jest.requireActual('../../src/server/helpers/oauth-state'),
+function mock (package, replacer) {
+  const actualPath = require.resolve(package)
+  if (arguments.length === 1) {
+    // eslint-disable-next-line import/no-dynamic-require,global-require
+    require.cache[actualPath] = require(`../__mocks__/${package}`)
+  } else {
+    // eslint-disable-next-line import/no-dynamic-require,global-require
+    const actual = require(package)
+    const Module = require('node:module') // eslint-disable-line global-require
+    require.cache[actualPath] = new Module(actualPath, module)
+    Object.defineProperties(require.cache[actualPath], {
+      exports: {
+        __proto__: null,
+        value: replacer(actual),
+      },
+      resetFn: { __proto__: null, value: replacer.bind(null, actual) },
+    })
+  }
+}
+mock('../../src/server/helpers/oauth-state', (actual) => ({
+  ...actual,
   ...mockOauthState,
 }))
 

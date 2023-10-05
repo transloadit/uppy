@@ -1,16 +1,27 @@
+const { before: beforeAll, after: afterAll, describe, it:test } = require('node:test')
+const expect = require('expect').default
+
+require.cache[require.resolve('tus-js-client')] = require('../__mocks__/tus-js-client')
+
+{
+  const request = require.resolve('../../src/server/helpers/request')
+  require(request) // eslint-disable-line global-require,import/no-dynamic-require
+  require.cache[request].getURLMeta = () => {
+    return Promise.resolve({ size: 7580, type: 'image/jpg' })
+  }
+}
+
 const nock = require('nock')
 const request = require('supertest')
-
-jest.mock('tus-js-client')
-jest.mock('../../src/server/helpers/request', () => {
-  return {
-    ...jest.requireActual('../../src/server/helpers/request'),
-    getURLMeta: () => {
-      return Promise.resolve({ size: 7580, type: 'image/jpg' })
-    },
-  }
-})
 const { getServer } = require('../mockserver')
+
+test.each = function each (iterable) {
+  return (message, fn) => {
+    for (const val of iterable) {
+      test(message, fn.bind(null, val))
+    }
+  }
+}
 
 const mockServer = getServer({ COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT: '0' })
 

@@ -1,3 +1,5 @@
+const { after: afterAll, test, describe } = require('node:test')
+const expect = require('expect').default
 const nock = require('nock')
 const { getRedirectEvaluator, FORBIDDEN_IP_ADDRESS, FORBIDDEN_RESOLVED_IP_ADDRESS } = require('../../src/server/helpers/request')
 const { getProtectedGot } = require('../../src/server/helpers/request')
@@ -17,18 +19,16 @@ describe('test getRedirectEvaluator', () => {
     },
   }
 
-  test('when original URL has "https:" as protocol', (done) => {
+  test('when original URL has "https:" as protocol', () => {
     const shouldRedirectHttps = getRedirectEvaluator(httpsURL, true)
     expect(shouldRedirectHttps(httpsRedirectResp)).toEqual(true)
     expect(shouldRedirectHttps(httpRedirectResp)).toEqual(false)
-    done()
   })
 
-  test('when original URL has "http:" as protocol', (done) => {
+  test('when original URL has "http:" as protocol', () => {
     const shouldRedirectHttp = getRedirectEvaluator(httpURL, true)
     expect(shouldRedirectHttp(httpRedirectResp)).toEqual(true)
     expect(shouldRedirectHttp(httpsRedirectResp)).toEqual(false)
-    done()
   })
 })
 

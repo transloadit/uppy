@@ -1,4 +1,21 @@
-jest.mock('../../src/server/helpers/jwt', () => {
+function mock (package, replacer) {
+  const actualPath = require.resolve(package)
+  if (arguments.length === 1) {
+    // eslint-disable-next-line import/no-dynamic-require,global-require
+    require.cache[actualPath] = require(`../__mocks__/${package}`)
+  } else {
+    const Module = require('node:module') // eslint-disable-line global-require
+    require.cache[actualPath] = new Module(actualPath, module)
+    Object.defineProperties(require.cache[actualPath], {
+      exports: {
+        __proto__: null,
+        value: replacer(),
+      },
+      resetFn: { __proto__: null, value: replacer },
+    })
+  }
+}
+mock('../../src/server/helpers/jwt', () => {
   return {
     generateEncryptedToken: () => 'dummy token',
     verifyEncryptedToken: () => '',
@@ -7,6 +24,8 @@ jest.mock('../../src/server/helpers/jwt', () => {
   }
 })
 
+const { test, describe } = require('node:test')
+const expect = require('expect').default
 const request = require('supertest')
 const { getServer } = require('../mockserver')
 // the order in which getServer is called matters because, once an env is passed,
