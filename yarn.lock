@@ -9204,6 +9204,7 @@ __metadata:
     postcss-logical: ^5.0.0
     pre-commit: ^1.2.2
     prettier: ^3.0.3
+    react: ^18.2.0
     remark-cli: ^11.0.0
     resolve: ^1.17.0
     sass: ^1.29.0
@@ -10087,7 +10088,7 @@ __metadata:
     "@uppy/file-input": "workspace:^"
     "@uppy/progress-bar": "workspace:^"
     "@uppy/status-bar": "workspace:^"
-    react: ^16.0.0 || ^17.0.0 || ^18.0.0
+    react: ^18.0.0
   peerDependenciesMeta:
     "@uppy/dashboard":
       optional: true
@@ -27204,7 +27205,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:^18.0.0, react@npm:^18.1.0":
+"react@npm:^18.0.0, react@npm:^18.1.0, react@npm:^18.2.0":
   version: 18.2.0
   resolution: "react@npm:18.2.0"
   dependencies:
