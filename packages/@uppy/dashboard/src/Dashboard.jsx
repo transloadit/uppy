@@ -1031,7 +1031,6 @@ export default class Dashboard extends UIPlugin {
   }
 
   #autoDiscoverPlugins = () => {
-    console.log('XXX Auto discovering plugins...')
     this.uppy.iteratePlugins(this.#addSupportedPluginIfNoTarget)
   }
 
@@ -1044,7 +1043,6 @@ export default class Dashboard extends UIPlugin {
         installedPlugin => plugin.id === installedPlugin.id,
       )
       if (!pluginAlreadyAdded) {
-        console.log('XXX Installing...', plugin.id)
         plugin.mount(this, plugin)
       }
     }
