@@ -1,10 +1,10 @@
 {
   "compilerOptions": {
     "outDir": "./lib",
-    "module": "commonjs",
+    "module": "Node16",
     "moduleResolution": "node16",
     "declaration": true,
-    "target": "es6",
+    "target": "es2019",
     "noImplicitAny": false,
     "sourceMap": false,
     "allowJs": true,

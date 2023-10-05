@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, jest, describe, it, expect } from '@jest/globals'
+import { afterEach, beforeEach, vi, describe, it, expect } from 'vitest'
 import UppySocket from './Socket.js'
 
 describe('Socket', () => {
@@ -7,9 +7,9 @@ describe('Socket', () => {
   let webSocketSendSpy
 
   beforeEach(() => {
-    webSocketConstructorSpy = jest.fn()
-    webSocketCloseSpy = jest.fn()
-    webSocketSendSpy = jest.fn()
+    webSocketConstructorSpy = vi.fn()
+    webSocketCloseSpy = vi.fn()
+    webSocketSendSpy = vi.fn()
 
     globalThis.WebSocket = class WebSocket {
       constructor (target) {
@@ -122,7 +122,7 @@ describe('Socket', () => {
     const uppySocket = new UppySocket({ target: 'foo' })
     const webSocketInstance = uppySocket[Symbol.for('uppy test: getSocket')]()
 
-    const emitterListenerMock = jest.fn()
+    const emitterListenerMock = vi.fn()
     uppySocket.on('hi', emitterListenerMock)
 
     webSocketInstance.triggerOpen()
@@ -137,7 +137,7 @@ describe('Socket', () => {
   it('should be able to emit messages and subscribe to them', () => {
     const uppySocket = new UppySocket({ target: 'foo' })
 
-    const emitterListenerMock = jest.fn()
+    const emitterListenerMock = vi.fn()
     uppySocket.on('hi', emitterListenerMock)
 
     uppySocket.emit('hi', 'ho')
@@ -161,7 +161,7 @@ describe('Socket', () => {
   it('should be able to subscribe to the first event for a particular action', () => {
     const uppySocket = new UppySocket({ target: 'foo' })
 
-    const emitterListenerMock = jest.fn()
+    const emitterListenerMock = vi.fn()
     uppySocket.once('hi', emitterListenerMock)
 
     uppySocket.emit('hi', 'ho')

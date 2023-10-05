@@ -16,7 +16,7 @@
     "url": "https://github.com/transloadit/uppy/issues"
   },
   "devDependencies": {
-    "@jest/globals": "^29.0.0"
+    "vitest": "^0.34.5"
   },
   "repository": {
     "type": "git",
