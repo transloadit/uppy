@@ -627,13 +627,6 @@ export default class AwsS3Multipart extends BasePlugin {
       throw new Error('Cannot upload to an undefined URL')
     }
 
-    function removeMetadataFromURL (urlString) {
-      const urlObject = new URL(urlString)
-      urlObject.search = ''
-      urlObject.hash = ''
-      return urlObject.href
-    }
-
     return new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest()
       xhr.open(method, url, true)
@@ -692,9 +685,7 @@ export default class AwsS3Multipart extends BasePlugin {
 
         // NOTE This must be allowed by CORS.
         const etag = ev.target.getResponseHeader('ETag')
-        const location = method.toUpperCase() === 'PUT'
-          ? removeMetadataFromURL(ev.target.responseURL)
-          : ev.target.getResponseHeader('Location')
+        const location = ev.target.getResponseHeader('Location')
 
         if (method.toUpperCase() === 'POST' && location === null) {
           // Not being able to read the Location header is not a fatal error.
