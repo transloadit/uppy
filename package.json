@@ -5,7 +5,12 @@
   "description": "Extensible JavaScript file upload widget with support for drag&drop, resumable uploads, previews, restrictions, file processing/encoding, remote providers like Instagram, Dropbox, Google Drive, S3 and more :dog:",
   "lint-staged": {
     "*.{js,mjs,cjs,jsx}": "eslint --fix",
-    "*.{ts,mts,cts,tsx}": "eslint --fix",
+    "*.{ts,mts,cts,tsx}": [
+      "eslint --fix",
+      "prettier -w",
+      "eslint"
+    ],
+    "*.{css,html,json,scss,vue,yaml,yml}": "prettier -w",
     "*.md": [
       "remark --silently-ignore -i .remarkignore -foq",
       "eslint --fix"
@@ -44,7 +49,6 @@
     "@babel/preset-env": "^7.14.7",
     "@babel/register": "^7.10.5",
     "@babel/types": "^7.17.0",
-    "@parcel/transformer-vue": "2.8.4-nightly.2903+5b901a317",
     "@types/jasmine": "file:./private/@types/jasmine",
     "@types/jasminewd2": "file:./private/@types/jasmine",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
@@ -53,7 +57,6 @@
     "adm-zip": "^0.5.5",
     "autoprefixer": "^10.2.6",
     "aws-sdk": "^2.1038.0",
-    "babel-jest": "^29.0.0",
     "babel-plugin-inline-package-json": "^2.0.0",
     "chalk": "^5.0.0",
     "concat-stream": "^2.0.0",
@@ -63,6 +66,7 @@
     "esbuild": "^0.17.1",
     "esbuild-plugin-babel": "^0.2.3",
     "eslint": "^8.0.0",
+    "eslint-config-prettier": "^9.0.0",
     "eslint-config-transloadit": "^2.0.0",
     "eslint-plugin-compat": "^4.0.0",
     "eslint-plugin-cypress": "^2.12.1",
@@ -80,8 +84,7 @@
     "eslint-plugin-unicorn": "^46.0.0",
     "github-contributors-list": "^1.2.4",
     "glob": "^8.0.0",
-    "jest": "^29.0.0",
-    "jest-environment-jsdom": "^29.0.0",
+    "jsdom": "^22.1.0",
     "lint-staged": "^13.0.0",
     "mime-types": "^2.1.26",
     "nodemon": "^2.0.8",
@@ -93,6 +96,7 @@
     "postcss-dir-pseudo-class": "^6.0.0",
     "postcss-logical": "^5.0.0",
     "pre-commit": "^1.2.2",
+    "prettier": "^3.0.3",
     "remark-cli": "^11.0.0",
     "resolve": "^1.17.0",
     "sass": "^1.29.0",
@@ -103,7 +107,8 @@
     "stylelint-config-standard-scss": "^10.0.0",
     "tar": "^6.1.0",
     "tsd": "^0.22.0",
-    "typescript": "~4.8",
+    "typescript": "~5.1",
+    "vitest": "^0.34.5",
     "vue-template-compiler": "workspace:*"
   },
   "scripts": {
@@ -123,11 +128,15 @@
     "dev:with-companion": "npm-run-all --parallel start:companion dev",
     "dev": "yarn workspace @uppy-dev/dev dev",
     "lint:fix": "yarn run lint -- --fix",
-    "lint:markdown": "remark -f -q . -i .remarkignore",
+    "lint:markdown": "remark -f -q -i .remarkignore . .github/CONTRIBUTING.md",
     "lint:staged": "lint-staged",
     "lint:css": "stylelint ./packages/**/*.scss",
     "lint:css:fix": "stylelint ./packages/**/*.scss --fix",
     "lint": "eslint . --cache",
+    "format:show-diff": "git diff --quiet || (echo 'Unable to show a diff because there are unstaged changes'; false) && (prettier . -w --loglevel silent && git --no-pager diff; git restore .)",
+    "format:check": "prettier -c .",
+    "format:check-diff": "yarn format:check || (yarn format:show-diff && false)",
+    "format": "prettier -w .",
     "release": "PACKAGES=$(yarn workspaces list --json) yarn workspace @uppy-dev/release interactive",
     "size": "echo 'JS Bundle mingz:' && cat ./packages/uppy/dist/uppy.min.js | gzip | wc -c && echo 'CSS Bundle mingz:' && cat ./packages/uppy/dist/uppy.min.css | gzip | wc -c",
     "e2e": "yarn build && yarn e2e:skip-build",
@@ -143,8 +152,8 @@
     "test:locale-packs:unused": "yarn workspace @uppy-dev/locale-pack test unused",
     "test:locale-packs:warnings": "yarn workspace @uppy-dev/locale-pack test warnings",
     "test:type": "yarn workspaces foreach -piv --include '@uppy/*' --exclude '@uppy/{angular,react-native,locales,companion,provider-views,robodog,svelte}' exec tsd",
-    "test:unit": "yarn run build:lib && NODE_OPTIONS=--experimental-vm-modules jest --env jsdom",
-    "test:watch": "NODE_OPTIONS=--experimental-vm-modules jest --env jsdom --watch --no-coverage",
+    "test:unit": "yarn run build:lib && yarn test:watch",
+    "test:watch": "vitest --environment jsdom --dir packages/@uppy",
     "test": "npm-run-all lint test:locale-packs:unused test:unit test:type test:companion",
     "uploadcdn": "yarn node ./bin/upload-to-cdn.js",
     "version": "yarn node ./bin/after-version-bump.js",
@@ -154,24 +163,11 @@
     "watch:js": "npm-run-all --parallel watch:js:bundle watch:js:lib",
     "watch": "npm-run-all --parallel watch:css watch:js"
   },
-  "jest": {
-    "automock": false,
-    "collectCoverage": true,
-    "collectCoverageFrom": [
-      "packages/**/src/**/*.js"
-    ],
-    "testMatch": [
-      "**/packages/**/*.test.js"
-    ],
-    "testPathIgnorePatterns": [
-      "/packages/@uppy/companion/"
-    ]
-  },
   "resolutions": {
     "@types/eslint@^7.2.13": "^8.2.0",
     "@types/react": "^17",
     "@types/webpack-dev-server": "^4",
-    "jest-environment-jsdom": "patch:jest-environment-jsdom@npm:29.5.0#.yarn/patches/jest-environment-jsdom-npm-29.5.0-fc600add1e.patch",
+    "p-queue": "patch:p-queue@npm%3A7.4.1#./.yarn/patches/p-queue-npm-7.4.1-e0cf0a6f17.patch",
     "pre-commit": "patch:pre-commit@npm:1.2.2#.yarn/patches/pre-commit-npm-1.2.2-f30af83877.patch",
     "preact": "patch:preact@npm:10.10.0#.yarn/patches/preact-npm-10.10.0-dd04de05e8.patch",
     "start-server-and-test": "patch:start-server-and-test@npm:1.14.0#.yarn/patches/start-server-and-test-npm-1.14.0-841aa34fdf.patch",

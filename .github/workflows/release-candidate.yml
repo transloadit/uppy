@@ -23,7 +23,8 @@ jobs:
           git rebase FETCH_HEAD
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
-        run: echo "dir=$(corepack yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+        run:
+          echo "dir=$(corepack yarn config get cacheFolder)" >> $GITHUB_OUTPUT
 
       - uses: actions/cache@v3
         id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
@@ -44,11 +45,17 @@ jobs:
       - name: Bump candidate packages version
         run: corepack yarn version apply --all --json | jq -s > releases.json
       - name: Prepare changelog
-        run: corepack yarn workspace @uppy-dev/release update-changelogs releases.json | xargs git add
+        run:
+          corepack yarn workspace @uppy-dev/release update-changelogs
+          releases.json | xargs git add
       - name: Update contributors table
-        run: corepack yarn contributors:save && corepack yarn remark -foq README.md && git add README.md
+        run:
+          corepack yarn contributors:save && corepack yarn remark -foq README.md
+          && git add README.md
       - name: Update CDN URLs
-        run: corepack yarn workspace @uppy-dev/release update-version-URLs | xargs git add
+        run:
+          corepack yarn workspace @uppy-dev/release update-version-URLs | xargs
+          git add
       - name: Stage changes and remove temp files
         run: |
           git rm -rf .yarn/versions
@@ -75,7 +82,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Assign to the releaser
-        run: echo '{"assignees":[${{ toJSON(github.actor) }}]}' | gh api repos/${{ github.repository }}/issues/${{ steps.pr_opening.outputs.pr_number }}/assignees --input -
+        run:
+          echo '{"assignees":[${{ toJSON(github.actor) }}]}' | gh api repos/${{
+          github.repository }}/issues/${{ steps.pr_opening.outputs.pr_number
+          }}/assignees --input -
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Enable Release workflow

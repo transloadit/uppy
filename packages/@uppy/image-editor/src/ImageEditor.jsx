@@ -91,6 +91,17 @@ export default class ImageEditor extends UIPlugin {
 
     const { currentImage } = this.getPluginState()
 
+    // Fixes black 1px lines on odd-width images.
+    // This should be removed when cropperjs fixes this issue.
+    // (See https://github.com/transloadit/uppy/issues/4305 and https://github.com/fengyuanchen/cropperjs/issues/551).
+    const croppedCanvas = this.cropper.getCroppedCanvas({})
+    if (croppedCanvas.width % 2 !== 0) {
+      this.cropper.setData({ width: croppedCanvas.width - 1 })
+    }
+    if (croppedCanvas.height % 2 !== 0) {
+      this.cropper.setData({ height: croppedCanvas.height - 1 })
+    }
+
     this.cropper.getCroppedCanvas(this.opts.cropperOptions.croppedCanvasOptions).toBlob(
       saveBlobCallback,
       currentImage.type,

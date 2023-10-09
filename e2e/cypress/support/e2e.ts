@@ -21,6 +21,6 @@ import './commands'
 
 // eslint-disable-next-line
 // @ts-ignore
-import installLogsCollector from  'cypress-terminal-report/src/installLogsCollector.js'
+import installLogsCollector from 'cypress-terminal-report/src/installLogsCollector.js'
 
 installLogsCollector()

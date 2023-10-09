@@ -1,7 +1,8 @@
-import { describe, expect, it } from '@jest/globals'
+import { describe, expect, it } from 'vitest'
 import Core from '@uppy/core'
 import getFileNameAndExtension from '@uppy/utils/lib/getFileNameAndExtension'
 import fs from 'node:fs'
+import path from 'node:path'
 import CompressorPlugin from './index.js'
 
 // Compressor uses browser canvas API, so need to mock compress()
@@ -14,7 +15,8 @@ CompressorPlugin.prototype.compress = (blob) => {
   }
 }
 
-const sampleImage = fs.readFileSync(new URL('../../../../e2e/cypress/fixtures/images/image.jpg', import.meta.url))
+// eslint-disable-next-line no-restricted-globals
+const sampleImage = fs.readFileSync(path.join(__dirname, '../../../../e2e/cypress/fixtures/images/image.jpg'))
 
 const file1 = { source: 'jest', name: 'image-1.jpeg', type: 'image/jpeg', data: new File([sampleImage], 'image-1.jpeg', { type: 'image/jpeg' }) }
 const file2 = { source: 'jest', name: 'yolo', type: 'image/jpeg', data: new File([sampleImage], 'yolo', { type: 'image/jpeg' }) }

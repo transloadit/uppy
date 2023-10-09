@@ -4,7 +4,7 @@
   "svelte": "src/index.js",
   "module": "dist/index.mjs",
   "main": "dist/index.js",
-  "version": "3.0.2",
+  "version": "3.1.0",
   "scripts": {
     "build": "rollup -c",
     "prepublishOnly": "yarn run build",
@@ -20,7 +20,7 @@
   },
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^13.0.0",
-    "@tsconfig/svelte": "^3.0.0",
+    "@tsconfig/svelte": "^5.0.0",
     "rollup": "^2.60.2",
     "rollup-plugin-svelte": "^7.0.0",
     "svelte": "^4.0.0",

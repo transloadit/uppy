@@ -1,5 +1,13 @@
 # @uppy/svelte
 
+## 3.1.0
+
+Released: 2023-09-29
+Included in: Uppy v3.17.0
+
+- @uppy/svelte: revert breaking change (Antoine du Hamel / #4694)
+- @uppy/svelte: Upgrade Svelte to 4 (frederikhors / #4652)
+
 ## 3.0.1
 
 Released: 2022-09-25
