@@ -276,9 +276,9 @@ class HTTPCommunicationQueue {
       signal,
     }).abortOn(signal)
 
-    return {
-      ...result,
+    return 'location' in result ? result : {
       location: removeMetadataFromURL(url),
+      ...result,
     }
   }
 
