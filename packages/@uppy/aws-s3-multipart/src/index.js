@@ -18,6 +18,13 @@ function assertServerError (res) {
   return res
 }
 
+function removeMetadataFromURL (urlString) {
+  const urlObject = new URL(urlString)
+  urlObject.search = ''
+  urlObject.hash = ''
+  return urlObject.href
+}
+
 /**
  * Computes the expiry time for a request signed with temporary credentials. If
  * no expiration was provided, or an invalid value (e.g. in the past) is
@@ -260,7 +267,7 @@ class HTTPCommunicationQueue {
 
     const { onProgress, onComplete } = chunk
 
-    return this.#uploadPartBytes({
+    const result = await this.#uploadPartBytes({
       signature: { url, headers, method },
       body,
       size: data.size,
@@ -268,6 +275,11 @@ class HTTPCommunicationQueue {
       onComplete,
       signal,
     }).abortOn(signal)
+
+    return {
+      ...result,
+      location: removeMetadataFromURL(url),
+    }
   }
 
   /**
