@@ -1,4 +1,4 @@
-import toArray from '../../toArray.js'
+import toArray from '../../toArray.ts'
 
 // .files fallback, should be implemented in any browser
 export default function fallbackApi (dataTransfer) {
