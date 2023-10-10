@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import secondsToTime from './secondsToTime.js'
+import secondsToTime from './secondsToTime.ts'
 
 describe('secondsToTime', () => {
   it('converts seconds to an { hours, minutes, seconds } object', () => {

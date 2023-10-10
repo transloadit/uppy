@@ -1,4 +1,4 @@
-import secondsToTime from './secondsToTime.js'
+import secondsToTime from './secondsToTime.ts'
 
 export default function prettyETA (seconds) {
   const time = secondsToTime(seconds)
