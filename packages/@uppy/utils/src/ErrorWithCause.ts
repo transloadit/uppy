@@ -1,3 +1,4 @@
+import type NetworkError from './NetworkError.ts'
 import hasProperty from './hasProperty.ts'
 
 class ErrorWithCause extends Error {
@@ -5,11 +6,14 @@ class ErrorWithCause extends Error {
 
   public cause: Error['cause']
 
-  constructor(message?: string, options?: ErrorOptions) {
+  constructor(
+    message?: ConstructorParameters<ErrorConstructor>[0],
+    options?: ConstructorParameters<ErrorConstructor>[1],
+  ) {
     super(message)
     this.cause = options?.cause
     if (this.cause && hasProperty(this.cause, 'isNetworkError')) {
-      this.isNetworkError = (this.cause as ErrorWithCause).isNetworkError
+      this.isNetworkError = (this.cause as NetworkError).isNetworkError
     }
   }
 }
