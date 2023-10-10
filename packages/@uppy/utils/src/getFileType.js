@@ -1,4 +1,4 @@
-import getFileNameAndExtension from './getFileNameAndExtension.js'
+import getFileNameAndExtension from './getFileNameAndExtension.ts'
 import mimeTypes from './mimeTypes.js'
 
 export default function getFileType (file) {

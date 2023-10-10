@@ -1,4 +1,4 @@
-import getFileNameAndExtension from './getFileNameAndExtension.js'
+import getFileNameAndExtension from './getFileNameAndExtension.ts'
 
 export default function remoteFileObjToLocal (file) {
   return {
