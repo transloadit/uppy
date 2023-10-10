@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import isPreviewSupported from './isPreviewSupported.js'
+import isPreviewSupported from './isPreviewSupported.ts'
 
 describe('isPreviewSupported', () => {
   it('should return true for any filetypes that browsers can preview', () => {
