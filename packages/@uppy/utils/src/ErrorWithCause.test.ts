@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import ErrorWithCause from './ErrorWithCause.ts'
-import NetworkError from './NetworkError.js'
+import NetworkError from './NetworkError.ts'
 import isNetworkError from './isNetworkError.js'
 
 describe('ErrorWithCause', () => {
