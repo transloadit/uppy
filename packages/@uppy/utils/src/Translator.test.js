@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import Translator from './Translator.js'
+import Translator from './Translator.ts'
 
 const english = {
   strings: {

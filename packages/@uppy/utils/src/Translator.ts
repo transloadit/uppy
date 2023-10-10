@@ -1,7 +1,20 @@
 import has from './hasProperty.ts'
 
-function insertReplacement (source, rx, replacement) {
-  const newParts = []
+interface Locale<T extends number = number> {
+  strings: Record<string, string | Record<T, string>>
+  pluralize: (n: number) => T
+}
+
+type Options = {
+  smart_count?: number
+} & Record<string, string>
+
+function insertReplacement(
+  source: Array<string | unknown>,
+  rx: RegExp,
+  replacement: string,
+): Array<string | unknown> {
+  const newParts: Array<string | unknown> = []
   source.forEach((chunk) => {
     // When the source contains multiple placeholders for interpolation,
     // we should ignore chunks that are not strings, because those
@@ -32,14 +45,16 @@ function insertReplacement (source, rx, replacement) {
  * @license https://github.com/airbnb/polyglot.js/blob/master/LICENSE
  * taken from https://github.com/airbnb/polyglot.js/blob/master/lib/polyglot.js#L299
  *
- * @param {string} phrase that needs interpolation, with placeholders
- * @param {object} options with values that will be used to replace placeholders
- * @returns {any[]} interpolated
+ * @param phrase that needs interpolation, with placeholders
+ * @param options with values that will be used to replace placeholders
  */
-function interpolate (phrase, options) {
+function interpolate(
+  phrase: string,
+  options?: Options,
+): Array<string | unknown> {
   const dollarRegex = /\$/g
   const dollarBillsYall = '$$$$'
-  let interpolated = [phrase]
+  let interpolated: Array<string | unknown> = [phrase]
 
   if (options == null) return interpolated
 
@@ -55,7 +70,11 @@ function interpolate (phrase, options) {
       // We create a new `RegExp` each time instead of using a more-efficient
       // string replace so that the same argument can be replaced multiple times
       // in the same phrase.
-      interpolated = insertReplacement(interpolated, new RegExp(`%\\{${arg}\\}`, 'g'), replacement)
+      interpolated = insertReplacement(
+        interpolated,
+        new RegExp(`%\\{${arg}\\}`, 'g'),
+        replacement,
+      )
     }
   }
 
@@ -74,13 +93,12 @@ function interpolate (phrase, options) {
  * Usage example: `translator.translate('files_chosen', {smart_count: 3})`
  */
 export default class Translator {
-  /**
-   * @param {object|Array<object>} locales - locale or list of locales.
-   */
-  constructor (locales) {
+  protected locale: Locale
+
+  constructor(locales?: Locale | Locale[]) {
     this.locale = {
       strings: {},
-      pluralize (n) {
+      pluralize(n: number): 0 | 1 {
         if (n === 1) {
           return 0
         }
@@ -95,35 +113,36 @@ export default class Translator {
     }
   }
 
-  #apply (locale) {
+  #apply(locale?: Locale): void {
     if (!locale?.strings) {
       return
     }
 
     const prevLocale = this.locale
-    this.locale = { ...prevLocale, strings: { ...prevLocale.strings, ...locale.strings } }
+    this.locale = {
+      ...prevLocale,
+      strings: { ...prevLocale.strings, ...locale.strings },
+    }
     this.locale.pluralize = locale.pluralize || prevLocale.pluralize
   }
 
   /**
    * Public translate method
    *
-   * @param {string} key
-   * @param {object} options with values that will be used later to replace placeholders in string
-   * @returns {string} translated (and interpolated)
+   * @param key
+   * @param options with values that will be used later to replace placeholders in string
+   * @returns string translated (and interpolated)
    */
-  translate (key, options) {
+  translate(key: string, options?: Options): string {
     return this.translateArray(key, options).join('')
   }
 
   /**
    * Get a translation and return the translated and interpolated parts as an array.
    *
-   * @param {string} key
-   * @param {object} options with values that will be used to replace placeholders
-   * @returns {Array} The translated and interpolated parts, in order.
+   * @returns The translated and interpolated parts, in order.
    */
-  translateArray (key, options) {
+  translateArray(key: string, options?: Options): Array<string | unknown> {
     if (!has(this.locale.strings, key)) {
       throw new Error(`missing string: ${key}`)
     }
@@ -136,7 +155,9 @@ export default class Translator {
         const plural = this.locale.pluralize(options.smart_count)
         return interpolate(string[plural], options)
       }
-      throw new Error('Attempted to use a string with plural forms, but no value was given for %{smart_count}')
+      throw new Error(
+        'Attempted to use a string with plural forms, but no value was given for %{smart_count}',
+      )
     }
 
     return interpolate(string, options)
