@@ -46,8 +46,8 @@
   },
   "devDependencies": {
     "@parcel/transformer-vue": "^2.9.3",
-    "cypress": "^12.9.0",
-    "cypress-terminal-report": "^4.1.2",
+    "cypress": "^13.0.0",
+    "cypress-terminal-report": "^5.0.0",
     "deep-freeze": "^0.0.1",
     "execa": "^6.1.0",
     "parcel": "^2.9.3",
