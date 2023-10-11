@@ -7,6 +7,7 @@
   "style": "dist/style.min.css",
   "types": "types/index.d.ts",
   "type": "module",
+  "sideEffects": false,
   "keywords": [
     "file uploader",
     "uppy",
