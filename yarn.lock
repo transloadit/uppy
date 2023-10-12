@@ -9867,7 +9867,9 @@ __metadata:
     "@uppy/provider-views": "workspace:^"
     "@uppy/status-bar": "workspace:^"
     "@uppy/thumbnail-generator": "workspace:^"
+    "@uppy/url": "workspace:^"
     "@uppy/utils": "workspace:^"
+    "@uppy/webcam": "workspace:^"
     classnames: ^2.2.6
     is-shallow-equal: ^1.0.1
     lodash: ^4.17.21
