@@ -15,6 +15,7 @@ export interface UppyFile<
   extension: string
   id: string
   isPaused?: boolean
+  isRestored?: boolean
   isRemote: boolean
   meta: InternalMetadata & TMeta
   name: string
