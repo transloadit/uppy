@@ -1,12 +1,17 @@
 /**
  * Recursive function, calls the original callback() when the directory is entirely parsed.
  *
- * @param {FileSystemDirectoryReader} directoryReader
+ * @param {} directoryReader
  * @param {Array} oldEntries
  * @param {Function} logDropError
  * @param {Function} callback - called with ([ all files and directories in that directoryReader ])
  */
-export default function getFilesAndDirectoriesFromDirectory (directoryReader, oldEntries, logDropError, { onSuccess }) {
+export default function getFilesAndDirectoriesFromDirectory(
+  directoryReader: FileSystemDirectoryReader,
+  oldEntries: FileSystemEntry[],
+  logDropError: (error?: unknown) => void,
+  { onSuccess }: { onSuccess: (newEntries: FileSystemEntry[]) => void },
+): void {
   directoryReader.readEntries(
     (entries) => {
       const newEntries = [...oldEntries, ...entries]
@@ -14,9 +19,14 @@ export default function getFilesAndDirectoriesFromDirectory (directoryReader, ol
       // must be called until it calls the onSuccess with an empty array.
       if (entries.length) {
         queueMicrotask(() => {
-          getFilesAndDirectoriesFromDirectory(directoryReader, newEntries, logDropError, { onSuccess })
+          getFilesAndDirectoriesFromDirectory(
+            directoryReader,
+            newEntries,
+            logDropError,
+            { onSuccess },
+          )
         })
-      // Done iterating this particular directory
+        // Done iterating this particular directory
       } else {
         onSuccess(newEntries)
       }

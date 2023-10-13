@@ -1,4 +1,4 @@
-import getFilesAndDirectoriesFromDirectory from './getFilesAndDirectoriesFromDirectory.js'
+import getFilesAndDirectoriesFromDirectory from './getFilesAndDirectoriesFromDirectory.ts'
 
 /**
  * Polyfill for the new (experimental) getAsFileSystemHandle API (using the popular webkitGetAsEntry behind the scenes)
