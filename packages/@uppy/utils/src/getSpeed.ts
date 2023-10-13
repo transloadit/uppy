@@ -1,4 +1,6 @@
-export default function getSpeed (fileProgress) {
+import type { FileProgress } from './FileProgress'
+
+export default function getSpeed(fileProgress: FileProgress): number {
   if (!fileProgress.bytesUploaded) return 0
 
   const timeElapsed = Date.now() - fileProgress.uploadStarted

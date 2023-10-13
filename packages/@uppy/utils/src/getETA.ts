@@ -1,4 +1,4 @@
-import getSpeed from './getSpeed.js'
+import getSpeed from './getSpeed.ts'
 import getBytesRemaining from './getBytesRemaining.ts'
 import type { FileProgress } from './FileProgress.ts'
 

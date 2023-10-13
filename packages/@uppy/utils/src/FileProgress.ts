@@ -1,8 +1,16 @@
-export interface FileProgress {
+interface FileProgressBase {
   progress: number
-  uploadStarted: number | null
   uploadComplete: boolean
   percentage: number
-  bytesUploaded: number
   bytesTotal: number
 }
+
+export type FileProgressStarted = FileProgressBase & {
+  uploadStarted: number
+  bytesUploaded: number
+}
+export type FileProgressNotStarted = FileProgressBase & {
+  uploadStarted: null
+  bytesUploaded: false
+}
+export type FileProgress = FileProgressStarted | FileProgressNotStarted
