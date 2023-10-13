@@ -140,8 +140,7 @@ export default class Provider extends RequestClient {
 
         authWindow.close()
         window.removeEventListener('message', handleToken)
-        this.setAuthToken(data.token)
-        resolve()
+        this.setAuthToken(data.token).then(() => resolve()).catch(reject)
       }
       window.addEventListener('message', handleToken)
     })
@@ -157,6 +156,8 @@ export default class Provider extends RequestClient {
 
   /** @protected */
   async request (...args) {
+    const authTokenBefore = await this.#getAuthToken()
+
     await this.#refreshingTokenPromise
 
     try {
@@ -169,13 +170,19 @@ export default class Provider extends RequestClient {
       return await super.request(...args)
     } catch (err) {
       // only handle auth errors (401 from provider), and only handle them if we have a (refresh) token
-      if (!err.isAuthError || !(await this.#getAuthToken())) throw err
+      const authTokenAfter = await this.#getAuthToken()
+      if (!err.isAuthError || !authTokenAfter) throw err
 
-      if (this.#refreshingTokenPromise == null) {
+      await this.#refreshingTokenPromise
+
+      const hasAuthTokenAlreadyBeenRefreshed = authTokenBefore !== authTokenAfter
+
+      if (!hasAuthTokenAlreadyBeenRefreshed && this.#refreshingTokenPromise == null) {
         // Many provider requests may be starting at once, however refresh token should only be called once.
         // Once a refresh token operation has started, we need all other request to wait for this operation (atomically)
         this.#refreshingTokenPromise = (async () => {
           try {
+            this.uppy.log(`[CompanionClient] Refreshing expired auth token`, 'info')
             const response = await super.request({ path: this.refreshTokenUrl(), method: 'POST' })
             await this.setAuthToken(response.uppyAuthToken)
           } catch (refreshTokenErr) {
