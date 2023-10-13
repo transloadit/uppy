@@ -1,9 +1,6 @@
 /**
  * Check if a URL string is an object URL from `URL.createObjectURL`.
- *
- * @param {string} url
- * @returns {boolean}
  */
-export default function isObjectURL (url) {
+export default function isObjectURL(url: string): boolean {
   return url.startsWith('blob:')
 }
