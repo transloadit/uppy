@@ -1,11 +1,8 @@
 /**
  * Get the declared text direction for an element.
- *
- * @param {Node} element
- * @returns {string|undefined}
  */
 
-function getTextDirection (element) {
+function getTextDirection(element?: HTMLElement): string | undefined {
   // There is another way to determine text direction using getComputedStyle(), as done here:
   // https://github.com/pencil-js/text-direction/blob/2a235ce95089b3185acec3b51313cbba921b3811/text-direction.js
   //
@@ -14,7 +11,7 @@ function getTextDirection (element) {
   // bidirectional CSS style sheets work.
   while (element && !element.dir) {
     // eslint-disable-next-line no-param-reassign
-    element = element.parentNode
+    element = element.parentNode as HTMLElement
   }
   return element?.dir
 }
