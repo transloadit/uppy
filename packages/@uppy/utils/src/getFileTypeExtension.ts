@@ -1,4 +1,5 @@
 const mimeToExtensions = {
+  __proto__: null,
   'audio/mp3': 'mp3',
   'audio/mp4': 'mp4',
   'audio/ogg': 'ogg',
@@ -15,11 +16,11 @@ const mimeToExtensions = {
   'video/webm': 'webm',
   'video/x-matroska': 'mkv',
   'video/x-msvideo': 'avi',
-}
+} as unknown as Record<string, string>
 
-export default function getFileTypeExtension (mimeType) {
+export default function getFileTypeExtension(mimeType: string): string | null {
   // Remove the ; bit in 'video/x-matroska;codecs=avc1'
   // eslint-disable-next-line no-param-reassign
-  [mimeType] = mimeType.split(';', 1)
+  ;[mimeType] = mimeType.split(';', 1)
   return mimeToExtensions[mimeType] || null
 }
