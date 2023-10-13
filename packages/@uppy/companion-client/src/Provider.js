@@ -160,8 +160,9 @@ export default class Provider extends RequestClient {
     await this.#refreshingTokenPromise
 
     try {
-      // throw Object.assign(new Error(), { isAuthError: true }) // testing simulate access token expired (to refresh token)
-      // A better way to test this is for example with Google Drive:
+      // to test simulate access token expired (leading to a token token refresh),
+      // see mockAccessTokenExpiredError in companion/drive.
+      // If you want to test refresh token *and* access token invalid, do this for example with Google Drive:
       // While uploading, go to your google account settings,
       // "Third-party apps & services", then click "Companion" and "Remove access".
 
