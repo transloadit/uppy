@@ -1,4 +1,4 @@
-import getFileType from './getFileType.js'
+import getFileType from './getFileType.ts'
 
 function encodeCharacter (character) {
   return character.charCodeAt(0).toString(32)

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import getFileType from './getFileType.js'
+import getFileType from './getFileType.ts'
 
 describe('getFileType', () => {
   it('should trust the filetype if the file comes from a remote source', () => {

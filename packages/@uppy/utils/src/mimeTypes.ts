@@ -4,6 +4,7 @@
 //    https://github.com/jshttp/mime-db/blob/master/db.json
 
 export default {
+  __proto__: null as never,
   md: 'text/markdown' as const,
   markdown: 'text/markdown' as const,
   mp4: 'video/mp4' as const,
