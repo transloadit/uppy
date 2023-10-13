@@ -76,9 +76,9 @@ export default class View {
         body: {
           fileId: file.id,
         },
-        providerOptions: this.provider.opts,
         providerName: this.provider.name,
         provider: this.provider.provider,
+        [Symbol.for('requestClient')]: this.provider,
       },
     }
 

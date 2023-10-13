@@ -1,6 +1,5 @@
 import BasePlugin from '@uppy/core/lib/BasePlugin.js'
 import * as tus from 'tus-js-client'
-import { Provider, RequestClient } from '@uppy/companion-client'
 import EventManager from '@uppy/utils/lib/EventManager'
 import NetworkError from '@uppy/utils/lib/NetworkError'
 import isNetworkError from '@uppy/utils/lib/isNetworkError'
@@ -483,11 +482,7 @@ export default class Tus extends BasePlugin {
       const total = files.length
 
       if (file.isRemote) {
-        // INFO: the url plugin needs to use RequestClient,
-        // while others use Provider
-        const Client = file.remote.providerOptions.provider ? Provider : RequestClient
         const getQueue = () => this.requests
-        const client = new Client(this.uppy, file.remote.providerOptions, getQueue)
         const controller = new AbortController()
 
         const removedHandler = (removedFile) => {
@@ -495,10 +490,10 @@ export default class Tus extends BasePlugin {
         }
         this.uppy.on('file-removed', removedHandler)
 
-        const uploadPromise = client.uploadRemoteFile(
+        const uploadPromise = file.remote[Symbol.for('requestClient')].uploadRemoteFile(
           file,
           this.#getCompanionClientArgs(file),
-          { signal: controller.signal },
+          { signal: controller.signal, getQueue },
         )
 
         this.requests.wrapSyncFunction(() => {
