@@ -1,4 +1,4 @@
-function isNetworkError (xhr) {
+function isNetworkError(xhr?: XMLHttpRequest): boolean {
   if (!xhr) {
     return false
   }

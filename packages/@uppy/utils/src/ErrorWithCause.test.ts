@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import ErrorWithCause from './ErrorWithCause.ts'
 import NetworkError from './NetworkError.ts'
-import isNetworkError from './isNetworkError.js'
+import isNetworkError from './isNetworkError.ts'
 
 describe('ErrorWithCause', () => {
   it('should support a `{ cause }` option', () => {
