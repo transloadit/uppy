@@ -66,7 +66,6 @@ export default class Tus extends BasePlugin {
 
     // set default options
     const defaultOptions = {
-      useFastRemoteRetry: true,
       limit: 20,
       retryDelays: tusDefaultOptions.retryDelays,
       withCredentials: false,

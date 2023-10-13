@@ -293,7 +293,6 @@ export default class RequestClient {
         return undefined
       }
 
-      this.uppy.setFileState(file.id, { serverToken: undefined })
       this.uppy.emit('upload-error', file, err)
       throw err
     }
@@ -364,11 +363,8 @@ export default class RequestClient {
         }
 
         const onFatalError = (err) => {
-          // If the remote retry optimisation should not be used,
-          if (!this.opts.useFastRemoteRetry) {
-            // Remove the serverToken so that a new one will be created for the retry.
-            this.uppy.setFileState(file.id, { serverToken: null })
-          }
+          // Remove the serverToken so that a new one will be created for the retry.
+          this.uppy.setFileState(file.id, { serverToken: null })
           closeSocket()
           queuedRequest.done()
           reject(err)

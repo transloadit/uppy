@@ -27,7 +27,6 @@ type Next = (
 export interface TusOptions extends PluginOptions, TusUploadOptions {
   allowedMetaFields?: string[] | null
   limit?: number
-  useFastRemoteRetry?: boolean
   withCredentials?: boolean
   onShouldRetry?: (
     err: Error | undefined,
