@@ -1,9 +1,7 @@
 /**
  * Checks if the browser supports Drag & Drop (not supported on mobile devices, for example).
- *
- * @returns {boolean}
  */
-export default function isDragDropSupported () {
+export default function isDragDropSupported(): boolean {
   const div = document.body
 
   if (!('draggable' in div) || !('ondragstart' in div && 'ondrop' in div)) {
