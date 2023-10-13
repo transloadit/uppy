@@ -24,6 +24,7 @@ export interface UppyFile<
     host: string
     url: string
     body?: Record<string, unknown>
+    provider?: string
   }
   size: number
   source?: string
