@@ -2555,11 +2555,11 @@ __metadata:
   linkType: hard
 
 "@babel/parser@npm:^7.20.15, @babel/parser@npm:^7.21.3":
-  version: 7.22.14
-  resolution: "@babel/parser@npm:7.22.14"
+  version: 7.23.0
+  resolution: "@babel/parser@npm:7.23.0"
   bin:
     parser: ./bin/babel-parser.js
-  checksum: a2293971f0889726a3d5a35fcceedc71d2fa4c8d97f438fc348fe0cf7e739affc6e2665e4c6ddd4900714772e19bfd5d6feb967ca1f623b894c0099ecb148b52
+  checksum: 453fdf8b9e2c2b7d7b02139e0ce003d1af21947bbc03eb350fb248ee335c9b85e4ab41697ddbdd97079698de825a265e45a0846bb2ed47a2c7c1df833f42a354
   languageName: node
   linkType: hard
 
@@ -4149,8 +4149,8 @@ __metadata:
   linkType: hard
 
 "@cypress/request@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "@cypress/request@npm:3.0.0"
+  version: 3.0.1
+  resolution: "@cypress/request@npm:3.0.1"
   dependencies:
     aws-sign2: ~0.7.0
     aws4: ^1.8.0
@@ -4165,12 +4165,12 @@ __metadata:
     json-stringify-safe: ~5.0.1
     mime-types: ~2.1.19
     performance-now: ^2.1.0
-    qs: ~6.10.3
+    qs: 6.10.4
     safe-buffer: ^5.1.2
     tough-cookie: ^4.1.3
     tunnel-agent: ^0.6.0
     uuid: ^8.3.2
-  checksum: 8ec81075b800b84df8a616dce820a194d562a35df251da234f849344022979f3675baa0b82988843f979a488e39bc1eec6204cfe660c75ace9bf4d2951edec43
+  checksum: 7175522ebdbe30e3c37973e204c437c23ce659e58d5939466615bddcd58d778f3a8ea40f087b965ae8b8138ea8d102b729c6eb18c6324f121f3778f4a2e8e727
   languageName: node
   linkType: hard
 
@@ -6806,7 +6806,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@parcel/transformer-vue@npm:2.9.3":
+"@parcel/transformer-vue@npm:^2.9.3":
   version: 2.9.3
   resolution: "@parcel/transformer-vue@npm:2.9.3"
   dependencies:
@@ -7665,11 +7665,11 @@ __metadata:
   linkType: hard
 
 "@swc/helpers@npm:^0.5.0":
-  version: 0.5.1
-  resolution: "@swc/helpers@npm:0.5.1"
+  version: 0.5.2
+  resolution: "@swc/helpers@npm:0.5.2"
   dependencies:
     tslib: ^2.4.0
-  checksum: 71e0e27234590435e4c62b97ef5e796f88e786841a38c7116a5e27a3eafa7b9ead7cdec5249b32165902076de78446945311c973e59bddf77c1e24f33a8f272a
+  checksum: 51d7e3d8bd56818c49d6bfbd715f0dbeedc13cf723af41166e45c03e37f109336bbcb57a1f2020f4015957721aeb21e1a7fff281233d797ff7d3dd1f447fa258
   languageName: node
   linkType: hard
 
@@ -8226,17 +8226,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^16.18.39":
-  version: 16.18.46
-  resolution: "@types/node@npm:16.18.46"
-  checksum: 1aed3fe9693f2098b8dac8c76c809c1925a456da00dd6f06c1ccb55c62ccfbbe7ec43ccfd12001f9cb4ff84e138292ae53456435dfecd5c4bb1324394c3e09c7
-  languageName: node
-  linkType: hard
-
 "@types/node@npm:^18.0.0, @types/node@npm:^18.0.3":
   version: 18.17.7
   resolution: "@types/node@npm:18.17.7"
   checksum: cb327da222eb9dc2a8e86c957bef58b16f20a2f6b109e43ff10267e83b342bcba5257e800438dd54deb2bd66bb7815539a759c6dcf91e1b0b08b3add1d5886c8
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:^18.17.5":
+  version: 18.18.4
+  resolution: "@types/node@npm:18.18.4"
+  checksum: 4901e91c4cc479bb58acbcd79236a97a0ad6db4a53cb1f4ba4cf32af15324c61b16faa6e31c1b09bf538a20feb5f5274239157ce5237f5741db0b9ab71e69c52
   languageName: node
   linkType: hard
 
@@ -8701,7 +8701,7 @@ __metadata:
     npm-run-all: ^4.1.5
     onchange: ^7.1.0
     pacote: ^13.0.0
-    postcss: ^8.2.10
+    postcss: ^8.4.31
     postcss-dir-pseudo-class: ^6.0.0
     postcss-logical: ^5.0.0
     pre-commit: ^1.2.2
@@ -9061,7 +9061,7 @@ __metadata:
     "@uppy/xhr-upload": "workspace:*"
     formidable: ^2.0.1
     npm-run-all: ^4.1.5
-    postcss: ^8.2.1
+    postcss: ^8.4.31
     postcss-import: ^13.0.0
     postcss-load-config: ^3.0.0
     rollup: ^2.60.2
@@ -9369,7 +9369,9 @@ __metadata:
     "@uppy/provider-views": "workspace:^"
     "@uppy/status-bar": "workspace:^"
     "@uppy/thumbnail-generator": "workspace:^"
+    "@uppy/url": "workspace:^"
     "@uppy/utils": "workspace:^"
+    "@uppy/webcam": "workspace:^"
     classnames: ^2.2.6
     is-shallow-equal: ^1.0.1
     lodash: ^4.17.21
@@ -13785,28 +13787,27 @@ __metadata:
   linkType: hard
 
 "cypress-terminal-report@npm:^5.0.0":
-  version: 5.3.3
-  resolution: "cypress-terminal-report@npm:5.3.3"
+  version: 5.3.7
+  resolution: "cypress-terminal-report@npm:5.3.7"
   dependencies:
     chalk: ^4.0.0
     fs-extra: ^10.1.0
     process: ^0.11.10
-    safe-json-stringify: ^1.2.0
     semver: ^7.3.5
     tv4: ^1.3.0
   peerDependencies:
     cypress: ">=10.0.0"
-  checksum: c0cda15cfda3240231725ddc0f0dd9dbc5c4bf062594691c879dc2b202c4f9bb2bcb7d85682cabe50be79d161a61f115911f8e72aee6fbf7a2401f162329b381
+  checksum: 7bd433c26009936d74a0cc002ec4e48942fa806b465d71ffdb783785074433f650cb95dda77ec4ea00e10cf723bcbea8543f74cfbd49104c89022776690dcc1c
   languageName: node
   linkType: hard
 
 "cypress@npm:^13.0.0":
-  version: 13.0.0
-  resolution: "cypress@npm:13.0.0"
+  version: 13.3.0
+  resolution: "cypress@npm:13.3.0"
   dependencies:
     "@cypress/request": ^3.0.0
     "@cypress/xvfb": ^1.2.4
-    "@types/node": ^16.18.39
+    "@types/node": ^18.17.5
     "@types/sinonjs__fake-timers": 8.1.1
     "@types/sizzle": ^2.3.2
     arch: ^2.2.0
@@ -13849,7 +13850,7 @@ __metadata:
     yauzl: ^2.10.0
   bin:
     cypress: bin/cypress
-  checksum: 223dddfd85dbde5e3a915e87b6cb176b99a9e5bcc24baa40cd5b9ca4a93315a95cf53c5c6ac3a6984f59be55ffc8b58b93a713c0ddcb63a5f4996229cce70329
+  checksum: 6ad11bd6aabccfaf8be78afff0e854c9c8ccc935704c41efe4d8e9412ccfcb652f23791931c3aa26fc41068eeeb739a51563308670c9dada91cb272d08227caf
   languageName: node
   linkType: hard
 
@@ -14503,7 +14504,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "e2e@workspace:e2e"
   dependencies:
-    "@parcel/transformer-vue": 2.9.3
+    "@parcel/transformer-vue": ^2.9.3
     "@uppy/audio": "workspace:^"
     "@uppy/aws-s3": "workspace:^"
     "@uppy/aws-s3-multipart": "workspace:^"
@@ -14540,7 +14541,8 @@ __metadata:
     cypress: ^13.0.0
     cypress-terminal-report: ^5.0.0
     deep-freeze: ^0.0.1
-    parcel: ^2.0.0
+    parcel: ^2.9.3
+    process: ^0.11.10
     prompts: ^2.4.2
     react: ^18.1.0
     react-dom: ^18.1.0
@@ -15589,13 +15591,13 @@ __metadata:
   linkType: hard
 
 "eslint-plugin-cypress@npm:^2.12.1":
-  version: 2.13.3
-  resolution: "eslint-plugin-cypress@npm:2.13.3"
+  version: 2.15.1
+  resolution: "eslint-plugin-cypress@npm:2.15.1"
   dependencies:
-    globals: ^11.12.0
+    globals: ^13.20.0
   peerDependencies:
     eslint: ">= 3.2.1"
-  checksum: 9affbcee29e030a4251c4794f7533e8e8c0e3b98ab3470a2c730ed059f733c5857a04c7ac214cc0ca7aeef1b11242e72595de7fc1f6b8b4d4578d9eca10af203
+  checksum: 3e66fa9a943fff52eaf3758250a63c2a0f8ffd60c50572beaf3688b33a55fbf0060d18ef32bc26abb57aef070517db827c22fd3d607582861d464970f95e550e
   languageName: node
   linkType: hard
 
@@ -17682,7 +17684,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"globals@npm:^11.1.0, globals@npm:^11.12.0":
+"globals@npm:^11.1.0":
   version: 11.12.0
   resolution: "globals@npm:11.12.0"
   checksum: 67051a45eca3db904aee189dfc7cd53c20c7d881679c93f6146ddd4c9f4ab2268e68a919df740d39c71f4445d2b38ee360fc234428baea1dbdfe68bbcb46979e
@@ -17704,6 +17706,15 @@ __metadata:
   dependencies:
     type-fest: ^0.20.2
   checksum: fbaf4112e59b92c9f5575e85ce65e9e17c0b82711196ec5f58beb08599bbd92fd72703d6dfc9b080381fd35b644e1b11dcf25b38cc2341ec21df942594cbc8ce
+  languageName: node
+  linkType: hard
+
+"globals@npm:^13.20.0":
+  version: 13.23.0
+  resolution: "globals@npm:13.23.0"
+  dependencies:
+    type-fest: ^0.20.2
+  checksum: 194c97cf8d1ef6ba59417234c2386549c4103b6e5f24b1ff1952de61a4753e5d2069435ba629de711a6480b1b1d114a98e2ab27f85e966d5a10c319c3bbd3dc3
   languageName: node
   linkType: hard
 
@@ -24941,7 +24952,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"parcel@npm:^2.0.0":
+"parcel@npm:^2.0.0, parcel@npm:^2.9.3":
   version: 2.9.3
   resolution: "parcel@npm:2.9.3"
   dependencies:
@@ -25949,7 +25960,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss@npm:^8.1.10, postcss@npm:^8.2.1, postcss@npm:^8.2.10, postcss@npm:^8.2.14, postcss@npm:^8.4.14":
+"postcss@npm:^8.1.10, postcss@npm:^8.2.14, postcss@npm:^8.4.14":
   version: 8.4.16
   resolution: "postcss@npm:8.4.16"
   dependencies:
@@ -26001,6 +26012,17 @@ __metadata:
     picocolors: ^1.0.0
     source-map-js: ^1.0.2
   checksum: 6c810c10c9bd3e03ca016e0b6b6756261e640aba1a9a7b1200b55502bc34b9165e38f590aef3493afc2f30ab55cdfcd43fd0f8408d69a77318ddbcf2a8ad164b
+  languageName: node
+  linkType: hard
+
+"postcss@npm:^8.4.31":
+  version: 8.4.31
+  resolution: "postcss@npm:8.4.31"
+  dependencies:
+    nanoid: ^3.3.6
+    picocolors: ^1.0.0
+    source-map-js: ^1.0.2
+  checksum: 1d8611341b073143ad90486fcdfeab49edd243377b1f51834dc4f6d028e82ce5190e4f11bb2633276864503654fb7cab28e67abdc0fbf9d1f88cad4a0ff0beea
   languageName: node
   linkType: hard
 
@@ -26410,6 +26432,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"qs@npm:6.10.4":
+  version: 6.10.4
+  resolution: "qs@npm:6.10.4"
+  dependencies:
+    side-channel: ^1.0.4
+  checksum: 31e4fedd759d01eae52dde6692abab175f9af3e639993c5caaa513a2a3607b34d8058d3ae52ceeccf37c3025f22ed5e90e9ddd6c2537e19c0562ddd10dc5b1eb
+  languageName: node
+  linkType: hard
+
 "qs@npm:6.9.3":
   version: 6.9.3
   resolution: "qs@npm:6.9.3"
@@ -26423,15 +26454,6 @@ __metadata:
   dependencies:
     side-channel: ^1.0.4
   checksum: 6e1f29dd5385f7488ec74ac7b6c92f4d09a90408882d0c208414a34dd33badc1a621019d4c799a3df15ab9b1d0292f97c1dd71dc7c045e69f81a8064e5af7297
-  languageName: node
-  linkType: hard
-
-"qs@npm:~6.10.3":
-  version: 6.10.4
-  resolution: "qs@npm:6.10.4"
-  dependencies:
-    side-channel: ^1.0.4
-  checksum: 31e4fedd759d01eae52dde6692abab175f9af3e639993c5caaa513a2a3607b34d8058d3ae52ceeccf37c3025f22ed5e90e9ddd6c2537e19c0562ddd10dc5b1eb
   languageName: node
   linkType: hard
 
@@ -28005,13 +28027,6 @@ __metadata:
   version: 5.2.1
   resolution: "safe-buffer@npm:5.2.1"
   checksum: b99c4b41fdd67a6aaf280fcd05e9ffb0813654894223afb78a31f14a19ad220bba8aba1cb14eddce1fcfb037155fe6de4e861784eb434f7d11ed58d1e70dd491
-  languageName: node
-  linkType: hard
-
-"safe-json-stringify@npm:^1.2.0":
-  version: 1.2.0
-  resolution: "safe-json-stringify@npm:1.2.0"
-  checksum: 5bb32db6d6a3ceb3752df51f4043a412419cd3d4fcd5680a865dfa34cd7e575ba659c077d13f52981ced084061df9c75c7fb12e391584d4264e6914c1cd3d216
   languageName: node
   linkType: hard
 

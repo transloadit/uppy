@@ -45,11 +45,11 @@ export default class ImageEditor extends UIPlugin {
       ...opts,
       actions: {
         ...defaultActions,
-        ...opts.actions,
+        ...opts?.actions,
       },
       cropperOptions: {
         ...defaultCropperOptions,
-        ...opts.cropperOptions,
+        ...opts?.cropperOptions,
       },
     }
 

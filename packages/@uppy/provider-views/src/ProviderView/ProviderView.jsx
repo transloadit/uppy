@@ -383,7 +383,7 @@ export default class ProviderView extends View {
         // and that will allow the user to start the upload, so we need to make sure we have
         // finished all async operations before we add any file
         // see https://github.com/transloadit/uppy/pull/4384
-        this.plugin.uppy.log('Adding remote provider files')
+        this.plugin.uppy.log('Adding files from a remote provider')
         this.plugin.uppy.addFiles(newFiles.map((file) => this.getTagFile(file)))
 
         this.plugin.setPluginState({ filterInput: '' })
