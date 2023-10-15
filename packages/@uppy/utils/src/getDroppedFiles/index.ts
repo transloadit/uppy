@@ -16,12 +16,12 @@ import fallbackApi from './utils/fallbackApi.ts'
  *
  * @returns {Promise} - Array<File>
  */
-export default async function getDroppedFiles (
+export default async function getDroppedFiles(
   dataTransfer: DataTransfer,
   options?: {
     logDropError?: any
-  }
-  ): Promise<File[]> {
+  },
+): Promise<File[]> {
   // Get all files from all subdirs. Works (at least) in Chrome, Mozilla, and Safari
   const logDropError = options?.logDropError ?? Function.prototype
   try {
@@ -30,7 +30,7 @@ export default async function getDroppedFiles (
       accumulator.push(file as File)
     }
     return accumulator
-  // Otherwise just return all first-order files
+    // Otherwise just return all first-order files
   } catch {
     return fallbackApi(dataTransfer)
   }
