@@ -16,7 +16,7 @@
     "@rollup/plugin-typescript": "^8.0.0",
     "@tsconfig/svelte": "^1.0.0",
     "npm-run-all": "^4.1.5",
-    "postcss": "^8.2.1",
+    "postcss": "^8.4.31",
     "postcss-import": "^13.0.0",
     "postcss-load-config": "^3.0.0",
     "rollup": "^2.60.2",
