@@ -1,10 +1,5 @@
 /**
  * Recursive function, calls the original callback() when the directory is entirely parsed.
- *
- * @param {} directoryReader
- * @param {Array} oldEntries
- * @param {Function} logDropError
- * @param {Function} callback - called with ([ all files and directories in that directoryReader ])
  */
 export default function getFilesAndDirectoriesFromDirectory(
   directoryReader: FileSystemDirectoryReader,
