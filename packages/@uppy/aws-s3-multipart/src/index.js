@@ -373,6 +373,10 @@ class HTTPCommunicationQueue {
 
     for (;;) {
       throwIfAborted(signal)
+      if (chunk == null) {
+        return;
+      }
+      
       const chunkData = chunk.getData()
       const { onProgress, onComplete } = chunk
       let signature
