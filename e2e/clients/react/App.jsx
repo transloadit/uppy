@@ -4,12 +4,16 @@ import Uppy from '@uppy/core'
 import React, { useState } from 'react'
 import { Dashboard, DashboardModal, DragDrop, useUppyState } from '@uppy/react'
 import ThumbnailGenerator from '@uppy/thumbnail-generator'
+import RemoteSources from '@uppy/remote-sources'
 
 import '@uppy/core/dist/style.css'
 import '@uppy/dashboard/dist/style.css'
 import '@uppy/drag-drop/dist/style.css'
 
-const uppyDashboard = new Uppy({ id: 'dashboard' })
+const uppyDashboard = new Uppy({ id: 'dashboard' }).use(RemoteSources, {
+  companionUrl: 'http://companion.uppy.io',
+  sources: ['GoogleDrive', 'OneDrive', 'Unsplash', 'Zoom', 'Url'],
+})
 const uppyModal = new Uppy({ id: 'modal' })
 const uppyDragDrop = new Uppy({ id: 'drag-drop' }).use(ThumbnailGenerator)
 

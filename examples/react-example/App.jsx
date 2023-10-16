@@ -2,7 +2,9 @@
 import React from'react'
 import Uppy from'@uppy/core'
 import Tus from'@uppy/tus'
-import GoogleDrive from'@uppy/google-drive'
+import GoogleDrive from '@uppy/google-drive'
+import Webcam from '@uppy/webcam'
+import RemoteSources from '@uppy/remote-sources' 
 import { Dashboard, DashboardModal, DragDrop, ProgressBar, FileInput } from'@uppy/react'
 
 import '@uppy/core/dist/style.css'
@@ -22,7 +24,9 @@ export default class App extends React.Component {
 
     this.uppy = new Uppy({ id: 'uppy1', autoProceed: true, debug: true })
       .use(Tus, { endpoint: 'https://tusd.tusdemo.net/files/' })
-      .use(GoogleDrive, { companionUrl: 'https://companion.uppy.io' })
+      .use(Webcam)
+      .use(RemoteSources, { companionUrl: 'https://companion.uppy.io', sources: ['GoogleDrive', 'Box', 'Dropbox', 'Facebook', 'Instagram', 'OneDrive', 'Unsplash', 'Zoom', 'Url'],
+      })
 
     this.uppy2 = new Uppy({ id: 'uppy2', autoProceed: false, debug: true })
       .use(Tus, { endpoint: 'https://tusd.tusdemo.net/files/' })
