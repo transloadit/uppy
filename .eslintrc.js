@@ -469,7 +469,8 @@ module.exports = {
     },
     {
       files: ['packages/@uppy/*/src/**/*.ts', 'packages/@uppy/*/src/**/*.tsx'],
-      'rules': {
+      excludedFiles: ['packages/@uppy/**/*.test.ts'],
+      rules: {
         '@typescript-eslint/explicit-function-return-type': 'error',
       },
     },
