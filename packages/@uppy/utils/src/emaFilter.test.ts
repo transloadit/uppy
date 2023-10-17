@@ -25,7 +25,9 @@ describe('emaFilter', () => {
     let lastFilteredValue = firstValue
     for (let i = 0; i < 10; ++i) {
       lastFilteredValue = emaFilter(newValue, lastFilteredValue, halfLife, step)
-      expect(lastFilteredValue).toBeCloseTo(emaFilter(newValue, firstValue, halfLife, step * (i + 1)))
+      expect(lastFilteredValue).toBeCloseTo(
+        emaFilter(newValue, firstValue, halfLife, step * (i + 1)),
+      )
     }
   })
 })

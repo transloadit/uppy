@@ -12,12 +12,6 @@ describe('toArray', () => {
       length: 5,
     }
 
-    expect(toArray(obj)).toEqual([
-      'zero',
-      'one',
-      'two',
-      'three',
-      'four',
-    ])
+    expect(toArray(obj)).toEqual(['zero', 'one', 'two', 'three', 'four'])
   })
 })

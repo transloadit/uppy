@@ -9,7 +9,7 @@ const english = {
       0: '%{smart_count} file selected',
       1: '%{smart_count} files selected',
     },
-    pluralize (n) {
+    pluralize(n) {
       if (n === 1) {
         return 0
       }
@@ -28,7 +28,7 @@ const russian = {
       2: 'Выбрано %{smart_count} файлов',
     },
   },
-  pluralize (n) {
+  pluralize(n) {
     if (n % 10 === 1 && n % 100 !== 11) {
       return 0
     }
@@ -57,9 +57,16 @@ describe('Translator', () => {
       })
 
       const who = Symbol('who')
-      expect(translator.translateArray('test', { who })).toEqual(['Hello ', who, '!'])
+      expect(translator.translateArray('test', { who })).toEqual([
+        'Hello ',
+        who,
+        '!',
+      ])
       // No empty string at the end.
-      expect(translator.translateArray('test2', { who })).toEqual(['Hello ', who])
+      expect(translator.translateArray('test2', { who })).toEqual([
+        'Hello ',
+        who,
+      ])
     })
   })
 
@@ -77,14 +84,21 @@ describe('Translator', () => {
     }
 
     it('should prioritize language pack strings from Core over default', () => {
-      const translator = new Translator([defaultStrings, launguagePackLoadedInCore])
+      const translator = new Translator([
+        defaultStrings,
+        launguagePackLoadedInCore,
+      ])
       expect(
         translator.translate('youHaveChosen', { fileName: 'img.jpg' }),
       ).toEqual('You have chosen: img.jpg')
     })
 
     it('should prioritize user-supplied strings over language pack from Core', () => {
-      const translator = new Translator([defaultStrings, launguagePackLoadedInCore, userSuppliedStrings])
+      const translator = new Translator([
+        defaultStrings,
+        launguagePackLoadedInCore,
+        userSuppliedStrings,
+      ])
       expect(
         translator.translate('youHaveChosen', { fileName: 'img.jpg' }),
       ).toEqual('Beep boop: img.jpg')
@@ -103,17 +117,17 @@ describe('Translator', () => {
   describe('pluralization', () => {
     it('should translate a string', () => {
       const translator = new Translator(russian)
-      expect(
-        translator.translate('filesChosen', { smart_count: 18 }),
-      ).toEqual('Выбрано 18 файлов')
+      expect(translator.translate('filesChosen', { smart_count: 18 })).toEqual(
+        'Выбрано 18 файлов',
+      )
 
-      expect(
-        translator.translate('filesChosen', { smart_count: 1 }),
-      ).toEqual('Выбран 1 файл')
+      expect(translator.translate('filesChosen', { smart_count: 1 })).toEqual(
+        'Выбран 1 файл',
+      )
 
-      expect(
-        translator.translate('filesChosen', { smart_count: 0 }),
-      ).toEqual('Выбрано 0 файлов')
+      expect(translator.translate('filesChosen', { smart_count: 0 })).toEqual(
+        'Выбрано 0 файлов',
+      )
     })
 
     it('should support strings without plural forms', () => {
@@ -124,12 +138,12 @@ describe('Translator', () => {
         pluralize: () => 0,
       })
 
-      expect(
-        translator.translate('theAmount', { smart_count: 0 }),
-      ).toEqual('het aantal is 0')
-      expect(
-        translator.translate('theAmount', { smart_count: 1 }),
-      ).toEqual('het aantal is 1')
+      expect(translator.translate('theAmount', { smart_count: 0 })).toEqual(
+        'het aantal is 0',
+      )
+      expect(translator.translate('theAmount', { smart_count: 1 })).toEqual(
+        'het aantal is 1',
+      )
       expect(
         translator.translate('theAmount', { smart_count: 1202530 }),
       ).toEqual('het aantal is 1202530')
@@ -147,7 +161,9 @@ describe('Translator', () => {
 
       expect(() => {
         translator.translate('test')
-      }).toThrow('Attempted to use a string with plural forms, but no value was given for %{smart_count}')
+      }).toThrow(
+        'Attempted to use a string with plural forms, but no value was given for %{smart_count}',
+      )
     })
   })
 })
