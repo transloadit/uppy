@@ -3,5 +3,6 @@ node_modules/
 *.jsx
 *.cjs
 *.mjs
+!private/js2ts/*
 *.md
 *.lock

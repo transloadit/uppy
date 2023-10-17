@@ -103,3 +103,5 @@ jobs:
           corepack yarn run build:locale-pack
       - name: Run type tests
         run: corepack yarn run test:type
+      - name: Attempt building TS packages
+        run: corepack yarn run build:ts
