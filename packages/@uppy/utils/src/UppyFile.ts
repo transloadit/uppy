@@ -12,6 +12,7 @@ export interface UppyFile<
   TBody = IndexedObject<any>,
 > {
   data: Blob | File
+  error?: Error
   extension: string
   id: string
   isPaused?: boolean
@@ -26,7 +27,9 @@ export interface UppyFile<
     url: string
     body?: Record<string, unknown>
     provider?: string
+    companionUrl: string
   }
+  serverToken: string
   size: number
   source?: string
   type?: string
