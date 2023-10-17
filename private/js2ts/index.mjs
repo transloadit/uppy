@@ -8,6 +8,7 @@
 import { opendir, readFile, open, writeFile, rm } from 'node:fs/promises'
 import { argv } from 'node:process'
 import { extname } from 'node:path'
+import { existsSync } from 'node:fs'
 
 const packageRoot = new URL(`../../packages/${argv[2]}/`, import.meta.url)
 let dir
@@ -29,6 +30,20 @@ const references = Object.keys(packageJSON.dependencies || {})
   .concat(Object.keys(packageJSON.peerDependencies || {}))
   .filter((pkg) => pkg.startsWith('@uppy/'))
   .map((pkg) => ({ path: `../${pkg.slice('@uppy/'.length)}` }))
+
+const depsNotYetConvertedToTS = references.filter(
+  (ref) =>
+    !existsSync(new URL(`${ref.path.slice(1)}/tsconfig.json`, packageRoot)),
+)
+
+if (depsNotYetConvertedToTS.length) {
+  // We need to first convert the dependencies, otherwise we won't be working with the correct types.
+  throw new Error('Some dependencies have not yet been converted to TS', {
+    cause: depsNotYetConvertedToTS.map((ref) =>
+      ref.path.replace(/^\.\./, '@uppy'),
+    ),
+  })
+}
 
 let tsConfig
 try {
