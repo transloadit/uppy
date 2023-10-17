@@ -103,5 +103,22 @@ jobs:
           corepack yarn run build:locale-pack
       - name: Run type tests
         run: corepack yarn run test:type
+      - name: Drop manual tyoes
+        # For backward compatiblity reasons, Uppy plugins ship a manual crafted d.ts file.
+        # We don't want to remove that file to not break users.
+        # However, we want to validate the types based on the types inferred from source.
+        run: |
+          node --input-type=module <<'EOF'
+            import { existsSync } from 'node:fs';
+            import { opendir, readFile, writeFile } from 'node:fs/promises';
+            for await (const dirent of await opendir('./packages/@uppy')) {
+              if (existsSync(`./packages/@uppy/${dirent.name}/tsconfig.build.json`)) {
+                const pjsonPath = `./packages/@uppy/${dirent.name}/package.json`
+                const pjson = JSON.parse(await readFile(pjsonPath));
+                delete pjson.types
+                await writeFile(pjsonPath, JSON.stringify(pjson))
+              }
+            }
+          EOF
       - name: Attempt building TS packages
         run: corepack yarn run build:ts
