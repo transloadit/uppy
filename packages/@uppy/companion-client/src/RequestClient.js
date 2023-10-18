@@ -4,12 +4,23 @@ import fetchWithNetworkError from '@uppy/utils/lib/fetchWithNetworkError'
 import ErrorWithCause from '@uppy/utils/lib/ErrorWithCause'
 import emitSocketProgress from '@uppy/utils/lib/emitSocketProgress'
 import getSocketHost from '@uppy/utils/lib/getSocketHost'
-import EventManager from '@uppy/utils/lib/EventManager'
+import { getUppyAbortController } from '@uppy/utils/lib/fetcher'
 
 import AuthError from './AuthError.js'
 import Socket from './Socket.js'
 
 import packageJson from '../package.json'
+
+function defer () {
+  const deferred = {}
+
+  deferred.promise = new Promise((resolve, reject) => {
+    deferred.resolve = resolve
+    deferred.reject = reject
+  })
+
+  return deferred
+}
 
 // Remove the trailing slash so we can always safely append /xyz.
 function stripSlash (url) {
@@ -47,29 +58,28 @@ export default class RequestClient {
 
   #companionHeaders
 
-  constructor (uppy, opts, getQueue) {
+  constructor(uppy, opts) {
     this.uppy = uppy
     this.opts = opts
-    this.getQueue = getQueue
     this.onReceiveResponse = this.onReceiveResponse.bind(this)
     this.#companionHeaders = opts?.companionHeaders
   }
 
-  setCompanionHeaders (headers) {
+  setCompanionHeaders(headers) {
     this.#companionHeaders = headers
   }
 
-  [Symbol.for('uppy test: getCompanionHeaders')] () {
+  [Symbol.for('uppy test: getCompanionHeaders')]() {
     return this.#companionHeaders
   }
 
-  get hostname () {
+  get hostname() {
     const { companion } = this.uppy.getState()
     const host = this.opts.companionUrl
     return stripSlash(companion && companion[host] ? companion[host] : host)
   }
 
-  async headers () {
+  async headers() {
     const defaultHeaders = {
       Accept: 'application/json',
       'Content-Type': 'application/json',
@@ -82,7 +92,7 @@ export default class RequestClient {
     }
   }
 
-  onReceiveResponse ({ headers }) {
+  onReceiveResponse({ headers }) {
     const state = this.uppy.getState()
     const companion = state.companion || {}
     const host = this.opts.companionUrl
@@ -95,7 +105,7 @@ export default class RequestClient {
     }
   }
 
-  #getUrl (url) {
+  #getUrl(url) {
     if (/^(https?:|)\/\//.test(url)) {
       return url
     }
@@ -116,15 +126,11 @@ export default class RequestClient {
     Subsequent requests use the cached result of the preflight.
     However if there is an error retrieving the allowed headers, we will try again next time
   */
-  async preflight (path) {
+  async preflight(path) {
     const allowedHeadersCached = allowedHeadersCache.get(this.hostname)
     if (allowedHeadersCached != null) return allowedHeadersCached
 
-    const fallbackAllowedHeaders = [
-      'accept',
-      'content-type',
-      'uppy-auth-token',
-    ]
+    const fallbackAllowedHeaders = ['accept', 'content-type', 'uppy-auth-token']
 
     const promise = (async () => {
       try {
@@ -161,7 +167,7 @@ export default class RequestClient {
     return promise
   }
 
-  async preflightAndHeaders (path) {
+  async preflightAndHeaders(path) {
     const [allowedHeaders, headers] = await Promise.all([
       this.preflight(path),
       this.headers(),
@@ -181,7 +187,7 @@ export default class RequestClient {
   }
 
   /** @protected */
-  async request ({ path, method = 'GET', data, skipPostResponse, signal }) {
+  async request({ path, method = 'GET', data, skipPostResponse, signal }) {
     try {
       const headers = await this.preflightAndHeaders(path)
       const response = await fetchWithNetworkError(this.#getUrl(path), {
@@ -201,47 +207,45 @@ export default class RequestClient {
     }
   }
 
-  async get (path, options = undefined) {
+  async get(path, options = undefined) {
     // TODO: remove boolean support for options that was added for backward compatibility.
     // eslint-disable-next-line no-param-reassign
     if (typeof options === 'boolean') options = { skipPostResponse: options }
     return this.request({ ...options, path })
   }
 
-  async post (path, data, options = undefined) {
+  async post(path, data, options = undefined) {
     // TODO: remove boolean support for options that was added for backward compatibility.
     // eslint-disable-next-line no-param-reassign
     if (typeof options === 'boolean') options = { skipPostResponse: options }
     return this.request({ ...options, path, method: 'POST', data })
   }
 
-  async delete (path, data = undefined, options) {
+  async delete(path, data = undefined, options) {
     // TODO: remove boolean support for options that was added for backward compatibility.
     // eslint-disable-next-line no-param-reassign
     if (typeof options === 'boolean') options = { skipPostResponse: options }
     return this.request({ ...options, path, method: 'DELETE', data })
   }
 
-  async uploadRemoteFile (file, reqBody, options = {}) {
+  async uploadRemoteFile(file, reqBody) {
+    // TODO: handle signal internally
     try {
       if (file.serverToken) {
-        return await this.connectToServerSocket(file, this.getQueue())
+        return await this.connectToServerSocket(file)
       }
-      const queueRequestSocketToken = this.getQueue().wrapPromiseFunction(
-        this.#requestSocketToken,
-        { priority: -1 },
-      )
-      const serverToken = await queueRequestSocketToken(file, reqBody).abortOn(
-        options.signal,
+      const controller = getUppyAbortController(this.uppy, file.id)
+      const serverToken = await this.uppy.queue.add(
+        ({ signal }) => {
+          return this.#requestSocketToken(file, reqBody, signal)
+        },
+        { signal: controller.signal, priority: -1 },
       )
 
       if (!this.uppy.getState().files[file.id]) return undefined
 
       this.uppy.setFileState(file.id, { serverToken })
-      return await this.connectToServerSocket(
-        this.uppy.getFile(file.id),
-        this.getQueue(),
-      )
+      return await this.connectToServerSocket(this.uppy.getFile(file.id))
     } catch (err) {
       if (err?.cause?.name === 'AbortError') {
         // The file upload was aborted, it’s not an error
@@ -254,7 +258,7 @@ export default class RequestClient {
     }
   }
 
-  #requestSocketToken = async (file, postBody) => {
+  #requestSocketToken = async (file, postBody, signal) => {
     if (file.remote.url == null) {
       throw new Error('Cannot connect to an undefined URL')
     }
@@ -262,6 +266,7 @@ export default class RequestClient {
     const res = await this.post(file.remote.url, {
       ...file.remote.body,
       ...postBody,
+      signal,
     })
 
     return res.token
@@ -270,69 +275,24 @@ export default class RequestClient {
   /**
    * @param {UppyFile} file
    */
-  async connectToServerSocket (file, queue) {
-    return new Promise((resolve, reject) => {
-      const token = file.serverToken
-      const host = getSocketHost(file.remote.companionUrl)
-      const socket = new Socket({
-        target: `${host}/api/${token}`,
-        autoOpen: false,
-      })
-      const eventManager = new EventManager(this.uppy)
+  async connectToServerSocket(file) {
+    const token = file.serverToken
+    const host = getSocketHost(file.remote.companionUrl)
+    const socket = new Socket({ target: `${host}/api/${token}`, autoOpen: false })
+    const { capabilities } = this.uppy.getState()
+    const deferred = defer()
+    const controller = new AbortController()
 
-      let queuedRequest
-
-      eventManager.onFileRemove(file.id, () => {
+    this.uppy.on('cancel-all', ({reason}) => {
+      if (reason === 'user') {
         socket.send('cancel', {})
-        queuedRequest.abort()
-        resolve(`upload ${file.id} was removed`)
-      })
+        controller.abort()
+      }
+      deferred.resolve(`upload ${file.id} was canceled`)
+    })
 
-      eventManager.onPause(file.id, (isPaused) => {
-        if (isPaused) {
-          // Remove this file from the queue so another file can start in its place.
-          socket.send('pause', {})
-          queuedRequest.abort()
-        } else {
-          // Resuming an upload should be queued, else you could pause and then
-          // resume a queued upload to make it skip the queue.
-          queuedRequest.abort()
-          queuedRequest = queue.run(() => {
-            socket.open()
-            socket.send('resume', {})
-
-            return () => {}
-          })
-        }
-      })
-
-      eventManager.onPauseAll(file.id, () => {
-        socket.send('pause', {})
-        queuedRequest.abort()
-      })
-
-      eventManager.onCancelAll(file.id, ({ reason } = {}) => {
-        if (reason === 'user') {
-          socket.send('cancel', {})
-          queuedRequest.abort()
-        }
-        resolve(`upload ${file.id} was canceled`)
-      })
-
-      eventManager.onResumeAll(file.id, () => {
-        queuedRequest.abort()
-        if (file.error) {
-          socket.send('pause', {})
-        }
-        queuedRequest = queue.run(() => {
-          socket.open()
-          socket.send('resume', {})
-
-          return () => {}
-        })
-      })
-
-      eventManager.onRetry(file.id, () => {
+    this.uppy.on('upload-retry', (id) => {
+      if (file.id === id) {
         // Only do the retry if the upload is actually in progress;
         // else we could try to send these messages when the upload is still queued.
         // We may need a better check for this since the socket may also be closed
@@ -341,60 +301,93 @@ export default class RequestClient {
           socket.send('pause', {})
           socket.send('resume', {})
         }
-      })
+      }
+    })
 
-      eventManager.onRetryAll(file.id, () => {
-        // See the comment in the onRetry() call
+    this.uppy.on('retry-all', () => {
+      if (this.uppy.getFile(file.id)) {
         if (socket.isOpen) {
           socket.send('pause', {})
           socket.send('resume', {})
         }
+      }
+    })
+
+    if (capabilities.resumableUploads) {
+      this.uppy.on('pause-all', () => {
+        if (this.uppy.getFile(file.id)) {
+          socket.send('pause', {})
+        }
       })
 
-      socket.on('progress', (progressData) => emitSocketProgress(this, progressData, file))
+      this.uppy.on('resume-all', () => {
+        if (this.uppy.getFile(file.id)) {
+          controller.abort()
+          if (file.error) {
+            socket.send('pause', {})
+          }
+          this.uppy.queue.add(() => {
+            socket.open()
+            socket.send('resume', {})
+          })
+        }
+      })
+    }
 
-      socket.on('error', (errData) => {
-        const { message } = errData.error
-        const error = Object.assign(new Error(message), {
-          cause: errData.error,
-        })
+    if (capabilities.individualCancellation) {
+      this.uppy.on('file-removed', () => {
+        if (this.uppy.getFile(file.id)) {
+          socket.send('cancel', {})
+          controller.abort()
+          deferred.resolve(`upload ${file.id} was removed`)
+        }
+      })
+    }
 
-        // If the remote retry optimisation should not be used,
-        // close the socket—this will tell companion to clear state and delete the file.
-        if (!this.opts.useFastRemoteRetry) {
+    socket.on('progress', (progressData) => {
+      emitSocketProgress(this, progressData, file)
+    })
+
+    socket.on('error', (errData) => {
+      const { message } = errData.error
+      const error = Object.assign(new Error(message), {
+        cause: errData.error,
+      })
+
+      // If the remote retry optimisation should not be used,
+      // close the socket—this will tell companion to clear state and delete the file.
+      if (!this.opts.useFastRemoteRetry) {
+        if (this.uppy.getFile(file.id)){
           // Remove the serverToken so that a new one will be created for the retry.
           this.uppy.setFileState(file.id, {
             serverToken: null,
           })
-        } else {
-          socket.close()
         }
-
-        this.uppy.emit('upload-error', file, error)
-        queuedRequest.done()
-        reject(error)
-      })
-
-      socket.on('success', (data) => {
-        const uploadResp = {
-          uploadURL: data.url,
-        }
-
-        this.uppy.emit('upload-success', file, uploadResp)
-        queuedRequest.done()
+      } else {
         socket.close()
-        resolve()
-      })
+      }
 
-      queuedRequest = queue.run(() => {
-        if (file.isPaused) {
-          socket.send('pause', {})
-        } else {
-          socket.open()
-        }
-
-        return () => {}
-      })
+      this.uppy.emit('upload-error', file, error)
+      deferred.reject(error)
     })
+
+    socket.on('success', (data) => {
+      const uploadResp = {
+        uploadURL: data.url,
+      }
+
+      this.uppy.emit('upload-success', file, uploadResp)
+      socket.close()
+      deferred.resolve()
+    })
+
+    this.uppy.queue.add(() => {
+      if (file.isPaused) {
+        socket.send('pause', {})
+      } else {
+        socket.open()
+      }
+      return deferred.promise
+    }, { signal: controller.signal })
   }
 }

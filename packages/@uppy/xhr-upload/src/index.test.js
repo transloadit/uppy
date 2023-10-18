@@ -50,8 +50,8 @@ describe('XHRUpload', () => {
         })
 
       const core = new Core()
-      const validateStatus = vi.fn((status, responseText) => {
-        return JSON.parse(responseText).code !== 40000
+      const validateStatus = vi.fn((response) => {
+        return JSON.parse(response.responseText).code !== 40000
       })
 
       core.use(XHRUpload, {

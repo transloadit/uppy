@@ -1,16 +1,14 @@
 import BasePlugin from '@uppy/core/lib/BasePlugin.js'
-import { nanoid } from 'nanoid/non-secure'
 import { Provider, RequestClient } from '@uppy/companion-client'
-import EventManager from '@uppy/utils/lib/EventManager'
-import ProgressTimeout from '@uppy/utils/lib/ProgressTimeout'
-import { RateLimitedQueue, internalRateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
 import NetworkError from '@uppy/utils/lib/NetworkError'
 import isNetworkError from '@uppy/utils/lib/isNetworkError'
 import { filterNonFailedFiles, filterFilesToEmitUploadStarted } from '@uppy/utils/lib/fileFilters'
+import { fetcher, XhrError, getUppyAbortController } from '@uppy/utils/lib/fetcher'
 
 import packageJson from '../package.json'
 import locale from './locale.js'
 
+// TODO: do we really need this?
 function buildResponseError (xhr, err) {
   let error = err
   // No error message
@@ -48,7 +46,9 @@ export default class XHRUpload extends BasePlugin {
   // eslint-disable-next-line global-require
   static VERSION = packageJson.version
 
-  constructor (uppy, opts) {
+  #uppyFetch
+
+  constructor(uppy, opts) {
     super(uppy, opts)
     this.type = 'uploader'
     this.id = this.opts.id || 'XHRUpload'
@@ -70,24 +70,15 @@ export default class XHRUpload extends BasePlugin {
       withCredentials: false,
       responseType: '',
       /**
-       * @param {string} responseText the response body string
+       * @param {XMLHttpRequest} response
        */
-      getResponseData (responseText) {
-        let parsedResponse = {}
-        try {
-          parsedResponse = JSON.parse(responseText)
-        } catch (err) {
-          uppy.log(err)
-        }
-
-        return parsedResponse
+      async getResponseData(response) {
+        return JSON.parse(response.responseText)
       },
       /**
-       *
-       * @param {string} _ the response body string
-       * @param {XMLHttpRequest | respObj} response the response object (XHR or similar)
+       * @param {XMLHttpRequest} response
        */
-      getResponseError (_, response) {
+      getResponseError(response) {
         let error = new Error('Upload error')
 
         if (isNetworkError(response)) {
@@ -97,23 +88,76 @@ export default class XHRUpload extends BasePlugin {
         return error
       },
       /**
-       * Check if the response from the upload endpoint indicates that the upload was successful.
-       *
-       * @param {number} status the response status code
+       * @param {XMLHttpRequest} response
        */
-      validateStatus (status) {
-        return status >= 200 && status < 300
+      validateStatus(response) {
+        return response.status >= 200 && response.status < 300
       },
     }
 
     this.opts = { ...defaultOptions, ...opts }
     this.i18nInit()
 
-    // Simultaneous upload limiting is shared across all uploads with this plugin.
-    if (internalRateLimitedQueue in this.opts) {
-      this.requests = this.opts[internalRateLimitedQueue]
-    } else {
-      this.requests = new RateLimitedQueue(this.opts.limit)
+    /**
+     * xhr-upload wrapper for `fetcher` to handle user options
+     * `validateStatus`, `getResponseError`, `getResponseData`
+     * and to emit `upload-progress`, `upload-error`, and `upload-success` events.
+     *
+     * @param {import('@uppy/core').UppyFile[]} files
+     */
+    this.#uppyFetch = (files) => {
+      /** @type {typeof fetcher} */
+      return async (url, options) => {
+        try {
+          const response = await fetcher(url, {
+            ...options,
+            onUploadProgress: (event) => {
+              if (event.lengthComputable) {
+                for (const file of files) {
+                  this.uppy.emit('upload-progress', file, {
+                    uploader: this,
+                    bytesUploaded: (event.loaded / event.total) * file.size,
+                    bytesTotal: file.size,
+                  })
+                }
+              }
+            },
+          })
+
+          if (!this.opts.validateStatus(response)) {
+            throw new XhrError(response.statusText, response)
+          }
+
+          const body = await this.opts.getResponseData(response)
+          const uploadUrl = body[this.opts.responseUrlFieldName]
+
+          for (const file of files) {
+            this.uppy.emit('upload-success', file, {
+              status: response.status,
+              body,
+              uploadUrl,
+            })
+          }
+
+          return response
+        } catch (error) {
+          if (error.name === 'AbortError') {
+            return undefined
+          }
+          if (error instanceof XhrError) {
+            const { xhr } = error
+            const customError = buildResponseError(
+              xhr,
+              this.opts.getResponseError(xhr.responseText, xhr),
+            )
+            for (const file of files) {
+              this.uppy.emit('upload-error', file, customError)
+            }
+          }
+
+          throw error
+        }
+      }
     }
 
     if (this.opts.bundle && !this.opts.formData) {
@@ -124,10 +168,12 @@ export default class XHRUpload extends BasePlugin {
       throw new Error('The `metaFields` option has been renamed to `allowedMetaFields`.')
     }
 
-    this.uploaderEvents = Object.create(null)
+    if (opts.bundle && typeof this.opts.headers === 'function') {
+      throw new TypeError('`headers` may not be a function when the `bundle: true` option is set')
+    }
   }
 
-  getOptions (file) {
+  getOptions(file) {
     const overrides = this.uppy.getState().xhrUpload
     const { headers } = this.opts
 
@@ -213,231 +259,36 @@ export default class XHRUpload extends BasePlugin {
     return formPost
   }
 
-  async #uploadLocalFile (file, current, total) {
+  async #uploadLocalFile(file) {
     const opts = this.getOptions(file)
+    const uppyFetch = this.#uppyFetch([file])
+    const body = opts.formData
+      ? this.createFormDataUpload(file, opts)
+      : file.data
 
-    this.uppy.log(`uploading ${current} of ${total}`)
-    return new Promise((resolve, reject) => {
-      const data = opts.formData
-        ? this.createFormDataUpload(file, opts)
-        : file.data
-
-      const xhr = new XMLHttpRequest()
-      const eventManager = new EventManager(this.uppy)
-      this.uploaderEvents[file.id] = eventManager
-      let queuedRequest
-
-      const timer = new ProgressTimeout(opts.timeout, () => {
-        const error = new Error(this.i18n('uploadStalled', { seconds: Math.ceil(opts.timeout / 1000) }))
-        this.uppy.emit('upload-stalled', error, [file])
-      })
-
-      const id = nanoid()
-
-      xhr.upload.addEventListener('loadstart', () => {
-        this.uppy.log(`[XHRUpload] ${id} started`)
-      })
-
-      xhr.upload.addEventListener('progress', (ev) => {
-        this.uppy.log(`[XHRUpload] ${id} progress: ${ev.loaded} / ${ev.total}`)
-        // Begin checking for timeouts when progress starts, instead of loading,
-        // to avoid timing out requests on browser concurrency queue
-        timer.progress()
-
-        if (ev.lengthComputable) {
-          this.uppy.emit('upload-progress', file, {
-            uploader: this,
-            bytesUploaded: ev.loaded,
-            bytesTotal: ev.total,
-          })
-        }
-      })
-
-      xhr.addEventListener('load', () => {
-        this.uppy.log(`[XHRUpload] ${id} finished`)
-        timer.done()
-        queuedRequest.done()
-        if (this.uploaderEvents[file.id]) {
-          this.uploaderEvents[file.id].remove()
-          this.uploaderEvents[file.id] = null
-        }
-
-        if (opts.validateStatus(xhr.status, xhr.responseText, xhr)) {
-          const body = opts.getResponseData(xhr.responseText, xhr)
-          const uploadURL = body[opts.responseUrlFieldName]
-
-          const uploadResp = {
-            status: xhr.status,
-            body,
-            uploadURL,
-          }
-
-          this.uppy.emit('upload-success', file, uploadResp)
-
-          if (uploadURL) {
-            this.uppy.log(`Download ${file.name} from ${uploadURL}`)
-          }
-
-          return resolve(file)
-        }
-        const body = opts.getResponseData(xhr.responseText, xhr)
-        const error = buildResponseError(xhr, opts.getResponseError(xhr.responseText, xhr))
-
-        const response = {
-          status: xhr.status,
-          body,
-        }
-
-        this.uppy.emit('upload-error', file, error, response)
-        return reject(error)
-      })
-
-      xhr.addEventListener('error', () => {
-        this.uppy.log(`[XHRUpload] ${id} errored`)
-        timer.done()
-        queuedRequest.done()
-        if (this.uploaderEvents[file.id]) {
-          this.uploaderEvents[file.id].remove()
-          this.uploaderEvents[file.id] = null
-        }
-
-        const error = buildResponseError(xhr, opts.getResponseError(xhr.responseText, xhr))
-        this.uppy.emit('upload-error', file, error)
-        return reject(error)
-      })
-
-      xhr.open(opts.method.toUpperCase(), opts.endpoint, true)
-      // IE10 does not allow setting `withCredentials` and `responseType`
-      // before `open()` is called.
-      xhr.withCredentials = opts.withCredentials
-      if (opts.responseType !== '') {
-        xhr.responseType = opts.responseType
-      }
-
-      queuedRequest = this.requests.run(() => {
-        // When using an authentication system like JWT, the bearer token goes as a header. This
-        // header needs to be fresh each time the token is refreshed so computing and setting the
-        // headers just before the upload starts enables this kind of authentication to work properly.
-        // Otherwise, half-way through the list of uploads the token could be stale and the upload would fail.
-        const currentOpts = this.getOptions(file)
-
-        Object.keys(currentOpts.headers).forEach((header) => {
-          xhr.setRequestHeader(header, currentOpts.headers[header])
-        })
-
-        xhr.send(data)
-
-        return () => {
-          timer.done()
-          xhr.abort()
-        }
-      })
-
-      eventManager.onFileRemove(file.id, () => {
-        queuedRequest.abort()
-        reject(new Error('File removed'))
-      })
-
-      eventManager.onCancelAll(file.id, ({ reason }) => {
-        if (reason === 'user') {
-          queuedRequest.abort()
-        }
-        reject(new Error('Upload cancelled'))
+    await this.uppy.queue.add(async () => {
+      return uppyFetch(opts.endpoint, {
+        method: opts.method,
+        headers: opts.headers,
+        body,
       })
     })
+
+    return file
   }
 
-  #uploadBundle (files) {
-    return new Promise((resolve, reject) => {
-      const { endpoint } = this.opts
-      const { method } = this.opts
+  async #uploadBundle(files) {
+    const { endpoint, method, headers } = this.opts
+    const optsFromState = this.uppy.getState().xhrUpload ?? {}
+    const uppyFetch = this.#uppyFetch(files)
+    const { signal } = getUppyAbortController(this.uppy)
+    const body = this.createBundledUpload(files, {
+      ...this.opts,
+      ...optsFromState,
+    })
 
-      const optsFromState = this.uppy.getState().xhrUpload
-      const formData = this.createBundledUpload(files, {
-        ...this.opts,
-        ...(optsFromState || {}),
-      })
-
-      const xhr = new XMLHttpRequest()
-
-      const emitError = (error) => {
-        files.forEach((file) => {
-          this.uppy.emit('upload-error', file, error)
-        })
-      }
-
-      const timer = new ProgressTimeout(this.opts.timeout, () => {
-        const error = new Error(this.i18n('uploadStalled', { seconds: Math.ceil(this.opts.timeout / 1000) }))
-        this.uppy.emit('upload-stalled', error, files)
-      })
-
-      xhr.upload.addEventListener('loadstart', () => {
-        this.uppy.log('[XHRUpload] started uploading bundle')
-        timer.progress()
-      })
-
-      xhr.upload.addEventListener('progress', (ev) => {
-        timer.progress()
-
-        if (!ev.lengthComputable) return
-
-        files.forEach((file) => {
-          this.uppy.emit('upload-progress', file, {
-            uploader: this,
-            bytesUploaded: (ev.loaded / ev.total) * file.size,
-            bytesTotal: file.size,
-          })
-        })
-      })
-
-      xhr.addEventListener('load', (ev) => {
-        timer.done()
-
-        if (this.opts.validateStatus(ev.target.status, xhr.responseText, xhr)) {
-          const body = this.opts.getResponseData(xhr.responseText, xhr)
-          const uploadResp = {
-            status: ev.target.status,
-            body,
-          }
-          files.forEach((file) => {
-            this.uppy.emit('upload-success', file, uploadResp)
-          })
-          return resolve()
-        }
-
-        const error = this.opts.getResponseError(xhr.responseText, xhr) || new Error('Upload error')
-        error.request = xhr
-        emitError(error)
-        return reject(error)
-      })
-
-      xhr.addEventListener('error', () => {
-        timer.done()
-
-        const error = this.opts.getResponseError(xhr.responseText, xhr) || new Error('Upload error')
-        emitError(error)
-        return reject(error)
-      })
-
-      this.uppy.on('cancel-all', ({ reason } = {}) => {
-        if (reason !== 'user') return
-        timer.done()
-        xhr.abort()
-      })
-
-      xhr.open(method.toUpperCase(), endpoint, true)
-      // IE10 does not allow setting `withCredentials` and `responseType`
-      // before `open()` is called.
-      xhr.withCredentials = this.opts.withCredentials
-      if (this.opts.responseType !== '') {
-        xhr.responseType = this.opts.responseType
-      }
-
-      Object.keys(this.opts.headers).forEach((header) => {
-        xhr.setRequestHeader(header, this.opts.headers[header])
-      })
-
-      xhr.send(formData)
+    await this.uppy.queue.add(async () => {
+      return uppyFetch(endpoint, { method, body, headers, signal })
     })
   }
 
@@ -468,27 +319,12 @@ export default class XHRUpload extends BasePlugin {
       if (file.isRemote) {
         // INFO: the url plugin needs to use RequestClient,
         // while others use Provider
+        // TODO: would be nice if we can always use Provider with an option rather than RequestClient
         const Client = file.remote.providerOptions.provider ? Provider : RequestClient
-        const getQueue = () => this.requests
-        const client = new Client(this.uppy, file.remote.providerOptions, getQueue)
-        const controller = new AbortController()
+        const client = new Client(this.uppy, file.remote.providerOptions)
+        const reqBody = this.#getCompanionClientArgs(file)
 
-        const removedHandler = (removedFile) => {
-          if (removedFile.id === file.id) controller.abort()
-        }
-        this.uppy.on('file-removed', removedHandler)
-
-        const uploadPromise = client.uploadRemoteFile(
-          file,
-          this.#getCompanionClientArgs(file),
-          { signal: controller.signal },
-        )
-
-        this.requests.wrapSyncFunction(() => {
-          this.uppy.off('file-removed', removedHandler)
-        }, { priority: -1 })()
-
-        return uploadPromise
+        return client.uploadRemoteFile(file, reqBody)
       }
 
       return this.#uploadLocalFile(file, current, total)
@@ -503,7 +339,7 @@ export default class XHRUpload extends BasePlugin {
 
     // No limit configured by the user, and no RateLimitedQueue passed in by a "parent" plugin
     // (basically just AwsS3) using the internal symbol
-    if (this.opts.limit === 0 && !this.opts[internalRateLimitedQueue]) {
+    if (this.opts.limit === 0) {
       this.uppy.log(
         '[XHRUpload] When uploading multiple files at once, consider setting the `limit` option (to `10` for example), to limit the number of concurrent uploads, which helps prevent memory and network issues: https://uppy.io/docs/xhr-upload/#limit-0',
         'warning',

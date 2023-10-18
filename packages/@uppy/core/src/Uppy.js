@@ -6,6 +6,7 @@ import ee from 'namespace-emitter'
 import { nanoid } from 'nanoid/non-secure'
 import throttle from 'lodash/throttle.js'
 import DefaultStore from '@uppy/store-default'
+import PQueue from 'p-queue'
 import getFileType from '@uppy/utils/lib/getFileType'
 import getFileNameAndExtension from '@uppy/utils/lib/getFileNameAndExtension'
 import { getSafeFileId } from '@uppy/utils/lib/generateFileID'
@@ -43,6 +44,8 @@ class Uppy {
   #uploaders = new Set()
 
   #postProcessors = new Set()
+
+  queue = new PQueue({ concurrency: 6, autoStart: false })
 
   /**
    * Instantiate Uppy
@@ -773,6 +776,7 @@ class Uppy {
   }
 
   pauseAll () {
+    this.queue.pause()
     const updatedFiles = { ...this.getState().files }
     const inProgressUpdatedFiles = Object.keys(updatedFiles).filter((file) => {
       return !updatedFiles[file].progress.uploadComplete
@@ -789,6 +793,7 @@ class Uppy {
   }
 
   resumeAll () {
+    this.queue.start()
     const updatedFiles = { ...this.getState().files }
     const inProgressUpdatedFiles = Object.keys(updatedFiles).filter((file) => {
       return !updatedFiles[file].progress.uploadComplete
@@ -843,6 +848,7 @@ class Uppy {
   }
 
   cancelAll ({ reason = 'user' } = {}) {
+    this.queue.clear()
     this.emit('cancel-all', { reason })
 
     // Only remove existing uploads if user is canceling
@@ -1624,11 +1630,13 @@ class Uppy {
         })
 
         const uploadID = this.#createUpload(waitingFileIDs)
+        this.queue.start()
         return this.#runUpload(uploadID)
       })
       .catch((err) => {
         this.emit('error', err)
         this.log(err, 'error')
+        this.queue.clear()
         throw err
       })
   }
