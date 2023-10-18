@@ -30,11 +30,12 @@ const references = Object.keys(packageJSON.dependencies || {})
   .concat(Object.keys(packageJSON.peerDependencies || {}))
   .concat(Object.keys(packageJSON.devDependencies || {}))
   .filter((pkg) => pkg.startsWith('@uppy/'))
-  .map((pkg) => ({ path: `../${pkg.slice('@uppy/'.length)}/tsconfig.build.json` }))
+  .map((pkg) => ({
+    path: `../${pkg.slice('@uppy/'.length)}/tsconfig.build.json`,
+  }))
 
 const depsNotYetConvertedToTS = references.filter(
-  (ref) =>
-    !existsSync(new URL(ref.path, packageRoot)),
+  (ref) => !existsSync(new URL(ref.path, packageRoot)),
 )
 
 if (depsNotYetConvertedToTS.length) {
