@@ -121,19 +121,7 @@
             // implement them (you'd also need to set `shouldUseMultipart: false` though).
 
             async createMultipartUpload(file, signal) {
-              if (signal?.aborted) {
-                const err = new DOMException(
-                  'The operation was aborted',
-                  'AbortError',
-                )
-                Object.defineProperty(err, 'cause', {
-                  __proto__: null,
-                  configurable: true,
-                  writable: true,
-                  value: signal.reason,
-                })
-                throw err
-              }
+              signal?.throwIfAborted()
 
               const metadata = {}
 
@@ -191,19 +179,7 @@
 
               const { uploadId, key, partNumber, signal } = options
 
-              if (signal?.aborted) {
-                const err = new DOMException(
-                  'The operation was aborted',
-                  'AbortError',
-                )
-                Object.defineProperty(err, 'cause', {
-                  __proto__: null,
-                  configurable: true,
-                  writable: true,
-                  value: signal.reason,
-                })
-                throw err
-              }
+              signal?.throwIfAborted()
 
               if (uploadId == null || key == null || partNumber == null) {
                 throw new Error(
@@ -226,19 +202,7 @@
             },
 
             async listParts(file, { key, uploadId }, signal) {
-              if (signal?.aborted) {
-                const err = new DOMException(
-                  'The operation was aborted',
-                  'AbortError',
-                )
-                Object.defineProperty(err, 'cause', {
-                  __proto__: null,
-                  configurable: true,
-                  writable: true,
-                  value: signal.reason,
-                })
-                throw err
-              }
+              signal?.throwIfAborted()
 
               const filename = encodeURIComponent(key)
               const response = await fetch(
@@ -259,19 +223,7 @@
               { key, uploadId, parts },
               signal,
             ) {
-              if (signal?.aborted) {
-                const err = new DOMException(
-                  'The operation was aborted',
-                  'AbortError',
-                )
-                Object.defineProperty(err, 'cause', {
-                  __proto__: null,
-                  configurable: true,
-                  writable: true,
-                  value: signal.reason,
-                })
-                throw err
-              }
+              signal?.throwIfAborted()
 
               const filename = encodeURIComponent(key)
               const uploadIdEnc = encodeURIComponent(uploadId)
