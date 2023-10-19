@@ -301,6 +301,7 @@ class HTTPCommunicationQueue {
       return await this.#sendCompletionRequest(
         this.#getFile(file),
         { key, uploadId, parts, signal },
+        signal,
       ).abortOn(signal)
     } catch (err) {
       if (err?.cause !== pausingUploadReason && err?.name !== 'AbortError') {
@@ -327,6 +328,7 @@ class HTTPCommunicationQueue {
     const alreadyUploadedParts = await this.#listParts(
       this.#getFile(file),
       { uploadId, key, signal },
+      signal,
     ).abortOn(signal)
     throwIfAborted(signal)
     const parts = await Promise.all(
@@ -346,6 +348,7 @@ class HTTPCommunicationQueue {
     return this.#sendCompletionRequest(
       this.#getFile(file),
       { key, uploadId, parts, signal },
+      signal,
     ).abortOn(signal)
   }
 
