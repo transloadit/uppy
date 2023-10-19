@@ -3,7 +3,7 @@ import { Provider, RequestClient } from '@uppy/companion-client'
 import NetworkError from '@uppy/utils/lib/NetworkError'
 import isNetworkError from '@uppy/utils/lib/isNetworkError'
 import { filterNonFailedFiles, filterFilesToEmitUploadStarted } from '@uppy/utils/lib/fileFilters'
-import { fetcher, XhrError, getUppyAbortController } from '@uppy/utils/lib/fetcher'
+import { fetcher, getUppyAbortController } from '@uppy/utils/lib/fetcher'
 
 import packageJson from '../package.json'
 import locale from './locale.js'
@@ -125,7 +125,7 @@ export default class XHRUpload extends BasePlugin {
           })
 
           if (!this.opts.validateStatus(response)) {
-            throw new XhrError(response.statusText, response)
+            throw new NetworkError(response.statusText, response)
           }
 
           const body = await this.opts.getResponseData(response)
@@ -144,7 +144,7 @@ export default class XHRUpload extends BasePlugin {
           if (error.name === 'AbortError') {
             return undefined
           }
-          if (error instanceof XhrError) {
+          if (error instanceof NetworkError) {
             const { xhr } = error
             const customError = buildResponseError(
               xhr,

@@ -1,22 +1,6 @@
 /* eslint-disable max-len */
 
-export class XhrError extends Error {
-  /**
-   * Create an XHR error.
-   *
-   * @param {string} message
-   *   Message.
-   * @param {XMLHttpRequest} xhr
-   *   Message.
-   * @returns
-   *   XHR error.
-   */
-  constructor (message, xhr) {
-    super(message)
-    this.name = 'XhrError'
-    this.xhr = xhr
-  }
-}
+import NetworkError from './NetworkError.js'
 
 /**
  * Get an abort signal that will be aborted when the specified Uppy file is removed or all uploads are cancelled.
@@ -108,7 +92,7 @@ export function fetcher(url, options = {}) {
             requestWithRetry(retryCount + 1).then(resolve, reject)
           }, delay(retryCount))
         } else {
-          reject(new XhrError(xhr.statusText, xhr));
+          reject(new NetworkError(xhr.statusText, xhr));
         }
       };
 
@@ -118,7 +102,7 @@ export function fetcher(url, options = {}) {
             requestWithRetry(retryCount + 1).then(resolve, reject)
           }, delay(retryCount))
         } else {
-          reject(new XhrError(xhr.statusText, xhr));
+          reject(new NetworkError(xhr.statusText, xhr));
         }
       };
 
