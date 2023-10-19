@@ -1,4 +1,4 @@
-import { Uppy, UppyFile } from '@uppy/core'
+import { Uppy, type UppyFile } from '@uppy/core'
 import { expectType, expectError } from 'tsd'
 import type { AwsS3Part } from '@uppy/aws-s3-multipart'
 import AwsS3 from '..'

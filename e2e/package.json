@@ -49,7 +49,6 @@
     "cypress": "^13.0.0",
     "cypress-terminal-report": "^5.0.0",
     "deep-freeze": "^0.0.1",
-    "execa": "^6.1.0",
     "parcel": "^2.9.3",
     "process": "^0.11.10",
     "prompts": "^2.4.2",
