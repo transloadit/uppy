@@ -116,6 +116,12 @@ const getConfigFromEnv = () => {
         key: process.env.COMPANION_UNSPLASH_KEY,
         secret: process.env.COMPANION_UNSPLASH_SECRET,
       },
+      webdavOauth: {
+        key: process.env.COMPANION_WEBDAV_KEY,
+        secret: getSecret('COMPANION_WEBDAV_SECRET'),
+        credentialsURL: process.env.COMPANION_WEBDAV_KEYS_ENDPOINT,
+        protocol: 'https',
+      },
     },
     s3: {
       key: process.env.COMPANION_AWS_KEY,

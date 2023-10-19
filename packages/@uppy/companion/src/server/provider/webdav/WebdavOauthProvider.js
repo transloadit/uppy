@@ -36,7 +36,7 @@ class WebdavOauth extends WebdavProvider {
   }
 
   #getBaseUrl ({ providerUserSession: { subdomain } }) {
-    const { protocol } = this.providerGrantConfig
+    const { protocol } = this.providerOptions
 
     return `${protocol}://${subdomain}`
   }

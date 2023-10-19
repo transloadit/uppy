@@ -74,7 +74,9 @@ module.exports.getProviderMiddleware = (providers, grantConfig) => {
         req.companion.providerGrantConfig = providerGrantConfig
       }
 
-      req.companion.provider = new ProviderClass({ providerName, providerGrantConfig, allowLocalUrls })
+      const providerOptions = req.companion.options.providerOptions[providerName] || {}
+
+      req.companion.provider = new ProviderClass({ providerName, providerGrantConfig, providerOptions, allowLocalUrls })
       req.companion.providerClass = ProviderClass
     } else {
       logger.warn('invalid provider options detected. Provider will not be loaded', 'provider.middleware.invalid', req.id)

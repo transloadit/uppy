@@ -53,7 +53,7 @@ module.exports = () => {
       access_url: 'https://[subdomain]/apps/oauth2/api/v1/token',
       scope: ['profile'],
       oauth: 2,
-      callback: '/webdav/callback',
+      callback: '/webdavOauth/callback',
     },
   }
 }
