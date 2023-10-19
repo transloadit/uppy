@@ -32,8 +32,7 @@ const references = Object.keys(packageJSON.dependencies || {})
   .map((pkg) => ({ path: `../${pkg.slice('@uppy/'.length)}` }))
 
 const depsNotYetConvertedToTS = references.filter(
-  (ref) =>
-    !existsSync(new URL(`${ref.path}/tsconfig.json`, packageRoot)),
+  (ref) => !existsSync(new URL(`${ref.path}/tsconfig.json`, packageRoot)),
 )
 
 if (depsNotYetConvertedToTS.length) {
