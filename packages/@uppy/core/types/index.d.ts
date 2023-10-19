@@ -1,4 +1,5 @@
 import * as UppyUtils from '@uppy/utils'
+import PQueue from 'p-queue'
 
 // Utility types
 type OmitKey<T, Key> = Pick<T, Exclude<keyof T, Key>>
@@ -293,6 +294,8 @@ export interface UppyEventMap<
 
 export class Uppy {
   constructor(opts?: UppyOptions)
+
+  queue: PQueue
 
   on<K extends keyof UppyEventMap>(event: K, callback: UppyEventMap[K]): this
 

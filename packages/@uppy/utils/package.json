@@ -57,6 +57,7 @@
     "./lib/truncateString": "./lib/truncateString.js",
     "./lib/remoteFileObjToLocal": "./lib/remoteFileObjToLocal.js",
     "./lib/fetchWithNetworkError": "./lib/fetchWithNetworkError.js",
+    "./lib/fetcher": "./lib/fetcher.js",
     "./lib/ErrorWithCause": "./lib/ErrorWithCause.js",
     "./lib/delay": "./lib/delay.js",
     "./lib/hasProperty": "./lib/hasProperty.js",
