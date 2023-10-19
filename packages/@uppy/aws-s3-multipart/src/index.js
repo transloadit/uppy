@@ -374,7 +374,7 @@ class HTTPCommunicationQueue {
     for (;;) {
       throwIfAborted(signal)
       if (chunk == null) {
-        return;
+        break;
       }
       
       const chunkData = chunk.getData()
