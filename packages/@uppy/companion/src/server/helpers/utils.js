@@ -178,10 +178,12 @@ module.exports.prepareStream = async (stream) => new Promise((resolve, reject) =
         try {
           responseJson = JSON.parse(err.response.body)
         } catch (err2) {
-          throw err
+          reject(err)
+          return
         }
 
         reject(new StreamHttpJsonError({ statusCode: err.response.statusCode, responseJson }))
+        return
       }
 
       reject(err)
