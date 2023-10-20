@@ -1,5 +1,12 @@
 # @uppy/companion
 
+## 4.10.0
+
+Released: 2023-10-20
+Included in: Uppy v3.18.0
+
+- @uppy/companion: Bucket fn also remote files (Mikael Finstad / #4693)
+
 ## 4.9.1
 
 Released: 2023-09-29
