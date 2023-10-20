@@ -71,12 +71,10 @@ class WebdavOauth extends WebdavProvider {
     const { AuthType } = await import('webdav') // eslint-disable-line import/no-unresolved
     return this.getClientHelper({
       url,
-      options: {
-        authType: AuthType.Token,
-        token: {
-          access_token: token,
-          token_type: 'Bearer',
-        },
+      authType: AuthType.Token,
+      token: {
+        access_token: token,
+        token_type: 'Bearer',
       },
     })
   }
