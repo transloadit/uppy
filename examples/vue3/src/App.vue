@@ -64,6 +64,7 @@ import { Dashboard, DashboardModal, DragDrop, ProgressBar } from '@uppy/vue'
 <script>
 import Uppy from '@uppy/core'
 import Tus from '@uppy/tus'
+import RemoteSources from '@uppy/remote-sources'
 import { defineComponent } from 'vue'
 
 const { VITE_TUS_ENDPOINT: TUS_ENDPOINT } = import.meta.env
@@ -71,9 +72,13 @@ const { VITE_TUS_ENDPOINT: TUS_ENDPOINT } = import.meta.env
 export default defineComponent({
   computed: {
     uppy: () =>
-      new Uppy({ id: 'uppy1', autoProceed: true, debug: true }).use(Tus, {
-        endpoint: TUS_ENDPOINT,
-      }),
+      new Uppy({ id: 'uppy1', autoProceed: true, debug: true })
+        .use(Tus, {
+          endpoint: TUS_ENDPOINT,
+        })
+        .use(RemoteSources, {
+          companionUrl: 'https://companion.uppy.io',
+        }),
     uppy2: () =>
       new Uppy({ id: 'uppy2', autoProceed: false, debug: true }).use(Tus, {
         endpoint: TUS_ENDPOINT,
