@@ -1,5 +1,14 @@
 # @uppy/aws-s3-multipart
 
+## 3.8.0
+
+Released: 2023-10-20
+Included in: Uppy v3.18.0
+
+- @uppy/aws-s3-multipart: fix `TypeError` (Antoine du Hamel / #4748)
+- @uppy/aws-s3-multipart: pass `signal` as separate arg for backward compat (Antoine du Hamel / #4746)
+- @uppy/aws-s3-multipart: fix `uploadURL` when using `PUT` (Antoine du Hamel / #4701)
+
 ## 3.7.0
 
 Released: 2023-09-29

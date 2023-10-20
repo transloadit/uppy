@@ -1,5 +1,12 @@
 # @uppy/dashboard
 
+## 3.6.0
+
+Released: 2023-10-20
+Included in: Uppy v3.18.0
+
+- @uppy/dashboard: auto discover and install plugins without target (Artur Paikin / #4343)
+
 ## 3.5.3
 
 Released: 2023-09-18

@@ -1,5 +1,12 @@
 # @uppy/svelte
 
+## 3.1.1
+
+Released: 2023-10-20
+Included in: Uppy v3.18.0
+
+- @uppy/svelte: fix TS build command (Antoine du Hamel / #4720)
+
 ## 3.1.0
 
 Released: 2023-09-29
