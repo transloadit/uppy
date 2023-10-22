@@ -279,7 +279,7 @@ export default class RequestClient {
       )
       const serverToken = await queueRequestSocketToken(file, reqBody).abortOn(signal)
 
-      if (!this.uppy.getState().files[file.id]) return undefined // has file since been removed?
+      if (!this.uppy.getFile(file.id)) return undefined // has file since been removed?
 
       this.uppy.setFileState(file.id, { serverToken })
       return await this.#awaitRemoteFileUpload({
