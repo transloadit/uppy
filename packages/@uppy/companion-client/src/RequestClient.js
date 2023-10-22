@@ -1,7 +1,7 @@
 'use strict'
 
 // eslint-disable-next-line import/no-extraneous-dependencies
-import pRetry from 'p-retry'
+import pRetry, { AbortError } from 'p-retry'
 
 import fetchWithNetworkError from '@uppy/utils/lib/fetchWithNetworkError'
 import ErrorWithCause from '@uppy/utils/lib/ErrorWithCause'
@@ -199,36 +199,20 @@ export default class RequestClient {
   /** @protected */
   async request ({ path, method = 'GET', data, skipPostResponse, signal }) {
     try {
-      return await pRetry(async () => {
-        const headers = await this.preflightAndHeaders(path)
-        const response = await fetchWithNetworkError(this.#getUrl(path), {
-          method,
-          signal,
-          headers,
-          credentials: this.opts.companionCookiesRule || 'same-origin',
-          body: data ? JSON.stringify(data) : null,
-        })
-        if (!skipPostResponse) this.onReceiveResponse(response)
-  
-        return handleJSONResponse(response)
-      }, {
-        retries: retryCount,
+      const headers = await this.preflightAndHeaders(path)
+      const response = await fetchWithNetworkError(this.#getUrl(path), {
+        method,
         signal,
-        onFailedAttempt: (err) => {
-          if (err instanceof AuthError) throw err
+        headers,
+        credentials: this.opts.companionCookiesRule || 'same-origin',
+        body: data ? JSON.stringify(data) : null,
+      })
+      if (!skipPostResponse) this.onReceiveResponse(response)
 
-          const isRetryableHttpError = () => (
-            [408, 409, 429, 418, 423].includes(err.statusCode)
-            || (err.statusCode >= 500 && err.statusCode <= 599 && ![501, 505].includes(err.statusCode))
-          )
-          if (err instanceof HttpError && !isRetryableHttpError()) throw err;
-
-          // p-retry will retry most other errors,
-          // but it will not retry TypeError (except network error TypeErrors)
-        },
-      });
+      return await handleJSONResponse(response)
     } catch (err) {
       if (err instanceof AuthError) throw err
+
       throw new ErrorWithCause(`Could not ${method} ${this.#getUrl(path)}`, {
         cause: err,
       })
@@ -272,25 +256,49 @@ export default class RequestClient {
   async uploadRemoteFile (file, reqBody, options = {}) {
     try {
       const { signal, getQueue } = options
-      if (file.serverToken) { // if we already have a serverToken, assume that we are resuming the existing server upload id
-        return await this.#awaitRemoteFileUpload({ file, queue: getQueue(), signal })
-      }
 
-      const queueRequestSocketToken = getQueue().wrapPromiseFunction(
-        this.#requestSocketToken,
-        { priority: -1 },
-      )
-      const serverToken = await queueRequestSocketToken(file, reqBody).abortOn(signal)
+      return await pRetry(async () => {
+        // if we already have a serverToken, assume that we are resuming the existing server upload id
+        if (file.serverToken) {
+          return this.#awaitRemoteFileUpload({ file, queue: getQueue(), signal })
+        }
 
-      if (!this.uppy.getFile(file.id)) return undefined // has file since been removed?
+        const queueRequestSocketToken = getQueue().wrapPromiseFunction(async (...args) => {
+          try {
+            return await this.#requestSocketToken(...args)
+          } catch (outerErr) {
+            // throwing AbortError will cause p-retry to stop retrying
+            if (outerErr instanceof AuthError) throw new AbortError(outerErr)
 
-      this.uppy.setFileState(file.id, { serverToken })
-      return await this.#awaitRemoteFileUpload({
-        file: this.uppy.getFile(file.id), // re-fetching file because it might have changed in the meantime
-        queue: getQueue(),
-        signal
-      })
+            if (outerErr.cause == null) throw outerErr
+            const err = outerErr.cause
+
+            const isRetryableHttpError = () => (
+              [408, 409, 429, 418, 423].includes(err.statusCode)
+              || (err.statusCode >= 500 && err.statusCode <= 599 && ![501, 505].includes(err.statusCode))
+            )
+            if (err instanceof HttpError && !isRetryableHttpError()) throw new AbortError(err);
+  
+            // p-retry will retry most other errors,
+            // but it will not retry TypeError (except network error TypeErrors)
+            throw err
+          }
+        }, { priority: -1 })
+
+        const serverToken = await queueRequestSocketToken(file, reqBody).abortOn(signal)
+
+        if (!this.uppy.getFile(file.id)) return undefined // has file since been removed?
+
+        this.uppy.setFileState(file.id, { serverToken })
+
+        return this.#awaitRemoteFileUpload({
+          file: this.uppy.getFile(file.id), // re-fetching file because it might have changed in the meantime
+          queue: getQueue(),
+          signal
+        })
+      }, { retries: retryCount, signal });
     } catch (err) {
+      // this is a bit confusing, but an error with name 'AbortError' (from `signal`) is not the same as `p-retry` AbortError
       if (err?.cause?.name === 'AbortError') {
         // The file upload was aborted, it’s not an error
         return undefined
@@ -321,7 +329,7 @@ export default class RequestClient {
    * 
    * @param {{ file: UppyFile, queue: RateLimitedQueue, signal: AbortSignal }} file
    */
-  async #tryAwaitRemoteFileUpload ({ file, queue, signal }) {
+  async #awaitRemoteFileUpload ({ file, queue, signal }) {
     const eventManager = new EventManager(this.uppy)
 
     try {
@@ -497,15 +505,5 @@ export default class RequestClient {
     } finally {
       eventManager.remove()
     }
-  }
-
-  /**
-   * 
-   * @param {{ file: UppyFile, queue: RateLimitedQueue, signal: AbortSignal }} file
-   */
-  async #awaitRemoteFileUpload ({ file, queue, signal }) {
-    return pRetry(async () => (
-      this.#tryAwaitRemoteFileUpload({ file, queue, signal })
-    ), { retries: retryCount, signal });
   }
 }
