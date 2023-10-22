@@ -18,6 +18,8 @@ function stripSlash (url) {
   return url.replace(/\/$/, '')
 }
 
+const retryCount = 10 // set to a low number, like 2 to test manual user retries
+const socketActivityTimeoutMs = 5 * 60 * 1000 // set to a low number like 10000 to test this
 
 const authErrorStatusCode = 401
 
@@ -210,7 +212,8 @@ export default class RequestClient {
   
         return handleJSONResponse(response)
       }, {
-        // retries: 3, // set to a low number to test manual user retries
+        retries: retryCount,
+        signal,
         onFailedAttempt: (err) => {
           if (err instanceof AuthError) throw err
 
@@ -318,7 +321,7 @@ export default class RequestClient {
    * 
    * @param {{ file: UppyFile, queue: RateLimitedQueue, signal: AbortSignal }} file
    */
-  async #awaitRemoteFileUpload ({ file, queue, signal}) {
+  async #tryAwaitRemoteFileUpload ({ file, queue, signal }) {
     const eventManager = new EventManager(this.uppy)
 
     try {
@@ -374,8 +377,7 @@ export default class RequestClient {
         function resetActivityTimeout() {
           clearTimeout(activityTimeout)
           if (isPaused) return
-          const activityTimeoutMs = 5 * 60 * 1000
-          activityTimeout = setTimeout(() => onFatalError(new Error('Timeout waiting for message from Companion socket')), activityTimeoutMs)
+          activityTimeout = setTimeout(() => onFatalError(new Error('Timeout waiting for message from Companion socket')), socketActivityTimeoutMs)
         }
 
         const createWebsocket = () => {
@@ -495,5 +497,15 @@ export default class RequestClient {
     } finally {
       eventManager.remove()
     }
+  }
+
+  /**
+   * 
+   * @param {{ file: UppyFile, queue: RateLimitedQueue, signal: AbortSignal }} file
+   */
+  async #awaitRemoteFileUpload ({ file, queue, signal }) {
+    return pRetry(async () => (
+      this.#tryAwaitRemoteFileUpload({ file, queue, signal })
+    ), { retries: retryCount, signal });
   }
 }
