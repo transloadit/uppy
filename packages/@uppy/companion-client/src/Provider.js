@@ -156,8 +156,6 @@ export default class Provider extends RequestClient {
 
   /** @protected */
   async request (...args) {
-    const authTokenBefore = await this.#getAuthToken()
-
     await this.#refreshingTokenPromise
 
     try {
@@ -173,11 +171,7 @@ export default class Provider extends RequestClient {
       const authTokenAfter = await this.#getAuthToken()
       if (!err.isAuthError || !authTokenAfter) throw err
 
-      await this.#refreshingTokenPromise
-
-      const hasAuthTokenAlreadyBeenRefreshed = authTokenBefore !== authTokenAfter
-
-      if (!hasAuthTokenAlreadyBeenRefreshed && this.#refreshingTokenPromise == null) {
+      if (this.#refreshingTokenPromise == null) {
         // Many provider requests may be starting at once, however refresh token should only be called once.
         // Once a refresh token operation has started, we need all other request to wait for this operation (atomically)
         this.#refreshingTokenPromise = (async () => {
