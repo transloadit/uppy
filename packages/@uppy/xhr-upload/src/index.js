@@ -70,15 +70,24 @@ export default class XHRUpload extends BasePlugin {
       withCredentials: false,
       responseType: '',
       /**
-       * @param {XMLHttpRequest} response
+       * @param {string} responseText the response body string
        */
-      async getResponseData(response) {
-        return JSON.parse(response.responseText)
+      getResponseData (responseText) {
+        let parsedResponse = {}
+        try {
+          parsedResponse = JSON.parse(responseText)
+        } catch (err) {
+          uppy.log(err)
+        }
+
+        return parsedResponse
       },
       /**
-       * @param {XMLHttpRequest} response
+       *
+       * @param {string} _ the response body string
+       * @param {XMLHttpRequest | respObj} response the response object (XHR or similar)
        */
-      getResponseError(response) {
+      getResponseError (_, response) {
         let error = new Error('Upload error')
 
         if (isNetworkError(response)) {
@@ -88,15 +97,19 @@ export default class XHRUpload extends BasePlugin {
         return error
       },
       /**
-       * @param {XMLHttpRequest} response
+       * Check if the response from the upload endpoint indicates that the upload was successful.
+       *
+       * @param {number} status the response status code
        */
-      validateStatus(response) {
-        return response.status >= 200 && response.status < 300
+      validateStatus (status) {
+        return status >= 200 && status < 300
       },
     }
 
     this.opts = { ...defaultOptions, ...opts }
     this.i18nInit()
+
+    this.uppy.queue.concurrency = this.opts.limit
 
     /**
      * xhr-upload wrapper for `fetcher` to handle user options
@@ -124,11 +137,11 @@ export default class XHRUpload extends BasePlugin {
             },
           })
 
-          if (!this.opts.validateStatus(response)) {
+          if (!this.opts.validateStatus(response.status)) {
             throw new NetworkError(response.statusText, response)
           }
 
-          const body = await this.opts.getResponseData(response)
+          const body = await this.opts.getResponseData(response.responseText)
           const uploadUrl = body[this.opts.responseUrlFieldName]
 
           for (const file of files) {
