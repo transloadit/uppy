@@ -67,6 +67,7 @@ export default class XHRUpload extends BasePlugin {
       headers: {},
       timeout: 30 * 1000,
       limit: 5,
+      // TODO: remove in next major
       withCredentials: false,
       responseType: '',
       /**
@@ -99,9 +100,11 @@ export default class XHRUpload extends BasePlugin {
       /**
        * Check if the response from the upload endpoint indicates that the upload was successful.
        *
-       * @param {number} status the response status code
+       * @param {number} status
+       * @param {string} responseText
        */
-      validateStatus (status) {
+      // eslint-disable-next-line no-unused-vars
+      validateStatus (status, responseText) {
         return status >= 200 && status < 300
       },
     }
@@ -124,6 +127,11 @@ export default class XHRUpload extends BasePlugin {
         try {
           const response = await fetcher(url, {
             ...options,
+            onTimeout: () => {
+              const seconds = Math.ceil(options.timeout / 1000)
+              const error = new Error(this.i18n('uploadStalled', { seconds }))
+              this.uppy.emit('upload-stalled', error, files)
+            },
             onUploadProgress: (event) => {
               if (event.lengthComputable) {
                 for (const file of files) {
@@ -137,7 +145,7 @@ export default class XHRUpload extends BasePlugin {
             },
           })
 
-          if (!this.opts.validateStatus(response.status)) {
+          if (!this.opts.validateStatus(response.status, response.responseText)) {
             throw new NetworkError(response.statusText, response)
           }
 
@@ -158,10 +166,10 @@ export default class XHRUpload extends BasePlugin {
             return undefined
           }
           if (error instanceof NetworkError) {
-            const { xhr } = error
+            const { request } = error
             const customError = buildResponseError(
-              xhr,
-              this.opts.getResponseError(xhr.responseText, xhr),
+              request,
+              this.opts.getResponseError(request.responseText, request),
             )
             for (const file of files) {
               this.uppy.emit('upload-error', file, customError)
@@ -280,18 +288,14 @@ export default class XHRUpload extends BasePlugin {
       : file.data
 
     await this.uppy.queue.add(async () => {
-      return uppyFetch(opts.endpoint, {
-        method: opts.method,
-        headers: opts.headers,
-        body,
-      })
+      return uppyFetch(opts.endpoint, { ...opts, body })
     })
 
     return file
   }
 
   async #uploadBundle(files) {
-    const { endpoint, method, headers } = this.opts
+    const { endpoint } = this.opts
     const optsFromState = this.uppy.getState().xhrUpload ?? {}
     const uppyFetch = this.#uppyFetch(files)
     const { signal } = getUppyAbortController(this.uppy)
@@ -301,7 +305,7 @@ export default class XHRUpload extends BasePlugin {
     })
 
     await this.uppy.queue.add(async () => {
-      return uppyFetch(endpoint, { method, body, headers, signal })
+      return uppyFetch(endpoint, { ...this.opts, body, signal })
     })
   }
 
