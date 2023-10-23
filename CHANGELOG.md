@@ -12,6 +12,22 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 3.18.1
+
+Released: 2023-10-23
+
+| Package         | Version | Package         | Version |
+| --------------- | ------- | --------------- | ------- |
+| @uppy/companion |  4.10.1 | uppy            |  3.18.1 |
+| @uppy/core      |   3.6.1 |                 |         |
+
+- @uppy/companion: Bump jsonwebtoken from 8.5.1 to 9.0.0 in /packages/@uppy/companion (dependabot[bot] / #4751)
+- meta: Bump react-devtools-core from 4.25.0 to 4.28.4 (dependabot[bot] / #4756)
+- meta: Bump webpack from 5.74.0 to 5.88.2 (dependabot[bot] / #4740)
+- meta: Bump @babel/traverse from 7.22.5 to 7.23.2 (dependabot[bot] / #4739)
+- @uppy/core: fix `sideEffects` declaration (Antoine du Hamel / #4759)
+
+
 ## 3.18.0
 
 Released: 2023-10-20
