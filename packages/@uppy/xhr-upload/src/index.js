@@ -67,7 +67,6 @@ export default class XHRUpload extends BasePlugin {
       headers: {},
       timeout: 30 * 1000,
       limit: 5,
-      // TODO: remove in next major
       withCredentials: false,
       responseType: '',
       /**
