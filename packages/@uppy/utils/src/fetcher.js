@@ -99,7 +99,7 @@ export function fetcher(url, options = {}) {
 
       xhr.open(method || 'GET', url, true)
       xhr.withCredentials = withCredentials
-      if (responseType !== '') {
+      if (responseType) {
         xhr.responseType = responseType
       }
 
