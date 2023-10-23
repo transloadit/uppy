@@ -320,7 +320,7 @@ class HTTPCommunicationQueue {
 
   async resumeUploadFile (file, chunks, signal) {
     throwIfAborted(signal)
-    if (chunks.length === 1 && !chunks[0].shouldUseMultipart) {
+    if (chunks.length === 1 && chunks[0] != null && !chunks[0].shouldUseMultipart) {
       return this.#nonMultipartUpload(file, chunks[0], signal)
     }
     const { uploadId, key } = await this.getUploadId(file, signal)
