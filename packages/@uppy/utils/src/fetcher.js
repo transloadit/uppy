@@ -55,6 +55,10 @@ export function getUppyAbortController(uppy, id, additionalSignal) {
  *  The request payload, if any.
  * @param {string} [options.timeout=30000]
  *  Miliseconds between XMLHttpRequest upload progress events before the request is aborted.
+ * @param {string} [options.withCredentials=false]
+ *  Sets the withCredentials property of the XMLHttpRequest object.
+ * @param {string} [options.responseType='']
+ *  Sets the responseType property of the XMLHttpRequest object.
  * @param {Record<string, string>} [options.headers]
  *  An object representing any headers to send with the request.
  * @param {number} [options.retries=3]
