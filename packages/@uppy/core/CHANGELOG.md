@@ -1,5 +1,12 @@
 # @uppy/core
 
+## 3.6.1
+
+Released: 2023-10-23
+Included in: Uppy v3.18.1
+
+- @uppy/core: fix `sideEffects` declaration (Antoine du Hamel / #4759)
+
 ## 3.6.0
 
 Released: 2023-10-20
