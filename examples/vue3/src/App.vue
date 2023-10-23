@@ -82,6 +82,9 @@ export default defineComponent({
     uppy2: () =>
       new Uppy({ id: 'uppy2', autoProceed: false, debug: true }).use(Tus, {
         endpoint: TUS_ENDPOINT,
+      })
+        .use(RemoteSources, {
+          companionUrl: 'https://companion.uppy.io',
       }),
   },
   data() {
