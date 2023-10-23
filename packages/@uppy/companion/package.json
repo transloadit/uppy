@@ -53,7 +53,7 @@
     "grant": "5.4.21",
     "helmet": "^4.6.0",
     "ipaddr.js": "^2.0.1",
-    "jsonwebtoken": "8.5.1",
+    "jsonwebtoken": "9.0.0",
     "lodash": "^4.17.21",
     "mime-types": "2.1.35",
     "moment": "^2.29.2",
