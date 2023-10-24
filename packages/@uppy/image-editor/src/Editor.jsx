@@ -95,11 +95,7 @@ export default class Editor extends Component {
 
     // 3. Scale the image so that it fits into the cropbox
     const image = this.cropper.getImageData()
-    const originalImageDimensions = {
-      width: image.width / image.scaleX,
-      height: image.height / image.scaleY,
-    }
-    const scaleFactor = getScaleFactorThatRemovesDarkCorners(originalImageDimensions, newGranularAngle)
+    const scaleFactor = getScaleFactorThatRemovesDarkCorners(image.naturalWidth, image.naturalHeight, newGranularAngle)
     // Preserve flip
     const scaleFactorX = this.cropper.getImageData().scaleX < 0 ? -scaleFactor : scaleFactor
     this.cropper.scale(scaleFactorX, scaleFactor)
