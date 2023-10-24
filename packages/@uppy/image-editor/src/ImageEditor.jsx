@@ -36,6 +36,9 @@ export default class ImageEditor extends UIPlugin {
       cropWidescreenVertical: true,
     }
 
+    // Why is the default quality smaller than 1?
+    // Because `quality: 1` increases the image size by orders of magnitude - 0.8 seems to be the sweet spot.
+    // (see https://github.com/fengyuanchen/cropperjs/issues/538#issuecomment-1776279427)
     const defaultOptions = {
       quality: 0.8,
     }
