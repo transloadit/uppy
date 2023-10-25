@@ -111,7 +111,7 @@ export default class Provider extends RequestClient {
       const authWindow = window.open(link, '_blank')
       const handleToken = (e) => {
         if (e.source !== authWindow) {
-          this.uppy.log.warn('ignoring event from unknown source', e)
+          this.uppy.log(`ignoring event from unknown source ${JSON.stringify(e.data)}`, 'warning')
           return
         }
 
