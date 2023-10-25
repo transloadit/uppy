@@ -298,7 +298,7 @@ export default class RequestClient {
           queue: getQueue(),
           signal
         })
-      }, { retries: retryCount, signal, onFailedAttempt: (err) => this.uppy.log(`Retrying upload due to: ${err.message}`, 'warn') });
+      }, { retries: retryCount, signal, onFailedAttempt: (err) => this.uppy.log(`Retrying upload due to: ${err.message}`, 'warning') });
     } catch (err) {
       // this is a bit confusing, but an error with name 'AbortError' (from `signal`) is not the same as `p-retry` AbortError
       if (err?.cause?.name === 'AbortError') {
@@ -347,14 +347,17 @@ export default class RequestClient {
 
         let { isPaused } = file
 
-        function socketSend(action, payload) {
-          if (socket == null) return
+        const socketSend = (action, payload) => {
+          if (socket == null || socket.readyState !== socket.OPEN) {
+            this.uppy.log(`Cannot send "${action}" to socket ${file.id} because the socket state was ${String(socket?.readyState)}`, 'warning')
+            return
+          }
 
           socket.send(JSON.stringify({
             action,
             payload: payload ?? {},
           }))    
-        }
+        };
 
         function sendState() {
           if (isPaused) socketSend('pause')
@@ -468,25 +471,33 @@ export default class RequestClient {
           }
         }
 
-        eventManager.onPause(file.id, (newPausedState) => pause(newPausedState))
-        eventManager.onPauseAll(file.id, () => pause(true))
-        eventManager.onResumeAll(file.id, () => pause(false))
+        const withErrorHandling = (fn, event) => {
+          try {
+            fn()
+          } catch (err) {
+            this.uppy.log(`Error while handling ${event} event for file ${file.id}: ${err.message}`, 'error')
+          }
+        }
 
-        eventManager.onFileRemove(file.id, () => {
+        eventManager.onPause(file.id, (newPausedState) => withErrorHandling(() => pause(newPausedState), 'pause'))
+        eventManager.onPauseAll(file.id, () => withErrorHandling(() => pause(true), 'pause-all'))
+        eventManager.onResumeAll(file.id, () => withErrorHandling(() => pause(false), 'resume-all'))
+
+        eventManager.onFileRemove(file.id, () => withErrorHandling(() => {
           socketSend('cancel')
           socketAbortController?.abort?.()
           this.uppy.log(`upload ${file.id} was removed`, 'info')
           resolve()
-        })
+        }, 'file-removed'))
 
-        eventManager.onCancelAll(file.id, ({ reason } = {}) => {
+        eventManager.onCancelAll(file.id, ({ reason } = {}) => withErrorHandling(() => {
           if (reason === 'user') {
             socketSend('cancel')
           }
           socketAbortController?.abort?.()
           this.uppy.log(`upload ${file.id} was canceled`, 'info')
           resolve()
-        })
+        }, 'cancel-all'))
 
         signal.addEventListener('abort', () => {
           socketAbortController?.abort();
