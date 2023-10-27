@@ -7,7 +7,6 @@ import fetchWithNetworkError from '@uppy/utils/lib/fetchWithNetworkError'
 import ErrorWithCause from '@uppy/utils/lib/ErrorWithCause'
 import emitSocketProgress from '@uppy/utils/lib/emitSocketProgress'
 import getSocketHost from '@uppy/utils/lib/getSocketHost'
-import EventManager from '@uppy/utils/lib/EventManager'
 
 import AuthError from './AuthError.js'
 
@@ -332,7 +331,7 @@ export default class RequestClient {
    * @param {{ file: UppyFile, queue: RateLimitedQueue, signal: AbortSignal }} file
    */
   async #awaitRemoteFileUpload ({ file, queue, signal }) {
-    const eventManager = new EventManager(this.uppy)
+    let removeEventHandlers
 
     try {
       return await new Promise((resolve, reject) => {
@@ -474,33 +473,44 @@ export default class RequestClient {
           }
         }
 
-        const withErrorHandling = (fn, event) => {
-          try {
-            fn()
-          } catch (err) {
-            this.uppy.log(`Error while handling ${event} event for file ${file.id}: ${err.message}`, 'error')
-          }
-        }
-
-        eventManager.onPause(file.id, (newPausedState) => withErrorHandling(() => pause(newPausedState), 'pause'))
-        eventManager.onPauseAll(file.id, () => withErrorHandling(() => pause(true), 'pause-all'))
-        eventManager.onResumeAll(file.id, () => withErrorHandling(() => pause(false), 'resume-all'))
-
-        eventManager.onFileRemove(file.id, () => withErrorHandling(() => {
+        const onFileRemove = (targetFile) => {
+          if (targetFile.id !== file.id) return
           socketSend('cancel')
           socketAbortController?.abort?.()
           this.uppy.log(`upload ${file.id} was removed`, 'info')
           resolve()
-        }, 'file-removed'))
+        }
 
-        eventManager.onCancelAll(file.id, ({ reason } = {}) => withErrorHandling(() => {
+        const onCancelAll = ({ reason }) => {
           if (reason === 'user') {
             socketSend('cancel')
           }
           socketAbortController?.abort?.()
           this.uppy.log(`upload ${file.id} was canceled`, 'info')
           resolve()
-        }, 'cancel-all'))
+        };
+
+        const onFilePausedChange = (targetFileId, newPausedState) => {
+          if (targetFileId !== file.id) return
+          pause(newPausedState)
+        }
+
+        const onPauseAll = () => pause(true)
+        const onResumeAll = () => pause(false)
+
+        this.uppy.on('file-removed', onFileRemove)
+        this.uppy.on('cancel-all', onCancelAll)
+        this.uppy.on('upload-pause', onFilePausedChange)
+        this.uppy.on('pause-all', onPauseAll)
+        this.uppy.on('resume-all', onResumeAll)
+
+        removeEventHandlers = () => {
+          this.uppy.off('file-removed', onFileRemove)
+          this.uppy.off('cancel-all', onCancelAll)
+          this.uppy.off('upload-pause', onFilePausedChange)
+          this.uppy.off('pause-all', onPauseAll)
+          this.uppy.off('resume-all', onResumeAll)
+        }
 
         signal.addEventListener('abort', () => {
           socketAbortController?.abort();
@@ -509,7 +519,7 @@ export default class RequestClient {
         createWebsocket()
       })
     } finally {
-      eventManager.remove()
+      removeEventHandlers?.()
     }
   }
 }
