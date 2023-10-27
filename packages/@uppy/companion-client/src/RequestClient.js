@@ -448,7 +448,10 @@ export default class RequestClient {
               await pRetry(reconnectWebsocket, {
                 retries: retryCount,
                 signal: socketAbortController.signal,
-                onFailedAttempt: () => this.uppy.log(`Retrying websocket ${file.id}`, 'info'),
+                onFailedAttempt: () => {
+                  if (socketAbortController.signal.aborted) return // don't log in this case
+                  this.uppy.log(`Retrying websocket ${file.id}`, 'info')
+                },
               });
             })().abortOn(socketAbortController.signal);
           } catch (err) {
