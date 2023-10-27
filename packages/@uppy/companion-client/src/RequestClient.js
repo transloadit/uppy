@@ -287,7 +287,7 @@ export default class RequestClient {
           }
         }, { priority: -1 })
 
-        const serverToken = await queueRequestSocketToken(file, reqBody).abortOn(signal)
+        const serverToken = await queueRequestSocketToken({ file, postBody: reqBody, signal }).abortOn(signal)
 
         if (!this.uppy.getFile(file.id)) return undefined // has file since been removed?
 
@@ -311,7 +311,7 @@ export default class RequestClient {
     }
   }
 
-  #requestSocketToken = async (file, postBody, signal) => {
+  #requestSocketToken = async ({ file, postBody, signal }) => {
     if (file.remote.url == null) {
       throw new Error('Cannot connect to an undefined URL')
     }
