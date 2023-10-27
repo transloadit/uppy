@@ -210,7 +210,8 @@ export default class RequestClient {
 
       return await handleJSONResponse(response)
     } catch (err) {
-      if (err instanceof AuthError) throw err
+      // pass these through
+      if (err instanceof AuthError || err.name === 'AbortError') throw err
 
       throw new ErrorWithCause(`Could not ${method} ${this.#getUrl(path)}`, {
         cause: err,
@@ -299,8 +300,9 @@ export default class RequestClient {
         })
       }, { retries: retryCount, signal, onFailedAttempt: (err) => this.uppy.log(`Retrying upload due to: ${err.message}`, 'warning') });
     } catch (err) {
-      // this is a bit confusing, but an error with name 'AbortError' (from `signal`) is not the same as `p-retry` AbortError
-      if (err?.cause?.name === 'AbortError') {
+      // this is a bit confusing, but note that an error with the `name` prop set to 'AbortError' (from AbortController)
+      // is not the same as `p-retry` `AbortError`
+      if (err.name === 'AbortError') {
         // The file upload was aborted, it’s not an error
         return undefined
       }
