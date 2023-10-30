@@ -335,6 +335,8 @@ export default class RequestClient {
   async #awaitRemoteFileUpload ({ file, queue, signal }) {
     let removeEventHandlers
 
+    const { capabilities } = this.uppy.getState()
+
     try {
       return await new Promise((resolve, reject) => {
         const token = file.serverToken
@@ -361,6 +363,8 @@ export default class RequestClient {
         };
 
         function sendState() {
+          if (!capabilities.resumableUploads) return;
+
           if (isPaused) socketSend('pause')
           else socketSend('resume')
         }
@@ -462,6 +466,8 @@ export default class RequestClient {
         }
 
         const pause = (newPausedState) => {
+          if (!capabilities.resumableUploads) return;
+
           isPaused = newPausedState
           if (socket) sendState()
 
@@ -476,6 +482,7 @@ export default class RequestClient {
         }
 
         const onFileRemove = (targetFile) => {
+          if (!capabilities.individualCancellation) return
           if (targetFile.id !== file.id) return
           socketSend('cancel')
           socketAbortController?.abort?.()
