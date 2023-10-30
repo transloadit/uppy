@@ -132,9 +132,11 @@ export default class Url extends UIPlugin {
             fileId: url,
             url,
           },
-          [Symbol.for('requestClient')]: this.client,
         },
       }
+
+      Object.defineProperty(tagFile.remote, 'requestClient', { value: this.client, enumerable: false })
+
       this.uppy.log('[Url] Adding remote file')
       try {
         return this.uppy.addFile(tagFile)

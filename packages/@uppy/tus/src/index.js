@@ -489,7 +489,7 @@ export default class Tus extends BasePlugin {
         }
         this.uppy.on('file-removed', removedHandler)
 
-        const uploadPromise = file.remote[Symbol.for('requestClient')].uploadRemoteFile(
+        const uploadPromise = file.remote.requestClient.uploadRemoteFile(
           file,
           this.#getCompanionClientArgs(file),
           { signal: controller.signal, getQueue },
