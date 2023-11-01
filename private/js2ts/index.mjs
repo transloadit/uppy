@@ -33,7 +33,7 @@ const references = Object.keys(packageJSON.dependencies || {})
 
 const depsNotYetConvertedToTS = references.filter(
   (ref) =>
-    !existsSync(new URL(`${ref.path.slice(1)}/tsconfig.json`, packageRoot)),
+    !existsSync(new URL(`${ref.path}/tsconfig.json`, packageRoot)),
 )
 
 if (depsNotYetConvertedToTS.length) {
