@@ -301,6 +301,7 @@ class HTTPCommunicationQueue {
       return await this.#sendCompletionRequest(
         this.#getFile(file),
         { key, uploadId, parts, signal },
+        signal,
       ).abortOn(signal)
     } catch (err) {
       if (err?.cause !== pausingUploadReason && err?.name !== 'AbortError') {
@@ -319,7 +320,7 @@ class HTTPCommunicationQueue {
 
   async resumeUploadFile (file, chunks, signal) {
     throwIfAborted(signal)
-    if (chunks.length === 1 && !chunks[0].shouldUseMultipart) {
+    if (chunks.length === 1 && chunks[0] != null && !chunks[0].shouldUseMultipart) {
       return this.#nonMultipartUpload(file, chunks[0], signal)
     }
     const { uploadId, key } = await this.getUploadId(file, signal)
@@ -327,6 +328,7 @@ class HTTPCommunicationQueue {
     const alreadyUploadedParts = await this.#listParts(
       this.#getFile(file),
       { uploadId, key, signal },
+      signal,
     ).abortOn(signal)
     throwIfAborted(signal)
     const parts = await Promise.all(
@@ -346,6 +348,7 @@ class HTTPCommunicationQueue {
     return this.#sendCompletionRequest(
       this.#getFile(file),
       { key, uploadId, parts, signal },
+      signal,
     ).abortOn(signal)
   }
 

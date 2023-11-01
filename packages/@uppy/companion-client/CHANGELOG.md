@@ -1,5 +1,13 @@
 # @uppy/companion-client
 
+## 3.5.0
+
+Released: 2023-10-20
+Included in: Uppy v3.18.0
+
+- @uppy/companion-client: fixup! Added Companion OAuth Key type (Murderlon / #4668)
+- @uppy/companion-client: Added Companion OAuth Key type (Chris Pratt / #4668)
+
 ## 3.4.1
 
 Released: 2023-09-29
