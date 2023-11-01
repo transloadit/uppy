@@ -21,6 +21,8 @@ export default class ImageEditor extends UIPlugin {
       background: false,
       autoCropArea: 1,
       responsive: true,
+      minCropBoxWidth: 70,
+      minCropBoxHeight: 70,
       croppedCanvasOptions: {},
     }
 
