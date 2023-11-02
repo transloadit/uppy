@@ -1,6 +1,5 @@
 import BasePlugin from '@uppy/core/lib/BasePlugin.js'
 import { nanoid } from 'nanoid/non-secure'
-import { Provider, RequestClient } from '@uppy/companion-client'
 import EventManager from '@uppy/utils/lib/EventManager'
 import ProgressTimeout from '@uppy/utils/lib/ProgressTimeout'
 import { RateLimitedQueue, internalRateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
@@ -466,11 +465,7 @@ export default class XHRUpload extends BasePlugin {
       const total = files.length
 
       if (file.isRemote) {
-        // INFO: the url plugin needs to use RequestClient,
-        // while others use Provider
-        const Client = file.remote.providerOptions.provider ? Provider : RequestClient
         const getQueue = () => this.requests
-        const client = new Client(this.uppy, file.remote.providerOptions, getQueue)
         const controller = new AbortController()
 
         const removedHandler = (removedFile) => {
@@ -478,10 +473,10 @@ export default class XHRUpload extends BasePlugin {
         }
         this.uppy.on('file-removed', removedHandler)
 
-        const uploadPromise = client.uploadRemoteFile(
+        const uploadPromise = file.remote.requestClient.uploadRemoteFile(
           file,
           this.#getCompanionClientArgs(file),
-          { signal: controller.signal },
+          { signal: controller.signal, getQueue },
         )
 
         this.requests.wrapSyncFunction(() => {

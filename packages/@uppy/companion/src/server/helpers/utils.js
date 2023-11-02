@@ -148,7 +148,21 @@ module.exports.decrypt = (encrypted, secret) => {
 
 module.exports.defaultGetKey = (req, filename) => `${crypto.randomUUID()}-${filename}`
 
-module.exports.prepareStream = async (stream) => new Promise((resolve, reject) => (
+class StreamHttpJsonError extends Error {
+  statusCode
+
+  responseJson
+
+  constructor({ statusCode, responseJson }) {
+    super(`Request failed with status ${statusCode}`)
+    this.statusCode = statusCode
+    this.responseJson = responseJson
+  }
+}
+
+module.exports.StreamHttpJsonError = StreamHttpJsonError
+
+module.exports.prepareStream = async (stream) => new Promise((resolve, reject) => {
   stream
     .on('response', () => {
       // Don't allow any more data to flow yet.
@@ -157,19 +171,24 @@ module.exports.prepareStream = async (stream) => new Promise((resolve, reject) =
       resolve()
     })
     .on('error', (err) => {
-      // got doesn't parse body as JSON on http error (responseType: 'json' is ignored and it instead becomes a string)
-      if (err?.request?.options?.responseType === 'json' && typeof err?.response?.body === 'string') {
+      // In this case the error object is not a normal GOT HTTPError where json is already parsed,
+      // we create our own StreamHttpJsonError error for this case
+      if (typeof err.response?.body === 'string' && typeof err.response?.statusCode === 'number') {
+        let responseJson
         try {
-          // todo unit test this
-          reject(Object.assign(new Error(), { response: { body: JSON.parse(err.response.body) } }))
+          responseJson = JSON.parse(err.response.body)
         } catch (err2) {
           reject(err)
+          return
         }
-      } else {
-        reject(err)
+
+        reject(new StreamHttpJsonError({ statusCode: err.response.statusCode, responseJson }))
+        return
       }
+
+      reject(err)
     })
-))
+  })
 
 module.exports.getBasicAuthHeader = (key, secret) => {
   const base64 = Buffer.from(`${key}:${secret}`, 'binary').toString('base64')

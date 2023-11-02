@@ -8370,6 +8370,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/retry@npm:0.12.2":
+  version: 0.12.2
+  resolution: "@types/retry@npm:0.12.2"
+  checksum: e5675035717b39ce4f42f339657cae9637cf0c0051cf54314a6a2c44d38d91f6544be9ddc0280587789b6afd056be5d99dbe3e9f4df68c286c36321579b1bf4a
+  languageName: node
+  linkType: hard
+
 "@types/sass@npm:^1.16.0":
   version: 1.43.1
   resolution: "@types/sass@npm:1.43.1"
@@ -9282,6 +9289,7 @@ __metadata:
   dependencies:
     "@uppy/utils": "workspace:^"
     namespace-emitter: ^2.0.1
+    p-retry: ^6.1.0
     vitest: ^0.34.5
   languageName: unknown
   linkType: soft
@@ -19021,6 +19029,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"is-network-error@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "is-network-error@npm:1.0.0"
+  checksum: 2ca2b4b2d420015e0237abe28ebf316fcd26a82304b07432abf155759a3bee6895609ac91e692a72ad61b7fc902c3283b2dece61e1ddb05a6257777a8573e468
+  languageName: node
+  linkType: hard
+
 "is-number-object@npm:^1.0.4":
   version: 1.0.7
   resolution: "is-number-object@npm:1.0.7"
@@ -24678,6 +24693,17 @@ __metadata:
     "@types/retry": 0.12.0
     retry: ^0.13.1
   checksum: 45c270bfddaffb4a895cea16cb760dcc72bdecb6cb45fef1971fa6ea2e91ddeafddefe01e444ac73e33b1b3d5d29fb0dd18a7effb294262437221ddc03ce0f2e
+  languageName: node
+  linkType: hard
+
+"p-retry@npm:^6.1.0":
+  version: 6.1.0
+  resolution: "p-retry@npm:6.1.0"
+  dependencies:
+    "@types/retry": 0.12.2
+    is-network-error: ^1.0.0
+    retry: ^0.13.1
+  checksum: 1083b2b72672205680f8a736583e31dce5d4ae472996cd06f4a33cd7ea11798d7712c202d253eb8afbdc80abf52f049651989c59f2e2ccca529e6b64d722b1f7
   languageName: node
   linkType: hard
 

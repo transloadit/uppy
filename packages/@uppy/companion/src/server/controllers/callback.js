@@ -41,12 +41,14 @@ module.exports = function callback (req, res, next) { // eslint-disable-line no-
     return res.status(400).send(closePageHtml(origin))
   }
 
+  const { access_token: accessToken, refresh_token: refreshToken } = grant.response
+
   if (!req.companion.allProvidersTokens) req.companion.allProvidersTokens = {}
   req.companion.allProvidersTokens[providerName] = {
-    accessToken: grant.response.access_token,
-    refreshToken: grant.response.refresh_token, // might be undefined for some providers
+    accessToken,
+    refreshToken, // might be undefined for some providers
   }
-  logger.debug(`Generating auth token for provider ${providerName}`, null, req.id)
+  logger.debug(`Generating auth token for provider ${providerName}. refreshToken: ${refreshToken ? 'yes' : 'no'}`, null, req.id)
   const uppyAuthToken = tokenService.generateEncryptedAuthToken(
     req.companion.allProvidersTokens, req.companion.options.secret,
   )
