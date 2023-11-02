@@ -187,8 +187,8 @@ module.exports.rfc2047EncodeMetadata = (metadata) => (
   Object.fromEntries(Object.entries(metadata).map((entry) => entry.map(rfc2047Encode)))
 )
 
-module.exports.getBucket = (bucketOrFn, req) => {
-  const bucket = typeof bucketOrFn === 'function' ? bucketOrFn(req) : bucketOrFn
+module.exports.getBucket = (bucketOrFn, req, metadata) => {
+  const bucket = typeof bucketOrFn === 'function' ? bucketOrFn(req, metadata) : bucketOrFn
 
   if (typeof bucket !== 'string' || bucket === '') {
     // This means a misconfiguration or bug
