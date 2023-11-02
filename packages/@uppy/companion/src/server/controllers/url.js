@@ -83,12 +83,12 @@ const get = async (req, res) => {
     return downloadURL(req.body.url, !allowLocalUrls, req.id)
   }
 
-  function onUnhandledError (err) {
+  try {
+    await startDownUpload({ req, res, getSize, download })
+  } catch (err) {
     logger.error(err, 'controller.url.error', req.id)
     res.status(err.status || 500).json({ message: 'failed to fetch URL' })
   }
-
-  startDownUpload({ req, res, getSize, download, onUnhandledError })
 }
 
 module.exports = () => express.Router()

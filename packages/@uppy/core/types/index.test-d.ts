@@ -51,8 +51,8 @@ type anyObject = Record<string, unknown>
   type ResponseBody = {
     averageColor: string
   }
-  const uppy = new Uppy()
-  const f = uppy.getFile<Meta, ResponseBody>('virtual')
+  const uppy = new Uppy<Meta, ResponseBody>()
+  const f = uppy.getFile('virtual')
   expectType<ResponseBody>(f.response!.body) // eslint-disable-line @typescript-eslint/no-non-null-assertion
 }
 
@@ -78,8 +78,10 @@ type anyObject = Record<string, unknown>
 }
 
 {
+  // Meta signature
+  type Meta = { myCustomMetadata: string }
   /* eslint-disable @typescript-eslint/no-empty-function */
-  const uppy = new Uppy()
+  const uppy = new Uppy<Meta>()
   // can emit events with internal event types
   uppy.emit('upload')
   uppy.emit('complete', () => {})
@@ -103,9 +105,7 @@ type anyObject = Record<string, unknown>
     const successResults = result.successful
   })
 
-  // Meta signature
-  type Meta = { myCustomMetadata: string }
-  uppy.on<'complete', Meta>('complete', (result) => {
+  uppy.on('complete', (result) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const meta = result.successful[0].meta.myCustomMetadata
   })
@@ -115,7 +115,7 @@ type anyObject = Record<string, unknown>
     const meta = file?.meta.myCustomMetadata
   }
 
-  uppy.off<'upload-success', Meta>('upload-success', handleUpload)
+  uppy.off('upload-success', handleUpload)
 
   interface CustomResponse extends SuccessResponse {
     body?: { someValue: string }
@@ -127,7 +127,7 @@ type anyObject = Record<string, unknown>
   ) => {
     const res = response.body?.someValue
   }
-  uppy.on<'upload-success', Meta>('upload-success', onUploadSuccess)
+  uppy.on('upload-success', onUploadSuccess)
 }
 
 {

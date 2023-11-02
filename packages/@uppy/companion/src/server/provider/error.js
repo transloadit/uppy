@@ -43,6 +43,10 @@ function errorToResponse (err) {
       return { code: 502, message: err.message }
     }
 
+    if (err.statusCode === 429) {
+      return { code: 429, message: err.message }
+    }
+
     if (err.statusCode >= 400) {
       // 424 Failed Dependency
       return { code: 424, message: err.message }

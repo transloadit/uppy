@@ -4,7 +4,7 @@ const { respondWithError } = require('../provider/error')
 
 const { ValidationError } = Uploader
 
-async function startDownUpload ({ req, res, getSize, download, onUnhandledError }) {
+async function startDownUpload ({ req, res, getSize, download }) {
   try {
     const size = await getSize()
     const { clientSocketConnectTimeout } = req.companion.options
@@ -38,7 +38,7 @@ async function startDownUpload ({ req, res, getSize, download, onUnhandledError 
 
     if (respondWithError(err, res)) return
 
-    onUnhandledError(err)
+    throw err
   }
 }
 
