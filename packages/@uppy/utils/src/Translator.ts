@@ -13,12 +13,13 @@ export type Locale =
 
 type Options = {
   smart_count?: number
-} & Record<string, string>
+  [key: string]: string | number | undefined
+}
 
 function insertReplacement(
   source: Array<string | unknown>,
   rx: RegExp,
-  replacement: string,
+  replacement: string | number,
 ): Array<string | unknown> {
   const newParts: Array<string | unknown> = []
   source.forEach((chunk) => {
@@ -79,7 +80,7 @@ function interpolate(
       interpolated = insertReplacement(
         interpolated,
         new RegExp(`%\\{${arg}\\}`, 'g'),
-        replacement,
+        replacement as string,
       )
     }
   }
