@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
-import Translator from './Translator.ts'
+import Translator, { type LocaleWithPlural } from './Translator.ts'
 
-const english = {
+const english: LocaleWithPlural<0 | 1> = {
   strings: {
     chooseFile: 'Choose a file',
     youHaveChosen: 'You have chosen: %{fileName}',
@@ -9,12 +9,12 @@ const english = {
       0: '%{smart_count} file selected',
       1: '%{smart_count} files selected',
     },
-    pluralize(n) {
-      if (n === 1) {
-        return 0
-      }
-      return 1
-    },
+  },
+  pluralize(n) {
+    if (n === 1) {
+      return 0
+    }
+    return 1
   },
 }
 
@@ -56,7 +56,7 @@ describe('Translator', () => {
         },
       })
 
-      const who = Symbol('who')
+      const who = Symbol('who') as any as string
       expect(translator.translateArray('test', { who })).toEqual([
         'Hello ',
         who,
@@ -157,6 +157,7 @@ describe('Translator', () => {
             1: '%{smart_count} tests',
           },
         },
+        pluralize: () => 1,
       })
 
       expect(() => {

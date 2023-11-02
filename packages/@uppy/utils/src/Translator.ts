@@ -1,9 +1,15 @@
 import has from './hasProperty.ts'
 
-interface Locale<T extends number = number> {
+export interface LocaleWithPlural<T extends number = number> {
   strings: Record<string, string | Record<T, string>>
   pluralize: (n: number) => T
 }
+
+export type Locale =
+  | LocaleWithPlural
+  | {
+      strings: Record<string, string>
+    }
 
 type Options = {
   smart_count?: number
