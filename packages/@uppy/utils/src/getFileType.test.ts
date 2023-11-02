@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import getFileType from './getFileType.ts'
+import type { UppyFile } from './UppyFile.ts'
 
 describe('getFileType', () => {
   it('should trust the filetype if the file comes from a remote source', () => {
@@ -7,7 +8,7 @@ describe('getFileType', () => {
       isRemote: true,
       type: 'audio/webm',
       name: 'foo.webm',
-    }
+    } as any as UppyFile
     expect(getFileType(file)).toEqual('audio/webm')
   })
 
@@ -16,7 +17,7 @@ describe('getFileType', () => {
       type: 'audio/webm',
       name: 'foo.webm',
       data: 'sdfsdfhq9efbicw',
-    }
+    } as any as UppyFile
     expect(getFileType(file)).toEqual('audio/webm')
   })
 
@@ -24,24 +25,27 @@ describe('getFileType', () => {
     const fileMP3 = {
       name: 'foo.mp3',
       data: 'sdfsfhfh329fhwihs',
-    }
+    } as any as UppyFile
     const fileYAML = {
       name: 'bar.yaml',
       data: 'sdfsfhfh329fhwihs',
-    }
+    } as any as UppyFile
     const fileMKV = {
       name: 'bar.mkv',
       data: 'sdfsfhfh329fhwihs',
-    }
+    } as any as UppyFile
     const fileDicom = {
       name: 'bar.dicom',
       data: 'sdfsfhfh329fhwihs',
-    }
+    } as any as UppyFile
     const fileWebp = {
       name: 'bar.webp',
       data: 'sdfsfhfh329fhwihs',
-    }
-    const toUpper = (file) => ({ ...file, name: file.name.toUpperCase() })
+    } as any as UppyFile
+    const toUpper = (file: UppyFile) => ({
+      ...file,
+      name: file.name.toUpperCase(),
+    })
     expect(getFileType(fileMP3)).toEqual('audio/mp3')
     expect(getFileType(toUpper(fileMP3))).toEqual('audio/mp3')
     expect(getFileType(fileYAML)).toEqual('text/yaml')
@@ -58,7 +62,7 @@ describe('getFileType', () => {
     const file = {
       name: 'foobar',
       data: 'sdfsfhfh329fhwihs',
-    }
+    } as any as UppyFile
     expect(getFileType(file)).toEqual('application/octet-stream')
   })
 })

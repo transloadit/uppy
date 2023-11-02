@@ -5,7 +5,7 @@ import { createAbortError } from './AbortController.ts'
  */
 export default function delay(
   ms: number,
-  opts: { signal: AbortSignal },
+  opts?: { signal: AbortSignal },
 ): Promise<void> {
   return new Promise((resolve, reject) => {
     if (opts?.signal?.aborted) {

@@ -6,6 +6,10 @@ describe('getBytesRemaining', () => {
     const fileProgress = {
       bytesUploaded: 1024,
       bytesTotal: 3096,
+      progress: 0,
+      uploadComplete: false,
+      percentage: 0,
+      uploadStarted: 0,
     }
     expect(getBytesRemaining(fileProgress)).toEqual(2072)
   })

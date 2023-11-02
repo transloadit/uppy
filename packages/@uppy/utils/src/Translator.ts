@@ -128,8 +128,12 @@ export default class Translator {
     this.locale = {
       ...prevLocale,
       strings: { ...prevLocale.strings, ...locale.strings },
+    } as any
+    if ('plurilize' in locale) {
+      ;(this.locale as LocaleWithPlural).pluralize = (
+        locale as LocaleWithPlural
+      ).pluralize
     }
-    this.locale.pluralize = locale.pluralize || prevLocale.pluralize
   }
 
   /**
@@ -158,7 +162,9 @@ export default class Translator {
 
     if (hasPluralForms) {
       if (options && typeof options.smart_count !== 'undefined') {
-        const plural = this.locale.pluralize(options.smart_count)
+        const plural = (this.locale as LocaleWithPlural).pluralize(
+          options.smart_count,
+        )
         return interpolate(string[plural], options)
       }
       throw new Error(

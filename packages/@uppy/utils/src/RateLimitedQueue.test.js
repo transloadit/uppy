@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { RateLimitedQueue } from './RateLimitedQueue.js'
-
-const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
+import delay from './delay.ts'
 
 describe('RateLimitedQueue', () => {
   let pending = 0

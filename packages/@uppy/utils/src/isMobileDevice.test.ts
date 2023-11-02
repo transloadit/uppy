@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import isMobileDevice from './isMobileDevice.ts'
 
-let fakeUserAgent = null
+let fakeUserAgent: string | null = null
 
 Object.defineProperty(globalThis.navigator, 'userAgent', {
   get() {
@@ -9,7 +9,7 @@ Object.defineProperty(globalThis.navigator, 'userAgent', {
   },
 })
 
-function setUserAgent(userAgent) {
+function setUserAgent(userAgent: string | null) {
   fakeUserAgent = userAgent
 }
 

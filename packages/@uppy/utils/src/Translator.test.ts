@@ -28,7 +28,7 @@ const russian = {
       2: 'Выбрано %{smart_count} файлов',
     },
   },
-  pluralize(n) {
+  pluralize(n: number) {
     if (n % 10 === 1 && n % 100 !== 11) {
       return 0
     }

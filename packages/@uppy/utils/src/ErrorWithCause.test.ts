@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import ErrorWithCause from './ErrorWithCause.ts'
 import NetworkError from './NetworkError.ts'
-import isNetworkError from './isNetworkError.ts'
 
 describe('ErrorWithCause', () => {
   it('should support a `{ cause }` option', () => {
@@ -14,20 +13,12 @@ describe('ErrorWithCause', () => {
     const regularError = new Error('cause')
     const networkError = new NetworkError('cause')
     expect(
-      isNetworkError(
-        new ErrorWithCause('message', { cause: networkError }).isNetworkError,
-      ),
+      new ErrorWithCause('message', { cause: networkError }).isNetworkError,
     ).toEqual(true)
     expect(
-      isNetworkError(
-        new ErrorWithCause('message', { cause: regularError }).isNetworkError,
-      ),
+      new ErrorWithCause('message', { cause: regularError }).isNetworkError,
     ).toEqual(false)
-    expect(
-      isNetworkError(new ErrorWithCause('message', {}).isNetworkError),
-    ).toEqual(false)
-    expect(
-      isNetworkError(new ErrorWithCause('message').isNetworkError),
-    ).toEqual(false)
+    expect(new ErrorWithCause('message', {}).isNetworkError).toEqual(false)
+    expect(new ErrorWithCause('message').isNetworkError).toEqual(false)
   })
 })

@@ -12,7 +12,7 @@ describe('delay', () => {
   })
 
   it('should reject if signal is already aborted', async () => {
-    const signal = { aborted: true }
+    const signal = { aborted: true } as any as AbortSignal
     const start = Date.now()
     await expect(delay(100, { signal })).rejects.toHaveProperty(
       'name',
