@@ -14,7 +14,7 @@ type Options = {
 function insertReplacement(
   source: Array<string | unknown>,
   rx: RegExp,
-  replacement: string | number,
+  replacement: string,
 ): Array<string | unknown> {
   const newParts: Array<string | unknown> = []
   source.forEach((chunk) => {
