@@ -1,5 +1,7 @@
 // This references the old types on purpose, to make sure to not create breaking changes for TS consumers.
-import * as UppyUtils from '@uppy/utils/types/index'
+// eslint-disable-next-line @typescript-eslint/triple-slash-reference
+/// <reference path="../../utils/types/index.d.ts"/>
+import * as UppyUtils from '@uppy/utils'
 
 // Utility types
 type OmitKey<T, Key> = Pick<T, Exclude<keyof T, Key>>
@@ -292,23 +294,26 @@ export interface UppyEventMap<
   upload: UploadCallback
 }
 
-export class Uppy<
-  TMeta extends IndexedObject<any> = Record<string, unknown>,
-  TBody extends IndexedObject<any> = Record<string, unknown>,
-> {
+export class Uppy {
   constructor(opts?: UppyOptions)
 
-  on<K extends keyof UppyEventMap>(
+  on<K extends keyof UppyEventMap>(event: K, callback: UppyEventMap[K]): this
+
+  on<K extends keyof UppyEventMap, TMeta extends IndexedObject<any>>(
     event: K,
     callback: UppyEventMap<TMeta>[K],
   ): this
 
-  once<K extends keyof UppyEventMap>(
+  once<K extends keyof UppyEventMap>(event: K, callback: UppyEventMap[K]): this
+
+  once<K extends keyof UppyEventMap, TMeta extends IndexedObject<any>>(
     event: K,
     callback: UppyEventMap<TMeta>[K],
   ): this
 
-  off<K extends keyof UppyEventMap>(
+  off<K extends keyof UppyEventMap>(event: K, callback: UppyEventMap[K]): this
+
+  off<K extends keyof UppyEventMap, TMeta extends IndexedObject<any>>(
     event: K,
     callback: UppyEventMap<TMeta>[K],
   ): this
@@ -324,7 +329,9 @@ export class Uppy<
 
   setState(patch: Record<string, unknown>): void
 
-  getState(): State<TMeta>
+  getState<
+    TMeta extends IndexedObject<any> = Record<string, unknown>,
+  >(): State<TMeta>
 
   setFileState(fileID: string, state: Record<string, unknown>): void
 
@@ -342,13 +349,24 @@ export class Uppy<
 
   removeUploader(fn: UploadHandler): void
 
-  setMeta(data: TMeta): void
+  setMeta<TMeta extends IndexedObject<any> = Record<string, unknown>>(
+    data: TMeta,
+  ): void
 
-  setFileMeta(fileID: string, data: TMeta): void
+  setFileMeta<TMeta extends IndexedObject<any> = Record<string, unknown>>(
+    fileID: string,
+    data: TMeta,
+  ): void
 
-  getFile(fileID: string): UppyFile<TMeta, TBody>
+  getFile<
+    TMeta extends IndexedObject<any> = Record<string, unknown>,
+    TBody extends IndexedObject<any> = Record<string, unknown>,
+  >(fileID: string): UppyFile<TMeta, TBody>
 
-  getFiles(): Array<UppyFile<TMeta, TBody>>
+  getFiles<
+    TMeta extends IndexedObject<any> = Record<string, unknown>,
+    TBody extends IndexedObject<any> = Record<string, unknown>,
+  >(): Array<UppyFile<TMeta, TBody>>
 
   getObjectOfFilesPerState(): {
     newFiles: Array<UppyFile>
@@ -368,9 +386,13 @@ export class Uppy<
     isSomeGhost: boolean
   }
 
-  addFile(file: AddFileOptions<TMeta>): string
+  addFile<TMeta extends IndexedObject<any> = Record<string, unknown>>(
+    file: AddFileOptions<TMeta>,
+  ): string
 
-  addFiles(files: AddFileOptions<TMeta>[]): void
+  addFiles<TMeta extends IndexedObject<any> = Record<string, unknown>>(
+    files: AddFileOptions<TMeta>[],
+  ): void
 
   removeFile(fileID: string, reason?: FileRemoveReason): void
 
@@ -380,11 +402,15 @@ export class Uppy<
 
   resumeAll(): void
 
-  retryAll(): Promise<UploadResult<TMeta>>
+  retryAll<
+    TMeta extends IndexedObject<any> = Record<string, unknown>,
+  >(): Promise<UploadResult<TMeta>>
 
   cancelAll(options?: CancelOptions): void
 
-  retryUpload(fileID: string): Promise<UploadResult<TMeta>>
+  retryUpload<TMeta extends IndexedObject<any> = Record<string, unknown>>(
+    fileID: string,
+  ): Promise<UploadResult<TMeta>>
 
   getID(): string
 
@@ -418,11 +444,15 @@ export class Uppy<
 
   log(msg: string, type?: LogLevel): void
 
-  restore(uploadID: string): Promise<UploadResult<TMeta>>
+  restore<TMeta extends IndexedObject<any> = Record<string, unknown>>(
+    uploadID: string,
+  ): Promise<UploadResult<TMeta>>
 
   addResultData(uploadID: string, data: Record<string, unknown>): void
 
-  upload(): Promise<UploadResult<TMeta>>
+  upload<TMeta extends IndexedObject<any> = Record<string, unknown>>(): Promise<
+    UploadResult<TMeta>
+  >
 }
 
 export default Uppy
