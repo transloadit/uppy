@@ -7,7 +7,8 @@ export interface Locale<T extends number = number> {
 
 type Options = {
   smart_count?: number
-  [key: string]: string | number | undefined
+} & {
+  [key: string]: string | number
 }
 
 function insertReplacement(

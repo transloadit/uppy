@@ -1,4 +1,5 @@
-import * as UppyUtils from '@uppy/utils'
+// This references the old types on purpose, to make sure to not create breaking changes for TS consumers.
+import * as UppyUtils from '@uppy/utils/types/index'
 
 // Utility types
 type OmitKey<T, Key> = Pick<T, Exclude<keyof T, Key>>
