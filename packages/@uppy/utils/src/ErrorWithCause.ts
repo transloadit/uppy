@@ -2,7 +2,7 @@ import type NetworkError from './NetworkError.ts'
 import hasProperty from './hasProperty.ts'
 
 class ErrorWithCause extends Error {
-  public isNetworkError?: boolean
+  public isNetworkError: boolean
 
   public cause: Error['cause']
 
@@ -14,6 +14,8 @@ class ErrorWithCause extends Error {
     this.cause = options?.cause
     if (this.cause && hasProperty(this.cause, 'isNetworkError')) {
       this.isNetworkError = (this.cause as NetworkError).isNetworkError
+    } else {
+      this.isNetworkError = false
     }
   }
 }
