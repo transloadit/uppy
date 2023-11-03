@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
-import Translator, { type LocaleWithPlural } from './Translator.ts'
+import Translator, { type Locale } from './Translator.ts'
 
-const english: LocaleWithPlural<0 | 1> = {
+const english: Locale<0 | 1> = {
   strings: {
     chooseFile: 'Choose a file',
     youHaveChosen: 'You have chosen: %{fileName}',
@@ -50,6 +50,7 @@ describe('Translator', () => {
 
     it('should translate a string with non-string elements', () => {
       const translator = new Translator({
+        pluralize: english.pluralize,
         strings: {
           test: 'Hello %{who}!',
           test2: 'Hello %{who}',
@@ -73,11 +74,13 @@ describe('Translator', () => {
   describe('translation strings inheritance / overriding', () => {
     const launguagePackLoadedInCore = english
     const defaultStrings = {
+      pluralize: english.pluralize,
       strings: {
         youHaveChosen: 'You have chosen 123: %{fileName}',
       },
     }
     const userSuppliedStrings = {
+      pluralize: english.pluralize,
       strings: {
         youHaveChosen: 'Beep boop: %{fileName}',
       },

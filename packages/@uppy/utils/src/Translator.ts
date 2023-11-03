@@ -1,15 +1,9 @@
 import has from './hasProperty.ts'
 
-export interface LocaleWithPlural<T extends number = number> {
+export interface Locale<T extends number = number> {
   strings: Record<string, string | Record<T, string>>
   pluralize: (n: number) => T
 }
-
-export type Locale =
-  | LocaleWithPlural
-  | {
-      strings: Record<string, string>
-    }
 
 type Options = {
   smart_count?: number
@@ -102,7 +96,7 @@ function interpolate(
 export default class Translator {
   protected locale: Locale
 
-  constructor(locales?: Locale | Locale[]) {
+  constructor(locales: Locale | Locale[]) {
     this.locale = {
       strings: {},
       pluralize(n: number): 0 | 1 {
@@ -130,11 +124,7 @@ export default class Translator {
       ...prevLocale,
       strings: { ...prevLocale.strings, ...locale.strings },
     } as any
-    if ('plurilize' in locale) {
-      ;(this.locale as LocaleWithPlural).pluralize = (
-        locale as LocaleWithPlural
-      ).pluralize
-    }
+    this.locale.pluralize = locale.pluralize || prevLocale.pluralize
   }
 
   /**
@@ -163,9 +153,7 @@ export default class Translator {
 
     if (hasPluralForms) {
       if (options && typeof options.smart_count !== 'undefined') {
-        const plural = (this.locale as LocaleWithPlural).pluralize(
-          options.smart_count,
-        )
+        const plural = this.locale.pluralize(options.smart_count)
         return interpolate(string[plural], options)
       }
       throw new Error(
