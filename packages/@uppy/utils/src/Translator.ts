@@ -1,5 +1,6 @@
 import has from './hasProperty.ts'
 
+// We're using a generic because languages have different plural rules.
 export interface Locale<T extends number = number> {
   strings: Record<string, string | Record<T, string>>
   pluralize: (n: number) => T
