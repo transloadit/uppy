@@ -67,7 +67,7 @@ export default class Dashboard extends UIPlugin {
       hidePauseResumeButton: false,
       hideProgressAfterFinish: false,
       doneButtonHandler: () => {
-        this.uppy.resetUploadState()
+        this.uppy.clearUploadedFiles()
         this.requestCloseModal()
       },
       note: null,

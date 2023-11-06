@@ -262,7 +262,7 @@ class Uppy {
   }
 
   /** @protected */
-  resetUploadState() {
+  clearUploadedFiles () {
     this.setState({ ...getDefaultUploadState(), files: {} })
   }
 
