@@ -1,4 +1,5 @@
-#!/usr/bin/env node// Upload Uppy releases to Edgly.net CDN. Copyright (c) 2018, Transloadit Ltd.
+#!/usr/bin/env node
+// Upload Uppy releases to Edgly.net CDN. Copyright (c) 2018, Transloadit Ltd.
 //
 // This file:
 //
@@ -24,10 +25,7 @@ const path = require('node:path')
 const { pipeline, finished } = require('node:stream/promises')
 const { readFile } = require('node:fs/promises')
 const AWS = require('aws-sdk')
-
-const {
-  S3
-} = require("@aws-sdk/client-s3");
+const { S3 } = require('@aws-sdk/client-s3');
 
 const packlist = require('npm-packlist')
 const tar = require('tar')
@@ -117,8 +115,7 @@ async function main (packageName, version) {
       accessKeyId: process.env.EDGLY_KEY,
       secretAccessKey: process.env.EDGLY_SECRET,
     }),
-
-    region: AWS_REGION
+    region: AWS_REGION,
   })
 
   const remote = !!version
