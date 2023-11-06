@@ -381,7 +381,7 @@
 .uppy-Dashboard-browse {
   @include clear-focus;
 
-  color: rgba($blue, 0.9);
+  color: $blue;
   cursor: pointer;
 
   &:hover,
