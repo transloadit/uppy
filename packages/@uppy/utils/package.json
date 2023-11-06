@@ -72,6 +72,7 @@
     "preact": "^10.5.13"
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.199",
     "vitest": "^0.34.5"
   }
 }

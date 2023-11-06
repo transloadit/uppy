@@ -1,3 +1,6 @@
+// This references the old types on purpose, to make sure to not create breaking changes for TS consumers.
+// eslint-disable-next-line @typescript-eslint/triple-slash-reference
+/// <reference path="../../utils/types/index.d.ts"/>
 import * as UppyUtils from '@uppy/utils'
 
 // Utility types

@@ -1,11 +1,10 @@
 import { describe, expect, it } from 'vitest'
 import { RateLimitedQueue } from './RateLimitedQueue.js'
-
-const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
+import delay from './delay.ts'
 
 describe('RateLimitedQueue', () => {
   let pending = 0
-  function fn () {
+  function fn() {
     pending++
     return delay(15).then(() => pending--)
   }
@@ -15,9 +14,16 @@ describe('RateLimitedQueue', () => {
     const fn2 = queue.wrapPromiseFunction(fn)
 
     const result = Promise.all([
-      fn2(), fn2(), fn2(), fn2(),
-      fn2(), fn2(), fn2(), fn2(),
-      fn2(), fn2(),
+      fn2(),
+      fn2(),
+      fn2(),
+      fn2(),
+      fn2(),
+      fn2(),
+      fn2(),
+      fn2(),
+      fn2(),
+      fn2(),
     ])
 
     expect(pending).toBe(4)
@@ -34,9 +40,16 @@ describe('RateLimitedQueue', () => {
     const fn2 = queue.wrapPromiseFunction(fn)
 
     const result = Promise.all([
-      fn2(), fn2(), fn2(), fn2(),
-      fn2(), fn2(), fn2(), fn2(),
-      fn2(), fn2(),
+      fn2(),
+      fn2(),
+      fn2(),
+      fn2(),
+      fn2(),
+      fn2(),
+      fn2(),
+      fn2(),
+      fn2(),
+      fn2(),
     ])
 
     expect(pending).toBe(10)
@@ -48,13 +61,22 @@ describe('RateLimitedQueue', () => {
 
   it('should accept non-promise function in wrapPromiseFunction()', () => {
     const queue = new RateLimitedQueue(1)
-    function syncFn () { return 1 }
+    function syncFn() {
+      return 1
+    }
     const fn2 = queue.wrapPromiseFunction(syncFn)
 
     return Promise.all([
-      fn2(), fn2(), fn2(), fn2(),
-      fn2(), fn2(), fn2(), fn2(),
-      fn2(), fn2(),
+      fn2(),
+      fn2(),
+      fn2(),
+      fn2(),
+      fn2(),
+      fn2(),
+      fn2(),
+      fn2(),
+      fn2(),
+      fn2(),
     ])
   })
 })
