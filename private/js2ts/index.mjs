@@ -79,7 +79,7 @@ await tsConfig.writeFile(
         emitDeclarationOnly: false,
         noEmit: true,
       },
-      include: ['./package.json', './src/**/*.'],
+      include: ['./package.json', './src/**/*.*'],
       references,
     },
     undefined,
@@ -90,7 +90,7 @@ await tsConfig.writeFile(
 await tsConfig.close()
 
 await writeFile(
-  new URL('./tsconfig.build.json', import.meta.url),
+  new URL('./tsconfig.build.json', packageRoot),
   `${JSON.stringify(
     {
       extends: '../../../tsconfig.shared',
@@ -101,7 +101,7 @@ await writeFile(
         noImplicitAny: false,
         skipLibCheck: true,
       },
-      include: ['./src/**/*.'],
+      include: ['./src/**/*.*'],
       exclude: ['./src/**/*.test.ts'],
       references,
     },
