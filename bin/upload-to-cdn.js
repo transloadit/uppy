@@ -1,5 +1,4 @@
-#!/usr/bin/env node
-// Upload Uppy releases to Edgly.net CDN. Copyright (c) 2018, Transloadit Ltd.
+#!/usr/bin/env node// Upload Uppy releases to Edgly.net CDN. Copyright (c) 2018, Transloadit Ltd.
 //
 // This file:
 //
@@ -25,6 +24,11 @@ const path = require('node:path')
 const { pipeline, finished } = require('node:stream/promises')
 const { readFile } = require('node:fs/promises')
 const AWS = require('aws-sdk')
+
+const {
+  S3
+} = require("@aws-sdk/client-s3");
+
 const packlist = require('npm-packlist')
 const tar = require('tar')
 const pacote = require('pacote')
@@ -108,12 +112,13 @@ async function main (packageName, version) {
   // where we force push a local build
   if (version?.startsWith('-')) version = undefined // eslint-disable-line no-param-reassign
 
-  const s3 = new AWS.S3({
+  const s3 = new S3({
     credentials: new AWS.Credentials({
       accessKeyId: process.env.EDGLY_KEY,
       secretAccessKey: process.env.EDGLY_SECRET,
     }),
-    region: AWS_REGION,
+
+    region: AWS_REGION
   })
 
   const remote = !!version
@@ -146,7 +151,7 @@ async function main (packageName, version) {
   const { Contents: existing } = await s3.listObjects({
     Bucket: AWS_BUCKET,
     Prefix: outputPath,
-  }).promise()
+  })
   if (existing.length > 0) {
     if (process.argv.includes('--force')) {
       console.warn(`WARN Release files for ${dirName} v${version} already exist, overwriting...`)
@@ -178,7 +183,7 @@ async function main (packageName, version) {
       Key: key,
       ContentType: mime.lookup(filename),
       Body: buffer,
-    }).promise()
+    })
   }
 }
 
