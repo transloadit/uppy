@@ -24,7 +24,6 @@
 const path = require('node:path')
 const { pipeline, finished } = require('node:stream/promises')
 const { readFile } = require('node:fs/promises')
-const AWS = require('aws-sdk')
 const { S3 } = require('@aws-sdk/client-s3');
 
 const packlist = require('npm-packlist')
@@ -111,10 +110,10 @@ async function main (packageName, version) {
   if (version?.startsWith('-')) version = undefined // eslint-disable-line no-param-reassign
 
   const s3 = new S3({
-    credentials: new AWS.Credentials({
+    credentials: {
       accessKeyId: process.env.EDGLY_KEY,
       secretAccessKey: process.env.EDGLY_SECRET,
-    }),
+    },
     region: AWS_REGION,
   })
 
