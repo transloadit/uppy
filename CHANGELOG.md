@@ -12,6 +12,32 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 3.19.0
+
+Released: 2023-11-08
+
+| Package                | Version | Package                | Version |
+| ---------------------- | ------- | ---------------------- | ------- |
+| @uppy/aws-s3           |   3.5.0 | @uppy/provider-views   |   3.7.0 |
+| @uppy/aws-s3-multipart |   3.9.0 | @uppy/react            |   3.2.0 |
+| @uppy/companion        |  4.11.0 | @uppy/transloadit      |   3.4.0 |
+| @uppy/companion-client |   3.6.0 | @uppy/tus              |   3.4.0 |
+| @uppy/core             |   3.7.0 | @uppy/url              |   3.4.0 |
+| @uppy/dashboard        |   3.7.0 | @uppy/utils            |   5.6.0 |
+| @uppy/image-editor     |   2.3.0 | @uppy/xhr-upload       |   3.5.0 |
+| @uppy/locales          |   3.4.0 | uppy                   |  3.19.0 |
+
+- @uppy/dashboard: Remove uppy-Dashboard-isFixed when uppy.close() is invoked (Artur Paikin / #4775)
+- @uppy/core,@uppy/dashboard: don't cancel all files when clicking "done" (Mikael Finstad / #4771)
+- @uppy/utils: refactor to TS (Antoine du Hamel / #4699)
+- @uppy/locales: locales: add ca_ES (ordago / #4772)
+- @uppy/companion: Companion+client stability fixes, error handling and retry (Mikael Finstad / #4734)
+- @uppy/companion: add getBucket metadata argument (Mikael Finstad / #4770)
+- @uppy/core: simplify types with class generic (JokcyLou / #4761)
+- @uppy/image-editor: More image editor improvements (Evgenia Karunus / #4676)
+- @uppy/react: add useUppyState (Merlijn Vos / #4711)
+
+
 ## 3.18.1
 
 Released: 2023-10-23

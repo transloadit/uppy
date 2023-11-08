@@ -1,5 +1,12 @@
 # @uppy/locales
 
+## 3.4.0
+
+Released: 2023-11-08
+Included in: Uppy v3.19.0
+
+- @uppy/locales: locales: add ca_ES (ordago / #4772)
+
 ## 3.3.1
 
 Released: 2023-09-18
