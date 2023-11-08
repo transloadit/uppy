@@ -1,5 +1,13 @@
 # @uppy/companion
 
+## 4.11.0
+
+Released: 2023-11-08
+Included in: Uppy v3.19.0
+
+- @uppy/companion: Companion+client stability fixes, error handling and retry (Mikael Finstad / #4734)
+- @uppy/companion: add getBucket metadata argument (Mikael Finstad / #4770)
+
 ## 4.10.1
 
 Released: 2023-10-23
