@@ -1160,6 +1160,10 @@ export default class Dashboard extends UIPlugin {
       this.darkModeMediaQuery.removeListener(this.handleSystemDarkModeChange)
     }
 
+    if (this.opts.disablePageScrollWhenModalOpen) {
+      document.body.classList.remove('uppy-Dashboard-isFixed')
+    }
+
     this.unmount()
     this.removeEvents()
   }
