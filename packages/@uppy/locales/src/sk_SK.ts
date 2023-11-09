@@ -14,7 +14,6 @@ sk_SK.strings = {
   addBulkFilesFailed: {
     '0': 'Súbor %{smart_count} sa nepodarilo pridať z dôvodu vnútornej chyby',
     '1': 'Nepodarilo sa pridať %{smart_count} súbory z dôvodu vnútorných chýb',
-    '2': 'Nepodarilo sa pridať %{smart_count} súborov z dôvodu vnútorných chýb',
   },
   addMore: 'Pridať ďalšie',
   addMoreFiles: 'Pridať ďalšie súbory',
@@ -83,7 +82,6 @@ sk_SK.strings = {
   folderAdded: {
     '0': 'Pridaný %{smart_count} súbor zo zložky %{folder}',
     '1': 'Pridané %{smart_count} súbory zo zložky %{folder}',
-    '2': 'Pridaných %{smart_count} súborov zo zložky %{folder}',
   },
   generatingThumbnails: 'Vytváram miniatury...',
   import: 'Importovať',
@@ -148,40 +146,33 @@ sk_SK.strings = {
   uploadXFiles: {
     '0': 'Nahrať %{smart_count} súbor',
     '1': 'Nahrať %{smart_count} súbory',
-    '2': 'Nahrať %{smart_count} súborov',
   },
   uploadXNewFiles: {
     '0': 'Nahrať +%{smart_count} súbor',
     '1': 'Nahrať +%{smart_count} súbory',
-    '2': 'Nahrať +%{smart_count} súborov',
   },
   uploading: 'Nahrávanie',
   uploadingXFiles: {
     '0': 'Nahrávám %{smart_count} súbor',
     '1': 'Nahrávám %{smart_count} súbory',
-    '2': 'Nahrávám %{smart_count} súborov',
   },
   xFilesSelected: {
     '0': '%{smart_count} vybratý súbor',
     '1': '%{smart_count} vybrané súbory',
-    '2': '%{smart_count} vybraných súborov',
   },
   xMoreFilesAdded: {
     '0': '%{smart_count} ďalší pridaný súbor',
     '1': '%{smart_count} ďalšie pridané súbory',
-    '2': '%{smart_count} ďalších pridaných súborov',
   },
   xTimeLeft: '%{time} zostáva',
   youCanOnlyUploadFileTypes: 'Môžete nahrať iba tieto typy súborov: %{types}',
   youCanOnlyUploadX: {
     '0': 'Môžete nahrať iba %{smart_count} súbor',
     '1': 'Môžete nahrať iba %{smart_count} súbory',
-    '2': 'Môžete nahrať iba %{smart_count} súborov',
   },
   youHaveToAtLeastSelectX: {
     '0': 'Musíte vybrať aspoň %{smart_count} súbor',
     '1': 'Musíte vybrať aspoň %{smart_count} súbory',
-    '2': 'Musíte vybrať aspoň %{smart_count} súborov',
   },
   zoomIn: 'Priblížiť',
   zoomOut: 'Oddialiť',

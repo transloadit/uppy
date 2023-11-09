@@ -7,8 +7,6 @@ const hu_HU: Locale<0> = {
   },
 }
 
-hu_HU.contributors = ['nagyv']
-
 hu_HU.strings = {
   addMore: 'Adj hozzá többet',
   addMoreFiles: 'További fájlok hozzáadása',
@@ -60,18 +58,10 @@ hu_HU.strings = {
     'A Companion-nak nem sikerült az URL letöltése, győzödjön meg az URL helyességéről',
   failedToUpload: '%{file}-t nem sikerült feltölteni',
   fileSource: 'Fájl forrása: %{name}',
-  filesUploadedOfTotal: {
-    '0': 'A %{smart_count}-ból %{complete} fájl feltöltve',
-    '1': 'A %{smart_count}-ból %{complete} fájl feltöltve',
-    '2': 'A %{smart_count}-ból %{complete} fájl feltöltve',
-  },
+  filesUploadedOfTotal: 'A %{smart_count}-ból %{complete} fájl feltöltve',
   filter: 'Szűrő',
   finishEditingFile: 'Fájl szerkesztésének befejezése',
-  folderAdded: {
-    '0': 'A %{folder}-ból %{smart_count} fájl hozzáadva',
-    '1': 'A %{folder}-ból %{smart_count} fájl hozzáadva',
-    '2': 'A %{folder}-ból %{smart_count} fájl hozzáadva',
-  },
+  folderAdded: 'A %{folder}-ból %{smart_count} fájl hozzáadva',
   import: 'Importálás',
   importFrom: 'Importálás innen: %{name}',
   loading: 'Töltés...',
@@ -83,11 +73,7 @@ hu_HU.strings = {
   pauseUpload: 'Feltöltés szüneteltetése',
   paused: 'Szüneteltetve',
   poweredBy: 'Meghajtja az %{uppy}',
-  processingXFiles: {
-    '0': '%{smart_count} fájl feldolgozása',
-    '1': '%{smart_count} fájl feldolgozása',
-    '2': '%{smart_count} fájl feldolgozása',
-  },
+  processingXFiles: '%{smart_count} fájl feldolgozása',
   removeFile: 'Fájl törlése',
   resetFilter: 'Szűrő visszaállítása',
   resume: 'Folytatás',
@@ -95,11 +81,7 @@ hu_HU.strings = {
   retry: 'Újra',
   retryUpload: 'Próbálja újra a feltöltést',
   saveChanges: 'Változtatások mentése',
-  selectX: {
-    '0': 'Válassza az %{smart_count} lehetőséget',
-    '1': 'Válassza az %{smart_count} lehetőséget',
-    '2': 'Válassza az %{smart_count} lehetőséget',
-  },
+  selectX: 'Válassza az %{smart_count} lehetőséget',
   smile: 'Csíííz!',
   startRecording: 'Videófeltével indul',
   stopRecording: 'Videófelvétel megáll',
@@ -109,44 +91,16 @@ hu_HU.strings = {
   uploadComplete: 'A feltöltés kész',
   uploadFailed: 'Sikertelen feltöltés',
   uploadPaused: 'Szüneteltetett feltöltés',
-  uploadXFiles: {
-    '0': '%{smart_count} fájl feltöltése',
-    '1': '%{smart_count} fájl feltöltése',
-    '2': '%{smart_count} fájl feltöltése',
-  },
-  uploadXNewFiles: {
-    '0': '+%{smart_count} fájl feltöltése',
-    '1': '+%{smart_count} fájl feltöltése',
-    '2': '+%{smart_count} fájl feltöltése',
-  },
+  uploadXFiles: '%{smart_count} fájl feltöltése',
+  uploadXNewFiles: '+%{smart_count} fájl feltöltése',
   uploading: 'Feltölés',
-  uploadingXFiles: {
-    '0': '+%{smart_count} fájl feltöltése',
-    '1': '+%{smart_count} fájl feltöltése',
-    '2': '+%{smart_count} fájl feltöltése',
-  },
-  xFilesSelected: {
-    '0': '%{smart_count} fájl kiválasztva',
-    '1': '%{smart_count} fájl kiválasztva',
-    '2': '%{smart_count} fájl kiválasztva',
-  },
-  xMoreFilesAdded: {
-    '0': 'további %{smart_count} fájl hozzáadva',
-    '1': 'további %{smart_count} fájl hozzáadva',
-    '2': 'további %{smart_count} fájl hozzáadva',
-  },
+  uploadingXFiles: '+%{smart_count} fájl feltöltése',
+  xFilesSelected: '%{smart_count} fájl kiválasztva',
+  xMoreFilesAdded: 'további %{smart_count} fájl hozzáadva',
   xTimeLeft: '%{time} van hátra',
   youCanOnlyUploadFileTypes: 'Feltölthető formátumok: %{types}',
-  youCanOnlyUploadX: {
-    '0': 'Csak %{smart_count} fájl tölthető fel',
-    '1': 'Csak %{smart_count} fájl tölthető fel',
-    '2': 'Csak %{smart_count} fájl tölthető fel',
-  },
-  youHaveToAtLeastSelectX: {
-    '0': 'Legalább %{smart_count} fájlt ki kell választania',
-    '1': 'Legalább %{smart_count} fájlt ki kell választania',
-    '2': 'Legalább %{smart_count} fájlt ki kell választania',
-  },
+  youCanOnlyUploadX: 'Csak %{smart_count} fájl tölthető fel',
+  youHaveToAtLeastSelectX: 'Legalább %{smart_count} fájlt ki kell választania',
   selectFileNamed: 'Válaszd ki a fájlt %{name}',
   unselectFileNamed: 'A fájl törlése %{name}',
   openFolderNamed: 'Nyitott mappa %{name}',

@@ -63,14 +63,12 @@ tr_TR.strings = {
   filesUploadedOfTotal: {
     '0': '%{complete} / %{smart_count} dosya yüklendi',
     '1': '%{complete} / %{smart_count} dosya yüklendi',
-    '2': '%{complete} / %{smart_count} dosya yüklendi',
   },
   filter: 'Filtre',
   finishEditingFile: 'Düzenlemeyi bitir',
   folderAdded: {
     '0': '%{folder} klasöründen %{smart_count} dosya eklendi',
     '1': '%{folder} klasöründen %{smart_count} dosya eklendi',
-    '2': '%{folder} klasöründen %{smart_count} dosya eklendi',
   },
   import: 'Ekle',
   importFrom: '%{name} Ekle',
@@ -86,7 +84,6 @@ tr_TR.strings = {
   processingXFiles: {
     '0': '%{smart_count} dosya işleniyor',
     '1': '%{smart_count} dosya işleniyor',
-    '2': '%{smart_count} dosya işleniyor',
   },
   removeFile: 'Dosyayı kaldır',
   resetFilter: 'Filtreyi temizle',
@@ -98,7 +95,6 @@ tr_TR.strings = {
   selectX: {
     '0': '%{smart_count} seç',
     '1': '%{smart_count} seç',
-    '2': '%{smart_count} seç',
   },
   smile: 'Gülümse!',
   startRecording: 'Video kaydına başla',
@@ -113,40 +109,33 @@ tr_TR.strings = {
   uploadXFiles: {
     '0': '%{smart_count} dosyayı yükle',
     '1': '%{smart_count} dosyayı yükle',
-    '2': '%{smart_count} dosyayı yükle',
   },
   uploadXNewFiles: {
     '0': '+%{smart_count} dosyayı yükle',
     '1': '+%{smart_count} dosyayı yükle',
-    '2': '+%{smart_count} dosyayı yükle',
   },
   uploading: 'Yükleniyor',
   uploadingXFiles: {
     '0': '%{smart_count} dosya yükleniyor',
     '1': '%{smart_count} dosya yükleniyor',
-    '2': '%{smart_count} dosya yükleniyor',
   },
   xFilesSelected: {
     '0': '%{smart_count} dosya seçildi',
     '1': '%{smart_count} dosya seçildi',
-    '2': '%{smart_count} dosya seçildi',
   },
   xMoreFilesAdded: {
     '0': '%{smart_count} dosya daha eklendi',
     '1': '%{smart_count} dosya daha eklendi',
-    '2': '%{smart_count} dosya daha eklendi',
   },
   xTimeLeft: 'kalan süre %{time}',
   youCanOnlyUploadFileTypes: 'Sadece %{types} yükleyebilirsiniz',
   youCanOnlyUploadX: {
     '0': 'Sadece %{smart_count} dosya yükleyebilirsiniz',
     '1': 'Sadece %{smart_count} dosya yükleyebilirsiniz',
-    '2': 'Sadece %{smart_count} dosya yükleyebilirsiniz',
   },
   youHaveToAtLeastSelectX: {
     '0': 'En az %{smart_count} dosya seçmelisin',
     '1': 'En az %{smart_count} dosya seçmelisin',
-    '2': 'En az %{smart_count} dosya seçmelisin',
   },
   selectFileNamed: 'Dosya Seç %{name}',
   unselectFileNamed: 'Dosya seçimini kaldır %{name}',
