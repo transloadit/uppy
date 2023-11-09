@@ -1,21 +1,32 @@
 import packageJson from '../package.json'
+
+type StateOrStateFragment = Record<string, unknown>
+
+export type Listener = (
+  prevState: StateOrStateFragment,
+  nextState: StateOrStateFragment,
+  patch: StateOrStateFragment,
+) => void
+
 /**
  * Default store that keeps state in a simple object.
  */
 class DefaultStore {
   static VERSION = packageJson.version
 
-  #callbacks = new Set()
+  public state: StateOrStateFragment
 
-  constructor () {
+  #callbacks = new Set<Listener>()
+
+  constructor() {
     this.state = {}
   }
 
-  getState () {
+  getState(): StateOrStateFragment {
     return this.state
   }
 
-  setState (patch) {
+  setState(patch: StateOrStateFragment): void {
     const prevState = { ...this.state }
     const nextState = { ...this.state, ...patch }
 
@@ -23,14 +34,14 @@ class DefaultStore {
     this.#publish(prevState, nextState, patch)
   }
 
-  subscribe (listener) {
+  subscribe(listener: Listener): () => void {
     this.#callbacks.add(listener)
     return () => {
       this.#callbacks.delete(listener)
     }
   }
 
-  #publish (...args) {
+  #publish(...args: Parameters<Listener>): void {
     this.#callbacks.forEach((listener) => {
       listener(...args)
     })

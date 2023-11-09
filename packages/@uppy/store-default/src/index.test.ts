@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import assert from 'node:assert'
-import DefaultStore from './index.js'
+import DefaultStore from './index.ts'
 
 describe('DefaultStore', () => {
   it('cannot be created without new', () => {
@@ -24,7 +24,7 @@ describe('DefaultStore', () => {
   it('notifies subscriptions when state changes', () => {
     let expected = []
     let calls = 0
-    function listener (prevState, nextState, patch) {
+    function listener(prevState, nextState, patch) {
       calls++
       expect([prevState, nextState, patch]).toEqual(expected)
     }
