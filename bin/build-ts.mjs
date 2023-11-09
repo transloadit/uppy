@@ -14,28 +14,25 @@ const argv0 = fromYarn ? [] : ['yarn']
 
 const cwd = fileURLToPath(new URL('../', import.meta.url))
 
+const locations = []
+
 for await (const line of readLines(stdin)) {
-  const { location, name } = JSON.parse(line)
+  const { location } = JSON.parse(line)
   if (existsSync(path.join(cwd, location, 'tsconfig.json'))) {
-    const cp = spawn(exe, [...argv0, 'tsc', '-p', location], {
-      stdio: 'inherit',
-      cwd,
-    })
-    await Promise.race([
-      once(cp, 'error').then(err => Promise.reject(err)),
-      await once(cp, 'exit')
-        .then(([code]) => (code && Promise.reject(new Error(`Non-zero exit code when building "${name}": ${code}`)))),
-    ])
+    locations.unshift(location)
   }
-  if (existsSync(path.join(cwd, location, 'tsconfig.build.json'))) {
-    const cp = spawn(exe, [...argv0, 'tsc', '--build', path.join(cwd, location, 'tsconfig.build.json')], {
-      stdio: 'inherit',
-      cwd,
-    })
-    await Promise.race([
-      once(cp, 'error').then(err => Promise.reject(err)),
-      await once(cp, 'exit')
-        .then(([code]) => (code && Promise.reject(new Error(`Non-zero exit code when building "${name}": ${code}`)))),
-    ])
+  const tsConfigBuildPath = path.join(cwd, location, 'tsconfig.build.json')
+  if (existsSync(tsConfigBuildPath)) {
+    locations.push(tsConfigBuildPath)
   }
 }
+
+const cp = spawn(exe, [...argv0, 'tsc', '--build', ...locations], {
+  stdio: 'inherit',
+  cwd,
+})
+await Promise.race([
+  once(cp, 'error').then(err => Promise.reject(err)),
+  await once(cp, 'exit')
+    .then(([code]) => (code && Promise.reject(new Error(`Non-zero exit code when building TS projects: ${code}`)))),
+])
