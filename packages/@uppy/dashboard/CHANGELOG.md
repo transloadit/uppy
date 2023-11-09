@@ -1,5 +1,13 @@
 # @uppy/dashboard
 
+## 3.7.0
+
+Released: 2023-11-08
+Included in: Uppy v3.19.0
+
+- @uppy/dashboard: Remove uppy-Dashboard-isFixed when uppy.close() is invoked (Artur Paikin / #4775)
+- @uppy/core,@uppy/dashboard: don't cancel all files when clicking "done" (Mikael Finstad / #4771)
+
 ## 3.6.0
 
 Released: 2023-10-20

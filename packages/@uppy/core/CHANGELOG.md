@@ -1,5 +1,13 @@
 # @uppy/core
 
+## 3.7.0
+
+Released: 2023-11-08
+Included in: Uppy v3.19.0
+
+- @uppy/core,@uppy/dashboard: don't cancel all files when clicking "done" (Mikael Finstad / #4771)
+- @uppy/core: simplify types with class generic (JokcyLou / #4761)
+
 ## 3.6.1
 
 Released: 2023-10-23

@@ -1,5 +1,12 @@
 # @uppy/image-editor
 
+## 2.3.0
+
+Released: 2023-11-08
+Included in: Uppy v3.19.0
+
+- @uppy/image-editor: More image editor improvements (Evgenia Karunus / #4676)
+
 ## 2.2.1
 
 Released: 2023-09-29

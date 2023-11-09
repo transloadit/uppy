@@ -1,5 +1,12 @@
 # @uppy/react
 
+## 3.2.0
+
+Released: 2023-11-08
+Included in: Uppy v3.19.0
+
+- @uppy/react: add useUppyState (Merlijn Vos / #4711)
+
 ## 3.1.3
 
 Released: 2023-07-13
