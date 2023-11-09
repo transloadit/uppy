@@ -5,5 +5,9 @@
     "noEmit": true
   },
   "include": ["./package.json", "./src/**/*.*"],
-  "references": []
+  "references": [
+    {
+      "path": "../utils/tsconfig.build.json"
+    }
+  ]
 }
