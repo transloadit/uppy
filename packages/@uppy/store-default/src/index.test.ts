@@ -1,9 +1,13 @@
 import { describe, expect, it } from 'vitest'
 import assert from 'node:assert'
-import DefaultStore from './index.ts'
+import DefaultStore, {
+  type Listener,
+  type StateOrStateFragment,
+} from './index.ts'
 
 describe('DefaultStore', () => {
   it('cannot be created without new', () => {
+    // @ts-expect-error TypeScript warns us that the following will throw.
     assert.throws(() => DefaultStore(), /TypeError/)
   })
 
@@ -22,11 +26,11 @@ describe('DefaultStore', () => {
   })
 
   it('notifies subscriptions when state changes', () => {
-    let expected = []
+    let expected: StateOrStateFragment[] = []
     let calls = 0
-    function listener(prevState, nextState, patch) {
+    function listener(...args: Parameters<Listener>): void {
       calls++
-      expect([prevState, nextState, patch]).toEqual(expected)
+      expect(args).toEqual(expected)
     }
 
     const store = new DefaultStore()
