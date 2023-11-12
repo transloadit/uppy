@@ -12,6 +12,23 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 3.19.1
+
+Released: 2023-11-12
+
+| Package            | Version | Package            | Version |
+| ------------------ | ------- | ------------------ | ------- |
+| @uppy/core         |   3.7.1 | @uppy/react-native |   0.5.2 |
+| @uppy/dashboard    |   3.7.1 | uppy               |  3.19.1 |
+| @uppy/react        |   3.2.1 |                    |         |
+
+- @uppy/react: Revert "@uppy/react: add useUppyState (#4711)" (Artur Paikin / #4789)
+- @uppy/dashboard: fix(@uppy/dashboard): fix wrong option type in index.d.ts (dzcpy / #4788)
+- meta: fix build of TypeScript plugins (Antoine du Hamel / #4784)
+- @uppy/core,@uppy/dashboard,@uppy/react-native: Update Uppy's blue color to meet WCAG contrast requirements (Alexander Zaytsev / #4777)
+- meta: fix JS2TS script (Antoine du Hamel / #4778)
+
+
 ## 3.19.0
 
 Released: 2023-11-08

@@ -1,5 +1,12 @@
 # @uppy/core
 
+## 3.7.1
+
+Released: 2023-11-12
+Included in: Uppy v3.19.1
+
+- @uppy/core,@uppy/dashboard,@uppy/react-native: Update Uppy's blue color to meet WCAG contrast requirements (Alexander Zaytsev / #4777)
+
 ## 3.7.0
 
 Released: 2023-11-08
