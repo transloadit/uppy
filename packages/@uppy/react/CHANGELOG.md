@@ -1,5 +1,12 @@
 # @uppy/react
 
+## 3.2.1
+
+Released: 2023-11-12
+Included in: Uppy v3.19.1
+
+- @uppy/react: Revert "@uppy/react: add useUppyState (#4711)" (Artur Paikin / #4789)
+
 ## 3.2.0
 
 Released: 2023-11-08
