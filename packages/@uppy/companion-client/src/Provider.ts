@@ -1,18 +1,18 @@
 'use strict'
 
-import RequestClient from './RequestClient.js'
-import * as tokenStorage from './tokenStorage.js'
+import RequestClient from './RequestClient.ts'
+import * as tokenStorage from './tokenStorage.ts'
 
-const getName = (id) => {
+const getName = (id: string): string => {
   return id.split('-').map((s) => s.charAt(0).toUpperCase() + s.slice(1)).join(' ')
 }
 
-function getOrigin () {
+function getOrigin (): Location['origin'] {
   // eslint-disable-next-line no-restricted-globals
   return location.origin
 }
 
-function getRegex (value) {
+function getRegex (value: unknown): RegExp | undefined {
   if (typeof value === 'string') {
     return new RegExp(`^${value}$`)
   } if (value instanceof RegExp) {
@@ -21,14 +21,14 @@ function getRegex (value) {
   return undefined
 }
 
-function isOriginAllowed (origin, allowedOrigin) {
+function isOriginAllowed (origin: Location['origin'], allowedOrigin: unknown): boolean {
   const patterns = Array.isArray(allowedOrigin) ? allowedOrigin.map(getRegex) : [getRegex(allowedOrigin)]
   return patterns
     .some((pattern) => pattern?.test(origin) || pattern?.test(`${origin}/`)) // allowing for trailing '/'
 }
 
 export default class Provider extends RequestClient {
-  #refreshingTokenPromise
+  #refreshingTokenPromise: Promise<void>
 
   constructor (uppy, opts) {
     super(uppy, opts)
@@ -41,9 +41,9 @@ export default class Provider extends RequestClient {
     this.preAuthToken = null
   }
 
-  async headers () {
+  async headers (): Promise<Record<string, string>> {
     const [headers, token] = await Promise.all([super.headers(), this.#getAuthToken()])
-    const authHeaders = {}
+    const authHeaders: Record<string, string> = { __proto__: null as unknown as string }
     if (token) {
       authHeaders['uppy-auth-token'] = token
     }
@@ -56,7 +56,7 @@ export default class Provider extends RequestClient {
     return { ...headers, ...authHeaders }
   }
 
-  onReceiveResponse (response) {
+  onReceiveResponse (response: Response) {
     super.onReceiveResponse(response)
     const plugin = this.uppy.getPlugin(this.pluginId)
     const oldAuthenticated = plugin.getPluginState().authenticated
@@ -158,7 +158,7 @@ export default class Provider extends RequestClient {
   async request (...args) {
     await this.#refreshingTokenPromise
 
-    try {
+    try{
       // to test simulate access token expired (leading to a token token refresh),
       // see mockAccessTokenExpiredError in companion/drive.
       // If you want to test refresh token *and* access token invalid, do this for example with Google Drive:

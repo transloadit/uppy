@@ -8,12 +8,15 @@ import ErrorWithCause from '@uppy/utils/lib/ErrorWithCause'
 import emitSocketProgress from '@uppy/utils/lib/emitSocketProgress'
 import getSocketHost from '@uppy/utils/lib/getSocketHost'
 
-import AuthError from './AuthError.js'
-
+import AuthError from './AuthError.ts'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'
 
-// Remove the trailing slash so we can always safely append /xyz.
-function stripSlash (url) {
+/**
+ * Removes the trailing slash so we can always safely append /xyz.
+ */
+function stripSlash (url: string): string {
   return url.replace(/\/$/, '')
 }
 
@@ -23,15 +26,15 @@ const socketActivityTimeoutMs = 5 * 60 * 1000 // set to a low number like 10000 
 const authErrorStatusCode = 401
 
 class HttpError extends Error {
-  statusCode
+  public statusCode: number
 
-  constructor({ statusCode, message }) {
+  constructor({ statusCode, message }: { statusCode: number, message: string}) {
     super(message)
     this.statusCode = statusCode
   }
 }
 
-async function handleJSONResponse (res) {
+async function handleJSONResponse (res: Response): Promise<ReturnType<typeof JSON.parse>> {
   if (res.status === authErrorStatusCode) {
     throw new AuthError()
   }
@@ -61,7 +64,7 @@ const allowedHeadersCache = new Map()
 export default class RequestClient {
   static VERSION = packageJson.version
 
-  #companionHeaders
+  #companionHeaders: Record<string, string>
 
   constructor (uppy, opts) {
     this.uppy = uppy
@@ -70,21 +73,21 @@ export default class RequestClient {
     this.#companionHeaders = opts?.companionHeaders
   }
 
-  setCompanionHeaders (headers) {
+  setCompanionHeaders (headers: Record<string, string>): void {
     this.#companionHeaders = headers
   }
 
-  [Symbol.for('uppy test: getCompanionHeaders')] () {
+  private [Symbol.for('uppy test: getCompanionHeaders')] (): Record<string, string> {
     return this.#companionHeaders
   }
 
-  get hostname () {
+  get hostname (): string {
     const { companion } = this.uppy.getState()
     const host = this.opts.companionUrl
     return stripSlash(companion && companion[host] ? companion[host] : host)
   }
 
-  async headers () {
+  async headers (): Promise<Record<string, string>> {
     const defaultHeaders = {
       Accept: 'application/json',
       'Content-Type': 'application/json',
@@ -97,7 +100,7 @@ export default class RequestClient {
     }
   }
 
-  onReceiveResponse ({ headers }) {
+  onReceiveResponse ({ headers }: Response): void {
     const state = this.uppy.getState()
     const companion = state.companion || {}
     const host = this.opts.companionUrl
@@ -110,7 +113,7 @@ export default class RequestClient {
     }
   }
 
-  #getUrl (url) {
+  #getUrl (url: string): string {
     if (/^(https?:|)\/\//.test(url)) {
       return url
     }
@@ -131,7 +134,7 @@ export default class RequestClient {
     Subsequent requests use the cached result of the preflight.
     However if there is an error retrieving the allowed headers, we will try again next time
   */
-  async preflight (path) {
+  async preflight (path: string): Promise<string[]>{
     const allowedHeadersCached = allowedHeadersCache.get(this.hostname)
     if (allowedHeadersCached != null) return allowedHeadersCached
 
@@ -141,7 +144,7 @@ export default class RequestClient {
       'uppy-auth-token',
     ]
 
-    const promise = (async () => {
+    const promise = (async (): Promise<string[]> => {
       try {
         const response = await fetch(this.#getUrl(path), { method: 'OPTIONS' })
 
@@ -176,7 +179,7 @@ export default class RequestClient {
     return promise
   }
 
-  async preflightAndHeaders (path) {
+  async preflightAndHeaders (path:string):Record<string,string> {
     const [allowedHeaders, headers] = await Promise.all([
       this.preflight(path),
       this.headers(),
@@ -195,8 +198,7 @@ export default class RequestClient {
     )
   }
 
-  /** @protected */
-  async request ({ path, method = 'GET', data, skipPostResponse, signal }) {
+protected async request ({ path, method = 'GET', data, skipPostResponse, signal }): ReturnType<typeof handleJSONResponse> {
     try {
       const headers = await this.preflightAndHeaders(path)
       const response = await fetchWithNetworkError(this.#getUrl(path), {
@@ -219,21 +221,21 @@ export default class RequestClient {
     }
   }
 
-  async get (path, options = undefined) {
+  async get (path, options = undefined): ReturnType<typeof handleJSONResponse> {
     // TODO: remove boolean support for options that was added for backward compatibility.
     // eslint-disable-next-line no-param-reassign
     if (typeof options === 'boolean') options = { skipPostResponse: options }
     return this.request({ ...options, path })
   }
 
-  async post (path, data, options = undefined) {
+  async post (path, data, options = undefined): ReturnType<typeof handleJSONResponse> {
     // TODO: remove boolean support for options that was added for backward compatibility.
     // eslint-disable-next-line no-param-reassign
     if (typeof options === 'boolean') options = { skipPostResponse: options }
     return this.request({ ...options, path, method: 'POST', data })
   }
 
-  async delete (path, data = undefined, options) {
+  async delete (path, data = undefined, options): ReturnType<typeof handleJSONResponse> {
     // TODO: remove boolean support for options that was added for backward compatibility.
     // eslint-disable-next-line no-param-reassign
     if (typeof options === 'boolean') options = { skipPostResponse: options }
@@ -312,7 +314,7 @@ export default class RequestClient {
     }
   }
 
-  #requestSocketToken = async ({ file, postBody, signal }) => {
+  #requestSocketToken = async ({ file, postBody, signal }): Promise<string> => {
     if (file.remote.url == null) {
       throw new Error('Cannot connect to an undefined URL')
     }
@@ -329,10 +331,8 @@ export default class RequestClient {
    * This method will ensure a websocket for the specified file and returns a promise that resolves
    * when the file has finished downloading, or rejects if it fails.
    * It will retry if the websocket gets disconnected
-   * 
-   * @param {{ file: UppyFile, queue: RateLimitedQueue, signal: AbortSignal }} file
    */
-  async #awaitRemoteFileUpload ({ file, queue, signal }) {
+  async #awaitRemoteFileUpload ({ file, queue, signal }: { file: UppyFile, queue: RateLimitedQueue, signal?: AbortSignal }): Promise<void> {
     let removeEventHandlers
 
     const { capabilities } = this.uppy.getState()

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import RequestClient from './RequestClient.js'
+import RequestClient from './RequestClient.ts'
 
 describe('RequestClient', () => {
   it('has a hostname without trailing slash', () => {
