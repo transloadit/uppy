@@ -1,8 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { Uppy as UppyCore } from '@uppy/core'
 
-// TODO: remove in the next major
-
 /**
  * @deprecated Initialize Uppy outside of the component.
  */
