@@ -9559,6 +9559,8 @@ __metadata:
 "@uppy/locales@workspace:packages/@uppy/locales":
   version: 0.0.0-use.local
   resolution: "@uppy/locales@workspace:packages/@uppy/locales"
+  dependencies:
+    "@uppy/utils": "workspace:^"
   languageName: unknown
   linkType: soft
 
