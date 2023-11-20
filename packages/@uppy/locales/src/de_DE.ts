@@ -137,6 +137,7 @@ de_DE.strings = {
   recordingLength: 'Aufnahmedauer %{recording_length}',
   recordingStoppedMaxSize:
     'Die Aufnahme wurde gestoppt, weil die Dateigröße das Limit überschritten hat',
+  recordVideoBtn: 'Video aufnehmen',
   recoveredAllFiles:
     'Wir haben alle Dateien wiederhergestellt. Sie können mit dem Hochladen fortfahren.',
   recoveredXFiles: {
@@ -168,7 +169,8 @@ de_DE.strings = {
   streamActive: 'Stream aktiv',
   streamPassive: 'Stream passiv',
   submitRecordedFile: 'Aufgezeichnete Datei verwenden',
-  takePicture: 'Ein Foto machen',
+  takePicture: 'Ein Foto aufnehmen',
+  takePictureBtn: 'Foto aufnehmen',
   timedOut: 'Upload für %{seconds} Sekunden stehen geblieben, breche ab.',
   upload: 'Hochladen',
   uploadComplete: 'Hochladen abgeschlossen',
