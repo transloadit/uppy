@@ -23,7 +23,7 @@ exports.jsonStringify = (data) => {
     if (typeof value === 'object' && value !== null) {
       if (cache.indexOf(value) !== -1) {
         // Circular reference found, discard key
-        return
+        return undefined
       }
       cache.push(value)
     }
@@ -41,24 +41,28 @@ module.exports.getURLBuilder = (options) => {
   /**
    * Builds companion targeted url
    *
-   * @param {string} path the tail path of the url
+   * @param {string} subPath the tail path of the url
    * @param {boolean} isExternal if the url is for the external world
    * @param {boolean} [excludeHost] if the server domain and protocol should be included
    */
-  const buildURL = (path, isExternal, excludeHost) => {
-    let url = path
-    // supports for no path specified too
-    if (isExternal) {
-      url = `${options.server.implicitPath || ''}${url}`
+  const buildURL = (subPath, isExternal, excludeHost) => {
+    let path = ''
+
+    if (isExternal && options.server.implicitPath) {
+      path += options.server.implicitPath
     }
 
-    url = `${options.server.path || ''}${url}`
-
-    if (!excludeHost) {
-      url = `${options.server.protocol}://${options.server.host}${url}`
+    if (options.server.path) {
+      path += options.server.path
     }
 
-    return url
+    path += subPath
+
+    if (excludeHost) {
+      return path
+    }
+
+    return `${options.server.protocol}://${options.server.host}${path}`
   }
 
   return buildURL
@@ -90,8 +94,7 @@ function urlEncode (unencoded) {
 }
 
 function urlDecode (encoded) {
-  encoded = encoded.replace(/-/g, '+').replace(/_/g, '/').replace(/~/g, '=')
-  return encoded
+  return encoded.replace(/-/g, '+').replace(/_/g, '/').replace(/~/g, '=')
 }
 
 /**
@@ -123,6 +126,7 @@ module.exports.decrypt = (encrypted, secret) => {
     throw new Error('Invalid encrypted value. Maybe it was generated with an old Companion version?')
   }
 
+  // NOTE: The first 32 characters are the iv, in hex format. The rest is the encrypted string, in base64 format.
   const iv = Buffer.from(encrypted.slice(0, 32), 'hex')
   const encryptionWithoutIv = encrypted.slice(32)
 
@@ -144,7 +148,21 @@ module.exports.decrypt = (encrypted, secret) => {
 
 module.exports.defaultGetKey = (req, filename) => `${crypto.randomUUID()}-${filename}`
 
-module.exports.prepareStream = async (stream) => new Promise((resolve, reject) => (
+class StreamHttpJsonError extends Error {
+  statusCode
+
+  responseJson
+
+  constructor({ statusCode, responseJson }) {
+    super(`Request failed with status ${statusCode}`)
+    this.statusCode = statusCode
+    this.responseJson = responseJson
+  }
+}
+
+module.exports.StreamHttpJsonError = StreamHttpJsonError
+
+module.exports.prepareStream = async (stream) => new Promise((resolve, reject) => {
   stream
     .on('response', () => {
       // Don't allow any more data to flow yet.
@@ -153,21 +171,47 @@ module.exports.prepareStream = async (stream) => new Promise((resolve, reject) =
       resolve()
     })
     .on('error', (err) => {
-      // got doesn't parse body as JSON on http error (responseType: 'json' is ignored and it instead becomes a string)
-      if (err?.request?.options?.responseType === 'json' && typeof err?.response?.body === 'string') {
+      // In this case the error object is not a normal GOT HTTPError where json is already parsed,
+      // we create our own StreamHttpJsonError error for this case
+      if (typeof err.response?.body === 'string' && typeof err.response?.statusCode === 'number') {
+        let responseJson
         try {
-          // todo unit test this
-          reject(Object.assign(new Error(), { response: { body: JSON.parse(err.response.body) } }))
+          responseJson = JSON.parse(err.response.body)
         } catch (err2) {
           reject(err)
+          return
         }
-      } else {
-        reject(err)
+
+        reject(new StreamHttpJsonError({ statusCode: err.response.statusCode, responseJson }))
+        return
       }
+
+      reject(err)
     })
-))
+  })
 
 module.exports.getBasicAuthHeader = (key, secret) => {
   const base64 = Buffer.from(`${key}:${secret}`, 'binary').toString('base64')
   return `Basic ${base64}`
+}
+
+const rfc2047Encode = (dataIn) => {
+  const data = `${dataIn}`
+  // eslint-disable-next-line no-control-regex
+  if (/^[\x00-\x7F]*$/.test(data)) return data // we return ASCII as is
+  return `=?UTF-8?B?${Buffer.from(data).toString('base64')}?=` // We encode non-ASCII strings
+}
+
+module.exports.rfc2047EncodeMetadata = (metadata) => (
+  Object.fromEntries(Object.entries(metadata).map((entry) => entry.map(rfc2047Encode)))
+)
+
+module.exports.getBucket = (bucketOrFn, req, metadata) => {
+  const bucket = typeof bucketOrFn === 'function' ? bucketOrFn(req, metadata) : bucketOrFn
+
+  if (typeof bucket !== 'string' || bucket === '') {
+    // This means a misconfiguration or bug
+    throw new TypeError('s3: bucket key must be a string or a function resolving the bucket string')
+  }
+  return bucket
 }

@@ -14,9 +14,11 @@ new Uppy().use(Webcam, {
   },
 })
 
-expectError(new Uppy().use(Webcam, {
-  modes: ['video-only'],
-  videoConstraints: {
-    width: 'not a number har har',
-  },
-}))
+expectError(
+  new Uppy().use(Webcam, {
+    modes: ['video-only'],
+    videoConstraints: {
+      width: 'not a number har har',
+    },
+  }),
+)

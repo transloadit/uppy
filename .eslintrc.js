@@ -8,7 +8,7 @@ const svgPresentationAttributes = [
 
 module.exports = {
   root: true,
-  extends: ['transloadit'],
+  extends: ['transloadit', 'prettier'],
   env: {
     es6: true,
     jest: true,
@@ -32,6 +32,7 @@ module.exports = {
     // extra:
     'compat',
     'jsdoc',
+    'no-only-tests',
     'unicorn',
   ],
   parser: '@babel/eslint-parser',
@@ -53,9 +54,15 @@ module.exports = {
       ignore: svgPresentationAttributes,
     }],
 
+    // Special rules for CI:
+    ...(process.env.CI && {
+      // Some imports are available only after a full build, which we don't do on CI.
+      'import/no-unresolved': 'off',
+    }),
+
     // rules we want to enforce
     'array-callback-return': 'error',
-    'implicit-arrow-linebreak': 'error',
+    'func-names': 'error',
     'import/no-dynamic-require': 'error',
     'import/no-extraneous-dependencies': 'error',
     'max-len': 'error',
@@ -76,25 +83,8 @@ module.exports = {
     'prefer-spread': 'error',
     'unicorn/prefer-node-protocol': 'error',
 
-    // transloadit rules we would like to enforce in the future
-    // but will require separate PRs to gradually get there
-    // and so the meantime: just warn
-    'class-methods-use-this': ['warn'],
-    'consistent-return': ['warn'],
-    'default-case': ['warn'],
-    'global-require': ['warn'],
-    'import/no-unresolved': ['warn'],
-    'import/order': ['warn'],
-    'no-mixed-operators': ['warn'],
-    'no-param-reassign': ['warn'],
-    'no-redeclare': ['warn'],
-    'no-shadow': ['warn'],
-    'no-use-before-define': ['warn', { 'functions': false }],
-    'radix': ['warn'],
     'react/button-has-type': 'error',
-    'react/destructuring-assignment': ['warn'],
     'react/forbid-prop-types': 'error',
-    'react/jsx-props-no-spreading': ['warn'],
     'react/no-access-state-in-setstate': 'error',
     'react/no-array-index-key': 'error',
     'react/no-deprecated': 'error',
@@ -122,8 +112,8 @@ module.exports = {
     // jsdoc
     'jsdoc/check-alignment': 'error',
     'jsdoc/check-examples': 'off', // cannot yet be supported for ESLint 8, see https://github.com/eslint/eslint/issues/14745
-    'jsdoc/check-param-names': ['warn'],
-    'jsdoc/check-syntax': ['warn'],
+    'jsdoc/check-param-names': 'error',
+    'jsdoc/check-syntax': 'error',
     'jsdoc/check-tag-names': ['error', { jsxTags: true }],
     'jsdoc/check-types': 'error',
     'jsdoc/newline-after-description': 'error',
@@ -151,6 +141,7 @@ module.exports = {
     {
       files: [
         '*.jsx',
+        '*.tsx',
         'packages/@uppy/react-native/**/*.js',
       ],
       parser: 'espree',
@@ -201,6 +192,7 @@ module.exports = {
         'examples/php-xhr/*.js',
         'examples/python-xhr/*.js',
         'examples/react-example/*.js',
+        'examples/redux/*.js',
         'examples/transloadit/*.js',
         'examples/transloadit-markdown-bin/*.js',
         'examples/xhr-bundle/*.js',
@@ -252,7 +244,6 @@ module.exports = {
         'packages/@uppy/webcam/src/**/*.js',
         'packages/@uppy/xhr-upload/src/**/*.js',
         'packages/@uppy/zoom/src/**/*.js',
-        'website/src/examples/*/*.es6',
       ],
       parser: 'espree',
       parserOptions: {
@@ -328,6 +319,14 @@ module.exports = {
         'examples/vue/**/*.js',
         'examples/vue3/**/*.js',
       ],
+      rules: {
+        'no-unused-vars': [
+          'error',
+          {
+            'varsIgnorePattern': 'React',
+          },
+        ],
+      },
       parserOptions: {
         sourceType: 'module',
       },
@@ -336,34 +335,12 @@ module.exports = {
       files: ['./packages/@uppy/companion/**/*.js'],
       rules: {
         'no-underscore-dangle': 'off',
-
-        // transloadit rules we would like to enforce in the future
-        // but will require separate PRs to gradually get there
-        // and so the meantime: just warn
-        'class-methods-use-this': 'warn',
-        'consistent-return': 'warn',
-        'global-require': 'warn',
-        'import/order': 'warn',
-        'no-param-reassign': 'warn',
-        'no-redeclare': 'warn',
-        'no-shadow': 'warn',
-        'no-use-before-define': 'warn',
-      },
-    },
-    {
-      files: [
-        'website/src/examples/*/*.es6',
-      ],
-      rules: {
-        'import/no-extraneous-dependencies': 'off',
-        'no-console': 'off',
       },
     },
     {
       files: [
         '*.test.js',
         'test/endtoend/*.js',
-        'website/*.js',
         'bin/**.js',
       ],
       rules: {
@@ -374,18 +351,19 @@ module.exports = {
       files: [
         'bin/**.js',
         'bin/**.mjs',
-        'examples/**/*.config.js',
         'examples/**/*.cjs',
+        'examples/**/*.js',
         'packages/@uppy/companion/test/**/*.js',
         'test/**/*.js',
         'test/**/*.ts',
         '*.test.js',
+        '*.test.ts',
         '*.test-d.ts',
+        '*.test-d.tsx',
         'postcss.config.js',
         '.eslintrc.js',
-        'website/*.js',
-        'website/**/*.js',
         'private/**/*.js',
+        'private/**/*.mjs',
       ],
       rules: {
         'no-console': 'off',
@@ -403,15 +381,6 @@ module.exports = {
       rules: {
         camelcase: ['off'],
         'quote-props': ['error', 'as-needed', { 'numbers': true }],
-      },
-    },
-
-    {
-      files: [
-        'website/themes/uppy/source/js/*.js',
-      ],
-      rules: {
-        'prefer-const': ['off'],
       },
     },
 
@@ -494,7 +463,15 @@ module.exports = {
       rules: {
         'import/prefer-default-export': 'off',
         '@typescript-eslint/no-explicit-any': 'off',
+        '@typescript-eslint/no-extra-semi': 'off',
         '@typescript-eslint/no-namespace': 'off',
+      },
+    },
+    {
+      files: ['packages/@uppy/*/src/**/*.ts', 'packages/@uppy/*/src/**/*.tsx'],
+      excludedFiles: ['packages/@uppy/**/*.test.ts'],
+      rules: {
+        '@typescript-eslint/explicit-function-return-type': 'error',
       },
     },
     {
@@ -508,9 +485,21 @@ module.exports = {
       },
     },
     {
-      files: ['**/react/*.md/*.js', '**/react.md/*.js', '**/react-*.md/*.js'],
+      files: ['**/react/*.md/*.js', '**/react.md/*.js', '**/react-*.md/*.js', '**/react/**/*.test-d.tsx'],
       settings: {
         react: { pragma: 'React' },
+      },
+    },
+    {
+      files: ['**/react/**/*.test-d.tsx'],
+      rules: {
+        'import/extensions': 'off',
+        'import/no-useless-path-segments': 'off',
+        'no-alert': 'off',
+        'no-inner-declarations': 'off',
+        'no-lone-blocks': 'off',
+        'no-unused-expressions': 'off',
+        'no-unused-vars': 'off',
       },
     },
     {
@@ -518,8 +507,13 @@ module.exports = {
       extends: ['plugin:cypress/recommended'],
     },
     {
-      files: ['e2e/**/*.ts', 'e2e/**/*.js', 'e2e/**/*.jsx'],
-      rules: { 'import/no-extraneous-dependencies': 'off', 'no-unused-expressions': 'off' },
+      files: ['e2e/**/*.ts', 'e2e/**/*.js', 'e2e/**/*.jsx', 'e2e/**/*.mjs'],
+      rules: {
+        'import/no-extraneous-dependencies': 'off',
+        'no-console': 'off',
+        'no-only-tests/no-only-tests': 'error',
+        'no-unused-expressions': 'off',
+      },
     },
   ],
 }

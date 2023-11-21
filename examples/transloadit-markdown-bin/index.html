@@ -1,21 +1,31 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
-    <meta charset="utf-8">
+    <meta charset="utf-8" />
     <style>
       body {
         font-family: Roboto, 'Open Sans';
         background: #f4f5f6;
       }
-      h1, h2, h3, h4, h5, h6 {
-        font-family: Oxygen, Raleway, Open Sans;
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        font-family:
+          Oxygen,
+          Raleway,
+          Open Sans;
       }
 
       header {
         width: 800px;
         margin: auto;
       }
-      header h1 { text-align: center; }
+      header h1 {
+        text-align: center;
+      }
 
       main {
         background: white;
@@ -26,7 +36,9 @@
         border-radius: 5px;
       }
 
-      main p:first-child { margin-top: 0 }
+      main p:first-child {
+        margin-top: 0;
+      }
 
       label {
         display: flex;
@@ -40,7 +52,8 @@
         color: #888888;
         line-height: 34px;
       }
-      label input, label textarea {
+      label input,
+      label textarea {
         flex-grow: 1;
         height: 34px;
       }
@@ -49,7 +62,9 @@
         padding: 6px;
         border-radius: 5px;
         border: 1px solid #b7b7b4;
-        font-family: Roboto, Open Sans;
+        font-family:
+          Roboto,
+          Open Sans;
         min-height: 160px;
         width: 100%;
         resize: vertical;
@@ -104,33 +119,47 @@
     </header>
     <main>
       <p>
-      Markdown Bin is a demo app that works a bit like Github Gists or pastebin. You can add markdown snippets, and add file attachments to each snippet by clicking "Upload an attachment" or by dragging files onto the text area. Transloadit generates an inline preview image for images, videos, and audio files. <a target="_blank" href="https://github.com/transloadit/uppy/blob/main/examples/transloadit-textarea/template.json">&raquo;&nbsp;View the Assembly Template here.</a>
+        Markdown Bin is a demo app that works a bit like Github Gists or
+        pastebin. You can add markdown snippets, and add file attachments to
+        each snippet by clicking "Upload an attachment" or by dragging files
+        onto the text area. Transloadit generates an inline preview image for
+        images, videos, and audio files.
+        <a
+          target="_blank"
+          href="https://github.com/transloadit/uppy/blob/main/examples/transloadit-textarea/template.json"
+          >&raquo;&nbsp;View the Assembly Template here.</a
+        >
       </p>
 
       <p>
-        ⚠️ For this demo, snippets are stored locally in your browser. Attachments are stored in Transloadit's temporary storage and expire after about 24 hours. In a real app, you can easily export files to a permanent storage solution like Amazon S3 or Google Cloud. <a target="_blank" href="https://transloadit.com/docs/#17-saving-conversion-results">&raquo;&nbsp;Learn more</a>
+        ⚠️ For this demo, snippets are stored locally in your browser.
+        Attachments are stored in Transloadit's temporary storage and expire
+        after about 24 hours. In a real app, you can easily export files to a
+        permanent storage solution like Amazon S3 or Google Cloud.
+        <a
+          target="_blank"
+          href="https://transloadit.com/docs/#17-saving-conversion-results"
+          >&raquo;&nbsp;Learn more</a
+        >
       </p>
 
       <form id="new">
         <h2>Create a new snippet</h2>
         <label>
           <span class="label-text">Snippet Title</span>
-          <input type="text" name="title" placeholder="Snippet Title">
+          <input type="text" name="title" placeholder="Snippet Title" />
         </label>
         <label>
           <textarea name="snippet"></textarea>
         </label>
         <p>
-          <button class="form-createSnippet" type="submit">
-            Create
-          </button>
+          <button class="form-createSnippet" type="submit">Create</button>
         </p>
       </form>
 
       <h2>Previous snippets</h2>
 
-      <div id="snippets">
-      </div>
+      <div id="snippets"></div>
     </main>
     <template id="snippet">
       <div class="snippet">

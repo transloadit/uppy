@@ -7,29 +7,31 @@ import type { AwsS3Part } from '..'
 {
   const uppy = new Uppy()
   uppy.use(AwsS3Multipart, {
-    createMultipartUpload (file) {
+    shouldUseMultipart: true,
+    createMultipartUpload(file) {
       expectType<UppyFile>(file)
       return { uploadId: '', key: '' }
     },
-    listParts (file, opts) {
+    listParts(file, opts) {
       expectType<UppyFile>(file)
       expectType<string>(opts.uploadId)
       expectType<string>(opts.key)
       return []
     },
-    prepareUploadParts (file, partData) {
+    signPart(file, opts) {
       expectType<UppyFile>(file)
-      expectType<string>(partData.uploadId)
-      expectType<string>(partData.key)
-      expectType<Array<{number: number, chunk: Blob}>>(partData.parts)
-      return { presignedUrls: {} }
+      expectType<string>(opts.uploadId)
+      expectType<string>(opts.key)
+      expectType<Blob>(opts.body)
+      expectType<AbortSignal>(opts.signal)
+      return { url: '' }
     },
-    abortMultipartUpload (file, opts) {
+    abortMultipartUpload(file, opts) {
       expectType<UppyFile>(file)
       expectType<string>(opts.uploadId)
       expectType<string>(opts.key)
     },
-    completeMultipartUpload (file, opts) {
+    completeMultipartUpload(file, opts) {
       expectType<UppyFile>(file)
       expectType<string>(opts.uploadId)
       expectType<string>(opts.key)
@@ -41,8 +43,16 @@ import type { AwsS3Part } from '..'
 
 {
   const uppy = new Uppy()
-  expectError(uppy.use(AwsS3Multipart, { getChunkSize: 100 }))
-  expectError(uppy.use(AwsS3Multipart, { getChunkSize: () => 'not a number' }))
-  uppy.use(AwsS3Multipart, { getChunkSize: () => 100 })
-  uppy.use(AwsS3Multipart, { getChunkSize: (file) => file.size })
+  expectError(uppy.use(AwsS3Multipart, { companionUrl: '', getChunkSize: 100 }))
+  expectError(
+    uppy.use(AwsS3Multipart, {
+      companionUrl: '',
+      getChunkSize: () => 'not a number',
+    }),
+  )
+  uppy.use(AwsS3Multipart, { companionUrl: '', getChunkSize: () => 100 })
+  uppy.use(AwsS3Multipart, {
+    companionUrl: '',
+    getChunkSize: (file) => file.size,
+  })
 }

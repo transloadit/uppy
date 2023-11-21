@@ -1,4 +1,3 @@
-import { h } from 'preact'
 import { UIPlugin } from '@uppy/core'
 import StatusBar from '@uppy/status-bar'
 import Informer from '@uppy/informer'
@@ -6,9 +5,10 @@ import ThumbnailGenerator from '@uppy/thumbnail-generator'
 import findAllDOMElements from '@uppy/utils/lib/findAllDOMElements'
 import toArray from '@uppy/utils/lib/toArray'
 import getDroppedFiles from '@uppy/utils/lib/getDroppedFiles'
+import { defaultPickerIcon } from '@uppy/provider-views'
+
 import { nanoid } from 'nanoid/non-secure'
 import memoizeOne from 'memoize-one'
-import FOCUSABLE_ELEMENTS from '@uppy/utils/lib/FOCUSABLE_ELEMENTS'
 import * as trapFocus from './utils/trapFocus.js'
 import createSuperFocus from './utils/createSuperFocus.js'
 import DashboardUI from './components/Dashboard.jsx'
@@ -30,19 +30,13 @@ function createPromise () {
   return o
 }
 
-function defaultPickerIcon () {
-  return (
-    <svg aria-hidden="true" focusable="false" width="30" height="30" viewBox="0 0 30 30">
-      <path d="M15 30c8.284 0 15-6.716 15-15 0-8.284-6.716-15-15-15C6.716 0 0 6.716 0 15c0 8.284 6.716 15 15 15zm4.258-12.676v6.846h-8.426v-6.846H5.204l9.82-12.364 9.82 12.364H19.26z" />
-    </svg>
-  )
-}
-
 /**
  * Dashboard UI with previews, metadata editing, tabs for various services and more
  */
 export default class Dashboard extends UIPlugin {
   static VERSION = packageJson.version
+
+  #disabledNodes = null
 
   constructor (uppy, opts) {
     super(uppy, opts)
@@ -73,12 +67,13 @@ export default class Dashboard extends UIPlugin {
       hidePauseResumeButton: false,
       hideProgressAfterFinish: false,
       doneButtonHandler: () => {
-        this.uppy.cancelAll()
+        this.uppy.clearUploadedFiles()
         this.requestCloseModal()
       },
       note: null,
       closeModalOnClickOutside: false,
       closeAfterFinish: false,
+      singleFileFullScreen: true,
       disableStatusBar: false,
       disableInformer: false,
       disableThumbnailGenerator: false,
@@ -170,6 +165,8 @@ export default class Dashboard extends UIPlugin {
     }
 
     this.setPluginState(update)
+
+    this.uppy.emit('dashboard:close-panel', state.activePickerPanel.id)
   }
 
   showPanel = (id) => {
@@ -407,10 +404,7 @@ export default class Dashboard extends UIPlugin {
     // Emits first event on initialization.
     this.resizeObserver = new ResizeObserver((entries) => {
       const uppyDashboardInnerEl = entries[0]
-
       const { width, height } = uppyDashboardInnerEl.contentRect
-
-      this.uppy.log(`[Dashboard] resized: ${width} / ${height}`, 'debug')
 
       this.setPluginState({
         containerWidth: width,
@@ -424,13 +418,14 @@ export default class Dashboard extends UIPlugin {
     this.makeDashboardInsidesVisibleAnywayTimeout = setTimeout(() => {
       const pluginState = this.getPluginState()
       const isModalAndClosed = !this.opts.inline && pluginState.isHidden
-      if (
+      if (// We might want to enable this in the future
+
         // if ResizeObserver hasn't yet fired,
         !pluginState.areInsidesReadyToBeVisible
         // and it's not due to the modal being closed
         && !isModalAndClosed
       ) {
-        this.uppy.log("[Dashboard] resize event didn't fire on time: defaulted to mobile layout", 'debug')
+        this.uppy.log('[Dashboard] resize event didn’t fire on time: defaulted to mobile layout', 'warning')
 
         this.setPluginState({
           areInsidesReadyToBeVisible: true,
@@ -459,26 +454,34 @@ export default class Dashboard extends UIPlugin {
     }
   }
 
-  disableAllFocusableElements = (disable) => {
-    const focusableNodes = toArray(this.el.querySelectorAll(FOCUSABLE_ELEMENTS))
-    if (disable) {
-      focusableNodes.forEach((node) => {
-        // save previous tabindex in a data-attribute, to restore when enabling
-        const currentTabIndex = node.getAttribute('tabindex')
-        if (currentTabIndex) {
-          node.dataset.inertTabindex = currentTabIndex // eslint-disable-line no-param-reassign
-        }
-        node.setAttribute('tabindex', '-1')
-      })
-    } else {
-      focusableNodes.forEach((node) => {
-        if ('inertTabindex' in node.dataset) {
-          node.setAttribute('tabindex', node.dataset.inertTabindex)
-        } else {
-          node.removeAttribute('tabindex')
-        }
-      })
+  disableInteractiveElements = (disable) => {
+    const NODES_TO_DISABLE = [
+      'a[href]',
+      'input:not([disabled])',
+      'select:not([disabled])',
+      'textarea:not([disabled])',
+      'button:not([disabled])',
+      '[role="button"]:not([disabled])',
+    ]
+
+    const nodesToDisable = this.#disabledNodes ?? toArray(this.el.querySelectorAll(NODES_TO_DISABLE))
+      .filter(node => !node.classList.contains('uppy-Dashboard-close'))
+
+    for (const node of nodesToDisable) {
+      // Links can’t have `disabled` attr, so we use `aria-disabled` for a11y
+      if (node.tagName === 'A') {
+        node.setAttribute('aria-disabled', disable)
+      } else {
+        node.disabled = disable
+      }
     }
+
+    if (disable) {
+      this.#disabledNodes = nodesToDisable
+    } else {
+      this.#disabledNodes = null
+    }
+
     this.dashboardIsDisabled = disable
   }
 
@@ -647,6 +650,8 @@ export default class Dashboard extends UIPlugin {
       }
     }
 
+    this.uppy.log('[Dashboard] Processing dropped files')
+
     // Add all dropped files
     const files = await getDroppedFiles(event.dataTransfer, { logDropError })
     if (files.length > 0) {
@@ -705,6 +710,24 @@ export default class Dashboard extends UIPlugin {
     this.uppy.emit('restore-canceled')
   }
 
+  #generateLargeThumbnailIfSingleFile = () => {
+    if (this.opts.disableThumbnailGenerator) {
+      return
+    }
+
+    const LARGE_THUMBNAIL = 600
+    const files = this.uppy.getFiles()
+
+    if (files.length === 1) {
+      const thumbnailGenerator = this.uppy.getPlugin(`${this.id}:ThumbnailGenerator`)
+      thumbnailGenerator?.setOptions({ thumbnailWidth: LARGE_THUMBNAIL })
+      const fileForThumbnail = { ...files[0], preview: undefined }
+      thumbnailGenerator.requestThumbnail(fileForThumbnail).then(() => {
+        thumbnailGenerator?.setOptions({ thumbnailWidth: this.opts.thumbnailWidth })
+      })
+    }
+  }
+
   #openFileEditorWhenFilesAdded = (files) => {
     const firstFile = files[0]
     if (this.canEditFile(firstFile)) {
@@ -726,11 +749,15 @@ export default class Dashboard extends UIPlugin {
     this.startListeningToResize()
     document.addEventListener('paste', this.handlePasteOnBody)
 
+    this.uppy.on('plugin-added', this.#addSupportedPluginIfNoTarget)
     this.uppy.on('plugin-remove', this.removeTarget)
     this.uppy.on('file-added', this.hideAllPanels)
     this.uppy.on('dashboard:modal-closed', this.hideAllPanels)
     this.uppy.on('file-editor:complete', this.hideAllPanels)
     this.uppy.on('complete', this.handleComplete)
+
+    this.uppy.on('files-added', this.#generateLargeThumbnailIfSingleFile)
+    this.uppy.on('file-removed', this.#generateLargeThumbnailIfSingleFile)
 
     // ___Why fire on capture?
     //    Because this.ifFocusedOnUppyRecently needs to change before onUpdate() fires.
@@ -754,13 +781,17 @@ export default class Dashboard extends UIPlugin {
 
     this.stopListeningToResize()
     document.removeEventListener('paste', this.handlePasteOnBody)
-
     window.removeEventListener('popstate', this.handlePopState, false)
+
+    this.uppy.off('plugin-added', this.#addSupportedPluginIfNoTarget)
     this.uppy.off('plugin-remove', this.removeTarget)
     this.uppy.off('file-added', this.hideAllPanels)
     this.uppy.off('dashboard:modal-closed', this.hideAllPanels)
     this.uppy.off('file-editor:complete', this.hideAllPanels)
     this.uppy.off('complete', this.handleComplete)
+
+    this.uppy.off('files-added', this.#generateLargeThumbnailIfSingleFile)
+    this.uppy.off('file-removed', this.#generateLargeThumbnailIfSingleFile)
 
     document.removeEventListener('focus', this.recordIfFocusedOnUppyRecently)
     document.removeEventListener('click', this.recordIfFocusedOnUppyRecently)
@@ -810,12 +841,12 @@ export default class Dashboard extends UIPlugin {
 
   afterUpdate = () => {
     if (this.opts.disabled && !this.dashboardIsDisabled) {
-      this.disableAllFocusableElements(true)
+      this.disableInteractiveElements(true)
       return
     }
 
     if (!this.opts.disabled && this.dashboardIsDisabled) {
-      this.disableAllFocusableElements(false)
+      this.disableInteractiveElements(false)
     }
 
     this.superFocusOnEachUpdate()
@@ -923,7 +954,7 @@ export default class Dashboard extends UIPlugin {
       activePickerPanel: pluginState.activePickerPanel,
       showFileEditor: pluginState.showFileEditor,
       saveFileEditor: this.saveFileEditor,
-      disableAllFocusableElements: this.disableAllFocusableElements,
+      disableInteractiveElements: this.disableInteractiveElements,
       animateOpenClose: this.opts.animateOpenClose,
       isClosing: pluginState.isClosing,
       progressindicators,
@@ -974,6 +1005,7 @@ export default class Dashboard extends UIPlugin {
       showNativePhotoCameraButton: this.opts.showNativePhotoCameraButton,
       showNativeVideoCameraButton: this.opts.showNativeVideoCameraButton,
       nativeCameraFacingMode: this.opts.nativeCameraFacingMode,
+      singleFileFullScreen: this.opts.singleFileFullScreen,
       handleCancelRestore: this.handleCancelRestore,
       handleRequestThumbnail: this.handleRequestThumbnail,
       handleCancelThumbnail: this.handleCancelThumbnail,
@@ -985,12 +1017,35 @@ export default class Dashboard extends UIPlugin {
     })
   }
 
-  discoverProviderPlugins = () => {
-    this.uppy.iteratePlugins((plugin) => {
-      if (plugin && !plugin.target && plugin.opts && plugin.opts.target === this.constructor) {
-        this.addTarget(plugin)
+  #addSpecifiedPluginsFromOptions = () => {
+    const plugins = this.opts.plugins || []
+
+    plugins.forEach((pluginID) => {
+      const plugin = this.uppy.getPlugin(pluginID)
+      if (plugin) {
+        plugin.mount(this, plugin)
+      } else {
+        this.uppy.log(`[Uppy] Dashboard could not find plugin '${pluginID}', make sure to uppy.use() the plugins you are specifying`, 'warning')
       }
     })
+  }
+
+  #autoDiscoverPlugins = () => {
+    this.uppy.iteratePlugins(this.#addSupportedPluginIfNoTarget)
+  }
+
+  #addSupportedPluginIfNoTarget = (plugin) => {
+    // Only these types belong on the Dashboard,
+    // we wouldn’t want to try and mount Compressor or Tus, for example.
+    const typesAllowed = ['acquirer', 'editor']
+    if (plugin && !plugin.opts?.target && typesAllowed.includes(plugin.type)) {
+      const pluginAlreadyAdded = this.getPluginState().targets.some(
+        installedPlugin => plugin.id === installedPlugin.id,
+      )
+      if (!pluginAlreadyAdded) {
+        plugin.mount(this, plugin)
+      }
+    }
   }
 
   install = () => {
@@ -1024,15 +1079,6 @@ export default class Dashboard extends UIPlugin {
     if (target) {
       this.mount(target, this)
     }
-
-    const plugins = this.opts.plugins || []
-
-    plugins.forEach((pluginID) => {
-      const plugin = this.uppy.getPlugin(pluginID)
-      if (plugin) {
-        plugin.mount(this, plugin)
-      }
-    })
 
     if (!this.opts.disableStatusBar) {
       this.uppy.use(StatusBar, {
@@ -1081,7 +1127,8 @@ export default class Dashboard extends UIPlugin {
       this.darkModeMediaQuery.addListener(this.handleSystemDarkModeChange)
     }
 
-    this.discoverProviderPlugins()
+    this.#addSpecifiedPluginsFromOptions()
+    this.#autoDiscoverPlugins()
     this.initEvents()
   }
 
@@ -1111,6 +1158,10 @@ export default class Dashboard extends UIPlugin {
 
     if (this.opts.theme === 'auto') {
       this.darkModeMediaQuery.removeListener(this.handleSystemDarkModeChange)
+    }
+
+    if (this.opts.disablePageScrollWhenModalOpen) {
+      document.body.classList.remove('uppy-Dashboard-isFixed')
     }
 
     this.unmount()

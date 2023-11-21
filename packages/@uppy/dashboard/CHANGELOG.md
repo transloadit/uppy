@@ -1,5 +1,87 @@
 # @uppy/dashboard
 
+## 3.7.1
+
+Released: 2023-11-12
+Included in: Uppy v3.19.1
+
+- @uppy/dashboard: fix(@uppy/dashboard): fix wrong option type in index.d.ts (dzcpy / #4788)
+- @uppy/core,@uppy/dashboard,@uppy/react-native: Update Uppy's blue color to meet WCAG contrast requirements (Alexander Zaytsev / #4777)
+
+## 3.7.0
+
+Released: 2023-11-08
+Included in: Uppy v3.19.0
+
+- @uppy/dashboard: Remove uppy-Dashboard-isFixed when uppy.close() is invoked (Artur Paikin / #4775)
+- @uppy/core,@uppy/dashboard: don't cancel all files when clicking "done" (Mikael Finstad / #4771)
+
+## 3.6.0
+
+Released: 2023-10-20
+Included in: Uppy v3.18.0
+
+- @uppy/dashboard: auto discover and install plugins without target (Artur Paikin / #4343)
+
+## 3.5.3
+
+Released: 2023-09-18
+Included in: Uppy v3.16.0
+
+- @uppy/dashboard: Make file-editor:cancel event fire when the Image Editor “cancel” button is pressed (Artur Paikin / #4684)
+
+## 3.5.2
+
+Released: 2023-09-05
+Included in: Uppy v3.15.0
+
+- @uppy/dashboard: when showAddFilesPanel  is true, aria-hidden should be the opposite (Artur Paikin / #4643)
+
+## 3.4.1
+
+Released: 2023-06-19
+Included in: Uppy v3.10.0
+
+- @uppy/companion,@uppy/core,@uppy/dashboard,@uppy/golden-retriever,@uppy/status-bar,@uppy/utils: Migrate all lodash' per-method-packages usage to lodash. (LinusMain / #4274)
+- @uppy/dashboard: include the old state when setting new (Artur Paikin / #4490)
+
+## 3.4.0
+
+Released: 2023-04-18
+Included in: Uppy v3.8.0
+
+- @uppy/dashboard: Single File Mode: fix layout and make optional (Artur Paikin / #4374)
+
+## 3.3.1
+
+Released: 2023-03-07
+Included in: Uppy v3.6.1
+
+- @uppy/dashboard: Fix low-contrast hover styles (Alexander Zaytsev / #4347)
+
+## 3.3.0
+
+Released: 2023-03-07
+Included in: Uppy v3.6.0
+
+- @uppy/dashboard: update provider icon style (Alexander Zaytsev / #4345)
+
+## 3.2.2
+
+Released: 2023-02-13
+Included in: Uppy v3.5.0
+
+- @uppy/dashboard: fix dashboard acquirers list (Mikael Finstad / #4306)
+- @uppy/dashboard: Dashboard: disallow clicking on buttons and links in Dashboard disabled mode (Artur Paikin / #4292)
+- @uppy/audio,@uppy/core,@uppy/dashboard,@uppy/screen-capture: Warn more instead of erroring (Artur Paikin / #4302)
+
+## 3.2.0
+
+Released: 2022-11-10
+Included in: Uppy v3.3.0
+
+- @uppy/dashboard: Single file mode (Artur Paikin / #4188)
+
 ## 3.1.0
 
 Released: 2022-09-25

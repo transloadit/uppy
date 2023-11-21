@@ -4,6 +4,7 @@ const request = require('supertest')
 const mockOauthState = require('../mockoauthstate')
 const { version } = require('../../package.json')
 const { nockGoogleDownloadFile } = require('../fixtures/drive')
+const defaults = require('../fixtures/constants')
 
 jest.mock('tus-js-client')
 jest.mock('../../src/server/helpers/oauth-state', () => ({
@@ -32,11 +33,11 @@ const { getServer } = require('../mockserver')
 // todo don't share server between tests. rewrite to not use env variables
 const authServer = getServer({ COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT: '0' })
 const authData = {
-  dropbox: 'token value',
-  box: 'token value',
-  drive: 'token value',
+  dropbox: { accessToken: 'token value' },
+  box: { accessToken: 'token value' },
+  drive: { accessToken: 'token value' },
 }
-const token = tokenService.generateEncryptedToken(authData, process.env.COMPANION_SECRET)
+const token = tokenService.generateEncryptedAuthToken(authData, process.env.COMPANION_SECRET)
 const OAUTH_STATE = 'some-cool-nice-encrytpion'
 
 afterAll(() => {
@@ -45,6 +46,35 @@ afterAll(() => {
 })
 
 describe('validate upload data', () => {
+  test('access token expired or invalid when starting provider download', () => {
+    const meta = {
+      size: null,
+      mimeType: 'video/mp4',
+      id: defaults.ITEM_ID,
+    }
+    nock('https://www.googleapis.com').get(`/drive/v3/files/${defaults.ITEM_ID}`).query(() => true).times(2).reply(200, meta)
+
+    nock('https://www.googleapis.com').get(`/drive/v3/files/${defaults.ITEM_ID}?alt=media&supportsAllDrives=true`).reply(401, {
+      "error": {
+        "code": 401,
+        "message": "Request had invalid authentication credentials. Expected OAuth 2 access token, login cookie or other valid authentication credential. See https://developers.google.com/identity/sign-in/web/devconsole-project.",
+        "status": "UNAUTHENTICATED"
+      }
+    })
+  
+    return request(authServer)
+      .post('/drive/get/DUMMY-FILE-ID')
+      .set('uppy-auth-token', token)
+      .set('Content-Type', 'application/json')
+      .send({
+        endpoint: 'http://url.myendpoint.com/files',
+        protocol: 'tus',
+        httpMethod: 'POST',
+      })
+      .expect(401)
+      .then((res) => expect(res.body.message).toBe('HTTP 401: invalid access token detected by Provider'))
+  })
+
   test('invalid upload protocol gets rejected', () => {
     nockGoogleDownloadFile()
 

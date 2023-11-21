@@ -1,19 +1,20 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { defineConfig } from 'cypress'
-// eslint-disable-next-line import/no-extraneous-dependencies
 import installLogsPrinter from 'cypress-terminal-report/src/installLogsPrinter.js'
+import startMockServer from './mock-server.mjs'
 
 export default defineConfig({
-  defaultCommandTimeout: 16000,
+  defaultCommandTimeout: 16_000,
+  requestTimeout: 16_000,
 
   e2e: {
     baseUrl: 'http://localhost:1234',
     specPattern: 'cypress/integration/*.spec.ts',
 
-    // eslint-disable-next-line no-unused-vars
-    setupNodeEvents (on, config) {
+    setupNodeEvents (on) {
       // implement node event listeners here
       installLogsPrinter(on)
+
+      startMockServer('localhost', 4678)
     },
   },
 })

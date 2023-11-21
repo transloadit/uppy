@@ -1,8 +1,13 @@
-import type { IndexedObject, PluginOptions, UIPlugin, UppyFile } from '@uppy/core'
+import type {
+  IndexedObject,
+  UIPlugin,
+  UIPluginOptions,
+  UppyFile,
+} from '@uppy/core'
 
 import ThumbnailGeneratorLocale from './generatedLocale'
 
-export interface ThumbnailOptions {
+export interface ThumbnailOptions extends UIPluginOptions {
   thumbnailWidth?: number
   thumbnailHeight?: number
   thumbnailType?: string
@@ -14,7 +19,7 @@ interface Options extends ThumbnailOptions {
   locale?: ThumbnailGeneratorLocale
 }
 
-declare class ThumbnailGenerator extends UIPlugin<PluginOptions & Options> {}
+declare class ThumbnailGenerator extends UIPlugin<Options> {}
 
 export default ThumbnailGenerator
 
@@ -22,7 +27,7 @@ export default ThumbnailGenerator
 
 export type ThumbnailGeneratedCallback<TMeta extends IndexedObject<any>> = (
   file: UppyFile<TMeta>,
-  preview: string
+  preview: string,
 ) => void
 
 declare module '@uppy/core' {

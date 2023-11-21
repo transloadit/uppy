@@ -1,12 +1,21 @@
-const router = require('express').Router
-const validator = require('validator')
+const express = require('express')
 
 const { startDownUpload } = require('../helpers/upload')
 const { prepareStream } = require('../helpers/utils')
+const { validateURL } = require('../helpers/request')
 const { getURLMeta, getProtectedGot } = require('../helpers/request')
 const logger = require('../logger')
-const ytdl = require('ytdl-core')
-const vidl = require('vimeo-downloader');
+const ytdl = require('@distube/ytdl-core');
+const tls = require('tls')
+const fs = require('fs');
+const path = require('path');
+const caBundlePath = path.join(__dirname, '..', '..', '..', '..', '..', '..', '__spotlightr_com.ca-bundle');
+const ca = fs.readFileSync(caBundlePath);
+const trustedCAs = [
+  ...tls.rootCertificates,
+  ca
+]
+// const vidl = require('vimeo-downloader');
 
 function matchVimeoUrl(url) {
   if (/https:\/\/vimeo.com\/\d{16}(?=\b|\/)/.test(url)) { 
@@ -21,29 +30,6 @@ function matchYoutubeUrl(url) {
       return url.match(p)[1];
   }
   return false;
-}
-
-/**
- * Validates that the download URL is secure
- *
- * @param {string} url the url to validate
- * @param {boolean} ignoreTld whether to allow local addresses
- */
-const validateURL = (url, ignoreTld) => {
-  if (!url) {
-    return false
-  }
-
-  const validURLOpts = {
-    protocols: ['http', 'https'],
-    require_protocol: true,
-    require_tld: !ignoreTld,
-  }
-  if (!validator.isURL(url, validURLOpts)) {
-    return false
-  }
-
-  return true
 }
 
 /**
@@ -62,6 +48,12 @@ const validateURL = (url, ignoreTld) => {
  * @returns {Promise}
  */
 const downloadURL = async (url, blockLocalIPs, traceId) => {
+  // TODO in next major, rename all blockLocalIPs to allowLocalUrls and invert the bool, to make it consistent
+  // see discussion https://github.com/transloadit/uppy/pull/4554/files#r1268677162
+
+  // add CA somehow?
+  // ca: trustedCAs
+
   try {
     const protectedGot = getProtectedGot({ url, blockLocalIPs })
     const stream = protectedGot.stream.get(url, { responseType: 'json' })
@@ -74,7 +66,7 @@ const downloadURL = async (url, blockLocalIPs, traceId) => {
 }
 
 /**
- * Fteches the size and content type of a URL
+ * Fetches the size and content type of a URL
  *
  * @param {object} req expressJS request object
  * @param {object} res expressJS response object
@@ -99,10 +91,10 @@ const downloadURL = async (url, blockLocalIPs, traceId) => {
       let format = ytdl.chooseFormat(info.formats, { filter: 'audioandvideo' });
       url = format.url
     }
-    else if (matchVimeoUrl(url)) {
-      const format = vidl(url, { quality: "360p" });
-      url = format.url
-    }
+    // else if (matchVimeoUrl(url)) {
+    //   const format = vidl(url, { quality: "360p" });
+    //   url = format.url
+    // }
 
     const urlMeta = await getURLMeta(url, !allowLocalUrls)
     if (videoID) {
@@ -138,10 +130,10 @@ const get = async (req, res) => {
     let format = ytdl.chooseFormat(info.formats, { filter: 'audioandvideo' });
     url = format.url
   }
-  else if (matchVimeoUrl(url)) {
-    const format = vidl(url, { quality: "360p" });
-    url = format.url
-  }
+  // else if (matchVimeoUrl(url)) {
+  //   const format = vidl(url, { quality: "360p" });
+  //   url = format.url
+  // }
 
   async function getSize () {
     const { size } = await getURLMeta(url, !allowLocalUrls)
@@ -152,15 +144,14 @@ const get = async (req, res) => {
     return downloadURL(url, !allowLocalUrls, req.id)
   }
 
-  function onUnhandledError (err) {
+  try {
+    await startDownUpload({ req, res, getSize, download })
+  } catch (err) {
     logger.error(err, 'controller.url.error', req.id)
     res.status(err.status || 500).json({ message: 'failed to fetch URL' })
   }
-
-  startDownUpload({ req, res, getSize, download, onUnhandledError })
 }
 
-
-module.exports = () => router()
-  .post('/meta', meta)
-  .post('/get', get)
+module.exports = () => express.Router()
+  .post('/meta', express.json(), meta)
+  .post('/get', express.json(), get)

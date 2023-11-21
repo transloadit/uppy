@@ -1,21 +1,38 @@
-import type { PluginOptions, BasePlugin, UppyFile } from '@uppy/core'
+import { AwsS3MultipartOptions } from '@uppy/aws-s3-multipart'
+import type { BasePlugin, Locale, PluginOptions, UppyFile } from '@uppy/core'
 
 type MaybePromise<T> = T | Promise<T>
 
-export interface AwsS3UploadParameters {
-    method?: string
-    url: string
-    fields?: { [type: string]: string }
-    headers?: { [type: string]: string }
+export type AwsS3UploadParameters =
+  | {
+      method?: 'POST'
+      url: string
+      fields?: Record<string, string>
+      expires?: number
+      headers?: Record<string, string>
+    }
+  | {
+      method: 'PUT'
+      url: string
+      fields?: Record<string, never>
+      expires?: number
+      headers?: Record<string, string>
+    }
+
+interface LegacyAwsS3Options extends PluginOptions {
+  shouldUseMultipart?: never
+  companionUrl?: string | null
+  companionHeaders?: Record<string, string>
+  allowedMetaFields?: Array<string> | null
+  getUploadParameters?: (file: UppyFile) => MaybePromise<AwsS3UploadParameters>
+  limit?: number
+  /** @deprecated this option will not be supported in future versions of this plugin */
+  getResponseData?: (responseText: string, response: XMLHttpRequest) => void
+  locale?: Locale
+  timeout?: number
 }
 
-export interface AwsS3Options extends PluginOptions {
-    companionUrl?: string
-    getUploadParameters?: (file: UppyFile) => MaybePromise<AwsS3UploadParameters>
-    allowedMetaFields?: string[] | null
-    timeout?: number
-    limit?: number
-}
+export type AwsS3Options = LegacyAwsS3Options | AwsS3MultipartOptions
 
 declare class AwsS3 extends BasePlugin<AwsS3Options> {}
 

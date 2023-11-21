@@ -15,17 +15,13 @@ const validParams = {
 {
   const uppy = new Uppy()
   uppy.use(Transloadit, {
-    getAssemblyOptions (file) {
-      expectType<UppyFile>(file)
+    getAssemblyOptions(file) {
+      expectType<UppyFile | undefined>(file)
       return { params: validParams }
     },
     waitForEncoding: false,
     waitForMetadata: true,
     importFromUploadURLs: false,
-    params: {
-      auth: { key: 'abc' },
-      steps: {},
-    },
   })
   // Access to both transloadit events and core events
   uppy.on('transloadit:assembly-created', (assembly) => {
@@ -37,6 +33,45 @@ const validParams = {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const success = result.successful
   })
+}
+
+{
+  const uppy = new Uppy()
+  uppy.use(Transloadit, {
+    async assemblyOptions(file) {
+      expectType<UppyFile | undefined>(file)
+      return { params: validParams }
+    },
+  })
+}
+
+{
+  const uppy = new Uppy()
+  uppy.use(Transloadit, {
+    assemblyOptions: { params: validParams },
+  })
+}
+
+{
+  const uppy = new Uppy()
+  expectError(
+    uppy.use(Transloadit, {
+      getAssemblyOptions() {
+        return { params: validParams }
+      },
+      assemblyOptions: { params: validParams },
+    }),
+  )
+}
+
+{
+  const uppy = new Uppy()
+  expectError(
+    uppy.use(Transloadit, {
+      params: validParams,
+      assemblyOptions: { params: validParams },
+    }),
+  )
 }
 
 {

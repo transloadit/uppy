@@ -1,5 +1,13 @@
 .uppy-Dashboard-Item-fileInfo {
   padding-inline-end: 5px;
+
+  .uppy-Dashboard--singleFile & {
+    padding-inline-end: 10px;
+  }
+
+  .uppy-size--md.uppy-Dashboard--singleFile & {
+    padding-inline-end: 15px;
+  }
 }
 
 .uppy-Dashboard-Item-name {
@@ -12,8 +20,13 @@
   word-wrap: anywhere;
   word-break: break-all;
 
-  [data-uppy-theme="dark"] & {
+  [data-uppy-theme='dark'] & {
     color: $gray-200;
+  }
+
+  .uppy-size--md.uppy-Dashboard--singleFile & {
+    font-size: 14px;
+    line-height: 1.4;
   }
 }
 
@@ -46,7 +59,7 @@
   font-size: 11px;
   line-height: 1;
 
-  [data-uppy-theme="dark"] & {
+  [data-uppy-theme='dark'] & {
     color: $gray-400;
   }
 }
@@ -75,7 +88,9 @@
 }
 
 .uppy-Dashboard-Item-errorMessageBtn {
+  font-size: 11px;
   text-decoration: underline;
+  color: darken($red, 15%);
   cursor: pointer;
   font-weight: 500;
 }
@@ -109,4 +124,3 @@
     display: none;
   }
 }
-

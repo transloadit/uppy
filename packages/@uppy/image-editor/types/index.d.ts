@@ -1,4 +1,10 @@
-import type { PluginOptions, UIPlugin, PluginTarget, UppyFile } from '@uppy/core'
+import type {
+  IndexedObject,
+  PluginTarget,
+  UIPlugin,
+  UIPluginOptions,
+  UppyFile,
+} from '@uppy/core'
 import type Cropper from 'cropperjs'
 import ImageEditorLocale from './generatedLocale'
 
@@ -18,7 +24,7 @@ interface UppyCropperOptions extends Cropper.Options {
   croppedCanvasOptions: Cropper.GetCroppedCanvasOptions
 }
 
-export interface ImageEditorOptions extends PluginOptions {
+export interface ImageEditorOptions extends UIPluginOptions {
   cropperOptions?: UppyCropperOptions
   actions?: Actions
   quality?: number
@@ -32,13 +38,19 @@ export default ImageEditor
 
 // Events
 
-export type FileEditorStartCallback<TMeta> = (file: UppyFile<TMeta>) => void;
-export type FileEditorCompleteCallback<TMeta> = (updatedFile: UppyFile<TMeta>) => void;
-export type FileEditorCancelCallback<TMeta> = (file: UppyFile<TMeta>) => void;
+export type FileEditorStartCallback<TMeta extends IndexedObject<any>> = (
+  file: UppyFile<TMeta>,
+) => void
+export type FileEditorCompleteCallback<TMeta extends IndexedObject<any>> = (
+  updatedFile: UppyFile<TMeta>,
+) => void
+export type FileEditorCancelCallback<TMeta extends IndexedObject<any>> = (
+  file: UppyFile<TMeta>,
+) => void
 
 declare module '@uppy/core' {
-  export interface UppyEventMap<TMeta> {
-    'file-editor:start' : FileEditorStartCallback<TMeta>
+  export interface UppyEventMap<TMeta extends IndexedObject<any>> {
+    'file-editor:start': FileEditorStartCallback<TMeta>
     'file-editor:complete': FileEditorCompleteCallback<TMeta>
     'file-editor:cancel': FileEditorCancelCallback<TMeta>
   }

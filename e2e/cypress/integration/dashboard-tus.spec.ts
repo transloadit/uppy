@@ -20,27 +20,29 @@ describe('Dashboard with Tus', () => {
   })
 
   it('should upload cat image successfully', () => {
-    cy.get('@file-input').selectFile('cypress/fixtures/images/cat.jpg', { force:true })
+    cy.get('@file-input').selectFile('cypress/fixtures/images/cat.jpg', {
+      force: true,
+    })
 
-    cy.get('.uppy-StatusBar-actionBtn--upload').click().then(() => {
-      cy.wait(['@post', '@patch']).then(() => {
-        cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Complete')
-      })
+    cy.get('.uppy-StatusBar-actionBtn--upload').click()
+    cy.wait(['@post', '@patch']).then(() => {
+      cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Complete')
     })
   })
 
   it('should start exponential backoff when receiving HTTP 429', () => {
-    cy.get('@file-input').selectFile('cypress/fixtures/images/baboon.png', { force: true })
+    cy.get('@file-input').selectFile('cypress/fixtures/images/baboon.png', {
+      force: true,
+    })
 
     cy.intercept(
       { method: 'PATCH', pathname: '/files/*', times: 2 },
       { statusCode: 429, body: {} },
     ).as('patch')
 
-    cy.get('.uppy-StatusBar-actionBtn--upload').click().then(() => {
-      cy.wait('@tus').then(() => {
-        cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Complete')
-      })
+    cy.get('.uppy-StatusBar-actionBtn--upload').click()
+    cy.wait('@tus').then(() => {
+      cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Complete')
     })
   })
 

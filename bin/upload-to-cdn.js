@@ -24,7 +24,8 @@
 const path = require('node:path')
 const { pipeline, finished } = require('node:stream/promises')
 const { readFile } = require('node:fs/promises')
-const AWS = require('aws-sdk')
+const { S3 } = require('@aws-sdk/client-s3');
+
 const packlist = require('npm-packlist')
 const tar = require('tar')
 const pacote = require('pacote')
@@ -108,11 +109,11 @@ async function main (packageName, version) {
   // where we force push a local build
   if (version?.startsWith('-')) version = undefined // eslint-disable-line no-param-reassign
 
-  const s3 = new AWS.S3({
-    credentials: new AWS.Credentials({
+  const s3 = new S3({
+    credentials: {
       accessKeyId: process.env.EDGLY_KEY,
       secretAccessKey: process.env.EDGLY_SECRET,
-    }),
+    },
     region: AWS_REGION,
   })
 
@@ -146,7 +147,7 @@ async function main (packageName, version) {
   const { Contents: existing } = await s3.listObjects({
     Bucket: AWS_BUCKET,
     Prefix: outputPath,
-  }).promise()
+  })
   if (existing.length > 0) {
     if (process.argv.includes('--force')) {
       console.warn(`WARN Release files for ${dirName} v${version} already exist, overwriting...`)
@@ -178,7 +179,7 @@ async function main (packageName, version) {
       Key: key,
       ContentType: mime.lookup(filename),
       Body: buffer,
-    }).promise()
+    })
   }
 }
 

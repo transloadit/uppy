@@ -15,7 +15,7 @@ function EditButton ({
   ) {
     return (
       <button
-        className="uppy-u-reset uppy-Dashboard-Item-action uppy-Dashboard-Item-action--edit"
+        className="uppy-u-reset uppy-c-btn uppy-Dashboard-Item-action uppy-Dashboard-Item-action--edit"
         type="button"
         aria-label={i18n('editFileWithFilename', { file: file.meta.name })}
         title={i18n('editFileWithFilename', { file: file.meta.name })}

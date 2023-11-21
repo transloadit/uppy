@@ -1,5 +1,104 @@
 # @uppy/core
 
+## 3.7.1
+
+Released: 2023-11-12
+Included in: Uppy v3.19.1
+
+- @uppy/core,@uppy/dashboard,@uppy/react-native: Update Uppy's blue color to meet WCAG contrast requirements (Alexander Zaytsev / #4777)
+
+## 3.7.0
+
+Released: 2023-11-08
+Included in: Uppy v3.19.0
+
+- @uppy/core,@uppy/dashboard: don't cancel all files when clicking "done" (Mikael Finstad / #4771)
+- @uppy/core: simplify types with class generic (JokcyLou / #4761)
+
+## 3.6.1
+
+Released: 2023-10-23
+Included in: Uppy v3.18.1
+
+- @uppy/core: fix `sideEffects` declaration (Antoine du Hamel / #4759)
+
+## 3.6.0
+
+Released: 2023-10-20
+Included in: Uppy v3.18.0
+
+- @uppy/core: mark the package as side-effect free (Antoine du Hamel / #4730)
+- @uppy/core: type more events (Antoine du Hamel / #4719)
+
+## 3.5.0
+
+Released: 2023-09-05
+Included in: Uppy v3.15.0
+
+- @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/companion-client,@uppy/core,@uppy/tus,@uppy/utils,@uppy/xhr-upload: Move remote file upload logic into companion-client (Merlijn Vos / #4573)
+
+## 3.4.0
+
+Released: 2023-08-15
+Included in: Uppy v3.14.0
+
+- @uppy/core: allow duplicate files with onBeforeFileAdded (Merlijn Vos / #4594)
+
+## 3.2.1
+
+Released: 2023-06-19
+Included in: Uppy v3.10.0
+
+- @uppy/companion,@uppy/core,@uppy/dashboard,@uppy/golden-retriever,@uppy/status-bar,@uppy/utils: Migrate all lodash' per-method-packages usage to lodash. (LinusMain / #4274)
+- @uppy/core: Don't set late (throttled) progress event on a file that is 100% complete (Artur Paikin / #4507)
+- @uppy/core: remove `state` getter from types (Antoine du Hamel / #4477)
+
+## 3.2.0
+
+Released: 2023-04-18
+Included in: Uppy v3.8.0
+
+- @uppy/core: improve performance of validating & uploading files (Mikael Finstad / #4402)
+- @uppy/core,@uppy/locales,@uppy/provider-views: User feedback adding recursive folders take 2 (Mikael Finstad / #4399)
+
+## 3.1.2
+
+Released: 2023-04-04
+Included in: Uppy v3.7.0
+
+- @uppy/core: fix bug with `setOptions` (Nguyễn bảo Trung / #4350)
+
+## 3.1.0
+
+Released: 2023-03-07
+Included in: Uppy v3.6.0
+
+- @uppy/core: fix uppy.resetProgress() (Artur Paikin / #4337)
+- @uppy/core: fix some types (Antoine du Hamel / #4332)
+- @uppy/core: Fixed type of State.info to match reality being an array of info objects (Marc Bennewitz / #4321)
+
+## 3.0.6
+
+Released: 2023-02-13
+Included in: Uppy v3.5.0
+
+- @uppy/audio,@uppy/core,@uppy/dashboard,@uppy/screen-capture: Warn more instead of erroring (Artur Paikin / #4302)
+
+## 3.0.5
+
+Released: 2023-01-26
+Included in: Uppy v3.4.0
+
+- @uppy/core: fix metafields validation when used as function (Merlijn Vos / #4276)
+- @uppy/core: fix typo in Uppy.test.js (Ikko Ashimine / #4235)
+
+## 3.0.4
+
+Released: 2022-10-24
+Included in: Uppy v3.2.2
+
+- @uppy/core: make cancel() and close() arguments optional in types (Merlijn Vos / #4161)
+
 ## 3.0.3
 
 Released: 2022-10-19

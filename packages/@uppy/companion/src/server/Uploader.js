@@ -8,7 +8,11 @@ const { join } = require('node:path')
 const fs = require('node:fs')
 const { promisify } = require('node:util')
 const FormData = require('form-data')
-const throttle = require('lodash.throttle')
+const throttle = require('lodash/throttle')
+
+const { Upload } = require('@aws-sdk/lib-storage')
+
+const { rfc2047EncodeMetadata, getBucket } = require('./helpers/utils')
 
 // TODO move to `require('streams/promises').pipeline` when dropping support for Node.js 14.x.
 const pipeline = promisify(pipelineCb)
@@ -20,7 +24,7 @@ const { stat, unlink } = fs.promises
 // @ts-ignore - typescript resolves this this to a hoisted version of
 // serialize-error that ships with a declaration file, we are using a version
 // here that does not have a declaration file
-const serializeError = require('serialize-error')
+const serializeError = require('serialize-error') // eslint-disable-line import/order
 const emitter = require('./emitter')
 const { jsonStringify, hasMatch } = require('./helpers/utils')
 const logger = require('./logger')
@@ -75,8 +79,8 @@ function validateOptions (options) {
       throw new ValidationError('unsupported HTTP METHOD specified')
     }
 
-    const method = options.httpMethod.toLowerCase()
-    if (method !== 'put' && method !== 'post') {
+    const method = options.httpMethod.toUpperCase()
+    if (method !== 'PUT' && method !== 'POST') {
       throw new ValidationError('unsupported HTTP METHOD specified')
     }
   }
@@ -221,11 +225,11 @@ class Uploader {
 
     switch (protocol) {
       case PROTOCOLS.multipart:
-        return this._uploadMultipart(this.readStream)
+        return this.#uploadMultipart(this.readStream)
       case PROTOCOLS.s3Multipart:
-        return this._uploadS3Multipart(this.readStream)
+        return this.#uploadS3Multipart(this.readStream)
       case PROTOCOLS.tus:
-        return this._uploadTus(this.readStream)
+        return this.#uploadTus(this.readStream)
       default:
         throw new Error('Invalid protocol')
     }
@@ -354,7 +358,7 @@ class Uploader {
       size,
       companionOptions: req.companion.options,
       pathPrefix: `${req.companion.options.filePath}`,
-      storage: redis.client()?.v4,
+      storage: redis.client(),
       s3: req.companion.s3Client ? {
         client: req.companion.s3Client,
         options: req.companion.options.s3,
@@ -416,7 +420,9 @@ class Uploader {
     // https://github.com/transloadit/uppy/issues/3748
     const keyExpirySec = 60 * 60 * 24
     const redisKey = `${Uploader.STORAGE_PREFIX}:${this.token}`
-    this.storage.set(redisKey, jsonStringify(state), 'EX', keyExpirySec)
+    this.storage.set(redisKey, jsonStringify(state), {
+      EX: keyExpirySec,
+    })
   }
 
   throttledEmitProgress = throttle((dataToEmit) => {
@@ -503,7 +509,7 @@ class Uploader {
    *
    * @param {any} stream
    */
-  async _uploadTus (stream) {
+  async #uploadTus (stream) {
     const uploader = this
 
     const isFileStream = stream instanceof ReadStream
@@ -515,9 +521,9 @@ class Uploader {
       this.tus = new tus.Upload(stream, {
         endpoint: this.options.endpoint,
         uploadUrl: this.options.uploadUrl,
-        uploadLengthDeferred: false,
+        uploadLengthDeferred: !isFileStream,
         retryDelays: [0, 1000, 3000, 5000],
-        uploadSize: this.size,
+        uploadSize: isFileStream ? this.size : undefined,
         chunkSize,
         headers: headerSanitize(this.options.headers),
         addRequestId: true,
@@ -539,8 +545,10 @@ class Uploader {
           // previously made to providers. Deleting the field would prevent it from getting leaked
           // to the frontend etc.
           // @ts-ignore
+          // eslint-disable-next-line no-param-reassign
           delete error.originalRequest
           // @ts-ignore
+          // eslint-disable-next-line no-param-reassign
           delete error.originalResponse
           reject(error)
         },
@@ -563,7 +571,7 @@ class Uploader {
     })
   }
 
-  async _uploadMultipart (stream) {
+  async #uploadMultipart (stream) {
     if (!this.options.endpoint) {
       throw new Error('No multipart endpoint set')
     }
@@ -611,7 +619,7 @@ class Uploader {
     }
 
     try {
-      const httpMethod = (this.options.httpMethod || '').toLowerCase() === 'put' ? 'put' : 'post'
+      const httpMethod = (this.options.httpMethod || '').toUpperCase() === 'PUT' ? 'put' : 'post'
       const runRequest = got[httpMethod]
 
       const response = await runRequest(url, reqOptions)
@@ -641,54 +649,54 @@ class Uploader {
   /**
    * Upload the file to S3 using a Multipart upload.
    */
-  async _uploadS3Multipart (stream) {
+  async #uploadS3Multipart (stream) {
     if (!this.options.s3) {
       throw new Error('The S3 client is not configured on this companion instance.')
     }
 
     const filename = this.uploadFileName
-    const { client, options } = this.options.s3
+    /**
+     * @type {{client: import('@aws-sdk/client-s3').S3Client, options: Record<string, any>}}
+     */
+    const s3Options = this.options.s3
+    const { client, options } = s3Options
     const speakerCount = (this.options?.metadata?.speakerCount && this.options.metadata.speakerCount.toString()) || '1'  
 
     const params = {
-      Bucket: options.bucket,
+      Bucket: getBucket(options.bucket, null, this.options.metadata),
       Key: options.getKey(null, filename, this.options.metadata),
       ContentType: this.options.metadata.type,
-      Metadata: {...removeMetadataProperties(this.options.metadata), speakerCount},
+      Metadata: rfc2047EncodeMetadata({...removeMetadataProperties(this.options.metadata), speakerCount}),
       Body: stream,
     }
 
     if (options.acl != null) params.ACL = options.acl
 
-    const upload = client.upload(params, {
+    const upload = new Upload({
+      client,
+      params,
       // using chunkSize as partSize too, see https://github.com/transloadit/uppy/pull/3511
       partSize: this.options.chunkSize,
+      leavePartsOnError: true, // https://github.com/aws/aws-sdk-js-v3/issues/2311
     })
 
     upload.on('httpUploadProgress', ({ loaded, total }) => {
       this.onProgress(loaded, total)
     })
 
-    return new Promise((resolve, reject) => {
-      upload.send((error, data) => {
-        if (error) {
-          reject(error)
-          return
-        }
-
-        resolve({
-          url: data && data.Location ? data.Location : null,
-          extraData: {
-            response: {
-              responseText: JSON.stringify(data),
-              headers: {
-                'content-type': 'application/json',
-              },
-            },
+    const data = await upload.done()
+    return {
+      // @ts-expect-error For some reason `|| null` is not enough for TS
+      url: data?.Location || null,
+      extraData: {
+        response: {
+          responseText: JSON.stringify(data),
+          headers: {
+            'content-type': 'application/json',
           },
-        })
-      })
-    })
+        },
+      },
+    }
   }
 }
 

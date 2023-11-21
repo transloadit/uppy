@@ -1,5 +1,139 @@
 # @uppy/aws-s3-multipart
 
+## 3.8.0
+
+Released: 2023-10-20
+Included in: Uppy v3.18.0
+
+- @uppy/aws-s3-multipart: fix `TypeError` (Antoine du Hamel / #4748)
+- @uppy/aws-s3-multipart: pass `signal` as separate arg for backward compat (Antoine du Hamel / #4746)
+- @uppy/aws-s3-multipart: fix `uploadURL` when using `PUT` (Antoine du Hamel / #4701)
+
+## 3.7.0
+
+Released: 2023-09-29
+Included in: Uppy v3.17.0
+
+- @uppy/aws-s3-multipart: retry signature request (Merlijn Vos / #4691)
+- @uppy/aws-s3-multipart: aws-s3-multipart - call `#setCompanionHeaders` in `setOptions` (jur-ng / #4687)
+
+## 3.6.0
+
+Released: 2023-09-05
+Included in: Uppy v3.15.0
+
+- @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/companion-client,@uppy/core,@uppy/tus,@uppy/utils,@uppy/xhr-upload: Move remote file upload logic into companion-client (Merlijn Vos / #4573)
+
+## 3.5.4
+
+Released: 2023-08-23
+Included in: Uppy v3.14.1
+
+- @uppy/aws-s3-multipart: fix types when using deprecated option (Antoine du Hamel / #4634)
+- @uppy/aws-s3-multipart,@uppy/aws-s3: allow empty objects for `fields` types (Antoine du Hamel / #4631)
+
+## 3.5.3
+
+Released: 2023-08-15
+Included in: Uppy v3.14.0
+
+- @uppy/aws-s3-multipart: pass the `uploadURL` back to the caller (Antoine du Hamel / #4614)
+- @uppy/aws-s3,@uppy/aws-s3-multipart: update types (Antoine du Hamel / #4611)
+- @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/companion,@uppy/transloadit,@uppy/xhr-upload: use uppercase HTTP method names (Antoine du Hamel / #4612)
+- @uppy/aws-s3,@uppy/aws-s3-multipart: update types (bdirito / #4576)
+
+## 3.5.2
+
+Released: 2023-07-24
+Included in: Uppy v3.13.1
+
+- @uppy/aws-s3-multipart: refresh file before calling user-defined functions (mjlumetta / #4557)
+
+## 3.5.1
+
+Released: 2023-07-20
+Included in: Uppy v3.13.0
+
+- @uppy/aws-s3-multipart: fix crash on pause/resume (Merlijn Vos / #4581)
+- @uppy/aws-s3-multipart: do not access `globalThis.crypto` on the top-level (Bryan J Swift / #4584)
+
+## 3.5.0
+
+Released: 2023-07-13
+Included in: Uppy v3.12.0
+
+- @uppy/aws-s3-multipart: add support for signing on the client (Antoine du Hamel / #4519)
+- @uppy/aws-s3-multipart: fix lint warning (Antoine du Hamel / #4569)
+- @uppy/aws-s3-multipart: fix support for non-multipart PUT upload (Antoine du Hamel / #4568)
+
+## 3.4.1
+
+Released: 2023-07-06
+Included in: Uppy v3.11.0
+
+- @uppy/aws-s3-multipart: increase priority of abort and complete (Stefan Schonert / #4542)
+- @uppy/aws-s3-multipart: fix upload retry using an outdated ID (Antoine du Hamel / #4544)
+- @uppy/aws-s3-multipart: fix Golden Retriever integration (Antoine du Hamel / #4526)
+- @uppy/aws-s3-multipart: add types to internal fields (Antoine du Hamel / #4535)
+- @uppy/aws-s3-multipart: fix pause/resume (Antoine du Hamel / #4523)
+- @uppy/aws-s3-multipart: fix resume single-chunk multipart uploads (Antoine du Hamel / #4528)
+- @uppy/aws-s3-multipart: disable pause/resume for remote uploads in the UI (Artur Paikin / #4500)
+
+## 3.4.0
+
+Released: 2023-06-19
+Included in: Uppy v3.10.0
+
+- @uppy/aws-s3-multipart: fix the chunk size calculation (Antoine du Hamel / #4508)
+- @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/tus,@uppy/utils,@uppy/xhr-upload: When file is removed (or all are canceled), controller.abort queued requests (Artur Paikin / #4504)
+- @uppy/aws-s3-multipart,@uppy/tus,@uppy/xhr-upload: Don't close socket while upload is still in progress (Artur Paikin / #4479)
+- @uppy/aws-s3-multipart: fix `getUploadParameters` option (Antoine du Hamel / #4465)
+
+## 3.3.0
+
+Released: 2023-05-02
+Included in: Uppy v3.9.0
+
+- @uppy/aws-s3-multipart: allowedMetaFields: null means “include all” (Artur Paikin / #4437)
+- @uppy/aws-s3-multipart: add `shouldUseMultipart ` option (Antoine du Hamel / #4205)
+- @uppy/aws-s3-multipart: make retries more robust (Antoine du Hamel / #4424)
+
+## 3.1.3
+
+Released: 2023-04-04
+Included in: Uppy v3.7.0
+
+- @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/tus,@uppy/xhr-upload: make sure that we reset serverToken when an upload fails (Mikael Finstad / #4376)
+- @uppy/aws-s3-multipart: do not auto-open sockets, clean them up on abort (Antoine du Hamel)
+
+## 3.1.2
+
+Released: 2023-01-26
+Included in: Uppy v3.4.0
+
+- @uppy/aws-s3-multipart: fix metadata shape (Antoine du Hamel / #4267)
+- @uppy/aws-s3-multipart: add support for `allowedMetaFields` option (Antoine du Hamel / #4215)
+- @uppy/aws-s3-multipart: fix singPart type (Stefan Schonert / #4224)
+
+## 3.1.1
+
+Released: 2022-11-16
+Included in: Uppy v3.3.1
+
+- @uppy/aws-s3-multipart: handle slow connections better (Antoine du Hamel / #4213)
+- @uppy/aws-s3-multipart: Fix typo in url check (Christian Franke / #4211)
+
+## 3.1.0
+
+Released: 2022-11-10
+Included in: Uppy v3.3.0
+
+- @uppy/aws-s3-multipart: empty the queue when pausing (Antoine du Hamel / #4203)
+- @uppy/aws-s3-multipart: refactor rate limiting approach (Antoine du Hamel / #4187)
+- @uppy/aws-s3-multipart: change limit to 6 (Antoine du Hamel / #4199)
+- @uppy/aws-s3-multipart: remove unused `timeout` option (Antoine du Hamel / #4186)
+- @uppy/aws-s3-multipart,@uppy/tus: fix `Timed out waiting for socket` (Antoine du Hamel / #4177)
+
 ## 3.0.2
 
 Released: 2022-09-25

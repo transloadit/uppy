@@ -1,4 +1,3 @@
-const ms = require('ms')
 const fs = require('node:fs')
 const { isURL } = require('validator')
 const logger = require('../server/logger')
@@ -15,8 +14,9 @@ const defaultOptions = {
     conditions: [],
     useAccelerateEndpoint: false,
     getKey: defaultGetKey,
-    expires: ms('5 minutes') / 1000,
+    expires: 800, // seconds
   },
+  enableUrlEndpoint: true, // todo next major make this default false
   allowLocalUrls: false,
   logClientVersion: true,
   periodicPingUrls: [],

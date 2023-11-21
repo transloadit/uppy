@@ -5,11 +5,14 @@ name: Companion Edge Deploy
 
 on:
   push:
-    branches: [ 'main' ]
+    branches: ['main']
     paths:
       - yarn.lock
       - 'packages/@uppy/companion/**'
       - '.github/workflows/companion-deploy.yml'
+
+env:
+  YARN_ENABLE_GLOBAL_CACHE: false
 
 jobs:
   npm:
@@ -19,9 +22,15 @@ jobs:
       - name: Checkout sources
         uses: actions/checkout@v3
       - name: Set SHA commit in version
-        run: (cd packages/@uppy/companion && node -e 'const pkg=require("./package.json");pkg.version+="+${{ github.sha }}";fs.writeFileSync("package.json",JSON.stringify(pkg, undefined, 2)+"\n")')
+        run:
+          (cd packages/@uppy/companion && node -e 'const
+          pkg=require("./package.json");pkg.version+="+${{ github.sha
+          }}";fs.writeFileSync("package.json",JSON.stringify(pkg, undefined,
+          2)+"\n")')
       - name: Create Companion tarball
-        run: corepack yarn workspace @uppy/companion pack --install-if-needed -o /tmp/companion-${{ github.sha }}.tar.gz
+        run:
+          corepack yarn workspace @uppy/companion pack --install-if-needed -o
+          /tmp/companion-${{ github.sha }}.tar.gz
       - name: Upload artifact
         if: success()
         uses: actions/upload-artifact@v3
@@ -62,3 +71,20 @@ jobs:
           file: Dockerfile
           tags: ${{ steps.docker_meta.outputs.tags }}
           labels: ${{ steps.docker_meta.outputs.labels }}
+
+  heroku:
+    name: Heroku
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v3
+      - name: Alter dockerfile
+        run: |
+          sed -i 's/^EXPOSE 3020$/EXPOSE $PORT/g' Dockerfile
+      - name: Deploy to heroku
+        uses: akhileshns/heroku-deploy@v3.12.12
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: companion-demo
+          heroku_email: ${{secrets.HEROKU_EMAIL}}
+          usedocker: true

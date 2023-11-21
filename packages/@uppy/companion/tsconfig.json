@@ -1,17 +1,15 @@
 {
   "compilerOptions": {
     "outDir": "./lib",
-    "module": "commonjs",
+    "module": "Node16",
+    "moduleResolution": "node16",
     "declaration": true,
-    "target": "es6",
-    "lib": ["es2019", "dom"],
+    "target": "es2019",
     "noImplicitAny": false,
     "sourceMap": false,
     "allowJs": true,
     "checkJs": true,
     "noEmitOnError": true
   },
-  "include": [
-    "src/**/*"
-  ]
+  "include": ["src/**/*"]
 }

@@ -25,6 +25,8 @@ export default {
     editFile: 'Edit file',
     // Shown in the panel header for the metadata editor. Rendered as “Editing image.png”.
     editing: 'Editing %{file}',
+    // Shown on the main upload screen when an upload error occurs
+    error: 'Error',
     // Used as the screen reader label for the button that saves metadata edits and returns to the
     // file list view.
     finishEditingFile: 'Finish editing file',

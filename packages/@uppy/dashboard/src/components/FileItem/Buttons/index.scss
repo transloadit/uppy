@@ -10,13 +10,13 @@
     opacity: 1;
   }
 
-  [data-uppy-theme="dark"] & {
+  [data-uppy-theme='dark'] & {
     @include blue-border-focus--dark;
 
     color: $gray-300;
   }
 
-  [data-uppy-theme="dark"] &:hover {
+  [data-uppy-theme='dark'] &:hover {
     color: $gray-200;
   }
 }
@@ -30,17 +30,39 @@
     opacity: 1;
   }
 
-  [data-uppy-theme="dark"] & {
+  .uppy-size--md & {
+    position: absolute;
+    top: -8px;
+    inset-inline-end: -8px;
+    z-index: $zIndex-3;
+    width: 18px;
+    height: 18px;
+    padding: 0;
+
+    &:focus {
+      border-radius: 50%;
+    }
+  }
+
+  .uppy-Dashboard--singleFile.uppy-size--height-md & {
+    position: absolute;
+    inset-inline-end: 8px;
+    top: 8px;
+  }
+
+  [data-uppy-theme='dark'] & {
     color: $gray-700;
   }
 
-  [data-uppy-theme="dark"] &:hover {
+  [data-uppy-theme='dark'] &:hover {
     color: $gray-800;
   }
 }
 
 // Only for mobile screens
-.uppy-Dashboard:not(.uppy-size--md) {
+.uppy-Dashboard:not(.uppy-size--md):not(
+    .uppy-Dashboard--singleFile.uppy-size--height-md
+  ) {
   // Vertically center Edit&Remove buttons on mobile
   .uppy-Dashboard-Item-actionWrapper {
     display: flex;
@@ -69,20 +91,6 @@
 
     &:focus {
       border-radius: 3px;
-    }
-  }
-  // Remove button is in the top right corner
-  .uppy-Dashboard-Item-action--remove {
-    position: absolute;
-    top: -8px;
-    z-index: $zIndex-3;
-    width: 18px;
-    height: 18px;
-    padding: 0;
-    inset-inline-end: -8px;
-
-    &:focus {
-      border-radius: 50%;
     }
   }
 }

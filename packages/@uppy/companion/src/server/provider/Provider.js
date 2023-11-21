@@ -4,10 +4,12 @@
 class Provider {
   /**
    *
-   * @param {object} options
+   * @param {{providerName: string, allowLocalUrls: boolean}} options
    */
-  constructor (options) { // eslint-disable-line no-unused-vars
+  constructor ({ allowLocalUrls }) {
+    // Some providers might need cookie auth for the thumbnails fetched via companion
     this.needsCookieAuth = false
+    this.allowLocalUrls = allowLocalUrls
     return this
   }
 
@@ -24,7 +26,8 @@ class Provider {
    * @param {object} options
    * @returns {Promise}
    */
-  async list (options) { // eslint-disable-line no-unused-vars
+  // eslint-disable-next-line class-methods-use-this,no-unused-vars
+  async list (options) {
     throw new Error('method not implemented')
   }
 
@@ -34,7 +37,8 @@ class Provider {
    * @param {object} options
    * @returns {Promise}
    */
-  async download (options) { // eslint-disable-line no-unused-vars
+  // eslint-disable-next-line class-methods-use-this,no-unused-vars
+  async download (options) {
     throw new Error('method not implemented')
   }
 
@@ -44,7 +48,8 @@ class Provider {
    * @param {object} options
    * @returns {Promise}
    */
-  async thumbnail (options) { // eslint-disable-line no-unused-vars
+  // eslint-disable-next-line class-methods-use-this,no-unused-vars
+  async thumbnail (options) {
     throw new Error('method not implemented')
   }
 
@@ -54,7 +59,8 @@ class Provider {
    * @param {object} options
    * @returns {Promise}
    */
-  async size (options) { // eslint-disable-line no-unused-vars
+  // eslint-disable-next-line class-methods-use-this,no-unused-vars
+  async size (options) {
     throw new Error('method not implemented')
   }
 
@@ -64,17 +70,30 @@ class Provider {
    * @param {object} options
    * @returns {Promise}
    */
-  async deauthorizationCallback (options) { // eslint-disable-line no-unused-vars
+  // eslint-disable-next-line class-methods-use-this,no-unused-vars
+  async deauthorizationCallback (options) {
     // @todo consider doing something like throw new NotImplementedError() instead
     throw new Error('method not implemented')
   }
 
   /**
+   * Generate a new access token based on the refresh token
+   */
+  // eslint-disable-next-line class-methods-use-this,no-unused-vars
+  async refreshToken (options) {
+    throw new Error('method not implemented')
+  }
+
+  /**
+   * Name of the OAuth provider. Return empty string if no OAuth provider is needed.
+   *
    * @returns {string}
    */
   static get authProvider () {
-    return ''
+    return undefined
   }
 }
 
 module.exports = Provider
+// OAuth providers are those that have a `static authProvider` set. It means they require OAuth authentication to work
+module.exports.isOAuthProvider = (authProvider) => typeof authProvider === 'string' && authProvider.length > 0

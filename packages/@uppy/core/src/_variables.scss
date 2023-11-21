@@ -1,7 +1,10 @@
 // Fonts
 
-$font-family-base: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", "Segoe UI Symbol", "Segoe UI Emoji", "Apple Color Emoji", Roboto, Helvetica, Arial, sans-serif !default;
-$font-family-mono: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !default;
+$font-family-base: -apple-system, system-ui, BlinkMacSystemFont, 'Segoe UI',
+  'Segoe UI Symbol', 'Segoe UI Emoji', 'Apple Color Emoji', Roboto, Helvetica,
+  Arial, sans-serif !default;
+$font-family-mono: SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
+  'Courier New', monospace !default;
 
 // Colors
 
@@ -13,14 +16,14 @@ $orange: #f6a623 !default;
 $yellow: #ffd600 !default;
 $green: #1bb240 !default;
 $darkgreen: #1c8b37 !default;
-$blue: #2275d7 !default;
+$blue: #1269cf !default;
 $lightblue: #aae1ff !default;
 $beige: #edd4b9 !default;
 
 $gray-50: #fafafa !default;
 $gray-100: #f4f4f4 !default;
-$gray-100--highlighted: #f1f3f6 !default;
 $gray-200: #eaeaea !default;
+$gray-200--highlighted: #e9ecef !default;
 $gray-250: #dfdfdf !default;
 $gray-300: #cfcfcf !default;
 $gray-400: #bbb !default;
@@ -32,7 +35,7 @@ $gray-900: #1f1f1f !default;
 
 $white-50: #fffbf7 !default;
 
-$highlight: #eceef2;
+$highlight: #dfe6f1;
 $highlight--dark: #02baf2;
 
 $uppy-pink: #eb2177;

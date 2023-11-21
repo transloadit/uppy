@@ -1,5 +1,72 @@
 # @uppy/utils
 
+## 5.6.0
+
+Released: 2023-11-08
+Included in: Uppy v3.19.0
+
+- @uppy/utils: refactor to TS (Antoine du Hamel / #4699)
+
+## 5.5.1
+
+Released: 2023-09-29
+Included in: Uppy v3.17.0
+
+- @uppy/utils: test: migrate to Vitest for Uppy core and Uppy plugins (Antoine du Hamel / #4700)
+
+## 5.5.0
+
+Released: 2023-09-05
+Included in: Uppy v3.15.0
+
+- @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/companion-client,@uppy/core,@uppy/tus,@uppy/utils,@uppy/xhr-upload: Move remote file upload logic into companion-client (Merlijn Vos / #4573)
+
+## 5.4.3
+
+Released: 2023-07-24
+Included in: Uppy v3.13.1
+
+- @uppy/utils: align version of `preact` with the UI plugins (Antoine du Hamel / #4599)
+
+## 5.4.0
+
+Released: 2023-06-19
+Included in: Uppy v3.10.0
+
+- @uppy/companion,@uppy/core,@uppy/dashboard,@uppy/golden-retriever,@uppy/status-bar,@uppy/utils: Migrate all lodash' per-method-packages usage to lodash. (LinusMain / #4274)
+- @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/tus,@uppy/utils,@uppy/xhr-upload: When file is removed (or all are canceled), controller.abort queued requests (Artur Paikin / #4504)
+- @uppy/utils: rename `EventTracker` -> `EventManager` (Stephen Wooten / #4481)
+
+## 5.1.3
+
+Released: 2023-03-07
+Included in: Uppy v3.6.0
+
+- @uppy/utils: workaround chrome crash (Mikael Finstad / #4310)
+
+## 5.1.2
+
+Released: 2023-01-26
+Included in: Uppy v3.4.0
+
+- @uppy/utils: better fallbacks for the drag & drop API (Antoine du Hamel / #4260)
+- @uppy/utils: Fix getSpeed type (referenced `bytesTotal` instead of `uploadStarted`) (Pascal Wengerter / #4263)
+
+## 5.1.1
+
+Released: 2022-11-16
+Included in: Uppy v3.3.1
+
+- @uppy/utils: fix types (Antoine du Hamel / #4212)
+
+## 5.1.0
+
+Released: 2022-11-10
+Included in: Uppy v3.3.0
+
+- @uppy/utils: update typings for `RateLimitedQueue` (Antoine du Hamel / #4204)
+- @uppy/utils: add `cause` support for `AbortError`s (Antoine du Hamel / #4198)
+
 ## 5.0.2
 
 Released: 2022-09-25

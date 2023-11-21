@@ -1,5 +1,5 @@
-import { describe, expect, it } from '@jest/globals'
-import generateFileID from './generateFileID.js'
+import { describe, expect, it } from 'vitest'
+import generateFileID from './generateFileID.ts'
 
 describe('generateFileID', () => {
   it('should take the filename object and produce a lowercase file id made up of uppy- prefix, file name (cleaned up to be lowercase, letters and numbers only), type, relative path (folder) from file.meta.relativePath, size and lastModified date', () => {

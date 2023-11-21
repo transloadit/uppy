@@ -8,12 +8,15 @@ let redisClient
  * A Singleton module that provides a single redis client through out
  * the lifetime of the server
  *
- * @param {Record<string, unknown>} [opts] node-redis client options
+ * @param {{ redisUrl?: string, redisOptions?: Record<string, any> }} [companionOptions] options
  */
-function createClient (opts) {
+function createClient (companionOptions) {
   if (!redisClient) {
-    // todo remove legacyMode when fixed: https://github.com/tj/connect-redis/issues/361
-    redisClient = redis.createClient({ ...opts, legacyMode: true })
+    const { redisUrl, redisOptions } = companionOptions
+    redisClient = redis.createClient({
+      ...redisOptions,
+      ...(redisUrl && { url: redisUrl }),
+    })
 
     redisClient.on('error', err => logger.error('redis error', err))
 
@@ -32,9 +35,9 @@ function createClient (opts) {
 }
 
 module.exports.client = (companionOptions) => {
-  if (!companionOptions) {
+  if (!companionOptions?.redisUrl && !companionOptions?.redisOptions) {
     return redisClient
   }
 
-  return createClient({ ...companionOptions.redisOptions, url: companionOptions.redisUrl })
+  return createClient(companionOptions)
 }

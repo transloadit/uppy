@@ -16,11 +16,17 @@ import Slide from './Slide.jsx'
 const WIDTH_XL = 900
 const WIDTH_LG = 700
 const WIDTH_MD = 576
-const HEIGHT_MD = 400
+
+const HEIGHT_MD = 330
+// We might want to enable this in the future
+// const HEIGHT_LG = 400
+// const HEIGHT_XL = 460
 
 export default function Dashboard (props) {
-  const noFiles = props.totalFileCount === 0
+  const isNoFiles = props.totalFileCount === 0
+  const isSingleFile = props.totalFileCount === 1
   const isSizeMD = props.containerWidth > WIDTH_MD
+  const isSizeHeightMD = props.containerHeight > HEIGHT_MD
 
   const dashboardClassName = classNames({
     'uppy-Dashboard': true,
@@ -33,8 +39,13 @@ export default function Dashboard (props) {
     'uppy-size--lg': props.containerWidth > WIDTH_LG,
     'uppy-size--xl': props.containerWidth > WIDTH_XL,
     'uppy-size--height-md': props.containerHeight > HEIGHT_MD,
+    // We might want to enable this in the future
+    // 'uppy-size--height-lg': props.containerHeight > HEIGHT_LG,
+    // 'uppy-size--height-xl': props.containerHeight > HEIGHT_XL,
     'uppy-Dashboard--isAddFilesPanelVisible': props.showAddFilesPanel,
     'uppy-Dashboard--isInnerWrapVisible': props.areInsidesReadyToBeVisible,
+    // Only enable “centered single file” mode when Dashboard is tall enough
+    'uppy-Dashboard--singleFile': props.singleFileFullScreen && isSingleFile && isSizeHeightMD,
   })
 
   // Important: keep these in sync with the percent width values in `src/components/FileItem/index.scss`.
@@ -47,7 +58,7 @@ export default function Dashboard (props) {
     itemsPerRow = 3
   }
 
-  const showFileList = props.showSelectedFiles && !noFiles
+  const showFileList = props.showSelectedFiles && !isNoFiles
 
   const numberOfFilesForRecovery = props.recoveredState ? Object.keys(props.recoveredState.files).length : null
   const numberOfGhosts = props.files ? Object.keys(props.files).filter((fileID) => props.files[fileID].isGhost).length : null
@@ -133,8 +144,29 @@ export default function Dashboard (props) {
 
           {showFileList ? (
             <FileList
-              // eslint-disable-next-line react/jsx-props-no-spreading
-              {...props}
+              id={props.id}
+              error={props.error}
+              i18n={props.i18n}
+              uppy={props.uppy}
+              files={props.files}
+              acquirers={props.acquirers}
+              resumableUploads={props.resumableUploads}
+              hideRetryButton={props.hideRetryButton}
+              hidePauseResumeButton={props.hidePauseResumeButton}
+              hideCancelButton={props.hideCancelButton}
+              showLinkToFileUploadResult={props.showLinkToFileUploadResult}
+              showRemoveButtonAfterComplete={props.showRemoveButtonAfterComplete}
+              isWide={props.isWide}
+              metaFields={props.metaFields}
+              toggleFileCard={props.toggleFileCard}
+              handleRequestThumbnail={props.handleRequestThumbnail}
+              handleCancelThumbnail={props.handleCancelThumbnail}
+              recoveredState={props.recoveredState}
+              individualCancellation={props.individualCancellation}
+              openFileEditor={props.openFileEditor}
+              canEditFile={props.canEditFile}
+              toggleAddFilesPanel={props.toggleAddFilesPanel}
+              isSingleFile={isSingleFile}
               itemsPerRow={itemsPerRow}
             />
           ) : (

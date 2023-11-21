@@ -13,41 +13,44 @@ function matchYoutubeUrl(url) {
 }
 
 export default function FilePreviewAndLink (props) {
+  const { file, i18n, toggleFileCard, metaFields, showLinkToFileUploadResult } = props
+  const white = 'rgba(255, 255, 255, 0.5)'
+  const previewBackgroundColor = file.preview ? white : getFileTypeIcon(props.file.type).color
   let thumbnail = false
   const url = props?.file?.remote?.body?.url
   if (url && matchYoutubeUrl(url)) {
     const videoID = getYouTubeID(url, { fuzzy: false });
     thumbnail = `https://img.youtube.com/vi/${videoID}/default.jpg`
   }
+
   return (
     <div
-      class="uppy-Dashboard-Item-previewInnerWrap"
-      style={{ background: thumbnail ? `url(${thumbnail})` : getFileTypeIcon(props.file.type).color, backgroundPosition: 'center', backgroundRepeat: 'no-repeat', backgroundSize: 'cover' }}
+      className="uppy-Dashboard-Item-previewInnerWrap"
+      style={{ backgroundColor: previewBackgroundColor }}
     >
       {
-        props.showLinkToFileUploadResult
-        && props.file.uploadURL
+        showLinkToFileUploadResult && file.uploadURL
           && (
           <a
             className="uppy-Dashboard-Item-previewLink"
-            href={props.file.uploadURL}
+            href={file.uploadURL}
             rel="noreferrer noopener"
             target="_blank"
-            aria-label={props.file.meta.name}
+            aria-label={file.meta.name}
           >
-            <span hidden>{props.file.meta.name}</span>
+            <span hidden>{file.meta.name}</span>
           </a>
           )
       }
       {
         !thumbnail &&
-        <FilePreview file={props.file} />
+        <FilePreview file={file} />
       }
       <MetaErrorMessage
-        file={props.file}
-        i18n={props.i18n}
-        toggleFileCard={props.toggleFileCard}
-        metaFields={props.metaFields}
+        file={file}
+        i18n={i18n}
+        toggleFileCard={toggleFileCard}
+        metaFields={metaFields}
       />
     </div>
   )

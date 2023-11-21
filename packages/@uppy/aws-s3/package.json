@@ -1,7 +1,7 @@
 {
   "name": "@uppy/aws-s3",
   "description": "Upload to Amazon S3 with Uppy",
-  "version": "3.0.3",
+  "version": "3.5.0",
   "license": "MIT",
   "main": "lib/index.js",
   "type": "module",
@@ -23,13 +23,14 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
+    "@uppy/aws-s3-multipart": "workspace:^",
     "@uppy/companion-client": "workspace:^",
     "@uppy/utils": "workspace:^",
     "@uppy/xhr-upload": "workspace:^",
     "nanoid": "^4.0.0"
   },
   "devDependencies": {
-    "@jest/globals": "^29.0.0",
+    "vitest": "^0.34.5",
     "whatwg-fetch": "3.6.2"
   },
   "peerDependencies": {

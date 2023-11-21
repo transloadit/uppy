@@ -11,14 +11,6 @@ import AssemblyWatcher from './AssemblyWatcher.js'
 import locale from './locale.js'
 import packageJson from '../package.json'
 
-function defaultGetAssemblyOptions (file, options) {
-  return {
-    params: options.params,
-    signature: options.signature,
-    fields: options.fields,
-  }
-}
-
 const sendErrorToConsole = originalErr => err => {
   const error = new ErrorWithCause('Failed to send error to the client', { cause: err })
   // eslint-disable-next-line no-console
@@ -60,27 +52,35 @@ export default class Transloadit extends BasePlugin {
       waitForMetadata: false,
       alwaysRunAssembly: false,
       importFromUploadURLs: false,
+      /** @deprecated use `assemblyOptions` instead */
       signature: null,
+      /** @deprecated use `assemblyOptions` instead */
       params: null,
-      fields: {},
-      getAssemblyOptions: defaultGetAssemblyOptions,
+      /** @deprecated use `assemblyOptions` instead */
+      fields: null,
+      /** @deprecated use `assemblyOptions` instead */
+      getAssemblyOptions: null,
       limit: 20,
       retryDelays: [7_000, 10_000, 15_000, 20_000],
     }
 
     this.opts = { ...defaultOptions, ...opts }
+
+    // TODO: remove this fallback in the next major
+    this.opts.assemblyOptions ??= this.opts.getAssemblyOptions ?? {
+      params: this.opts.params,
+      signature: this.opts.signature,
+      fields: this.opts.fields,
+    }
+
+    // TODO: remove this check in the next major (validating params when creating the assembly should be enough)
+    if (opts?.params != null && opts.getAssemblyOptions == null && opts.assemblyOptions == null) {
+      validateParams(this.opts.assemblyOptions.params)
+    }
+
     this.#rateLimitedQueue = new RateLimitedQueue(this.opts.limit)
 
     this.i18nInit()
-
-    const hasCustomAssemblyOptions = this.opts.getAssemblyOptions !== defaultOptions.getAssemblyOptions
-    if (this.opts.params) {
-      validateParams(this.opts.params)
-    } else if (!hasCustomAssemblyOptions) {
-      // Throw the same error that we'd throw if the `params` returned from a
-      // `getAssemblyOptions()` function is null.
-      validateParams(null)
-    }
 
     this.client = new Client({
       service: this.opts.service,
@@ -188,14 +188,12 @@ export default class Transloadit extends BasePlugin {
     return newFile
   }
 
-  #createAssembly (fileIDs, uploadID, options) {
+  #createAssembly (fileIDs, uploadID, assemblyOptions) {
     this.uppy.log('[Transloadit] Create Assembly')
 
     return this.client.createAssembly({
-      params: options.params,
-      fields: options.fields,
+      ...assemblyOptions,
       expectedFiles: fileIDs.length,
-      signature: options.signature,
     }).then(async (newAssembly) => {
       const files = this.uppy.getFiles().filter(({ id }) => fileIDs.includes(id))
       if (files.length !== fileIDs.length) {
@@ -241,17 +239,26 @@ export default class Transloadit extends BasePlugin {
         },
       })
 
+      // TODO: this should not live inside a `file-removed` event but somewhere more deterministic.
+      // Such as inside the function where the assembly has succeeded or cancelled.
+      // For the use case of cancelling the assembly when needed, we should try to do that with just `cancel-all`.
       const fileRemovedHandler = (fileRemoved, reason) => {
+        // If the assembly has successfully completed, we do not need these checks.
+        // Otherwise we may cancel an assembly after it already succeeded
+        if (assembly.status?.ok === 'ASSEMBLY_COMPLETED') {
+          this.uppy.off('file-removed', fileRemovedHandler)
+          return
+        }
         if (reason === 'cancel-all') {
           assembly.close()
-          this.uppy.off(fileRemovedHandler)
+          this.uppy.off('file-removed', fileRemovedHandler)
         } else if (fileRemoved.id in updatedFiles) {
           delete updatedFiles[fileRemoved.id]
           const nbOfRemainingFiles = Object.keys(updatedFiles).length
           if (nbOfRemainingFiles === 0) {
             assembly.close()
             this.#cancelAssembly(newAssembly).catch(() => { /* ignore potential errors */ })
-            this.uppy.off(fileRemovedHandler)
+            this.uppy.off('file-removed', fileRemovedHandler)
           } else {
             this.client.updateNumberOfFilesInAssembly(newAssembly, nbOfRemainingFiles)
               .catch(() => { /* ignore potential errors */ })
@@ -290,13 +297,23 @@ export default class Transloadit extends BasePlugin {
 
     watcher.on('assembly-error', (id, error) => {
       // Clear postprocessing state for all our files.
-      const files = this.getAssemblyFiles(id)
-      files.forEach((file) => {
-      // TODO Maybe make a postprocess-error event here?
-        this.uppy.emit('upload-error', file, error)
+      const filesFromAssembly = this.getAssemblyFiles(id)
+      filesFromAssembly.forEach((file) => {
+        // TODO Maybe make a postprocess-error event here?
 
+        this.uppy.emit('upload-error', file, error)
         this.uppy.emit('postprocess-complete', file)
       })
+
+      // Reset `tus` key in the file state, so when the upload is retried,
+      // old tus upload is not re-used — Assebmly expects a new upload, can't currently
+      // re-use the old one. See: https://github.com/transloadit/uppy/issues/4412
+      // and `onReceiveUploadUrl` in @uppy/tus
+      const files = { ...this.uppy.getState().files }
+      filesFromAssembly.forEach(file => delete files[file.id].tus)
+      this.uppy.setState({ files })
+
+      this.uppy.emit('error', error)
     })
 
     this.assemblyWatchers[uploadID] = watcher
@@ -362,7 +379,7 @@ export default class Transloadit extends BasePlugin {
     const state = this.getPluginState()
     const file = this.#findFile(uploadedFile)
     if (!file) {
-      this.uppy.log('[Transloadit] Couldn’t file the file, it was likely removed in the process')
+      this.uppy.log('[Transloadit] Couldn’t find the file, it was likely removed in the process')
       return
     }
     this.setPluginState({
@@ -580,6 +597,29 @@ export default class Transloadit extends BasePlugin {
       this.uppy.emit('transloadit:assembly-executing', assembly.status)
     })
 
+    assembly.on('execution-progress', (details) => {
+      this.uppy.emit('transloadit:execution-progress', details)
+
+      if (details.progress_combined != null) {
+        // TODO: Transloadit emits progress information for the entire Assembly combined
+        // (progress_combined) and for each imported/uploaded file (progress_per_original_file).
+        // Uppy's current design requires progress to be set for each file, which is then
+        // averaged to get the total progress (see calculateProcessingProgress.js).
+        // Therefore, we currently set the combined progres for every file, so that this is
+        // the same value that is displayed to the end user, although we have more accurate
+        // per-file progress as well. We cannot use this here or otherwise progress from
+        // imported files would not be counted towards the total progress because imported
+        // files are not registered with Uppy.
+        for (const file of this.uppy.getFiles()) {
+          this.uppy.emit('postprocess-progress', file, {
+            mode: 'determinate',
+            value: details.progress_combined / 100,
+            message: this.i18n('encoding'),
+          })
+        }
+      }
+    })
+
     if (this.opts.waitForEncoding) {
       assembly.on('result', (stepName, result) => {
         this.#onResult(id, stepName, result)
@@ -789,9 +829,6 @@ export default class Transloadit extends BasePlugin {
         // Golden Retriever. So, Golden Retriever is required to do resumability with the Transloadit plugin,
         // and we disable Tus's default resume implementation to prevent bad behaviours.
         storeFingerprintForResuming: false,
-        // Disable Companion's retry optimisation; we need to change the endpoint on retry
-        // so it can't just reuse the same tus.Upload instance server-side.
-        useFastRemoteRetry: false,
         // Only send Assembly metadata to the tus endpoint.
         allowedMetaFields: ['assembly_url', 'filename', 'fieldname'],
         // Pass the limit option to @uppy/tus

@@ -1,8 +1,8 @@
-import * as Expo from 'expo'
+import * as FileSystem from 'expo-file-system'
 import base64 from 'base64-js'
 
 export default function getTusFileReader (file, chunkSize, cb) {
-  Expo.FileSystem.getInfoAsync(file.uri, { size: true }).then((info) => {
+  FileSystem.getInfoAsync(file.uri, { size: true }).then((info) => {
     cb(null, new TusFileReader(file, info.size))
   }).catch(cb)
 }
@@ -14,18 +14,13 @@ class TusFileReader {
   }
 
   slice (start, end, cb) {
-    end = Math.min(end, this.size)
     const options = {
-      encoding: Expo.FileSystem.EncodingTypes.Base64,
-      length: end - start,
+      encoding: FileSystem.EncodingType.Base64,
+      length: Math.min(end, this.size) - start,
       position: start,
     }
-    Expo.FileSystem.readAsStringAsync(this.file.uri, options).then((data) => {
+    FileSystem.readAsStringAsync(this.file.uri, options).then((data) => {
       cb(null, base64.toByteArray(data))
     }).catch(cb)
-  }
-
-  close () {
-
   }
 }
