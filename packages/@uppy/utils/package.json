@@ -65,6 +65,8 @@
     "./lib/FOCUSABLE_ELEMENTS.js": "./lib/FOCUSABLE_ELEMENTS.js",
     "./lib/fileFilters": "./lib/fileFilters.js",
     "./lib/VirtualList": "./lib/VirtualList.js",
+    "./lib/UppyFile": "./lib/UppyFile.js",
+    "./lib/FileProgress": "./lib/FileProgress.js",
     "./src/microtip.scss": "./src/microtip.scss",
     "./lib/UserFacingApiError": "./lib/UserFacingApiError.js"
   },

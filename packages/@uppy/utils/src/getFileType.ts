@@ -2,7 +2,7 @@ import type { UppyFile } from './UppyFile'
 import getFileNameAndExtension from './getFileNameAndExtension.ts'
 import mimeTypes from './mimeTypes.ts'
 
-export default function getFileType(file: UppyFile): string {
+export default function getFileType(file: Partial<UppyFile<any, any>>): string {
   if (file.type) return file.type
 
   const fileExtension = file.name

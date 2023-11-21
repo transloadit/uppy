@@ -1,18 +1,21 @@
-import { render } from 'preact'
+/* eslint-disable class-methods-use-this */
+/* eslint-disable @typescript-eslint/no-empty-function */
+import { render, type ComponentChild } from 'preact'
 import findDOMElement from '@uppy/utils/lib/findDOMElement'
 import getTextDirection from '@uppy/utils/lib/getTextDirection'
 
-import BasePlugin from './BasePlugin.js'
+import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
+import BasePlugin from './BasePlugin.ts'
+import type { PluginOpts } from './BasePlugin.ts'
 
 /**
  * Defer a frequent call to the microtask queue.
- *
- * @param {() => T} fn
- * @returns {Promise<T>}
  */
-function debounce (fn) {
-  let calling = null
-  let latestArgs = null
+function debounce<T extends (...args: any[]) => any>(
+  fn: T,
+): (...args: Parameters<T>) => Promise<ReturnType<T>> {
+  let calling: Promise<ReturnType<T>> | null = null
+  let latestArgs: Parameters<T>
   return (...args) => {
     latestArgs = args
     if (!calling) {
@@ -35,10 +38,20 @@ function debounce (fn) {
  *
  * For plugins without an user interface, see BasePlugin.
  */
-class UIPlugin extends BasePlugin {
-  #updateUI
+class UIPlugin<
+  Opts extends PluginOpts & { direction?: 'ltr' | 'rtl' },
+  M extends Meta,
+  B extends Body,
+> extends BasePlugin<Opts, M, B> {
+  #updateUI: (state: any) => void
 
-  getTargetPlugin (target) {
+  isTargetDOMEl: boolean
+
+  el: HTMLElement | null
+
+  parent: unknown
+
+  getTargetPlugin(target: unknown): UIPlugin<any, any, any> | undefined {
     let targetPlugin
     if (typeof target === 'object' && target instanceof UIPlugin) {
       // Targeting a plugin *instance*
@@ -47,7 +60,7 @@ class UIPlugin extends BasePlugin {
       // Targeting a plugin type
       const Target = target
       // Find the target plugin instance.
-      this.uppy.iteratePlugins(p => {
+      this.uppy.iteratePlugins((p) => {
         if (p instanceof Target) {
           targetPlugin = p
         }
@@ -62,7 +75,10 @@ class UIPlugin extends BasePlugin {
    * If it’s an object — target is a plugin, and we search `plugins`
    * for a plugin with same name and return its target.
    */
-  mount (target, plugin) {
+  mount(
+    target: HTMLElement | string,
+    plugin: UIPlugin<any, any, any>,
+  ): HTMLElement {
     const callerPluginName = plugin.id
 
     const targetElement = findDOMElement(target)
@@ -85,7 +101,9 @@ class UIPlugin extends BasePlugin {
         this.afterUpdate()
       })
 
-      this.uppy.log(`Installing ${callerPluginName} to a DOM element '${target}'`)
+      this.uppy.log(
+        `Installing ${callerPluginName} to a DOM element '${target}'`,
+      )
 
       if (this.opts.replaceTargetContent) {
         // Doing render(h(null), targetElement), which should have been
@@ -99,7 +117,8 @@ class UIPlugin extends BasePlugin {
       targetElement.appendChild(uppyRootElement)
 
       // Set the text direction if the page has not defined one.
-      uppyRootElement.dir = this.opts.direction || getTextDirection(uppyRootElement) || 'ltr'
+      uppyRootElement.dir =
+        this.opts.direction || getTextDirection(uppyRootElement) || 'ltr'
 
       this.onMount()
 
@@ -121,37 +140,50 @@ class UIPlugin extends BasePlugin {
 
     let message = `Invalid target option given to ${callerPluginName}.`
     if (typeof target === 'function') {
-      message += ' The given target is not a Plugin class. '
-        + 'Please check that you\'re not specifying a React Component instead of a plugin. '
-        + 'If you are using @uppy/* packages directly, make sure you have only 1 version of @uppy/core installed: '
-        + 'run `npm ls @uppy/core` on the command line and verify that all the versions match and are deduped correctly.'
+      message +=
+        ' The given target is not a Plugin class. ' +
+        "Please check that you're not specifying a React Component instead of a plugin. " +
+        'If you are using @uppy/* packages directly, make sure you have only 1 version of @uppy/core installed: ' +
+        'run `npm ls @uppy/core` on the command line and verify that all the versions match and are deduped correctly.'
     } else {
-      message += 'If you meant to target an HTML element, please make sure that the element exists. '
-        + 'Check that the <script> tag initializing Uppy is right before the closing </body> tag at the end of the page. '
-        + '(see https://github.com/transloadit/uppy/issues/1042)\n\n'
-        + 'If you meant to target a plugin, please confirm that your `import` statements or `require` calls are correct.'
+      message +=
+        'If you meant to target an HTML element, please make sure that the element exists. ' +
+        'Check that the <script> tag initializing Uppy is right before the closing </body> tag at the end of the page. ' +
+        '(see https://github.com/transloadit/uppy/issues/1042)\n\n' +
+        'If you meant to target a plugin, please confirm that your `import` statements or `require` calls are correct.'
     }
     throw new Error(message)
   }
 
-  update (state) {
+  /**
+   * Called when plugin is mounted, whether in DOM or into another plugin.
+   * Needed because sometimes plugins are mounted separately/after `install`,
+   * so this.el and this.parent might not be available in `install`.
+   * This is the case with @uppy/react plugins, for example.
+   */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  render(state: Record<string, unknown>): ComponentChild {
+    throw new Error(
+      'Extend the render method to add your plugin to a DOM element',
+    )
+  }
+
+  update(state: any): void {
     if (this.el != null) {
       this.#updateUI?.(state)
     }
   }
 
-  unmount () {
+  unmount(): void {
     if (this.isTargetDOMEl) {
       this.el?.remove()
     }
     this.onUnmount()
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  onMount () {}
+  onMount(): void {}
 
-  // eslint-disable-next-line class-methods-use-this
-  onUnmount () {}
+  onUnmount(): void {}
 }
 
 export default UIPlugin
