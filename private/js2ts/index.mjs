@@ -60,12 +60,23 @@ for await (const dirent of dir) {
   if (!dirent.isDirectory()) {
     const { path: filepath } = dirent
     const ext = extname(filepath)
+    if (ext !== '.js' && ext !== '.jsx') continue // eslint-disable-line no-continue
     await writeFile(
-      filepath.replace(ext, ext.replace('js', 'ts')),
-      (await readFile(filepath, 'utf-8')).replace(
-        /((?:^|\n)import[^\n]*["']\.\.?\/[^'"]+\.)js(x?["'])/g,
-        '$1ts$2',
-      ),
+      filepath.slice(0, -ext.length) + ext.replace('js', 'ts'),
+      (await readFile(filepath, 'utf-8'))
+        .replace(
+          // The following regex aims to capture all imports and reexports of local .js(x) files to replace it to .ts(x)
+          // It's far from perfect and will have false positives and false negatives.
+          /((?:^|\n)(?:import(?:\s+\w+\s+from)?|export\s*\*\s*from|(?:import|export)\s*(?:\{[^}]*\}|\*\s*as\s+\w+\s)\s*from)\s*["']\.\.?\/[^'"]+\.)js(x?["'])/g, // eslint-disable-line max-len
+          '$1ts$2',
+        )
+        .replace(
+          // The following regex aims to capture all local package.json imports.
+          /\nimport \w+ from ['"]..\/([^'"]+\/)*package.json['"]\n/g,
+          (originalImport) =>
+            `// eslint-disable-next-line @typescript-eslint/ban-ts-comment\n` +
+            `// @ts-ignore We don't want TS to generate types for the package.json${originalImport}`,
+        ),
     )
     await rm(filepath)
   }
