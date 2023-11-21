@@ -1,9 +1,10 @@
 import { describe, expect, it } from 'vitest'
 import assert from 'node:assert'
-import DefaultStore from './index.js'
+import DefaultStore, { type Listener, type GenericState } from './index.ts'
 
 describe('DefaultStore', () => {
   it('cannot be created without new', () => {
+    // @ts-expect-error TypeScript warns us that the following will throw.
     assert.throws(() => DefaultStore(), /TypeError/)
   })
 
@@ -22,11 +23,11 @@ describe('DefaultStore', () => {
   })
 
   it('notifies subscriptions when state changes', () => {
-    let expected = []
+    let expected: GenericState[] = []
     let calls = 0
-    function listener (prevState, nextState, patch) {
+    function listener(...args: Parameters<Listener<GenericState>>): void {
       calls++
-      expect([prevState, nextState, patch]).toEqual(expected)
+      expect(args).toEqual(expected)
     }
 
     const store = new DefaultStore()
