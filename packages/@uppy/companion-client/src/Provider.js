@@ -111,7 +111,17 @@ export default class Provider extends RequestClient {
       const authWindow = window.open(link, '_blank')
       const handleToken = (e) => {
         if (e.source !== authWindow) {
-          this.uppy.log.warn('ignoring event from unknown source', e)
+          let jsonData = ''
+          try {
+            // TODO improve our uppy logger so that it can take an arbitrary number of arguments,
+            // each either objects, errors or strings,
+            // then we don’t have to manually do these things like json stringify when logging.
+            // the logger should never throw an error.
+            jsonData = JSON.stringify(e.data)
+          } catch (err) {
+            // in case JSON.stringify fails (ignored)
+          }
+          this.uppy.log(`ignoring event from unknown source ${jsonData}`, 'warning')
           return
         }
 
