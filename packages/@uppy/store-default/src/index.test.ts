@@ -1,9 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import assert from 'node:assert'
-import DefaultStore, {
-  type Listener,
-  type StateOrStateFragment,
-} from './index.ts'
+import DefaultStore, { type Listener, type GenericState } from './index.ts'
 
 describe('DefaultStore', () => {
   it('cannot be created without new', () => {
@@ -26,9 +23,9 @@ describe('DefaultStore', () => {
   })
 
   it('notifies subscriptions when state changes', () => {
-    let expected: StateOrStateFragment[] = []
+    let expected: GenericState[] = []
     let calls = 0
-    function listener(...args: Parameters<Listener>): void {
+    function listener(...args: Parameters<Listener<GenericState>>): void {
       calls++
       expect(args).toEqual(expected)
     }
