@@ -4,6 +4,7 @@ import type {
   FileRemovedCallback,
   UploadRetryCallback,
   GenericEventCallback,
+  // @ts-expect-error @uppy/core has not been typed yet
 } from '@uppy/core'
 import type { UppyFile } from './UppyFile'
 /**
@@ -41,6 +42,7 @@ export default class EventManager {
         isPaused: Parameters<UploadPauseCallback>[1],
       ) => {
         if (fileID === targetFileID) {
+          // @ts-expect-error @uppy/core has not been typed yet
           cb(isPaused)
         }
       },
@@ -52,6 +54,7 @@ export default class EventManager {
     cb: (isPaused: UppyFile['id']) => void,
   ): void {
     this.on('file-removed', (file: Parameters<FileRemovedCallback<any>>[0]) => {
+      // @ts-expect-error @uppy/core has not been typed yet
       if (fileID === file.id) cb(file.id)
     })
   }
@@ -65,6 +68,7 @@ export default class EventManager {
       ) => {
         if (fileID === targetFileID) {
           // const isPaused = this.#uppy.pauseResume(fileID)
+          // @ts-expect-error @uppy/core has not been typed yet
           cb(isPaused)
         }
       },
