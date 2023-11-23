@@ -4,7 +4,6 @@
   "version": "3.0.6",
   "license": "MIT",
   "main": "lib/index.js",
-  "types": "types/index.d.ts",
   "type": "module",
   "keywords": [
     "file uploader",
