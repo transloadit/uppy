@@ -6,7 +6,6 @@
   "main": "lib/index.js",
   "style": "dist/style.min.css",
   "type": "module",
-  "types": "types/index.d.ts",
   "keywords": [
     "file uploader",
     "upload",

@@ -3,7 +3,6 @@
   "description": "Shared utility functions for Uppy Core and plugins maintained by the Uppy team.",
   "version": "5.6.0",
   "license": "MIT",
-  "types": "types/index.d.ts",
   "type": "module",
   "keywords": [
     "file uploader",

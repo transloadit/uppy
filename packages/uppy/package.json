@@ -7,7 +7,6 @@
   "module": "index.mjs",
   "unpkg": "dist/uppy.min.js",
   "style": "dist/uppy.min.css",
-  "types": "types/index.d.ts",
   "keywords": [
     "file uploader",
     "drag-drop",

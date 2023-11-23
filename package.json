@@ -107,7 +107,6 @@
     "stylelint-config-standard": "^34.0.0",
     "stylelint-config-standard-scss": "^10.0.0",
     "tar": "^6.1.0",
-    "tsd": "^0.28.0",
     "typescript": "~5.1",
     "vitest": "^0.34.5",
     "vue-template-compiler": "workspace:*"
@@ -153,7 +152,6 @@
     "test:locale-packs": "yarn locale-packs:unused && yarn locale-packs:warnings",
     "test:locale-packs:unused": "yarn workspace @uppy-dev/locale-pack test unused",
     "test:locale-packs:warnings": "yarn workspace @uppy-dev/locale-pack test warnings",
-    "test:type": "yarn workspaces foreach -piv --include '@uppy/*' --exclude '@uppy/{angular,react-native,locales,companion,provider-views,robodog,svelte}' exec tsd",
     "test:unit": "yarn run build:lib && yarn test:watch",
     "test:watch": "vitest --environment jsdom --dir packages/@uppy",
     "test": "npm-run-all lint test:locale-packs:unused test:unit test:type test:companion",

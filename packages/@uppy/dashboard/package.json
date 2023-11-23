@@ -5,7 +5,6 @@
   "license": "MIT",
   "main": "lib/index.js",
   "style": "dist/style.min.css",
-  "types": "types/index.d.ts",
   "type": "module",
   "keywords": [
     "file uploader",
