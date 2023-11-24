@@ -12,6 +12,25 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 3.20.0
+
+Released: 2023-11-24
+
+| Package                | Version | Package                | Version |
+| ---------------------- | ------- | ---------------------- | ------- |
+| @uppy/companion-client |   3.6.1 | @uppy/store-default    |   3.1.0 |
+| @uppy/locales          |   3.5.0 | uppy                   |  3.20.0 |
+
+- meta: uppy CDN: Export UIPlugin and BasePlugin (Artur Paikin / #4774)
+- @uppy/locales: Add missing translations to de_DE (Leonhard Melzer / #4800)
+- @uppy/store-default: refactor to typescript (Antoine du Hamel / #4785)
+- meta: improve js2ts script (Antoine du Hamel / #4786)
+- @uppy/companion-client: fix log type error (Mikael Finstad / #4766)
+- @uppy/companion-client: revert breaking change (Antoine du Hamel / #4801)
+- @uppy/locales: use TypeScript for source files (Antoine du Hamel / #4779)
+- meta: migrate AWS SDK v2 to v3 in `bin/uploadcdn` (Trivikram Kamat / #4776)
+
+
 ## 3.19.1
 
 Released: 2023-11-12
