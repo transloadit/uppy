@@ -1,5 +1,13 @@
 # @uppy/companion-client
 
+## 3.6.1
+
+Released: 2023-11-24
+Included in: Uppy v3.20.0
+
+- @uppy/companion-client: fix log type error (Mikael Finstad / #4766)
+- @uppy/companion-client: revert breaking change (Antoine du Hamel / #4801)
+
 ## 3.5.0
 
 Released: 2023-10-20
