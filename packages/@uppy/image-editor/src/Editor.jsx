@@ -127,7 +127,7 @@ export default class Editor extends Component {
   }
 
   renderRevert () {
-    const { i18n } = this.props
+    const { i18n, opts } = this.props
 
     return (
       <label
@@ -140,7 +140,11 @@ export default class Editor extends Component {
           className="uppy-u-reset uppy-c-btn"
           onClick={() => {
             this.cropper.reset()
-            this.cropper.setAspectRatio(0)
+            if (opts.cropperOptions.initialAspectRatio) {
+              this.cropper.setAspectRatio(opts.cropperOptions.initialAspectRatio);
+            } else {
+              this.cropper.setAspectRatio(0);
+            }
             this.setState({ angle90Deg: 0, angleGranular: 0 })
           }}
         >
