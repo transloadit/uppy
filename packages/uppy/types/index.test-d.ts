@@ -9,12 +9,12 @@ import * as Uppy from '..'
     endpoint: 'xxx',
     fieldName: 'up_load_file',
   })
-  uppy.on('upload-success', (fileCount, body, uploadurl) => {
-    console.log(fileCount, body, uploadurl, ` files uploaded`)
+  uppy.on('upload-success', (fileCount, { body, uploadURL }) => {
+    console.log(fileCount, body, uploadURL, ` files uploaded`)
   })
 })()
 ;(() => {
-  new Uppy.Uppy({ autoProceed: false })
+  const uppy = new Uppy.Uppy({ autoProceed: false })
     .use(Uppy.Dashboard, { trigger: '#select-files' })
     .use(Uppy.GoogleDrive, {
       target: Uppy.Dashboard,

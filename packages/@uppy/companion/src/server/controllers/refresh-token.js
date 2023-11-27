@@ -14,7 +14,8 @@ async function refreshToken (req, res, next) {
   const { providerUserSession } = req.companion
 
   // not all providers have refresh tokens
-  if (providerUserSession.refreshToken == null) {
+  if (providerUserSession.refreshToken == null || providerUserSession.refreshToken === '') {
+    logger.warn('Tried to refresh token without having a token')
     res.sendStatus(401)
     return
   }

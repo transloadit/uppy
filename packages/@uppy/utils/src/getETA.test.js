@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import getETA from './getETA.js'
+import getETA from './getETA.ts'
 
 describe('getETA', () => {
   it('should get the ETA remaining based on a fileProgress object', () => {

@@ -42,13 +42,15 @@ module.exports = function callback (req, res, next) { // eslint-disable-line no-
     return res.status(400).send(closePageHtml(origin))
   }
 
+  const { access_token: accessToken, refresh_token: refreshToken } = grant.response
+
   req.companion.providerUserSession = {
-    accessToken: grant.response.access_token,
-    refreshToken: grant.response.refresh_token, // might be undefined for some providers
+    accessToken,
+    refreshToken, // might be undefined for some providers
     ...req.companion.providerClass.grantDynamicToUserSession({ grantDynamic }),
   }
 
-  logger.debug(`Generating auth token for provider ${providerName}`, null, req.id)
+  logger.debug(`Generating auth token for provider ${providerName}. refreshToken: ${refreshToken ? 'yes' : 'no'}`, null, req.id)
   const uppyAuthToken = tokenService.generateEncryptedAuthToken(
     { [providerName]: req.companion.providerUserSession },
     req.companion.options.secret, req.companion.providerClass.authStateExpiry,

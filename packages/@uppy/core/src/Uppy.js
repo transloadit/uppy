@@ -21,6 +21,14 @@ import {
 import packageJson from '../package.json'
 import locale from './locale.js'
 
+
+const getDefaultUploadState = () => ({
+  totalProgress: 0,
+  allowNewUpload: true,
+  error: null,
+  recoveredState: null,
+});
+
 /**
  * Uppy Core module.
  * Manages plugins, state updates, acts as an event bus,
@@ -91,19 +99,17 @@ class Uppy {
 
     this.store = this.opts.store
     this.setState({
+      ...getDefaultUploadState(),
       plugins: {},
       files: {},
       currentUploads: {},
-      allowNewUpload: true,
       capabilities: {
         uploadProgress: supportsUploadProgress(),
         individualCancellation: true,
         resumableUploads: false,
       },
-      totalProgress: 0,
       meta: { ...this.opts.meta },
       info: [],
-      recoveredState: null,
     })
 
     this.#restricter = new Restricter(() => this.opts, this.i18n)
@@ -231,6 +237,7 @@ class Uppy {
     this.setState() // so that UI re-renders with new options
   }
 
+  // todo next major: rename to something better? (it doesn't just reset progress)
   resetProgress () {
     const defaultProgress = {
       percentage: 0,
@@ -250,15 +257,14 @@ class Uppy {
       }
     })
 
-    this.setState({
-      files: updatedFiles,
-      totalProgress: 0,
-      allowNewUpload: true,
-      error: null,
-      recoveredState: null,
-    })
+    this.setState({ files: updatedFiles, ...getDefaultUploadState() })
 
     this.emit('reset-progress')
+  }
+
+  /** @protected */
+  clearUploadedFiles () {
+    this.setState({ ...getDefaultUploadState(), files: {} })
   }
 
   addPreProcessor (fn) {
@@ -855,11 +861,8 @@ class Uppy {
         this.removeFiles(fileIDs, 'cancel-all')
       }
 
-      this.setState({
-        totalProgress: 0,
-        error: null,
-        recoveredState: null,
-      })
+      this.setState(getDefaultUploadState())
+      // todo should we call this.emit('reset-progress') like we do for resetProgress?
     }
   }
 
@@ -1245,6 +1248,8 @@ class Uppy {
       this.#plugins[plugin.type] = [plugin]
     }
     plugin.install()
+
+    this.emit('plugin-added', plugin)
 
     return this
   }

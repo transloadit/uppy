@@ -12,6 +12,139 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 3.20.0
+
+Released: 2023-11-24
+
+| Package                | Version | Package                | Version |
+| ---------------------- | ------- | ---------------------- | ------- |
+| @uppy/companion-client |   3.6.1 | @uppy/store-default    |   3.1.0 |
+| @uppy/locales          |   3.5.0 | uppy                   |  3.20.0 |
+
+- meta: uppy CDN: Export UIPlugin and BasePlugin (Artur Paikin / #4774)
+- @uppy/locales: Add missing translations to de_DE (Leonhard Melzer / #4800)
+- @uppy/store-default: refactor to typescript (Antoine du Hamel / #4785)
+- meta: improve js2ts script (Antoine du Hamel / #4786)
+- @uppy/companion-client: fix log type error (Mikael Finstad / #4766)
+- @uppy/companion-client: revert breaking change (Antoine du Hamel / #4801)
+- @uppy/locales: use TypeScript for source files (Antoine du Hamel / #4779)
+- meta: migrate AWS SDK v2 to v3 in `bin/uploadcdn` (Trivikram Kamat / #4776)
+
+
+## 3.19.1
+
+Released: 2023-11-12
+
+| Package            | Version | Package            | Version |
+| ------------------ | ------- | ------------------ | ------- |
+| @uppy/core         |   3.7.1 | @uppy/react-native |   0.5.2 |
+| @uppy/dashboard    |   3.7.1 | uppy               |  3.19.1 |
+| @uppy/react        |   3.2.1 |                    |         |
+
+- @uppy/react: Revert "@uppy/react: add useUppyState (#4711)" (Artur Paikin / #4789)
+- @uppy/dashboard: fix(@uppy/dashboard): fix wrong option type in index.d.ts (dzcpy / #4788)
+- meta: fix build of TypeScript plugins (Antoine du Hamel / #4784)
+- @uppy/core,@uppy/dashboard,@uppy/react-native: Update Uppy's blue color to meet WCAG contrast requirements (Alexander Zaytsev / #4777)
+- meta: fix JS2TS script (Antoine du Hamel / #4778)
+
+
+## 3.19.0
+
+Released: 2023-11-08
+
+| Package                | Version | Package                | Version |
+| ---------------------- | ------- | ---------------------- | ------- |
+| @uppy/aws-s3           |   3.5.0 | @uppy/provider-views   |   3.7.0 |
+| @uppy/aws-s3-multipart |   3.9.0 | @uppy/react            |   3.2.0 |
+| @uppy/companion        |  4.11.0 | @uppy/transloadit      |   3.4.0 |
+| @uppy/companion-client |   3.6.0 | @uppy/tus              |   3.4.0 |
+| @uppy/core             |   3.7.0 | @uppy/url              |   3.4.0 |
+| @uppy/dashboard        |   3.7.0 | @uppy/utils            |   5.6.0 |
+| @uppy/image-editor     |   2.3.0 | @uppy/xhr-upload       |   3.5.0 |
+| @uppy/locales          |   3.4.0 | uppy                   |  3.19.0 |
+
+- @uppy/dashboard: Remove uppy-Dashboard-isFixed when uppy.close() is invoked (Artur Paikin / #4775)
+- @uppy/core,@uppy/dashboard: don't cancel all files when clicking "done" (Mikael Finstad / #4771)
+- @uppy/utils: refactor to TS (Antoine du Hamel / #4699)
+- @uppy/locales: locales: add ca_ES (ordago / #4772)
+- @uppy/companion: Companion+client stability fixes, error handling and retry (Mikael Finstad / #4734)
+- @uppy/companion: add getBucket metadata argument (Mikael Finstad / #4770)
+- @uppy/core: simplify types with class generic (JokcyLou / #4761)
+- @uppy/image-editor: More image editor improvements (Evgenia Karunus / #4676)
+- @uppy/react: add useUppyState (Merlijn Vos / #4711)
+
+
+## 3.18.1
+
+Released: 2023-10-23
+
+| Package         | Version | Package         | Version |
+| --------------- | ------- | --------------- | ------- |
+| @uppy/companion |  4.10.1 | uppy            |  3.18.1 |
+| @uppy/core      |   3.6.1 |                 |         |
+
+- @uppy/companion: Bump jsonwebtoken from 8.5.1 to 9.0.0 in /packages/@uppy/companion (dependabot[bot] / #4751)
+- meta: Bump react-devtools-core from 4.25.0 to 4.28.4 (dependabot[bot] / #4756)
+- meta: Bump webpack from 5.74.0 to 5.88.2 (dependabot[bot] / #4740)
+- meta: Bump @babel/traverse from 7.22.5 to 7.23.2 (dependabot[bot] / #4739)
+- @uppy/core: fix `sideEffects` declaration (Antoine du Hamel / #4759)
+
+
+## 3.18.0
+
+Released: 2023-10-20
+
+| Package                   | Version | Package                   | Version |
+| ------------------------- | ------- | ------------------------- | ------- |
+| @uppy/angular             |   0.6.1 | @uppy/progress-bar        |   3.0.4 |
+| @uppy/audio               |   1.1.4 | @uppy/provider-views      |   3.6.0 |
+| @uppy/aws-s3              |   3.4.0 | @uppy/react               |   3.1.4 |
+| @uppy/aws-s3-multipart    |   3.8.0 | @uppy/remote-sources      |   1.1.0 |
+| @uppy/box                 |   2.1.4 | @uppy/screen-capture      |   3.1.3 |
+| @uppy/companion           |  4.10.0 | @uppy/status-bar          |   3.2.5 |
+| @uppy/companion-client    |   3.5.0 | @uppy/store-default       |   3.0.5 |
+| @uppy/compressor          |   1.0.5 | @uppy/store-redux         |   3.0.5 |
+| @uppy/core                |   3.6.0 | @uppy/svelte              |   3.1.1 |
+| @uppy/dashboard           |   3.6.0 | @uppy/thumbnail-generator |   3.0.6 |
+| @uppy/drop-target         |   2.0.2 | @uppy/transloadit         |   3.3.2 |
+| @uppy/dropbox             |   3.1.4 | @uppy/tus                 |   3.3.2 |
+| @uppy/facebook            |   3.1.3 | @uppy/unsplash            |   3.2.3 |
+| @uppy/file-input          |   3.0.4 | @uppy/url                 |   3.3.4 |
+| @uppy/form                |   3.0.3 | @uppy/utils               |   5.5.2 |
+| @uppy/golden-retriever    |   3.1.1 | @uppy/vue                 |   1.1.0 |
+| @uppy/google-drive        |   3.3.0 | @uppy/webcam              |   3.3.4 |
+| @uppy/image-editor        |   2.2.2 | @uppy/xhr-upload          |   3.4.2 |
+| @uppy/informer            |   3.0.4 | @uppy/zoom                |   2.1.3 |
+| @uppy/instagram           |   3.1.3 | uppy                      |  3.18.0 |
+| @uppy/onedrive            |   3.1.4 |                           |         |
+
+- @uppy/aws-s3-multipart: fix `TypeError` (Antoine du Hamel / #4748)
+- meta: Bump tough-cookie from 4.1.2 to 4.1.3 (dependabot[bot] / #4750)
+- meta: example: simplify code by using built-in `throwIfAborted` (Antoine du Hamel / #4749)
+- @uppy/aws-s3-multipart: pass `signal` as separate arg for backward compat (Antoine du Hamel / #4746)
+- meta: fix TS integration (Antoine du Hamel / #4741)
+- meta: fix js2ts check (Antoine du Hamel)
+- meta: add support for TypeScript plugins (Antoine du Hamel / #4640)
+- @uppy/vue: export FileInput (mdxiaohu / #4736)
+- meta: examples: update `server.py` (codehero7386 / #4732)
+- @uppy/aws-s3-multipart: fix `uploadURL` when using `PUT` (Antoine du Hamel / #4701)
+- @uppy/dashboard: auto discover and install plugins without target (Artur Paikin / #4343)
+- meta: e2e: upgrade Cypress (Antoine du Hamel / #4731)
+- @uppy/core: mark the package as side-effect free (Antoine du Hamel / #4730)
+- meta: Bump postcss from 8.4.16 to 8.4.31 (dependabot[bot] / #4723)
+- meta: test with the latest versions of Node.js (Antoine du Hamel / #4729)
+- meta: e2e: update Parcel (Antoine du Hamel / #4726)
+- meta: uppy: fix types (Antoine du Hamel / #4721)
+- @uppy/core: type more events (Antoine du Hamel / #4719)
+- @uppy/svelte: fix TS build command (Antoine du Hamel / #4720)
+- @uppy/companion: Bucket fn also remote files (Mikael Finstad / #4693)
+- @uppy/companion-client: fixup! Added Companion OAuth Key type (Murderlon / #4668)
+- @uppy/companion-client: Added Companion OAuth Key type (Chris Pratt / #4668)
+- meta: check for formatting in CI (Antoine du Hamel / #4714)
+- meta: bump get-func-name from 2.0.0 to 2.0.2 (dependabot[bot] / #4709)
+- meta: run Prettier on existing files (Antoine du Hamel / #4713)
+
+
 ## 3.17.0
 
 Released: 2023-09-29
