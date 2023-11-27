@@ -140,11 +140,7 @@ export default class Editor extends Component {
           className="uppy-u-reset uppy-c-btn"
           onClick={() => {
             this.cropper.reset()
-            if (opts.cropperOptions.initialAspectRatio) {
-              this.cropper.setAspectRatio(opts.cropperOptions.initialAspectRatio);
-            } else {
-              this.cropper.setAspectRatio(0);
-            }
+            this.cropper.setAspectRatio(opts.cropperOptions.initialAspectRatio);
             this.setState({ angle90Deg: 0, angleGranular: 0 })
           }}
         >
