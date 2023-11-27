@@ -7,7 +7,7 @@ import limitCropboxMovementOnMove from './utils/limitCropboxMovementOnMove.js'
 import limitCropboxMovementOnResize from './utils/limitCropboxMovementOnResize.js'
 
 export default class Editor extends Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = {
       angle90Deg: 0,
@@ -18,7 +18,7 @@ export default class Editor extends Component {
     this.limitCropboxMovement = this.limitCropboxMovement.bind(this)
   }
 
-  componentDidMount () {
+  componentDidMount() {
     const { opts, storeCropperInstance } = this.props
     this.cropper = new Cropper(
       this.imgElement,
@@ -31,7 +31,7 @@ export default class Editor extends Component {
     storeCropperInstance(this.cropper)
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     this.cropper.destroy()
 
     this.imgElement.removeEventListener('cropstart', this.storePrevCropboxData)
@@ -39,11 +39,11 @@ export default class Editor extends Component {
   }
 
   // eslint-disable-next-line react/sort-comp
-  storePrevCropboxData () {
+  storePrevCropboxData() {
     this.setState({ prevCropboxData: this.cropper.getCropBoxData() })
   }
 
-  limitCropboxMovement (event) {
+  limitCropboxMovement(event) {
     const canvasData = this.cropper.getCanvasData()
     const cropboxData = this.cropper.getCropBoxData()
     const { prevCropboxData } = this.state
@@ -52,7 +52,7 @@ export default class Editor extends Component {
     if (event.detail.action === 'all') {
       const newCropboxData = limitCropboxMovementOnMove(canvasData, cropboxData, prevCropboxData)
       if (newCropboxData) this.cropper.setCropBoxData(newCropboxData)
-    // When we stretch the cropbox by one of its sides
+      // When we stretch the cropbox by one of its sides
     } else {
       const newCropboxData = limitCropboxMovementOnResize(canvasData, cropboxData, prevCropboxData)
       if (newCropboxData) this.cropper.setCropBoxData(newCropboxData)
@@ -101,7 +101,7 @@ export default class Editor extends Component {
     this.cropper.scale(scaleFactorX, scaleFactor)
   }
 
-  renderGranularRotate () {
+  renderGranularRotate() {
     const { i18n } = this.props
     const { angleGranular } = this.state
 
@@ -126,7 +126,7 @@ export default class Editor extends Component {
     )
   }
 
-  renderRevert () {
+  renderRevert() {
     const { i18n, opts } = this.props
 
     return (
@@ -153,7 +153,7 @@ export default class Editor extends Component {
     )
   }
 
-  renderRotate () {
+  renderRotate() {
     const { i18n } = this.props
 
     return (
@@ -176,7 +176,7 @@ export default class Editor extends Component {
     )
   }
 
-  renderFlip () {
+  renderFlip() {
     const { i18n } = this.props
 
     return (
@@ -199,7 +199,7 @@ export default class Editor extends Component {
     )
   }
 
-  renderZoomIn () {
+  renderZoomIn() {
     const { i18n } = this.props
 
     return (
@@ -223,7 +223,7 @@ export default class Editor extends Component {
     )
   }
 
-  renderZoomOut () {
+  renderZoomOut() {
     const { i18n } = this.props
 
     return (
@@ -246,7 +246,7 @@ export default class Editor extends Component {
     )
   }
 
-  renderCropSquare () {
+  renderCropSquare() {
     const { i18n } = this.props
 
     return (
@@ -269,7 +269,7 @@ export default class Editor extends Component {
     )
   }
 
-  renderCropWidescreen () {
+  renderCropWidescreen() {
     const { i18n } = this.props
 
     return (
@@ -292,7 +292,7 @@ export default class Editor extends Component {
     )
   }
 
-  renderCropWidescreenVertical () {
+  renderCropWidescreenVertical() {
     const { i18n } = this.props
 
     return (
@@ -315,7 +315,7 @@ export default class Editor extends Component {
     )
   }
 
-  render () {
+  render() {
     const { currentImage, opts } = this.props
     const { actions } = opts
     const imageURL = URL.createObjectURL(currentImage.data)
