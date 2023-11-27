@@ -100,7 +100,10 @@ const defaultOnMissingKey = (key: string): void => {
 export default class Translator {
   protected locale: Locale
 
-  constructor(locales: Locale | Locale[], { onMissingKey = defaultOnMissingKey } = {}) {
+  constructor(
+    locales: Locale | Locale[],
+    { onMissingKey = defaultOnMissingKey } = {},
+  ) {
     this.locale = {
       strings: {},
       pluralize(n: number): 0 | 1 {
@@ -170,7 +173,7 @@ export default class Translator {
     }
 
     if (typeof string !== 'string') {
-      throw new Error(`string was not a string`);
+      throw new Error(`string was not a string`)
     }
 
     return interpolate(string, options)
