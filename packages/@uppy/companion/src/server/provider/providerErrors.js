@@ -7,12 +7,23 @@ const { StreamHttpJsonError } = require('../helpers/utils')
 /**
  * 
  * @param {{
- *   fn: () => any, tag: string, providerName: string, isAuthError?: (a: { statusCode: number, body?: object }) => boolean, isUserFacingError?: (a: { statusCode: number, body?: object }) => boolean,
+ *   fn: () => any,
+ *   tag: string,
+ * providerName: string,
+ *   isAuthError?: (a: { statusCode: number, body?: object }) => boolean,
+ * isUserFacingError?: (a: { statusCode: number, body?: object }) => boolean,
  *   getJsonErrorMessage: (a: object) => string
  * }} param0 
  * @returns 
  */
-async function withProviderErrorHandling ({ fn, tag, providerName, isAuthError = () => false, isUserFacingError = () => false, getJsonErrorMessage }) {
+async function withProviderErrorHandling ({
+  fn,
+  tag,
+  providerName,
+  isAuthError = () => false,
+  isUserFacingError = () => false,
+  getJsonErrorMessage,
+}) {
   function getErrorMessage ({ statusCode, body }) {
     if (typeof body === 'object') {
       const message = getJsonErrorMessage(body)
@@ -42,9 +53,13 @@ async function withProviderErrorHandling ({ fn, tag, providerName, isAuthError =
 
     if (statusCode != null) {
       let knownErr
-      if (isAuthError({ statusCode, body })) knownErr = new ProviderAuthError()
-      else if (isUserFacingError({ statusCode, body })) knownErr = new ProviderUserError({ message: getErrorMessage({ statusCode, body }) })
-      else knownErr = new ProviderApiError(getErrorMessage({ statusCode, body }), statusCode)
+      if (isAuthError({ statusCode, body })) {
+        knownErr = new ProviderAuthError()
+      } else if (isUserFacingError({ statusCode, body })) {
+    knownErr = new ProviderUserError({ message: getErrorMessage({ statusCode, body }) })
+      } else {
+        knownErr = new ProviderApiError(getErrorMessage({ statusCode, body }), statusCode)
+      }
 
       logger.error(knownErr, tag)
       throw knownErr
