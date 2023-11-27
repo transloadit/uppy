@@ -24,6 +24,7 @@ export default class ImageEditor extends UIPlugin {
       minCropBoxWidth: 70,
       minCropBoxHeight: 70,
       croppedCanvasOptions: {},
+      initialAspectRatio: 0,
     }
 
     const defaultActions = {
