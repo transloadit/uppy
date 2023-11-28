@@ -544,8 +544,9 @@ class Uppy {
         // users are asked to re-select these half-recovered files and then this method will be called again.
         // In order to keep the progress, meta and everthing else, we keep the existing file,
         // but we replace `data`, and we remove `isGhost`, because the file is no longer a ghost now
-        if (existingFiles[newFile.id]?.isGhost) {
-          const { isGhost, ...existingFileState } = existingFiles[newFile.id]
+        const isGhost = existingFiles[newFile.id]?.isGhost
+        if (isGhost) {
+          const { isGhost: _, ...existingFileState } = existingFiles[newFile.id]
           newFile = {
             ...existingFileState,
             data: fileToAdd.data,
@@ -559,7 +560,8 @@ class Uppy {
           throw new RestrictionError(this.i18n('noDuplicates', { fileName: newFile.name }), { file: fileToAdd })
         }
 
-        if (onBeforeFileAddedResult === false) {
+        // Pass through reselected files from Golden Retriever
+        if (onBeforeFileAddedResult === false && !isGhost) {
           // Don’t show UI info for this error, as it should be done by the developer
           throw new RestrictionError('Cannot add the file because onBeforeFileAdded returned false.', { isUserFacing: false, file: fileToAdd })
         } else if (typeof onBeforeFileAddedResult === 'object' && onBeforeFileAddedResult !== null) {
