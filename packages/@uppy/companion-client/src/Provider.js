@@ -171,7 +171,7 @@ export default class Provider extends RequestClient {
         }
 
         cleanup()
-        this.setAuthToken(data.token).then(() => resolve()).catch(reject)
+        resolve(this.setAuthToken(data.token))
       }
 
       cleanup = () => {

@@ -50,9 +50,9 @@ async function handleJSONResponse (res) {
     errMsg = errData.requestId
       ? `${errMsg} request-Id: ${errData.requestId}`
       : errMsg
-  } catch {
+  } catch (cause) {
     // if the response contains invalid JSON, let's ignore the error data
-    throw new Error(errMsg)
+    throw new Error(errMsg, { cause })
   }
 
   if (res.status >= 400 && res.status <= 499 && errData.message) {
