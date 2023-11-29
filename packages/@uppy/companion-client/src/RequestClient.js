@@ -46,10 +46,8 @@ async function handleJSONResponse (res) {
   try {
     errData = await res.json()
 
-    errMsg = errData.message ? `${errMsg} message: ${errData.message}` : errMsg
-    errMsg = errData.requestId
-      ? `${errMsg} request-Id: ${errData.requestId}`
-      : errMsg
+    if (errData.message) errMsg = `${errMsg} message: ${errData.message}`
+    if (errData.requestId) errMsg = `${errMsg} request-Id: ${errData.requestId}`
   } catch (cause) {
     // if the response contains invalid JSON, let's ignore the error data
     throw new Error(errMsg, { cause })
@@ -59,8 +57,6 @@ async function handleJSONResponse (res) {
     throw new UserFacingApiError(errData.message)
   }
 
-  errMsg = errData.message ? `${errMsg} message: ${errData.message}` : errMsg
-  errMsg = errData.requestId ? `${errMsg} request-Id: ${errData.requestId}` : errMsg
   throw new HttpError({ statusCode: res.status, message: errMsg })
 }
 
