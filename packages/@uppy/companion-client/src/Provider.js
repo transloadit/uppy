@@ -30,8 +30,8 @@ function isOriginAllowed (origin, allowedOrigin) {
 export default class Provider extends RequestClient {
   #refreshingTokenPromise
 
-  constructor (uppy, opts, getQueue) {
-    super(uppy, opts, getQueue)
+  constructor (uppy, opts) {
+    super(uppy, opts)
     this.provider = opts.provider
     this.id = this.provider
     this.name = this.opts.name || getName(this.id)
@@ -111,7 +111,17 @@ export default class Provider extends RequestClient {
       const authWindow = window.open(link, '_blank')
       const handleToken = (e) => {
         if (e.source !== authWindow) {
-          this.uppy.log.warn('ignoring event from unknown source', e)
+          let jsonData = ''
+          try {
+            // TODO improve our uppy logger so that it can take an arbitrary number of arguments,
+            // each either objects, errors or strings,
+            // then we don’t have to manually do these things like json stringify when logging.
+            // the logger should never throw an error.
+            jsonData = JSON.stringify(e.data)
+          } catch (err) {
+            // in case JSON.stringify fails (ignored)
+          }
+          this.uppy.log(`ignoring event from unknown source ${jsonData}`, 'warning')
           return
         }
 
@@ -140,8 +150,7 @@ export default class Provider extends RequestClient {
 
         authWindow.close()
         window.removeEventListener('message', handleToken)
-        this.setAuthToken(data.token)
-        resolve()
+        this.setAuthToken(data.token).then(() => resolve()).catch(reject)
       }
       window.addEventListener('message', handleToken)
     })
@@ -160,21 +169,24 @@ export default class Provider extends RequestClient {
     await this.#refreshingTokenPromise
 
     try {
-      // throw Object.assign(new Error(), { isAuthError: true }) // testing simulate access token expired (to refresh token)
-      // A better way to test this is for example with Google Drive:
+      // to test simulate access token expired (leading to a token token refresh),
+      // see mockAccessTokenExpiredError in companion/drive.
+      // If you want to test refresh token *and* access token invalid, do this for example with Google Drive:
       // While uploading, go to your google account settings,
       // "Third-party apps & services", then click "Companion" and "Remove access".
 
       return await super.request(...args)
     } catch (err) {
       // only handle auth errors (401 from provider), and only handle them if we have a (refresh) token
-      if (!err.isAuthError || !(await this.#getAuthToken())) throw err
+      const authTokenAfter = await this.#getAuthToken()
+      if (!err.isAuthError || !authTokenAfter) throw err
 
       if (this.#refreshingTokenPromise == null) {
         // Many provider requests may be starting at once, however refresh token should only be called once.
         // Once a refresh token operation has started, we need all other request to wait for this operation (atomically)
         this.#refreshingTokenPromise = (async () => {
           try {
+            this.uppy.log(`[CompanionClient] Refreshing expired auth token`, 'info')
             const response = await super.request({ path: this.refreshTokenUrl(), method: 'POST' })
             await this.setAuthToken(response.uppyAuthToken)
           } catch (refreshTokenErr) {

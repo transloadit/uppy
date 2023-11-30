@@ -54,7 +54,7 @@ export class RateLimitedQueue {
         if (done) return
         done = true
         this.#activeRequests -= 1
-        cancelActive(cause)
+        cancelActive?.(cause)
         this.#queueNext()
       },
 

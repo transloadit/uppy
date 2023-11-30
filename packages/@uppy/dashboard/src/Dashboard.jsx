@@ -67,7 +67,7 @@ export default class Dashboard extends UIPlugin {
       hidePauseResumeButton: false,
       hideProgressAfterFinish: false,
       doneButtonHandler: () => {
-        this.uppy.cancelAll()
+        this.uppy.clearUploadedFiles()
         this.requestCloseModal()
       },
       note: null,
@@ -1158,6 +1158,10 @@ export default class Dashboard extends UIPlugin {
 
     if (this.opts.theme === 'auto') {
       this.darkModeMediaQuery.removeListener(this.handleSystemDarkModeChange)
+    }
+
+    if (this.opts.disablePageScrollWhenModalOpen) {
+      document.body.classList.remove('uppy-Dashboard-isFixed')
     }
 
     this.unmount()

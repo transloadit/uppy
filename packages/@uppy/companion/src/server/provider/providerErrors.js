@@ -1,6 +1,17 @@
+const { HTTPError } = require('got').default
+
 const logger = require('../logger')
 const { ProviderApiError, ProviderAuthError } = require('./error')
+const { StreamHttpJsonError } = require('../helpers/utils')
 
+/**
+ * 
+ * @param {{
+ *   fn: () => any, tag: string, providerName: string, isAuthError: (a: { statusCode: number, body?: object }) => boolean,
+ *   getJsonErrorMessage: (a: object) => string
+ * }} param0 
+ * @returns 
+ */
 async function withProviderErrorHandling ({ fn, tag, providerName, isAuthError = () => false, getJsonErrorMessage }) {
   function getErrorMessage (response) {
     if (typeof response.body === 'object') {
@@ -18,19 +29,29 @@ async function withProviderErrorHandling ({ fn, tag, providerName, isAuthError =
   try {
     return await fn()
   } catch (err) {
-    const { response } = err
+    let statusCode
+    let body
 
-    let err2 = err
-
-    if (response) {
-      // @ts-ignore
-      if (isAuthError(response)) err2 = new ProviderAuthError()
-      else err2 = new ProviderApiError(getErrorMessage(response), response.statusCode)
+    if (err instanceof HTTPError) {
+      statusCode = err.response?.statusCode
+      body = err.response?.body
+    } else if (err instanceof StreamHttpJsonError) {
+      statusCode = err.statusCode      
+      body = err.responseJson
     }
 
-    logger.error(err2, tag)
+    if (statusCode != null) {
+      const err2 = isAuthError({ statusCode, body })
+        ? new ProviderAuthError()
+        : new ProviderApiError(getErrorMessage(body), statusCode)
 
-    throw err2
+      logger.error(err2, tag)
+      throw err2
+    }
+
+    logger.error(err, tag)
+
+    throw err
   }
 }
 

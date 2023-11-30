@@ -21,6 +21,14 @@ import {
 import packageJson from '../package.json'
 import locale from './locale.js'
 
+
+const getDefaultUploadState = () => ({
+  totalProgress: 0,
+  allowNewUpload: true,
+  error: null,
+  recoveredState: null,
+});
+
 /**
  * Uppy Core module.
  * Manages plugins, state updates, acts as an event bus,
@@ -91,19 +99,17 @@ class Uppy {
 
     this.store = this.opts.store
     this.setState({
+      ...getDefaultUploadState(),
       plugins: {},
       files: {},
       currentUploads: {},
-      allowNewUpload: true,
       capabilities: {
         uploadProgress: supportsUploadProgress(),
         individualCancellation: true,
         resumableUploads: false,
       },
-      totalProgress: 0,
       meta: { ...this.opts.meta },
       info: [],
-      recoveredState: null,
     })
 
     this.#restricter = new Restricter(() => this.opts, this.i18n)
@@ -230,6 +236,7 @@ class Uppy {
     this.setState() // so that UI re-renders with new options
   }
 
+  // todo next major: rename to something better? (it doesn't just reset progress)
   resetProgress () {
     const defaultProgress = {
       percentage: 0,
@@ -249,15 +256,14 @@ class Uppy {
       }
     })
 
-    this.setState({
-      files: updatedFiles,
-      totalProgress: 0,
-      allowNewUpload: true,
-      error: null,
-      recoveredState: null,
-    })
+    this.setState({ files: updatedFiles, ...getDefaultUploadState() })
 
     this.emit('reset-progress')
+  }
+
+  /** @protected */
+  clearUploadedFiles () {
+    this.setState({ ...getDefaultUploadState(), files: {} })
   }
 
   addPreProcessor (fn) {
@@ -538,8 +544,9 @@ class Uppy {
         // users are asked to re-select these half-recovered files and then this method will be called again.
         // In order to keep the progress, meta and everthing else, we keep the existing file,
         // but we replace `data`, and we remove `isGhost`, because the file is no longer a ghost now
-        if (existingFiles[newFile.id]?.isGhost) {
-          const { isGhost, ...existingFileState } = existingFiles[newFile.id]
+        const isGhost = existingFiles[newFile.id]?.isGhost
+        if (isGhost) {
+          const { isGhost: _, ...existingFileState } = existingFiles[newFile.id]
           newFile = {
             ...existingFileState,
             data: fileToAdd.data,
@@ -553,7 +560,8 @@ class Uppy {
           throw new RestrictionError(this.i18n('noDuplicates', { fileName: newFile.name }), { file: fileToAdd })
         }
 
-        if (onBeforeFileAddedResult === false) {
+        // Pass through reselected files from Golden Retriever
+        if (onBeforeFileAddedResult === false && !isGhost) {
           // Don’t show UI info for this error, as it should be done by the developer
           throw new RestrictionError('Cannot add the file because onBeforeFileAdded returned false.', { isUserFacing: false, file: fileToAdd })
         } else if (typeof onBeforeFileAddedResult === 'object' && onBeforeFileAddedResult !== null) {
@@ -854,11 +862,8 @@ class Uppy {
         this.removeFiles(fileIDs, 'cancel-all')
       }
 
-      this.setState({
-        totalProgress: 0,
-        error: null,
-        recoveredState: null,
-      })
+      this.setState(getDefaultUploadState())
+      // todo should we call this.emit('reset-progress') like we do for resetProgress?
     }
   }
 

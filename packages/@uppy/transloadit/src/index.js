@@ -829,9 +829,6 @@ export default class Transloadit extends BasePlugin {
         // Golden Retriever. So, Golden Retriever is required to do resumability with the Transloadit plugin,
         // and we disable Tus's default resume implementation to prevent bad behaviours.
         storeFingerprintForResuming: false,
-        // Disable Companion's retry optimisation; we need to change the endpoint on retry
-        // so it can't just reuse the same tus.Upload instance server-side.
-        useFastRemoteRetry: false,
         // Only send Assembly metadata to the tus endpoint.
         allowedMetaFields: ['assembly_url', 'filename', 'fieldname'],
         // Pass the limit option to @uppy/tus

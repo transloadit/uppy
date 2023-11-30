@@ -38,6 +38,7 @@
     "e2e"
   ],
   "devDependencies": {
+    "@aws-sdk/client-s3": "^3.338.0",
     "@babel/cli": "^7.14.5",
     "@babel/core": "^7.14.6",
     "@babel/eslint-parser": "^7.11.3",
@@ -57,7 +58,6 @@
     "@uppy-dev/remark-lint-uppy": "workspace:*",
     "adm-zip": "^0.5.5",
     "autoprefixer": "^10.2.6",
-    "aws-sdk": "^2.1038.0",
     "babel-plugin-inline-package-json": "^2.0.0",
     "chalk": "^5.0.0",
     "concat-stream": "^2.0.0",
