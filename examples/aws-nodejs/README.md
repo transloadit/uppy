@@ -87,7 +87,7 @@ get STS Federated Token and upload files to `MY-UPPY-BUCKET`:
             }
         ]
     }
-	```
+    ```
 
 ### AWS Credentials
 
