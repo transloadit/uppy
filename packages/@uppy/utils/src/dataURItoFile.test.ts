@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import dataURItoFile from './dataURItoFile.ts'
-import sampleImageDataURI from './sampleImageDataURI.js'
+import sampleImageDataURI from './sampleImageDataURI.ts'
 
 describe('dataURItoFile', () => {
   it('should convert a data uri to a file', () => {
