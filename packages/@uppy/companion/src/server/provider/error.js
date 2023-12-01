@@ -16,12 +16,12 @@ class ProviderApiError extends Error {
   }
 }
 
-class ProviderUserError extends Error {
+class ProviderUserError extends ProviderApiError {
   /**
    * @param {object} json arbitrary JSON.stringify-able object that will be passed to the client
    */
   constructor (json) {
-    super('User error')
+    super('User error', undefined)
     this.json = json
   }
 }
