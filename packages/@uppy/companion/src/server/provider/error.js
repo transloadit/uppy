@@ -48,6 +48,10 @@ function errorToResponse (err) {
     return { code: 401, json: { message: err.message } }
   }
 
+  if (err instanceof ProviderUserError) {
+    return { code: 400, json: err.json }
+  }
+
   if (err instanceof ProviderApiError) {
     if (err.statusCode >= 500) {
       // bad gateway i.e the provider APIs gateway
@@ -62,10 +66,6 @@ function errorToResponse (err) {
       // 424 Failed Dependency
       return { code: 424, json: { message: err.message } }
     }
-  }
-
-  if (err instanceof ProviderUserError) {
-    return { code: 400, json: err.json }
   }
 
   return undefined
