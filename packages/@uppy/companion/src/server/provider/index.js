@@ -36,7 +36,7 @@ const providerNameToAuthName = (name, options) => { // eslint-disable-line no-un
   return (providers[name] || {}).authProvider
 }
 
-function getGrantConfigForProvider ({ providerName, companionOptions, grantConfig }) {
+function getGrantConfigForProvider({ providerName, companionOptions, grantConfig }) {
   const authProvider = providerNameToAuthName(providerName, companionOptions)
 
   if (!isOAuthProvider(authProvider)) return undefined
