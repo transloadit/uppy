@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import dataURItoBlob from './dataURItoBlob.ts'
-import sampleImageDataURI from './sampleImageDataURI.js'
+import sampleImageDataURI from './sampleImageDataURI.ts'
 
 describe('dataURItoBlob', () => {
   it('should convert a data uri to a blob', () => {

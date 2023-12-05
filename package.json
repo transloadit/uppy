@@ -152,7 +152,7 @@
     "test:locale-packs": "yarn locale-packs:unused && yarn locale-packs:warnings",
     "test:locale-packs:unused": "yarn workspace @uppy-dev/locale-pack test unused",
     "test:locale-packs:warnings": "yarn workspace @uppy-dev/locale-pack test warnings",
-    "test:unit": "yarn run build:lib && yarn test:watch",
+    "test:unit": "yarn run build:lib && yarn test:watch --run",
     "test:watch": "vitest --environment jsdom --dir packages/@uppy",
     "test": "npm-run-all lint test:locale-packs:unused test:unit test:type test:companion",
     "uploadcdn": "yarn node ./bin/upload-to-cdn.js",

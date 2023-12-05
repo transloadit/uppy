@@ -63,7 +63,6 @@
     "node-schedule": "2.1.0",
     "prom-client": "14.0.1",
     "redis": "4.2.0",
-    "semver": "7.5.3",
     "serialize-error": "^2.1.0",
     "serialize-javascript": "^6.0.0",
     "tus-js-client": "^3.0.0",
