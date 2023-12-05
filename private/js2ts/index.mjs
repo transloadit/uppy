@@ -7,7 +7,7 @@
 
 import { opendir, readFile, open, writeFile, rm } from 'node:fs/promises'
 import { argv } from 'node:process'
-import { extname, resolve } from 'node:path'
+import { basename, extname, join } from 'node:path'
 import { existsSync } from 'node:fs'
 
 const packageRoot = new URL(`../../packages/${argv[2]}/`, import.meta.url)
@@ -61,7 +61,9 @@ for await (const dirent of dir) {
     const { name } = dirent
     const ext = extname(name)
     if (ext !== '.js' && ext !== '.jsx') continue // eslint-disable-line no-continue
-    const filePath = resolve(dirent.path, name)
+    const filePath = basename(dirent.path) === name ?
+      dirent.path : // Some versions of Node.js give the full path as dirent.path.
+      join(dirent.path, name) // Others supply only the path to the parent.
     await writeFile(
       `${filePath.slice(0, -ext.length)}${ext.replace('js', 'ts')}`,
       (await readFile(filePath, 'utf-8'))
