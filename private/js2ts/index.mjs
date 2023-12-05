@@ -7,7 +7,7 @@
 
 import { opendir, readFile, open, writeFile, rm } from 'node:fs/promises'
 import { argv } from 'node:process'
-import { extname } from 'node:path'
+import { basename, extname, join } from 'node:path'
 import { existsSync } from 'node:fs'
 
 const packageRoot = new URL(`../../packages/${argv[2]}/`, import.meta.url)
@@ -58,12 +58,16 @@ try {
 
 for await (const dirent of dir) {
   if (!dirent.isDirectory()) {
-    const { path: filepath } = dirent
-    const ext = extname(filepath)
+    const { name } = dirent
+    const ext = extname(name)
     if (ext !== '.js' && ext !== '.jsx') continue // eslint-disable-line no-continue
+    const filePath =
+      basename(dirent.path) === name
+        ? dirent.path // Some versions of Node.js give the full path as dirent.path.
+        : join(dirent.path, name) // Others supply only the path to the parent.
     await writeFile(
-      filepath.slice(0, -ext.length) + ext.replace('js', 'ts'),
-      (await readFile(filepath, 'utf-8'))
+      `${filePath.slice(0, -ext.length)}${ext.replace('js', 'ts')}`,
+      (await readFile(filePath, 'utf-8'))
         .replace(
           // The following regex aims to capture all imports and reexports of local .js(x) files to replace it to .ts(x)
           // It's far from perfect and will have false positives and false negatives.
@@ -78,7 +82,7 @@ for await (const dirent of dir) {
             `// @ts-ignore We don't want TS to generate types for the package.json${originalImport}`,
         ),
     )
-    await rm(filepath)
+    await rm(filePath)
   }
 }
 
