@@ -61,9 +61,10 @@ for await (const dirent of dir) {
     const { name } = dirent
     const ext = extname(name)
     if (ext !== '.js' && ext !== '.jsx') continue // eslint-disable-line no-continue
-    const filePath = basename(dirent.path) === name
-      ? dirent.path // Some versions of Node.js give the full path as dirent.path.
-      : join(dirent.path, name) // Others supply only the path to the parent.
+    const filePath =
+      basename(dirent.path) === name
+        ? dirent.path // Some versions of Node.js give the full path as dirent.path.
+        : join(dirent.path, name) // Others supply only the path to the parent.
     await writeFile(
       `${filePath.slice(0, -ext.length)}${ext.replace('js', 'ts')}`,
       (await readFile(filePath, 'utf-8'))
