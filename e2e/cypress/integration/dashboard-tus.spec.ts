@@ -1,6 +1,5 @@
 import {
   interceptCompanionUrlRequest,
-  interceptCompanionUnsplashRequest,
   runRemoteUrlImageUploadTest,
   runRemoteUnsplashUploadTest,
 } from './reusable-tests'
@@ -15,8 +14,6 @@ describe('Dashboard with Tus', () => {
     cy.intercept('/files/*').as('tus')
     cy.intercept({ method: 'POST', pathname: '/files' }).as('post')
     cy.intercept({ method: 'PATCH', pathname: '/files/*' }).as('patch')
-    interceptCompanionUrlRequest()
-    interceptCompanionUnsplashRequest()
   })
 
   it('should upload cat image successfully', () => {
