@@ -41,12 +41,12 @@ const PROTOCOLS = Object.freeze({
   tus: 'tus',
 })
 
-function exceedsMaxFileSize (maxFileSize, size) {
+function exceedsMaxFileSize(maxFileSize, size) {
   return maxFileSize && size && size > maxFileSize
 }
 
 // TODO remove once we migrate away from form-data
-function sanitizeMetadata (inputMetadata) {
+function sanitizeMetadata(inputMetadata) {
   if (inputMetadata == null) return {}
 
   const outputMetadata = {}
@@ -56,16 +56,24 @@ function sanitizeMetadata (inputMetadata) {
   return outputMetadata
 }
 
-class AbortError extends Error {}
+class AbortError extends Error {
+  isAbortError = true
+}
 
-class ValidationError extends Error {}
+class ValidationError extends Error {
+  constructor(message) {
+    super(message)
+
+    this.name = 'ValidationError'
+  }
+}
 
 /**
  * Validate the options passed down to the uplaoder
  *
  * @param {UploaderOptions} options
  */
-function validateOptions (options) {
+function validateOptions(options) {
   // validate HTTP Method
   if (options.httpMethod) {
     if (typeof options.httpMethod !== 'string') {
@@ -155,7 +163,7 @@ class Uploader {
    *
    * @param {UploaderOptions} options
    */
-  constructor (options) {
+  constructor(options) {
     validateOptions(options)
 
     this.options = options
@@ -200,18 +208,18 @@ class Uploader {
       this._paused = true
       if (this.tus) {
         const shouldTerminate = !!this.tus.url
-        this.tus.abort(shouldTerminate).catch(() => {})
+        this.tus.abort(shouldTerminate).catch(() => { })
       }
       this.abortReadStream(new AbortError())
     })
   }
 
-  abortReadStream (err) {
+  abortReadStream(err) {
     this.uploadStopped = true
     if (this.readStream) this.readStream.destroy(err)
   }
 
-  async _uploadByProtocol () {
+  async _uploadByProtocol() {
     // todo a default protocol should not be set. We should ensure that the user specifies their protocol.
     // after we drop old versions of uppy client we can remove this
     const protocol = this.options.protocol || PROTOCOLS.multipart
@@ -228,7 +236,7 @@ class Uploader {
     }
   }
 
-  async _downloadStreamAsFile (stream) {
+  async _downloadStreamAsFile(stream) {
     this.tmpPath = join(this.options.pathPrefix, this.fileName)
 
     logger.debug('fully downloading file', 'uploader.download', this.shortToken)
@@ -253,7 +261,7 @@ class Uploader {
     this.readStream = fileStream
   }
 
-  _needDownloadFirst () {
+  _needDownloadFirst() {
     return !this.options.size || !this.options.companionOptions.streamingUpload
   }
 
@@ -261,7 +269,7 @@ class Uploader {
    *
    * @param {import('stream').Readable} stream
    */
-  async uploadStream (stream) {
+  async uploadStream(stream) {
     try {
       if (this.uploadStopped) throw new Error('Cannot upload stream after upload stopped')
       if (this.readStream) throw new Error('Already uploading')
@@ -289,15 +297,15 @@ class Uploader {
     }
   }
 
-  tryDeleteTmpPath () {
-    if (this.tmpPath) unlink(this.tmpPath).catch(() => {})
+  tryDeleteTmpPath() {
+    if (this.tmpPath) unlink(this.tmpPath).catch(() => { })
   }
 
   /**
    *
    * @param {import('stream').Readable} stream
    */
-  async tryUploadStream (stream) {
+  async tryUploadStream(stream) {
     try {
       emitter().emit('upload-start', { token: this.token })
 
@@ -306,7 +314,7 @@ class Uploader {
       const { url, extraData } = ret
       this.#emitSuccess(url, extraData)
     } catch (err) {
-      if (err instanceof AbortError) {
+      if (err?.isAbortError) {
         logger.error('Aborted upload', 'uploader.aborted', this.shortToken)
         return
       }
@@ -328,11 +336,11 @@ class Uploader {
    * @param {string} token the token to Shorten
    * @returns {string}
    */
-  static shortenToken (token) {
+  static shortenToken(token) {
     return token.substring(0, 8)
   }
 
-  static reqToOptions (req, size) {
+  static reqToOptions(req, size) {
     const useFormDataIsSet = Object.prototype.hasOwnProperty.call(req.body, 'useFormData')
     const useFormData = useFormDataIsSet ? req.body.useFormData : true
 
@@ -365,11 +373,11 @@ class Uploader {
    * we avoid using the entire token because this is meant to be a short term
    * access token between uppy client and companion websocket
    */
-  get shortToken () {
+  get shortToken() {
     return Uploader.shortenToken(this.token)
   }
 
-  async awaitReady (timeout) {
+  async awaitReady(timeout) {
     logger.debug('waiting for socket connection', 'uploader.socket.wait', this.shortToken)
 
     // TODO: replace the Promise constructor call when dropping support for Node.js <16 with
@@ -379,7 +387,7 @@ class Uploader {
       let timer
       let onEvent
 
-      function cleanup () {
+      function cleanup() {
         emitter().removeListener(eventName, onEvent)
         clearTimeout(timer)
       }
@@ -407,7 +415,7 @@ class Uploader {
    * @typedef {{action: string, payload: object}} State
    * @param {State} state
    */
-  saveState (state) {
+  saveState(state) {
     if (!this.storage) return
     // make sure the keys get cleaned up.
     // https://github.com/transloadit/uppy/issues/3748
@@ -434,7 +442,7 @@ class Uploader {
    * @param {number} [bytesUploaded]
    * @param {number | null} [bytesTotalIn]
    */
-  onProgress (bytesUploaded = 0, bytesTotalIn = 0) {
+  onProgress(bytesUploaded = 0, bytesTotalIn = 0) {
     const bytesTotal = bytesTotalIn || this.size || 0
 
     // If fully downloading before uploading, combine downloaded and uploaded bytes
@@ -470,7 +478,7 @@ class Uploader {
    * @param {string} url
    * @param {object} extraData
    */
-  #emitSuccess (url, extraData) {
+  #emitSuccess(url, extraData) {
     const emitData = {
       action: 'success',
       payload: { ...extraData, complete: true, url },
@@ -483,7 +491,7 @@ class Uploader {
    *
    * @param {Error} err
    */
-  #emitError (err) {
+  #emitError(err) {
     // delete stack to avoid sending server info to client
     // todo remove also extraData from serializedErr in next major,
     // see PR discussion https://github.com/transloadit/uppy/pull/3832
@@ -502,7 +510,7 @@ class Uploader {
    *
    * @param {any} stream
    */
-  async #uploadTus (stream) {
+  async #uploadTus(stream) {
     const uploader = this
 
     const isFileStream = stream instanceof ReadStream
@@ -531,7 +539,7 @@ class Uploader {
          *
          * @param {Error} error
          */
-        onError (error) {
+        onError(error) {
           logger.error(error, 'uploader.tus.error')
           // deleting tus originalRequest field because it uses the same http-agent
           // as companion, and this agent may contain sensitive request details (e.g headers)
@@ -550,10 +558,10 @@ class Uploader {
          * @param {number} [bytesUploaded]
          * @param {number} [bytesTotal]
          */
-        onProgress (bytesUploaded, bytesTotal) {
+        onProgress(bytesUploaded, bytesTotal) {
           uploader.onProgress(bytesUploaded, bytesTotal)
         },
-        onSuccess () {
+        onSuccess() {
           resolve({ url: uploader.tus.url })
         },
       })
@@ -564,12 +572,12 @@ class Uploader {
     })
   }
 
-  async #uploadMultipart (stream) {
+  async #uploadMultipart(stream) {
     if (!this.options.endpoint) {
       throw new Error('No multipart endpoint set')
     }
 
-    function getRespObj (response) {
+    function getRespObj(response) {
       // remove browser forbidden headers
       const { 'set-cookie': deleted, 'set-cookie2': deleted2, ...responseHeaders } = response.headers
 
@@ -642,7 +650,7 @@ class Uploader {
   /**
    * Upload the file to S3 using a Multipart upload.
    */
-  async #uploadS3Multipart (stream) {
+  async #uploadS3Multipart(stream) {
     if (!this.options.s3) {
       throw new Error('The S3 client is not configured on this companion instance.')
     }

@@ -11,10 +11,10 @@ async function refreshToken (req, res, next) {
   const { key: clientId, secret: clientSecret } = req.companion.options.providerOptions[providerName]
   const { redirect_uri: redirectUri } = req.companion.providerGrantConfig
 
-  const providerTokens = req.companion.allProvidersTokens[providerName]
+  const { providerUserSession } = req.companion
 
   // not all providers have refresh tokens
-  if (providerTokens.refreshToken == null || providerTokens.refreshToken === '') {
+  if (providerUserSession.refreshToken == null || providerUserSession.refreshToken === '') {
     logger.warn('Tried to refresh token without having a token')
     res.sendStatus(401)
     return
@@ -22,26 +22,21 @@ async function refreshToken (req, res, next) {
 
   try {
     const data = await req.companion.provider.refreshToken({
-      redirectUri, clientId, clientSecret, refreshToken: providerTokens.refreshToken,
+      redirectUri, clientId, clientSecret, refreshToken: providerUserSession.refreshToken,
     })
 
-    const newAllProvidersTokens = {
-      ...req.companion.allProvidersTokens,
-      [providerName]: {
-        ...providerTokens,
-        accessToken: data.accessToken,
-      },
+    req.companion.providerUserSession = {
+      ...providerUserSession,
+      accessToken: data.accessToken,
     }
-
-    req.companion.allProvidersTokens = newAllProvidersTokens
-    req.companion.providerTokens = newAllProvidersTokens[providerName]
 
     logger.debug(`Generating refreshed auth token for provider ${providerName}`, null, req.id)
     const uppyAuthToken = tokenService.generateEncryptedAuthToken(
-      req.companion.allProvidersTokens, req.companion.options.secret,
+      { [providerName]: req.companion.providerUserSession },
+      req.companion.options.secret, req.companion.providerClass.authStateExpiry,
     )
 
-    tokenService.addToCookiesIfNeeded(req, res, uppyAuthToken)
+    tokenService.addToCookiesIfNeeded(req, res, uppyAuthToken, req.companion.providerClass.authStateExpiry)
 
     res.send({ uppyAuthToken })
   } catch (err) {

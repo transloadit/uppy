@@ -1,9 +1,13 @@
 /* global cy */
 
-export const interceptCompanionUrlRequest = () =>
-  cy.intercept('http://localhost:3020/url/*').as('url')
-export const interceptCompanionUnsplashRequest = () =>
-  cy.intercept('http://localhost:3020/search/unsplash/*').as('unsplash')
+const interceptCompanionUrlRequest = () =>
+  cy
+    .intercept({ method: 'POST', url: 'http://localhost:3020/url/get' })
+    .as('url')
+export const interceptCompanionUrlMetaRequest = () =>
+  cy
+    .intercept({ method: 'POST', url: 'http://localhost:3020/url/meta' })
+    .as('url-meta')
 
 export function runRemoteUrlImageUploadTest() {
   cy.get('[data-cy="Url"]').click()
@@ -11,6 +15,7 @@ export function runRemoteUrlImageUploadTest() {
     'https://raw.githubusercontent.com/transloadit/uppy/main/e2e/cypress/fixtures/images/cat.jpg',
   )
   cy.get('.uppy-Url-importButton').click()
+  interceptCompanionUrlRequest()
   cy.get('.uppy-StatusBar-actionBtn--upload').click()
   cy.wait('@url').then(() => {
     cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Complete')
@@ -20,8 +25,12 @@ export function runRemoteUrlImageUploadTest() {
 export function runRemoteUnsplashUploadTest() {
   cy.get('[data-cy="Unsplash"]').click()
   cy.get('.uppy-SearchProvider-input').type('book')
+  cy.intercept({
+    method: 'GET',
+    url: 'http://localhost:3020/search/unsplash/list?q=book',
+  }).as('unsplash-list')
   cy.get('.uppy-SearchProvider-searchButton').click()
-  cy.wait('@unsplash')
+  cy.wait('@unsplash-list')
   // Test that the author link is visible
   cy.get('.uppy-ProviderBrowserItem')
     .first()
@@ -34,8 +43,12 @@ export function runRemoteUnsplashUploadTest() {
       cy.get('a').should('have.css', 'display', 'block')
     })
   cy.get('.uppy-c-btn-primary').click()
+  cy.intercept({
+    method: 'POST',
+    url: 'http://localhost:3020/search/unsplash/get/*',
+  }).as('unsplash-get')
   cy.get('.uppy-StatusBar-actionBtn--upload').click()
-  cy.wait('@unsplash').then(() => {
+  cy.wait('@unsplash-get').then(() => {
     cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Complete')
   })
 }

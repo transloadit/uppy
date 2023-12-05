@@ -1,5 +1,6 @@
 'use strict'
 
+import UserFacingApiError from '@uppy/utils/lib/UserFacingApiError'
 // eslint-disable-next-line import/no-extraneous-dependencies
 import pRetry, { AbortError } from 'p-retry'
 
@@ -13,25 +14,26 @@ import AuthError from './AuthError.js'
 import packageJson from '../package.json'
 
 // Remove the trailing slash so we can always safely append /xyz.
-function stripSlash (url) {
+function stripSlash(url) {
   return url.replace(/\/$/, '')
 }
 
 const retryCount = 10 // set to a low number, like 2 to test manual user retries
 const socketActivityTimeoutMs = 5 * 60 * 1000 // set to a low number like 10000 to test this
 
-const authErrorStatusCode = 401
+export const authErrorStatusCode = 401
 
 class HttpError extends Error {
   statusCode
 
   constructor({ statusCode, message }) {
     super(message)
+    this.name = 'HttpError'
     this.statusCode = statusCode
   }
 }
 
-async function handleJSONResponse (res) {
+async function handleJSONResponse(res) {
   if (res.status === authErrorStatusCode) {
     throw new AuthError()
   }
@@ -41,15 +43,19 @@ async function handleJSONResponse (res) {
   }
 
   let errMsg = `Failed request with status: ${res.status}. ${res.statusText}`
+  let errData
   try {
-    const errData = await res.json()
+    errData = await res.json()
 
-    errMsg = errData.message ? `${errMsg} message: ${errData.message}` : errMsg
-    errMsg = errData.requestId
-      ? `${errMsg} request-Id: ${errData.requestId}`
-      : errMsg
-  } catch {
-    /* if the response contains invalid JSON, let's ignore the error */
+    if (errData.message) errMsg = `${errMsg} message: ${errData.message}`
+    if (errData.requestId) errMsg = `${errMsg} request-Id: ${errData.requestId}`
+  } catch (cause) {
+    // if the response contains invalid JSON, let's ignore the error data
+    throw new Error(errMsg, { cause })
+  }
+
+  if (res.status >= 400 && res.status <= 499 && errData.message) {
+    throw new UserFacingApiError(errData.message)
   }
 
   throw new HttpError({ statusCode: res.status, message: errMsg })
@@ -60,22 +66,22 @@ export default class RequestClient {
 
   #companionHeaders
 
-  constructor (uppy, opts) {
+  constructor(uppy, opts) {
     this.uppy = uppy
     this.opts = opts
     this.onReceiveResponse = this.onReceiveResponse.bind(this)
     this.#companionHeaders = opts?.companionHeaders
   }
 
-  setCompanionHeaders (headers) {
+  setCompanionHeaders(headers) {
     this.#companionHeaders = headers
   }
 
-  [Symbol.for('uppy test: getCompanionHeaders')] () {
+  [Symbol.for('uppy test: getCompanionHeaders')]() {
     return this.#companionHeaders
   }
 
-  get hostname () {
+  get hostname() {
     const { companion } = this.uppy.getState()
     const host = this.opts.companionUrl
     return stripSlash(companion && companion[host] ? companion[host] : host)
@@ -96,7 +102,7 @@ export default class RequestClient {
     }
   }
 
-  onReceiveResponse ({ headers }) {
+  onReceiveResponse({ headers }) {
     const state = this.uppy.getState()
     const companion = state.companion || {}
     const host = this.opts.companionUrl
@@ -109,7 +115,7 @@ export default class RequestClient {
     }
   }
 
-  #getUrl (url) {
+  #getUrl(url) {
     if (/^(https?:|)\/\//.test(url)) {
       return url
     }
@@ -117,7 +123,7 @@ export default class RequestClient {
   }
 
   /** @protected */
-  async request ({ path, method = 'GET', data, skipPostResponse, signal }) {
+  async request({ path, method = 'GET', data, skipPostResponse, signal }) {
     try {
       const headers = await this.headers(!data)
       const response = await fetchWithNetworkError(this.#getUrl(path), {
@@ -132,7 +138,7 @@ export default class RequestClient {
       return await handleJSONResponse(response)
     } catch (err) {
       // pass these through
-      if (err instanceof AuthError || err.name === 'AbortError') throw err
+      if (err.isAuthError || err.name === 'UserFacingApiError' || err.name === 'AbortError') throw err
 
       throw new ErrorWithCause(`Could not ${method} ${this.#getUrl(path)}`, {
         cause: err,
@@ -140,21 +146,21 @@ export default class RequestClient {
     }
   }
 
-  async get (path, options = undefined) {
+  async get(path, options = undefined) {
     // TODO: remove boolean support for options that was added for backward compatibility.
     // eslint-disable-next-line no-param-reassign
     if (typeof options === 'boolean') options = { skipPostResponse: options }
     return this.request({ ...options, path })
   }
 
-  async post (path, data, options = undefined) {
+  async post(path, data, options = undefined) {
     // TODO: remove boolean support for options that was added for backward compatibility.
     // eslint-disable-next-line no-param-reassign
     if (typeof options === 'boolean') options = { skipPostResponse: options }
     return this.request({ ...options, path, method: 'POST', data })
   }
 
-  async delete (path, data = undefined, options) {
+  async delete(path, data = undefined, options) {
     // TODO: remove boolean support for options that was added for backward compatibility.
     // eslint-disable-next-line no-param-reassign
     if (typeof options === 'boolean') options = { skipPostResponse: options }
@@ -174,7 +180,7 @@ export default class RequestClient {
    * @param {*} options 
    * @returns 
    */
-  async uploadRemoteFile (file, reqBody, options = {}) {
+  async uploadRemoteFile(file, reqBody, options = {}) {
     try {
       const { signal, getQueue } = options
 
@@ -191,7 +197,7 @@ export default class RequestClient {
             return await this.#requestSocketToken(...args)
           } catch (outerErr) {
             // throwing AbortError will cause p-retry to stop retrying
-            if (outerErr instanceof AuthError) throw new AbortError(outerErr)
+            if (outerErr.isAuthError) throw new AbortError(outerErr)
 
             if (outerErr.cause == null) throw outerErr
             const err = outerErr.cause
@@ -200,7 +206,7 @@ export default class RequestClient {
               [408, 409, 429, 418, 423].includes(err.statusCode)
               || (err.statusCode >= 500 && err.statusCode <= 599 && ![501, 505].includes(err.statusCode))
             )
-            if (err instanceof HttpError && !isRetryableHttpError()) throw new AbortError(err);
+            if (err.name === 'HttpError' && !isRetryableHttpError()) throw new AbortError(err);
 
             // p-retry will retry most other errors,
             // but it will not retry TypeError (except network error TypeErrors)
@@ -253,7 +259,7 @@ export default class RequestClient {
    * 
    * @param {{ file: UppyFile, queue: RateLimitedQueue, signal: AbortSignal }} file
    */
-  async #awaitRemoteFileUpload ({ file, queue, signal }) {
+  async #awaitRemoteFileUpload({ file, queue, signal }) {
     let removeEventHandlers
 
     const { capabilities } = this.uppy.getState()

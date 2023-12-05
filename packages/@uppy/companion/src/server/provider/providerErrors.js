@@ -1,29 +1,37 @@
-const { HTTPError } = require('got').default
-
 const logger = require('../logger')
-const { ProviderApiError, ProviderAuthError } = require('./error')
-const { StreamHttpJsonError } = require('../helpers/utils')
+const { ProviderApiError, ProviderUserError, ProviderAuthError } = require('./error')
 
 /**
  * 
  * @param {{
- *   fn: () => any, tag: string, providerName: string, isAuthError: (a: { statusCode: number, body?: object }) => boolean,
+ *   fn: () => any,
+ *   tag: string,
+ * providerName: string,
+ *   isAuthError?: (a: { statusCode: number, body?: object }) => boolean,
+ * isUserFacingError?: (a: { statusCode: number, body?: object }) => boolean,
  *   getJsonErrorMessage: (a: object) => string
  * }} param0 
  * @returns 
  */
-async function withProviderErrorHandling ({ fn, tag, providerName, isAuthError = () => false, getJsonErrorMessage }) {
-  function getErrorMessage (response) {
-    if (typeof response.body === 'object') {
-      const message = getJsonErrorMessage(response.body)
+async function withProviderErrorHandling({
+  fn,
+  tag,
+  providerName,
+  isAuthError = () => false,
+  isUserFacingError = () => false,
+  getJsonErrorMessage,
+}) {
+  function getErrorMessage({ statusCode, body }) {
+    if (typeof body === 'object') {
+      const message = getJsonErrorMessage(body)
       if (message != null) return message
     }
 
-    if (typeof response.body === 'string') {
-      return response.body
+    if (typeof body === 'string') {
+      return body
     }
 
-    return `request to ${providerName} returned ${response.statusCode}`
+    return `request to ${providerName} returned ${statusCode}`
   }
 
   try {
@@ -32,21 +40,26 @@ async function withProviderErrorHandling ({ fn, tag, providerName, isAuthError =
     let statusCode
     let body
 
-    if (err instanceof HTTPError) {
+    if (err?.name === 'HTTPError') {
       statusCode = err.response?.statusCode
       body = err.response?.body
-    } else if (err instanceof StreamHttpJsonError) {
-      statusCode = err.statusCode      
+    } else if (err?.name === 'StreamHttpJsonError') {
+      statusCode = err.statusCode
       body = err.responseJson
     }
 
     if (statusCode != null) {
-      const err2 = isAuthError({ statusCode, body })
-        ? new ProviderAuthError()
-        : new ProviderApiError(getErrorMessage(body), statusCode)
+      let knownErr
+      if (isAuthError({ statusCode, body })) {
+        knownErr = new ProviderAuthError()
+      } else if (isUserFacingError({ statusCode, body })) {
+        knownErr = new ProviderUserError({ message: getErrorMessage({ statusCode, body }) })
+      } else {
+        knownErr = new ProviderApiError(getErrorMessage({ statusCode, body }), statusCode)
+      }
 
-      logger.error(err2, tag)
-      throw err2
+      logger.error(knownErr, tag)
+      throw knownErr
     }
 
     logger.error(err, tag)

@@ -1,9 +1,12 @@
 'use strict'
 
 class AuthError extends Error {
-  constructor () {
+  constructor() {
     super('Authorization required')
     this.name = 'AuthError'
+
+    // we use a property because of instanceof is unsafe:
+    // https://github.com/transloadit/uppy/pull/4619#discussion_r1406225982
     this.isAuthError = true
   }
 }
