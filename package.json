@@ -156,7 +156,7 @@
     "test:type": "yarn workspaces foreach -piv --include '@uppy/*' --exclude '@uppy/{angular,react-native,locales,companion,provider-views,robodog,svelte}' exec tsd",
     "test:unit": "yarn run build:lib && yarn test:watch",
     "test:watch": "vitest --environment jsdom --dir packages/@uppy",
-    "test": "npm-run-all lint test:locale-packs:unused test:unit test:type test:companion",
+    "test": "CI=true npm-run-all lint test:locale-packs:unused test:unit test:type test:companion",
     "uploadcdn": "yarn node ./bin/upload-to-cdn.js",
     "version": "yarn node ./bin/after-version-bump.js",
     "watch:css": "onchange 'packages/{@uppy/,}*/src/*.scss' --initial --verbose -- yarn run build:css",
