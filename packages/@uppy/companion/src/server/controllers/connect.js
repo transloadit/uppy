@@ -7,7 +7,7 @@ const oAuthState = require('../helpers/oauth-state')
  * @param {object} req
  * @param {object} res
  */
-module.exports = function connect (req, res) {
+module.exports = function connect(req, res) {
   const { secret } = req.companion.options
   let state = oAuthState.generateState(secret)
   if (req.query.state) {
@@ -17,10 +17,6 @@ module.exports = function connect (req, res) {
 
   if (req.companion.options.server.oauthDomain) {
     state = oAuthState.addToState(state, { companionInstance: req.companion.buildURL('', true) }, secret)
-  }
-
-  if (req.companion.clientVersion) {
-    state = oAuthState.addToState(state, { clientVersion: req.companion.clientVersion }, secret)
   }
 
   if (req.query.uppyPreAuthToken) {

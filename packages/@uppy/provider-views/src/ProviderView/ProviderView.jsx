@@ -242,9 +242,8 @@ export default class ProviderView extends View {
   }
 
   async handleAuth () {
-    const clientVersion = `@uppy/provider-views=${ProviderView.VERSION}`
     try {
-      await this.provider.login({ uppyVersions: clientVersion })
+      await this.provider.login()
       this.plugin.setPluginState({ authenticated: true })
       this.preFirstRender()
     } catch (e) {

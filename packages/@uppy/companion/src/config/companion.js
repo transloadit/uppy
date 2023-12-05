@@ -18,7 +18,6 @@ const defaultOptions = {
   },
   enableUrlEndpoint: true, // todo next major make this default false
   allowLocalUrls: false,
-  logClientVersion: true,
   periodicPingUrls: [],
   streamingUpload: false,
   clientSocketConnectTimeout: 60000,
@@ -28,7 +27,7 @@ const defaultOptions = {
 /**
  * @param {object} companionOptions
  */
-function getMaskableSecrets (companionOptions) {
+function getMaskableSecrets(companionOptions) {
   const secrets = []
   const { providerOptions, customProviders, s3 } = companionOptions
 
