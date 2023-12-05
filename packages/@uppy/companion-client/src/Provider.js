@@ -2,18 +2,18 @@
 
 import RequestClient, { authErrorStatusCode } from './RequestClient.js'
 import * as tokenStorage from './tokenStorage.js'
-import AuthError from './AuthError.js'
+
 
 const getName = (id) => {
   return id.split('-').map((s) => s.charAt(0).toUpperCase() + s.slice(1)).join(' ')
 }
 
-function getOrigin () {
+function getOrigin() {
   // eslint-disable-next-line no-restricted-globals
   return location.origin
 }
 
-function getRegex (value) {
+function getRegex(value) {
   if (typeof value === 'string') {
     return new RegExp(`^${value}$`)
   } if (value instanceof RegExp) {
@@ -22,7 +22,7 @@ function getRegex (value) {
   return undefined
 }
 
-function isOriginAllowed (origin, allowedOrigin) {
+function isOriginAllowed(origin, allowedOrigin) {
   const patterns = Array.isArray(allowedOrigin) ? allowedOrigin.map(getRegex) : [getRegex(allowedOrigin)]
   return patterns
     .some((pattern) => pattern?.test(origin) || pattern?.test(`${origin}/`)) // allowing for trailing '/'
@@ -31,7 +31,7 @@ function isOriginAllowed (origin, allowedOrigin) {
 export default class Provider extends RequestClient {
   #refreshingTokenPromise
 
-  constructor (uppy, opts) {
+  constructor(uppy, opts) {
     super(uppy, opts)
     this.provider = opts.provider
     this.id = this.provider
@@ -43,7 +43,7 @@ export default class Provider extends RequestClient {
     this.supportsRefreshToken = opts.supportsRefreshToken ?? true // todo false in next major
   }
 
-  async headers () {
+  async headers() {
     const [headers, token] = await Promise.all([super.headers(), this.#getAuthToken()])
     const authHeaders = {}
     if (token) {
@@ -58,7 +58,7 @@ export default class Provider extends RequestClient {
     return { ...headers, ...authHeaders }
   }
 
-  onReceiveResponse (response) {
+  onReceiveResponse(response) {
     super.onReceiveResponse(response)
     const plugin = this.uppy.getPlugin(this.pluginId)
     const oldAuthenticated = plugin.getPluginState().authenticated
@@ -67,16 +67,16 @@ export default class Provider extends RequestClient {
     return response
   }
 
-  async setAuthToken (token) {
+  async setAuthToken(token) {
     return this.uppy.getPlugin(this.pluginId).storage.setItem(this.tokenKey, token)
   }
 
-  async #getAuthToken () {
+  async #getAuthToken() {
     return this.uppy.getPlugin(this.pluginId).storage.getItem(this.tokenKey)
   }
 
   /** @protected */
-  async removeAuthToken () {
+  async removeAuthToken() {
     return this.uppy.getPlugin(this.pluginId).storage.removeItem(this.tokenKey)
   }
 
@@ -84,7 +84,7 @@ export default class Provider extends RequestClient {
    * Ensure we have a preauth token if necessary. Attempts to fetch one if we don't,
    * or rejects if loading one fails.
    */
-  async ensurePreAuth () {
+  async ensurePreAuth() {
     if (this.companionKeysParams && !this.preAuthToken) {
       await this.fetchPreAuthToken()
 
@@ -95,11 +95,11 @@ export default class Provider extends RequestClient {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  authQuery () {
+  authQuery() {
     return {}
   }
 
-  authUrl ({ authFormData, query } = {}) {
+  authUrl({ authFormData, query } = {}) {
     const params = new URLSearchParams({
       ...query,
       state: btoa(JSON.stringify({ origin: getOrigin() })),
@@ -114,13 +114,13 @@ export default class Provider extends RequestClient {
   }
 
   /** @protected */
-  async loginSimpleAuth ({ uppyVersions, authFormData, signal }) {
+  async loginSimpleAuth({ uppyVersions, authFormData, signal }) {
     const response = await this.post(`${this.id}/simple-auth`, { form: authFormData }, { qs: { uppyVersions }, signal })
     this.setAuthToken(response.uppyAuthToken)
   }
 
   /** @protected */
-  async loginOAuth ({ uppyVersions, authFormData, signal }) {
+  async loginOAuth({ uppyVersions, authFormData, signal }) {
     await this.ensurePreAuth()
 
     signal.throwIfAborted()
@@ -185,20 +185,20 @@ export default class Provider extends RequestClient {
     })
   }
 
-  async login ({ uppyVersions, authFormData, signal }) {
+  async login({ uppyVersions, authFormData, signal }) {
     return this.loginOAuth({ uppyVersions, authFormData, signal })
   }
 
-  refreshTokenUrl () {
+  refreshTokenUrl() {
     return `${this.hostname}/${this.id}/refresh-token`
   }
 
-  fileUrl (id) {
+  fileUrl(id) {
     return `${this.hostname}/${this.id}/get/${id}`
   }
 
   /** @protected */
-  async request (...args) {
+  async request(...args) {
     await this.#refreshingTokenPromise
 
     try {
@@ -213,7 +213,7 @@ export default class Provider extends RequestClient {
       if (!this.supportsRefreshToken) throw err
       // only handle auth errors (401 from provider), and only handle them if we have a (refresh) token
       const authTokenAfter = await this.#getAuthToken()
-      if (!(err instanceof AuthError) || !authTokenAfter) throw err
+      if (!err.isAuthError || !authTokenAfter) throw err
 
       if (this.#refreshingTokenPromise == null) {
         // Many provider requests may be starting at once, however refresh token should only be called once.
@@ -242,7 +242,7 @@ export default class Provider extends RequestClient {
     }
   }
 
-  async fetchPreAuthToken () {
+  async fetchPreAuthToken() {
     if (!this.companionKeysParams) {
       return
     }
@@ -255,17 +255,17 @@ export default class Provider extends RequestClient {
     }
   }
 
-  list (directory, options) {
+  list(directory, options) {
     return this.get(`${this.id}/list/${directory || ''}`, options)
   }
 
-  async logout (options) {
+  async logout(options) {
     const response = await this.get(`${this.id}/logout`, options)
     await this.removeAuthToken()
     return response
   }
 
-  static initPlugin (plugin, opts, defaultOpts) {
+  static initPlugin(plugin, opts, defaultOpts) {
     /* eslint-disable no-param-reassign */
     plugin.type = 'acquirer'
     plugin.files = []

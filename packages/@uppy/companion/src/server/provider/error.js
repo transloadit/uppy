@@ -8,7 +8,7 @@ class ProviderApiError extends Error {
    * @param {string} message error message
    * @param {number} statusCode the http status code from the provider api
    */
-  constructor (message, statusCode) {
+  constructor(message, statusCode) {
     super(`HTTP ${statusCode}: ${message}`) // Include statusCode to make it easier to debug
     this.name = 'ProviderApiError'
     this.statusCode = statusCode
@@ -20,8 +20,9 @@ class ProviderUserError extends ProviderApiError {
   /**
    * @param {object} json arbitrary JSON.stringify-able object that will be passed to the client
    */
-  constructor (json) {
+  constructor(json) {
     super('User error', undefined)
+    this.name = 'ProviderUserError'
     this.json = json
   }
 }
@@ -31,7 +32,7 @@ class ProviderUserError extends ProviderApiError {
  * an authorization error while communication with its corresponding provider
  */
 class ProviderAuthError extends ProviderApiError {
-  constructor () {
+  constructor() {
     super('invalid access token detected by Provider', 401)
     this.name = 'AuthError'
     this.isAuthError = true
@@ -43,25 +44,30 @@ class ProviderAuthError extends ProviderApiError {
  *
  * @param {Error | ProviderApiError} err the error instance to convert to an http json response
  */
-function errorToResponse (err) {
-  if (err instanceof ProviderAuthError) {
+function errorToResponse(err) {
+  // @ts-ignore
+  if (err.isAuthError) {
     return { code: 401, json: { message: err.message } }
   }
 
-  if (err instanceof ProviderUserError) {
+  if (err.name === 'ProviderUserError') {
+    // @ts-ignore
     return { code: 400, json: err.json }
   }
 
-  if (err instanceof ProviderApiError) {
+  if (err.name === 'ProviderApiError') {
+    // @ts-ignore
     if (err.statusCode >= 500) {
       // bad gateway i.e the provider APIs gateway
       return { code: 502, json: { message: err.message } }
     }
 
+    // @ts-ignore
     if (err.statusCode === 429) {
       return { code: 429, message: err.message }
     }
 
+    // @ts-ignore
     if (err.statusCode >= 400) {
       // 424 Failed Dependency
       return { code: 424, json: { message: err.message } }
@@ -71,7 +77,7 @@ function errorToResponse (err) {
   return undefined
 }
 
-function respondWithError (err, res) {
+function respondWithError(err, res) {
   const errResp = errorToResponse(err)
   if (errResp) {
     res.status(errResp.code).json(errResp.json)

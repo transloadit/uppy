@@ -14,7 +14,7 @@ import AuthError from './AuthError.js'
 import packageJson from '../package.json'
 
 // Remove the trailing slash so we can always safely append /xyz.
-function stripSlash (url) {
+function stripSlash(url) {
   return url.replace(/\/$/, '')
 }
 
@@ -28,11 +28,12 @@ class HttpError extends Error {
 
   constructor({ statusCode, message }) {
     super(message)
+    this.name = 'HttpError'
     this.statusCode = statusCode
   }
 }
 
-async function handleJSONResponse (res) {
+async function handleJSONResponse(res) {
   if (res.status === authErrorStatusCode) {
     throw new AuthError()
   }
@@ -68,28 +69,28 @@ export default class RequestClient {
 
   #companionHeaders
 
-  constructor (uppy, opts) {
+  constructor(uppy, opts) {
     this.uppy = uppy
     this.opts = opts
     this.onReceiveResponse = this.onReceiveResponse.bind(this)
     this.#companionHeaders = opts?.companionHeaders
   }
 
-  setCompanionHeaders (headers) {
+  setCompanionHeaders(headers) {
     this.#companionHeaders = headers
   }
 
-  [Symbol.for('uppy test: getCompanionHeaders')] () {
+  [Symbol.for('uppy test: getCompanionHeaders')]() {
     return this.#companionHeaders
   }
 
-  get hostname () {
+  get hostname() {
     const { companion } = this.uppy.getState()
     const host = this.opts.companionUrl
     return stripSlash(companion && companion[host] ? companion[host] : host)
   }
 
-  async headers () {
+  async headers() {
     const defaultHeaders = {
       Accept: 'application/json',
       'Content-Type': 'application/json',
@@ -102,7 +103,7 @@ export default class RequestClient {
     }
   }
 
-  onReceiveResponse ({ headers }) {
+  onReceiveResponse({ headers }) {
     const state = this.uppy.getState()
     const companion = state.companion || {}
     const host = this.opts.companionUrl
@@ -115,7 +116,7 @@ export default class RequestClient {
     }
   }
 
-  #getUrl (url) {
+  #getUrl(url) {
     if (/^(https?:|)\/\//.test(url)) {
       return url
     }
@@ -136,7 +137,7 @@ export default class RequestClient {
     Subsequent requests use the cached result of the preflight.
     However if there is an error retrieving the allowed headers, we will try again next time
   */
-  async preflight (path) {
+  async preflight(path) {
     const allowedHeadersCached = allowedHeadersCache.get(this.hostname)
     if (allowedHeadersCached != null) return allowedHeadersCached
 
@@ -181,7 +182,7 @@ export default class RequestClient {
     return promise
   }
 
-  async preflightAndHeaders (path) {
+  async preflightAndHeaders(path) {
     const [allowedHeaders, headers] = await Promise.all([
       this.preflight(path),
       this.headers(),
@@ -201,7 +202,7 @@ export default class RequestClient {
   }
 
   /** @protected */
-  async request ({ path, method = 'GET', data, skipPostResponse, signal }) {
+  async request({ path, method = 'GET', data, skipPostResponse, signal }) {
     try {
       const headers = await this.preflightAndHeaders(path)
       const response = await fetchWithNetworkError(this.#getUrl(path), {
@@ -216,7 +217,7 @@ export default class RequestClient {
       return await handleJSONResponse(response)
     } catch (err) {
       // pass these through
-      if (err instanceof AuthError || err instanceof UserFacingApiError || err.name === 'AbortError') throw err
+      if (err.isAuthError || err.name === 'UserFacingApiError' || err.name === 'AbortError') throw err
 
       throw new ErrorWithCause(`Could not ${method} ${this.#getUrl(path)}`, {
         cause: err,
@@ -224,21 +225,21 @@ export default class RequestClient {
     }
   }
 
-  async get (path, options = undefined) {
+  async get(path, options = undefined) {
     // TODO: remove boolean support for options that was added for backward compatibility.
     // eslint-disable-next-line no-param-reassign
     if (typeof options === 'boolean') options = { skipPostResponse: options }
     return this.request({ ...options, path })
   }
 
-  async post (path, data, options = undefined) {
+  async post(path, data, options = undefined) {
     // TODO: remove boolean support for options that was added for backward compatibility.
     // eslint-disable-next-line no-param-reassign
     if (typeof options === 'boolean') options = { skipPostResponse: options }
     return this.request({ ...options, path, method: 'POST', data })
   }
 
-  async delete (path, data = undefined, options) {
+  async delete(path, data = undefined, options) {
     // TODO: remove boolean support for options that was added for backward compatibility.
     // eslint-disable-next-line no-param-reassign
     if (typeof options === 'boolean') options = { skipPostResponse: options }
@@ -258,7 +259,7 @@ export default class RequestClient {
    * @param {*} options 
    * @returns 
    */
-  async uploadRemoteFile (file, reqBody, options = {}) {
+  async uploadRemoteFile(file, reqBody, options = {}) {
     try {
       const { signal, getQueue } = options
 
@@ -275,7 +276,7 @@ export default class RequestClient {
             return await this.#requestSocketToken(...args)
           } catch (outerErr) {
             // throwing AbortError will cause p-retry to stop retrying
-            if (outerErr instanceof AuthError) throw new AbortError(outerErr)
+            if (outerErr.isAuthError) throw new AbortError(outerErr)
 
             if (outerErr.cause == null) throw outerErr
             const err = outerErr.cause
@@ -284,8 +285,8 @@ export default class RequestClient {
               [408, 409, 429, 418, 423].includes(err.statusCode)
               || (err.statusCode >= 500 && err.statusCode <= 599 && ![501, 505].includes(err.statusCode))
             )
-            if (err instanceof HttpError && !isRetryableHttpError()) throw new AbortError(err);
-  
+            if (err.name === 'HttpError' && !isRetryableHttpError()) throw new AbortError(err);
+
             // p-retry will retry most other errors,
             // but it will not retry TypeError (except network error TypeErrors)
             throw err
@@ -337,7 +338,7 @@ export default class RequestClient {
    * 
    * @param {{ file: UppyFile, queue: RateLimitedQueue, signal: AbortSignal }} file
    */
-  async #awaitRemoteFileUpload ({ file, queue, signal }) {
+  async #awaitRemoteFileUpload({ file, queue, signal }) {
     let removeEventHandlers
 
     const { capabilities } = this.uppy.getState()
@@ -364,7 +365,7 @@ export default class RequestClient {
           socket.send(JSON.stringify({
             action,
             payload: payload ?? {},
-          }))    
+          }))
         };
 
         function sendState() {
@@ -384,7 +385,7 @@ export default class RequestClient {
             socketAbortController?.abort?.()
             reject(err)
           }
-  
+
           // todo instead implement the ability for users to cancel / retry *currently uploading files* in the UI
           function resetActivityTimeout() {
             clearTimeout(activityTimeout)
@@ -419,7 +420,7 @@ export default class RequestClient {
 
                   try {
                     const { action, payload } = JSON.parse(e.data)
-            
+
                     switch (action) {
                       case 'progress': {
                         emitSocketProgress(this, payload, file)
@@ -435,8 +436,8 @@ export default class RequestClient {
                         const { message } = payload.error
                         throw Object.assign(new Error(message), { cause: payload.error })
                       }
-                        default:
-                          this.uppy.log(`Companion socket unknown action ${action}`, 'warning')
+                      default:
+                        this.uppy.log(`Companion socket unknown action ${action}`, 'warning')
                     }
                   } catch (err) {
                     onFatalError(err)
@@ -449,7 +450,7 @@ export default class RequestClient {
                   if (socket) socket.close()
                   socket = undefined
                 }
-        
+
                 socketAbortController.signal.addEventListener('abort', () => {
                   closeSocket()
                 })

@@ -1,8 +1,5 @@
-const { HTTPError } = require('got').default
-
 const logger = require('../logger')
 const { ProviderApiError, ProviderUserError, ProviderAuthError } = require('./error')
-const { StreamHttpJsonError } = require('../helpers/utils')
 
 /**
  * 
@@ -16,7 +13,7 @@ const { StreamHttpJsonError } = require('../helpers/utils')
  * }} param0 
  * @returns 
  */
-async function withProviderErrorHandling ({
+async function withProviderErrorHandling({
   fn,
   tag,
   providerName,
@@ -24,7 +21,7 @@ async function withProviderErrorHandling ({
   isUserFacingError = () => false,
   getJsonErrorMessage,
 }) {
-  function getErrorMessage ({ statusCode, body }) {
+  function getErrorMessage({ statusCode, body }) {
     if (typeof body === 'object') {
       const message = getJsonErrorMessage(body)
       if (message != null) return message
@@ -43,11 +40,11 @@ async function withProviderErrorHandling ({
     let statusCode
     let body
 
-    if (err instanceof HTTPError) {
+    if (err.name === 'HTTPError') {
       statusCode = err.response?.statusCode
       body = err.response?.body
-    } else if (err instanceof StreamHttpJsonError) {
-      statusCode = err.statusCode      
+    } else if (err.name === 'StreamHttpJsonError') {
+      statusCode = err.statusCode
       body = err.responseJson
     }
 
@@ -56,7 +53,7 @@ async function withProviderErrorHandling ({
       if (isAuthError({ statusCode, body })) {
         knownErr = new ProviderAuthError()
       } else if (isUserFacingError({ statusCode, body })) {
-    knownErr = new ProviderUserError({ message: getErrorMessage({ statusCode, body }) })
+        knownErr = new ProviderUserError({ message: getErrorMessage({ statusCode, body }) })
       } else {
         knownErr = new ProviderApiError(getErrorMessage({ statusCode, body }), statusCode)
       }
