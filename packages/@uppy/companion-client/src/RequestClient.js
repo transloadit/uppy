@@ -81,10 +81,10 @@ export default class RequestClient {
     return stripSlash(companion && companion[host] ? companion[host] : host)
   }
 
-  async headers (emptyRequest = false) {
+  async headers (emptyBody = false) {
     const defaultHeaders = {
       Accept: 'application/json',
-      ...(emptyRequest ? undefined : {
+      ...(emptyBody ? undefined : {
         // Passing those headers on requests with no data forces browsers to first make a preflight request.
         'Content-Type': 'application/json',
       }),
