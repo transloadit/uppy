@@ -19,10 +19,6 @@ module.exports = function connect (req, res) {
     state = oAuthState.addToState(state, { companionInstance: req.companion.buildURL('', true) }, secret)
   }
 
-  if (req.companion.clientVersion) {
-    state = oAuthState.addToState(state, { clientVersion: req.companion.clientVersion }, secret)
-  }
-
   if (req.query.uppyPreAuthToken) {
     state = oAuthState.addToState(state, { preAuthToken: req.query.uppyPreAuthToken }, secret)
   }
