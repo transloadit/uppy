@@ -27,7 +27,7 @@ const defaultOptions = {
 /**
  * @param {object} companionOptions
  */
-function getMaskableSecrets(companionOptions) {
+function getMaskableSecrets (companionOptions) {
   const secrets = []
   const { providerOptions, customProviders, s3 } = companionOptions
 

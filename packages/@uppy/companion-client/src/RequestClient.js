@@ -13,7 +13,7 @@ import AuthError from './AuthError.js'
 import packageJson from '../package.json'
 
 // Remove the trailing slash so we can always safely append /xyz.
-function stripSlash(url) {
+function stripSlash (url) {
   return url.replace(/\/$/, '')
 }
 
@@ -31,7 +31,7 @@ class HttpError extends Error {
   }
 }
 
-async function handleJSONResponse(res) {
+async function handleJSONResponse (res) {
   if (res.status === authErrorStatusCode) {
     throw new AuthError()
   }
@@ -60,28 +60,28 @@ export default class RequestClient {
 
   #companionHeaders
 
-  constructor(uppy, opts) {
+  constructor (uppy, opts) {
     this.uppy = uppy
     this.opts = opts
     this.onReceiveResponse = this.onReceiveResponse.bind(this)
     this.#companionHeaders = opts?.companionHeaders
   }
 
-  setCompanionHeaders(headers) {
+  setCompanionHeaders (headers) {
     this.#companionHeaders = headers
   }
 
-  [Symbol.for('uppy test: getCompanionHeaders')]() {
+  [Symbol.for('uppy test: getCompanionHeaders')] () {
     return this.#companionHeaders
   }
 
-  get hostname() {
+  get hostname () {
     const { companion } = this.uppy.getState()
     const host = this.opts.companionUrl
     return stripSlash(companion && companion[host] ? companion[host] : host)
   }
 
-  async headers(emptyRequest = false) {
+  async headers (emptyRequest = false) {
     const defaultHeaders = {
       Accept: 'application/json',
       ...(emptyRequest ? undefined : {
@@ -96,7 +96,7 @@ export default class RequestClient {
     }
   }
 
-  onReceiveResponse({ headers }) {
+  onReceiveResponse ({ headers }) {
     const state = this.uppy.getState()
     const companion = state.companion || {}
     const host = this.opts.companionUrl
@@ -109,7 +109,7 @@ export default class RequestClient {
     }
   }
 
-  #getUrl(url) {
+  #getUrl (url) {
     if (/^(https?:|)\/\//.test(url)) {
       return url
     }
@@ -117,7 +117,7 @@ export default class RequestClient {
   }
 
   /** @protected */
-  async request({ path, method = 'GET', data, skipPostResponse, signal }) {
+  async request ({ path, method = 'GET', data, skipPostResponse, signal }) {
     try {
       const headers = await this.headers(!data)
       const response = await fetchWithNetworkError(this.#getUrl(path), {
@@ -140,21 +140,21 @@ export default class RequestClient {
     }
   }
 
-  async get(path, options = undefined) {
+  async get (path, options = undefined) {
     // TODO: remove boolean support for options that was added for backward compatibility.
     // eslint-disable-next-line no-param-reassign
     if (typeof options === 'boolean') options = { skipPostResponse: options }
     return this.request({ ...options, path })
   }
 
-  async post(path, data, options = undefined) {
+  async post (path, data, options = undefined) {
     // TODO: remove boolean support for options that was added for backward compatibility.
     // eslint-disable-next-line no-param-reassign
     if (typeof options === 'boolean') options = { skipPostResponse: options }
     return this.request({ ...options, path, method: 'POST', data })
   }
 
-  async delete(path, data = undefined, options) {
+  async delete (path, data = undefined, options) {
     // TODO: remove boolean support for options that was added for backward compatibility.
     // eslint-disable-next-line no-param-reassign
     if (typeof options === 'boolean') options = { skipPostResponse: options }
@@ -174,7 +174,7 @@ export default class RequestClient {
    * @param {*} options 
    * @returns 
    */
-  async uploadRemoteFile(file, reqBody, options = {}) {
+  async uploadRemoteFile (file, reqBody, options = {}) {
     try {
       const { signal, getQueue } = options
 
@@ -253,7 +253,7 @@ export default class RequestClient {
    * 
    * @param {{ file: UppyFile, queue: RateLimitedQueue, signal: AbortSignal }} file
    */
-  async #awaitRemoteFileUpload({ file, queue, signal }) {
+  async #awaitRemoteFileUpload ({ file, queue, signal }) {
     let removeEventHandlers
 
     const { capabilities } = this.uppy.getState()

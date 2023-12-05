@@ -7,7 +7,7 @@ const oAuthState = require('../helpers/oauth-state')
  * @param {object} req
  * @param {object} res
  */
-module.exports = function connect(req, res) {
+module.exports = function connect (req, res) {
   const { secret } = req.companion.options
   let state = oAuthState.generateState(secret)
   if (req.query.state) {
