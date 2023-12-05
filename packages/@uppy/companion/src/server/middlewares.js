@@ -67,7 +67,9 @@ exports.verifyToken = (req, res, next) => {
       return
     }
 
-    req.companion.providerToken = providerOptions[providerName].key
+    req.companion.providerTokens = {
+      accessToken: providerOptions[providerName].key,
+    }
     next()
     return
   }
@@ -80,16 +82,15 @@ exports.verifyToken = (req, res, next) => {
     return
   }
   const { providerName } = req.params
-  const { err, payload } = tokenService.verifyEncryptedToken(token, req.companion.options.secret)
-  if (err || !payload[providerName]) {
-    if (err) {
-      logger.error(err.message, 'token.verify.error', req.id)
-    }
+  try {
+    const payload = tokenService.verifyEncryptedAuthToken(token, req.companion.options.secret, providerName)
+    req.companion.allProvidersTokens = payload
+    req.companion.providerTokens = payload[providerName]
+  } catch (err) {
+    logger.error(err.message, 'token.verify.error', req.id)
     res.sendStatus(401)
     return
   }
-  req.companion.providerTokens = payload
-  req.companion.providerToken = payload[providerName]
   next()
 }
 
@@ -97,9 +98,13 @@ exports.verifyToken = (req, res, next) => {
 exports.gentleVerifyToken = (req, res, next) => {
   const { providerName } = req.params
   if (req.companion.authToken) {
-    const { err, payload } = tokenService.verifyEncryptedToken(req.companion.authToken, req.companion.options.secret)
-    if (!err && payload[providerName]) {
-      req.companion.providerTokens = payload
+    try {
+      const payload = tokenService.verifyEncryptedAuthToken(
+        req.companion.authToken, req.companion.options.secret, providerName,
+      )
+      req.companion.allProvidersTokens = payload
+    } catch (err) {
+      logger.error(err.message, 'token.gentle.verify.error', req.id)
     }
   }
   next()

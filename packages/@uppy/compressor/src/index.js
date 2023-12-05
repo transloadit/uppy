@@ -2,7 +2,7 @@ import { BasePlugin } from '@uppy/core'
 import { RateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
 import getFileNameAndExtension from '@uppy/utils/lib/getFileNameAndExtension'
 import prettierBytes from '@transloadit/prettier-bytes'
-import CompressorJS from 'compressorjs/dist/compressor.common.js'
+import CompressorJS from 'compressorjs'
 import locale from './locale.js'
 
 export default class Compressor extends BasePlugin {
@@ -52,15 +52,25 @@ export default class Compressor extends BasePlugin {
           this.uppy.log(`[Image Compressor] Image ${file.id} compressed by ${prettierBytes(compressedSavingsSize)}`)
           totalCompressedSize += compressedSavingsSize
           const { name, type, size } = compressedBlob
-          const extension = name && getFileNameAndExtension(name).extension
+
+          const compressedFileName = getFileNameAndExtension(name)
+          const metaFileName = getFileNameAndExtension(file.meta.name)
+
+          // Name (file.meta.name) might have been changed by user, so we update only the extension
+          const newMetaName = `${metaFileName.name}.${compressedFileName.extension}`
+
           this.uppy.setFileState(file.id, {
             ...(name && { name }),
-            ...(extension && { extension }),
+            ...(compressedFileName.extension && { extension: compressedFileName.extension }),
             ...(type && { type }),
             ...(size && { size }),
             data: compressedBlob,
+            meta: {
+              ...file.meta,
+              type,
+              name: newMetaName,
+            },
           })
-          this.uppy.setFileMeta(file.id, { type })
           compressedFiles.push(file)
         } catch (err) {
           this.uppy.log(`[Image Compressor] Failed to compress ${file.id}:`, 'warning')

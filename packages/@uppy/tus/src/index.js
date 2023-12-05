@@ -1,9 +1,6 @@
 import BasePlugin from '@uppy/core/lib/BasePlugin.js'
 import * as tus from 'tus-js-client'
-import { Provider, RequestClient, Socket } from '@uppy/companion-client'
-import emitSocketProgress from '@uppy/utils/lib/emitSocketProgress'
-import getSocketHost from '@uppy/utils/lib/getSocketHost'
-import EventTracker from '@uppy/utils/lib/EventTracker'
+import EventManager from '@uppy/utils/lib/EventManager'
 import NetworkError from '@uppy/utils/lib/NetworkError'
 import isNetworkError from '@uppy/utils/lib/isNetworkError'
 import { RateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
@@ -57,8 +54,6 @@ export default class Tus extends BasePlugin {
 
   #retryDelayIterator
 
-  #queueRequestSocketToken
-
   /**
    * @param {Uppy} uppy
    * @param {TusOptions} opts
@@ -71,7 +66,6 @@ export default class Tus extends BasePlugin {
 
     // set default options
     const defaultOptions = {
-      useFastRemoteRetry: true,
       limit: 20,
       retryDelays: tusDefaultOptions.retryDelays,
       withCredentials: false,
@@ -99,10 +93,8 @@ export default class Tus extends BasePlugin {
 
     this.uploaders = Object.create(null)
     this.uploaderEvents = Object.create(null)
-    this.uploaderSockets = Object.create(null)
 
     this.handleResetProgress = this.handleResetProgress.bind(this)
-    this.#queueRequestSocketToken = this.requests.wrapPromiseFunction(this.#requestSocketToken, { priority: -1 })
   }
 
   handleResetProgress () {
@@ -141,10 +133,6 @@ export default class Tus extends BasePlugin {
       this.uploaderEvents[fileID].remove()
       this.uploaderEvents[fileID] = null
     }
-    if (this.uploaderSockets[fileID]) {
-      this.uploaderSockets[fileID].close()
-      this.uploaderSockets[fileID] = null
-    }
   }
 
   /**
@@ -153,22 +141,22 @@ export default class Tus extends BasePlugin {
    * A lot can happen during an upload, so this is quite hard to follow!
    * - First, the upload is started. If the file was already paused by the time the upload starts, nothing should happen.
    *   If the `limit` option is used, the upload must be queued onto the `this.requests` queue.
-   *   When an upload starts, we store the tus.Upload instance, and an EventTracker instance that manages the event listeners
+   *   When an upload starts, we store the tus.Upload instance, and an EventManager instance that manages the event listeners
    *   for pausing, cancellation, removal, etc.
    * - While the upload is in progress, it may be paused or cancelled.
    *   Pausing aborts the underlying tus.Upload, and removes the upload from the `this.requests` queue. All other state is
    *   maintained.
    *   Cancelling removes the upload from the `this.requests` queue, and completely aborts the upload-- the `tus.Upload`
-   *   instance is aborted and discarded, the EventTracker instance is destroyed (removing all listeners).
+   *   instance is aborted and discarded, the EventManager instance is destroyed (removing all listeners).
    *   Resuming the upload uses the `this.requests` queue as well, to prevent selectively pausing and resuming uploads from
    *   bypassing the limit.
-   * - After completing an upload, the tus.Upload and EventTracker instances are cleaned up, and the upload is marked as done
+   * - After completing an upload, the tus.Upload and EventManager instances are cleaned up, and the upload is marked as done
    *   in the `this.requests` queue.
    * - When an upload completed with an error, the same happens as on successful completion, but the `upload()` promise is
    *   rejected.
    *
    * When working on this function, keep in mind:
-   *  - When an upload is completed or cancelled for any reason, the tus.Upload and EventTracker instances need to be cleaned
+   *  - When an upload is completed or cancelled for any reason, the tus.Upload and EventManager instances need to be cleaned
    *    up using this.resetUploaderReferences().
    *  - When an upload is cancelled or paused, for any reason, it needs to be removed from the `this.requests` queue using
    *    `queuedRequest.abort()`.
@@ -182,7 +170,7 @@ export default class Tus extends BasePlugin {
    * @param {UppyFile} file for use with upload
    * @returns {Promise<void>}
    */
-  #upload (file) {
+  #uploadLocalFile (file) {
     this.resetUploaderReferences(file.id)
 
     // Create a new tus upload
@@ -260,12 +248,17 @@ export default class Tus extends BasePlugin {
         queuedRequest?.abort()
 
         this.uppy.emit('upload-error', file, err)
-
+        if (typeof opts.onError === 'function') {
+          opts.onError(err)
+        }
         reject(err)
       }
 
       uploadOptions.onProgress = (bytesUploaded, bytesTotal) => {
         this.onReceiveUploadUrl(file, upload.url)
+        if (typeof opts.onProgress === 'function') {
+          opts.onProgress(bytesUploaded, bytesTotal)
+        }
         this.uppy.emit('upload-progress', file, {
           uploader: this,
           bytesUploaded,
@@ -286,6 +279,9 @@ export default class Tus extends BasePlugin {
         if (upload.url) {
           this.uppy.log(`Download ${upload.file.name} from ${upload.url}`)
         }
+        if (typeof opts.onSuccess === 'function') {
+          opts.onSuccess()
+        }
 
         resolve(upload)
       }
@@ -302,8 +298,10 @@ export default class Tus extends BasePlugin {
             }
             this.requests.rateLimit(next.value)
           }
-        } else if (status > 400 && status < 500 && status !== 409) {
+        } else if (status > 400 && status < 500 && status !== 409 && status !== 423) {
           // HTTP 4xx, the server won't send anything, it's doesn't make sense to retry
+          // HTTP 409 Conflict (happens if the Upload-Offset header does not match the one on the server)
+          // HTTP 423 Locked (happens when a paused download is resumed too quickly)
           return false
         } else if (typeof navigator !== 'undefined' && navigator.onLine === false) {
           // The navigator is offline, let's wait for it to come back online.
@@ -361,7 +359,8 @@ export default class Tus extends BasePlugin {
 
       upload = new tus.Upload(file.data, uploadOptions)
       this.uploaders[file.id] = upload
-      this.uploaderEvents[file.id] = new EventTracker(this.uppy)
+      const eventManager = new EventManager(this.uppy)
+      this.uploaderEvents[file.id] = eventManager
 
       // eslint-disable-next-line prefer-const
       qRequest = () => {
@@ -387,13 +386,13 @@ export default class Tus extends BasePlugin {
 
       queuedRequest = this.requests.run(qRequest)
 
-      this.onFileRemove(file.id, (targetFileID) => {
+      eventManager.onFileRemove(file.id, (targetFileID) => {
         queuedRequest.abort()
         this.resetUploaderReferences(file.id, { abort: !!upload.url })
         resolve(`upload ${targetFileID} was removed`)
       })
 
-      this.onPause(file.id, (isPaused) => {
+      eventManager.onPause(file.id, (isPaused) => {
         queuedRequest.abort()
         if (isPaused) {
           // Remove this file from the queue so another file can start in its place.
@@ -405,12 +404,12 @@ export default class Tus extends BasePlugin {
         }
       })
 
-      this.onPauseAll(file.id, () => {
+      eventManager.onPauseAll(file.id, () => {
         queuedRequest.abort()
         upload.abort()
       })
 
-      this.onCancelAll(file.id, ({ reason } = {}) => {
+      eventManager.onCancelAll(file.id, ({ reason } = {}) => {
         if (reason === 'user') {
           queuedRequest.abort()
           this.resetUploaderReferences(file.id, { abort: !!upload.url })
@@ -418,7 +417,7 @@ export default class Tus extends BasePlugin {
         resolve(`upload ${file.id} was canceled`)
       })
 
-      this.onResumeAll(file.id, () => {
+      eventManager.onResumeAll(file.id, () => {
         queuedRequest.abort()
         if (file.error) {
           upload.abort()
@@ -428,196 +427,6 @@ export default class Tus extends BasePlugin {
     }).catch((err) => {
       this.uppy.emit('upload-error', file, err)
       throw err
-    })
-  }
-
-  #requestSocketToken = async (file) => {
-    const Client = file.remote.providerOptions.provider ? Provider : RequestClient
-    const client = new Client(this.uppy, file.remote.providerOptions)
-    const opts = { ...this.opts }
-
-    if (file.tus) {
-      // Install file-specific upload overrides.
-      Object.assign(opts, file.tus)
-    }
-
-    const res = await client.post(file.remote.url, {
-      ...file.remote.body,
-      endpoint: opts.endpoint,
-      uploadUrl: opts.uploadUrl,
-      protocol: 'tus',
-      size: file.data.size,
-      headers: opts.headers,
-      metadata: file.meta,
-    })
-    return res.token
-  }
-
-  // NOTE! Keep this duplicated code in sync with other plugins
-  // TODO we should probably abstract this into a common function
-  /**
-   * @param {UppyFile} file for use with upload
-   * @returns {Promise<void>}
-   */
-  async #uploadRemote (file) {
-    this.resetUploaderReferences(file.id)
-
-    try {
-      if (file.serverToken) {
-        return await this.connectToServerSocket(file)
-      }
-      const serverToken = await this.#queueRequestSocketToken(file)
-
-      if (!this.uppy.getState().files[file.id]) return undefined
-
-      this.uppy.setFileState(file.id, { serverToken })
-      return await this.connectToServerSocket(this.uppy.getFile(file.id))
-    } catch (err) {
-      this.uppy.setFileState(file.id, { serverToken: undefined })
-      this.uppy.emit('upload-error', file, err)
-      throw err
-    }
-  }
-
-  /**
-   * See the comment on the upload() method.
-   *
-   * Additionally, when an upload is removed, completed, or cancelled, we need to close the WebSocket connection. This is
-   * handled by the resetUploaderReferences() function, so the same guidelines apply as in upload().
-   *
-   * @param {UppyFile} file
-   */
-  async connectToServerSocket (file) {
-    return new Promise((resolve, reject) => {
-      const token = file.serverToken
-      const host = getSocketHost(file.remote.companionUrl)
-      const socket = new Socket({ target: `${host}/api/${token}`, autoOpen: false })
-      this.uploaderSockets[file.id] = socket
-      this.uploaderEvents[file.id] = new EventTracker(this.uppy)
-
-      let queuedRequest
-
-      this.onFileRemove(file.id, () => {
-        queuedRequest.abort()
-        socket.send('cancel', {})
-        this.resetUploaderReferences(file.id)
-        resolve(`upload ${file.id} was removed`)
-      })
-
-      this.onPause(file.id, (isPaused) => {
-        if (isPaused) {
-          // Remove this file from the queue so another file can start in its place.
-          queuedRequest.abort()
-          socket.send('pause', {})
-        } else {
-          // Resuming an upload should be queued, else you could pause and then
-          // resume a queued upload to make it skip the queue.
-          queuedRequest.abort()
-          queuedRequest = this.requests.run(() => {
-            socket.open()
-            socket.send('resume', {})
-
-            return () => socket.close()
-          })
-        }
-      })
-
-      this.onPauseAll(file.id, () => {
-        queuedRequest.abort()
-        socket.send('pause', {})
-      })
-
-      this.onCancelAll(file.id, ({ reason } = {}) => {
-        if (reason === 'user') {
-          queuedRequest.abort()
-          socket.send('cancel', {})
-          this.resetUploaderReferences(file.id)
-        }
-        resolve(`upload ${file.id} was canceled`)
-      })
-
-      this.onResumeAll(file.id, () => {
-        queuedRequest.abort()
-        if (file.error) {
-          socket.send('pause', {})
-        }
-        queuedRequest = this.requests.run(() => {
-          socket.open()
-          socket.send('resume', {})
-
-          return () => socket.close()
-        })
-      })
-
-      this.onRetry(file.id, () => {
-        // Only do the retry if the upload is actually in progress;
-        // else we could try to send these messages when the upload is still queued.
-        // We may need a better check for this since the socket may also be closed
-        // for other reasons, like network failures.
-        if (socket.isOpen) {
-          socket.send('pause', {})
-          socket.send('resume', {})
-        }
-      })
-
-      this.onRetryAll(file.id, () => {
-        // See the comment in the onRetry() call
-        if (socket.isOpen) {
-          socket.send('pause', {})
-          socket.send('resume', {})
-        }
-      })
-
-      socket.on('progress', (progressData) => emitSocketProgress(this, progressData, file))
-
-      socket.on('error', (errData) => {
-        const { message } = errData.error
-        const error = Object.assign(new Error(message), { cause: errData.error })
-
-        // If the remote retry optimisation should not be used,
-        // close the socket—this will tell companion to clear state and delete the file.
-        if (!this.opts.useFastRemoteRetry) {
-          this.resetUploaderReferences(file.id)
-          // Remove the serverToken so that a new one will be created for the retry.
-          this.uppy.setFileState(file.id, {
-            serverToken: null,
-          })
-        } else {
-          socket.close()
-        }
-
-        this.uppy.emit('upload-error', file, error)
-        queuedRequest.done()
-        reject(error)
-      })
-
-      socket.on('success', (data) => {
-        const uploadResp = {
-          uploadURL: data.url,
-        }
-
-        this.uppy.emit('upload-success', file, uploadResp)
-        this.resetUploaderReferences(file.id)
-        queuedRequest.done()
-
-        resolve()
-      })
-
-      queuedRequest = this.requests.run(() => {
-        if (file.isPaused) {
-          socket.send('pause', {})
-        } else {
-          socket.open()
-        }
-
-        // Just close the socket here, the caller will take care of cancelling the upload itself
-        // using resetUploaderReferences(). This is because resetUploaderReferences() has to be
-        // called when this request is still in the queue, and has not been started yet, too. At
-        // that point this cancellation function is not going to be called.
-        // Also, we need to remove the request from the queue _without_ destroying everything
-        // related to this upload to handle pauses.
-        return () => socket.close()
-      })
     })
   }
 
@@ -640,83 +449,23 @@ export default class Tus extends BasePlugin {
     }
   }
 
-  /**
-   * @param {string} fileID
-   * @param {function(string): void} cb
-   */
-  onFileRemove (fileID, cb) {
-    this.uploaderEvents[fileID].on('file-removed', (file) => {
-      if (fileID === file.id) cb(file.id)
-    })
-  }
+  #getCompanionClientArgs (file) {
+    const opts = { ...this.opts }
 
-  /**
-   * @param {string} fileID
-   * @param {function(boolean): void} cb
-   */
-  onPause (fileID, cb) {
-    this.uploaderEvents[fileID].on('upload-pause', (targetFileID, isPaused) => {
-      if (fileID === targetFileID) {
-        // const isPaused = this.uppy.pauseResume(fileID)
-        cb(isPaused)
-      }
-    })
-  }
+    if (file.tus) {
+      // Install file-specific upload overrides.
+      Object.assign(opts, file.tus)
+    }
 
-  /**
-   * @param {string} fileID
-   * @param {function(): void} cb
-   */
-  onRetry (fileID, cb) {
-    this.uploaderEvents[fileID].on('upload-retry', (targetFileID) => {
-      if (fileID === targetFileID) {
-        cb()
-      }
-    })
-  }
-
-  /**
-   * @param {string} fileID
-   * @param {function(): void} cb
-   */
-  onRetryAll (fileID, cb) {
-    this.uploaderEvents[fileID].on('retry-all', () => {
-      if (!this.uppy.getFile(fileID)) return
-      cb()
-    })
-  }
-
-  /**
-   * @param {string} fileID
-   * @param {function(): void} cb
-   */
-  onPauseAll (fileID, cb) {
-    this.uploaderEvents[fileID].on('pause-all', () => {
-      if (!this.uppy.getFile(fileID)) return
-      cb()
-    })
-  }
-
-  /**
-   * @param {string} fileID
-   * @param {function(): void} eventHandler
-   */
-  onCancelAll (fileID, eventHandler) {
-    this.uploaderEvents[fileID].on('cancel-all', (...args) => {
-      if (!this.uppy.getFile(fileID)) return
-      eventHandler(...args)
-    })
-  }
-
-  /**
-   * @param {string} fileID
-   * @param {function(): void} cb
-   */
-  onResumeAll (fileID, cb) {
-    this.uploaderEvents[fileID].on('resume-all', () => {
-      if (!this.uppy.getFile(fileID)) return
-      cb()
-    })
+    return {
+      ...file.remote.body,
+      endpoint: opts.endpoint,
+      uploadUrl: opts.uploadUrl,
+      protocol: 'tus',
+      size: file.data.size,
+      headers: opts.headers,
+      metadata: file.meta,
+    }
   }
 
   /**
@@ -732,9 +481,28 @@ export default class Tus extends BasePlugin {
       const total = files.length
 
       if (file.isRemote) {
-        return this.#uploadRemote(file, current, total)
+        const getQueue = () => this.requests
+        const controller = new AbortController()
+
+        const removedHandler = (removedFile) => {
+          if (removedFile.id === file.id) controller.abort()
+        }
+        this.uppy.on('file-removed', removedHandler)
+
+        const uploadPromise = file.remote.requestClient.uploadRemoteFile(
+          file,
+          this.#getCompanionClientArgs(file),
+          { signal: controller.signal, getQueue },
+        )
+
+        this.requests.wrapSyncFunction(() => {
+          this.uppy.off('file-removed', removedHandler)
+        }, { priority: -1 })()
+
+        return uploadPromise
       }
-      return this.#upload(file, current, total)
+
+      return this.#uploadLocalFile(file, current, total)
     }))
   }
 

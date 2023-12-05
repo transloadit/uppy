@@ -1,9 +1,7 @@
 import Emitter from 'component-emitter'
-import { io } from 'socket.io-client'
 import has from '@uppy/utils/lib/hasProperty'
 import NetworkError from '@uppy/utils/lib/NetworkError'
 import fetchWithNetworkError from '@uppy/utils/lib/fetchWithNetworkError'
-import parseUrl from './parseUrl.js'
 
 const ASSEMBLY_UPLOADING = 'ASSEMBLY_UPLOADING'
 const ASSEMBLY_EXECUTING = 'ASSEMBLY_EXECUTING'
@@ -36,13 +34,13 @@ class TransloaditAssembly extends Emitter {
 
   #previousFetchStatusStillPending = false
 
+  #sse
+
   constructor (assembly, rateLimitedQueue) {
     super()
 
     // The current assembly status.
     this.status = assembly
-    // The socket.io connection.
-    this.socket = null
     // The interval timer for full status updates.
     this.pollInterval = null
     // Whether this assembly has been closed (finished or errored)
@@ -53,7 +51,7 @@ class TransloaditAssembly extends Emitter {
   }
 
   connect () {
-    this.#connectSocket()
+    this.#connectServerSentEvents()
     this.#beginPolling()
   }
 
@@ -62,59 +60,66 @@ class TransloaditAssembly extends Emitter {
     this.close()
   }
 
-  #connectSocket () {
-    const parsed = parseUrl(this.status.websocket_url)
-    const socket = io(parsed.origin, {
-      transports: ['websocket'],
-      path: parsed.pathname,
+  #connectServerSentEvents () {
+    this.#sse = new EventSource(`${this.status.websocket_url}?assembly=${this.status.assembly_id}`)
+
+    this.#sse.addEventListener('open', () => {
+      // if server side events works, we don't need websockets anymore (it's just a fallback)
+      if (this.socket) {
+        this.socket.disconnect()
+        this.socket = null
+      }
+      clearInterval(this.pollInterval)
+      this.pollInterval = null
     })
 
-    socket.on('connect', () => {
-      socket.emit('assembly_connect', {
-        id: this.status.assembly_id,
-      })
+    /*
+     * The event "message" is a special case, as it
+     * will capture events without an event field
+     * as well as events that have the specific type
+     * other event type.
+     */
+    this.#sse.addEventListener('message', (e) => {
+      if (e.data === 'assembly_finished') {
+        this.#onFinished()
+      }
 
-      this.emit('connect')
+      if (e.data === 'assembly_uploading_finished') {
+        this.emit('executing')
+      }
+
+      if (e.data === 'assembly_upload_meta_data_extracted') {
+        this.emit('metadata')
+        this.#fetchStatus({ diff: false })
+      }
     })
 
-    socket.on('connect_error', () => {
-      socket.disconnect()
-      this.socket = null
-    })
-
-    socket.on('assembly_finished', () => {
-      this.#onFinished()
-    })
-
-    socket.on('assembly_upload_finished', (file) => {
+    this.#sse.addEventListener('assembly_upload_finished', (e) => {
+      const file = JSON.parse(e.data)
       this.emit('upload', file)
       this.status.uploads.push(file)
     })
 
-    socket.on('assembly_uploading_finished', () => {
-      this.emit('executing')
-    })
-
-    socket.on('assembly_upload_meta_data_extracted', () => {
-      this.emit('metadata')
-      this.#fetchStatus({ diff: false })
-    })
-
-    socket.on('assembly_result_finished', (stepName, result) => {
+    this.#sse.addEventListener('assembly_result_finished', (e) => {
+      const [stepName, result] = JSON.parse(e.data)
       this.emit('result', stepName, result)
-      if (!this.status.results[stepName]) {
-        this.status.results[stepName] = []
-      }
-      this.status.results[stepName].push(result)
+      ;(this.status.results[stepName] ??= []).push(result)
     })
 
-    socket.on('assembly_error', (status) => {
+    this.#sse.addEventListener('assembly_execution_progress', (e) => {
+      const details = JSON.parse(e.data)
+      this.emit('execution-progress', details)
+    })
+
+    this.#sse.addEventListener('assembly_error', (e) => {
+      try {
+        this.#onError(JSON.parse(e.data))
+      } catch {
+        this.#onError({ msg: e.data })
+      }
       // Refetch for updated status code
       this.#fetchStatus({ diff: false })
-      this.#onError(status)
     })
-
-    this.socket = socket
   }
 
   #onError (status) {
@@ -124,20 +129,18 @@ class TransloaditAssembly extends Emitter {
 
   /**
    * Begin polling for assembly status changes. This sends a request to the
-   * assembly status endpoint every so often, if the socket is not connected.
-   * If the socket connection fails or takes a long time, we won't miss any
+   * assembly status endpoint every so often, if SSE connection failed.
+   * If the SSE connection fails or takes a long time, we won't miss any
    * events.
    */
   #beginPolling () {
     this.pollInterval = setInterval(() => {
-      if (!this.socket || !this.socket.connected) {
-        this.#fetchStatus()
-      }
+      this.#fetchStatus()
     }, 2000)
   }
 
   /**
-   * Reload assembly status. Useful if the socket doesn't work.
+   * Reload assembly status. Useful if SSE doesn't work.
    *
    * Pass `diff: false` to avoid emitting diff events, instead only emitting
    * 'status'.
@@ -219,10 +222,10 @@ class TransloaditAssembly extends Emitter {
     const nowExecuting = isStatus(nextStatus, ASSEMBLY_EXECUTING)
       && !isStatus(prevStatus, ASSEMBLY_EXECUTING)
     if (nowExecuting) {
-      // Without WebSockets, this is our only way to tell if uploading finished.
+      // Without SSE, this is our only way to tell if uploading finished.
       // Hence, we emit this just before the 'upload's and before the 'metadata'
       // event for the most intuitive ordering, corresponding to the _usual_
-      // ordering (if not guaranteed) that you'd get on the WebSocket.
+      // ordering (if not guaranteed) that you'd get on SSE.
       this.emit('executing')
     }
 
@@ -262,9 +265,9 @@ class TransloaditAssembly extends Emitter {
    */
   close () {
     this.closed = true
-    if (this.socket) {
-      this.socket.disconnect()
-      this.socket = null
+    if (this.#sse) {
+      this.#sse.close()
+      this.#sse = null
     }
     clearInterval(this.pollInterval)
     this.pollInterval = null

@@ -1,6 +1,5 @@
 import { UIPlugin } from '@uppy/core'
-import getSpeed from '@uppy/utils/lib/getSpeed'
-import getBytesRemaining from '@uppy/utils/lib/getBytesRemaining'
+import emaFilter from '@uppy/utils/lib/emaFilter'
 import getTextDirection from '@uppy/utils/lib/getTextDirection'
 import statusBarStates from './StatusBarStates.js'
 import StatusBarUI from './StatusBarUI.jsx'
@@ -8,26 +7,8 @@ import StatusBarUI from './StatusBarUI.jsx'
 import packageJson from '../package.json'
 import locale from './locale.js'
 
-function getTotalSpeed (files) {
-  let totalSpeed = 0
-  files.forEach((file) => {
-    totalSpeed += getSpeed(file.progress)
-  })
-  return totalSpeed
-}
-
-function getTotalETA (files) {
-  const totalSpeed = getTotalSpeed(files)
-  if (totalSpeed === 0) {
-    return 0
-  }
-
-  const totalBytesRemaining = files.reduce((total, file) => {
-    return total + getBytesRemaining(file.progress)
-  }, 0)
-
-  return Math.round((totalBytesRemaining / totalSpeed) * 10) / 10
-}
+const speedFilterHalfLife = 2000
+const ETAFilterHalfLife = 2000
 
 function getUploadingState (error, isAllComplete, recoveredState, files) {
   if (error) {
@@ -75,6 +56,14 @@ function getUploadingState (error, isAllComplete, recoveredState, files) {
 export default class StatusBar extends UIPlugin {
   static VERSION = packageJson.version
 
+  #lastUpdateTime
+
+  #previousUploadedBytes
+
+  #previousSpeed
+
+  #previousETA
+
   constructor (uppy, opts) {
     super(uppy, opts)
     this.id = this.opts.id || 'StatusBar'
@@ -103,14 +92,44 @@ export default class StatusBar extends UIPlugin {
     this.install = this.install.bind(this)
   }
 
-  startUpload = () => {
-    const { recoveredState } = this.uppy.getState()
-
-    if (recoveredState) {
-      this.uppy.emit('restore-confirmed')
-      return undefined
+  #computeSmoothETA (totalBytes) {
+    if (totalBytes.total === 0 || totalBytes.remaining === 0) {
+      return 0
     }
 
+    // When state is restored, lastUpdateTime is still nullish at this point.
+    this.#lastUpdateTime ??= performance.now()
+    const dt = performance.now() - this.#lastUpdateTime
+    if (dt === 0) {
+      return Math.round((this.#previousETA ?? 0) / 100) / 10
+    }
+
+    const uploadedBytesSinceLastTick = totalBytes.uploaded - this.#previousUploadedBytes
+    this.#previousUploadedBytes = totalBytes.uploaded
+
+    // uploadedBytesSinceLastTick can be negative in some cases (packet loss?)
+    // in which case, we wait for next tick to update ETA.
+    if (uploadedBytesSinceLastTick <= 0) {
+      return Math.round((this.#previousETA ?? 0) / 100) / 10
+    }
+    const currentSpeed = uploadedBytesSinceLastTick / dt
+    const filteredSpeed = this.#previousSpeed == null
+      ? currentSpeed
+      : emaFilter(currentSpeed, this.#previousSpeed, speedFilterHalfLife, dt)
+    this.#previousSpeed = filteredSpeed
+    const instantETA = totalBytes.remaining / filteredSpeed
+
+    const updatedPreviousETA = Math.max(this.#previousETA - dt, 0)
+    const filteredETA = this.#previousETA == null
+      ? instantETA
+      : emaFilter(instantETA, updatedPreviousETA, ETAFilterHalfLife, dt)
+    this.#previousETA = filteredETA
+    this.#lastUpdateTime = performance.now()
+
+    return Math.round(filteredETA / 100) / 10
+  }
+
+  startUpload = () => {
     return this.uppy.upload().catch(() => {
       // Error logged in Core
     })
@@ -130,7 +149,6 @@ export default class StatusBar extends UIPlugin {
       newFiles,
       startedFiles,
       completeFiles,
-      inProgressNotPausedFiles,
 
       isUploadStarted,
       isAllComplete,
@@ -146,7 +164,6 @@ export default class StatusBar extends UIPlugin {
     const newFilesOrRecovered = recoveredState
       ? Object.values(files)
       : newFiles
-    const totalETA = getTotalETA(inProgressNotPausedFiles)
     const resumableUploads = !!capabilities.resumableUploads
     const supportsUploadProgress = capabilities.uploadProgress !== false
 
@@ -156,6 +173,11 @@ export default class StatusBar extends UIPlugin {
     startedFiles.forEach((file) => {
       totalSize += file.progress.bytesTotal || 0
       totalUploadedSize += file.progress.bytesUploaded || 0
+    })
+    const totalETA = this.#computeSmoothETA({
+      uploaded: totalUploadedSize,
+      total: totalSize,
+      remaining: totalSize - totalUploadedSize,
     })
 
     return StatusBarUI({
@@ -207,14 +229,41 @@ export default class StatusBar extends UIPlugin {
     }
   }
 
+  #onUploadStart = () => {
+    const { recoveredState } = this.uppy.getState()
+
+    this.#previousSpeed = null
+    this.#previousETA = null
+    if (recoveredState) {
+      this.#previousUploadedBytes = Object.values(recoveredState.files)
+        .reduce((pv, { progress }) => pv + progress.bytesUploaded, 0)
+
+      // We don't set `#lastUpdateTime` at this point because the upload won't
+      // actually resume until the user asks for it.
+
+      this.uppy.emit('restore-confirmed')
+      return
+    }
+    this.#lastUpdateTime = performance.now()
+    this.#previousUploadedBytes = 0
+  }
+
   install () {
     const { target } = this.opts
     if (target) {
       this.mount(target, this)
     }
+    this.uppy.on('upload', this.#onUploadStart)
+
+    // To cover the use case where the status bar is installed while the upload
+    // has started, we set `lastUpdateTime` right away.
+    this.#lastUpdateTime = performance.now()
+    this.#previousUploadedBytes = this.uppy.getFiles()
+      .reduce((pv, file) => pv + file.progress.bytesUploaded, 0)
   }
 
   uninstall () {
     this.unmount()
+    this.uppy.off('upload', this.#onUploadStart)
   }
 }

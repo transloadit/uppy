@@ -1,5 +1,42 @@
 # @uppy/utils
 
+## 5.6.0
+
+Released: 2023-11-08
+Included in: Uppy v3.19.0
+
+- @uppy/utils: refactor to TS (Antoine du Hamel / #4699)
+
+## 5.5.1
+
+Released: 2023-09-29
+Included in: Uppy v3.17.0
+
+- @uppy/utils: test: migrate to Vitest for Uppy core and Uppy plugins (Antoine du Hamel / #4700)
+
+## 5.5.0
+
+Released: 2023-09-05
+Included in: Uppy v3.15.0
+
+- @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/companion-client,@uppy/core,@uppy/tus,@uppy/utils,@uppy/xhr-upload: Move remote file upload logic into companion-client (Merlijn Vos / #4573)
+
+## 5.4.3
+
+Released: 2023-07-24
+Included in: Uppy v3.13.1
+
+- @uppy/utils: align version of `preact` with the UI plugins (Antoine du Hamel / #4599)
+
+## 5.4.0
+
+Released: 2023-06-19
+Included in: Uppy v3.10.0
+
+- @uppy/companion,@uppy/core,@uppy/dashboard,@uppy/golden-retriever,@uppy/status-bar,@uppy/utils: Migrate all lodash' per-method-packages usage to lodash. (LinusMain / #4274)
+- @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/tus,@uppy/utils,@uppy/xhr-upload: When file is removed (or all are canceled), controller.abort queued requests (Artur Paikin / #4504)
+- @uppy/utils: rename `EventTracker` -> `EventManager` (Stephen Wooten / #4481)
+
 ## 5.1.3
 
 Released: 2023-03-07

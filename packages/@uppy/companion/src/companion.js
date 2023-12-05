@@ -1,6 +1,6 @@
 const express = require('express')
 const Grant = require('grant').default.express()
-const merge = require('lodash.merge')
+const merge = require('lodash/merge')
 const cookieParser = require('cookie-parser')
 const interceptor = require('express-interceptor')
 const { randomUUID } = require('node:crypto')
@@ -82,11 +82,9 @@ module.exports.app = (optionsArg = {}) => {
   // mask provider secrets from log messages
   logger.setMaskables(getMaskableSecrets(options))
 
-  // create singleton redis client
-  if (options.redisUrl) {
-    redis.client(options)
-  }
-  const emitter = createEmitter(options.redisUrl, options.redisPubSubScope)
+  // create singleton redis client if corresponding options are set
+  const redisClient = redis.client(options)
+  const emitter = createEmitter(redisClient, options.redisPubSubScope)
 
   const app = express()
 
@@ -117,12 +115,13 @@ module.exports.app = (optionsArg = {}) => {
   // add uppy options to the request object so it can be accessed by subsequent handlers.
   app.use('*', middlewares.getCompanionMiddleware(options))
   app.use('/s3', s3(options.s3))
-  app.use('/url', url())
+  if (options.enableUrlEndpoint) app.use('/url', url())
 
   app.post('/:providerName/preauth', express.json(), express.urlencoded({ extended: false }), middlewares.hasSessionAndProvider, middlewares.hasBody, middlewares.hasOAuthProvider, controllers.preauth)
   app.get('/:providerName/connect', middlewares.hasSessionAndProvider, middlewares.hasOAuthProvider, controllers.connect)
   app.get('/:providerName/redirect', middlewares.hasSessionAndProvider, middlewares.hasOAuthProvider, controllers.redirect)
   app.get('/:providerName/callback', middlewares.hasSessionAndProvider, middlewares.hasOAuthProvider, controllers.callback)
+  app.post('/:providerName/refresh-token', middlewares.hasSessionAndProvider, middlewares.hasOAuthProvider, middlewares.verifyToken, controllers.refreshToken)
   app.post('/:providerName/deauthorization/callback', express.json(), middlewares.hasSessionAndProvider, middlewares.hasBody, middlewares.hasOAuthProvider, controllers.deauthorizationCallback)
   app.get('/:providerName/logout', middlewares.hasSessionAndProvider, middlewares.hasOAuthProvider, middlewares.gentleVerifyToken, controllers.logout)
   app.get('/:providerName/send-token', middlewares.hasSessionAndProvider, middlewares.hasOAuthProvider, middlewares.verifyToken, controllers.sendToken)
@@ -137,7 +136,28 @@ module.exports.app = (optionsArg = {}) => {
 
   app.get('/:providerName/thumbnail/:id', middlewares.hasSessionAndProvider, middlewares.hasOAuthProvider, middlewares.cookieAuthToken, middlewares.verifyToken, controllers.thumbnail)
 
-  app.param('providerName', providerManager.getProviderMiddleware(providers))
+  // Used for testing dynamic credentials only, normally this would run on a separate server.
+  if (options.testDynamicOauthCredentials) {
+    app.post('/:providerName/test-dynamic-oauth-credentials', (req, res) => {
+      if (req.query.secret !== options.testDynamicOauthCredentialsSecret) throw new Error('Invalid secret')
+      logger.info('Returning dynamic OAuth2 credentials')
+      const { providerName } = req.params
+      // for simplicity, we just return the normal credentials for the provider, but in a real-world scenario,
+      // we would query based on parameters
+      const { key, secret } = options.providerOptions[providerName]
+      res.send({
+        credentials: {
+          key,
+          secret,
+          redirect_uri: providerManager.getGrantConfigForProvider({
+            providerName, companionOptions: options, grantConfig,
+          })?.redirect_uri,
+        },
+      })
+    })
+  }
+
+  app.param('providerName', providerManager.getProviderMiddleware(providers, grantConfig))
 
   if (app.get('env') !== 'test') {
     jobs.startCleanUpJob(options.filePath)

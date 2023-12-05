@@ -24,7 +24,8 @@
 const path = require('node:path')
 const { pipeline, finished } = require('node:stream/promises')
 const { readFile } = require('node:fs/promises')
-const AWS = require('aws-sdk')
+const { S3Client, ListObjectsV2Command, PutObjectCommand } = require('@aws-sdk/client-s3');
+
 const packlist = require('npm-packlist')
 const tar = require('tar')
 const pacote = require('pacote')
@@ -108,11 +109,11 @@ async function main (packageName, version) {
   // where we force push a local build
   if (version?.startsWith('-')) version = undefined // eslint-disable-line no-param-reassign
 
-  const s3 = new AWS.S3({
-    credentials: new AWS.Credentials({
+  const s3Client = new S3Client({
+    credentials: {
       accessKeyId: process.env.EDGLY_KEY,
       secretAccessKey: process.env.EDGLY_SECRET,
-    }),
+    },
     region: AWS_REGION,
   })
 
@@ -143,11 +144,12 @@ async function main (packageName, version) {
 
   const outputPath = path.posix.join(dirName, `v${version}`)
 
-  const { Contents: existing } = await s3.listObjects({
+  const { Contents: existing } = await s3Client.send(new ListObjectsV2Command({
     Bucket: AWS_BUCKET,
     Prefix: outputPath,
-  }).promise()
-  if (existing.length > 0) {
+  }))
+
+  if (existing?.length > 0) {
     if (process.argv.includes('--force')) {
       console.warn(`WARN Release files for ${dirName} v${version} already exist, overwriting...`)
     } else {
@@ -173,16 +175,16 @@ async function main (packageName, version) {
   for (const [filename, buffer] of files.entries()) {
     const key = path.posix.join(outputPath, filename)
     console.log(`pushing s3://${AWS_BUCKET}/${key}`)
-    await s3.putObject({
+    await s3Client.send(new PutObjectCommand({
       Bucket: AWS_BUCKET,
       Key: key,
       ContentType: mime.lookup(filename),
       Body: buffer,
-    }).promise()
+    }))
   }
 }
 
 main(...process.argv.slice(2)).catch((err) => {
-  console.error(err.stack)
+  console.error(err)
   process.exit(1)
 })

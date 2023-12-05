@@ -1,5 +1,42 @@
 # @uppy/status-bar
 
+## 3.2.4
+
+Released: 2023-08-15
+Included in: Uppy v3.14.0
+
+- @uppy/status-bar: e2e: add test for retrying and pausing uploads (Antoine du Hamel / #3599)
+
+## 3.2.3
+
+Released: 2023-07-20
+Included in: Uppy v3.13.0
+
+- @uppy/status-bar: fix ETA when status bar is installed during upload (Antoine du Hamel / #4588)
+
+## 3.2.2
+
+Released: 2023-07-13
+Included in: Uppy v3.12.0
+
+- @uppy/status-bar: listen to `upload` event instead of button click (Antoine du Hamel / #4563)
+
+## 3.2.1
+
+Released: 2023-07-06
+Included in: Uppy v3.11.0
+
+- @uppy/status-bar: remove throttled component (Artur Paikin / #4396)
+- @uppy/status-bar: fix ETA when Uppy recovers its state (Antoine du Hamel / #4525)
+
+## 3.2.0
+
+Released: 2023-06-19
+Included in: Uppy v3.10.0
+
+- @uppy/companion,@uppy/core,@uppy/dashboard,@uppy/golden-retriever,@uppy/status-bar,@uppy/utils: Migrate all lodash' per-method-packages usage to lodash. (LinusMain / #4274)
+- @uppy/status-bar: Filtered ETA (stduhpf / #4458)
+
 ## 3.0.1
 
 Released: 2022-09-25

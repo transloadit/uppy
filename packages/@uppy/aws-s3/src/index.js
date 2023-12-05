@@ -26,6 +26,7 @@
  */
 
 import BasePlugin from '@uppy/core/lib/BasePlugin.js'
+import AwsS3Multipart from '@uppy/aws-s3-multipart'
 import { RateLimitedQueue, internalRateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
 import { RequestClient } from '@uppy/companion-client'
 import { filterNonFailedFiles, filterFilesToEmitUploadStarted } from '@uppy/utils/lib/fileFilters'
@@ -81,7 +82,7 @@ function validateParameters (file, params) {
   const methodIsValid = params.method == null || /^p(u|os)t$/i.test(params.method)
 
   if (!methodIsValid) {
-    const err = new TypeError(`AwsS3: got incorrect method from 'getUploadParameters()' for file '${file.name}', expected  'put' or 'post' but got '${params.method}' instead.\nSee https://uppy.io/docs/aws-s3/#getUploadParameters-file for more on the expected format.`)
+    const err = new TypeError(`AwsS3: got incorrect method from 'getUploadParameters()' for file '${file.name}', expected  'PUT' or 'POST' but got '${params.method}' instead.\nSee https://uppy.io/docs/aws-s3/#getUploadParameters-file for more on the expected format.`)
     throw err
   }
 }
@@ -112,6 +113,10 @@ export default class AwsS3 extends BasePlugin {
   #uploader
 
   constructor (uppy, opts) {
+    // Opt-in to using the multipart plugin, which is going to be the only S3 plugin as of the next semver.
+    if (opts?.shouldUseMultipart != null) {
+      return new AwsS3Multipart(uppy, opts)
+    }
     super(uppy, opts)
     this.type = 'uploader'
     this.id = this.opts.id || 'AwsS3'
@@ -124,6 +129,7 @@ export default class AwsS3 extends BasePlugin {
       limit: 0,
       allowedMetaFields: [], // have to opt in
       getUploadParameters: this.getUploadParameters.bind(this),
+      shouldUseMultipart: false,
       companionHeaders: {},
     }
 
@@ -201,14 +207,14 @@ export default class AwsS3 extends BasePlugin {
         validateParameters(file, params)
 
         const {
-          method = 'post',
+          method = 'POST',
           url,
           fields,
           headers,
         } = params
         const xhrOpts = {
           method,
-          formData: method.toLowerCase() === 'post',
+          formData: method.toUpperCase() === 'POST',
           endpoint: url,
           allowedMetaFields: fields ? Object.keys(fields) : [],
         }
@@ -222,7 +228,7 @@ export default class AwsS3 extends BasePlugin {
           xhrUpload: xhrOpts,
         })
 
-        return this.#uploader.uploadFile(file.id, index, numberOfFiles)
+        return this.uploadFile(file.id, index, numberOfFiles)
       }).catch((error) => {
         delete paramsPromises[id]
 
@@ -239,6 +245,56 @@ export default class AwsS3 extends BasePlugin {
   #setCompanionHeaders = () => {
     this.#client.setCompanionHeaders(this.opts.companionHeaders)
     return Promise.resolve()
+  }
+
+  #getCompanionClientArgs = (file) => {
+    const opts = this.#uploader.getOptions(file)
+    const allowedMetaFields = Array.isArray(opts.allowedMetaFields)
+      ? opts.allowedMetaFields
+      // Send along all fields by default.
+      : Object.keys(file.meta)
+    return {
+      ...file.remote.body,
+      protocol: 'multipart',
+      endpoint: opts.endpoint,
+      size: file.data.size,
+      fieldname: opts.fieldName,
+      metadata: Object.fromEntries(allowedMetaFields.map(name => [name, file.meta[name]])),
+      httpMethod: opts.method,
+      useFormData: opts.formData,
+      headers: typeof opts.headers === 'function' ? opts.headers(file) : opts.headers,
+    }
+  }
+
+  uploadFile (id, current, total) {
+    const file = this.uppy.getFile(id)
+    this.uppy.log(`uploading ${current} of ${total}`)
+
+    if (file.error) throw new Error(file.error)
+
+    if (file.isRemote) {
+      const getQueue = () => this.#requests
+      const controller = new AbortController()
+
+      const removedHandler = (removedFile) => {
+        if (removedFile.id === file.id) controller.abort()
+      }
+      this.uppy.on('file-removed', removedHandler)
+
+      const uploadPromise = file.remote.requestClient.uploadRemoteFile(
+        file,
+        this.#getCompanionClientArgs(file),
+        { signal: controller.signal, getQueue },
+      )
+
+      this.#requests.wrapSyncFunction(() => {
+        this.uppy.off('file-removed', removedHandler)
+      }, { priority: -1 })()
+
+      return uploadPromise
+    }
+
+    return this.#uploader.uploadLocalFile(file, current, total)
   }
 
   install () {

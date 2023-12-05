@@ -1,4 +1,3 @@
-import { h } from 'preact'
 import { UIPlugin } from '@uppy/core'
 import StatusBar from '@uppy/status-bar'
 import Informer from '@uppy/informer'
@@ -6,6 +5,8 @@ import ThumbnailGenerator from '@uppy/thumbnail-generator'
 import findAllDOMElements from '@uppy/utils/lib/findAllDOMElements'
 import toArray from '@uppy/utils/lib/toArray'
 import getDroppedFiles from '@uppy/utils/lib/getDroppedFiles'
+import { defaultPickerIcon } from '@uppy/provider-views'
+
 import { nanoid } from 'nanoid/non-secure'
 import memoizeOne from 'memoize-one'
 import * as trapFocus from './utils/trapFocus.js'
@@ -27,14 +28,6 @@ function createPromise () {
     o.reject = reject
   })
   return o
-}
-
-function defaultPickerIcon () {
-  return (
-    <svg aria-hidden="true" focusable="false" width="30" height="30" viewBox="0 0 30 30">
-      <path d="M15 30c8.284 0 15-6.716 15-15 0-8.284-6.716-15-15-15C6.716 0 0 6.716 0 15c0 8.284 6.716 15 15 15zm4.258-12.676v6.846h-8.426v-6.846H5.204l9.82-12.364 9.82 12.364H19.26z" />
-    </svg>
-  )
 }
 
 /**
@@ -74,7 +67,7 @@ export default class Dashboard extends UIPlugin {
       hidePauseResumeButton: false,
       hideProgressAfterFinish: false,
       doneButtonHandler: () => {
-        this.uppy.cancelAll()
+        this.uppy.clearUploadedFiles()
         this.requestCloseModal()
       },
       note: null,
@@ -172,6 +165,8 @@ export default class Dashboard extends UIPlugin {
     }
 
     this.setPluginState(update)
+
+    this.uppy.emit('dashboard:close-panel', state.activePickerPanel.id)
   }
 
   showPanel = (id) => {
@@ -754,6 +749,7 @@ export default class Dashboard extends UIPlugin {
     this.startListeningToResize()
     document.addEventListener('paste', this.handlePasteOnBody)
 
+    this.uppy.on('plugin-added', this.#addSupportedPluginIfNoTarget)
     this.uppy.on('plugin-remove', this.removeTarget)
     this.uppy.on('file-added', this.hideAllPanels)
     this.uppy.on('dashboard:modal-closed', this.hideAllPanels)
@@ -785,8 +781,9 @@ export default class Dashboard extends UIPlugin {
 
     this.stopListeningToResize()
     document.removeEventListener('paste', this.handlePasteOnBody)
-
     window.removeEventListener('popstate', this.handlePopState, false)
+
+    this.uppy.off('plugin-added', this.#addSupportedPluginIfNoTarget)
     this.uppy.off('plugin-remove', this.removeTarget)
     this.uppy.off('file-added', this.hideAllPanels)
     this.uppy.off('dashboard:modal-closed', this.hideAllPanels)
@@ -1020,12 +1017,35 @@ export default class Dashboard extends UIPlugin {
     })
   }
 
-  discoverProviderPlugins = () => {
-    this.uppy.iteratePlugins((plugin) => {
-      if (plugin && !plugin.target && plugin.opts && plugin.opts.target === this.constructor) {
-        this.addTarget(plugin)
+  #addSpecifiedPluginsFromOptions = () => {
+    const plugins = this.opts.plugins || []
+
+    plugins.forEach((pluginID) => {
+      const plugin = this.uppy.getPlugin(pluginID)
+      if (plugin) {
+        plugin.mount(this, plugin)
+      } else {
+        this.uppy.log(`[Uppy] Dashboard could not find plugin '${pluginID}', make sure to uppy.use() the plugins you are specifying`, 'warning')
       }
     })
+  }
+
+  #autoDiscoverPlugins = () => {
+    this.uppy.iteratePlugins(this.#addSupportedPluginIfNoTarget)
+  }
+
+  #addSupportedPluginIfNoTarget = (plugin) => {
+    // Only these types belong on the Dashboard,
+    // we wouldn’t want to try and mount Compressor or Tus, for example.
+    const typesAllowed = ['acquirer', 'editor']
+    if (plugin && !plugin.opts?.target && typesAllowed.includes(plugin.type)) {
+      const pluginAlreadyAdded = this.getPluginState().targets.some(
+        installedPlugin => plugin.id === installedPlugin.id,
+      )
+      if (!pluginAlreadyAdded) {
+        plugin.mount(this, plugin)
+      }
+    }
   }
 
   install = () => {
@@ -1059,15 +1079,6 @@ export default class Dashboard extends UIPlugin {
     if (target) {
       this.mount(target, this)
     }
-
-    const plugins = this.opts.plugins || []
-
-    plugins.forEach((pluginID) => {
-      const plugin = this.uppy.getPlugin(pluginID)
-      if (plugin) {
-        plugin.mount(this, plugin)
-      }
-    })
 
     if (!this.opts.disableStatusBar) {
       this.uppy.use(StatusBar, {
@@ -1116,7 +1127,8 @@ export default class Dashboard extends UIPlugin {
       this.darkModeMediaQuery.addListener(this.handleSystemDarkModeChange)
     }
 
-    this.discoverProviderPlugins()
+    this.#addSpecifiedPluginsFromOptions()
+    this.#autoDiscoverPlugins()
     this.initEvents()
   }
 
@@ -1146,6 +1158,10 @@ export default class Dashboard extends UIPlugin {
 
     if (this.opts.theme === 'auto') {
       this.darkModeMediaQuery.removeListener(this.handleSystemDarkModeChange)
+    }
+
+    if (this.opts.disablePageScrollWhenModalOpen) {
+      document.body.classList.remove('uppy-Dashboard-isFixed')
     }
 
     this.unmount()

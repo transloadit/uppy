@@ -1,5 +1,42 @@
 # @uppy/companion-client
 
+## 3.6.1
+
+Released: 2023-11-24
+Included in: Uppy v3.20.0
+
+- @uppy/companion-client: fix log type error (Mikael Finstad / #4766)
+- @uppy/companion-client: revert breaking change (Antoine du Hamel / #4801)
+
+## 3.5.0
+
+Released: 2023-10-20
+Included in: Uppy v3.18.0
+
+- @uppy/companion-client: fixup! Added Companion OAuth Key type (Murderlon / #4668)
+- @uppy/companion-client: Added Companion OAuth Key type (Chris Pratt / #4668)
+
+## 3.4.1
+
+Released: 2023-09-29
+Included in: Uppy v3.17.0
+
+- @uppy/companion-client: fix a refresh token race condition (Mikael Finstad / #4695)
+
+## 3.4.0
+
+Released: 2023-09-05
+Included in: Uppy v3.15.0
+
+- @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/companion-client,@uppy/core,@uppy/tus,@uppy/utils,@uppy/xhr-upload: Move remote file upload logic into companion-client (Merlijn Vos / #4573)
+
+## 3.3.0
+
+Released: 2023-08-15
+Included in: Uppy v3.14.0
+
+- @uppy/companion-client,@uppy/provider-views: make authentication optional (Dominik Schmidt / #4556)
+
 ## 3.1.2
 
 Released: 2023-04-04

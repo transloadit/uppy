@@ -188,14 +188,12 @@ export default class Transloadit extends BasePlugin {
     return newFile
   }
 
-  #createAssembly (fileIDs, uploadID, options) {
+  #createAssembly (fileIDs, uploadID, assemblyOptions) {
     this.uppy.log('[Transloadit] Create Assembly')
 
     return this.client.createAssembly({
-      params: options.params,
-      fields: options.fields,
+      ...assemblyOptions,
       expectedFiles: fileIDs.length,
-      signature: options.signature,
     }).then(async (newAssembly) => {
       const files = this.uppy.getFiles().filter(({ id }) => fileIDs.includes(id))
       if (files.length !== fileIDs.length) {
@@ -381,7 +379,7 @@ export default class Transloadit extends BasePlugin {
     const state = this.getPluginState()
     const file = this.#findFile(uploadedFile)
     if (!file) {
-      this.uppy.log('[Transloadit] Couldn’t file the file, it was likely removed in the process')
+      this.uppy.log('[Transloadit] Couldn’t find the file, it was likely removed in the process')
       return
     }
     this.setPluginState({
@@ -599,6 +597,29 @@ export default class Transloadit extends BasePlugin {
       this.uppy.emit('transloadit:assembly-executing', assembly.status)
     })
 
+    assembly.on('execution-progress', (details) => {
+      this.uppy.emit('transloadit:execution-progress', details)
+
+      if (details.progress_combined != null) {
+        // TODO: Transloadit emits progress information for the entire Assembly combined
+        // (progress_combined) and for each imported/uploaded file (progress_per_original_file).
+        // Uppy's current design requires progress to be set for each file, which is then
+        // averaged to get the total progress (see calculateProcessingProgress.js).
+        // Therefore, we currently set the combined progres for every file, so that this is
+        // the same value that is displayed to the end user, although we have more accurate
+        // per-file progress as well. We cannot use this here or otherwise progress from
+        // imported files would not be counted towards the total progress because imported
+        // files are not registered with Uppy.
+        for (const file of this.uppy.getFiles()) {
+          this.uppy.emit('postprocess-progress', file, {
+            mode: 'determinate',
+            value: details.progress_combined / 100,
+            message: this.i18n('encoding'),
+          })
+        }
+      }
+    })
+
     if (this.opts.waitForEncoding) {
       assembly.on('result', (stepName, result) => {
         this.#onResult(id, stepName, result)
@@ -808,9 +829,6 @@ export default class Transloadit extends BasePlugin {
         // Golden Retriever. So, Golden Retriever is required to do resumability with the Transloadit plugin,
         // and we disable Tus's default resume implementation to prevent bad behaviours.
         storeFingerprintForResuming: false,
-        // Disable Companion's retry optimisation; we need to change the endpoint on retry
-        // so it can't just reuse the same tus.Upload instance server-side.
-        useFastRemoteRetry: false,
         // Only send Assembly metadata to the tus endpoint.
         allowedMetaFields: ['assembly_url', 'filename', 'fieldname'],
         // Pass the limit option to @uppy/tus

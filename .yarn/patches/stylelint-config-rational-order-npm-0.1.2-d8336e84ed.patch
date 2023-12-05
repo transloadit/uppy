@@ -1,0 +1,15 @@
+diff --git a/package.json b/package.json
+index a2047a8b2895a64a4cbf7b493362ee1d72c43771..7478198712b460936f6b7f2557b116c52f4d71b5 100644
+--- a/package.json
++++ b/package.json
+@@ -30,8 +30,8 @@
+     "order"
+   ],
+   "dependencies": {
+-    "stylelint": "^9.10.1",
+-    "stylelint-order": "^2.2.1"
++    "stylelint": "^15.0.1",
++    "stylelint-order": "^6.0.3"
+   },
+   "devDependencies": {
+     "eslint": "^5.16.0",

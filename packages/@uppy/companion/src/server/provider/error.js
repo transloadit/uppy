@@ -43,6 +43,10 @@ function errorToResponse (err) {
       return { code: 502, message: err.message }
     }
 
+    if (err.statusCode === 429) {
+      return { code: 429, message: err.message }
+    }
+
     if (err.statusCode >= 400) {
       // 424 Failed Dependency
       return { code: 424, message: err.message }
@@ -52,4 +56,13 @@ function errorToResponse (err) {
   return undefined
 }
 
-module.exports = { ProviderAuthError, ProviderApiError, errorToResponse }
+function respondWithError (err, res) {
+  const errResp = errorToResponse(err)
+  if (errResp) {
+    res.status(errResp.code).json({ message: errResp.message })
+    return true
+  }
+  return false
+}
+
+module.exports = { ProviderAuthError, ProviderApiError, errorToResponse, respondWithError }

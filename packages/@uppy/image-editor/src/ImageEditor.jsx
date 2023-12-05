@@ -17,11 +17,14 @@ export default class ImageEditor extends UIPlugin {
     this.defaultLocale = locale
 
     const defaultCropperOptions = {
-      viewMode: 1,
+      viewMode: 0,
       background: false,
       autoCropArea: 1,
       responsive: true,
+      minCropBoxWidth: 70,
+      minCropBoxHeight: 70,
       croppedCanvasOptions: {},
+      initialAspectRatio: 0,
     }
 
     const defaultActions = {
@@ -36,6 +39,9 @@ export default class ImageEditor extends UIPlugin {
       cropWidescreenVertical: true,
     }
 
+    // Why is the default quality smaller than 1?
+    // Because `quality: 1` increases the image size by orders of magnitude - 0.8 seems to be the sweet spot.
+    // (see https://github.com/fengyuanchen/cropperjs/issues/538#issuecomment-1776279427)
     const defaultOptions = {
       quality: 0.8,
     }
@@ -45,11 +51,11 @@ export default class ImageEditor extends UIPlugin {
       ...opts,
       actions: {
         ...defaultActions,
-        ...opts.actions,
+        ...opts?.actions,
       },
       cropperOptions: {
         ...defaultCropperOptions,
-        ...opts.cropperOptions,
+        ...opts?.cropperOptions,
       },
     }
 
@@ -90,6 +96,17 @@ export default class ImageEditor extends UIPlugin {
     }
 
     const { currentImage } = this.getPluginState()
+
+    // Fixes black 1px lines on odd-width images.
+    // This should be removed when cropperjs fixes this issue.
+    // (See https://github.com/transloadit/uppy/issues/4305 and https://github.com/fengyuanchen/cropperjs/issues/551).
+    const croppedCanvas = this.cropper.getCroppedCanvas({})
+    if (croppedCanvas.width % 2 !== 0) {
+      this.cropper.setData({ width: croppedCanvas.width - 1 })
+    }
+    if (croppedCanvas.height % 2 !== 0) {
+      this.cropper.setData({ height: croppedCanvas.height - 1 })
+    }
 
     this.cropper.getCroppedCanvas(this.opts.cropperOptions.croppedCanvasOptions).toBlob(
       saveBlobCallback,

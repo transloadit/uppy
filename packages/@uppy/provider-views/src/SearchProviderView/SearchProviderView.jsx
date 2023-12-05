@@ -46,7 +46,7 @@ export default class SearchProviderView extends View {
       isInputMode: true,
       files: [],
       folders: [],
-      directories: [],
+      breadcrumbs: [],
       filterInput: '',
       currentSelection: [],
       searchTerm: null,
@@ -138,12 +138,13 @@ export default class SearchProviderView extends View {
 
     const targetViewOptions = { ...this.opts, ...viewOptions }
     const { files, folders, filterInput, loading, currentSelection } = this.plugin.getPluginState()
-    const { isChecked, toggleCheckbox, filterItems } = this
+    const { isChecked, toggleCheckbox, filterItems, recordShiftKeyPress } = this
     const hasInput = filterInput !== ''
 
     const browserProps = {
       isChecked,
       toggleCheckbox,
+      recordShiftKeyPress,
       currentSelection,
       files: hasInput ? filterItems(files) : files,
       folders: hasInput ? filterItems(folders) : folders,

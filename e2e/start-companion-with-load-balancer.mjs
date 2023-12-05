@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 
-import { execa } from 'execa'
+import { spawn } from 'node:child_process'
 import http from 'node:http'
 import httpProxy from 'http-proxy'
+import process from 'node:process'
 
 const numInstances = 3
 const lbPort = 3020
@@ -45,20 +46,42 @@ function createLoadBalancer (baseUrls) {
   return server
 }
 
-const startCompanion = ({ name, port }) => execa('nodemon', [
-  '--watch', 'packages/@uppy/companion/src', '--exec', 'node', '-r', 'dotenv/config', './packages/@uppy/companion/src/standalone/start-server.js',
-], {
-  cwd: new URL('../', import.meta.url),
-  stdio: 'inherit',
-  env: {
-    // Note: these env variables will override anything set in .env
-    COMPANION_PORT: port,
-    COMPANION_SECRET: 'development', // multi instance will not work without secret set
-    COMPANION_PREAUTH_SECRET: 'development', // multi instance will not work without secret set
-    COMPANION_ALLOW_LOCAL_URLS: 'true',
-    COMPANION_LOGGER_PROCESS_NAME: name,
-  },
-})
+const isWindows = process.platform === 'win32'
+const isOSX = process.platform === 'darwin'
+
+const startCompanion = ({ name, port }) => {
+  const cp = spawn(process.execPath, [
+    '-r', 'dotenv/config',
+    // Watch mode support is limited to Windows and macOS at the time of writing.
+    ...(isWindows || isOSX ? ['--watch-path', 'packages/@uppy/companion/src', '--watch'] : []),
+    './packages/@uppy/companion/src/standalone/start-server.js',
+  ], {
+    cwd: new URL('../', import.meta.url),
+    stdio: 'inherit',
+    env: {
+      // Note: these env variables will override anything set in .env
+      ...process.env,
+      COMPANION_PORT: port,
+      COMPANION_SECRET: 'development', // multi instance will not work without secret set
+      COMPANION_PREAUTH_SECRET: 'development', // multi instance will not work without secret set
+      COMPANION_ALLOW_LOCAL_URLS: 'true',
+      COMPANION_LOGGER_PROCESS_NAME: name,
+    },
+  })
+  // Adding a `then` property so the return value is awaitable:
+  return Object.defineProperty(cp, 'then', {
+    __proto__: null,
+    writable: true,
+    configurable: true,
+    value: Promise.prototype.then.bind(new Promise((resolve, reject) => {
+      cp.on('exit', (code) => {
+        if (code === 0) resolve(cp)
+        else reject(new Error(`Non-zero exit code: ${code}`))
+      })
+      cp.on('error', reject)
+    })),
+  })
+}
 
 const hosts = Array.from({ length: numInstances }, (_, index) => {
   const port = companionStartPort + index

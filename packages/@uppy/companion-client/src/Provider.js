@@ -7,7 +7,29 @@ const getName = (id) => {
   return id.split('-').map((s) => s.charAt(0).toUpperCase() + s.slice(1)).join(' ')
 }
 
+function getOrigin () {
+  // eslint-disable-next-line no-restricted-globals
+  return location.origin
+}
+
+function getRegex (value) {
+  if (typeof value === 'string') {
+    return new RegExp(`^${value}$`)
+  } if (value instanceof RegExp) {
+    return value
+  }
+  return undefined
+}
+
+function isOriginAllowed (origin, allowedOrigin) {
+  const patterns = Array.isArray(allowedOrigin) ? allowedOrigin.map(getRegex) : [getRegex(allowedOrigin)]
+  return patterns
+    .some((pattern) => pattern?.test(origin) || pattern?.test(`${origin}/`)) // allowing for trailing '/'
+}
+
 export default class Provider extends RequestClient {
+  #refreshingTokenPromise
+
   constructor (uppy, opts) {
     super(uppy, opts)
     this.provider = opts.provider
@@ -20,7 +42,7 @@ export default class Provider extends RequestClient {
   }
 
   async headers () {
-    const [headers, token] = await Promise.all([super.headers(), this.getAuthToken()])
+    const [headers, token] = await Promise.all([super.headers(), this.#getAuthToken()])
     const authHeaders = {}
     if (token) {
       authHeaders['uppy-auth-token'] = token
@@ -43,12 +65,16 @@ export default class Provider extends RequestClient {
     return response
   }
 
-  setAuthToken (token) {
+  async setAuthToken (token) {
     return this.uppy.getPlugin(this.pluginId).storage.setItem(this.tokenKey, token)
   }
 
-  getAuthToken () {
+  async #getAuthToken () {
     return this.uppy.getPlugin(this.pluginId).storage.getItem(this.tokenKey)
+  }
+
+  async #removeAuthToken () {
+    return this.uppy.getPlugin(this.pluginId).storage.removeItem(this.tokenKey)
   }
 
   /**
@@ -66,7 +92,10 @@ export default class Provider extends RequestClient {
   }
 
   authUrl (queries = {}) {
-    const params = new URLSearchParams(queries)
+    const params = new URLSearchParams({
+      state: btoa(JSON.stringify({ origin: getOrigin() })),
+      ...queries,
+    })
     if (this.preAuthToken) {
       params.set('uppyPreAuthToken', this.preAuthToken)
     }
@@ -74,8 +103,109 @@ export default class Provider extends RequestClient {
     return `${this.hostname}/${this.id}/connect?${params}`
   }
 
+  async login (queries) {
+    await this.ensurePreAuth()
+
+    return new Promise((resolve, reject) => {
+      const link = this.authUrl(queries)
+      const authWindow = window.open(link, '_blank')
+      const handleToken = (e) => {
+        if (e.source !== authWindow) {
+          let jsonData = ''
+          try {
+            // TODO improve our uppy logger so that it can take an arbitrary number of arguments,
+            // each either objects, errors or strings,
+            // then we don’t have to manually do these things like json stringify when logging.
+            // the logger should never throw an error.
+            jsonData = JSON.stringify(e.data)
+          } catch (err) {
+            // in case JSON.stringify fails (ignored)
+          }
+          this.uppy.log(`ignoring event from unknown source ${jsonData}`, 'warning')
+          return
+        }
+
+        const { companionAllowedHosts } = this.uppy.getPlugin(this.pluginId).opts
+        if (!isOriginAllowed(e.origin, companionAllowedHosts)) {
+          reject(new Error(`rejecting event from ${e.origin} vs allowed pattern ${companionAllowedHosts}`))
+          return
+        }
+
+        // Check if it's a string before doing the JSON.parse to maintain support
+        // for older Companion versions that used object references
+        const data = typeof e.data === 'string' ? JSON.parse(e.data) : e.data
+
+        if (data.error) {
+          const { uppy } = this
+          const message = uppy.i18n('authAborted')
+          uppy.info({ message }, 'warning', 5000)
+          reject(new Error('auth aborted'))
+          return
+        }
+
+        if (!data.token) {
+          reject(new Error('did not receive token from auth window'))
+          return
+        }
+
+        authWindow.close()
+        window.removeEventListener('message', handleToken)
+        this.setAuthToken(data.token).then(() => resolve()).catch(reject)
+      }
+      window.addEventListener('message', handleToken)
+    })
+  }
+
+  refreshTokenUrl () {
+    return `${this.hostname}/${this.id}/refresh-token`
+  }
+
   fileUrl (id) {
     return `${this.hostname}/${this.id}/get/${id}`
+  }
+
+  /** @protected */
+  async request (...args) {
+    await this.#refreshingTokenPromise
+
+    try {
+      // to test simulate access token expired (leading to a token token refresh),
+      // see mockAccessTokenExpiredError in companion/drive.
+      // If you want to test refresh token *and* access token invalid, do this for example with Google Drive:
+      // While uploading, go to your google account settings,
+      // "Third-party apps & services", then click "Companion" and "Remove access".
+
+      return await super.request(...args)
+    } catch (err) {
+      // only handle auth errors (401 from provider), and only handle them if we have a (refresh) token
+      const authTokenAfter = await this.#getAuthToken()
+      if (!err.isAuthError || !authTokenAfter) throw err
+
+      if (this.#refreshingTokenPromise == null) {
+        // Many provider requests may be starting at once, however refresh token should only be called once.
+        // Once a refresh token operation has started, we need all other request to wait for this operation (atomically)
+        this.#refreshingTokenPromise = (async () => {
+          try {
+            this.uppy.log(`[CompanionClient] Refreshing expired auth token`, 'info')
+            const response = await super.request({ path: this.refreshTokenUrl(), method: 'POST' })
+            await this.setAuthToken(response.uppyAuthToken)
+          } catch (refreshTokenErr) {
+            if (refreshTokenErr.isAuthError) {
+              // if refresh-token has failed with auth error, delete token, so we don't keep trying to refresh in future
+              await this.#removeAuthToken()
+            }
+            throw err
+          } finally {
+            this.#refreshingTokenPromise = undefined
+          }
+        })()
+      }
+
+      await this.#refreshingTokenPromise
+
+      // now retry the request with our new refresh token
+      return super.request(...args)
+    }
   }
 
   async fetchPreAuthToken () {
@@ -91,16 +221,14 @@ export default class Provider extends RequestClient {
     }
   }
 
-  list (directory) {
-    return this.get(`${this.id}/list/${directory || ''}`)
+  list (directory, options) {
+    return this.get(`${this.id}/list/${directory || ''}`, options)
   }
 
-  logout () {
-    return this.get(`${this.id}/logout`)
-      .then((response) => Promise.all([
-        response,
-        this.uppy.getPlugin(this.pluginId).storage.removeItem(this.tokenKey),
-      ])).then(([response]) => response)
+  async logout (options) {
+    const response = await this.get(`${this.id}/logout`, options)
+    await this.#removeAuthToken()
+    return response
   }
 
   static initPlugin (plugin, opts, defaultOpts) {

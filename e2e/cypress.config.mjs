@@ -1,8 +1,10 @@
 import { defineConfig } from 'cypress'
 import installLogsPrinter from 'cypress-terminal-report/src/installLogsPrinter.js'
+import startMockServer from './mock-server.mjs'
 
 export default defineConfig({
-  defaultCommandTimeout: 16000,
+  defaultCommandTimeout: 16_000,
+  requestTimeout: 16_000,
 
   e2e: {
     baseUrl: 'http://localhost:1234',
@@ -11,6 +13,8 @@ export default defineConfig({
     setupNodeEvents (on) {
       // implement node event listeners here
       installLogsPrinter(on)
+
+      startMockServer('localhost', 4678)
     },
   },
 })

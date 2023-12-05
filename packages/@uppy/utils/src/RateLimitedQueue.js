@@ -7,7 +7,7 @@ function abortOn (signal) {
     const abortPromise = () => this.abort(signal.reason)
     signal.addEventListener('abort', abortPromise, { once: true })
     const removeAbortListener = () => { signal.removeEventListener('abort', abortPromise) }
-    this.then(removeAbortListener, removeAbortListener)
+    this.then?.(removeAbortListener, removeAbortListener)
   }
 
   return this
@@ -54,7 +54,7 @@ export class RateLimitedQueue {
         if (done) return
         done = true
         this.#activeRequests -= 1
-        cancelActive(cause)
+        cancelActive?.(cause)
         this.#queueNext()
       },
 
@@ -126,6 +126,23 @@ export class RateLimitedQueue {
       return this.#call(fn)
     }
     return this.#queue(fn, queueOptions)
+  }
+
+  wrapSyncFunction (fn, queueOptions) {
+    return (...args) => {
+      const queuedRequest = this.run(() => {
+        fn(...args)
+        queueMicrotask(() => queuedRequest.done())
+        return () => {}
+      }, queueOptions)
+
+      return {
+        abortOn,
+        abort () {
+          queuedRequest.abort()
+        },
+      }
+    }
   }
 
   wrapPromiseFunction (fn, queueOptions) {

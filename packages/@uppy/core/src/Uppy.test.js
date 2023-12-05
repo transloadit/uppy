@@ -1,8 +1,9 @@
 /* eslint no-console: "off", no-restricted-syntax: "off" */
-import { afterEach, beforeEach, describe, expect, it, jest, xit } from '@jest/globals'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import assert from 'node:assert'
 import fs from 'node:fs'
+import path from 'node:path'
 import prettierBytes from '@transloadit/prettier-bytes'
 import Core from '../lib/index.js'
 import UIPlugin from '../lib/UIPlugin.js'
@@ -12,14 +13,16 @@ import AcquirerPlugin2 from './mocks/acquirerPlugin2.js'
 import InvalidPlugin from './mocks/invalidPlugin.js'
 import InvalidPluginWithoutId from './mocks/invalidPluginWithoutId.js'
 import InvalidPluginWithoutType from './mocks/invalidPluginWithoutType.js'
+// @ts-ignore trying to import a file from outside the package
 import DeepFrozenStore from '../../../../e2e/cypress/fixtures/DeepFrozenStore.mjs'
 
-const sampleImage = fs.readFileSync(new URL('../../../../e2e/cypress/fixtures/images/image.jpg', import.meta.url))
+// eslint-disable-next-line no-restricted-globals
+const sampleImage = fs.readFileSync(path.join(__dirname, '../../../../e2e/cypress/fixtures/images/image.jpg'))
 
 describe('src/Core', () => {
   const RealCreateObjectUrl = globalThis.URL.createObjectURL
   beforeEach(() => {
-    globalThis.URL.createObjectURL = jest.fn().mockReturnValue('newUrl')
+    globalThis.URL.createObjectURL = vi.fn().mockReturnValue('newUrl')
   })
 
   afterEach(() => {
@@ -134,7 +137,7 @@ describe('src/Core', () => {
 
     it('should update the state', () => {
       const core = new Core()
-      const stateUpdateEventMock = jest.fn()
+      const stateUpdateEventMock = vi.fn()
       core.on('state-update', stateUpdateEventMock)
       core.use(AcquirerPlugin1)
       core.use(AcquirerPlugin2)
@@ -147,6 +150,7 @@ describe('src/Core', () => {
         capabilities: { individualCancellation: true, uploadProgress: true, resumableUploads: false },
         files: {},
         currentUploads: {},
+        error: null,
         allowNewUpload: true,
         foo: 'baar',
         info: [],
@@ -172,6 +176,7 @@ describe('src/Core', () => {
         capabilities: { individualCancellation: true, uploadProgress: true, resumableUploads: false },
         files: {},
         currentUploads: {},
+        error: null,
         allowNewUpload: true,
         foo: 'bar',
         info: [],
@@ -186,6 +191,7 @@ describe('src/Core', () => {
         capabilities: { individualCancellation: true, uploadProgress: true, resumableUploads: false },
         files: {},
         currentUploads: {},
+        error: null,
         allowNewUpload: true,
         foo: 'baar',
         info: [],
@@ -210,9 +216,9 @@ describe('src/Core', () => {
     const core = new Core({
       store: DeepFrozenStore(),
     })
-    // const corePauseEventMock = jest.fn()
-    const coreCancelEventMock = jest.fn()
-    const coreStateUpdateEventMock = jest.fn()
+    // const corePauseEventMock = vi.fn()
+    const coreCancelEventMock = vi.fn()
+    const coreStateUpdateEventMock = vi.fn()
     core.on('cancel-all', coreCancelEventMock)
     core.on('state-update', coreStateUpdateEventMock)
     core.setState({ foo: 'bar', totalProgress: 30 })
@@ -240,14 +246,14 @@ describe('src/Core', () => {
     const core = new Core()
 
     core.addFile({
-      source: 'jest',
+      source: 'vi',
       name: 'foo1.jpg',
       type: 'image/jpeg',
       data: new File([sampleImage], { type: 'image/jpeg' }),
     })
 
     core.addFile({
-      source: 'jest',
+      source: 'vi',
       name: 'foo2.jpg',
       type: 'image/jpeg',
       data: new File([sampleImage], { type: 'image/jpeg' }),
@@ -277,14 +283,14 @@ describe('src/Core', () => {
     })
 
     core.addFile({
-      source: 'jest',
+      source: 'vi',
       name: 'foo1.jpg',
       type: 'image/jpeg',
       data: new File([sampleImage], { type: 'image/jpeg' }),
     })
 
     core.addFile({
-      source: 'jest',
+      source: 'vi',
       name: 'foo2.jpg',
       type: 'image/jpeg',
       data: new File([sampleImage], { type: 'image/jpeg' }),
@@ -314,14 +320,14 @@ describe('src/Core', () => {
     })
 
     core.addFile({
-      source: 'jest',
+      source: 'vi',
       name: 'foo1.jpg',
       type: 'image/jpeg',
       data: new File([sampleImage], { type: 'image/jpeg' }),
     })
 
     core.addFile({
-      source: 'jest',
+      source: 'vi',
       name: 'foo2.jpg',
       type: 'image/jpeg',
       data: new File([sampleImage], { type: 'image/jpeg' }),
@@ -351,14 +357,14 @@ describe('src/Core', () => {
     })
 
     core.addFile({
-      source: 'jest',
+      source: 'vi',
       name: 'foo1.jpg',
       type: 'image/jpeg',
       data: new File([sampleImage], { type: 'image/jpeg' }),
     })
 
     core.addFile({
-      source: 'jest',
+      source: 'vi',
       name: 'foo2.jpg',
       type: 'image/jpeg',
       data: new File([sampleImage], { type: 'image/jpeg' }),
@@ -383,8 +389,8 @@ describe('src/Core', () => {
     })
     core.use(AcquirerPlugin1)
 
-    const coreCancelEventMock = jest.fn()
-    const coreStateUpdateEventMock = jest.fn()
+    const coreCancelEventMock = vi.fn()
+    const coreStateUpdateEventMock = vi.fn()
     const plugin = core[Symbol.for('uppy test: getPlugins')]('acquirer')[0]
 
     core.on('cancel-all', coreCancelEventMock)
@@ -408,7 +414,7 @@ describe('src/Core', () => {
     })
     expect(plugin.mocks.uninstall.mock.calls.length).toEqual(1)
 
-    const pluginIteration = jest.fn()
+    const pluginIteration = vi.fn()
     core.iteratePlugins(pluginIteration)
     expect(pluginIteration.mock.calls.length).toEqual(0)
   })
@@ -445,13 +451,13 @@ describe('src/Core', () => {
 
     it('should execute all the preprocessors when uploading a file', () => {
       const core = new Core()
-      const preprocessor1 = jest.fn()
-      const preprocessor2 = jest.fn()
+      const preprocessor1 = vi.fn()
+      const preprocessor2 = vi.fn()
       core.addPreProcessor(preprocessor1)
       core.addPreProcessor(preprocessor2)
 
       core.addFile({
-        source: 'jest',
+        source: 'vi',
         name: 'foo.jpg',
         type: 'image/jpeg',
         data: new File([sampleImage], { type: 'image/jpeg' }),
@@ -472,20 +478,20 @@ describe('src/Core', () => {
 
     it('should not pass removed file IDs to next step', async () => {
       const core = new Core()
-      const uploader = jest.fn()
+      const uploader = vi.fn()
       core.addPreProcessor((fileIDs) => {
         core.removeFile(fileIDs[0])
       })
       core.addUploader(uploader)
 
       core.addFile({
-        source: 'jest',
+        source: 'vi',
         name: 'rmd.jpg',
         type: 'image/jpeg',
         data: new File([sampleImage], { type: 'image/jpeg' }),
       })
       core.addFile({
-        source: 'jest',
+        source: 'vi',
         name: 'kept.jpg',
         type: 'image/jpeg',
         data: new File([sampleImage], { type: 'image/jpeg' }),
@@ -501,7 +507,7 @@ describe('src/Core', () => {
     it('should update the file progress state when preprocess-progress event is fired', () => {
       const core = new Core()
       core.addFile({
-        source: 'jest',
+        source: 'vi',
         name: 'foo.jpg',
         type: 'image/jpeg',
         data: new File([sampleImage], { type: 'image/jpeg' }),
@@ -528,7 +534,7 @@ describe('src/Core', () => {
       const core = new Core()
 
       core.addFile({
-        source: 'jest',
+        source: 'vi',
         name: 'foo.jpg',
         type: 'image/jpeg',
         data: new File([sampleImage], { type: 'image/jpeg' }),
@@ -563,13 +569,13 @@ describe('src/Core', () => {
 
     it('should execute all the postprocessors when uploading a file', () => {
       const core = new Core()
-      const postprocessor1 = jest.fn()
-      const postprocessor2 = jest.fn()
+      const postprocessor1 = vi.fn()
+      const postprocessor2 = vi.fn()
       core.addPostProcessor(postprocessor1)
       core.addPostProcessor(postprocessor2)
 
       core.addFile({
-        source: 'jest',
+        source: 'vi',
         name: 'foo.jpg',
         type: 'image/jpeg',
         data: new File([sampleImage], { type: 'image/jpeg' }),
@@ -597,7 +603,7 @@ describe('src/Core', () => {
       const core = new Core()
 
       core.addFile({
-        source: 'jest',
+        source: 'vi',
         name: 'foo.jpg',
         type: 'image/jpeg',
         data: new File([sampleImage], { type: 'image/jpeg' }),
@@ -624,7 +630,7 @@ describe('src/Core', () => {
       const core = new Core()
 
       core.addFile({
-        source: 'jest',
+        source: 'vi',
         name: 'foo.jpg',
         type: 'image/jpeg',
         data: new File([sampleImage], { type: 'image/jpeg' }),
@@ -650,7 +656,7 @@ describe('src/Core', () => {
       const core = new Core()
 
       core.addFile({
-        source: 'jest',
+        source: 'vi',
         name: 'foo.jpg',
         type: 'image/jpeg',
         data: new File([sampleImage], { type: 'image/jpeg' }),
@@ -683,7 +689,7 @@ describe('src/Core', () => {
 
   describe('adding a file', () => {
     it('should call onBeforeFileAdded if it was specified in the options when initialising the class', () => {
-      const onBeforeFileAdded = jest.fn()
+      const onBeforeFileAdded = vi.fn()
 
       const core = new Core({
         // need to capture a snapshot of files, because files will change in the next tick, thus failing the expect below
@@ -691,7 +697,7 @@ describe('src/Core', () => {
       })
 
       core.addFile({
-        source: 'jest',
+        source: 'vi',
         name: 'foo.jpg',
         type: 'image/jpeg',
         data: new File([sampleImage], { type: 'image/jpeg' }),
@@ -702,14 +708,33 @@ describe('src/Core', () => {
       expect(onBeforeFileAdded.mock.calls[0][1]).toEqual({})
     })
 
+    it('should allow uploading duplicate file if explicitly allowed in onBeforeFileAdded', async () => {
+      const core = new Core({ onBeforeFileAdded: () => true })
+      const sameFileBlob = new File([sampleImage], { type: 'image/jpeg' })
+
+      core.addFile({
+        source: 'vi',
+        name: 'foo.jpg',
+        type: 'image/jpeg',
+        data: sameFileBlob,
+      })
+
+      core.addFile({
+        source: 'vi',
+        name: 'foo.jpg',
+        type: 'image/jpeg',
+        data: sameFileBlob,
+      })
+    })
+
     it('should add a file', () => {
       const fileData = new File([sampleImage], { type: 'image/jpeg' })
-      const fileAddedEventMock = jest.fn()
+      const fileAddedEventMock = vi.fn()
       const core = new Core()
       core.on('file-added', fileAddedEventMock)
 
       const fileId = core.addFile({
-        source: 'jest',
+        source: 'vi',
         name: 'foo.jpg',
         type: 'image/jpeg',
         data: fileData,
@@ -731,7 +756,7 @@ describe('src/Core', () => {
         },
         remote: '',
         size: 17175,
-        source: 'jest',
+        source: 'vi',
         type: 'image/jpeg',
       }
       expect(core.getFile(fileId)).toEqual(newFile)
@@ -755,7 +780,7 @@ describe('src/Core', () => {
 
       expect(() => {
         core.addFile({
-          source: 'jest',
+          source: 'vi',
           name: 'foo.jpg',
           type: 'image/jpeg',
           data: new File([sampleImage], { type: 'image/jpeg' }),
@@ -764,7 +789,7 @@ describe('src/Core', () => {
 
       expect(() => {
         core.addFile({
-          source: 'jest',
+          source: 'vi',
           name: 'foo.webm',
           type: 'video/webm; codecs="vp8, opus"',
           data: new File([sampleImage], { type: 'video/webm; codecs="vp8, opus"' }),
@@ -776,14 +801,14 @@ describe('src/Core', () => {
       const core = new Core()
       const sameFileBlob = new File([sampleImage], { type: 'image/jpeg' })
       core.addFile({
-        source: 'jest',
+        source: 'vi',
         name: 'foo.jpg',
         type: 'image/jpeg',
         data: sameFileBlob,
       })
       expect(() => {
         core.addFile({
-          source: 'jest',
+          source: 'vi',
           name: 'foo.jpg',
           type: 'image/jpeg',
           data: sameFileBlob,
@@ -800,13 +825,13 @@ describe('src/Core', () => {
     it('should allow a duplicate file if its relativePath is different, thus the id is different', () => {
       const core = new Core()
       core.addFile({
-        source: 'jest',
+        source: 'vi',
         name: 'foo.jpg',
         type: 'image/jpeg',
         data: new File([sampleImage], { type: 'image/jpeg' }),
       })
       core.addFile({
-        source: 'jest',
+        source: 'vi',
         name: 'foo.jpg',
         type: 'image/jpeg',
         data: new File([sampleImage], { type: 'image/jpeg' }),
@@ -820,7 +845,7 @@ describe('src/Core', () => {
     it('should not allow a file if onBeforeFileAdded returned false', () => {
       const core = new Core({
         onBeforeFileAdded: (file) => {
-          if (file.source === 'jest') {
+          if (file.source === 'vi') {
             return false
           }
           return undefined
@@ -828,7 +853,7 @@ describe('src/Core', () => {
       })
       expect(() => {
         core.addFile({
-          source: 'jest',
+          source: 'vi',
           name: 'foo.jpg',
           type: 'image/jpeg',
           data: new File([sampleImage], { type: 'image/jpeg' }),
@@ -843,7 +868,7 @@ describe('src/Core', () => {
       it('allows no new files after upload', async () => {
         const core = new Core({ allowMultipleUploadBatches: false })
         core.addFile({
-          source: 'jest',
+          source: 'vi',
           name: 'foo.jpg',
           type: 'image/jpeg',
           data: new File([sampleImage], { type: 'image/jpeg' }),
@@ -853,7 +878,7 @@ describe('src/Core', () => {
 
         expect(() => {
           core.addFile({
-            source: 'jest',
+            source: 'vi',
             name: '123.foo',
             type: 'image/jpeg',
             data: new File([sampleImage], { type: 'image/jpeg' }),
@@ -866,7 +891,7 @@ describe('src/Core', () => {
       it('allows no new files after upload with legacy allowMultipleUploads option', async () => {
         const core = new Core({ allowMultipleUploads: false })
         core.addFile({
-          source: 'jest',
+          source: 'vi',
           name: 'foo.jpg',
           type: 'image/jpeg',
           data: new File([sampleImage], { type: 'image/jpeg' }),
@@ -876,7 +901,7 @@ describe('src/Core', () => {
 
         expect(() => {
           core.addFile({
-            source: 'jest',
+            source: 'vi',
             name: '123.foo',
             type: 'image/jpeg',
             data: new File([sampleImage], { type: 'image/jpeg' }),
@@ -891,13 +916,13 @@ describe('src/Core', () => {
 
         // adding 2 files
         const fileId1 = core.addFile({
-          source: 'jest',
+          source: 'vi',
           name: '1.jpg',
           type: 'image/jpeg',
           data: new File([sampleImage], { type: 'image/jpeg' }),
         })
         core.addFile({
-          source: 'jest',
+          source: 'vi',
           name: '2.jpg',
           type: 'image/jpeg',
           data: new File([sampleImage], { type: 'image/jpeg' }),
@@ -914,13 +939,13 @@ describe('src/Core', () => {
 
         // adding 2 files
         const fileId1 = core.addFile({
-          source: 'jest',
+          source: 'vi',
           name: '1.jpg',
           type: 'image/jpeg',
           data: new File([sampleImage], { type: 'image/jpeg' }),
         })
         const fileId2 = core.addFile({
-          source: 'jest',
+          source: 'vi',
           name: '2.jpg',
           type: 'image/jpeg',
           data: new File([sampleImage], { type: 'image/jpeg' }),
@@ -940,13 +965,13 @@ describe('src/Core', () => {
       data.lastModified = 1562770350937
 
       core.addFile({
-        source: 'jest',
+        source: 'vi',
         name: 'foo.jpg',
         type: 'image/jpeg',
         data,
       })
       core.addFile({
-        source: 'jest',
+        source: 'vi',
         name: 'foo푸.jpg',
         type: 'image/jpeg',
         data,
@@ -963,8 +988,8 @@ describe('src/Core', () => {
       const core = new Core()
       core.addUploader(() => Promise.resolve())
 
-      core.addFile({ source: 'jest', name: 'foo.jpg', type: 'image/jpeg', data: new Uint8Array() })
-      core.addFile({ source: 'jest', name: 'bar.jpg', type: 'image/jpeg', data: new Uint8Array() })
+      core.addFile({ source: 'vi', name: 'foo.jpg', type: 'image/jpeg', data: new Uint8Array() })
+      core.addFile({ source: 'vi', name: 'bar.jpg', type: 'image/jpeg', data: new Uint8Array() })
 
       return expect(core.upload()).resolves.toMatchObject({
         successful: [
@@ -990,8 +1015,8 @@ describe('src/Core', () => {
         return Promise.resolve()
       })
 
-      core.addFile({ source: 'jest', name: 'foo.jpg', type: 'image/jpeg', data: new Uint8Array() })
-      core.addFile({ source: 'jest', name: 'bar.jpg', type: 'image/jpeg', data: new Uint8Array() })
+      core.addFile({ source: 'vi', name: 'foo.jpg', type: 'image/jpeg', data: new Uint8Array() })
+      core.addFile({ source: 'vi', name: 'bar.jpg', type: 'image/jpeg', data: new Uint8Array() })
 
       return expect(core.upload()).resolves.toMatchObject({
         successful: [
@@ -1015,8 +1040,8 @@ describe('src/Core', () => {
       }
       core.addUploader(() => Promise.resolve())
 
-      core.addFile({ source: 'jest', name: 'foo.jpg', type: 'image/jpeg', data: new Uint8Array() })
-      core.addFile({ source: 'jest', name: 'bar.jpg', type: 'image/jpeg', data: new Uint8Array() })
+      core.addFile({ source: 'vi', name: 'foo.jpg', type: 'image/jpeg', data: new Uint8Array() })
+      core.addFile({ source: 'vi', name: 'bar.jpg', type: 'image/jpeg', data: new Uint8Array() })
       core.addFile({ source: 'file3', name: 'file3.jpg', type: 'image/jpeg', data: new Uint8Array() })
 
       // uploadID is random, we don't want randomness in the snapshot
@@ -1039,19 +1064,19 @@ describe('src/Core', () => {
         },
       })
       core.addFile({
-        source: 'jest',
+        source: 'vi',
         name: 'foo.jpg',
         type: 'image/jpeg',
         data: new File([sampleImage], { type: 'image/jpeg' }),
       })
       core.addFile({
-        source: 'jest',
+        source: 'vi',
         name: 'bar.jpg',
         type: 'image/jpeg',
         data: new File([sampleImage], { type: 'image/jpeg' }),
       })
       core.addFile({
-        source: 'jest',
+        source: 'vi',
         name: '123.foo',
         type: 'image/jpeg',
         data: new File([sampleImage], { type: 'image/jpeg' }),
@@ -1064,13 +1089,13 @@ describe('src/Core', () => {
     it('only allows a single upload() batch when allowMultipleUploadBatches: false', async () => {
       const core = new Core({ allowMultipleUploadBatches: false })
       core.addFile({
-        source: 'jest',
+        source: 'vi',
         name: 'foo.jpg',
         type: 'image/jpeg',
         data: new File([sampleImage], { type: 'image/jpeg' }),
       })
       core.addFile({
-        source: 'jest',
+        source: 'vi',
         name: 'bar.jpg',
         type: 'image/jpeg',
         data: new File([sampleImage], { type: 'image/jpeg' }),
@@ -1086,7 +1111,7 @@ describe('src/Core', () => {
       const core = new Core({ allowMultipleUploadBatches: false })
 
       core.addFile({
-        source: 'jest',
+        source: 'vi',
         name: 'bar.jpg',
         type: 'image/jpeg',
         data: new File([sampleImage], { type: 'image/jpeg' }),
@@ -1096,7 +1121,7 @@ describe('src/Core', () => {
       core.cancelAll()
 
       core.addFile({
-        source: 'jest',
+        source: 'vi',
         name: '123.foo',
         type: 'image/jpeg',
         data: new File([sampleImage], { type: 'image/jpeg' }),
@@ -1107,13 +1132,13 @@ describe('src/Core', () => {
 
   describe('removing a file', () => {
     it('should remove the file', () => {
-      const fileRemovedEventMock = jest.fn()
+      const fileRemovedEventMock = vi.fn()
 
       const core = new Core()
       core.on('file-removed', fileRemovedEventMock)
 
       core.addFile({
-        source: 'jest',
+        source: 'vi',
         name: 'foo.jpg',
         type: 'image/jpeg',
         data: new File([sampleImage], { type: 'image/jpeg' }),
@@ -1136,15 +1161,15 @@ describe('src/Core', () => {
 
   describe('retries', () => {
     it('should start a new upload with failed files', async () => {
-      const onUpload = jest.fn()
-      const onRetryAll = jest.fn()
+      const onUpload = vi.fn()
+      const onRetryAll = vi.fn()
 
       const core = new Core()
       core.on('upload', onUpload)
       core.on('retry-all', onRetryAll)
 
       const id = core.addFile({
-        source: 'jest',
+        source: 'vi',
         name: 'foo.jpg',
         type: 'image/jpeg',
         data: new File([sampleImage], { type: 'image/jpeg' }),
@@ -1159,13 +1184,13 @@ describe('src/Core', () => {
     })
 
     it('should not start a new upload if there are no failed files', async () => {
-      const onUpload = jest.fn()
+      const onUpload = vi.fn()
 
       const core = new Core()
       core.on('upload', onUpload)
 
       core.addFile({
-        source: 'jest',
+        source: 'vi',
         name: 'foo.jpg',
         type: 'image/jpeg',
         data: new File([sampleImage], { type: 'image/jpeg' }),
@@ -1177,9 +1202,9 @@ describe('src/Core', () => {
   })
 
   describe('restoring a file', () => {
-    xit('should restore a file', () => { })
+    it.skip('should restore a file', () => { })
 
-    xit("should fail to restore a file if it doesn't exist", () => { })
+    it.skip("should fail to restore a file if it doesn't exist", () => { })
   })
 
   describe('get a file', () => {
@@ -1187,7 +1212,7 @@ describe('src/Core', () => {
       const core = new Core()
 
       core.addFile({
-        source: 'jest',
+        source: 'vi',
         name: 'foo.jpg',
         type: 'image/jpeg',
         data: new File([sampleImage], { type: 'image/jpeg' }),
@@ -1211,13 +1236,13 @@ describe('src/Core', () => {
       const core = new Core()
 
       core.addFile({
-        source: 'jest',
+        source: 'vi',
         name: 'foo.jpg',
         type: 'image/jpeg',
         data: new File([sampleImage], { type: 'image/jpeg' }),
       })
       core.addFile({
-        source: 'jest',
+        source: 'vi',
         name: 'empty.dat',
         type: 'application/octet-stream',
         data: new File([new Uint8Array(1000)], { type: 'application/octet-stream' }),
@@ -1290,7 +1315,7 @@ describe('src/Core', () => {
 
       try {
         core.addFile({
-          source: 'jest',
+          source: 'vi',
           name: 'foo1.png',
           type: 'image/png',
           data: new File([sampleImage], { type: 'image/png' }),
@@ -1309,7 +1334,7 @@ describe('src/Core', () => {
 
       expect(() => {
         core.addFile({
-          source: 'jest',
+          source: 'vi',
           name: 'foo1.png',
           type: 'image/png',
           data: new File([sampleImage], { type: 'image/png' }),
@@ -1341,7 +1366,7 @@ describe('src/Core', () => {
       const core = new Core()
 
       core.addFile({
-        source: 'jest',
+        source: 'vi',
         name: 'foo.jpg',
         type: 'image/jpeg',
         data: new File([sampleImage], { type: 'image/jpeg' }),
@@ -1364,7 +1389,7 @@ describe('src/Core', () => {
         meta: { foo2: 'bar2' },
       })
       core.addFile({
-        source: 'jest',
+        source: 'vi',
         name: 'foo.jpg',
         type: 'image/jpeg',
         meta: {
@@ -1387,7 +1412,7 @@ describe('src/Core', () => {
       const core = new Core()
 
       core.addFile({
-        source: 'jest',
+        source: 'vi',
         name: 'foo.jpg',
         type: 'image/jpeg',
         data: new File([sampleImage], { type: 'image/jpeg' }),
@@ -1539,13 +1564,13 @@ describe('src/Core', () => {
       })
 
       core.addFile({
-        source: 'jest',
+        source: 'vi',
         name: 'foo.jpg',
         type: 'image/jpeg',
         data: new File([sampleImage], { type: 'image/jpeg' }),
       })
       core.addFile({
-        source: 'jest',
+        source: 'vi',
         name: 'foo2.jpg',
         type: 'image/jpeg',
         data: new File([sampleImage], { type: 'image/jpeg' }),
@@ -1572,18 +1597,18 @@ describe('src/Core', () => {
     })
 
     it('should reset the progress', () => {
-      const resetProgressEvent = jest.fn()
+      const resetProgressEvent = vi.fn()
       const core = new Core()
       core.on('reset-progress', resetProgressEvent)
 
       core.addFile({
-        source: 'jest',
+        source: 'vi',
         name: 'foo.jpg',
         type: 'image/jpeg',
         data: new File([sampleImage], { type: 'image/jpeg' }),
       })
       core.addFile({
-        source: 'jest',
+        source: 'vi',
         name: 'foo2.jpg',
         type: 'image/jpeg',
         data: new File([sampleImage], { type: 'image/jpeg' }),
@@ -1643,14 +1668,14 @@ describe('src/Core', () => {
 
       // add 2 files
       core.addFile({
-        source: 'jest',
+        source: 'vi',
         name: 'foo1.jpg',
         type: 'image/jpeg',
         data: new File([sampleImage], { type: 'image/jpeg' }),
       })
       try {
         core.addFile({
-          source: 'jest',
+          source: 'vi',
           name: 'foo2.jpg',
           type: 'image/jpeg',
           data: new File([sampleImage], { type: 'image/jpeg' }),
@@ -1672,7 +1697,7 @@ describe('src/Core', () => {
       expect(() => {
         // add 1 ghost file
         const fileId1 = core.addFile({
-          source: 'jest',
+          source: 'vi',
           name: 'foo1.jpg',
           type: 'image/jpeg',
           data: new File([sampleImage], { type: 'image/jpeg' }),
@@ -1681,7 +1706,7 @@ describe('src/Core', () => {
 
         // add another file
         core.addFile({
-          source: 'jest',
+          source: 'vi',
           name: 'foo2.jpg',
           type: 'image/jpeg',
           data: new File([sampleImage], { type: 'image/jpeg' }),
@@ -1689,7 +1714,7 @@ describe('src/Core', () => {
       }).not.toThrowError()
     })
 
-    xit('should enforce the minNumberOfFiles rule', () => { })
+    it.skip('should enforce the minNumberOfFiles rule', () => { })
 
     it('should enforce the allowedFileTypes rule', () => {
       const core = new Core({
@@ -1700,7 +1725,7 @@ describe('src/Core', () => {
 
       try {
         core.addFile({
-          source: 'jest',
+          source: 'vi',
           name: 'foo2.jpg',
           type: 'image/jpeg',
           data: new File([sampleImage], { type: 'image/jpeg' }),
@@ -1734,7 +1759,7 @@ describe('src/Core', () => {
 
       try {
         core.addFile({
-          source: 'jest',
+          source: 'vi',
           name: 'foo2.png',
           type: '',
           data: new File([sampleImage], { type: 'image/jpeg' }),
@@ -1746,7 +1771,7 @@ describe('src/Core', () => {
       }
 
       expect(() => core.addFile({
-        source: 'jest',
+        source: 'vi',
         name: 'foo2.JPG',
         type: '',
         data: new File([sampleImage], { type: 'image/jpeg' }),
@@ -1762,7 +1787,7 @@ describe('src/Core', () => {
 
       try {
         core.addFile({
-          source: 'jest',
+          source: 'vi',
           name: 'foo.jpg',
           type: 'image/jpeg',
           data: new File([sampleImage], { type: 'image/jpeg' }),
@@ -1783,7 +1808,7 @@ describe('src/Core', () => {
 
       try {
         core.addFile({
-          source: 'jest',
+          source: 'vi',
           name: 'foo.jpg',
           type: 'image/jpeg',
           data: new File([sampleImage], { type: 'image/jpeg' }),
@@ -1803,7 +1828,7 @@ describe('src/Core', () => {
       })
 
       core.addFile({
-        source: 'jest',
+        source: 'vi',
         name: 'foo.jpg',
         type: 'image/jpeg',
         data: new File([sampleImage], { type: 'image/jpeg' }),
@@ -1811,7 +1836,7 @@ describe('src/Core', () => {
 
       expect(() => {
         core.addFile({
-          source: 'jest',
+          source: 'vi',
           name: 'foo1.jpg',
           type: 'image/jpeg',
           data: new File([sampleImage], { type: 'image/jpeg' }),
@@ -1835,7 +1860,7 @@ describe('src/Core', () => {
       })
 
       const newFile = {
-        source: 'jest',
+        source: 'vi',
         name: 'foo1.jpg',
         extension: 'jpg',
         type: 'image/jpeg',
@@ -1860,7 +1885,7 @@ describe('src/Core', () => {
           maxFileSize,
         },
       })
-      const restrictionsViolatedEventMock = jest.fn()
+      const restrictionsViolatedEventMock = vi.fn()
       const file = {
         name: 'test.jpg',
         data: new Blob([new Uint8Array(2 * maxFileSize)]),
@@ -1931,9 +1956,9 @@ describe('src/Core', () => {
     })
 
     it('should emit the correct event based on whether there is a network connection', () => {
-      const onlineEventMock = jest.fn()
-      const offlineEventMock = jest.fn()
-      const backOnlineEventMock = jest.fn()
+      const onlineEventMock = vi.fn()
+      const offlineEventMock = vi.fn()
+      const backOnlineEventMock = vi.fn()
       const core = new Core()
       core.on('is-offline', offlineEventMock)
       core.on('is-online', onlineEventMock)
@@ -1961,7 +1986,7 @@ describe('src/Core', () => {
 
   describe('info', () => {
     it('should set a string based message to be displayed infinitely', () => {
-      const infoVisibleEvent = jest.fn()
+      const infoVisibleEvent = vi.fn()
       const core = new Core()
       core.on('info-visible', infoVisibleEvent)
 
@@ -1975,7 +2000,7 @@ describe('src/Core', () => {
     })
 
     it('should set a object based message to be displayed infinitely', () => {
-      const infoVisibleEvent = jest.fn()
+      const infoVisibleEvent = vi.fn()
       const core = new Core()
       core.on('info-visible', infoVisibleEvent)
 
@@ -1996,8 +2021,8 @@ describe('src/Core', () => {
     })
 
     it('should set an info message to be displayed for a period of time before hiding', (done) => {
-      const infoVisibleEvent = jest.fn()
-      const infoHiddenEvent = jest.fn()
+      const infoVisibleEvent = vi.fn()
+      const infoHiddenEvent = vi.fn()
       const core = new Core()
       core.on('info-visible', infoVisibleEvent)
       core.on('info-hidden', infoHiddenEvent)
@@ -2012,8 +2037,8 @@ describe('src/Core', () => {
     })
 
     it('should hide an info message', () => {
-      const infoVisibleEvent = jest.fn()
-      const infoHiddenEvent = jest.fn()
+      const infoVisibleEvent = vi.fn()
+      const infoHiddenEvent = vi.fn()
       const core = new Core()
       core.on('info-visible', infoVisibleEvent)
       core.on('info-hidden', infoHiddenEvent)
@@ -2026,8 +2051,8 @@ describe('src/Core', () => {
     })
 
     it('should support multiple messages', () => {
-      const infoVisibleEvent = jest.fn()
-      const infoHiddenEvent = jest.fn()
+      const infoVisibleEvent = vi.fn()
+      const infoHiddenEvent = vi.fn()
       const core = new Core()
 
       core.on('info-visible', infoVisibleEvent)
@@ -2070,7 +2095,7 @@ describe('src/Core', () => {
     it('should assign the specified files to a new upload', () => {
       const core = new Core()
       core.addFile({
-        source: 'jest',
+        source: 'vi',
         name: 'foo.jpg',
         type: 'image/jpeg',
         data: new File([sampleImage], { type: 'image/jpeg' }),
@@ -2119,9 +2144,9 @@ describe('src/Core', () => {
   describe('log', () => {
     it('should log via provided logger function', () => {
       const myTestLogger = {
-        debug: jest.fn(),
-        warn: jest.fn(),
-        error: jest.fn(),
+        debug: vi.fn(),
+        warn: vi.fn(),
+        error: vi.fn(),
       }
 
       const core = new Core({
@@ -2142,9 +2167,9 @@ describe('src/Core', () => {
 
     it('should log via provided logger function, even if debug: true', () => {
       const myTestLogger = {
-        debug: jest.fn(),
-        warn: jest.fn(),
-        error: jest.fn(),
+        debug: vi.fn(),
+        warn: vi.fn(),
+        error: vi.fn(),
       }
 
       const core = new Core({
@@ -2167,8 +2192,8 @@ describe('src/Core', () => {
     })
 
     it('should log to console when logger: Uppy.debugLogger or debug: true is set', () => {
-      console.debug = jest.fn()
-      console.error = jest.fn()
+      console.debug = vi.fn()
+      console.error = vi.fn()
 
       const core = new Core({
         logger: debugLogger,
@@ -2201,8 +2226,8 @@ describe('src/Core', () => {
     })
 
     it('should only log errors to console when logger is not set', () => {
-      console.debug = jest.fn()
-      console.error = jest.fn()
+      console.debug = vi.fn()
+      console.error = vi.fn()
 
       const core = new Core()
 

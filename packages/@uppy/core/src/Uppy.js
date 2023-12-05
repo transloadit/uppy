@@ -4,7 +4,7 @@
 import Translator from '@uppy/utils/lib/Translator'
 import ee from 'namespace-emitter'
 import { nanoid } from 'nanoid/non-secure'
-import throttle from 'lodash.throttle'
+import throttle from 'lodash/throttle.js'
 import DefaultStore from '@uppy/store-default'
 import getFileType from '@uppy/utils/lib/getFileType'
 import getFileNameAndExtension from '@uppy/utils/lib/getFileNameAndExtension'
@@ -20,6 +20,14 @@ import {
 
 import packageJson from '../package.json'
 import locale from './locale.js'
+
+
+const getDefaultUploadState = () => ({
+  totalProgress: 0,
+  allowNewUpload: true,
+  error: null,
+  recoveredState: null,
+});
 
 /**
  * Uppy Core module.
@@ -59,7 +67,7 @@ class Uppy {
       debug: false,
       restrictions: defaultRestrictionOptions,
       meta: {},
-      onBeforeFileAdded: (currentFile) => currentFile,
+      onBeforeFileAdded: (file, files) => !Object.hasOwn(files, file.id),
       onBeforeUpload: (files) => files,
       store: new DefaultStore(),
       logger: justErrorsLogger,
@@ -89,30 +97,19 @@ class Uppy {
 
     this.i18nInit()
 
-    // ___Why throttle at 500ms?
-    //    - We must throttle at >250ms for superfocus in Dashboard to work well
-    //    (because animation takes 0.25s, and we want to wait for all animations to be over before refocusing).
-    //    [Practical Check]: if thottle is at 100ms, then if you are uploading a file,
-    //    and click 'ADD MORE FILES', - focus won't activate in Firefox.
-    //    - We must throttle at around >500ms to avoid performance lags.
-    //    [Practical Check] Firefox, try to upload a big file for a prolonged period of time. Laptop will start to heat up.
-    this.calculateProgress = throttle(this.calculateProgress.bind(this), 500, { leading: true, trailing: true })
-
     this.store = this.opts.store
     this.setState({
+      ...getDefaultUploadState(),
       plugins: {},
       files: {},
       currentUploads: {},
-      allowNewUpload: true,
       capabilities: {
         uploadProgress: supportsUploadProgress(),
         individualCancellation: true,
         resumableUploads: false,
       },
-      totalProgress: 0,
       meta: { ...this.opts.meta },
       info: [],
-      recoveredState: null,
     })
 
     this.#restricter = new Restricter(() => this.opts, this.i18n)
@@ -239,6 +236,7 @@ class Uppy {
     this.setState() // so that UI re-renders with new options
   }
 
+  // todo next major: rename to something better? (it doesn't just reset progress)
   resetProgress () {
     const defaultProgress = {
       percentage: 0,
@@ -258,15 +256,14 @@ class Uppy {
       }
     })
 
-    this.setState({
-      files: updatedFiles,
-      totalProgress: 0,
-      allowNewUpload: true,
-      error: null,
-      recoveredState: null,
-    })
+    this.setState({ files: updatedFiles, ...getDefaultUploadState() })
 
     this.emit('reset-progress')
+  }
+
+  /** @protected */
+  clearUploadedFiles () {
+    this.setState({ ...getDefaultUploadState(), files: {} })
   }
 
   addPreProcessor (fn) {
@@ -547,8 +544,9 @@ class Uppy {
         // users are asked to re-select these half-recovered files and then this method will be called again.
         // In order to keep the progress, meta and everthing else, we keep the existing file,
         // but we replace `data`, and we remove `isGhost`, because the file is no longer a ghost now
-        if (existingFiles[newFile.id]?.isGhost) {
-          const { isGhost, ...existingFileState } = existingFiles[newFile.id]
+        const isGhost = existingFiles[newFile.id]?.isGhost
+        if (isGhost) {
+          const { isGhost: _, ...existingFileState } = existingFiles[newFile.id]
           newFile = {
             ...existingFileState,
             data: fileToAdd.data,
@@ -556,13 +554,14 @@ class Uppy {
           this.log(`Replaced the blob in the restored ghost file: ${newFile.name}, ${newFile.id}`)
         }
 
-        if (this.checkIfFileAlreadyExists(newFile.id)) {
+        const onBeforeFileAddedResult = this.opts.onBeforeFileAdded(newFile, nextFilesState)
+
+        if (!onBeforeFileAddedResult && this.checkIfFileAlreadyExists(newFile.id)) {
           throw new RestrictionError(this.i18n('noDuplicates', { fileName: newFile.name }), { file: fileToAdd })
         }
 
-        const onBeforeFileAddedResult = this.opts.onBeforeFileAdded(newFile, nextFilesState)
-
-        if (onBeforeFileAddedResult === false) {
+        // Pass through reselected files from Golden Retriever
+        if (onBeforeFileAddedResult === false && !isGhost) {
           // Don’t show UI info for this error, as it should be done by the developer
           throw new RestrictionError('Cannot add the file because onBeforeFileAdded returned false.', { isUserFacing: false, file: fileToAdd })
         } else if (typeof onBeforeFileAddedResult === 'object' && onBeforeFileAddedResult !== null) {
@@ -863,11 +862,8 @@ class Uppy {
         this.removeFiles(fileIDs, 'cancel-all')
       }
 
-      this.setState({
-        totalProgress: 0,
-        error: null,
-        recoveredState: null,
-      })
+      this.setState(getDefaultUploadState())
+      // todo should we call this.emit('reset-progress') like we do for resetProgress?
     }
   }
 
@@ -893,9 +889,22 @@ class Uppy {
     })
   }
 
-  calculateProgress (file, data) {
-    if (file == null || !this.getFile(file.id)) {
+  // ___Why throttle at 500ms?
+  //    - We must throttle at >250ms for superfocus in Dashboard to work well
+  //    (because animation takes 0.25s, and we want to wait for all animations to be over before refocusing).
+  //    [Practical Check]: if thottle is at 100ms, then if you are uploading a file,
+  //    and click 'ADD MORE FILES', - focus won't activate in Firefox.
+  //    - We must throttle at around >500ms to avoid performance lags.
+  //    [Practical Check] Firefox, try to upload a big file for a prolonged period of time. Laptop will start to heat up.
+  calculateProgress = throttle((file, data) => {
+    const fileInState = this.getFile(file?.id)
+    if (file == null || !fileInState) {
       this.log(`Not setting progress for a file that has been removed: ${file?.id}`)
+      return
+    }
+
+    if (fileInState.progress.percentage === 100) {
+      this.log(`Not setting progress for a file that has been already uploaded: ${file.id}`)
       return
     }
 
@@ -903,7 +912,7 @@ class Uppy {
     const canHavePercentage = Number.isFinite(data.bytesTotal) && data.bytesTotal > 0
     this.setFileState(file.id, {
       progress: {
-        ...this.getFile(file.id).progress,
+        ...fileInState.progress,
         bytesUploaded: data.bytesUploaded,
         bytesTotal: data.bytesTotal,
         percentage: canHavePercentage
@@ -913,7 +922,7 @@ class Uppy {
     })
 
     this.calculateTotalProgress()
-  }
+  }, 500, { leading: true, trailing: true })
 
   calculateTotalProgress () {
     // calculate total progress, using the number of files currently uploading,
@@ -1005,13 +1014,13 @@ class Uppy {
       errorHandler(error, file, response)
 
       if (typeof error === 'object' && error.message) {
-        const newError = new Error(error.message)
+        this.log(error.message, 'error')
+        const newError = new Error(this.i18n('failedToUpload', { file: file?.name }))
         newError.isUserFacing = true // todo maybe don't do this with all errors?
         newError.details = error.message
         if (error.details) {
           newError.details += ` ${error.details}`
         }
-        newError.message = this.i18n('failedToUpload', { file: file?.name })
         this.#informAndEmit([newError])
       } else {
         this.#informAndEmit([error])
@@ -1240,6 +1249,8 @@ class Uppy {
       this.#plugins[plugin.type] = [plugin]
     }
     plugin.install()
+
+    this.emit('plugin-added', plugin)
 
     return this
   }
