@@ -250,10 +250,8 @@ export default class ProviderView extends View {
   async handleAuth (authFormData) {
     try {
       await this.#withAbort(async (signal) => {
-        const clientVersion = `@uppy/provider-views=${ProviderView.VERSION}`
-
         this.setLoading(true)
-        await this.provider.login({ uppyVersions: clientVersion, authFormData, signal })
+        await this.provider.login({ authFormData, signal })
         this.plugin.setPluginState({ authenticated: true })
         this.preFirstRender()
       })

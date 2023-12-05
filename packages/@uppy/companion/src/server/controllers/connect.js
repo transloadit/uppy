@@ -25,10 +25,6 @@ module.exports = function connect(req, res) {
     stateObj.companionInstance = req.companion.buildURL('', true)
   }
 
-  if (req.companion.clientVersion) {
-    stateObj.clientVersion = req.companion.clientVersion
-  }
-
   if (req.query.uppyPreAuthToken) {
     stateObj.preAuthToken = req.query.uppyPreAuthToken
   }
