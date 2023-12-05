@@ -187,7 +187,7 @@ export default class ProviderView extends View {
     } catch (err) {
       // This is the first call that happens when the provider view loads, after auth, so it's probably nice to show any
       // error occurring here to the user.
-      if (err.name === 'UserFacingApiError') {
+      if (err?.name === 'UserFacingApiError') {
         this.plugin.uppy.info({ message: this.plugin.uppy.i18n(err.message) }, 'warning', 5000)
         return
       }

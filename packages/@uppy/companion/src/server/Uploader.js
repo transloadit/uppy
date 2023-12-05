@@ -57,10 +57,7 @@ function sanitizeMetadata(inputMetadata) {
 }
 
 class AbortError extends Error {
-  constructor(message) {
-    super(message)
-    this.isAbortError = true
-  }
+  isAbortError = true
 }
 
 class ValidationError extends Error {
@@ -317,7 +314,7 @@ class Uploader {
       const { url, extraData } = ret
       this.#emitSuccess(url, extraData)
     } catch (err) {
-      if (err.isAbortError) {
+      if (err?.isAbortError) {
         logger.error('Aborted upload', 'uploader.aborted', this.shortToken)
         return
       }

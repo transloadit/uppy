@@ -46,16 +46,16 @@ class ProviderAuthError extends ProviderApiError {
  */
 function errorToResponse(err) {
   // @ts-ignore
-  if (err.isAuthError) {
+  if (err?.isAuthError) {
     return { code: 401, json: { message: err.message } }
   }
 
-  if (err.name === 'ProviderUserError') {
+  if (err?.name === 'ProviderUserError') {
     // @ts-ignore
     return { code: 400, json: err.json }
   }
 
-  if (err.name === 'ProviderApiError') {
+  if (err?.name === 'ProviderApiError') {
     // @ts-ignore
     if (err.statusCode >= 500) {
       // bad gateway i.e the provider APIs gateway

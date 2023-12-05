@@ -40,10 +40,10 @@ async function withProviderErrorHandling({
     let statusCode
     let body
 
-    if (err.name === 'HTTPError') {
+    if (err?.name === 'HTTPError') {
       statusCode = err.response?.statusCode
       body = err.response?.body
-    } else if (err.name === 'StreamHttpJsonError') {
+    } else if (err?.name === 'StreamHttpJsonError') {
       statusCode = err.statusCode
       body = err.responseJson
     }
