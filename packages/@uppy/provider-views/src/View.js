@@ -76,11 +76,16 @@ export default class View {
         body: {
           fileId: file.id,
         },
-        providerOptions: this.provider.opts,
         providerName: this.provider.name,
         provider: this.provider.provider,
       },
     }
+
+    // all properties on this object get saved into the Uppy store.
+    // Some users might serialize their store (for example using JSON.stringify),
+    // or when using Golden Retriever it will serialize state into e.g. localStorage.
+    // However RequestClient is not serializable so we need to prevent it from being serialized.
+    Object.defineProperty(tagFile.remote, 'requestClient', { value: this.provider, enumerable: false })
 
     const fileType = getFileType(tagFile)
 

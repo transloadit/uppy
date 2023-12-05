@@ -78,6 +78,7 @@ describe('Test Provider options', () => {
       callback: '/drive/callback',
       custom_params: {
         access_type: 'offline',
+        prompt: 'consent',
       },
     })
     expect(grantConfig.zoom).toEqual({

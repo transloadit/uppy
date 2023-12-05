@@ -87,7 +87,7 @@ class Box extends Provider {
       })
 
       await prepareStream(stream)
-      return { stream }
+      return { stream, contentType: 'image/jpeg' }
     })
   }
 

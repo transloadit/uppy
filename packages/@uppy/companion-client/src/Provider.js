@@ -2,18 +2,18 @@
 
 import RequestClient, { authErrorStatusCode } from './RequestClient.js'
 import * as tokenStorage from './tokenStorage.js'
-import AuthError from './AuthError.js'
+
 
 const getName = (id) => {
   return id.split('-').map((s) => s.charAt(0).toUpperCase() + s.slice(1)).join(' ')
 }
 
-function getOrigin () {
+function getOrigin() {
   // eslint-disable-next-line no-restricted-globals
   return location.origin
 }
 
-function getRegex (value) {
+function getRegex(value) {
   if (typeof value === 'string') {
     return new RegExp(`^${value}$`)
   } if (value instanceof RegExp) {
@@ -22,7 +22,7 @@ function getRegex (value) {
   return undefined
 }
 
-function isOriginAllowed (origin, allowedOrigin) {
+function isOriginAllowed(origin, allowedOrigin) {
   const patterns = Array.isArray(allowedOrigin) ? allowedOrigin.map(getRegex) : [getRegex(allowedOrigin)]
   return patterns
     .some((pattern) => pattern?.test(origin) || pattern?.test(`${origin}/`)) // allowing for trailing '/'
@@ -31,8 +31,8 @@ function isOriginAllowed (origin, allowedOrigin) {
 export default class Provider extends RequestClient {
   #refreshingTokenPromise
 
-  constructor (uppy, opts, getQueue) {
-    super(uppy, opts, getQueue)
+  constructor(uppy, opts) {
+    super(uppy, opts)
     this.provider = opts.provider
     this.id = this.provider
     this.name = this.opts.name || getName(this.id)
@@ -43,7 +43,7 @@ export default class Provider extends RequestClient {
     this.supportsRefreshToken = opts.supportsRefreshToken ?? true // todo false in next major
   }
 
-  async headers () {
+  async headers() {
     const [headers, token] = await Promise.all([super.headers(), this.#getAuthToken()])
     const authHeaders = {}
     if (token) {
@@ -58,7 +58,7 @@ export default class Provider extends RequestClient {
     return { ...headers, ...authHeaders }
   }
 
-  onReceiveResponse (response) {
+  onReceiveResponse(response) {
     super.onReceiveResponse(response)
     const plugin = this.uppy.getPlugin(this.pluginId)
     const oldAuthenticated = plugin.getPluginState().authenticated
@@ -67,15 +67,16 @@ export default class Provider extends RequestClient {
     return response
   }
 
-  async setAuthToken (token) {
+  async setAuthToken(token) {
     return this.uppy.getPlugin(this.pluginId).storage.setItem(this.tokenKey, token)
   }
 
-  async #getAuthToken () {
+  async #getAuthToken() {
     return this.uppy.getPlugin(this.pluginId).storage.getItem(this.tokenKey)
   }
 
-  async removeAuthToken () {
+  /** @protected */
+  async removeAuthToken() {
     return this.uppy.getPlugin(this.pluginId).storage.removeItem(this.tokenKey)
   }
 
@@ -83,7 +84,7 @@ export default class Provider extends RequestClient {
    * Ensure we have a preauth token if necessary. Attempts to fetch one if we don't,
    * or rejects if loading one fails.
    */
-  async ensurePreAuth () {
+  async ensurePreAuth() {
     if (this.companionKeysParams && !this.preAuthToken) {
       await this.fetchPreAuthToken()
 
@@ -94,11 +95,11 @@ export default class Provider extends RequestClient {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  authQuery () {
+  authQuery() {
     return {}
   }
 
-  authUrl ({ authFormData, query } = {}) {
+  authUrl({ authFormData, query } = {}) {
     const params = new URLSearchParams({
       ...query,
       state: btoa(JSON.stringify({ origin: getOrigin() })),
@@ -112,7 +113,14 @@ export default class Provider extends RequestClient {
     return `${this.hostname}/${this.id}/connect?${params}`
   }
 
-  async login ({ uppyVersions, authFormData, signal }) {
+  /** @protected */
+  async loginSimpleAuth({ uppyVersions, authFormData, signal }) {
+    const response = await this.post(`${this.id}/simple-auth`, { form: authFormData }, { qs: { uppyVersions }, signal })
+    this.setAuthToken(response.uppyAuthToken)
+  }
+
+  /** @protected */
+  async loginOAuth({ uppyVersions, authFormData, signal }) {
     await this.ensurePreAuth()
 
     signal.throwIfAborted()
@@ -125,7 +133,17 @@ export default class Provider extends RequestClient {
 
       const handleToken = (e) => {
         if (e.source !== authWindow) {
-          this.uppy.log.warn('ignoring event from unknown source', e)
+          let jsonData = ''
+          try {
+            // TODO improve our uppy logger so that it can take an arbitrary number of arguments,
+            // each either objects, errors or strings,
+            // then we don’t have to manually do these things like json stringify when logging.
+            // the logger should never throw an error.
+            jsonData = JSON.stringify(e.data)
+          } catch (err) {
+            // in case JSON.stringify fails (ignored)
+          }
+          this.uppy.log(`ignoring event from unknown source ${jsonData}`, 'warning')
           return
         }
 
@@ -153,8 +171,7 @@ export default class Provider extends RequestClient {
         }
 
         cleanup()
-        this.setAuthToken(data.token)
-        resolve()
+        resolve(this.setAuthToken(data.token))
       }
 
       cleanup = () => {
@@ -168,37 +185,55 @@ export default class Provider extends RequestClient {
     })
   }
 
-  refreshTokenUrl () {
+  async login({ uppyVersions, authFormData, signal }) {
+    return this.loginOAuth({ uppyVersions, authFormData, signal })
+  }
+
+  refreshTokenUrl() {
     return `${this.hostname}/${this.id}/refresh-token`
   }
 
-  fileUrl (id) {
+  fileUrl(id) {
     return `${this.hostname}/${this.id}/get/${id}`
   }
 
   /** @protected */
-  async request (...args) {
+  async request(...args) {
     await this.#refreshingTokenPromise
 
     try {
-      // throw new AuthError() // testing simulate access token expired (to refresh token)
+      // to test simulate access token expired (leading to a token token refresh),
+      // see mockAccessTokenExpiredError in companion/drive.
+      // If you want to test refresh token *and* access token invalid, do this for example with Google Drive:
+      // While uploading, go to your google account settings,
+      // "Third-party apps & services", then click "Companion" and "Remove access".
+
       return await super.request(...args)
     } catch (err) {
       if (!this.supportsRefreshToken) throw err
-      if (!(err instanceof AuthError)) throw err // only handle auth errors (401 from provider)
+      // only handle auth errors (401 from provider), and only handle them if we have a (refresh) token
+      const authTokenAfter = await this.#getAuthToken()
+      if (!err.isAuthError || !authTokenAfter) throw err
 
-      await this.#refreshingTokenPromise
-
-      // Many provider requests may be starting at once, however refresh token should only be called once.
-      // Once a refresh token operation has started, we need all other request to wait for this operation (atomically)
-      this.#refreshingTokenPromise = (async () => {
-        try {
-          const response = await super.request({ path: this.refreshTokenUrl(), method: 'POST' })
-          await this.setAuthToken(response.uppyAuthToken)
-        } finally {
-          this.#refreshingTokenPromise = undefined
-        }
-      })()
+      if (this.#refreshingTokenPromise == null) {
+        // Many provider requests may be starting at once, however refresh token should only be called once.
+        // Once a refresh token operation has started, we need all other request to wait for this operation (atomically)
+        this.#refreshingTokenPromise = (async () => {
+          try {
+            this.uppy.log(`[CompanionClient] Refreshing expired auth token`, 'info')
+            const response = await super.request({ path: this.refreshTokenUrl(), method: 'POST' })
+            await this.setAuthToken(response.uppyAuthToken)
+          } catch (refreshTokenErr) {
+            if (refreshTokenErr.isAuthError) {
+              // if refresh-token has failed with auth error, delete token, so we don't keep trying to refresh in future
+              await this.removeAuthToken()
+            }
+            throw err
+          } finally {
+            this.#refreshingTokenPromise = undefined
+          }
+        })()
+      }
 
       await this.#refreshingTokenPromise
 
@@ -207,7 +242,7 @@ export default class Provider extends RequestClient {
     }
   }
 
-  async fetchPreAuthToken () {
+  async fetchPreAuthToken() {
     if (!this.companionKeysParams) {
       return
     }
@@ -220,17 +255,17 @@ export default class Provider extends RequestClient {
     }
   }
 
-  list (directory, options) {
+  list(directory, options) {
     return this.get(`${this.id}/list/${directory || ''}`, options)
   }
 
-  async logout (options) {
+  async logout(options) {
     const response = await this.get(`${this.id}/logout`, options)
     await this.removeAuthToken()
     return response
   }
 
-  static initPlugin (plugin, opts, defaultOpts) {
+  static initPlugin(plugin, opts, defaultOpts) {
     /* eslint-disable no-param-reassign */
     plugin.type = 'acquirer'
     plugin.files = []

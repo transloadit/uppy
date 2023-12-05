@@ -3,6 +3,8 @@ const defaults = require('./constants')
 
 module.exports.expects = {}
 
+module.exports.nockGoogleDriveAboutCall = () => nock('https://www.googleapis.com').get((uri) => uri.includes('about')).reply(200, { user: { emailAddress: 'john.doe@transloadit.com' } })
+
 module.exports.nockGoogleDownloadFile = ({ times = 1 } = {}) => {
   nock('https://www.googleapis.com').get(`/drive/v3/files/${defaults.ITEM_ID}?fields=kind%2Cid%2CimageMediaMetadata%2Cname%2CmimeType%2CownedByMe%2Csize%2CmodifiedTime%2CiconLink%2CthumbnailLink%2CteamDriveId%2CvideoMediaMetadata%2CshortcutDetails%28targetId%2CtargetMimeType%29&supportsAllDrives=true`).times(times).reply(200, {
     kind: 'drive#file',
@@ -17,5 +19,5 @@ module.exports.nockGoogleDownloadFile = ({ times = 1 } = {}) => {
     size: '758051',
   })
   nock('https://www.googleapis.com').get(`/drive/v3/files/${defaults.ITEM_ID}?alt=media&supportsAllDrives=true`).reply(200, {})
-  nock('https://www.googleapis.com').get((uri) => uri.includes('about')).reply(200, { user: { emailAddress: 'john.doe@transloadit.com' } })
+  module.exports.nockGoogleDriveAboutCall()
 }

@@ -25,6 +25,15 @@ const validOptions = (options) => {
   return options.server.host && options.server.protocol
 }
 
+function getGrantConfigForProvider({ providerName, companionOptions, grantConfig }) {
+  const authProvider = providerNameToAuthName(providerName, companionOptions)
+
+  if (!isOAuthProvider(authProvider)) return undefined
+  return grantConfig[authProvider]
+}
+
+module.exports.getGrantConfigForProvider = getGrantConfigForProvider
+
 /**
  * adds the desired provider module to the request object,
  * based on the providerName parameter specified

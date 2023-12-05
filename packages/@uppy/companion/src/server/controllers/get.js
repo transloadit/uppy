@@ -16,12 +16,12 @@ async function get (req, res) {
     return stream
   }
 
-  function onUnhandledError (err) {
+  try {
+    await startDownUpload({ req, res, getSize, download })
+  } catch (err) {
     logger.error(err, 'controller.get.error', req.id)
-    res.status(400).json({ message: 'Failed to download file' })
+    res.status(500).json({ message: 'Failed to download file' })
   }
-
-  startDownUpload({ req, res, getSize, download, onUnhandledError })
 }
 
 module.exports = get

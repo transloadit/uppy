@@ -40,7 +40,9 @@ class OneDrive extends Provider {
     return this.#withErrorHandling('provider.onedrive.list.error', async () => {
       const path = directory ? `items/${directory}` : 'root'
       // https://learn.microsoft.com/en-us/graph/query-parameters?tabs=http#top-parameter
-      const qs = { $expand: 'thumbnails', $top: 999 }
+      const pageSize = 999
+      // const pageSize = 20 // to test pagination easily
+      const qs = { $expand: 'thumbnails', $top: pageSize }
       if (query.cursor) {
         qs.$skiptoken = query.cursor
       }
@@ -52,7 +54,7 @@ class OneDrive extends Provider {
         client.get(`${getRootPath(query)}/${path}/children`, { searchParams: qs, responseType: 'json' }).json(),
       ])
 
-      return adaptData(list, mail || userPrincipalName)
+      return adaptData(list, mail || userPrincipalName, query, directory)
     })
   }
 
