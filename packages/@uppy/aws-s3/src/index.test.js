@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from '@jest/globals'
+import { beforeEach, describe, expect, it } from 'vitest'
 import 'whatwg-fetch'
 import Core from '@uppy/core'
 import AwsS3 from './index.js'
@@ -23,7 +23,7 @@ describe('AwsS3', () => {
 
     it('Does not throw an error with companionUrl configured', () => {
       const core = new Core()
-      core.use(AwsS3, { companionUrl: 'https://uppy-companion.myapp.com/' })
+      core.use(AwsS3, { companionUrl: 'https://companion.uppy.io/' })
       const awsS3 = core.getPlugin('AwsS3')
       const file = {
         meta: {

@@ -37,7 +37,7 @@ $focus-shadow: 0 0 0 3px rgba($blue, 0.5);
     background-color: $highlight;
   }
 
-  [data-uppy-theme="dark"] &:focus {
+  [data-uppy-theme='dark'] &:focus {
     background-color: $gray-800;
   }
 }

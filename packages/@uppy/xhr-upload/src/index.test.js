@@ -1,4 +1,4 @@
-import { jest, describe, it, expect } from '@jest/globals'
+import { vi, describe, it, expect } from 'vitest'
 import nock from 'nock'
 import Core from '@uppy/core'
 import XHRUpload from './index.js'
@@ -15,7 +15,7 @@ describe('XHRUpload', () => {
         .post('/').reply(200, {})
 
       const core = new Core()
-      const getResponseData = jest.fn(function getResponseData () {
+      const getResponseData = vi.fn(function getResponseData () {
         expect(this.some).toEqual('option')
         return {}
       })
@@ -50,7 +50,7 @@ describe('XHRUpload', () => {
         })
 
       const core = new Core()
-      const validateStatus = jest.fn((status, responseText) => {
+      const validateStatus = vi.fn((status, responseText) => {
         return JSON.parse(responseText).code !== 40000
       })
 

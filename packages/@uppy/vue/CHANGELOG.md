@@ -1,5 +1,12 @@
 # @uppy/vue
 
+## 1.1.0
+
+Released: 2023-10-20
+Included in: Uppy v3.18.0
+
+- @uppy/vue: export FileInput (mdxiaohu / #4736)
+
 ## 1.0.1
 
 Released: 2022-09-25

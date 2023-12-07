@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
   },
   buttonImport: {
     alignItems: 'center',
-    backgroundColor: '#2275d7',
+    backgroundColor: '#1269cf',
     paddingHorizontal: 25,
     paddingVertical: 8,
     borderRadius: 5,
