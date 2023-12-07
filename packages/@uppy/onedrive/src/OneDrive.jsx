@@ -32,6 +32,7 @@ export default class OneDrive extends UIPlugin {
       companionCookiesRule: this.opts.companionCookiesRule,
       provider: 'onedrive',
       pluginId: this.id,
+      supportsRefreshToken: false,
     })
 
     this.defaultLocale = locale

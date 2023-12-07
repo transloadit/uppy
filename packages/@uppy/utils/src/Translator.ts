@@ -1,5 +1,3 @@
-import has from './hasProperty.ts'
-
 // We're using a generic because languages have different plural rules.
 export interface Locale<T extends number = number> {
   strings: Record<string, string | Record<T, string>>
@@ -84,6 +82,10 @@ function interpolate(
   return interpolated
 }
 
+const defaultOnMissingKey = (key: string): void => {
+  throw new Error(`missing string: ${key}`)
+}
+
 /**
  * Translates strings with interpolation & pluralization support.
  * Extensible with custom dictionaries and pluralization functions.
@@ -98,7 +100,10 @@ function interpolate(
 export default class Translator {
   protected locale: Locale
 
-  constructor(locales: Locale | Locale[]) {
+  constructor(
+    locales: Locale | Locale[],
+    { onMissingKey = defaultOnMissingKey } = {},
+  ) {
     this.locale = {
       strings: {},
       pluralize(n: number): 0 | 1 {
@@ -114,7 +119,11 @@ export default class Translator {
     } else {
       this.#apply(locales)
     }
+
+    this.#onMissingKey = onMissingKey
   }
+
+  #onMissingKey
 
   #apply(locale?: Locale): void {
     if (!locale?.strings) {
@@ -146,11 +155,11 @@ export default class Translator {
    * @returns The translated and interpolated parts, in order.
    */
   translateArray(key: string, options?: Options): Array<string | unknown> {
-    if (!has(this.locale.strings, key)) {
-      throw new Error(`missing string: ${key}`)
+    let string = this.locale.strings[key]
+    if (string == null) {
+      this.#onMissingKey(key)
+      string = key
     }
-
-    const string = this.locale.strings[key]
     const hasPluralForms = typeof string === 'object'
 
     if (hasPluralForms) {
@@ -161,6 +170,10 @@ export default class Translator {
       throw new Error(
         'Attempted to use a string with plural forms, but no value was given for %{smart_count}',
       )
+    }
+
+    if (typeof string !== 'string') {
+      throw new Error(`string was not a string`)
     }
 
     return interpolate(string, options)

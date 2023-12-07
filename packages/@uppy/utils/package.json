@@ -64,7 +64,8 @@
     "./lib/FOCUSABLE_ELEMENTS.js": "./lib/FOCUSABLE_ELEMENTS.js",
     "./lib/fileFilters": "./lib/fileFilters.js",
     "./lib/VirtualList": "./lib/VirtualList.js",
-    "./src/microtip.scss": "./src/microtip.scss"
+    "./src/microtip.scss": "./src/microtip.scss",
+    "./lib/UserFacingApiError": "./lib/UserFacingApiError.js"
   },
   "dependencies": {
     "lodash": "^4.17.21",

@@ -5,6 +5,7 @@ const logger = require('../../logger')
 const { VIRTUAL_SHARED_DIR, adaptData, isShortcut, isGsuiteFile, getGsuiteExportType } = require('./adapter')
 const { withProviderErrorHandling } = require('../providerErrors')
 const { prepareStream } = require('../../helpers/utils')
+const { MAX_AGE_REFRESH_TOKEN } = require('../../helpers/jwt')
 const { ProviderAuthError } = require('../error')
 
 
@@ -57,6 +58,10 @@ class Drive extends Provider {
 
   static get authProvider () {
     return 'google'
+  }
+
+  static get authStateExpiry () {
+    return MAX_AGE_REFRESH_TOKEN
   }
 
   async list (options) {

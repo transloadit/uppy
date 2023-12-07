@@ -83,17 +83,15 @@ exports.getCredentialsOverrideMiddleware = (providers, companionOptions) => {
         return
       }
 
-      const dynamicState = oAuthState.getDynamicStateFromRequest(req)
+      const grantDynamic = oAuthState.getGrantDynamicFromRequest(req)
       // only use state via session object if user isn't making intial "connect" request.
       // override param indicates subsequent requests from the oauth flow
-      const state = override ? dynamicState : req.query.state
+      const state = override ? grantDynamic.state : req.query.state
       if (!state) {
         next()
         return
       }
 
-      // pre auth token is companionKeysParams encoded and encrypted by companion before the oauth flow,
-      // I believe this has been done so that it cannot be modified by the client later.
       const preAuthToken = oAuthState.getFromState(state, 'preAuthToken', companionOptions.secret)
       if (!preAuthToken) {
         next()

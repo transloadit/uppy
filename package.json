@@ -128,7 +128,7 @@
     "contributors:save": "yarn node ./bin/update-contributors.mjs",
     "dev:with-companion": "npm-run-all --parallel start:companion dev",
     "dev": "yarn workspace @uppy-dev/dev dev",
-    "lint:fix": "yarn run lint -- --fix",
+    "lint:fix": "yarn lint --fix",
     "lint:markdown": "remark -f -q -i .remarkignore . .github/CONTRIBUTING.md",
     "lint:staged": "lint-staged",
     "lint:css": "stylelint ./packages/**/*.scss",

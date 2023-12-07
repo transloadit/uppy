@@ -7,7 +7,7 @@ export type GenericState = Record<string, unknown>
 export type Listener<T> = (
   prevState: T,
   nextState: T,
-  patch: Partial<T>,
+  patch?: Partial<T>,
 ) => void
 
 /**
@@ -24,7 +24,7 @@ class DefaultStore<T extends GenericState = GenericState> {
     return this.state
   }
 
-  setState(patch: Partial<T>): void {
+  setState(patch?: Partial<T>): void {
     const prevState = { ...this.state }
     const nextState = { ...this.state, ...patch }
 

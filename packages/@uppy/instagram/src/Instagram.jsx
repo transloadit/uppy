@@ -40,6 +40,7 @@ export default class Instagram extends UIPlugin {
       companionCookiesRule: this.opts.companionCookiesRule,
       provider: 'instagram',
       pluginId: this.id,
+      supportsRefreshToken: false,
     })
 
     this.onFirstRender = this.onFirstRender.bind(this)
