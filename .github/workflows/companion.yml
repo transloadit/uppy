@@ -1,7 +1,7 @@
 name: Companion
 on:
   push:
-    branches: [main]
+    branches: [main, 4.x]
     paths:
       - yarn.lock
       - 'packages/@uppy/companion/**'

@@ -1,7 +1,7 @@
 name: End-to-end tests
 on:
   push:
-    branches: [main]
+    branches: [main, 4.x]
     paths-ignore:
       - '**.md'
       - '**.d.ts'

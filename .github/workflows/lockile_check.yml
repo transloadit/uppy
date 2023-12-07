@@ -2,7 +2,7 @@ name: Lockfile checks
 
 on:
   push:
-    branches: [main]
+    branches: [main, 4.x]
     paths:
       - yarn.lock
   pull_request:
