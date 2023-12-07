@@ -36,7 +36,7 @@ import MiniXHRUpload from './MiniXHRUpload.js'
 import isXml from './isXml.js'
 import locale from './locale.js'
 
-function resolveUrl (origin, link) {
+function resolveUrl(origin, link) {
   // DigitalOcean doesn’t return the protocol from Location
   // without it, the `new URL` constructor will fail
   if (!origin && !link.startsWith('https://') && !link.startsWith('http://')) {
@@ -52,7 +52,7 @@ function resolveUrl (origin, link) {
  * @param {string} tagName - The name of the tag.
  * @returns {string} The contents of the tag, or the empty string if the tag does not exist.
  */
-function getXmlValue (source, tagName) {
+function getXmlValue(source, tagName) {
   const start = source.indexOf(`<${tagName}>`)
   const end = source.indexOf(`</${tagName}>`, start)
   return start !== -1 && end !== -1
@@ -60,7 +60,7 @@ function getXmlValue (source, tagName) {
     : ''
 }
 
-function assertServerError (res) {
+function assertServerError(res) {
   if (res && res.error) {
     const error = new Error(res.message)
     Object.assign(error, res.error)
@@ -69,7 +69,7 @@ function assertServerError (res) {
   return res
 }
 
-function validateParameters (file, params) {
+function validateParameters(file, params) {
   const valid = params != null
     && typeof params.url === 'string'
     && (typeof params.fields === 'object' || params.fields == null)
@@ -90,7 +90,7 @@ function validateParameters (file, params) {
 // Get the error data from a failed XMLHttpRequest instance.
 // `content` is the S3 response as a string.
 // `xhr` is the XMLHttpRequest instance.
-function defaultGetResponseError (content, xhr) {
+function defaultGetResponseError(content, xhr) {
   // If no response, we don't have a specific error message, use the default.
   if (!isXml(content, xhr)) {
     return undefined
@@ -112,7 +112,7 @@ export default class AwsS3 extends BasePlugin {
 
   #uploader
 
-  constructor (uppy, opts) {
+  constructor(uppy, opts) {
     // Opt-in to using the multipart plugin, which is going to be the only S3 plugin as of the next semver.
     if (opts?.shouldUseMultipart != null) {
       return new AwsS3Multipart(uppy, opts)
@@ -146,14 +146,14 @@ export default class AwsS3 extends BasePlugin {
     this.#requests = new RateLimitedQueue(this.opts.limit)
   }
 
-  [Symbol.for('uppy test: getClient')] () { return this.#client }
+  [Symbol.for('uppy test: getClient')]() { return this.#client }
 
   // TODO: remove getter and setter for #client on the next major release
-  get client () { return this.#client }
+  get client() { return this.#client }
 
-  set client (client) { this.#client = client }
+  set client(client) { this.#client = client }
 
-  getUploadParameters (file) {
+  getUploadParameters(file) {
     if (!this.opts.companionUrl) {
       throw new Error('Expected a `companionUrl` option containing a Companion address.')
     }
@@ -180,7 +180,7 @@ export default class AwsS3 extends BasePlugin {
      */
     const paramsPromises = Object.create(null)
 
-    function onremove (file) {
+    function onremove(file) {
       const { id } = file
       paramsPromises[id]?.abort()
     }
@@ -266,7 +266,7 @@ export default class AwsS3 extends BasePlugin {
     }
   }
 
-  uploadFile (id, current, total) {
+  uploadFile(id, current, total) {
     const file = this.uppy.getFile(id)
     this.uppy.log(`uploading ${current} of ${total}`)
 
@@ -281,7 +281,7 @@ export default class AwsS3 extends BasePlugin {
       }
       this.uppy.on('file-removed', removedHandler)
 
-      const uploadPromise = file.remote.requestClient.uploadRemoteFile(
+      const uploadPromise = this.uppy.getRequestClientForFile(file).uploadRemoteFile(
         file,
         this.#getCompanionClientArgs(file),
         { signal: controller.signal, getQueue },
@@ -297,7 +297,7 @@ export default class AwsS3 extends BasePlugin {
     return this.#uploader.uploadLocalFile(file, current, total)
   }
 
-  install () {
+  install() {
     const { uppy } = this
     uppy.addPreProcessor(this.#setCompanionHeaders)
     uppy.addUploader(this.#handleUpload)
@@ -305,7 +305,7 @@ export default class AwsS3 extends BasePlugin {
     // Get the response data from a successful XMLHttpRequest instance.
     // `content` is the S3 response as a string.
     // `xhr` is the XMLHttpRequest instance.
-    function defaultGetResponseData (content, xhr) {
+    function defaultGetResponseData(content, xhr) {
       const opts = this
 
       // If no response, we've hopefully done a PUT request to the file
@@ -360,7 +360,7 @@ export default class AwsS3 extends BasePlugin {
     this.#uploader = new MiniXHRUpload(uppy, xhrOptions)
   }
 
-  uninstall () {
+  uninstall() {
     this.uppy.removePreProcessor(this.#setCompanionHeaders)
     this.uppy.removeUploader(this.#handleUpload)
   }

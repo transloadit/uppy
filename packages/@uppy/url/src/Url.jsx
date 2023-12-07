@@ -113,6 +113,8 @@ export default class Url extends UIPlugin {
     try {
       const meta = await this.getMeta(url)
 
+      const requestClientId = 'url';
+
       const tagFile = {
         meta: optionalMeta,
         source: this.id,
@@ -132,10 +134,11 @@ export default class Url extends UIPlugin {
             fileId: url,
             url,
           },
+          requestClientId,
         },
       }
 
-      Object.defineProperty(tagFile.remote, 'requestClient', { value: this.client, enumerable: false })
+      this.uppy.requestClientById.set(requestClientId, this.provider)
 
       this.uppy.log('[Url] Adding remote file')
       try {

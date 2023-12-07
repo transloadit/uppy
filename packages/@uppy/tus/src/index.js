@@ -58,7 +58,7 @@ export default class Tus extends BasePlugin {
    * @param {Uppy} uppy
    * @param {TusOptions} opts
    */
-  constructor (uppy, opts) {
+  constructor(uppy, opts) {
     super(uppy, opts)
     this.type = 'uploader'
     this.id = this.opts.id || 'Tus'
@@ -97,7 +97,7 @@ export default class Tus extends BasePlugin {
     this.handleResetProgress = this.handleResetProgress.bind(this)
   }
 
-  handleResetProgress () {
+  handleResetProgress() {
     const files = { ...this.uppy.getState().files }
     Object.keys(files).forEach((fileID) => {
       // Only clone the file object if it has a Tus `uploadUrl` attached.
@@ -117,7 +117,7 @@ export default class Tus extends BasePlugin {
    *
    * @param {string} fileID
    */
-  resetUploaderReferences (fileID, opts = {}) {
+  resetUploaderReferences(fileID, opts = {}) {
     if (this.uploaders[fileID]) {
       const uploader = this.uploaders[fileID]
 
@@ -170,7 +170,7 @@ export default class Tus extends BasePlugin {
    * @param {UppyFile} file for use with upload
    * @returns {Promise<void>}
    */
-  #uploadLocalFile (file) {
+  #uploadLocalFile(file) {
     this.resetUploaderReferences(file.id)
 
     // Create a new tus upload
@@ -220,7 +220,7 @@ export default class Tus extends BasePlugin {
               queuedRequest.abort()
             }
             done()
-            return () => {}
+            return () => { }
           })
           // If the request has been requeued because it was rate limited by the
           // remote server, we want to wait for `RateLimitedQueue` to dispatch
@@ -315,13 +315,13 @@ export default class Tus extends BasePlugin {
         queuedRequest.abort()
         queuedRequest = {
           shouldBeRequeued: true,
-          abort () {
+          abort() {
             this.shouldBeRequeued = false
           },
-          done () {
+          done() {
             throw new Error('Cannot mark a queued request as done: this indicates a bug')
           },
-          fn () {
+          fn() {
             throw new Error('Cannot run a queued request: this indicates a bug')
           },
         }
@@ -373,7 +373,7 @@ export default class Tus extends BasePlugin {
         // that point this cancellation function is not going to be called.
         // Also, we need to remove the request from the queue _without_ destroying everything
         // related to this upload to handle pauses.
-        return () => {}
+        return () => { }
       }
 
       upload.findPreviousUploads().then((previousUploads) => {
@@ -437,7 +437,7 @@ export default class Tus extends BasePlugin {
    * @param {UppyFile} file
    * @param {string} uploadURL
    */
-  onReceiveUploadUrl (file, uploadURL) {
+  onReceiveUploadUrl(file, uploadURL) {
     const currentFile = this.uppy.getFile(file.id)
     if (!currentFile) return
     // Only do the update if we didn't have an upload URL yet.
@@ -449,7 +449,7 @@ export default class Tus extends BasePlugin {
     }
   }
 
-  #getCompanionClientArgs (file) {
+  #getCompanionClientArgs(file) {
     const opts = { ...this.opts }
 
     if (file.tus) {
@@ -471,7 +471,7 @@ export default class Tus extends BasePlugin {
   /**
    * @param {(UppyFile | FailedUppyFile)[]} files
    */
-  async #uploadFiles (files) {
+  async #uploadFiles(files) {
     const filesFiltered = filterNonFailedFiles(files)
     const filesToEmit = filterFilesToEmitUploadStarted(filesFiltered)
     this.uppy.emit('upload-start', filesToEmit)
@@ -489,7 +489,7 @@ export default class Tus extends BasePlugin {
         }
         this.uppy.on('file-removed', removedHandler)
 
-        const uploadPromise = file.remote.requestClient.uploadRemoteFile(
+        const uploadPromise = this.uppy.getRequestClientForFile(file).uploadRemoteFile(
           file,
           this.#getCompanionClientArgs(file),
           { signal: controller.signal, getQueue },
@@ -528,7 +528,7 @@ export default class Tus extends BasePlugin {
     await this.#uploadFiles(filesToUpload)
   }
 
-  install () {
+  install() {
     this.uppy.setState({
       capabilities: { ...this.uppy.getState().capabilities, resumableUploads: true },
     })
@@ -537,7 +537,7 @@ export default class Tus extends BasePlugin {
     this.uppy.on('reset-progress', this.handleResetProgress)
   }
 
-  uninstall () {
+  uninstall() {
     this.uppy.setState({
       capabilities: { ...this.uppy.getState().capabilities, resumableUploads: false },
     })

@@ -3,7 +3,7 @@ import isPreviewSupported from '@uppy/utils/lib/isPreviewSupported'
 import remoteFileObjToLocal from '@uppy/utils/lib/remoteFileObjToLocal'
 
 export default class View {
-  constructor (plugin, opts) {
+  constructor(plugin, opts) {
     this.plugin = plugin
     this.provider = opts.provider
 
@@ -15,24 +15,24 @@ export default class View {
     this.cancelPicking = this.cancelPicking.bind(this)
   }
 
-  preFirstRender () {
+  preFirstRender() {
     this.plugin.setPluginState({ didFirstRender: true })
     this.plugin.onFirstRender()
   }
 
   // eslint-disable-next-line class-methods-use-this
-  shouldHandleScroll (event) {
+  shouldHandleScroll(event) {
     const { scrollHeight, scrollTop, offsetHeight } = event.target
     const scrollPosition = scrollHeight - (scrollTop + offsetHeight)
 
     return scrollPosition < 50 && !this.isHandlingScroll
   }
 
-  clearSelection () {
+  clearSelection() {
     this.plugin.setPluginState({ currentSelection: [], filterInput: '' })
   }
 
-  cancelPicking () {
+  cancelPicking() {
     this.clearSelection()
 
     const dashboard = this.plugin.uppy.getPlugin('Dashboard')
@@ -42,7 +42,7 @@ export default class View {
     }
   }
 
-  handleError (error) {
+  handleError(error) {
     const { uppy } = this.plugin
     const message = uppy.i18n('companionError')
 
@@ -58,7 +58,9 @@ export default class View {
   }
 
   // todo document what is a "tagFile" or get rid of this concept
-  getTagFile (file) {
+  getTagFile(file) {
+    const requestClientId = `provider-${this.provider.provider}`;
+
     const tagFile = {
       id: file.id,
       source: this.plugin.id,
@@ -78,14 +80,11 @@ export default class View {
         },
         providerName: this.provider.name,
         provider: this.provider.provider,
+        requestClientId,
       },
     }
 
-    // all properties on this object get saved into the Uppy store.
-    // Some users might serialize their store (for example using JSON.stringify),
-    // or when using Golden Retriever it will serialize state into e.g. localStorage.
-    // However RequestClient is not serializable so we need to prevent it from being serialized.
-    Object.defineProperty(tagFile.remote, 'requestClient', { value: this.provider, enumerable: false })
+    this.plugin.uppy.requestClientById.set(requestClientId, this.provider)
 
     const fileType = getFileType(tagFile)
 
@@ -184,7 +183,7 @@ export default class View {
     return currentSelection.some((item) => item.id === file.id)
   }
 
-  setLoading (loading) {
+  setLoading(loading) {
     this.plugin.setPluginState({ loading })
   }
 }
