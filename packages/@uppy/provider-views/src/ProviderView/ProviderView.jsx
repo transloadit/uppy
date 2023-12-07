@@ -1,9 +1,7 @@
 import { h } from 'preact'
-// eslint-disable-next-line import/no-unresolved
 import PQueue from 'p-queue'
 
 import { getSafeFileId } from '@uppy/utils/lib/generateFileID'
-import UserFacingApiError from '@uppy/utils/lib/UserFacingApiError'
 
 import AuthView from './AuthView.jsx'
 import Header from './Header.jsx'
@@ -189,7 +187,7 @@ export default class ProviderView extends View {
     } catch (err) {
       // This is the first call that happens when the provider view loads, after auth, so it's probably nice to show any
       // error occurring here to the user.
-      if (err instanceof UserFacingApiError) {
+      if (err?.name === 'UserFacingApiError') {
         this.plugin.uppy.info({ message: this.plugin.uppy.i18n(err.message) }, 'warning', 5000)
         return
       }
@@ -252,15 +250,13 @@ export default class ProviderView extends View {
   async handleAuth (authFormData) {
     try {
       await this.#withAbort(async (signal) => {
-        const clientVersion = `@uppy/provider-views=${ProviderView.VERSION}`
-
         this.setLoading(true)
-        await this.provider.login({ uppyVersions: clientVersion, authFormData, signal })
+        await this.provider.login({ authFormData, signal })
         this.plugin.setPluginState({ authenticated: true })
         this.preFirstRender()
       })
     } catch (err) {
-      if (err instanceof UserFacingApiError) {
+      if (err.name === 'UserFacingApiError') {
         this.plugin.uppy.info({ message: this.plugin.uppy.i18n(err.message) }, 'warning', 5000)
         return
       }
@@ -402,7 +398,7 @@ export default class ProviderView extends View {
         // and that will allow the user to start the upload, so we need to make sure we have
         // finished all async operations before we add any file
         // see https://github.com/transloadit/uppy/pull/4384
-        this.plugin.uppy.log('Adding remote provider files')
+        this.plugin.uppy.log('Adding files from a remote provider')
         this.plugin.uppy.addFiles(newFiles.map((file) => this.getTagFile(file)))
 
         this.plugin.setPluginState({ filterInput: '' })

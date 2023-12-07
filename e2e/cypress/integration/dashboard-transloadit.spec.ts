@@ -40,6 +40,8 @@ describe('Dashboard with Transloadit', () => {
       cy.get('.uppy-StatusBar-actionBtn--upload').click()
 
       cy.wait(['@createAssemblies']).then(() => {
+        // eslint-disable-next-line
+        // @ts-ignore fix me
         expect(
           Object.values(uppy.getPlugin('Transloadit').activeAssemblies).every(
             (a: any) => a.pollInterval,
@@ -49,6 +51,8 @@ describe('Dashboard with Transloadit', () => {
         uppy.cancelAll()
 
         cy.wait(['@delete']).then(() => {
+          // eslint-disable-next-line
+          // @ts-ignore fix me
           expect(
             Object.values(uppy.getPlugin('Transloadit').activeAssemblies).some(
               (a: any) => a.pollInterval,
@@ -67,6 +71,8 @@ describe('Dashboard with Transloadit', () => {
     const spy = cy.spy()
 
     cy.window().then(({ uppy }) => {
+      // eslint-disable-next-line
+      // @ts-ignore fix me
       uppy.on('transloadit:assembly-cancelled', spy)
 
       cy.get('@file-input').selectFile(
@@ -111,6 +117,8 @@ describe('Dashboard with Transloadit', () => {
     const spy = cy.spy()
 
     cy.window().then(({ uppy }) => {
+      // eslint-disable-next-line
+      // @ts-ignore fix me
       uppy.on('transloadit:assembly-cancelled', spy)
 
       cy.get('@file-input').selectFile(
@@ -141,6 +149,8 @@ describe('Dashboard with Transloadit', () => {
 
       cy.get('.uppy-StatusBar-actionBtn--upload').click()
       cy.wait('@assemblyPolling')
+      // eslint-disable-next-line
+      // @ts-ignore fix me
       expect(
         Object.values(uppy.getPlugin('Transloadit').activeAssemblies).every(
           (a: any) => a.pollInterval,
@@ -148,9 +158,13 @@ describe('Dashboard with Transloadit', () => {
       ).to.equal(true)
 
       const { files } = uppy.getState()
+      // eslint-disable-next-line
+      // @ts-ignore fix me
       uppy.removeFiles(Object.keys(files))
 
       cy.wait('@assemblyDeletion').then(() => {
+        // eslint-disable-next-line
+        // @ts-ignore fix me
         expect(
           Object.values(uppy.getPlugin('Transloadit').activeAssemblies).some(
             (a: any) => a.pollInterval,
@@ -172,14 +186,20 @@ describe('Dashboard with Transloadit', () => {
     cy.get('.uppy-StatusBar-actionBtn--upload').click()
 
     cy.window().then(({ uppy }) => {
+      // eslint-disable-next-line
+      // @ts-ignore fix me
       expect(
         Object.values(uppy.getPlugin('Transloadit').activeAssemblies).length,
       ).to.equal(0)
 
       const { files } = uppy.getState()
+      // eslint-disable-next-line
+      // @ts-ignore fix me
       uppy.removeFiles(Object.keys(files))
 
       cy.wait('@createAssemblies').then(() => {
+        // eslint-disable-next-line
+        // @ts-ignore fix me
         expect(
           Object.values(uppy.getPlugin('Transloadit').activeAssemblies).some(
             (a: any) => a.pollInterval,
@@ -201,6 +221,8 @@ describe('Dashboard with Transloadit', () => {
     cy.get('.uppy-StatusBar-actionBtn--upload').click()
 
     cy.window().then(({ uppy }) => {
+      // eslint-disable-next-line
+      // @ts-ignore fix me
       expect(
         Object.values(uppy.getPlugin('Transloadit').activeAssemblies).length,
       ).to.equal(0)

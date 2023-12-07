@@ -142,8 +142,8 @@ module.exports.app = (optionsArg = {}) => {
   if (options.testDynamicOauthCredentials) {
     app.post('/:providerName/test-dynamic-oauth-credentials', (req, res) => {
       if (req.query.secret !== options.testDynamicOauthCredentialsSecret) throw new Error('Invalid secret')
-      logger.info('Returning dynamic OAuth2 credentials')
       const { providerName } = req.params
+      logger.info(`Returning dynamic OAuth2 credentials for ${providerName}`)
       // for simplicity, we just return the normal credentials for the provider, but in a real-world scenario,
       // we would query based on parameters
       const { key, secret } = options.providerOptions[providerName]

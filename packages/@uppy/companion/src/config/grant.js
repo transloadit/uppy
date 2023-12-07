@@ -8,7 +8,12 @@ module.exports = () => {
         'https://www.googleapis.com/auth/drive.readonly',
       ],
       callback: '/drive/callback',
-      custom_params: { access_type : 'offline' },
+      // access_type: offline is needed in order to get refresh tokens.
+      // prompt: 'consent' is needed because sometimes a user will get stuck in an authenticated state where we will
+      // receive no refresh tokens from them. This seems to be happen when running on different subdomains.
+      // therefore to be safe that we always get refresh tokens, we set this.
+      // https://stackoverflow.com/questions/10827920/not-receiving-google-oauth-refresh-token/65108513#65108513
+      custom_params: { access_type : 'offline', prompt: 'consent' },
     },
     dropbox: {
       transport: 'session',

@@ -14,6 +14,8 @@ node_modules
 yarn-error.log
 .idea
 .env
+tsconfig.tsbuildinfo
+tsconfig.build.tsbuildinfo
 
 dist/
 lib/

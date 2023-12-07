@@ -134,13 +134,13 @@ exports.cors = (options = {}) => (req, res, next) => {
   const exposeHeadersSet = new Set(existingExposeHeaders?.split(',')?.map((method) => method.trim().toLowerCase()))
 
   // exposed so it can be accessed for our custom uppy client preflight
-  exposeHeadersSet.add('access-control-allow-headers')
+  exposeHeadersSet.add('access-control-allow-headers') // todo remove in next major, see https://github.com/transloadit/uppy/pull/4462
   if (options.sendSelfEndpoint) exposeHeadersSet.add('i-am')
 
   // Needed for basic operation: https://github.com/transloadit/uppy/issues/3021
   const allowedHeaders = [
     'uppy-auth-token',
-    'uppy-versions',
+    'uppy-versions', // todo remove in the future? see https://github.com/transloadit/uppy/pull/4462
     'uppy-credentials-params',
     'authorization',
     'origin',
@@ -202,17 +202,11 @@ exports.getCompanionMiddleware = (options) => {
    * @param {Function} next
    */
   const middleware = (req, res, next) => {
-    const versionFromQuery = req.query.uppyVersions ? decodeURIComponent(req.query.uppyVersions) : null
     req.companion = {
       options,
       s3Client: getS3Client(options),
       authToken: req.header('uppy-auth-token') || req.query.uppyAuthToken,
-      clientVersion: req.header('uppy-versions') || versionFromQuery || '1.0.0',
       buildURL: getURLBuilder(options),
-    }
-
-    if (options.logClientVersion) {
-      logger.info(`uppy client version ${req.companion.clientVersion}`, 'companion.client.version')
     }
     next()
   }

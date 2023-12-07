@@ -18,7 +18,6 @@ const defaultOptions = {
   },
   enableUrlEndpoint: true, // todo next major make this default false
   allowLocalUrls: false,
-  logClientVersion: true,
   periodicPingUrls: [],
   streamingUpload: false,
   clientSocketConnectTimeout: 60000,

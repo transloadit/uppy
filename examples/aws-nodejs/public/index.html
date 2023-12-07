@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <title>Uppy – AWS upload example</title>
     <link
-      href="https://releases.transloadit.com/uppy/v3.17.0/uppy.min.css"
+      href="https://releases.transloadit.com/uppy/v3.20.0/uppy.min.css"
       rel="stylesheet"
     />
   </head>
@@ -16,7 +16,7 @@
         Uppy,
         Dashboard,
         AwsS3,
-      } from 'https://releases.transloadit.com/uppy/v3.17.0/uppy.min.mjs'
+      } from 'https://releases.transloadit.com/uppy/v3.20.0/uppy.min.mjs'
       /**
        * This generator transforms a deep object into URL-encodable pairs
        * to work with `URLSearchParams` on the client and `body-parser` on the server.
@@ -121,19 +121,7 @@
             // implement them (you'd also need to set `shouldUseMultipart: false` though).
 
             async createMultipartUpload(file, signal) {
-              if (signal?.aborted) {
-                const err = new DOMException(
-                  'The operation was aborted',
-                  'AbortError',
-                )
-                Object.defineProperty(err, 'cause', {
-                  __proto__: null,
-                  configurable: true,
-                  writable: true,
-                  value: signal.reason,
-                })
-                throw err
-              }
+              signal?.throwIfAborted()
 
               const metadata = {}
 
@@ -191,19 +179,7 @@
 
               const { uploadId, key, partNumber, signal } = options
 
-              if (signal?.aborted) {
-                const err = new DOMException(
-                  'The operation was aborted',
-                  'AbortError',
-                )
-                Object.defineProperty(err, 'cause', {
-                  __proto__: null,
-                  configurable: true,
-                  writable: true,
-                  value: signal.reason,
-                })
-                throw err
-              }
+              signal?.throwIfAborted()
 
               if (uploadId == null || key == null || partNumber == null) {
                 throw new Error(
@@ -226,19 +202,7 @@
             },
 
             async listParts(file, { key, uploadId }, signal) {
-              if (signal?.aborted) {
-                const err = new DOMException(
-                  'The operation was aborted',
-                  'AbortError',
-                )
-                Object.defineProperty(err, 'cause', {
-                  __proto__: null,
-                  configurable: true,
-                  writable: true,
-                  value: signal.reason,
-                })
-                throw err
-              }
+              signal?.throwIfAborted()
 
               const filename = encodeURIComponent(key)
               const response = await fetch(
@@ -259,19 +223,7 @@
               { key, uploadId, parts },
               signal,
             ) {
-              if (signal?.aborted) {
-                const err = new DOMException(
-                  'The operation was aborted',
-                  'AbortError',
-                )
-                Object.defineProperty(err, 'cause', {
-                  __proto__: null,
-                  configurable: true,
-                  writable: true,
-                  value: signal.reason,
-                })
-                throw err
-              }
+              signal?.throwIfAborted()
 
               const filename = encodeURIComponent(key)
               const uploadIdEnc = encodeURIComponent(uploadId)

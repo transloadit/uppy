@@ -358,11 +358,13 @@ module.exports = {
         'test/**/*.js',
         'test/**/*.ts',
         '*.test.js',
+        '*.test.ts',
         '*.test-d.ts',
         '*.test-d.tsx',
         'postcss.config.js',
         '.eslintrc.js',
         'private/**/*.js',
+        'private/**/*.mjs',
       ],
       rules: {
         'no-console': 'off',
@@ -462,7 +464,15 @@ module.exports = {
       rules: {
         'import/prefer-default-export': 'off',
         '@typescript-eslint/no-explicit-any': 'off',
+        '@typescript-eslint/no-extra-semi': 'off',
         '@typescript-eslint/no-namespace': 'off',
+      },
+    },
+    {
+      files: ['packages/@uppy/*/src/**/*.ts', 'packages/@uppy/*/src/**/*.tsx'],
+      excludedFiles: ['packages/@uppy/**/*.test.ts'],
+      rules: {
+        '@typescript-eslint/explicit-function-return-type': 'error',
       },
     },
     {

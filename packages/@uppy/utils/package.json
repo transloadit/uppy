@@ -1,7 +1,7 @@
 {
   "name": "@uppy/utils",
   "description": "Shared utility functions for Uppy Core and plugins maintained by the Uppy team.",
-  "version": "5.5.1",
+  "version": "5.6.0",
   "license": "MIT",
   "types": "types/index.d.ts",
   "type": "module",
@@ -73,6 +73,7 @@
     "preact": "^10.5.13"
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.199",
     "vitest": "^0.34.5"
   }
 }

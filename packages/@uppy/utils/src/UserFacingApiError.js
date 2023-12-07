@@ -1,8 +1,5 @@
 class UserFacingApiError extends Error {
-  constructor (message) {
-    super(message)
-    this.name = 'UserFacingApiError'
-  }
+  name = 'UserFacingApiError'
 }
 
 export default UserFacingApiError

@@ -6,6 +6,16 @@ const { VIRTUAL_SHARED_DIR, adaptData, isShortcut, isGsuiteFile, getGsuiteExport
 const { withProviderErrorHandling } = require('../providerErrors')
 const { prepareStream } = require('../../helpers/utils')
 const { MAX_AGE_REFRESH_TOKEN } = require('../../helpers/jwt')
+const { ProviderAuthError } = require('../error')
+
+
+// For testing refresh token:
+// first run a download with mockAccessTokenExpiredError = true 
+// then when you want to test expiry, set to mockAccessTokenExpiredError to the logged access token
+// This will trigger companion/nodemon to restart, and it will respond with a simulated invalid token response
+const mockAccessTokenExpiredError = undefined
+// const mockAccessTokenExpiredError = true
+// const mockAccessTokenExpiredError = ''
 
 const DRIVE_FILE_FIELDS = 'kind,id,imageMediaMetadata,name,mimeType,ownedByMe,size,modifiedTime,iconLink,thumbnailLink,teamDriveId,videoMediaMetadata,shortcutDetails(targetId,targetMimeType)'
 const DRIVE_FILES_FIELDS = `kind,nextPageToken,incompleteSearch,files(${DRIVE_FILE_FIELDS})`
@@ -122,6 +132,15 @@ class Drive extends Provider {
   }
 
   async download ({ id: idIn, token }) {
+    if (mockAccessTokenExpiredError != null) {
+      logger.warn(`Access token: ${token}`)
+
+      if (mockAccessTokenExpiredError === token) {
+        logger.warn('Mocking expired access token!')
+        throw new ProviderAuthError()
+      }
+    }
+
     return this.#withErrorHandling('provider.drive.download.error', async () => {
       const client = getClient({ token })
 

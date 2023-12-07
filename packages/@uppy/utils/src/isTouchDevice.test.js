@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
-import isTouchDevice from './isTouchDevice.js'
+import isTouchDevice from './isTouchDevice.ts'
 
 describe('isTouchDevice', () => {
   const RealTouchStart = globalThis.window.ontouchstart
