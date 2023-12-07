@@ -1,5 +1,4 @@
 import {
-  interceptCompanionUrlRequest,
   runRemoteUrlImageUploadTest,
   runRemoteUnsplashUploadTest,
 } from './reusable-tests'
