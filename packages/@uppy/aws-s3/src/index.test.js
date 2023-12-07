@@ -23,7 +23,7 @@ describe('AwsS3', () => {
 
     it('Does not throw an error with companionUrl configured', () => {
       const core = new Core()
-      core.use(AwsS3, { companionUrl: 'https://uppy-companion.myapp.com/' })
+      core.use(AwsS3, { companionUrl: 'https://companion.uppy.io/' })
       const awsS3 = core.getPlugin('AwsS3')
       const file = {
         meta: {
