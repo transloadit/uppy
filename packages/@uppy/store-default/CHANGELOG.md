@@ -1,5 +1,12 @@
 # @uppy/store-default
 
+## 3.1.0
+
+Released: 2023-11-24
+Included in: Uppy v3.20.0
+
+- @uppy/store-default: refactor to typescript (Antoine du Hamel / #4785)
+
 ## 3.0.2
 
 Released: 2022-09-25

@@ -1,4 +1,4 @@
-import { jest } from '@jest/globals' // eslint-disable-line import/no-extraneous-dependencies
+import { vi } from 'vitest' // eslint-disable-line import/no-extraneous-dependencies
 import UIPlugin from '../UIPlugin.js'
 
 export default class TestSelector2 extends UIPlugin {
@@ -9,9 +9,9 @@ export default class TestSelector2 extends UIPlugin {
     this.name = this.constructor.name
 
     this.mocks = {
-      run: jest.fn(),
-      update: jest.fn(),
-      uninstall: jest.fn(),
+      run: vi.fn(),
+      update: vi.fn(),
+      uninstall: vi.fn(),
     }
   }
 

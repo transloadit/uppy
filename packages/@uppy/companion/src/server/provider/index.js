@@ -36,6 +36,15 @@ const providerNameToAuthName = (name, options) => { // eslint-disable-line no-un
   return (providers[name] || {}).authProvider
 }
 
+function getGrantConfigForProvider({ providerName, companionOptions, grantConfig }) {
+  const authProvider = providerNameToAuthName(providerName, companionOptions)
+
+  if (!isOAuthProvider(authProvider)) return undefined
+  return grantConfig[authProvider]
+}
+
+module.exports.getGrantConfigForProvider = getGrantConfigForProvider
+
 /**
  * adds the desired provider module to the request object,
  * based on the providerName parameter specified

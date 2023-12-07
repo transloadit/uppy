@@ -1,5 +1,5 @@
 /* eslint-disable max-classes-per-file */
-import { describe, expect, it } from '@jest/globals'
+import { describe, expect, it } from 'vitest'
 import supportsMediaRecorder from './supportsMediaRecorder.js'
 
 describe('supportsMediaRecorder', () => {
