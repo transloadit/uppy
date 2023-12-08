@@ -1395,7 +1395,7 @@ class Uppy {
   getRequestClientForFile(file) {
     if (!file.remote) throw new Error(`Tried to get RequestClient for a non-remote file ${file.id}`)
     const requestClient = this.requestClientById.get(file.remote.requestClientId)
-    if (requestClient == null) throw new Error(`RequestClient for file ${file.id} not registered`)
+    if (requestClient == null) throw new Error(`requestClientId "${file.remote.requestClientId}" not registered for file "${file.id}"`)
     return requestClient
   }
 

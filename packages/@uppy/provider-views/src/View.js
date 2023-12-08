@@ -57,10 +57,13 @@ export default class View {
     uppy.info({ message, details: error.toString() }, 'error', 5000)
   }
 
-  // todo document what is a "tagFile" or get rid of this concept
-  getTagFile(file) {
-    const requestClientId = `provider-${this.provider.provider}`;
+  registerRequestClient() {
+    this.requestClientId = `provider-${this.provider.provider}`;
+    this.plugin.uppy.requestClientById.set(this.requestClientId, this.provider)
+  }
 
+  // todo document what is a "tagFile" or get rid of this concept
+  getTagFile(file, requestClientId) {
     const tagFile = {
       id: file.id,
       source: this.plugin.id,
@@ -83,8 +86,6 @@ export default class View {
         requestClientId,
       },
     }
-
-    this.plugin.uppy.requestClientById.set(requestClientId, this.provider)
 
     const fileType = getFileType(tagFile)
 

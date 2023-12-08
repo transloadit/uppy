@@ -88,6 +88,9 @@ export default class Url extends UIPlugin {
       companionHeaders: this.opts.companionHeaders,
       companionCookiesRule: this.opts.companionCookiesRule,
     })
+
+    this.requestClientId = 'url';
+    this.uppy.requestClientById.set(this.requestClientId, this.client)
   }
 
   getMeta (url) {
@@ -113,8 +116,6 @@ export default class Url extends UIPlugin {
     try {
       const meta = await this.getMeta(url)
 
-      const requestClientId = 'url';
-
       const tagFile = {
         meta: optionalMeta,
         source: this.id,
@@ -134,11 +135,9 @@ export default class Url extends UIPlugin {
             fileId: url,
             url,
           },
-          requestClientId,
+          requestClientId: this.requestClientId,
         },
       }
-
-      this.uppy.requestClientById.set(requestClientId, this.provider)
 
       this.uppy.log('[Url] Adding remote file')
       try {

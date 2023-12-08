@@ -878,7 +878,7 @@ export default class AwsS3Multipart extends BasePlugin {
         }
         this.uppy.on('file-removed', removedHandler)
 
-        const uploadPromise = this.uppy.requestClientById.get(file.remote.requestClientId).uploadRemoteFile(
+        const uploadPromise = this.uppy.getRequestClientForFile(file).uploadRemoteFile(
           file,
           this.#getCompanionClientArgs(file),
           { signal: controller.signal, getQueue },

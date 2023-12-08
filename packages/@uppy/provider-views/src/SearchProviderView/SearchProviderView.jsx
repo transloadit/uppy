@@ -54,6 +54,8 @@ export default class SearchProviderView extends View {
 
     // Set default state for the plugin
     this.plugin.setPluginState(this.defaultState)
+
+    this.registerRequestClient()
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -124,7 +126,7 @@ export default class SearchProviderView extends View {
   donePicking () {
     const { currentSelection } = this.plugin.getPluginState()
     this.plugin.uppy.log('Adding remote search provider files')
-    this.plugin.uppy.addFiles(currentSelection.map((file) => this.getTagFile(file)))
+    this.plugin.uppy.addFiles(currentSelection.map((file) => this.getTagFile(file, this.requestClientId)))
     this.resetPluginState()
   }
 
