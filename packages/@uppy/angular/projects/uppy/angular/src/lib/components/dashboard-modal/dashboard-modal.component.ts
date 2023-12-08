@@ -1,16 +1,30 @@
-import { Component, ChangeDetectionStrategy, ElementRef, Input, OnDestroy, OnChanges, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  ElementRef,
+  Input,
+  OnDestroy,
+  OnChanges,
+  SimpleChanges,
+} from '@angular/core';
+// @ts-expect-error
 import Dashboard from '@uppy/dashboard';
+// @ts-expect-error
 import type { DashboardOptions } from '@uppy/dashboard';
+// @ts-expect-error
 import { Uppy } from '@uppy/core';
 import { UppyAngularWrapper } from '../../utils/wrapper';
 
 @Component({
   selector: 'uppy-dashboard-modal',
   template: '',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DashboardModalComponent extends UppyAngularWrapper<Dashboard> implements OnDestroy, OnChanges {
-  @Input() uppy: Uppy = new Uppy;
+export class DashboardModalComponent
+  extends UppyAngularWrapper<Dashboard>
+  implements OnDestroy, OnChanges
+{
+  @Input() uppy: Uppy = new Uppy();
   @Input() props: DashboardOptions = {};
   @Input() open: boolean = false;
 
@@ -19,22 +33,25 @@ export class DashboardModalComponent extends UppyAngularWrapper<Dashboard> imple
   }
 
   ngOnInit() {
-    this.onMount({
-      id: 'angular:DashboardModal',
-      inline: false,
-      target: this.el.nativeElement
-    }, Dashboard)
+    this.onMount(
+      {
+        id: 'angular:DashboardModal',
+        inline: false,
+        target: this.el.nativeElement,
+      },
+      Dashboard,
+    );
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     this.handleChanges(changes, Dashboard);
     // Handle dashboard-modal specific changes
     if (changes['open'] && this.open !== changes['open'].previousValue) {
-      if(this.open && !changes['open'].previousValue) {
-        this.plugin!.openModal()
+      if (this.open && !changes['open'].previousValue) {
+        this.plugin!.openModal();
       }
       if (!this.open && changes['open'].previousValue) {
-        this.plugin!.closeModal()
+        this.plugin!.closeModal();
       }
     }
   }
@@ -42,5 +59,4 @@ export class DashboardModalComponent extends UppyAngularWrapper<Dashboard> imple
   ngOnDestroy(): void {
     this.uninstall();
   }
-
 }

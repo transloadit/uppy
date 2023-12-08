@@ -1,16 +1,30 @@
-import { Component, ChangeDetectionStrategy, ElementRef, Input, OnDestroy, OnChanges, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  ElementRef,
+  Input,
+  OnDestroy,
+  OnChanges,
+  SimpleChanges,
+} from '@angular/core';
+// @ts-expect-error
 import Dashboard from '@uppy/dashboard';
+// @ts-expect-error
 import type { DashboardOptions } from '@uppy/dashboard';
+// @ts-expect-error
 import { Uppy } from '@uppy/core';
 import { UppyAngularWrapper } from '../../utils/wrapper';
 
 @Component({
   selector: 'uppy-dashboard',
   template: '',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DashboardComponent extends UppyAngularWrapper implements OnDestroy, OnChanges {
-  @Input() uppy: Uppy = new Uppy;
+export class DashboardComponent
+  extends UppyAngularWrapper
+  implements OnDestroy, OnChanges
+{
+  @Input() uppy: Uppy = new Uppy();
   @Input() props: DashboardOptions = {};
 
   constructor(public el: ElementRef) {
@@ -18,7 +32,10 @@ export class DashboardComponent extends UppyAngularWrapper implements OnDestroy,
   }
 
   ngOnInit() {
-    this.onMount({ id: 'angular:Dashboard', inline: true, target: this.el.nativeElement }, Dashboard)
+    this.onMount(
+      { id: 'angular:Dashboard', inline: true, target: this.el.nativeElement },
+      Dashboard,
+    );
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -28,5 +45,4 @@ export class DashboardComponent extends UppyAngularWrapper implements OnDestroy,
   ngOnDestroy(): void {
     this.uninstall();
   }
-
 }
