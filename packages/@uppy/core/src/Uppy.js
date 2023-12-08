@@ -1388,13 +1388,16 @@ class Uppy {
 
   // We need to store request clients by a unique ID, so we can share RequestClient instances across files
   // this allows us to do rate limiting and synchronous operations like refreshing provider tokens
-  /** @protected */
-  requestClientById = new Map()
+  #requestClientById = new Map()
+
+  registerRequestClient(id, client) {
+    this.#requestClientById.set(id, client)
+  }
 
   /** @protected */
   getRequestClientForFile (file) {
     if (!file.remote) throw new Error(`Tried to get RequestClient for a non-remote file ${file.id}`)
-    const requestClient = this.requestClientById.get(file.remote.requestClientId)
+    const requestClient = this.#requestClientById.get(file.remote.requestClientId)
     if (requestClient == null) throw new Error(`requestClientId "${file.remote.requestClientId}" not registered for file "${file.id}"`)
     return requestClient
   }

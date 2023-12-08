@@ -348,7 +348,7 @@ export default class ProviderView extends View {
 
             const onFiles = (files) => {
               for (const newFile of files) {
-                const tagFile = this.getTagFile(newFile, this.requestClientId)
+                const tagFile = this.getTagFile(newFile)
                 const id = getSafeFileId(tagFile)
                 // If the same folder is added again, we don't want to send
                 // X amount of duplicate file notifications, we want to say

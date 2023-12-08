@@ -27,7 +27,7 @@ export default class MyCustomProvider extends UIPlugin {
       pluginId: this.id,
     })
 
-    uppy.requestClientById.set(`provider-${this.provider}`, this.provider)
+    uppy.registerRequestClient(MyCustomProvider.name, this.provider)
 
     this.defaultLocale = {
       strings: {

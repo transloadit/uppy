@@ -126,7 +126,7 @@ export default class SearchProviderView extends View {
   donePicking () {
     const { currentSelection } = this.plugin.getPluginState()
     this.plugin.uppy.log('Adding remote search provider files')
-    this.plugin.uppy.addFiles(currentSelection.map((file) => this.getTagFile(file, this.requestClientId)))
+    this.plugin.uppy.addFiles(currentSelection.map((file) => this.getTagFile(file)))
     this.resetPluginState()
   }
 

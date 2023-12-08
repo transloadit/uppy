@@ -58,8 +58,8 @@ export default class View {
   }
 
   registerRequestClient() {
-    this.requestClientId = `provider-${this.provider.provider}`;
-    this.plugin.uppy.requestClientById.set(this.requestClientId, this.provider)
+    this.requestClientId = this.provider.provider;
+    this.plugin.uppy.registerRequestClient(this.requestClientId, this.provider)
   }
 
   // todo document what is a "tagFile" or get rid of this concept
@@ -83,6 +83,7 @@ export default class View {
         },
         providerName: this.provider.name,
         provider: this.provider.provider,
+        requestClientId: this.requestClientId,
       },
     }
 

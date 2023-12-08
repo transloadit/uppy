@@ -48,12 +48,15 @@ function getFileNameFromUrl (url) {
   const { pathname } = new URL(url)
   return pathname.substring(pathname.lastIndexOf('/') + 1)
 }
+
 /**
  * Url
  *
  */
 export default class Url extends UIPlugin {
   static VERSION = packageJson.version
+
+  static requestClientId = Url.name
 
   constructor (uppy, opts) {
     super(uppy, opts)
@@ -89,8 +92,7 @@ export default class Url extends UIPlugin {
       companionCookiesRule: this.opts.companionCookiesRule,
     })
 
-    this.requestClientId = 'url';
-    this.uppy.requestClientById.set(this.requestClientId, this.client)
+    this.uppy.registerRequestClient(Url.requestClientId, this.client)
   }
 
   getMeta (url) {
@@ -135,7 +137,7 @@ export default class Url extends UIPlugin {
             fileId: url,
             url,
           },
-          requestClientId: this.requestClientId,
+          requestClientId: Url.requestClientId,
         },
       }
 
