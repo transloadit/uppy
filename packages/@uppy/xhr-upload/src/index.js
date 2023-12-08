@@ -10,7 +10,7 @@ import { filterNonFailedFiles, filterFilesToEmitUploadStarted } from '@uppy/util
 import packageJson from '../package.json'
 import locale from './locale.js'
 
-function buildResponseError(xhr, err) {
+function buildResponseError (xhr, err) {
   let error = err
   // No error message
   if (!error) error = new Error('Upload error')
@@ -38,7 +38,7 @@ function buildResponseError(xhr, err) {
  * @param {object} file File object with `data`, `size` and `meta` properties
  * @returns {object} blob updated with the new `type` set from `file.meta.type`
  */
-function setTypeInBlob(file) {
+function setTypeInBlob (file) {
   const dataWithUpdatedType = file.data.slice(0, file.data.size, file.meta.type)
   return dataWithUpdatedType
 }
@@ -47,7 +47,7 @@ export default class XHRUpload extends BasePlugin {
   // eslint-disable-next-line global-require
   static VERSION = packageJson.version
 
-  constructor(uppy, opts) {
+  constructor (uppy, opts) {
     super(uppy, opts)
     this.type = 'uploader'
     this.id = this.opts.id || 'XHRUpload'
@@ -71,7 +71,7 @@ export default class XHRUpload extends BasePlugin {
       /**
        * @param {string} responseText the response body string
        */
-      getResponseData(responseText) {
+      getResponseData (responseText) {
         let parsedResponse = {}
         try {
           parsedResponse = JSON.parse(responseText)
@@ -86,7 +86,7 @@ export default class XHRUpload extends BasePlugin {
        * @param {string} _ the response body string
        * @param {XMLHttpRequest | respObj} response the response object (XHR or similar)
        */
-      getResponseError(_, response) {
+      getResponseError (_, response) {
         let error = new Error('Upload error')
 
         if (isNetworkError(response)) {
@@ -100,7 +100,7 @@ export default class XHRUpload extends BasePlugin {
        *
        * @param {number} status the response status code
        */
-      validateStatus(status) {
+      validateStatus (status) {
         return status >= 200 && status < 300
       },
     }
@@ -126,7 +126,7 @@ export default class XHRUpload extends BasePlugin {
     this.uploaderEvents = Object.create(null)
   }
 
-  getOptions(file) {
+  getOptions (file) {
     const overrides = this.uppy.getState().xhrUpload
     const { headers } = this.opts
 
@@ -159,7 +159,7 @@ export default class XHRUpload extends BasePlugin {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  addMetadata(formData, meta, opts) {
+  addMetadata (formData, meta, opts) {
     const allowedMetaFields = Array.isArray(opts.allowedMetaFields)
       ? opts.allowedMetaFields
       : Object.keys(meta) // Send along all fields by default.
@@ -175,7 +175,7 @@ export default class XHRUpload extends BasePlugin {
     })
   }
 
-  createFormDataUpload(file, opts) {
+  createFormDataUpload (file, opts) {
     const formPost = new FormData()
 
     this.addMetadata(formPost, file.meta, opts)
@@ -191,7 +191,7 @@ export default class XHRUpload extends BasePlugin {
     return formPost
   }
 
-  createBundledUpload(files, opts) {
+  createBundledUpload (files, opts) {
     const formPost = new FormData()
 
     const { meta } = this.uppy.getState()
@@ -212,7 +212,7 @@ export default class XHRUpload extends BasePlugin {
     return formPost
   }
 
-  async #uploadLocalFile(file, current, total) {
+  async #uploadLocalFile (file, current, total) {
     const opts = this.getOptions(file)
 
     this.uppy.log(`uploading ${current} of ${total}`)
@@ -346,7 +346,7 @@ export default class XHRUpload extends BasePlugin {
     })
   }
 
-  #uploadBundle(files) {
+  #uploadBundle (files) {
     return new Promise((resolve, reject) => {
       const { endpoint } = this.opts
       const { method } = this.opts
@@ -440,7 +440,7 @@ export default class XHRUpload extends BasePlugin {
     })
   }
 
-  #getCompanionClientArgs(file) {
+  #getCompanionClientArgs (file) {
     const opts = this.getOptions(file)
     const allowedMetaFields = Array.isArray(opts.allowedMetaFields)
       ? opts.allowedMetaFields
@@ -459,7 +459,7 @@ export default class XHRUpload extends BasePlugin {
     }
   }
 
-  async #uploadFiles(files) {
+  async #uploadFiles (files) {
     await Promise.allSettled(files.map((file, i) => {
       const current = parseInt(i, 10) + 1
       const total = files.length
@@ -529,7 +529,7 @@ export default class XHRUpload extends BasePlugin {
     }
   }
 
-  install() {
+  install () {
     if (this.opts.bundle) {
       const { capabilities } = this.uppy.getState()
       this.uppy.setState({
@@ -543,7 +543,7 @@ export default class XHRUpload extends BasePlugin {
     this.uppy.addUploader(this.#handleUpload)
   }
 
-  uninstall() {
+  uninstall () {
     if (this.opts.bundle) {
       const { capabilities } = this.uppy.getState()
       this.uppy.setState({

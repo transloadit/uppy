@@ -57,7 +57,7 @@ class Uppy {
    *
    * @param {object} opts — Uppy options
    */
-  constructor(opts) {
+  constructor (opts) {
     this.defaultLocale = locale
 
     const defaultOptions = {
@@ -127,21 +127,21 @@ class Uppy {
     this.#addListeners()
   }
 
-  emit(event, ...args) {
+  emit (event, ...args) {
     this.#emitter.emit(event, ...args)
   }
 
-  on(event, callback) {
+  on (event, callback) {
     this.#emitter.on(event, callback)
     return this
   }
 
-  once(event, callback) {
+  once (event, callback) {
     this.#emitter.once(event, callback)
     return this
   }
 
-  off(event, callback) {
+  off (event, callback) {
     this.#emitter.off(event, callback)
     return this
   }
@@ -151,7 +151,7 @@ class Uppy {
    * Called each time state changes.
    *
    */
-  updateAll(state) {
+  updateAll (state) {
     this.iteratePlugins(plugin => {
       plugin.update(state)
     })
@@ -162,7 +162,7 @@ class Uppy {
    *
    * @param {object} patch {foo: 'bar'}
    */
-  setState(patch) {
+  setState (patch) {
     this.store.setState(patch)
   }
 
@@ -171,11 +171,11 @@ class Uppy {
    *
    * @returns {object}
    */
-  getState() {
+  getState () {
     return this.store.getState()
   }
 
-  patchFilesState(filesWithNewState) {
+  patchFilesState (filesWithNewState) {
     const existingFilesState = this.getState().files
 
     this.setState({
@@ -195,7 +195,7 @@ class Uppy {
   /**
    * Shorthand to set state for a specific file.
    */
-  setFileState(fileID, state) {
+  setFileState (fileID, state) {
     if (!this.getState().files[fileID]) {
       throw new Error(`Can’t set state for ${fileID} (the file could have been removed)`)
     }
@@ -203,7 +203,7 @@ class Uppy {
     this.patchFilesState({ [fileID]: state })
   }
 
-  i18nInit() {
+  i18nInit () {
     const onMissingKey = (key) => this.log(`Missing i18n string: ${key}`, 'error')
     const translator = new Translator([this.defaultLocale, this.opts.locale], { onMissingKey })
     this.i18n = translator.translate.bind(translator)
@@ -211,7 +211,7 @@ class Uppy {
     this.locale = translator.locale
   }
 
-  setOptions(newOpts) {
+  setOptions (newOpts) {
     this.opts = {
       ...this.opts,
       ...newOpts,
@@ -238,7 +238,7 @@ class Uppy {
   }
 
   // todo next major: rename to something better? (it doesn't just reset progress)
-  resetProgress() {
+  resetProgress () {
     const defaultProgress = {
       percentage: 0,
       bytesUploaded: 0,
@@ -263,35 +263,35 @@ class Uppy {
   }
 
   /** @protected */
-  clearUploadedFiles() {
+  clearUploadedFiles () {
     this.setState({ ...getDefaultUploadState(), files: {} })
   }
 
-  addPreProcessor(fn) {
+  addPreProcessor (fn) {
     this.#preProcessors.add(fn)
   }
 
-  removePreProcessor(fn) {
+  removePreProcessor (fn) {
     return this.#preProcessors.delete(fn)
   }
 
-  addPostProcessor(fn) {
+  addPostProcessor (fn) {
     this.#postProcessors.add(fn)
   }
 
-  removePostProcessor(fn) {
+  removePostProcessor (fn) {
     return this.#postProcessors.delete(fn)
   }
 
-  addUploader(fn) {
+  addUploader (fn) {
     this.#uploaders.add(fn)
   }
 
-  removeUploader(fn) {
+  removeUploader (fn) {
     return this.#uploaders.delete(fn)
   }
 
-  setMeta(data) {
+  setMeta (data) {
     const updatedMeta = { ...this.getState().meta, ...data }
     const updatedFiles = { ...this.getState().files }
 
@@ -308,7 +308,7 @@ class Uppy {
     })
   }
 
-  setFileMeta(fileID, data) {
+  setFileMeta (fileID, data) {
     const updatedFiles = { ...this.getState().files }
     if (!updatedFiles[fileID]) {
       this.log('Was trying to set metadata for a file that has been removed: ', fileID)
@@ -324,27 +324,27 @@ class Uppy {
    *
    * @param {string} fileID The ID of the file object to return.
    */
-  getFile(fileID) {
+  getFile (fileID) {
     return this.getState().files[fileID]
   }
 
   /**
    * Get all files in an array.
    */
-  getFiles() {
+  getFiles () {
     const { files } = this.getState()
     return Object.values(files)
   }
 
-  getFilesByIds(ids) {
+  getFilesByIds (ids) {
     return ids.map((id) => this.getFile(id))
   }
 
-  getObjectOfFilesPerState() {
+  getObjectOfFilesPerState () {
     const { files: filesObject, totalProgress, error } = this.getState()
     const files = Object.values(filesObject)
     const inProgressFiles = files.filter(({ progress }) => !progress.uploadComplete && progress.uploadStarted)
-    const newFiles = files.filter((file) => !file.progress.uploadStarted)
+    const newFiles =  files.filter((file) => !file.progress.uploadStarted)
     const startedFiles = files.filter(
       file => file.progress.uploadStarted || file.progress.preprocess || file.progress.postprocess,
     )
@@ -386,7 +386,7 @@ class Uppy {
   * @constructs
   * @param { RestrictionError } error
   */
-  #informAndEmit(errors) {
+  #informAndEmit (errors) {
     for (const error of errors) {
       const { file, isRestriction } = error
 
@@ -413,7 +413,7 @@ class Uppy {
     }
   }
 
-  validateRestrictions(file, files = this.getFiles()) {
+  validateRestrictions (file, files = this.getFiles()) {
     try {
       this.#restricter.validate(files, [file])
     } catch (err) {
@@ -422,7 +422,7 @@ class Uppy {
     return null
   }
 
-  #checkRequiredMetaFieldsOnFile(file) {
+  #checkRequiredMetaFieldsOnFile (file) {
     const { missingFields, error } = this.#restricter.getMissingRequiredMetaFields(file)
 
     if (missingFields.length > 0) {
@@ -434,7 +434,7 @@ class Uppy {
     return true
   }
 
-  #checkRequiredMetaFields(files) {
+  #checkRequiredMetaFields (files) {
     let success = true
     for (const file of Object.values(files)) {
       if (!this.#checkRequiredMetaFieldsOnFile(file)) {
@@ -444,7 +444,7 @@ class Uppy {
     return success
   }
 
-  #assertNewUploadAllowed(file) {
+  #assertNewUploadAllowed (file) {
     const { allowNewUpload } = this.getState()
 
     if (allowNewUpload === false) {
@@ -454,7 +454,7 @@ class Uppy {
     }
   }
 
-  checkIfFileAlreadyExists(fileID) {
+  checkIfFileAlreadyExists (fileID) {
     const { files } = this.getState()
 
     if (files[fileID] && !files[fileID].isGhost) {
@@ -466,7 +466,7 @@ class Uppy {
   /**
    * Create a file state object based on user-provided `addFile()` options.
    */
-  #transformFile(fileDescriptorOrFile) {
+  #transformFile (fileDescriptorOrFile) {
     // Uppy expects files in { name, type, size, data } format.
     // If the actual File object is passed from input[type=file] or drag-drop,
     // we normalize it to match Uppy file object
@@ -516,7 +516,7 @@ class Uppy {
   }
 
   // Schedule an upload if `autoProceed` is enabled.
-  #startIfAutoProceed() {
+  #startIfAutoProceed () {
     if (this.opts.autoProceed && !this.scheduledAutoProceed) {
       this.scheduledAutoProceed = setTimeout(() => {
         this.scheduledAutoProceed = null
@@ -529,7 +529,7 @@ class Uppy {
     }
   }
 
-  #checkAndUpdateFileState(filesToAdd) {
+  #checkAndUpdateFileState (filesToAdd) {
     const { files: existingFiles } = this.getState()
 
     // create a copy of the files object only once
@@ -609,7 +609,7 @@ class Uppy {
    * @param {object} file object to add
    * @returns {string} id for the added file
    */
-  addFile(file) {
+  addFile (file) {
     this.#assertNewUploadAllowed(file)
 
     const { nextFilesState, validFilesToAdd, errors } = this.#checkAndUpdateFileState([file])
@@ -639,7 +639,7 @@ class Uppy {
    * This is good for UI plugins, but not for programmatic use.
    * Programmatic users should usually still use `addFile()` on individual files.
    */
-  addFiles(fileDescriptors) {
+  addFiles (fileDescriptors) {
     this.#assertNewUploadAllowed()
 
     const { nextFilesState, validFilesToAdd, errors } = this.#checkAndUpdateFileState(fileDescriptors)
@@ -692,7 +692,7 @@ class Uppy {
     }
   }
 
-  removeFiles(fileIDs, reason) {
+  removeFiles (fileIDs, reason) {
     const { files, currentUploads } = this.getState()
     const updatedFiles = { ...files }
     const updatedUploads = { ...currentUploads }
@@ -706,7 +706,7 @@ class Uppy {
     })
 
     // Remove files from the `fileIDs` list in each upload.
-    function fileIsNotRemoved(uploadFileID) {
+    function fileIsNotRemoved (uploadFileID) {
       return removedFiles[uploadFileID] === undefined
     }
 
@@ -721,7 +721,7 @@ class Uppy {
 
       const { capabilities } = this.getState()
       if (newFileIDs.length !== currentUploads[uploadID].fileIDs.length
-        && !capabilities.individualCancellation) {
+          && !capabilities.individualCancellation) {
         throw new Error('individualCancellation is disabled')
       }
 
@@ -759,13 +759,13 @@ class Uppy {
     }
   }
 
-  removeFile(fileID, reason = null) {
+  removeFile (fileID, reason = null) {
     this.removeFiles([fileID], reason)
   }
 
-  pauseResume(fileID) {
+  pauseResume (fileID) {
     if (!this.getState().capabilities.resumableUploads
-      || this.getFile(fileID).uploadComplete) {
+         || this.getFile(fileID).uploadComplete) {
       return undefined
     }
 
@@ -781,11 +781,11 @@ class Uppy {
     return isPaused
   }
 
-  pauseAll() {
+  pauseAll () {
     const updatedFiles = { ...this.getState().files }
     const inProgressUpdatedFiles = Object.keys(updatedFiles).filter((file) => {
       return !updatedFiles[file].progress.uploadComplete
-        && updatedFiles[file].progress.uploadStarted
+             && updatedFiles[file].progress.uploadStarted
     })
 
     inProgressUpdatedFiles.forEach((file) => {
@@ -797,11 +797,11 @@ class Uppy {
     this.emit('pause-all')
   }
 
-  resumeAll() {
+  resumeAll () {
     const updatedFiles = { ...this.getState().files }
     const inProgressUpdatedFiles = Object.keys(updatedFiles).filter((file) => {
       return !updatedFiles[file].progress.uploadComplete
-        && updatedFiles[file].progress.uploadStarted
+             && updatedFiles[file].progress.uploadStarted
     })
 
     inProgressUpdatedFiles.forEach((file) => {
@@ -817,7 +817,7 @@ class Uppy {
     this.emit('resume-all')
   }
 
-  retryAll() {
+  retryAll () {
     const updatedFiles = { ...this.getState().files }
     const filesToRetry = Object.keys(updatedFiles).filter(file => {
       return updatedFiles[file].error
@@ -851,7 +851,7 @@ class Uppy {
     return this.#runUpload(uploadID)
   }
 
-  cancelAll({ reason = 'user' } = {}) {
+  cancelAll ({ reason = 'user' } = {}) {
     this.emit('cancel-all', { reason })
 
     // Only remove existing uploads if user is canceling
@@ -868,7 +868,7 @@ class Uppy {
     }
   }
 
-  retryUpload(fileID) {
+  retryUpload (fileID) {
     this.setFileState(fileID, {
       error: null,
       isPaused: false,
@@ -882,7 +882,7 @@ class Uppy {
     return this.#runUpload(uploadID)
   }
 
-  logout() {
+  logout () {
     this.iteratePlugins(plugin => {
       if (plugin.provider && plugin.provider.logout) {
         plugin.provider.logout()
@@ -925,7 +925,7 @@ class Uppy {
     this.calculateTotalProgress()
   }, 500, { leading: true, trailing: true })
 
-  calculateTotalProgress() {
+  calculateTotalProgress () {
     // calculate total progress, using the number of files currently uploading,
     // multiplied by 100 and the summ of individual progress of each file
     const files = this.getFiles()
@@ -987,7 +987,7 @@ class Uppy {
    * Registers listeners for all global actions, like:
    * `error`, `file-removed`, `upload-progress`
    */
-  #addListeners() {
+  #addListeners () {
     /**
      * @param {Error} error
      * @param {object} [file]
@@ -1181,7 +1181,7 @@ class Uppy {
     }
   }
 
-  updateOnlineStatus() {
+  updateOnlineStatus () {
     const online = typeof window.navigator.onLine !== 'undefined'
       ? window.navigator.onLine
       : true
@@ -1201,7 +1201,7 @@ class Uppy {
 
   #updateOnlineStatus = this.updateOnlineStatus.bind(this)
 
-  getID() {
+  getID () {
     return this.opts.id
   }
 
@@ -1213,7 +1213,7 @@ class Uppy {
    * @returns {object} self for chaining
    */
   // eslint-disable-next-line no-shadow
-  use(Plugin, opts) {
+  use (Plugin, opts) {
     if (typeof Plugin !== 'function') {
       const msg = `Expected a plugin class, but got ${Plugin === null ? 'null' : typeof Plugin}.`
         + ' Please verify that the plugin was imported and spelled correctly.'
@@ -1262,7 +1262,7 @@ class Uppy {
    * @param {string} id plugin id
    * @returns {BasePlugin|undefined}
    */
-  getPlugin(id) {
+  getPlugin (id) {
     for (const plugins of Object.values(this.#plugins)) {
       const foundPlugin = plugins.find(plugin => plugin.id === id)
       if (foundPlugin != null) return foundPlugin
@@ -1270,7 +1270,7 @@ class Uppy {
     return undefined
   }
 
-  [Symbol.for('uppy test: getPlugins')](type) {
+  [Symbol.for('uppy test: getPlugins')] (type) {
     return this.#plugins[type]
   }
 
@@ -1279,7 +1279,7 @@ class Uppy {
    *
    * @param {Function} method that will be run on each plugin
    */
-  iteratePlugins(method) {
+  iteratePlugins (method) {
     Object.values(this.#plugins).flat(1).forEach(method)
   }
 
@@ -1288,7 +1288,7 @@ class Uppy {
    *
    * @param {object} instance The plugin instance to remove.
    */
-  removePlugin(instance) {
+  removePlugin (instance) {
     this.log(`Removing plugin ${instance.id}`)
     this.emit('plugin-remove', instance)
 
@@ -1318,7 +1318,7 @@ class Uppy {
   /**
    * Uninstall all plugins and close down this Uppy instance.
    */
-  close({ reason } = {}) {
+  close ({ reason } = {}) {
     this.log(`Closing Uppy instance ${this.opts.id}: removing all files and uninstalling plugins`)
 
     this.cancelAll({ reason })
@@ -1335,7 +1335,7 @@ class Uppy {
     }
   }
 
-  hideInfo() {
+  hideInfo () {
     const { info } = this.getState()
 
     this.setState({ info: info.slice(1) })
@@ -1351,7 +1351,7 @@ class Uppy {
    * @param {string} [type]
    * @param {number} [duration]
    */
-  info(message, type = 'info', duration = 3000) {
+  info (message, type = 'info', duration = 3000) {
     const isComplexMessage = typeof message === 'object'
 
     this.setState({
@@ -1377,7 +1377,7 @@ class Uppy {
    * @param {string|object} message to log
    * @param {string} [type] optional `error` or `warning`
    */
-  log(message, type) {
+  log (message, type) {
     const { logger } = this.opts
     switch (type) {
       case 'error': logger.error(message); break
@@ -1392,7 +1392,7 @@ class Uppy {
   requestClientById = new Map()
 
   /** @protected */
-  getRequestClientForFile(file) {
+  getRequestClientForFile (file) {
     if (!file.remote) throw new Error(`Tried to get RequestClient for a non-remote file ${file.id}`)
     const requestClient = this.requestClientById.get(file.remote.requestClientId)
     if (requestClient == null) throw new Error(`requestClientId "${file.remote.requestClientId}" not registered for file "${file.id}"`)
@@ -1402,7 +1402,7 @@ class Uppy {
   /**
    * Restore an upload by its ID.
    */
-  restore(uploadID) {
+  restore (uploadID) {
     this.log(`Core: attempting to restore upload "${uploadID}"`)
 
     if (!this.getState().currentUploads[uploadID]) {
@@ -1419,7 +1419,7 @@ class Uppy {
    * @param {Array<string>} fileIDs File IDs to include in this upload.
    * @returns {string} ID of this upload.
    */
-  #createUpload(fileIDs, opts = {}) {
+  #createUpload (fileIDs, opts = {}) {
     // uppy.retryAll sets this to true — when retrying we want to ignore `allowNewUpload: false`
     const { forceAllowNewUpload = false } = opts
 
@@ -1451,9 +1451,9 @@ class Uppy {
     return uploadID
   }
 
-  [Symbol.for('uppy test: createUpload')](...args) { return this.#createUpload(...args) }
+  [Symbol.for('uppy test: createUpload')] (...args) { return this.#createUpload(...args) }
 
-  #getUpload(uploadID) {
+  #getUpload (uploadID) {
     const { currentUploads } = this.getState()
 
     return currentUploads[uploadID]
@@ -1465,7 +1465,7 @@ class Uppy {
    * @param {string} uploadID The ID of the upload.
    * @param {object} data Data properties to add to the result object.
    */
-  addResultData(uploadID, data) {
+  addResultData (uploadID, data) {
     if (!this.#getUpload(uploadID)) {
       this.log(`Not setting result for an upload that has been removed: ${uploadID}`)
       return
@@ -1482,7 +1482,7 @@ class Uppy {
    *
    * @param {string} uploadID The ID of the upload.
    */
-  #removeUpload(uploadID) {
+  #removeUpload (uploadID) {
     const currentUploads = { ...this.getState().currentUploads }
     delete currentUploads[uploadID]
 
@@ -1496,7 +1496,7 @@ class Uppy {
    *
    * @private
    */
-  async #runUpload(uploadID) {
+  async #runUpload (uploadID) {
     const getCurrentUpload = () => {
       const { currentUploads } = this.getState()
       return currentUploads[uploadID]
@@ -1589,7 +1589,7 @@ class Uppy {
    *
    * @returns {Promise}
    */
-  upload() {
+  upload () {
     if (!this.#plugins.uploader?.length) {
       this.log('No uploader type plugins are used', 'warning')
     }
