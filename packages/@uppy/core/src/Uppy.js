@@ -1388,6 +1388,11 @@ class Uppy {
 
   // We need to store request clients by a unique ID, so we can share RequestClient instances across files
   // this allows us to do rate limiting and synchronous operations like refreshing provider tokens
+  // example: refreshing tokens: if each file has their own requestclient, we don't have any way to synchronize all requests in order to
+  // - block all requests
+  // - refresh the token
+  // - unblock all requests and allow them to run with a the new access token
+  // back when we had a requestclient per file, once an access token expired, all 6 files would go ahead and refresh the token at the same time (calling /refresh-token up to 6 times), which will probably fail for some providers
   #requestClientById = new Map()
 
   registerRequestClient(id, client) {
