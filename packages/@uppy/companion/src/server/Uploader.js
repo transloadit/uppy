@@ -216,7 +216,7 @@ class Uploader {
     })
   }
 
-  #uploadState = 'idle'
+  #uploadState = states.idle
 
   #canceled = false
 
