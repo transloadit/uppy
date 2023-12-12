@@ -1,5 +1,12 @@
 # @uppy/utils
 
+## 5.7.0
+
+Released: 2023-12-12
+Included in: Uppy v3.21.0
+
+- @uppy/utils: fix import in test files (Antoine du Hamel / #4806)
+
 ## 5.6.0
 
 Released: 2023-11-08
