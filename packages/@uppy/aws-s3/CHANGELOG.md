@@ -1,5 +1,12 @@
 # @uppy/aws-s3
 
+## 3.6.0
+
+Released: 2023-12-12
+Included in: Uppy v3.21.0
+
+- @uppy/aws-s3: change Companion URL in tests (Antoine du Hamel)
+
 ## 3.3.0
 
 Released: 2023-09-05

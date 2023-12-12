@@ -1,5 +1,12 @@
 # @uppy/provider-views
 
+## 3.8.0
+
+Released: 2023-12-12
+Included in: Uppy v3.21.0
+
+- @uppy/provider-views: fix uploadRemoteFile undefined (Mikael Finstad / #4814)
+
 ## 3.5.0
 
 Released: 2023-08-15

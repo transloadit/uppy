@@ -1,5 +1,12 @@
 # @uppy/companion-client
 
+## 3.7.0
+
+Released: 2023-12-12
+Included in: Uppy v3.21.0
+
+- @uppy/companion-client: avoid unnecessary preflight requests (Antoine du Hamel / #4462)
+
 ## 3.6.1
 
 Released: 2023-11-24
