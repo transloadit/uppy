@@ -20,8 +20,10 @@ const { ProviderApiError, ProviderUserError, ProviderAuthError } = require('./se
 const { getCredentialsOverrideMiddleware } = require('./server/provider/credentials')
 // @ts-ignore
 const { version } = require('../package.json')
+const { isOAuthProvider } = require('./server/provider/Provider')
 
-function setLoggerProcessName ({ loggerProcessName }) {
+
+function setLoggerProcessName({ loggerProcessName }) {
   if (loggerProcessName != null) logger.setProcessName(loggerProcessName)
 }
 
@@ -72,12 +74,14 @@ module.exports.app = (optionsArg = {}) => {
 
   const providers = providerManager.getDefaultProviders()
 
-  providerManager.addProviderOptions(options, grantConfig)
-
   const { customProviders } = options
   if (customProviders) {
     providerManager.addCustomProviders(customProviders, providers, grantConfig)
   }
+
+  const getAuthProvider = (providerName) => providers[providerName]?.authProvider
+
+  providerManager.addProviderOptions(options, grantConfig, getAuthProvider)
 
   // mask provider secrets from log messages
   logger.setMaskables(getMaskableSecrets(options))
@@ -147,13 +151,18 @@ module.exports.app = (optionsArg = {}) => {
       // for simplicity, we just return the normal credentials for the provider, but in a real-world scenario,
       // we would query based on parameters
       const { key, secret } = options.providerOptions[providerName]
+
+      function getRedirectUri() {
+        const authProvider = getAuthProvider(providerName)
+        if (!isOAuthProvider(authProvider)) return undefined
+        return grantConfig[authProvider]?.redirect_uri
+      }
+
       res.send({
         credentials: {
           key,
           secret,
-          redirect_uri: providerManager.getGrantConfigForProvider({
-            providerName, companionOptions: options, grantConfig,
-          })?.redirect_uri,
+          redirect_uri: getRedirectUri(),
         },
       })
     })
