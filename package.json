@@ -124,7 +124,7 @@
     "build:ts": "yarn workspaces list --no-private --json | yarn node ./bin/build-ts.mjs",
     "build:lib": "yarn node ./bin/build-lib.js",
     "build:locale-pack": "yarn workspace @uppy-dev/locale-pack build && eslint packages/@uppy/locales/src/en_US.js --fix && yarn workspace @uppy-dev/locale-pack test unused",
-    "build": "npm-run-all --parallel build:js build:css --serial size",
+    "build": "npm-run-all --parallel build:ts build:js build:css --serial size",
     "contributors:save": "yarn node ./bin/update-contributors.mjs",
     "dev:with-companion": "npm-run-all --parallel start:companion dev",
     "dev": "yarn workspace @uppy-dev/dev dev",
