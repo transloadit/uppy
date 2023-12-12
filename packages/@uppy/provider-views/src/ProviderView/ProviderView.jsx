@@ -75,6 +75,8 @@ export default class ProviderView extends View {
       isSearchVisible: false,
       currentSelection: [],
     })
+
+    this.registerRequestClient()
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -399,7 +401,7 @@ export default class ProviderView extends View {
         // finished all async operations before we add any file
         // see https://github.com/transloadit/uppy/pull/4384
         this.plugin.uppy.log('Adding files from a remote provider')
-        this.plugin.uppy.addFiles(newFiles.map((file) => this.getTagFile(file)))
+        this.plugin.uppy.addFiles(newFiles.map((file) => this.getTagFile(file, this.requestClientId)))
 
         this.plugin.setPluginState({ filterInput: '' })
         messages.forEach(message => this.plugin.uppy.info(message))
