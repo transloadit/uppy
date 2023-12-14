@@ -119,6 +119,12 @@ jobs:
                 await writeFile(pjsonPath, JSON.stringify(pjson))
               }
             }
+            const pjsonPath = `./packages/uppy/package.json`
+            const pjson = JSON.parse(await readFile(pjsonPath));
+            delete pjson.types
+            await writeFile(pjsonPath, JSON.stringify(pjson))
           EOF
+          echo > packages/uppy/types/index.test-d.ts
+          rm -r packages/@uppy/*/types
       - name: Attempt building TS packages
         run: corepack yarn run build:ts
