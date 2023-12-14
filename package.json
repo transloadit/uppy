@@ -116,7 +116,7 @@
     "start:companion": "bash bin/companion.sh",
     "start:companion:with-loadbalancer": "e2e/start-companion-with-load-balancer.mjs",
     "build:bundle": "yarn node ./bin/build-bundle.mjs",
-    "build:clean": "git clean -e node_modules -xfd packages && rm -rf .parcel-cache coverage",
+    "build:clean": "git clean -e node_modules -xfd packages e2e .parcel-cache coverage",
     "build:companion": "yarn workspace @uppy/companion build",
     "build:css": "yarn node ./bin/build-css.js",
     "build:svelte": "yarn workspace @uppy/svelte build",
