@@ -4,6 +4,13 @@ export interface Locale<T extends number = number> {
   pluralize: (n: number) => T
 }
 
+export type OptionalPluralizeLocale<T extends number = number> =
+  | (Omit<Locale<T>, 'pluralize'> & Partial<Pick<Locale<T>, 'pluralize'>>)
+  | undefined
+
+// eslint-disable-next-line no-use-before-define
+export type I18n = Translator['translate']
+
 type Options = {
   smart_count?: number
 } & {
@@ -98,10 +105,10 @@ const defaultOnMissingKey = (key: string): void => {
  * Usage example: `translator.translate('files_chosen', {smart_count: 3})`
  */
 export default class Translator {
-  protected locale: Locale
+  readonly locale: Locale
 
   constructor(
-    locales: Locale | Locale[],
+    locales: Locale | Array<OptionalPluralizeLocale | undefined>,
     { onMissingKey = defaultOnMissingKey } = {},
   ) {
     this.locale = {
@@ -125,17 +132,16 @@ export default class Translator {
 
   #onMissingKey
 
-  #apply(locale?: Locale): void {
+  #apply(locale?: OptionalPluralizeLocale): void {
     if (!locale?.strings) {
       return
     }
 
     const prevLocale = this.locale
-    this.locale = {
-      ...prevLocale,
+    Object.assign(this.locale, {
       strings: { ...prevLocale.strings, ...locale.strings },
-    } as any
-    this.locale.pluralize = locale.pluralize || prevLocale.pluralize
+      pluralize: locale.pluralize || prevLocale.pluralize,
+    })
   }
 
   /**

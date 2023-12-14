@@ -54,6 +54,8 @@ export default class SearchProviderView extends View {
 
     // Set default state for the plugin
     this.plugin.setPluginState(this.defaultState)
+
+    this.registerRequestClient()
   }
 
   // eslint-disable-next-line class-methods-use-this

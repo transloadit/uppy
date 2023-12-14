@@ -1,8 +1,15 @@
 import { vi } from 'vitest' // eslint-disable-line import/no-extraneous-dependencies
-import UIPlugin from '../UIPlugin.js'
+import UIPlugin from '../UIPlugin.ts'
+import type Uppy from '../Uppy.ts'
 
-export default class TestSelector1 extends UIPlugin {
-  constructor (uppy, opts) {
+type mock = ReturnType<typeof vi.fn>
+
+export default class TestSelector1 extends UIPlugin<any, any, any> {
+  name: string
+
+  mocks: { run: mock; update: mock; uninstall: mock }
+
+  constructor(uppy: Uppy<any, any>, opts: any) {
     super(uppy, opts)
     this.type = 'acquirer'
     this.id = 'TestSelector1'
@@ -15,7 +22,7 @@ export default class TestSelector1 extends UIPlugin {
     }
   }
 
-  run (results) {
+  run(results: any) {
     this.uppy.log({
       class: this.constructor.name,
       method: 'run',
@@ -25,11 +32,11 @@ export default class TestSelector1 extends UIPlugin {
     return Promise.resolve('success')
   }
 
-  update (state) {
+  update(state: any) {
     this.mocks.update(state)
   }
 
-  uninstall () {
+  uninstall() {
     this.mocks.uninstall()
   }
 }

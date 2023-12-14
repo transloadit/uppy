@@ -51,11 +51,6 @@ async function getStats ({ id, token }) {
  * Adapter for API https://developers.google.com/drive/api/v3/
  */
 class Drive extends Provider {
-  constructor (options) {
-    super(options)
-    this.authProvider = Drive.authProvider
-  }
-
   static get authProvider () {
     return 'google'
   }
@@ -200,11 +195,12 @@ class Drive extends Provider {
     })
   }
 
+  // eslint-disable-next-line class-methods-use-this
   async #withErrorHandling (tag, fn) {
     return withProviderErrorHandling({
       fn,
       tag,
-      providerName: this.authProvider,
+      providerName: Drive.authProvider,
       isAuthError: (response) => (
         response.statusCode === 401
         || (response.statusCode === 400 && response.body?.error === 'invalid_grant') // Refresh token has expired or been revoked

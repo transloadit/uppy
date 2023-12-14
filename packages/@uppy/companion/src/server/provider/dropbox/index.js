@@ -56,7 +56,6 @@ async function userInfo ({ token }) {
 class DropBox extends Provider {
   constructor (options) {
     super(options)
-    this.authProvider = DropBox.authProvider
     this.needsCookieAuth = true
   }
 
@@ -136,11 +135,12 @@ class DropBox extends Provider {
     })
   }
 
+  // eslint-disable-next-line class-methods-use-this
   async #withErrorHandling (tag, fn) {
     return withProviderErrorHandling({
       fn,
       tag,
-      providerName: this.authProvider,
+      providerName: DropBox.authProvider,
       isAuthError: (response) => response.statusCode === 401,
       getJsonErrorMessage: (body) => body?.error_summary,
     })

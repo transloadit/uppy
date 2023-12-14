@@ -19,7 +19,7 @@ function encodeFilename(name: string): string {
  * Takes a file object and turns it into fileID, by converting file.name to lowercase,
  * removing extra characters and adding type, size and lastModified
  */
-export default function generateFileID(file: UppyFile): string {
+export default function generateFileID(file: UppyFile<any, any>): string {
   // It's tempting to do `[items].filter(Boolean).join('-')` here, but that
   // is slower! simple string concatenation is fast
 
@@ -48,7 +48,7 @@ export default function generateFileID(file: UppyFile): string {
 
 // If the provider has a stable, unique ID, then we can use that to identify the file.
 // Then we don't have to generate our own ID, and we can add the same file many times if needed (different path)
-function hasFileStableId(file: UppyFile): boolean {
+function hasFileStableId(file: UppyFile<any, any>): boolean {
   if (!file.isRemote || !file.remote) return false
   // These are the providers that it seems like have stable IDs for their files. The other's I haven't checked yet.
   const stableIdProviders = new Set([
@@ -61,7 +61,7 @@ function hasFileStableId(file: UppyFile): boolean {
   return stableIdProviders.has(file.remote.provider as any)
 }
 
-export function getSafeFileId(file: UppyFile): string {
+export function getSafeFileId(file: UppyFile<any, any>): string {
   if (hasFileStableId(file)) return file.id
 
   const fileType = getFileType(file)

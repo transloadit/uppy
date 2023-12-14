@@ -286,7 +286,7 @@ export default class Provider extends RequestClient {
       plugin.opts.companionAllowedHosts = pattern
     } else if (/^(?!https?:\/\/).*$/i.test(opts.companionUrl)) {
       // does not start with https://
-      plugin.opts.companionAllowedHosts = `https://${opts.companionUrl.replace(/^\/\//, '')}`
+      plugin.opts.companionAllowedHosts = `https://${opts.companionUrl?.replace(/^\/\//, '')}`
     } else {
       plugin.opts.companionAllowedHosts = new URL(opts.companionUrl).origin
     }

@@ -1,5 +1,12 @@
 # @uppy/image-editor
 
+## 2.4.0
+
+Released: 2023-12-12
+Included in: Uppy v3.21.0
+
+- @uppy/image-editor: respect `cropperOptions.initialAspectRatio` (Lucklj521 / #4805)
+
 ## 2.3.0
 
 Released: 2023-11-08

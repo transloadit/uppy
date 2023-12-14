@@ -57,6 +57,11 @@ export default class View {
     uppy.info({ message, details: error.toString() }, 'error', 5000)
   }
 
+  registerRequestClient() {
+    this.requestClientId = this.provider.provider;
+    this.plugin.uppy.registerRequestClient(this.requestClientId, this.provider)
+  }
+
   // todo document what is a "tagFile" or get rid of this concept
   getTagFile (file) {
     const tagFile = {
@@ -78,14 +83,9 @@ export default class View {
         },
         providerName: this.provider.name,
         provider: this.provider.provider,
+        requestClientId: this.requestClientId,
       },
     }
-
-    // all properties on this object get saved into the Uppy store.
-    // Some users might serialize their store (for example using JSON.stringify),
-    // or when using Golden Retriever it will serialize state into e.g. localStorage.
-    // However RequestClient is not serializable so we need to prevent it from being serialized.
-    Object.defineProperty(tagFile.remote, 'requestClient', { value: this.provider, enumerable: false })
 
     const fileType = getFileType(tagFile)
 

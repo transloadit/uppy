@@ -1,8 +1,10 @@
 interface FileProgressBase {
-  progress: number
+  progress?: number
   uploadComplete: boolean
   percentage: number
   bytesTotal: number
+  preprocess?: { mode: string; message?: string; value?: number }
+  postprocess?: { mode: string; message?: string; value?: number }
 }
 
 // FileProgress is either started or not started. We want to make sure TS doesn't
@@ -10,9 +12,11 @@ interface FileProgressBase {
 export type FileProgressStarted = FileProgressBase & {
   uploadStarted: number
   bytesUploaded: number
+  progress: number
 }
 export type FileProgressNotStarted = FileProgressBase & {
   uploadStarted: null
-  bytesUploaded: false
+  // TODO: remove `|0` (or maybe `false|`?)
+  bytesUploaded: false | 0
 }
 export type FileProgress = FileProgressStarted | FileProgressNotStarted

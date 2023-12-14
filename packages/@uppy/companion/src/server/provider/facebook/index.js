@@ -24,11 +24,6 @@ async function getMediaUrl ({ token, id }) {
  * Adapter for API https://developers.facebook.com/docs/graph-api/using-graph-api/
  */
 class Facebook extends Provider {
-  constructor (options) {
-    super(options)
-    this.authProvider = Facebook.authProvider
-  }
-
   static get authProvider () {
     return 'facebook'
   }
@@ -86,11 +81,12 @@ class Facebook extends Provider {
     })
   }
 
+  // eslint-disable-next-line class-methods-use-this
   async #withErrorHandling (tag, fn) {
     return withProviderErrorHandling({
       fn,
       tag,
-      providerName: this.authProvider,
+      providerName: Facebook.authProvider,
       isAuthError: (response) => typeof response.body === 'object' && response.body?.error?.code === 190, // Invalid OAuth 2.0 Access Token
       getJsonErrorMessage: (body) => body?.error?.message,
     })

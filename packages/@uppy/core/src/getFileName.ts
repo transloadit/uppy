@@ -1,4 +1,7 @@
-export default function getFileName (fileType, fileDescriptor) {
+export default function getFileName(
+  fileType: string,
+  fileDescriptor: { name?: string },
+): string {
   if (fileDescriptor.name) {
     return fileDescriptor.name
   }

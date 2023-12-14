@@ -122,7 +122,7 @@ exports.gentleVerifyToken = (req, res, next) => {
 }
 
 exports.cookieAuthToken = (req, res, next) => {
-  req.companion.authToken = req.cookies[`uppyAuthToken--${req.companion.provider.authProvider}`]
+  req.companion.authToken = req.cookies[`uppyAuthToken--${req.companion.providerClass.authProvider}`]
   return next()
 }
 
@@ -204,7 +204,8 @@ exports.getCompanionMiddleware = (options) => {
   const middleware = (req, res, next) => {
     req.companion = {
       options,
-      s3Client: getS3Client(options),
+      s3Client: getS3Client(options, false),
+      s3ClientCreatePresignedPost: getS3Client(options, true),
       authToken: req.header('uppy-auth-token') || req.query.uppyAuthToken,
       buildURL: getURLBuilder(options),
     }

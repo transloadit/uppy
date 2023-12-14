@@ -6,7 +6,7 @@ import isDOMElement from './isDOMElement.ts'
 export default function findDOMElement(
   element: Node | string,
   context = document,
-): Node | null {
+): Element | null {
   if (typeof element === 'string') {
     return context.querySelector(element)
   }
