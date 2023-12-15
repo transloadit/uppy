@@ -68,9 +68,9 @@ module.exports.setLoggerProcessName = setLoggerProcessName
 module.exports.app = (optionsArg = {}) => {
   setLoggerProcessName(optionsArg)
 
-  validateConfig(optionsArg)
-
   const options = merge({}, defaultOptions, optionsArg)
+
+  validateConfig(options)
 
   const providers = providerManager.getDefaultProviders()
 
