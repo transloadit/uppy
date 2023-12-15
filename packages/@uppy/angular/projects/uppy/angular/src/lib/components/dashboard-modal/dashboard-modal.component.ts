@@ -11,20 +11,20 @@ import {
 import Dashboard from '@uppy/dashboard';
 // @ts-expect-error
 import type { DashboardOptions } from '@uppy/dashboard';
-// @ts-expect-error
 import { Uppy } from '@uppy/core';
 import { UppyAngularWrapper } from '../../utils/wrapper';
+import { Body, Meta } from '@uppy/utils/lib/UppyFile';
 
 @Component({
   selector: 'uppy-dashboard-modal',
   template: '',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DashboardModalComponent
-  extends UppyAngularWrapper<Dashboard>
+export class DashboardModalComponent<M extends Meta, B extends Body>
+  extends UppyAngularWrapper<M, B, Dashboard>
   implements OnDestroy, OnChanges
 {
-  @Input() uppy: Uppy = new Uppy();
+  @Input() uppy: Uppy<M, B> = new Uppy();
   @Input() props: DashboardOptions = {};
   @Input() open: boolean = false;
 

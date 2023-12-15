@@ -11,20 +11,20 @@ import {
 import Dashboard from '@uppy/dashboard';
 // @ts-expect-error
 import type { DashboardOptions } from '@uppy/dashboard';
-// @ts-expect-error
 import { Uppy } from '@uppy/core';
 import { UppyAngularWrapper } from '../../utils/wrapper';
+import { Body, Meta } from '@uppy/utils/lib/UppyFile';
 
 @Component({
   selector: 'uppy-dashboard',
   template: '',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DashboardComponent
-  extends UppyAngularWrapper
+export class DashboardComponent<M extends Meta, B extends Body>
+  extends UppyAngularWrapper<M, B>
   implements OnDestroy, OnChanges
 {
-  @Input() uppy: Uppy = new Uppy();
+  @Input() uppy: Uppy<M, B> = new Uppy();
   @Input() props: DashboardOptions = {};
 
   constructor(public el: ElementRef) {
