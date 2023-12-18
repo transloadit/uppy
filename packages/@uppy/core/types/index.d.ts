@@ -147,6 +147,8 @@ export interface Logger {
   error: (...args: any[]) => void
 }
 
+export const debugLogger: Logger
+
 export interface Restrictions {
   maxFileSize?: number | null
   minFileSize?: number | null
