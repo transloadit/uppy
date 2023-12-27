@@ -1,7 +1,7 @@
 import { h } from 'preact'
 import classNames from 'classnames'
-import statusBarStates from './StatusBarStates.js'
-import calculateProcessingProgress from './calculateProcessingProgress.js'
+import statusBarStates from './StatusBarStates.ts'
+import calculateProcessingProgress from './calculateProcessingProgress.ts'
 
 import {
   UploadBtn,
@@ -13,7 +13,10 @@ import {
   ProgressBarError,
   ProgressBarUploading,
   ProgressBarComplete,
-} from './Components.jsx'
+} from './Components.tsx'
+import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
+import type { BasePlugin, Uppy } from '@uppy/core'
+import type { State } from '@uppy/core/src/Uppy.ts'
 
 const {
   STATE_ERROR,
@@ -24,8 +27,48 @@ const {
   STATE_COMPLETE,
 } = statusBarStates
 
+export interface StatusBarUIProps<M extends Meta, B extends Body> {
+  newFiles: number
+  allowNewUpload: boolean
+  isUploadInProgress: boolean
+  isAllPaused: boolean
+  resumableUploads: boolean
+  error: any
+  hideUploadButton?: boolean
+  hidePauseResumeButton?: boolean
+  hideCancelButton?: boolean
+  hideRetryButton?: boolean
+  recoveredState: null | State<M, B>
+  uploadState:
+    | typeof STATE_ERROR
+    | typeof STATE_WAITING
+    | typeof STATE_PREPROCESSING
+    | typeof STATE_UPLOADING
+    | typeof STATE_POSTPROCESSING
+    | typeof STATE_COMPLETE
+  totalProgress: number
+  files: Record<string, UppyFile<M, B>>
+  supportsUploadProgress: boolean
+  hideAfterFinish?: boolean
+  isSomeGhost: boolean
+  doneButtonHandler?: (() => void) | null
+  isUploadStarted: boolean
+  i18n: BasePlugin<any, M, B>['i18n']
+  startUpload: () => void
+  uppy: Uppy<M, B>
+  isAllComplete: boolean
+  showProgressDetails?: boolean
+  numUploads: number
+  complete: number
+  totalSize: number
+  totalETA: number
+  totalUploadedSize: number
+}
+
 // TODO: rename the function to StatusBarUI on the next major.
-export default function StatusBar (props) {
+export default function StatusBar<M extends Meta, B extends Body>(
+  props: StatusBarUIProps<M, B>,
+) {
   const {
     newFiles,
     allowNewUpload,
@@ -58,7 +101,7 @@ export default function StatusBar (props) {
     totalUploadedSize,
   } = props
 
-  function getProgressValue () {
+  function getProgressValue() {
     switch (uploadState) {
       case STATE_POSTPROCESSING:
       case STATE_PREPROCESSING: {
@@ -83,7 +126,7 @@ export default function StatusBar (props) {
     }
   }
 
-  function getIsIndeterminate () {
+  function getIsIndeterminate() {
     switch (uploadState) {
       case STATE_POSTPROCESSING:
       case STATE_PREPROCESSING: {
@@ -101,7 +144,7 @@ export default function StatusBar (props) {
     }
   }
 
-  function getIsHidden () {
+  function getIsHidden() {
     if (recoveredState) {
       return false
     }
@@ -122,20 +165,23 @@ export default function StatusBar (props) {
 
   const width = progressValue ?? 100
 
-  const showUploadBtn = !error
-    && newFiles
-    && !isUploadInProgress
-    && !isAllPaused
-    && allowNewUpload
-    && !hideUploadButton
+  const showUploadBtn =
+    !error &&
+    newFiles &&
+    !isUploadInProgress &&
+    !isAllPaused &&
+    allowNewUpload &&
+    !hideUploadButton
 
-  const showCancelBtn = !hideCancelButton
-    && uploadState !== STATE_WAITING
-    && uploadState !== STATE_COMPLETE
+  const showCancelBtn =
+    !hideCancelButton &&
+    uploadState !== STATE_WAITING &&
+    uploadState !== STATE_COMPLETE
 
-  const showPauseResumeBtn = resumableUploads
-    && !hidePauseResumeButton
-    && uploadState === STATE_UPLOADING
+  const showPauseResumeBtn =
+    resumableUploads &&
+    !hidePauseResumeButton &&
+    uploadState === STATE_UPLOADING
 
   const showRetryBtn = error && !isAllComplete && !hideRetryButton
 
@@ -159,16 +205,20 @@ export default function StatusBar (props) {
         role="progressbar"
         aria-label={`${width}%`}
         aria-valuetext={`${width}%`}
-        aria-valuemin="0"
-        aria-valuemax="100"
-        aria-valuenow={progressValue}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-valuenow={progressValue!}
       />
 
       {(() => {
         switch (uploadState) {
           case STATE_PREPROCESSING:
           case STATE_POSTPROCESSING:
-            return <ProgressBarProcessing progress={calculateProcessingProgress(files)} />
+            return (
+              <ProgressBarProcessing
+                progress={calculateProcessingProgress(files)}
+              />
+            )
           case STATE_COMPLETE:
             return <ProgressBarComplete i18n={i18n} />
           case STATE_ERROR:

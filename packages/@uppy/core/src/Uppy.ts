@@ -558,7 +558,7 @@ export class Uppy<M extends Meta, B extends Body> {
   resetProgress(): void {
     const defaultProgress: Omit<FileProgressNotStarted, 'bytesTotal'> = {
       percentage: 0,
-      bytesUploaded: 0,
+      bytesUploaded: false,
       uploadComplete: false,
       uploadStarted: null,
     }
@@ -856,7 +856,9 @@ export class Uppy<M extends Meta, B extends Body> {
     meta.type = fileType
 
     // `null` means the size is unknown.
-    const size = Number.isFinite(file.data.size) ? file.data.size : null
+    const size = Number.isFinite(file.data.size)
+      ? file.data.size
+      : (null as never)
 
     return {
       source: file.source || '',
@@ -871,17 +873,15 @@ export class Uppy<M extends Meta, B extends Body> {
       data: file.data,
       progress: {
         percentage: 0,
-        bytesUploaded: 0,
+        bytesUploaded: false,
         bytesTotal: size,
         uploadComplete: false,
         uploadStarted: null,
-      } as FileProgressNotStarted,
+      },
       size,
       isGhost: false,
       isRemote: file.isRemote || false,
-      // TODO: this should not be a string
-      // @ts-expect-error wrong
-      remote: file.remote || '',
+      remote: file.remote,
       preview: file.preview,
     }
   }
