@@ -98,7 +98,7 @@ export interface State<M extends Meta, B extends Body>
   }
   currentUploads: Record<string, CurrentUpload<M, B>>
   allowNewUpload: boolean
-  recoveredState: null
+  recoveredState: null | State<M, B>
   error: string | null
   files: {
     [key: string]: UppyFile<M, B>
@@ -254,6 +254,7 @@ export interface _UppyEventMap<M extends Meta, B extends Body> {
   progress: ProgressCallback
   'reset-progress': GenericEventCallback
   restored: GenericEventCallback
+  'restore-confirmed': GenericEventCallback
   'restriction-failed': RestrictionFailedCallback<M, B>
   'resume-all': GenericEventCallback
   'retry-all': RetryAllCallback
