@@ -32,6 +32,11 @@ function debounce<T extends (...args: any[]) => any>(
   }
 }
 
+export interface UIPluginOptions extends PluginOpts {
+  replaceTargetContent?: boolean
+  direction?: 'ltr' | 'rtl'
+}
+
 /**
  * UIPlugin is the extended version of BasePlugin to incorporate rendering with Preact.
  * Use this for plugins that need a user interface.
@@ -39,7 +44,7 @@ function debounce<T extends (...args: any[]) => any>(
  * For plugins without an user interface, see BasePlugin.
  */
 class UIPlugin<
-  Opts extends PluginOpts & { direction?: 'ltr' | 'rtl' },
+  Opts extends UIPluginOptions,
   M extends Meta,
   B extends Body,
 > extends BasePlugin<Opts, M, B> {
@@ -50,6 +55,8 @@ class UIPlugin<
   el: HTMLElement | null
 
   parent: unknown
+
+  title: string
 
   getTargetPlugin(target: unknown): UIPlugin<any, any, any> | undefined {
     let targetPlugin
