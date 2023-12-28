@@ -1,10 +1,24 @@
+export interface DeterminateFileProcessing {
+  mode: 'determinate'
+  message: string
+  value: number
+}
+export interface IndeterminateFileProcessing {
+  mode: 'indeterminate'
+  message?: undefined
+  value?: 0
+}
+export type FileProcessingInfo =
+  | IndeterminateFileProcessing
+  | DeterminateFileProcessing
+
 interface FileProgressBase {
   progress?: number
   uploadComplete: boolean
   percentage: number
   bytesTotal: number
-  preprocess?: { mode: string; message?: string; value?: number }
-  postprocess?: { mode: string; message?: string; value?: number }
+  preprocess?: FileProcessingInfo
+  postprocess?: FileProcessingInfo
 }
 
 // FileProgress is either started or not started. We want to make sure TS doesn't
