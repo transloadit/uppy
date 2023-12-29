@@ -15,7 +15,11 @@ import type { I18n, Locale } from '@uppy/utils/lib/Translator'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import type { Uppy } from '.'
 
-export type PluginOpts = { locale?: Locale; [key: string]: unknown }
+export type PluginOpts = {
+  locale?: Locale
+  id?: string
+  [key: string]: unknown
+}
 
 export default class BasePlugin<
   Opts extends PluginOpts,
