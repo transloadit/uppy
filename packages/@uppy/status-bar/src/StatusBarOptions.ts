@@ -1,4 +1,4 @@
-import type { UIPluginOptions } from '@uppy/core'
+import type { UIPluginOptions } from '@uppy/core/src/UIPlugin.ts'
 import type StatusBarLocale from './locale.ts'
 
 export interface StatusBarOptions extends UIPluginOptions {

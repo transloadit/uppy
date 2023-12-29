@@ -1,4 +1,6 @@
-import { UIPlugin, type Uppy } from '@uppy/core'
+import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
+import type { Uppy, State } from '@uppy/core/src/Uppy.ts'
+import UIPlugin from '@uppy/core/lib/UIPlugin.js'
 import emaFilter from '@uppy/utils/lib/emaFilter'
 import getTextDirection from '@uppy/utils/lib/getTextDirection'
 import statusBarStates from './StatusBarStates.ts'
@@ -8,8 +10,6 @@ import StatusBarUI, { type StatusBarUIProps } from './StatusBarUI.tsx'
 import packageJson from '../package.json'
 import locale from './locale.ts'
 import type { StatusBarOptions } from './StatusBarOptions.ts'
-import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
-import type { State } from '@uppy/core/src/Uppy.ts'
 
 const speedFilterHalfLife = 2000
 const ETAFilterHalfLife = 2000
@@ -152,7 +152,7 @@ export default class StatusBar<M extends Meta, B extends Body> extends UIPlugin<
     }) as () => undefined)
   }
 
-  render(state: State<M, B>) {
+  render(state: State<M, B>): JSX.Element {
     const {
       capabilities,
       files,
@@ -237,7 +237,7 @@ export default class StatusBar<M extends Meta, B extends Body> extends UIPlugin<
     })
   }
 
-  onMount() {
+  onMount(): void {
     // Set the text direction if the page has not defined one.
     const element = this.el
     const direction = getTextDirection(element!)
@@ -246,7 +246,7 @@ export default class StatusBar<M extends Meta, B extends Body> extends UIPlugin<
     }
   }
 
-  #onUploadStart = () => {
+  #onUploadStart = (): void => {
     const { recoveredState } = this.uppy.getState()
 
     this.#previousSpeed = null
@@ -267,7 +267,7 @@ export default class StatusBar<M extends Meta, B extends Body> extends UIPlugin<
     this.#previousUploadedBytes = 0
   }
 
-  install() {
+  install(): void {
     const { target } = this.opts
     if (target) {
       this.mount(target, this)
@@ -282,7 +282,7 @@ export default class StatusBar<M extends Meta, B extends Body> extends UIPlugin<
       .reduce((pv, file) => pv + (file.progress.bytesUploaded as number), 0)
   }
 
-  uninstall() {
+  uninstall(): void {
     this.unmount()
     this.uppy.off('upload', this.#onUploadStart)
   }

@@ -1,3 +1,6 @@
+import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
+import type BasePlugin from '@uppy/core/src/BasePlugin.ts'
+import type { Uppy, State } from '@uppy/core/src/Uppy.ts'
 import { h } from 'preact'
 import classNames from 'classnames'
 import statusBarStates from './StatusBarStates.ts'
@@ -14,9 +17,6 @@ import {
   ProgressBarUploading,
   ProgressBarComplete,
 } from './Components.tsx'
-import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
-import type { BasePlugin, Uppy } from '@uppy/core'
-import type { State } from '@uppy/core/src/Uppy.ts'
 
 const {
   STATE_ERROR,
@@ -68,7 +68,7 @@ export interface StatusBarUIProps<M extends Meta, B extends Body> {
 // TODO: rename the function to StatusBarUI on the next major.
 export default function StatusBar<M extends Meta, B extends Body>(
   props: StatusBarUIProps<M, B>,
-) {
+): JSX.Element {
   const {
     newFiles,
     allowNewUpload,
@@ -101,7 +101,7 @@ export default function StatusBar<M extends Meta, B extends Body>(
     totalUploadedSize,
   } = props
 
-  function getProgressValue() {
+  function getProgressValue(): number | null {
     switch (uploadState) {
       case STATE_POSTPROCESSING:
       case STATE_PREPROCESSING: {
@@ -126,7 +126,7 @@ export default function StatusBar<M extends Meta, B extends Body>(
     }
   }
 
-  function getIsIndeterminate() {
+  function getIsIndeterminate(): boolean {
     switch (uploadState) {
       case STATE_POSTPROCESSING:
       case STATE_PREPROCESSING: {
@@ -144,7 +144,7 @@ export default function StatusBar<M extends Meta, B extends Body>(
     }
   }
 
-  function getIsHidden() {
+  function getIsHidden(): boolean | undefined {
     if (recoveredState) {
       return false
     }
@@ -210,7 +210,7 @@ export default function StatusBar<M extends Meta, B extends Body>(
         aria-valuenow={progressValue!}
       />
 
-      {(() => {
+      {((): JSX.Element | null => {
         switch (uploadState) {
           case STATE_PREPROCESSING:
           case STATE_POSTPROCESSING:
@@ -287,4 +287,14 @@ export default function StatusBar<M extends Meta, B extends Body>(
       </div>
     </div>
   )
+}
+
+StatusBar.defaultProps = {
+  doneButtonHandler: undefined,
+  hideAfterFinish: false,
+  hideCancelButton: false,
+  hidePauseResumeButton: false,
+  hideRetryButton: false,
+  hideUploadButton: undefined,
+  showProgressDetails: undefined,
 }

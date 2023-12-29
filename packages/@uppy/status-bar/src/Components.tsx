@@ -1,3 +1,6 @@
+import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
+import type { State, Uppy } from '@uppy/core/src/Uppy.ts'
+import type { FileProcessingInfo } from '@uppy/utils/lib/FileProgress'
 import { h } from 'preact'
 import classNames from 'classnames'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -6,12 +9,9 @@ import prettierBytes from '@transloadit/prettier-bytes'
 import prettyETA from '@uppy/utils/lib/prettyETA'
 
 import statusBarStates from './StatusBarStates.ts'
-import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
-import type { State, Uppy } from '@uppy/core/src/Uppy.ts'
-import type { FileProcessingInfo } from '@uppy/utils/lib/FileProgress'
 
 const DOT = `\u00B7`
-const renderDot = () => ` ${DOT} `
+const renderDot = (): string => ` ${DOT} `
 
 interface UploadBtnProps<M extends Meta, B extends Body> {
   newFiles: number
@@ -25,7 +25,7 @@ interface UploadBtnProps<M extends Meta, B extends Body> {
 
 function UploadBtn<M extends Meta, B extends Body>(
   props: UploadBtnProps<M, B>,
-) {
+): JSX.Element {
   const {
     newFiles,
     isUploadStarted,
@@ -71,7 +71,9 @@ interface RetryBtnProps<M extends Meta, B extends Body> {
   uppy: Uppy<M, B>
 }
 
-function RetryBtn<M extends Meta, B extends Body>(props: RetryBtnProps<M, B>) {
+function RetryBtn<M extends Meta, B extends Body>(
+  props: RetryBtnProps<M, B>,
+): JSX.Element {
   const { i18n, uppy } = props
 
   return (
@@ -79,7 +81,7 @@ function RetryBtn<M extends Meta, B extends Body>(props: RetryBtnProps<M, B>) {
       type="button"
       className="uppy-u-reset uppy-c-btn uppy-StatusBar-actionBtn uppy-StatusBar-actionBtn--retry"
       aria-label={i18n('retryUpload')}
-      onClick={() =>
+      onClick={(): Promise<any> =>
         uppy.retryAll().catch(() => {
           /* Error reported and handled via an event */
         })
@@ -109,7 +111,7 @@ interface CancelBtnProps<M extends Meta, B extends Body> {
 
 function CancelBtn<M extends Meta, B extends Body>(
   props: CancelBtnProps<M, B>,
-) {
+): JSX.Element {
   const { i18n, uppy } = props
 
   return (
@@ -118,7 +120,7 @@ function CancelBtn<M extends Meta, B extends Body>(
       className="uppy-u-reset uppy-StatusBar-actionCircleBtn"
       title={i18n('cancel')}
       aria-label={i18n('cancel')}
-      onClick={() => uppy.cancelAll()}
+      onClick={(): void => uppy.cancelAll()}
       data-cy="cancel"
       data-uppy-super-focusable
     >
@@ -152,22 +154,24 @@ interface PauseResumeButtonProps<M extends Meta, B extends Body> {
 
 function PauseResumeButton<M extends Meta, B extends Body>(
   props: PauseResumeButtonProps<M, B>,
-) {
+): JSX.Element {
   const { isAllPaused, i18n, isAllComplete, resumableUploads, uppy } = props
   const title = isAllPaused ? i18n('resume') : i18n('pause')
 
-  function togglePauseResume() {
-    if (isAllComplete) return null
+  function togglePauseResume(): void {
+    if (isAllComplete) return
 
     if (!resumableUploads) {
-      return uppy.cancelAll()
+      uppy.cancelAll()
+      return
     }
 
     if (isAllPaused) {
-      return uppy.resumeAll()
+      uppy.resumeAll()
+      return
     }
 
-    return uppy.pauseAll()
+    uppy.pauseAll()
   }
 
   return (
@@ -209,7 +213,9 @@ interface DoneBtnProps<M extends Meta, B extends Body> {
   doneButtonHandler: (() => void) | null
 }
 
-function DoneBtn<M extends Meta, B extends Body>(props: DoneBtnProps<M, B>) {
+function DoneBtn<M extends Meta, B extends Body>(
+  props: DoneBtnProps<M, B>,
+): JSX.Element {
   const { i18n, doneButtonHandler } = props
 
   return (
@@ -224,7 +230,7 @@ function DoneBtn<M extends Meta, B extends Body>(props: DoneBtnProps<M, B>) {
   )
 }
 
-function LoadingSpinner() {
+function LoadingSpinner(): JSX.Element {
   return (
     <svg
       className="uppy-StatusBar-spinner"
@@ -245,7 +251,7 @@ interface ProgressBarProcessingProps {
   progress: FileProcessingInfo
 }
 
-function ProgressBarProcessing(props: ProgressBarProcessingProps) {
+function ProgressBarProcessing(props: ProgressBarProcessingProps): JSX.Element {
   const { progress } = props
   const { value, mode, message } = progress
   const roundedValue = Math.round(value! * 100)
@@ -271,7 +277,7 @@ interface ProgressDetailsProps<M extends Meta, B extends Body> {
 
 function ProgressDetails<M extends Meta, B extends Body>(
   props: ProgressDetailsProps<M, B>,
-) {
+): JSX.Element {
   const { numUploads, complete, totalUploadedSize, totalSize, totalETA, i18n } =
     props
 
@@ -314,7 +320,7 @@ interface FileUploadCountProps<M extends Meta, B extends Body> {
 
 function FileUploadCount<M extends Meta, B extends Body>(
   props: FileUploadCountProps<M, B>,
-) {
+): JSX.Element {
   const { i18n, complete, numUploads } = props
 
   return (
@@ -332,7 +338,7 @@ interface UploadNewlyAddedFilesProps<M extends Meta, B extends Body> {
 
 function UploadNewlyAddedFiles<M extends Meta, B extends Body>(
   props: UploadNewlyAddedFilesProps<M, B>,
-) {
+): JSX.Element {
   const { i18n, newFiles, startUpload } = props
   const uploadBtnClassNames = classNames(
     'uppy-u-reset',
@@ -377,7 +383,7 @@ interface ProgressBarUploadingProps<M extends Meta, B extends Body> {
 
 function ProgressBarUploading<M extends Meta, B extends Body>(
   props: ProgressBarUploadingProps<M, B>,
-) {
+): JSX.Element | null {
   const {
     i18n,
     supportsUploadProgress,
@@ -403,7 +409,7 @@ function ProgressBarUploading<M extends Meta, B extends Body>(
 
   const title = isAllPaused ? i18n('paused') : i18n('uploading')
 
-  function renderProgressDetails() {
+  function renderProgressDetails(): JSX.Element | null {
     if (!isAllPaused && !showUploadNewlyAddedFiles && showProgressDetails) {
       if (supportsUploadProgress) {
         return (
@@ -450,13 +456,17 @@ function ProgressBarUploading<M extends Meta, B extends Body>(
   )
 }
 
+ProgressBarUploading.defaultProps = {
+  showProgressDetails: false,
+}
+
 interface ProgressBarCompleteProps<M extends Meta, B extends Body> {
   i18n: Uppy<M, B>['i18n']
 }
 
 function ProgressBarComplete<M extends Meta, B extends Body>(
   props: ProgressBarCompleteProps<M, B>,
-) {
+): JSX.Element {
   const { i18n } = props
 
   return (
@@ -493,10 +503,10 @@ interface ProgressBarErrorProps<M extends Meta, B extends Body> {
 
 function ProgressBarError<M extends Meta, B extends Body>(
   props: ProgressBarErrorProps<M, B>,
-) {
+): JSX.Element {
   const { error, i18n, complete, numUploads } = props
 
-  function displayErrorAlert() {
+  function displayErrorAlert(): void {
     const errorMessage = `${i18n('uploadFailed')} \n\n ${error}`
     // eslint-disable-next-line no-alert
     alert(errorMessage) // TODO: move to custom alert implementation
