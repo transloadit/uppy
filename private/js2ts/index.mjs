@@ -36,17 +36,15 @@ const paths = Object.fromEntries(
   (function* generatePaths() {
     const require = createRequire(packageRoot)
     for (const pkg of uppyDeps) {
+      const nickname = pkg.slice('@uppy/'.length)
       // eslint-disable-next-line import/no-dynamic-require
-      const pkgJson = require(`../../${pkg}/package.json`)
-      if (pkgJson.main) {
-        yield [pkg, [`../${pkg.slice('@uppy/'.length)}/${pkgJson.main}`]]
-      } else if (pkgJson.exports?.['.']) {
-        yield [
-          pkg,
-          [`../${pkg.slice('@uppy/'.length)}/${pkgJson.exports['.']}`],
-        ]
+      const pkgJson = require(`../${nickname}/package.json`)
+      if (pkgJson.exports?.['.']) {
+        yield [pkg, [`../${nickname}/${pkgJson.exports['.']}`]]
+      } else if (pkgJson.main) {
+        yield [pkg, [`../${nickname}/${pkgJson.main}`]]
       }
-      yield [`${pkg}/*`, [`../${pkg.slice('@uppy/'.length)}/*`]]
+      yield [`${pkg}/*`, [`../${nickname}/*`]]
     }
   })(),
 )
