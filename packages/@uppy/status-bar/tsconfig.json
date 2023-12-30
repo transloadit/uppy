@@ -3,6 +3,7 @@
   "compilerOptions": {
     "emitDeclarationOnly": false,
     "paths": {
+      "@uppy/core": ["../core/lib/index.js"],
       "@uppy/core/*": ["../core/*"],
       "@uppy/utils/*": ["../utils/*"]
     },
