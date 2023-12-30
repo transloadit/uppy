@@ -5,7 +5,6 @@ import path from 'node:path'
 import chalk from 'chalk'
 
 import esbuild from 'esbuild'
-import babel from 'esbuild-plugin-babel'
 
 const UPPY_ROOT = new URL('../', import.meta.url)
 const PACKAGES_ROOT = new URL('./packages/', UPPY_ROOT)
@@ -44,29 +43,6 @@ const methods = [
     './packages/uppy/bundle.mjs',
     './packages/uppy/dist/uppy.min.js',
     { standalone: 'Uppy', format: 'iife' },
-  ),
-  buildBundle(
-    './packages/uppy/bundle-legacy.mjs',
-    './packages/uppy/dist/uppy.legacy.min.js',
-    {
-      standalone: 'Uppy (with polyfills)',
-      target: 'es5',
-      plugins:[babel({
-        config:{
-          compact: false,
-          highlightCode: false,
-          inputSourceMap: true,
-
-          browserslistEnv: 'legacy',
-          presets: [['@babel/preset-env',  {
-            loose: false,
-            targets: { ie:11 },
-            useBuiltIns: 'entry',
-            corejs: { version: '3.24', proposals: true },
-          }]],
-        },
-      })],
-    },
   ),
 ]
 

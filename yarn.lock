@@ -4022,21 +4022,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:7.22.6":
+"@babel/runtime@npm:7.22.6, @babel/runtime@npm:^7.14.0, @babel/runtime@npm:^7.20.7, @babel/runtime@npm:^7.8.4, @babel/runtime@npm:^7.9.2":
   version: 7.22.6
   resolution: "@babel/runtime@npm:7.22.6"
   dependencies:
     regenerator-runtime: ^0.13.11
   checksum: e585338287c4514a713babf4fdb8fc2a67adcebab3e7723a739fc62c79cfda875b314c90fd25f827afb150d781af97bc16c85bfdbfa2889f06053879a1ddb597
-  languageName: node
-  linkType: hard
-
-"@babel/runtime@npm:^7.14.0, @babel/runtime@npm:^7.20.7, @babel/runtime@npm:^7.8.4, @babel/runtime@npm:^7.9.2":
-  version: 7.22.5
-  resolution: "@babel/runtime@npm:7.22.5"
-  dependencies:
-    regenerator-runtime: ^0.13.11
-  checksum: 12a50b7de2531beef38840d17af50c55a094253697600cee255311222390c68eed704829308d4fd305e1b3dfbce113272e428e9d9d45b1730e0fede997eaceb1
   languageName: node
   linkType: hard
 
@@ -8686,7 +8677,6 @@ __metadata:
     babel-plugin-inline-package-json: ^2.0.0
     chalk: ^5.0.0
     concat-stream: ^2.0.0
-    core-js: ~3.24.0
     cssnano: ^5.0.6
     dotenv: ^16.0.0
     esbuild: ^0.17.1
@@ -10520,7 +10510,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"abortcontroller-polyfill@npm:^1.1.9, abortcontroller-polyfill@npm:^1.7.3":
+"abortcontroller-polyfill@npm:^1.1.9":
   version: 1.7.3
   resolution: "abortcontroller-polyfill@npm:1.7.3"
   checksum: 55739d7f0c9bd6afa2aabb3148778967c4dd4dcff91f6b9259df38da34f9882d3f7730b0954e9767a19cc16a8dd9a58915da4e8a50220300d45af3817d7557b1
@@ -13197,13 +13187,6 @@ __metadata:
   version: 1.2.7
   resolution: "core-js@npm:1.2.7"
   checksum: 0b76371bfa98708351cde580f9287e2360d2209920e738ae950ae74ad08639a2e063541020bf666c28778956fc356ed9fe56d962129c88a87a6a4a0612526c75
-  languageName: node
-  linkType: hard
-
-"core-js@npm:~3.24.0":
-  version: 3.24.1
-  resolution: "core-js@npm:3.24.1"
-  checksum: 6fb5bf0fd9e9f3e69d95616dd03332fea6758a715d2628c108b5faf17b48b0f580e90c4febb0a523c4665b0991a810de16289f86187fe79d70cc722dbd3edf0e
   languageName: node
   linkType: hard
 
@@ -21587,13 +21570,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"md-gum-polyfill@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "md-gum-polyfill@npm:1.0.0"
-  checksum: d3302bb993fe89b1823166f922055c251318932419306aff62d615c6a7fd58a6a6eb483f00b2c1946b6f755481a6065c1b74d84af4826b54f00bcc8e67f4f788
-  languageName: node
-  linkType: hard
-
 "md5-file@npm:^3.2.3":
   version: 3.2.3
   resolution: "md5-file@npm:3.2.3"
@@ -26632,14 +26608,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"regenerator-runtime@npm:0.13.9, regenerator-runtime@npm:^0.13.2, regenerator-runtime@npm:^0.13.7":
-  version: 0.13.9
-  resolution: "regenerator-runtime@npm:0.13.9"
-  checksum: 65ed455fe5afd799e2897baf691ca21c2772e1a969d19bb0c4695757c2d96249eb74ee3553ea34a91062b2a676beedf630b4c1551cc6299afb937be1426ec55e
-  languageName: node
-  linkType: hard
-
-"regenerator-runtime@npm:^0.13.11":
+"regenerator-runtime@npm:^0.13.11, regenerator-runtime@npm:^0.13.2, regenerator-runtime@npm:^0.13.7":
   version: 0.13.11
   resolution: "regenerator-runtime@npm:0.13.11"
   checksum: 27481628d22a1c4e3ff551096a683b424242a216fee44685467307f14d58020af1e19660bf2e26064de946bad7eff28950eae9f8209d55723e2d9351e632bbb4
@@ -30889,12 +30858,6 @@ __metadata:
     "@uppy/webcam": "workspace:^"
     "@uppy/xhr-upload": "workspace:^"
     "@uppy/zoom": "workspace:^"
-    abortcontroller-polyfill: ^1.7.3
-    core-js: ~3.24.0
-    md-gum-polyfill: ^1.0.0
-    regenerator-runtime: 0.13.9
-    resize-observer-polyfill: ^1.5.1
-    whatwg-fetch: ^3.6.2
   languageName: unknown
   linkType: soft
 

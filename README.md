@@ -141,47 +141,11 @@ The ⓒ mark means that [`@uppy/companion`](https://uppy.io/docs/companion), a s
 ## React
 
 * [React](https://uppy.io/docs/react/) — components to integrate Uppy UI plugins with React apps
-* [React Native](https://uppy.io//docs/react/native/) — basic Uppy component for React Native with Expo
+* [React Native](./examples/react-native-expo/) — basic Uppy component for React Native with Expo
 
 ## Browser Support
 
-We aim to support recent versions of Chrome, Firefox, Safari and Edge.
-
-We still provide a bundle which should work on IE11, but we are not running tests on it.
-
-### Polyfills
-
-Here’s a list of polyfills you’ll need to include to make Uppy work in older browsers, such as IE11:
-
-* [abortcontroller-polyfill](https://github.com/mo/abortcontroller-polyfill)
-* [core-js](https://github.com/zloirock/core-js)
-* [md-gum-polyfill](https://github.com/mozdevs/mediaDevices-getUserMedia-polyfill)
-* [resize-observer-polyfill](https://github.com/que-etc/resize-observer-polyfill)
-* [whatwg-fetch](https://github.com/github/fetch)
-
-If you’re using a bundler, you need to import them before Uppy:
-
-```js
-import 'core-js'
-import 'whatwg-fetch'
-import 'abortcontroller-polyfill/dist/polyfill-patch-fetch'
-// Order matters: AbortController needs fetch which needs Promise (provided by core-js).
-
-import 'md-gum-polyfill'
-import ResizeObserver from 'resize-observer-polyfill'
-
-window.ResizeObserver ??= ResizeObserver
-
-export { default } from '@uppy/core'
-export * from '@uppy/core'
-```
-
-If you’re using Uppy from CDN, those polyfills are already included in the legacy
-bundle, so no need to include anything additionally:
-
-```html
-<script src="https://releases.transloadit.com/uppy/v3.21.0/uppy.legacy.min.js"></script>
-```
+We aim to support recent versions of Chrome, Firefox, and Safari.
 
 ## FAQ
 
