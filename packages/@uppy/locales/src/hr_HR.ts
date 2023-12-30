@@ -92,6 +92,7 @@ hr_HR.strings = {
   resumeUpload: 'Nastavi prijenos',
   retry: 'Pokušaj ponovo',
   retryUpload: 'Ponovno pokušaj prenijeti datoteku',
+  save: 'Spremi',
   saveChanges: 'Spremi promjene',
   selectX: {
     '0': 'Izaberi datoteku',
