@@ -3,8 +3,8 @@
   "compilerOptions": {
     "emitDeclarationOnly": false,
     "paths": {
-      "@uppy/core": ["../core/lib/index.js"],
-      "@uppy/core/*": ["../core/*"],
+      "@uppy/core": ["../core/src/index.ts"],
+      "@uppy/core/lib/*": ["../core/src/*"],
       "@uppy/utils/*": ["../utils/*"]
     },
     "noEmit": true
