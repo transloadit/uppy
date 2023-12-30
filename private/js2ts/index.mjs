@@ -38,10 +38,13 @@ const paths = Object.fromEntries(
     for (const pkg of uppyDeps) {
       // eslint-disable-next-line import/no-dynamic-require
       const pkgJson = require(`../../${pkg}/package.json`)
-      if (pkgJson.main || pkgJson.exports?.['.']) {
-        // If the package does have a main export (e.g. `import '@uppy/utils'`
-        // should flag an error because @uppy/utils does not have a main export).
-        yield [pkg, [`../${pkg.slice('@uppy/'.length)}/lib/index.js`]]
+      if (pkgJson.main) {
+        yield [pkg, [`../${pkg.slice('@uppy/'.length)}/${pkgJson.main}`]]
+      } else if (pkgJson.exports?.['.']) {
+        yield [
+          pkg,
+          [`../${pkg.slice('@uppy/'.length)}/${pkgJson.exports['.']}`],
+        ]
       }
       yield [`${pkg}/*`, [`../${pkg.slice('@uppy/'.length)}/*`]]
     }
