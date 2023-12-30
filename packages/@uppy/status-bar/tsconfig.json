@@ -2,6 +2,10 @@
   "extends": "../../../tsconfig.shared",
   "compilerOptions": {
     "emitDeclarationOnly": false,
+    "paths": {
+      "@uppy/core/*": ["../core/*"],
+      "@uppy/utils/*": ["../utils/*"]
+    },
     "noEmit": true
   },
   "include": ["./package.json", "./src/**/*.*"],

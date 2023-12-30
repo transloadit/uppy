@@ -5,7 +5,12 @@
     "rootDir": "./src",
     "resolveJsonModule": false,
     "noImplicitAny": false,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "paths": {
+      "@uppy/core": ["../core/lib/index.js"],
+      "@uppy/core/*": ["../core/*"],
+      "@uppy/utils/*": ["../utils/*"]
+    }
   },
   "include": ["./src/**/*.*"],
   "exclude": ["./src/**/*.test.ts"],

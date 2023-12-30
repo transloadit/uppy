@@ -1,6 +1,6 @@
 import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
 import type { Uppy, State } from '@uppy/core/src/Uppy.ts'
-import UIPlugin from '@uppy/core/lib/UIPlugin.js'
+import { UIPlugin } from '@uppy/core'
 import emaFilter from '@uppy/utils/lib/emaFilter'
 import getTextDirection from '@uppy/utils/lib/getTextDirection'
 import statusBarStates from './StatusBarStates.ts'
