@@ -27,10 +27,12 @@ if (packageJSON.type !== 'module') {
   throw new Error('Cannot convert non-ESM package to TS')
 }
 
-const uppyDeps = Object.keys(packageJSON.dependencies || {})
-  .concat(Object.keys(packageJSON.peerDependencies || {}))
-  .concat(Object.keys(packageJSON.devDependencies || {}))
-  .filter((pkg) => pkg.startsWith('@uppy/'))
+const uppyDeps = new Set(
+  Object.keys(packageJSON.dependencies || {})
+    .concat(Object.keys(packageJSON.peerDependencies || {}))
+    .concat(Object.keys(packageJSON.devDependencies || {}))
+    .filter((pkg) => pkg.startsWith('@uppy/')),
+)
 
 // We want TS to check the source files so it doesn't use outdated (or missing) types:
 const paths = Object.fromEntries(
@@ -50,7 +52,7 @@ const paths = Object.fromEntries(
     }
   })(),
 )
-const references = uppyDeps.map((pkg) => ({
+const references = Array.from(uppyDeps, (pkg) => ({
   path: `../${pkg.slice('@uppy/'.length)}/tsconfig.build.json`,
 }))
 
