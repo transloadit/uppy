@@ -9359,7 +9359,7 @@ __metadata:
     serialize-error: ^2.1.0
     serialize-javascript: ^6.0.0
     supertest: 6.2.4
-    tus-js-client: ^3.0.0
+    tus-js-client: ^3.1.3
     typescript: ~5.1
     validator: ^13.0.0
     ws: 8.8.1
@@ -9775,7 +9775,7 @@ __metadata:
   dependencies:
     "@uppy/companion-client": "workspace:^"
     "@uppy/utils": "workspace:^"
-    tus-js-client: ^3.0.0
+    tus-js-client: ^3.1.3
     vitest: ^0.34.5
   peerDependencies:
     "@uppy/core": "workspace:^"
@@ -30356,9 +30356,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tus-js-client@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "tus-js-client@npm:3.0.0"
+"tus-js-client@npm:^3.1.3":
+  version: 3.1.3
+  resolution: "tus-js-client@npm:3.1.3"
   dependencies:
     buffer-from: ^1.1.2
     combine-errors: ^3.0.3
@@ -30367,7 +30367,7 @@ __metadata:
     lodash.throttle: ^4.1.1
     proper-lockfile: ^4.1.2
     url-parse: ^1.5.7
-  checksum: dda7921a0d55f3a15535590adb6eb98edfbf6c88dfbcad9bf1013cfa16bc2244fb937ad1d6bc05f34005ee103da31ccbae5ca650d46dc23d6e653946994c9015
+  checksum: 6f25dbbdbe1de51f44688dfb9ee78cae8deb987ac0a8e5d7d3e09a52ed0a7bfa5e2c3e39e82f0913beb241da78ddf42bdcb4c44369ea57f7cf15fad17e5b954f
   languageName: node
   linkType: hard
 
