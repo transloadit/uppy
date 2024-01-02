@@ -6,7 +6,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import assert from 'node:assert'
 import fs from 'node:fs'
 import path from 'node:path'
-// @ts-expect-error untyped
 import prettierBytes from '@transloadit/prettier-bytes'
 import Core from './index.ts'
 import UIPlugin from './UIPlugin.ts'
