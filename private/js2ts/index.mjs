@@ -6,6 +6,7 @@
  */
 
 import { opendir, readFile, open, writeFile, rm } from 'node:fs/promises'
+import { createRequire } from 'node:module'
 import { argv } from 'node:process'
 import { basename, extname, join } from 'node:path'
 import { existsSync } from 'node:fs'
@@ -26,13 +27,34 @@ if (packageJSON.type !== 'module') {
   throw new Error('Cannot convert non-ESM package to TS')
 }
 
-const references = Object.keys(packageJSON.dependencies || {})
-  .concat(Object.keys(packageJSON.peerDependencies || {}))
-  .concat(Object.keys(packageJSON.devDependencies || {}))
-  .filter((pkg) => pkg.startsWith('@uppy/'))
-  .map((pkg) => ({
-    path: `../${pkg.slice('@uppy/'.length)}/tsconfig.build.json`,
-  }))
+const uppyDeps = new Set(
+  Object.keys(packageJSON.dependencies || {})
+    .concat(Object.keys(packageJSON.peerDependencies || {}))
+    .concat(Object.keys(packageJSON.devDependencies || {}))
+    .filter((pkg) => pkg.startsWith('@uppy/')),
+)
+
+// We want TS to check the source files so it doesn't use outdated (or missing) types:
+const paths = Object.fromEntries(
+  (function* generatePaths() {
+    const require = createRequire(packageRoot)
+    for (const pkg of uppyDeps) {
+      const nickname = pkg.slice('@uppy/'.length)
+      // eslint-disable-next-line import/no-dynamic-require
+      const pkgJson = require(`../${nickname}/package.json`)
+      if (pkgJson.main) {
+        yield [
+          pkg,
+          [`../${nickname}/${pkgJson.main.replace(/^(\.\/)?lib\//, 'src/')}`],
+        ]
+      }
+      yield [`${pkg}/lib/*`, [`../${nickname}/src/*`]]
+    }
+  })(),
+)
+const references = Array.from(uppyDeps, (pkg) => ({
+  path: `../${pkg.slice('@uppy/'.length)}/tsconfig.build.json`,
+}))
 
 const depsNotYetConvertedToTS = references.filter(
   (ref) => !existsSync(new URL(ref.path, packageRoot)),
@@ -93,6 +115,7 @@ await tsConfig.writeFile(
       compilerOptions: {
         emitDeclarationOnly: false,
         noEmit: true,
+        paths,
       },
       include: ['./package.json', './src/**/*.*'],
       references,
@@ -110,10 +133,11 @@ await writeFile(
     {
       extends: '../../../tsconfig.shared',
       compilerOptions: {
-        outDir: './lib',
-        rootDir: './src',
-        resolveJsonModule: false,
         noImplicitAny: false,
+        outDir: './lib',
+        paths,
+        resolveJsonModule: false,
+        rootDir: './src',
         skipLibCheck: true,
       },
       include: ['./src/**/*.*'],

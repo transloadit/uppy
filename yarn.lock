@@ -7718,17 +7718,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@transloadit/prettier-bytes@npm:0.0.7":
-  version: 0.0.7
-  resolution: "@transloadit/prettier-bytes@npm:0.0.7"
-  checksum: af075e1b2b045cac55d5ab854b5c94273ef7f4bd825f05fe578559465f206d2a1535343b50170252a9efb31ffdc2d6420e64eb32d2faeabeeb8b7d81d5d46ef0
-  languageName: node
-  linkType: hard
-
-"@transloadit/prettier-bytes@npm:0.0.9, @transloadit/prettier-bytes@npm:^0.0.9":
-  version: 0.0.9
-  resolution: "@transloadit/prettier-bytes@npm:0.0.9"
-  checksum: efa5a723c41e7bce7ad17d1affe6a43209df857e17dc2b12a7c7bd6d3c921df8298086dbfb62ed740ca3e617d8c7f47485bb311adb637b20f2f75a28b08bac4f
+"@transloadit/prettier-bytes@npm:^0.2.0":
+  version: 0.2.0
+  resolution: "@transloadit/prettier-bytes@npm:0.2.0"
+  checksum: 0faaeffc879754e18103bd576510d4349ec5253c2ebe846f7f8e52f2e9bc4c6877a9197adf4d2f196fa9b442a64cd43c5a742b5b51268e7f56bb3451299af1ce
   languageName: node
   linkType: hard
 
@@ -9325,7 +9318,7 @@ __metadata:
     serialize-error: ^2.1.0
     serialize-javascript: ^6.0.0
     supertest: 6.2.4
-    tus-js-client: ^3.0.0
+    tus-js-client: ^3.1.3
     typescript: ~5.1
     validator: ^13.0.0
     ws: 8.8.1
@@ -9338,7 +9331,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/compressor@workspace:packages/@uppy/compressor"
   dependencies:
-    "@transloadit/prettier-bytes": ^0.0.9
+    "@transloadit/prettier-bytes": ^0.2.0
     "@uppy/utils": "workspace:^"
     compressorjs: ^1.1.1
     preact: ^10.5.13
@@ -9353,7 +9346,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/core@workspace:packages/@uppy/core"
   dependencies:
-    "@transloadit/prettier-bytes": 0.0.9
+    "@transloadit/prettier-bytes": ^0.2.0
     "@uppy/store-default": "workspace:^"
     "@uppy/utils": "workspace:^"
     lodash: ^4.17.21
@@ -9369,7 +9362,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/dashboard@workspace:packages/@uppy/dashboard"
   dependencies:
-    "@transloadit/prettier-bytes": 0.0.7
+    "@transloadit/prettier-bytes": ^0.2.0
     "@uppy/google-drive": "workspace:^"
     "@uppy/informer": "workspace:^"
     "@uppy/provider-views": "workspace:^"
@@ -9464,7 +9457,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/golden-retriever@workspace:packages/@uppy/golden-retriever"
   dependencies:
-    "@transloadit/prettier-bytes": 0.0.9
     "@uppy/utils": "workspace:^"
     lodash: ^4.17.21
   peerDependencies:
@@ -9658,7 +9650,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/status-bar@workspace:packages/@uppy/status-bar"
   dependencies:
-    "@transloadit/prettier-bytes": 0.0.9
+    "@transloadit/prettier-bytes": ^0.2.0
     "@uppy/utils": "workspace:^"
     classnames: ^2.2.6
     preact: ^10.5.13
@@ -9741,7 +9733,7 @@ __metadata:
   dependencies:
     "@uppy/companion-client": "workspace:^"
     "@uppy/utils": "workspace:^"
-    tus-js-client: ^3.0.0
+    tus-js-client: ^3.1.3
     vitest: ^0.34.5
   peerDependencies:
     "@uppy/core": "workspace:^"
@@ -30143,9 +30135,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tus-js-client@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "tus-js-client@npm:3.0.0"
+"tus-js-client@npm:^3.1.3":
+  version: 3.1.3
+  resolution: "tus-js-client@npm:3.1.3"
   dependencies:
     buffer-from: ^1.1.2
     combine-errors: ^3.0.3
@@ -30154,7 +30146,7 @@ __metadata:
     lodash.throttle: ^4.1.1
     proper-lockfile: ^4.1.2
     url-parse: ^1.5.7
-  checksum: dda7921a0d55f3a15535590adb6eb98edfbf6c88dfbcad9bf1013cfa16bc2244fb937ad1d6bc05f34005ee103da31ccbae5ca650d46dc23d6e653946994c9015
+  checksum: 6f25dbbdbe1de51f44688dfb9ee78cae8deb987ac0a8e5d7d3e09a52ed0a7bfa5e2c3e39e82f0913beb241da78ddf42bdcb4c44369ea57f7cf15fad17e5b954f
   languageName: node
   linkType: hard
 
