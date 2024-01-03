@@ -154,6 +154,7 @@ export interface Restrictions {
   maxNumberOfFiles?: number | null
   minNumberOfFiles?: number | null
   allowedFileTypes?: string[] | null
+  requiredMetaFields?: string[]
 }
 
 export interface UppyOptions<
