@@ -3,6 +3,9 @@
   "compilerOptions": {
     "outDir": "./lib",
     "rootDir": "./src",
+    "paths": {
+      "@uppy/utils/lib/*": ["../utils/src/*"]
+    },
     "skipLibCheck": true
   },
   "include": ["./src/**/*.*"],

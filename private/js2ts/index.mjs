@@ -27,11 +27,14 @@ if (packageJSON.type !== 'module') {
   throw new Error('Cannot convert non-ESM package to TS')
 }
 
-const uppyDeps = Object.keys(packageJSON.dependencies || {})
-  .concat(Object.keys(packageJSON.peerDependencies || {}))
-  .concat(Object.keys(packageJSON.devDependencies || {}))
-  .filter((pkg) => pkg.startsWith('@uppy/'))
+const uppyDeps = new Set(
+  Object.keys(packageJSON.dependencies || {})
+    .concat(Object.keys(packageJSON.peerDependencies || {}))
+    .concat(Object.keys(packageJSON.devDependencies || {}))
+    .filter((pkg) => pkg.startsWith('@uppy/')),
+)
 
+// We want TS to check the source files so it doesn't use outdated (or missing) types:
 const paths = Object.fromEntries(
   (function* generatePaths() {
     const require = createRequire(packageRoot)
@@ -39,16 +42,17 @@ const paths = Object.fromEntries(
       const nickname = pkg.slice('@uppy/'.length)
       // eslint-disable-next-line import/no-dynamic-require
       const pkgJson = require(`../${nickname}/package.json`)
-      if (pkgJson.exports?.['.']) {
-        yield [pkg, [`../${nickname}/${pkgJson.exports['.']}`]]
-      } else if (pkgJson.main) {
-        yield [pkg, [`../${nickname}/${pkgJson.main}`]]
+      if (pkgJson.main) {
+        yield [
+          pkg,
+          [`../${nickname}/${pkgJson.main.replace(/^(\.\/)?lib\//, 'src/')}`],
+        ]
       }
-      yield [`${pkg}/*`, [`../${nickname}/*`]]
+      yield [`${pkg}/lib/*`, [`../${nickname}/src/*`]]
     }
   })(),
 )
-const references = uppyDeps.map((pkg) => ({
+const references = Array.from(uppyDeps, (pkg) => ({
   path: `../${pkg.slice('@uppy/'.length)}/tsconfig.build.json`,
 }))
 
