@@ -12,6 +12,9 @@ import packageJson from '../package.json'
 export default class Form extends BasePlugin {
   static VERSION = packageJson.version
 
+  /** @type {HTMLFormElement} */
+  form
+
   constructor (uppy, opts) {
     super(uppy, opts)
     this.type = 'acquirer'
@@ -50,7 +53,7 @@ export default class Form extends BasePlugin {
     }
 
     if (this.opts.submitOnSuccess) {
-      this.form.submit()
+      this.form.requestSubmit()
     }
   }
 
