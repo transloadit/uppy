@@ -3,8 +3,6 @@ import type { State, Uppy } from '@uppy/core/src/Uppy.ts'
 import type { FileProcessingInfo } from '@uppy/utils/lib/FileProgress'
 import { h } from 'preact'
 import classNames from 'classnames'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore untyped
 import prettierBytes from '@transloadit/prettier-bytes'
 import prettyETA from '@uppy/utils/lib/prettyETA'
 
