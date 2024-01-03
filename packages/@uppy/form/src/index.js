@@ -13,7 +13,7 @@ export default class Form extends BasePlugin {
   static VERSION = packageJson.version
 
   /** @type {HTMLFormElement} */
-  form
+  form // TODO: make this private (or at least, mark it as readonly)
 
   constructor (uppy, opts) {
     super(uppy, opts)
