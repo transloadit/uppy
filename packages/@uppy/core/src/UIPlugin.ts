@@ -49,7 +49,7 @@ class UIPlugin<
   M extends Meta,
   B extends Body,
 > extends BasePlugin<Opts, M, B> {
-  #updateUI: (state: State<M, B>) => void
+  #updateUI: (state: Partial<State<M, B>>) => void
 
   isTargetDOMEl: boolean
 
@@ -176,7 +176,7 @@ class UIPlugin<
     )
   }
 
-  update(state: State<M, B>): void {
+  update(state: Partial<State<M, B>>): void {
     if (this.el != null) {
       this.#updateUI?.(state)
     }

@@ -103,7 +103,7 @@ export default class BasePlugin<
   uninstall(): void {}
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  update(state: State<M, B>): void {}
+  update(state: Partial<State<M, B>>): void {}
 
   // Called after every state update, after everything's mounted. Debounced.
   afterUpdate(): void {}
