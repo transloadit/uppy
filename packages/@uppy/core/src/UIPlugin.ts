@@ -7,6 +7,7 @@ import getTextDirection from '@uppy/utils/lib/getTextDirection'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import BasePlugin from './BasePlugin.ts'
 import type { PluginOpts } from './BasePlugin.ts'
+import type { State } from './Uppy.ts'
 
 /**
  * Defer a frequent call to the microtask queue.
@@ -48,7 +49,7 @@ class UIPlugin<
   M extends Meta,
   B extends Body,
 > extends BasePlugin<Opts, M, B> {
-  #updateUI: (state: any) => void
+  #updateUI: (state: State<M, B>) => void
 
   isTargetDOMEl: boolean
 
@@ -175,7 +176,7 @@ class UIPlugin<
     )
   }
 
-  update(state: any): void {
+  update(state: State<M, B>): void {
     if (this.el != null) {
       this.#updateUI?.(state)
     }

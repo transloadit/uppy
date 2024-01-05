@@ -13,7 +13,7 @@
 import Translator from '@uppy/utils/lib/Translator'
 import type { I18n, Locale } from '@uppy/utils/lib/Translator'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
-import type { Uppy } from '.'
+import type { State, Uppy } from './Uppy'
 
 export type PluginOpts = {
   locale?: Locale
@@ -103,7 +103,7 @@ export default class BasePlugin<
   uninstall(): void {}
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  update(state: any): void {}
+  update(state: State<M, B>): void {}
 
   // Called after every state update, after everything's mounted. Debounced.
   afterUpdate(): void {}
