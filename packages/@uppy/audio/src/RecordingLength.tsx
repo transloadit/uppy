@@ -1,5 +1,5 @@
 import { h } from 'preact'
-import formatSeconds from './formatSeconds.js'
+import formatSeconds from './formatSeconds.ts'
 
 export default function RecordingLength ({ recordingLengthSeconds, i18n }) {
   const formattedRecordingLengthSeconds = formatSeconds(recordingLengthSeconds)

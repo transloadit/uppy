@@ -1,12 +1,12 @@
 /* eslint-disable jsx-a11y/media-has-caption */
 import { h } from 'preact'
 import { useEffect, useRef } from 'preact/hooks'
-import RecordButton from './RecordButton.jsx'
-import RecordingLength from './RecordingLength.jsx'
-import AudioSourceSelect from './AudioSourceSelect.jsx'
-import AudioOscilloscope from './audio-oscilloscope/index.js'
-import SubmitButton from './SubmitButton.jsx'
-import DiscardButton from './DiscardButton.jsx'
+import RecordButton from './RecordButton.tsx'
+import RecordingLength from './RecordingLength.tsx'
+import AudioSourceSelect from './AudioSourceSelect.tsx'
+import AudioOscilloscope from './audio-oscilloscope/index.ts'
+import SubmitButton from './SubmitButton.tsx'
+import DiscardButton from './DiscardButton.tsx'
 
 export default function RecordingScreen (props) {
   const {

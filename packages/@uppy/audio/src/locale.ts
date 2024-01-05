@@ -1,3 +1,5 @@
+import type { Locale } from "@uppy/utils/lib/Translator";
+
 export default {
   strings: {
     pluginNameAudio: 'Audio',
@@ -27,4 +29,4 @@ export default {
     // This is not visibly rendered but is picked up by screen readers.
     discardRecordedFile: 'Discard recorded file',
   },
-}
+} as Locale
