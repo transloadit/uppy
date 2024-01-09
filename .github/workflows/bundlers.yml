@@ -51,26 +51,9 @@ jobs:
       - name: Build lib
         run: corepack yarn run build:lib
       - name: Make Uppy bundle use local version
-        run: |
-          node <<'EOF'
-            const pkg = require('./packages/uppy/package.json');
-            pkg.overrides = {};
-            (async () => {
-              for await (const { name } of await require('node:fs/promises').opendir('./packages/@uppy/')) {
-                pkg.overrides["@uppy/" + name] = `/tmp/packages/@uppy-${name}-${{ github.sha }}.tgz`;
-              }
-              for(const key of Object.keys(pkg.dependencies)) {
-                if (key in pkg.overrides) {
-                  pkg.dependencies[key] = pkg.overrides[key];
-                }
-              }
-              require('node:fs').writeFileSync('./packages/uppy/package.json', JSON.stringify(pkg));
-            })();
-          EOF
+        run: node bin/replace-deps.mjs ${{ github.sha }}
       - name: Eject public packages from repo
-        run:
-          mkdir /tmp/artifacts && corepack yarn workspaces foreach --no-private
-          pack --install-if-needed -o /tmp/artifacts/%s-${{ github.sha }}.tgz
+        run: mkdir /tmp/artifacts && for name in $(corepack yarn workspaces list --no-private --json | jq --raw-output .name); do (cd packages/${name} && echo ${name} && corepack yarn pack --install-if-needed -o /tmp/artifacts/${name//\//-}-${{ github.sha }}.tgz); done
       - name: Upload artifact
         if: success()
         uses: actions/upload-artifact@v3
