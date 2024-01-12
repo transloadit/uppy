@@ -2,6 +2,7 @@ import { h } from 'preact'
 
 import { UIPlugin, type UIPluginOptions } from '@uppy/core'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
+import type { Uppy, MinimalRequiredUppyFile } from '@uppy/core/lib/Uppy.ts'
 
 import getFileTypeExtension from '@uppy/utils/lib/getFileTypeExtension'
 import supportsMediaRecorder from './supportsMediaRecorder.ts'
@@ -12,7 +13,18 @@ import locale from './locale.ts'
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'
 
-interface AudioOptions extends UIPluginOptions {}
+interface AudioOptions extends UIPluginOptions {
+  target?: HTMLElement | string
+}
+interface AudioState {
+  audioReady: boolean
+  recordingLengthSeconds: number
+  hasAudio: boolean
+  cameraError: null
+  audioSources: MediaDeviceInfo[]
+  currentDeviceId?: null | string | MediaStreamTrack
+  [id: string]: unknown
+}
 
 /**
  * Audio recording plugin
@@ -20,21 +32,24 @@ interface AudioOptions extends UIPluginOptions {}
 export default class Audio<M extends Meta, B extends Body> extends UIPlugin<
   AudioOptions,
   M,
-  B
+  B,
+  AudioState
 > {
   static VERSION = packageJson.version
 
   private recordingLengthTimer: ReturnType<typeof setInterval>
 
-  #stream?: MediaStream
+  private icon
+
+  #stream?: MediaStream | null
 
   #audioActive = false
 
-  #recordingChunks?: Blob[]
+  #recordingChunks?: Blob[] | null
 
-  #recorder?: MediaRecorder
+  #recorder?: MediaRecorder | null
 
-  #capturedMediaFile?: File
+  #capturedMediaFile?: MinimalRequiredUppyFile<M, B> | null
 
   #mediaDevices
 
@@ -46,7 +61,7 @@ export default class Audio<M extends Meta, B extends Body> extends UIPlugin<
     this.#supportsUserMedia = this.#mediaDevices != null
     this.id = this.opts.id || 'Audio'
     this.type = 'acquirer'
-    this.icon = (): JSX.Element => (
+    this.icon = () => (
       <svg
         className="uppy-DashboardTab-iconAudio"
         aria-hidden="true"
@@ -195,7 +210,7 @@ export default class Audio<M extends Meta, B extends Body> extends UIPlugin<
   }
 
   #stopRecording = (): Promise<void> => {
-    const stopped = new Promise((resolve) => {
+    const stopped = new Promise<void>((resolve) => {
       this.#recorder!.addEventListener('stop', () => {
         resolve()
       })
@@ -265,8 +280,8 @@ export default class Audio<M extends Meta, B extends Body> extends UIPlugin<
 
     if (this.#recorder) {
       await new Promise((resolve) => {
-        this.#recorder.addEventListener('stop', resolve, { once: true })
-        this.#recorder.stop()
+        this.#recorder!.addEventListener('stop', resolve, { once: true })
+        this.#recorder!.stop()
 
         clearInterval(this.recordingLengthTimer)
       })
@@ -288,9 +303,9 @@ export default class Audio<M extends Meta, B extends Body> extends UIPlugin<
     // Sometimes in iOS Safari, Blobs (especially the first Blob in the recordingChunks Array)
     // have empty 'type' attributes (e.g. '') so we need to find a Blob that has a defined 'type'
     // attribute in order to determine the correct MIME type.
-    const mimeType = this.#recordingChunks.find(
+    const mimeType = this.#recordingChunks!.find(
       (blob) => blob.type?.length > 0,
-    ).type
+    )!.type
 
     const fileExtension = getFileTypeExtension(mimeType)
 
@@ -303,7 +318,7 @@ export default class Audio<M extends Meta, B extends Body> extends UIPlugin<
     }
 
     const name = `audio-${Date.now()}.${fileExtension}`
-    const blob = new Blob(this.#recordingChunks, { type: mimeType })
+    const blob = new Blob(this.#recordingChunks!, { type: mimeType })
     const file = {
       source: this.id,
       name,
@@ -314,7 +329,7 @@ export default class Audio<M extends Meta, B extends Body> extends UIPlugin<
     return Promise.resolve(file)
   }
 
-  #changeSource = (deviceId): void => {
+  #changeSource = (deviceId?: number): void => {
     this.#stop()
     this.#start({ deviceId })
   }
@@ -327,7 +342,7 @@ export default class Audio<M extends Meta, B extends Body> extends UIPlugin<
     })
   }
 
-  render() {
+  render(): JSX.Element {
     if (!this.#audioActive) {
       this.#start()
     }
@@ -364,7 +379,7 @@ export default class Audio<M extends Meta, B extends Body> extends UIPlugin<
     )
   }
 
-  install() {
+  install(): void {
     this.setPluginState({
       audioReady: false,
       recordingLengthSeconds: 0,
@@ -401,7 +416,7 @@ export default class Audio<M extends Meta, B extends Body> extends UIPlugin<
     }
   }
 
-  uninstall() {
+  uninstall(): void {
     if (this.#stream) {
       this.#stop()
     }
