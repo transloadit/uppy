@@ -1,14 +1,34 @@
 /* eslint-disable jsx-a11y/media-has-caption */
 import { h } from 'preact'
 import { useEffect, useRef } from 'preact/hooks'
+import type { Uppy } from '@uppy/core/lib/Uppy'
 import RecordButton from './RecordButton.tsx'
 import RecordingLength from './RecordingLength.tsx'
-import AudioSourceSelect from './AudioSourceSelect.tsx'
+import AudioSourceSelect, {
+  type AudioSourceSelectProps,
+} from './AudioSourceSelect.tsx'
 import AudioOscilloscope from './audio-oscilloscope/index.ts'
 import SubmitButton from './SubmitButton.tsx'
 import DiscardButton from './DiscardButton.tsx'
 
-export default function RecordingScreen (props) {
+interface RecordingScreenProps extends AudioSourceSelectProps {
+  stream: MediaStream | null | undefined
+  recordedAudio: string
+  recording: boolean
+  supportsRecording: boolean
+  showAudioSourceDropdown: boolean
+  onSubmit: () => void
+  i18n: Uppy<any, any>['i18n']
+  onStartRecording: () => void
+  onStopRecording: () => void
+  onStop: () => void
+  onDiscardRecordedAudio: () => void
+  recordingLengthSeconds: number
+}
+
+export default function RecordingScreen(
+  props: RecordingScreenProps,
+): JSX.Element {
   const {
     stream,
     recordedAudio,
@@ -62,33 +82,24 @@ export default function RecordingScreen (props) {
 
   const hasRecordedAudio = recordedAudio != null
   const shouldShowRecordButton = !hasRecordedAudio && supportsRecording
-  const shouldShowAudioSourceDropdown = showAudioSourceDropdown
-    && !hasRecordedAudio
-    && audioSources
-    && audioSources.length > 1
+  const shouldShowAudioSourceDropdown =
+    showAudioSourceDropdown &&
+    !hasRecordedAudio &&
+    audioSources &&
+    audioSources.length > 1
 
   return (
     <div className="uppy-Audio-container">
       <div className="uppy-Audio-audioContainer">
-        {hasRecordedAudio
-          ? (
-            <audio
-              className="uppy-Audio-player"
-              controls
-              src={recordedAudio}
-            />
-          ) : (
-            <canvas
-              ref={canvasEl}
-              className="uppy-Audio-canvas"
-            />
-          )}
+        {hasRecordedAudio ? (
+          <audio className="uppy-Audio-player" controls src={recordedAudio} />
+        ) : (
+          <canvas ref={canvasEl} className="uppy-Audio-canvas" />
+        )}
       </div>
       <div className="uppy-Audio-footer">
         <div className="uppy-Audio-audioSourceContainer">
-          {shouldShowAudioSourceDropdown
-            ? AudioSourceSelect(props)
-            : null}
+          {shouldShowAudioSourceDropdown ? AudioSourceSelect(props) : null}
         </div>
         <div className="uppy-Audio-buttonContainer">
           {shouldShowRecordButton && (
@@ -102,12 +113,17 @@ export default function RecordingScreen (props) {
 
           {hasRecordedAudio && <SubmitButton onSubmit={onSubmit} i18n={i18n} />}
 
-          {hasRecordedAudio && <DiscardButton onDiscard={onDiscardRecordedAudio} i18n={i18n} />}
+          {hasRecordedAudio && (
+            <DiscardButton onDiscard={onDiscardRecordedAudio} i18n={i18n} />
+          )}
         </div>
 
         <div className="uppy-Audio-recordingLength">
           {!hasRecordedAudio && (
-            <RecordingLength recordingLengthSeconds={recordingLengthSeconds} i18n={i18n} />
+            <RecordingLength
+              recordingLengthSeconds={recordingLengthSeconds}
+              i18n={i18n}
+            />
           )}
         </div>
       </div>

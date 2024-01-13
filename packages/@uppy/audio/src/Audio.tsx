@@ -15,6 +15,7 @@ import packageJson from '../package.json'
 
 interface AudioOptions extends UIPluginOptions {
   target?: HTMLElement | string
+  showAudioSourceDropdown: boolean
 }
 interface AudioState {
   audioReady: boolean
@@ -23,6 +24,8 @@ interface AudioState {
   cameraError: null
   audioSources: MediaDeviceInfo[]
   currentDeviceId?: null | string | MediaStreamTrack
+  isRecording: boolean
+  showAudioSourceDropdown: boolean
   [id: string]: unknown
 }
 
@@ -106,7 +109,7 @@ export default class Audio<M extends Meta, B extends Body> extends UIPlugin<
   }
 
   // eslint-disable-next-line consistent-return
-  #start = (options?: { deviceId?: number }): Promise<never> | void => {
+  #start = (options?: { deviceId?: string }): Promise<never> | void => {
     if (!this.#supportsUserMedia) {
       return Promise.reject(new Error('Microphone access not supported'))
     }
@@ -329,7 +332,7 @@ export default class Audio<M extends Meta, B extends Body> extends UIPlugin<
     return Promise.resolve(file)
   }
 
-  #changeSource = (deviceId?: number): void => {
+  #changeSource = (deviceId?: string): void => {
     this.#stop()
     this.#start({ deviceId })
   }
@@ -363,6 +366,8 @@ export default class Audio<M extends Meta, B extends Body> extends UIPlugin<
       <RecordingScreen
         // eslint-disable-next-line react/jsx-props-no-spreading
         {...audioState}
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore TODO: remove unused
         audioActive={this.#audioActive}
         onChangeSource={this.#changeSource}
         onStartRecording={this.#startRecording}
