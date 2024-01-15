@@ -1,0 +1,20 @@
+{
+  "extends": "../../../tsconfig.shared",
+  "compilerOptions": {
+    "noImplicitAny": false,
+    "outDir": "./lib",
+    "paths": {
+      "@uppy/utils/lib/*": ["../utils/src/*"]
+    },
+    "resolveJsonModule": false,
+    "rootDir": "./src",
+    "skipLibCheck": true
+  },
+  "include": ["./src/**/*.*"],
+  "exclude": ["./src/**/*.test.ts"],
+  "references": [
+    {
+      "path": "../utils/tsconfig.build.json"
+    }
+  ]
+}
