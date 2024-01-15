@@ -46,7 +46,7 @@ type FileRemoveReason = 'user' | 'cancel-all'
 
 type LogLevel = 'info' | 'warning' | 'error' | 'success'
 
-type UnknownPlugin<M extends Meta, B extends Body> = InstanceType<
+export type UnknownPlugin<M extends Meta, B extends Body> = InstanceType<
   typeof BasePlugin<any, M, B> | typeof UIPlugin<any, M, B>
 >
 
@@ -110,6 +110,7 @@ export interface State<M extends Meta, B extends Body>
   }>
   plugins: Plugins
   totalProgress: number
+  companion?: Record<string, string>
 }
 
 export interface UppyOptions<M extends Meta, B extends Body> {
@@ -211,7 +212,7 @@ type ErrorCallback<M extends Meta, B extends Body> = (
 type UploadErrorCallback<M extends Meta, B extends Body> = (
   file: UppyFile<M, B> | undefined,
   error: { message: string; details?: string },
-  response: UppyFile<M, B>['response'] | undefined,
+  response?: UppyFile<M, B>['response'] | undefined,
 ) => void
 type UploadStalledCallback<M extends Meta, B extends Body> = (
   error: { message: string; details?: string },

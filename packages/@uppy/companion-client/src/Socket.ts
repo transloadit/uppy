@@ -1,15 +1,24 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore no types
 import ee from 'namespace-emitter'
 
+type Opts = {
+  autoOpen?: boolean
+  target: string
+}
+
 export default class UppySocket {
-  #queued = []
+  #queued: Array<{ action: string; payload: unknown }> = []
 
   #emitter = ee()
 
   #isOpen = false
 
-  #socket
+  #socket: WebSocket | null
 
-  constructor (opts) {
+  opts: Opts
+
+  constructor(opts: Opts) {
     this.opts = opts
 
     if (!opts || opts.autoOpen !== false) {
@@ -17,13 +26,22 @@ export default class UppySocket {
     }
   }
 
-  get isOpen () { return this.#isOpen }
+  get isOpen(): boolean {
+    return this.#isOpen
+  }
 
-  [Symbol.for('uppy test: getSocket')] () { return this.#socket }
+  [Symbol.for('uppy test: getSocket')](): WebSocket | null {
+    return this.#socket
+  }
 
-  [Symbol.for('uppy test: getQueued')] () { return this.#queued }
+  [Symbol.for('uppy test: getQueued')](): Array<{
+    action: string
+    payload: unknown
+  }> {
+    return this.#queued
+  }
 
-  open () {
+  open(): void {
     if (this.#socket != null) return
 
     this.#socket = new WebSocket(this.opts.target)
@@ -33,7 +51,8 @@ export default class UppySocket {
 
       while (this.#queued.length > 0 && this.#isOpen) {
         const first = this.#queued.shift()
-        this.send(first.action, first.payload)
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        this.send(first!.action, first!.payload)
       }
     }
 
@@ -45,11 +64,11 @@ export default class UppySocket {
     this.#socket.onmessage = this.#handleMessage
   }
 
-  close () {
+  close(): void {
     this.#socket?.close()
   }
 
-  send (action, payload) {
+  send(action: string, payload: unknown): void {
     // attach uuid
 
     if (!this.#isOpen) {
@@ -57,25 +76,27 @@ export default class UppySocket {
       return
     }
 
-    this.#socket.send(JSON.stringify({
-      action,
-      payload,
-    }))
+    this.#socket?.send(
+      JSON.stringify({
+        action,
+        payload,
+      }),
+    )
   }
 
-  on (action, handler) {
+  on(action: string, handler: () => void): void {
     this.#emitter.on(action, handler)
   }
 
-  emit (action, payload) {
+  emit(action: string, payload: unknown): void {
     this.#emitter.emit(action, payload)
   }
 
-  once (action, handler) {
+  once(action: string, handler: () => void): void {
     this.#emitter.once(action, handler)
   }
 
-  #handleMessage = (e) => {
+  #handleMessage = (e: MessageEvent<any>) => {
     try {
       const message = JSON.parse(e.data)
       this.emit(message.action, message.payload)
