@@ -9290,8 +9290,6 @@ __metadata:
     namespace-emitter: ^2.0.1
     p-retry: ^6.1.0
     vitest: ^0.34.5
-  peerDependencies:
-    "@uppy/core": "workspace:^"
   languageName: unknown
   linkType: soft
 
