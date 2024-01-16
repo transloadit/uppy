@@ -1,6 +1,7 @@
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import type { State, Uppy } from '@uppy/core/src/Uppy.ts'
 import type { FileProcessingInfo } from '@uppy/utils/lib/FileProgress'
+import type { I18n } from '@uppy/utils/lib/Translator'
 import { h } from 'preact'
 import classNames from 'classnames'
 import prettierBytes from '@transloadit/prettier-bytes'
@@ -15,7 +16,7 @@ interface UploadBtnProps<M extends Meta, B extends Body> {
   newFiles: number
   isUploadStarted: boolean
   recoveredState: null | State<M, B>
-  i18n: Uppy<M, B>['i18n']
+  i18n: I18n
   uploadState: string
   isSomeGhost: boolean
   startUpload: () => void
@@ -65,7 +66,7 @@ function UploadBtn<M extends Meta, B extends Body>(
 }
 
 interface RetryBtnProps<M extends Meta, B extends Body> {
-  i18n: Uppy<M, B>['i18n']
+  i18n: I18n
   uppy: Uppy<M, B>
 }
 
@@ -103,7 +104,7 @@ function RetryBtn<M extends Meta, B extends Body>(
 }
 
 interface CancelBtnProps<M extends Meta, B extends Body> {
-  i18n: Uppy<M, B>['i18n']
+  i18n: I18n
   uppy: Uppy<M, B>
 }
 
@@ -143,7 +144,7 @@ function CancelBtn<M extends Meta, B extends Body>(
 }
 
 interface PauseResumeButtonProps<M extends Meta, B extends Body> {
-  i18n: Uppy<M, B>['i18n']
+  i18n: I18n
   uppy: Uppy<M, B>
   isAllPaused: boolean
   isAllComplete: boolean
@@ -206,14 +207,12 @@ function PauseResumeButton<M extends Meta, B extends Body>(
   )
 }
 
-interface DoneBtnProps<M extends Meta, B extends Body> {
-  i18n: Uppy<M, B>['i18n']
+interface DoneBtnProps {
+  i18n: I18n
   doneButtonHandler: (() => void) | null
 }
 
-function DoneBtn<M extends Meta, B extends Body>(
-  props: DoneBtnProps<M, B>,
-): JSX.Element {
+function DoneBtn(props: DoneBtnProps): JSX.Element {
   const { i18n, doneButtonHandler } = props
 
   return (
@@ -264,8 +263,8 @@ function ProgressBarProcessing(props: ProgressBarProcessingProps): JSX.Element {
   )
 }
 
-interface ProgressDetailsProps<M extends Meta, B extends Body> {
-  i18n: Uppy<M, B>['i18n']
+interface ProgressDetailsProps {
+  i18n: I18n
   numUploads: number
   complete: number
   totalUploadedSize: number
@@ -273,9 +272,7 @@ interface ProgressDetailsProps<M extends Meta, B extends Body> {
   totalETA: number
 }
 
-function ProgressDetails<M extends Meta, B extends Body>(
-  props: ProgressDetailsProps<M, B>,
-): JSX.Element {
+function ProgressDetails(props: ProgressDetailsProps): JSX.Element {
   const { numUploads, complete, totalUploadedSize, totalSize, totalETA, i18n } =
     props
 
@@ -310,15 +307,13 @@ function ProgressDetails<M extends Meta, B extends Body>(
   )
 }
 
-interface FileUploadCountProps<M extends Meta, B extends Body> {
-  i18n: Uppy<M, B>['i18n']
+interface FileUploadCountProps {
+  i18n: I18n
   complete: number
   numUploads: number
 }
 
-function FileUploadCount<M extends Meta, B extends Body>(
-  props: FileUploadCountProps<M, B>,
-): JSX.Element {
+function FileUploadCount(props: FileUploadCountProps): JSX.Element {
   const { i18n, complete, numUploads } = props
 
   return (
@@ -328,15 +323,13 @@ function FileUploadCount<M extends Meta, B extends Body>(
   )
 }
 
-interface UploadNewlyAddedFilesProps<M extends Meta, B extends Body> {
-  i18n: Uppy<M, B>['i18n']
+interface UploadNewlyAddedFilesProps {
+  i18n: I18n
   newFiles: number
   startUpload: () => void
 }
 
-function UploadNewlyAddedFiles<M extends Meta, B extends Body>(
-  props: UploadNewlyAddedFilesProps<M, B>,
-): JSX.Element {
+function UploadNewlyAddedFiles(props: UploadNewlyAddedFilesProps): JSX.Element {
   const { i18n, newFiles, startUpload } = props
   const uploadBtnClassNames = classNames(
     'uppy-u-reset',
@@ -362,11 +355,11 @@ function UploadNewlyAddedFiles<M extends Meta, B extends Body>(
   )
 }
 
-interface ProgressBarUploadingProps<M extends Meta, B extends Body> {
-  i18n: Uppy<M, B>['i18n']
+interface ProgressBarUploadingProps {
+  i18n: I18n
   supportsUploadProgress: boolean
   totalProgress: number
-  showProgressDetails?: boolean
+  showProgressDetails: boolean | undefined
   isUploadStarted: boolean
   isAllComplete: boolean
   isAllPaused: boolean
@@ -379,8 +372,8 @@ interface ProgressBarUploadingProps<M extends Meta, B extends Body> {
   startUpload: () => void
 }
 
-function ProgressBarUploading<M extends Meta, B extends Body>(
-  props: ProgressBarUploadingProps<M, B>,
+function ProgressBarUploading(
+  props: ProgressBarUploadingProps,
 ): JSX.Element | null {
   const {
     i18n,
@@ -454,17 +447,11 @@ function ProgressBarUploading<M extends Meta, B extends Body>(
   )
 }
 
-ProgressBarUploading.defaultProps = {
-  showProgressDetails: false,
+interface ProgressBarCompleteProps {
+  i18n: I18n
 }
 
-interface ProgressBarCompleteProps<M extends Meta, B extends Body> {
-  i18n: Uppy<M, B>['i18n']
-}
-
-function ProgressBarComplete<M extends Meta, B extends Body>(
-  props: ProgressBarCompleteProps<M, B>,
-): JSX.Element {
+function ProgressBarComplete(props: ProgressBarCompleteProps): JSX.Element {
   const { i18n } = props
 
   return (
@@ -492,16 +479,14 @@ function ProgressBarComplete<M extends Meta, B extends Body>(
   )
 }
 
-interface ProgressBarErrorProps<M extends Meta, B extends Body> {
-  i18n: Uppy<M, B>['i18n']
+interface ProgressBarErrorProps {
+  i18n: I18n
   error: any
   complete: number
   numUploads: number
 }
 
-function ProgressBarError<M extends Meta, B extends Body>(
-  props: ProgressBarErrorProps<M, B>,
-): JSX.Element {
+function ProgressBarError(props: ProgressBarErrorProps): JSX.Element {
   const { error, i18n, complete, numUploads } = props
 
   function displayErrorAlert(): void {

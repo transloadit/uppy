@@ -1,5 +1,5 @@
 import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
-import type BasePlugin from '@uppy/core/src/BasePlugin.ts'
+import type { I18n } from '@uppy/utils/lib/Translator'
 import type { Uppy, State } from '@uppy/core/src/Uppy.ts'
 import { h } from 'preact'
 import classNames from 'classnames'
@@ -39,7 +39,7 @@ export interface StatusBarUIProps<M extends Meta, B extends Body> {
   hideCancelButton?: boolean
   hideRetryButton?: boolean
   recoveredState: null | State<M, B>
-  uploadState: typeof statusBarStates[keyof typeof statusBarStates]
+  uploadState: (typeof statusBarStates)[keyof typeof statusBarStates]
   totalProgress: number
   files: Record<string, UppyFile<M, B>>
   supportsUploadProgress: boolean
@@ -47,7 +47,7 @@ export interface StatusBarUIProps<M extends Meta, B extends Body> {
   isSomeGhost: boolean
   doneButtonHandler?: (() => void) | null
   isUploadStarted: boolean
-  i18n: BasePlugin<any, M, B>['i18n']
+  i18n: I18n
   startUpload: () => void
   uppy: Uppy<M, B>
   isAllComplete: boolean
