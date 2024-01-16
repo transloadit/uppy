@@ -4,13 +4,18 @@
     "emitDeclarationOnly": false,
     "noEmit": true,
     "paths": {
-      "@uppy/utils/lib/*": ["../utils/src/*"]
+      "@uppy/utils/lib/*": ["../utils/src/*"],
+      "@uppy/core": ["../core/src/index.js"],
+      "@uppy/core/lib/*": ["../core/src/*"]
     }
   },
   "include": ["./package.json", "./src/**/*.*"],
   "references": [
     {
       "path": "../utils/tsconfig.build.json"
+    },
+    {
+      "path": "../core/tsconfig.build.json"
     }
   ]
 }

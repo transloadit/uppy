@@ -1,7 +1,5 @@
-'use strict'
-
-import type { Uppy } from '@uppy/core'
 import { BasePlugin } from '@uppy/core'
+import type { Uppy } from '@uppy/core'
 import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
 import RequestClient, {
   authErrorStatusCode,
@@ -9,16 +7,7 @@ import RequestClient, {
 } from './RequestClient.ts'
 import * as tokenStorage from './tokenStorage.ts'
 
-class ProviderPlugin<M extends Meta, B extends Body> extends BasePlugin<
-  any,
-  M,
-  B
-> {
-  files: UppyFile<M, B>[]
-
-  storage: typeof tokenStorage
-}
-
+// TODO: remove deprecated options in next major release
 export type Opts = {
   /** @deprecated */
   serverUrl?: string
@@ -31,6 +20,16 @@ export type Opts = {
   name?: string
   supportsRefreshToken?: boolean
   provider: string
+}
+
+class ProviderPlugin<M extends Meta, B extends Body> extends BasePlugin<
+  Opts,
+  M,
+  B
+> {
+  files: UppyFile<M, B>[]
+
+  storage: typeof tokenStorage
 }
 
 const getName = (id: string) => {
@@ -400,7 +399,7 @@ export default class Provider<
   }
 
   static initPlugin(
-    plugin: ProviderPlugin<any, any>,
+    plugin: ProviderPlugin<any, any>, // any because static methods cannot use class generics
     opts: Opts,
     defaultOpts: Record<string, unknown>,
   ): void {
