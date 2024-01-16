@@ -1,34 +1,86 @@
-function isFunction (v) {
+// eslint-disable-next-line @typescript-eslint/ban-types
+function isFunction(v: any): v is Function {
   return typeof v === 'function'
 }
 
-function result (v) {
+function result<T>(v: T): T extends (...args: any) => any ? ReturnType<T> : T {
   return isFunction(v) ? v() : v
+}
+
+type MaybeFunction<T> = T | (() => T)
+
+interface AudioOscilloscopeOptions {
+  canvas?: {
+    width?: number
+    height?: number
+  }
+  canvasContext?: {
+    width?: MaybeFunction<number>
+    height?: MaybeFunction<number>
+    lineWidth?: MaybeFunction<number>
+    fillStyle?: MaybeFunction<string>
+    strokeStyle?: MaybeFunction<string>
+  }
+
+  // eslint-disable-next-line no-use-before-define
+  onDrawFrame?: (oscilloscope: AudioOscilloscope) => void
 }
 
 /* Audio Oscilloscope
   https://github.com/miguelmota/audio-oscilloscope
 */
 export default class AudioOscilloscope {
-  constructor (canvas, options = {}) {
-    const canvasOptions = options.canvas || {}
-    const canvasContextOptions = options.canvasContext || {}
+  private canvas: HTMLCanvasElement
+
+  private canvasContext: CanvasRenderingContext2D
+
+  private width: number
+
+  private height: number
+
+  private analyser: null | AnalyserNode
+
+  private bufferLength: number
+
+  private dataArray: Uint8Array
+
+  // eslint-disable-next-line no-use-before-define
+  private onDrawFrame: (oscilloscope: AudioOscilloscope) => void
+
+  private streamSource?: MediaStreamAudioSourceNode
+
+  private audioContext: BaseAudioContext
+
+  public source: AudioBufferSourceNode
+
+  constructor(
+    canvas: HTMLCanvasElement,
+    options: AudioOscilloscopeOptions = {},
+  ) {
+    const canvasOptions =
+      options.canvas || ({} as NonNullable<AudioOscilloscopeOptions['canvas']>)
+    const canvasContextOptions =
+      options.canvasContext ||
+      ({} as NonNullable<AudioOscilloscopeOptions['canvasContext']>)
     this.analyser = null
     this.bufferLength = 0
-    this.dataArray = []
     this.canvas = canvas
     this.width = result(canvasOptions.width) || this.canvas.width
     this.height = result(canvasOptions.height) || this.canvas.height
     this.canvas.width = this.width
     this.canvas.height = this.height
-    this.canvasContext = this.canvas.getContext('2d')
-    this.canvasContext.fillStyle = result(canvasContextOptions.fillStyle) || 'rgb(255, 255, 255)'
-    this.canvasContext.strokeStyle = result(canvasContextOptions.strokeStyle) || 'rgb(0, 0, 0)'
+    this.canvasContext = this.canvas.getContext('2d')!
+    this.canvasContext.fillStyle =
+      result(canvasContextOptions.fillStyle) || 'rgb(255, 255, 255)'
+    this.canvasContext.strokeStyle =
+      result(canvasContextOptions.strokeStyle) || 'rgb(0, 0, 0)'
     this.canvasContext.lineWidth = result(canvasContextOptions.lineWidth) || 1
-    this.onDrawFrame = isFunction(options.onDrawFrame) ? options.onDrawFrame : () => {}
+    this.onDrawFrame = isFunction(options.onDrawFrame)
+      ? options.onDrawFrame
+      : () => {} // eslint-disable-line @typescript-eslint/no-empty-function
   }
 
-  addSource (streamSource) {
+  addSource(streamSource: MediaStreamAudioSourceNode): void {
     this.streamSource = streamSource
     this.audioContext = this.streamSource.context
     this.analyser = this.audioContext.createAnalyser()
@@ -40,7 +92,7 @@ export default class AudioOscilloscope {
     this.streamSource.connect(this.analyser)
   }
 
-  draw () {
+  draw(): void {
     const { analyser, dataArray, bufferLength } = this
     const ctx = this.canvasContext
     const w = this.width
