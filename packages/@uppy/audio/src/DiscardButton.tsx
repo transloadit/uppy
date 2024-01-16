@@ -1,9 +1,9 @@
 import { h } from 'preact'
-import type { Uppy } from '@uppy/core'
+import type { I18n } from '@uppy/utils/lib/Translator'
 
 interface DiscardButtonProps {
   onDiscard: () => void
-  i18n: Uppy<any, any>['i18n']
+  i18n: I18n
 }
 
 function DiscardButton({ onDiscard, i18n }: DiscardButtonProps): JSX.Element {

@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/media-has-caption */
 import { h } from 'preact'
 import { useEffect, useRef, type MutableRef } from 'preact/hooks'
-import type { Uppy } from '@uppy/core/lib/Uppy'
+import type { I18n } from '@uppy/utils/lib/Translator'
 import RecordButton from './RecordButton.tsx'
 import RecordingLength from './RecordingLength.tsx'
 import AudioSourceSelect, {
@@ -18,7 +18,7 @@ interface RecordingScreenProps extends AudioSourceSelectProps {
   supportsRecording: boolean
   showAudioSourceDropdown: boolean
   onSubmit: () => void
-  i18n: Uppy<any, any>['i18n']
+  i18n: I18n
   onStartRecording: () => void
   onStopRecording: () => void
   onStop: () => void
