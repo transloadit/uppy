@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/media-has-caption */
 import { h } from 'preact'
-import { useEffect, useRef } from 'preact/hooks'
+import { useEffect, useRef, type MutableRef } from 'preact/hooks'
 import type { Uppy } from '@uppy/core/lib/Uppy'
 import RecordButton from './RecordButton.tsx'
 import RecordingLength from './RecordingLength.tsx'
@@ -45,8 +45,12 @@ export default function RecordingScreen(
     recordingLengthSeconds,
   } = props
 
-  const canvasEl = useRef(null)
-  const oscilloscope = useRef(null)
+  const canvasEl = useRef<HTMLCanvasElement>(
+    null,
+  ) as MutableRef<HTMLCanvasElement>
+  const oscilloscope = useRef<AudioOscilloscope>(
+    null,
+  ) as MutableRef<AudioOscilloscope | null>
 
   // componentDidMount / componentDidUnmount
   useEffect(() => {
