@@ -28,5 +28,8 @@
   },
   "devDependencies": {
     "vitest": "^0.34.5"
+  },
+  "peerDependencies": {
+    "@uppy/core": "workspace:^"
   }
 }
