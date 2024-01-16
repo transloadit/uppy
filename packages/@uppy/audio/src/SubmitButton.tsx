@@ -1,6 +1,12 @@
 import { h } from 'preact'
+import type { Uppy } from '@uppy/core'
 
-function SubmitButton ({ onSubmit, i18n }) {
+interface SubmitButtonProps {
+  onSubmit: () => void
+  i18n: Uppy<any, any>['i18n']
+}
+
+function SubmitButton({ onSubmit, i18n }: SubmitButtonProps): JSX.Element {
   return (
     <button
       className="uppy-u-reset uppy-c-btn uppy-Audio-button uppy-Audio-button--submit"
@@ -19,7 +25,11 @@ function SubmitButton ({ onSubmit, i18n }) {
         focusable="false"
         className="uppy-c-icon"
       >
-        <path fill="#fff" fillRule="nonzero" d="M10.66 0L12 1.31 4.136 9 0 4.956l1.34-1.31L4.136 6.38z" />
+        <path
+          fill="#fff"
+          fillRule="nonzero"
+          d="M10.66 0L12 1.31 4.136 9 0 4.956l1.34-1.31L4.136 6.38z"
+        />
       </svg>
     </button>
   )
