@@ -79,7 +79,7 @@ function RetryBtn<M extends Meta, B extends Body>(
       type="button"
       className="uppy-u-reset uppy-c-btn uppy-StatusBar-actionBtn uppy-StatusBar-actionBtn--retry"
       aria-label={i18n('retryUpload')}
-      onClick={(): Promise<any> =>
+      onClick={() =>
         uppy.retryAll().catch(() => {
           /* Error reported and handled via an event */
         })
