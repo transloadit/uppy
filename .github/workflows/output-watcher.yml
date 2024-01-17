@@ -14,7 +14,7 @@ env:
   YARN_ENABLE_GLOBAL_CACHE: false
 
 jobs:
-  build_previous_version:
+  compare_diff:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
@@ -49,10 +49,12 @@ jobs:
           CYPRESS_INSTALL_BINARY: 0
       - run: corepack yarn build:lib
       - name: Store output file
-        run: tar czf /tmp/previousVersion.tar.gz packages/@uppy/*/lib
+        run: tar cf /tmp/previousVersion.tar packages/@uppy/*/lib
       - name: Fetch source from the PR
         run: git checkout FETCH_HEAD -- packages
       - run: corepack yarn build:lib
+      - name: Store output file
+        run: tar cf /tmp/newVersion.tar packages/@uppy/*/lib
       - name: Setup git
         run: |
           git config --global user.email "actions@github.com"
@@ -60,11 +62,11 @@ jobs:
           git init /tmp/uppy
           echo '*.map' > /tmp/uppy/.gitignore
       - name: Extract previous version
-        run: cd /tmp/uppy && tar xzf /tmp/previousVersion.tar.gz
+        run: cd /tmp/uppy && tar xf /tmp/previousVersion.tar
       - name: Commit previous version
         run: cd /tmp/uppy && git add -A . && git commit -m 'previous version'
       - name: Extract new version
-        run: cp -R packages/@uppy/*/lib /tmp/uppy/.
+        run: cd /tmp/uppy && tar xf /tmp/newVersion.tar
       - name: Build diff
         id: diff
         run: |
