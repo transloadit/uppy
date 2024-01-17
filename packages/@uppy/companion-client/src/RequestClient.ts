@@ -67,9 +67,9 @@ class HttpError extends Error {
   }
 }
 
-async function handleJSONResponse<JSON extends Record<string, unknown>>(
+async function handleJSONResponse<ResJson extends Record<string, unknown>>(
   res: Response,
-): Promise<JSON> {
+): Promise<ResJson> {
   if (res.status === authErrorStatusCode) {
     throw new AuthError()
   }
