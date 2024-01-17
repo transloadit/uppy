@@ -1,8 +1,6 @@
 name: Compare JS output
 
 on:
-  push:
-    branches: [main]
   pull_request:
     # We want all branches so we configure types to be the GH default again
     types: [opened, synchronize, reopened]
@@ -11,6 +9,7 @@ on:
       - 'bin/*'
       - '.github/workflows/output-watcher.yml'
 
+permissions: read-all
 env:
   YARN_ENABLE_GLOBAL_CACHE: false
 
@@ -123,7 +122,7 @@ jobs:
         run: cd /tmp/uppy && git add -A . && git commit -m 'previous version'
       - name: Extract new version
         run: cd /tmp/uppy && tar xzf /tmp/newVersion.tar.gz/newVersion.tar.gz
-      - name: Build diff comment file
+      - name: Build diff
         id: diff
         run: |
           EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
