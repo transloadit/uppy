@@ -67,6 +67,7 @@ jobs:
         run: cd /tmp/uppy && git add -A . && git commit -m 'previous version'
       - name: Extract new version
         run: cd /tmp/uppy && tar xf /tmp/newVersion.tar
+      - run: cd /tmp/uppy && git --no-pager diff
       - name: Build diff
         id: diff
         run: |
