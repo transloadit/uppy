@@ -99,6 +99,8 @@ jobs:
           retention-days: 1
 
   compare:
+    permissions:
+      pull-requests: write
     needs: [build_new_version, build_previous_version]
     name: Compare output files for both versions
     runs-on: ubuntu-latest
@@ -121,16 +123,12 @@ jobs:
         run: cd /tmp/uppy && git add -A . && git commit -m 'previous version'
       - name: Extract new version
         run: cd /tmp/uppy && tar xzf /tmp/newVersion.tar.gz/newVersion.tar.gz
-      - name: Commit new version
-        run:
-          cd /tmp/uppy && git add -A . && git commit -m 'new version'
-          --allow-empty
       - name: Build diff comment file
         id: diff
         run: |
           EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
           echo "OUTPUT_DIFF<<$EOF" >> "$GITHUB_OUTPUT"
-          cd /tmp/uppy && git --no-pager diff HEAD^..HEAD >> "$GITHUB_OUTPUT"
+          cd /tmp/uppy && git --no-pager diff >> "$GITHUB_OUTPUT"
           echo "$EOF" >> "$GITHUB_OUTPUT"
       - name: Add/update comment
         uses: marocchino/sticky-pull-request-comment@v2
@@ -139,7 +137,7 @@ jobs:
             <details><summary>Diff output files</summary>
 
             ```diff
-            ${{ steps.diff.outputs.OUTPUT_DIFF }}
+            ${{ steps.diff.outputs.OUTPUT_DIFF || 'No diff' }}
             ```
 
             </details>
