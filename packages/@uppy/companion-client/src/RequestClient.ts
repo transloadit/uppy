@@ -32,7 +32,7 @@ export type Opts = {
 }
 
 export type RequestOptions =
-  | boolean
+  | boolean // TODO: remove this on the next major
   | {
       method?: string
       data?: Record<string, unknown>
@@ -117,7 +117,7 @@ export default class RequestClient<M extends Meta, B extends Body> {
     this.#companionHeaders = headers
   }
 
-  [Symbol.for('uppy test: getCompanionHeaders')](): CompanionHeaders {
+  private [Symbol.for('uppy test: getCompanionHeaders')](): CompanionHeaders {
     return this.#companionHeaders
   }
 

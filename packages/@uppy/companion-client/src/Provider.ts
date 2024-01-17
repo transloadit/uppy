@@ -176,8 +176,8 @@ export default class Provider<
     authFormData,
     query,
   }: {
-    query: Record<string, string>
     authFormData: unknown
+    query: Record<string, string>
   }): string {
     const params = new URLSearchParams({
       ...query,
