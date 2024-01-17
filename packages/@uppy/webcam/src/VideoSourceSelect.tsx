@@ -1,11 +1,22 @@
 import { h } from 'preact'
 
-export default ({ currentDeviceId, videoSources, onChangeVideoSource }) => {
+interface VideoSourceSelect {
+  currentDeviceId: string
+  videoSources: boolean[]
+  onChangeVideoSource: () => void
+}
+export default ({
+  currentDeviceId,
+  videoSources,
+  onChangeVideoSource,
+}: VideoSourceSelect): JSX.Element => {
   return (
     <div className="uppy-Webcam-videoSource">
       <select
         className="uppy-u-reset uppy-Webcam-videoSource-select"
-        onChange={(event) => { onChangeVideoSource(event.target.value) }}
+        onChange={(event) => {
+          onChangeVideoSource(event.target.value)
+        }}
       >
         {videoSources.map((videoSource) => (
           <option

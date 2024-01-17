@@ -1,11 +1,12 @@
 /* eslint-disable max-classes-per-file, class-methods-use-this */
 import { describe, expect, it } from 'vitest'
-import supportsMediaRecorder from './supportsMediaRecorder.js'
+import supportsMediaRecorder from './supportsMediaRecorder.ts'
 
 describe('supportsMediaRecorder', () => {
   it('should return true if MediaRecorder is supported', () => {
     globalThis.MediaRecorder = class MediaRecorder {
-      start () {}
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      start() {}
     }
     expect(supportsMediaRecorder()).toEqual(true)
   })
@@ -18,7 +19,8 @@ describe('supportsMediaRecorder', () => {
     expect(supportsMediaRecorder()).toEqual(false)
 
     globalThis.MediaRecorder = class MediaRecorder {
-      foo () {}
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      foo() {}
     }
     expect(supportsMediaRecorder()).toEqual(false)
   })
