@@ -8,7 +8,7 @@ async function get (req, res) {
   const { provider } = req.companion
 
   async function getSize () {
-    return provider.size({ id, token: accessToken, query: req.query })
+    return provider.size({ id, token: accessToken, providerUserSession, query: req.query })
   }
 
   async function download () {

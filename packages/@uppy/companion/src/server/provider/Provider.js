@@ -8,11 +8,12 @@ class Provider {
    *
    * @param {{providerName: string, allowLocalUrls: boolean, providerGrantConfig?: object}} options
    */
-  constructor ({ allowLocalUrls, providerGrantConfig }) {
+  constructor ({ allowLocalUrls, providerGrantConfig, providerOptions }) {
     // Some providers might need cookie auth for the thumbnails fetched via companion
     this.needsCookieAuth = false
     this.allowLocalUrls = allowLocalUrls
     this.providerGrantConfig = providerGrantConfig
+    this.providerOptions = providerOptions
     return this
   }
 

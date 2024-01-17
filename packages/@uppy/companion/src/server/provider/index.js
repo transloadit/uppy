@@ -9,6 +9,8 @@ const facebook = require('./facebook')
 const onedrive = require('./onedrive')
 const unsplash = require('./unsplash')
 const zoom = require('./zoom')
+const webdavSimpleAuth = require('./webdav/WebdavSimpleAuthProvider')
+const webdavOauth = require('./webdav/WebdavOauthProvider')
 const { getURLBuilder } = require('../helpers/utils')
 const logger = require('../logger')
 const { getCredentialsResolver } = require('./credentials')
@@ -51,7 +53,9 @@ module.exports.getProviderMiddleware = (providers, grantConfig) => {
         req.companion.providerGrantConfig = providerGrantConfig
       }
 
-      req.companion.provider = new ProviderClass({ providerName, providerGrantConfig, allowLocalUrls })
+      const providerOptions = req.companion.options.providerOptions[providerName] || {}
+
+      req.companion.provider = new ProviderClass({ providerName, providerGrantConfig, providerOptions, allowLocalUrls })
       req.companion.providerClass = ProviderClass
     } else {
       logger.warn('invalid provider options detected. Provider will not be loaded', 'provider.middleware.invalid', req.id)
@@ -66,7 +70,9 @@ module.exports.getProviderMiddleware = (providers, grantConfig) => {
  * @returns {Record<string, typeof Provider>}
  */
 module.exports.getDefaultProviders = () => {
-  const providers = { dropbox, box, drive, facebook, onedrive, zoom, instagram, unsplash }
+  const providers = {
+    dropbox, box, drive, facebook, onedrive, zoom, instagram, unsplash, webdavOauth, webdavSimpleAuth,
+  }
 
   return providers
 }
