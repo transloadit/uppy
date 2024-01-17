@@ -15,7 +15,7 @@ const speedFilterHalfLife = 2000
 const ETAFilterHalfLife = 2000
 
 function getUploadingState(
-  error: any,
+  error: unknown,
   isAllComplete: boolean,
   recoveredState: any,
   files: Record<string, UppyFile<any, any>>,
