@@ -329,7 +329,7 @@ export class Uppy<M extends Meta, B extends Body> {
    * Instantiate Uppy
    */
   constructor(opts?: UppyOptionsWithOptionalRestrictions<M, B>) {
-    this.defaultLocale = locale as any as Locale
+    this.defaultLocale = (locale as any as Locale) || {}
 
     const defaultOptions: UppyOptions<Record<string, unknown>, B> = {
       id: 'uppy',
