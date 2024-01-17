@@ -44,15 +44,15 @@ export default class Audio<M extends Meta, B extends Body> extends UIPlugin<
 
   private icon
 
-  #stream?: MediaStream | null
+  #stream: MediaStream | null = null
 
   #audioActive = false
 
-  #recordingChunks?: Blob[] | null
+  #recordingChunks: Blob[] | null = null
 
-  #recorder?: MediaRecorder | null
+  #recorder: MediaRecorder | null = null
 
-  #capturedMediaFile?: MinimalRequiredUppyFile<M, B> | null
+  #capturedMediaFile: MinimalRequiredUppyFile<M, B> | null = null
 
   #mediaDevices
 
