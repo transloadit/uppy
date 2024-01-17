@@ -30,11 +30,11 @@ export default class UppySocket {
     return this.#isOpen
   }
 
-  [Symbol.for('uppy test: getSocket')](): WebSocket | null {
+  private [Symbol.for('uppy test: getSocket')](): WebSocket | null {
     return this.#socket
   }
 
-  [Symbol.for('uppy test: getQueued')](): Array<{
+  private [Symbol.for('uppy test: getQueued')](): Array<{
     action: string
     payload: unknown
   }> {
