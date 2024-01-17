@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/media-has-caption */
 import { h } from 'preact'
-import { useEffect, useRef, type MutableRef } from 'preact/hooks'
+import { useEffect, useRef } from 'preact/hooks'
 import type { I18n } from '@uppy/utils/lib/Translator'
 import RecordButton from './RecordButton.tsx'
 import RecordingLength from './RecordingLength.tsx'
