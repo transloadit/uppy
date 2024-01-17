@@ -125,12 +125,21 @@ jobs:
         run:
           cd /tmp/uppy && git add -A . && git commit -m 'new version'
           --allow-empty
-      - name: Show diff
-        run: cd /tmp/uppy && git --no-pager diff HEAD^..HEAD
-      - run: cd /tmp/uppy && git format-patch HEAD^ -o /tmp/patch
-      - name: Upload artifact
-        if: success()
-        uses: actions/upload-artifact@v3
+      - name: Build diff comment file
+        id: diff
+        run: |
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          echo "OUTPUT_DIFF<<$EOF" >> "$GITHUB_OUTPUT"
+          cd /tmp/uppy && git --no-pager diff HEAD^..HEAD >> "$GITHUB_OUTPUT"
+          echo "$EOF" >> "$GITHUB_OUTPUT"
+      - name: Add/update comment
+        uses: marocchino/sticky-pull-request-comment@v2
         with:
-          name: diff
-          path: /tmp/patch
+          message: |
+            <details><summary>Diff output files</summary>
+
+            ```diff
+            ${{ steps.diff.outputs.OUTPUT_DIFF }}
+            ```
+
+            </details>
