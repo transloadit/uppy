@@ -45,12 +45,8 @@ export default function RecordingScreen(
     recordingLengthSeconds,
   } = props
 
-  const canvasEl = useRef<HTMLCanvasElement>(
-    null,
-  ) as MutableRef<HTMLCanvasElement>
-  const oscilloscope = useRef<AudioOscilloscope>(
-    null,
-  ) as MutableRef<AudioOscilloscope | null>
+  const canvasEl = useRef<HTMLCanvasElement>(null)
+  const oscilloscope = useRef<AudioOscilloscope | null>()
 
   // componentDidMount / componentDidUnmount
   useEffect(() => {
@@ -63,7 +59,7 @@ export default function RecordingScreen(
   // componentDidUpdate
   useEffect(() => {
     if (!recordedAudio) {
-      oscilloscope.current = new AudioOscilloscope(canvasEl.current, {
+      oscilloscope.current = new AudioOscilloscope(canvasEl.current!, {
         canvas: {
           width: 600,
           height: 600,
