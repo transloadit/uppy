@@ -28,7 +28,7 @@ export interface UppyFile<M extends Meta, B extends Body> {
     requestClientId: string
     url: string
   }
-  serverToken?: string
+  serverToken?: string | null
   size: number | null
   source?: string
   type?: string
