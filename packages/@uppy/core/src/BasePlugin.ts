@@ -25,6 +25,7 @@ export default class BasePlugin<
   Opts extends PluginOpts,
   M extends Meta,
   B extends Body,
+  PluginState extends Record<string, unknown> = Record<string, unknown>,
 > {
   uppy: Uppy<M, B>
 
@@ -47,12 +48,12 @@ export default class BasePlugin<
     this.opts = opts ?? {}
   }
 
-  getPluginState(): Record<string, unknown> {
+  getPluginState(): PluginState {
     const { plugins } = this.uppy.getState()
-    return plugins?.[this.id] || {}
+    return (plugins?.[this.id] || {}) as PluginState
   }
 
-  setPluginState(update: unknown): void {
+  setPluginState(update?: Partial<PluginState>): void {
     if (!update) return
     const { plugins } = this.uppy.getState()
 

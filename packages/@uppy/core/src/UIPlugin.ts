@@ -48,7 +48,8 @@ class UIPlugin<
   Opts extends UIPluginOptions,
   M extends Meta,
   B extends Body,
-> extends BasePlugin<Opts, M, B> {
+  PluginState extends Record<string, unknown> = Record<string, unknown>,
+> extends BasePlugin<Opts, M, B, PluginState> {
   #updateUI: (state: Partial<State<M, B>>) => void
 
   isTargetDOMEl: boolean
