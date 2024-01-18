@@ -76,7 +76,7 @@ export default class UppySocket {
       return
     }
 
-    this.#socket?.send(
+    this.#socket!.send(
       JSON.stringify({
         action,
         payload,
