@@ -1,4 +1,4 @@
-import type { Locale } from '@uppy/core'
+import type { Locale } from '@uppy/utils/lib/Translator'
 
 export default {
   strings: {

@@ -2,7 +2,9 @@ import { h } from 'preact'
 
 import { UIPlugin } from '@uppy/core'
 import type { Uppy, UIPluginOptions } from '@uppy/core'
-import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
+import type { Body, Meta } from '@uppy/utils/lib/UppyFile.ts'
+import type { PluginTarget } from '@uppy/core/lib/UIPlugin.ts'
+import type { MinimalRequiredUppyFile } from '@uppy/core/lib/Uppy.ts'
 import getFileTypeExtension from '@uppy/utils/lib/getFileTypeExtension'
 import mimeTypes from '@uppy/utils/lib/mimeTypes'
 import isMobile from 'is-mobile'
@@ -15,8 +17,6 @@ import PermissionsScreen from './PermissionsScreen.tsx'
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'
 import locale from './locale.ts'
-import type { MinimalRequiredUppyFile } from '@uppy/core/lib/Uppy.ts'
-import type { PluginTarget } from '@uppy/core/lib/UIPlugin.ts'
 
 /**
  * Normalize a MIME type or file extension into a MIME type.
@@ -58,8 +58,8 @@ function isModeAvailable<T>(modes: T[], mode: unknown): mode is T {
 interface WebcamOptions<M extends Meta, B extends Body>
   extends UIPluginOptions {
   target?: PluginTarget<M, B>
-  onBeforeSnapshot: () => void
-  countdown: boolean
+  onBeforeSnapshot: () => Promise<void>
+  countdown: number
   modes: Array<'video-audio' | 'video-only' | 'audio-only' | 'picture'>
   mirror: boolean
   showVideoSourceDropdown: boolean
@@ -80,6 +80,7 @@ interface WebcamState {
   recordingLengthSeconds: number
   videoSources: MediaDeviceInfo[]
   currentDeviceId: null | string
+  isRecording: boolean
   [key: string]: unknown
 }
 
@@ -110,7 +111,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
 
   private webcamActive
 
-  private stream: MediaStream
+  private stream: MediaStream | null
 
   private recorder: MediaRecorder | null
 
@@ -118,7 +119,9 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
 
   private recordingLengthTimer: ReturnType<typeof setInterval>
 
-  constructor(uppy: Uppy<M, B>, opts: Partial<WebcamOptions<M, B>>) {
+  private captureInProgress: boolean
+
+  constructor(uppy: Uppy<M, B>, opts?: Partial<WebcamOptions<M, B>>) {
     super(uppy, opts)
     this.mediaDevices = getMediaDevices()
     this.supportsUserMedia = !!this.mediaDevices
@@ -348,7 +351,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
     // only used if supportsMediaRecorder() returned true
     // eslint-disable-next-line compat/compat
     this.recorder = new MediaRecorder(
-      this.stream,
+      this.stream!,
       this.getMediaRecorderOptions(),
     )
     this.recordingChunks = []
@@ -487,8 +490,8 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
 
     if (this.recorder) {
       await new Promise((resolve) => {
-        this.recorder.addEventListener('stop', resolve, { once: true })
-        this.recorder.stop()
+        this.recorder!.addEventListener('stop', resolve, { once: true })
+        this.recorder!.stop()
 
         if (this.opts.showRecordingLength) {
           clearInterval(this.recordingLengthTimer)
@@ -508,8 +511,8 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
     })
   }
 
-  getVideoElement(): HTMLElement | null {
-    return this.el.querySelector('.uppy-Webcam-video')
+  getVideoElement(): HTMLVideoElement | null {
+    return this.el!.querySelector('.uppy-Webcam-video')
   }
 
   oneTwoThreeSmile(): Promise<void> {
@@ -536,7 +539,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
     })
   }
 
-  takeSnapshot(): Promise<void> {
+  takeSnapshot(): void {
     if (this.captureInProgress) return
 
     this.captureInProgress = true
@@ -570,7 +573,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
       )
   }
 
-  getImage(): Promise<UppyFile<M, B>> {
+  getImage(): Promise<MinimalRequiredUppyFile<M, B>> {
     const video = this.getVideoElement()
     if (!video) {
       return Promise.reject(
@@ -587,16 +590,16 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
     canvas.width = width
     canvas.height = height
     const ctx = canvas.getContext('2d')
-    ctx.drawImage(video, 0, 0)
+    ctx!.drawImage(video, 0, 0)
 
     const { restrictions } = this.uppy.opts
-    let preferredImageMimeTypes = []
+    let preferredImageMimeTypes: string[] = []
     if (this.opts.preferredImageMimeType) {
       preferredImageMimeTypes = [this.opts.preferredImageMimeType]
     } else if (restrictions.allowedFileTypes) {
       preferredImageMimeTypes = restrictions.allowedFileTypes
         .map(toMimeType)
-        .filter(isImageMimeType)
+        .filter(isImageMimeType) as string[]
     }
 
     const mimeType = preferredImageMimeTypes[0] || 'image/jpeg'
@@ -607,7 +610,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
       return {
         source: this.id,
         name,
-        data: new Blob([blob], { type: mimeType }),
+        data: new Blob([blob!], { type: mimeType }),
         type: mimeType,
       }
     })

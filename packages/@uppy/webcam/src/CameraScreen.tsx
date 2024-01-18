@@ -4,7 +4,9 @@ import { h, Component } from 'preact'
 import SnapshotButton from './SnapshotButton.tsx'
 import RecordButton from './RecordButton.tsx'
 import RecordingLength from './RecordingLength.tsx'
-import VideoSourceSelect from './VideoSourceSelect.tsx'
+import VideoSourceSelect, {
+  type VideoSourceSelectProps,
+} from './VideoSourceSelect.tsx'
 import SubmitButton from './SubmitButton.tsx'
 import DiscardButton from './DiscardButton.tsx'
 
@@ -12,16 +14,14 @@ function isModeAvailable<T>(modes: T[], mode: any): mode is T {
   return modes.includes(mode)
 }
 
-interface CameraScreenProps {
+interface CameraScreenProps extends VideoSourceSelectProps {
   onFocus: () => void
   onStop: () => void
 
-  src: string
-  recordedVideo: string
+  src: MediaStream | null
   recording: boolean
-  modes: boolean[]
+  modes: string[]
   supportsRecording: boolean
-  videoSources: boolean[]
   showVideoSourceDropdown: boolean
   showRecordingLength: boolean
   onSubmit: () => void
@@ -32,13 +32,12 @@ interface CameraScreenProps {
   onStopRecording: () => void
   onDiscardRecordedVideo: () => void
   recordingLengthSeconds: number
-
-  currentDeviceId: string
-  onChangeVideoSource: () => void
 }
 
 class CameraScreen extends Component<CameraScreenProps> {
   private videoElement: HTMLVideoElement
+
+  refs: any
 
   componentDidMount(): void {
     const { onFocus } = this.props
@@ -53,6 +52,7 @@ class CameraScreen extends Component<CameraScreenProps> {
   render(): JSX.Element {
     const {
       src,
+      // @ts-expect-error TODO: remove unused
       recordedVideo,
       recording,
       modes,

@@ -1,4 +1,4 @@
-export default function supportsMediaRecorder(): true {
+export default function supportsMediaRecorder(): boolean {
   /* eslint-disable compat/compat */
   return (
     typeof MediaRecorder === 'function' &&
