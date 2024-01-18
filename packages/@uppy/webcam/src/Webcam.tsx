@@ -15,6 +15,8 @@ import PermissionsScreen from './PermissionsScreen.tsx'
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'
 import locale from './locale.ts'
+import type { MinimalRequiredUppyFile } from '@uppy/core/lib/Uppy.ts'
+import type { PluginTarget } from '@uppy/core/lib/UIPlugin.ts'
 
 /**
  * Normalize a MIME type or file extension into a MIME type.
@@ -32,15 +34,15 @@ function toMimeType(fileType: string): string | undefined {
 /**
  * Is this MIME type a video?
  */
-function isVideoMimeType(mimeType: string): boolean {
-  return /^video\/[^*]+$/.test(mimeType)
+function isVideoMimeType(mimeType?: string): boolean {
+  return /^video\/[^*]+$/.test(mimeType!)
 }
 
 /**
  * Is this MIME type an image?
  */
-function isImageMimeType(mimeType: string): boolean {
-  return /^image\/[^*]+$/.test(mimeType)
+function isImageMimeType(mimeType?: string): boolean {
+  return /^image\/[^*]+$/.test(mimeType!)
 }
 
 function getMediaDevices() {
@@ -53,29 +55,42 @@ function isModeAvailable<T>(modes: T[], mode: unknown): mode is T {
   return modes.includes(mode as T)
 }
 
-interface WebcamOptions extends UIPluginOptions {
-  onBeforeSnapshot?: () => void
-  countdown?: boolean
-  modes?: Array<'video-audio' | 'video-only' | 'audio-only' | 'picture'>
-  mirror?: boolean
+interface WebcamOptions<M extends Meta, B extends Body>
+  extends UIPluginOptions {
+  target?: PluginTarget<M, B>
+  onBeforeSnapshot: () => void
+  countdown: boolean
+  modes: Array<'video-audio' | 'video-only' | 'audio-only' | 'picture'>
+  mirror: boolean
   showVideoSourceDropdown: boolean
   /** @deprecated */
-  facingMode?: MediaTrackConstraints['facingMode'] // @TODO: remove in the next major
-  title?: string
-  videoConstraints?: MediaTrackConstraints
-  showRecordingLength?: boolean
-  preferredImageMimeType?: string | null
-  preferredVideoMimeType?: string | null
-  mobileNativeCamera?: boolean
+  facingMode: MediaTrackConstraints['facingMode'] // @TODO: remove in the next major
+  title: string
+  videoConstraints: MediaTrackConstraints
+  showRecordingLength: boolean
+  preferredImageMimeType: string | null
+  preferredVideoMimeType: string | null
+  mobileNativeCamera: boolean
+}
+
+interface WebcamState {
+  hasCamera: boolean
+  cameraReady: boolean
+  cameraError: null
+  recordingLengthSeconds: number
+  videoSources: MediaDeviceInfo[]
+  currentDeviceId: null | string
+  [key: string]: unknown
 }
 
 /**
  * Webcam
  */
 export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
-  WebcamOptions,
+  WebcamOptions<M, B>,
   M,
-  B
+  B,
+  WebcamState
 > {
   static VERSION = packageJson.version
 
@@ -89,11 +104,21 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
 
   private protocol: 'http' | 'https'
 
-  private capturedMediaFile: UppyFile<M, B> | null
+  private capturedMediaFile: MinimalRequiredUppyFile<M, B> | null
 
   private icon: () => JSX.Element
 
-  constructor(uppy: Uppy<M, B>, opts: WebcamOptions) {
+  private webcamActive
+
+  private stream: MediaStream
+
+  private recorder: MediaRecorder | null
+
+  private recordingChunks: Blob[] | null
+
+  private recordingLengthTimer: ReturnType<typeof setInterval>
+
+  constructor(uppy: Uppy<M, B>, opts: Partial<WebcamOptions<M, B>>) {
     super(uppy, opts)
     this.mediaDevices = getMediaDevices()
     this.supportsUserMedia = !!this.mediaDevices
@@ -135,7 +160,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
       mobileNativeCamera: isMobile({ tablet: true }),
     }
 
-    this.opts = { ...defaultOptions, ...opts }
+    this.opts = { ...defaultOptions, ...opts } as WebcamOptions<M, B>
     this.i18nInit()
     this.title = this.i18n('pluginNameCamera')
 
@@ -173,7 +198,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
     })
   }
 
-  setOptions(newOpts): void {
+  setOptions(newOpts: Partial<WebcamOptions<M, B>>): void {
     super.setOptions({
       ...newOpts,
       videoConstraints: {
@@ -184,7 +209,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
     })
   }
 
-  hasCameraCheck(): boolean {
+  hasCameraCheck(): Promise<boolean> {
     if (!this.mediaDevices) {
       return Promise.resolve(false)
     }
@@ -198,7 +223,10 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
     return this.opts.modes.length === 1 && this.opts.modes[0] === 'audio-only'
   }
 
-  getConstraints(deviceId = null) {
+  getConstraints(deviceId: string | null = null): {
+    video: false | MediaTrackConstraints
+    audio: boolean
+  } {
     const acceptsAudio =
       this.opts.modes.indexOf('video-audio') !== -1 ||
       this.opts.modes.indexOf('audio-only') !== -1
@@ -212,7 +240,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
       ...(this.opts.videoConstraints || { facingMode: this.opts.facingMode }),
       // facingMode takes precedence over deviceId, and not needed
       // when specific device is selected
-      ...(deviceId ? { deviceId, facingMode: null } : {}),
+      ...(deviceId ? { deviceId, facingMode: null as any as undefined } : {}),
     }
 
     return {
@@ -222,7 +250,11 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
   }
 
   // eslint-disable-next-line consistent-return
-  start(options = null): Promise<void> {
+  start(
+    options: {
+      deviceId: string
+    } | null = null,
+  ): Promise<never> | void {
     if (!this.supportsUserMedia) {
       return Promise.reject(new Error('Webcam access not supported'))
     }
@@ -233,9 +265,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
       this.#enableMirror = true
     }
 
-    const constraints = this.getConstraints(
-      options && options.deviceId ? options.deviceId : null,
-    )
+    const constraints = this.getConstraints(options?.deviceId)
 
     // TODO: add a return and/or convert this to async/await
     this.hasCameraCheck().then((hasCamera) => {
@@ -283,14 +313,14 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
   }
 
   getMediaRecorderOptions(): { mimeType?: string } {
-    const options = {}
+    const options: { mimeType?: string } = {}
 
     // Try to use the `opts.preferredVideoMimeType` or one of the `allowedFileTypes` for the recording.
     // If the browser doesn't support it, we'll fall back to the browser default instead.
     // Safari doesn't have the `isTypeSupported` API.
     if (MediaRecorder.isTypeSupported) {
       const { restrictions } = this.uppy.opts
-      let preferredVideoMimeTypes = []
+      let preferredVideoMimeTypes: Array<string | undefined> = []
       if (this.opts.preferredVideoMimeType) {
         preferredVideoMimeTypes = [this.opts.preferredVideoMimeType]
       } else if (restrictions.allowedFileTypes) {
@@ -299,9 +329,9 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
           .filter(isVideoMimeType)
       }
 
-      const filterSupportedTypes = (candidateType) =>
-        MediaRecorder.isTypeSupported(candidateType) &&
-        getFileTypeExtension(candidateType)
+      const filterSupportedTypes = (candidateType?: string) =>
+        MediaRecorder.isTypeSupported(candidateType!) &&
+        getFileTypeExtension(candidateType!)
       const acceptableMimeTypes =
         preferredVideoMimeTypes.filter(filterSupportedTypes)
 
@@ -324,22 +354,22 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
     this.recordingChunks = []
     let stoppingBecauseOfMaxSize = false
     this.recorder.addEventListener('dataavailable', (event) => {
-      this.recordingChunks.push(event.data)
+      this.recordingChunks!.push(event.data)
 
       const { restrictions } = this.uppy.opts
       if (
-        this.recordingChunks.length > 1 &&
+        this.recordingChunks!.length > 1 &&
         restrictions.maxFileSize != null &&
         !stoppingBecauseOfMaxSize
       ) {
-        const totalSize = this.recordingChunks.reduce(
+        const totalSize = this.recordingChunks!.reduce(
           (acc, chunk) => acc + chunk.size,
           0,
         )
         // Exclude the initial chunk from the average size calculation because it is likely to be a very small outlier
         const averageChunkSize =
-          (totalSize - this.recordingChunks[0].size) /
-          (this.recordingChunks.length - 1)
+          (totalSize - this.recordingChunks![0].size) /
+          (this.recordingChunks!.length - 1)
         const expectedEndChunkSize = averageChunkSize * 3
         const maxSize = Math.max(
           0,
@@ -375,11 +405,11 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
   }
 
   stopRecording(): Promise<void> {
-    const stopped = new Promise((resolve) => {
-      this.recorder.addEventListener('stop', () => {
+    const stopped = new Promise<void>((resolve) => {
+      this.recorder!.addEventListener('stop', () => {
         resolve()
       })
-      this.recorder.stop()
+      this.recorder!.stop()
 
       if (this.opts.showRecordingLength) {
         // Stop the recordingLengthTimer if we are showing the recording length.
@@ -583,13 +613,13 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
     })
   }
 
-  getVideo(): Promise<UppyFile<M, B>> {
+  getVideo(): Promise<MinimalRequiredUppyFile<M, B>> {
     // Sometimes in iOS Safari, Blobs (especially the first Blob in the recordingChunks Array)
     // have empty 'type' attributes (e.g. '') so we need to find a Blob that has a defined 'type'
     // attribute in order to determine the correct MIME type.
-    const mimeType = this.recordingChunks.find(
+    const mimeType = this.recordingChunks!.find(
       (blob) => blob.type?.length > 0,
-    ).type
+    )!.type
 
     const fileExtension = getFileTypeExtension(mimeType)
 
@@ -602,7 +632,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
     }
 
     const name = `webcam-${Date.now()}.${fileExtension}`
-    const blob = new Blob(this.recordingChunks, { type: mimeType })
+    const blob = new Blob(this.recordingChunks!, { type: mimeType })
     const file = {
       source: this.id,
       name,
@@ -620,7 +650,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
     }, 1000)
   }
 
-  changeVideoSource(deviceId): void {
+  changeVideoSource(deviceId: string): void {
     this.stop()
     this.start({ deviceId })
   }
@@ -680,7 +710,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
 
     const { target } = this.opts
     if (mobileNativeCamera && target) {
-      this.getTargetPlugin(target)?.setOptions({
+      this.getTargetPlugin<M, B>(target)?.setOptions({
         showNativeVideoCameraButton:
           isModeAvailable(modes, 'video-only') ||
           isModeAvailable(modes, 'video-audio'),

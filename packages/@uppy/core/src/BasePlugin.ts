@@ -43,9 +43,9 @@ export default class BasePlugin<
 
   VERSION: string
 
-  constructor(uppy: Uppy<M, B>, opts: Opts) {
+  constructor(uppy: Uppy<M, B>, opts?: Partial<Opts>) {
     this.uppy = uppy
-    this.opts = opts ?? {}
+    this.opts = (opts ?? {}) as Opts
   }
 
   getPluginState(): PluginState {
