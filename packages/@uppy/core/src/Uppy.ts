@@ -61,7 +61,7 @@ type UnknownProviderPlugin<M extends Meta, B extends Body> = UnknownPlugin<
 }
 
 // The user facing type for UppyFile used in uppy.addFile() and uppy.setOptions()
-type MinimalRequiredUppyFile<M extends Meta, B extends Body> = Required<
+export type MinimalRequiredUppyFile<M extends Meta, B extends Body> = Required<
   Pick<UppyFile<M, B>, 'name' | 'data' | 'type' | 'source'>
 > &
   Partial<
