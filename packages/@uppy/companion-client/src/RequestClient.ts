@@ -422,7 +422,7 @@ export default class RequestClient<M extends Meta, B extends Body> {
 
           const onFatalError = (err: Error) => {
             // Remove the serverToken so that a new one will be created for the retry.
-            this.uppy.setFileState(file.id, { serverToken: undefined })
+            this.uppy.setFileState(file.id, { serverToken: null })
             socketAbortController?.abort?.()
             reject(err)
           }
