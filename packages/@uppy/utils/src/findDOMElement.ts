@@ -1,25 +1,19 @@
 import isDOMElement from './isDOMElement.ts'
 
-function findDOMElement(element: Element, context?: Document): Element
-function findDOMElement(
-  element: string | Node,
-  context?: Document,
-): Element | null
-function findDOMElement(element: any, context?: Document): null
-
-/**
- * Find a DOM element.
- */
-function findDOMElement(element: unknown, context = document): unknown {
+export default function findDOMElement<T>(
+  element: T,
+  context: Document = document,
+): T extends Element ? T : T extends Node | string ? Element | null : null {
   if (typeof element === 'string') {
+    // @ts-expect-error ????
     return context.querySelector(element)
   }
 
   if (isDOMElement(element)) {
+    // @ts-expect-error ????
     return element
   }
 
+  // @ts-expect-error ????
   return null
 }
-
-export default findDOMElement
