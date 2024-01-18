@@ -1,7 +1,8 @@
 import { h } from 'preact'
 
 import { UIPlugin } from '@uppy/core'
-import type { UppyFile } from '@uppy/core'
+import type { Uppy, UIPluginOptions } from '@uppy/core'
+import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
 import getFileTypeExtension from '@uppy/utils/lib/getFileTypeExtension'
 import mimeTypes from '@uppy/utils/lib/mimeTypes'
 import isMobile from 'is-mobile'
@@ -18,33 +19,27 @@ import locale from './locale.ts'
 /**
  * Normalize a MIME type or file extension into a MIME type.
  *
- * @param {string} fileType - MIME type or a file extension prefixed with `.`.
- * @returns {string|undefined} The MIME type or `undefined` if the fileType is an extension and is not known.
+ * @param fileType - MIME type or a file extension prefixed with `.`.
+ * @returns The MIME type or `undefined` if the fileType is an extension and is not known.
  */
-function toMimeType(fileType) {
+function toMimeType(fileType: string): string | undefined {
   if (fileType[0] === '.') {
-    return mimeTypes[fileType.slice(1)]
+    return mimeTypes[fileType.slice(1) as keyof typeof mimeTypes]
   }
   return fileType
 }
 
 /**
  * Is this MIME type a video?
- *
- * @param {string} mimeType - MIME type.
- * @returns {boolean}
  */
-function isVideoMimeType(mimeType) {
+function isVideoMimeType(mimeType: string): boolean {
   return /^video\/[^*]+$/.test(mimeType)
 }
 
 /**
  * Is this MIME type an image?
- *
- * @param {string} mimeType - MIME type.
- * @returns {boolean}
  */
-function isImageMimeType(mimeType) {
+function isImageMimeType(mimeType: string): boolean {
   return /^image\/[^*]+$/.test(mimeType)
 }
 
@@ -55,20 +50,50 @@ function getMediaDevices() {
 }
 
 function isModeAvailable<T>(modes: T[], mode: unknown): mode is T {
-  return modes.includes(mode)
+  return modes.includes(mode as T)
+}
+
+interface WebcamOptions extends UIPluginOptions {
+  onBeforeSnapshot?: () => void
+  countdown?: boolean
+  modes?: Array<'video-audio' | 'video-only' | 'audio-only' | 'picture'>
+  mirror?: boolean
+  showVideoSourceDropdown: boolean
+  /** @deprecated */
+  facingMode?: MediaTrackConstraints['facingMode'] // @TODO: remove in the next major
+  title?: string
+  videoConstraints?: MediaTrackConstraints
+  showRecordingLength?: boolean
+  preferredImageMimeType?: string | null
+  preferredVideoMimeType?: string | null
+  mobileNativeCamera?: boolean
 }
 
 /**
  * Webcam
  */
-export default class Webcam extends UIPlugin {
+export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
+  WebcamOptions,
+  M,
+  B
+> {
   static VERSION = packageJson.version
 
   // enableMirror is used to toggle mirroring, for instance when discarding the video,
   // while `opts.mirror` is used to remember the initial user setting
   #enableMirror
 
-  constructor(uppy, opts) {
+  private mediaDevices
+
+  private supportsUserMedia
+
+  private protocol: 'http' | 'https'
+
+  private capturedMediaFile: UppyFile<M, B> | null
+
+  private icon: () => JSX.Element
+
+  constructor(uppy: Uppy<M, B>, opts: WebcamOptions) {
     super(uppy, opts)
     this.mediaDevices = getMediaDevices()
     this.supportsUserMedia = !!this.mediaDevices
@@ -99,7 +124,7 @@ export default class Webcam extends UIPlugin {
     const defaultOptions = {
       onBeforeSnapshot: () => Promise.resolve(),
       countdown: false,
-      modes: ['video-audio', 'video-only', 'audio-only', 'picture'],
+      modes: ['video-audio', 'video-only', 'audio-only', 'picture'] as any,
       mirror: true,
       showVideoSourceDropdown: false,
       facingMode: 'user', // @TODO: remove in the next major
@@ -515,7 +540,7 @@ export default class Webcam extends UIPlugin {
       )
   }
 
-  getImage(): Promise<UppyFile> {
+  getImage(): Promise<UppyFile<M, B>> {
     const video = this.getVideoElement()
     if (!video) {
       return Promise.reject(
@@ -558,7 +583,7 @@ export default class Webcam extends UIPlugin {
     })
   }
 
-  getVideo(): Promise<UppyFile> {
+  getVideo(): Promise<UppyFile<M, B>> {
     // Sometimes in iOS Safari, Blobs (especially the first Blob in the recordingChunks Array)
     // have empty 'type' attributes (e.g. '') so we need to find a Blob that has a defined 'type'
     // attribute in order to determine the correct MIME type.
