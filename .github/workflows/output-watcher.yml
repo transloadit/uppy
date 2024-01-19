@@ -1,12 +1,17 @@
 name: Compare JS output
 
 on:
+  pull_request:
+    # We want all branches so we configure types to be the GH default again
+    types: [opened, synchronize, reopened]
+    paths:
+      - '.github/workflows/output-watcher.yml'
+      - 'bin/build-lib.js'
   pull_request_target:
     # We want all branches so we configure types to be the GH default again
     types: [opened, synchronize, reopened]
     paths:
       - 'packages/@uppy/*/src/**/*'
-      - '.github/workflows/output-watcher.yml'
 
 permissions:
   pull-requests: write
@@ -62,18 +67,24 @@ jobs:
           git config --global user.name "GitHub Actions"
           git init /tmp/uppy
           echo '*.map' > /tmp/uppy/.gitignore
+      - name: Install dformat
+        run: curl -fsSL https://dprint.dev/install.sh | sh
       - name: Extract previous version
         run: cd /tmp/uppy && tar xf /tmp/previousVersion.tar
+      - name: Format previous output code
+        run: cd /tmp/uppy && "$HOME/.dprint/bin/dprint" fmt **/*.js
       - name: Commit previous version
         run: cd /tmp/uppy && git add -A . && git commit -m 'previous version'
       - name: Extract new version
         run: cd /tmp/uppy && tar xf /tmp/newVersion.tar
+      - name: Format new output code
+        run: cd /tmp/uppy && "$HOME/.dprint/bin/dprint" fmt **/*.js
       - name: Build diff
         id: diff
         run: |
           EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
           echo "OUTPUT_DIFF<<$EOF" >> "$GITHUB_OUTPUT"
-          cd /tmp/uppy && git --no-pager diff --ignore-all-space -U0 | grep -Ev "^\+\s*$" >> "$GITHUB_OUTPUT"
+          cd /tmp/uppy && git --no-pager diff >> "$GITHUB_OUTPUT"
           echo "$EOF" >> "$GITHUB_OUTPUT"
       - name: Add/update comment
         uses: marocchino/sticky-pull-request-comment@v2
