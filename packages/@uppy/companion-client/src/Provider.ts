@@ -139,10 +139,8 @@ export default class Provider<
   }
 
   async #getAuthToken(): Promise<string | void> {
-    const plugin = this.uppy.getPlugin(this.pluginId)
-    if (!plugin) return undefined
     // @ts-expect-error don't think we can make core aware that _some_ plugins have a storage
-    return plugin.storage.getItem(this.tokenKey)
+    return this.uppy.getPlugin(this.pluginId).storage.getItem(this.tokenKey)
   }
 
   protected async removeAuthToken(): Promise<void> {
