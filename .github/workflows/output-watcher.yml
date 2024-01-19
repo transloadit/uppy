@@ -68,7 +68,9 @@ jobs:
           git init /tmp/uppy
           echo '*.map' > /tmp/uppy/.gitignore
       - name: Install dformat
-        run: curl -fsSL https://dprint.dev/install.sh | sh && cd /tmp/uppy && "$HOME/.dprint/bin/dprint" init
+        run: |
+          curl -fsSL https://dprint.dev/install.sh | sh
+          cd /tmp/uppy && echo '{"plugins":[]}' > dprint.json && "$HOME/.dprint/bin/dprint" config add typescript
       - name: Extract previous version
         run: cd /tmp/uppy && tar xf /tmp/previousVersion.tar
       - name: Format previous output code
