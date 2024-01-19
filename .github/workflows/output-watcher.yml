@@ -73,7 +73,7 @@ jobs:
         run: |
           EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
           echo "OUTPUT_DIFF<<$EOF" >> "$GITHUB_OUTPUT"
-          cd /tmp/uppy && git --no-pager diff --ignore-blank-lines >> "$GITHUB_OUTPUT"
+          cd /tmp/uppy && git --no-pager diff --ignore-all-space -U0 | grep -Ev "^\+\s*$" >> "$GITHUB_OUTPUT"
           echo "$EOF" >> "$GITHUB_OUTPUT"
       - name: Add/update comment
         uses: marocchino/sticky-pull-request-comment@v2
