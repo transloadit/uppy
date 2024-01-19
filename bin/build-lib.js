@@ -116,8 +116,14 @@ async function buildLib () {
     const isTSX = file.endsWith('.tsx')
     if (isTSX || file.endsWith('.ts')) { plugins.push(['@babel/plugin-transform-typescript', { disallowAmbiguousJSXLike: true, isTSX, jsxPragma: 'h' }]) }
 
-    // compact and no comments because https://github.com/transloadit/uppy/pull/4868#issuecomment-1897717779
-    const { code, map } = await babel.transformFileAsync(file, { sourceMaps: true, plugins, comments: false, compact: true })
+    const { code, map } = await babel.transformFileAsync(file, {
+      sourceMaps: true,
+      plugins,
+      // compact and no comments because https://github.com/transloadit/uppy/pull/4868#issuecomment-1897717779
+      comments: !process.env.DIFF_BUILDER,
+      compact: !!process.env.DIFF_BUILDER,
+      retainLines: !!process.env.DIFF_BUILDER,
+    })
     const [{ default: chalk }] = await Promise.all([
       import('chalk'),
       writeFile(libFile, code),
