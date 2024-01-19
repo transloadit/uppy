@@ -74,7 +74,7 @@ export default class StatusBar<M extends Meta, B extends Body> extends UIPlugin<
 
   #previousETA: number | null
 
-  constructor(uppy: Uppy<M, B>, opts: StatusBarOptions) {
+  constructor(uppy: Uppy<M, B>, opts?: Partial<StatusBarOptions>) {
     super(uppy, opts)
     this.id = this.opts.id || 'StatusBar'
     this.title = 'StatusBar'
