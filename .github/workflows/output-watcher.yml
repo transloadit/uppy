@@ -12,6 +12,7 @@ permissions:
   pull-requests: write
 env:
   YARN_ENABLE_GLOBAL_CACHE: false
+  DIFF_BUILDER: true
 
 jobs:
   compare_diff:
@@ -72,7 +73,7 @@ jobs:
         run: |
           EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
           echo "OUTPUT_DIFF<<$EOF" >> "$GITHUB_OUTPUT"
-          cd /tmp/uppy && git --no-pager diff >> "$GITHUB_OUTPUT"
+          cd /tmp/uppy && git --no-pager diff --ignore-blank-lines >> "$GITHUB_OUTPUT"
           echo "$EOF" >> "$GITHUB_OUTPUT"
       - name: Add/update comment
         uses: marocchino/sticky-pull-request-comment@v2
