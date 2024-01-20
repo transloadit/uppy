@@ -13,7 +13,7 @@
     "marked": "^4.0.18"
   },
   "devDependencies": {
-    "vite": "^4.0.0"
+    "vite": "^4.5.2"
   },
   "private": true,
   "scripts": {

@@ -13,7 +13,7 @@
     "autoprefixer": "^10.2.6",
     "postcss-dir-pseudo-class": "^6.0.0",
     "postcss-logical": "^5.0.0",
-    "vite": "^4.0.0"
+    "vite": "^4.5.2"
   },
   "private": true,
   "type": "module",
