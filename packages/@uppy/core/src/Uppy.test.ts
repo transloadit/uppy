@@ -7,8 +7,10 @@ import assert from 'node:assert'
 import fs from 'node:fs'
 import path from 'node:path'
 import prettierBytes from '@transloadit/prettier-bytes'
+import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import Core from './index.ts'
 import UIPlugin from './UIPlugin.ts'
+import BasePlugin from './BasePlugin.ts'
 import { debugLogger } from './loggers.ts'
 import AcquirerPlugin1 from './mocks/acquirerPlugin1.ts'
 import AcquirerPlugin2 from './mocks/acquirerPlugin2.ts'
@@ -59,6 +61,28 @@ describe('src/Core', () => {
         Object.keys(core[Symbol.for('uppy test: getPlugins')]('acquirer'))
           .length,
       ).toEqual(1)
+    })
+
+    it('should be able to .use() without passing generics again', () => {
+      type TestOpts = {
+        foo: string
+      }
+      class TestPlugin<M extends Meta, B extends Body> extends BasePlugin<
+        TestOpts,
+        M,
+        B
+      > {
+        foo: string
+
+        constructor(uppy: Core<M, B>, opts: TestOpts) {
+          super(uppy, opts)
+          this.foo = opts.foo
+        }
+      }
+      new Core().use(TestPlugin)
+      new Core().use(TestPlugin, { foo: '' })
+      // @ts-expect-error boolean not allowed
+      new Core().use(TestPlugin, { foo: false })
     })
 
     it('should prevent the same plugin from being added more than once', () => {
