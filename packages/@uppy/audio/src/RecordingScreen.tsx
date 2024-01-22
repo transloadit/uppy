@@ -16,7 +16,7 @@ interface RecordingScreenProps extends AudioSourceSelectProps {
   recordedAudio: string
   recording: boolean
   supportsRecording: boolean
-  showAudioSourceDropdown: boolean
+  showAudioSourceDropdown: boolean | undefined
   onSubmit: () => void
   i18n: I18n
   onStartRecording: () => void

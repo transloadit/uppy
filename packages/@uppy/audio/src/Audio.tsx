@@ -15,7 +15,7 @@ import packageJson from '../package.json'
 
 interface AudioOptions extends UIPluginOptions {
   target?: HTMLElement | string
-  showAudioSourceDropdown: boolean
+  showAudioSourceDropdown?: boolean
 }
 interface AudioState {
   audioReady: boolean
@@ -58,7 +58,7 @@ export default class Audio<M extends Meta, B extends Body> extends UIPlugin<
 
   #supportsUserMedia
 
-  constructor(uppy: Uppy<M, B>, opts: AudioOptions) {
+  constructor(uppy: Uppy<M, B>, opts?: AudioOptions) {
     super(uppy, opts)
     this.#mediaDevices = navigator.mediaDevices
     this.#supportsUserMedia = this.#mediaDevices != null
