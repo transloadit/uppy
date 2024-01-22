@@ -138,7 +138,7 @@ export default class ImageEditor<
   }
 
   save = (): void => {
-    const saveBlobCallback = (blob: Blob | null) => {
+    const saveBlobCallback: BlobCallback = (blob) => {
       const { currentImage } = this.getPluginState()
 
       this.uppy.setFileState(currentImage!.id, {
