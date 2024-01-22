@@ -1,16 +1,25 @@
+import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
+import type { Uppy, State } from '@uppy/core/src/Uppy.ts'
 import { UIPlugin } from '@uppy/core'
 import emaFilter from '@uppy/utils/lib/emaFilter'
 import getTextDirection from '@uppy/utils/lib/getTextDirection'
-import statusBarStates from './StatusBarStates.js'
-import StatusBarUI from './StatusBarUI.jsx'
-
+import statusBarStates from './StatusBarStates.ts'
+import StatusBarUI, { type StatusBarUIProps } from './StatusBarUI.tsx'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'
-import locale from './locale.js'
+import locale from './locale.ts'
+import type { StatusBarOptions } from './StatusBarOptions.ts'
 
 const speedFilterHalfLife = 2000
 const ETAFilterHalfLife = 2000
 
-function getUploadingState (error, isAllComplete, recoveredState, files) {
+function getUploadingState(
+  error: unknown,
+  isAllComplete: boolean,
+  recoveredState: any,
+  files: Record<string, UppyFile<any, any>>,
+): StatusBarUIProps<any, any>['uploadState'] {
   if (error) {
     return statusBarStates.STATE_ERROR
   }
@@ -23,7 +32,8 @@ function getUploadingState (error, isAllComplete, recoveredState, files) {
     return statusBarStates.STATE_WAITING
   }
 
-  let state = statusBarStates.STATE_WAITING
+  let state: StatusBarUIProps<any, any>['uploadState'] =
+    statusBarStates.STATE_WAITING
   const fileIDs = Object.keys(files)
   for (let i = 0; i < fileIDs.length; i++) {
     const { progress } = files[fileIDs[i]]
@@ -33,16 +43,12 @@ function getUploadingState (error, isAllComplete, recoveredState, files) {
     }
     // If files are being preprocessed AND postprocessed at this time, we show the
     // preprocess state. If any files are being uploaded we show uploading.
-    if (progress.preprocess && state !== statusBarStates.STATE_UPLOADING) {
+    if (progress.preprocess) {
       state = statusBarStates.STATE_PREPROCESSING
     }
     // If NO files are being preprocessed or uploaded right now, but some files are
     // being postprocessed, show the postprocess state.
-    if (
-      progress.postprocess
-      && state !== statusBarStates.STATE_UPLOADING
-      && state !== statusBarStates.STATE_PREPROCESSING
-    ) {
+    if (progress.postprocess && state !== statusBarStates.STATE_PREPROCESSING) {
       state = statusBarStates.STATE_POSTPROCESSING
     }
   }
@@ -53,18 +59,22 @@ function getUploadingState (error, isAllComplete, recoveredState, files) {
  * StatusBar: renders a status bar with upload/pause/resume/cancel/retry buttons,
  * progress percentage and time remaining.
  */
-export default class StatusBar extends UIPlugin {
+export default class StatusBar<M extends Meta, B extends Body> extends UIPlugin<
+  StatusBarOptions,
+  M,
+  B
+> {
   static VERSION = packageJson.version
 
-  #lastUpdateTime
+  #lastUpdateTime: ReturnType<typeof performance.now>
 
-  #previousUploadedBytes
+  #previousUploadedBytes: number | null
 
-  #previousSpeed
+  #previousSpeed: number | null
 
-  #previousETA
+  #previousETA: number | null
 
-  constructor (uppy, opts) {
+  constructor(uppy: Uppy<M, B>, opts?: Partial<StatusBarOptions>) {
     super(uppy, opts)
     this.id = this.opts.id || 'StatusBar'
     this.title = 'StatusBar'
@@ -92,7 +102,11 @@ export default class StatusBar extends UIPlugin {
     this.install = this.install.bind(this)
   }
 
-  #computeSmoothETA (totalBytes) {
+  #computeSmoothETA(totalBytes: {
+    uploaded: number
+    total: number
+    remaining: number
+  }): number {
     if (totalBytes.total === 0 || totalBytes.remaining === 0) {
       return 0
     }
@@ -104,7 +118,8 @@ export default class StatusBar extends UIPlugin {
       return Math.round((this.#previousETA ?? 0) / 100) / 10
     }
 
-    const uploadedBytesSinceLastTick = totalBytes.uploaded - this.#previousUploadedBytes
+    const uploadedBytesSinceLastTick =
+      totalBytes.uploaded - this.#previousUploadedBytes!
     this.#previousUploadedBytes = totalBytes.uploaded
 
     // uploadedBytesSinceLastTick can be negative in some cases (packet loss?)
@@ -113,29 +128,31 @@ export default class StatusBar extends UIPlugin {
       return Math.round((this.#previousETA ?? 0) / 100) / 10
     }
     const currentSpeed = uploadedBytesSinceLastTick / dt
-    const filteredSpeed = this.#previousSpeed == null
-      ? currentSpeed
-      : emaFilter(currentSpeed, this.#previousSpeed, speedFilterHalfLife, dt)
+    const filteredSpeed =
+      this.#previousSpeed == null
+        ? currentSpeed
+        : emaFilter(currentSpeed, this.#previousSpeed, speedFilterHalfLife, dt)
     this.#previousSpeed = filteredSpeed
     const instantETA = totalBytes.remaining / filteredSpeed
 
-    const updatedPreviousETA = Math.max(this.#previousETA - dt, 0)
-    const filteredETA = this.#previousETA == null
-      ? instantETA
-      : emaFilter(instantETA, updatedPreviousETA, ETAFilterHalfLife, dt)
+    const updatedPreviousETA = Math.max(this.#previousETA! - dt, 0)
+    const filteredETA =
+      this.#previousETA == null
+        ? instantETA
+        : emaFilter(instantETA, updatedPreviousETA, ETAFilterHalfLife, dt)
     this.#previousETA = filteredETA
     this.#lastUpdateTime = performance.now()
 
     return Math.round(filteredETA / 100) / 10
   }
 
-  startUpload = () => {
-    return this.uppy.upload().catch(() => {
+  startUpload = (): ReturnType<Uppy<M, B>['upload']> => {
+    return this.uppy.upload().catch((() => {
       // Error logged in Core
-    })
+    }) as () => undefined)
   }
 
-  render (state) {
+  render(state: State<M, B>): JSX.Element {
     const {
       capabilities,
       files,
@@ -161,9 +178,7 @@ export default class StatusBar extends UIPlugin {
     // If some state was recovered, we want to show Upload button/counter
     // for all the files, because in this case it’s not an Upload button,
     // but “Confirm Restore Button”
-    const newFilesOrRecovered = recoveredState
-      ? Object.values(files)
-      : newFiles
+    const newFilesOrRecovered = recoveredState ? Object.values(files) : newFiles
     const resumableUploads = !!capabilities.resumableUploads
     const supportsUploadProgress = capabilities.uploadProgress !== false
 
@@ -194,6 +209,7 @@ export default class StatusBar extends UIPlugin {
       totalUploadedSize,
       isAllComplete: false,
       isAllPaused,
+      // @ts-expect-error TODO: remove this in 4.x branch
       isAllErrored,
       isUploadStarted,
       isUploadInProgress,
@@ -216,27 +232,30 @@ export default class StatusBar extends UIPlugin {
       hidePauseResumeButton: this.opts.hidePauseResumeButton,
       hideCancelButton: this.opts.hideCancelButton,
       hideAfterFinish: this.opts.hideAfterFinish,
+      // ts-expect-error TODO: remove this in 4.x branch
       isTargetDOMEl: this.isTargetDOMEl,
     })
   }
 
-  onMount () {
+  onMount(): void {
     // Set the text direction if the page has not defined one.
     const element = this.el
-    const direction = getTextDirection(element)
+    const direction = getTextDirection(element!)
     if (!direction) {
-      element.dir = 'ltr'
+      element!.dir = 'ltr'
     }
   }
 
-  #onUploadStart = () => {
+  #onUploadStart = (): void => {
     const { recoveredState } = this.uppy.getState()
 
     this.#previousSpeed = null
     this.#previousETA = null
     if (recoveredState) {
-      this.#previousUploadedBytes = Object.values(recoveredState.files)
-        .reduce((pv, { progress }) => pv + progress.bytesUploaded, 0)
+      this.#previousUploadedBytes = Object.values(recoveredState.files).reduce(
+        (pv, { progress }) => pv + (progress.bytesUploaded as number),
+        0,
+      )
 
       // We don't set `#lastUpdateTime` at this point because the upload won't
       // actually resume until the user asks for it.
@@ -248,7 +267,7 @@ export default class StatusBar extends UIPlugin {
     this.#previousUploadedBytes = 0
   }
 
-  install () {
+  install(): void {
     const { target } = this.opts
     if (target) {
       this.mount(target, this)
@@ -258,11 +277,12 @@ export default class StatusBar extends UIPlugin {
     // To cover the use case where the status bar is installed while the upload
     // has started, we set `lastUpdateTime` right away.
     this.#lastUpdateTime = performance.now()
-    this.#previousUploadedBytes = this.uppy.getFiles()
-      .reduce((pv, file) => pv + file.progress.bytesUploaded, 0)
+    this.#previousUploadedBytes = this.uppy
+      .getFiles()
+      .reduce((pv, file) => pv + (file.progress.bytesUploaded as number), 0)
   }
 
-  uninstall () {
+  uninstall(): void {
     this.unmount()
     this.uppy.off('upload', this.#onUploadStart)
   }

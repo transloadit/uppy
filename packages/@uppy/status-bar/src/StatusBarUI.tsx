@@ -1,7 +1,10 @@
+import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
+import type { I18n } from '@uppy/utils/lib/Translator'
+import type { Uppy, State } from '@uppy/core/src/Uppy.ts'
 import { h } from 'preact'
 import classNames from 'classnames'
-import statusBarStates from './StatusBarStates.js'
-import calculateProcessingProgress from './calculateProcessingProgress.js'
+import statusBarStates from './StatusBarStates.ts'
+import calculateProcessingProgress from './calculateProcessingProgress.ts'
 
 import {
   UploadBtn,
@@ -13,7 +16,7 @@ import {
   ProgressBarError,
   ProgressBarUploading,
   ProgressBarComplete,
-} from './Components.jsx'
+} from './Components.tsx'
 
 const {
   STATE_ERROR,
@@ -24,8 +27,42 @@ const {
   STATE_COMPLETE,
 } = statusBarStates
 
+export interface StatusBarUIProps<M extends Meta, B extends Body> {
+  newFiles: number
+  allowNewUpload: boolean
+  isUploadInProgress: boolean
+  isAllPaused: boolean
+  resumableUploads: boolean
+  error: any
+  hideUploadButton?: boolean
+  hidePauseResumeButton?: boolean
+  hideCancelButton?: boolean
+  hideRetryButton?: boolean
+  recoveredState: null | State<M, B>
+  uploadState: (typeof statusBarStates)[keyof typeof statusBarStates]
+  totalProgress: number
+  files: Record<string, UppyFile<M, B>>
+  supportsUploadProgress: boolean
+  hideAfterFinish?: boolean
+  isSomeGhost: boolean
+  doneButtonHandler?: (() => void) | null
+  isUploadStarted: boolean
+  i18n: I18n
+  startUpload: () => void
+  uppy: Uppy<M, B>
+  isAllComplete: boolean
+  showProgressDetails?: boolean
+  numUploads: number
+  complete: number
+  totalSize: number
+  totalETA: number
+  totalUploadedSize: number
+}
+
 // TODO: rename the function to StatusBarUI on the next major.
-export default function StatusBar (props) {
+export default function StatusBar<M extends Meta, B extends Body>(
+  props: StatusBarUIProps<M, B>,
+): JSX.Element {
   const {
     newFiles,
     allowNewUpload,
@@ -58,7 +95,7 @@ export default function StatusBar (props) {
     totalUploadedSize,
   } = props
 
-  function getProgressValue () {
+  function getProgressValue(): number | null {
     switch (uploadState) {
       case STATE_POSTPROCESSING:
       case STATE_PREPROCESSING: {
@@ -83,7 +120,7 @@ export default function StatusBar (props) {
     }
   }
 
-  function getIsIndeterminate () {
+  function getIsIndeterminate(): boolean {
     switch (uploadState) {
       case STATE_POSTPROCESSING:
       case STATE_PREPROCESSING: {
@@ -101,7 +138,7 @@ export default function StatusBar (props) {
     }
   }
 
-  function getIsHidden () {
+  function getIsHidden(): boolean | undefined {
     if (recoveredState) {
       return false
     }
@@ -122,20 +159,23 @@ export default function StatusBar (props) {
 
   const width = progressValue ?? 100
 
-  const showUploadBtn = !error
-    && newFiles
-    && !isUploadInProgress
-    && !isAllPaused
-    && allowNewUpload
-    && !hideUploadButton
+  const showUploadBtn =
+    !error &&
+    newFiles &&
+    !isUploadInProgress &&
+    !isAllPaused &&
+    allowNewUpload &&
+    !hideUploadButton
 
-  const showCancelBtn = !hideCancelButton
-    && uploadState !== STATE_WAITING
-    && uploadState !== STATE_COMPLETE
+  const showCancelBtn =
+    !hideCancelButton &&
+    uploadState !== STATE_WAITING &&
+    uploadState !== STATE_COMPLETE
 
-  const showPauseResumeBtn = resumableUploads
-    && !hidePauseResumeButton
-    && uploadState === STATE_UPLOADING
+  const showPauseResumeBtn =
+    resumableUploads &&
+    !hidePauseResumeButton &&
+    uploadState === STATE_UPLOADING
 
   const showRetryBtn = error && !isAllComplete && !hideRetryButton
 
@@ -159,16 +199,20 @@ export default function StatusBar (props) {
         role="progressbar"
         aria-label={`${width}%`}
         aria-valuetext={`${width}%`}
-        aria-valuemin="0"
-        aria-valuemax="100"
-        aria-valuenow={progressValue}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-valuenow={progressValue!}
       />
 
-      {(() => {
+      {((): JSX.Element | null => {
         switch (uploadState) {
           case STATE_PREPROCESSING:
           case STATE_POSTPROCESSING:
-            return <ProgressBarProcessing progress={calculateProcessingProgress(files)} />
+            return (
+              <ProgressBarProcessing
+                progress={calculateProcessingProgress(files)}
+              />
+            )
           case STATE_COMPLETE:
             return <ProgressBarComplete i18n={i18n} />
           case STATE_ERROR:
@@ -237,4 +281,14 @@ export default function StatusBar (props) {
       </div>
     </div>
   )
+}
+
+StatusBar.defaultProps = {
+  doneButtonHandler: undefined,
+  hideAfterFinish: false,
+  hideCancelButton: false,
+  hidePauseResumeButton: false,
+  hideRetryButton: false,
+  hideUploadButton: undefined,
+  showProgressDetails: undefined,
 }
