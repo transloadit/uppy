@@ -269,13 +269,17 @@ export default class RequestClient<M extends Meta, B extends Body> {
           }
 
           const queueRequestSocketToken = getQueue().wrapPromiseFunction(
-            async (args: {
-              file: UppyFile<M, B>
-              postBody: Record<string, unknown>
-              signal: AbortSignal
-            }) => {
+            async (
+              ...args: [
+                {
+                  file: UppyFile<M, B>
+                  postBody: Record<string, unknown>
+                  signal: AbortSignal
+                },
+              ]
+            ) => {
               try {
-                return await this.#requestSocketToken(args)
+                return await this.#requestSocketToken(...args)
               } catch (outerErr) {
                 // throwing AbortError will cause p-retry to stop retrying
                 if (outerErr.isAuthError) throw new AbortError(outerErr)
