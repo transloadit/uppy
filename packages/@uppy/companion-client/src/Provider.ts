@@ -116,7 +116,7 @@ export default class Provider<
 
   onReceiveResponse(response: Response): Response {
     super.onReceiveResponse(response)
-    const plugin = this.getPlugin()
+    const plugin = this.#getPlugin()
     const oldAuthenticated = plugin.getPluginState().authenticated
     const authenticated = oldAuthenticated
       ? response.status !== authErrorStatusCode
@@ -126,19 +126,18 @@ export default class Provider<
   }
 
   async setAuthToken(token: string): Promise<void> {
-    return this.getPlugin().storage.setItem(this.tokenKey, token)
+    return this.#getPlugin().storage.setItem(this.tokenKey, token)
   }
 
   async #getAuthToken(): Promise<string | null> {
-    return this.getPlugin().storage.getItem(this.tokenKey)
+    return this.#getPlugin().storage.getItem(this.tokenKey)
   }
 
   protected async removeAuthToken(): Promise<void> {
-    return this.getPlugin().storage.removeItem(this.tokenKey)
+    return this.#getPlugin().storage.removeItem(this.tokenKey)
   }
 
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  protected getPlugin() {
+  #getPlugin() {
     const plugin = this.uppy.getPlugin(this.pluginId) as ProviderPlugin<M, B>
     if (plugin == null) throw new Error('Plugin was nullish')
     return plugin
@@ -241,7 +240,7 @@ export default class Provider<
           return
         }
 
-        const { companionAllowedHosts } = this.getPlugin().opts
+        const { companionAllowedHosts } = this.#getPlugin().opts
         if (!isOriginAllowed(e.origin, companionAllowedHosts)) {
           reject(
             new Error(
