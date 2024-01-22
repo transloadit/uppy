@@ -10,7 +10,7 @@ import prettierBytes from '@transloadit/prettier-bytes'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import Core from './index.ts'
 import UIPlugin from './UIPlugin.ts'
-import BasePlugin from './BasePlugin.ts'
+import BasePlugin, { type PluginOpts } from './BasePlugin.ts'
 import { debugLogger } from './loggers.ts'
 import AcquirerPlugin1 from './mocks/acquirerPlugin1.ts'
 import AcquirerPlugin2 from './mocks/acquirerPlugin2.ts'
@@ -64,8 +64,9 @@ describe('src/Core', () => {
     })
 
     it('should be able to .use() without passing generics again', () => {
-      type TestOpts = {
+      interface TestOpts extends PluginOpts {
         foo?: string
+        bar: string
       }
       class TestPlugin<M extends Meta, B extends Body> extends BasePlugin<
         TestOpts,
@@ -74,7 +75,7 @@ describe('src/Core', () => {
       > {
         foo: string
 
-        constructor(uppy: Core<M, B>, opts?: TestOpts) {
+        constructor(uppy: Core<M, B>, opts: TestOpts) {
           super(uppy, opts)
           this.id = 'Test'
           this.type = 'acquirer'
@@ -82,9 +83,11 @@ describe('src/Core', () => {
         }
       }
       new Core().use(TestPlugin)
-      new Core().use(TestPlugin, { foo: '' })
+      new Core().use(TestPlugin, { foo: '', bar: '' })
       // @ts-expect-error boolean not allowed
       new Core().use(TestPlugin, { foo: false })
+      // @ts-expect-error missing option
+      new Core().use(TestPlugin, { foo: '' })
     })
 
     it('should prevent the same plugin from being added more than once', () => {
