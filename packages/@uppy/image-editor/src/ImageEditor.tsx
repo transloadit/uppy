@@ -1,4 +1,4 @@
-import { UIPlugin, type Uppy } from '@uppy/core'
+import { UIPlugin, type UIPluginOptions, type Uppy } from '@uppy/core'
 import type Cropper from 'cropperjs'
 import { h } from 'preact'
 
@@ -34,9 +34,8 @@ declare module '@uppy/core' {
   }
 }
 
-export type Opts = {
-  id?: string
-  target?: string | HTMLElement
+export interface Opts extends UIPluginOptions {
+  target: string | HTMLElement
   quality?: number
   cropperOptions?: Cropper.Options & {
     croppedCanvasOptions?: Cropper.GetCroppedCanvasOptions
