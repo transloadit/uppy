@@ -55,12 +55,25 @@ function getUploadingState(
   return state
 }
 
+// set default options, must be kept in sync with @uppy/react/src/StatusBar.js
+const defaultOptions = {
+  target: 'body',
+  hideUploadButton: false,
+  hideRetryButton: false,
+  hidePauseResumeButton: false,
+  hideCancelButton: false,
+  showProgressDetails: false,
+  hideAfterFinish: true,
+  doneButtonHandler: null,
+}
+
 /**
  * StatusBar: renders a status bar with upload/pause/resume/cancel/retry buttons,
  * progress percentage and time remaining.
  */
 export default class StatusBar<M extends Meta, B extends Body> extends UIPlugin<
-  StatusBarOptions,
+  StatusBarOptions &
+    Required<Pick<StatusBarOptions, keyof typeof defaultOptions>>,
   M,
   B
 > {
@@ -74,27 +87,13 @@ export default class StatusBar<M extends Meta, B extends Body> extends UIPlugin<
 
   #previousETA: number | null
 
-  constructor(uppy: Uppy<M, B>, opts?: Partial<StatusBarOptions>) {
+  constructor(uppy: Uppy<M, B>, opts?: StatusBarOptions) {
     super(uppy, opts)
-    this.id = this.opts.id || 'StatusBar'
+    this.opts = { ...defaultOptions, ...opts, id: this.opts.id || 'StatusBar' }
     this.title = 'StatusBar'
     this.type = 'progressindicator'
 
     this.defaultLocale = locale
-
-    // set default options, must be kept in sync with @uppy/react/src/StatusBar.js
-    const defaultOptions = {
-      target: 'body',
-      hideUploadButton: false,
-      hideRetryButton: false,
-      hidePauseResumeButton: false,
-      hideCancelButton: false,
-      showProgressDetails: false,
-      hideAfterFinish: true,
-      doneButtonHandler: null,
-    }
-
-    this.opts = { ...defaultOptions, ...opts }
 
     this.i18nInit()
 
