@@ -44,7 +44,7 @@ function getOrigin() {
   return location.origin
 }
 
-function getRegex(value: string | RegExp) {
+function getRegex(value?: string | RegExp) {
   if (typeof value === 'string') {
     return new RegExp(`^${value}$`)
   }
@@ -56,7 +56,7 @@ function getRegex(value: string | RegExp) {
 
 function isOriginAllowed(
   origin: string,
-  allowedOrigin: string | Array<string | RegExp>,
+  allowedOrigin: string | RegExp | Array<string | RegExp> | undefined,
 ) {
   const patterns = Array.isArray(allowedOrigin)
     ? allowedOrigin.map(getRegex)
@@ -120,32 +120,32 @@ export default class Provider<
 
   onReceiveResponse(response: Response): Response {
     super.onReceiveResponse(response)
-    const plugin = this.uppy.getPlugin(this.pluginId)
-    const oldAuthenticated = plugin!.getPluginState().authenticated
+    const plugin = this.getPlugin()
+    const oldAuthenticated = plugin.getPluginState().authenticated
     const authenticated = oldAuthenticated
       ? response.status !== authErrorStatusCode
       : response.status < 400
-    plugin!.setPluginState({ authenticated })
+    plugin.setPluginState({ authenticated })
     return response
   }
 
   async setAuthToken(token: string): Promise<void> {
-    return (
-      this.uppy
-        .getPlugin(this.pluginId)!
-        // @ts-expect-error don't think we can make core aware that _some_ plugins have a storage
-        .storage.setItem(this.tokenKey, token)
-    )
+    return this.getPlugin().storage.setItem(this.tokenKey, token)
   }
 
-  async #getAuthToken(): Promise<string | void> {
-    // @ts-expect-error don't think we can make core aware that _some_ plugins have a storage
-    return this.uppy.getPlugin(this.pluginId).storage.getItem(this.tokenKey)
+  async #getAuthToken(): Promise<string | null> {
+    return this.getPlugin().storage.getItem(this.tokenKey)
   }
 
   protected async removeAuthToken(): Promise<void> {
-    // @ts-expect-error don't think we can make core aware that _some_ plugins have a storage
-    return this.uppy.getPlugin(this.pluginId).storage.removeItem(this.tokenKey)
+    return this.getPlugin().storage.removeItem(this.tokenKey)
+  }
+
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+  protected getPlugin() {
+    const plugin = this.uppy.getPlugin(this.pluginId) as ProviderPlugin<M, B>
+    if (plugin == null) throw new Error('Plugin was nullish')
+    return plugin
   }
 
   /**
@@ -245,10 +245,7 @@ export default class Provider<
           return
         }
 
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        const { companionAllowedHosts } = this.uppy.getPlugin(
-          this.pluginId,
-        )!.opts
+        const { companionAllowedHosts } = this.getPlugin().opts
         if (!isOriginAllowed(e.origin, companionAllowedHosts)) {
           reject(
             new Error(
