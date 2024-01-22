@@ -17,6 +17,23 @@ declare global {
   }
 }
 
+type ThumbnailGeneratedCallback<M extends Meta, B extends Body> = (
+  file: UppyFile<M, B>,
+  preview: string,
+) => void
+type GenericCallback<M extends Meta, B extends Body> = (
+  file: UppyFile<M, B>,
+) => void
+declare module '@uppy/core' {
+  export interface UppyEventMap<M extends Meta, B extends Body> {
+    'thumbnail:request': GenericCallback<M, B>
+    'thumbnail:generated': ThumbnailGeneratedCallback<M, B>
+    'file-editor:complete': GenericCallback<M, B>
+    'file-editor:start': GenericCallback<M, B>
+    'file-editor:cancel': GenericCallback<M, B>
+  }
+}
+
 export type Opts = {
   id?: string
   target?: string | HTMLElement
@@ -39,25 +56,6 @@ export type Opts = {
 
 type PluginState<M extends Meta, B extends Body> = {
   currentImage: UppyFile<M, B> | null
-}
-
-type ThumbnailGeneratedCallback<M extends Meta, B extends Body> = (
-  file: UppyFile<M, B>,
-  preview: string,
-) => void
-
-type GenericCallback<M extends Meta, B extends Body> = (
-  file: UppyFile<M, B>,
-) => void
-
-declare module '@uppy/core' {
-  export interface UppyEventMap<M extends Meta, B extends Body> {
-    'thumbnail:request': GenericCallback<M, B>
-    'thumbnail:generated': ThumbnailGeneratedCallback<M, B>
-    'file-editor:complete': GenericCallback<M, B>
-    'file-editor:start': GenericCallback<M, B>
-    'file-editor:cancel': GenericCallback<M, B>
-  }
 }
 
 export default class ImageEditor<
@@ -108,11 +106,6 @@ export default class ImageEditor<
       quality: 0.8,
     }
 
-    const cropperOptions = {
-      ...defaultCropperOptions,
-      ...opts?.cropperOptions,
-    } as Cropper.Options
-
     this.opts = {
       ...defaultOptions,
       ...(opts as Required<Opts>),
@@ -120,7 +113,10 @@ export default class ImageEditor<
         ...defaultActions,
         ...opts?.actions,
       },
-      cropperOptions,
+      cropperOptions: {
+        ...defaultCropperOptions,
+        ...opts?.cropperOptions,
+      } as Cropper.Options,
     }
 
     this.i18nInit()
@@ -145,17 +141,13 @@ export default class ImageEditor<
     const saveBlobCallback = (blob: Blob | null) => {
       const { currentImage } = this.getPluginState()
 
-      if (!currentImage || !blob) {
-        throw new Error('currentImage and blob can not be null')
-      }
-
-      this.uppy.setFileState(currentImage.id, {
-        data: blob,
-        size: blob.size,
+      this.uppy.setFileState(currentImage!.id, {
+        data: blob!,
+        size: blob!.size,
         preview: undefined,
       })
 
-      const updatedFile = this.uppy.getFile(currentImage.id)
+      const updatedFile = this.uppy.getFile(currentImage!.id)
       this.uppy.emit('thumbnail:request', updatedFile)
       this.setPluginState({
         currentImage: updatedFile,
