@@ -1,14 +1,76 @@
-import { UIPlugin } from '@uppy/core'
+import { UIPlugin, type Uppy } from '@uppy/core'
+import type Cropper from 'cropperjs'
 import { h } from 'preact'
 
-import Editor from './Editor.jsx'
+import type { Meta, Body, UppyFile } from '@uppy/utils/lib/UppyFile'
+import Editor from './Editor.tsx' // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'
-import locale from './locale.js'
+import locale from './locale.ts'
 
-export default class ImageEditor extends UIPlugin {
+declare global {
+  namespace preact {
+    interface Component {
+      // This is a workaround for https://github.com/preactjs/preact/issues/1206
+      refs: Record<string, any>
+    }
+  }
+}
+
+export type Opts = {
+  id?: string
+  target?: string | HTMLElement
+  quality?: number
+  cropperOptions?: Cropper.Options & {
+    croppedCanvasOptions?: Cropper.GetCroppedCanvasOptions
+  }
+  actions?: {
+    revert?: boolean
+    rotate?: boolean
+    granularRotate?: boolean
+    flip?: boolean
+    zoomIn?: boolean
+    zoomOut?: boolean
+    cropSquare?: boolean
+    cropWidescreen?: boolean
+    cropWidescreenVertical?: boolean
+  }
+}
+
+type PluginState<M extends Meta, B extends Body> = {
+  currentImage: UppyFile<M, B> | null
+}
+
+type ThumbnailGeneratedCallback<M extends Meta, B extends Body> = (
+  file: UppyFile<M, B>,
+  preview: string,
+) => void
+
+type GenericCallback<M extends Meta, B extends Body> = (
+  file: UppyFile<M, B>,
+) => void
+
+declare module '@uppy/core' {
+  export interface UppyEventMap<M extends Meta, B extends Body> {
+    'thumbnail:request': GenericCallback<M, B>
+    'thumbnail:generated': ThumbnailGeneratedCallback<M, B>
+    'file-editor:complete': GenericCallback<M, B>
+    'file-editor:start': GenericCallback<M, B>
+    'file-editor:cancel': GenericCallback<M, B>
+  }
+}
+
+export default class ImageEditor<
+  M extends Meta,
+  B extends Body,
+> extends UIPlugin<Opts, M, B, PluginState<M, B>> {
   static VERSION = packageJson.version
 
-  constructor (uppy, opts) {
+  cropper: Cropper
+
+  opts: Required<Opts>
+
+  constructor(uppy: Uppy<M, B>, opts: Opts) {
     super(uppy, opts)
     this.id = this.opts.id || 'ImageEditor'
     this.title = 'Image Editor'
@@ -46,24 +108,26 @@ export default class ImageEditor extends UIPlugin {
       quality: 0.8,
     }
 
+    const cropperOptions = {
+      ...defaultCropperOptions,
+      ...opts?.cropperOptions,
+    } as Cropper.Options
+
     this.opts = {
       ...defaultOptions,
-      ...opts,
+      ...(opts as Required<Opts>),
       actions: {
         ...defaultActions,
         ...opts?.actions,
       },
-      cropperOptions: {
-        ...defaultCropperOptions,
-        ...opts?.cropperOptions,
-      },
+      cropperOptions,
     }
 
     this.i18nInit()
   }
 
   // eslint-disable-next-line class-methods-use-this
-  canEditFile (file) {
+  canEditFile(file: UppyFile<M, B>): boolean {
     if (!file.type || file.isRemote) {
       return false
     }
@@ -77,14 +141,18 @@ export default class ImageEditor extends UIPlugin {
     return false
   }
 
-  save = () => {
-    const saveBlobCallback = (blob) => {
+  save = (): void => {
+    const saveBlobCallback = (blob: Blob | null) => {
       const { currentImage } = this.getPluginState()
+
+      if (!currentImage || !blob) {
+        throw new Error('currentImage and blob can not be null')
+      }
 
       this.uppy.setFileState(currentImage.id, {
         data: blob,
         size: blob.size,
-        preview: null,
+        preview: undefined,
       })
 
       const updatedFile = this.uppy.getFile(currentImage.id)
@@ -108,25 +176,24 @@ export default class ImageEditor extends UIPlugin {
       this.cropper.setData({ height: croppedCanvas.height - 1 })
     }
 
-    this.cropper.getCroppedCanvas(this.opts.cropperOptions.croppedCanvasOptions).toBlob(
-      saveBlobCallback,
-      currentImage.type,
-      this.opts.quality,
-    )
+    this.cropper
+      .getCroppedCanvas(this.opts.cropperOptions.croppedCanvasOptions)
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      .toBlob(saveBlobCallback, currentImage!.type, this.opts.quality)
   }
 
-  storeCropperInstance = (cropper) => {
+  storeCropperInstance = (cropper: Cropper): void => {
     this.cropper = cropper
   }
 
-  selectFile = (file) => {
+  selectFile = (file: UppyFile<M, B>): void => {
     this.uppy.emit('file-editor:start', file)
     this.setPluginState({
       currentImage: file,
     })
   }
 
-  install () {
+  install(): void {
     this.setPluginState({
       currentImage: null,
     })
@@ -137,7 +204,7 @@ export default class ImageEditor extends UIPlugin {
     }
   }
 
-  uninstall () {
+  uninstall(): void {
     const { currentImage } = this.getPluginState()
 
     if (currentImage) {
@@ -147,7 +214,7 @@ export default class ImageEditor extends UIPlugin {
     this.unmount()
   }
 
-  render () {
+  render(): JSX.Element | null {
     const { currentImage } = this.getPluginState()
 
     if (currentImage === null || currentImage.isRemote) {
@@ -155,7 +222,7 @@ export default class ImageEditor extends UIPlugin {
     }
 
     return (
-      <Editor
+      <Editor<M, B>
         currentImage={currentImage}
         storeCropperInstance={this.storeCropperInstance}
         save={this.save}
