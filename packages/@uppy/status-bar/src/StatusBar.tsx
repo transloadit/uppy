@@ -88,8 +88,8 @@ export default class StatusBar<M extends Meta, B extends Body> extends UIPlugin<
   #previousETA: number | null
 
   constructor(uppy: Uppy<M, B>, opts?: StatusBarOptions) {
-    super(uppy, opts)
-    this.opts = { ...defaultOptions, ...opts, id: this.opts.id || 'StatusBar' }
+    super(uppy, { ...defaultOptions, ...opts })
+    this.id = this.opts.id || 'StatusBar'
     this.title = 'StatusBar'
     this.type = 'progressindicator'
 
