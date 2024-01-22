@@ -65,7 +65,7 @@ const defaultOptions = {
   showProgressDetails: false,
   hideAfterFinish: true,
   doneButtonHandler: null,
-}
+} satisfies StatusBarOptions
 
 /**
  * StatusBar: renders a status bar with upload/pause/resume/cancel/retry buttons,
