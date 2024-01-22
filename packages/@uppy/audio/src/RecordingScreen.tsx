@@ -1,14 +1,34 @@
 /* eslint-disable jsx-a11y/media-has-caption */
 import { h } from 'preact'
 import { useEffect, useRef } from 'preact/hooks'
-import RecordButton from './RecordButton.jsx'
-import RecordingLength from './RecordingLength.jsx'
-import AudioSourceSelect from './AudioSourceSelect.jsx'
-import AudioOscilloscope from './audio-oscilloscope/index.js'
-import SubmitButton from './SubmitButton.jsx'
-import DiscardButton from './DiscardButton.jsx'
+import type { I18n } from '@uppy/utils/lib/Translator'
+import RecordButton from './RecordButton.tsx'
+import RecordingLength from './RecordingLength.tsx'
+import AudioSourceSelect, {
+  type AudioSourceSelectProps,
+} from './AudioSourceSelect.tsx'
+import AudioOscilloscope from './audio-oscilloscope/index.ts'
+import SubmitButton from './SubmitButton.tsx'
+import DiscardButton from './DiscardButton.tsx'
 
-export default function RecordingScreen (props) {
+interface RecordingScreenProps extends AudioSourceSelectProps {
+  stream: MediaStream | null | undefined
+  recordedAudio: string
+  recording: boolean
+  supportsRecording: boolean
+  showAudioSourceDropdown: boolean
+  onSubmit: () => void
+  i18n: I18n
+  onStartRecording: () => void
+  onStopRecording: () => void
+  onStop: () => void
+  onDiscardRecordedAudio: () => void
+  recordingLengthSeconds: number
+}
+
+export default function RecordingScreen(
+  props: RecordingScreenProps,
+): JSX.Element {
   const {
     stream,
     recordedAudio,
@@ -25,8 +45,8 @@ export default function RecordingScreen (props) {
     recordingLengthSeconds,
   } = props
 
-  const canvasEl = useRef(null)
-  const oscilloscope = useRef(null)
+  const canvasEl = useRef<HTMLCanvasElement>(null)
+  const oscilloscope = useRef<AudioOscilloscope | null>()
 
   // componentDidMount / componentDidUnmount
   useEffect(() => {
@@ -39,7 +59,7 @@ export default function RecordingScreen (props) {
   // componentDidUpdate
   useEffect(() => {
     if (!recordedAudio) {
-      oscilloscope.current = new AudioOscilloscope(canvasEl.current, {
+      oscilloscope.current = new AudioOscilloscope(canvasEl.current!, {
         canvas: {
           width: 600,
           height: 600,
@@ -62,33 +82,24 @@ export default function RecordingScreen (props) {
 
   const hasRecordedAudio = recordedAudio != null
   const shouldShowRecordButton = !hasRecordedAudio && supportsRecording
-  const shouldShowAudioSourceDropdown = showAudioSourceDropdown
-    && !hasRecordedAudio
-    && audioSources
-    && audioSources.length > 1
+  const shouldShowAudioSourceDropdown =
+    showAudioSourceDropdown &&
+    !hasRecordedAudio &&
+    audioSources &&
+    audioSources.length > 1
 
   return (
     <div className="uppy-Audio-container">
       <div className="uppy-Audio-audioContainer">
-        {hasRecordedAudio
-          ? (
-            <audio
-              className="uppy-Audio-player"
-              controls
-              src={recordedAudio}
-            />
-          ) : (
-            <canvas
-              ref={canvasEl}
-              className="uppy-Audio-canvas"
-            />
-          )}
+        {hasRecordedAudio ? (
+          <audio className="uppy-Audio-player" controls src={recordedAudio} />
+        ) : (
+          <canvas ref={canvasEl} className="uppy-Audio-canvas" />
+        )}
       </div>
       <div className="uppy-Audio-footer">
         <div className="uppy-Audio-audioSourceContainer">
-          {shouldShowAudioSourceDropdown
-            ? AudioSourceSelect(props)
-            : null}
+          {shouldShowAudioSourceDropdown ? AudioSourceSelect(props) : null}
         </div>
         <div className="uppy-Audio-buttonContainer">
           {shouldShowRecordButton && (
@@ -102,12 +113,17 @@ export default function RecordingScreen (props) {
 
           {hasRecordedAudio && <SubmitButton onSubmit={onSubmit} i18n={i18n} />}
 
-          {hasRecordedAudio && <DiscardButton onDiscard={onDiscardRecordedAudio} i18n={i18n} />}
+          {hasRecordedAudio && (
+            <DiscardButton onDiscard={onDiscardRecordedAudio} i18n={i18n} />
+          )}
         </div>
 
         <div className="uppy-Audio-recordingLength">
           {!hasRecordedAudio && (
-            <RecordingLength recordingLengthSeconds={recordingLengthSeconds} i18n={i18n} />
+            <RecordingLength
+              recordingLengthSeconds={recordingLengthSeconds}
+              i18n={i18n}
+            />
           )}
         </div>
       </div>
