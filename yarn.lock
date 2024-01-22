@@ -9840,6 +9840,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@vitest/utils@patch:@vitest/utils@npm%3A1.2.1#./.yarn/patches/@vitest-utils-npm-1.2.1-3028846845.patch::locator=%40uppy-dev%2Fbuild%40workspace%3A.":
+  version: 1.2.1
+  resolution: "@vitest/utils@patch:@vitest/utils@npm%3A1.2.1#./.yarn/patches/@vitest-utils-npm-1.2.1-3028846845.patch::version=1.2.1&hash=af09a6&locator=%40uppy-dev%2Fbuild%40workspace%3A."
+  dependencies:
+    diff-sequences: ^29.6.3
+    estree-walker: ^3.0.3
+    loupe: ^2.3.7
+    pretty-format: ^29.7.0
+  checksum: 4394acd83984750dac7de7aff9623fdb213d149b412a751003cb7f54f9d71dd7b04ed501586a8ea252cf7915c2295459cbdd64c56a04a0869d52c4cdd8dedbe7
+  languageName: node
+  linkType: hard
+
 "@vue/babel-helper-vue-jsx-merge-props@npm:^1.2.1, @vue/babel-helper-vue-jsx-merge-props@npm:^1.4.0":
   version: 1.4.0
   resolution: "@vue/babel-helper-vue-jsx-merge-props@npm:1.4.0"
