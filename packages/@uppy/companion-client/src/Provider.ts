@@ -1,5 +1,4 @@
-import { BasePlugin } from '@uppy/core'
-import type { Uppy } from '@uppy/core'
+import type { Uppy, BasePlugin } from '@uppy/core'
 import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
 import RequestClient, {
   authErrorStatusCode,
@@ -22,11 +21,8 @@ export type Opts = {
   provider: string
 }
 
-class ProviderPlugin<M extends Meta, B extends Body> extends BasePlugin<
-  Opts,
-  M,
-  B
-> {
+interface ProviderPlugin<M extends Meta, B extends Body>
+  extends BasePlugin<Opts, M, B> {
   files: UppyFile<M, B>[]
 
   storage: typeof tokenStorage
