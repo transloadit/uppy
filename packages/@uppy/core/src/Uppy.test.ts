@@ -65,7 +65,7 @@ describe('src/Core', () => {
 
     it('should be able to .use() without passing generics again', () => {
       type TestOpts = {
-        foo: string
+        foo?: string
       }
       class TestPlugin<M extends Meta, B extends Body> extends BasePlugin<
         TestOpts,
@@ -74,9 +74,11 @@ describe('src/Core', () => {
       > {
         foo: string
 
-        constructor(uppy: Core<M, B>, opts: TestOpts) {
+        constructor(uppy: Core<M, B>, opts?: TestOpts) {
           super(uppy, opts)
-          this.foo = opts.foo
+          this.id = 'Test'
+          this.type = 'acquirer'
+          this.foo = opts?.foo ?? 'bar'
         }
       }
       new Core().use(TestPlugin)

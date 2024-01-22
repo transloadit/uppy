@@ -39,7 +39,6 @@ import locale from './locale.ts'
 import type BasePlugin from './BasePlugin.ts'
 import type UIPlugin from './UIPlugin.ts'
 import type { Restrictions } from './Restricter.ts'
-import type { PluginOpts } from './BasePlugin.ts'
 
 type Processor = (fileIDs: string[], uploadID: string) => Promise<void> | void
 
