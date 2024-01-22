@@ -28,7 +28,7 @@
   },
   "devDependencies": {
     "namespace-emitter": "2.0.1",
-    "vitest": "^0.34.5"
+    "vitest": "^1.2.1"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^"
