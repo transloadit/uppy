@@ -1,5 +1,4 @@
 .DS_Store
-node_modules
 /dist
 
 
@@ -22,5 +21,5 @@ pnpm-debug.log*
 *.sln
 *.sw?
 
-lib
+./lib
 *.vue.js

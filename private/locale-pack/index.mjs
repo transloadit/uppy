@@ -11,8 +11,8 @@ const localesPath = path.join(root, 'packages', '@uppy', 'locales')
 const templatePath = path.join(localesPath, 'template.js')
 const englishLocalePath = path.join(localesPath, 'src', 'en_US.js')
 
-async function getLocalesAndCombinedLocale() {
-  const locales = await getLocales(`${root}/packages/@uppy/**/src/locale.js`)
+async function getLocalesAndCombinedLocale () {
+  const locales = await getLocales(`${root}/packages/@uppy/**/lib/locale.js`)
 
   const combinedLocale = {}
   for (const [pluginName, locale] of Object.entries(locales)) {

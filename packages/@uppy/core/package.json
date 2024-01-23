@@ -33,6 +33,6 @@
     "preact": "^10.5.13"
   },
   "devDependencies": {
-    "vitest": "^0.34.5"
+    "vitest": "^1.2.1"
   }
 }

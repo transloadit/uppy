@@ -21,10 +21,16 @@ export type PluginOpts = {
   [key: string]: unknown
 }
 
+export type DefinePluginOpts<
+  Opts extends PluginOpts,
+  AlwaysDefinedKeys extends string,
+> = Opts & Required<Pick<Opts, AlwaysDefinedKeys>>
+
 export default class BasePlugin<
   Opts extends PluginOpts,
   M extends Meta,
   B extends Body,
+  PluginState extends Record<string, unknown> = Record<string, unknown>,
 > {
   uppy: Uppy<M, B>
 
@@ -42,17 +48,17 @@ export default class BasePlugin<
 
   VERSION: string
 
-  constructor(uppy: Uppy<M, B>, opts: Opts) {
+  constructor(uppy: Uppy<M, B>, opts?: Opts) {
     this.uppy = uppy
-    this.opts = opts ?? {}
+    this.opts = opts ?? ({} as Opts)
   }
 
-  getPluginState(): Record<string, unknown> {
+  getPluginState(): PluginState {
     const { plugins } = this.uppy.getState()
-    return plugins?.[this.id] || {}
+    return (plugins?.[this.id] || {}) as PluginState
   }
 
-  setPluginState(update: unknown): void {
+  setPluginState(update?: Partial<PluginState>): void {
     if (!update) return
     const { plugins } = this.uppy.getState()
 

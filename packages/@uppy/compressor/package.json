@@ -35,6 +35,6 @@
     "access": "public"
   },
   "devDependencies": {
-    "vitest": "^0.34.5"
+    "vitest": "^1.2.1"
   }
 }

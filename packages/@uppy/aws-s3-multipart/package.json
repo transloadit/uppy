@@ -30,7 +30,7 @@
     "@aws-sdk/client-s3": "^3.362.0",
     "@aws-sdk/s3-request-presigner": "^3.362.0",
     "nock": "^13.1.0",
-    "vitest": "^0.34.5",
+    "vitest": "^1.2.1",
     "whatwg-fetch": "3.6.2"
   },
   "peerDependencies": {

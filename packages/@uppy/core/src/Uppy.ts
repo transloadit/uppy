@@ -37,7 +37,6 @@ import locale from './locale.ts'
 import type BasePlugin from './BasePlugin.ts'
 import type UIPlugin from './UIPlugin.ts'
 import type { Restrictions } from './Restricter.ts'
-import type { PluginOpts } from './BasePlugin.ts'
 
 type Processor = (fileIDs: string[], uploadID: string) => Promise<void> | void
 
@@ -59,7 +58,7 @@ type UnknownProviderPlugin<M extends Meta, B extends Body> = UnknownPlugin<
 }
 
 // The user facing type for UppyFile used in uppy.addFile() and uppy.setOptions()
-type MinimalRequiredUppyFile<M extends Meta, B extends Body> = Required<
+export type MinimalRequiredUppyFile<M extends Meta, B extends Body> = Required<
   Pick<UppyFile<M, B>, 'name' | 'data' | 'type' | 'source'>
 > &
   Partial<
@@ -543,7 +542,7 @@ export class Uppy<M extends Meta, B extends Body> {
     this.setState(undefined) // so that UI re-renders with new options
   }
 
-  // todo next major: rename to something better? (it doesn't just reset progress)
+  // todo next major: remove
   resetProgress(): void {
     const defaultProgress: Omit<FileProgressNotStarted, 'bytesTotal'> = {
       percentage: 0,
@@ -569,6 +568,8 @@ export class Uppy<M extends Meta, B extends Body> {
     this.emit('reset-progress')
   }
 
+  // @todo next major: rename to `clear()`, make it also cancel ongoing uploads
+  // or throw and say you need to cancel manually
   protected clearUploadedFiles(): void {
     this.setState({ ...defaultUploadState, files: {} })
   }
@@ -1650,9 +1651,9 @@ export class Uppy<M extends Meta, B extends Body> {
   /**
    * Registers a plugin with Core.
    */
-  use<O extends PluginOpts, I extends UIPlugin<O, M, B> | BasePlugin<O, M, B>>(
-    Plugin: new (uppy: this, opts?: O) => I,
-    opts?: O,
+  use<T extends typeof BasePlugin<any, M, B>>(
+    Plugin: T,
+    opts?: ConstructorParameters<T>[1],
   ): this {
     if (typeof Plugin !== 'function') {
       const msg =
@@ -1762,6 +1763,10 @@ export class Uppy<M extends Meta, B extends Body> {
   /**
    * Uninstall all plugins and close down this Uppy instance.
    */
+  // @todo next major: rename to `destroy`.
+  // Cancel local uploads, cancel remote uploads, DON'T cancel assemblies
+  // document that if you do want to cancel assemblies, you need to call smth manually.
+  // Potentially remove reason, as it’s confusing, just come up with a default behaviour.
   close({ reason }: { reason?: FileRemoveReason } | undefined = {}): void {
     this.log(
       `Closing Uppy instance ${this.opts.id}: removing all files and uninstalling plugins`,

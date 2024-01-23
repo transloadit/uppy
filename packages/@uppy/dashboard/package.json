@@ -41,7 +41,7 @@
     "@uppy/url": "workspace:^",
     "@uppy/webcam": "workspace:^",
     "resize-observer-polyfill": "^1.5.0",
-    "vitest": "^0.34.5"
+    "vitest": "^1.2.1"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^"

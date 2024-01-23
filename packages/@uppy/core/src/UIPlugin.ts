@@ -48,7 +48,8 @@ class UIPlugin<
   Opts extends UIPluginOptions,
   M extends Meta,
   B extends Body,
-> extends BasePlugin<Opts, M, B> {
+  PluginState extends Record<string, unknown> = Record<string, unknown>,
+> extends BasePlugin<Opts, M, B, PluginState> {
   #updateUI: (state: Partial<State<M, B>>) => void
 
   isTargetDOMEl: boolean
@@ -59,7 +60,9 @@ class UIPlugin<
 
   title: string
 
-  getTargetPlugin(target: unknown): UIPlugin<any, any, any> | undefined {
+  getTargetPlugin<Me extends Meta, Bo extends Body>(
+    target: PluginTarget<Me, Bo>, // eslint-disable-line no-use-before-define
+  ): UIPlugin<any, Me, Bo> | undefined {
     let targetPlugin
     if (typeof target === 'object' && target instanceof UIPlugin) {
       // Targeting a plugin *instance*
@@ -83,9 +86,9 @@ class UIPlugin<
    * If it’s an object — target is a plugin, and we search `plugins`
    * for a plugin with same name and return its target.
    */
-  mount(
-    target: HTMLElement | string,
-    plugin: UIPlugin<any, any, any>,
+  mount<Me extends Meta, Bo extends Body>(
+    target: PluginTarget<Me, Bo>, // eslint-disable-line no-use-before-define
+    plugin: UIPlugin<any, Me, Bo>,
   ): HTMLElement {
     const callerPluginName = plugin.id
 
@@ -195,3 +198,10 @@ class UIPlugin<
 }
 
 export default UIPlugin
+
+export type PluginTarget<M extends Meta, B extends Body> =
+  | string
+  | Element
+  | typeof BasePlugin
+  | typeof UIPlugin
+  | BasePlugin<any, M, B>
