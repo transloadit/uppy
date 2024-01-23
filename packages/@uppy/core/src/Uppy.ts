@@ -39,7 +39,6 @@ import locale from './locale.ts'
 import type BasePlugin from './BasePlugin.ts'
 import type UIPlugin from './UIPlugin.ts'
 import type { Restrictions } from './Restricter.ts'
-import type { PluginOpts } from './BasePlugin.ts'
 
 type Processor = (fileIDs: string[], uploadID: string) => Promise<void> | void
 
@@ -1663,9 +1662,9 @@ export class Uppy<M extends Meta, B extends Body> {
   /**
    * Registers a plugin with Core.
    */
-  use<O extends PluginOpts, I extends UIPlugin<O, M, B> | BasePlugin<O, M, B>>(
-    Plugin: new (uppy: this, opts?: O) => I,
-    opts?: O,
+  use<T extends typeof BasePlugin<any, M, B> | typeof UIPlugin<any, M, B>>(
+    Plugin: T,
+    opts?: ConstructorParameters<T>[1],
   ): this {
     if (typeof Plugin !== 'function') {
       const msg =
