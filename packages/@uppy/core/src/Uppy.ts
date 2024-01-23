@@ -341,7 +341,8 @@ export class Uppy<M extends Meta, B extends Body> {
       onBeforeUpload: (files) => files,
       store: new DefaultStore(),
       logger: justErrorsLogger,
-      infoTimeout: Number(5000),
+      // Just a comment
+      infoTimeout: 5000,
     }
 
     const merged = { ...defaultOptions, ...opts } as Omit<
