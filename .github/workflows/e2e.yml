@@ -160,7 +160,7 @@ jobs:
             ${{ steps.diff.outputs.OUTPUT_DIFF || 'No diff' }}
             ```
 
-            ${{ env.IS_ACCURATE_DIFF != 'true' && format(fromJson('"The following build files have been modified and might affect the actual diff:\n\n```\n{0}```"'), steps.build_chain_changes.outputs.MIGHT_CONTAIN_OTHER_CHANGES) || '' }}
+            ${{ env.IS_ACCURATE_DIFF != 'true' && format(fromJson('"The following build files have been modified and might affect the actual diff:\n\n```\n{0}\n```"'), steps.build_chain_changes.outputs.MIGHT_CONTAIN_OTHER_CHANGES) || '' }}
 
             </details>
       - name: Remove 'safe to test' label if cancelled
@@ -289,12 +289,20 @@ jobs:
             e2e/cypress/videos/
             e2e/cypress/screenshots/
       - name: Remove labels
+        # Remove the 'pending end-to-end tests' label if tests ran successfully
         if:
-          always() && github.event.pull_request.head.repo.full_name !=
-          github.repository
-        run:
-          gh pr edit "$NUMBER" --remove-label 'safe to test' --remove-label
-          'pending end-to-end tests'
+          github.event.pull_request &&
+          contains(github.event.pull_request.labels.*.name, 'pending end-to-end
+          tests')
+        run: gh pr edit "$NUMBER" --remove-label 'pending end-to-end tests'
+        env:
+          NUMBER: ${{ github.event.pull_request.number }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Remove 'safe to test' label
+        if:
+          always() && github.event.pull_request &&
+          contains(github.event.pull_request.labels.*.name, 'safe to test')
+        run: gh pr edit "$NUMBER" --remove-label 'safe to test'
         env:
           NUMBER: ${{ github.event.pull_request.number }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
