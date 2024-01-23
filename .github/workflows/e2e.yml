@@ -25,7 +25,9 @@ on:
       - .github/workflows/e2e.yml
 
 concurrency:
-  group: ${{ github.workflow }}--${{ github.ref }}
+  group:
+    ${{ github.workflow }}--${{ github.event.pull_request.head.repo.full_name ||
+    github.repository }} -- ${{ github.head_ref || github.ref }}
   cancel-in-progress:
     # For PRs coming from forks, we need the previous job to run until the end
     # to be sure it can remove the `safe to test` label before it affects the next run.
@@ -189,10 +191,10 @@ jobs:
           !contains(github.event.pull_request.labels.*.name, 'pending end-to-end
           tests'))
         env:
-          NUMBER: ${{ github.event.pull_request.number }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run:
-          gh pr edit "$NUMBER" --repo ${{ github.repository }} --add-label
+          gh pr edit "$PR_URL" --repo ${{ github.repository }} --add-label
           'pending end-to-end tests'
       - name: Remove label
         if:
@@ -202,10 +204,10 @@ jobs:
           contains(github.event.pull_request.labels.*.name, 'pending end-to-end
           tests'))
         env:
-          NUMBER: ${{ github.event.pull_request.number }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run:
-          gh pr edit "$NUMBER" --remove-label 'safe to test' --remove-label
+          gh pr edit "$PR_URL" --remove-label 'safe to test' --remove-label
           'pending end-to-end tests'
 
   e2e:
