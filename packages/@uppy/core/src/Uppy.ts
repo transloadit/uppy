@@ -50,8 +50,6 @@ type UnknownPlugin<M extends Meta, B extends Body> = InstanceType<
   typeof BasePlugin<any, M, B> | typeof UIPlugin<any, M, B>
 >
 
-type OmitFirstArg<T> = T extends [any, ...infer U] ? U : never
-
 type UnknownProviderPlugin<M extends Meta, B extends Body> = UnknownPlugin<
   M,
   B
@@ -1666,7 +1664,7 @@ export class Uppy<M extends Meta, B extends Body> {
    */
   use<T extends typeof BasePlugin<any, M, B>>(
     Plugin: T,
-    ...args: OmitFirstArg<ConstructorParameters<T>>
+    opts?: ConstructorParameters<T>[1],
   ): this {
     if (typeof Plugin !== 'function') {
       const msg =
@@ -1678,7 +1676,7 @@ export class Uppy<M extends Meta, B extends Body> {
     }
 
     // Instantiate
-    const plugin = new Plugin(this, ...args)
+    const plugin = new Plugin(this, opts)
     const pluginId = plugin.id
 
     if (!pluginId) {

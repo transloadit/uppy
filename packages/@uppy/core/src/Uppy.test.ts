@@ -86,7 +86,6 @@ describe('src/Core', () => {
             this.foo = opts?.foo ?? 'bar'
           }
         }
-        // @ts-expect-error missing mandatory option foo
         new Core().use(TestPlugin)
         new Core().use(TestPlugin, { foo: '', bar: '' })
         // @ts-expect-error boolean not allowed
