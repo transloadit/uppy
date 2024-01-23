@@ -26,7 +26,7 @@ describe('Webcam', () => {
 
       const uppy = new Uppy().use(Webcam, {
         preferredVideoMimeType: 'video/webm',
-      } as ConstructorParameters<typeof Webcam>[1])
+      })
       expect(
         (uppy.getPlugin('Webcam') as Webcam<any, any>).getMediaRecorderOptions()
           .mimeType,
@@ -41,7 +41,7 @@ describe('Webcam', () => {
 
       const uppy = new Uppy().use(Webcam, {
         preferredVideoMimeType: 'video/mp4',
-      } as ConstructorParameters<typeof Webcam>[1])
+      })
       expect(
         (uppy.getPlugin('Webcam') as Webcam<any, any>).getMediaRecorderOptions()
           .mimeType,
@@ -88,7 +88,7 @@ describe('Webcam', () => {
         restrictions: { allowedFileTypes: ['video/mp4', 'video/webm'] },
       }).use(Webcam, {
         preferredVideoMimeType: 'video/webm',
-      } as ConstructorParameters<typeof Webcam>[1])
+      })
       expect(
         (uppy.getPlugin('Webcam') as Webcam<any, any>).getMediaRecorderOptions()
           .mimeType,

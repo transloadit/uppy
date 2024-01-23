@@ -2,6 +2,7 @@ import { h } from 'preact'
 
 import { UIPlugin } from '@uppy/core'
 import type { Uppy, UIPluginOptions } from '@uppy/core'
+import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin.ts'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile.ts'
 import type { PluginTarget } from '@uppy/core/lib/UIPlugin.ts'
 import type { MinimalRequiredUppyFile } from '@uppy/core/lib/Uppy.ts'
@@ -58,19 +59,19 @@ function isModeAvailable<T>(modes: T[], mode: unknown): mode is T {
 interface WebcamOptions<M extends Meta, B extends Body>
   extends UIPluginOptions {
   target?: PluginTarget<M, B>
-  onBeforeSnapshot: () => Promise<void>
-  countdown: number
-  modes: Array<'video-audio' | 'video-only' | 'audio-only' | 'picture'>
-  mirror: boolean
-  showVideoSourceDropdown: boolean
+  onBeforeSnapshot?: () => Promise<void>
+  countdown?: number | false
+  modes?: Array<'video-audio' | 'video-only' | 'audio-only' | 'picture'>
+  mirror?: boolean
+  showVideoSourceDropdown?: boolean
   /** @deprecated */
-  facingMode: MediaTrackConstraints['facingMode'] // @TODO: remove in the next major
-  title: string
-  videoConstraints: MediaTrackConstraints
-  showRecordingLength: boolean
-  preferredImageMimeType: string | null
-  preferredVideoMimeType: string | null
-  mobileNativeCamera: boolean
+  facingMode?: MediaTrackConstraints['facingMode'] // @TODO: remove in the next major
+  title?: string
+  videoConstraints?: MediaTrackConstraints
+  showRecordingLength?: boolean
+  preferredImageMimeType?: string | null
+  preferredVideoMimeType?: string | null
+  mobileNativeCamera?: boolean
 }
 
 interface WebcamState {
@@ -84,11 +85,25 @@ interface WebcamState {
   [key: string]: unknown
 }
 
+// set default options
+const defaultOptions = {
+  onBeforeSnapshot: () => Promise.resolve(),
+  countdown: false,
+  modes: ['video-audio', 'video-only', 'audio-only', 'picture'] as any,
+  mirror: true,
+  showVideoSourceDropdown: false,
+  facingMode: 'user', // @TODO: remove in the next major
+  preferredImageMimeType: null,
+  preferredVideoMimeType: null,
+  showRecordingLength: false,
+  mobileNativeCamera: isMobile({ tablet: true }),
+} satisfies WebcamOptions<any, any>
+
 /**
  * Webcam
  */
 export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
-  WebcamOptions<M, B>,
+  DefinePluginOpts<WebcamOptions<M, B>, keyof typeof defaultOptions>,
   M,
   B,
   WebcamState
@@ -121,8 +136,8 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
 
   private captureInProgress: boolean
 
-  constructor(uppy: Uppy<M, B>, opts?: Partial<WebcamOptions<M, B>>) {
-    super(uppy, opts)
+  constructor(uppy: Uppy<M, B>, opts?: WebcamOptions<M, B>) {
+    super(uppy, { ...defaultOptions, ...opts })
     this.mediaDevices = getMediaDevices()
     this.supportsUserMedia = !!this.mediaDevices
     // eslint-disable-next-line no-restricted-globals
@@ -148,22 +163,6 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
 
     this.defaultLocale = locale
 
-    // set default options
-    const defaultOptions = {
-      onBeforeSnapshot: () => Promise.resolve(),
-      countdown: false,
-      modes: ['video-audio', 'video-only', 'audio-only', 'picture'] as any,
-      mirror: true,
-      showVideoSourceDropdown: false,
-      facingMode: 'user', // @TODO: remove in the next major
-      videoConstraints: undefined,
-      preferredImageMimeType: null,
-      preferredVideoMimeType: null,
-      showRecordingLength: false,
-      mobileNativeCamera: isMobile({ tablet: true }),
-    }
-
-    this.opts = { ...defaultOptions, ...opts } as WebcamOptions<M, B>
     this.i18nInit()
     this.title = this.i18n('pluginNameCamera')
 
@@ -527,7 +526,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
           return reject(new Error('Webcam is not active'))
         }
 
-        if (count > 0) {
+        if (count) {
           this.uppy.info(`${count}...`, 'warning', 800)
           count--
         } else {
