@@ -38,7 +38,7 @@ jobs:
       DIFF_BUILDER: true
     outputs:
       diff: steps.diff.outputs.OUTPUT_DIFF
-      is_accurate_diff: env.IS_ACCURATE_DIFF
+      is_accurate_diff: steps.diff.outputs.IS_ACCURATE_DIFF
     steps:
       - name: Checkout sources
         uses: actions/checkout@v3
@@ -135,6 +135,7 @@ jobs:
           echo "OUTPUT_DIFF<<$EOF" >> "$GITHUB_OUTPUT"
           cd /tmp/uppy && git --no-pager diff >> "$GITHUB_OUTPUT"
           echo "$EOF" >> "$GITHUB_OUTPUT"
+          echo "IS_ACCURATE_DIFF=$IS_ACCURATE_DIFF" >> "$GITHUB_OUTPUT"
       - name: Add/update comment
         uses: marocchino/sticky-pull-request-comment@v2
         with:
@@ -145,7 +146,7 @@ jobs:
             ${{ steps.diff.outputs.OUTPUT_DIFF || 'No diff' }}
             ```
 
-            ${{ env.IS_ACCURATE_DIFF == 'true' || 'The following build files have been modified and might affect the actual diff:\n\n```\n${{steps.build_chain_changes.outputs.MIGHT_CONTAIN_OTHER_CHANGES}}```'}}
+            ${{ env.IS_ACCURATE_DIFF == 'true' && '' || 'The following build files have been modified and might affect the actual diff:\n\n```\n${{steps.build_chain_changes.outputs.MIGHT_CONTAIN_OTHER_CHANGES}}```'}}
 
             </details>
   add-pending-e2e-label:
