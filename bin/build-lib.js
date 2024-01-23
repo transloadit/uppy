@@ -135,6 +135,7 @@ async function buildLib () {
 
 console.log('Using Babel version:', require('@babel/core/package.json').version)
 
+console.log(process.env)
 buildLib().catch((err) => {
   console.error(err)
   process.exit(1)
