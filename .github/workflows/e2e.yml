@@ -146,7 +146,7 @@ jobs:
             ${{ steps.diff.outputs.OUTPUT_DIFF || 'No diff' }}
             ```
 
-            ${{ env.IS_ACCURATE_DIFF == 'true' && '' || 'The following build files have been modified and might affect the actual diff:\n\n```\n${{steps.build_chain_changes.outputs.MIGHT_CONTAIN_OTHER_CHANGES}}```'}}
+            ${{ env.IS_ACCURATE_DIFF != 'true' && format('The following build files have been modified and might affect the actual diff:\n\n```\n{}```', steps.build_chain_changes.outputs.MIGHT_CONTAIN_OTHER_CHANGES) }}
 
             </details>
   add-pending-e2e-label:
@@ -184,6 +184,7 @@ jobs:
     name: Browser tests
     runs-on: ubuntu-latest
     steps:
+      - run: echo "${{ needs.compare_diff.outputs.diff }}"
       - name: Checkout sources
         uses: actions/checkout@v3
         with:
