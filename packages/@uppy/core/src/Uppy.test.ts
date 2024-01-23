@@ -7,8 +7,13 @@ import assert from 'node:assert'
 import fs from 'node:fs'
 import path from 'node:path'
 import prettierBytes from '@transloadit/prettier-bytes'
+import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import Core from './index.ts'
 import UIPlugin from './UIPlugin.ts'
+import BasePlugin, {
+  type DefinePluginOpts,
+  type PluginOpts,
+} from './BasePlugin.ts'
 import { debugLogger } from './loggers.ts'
 import AcquirerPlugin1 from './mocks/acquirerPlugin1.ts'
 import AcquirerPlugin2 from './mocks/acquirerPlugin2.ts'
@@ -59,6 +64,66 @@ describe('src/Core', () => {
         Object.keys(core[Symbol.for('uppy test: getPlugins')]('acquirer'))
           .length,
       ).toEqual(1)
+    })
+
+    it('should be able to .use() without passing generics again', () => {
+      {
+        interface TestOpts extends PluginOpts {
+          foo?: string
+          bar: string
+        }
+        class TestPlugin<M extends Meta, B extends Body> extends BasePlugin<
+          TestOpts,
+          M,
+          B
+        > {
+          foo: string
+
+          bar: string
+
+          constructor(uppy: Core<M, B>, opts: TestOpts) {
+            super(uppy, opts)
+            this.id = 'Test'
+            this.type = 'acquirer'
+            this.foo = this.opts.foo ?? 'defaultFoo'
+            this.bar = this.opts.bar
+          }
+        }
+        new Core().use(TestPlugin)
+        new Core().use(TestPlugin, { foo: '', bar: '' })
+        // @ts-expect-error boolean not allowed
+        new Core().use(TestPlugin, { bar: false })
+        // @ts-expect-error missing option
+        new Core().use(TestPlugin, { foo: '' })
+      }
+
+      {
+        interface TestOpts extends PluginOpts {
+          foo?: string
+          bar?: string
+        }
+        const defaultOptions = {
+          foo: 'defaultFoo',
+        }
+        class TestPlugin<M extends Meta, B extends Body> extends BasePlugin<
+          DefinePluginOpts<TestOpts, keyof typeof defaultOptions>,
+          M,
+          B
+        > {
+          constructor(uppy: Core<M, B>, opts?: TestOpts) {
+            super(uppy, { ...defaultOptions, ...opts })
+            this.id = this.opts.id ?? 'Test'
+            this.type = 'acquirer'
+          }
+        }
+
+        new Core().use(TestPlugin)
+        new Core().use(TestPlugin, { foo: '', bar: '' })
+        new Core().use(TestPlugin, { foo: '' })
+        new Core().use(TestPlugin, { bar: '' })
+        // @ts-expect-error boolean not allowed
+        new Core().use(TestPlugin, { foo: false })
+      }
     })
 
     it('should prevent the same plugin from being added more than once', () => {

@@ -21,6 +21,11 @@ export type PluginOpts = {
   [key: string]: unknown
 }
 
+export type DefinePluginOpts<
+  Opts extends PluginOpts,
+  AlwaysDefinedKeys extends string,
+> = Opts & Required<Pick<Opts, AlwaysDefinedKeys>>
+
 export default class BasePlugin<
   Opts extends PluginOpts,
   M extends Meta,
@@ -43,9 +48,9 @@ export default class BasePlugin<
 
   VERSION: string
 
-  constructor(uppy: Uppy<M, B>, opts?: Partial<Opts>) {
+  constructor(uppy: Uppy<M, B>, opts?: Opts) {
     this.uppy = uppy
-    this.opts = (opts ?? {}) as Opts
+    this.opts = opts ?? ({} as Opts)
   }
 
   getPluginState(): PluginState {
