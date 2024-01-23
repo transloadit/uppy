@@ -184,7 +184,6 @@ jobs:
     name: Browser tests
     runs-on: ubuntu-latest
     steps:
-      - run: echo "${{ needs.compare_diff.outputs.diff }}"
       - name: Checkout sources
         uses: actions/checkout@v3
         with:
