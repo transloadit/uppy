@@ -87,7 +87,7 @@ export default class RequestClient {
     return stripSlash(companion && companion[host] ? companion[host] : host)
   }
 
-  async headers (emptyBody = false) {
+  async headers(emptyBody = false) {
     const defaultHeaders = {
       Accept: 'application/json',
       ...(emptyBody ? undefined : {
@@ -397,15 +397,6 @@ export default class RequestClient {
 
           isPaused = newPausedState
           if (socket) sendState()
-
-          if (newPausedState) {
-            // Remove this file from the queue so another file can start in its place.
-            socketAbortController?.abort?.() // close socket to free up the request for other uploads
-          } else {
-            // Resuming an upload should be queued, else you could pause and then
-            // resume a queued upload to make it skip the queue.
-            createWebsocket()
-          }
         }
 
         const onFileRemove = (targetFile) => {
