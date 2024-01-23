@@ -78,12 +78,14 @@ describe('src/Core', () => {
           B
         > {
           foo: string
+          bar: string
 
           constructor(uppy: Core<M, B>, opts: TestOpts) {
             super(uppy, opts)
             this.id = 'Test'
             this.type = 'acquirer'
-            this.foo = opts?.foo ?? 'bar'
+            this.foo = this.opts.foo ?? 'defaultFoo'
+            this.bar = this.opts.bar
           }
         }
         new Core().use(TestPlugin)
