@@ -50,6 +50,8 @@ type UnknownPlugin<M extends Meta, B extends Body> = InstanceType<
   typeof BasePlugin<any, M, B> | typeof UIPlugin<any, M, B>
 >
 
+type OmitFirstArg<T> = T extends [any, ...infer U] ? U : never
+
 type UnknownProviderPlugin<M extends Meta, B extends Body> = UnknownPlugin<
   M,
   B
@@ -1662,9 +1664,9 @@ export class Uppy<M extends Meta, B extends Body> {
   /**
    * Registers a plugin with Core.
    */
-  use<T extends typeof BasePlugin<any, M, B> | typeof UIPlugin<any, M, B>>(
+  use<T extends typeof BasePlugin<any, M, B>>(
     Plugin: T,
-    opts?: ConstructorParameters<T>[1],
+    ...args: OmitFirstArg<ConstructorParameters<T>>
   ): this {
     if (typeof Plugin !== 'function') {
       const msg =
@@ -1676,7 +1678,7 @@ export class Uppy<M extends Meta, B extends Body> {
     }
 
     // Instantiate
-    const plugin = new Plugin(this, opts)
+    const plugin = new Plugin(this, ...args)
     const pluginId = plugin.id
 
     if (!pluginId) {
