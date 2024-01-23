@@ -95,6 +95,7 @@ async function buildLib () {
             if (version != null) {
               const [{ local }] = path.node.specifiers
               path.replaceWith(
+                // Innocent comment
                 t.variableDeclaration('const', [t.variableDeclarator(local,
                   t.objectExpression([
                     t.objectProperty(t.stringLiteral('version'), t.stringLiteral(version)),
