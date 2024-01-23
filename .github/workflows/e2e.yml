@@ -98,9 +98,11 @@ jobs:
           github.event.event_name != 'labeled'))
         run: |
           git reset FETCH_HEAD --hard
-          corepack yarn workspaces focus $(corepack yarn workspaces list --json
-          | jq -r .name | awk '/^@uppy-example/{ next } { if ($0!="uppy.io")
-          print $0 }')
+          corepack yarn workspaces focus $(\
+            corepack yarn workspaces list --json | \
+            jq -r .name | \
+            awk '/^@uppy-example/{ next } { if ($0!="uppy.io") print $0 }'\
+          )
           echo 'IS_ACCURATE_DIFF=true' >> "$GITHUB_ENV"
         env:
           # https://docs.cypress.io/guides/references/advanced-installation#Skipping-installation
