@@ -112,6 +112,13 @@ jobs:
         env:
           # https://docs.cypress.io/guides/references/advanced-installation#Skipping-installation
           CYPRESS_INSTALL_BINARY: 0
+      - name: Fetch source from the PR
+        if:
+          steps.build_chain_changes.outputs.MIGHT_CONTAIN_OTHER_CHANGES != '' &&
+          github.event.pull_request.head.repo.full_name != github.repository &&
+          !contains(github.event.pull_request.labels.*.name, 'safe to test')
+        run: |
+          git checkout FETCH_HEAD -- packages
       - run: corepack yarn build:lib
       - name: Store output file
         run: tar cf /tmp/newVersion.tar packages/@uppy/*/lib
@@ -153,7 +160,7 @@ jobs:
             ${{ steps.diff.outputs.OUTPUT_DIFF || 'No diff' }}
             ```
 
-            ${{ env.IS_ACCURATE_DIFF != 'true' && format('The following build files have been modified and might affect the actual diff:\n\n```\n{0}```', steps.build_chain_changes.outputs.MIGHT_CONTAIN_OTHER_CHANGES) || '' }}
+            ${{ env.IS_ACCURATE_DIFF != 'true' && format(fromJson('"The following build files have been modified and might affect the actual diff:\n\n```\n{0}```"'), steps.build_chain_changes.outputs.MIGHT_CONTAIN_OTHER_CHANGES) || '' }}
 
             </details>
       - name: Remove 'safe to test' label if cancelled
