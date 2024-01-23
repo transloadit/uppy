@@ -37,8 +37,8 @@ jobs:
     env:
       DIFF_BUILDER: true
     outputs:
-      diff: steps.diff.outputs.OUTPUT_DIFF
-      is_accurate_diff: steps.diff.outputs.IS_ACCURATE_DIFF
+      diff: ${{ steps.diff.outputs.OUTPUT_DIFF }}
+      is_accurate_diff: ${{ steps.diff.outputs.IS_ACCURATE_DIFF }}
     steps:
       - name: Checkout sources
         uses: actions/checkout@v3
