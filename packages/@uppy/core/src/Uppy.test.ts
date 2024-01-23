@@ -89,7 +89,7 @@ describe('src/Core', () => {
         new Core().use(TestPlugin)
         new Core().use(TestPlugin, { foo: '', bar: '' })
         // @ts-expect-error boolean not allowed
-        new Core().use(TestPlugin, { foo: false })
+        new Core().use(TestPlugin, { bar: false })
         // @ts-expect-error missing option
         new Core().use(TestPlugin, { foo: '' })
       }
