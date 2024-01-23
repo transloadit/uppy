@@ -78,6 +78,7 @@ describe('src/Core', () => {
           B
         > {
           foo: string
+
           bar: string
 
           constructor(uppy: Core<M, B>, opts: TestOpts) {
