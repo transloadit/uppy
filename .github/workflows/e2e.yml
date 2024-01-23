@@ -51,7 +51,9 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 2
-          ref: refs/pull/${{ github.event.pull_request.number }}/merge
+          ref:
+            ${{ github.event.pull_request && format('refs/pull/{0}/merge',
+            github.event.pull_request.number) || github.sha }}
       - name: Check if there are "unsafe" changes
         id: build_chain_changes
         # If there are changes in JS script that generates the output, we cannot
@@ -154,6 +156,7 @@ jobs:
           echo "$EOF" >> "$GITHUB_OUTPUT"
           echo "IS_ACCURATE_DIFF=$IS_ACCURATE_DIFF" >> "$GITHUB_OUTPUT"
       - name: Add/update comment
+        if: github.event.pull_request
         uses: marocchino/sticky-pull-request-comment@v2
         with:
           message: |
@@ -168,8 +171,8 @@ jobs:
             </details>
       - name: Remove 'safe to test' label if cancelled
         if:
-          cancelled() && github.event.pull_request.head.repo.full_name !=
-          github.repository
+          cancelled() && github.event.pull_request &&
+          github.event.pull_request.head.repo.full_name != github.repository
         run: gh pr edit "$NUMBER" --remove-label 'safe to test'
         env:
           NUMBER: ${{ github.event.pull_request.number }}
