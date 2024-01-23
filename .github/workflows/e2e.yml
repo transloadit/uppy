@@ -98,8 +98,8 @@ jobs:
       - name: Fetch source from the PR
         if:
           steps.build_chain_changes.outputs.MIGHT_CONTAIN_OTHER_CHANGES != '' &&
-          (!github.event.pull_request ||
-          (contains(github.event.pull_request.labels.*.name, 'safe to test') &&
+          (!github.event.pull_request || (github.event.action == 'labeled' &&
+          github.event.label.name == 'safe to test' &&
           github.event.pull_request.state == 'open') ||
           (github.event.pull_request.head.repo.full_name == github.repository &&
           github.event.event_name != 'labeled'))
@@ -118,7 +118,8 @@ jobs:
         if:
           steps.build_chain_changes.outputs.MIGHT_CONTAIN_OTHER_CHANGES != '' &&
           github.event.pull_request.head.repo.full_name != github.repository &&
-          !contains(github.event.pull_request.labels.*.name, 'safe to test')
+          (github.event.action != 'labeled' || github.event.label.name != 'safe
+          to test')
         run: |
           git checkout FETCH_HEAD -- packages
       - run: corepack yarn build:lib
@@ -180,7 +181,8 @@ jobs:
     needs: [compare_diff]
     if:
       github.event.pull_request.state == 'open' &&
-      github.event.pull_request.head.repo.full_name != github.repository
+      github.event.pull_request.head.repo.full_name != github.repository &&
+      github.event.action != 'labeled'
     runs-on: ubuntu-latest
     steps:
       - name: Add label
@@ -214,8 +216,8 @@ jobs:
     needs: [compare_diff]
     if:
       ${{ needs.compare_diff.outputs.diff != '' && (!github.event.pull_request
-      || (contains(github.event.pull_request.labels.*.name, 'safe to test') &&
-      github.event.pull_request.state == 'open') ||
+      || (github.event.action == 'labeled' && github.event.label.name == 'safe
+      to test' && github.event.pull_request.state == 'open') ||
       (github.event.pull_request.head.repo.full_name == github.repository &&
       github.event.event_name != 'labeled')) }}
     name: Browser tests
