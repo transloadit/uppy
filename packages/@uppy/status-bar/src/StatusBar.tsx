@@ -1,5 +1,6 @@
 import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
 import type { Uppy, State } from '@uppy/core/src/Uppy.ts'
+import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin.ts'
 import { UIPlugin } from '@uppy/core'
 import emaFilter from '@uppy/utils/lib/emaFilter'
 import getTextDirection from '@uppy/utils/lib/getTextDirection'
@@ -72,8 +73,7 @@ const defaultOptions = {
  * progress percentage and time remaining.
  */
 export default class StatusBar<M extends Meta, B extends Body> extends UIPlugin<
-  StatusBarOptions &
-    Required<Pick<StatusBarOptions, keyof typeof defaultOptions>>,
+  DefinePluginOpts<StatusBarOptions, keyof typeof defaultOptions>,
   M,
   B
 > {

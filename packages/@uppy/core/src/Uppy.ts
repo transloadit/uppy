@@ -1662,7 +1662,7 @@ export class Uppy<M extends Meta, B extends Body> {
   /**
    * Registers a plugin with Core.
    */
-  use<T extends typeof BasePlugin<any, M, B> | typeof UIPlugin<any, M, B>>(
+  use<T extends typeof BasePlugin<any, M, B>>(
     Plugin: T,
     opts?: ConstructorParameters<T>[1],
   ): this {
