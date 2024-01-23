@@ -1,5 +1,6 @@
 import { h } from 'preact'
 
+// TODO: name that function
 export default (): JSX.Element => {
   return (
     <svg
