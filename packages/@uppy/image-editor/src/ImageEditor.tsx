@@ -1,4 +1,5 @@
 import { UIPlugin, type UIPluginOptions, type Uppy } from '@uppy/core'
+import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin.js'
 import type Cropper from 'cropperjs'
 import { h } from 'preact'
 
@@ -57,57 +58,55 @@ type PluginState<M extends Meta, B extends Body> = {
   currentImage: UppyFile<M, B> | null
 }
 
+const defaultCropperOptions = {
+  viewMode: 0,
+  background: false,
+  autoCropArea: 1,
+  responsive: true,
+  minCropBoxWidth: 70,
+  minCropBoxHeight: 70,
+  croppedCanvasOptions: {},
+  initialAspectRatio: 0,
+} satisfies Opts['cropperOptions']
+
+const defaultActions = {
+  revert: true,
+  rotate: true,
+  granularRotate: true,
+  flip: true,
+  zoomIn: true,
+  zoomOut: true,
+  cropSquare: true,
+  cropWidescreen: true,
+  cropWidescreenVertical: true,
+} satisfies Opts['actions']
+
+const defaultOptions = {
+  target: 'body',
+  // `quality: 1` increases the image size by orders of magnitude - 0.8 seems to be the sweet spot.
+  // see https://github.com/fengyuanchen/cropperjs/issues/538#issuecomment-1776279427
+  quality: 0.8,
+  actions: defaultActions,
+  cropperOptions: defaultCropperOptions,
+} satisfies Opts
+
+export type ImageEditorOpts = DefinePluginOpts<
+  Opts,
+  keyof typeof defaultOptions
+>
+
 export default class ImageEditor<
   M extends Meta,
   B extends Body,
-> extends UIPlugin<Opts, M, B, PluginState<M, B>> {
+> extends UIPlugin<ImageEditorOpts, M, B, PluginState<M, B>> {
   static VERSION = packageJson.version
 
   cropper: Cropper
 
-  opts: Required<Opts>
-
-  constructor(uppy: Uppy<M, B>, opts: Opts) {
-    super(uppy, opts)
-    this.id = this.opts.id || 'ImageEditor'
-    this.title = 'Image Editor'
-    this.type = 'editor'
-
-    this.defaultLocale = locale
-
-    const defaultCropperOptions = {
-      viewMode: 0,
-      background: false,
-      autoCropArea: 1,
-      responsive: true,
-      minCropBoxWidth: 70,
-      minCropBoxHeight: 70,
-      croppedCanvasOptions: {},
-      initialAspectRatio: 0,
-    }
-
-    const defaultActions = {
-      revert: true,
-      rotate: true,
-      granularRotate: true,
-      flip: true,
-      zoomIn: true,
-      zoomOut: true,
-      cropSquare: true,
-      cropWidescreen: true,
-      cropWidescreenVertical: true,
-    }
-
-    // Why is the default quality smaller than 1?
-    // Because `quality: 1` increases the image size by orders of magnitude - 0.8 seems to be the sweet spot.
-    // (see https://github.com/fengyuanchen/cropperjs/issues/538#issuecomment-1776279427)
-    const defaultOptions = {
-      quality: 0.8,
-    }
-
-    this.opts = {
+  constructor(uppy: Uppy<M, B>, opts?: Opts) {
+    super(uppy, {
       ...defaultOptions,
-      ...(opts as Required<Opts>),
+      ...opts,
       actions: {
         ...defaultActions,
         ...opts?.actions,
@@ -115,8 +114,13 @@ export default class ImageEditor<
       cropperOptions: {
         ...defaultCropperOptions,
         ...opts?.cropperOptions,
-      } as Cropper.Options,
-    }
+      },
+    })
+    this.id = this.opts.id || 'ImageEditor'
+    this.title = 'Image Editor'
+    this.type = 'editor'
+
+    this.defaultLocale = locale
 
     this.i18nInit()
   }
