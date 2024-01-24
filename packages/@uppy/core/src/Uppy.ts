@@ -835,15 +835,14 @@ export class Uppy<M extends Meta, B extends Body> {
     // If the actual File object is passed from input[type=file] or drag-drop,
     // we normalize it to match Uppy file object
     const file = (
-      fileDescriptorOrFile instanceof File
-        ? {
-            name: fileDescriptorOrFile.name,
-            type: fileDescriptorOrFile.type,
-            size: fileDescriptorOrFile.size,
-            data: fileDescriptorOrFile,
-          }
-        : fileDescriptorOrFile
-    ) as UppyFile<M, B>
+      fileDescriptorOrFile instanceof File ?
+        {
+          name: fileDescriptorOrFile.name,
+          type: fileDescriptorOrFile.type,
+          size: fileDescriptorOrFile.size,
+          data: fileDescriptorOrFile,
+        }
+      : fileDescriptorOrFile) as UppyFile<M, B>
 
     const fileType = getFileType(file)
     const fileName = getFileName(fileType, file)
@@ -1334,8 +1333,9 @@ export class Uppy<M extends Meta, B extends Body> {
           ...fileInState.progress,
           bytesUploaded: data.bytesUploaded,
           bytesTotal: data.bytesTotal,
-          percentage: canHavePercentage
-            ? Math.round((data.bytesUploaded / data.bytesTotal) * 100)
+          percentage:
+            canHavePercentage ?
+              Math.round((data.bytesUploaded / data.bytesTotal) * 100)
             : 0,
         },
       })
@@ -1527,11 +1527,11 @@ export class Uppy<M extends Meta, B extends Body> {
         progress: {
           ...currentProgress,
           postprocess:
-            this.#postProcessors.size > 0
-              ? {
-                  mode: 'indeterminate',
-                }
-              : undefined,
+            this.#postProcessors.size > 0 ?
+              {
+                mode: 'indeterminate',
+              }
+            : undefined,
           uploadComplete: true,
           percentage: 100,
           bytesUploaded: currentProgress.bytesTotal,

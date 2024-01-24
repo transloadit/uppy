@@ -5,8 +5,9 @@ import mimeTypes from './mimeTypes.ts'
 export default function getFileType(file: Partial<UppyFile<any, any>>): string {
   if (file.type) return file.type
 
-  const fileExtension = file.name
-    ? getFileNameAndExtension(file.name).extension?.toLowerCase()
+  const fileExtension =
+    file.name ?
+      getFileNameAndExtension(file.name).extension?.toLowerCase()
     : null
   if (fileExtension && fileExtension in mimeTypes) {
     // else, see if we can map extension to a mime type
