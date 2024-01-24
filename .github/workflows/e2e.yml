@@ -184,8 +184,7 @@ jobs:
     needs: [compare_diff]
     if:
       github.event.pull_request.state == 'open' &&
-      github.event.pull_request.head.repo.full_name != github.repository &&
-      github.event.action != 'labeled'
+      github.event.pull_request.head.repo.full_name != github.repository
     runs-on: ubuntu-latest
     steps:
       - name: Add label
