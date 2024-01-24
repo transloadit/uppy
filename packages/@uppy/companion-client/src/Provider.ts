@@ -54,8 +54,9 @@ function isOriginAllowed(
   origin: string,
   allowedOrigin: string | RegExp | Array<string | RegExp> | undefined,
 ) {
-  const patterns = Array.isArray(allowedOrigin)
-    ? allowedOrigin.map(getRegex)
+  const patterns =
+    Array.isArray(allowedOrigin) ?
+      allowedOrigin.map(getRegex)
     : [getRegex(allowedOrigin)]
   return patterns.some(
     (pattern) => pattern?.test(origin) || pattern?.test(`${origin}/`),
@@ -118,8 +119,9 @@ export default class Provider<
     super.onReceiveResponse(response)
     const plugin = this.#getPlugin()
     const oldAuthenticated = plugin.getPluginState().authenticated
-    const authenticated = oldAuthenticated
-      ? response.status !== authErrorStatusCode
+    const authenticated =
+      oldAuthenticated ?
+        response.status !== authErrorStatusCode
       : response.status < 400
     plugin.setPluginState({ authenticated })
     return response
