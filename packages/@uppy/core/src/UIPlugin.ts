@@ -1,5 +1,4 @@
 /* eslint-disable class-methods-use-this */
-/* eslint-disable @typescript-eslint/no-empty-function */
 import { render, type ComponentChild } from 'preact'
 import findDOMElement from '@uppy/utils/lib/findDOMElement'
 import getTextDirection from '@uppy/utils/lib/getTextDirection'

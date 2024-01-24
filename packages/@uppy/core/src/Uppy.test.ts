@@ -611,7 +611,6 @@ describe('src/Core', () => {
   describe('preprocessors', () => {
     it('should add and remove preprocessor', () => {
       const core = new Core()
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
       const preprocessor = () => {}
       expect(core.removePreProcessor(preprocessor)).toBe(false)
       core.addPreProcessor(preprocessor)
@@ -731,7 +730,6 @@ describe('src/Core', () => {
   describe('postprocessors', () => {
     it('should add and remove postprocessor', () => {
       const core = new Core()
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
       const postprocessor = () => {}
       expect(core.removePostProcessor(postprocessor)).toBe(false)
       core.addPostProcessor(postprocessor)
@@ -849,7 +847,6 @@ describe('src/Core', () => {
   describe('uploaders', () => {
     it('should add and remove uploader', () => {
       const core = new Core()
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
       const uploader = () => {}
       expect(core.removeUploader(uploader)).toBe(false)
       core.addUploader(uploader)
