@@ -249,7 +249,7 @@ export default function StatusBar<M extends Meta, B extends Body>(
       })()}
 
       <div className="uppy-StatusBar-actions">
-        {recoveredState || showUploadBtn ? (
+        {recoveredState || showUploadBtn ?
           <UploadBtn
             newFiles={newFiles}
             isUploadStarted={isUploadStarted}
@@ -259,11 +259,13 @@ export default function StatusBar<M extends Meta, B extends Body>(
             startUpload={startUpload}
             uploadState={uploadState}
           />
-        ) : null}
+        : null}
 
-        {showRetryBtn ? <RetryBtn i18n={i18n} uppy={uppy} /> : null}
+        {showRetryBtn ?
+          <RetryBtn i18n={i18n} uppy={uppy} />
+        : null}
 
-        {showPauseResumeBtn ? (
+        {showPauseResumeBtn ?
           <PauseResumeButton
             isAllPaused={isAllPaused}
             i18n={i18n}
@@ -271,13 +273,15 @@ export default function StatusBar<M extends Meta, B extends Body>(
             resumableUploads={resumableUploads}
             uppy={uppy}
           />
-        ) : null}
+        : null}
 
-        {showCancelBtn ? <CancelBtn i18n={i18n} uppy={uppy} /> : null}
+        {showCancelBtn ?
+          <CancelBtn i18n={i18n} uppy={uppy} />
+        : null}
 
-        {showDoneBtn ? (
+        {showDoneBtn ?
           <DoneBtn i18n={i18n} doneButtonHandler={doneButtonHandler} />
-        ) : null}
+        : null}
       </div>
     </div>
   )

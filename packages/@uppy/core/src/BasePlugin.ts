@@ -11,7 +11,11 @@
  */
 
 import Translator from '@uppy/utils/lib/Translator'
-import type { I18n, Locale } from '@uppy/utils/lib/Translator'
+import type {
+  I18n,
+  Locale,
+  OptionalPluralizeLocale,
+} from '@uppy/utils/lib/Translator'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import type { State, Uppy } from './Uppy'
 
@@ -38,7 +42,7 @@ export default class BasePlugin<
 
   id: string
 
-  defaultLocale: Locale
+  defaultLocale: OptionalPluralizeLocale
 
   i18n: I18n
 

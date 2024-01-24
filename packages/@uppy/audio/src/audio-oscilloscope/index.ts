@@ -75,9 +75,11 @@ export default class AudioOscilloscope {
     this.canvasContext.strokeStyle =
       result(canvasContextOptions.strokeStyle) || 'rgb(0, 0, 0)'
     this.canvasContext.lineWidth = result(canvasContextOptions.lineWidth) || 1
-    this.onDrawFrame = isFunction(options.onDrawFrame)
-      ? options.onDrawFrame
-      : () => {} // eslint-disable-line @typescript-eslint/no-empty-function
+    this.onDrawFrame =
+      isFunction(options.onDrawFrame) ?
+        options.onDrawFrame
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+      : () => {}
   }
 
   addSource(streamSource: MediaStreamAudioSourceNode): void {
