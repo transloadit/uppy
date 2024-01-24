@@ -21,8 +21,8 @@ function getAsFileSystemHandleFromEntry(
 ): FileSystemFileHandle | FileSystemDirectoryHandle | null | undefined {
   if (entry == null) return entry
   return {
-    // eslint-disable-next-line no-nested-ternary
     kind:
+      // eslint-disable-next-line no-nested-ternary
       entry.isFile ? 'file'
       : entry.isDirectory ? 'directory'
       : (undefined as never),
