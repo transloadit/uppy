@@ -1656,7 +1656,8 @@ export class Uppy<M extends Meta, B extends Body> {
    */
   use<T extends typeof BasePlugin<any, M, B>>(
     Plugin: T,
-    // We are going to additional arguments to the plugin constructor.
+    // We want to let the plugin decide whether `opts` is optional or not
+    // so we spread the argument rather than defining `opts:` ourselves.
     ...args: OmitFirstArg<ConstructorParameters<T>>
   ): this {
     if (typeof Plugin !== 'function') {
