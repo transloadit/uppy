@@ -1273,9 +1273,9 @@ describe('src/Core', () => {
         core
           .upload()
           .then((r) =>
-            typeof r!.uploadID === 'string' && r!.uploadID.length === 21
-              ? { ...r, uploadID: 'cjd09qwxb000dlql4tp4doz8h' }
-              : r,
+            typeof r!.uploadID === 'string' && r!.uploadID.length === 21 ?
+              { ...r, uploadID: 'cjd09qwxb000dlql4tp4doz8h' }
+            : r,
           ),
       ).resolves.toMatchSnapshot()
     })

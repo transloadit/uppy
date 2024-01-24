@@ -9,7 +9,7 @@
     "sourceMap": false,
     "allowJs": true,
     "checkJs": true,
-    "noEmitOnError": true
+    "noEmitOnError": true,
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*"],
 }
