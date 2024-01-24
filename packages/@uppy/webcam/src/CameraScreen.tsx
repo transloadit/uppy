@@ -119,9 +119,9 @@ class CameraScreen extends Component<CameraScreenProps> {
         </div>
         <div className="uppy-Webcam-footer">
           <div className="uppy-Webcam-videoSourceContainer">
-            {shouldShowVideoSourceDropdown
-              ? VideoSourceSelect(this.props)
-              : null}
+            {shouldShowVideoSourceDropdown ?
+              VideoSourceSelect(this.props)
+            : null}
           </div>
           <div className="uppy-Webcam-buttonContainer">
             {shouldShowSnapshotButton && (

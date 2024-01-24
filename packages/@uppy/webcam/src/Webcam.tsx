@@ -282,8 +282,9 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
           this.stream = stream
 
           let currentDeviceId = null
-          const tracks = this.isAudioOnly()
-            ? stream.getAudioTracks()
+          const tracks =
+            this.isAudioOnly() ?
+              stream.getAudioTracks()
             : stream.getVideoTracks()
 
           if (!options || !options.deviceId) {

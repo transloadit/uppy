@@ -20,9 +20,9 @@ export default ({
         {hasCamera ? i18n('allowAccessTitle') : i18n('noCameraTitle')}
       </h1>
       <p>
-        {hasCamera
-          ? i18n('allowAccessDescription')
-          : i18n('noCameraDescription')}
+        {hasCamera ?
+          i18n('allowAccessDescription')
+        : i18n('noCameraDescription')}
       </p>
     </div>
   )
