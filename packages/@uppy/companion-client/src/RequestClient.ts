@@ -110,7 +110,8 @@ export default class RequestClient<M extends Meta, B extends Body> {
     this.uppy = uppy
     this.opts = opts
     this.onReceiveResponse = this.onReceiveResponse.bind(this)
-    this.#companionHeaders = opts.companionHeaders
+    // TODO: Remove optional chaining
+    this.#companionHeaders = opts?.companionHeaders
   }
 
   setCompanionHeaders(headers: Record<string, string>): void {
@@ -130,12 +131,12 @@ export default class RequestClient<M extends Meta, B extends Body> {
   async headers(emptyBody = false): Promise<Record<string, string>> {
     const defaultHeaders = {
       Accept: 'application/json',
-      ...(emptyBody
-        ? undefined
-        : {
-            // Passing those headers on requests with no data forces browsers to first make a preflight request.
-            'Content-Type': 'application/json',
-          }),
+      ...(emptyBody ? undefined : (
+        {
+          // Passing those headers on requests with no data forces browsers to first make a preflight request.
+          'Content-Type': 'application/json',
+        }
+      )),
     }
 
     return {
