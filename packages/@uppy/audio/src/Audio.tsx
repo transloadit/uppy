@@ -1,44 +1,83 @@
 import { h } from 'preact'
 
-import { UIPlugin } from '@uppy/core'
+import { UIPlugin, type UIPluginOptions } from '@uppy/core'
+import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
+import type { Uppy, MinimalRequiredUppyFile } from '@uppy/core/lib/Uppy.ts'
 
 import getFileTypeExtension from '@uppy/utils/lib/getFileTypeExtension'
-import supportsMediaRecorder from './supportsMediaRecorder.js'
-import RecordingScreen from './RecordingScreen.jsx'
-import PermissionsScreen from './PermissionsScreen.jsx'
-import locale from './locale.js'
-
+import supportsMediaRecorder from './supportsMediaRecorder.ts'
+import RecordingScreen from './RecordingScreen.tsx'
+import PermissionsScreen from './PermissionsScreen.tsx'
+import locale from './locale.ts'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'
+
+interface AudioOptions extends UIPluginOptions {
+  target?: HTMLElement | string
+  showAudioSourceDropdown?: boolean
+}
+interface AudioState {
+  audioReady: boolean
+  recordingLengthSeconds: number
+  hasAudio: boolean
+  cameraError: null
+  audioSources: MediaDeviceInfo[]
+  currentDeviceId?: null | string | MediaStreamTrack
+  isRecording: boolean
+  showAudioSourceDropdown: boolean
+  [id: string]: unknown
+}
 
 /**
  * Audio recording plugin
  */
-export default class Audio extends UIPlugin {
+export default class Audio<M extends Meta, B extends Body> extends UIPlugin<
+  AudioOptions,
+  M,
+  B,
+  AudioState
+> {
   static VERSION = packageJson.version
 
-  #stream = null
+  private recordingLengthTimer: ReturnType<typeof setInterval>
+
+  private icon
+
+  #stream: MediaStream | null = null
 
   #audioActive = false
 
-  #recordingChunks = null
+  #recordingChunks: Blob[] | null = null
 
-  #recorder = null
+  #recorder: MediaRecorder | null = null
 
-  #capturedMediaFile = null
+  #capturedMediaFile: MinimalRequiredUppyFile<M, B> | null = null
 
-  #mediaDevices = null
+  #mediaDevices
 
-  #supportsUserMedia = null
+  #supportsUserMedia
 
-  constructor (uppy, opts) {
+  constructor(uppy: Uppy<M, B>, opts?: AudioOptions) {
     super(uppy, opts)
     this.#mediaDevices = navigator.mediaDevices
     this.#supportsUserMedia = this.#mediaDevices != null
     this.id = this.opts.id || 'Audio'
     this.type = 'acquirer'
     this.icon = () => (
-      <svg className="uppy-DashboardTab-iconAudio" aria-hidden="true" focusable="false" width="32px" height="32px" viewBox="0 0 32 32">
-        <path d="M21.143 12.297c.473 0 .857.383.857.857v2.572c0 3.016-2.24 5.513-5.143 5.931v2.64h2.572a.857.857 0 110 1.714H12.57a.857.857 0 110-1.714h2.572v-2.64C12.24 21.24 10 18.742 10 15.726v-2.572a.857.857 0 111.714 0v2.572A4.29 4.29 0 0016 20.01a4.29 4.29 0 004.286-4.285v-2.572c0-.474.384-.857.857-.857zM16 6.5a3 3 0 013 3v6a3 3 0 01-6 0v-6a3 3 0 013-3z" fill="currentcolor" fill-rule="nonzero" />
+      <svg
+        className="uppy-DashboardTab-iconAudio"
+        aria-hidden="true"
+        focusable="false"
+        width="32px"
+        height="32px"
+        viewBox="0 0 32 32"
+      >
+        <path
+          d="M21.143 12.297c.473 0 .857.383.857.857v2.572c0 3.016-2.24 5.513-5.143 5.931v2.64h2.572a.857.857 0 110 1.714H12.57a.857.857 0 110-1.714h2.572v-2.64C12.24 21.24 10 18.742 10 15.726v-2.572a.857.857 0 111.714 0v2.572A4.29 4.29 0 0016 20.01a4.29 4.29 0 004.286-4.285v-2.572c0-.474.384-.857.857-.857zM16 6.5a3 3 0 013 3v6a3 3 0 01-6 0v-6a3 3 0 013-3z"
+          fill="currentcolor"
+          fill-rule="nonzero"
+        />
       </svg>
     )
 
@@ -59,44 +98,43 @@ export default class Audio extends UIPlugin {
     })
   }
 
-  #hasAudioCheck () {
+  #hasAudioCheck(): Promise<boolean> {
     if (!this.#mediaDevices) {
       return Promise.resolve(false)
     }
 
-    return this.#mediaDevices.enumerateDevices().then(devices => {
-      return devices.some(device => device.kind === 'audioinput')
+    return this.#mediaDevices.enumerateDevices().then((devices) => {
+      return devices.some((device) => device.kind === 'audioinput')
     })
   }
 
   // eslint-disable-next-line consistent-return
-  #start = (options = null) => {
+  #start = (options?: { deviceId?: string }): Promise<never> | void => {
     if (!this.#supportsUserMedia) {
       return Promise.reject(new Error('Microphone access not supported'))
     }
 
     this.#audioActive = true
 
-    this.#hasAudioCheck().then(hasAudio => {
+    this.#hasAudioCheck().then((hasAudio) => {
       this.setPluginState({
         hasAudio,
       })
 
       // ask user for access to their camera
-      return this.#mediaDevices.getUserMedia({ audio: true })
+      return this.#mediaDevices
+        .getUserMedia({ audio: true })
         .then((stream) => {
           this.#stream = stream
 
           let currentDeviceId = null
           const tracks = stream.getAudioTracks()
 
-          if (!options || !options.deviceId) {
+          if (!options?.deviceId) {
             currentDeviceId = tracks[0].getSettings().deviceId
           } else {
-            tracks.forEach((track) => {
-              if (track.getSettings().deviceId === options.deviceId) {
-                currentDeviceId = track.getSettings().deviceId
-              }
+            currentDeviceId = tracks.findLast((track) => {
+              return track.getSettings().deviceId === options.deviceId
             })
           }
 
@@ -118,24 +156,34 @@ export default class Audio extends UIPlugin {
     })
   }
 
-  #startRecording = () => {
+  #startRecording = (): void => {
     // only used if supportsMediaRecorder() returned true
     // eslint-disable-next-line compat/compat
-    this.#recorder = new MediaRecorder(this.#stream)
+    this.#recorder = new MediaRecorder(this.#stream!)
     this.#recordingChunks = []
     let stoppingBecauseOfMaxSize = false
     this.#recorder.addEventListener('dataavailable', (event) => {
-      this.#recordingChunks.push(event.data)
+      this.#recordingChunks!.push(event.data)
 
       const { restrictions } = this.uppy.opts
-      if (this.#recordingChunks.length > 1
-          && restrictions.maxFileSize != null
-          && !stoppingBecauseOfMaxSize) {
-        const totalSize = this.#recordingChunks.reduce((acc, chunk) => acc + chunk.size, 0)
+      if (
+        this.#recordingChunks!.length > 1 &&
+        restrictions.maxFileSize != null &&
+        !stoppingBecauseOfMaxSize
+      ) {
+        const totalSize = this.#recordingChunks!.reduce(
+          (acc, chunk) => acc + chunk.size,
+          0,
+        )
         // Exclude the initial chunk from the average size calculation because it is likely to be a very small outlier
-        const averageChunkSize = (totalSize - this.#recordingChunks[0].size) / (this.#recordingChunks.length - 1)
+        const averageChunkSize =
+          (totalSize - this.#recordingChunks![0].size) /
+          (this.#recordingChunks!.length - 1)
         const expectedEndChunkSize = averageChunkSize * 3
-        const maxSize = Math.max(0, restrictions.maxFileSize - expectedEndChunkSize)
+        const maxSize = Math.max(
+          0,
+          restrictions.maxFileSize - expectedEndChunkSize,
+        )
 
         if (totalSize > maxSize) {
           stoppingBecauseOfMaxSize = true
@@ -150,9 +198,13 @@ export default class Audio extends UIPlugin {
     this.#recorder.start(500)
 
     // Start the recordingLengthTimer if we are showing the recording length.
+    // TODO: switch this to a private field
     this.recordingLengthTimer = setInterval(() => {
-      const currentRecordingLength = this.getPluginState().recordingLengthSeconds
-      this.setPluginState({ recordingLengthSeconds: currentRecordingLength + 1 })
+      const currentRecordingLength = this.getPluginState()
+        .recordingLengthSeconds as number
+      this.setPluginState({
+        recordingLengthSeconds: currentRecordingLength + 1,
+      })
     }, 1000)
 
     this.setPluginState({
@@ -160,43 +212,49 @@ export default class Audio extends UIPlugin {
     })
   }
 
-  #stopRecording = () => {
-    const stopped = new Promise((resolve) => {
-      this.#recorder.addEventListener('stop', () => {
+  #stopRecording = (): Promise<void> => {
+    const stopped = new Promise<void>((resolve) => {
+      this.#recorder!.addEventListener('stop', () => {
         resolve()
       })
-      this.#recorder.stop()
+      this.#recorder!.stop()
 
       clearInterval(this.recordingLengthTimer)
       this.setPluginState({ recordingLengthSeconds: 0 })
     })
 
-    return stopped.then(() => {
-      this.setPluginState({
-        isRecording: false,
-      })
-      return this.#getAudio()
-    }).then((file) => {
-      try {
-        this.#capturedMediaFile = file
-        // create object url for capture result preview
+    return stopped
+      .then(() => {
         this.setPluginState({
-          recordedAudio: URL.createObjectURL(file.data),
+          isRecording: false,
         })
-      } catch (err) {
-        // Logging the error, exept restrictions, which is handled in Core
-        if (!err.isRestriction) {
-          this.uppy.log(err)
+        return this.#getAudio()
+      })
+      .then((file) => {
+        try {
+          this.#capturedMediaFile = file
+          // create object url for capture result preview
+          this.setPluginState({
+            recordedAudio: URL.createObjectURL(file.data),
+          })
+        } catch (err) {
+          // Logging the error, exept restrictions, which is handled in Core
+          if (!err.isRestriction) {
+            this.uppy.log(err)
+          }
         }
-      }
-    }).then(() => {
-      this.#recordingChunks = null
-      this.#recorder = null
-    }, (error) => {
-      this.#recordingChunks = null
-      this.#recorder = null
-      throw error
-    })
+      })
+      .then(
+        () => {
+          this.#recordingChunks = null
+          this.#recorder = null
+        },
+        (error) => {
+          this.#recordingChunks = null
+          this.#recorder = null
+          throw error
+        },
+      )
   }
 
   #discardRecordedAudio = () => {
@@ -225,8 +283,8 @@ export default class Audio extends UIPlugin {
 
     if (this.#recorder) {
       await new Promise((resolve) => {
-        this.#recorder.addEventListener('stop', resolve, { once: true })
-        this.#recorder.stop()
+        this.#recorder!.addEventListener('stop', resolve, { once: true })
+        this.#recorder!.stop()
 
         clearInterval(this.recordingLengthTimer)
       })
@@ -244,20 +302,26 @@ export default class Audio extends UIPlugin {
     })
   }
 
-  #getAudio () {
+  #getAudio() {
     // Sometimes in iOS Safari, Blobs (especially the first Blob in the recordingChunks Array)
     // have empty 'type' attributes (e.g. '') so we need to find a Blob that has a defined 'type'
     // attribute in order to determine the correct MIME type.
-    const mimeType = this.#recordingChunks.find(blob => blob.type?.length > 0).type
+    const mimeType = this.#recordingChunks!.find(
+      (blob) => blob.type?.length > 0,
+    )!.type
 
     const fileExtension = getFileTypeExtension(mimeType)
 
     if (!fileExtension) {
-      return Promise.reject(new Error(`Could not retrieve recording: Unsupported media type "${mimeType}"`))
+      return Promise.reject(
+        new Error(
+          `Could not retrieve recording: Unsupported media type "${mimeType}"`,
+        ),
+      )
     }
 
     const name = `audio-${Date.now()}.${fileExtension}`
-    const blob = new Blob(this.#recordingChunks, { type: mimeType })
+    const blob = new Blob(this.#recordingChunks!, { type: mimeType })
     const file = {
       source: this.id,
       name,
@@ -268,20 +332,20 @@ export default class Audio extends UIPlugin {
     return Promise.resolve(file)
   }
 
-  #changeSource = (deviceId) => {
+  #changeSource = (deviceId?: string): void => {
     this.#stop()
     this.#start({ deviceId })
   }
 
   #updateSources = () => {
-    this.#mediaDevices.enumerateDevices().then(devices => {
+    this.#mediaDevices.enumerateDevices().then((devices) => {
       this.setPluginState({
         audioSources: devices.filter((device) => device.kind === 'audioinput'),
       })
     })
   }
 
-  render () {
+  render(): JSX.Element {
     if (!this.#audioActive) {
       this.#start()
     }
@@ -302,6 +366,8 @@ export default class Audio extends UIPlugin {
       <RecordingScreen
         // eslint-disable-next-line react/jsx-props-no-spreading
         {...audioState}
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore TODO: remove unused
         audioActive={this.#audioActive}
         onChangeSource={this.#changeSource}
         onStartRecording={this.#startRecording}
@@ -318,7 +384,7 @@ export default class Audio extends UIPlugin {
     )
   }
 
-  install () {
+  install(): void {
     this.setPluginState({
       audioReady: false,
       recordingLengthSeconds: 0,
@@ -355,7 +421,7 @@ export default class Audio extends UIPlugin {
     }
   }
 
-  uninstall () {
+  uninstall(): void {
     if (this.#stream) {
       this.#stop()
     }

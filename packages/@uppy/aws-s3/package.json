@@ -30,7 +30,7 @@
     "nanoid": "^4.0.0"
   },
   "devDependencies": {
-    "vitest": "^0.34.5",
+    "vitest": "^1.2.1",
     "whatwg-fetch": "3.6.2"
   },
   "peerDependencies": {

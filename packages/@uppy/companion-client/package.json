@@ -27,6 +27,6 @@
     "p-retry": "^6.1.0"
   },
   "devDependencies": {
-    "vitest": "^0.34.5"
+    "vitest": "^1.2.1"
   }
 }
