@@ -53,6 +53,7 @@ module.exports = {
     'react/no-unknown-property': ['error', {
       ignore: svgPresentationAttributes,
     }],
+    '@typescript-eslint/no-empty-function': 'off',
 
     // Special rules for CI:
     ...(process.env.CI && {
