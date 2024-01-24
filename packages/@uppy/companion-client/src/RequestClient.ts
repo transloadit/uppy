@@ -110,7 +110,7 @@ export default class RequestClient<M extends Meta, B extends Body> {
     this.uppy = uppy
     this.opts = opts
     this.onReceiveResponse = this.onReceiveResponse.bind(this)
-    this.#companionHeaders = opts?.companionHeaders
+    this.#companionHeaders = opts.companionHeaders
   }
 
   setCompanionHeaders(headers: Record<string, string>): void {
