@@ -48,6 +48,7 @@ type UnknownPlugin<M extends Meta, B extends Body> = InstanceType<
   typeof BasePlugin<any, M, B> | typeof UIPlugin<any, M, B>
 >
 
+// `OmitFirstArg<typeof someArray>` is the type of the returned value of `someArray.slice(1)`.
 type OmitFirstArg<T> = T extends [any, ...infer U] ? U : never
 
 type UnknownProviderPlugin<M extends Meta, B extends Body> = UnknownPlugin<
@@ -1655,6 +1656,7 @@ export class Uppy<M extends Meta, B extends Body> {
    */
   use<T extends typeof BasePlugin<any, M, B>>(
     Plugin: T,
+    // We are going to additional arguments to the plugin constructor.
     ...args: OmitFirstArg<ConstructorParameters<T>>
   ): this {
     if (typeof Plugin !== 'function') {
