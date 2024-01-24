@@ -4,7 +4,8 @@ import type Cropper from 'cropperjs'
 import { h } from 'preact'
 
 import type { Meta, Body, UppyFile } from '@uppy/utils/lib/UppyFile'
-import Editor from './Editor.tsx' // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+import Editor from './Editor.tsx'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'
 import locale from './locale.ts'
