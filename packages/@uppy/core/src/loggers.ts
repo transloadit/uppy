@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-console */
 import getTimeStamp from '@uppy/utils/lib/getTimeStamp'
 

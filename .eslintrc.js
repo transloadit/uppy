@@ -53,7 +53,6 @@ module.exports = {
     'react/no-unknown-property': ['error', {
       ignore: svgPresentationAttributes,
     }],
-    '@typescript-eslint/no-empty-function': 'off',
 
     // Special rules for CI:
     ...(process.env.CI && {
@@ -463,6 +462,7 @@ module.exports = {
       ],
       rules: {
         'import/prefer-default-export': 'off',
+        '@typescript-eslint/no-empty-function': 'off',
         '@typescript-eslint/no-explicit-any': 'off',
         '@typescript-eslint/no-extra-semi': 'off',
         '@typescript-eslint/no-namespace': 'off',
