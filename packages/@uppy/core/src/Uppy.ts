@@ -212,7 +212,9 @@ type ErrorCallback<M extends Meta, B extends Body> = (
 type UploadErrorCallback<M extends Meta, B extends Body> = (
   file: UppyFile<M, B> | undefined,
   error: { message: string; details?: string },
-  response?: UppyFile<M, B>['response'] | undefined,
+  response?:
+    | Omit<NonNullable<UppyFile<M, B>['response']>, 'uploadURL'>
+    | undefined,
 ) => void
 type UploadStalledCallback<M extends Meta, B extends Body> = (
   error: { message: string; details?: string },
@@ -1376,7 +1378,7 @@ export class Uppy<M extends Meta, B extends Body> {
     if (sizedFiles.length === 0) {
       const progressMax = inProgress.length * 100
       const currentProgress = unsizedFiles.reduce((acc, file) => {
-        return acc + file.progress.percentage
+        return acc + (file.progress.percentage as number)
       }, 0)
       const totalProgress = Math.round((currentProgress / progressMax) * 100)
       this.setState({ totalProgress })
@@ -1871,7 +1873,7 @@ export class Uppy<M extends Meta, B extends Body> {
   }
 
   /** @protected */
-  getRequestClientForFile(file: UppyFile<M, B>): unknown {
+  getRequestClientForFile<Client>(file: UppyFile<M, B>): Client {
     if (!file.remote)
       throw new Error(
         `Tried to get RequestClient for a non-remote file ${file.id}`,
@@ -1883,7 +1885,7 @@ export class Uppy<M extends Meta, B extends Body> {
       throw new Error(
         `requestClientId "${file.remote.requestClientId}" not registered for file "${file.id}"`,
       )
-    return requestClient
+    return requestClient as Client
   }
 
   /**

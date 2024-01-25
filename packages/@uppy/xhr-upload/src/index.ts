@@ -1,16 +1,78 @@
 import BasePlugin from '@uppy/core/lib/BasePlugin.js'
+import type { DefinePluginOpts, PluginOpts } from '@uppy/core/lib/BasePlugin.js'
+import type { RequestClient } from '@uppy/companion-client'
 import { nanoid } from 'nanoid/non-secure'
 import EventManager from '@uppy/utils/lib/EventManager'
 import ProgressTimeout from '@uppy/utils/lib/ProgressTimeout'
-import { RateLimitedQueue, internalRateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
+import {
+  RateLimitedQueue,
+  internalRateLimitedQueue,
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore untyped
+} from '@uppy/utils/lib/RateLimitedQueue'
 import NetworkError from '@uppy/utils/lib/NetworkError'
 import isNetworkError from '@uppy/utils/lib/isNetworkError'
-import { filterNonFailedFiles, filterFilesToEmitUploadStarted } from '@uppy/utils/lib/fileFilters'
-
+import {
+  filterNonFailedFiles,
+  filterFilesToEmitUploadStarted,
+} from '@uppy/utils/lib/fileFilters'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore We don't want TS to generate types for the package.json
+import type { Meta, Body, UppyFile } from '@uppy/utils/lib/UppyFile'
+import type { State, Uppy } from '@uppy/core'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'
-import locale from './locale.js'
+import locale from './locale.ts'
 
-function buildResponseError (xhr, err) {
+declare module '@uppy/utils/lib/UppyFile' {
+  // eslint-disable-next-line no-shadow, @typescript-eslint/no-unused-vars
+  export interface UppyFile<M extends Meta, B extends Body> {
+    // TODO: figure out what else is in this type
+    xhrUpload?: { headers: Record<string, string> }
+  }
+}
+
+declare module '@uppy/core' {
+  // eslint-disable-next-line no-shadow, @typescript-eslint/no-unused-vars
+  export interface State<M extends Meta, B extends Body> {
+    // TODO: figure out what else is in this type
+    xhrUpload?: { headers: Record<string, string> }
+  }
+}
+
+export interface XhrUploadOpts<M extends Meta, B extends Body>
+  extends PluginOpts {
+  endpoint: string
+  method?: 'post' | 'put'
+  formData?: boolean
+  fieldName?: string
+  headers?:
+    | Record<string, string>
+    | ((file: UppyFile<M, B>) => Record<string, string>)
+  timeout?: number
+  limit?: number
+  responseType?: XMLHttpRequestResponseType
+  withCredentials?: boolean
+  validateStatus?: (
+    status: number,
+    body: string,
+    xhr: XMLHttpRequest,
+  ) => boolean
+  getResponseData?: (
+    body: string,
+    xhr: XMLHttpRequest,
+  ) => NonNullable<UppyFile<M, B>['response']>['body']
+  getResponseError?: (body: string, xhr: XMLHttpRequest) => Error | NetworkError
+  allowedMetaFields?: string[] | null
+  bundle?: boolean
+  responseUrlFieldName?: string
+}
+
+function buildResponseError(
+  xhr: XMLHttpRequest,
+  err?: string | Error | NetworkError,
+) {
   let error = err
   // No error message
   if (!error) error = new Error('Upload error')
@@ -26,6 +88,8 @@ function buildResponseError (xhr, err) {
     return error
   }
 
+  // @ts-expect-error request can only be set on NetworkError
+  // but we use NetworkError to distinguish between errors.
   error.request = xhr
   return error
 }
@@ -34,78 +98,73 @@ function buildResponseError (xhr, err) {
  * Set `data.type` in the blob to `file.meta.type`,
  * because we might have detected a more accurate file type in Uppy
  * https://stackoverflow.com/a/50875615
- *
- * @param {object} file File object with `data`, `size` and `meta` properties
- * @returns {object} blob updated with the new `type` set from `file.meta.type`
  */
-function setTypeInBlob (file) {
+function setTypeInBlob<M extends Meta, B extends Body>(file: UppyFile<M, B>) {
   const dataWithUpdatedType = file.data.slice(0, file.data.size, file.meta.type)
   return dataWithUpdatedType
 }
 
-export default class XHRUpload extends BasePlugin {
+const defaultOptions = {
+  endpoint: '',
+  formData: true,
+  fieldName: 'file',
+  method: 'post',
+  allowedMetaFields: null,
+  responseUrlFieldName: 'url',
+  bundle: false,
+  headers: {},
+  timeout: 30 * 1000,
+  limit: 5,
+  withCredentials: false,
+  responseType: '',
+  getResponseData(responseText) {
+    return JSON.parse(responseText)
+  },
+  getResponseError(_, response) {
+    let error = new Error('Upload error')
+
+    if (isNetworkError(response)) {
+      error = new NetworkError(error, response)
+    }
+
+    return error
+  },
+  validateStatus(status) {
+    return status >= 200 && status < 300
+  },
+} satisfies XhrUploadOpts<any, any>
+
+type Opts<M extends Meta, B extends Body> = DefinePluginOpts<
+  XhrUploadOpts<M, B>,
+  keyof typeof defaultOptions
+>
+
+interface OptsWithHeaders<M extends Meta, B extends Body> extends Opts<M, B> {
+  headers: Record<string, string>
+}
+
+export default class XHRUpload<
+  M extends Meta,
+  B extends Body,
+> extends BasePlugin<Opts<M, B>, M, B> {
   // eslint-disable-next-line global-require
   static VERSION = packageJson.version
 
-  constructor (uppy, opts) {
-    super(uppy, opts)
+  requests: RateLimitedQueue
+
+  uploaderEvents: Record<string, EventManager<M, B> | null>
+
+  constructor(uppy: Uppy<M, B>, opts: XhrUploadOpts<M, B>) {
+    super(uppy, {
+      ...defaultOptions,
+      fieldName: opts.bundle ? 'files[]' : 'file',
+      ...opts,
+    })
     this.type = 'uploader'
     this.id = this.opts.id || 'XHRUpload'
-    this.title = 'XHRUpload'
 
     this.defaultLocale = locale
 
-    // Default options
-    const defaultOptions = {
-      formData: true,
-      fieldName: opts.bundle ? 'files[]' : 'file',
-      method: 'post',
-      allowedMetaFields: null,
-      responseUrlFieldName: 'url',
-      bundle: false,
-      headers: {},
-      timeout: 30 * 1000,
-      limit: 5,
-      withCredentials: false,
-      responseType: '',
-      /**
-       * @param {string} responseText the response body string
-       */
-      getResponseData (responseText) {
-        let parsedResponse = {}
-        try {
-          parsedResponse = JSON.parse(responseText)
-        } catch (err) {
-          uppy.log(err)
-        }
-
-        return parsedResponse
-      },
-      /**
-       *
-       * @param {string} _ the response body string
-       * @param {XMLHttpRequest | respObj} response the response object (XHR or similar)
-       */
-      getResponseError (_, response) {
-        let error = new Error('Upload error')
-
-        if (isNetworkError(response)) {
-          error = new NetworkError(error, response)
-        }
-
-        return error
-      },
-      /**
-       * Check if the response from the upload endpoint indicates that the upload was successful.
-       *
-       * @param {number} status the response status code
-       */
-      validateStatus (status) {
-        return status >= 200 && status < 300
-      },
-    }
-
-    this.opts = { ...defaultOptions, ...opts }
     this.i18nInit()
 
     // Simultaneous upload limiting is shared across all uploads with this plugin.
@@ -116,17 +175,27 @@ export default class XHRUpload extends BasePlugin {
     }
 
     if (this.opts.bundle && !this.opts.formData) {
-      throw new Error('`opts.formData` must be true when `opts.bundle` is enabled.')
+      throw new Error(
+        '`opts.formData` must be true when `opts.bundle` is enabled.',
+      )
+    }
+
+    if (this.opts.bundle && typeof this.opts.headers === 'function') {
+      throw new Error(
+        '`opts.headers` can not be a function when the `bundle: true` option is set.',
+      )
     }
 
     if (opts?.allowedMetaFields === undefined && 'metaFields' in this.opts) {
-      throw new Error('The `metaFields` option has been renamed to `allowedMetaFields`.')
+      throw new Error(
+        'The `metaFields` option has been renamed to `allowedMetaFields`.',
+      )
     }
 
     this.uploaderEvents = Object.create(null)
   }
 
-  getOptions (file) {
+  getOptions(file: UppyFile<M, B>): OptsWithHeaders<M, B> {
     const overrides = this.uppy.getState().xhrUpload
     const { headers } = this.opts
 
@@ -159,23 +228,29 @@ export default class XHRUpload extends BasePlugin {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  addMetadata (formData, meta, opts) {
-    const allowedMetaFields = Array.isArray(opts.allowedMetaFields)
-      ? opts.allowedMetaFields
+  addMetadata(
+    formData: FormData,
+    meta: State<M, B>['meta'],
+    opts: Opts<M, B>,
+  ): void {
+    const allowedMetaFields =
+      Array.isArray(opts.allowedMetaFields) ?
+        opts.allowedMetaFields
       : Object.keys(meta) // Send along all fields by default.
 
     allowedMetaFields.forEach((item) => {
-      if (Array.isArray(meta[item])) {
+      const value = meta[item]
+      if (Array.isArray(value)) {
         // In this case we don't transform `item` to add brackets, it's up to
         // the user to add the brackets so it won't be overridden.
-        meta[item].forEach(subItem => formData.append(item, subItem))
+        value.forEach((subItem) => formData.append(item, subItem))
       } else {
-        formData.append(item, meta[item])
+        formData.append(item, value as string)
       }
     })
   }
 
-  createFormDataUpload (file, opts) {
+  createFormDataUpload(file: UppyFile<M, B>, opts: Opts<M, B>): FormData {
     const formPost = new FormData()
 
     this.addMetadata(formPost, file.meta, opts)
@@ -191,7 +266,7 @@ export default class XHRUpload extends BasePlugin {
     return formPost
   }
 
-  createBundledUpload (files, opts) {
+  createBundledUpload(files: UppyFile<M, B>[], opts: Opts<M, B>): FormData {
     const formPost = new FormData()
 
     const { meta } = this.uppy.getState()
@@ -212,22 +287,26 @@ export default class XHRUpload extends BasePlugin {
     return formPost
   }
 
-  async #uploadLocalFile (file, current, total) {
+  async #uploadLocalFile(file: UppyFile<M, B>, current: number, total: number) {
     const opts = this.getOptions(file)
+    const uploadStarted = Date.now()
 
     this.uppy.log(`uploading ${current} of ${total}`)
     return new Promise((resolve, reject) => {
-      const data = opts.formData
-        ? this.createFormDataUpload(file, opts)
-        : file.data
+      const data =
+        opts.formData ? this.createFormDataUpload(file, opts) : file.data
 
       const xhr = new XMLHttpRequest()
       const eventManager = new EventManager(this.uppy)
       this.uploaderEvents[file.id] = eventManager
-      let queuedRequest
+      let queuedRequest: { abort: () => void; done: () => void }
 
       const timer = new ProgressTimeout(opts.timeout, () => {
-        const error = new Error(this.i18n('uploadStalled', { seconds: Math.ceil(opts.timeout / 1000) }))
+        const error = new Error(
+          this.i18n('uploadStalled', {
+            seconds: Math.ceil(opts.timeout / 1000),
+          }),
+        )
         this.uppy.emit('upload-stalled', error, [file])
       })
 
@@ -245,7 +324,7 @@ export default class XHRUpload extends BasePlugin {
 
         if (ev.lengthComputable) {
           this.uppy.emit('upload-progress', file, {
-            uploader: this,
+            uploadStarted,
             bytesUploaded: ev.loaded,
             bytesTotal: ev.total,
           })
@@ -257,13 +336,13 @@ export default class XHRUpload extends BasePlugin {
         timer.done()
         queuedRequest.done()
         if (this.uploaderEvents[file.id]) {
-          this.uploaderEvents[file.id].remove()
+          this.uploaderEvents[file.id]!.remove()
           this.uploaderEvents[file.id] = null
         }
 
         if (opts.validateStatus(xhr.status, xhr.responseText, xhr)) {
           const body = opts.getResponseData(xhr.responseText, xhr)
-          const uploadURL = body[opts.responseUrlFieldName]
+          const uploadURL = body[opts.responseUrlFieldName] as string
 
           const uploadResp = {
             status: xhr.status,
@@ -280,7 +359,10 @@ export default class XHRUpload extends BasePlugin {
           return resolve(file)
         }
         const body = opts.getResponseData(xhr.responseText, xhr)
-        const error = buildResponseError(xhr, opts.getResponseError(xhr.responseText, xhr))
+        const error = buildResponseError(
+          xhr,
+          opts.getResponseError(xhr.responseText, xhr),
+        )
 
         const response = {
           status: xhr.status,
@@ -296,11 +378,14 @@ export default class XHRUpload extends BasePlugin {
         timer.done()
         queuedRequest.done()
         if (this.uploaderEvents[file.id]) {
-          this.uploaderEvents[file.id].remove()
+          this.uploaderEvents[file.id]!.remove()
           this.uploaderEvents[file.id] = null
         }
 
-        const error = buildResponseError(xhr, opts.getResponseError(xhr.responseText, xhr))
+        const error = buildResponseError(
+          xhr,
+          opts.getResponseError(xhr.responseText, xhr),
+        )
         this.uppy.emit('upload-error', file, error)
         return reject(error)
       })
@@ -346,10 +431,11 @@ export default class XHRUpload extends BasePlugin {
     })
   }
 
-  #uploadBundle (files) {
+  #uploadBundle(files: UppyFile<M, B>[]): Promise<void> {
     return new Promise((resolve, reject) => {
       const { endpoint } = this.opts
       const { method } = this.opts
+      const uploadStarted = Date.now()
 
       const optsFromState = this.uppy.getState().xhrUpload
       const formData = this.createBundledUpload(files, {
@@ -359,14 +445,18 @@ export default class XHRUpload extends BasePlugin {
 
       const xhr = new XMLHttpRequest()
 
-      const emitError = (error) => {
+      const emitError = (error: Error) => {
         files.forEach((file) => {
           this.uppy.emit('upload-error', file, error)
         })
       }
 
       const timer = new ProgressTimeout(this.opts.timeout, () => {
-        const error = new Error(this.i18n('uploadStalled', { seconds: Math.ceil(this.opts.timeout / 1000) }))
+        const error = new Error(
+          this.i18n('uploadStalled', {
+            seconds: Math.ceil(this.opts.timeout / 1000),
+          }),
+        )
         this.uppy.emit('upload-stalled', error, files)
       })
 
@@ -382,20 +472,20 @@ export default class XHRUpload extends BasePlugin {
 
         files.forEach((file) => {
           this.uppy.emit('upload-progress', file, {
-            uploader: this,
-            bytesUploaded: (ev.loaded / ev.total) * file.size,
-            bytesTotal: file.size,
+            uploadStarted,
+            bytesUploaded: (ev.loaded / ev.total) * (file.size as number),
+            bytesTotal: file.size as number,
           })
         })
       })
 
-      xhr.addEventListener('load', (ev) => {
+      xhr.addEventListener('load', () => {
         timer.done()
 
-        if (this.opts.validateStatus(ev.target.status, xhr.responseText, xhr)) {
+        if (this.opts.validateStatus(xhr.status, xhr.responseText, xhr)) {
           const body = this.opts.getResponseData(xhr.responseText, xhr)
           const uploadResp = {
-            status: ev.target.status,
+            status: xhr.status,
             body,
           }
           files.forEach((file) => {
@@ -404,8 +494,9 @@ export default class XHRUpload extends BasePlugin {
           return resolve()
         }
 
-        const error = this.opts.getResponseError(xhr.responseText, xhr) || new Error('Upload error')
-        error.request = xhr
+        const error =
+          this.opts.getResponseError(xhr.responseText, xhr) ||
+          new NetworkError('Upload error', xhr)
         emitError(error)
         return reject(error)
       })
@@ -413,7 +504,9 @@ export default class XHRUpload extends BasePlugin {
       xhr.addEventListener('error', () => {
         timer.done()
 
-        const error = this.opts.getResponseError(xhr.responseText, xhr) || new Error('Upload error')
+        const error =
+          this.opts.getResponseError(xhr.responseText, xhr) ||
+          new Error('Upload error')
         emitError(error)
         return reject(error)
       })
@@ -432,65 +525,76 @@ export default class XHRUpload extends BasePlugin {
         xhr.responseType = this.opts.responseType
       }
 
-      Object.keys(this.opts.headers).forEach((header) => {
-        xhr.setRequestHeader(header, this.opts.headers[header])
+      // In bundle mode headers can not be a function
+      const headers = this.opts.headers as Record<string, string>
+      Object.keys(headers).forEach((header) => {
+        xhr.setRequestHeader(header, headers[header] as string)
       })
 
       xhr.send(formData)
     })
   }
 
-  #getCompanionClientArgs (file) {
+  #getCompanionClientArgs(file: UppyFile<M, B>) {
     const opts = this.getOptions(file)
-    const allowedMetaFields = Array.isArray(opts.allowedMetaFields)
-      ? opts.allowedMetaFields
-      // Send along all fields by default.
+    const allowedMetaFields =
+      Array.isArray(opts.allowedMetaFields) ?
+        opts.allowedMetaFields
+        // Send along all fields by default.
       : Object.keys(file.meta)
     return {
-      ...file.remote.body,
+      ...file?.remote?.body,
       protocol: 'multipart',
       endpoint: opts.endpoint,
       size: file.data.size,
       fieldname: opts.fieldName,
-      metadata: Object.fromEntries(allowedMetaFields.map(name => [name, file.meta[name]])),
+      metadata: Object.fromEntries(
+        allowedMetaFields.map((name) => [name, file.meta[name]]),
+      ),
       httpMethod: opts.method,
       useFormData: opts.formData,
       headers: opts.headers,
     }
   }
 
-  async #uploadFiles (files) {
-    await Promise.allSettled(files.map((file, i) => {
-      const current = parseInt(i, 10) + 1
-      const total = files.length
+  async #uploadFiles(files: UppyFile<M, B>[]) {
+    await Promise.allSettled(
+      files.map((file, i) => {
+        const current = i + 1
+        const total = files.length
 
-      if (file.isRemote) {
-        const getQueue = () => this.requests
-        const controller = new AbortController()
+        if (file.isRemote) {
+          const getQueue = () => this.requests
+          const controller = new AbortController()
 
-        const removedHandler = (removedFile) => {
-          if (removedFile.id === file.id) controller.abort()
+          const removedHandler = (removedFile: UppyFile<M, B>) => {
+            if (removedFile.id === file.id) controller.abort()
+          }
+          this.uppy.on('file-removed', removedHandler)
+
+          const uploadPromise = this.uppy
+            .getRequestClientForFile<RequestClient<M, B>>(file)
+            .uploadRemoteFile(file, this.#getCompanionClientArgs(file), {
+              signal: controller.signal,
+              getQueue,
+            })
+
+          this.requests.wrapSyncFunction(
+            () => {
+              this.uppy.off('file-removed', removedHandler)
+            },
+            { priority: -1 },
+          )()
+
+          return uploadPromise
         }
-        this.uppy.on('file-removed', removedHandler)
 
-        const uploadPromise = this.uppy.getRequestClientForFile(file).uploadRemoteFile(
-          file,
-          this.#getCompanionClientArgs(file),
-          { signal: controller.signal, getQueue },
-        )
-
-        this.requests.wrapSyncFunction(() => {
-          this.uppy.off('file-removed', removedHandler)
-        }, { priority: -1 })()
-
-        return uploadPromise
-      }
-
-      return this.#uploadLocalFile(file, current, total)
-    }))
+        return this.#uploadLocalFile(file, current, total)
+      }),
+    )
   }
 
-  #handleUpload = async (fileIDs) => {
+  #handleUpload = async (fileIDs: string[]) => {
     if (fileIDs.length === 0) {
       this.uppy.log('[XHRUpload] No files to upload!')
       return
@@ -514,13 +618,17 @@ export default class XHRUpload extends BasePlugin {
 
     if (this.opts.bundle) {
       // if bundle: true, we don’t support remote uploads
-      const isSomeFileRemote = filesFiltered.some(file => file.isRemote)
+      const isSomeFileRemote = filesFiltered.some((file) => file.isRemote)
       if (isSomeFileRemote) {
-        throw new Error('Can’t upload remote files when the `bundle: true` option is set')
+        throw new Error(
+          'Can’t upload remote files when the `bundle: true` option is set',
+        )
       }
 
       if (typeof this.opts.headers === 'function') {
-        throw new TypeError('`headers` may not be a function when the `bundle: true` option is set')
+        throw new TypeError(
+          '`headers` may not be a function when the `bundle: true` option is set',
+        )
       }
 
       await this.#uploadBundle(filesFiltered)
@@ -529,7 +637,7 @@ export default class XHRUpload extends BasePlugin {
     }
   }
 
-  install () {
+  install(): void {
     if (this.opts.bundle) {
       const { capabilities } = this.uppy.getState()
       this.uppy.setState({
@@ -543,7 +651,7 @@ export default class XHRUpload extends BasePlugin {
     this.uppy.addUploader(this.#handleUpload)
   }
 
-  uninstall () {
+  uninstall(): void {
     if (this.opts.bundle) {
       const { capabilities } = this.uppy.getState()
       this.uppy.setState({
