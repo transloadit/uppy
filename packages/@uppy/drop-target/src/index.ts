@@ -1,6 +1,6 @@
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import type { Uppy } from '@uppy/core/src/Uppy.ts'
-import type { UIPluginOptions } from '@uppy/core/src/UIPlugin.ts'
+import type { DefinePluginOpts, PluginOpts } from '@uppy/core/lib/BasePlugin.js'
 import BasePlugin from '@uppy/core/lib/BasePlugin.js'
 import getDroppedFiles from '@uppy/utils/lib/getDroppedFiles'
 import toArray from '@uppy/utils/lib/toArray'
@@ -8,11 +8,16 @@ import toArray from '@uppy/utils/lib/toArray'
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'
 
-interface DropTargetOptions extends UIPluginOptions {
+interface DropTargetOptions extends PluginOpts {
   target?: HTMLElement | string | null
   onDrop?: (event: DragEvent) => void
   onDragOver?: (event: DragEvent) => void
   onDragLeave?: (event: DragEvent) => void
+}
+
+// Default options
+const defaultOpts = {
+  target: null,
 }
 
 interface DragEventWithFileTransfer extends DragEvent {
@@ -30,7 +35,11 @@ function isFileTransfer(event: DragEvent): event is DragEventWithFileTransfer {
 export default class DropTarget<
   M extends Meta,
   B extends Body,
-> extends BasePlugin<DefinePluginOpts<DropTargetOptions, keyof typeof defaultOptions>, M, B> {
+> extends BasePlugin<
+  DefinePluginOpts<DropTargetOptions, keyof typeof defaultOpts>,
+  M,
+  B
+> {
   static VERSION = packageJson.version
 
   private removeDragOverClassTimeout: ReturnType<typeof setTimeout>
@@ -43,11 +52,6 @@ export default class DropTarget<
     this.id = this.opts.id || 'DropTarget'
     // @ts-expect-error TODO: remove in major
     this.title = 'Drop Target'
-
-    // Default options
-    const defaultOpts = {
-      target: null,
-    }
 
     // Merge default options with the ones set by user
     this.opts = { ...defaultOpts, ...opts }
