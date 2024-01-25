@@ -1,5 +1,5 @@
-import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
-import type { Uppy, State } from '@uppy/core/src/Uppy.ts'
+import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
+import type { Uppy } from '@uppy/core/src/Uppy.ts'
 import type { UIPluginOptions } from '@uppy/core/src/UIPlugin.ts'
 import BasePlugin from '@uppy/core/lib/BasePlugin.js'
 import getDroppedFiles from '@uppy/utils/lib/getDroppedFiles'
