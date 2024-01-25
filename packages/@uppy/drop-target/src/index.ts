@@ -37,7 +37,7 @@ export default class DropTarget<
 
   private nodes?: Array<HTMLElement>
 
-  constructor(uppy: Uppy<M, B>, opts: DropTargetOptions) {
+  constructor(uppy: Uppy<M, B>, opts?: DropTargetOptions) {
     super(uppy, opts)
     this.type = 'acquirer'
     this.id = this.opts.id || 'DropTarget'
