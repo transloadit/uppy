@@ -1,8 +1,12 @@
-function toRadians (angle) {
+function toRadians(angle: number) {
   return angle * (Math.PI / 180)
 }
 
-function getScaleFactorThatRemovesDarkCorners (w, h, granularAngle) {
+function getScaleFactorThatRemovesDarkCorners(
+  w: number,
+  h: number,
+  granularAngle: number,
+): number {
   const α = Math.abs(toRadians(granularAngle))
 
   const scaleFactor = Math.max(

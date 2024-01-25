@@ -16,9 +16,9 @@ export default (props: PermissionsScreenProps): JSX.Element => {
         {hasAudio ? i18n('allowAudioAccessTitle') : i18n('noAudioTitle')}
       </h1>
       <p>
-        {hasAudio
-          ? i18n('allowAudioAccessDescription')
-          : i18n('noAudioDescription')}
+        {hasAudio ?
+          i18n('allowAudioAccessDescription')
+        : i18n('noAudioDescription')}
       </p>
     </div>
   )

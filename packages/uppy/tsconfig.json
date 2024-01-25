@@ -4,7 +4,7 @@
     "allowJs": true,
     "emitDeclarationOnly": false,
     "skipLibCheck": true,
-    "noEmit": true
+    "noEmit": true,
   },
-  "include": ["types/*"]
+  "include": ["types/*"],
 }

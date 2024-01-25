@@ -1,6 +1,8 @@
 'use strict'
 
 class AuthError extends Error {
+  isAuthError: boolean
+
   constructor() {
     super('Authorization required')
     this.name = 'AuthError'

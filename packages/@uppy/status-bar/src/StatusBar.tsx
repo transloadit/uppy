@@ -1,5 +1,6 @@
 import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
 import type { Uppy, State } from '@uppy/core/src/Uppy.ts'
+import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin.ts'
 import { UIPlugin } from '@uppy/core'
 import emaFilter from '@uppy/utils/lib/emaFilter'
 import getTextDirection from '@uppy/utils/lib/getTextDirection'
@@ -55,12 +56,24 @@ function getUploadingState(
   return state
 }
 
+// set default options, must be kept in sync with @uppy/react/src/StatusBar.js
+const defaultOptions = {
+  target: 'body',
+  hideUploadButton: false,
+  hideRetryButton: false,
+  hidePauseResumeButton: false,
+  hideCancelButton: false,
+  showProgressDetails: false,
+  hideAfterFinish: true,
+  doneButtonHandler: null,
+} satisfies StatusBarOptions
+
 /**
  * StatusBar: renders a status bar with upload/pause/resume/cancel/retry buttons,
  * progress percentage and time remaining.
  */
 export default class StatusBar<M extends Meta, B extends Body> extends UIPlugin<
-  StatusBarOptions,
+  DefinePluginOpts<StatusBarOptions, keyof typeof defaultOptions>,
   M,
   B
 > {
@@ -74,27 +87,13 @@ export default class StatusBar<M extends Meta, B extends Body> extends UIPlugin<
 
   #previousETA: number | null
 
-  constructor(uppy: Uppy<M, B>, opts?: Partial<StatusBarOptions>) {
-    super(uppy, opts)
+  constructor(uppy: Uppy<M, B>, opts?: StatusBarOptions) {
+    super(uppy, { ...defaultOptions, ...opts })
     this.id = this.opts.id || 'StatusBar'
     this.title = 'StatusBar'
     this.type = 'progressindicator'
 
     this.defaultLocale = locale
-
-    // set default options, must be kept in sync with @uppy/react/src/StatusBar.js
-    const defaultOptions = {
-      target: 'body',
-      hideUploadButton: false,
-      hideRetryButton: false,
-      hidePauseResumeButton: false,
-      hideCancelButton: false,
-      showProgressDetails: false,
-      hideAfterFinish: true,
-      doneButtonHandler: null,
-    }
-
-    this.opts = { ...defaultOptions, ...opts }
 
     this.i18nInit()
 
@@ -129,17 +128,17 @@ export default class StatusBar<M extends Meta, B extends Body> extends UIPlugin<
     }
     const currentSpeed = uploadedBytesSinceLastTick / dt
     const filteredSpeed =
-      this.#previousSpeed == null
-        ? currentSpeed
-        : emaFilter(currentSpeed, this.#previousSpeed, speedFilterHalfLife, dt)
+      this.#previousSpeed == null ?
+        currentSpeed
+      : emaFilter(currentSpeed, this.#previousSpeed, speedFilterHalfLife, dt)
     this.#previousSpeed = filteredSpeed
     const instantETA = totalBytes.remaining / filteredSpeed
 
     const updatedPreviousETA = Math.max(this.#previousETA! - dt, 0)
     const filteredETA =
-      this.#previousETA == null
-        ? instantETA
-        : emaFilter(instantETA, updatedPreviousETA, ETAFilterHalfLife, dt)
+      this.#previousETA == null ?
+        instantETA
+      : emaFilter(instantETA, updatedPreviousETA, ETAFilterHalfLife, dt)
     this.#previousETA = filteredETA
     this.#lastUpdateTime = performance.now()
 

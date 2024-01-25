@@ -39,7 +39,6 @@ import locale from './locale.ts'
 import type BasePlugin from './BasePlugin.ts'
 import type UIPlugin from './UIPlugin.ts'
 import type { Restrictions } from './Restricter.ts'
-import type { PluginOpts } from './BasePlugin.ts'
 
 type Processor = (fileIDs: string[], uploadID: string) => Promise<void> | void
 
@@ -47,7 +46,7 @@ type FileRemoveReason = 'user' | 'cancel-all'
 
 type LogLevel = 'info' | 'warning' | 'error' | 'success'
 
-type UnknownPlugin<M extends Meta, B extends Body> = InstanceType<
+export type UnknownPlugin<M extends Meta, B extends Body> = InstanceType<
   typeof BasePlugin<any, M, B> | typeof UIPlugin<any, M, B>
 >
 
@@ -111,6 +110,7 @@ export interface State<M extends Meta, B extends Body>
   }>
   plugins: Plugins
   totalProgress: number
+  companion?: Record<string, string>
 }
 
 export interface UppyOptions<M extends Meta, B extends Body> {
@@ -212,7 +212,7 @@ type ErrorCallback<M extends Meta, B extends Body> = (
 type UploadErrorCallback<M extends Meta, B extends Body> = (
   file: UppyFile<M, B> | undefined,
   error: { message: string; details?: string },
-  response: UppyFile<M, B>['response'] | undefined,
+  response?: UppyFile<M, B>['response'] | undefined,
 ) => void
 type UploadStalledCallback<M extends Meta, B extends Body> = (
   error: { message: string; details?: string },
@@ -836,15 +836,14 @@ export class Uppy<M extends Meta, B extends Body> {
     // If the actual File object is passed from input[type=file] or drag-drop,
     // we normalize it to match Uppy file object
     const file = (
-      fileDescriptorOrFile instanceof File
-        ? {
-            name: fileDescriptorOrFile.name,
-            type: fileDescriptorOrFile.type,
-            size: fileDescriptorOrFile.size,
-            data: fileDescriptorOrFile,
-          }
-        : fileDescriptorOrFile
-    ) as UppyFile<M, B>
+      fileDescriptorOrFile instanceof File ?
+        {
+          name: fileDescriptorOrFile.name,
+          type: fileDescriptorOrFile.type,
+          size: fileDescriptorOrFile.size,
+          data: fileDescriptorOrFile,
+        }
+      : fileDescriptorOrFile) as UppyFile<M, B>
 
     const fileType = getFileType(file)
     const fileName = getFileName(fileType, file)
@@ -1335,8 +1334,9 @@ export class Uppy<M extends Meta, B extends Body> {
           ...fileInState.progress,
           bytesUploaded: data.bytesUploaded,
           bytesTotal: data.bytesTotal,
-          percentage: canHavePercentage
-            ? Math.round((data.bytesUploaded / data.bytesTotal) * 100)
+          percentage:
+            canHavePercentage ?
+              Math.round((data.bytesUploaded / data.bytesTotal) * 100)
             : 0,
         },
       })
@@ -1528,11 +1528,11 @@ export class Uppy<M extends Meta, B extends Body> {
         progress: {
           ...currentProgress,
           postprocess:
-            this.#postProcessors.size > 0
-              ? {
-                  mode: 'indeterminate',
-                }
-              : undefined,
+            this.#postProcessors.size > 0 ?
+              {
+                mode: 'indeterminate',
+              }
+            : undefined,
           uploadComplete: true,
           percentage: 100,
           bytesUploaded: currentProgress.bytesTotal,
@@ -1663,9 +1663,9 @@ export class Uppy<M extends Meta, B extends Body> {
   /**
    * Registers a plugin with Core.
    */
-  use<O extends PluginOpts, I extends UIPlugin<O, M, B> | BasePlugin<O, M, B>>(
-    Plugin: new (uppy: this, opts?: O) => I,
-    opts?: O,
+  use<T extends typeof BasePlugin<any, M, B>>(
+    Plugin: T,
+    opts?: ConstructorParameters<T>[1],
   ): this {
     if (typeof Plugin !== 'function') {
       const msg =

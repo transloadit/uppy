@@ -16,7 +16,7 @@ interface RecordingScreenProps extends AudioSourceSelectProps {
   recordedAudio: string
   recording: boolean
   supportsRecording: boolean
-  showAudioSourceDropdown: boolean
+  showAudioSourceDropdown: boolean | undefined
   onSubmit: () => void
   i18n: I18n
   onStartRecording: () => void
@@ -91,11 +91,9 @@ export default function RecordingScreen(
   return (
     <div className="uppy-Audio-container">
       <div className="uppy-Audio-audioContainer">
-        {hasRecordedAudio ? (
+        {hasRecordedAudio ?
           <audio className="uppy-Audio-player" controls src={recordedAudio} />
-        ) : (
-          <canvas ref={canvasEl} className="uppy-Audio-canvas" />
-        )}
+        : <canvas ref={canvasEl} className="uppy-Audio-canvas" />}
       </div>
       <div className="uppy-Audio-footer">
         <div className="uppy-Audio-audioSourceContainer">

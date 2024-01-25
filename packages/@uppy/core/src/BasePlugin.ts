@@ -1,5 +1,4 @@
 /* eslint-disable class-methods-use-this */
-/* eslint-disable @typescript-eslint/no-empty-function */
 
 /**
  * Core plugin logic that all plugins share.
@@ -11,7 +10,11 @@
  */
 
 import Translator from '@uppy/utils/lib/Translator'
-import type { I18n, Locale } from '@uppy/utils/lib/Translator'
+import type {
+  I18n,
+  Locale,
+  OptionalPluralizeLocale,
+} from '@uppy/utils/lib/Translator'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import type { State, Uppy } from './Uppy'
 
@@ -20,6 +23,11 @@ export type PluginOpts = {
   id?: string
   [key: string]: unknown
 }
+
+export type DefinePluginOpts<
+  Opts extends PluginOpts,
+  AlwaysDefinedKeys extends string,
+> = Opts & Required<Pick<Opts, AlwaysDefinedKeys>>
 
 export default class BasePlugin<
   Opts extends PluginOpts,
@@ -33,7 +41,7 @@ export default class BasePlugin<
 
   id: string
 
-  defaultLocale: Locale
+  defaultLocale: OptionalPluralizeLocale
 
   i18n: I18n
 
@@ -43,9 +51,9 @@ export default class BasePlugin<
 
   VERSION: string
 
-  constructor(uppy: Uppy<M, B>, opts?: Partial<Opts>) {
+  constructor(uppy: Uppy<M, B>, opts?: Opts) {
     this.uppy = uppy
-    this.opts = (opts ?? {}) as Opts
+    this.opts = opts ?? ({} as Opts)
   }
 
   getPluginState(): PluginState {

@@ -7,10 +7,10 @@
     "*.{js,mjs,cjs,jsx}": "eslint --fix",
     "*.{ts,mts,cts,tsx}": [
       "eslint --fix",
-      "prettier -w",
+      "prettier --experimental-ternaries -w",
       "eslint"
     ],
-    "*.{css,html,json,scss,vue,yaml,yml}": "prettier -w",
+    "*.{css,html,json,scss,vue,yaml,yml}": "prettier --experimental-ternaries -w",
     "*.md": [
       "remark --silently-ignore -i .remarkignore -foq",
       "eslint --fix"
@@ -109,7 +109,7 @@
     "tar": "^6.1.0",
     "tsd": "^0.28.0",
     "typescript": "~5.1",
-    "vitest": "^0.34.5",
+    "vitest": "^1.2.1",
     "vue-template-compiler": "workspace:*"
   },
   "scripts": {
@@ -135,10 +135,10 @@
     "lint:css": "stylelint ./packages/**/*.scss",
     "lint:css:fix": "stylelint ./packages/**/*.scss --fix",
     "lint": "eslint . --cache",
-    "format:show-diff": "git diff --quiet || (echo 'Unable to show a diff because there are unstaged changes'; false) && (prettier . -w --loglevel silent && git --no-pager diff; git restore .)",
-    "format:check": "prettier -c .",
+    "format:show-diff": "git diff --quiet || (echo 'Unable to show a diff because there are unstaged changes'; false) && (prettier . --experimental-ternaries -w --loglevel silent && git --no-pager diff; git restore .)",
+    "format:check": "prettier --experimental-ternaries -c .",
     "format:check-diff": "yarn format:check || (yarn format:show-diff && false)",
-    "format": "prettier -w .",
+    "format": "prettier --experimental-ternaries -w .",
     "release": "PACKAGES=$(yarn workspaces list --json) yarn workspace @uppy-dev/release interactive",
     "size": "echo 'JS Bundle mingz:' && cat ./packages/uppy/dist/uppy.min.js | gzip | wc -c && echo 'CSS Bundle mingz:' && cat ./packages/uppy/dist/uppy.min.css | gzip | wc -c",
     "e2e": "yarn build:clean && yarn build && yarn e2e:skip-build",
@@ -169,6 +169,7 @@
     "@types/eslint@^7.2.13": "^8.2.0",
     "@types/react": "^17",
     "@types/webpack-dev-server": "^4",
+    "@vitest/utils": "patch:@vitest/utils@npm%3A1.2.1#./.yarn/patches/@vitest-utils-npm-1.2.1-3028846845.patch",
     "p-queue": "patch:p-queue@npm%3A7.4.1#./.yarn/patches/p-queue-npm-7.4.1-e0cf0a6f17.patch",
     "pre-commit": "patch:pre-commit@npm:1.2.2#.yarn/patches/pre-commit-npm-1.2.2-f30af83877.patch",
     "preact": "patch:preact@npm:10.10.0#.yarn/patches/preact-npm-10.10.0-dd04de05e8.patch",
