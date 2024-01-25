@@ -30,7 +30,7 @@ function isFileTransfer(event: DragEvent): event is DragEventWithFileTransfer {
 export default class DropTarget<
   M extends Meta,
   B extends Body,
-> extends BasePlugin<DropTargetOptions, M, B> {
+> extends BasePlugin<DefinePluginOpts<DropTargetOptions, keyof typeof defaultOptions>, M, B> {
   static VERSION = packageJson.version
 
   private removeDragOverClassTimeout: ReturnType<typeof setTimeout>
