@@ -543,7 +543,7 @@ export default class XHRUpload<
         // Send along all fields by default.
       : Object.keys(file.meta)
     return {
-      ...file?.remote?.body,
+      ...file.remote?.body,
       protocol: 'multipart',
       endpoint: opts.endpoint,
       size: file.data.size,
