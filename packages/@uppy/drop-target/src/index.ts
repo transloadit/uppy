@@ -47,14 +47,11 @@ export default class DropTarget<
   private nodes?: Array<HTMLElement>
 
   constructor(uppy: Uppy<M, B>, opts?: DropTargetOptions) {
-    super(uppy, opts)
+    super(uppy, { ...defaultOpts, ...opts })
     this.type = 'acquirer'
     this.id = this.opts.id || 'DropTarget'
     // @ts-expect-error TODO: remove in major
     this.title = 'Drop Target'
-
-    // Merge default options with the ones set by user
-    this.opts = { ...defaultOpts, ...opts }
   }
 
   addFiles = (files: Array<File>): void => {
