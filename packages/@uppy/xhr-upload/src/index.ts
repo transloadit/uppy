@@ -2,7 +2,7 @@ import BasePlugin from '@uppy/core/lib/BasePlugin.js'
 import type { DefinePluginOpts, PluginOpts } from '@uppy/core/lib/BasePlugin.js'
 import type { RequestClient } from '@uppy/companion-client'
 import { nanoid } from 'nanoid/non-secure'
-import EventManager from '@uppy/utils/lib/EventManager'
+import EventManager from '@uppy/core/lib/EventManager.js'
 import ProgressTimeout from '@uppy/utils/lib/ProgressTimeout'
 import {
   RateLimitedQueue,
