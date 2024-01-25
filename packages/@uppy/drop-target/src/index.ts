@@ -18,7 +18,7 @@ interface DropTargetOptions extends PluginOpts {
 // Default options
 const defaultOpts = {
   target: null,
-}
+} satisfies DropTargetOptions
 
 interface DragEventWithFileTransfer extends DragEvent {
   dataTransfer: NonNullable<DragEvent['dataTransfer']>
