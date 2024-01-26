@@ -324,6 +324,9 @@ export default class XHRUpload<
 
         if (ev.lengthComputable) {
           this.uppy.emit('upload-progress', file, {
+            // TODO: do not send `uploader` in next major
+            // @ts-expect-error we can't type this and we should remove it
+            uploader: this,
             uploadStarted,
             bytesUploaded: ev.loaded,
             bytesTotal: ev.total,
@@ -472,6 +475,9 @@ export default class XHRUpload<
 
         files.forEach((file) => {
           this.uppy.emit('upload-progress', file, {
+            // TODO: do not send `uploader` in next major
+            // @ts-expect-error we can't type this and we should remove it
+            uploader: this,
             uploadStarted,
             bytesUploaded: (ev.loaded / ev.total) * (file.size as number),
             bytesTotal: file.size as number,
