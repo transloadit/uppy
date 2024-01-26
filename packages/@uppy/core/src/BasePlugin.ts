@@ -24,6 +24,9 @@ export type PluginOpts = {
   [key: string]: unknown
 }
 
+/**
+ * DefinePluginOpts marks all of the passed AlwaysDefinedKeys as “required” or “always defined”.
+ */
 export type DefinePluginOpts<
   Opts extends PluginOpts,
   AlwaysDefinedKeys extends string,
