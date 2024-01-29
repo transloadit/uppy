@@ -11,9 +11,6 @@ import getSocketHost from '@uppy/utils/lib/getSocketHost'
 
 import type Uppy from '@uppy/core'
 import type { UppyFile, Meta, Body } from '@uppy/utils/lib/UppyFile'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore untyped because we're getting rid of it
-import type { RateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
 import AuthError from './AuthError.ts'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
@@ -249,7 +246,7 @@ export default class RequestClient<M extends Meta, B extends Body> {
   async uploadRemoteFile(
     file: UppyFile<M, B>,
     reqBody: Record<string, unknown>,
-    options: { signal: AbortSignal; getQueue: () => RateLimitedQueue },
+    options: { signal: AbortSignal; getQueue: () => any },
   ): Promise<void> {
     try {
       const { signal, getQueue } = options || {}
@@ -376,7 +373,7 @@ export default class RequestClient<M extends Meta, B extends Body> {
     signal,
   }: {
     file: UppyFile<M, B>
-    queue: RateLimitedQueue
+    queue: any
     signal: AbortSignal
   }): Promise<void> {
     let removeEventHandlers: () => void
