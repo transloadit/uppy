@@ -1,15 +1,12 @@
 // eslint-disable-next-line max-classes-per-file
 const http = require('node:http')
 const https = require('node:https')
-const { URL } = require('node:url')
 const dns = require('node:dns')
 const ipaddr = require('ipaddr.js')
 const got = require('got').default
 const path = require('node:path')
 const contentDisposition = require('content-disposition')
 const validator = require('validator')
-
-const logger = require('../logger')
 
 const FORBIDDEN_IP_ADDRESS = 'Forbidden IP address'
 
@@ -19,30 +16,6 @@ const FORBIDDEN_IP_ADDRESS = 'Forbidden IP address'
 const isDisallowedIP = (ipAddress) => ipaddr.parse(ipAddress).range() !== 'unicast'
 
 module.exports.FORBIDDEN_IP_ADDRESS = FORBIDDEN_IP_ADDRESS
-
-module.exports.getRedirectEvaluator = (rawRequestURL, isEnabled) => {
-  const requestURL = new URL(rawRequestURL)
-
-  return ({ headers }) => {
-    if (!isEnabled) return true
-
-    let redirectURL = null
-    try {
-      redirectURL = new URL(headers.location, requestURL)
-    } catch (err) {
-      return false
-    }
-
-    const shouldRedirect = redirectURL.protocol === requestURL.protocol
-    if (!shouldRedirect) {
-      logger.info(
-        `blocking redirect from ${requestURL} to ${redirectURL}`, 'redirect.protection',
-      )
-    }
-
-    return shouldRedirect
-  }
-}
 
 /**
  * Validates that the download URL is secure
@@ -111,23 +84,15 @@ const getProtectedHttpAgent = ({ protocol, blockLocalIPs }) => {
 
 module.exports.getProtectedHttpAgent = getProtectedHttpAgent
 
-function getProtectedGot ({ url, blockLocalIPs }) {
+function getProtectedGot ({ blockLocalIPs }) {
   const HttpAgent = getProtectedHttpAgent({ protocol: 'http', blockLocalIPs })
   const HttpsAgent = getProtectedHttpAgent({ protocol: 'https', blockLocalIPs })
   const httpAgent = new HttpAgent()
   const httpsAgent = new HttpsAgent()
 
-  const redirectEvaluator = module.exports.getRedirectEvaluator(url, blockLocalIPs)
-
-  const beforeRedirect = (options, response) => {
-    const allowRedirect = redirectEvaluator(response)
-    if (!allowRedirect) {
-      throw new Error(`Redirect evaluator does not allow the redirect to ${response.headers.location}`)
-    }
-  }
 
   // @ts-ignore
-  return got.extend({ hooks: { beforeRedirect: [beforeRedirect] }, agent: { http: httpAgent, https: httpsAgent } })
+  return got.extend({ agent: { http: httpAgent, https: httpsAgent } })
 }
 
 module.exports.getProtectedGot = getProtectedGot
@@ -141,7 +106,7 @@ module.exports.getProtectedGot = getProtectedGot
  */
 exports.getURLMeta = async (url, blockLocalIPs = false) => {
   async function requestWithMethod (method) {
-    const protectedGot = getProtectedGot({ url, blockLocalIPs })
+    const protectedGot = getProtectedGot({ blockLocalIPs })
     const stream = protectedGot.stream(url, { method, throwHttpErrors: false })
 
     return new Promise((resolve, reject) => (
