@@ -1,5 +1,5 @@
 const nock = require('nock')
-const { getRedirectEvaluator, FORBIDDEN_IP_ADDRESS, FORBIDDEN_RESOLVED_IP_ADDRESS } = require('../../src/server/helpers/request')
+const { getRedirectEvaluator, FORBIDDEN_IP_ADDRESS } = require('../../src/server/helpers/request')
 const { getProtectedGot } = require('../../src/server/helpers/request')
 
 describe('test getRedirectEvaluator', () => {
@@ -47,7 +47,7 @@ describe('test protected request Agent', () => {
   test('blocks url that resolves to forbidden IP', async () => {
     const url = 'https://localhost'
     const promise = getProtectedGot({ url, blockLocalIPs: true }).get(url)
-    await expect(promise).rejects.toThrow(new Error(FORBIDDEN_RESOLVED_IP_ADDRESS))
+    await expect(promise).rejects.toThrow(/^Forbidden resolved IP address/)
   })
 
   test('blocks private http IP address', async () => {

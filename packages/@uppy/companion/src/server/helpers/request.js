@@ -12,7 +12,6 @@ const validator = require('validator')
 const logger = require('../logger')
 
 const FORBIDDEN_IP_ADDRESS = 'Forbidden IP address'
-const FORBIDDEN_RESOLVED_IP_ADDRESS = 'Forbidden resolved IP address'
 
 // Example scary IPs that should return false (ipv6-to-ipv4 mapped):
 // ::FFFF:127.0.0.1
@@ -20,7 +19,6 @@ const FORBIDDEN_RESOLVED_IP_ADDRESS = 'Forbidden resolved IP address'
 const isDisallowedIP = (ipAddress) => ipaddr.parse(ipAddress).range() !== 'unicast'
 
 module.exports.FORBIDDEN_IP_ADDRESS = FORBIDDEN_IP_ADDRESS
-module.exports.FORBIDDEN_RESOLVED_IP_ADDRESS = FORBIDDEN_RESOLVED_IP_ADDRESS
 
 module.exports.getRedirectEvaluator = (rawRequestURL, isEnabled) => {
   const requestURL = new URL(rawRequestURL)
@@ -83,14 +81,19 @@ const getProtectedHttpAgent = ({ protocol, blockLocalIPs }) => {
       }
 
       const toValidate = Array.isArray(addresses) ? addresses : [{ address: addresses }]
-      for (const record of toValidate) {
-        if (blockLocalIPs && isDisallowedIP(record.address)) {
-          callback(new Error(FORBIDDEN_RESOLVED_IP_ADDRESS), addresses, maybeFamily)
-          return
-        }
+      // because dns.lookup seems to be called with option `all: true`, if we are on an ipv6 system,
+      // `addresses` could contain a list of ipv4 addresses as well as ipv6 mapped addresses (rfc6052) which we cannot allow
+      // however we should still allow any valid ipv4 addresses, so we filter out the invalid addresses
+      const validAddresses = !blockLocalIPs ? toValidate : toValidate.filter(({ address }) => !isDisallowedIP(address))
+
+      // and check if there's anything left after we filtered:
+      if (validAddresses.length === 0) {
+        callback(new Error(`Forbidden resolved IP address ${hostname} -> ${toValidate.map(({ address }) => address).join(', ')}`), addresses, maybeFamily)
+        return
       }
 
-      callback(err, addresses, maybeFamily)
+      const ret = Array.isArray(addresses) ? validAddresses : validAddresses[0].address;
+      callback(err, ret, maybeFamily)
     })
   }
 
