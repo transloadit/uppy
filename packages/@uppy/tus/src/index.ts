@@ -1,26 +1,65 @@
-import BasePlugin from '@uppy/core/lib/BasePlugin.js'
+import BasePlugin, {
+  type DefinePluginOpts,
+  type PluginOpts,
+} from '@uppy/core/lib/BasePlugin.js'
 import * as tus from 'tus-js-client'
 import EventManager from '@uppy/utils/lib/EventManager'
 import NetworkError from '@uppy/utils/lib/NetworkError'
 import isNetworkError from '@uppy/utils/lib/isNetworkError'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore untyped
 import { RateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
 import hasProperty from '@uppy/utils/lib/hasProperty'
-import { filterNonFailedFiles, filterFilesToEmitUploadStarted } from '@uppy/utils/lib/fileFilters'
-import getFingerprint from './getFingerprint.js'
+import {
+  filterNonFailedFiles,
+  filterFilesToEmitUploadStarted,
+} from '@uppy/utils/lib/fileFilters'
+import type { Meta, Body, UppyFile } from '@uppy/utils/lib/UppyFile'
+import type { Uppy } from '@uppy/core'
+import type { RequestClient } from '@uppy/companion-client'
+import getFingerprint from './getFingerprint.ts'
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'
 
-/** @typedef {import('..').TusOptions} TusOptions */
-/** @typedef {import('tus-js-client').UploadOptions} RawTusOptions */
-/** @typedef {import('@uppy/core').Uppy} Uppy */
-/** @typedef {import('@uppy/core').UppyFile} UppyFile */
-/** @typedef {import('@uppy/core').FailedUppyFile<{}>} FailedUppyFile */
+declare module '@uppy/utils/lib/UppyFile' {
+  // eslint-disable-next-line no-shadow, @typescript-eslint/no-unused-vars
+  export interface UppyFile<M extends Meta, B extends Body> {
+    // TODO: figure out what else is in this type
+    tus?: { uploadUrl?: string | null }
+  }
+}
+
+type RestTusUploadOptions = Omit<
+  tus.UploadOptions,
+  'onShouldRetry' | 'onBeforeRequest' | 'headers'
+>
+
+export interface TusOpts<M extends Meta, B extends Body>
+  extends PluginOpts,
+    RestTusUploadOptions {
+  endpoint: string
+  headers?:
+    | Record<string, string>
+    | ((file: UppyFile<M, B>) => Record<string, string>)
+  limit?: number
+  chunkSize?: number
+  onBeforeRequest?: (req: tus.HttpRequest, file: UppyFile<M, B>) => void
+  onShouldRetry?: (
+    err: tus.DetailedError,
+    retryAttempt: number,
+    options: TusOpts<M, B>,
+    next: (e: tus.DetailedError) => void,
+  ) => boolean
+  retryDelays?: number[]
+  withCredentials?: boolean
+  allowedMetaFields?: string[]
+}
 
 /**
  * Extracted from https://github.com/tus/tus-js-client/blob/master/lib/upload.js#L13
  * excepted we removed 'fingerprint' key to avoid adding more dependencies
- *
- * @type {RawTusOptions}
  */
 const tusDefaultOptions = {
   endpoint: '',
@@ -44,43 +83,52 @@ const tusDefaultOptions = {
   removeFingerprintOnSuccess: false,
   uploadLengthDeferred: false,
   uploadDataDuringCreation: false,
+} satisfies tus.UploadOptions
+
+const defaultOptions = {
+  limit: 20,
+  retryDelays: tusDefaultOptions.retryDelays,
+  withCredentials: false,
 }
+
+type Opts<M extends Meta, B extends Body> = DefinePluginOpts<
+  TusOpts<M, B>,
+  keyof typeof defaultOptions
+>
 
 /**
  * Tus resumable file uploader
  */
-export default class Tus extends BasePlugin {
+export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
+  Opts<M, B>,
+  M,
+  B
+> {
   static VERSION = packageJson.version
 
   #retryDelayIterator
 
-  /**
-   * @param {Uppy} uppy
-   * @param {TusOptions} opts
-   */
-  constructor (uppy, opts) {
-    super(uppy, opts)
+  requests: RateLimitedQueue
+
+  uploaders: Record<string, tus.Upload | null>
+
+  uploaderEvents: Record<string, EventManager<M, B> | null>
+
+  constructor(uppy: Uppy<M, B>, opts: TusOpts<M, B>) {
+    super(uppy, { ...defaultOptions, ...opts })
     this.type = 'uploader'
     this.id = this.opts.id || 'Tus'
-    this.title = 'Tus'
-
-    // set default options
-    const defaultOptions = {
-      limit: 20,
-      retryDelays: tusDefaultOptions.retryDelays,
-      withCredentials: false,
-    }
-
-    // merge default options with the ones set by user
-    /** @type {import("..").TusOptions} */
-    this.opts = { ...defaultOptions, ...opts }
 
     if (opts?.allowedMetaFields === undefined && 'metaFields' in this.opts) {
-      throw new Error('The `metaFields` option has been renamed to `allowedMetaFields`.')
+      throw new Error(
+        'The `metaFields` option has been renamed to `allowedMetaFields`.',
+      )
     }
 
     if ('autoRetry' in opts) {
-      throw new Error('The `autoRetry` option was deprecated and has been removed.')
+      throw new Error(
+        'The `autoRetry` option was deprecated and has been removed.',
+      )
     }
 
     /**
@@ -88,7 +136,8 @@ export default class Tus extends BasePlugin {
      *
      * @type {RateLimitedQueue}
      */
-    this.requests = this.opts.rateLimitedQueue ?? new RateLimitedQueue(this.opts.limit)
+    this.requests =
+      this.opts.rateLimitedQueue ?? new RateLimitedQueue(this.opts.limit)
     this.#retryDelayIterator = this.opts.retryDelays?.values()
 
     this.uploaders = Object.create(null)
@@ -97,11 +146,11 @@ export default class Tus extends BasePlugin {
     this.handleResetProgress = this.handleResetProgress.bind(this)
   }
 
-  handleResetProgress () {
+  handleResetProgress(): void {
     const files = { ...this.uppy.getState().files }
     Object.keys(files).forEach((fileID) => {
       // Only clone the file object if it has a Tus `uploadUrl` attached.
-      if (files[fileID].tus && files[fileID].tus.uploadUrl) {
+      if (files[fileID]?.tus?.uploadUrl) {
         const tusState = { ...files[fileID].tus }
         delete tusState.uploadUrl
         files[fileID] = { ...files[fileID], tus: tusState }
@@ -114,23 +163,21 @@ export default class Tus extends BasePlugin {
   /**
    * Clean up all references for a file's upload: the tus.Upload instance,
    * any events related to the file, and the Companion WebSocket connection.
-   *
-   * @param {string} fileID
    */
-  resetUploaderReferences (fileID, opts = {}) {
+  resetUploaderReferences(fileID: string, opts?: { abort: boolean }): void {
     if (this.uploaders[fileID]) {
       const uploader = this.uploaders[fileID]
 
-      uploader.abort()
+      uploader!.abort()
 
-      if (opts.abort) {
-        uploader.abort(true)
+      if (opts?.abort) {
+        uploader!.abort(true)
       }
 
       this.uploaders[fileID] = null
     }
     if (this.uploaderEvents[fileID]) {
-      this.uploaderEvents[fileID].remove()
+      this.uploaderEvents[fileID]!.remove()
       this.uploaderEvents[fileID] = null
     }
   }
@@ -167,17 +214,15 @@ export default class Tus extends BasePlugin {
    *  - Before replacing the `queuedRequest` variable, the previous `queuedRequest` must be aborted, else it will keep taking
    *    up a spot in the queue.
    *
-   * @param {UppyFile} file for use with upload
-   * @returns {Promise<void>}
    */
-  #uploadLocalFile (file) {
+  #uploadLocalFile(file: UppyFile<M, B>): Promise<tus.Upload | string> {
     this.resetUploaderReferences(file.id)
 
     // Create a new tus upload
-    return new Promise((resolve, reject) => {
-      let queuedRequest
-      let qRequest
-      let upload
+    return new Promise<tus.Upload | string>((resolve, reject) => {
+      let queuedRequest: RateLimitedQueue.QueueEntry
+      let qRequest: () => void
+      let upload: tus.Upload
 
       const opts = {
         ...this.opts,
@@ -188,8 +233,11 @@ export default class Tus extends BasePlugin {
         opts.headers = opts.headers(file)
       }
 
-      /** @type {RawTusOptions} */
-      const uploadOptions = {
+      const uploadOptions: Omit<
+        tus.UploadOptions,
+        'onShouldRetry' | 'onBeforeRequest'
+      > &
+        Pick<TusOpts<M, B>, 'onShouldRetry' | 'onBeforeRequest'> = {
         ...tusDefaultOptions,
         ...opts,
       }
@@ -211,8 +259,9 @@ export default class Tus extends BasePlugin {
 
         if (hasProperty(queuedRequest, 'shouldBeRequeued')) {
           if (!queuedRequest.shouldBeRequeued) return Promise.reject()
-          let done
-          const p = new Promise((res) => { // eslint-disable-line promise/param-names
+          let done: () => void
+          // eslint-disable-next-line promise/param-names
+          const p = new Promise<void>((res) => {
             done = res
           })
           queuedRequest = this.requests.run(() => {
@@ -238,7 +287,10 @@ export default class Tus extends BasePlugin {
       uploadOptions.onError = (err) => {
         this.uppy.log(err)
 
-        const xhr = err.originalRequest ? err.originalRequest.getUnderlyingObject() : null
+        const xhr =
+          err instanceof tus.DetailedError ?
+            err.originalRequest.getUnderlyingObject()
+          : null
         if (isNetworkError(xhr)) {
           // eslint-disable-next-line no-param-reassign
           err = new NetworkError(err, xhr)
@@ -260,6 +312,8 @@ export default class Tus extends BasePlugin {
           opts.onProgress(bytesUploaded, bytesTotal)
         }
         this.uppy.emit('upload-progress', file, {
+          // TODO: remove `uploader` in next major
+          // @ts-expect-error untyped
           uploader: this,
           bytesUploaded,
           bytesTotal,
@@ -268,7 +322,9 @@ export default class Tus extends BasePlugin {
 
       uploadOptions.onSuccess = () => {
         const uploadResp = {
-          uploadURL: upload.url,
+          uploadURL: upload.url ?? undefined,
+          status: 200,
+          body: {} as B,
         }
 
         this.resetUploaderReferences(file.id)
@@ -277,7 +333,9 @@ export default class Tus extends BasePlugin {
         this.uppy.emit('upload-success', file, uploadResp)
 
         if (upload.url) {
-          this.uppy.log(`Download ${upload.file.name} from ${upload.url}`)
+          // @ts-expect-error not typed in tus-js-client
+          const { name } = upload.file
+          this.uppy.log(`Download ${name} from ${upload.url}`)
         }
         if (typeof opts.onSuccess === 'function') {
           opts.onSuccess()
@@ -286,7 +344,7 @@ export default class Tus extends BasePlugin {
         resolve(upload)
       }
 
-      const defaultOnShouldRetry = (err) => {
+      const defaultOnShouldRetry = (err: tus.DetailedError) => {
         const status = err?.originalResponse?.getStatus()
 
         if (status === 429) {
@@ -298,30 +356,45 @@ export default class Tus extends BasePlugin {
             }
             this.requests.rateLimit(next.value)
           }
-        } else if (status > 400 && status < 500 && status !== 409 && status !== 423) {
+        } else if (
+          status != null &&
+          status > 400 &&
+          status < 500 &&
+          status !== 409 &&
+          status !== 423
+        ) {
           // HTTP 4xx, the server won't send anything, it's doesn't make sense to retry
           // HTTP 409 Conflict (happens if the Upload-Offset header does not match the one on the server)
           // HTTP 423 Locked (happens when a paused download is resumed too quickly)
           return false
-        } else if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+        } else if (
+          typeof navigator !== 'undefined' &&
+          navigator.onLine === false
+        ) {
           // The navigator is offline, let's wait for it to come back online.
           if (!this.requests.isPaused) {
             this.requests.pause()
-            window.addEventListener('online', () => {
-              this.requests.resume()
-            }, { once: true })
+            window.addEventListener(
+              'online',
+              () => {
+                this.requests.resume()
+              },
+              { once: true },
+            )
           }
         }
         queuedRequest.abort()
         queuedRequest = {
           shouldBeRequeued: true,
-          abort () {
+          abort() {
             this.shouldBeRequeued = false
           },
-          done () {
-            throw new Error('Cannot mark a queued request as done: this indicates a bug')
+          done() {
+            throw new Error(
+              'Cannot mark a queued request as done: this indicates a bug',
+            )
           },
-          fn () {
+          fn() {
             throw new Error('Cannot run a queued request: this indicates a bug')
           },
         }
@@ -329,26 +402,34 @@ export default class Tus extends BasePlugin {
       }
 
       if (opts.onShouldRetry != null) {
-        uploadOptions.onShouldRetry = (...args) => opts.onShouldRetry(...args, defaultOnShouldRetry)
+        uploadOptions.onShouldRetry = (...args) =>
+          // @ts-expect-error TS does not pick up the != null check and also thinks ...args already
+          // contains the `next` argument we are about to add. It would require complex utility types
+          // to fix but it doesn't matter, the type is correct everywhere, it's just confused about this composition.
+          opts.onShouldRetry(...args, defaultOnShouldRetry)
       } else {
         uploadOptions.onShouldRetry = defaultOnShouldRetry
       }
 
-      const copyProp = (obj, srcProp, destProp) => {
+      const copyProp = (
+        obj: Record<string, unknown>,
+        srcProp: string,
+        destProp: string,
+      ) => {
         if (hasProperty(obj, srcProp) && !hasProperty(obj, destProp)) {
           // eslint-disable-next-line no-param-reassign
           obj[destProp] = obj[srcProp]
         }
       }
 
-      /** @type {Record<string, string>} */
-      const meta = {}
-      const allowedMetaFields = Array.isArray(opts.allowedMetaFields)
-        ? opts.allowedMetaFields
-        // Send along all fields by default.
+      const meta: Record<string, string> = {}
+      const allowedMetaFields =
+        Array.isArray(opts.allowedMetaFields) ?
+          opts.allowedMetaFields
+          // Send along all fields by default.
         : Object.keys(file.meta)
       allowedMetaFields.forEach((item) => {
-        meta[item] = file.meta[item]
+        meta[item] = file.meta[item] as string
       })
 
       // tusd uses metadata fields 'filetype' and 'filename'
@@ -357,7 +438,7 @@ export default class Tus extends BasePlugin {
 
       uploadOptions.metadata = meta
 
-      upload = new tus.Upload(file.data, uploadOptions)
+      upload = new tus.Upload(file.data, uploadOptions as tus.UploadOptions)
       this.uploaders[file.id] = upload
       const eventManager = new EventManager(this.uppy)
       this.uploaderEvents[file.id] = eventManager
@@ -379,7 +460,9 @@ export default class Tus extends BasePlugin {
       upload.findPreviousUploads().then((previousUploads) => {
         const previousUpload = previousUploads[0]
         if (previousUpload) {
-          this.uppy.log(`[Tus] Resuming upload of ${file.id} started at ${previousUpload.creationTime}`)
+          this.uppy.log(
+            `[Tus] Resuming upload of ${file.id} started at ${previousUpload.creationTime}`,
+          )
           upload.resumeFromPreviousUpload(previousUpload)
         }
       })
@@ -433,11 +516,8 @@ export default class Tus extends BasePlugin {
   /**
    * Store the uploadUrl on the file options, so that when Golden Retriever
    * restores state, we will continue uploading to the correct URL.
-   *
-   * @param {UppyFile} file
-   * @param {string} uploadURL
    */
-  onReceiveUploadUrl (file, uploadURL) {
+  onReceiveUploadUrl(file: UppyFile<M, B>, uploadURL: string | null): void {
     const currentFile = this.uppy.getFile(file.id)
     if (!currentFile) return
     // Only do the update if we didn't have an upload URL yet.
@@ -449,7 +529,7 @@ export default class Tus extends BasePlugin {
     }
   }
 
-  #getCompanionClientArgs (file) {
+  #getCompanionClientArgs(file: UppyFile<M, B>) {
     const opts = { ...this.opts }
 
     if (file.tus) {
@@ -458,7 +538,7 @@ export default class Tus extends BasePlugin {
     }
 
     return {
-      ...file.remote.body,
+      ...file.remote?.body,
       endpoint: opts.endpoint,
       uploadUrl: opts.uploadUrl,
       protocol: 'tus',
@@ -468,48 +548,45 @@ export default class Tus extends BasePlugin {
     }
   }
 
-  /**
-   * @param {(UppyFile | FailedUppyFile)[]} files
-   */
-  async #uploadFiles (files) {
+  async #uploadFiles(files: UppyFile<M, B>[]) {
     const filesFiltered = filterNonFailedFiles(files)
     const filesToEmit = filterFilesToEmitUploadStarted(filesFiltered)
     this.uppy.emit('upload-start', filesToEmit)
 
-    await Promise.allSettled(filesFiltered.map((file, i) => {
-      const current = i + 1
-      const total = files.length
+    await Promise.allSettled(
+      filesFiltered.map((file) => {
+        if (file.isRemote) {
+          const getQueue = () => this.requests
+          const controller = new AbortController()
 
-      if (file.isRemote) {
-        const getQueue = () => this.requests
-        const controller = new AbortController()
+          const removedHandler = (removedFile: UppyFile<M, B>) => {
+            if (removedFile.id === file.id) controller.abort()
+          }
+          this.uppy.on('file-removed', removedHandler)
 
-        const removedHandler = (removedFile) => {
-          if (removedFile.id === file.id) controller.abort()
+          const uploadPromise = this.uppy
+            .getRequestClientForFile<RequestClient<M, B>>(file)
+            .uploadRemoteFile(file, this.#getCompanionClientArgs(file), {
+              signal: controller.signal,
+              getQueue,
+            })
+
+          this.requests.wrapSyncFunction(
+            () => {
+              this.uppy.off('file-removed', removedHandler)
+            },
+            { priority: -1 },
+          )()
+
+          return uploadPromise
         }
-        this.uppy.on('file-removed', removedHandler)
 
-        const uploadPromise = this.uppy.getRequestClientForFile(file).uploadRemoteFile(
-          file,
-          this.#getCompanionClientArgs(file),
-          { signal: controller.signal, getQueue },
-        )
-
-        this.requests.wrapSyncFunction(() => {
-          this.uppy.off('file-removed', removedHandler)
-        }, { priority: -1 })()
-
-        return uploadPromise
-      }
-
-      return this.#uploadLocalFile(file, current, total)
-    }))
+        return this.#uploadLocalFile(file)
+      }),
+    )
   }
 
-  /**
-   * @param {string[]} fileIDs
-   */
-  #handleUpload = async (fileIDs) => {
+  #handleUpload = async (fileIDs: string[]) => {
     if (fileIDs.length === 0) {
       this.uppy.log('[Tus] No files to upload')
       return
@@ -528,18 +605,24 @@ export default class Tus extends BasePlugin {
     await this.#uploadFiles(filesToUpload)
   }
 
-  install () {
+  install(): void {
     this.uppy.setState({
-      capabilities: { ...this.uppy.getState().capabilities, resumableUploads: true },
+      capabilities: {
+        ...this.uppy.getState().capabilities,
+        resumableUploads: true,
+      },
     })
     this.uppy.addUploader(this.#handleUpload)
 
     this.uppy.on('reset-progress', this.handleResetProgress)
   }
 
-  uninstall () {
+  uninstall(): void {
     this.uppy.setState({
-      capabilities: { ...this.uppy.getState().capabilities, resumableUploads: false },
+      capabilities: {
+        ...this.uppy.getState().capabilities,
+        resumableUploads: false,
+      },
     })
     this.uppy.removeUploader(this.#handleUpload)
   }
