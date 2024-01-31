@@ -1,20 +1,38 @@
 import { AbortController } from '@uppy/utils/lib/AbortController'
+import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
 
 const MB = 1024 * 1024
 
-const defaultOptions = {
-  getChunkSize (file) {
-    return Math.ceil(file.size / 10000)
-  },
-  onProgress () {},
-  onPartComplete () {},
-  onSuccess () {},
-  onError (err) {
-    throw err
-  },
+interface MultipartUploaderOptions<M extends Meta, B extends Body> {
+  getChunkSize?: (file: { size: number }) => number
+  onProgress?: () => void
+  onPartComplete?: () => void
+  onSuccess?: () => void
+  onError?: (err: unknown) => void
+  file: UppyFile<M, B>
 }
 
-function ensureInt (value) {
+const defaultOptions = {
+  getChunkSize(file: { size: number }) {
+    return Math.ceil(file.size / 10000)
+  },
+  onProgress() {},
+  onPartComplete() {},
+  onSuccess() {},
+  onError(err: unknown) {
+    throw err
+  },
+} satisfies MultipartUploaderOptions<any, any>
+
+export interface Chunk {
+  getData: () => Blob
+  onProgress: (ev: ProgressEvent) => void
+  onComplete: (etag: string) => void
+  shouldUseMultipart: boolean
+  setAsUploaded?: () => void
+}
+
+function ensureInt<T>(value: T): T extends number | string ? number : never {
   if (typeof value === 'string') {
     return parseInt(value, 10)
   }
@@ -32,47 +50,42 @@ export const pausingUploadReason = Symbol('pausing upload, not an actual error')
  * (based on the user-provided `shouldUseMultipart` option value) and to manage
  * the chunk splitting.
  */
-class MultipartUploader {
+class MultipartUploader<M extends Meta, B extends Body> {
+  options: MultipartUploaderOptions<M, B> &
+    Required<Pick<MultipartUploaderOptions<M, B>, keyof typeof defaultOptions>>
+
   #abortController = new AbortController()
 
-  /** @type {import("../types/chunk").Chunk[]} */
-  #chunks
+  #chunks: Array<Chunk | null>
 
-  /** @type {{ uploaded: number, etag?: string, done?: boolean }[]} */
-  #chunkState
+  #chunkState: { uploaded: number; etag?: string; done?: boolean }[]
 
   /**
    * The (un-chunked) data to upload.
-   *
-   * @type {Blob}
    */
-  #data
+  #data: Blob
 
-  /** @type {import("@uppy/core").UppyFile} */
-  #file
+  #file: UppyFile<M, B>
 
-  /** @type {boolean} */
   #uploadHasStarted = false
 
-  /** @type {(err?: Error | any) => void} */
-  #onError
+  #onError: (err: unknown) => void
 
-  /** @type {() => void} */
-  #onSuccess
+  #onSuccess: () => void
 
   /** @type {import('../types/index').AwsS3MultipartOptions["shouldUseMultipart"]} */
   #shouldUseMultipart
 
-  /** @type {boolean} */
-  #isRestoring
+  #isRestoring: boolean
 
-  #onReject = (err) => (err?.cause === pausingUploadReason ? null : this.#onError(err))
+  #onReject = (err: unknown) =>
+    (err as any)?.cause === pausingUploadReason ? null : this.#onError(err)
 
   #maxMultipartParts = 10_000
 
   #minPartSize = 5 * MB
 
-  constructor (data, options) {
+  constructor(data: Blob, options: MultipartUploaderOptions<M, B>) {
     this.options = {
       ...defaultOptions,
       ...options,
@@ -98,15 +111,19 @@ class MultipartUploader {
   // and calculates the optimal part size. When using multipart part uploads every part except for the last has
   // to be at least 5 MB and there can be no more than 10K parts.
   // This means we sometimes need to change the preferred part size from the user in order to meet these requirements.
-  #initChunks () {
+  #initChunks() {
     const fileSize = this.#data.size
-    const shouldUseMultipart = typeof this.#shouldUseMultipart === 'function'
-      ? this.#shouldUseMultipart(this.#file)
+    const shouldUseMultipart =
+      typeof this.#shouldUseMultipart === 'function' ?
+        this.#shouldUseMultipart(this.#file)
       : Boolean(this.#shouldUseMultipart)
 
     if (shouldUseMultipart && fileSize > this.#minPartSize) {
       // At least 5MB per request:
-      let chunkSize = Math.max(this.options.getChunkSize(this.#data), this.#minPartSize)
+      let chunkSize = Math.max(
+        this.options.getChunkSize(this.#data),
+        this.#minPartSize,
+      )
       let arraySize = Math.floor(fileSize / chunkSize)
 
       // At most 10k requests per file:
@@ -132,7 +149,8 @@ class MultipartUploader {
           shouldUseMultipart,
         }
         if (this.#isRestoring) {
-          const size = offset + chunkSize > fileSize ? fileSize - offset : chunkSize
+          const size =
+            offset + chunkSize > fileSize ? fileSize - offset : chunkSize
           // setAsUploaded is called by listPart, to keep up-to-date the
           // quantity of data that is left to actually upload.
           this.#chunks[j].setAsUploaded = () => {
@@ -142,27 +160,29 @@ class MultipartUploader {
         }
       }
     } else {
-      this.#chunks = [{
-        getData: () => this.#data,
-        onProgress: this.#onPartProgress(0),
-        onComplete: this.#onPartComplete(0),
-        shouldUseMultipart,
-      }]
+      this.#chunks = [
+        {
+          getData: () => this.#data,
+          onProgress: this.#onPartProgress(0),
+          onComplete: this.#onPartComplete(0),
+          shouldUseMultipart,
+        },
+      ]
     }
 
     this.#chunkState = this.#chunks.map(() => ({ uploaded: 0 }))
   }
 
-  #createUpload () {
-    this
-      .options.companionComm.uploadFile(this.#file, this.#chunks, this.#abortController.signal)
+  #createUpload() {
+    this.options.companionComm
+      .uploadFile(this.#file, this.#chunks, this.#abortController.signal)
       .then(this.#onSuccess, this.#onReject)
     this.#uploadHasStarted = true
   }
 
-  #resumeUpload () {
-    this
-      .options.companionComm.resumeUploadFile(this.#file, this.#chunks, this.#abortController.signal)
+  #resumeUpload() {
+    this.options.companionComm
+      .resumeUploadFile(this.#file, this.#chunks, this.#abortController.signal)
       .then(this.#onSuccess, this.#onReject)
   }
 
@@ -188,37 +208,44 @@ class MultipartUploader {
     this.options.onPartComplete(part)
   }
 
-  #abortUpload () {
+  #abortUpload() {
     this.#abortController.abort()
-    this.options.companionComm.abortFileUpload(this.#file).catch((err) => this.options.log(err))
+    this.options.companionComm
+      .abortFileUpload(this.#file)
+      .catch((err: unknown) => this.options.log(err))
   }
 
-  start () {
+  start(): void {
     if (this.#uploadHasStarted) {
-      if (!this.#abortController.signal.aborted) this.#abortController.abort(pausingUploadReason)
+      if (!this.#abortController.signal.aborted)
+        this.#abortController.abort(pausingUploadReason)
       this.#abortController = new AbortController()
       this.#resumeUpload()
     } else if (this.#isRestoring) {
-      this.options.companionComm.restoreUploadFile(this.#file, { uploadId: this.options.uploadId, key: this.options.key })
+      this.options.companionComm.restoreUploadFile(this.#file, {
+        uploadId: this.options.uploadId,
+        key: this.options.key,
+      })
       this.#resumeUpload()
     } else {
       this.#createUpload()
     }
   }
 
-  pause () {
+  pause(): void {
     this.#abortController.abort(pausingUploadReason)
     // Swap it out for a new controller, because this instance may be resumed later.
     this.#abortController = new AbortController()
   }
 
-  abort (opts = undefined) {
+  abort(opts: { really?: boolean } = undefined): void {
     if (opts?.really) this.#abortUpload()
     else this.pause()
   }
 
   // TODO: remove this in the next major
-  get chunkState () {
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+  get chunkState() {
     return this.#chunkState
   }
 }
