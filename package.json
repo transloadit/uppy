@@ -7,10 +7,10 @@
     "*.{js,mjs,cjs,jsx}": "eslint --fix",
     "*.{ts,mts,cts,tsx}": [
       "eslint --fix",
-      "prettier --experimental-ternaries -w",
+      "prettier -w",
       "eslint"
     ],
-    "*.{css,html,json,scss,vue,yaml,yml}": "prettier --experimental-ternaries -w",
+    "*.{css,html,json,scss,vue,yaml,yml}": "prettier -w",
     "*.md": [
       "remark --silently-ignore -i .remarkignore -foq",
       "eslint --fix"
@@ -135,10 +135,10 @@
     "lint:css": "stylelint ./packages/**/*.scss",
     "lint:css:fix": "stylelint ./packages/**/*.scss --fix",
     "lint": "eslint . --cache",
-    "format:show-diff": "git diff --quiet || (echo 'Unable to show a diff because there are unstaged changes'; false) && (prettier . --experimental-ternaries -w --loglevel silent && git --no-pager diff; git restore .)",
-    "format:check": "prettier --experimental-ternaries -c .",
+    "format:show-diff": "git diff --quiet || (echo 'Unable to show a diff because there are unstaged changes'; false) && (prettier . -w --loglevel silent && git --no-pager diff; git restore .)",
+    "format:check": "prettier  -c .",
     "format:check-diff": "yarn format:check || (yarn format:show-diff && false)",
-    "format": "prettier --experimental-ternaries -w .",
+    "format": "prettier  -w .",
     "release": "PACKAGES=$(yarn workspaces list --json) yarn workspace @uppy-dev/release interactive",
     "size": "echo 'JS Bundle mingz:' && cat ./packages/uppy/dist/uppy.min.js | gzip | wc -c && echo 'CSS Bundle mingz:' && cat ./packages/uppy/dist/uppy.min.css | gzip | wc -c",
     "e2e": "yarn build:clean && yarn build && yarn e2e:skip-build",
