@@ -105,7 +105,6 @@ function setTypeInBlob<M extends Meta, B extends Body>(file: UppyFile<M, B>) {
 }
 
 const defaultOptions = {
-  endpoint: '',
   formData: true,
   fieldName: 'file',
   method: 'post',
@@ -132,7 +131,7 @@ const defaultOptions = {
   validateStatus(status) {
     return status >= 200 && status < 300
   },
-} satisfies XhrUploadOpts<any, any>
+} satisfies Partial<XhrUploadOpts<any, any>>
 
 type Opts<M extends Meta, B extends Body> = DefinePluginOpts<
   XhrUploadOpts<M, B>,
@@ -169,6 +168,8 @@ export default class XHRUpload<
 
     // Simultaneous upload limiting is shared across all uploads with this plugin.
     if (internalRateLimitedQueue in this.opts) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore untyped internal
       this.requests = this.opts[internalRateLimitedQueue]
     } else {
       this.requests = new RateLimitedQueue(this.opts.limit)
@@ -608,6 +609,8 @@ export default class XHRUpload<
 
     // No limit configured by the user, and no RateLimitedQueue passed in by a "parent" plugin
     // (basically just AwsS3) using the internal symbol
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore untyped internal
     if (this.opts.limit === 0 && !this.opts[internalRateLimitedQueue]) {
       this.uppy.log(
         '[XHRUpload] When uploading multiple files at once, consider setting the `limit` option (to `10` for example), to limit the number of concurrent uploads, which helps prevent memory and network issues: https://uppy.io/docs/xhr-upload/#limit-0',
