@@ -91,7 +91,7 @@ const defaultOptions = {
   cropperOptions: defaultCropperOptions,
 } satisfies Partial<Opts>
 
-export type ImageEditorOpts = Omit<
+type InternalImageEditorOpts = Omit<
   DefinePluginOpts<Opts, keyof typeof defaultOptions>,
   'actions' | 'cropperOptions'
 > & {
@@ -108,7 +108,7 @@ export type ImageEditorOpts = Omit<
 export default class ImageEditor<
   M extends Meta,
   B extends Body,
-> extends UIPlugin<ImageEditorOpts, M, B, PluginState<M, B>> {
+> extends UIPlugin<InternalImageEditorOpts, M, B, PluginState<M, B>> {
   static VERSION = packageJson.version
 
   cropper: Cropper
