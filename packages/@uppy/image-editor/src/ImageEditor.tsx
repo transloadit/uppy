@@ -36,7 +36,7 @@ declare module '@uppy/core' {
   }
 }
 
-export interface Opts extends UIPluginOptions {
+interface Opts extends UIPluginOptions {
   target?: string | HTMLElement
   quality?: number
   cropperOptions?: Cropper.Options & {
@@ -54,6 +54,7 @@ export interface Opts extends UIPluginOptions {
     cropWidescreenVertical?: boolean
   }
 }
+export type { Opts as ImageEditorOptions }
 
 type PluginState<M extends Meta, B extends Body> = {
   currentImage: UppyFile<M, B> | null
