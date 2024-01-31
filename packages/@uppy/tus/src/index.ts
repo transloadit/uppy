@@ -3,7 +3,7 @@ import BasePlugin, {
   type PluginOpts,
 } from '@uppy/core/lib/BasePlugin.js'
 import * as tus from 'tus-js-client'
-import EventManager from '@uppy/utils/lib/EventManager'
+import EventManager from '@uppy/core/lib/EventManager.js'
 import NetworkError from '@uppy/utils/lib/NetworkError'
 import isNetworkError from '@uppy/utils/lib/isNetworkError'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
