@@ -89,7 +89,7 @@ const defaultOptions = {
   limit: 20,
   retryDelays: tusDefaultOptions.retryDelays,
   withCredentials: false,
-}
+} satisfies Partial<TusOpts<any, any>>
 
 type Opts<M extends Meta, B extends Body> = DefinePluginOpts<
   TusOpts<M, B>,
@@ -259,6 +259,7 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
 
         if (hasProperty(queuedRequest, 'shouldBeRequeued')) {
           if (!queuedRequest.shouldBeRequeued) return Promise.reject()
+          // TODO: switch to `Promise.withResolvers` on the next major if available.
           let done: () => void
           // eslint-disable-next-line promise/param-names
           const p = new Promise<void>((res) => {
@@ -288,8 +289,8 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
         this.uppy.log(err)
 
         const xhr =
-          err instanceof tus.DetailedError ?
-            err.originalRequest.getUnderlyingObject()
+          (err as tus.DetailedError).originalRequest != null ?
+            (err as tus.DetailedError).originalRequest.getUnderlyingObject()
           : null
         if (isNetworkError(xhr)) {
           // eslint-disable-next-line no-param-reassign
@@ -422,6 +423,9 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
         }
       }
 
+      // We can't use `allowedMetaFields` to index generic M
+      // and we also don't care about the type specifically here,
+      // we just want to pass the meta fields along.
       const meta: Record<string, string> = {}
       const allowedMetaFields =
         Array.isArray(opts.allowedMetaFields) ?
