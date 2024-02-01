@@ -27,7 +27,7 @@
     "node": "^16.15.0 || >=18.0.0",
     "yarn": "3.6.1"
   },
-  "packageManager": "yarn@3.6.1+sha224.679d48a4db29f6beed7fe901a71e56b5e0619cdd615e140d9f33ce92",
+  "packageManager": "yarn@3.8.0+sha256.a1a53a88823c9f5bcd36e465791b7e490837ebf94dc6ef96282ab558a00c0811",
   "workspaces": [
     "examples/*",
     "packages/@uppy/*",
