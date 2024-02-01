@@ -36,8 +36,8 @@ declare module '@uppy/core' {
   }
 }
 
-export interface Opts extends UIPluginOptions {
-  target: string | HTMLElement
+interface Opts extends UIPluginOptions {
+  target?: string | HTMLElement
   quality?: number
   cropperOptions?: Cropper.Options & {
     croppedCanvasOptions?: Cropper.GetCroppedCanvasOptions
@@ -54,13 +54,14 @@ export interface Opts extends UIPluginOptions {
     cropWidescreenVertical?: boolean
   }
 }
+export type { Opts as ImageEditorOptions }
 
 type PluginState<M extends Meta, B extends Body> = {
   currentImage: UppyFile<M, B> | null
 }
 
 const defaultCropperOptions = {
-  viewMode: 0,
+  viewMode: 0 as const,
   background: false,
   autoCropArea: 1,
   responsive: true,
@@ -68,7 +69,7 @@ const defaultCropperOptions = {
   minCropBoxHeight: 70,
   croppedCanvasOptions: {},
   initialAspectRatio: 0,
-} satisfies Opts['cropperOptions']
+} satisfies Partial<Opts['cropperOptions']>
 
 const defaultActions = {
   revert: true,
@@ -80,7 +81,7 @@ const defaultActions = {
   cropSquare: true,
   cropWidescreen: true,
   cropWidescreenVertical: true,
-} satisfies Opts['actions']
+} satisfies Partial<Opts['actions']>
 
 const defaultOptions = {
   target: 'body',
@@ -89,17 +90,26 @@ const defaultOptions = {
   quality: 0.8,
   actions: defaultActions,
   cropperOptions: defaultCropperOptions,
-} satisfies Opts
+} satisfies Partial<Opts>
 
-export type ImageEditorOpts = DefinePluginOpts<
-  Opts,
-  keyof typeof defaultOptions
->
+type InternalImageEditorOpts = Omit<
+  DefinePluginOpts<Opts, keyof typeof defaultOptions>,
+  'actions' | 'cropperOptions'
+> & {
+  actions: DefinePluginOpts<
+    NonNullable<Opts['actions']>,
+    keyof typeof defaultActions
+  >
+  cropperOptions: DefinePluginOpts<
+    NonNullable<Opts['cropperOptions']>,
+    keyof typeof defaultCropperOptions
+  >
+}
 
 export default class ImageEditor<
   M extends Meta,
   B extends Body,
-> extends UIPlugin<ImageEditorOpts, M, B, PluginState<M, B>> {
+> extends UIPlugin<InternalImageEditorOpts, M, B, PluginState<M, B>> {
   static VERSION = packageJson.version
 
   cropper: Cropper

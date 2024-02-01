@@ -26,6 +26,7 @@ describe('XHRUpload', () => {
       core.use(XHRUpload, {
         id: 'XHRUpload',
         endpoint: 'https://fake-endpoint.uppy.io',
+        // @ts-expect-error that option does not exist
         some: 'option',
         getResponseData,
       })
@@ -65,6 +66,7 @@ describe('XHRUpload', () => {
       core.use(XHRUpload, {
         id: 'XHRUpload',
         endpoint: 'https://fake-endpoint.uppy.io',
+        // @ts-expect-error that option doesn't exist
         some: 'option',
         validateStatus,
         getResponseError(responseText) {
