@@ -37,6 +37,6 @@ export interface UppyFile<M extends Meta, B extends Body> {
     body: B
     status: number
     bytesUploaded?: number
-    uploadURL: string
+    uploadURL?: string
   }
 }

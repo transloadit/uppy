@@ -8,12 +8,12 @@ import getCanvasDataThatFitsPerfectlyIntoContainer from './utils/getCanvasDataTh
 import getScaleFactorThatRemovesDarkCorners from './utils/getScaleFactorThatRemovesDarkCorners.ts'
 import limitCropboxMovementOnMove from './utils/limitCropboxMovementOnMove.ts'
 import limitCropboxMovementOnResize from './utils/limitCropboxMovementOnResize.ts'
-import type { ImageEditorOpts } from './ImageEditor.tsx'
+import type ImageEditor from './ImageEditor.tsx'
 
 type Props<M extends Meta, B extends Body> = {
   currentImage: UppyFile<M, B>
   storeCropperInstance: (cropper: Cropper) => void
-  opts: ImageEditorOpts
+  opts: ImageEditor<M, B>['opts']
   i18n: I18n
   // eslint-disable-next-line react/no-unused-prop-types
   save: () => void // eslint confused

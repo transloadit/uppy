@@ -1,5 +1,6 @@
 import type { Uppy, BasePlugin } from '@uppy/core'
 import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
+import type { PluginOpts } from '@uppy/core/lib/BasePlugin.ts'
 import RequestClient, {
   authErrorStatusCode,
   type RequestOptions,
@@ -7,7 +8,7 @@ import RequestClient, {
 import * as tokenStorage from './tokenStorage.ts'
 
 // TODO: remove deprecated options in next major release
-export type Opts = {
+export interface Opts extends PluginOpts {
   /** @deprecated */
   serverUrl?: string
   /** @deprecated */

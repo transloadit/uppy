@@ -1,37 +1,60 @@
+import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
+import type { Uppy } from '@uppy/core/src/Uppy.ts'
+import type { DefinePluginOpts, PluginOpts } from '@uppy/core/lib/BasePlugin.js'
 import BasePlugin from '@uppy/core/lib/BasePlugin.js'
 import getDroppedFiles from '@uppy/utils/lib/getDroppedFiles'
 import toArray from '@uppy/utils/lib/toArray'
-
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'
 
-function isFileTransfer (event) {
-  return event.dataTransfer.types?.some((type) => type === 'Files') ?? false
+interface DropTargetOptions extends PluginOpts {
+  target?: HTMLElement | string | null
+  onDrop?: (event: DragEvent) => void
+  onDragOver?: (event: DragEvent) => void
+  onDragLeave?: (event: DragEvent) => void
+}
+
+// Default options
+const defaultOpts = {
+  target: null,
+} satisfies DropTargetOptions
+
+interface DragEventWithFileTransfer extends DragEvent {
+  dataTransfer: NonNullable<DragEvent['dataTransfer']>
+}
+
+function isFileTransfer(event: DragEvent): event is DragEventWithFileTransfer {
+  return event.dataTransfer?.types?.some((type) => type === 'Files') ?? false
 }
 
 /**
  * Drop Target plugin
  *
  */
-export default class DropTarget extends BasePlugin {
+export default class DropTarget<
+  M extends Meta,
+  B extends Body,
+> extends BasePlugin<
+  DefinePluginOpts<DropTargetOptions, keyof typeof defaultOpts>,
+  M,
+  B
+> {
   static VERSION = packageJson.version
 
-  constructor (uppy, opts) {
-    super(uppy, opts)
+  private removeDragOverClassTimeout: ReturnType<typeof setTimeout>
+
+  private nodes?: Array<HTMLElement>
+
+  constructor(uppy: Uppy<M, B>, opts?: DropTargetOptions) {
+    super(uppy, { ...defaultOpts, ...opts })
     this.type = 'acquirer'
     this.id = this.opts.id || 'DropTarget'
+    // @ts-expect-error TODO: remove in major
     this.title = 'Drop Target'
-
-    // Default options
-    const defaultOpts = {
-      target: null,
-    }
-
-    // Merge default options with the ones set by user
-    this.opts = { ...defaultOpts, ...opts }
-    this.removeDragOverClassTimeout = null
   }
 
-  addFiles = (files) => {
+  addFiles = (files: Array<File>): void => {
     const descriptors = files.map((file) => ({
       source: this.id,
       name: file.name,
@@ -40,8 +63,8 @@ export default class DropTarget extends BasePlugin {
       meta: {
         // path of the file relative to the ancestor directory the user selected.
         // e.g. 'docs/Old Prague/airbnb.pdf'
-        relativePath: file.relativePath || null,
-      },
+        relativePath: (file as any).relativePath || null,
+      } as any,
     }))
 
     try {
@@ -51,7 +74,7 @@ export default class DropTarget extends BasePlugin {
     }
   }
 
-  handleDrop = async (event) => {
+  handleDrop = async (event: DragEvent): Promise<void> => {
     if (!isFileTransfer(event)) {
       return
     }
@@ -61,20 +84,20 @@ export default class DropTarget extends BasePlugin {
     clearTimeout(this.removeDragOverClassTimeout)
 
     // Remove dragover class
-    event.currentTarget.classList.remove('uppy-is-drag-over')
+    ;(event.currentTarget as HTMLElement)?.classList.remove('uppy-is-drag-over')
     this.setPluginState({ isDraggingOver: false })
 
     // Let any acquirer plugin (Url/Webcam/etc.) handle drops to the root
     this.uppy.iteratePlugins((plugin) => {
       if (plugin.type === 'acquirer') {
-        // Every Plugin with .type acquirer can define handleRootDrop(event)
+        // @ts-expect-error Every Plugin with .type acquirer can define handleRootDrop(event)
         plugin.handleRootDrop?.(event)
       }
     })
 
     // Add all dropped files, handle errors
     let executedDropErrorOnce = false
-    const logDropError = (error) => {
+    const logDropError = (error: Error): void => {
       this.uppy.log(error, 'error')
 
       // In practice all drop errors are most likely the same,
@@ -94,7 +117,7 @@ export default class DropTarget extends BasePlugin {
     this.opts.onDrop?.(event)
   }
 
-  handleDragOver = (event) => {
+  handleDragOver = (event: DragEvent): void => {
     if (!isFileTransfer(event)) {
       return
     }
@@ -108,12 +131,12 @@ export default class DropTarget extends BasePlugin {
     event.dataTransfer.dropEffect = 'copy' // eslint-disable-line no-param-reassign
 
     clearTimeout(this.removeDragOverClassTimeout)
-    event.currentTarget.classList.add('uppy-is-drag-over')
+    ;(event.currentTarget as HTMLElement).classList.add('uppy-is-drag-over')
     this.setPluginState({ isDraggingOver: true })
     this.opts.onDragOver?.(event)
   }
 
-  handleDragLeave = (event) => {
+  handleDragLeave = (event: DragEvent): void => {
     if (!isFileTransfer(event)) {
       return
     }
@@ -127,13 +150,13 @@ export default class DropTarget extends BasePlugin {
     // Timeout against flickering, this solution is taken from drag-drop library.
     // Solution with 'pointer-events: none' didn't work across browsers.
     this.removeDragOverClassTimeout = setTimeout(() => {
-      currentTarget.classList.remove('uppy-is-drag-over')
+      ;(currentTarget as HTMLElement).classList.remove('uppy-is-drag-over')
       this.setPluginState({ isDraggingOver: false })
     }, 50)
     this.opts.onDragLeave?.(event)
   }
 
-  addListeners = () => {
+  addListeners = (): void => {
     const { target } = this.opts
 
     if (target instanceof Element) {
@@ -142,7 +165,7 @@ export default class DropTarget extends BasePlugin {
       this.nodes = toArray(document.querySelectorAll(target))
     }
 
-    if (!this.nodes && !this.nodes.length > 0) {
+    if (!this.nodes || this.nodes.length === 0) {
       throw new Error(`"${target}" does not match any HTML elements`)
     }
 
@@ -153,7 +176,7 @@ export default class DropTarget extends BasePlugin {
     })
   }
 
-  removeListeners = () => {
+  removeListeners = (): void => {
     if (this.nodes) {
       this.nodes.forEach((node) => {
         node.removeEventListener('dragover', this.handleDragOver, false)
@@ -163,12 +186,12 @@ export default class DropTarget extends BasePlugin {
     }
   }
 
-  install () {
+  install(): void {
     this.setPluginState({ isDraggingOver: false })
     this.addListeners()
   }
 
-  uninstall () {
+  uninstall(): void {
     this.removeListeners()
   }
 }
