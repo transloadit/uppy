@@ -241,11 +241,9 @@ class AddFiles extends Component {
 
     const myDeviceKey = 'myDevice'
 
-    if (!disableLocalFiles) {
-      list.push({ key: myDeviceKey, elements: this.renderMyDeviceAcquirer() })
-      if (showNativePhotoCameraButton) list.push({ key: 'nativePhotoCameraButton', elements: this.renderPhotoCamera() })
-      if (showNativeVideoCameraButton) list.push({ key: 'nativePhotoCameraButton', elements: this.renderVideoCamera() })
-    }
+    if (!disableLocalFiles) list.push({ key: myDeviceKey, elements: this.renderMyDeviceAcquirer() })
+    if (showNativePhotoCameraButton) list.push({ key: 'nativePhotoCameraButton', elements: this.renderPhotoCamera() })
+    if (showNativeVideoCameraButton) list.push({ key: 'nativePhotoCameraButton', elements: this.renderVideoCamera() })
     list.push(...acquirers.map((acquirer) => ({ key: acquirer.id, elements: this.renderAcquirer(acquirer) })))
 
     // doesn't make sense to show only a lonely "My Device"
