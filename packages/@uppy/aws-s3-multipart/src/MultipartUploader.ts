@@ -5,9 +5,9 @@ const MB = 1024 * 1024
 
 interface MultipartUploaderOptions<M extends Meta, B extends Body> {
   getChunkSize?: (file: { size: number }) => number
-  onProgress?: () => void
-  onPartComplete?: () => void
-  onSuccess?: () => void
+  onProgress?: (ev: ProgressEvent<XMLHttpRequestEventTarget>) => void
+  onPartComplete?: (part: { PartNumber: number; ETag: string }) => void
+  onSuccess?: (result: B) => void
   onError?: (err: unknown) => void
   file: UppyFile<M, B>
 }
@@ -114,9 +114,9 @@ class MultipartUploader<M extends Meta, B extends Body> {
   #initChunks() {
     const fileSize = this.#data.size
     const shouldUseMultipart =
-      typeof this.#shouldUseMultipart === 'function' ?
-        this.#shouldUseMultipart(this.#file)
-      : Boolean(this.#shouldUseMultipart)
+      typeof this.#shouldUseMultipart === 'function'
+        ? this.#shouldUseMultipart(this.#file)
+        : Boolean(this.#shouldUseMultipart)
 
     if (shouldUseMultipart && fileSize > this.#minPartSize) {
       // At least 5MB per request:
@@ -186,7 +186,7 @@ class MultipartUploader<M extends Meta, B extends Body> {
       .then(this.#onSuccess, this.#onReject)
   }
 
-  #onPartProgress = (index) => (ev) => {
+  #onPartProgress = (index: number) => (ev: ProgressEvent) => {
     if (!ev.lengthComputable) return
 
     this.#chunkState[index].uploaded = ensureInt(ev.loaded)
@@ -195,7 +195,7 @@ class MultipartUploader<M extends Meta, B extends Body> {
     this.options.onProgress(totalUploaded, this.#data.size)
   }
 
-  #onPartComplete = (index) => (etag) => {
+  #onPartComplete = (index: number) => (etag: string) => {
     // This avoids the net::ERR_OUT_OF_MEMORY in Chromium Browsers.
     this.#chunks[index] = null
     this.#chunkState[index].etag = etag
