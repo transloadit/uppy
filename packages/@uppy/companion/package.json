@@ -71,7 +71,7 @@
     "validator": "^13.0.0",
     "vimeo-downloader": "^1.0.4",
     "ws": "8.8.1",
-    "ytdl-core": "^4.9.2"
+    "@distube/ytdl-core": "^4.13.3"
   },
   "devDependencies": {
     "@types/compression": "1.7.0",
