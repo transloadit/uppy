@@ -324,7 +324,7 @@ export default class XHRUpload<
         timer.progress()
 
         if (ev.lengthComputable) {
-          this.uppy.emit('upload-progress', file, {
+          this.uppy.emitProgressWithFile(file, {
             // TODO: do not send `uploader` in next major
             // @ts-expect-error we can't type this and we should remove it
             uploader: this,
@@ -475,7 +475,7 @@ export default class XHRUpload<
         if (!ev.lengthComputable) return
 
         files.forEach((file) => {
-          this.uppy.emit('upload-progress', file, {
+          this.uppy.emitProgressWithFile(file, {
             // TODO: do not send `uploader` in next major
             // @ts-expect-error we can't type this and we should remove it
             uploader: this,

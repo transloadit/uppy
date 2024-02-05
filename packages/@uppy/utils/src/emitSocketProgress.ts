@@ -10,11 +10,12 @@ function emitSocketProgress(
   const { progress, bytesUploaded, bytesTotal } = progressData
   if (progress) {
     uploader.uppy.log(`Upload progress: ${progress}`)
-    uploader.uppy.emit('upload-progress', file, {
+    uploader.uppy.emitProgressWithFile(file, {
+      // @ts-expect-error todo remove in next major
       uploader,
       bytesUploaded,
       bytesTotal,
-    })
+    } satisfies FileProgress)
   }
 }
 

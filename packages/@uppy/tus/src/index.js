@@ -259,7 +259,8 @@ export default class Tus extends BasePlugin {
         if (typeof opts.onProgress === 'function') {
           opts.onProgress(bytesUploaded, bytesTotal)
         }
-        this.uppy.emit('upload-progress', file, {
+
+        this.uppy.emitProgressWithFile(file, {
           uploader: this,
           bytesUploaded,
           bytesTotal,

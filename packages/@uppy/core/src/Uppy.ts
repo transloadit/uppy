@@ -421,6 +421,16 @@ export class Uppy<M extends Meta, B extends Body> {
     this.#emitter.emit(event, ...args)
   }
 
+  emitProgressWithFile(
+    file: UppyFile<M, B>,
+    progress: FileProgressStarted,
+  ): void {
+    // we need to fetch the file before emitting, or else the recipient will get the old file state
+    // https://github.com/transloadit/uppy/issues/4593#issuecomment-1926789670
+    const file2 = this.getFile(file.id)
+    this.emit('upload-progress', file2, progress)
+  }
+
   /** @deprecated */
   on<K extends keyof DeprecatedUppyEventMap<M, B>>(
     event: K,
@@ -1311,6 +1321,8 @@ export class Uppy<M extends Meta, B extends Body> {
   //    and click 'ADD MORE FILES', - focus won't activate in Firefox.
   //    - We must throttle at around >500ms to avoid performance lags.
   //    [Practical Check] Firefox, try to upload a big file for a prolonged period of time. Laptop will start to heat up.
+  // todo when uploading multiple files, this will cause problems because they share the same throttle,
+  // meaning some files might never get their progress reported (eaten up by progress events from other files)
   calculateProgress = throttle(
     (file, data) => {
       const fileInState = this.getFile(file?.id)

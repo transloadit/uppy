@@ -134,7 +134,7 @@ export default class MiniXHRUpload {
         timer.progress()
 
         if (ev.lengthComputable) {
-          this.uppy.emit('upload-progress', file, {
+          this.uppy.emitProgressWithFile(file, {
             uploader: this,
             bytesUploaded: ev.loaded,
             bytesTotal: ev.total,
