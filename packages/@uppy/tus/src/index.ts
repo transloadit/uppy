@@ -431,9 +431,11 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
           // Send along all fields by default.
         : Object.keys(file.meta)
       allowedMetaFields.forEach((item) => {
-        const fileMeta = file.meta[item]
-        if (typeof fileMeta !== 'string') throw new Error('got non-string meta')
-        meta[item] = fileMeta
+        // tus type definition for metadata only accepts `Record<string, string>`
+        // but in reality (at runtime) it accepts `Record<string, unknown>`
+        // tus internally converts everything into a string, but let's do it here instead to be explicit.
+        // because Uppy can have anything inside meta values, (for example relativePath: null is often sent by uppy)
+        meta[item] = String(file.meta[item])
       })
 
       // tusd uses metadata fields 'filetype' and 'filename'
