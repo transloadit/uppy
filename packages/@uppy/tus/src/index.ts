@@ -55,6 +55,7 @@ export interface TusOpts<M extends Meta, B extends Body>
   retryDelays?: number[]
   withCredentials?: boolean
   allowedMetaFields?: string[]
+  rateLimitedQueue?: RateLimitedQueue
 }
 
 /**
