@@ -233,13 +233,11 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
         opts.headers = opts.headers(file)
       }
 
-      const uploadOptions: Omit<
-        tus.UploadOptions,
-        'onShouldRetry' | 'onBeforeRequest'
-      > &
-        Pick<TusOpts<M, B>, 'onShouldRetry' | 'onBeforeRequest'> = {
+      const { onShouldRetry, onBeforeRequest, ...commonOpts } = opts
+
+      const uploadOptions: tus.UploadOptions = {
         ...tusDefaultOptions,
-        ...opts,
+        ...commonOpts,
       }
 
       // We override tus fingerprint to uppy’s `file.id`, since the `file.id`
@@ -248,13 +246,13 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
       // the other in folder b.
       uploadOptions.fingerprint = getFingerprint(file)
 
-      uploadOptions.onBeforeRequest = (req) => {
+      uploadOptions.onBeforeRequest = async (req) => {
         const xhr = req.getUnderlyingObject()
         xhr.withCredentials = !!opts.withCredentials
 
         let userProvidedPromise
-        if (typeof opts.onBeforeRequest === 'function') {
-          userProvidedPromise = opts.onBeforeRequest(req, file)
+        if (typeof onBeforeRequest === 'function') {
+          userProvidedPromise = onBeforeRequest(req, file)
         }
 
         if (hasProperty(queuedRequest, 'shouldBeRequeued')) {
@@ -280,7 +278,8 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
           // This means we can hold the Tus retry here with a `Promise.all`,
           // together with the returned value of the user provided
           // `onBeforeRequest` option callback (in case it returns a promise).
-          return Promise.all([p, userProvidedPromise])
+          await Promise.all([p, userProvidedPromise])
+          return undefined
         }
         return userProvidedPromise
       }
@@ -402,12 +401,11 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
         return true
       }
 
-      if (opts.onShouldRetry != null) {
-        uploadOptions.onShouldRetry = (...args) =>
-          // @ts-expect-error TS does not pick up the != null check and also thinks ...args already
-          // contains the `next` argument we are about to add. It would require complex utility types
-          // to fix but it doesn't matter, the type is correct everywhere, it's just confused about this composition.
-          opts.onShouldRetry(...args, defaultOnShouldRetry)
+      if (onShouldRetry != null) {
+        uploadOptions.onShouldRetry = (
+          error: tus.DetailedError,
+          retryAttempt: number,
+        ) => onShouldRetry(error, retryAttempt, opts, defaultOnShouldRetry)
       } else {
         uploadOptions.onShouldRetry = defaultOnShouldRetry
       }
@@ -433,7 +431,9 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
           // Send along all fields by default.
         : Object.keys(file.meta)
       allowedMetaFields.forEach((item) => {
-        meta[item] = file.meta[item] as string
+        const fileMeta = file.meta[item]
+        if (typeof fileMeta !== 'string') throw new Error('got non-string meta')
+        meta[item] = fileMeta
       })
 
       // tusd uses metadata fields 'filetype' and 'filename'
@@ -442,7 +442,7 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
 
       uploadOptions.metadata = meta
 
-      upload = new tus.Upload(file.data, uploadOptions as tus.UploadOptions)
+      upload = new tus.Upload(file.data, uploadOptions)
       this.uploaders[file.id] = upload
       const eventManager = new EventManager(this.uppy)
       this.uploaderEvents[file.id] = eventManager
