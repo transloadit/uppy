@@ -109,9 +109,9 @@ export default async function createSignedURL({
   bucketName: string
   Key: string
   Region: string
-  expires: string
+  expires: string | number
   uploadId: string
-  partNumber: string
+  partNumber: string | number
 }): Promise<URL> {
   const Service = 's3'
   const host = `${bucketName}.${Service}.${Region}.amazonaws.com`
@@ -128,12 +128,12 @@ export default async function createSignedURL({
   url.searchParams.set('X-Amz-Content-Sha256', payload)
   url.searchParams.set('X-Amz-Credential', `${accountKey}/${scope}`)
   url.searchParams.set('X-Amz-Date', requestDateTime)
-  url.searchParams.set('X-Amz-Expires', expires)
+  url.searchParams.set('X-Amz-Expires', expires as string)
   // We are signing on the client, so we expect there's going to be a session token:
   url.searchParams.set('X-Amz-Security-Token', sessionToken)
   url.searchParams.set('X-Amz-SignedHeaders', 'host')
   // Those two are present only for Multipart Uploads:
-  if (partNumber) url.searchParams.set('partNumber', partNumber)
+  if (partNumber) url.searchParams.set('partNumber', partNumber as string)
   if (uploadId) url.searchParams.set('uploadId', uploadId)
   url.searchParams.set(
     'x-id',

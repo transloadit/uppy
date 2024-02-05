@@ -64,7 +64,7 @@ class HttpError extends Error {
   }
 }
 
-async function handleJSONResponse<ResJson extends Record<string, unknown>>(
+async function handleJSONResponse<ResJson = Record<string, unknown>>(
   res: Response,
 ): Promise<ResJson> {
   if (res.status === authErrorStatusCode) {
@@ -163,7 +163,7 @@ export default class RequestClient<M extends Meta, B extends Body> {
     return `${this.hostname}/${url}`
   }
 
-  protected async request<ResBody extends Record<string, unknown>>({
+  protected async request<ResBody = Record<string, unknown>>({
     path,
     method = 'GET',
     data,
@@ -203,7 +203,7 @@ export default class RequestClient<M extends Meta, B extends Body> {
     }
   }
 
-  async get<PostBody extends Record<string, unknown>>(
+  async get<PostBody = Record<string, unknown>>(
     path: string,
     options?: RequestOptions,
   ): Promise<PostBody> {
@@ -213,7 +213,7 @@ export default class RequestClient<M extends Meta, B extends Body> {
     return this.request({ ...options, path })
   }
 
-  async post<PostBody extends Record<string, unknown>>(
+  async post<PostBody = Record<string, unknown>>(
     path: string,
     data: Record<string, unknown>,
     options?: RequestOptions,
@@ -224,11 +224,11 @@ export default class RequestClient<M extends Meta, B extends Body> {
     return this.request<PostBody>({ ...options, path, method: 'POST', data })
   }
 
-  async delete(
+  async delete<T = unknown>(
     path: string,
-    data: Record<string, unknown>,
+    data?: Record<string, unknown>,
     options?: RequestOptions,
-  ): Promise<unknown> {
+  ): Promise<T> {
     // TODO: remove boolean support for options that was added for backward compatibility.
     // eslint-disable-next-line no-param-reassign
     if (typeof options === 'boolean') options = { skipPostResponse: options }
