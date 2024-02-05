@@ -869,6 +869,14 @@ export class Uppy<M extends Meta, B extends Body> {
     // `null` means the size is unknown.
     const size = Number.isFinite(file.data.size) ? file.data.size : null
 
+    const progress: FileProgressNotStarted = {
+      percentage: 0,
+      bytesUploaded: 0,
+      bytesTotal: size,
+      uploadComplete: false,
+      uploadStarted: null,
+    }
+
     return {
       source: file.source || '',
       id,
@@ -880,13 +888,7 @@ export class Uppy<M extends Meta, B extends Body> {
       },
       type: fileType,
       data: file.data,
-      progress: {
-        percentage: 0,
-        bytesUploaded: 0,
-        bytesTotal: size,
-        uploadComplete: false,
-        uploadStarted: null,
-      } as FileProgressNotStarted,
+      progress,
       size,
       isGhost: false,
       isRemote: file.isRemote || false,
@@ -1505,7 +1507,6 @@ export class Uppy<M extends Meta, B extends Body> {
           file.id,
           {
             progress: {
-              progress: 0,
               uploadStarted: Date.now(),
               uploadComplete: false,
               percentage: 0,

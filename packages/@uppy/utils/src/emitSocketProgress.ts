@@ -4,7 +4,11 @@ import type { FileProgress } from './FileProgress'
 
 function emitSocketProgress(
   uploader: any,
-  progressData: FileProgress,
+  progressData: {
+    progress: string // percentage
+    bytesTotal: number
+    bytesUploaded: number
+  },
   file: UppyFile<any, any>,
 ): void {
   const { progress, bytesUploaded, bytesTotal } = progressData
