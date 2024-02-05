@@ -20,6 +20,7 @@ import createSignedURL from './createSignedURL.ts'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'
+import type { RequestOptions } from '@uppy/companion-client'
 
 type PartUploadedCallback<M extends Meta, B extends Body> = (
   file: UppyFile<M, B>,
@@ -32,10 +33,10 @@ declare module '@uppy/core' {
   }
 }
 
-function assertServerError(res: Record<string, unknown>) {
-  if (res && res.error) {
-    const error = new Error(res.message)
-    Object.assign(error, res.error)
+function assertServerError<T>(res: T): T {
+  if ((res as any)?.error) {
+    const error = new Error((res as any).message)
+    Object.assign(error, (res as any).error)
     throw error
   }
   return res
@@ -109,7 +110,7 @@ type AbortablePromise<T extends (...args: any) => Promise<any>> = (
   ...args: Parameters<T>
 ) => ReturnType<T> & {
   abort: (reason?: any) => void
-  abortOn: (signal?: AbortSignal) => void
+  abortOn: (signal?: AbortSignal) => ReturnType<T>
 }
 
 type UploadResult = { key: string; uploadId: string }
@@ -521,6 +522,14 @@ class HTTPCommunicationQueue<M extends Meta, B extends Body> {
 
 type MaybePromise<T> = T | Promise<T>
 
+type SignPartOptions = {
+  uploadId: string
+  key: string
+  partNumber: number
+  body: Blob
+  signal?: AbortSignal
+}
+
 export type AwsS3UploadParameters =
   | {
       method: 'POST'
@@ -619,13 +628,7 @@ type AWSS3MultipartWithoutCompanionMandatory<M extends Meta, B extends Body> = {
   | {
       signPart: (
         file: UppyFile<M, B>,
-        opts: {
-          uploadId: string
-          key: string
-          partNumber: number
-          body: Blob
-          signal: AbortSignal
-        },
+        opts: SignPartOptions,
       ) => MaybePromise<AwsS3UploadParameters>
     }
   | {
@@ -919,11 +922,14 @@ export default class AwsS3Multipart<
     return this.#cachedTemporaryCredentials
   }
 
-  async createSignedURL(file, options) {
+  async createSignedURL(
+    file: UppyFile<M, B>,
+    options: SignPartOptions,
+  ): Promise<AwsS3UploadParameters> {
     const data = await this.#getTemporarySecurityCredentials(options)
     const expires = getExpiry(data.credentials) || 604_800 // 604 800 is the max value accepted by AWS.
 
-    const { uploadId, key, partNumber, signal } = options
+    const { uploadId, key, partNumber } = options
 
     // Return an object in the correct shape.
     return {
@@ -940,16 +946,18 @@ export default class AwsS3Multipart<
         Key: key ?? `${crypto.randomUUID()}-${file.name}`,
         uploadId,
         partNumber,
-        signal,
       })}`,
       // Provide content type header required by S3
       headers: {
-        'Content-Type': file.type,
+        'Content-Type': file.type as string,
       },
     }
   }
 
-  signPart(file, { uploadId, key, partNumber, signal }) {
+  signPart(
+    file: UppyFile<M, B>,
+    { uploadId, key, partNumber, signal }: SignPartOptions,
+  ): Promise<AwsS3UploadParameters> {
     this.assertHost('signPart')
     throwIfAborted(signal)
 
@@ -961,23 +969,47 @@ export default class AwsS3Multipart<
 
     const filename = encodeURIComponent(key)
     return this.#client
-      .get(`s3/multipart/${uploadId}/${partNumber}?key=${filename}`, { signal })
+      .get<AwsS3UploadParameters>(
+        `s3/multipart/${uploadId}/${partNumber}?key=${filename}`,
+        { signal },
+      )
       .then(assertServerError)
   }
 
-  abortMultipartUpload(file, { key, uploadId }, signal) {
+  abortMultipartUpload(
+    file: UppyFile<M, B>,
+    {
+      key,
+      uploadId,
+      signal,
+    }: {
+      key: string
+      uploadId: string
+      signal?: AbortSignal
+    },
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    oldSignal?: AbortSignal, // TODO: remove in next major
+  ): Promise<Record<string, never>> {
+    signal ??= oldSignal // eslint-disable-line no-param-reassign
     this.assertHost('abortMultipartUpload')
 
     const filename = encodeURIComponent(key)
     const uploadIdEnc = encodeURIComponent(uploadId)
     return this.#client
-      .delete(`s3/multipart/${uploadIdEnc}?key=${filename}`, undefined, {
-        signal,
-      })
+      .delete<Record<string, never>>(
+        `s3/multipart/${uploadIdEnc}?key=${filename}`,
+        undefined,
+        {
+          signal,
+        },
+      )
       .then(assertServerError)
   }
 
-  getUploadParameters(file, options) {
+  getUploadParameters(
+    file: UppyFile<M, B>,
+    options: RequestOptions,
+  ): Promise<AwsS3UploadParameters> {
     const { meta } = file
     const { type, name: filename } = meta
     const metadata = getAllowedMetadata({
@@ -986,7 +1018,10 @@ export default class AwsS3Multipart<
       querify: true,
     })
 
-    const query = new URLSearchParams({ filename, type, ...metadata })
+    const query = new URLSearchParams({ filename, type, ...metadata } as Record<
+      string,
+      string
+    >)
 
     return this.#client.get(`s3/params?${query}`, options)
   }
@@ -998,7 +1033,17 @@ export default class AwsS3Multipart<
     onProgress,
     onComplete,
     signal,
-  }) {
+  }: {
+    signature: AwsS3MultipartOptions
+    body: FormData | Blob
+    size?: number
+    onProgress: any
+    onComplete: any
+    signal: AbortSignal
+  }): Promise<{
+    ETag: string
+    location?: string
+  }> {
     throwIfAborted(signal)
 
     if (url == null) {
