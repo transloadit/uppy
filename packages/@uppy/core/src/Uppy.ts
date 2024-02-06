@@ -89,7 +89,7 @@ interface Plugins extends Record<string, Record<string, unknown> | undefined> {}
 
 export interface State<M extends Meta, B extends Body>
   extends Record<string, unknown> {
-  meta: M
+  meta: Partial<M>
   capabilities: {
     uploadProgress: boolean
     individualCancellation: boolean
@@ -124,7 +124,7 @@ export interface UppyOptions<M extends Meta, B extends Body> {
   logger?: typeof debugLogger
   debug?: boolean
   restrictions: Restrictions
-  meta?: M
+  meta?: Partial<M>
   onBeforeFileAdded?: (
     currentFile: UppyFile<M, B>,
     files: { [key: string]: UppyFile<M, B> },
@@ -132,7 +132,7 @@ export interface UppyOptions<M extends Meta, B extends Body> {
   onBeforeUpload?: (files: {
     [key: string]: UppyFile<M, B>
   }) => { [key: string]: UppyFile<M, B> } | boolean
-  locale?: Locale
+  locale?: OptionalPluralizeLocale
   // TODO: add <State<M, B>> when landing on `4.x`
   store?: DefaultStore
   infoTimeout?: number
@@ -154,9 +154,12 @@ type MinimalRequiredOptions<M extends Meta, B extends Body> = Partial<
   }
 >
 
-export type NonNullableUppyOptions<M extends Meta, B extends Body> = Required<
-  UppyOptions<M, B>
->
+// everything is required, except for `locale`
+export type NonNullableUppyOptions<M extends Meta, B extends Body> = Omit<
+  Required<UppyOptions<M, B>>,
+  'locale'
+> &
+  Pick<UppyOptions<M, B>, 'locale'>
 
 type GenericEventCallback = () => void
 type FileAddedCallback<M extends Meta, B extends Body> = (
@@ -309,7 +312,7 @@ export class Uppy<M extends Meta, B extends Body> {
 
   #postProcessors: Set<Processor> = new Set()
 
-  defaultLocale: Locale
+  defaultLocale: OptionalPluralizeLocale
 
   locale: Locale
 
@@ -331,34 +334,29 @@ export class Uppy<M extends Meta, B extends Body> {
    * Instantiate Uppy
    */
   constructor(opts?: UppyOptionsWithOptionalRestrictions<M, B>) {
-    this.defaultLocale = locale as any as Locale
+    this.defaultLocale = locale
 
-    const defaultOptions: UppyOptions<Record<string, unknown>, B> = {
-      id: 'uppy',
-      autoProceed: false,
-      allowMultipleUploadBatches: true,
-      debug: false,
-      restrictions: defaultRestrictionOptions,
-      meta: {},
-      onBeforeFileAdded: (file, files) => !Object.hasOwn(files, file.id),
-      onBeforeUpload: (files) => files,
-      store: new DefaultStore(),
-      logger: justErrorsLogger,
-      infoTimeout: 5000,
-    }
-
-    const merged = { ...defaultOptions, ...opts } as Omit<
-      NonNullableUppyOptions<M, B>,
-      'restrictions'
-    >
     // Merge default options with the ones set by user,
-    // making sure to merge restrictions too
     this.opts = {
-      ...merged,
+      ...opts,
+      id: opts?.id ?? 'uppy',
+      autoProceed: opts?.autoProceed ?? false,
+      allowMultipleUploadBatches: opts?.allowMultipleUploadBatches ?? true,
+      allowMultipleUploads: opts?.allowMultipleUploads ?? true,
+      debug: opts?.debug ?? false,
+      // making sure to merge restrictions too:
       restrictions: {
-        ...(defaultOptions.restrictions as Restrictions),
-        ...(opts && opts.restrictions),
+        ...defaultRestrictionOptions,
+        ...opts?.restrictions,
       },
+      meta: opts?.meta ?? {},
+      onBeforeFileAdded:
+        opts?.onBeforeFileAdded ??
+        ((file, files) => !Object.hasOwn(files, file.id)),
+      onBeforeUpload: opts?.onBeforeUpload ?? ((files) => files),
+      store: opts?.store ?? new DefaultStore(),
+      logger: opts?.logger ?? justErrorsLogger,
+      infoTimeout: opts?.infoTimeout ?? 5000,
     }
 
     // Support debug: true for backwards-compatability, unless logger is set in opts
@@ -543,10 +541,10 @@ export class Uppy<M extends Meta, B extends Body> {
   setOptions(newOpts: MinimalRequiredOptions<M, B>): void {
     this.opts = {
       ...this.opts,
-      ...(newOpts as UppyOptions<M, B>),
+      ...newOpts,
       restrictions: {
         ...this.opts.restrictions,
-        ...(newOpts?.restrictions as Restrictions),
+        ...newOpts?.restrictions,
       },
     }
 
@@ -855,7 +853,7 @@ export class Uppy<M extends Meta, B extends Body> {
           size: fileDescriptorOrFile.size,
           data: fileDescriptorOrFile,
         }
-      : fileDescriptorOrFile) as UppyFile<M, B>
+      : fileDescriptorOrFile) as UppyFile<M, B> // todo remove this `as` (it hides a lot of logical issues)
 
     const fileType = getFileType(file)
     const fileName = getFileName(fileType, file)
@@ -1016,10 +1014,10 @@ export class Uppy<M extends Meta, B extends Body> {
    * and start an upload if `autoProceed === true`.
    */
   addFile(file: File | MinimalRequiredUppyFile<M, B>): UppyFile<M, B>['id'] {
-    this.#assertNewUploadAllowed(file as UppyFile<M, B>)
+    this.#assertNewUploadAllowed(file as UppyFile<M, B>) // todo remove this `as` (it hides a lot of logical issues)
 
     const { nextFilesState, validFilesToAdd, errors } =
-      this.#checkAndUpdateFileState([file as UppyFile<M, B>])
+      this.#checkAndUpdateFileState([file as UppyFile<M, B>]) // todo remove this `as` (it hides a lot of logical issues)
 
     const restrictionErrors = errors.filter((error) => error.isRestriction)
     this.#informAndEmit(restrictionErrors)
@@ -1052,6 +1050,7 @@ export class Uppy<M extends Meta, B extends Body> {
     this.#assertNewUploadAllowed()
 
     const { nextFilesState, validFilesToAdd, errors } =
+      // todo remove this `as` (it hides a lot of logical issues)
       this.#checkAndUpdateFileState(fileDescriptors as UppyFile<M, B>[])
 
     const restrictionErrors = errors.filter((error) => error.isRestriction)
@@ -1391,23 +1390,25 @@ export class Uppy<M extends Meta, B extends Body> {
 
     if (sizedFiles.length === 0) {
       const progressMax = inProgress.length * 100
-      const currentProgress = unsizedFiles.reduce((acc, file) => {
-        return acc + (file.progress.percentage as number)
-      }, 0)
+      const currentProgress = unsizedFiles.reduce(
+        (acc, file) => acc + (file.progress.percentage ?? 0),
+        0,
+      )
       const totalProgress = Math.round((currentProgress / progressMax) * 100)
       this.setState({ totalProgress })
       return
     }
 
-    let totalSize = sizedFiles.reduce((acc, file) => {
-      return (acc + (file.progress.bytesTotal ?? 0)) as number
-    }, 0)
+    let totalSize = sizedFiles.reduce(
+      (acc, file) => acc + (file.progress.bytesTotal ?? 0),
+      0,
+    )
     const averageSize = totalSize / sizedFiles.length
     totalSize += averageSize * unsizedFiles.length
 
     let uploadedSize = 0
     sizedFiles.forEach((file) => {
-      uploadedSize += file.progress.bytesUploaded as number
+      uploadedSize += Number(file.progress.bytesUploaded)
     })
     unsizedFiles.forEach((file) => {
       uploadedSize += (averageSize * (file.progress.percentage || 0)) / 100
@@ -1512,7 +1513,7 @@ export class Uppy<M extends Meta, B extends Body> {
               percentage: 0,
               bytesUploaded: 0,
               bytesTotal: file.size,
-            } as FileProgressStarted,
+            } satisfies FileProgressStarted,
           },
         ]),
       )
