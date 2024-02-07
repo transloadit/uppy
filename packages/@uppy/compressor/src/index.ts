@@ -17,7 +17,7 @@ declare module '@uppy/core' {
   }
 }
 
-interface Options extends PluginOpts, CompressorJS.Options {
+interface CompressorOpts extends PluginOpts, CompressorJS.Options {
   quality: number
   limit?: number
 }
@@ -25,10 +25,10 @@ interface Options extends PluginOpts, CompressorJS.Options {
 export default class Compressor<
   M extends Meta,
   B extends Body,
-> extends BasePlugin<Options, M, B> {
+> extends BasePlugin<CompressorOpts, M, B> {
   #RateLimitedQueue
 
-  constructor(uppy: Uppy<M, B>, opts: Options) {
+  constructor(uppy: Uppy<M, B>, opts: CompressorOpts) {
     super(uppy, opts)
     this.id = this.opts.id || 'Compressor'
     this.type = 'modifier'
