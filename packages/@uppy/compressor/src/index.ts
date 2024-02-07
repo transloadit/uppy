@@ -17,7 +17,7 @@ declare module '@uppy/core' {
   }
 }
 
-interface CompressorOpts extends PluginOpts, CompressorJS.Options {
+export interface CompressorOpts extends PluginOpts, CompressorJS.Options {
   quality: number
   limit?: number
 }
