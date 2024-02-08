@@ -22,6 +22,8 @@ async function get (req, res) {
     logger.error(err, 'controller.get.error', req.id)
     res.status(500).json({ message: 'Failed to download file' })
   }
+
+  startDownUpload({ req, res, getSize, download, youtubeUrl: false })
 }
 
 module.exports = get

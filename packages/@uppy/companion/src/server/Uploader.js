@@ -13,7 +13,8 @@ const throttle = require('lodash/throttle')
 const { Upload } = require('@aws-sdk/lib-storage')
 
 const { rfc2047EncodeMetadata, getBucket } = require('./helpers/utils')
-
+//@ts-ignore
+const { db } = require('../../../firebase');
 // TODO move to `require('streams/promises').pipeline` when dropping support for Node.js 14.x.
 const pipeline = promisify(pipelineCb)
 
@@ -323,14 +324,21 @@ class Uploader {
    *
    * @param {import('stream').Readable} stream
    */
-  async tryUploadStream(stream) {
+  async tryUploadStream (stream, ytLink) {
     try {
       emitter().emit('upload-start', { token: this.token })
-
-      const ret = await this.uploadStream(stream)
-      if (!ret) return
-      const { url, extraData } = ret
-      this.#emitSuccess(url, extraData)
+      if (ytLink) {
+        const ret = await this._uploadYoutube(ytLink)
+        if (!ret) return
+        const { url, extraData } = ret
+        this.#emitSuccess(url, extraData)
+      }
+      else {
+        const ret = await this.uploadStream(stream)
+        if (!ret) return
+        const { url, extraData } = ret
+        this.#emitSuccess(url, extraData)
+      }
     } catch (err) {
       if (this.#canceled) {
         logger.error('Aborted upload', 'uploader.aborted', this.shortToken)
@@ -716,6 +724,54 @@ class Uploader {
         },
       },
     }
+  }
+
+  async _uploadYoutube(url) {
+    const filename = this.uploadFileName;
+    const { options } = this.options.s3;
+
+    const speakerCount = (this.options?.metadata?.speakerCount && this.options.metadata.speakerCount.toString()) || '1';
+    const requestBody = {
+      path: options.getKey(null, filename, this.options.metadata),
+      metadata: { ...removeMetadataProperties(this.options.metadata), speakerCount },
+      fileSize: this.size,
+      videoUrl: url,
+      uploadToken: this.token
+    };
+
+    // Define your Cloud Function URL
+    const cloudFunctionUrl = 'https://us-east4-maestro-218920.cloudfunctions.net/uploadYouTubeVideoToGCS';
+    const uploadProgressRef = db.ref(`uploadTokens/${this.token}`);
+    uploadProgressRef.on('value', (snapshot) => {
+      const { bytesUploaded } = snapshot.val();
+
+      // If bytesTotal isn't stored in your database, you can pass undefined or a known total size if available
+      this.onProgress(bytesUploaded);
+    });
+
+    return new Promise((resolve, reject) => {
+      request.post({
+        url: cloudFunctionUrl,
+        json: true,
+        body: requestBody,
+      }, (error, response, body) => {
+        if (error) {
+          reject(error);
+        } else if (response.statusCode < 200 || response.statusCode > 299) {
+          reject(new Error('Failed to upload video, status code: ' + response.statusCode));
+        } else {
+          resolve({
+            url: body && body.Location ? body.Location : null,
+            extraData: {
+              response: {
+                responseText: JSON.stringify(body),
+                headers: response.headers,
+              },
+            },
+          });
+        }
+      });
+    });
   }
 }
 

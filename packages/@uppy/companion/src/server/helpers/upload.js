@@ -2,16 +2,18 @@ const Uploader = require('../Uploader')
 const logger = require('../logger')
 const { respondWithError } = require('../provider/error')
 
-async function startDownUpload({ req, res, getSize, download }) {
+async function startDownUpload({ req, res, getSize, download, youtubeUrl }) {
   try {
     const size = await getSize()
     const { clientSocketConnectTimeout } = req.companion.options
-
+    let stream;
     logger.debug('Instantiating uploader.', null, req.id)
     const uploader = new Uploader(Uploader.reqToOptions(req, size))
 
     logger.debug('Starting download stream.', null, req.id)
-    const stream = await download()
+    if (!youtubeUrl) {
+      stream = await download()
+    }
 
       // "Forking" off the upload operation to background, so we can return the http request:
       ; (async () => {
@@ -23,6 +25,7 @@ async function startDownUpload({ req, res, getSize, download }) {
 
         await uploader.tryUploadStream(stream)
       })().catch((err) => logger.error(err))
+
 
     // Respond the request
     // NOTE: the Uploader will continue running after the http request is responded

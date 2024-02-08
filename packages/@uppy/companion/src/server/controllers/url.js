@@ -5,6 +5,7 @@ const { prepareStream } = require('../helpers/utils')
 const { validateURL } = require('../helpers/request')
 const { getURLMeta, getProtectedGot } = require('../helpers/request')
 const logger = require('../logger')
+// @ts-ignore
 const ytdl = require('@distube/ytdl-core');
 const tls = require('tls')
 const fs = require('fs');
@@ -119,16 +120,18 @@ const get = async (req, res) => {
   logger.debug('URL file import handler running', null, req.id)
   const { allowLocalUrls } = req.companion.options
   let url = req.body.url
+  let isYoutubeUrl = false
   if (!validateURL(url, allowLocalUrls)) {
     logger.debug('Invalid request body detected. Exiting url import handler.', null, req.id)
     res.status(400).json({ error: 'Invalid request body' })
     return
   }
   if (matchYoutubeUrl(url)) {
-    const videoID = ytdl.getURLVideoID(url)
-    let info = await ytdl.getInfo(videoID);
-    let format = ytdl.chooseFormat(info.formats, { filter: 'audioandvideo' });
-    url = format.url
+    // const videoID = ytdl.getURLVideoID(url)
+    // let info = await ytdl.getInfo(videoID);
+    // let format = ytdl.chooseFormat(info.formats, { filter: 'audioandvideo' });
+    // url = format.url
+    isYoutubeUrl = true
   }
   // else if (matchVimeoUrl(url)) {
   //   const format = vidl(url, { quality: "360p" });
@@ -140,12 +143,16 @@ const get = async (req, res) => {
     return size
   }
 
-  async function download () {
-    return downloadURL(url, !allowLocalUrls, req.id)
-  }
-
   try {
-    await startDownUpload({ req, res, getSize, download })
+    if (isYoutubeUrl) {
+      startDownUpload({ req, res, getSize, download: false, youtubeUrl: url })
+    }
+    else {
+      async function download() {
+        return downloadURL(url, !allowLocalUrls, req.id)
+      }
+      await startDownUpload({ req, res, getSize, download, youtubeUrl: false })
+    }
   } catch (err) {
     logger.error(err, 'controller.url.error', req.id)
     res.status(err.status || 500).json({ message: 'failed to fetch URL' })
