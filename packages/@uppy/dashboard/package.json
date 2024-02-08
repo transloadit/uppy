@@ -23,7 +23,7 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
-    "@transloadit/prettier-bytes": "0.0.7",
+    "@transloadit/prettier-bytes": "^0.2.0",
     "@uppy/informer": "workspace:^",
     "@uppy/provider-views": "workspace:^",
     "@uppy/status-bar": "workspace:^",
@@ -42,7 +42,7 @@
     "@uppy/url": "workspace:^",
     "@uppy/webcam": "workspace:^",
     "resize-observer-polyfill": "^1.5.0",
-    "vitest": "^0.34.5"
+    "vitest": "^1.2.1"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^"

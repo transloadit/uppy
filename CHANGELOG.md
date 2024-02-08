@@ -12,6 +12,59 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 3.21.0
+
+Released: 2023-12-12
+
+| Package                | Version | Package                | Version |
+| ---------------------- | ------- | ---------------------- | ------- |
+| @uppy/aws-s3           |   3.6.0 | @uppy/instagram        |   3.2.0 |
+| @uppy/aws-s3-multipart |  3.10.0 | @uppy/onedrive         |   3.2.0 |
+| @uppy/box              |   2.2.0 | @uppy/provider-views   |   3.8.0 |
+| @uppy/companion        |  4.12.0 | @uppy/store-default    |   3.2.0 |
+| @uppy/companion-client |   3.7.0 | @uppy/tus              |   3.5.0 |
+| @uppy/core             |   3.8.0 | @uppy/url              |   3.5.0 |
+| @uppy/dropbox          |   3.2.0 | @uppy/utils            |   5.7.0 |
+| @uppy/facebook         |   3.2.0 | @uppy/xhr-upload       |   3.6.0 |
+| @uppy/google-drive     |   3.4.0 | @uppy/zoom             |   2.2.0 |
+| @uppy/image-editor     |   2.4.0 | uppy                   |  3.21.0 |
+
+- @uppy/provider-views: fix uploadRemoteFile undefined (Mikael Finstad / #4814)
+- @uppy/companion: fix double tus uploads (Mikael Finstad / #4816)
+- @uppy/companion: fix accelerated endpoints for presigned POST  (Mikael Finstad / #4817)
+- @uppy/companion: fix `authProvider` property inconsistency (Mikael Finstad / #4672)
+- @uppy/companion:  send certain onedrive errors to the user (Mikael Finstad / #4671)
+- meta: fix typo in `lockfile_check.yml` name (Antoine du Hamel)
+- @uppy/aws-s3: change Companion URL in tests (Antoine du Hamel)
+- @uppy/set-state: fix types (Antoine du Hamel)
+- @uppy/companion: Provider user sessions (Mikael Finstad / #4619)
+- meta: fix `js2ts` script on Node.js 20+ (Merlijn Vos / #4802)
+- @uppy/companion-client: avoid unnecessary preflight requests (Antoine du Hamel / #4462)
+- meta: Migrate to AWS-SDK V3 syntax (Artur Paikin / #4810)
+- @uppy/utils: fix import in test files (Antoine du Hamel / #4806)
+- @uppy/core: Fix onBeforeFileAdded with Golden Retriever (Merlijn Vos / #4799)
+- @uppy/image-editor: respect `cropperOptions.initialAspectRatio` (Lucklj521 / #4805)
+
+
+## 3.20.0
+
+Released: 2023-11-24
+
+| Package                | Version | Package                | Version |
+| ---------------------- | ------- | ---------------------- | ------- |
+| @uppy/companion-client |   3.6.1 | @uppy/store-default    |   3.1.0 |
+| @uppy/locales          |   3.5.0 | uppy                   |  3.20.0 |
+
+- meta: uppy CDN: Export UIPlugin and BasePlugin (Artur Paikin / #4774)
+- @uppy/locales: Add missing translations to de_DE (Leonhard Melzer / #4800)
+- @uppy/store-default: refactor to typescript (Antoine du Hamel / #4785)
+- meta: improve js2ts script (Antoine du Hamel / #4786)
+- @uppy/companion-client: fix log type error (Mikael Finstad / #4766)
+- @uppy/companion-client: revert breaking change (Antoine du Hamel / #4801)
+- @uppy/locales: use TypeScript for source files (Antoine du Hamel / #4779)
+- meta: migrate AWS SDK v2 to v3 in `bin/uploadcdn` (Trivikram Kamat / #4776)
+
+
 ## 3.19.1
 
 Released: 2023-11-12

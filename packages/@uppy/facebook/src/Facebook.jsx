@@ -30,6 +30,7 @@ export default class Facebook extends UIPlugin {
       companionCookiesRule: this.opts.companionCookiesRule,
       provider: 'facebook',
       pluginId: this.id,
+      supportsRefreshToken: false,
     })
 
     this.defaultLocale = locale

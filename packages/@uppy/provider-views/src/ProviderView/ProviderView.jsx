@@ -6,7 +6,6 @@ import { getSafeFileId } from '@uppy/utils/lib/generateFileID'
 import AuthView from './AuthView.jsx'
 import Header from './Header.jsx'
 import Browser from '../Browser.jsx'
-import LoaderView from '../Loader.jsx'
 import CloseWrapper from '../CloseWrapper.js'
 import View from '../View.js'
 
@@ -68,7 +67,7 @@ export default class ProviderView extends View {
 
     // Set default state for the plugin
     this.plugin.setPluginState({
-      authenticated: false,
+      authenticated: undefined, // we don't know yet
       files: [],
       folders: [],
       breadcrumbs: [],
@@ -76,6 +75,8 @@ export default class ProviderView extends View {
       isSearchVisible: false,
       currentSelection: [],
     })
+
+    this.registerRequestClient()
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -186,6 +187,13 @@ export default class ProviderView extends View {
         this.plugin.setPluginState({ folders, files, breadcrumbs, filterInput: '' })
       })
     } catch (err) {
+      // This is the first call that happens when the provider view loads, after auth, so it's probably nice to show any
+      // error occurring here to the user.
+      if (err?.name === 'UserFacingApiError') {
+        this.plugin.uppy.info({ message: this.plugin.uppy.i18n(err.message) }, 'warning', 5000)
+        return
+      }
+
       this.handleError(err)
     } finally {
       this.setLoading(false)
@@ -241,14 +249,23 @@ export default class ProviderView extends View {
     this.plugin.setPluginState({ filterInput: '' })
   }
 
-  async handleAuth () {
-    const clientVersion = `@uppy/provider-views=${ProviderView.VERSION}`
+  async handleAuth (authFormData) {
     try {
-      await this.provider.login({ uppyVersions: clientVersion })
-      this.plugin.setPluginState({ authenticated: true })
-      this.preFirstRender()
-    } catch (e) {
-      this.plugin.uppy.log(`login failed: ${e.message}`)
+      await this.#withAbort(async (signal) => {
+        this.setLoading(true)
+        await this.provider.login({ authFormData, signal })
+        this.plugin.setPluginState({ authenticated: true })
+        this.preFirstRender()
+      })
+    } catch (err) {
+      if (err.name === 'UserFacingApiError') {
+        this.plugin.uppy.info({ message: this.plugin.uppy.i18n(err.message) }, 'warning', 5000)
+        return
+      }
+
+      this.plugin.uppy.log(`login failed: ${err.message}`)
+    } finally {
+      this.setLoading(false)
     }
   }
 
@@ -384,7 +401,7 @@ export default class ProviderView extends View {
         // finished all async operations before we add any file
         // see https://github.com/transloadit/uppy/pull/4384
         this.plugin.uppy.log('Adding files from a remote provider')
-        this.plugin.uppy.addFiles(newFiles.map((file) => this.getTagFile(file)))
+        this.plugin.uppy.addFiles(newFiles.map((file) => this.getTagFile(file, this.requestClientId)))
 
         this.plugin.setPluginState({ filterInput: '' })
         messages.forEach(message => this.plugin.uppy.info(message))
@@ -430,7 +447,6 @@ export default class ProviderView extends View {
       currentSelection,
       files: hasInput ? filterItems(files) : files,
       folders: hasInput ? filterItems(folders) : folders,
-      username: this.username,
       getNextFolder: this.getNextFolder,
       getFolder: this.getFolder,
       loadAllFiles: this.opts.loadAllFiles,
@@ -458,25 +474,19 @@ export default class ProviderView extends View {
       i18n: this.plugin.uppy.i18n,
       uppyFiles: this.plugin.uppy.getFiles(),
       validateRestrictions: (...args) => this.plugin.uppy.validateRestrictions(...args),
+      isLoading: loading,
     }
 
-    if (loading) {
-      return (
-        <CloseWrapper onUnmount={this.clearSelection}>
-          <LoaderView i18n={this.plugin.uppy.i18n} loading={loading} />
-        </CloseWrapper>
-      )
-    }
-
-    if (!authenticated) {
+    if (authenticated === false) {
       return (
         <CloseWrapper onUnmount={this.clearSelection}>
           <AuthView
             pluginName={this.plugin.title}
             pluginIcon={pluginIcon}
             handleAuth={this.handleAuth}
-            i18n={this.plugin.uppy.i18n}
-            i18nArray={this.plugin.uppy.i18nArray}
+            i18n={this.plugin.uppy.i18nArray}
+            renderForm={this.opts.renderAuthForm}
+            loading={loading}
           />
         </CloseWrapper>
       )

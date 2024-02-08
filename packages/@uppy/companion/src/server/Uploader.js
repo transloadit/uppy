@@ -48,12 +48,12 @@ const PROTOCOLS = Object.freeze({
   tus: 'tus',
 })
 
-function exceedsMaxFileSize (maxFileSize, size) {
+function exceedsMaxFileSize(maxFileSize, size) {
   return maxFileSize && size && size > maxFileSize
 }
 
 // TODO remove once we migrate away from form-data
-function sanitizeMetadata (inputMetadata) {
+function sanitizeMetadata(inputMetadata) {
   if (inputMetadata == null) return {}
 
   const outputMetadata = {}
@@ -63,16 +63,20 @@ function sanitizeMetadata (inputMetadata) {
   return outputMetadata
 }
 
-class AbortError extends Error {}
+class ValidationError extends Error {
+  constructor(message) {
+    super(message)
 
-class ValidationError extends Error {}
+    this.name = 'ValidationError'
+  }
+}
 
 /**
  * Validate the options passed down to the uplaoder
  *
  * @param {UploaderOptions} options
  */
-function validateOptions (options) {
+function validateOptions(options) {
   // validate HTTP Method
   if (options.httpMethod) {
     if (typeof options.httpMethod !== 'string') {
@@ -138,6 +142,13 @@ function validateOptions (options) {
   }
 }
 
+const states = {
+  idle: 'idle',
+  uploading: 'uploading',
+  paused: 'paused',
+  done: 'done',
+}
+
 class Uploader {
   /**
    * Uploads file to destination based on the supplied protocol (tus, s3-multipart, multipart)
@@ -162,7 +173,7 @@ class Uploader {
    *
    * @param {UploaderOptions} options
    */
-  constructor (options) {
+  constructor(options) {
     validateOptions(options)
 
     this.options = options
@@ -175,10 +186,7 @@ class Uploader {
       ? this.options.metadata.name.substring(0, MAX_FILENAME_LENGTH)
       : this.fileName
 
-    this.uploadStopped = false
-
     this.storage = options.storage
-    this._paused = false
 
     this.downloadedBytes = 0
 
@@ -187,7 +195,8 @@ class Uploader {
     if (this.options.protocol === PROTOCOLS.tus) {
       emitter().on(`pause:${this.token}`, () => {
         logger.debug('Received from client: pause', 'uploader', this.shortToken)
-        this._paused = true
+        if (this.#uploadState !== states.uploading) return
+        this.#uploadState = states.paused
         if (this.tus) {
           this.tus.abort()
         }
@@ -195,7 +204,8 @@ class Uploader {
 
       emitter().on(`resume:${this.token}`, () => {
         logger.debug('Received from client: resume', 'uploader', this.shortToken)
-        this._paused = false
+        if (this.#uploadState !== states.paused) return
+        this.#uploadState = states.uploading
         if (this.tus) {
           this.tus.start()
         }
@@ -204,21 +214,25 @@ class Uploader {
 
     emitter().on(`cancel:${this.token}`, () => {
       logger.debug('Received from client: cancel', 'uploader', this.shortToken)
-      this._paused = true
       if (this.tus) {
         const shouldTerminate = !!this.tus.url
-        this.tus.abort(shouldTerminate).catch(() => {})
+        this.tus.abort(shouldTerminate).catch(() => { })
       }
-      this.abortReadStream(new AbortError())
+      this.#canceled = true
+      this.abortReadStream(new Error('Canceled'))
     })
   }
 
-  abortReadStream (err) {
-    this.uploadStopped = true
+  #uploadState = states.idle
+
+  #canceled = false
+
+  abortReadStream(err) {
+    this.#uploadState = states.done
     if (this.readStream) this.readStream.destroy(err)
   }
 
-  async _uploadByProtocol () {
+  async _uploadByProtocol() {
     // todo a default protocol should not be set. We should ensure that the user specifies their protocol.
     // after we drop old versions of uppy client we can remove this
     const protocol = this.options.protocol || PROTOCOLS.multipart
@@ -235,7 +249,7 @@ class Uploader {
     }
   }
 
-  async _downloadStreamAsFile (stream) {
+  async _downloadStreamAsFile(stream) {
     this.tmpPath = join(this.options.pathPrefix, this.fileName)
 
     logger.debug('fully downloading file', 'uploader.download', this.shortToken)
@@ -243,7 +257,9 @@ class Uploader {
 
     const onData = (chunk) => {
       this.downloadedBytes += chunk.length
-      if (exceedsMaxFileSize(this.options.companionOptions.maxFileSize, this.downloadedBytes)) this.abortReadStream(new Error('maxFileSize exceeded'))
+      if (exceedsMaxFileSize(this.options.companionOptions.maxFileSize, this.downloadedBytes)) {
+        this.abortReadStream(new Error('maxFileSize exceeded'))
+      }
       this.onProgress(0, undefined)
     }
 
@@ -260,7 +276,7 @@ class Uploader {
     this.readStream = fileStream
   }
 
-  _needDownloadFirst () {
+  _needDownloadFirst() {
     return !this.options.size || !this.options.companionOptions.streamingUpload
   }
 
@@ -268,10 +284,12 @@ class Uploader {
    *
    * @param {import('stream').Readable} stream
    */
-  async uploadStream (stream) {
+  async uploadStream(stream) {
     try {
-      if (this.uploadStopped) throw new Error('Cannot upload stream after upload stopped')
+      if (this.#uploadState !== states.idle) throw new Error('Can only start an upload in the idle state')
       if (this.readStream) throw new Error('Already uploading')
+
+      this.#uploadState = states.uploading
 
       this.readStream = stream
       if (this._needDownloadFirst()) {
@@ -281,7 +299,7 @@ class Uploader {
         // The stream will then typically come from a "Transfer-Encoding: chunked" response
         await this._downloadStreamAsFile(this.readStream)
       }
-      if (this.uploadStopped) return undefined
+      if (this.#uploadState !== states.uploading) return undefined
 
       const { url, extraData } = await Promise.race([
         this._uploadByProtocol(),
@@ -290,21 +308,22 @@ class Uploader {
       ])
       return { url, extraData }
     } finally {
+      this.#uploadState = states.done
       logger.debug('cleanup', this.shortToken)
       if (this.readStream && !this.readStream.destroyed) this.readStream.destroy()
       await this.tryDeleteTmpPath()
     }
   }
 
-  tryDeleteTmpPath () {
-    if (this.tmpPath) unlink(this.tmpPath).catch(() => {})
+  tryDeleteTmpPath() {
+    if (this.tmpPath) unlink(this.tmpPath).catch(() => { })
   }
 
   /**
    *
    * @param {import('stream').Readable} stream
    */
-  async tryUploadStream (stream) {
+  async tryUploadStream(stream) {
     try {
       emitter().emit('upload-start', { token: this.token })
 
@@ -313,11 +332,10 @@ class Uploader {
       const { url, extraData } = ret
       this.#emitSuccess(url, extraData)
     } catch (err) {
-      if (err instanceof AbortError) {
+      if (this.#canceled) {
         logger.error('Aborted upload', 'uploader.aborted', this.shortToken)
         return
       }
-      // console.log(err)
       logger.error(err, 'uploader.error', this.shortToken)
       this.#emitError(err)
     } finally {
@@ -335,11 +353,11 @@ class Uploader {
    * @param {string} token the token to Shorten
    * @returns {string}
    */
-  static shortenToken (token) {
+  static shortenToken(token) {
     return token.substring(0, 8)
   }
 
-  static reqToOptions (req, size) {
+  static reqToOptions(req, size) {
     const useFormDataIsSet = Object.prototype.hasOwnProperty.call(req.body, 'useFormData')
     const useFormData = useFormDataIsSet ? req.body.useFormData : true
 
@@ -372,11 +390,11 @@ class Uploader {
    * we avoid using the entire token because this is meant to be a short term
    * access token between uppy client and companion websocket
    */
-  get shortToken () {
+  get shortToken() {
     return Uploader.shortenToken(this.token)
   }
 
-  async awaitReady (timeout) {
+  async awaitReady(timeout) {
     logger.debug('waiting for socket connection', 'uploader.socket.wait', this.shortToken)
 
     // TODO: replace the Promise constructor call when dropping support for Node.js <16 with
@@ -386,7 +404,7 @@ class Uploader {
       let timer
       let onEvent
 
-      function cleanup () {
+      function cleanup() {
         emitter().removeListener(eventName, onEvent)
         clearTimeout(timer)
       }
@@ -414,7 +432,7 @@ class Uploader {
    * @typedef {{action: string, payload: object}} State
    * @param {State} state
    */
-  saveState (state) {
+  saveState(state) {
     if (!this.storage) return
     // make sure the keys get cleaned up.
     // https://github.com/transloadit/uppy/issues/3748
@@ -441,7 +459,7 @@ class Uploader {
    * @param {number} [bytesUploaded]
    * @param {number | null} [bytesTotalIn]
    */
-  onProgress (bytesUploaded = 0, bytesTotalIn = 0) {
+  onProgress(bytesUploaded = 0, bytesTotalIn = 0) {
     const bytesTotal = bytesTotalIn || this.size || 0
 
     // If fully downloading before uploading, combine downloaded and uploaded bytes
@@ -457,7 +475,7 @@ class Uploader {
 
     const formattedPercentage = percentage.toFixed(2)
 
-    if (this._paused || this.uploadStopped) {
+    if (this.#uploadState !== states.uploading) {
       return
     }
 
@@ -477,7 +495,7 @@ class Uploader {
    * @param {string} url
    * @param {object} extraData
    */
-  #emitSuccess (url, extraData) {
+  #emitSuccess(url, extraData) {
     const emitData = {
       action: 'success',
       payload: { ...extraData, complete: true, url },
@@ -490,7 +508,7 @@ class Uploader {
    *
    * @param {Error} err
    */
-  #emitError (err) {
+  #emitError(err) {
     // delete stack to avoid sending server info to client
     // todo remove also extraData from serializedErr in next major,
     // see PR discussion https://github.com/transloadit/uppy/pull/3832
@@ -509,7 +527,7 @@ class Uploader {
    *
    * @param {any} stream
    */
-  async #uploadTus (stream) {
+  async #uploadTus(stream) {
     const uploader = this
 
     const isFileStream = stream instanceof ReadStream
@@ -518,7 +536,8 @@ class Uploader {
     const chunkSize = this.options.chunkSize || (isFileStream ? Infinity : 50e6)
 
     return new Promise((resolve, reject) => {
-      this.tus = new tus.Upload(stream, {
+
+      const tusOptions = {
         endpoint: this.options.endpoint,
         uploadUrl: this.options.uploadUrl,
         uploadLengthDeferred: !isFileStream,
@@ -538,7 +557,7 @@ class Uploader {
          *
          * @param {Error} error
          */
-        onError (error) {
+        onError(error) {
           logger.error(error, 'uploader.tus.error')
           // deleting tus originalRequest field because it uses the same http-agent
           // as companion, and this agent may contain sensitive request details (e.g headers)
@@ -557,26 +576,26 @@ class Uploader {
          * @param {number} [bytesUploaded]
          * @param {number} [bytesTotal]
          */
-        onProgress (bytesUploaded, bytesTotal) {
+        onProgress(bytesUploaded, bytesTotal) {
           uploader.onProgress(bytesUploaded, bytesTotal)
         },
-        onSuccess () {
+        onSuccess() {
           resolve({ url: uploader.tus.url })
         },
-      })
-
-      if (!this._paused) {
-        this.tus.start()
       }
+
+      this.tus = new tus.Upload(stream, tusOptions)
+
+      this.tus.start()
     })
   }
 
-  async #uploadMultipart (stream) {
+  async #uploadMultipart(stream) {
     if (!this.options.endpoint) {
       throw new Error('No multipart endpoint set')
     }
 
-    function getRespObj (response) {
+    function getRespObj(response) {
       // remove browser forbidden headers
       const { 'set-cookie': deleted, 'set-cookie2': deleted2, ...responseHeaders } = response.headers
 
@@ -649,7 +668,7 @@ class Uploader {
   /**
    * Upload the file to S3 using a Multipart upload.
    */
-  async #uploadS3Multipart (stream) {
+  async #uploadS3Multipart(stream) {
     if (!this.options.s3) {
       throw new Error('The S3 client is not configured on this companion instance.')
     }

@@ -101,6 +101,7 @@ jobs:
           corepack yarn run build:lib
           corepack yarn run build:companion
           corepack yarn run build:locale-pack
+          find packages/@uppy -name 'tsconfig.json' -delete
       - name: Run type tests
         run: corepack yarn run test:type
       - name: Drop manual tyoes
@@ -108,6 +109,7 @@ jobs:
         # We don't want to remove that file to not break users.
         # However, we want to validate the types based on the types inferred from source.
         run: |
+          git checkout -- packages/@uppy
           node --input-type=module <<'EOF'
             import { existsSync } from 'node:fs';
             import { opendir, readFile, writeFile } from 'node:fs/promises';
@@ -119,6 +121,12 @@ jobs:
                 await writeFile(pjsonPath, JSON.stringify(pjson))
               }
             }
+            const pjsonPath = `./packages/uppy/package.json`
+            const pjson = JSON.parse(await readFile(pjsonPath));
+            delete pjson.types
+            await writeFile(pjsonPath, JSON.stringify(pjson))
           EOF
+          echo > packages/uppy/types/index.test-d.ts
+          rm -r packages/@uppy/*/types
       - name: Attempt building TS packages
         run: corepack yarn run build:ts

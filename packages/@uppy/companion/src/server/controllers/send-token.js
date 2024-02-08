@@ -33,7 +33,7 @@ const htmlContent = (token, origin) => {
 module.exports = function sendToken (req, res, next) {
   const uppyAuthToken = req.companion.authToken
 
-  const state = oAuthState.getDynamicStateFromRequest(req)
+  const { state } = oAuthState.getGrantDynamicFromRequest(req)
   if (state) {
     const origin = oAuthState.getFromState(state, 'origin', req.companion.options.secret)
     const allowedClients = req.companion.options.clients

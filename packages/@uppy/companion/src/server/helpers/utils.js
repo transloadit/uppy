@@ -74,7 +74,7 @@ module.exports.getURLBuilder = (options) => {
  *
  * @param {string|Buffer} secret
  */
-function createSecret (secret) {
+function createSecret(secret) {
   const hash = crypto.createHash('sha256')
   hash.update(secret)
   return hash.digest()
@@ -85,15 +85,15 @@ function createSecret (secret) {
  *
  * @returns {Buffer}
  */
-function createIv () {
+function createIv() {
   return crypto.randomBytes(16)
 }
 
-function urlEncode (unencoded) {
+function urlEncode(unencoded) {
   return unencoded.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '~')
 }
 
-function urlDecode (encoded) {
+function urlDecode(encoded) {
   return encoded.replace(/-/g, '+').replace(/_/g, '/').replace(/~/g, '=')
 }
 
@@ -157,6 +157,7 @@ class StreamHttpJsonError extends Error {
     super(`Request failed with status ${statusCode}`)
     this.statusCode = statusCode
     this.responseJson = responseJson
+    this.name = 'StreamHttpJsonError'
   }
 }
 
@@ -188,7 +189,7 @@ module.exports.prepareStream = async (stream) => new Promise((resolve, reject) =
 
       reject(err)
     })
-  })
+})
 
 module.exports.getBasicAuthHeader = (key, secret) => {
   const base64 = Buffer.from(`${key}:${secret}`, 'binary').toString('base64')

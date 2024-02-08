@@ -444,7 +444,7 @@ module.exports = {
       },
     },
     {
-      files: ['**/*.ts', '**/*.md/*.ts', '**/*.md/*.typescript'],
+      files: ['**/*.ts', '**/*.md/*.ts', '**/*.md/*.typescript', '**/*.tsx', '**/*.md/*.tsx'],
       excludedFiles: ['examples/angular-example/**/*.ts', 'packages/@uppy/angular/**/*.ts'],
       parser: '@typescript-eslint/parser',
       settings: {
@@ -462,6 +462,7 @@ module.exports = {
       ],
       rules: {
         'import/prefer-default-export': 'off',
+        '@typescript-eslint/no-empty-function': 'off',
         '@typescript-eslint/no-explicit-any': 'off',
         '@typescript-eslint/no-extra-semi': 'off',
         '@typescript-eslint/no-namespace': 'off',
@@ -469,9 +470,9 @@ module.exports = {
     },
     {
       files: ['packages/@uppy/*/src/**/*.ts', 'packages/@uppy/*/src/**/*.tsx'],
-      excludedFiles: ['packages/@uppy/**/*.test.ts'],
+      excludedFiles: ['packages/@uppy/**/*.test.ts', 'packages/@uppy/core/src/mocks/*.ts'],
       rules: {
-        '@typescript-eslint/explicit-function-return-type': 'error',
+        '@typescript-eslint/explicit-module-boundary-types': 'error',
       },
     },
     {

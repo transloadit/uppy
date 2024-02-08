@@ -5,7 +5,7 @@ import type { FileProgress } from './FileProgress'
 function emitSocketProgress(
   uploader: any,
   progressData: FileProgress,
-  file: UppyFile,
+  file: UppyFile<any, any>,
 ): void {
   const { progress, bytesUploaded, bytesTotal } = progressData
   if (progress) {

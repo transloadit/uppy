@@ -68,6 +68,8 @@ async function getFileNameFromUrl (url) {
 export default class Url extends UIPlugin {
   static VERSION = packageJson.version
 
+  static requestClientId = Url.name
+
   constructor (uppy, opts) {
     super(uppy, opts)
     this.id = this.opts.id || 'Url'
@@ -101,6 +103,8 @@ export default class Url extends UIPlugin {
       companionHeaders: this.opts.companionHeaders,
       companionCookiesRule: this.opts.companionCookiesRule,
     })
+
+    this.uppy.registerRequestClient(Url.requestClientId, this.client)
   }
 
   getMeta (url) {
@@ -145,10 +149,9 @@ export default class Url extends UIPlugin {
             fileId: url,
             url,
           },
+          requestClientId: Url.requestClientId,
         },
       }
-
-      Object.defineProperty(tagFile.remote, 'requestClient', { value: this.client, enumerable: false })
 
       this.uppy.log('[Url] Adding remote file')
       try {

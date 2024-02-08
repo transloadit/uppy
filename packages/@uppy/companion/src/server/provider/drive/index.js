@@ -5,6 +5,7 @@ const logger = require('../../logger')
 const { VIRTUAL_SHARED_DIR, adaptData, isShortcut, isGsuiteFile, getGsuiteExportType } = require('./adapter')
 const { withProviderErrorHandling } = require('../providerErrors')
 const { prepareStream } = require('../../helpers/utils')
+const { MAX_AGE_REFRESH_TOKEN } = require('../../helpers/jwt')
 const { ProviderAuthError } = require('../error')
 
 
@@ -50,13 +51,12 @@ async function getStats ({ id, token }) {
  * Adapter for API https://developers.google.com/drive/api/v3/
  */
 class Drive extends Provider {
-  constructor (options) {
-    super(options)
-    this.authProvider = Drive.authProvider
-  }
-
   static get authProvider () {
     return 'google'
+  }
+
+  static get authStateExpiry () {
+    return MAX_AGE_REFRESH_TOKEN
   }
 
   async list (options) {
@@ -195,11 +195,12 @@ class Drive extends Provider {
     })
   }
 
+  // eslint-disable-next-line class-methods-use-this
   async #withErrorHandling (tag, fn) {
     return withProviderErrorHandling({
       fn,
       tag,
-      providerName: this.authProvider,
+      providerName: Drive.authProvider,
       isAuthError: (response) => (
         response.statusCode === 401
         || (response.statusCode === 400 && response.body?.error === 'invalid_grant') // Refresh token has expired or been revoked

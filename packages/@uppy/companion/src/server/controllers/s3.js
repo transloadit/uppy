@@ -31,11 +31,11 @@ module.exports = function s3 (config) {
     throw new TypeError('s3: The `getKey` option must be a function')
   }
 
-  function getS3Client (req, res) {
+  function getS3Client (req, res, createPresignedPostMode = false) {
     /**
      * @type {import('@aws-sdk/client-s3').S3Client}
      */
-    const client = req.companion.s3Client
+    const client = createPresignedPostMode ? req.companion.s3ClientCreatePresignedPost : req.companion.s3Client
     if (!client) res.status(400).json({ error: 'This Companion server does not support uploading to S3' })
     return client
   }
