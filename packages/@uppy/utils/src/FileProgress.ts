@@ -5,7 +5,7 @@ export interface DeterminateFileProcessing {
 }
 export interface IndeterminateFileProcessing {
   mode: 'indeterminate'
-  message?: undefined
+  message?: string
   value?: 0
 }
 export type FileProcessingInfo =

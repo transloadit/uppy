@@ -3,10 +3,11 @@ import Core from '@uppy/core'
 import getFileNameAndExtension from '@uppy/utils/lib/getFileNameAndExtension'
 import fs from 'node:fs'
 import path from 'node:path'
-import CompressorPlugin from './index.js'
+import CompressorPlugin from './index.ts'
 
 // Compressor uses browser canvas API, so need to mock compress()
-CompressorPlugin.prototype.compress = (blob) => {
+// @ts-expect-error mocked
+CompressorPlugin.prototype.compress = async (blob: Blob) => {
   return {
     name: `${getFileNameAndExtension(blob.name).name}.webp`,
     type: 'image/webp',
@@ -16,11 +17,28 @@ CompressorPlugin.prototype.compress = (blob) => {
 }
 
 // eslint-disable-next-line no-restricted-globals
-const sampleImage = fs.readFileSync(path.join(__dirname, '../../../../e2e/cypress/fixtures/images/image.jpg'))
+const sampleImage = fs.readFileSync(
+  path.join(__dirname, '../../../../e2e/cypress/fixtures/images/image.jpg'),
+)
 
-const file1 = { source: 'jest', name: 'image-1.jpeg', type: 'image/jpeg', data: new File([sampleImage], 'image-1.jpeg', { type: 'image/jpeg' }) }
-const file2 = { source: 'jest', name: 'yolo', type: 'image/jpeg', data: new File([sampleImage], 'yolo', { type: 'image/jpeg' }) }
-const file3 = { source: 'jest', name: 'my.file.is.weird.png', type: 'image/png', data: new File([sampleImage], 'my.file.is.weird.png', { type: 'image/png' }) }
+const file1 = {
+  source: 'jest',
+  name: 'image-1.jpeg',
+  type: 'image/jpeg',
+  data: new File([sampleImage], 'image-1.jpeg', { type: 'image/jpeg' }),
+}
+const file2 = {
+  source: 'jest',
+  name: 'yolo',
+  type: 'image/jpeg',
+  data: new File([sampleImage], 'yolo', { type: 'image/jpeg' }),
+}
+const file3 = {
+  source: 'jest',
+  name: 'my.file.is.weird.png',
+  type: 'image/png',
+  data: new File([sampleImage], 'my.file.is.weird.png', { type: 'image/png' }),
+}
 
 describe('CompressorPlugin', () => {
   it('should change update extension in file.name and file.meta.name', () => {
