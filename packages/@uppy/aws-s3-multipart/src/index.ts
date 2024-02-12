@@ -114,6 +114,7 @@ type AbortablePromise<T extends (...args: any) => Promise<any>> = (
 }
 
 type UploadResult = { key: string; uploadId: string }
+type UploadResultWithSignal = UploadResult & { signal?:AbortSignal }
 
 class HTTPCommunicationQueue<M extends Meta, B extends Body> {
   #abortMultipartUpload: AbortablePromise<
@@ -606,14 +607,14 @@ type AWSS3MultipartWithoutCompanionMandatory<M extends Meta, B extends Body> = {
   getChunkSize?: (file: UppyFile<M, B>) => number
   createMultipartUpload: (
     file: UppyFile<M, B>,
-  ) => MaybePromise<{ uploadId: string; key: string }>
+  ) => MaybePromise<UploadResult>
   listParts: (
     file: UppyFile<M, B>,
-    opts: { uploadId: string; key: string; signal: AbortSignal },
+    opts: UploadResultWithSignal,
   ) => MaybePromise<AwsS3Part[]>
   abortMultipartUpload: (
     file: UppyFile<M, B>,
-    opts: { uploadId: string; key: string; signal: AbortSignal },
+    opts: UploadResultWithSignal,
   ) => MaybePromise<void>
   completeMultipartUpload: (
     file: UppyFile<M, B>,
@@ -714,13 +715,13 @@ export default class AwsS3Multipart<
 
   #companionCommunicationQueue
 
-  #client
+  #client: RequestClient<M, B>
 
   protected requests: any
 
-  protected uploaderEvents: Record<string, EventManager<M, B>>
+  protected uploaderEvents: Record<string, EventManager<M, B> | null>
 
-  protected uploaders: Record<string, MultipartUploader<M, B>>
+  protected uploaders: Record<string, MultipartUploader<M, B> | null>
 
   protected uploaderSockets: Record<string, never>
 
@@ -813,23 +814,25 @@ export default class AwsS3Multipart<
    * Set `opts.abort` to tell S3 that the multipart upload is cancelled and must be removed.
    * This should be done when the user cancels the upload, not when the upload is completed or errored.
    */
-  resetUploaderReferences(fileID, opts = {}) {
+  resetUploaderReferences(fileID, opts?: { abort: boolean }) {
     if (this.uploaders[fileID]) {
-      this.uploaders[fileID].abort({ really: opts.abort || false })
+      this.uploaders[fileID]!.abort({ really: opts?.abort || false })
       this.uploaders[fileID] = null
     }
     if (this.uploaderEvents[fileID]) {
-      this.uploaderEvents[fileID].remove()
+      this.uploaderEvents[fileID]!.remove()
       this.uploaderEvents[fileID] = null
     }
     if (this.uploaderSockets[fileID]) {
+      // @ts-expect-error TODO: remove this block in the next major
       this.uploaderSockets[fileID].close()
+      // @ts-expect-error TODO: remove this block in the next major
       this.uploaderSockets[fileID] = null
     }
   }
 
   // TODO: make this a private method in the next major
-  assertHost(method) {
+  assertHost(method: string): void {
     if (!this.opts.companionUrl) {
       throw new Error(
         `Expected a \`companionUrl\` option containing a Companion address, or if you are not using Companion, a custom \`${method}\` implementation.`,
@@ -837,7 +840,10 @@ export default class AwsS3Multipart<
     }
   }
 
-  createMultipartUpload(file, signal) {
+  createMultipartUpload(
+    file: UppyFile<M, B>,
+    signal?: AbortSignal,
+  ): Promise<UploadResult> {
     this.assertHost('createMultipartUpload')
     throwIfAborted(signal)
 
@@ -847,7 +853,7 @@ export default class AwsS3Multipart<
     })
 
     return this.#client
-      .post(
+      .post<UploadResult>(
         's3/multipart',
         {
           filename: file.name,
@@ -859,24 +865,30 @@ export default class AwsS3Multipart<
       .then(assertServerError)
   }
 
-  listParts(file, { key, uploadId }, signal) {
+  listParts(
+    file: UppyFile<M, B>,
+    { key, uploadId }: UploadResult,
+    signal?: AbortSignal,
+  ):Promise<AwsS3Part[]> {
     this.assertHost('listParts')
     throwIfAborted(signal)
 
     const filename = encodeURIComponent(key)
     return this.#client
-      .get(`s3/multipart/${uploadId}?key=${filename}`, { signal })
+      .get<AwsS3Part[]>(`s3/multipart/${uploadId}?key=${filename}`, { signal })
       .then(assertServerError)
   }
 
-  completeMultipartUpload(file, { key, uploadId, parts }, signal) {
+  completeMultipartUpload(file:UppyFile<M,B>, { key, uploadId, parts }:UploadResult, signal?:AbortSignal): Promise<{
+    location: string
+  }> {
     this.assertHost('completeMultipartUpload')
     throwIfAborted(signal)
 
     const filename = encodeURIComponent(key)
     const uploadIdEnc = encodeURIComponent(uploadId)
     return this.#client
-      .post(
+      .post<{location: string}>(
         `s3/multipart/${uploadIdEnc}/complete?key=${filename}`,
         { parts },
         { signal },
@@ -884,12 +896,9 @@ export default class AwsS3Multipart<
       .then(assertServerError)
   }
 
-  /**
-   * @type {import("../types").AwsS3STSResponse | Promise<import("../types").AwsS3STSResponse>}
-   */
-  #cachedTemporaryCredentials
+  #cachedTemporaryCredentials: MaybePromise<AwsS3STSResponse>
 
-  async #getTemporarySecurityCredentials(options) {
+  async #getTemporarySecurityCredentials(options?: RequestOptions) {
     throwIfAborted(options?.signal)
 
     if (this.#cachedTemporaryCredentials == null) {
@@ -897,7 +906,7 @@ export default class AwsS3Multipart<
       if (this.opts.getTemporarySecurityCredentials === true) {
         this.assertHost('getTemporarySecurityCredentials')
         this.#cachedTemporaryCredentials = this.#client
-          .get('s3/sts', null, options)
+          .get<AwsS3STSResponse>('s3/sts', options)
           .then(assertServerError)
       } else {
         this.#cachedTemporaryCredentials =
@@ -982,11 +991,7 @@ export default class AwsS3Multipart<
       key,
       uploadId,
       signal,
-    }: {
-      key: string
-      uploadId: string
-      signal?: AbortSignal
-    },
+    }: UploadResult,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     oldSignal?: AbortSignal, // TODO: remove in next major
   ): Promise<Record<string, never>> {
@@ -1029,12 +1034,12 @@ export default class AwsS3Multipart<
   static async uploadPartBytes({
     signature: { url, expires, headers, method = 'PUT' },
     body,
-    size = body.size,
+    size = (body as Blob).size,
     onProgress,
     onComplete,
     signal,
   }: {
-    signature: AwsS3MultipartOptions
+    signature: AwsS3UploadParameters
     body: FormData | Blob
     size?: number
     onProgress: any
@@ -1244,8 +1249,8 @@ export default class AwsS3Multipart<
         resolve(`upload ${removed} was removed`)
       })
 
-      eventManager.onCancelAll(file.id, ({ reason } = {}) => {
-        if (reason === 'user') {
+      eventManager.onCancelAll(file.id, (options) => {
+        if (options?.reason === 'user') {
           upload.abort()
           this.resetUploaderReferences(file.id, { abort: true })
         }
