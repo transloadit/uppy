@@ -1,5 +1,120 @@
 # @uppy/companion
 
+## 4.12.0
+
+Released: 2023-12-12
+Included in: Uppy v3.21.0
+
+- @uppy/companion: fix double tus uploads (Mikael Finstad / #4816)
+- @uppy/companion: fix accelerated endpoints for presigned POST  (Mikael Finstad / #4817)
+- @uppy/companion: fix `authProvider` property inconsistency (Mikael Finstad / #4672)
+- @uppy/companion:  send certain onedrive errors to the user (Mikael Finstad / #4671)
+- @uppy/companion: Provider user sessions (Mikael Finstad / #4619)
+
+## 4.11.0
+
+Released: 2023-11-08
+Included in: Uppy v3.19.0
+
+- @uppy/companion: Companion+client stability fixes, error handling and retry (Mikael Finstad / #4734)
+- @uppy/companion: add getBucket metadata argument (Mikael Finstad / #4770)
+
+## 4.10.1
+
+Released: 2023-10-23
+Included in: Uppy v3.18.1
+
+- @uppy/companion: Bump jsonwebtoken from 8.5.1 to 9.0.0 in /packages/@uppy/companion (dependabot[bot] / #4751)
+
+## 4.10.0
+
+Released: 2023-10-20
+Included in: Uppy v3.18.0
+
+- @uppy/companion: Bucket fn also remote files (Mikael Finstad / #4693)
+
+## 4.9.1
+
+Released: 2023-09-29
+Included in: Uppy v3.17.0
+
+- @uppy/companion: upgrade TS target (Mikael Finstad / #4670)
+- @uppy/companion: use deferred length for tus streams (Mikael Finstad / #4697)
+- @uppy/companion: fix instagram/facebook auth error regression (Mikael Finstad / #4692)
+- @uppy/companion: add test endpoint for dynamic oauth creds (Mikael Finstad / #4667)
+- @uppy/companion: fix edge case for pagination on root (Mikael Finstad / #4689)
+- @uppy/companion: fix onedrive pagination (Mikael Finstad / #4686)
+
+## 4.9.0
+
+Released: 2023-09-18
+Included in: Uppy v3.16.0
+
+- @uppy/companion: add missing credentialsURL for box (Mikael Finstad / #4681)
+- @uppy/companion: remove s3 endpoints if s3 disabled (Mikael Finstad / #4675)
+- @uppy/companion: Onedrive refresh tokens (Mikael Finstad / #4655)
+- @uppy/companion: catch "invalid initialization vector" instead of crashing (Mikael Finstad / #4661)
+
+## 4.8.2
+
+Released: 2023-09-05
+Included in: Uppy v3.15.0
+
+- @uppy/companion: refactor `getProtectedHttpAgent` to make TS happy (Antoine du Hamel / #4654)
+- @uppy/companion: Alias "removeListener" as "off" in Redis emitter (Elliot Dickison / #4647)
+
+## 4.8.1
+
+Released: 2023-08-23
+Included in: Uppy v3.14.1
+
+- @uppy/companion: harden lint rules (Antoine du Hamel / #4641)
+
+## 4.8.0
+
+Released: 2023-08-15
+Included in: Uppy v3.14.0
+
+- @uppy/companion: Fix typos and add env vars to .env.example (Dominik Schmidt / #4624)
+- @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/companion,@uppy/transloadit,@uppy/xhr-upload: use uppercase HTTP method names (Antoine du Hamel / #4612)
+- @uppy/companion: make CSRF protection helpers available to providers (Dominik Schmidt / #4554)
+- @uppy/companion: fix Redis key default TTL (Subha Sarkar / #4607)
+- @uppy/companion: Fix Uploader.js metadata normalisation (Subha Sarkar / #4608)
+- @uppy/companion: Unify redis initialization (Dominik Schmidt / #4597)
+- @uppy/companion: allow dynamic S3 bucket (rmoura-92 / #4579)
+
+## 4.7.0
+
+Released: 2023-07-13
+Included in: Uppy v3.12.0
+
+- @uppy/companion: fix esm imports in production/transpiled builds (Dominik Schmidt / #4561)
+- @uppy/box,@uppy/companion,@uppy/dropbox,@uppy/google-drive,@uppy/onedrive,@uppy/provider-views: Load Google Drive / OneDrive lists 5-10x faster & always load all files (Merlijn Vos / #4513)
+
+## 4.6.0
+
+Released: 2023-07-06
+Included in: Uppy v3.11.0
+
+- @uppy/companion: fix infinite recursion in uploader test (Mikael Finstad / #4536)
+- @uppy/companion: bump semver from 7.3.7 to 7.5.3 (dependabot[bot] / #4529)
+- @uppy/companion: fix part listing in s3 (Antoine du Hamel / #4524)
+- @uppy/companion: implement refresh for authentication tokens (Mikael Finstad / #4448)
+
+## 4.5.1
+
+Released: 2023-06-19
+Included in: Uppy v3.10.0
+
+- @uppy/companion: switch from aws-sdk v2 to @aws-sdk/* (v3) (Scott Bessler / #4285)
+- @uppy/companion,@uppy/core,@uppy/dashboard,@uppy/golden-retriever,@uppy/status-bar,@uppy/utils: Migrate all lodash' per-method-packages usage to lodash. (LinusMain / #4274)
+- @uppy/companion: revert randomness from file names (Mikael Finstad / #4509)
+- @uppy/companion: Custom provider fixes (Mikael Finstad / #4498)
+- @uppy/companion: fix 500 when file name contains non-ASCII chars (Antoine du Hamel / #4493)
+- @uppy/companion: Use filename from content-disposition instead of relying on url, with fallback (Artur Paikin / #4489)
+- @uppy/companion: fix companion implicitpath (Mikael Finstad / #4484)
+- @uppy/companion: fix undefined protocol and example page (Mikael Finstad / #4483)
+
 ## 4.5.0
 
 Released: 2023-04-18

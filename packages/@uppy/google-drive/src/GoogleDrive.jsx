@@ -41,6 +41,7 @@ export default class GoogleDrive extends UIPlugin {
       companionCookiesRule: this.opts.companionCookiesRule,
       provider: 'drive',
       pluginId: this.id,
+      supportsRefreshToken: true,
     })
 
     this.defaultLocale = locale
@@ -55,6 +56,7 @@ export default class GoogleDrive extends UIPlugin {
   install () {
     this.view = new DriveProviderViews(this, {
       provider: this.provider,
+      loadAllFiles: true,
     })
 
     const { target } = this.opts
@@ -71,7 +73,7 @@ export default class GoogleDrive extends UIPlugin {
   onFirstRender () {
     return Promise.all([
       this.provider.fetchPreAuthToken(),
-      this.view.getFolder('root', '/'),
+      this.view.getFolder('root'),
     ])
   }
 

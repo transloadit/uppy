@@ -48,12 +48,15 @@ function getFileNameFromUrl (url) {
   const { pathname } = new URL(url)
   return pathname.substring(pathname.lastIndexOf('/') + 1)
 }
+
 /**
  * Url
  *
  */
 export default class Url extends UIPlugin {
   static VERSION = packageJson.version
+
+  static requestClientId = Url.name
 
   constructor (uppy, opts) {
     super(uppy, opts)
@@ -88,6 +91,8 @@ export default class Url extends UIPlugin {
       companionHeaders: this.opts.companionHeaders,
       companionCookiesRule: this.opts.companionCookiesRule,
     })
+
+    this.uppy.registerRequestClient(Url.requestClientId, this.client)
   }
 
   getMeta (url) {
@@ -116,7 +121,7 @@ export default class Url extends UIPlugin {
       const tagFile = {
         meta: optionalMeta,
         source: this.id,
-        name: getFileNameFromUrl(url),
+        name: meta.name || getFileNameFromUrl(url),
         type: meta.type,
         data: {
           size: meta.size,
@@ -132,9 +137,10 @@ export default class Url extends UIPlugin {
             fileId: url,
             url,
           },
-          providerOptions: this.client.opts,
+          requestClientId: Url.requestClientId,
         },
       }
+
       this.uppy.log('[Url] Adding remote file')
       try {
         return this.uppy.addFile(tagFile)

@@ -1,0 +1,34 @@
+diff --git a/index.js b/index.js
+index a20646d922945004cb737918ef6b6d063bb3c2a4..a44863e9555abdaa569f309b1197fddc8dd244a5 100644
+--- a/index.js
++++ b/index.js
+@@ -147,7 +147,7 @@ Hook.prototype.log = function log(lines, exit) {
+  * @api private
+  */
+ Hook.prototype.initialize = function initialize() {
+-  ['git', 'npm'].forEach(function each(binary) {
++  ['git', 'corepack'].forEach(function each(binary) {
+     try { this[binary] = which.sync(binary); }
+     catch (e) {}
+   }, this);
+@@ -159,9 +159,9 @@ Hook.prototype.initialize = function initialize() {
+   if (!this.npm) {
+     try {
+       process.env.PATH += path.delimiter + path.dirname(process.env._);
+-      this.npm = which.sync('npm');
++      this.npm = which.sync('corepack');
+     } catch (e) {
+-      return this.log(this.format(Hook.log.binary, 'npm'), 0);
++      return this.log(this.format(Hook.log.binary, 'corepack'), 0);
+     }
+   }
+ 
+@@ -225,7 +225,7 @@ Hook.prototype.run = function runner() {
+     // this doesn't have the required `isAtty` information that libraries use to
+     // output colors resulting in script output that doesn't have any color.
+     //
+-    spawn(hooked.npm, ['run', script, '--silent'], {
++    spawn(hooked.npm, ['yarn', script], {
+       env: process.env,
+       cwd: hooked.root,
+       stdio: [0, 1, 2]

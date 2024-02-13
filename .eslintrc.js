@@ -8,7 +8,7 @@ const svgPresentationAttributes = [
 
 module.exports = {
   root: true,
-  extends: ['transloadit'],
+  extends: ['transloadit', 'prettier'],
   env: {
     es6: true,
     jest: true,
@@ -32,6 +32,7 @@ module.exports = {
     // extra:
     'compat',
     'jsdoc',
+    'no-only-tests',
     'unicorn',
   ],
   parser: '@babel/eslint-parser',
@@ -62,7 +63,6 @@ module.exports = {
     // rules we want to enforce
     'array-callback-return': 'error',
     'func-names': 'error',
-    'implicit-arrow-linebreak': 'error',
     'import/no-dynamic-require': 'error',
     'import/no-extraneous-dependencies': 'error',
     'max-len': 'error',
@@ -141,6 +141,7 @@ module.exports = {
     {
       files: [
         '*.jsx',
+        '*.tsx',
         'packages/@uppy/react-native/**/*.js',
       ],
       parser: 'espree',
@@ -334,18 +335,6 @@ module.exports = {
       files: ['./packages/@uppy/companion/**/*.js'],
       rules: {
         'no-underscore-dangle': 'off',
-
-        // transloadit rules we would like to enforce in the future
-        // but will require separate PRs to gradually get there
-        // and so the meantime: just warn
-        'class-methods-use-this': 'warn',
-        'consistent-return': 'warn',
-        'global-require': 'warn',
-        'import/order': 'warn',
-        'no-param-reassign': 'warn',
-        'no-redeclare': 'warn',
-        'no-shadow': 'warn',
-        'no-use-before-define': 'warn',
       },
     },
     {
@@ -368,10 +357,13 @@ module.exports = {
         'test/**/*.js',
         'test/**/*.ts',
         '*.test.js',
+        '*.test.ts',
         '*.test-d.ts',
+        '*.test-d.tsx',
         'postcss.config.js',
         '.eslintrc.js',
         'private/**/*.js',
+        'private/**/*.mjs',
       ],
       rules: {
         'no-console': 'off',
@@ -452,7 +444,7 @@ module.exports = {
       },
     },
     {
-      files: ['**/*.ts', '**/*.md/*.ts', '**/*.md/*.typescript'],
+      files: ['**/*.ts', '**/*.md/*.ts', '**/*.md/*.typescript', '**/*.tsx', '**/*.md/*.tsx'],
       excludedFiles: ['examples/angular-example/**/*.ts', 'packages/@uppy/angular/**/*.ts'],
       parser: '@typescript-eslint/parser',
       settings: {
@@ -470,8 +462,17 @@ module.exports = {
       ],
       rules: {
         'import/prefer-default-export': 'off',
+        '@typescript-eslint/no-empty-function': 'off',
         '@typescript-eslint/no-explicit-any': 'off',
+        '@typescript-eslint/no-extra-semi': 'off',
         '@typescript-eslint/no-namespace': 'off',
+      },
+    },
+    {
+      files: ['packages/@uppy/*/src/**/*.ts', 'packages/@uppy/*/src/**/*.tsx'],
+      excludedFiles: ['packages/@uppy/**/*.test.ts', 'packages/@uppy/core/src/mocks/*.ts'],
+      rules: {
+        '@typescript-eslint/explicit-module-boundary-types': 'error',
       },
     },
     {
@@ -485,9 +486,21 @@ module.exports = {
       },
     },
     {
-      files: ['**/react/*.md/*.js', '**/react.md/*.js', '**/react-*.md/*.js'],
+      files: ['**/react/*.md/*.js', '**/react.md/*.js', '**/react-*.md/*.js', '**/react/**/*.test-d.tsx'],
       settings: {
         react: { pragma: 'React' },
+      },
+    },
+    {
+      files: ['**/react/**/*.test-d.tsx'],
+      rules: {
+        'import/extensions': 'off',
+        'import/no-useless-path-segments': 'off',
+        'no-alert': 'off',
+        'no-inner-declarations': 'off',
+        'no-lone-blocks': 'off',
+        'no-unused-expressions': 'off',
+        'no-unused-vars': 'off',
       },
     },
     {
@@ -496,7 +509,12 @@ module.exports = {
     },
     {
       files: ['e2e/**/*.ts', 'e2e/**/*.js', 'e2e/**/*.jsx', 'e2e/**/*.mjs'],
-      rules: { 'import/no-extraneous-dependencies': 'off', 'no-unused-expressions': 'off', 'no-console': 'off' },
+      rules: {
+        'import/no-extraneous-dependencies': 'off',
+        'no-console': 'off',
+        'no-only-tests/no-only-tests': 'error',
+        'no-unused-expressions': 'off',
+      },
     },
   ],
 }

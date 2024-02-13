@@ -9,7 +9,6 @@ import RenderMetaFields from './RenderMetaFields.jsx'
 
 export default function FileCard (props) {
   const {
-    uppy,
     files,
     fileCardFor,
     toggleFileCard,
@@ -46,11 +45,13 @@ export default function FileCard (props) {
   }, [saveFileCard, formState, fileCardFor])
 
   const updateMeta = (newVal, name) => {
-    setFormState({ [name]: newVal })
+    setFormState({
+      ...formState,
+      [name]: newVal,
+    })
   }
 
   const handleCancel = () => {
-    uppy.emit('file-editor:cancel', file)
     toggleFileCard(false)
   }
 

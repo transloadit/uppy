@@ -7,7 +7,9 @@ describe('Dashboard with @uppy/aws-s3', () => {
   })
 
   it('should upload cat image successfully', () => {
-    cy.get('@file-input').selectFile('cypress/fixtures/images/cat.jpg', { force:true })
+    cy.get('@file-input').selectFile('cypress/fixtures/images/cat.jpg', {
+      force: true,
+    })
 
     cy.get('.uppy-StatusBar-actionBtn--upload').click()
     cy.wait(['@post', '@get'])

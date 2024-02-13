@@ -48,11 +48,18 @@ export default class View {
 
     uppy.log(error.toString())
 
-    if (error.isAuthError) {
+    if (error.isAuthError || error.cause?.name === 'AbortError') {
+      // authError just means we're not authenticated, don't show to user
+      // AbortError means the user has clicked "cancel" on an operation
       return
     }
 
     uppy.info({ message, details: error.toString() }, 'error', 5000)
+  }
+
+  registerRequestClient() {
+    this.requestClientId = this.provider.provider;
+    this.plugin.uppy.registerRequestClient(this.requestClientId, this.provider)
   }
 
   // todo document what is a "tagFile" or get rid of this concept
@@ -74,9 +81,9 @@ export default class View {
         body: {
           fileId: file.id,
         },
-        providerOptions: this.provider.opts,
         providerName: this.provider.name,
         provider: this.provider.provider,
+        requestClientId: this.requestClientId,
       },
     }
 
@@ -91,6 +98,11 @@ export default class View {
       if (file.author.name != null) tagFile.meta.authorName = String(file.author.name)
       if (file.author.url) tagFile.meta.authorUrl = file.author.url
     }
+
+    // add relativePath similar to non-remote files: https://github.com/transloadit/uppy/pull/4486#issuecomment-1579203717
+    if (file.relDirPath != null) tagFile.meta.relativePath = file.relDirPath ? `${file.relDirPath}/${tagFile.name}` : null
+    // and absolutePath (with leading slash) https://github.com/transloadit/uppy/pull/4537#issuecomment-1614236655
+    if (file.absDirPath != null) tagFile.meta.absolutePath = file.absDirPath ? `/${file.absDirPath}/${tagFile.name}` : `/${tagFile.name}`
 
     return tagFile
   }
@@ -123,31 +135,32 @@ export default class View {
     const { folders, files } = this.plugin.getPluginState()
     const items = this.filterItems(folders.concat(files))
     // Shift-clicking selects a single consecutive list of items
-    // starting at the previous click and deselects everything else.
+    // starting at the previous click.
     if (this.lastCheckbox && this.isShiftKeyPressed) {
+      const { currentSelection } = this.plugin.getPluginState()
       const prevIndex = items.indexOf(this.lastCheckbox)
       const currentIndex = items.indexOf(file)
-      const currentSelection = (prevIndex < currentIndex)
+      const newSelection = (prevIndex < currentIndex)
         ? items.slice(prevIndex, currentIndex + 1)
         : items.slice(currentIndex, prevIndex + 1)
-      const reducedCurrentSelection = []
+      const reducedNewSelection = []
 
       // Check restrictions on each file in currentSelection,
       // reduce it to only contain files that pass restrictions
-      for (const item of currentSelection) {
+      for (const item of newSelection) {
         const { uppy } = this.plugin
         const restrictionError = uppy.validateRestrictions(
           remoteFileObjToLocal(item),
-          [...uppy.getFiles(), ...reducedCurrentSelection],
+          [...uppy.getFiles(), ...reducedNewSelection],
         )
 
         if (!restrictionError) {
-          reducedCurrentSelection.push(item)
+          reducedNewSelection.push(item)
         } else {
           uppy.info({ message: restrictionError.message }, 'error', uppy.opts.infoTimeout)
         }
       }
-      this.plugin.setPluginState({ currentSelection: reducedCurrentSelection })
+      this.plugin.setPluginState({ currentSelection: [...new Set([...currentSelection, ...reducedNewSelection])] })
       return
     }
 

@@ -13,7 +13,7 @@
     padding-inline-end: 0;
   }
 
-  [data-uppy-theme="dark"] & {
+  [data-uppy-theme='dark'] & {
     border-bottom: 1px solid $gray-800;
   }
 
@@ -167,12 +167,6 @@
 .uppy-Dashboard-Item.is-error {
   .uppy-Dashboard-Item-previewInnerWrap::after {
     display: block;
-  }
-}
-
-.uppy-Dashboard-Item.is-inprogress:not(.is-resumable) {
-  .uppy-Dashboard-Item-action--remove {
-    display: none;
   }
 }
 

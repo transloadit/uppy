@@ -1,17 +1,17 @@
-const { errorToResponse } = require('../provider/error')
+const { respondWithError } = require('../provider/error')
 
 async function list ({ query, params, companion }, res, next) {
-  const token = companion.providerToken
+  const { providerUserSession } = companion
+  const { accessToken } = providerUserSession
 
   try {
-    const data = await companion.provider.list({ companion, token, directory: params.id, query })
+    // todo remove backward compat `token` param from all provider methods (because it can be found in providerUserSession)
+    const data = await companion.provider.list({
+      companion, token: accessToken, providerUserSession, directory: params.id, query,
+    })
     res.json(data)
   } catch (err) {
-    const errResp = errorToResponse(err)
-    if (errResp) {
-      res.status(errResp.code).json({ message: errResp.message })
-      return
-    }
+    if (respondWithError(err, res)) return
     next(err)
   }
 }

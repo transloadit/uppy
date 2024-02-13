@@ -38,6 +38,7 @@ class DashboardModal extends Component {
 
   installPlugin () {
     const {
+      id = 'react:DashboardModal',
       uppy,
       target,
       open,
@@ -77,7 +78,7 @@ class DashboardModal extends Component {
       locale, // eslint-disable-line no-shadow
     } = this.props
     const options = {
-      id: 'react:DashboardModal',
+      id,
       target,
       closeModalOnClickOutside,
       disablePageScrollWhenModalOpen,

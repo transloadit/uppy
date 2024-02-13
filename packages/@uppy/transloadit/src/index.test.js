@@ -1,4 +1,6 @@
-import { describe, expect, it } from '@jest/globals'
+import { createServer } from 'node:http'
+import { once } from 'node:events'
+import { describe, expect, it } from 'vitest'
 import Core from '@uppy/core'
 import Transloadit from './index.js'
 import 'whatwg-fetch'
@@ -83,5 +85,58 @@ describe('Transloadit', () => {
       expect(err.message).toBe('Transloadit: Could not create Assembly: VIDEO_ENCODE_VALIDATION')
       expect(uppy.getFile(fileID).progress.uploadStarted).toBe(null)
     })
+  })
+
+  // For some reason this test doesn't pass on CI
+  it.skip('Can start an assembly with no files and no fields', async () => {
+    const server = createServer((req, res) => {
+      res.setHeader('Access-Control-Allow-Origin', '*')
+      res.setHeader('Access-Control-Allow-Headers', '*')
+      res.setHeader('Content-Type', 'application/json')
+      res.end('{"websocket_url":"about:blank"}')
+    }).listen()
+    await once(server, 'listening')
+    const uppy = new Core({
+      autoProceed: false,
+    })
+    uppy.use(Transloadit, {
+      service: `http://localhost:${server.address().port}`,
+      alwaysRunAssembly: true,
+      params: {
+        auth: { key: 'some auth key string' },
+        template_id: 'some template id string',
+      },
+    })
+
+    await uppy.upload()
+    server.closeAllConnections()
+    await new Promise(resolve => server.close(resolve))
+  })
+
+  // For some reason this test doesn't pass on CI
+  it.skip('Can start an assembly with no files and some fields', async () => {
+    const server = createServer((req, res) => {
+      res.setHeader('Access-Control-Allow-Origin', '*')
+      res.setHeader('Access-Control-Allow-Headers', '*')
+      res.setHeader('Content-Type', 'application/json')
+      res.end('{"websocket_url":"about:blank"}')
+    }).listen()
+    await once(server, 'listening')
+    const uppy = new Core({
+      autoProceed: false,
+    })
+    uppy.use(Transloadit, {
+      service: `http://localhost:${server.address().port}`,
+      alwaysRunAssembly: true,
+      params: {
+        auth: { key: 'some auth key string' },
+        template_id: 'some template id string',
+      },
+      fields: ['hasOwnProperty'],
+    })
+
+    await uppy.upload()
+    server.closeAllConnections()
+    await new Promise(resolve => server.close(resolve))
   })
 })

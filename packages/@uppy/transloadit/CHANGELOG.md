@@ -1,5 +1,42 @@
 # @uppy/transloadit
 
+## 3.3.0
+
+Released: 2023-09-05
+Included in: Uppy v3.15.0
+
+- @uppy/transloadit: Emit assembly progress events (Marius / #4603)
+- @uppy/transloadit: remove Socket.io (Antoine du Hamel / #4281)
+
+## 3.2.1
+
+Released: 2023-08-15
+Included in: Uppy v3.14.0
+
+- @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/companion,@uppy/transloadit,@uppy/xhr-upload: use uppercase HTTP method names (Antoine du Hamel / #4612)
+
+## 3.2.0
+
+Released: 2023-07-13
+Included in: Uppy v3.12.0
+
+- @uppy/transloadit: fix error message (Antoine du Hamel / #4572)
+- @uppy/transloadit: implement Server-sent event API (Antoine du Hamel / #4098)
+
+## 3.1.6
+
+Released: 2023-06-19
+Included in: Uppy v3.10.0
+
+- @uppy/transloadit: ensure `fields` is not nullish when there no uploaded files (Antoine du Hamel / #4487)
+
+## 3.1.5
+
+Released: 2023-05-15
+Included in: Uppy v3.9.1
+
+- @uppy/transloadit: clean up event listener to prevent cancelled assemblies (Merlijn Vos / #4447)
+
 ## 3.1.4
 
 Released: 2023-05-02

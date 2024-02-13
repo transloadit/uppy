@@ -30,6 +30,7 @@ export default class Box extends UIPlugin {
       companionCookiesRule: this.opts.companionCookiesRule,
       provider: 'box',
       pluginId: this.id,
+      supportsRefreshToken: false,
     })
 
     this.defaultLocale = locale
@@ -44,6 +45,7 @@ export default class Box extends UIPlugin {
   install () {
     this.view = new ProviderViews(this, {
       provider: this.provider,
+      loadAllFiles: true,
     })
 
     const { target } = this.opts

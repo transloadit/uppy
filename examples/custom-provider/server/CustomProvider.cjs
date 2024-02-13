@@ -34,7 +34,9 @@ function adaptData (res) {
 class MyCustomProvider {
   static version = 2
 
-  authProvider = 'myunsplash'
+  static get authProvider () {
+    return 'myunsplash'
+  }
 
   // eslint-disable-next-line class-methods-use-this
   async list ({ token, directory }) {

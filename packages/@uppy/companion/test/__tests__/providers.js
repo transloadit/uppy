@@ -31,9 +31,9 @@ const AUTH_PROVIDERS = {
 }
 const authData = {}
 providerNames.forEach((provider) => {
-  authData[provider] = 'token value'
+  authData[provider] = { accessToken: 'token value' }
 })
-const token = tokenService.generateEncryptedToken(authData, process.env.COMPANION_SECRET)
+const token = tokenService.generateEncryptedAuthToken(authData, process.env.COMPANION_SECRET)
 
 const thisOrThat = (value1, value2) => {
   if (value1 !== undefined) {
@@ -137,7 +137,7 @@ describe('list provider files', () => {
     nock('https://api.box.com').get('/2.0/users/me').reply(200, {
       login: defaults.USERNAME,
     })
-    nock('https://api.box.com').get('/2.0/folders/0/items?fields=id%2Cmodified_at%2Cname%2Cpermissions%2Csize%2Ctype').reply(200, {
+    nock('https://api.box.com').get('/2.0/folders/0/items?fields=id%2Cmodified_at%2Cname%2Cpermissions%2Csize%2Ctype&limit=1000').reply(200, {
       entries: [
         {
           type: 'file',
@@ -157,7 +157,7 @@ describe('list provider files', () => {
       kind: 'drive#driveList', drives: [],
     })
 
-    nock('https://www.googleapis.com').get('/drive/v3/files?fields=kind%2CnextPageToken%2CincompleteSearch%2Cfiles%28kind%2Cid%2CimageMediaMetadata%2Cname%2CmimeType%2CownedByMe%2Cpermissions%28role%2CemailAddress%29%2Csize%2CmodifiedTime%2CiconLink%2CthumbnailLink%2CteamDriveId%2CvideoMediaMetadata%2CshortcutDetails%28targetId%2CtargetMimeType%29%29&q=%28%27root%27+in+parents%29+and+trashed%3Dfalse&orderBy=folder%2Cname&includeItemsFromAllDrives=true&supportsAllDrives=true').reply(200, {
+    nock('https://www.googleapis.com').get('/drive/v3/files?fields=kind%2CnextPageToken%2CincompleteSearch%2Cfiles%28kind%2Cid%2CimageMediaMetadata%2Cname%2CmimeType%2CownedByMe%2Csize%2CmodifiedTime%2CiconLink%2CthumbnailLink%2CteamDriveId%2CvideoMediaMetadata%2CshortcutDetails%28targetId%2CtargetMimeType%29%29&q=%28%27root%27+in+parents%29+and+trashed%3Dfalse&pageSize=1000&orderBy=folder%2Cname&includeItemsFromAllDrives=true&supportsAllDrives=true').reply(200, {
       kind: 'drive#fileList',
       nextPageToken: defaults.NEXT_PAGE_TOKEN,
       files: [
@@ -175,6 +175,8 @@ describe('list provider files', () => {
         },
       ],
     })
+
+    nock('https://www.googleapis.com').get((uri) => uri.includes('about')).reply(200, { user: { emailAddress: 'john.doe@transloadit.com' } })
 
     await runTest('drive')
   })
@@ -231,7 +233,7 @@ describe('list provider files', () => {
       userPrincipalName: defaults.USERNAME,
       mail: defaults.USERNAME,
     })
-    nock('https://graph.microsoft.com').get('/v1.0/me/drive/root/children?%24expand=thumbnails').reply(200, {
+    nock('https://graph.microsoft.com').get('/v1.0/me/drive/root/children?%24expand=thumbnails&%24top=999').reply(200, {
       value: [
         {
           createdDateTime: '2020-01-31T15:40:26.197Z',

@@ -188,14 +188,12 @@ export default class Transloadit extends BasePlugin {
     return newFile
   }
 
-  #createAssembly (fileIDs, uploadID, options) {
+  #createAssembly (fileIDs, uploadID, assemblyOptions) {
     this.uppy.log('[Transloadit] Create Assembly')
 
     return this.client.createAssembly({
-      params: options.params,
-      fields: options.fields,
+      ...assemblyOptions,
       expectedFiles: fileIDs.length,
-      signature: options.signature,
     }).then(async (newAssembly) => {
       const files = this.uppy.getFiles().filter(({ id }) => fileIDs.includes(id))
       if (files.length !== fileIDs.length) {
@@ -241,17 +239,26 @@ export default class Transloadit extends BasePlugin {
         },
       })
 
+      // TODO: this should not live inside a `file-removed` event but somewhere more deterministic.
+      // Such as inside the function where the assembly has succeeded or cancelled.
+      // For the use case of cancelling the assembly when needed, we should try to do that with just `cancel-all`.
       const fileRemovedHandler = (fileRemoved, reason) => {
+        // If the assembly has successfully completed, we do not need these checks.
+        // Otherwise we may cancel an assembly after it already succeeded
+        if (assembly.status?.ok === 'ASSEMBLY_COMPLETED') {
+          this.uppy.off('file-removed', fileRemovedHandler)
+          return
+        }
         if (reason === 'cancel-all') {
           assembly.close()
-          this.uppy.off(fileRemovedHandler)
+          this.uppy.off('file-removed', fileRemovedHandler)
         } else if (fileRemoved.id in updatedFiles) {
           delete updatedFiles[fileRemoved.id]
           const nbOfRemainingFiles = Object.keys(updatedFiles).length
           if (nbOfRemainingFiles === 0) {
             assembly.close()
             this.#cancelAssembly(newAssembly).catch(() => { /* ignore potential errors */ })
-            this.uppy.off(fileRemovedHandler)
+            this.uppy.off('file-removed', fileRemovedHandler)
           } else {
             this.client.updateNumberOfFilesInAssembly(newAssembly, nbOfRemainingFiles)
               .catch(() => { /* ignore potential errors */ })
@@ -372,7 +379,7 @@ export default class Transloadit extends BasePlugin {
     const state = this.getPluginState()
     const file = this.#findFile(uploadedFile)
     if (!file) {
-      this.uppy.log('[Transloadit] Couldn’t file the file, it was likely removed in the process')
+      this.uppy.log('[Transloadit] Couldn’t find the file, it was likely removed in the process')
       return
     }
     this.setPluginState({
@@ -590,6 +597,29 @@ export default class Transloadit extends BasePlugin {
       this.uppy.emit('transloadit:assembly-executing', assembly.status)
     })
 
+    assembly.on('execution-progress', (details) => {
+      this.uppy.emit('transloadit:execution-progress', details)
+
+      if (details.progress_combined != null) {
+        // TODO: Transloadit emits progress information for the entire Assembly combined
+        // (progress_combined) and for each imported/uploaded file (progress_per_original_file).
+        // Uppy's current design requires progress to be set for each file, which is then
+        // averaged to get the total progress (see calculateProcessingProgress.js).
+        // Therefore, we currently set the combined progres for every file, so that this is
+        // the same value that is displayed to the end user, although we have more accurate
+        // per-file progress as well. We cannot use this here or otherwise progress from
+        // imported files would not be counted towards the total progress because imported
+        // files are not registered with Uppy.
+        for (const file of this.uppy.getFiles()) {
+          this.uppy.emit('postprocess-progress', file, {
+            mode: 'determinate',
+            value: details.progress_combined / 100,
+            message: this.i18n('encoding'),
+          })
+        }
+      }
+    })
+
     if (this.opts.waitForEncoding) {
       assembly.on('result', (stepName, result) => {
         this.#onResult(id, stepName, result)
@@ -799,9 +829,6 @@ export default class Transloadit extends BasePlugin {
         // Golden Retriever. So, Golden Retriever is required to do resumability with the Transloadit plugin,
         // and we disable Tus's default resume implementation to prevent bad behaviours.
         storeFingerprintForResuming: false,
-        // Disable Companion's retry optimisation; we need to change the endpoint on retry
-        // so it can't just reuse the same tus.Upload instance server-side.
-        useFastRemoteRetry: false,
         // Only send Assembly metadata to the tus endpoint.
         allowedMetaFields: ['assembly_url', 'filename', 'fieldname'],
         // Pass the limit option to @uppy/tus

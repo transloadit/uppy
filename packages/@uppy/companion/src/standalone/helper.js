@@ -1,5 +1,5 @@
 const fs = require('node:fs')
-const merge = require('lodash.merge')
+const merge = require('lodash/merge')
 const stripIndent = require('common-tags/lib/stripIndent')
 const crypto = require('node:crypto')
 
@@ -41,11 +41,13 @@ const hasProtocol = (url) => {
   return url.startsWith('https://') || url.startsWith('http://')
 }
 
+const companionProtocol = process.env.COMPANION_PROTOCOL || 'http'
+
 function getCorsOrigins () {
   if (process.env.COMPANION_CLIENT_ORIGINS) {
     return process.env.COMPANION_CLIENT_ORIGINS
       .split(',')
-      .map((url) => (hasProtocol(url) ? url : `${process.env.COMPANION_PROTOCOL || 'http'}://${url}`))
+      .map((url) => (hasProtocol(url) ? url : `${companionProtocol}://${url}`))
   }
   if (process.env.COMPANION_CLIENT_ORIGINS_REGEX) {
     return new RegExp(process.env.COMPANION_CLIENT_ORIGINS_REGEX)
@@ -87,6 +89,7 @@ const getConfigFromEnv = () => {
       box: {
         key: process.env.COMPANION_BOX_KEY,
         secret: getSecret('COMPANION_BOX_SECRET'),
+        credentialsURL: process.env.COMPANION_BOX_KEYS_ENDPOINT,
       },
       instagram: {
         key: process.env.COMPANION_INSTAGRAM_KEY,
@@ -128,12 +131,14 @@ const getConfigFromEnv = () => {
     },
     server: {
       host: process.env.COMPANION_DOMAIN,
-      protocol: process.env.COMPANION_PROTOCOL,
+      protocol: companionProtocol,
       path: process.env.COMPANION_PATH,
       implicitPath: process.env.COMPANION_IMPLICIT_PATH,
       oauthDomain: process.env.COMPANION_OAUTH_DOMAIN,
       validHosts,
     },
+    // todo next major make this default false
+    enableUrlEndpoint: process.env.COMPANION_ENABLE_URL_ENDPOINT == null || process.env.COMPANION_ENABLE_URL_ENDPOINT === 'true',
     periodicPingUrls: process.env.COMPANION_PERIODIC_PING_URLS ? process.env.COMPANION_PERIODIC_PING_URLS.split(',') : [],
     periodicPingInterval: process.env.COMPANION_PERIODIC_PING_INTERVAL
       ? parseInt(process.env.COMPANION_PERIODIC_PING_INTERVAL, 10) : undefined,
@@ -144,9 +149,18 @@ const getConfigFromEnv = () => {
     filePath: process.env.COMPANION_DATADIR,
     redisUrl: process.env.COMPANION_REDIS_URL,
     redisPubSubScope: process.env.COMPANION_REDIS_PUBSUB_SCOPE,
-    // adding redisOptions to keep all companion options easily visible
     //  redisOptions refers to https://www.npmjs.com/package/redis#options-object-properties
-    redisOptions: {},
+    redisOptions: (() => {
+      try {
+        if (!process.env.COMPANION_REDIS_OPTIONS) {
+          return undefined
+        }
+        return JSON.parse(process.env.COMPANION_REDIS_OPTIONS)
+      } catch (e) {
+        logger.warn('COMPANION_REDIS_OPTIONS parse error', e)
+      }
+      return undefined
+    })(),
     sendSelfEndpoint: process.env.COMPANION_SELF_ENDPOINT,
     uploadUrls: uploadUrls ? uploadUrls.split(',') : null,
     secret: getSecret('COMPANION_SECRET'),
@@ -162,6 +176,8 @@ const getConfigFromEnv = () => {
     metrics: process.env.COMPANION_HIDE_METRICS !== 'true',
     loggerProcessName: process.env.COMPANION_LOGGER_PROCESS_NAME,
     corsOrigins: getCorsOrigins(),
+    testDynamicOauthCredentials: process.env.COMPANION_TEST_DYNAMIC_OAUTH_CREDENTIALS === 'true',
+    testDynamicOauthCredentialsSecret: process.env.COMPANION_TEST_DYNAMIC_OAUTH_CREDENTIALS_SECRET,
   }
 }
 
@@ -213,7 +229,7 @@ exports.buildHelpfulStartupMessage = (companionOptions) => {
   const buildURL = utils.getURLBuilder(companionOptions)
   const callbackURLs = []
   Object.keys(companionOptions.providerOptions).forEach((providerName) => {
-    callbackURLs.push(buildURL(`/connect/${providerName}/redirect`, true))
+    callbackURLs.push(buildURL(`/${providerName}/redirect`, true))
   })
 
   return stripIndent`
@@ -227,7 +243,8 @@ exports.buildHelpfulStartupMessage = (companionOptions) => {
     While you did an awesome job on getting Companion running, this is just the welcome
     message, so let's talk about the places that really matter:
 
-    - Be sure to add ${callbackURLs.join(', ')} as your Oauth redirect uris on their corresponding developer interfaces.
+    - Be sure to add the following URLs as your Oauth redirect uris on their corresponding developer interfaces:
+        ${callbackURLs.join(', ')}
     - The URL ${buildURL('/metrics', true)} is available for  statistics to keep Companion running smoothly
     - https://github.com/transloadit/uppy/issues - report your bugs here
 

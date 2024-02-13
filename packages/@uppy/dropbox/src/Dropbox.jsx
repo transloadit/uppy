@@ -27,6 +27,7 @@ export default class Dropbox extends UIPlugin {
       companionCookiesRule: this.opts.companionCookiesRule,
       provider: 'dropbox',
       pluginId: this.id,
+      supportsRefreshToken: true,
     })
 
     this.defaultLocale = locale
@@ -41,6 +42,7 @@ export default class Dropbox extends UIPlugin {
   install () {
     this.view = new ProviderViews(this, {
       provider: this.provider,
+      loadAllFiles: true,
     })
 
     const { target } = this.opts
