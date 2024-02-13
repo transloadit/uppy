@@ -5,7 +5,14 @@
  * TS source. It will rename the files, update the imports, and add a `tsconfig.json`.
  */
 
-import { appendFile, opendir, readFile, open, writeFile, rm } from 'node:fs/promises'
+import {
+  appendFile,
+  opendir,
+  readFile,
+  open,
+  writeFile,
+  rm,
+} from 'node:fs/promises'
 import { createRequire } from 'node:module'
 import { argv } from 'node:process'
 import { basename, extname, join } from 'node:path'
@@ -84,9 +91,9 @@ for await (const dirent of dir) {
     const ext = extname(name)
     if (ext !== '.js' && ext !== '.jsx') continue // eslint-disable-line no-continue
     const filePath =
-      basename(dirent.path) === name ?
-        dirent.path // Some versions of Node.js give the full path as dirent.path.
-      : join(dirent.path, name) // Others supply only the path to the parent.
+      basename(dirent.path) === name
+        ? dirent.path // Some versions of Node.js give the full path as dirent.path.
+        : join(dirent.path, name) // Others supply only the path to the parent.
     await writeFile(
       `${filePath.slice(0, -ext.length)}${ext.replace('js', 'ts')}`,
       (await readFile(filePath, 'utf-8'))
