@@ -1,4 +1,7 @@
-import BasePlugin, { type PluginOpts } from '@uppy/core/lib/BasePlugin.js'
+import BasePlugin, {
+  type DefinePluginOpts,
+  type PluginOpts,
+} from '@uppy/core/lib/BasePlugin.js'
 import { RequestClient } from '@uppy/companion-client'
 import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
 import type { Uppy } from '@uppy/core'
@@ -114,7 +117,7 @@ type AbortablePromise<T extends (...args: any) => Promise<any>> = (
 }
 
 type UploadResult = { key: string; uploadId: string }
-type UploadResultWithSignal = UploadResult & { signal?:AbortSignal }
+type UploadResultWithSignal = UploadResult & { signal?: AbortSignal }
 
 class HTTPCommunicationQueue<M extends Meta, B extends Body> {
   #abortMultipartUpload: AbortablePromise<
@@ -605,9 +608,7 @@ type AWSS3NonMultipartWithoutCompanion<
 
 type AWSS3MultipartWithoutCompanionMandatory<M extends Meta, B extends Body> = {
   getChunkSize?: (file: UppyFile<M, B>) => number
-  createMultipartUpload: (
-    file: UppyFile<M, B>,
-  ) => MaybePromise<UploadResult>
+  createMultipartUpload: (file: UppyFile<M, B>) => MaybePromise<UploadResult>
   listParts: (
     file: UppyFile<M, B>,
     opts: UploadResultWithSignal,
@@ -707,10 +708,38 @@ export type AwsS3MultipartOptions<
     | AWSS3MaybeMultipartWithoutCompanion<M, B>
   )
 
+const defaultOptions = {
+  // TODO: null here means “include all”, [] means include none.
+  // This is inconsistent with @uppy/aws-s3 and @uppy/transloadit
+  allowedMetaFields: null,
+  limit: 6,
+  getTemporarySecurityCredentials: false as any,
+  shouldUseMultipart: (file: UppyFile<any, any>) => file.size !== 0, // TODO: Switch default to:
+  // eslint-disable-next-line no-bitwise
+  // shouldUseMultipart: (file) => file.size >> 10 >> 10 > 100,
+  retryDelays: [0, 1000, 3000, 5000],
+  companionHeaders: {},
+} satisfies Partial<AwsS3MultipartOptions<any, any>>
+
 export default class AwsS3Multipart<
   M extends Meta,
   B extends Body,
-> extends BasePlugin<AwsS3MultipartOptions<M, B>, M, B> {
+> extends BasePlugin<
+  DefinePluginOpts<
+    AwsS3MultipartOptions<M, B>,
+    | keyof typeof defaultOptions
+    // We also have a few dynamic options defined below:
+    | 'createMultipartUpload'
+    | 'listParts'
+    | 'abortMultipartUpload'
+    | 'completeMultipartUpload'
+    // | 'uploadPartBytes'
+    | 'getUploadParameters'
+    // | 'signPart'
+  >,
+  M,
+  B
+> {
   static VERSION = packageJson.version
 
   #companionCommunicationQueue
@@ -726,7 +755,11 @@ export default class AwsS3Multipart<
   protected uploaderSockets: Record<string, never>
 
   constructor(uppy: Uppy<M, B>, opts: AwsS3MultipartOptions<M, B>) {
-    super(uppy, opts)
+    super(uppy, {
+      ...defaultOptions,
+      uploadPartBytes: AwsS3Multipart.uploadPartBytes,
+      ...opts,
+    })
     this.type = 'uploader'
     this.id = this.opts.id || 'AwsS3Multipart'
     // @ts-expect-error TODO: remove unused
@@ -734,31 +767,20 @@ export default class AwsS3Multipart<
     // TODO: only initiate `RequestClient` is `companionUrl` is defined.
     this.#client = new RequestClient(uppy, opts as any)
 
-    const defaultOptions = {
-      // TODO: null here means “include all”, [] means include none.
-      // This is inconsistent with @uppy/aws-s3 and @uppy/transloadit
-      allowedMetaFields: null,
-      limit: 6,
-      shouldUseMultipart: (file: UppyFile<any, any>) => file.size !== 0, // TODO: Switch default to:
-      // eslint-disable-next-line no-bitwise
-      // shouldUseMultipart: (file) => file.size >> 10 >> 10 > 100,
-      retryDelays: [0, 1000, 3000, 5000],
+    const dynamicDefaultOptions = {
       createMultipartUpload: this.createMultipartUpload.bind(this),
       listParts: this.listParts.bind(this),
       abortMultipartUpload: this.abortMultipartUpload.bind(this),
       completeMultipartUpload: this.completeMultipartUpload.bind(this),
-      getTemporarySecurityCredentials: false,
       signPart: opts?.getTemporarySecurityCredentials
         ? this.createSignedURL.bind(this)
         : this.signPart.bind(this),
-      uploadPartBytes: AwsS3Multipart.uploadPartBytes,
       getUploadParameters: opts?.getTemporarySecurityCredentials
         ? this.createSignedURL.bind(this)
         : this.getUploadParameters.bind(this),
-      companionHeaders: {},
-    }
+    } satisfies Partial<AwsS3MultipartOptions<M, B>>
 
-    this.opts = { ...defaultOptions, ...opts }
+    this.opts = { ...dynamicDefaultOptions, ...this.opts }
     if (opts?.prepareUploadParts != null && opts.signPart == null) {
       this.opts.signPart = async (
         file: UppyFile<M, B>,
@@ -869,7 +891,7 @@ export default class AwsS3Multipart<
     file: UppyFile<M, B>,
     { key, uploadId }: UploadResult,
     signal?: AbortSignal,
-  ):Promise<AwsS3Part[]> {
+  ): Promise<AwsS3Part[]> {
     this.assertHost('listParts')
     throwIfAborted(signal)
 
@@ -879,7 +901,11 @@ export default class AwsS3Multipart<
       .then(assertServerError)
   }
 
-  completeMultipartUpload(file:UppyFile<M,B>, { key, uploadId, parts }:UploadResult, signal?:AbortSignal): Promise<{
+  completeMultipartUpload(
+    file: UppyFile<M, B>,
+    { key, uploadId, parts }: UploadResult,
+    signal?: AbortSignal,
+  ): Promise<{
     location: string
   }> {
     this.assertHost('completeMultipartUpload')
@@ -888,7 +914,9 @@ export default class AwsS3Multipart<
     const filename = encodeURIComponent(key)
     const uploadIdEnc = encodeURIComponent(uploadId)
     return this.#client
-      .post<{location: string}>(
+      .post<{
+        location: string
+      }>(
         `s3/multipart/${uploadIdEnc}/complete?key=${filename}`,
         { parts },
         { signal },
@@ -987,11 +1015,7 @@ export default class AwsS3Multipart<
 
   abortMultipartUpload(
     file: UppyFile<M, B>,
-    {
-      key,
-      uploadId,
-      signal,
-    }: UploadResult,
+    { key, uploadId, signal }: UploadResult,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     oldSignal?: AbortSignal, // TODO: remove in next major
   ): Promise<Record<string, never>> {
