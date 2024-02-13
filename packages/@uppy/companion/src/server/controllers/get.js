@@ -17,7 +17,7 @@ async function get (req, res) {
   }
 
   try {
-    await startDownUpload({ req, res, getSize, download })
+    await startDownUpload({ req, res, getSize, download, youtubeUrl: false })
   } catch (err) {
     logger.error(err, 'controller.get.error', req.id)
     res.status(500).json({ message: 'Failed to download file' })

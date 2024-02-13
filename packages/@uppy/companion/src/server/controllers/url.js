@@ -7,6 +7,7 @@ const { getURLMeta, getProtectedGot } = require('../helpers/request')
 const logger = require('../logger')
 // @ts-ignore
 const ytdl = require('@distube/ytdl-core');
+const request = require('request')
 const tls = require('tls')
 const fs = require('fs');
 const path = require('path');
@@ -66,6 +67,41 @@ const downloadURL = async (url, blockLocalIPs, traceId) => {
   }
 }
 
+function fetchYouTubeVideoMetadata(videoUrl) {
+  const endpoint = 'https://us-east4-maestro-218920.cloudfunctions.net/getYoutubeURLMeta';
+  const options = {
+    method: 'POST',
+    url: endpoint,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ videoUrl }),
+  };
+
+  return new Promise((resolve, reject) => {
+    request(options, (error, response, body) => {
+      if (error) {
+        console.error('Error fetching YouTube video metadata:', error);
+        reject(error);
+        return;
+      }
+
+      if (response && response.statusCode === 200) {
+        const data = JSON.parse(body);
+        resolve({
+          videoID: data.videoID,
+          name: data.name,
+          type: data.type,
+          size: data.size,
+        });
+      } else {
+        reject(new Error(`Failed to fetch metadata. Status code: ${response ? response.statusCode : 'N/A'}`));
+      }
+    });
+  });
+}
+
+
 /**
  * Fetches the size and content type of a URL
  *
@@ -82,25 +118,8 @@ const downloadURL = async (url, blockLocalIPs, traceId) => {
       return res.status(400).json({ error: 'Invalid request body' })
     }
 
-    let videoID;
-    let thumbnail = false;
-    if (matchYoutubeUrl(url)) {
-      videoID = ytdl.getURLVideoID(url)
-      // @ts-ignore
-      thumbnail = `https://img.youtube.com/vi/${videoID}/default.jpg`
-      let info = await ytdl.getInfo(videoID);
-      let format = ytdl.chooseFormat(info.formats, { filter: 'audioandvideo' });
-      url = format.url
-    }
-    // else if (matchVimeoUrl(url)) {
-    //   const format = vidl(url, { quality: "360p" });
-    //   url = format.url
-    // }
-
-    const urlMeta = await getURLMeta(url, !allowLocalUrls)
-    if (videoID) {
-      urlMeta.videoId = videoID;
-    }
+    const urlMeta = matchYoutubeUrl(url) ? await fetchYouTubeVideoMetadata(url) : await getURLMeta(url, !allowLocalUrls)
+    
     return res.json(urlMeta)
   }
   catch(err) {
@@ -139,7 +158,7 @@ const get = async (req, res) => {
   // }
 
   async function getSize () {
-    const { size } = await getURLMeta(url, !allowLocalUrls)
+    const { size } = matchYoutubeUrl(url) ? await fetchYouTubeVideoMetadata(url) : await getURLMeta(url, !allowLocalUrls)
     return size
   }
 

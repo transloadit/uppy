@@ -8,13 +8,14 @@ const { join } = require('node:path')
 const fs = require('node:fs')
 const { promisify } = require('node:util')
 const FormData = require('form-data')
+const request = require('request')
 const throttle = require('lodash/throttle')
 
 const { Upload } = require('@aws-sdk/lib-storage')
 
 const { rfc2047EncodeMetadata, getBucket } = require('./helpers/utils')
 //@ts-ignore
-const { db } = require('../../../firebase');
+const { db } = require('../../../../../firebase');
 // TODO move to `require('streams/promises').pipeline` when dropping support for Node.js 14.x.
 const pipeline = promisify(pipelineCb)
 
@@ -729,7 +730,7 @@ class Uploader {
   async _uploadYoutube(url) {
     const filename = this.uploadFileName;
     const { options } = this.options.s3;
-
+    this.#uploadState = states.uploading
     const speakerCount = (this.options?.metadata?.speakerCount && this.options.metadata.speakerCount.toString()) || '1';
     const requestBody = {
       path: options.getKey(null, filename, this.options.metadata),
@@ -743,10 +744,10 @@ class Uploader {
     const cloudFunctionUrl = 'https://us-east4-maestro-218920.cloudfunctions.net/uploadYouTubeVideoToGCS';
     const uploadProgressRef = db.ref(`uploadTokens/${this.token}`);
     uploadProgressRef.on('value', (snapshot) => {
-      const { bytesUploaded } = snapshot.val();
-
-      // If bytesTotal isn't stored in your database, you can pass undefined or a known total size if available
-      this.onProgress(bytesUploaded);
+      const val = snapshot.val();
+      if (val && val.bytesUploaded) {
+        this.onProgress(val.bytesUploaded);
+      }
     });
 
     return new Promise((resolve, reject) => {

@@ -31,7 +31,7 @@
     "node": "^16.15.0 || >=18.0.0",
     "yarn": "3.6.1"
   },
-  "packageManager": "yarn@3.8.0+sha256.a1a53a88823c9f5bcd36e465791b7e490837ebf94dc6ef96282ab558a00c0811",
+  "packageManager": "yarn@4.1.0",
   "workspaces": [
     "examples/*",
     "packages/@uppy/*",

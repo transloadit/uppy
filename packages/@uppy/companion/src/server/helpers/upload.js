@@ -23,7 +23,7 @@ async function startDownUpload({ req, res, getSize, download, youtubeUrl }) {
         await uploader.awaitReady(clientSocketConnectTimeout)
         logger.debug('Socket connection received. Starting remote download/upload.', null, req.id)
 
-        await uploader.tryUploadStream(stream)
+        await uploader.tryUploadStream(stream, youtubeUrl)
       })().catch((err) => logger.error(err))
 
 
