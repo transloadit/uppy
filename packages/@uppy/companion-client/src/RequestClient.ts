@@ -11,6 +11,7 @@ import getSocketHost from '@uppy/utils/lib/getSocketHost'
 
 import type Uppy from '@uppy/core'
 import type { UppyFile, Meta, Body } from '@uppy/utils/lib/UppyFile'
+import type { RequestOptions } from '@uppy/utils/lib/CompanionClientProvider'
 import AuthError from './AuthError.ts'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
@@ -27,16 +28,6 @@ export type Opts = {
   companionHeaders?: CompanionHeaders
   companionKeysParams?: Record<string, string>
 }
-
-export type RequestOptions =
-  | boolean // TODO: remove this on the next major
-  | {
-      method?: string
-      data?: Record<string, unknown>
-      skipPostResponse?: boolean
-      signal?: AbortSignal
-      qs?: Record<string, string>
-    }
 
 // Remove the trailing slash so we can always safely append /xyz.
 function stripSlash(url: string) {

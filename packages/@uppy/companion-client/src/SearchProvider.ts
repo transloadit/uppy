@@ -2,6 +2,7 @@
 
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile.ts'
 import type { Uppy } from '@uppy/core'
+import type { CompanionClientSearchProvider } from '@uppy/utils/lib/CompanionClientProvider'
 import RequestClient, { type Opts } from './RequestClient.ts'
 
 const getName = (id: string): string => {
@@ -11,10 +12,10 @@ const getName = (id: string): string => {
     .join(' ')
 }
 
-export default class SearchProvider<
-  M extends Meta,
-  B extends Body,
-> extends RequestClient<M, B> {
+export default class SearchProvider<M extends Meta, B extends Body>
+  extends RequestClient<M, B>
+  implements CompanionClientSearchProvider
+{
   provider: string
 
   id: string

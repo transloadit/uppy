@@ -1,7 +1,21 @@
+/* eslint-disable react/require-default-props */
 import { h } from 'preact'
 import { useCallback } from 'preact/hooks'
+import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
+import type Translator from '@uppy/utils/lib/Translator'
+import type { ProviderViewOptions } from './ProviderView'
+import type ProviderViews from './ProviderView'
 
-function GoogleIcon () {
+type AuthViewProps<M extends Meta, B extends Body> = {
+  loading: boolean | string
+  pluginName: string
+  pluginIcon: () => JSX.Element
+  i18n: Translator['translateArray']
+  handleAuth: ProviderViews<M, B>['handleAuth']
+  renderForm?: ProviderViewOptions<M, B>['renderAuthForm']
+}
+
+function GoogleIcon() {
   return (
     <svg
       width="26"
@@ -37,19 +51,30 @@ function GoogleIcon () {
   )
 }
 
-const DefaultForm = ({ pluginName, i18n, onAuth }) => {
+function DefaultForm<M extends Meta, B extends Body>({
+  pluginName,
+  i18n,
+  onAuth,
+}: {
+  pluginName: string
+  i18n: Translator['translateArray']
+  onAuth: AuthViewProps<M, B>['handleAuth']
+}) {
   // In order to comply with Google's brand we need to create a different button
   // for the Google Drive plugin
   const isGoogleDrive = pluginName === 'Google Drive'
 
-  const onSubmit = useCallback((e) => {
-    e.preventDefault()
-    onAuth()
-  }, [onAuth])
+  const onSubmit = useCallback(
+    (e: Event) => {
+      e.preventDefault()
+      onAuth(undefined)
+    },
+    [onAuth],
+  )
 
   return (
     <form onSubmit={onSubmit}>
-      {isGoogleDrive ? (
+      {isGoogleDrive ?
         <button
           type="submit"
           className="uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-Provider-authBtn uppy-Provider-btn-google"
@@ -58,25 +83,39 @@ const DefaultForm = ({ pluginName, i18n, onAuth }) => {
           <GoogleIcon />
           {i18n('signInWithGoogle')}
         </button>
-      ) : (
-        <button
+      : <button
           type="submit"
           className="uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-Provider-authBtn"
           data-uppy-super-focusable
         >
           {i18n('authenticateWith', { pluginName })}
         </button>
-      )}
+      }
     </form>
   )
 }
 
-const defaultRenderForm = ({ pluginName, i18n, onAuth }) => (
-  <DefaultForm pluginName={pluginName} i18n={i18n} onAuth={onAuth} />
-)
+const defaultRenderForm = ({
+  pluginName,
+  i18n,
+  onAuth,
+}: {
+  pluginName: string
+  i18n: Translator['translateArray']
+  onAuth: AuthViewProps<Meta, Body>['handleAuth']
+}) => <DefaultForm pluginName={pluginName} i18n={i18n} onAuth={onAuth} />
 
-function AuthView (props) {
-  const { loading, pluginName, pluginIcon, i18n, handleAuth, renderForm = defaultRenderForm } = props
+export default function AuthView<M extends Meta, B extends Body>(
+  props: AuthViewProps<M, B>,
+): JSX.Element {
+  const {
+    loading,
+    pluginName,
+    pluginIcon,
+    i18n,
+    handleAuth,
+    renderForm = defaultRenderForm,
+  } = props
 
   const pluginNameComponent = (
     <span className="uppy-Provider-authTitleName">
@@ -89,6 +128,8 @@ function AuthView (props) {
       <div className="uppy-Provider-authIcon">{pluginIcon()}</div>
       <div className="uppy-Provider-authTitle">
         {i18n('authenticateWithTitle', {
+          // @ts-expect-error how it possible to pass `Element` to `i18n`?
+          // It seems like like that shouldn't work.
           pluginName: pluginNameComponent,
         })}
       </div>
@@ -99,5 +140,3 @@ function AuthView (props) {
     </div>
   )
 }
-
-export default AuthView

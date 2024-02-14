@@ -1,11 +1,91 @@
+import type {
+  UnknownProviderPlugin,
+  UnknownSearchProviderPlugin,
+} from '@uppy/core/lib/Uppy'
+import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
+import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
 import getFileType from '@uppy/utils/lib/getFileType'
 import isPreviewSupported from '@uppy/utils/lib/isPreviewSupported'
 import remoteFileObjToLocal from '@uppy/utils/lib/remoteFileObjToLocal'
 
-export default class View {
-  constructor (plugin, opts) {
+type TagFile<M extends Meta> = {
+  id: string
+  source: string
+  data: Blob
+  name: string
+  type: string
+  isRemote: boolean
+  preview?: string
+  meta: {
+    authorName?: string
+    authorUrl?: string
+    relativePath?: string | null
+    absolutePath?: string
+  } & M
+  remote: {
+    companionUrl: string
+    url: string
+    body: {
+      fileId: string
+    }
+    providerName: string
+    provider: string
+    requestClientId: string
+  }
+}
+
+type PluginType = 'Provider' | 'SearchProvider'
+
+// Conditional type for selecting the plugin
+type SelectedPlugin<M extends Meta, B extends Body, T extends PluginType> =
+  T extends 'Provider' ? UnknownProviderPlugin<M, B>
+  : T extends 'SearchProvider' ? UnknownSearchProviderPlugin<M, B>
+  : never
+
+// Conditional type for selecting the provider from the selected plugin
+type SelectedProvider<
+  M extends Meta,
+  B extends Body,
+  T extends PluginType,
+> = SelectedPlugin<M, B, T>['provider']
+
+export interface ViewOptions<
+  M extends Meta,
+  B extends Body,
+  T extends PluginType,
+> {
+  provider: SelectedProvider<M, B, T>
+  viewType?: string
+  showTitles?: boolean
+  showFilter?: boolean
+  showBreadcrumbs?: boolean
+  loadAllFiles?: boolean
+}
+
+export default class View<
+  M extends Meta,
+  B extends Body,
+  T extends PluginType,
+  O extends ViewOptions<M, B, T>,
+> {
+  plugin: SelectedPlugin<M, B, T>
+
+  provider: SelectedProvider<M, B, T>
+
+  isHandlingScroll: boolean
+
+  requestClientId: string
+
+  isShiftKeyPressed: boolean
+
+  lastCheckbox: CompanionFile | undefined
+
+  opts: O
+
+  constructor(plugin: SelectedPlugin<M, B, T>, opts: O) {
     this.plugin = plugin
     this.provider = opts.provider
+    this.opts = opts
 
     this.isHandlingScroll = false
 
@@ -15,39 +95,42 @@ export default class View {
     this.cancelPicking = this.cancelPicking.bind(this)
   }
 
-  preFirstRender () {
+  preFirstRender(): void {
     this.plugin.setPluginState({ didFirstRender: true })
     this.plugin.onFirstRender()
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  shouldHandleScroll (event) {
-    const { scrollHeight, scrollTop, offsetHeight } = event.target
+  shouldHandleScroll(event: Event): boolean {
+    const { scrollHeight, scrollTop, offsetHeight } =
+      event.target as HTMLElement
     const scrollPosition = scrollHeight - (scrollTop + offsetHeight)
 
     return scrollPosition < 50 && !this.isHandlingScroll
   }
 
-  clearSelection () {
+  clearSelection(): void {
     this.plugin.setPluginState({ currentSelection: [], filterInput: '' })
   }
 
-  cancelPicking () {
+  cancelPicking(): void {
     this.clearSelection()
 
     const dashboard = this.plugin.uppy.getPlugin('Dashboard')
 
     if (dashboard) {
+      // @ts-expect-error impossible to type this correctly without adding dashboard
+      // as a dependency to this package.
       dashboard.hideAllPanels()
     }
   }
 
-  handleError (error) {
+  handleError(error: Error): void {
     const { uppy } = this.plugin
     const message = uppy.i18n('companionError')
 
     uppy.log(error.toString())
 
+    // @ts-expect-error AuthError lives in @uppy/companion-client
     if (error.isAuthError || error.cause?.name === 'AbortError') {
       // authError just means we're not authenticated, don't show to user
       // AbortError means the user has clicked "cancel" on an operation
@@ -57,26 +140,28 @@ export default class View {
     uppy.info({ message, details: error.toString() }, 'error', 5000)
   }
 
-  registerRequestClient() {
-    this.requestClientId = this.provider.provider;
+  registerRequestClient(): void {
+    this.requestClientId = this.provider.provider
     this.plugin.uppy.registerRequestClient(this.requestClientId, this.provider)
   }
 
-  // todo document what is a "tagFile" or get rid of this concept
-  getTagFile (file) {
-    const tagFile = {
+  // TODO: document what is a "tagFile" or get rid of this concept
+  getTagFile(file: CompanionFile): TagFile<M> {
+    const tagFile: TagFile<M> = {
       id: file.id,
       source: this.plugin.id,
-      data: file,
+      data: new Blob(),
       name: file.name || file.id,
       type: file.mimeType,
       isRemote: true,
+      // @ts-expect-error meta is filled conditionally below
       meta: {},
       body: {
         fileId: file.id,
       },
       remote: {
         companionUrl: this.plugin.opts.companionUrl,
+        // @ts-expect-error untyped for now
         url: `${this.provider.fileUrl(file.requestPath)}`,
         body: {
           fileId: file.id,
@@ -95,29 +180,39 @@ export default class View {
     }
 
     if (file.author) {
-      if (file.author.name != null) tagFile.meta.authorName = String(file.author.name)
+      if (file.author.name != null)
+        tagFile.meta.authorName = String(file.author.name)
       if (file.author.url) tagFile.meta.authorUrl = file.author.url
     }
 
     // add relativePath similar to non-remote files: https://github.com/transloadit/uppy/pull/4486#issuecomment-1579203717
-    if (file.relDirPath != null) tagFile.meta.relativePath = file.relDirPath ? `${file.relDirPath}/${tagFile.name}` : null
+    if (file.relDirPath != null)
+      tagFile.meta.relativePath =
+        file.relDirPath ? `${file.relDirPath}/${tagFile.name}` : null
     // and absolutePath (with leading slash) https://github.com/transloadit/uppy/pull/4537#issuecomment-1614236655
-    if (file.absDirPath != null) tagFile.meta.absolutePath = file.absDirPath ? `/${file.absDirPath}/${tagFile.name}` : `/${tagFile.name}`
+    if (file.absDirPath != null)
+      tagFile.meta.absolutePath =
+        file.absDirPath ?
+          `/${file.absDirPath}/${tagFile.name}`
+        : `/${tagFile.name}`
 
     return tagFile
   }
 
-  filterItems = (items) => {
+  filterItems = (items: CompanionFile[]): CompanionFile[] => {
     const state = this.plugin.getPluginState()
     if (!state.filterInput || state.filterInput === '') {
       return items
     }
     return items.filter((folder) => {
-      return folder.name.toLowerCase().indexOf(state.filterInput.toLowerCase()) !== -1
+      return (
+        folder.name.toLowerCase().indexOf(state.filterInput.toLowerCase()) !==
+        -1
+      )
     })
   }
 
-  recordShiftKeyPress = (e) => {
+  recordShiftKeyPress = (e: KeyboardEvent): void => {
     this.isShiftKeyPressed = e.shiftKey
   }
 
@@ -128,10 +223,10 @@ export default class View {
    * toggle multiple checkboxes at once, which is done by getting all files
    * in between last checked file and current one.
    */
-  toggleCheckbox = (e, file) => {
+  toggleCheckbox = (e: Event, file: CompanionFile): void => {
     e.stopPropagation()
     e.preventDefault()
-    e.currentTarget.focus()
+    ;(e.currentTarget as HTMLInputElement).focus()
     const { folders, files } = this.plugin.getPluginState()
     const items = this.filterItems(folders.concat(files))
     // Shift-clicking selects a single consecutive list of items
@@ -140,10 +235,11 @@ export default class View {
       const { currentSelection } = this.plugin.getPluginState()
       const prevIndex = items.indexOf(this.lastCheckbox)
       const currentIndex = items.indexOf(file)
-      const newSelection = (prevIndex < currentIndex)
-        ? items.slice(prevIndex, currentIndex + 1)
+      const newSelection =
+        prevIndex < currentIndex ?
+          items.slice(prevIndex, currentIndex + 1)
         : items.slice(currentIndex, prevIndex + 1)
-      const reducedNewSelection = []
+      const reducedNewSelection: CompanionFile[] = []
 
       // Check restrictions on each file in currentSelection,
       // reduce it to only contain files that pass restrictions
@@ -157,10 +253,18 @@ export default class View {
         if (!restrictionError) {
           reducedNewSelection.push(item)
         } else {
-          uppy.info({ message: restrictionError.message }, 'error', uppy.opts.infoTimeout)
+          uppy.info(
+            { message: restrictionError.message },
+            'error',
+            uppy.opts.infoTimeout,
+          )
         }
       }
-      this.plugin.setPluginState({ currentSelection: [...new Set([...currentSelection, ...reducedNewSelection])] })
+      this.plugin.setPluginState({
+        currentSelection: [
+          ...new Set([...currentSelection, ...reducedNewSelection]),
+        ],
+      })
       return
     }
 
@@ -168,7 +272,9 @@ export default class View {
     const { currentSelection } = this.plugin.getPluginState()
     if (this.isChecked(file)) {
       this.plugin.setPluginState({
-        currentSelection: currentSelection.filter((item) => item.id !== file.id),
+        currentSelection: currentSelection.filter(
+          (item) => item.id !== file.id,
+        ),
       })
     } else {
       this.plugin.setPluginState({
@@ -177,14 +283,14 @@ export default class View {
     }
   }
 
-  isChecked = (file) => {
+  isChecked = (file: CompanionFile): boolean => {
     const { currentSelection } = this.plugin.getPluginState()
     // comparing id instead of the file object, because the reference to the object
     // changes when we switch folders, and the file list is updated
     return currentSelection.some((item) => item.id === file.id)
   }
 
-  setLoading (loading) {
+  setLoading(loading: boolean | string): void {
     this.plugin.setPluginState({ loading })
   }
 }

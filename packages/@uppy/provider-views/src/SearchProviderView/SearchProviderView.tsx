@@ -1,75 +1,95 @@
 import { h } from 'preact'
 
-import SearchFilterInput from '../SearchFilterInput.jsx'
-import Browser from '../Browser.jsx'
-import CloseWrapper from '../CloseWrapper.js'
-import View from '../View.js'
+import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
+import type { UnknownSearchProviderPlugin } from '@uppy/core/lib/Uppy.ts'
+import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin.ts'
+import type Uppy from '@uppy/core'
+import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
+import SearchFilterInput from '../SearchFilterInput.tsx'
+import Browser from '../Browser.tsx'
+import CloseWrapper from '../CloseWrapper.ts'
+import View, { type ViewOptions } from '../View.ts'
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../../package.json'
+
+const defaultState = {
+  isInputMode: true,
+  files: [],
+  folders: [],
+  breadcrumbs: [],
+  filterInput: '',
+  currentSelection: [],
+  searchTerm: null,
+}
+
+type PluginType = 'SearchProvider'
+
+const defaultOptions = {
+  viewType: 'grid',
+  showTitles: true,
+  showFilter: true,
+  showBreadcrumbs: true,
+}
+
+type Opts<
+  M extends Meta,
+  B extends Body,
+  T extends PluginType,
+> = DefinePluginOpts<ViewOptions<M, B, T>, keyof typeof defaultOptions>
+
+type Res = {
+  items: CompanionFile[]
+  nextPageQuery: string | null
+  searchedFor: string
+}
 
 /**
  * SearchProviderView, used for Unsplash and future image search providers.
  * Extends generic View, shared with regular providers like Google Drive and Instagram.
  */
-export default class SearchProviderView extends View {
+export default class SearchProviderView<
+  M extends Meta,
+  B extends Body,
+> extends View<M, B, PluginType, Opts<M, B, PluginType>> {
   static VERSION = packageJson.version
 
-  /**
-   * @param {object} plugin instance of the plugin
-   * @param {object} opts
-   */
-  constructor (plugin, opts) {
-    super(plugin, opts)
+  nextPageQuery: string | null = null
 
-    // set default options
-    const defaultOptions = {
-      viewType: 'grid',
-      showTitles: false,
-      showFilter: false,
-      showBreadcrumbs: false,
-    }
+  constructor(
+    plugin: UnknownSearchProviderPlugin<M, B>,
+    opts: ViewOptions<M, B, PluginType>,
+  ) {
+    super(plugin, { ...defaultOptions, ...opts })
 
-    // merge default options with the ones set by user
-    this.opts = { ...defaultOptions, ...opts }
-
-    // Logic
     this.search = this.search.bind(this)
     this.clearSearch = this.clearSearch.bind(this)
     this.resetPluginState = this.resetPluginState.bind(this)
     this.handleScroll = this.handleScroll.bind(this)
     this.donePicking = this.donePicking.bind(this)
 
-    // Visual
     this.render = this.render.bind(this)
 
-    this.defaultState = {
-      isInputMode: true,
-      files: [],
-      folders: [],
-      breadcrumbs: [],
-      filterInput: '',
-      currentSelection: [],
-      searchTerm: null,
-    }
-
-    // Set default state for the plugin
-    this.plugin.setPluginState(this.defaultState)
+    this.plugin.setPluginState(defaultState)
 
     this.registerRequestClient()
   }
 
   // eslint-disable-next-line class-methods-use-this
-  tearDown () {
+  tearDown(): void {
     // Nothing.
   }
 
-  resetPluginState () {
-    this.plugin.setPluginState(this.defaultState)
+  resetPluginState(): void {
+    this.plugin.setPluginState(defaultState)
   }
 
-  #updateFilesAndInputMode (res, files) {
+  #updateFilesAndInputMode(res: Res, files: CompanionFile[]): void {
     this.nextPageQuery = res.nextPageQuery
-    res.items.forEach((item) => { files.push(item) })
+    res.items.forEach((item) => {
+      files.push(item)
+    })
     this.plugin.setPluginState({
       currentSelection: [],
       isInputMode: false,
@@ -78,7 +98,7 @@ export default class SearchProviderView extends View {
     })
   }
 
-  async search (query) {
+  async search(query: string): Promise<void> {
     const { searchTerm } = this.plugin.getPluginState()
     if (query && query === searchTerm) {
       // no need to search again as this is the same as the previous search
@@ -87,7 +107,7 @@ export default class SearchProviderView extends View {
 
     this.setLoading(true)
     try {
-      const res = await this.provider.search(query)
+      const res = await this.provider.search<Res>(query)
       this.#updateFilesAndInputMode(res, [])
     } catch (err) {
       this.handleError(err)
@@ -96,7 +116,7 @@ export default class SearchProviderView extends View {
     }
   }
 
-  clearSearch () {
+  clearSearch(): void {
     this.plugin.setPluginState({
       currentSelection: [],
       files: [],
@@ -104,7 +124,7 @@ export default class SearchProviderView extends View {
     })
   }
 
-  async handleScroll (event) {
+  async handleScroll(event: Event): Promise<void> {
     const query = this.nextPageQuery || null
 
     if (this.shouldHandleScroll(event) && query) {
@@ -112,7 +132,7 @@ export default class SearchProviderView extends View {
 
       try {
         const { files, searchTerm } = this.plugin.getPluginState()
-        const response = await this.provider.search(searchTerm, query)
+        const response = await this.provider.search<Res>(searchTerm!, query)
 
         this.#updateFilesAndInputMode(response, files)
       } catch (error) {
@@ -123,15 +143,21 @@ export default class SearchProviderView extends View {
     }
   }
 
-  donePicking () {
+  donePicking(): void {
     const { currentSelection } = this.plugin.getPluginState()
     this.plugin.uppy.log('Adding remote search provider files')
-    this.plugin.uppy.addFiles(currentSelection.map((file) => this.getTagFile(file)))
+    this.plugin.uppy.addFiles(
+      currentSelection.map((file) => this.getTagFile(file)),
+    )
     this.resetPluginState()
   }
 
-  render (state, viewOptions = {}) {
-    const { didFirstRender, isInputMode, searchTerm } = this.plugin.getPluginState()
+  render(
+    state: unknown,
+    viewOptions: Omit<ViewOptions<M, B, PluginType>, 'provider'> = {},
+  ): JSX.Element {
+    const { didFirstRender, isInputMode, searchTerm } =
+      this.plugin.getPluginState()
     const { i18n } = this.plugin.uppy
 
     if (!didFirstRender) {
@@ -139,7 +165,8 @@ export default class SearchProviderView extends View {
     }
 
     const targetViewOptions = { ...this.opts, ...viewOptions }
-    const { files, folders, filterInput, loading, currentSelection } = this.plugin.getPluginState()
+    const { files, folders, filterInput, loading, currentSelection } =
+      this.plugin.getPluginState()
     const { isChecked, toggleCheckbox, filterItems, recordShiftKeyPress } = this
     const hasInput = filterInput !== ''
 
@@ -173,7 +200,9 @@ export default class SearchProviderView extends View {
       pluginIcon: this.plugin.icon,
       i18n,
       uppyFiles: this.plugin.uppy.getFiles(),
-      validateRestrictions: (...args) => this.plugin.uppy.validateRestrictions(...args),
+      validateRestrictions: (
+        ...args: Parameters<Uppy<M, B>['validateRestrictions']>
+      ) => this.plugin.uppy.validateRestrictions(...args),
     }
 
     if (isInputMode) {
@@ -182,7 +211,6 @@ export default class SearchProviderView extends View {
           <div className="uppy-SearchProvider">
             <SearchFilterInput
               search={this.search}
-              clearSelection={this.clearSelection}
               inputLabel={i18n('enterTextToSearch')}
               buttonLabel={i18n('searchImages')}
               inputClassName="uppy-c-textInput uppy-SearchProvider-input"
