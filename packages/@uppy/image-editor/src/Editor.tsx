@@ -81,7 +81,7 @@ export default class Editor<M extends Meta, B extends Body> extends Component<
         prevCropboxData,
       )
       if (newCropboxData) this.cropper.setCropBoxData(newCropboxData)
-      // When we stretch the cropbox by one of its sides
+      // 2. When we stretch the cropbox by one of its sides
     } else {
       const newCropboxData = limitCropboxMovementOnResize(
         canvasData,
@@ -120,7 +120,7 @@ export default class Editor<M extends Meta, B extends Body> extends Component<
   }
 
   onRotateGranular = (ev: ChangeEvent<HTMLInputElement>): void => {
-    //  1. Set state
+    // 1. Set state
     const newGranularAngle = Number(ev.target.value)
     this.setState({ angleGranular: newGranularAngle })
 
