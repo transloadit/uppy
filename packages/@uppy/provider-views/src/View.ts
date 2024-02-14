@@ -150,6 +150,7 @@ export default class View<
     const tagFile: TagFile<M> = {
       id: file.id,
       source: this.plugin.id,
+      // We create an empty blob as most of the codebase expects a Blob | File to be present
       data: new Blob(),
       name: file.name || file.id,
       type: file.mimeType,
