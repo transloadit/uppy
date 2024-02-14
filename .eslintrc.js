@@ -8,7 +8,7 @@ const svgPresentationAttributes = [
 
 module.exports = {
   root: true,
-  extends: ['transloadit'],
+  extends: ['transloadit', 'prettier'],
   env: {
     es6: true,
     jest: true,
@@ -63,7 +63,6 @@ module.exports = {
     // rules we want to enforce
     'array-callback-return': 'error',
     'func-names': 'error',
-    'implicit-arrow-linebreak': 'error',
     'import/no-dynamic-require': 'error',
     'import/no-extraneous-dependencies': 'error',
     'max-len': 'error',
@@ -142,6 +141,7 @@ module.exports = {
     {
       files: [
         '*.jsx',
+        '*.tsx',
         'packages/@uppy/react-native/**/*.js',
       ],
       parser: 'espree',
@@ -357,10 +357,13 @@ module.exports = {
         'test/**/*.js',
         'test/**/*.ts',
         '*.test.js',
+        '*.test.ts',
         '*.test-d.ts',
+        '*.test-d.tsx',
         'postcss.config.js',
         '.eslintrc.js',
         'private/**/*.js',
+        'private/**/*.mjs',
       ],
       rules: {
         'no-console': 'off',
@@ -441,7 +444,7 @@ module.exports = {
       },
     },
     {
-      files: ['**/*.ts', '**/*.md/*.ts', '**/*.md/*.typescript'],
+      files: ['**/*.ts', '**/*.md/*.ts', '**/*.md/*.typescript', '**/*.tsx', '**/*.md/*.tsx'],
       excludedFiles: ['examples/angular-example/**/*.ts', 'packages/@uppy/angular/**/*.ts'],
       parser: '@typescript-eslint/parser',
       settings: {
@@ -459,8 +462,17 @@ module.exports = {
       ],
       rules: {
         'import/prefer-default-export': 'off',
+        '@typescript-eslint/no-empty-function': 'off',
         '@typescript-eslint/no-explicit-any': 'off',
+        '@typescript-eslint/no-extra-semi': 'off',
         '@typescript-eslint/no-namespace': 'off',
+      },
+    },
+    {
+      files: ['packages/@uppy/*/src/**/*.ts', 'packages/@uppy/*/src/**/*.tsx'],
+      excludedFiles: ['packages/@uppy/**/*.test.ts', 'packages/@uppy/core/src/mocks/*.ts'],
+      rules: {
+        '@typescript-eslint/explicit-module-boundary-types': 'error',
       },
     },
     {
@@ -474,9 +486,21 @@ module.exports = {
       },
     },
     {
-      files: ['**/react/*.md/*.js', '**/react.md/*.js', '**/react-*.md/*.js'],
+      files: ['**/react/*.md/*.js', '**/react.md/*.js', '**/react-*.md/*.js', '**/react/**/*.test-d.tsx'],
       settings: {
         react: { pragma: 'React' },
+      },
+    },
+    {
+      files: ['**/react/**/*.test-d.tsx'],
+      rules: {
+        'import/extensions': 'off',
+        'import/no-useless-path-segments': 'off',
+        'no-alert': 'off',
+        'no-inner-declarations': 'off',
+        'no-lone-blocks': 'off',
+        'no-unused-expressions': 'off',
+        'no-unused-vars': 'off',
       },
     },
     {

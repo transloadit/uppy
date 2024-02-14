@@ -1,0 +1,30 @@
+{
+  "extends": "../../../tsconfig.shared",
+  "compilerOptions": {
+    "noImplicitAny": false,
+    "outDir": "./lib",
+    "paths": {
+      "@uppy/companion-client": ["../companion-client/src/index.js"],
+      "@uppy/companion-client/lib/*": ["../companion-client/src/*"],
+      "@uppy/utils/lib/*": ["../utils/src/*"],
+      "@uppy/core": ["../core/src/index.js"],
+      "@uppy/core/lib/*": ["../core/src/*"]
+    },
+    "resolveJsonModule": false,
+    "rootDir": "./src",
+    "skipLibCheck": true
+  },
+  "include": ["./src/**/*.*"],
+  "exclude": ["./src/**/*.test.ts"],
+  "references": [
+    {
+      "path": "../companion-client/tsconfig.build.json"
+    },
+    {
+      "path": "../utils/tsconfig.build.json"
+    },
+    {
+      "path": "../core/tsconfig.build.json"
+    }
+  ]
+}

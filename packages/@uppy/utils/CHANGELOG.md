@@ -1,5 +1,26 @@
 # @uppy/utils
 
+## 5.7.0
+
+Released: 2023-12-12
+Included in: Uppy v3.21.0
+
+- @uppy/utils: fix import in test files (Antoine du Hamel / #4806)
+
+## 5.6.0
+
+Released: 2023-11-08
+Included in: Uppy v3.19.0
+
+- @uppy/utils: refactor to TS (Antoine du Hamel / #4699)
+
+## 5.5.1
+
+Released: 2023-09-29
+Included in: Uppy v3.17.0
+
+- @uppy/utils: test: migrate to Vitest for Uppy core and Uppy plugins (Antoine du Hamel / #4700)
+
 ## 5.5.0
 
 Released: 2023-09-05

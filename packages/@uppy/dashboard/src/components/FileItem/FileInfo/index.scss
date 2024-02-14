@@ -20,7 +20,7 @@
   word-wrap: anywhere;
   word-break: break-all;
 
-  [data-uppy-theme="dark"] & {
+  [data-uppy-theme='dark'] & {
     color: $gray-200;
   }
 
@@ -59,7 +59,7 @@
   font-size: 11px;
   line-height: 1;
 
-  [data-uppy-theme="dark"] & {
+  [data-uppy-theme='dark'] & {
     color: $gray-400;
   }
 }
@@ -124,4 +124,3 @@
     display: none;
   }
 }
-

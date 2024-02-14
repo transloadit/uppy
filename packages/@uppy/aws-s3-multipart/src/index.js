@@ -1,5 +1,5 @@
 import BasePlugin from '@uppy/core/lib/BasePlugin.js'
-import { Provider, RequestClient } from '@uppy/companion-client'
+import { RequestClient } from '@uppy/companion-client'
 import EventManager from '@uppy/utils/lib/EventManager'
 import { RateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
 import { filterNonFailedFiles, filterFilesToEmitUploadStarted } from '@uppy/utils/lib/fileFilters'
@@ -16,6 +16,13 @@ function assertServerError (res) {
     throw error
   }
   return res
+}
+
+function removeMetadataFromURL (urlString) {
+  const urlObject = new URL(urlString)
+  urlObject.search = ''
+  urlObject.hash = ''
+  return urlObject.href
 }
 
 /**
@@ -76,7 +83,7 @@ class HTTPCommunicationQueue {
 
   #requests
 
-  #retryDelayIterator
+  #retryDelays
 
   #sendCompletionRequest
 
@@ -112,7 +119,7 @@ class HTTPCommunicationQueue {
       this.#sendCompletionRequest = requests.wrapPromiseFunction(options.completeMultipartUpload, { priority:1 })
     }
     if ('retryDelays' in options) {
-      this.#retryDelayIterator = options.retryDelays?.values()
+      this.#retryDelays = options.retryDelays ?? []
     }
     if ('uploadPartBytes' in options) {
       this.#uploadPartBytes = requests.wrapPromiseFunction(options.uploadPartBytes, { priority:Infinity })
@@ -122,7 +129,7 @@ class HTTPCommunicationQueue {
     }
   }
 
-  async #shouldRetry (err) {
+  async #shouldRetry (err, retryDelayIterator) {
     const requests = this.#requests
     const status = err?.source?.status
 
@@ -137,7 +144,7 @@ class HTTPCommunicationQueue {
         // more than one request in parallel, to give slower connection a chance
         // to catch up with the expiry set in Companion.
         if (requests.limit === 1 || this.#previousRetryDelay == null) {
-          const next = this.#retryDelayIterator?.next()
+          const next = retryDelayIterator.next()
           if (next == null || next.done) {
             return false
           }
@@ -156,7 +163,7 @@ class HTTPCommunicationQueue {
     } else if (status === 429) {
       // HTTP 429 Too Many Requests => to avoid the whole download to fail, pause all requests.
       if (!requests.isPaused) {
-        const next = this.#retryDelayIterator?.next()
+        const next = retryDelayIterator.next()
         if (next == null || next.done) {
           return false
         }
@@ -175,7 +182,7 @@ class HTTPCommunicationQueue {
       }
     } else {
       // Other error code means the request can be retried later.
-      const next = this.#retryDelayIterator?.next()
+      const next = retryDelayIterator.next()
       if (next == null || next.done) {
         return false
       }
@@ -260,7 +267,7 @@ class HTTPCommunicationQueue {
 
     const { onProgress, onComplete } = chunk
 
-    return this.#uploadPartBytes({
+    const result = await this.#uploadPartBytes({
       signature: { url, headers, method },
       body,
       size: data.size,
@@ -268,6 +275,11 @@ class HTTPCommunicationQueue {
       onComplete,
       signal,
     }).abortOn(signal)
+
+    return 'location' in result ? result : {
+      location: removeMetadataFromURL(url),
+      ...result,
+    }
   }
 
   /**
@@ -289,6 +301,7 @@ class HTTPCommunicationQueue {
       return await this.#sendCompletionRequest(
         this.#getFile(file),
         { key, uploadId, parts, signal },
+        signal,
       ).abortOn(signal)
     } catch (err) {
       if (err?.cause !== pausingUploadReason && err?.name !== 'AbortError') {
@@ -307,7 +320,7 @@ class HTTPCommunicationQueue {
 
   async resumeUploadFile (file, chunks, signal) {
     throwIfAborted(signal)
-    if (chunks.length === 1 && !chunks[0].shouldUseMultipart) {
+    if (chunks.length === 1 && chunks[0] != null && !chunks[0].shouldUseMultipart) {
       return this.#nonMultipartUpload(file, chunks[0], signal)
     }
     const { uploadId, key } = await this.getUploadId(file, signal)
@@ -315,6 +328,7 @@ class HTTPCommunicationQueue {
     const alreadyUploadedParts = await this.#listParts(
       this.#getFile(file),
       { uploadId, key, signal },
+      signal,
     ).abortOn(signal)
     throwIfAborted(signal)
     const parts = await Promise.all(
@@ -334,6 +348,7 @@ class HTTPCommunicationQueue {
     return this.#sendCompletionRequest(
       this.#getFile(file),
       { key, uploadId, parts, signal },
+      signal,
     ).abortOn(signal)
   }
 
@@ -348,14 +363,36 @@ class HTTPCommunicationQueue {
   async uploadChunk (file, partNumber, chunk, signal) {
     throwIfAborted(signal)
     const { uploadId, key } = await this.getUploadId(file, signal)
-    throwIfAborted(signal)
+
+    const signatureRetryIterator = this.#retryDelays.values()
+    const chunkRetryIterator = this.#retryDelays.values()
+    const shouldRetrySignature = () => {
+      const next = signatureRetryIterator.next()
+      if (next == null || next.done) {
+        return null
+      }
+      return next.value
+    }
+
     for (;;) {
+      throwIfAborted(signal)
       const chunkData = chunk.getData()
       const { onProgress, onComplete } = chunk
+      let signature
 
-      const signature = await this.#fetchSignature(this.#getFile(file), {
-        uploadId, key, partNumber, body: chunkData, signal,
-      }).abortOn(signal)
+      try {
+        signature = await this.#fetchSignature(this.#getFile(file), {
+          uploadId, key, partNumber, body: chunkData, signal,
+        }).abortOn(signal)
+      } catch (err) {
+        const timeout = shouldRetrySignature()
+        if (timeout == null || signal.aborted) {
+          throw err
+        }
+        await new Promise(resolve => setTimeout(resolve, timeout))
+        // eslint-disable-next-line no-continue
+        continue
+      }
 
       throwIfAborted(signal)
       try {
@@ -366,7 +403,7 @@ class HTTPCommunicationQueue {
           }).abortOn(signal),
         }
       } catch (err) {
-        if (!await this.#shouldRetry(err)) throw err
+        if (!await this.#shouldRetry(err, chunkRetryIterator)) throw err
       }
     }
   }
@@ -439,7 +476,8 @@ export default class AwsS3Multipart extends BasePlugin {
 
   setOptions (newOptions) {
     this.#companionCommunicationQueue.setOptions(newOptions)
-    return super.setOptions(newOptions)
+    super.setOptions(newOptions)
+    this.#setCompanionHeaders()
   }
 
   /**
@@ -831,11 +869,7 @@ export default class AwsS3Multipart extends BasePlugin {
 
     const promises = filesFiltered.map((file) => {
       if (file.isRemote) {
-        // INFO: the url plugin needs to use RequestClient,
-        // while others use Provider
-        const Client = file.remote.providerOptions.provider ? Provider : RequestClient
         const getQueue = () => this.requests
-        const client = new Client(this.uppy, file.remote.providerOptions, getQueue)
         this.#setResumableUploadsCapability(false)
         const controller = new AbortController()
 
@@ -844,10 +878,10 @@ export default class AwsS3Multipart extends BasePlugin {
         }
         this.uppy.on('file-removed', removedHandler)
 
-        const uploadPromise = client.uploadRemoteFile(
+        const uploadPromise = this.uppy.getRequestClientForFile(file).uploadRemoteFile(
           file,
           this.#getCompanionClientArgs(file),
-          { signal: controller.signal },
+          { signal: controller.signal, getQueue },
         )
 
         this.requests.wrapSyncFunction(() => {

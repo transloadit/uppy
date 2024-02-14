@@ -27,6 +27,8 @@ export default class MyCustomProvider extends UIPlugin {
       pluginId: this.id,
     })
 
+    uppy.registerRequestClient(MyCustomProvider.name, this.provider)
+
     this.defaultLocale = {
       strings: {
         pluginNameMyUnsplash: 'MyUnsplash',

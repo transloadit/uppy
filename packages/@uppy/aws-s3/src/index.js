@@ -28,7 +28,7 @@
 import BasePlugin from '@uppy/core/lib/BasePlugin.js'
 import AwsS3Multipart from '@uppy/aws-s3-multipart'
 import { RateLimitedQueue, internalRateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
-import { RequestClient, Provider } from '@uppy/companion-client'
+import { RequestClient } from '@uppy/companion-client'
 import { filterNonFailedFiles, filterFilesToEmitUploadStarted } from '@uppy/utils/lib/fileFilters'
 
 import packageJson from '../package.json'
@@ -273,11 +273,7 @@ export default class AwsS3 extends BasePlugin {
     if (file.error) throw new Error(file.error)
 
     if (file.isRemote) {
-      // INFO: the url plugin needs to use RequestClient,
-      // while others use Provider
-      const Client = file.remote.providerOptions.provider ? Provider : RequestClient
       const getQueue = () => this.#requests
-      const client = new Client(this.uppy, file.remote.providerOptions, getQueue)
       const controller = new AbortController()
 
       const removedHandler = (removedFile) => {
@@ -285,10 +281,10 @@ export default class AwsS3 extends BasePlugin {
       }
       this.uppy.on('file-removed', removedHandler)
 
-      const uploadPromise = client.uploadRemoteFile(
+      const uploadPromise = this.uppy.getRequestClientForFile(file).uploadRemoteFile(
         file,
         this.#getCompanionClientArgs(file),
-        { signal: controller.signal },
+        { signal: controller.signal, getQueue },
       )
 
       this.#requests.wrapSyncFunction(() => {

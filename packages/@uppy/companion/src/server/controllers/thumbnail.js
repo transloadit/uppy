@@ -1,19 +1,22 @@
+const { respondWithError } = require('../provider/error')
+
 /**
  *
  * @param {object} req
  * @param {object} res
  */
 async function thumbnail (req, res, next) {
-  const { providerName, id } = req.params
-  const { accessToken } = req.companion.allProvidersTokens[providerName]
-  const { provider } = req.companion
+  const { id } = req.params
+  const { provider, providerUserSession } = req.companion
+  const { accessToken } = providerUserSession
 
   try {
-    const { stream } = await provider.thumbnail({ id, token: accessToken })
+    const { stream, contentType } = await provider.thumbnail({ id, token: accessToken, providerUserSession })
+    if (contentType != null) res.set('Content-Type', contentType)
     stream.pipe(res)
   } catch (err) {
-    if (err.isAuthError) res.sendStatus(401)
-    else next(err)
+    if (respondWithError(err, res)) return
+    next(err)
   }
 }
 

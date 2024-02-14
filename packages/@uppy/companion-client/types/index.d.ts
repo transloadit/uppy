@@ -12,38 +12,60 @@ export interface TokenStorage {
 
 type CompanionHeaders = Record<string, string>
 
+type CompanionKeys = {
+  key: string
+  credentialsName: string
+}
+
 export interface RequestClientOptions {
   companionUrl: string
   companionHeaders?: CompanionHeaders
   companionCookiesRule?: RequestCredentials
+  companionKeysParams?: CompanionKeys
 }
 
 type RequestOptions = {
-  skipPostResponse?: boolean,
-  signal?: AbortSignal,
+  skipPostResponse?: boolean
+  signal?: AbortSignal
 }
 
 export class RequestClient {
-  constructor (uppy: Uppy, opts: RequestClientOptions)
+  constructor(uppy: Uppy, opts: RequestClientOptions)
 
   readonly hostname: string
 
   setCompanionHeaders(headers: CompanionHeaders): void
 
-  get<T = unknown> (path: string, options?: RequestOptions): Promise<T>
+  get<T = unknown>(path: string, options?: RequestOptions): Promise<T>
 
   /** @deprecated use option bag instead */
-  get<T = unknown> (path: string, skipPostResponse: boolean): Promise<T>
+  get<T = unknown>(path: string, skipPostResponse: boolean): Promise<T>
 
-  post<T = unknown> (path: string, data: Record<string, unknown>, options?: RequestOptions): Promise<T>
+  post<T = unknown>(
+    path: string,
+    data: Record<string, unknown>,
+    options?: RequestOptions,
+  ): Promise<T>
 
   /** @deprecated use option bag instead */
-  post<T = unknown> (path: string, data: Record<string, unknown>, skipPostResponse: boolean): Promise<T>
+  post<T = unknown>(
+    path: string,
+    data: Record<string, unknown>,
+    skipPostResponse: boolean,
+  ): Promise<T>
 
-  delete<T = unknown> (path: string, data?: Record<string, unknown>, options?: RequestOptions): Promise<T>
+  delete<T = unknown>(
+    path: string,
+    data?: Record<string, unknown>,
+    options?: RequestOptions,
+  ): Promise<T>
 
   /** @deprecated use option bag instead */
-  delete<T = unknown> (path: string, data: Record<string, unknown>, skipPostResponse: boolean): Promise<T>
+  delete<T = unknown>(
+    path: string,
+    data: Record<string, unknown>,
+    skipPostResponse: boolean,
+  ): Promise<T>
 }
 
 /**
@@ -64,19 +86,23 @@ export interface ProviderOptions extends PublicProviderOptions {
 }
 
 export class Provider extends RequestClient {
-  constructor (uppy: Uppy, opts: ProviderOptions)
+  constructor(uppy: Uppy, opts: ProviderOptions)
 
-  checkAuth (): Promise<boolean>
+  checkAuth(): Promise<boolean>
 
-  authUrl (): string
+  authUrl(): string
 
-  fileUrl (id: string): string
+  fileUrl(id: string): string
 
-  list (directory: string): Promise<any>
+  list(directory: string): Promise<any>
 
-  logout (redirect?: string): Promise<any>
+  logout(redirect?: string): Promise<any>
 
-  static initPlugin (plugin: unknown, opts: Record<string, unknown>, defaultOpts?: Record<string, unknown>): void
+  static initPlugin(
+    plugin: unknown,
+    opts: Record<string, unknown>,
+    defaultOpts?: Record<string, unknown>,
+  ): void
 }
 
 export interface SocketOptions {
@@ -87,17 +113,17 @@ export interface SocketOptions {
 export class Socket {
   readonly isOpen: boolean
 
-  constructor (opts: SocketOptions)
+  constructor(opts: SocketOptions)
 
-  open (): void
+  open(): void
 
-  close (): void
+  close(): void
 
-  send (action: string, payload: unknown): void
+  send(action: string, payload: unknown): void
 
-  on (action: string, handler: (param: any) => void): void
+  on(action: string, handler: (param: any) => void): void
 
-  once (action: string, handler: (param: any) => void): void
+  once(action: string, handler: (param: any) => void): void
 
-  emit (action: string, payload: (param: any) => void): void
+  emit(action: string, payload: (param: any) => void): void
 }

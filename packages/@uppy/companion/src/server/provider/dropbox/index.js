@@ -4,6 +4,7 @@ const Provider = require('../Provider')
 const adaptData = require('./adapter')
 const { withProviderErrorHandling } = require('../providerErrors')
 const { prepareStream } = require('../../helpers/utils')
+const { MAX_AGE_REFRESH_TOKEN } = require('../../helpers/jwt')
 
 // From https://www.dropbox.com/developers/reference/json-encoding:
 //
@@ -55,12 +56,15 @@ async function userInfo ({ token }) {
 class DropBox extends Provider {
   constructor (options) {
     super(options)
-    this.authProvider = DropBox.authProvider
     this.needsCookieAuth = true
   }
 
   static get authProvider () {
     return 'dropbox'
+  }
+
+  static get authStateExpiry () {
+    return MAX_AGE_REFRESH_TOKEN
   }
 
   /**
@@ -100,13 +104,13 @@ class DropBox extends Provider {
     return this.#withErrorHandling('provider.dropbox.thumbnail.error', async () => {
       const stream = getClient({ token }).stream.post('files/get_thumbnail_v2', {
         prefixUrl: 'https://content.dropboxapi.com/2',
-        headers: { 'Dropbox-API-Arg': httpHeaderSafeJson({ resource: { '.tag': 'path', path: `${id}` }, size: 'w256h256' }) },
+        headers: { 'Dropbox-API-Arg': httpHeaderSafeJson({ resource: { '.tag': 'path', path: `${id}` }, size: 'w256h256', format: 'jpeg' }) },
         body: Buffer.alloc(0),
         responseType: 'json',
       })
 
       await prepareStream(stream)
-      return { stream }
+      return { stream, contentType: 'image/jpeg' }
     })
   }
 
@@ -131,11 +135,12 @@ class DropBox extends Provider {
     })
   }
 
+  // eslint-disable-next-line class-methods-use-this
   async #withErrorHandling (tag, fn) {
     return withProviderErrorHandling({
       fn,
       tag,
-      providerName: this.authProvider,
+      providerName: DropBox.authProvider,
       isAuthError: (response) => response.statusCode === 401,
       getJsonErrorMessage: (body) => body?.error_summary,
     })

@@ -21,6 +21,7 @@ const config = {
     },
   },
   esbuild: {
+    jsx: 'transform',
     jsxFactory: 'h',
     jsxFragment: 'Fragment',
   },
@@ -32,10 +33,10 @@ const config = {
       },
       {
         find: /^@uppy\/([^/]+)$/,
-        replacement: `${PACKAGES_ROOT}@uppy/$1/src/index.js`,
+        replacement: `${PACKAGES_ROOT}@uppy/$1/src/index`,
       },
       {
-        find: /^@uppy\/([^/]+)\/lib\/(.+)$/,
+        find: /^@uppy\/([^/]+)\/lib\/(.+?)(\.js)?$/,
         replacement: `${PACKAGES_ROOT}@uppy/$1/src/$2`,
       },
       //   {

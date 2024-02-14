@@ -57,6 +57,11 @@ export default class View {
     uppy.info({ message, details: error.toString() }, 'error', 5000)
   }
 
+  registerRequestClient() {
+    this.requestClientId = this.provider.provider;
+    this.plugin.uppy.registerRequestClient(this.requestClientId, this.provider)
+  }
+
   // todo document what is a "tagFile" or get rid of this concept
   getTagFile (file) {
     const tagFile = {
@@ -76,9 +81,9 @@ export default class View {
         body: {
           fileId: file.id,
         },
-        providerOptions: this.provider.opts,
         providerName: this.provider.name,
         provider: this.provider.provider,
+        requestClientId: this.requestClientId,
       },
     }
 

@@ -16,12 +16,14 @@ const jobs = require('./server/jobs')
 const logger = require('./server/logger')
 const middlewares = require('./server/middlewares')
 const { getMaskableSecrets, defaultOptions, validateConfig } = require('./config/companion')
-const { ProviderApiError, ProviderAuthError } = require('./server/provider/error')
+const { ProviderApiError, ProviderUserError, ProviderAuthError } = require('./server/provider/error')
 const { getCredentialsOverrideMiddleware } = require('./server/provider/credentials')
 // @ts-ignore
 const { version } = require('../package.json')
+const { isOAuthProvider } = require('./server/provider/Provider')
 
-function setLoggerProcessName ({ loggerProcessName }) {
+
+function setLoggerProcessName({ loggerProcessName }) {
   if (loggerProcessName != null) logger.setProcessName(loggerProcessName)
 }
 
@@ -52,7 +54,7 @@ const interceptGrantErrorResponse = interceptor((req, res) => {
 })
 
 // make the errors available publicly for custom providers
-module.exports.errors = { ProviderApiError, ProviderAuthError }
+module.exports.errors = { ProviderApiError, ProviderUserError, ProviderAuthError }
 module.exports.socket = require('./server/socket')
 
 module.exports.setLoggerProcessName = setLoggerProcessName
@@ -72,12 +74,14 @@ module.exports.app = (optionsArg = {}) => {
 
   const providers = providerManager.getDefaultProviders()
 
-  providerManager.addProviderOptions(options, grantConfig)
-
   const { customProviders } = options
   if (customProviders) {
     providerManager.addCustomProviders(customProviders, providers, grantConfig)
   }
+
+  const getAuthProvider = (providerName) => providers[providerName]?.authProvider
+
+  providerManager.addProviderOptions(options, grantConfig, getAuthProvider)
 
   // mask provider secrets from log messages
   logger.setMaskables(getMaskableSecrets(options))
@@ -115,7 +119,7 @@ module.exports.app = (optionsArg = {}) => {
   // add uppy options to the request object so it can be accessed by subsequent handlers.
   app.use('*', middlewares.getCompanionMiddleware(options))
   app.use('/s3', s3(options.s3))
-  app.use('/url', url())
+  if (options.enableUrlEndpoint) app.use('/url', url())
 
   app.post('/:providerName/preauth', express.json(), express.urlencoded({ extended: false }), middlewares.hasSessionAndProvider, middlewares.hasBody, middlewares.hasOAuthProvider, controllers.preauth)
   app.get('/:providerName/connect', middlewares.hasSessionAndProvider, middlewares.hasOAuthProvider, controllers.connect)
@@ -126,6 +130,8 @@ module.exports.app = (optionsArg = {}) => {
   app.get('/:providerName/logout', middlewares.hasSessionAndProvider, middlewares.hasOAuthProvider, middlewares.gentleVerifyToken, controllers.logout)
   app.get('/:providerName/send-token', middlewares.hasSessionAndProvider, middlewares.hasOAuthProvider, middlewares.verifyToken, controllers.sendToken)
 
+  app.post('/:providerName/simple-auth', express.json(), middlewares.hasSessionAndProvider, middlewares.hasBody, middlewares.hasSimpleAuthProvider, controllers.simpleAuth)
+
   app.get('/:providerName/list/:id?', middlewares.hasSessionAndProvider, middlewares.verifyToken, controllers.list)
   // backwards compat:
   app.get('/search/:providerName/list', middlewares.hasSessionAndProvider, middlewares.verifyToken, controllers.list)
@@ -135,6 +141,32 @@ module.exports.app = (optionsArg = {}) => {
   app.post('/search/:providerName/get/:id', express.json(), middlewares.hasSessionAndProvider, middlewares.verifyToken, controllers.get)
 
   app.get('/:providerName/thumbnail/:id', middlewares.hasSessionAndProvider, middlewares.hasOAuthProvider, middlewares.cookieAuthToken, middlewares.verifyToken, controllers.thumbnail)
+
+  // Used for testing dynamic credentials only, normally this would run on a separate server.
+  if (options.testDynamicOauthCredentials) {
+    app.post('/:providerName/test-dynamic-oauth-credentials', (req, res) => {
+      if (req.query.secret !== options.testDynamicOauthCredentialsSecret) throw new Error('Invalid secret')
+      const { providerName } = req.params
+      logger.info(`Returning dynamic OAuth2 credentials for ${providerName}`)
+      // for simplicity, we just return the normal credentials for the provider, but in a real-world scenario,
+      // we would query based on parameters
+      const { key, secret } = options.providerOptions[providerName]
+
+      function getRedirectUri() {
+        const authProvider = getAuthProvider(providerName)
+        if (!isOAuthProvider(authProvider)) return undefined
+        return grantConfig[authProvider]?.redirect_uri
+      }
+
+      res.send({
+        credentials: {
+          key,
+          secret,
+          redirect_uri: getRedirectUri(),
+        },
+      })
+    })
+  }
 
   app.param('providerName', providerManager.getProviderMiddleware(providers, grantConfig))
 

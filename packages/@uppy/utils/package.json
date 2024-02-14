@@ -1,7 +1,7 @@
 {
   "name": "@uppy/utils",
   "description": "Shared utility functions for Uppy Core and plugins maintained by the Uppy team.",
-  "version": "5.5.0",
+  "version": "5.7.0",
   "license": "MIT",
   "types": "types/index.d.ts",
   "type": "module",
@@ -65,13 +65,17 @@
     "./lib/FOCUSABLE_ELEMENTS.js": "./lib/FOCUSABLE_ELEMENTS.js",
     "./lib/fileFilters": "./lib/fileFilters.js",
     "./lib/VirtualList": "./lib/VirtualList.js",
-    "./src/microtip.scss": "./src/microtip.scss"
+    "./lib/UppyFile": "./lib/UppyFile.js",
+    "./lib/FileProgress": "./lib/FileProgress.js",
+    "./src/microtip.scss": "./src/microtip.scss",
+    "./lib/UserFacingApiError": "./lib/UserFacingApiError.js"
   },
   "dependencies": {
     "lodash": "^4.17.21",
     "preact": "^10.5.13"
   },
   "devDependencies": {
-    "@jest/globals": "^29.0.0"
+    "@types/lodash": "^4.14.199",
+    "vitest": "^1.2.1"
   }
 }

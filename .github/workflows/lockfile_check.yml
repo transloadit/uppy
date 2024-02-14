@@ -1,0 +1,41 @@
+name: Lockfile checks
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - yarn.lock
+  pull_request:
+    # We want all branches so we configure types to be the GH default again
+    types: [opened, synchronize, reopened]
+    paths:
+      - yarn.lock
+
+env:
+  YARN_ENABLE_GLOBAL_CACHE: false
+
+jobs:
+  lint_lockfile:
+    name: Lint yarn.lock
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v3
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run:
+          echo "dir=$(corepack yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+
+      - uses: actions/cache@v3
+        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: lts/*
+      - name: Install dependencies
+        run: corepack yarn install --immutable --mode=skip-build

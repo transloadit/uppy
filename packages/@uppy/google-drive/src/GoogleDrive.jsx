@@ -41,6 +41,7 @@ export default class GoogleDrive extends UIPlugin {
       companionCookiesRule: this.opts.companionCookiesRule,
       provider: 'drive',
       pluginId: this.id,
+      supportsRefreshToken: true,
     })
 
     this.defaultLocale = locale
