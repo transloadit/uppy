@@ -3,6 +3,7 @@ import BasePlugin, {
   type PluginOpts,
 } from '@uppy/core/lib/BasePlugin.js'
 import { RequestClient } from '@uppy/companion-client'
+import type { RequestOptions } from '@uppy/companion-client/lib/RequestClient'
 import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
 import type { Uppy } from '@uppy/core'
 import EventManager from '@uppy/utils/lib/EventManager'
@@ -23,7 +24,6 @@ import createSignedURL from './createSignedURL.ts'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'
-import type { RequestOptions } from '@uppy/companion-client'
 
 type PartUploadedCallback<M extends Meta, B extends Body> = (
   file: UppyFile<M, B>,
@@ -85,7 +85,11 @@ function getExpiry(
   return undefined
 }
 
-function getAllowedMetadata({ meta, allowedMetaFields, querify = false }) {
+function getAllowedMetadata<M extends Record<string, any>>({ meta, allowedMetaFields, querify = false }: {
+  meta: M,
+  allowedMetaFields?: string[],
+  querify?: boolean,
+}) {
   const metaFields = allowedMetaFields ?? Object.keys(meta)
 
   if (!meta) return {}
@@ -118,6 +122,8 @@ type AbortablePromise<T extends (...args: any) => Promise<any>> = (
 
 type UploadResult = { key: string; uploadId: string }
 type UploadResultWithSignal = UploadResult & { signal?: AbortSignal }
+type MultipartUploadResult = UploadResult & { parts: AwsS3Part[] }
+type MultipartUploadResultWithSignal = MultipartUploadResult & { signal?: AbortSignal }
 
 class HTTPCommunicationQueue<M extends Meta, B extends Body> {
   #abortMultipartUpload: AbortablePromise<
@@ -360,7 +366,7 @@ class HTTPCommunicationQueue<M extends Meta, B extends Body> {
     const data = chunk.getData()
     if (method.toUpperCase() === 'POST') {
       const formData = new FormData()
-      Object.entries(fields).forEach(([key, value]) => formData.set(key, value))
+      Object.entries(fields!).forEach(([key, value]) => formData.set(key, value))
       formData.set('file', data)
       body = formData
     } else {
@@ -784,7 +790,7 @@ export default class AwsS3Multipart<
     if (opts?.prepareUploadParts != null && opts.signPart == null) {
       this.opts.signPart = async (
         file: UppyFile<M, B>,
-        { uploadId, key, partNumber, body, signal },
+        { uploadId, key, partNumber, body, signal }: SignPartOptions,
       ) => {
         const { presignedUrls, headers } = await opts.prepareUploadParts(file, {
           uploadId,
@@ -889,9 +895,10 @@ export default class AwsS3Multipart<
 
   listParts(
     file: UppyFile<M, B>,
-    { key, uploadId }: UploadResult,
-    signal?: AbortSignal,
+    { key, uploadId, signal }: UploadResultWithSignal,
+    oldSignal?: AbortSignal,
   ): Promise<AwsS3Part[]> {
+    signal ??= oldSignal // eslint-disable-line no-param-reassign
     this.assertHost('listParts')
     throwIfAborted(signal)
 
@@ -903,11 +910,12 @@ export default class AwsS3Multipart<
 
   completeMultipartUpload(
     file: UppyFile<M, B>,
-    { key, uploadId, parts }: UploadResult,
-    signal?: AbortSignal,
+    { key, uploadId, parts, signal }: MultipartUploadResultWithSignal,
+    oldSignal?: AbortSignal,
   ): Promise<{
     location: string
   }> {
+    signal ??= oldSignal // eslint-disable-line no-param-reassign
     this.assertHost('completeMultipartUpload')
     throwIfAborted(signal)
 
@@ -950,7 +958,7 @@ export default class AwsS3Multipart<
           // The HTTP cache should be configured to ensure a client doesn't request
           // more tokens than it needs, but this timeout provides a second layer of
           // security in case the HTTP cache is disabled or misconfigured.
-          this.#cachedTemporaryCredentials = null
+          this.#cachedTemporaryCredentials = null as any
         },
         (getExpiry(this.#cachedTemporaryCredentials.credentials) || 0) * 500,
       )
@@ -1015,7 +1023,7 @@ export default class AwsS3Multipart<
 
   abortMultipartUpload(
     file: UppyFile<M, B>,
-    { key, uploadId, signal }: UploadResult,
+    { key, uploadId, signal }: UploadResultWithSignal,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     oldSignal?: AbortSignal, // TODO: remove in next major
   ): Promise<Record<string, never>> {
