@@ -24,13 +24,6 @@ export interface Opts extends PluginOpts {
   provider: string
 }
 
-// interface ProviderPlugin<M extends Meta, B extends Body>
-//   extends BasePlugin<Opts, M, B> {
-//   files: UppyFile<M, B>[]
-//
-//   storage: typeof tokenStorage
-// }
-
 const getName = (id: string) => {
   return id
     .split('-')
