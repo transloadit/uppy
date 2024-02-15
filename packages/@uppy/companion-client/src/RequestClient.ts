@@ -487,14 +487,11 @@ export default class RequestClient<M extends Meta, B extends Body> {
                           case 'success': {
                             // payload.response exists for xhr-upload but not for tus/transloadit
                             const text = payload.response?.responseText
-                            const body = text ? JSON.parse(text) : undefined
-                            // with xhr-upload the url may be undefined and send inside the responseText
-                            const uploadURL = payload.url ?? body?.url
 
                             this.uppy.emit('upload-success', file, {
-                              uploadURL,
+                              uploadURL: payload.url,
                               status: payload.response?.status ?? 200,
-                              body,
+                              body: text ? JSON.parse(text) : undefined,
                             })
                             socketAbortController?.abort?.()
                             resolve()

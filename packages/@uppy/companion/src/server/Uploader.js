@@ -643,7 +643,7 @@ class Uploader {
       }
 
       return {
-        url: null,
+        url: JSON.parse(response.body)?.url || null,
         extraData: { response: getRespObj(response), bytesUploaded },
       }
     } catch (err) {
