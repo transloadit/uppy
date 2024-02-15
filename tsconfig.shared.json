@@ -13,6 +13,7 @@
     "emitDeclarationOnly": true,
     "declarationMap": true,
     "jsx": "preserve",
+    "jsxImportSource": "preact",
     "noImplicitAny": true,
     "noImplicitThis": true,
     "strictNullChecks": true,
