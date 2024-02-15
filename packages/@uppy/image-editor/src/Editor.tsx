@@ -1,7 +1,6 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import Cropper from 'cropperjs'
 import { h, Component } from 'preact'
-import type { ChangeEvent } from 'react'
 import type { Meta, Body, UppyFile } from '@uppy/utils/lib/UppyFile'
 import type { I18n } from '@uppy/utils/lib/Translator'
 import getCanvasDataThatFitsPerfectlyIntoContainer from './utils/getCanvasDataThatFitsPerfectlyIntoContainer.ts'
@@ -119,9 +118,9 @@ export default class Editor<M extends Meta, B extends Body> extends Component<
     this.cropper.setCropBoxData(newCanvasData)
   }
 
-  onRotateGranular = (ev: ChangeEvent<HTMLInputElement>): void => {
+  onRotateGranular = (ev: Event): void => {
     // 1. Set state
-    const newGranularAngle = Number(ev.target.value)
+    const newGranularAngle = Number((ev.target as HTMLInputElement).value)
     this.setState({ angleGranular: newGranularAngle })
 
     // 2. Rotate the image
