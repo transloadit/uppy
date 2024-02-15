@@ -13,7 +13,7 @@ import locale from './locale.ts'
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'
 
-interface AudioOptions extends UIPluginOptions {
+export interface AudioOptions extends UIPluginOptions {
   target?: HTMLElement | string
   showAudioSourceDropdown?: boolean
 }

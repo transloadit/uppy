@@ -4,6 +4,7 @@ import type { CSSProperties } from 'preact/compat'
 import { UIPlugin, Uppy, type UIPluginOptions } from '@uppy/core'
 import toArray from '@uppy/utils/lib/toArray'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
+import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin.js'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
@@ -11,46 +12,41 @@ import packageJson from '../package.json'
 import locale from './locale.ts'
 
 
-interface FileInputOptions extends UIPluginOptions {
-  target: HTMLElement | string | null
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export interface FileInputOptions<M extends Meta, B extends Body> extends UIPluginOptions {
+  target?: HTMLElement | string | null
   pretty?: boolean,
   inputName?: string,
 }
 interface FileInputState {
-  audioReady: boolean
-  recordingLengthSeconds: number
-  hasAudio: boolean
-  cameraError: null
-  audioSources: MediaDeviceInfo[]
-  currentDeviceId?: null | string | MediaStreamTrack
-  isRecording: boolean
-  showAudioSourceDropdown: boolean
   [id: string]: unknown
 }
 
+// Default options, must be kept in sync with @uppy/react/src/FileInput.js.
+const defaultOptions = {
+  target: null,
+  pretty: true,
+  inputName: 'files[]',
+}
+
+type Opts<M extends Meta, B extends Body> = DefinePluginOpts<
+  FileInputOptions<M, B>,
+  keyof typeof defaultOptions
+>
+
 export default  class FileInput<M extends Meta, B extends Body> extends
-  UIPlugin<FileInputOptions, M, B, FileInputState> {
+  UIPlugin<Opts<M, B>, M, B, FileInputState> {
   static VERSION = packageJson.version
 
   input: HTMLInputElement | null
 
-  constructor (uppy: Uppy<M, B>, opts?: FileInputOptions) {
-    super(uppy, opts)
+  constructor (uppy: Uppy<M, B>, opts?: FileInputOptions<M, B>) {
+    super(uppy, { ...defaultOptions, ...opts })
     this.id = this.opts.id || 'FileInput'
     this.title = 'File Input'
     this.type = 'acquirer'
 
     this.defaultLocale = locale
-
-    // Default options, must be kept in sync with @uppy/react/src/FileInput.js.
-    const defaultOptions = {
-      target: null,
-      pretty: true,
-      inputName: 'files[]',
-    }
-
-    // Merge default options with the ones set by user
-    this.opts = { ...defaultOptions, ...opts }
 
     this.i18nInit()
 
@@ -74,7 +70,7 @@ export default  class FileInput<M extends Meta, B extends Body> extends
     }
   }
 
-  handleInputChange (event: Parameters<React.ChangeEventHandler<HTMLInputElement>>[0]): void {
+  handleInputChange (event: Event): void {
     this.uppy.log('[FileInput] Something selected through input...')
     const files = toArray((event.target as HTMLInputElement | null)?.files ?? [])
     this.addFiles(files)

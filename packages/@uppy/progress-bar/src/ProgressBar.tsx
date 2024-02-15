@@ -1,52 +1,48 @@
 import { h, type ComponentChild } from 'preact'
 import { UIPlugin, Uppy, type UIPluginOptions } from '@uppy/core'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
+import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin.js'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'
 
 
-interface ProgressBarOptions extends UIPluginOptions {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export interface ProgressBarOptions<M extends Meta, B extends Body> extends UIPluginOptions {
   target?: HTMLElement | string
   hideAfterFinish?: boolean,
   fixed?: boolean,
 }
 interface ProgressBarState {
-  audioReady: boolean
-  recordingLengthSeconds: number
-  hasAudio: boolean
-  cameraError: null
-  audioSources: MediaDeviceInfo[]
-  currentDeviceId?: null | string | MediaStreamTrack
-  isRecording: boolean
-  showAudioSourceDropdown: boolean
   [id: string]: unknown
 }
+
+// set default options, must kept in sync with @uppy/react/src/ProgressBar.js
+const defaultOptions = {
+  target: 'body',
+  fixed: false,
+  hideAfterFinish: true,
+}
+
+type Opts<M extends Meta, B extends Body> = DefinePluginOpts<
+  ProgressBarOptions<M, B>,
+  keyof typeof defaultOptions
+>
 
 /**
  * Progress bar
  *
  */
 export default class ProgressBar<M extends Meta, B extends Body>
-  extends UIPlugin<ProgressBarOptions, M, B, ProgressBarState> {
+  extends UIPlugin<Opts<M, B>, M, B, ProgressBarState> {
   static VERSION = packageJson.version
 
-  constructor (uppy: Uppy<M, B>, opts?: ProgressBarOptions) {
-    super(uppy, opts)
+  constructor (uppy: Uppy<M, B>, opts?: ProgressBarOptions<M, B>) {
+    super(uppy, { ...defaultOptions, ...opts })
     this.id = this.opts.id || 'ProgressBar'
     this.title = 'Progress Bar'
     this.type = 'progressindicator'
-
-    // set default options, must kept in sync with @uppy/react/src/ProgressBar.js
-    const defaultOptions = {
-      target: 'body',
-      fixed: false,
-      hideAfterFinish: true,
-    }
-
-    // merge default options with the ones set by user
-    this.opts = { ...defaultOptions, ...opts }
 
     this.render = this.render.bind(this)
   }
