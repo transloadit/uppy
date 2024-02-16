@@ -61,6 +61,7 @@ ca_ES.strings = {
   dropPasteImportFiles: 'Deixa arxius aquí, %{browseFiles} o importa des de:',
   dropPasteImportFolders: 'Deixa arxius aquí, %{browseFolders} o importa des de:',
   editFile: 'Edita l\'arxiu',
+  editImage: 'Edita la imatge',
   editFileWithFilename: 'Edita l\'arxiu %{file}',
   editing: 'Editant %{file}',
   emptyFolderAdded: 'No s\'han afegit arxius des de la carpeta buida',

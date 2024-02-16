@@ -52,6 +52,7 @@ sr_RS_Cyrillic.strings = {
   dropPasteImportFolders:
     'Спусти датотеке овде, уметни (енг. "paste"), %{browse} или преузми са',
   editFile: 'Измени датотеку',
+  editImage: 'Уреди слику',
   editing: 'Мењање  %{file}',
   emptyFolderAdded: 'Ни једна датотека није додата из празног фолдера',
   encoding: 'Шифровање...',

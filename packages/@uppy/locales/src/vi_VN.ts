@@ -49,6 +49,7 @@ vi_VN.strings = {
   dropPasteImportFiles: 'Thả tập tin vào đây, dán, %{browse} hoặc nhập từ',
   dropPasteImportFolders: 'Thả tập tin vào đây, dán, %{browse} hoặc nhập từ',
   editFile: 'Sửa tập tin',
+  editImage: 'Chỉnh sửa ảnh',
   editing: 'Đang sửa %{file}',
   emptyFolderAdded: 'Không có tập tin nào được thêm từ thư mục trống',
   encoding: 'Đang encode...',
