@@ -111,6 +111,7 @@ interface Options extends PluginOptions {
   alwaysRunAssembly?: boolean
   locale?: TransloaditLocale
   limit?: number
+  clientName?: string
 }
 
 export type TransloaditOptions = Options &
