@@ -9242,7 +9242,7 @@ __metadata:
   dependencies:
     "@transloadit/prettier-bytes": ^0.2.0
     "@uppy/utils": "workspace:^"
-    compressorjs: ^1.1.1
+    compressorjs: ^1.2.1
     preact: ^10.5.13
     promise-queue: ^2.2.5
     vitest: ^1.2.1
@@ -12782,13 +12782,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"compressorjs@npm:^1.1.1":
-  version: 1.1.1
-  resolution: "compressorjs@npm:1.1.1"
+"compressorjs@npm:^1.2.1":
+  version: 1.2.1
+  resolution: "compressorjs@npm:1.2.1"
   dependencies:
     blueimp-canvas-to-blob: ^3.29.0
     is-blob: ^2.1.0
-  checksum: b4899567df07ebd0f2d3bdc814a6e63b0013be0020e119c0aa4fd4292298a0a4251302855c6ec6c40dd676c0e02f9a4483868f81474229cc375b928bb9c3f086
+  checksum: 8b25fc29b7908216f7029e807623ae9c034fb0e77a72a752686bdd255bd3b1a5cc004b6651cf7ca948c1f86f3151ac3fc00800119d17f8a248d2f0a54570c8b8
   languageName: node
   linkType: hard
 
