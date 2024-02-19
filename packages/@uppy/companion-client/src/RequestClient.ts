@@ -29,7 +29,6 @@ export type Opts = {
 }
 
 export type RequestOptions =
-  | boolean // TODO: remove this on the next major
   | {
       method?: string
       data?: Record<string, unknown>
@@ -37,6 +36,9 @@ export type RequestOptions =
       signal?: AbortSignal
       qs?: Record<string, string>
     }
+type _RequestOptions =
+  | boolean // TODO: remove this on the next major
+  | RequestOptions
 
 // Remove the trailing slash so we can always safely append /xyz.
 function stripSlash(url: string) {
@@ -205,7 +207,7 @@ export default class RequestClient<M extends Meta, B extends Body> {
 
   async get<PostBody = Record<string, unknown>>(
     path: string,
-    options?: RequestOptions,
+    options?: _RequestOptions,
   ): Promise<PostBody> {
     // TODO: remove boolean support for options that was added for backward compatibility.
     // eslint-disable-next-line no-param-reassign
@@ -216,7 +218,7 @@ export default class RequestClient<M extends Meta, B extends Body> {
   async post<PostBody = Record<string, unknown>>(
     path: string,
     data: Record<string, unknown>,
-    options?: RequestOptions,
+    options?: _RequestOptions,
   ): Promise<PostBody> {
     // TODO: remove boolean support for options that was added for backward compatibility.
     // eslint-disable-next-line no-param-reassign
@@ -227,7 +229,7 @@ export default class RequestClient<M extends Meta, B extends Body> {
   async delete<T = unknown>(
     path: string,
     data?: Record<string, unknown>,
-    options?: RequestOptions,
+    options?: _RequestOptions,
   ): Promise<T> {
     // TODO: remove boolean support for options that was added for backward compatibility.
     // eslint-disable-next-line no-param-reassign

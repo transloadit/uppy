@@ -16,14 +16,19 @@ import {
 } from '@uppy/utils/lib/fileFilters'
 import { createAbortError } from '@uppy/utils/lib/AbortController'
 
-import MultipartUploader, {
-  pausingUploadReason,
-  type Chunk,
-} from './MultipartUploader.ts'
+import MultipartUploader from './MultipartUploader.ts'
+import { throwIfAborted } from './utils.ts'
+import type {
+  UploadResult,
+  UploadResultWithSignal,
+  MultipartUploadResultWithSignal,
+  UploadPartBytesResult,
+} from './utils.ts'
 import createSignedURL from './createSignedURL.ts'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'
+import { HTTPCommunicationQueue } from './HTTPCommunicationQueue.ts'
 
 type PartUploadedCallback<M extends Meta, B extends Body> = (
   file: UppyFile<M, B>,
@@ -43,13 +48,6 @@ function assertServerError<T>(res: T): T {
     throw error
   }
   return res
-}
-
-function removeMetadataFromURL(urlString: string) {
-  const urlObject = new URL(urlString)
-  urlObject.search = ''
-  urlObject.hash = ''
-  return urlObject.href
 }
 
 export interface AwsS3STSResponse {
@@ -85,10 +83,14 @@ function getExpiry(
   return undefined
 }
 
-function getAllowedMetadata<M extends Record<string, any>>({ meta, allowedMetaFields, querify = false }: {
-  meta: M,
-  allowedMetaFields?: string[],
-  querify?: boolean,
+function getAllowedMetadata<M extends Record<string, any>>({
+  meta,
+  allowedMetaFields,
+  querify = false,
+}: {
+  meta: M
+  allowedMetaFields?: string[] | null
+  querify?: boolean
 }) {
   const metaFields = allowedMetaFields ?? Object.keys(meta)
 
@@ -103,431 +105,6 @@ function getAllowedMetadata<M extends Record<string, any>>({ meta, allowedMetaFi
         return [realKey, value]
       }),
   )
-}
-
-function throwIfAborted(signal?: AbortSignal | null) {
-  if (signal?.aborted) {
-    throw createAbortError('The operation was aborted', {
-      cause: signal.reason,
-    })
-  }
-}
-
-type AbortablePromise<T extends (...args: any) => Promise<any>> = (
-  ...args: Parameters<T>
-) => ReturnType<T> & {
-  abort: (reason?: any) => void
-  abortOn: (signal?: AbortSignal) => ReturnType<T>
-}
-
-type UploadResult = { key: string; uploadId: string }
-type UploadResultWithSignal = UploadResult & { signal?: AbortSignal }
-type MultipartUploadResult = UploadResult & { parts: AwsS3Part[] }
-type MultipartUploadResultWithSignal = MultipartUploadResult & { signal?: AbortSignal }
-
-class HTTPCommunicationQueue<M extends Meta, B extends Body> {
-  #abortMultipartUpload: AbortablePromise<
-    (typeof AwsS3Multipart<M, B>)['prototype']['abortMultipartUpload']
-  >
-
-  #cache = new WeakMap()
-
-  #createMultipartUpload: AbortablePromise<
-    (typeof AwsS3Multipart<M, B>)['prototype']['createMultipartUpload']
-  >
-
-  #fetchSignature: AbortablePromise<
-    (typeof AwsS3Multipart<M, B>)['prototype']['signPart']
-  >
-
-  #getUploadParameters: AbortablePromise<
-    (typeof AwsS3Multipart<M, B>)['prototype']['getUploadParameters']
-  >
-
-  #listParts: AbortablePromise<
-    (typeof AwsS3Multipart<M, B>)['prototype']['listParts']
-  >
-
-  #previousRetryDelay: number
-
-  #requests
-
-  #retryDelays: { values: () => Iterator<number> }
-
-  #sendCompletionRequest: AbortablePromise<
-    (typeof AwsS3Multipart<M, B>)['prototype']['completeMultipartUpload']
-  >
-
-  #setS3MultipartState
-
-  #uploadPartBytes: AbortablePromise<
-    (typeof AwsS3Multipart<M, B>)['uploadPartBytes']
-  >
-
-  #getFile
-
-  constructor(
-    requests: RateLimitedQueue,
-    options: AwsS3MultipartOptions<M, B>,
-    setS3MultipartState: (file: UppyFile<M, B>, result: UploadResult) => void,
-    getFile: (file: UppyFile<M, B>) => UppyFile<M, B>,
-  ) {
-    this.#requests = requests
-    this.#setS3MultipartState = setS3MultipartState
-    this.#getFile = getFile
-    this.setOptions(options)
-  }
-
-  setOptions(options: Partial<AwsS3MultipartOptions<M, B>>) {
-    const requests = this.#requests
-
-    if ('abortMultipartUpload' in options) {
-      this.#abortMultipartUpload = requests.wrapPromiseFunction(
-        options.abortMultipartUpload,
-        { priority: 1 },
-      )
-    }
-    if ('createMultipartUpload' in options) {
-      this.#createMultipartUpload = requests.wrapPromiseFunction(
-        options.createMultipartUpload,
-        { priority: -1 },
-      )
-    }
-    if ('signPart' in options) {
-      this.#fetchSignature = requests.wrapPromiseFunction(options.signPart)
-    }
-    if ('listParts' in options) {
-      this.#listParts = requests.wrapPromiseFunction(options.listParts)
-    }
-    if ('completeMultipartUpload' in options) {
-      this.#sendCompletionRequest = requests.wrapPromiseFunction(
-        options.completeMultipartUpload,
-        { priority: 1 },
-      )
-    }
-    if ('retryDelays' in options) {
-      this.#retryDelays = options.retryDelays ?? []
-    }
-    if ('uploadPartBytes' in options) {
-      this.#uploadPartBytes = requests.wrapPromiseFunction(
-        options.uploadPartBytes,
-        { priority: Infinity },
-      )
-    }
-    if ('getUploadParameters' in options) {
-      this.#getUploadParameters = requests.wrapPromiseFunction(
-        options.getUploadParameters,
-      )
-    }
-  }
-
-  async #shouldRetry(err: any, retryDelayIterator: Iterator<number>) {
-    const requests = this.#requests
-    const status = err?.source?.status
-
-    // TODO: this retry logic is taken out of Tus. We should have a centralized place for retrying,
-    // perhaps the rate limited queue, and dedupe all plugins with that.
-    if (status == null) {
-      return false
-    }
-    if (status === 403 && err.message === 'Request has expired') {
-      if (!requests.isPaused) {
-        // We don't want to exhaust the retryDelayIterator as long as there are
-        // more than one request in parallel, to give slower connection a chance
-        // to catch up with the expiry set in Companion.
-        if (requests.limit === 1 || this.#previousRetryDelay == null) {
-          const next = retryDelayIterator.next()
-          if (next == null || next.done) {
-            return false
-          }
-          // If there are more than 1 request done in parallel, the RLQ limit is
-          // decreased and the failed request is requeued after waiting for a bit.
-          // If there is only one request in parallel, the limit can't be
-          // decreased, so we iterate over `retryDelayIterator` as we do for
-          // other failures.
-          // `#previousRetryDelay` caches the value so we can re-use it next time.
-          this.#previousRetryDelay = next.value
-        }
-        // No need to stop the other requests, we just want to lower the limit.
-        requests.rateLimit(0)
-        await new Promise((resolve) =>
-          setTimeout(resolve, this.#previousRetryDelay),
-        )
-      }
-    } else if (status === 429) {
-      // HTTP 429 Too Many Requests => to avoid the whole download to fail, pause all requests.
-      if (!requests.isPaused) {
-        const next = retryDelayIterator.next()
-        if (next == null || next.done) {
-          return false
-        }
-        requests.rateLimit(next.value)
-      }
-    } else if (status > 400 && status < 500 && status !== 409) {
-      // HTTP 4xx, the server won't send anything, it's doesn't make sense to retry
-      return false
-    } else if (typeof navigator !== 'undefined' && navigator.onLine === false) {
-      // The navigator is offline, let's wait for it to come back online.
-      if (!requests.isPaused) {
-        requests.pause()
-        window.addEventListener(
-          'online',
-          () => {
-            requests.resume()
-          },
-          { once: true },
-        )
-      }
-    } else {
-      // Other error code means the request can be retried later.
-      const next = retryDelayIterator.next()
-      if (next == null || next.done) {
-        return false
-      }
-      await new Promise((resolve) => setTimeout(resolve, next.value))
-    }
-    return true
-  }
-
-  async getUploadId(file: UppyFile<M, B>, signal: AbortSignal) {
-    let cachedResult
-    // As the cache is updated asynchronously, there could be a race condition
-    // where we just miss a new result so we loop here until we get nothing back,
-    // at which point it's out turn to create a new cache entry.
-    // eslint-disable-next-line no-cond-assign
-    while ((cachedResult = this.#cache.get(file.data)) != null) {
-      try {
-        return await cachedResult
-      } catch {
-        // In case of failure, we want to ignore the cached error.
-        // At this point, either there's a new cached value, or we'll exit the loop a create a new one.
-      }
-    }
-
-    const promise = this.#createMultipartUpload(this.#getFile(file), signal)
-
-    const abortPromise = () => {
-      promise.abort(signal.reason)
-      this.#cache.delete(file.data)
-    }
-    signal.addEventListener('abort', abortPromise, { once: true })
-    this.#cache.set(file.data, promise)
-    promise.then(
-      async (result) => {
-        signal.removeEventListener('abort', abortPromise)
-        this.#setS3MultipartState(file, result)
-        this.#cache.set(file.data, result)
-      },
-      () => {
-        signal.removeEventListener('abort', abortPromise)
-        this.#cache.delete(file.data)
-      },
-    )
-
-    return promise
-  }
-
-  async abortFileUpload(file: UppyFile<M, B>) {
-    const result = this.#cache.get(file.data)
-    if (result == null) {
-      // If the createMultipartUpload request never was made, we don't
-      // need to send the abortMultipartUpload request.
-      return
-    }
-    // Remove the cache entry right away for follow-up requests do not try to
-    // use the soon-to-be aborted cached values.
-    this.#cache.delete(file.data)
-    this.#setS3MultipartState(file, Object.create(null))
-    let awaitedResult
-    try {
-      awaitedResult = await result
-    } catch {
-      // If the cached result rejects, there's nothing to abort.
-      return
-    }
-    await this.#abortMultipartUpload(this.#getFile(file), awaitedResult)
-  }
-
-  async #nonMultipartUpload(
-    file: UppyFile<M, B>,
-    chunk: Chunk,
-    signal?: AbortSignal,
-  ) {
-    const {
-      method = 'POST',
-      url,
-      fields,
-      headers,
-    } = await this.#getUploadParameters(this.#getFile(file), {
-      signal,
-    }).abortOn(signal)
-
-    let body
-    const data = chunk.getData()
-    if (method.toUpperCase() === 'POST') {
-      const formData = new FormData()
-      Object.entries(fields!).forEach(([key, value]) => formData.set(key, value))
-      formData.set('file', data)
-      body = formData
-    } else {
-      body = data
-    }
-
-    const { onProgress, onComplete } = chunk
-
-    const result = await this.#uploadPartBytes({
-      signature: { url, headers, method },
-      body,
-      size: data.size,
-      onProgress,
-      onComplete,
-      signal,
-    }).abortOn(signal)
-
-    return 'location' in result
-      ? result
-      : {
-          location: removeMetadataFromURL(url),
-          ...result,
-        }
-  }
-
-  async uploadFile(file: UppyFile<M, B>, chunks: Chunk[], signal: AbortSignal) {
-    throwIfAborted(signal)
-    if (chunks.length === 1 && !chunks[0].shouldUseMultipart) {
-      return this.#nonMultipartUpload(file, chunks[0], signal)
-    }
-    const { uploadId, key } = await this.getUploadId(file, signal)
-    throwIfAborted(signal)
-    try {
-      const parts = await Promise.all(
-        chunks.map((chunk, i) => this.uploadChunk(file, i + 1, chunk, signal)),
-      )
-      throwIfAborted(signal)
-      return await this.#sendCompletionRequest(
-        this.#getFile(file),
-        { key, uploadId, parts, signal },
-        signal,
-      ).abortOn(signal)
-    } catch (err) {
-      if (err?.cause !== pausingUploadReason && err?.name !== 'AbortError') {
-        // We purposefully don't wait for the promise and ignore its status,
-        // because we want the error `err` to bubble up ASAP to report it to the
-        // user. A failure to abort is not that big of a deal anyway.
-        this.abortFileUpload(file)
-      }
-      throw err
-    }
-  }
-
-  restoreUploadFile(file: UppyFile<M, B>, uploadIdAndKey: UploadResult) {
-    this.#cache.set(file.data, uploadIdAndKey)
-  }
-
-  async resumeUploadFile(
-    file: UppyFile<M, B>,
-    chunks: Chunk[],
-    signal: AbortSignal,
-  ) {
-    throwIfAborted(signal)
-    if (
-      chunks.length === 1 &&
-      chunks[0] != null &&
-      !chunks[0].shouldUseMultipart
-    ) {
-      return this.#nonMultipartUpload(file, chunks[0], signal)
-    }
-    const { uploadId, key } = await this.getUploadId(file, signal)
-    throwIfAborted(signal)
-    const alreadyUploadedParts = await this.#listParts(
-      this.#getFile(file),
-      { uploadId, key, signal },
-      signal,
-    ).abortOn(signal)
-    throwIfAborted(signal)
-    const parts = await Promise.all(
-      chunks.map((chunk, i) => {
-        const partNumber = i + 1
-        const alreadyUploadedInfo = alreadyUploadedParts.find(
-          ({ PartNumber }) => PartNumber === partNumber,
-        )
-        if (alreadyUploadedInfo == null) {
-          return this.uploadChunk(file, partNumber, chunk, signal)
-        }
-        // Already uploaded chunks are set to null. If we are restoring the upload, we need to mark it as already uploaded.
-        chunk?.setAsUploaded?.()
-        return { PartNumber: partNumber, ETag: alreadyUploadedInfo.ETag }
-      }),
-    )
-    throwIfAborted(signal)
-    return this.#sendCompletionRequest(
-      this.#getFile(file),
-      { key, uploadId, parts, signal },
-      signal,
-    ).abortOn(signal)
-  }
-
-  async uploadChunk(
-    file: UppyFile<M, B>,
-    partNumber: number,
-    chunk: Chunk,
-    signal: AbortSignal,
-  ) {
-    throwIfAborted(signal)
-    const { uploadId, key } = await this.getUploadId(file, signal)
-
-    const signatureRetryIterator = this.#retryDelays.values()
-    const chunkRetryIterator = this.#retryDelays.values()
-    const shouldRetrySignature = () => {
-      const next = signatureRetryIterator.next()
-      if (next == null || next.done) {
-        return null
-      }
-      return next.value
-    }
-
-    for (;;) {
-      throwIfAborted(signal)
-      const chunkData = chunk.getData()
-      const { onProgress, onComplete } = chunk
-      let signature
-
-      try {
-        signature = await this.#fetchSignature(this.#getFile(file), {
-          uploadId,
-          key,
-          partNumber,
-          body: chunkData,
-          signal,
-        }).abortOn(signal)
-      } catch (err) {
-        const timeout = shouldRetrySignature()
-        if (timeout == null || signal.aborted) {
-          throw err
-        }
-        await new Promise((resolve) => setTimeout(resolve, timeout))
-        // eslint-disable-next-line no-continue
-        continue
-      }
-
-      throwIfAborted(signal)
-      try {
-        return {
-          PartNumber: partNumber,
-          ...(await this.#uploadPartBytes({
-            signature,
-            body: chunkData,
-            size: chunkData.size,
-            onProgress,
-            onComplete,
-            signal,
-          }).abortOn(signal)),
-        }
-      } catch (err) {
-        if (!(await this.#shouldRetry(err, chunkRetryIterator))) throw err
-      }
-    }
-  }
 }
 
 type MaybePromise<T> = T | Promise<T>
@@ -569,16 +146,21 @@ type AWSS3WithCompanion = {
   getTemporarySecurityCredentials?: true
 }
 type AWSS3WithoutCompanion = {
-  companionUrl?: never
-  companionHeaders?: never
-  companionCookiesRule?: never
   getTemporarySecurityCredentials?: (options?: {
     signal?: AbortSignal
   }) => MaybePromise<AwsS3STSResponse>
+  uploadPartBytes?: (options: {
+    signature: AwsS3UploadParameters
+    body: FormData | Blob
+    size?: number
+    onProgress: any
+    onComplete: any
+    signal?: AbortSignal
+  }) => Promise<UploadPartBytesResult>
 }
 
 type AWSS3NonMultipartWithCompanionMandatory = {
-  getUploadParameters?: never
+  // No related options
 }
 
 type AWSS3NonMultipartWithoutCompanionMandatory<
@@ -592,11 +174,6 @@ type AWSS3NonMultipartWithoutCompanionMandatory<
 type AWSS3NonMultipartWithCompanion = AWSS3WithCompanion &
   AWSS3NonMultipartWithCompanionMandatory & {
     shouldUseMultipart: false
-    createMultipartUpload?: never
-    listParts?: never
-    signPart?: never
-    abortMultipartUpload?: never
-    completeMultipartUpload?: never
   }
 
 type AWSS3NonMultipartWithoutCompanion<
@@ -605,13 +182,36 @@ type AWSS3NonMultipartWithoutCompanion<
 > = AWSS3WithoutCompanion &
   AWSS3NonMultipartWithoutCompanionMandatory<M, B> & {
     shouldUseMultipart: false
-    createMultipartUpload?: never
-    listParts?: never
-    signPart?: never
-    abortMultipartUpload?: never
-    completeMultipartUpload?: never
   }
 
+type AWSS3MultipartWithoutCompanionMandatorySignPart<
+  M extends Meta,
+  B extends Body,
+> = {
+  signPart: (
+    file: UppyFile<M, B>,
+    opts: SignPartOptions,
+  ) => MaybePromise<AwsS3UploadParameters>
+}
+/** @deprecated Use signPart instead */
+type AWSS3MultipartWithoutCompanionMandatoryPrepareUploadParts<
+  M extends Meta,
+  B extends Body,
+> = {
+  /** @deprecated Use signPart instead */
+  prepareUploadParts: (
+    file: UppyFile<M, B>,
+    partData: {
+      uploadId: string
+      key: string
+      parts: [{ number: number; chunk: Blob }]
+      signal?: AbortSignal
+    },
+  ) => MaybePromise<{
+    presignedUrls: Record<number, string>
+    headers?: Record<number, Record<string, string>>
+  }>
+}
 type AWSS3MultipartWithoutCompanionMandatory<M extends Meta, B extends Body> = {
   getChunkSize?: (file: UppyFile<M, B>) => number
   createMultipartUpload: (file: UppyFile<M, B>) => MaybePromise<UploadResult>
@@ -633,26 +233,8 @@ type AWSS3MultipartWithoutCompanionMandatory<M extends Meta, B extends Body> = {
     },
   ) => MaybePromise<{ location?: string }>
 } & (
-  | {
-      signPart: (
-        file: UppyFile<M, B>,
-        opts: SignPartOptions,
-      ) => MaybePromise<AwsS3UploadParameters>
-    }
-  | {
-      /** @deprecated Use signPart instead */
-      prepareUploadParts: (
-        file: UppyFile<M, B>,
-        partData: {
-          uploadId: string
-          key: string
-          parts: [{ number: number; chunk: Blob }]
-        },
-      ) => MaybePromise<{
-        presignedUrls: Record<number, string>
-        headers?: Record<number, Record<string, string>>
-      }>
-    }
+  | AWSS3MultipartWithoutCompanionMandatorySignPart<M, B>
+  | AWSS3MultipartWithoutCompanionMandatoryPrepareUploadParts<M, B>
 )
 
 type AWSS3MultipartWithoutCompanion<
@@ -661,7 +243,6 @@ type AWSS3MultipartWithoutCompanion<
 > = AWSS3WithoutCompanion &
   AWSS3MultipartWithoutCompanionMandatory<M, B> & {
     shouldUseMultipart?: true
-    getUploadParameters?: never
   }
 
 type AWSS3MultipartWithCompanion<
@@ -670,7 +251,6 @@ type AWSS3MultipartWithCompanion<
 > = AWSS3WithCompanion &
   Partial<AWSS3MultipartWithoutCompanionMandatory<M, B>> & {
     shouldUseMultipart?: true
-    getUploadParameters?: never
   }
 
 type AWSS3MaybeMultipartWithCompanion<
@@ -731,18 +311,19 @@ export default class AwsS3Multipart<
   M extends Meta,
   B extends Body,
 > extends BasePlugin<
-  DefinePluginOpts<
-    AwsS3MultipartOptions<M, B>,
-    | keyof typeof defaultOptions
+  DefinePluginOpts<AwsS3MultipartOptions<M, B>, keyof typeof defaultOptions> &
     // We also have a few dynamic options defined below:
-    | 'createMultipartUpload'
-    | 'listParts'
-    | 'abortMultipartUpload'
-    | 'completeMultipartUpload'
-    // | 'uploadPartBytes'
-    | 'getUploadParameters'
-    // | 'signPart'
-  >,
+    Pick<
+      AWSS3MultipartWithoutCompanionMandatory<M, B>,
+      | 'getChunkSize'
+      | 'createMultipartUpload'
+      | 'listParts'
+      | 'abortMultipartUpload'
+      | 'completeMultipartUpload'
+    > &
+    Required<Pick<AWSS3WithoutCompanion, 'uploadPartBytes'>> &
+    AWSS3MultipartWithoutCompanionMandatorySignPart<M, B> &
+    AWSS3NonMultipartWithoutCompanionMandatory<M, B>,
   M,
   B
 > {
@@ -764,8 +345,15 @@ export default class AwsS3Multipart<
     super(uppy, {
       ...defaultOptions,
       uploadPartBytes: AwsS3Multipart.uploadPartBytes,
+      createMultipartUpload: null as any,
+      listParts: null as any,
+abortMultipartUpload: null as any,
+completeMultipartUpload: null as any,
+signPart: null as any,
+getUploadParameters: null as any,
       ...opts,
-    })
+    } )
+    // We need the `as any` here because of the dynamic default options.
     this.type = 'uploader'
     this.id = this.opts.id || 'AwsS3Multipart'
     // @ts-expect-error TODO: remove unused
@@ -778,21 +366,32 @@ export default class AwsS3Multipart<
       listParts: this.listParts.bind(this),
       abortMultipartUpload: this.abortMultipartUpload.bind(this),
       completeMultipartUpload: this.completeMultipartUpload.bind(this),
-      signPart: opts?.getTemporarySecurityCredentials
-        ? this.createSignedURL.bind(this)
+      signPart:
+        opts?.getTemporarySecurityCredentials ?
+          this.createSignedURL.bind(this)
         : this.signPart.bind(this),
-      getUploadParameters: opts?.getTemporarySecurityCredentials
-        ? this.createSignedURL.bind(this)
+      getUploadParameters:
+        opts?.getTemporarySecurityCredentials ?
+          this.createSignedURL.bind(this)
         : this.getUploadParameters.bind(this),
     } satisfies Partial<AwsS3MultipartOptions<M, B>>
 
     this.opts = { ...dynamicDefaultOptions, ...this.opts }
-    if (opts?.prepareUploadParts != null && opts.signPart == null) {
+    if (
+      (opts as AWSS3MultipartWithoutCompanionMandatoryPrepareUploadParts<M, B>)
+        ?.prepareUploadParts != null &&
+      (opts as AWSS3MultipartWithoutCompanionMandatorySignPart<M,B>).signPart == null
+    ) {
       this.opts.signPart = async (
         file: UppyFile<M, B>,
         { uploadId, key, partNumber, body, signal }: SignPartOptions,
       ) => {
-        const { presignedUrls, headers } = await opts.prepareUploadParts(file, {
+        const { presignedUrls, headers } = await (
+          opts as AWSS3MultipartWithoutCompanionMandatoryPrepareUploadParts<
+            M,
+            B
+          >
+        ).prepareUploadParts(file, {
           uploadId,
           key,
           parts: [{ number: partNumber, chunk: body }],
@@ -842,7 +441,7 @@ export default class AwsS3Multipart<
    * Set `opts.abort` to tell S3 that the multipart upload is cancelled and must be removed.
    * This should be done when the user cancels the upload, not when the upload is completed or errored.
    */
-  resetUploaderReferences(fileID, opts?: { abort: boolean }) {
+  resetUploaderReferences(fileID: string, opts?: { abort: boolean }): void {
     if (this.uploaders[fileID]) {
       this.uploaders[fileID]!.abort({ really: opts?.abort || false })
       this.uploaders[fileID] = null
@@ -1076,11 +675,8 @@ export default class AwsS3Multipart<
     size?: number
     onProgress: any
     onComplete: any
-    signal: AbortSignal
-  }): Promise<{
-    ETag: string
-    location?: string
-  }> {
+    signal?: AbortSignal
+  }): Promise<UploadPartBytesResult> {
     throwIfAborted(signal)
 
     if (url == null) {
@@ -1104,9 +700,9 @@ export default class AwsS3Multipart<
         xhr.abort()
       }
       function cleanup() {
-        signal.removeEventListener('abort', onabort)
+        signal?.removeEventListener('abort', onabort)
       }
-      signal.addEventListener('abort', onabort)
+      signal?.addEventListener('abort', onabort)
 
       xhr.upload.addEventListener('progress', (ev) => {
         onProgress(ev)
@@ -1250,9 +846,8 @@ export default class AwsS3Multipart<
         companionComm: this.#companionCommunicationQueue,
 
         log: (...args: Parameters<Uppy<M, B>['log']>) => this.uppy.log(...args),
-        getChunkSize: this.opts.getChunkSize
-          ? this.opts.getChunkSize.bind(this)
-          : null,
+        getChunkSize:
+          this.opts.getChunkSize ? this.opts.getChunkSize.bind(this) : null,
 
         onProgress,
         onError,
@@ -1397,3 +992,8 @@ export default class AwsS3Multipart<
     this.uppy.off('cancel-all', this.#resetResumableCapability)
   }
 }
+
+export type uploadPartBytes = (typeof AwsS3Multipart<
+  any,
+  any
+>)['uploadPartBytes']

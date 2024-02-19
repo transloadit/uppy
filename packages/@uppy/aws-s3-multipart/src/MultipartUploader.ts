@@ -1,5 +1,6 @@
 import { AbortController } from '@uppy/utils/lib/AbortController'
 import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
+import type { HTTPCommunicationQueue } from './HTTPCommunicationQueue'
 
 const MB = 1024 * 1024
 
@@ -7,9 +8,14 @@ interface MultipartUploaderOptions<M extends Meta, B extends Body> {
   getChunkSize?: (file: { size: number }) => number
   onProgress?: (ev: ProgressEvent<XMLHttpRequestEventTarget>) => void
   onPartComplete?: (part: { PartNumber: number; ETag: string }) => void
-  onSuccess?: (result: B) => void
+  shouldUseMultipart?: boolean | ((file: UppyFile<M, B>) => boolean)
+  onSuccess?: (result: {location: string}) => void
   onError?: (err: unknown) => void
+  companionComm: HTTPCommunicationQueue<M,B>
   file: UppyFile<M, B>
+
+  uploadId: string
+  key: string
 }
 
 const defaultOptions = {
@@ -22,7 +28,7 @@ const defaultOptions = {
   onError(err: unknown) {
     throw err
   },
-} satisfies MultipartUploaderOptions<any, any>
+} satisfies Partial<MultipartUploaderOptions<any, any>>
 
 export interface Chunk {
   getData: () => Blob
@@ -34,9 +40,11 @@ export interface Chunk {
 
 function ensureInt<T>(value: T): T extends number | string ? number : never {
   if (typeof value === 'string') {
+    // @ts-expect-error TS is not able to recognize it's fine.
     return parseInt(value, 10)
   }
   if (typeof value === 'number') {
+    // @ts-expect-error TS is not able to recognize it's fine.
     return value
   }
   throw new TypeError('Expected a number')
@@ -71,10 +79,9 @@ class MultipartUploader<M extends Meta, B extends Body> {
 
   #onError: (err: unknown) => void
 
-  #onSuccess: () => void
+  #onSuccess: (result: {location: string}) => void
 
-  /** @type {import('../types/index').AwsS3MultipartOptions["shouldUseMultipart"]} */
-  #shouldUseMultipart
+  #shouldUseMultipart: MultipartUploaderOptions<M, B>['shouldUseMultipart']
 
   #isRestoring: boolean
 
@@ -102,7 +109,7 @@ class MultipartUploader<M extends Meta, B extends Body> {
     // When we are restoring an upload, we already have an UploadId and a Key. Otherwise
     // we need to call `createMultipartUpload` to get an `uploadId` and a `key`.
     // Non-multipart uploads are not restorable.
-    this.#isRestoring = options.uploadId && options.key
+    this.#isRestoring = (options.uploadId && options.key) as any as boolean
 
     this.#initChunks()
   }
@@ -238,7 +245,7 @@ class MultipartUploader<M extends Meta, B extends Body> {
     this.#abortController = new AbortController()
   }
 
-  abort(opts: { really?: boolean } = undefined): void {
+  abort(opts?: { really?: boolean }): void {
     if (opts?.really) this.#abortUpload()
     else this.pause()
   }

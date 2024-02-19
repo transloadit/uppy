@@ -1,0 +1,17 @@
+export function throwIfAborted(signal?: AbortSignal | null): void {
+  if (signal?.aborted) {
+    throw createAbortError('The operation was aborted', {
+      cause: signal.reason,
+    })
+  }
+}
+
+export type UploadResult = { key: string; uploadId: string }
+export type UploadResultWithSignal = UploadResult & { signal?: AbortSignal }
+export type MultipartUploadResult = UploadResult & { parts: AwsS3Part[] }
+export type MultipartUploadResultWithSignal = MultipartUploadResult & { signal?: AbortSignal }
+
+export type UploadPartBytesResult = {
+    ETag: string
+    location?: string
+  }
