@@ -312,7 +312,7 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
         if (typeof opts.onProgress === 'function') {
           opts.onProgress(bytesUploaded, bytesTotal)
         }
-        this.uppy.emit('upload-progress', file, {
+        this.uppy.emit('upload-progress', this.uppy.getFile(file.id), {
           // TODO: remove `uploader` in next major
           // @ts-expect-error untyped
           uploader: this,
@@ -331,7 +331,7 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
         this.resetUploaderReferences(file.id)
         queuedRequest.done()
 
-        this.uppy.emit('upload-success', file, uploadResp)
+        this.uppy.emit('upload-success', this.uppy.getFile(file.id), uploadResp)
 
         if (upload.url) {
           // @ts-expect-error not typed in tus-js-client
