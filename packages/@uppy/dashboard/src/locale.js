@@ -23,6 +23,7 @@ export default {
     removeFile: 'Remove file',
     // Used as the screen reader label for buttons that open the metadata editor panel for a file.
     editFile: 'Edit file',
+    editImage: 'Edit image',
     // Shown in the panel header for the metadata editor. Rendered as “Editing image.png”.
     editing: 'Editing %{file}',
     // Shown on the main upload screen when an upload error occurs

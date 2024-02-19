@@ -60,6 +60,7 @@ nb_NO.strings = {
   dropPasteImportFiles: 'Dra filer hit %{browseFiles} eller importer fra:',
   dropPasteImportFolders: 'Dra filer hit %{browseFolders} eller importer fra:',
   editFile: 'Rediger fil',
+  editImage: 'Rediger bilde',
   editing: 'Redigerer %{file}',
   emptyFolderAdded: 'Ingen filer ble lagt til fra tom mappe',
   encoding: 'Koder...',

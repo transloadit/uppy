@@ -51,6 +51,7 @@ ko_KR.strings = {
   dropPasteImportFolders:
     '여기에 파일을 드래그 앤 드롭 하거나, %{browseFolders}, 이 경로에서 입수 :',
   editFile: '파일 수정',
+  editImage: '이미지 수정',
   editing: '%{file} 수정 중',
   emptyFolderAdded: '빈 폴더입니다.',
   encoding: '인코딩 중...',

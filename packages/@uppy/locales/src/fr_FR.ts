@@ -63,6 +63,7 @@ fr_FR.strings = {
   dropPasteImportFolders:
     'Déposer les fichiers ici, coller, %{browse} ou importer de',
   editFile: 'Modifier le fichier',
+  editImage: 'Modifier l’image',
   editFileWithFilename: 'Modifier le fichier %{file}',
   editing: 'Modification en cours de %{file}',
   emptyFolderAdded: 'Aucun fichier n’a été ajouté depuis un dossier vide',

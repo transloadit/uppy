@@ -48,6 +48,7 @@ it_IT.strings = {
   dropPasteImportFolders:
     'Trascina i file qui, incolla, %{browse} o importa da',
   editFile: 'Modifica file',
+  editImage: 'Modifica immagine',
   editing: 'Modifica %{file}',
   emptyFolderAdded: 'Nessun file aggiunto dalla cartella vuota',
   encoding: 'Encoding...',
