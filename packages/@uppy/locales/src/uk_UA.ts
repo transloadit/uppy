@@ -76,6 +76,7 @@ uk_UA.strings = {
   dropPasteImportFolders:
     'Перетягніть файли, вставте, %{browse} або імпортуйте з:',
   editFile: 'Редагувати файл',
+  editImage: 'Редагувати зображення',
   editFileWithFilename: 'Редагувати файл %{file}',
   editing: 'Редагується %{file}',
   emptyFolderAdded: 'Файли не додано — тека порожня',

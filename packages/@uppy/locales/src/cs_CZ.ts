@@ -55,6 +55,7 @@ cs_CZ.strings = {
   dropPasteImportFolders:
     'Přetáhněte soubory sem, vložte je, %{browse} nebo je importujte',
   editFile: 'Upravit soubor',
+  editImage: 'Upravit obrázek',
   editing: 'Upravujete %{file}',
   emptyFolderAdded: 'Nebyly přidány žádné soubory, adresář je prázdný.',
   encoding: 'Převádění...',

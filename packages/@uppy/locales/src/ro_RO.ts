@@ -58,6 +58,7 @@ ro_RO.strings = {
   dropPasteImportFolders:
     'Trage fișierele aici, copy/paste, %{browse} sau importă din:',
   editFile: 'Editează fișier',
+  editImage: 'Editează imagine',
   editing: 'Se editează %{file}',
   emptyFolderAdded: 'Nu s-au adăugat fișiere, directorul este gol',
   encoding: 'Encodare...',

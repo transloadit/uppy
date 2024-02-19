@@ -114,7 +114,10 @@ export default function FileCard (props) {
                 openFileEditor(file)
               }}
             >
-              {i18n('editFile')}
+              {/* At the moment we only have one file editor - image editor.
+              If we get editors for other file formats (e.g. pdfs),
+              we can conditionally display i18n('editFile')/i18n('editImage'). */}
+              {i18n('editImage')}
             </button>
             )}
         </div>

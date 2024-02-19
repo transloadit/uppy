@@ -53,6 +53,7 @@ is_IS.strings = {
   dropPasteImportFolders:
     'Slepptu skrám hérna, límdu (paste), %{browse} eða bættu við frá',
   editFile: 'Breyta skrá',
+  editImage: 'Breyta mynd',
   editing: 'Breyti %{file}',
   emptyFolderAdded: 'Engum skrám var bætt við frá tómri möppu',
   encoding: 'Dulkóða...',

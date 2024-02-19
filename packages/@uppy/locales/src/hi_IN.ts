@@ -63,6 +63,7 @@ hi_IN.strings = {
   dropPasteImportFolders:
     'यहां फ़ाइलें ड्रॉप करें, %{browseFolders} या इससे आयात करें:',
   editFile: 'फ़ाइल संपादित करें',
+  editImage: 'छवि संपादित करें',
   editing: 'संपादन %{file}',
   emptyFolderAdded: 'खाली फ़ोल्डर से कोई फ़ाइलें नहीं जोड़ी गईं',
   encoding: 'एन्कोडिंग...',
