@@ -52,7 +52,7 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
       plugin.addToQueue = vi.fn()
       plugin.install()
 
-      expect(core.on).toHaveBeenCalledTimes(4)
+      expect(core.on).toHaveBeenCalledTimes(5)
       expect(core.on).toHaveBeenCalledWith('file-added', plugin.onFileAdded)
     })
   })
@@ -68,11 +68,11 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
       plugin.addToQueue = vi.fn()
       plugin.install()
 
-      expect(core.on).toHaveBeenCalledTimes(4)
+      expect(core.on).toHaveBeenCalledTimes(5)
 
       plugin.uninstall()
 
-      expect(core.off).toHaveBeenCalledTimes(4)
+      expect(core.off).toHaveBeenCalledTimes(5)
       expect(core.off).toHaveBeenCalledWith('file-added', plugin.onFileAdded)
     })
   })
