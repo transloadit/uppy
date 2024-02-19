@@ -481,15 +481,23 @@ export default class RequestClient<M extends Meta, B extends Body> {
 
                         switch (action) {
                           case 'progress': {
-                            emitSocketProgress(this, payload, file)
+                            emitSocketProgress(
+                              this,
+                              payload,
+                              this.uppy.getFile(file.id),
+                            )
                             break
                           }
                           case 'success': {
-                            // @ts-expect-error event expects a lot more data.
-                            // TODO: add missing data?
-                            this.uppy.emit('upload-success', file, {
-                              uploadURL: payload.url,
-                            })
+                            this.uppy.emit(
+                              'upload-success',
+                              this.uppy.getFile(file.id),
+                              // @ts-expect-error event expects a lot more data.
+                              // TODO: add missing data?
+                              {
+                                uploadURL: payload.url,
+                              },
+                            )
                             socketAbortController?.abort?.()
                             resolve()
                             break
