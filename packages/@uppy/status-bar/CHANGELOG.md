@@ -1,5 +1,13 @@
 # @uppy/status-bar
 
+## 3.2.6
+
+Released: 2024-02-19
+Included in: Uppy v3.22.0
+
+- @uppy/status-bar: fix `statusbaroptions` type (antoine du hamel / #4883)
+- @uppy/status-bar: refactor to typescript (antoine du hamel / #4839)
+
 ## 3.2.4
 
 Released: 2023-08-15

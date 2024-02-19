@@ -1,5 +1,14 @@
 # @uppy/xhr-upload
 
+## 3.6.1
+
+Released: 2024-02-19
+Included in: Uppy v3.22.0
+
+-  @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/companion-client,@uppy/tus,@uppy/xhr-upload: update `uppyfile` objects before emitting events (antoine du hamel / #4928)
+- @uppy/xhr-upload: migrate to ts (merlijn vos / #4892)
+- @uppy/xhr-upload: show remove button (merlijn vos / #4851)
+
 ## 3.4.0
 
 Released: 2023-09-05
