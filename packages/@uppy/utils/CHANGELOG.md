@@ -1,5 +1,13 @@
 # @uppy/utils
 
+## 5.7.1
+
+Released: 2024-02-19
+Included in: Uppy v3.22.0
+
+- @uppy/utils: improve types for `finddomelement` (antoine du hamel / #4873)
+- @uppy/utils: improve `preprocess` and `postprocess` types (antoine du hamel / #4841)
+
 ## 5.7.0
 
 Released: 2023-12-12

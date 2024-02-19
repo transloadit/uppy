@@ -1,5 +1,14 @@
 # @uppy/dashboard
 
+## 3.7.2
+
+Released: 2024-02-19
+Included in: Uppy v3.22.0
+
+- @uppy/dashboard: autoopenfileeditor - rename "edit file" to "edit image" (evgenia karunus / #4925)
+- @uppy/dashboard: Uncouple native camera and video buttons from the `disableLocalFiles` option (jake mcallister / #4894)
+- @uppy/dashboard: fix `typeerror` when `file.remote` is nullish (antoine du hamel / #4825)
+
 ## 3.7.1
 
 Released: 2023-11-12

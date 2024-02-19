@@ -1,5 +1,13 @@
 # @uppy/compressor
 
+## 1.1.0
+
+Released: 2024-02-19
+Included in: Uppy v3.22.0
+
+- @uppy/compressor: upgrade compressorjs (merlijn vos / #4924)
+- @uppy/compressor: migrate to ts (mikael finstad / #4907)
+
 ## 1.0.3
 
 Released: 2023-09-18
