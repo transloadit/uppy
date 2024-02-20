@@ -65,9 +65,7 @@ class HttpError extends Error {
   }
 }
 
-async function handleJSONResponse<ResJson = Record<string, unknown>>(
-  res: Response,
-): Promise<ResJson> {
+async function handleJSONResponse<ResJson>(res: Response): Promise<ResJson> {
   if (res.status === authErrorStatusCode) {
     throw new AuthError()
   }
@@ -164,7 +162,7 @@ export default class RequestClient<M extends Meta, B extends Body> {
     return `${this.hostname}/${url}`
   }
 
-  protected async request<ResBody = Record<string, unknown>>({
+  protected async request<ResBody>({
     path,
     method = 'GET',
     data,
@@ -204,7 +202,7 @@ export default class RequestClient<M extends Meta, B extends Body> {
     }
   }
 
-  async get<PostBody = Record<string, unknown>>(
+  async get<PostBody>(
     path: string,
     options?: _RequestOptions,
   ): Promise<PostBody> {
@@ -214,7 +212,7 @@ export default class RequestClient<M extends Meta, B extends Body> {
     return this.request({ ...options, path })
   }
 
-  async post<PostBody = Record<string, unknown>>(
+  async post<PostBody>(
     path: string,
     data: Record<string, unknown>,
     options?: _RequestOptions,
@@ -225,7 +223,7 @@ export default class RequestClient<M extends Meta, B extends Body> {
     return this.request<PostBody>({ ...options, path, method: 'POST', data })
   }
 
-  async delete<T = unknown>(
+  async delete<T>(
     path: string,
     data?: Record<string, unknown>,
     options?: _RequestOptions,
