@@ -305,7 +305,7 @@ export default class Provider<
     return `${this.hostname}/${this.id}/get/${id}`
   }
 
-  protected async request<ResBody extends Record<string, unknown>>(
+  protected async request<ResBody>(
     ...args: Parameters<RequestClient<M, B>['request']>
   ): Promise<ResBody> {
     await this.#refreshingTokenPromise
