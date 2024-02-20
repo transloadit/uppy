@@ -7612,10 +7612,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@transloadit/prettier-bytes@npm:^0.2.0":
-  version: 0.2.0
-  resolution: "@transloadit/prettier-bytes@npm:0.2.0"
-  checksum: 0faaeffc879754e18103bd576510d4349ec5253c2ebe846f7f8e52f2e9bc4c6877a9197adf4d2f196fa9b442a64cd43c5a742b5b51268e7f56bb3451299af1ce
+"@transloadit/prettier-bytes@npm:^0.3.0":
+  version: 0.3.1
+  resolution: "@transloadit/prettier-bytes@npm:0.3.1"
+  checksum: 2ab7dc9cc00bafa47878735c3d613bfdf507af5649251b08b95296a83454c3fb5ccef2de8b74d266078ef8157bc9da9644e1400c9fe5e12b2353b102f48891a4
   languageName: node
   linkType: hard
 
@@ -9240,7 +9240,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/compressor@workspace:packages/@uppy/compressor"
   dependencies:
-    "@transloadit/prettier-bytes": ^0.2.0
+    "@transloadit/prettier-bytes": ^0.3.0
     "@uppy/utils": "workspace:^"
     compressorjs: ^1.2.1
     preact: ^10.5.13
@@ -9255,7 +9255,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/core@workspace:packages/@uppy/core"
   dependencies:
-    "@transloadit/prettier-bytes": ^0.2.0
+    "@transloadit/prettier-bytes": ^0.3.0
     "@uppy/store-default": "workspace:^"
     "@uppy/utils": "workspace:^"
     lodash: ^4.17.21
@@ -9271,7 +9271,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/dashboard@workspace:packages/@uppy/dashboard"
   dependencies:
-    "@transloadit/prettier-bytes": ^0.2.0
+    "@transloadit/prettier-bytes": ^0.3.0
     "@uppy/google-drive": "workspace:^"
     "@uppy/informer": "workspace:^"
     "@uppy/provider-views": "workspace:^"
@@ -9559,7 +9559,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/status-bar@workspace:packages/@uppy/status-bar"
   dependencies:
-    "@transloadit/prettier-bytes": ^0.2.0
+    "@transloadit/prettier-bytes": ^0.3.0
     "@uppy/utils": "workspace:^"
     classnames: ^2.2.6
     preact: ^10.5.13
