@@ -28,15 +28,16 @@ export type Opts = {
   companionKeysParams?: Record<string, string>
 }
 
-export type RequestOptions =
+export type RequestOptions = {
+  method?: string
+  data?: Record<string, unknown>
+  skipPostResponse?: boolean
+  signal?: AbortSignal
+  qs?: Record<string, string>
+}
+type _RequestOptions =
   | boolean // TODO: remove this on the next major
-  | {
-      method?: string
-      data?: Record<string, unknown>
-      skipPostResponse?: boolean
-      signal?: AbortSignal
-      qs?: Record<string, string>
-    }
+  | RequestOptions
 
 // Remove the trailing slash so we can always safely append /xyz.
 function stripSlash(url: string) {
@@ -64,9 +65,7 @@ class HttpError extends Error {
   }
 }
 
-async function handleJSONResponse<ResJson extends Record<string, unknown>>(
-  res: Response,
-): Promise<ResJson> {
+async function handleJSONResponse<ResJson>(res: Response): Promise<ResJson> {
   if (res.status === authErrorStatusCode) {
     throw new AuthError()
   }
@@ -163,7 +162,7 @@ export default class RequestClient<M extends Meta, B extends Body> {
     return `${this.hostname}/${url}`
   }
 
-  protected async request<ResBody extends Record<string, unknown>>({
+  protected async request<ResBody>({
     path,
     method = 'GET',
     data,
@@ -203,9 +202,9 @@ export default class RequestClient<M extends Meta, B extends Body> {
     }
   }
 
-  async get<PostBody extends Record<string, unknown>>(
+  async get<PostBody>(
     path: string,
-    options?: RequestOptions,
+    options?: _RequestOptions,
   ): Promise<PostBody> {
     // TODO: remove boolean support for options that was added for backward compatibility.
     // eslint-disable-next-line no-param-reassign
@@ -213,10 +212,10 @@ export default class RequestClient<M extends Meta, B extends Body> {
     return this.request({ ...options, path })
   }
 
-  async post<PostBody extends Record<string, unknown>>(
+  async post<PostBody>(
     path: string,
     data: Record<string, unknown>,
-    options?: RequestOptions,
+    options?: _RequestOptions,
   ): Promise<PostBody> {
     // TODO: remove boolean support for options that was added for backward compatibility.
     // eslint-disable-next-line no-param-reassign
@@ -224,11 +223,11 @@ export default class RequestClient<M extends Meta, B extends Body> {
     return this.request<PostBody>({ ...options, path, method: 'POST', data })
   }
 
-  async delete(
+  async delete<T>(
     path: string,
-    data: Record<string, unknown>,
-    options?: RequestOptions,
-  ): Promise<unknown> {
+    data?: Record<string, unknown>,
+    options?: _RequestOptions,
+  ): Promise<T> {
     // TODO: remove boolean support for options that was added for backward compatibility.
     // eslint-disable-next-line no-param-reassign
     if (typeof options === 'boolean') options = { skipPostResponse: options }
@@ -350,7 +349,7 @@ export default class RequestClient<M extends Meta, B extends Body> {
       throw new Error('Cannot connect to an undefined URL')
     }
 
-    const res = await this.post(
+    const res = await this.post<{ token: string }>(
       file.remote.url,
       {
         ...file.remote.body,
@@ -359,7 +358,7 @@ export default class RequestClient<M extends Meta, B extends Body> {
       { signal },
     )
 
-    return res.token as string
+    return res.token
   }
 
   /**
