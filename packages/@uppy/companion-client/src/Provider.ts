@@ -6,9 +6,7 @@ import type {
   CompanionClientProvider,
 } from '@uppy/utils/lib/CompanionClientProvider'
 import type { UnknownProviderPlugin } from '@uppy/core/lib/Uppy.ts'
-import RequestClient, {
-  authErrorStatusCode,
-} from './RequestClient.ts'
+import RequestClient, { authErrorStatusCode } from './RequestClient.ts'
 import * as tokenStorage from './tokenStorage.ts'
 
 // TODO: remove deprecated options in next major release
@@ -382,9 +380,7 @@ export default class Provider<M extends Meta, B extends Body>
     return this.get<ResBody>(`${this.id}/list/${directory || ''}`, options)
   }
 
-  async logout<ResBody>(
-    options?: RequestOptions,
-  ): Promise<ResBody> {
+  async logout<ResBody>(options?: RequestOptions): Promise<ResBody> {
     const response = await this.get<ResBody>(`${this.id}/logout`, options)
     await this.removeAuthToken()
     return response
