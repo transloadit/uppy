@@ -17,8 +17,7 @@ vi_VN.strings = {
   },
   addedNumFiles: 'Đã thêm %{numFiles} tệp',
   addingMoreFiles: 'Đang thêm tệp',
-  additionalRestrictionsFailed:
-    '%{count} ràng buộc bổ sung không được đáp ứng',
+  additionalRestrictionsFailed: '%{count} ràng buộc bổ sung không được đáp ứng',
   addMore: 'Thêm',
   addMoreFiles: 'Thêm tệp',
   allFilesFromFolderNamed: 'Tất cả tệp từ thư mục %{name}',
@@ -33,8 +32,7 @@ vi_VN.strings = {
   aspectRatioSquare: 'Cắt ảnh vuông',
   authAborted: 'Xác thực đã bị hủy',
   authenticateWith: 'Kết nối với %{pluginName}',
-  authenticateWithTitle:
-    'Vui lòng xác thực với %{pluginName} để chọn tệp',
+  authenticateWithTitle: 'Vui lòng xác thực với %{pluginName} để chọn tệp',
   back: 'Quay lại',
   browse: 'Duyệt',
   browseFiles: 'Duyệt tệp',
@@ -68,7 +66,8 @@ vi_VN.strings = {
   dropPasteImportBoth:
     'Kéo và thả tệp vào đây, %{browseFiles}, %{browseFolders} hoặc nhập từ:',
   dropPasteImportFiles: 'Kéo và thả tệp vào đây, %{browseFiles} hoặc nhập từ:',
-  dropPasteImportFolders: 'Kéo và thả tệp vào đây, %{browseFolders} hoặc nhập từ:',
+  dropPasteImportFolders:
+    'Kéo và thả tệp vào đây, %{browseFolders} hoặc nhập từ:',
   editFile: 'Chỉnh sửa tệp',
   editImage: 'Chỉnh sửa ảnh',
   editFileWithFilename: 'Chỉnh sửa tệp %{file}',
@@ -106,7 +105,8 @@ vi_VN.strings = {
   logOut: 'Đăng xuất',
   micDisabled: 'Người dùng đã từ chối truy cập microphone',
   missingRequiredMetaField: 'Thiếu trường meta bắt buộc',
-  missingRequiredMetaFieldOnFile: 'Thiếu trường meta bắt buộc trong %{fileName}',
+  missingRequiredMetaFieldOnFile:
+    'Thiếu trường meta bắt buộc trong %{fileName}',
   missingRequiredMetaFields: {
     '0': 'Thiếu trường meta bắt buộc: %{fields}.',
     '1': 'Thiếu trường meta bắt buộc: %{fields}.',
@@ -118,8 +118,7 @@ vi_VN.strings = {
   noCameraDescription:
     'Để chụp ảnh hoặc quay video, vui lòng kết nối thiết bị máy ảnh',
   noCameraTitle: 'Máy ảnh không khả dụng',
-  noDuplicates:
-    "Không thể thêm tệp trùng lặp '%{fileName}', nó đã tồn tại",
+  noDuplicates: "Không thể thêm tệp trùng lặp '%{fileName}', nó đã tồn tại",
   noFilesFound: 'Bạn không có tệp hoặc thư mục nào ở đây',
   noInternetConnection: 'Không có kết nối Internet',
   noMoreFilesAllowed: 'Không thể thêm tệp nữa',
@@ -147,7 +146,8 @@ vi_VN.strings = {
   recordingStoppedMaxSize:
     'Ghi âm đã dừng vì kích thước tệp sắp vượt quá giới hạn',
   recordVideoBtn: 'Quay video',
-  recoveredAllFiles: 'Chúng tôi đã khôi phục tất cả các tệp. Bạn có thể tiếp tục tải lên.',
+  recoveredAllFiles:
+    'Chúng tôi đã khôi phục tất cả các tệp. Bạn có thể tiếp tục tải lên.',
   recoveredXFiles: {
     '0': 'Chúng tôi không thể khôi phục hoàn toàn 1 tệp. Vui lòng chọn lại nó và tiếp tục tải lên.',
     '1': 'Chúng tôi không thể khôi phục hoàn toàn %{smart_count} tệp. Vui lòng chọn lại chúng và tiếp tục tải lên.',
