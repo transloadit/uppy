@@ -1,7 +1,7 @@
 {
   "name": "@uppy/image-editor",
   "description": "Image editor and cropping UI",
-  "version": "2.4.1",
+  "version": "2.4.2",
   "license": "MIT",
   "main": "lib/index.js",
   "style": "dist/style.min.css",
