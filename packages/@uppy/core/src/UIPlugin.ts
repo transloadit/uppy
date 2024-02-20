@@ -33,6 +33,7 @@ function debounce<T extends (...args: any[]) => any>(
 }
 
 export interface UIPluginOptions extends PluginOpts {
+  target?: null | string | Element | typeof BasePlugin
   replaceTargetContent?: boolean
   direction?: 'ltr' | 'rtl'
 }
@@ -91,7 +92,8 @@ class UIPlugin<
   ): HTMLElement {
     const callerPluginName = plugin.id
 
-    const targetElement = findDOMElement(target)
+    // eslint-disable-next-line no-use-before-define
+    const targetElement = findDOMElement<PluginTarget<Me, Bo>>(target)
 
     if (targetElement) {
       this.isTargetDOMEl = true
