@@ -1,7 +1,7 @@
 {
   "name": "@uppy/aws-s3-multipart",
   "description": "Upload to Amazon S3 with Uppy and S3's Multipart upload strategy",
-  "version": "3.10.1",
+  "version": "3.10.2",
   "license": "MIT",
   "main": "lib/index.js",
   "type": "module",

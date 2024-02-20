@@ -1,5 +1,12 @@
 # @uppy/locales
 
+## 3.5.2
+
+Released: 2024-02-20
+Included in: Uppy v3.22.1
+
+- @uppy/locales: update vi_VN translation (David Nguyen / #4930)
+
 ## 3.5.1
 
 Released: 2024-02-19

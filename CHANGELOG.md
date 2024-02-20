@@ -12,6 +12,31 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 3.22.1
+
+Released: 2024-02-20
+
+| Package                   | Version | Package                   | Version |
+| ------------------------- | ------- | ------------------------- | ------- |
+| @uppy/audio               |   1.1.6 | @uppy/remote-sources      |   1.1.2 |
+| @uppy/aws-s3              |   3.6.2 | @uppy/status-bar          |   3.2.7 |
+| @uppy/aws-s3-multipart    |  3.10.2 | @uppy/store-default       |   3.2.2 |
+| @uppy/companion           |  4.12.2 | @uppy/store-redux         |   3.0.7 |
+| @uppy/companion-client    |   3.7.2 | @uppy/svelte              |   3.1.3 |
+| @uppy/compressor          |   1.1.1 | @uppy/thumbnail-generator |   3.0.8 |
+| @uppy/core                |   3.9.1 | @uppy/transloadit         |   3.5.1 |
+| @uppy/dashboard           |   3.7.3 | @uppy/tus                 |   3.5.2 |
+| @uppy/drop-target         |   2.0.4 | @uppy/utils               |   5.7.2 |
+| @uppy/form                |   3.1.1 | @uppy/vue                 |   1.1.2 |
+| @uppy/golden-retriever    |   3.1.3 | @uppy/webcam              |   3.3.6 |
+| @uppy/image-editor        |   2.4.2 | @uppy/xhr-upload          |   3.6.2 |
+| @uppy/locales             |   3.5.2 | uppy                      |  3.22.1 |
+| @uppy/provider-views      |   3.9.1 |                           |         |
+
+- @uppy/locales: update vi_VN translation (David Nguyen / #4930)
+- @uppy/compressor,@uppy/core,@uppy/dashboard,@uppy/status-bar: bump `@transloadit/prettier-bytes` (Antoine du Hamel / #4933)
+
+
 ## 3.22.0
 
 Released: 2024-02-19

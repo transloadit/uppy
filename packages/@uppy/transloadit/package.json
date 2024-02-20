@@ -1,7 +1,7 @@
 {
   "name": "@uppy/transloadit",
   "description": "The Transloadit plugin can be used to upload files to Transloadit for all kinds of processing, such as transcoding video, resizing images, zipping/unzipping, and more",
-  "version": "3.5.0",
+  "version": "3.5.1",
   "license": "MIT",
   "main": "lib/index.js",
   "types": "types/index.d.ts",
