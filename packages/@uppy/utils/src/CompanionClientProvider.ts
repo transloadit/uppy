@@ -1,12 +1,11 @@
-export type RequestOptions =
-  {
-      method?: string
-      data?: Record<string, unknown>
-      skipPostResponse?: boolean
-      signal?: AbortSignal
-      authFormData?: unknown
-      qs?: Record<string, string>
-    }
+export type RequestOptions = {
+  method?: string
+  data?: Record<string, unknown>
+  skipPostResponse?: boolean
+  signal?: AbortSignal
+  authFormData?: unknown
+  qs?: Record<string, string>
+}
 
 /**
  * CompanionClientProvider is subset of the types of the `Provider`
@@ -23,9 +22,7 @@ export interface CompanionClientProvider {
   name: string
   provider: string
   login(options?: RequestOptions): Promise<void>
-  logout<ResBody>(
-    options?: RequestOptions,
-  ): Promise<ResBody>
+  logout<ResBody>(options?: RequestOptions): Promise<ResBody>
   list<ResBody>(
     directory: string | undefined,
     options: RequestOptions,
@@ -34,8 +31,5 @@ export interface CompanionClientProvider {
 export interface CompanionClientSearchProvider {
   name: string
   provider: string
-  search<ResBody>(
-    text: string,
-    queries?: string,
-  ): Promise<ResBody>
+  search<ResBody>(text: string, queries?: string): Promise<ResBody>
 }
