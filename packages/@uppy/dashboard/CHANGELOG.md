@@ -1,5 +1,12 @@
 # @uppy/dashboard
 
+## 3.7.3
+
+Released: 2024-02-20
+Included in: Uppy v3.22.1
+
+- @uppy/compressor,@uppy/core,@uppy/dashboard,@uppy/status-bar: bump `@transloadit/prettier-bytes` (Antoine du Hamel / #4933)
+
 ## 3.7.2
 
 Released: 2024-02-19
