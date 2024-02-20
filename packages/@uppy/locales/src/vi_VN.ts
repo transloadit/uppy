@@ -43,7 +43,7 @@ vi_VN.strings = {
   cancelUpload: 'Hủy tải lên',
   chooseFiles: 'Chọn tệp',
   closeModal: 'Đóng cửa sổ',
-  companionError: 'Không thể kết nối với Companion',
+  companionError: 'Kết nối thất bại',
   companionUnauthorizeHint:
     'Để hủy ủy quyền tài khoản %{provider} của bạn, vui lòng truy cập %{url}',
   complete: 'Hoàn thành',
@@ -85,8 +85,8 @@ vi_VN.strings = {
     'Companion không thể truy xuất URL này, vui lòng đảm bảo nó chính xác',
   failedToUpload: 'Không thể tải lên %{file}',
   filesUploadedOfTotal: {
-    '0': '%{complete} trên %{smart_count} tệp đã được tải lên',
-    '1': '%{complete} trên %{smart_count} tệp đã được tải lên',
+    '0': '%{complete} trong số %{smart_count} tệp tin đã được tải lên',
+    '1': '%{complete} trong số %{smart_count} tệp tin đã được tải lên',
   },
   filter: 'Bộ lọc',
   finishEditingFile: 'Hoàn thành chỉnh sửa tệp',
