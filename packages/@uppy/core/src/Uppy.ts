@@ -55,10 +55,7 @@ export type UnknownPlugin<
   M extends Meta,
   B extends Body,
   PluginState extends Record<string, unknown> = Record<string, unknown>,
-> = InstanceType<
-  | typeof BasePlugin<any, M, B, PluginState>
-  | typeof UIPlugin<any, M, B, PluginState>
->
+> = BasePlugin<any, M, B, PluginState>
 
 export type UnknownProviderPluginState = {
   authenticated: boolean | undefined
