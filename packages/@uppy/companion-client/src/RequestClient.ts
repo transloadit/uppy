@@ -349,7 +349,7 @@ export default class RequestClient<M extends Meta, B extends Body> {
       throw new Error('Cannot connect to an undefined URL')
     }
 
-    const res = await this.post(
+    const res = await this.post<{ token: string }>(
       file.remote.url,
       {
         ...file.remote.body,
@@ -358,7 +358,7 @@ export default class RequestClient<M extends Meta, B extends Body> {
       { signal },
     )
 
-    return res.token as string
+    return res.token
   }
 
   /**
