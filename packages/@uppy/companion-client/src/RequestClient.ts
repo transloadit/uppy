@@ -10,6 +10,7 @@ import emitSocketProgress from '@uppy/utils/lib/emitSocketProgress'
 import getSocketHost from '@uppy/utils/lib/getSocketHost'
 
 import type Uppy from '@uppy/core'
+import type { RequestOptions } from '@uppy/utils/lib/CompanionClientProvider.ts'
 import type { UppyFile, Meta, Body } from '@uppy/utils/lib/UppyFile'
 import AuthError from './AuthError.ts'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -28,13 +29,6 @@ export type Opts = {
   companionKeysParams?: Record<string, string>
 }
 
-export type RequestOptions = {
-  method?: string
-  data?: Record<string, unknown>
-  skipPostResponse?: boolean
-  signal?: AbortSignal
-  qs?: Record<string, string>
-}
 type _RequestOptions =
   | boolean // TODO: remove this on the next major
   | RequestOptions
