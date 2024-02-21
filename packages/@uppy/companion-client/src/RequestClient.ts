@@ -10,8 +10,8 @@ import emitSocketProgress from '@uppy/utils/lib/emitSocketProgress'
 import getSocketHost from '@uppy/utils/lib/getSocketHost'
 
 import type Uppy from '@uppy/core'
-import type { RequestOptions } from '@uppy/utils/lib/CompanionClientProvider.ts'
 import type { UppyFile, Meta, Body } from '@uppy/utils/lib/UppyFile'
+import type { RequestOptions } from '@uppy/utils/lib/CompanionClientProvider.ts'
 import AuthError from './AuthError.ts'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
