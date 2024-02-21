@@ -14,11 +14,6 @@ import getFileType from '@uppy/utils/lib/getFileType'
 import getFileNameAndExtension from '@uppy/utils/lib/getFileNameAndExtension'
 import { getSafeFileId } from '@uppy/utils/lib/generateFileID'
 import type { UppyFile, Meta, Body } from '@uppy/utils/lib/UppyFile'
-import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
-import type {
-  CompanionClientProvider,
-  CompanionClientSearchProvider,
-} from '@uppy/utils/lib/CompanionClientProvider'
 import type {
   FileProgressNotStarted,
   FileProgressStarted,
@@ -51,81 +46,17 @@ type FileRemoveReason = 'user' | 'cancel-all'
 
 type LogLevel = 'info' | 'warning' | 'error' | 'success'
 
-export type UnknownPlugin<
-  M extends Meta,
-  B extends Body,
-  PluginState extends Record<string, unknown> = Record<string, unknown>,
-> = BasePlugin<any, M, B, PluginState>
-
-export type UnknownProviderPluginState = {
-  authenticated: boolean | undefined
-  breadcrumbs: {
-    requestPath: string
-    name: string
-    id?: string
-  }[]
-  didFirstRender: boolean
-  currentSelection: CompanionFile[]
-  filterInput: string
-  loading: boolean | string
-  folders: CompanionFile[]
-  files: CompanionFile[]
-  isSearchVisible: boolean
-}
-/*
- * UnknownProviderPlugin can be any Companion plugin (such as Google Drive).
- * As the plugins are passed around throughout Uppy we need a generic type for this.
- * It may seems like duplication, but this type safe. Changing the type of `storage`
- * will error in the `Provider` class of @uppy/companion-client and vice versa.
- *
- * Note that this is the *plugin* class, not a version of the `Provider` class.
- * `Provider` does operate on Companion plugins with `uppy.getPlugin()`.
- */
-export type UnknownProviderPlugin<
-  M extends Meta,
-  B extends Body,
-> = UnknownPlugin<M, B, UnknownProviderPluginState> & {
-  onFirstRender: () => void
-  title: string
-  files: UppyFile<M, B>[]
-  icon: () => JSX.Element
-  provider: CompanionClientProvider
-  storage: {
-    getItem: (key: string) => Promise<string | null>
-    setItem: (key: string, value: string) => Promise<void>
-    removeItem: (key: string) => Promise<void>
-  }
-}
-
-/*
- * UnknownSearchProviderPlugin can be any search Companion plugin (such as Unsplash).
- * As the plugins are passed around throughout Uppy we need a generic type for this.
- * It may seems like duplication, but this type safe. Changing the type of `title`
- * will error in the `SearchProvider` class of @uppy/companion-client and vice versa.
- *
- * Note that this is the *plugin* class, not a version of the `SearchProvider` class.
- * `SearchProvider` does operate on Companion plugins with `uppy.getPlugin()`.
- */
-export type UnknownSearchProviderPluginState = {
-  isInputMode?: boolean
-  searchTerm?: string | null
-} & Pick<
-  UnknownProviderPluginState,
-  | 'loading'
-  | 'files'
-  | 'folders'
-  | 'currentSelection'
-  | 'filterInput'
-  | 'didFirstRender'
+export type UnknownPlugin<M extends Meta, B extends Body> = InstanceType<
+  typeof BasePlugin<any, M, B> | typeof UIPlugin<any, M, B>
 >
-export type UnknownSearchProviderPlugin<
-  M extends Meta,
-  B extends Body,
-> = UnknownPlugin<M, B, UnknownSearchProviderPluginState> & {
-  onFirstRender: () => void
-  title: string
-  icon: () => JSX.Element
-  provider: CompanionClientSearchProvider
+
+type UnknownProviderPlugin<M extends Meta, B extends Body> = UnknownPlugin<
+  M,
+  B
+> & {
+  provider: {
+    logout: () => void
+  }
 }
 
 // The user facing type for UppyFile used in uppy.addFile() and uppy.setOptions()
@@ -1910,7 +1841,7 @@ export class Uppy<M extends Meta, B extends Body> {
    * Passes messages to a function, provided in `opts.logger`.
    * If `opts.logger: Uppy.debugLogger` or `opts.debug: true`, logs to the browser console.
    */
-  log(message: string | Record<string, unknown> | Error, type?: string): void {
+  log(message: string | Record<any, any> | Error, type?: string): void {
     const { logger } = this.opts
     switch (type) {
       case 'error':
