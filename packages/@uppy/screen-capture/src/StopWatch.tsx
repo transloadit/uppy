@@ -1,7 +1,11 @@
+// TODO: remove this and type properly
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 import { h, Component } from 'preact'
 
 class StopWatch extends Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = { elapsedTime: 0 }
 
@@ -45,31 +49,31 @@ class StopWatch extends Component {
     }
   }
 
-  startTimer () {
+  startTimer() {
     this.timerTick()
     this.timerRunning = true
   }
 
-  resetTimer () {
+  resetTimer() {
     clearTimeout(this.timer)
     this.setState({ elapsedTime: 0 })
     this.timerRunning = false
   }
 
-  timerTick () {
+  timerTick() {
     this.timer = setTimeout(() => {
-      this.setState(state => ({ elapsedTime: state.elapsedTime + 1 }))
+      this.setState((state) => ({ elapsedTime: state.elapsedTime + 1 }))
       this.timerTick()
     }, 1000)
   }
 
   // eslint-disable-next-line class-methods-use-this
-  fmtMSS (s) {
+  fmtMSS(s) {
     // eslint-disable-next-line no-return-assign, no-param-reassign
     return (s - (s %= 60)) / 60 + (s > 9 ? ':' : ':0') + s
   }
 
-  render () {
+  render() {
     const { recording, i18n } = { ...this.props }
     const { elapsedTime } = this.state
 
@@ -89,14 +93,9 @@ class StopWatch extends Component {
         <div style={this.wrapperStyle}>
           <div style={this.overlayStyle} />
           <div style={this.infoContainerStyle}>
-            <div style={this.infotextStyle}>
-              {i18n('recording')}
-            </div>
-            <div style={this.timeStyle}>
-              {minAndSec}
-            </div>
+            <div style={this.infotextStyle}>{i18n('recording')}</div>
+            <div style={this.timeStyle}>{minAndSec}</div>
           </div>
-
         </div>
       )
     }

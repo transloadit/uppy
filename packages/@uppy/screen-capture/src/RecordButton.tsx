@@ -1,9 +1,18 @@
+// TODO: remove this and type properly
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 import { h } from 'preact'
 
 /**
  * Control screen capture recording. Will show record or stop button.
  */
-export default function RecordButton ({ recording, onStartRecording, onStopRecording, i18n }) {
+export default function RecordButton({
+  recording,
+  onStartRecording,
+  onStopRecording,
+  i18n,
+}) {
   if (recording) {
     return (
       <button
@@ -14,7 +23,14 @@ export default function RecordButton ({ recording, onStartRecording, onStopRecor
         onClick={onStopRecording}
         data-uppy-super-focusable
       >
-        <svg aria-hidden="true" focusable="false" className="uppy-c-icon" width="100" height="100" viewBox="0 0 100 100">
+        <svg
+          aria-hidden="true"
+          focusable="false"
+          className="uppy-c-icon"
+          width="100"
+          height="100"
+          viewBox="0 0 100 100"
+        >
           <rect x="15" y="15" width="70" height="70" />
         </svg>
       </button>
@@ -30,7 +46,14 @@ export default function RecordButton ({ recording, onStartRecording, onStopRecor
       onClick={onStartRecording}
       data-uppy-super-focusable
     >
-      <svg aria-hidden="true" focusable="false" className="uppy-c-icon" width="100" height="100" viewBox="0 0 100 100">
+      <svg
+        aria-hidden="true"
+        focusable="false"
+        className="uppy-c-icon"
+        width="100"
+        height="100"
+        viewBox="0 0 100 100"
+      >
         <circle cx="50" cy="50" r="40" />
       </svg>
     </button>
