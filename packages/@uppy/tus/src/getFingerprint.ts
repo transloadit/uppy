@@ -34,10 +34,10 @@ export default function getFingerprint<M extends Meta, B extends Body>(
 ): tus.UploadOptions['fingerprint'] {
   return (file, options) => {
     if (isCordova() || isReactNative()) {
-      return tus.defaultOptions.fingerprint!(file, options)
+      return tus.defaultOptions.fingerprint(file, options)
     }
 
-    const uppyFingerprint = ['tus', uppyFile.id, options!.endpoint].join('-')
+    const uppyFingerprint = ['tus', uppyFile.id, options.endpoint].join('-')
 
     return Promise.resolve(uppyFingerprint)
   }
