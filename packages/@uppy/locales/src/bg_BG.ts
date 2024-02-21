@@ -58,6 +58,7 @@ bg_BG.strings = {
   dropPasteImportFolders:
     'Пуснете файловете си тук, поставете, %{browse} или импортирайте от:',
   editFile: 'Редакция файл',
+  editImage: 'Редактиране на изображение',
   editing: 'Редактиране %{file}',
   emptyFolderAdded: 'Не са добавени файлове от празна директория',
   encoding: 'Кодиране...',

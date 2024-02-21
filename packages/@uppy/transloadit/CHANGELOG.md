@@ -1,5 +1,12 @@
 # @uppy/transloadit
 
+## 3.5.0
+
+Released: 2024-02-19
+Included in: Uppy v3.22.0
+
+- @uppy/transloadit: add `clientname` option (marius / #4920)
+
 ## 3.3.0
 
 Released: 2023-09-05

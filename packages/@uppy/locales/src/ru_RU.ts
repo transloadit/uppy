@@ -59,6 +59,7 @@ ru_RU.strings = {
   dropPasteImportFolders:
     'Перетащите файлы, вставьте, %{browse} или импортируйте из:',
   editFile: 'Редактировать файл',
+  editImage: 'Редактировать изображение',
   editing: 'Редактируется %{file}',
   emptyFolderAdded: 'Файлы не были добавлены — папка пуста',
   encoding: 'Обработка...',

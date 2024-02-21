@@ -1,5 +1,25 @@
 # @uppy/core
 
+## 3.9.1
+
+Released: 2024-02-20
+Included in: Uppy v3.22.1
+
+- @uppy/compressor,@uppy/core,@uppy/dashboard,@uppy/status-bar: bump `@transloadit/prettier-bytes` (Antoine du Hamel / #4933)
+
+## 3.9.0
+
+Released: 2024-02-19
+Included in: Uppy v3.22.0
+
+- @uppy/core: add utility type to help define plugin option types (antoine du hamel / #4885)
+- @uppy/core: improve types of .use() (merlijn vos / #4882)
+- @uppy/core: add `plugintarget` type and mark options as optional (antoine du hamel / #4874)
+- @uppy/core: add `debuglogger` as export in manual types (antoine du hamel / #4831)
+- @uppy/core: add missing requiredmetafields key in restrictions (darthf1 / #4819)
+- @uppy/core: fix types (antoine du hamel / #4842)
+- @uppy/core: refactor to ts (murderlon)
+
 ## 3.8.0
 
 Released: 2023-12-12

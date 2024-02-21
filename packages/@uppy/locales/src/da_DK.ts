@@ -49,6 +49,7 @@ da_DK.strings = {
   dropPasteImportFolders:
     'Træk filer her, sæt ind, %{browse} eller importer fra',
   editFile: 'Rediger fil',
+  editImage: 'Rediger billede',
   editing: 'Redigerer %{file}',
   emptyFolderAdded: 'Ingen filer blev tilføjet fra en tom mappe',
   encoding: 'Encoding...',

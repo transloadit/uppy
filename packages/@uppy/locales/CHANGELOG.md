@@ -1,5 +1,19 @@
 # @uppy/locales
 
+## 3.5.2
+
+Released: 2024-02-20
+Included in: Uppy v3.22.1
+
+- @uppy/locales: update vi_VN translation (David Nguyen / #4930)
+
+## 3.5.1
+
+Released: 2024-02-19
+Included in: Uppy v3.22.0
+
+- @uppy/locales: fix "save" button translation in hr_hr.ts (žan žlender / #4830)
+
 ## 3.5.0
 
 Released: 2023-11-24

@@ -1,5 +1,13 @@
 # @uppy/provider-views
 
+## 3.9.0
+
+Released: 2024-02-19
+Included in: Uppy v3.22.0
+
+- @uppy/provider-views: update uppy-providerbrowser-viewtype--list.scss (aditya patadia / #4913)
+- @uppy/provider-views: add referrerpolicy to images (merlijn vos / #4853)
+
 ## 3.8.0
 
 Released: 2023-12-12
