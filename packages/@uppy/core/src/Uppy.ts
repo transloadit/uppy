@@ -13,7 +13,12 @@ import DefaultStore from '@uppy/store-default'
 import getFileType from '@uppy/utils/lib/getFileType'
 import getFileNameAndExtension from '@uppy/utils/lib/getFileNameAndExtension'
 import { getSafeFileId } from '@uppy/utils/lib/generateFileID'
-import type { UppyFile, Meta, Body } from '@uppy/utils/lib/UppyFile'
+import type {
+  UppyFile,
+  Meta,
+  Body,
+  MinimalRequiredUppyFile,
+} from '@uppy/utils/lib/UppyFile'
 import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
 import type {
   CompanionClientProvider,
@@ -43,7 +48,7 @@ import locale from './locale.ts'
 
 import type BasePlugin from './BasePlugin.ts'
 import type UIPlugin from './UIPlugin.ts'
-import type { Restrictions } from './Restricter.ts'
+import type { Restrictions, ValidateableFile } from './Restricter.ts'
 
 type Processor = (fileIDs: string[], uploadID: string) => Promise<void> | void
 
@@ -127,17 +132,6 @@ export type UnknownSearchProviderPlugin<
   icon: () => JSX.Element
   provider: CompanionClientSearchProvider
 }
-
-// The user facing type for UppyFile used in uppy.addFile() and uppy.setOptions()
-export type MinimalRequiredUppyFile<M extends Meta, B extends Body> = Required<
-  Pick<UppyFile<M, B>, 'name' | 'data' | 'type' | 'source'>
-> &
-  Partial<
-    Omit<UppyFile<M, B>, 'name' | 'data' | 'type' | 'source' | 'meta'>
-    // We want to omit the 'meta' from UppyFile because of internal metadata
-    // (see InternalMetadata in `UppyFile.ts`), as when adding a new file
-    // that is not required.
-  > & { meta?: M }
 
 interface UploadResult<M extends Meta, B extends Body> {
   successful?: UppyFile<M, B>[]
@@ -844,8 +838,8 @@ export class Uppy<M extends Meta, B extends Body> {
   }
 
   validateRestrictions(
-    file: UppyFile<M, B>,
-    files = this.getFiles(),
+    file: ValidateableFile<M, B>,
+    files: ValidateableFile<M, B>[] = this.getFiles(),
   ): RestrictionError<M, B> | null {
     try {
       this.#restricter.validate(files, [file])
@@ -882,9 +876,12 @@ export class Uppy<M extends Meta, B extends Body> {
     const { allowNewUpload } = this.getState()
 
     if (allowNewUpload === false) {
-      const error = new RestrictionError(this.i18n('noMoreFilesAllowed'), {
-        file,
-      })
+      const error = new RestrictionError<M, B>(
+        this.i18n('noMoreFilesAllowed'),
+        {
+          file,
+        },
+      )
       this.#informAndEmit([error])
       throw error
     }
