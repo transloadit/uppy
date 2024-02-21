@@ -66,6 +66,8 @@
     "./lib/fileFilters": "./lib/fileFilters.js",
     "./lib/VirtualList": "./lib/VirtualList.js",
     "./lib/UppyFile": "./lib/UppyFile.js",
+    "./lib/CompanionFile": "./lib/CompanionFile.js",
+    "./lib/CompanionClientProvider": "./lib/CompanionClientProvider.js",
     "./lib/FileProgress": "./lib/FileProgress.js",
     "./src/microtip.scss": "./src/microtip.scss",
     "./lib/UserFacingApiError": "./lib/UserFacingApiError.js"
