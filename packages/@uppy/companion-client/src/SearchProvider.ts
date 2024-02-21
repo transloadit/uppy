@@ -1,5 +1,3 @@
-'use strict'
-
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile.ts'
 import type { Uppy } from '@uppy/core'
 import type { CompanionClientSearchProvider } from '@uppy/utils/lib/CompanionClientProvider'
