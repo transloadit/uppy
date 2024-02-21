@@ -36,10 +36,7 @@ export default class SearchProvider<M extends Meta, B extends Body>
     return `${this.hostname}/search/${this.id}/get/${id}`
   }
 
-  search<ResBody extends Record<string, unknown>>(
-    text: string,
-    queries?: string,
-  ): Promise<ResBody> {
+  search<ResBody>(text: string, queries?: string): Promise<ResBody> {
     return this.get<ResBody>(
       `search/${this.id}/list?q=${encodeURIComponent(text)}${
         queries ? `&${queries}` : ''

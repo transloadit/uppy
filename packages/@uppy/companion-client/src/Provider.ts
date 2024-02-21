@@ -373,16 +373,14 @@ export default class Provider<M extends Meta, B extends Body>
     }
   }
 
-  list<ResBody extends Record<string, unknown>>(
+  list<ResBody>(
     directory: string | undefined,
     options: RequestOptions,
   ): Promise<ResBody> {
     return this.get<ResBody>(`${this.id}/list/${directory || ''}`, options)
   }
 
-  async logout<ResBody extends Record<string, unknown>>(
-    options?: RequestOptions,
-  ): Promise<ResBody> {
+  async logout<ResBody>(options?: RequestOptions): Promise<ResBody> {
     const response = await this.get<ResBody>(`${this.id}/logout`, options)
     await this.removeAuthToken()
     return response
