@@ -13,7 +13,7 @@ export default function calculateProcessingProgress(
     // In the future we should probably do this differently. For now we'll take the
     // mode and message from the first file…
     if (message == null && (preprocess || postprocess)) {
-      ;({ mode, message } = preprocess || postprocess!) // eslint-disable-line @typescript-eslint/no-non-null-assertion
+      ;({ mode, message } = preprocess || postprocess!)
     }
     if (preprocess?.mode === 'determinate') values.push(preprocess.value)
     if (postprocess?.mode === 'determinate') values.push(postprocess.value)

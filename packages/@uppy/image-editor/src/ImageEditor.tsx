@@ -184,7 +184,6 @@ export default class ImageEditor<
 
     this.cropper
       .getCroppedCanvas(this.opts.cropperOptions.croppedCanvasOptions)
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       .toBlob(saveBlobCallback, currentImage!.type, this.opts.quality)
   }
 
