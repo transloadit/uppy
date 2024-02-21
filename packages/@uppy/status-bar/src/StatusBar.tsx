@@ -238,10 +238,10 @@ export default class StatusBar<M extends Meta, B extends Body> extends UIPlugin<
 
   onMount(): void {
     // Set the text direction if the page has not defined one.
-    const element = this.el
-    const direction = getTextDirection(element!)
+    const element = this.el!
+    const direction = getTextDirection(element)
     if (!direction) {
-      element!.dir = 'ltr'
+      element.dir = 'ltr'
     }
   }
 

@@ -10,6 +10,11 @@ import Editor from './Editor.tsx'
 import packageJson from '../package.json'
 import locale from './locale.ts'
 
+// const assertNonNull: (<T>(value: T) => T extends null | undefined ? never:void) = Function.prototype as any
+function assertNonNull(val: unknown) {
+  if (val == null) throw new Error('ERR_ASSERTION')
+}
+
 declare global {
   namespace preact {
     interface Component {
@@ -185,7 +190,6 @@ export default class ImageEditor<
 
     this.cropper
       .getCroppedCanvas(this.opts.cropperOptions.croppedCanvasOptions)
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       .toBlob(saveBlobCallback, currentImage!.type, this.opts.quality)
   }
 

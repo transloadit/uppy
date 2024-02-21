@@ -374,7 +374,6 @@ export default class RequestClient<M extends Meta, B extends Body> {
     try {
       return await new Promise((resolve, reject) => {
         const token = file.serverToken
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const host = getSocketHost(file.remote!.companionUrl)
 
         let socket: WebSocket | undefined
