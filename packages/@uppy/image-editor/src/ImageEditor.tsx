@@ -37,7 +37,6 @@ declare module '@uppy/core' {
 }
 
 interface Opts extends UIPluginOptions {
-  target?: string | HTMLElement
   quality?: number
   cropperOptions?: Cropper.Options & {
     croppedCanvasOptions?: Cropper.GetCroppedCanvasOptions
