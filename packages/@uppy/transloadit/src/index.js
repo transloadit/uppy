@@ -62,6 +62,7 @@ export default class Transloadit extends BasePlugin {
       getAssemblyOptions: null,
       limit: 20,
       retryDelays: [7_000, 10_000, 15_000, 20_000],
+      clientName: null,
     }
 
     this.opts = { ...defaultOptions, ...opts }
@@ -125,6 +126,10 @@ export default class Transloadit extends BasePlugin {
     addPluginVersion('OneDrive', 'uppy-onedrive')
     addPluginVersion('Zoom', 'uppy-zoom')
     addPluginVersion('Url', 'uppy-url')
+
+    if (this.opts.clientName != null) {
+      list.push(this.opts.clientName)
+    }
 
     return list.join(',')
   }

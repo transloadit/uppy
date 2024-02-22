@@ -51,6 +51,7 @@ hr_HR.strings = {
   dropPasteImportFolders:
     'Ispusti datoteke ovdje, zalijepi (eng. "paste"), %{browse} ili preuzmi s',
   editFile: 'Izmijeni datoteku',
+  editImage: 'Uredi sliku',
   editing: 'Uredi %{file}',
   emptyFolderAdded: 'Ni jedna datoteka nije dodana iz prazne mape',
   encoding: 'Enkodiranje...',

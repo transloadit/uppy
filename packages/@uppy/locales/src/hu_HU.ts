@@ -47,6 +47,7 @@ hu_HU.strings = {
   dropPasteImportFolders:
     'Húzza ide a fájlokat, %{browseFolders} vagy importáljon:',
   editFile: 'Fájl szerkesztése',
+  editImage: 'Kép szerkesztése',
   editing: '%{file} szerkesztése',
   emptyFolderAdded: 'Az üres mappából nem kerültek fájlok hozzáadásra',
   encoding: 'Kódolás...',
