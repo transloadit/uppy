@@ -208,6 +208,24 @@ export default class Dashboard extends UIPlugin {
     })
   }
 
+  closeFileEditor = () => {
+    const { metaFields } = this.getPluginState()
+    const isMetaEditorEnabled = metaFields && metaFields.length > 0
+
+    if (isMetaEditorEnabled) {
+      this.setPluginState({
+        showFileEditor: false,
+        activeOverlayType: 'FileCard'
+      })
+    } else {
+      this.setPluginState({
+        showFileEditor: false,
+        fileCardFor: null,
+        activeOverlayType: 'AddFiles'
+      })
+    }
+  }
+
   saveFileEditor = () => {
     const { targets } = this.getPluginState()
     const editors = this.#getEditors(targets)
@@ -216,7 +234,7 @@ export default class Dashboard extends UIPlugin {
       this.uppy.getPlugin(editor.id).save()
     })
 
-    this.hideAllPanels()
+    this.closeFileEditor()
   }
 
   openModal = () => {
@@ -730,7 +748,14 @@ export default class Dashboard extends UIPlugin {
 
   #openFileEditorWhenFilesAdded = (files) => {
     const firstFile = files[0]
-    if (this.canEditFile(firstFile)) {
+
+    const {metaFields} = this.getPluginState()
+    const isMetaEditorEnabled = metaFields && metaFields.length > 0
+    const isFileEditorEnabled = this.canEditFile(firstFile)
+
+    if (isMetaEditorEnabled) {
+      this.toggleFileCard(true, firstFile.id)
+    } else if (isFileEditorEnabled) {
       this.openFileEditor(firstFile)
     }
   }
@@ -753,7 +778,6 @@ export default class Dashboard extends UIPlugin {
     this.uppy.on('plugin-remove', this.removeTarget)
     this.uppy.on('file-added', this.hideAllPanels)
     this.uppy.on('dashboard:modal-closed', this.hideAllPanels)
-    this.uppy.on('file-editor:complete', this.hideAllPanels)
     this.uppy.on('complete', this.handleComplete)
 
     this.uppy.on('files-added', this.#generateLargeThumbnailIfSingleFile)
@@ -787,7 +811,6 @@ export default class Dashboard extends UIPlugin {
     this.uppy.off('plugin-remove', this.removeTarget)
     this.uppy.off('file-added', this.hideAllPanels)
     this.uppy.off('dashboard:modal-closed', this.hideAllPanels)
-    this.uppy.off('file-editor:complete', this.hideAllPanels)
     this.uppy.off('complete', this.handleComplete)
 
     this.uppy.off('files-added', this.#generateLargeThumbnailIfSingleFile)
@@ -954,6 +977,7 @@ export default class Dashboard extends UIPlugin {
       activePickerPanel: pluginState.activePickerPanel,
       showFileEditor: pluginState.showFileEditor,
       saveFileEditor: this.saveFileEditor,
+      closeFileEditor: this.closeFileEditor,
       disableInteractiveElements: this.disableInteractiveElements,
       animateOpenClose: this.opts.animateOpenClose,
       isClosing: pluginState.isClosing,

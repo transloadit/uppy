@@ -6,7 +6,7 @@ function EditorPanel (props) {
 
   const handleCancel = () => {
     props.uppy.emit('file-editor:cancel', file)
-    props.hideAllPanels()
+    props.closeFileEditor()
   }
 
   return (
