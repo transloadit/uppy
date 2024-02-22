@@ -479,13 +479,16 @@ export default class RequestClient<M extends Meta, B extends Body> {
                             break
                           }
                           case 'success': {
+                            // payload.response exists for xhr-upload but not for tus/transloadit
+                            const text = payload.response?.responseText
+
                             this.uppy.emit(
                               'upload-success',
                               this.uppy.getFile(file.id),
-                              // @ts-expect-error event expects a lot more data.
-                              // TODO: add missing data?
                               {
                                 uploadURL: payload.url,
+                                status: payload.response?.status ?? 200,
+                                body: text ? JSON.parse(text) : undefined,
                               },
                             )
                             socketAbortController?.abort?.()

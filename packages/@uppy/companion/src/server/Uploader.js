@@ -642,8 +642,16 @@ class Uploader {
         throw new Error(errMsg)
       }
 
+      let bodyURL = null
+      try {
+        bodyURL = JSON.parse(response.body)?.url
+      } catch {
+        // response.body can be undefined or an empty string
+        // in that case we ignore and continue.
+      }
+
       return {
-        url: null,
+        url: bodyURL,
         extraData: { response: getRespObj(response), bytesUploaded },
       }
     } catch (err) {
