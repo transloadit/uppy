@@ -54,6 +54,7 @@ pl_PL.strings = {
   dropPasteImportFolders:
     'Upuść foldery tutaj, wklej, %{browse} albo zaimportuj z',
   editFile: 'Edytuj plik',
+  editImage: 'Edytuj obraz',
   editing: 'Edycja %{file}',
   emptyFolderAdded: 'Z pustego folderu nie zostały dodane żadne pliki',
   encoding: 'Transkodowanie...',

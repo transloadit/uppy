@@ -50,6 +50,7 @@ tr_TR.strings = {
   dropPasteImportFolders:
     'Sürükleyip bırak, yapıştır, %{browse} veya içeri aktar',
   editFile: 'Dosyayı düzenle',
+  editImage: 'Resmi Düzenle',
   editing: '%{file} düzenleniyor',
   emptyFolderAdded: 'Klasör boş',
   encoding: 'Çözümleniyor...',

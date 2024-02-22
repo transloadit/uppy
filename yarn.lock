@@ -7612,10 +7612,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@transloadit/prettier-bytes@npm:^0.2.0":
-  version: 0.2.0
-  resolution: "@transloadit/prettier-bytes@npm:0.2.0"
-  checksum: 0faaeffc879754e18103bd576510d4349ec5253c2ebe846f7f8e52f2e9bc4c6877a9197adf4d2f196fa9b442a64cd43c5a742b5b51268e7f56bb3451299af1ce
+"@transloadit/prettier-bytes@npm:^0.3.0":
+  version: 0.3.1
+  resolution: "@transloadit/prettier-bytes@npm:0.3.1"
+  checksum: 2ab7dc9cc00bafa47878735c3d613bfdf507af5649251b08b95296a83454c3fb5ccef2de8b74d266078ef8157bc9da9644e1400c9fe5e12b2353b102f48891a4
   languageName: node
   linkType: hard
 
@@ -9240,9 +9240,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/compressor@workspace:packages/@uppy/compressor"
   dependencies:
-    "@transloadit/prettier-bytes": ^0.2.0
+    "@transloadit/prettier-bytes": ^0.3.0
     "@uppy/utils": "workspace:^"
-    compressorjs: ^1.1.1
+    compressorjs: ^1.2.1
     preact: ^10.5.13
     promise-queue: ^2.2.5
     vitest: ^1.2.1
@@ -9255,7 +9255,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/core@workspace:packages/@uppy/core"
   dependencies:
-    "@transloadit/prettier-bytes": ^0.2.0
+    "@transloadit/prettier-bytes": ^0.3.0
     "@uppy/store-default": "workspace:^"
     "@uppy/utils": "workspace:^"
     lodash: ^4.17.21
@@ -9271,7 +9271,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/dashboard@workspace:packages/@uppy/dashboard"
   dependencies:
-    "@transloadit/prettier-bytes": ^0.2.0
+    "@transloadit/prettier-bytes": ^0.3.0
     "@uppy/google-drive": "workspace:^"
     "@uppy/informer": "workspace:^"
     "@uppy/provider-views": "workspace:^"
@@ -9559,7 +9559,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/status-bar@workspace:packages/@uppy/status-bar"
   dependencies:
-    "@transloadit/prettier-bytes": ^0.2.0
+    "@transloadit/prettier-bytes": ^0.3.0
     "@uppy/utils": "workspace:^"
     classnames: ^2.2.6
     preact: ^10.5.13
@@ -12782,13 +12782,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"compressorjs@npm:^1.1.1":
-  version: 1.1.1
-  resolution: "compressorjs@npm:1.1.1"
+"compressorjs@npm:^1.2.1":
+  version: 1.2.1
+  resolution: "compressorjs@npm:1.2.1"
   dependencies:
     blueimp-canvas-to-blob: ^3.29.0
     is-blob: ^2.1.0
-  checksum: b4899567df07ebd0f2d3bdc814a6e63b0013be0020e119c0aa4fd4292298a0a4251302855c6ec6c40dd676c0e02f9a4483868f81474229cc375b928bb9c3f086
+  checksum: 8b25fc29b7908216f7029e807623ae9c034fb0e77a72a752686bdd255bd3b1a5cc004b6651cf7ca948c1f86f3151ac3fc00800119d17f8a248d2f0a54570c8b8
   languageName: node
   linkType: hard
 
@@ -18366,9 +18366,9 @@ __metadata:
   linkType: hard
 
 "ip@npm:^1.1.5":
-  version: 1.1.8
-  resolution: "ip@npm:1.1.8"
-  checksum: a2ade53eb339fb0cbe9e69a44caab10d6e3784662285eb5d2677117ee4facc33a64679051c35e0dfdb1a3983a51ce2f5d2cb36446d52e10d01881789b76e28fb
+  version: 1.1.9
+  resolution: "ip@npm:1.1.9"
+  checksum: b6d91fd45a856e3bd6d4f601ea0619d90f3517638f6918ebd079f959a8a6308568d8db5ef4fdf037e0d9cfdcf264f46833dfeea81ca31309cf0a7eb4b1307b84
   languageName: node
   linkType: hard
 
@@ -30266,7 +30266,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tus-js-client@npm:^3.1.3":
+"tus-js-client@npm:3.1.3":
   version: 3.1.3
   resolution: "tus-js-client@npm:3.1.3"
   dependencies:
@@ -30278,6 +30278,21 @@ __metadata:
     proper-lockfile: ^4.1.2
     url-parse: ^1.5.7
   checksum: 6f25dbbdbe1de51f44688dfb9ee78cae8deb987ac0a8e5d7d3e09a52ed0a7bfa5e2c3e39e82f0913beb241da78ddf42bdcb4c44369ea57f7cf15fad17e5b954f
+  languageName: node
+  linkType: hard
+
+"tus-js-client@patch:tus-js-client@npm%3A3.1.3#./.yarn/patches/tus-js-client-npm-3.1.3-dc57874d23.patch::locator=%40uppy-dev%2Fbuild%40workspace%3A.":
+  version: 3.1.3
+  resolution: "tus-js-client@patch:tus-js-client@npm%3A3.1.3#./.yarn/patches/tus-js-client-npm-3.1.3-dc57874d23.patch::version=3.1.3&hash=f79010&locator=%40uppy-dev%2Fbuild%40workspace%3A."
+  dependencies:
+    buffer-from: ^1.1.2
+    combine-errors: ^3.0.3
+    is-stream: ^2.0.0
+    js-base64: ^3.7.2
+    lodash.throttle: ^4.1.1
+    proper-lockfile: ^4.1.2
+    url-parse: ^1.5.7
+  checksum: ae7275f12e016271e67f8d465f914f4b8c8b6ecd75501ebba95374176247903bada06452f5b7a0e8e7d80342cd63dc395eda5a707bf216c770b95cf60e1b0d63
   languageName: node
   linkType: hard
 

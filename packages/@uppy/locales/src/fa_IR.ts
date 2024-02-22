@@ -67,6 +67,7 @@ fa_IR.strings = {
   dropPasteImportFiles: 'فایل‌ها را اینجا رها کنید، بچسبانید یا %{browse}',
   dropPasteImportFolders: 'فایل‌ها را اینجا رها کنید، بچسبانید یا %{browse}',
   editFile: 'ویرایش فایل',
+  editImage: 'ویرایش تصویر',
   editFileWithFilename: 'ویرایش فایل %{file}',
   editing: 'در حال ویرایش %{file}',
   emptyFolderAdded: 'از پوشه‌ی خالی هیچ فایلی افزوده نشد',

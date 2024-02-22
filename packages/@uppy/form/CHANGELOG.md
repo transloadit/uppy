@@ -1,5 +1,12 @@
 # @uppy/form
 
+## 3.1.0
+
+Released: 2024-02-19
+Included in: Uppy v3.22.0
+
+- @uppy/form: use requestsubmit (merlijn vos / #4852)
+
 ## 3.0.1
 
 Released: 2022-09-25

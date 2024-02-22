@@ -71,6 +71,7 @@ uz_UZ.strings = {
   dropPasteImportFolders:
     'Fayllarni bu yerga tashlang, %{browseFolders} yoki import qiling:',
   editFile: 'Faylni tahrirlash',
+  editImage: 'Rasmni tahrirlash',
   editFileWithFilename: '%{file} faylini tahrirlash',
   editing: '%{file} tahrirlanmoqda',
   emptyFolderAdded: "Bo'sh jilddan hech qanday fayl qo'shilmadi",

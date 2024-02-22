@@ -373,6 +373,7 @@ export default class ThumbnailGenerator extends UIPlugin {
       this.uppy.on('thumbnail:request', this.onFileAdded)
       this.uppy.on('thumbnail:cancel', this.onCancelRequest)
     } else {
+      this.uppy.on('thumbnail:request', this.onFileAdded)
       this.uppy.on('file-added', this.onFileAdded)
       this.uppy.on('restored', this.onRestored)
     }
@@ -390,6 +391,7 @@ export default class ThumbnailGenerator extends UIPlugin {
       this.uppy.off('thumbnail:request', this.onFileAdded)
       this.uppy.off('thumbnail:cancel', this.onCancelRequest)
     } else {
+      this.uppy.off('thumbnail:request', this.onFileAdded)
       this.uppy.off('file-added', this.onFileAdded)
       this.uppy.off('restored', this.onRestored)
     }

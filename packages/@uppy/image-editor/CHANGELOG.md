@@ -1,5 +1,13 @@
 # @uppy/image-editor
 
+## 2.4.1
+
+Released: 2024-02-19
+Included in: Uppy v3.22.0
+
+- @uppy/image-editor: image editor: make compressor work after the image editor, too (evgenia karunus / #4918)
+- @uppy/image-editor: migrate to ts (merlijn vos / #4880)
+
 ## 2.4.0
 
 Released: 2023-12-12

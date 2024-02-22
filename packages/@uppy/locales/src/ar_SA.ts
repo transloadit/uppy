@@ -46,6 +46,7 @@ ar_SA.strings = {
   dropPasteImportFiles: 'او  اسحب الملفات هنا %{browse}',
   dropPasteImportFolders: 'او  اسحب الملفات هنا %{browse}',
   editFile: 'تعديل الملف',
+  editImage: 'تعديل الصورة',
   editing: 'جاري تعديل %{file}',
   emptyFolderAdded: 'لا يوجد ملفات او مجلدات هنا',
   encoding: 'التشفير...',

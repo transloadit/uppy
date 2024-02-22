@@ -22,6 +22,7 @@ const validParams = {
     waitForEncoding: false,
     waitForMetadata: true,
     importFromUploadURLs: false,
+    clientName: 'my-application',
   })
   // Access to both transloadit events and core events
   uppy.on('transloadit:assembly-created', (assembly) => {
