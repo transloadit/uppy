@@ -151,9 +151,7 @@ export default class Form<M extends Meta, B extends Body> extends BasePlugin<
   }
 
   install(): void {
-    this.form = findDOMElement<FormOptions['target'], HTMLFormElement>(
-      this.opts.target,
-    )
+    this.form = findDOMElement(this.opts.target) as HTMLFormElement
 
     if (!this.form || this.form.nodeName !== 'FORM') {
       this.uppy.log(

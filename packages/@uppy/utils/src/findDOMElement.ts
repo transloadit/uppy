@@ -1,10 +1,10 @@
 import isDOMElement from './isDOMElement.ts'
 
-export default function findDOMElement<E, ReturnType = Element>(
-  element: E,
+export default function findDOMElement<T>(
+  element: T,
   context: Document = document,
-): ReturnType extends Element ? ReturnType
-: ReturnType extends Node | string ? Element | null
+): T extends Element ? T
+: T extends Node | string ? Element | null
 : null {
   if (typeof element === 'string') {
     // @ts-expect-error ????
