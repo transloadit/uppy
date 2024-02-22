@@ -1910,7 +1910,7 @@ export class Uppy<M extends Meta, B extends Body> {
    * Passes messages to a function, provided in `opts.logger`.
    * If `opts.logger: Uppy.debugLogger` or `opts.debug: true`, logs to the browser console.
    */
-  log(message: string | Record<string, unknown> | Error, type?: string): void {
+  log(message: string | Record<any, any> | Error, type?: string): void {
     const { logger } = this.opts
     switch (type) {
       case 'error':
