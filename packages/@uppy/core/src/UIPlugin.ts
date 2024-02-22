@@ -87,8 +87,7 @@ class UIPlugin<
   ): HTMLElement {
     const callerPluginName = plugin.id
 
-    // eslint-disable-next-line no-use-before-define
-    const targetElement = findDOMElement<PluginTarget<Me, Bo>>(target)
+    const targetElement = findDOMElement(target)
 
     if (targetElement) {
       this.isTargetDOMEl = true
