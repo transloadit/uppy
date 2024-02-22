@@ -1,5 +1,14 @@
 # @uppy/core
 
+## 3.9.2
+
+Released: 2024-02-22
+Included in: Uppy v3.22.2
+
+- @uppy/core: fix plugin detection (Antoine du Hamel / #4951)
+- @uppy/core,@uppy/utils: Introduce `ValidateableFile` & move `MinimalRequiredUppyFile` into utils (Antoine du Hamel / #4944)
+- @uppy/core: improve `UIPluginOptions` types (Merlijn Vos / #4946)
+
 ## 3.9.1
 
 Released: 2024-02-20
