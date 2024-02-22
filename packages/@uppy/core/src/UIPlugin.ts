@@ -87,7 +87,6 @@ class UIPlugin<
   ): HTMLElement {
     const callerPluginName = plugin.id
 
-    // eslint-disable-next-line no-use-before-define
     const targetElement = findDOMElement(target)
 
     if (targetElement) {
