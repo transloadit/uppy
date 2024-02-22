@@ -1,6 +1,6 @@
 {
   "name": "@uppy/companion",
-  "version": "4.12.2",
+  "version": "4.12.3",
   "description": "OAuth helper and remote fetcher for Uppy's (https://uppy.io) extensible file upload widget with support for drag&drop, resumable uploads, previews, restrictions, file processing/encoding, remote providers like Dropbox and Google Drive, S3 and more :dog:",
   "main": "lib/companion.js",
   "types": "lib/companion.d.ts",

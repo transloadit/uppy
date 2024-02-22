@@ -77,7 +77,7 @@ export default class Editor<M extends Meta, B extends Body> extends Component<
       const newCropboxData = limitCropboxMovementOnMove(
         canvasData,
         cropboxData,
-        prevCropboxData,
+        prevCropboxData!,
       )
       if (newCropboxData) this.cropper.setCropBoxData(newCropboxData)
       // 2. When we stretch the cropbox by one of its sides
@@ -85,7 +85,7 @@ export default class Editor<M extends Meta, B extends Body> extends Component<
       const newCropboxData = limitCropboxMovementOnResize(
         canvasData,
         cropboxData,
-        prevCropboxData,
+        prevCropboxData!,
       )
       if (newCropboxData) this.cropper.setCropBoxData(newCropboxData)
     }

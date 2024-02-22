@@ -144,7 +144,7 @@ class Restricter<M extends Meta, B extends Body> {
           this.i18n('youCanOnlyUploadFileTypes', {
             types: allowedFileTypesString,
           }),
-          { file: file as UppyFile<M, B> },
+          { file } as { file: UppyFile<M, B> },
         )
       }
     }
@@ -156,7 +156,7 @@ class Restricter<M extends Meta, B extends Body> {
           size: prettierBytes(maxFileSize),
           file: file.name,
         }),
-        { file: file as UppyFile<M, B> },
+        { file } as { file: UppyFile<M, B> },
       )
     }
 
@@ -166,7 +166,7 @@ class Restricter<M extends Meta, B extends Body> {
         this.i18n('inferiorSize', {
           size: prettierBytes(minFileSize),
         }),
-        { file: file as UppyFile<M, B> },
+        { file } as { file: UppyFile<M, B> },
       )
     }
   }

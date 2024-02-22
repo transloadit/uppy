@@ -1,5 +1,13 @@
 # @uppy/utils
 
+## 5.7.3
+
+Released: 2024-02-22
+Included in: Uppy v3.22.2
+
+- @uppy/core,@uppy/utils: Introduce `ValidateableFile` & move `MinimalRequiredUppyFile` into utils (Antoine du Hamel / #4944)
+- @uppy/utils: remove EventManager circular reference (Merlijn Vos / #4949)
+
 ## 5.7.1
 
 Released: 2024-02-19

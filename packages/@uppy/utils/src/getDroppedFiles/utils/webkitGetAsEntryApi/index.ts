@@ -42,7 +42,6 @@ function getAsFileSystemHandleFromEntry(
           onSuccess: (dirEntries) =>
             resolve(
               dirEntries.map(
-                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 (file) => getAsFileSystemHandleFromEntry(file, logDropError)!,
               ),
             ),

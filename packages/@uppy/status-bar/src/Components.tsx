@@ -209,7 +209,7 @@ function PauseResumeButton<M extends Meta, B extends Body>(
 
 interface DoneBtnProps {
   i18n: I18n
-  doneButtonHandler: (() => void) | null
+  doneButtonHandler: (() => void) | undefined
 }
 
 function DoneBtn(props: DoneBtnProps): JSX.Element {
@@ -219,7 +219,7 @@ function DoneBtn(props: DoneBtnProps): JSX.Element {
     <button
       type="button"
       className="uppy-u-reset uppy-c-btn uppy-StatusBar-actionBtn uppy-StatusBar-actionBtn--done"
-      onClick={doneButtonHandler!}
+      onClick={doneButtonHandler}
       data-uppy-super-focusable
     >
       {i18n('done')}
@@ -251,13 +251,12 @@ interface ProgressBarProcessingProps {
 function ProgressBarProcessing(props: ProgressBarProcessingProps): JSX.Element {
   const { progress } = props
   const { value, mode, message } = progress
-  const roundedValue = Math.round(value! * 100)
   const dot = `\u00B7`
 
   return (
     <div className="uppy-StatusBar-content">
       <LoadingSpinner />
-      {mode === 'determinate' ? `${roundedValue}% ${dot} ` : ''}
+      {mode === 'determinate' ? `${Math.round(value * 100)}% ${dot} ` : ''}
       {message}
     </div>
   )

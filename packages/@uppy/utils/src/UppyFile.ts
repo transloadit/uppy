@@ -42,7 +42,7 @@ export interface UppyFile<M extends Meta, B extends Body> {
     uploadURL?: string
   }
 }
-//
+
 // The user facing type for UppyFile used in uppy.addFile() and uppy.setOptions()
 export type MinimalRequiredUppyFile<M extends Meta, B extends Body> = Required<
   Pick<UppyFile<M, B>, 'name' | 'data'>

@@ -1,5 +1,3 @@
-'use strict'
-
 import UserFacingApiError from '@uppy/utils/lib/UserFacingApiError'
 // eslint-disable-next-line import/no-extraneous-dependencies
 import pRetry, { AbortError } from 'p-retry'
@@ -376,7 +374,6 @@ export default class RequestClient<M extends Meta, B extends Body> {
     try {
       return await new Promise((resolve, reject) => {
         const token = file.serverToken
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const host = getSocketHost(file.remote!.companionUrl)
 
         let socket: WebSocket | undefined
@@ -482,13 +479,16 @@ export default class RequestClient<M extends Meta, B extends Body> {
                             break
                           }
                           case 'success': {
+                            // payload.response exists for xhr-upload but not for tus/transloadit
+                            const text = payload.response?.responseText
+
                             this.uppy.emit(
                               'upload-success',
                               this.uppy.getFile(file.id),
-                              // @ts-expect-error event expects a lot more data.
-                              // TODO: add missing data?
                               {
                                 uploadURL: payload.url,
+                                status: payload.response?.status ?? 200,
+                                body: text ? JSON.parse(text) : undefined,
                               },
                             )
                             socketAbortController?.abort?.()

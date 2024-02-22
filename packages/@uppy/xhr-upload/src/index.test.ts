@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { vi, describe, it, expect } from 'vitest'
 import nock from 'nock'
 import Core from '@uppy/core'

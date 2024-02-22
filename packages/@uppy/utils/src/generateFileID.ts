@@ -64,7 +64,7 @@ function hasFileStableId(file: MinimalRequiredUppyFile<any, any>): boolean {
 }
 
 export function getSafeFileId(file: MinimalRequiredUppyFile<any, any>): string {
-  if (hasFileStableId(file)) return file.id as string
+  if (hasFileStableId(file)) return file.id!
 
   const fileType = getFileType(file)
 

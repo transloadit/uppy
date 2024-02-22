@@ -166,13 +166,12 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
    * any events related to the file, and the Companion WebSocket connection.
    */
   resetUploaderReferences(fileID: string, opts?: { abort: boolean }): void {
-    if (this.uploaders[fileID]) {
-      const uploader = this.uploaders[fileID]
-
-      uploader!.abort()
+    const uploader = this.uploaders[fileID]
+    if (uploader) {
+      uploader.abort()
 
       if (opts?.abort) {
-        uploader!.abort(true)
+        uploader.abort(true)
       }
 
       this.uploaders[fileID] = null

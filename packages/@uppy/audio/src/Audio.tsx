@@ -18,7 +18,6 @@ import locale from './locale.ts'
 import packageJson from '../package.json'
 
 interface AudioOptions extends UIPluginOptions {
-  target?: HTMLElement | string
   showAudioSourceDropdown?: boolean
 }
 interface AudioState {
