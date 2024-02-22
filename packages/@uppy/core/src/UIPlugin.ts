@@ -59,9 +59,18 @@ class UIPlugin<
     target: PluginTarget<Me, Bo>, // eslint-disable-line no-use-before-define
   ): UIPlugin<any, Me, Bo> | undefined {
     let targetPlugin
-    if (typeof target === 'object' && target instanceof UIPlugin) {
+    if (typeof (target as UIPlugin<any, any, any>)?.addTarget === 'function') {
       // Targeting a plugin *instance*
-      targetPlugin = target
+      targetPlugin = target as UIPlugin<any, any, any>
+      if (!(targetPlugin instanceof UIPlugin)) {
+        // eslint-disable-next-line no-console
+        console.warn(
+          new Error(
+            'The provided plugin is not an instance of UIPlugin. This is an indication of a bug with the way Uppy is bundled.',
+            { cause: { targetPlugin, UIPlugin } },
+          ),
+        )
+      }
     } else if (typeof target === 'function') {
       // Targeting a plugin type
       const Target = target
