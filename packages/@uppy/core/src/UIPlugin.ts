@@ -63,9 +63,9 @@ class UIPlugin<
     target: PluginTarget<Me, Bo>, // eslint-disable-line no-use-before-define
   ): UIPlugin<any, Me, Bo> | undefined {
     let targetPlugin
-    if (typeof (target as UIPlugin<any, any, any>)?.addTarget === 'function') {
+    if (typeof target === 'object' && target instanceof UIPlugin) {
       // Targeting a plugin *instance*
-      targetPlugin = target as UIPlugin<any, any, any>
+      targetPlugin = target
     } else if (typeof target === 'function') {
       // Targeting a plugin type
       const Target = target
