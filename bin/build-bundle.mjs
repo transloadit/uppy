@@ -6,7 +6,6 @@ import chalk from 'chalk'
 
 import esbuild from 'esbuild'
 import babel from 'esbuild-plugin-babel'
-import { fileURLToPath } from 'node:url'
 
 const UPPY_ROOT = new URL('../', import.meta.url)
 const PACKAGES_ROOT = new URL('./packages/', UPPY_ROOT)
@@ -19,9 +18,9 @@ function buildBundle (srcFile, bundleFile, { minify = true, standalone = '', plu
     outfile: bundleFile,
     platform: 'browser',
     minify,
-    keepNames: true,
+    keepNames: target !== 'es5',
     plugins,
-    tsconfig: fileURLToPath(new URL('../private/empty.json', import.meta.url)),
+    tsconfigRaw: '{}',
     target,
     format,
   }).then(() => {
