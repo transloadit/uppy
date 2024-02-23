@@ -52,6 +52,7 @@ gl_ES.strings = {
   dropPasteImportFolders:
     'Soltar arquivos aquí, pegar, %{browse} ou importar dende',
   editFile: 'Editar arquivo',
+  editImage: 'Editar imaxe',
   editing: 'Editando %{file}',
   emptyFolderAdded: 'Ningún arquivo foi agregado dende o cartafol vacía',
   encoding: 'Codificando...',

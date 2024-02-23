@@ -1,5 +1,21 @@
 # @uppy/utils
 
+## 5.7.3
+
+Released: 2024-02-22
+Included in: Uppy v3.22.2
+
+- @uppy/core,@uppy/utils: Introduce `ValidateableFile` & move `MinimalRequiredUppyFile` into utils (Antoine du Hamel / #4944)
+- @uppy/utils: remove EventManager circular reference (Merlijn Vos / #4949)
+
+## 5.7.1
+
+Released: 2024-02-19
+Included in: Uppy v3.22.0
+
+- @uppy/utils: improve types for `finddomelement` (antoine du hamel / #4873)
+- @uppy/utils: improve `preprocess` and `postprocess` types (antoine du hamel / #4841)
+
 ## 5.7.0
 
 Released: 2023-12-12

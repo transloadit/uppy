@@ -25,7 +25,7 @@ const downloadURL = async (url, blockLocalIPs, traceId) => {
   // TODO in next major, rename all blockLocalIPs to allowLocalUrls and invert the bool, to make it consistent
   // see discussion https://github.com/transloadit/uppy/pull/4554/files#r1268677162
   try {
-    const protectedGot = getProtectedGot({ url, blockLocalIPs })
+    const protectedGot = getProtectedGot({ blockLocalIPs })
     const stream = protectedGot.stream.get(url, { responseType: 'json' })
     await prepareStream(stream)
     return stream

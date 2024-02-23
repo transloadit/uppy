@@ -46,6 +46,7 @@ zh_CN.strings = {
   dropPasteImportFiles: '拖拽文件到这里，粘贴、%{browse}或者导入',
   dropPasteImportFolders: '拖拽文件到这里，粘贴、%{browse}或者导入',
   editFile: '编辑文件',
+  editImage: '编辑图片',
   editing: '正在编辑 %{file}',
   emptyFolderAdded: '无法从空文件夹添加文件',
   encoding: '正在编码…',

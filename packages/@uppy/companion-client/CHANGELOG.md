@@ -1,5 +1,25 @@
 # @uppy/companion-client
 
+## 3.7.3
+
+Released: 2024-02-22
+Included in: Uppy v3.22.2
+
+- @uppy/companion-client: fix body/url on upload-success (Merlijn Vos / #4922)
+- @uppy/companion-client: remove unnecessary `'use strict'` directives (Antoine du Hamel / #4943)
+- @uppy/companion-client: type changes for provider-views (Antoine du Hamel / #4938)
+- @uppy/companion-client: update types (Antoine du Hamel / #4927)
+
+## 3.7.1
+
+Released: 2024-02-19
+Included in: Uppy v3.22.0
+
+-  @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/companion-client,@uppy/tus,@uppy/xhr-upload: update `uppyfile` objects before emitting events (antoine du hamel / #4928)
+- @uppy/companion-client: fix tests and linter (antoine du hamel / #4890)
+- @uppy/companion-client: migrate to ts (merlijn vos / #4864)
+- @uppy/companion-client: fix `typeerror` (antoine du hamel)
+
 ## 3.7.0
 
 Released: 2023-12-12

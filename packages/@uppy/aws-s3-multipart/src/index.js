@@ -754,7 +754,7 @@ export default class AwsS3Multipart extends BasePlugin {
   #uploadLocalFile (file) {
     return new Promise((resolve, reject) => {
       const onProgress = (bytesUploaded, bytesTotal) => {
-        this.uppy.emit('upload-progress', file, {
+        this.uppy.emit('upload-progress', this.uppy.getFile(file.id), {
           uploader: this,
           bytesUploaded,
           bytesTotal,
