@@ -114,7 +114,14 @@ async function buildLib () {
       },
     }]
     const isTSX = file.endsWith('.tsx')
-    if (isTSX || file.endsWith('.ts')) { plugins.push(['@babel/plugin-transform-typescript', { disallowAmbiguousJSXLike: true, isTSX, jsxPragma: 'h' }]) }
+    if (isTSX || file.endsWith('.ts')) {
+      plugins.push(['@babel/plugin-transform-typescript', {
+        disallowAmbiguousJSXLike: true,
+        isTSX,
+        jsxPragma: 'h',
+        jsxPragmaFrag: 'Fragment',
+      }])
+    }
 
     const { code, map } = await babel.transformFileAsync(file, {
       sourceMaps: true,
