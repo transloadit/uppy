@@ -1,52 +1,30 @@
-import { h, type ComponentChild } from 'preact'
-import type { CSSProperties } from 'preact/compat'
-
-import { UIPlugin, Uppy, type UIPluginOptions } from '@uppy/core'
+import { UIPlugin } from '@uppy/core'
 import toArray from '@uppy/utils/lib/toArray'
-import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
-import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin.js'
+import { h } from 'preact'
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'
-import locale from './locale.ts'
+import locale from './locale.js'
 
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export interface FileInputOptions<M extends Meta, B extends Body> extends UIPluginOptions {
-  target?: HTMLElement | string | null
-  pretty?: boolean,
-  inputName?: string,
-}
-interface FileInputState {
-  [id: string]: unknown
-}
-
-// Default options, must be kept in sync with @uppy/react/src/FileInput.js.
-const defaultOptions = {
-  target: null,
-  pretty: true,
-  inputName: 'files[]',
-}
-
-type Opts<M extends Meta, B extends Body> = DefinePluginOpts<
-  FileInputOptions<M, B>,
-  keyof typeof defaultOptions
->
-
-export default  class FileInput<M extends Meta, B extends Body> extends
-  UIPlugin<Opts<M, B>, M, B, FileInputState> {
+export default  class FileInput extends UIPlugin {
   static VERSION = packageJson.version
 
-  input: HTMLInputElement | null
-
-  constructor (uppy: Uppy<M, B>, opts?: FileInputOptions<M, B>) {
-    super(uppy, { ...defaultOptions, ...opts })
+  constructor (uppy, opts) {
+    super(uppy, opts)
     this.id = this.opts.id || 'FileInput'
     this.title = 'File Input'
     this.type = 'acquirer'
 
     this.defaultLocale = locale
+
+    // Default options, must be kept in sync with @uppy/react/src/FileInput.js.
+    const defaultOptions = {
+      target: null,
+      pretty: true,
+      inputName: 'files[]',
+    }
+
+    // Merge default options with the ones set by user
+    this.opts = { ...defaultOptions, ...opts }
 
     this.i18nInit()
 
@@ -55,7 +33,7 @@ export default  class FileInput<M extends Meta, B extends Body> extends
     this.handleClick = this.handleClick.bind(this)
   }
 
-  addFiles (files: File[]): void {
+  addFiles (files) {
     const descriptors = files.map((file) => ({
       source: this.id,
       name: file.name,
@@ -70,9 +48,9 @@ export default  class FileInput<M extends Meta, B extends Body> extends
     }
   }
 
-  handleInputChange (event: Event): void {
+  handleInputChange (event) {
     this.uppy.log('[FileInput] Something selected through input...')
-    const files = toArray((event.target as HTMLInputElement | null)?.files ?? [])
+    const files = toArray(event.target.files)
     this.addFiles(files)
 
     // We clear the input after a file is selected, because otherwise
@@ -81,17 +59,16 @@ export default  class FileInput<M extends Meta, B extends Body> extends
     // ___Why not use value="" on <input/> instead?
     //    Because if we use that method of clearing the input,
     //    Chrome will not trigger change if we drop the same file twice (Issue #768).
-    // @ts-expect-error yes
     event.target.value = null // eslint-disable-line no-param-reassign
   }
 
-  handleClick (): void {
-    this.input?.click()
+  handleClick () {
+    this.input.click()
   }
 
-  render (): ComponentChild {
+  render () {
     /* http://tympanus.net/codrops/2015/09/15/styling-customizing-file-inputs-smart-way/ */
-    const hiddenInputStyle: CSSProperties = {
+    const hiddenInputStyle = {
       width: '0.1px',
       height: '0.1px',
       opacity: 0,
@@ -101,13 +78,13 @@ export default  class FileInput<M extends Meta, B extends Body> extends
     }
 
     const { restrictions } = this.uppy.opts
-    const accept = restrictions.allowedFileTypes ? restrictions.allowedFileTypes.join(',') : undefined
+    const accept = restrictions.allowedFileTypes ? restrictions.allowedFileTypes.join(',') : null
 
     return (
       <div className="uppy-FileInput-container">
         <input
           className="uppy-FileInput-input"
-          style={this.opts.pretty ? hiddenInputStyle : undefined}
+          style={this.opts.pretty && hiddenInputStyle}
           type="file"
           name={this.opts.inputName}
           onChange={this.handleInputChange}
@@ -129,14 +106,14 @@ export default  class FileInput<M extends Meta, B extends Body> extends
     )
   }
 
-  install (): void {
+  install () {
     const { target } = this.opts
     if (target) {
       this.mount(target, this)
     }
   }
 
-  uninstall (): void {
+  uninstall () {
     this.unmount()
   }
 }
