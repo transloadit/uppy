@@ -4,21 +4,20 @@ import { UIPlugin, Uppy, type UIPluginOptions } from '@uppy/core'
 import toArray from '@uppy/utils/lib/toArray'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin.js'
+import type { CSSProperties } from 'preact/compat'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'
 import locale from './locale.ts'
 
-
-export interface FileInputOptions<M extends Meta, B extends Body> extends UIPluginOptions {
-  target?: HTMLElement | string | null
-  pretty?: boolean,
-  inputName?: string,
+export interface FileInputOptions<M extends Meta, B extends Body>
+  extends UIPluginOptions {
+  pretty?: boolean
+  inputName?: string
 }
 // Default options, must be kept in sync with @uppy/react/src/FileInput.js.
 const defaultOptions = {
-  target: null,
   pretty: true,
   inputName: 'files[]',
 }
@@ -28,13 +27,16 @@ type Opts<M extends Meta, B extends Body> = DefinePluginOpts<
   keyof typeof defaultOptions
 >
 
-export default  class FileInput<M extends Meta, B extends Body> extends
-  UIPlugin<Opts<M, B>, M, B> {
+export default class FileInput<M extends Meta, B extends Body> extends UIPlugin<
+  Opts<M, B>,
+  M,
+  B
+> {
   static VERSION = packageJson.version
 
   input: HTMLInputElement | null
 
-  constructor (uppy: Uppy<M, B>, opts?: FileInputOptions<M, B>) {
+  constructor(uppy: Uppy<M, B>, opts?: FileInputOptions<M, B>) {
     super(uppy, { ...defaultOptions, ...opts })
     this.id = this.opts.id || 'FileInput'
     this.title = 'File Input'
@@ -49,7 +51,7 @@ export default  class FileInput<M extends Meta, B extends Body> extends
     this.handleClick = this.handleClick.bind(this)
   }
 
-  addFiles (files: File[]): void {
+  addFiles(files: File[]): void {
     const descriptors = files.map((file) => ({
       source: this.id,
       name: file.name,
@@ -66,7 +68,7 @@ export default  class FileInput<M extends Meta, B extends Body> extends
 
   private handleInputChange(event: Event) {
     this.uppy.log('[FileInput] Something selected through input...')
-    const files = toArray((event.target as HTMLInputElement).files)
+    const files = toArray((event.target as HTMLInputElement).files ?? [])
     this.addFiles(files)
 
     // We clear the input after a file is selected, because otherwise
@@ -83,9 +85,9 @@ export default  class FileInput<M extends Meta, B extends Body> extends
     this.input!.click()
   }
 
-  render (): ComponentChild {
+  render(): ComponentChild {
     /* http://tympanus.net/codrops/2015/09/15/styling-customizing-file-inputs-smart-way/ */
-    const hiddenInputStyle: JSX.IntrinsicElements['input']['style'] = {
+    const hiddenInputStyle: CSSProperties = {
       width: '0.1px',
       height: '0.1px',
       opacity: 0,
@@ -95,7 +97,10 @@ export default  class FileInput<M extends Meta, B extends Body> extends
     }
 
     const { restrictions } = this.uppy.opts
-    const accept = restrictions.allowedFileTypes ? restrictions.allowedFileTypes.join(',') : undefined
+    const accept =
+      restrictions.allowedFileTypes ?
+        restrictions.allowedFileTypes.join(',')
+      : undefined
 
     return (
       <div className="uppy-FileInput-container">
@@ -107,10 +112,11 @@ export default  class FileInput<M extends Meta, B extends Body> extends
           onChange={this.handleInputChange}
           multiple={restrictions.maxNumberOfFiles !== 1}
           accept={accept}
-          ref={(input) => { this.input = input }}
+          ref={(input) => {
+            this.input = input
+          }}
         />
-        {this.opts.pretty
-          && (
+        {this.opts.pretty && (
           <button
             className="uppy-FileInput-btn"
             type="button"
@@ -118,19 +124,19 @@ export default  class FileInput<M extends Meta, B extends Body> extends
           >
             {this.i18n('chooseFiles')}
           </button>
-          )}
+        )}
       </div>
     )
   }
 
-  install (): void {
+  install(): void {
     const { target } = this.opts
     if (target) {
       this.mount(target, this)
     }
   }
 
-  uninstall (): void {
+  uninstall(): void {
     this.unmount()
   }
 }
