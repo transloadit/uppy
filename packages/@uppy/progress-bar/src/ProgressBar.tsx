@@ -8,16 +8,11 @@ import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin.js'
 import packageJson from '../package.json'
 
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export interface ProgressBarOptions<M extends Meta, B extends Body> extends UIPluginOptions {
   target?: HTMLElement | string
   hideAfterFinish?: boolean,
   fixed?: boolean,
 }
-interface ProgressBarState {
-  [id: string]: unknown
-}
-
 // set default options, must kept in sync with @uppy/react/src/ProgressBar.js
 const defaultOptions = {
   target: 'body',
@@ -35,7 +30,7 @@ type Opts<M extends Meta, B extends Body> = DefinePluginOpts<
  *
  */
 export default class ProgressBar<M extends Meta, B extends Body>
-  extends UIPlugin<Opts<M, B>, M, B, ProgressBarState> {
+  extends UIPlugin<Opts<M, B>, M, B> {
   static VERSION = packageJson.version
 
   constructor (uppy: Uppy<M, B>, opts?: ProgressBarOptions<M, B>) {
