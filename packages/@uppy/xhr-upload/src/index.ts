@@ -346,7 +346,9 @@ export default class XHRUpload<
 
         if (opts.validateStatus(xhr.status, xhr.responseText, xhr)) {
           const body = opts.getResponseData(xhr.responseText, xhr)
-          const uploadURL = body[opts.responseUrlFieldName] as string
+          const uploadURL = body?.[opts.responseUrlFieldName] as
+            | string
+            | undefined
 
           const uploadResp = {
             status: xhr.status,
