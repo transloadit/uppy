@@ -10,8 +10,7 @@ import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin.js'
 import packageJson from '../package.json'
 import locale from './locale.ts'
 
-export interface FileInputOptions<M extends Meta, B extends Body>
-  extends UIPluginOptions {
+export interface FileInputOptions extends UIPluginOptions {
   pretty?: boolean
   inputName?: string
 }
@@ -21,13 +20,13 @@ const defaultOptions = {
   inputName: 'files[]',
 }
 
-type Opts<M extends Meta, B extends Body> = DefinePluginOpts<
-  FileInputOptions<M, B>,
+type Opts = DefinePluginOpts<
+  FileInputOptions,
   keyof typeof defaultOptions
 >
 
 export default class FileInput<M extends Meta, B extends Body> extends UIPlugin<
-  Opts<M, B>,
+  Opts,
   M,
   B
 > {
