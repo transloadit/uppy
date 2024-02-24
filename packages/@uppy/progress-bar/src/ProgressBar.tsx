@@ -8,7 +8,7 @@ import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin.js'
 import packageJson from '../package.json'
 
 
-export interface ProgressBarOptions<M extends Meta, B extends Body> extends UIPluginOptions {
+export interface ProgressBarOptions extends UIPluginOptions {
   target?: HTMLElement | string
   hideAfterFinish?: boolean,
   fixed?: boolean,
@@ -20,8 +20,8 @@ const defaultOptions = {
   hideAfterFinish: true,
 }
 
-type Opts<M extends Meta, B extends Body> = DefinePluginOpts<
-  ProgressBarOptions<M, B>,
+type Opts = DefinePluginOpts<
+  ProgressBarOptions,
   keyof typeof defaultOptions
 >
 
@@ -30,7 +30,7 @@ type Opts<M extends Meta, B extends Body> = DefinePluginOpts<
  *
  */
 export default class ProgressBar<M extends Meta, B extends Body>
-  extends UIPlugin<Opts<M, B>, M, B> {
+  extends UIPlugin<Opts, M, B> {
   static VERSION = packageJson.version
 
   constructor (uppy: Uppy<M, B>, opts?: ProgressBarOptions<M, B>) {
@@ -42,7 +42,7 @@ export default class ProgressBar<M extends Meta, B extends Body>
     this.render = this.render.bind(this)
   }
 
-  render (state: ProgressBarState): ComponentChild {
+  render (state: State<M, B>): ComponentChild {
     const progress = state.totalProgress || 0
     // before starting and after finish should be hidden if specified in the options
     const isHidden = (progress === 0 || progress === 100) && this.opts.hideAfterFinish
