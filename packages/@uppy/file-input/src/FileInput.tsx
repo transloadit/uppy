@@ -20,6 +20,11 @@ const defaultOptions = {
   inputName: 'files[]',
 }
 
+// https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement/files
+interface HTMLFileInputElement extends HTMLInputElement {
+  files: FileList
+}
+
 type Opts = DefinePluginOpts<FileInputOptions, keyof typeof defaultOptions>
 
 export default class FileInput<M extends Meta, B extends Body> extends UIPlugin<
@@ -29,9 +34,9 @@ export default class FileInput<M extends Meta, B extends Body> extends UIPlugin<
 > {
   static VERSION = packageJson.version
 
-  input: HTMLInputElement | null
+  input: HTMLFileInputElement | null
 
-  constructor(uppy: Uppy<M, B>, opts?: FileInputOptions<M, B>) {
+  constructor(uppy: Uppy<M, B>, opts?: FileInputOptions) {
     super(uppy, { ...defaultOptions, ...opts })
     this.id = this.opts.id || 'FileInput'
     this.title = 'File Input'
@@ -63,7 +68,7 @@ export default class FileInput<M extends Meta, B extends Body> extends UIPlugin<
 
   private handleInputChange(event: Event) {
     this.uppy.log('[FileInput] Something selected through input...')
-    const files = toArray((event.target as HTMLInputElement).files ?? [])
+    const files = toArray((event.target as HTMLFileInputElement).files)
     this.addFiles(files)
 
     // We clear the input after a file is selected, because otherwise
@@ -108,7 +113,7 @@ export default class FileInput<M extends Meta, B extends Body> extends UIPlugin<
           multiple={restrictions.maxNumberOfFiles !== 1}
           accept={accept}
           ref={(input) => {
-            this.input = input
+            this.input = input as HTMLFileInputElement
           }}
         />
         {this.opts.pretty && (
