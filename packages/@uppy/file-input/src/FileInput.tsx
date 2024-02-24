@@ -20,10 +20,7 @@ const defaultOptions = {
   inputName: 'files[]',
 }
 
-type Opts = DefinePluginOpts<
-  FileInputOptions,
-  keyof typeof defaultOptions
->
+type Opts = DefinePluginOpts<FileInputOptions, keyof typeof defaultOptions>
 
 export default class FileInput<M extends Meta, B extends Body> extends UIPlugin<
   Opts,
