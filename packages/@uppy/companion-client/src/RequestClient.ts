@@ -488,7 +488,8 @@ export default class RequestClient<M extends Meta, B extends Body> {
                               {
                                 uploadURL: payload.url,
                                 status: payload.response?.status ?? 200,
-                                body: text ? JSON.parse(text) : undefined,
+                                body:
+                                  text ? (JSON.parse(text) as B) : undefined,
                               },
                             )
                             socketAbortController?.abort?.()
