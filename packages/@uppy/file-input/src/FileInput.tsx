@@ -1,5 +1,4 @@
 import { h, type ComponentChild } from 'preact'
-import type { CSSProperties } from 'preact/compat'
 
 import { UIPlugin, Uppy, type UIPluginOptions } from '@uppy/core'
 import toArray from '@uppy/utils/lib/toArray'
@@ -12,16 +11,11 @@ import packageJson from '../package.json'
 import locale from './locale.ts'
 
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export interface FileInputOptions<M extends Meta, B extends Body> extends UIPluginOptions {
   target?: HTMLElement | string | null
   pretty?: boolean,
   inputName?: string,
 }
-interface FileInputState {
-  [id: string]: unknown
-}
-
 // Default options, must be kept in sync with @uppy/react/src/FileInput.js.
 const defaultOptions = {
   target: null,
@@ -35,7 +29,7 @@ type Opts<M extends Meta, B extends Body> = DefinePluginOpts<
 >
 
 export default  class FileInput<M extends Meta, B extends Body> extends
-  UIPlugin<Opts<M, B>, M, B, FileInputState> {
+  UIPlugin<Opts<M, B>, M, B> {
   static VERSION = packageJson.version
 
   input: HTMLInputElement | null
@@ -70,9 +64,9 @@ export default  class FileInput<M extends Meta, B extends Body> extends
     }
   }
 
-  handleInputChange (event: Event): void {
+  private handleInputChange(event: Event) {
     this.uppy.log('[FileInput] Something selected through input...')
-    const files = toArray((event.target as HTMLInputElement | null)?.files ?? [])
+    const files = toArray((event.target as HTMLInputElement).files)
     this.addFiles(files)
 
     // We clear the input after a file is selected, because otherwise
@@ -85,13 +79,13 @@ export default  class FileInput<M extends Meta, B extends Body> extends
     event.target.value = null // eslint-disable-line no-param-reassign
   }
 
-  handleClick (): void {
-    this.input?.click()
+  private handleClick() {
+    this.input!.click()
   }
 
   render (): ComponentChild {
     /* http://tympanus.net/codrops/2015/09/15/styling-customizing-file-inputs-smart-way/ */
-    const hiddenInputStyle: CSSProperties = {
+    const hiddenInputStyle: JSX.IntrinsicElements['input']['style'] = {
       width: '0.1px',
       height: '0.1px',
       opacity: 0,
