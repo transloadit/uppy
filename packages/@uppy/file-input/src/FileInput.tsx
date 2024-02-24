@@ -4,7 +4,6 @@ import { UIPlugin, Uppy, type UIPluginOptions } from '@uppy/core'
 import toArray from '@uppy/utils/lib/toArray'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin.js'
-import type { CSSProperties } from 'preact/compat'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
@@ -87,14 +86,14 @@ export default class FileInput<M extends Meta, B extends Body> extends UIPlugin<
 
   render(): ComponentChild {
     /* http://tympanus.net/codrops/2015/09/15/styling-customizing-file-inputs-smart-way/ */
-    const hiddenInputStyle: CSSProperties = {
+    const hiddenInputStyle = {
       width: '0.1px',
       height: '0.1px',
       opacity: 0,
       overflow: 'hidden',
       position: 'absolute',
       zIndex: -1,
-    }
+    } satisfies JSX.IntrinsicElements['input']['style']
 
     const { restrictions } = this.uppy.opts
     const accept =
