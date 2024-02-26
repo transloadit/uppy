@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint no-console: "off", no-restricted-syntax: "off" */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -166,7 +165,6 @@ describe('src/Core', () => {
 
       core.use(AcquirerPlugin1)
       const plugin = core.getPlugin('TestSelector1')
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       expect(plugin!.id).toEqual('TestSelector1')
       expect(plugin instanceof UIPlugin)
     })

@@ -1,5 +1,12 @@
 # @uppy/dashboard
 
+## 3.7.4
+
+Released: 2024-02-22
+Included in: Uppy v3.22.2
+
+- @uppy/dashboard: MetaEditor + ImageEditor - new state machine logic (Evgenia Karunus / #4939)
+
 ## 3.7.3
 
 Released: 2024-02-20
