@@ -195,7 +195,6 @@ class UIPlugin<
 export default UIPlugin
 
 export type PluginTarget<M extends Meta, B extends Body> =
-  | null
   | string
   | Element
   | typeof BasePlugin

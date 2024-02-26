@@ -25,7 +25,6 @@ export interface FormOptions extends UIPluginOptions {
 }
 
 const defaultOptions = {
-  target: null,
   resultName: 'uppyResult',
   getMetaFromForm: true,
   addResultToForm: true,
@@ -34,6 +33,15 @@ const defaultOptions = {
 }
 
 type Opts = DefinePluginOpts<FormOptions, keyof typeof defaultOptions>
+
+function assertHTMLFormElement(input: Node | null): HTMLFormElement {
+  if (input == null || input.nodeName !== 'FORM') {
+    throw new Error('ASSERTION FAILED: the target is not a <form> element', {
+      cause: input,
+    })
+  }
+  return input as any
+}
 
 export default class Form<M extends Meta, B extends Body> extends BasePlugin<
   Opts,
@@ -151,7 +159,7 @@ export default class Form<M extends Meta, B extends Body> extends BasePlugin<
   }
 
   install(): void {
-    this.form = findDOMElement(this.opts.target) as HTMLFormElement
+    this.form = assertHTMLFormElement(findDOMElement(this.opts.target))
 
     if (!this.form || this.form.nodeName !== 'FORM') {
       this.uppy.log(
