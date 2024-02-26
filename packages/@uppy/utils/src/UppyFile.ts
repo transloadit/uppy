@@ -1,4 +1,3 @@
-import type { CompanionFile } from './CompanionFile'
 import type { FileProgress } from './FileProgress'
 
 export type Meta = Record<string, unknown>

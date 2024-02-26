@@ -1,5 +1,5 @@
 /* eslint-disable react/require-default-props */
-import { h, Fragment } from 'preact'
+import { h } from 'preact'
 import { useEffect, useState, useCallback } from 'preact/hooks'
 import { nanoid } from 'nanoid/non-secure'
 
@@ -72,7 +72,7 @@ export default function SearchFilterInput(props: Props): JSX.Element {
   }, [form, validateAndSearch])
 
   return (
-    <Fragment>
+    <>
       <input
         className={`uppy-u-reset ${inputClassName}`}
         type="search"
@@ -122,6 +122,6 @@ export default function SearchFilterInput(props: Props): JSX.Element {
           {buttonLabel}
         </button>
       )}
-    </Fragment>
+    </>
   )
 }

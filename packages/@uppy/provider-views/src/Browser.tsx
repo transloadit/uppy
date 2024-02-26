@@ -23,7 +23,7 @@ type ListItemProps<M extends Meta, B extends Body> = {
   viewType: string
   isChecked: (file: any) => boolean
   toggleCheckbox: (event: Event, file: CompanionFile) => void
-  recordShiftKeyPress: (event: KeyboardEvent) => void
+  recordShiftKeyPress: (event: KeyboardEvent | MouseEvent) => void
   showTitles: boolean
   i18n: I18n
   validateRestrictions: Uppy<M, B>['validateRestrictions']
@@ -100,7 +100,7 @@ type BrowserProps<M extends Meta, B extends Body> = {
   showBreadcrumbs: boolean
   isChecked: (file: any) => boolean
   toggleCheckbox: (event: Event, file: CompanionFile) => void
-  recordShiftKeyPress: (event: KeyboardEvent) => void
+  recordShiftKeyPress: (event: KeyboardEvent | MouseEvent) => void
   handleScroll: (event: Event) => Promise<void>
   showTitles: boolean
   i18n: I18n

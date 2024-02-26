@@ -337,7 +337,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
     this.plugin.setPluginState({ filterInput: '' })
   }
 
-  async handleAuth(authFormData: unknown): Promise<void> {
+  async handleAuth(authFormData?: unknown): Promise<void> {
     try {
       await this.#withAbort(async (signal) => {
         this.setLoading(true)

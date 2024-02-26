@@ -26,15 +26,15 @@ const Breadcrumb = (props: BreadcrumbProps) => {
   )
 }
 
-type BreadcrumpsProps<M extends Meta, B extends Body> = {
+type BreadcrumbsProps<M extends Meta, B extends Body> = {
   getFolder: ProviderView<M, B>['getFolder']
   title: string
   breadcrumbsIcon: JSX.Element
   breadcrumbs: UnknownProviderPluginState['breadcrumbs']
 }
 
-export default function Breadcrumps<M extends Meta, B extends Body>(
-  props: BreadcrumpsProps<M, B>,
+export default function Breadcrumbs<M extends Meta, B extends Body>(
+  props: BreadcrumbsProps<M, B>,
 ): JSX.Element {
   const { getFolder, title, breadcrumbsIcon, breadcrumbs } = props
 

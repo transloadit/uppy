@@ -16,7 +16,7 @@ type ItemProps<M extends Meta, B extends Body> = {
   id: string
   title: string
   toggleCheckbox: (event: Event) => void
-  recordShiftKeyPress: (event: KeyboardEvent) => void
+  recordShiftKeyPress: (event: KeyboardEvent | MouseEvent) => void
   handleFolderClick?: () => void
   restrictionError?: RestrictionError<M, B> | null
   isCheckboxDisabled: boolean

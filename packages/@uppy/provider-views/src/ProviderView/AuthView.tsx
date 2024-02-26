@@ -67,7 +67,7 @@ function DefaultForm<M extends Meta, B extends Body>({
   const onSubmit = useCallback(
     (e: Event) => {
       e.preventDefault()
-      onAuth(undefined)
+      onAuth()
     },
     [onAuth],
   )
@@ -117,20 +117,12 @@ export default function AuthView<M extends Meta, B extends Body>(
     renderForm = defaultRenderForm,
   } = props
 
-  const pluginNameComponent = (
-    <span className="uppy-Provider-authTitleName">
-      {pluginName}
-      <br />
-    </span>
-  )
   return (
     <div className="uppy-Provider-auth">
       <div className="uppy-Provider-authIcon">{pluginIcon()}</div>
       <div className="uppy-Provider-authTitle">
         {i18n('authenticateWithTitle', {
-          // @ts-expect-error how it possible to pass `Element` to `i18n`?
-          // It seems like like that shouldn't work.
-          pluginName: pluginNameComponent,
+          pluginName,
         })}
       </div>
 

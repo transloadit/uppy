@@ -130,8 +130,10 @@ export default class View<
 
     uppy.log(error.toString())
 
-    // @ts-expect-error AuthError lives in @uppy/companion-client
-    if (error.isAuthError || error.cause?.name === 'AbortError') {
+    if (
+      (error as any).isAuthError ||
+      (error.cause as Error)?.name === 'AbortError'
+    ) {
       // authError just means we're not authenticated, don't show to user
       // AbortError means the user has clicked "cancel" on an operation
       return
@@ -213,7 +215,7 @@ export default class View<
     })
   }
 
-  recordShiftKeyPress = (e: KeyboardEvent): void => {
+  recordShiftKeyPress = (e: KeyboardEvent | MouseEvent): void => {
     this.isShiftKeyPressed = e.shiftKey
   }
 

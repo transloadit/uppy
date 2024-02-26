@@ -17,7 +17,7 @@ type ListItemProps<M extends Meta, B extends Body> = {
   isCheckboxDisabled: boolean
   isChecked: boolean
   toggleCheckbox: (event: Event) => void
-  recordShiftKeyPress: (event: KeyboardEvent) => void
+  recordShiftKeyPress: (event: KeyboardEvent | MouseEvent) => void
   type: string
   id: string
   itemIconEl: any
@@ -58,7 +58,6 @@ export default function ListItem<M extends Meta, B extends Body>(
           className={`uppy-u-reset uppy-ProviderBrowserItem-checkbox ${isChecked ? 'uppy-ProviderBrowserItem-checkbox--is-checked' : ''}`}
           onChange={toggleCheckbox}
           onKeyDown={recordShiftKeyPress}
-          // @ts-expect-error this is fine onMouseDown too
           onMouseDown={recordShiftKeyPress}
           // for the <label/>
           name="listitem"
