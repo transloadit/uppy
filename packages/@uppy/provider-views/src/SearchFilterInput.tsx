@@ -1,5 +1,5 @@
 /* eslint-disable react/require-default-props */
-import { h } from 'preact'
+import { h, Fragment } from 'preact'
 import { useEffect, useState, useCallback } from 'preact/hooks'
 import { nanoid } from 'nanoid/non-secure'
 

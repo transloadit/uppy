@@ -1,5 +1,5 @@
 /* eslint-disable react/destructuring-assignment */
-import { h } from 'preact'
+import { h, Fragment } from 'preact'
 import type { I18n } from '@uppy/utils/lib/Translator'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import type { UnknownProviderPluginState } from '@uppy/core/lib/Uppy.ts'

@@ -1,4 +1,4 @@
-import { h } from 'preact'
+import { h, Fragment } from 'preact'
 
 type UserProps = {
   i18n: (phrase: string) => string
