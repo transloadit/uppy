@@ -52,6 +52,7 @@ el_GR.strings = {
   dropPasteImportFolders:
     'Σύρετε αρχεία εδώ, κάντε επικόλληση, %{browse} ή εισαγωγή από',
   editFile: 'Επεξεργασία αρχείου',
+  editImage: 'Επεξεργασία εικόνας',
   editing: 'Γίνεται επεξεργασία %{file}',
   emptyFolderAdded: 'Δεν προστέθηκαν αρχεία από τον άδειο φάκελο',
   encoding: 'Γίνεται κωδικοποίηση...',

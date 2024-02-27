@@ -57,6 +57,7 @@ th_TH.strings = {
   dropPasteImportFiles: 'ลากไฟล์มาวางที่นี่ หรือ %{browse} หรือ เปิดกล้อง',
   dropPasteImportFolders: 'ลากไฟล์มาวางที่นี่ หรือ %{browse} หรือ เปิดกล้อง',
   editFile: 'แก้ไขไฟล์',
+  editImage: 'แก้ไขภาพ',
   editing: 'กำลังแก้ไข %{file}',
   emptyFolderAdded: 'ไม่สามารถเพิ่มไฟล์จากโฟลเดอร์ว่าง',
   encoding: 'กำลังเข้ารหัส...',

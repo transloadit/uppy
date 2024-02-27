@@ -1,10 +1,12 @@
-import type { Uppy, BasePlugin } from '@uppy/core'
-import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
+import type { Uppy } from '@uppy/core'
+import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import type { PluginOpts } from '@uppy/core/lib/BasePlugin.ts'
-import RequestClient, {
-  authErrorStatusCode,
-  type RequestOptions,
-} from './RequestClient.ts'
+import type {
+  RequestOptions,
+  CompanionClientProvider,
+} from '@uppy/utils/lib/CompanionClientProvider'
+import type { UnknownProviderPlugin } from '@uppy/core/lib/Uppy.ts'
+import RequestClient, { authErrorStatusCode } from './RequestClient.ts'
 import * as tokenStorage from './tokenStorage.ts'
 
 // TODO: remove deprecated options in next major release
@@ -20,13 +22,6 @@ export interface Opts extends PluginOpts {
   name?: string
   supportsRefreshToken?: boolean
   provider: string
-}
-
-interface ProviderPlugin<M extends Meta, B extends Body>
-  extends BasePlugin<Opts, M, B> {
-  files: UppyFile<M, B>[]
-
-  storage: typeof tokenStorage
 }
 
 const getName = (id: string) => {
@@ -55,18 +50,19 @@ function isOriginAllowed(
   origin: string,
   allowedOrigin: string | RegExp | Array<string | RegExp> | undefined,
 ) {
-  const patterns = Array.isArray(allowedOrigin)
-    ? allowedOrigin.map(getRegex)
+  const patterns =
+    Array.isArray(allowedOrigin) ?
+      allowedOrigin.map(getRegex)
     : [getRegex(allowedOrigin)]
   return patterns.some(
     (pattern) => pattern?.test(origin) || pattern?.test(`${origin}/`),
   ) // allowing for trailing '/'
 }
 
-export default class Provider<
-  M extends Meta,
-  B extends Body,
-> extends RequestClient<M, B> {
+export default class Provider<M extends Meta, B extends Body>
+  extends RequestClient<M, B>
+  implements CompanionClientProvider
+{
   #refreshingTokenPromise: Promise<void> | undefined
 
   provider: string
@@ -119,8 +115,9 @@ export default class Provider<
     super.onReceiveResponse(response)
     const plugin = this.#getPlugin()
     const oldAuthenticated = plugin.getPluginState().authenticated
-    const authenticated = oldAuthenticated
-      ? response.status !== authErrorStatusCode
+    const authenticated =
+      oldAuthenticated ?
+        response.status !== authErrorStatusCode
       : response.status < 400
     plugin.setPluginState({ authenticated })
     return response
@@ -139,7 +136,10 @@ export default class Provider<
   }
 
   #getPlugin() {
-    const plugin = this.uppy.getPlugin(this.pluginId) as ProviderPlugin<M, B>
+    const plugin = this.uppy.getPlugin(this.pluginId) as UnknownProviderPlugin<
+      M,
+      B
+    >
     if (plugin == null) throw new Error('Plugin was nullish')
     return plugin
   }
@@ -303,7 +303,7 @@ export default class Provider<
     return `${this.hostname}/${this.id}/get/${id}`
   }
 
-  protected async request<ResBody = Record<string, unknown>>(
+  protected async request<ResBody>(
     ...args: Parameters<RequestClient<M, B>['request']>
   ): Promise<ResBody> {
     await this.#refreshingTokenPromise
@@ -373,23 +373,21 @@ export default class Provider<
     }
   }
 
-  list<ResBody extends Record<string, unknown>>(
+  list<ResBody>(
     directory: string | undefined,
     options: RequestOptions,
   ): Promise<ResBody> {
     return this.get<ResBody>(`${this.id}/list/${directory || ''}`, options)
   }
 
-  async logout<ResBody extends Record<string, unknown>>(
-    options: RequestOptions,
-  ): Promise<ResBody> {
+  async logout<ResBody>(options?: RequestOptions): Promise<ResBody> {
     const response = await this.get<ResBody>(`${this.id}/logout`, options)
     await this.removeAuthToken()
     return response
   }
 
   static initPlugin(
-    plugin: ProviderPlugin<any, any>, // any because static methods cannot use class generics
+    plugin: UnknownProviderPlugin<any, any>, // any because static methods cannot use class generics
     opts: Opts,
     defaultOpts: Record<string, unknown>,
   ): void {

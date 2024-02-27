@@ -51,6 +51,7 @@ sv_SE.strings = {
   dropPasteImportFolders:
     'Släpp filer här, klistra in, %{browse} eller importera från',
   editFile: 'Redigera fil',
+  editImage: 'Redigera bild',
   editing: 'Redigerar %{file}',
   emptyFolderAdded: 'Inga filer lades till från en tom mapp',
   encoding: 'Kodar...',

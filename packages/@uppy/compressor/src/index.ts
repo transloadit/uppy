@@ -1,14 +1,34 @@
-import { BasePlugin } from '@uppy/core'
+import { BasePlugin, Uppy } from '@uppy/core'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import { RateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
 import getFileNameAndExtension from '@uppy/utils/lib/getFileNameAndExtension'
 import prettierBytes from '@transloadit/prettier-bytes'
 import CompressorJS from 'compressorjs'
-import locale from './locale.js'
 
-export default class Compressor extends BasePlugin {
+import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
+import type { PluginOpts } from '@uppy/core/lib/BasePlugin.ts'
+
+import locale from './locale.ts'
+
+declare module '@uppy/core' {
+  export interface UppyEventMap<M extends Meta, B extends Body> {
+    'compressor:complete': (file: UppyFile<M, B>[]) => void
+  }
+}
+
+export interface CompressorOpts extends PluginOpts, CompressorJS.Options {
+  quality: number
+  limit?: number
+}
+
+export default class Compressor<
+  M extends Meta,
+  B extends Body,
+> extends BasePlugin<CompressorOpts, M, B> {
   #RateLimitedQueue
 
-  constructor (uppy, opts) {
+  constructor(uppy: Uppy<M, B>, opts: CompressorOpts) {
     super(uppy, opts)
     this.id = this.opts.id || 'Compressor'
     this.type = 'modifier'
@@ -30,7 +50,7 @@ export default class Compressor extends BasePlugin {
     this.compress = this.compress.bind(this)
   }
 
-  compress (blob) {
+  compress(blob: Blob): Promise<Blob | File> {
     return new Promise((resolve, reject) => {
       /* eslint-disable no-new */
       new CompressorJS(blob, {
@@ -41,15 +61,17 @@ export default class Compressor extends BasePlugin {
     })
   }
 
-  async prepareUpload (fileIDs) {
+  async prepareUpload(fileIDs: string[]): Promise<void> {
     let totalCompressedSize = 0
-    const compressedFiles = []
+    const compressedFiles: UppyFile<M, B>[] = []
     const compressAndApplyResult = this.#RateLimitedQueue.wrapPromiseFunction(
-      async (file) => {
+      async (file: UppyFile<M, B>) => {
         try {
           const compressedBlob = await this.compress(file.data)
           const compressedSavingsSize = file.data.size - compressedBlob.size
-          this.uppy.log(`[Image Compressor] Image ${file.id} compressed by ${prettierBytes(compressedSavingsSize)}`)
+          this.uppy.log(
+            `[Image Compressor] Image ${file.id} compressed by ${prettierBytes(compressedSavingsSize)}`,
+          )
           totalCompressedSize += compressedSavingsSize
           const { name, type, size } = compressedBlob
 
@@ -61,7 +83,9 @@ export default class Compressor extends BasePlugin {
 
           this.uppy.setFileState(file.id, {
             ...(name && { name }),
-            ...(compressedFileName.extension && { extension: compressedFileName.extension }),
+            ...(compressedFileName.extension && {
+              extension: compressedFileName.extension,
+            }),
             ...(type && { type }),
             ...(size && { size }),
             data: compressedBlob,
@@ -73,7 +97,10 @@ export default class Compressor extends BasePlugin {
           })
           compressedFiles.push(file)
         } catch (err) {
-          this.uppy.log(`[Image Compressor] Failed to compress ${file.id}:`, 'warning')
+          this.uppy.log(
+            `[Image Compressor] Failed to compress ${file.id}:`,
+            'warning',
+          )
           this.uppy.log(err, 'warning')
         }
       },
@@ -97,7 +124,7 @@ export default class Compressor extends BasePlugin {
         file.data = file.data.slice(0, file.data.size, file.type)
       }
 
-      if (!file.type.startsWith('image/')) {
+      if (!file.type?.startsWith('image/')) {
         return Promise.resolve()
       }
 
@@ -128,11 +155,11 @@ export default class Compressor extends BasePlugin {
     }
   }
 
-  install () {
+  install(): void {
     this.uppy.addPreProcessor(this.prepareUpload)
   }
 
-  uninstall () {
+  uninstall(): void {
     this.uppy.removePreProcessor(this.prepareUpload)
   }
 }

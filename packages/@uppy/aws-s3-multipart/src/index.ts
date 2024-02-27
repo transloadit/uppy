@@ -347,12 +347,12 @@ export default class AwsS3Multipart<
       uploadPartBytes: AwsS3Multipart.uploadPartBytes,
       createMultipartUpload: null as any,
       listParts: null as any,
-abortMultipartUpload: null as any,
-completeMultipartUpload: null as any,
-signPart: null as any,
-getUploadParameters: null as any,
+      abortMultipartUpload: null as any,
+      completeMultipartUpload: null as any,
+      signPart: null as any,
+      getUploadParameters: null as any,
       ...opts,
-    } )
+    })
     // We need the `as any` here because of the dynamic default options.
     this.type = 'uploader'
     this.id = this.opts.id || 'AwsS3Multipart'
@@ -380,7 +380,8 @@ getUploadParameters: null as any,
     if (
       (opts as AWSS3MultipartWithoutCompanionMandatoryPrepareUploadParts<M, B>)
         ?.prepareUploadParts != null &&
-      (opts as AWSS3MultipartWithoutCompanionMandatorySignPart<M,B>).signPart == null
+      (opts as AWSS3MultipartWithoutCompanionMandatorySignPart<M, B>)
+        .signPart == null
     ) {
       this.opts.signPart = async (
         file: UppyFile<M, B>,
@@ -805,7 +806,7 @@ getUploadParameters: null as any,
   #uploadLocalFile(file: UppyFile<M, B>) {
     return new Promise<void | string>((resolve, reject) => {
       const onProgress = (bytesUploaded: number, bytesTotal: number) => {
-        this.uppy.emit('upload-progress', file, {
+        this.uppy.emit('upload-progress', this.uppy.getFile(file.id), {
           // @ts-expect-error TODO: figure out if we need this
           uploader: this,
           bytesUploaded,

@@ -1,5 +1,3 @@
-'use strict'
-
 /**
  * This module serves as an Async wrapper for LocalStorage
  */

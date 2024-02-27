@@ -48,6 +48,7 @@ fi_FI.strings = {
   dropPasteImportFiles: 'Raahaa tiedostot tähän, liitä, %{browse} tai tuo',
   dropPasteImportFolders: 'Raahaa tiedostot tähän, liitä, %{browse} tai tuo',
   editFile: 'Muokkaa tiedostoa',
+  editImage: 'Muokkaa kuvaa',
   editing: 'Muokataan %{file}',
   emptyFolderAdded: 'Ei lisätty tiedostoja tyhjästä kansiosta',
   encoding: 'Koodataan...',

@@ -1,5 +1,13 @@
 # @uppy/companion
 
+## 4.12.1
+
+Released: 2024-02-19
+Included in: Uppy v3.22.0
+
+- @uppy/companion: fix companion dns and allow redirects from http->https again (mikael finstad / #4895)
+- @uppy/companion,@uppy/tus: bump `tus-js-client` version range (merlijn vos / #4848)
+
 ## 4.12.0
 
 Released: 2023-12-12

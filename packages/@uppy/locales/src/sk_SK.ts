@@ -59,6 +59,7 @@ sk_SK.strings = {
   dropPasteImportFiles: 'Presuňte sem, %{browse} alebo importujte súbory:',
   dropPasteImportFolders: 'Presuňte sem, %{browse} alebo importujte súbory:',
   editFile: 'Upraviť súbor',
+  editImage: 'Upraviť obrázok',
   editing: 'Úprava %{file}',
   emptyFolderAdded: 'Neboli pridané žiadne súbory, pretože adresár je prázdny.',
   encoding: 'Konvertovanie...',

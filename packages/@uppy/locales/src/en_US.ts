@@ -70,6 +70,7 @@ en_US.strings = {
   dropPasteImportFiles: 'Drop files here, %{browseFiles} or import from:',
   dropPasteImportFolders: 'Drop files here, %{browseFolders} or import from:',
   editFile: 'Edit file',
+  editImage: 'Edit image',
   editFileWithFilename: 'Edit file %{file}',
   editing: 'Editing %{file}',
   emptyFolderAdded: 'No files were added from empty folder',
