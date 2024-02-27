@@ -72,7 +72,7 @@ export default function SearchFilterInput(props: Props): JSX.Element {
   }, [form, validateAndSearch])
 
   return (
-    <>
+    <Fragment>
       <input
         className={`uppy-u-reset ${inputClassName}`}
         type="search"
@@ -122,6 +122,6 @@ export default function SearchFilterInput(props: Props): JSX.Element {
           {buttonLabel}
         </button>
       )}
-    </>
+    </Fragment>
   )
 }

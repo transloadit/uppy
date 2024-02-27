@@ -1,7 +1,6 @@
 {
   "extends": "../../../tsconfig.shared",
   "compilerOptions": {
-    "jsxImportSource": "preact",
     "emitDeclarationOnly": false,
     "noEmit": true,
     "paths": {

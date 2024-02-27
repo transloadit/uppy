@@ -80,7 +80,7 @@ export default class View<
 
   lastCheckbox: CompanionFile | undefined
 
-  opts: O
+  protected opts: O
 
   constructor(plugin: SelectedPlugin<M, B, T>, opts: O) {
     this.plugin = plugin
