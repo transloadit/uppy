@@ -504,7 +504,7 @@ describe('AwsS3Multipart', () => {
   })
 
   describe('file metadata across custom main functions', () => {
-    let core
+    let core: Core<any, any>
     const createMultipartUpload = vi.fn((file) => {
       core.setFileMeta(file.id, {
         ...file.meta,

@@ -1,3 +1,7 @@
+import { createAbortError } from '@uppy/utils/lib/AbortController'
+
+import type { AwsS3Part } from './index'
+
 export function throwIfAborted(signal?: AbortSignal | null): void {
   if (signal?.aborted) {
     throw createAbortError('The operation was aborted', {
@@ -9,9 +13,11 @@ export function throwIfAborted(signal?: AbortSignal | null): void {
 export type UploadResult = { key: string; uploadId: string }
 export type UploadResultWithSignal = UploadResult & { signal?: AbortSignal }
 export type MultipartUploadResult = UploadResult & { parts: AwsS3Part[] }
-export type MultipartUploadResultWithSignal = MultipartUploadResult & { signal?: AbortSignal }
+export type MultipartUploadResultWithSignal = MultipartUploadResult & {
+  signal?: AbortSignal
+}
 
 export type UploadPartBytesResult = {
-    ETag: string
-    location?: string
-  }
+  ETag: string
+  location?: string
+}

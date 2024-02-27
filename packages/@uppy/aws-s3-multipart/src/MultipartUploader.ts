@@ -1,3 +1,4 @@
+import type { Uppy } from '@uppy/core'
 import { AbortController } from '@uppy/utils/lib/AbortController'
 import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
 import type { HTTPCommunicationQueue } from './HTTPCommunicationQueue'
@@ -6,13 +7,14 @@ const MB = 1024 * 1024
 
 interface MultipartUploaderOptions<M extends Meta, B extends Body> {
   getChunkSize?: (file: { size: number }) => number
-  onProgress?: (ev: ProgressEvent<XMLHttpRequestEventTarget>) => void
+  onProgress?: (bytesUploaded: number, bytesTotal: number) => void
   onPartComplete?: (part: { PartNumber: number; ETag: string }) => void
   shouldUseMultipart?: boolean | ((file: UppyFile<M, B>) => boolean)
-  onSuccess?: (result: {location: string}) => void
+  onSuccess?: (result: { location: string }) => void
   onError?: (err: unknown) => void
-  companionComm: HTTPCommunicationQueue<M,B>
+  companionComm: HTTPCommunicationQueue<M, B>
   file: UppyFile<M, B>
+  log: Uppy<M, B>['log']
 
   uploadId: string
   key: string
@@ -79,7 +81,7 @@ class MultipartUploader<M extends Meta, B extends Body> {
 
   #onError: (err: unknown) => void
 
-  #onSuccess: (result: {location: string}) => void
+  #onSuccess: (result: { location: string }) => void
 
   #shouldUseMultipart: MultipartUploaderOptions<M, B>['shouldUseMultipart']
 
@@ -121,9 +123,9 @@ class MultipartUploader<M extends Meta, B extends Body> {
   #initChunks() {
     const fileSize = this.#data.size
     const shouldUseMultipart =
-      typeof this.#shouldUseMultipart === 'function'
-        ? this.#shouldUseMultipart(this.#file)
-        : Boolean(this.#shouldUseMultipart)
+      typeof this.#shouldUseMultipart === 'function' ?
+        this.#shouldUseMultipart(this.#file)
+      : Boolean(this.#shouldUseMultipart)
 
     if (shouldUseMultipart && fileSize > this.#minPartSize) {
       // At least 5MB per request:
@@ -160,7 +162,7 @@ class MultipartUploader<M extends Meta, B extends Body> {
             offset + chunkSize > fileSize ? fileSize - offset : chunkSize
           // setAsUploaded is called by listPart, to keep up-to-date the
           // quantity of data that is left to actually upload.
-          this.#chunks[j].setAsUploaded = () => {
+          this.#chunks[j]!.setAsUploaded = () => {
             this.#chunks[j] = null
             this.#chunkState[j].uploaded = size
           }
@@ -182,7 +184,11 @@ class MultipartUploader<M extends Meta, B extends Body> {
 
   #createUpload() {
     this.options.companionComm
-      .uploadFile(this.#file, this.#chunks, this.#abortController.signal)
+      .uploadFile(
+        this.#file,
+        this.#chunks as Chunk[],
+        this.#abortController.signal,
+      )
       .then(this.#onSuccess, this.#onReject)
     this.#uploadHasStarted = true
   }
@@ -219,7 +225,7 @@ class MultipartUploader<M extends Meta, B extends Body> {
     this.#abortController.abort()
     this.options.companionComm
       .abortFileUpload(this.#file)
-      .catch((err: unknown) => this.options.log(err))
+      .catch((err: unknown) => this.options.log(err as Error))
   }
 
   start(): void {

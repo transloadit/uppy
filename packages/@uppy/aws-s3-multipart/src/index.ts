@@ -3,10 +3,10 @@ import BasePlugin, {
   type PluginOpts,
 } from '@uppy/core/lib/BasePlugin.js'
 import { RequestClient } from '@uppy/companion-client'
-import type { RequestOptions } from '@uppy/companion-client/lib/RequestClient'
+import type { RequestOptions } from '@uppy/utils/lib/CompanionClientProvider.ts'
 import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
 import type { Uppy } from '@uppy/core'
-import EventManager from '@uppy/utils/lib/EventManager'
+import EventManager from '@uppy/core/lib/EventManager'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore untyped
 import { RateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
@@ -29,6 +29,10 @@ import createSignedURL from './createSignedURL.ts'
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'
 import { HTTPCommunicationQueue } from './HTTPCommunicationQueue.ts'
+
+interface MultipartFile<M extends Meta, B extends Body> extends UppyFile<M, B> {
+  s3Multipart: UploadResult
+}
 
 type PartUploadedCallback<M extends Meta, B extends Body> = (
   file: UppyFile<M, B>,
@@ -783,7 +787,10 @@ export default class AwsS3Multipart<
     })
   }
 
-  #setS3MultipartState = (file: UppyFile<M, B>, { key, uploadId }) => {
+  #setS3MultipartState = (
+    file: UppyFile<M, B>,
+    { key, uploadId }: UploadResult,
+  ) => {
     const cFile = this.uppy.getFile(file.id)
     if (cFile == null) {
       // file was removed from store
@@ -792,11 +799,11 @@ export default class AwsS3Multipart<
 
     this.uppy.setFileState(file.id, {
       s3Multipart: {
-        ...cFile.s3Multipart,
+        ...(cFile as MultipartFile<M, B>).s3Multipart,
         key,
         uploadId,
       },
-    })
+    } as Partial<MultipartFile<M, B>>)
   }
 
   #getFile = (file: UppyFile<M, B>) => {
@@ -814,15 +821,15 @@ export default class AwsS3Multipart<
         })
       }
 
-      const onError = (err: Error) => {
-        this.uppy.log(err)
-        this.uppy.emit('upload-error', file, err)
+      const onError = (err: unknown) => {
+        this.uppy.log(err as Error)
+        this.uppy.emit('upload-error', file, err as Error)
 
         this.resetUploaderReferences(file.id)
         reject(err)
       }
 
-      const onSuccess = (result: B & { location: string }) => {
+      const onSuccess = (result: { location: string }) => {
         const uploadResp = {
           body: {
             ...result,
@@ -864,7 +871,7 @@ export default class AwsS3Multipart<
         file,
         shouldUseMultipart: this.opts.shouldUseMultipart,
 
-        ...file.s3Multipart,
+        ...(file as MultipartFile<M, B>).s3Multipart,
       })
 
       this.uploaders[file.id] = upload
