@@ -2,14 +2,14 @@ import isDOMElement from './isDOMElement.ts'
 
 function findDOMElement<T>(
   element: T,
-  context?: Document,
+  context?: ParentNode,
 ): T extends Element ? T
 : T extends Node | string ? Element | null
 : null
 
 function findDOMElement(
-  element: Element | Node | string | null,
-  context: Document = document,
+  element: unknown,
+  context: ParentNode = document,
 ): Element | null {
   if (typeof element === 'string') {
     return context.querySelector(element)
