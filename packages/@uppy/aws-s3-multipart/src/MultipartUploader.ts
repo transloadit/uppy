@@ -5,12 +5,15 @@ import type { HTTPCommunicationQueue } from './HTTPCommunicationQueue'
 
 const MB = 1024 * 1024
 
-interface MultipartUploaderOptions<M extends Meta, B extends Body> {
+interface MultipartUploaderOptions<
+  M extends Meta,
+  B extends Body & { location: string },
+> {
   getChunkSize?: (file: { size: number }) => number
   onProgress?: (bytesUploaded: number, bytesTotal: number) => void
   onPartComplete?: (part: { PartNumber: number; ETag: string }) => void
   shouldUseMultipart?: boolean | ((file: UppyFile<M, B>) => boolean)
-  onSuccess?: (result: { location: string }) => void
+  onSuccess?: (result: B) => void
   onError?: (err: unknown) => void
   companionComm: HTTPCommunicationQueue<M, B>
   file: UppyFile<M, B>
@@ -60,7 +63,7 @@ export const pausingUploadReason = Symbol('pausing upload, not an actual error')
  * (based on the user-provided `shouldUseMultipart` option value) and to manage
  * the chunk splitting.
  */
-class MultipartUploader<M extends Meta, B extends Body> {
+class MultipartUploader<M extends Meta, B extends Body & { location: string }> {
   options: MultipartUploaderOptions<M, B> &
     Required<Pick<MultipartUploaderOptions<M, B>, keyof typeof defaultOptions>>
 
@@ -81,7 +84,7 @@ class MultipartUploader<M extends Meta, B extends Body> {
 
   #onError: (err: unknown) => void
 
-  #onSuccess: (result: { location: string }) => void
+  #onSuccess: (result: B) => void
 
   #shouldUseMultipart: MultipartUploaderOptions<M, B>['shouldUseMultipart']
 

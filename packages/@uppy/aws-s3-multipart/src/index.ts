@@ -30,7 +30,8 @@ import createSignedURL from './createSignedURL.ts'
 import packageJson from '../package.json'
 import { HTTPCommunicationQueue } from './HTTPCommunicationQueue.ts'
 
-interface MultipartFile<M extends Meta, B extends Body> extends UppyFile<M, B> {
+interface MultipartFile<M extends Meta, B extends Body & { location: string }>
+  extends UppyFile<M, B> {
   s3Multipart: UploadResult
 }
 
@@ -313,7 +314,7 @@ const defaultOptions = {
 
 export default class AwsS3Multipart<
   M extends Meta,
-  B extends Body,
+  B extends Body & { location: string },
 > extends BasePlugin<
   DefinePluginOpts<AwsS3MultipartOptions<M, B>, keyof typeof defaultOptions> &
     // We also have a few dynamic options defined below:
@@ -516,9 +517,7 @@ export default class AwsS3Multipart<
     file: UppyFile<M, B>,
     { key, uploadId, parts, signal }: MultipartUploadResultWithSignal,
     oldSignal?: AbortSignal,
-  ): Promise<{
-    location: string
-  }> {
+  ): Promise<B> {
     signal ??= oldSignal // eslint-disable-line no-param-reassign
     this.assertHost('completeMultipartUpload')
     throwIfAborted(signal)
@@ -526,9 +525,7 @@ export default class AwsS3Multipart<
     const filename = encodeURIComponent(key)
     const uploadIdEnc = encodeURIComponent(uploadId)
     return this.#client
-      .post<{
-        location: string
-      }>(
+      .post<B>(
         `s3/multipart/${uploadIdEnc}/complete?key=${filename}`,
         { parts },
         { signal },
@@ -829,7 +826,7 @@ export default class AwsS3Multipart<
         reject(err)
       }
 
-      const onSuccess = (result: { location: string }) => {
+      const onSuccess = (result: B) => {
         const uploadResp = {
           body: {
             ...result,

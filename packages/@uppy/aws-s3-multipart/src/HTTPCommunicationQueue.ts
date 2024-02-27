@@ -21,7 +21,10 @@ type AbortablePromise<T extends (...args: any) => Promise<any>> = (
   abortOn: (signal?: AbortSignal) => ReturnType<T>
 }
 
-export class HTTPCommunicationQueue<M extends Meta, B extends Body> {
+export class HTTPCommunicationQueue<
+  M extends Meta,
+  B extends Body & { location: string },
+> {
   #abortMultipartUpload: AbortablePromise<
     AwsS3Multipart<M, B>['abortMultipartUpload']
   >
