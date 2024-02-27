@@ -47,7 +47,6 @@ import packageJson from '../package.json'
 import locale from './locale.ts'
 
 import type BasePlugin from './BasePlugin.ts'
-import type UIPlugin from './UIPlugin.ts'
 import type { Restrictions, ValidateableFile } from './Restricter.ts'
 
 type Processor = (fileIDs: string[], uploadID: string) => Promise<void> | void
