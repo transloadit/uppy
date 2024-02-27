@@ -22,7 +22,7 @@ export default function Header<M extends Meta, B extends Body>(
   props: HeaderProps<M, B>,
 ): JSX.Element {
   return (
-    <Fragment>
+    <>
       {props.showBreadcrumbs && (
         <Breadcrumbs
           getFolder={props.getFolder}
@@ -32,6 +32,6 @@ export default function Header<M extends Meta, B extends Body>(
         />
       )}
       <User logout={props.logout} username={props.username} i18n={props.i18n} />
-    </Fragment>
+    </>
   )
 }

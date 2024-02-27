@@ -156,6 +156,8 @@ export default class View<
       type: file.mimeType,
       isRemote: true,
       // @ts-expect-error meta is filled conditionally below
+      data: file,
+      // @ts-expect-error meta is filled conditionally below
       meta: {},
       body: {
         fileId: file.id,
