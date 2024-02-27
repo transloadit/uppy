@@ -13,7 +13,7 @@ const Breadcrumb = (props: BreadcrumbProps) => {
   const { getFolder, title, isLast } = props
 
   return (
-    <>
+    <Fragment>
       <button
         type="button"
         className="uppy-u-reset uppy-c-btn"
@@ -22,7 +22,7 @@ const Breadcrumb = (props: BreadcrumbProps) => {
         {title}
       </button>
       {!isLast ? ' / ' : ''}
-    </>
+    </Fragment>
   )
 }
 

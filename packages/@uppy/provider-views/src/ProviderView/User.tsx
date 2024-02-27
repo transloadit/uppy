@@ -12,7 +12,7 @@ export default function User({
   username,
 }: UserProps): JSX.Element {
   return (
-    <>
+    <Fragment>
       <span className="uppy-ProviderBrowser-user" key="username">
         {username}
       </span>
@@ -24,6 +24,6 @@ export default function User({
       >
         {i18n('logOut')}
       </button>
-    </>
+    </Fragment>
   )
 }
