@@ -165,6 +165,9 @@
     "watch:js": "npm-run-all --parallel watch:js:bundle watch:js:lib",
     "watch": "npm-run-all --parallel watch:css watch:js"
   },
+  "alias": {
+    "preact/jsx-dev-runtime": "preact/jsx-runtime"
+  },
   "resolutions": {
     "@types/eslint@^7.2.13": "^8.2.0",
     "@types/react": "^17",

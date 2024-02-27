@@ -72,9 +72,6 @@
     "./src/microtip.scss": "./src/microtip.scss",
     "./lib/UserFacingApiError": "./lib/UserFacingApiError.js"
   },
-  "alias": {
-    "preact/jsx-dev-runtime": "preact/jsx-runtime"
-  },
   "dependencies": {
     "lodash": "^4.17.21",
     "preact": "^10.5.13"
