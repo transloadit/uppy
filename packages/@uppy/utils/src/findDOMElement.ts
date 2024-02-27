@@ -1,7 +1,14 @@
 import isDOMElement from './isDOMElement.ts'
 
-export default function findDOMElement(
-  element: unknown,
+function findDOMElement<T>(
+  element: T,
+  context?: Document,
+): T extends Element ? T
+: T extends Node | string ? Element | null
+: null
+
+function findDOMElement(
+  element: Element | Node | string | null,
   context: Document = document,
 ): Element | null {
   if (typeof element === 'string') {
@@ -14,3 +21,5 @@ export default function findDOMElement(
 
   return null
 }
+
+export default findDOMElement
