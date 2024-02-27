@@ -183,7 +183,6 @@ describe('Dashboard with Transloadit', () => {
       ],
       { force: true },
     )
-    cy.get('.uppy-StatusBar-actionBtn--upload').click()
 
     cy.window().then(({ uppy }) => {
       // eslint-disable-next-line
@@ -191,6 +190,8 @@ describe('Dashboard with Transloadit', () => {
       expect(
         Object.values(uppy.getPlugin('Transloadit').activeAssemblies).length,
       ).to.equal(0)
+
+      cy.get('.uppy-StatusBar-actionBtn--upload').click()
 
       const { files } = uppy.getState()
       // eslint-disable-next-line
