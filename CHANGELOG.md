@@ -12,6 +12,33 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 3.22.2
+
+Released: 2024-02-22
+
+| Package                | Version | Package                | Version |
+| ---------------------- | ------- | ---------------------- | ------- |
+| @uppy/audio            |   1.1.7 | @uppy/react            |   3.2.2 |
+| @uppy/companion        |  4.12.3 | @uppy/status-bar       |   3.2.8 |
+| @uppy/companion-client |   3.7.3 | @uppy/tus              |   3.5.3 |
+| @uppy/core             |   3.9.2 | @uppy/utils            |   5.7.3 |
+| @uppy/dashboard        |   3.7.4 | @uppy/xhr-upload       |   3.6.3 |
+| @uppy/image-editor     |   2.4.3 | uppy                   |  3.22.2 |
+
+- @uppy/core: fix plugin detection (Antoine du Hamel / #4951)
+- @uppy/core,@uppy/utils: Introduce `ValidateableFile` & move `MinimalRequiredUppyFile` into utils (Antoine du Hamel / #4944)
+- meta: uppy: fix bundle builder (Antoine du Hamel / #4950)
+- @uppy/core: improve `UIPluginOptions` types (Merlijn Vos / #4946)
+- @uppy/companion-client: fix body/url on upload-success (Merlijn Vos / #4922)
+- @uppy/utils: remove EventManager circular reference (Merlijn Vos / #4949)
+- @uppy/dashboard: MetaEditor + ImageEditor - new state machine logic (Evgenia Karunus / #4939)
+- meta: disable `@typescript-eslint/no-non-null-assertion` lint rule (Antoine du Hamel / #4945)
+- @uppy/companion-client: remove unnecessary `'use strict'` directives (Antoine du Hamel / #4943)
+- @uppy/companion-client: type changes for provider-views (Antoine du Hamel / #4938)
+- meta: bump ip from 1.1.8 to 1.1.9 (dependabot[bot] / #4941)
+- @uppy/companion-client: update types (Antoine du Hamel / #4927)
+
+
 ## 3.22.1
 
 Released: 2024-02-20

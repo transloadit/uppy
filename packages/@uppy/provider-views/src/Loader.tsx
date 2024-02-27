@@ -1,6 +1,13 @@
 import { h } from 'preact'
+import type { I18n } from '@uppy/utils/lib/Translator'
 
-export default ({ i18n, loading }) => {
+export default function Loader({
+  i18n,
+  loading,
+}: {
+  i18n: I18n
+  loading: string | boolean
+}): JSX.Element {
   return (
     <div className="uppy-Provider-loading">
       <span>{i18n('loading')}</span>

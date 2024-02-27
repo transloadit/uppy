@@ -37,7 +37,6 @@ declare module '@uppy/core' {
 }
 
 interface Opts extends UIPluginOptions {
-  target?: string | HTMLElement
   quality?: number
   cropperOptions?: Cropper.Options & {
     croppedCanvasOptions?: Cropper.GetCroppedCanvasOptions
@@ -84,7 +83,6 @@ const defaultActions = {
 } satisfies Partial<Opts['actions']>
 
 const defaultOptions = {
-  target: 'body',
   // `quality: 1` increases the image size by orders of magnitude - 0.8 seems to be the sweet spot.
   // see https://github.com/fengyuanchen/cropperjs/issues/538#issuecomment-1776279427
   quality: 0.8,
@@ -185,7 +183,6 @@ export default class ImageEditor<
 
     this.cropper
       .getCroppedCanvas(this.opts.cropperOptions.croppedCanvasOptions)
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       .toBlob(saveBlobCallback, currentImage!.type, this.opts.quality)
   }
 

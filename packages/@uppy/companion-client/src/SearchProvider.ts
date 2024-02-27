@@ -1,7 +1,6 @@
-'use strict'
-
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile.ts'
 import type { Uppy } from '@uppy/core'
+import type { CompanionClientSearchProvider } from '@uppy/utils/lib/CompanionClientProvider'
 import RequestClient, { type Opts } from './RequestClient.ts'
 
 const getName = (id: string): string => {
@@ -11,10 +10,10 @@ const getName = (id: string): string => {
     .join(' ')
 }
 
-export default class SearchProvider<
-  M extends Meta,
-  B extends Body,
-> extends RequestClient<M, B> {
+export default class SearchProvider<M extends Meta, B extends Body>
+  extends RequestClient<M, B>
+  implements CompanionClientSearchProvider
+{
   provider: string
 
   id: string
@@ -35,10 +34,7 @@ export default class SearchProvider<
     return `${this.hostname}/search/${this.id}/get/${id}`
   }
 
-  search<ResBody extends Record<string, unknown>>(
-    text: string,
-    queries?: string,
-  ): Promise<ResBody> {
+  search<ResBody>(text: string, queries?: string): Promise<ResBody> {
     return this.get<ResBody>(
       `search/${this.id}/list?q=${encodeURIComponent(text)}${
         queries ? `&${queries}` : ''

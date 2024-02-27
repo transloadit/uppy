@@ -50,9 +50,8 @@ export default class UppySocket {
       this.#isOpen = true
 
       while (this.#queued.length > 0 && this.#isOpen) {
-        const first = this.#queued.shift()
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        this.send(first!.action, first!.payload)
+        const first = this.#queued.shift()!
+        this.send(first.action, first.payload)
       }
     }
 

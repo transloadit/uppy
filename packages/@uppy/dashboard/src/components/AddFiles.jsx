@@ -225,12 +225,12 @@ class AddFiles extends Component {
     const lastTwoAcquirers = acquirersWithoutLastTwo.splice(acquirers.length - 2, acquirers.length)
 
     return (
-      <Fragment>
+      <>
         {acquirersWithoutLastTwo.map((acquirer) => this.renderAcquirer(acquirer))}
         <span role="presentation" style={{ 'white-space': 'nowrap' }}>
           {lastTwoAcquirers.map((acquirer) => this.renderAcquirer(acquirer))}
         </span>
-      </Fragment>
+      </>
     )
   }
 
@@ -258,7 +258,7 @@ class AddFiles extends Component {
     const renderList = (l) => l.map(({ key, elements }) => <Fragment key={key}>{elements}</Fragment>)
 
     return (
-      <Fragment>
+      <>
         {this.renderDropPasteBrowseTagline(list.length)}
 
         <div className="uppy-Dashboard-AddFiles-list" role="tablist">
@@ -268,7 +268,7 @@ class AddFiles extends Component {
             {renderList(lastTwo)}
           </span>
         </div>
-      </Fragment>
+      </>
     )
   }
 

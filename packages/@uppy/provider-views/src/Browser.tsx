@@ -1,16 +1,39 @@
+/* eslint-disable react/require-default-props */
 import { h } from 'preact'
 
 import classNames from 'classnames'
 import remoteFileObjToLocal from '@uppy/utils/lib/remoteFileObjToLocal'
 import { useMemo } from 'preact/hooks'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore untyped
 import VirtualList from '@uppy/utils/lib/VirtualList'
-import SearchFilterInput from './SearchFilterInput.jsx'
-import FooterActions from './FooterActions.jsx'
-import Item from './Item/index.jsx'
+import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
+import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
+import type { I18n } from '@uppy/utils/lib/Translator'
+import type Uppy from '@uppy/core'
+import SearchFilterInput from './SearchFilterInput.tsx'
+import FooterActions from './FooterActions.tsx'
+import Item from './Item/index.tsx'
 
 const VIRTUAL_SHARED_DIR = 'shared-with-me'
 
-function ListItem (props) {
+type ListItemProps<M extends Meta, B extends Body> = {
+  currentSelection: any[]
+  uppyFiles: UppyFile<M, B>[]
+  viewType: string
+  isChecked: (file: any) => boolean
+  toggleCheckbox: (event: Event, file: CompanionFile) => void
+  recordShiftKeyPress: (event: KeyboardEvent | MouseEvent) => void
+  showTitles: boolean
+  i18n: I18n
+  validateRestrictions: Uppy<M, B>['validateRestrictions']
+  getNextFolder?: (folder: any) => void
+  f: CompanionFile
+}
+
+function ListItem<M extends Meta, B extends Body>(
+  props: ListItemProps<M, B>,
+): JSX.Element {
   const {
     currentSelection,
     uppyFiles,
@@ -22,13 +45,11 @@ function ListItem (props) {
     i18n,
     validateRestrictions,
     getNextFolder,
-    columns,
     f,
   } = props
 
   if (f.isFolder) {
-    return Item({
-      columns,
+    return Item<M, B>({
       showTitles,
       viewType,
       i18n,
@@ -36,12 +57,14 @@ function ListItem (props) {
       title: f.name,
       getItemIcon: () => f.icon,
       isChecked: isChecked(f),
-      toggleCheckbox: (event) => toggleCheckbox(event, f),
+      toggleCheckbox: (event: Event) => toggleCheckbox(event, f),
       recordShiftKeyPress,
       type: 'folder',
-      isDisabled: isChecked(f)?.loading,
+      // TODO: when was this supposed to be true?
+      isDisabled: false,
       isCheckboxDisabled: f.id === VIRTUAL_SHARED_DIR,
-      handleFolderClick: () => getNextFolder(f),
+      // getNextFolder always exists when f.isFolder is true
+      handleFolderClick: () => getNextFolder!(f),
     })
   }
   const restrictionError = validateRestrictions(remoteFileObjToLocal(f), [
@@ -49,25 +72,57 @@ function ListItem (props) {
     ...currentSelection,
   ])
 
-  return Item({
+  return Item<M, B>({
     id: f.id,
     title: f.name,
     author: f.author,
     getItemIcon: () => f.icon,
     isChecked: isChecked(f),
-    toggleCheckbox: (event) => toggleCheckbox(event, f),
+    toggleCheckbox: (event: Event) => toggleCheckbox(event, f),
+    isCheckboxDisabled: false,
     recordShiftKeyPress,
-    columns,
     showTitles,
     viewType,
     i18n,
     type: 'file',
-    isDisabled: restrictionError && !isChecked(f),
+    isDisabled: Boolean(restrictionError) && !isChecked(f),
     restrictionError,
   })
 }
 
-function Browser (props) {
+type BrowserProps<M extends Meta, B extends Body> = {
+  currentSelection: any[]
+  folders: CompanionFile[]
+  files: CompanionFile[]
+  uppyFiles: UppyFile<M, B>[]
+  viewType: string
+  headerComponent?: JSX.Element
+  showBreadcrumbs: boolean
+  isChecked: (file: any) => boolean
+  toggleCheckbox: (event: Event, file: CompanionFile) => void
+  recordShiftKeyPress: (event: KeyboardEvent | MouseEvent) => void
+  handleScroll: (event: Event) => Promise<void>
+  showTitles: boolean
+  i18n: I18n
+  validateRestrictions: Uppy<M, B>['validateRestrictions']
+  isLoading: boolean | string
+  showSearchFilter: boolean
+  search: (query: string) => void
+  searchTerm?: string | null
+  clearSearch: () => void
+  searchOnInput: boolean
+  searchInputLabel: string
+  clearSearchLabel: string
+  getNextFolder?: (folder: any) => void
+  cancel: () => void
+  done: () => void
+  noResultsLabel: string
+  loadAllFiles?: boolean
+}
+
+function Browser<M extends Meta, B extends Body>(
+  props: BrowserProps<M, B>,
+): JSX.Element {
   const {
     currentSelection,
     folders,
@@ -94,7 +149,6 @@ function Browser (props) {
     getNextFolder,
     cancel,
     done,
-    columns,
     noResultsLabel,
     loadAllFiles,
   } = props
@@ -156,7 +210,7 @@ function Browser (props) {
               <ul className="uppy-ProviderBrowser-list">
                 <VirtualList
                   data={rows}
-                  renderRow={(f) => (
+                  renderRow={(f: CompanionFile) => (
                     <ListItem
                       currentSelection={currentSelection}
                       uppyFiles={uppyFiles}
@@ -168,7 +222,6 @@ function Browser (props) {
                       i18n={i18n}
                       validateRestrictions={validateRestrictions}
                       getNextFolder={getNextFolder}
-                      columns={columns}
                       f={f}
                     />
                   )}
@@ -186,7 +239,7 @@ function Browser (props) {
               onScroll={handleScroll}
               role="listbox"
               // making <ul> not focusable for firefox
-              tabIndex="-1"
+              tabIndex={-1}
             >
               {rows.map((f) => (
                 <ListItem
@@ -200,7 +253,6 @@ function Browser (props) {
                   i18n={i18n}
                   validateRestrictions={validateRestrictions}
                   getNextFolder={getNextFolder}
-                  columns={columns}
                   f={f}
                 />
               ))}

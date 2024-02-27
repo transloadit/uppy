@@ -23,15 +23,16 @@ export interface UppyFile<M extends Meta, B extends Body> {
   remote?: {
     body?: Record<string, unknown>
     companionUrl: string
-    host: string
+    host?: string
     provider?: string
+    providerName?: string
     requestClientId: string
     url: string
   }
   serverToken?: string | null
   size: number | null
   source?: string
-  type?: string
+  type: string
   uploadURL?: string
   response?: {
     body: B
@@ -40,3 +41,14 @@ export interface UppyFile<M extends Meta, B extends Body> {
     uploadURL?: string
   }
 }
+
+// The user facing type for UppyFile used in uppy.addFile() and uppy.setOptions()
+export type MinimalRequiredUppyFile<M extends Meta, B extends Body> = Required<
+  Pick<UppyFile<M, B>, 'name' | 'data'>
+> &
+  Partial<
+    Omit<UppyFile<M, B>, 'name' | 'data' | 'meta'>
+    // We want to omit the 'meta' from UppyFile because of internal metadata
+    // (see InternalMetadata in `UppyFile.ts`), as when adding a new file
+    // that is not required.
+  > & { meta?: M }

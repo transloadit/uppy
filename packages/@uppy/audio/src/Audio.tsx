@@ -1,8 +1,12 @@
 import { h } from 'preact'
 
 import { UIPlugin, type UIPluginOptions } from '@uppy/core'
-import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
-import type { Uppy, MinimalRequiredUppyFile } from '@uppy/core/lib/Uppy.ts'
+import type {
+  Body,
+  Meta,
+  MinimalRequiredUppyFile,
+} from '@uppy/utils/lib/UppyFile'
+import type { Uppy } from '@uppy/core/lib/Uppy.ts'
 
 import getFileTypeExtension from '@uppy/utils/lib/getFileTypeExtension'
 import supportsMediaRecorder from './supportsMediaRecorder.ts'
@@ -14,7 +18,6 @@ import locale from './locale.ts'
 import packageJson from '../package.json'
 
 interface AudioOptions extends UIPluginOptions {
-  target?: HTMLElement | string
   showAudioSourceDropdown?: boolean
 }
 interface AudioState {
