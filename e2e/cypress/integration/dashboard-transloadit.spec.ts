@@ -176,15 +176,14 @@ describe('Dashboard with Transloadit', () => {
   })
 
   it('should not create assembly when all individual files have been cancelled', () => {
-    cy.get('@file-input').selectFile(
-      [
-        'cypress/fixtures/images/cat.jpg',
-        'cypress/fixtures/images/traffic.jpg',
-      ],
-      { force: true },
-    )
-
     cy.window().then(({ uppy }) => {
+      cy.get('@file-input').selectFile(
+        [
+          'cypress/fixtures/images/cat.jpg',
+          'cypress/fixtures/images/traffic.jpg',
+        ],
+        { force: true },
+      )
       // eslint-disable-next-line
       // @ts-ignore fix me
       expect(
