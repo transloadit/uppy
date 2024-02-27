@@ -1,11 +1,17 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions  */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import { h } from 'preact'
+import { h, type ComponentChild } from 'preact'
 import { UIPlugin } from '@uppy/core'
-import FadeIn from './FadeIn.jsx'
-import TransitionGroup from './TransitionGroup.js'
+import type { State, UIPluginOptions, Uppy } from '@uppy/core'
+import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
+import FadeIn from './FadeIn.tsx'
+import TransitionGroup from './TransitionGroup.ts'
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'
+
+export type InformerOptions = UIPluginOptions
 
 /**
  * Informer
@@ -14,38 +20,38 @@ import packageJson from '../package.json'
  * or for errors: `uppy.info('Error uploading img.jpg', 'error', 5000)`
  *
  */
-export default class Informer extends UIPlugin {
+export default class Informer<M extends Meta, B extends Body> extends UIPlugin<
+  UIPluginOptions,
+  M,
+  B
+> {
   static VERSION = packageJson.version
 
-  constructor (uppy, opts) {
+  constructor(uppy: Uppy<M, B>, opts?: UIPluginOptions) {
     super(uppy, opts)
     this.type = 'progressindicator'
     this.id = this.opts.id || 'Informer'
     this.title = 'Informer'
-
-    // set default options
-    const defaultOptions = {}
-    // merge default options with the ones set by user
-    this.opts = { ...defaultOptions, ...opts }
   }
 
-  render = (state) => {
+  render = (state: State<M, B>): ComponentChild => {
     return (
       <div className="uppy uppy-Informer">
         <TransitionGroup>
           {state.info.map((info) => (
             <FadeIn key={info.message}>
               <p role="alert">
-                {info.message}
-                {' '}
+                {info.message}{' '}
                 {info.details && (
                   <span
                     aria-label={info.details}
                     data-microtip-position="top-left"
                     data-microtip-size="medium"
                     role="tooltip"
-                    // eslint-disable-next-line no-alert
-                    onClick={() => alert(`${info.message} \n\n ${info.details}`)}
+                    onClick={() =>
+                      // eslint-disable-next-line no-alert
+                      alert(`${info.message} \n\n ${info.details}`)
+                    }
                   >
                     ?
                   </span>
@@ -58,7 +64,7 @@ export default class Informer extends UIPlugin {
     )
   }
 
-  install () {
+  install(): void {
     const { target } = this.opts
     if (target) {
       this.mount(target, this)
