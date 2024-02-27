@@ -83,7 +83,6 @@ const defaultActions = {
 } satisfies Partial<Opts['actions']>
 
 const defaultOptions = {
-  target: 'body',
   // `quality: 1` increases the image size by orders of magnitude - 0.8 seems to be the sweet spot.
   // see https://github.com/fengyuanchen/cropperjs/issues/538#issuecomment-1776279427
   quality: 0.8,
