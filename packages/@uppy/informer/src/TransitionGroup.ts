@@ -1,3 +1,6 @@
+// INFO: not typing copy pasted libarary code
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 /* eslint-disable */
 /**
  * @source https://github.com/developit/preact-transition-group
@@ -5,20 +8,23 @@
 
 import { Component, cloneElement, h, toChildArray } from 'preact'
 
-function assign (obj, props) {
+function assign(obj, props) {
   return Object.assign(obj, props)
 }
-function getKey (vnode, fallback) {
+function getKey(vnode, fallback) {
   return vnode?.key ?? fallback
 }
-function linkRef (component, name) {
+function linkRef(component, name) {
   const cache = component._ptgLinkedRefs || (component._ptgLinkedRefs = {})
-  return cache[name] || (cache[name] = c => {
-    component.refs[name] = c
-  })
+  return (
+    cache[name] ||
+    (cache[name] = (c) => {
+      component.refs[name] = c
+    })
+  )
 }
 
-function getChildMapping (children) {
+function getChildMapping(children) {
   const out = {}
   for (let i = 0; i < children.length; i++) {
     if (children[i] != null) {
@@ -29,11 +35,12 @@ function getChildMapping (children) {
   return out
 }
 
-function mergeChildMappings (prev, next) {
+function mergeChildMappings(prev, next) {
   prev = prev || {}
   next = next || {}
 
-  const getValueForKey = key => (next.hasOwnProperty(key) ? next[key] : prev[key])
+  const getValueForKey = (key) =>
+    next.hasOwnProperty(key) ? next[key] : prev[key]
 
   // For each key of `next`, the list of keys to insert before that key in
   // the combined list
@@ -56,7 +63,8 @@ function mergeChildMappings (prev, next) {
     if (nextKeysPending.hasOwnProperty(nextKey)) {
       for (let i = 0; i < nextKeysPending[nextKey].length; i++) {
         const pendingNextKey = nextKeysPending[nextKey][i]
-        childMapping[nextKeysPending[nextKey][i]] = getValueForKey(pendingNextKey)
+        childMapping[nextKeysPending[nextKey][i]] =
+          getValueForKey(pendingNextKey)
       }
     }
     childMapping[nextKey] = getValueForKey(nextKey)
@@ -70,16 +78,18 @@ function mergeChildMappings (prev, next) {
   return childMapping
 }
 
-const identity = i => i
+const identity = (i) => i
 
 class TransitionGroup extends Component {
-  constructor (props, context) {
+  constructor(props, context) {
     super(props, context)
 
     this.refs = {}
 
     this.state = {
-      children: getChildMapping(toChildArray(toChildArray(this.props.children)) || []),
+      children: getChildMapping(
+        toChildArray(toChildArray(this.props.children)) || [],
+      ),
     }
 
     this.performAppear = this.performAppear.bind(this)
@@ -87,14 +97,14 @@ class TransitionGroup extends Component {
     this.performLeave = this.performLeave.bind(this)
   }
 
-  componentWillMount () {
+  componentWillMount() {
     this.currentlyTransitioningKeys = {}
     this.keysToAbortLeave = []
     this.keysToEnter = []
     this.keysToLeave = []
   }
 
-  componentDidMount () {
+  componentDidMount() {
     const initialChildMapping = this.state.children
     for (const key in initialChildMapping) {
       if (initialChildMapping[key]) {
@@ -104,11 +114,13 @@ class TransitionGroup extends Component {
     }
   }
 
-  componentWillReceiveProps (nextProps) {
-    const nextChildMapping = getChildMapping(toChildArray(nextProps.children) || [])
+  componentWillReceiveProps(nextProps) {
+    const nextChildMapping = getChildMapping(
+      toChildArray(nextProps.children) || [],
+    )
     const prevChildMapping = this.state.children
 
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       children: mergeChildMappings(prevState.children, nextChildMapping),
     }))
 
@@ -118,10 +130,18 @@ class TransitionGroup extends Component {
       if (nextChildMapping.hasOwnProperty(key)) {
         const hasPrev = prevChildMapping && prevChildMapping.hasOwnProperty(key)
         // We should re-enter the component and abort its leave function
-        if (nextChildMapping[key] && hasPrev && this.currentlyTransitioningKeys[key]) {
+        if (
+          nextChildMapping[key] &&
+          hasPrev &&
+          this.currentlyTransitioningKeys[key]
+        ) {
           this.keysToEnter.push(key)
           this.keysToAbortLeave.push(key)
-        } else if (nextChildMapping[key] && !hasPrev && !this.currentlyTransitioningKeys[key]) {
+        } else if (
+          nextChildMapping[key] &&
+          !hasPrev &&
+          !this.currentlyTransitioningKeys[key]
+        ) {
           this.keysToEnter.push(key)
         }
       }
@@ -130,14 +150,18 @@ class TransitionGroup extends Component {
     for (key in prevChildMapping) {
       if (prevChildMapping.hasOwnProperty(key)) {
         const hasNext = nextChildMapping && nextChildMapping.hasOwnProperty(key)
-        if (prevChildMapping[key] && !hasNext && !this.currentlyTransitioningKeys[key]) {
+        if (
+          prevChildMapping[key] &&
+          !hasNext &&
+          !this.currentlyTransitioningKeys[key]
+        ) {
           this.keysToLeave.push(key)
         }
       }
     }
   }
 
-  componentDidUpdate () {
+  componentDidUpdate() {
     const { keysToEnter } = this
     this.keysToEnter = []
     keysToEnter.forEach(this.performEnter)
@@ -147,14 +171,14 @@ class TransitionGroup extends Component {
     keysToLeave.forEach(this.performLeave)
   }
 
-  _finishAbort (key) {
+  _finishAbort(key) {
     const idx = this.keysToAbortLeave.indexOf(key)
     if (idx !== -1) {
       this.keysToAbortLeave.splice(idx, 1)
     }
   }
 
-  performAppear (key) {
+  performAppear(key) {
     this.currentlyTransitioningKeys[key] = true
 
     const component = this.refs[key]
@@ -166,7 +190,7 @@ class TransitionGroup extends Component {
     }
   }
 
-  _handleDoneAppearing (key) {
+  _handleDoneAppearing(key) {
     const component = this.refs[key]
     if (component?.componentDidAppear) {
       component.componentDidAppear()
@@ -175,7 +199,9 @@ class TransitionGroup extends Component {
     delete this.currentlyTransitioningKeys[key]
     this._finishAbort(key)
 
-    const currentChildMapping = getChildMapping(toChildArray(this.props.children) || [])
+    const currentChildMapping = getChildMapping(
+      toChildArray(this.props.children) || [],
+    )
 
     if (!currentChildMapping || !currentChildMapping.hasOwnProperty(key)) {
       // This was removed before it had fully appeared. Remove it.
@@ -183,7 +209,7 @@ class TransitionGroup extends Component {
     }
   }
 
-  performEnter (key) {
+  performEnter(key) {
     this.currentlyTransitioningKeys[key] = true
 
     const component = this.refs[key]
@@ -195,7 +221,7 @@ class TransitionGroup extends Component {
     }
   }
 
-  _handleDoneEntering (key) {
+  _handleDoneEntering(key) {
     const component = this.refs[key]
     if (component?.componentDidEnter) {
       component.componentDidEnter()
@@ -204,7 +230,9 @@ class TransitionGroup extends Component {
     delete this.currentlyTransitioningKeys[key]
     this._finishAbort(key)
 
-    const currentChildMapping = getChildMapping(toChildArray(this.props.children) || [])
+    const currentChildMapping = getChildMapping(
+      toChildArray(this.props.children) || [],
+    )
 
     if (!currentChildMapping || !currentChildMapping.hasOwnProperty(key)) {
       // This was removed before it had fully entered. Remove it.
@@ -212,7 +240,7 @@ class TransitionGroup extends Component {
     }
   }
 
-  performLeave (key) {
+  performLeave(key) {
     // If we should immediately abort this leave function,
     // don't run the leave transition at all.
     const idx = this.keysToAbortLeave.indexOf(key)
@@ -233,7 +261,7 @@ class TransitionGroup extends Component {
     }
   }
 
-  _handleDoneLeaving (key) {
+  _handleDoneLeaving(key) {
     // If we should immediately abort the leave,
     // then skip this altogether
     const idx = this.keysToAbortLeave.indexOf(key)
@@ -249,7 +277,9 @@ class TransitionGroup extends Component {
 
     delete this.currentlyTransitioningKeys[key]
 
-    const currentChildMapping = getChildMapping(toChildArray(this.props.children) || [])
+    const currentChildMapping = getChildMapping(
+      toChildArray(this.props.children) || [],
+    )
 
     if (currentChildMapping && currentChildMapping.hasOwnProperty(key)) {
       // This entered again before it fully left. Add it again.
@@ -261,15 +291,31 @@ class TransitionGroup extends Component {
     }
   }
 
-  render ({ childFactory, transitionLeave, transitionName, transitionAppear, transitionEnter, transitionLeaveTimeout, transitionEnterTimeout, transitionAppearTimeout, component, ...props }, { children }) {
+  render(
+    {
+      childFactory,
+      transitionLeave,
+      transitionName,
+      transitionAppear,
+      transitionEnter,
+      transitionLeaveTimeout,
+      transitionEnterTimeout,
+      transitionAppearTimeout,
+      component,
+      ...props
+    },
+    { children },
+  ) {
     // TODO: we could get rid of the need for the wrapper node
     // by cloning a single child
-    const childrenToRender = Object.entries(children).map(([key, child]) => {
-      if (!child) return undefined
+    const childrenToRender = Object.entries(children)
+      .map(([key, child]) => {
+        if (!child) return undefined
 
-      const ref = linkRef(this, key);
-      return cloneElement(childFactory(child), { ref, key })
-    }).filter(Boolean)
+        const ref = linkRef(this, key)
+        return cloneElement(childFactory(child), { ref, key })
+      })
+      .filter(Boolean)
 
     return h(component, props, childrenToRender)
   }
