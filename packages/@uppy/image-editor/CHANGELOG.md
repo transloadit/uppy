@@ -1,5 +1,12 @@
 # @uppy/image-editor
 
+## 2.4.4
+
+Released: 2024-02-28
+Included in: Uppy v3.23.0
+
+- @uppy/image-editor: remove default target (Merlijn Vos / #4966)
+
 ## 2.4.1
 
 Released: 2024-02-19

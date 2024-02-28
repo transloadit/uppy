@@ -1,5 +1,12 @@
 # @uppy/core
 
+## 3.9.3
+
+Released: 2024-02-28
+Included in: Uppy v3.23.0
+
+- @uppy/core: remove unused import (Antoine du Hamel / #4972)
+
 ## 3.9.2
 
 Released: 2024-02-22
