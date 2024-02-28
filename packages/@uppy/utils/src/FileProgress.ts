@@ -13,10 +13,9 @@ export type FileProcessingInfo =
   | DeterminateFileProcessing
 
 interface FileProgressBase {
-  progress?: number
   uploadComplete?: boolean
   percentage?: number
-  bytesTotal: number
+  bytesTotal: number | null
   preprocess?: FileProcessingInfo
   postprocess?: FileProcessingInfo
 }
@@ -26,7 +25,6 @@ interface FileProgressBase {
 export type FileProgressStarted = FileProgressBase & {
   uploadStarted: number
   bytesUploaded: number
-  progress?: number
 }
 export type FileProgressNotStarted = FileProgressBase & {
   uploadStarted: null
