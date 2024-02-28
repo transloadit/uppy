@@ -29,6 +29,7 @@ export default class OneDrive extends UIPlugin {
     this.provider = new Provider(uppy, {
       companionUrl: this.opts.companionUrl,
       companionHeaders: this.opts.companionHeaders,
+      companionKeysParams: this.opts.companionKeysParams,
       companionCookiesRule: this.opts.companionCookiesRule,
       provider: 'onedrive',
       pluginId: this.id,
