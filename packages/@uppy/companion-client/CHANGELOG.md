@@ -1,5 +1,12 @@
 # @uppy/companion-client
 
+## 3.7.4
+
+Released: 2024-02-28
+Included in: Uppy v3.23.0
+
+- @uppy/companion-client,@uppy/utils,@uppy/xhr-upload: improvements for #4922 (Mikael Finstad / #4960)
+
 ## 3.7.3
 
 Released: 2024-02-22

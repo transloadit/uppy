@@ -1,5 +1,12 @@
 # @uppy/form
 
+## 3.2.0
+
+Released: 2024-02-28
+Included in: Uppy v3.23.0
+
+- @uppy/form: migrate to TS (Merlijn Vos / #4937)
+
 ## 3.1.0
 
 Released: 2024-02-19
