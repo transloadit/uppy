@@ -6,17 +6,14 @@ import { h } from 'preact'
 import packageJson from '../package.json'
 import locale from './locale.js'
 
-const defaultOptions = {
-  storage: tokenStorage,
-}
-
 export default class Dropbox extends UIPlugin {
   static VERSION = packageJson.version
 
   constructor (uppy, opts) {
-    super(uppy, { ...defaultOptions, ...opts })
+    super(uppy, opts)
     this.id = this.opts.id || 'Dropbox'
     this.type = 'acquirer'
+    this.storage = this.opts.storage || tokenStorage
     this.files = []
     this.icon = () => (
       <svg className="uppy-DashboardTab-iconDropbox" aria-hidden="true" focusable="false" width="32" height="32" viewBox="0 0 32 32">

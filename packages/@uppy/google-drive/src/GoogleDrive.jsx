@@ -6,15 +6,13 @@ import packageJson from '../package.json'
 import DriveProviderViews from './DriveProviderViews.js'
 import locale from './locale.js'
 
-const defaultOptions = {
-  storage: tokenStorage
-}
 export default class GoogleDrive extends UIPlugin {
   static VERSION = packageJson.version
 
   constructor (uppy, opts) {
-    super(uppy, {...defaultOptions, ...opts })
+    super(uppy, opts)
     this.type = 'acquirer'
+    this.storage = this.opts.storage || tokenStorage
     this.files = []
     this.id = this.opts.id || 'GoogleDrive'
     this.icon = () => (

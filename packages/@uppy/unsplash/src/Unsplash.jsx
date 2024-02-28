@@ -5,17 +5,14 @@ import { SearchProviderViews } from '@uppy/provider-views'
 
 import packageJson from '../package.json'
 
-const defaultOptions = {
-  storage: tokenStorage
-}
-
 export default class Unsplash extends UIPlugin {
   static VERSION = packageJson.version
 
   constructor (uppy, opts) {
-    super(uppy, {...defaultOptions, ...opts })
+    super(uppy, opts)
     this.type = 'acquirer'
     this.files = []
+    this.storage = this.opts.storage || tokenStorage
     this.id = this.opts.id || 'Unsplash'
     this.title = this.opts.title || 'Unsplash'
 
