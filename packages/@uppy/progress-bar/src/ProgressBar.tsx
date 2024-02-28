@@ -8,7 +8,6 @@ import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin.js'
 import packageJson from '../package.json'
 
 export interface ProgressBarOptions extends UIPluginOptions {
-  target?: HTMLElement | string
   hideAfterFinish?: boolean
   fixed?: boolean
 }
