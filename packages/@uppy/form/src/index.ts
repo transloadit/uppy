@@ -161,7 +161,6 @@ export default class Form<M extends Meta, B extends Body> extends BasePlugin<
   install(): void {
     this.form = assertHTMLFormElement(findDOMElement(this.opts.target))
 
-
     this.form.addEventListener('submit', this.handleFormSubmit)
     this.uppy.on('upload', this.handleUploadStart)
     this.uppy.on('complete', this.handleSuccess)
