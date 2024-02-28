@@ -60,7 +60,10 @@ export default class Box extends UIPlugin {
   }
 
   onFirstRender () {
-    return this.view.getFolder()
+    return Promise.all([
+      this.provider.fetchPreAuthToken(),
+      this.view.getFolder(),
+    ])
   }
 
   render (state) {
