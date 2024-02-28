@@ -161,13 +161,6 @@ export default class Form<M extends Meta, B extends Body> extends BasePlugin<
   install(): void {
     this.form = assertHTMLFormElement(findDOMElement(this.opts.target))
 
-    if (!this.form || this.form.nodeName !== 'FORM') {
-      this.uppy.log(
-        'Form plugin requires a <form> target element passed in options to operate, none was found',
-        'error',
-      )
-      return
-    }
 
     this.form.addEventListener('submit', this.handleFormSubmit)
     this.uppy.on('upload', this.handleUploadStart)
