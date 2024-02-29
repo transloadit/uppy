@@ -1,5 +1,5 @@
 import { UIPlugin } from '@uppy/core'
-import { Provider } from '@uppy/companion-client'
+import { Provider, getAllowedHosts, tokenStorage } from '@uppy/companion-client'
 import { ProviderViews } from '@uppy/provider-views'
 import { h } from 'preact'
 
@@ -12,8 +12,9 @@ export default class Box extends UIPlugin {
   constructor (uppy, opts) {
     super(uppy, opts)
     this.id = this.opts.id || 'Box'
-    Provider.initPlugin(this, opts)
-    this.title = this.opts.title || 'Box'
+    this.type = 'acquirer'
+    this.storage = this.opts.storage || tokenStorage
+    this.files = []
     this.icon = () => (
       <svg className="uppy-DashboardTab-iconBox" aria-hidden="true" focusable="false" width="32" height="32" viewBox="0 0 32 32">
         <g fill="currentcolor" fillRule="nonzero">
@@ -23,6 +24,7 @@ export default class Box extends UIPlugin {
       </svg>
     )
 
+    this.opts.companionAllowedHosts = getAllowedHosts(this.opts.companionAllowedHosts, this.opts.companionUrl)
     this.provider = new Provider(uppy, {
       companionUrl: this.opts.companionUrl,
       companionHeaders: this.opts.companionHeaders,

@@ -385,49 +385,4 @@ export default class Provider<M extends Meta, B extends Body>
     await this.removeAuthToken()
     return response
   }
-
-  static initPlugin(
-    plugin: UnknownProviderPlugin<any, any>, // any because static methods cannot use class generics
-    opts: Opts,
-    defaultOpts: Record<string, unknown>,
-  ): void {
-    /* eslint-disable no-param-reassign */
-    plugin.type = 'acquirer'
-    plugin.files = []
-    if (defaultOpts) {
-      plugin.opts = { ...defaultOpts, ...opts }
-    }
-
-    if (opts.serverUrl || opts.serverPattern) {
-      throw new Error(
-        '`serverUrl` and `serverPattern` have been renamed to `companionUrl` and `companionAllowedHosts` respectively in the 0.30.5 release. Please consult the docs (for example, https://uppy.io/docs/instagram/ for the Instagram plugin) and use the updated options.`',
-      )
-    }
-
-    if (opts.companionAllowedHosts) {
-      const pattern = opts.companionAllowedHosts
-      // validate companionAllowedHosts param
-      if (
-        typeof pattern !== 'string' &&
-        !Array.isArray(pattern) &&
-        !(pattern instanceof RegExp)
-      ) {
-        throw new TypeError(
-          `${plugin.id}: the option "companionAllowedHosts" must be one of string, Array, RegExp`,
-        )
-      }
-      plugin.opts.companionAllowedHosts = pattern
-    } else if (/^(?!https?:\/\/).*$/i.test(opts.companionUrl)) {
-      // does not start with https://
-      plugin.opts.companionAllowedHosts = `https://${opts.companionUrl?.replace(
-        /^\/\//,
-        '',
-      )}`
-    } else {
-      plugin.opts.companionAllowedHosts = new URL(opts.companionUrl).origin
-    }
-
-    plugin.storage = plugin.opts.storage || tokenStorage
-    /* eslint-enable no-param-reassign */
-  }
 }
