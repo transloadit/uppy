@@ -1,5 +1,5 @@
 import { UIPlugin } from '@uppy/core'
-import { Provider , tokenStorage, getAllowedHosts } from '@uppy/companion-client'
+import { Provider, tokenStorage, getAllowedHosts } from '@uppy/companion-client'
 import { h } from 'preact'
 
 import packageJson from '../package.json'

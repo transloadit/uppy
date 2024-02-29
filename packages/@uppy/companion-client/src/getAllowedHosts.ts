@@ -16,7 +16,7 @@ export default function getAllowedHosts(
   }
   // does not start with https://
   if (/^(?!https?:\/\/).*$/i.test(url)) {
-    return `https://${url?.replace(/^\/\//, '')}`
+    return `https://${url.replace(/^\/\//, '')}`
   }
   return new URL(url).origin
 }
