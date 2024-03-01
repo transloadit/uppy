@@ -47,7 +47,6 @@ import packageJson from '../package.json'
 import locale from './locale.ts'
 
 import type BasePlugin from './BasePlugin.ts'
-import type UIPlugin from './UIPlugin.ts'
 import type { Restrictions, ValidateableFile } from './Restricter.ts'
 
 type Processor = (
@@ -945,7 +944,7 @@ export class Uppy<M extends Meta, B extends Body> {
         bytesTotal: size,
         uploadComplete: false,
         uploadStarted: null,
-      } as FileProgressNotStarted,
+      } satisfies FileProgressNotStarted,
       size,
       isGhost: false,
       isRemote: file.isRemote || false,
@@ -1380,6 +1379,8 @@ export class Uppy<M extends Meta, B extends Body> {
   //    and click 'ADD MORE FILES', - focus won't activate in Firefox.
   //    - We must throttle at around >500ms to avoid performance lags.
   //    [Practical Check] Firefox, try to upload a big file for a prolonged period of time. Laptop will start to heat up.
+  // todo when uploading multiple files, this will cause problems because they share the same throttle,
+  // meaning some files might never get their progress reported (eaten up by progress events from other files)
   calculateProgress = throttle(
     (file, data) => {
       const fileInState = this.getFile(file?.id)
@@ -1562,7 +1563,6 @@ export class Uppy<M extends Meta, B extends Body> {
           file.id,
           {
             progress: {
-              progress: 0,
               uploadStarted: Date.now(),
               uploadComplete: false,
               percentage: 0,

@@ -35,7 +35,7 @@ export interface UppyFile<M extends Meta, B extends Body> {
   type: string
   uploadURL?: string
   response?: {
-    body: B
+    body?: B
     status: number
     bytesUploaded?: number
     uploadURL?: string

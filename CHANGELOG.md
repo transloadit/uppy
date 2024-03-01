@@ -12,6 +12,40 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 3.23.0
+
+Released: 2024-02-28
+
+| Package                | Version | Package                | Version |
+| ---------------------- | ------- | ---------------------- | ------- |
+| @uppy/box              |   2.2.1 | @uppy/onedrive         |   3.2.1 |
+| @uppy/companion-client |   3.7.4 | @uppy/progress-bar     |   3.1.0 |
+| @uppy/core             |   3.9.3 | @uppy/provider-views   |  3.10.0 |
+| @uppy/dashboard        |   3.7.5 | @uppy/status-bar       |   3.3.0 |
+| @uppy/file-input       |   3.1.0 | @uppy/utils            |   5.7.4 |
+| @uppy/form             |   3.2.0 | @uppy/xhr-upload       |   3.6.4 |
+| @uppy/image-editor     |   2.4.4 | uppy                   |  3.23.0 |
+| @uppy/informer         |   3.1.0 |                        |         |
+
+- @uppy/form: migrate to TS (Merlijn Vos / #4937)
+- @uppy/box: fetchPreAuthToken in box too (Mikael Finstad / #4969)
+- @uppy/progress-bar: refactor to TypeScript (Mikael Finstad / #4921)
+- @uppy/onedrive: fix custom oauth2 credentials for onedrive (Mikael Finstad / #4968)
+- @uppy/companion-client,@uppy/utils,@uppy/xhr-upload: improvements for #4922 (Mikael Finstad / #4960)
+- @uppy/utils: fix various type issues (Mikael Finstad / #4958)
+- @uppy/provider-views: migrate to TS (Merlijn Vos / #4919)
+- @uppy/utils: simplify `findDOMElements` (Mikael Finstad / #4957)
+- @uppy/xhr-upload: fix getResponseData regression (Merlijn Vos / #4964)
+- @uppy/informer: migrate to TS (Merlijn Vos / #4967)
+- @uppy/core: remove unused import (Antoine du Hamel / #4972)
+- @uppy/image-editor: remove default target (Merlijn Vos / #4966)
+- @uppy/angular: Build fixes (Mikael Finstad / #4959)
+- meta: Fix flaky e2e test (Murderlon)
+- meta: fix e2e flake (Mikael Finstad / #4961)
+- meta: add support for `Fragment` short syntax (Antoine du Hamel / #4953)
+- @uppy/file-input: refactor to TypeScript (Antoine du Hamel / #4954)
+
+
 ## 3.22.2
 
 Released: 2024-02-22

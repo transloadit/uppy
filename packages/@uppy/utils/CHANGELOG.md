@@ -1,5 +1,14 @@
 # @uppy/utils
 
+## 5.7.4
+
+Released: 2024-02-28
+Included in: Uppy v3.23.0
+
+- @uppy/companion-client,@uppy/utils,@uppy/xhr-upload: improvements for #4922 (Mikael Finstad / #4960)
+- @uppy/utils: fix various type issues (Mikael Finstad / #4958)
+- @uppy/utils: simplify `findDOMElements` (Mikael Finstad / #4957)
+
 ## 5.7.3
 
 Released: 2024-02-22

@@ -59,10 +59,7 @@ export interface XhrUploadOpts<M extends Meta, B extends Body>
     body: string,
     xhr: XMLHttpRequest,
   ) => boolean
-  getResponseData?: (
-    body: string,
-    xhr: XMLHttpRequest,
-  ) => NonNullable<UppyFile<M, B>['response']>['body']
+  getResponseData?: (body: string, xhr: XMLHttpRequest) => B
   getResponseError?: (body: string, xhr: XMLHttpRequest) => Error | NetworkError
   allowedMetaFields?: string[] | null
   bundle?: boolean
@@ -117,7 +114,16 @@ const defaultOptions = {
   withCredentials: false,
   responseType: '',
   getResponseData(responseText) {
-    return JSON.parse(responseText)
+    let parsedResponse = {}
+    try {
+      parsedResponse = JSON.parse(responseText)
+    } catch {
+      // ignore
+    }
+    // We don't have access to the B (Body) generic here
+    // so we have to cast it to any. The user facing types
+    // remain correct, this is only to please the merging of default options.
+    return parsedResponse as any
   },
   getResponseError(_, response) {
     let error = new Error('Upload error')
@@ -346,7 +352,9 @@ export default class XHRUpload<
 
         if (opts.validateStatus(xhr.status, xhr.responseText, xhr)) {
           const body = opts.getResponseData(xhr.responseText, xhr)
-          const uploadURL = body[opts.responseUrlFieldName] as string
+          const uploadURL = body?.[opts.responseUrlFieldName] as
+            | string
+            | undefined
 
           const uploadResp = {
             status: xhr.status,

@@ -1,5 +1,13 @@
 # @uppy/xhr-upload
 
+## 3.6.4
+
+Released: 2024-02-28
+Included in: Uppy v3.23.0
+
+- @uppy/companion-client,@uppy/utils,@uppy/xhr-upload: improvements for #4922 (Mikael Finstad / #4960)
+- @uppy/xhr-upload: fix getResponseData regression (Merlijn Vos / #4964)
+
 ## 3.6.1
 
 Released: 2024-02-19
