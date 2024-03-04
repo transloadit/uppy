@@ -1,5 +1,5 @@
 export default function getAllowedHosts(
-  hosts: string | RegExp | Array<string | RegExp>,
+  hosts: string | RegExp | Array<string | RegExp> | undefined,
   url: string,
 ): string | RegExp | Array<string | RegExp> {
   if (hosts) {

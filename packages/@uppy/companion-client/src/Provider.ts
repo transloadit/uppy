@@ -7,17 +7,14 @@ import type {
 } from '@uppy/utils/lib/CompanionClientProvider'
 import type { UnknownProviderPlugin } from '@uppy/core/lib/Uppy.ts'
 import RequestClient, { authErrorStatusCode } from './RequestClient.ts'
-import * as tokenStorage from './tokenStorage.ts'
+import type { CompanionPluginOptions } from '.'
 
 // TODO: remove deprecated options in next major release
-export interface Opts extends PluginOpts {
+export interface Opts extends PluginOpts, CompanionPluginOptions {
   /** @deprecated */
   serverUrl?: string
   /** @deprecated */
   serverPattern?: string
-  companionUrl: string
-  companionAllowedHosts?: string | RegExp | Array<string | RegExp>
-  storage?: typeof tokenStorage
   pluginId: string
   name?: string
   supportsRefreshToken?: boolean

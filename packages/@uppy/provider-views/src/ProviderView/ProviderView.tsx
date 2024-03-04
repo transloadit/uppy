@@ -88,7 +88,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
 
   username: string | undefined
 
-  nextPagePath: string
+  nextPagePath: string | undefined
 
   constructor(
     plugin: UnknownProviderPlugin<M, B>,
@@ -162,7 +162,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
     absDirPath,
     signal,
   }: {
-    requestPath: string
+    requestPath?: string
     absDirPath: string
     signal: AbortSignal
   }) {
@@ -218,7 +218,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
    * TODO rename to something better like selectFolder or navigateToFolder (breaking change?)
    *
    */
-  async getFolder(requestPath: string, name: string): Promise<void> {
+  async getFolder(requestPath?: string, name?: string): Promise<void> {
     this.setLoading(true)
     try {
       await this.#withAbort(async (signal) => {
@@ -233,7 +233,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
         if (index !== -1) {
           // means we navigated back to a known directory (already in the stack), so cut the stack off there
           breadcrumbs = breadcrumbs.slice(0, index + 1)
-        } else {
+        } else if (requestPath) {
           // we have navigated into a new (unknown) folder, add it to the stack
           breadcrumbs = [...breadcrumbs, { requestPath, name }]
         }
