@@ -22,4 +22,14 @@ export type CompanionFile = {
     name?: string
     url?: string
   }
+  custom?: {
+    isSharedDrive: boolean
+    imageHeight: number
+    imageWidth: number
+    imageRotation: number
+    imageDateTime: string
+    videoHeight: number
+    videoWidth: number
+    videoDurationMillis: number
+  }
 }
