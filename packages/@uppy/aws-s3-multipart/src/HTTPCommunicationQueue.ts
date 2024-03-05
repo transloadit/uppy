@@ -1,8 +1,8 @@
-import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
+import type { Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
 import { pausingUploadReason, type Chunk } from './MultipartUploader.ts'
 import type AwsS3Multipart from './index.ts'
 import { throwIfAborted } from './utils.ts'
-import type { UploadPartBytesResult, UploadResult } from './utils.ts'
+import type { Body, UploadPartBytesResult, UploadResult } from './utils.ts'
 import type { AwsS3MultipartOptions, uploadPartBytes } from './index.ts'
 
 type RateLimitedQueue = any // untyped
@@ -21,10 +21,7 @@ type AbortablePromise<T extends (...args: any) => Promise<any>> = (
   abortOn: (signal?: AbortSignal) => ReturnType<T>
 }
 
-export class HTTPCommunicationQueue<
-  M extends Meta,
-  B extends Body & { location: string },
-> {
+export class HTTPCommunicationQueue<M extends Meta, B extends Body> {
   #abortMultipartUpload: AbortablePromise<
     AwsS3Multipart<M, B>['abortMultipartUpload']
   >
@@ -294,7 +291,7 @@ export class HTTPCommunicationQueue<
     file: UppyFile<M, B>,
     chunks: Chunk[],
     signal: AbortSignal,
-  ): ReturnType<AwsS3Multipart<M, B>['completeMultipartUpload']> {
+  ): Promise<B | Required<UploadPartBytesResult>> {
     throwIfAborted(signal)
     if (chunks.length === 1 && !chunks[0].shouldUseMultipart) {
       return this.#nonMultipartUpload(file, chunks[0], signal)
@@ -330,7 +327,7 @@ export class HTTPCommunicationQueue<
     file: UppyFile<M, B>,
     chunks: Array<Chunk | null>,
     signal: AbortSignal,
-  ): ReturnType<AwsS3Multipart<M, B>['completeMultipartUpload']> {
+  ): Promise<B> {
     throwIfAborted(signal)
     if (
       chunks.length === 1 &&

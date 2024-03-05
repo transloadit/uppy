@@ -4,7 +4,7 @@ import BasePlugin, {
 } from '@uppy/core/lib/BasePlugin.js'
 import { RequestClient } from '@uppy/companion-client'
 import type { RequestOptions } from '@uppy/utils/lib/CompanionClientProvider.ts'
-import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
+import type { Body as _Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
 import type { Uppy } from '@uppy/core'
 import EventManager from '@uppy/core/lib/EventManager'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -23,25 +23,25 @@ import type {
   UploadResultWithSignal,
   MultipartUploadResultWithSignal,
   UploadPartBytesResult,
+  Body,
 } from './utils.ts'
 import createSignedURL from './createSignedURL.ts'
+import { HTTPCommunicationQueue } from './HTTPCommunicationQueue.ts'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'
-import { HTTPCommunicationQueue } from './HTTPCommunicationQueue.ts'
 
-interface MultipartFile<M extends Meta, B extends Body & { location: string }>
-  extends UppyFile<M, B> {
+interface MultipartFile<M extends Meta, B extends Body> extends UppyFile<M, B> {
   s3Multipart: UploadResult
 }
 
-type PartUploadedCallback<M extends Meta, B extends Body> = (
+type PartUploadedCallback<M extends Meta, B extends _Body> = (
   file: UppyFile<M, B>,
   part: { PartNumber: number; ETag: string },
 ) => void
 
 declare module '@uppy/core' {
-  export interface UppyEventMap<M extends Meta, B extends Body> {
+  export interface UppyEventMap<M extends Meta, B extends _Body> {
     's3-multipart:part-uploaded': PartUploadedCallback<M, B>
   }
 }
@@ -314,7 +314,7 @@ const defaultOptions = {
 
 export default class AwsS3Multipart<
   M extends Meta,
-  B extends Body & { location: string },
+  B extends Body,
 > extends BasePlugin<
   DefinePluginOpts<AwsS3MultipartOptions<M, B>, keyof typeof defaultOptions> &
     // We also have a few dynamic options defined below:

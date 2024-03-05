@@ -443,8 +443,8 @@ describe('AwsS3Multipart', () => {
   })
 
   describe('dynamic companionHeader', () => {
-    let core
-    let awsS3Multipart
+    let core: Core<any, any>
+    let awsS3Multipart: AwsS3Multipart<any, any>
     const oldToken = 'old token'
     const newToken = 'new token'
 
@@ -455,7 +455,7 @@ describe('AwsS3Multipart', () => {
           authorization: oldToken,
         },
       })
-      awsS3Multipart = core.getPlugin('AwsS3Multipart')
+      awsS3Multipart = core.getPlugin('AwsS3Multipart') as any
     })
 
     it('companionHeader is updated before uploading file', async () => {
@@ -476,8 +476,8 @@ describe('AwsS3Multipart', () => {
   })
 
   describe('dynamic companionHeader using setOption', () => {
-    let core
-    let awsS3Multipart
+    let core: Core<any, any>
+    let awsS3Multipart: AwsS3Multipart<any, any>
     const newToken = 'new token'
 
     it('companionHeader is updated before uploading file', async () => {

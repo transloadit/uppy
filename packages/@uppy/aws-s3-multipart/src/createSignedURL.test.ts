@@ -53,14 +53,10 @@ describe('createSignedURL', () => {
       new URL(
         await getSignedUrl(
           client,
-          new PutObjectCommand(
-            {
-              Bucket: bucketName,
-              Fields: {},
-              Key: 'some/key',
-            },
-            { expiresIn: 900 },
-          ),
+          new PutObjectCommand({
+            Bucket: bucketName,
+            Key: 'some/key',
+          }),
         ),
       ).searchParams.get('X-Amz-Signature'),
     )
@@ -86,15 +82,12 @@ describe('createSignedURL', () => {
       new URL(
         await getSignedUrl(
           client,
-          new UploadPartCommand(
-            {
-              Bucket: bucketName,
-              UploadId: uploadId,
-              PartNumber: partNumber,
-              Key: 'some/key',
-            },
-            { expiresIn: 900 },
-          ),
+          new UploadPartCommand({
+            Bucket: bucketName,
+            UploadId: uploadId,
+            PartNumber: partNumber,
+            Key: 'some/key',
+          }),
         ),
       ).searchParams.get('X-Amz-Signature'),
     )

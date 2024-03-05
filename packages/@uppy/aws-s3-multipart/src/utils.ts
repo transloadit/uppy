@@ -1,4 +1,5 @@
 import { createAbortError } from '@uppy/utils/lib/AbortController'
+import type { Body as _Body } from '@uppy/utils/lib/UppyFile'
 
 import type { AwsS3Part } from './index'
 
@@ -20,4 +21,8 @@ export type MultipartUploadResultWithSignal = MultipartUploadResult & {
 export type UploadPartBytesResult = {
   ETag: string
   location?: string
+}
+
+export interface Body extends _Body {
+  location: string
 }

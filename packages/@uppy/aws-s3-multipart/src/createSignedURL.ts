@@ -110,8 +110,8 @@ export default async function createSignedURL({
   Key: string
   Region: string
   expires: string | number
-  uploadId: string
-  partNumber: string | number
+  uploadId?: string
+  partNumber?: string | number
 }): Promise<URL> {
   const Service = 's3'
   const host = `${bucketName}.${Service}.${Region}.amazonaws.com`
