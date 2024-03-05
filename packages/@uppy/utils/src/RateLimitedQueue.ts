@@ -20,7 +20,8 @@ function abortOn(
 }
 
 type Handler = {
-  fn: () => (cause?: string) => void
+  shouldBeRequeued?: boolean
+  fn: () => (...args: any[]) => Promise<void> | void
   priority: number
   abort: (cause?: string) => void
   done: () => void
@@ -160,7 +161,7 @@ export class RateLimitedQueue {
     return this.#queue(fn, queueOptions)
   }
 
-  wrapSyncFunction(fn: Handler['fn'], queueOptions: QueueOptions) {
+  wrapSyncFunction(fn: () => void, queueOptions: QueueOptions) {
     return (
       ...args: Parameters<Handler['fn']>
     ): { abortOn: typeof abortOn; abort: Handler['abort'] } => {
@@ -179,8 +180,11 @@ export class RateLimitedQueue {
     }
   }
 
-  wrapPromiseFunction(fn: Handler['fn'], queueOptions: QueueOptions) {
-    return (...args: Parameters<Handler['fn']>): AbortablePromise<unknown> => {
+  wrapPromiseFunction(
+    fn: (...args: any[]) => Promise<void>,
+    queueOptions?: QueueOptions,
+  ) {
+    return (...args: any[]): AbortablePromise<unknown> => {
       let queuedRequest: ReturnType<RateLimitedQueue['run']>
       const outerPromise = new Promise((resolve, reject) => {
         queuedRequest = this.run(() => {
