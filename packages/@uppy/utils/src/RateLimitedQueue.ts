@@ -181,7 +181,7 @@ export class RateLimitedQueue {
   }
 
   wrapPromiseFunction(
-    fn: (...args: any[]) => Promise<void>,
+    fn: (...args: any[]) => Promise<any> | any,
     queueOptions?: QueueOptions,
   ) {
     return (...args: any[]): AbortablePromise<unknown> => {

@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest'
-import { RateLimitedQueue } from './RateLimitedQueue.js'
+import { RateLimitedQueue } from './RateLimitedQueue.ts'
 import delay from './delay.ts'
 
 describe('RateLimitedQueue', () => {
   let pending = 0
-  function fn() {
+  async function fn() {
     pending++
     return delay(15).then(() => pending--)
   }
