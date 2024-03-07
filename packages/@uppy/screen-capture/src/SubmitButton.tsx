@@ -1,9 +1,17 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { h } from 'preact'
+
+type $TSFixMe = any
 
 /**
  * Submit recorded video to uppy. Enabled when file is available
  */
-export default function SubmitButton ({ recording, recordedVideo, onSubmit, i18n }) {
+export default function SubmitButton({
+  recording,
+  recordedVideo,
+  onSubmit,
+  i18n,
+}: $TSFixMe) {
   if (recordedVideo && !recording) {
     return (
       <button
@@ -23,7 +31,11 @@ export default function SubmitButton ({ recording, recordedVideo, onSubmit, i18n
           focusable="false"
           className="uppy-c-icon"
         >
-          <path fill="#fff" fillRule="nonzero" d="M10.66 0L12 1.31 4.136 9 0 4.956l1.34-1.31L4.136 6.38z" />
+          <path
+            fill="#fff"
+            fillRule="nonzero"
+            d="M10.66 0L12 1.31 4.136 9 0 4.956l1.34-1.31L4.136 6.38z"
+          />
         </svg>
       </button>
     )
