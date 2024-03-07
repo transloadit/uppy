@@ -483,6 +483,17 @@ export class Uppy<M extends Meta, B extends Body> {
     this.#emitter.emit(event, ...args)
   }
 
+  /** @deprecated */
+  on<K extends keyof DeprecatedUppyEventMap<M, B>>(
+    event: K,
+    callback: DeprecatedUppyEventMap<M, B>[K],
+  ): this
+
+  on<K extends keyof _UppyEventMap<M, B>>(
+    event: K,
+    callback: _UppyEventMap<M, B>[K],
+  ): this
+
   on<K extends keyof UppyEventMap<M, B>>(
     event: K,
     callback: UppyEventMap<M, B>[K],
