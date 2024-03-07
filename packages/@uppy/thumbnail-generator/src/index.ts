@@ -297,7 +297,7 @@ export default class ThumbnailGenerator<
     // Resizing in steps refactored to use a solution from
     // https://blog.uploadcare.com/image-resize-in-browsers-is-broken-e38eed08df01
 
-    const img = protect(image)
+    let img = protect(image)
 
     let steps = Math.ceil(Math.log2(img.width / targetWidth))
     if (steps < 1) {
@@ -307,20 +307,18 @@ export default class ThumbnailGenerator<
     let sH = targetHeight * 2 ** (steps - 1)
     const x = 2
 
-    let canvas: HTMLCanvasElement
-
     while (steps--) {
-      canvas = document.createElement('canvas')
+      const canvas = document.createElement('canvas')
       canvas.width = sW
       canvas.height = sH
       canvas.getContext('2d')!.drawImage(img, 0, 0, sW, sH)
+      img = canvas
 
       sW = Math.round(sW / x)
       sH = Math.round(sH / x)
     }
 
-    // @ts-expect-error canvas is defined
-    return canvas
+    return img
   }
 
   /**
