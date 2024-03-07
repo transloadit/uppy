@@ -1,49 +1,60 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { h, Component } from 'preact'
 
+type $TSFixMe = any
+
+function fmtMSS(s: number) {
+  // eslint-disable-next-line no-return-assign, no-param-reassign
+  return (s - (s %= 60)) / 60 + (s > 9 ? ':' : ':0') + s
+}
+
 class StopWatch extends Component {
-  constructor(props) {
+  private wrapperStyle = {
+    width: '100%',
+    height: '100%',
+    display: 'flex',
+  } as const
+
+  private overlayStyle = {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    background: 'black',
+    opacity: 0.7,
+  } as const
+
+  private infoContainerStyle = {
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    marginTop: 'auto',
+    marginBottom: 'auto',
+    zIndex: 1,
+    color: 'white',
+  } as const
+
+  private infotextStyle = {
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    marginBottom: '1rem',
+    fontSize: '1.5rem',
+  } as const
+
+  private timeStyle = {
+    display: 'block',
+    fontWeight: 'bold',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    fontSize: '3rem',
+    fontFamily: 'Courier New',
+  } as const
+
+  private timerRunning: boolean
+
+  private timer: ReturnType<typeof setTimeout>
+
+  constructor(props: $TSFixMe) {
     super(props)
     this.state = { elapsedTime: 0 }
-
-    this.wrapperStyle = {
-      width: '100%',
-      height: '100%',
-      display: 'flex',
-    }
-
-    this.overlayStyle = {
-      position: 'absolute',
-      width: '100%',
-      height: '100%',
-      background: 'black',
-      opacity: 0.7,
-    }
-
-    this.infoContainerStyle = {
-      marginLeft: 'auto',
-      marginRight: 'auto',
-      marginTop: 'auto',
-      marginBottom: 'auto',
-      zIndex: 1,
-      color: 'white',
-    }
-
-    this.infotextStyle = {
-      marginLeft: 'auto',
-      marginRight: 'auto',
-      marginBottom: '1rem',
-      fontSize: '1.5rem',
-    }
-
-    this.timeStyle = {
-      display: 'block',
-      fontWeight: 'bold',
-      marginLeft: 'auto',
-      marginRight: 'auto',
-      fontSize: '3rem',
-      fontFamily: 'Courier New',
-    }
   }
 
   startTimer() {
@@ -59,23 +70,19 @@ class StopWatch extends Component {
 
   timerTick() {
     this.timer = setTimeout(() => {
-      this.setState((state) => ({ elapsedTime: state.elapsedTime + 1 }))
+      this.setState((state: $TSFixMe) => ({
+        elapsedTime: state.elapsedTime + 1,
+      }))
       this.timerTick()
     }, 1000)
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  fmtMSS(s) {
-    // eslint-disable-next-line no-return-assign, no-param-reassign
-    return (s - (s %= 60)) / 60 + (s > 9 ? ':' : ':0') + s
-  }
-
   render() {
-    const { recording, i18n } = { ...this.props }
-    const { elapsedTime } = this.state
+    const { recording, i18n } = { ...this.props } as $TSFixMe
+    const { elapsedTime } = this.state as $TSFixMe
 
     // second to minutes and seconds
-    const minAndSec = this.fmtMSS(elapsedTime)
+    const minAndSec = fmtMSS(elapsedTime)
 
     if (recording && !this.timerRunning) {
       this.startTimer()
