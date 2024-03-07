@@ -1,8 +1,7 @@
-// TODO: remove this and type properly
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
 import { h } from 'preact'
+
+type $TSFixMe = any
 
 /**
  * Submit recorded video to uppy. Enabled when file is available
@@ -12,7 +11,7 @@ export default function SubmitButton({
   recordedVideo,
   onSubmit,
   i18n,
-}) {
+}: $TSFixMe) {
   if (recordedVideo && !recording) {
     return (
       <button

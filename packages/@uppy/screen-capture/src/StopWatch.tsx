@@ -1,7 +1,4 @@
-// TODO: remove this and type properly
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
 import { h, Component } from 'preact'
 
 class StopWatch extends Component {

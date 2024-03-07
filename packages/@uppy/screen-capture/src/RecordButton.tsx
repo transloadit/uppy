@@ -1,8 +1,7 @@
-// TODO: remove this and type properly
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
 import { h } from 'preact'
+
+type $TSFixMe = any
 
 /**
  * Control screen capture recording. Will show record or stop button.
@@ -12,7 +11,7 @@ export default function RecordButton({
   onStartRecording,
   onStopRecording,
   i18n,
-}) {
+}: $TSFixMe) {
   if (recording) {
     return (
       <button

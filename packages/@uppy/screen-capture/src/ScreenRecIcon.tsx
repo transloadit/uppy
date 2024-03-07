@@ -1,10 +1,7 @@
-// TODO: remove this and type properly
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
 import { h } from 'preact'
 
-export default () => {
+export default function ScreenRecIcon() {
   return (
     <svg
       className="uppy-DashboardTab-iconScreenRec"

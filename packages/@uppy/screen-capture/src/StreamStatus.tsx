@@ -1,10 +1,9 @@
-// TODO: remove this and type properly
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
 import { h } from 'preact'
 
-export default ({ streamActive, i18n }) => {
+type $TSFixMe = any
+
+export default function StreamStatus({ streamActive, i18n }: $TSFixMe) {
   if (streamActive) {
     return (
       <div
