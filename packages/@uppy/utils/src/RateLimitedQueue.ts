@@ -3,7 +3,7 @@ function createCancelError(cause?: string) {
 }
 
 function abortOn(
-  this: { abort: (cause: string) => void, then?: Promise<any>['then'] },
+  this: { abort: (cause: string) => void; then?: Promise<any>['then'] },
   signal?: AbortSignal,
 ) {
   if (signal != null) {
@@ -31,7 +31,7 @@ type QueueOptions = {
 }
 
 interface AbortablePromise<T> extends Promise<T> {
-  abort(cause: string): void
+  abort(cause?: unknown): void
   abortOn: typeof abortOn
 }
 
@@ -65,7 +65,7 @@ export class RateLimitedQueue {
 
     let done = false
 
-    let cancelActive: (cause?: string) => void
+    let cancelActive: (cause?: unknown) => void
     try {
       cancelActive = fn()
     } catch (err) {
@@ -74,7 +74,7 @@ export class RateLimitedQueue {
     }
 
     return {
-      abort: (cause?: string) => {
+      abort: (cause?: unknown) => {
         if (done) return
         done = true
         this.#activeRequests -= 1
