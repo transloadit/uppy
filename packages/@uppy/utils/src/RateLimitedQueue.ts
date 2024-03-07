@@ -3,8 +3,8 @@ function createCancelError(cause?: string) {
 }
 
 function abortOn(
-  this: { abort: (cause: string) => void },
-  signal: AbortSignal,
+  this: { abort: (cause: string) => void, then?: Promise<any>['then'] },
+  signal?: AbortSignal,
 ) {
   if (signal != null) {
     const abortPromise = () => this.abort(signal.reason)
@@ -12,7 +12,6 @@ function abortOn(
     const removeAbortListener = () => {
       signal.removeEventListener('abort', abortPromise)
     }
-    // @ts-expect-error don't how how to type this
     this.then?.(removeAbortListener, removeAbortListener)
   }
 
@@ -23,7 +22,7 @@ type Handler = {
   shouldBeRequeued?: boolean
   fn: () => (...args: any[]) => Promise<void> | void
   priority: number
-  abort: (cause?: string) => void
+  abort: (cause?: unknown) => void
   done: () => void
 }
 
@@ -180,11 +179,11 @@ export class RateLimitedQueue {
     }
   }
 
-  wrapPromiseFunction(
-    fn: (...args: any[]) => Promise<any> | any,
+  wrapPromiseFunction<T extends (...args: any[]) => any>(
+    fn: T,
     queueOptions?: QueueOptions,
   ) {
-    return (...args: any[]): AbortablePromise<unknown> => {
+    return (...args: Parameters<T>): AbortablePromise<ReturnType<T>> => {
       let queuedRequest: ReturnType<RateLimitedQueue['run']>
       const outerPromise = new Promise((resolve, reject) => {
         queuedRequest = this.run(() => {
@@ -219,7 +218,7 @@ export class RateLimitedQueue {
             cancelError = createCancelError(cause)
           }
         }, queueOptions)
-      }) as AbortablePromise<unknown>
+      }) as AbortablePromise<ReturnType<T>>
 
       outerPromise.abort = (cause) => {
         queuedRequest.abort(cause)
