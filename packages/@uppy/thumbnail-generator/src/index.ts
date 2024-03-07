@@ -13,8 +13,6 @@ import locale from './locale.ts'
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'
 
-type $TSFixMe = any
-
 declare module '@uppy/core' {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   export interface UppyEventMap<M extends Meta, B extends Body> {
@@ -472,10 +470,10 @@ export default class ThumbnailGenerator<
     this.uppy.on('cancel-all', this.onAllFilesRemoved)
 
     if (this.opts.lazy) {
-      this.uppy.on('thumbnail:request' as $TSFixMe, this.onFileAdded)
-      this.uppy.on('thumbnail:cancel' as $TSFixMe, this.onCancelRequest)
+      this.uppy.on('thumbnail:request', this.onFileAdded)
+      this.uppy.on('thumbnail:cancel', this.onCancelRequest)
     } else {
-      this.uppy.on('thumbnail:request' as $TSFixMe, this.onFileAdded)
+      this.uppy.on('thumbnail:request', this.onFileAdded)
       this.uppy.on('file-added', this.onFileAdded)
       this.uppy.on('restored', this.onRestored)
     }
