@@ -7,6 +7,7 @@ import forEachDroppedOrPastedUrl from './utils/forEachDroppedOrPastedUrl.js'
 
 import packageJson from '../package.json'
 import locale from './locale.js'
+
 const getYouTubeID = require('get-youtube-id');
 const getYoutubeTitle  = require('get-youtube-title');
 
@@ -50,7 +51,7 @@ async function getFileNameFromUrl (url) {
   return new Promise((resolve, reject) => {
     if (url.match(/(http:|https:)?\/\/(www\.)?(youtube.com|youtu.be)\/(watch)?(\?v=)?(\S+)?/)) {
       const id = getYouTubeID(url, {fuzzy: false});
-      getYoutubeTitle(id, 'AIzaSyCM3w7SKmg25eRBgh4tmjPpXDWED-iFp9Q', function (err, title) {
+      getYoutubeTitle(id, 'AIzaSyCM3w7SKmg25eRBgh4tmjPpXDWED-iFp9Q', (err, title) => {
         resolve(title)
       })
     }
@@ -76,7 +77,7 @@ export default class Url extends UIPlugin {
     this.title = this.opts.title || 'Link'
     this.type = 'acquirer'
     this.icon = () => <UrlIcon />
-
+    this.activeRequests = {};
     // Set default options and locale
     this.defaultLocale = locale
 
@@ -127,6 +128,15 @@ export default class Url extends UIPlugin {
       return undefined
     }
 
+    // Check if a request for this URL is already in progress
+    if (this.activeRequests[url]) {
+      this.uppy.log(`[URL] Request for this URL is already in progress: ${url}`);
+      return undefined; // Optionally, handle queuing of requests here
+    }
+
+    // / Mark this URL as having an active request
+    this.activeRequests[url] = true;
+
     try {
       const meta = await this.getMeta(url)
 
@@ -169,6 +179,9 @@ export default class Url extends UIPlugin {
         details: err,
       }, 'error', 4000)
       return err
+    }
+    finally {
+      delete this.activeRequests[url];
     }
   }
 
