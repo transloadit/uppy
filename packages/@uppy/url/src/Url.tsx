@@ -123,9 +123,9 @@ export default class Url<M extends Meta, B extends Body> extends UIPlugin<
   private getMeta = (url: string): Promise<MetaResponse> => {
     return this.client.post<MetaResponse>('url/meta', { url }).then((res) => {
       // TODO: remove this handler in the next major
-      if ((res as any).errors) {
+      if ((res as any).error) {
         this.uppy.log('[URL] Error:')
-        this.uppy.log((res as any).errors)
+        this.uppy.log((res as any).error)
         throw new Error('Failed to fetch the file')
       }
       return res
