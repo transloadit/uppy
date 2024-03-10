@@ -305,7 +305,8 @@ const defaultOptions = {
   allowedMetaFields: null,
   limit: 6,
   getTemporarySecurityCredentials: false as any,
-  shouldUseMultipart: (file: UppyFile<any, any>) => file.size !== 0, // TODO: Switch default to:
+  shouldUseMultipart: ((file: UppyFile<any, any>) =>
+    file.size !== 0) as any as true, // TODO: Switch default to:
   // eslint-disable-next-line no-bitwise
   // shouldUseMultipart: (file) => file.size >> 10 >> 10 > 100,
   retryDelays: [0, 1000, 3000, 5000],

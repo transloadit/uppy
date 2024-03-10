@@ -245,7 +245,7 @@ export class HTTPCommunicationQueue<M extends Meta, B extends Body> {
     file: UppyFile<M, B>,
     chunk: Chunk,
     signal?: AbortSignal,
-  ): Promise<Required<UploadPartBytesResult>> {
+  ): Promise<UploadPartBytesResult & B> {
     const {
       method = 'POST',
       url,
@@ -280,18 +280,18 @@ export class HTTPCommunicationQueue<M extends Meta, B extends Body> {
     }).abortOn(signal)
 
     return 'location' in result ?
-        (result as Required<UploadPartBytesResult>)
-      : {
+        (result as UploadPartBytesResult & B)
+      : ({
           location: removeMetadataFromURL(url),
           ...result,
-        }
+        } as any)
   }
 
   async uploadFile(
     file: UppyFile<M, B>,
     chunks: Chunk[],
     signal: AbortSignal,
-  ): Promise<B | Required<UploadPartBytesResult>> {
+  ): Promise<B & Partial<UploadPartBytesResult>> {
     throwIfAborted(signal)
     if (chunks.length === 1 && !chunks[0].shouldUseMultipart) {
       return this.#nonMultipartUpload(file, chunks[0], signal)
