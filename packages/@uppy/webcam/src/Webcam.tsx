@@ -437,7 +437,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
           // create object url for capture result preview
           this.setPluginState({
             // eslint-disable-next-line compat/compat
-            recordedVideo: URL.createObjectURL(file.data),
+            recordedVideo: URL.createObjectURL(file.data as Blob),
           })
           this.#enableMirror = false
         } catch (err) {
