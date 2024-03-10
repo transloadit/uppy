@@ -1,18 +1,18 @@
 import type { I18n } from '@uppy/utils/lib/Translator'
-import { h } from 'preact'
+import { h, type ComponentChild } from 'preact'
 
 interface PermissionScreenProps {
   hasCamera: boolean
-  icon: () => JSX.Element | null
+  icon: () => ComponentChild | null
   i18n: I18n
 }
 
 // TODO: name that function
-export default ({
+export default function PermissionsScreen({
   icon,
   i18n,
   hasCamera,
-}: PermissionScreenProps): JSX.Element => {
+}: PermissionScreenProps): ComponentChild {
   return (
     <div className="uppy-Webcam-permissons">
       <div className="uppy-Webcam-permissonsIcon">{icon()}</div>

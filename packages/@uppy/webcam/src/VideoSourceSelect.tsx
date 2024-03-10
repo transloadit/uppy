@@ -1,15 +1,15 @@
-import { h } from 'preact'
+import { h, type ComponentChild } from 'preact'
 
 export interface VideoSourceSelectProps {
   currentDeviceId: string | null
   videoSources: MediaDeviceInfo[]
   onChangeVideoSource: (deviceId: string) => void
 }
-export default ({
+export default function VideoSourceSelect({
   currentDeviceId,
   videoSources,
   onChangeVideoSource,
-}: VideoSourceSelectProps): JSX.Element => {
+}: VideoSourceSelectProps): ComponentChild {
   return (
     <div className="uppy-Webcam-videoSource">
       <select

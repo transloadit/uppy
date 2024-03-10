@@ -1,12 +1,15 @@
 import type { I18n } from '@uppy/utils/lib/Translator'
-import { h } from 'preact'
+import { h, type ComponentChild } from 'preact'
 
 interface DiscardButtonProps {
   onDiscard: () => void
   i18n: I18n
 }
 
-function DiscardButton({ onDiscard, i18n }: DiscardButtonProps): JSX.Element {
+function DiscardButton({
+  onDiscard,
+  i18n,
+}: DiscardButtonProps): ComponentChild {
   return (
     <button
       className="uppy-u-reset uppy-c-btn uppy-Webcam-button uppy-Webcam-button--discard"

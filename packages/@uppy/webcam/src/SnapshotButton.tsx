@@ -1,5 +1,5 @@
 import type { I18n } from '@uppy/utils/lib/Translator'
-import { h } from 'preact'
+import { h, type ComponentChild } from 'preact'
 import CameraIcon from './CameraIcon.tsx'
 
 interface SnapshotButtonProps {
@@ -7,7 +7,10 @@ interface SnapshotButtonProps {
   i18n: I18n
 }
 
-export default ({ onSnapshot, i18n }: SnapshotButtonProps): JSX.Element => {
+export default function SnapshotButton({
+  onSnapshot,
+  i18n,
+}: SnapshotButtonProps): ComponentChild {
   return (
     <button
       className="uppy-u-reset uppy-c-btn uppy-Webcam-button uppy-Webcam-button--picture"

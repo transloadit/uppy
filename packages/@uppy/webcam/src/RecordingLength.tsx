@@ -1,5 +1,5 @@
 import type { I18n } from '@uppy/utils/lib/Translator'
-import { h } from 'preact'
+import { h, type ComponentChild } from 'preact'
 import formatSeconds from './formatSeconds.ts'
 
 interface RecordingLengthProps {
@@ -10,7 +10,7 @@ interface RecordingLengthProps {
 export default function RecordingLength({
   recordingLengthSeconds,
   i18n,
-}: RecordingLengthProps): JSX.Element {
+}: RecordingLengthProps): ComponentChild {
   const formattedRecordingLengthSeconds = formatSeconds(recordingLengthSeconds)
 
   return (

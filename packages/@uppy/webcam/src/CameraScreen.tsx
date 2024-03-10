@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/media-has-caption */
 import type { I18n } from '@uppy/utils/lib/Translator'
-import { h, Component } from 'preact'
+import { h, Component, type ComponentChild } from 'preact'
 import SnapshotButton from './SnapshotButton.tsx'
 import RecordButton from './RecordButton.tsx'
 import RecordingLength from './RecordingLength.tsx'
@@ -49,7 +49,7 @@ class CameraScreen extends Component<CameraScreenProps> {
     onStop()
   }
 
-  render(): JSX.Element {
+  render(): ComponentChild {
     const {
       src,
       // @ts-expect-error TODO: remove unused

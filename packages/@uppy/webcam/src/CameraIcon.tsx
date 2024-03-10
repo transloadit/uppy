@@ -1,7 +1,6 @@
-import { h } from 'preact'
+import { h, type ComponentChild } from 'preact'
 
-// TODO: name that function
-export default (): JSX.Element => {
+export default function CameraIcon(): ComponentChild {
   return (
     <svg
       aria-hidden="true"
