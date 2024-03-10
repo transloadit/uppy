@@ -125,7 +125,7 @@ export default class Url<M extends Meta, B extends Body> extends UIPlugin<
       // TODO: remove this handler in the next major
       if ((res as any).errors) {
         this.uppy.log('[URL] Error:')
-        this.uppy.log(error)
+        this.uppy.log((res as any).errors)
         throw new Error('Failed to fetch the file')
       }
       return res
@@ -135,7 +135,7 @@ export default class Url<M extends Meta, B extends Body> extends UIPlugin<
   private addFile = async (
     protocollessUrl: string,
     optionalMeta?: M,
-  ): Promise<string | undefined> {
+  ): Promise<string | undefined> => {
     const url = addProtocolToURL(protocollessUrl)
     if (!checkIfCorrectURL(url)) {
       this.uppy.log(`[URL] Incorrect URL entered: ${url}`)
