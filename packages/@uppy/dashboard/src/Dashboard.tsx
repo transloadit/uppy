@@ -1,4 +1,4 @@
-import { UIPlugin, type UIPluginOptions, type UnknownPlugin, type Uppy } from '@uppy/core'
+import { UIPlugin, type UIPluginOptions, type UnknownPlugin, type Uppy, type GenericEventCallback } from '@uppy/core'
 import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin.ts'
 import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
 import StatusBar from '@uppy/status-bar'
@@ -19,6 +19,21 @@ import DashboardUI from './components/Dashboard.tsx'
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'
 import locale from './locale.ts'
+
+export type DashboardFileEditStartCallback<M extends Meta, B extends Body> = (
+  file?: UppyFile<M , B >,
+) => void
+export type DashboardFileEditCompleteCallback<M extends Meta, B extends Body> = (file?: UppyFile<M, B>) => void
+export type DashboardShowPlanelCallback = (id: string) => void
+declare module '@uppy/core' {
+  export interface UppyEventMap<M extends Meta, B extends Body> {
+    'dashboard:modal-open': GenericEventCallback
+    'dashboard:modal-closed': GenericEventCallback
+    'dashboard:show-panel': DashboardShowPlanelCallback
+    'dashboard:file-edit-start': DashboardFileEditStartCallback<M,B>
+    'dashboard:file-edit-complete': DashboardFileEditCompleteCallback<M,B>
+  }
+}
 
 const memoize = ((memoizeOne as any).default as false) || memoizeOne
 
