@@ -1,5 +1,5 @@
 import { UIPlugin } from '@uppy/core'
-import { Provider } from '@uppy/companion-client'
+import { Provider, tokenStorage, getAllowedHosts } from '@uppy/companion-client'
 import { h } from 'preact'
 
 import packageJson from '../package.json'
@@ -11,10 +11,10 @@ export default class GoogleDrive extends UIPlugin {
 
   constructor (uppy, opts) {
     super(uppy, opts)
+    this.type = 'acquirer'
+    this.storage = this.opts.storage || tokenStorage
+    this.files = []
     this.id = this.opts.id || 'GoogleDrive'
-    this.title = this.opts.title || 'Google Drive'
-    Provider.initPlugin(this, opts)
-    this.title = this.opts.title || 'Google Drive'
     this.icon = () => (
       <svg
         aria-hidden="true"
@@ -34,6 +34,7 @@ export default class GoogleDrive extends UIPlugin {
       </svg>
     )
 
+    this.opts.companionAllowedHosts = getAllowedHosts(this.opts.companionAllowedHosts, this.opts.companionUrl)
     this.provider = new Provider(uppy, {
       companionUrl: this.opts.companionUrl,
       companionHeaders: this.opts.companionHeaders,

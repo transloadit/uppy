@@ -58,6 +58,7 @@ zh_TW.strings = {
   dropPasteImportFiles: '將檔案拖曳至此處、%{browseFiles}，或匯入',
   dropPasteImportFolders: '將檔案拖曳至此處、%{browseFolders}，或匯入',
   editFile: '編輯檔案',
+  editImage: '編輯圖片',
   editFileWithFilename: '編輯檔案 %{file}',
   editing: '編輯 %{file}',
   emptyFolderAdded: '未從空資料夾新增任何檔案',

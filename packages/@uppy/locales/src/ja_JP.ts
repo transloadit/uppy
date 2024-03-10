@@ -57,6 +57,7 @@ ja_JP.strings = {
   dropPasteImportFolders:
     'ここにファイルをドロップするか、貼り付けるか、%{browse}するか、以下からインポートしてください',
   editFile: 'ファイルを編集',
+  editImage: '画像を編集',
   editing: '%{file}を編集しています',
   emptyFolderAdded: 'フォルダが空なためファイルが追加されませんでした',
   encoding: 'エンコードしています...',

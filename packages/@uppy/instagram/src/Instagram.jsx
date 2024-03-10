@@ -1,7 +1,7 @@
 import { h } from 'preact'
 
 import { UIPlugin } from '@uppy/core'
-import { Provider } from '@uppy/companion-client'
+import { Provider, tokenStorage, getAllowedHosts } from '@uppy/companion-client'
 import { ProviderViews } from '@uppy/provider-views'
 
 import packageJson from '../package.json'
@@ -12,8 +12,10 @@ export default class Instagram extends UIPlugin {
 
   constructor (uppy, opts) {
     super(uppy, opts)
+    this.type = 'acquirer'
+    this.files = []
+    this.storage = this.opts.storage || tokenStorage
     this.id = this.opts.id || 'Instagram'
-    Provider.initPlugin(this, opts)
     this.icon = () => (
       <svg aria-hidden="true" focusable="false" width="32" height="32" viewBox="0 0 32 32">
         <defs>
@@ -33,6 +35,7 @@ export default class Instagram extends UIPlugin {
     this.i18nInit()
     this.title = this.i18n('pluginNameInstagram')
 
+    this.opts.companionAllowedHosts = getAllowedHosts(this.opts.companionAllowedHosts, this.opts.companionUrl)
     this.provider = new Provider(uppy, {
       companionUrl: this.opts.companionUrl,
       companionHeaders: this.opts.companionHeaders,

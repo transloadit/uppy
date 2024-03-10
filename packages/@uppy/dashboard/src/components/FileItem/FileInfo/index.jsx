@@ -48,11 +48,11 @@ const renderAuthor = (props) => {
         {truncateString(author.name, 13)}
       </a>
       {providerName ? (
-        <Fragment>
+        <>
           {` ${dot} `}
           {providerName}
           {` ${dot} `}
-        </Fragment>
+        </>
       ) : null}
     </div>
   )

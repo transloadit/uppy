@@ -5,7 +5,14 @@
  * TS source. It will rename the files, update the imports, and add a `tsconfig.json`.
  */
 
-import { opendir, readFile, open, writeFile, rm } from 'node:fs/promises'
+import {
+  appendFile,
+  opendir,
+  readFile,
+  open,
+  writeFile,
+  rm,
+} from 'node:fs/promises'
 import { createRequire } from 'node:module'
 import { argv } from 'node:process'
 import { basename, extname, join } from 'node:path'
@@ -100,7 +107,7 @@ for await (const dirent of dir) {
           // The following regex aims to capture all local package.json imports.
           /\nimport \w+ from ['"]..\/([^'"]+\/)*package.json['"]\n/g,
           (originalImport) =>
-            `// eslint-disable-next-line @typescript-eslint/ban-ts-comment\n` +
+            `\n// eslint-disable-next-line @typescript-eslint/ban-ts-comment\n` +
             `// @ts-ignore We don't want TS to generate types for the package.json${originalImport}`,
         ),
     )
@@ -148,5 +155,7 @@ await writeFile(
     2,
   )}\n`,
 )
+
+await appendFile(new URL('./.npmignore', packageRoot), `\ntsconfig.*\n`)
 
 console.log('Done')

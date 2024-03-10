@@ -1,21 +1,25 @@
 import isDOMElement from './isDOMElement.ts'
 
-export default function findDOMElement<T>(
+function findDOMElement<T>(
   element: T,
-  context: Document = document,
+  context?: ParentNode,
 ): T extends Element ? T
 : T extends Node | string ? Element | null
-: null {
+: null
+
+function findDOMElement(
+  element: unknown,
+  context: ParentNode = document,
+): Element | null {
   if (typeof element === 'string') {
-    // @ts-expect-error ????
     return context.querySelector(element)
   }
 
   if (isDOMElement(element)) {
-    // @ts-expect-error ????
     return element
   }
 
-  // @ts-expect-error ????
   return null
 }
+
+export default findDOMElement

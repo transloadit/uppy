@@ -64,6 +64,7 @@ es_MX.strings = {
   dropPasteImportFolders:
     'Suelte archivos aquí, %{browseFolders} o importar desde:',
   editFile: 'Editar archivo',
+  editImage: 'Editar imagen',
   editing: 'Editando %{file}',
   emptyFolderAdded: 'No se agregaron archivos desde la carpeta vacía',
   encoding: 'Codificando...',

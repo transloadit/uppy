@@ -49,6 +49,7 @@ he_IL.strings = {
   dropPasteImportFiles: 'גרור לכאן קבצים, הדבק, %{browse} או ייבא מ',
   dropPasteImportFolders: 'גרור לכאן קבצים, הדבק, %{browse} או ייבא מ',
   editFile: 'ערוך קובץ',
+  editImage: 'ערוך תמונה',
   editing: 'מעדכן %{file}',
   emptyFolderAdded: 'לא נוספו קבצים מהתיקיה הריקה',
   encoding: 'מקודד...',

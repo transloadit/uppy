@@ -1,23 +1,20 @@
 import { h } from 'preact'
 import { UIPlugin } from '@uppy/core'
-import { SearchProvider, Provider } from '@uppy/companion-client'
+import { SearchProvider, tokenStorage, getAllowedHosts } from '@uppy/companion-client'
 import { SearchProviderViews } from '@uppy/provider-views'
 
 import packageJson from '../package.json'
 
-/**
- * Unsplash
- *
- */
 export default class Unsplash extends UIPlugin {
   static VERSION = packageJson.version
 
   constructor (uppy, opts) {
     super(uppy, opts)
+    this.type = 'acquirer'
+    this.files = []
+    this.storage = this.opts.storage || tokenStorage
     this.id = this.opts.id || 'Unsplash'
     this.title = this.opts.title || 'Unsplash'
-
-    Provider.initPlugin(this, opts, {})
 
     this.icon = () => (
       <svg className="uppy-DashboardTab-iconUnsplash" viewBox="0 0 32 32" height="32" width="32" aria-hidden="true">
@@ -34,6 +31,7 @@ export default class Unsplash extends UIPlugin {
 
     this.hostname = this.opts.companionUrl
 
+    this.opts.companionAllowedHosts = getAllowedHosts(this.opts.companionAllowedHosts, this.opts.companionUrl)
     this.provider = new SearchProvider(uppy, {
       companionUrl: this.opts.companionUrl,
       companionHeaders: this.opts.companionHeaders,

@@ -13,7 +13,17 @@ import DefaultStore from '@uppy/store-default'
 import getFileType from '@uppy/utils/lib/getFileType'
 import getFileNameAndExtension from '@uppy/utils/lib/getFileNameAndExtension'
 import { getSafeFileId } from '@uppy/utils/lib/generateFileID'
-import type { UppyFile, Meta, Body } from '@uppy/utils/lib/UppyFile'
+import type {
+  UppyFile,
+  Meta,
+  Body,
+  MinimalRequiredUppyFile,
+} from '@uppy/utils/lib/UppyFile'
+import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
+import type {
+  CompanionClientProvider,
+  CompanionClientSearchProvider,
+} from '@uppy/utils/lib/CompanionClientProvider'
 import type {
   FileProgressNotStarted,
   FileProgressStarted,
@@ -37,8 +47,7 @@ import packageJson from '../package.json'
 import locale from './locale.ts'
 
 import type BasePlugin from './BasePlugin.ts'
-import type UIPlugin from './UIPlugin.ts'
-import type { Restrictions } from './Restricter.ts'
+import type { Restrictions, ValidateableFile } from './Restricter.ts'
 
 type Processor = (fileIDs: string[], uploadID: string) => Promise<void> | void
 
@@ -46,29 +55,82 @@ type FileRemoveReason = 'user' | 'cancel-all'
 
 type LogLevel = 'info' | 'warning' | 'error' | 'success'
 
-type UnknownPlugin<M extends Meta, B extends Body> = InstanceType<
-  typeof BasePlugin<any, M, B> | typeof UIPlugin<any, M, B>
->
+export type UnknownPlugin<
+  M extends Meta,
+  B extends Body,
+  PluginState extends Record<string, unknown> = Record<string, unknown>,
+> = BasePlugin<any, M, B, PluginState>
 
-type UnknownProviderPlugin<M extends Meta, B extends Body> = UnknownPlugin<
-  M,
-  B
-> & {
-  provider: {
-    logout: () => void
+export type UnknownProviderPluginState = {
+  authenticated: boolean | undefined
+  breadcrumbs: {
+    requestPath: string
+    name: string
+    id?: string
+  }[]
+  didFirstRender: boolean
+  currentSelection: CompanionFile[]
+  filterInput: string
+  loading: boolean | string
+  folders: CompanionFile[]
+  files: CompanionFile[]
+  isSearchVisible: boolean
+}
+/*
+ * UnknownProviderPlugin can be any Companion plugin (such as Google Drive).
+ * As the plugins are passed around throughout Uppy we need a generic type for this.
+ * It may seems like duplication, but this type safe. Changing the type of `storage`
+ * will error in the `Provider` class of @uppy/companion-client and vice versa.
+ *
+ * Note that this is the *plugin* class, not a version of the `Provider` class.
+ * `Provider` does operate on Companion plugins with `uppy.getPlugin()`.
+ */
+export type UnknownProviderPlugin<
+  M extends Meta,
+  B extends Body,
+> = UnknownPlugin<M, B, UnknownProviderPluginState> & {
+  onFirstRender: () => void
+  title: string
+  files: UppyFile<M, B>[]
+  icon: () => JSX.Element
+  provider: CompanionClientProvider
+  storage: {
+    getItem: (key: string) => Promise<string | null>
+    setItem: (key: string, value: string) => Promise<void>
+    removeItem: (key: string) => Promise<void>
   }
 }
 
-// The user facing type for UppyFile used in uppy.addFile() and uppy.setOptions()
-export type MinimalRequiredUppyFile<M extends Meta, B extends Body> = Required<
-  Pick<UppyFile<M, B>, 'name' | 'data' | 'type' | 'source'>
-> &
-  Partial<
-    Omit<UppyFile<M, B>, 'name' | 'data' | 'type' | 'source' | 'meta'>
-    // We want to omit the 'meta' from UppyFile because of internal metadata
-    // (see InternalMetadata in `UppyFile.ts`), as when adding a new file
-    // that is not required.
-  > & { meta?: M }
+/*
+ * UnknownSearchProviderPlugin can be any search Companion plugin (such as Unsplash).
+ * As the plugins are passed around throughout Uppy we need a generic type for this.
+ * It may seems like duplication, but this type safe. Changing the type of `title`
+ * will error in the `SearchProvider` class of @uppy/companion-client and vice versa.
+ *
+ * Note that this is the *plugin* class, not a version of the `SearchProvider` class.
+ * `SearchProvider` does operate on Companion plugins with `uppy.getPlugin()`.
+ */
+export type UnknownSearchProviderPluginState = {
+  isInputMode?: boolean
+  searchTerm?: string | null
+} & Pick<
+  UnknownProviderPluginState,
+  | 'loading'
+  | 'files'
+  | 'folders'
+  | 'currentSelection'
+  | 'filterInput'
+  | 'didFirstRender'
+>
+export type UnknownSearchProviderPlugin<
+  M extends Meta,
+  B extends Body,
+> = UnknownPlugin<M, B, UnknownSearchProviderPluginState> & {
+  onFirstRender: () => void
+  title: string
+  icon: () => JSX.Element
+  provider: CompanionClientSearchProvider
+}
 
 interface UploadResult<M extends Meta, B extends Body> {
   successful?: UppyFile<M, B>[]
@@ -110,6 +172,7 @@ export interface State<M extends Meta, B extends Body>
   }>
   plugins: Plugins
   totalProgress: number
+  companion?: Record<string, string>
 }
 
 export interface UppyOptions<M extends Meta, B extends Body> {
@@ -211,7 +274,9 @@ type ErrorCallback<M extends Meta, B extends Body> = (
 type UploadErrorCallback<M extends Meta, B extends Body> = (
   file: UppyFile<M, B> | undefined,
   error: { message: string; details?: string },
-  response: UppyFile<M, B>['response'] | undefined,
+  response?:
+    | Omit<NonNullable<UppyFile<M, B>['response']>, 'uploadURL'>
+    | undefined,
 ) => void
 type UploadStalledCallback<M extends Meta, B extends Body> = (
   error: { message: string; details?: string },
@@ -417,17 +482,6 @@ export class Uppy<M extends Meta, B extends Body> {
   ): void {
     this.#emitter.emit(event, ...args)
   }
-
-  /** @deprecated */
-  on<K extends keyof DeprecatedUppyEventMap<M, B>>(
-    event: K,
-    callback: DeprecatedUppyEventMap<M, B>[K],
-  ): this
-
-  on<K extends keyof _UppyEventMap<M, B>>(
-    event: K,
-    callback: _UppyEventMap<M, B>[K],
-  ): this
 
   on<K extends keyof UppyEventMap<M, B>>(
     event: K,
@@ -772,8 +826,8 @@ export class Uppy<M extends Meta, B extends Body> {
   }
 
   validateRestrictions(
-    file: UppyFile<M, B>,
-    files = this.getFiles(),
+    file: ValidateableFile<M, B>,
+    files: ValidateableFile<M, B>[] = this.getFiles(),
   ): RestrictionError<M, B> | null {
     try {
       this.#restricter.validate(files, [file])
@@ -810,9 +864,12 @@ export class Uppy<M extends Meta, B extends Body> {
     const { allowNewUpload } = this.getState()
 
     if (allowNewUpload === false) {
-      const error = new RestrictionError(this.i18n('noMoreFilesAllowed'), {
-        file,
-      })
+      const error = new RestrictionError<M, B>(
+        this.i18n('noMoreFilesAllowed'),
+        {
+          file,
+        },
+      )
       this.#informAndEmit([error])
       throw error
     }
@@ -873,7 +930,7 @@ export class Uppy<M extends Meta, B extends Body> {
         bytesTotal: size,
         uploadComplete: false,
         uploadStarted: null,
-      } as FileProgressNotStarted,
+      } satisfies FileProgressNotStarted,
       size,
       isGhost: false,
       isRemote: file.isRemote || false,
@@ -1308,6 +1365,8 @@ export class Uppy<M extends Meta, B extends Body> {
   //    and click 'ADD MORE FILES', - focus won't activate in Firefox.
   //    - We must throttle at around >500ms to avoid performance lags.
   //    [Practical Check] Firefox, try to upload a big file for a prolonged period of time. Laptop will start to heat up.
+  // todo when uploading multiple files, this will cause problems because they share the same throttle,
+  // meaning some files might never get their progress reported (eaten up by progress events from other files)
   calculateProgress = throttle(
     (file, data) => {
       const fileInState = this.getFile(file?.id)
@@ -1375,7 +1434,7 @@ export class Uppy<M extends Meta, B extends Body> {
     if (sizedFiles.length === 0) {
       const progressMax = inProgress.length * 100
       const currentProgress = unsizedFiles.reduce((acc, file) => {
-        return acc + file.progress.percentage
+        return acc + (file.progress.percentage as number)
       }, 0)
       const totalProgress = Math.round((currentProgress / progressMax) * 100)
       this.setState({ totalProgress })
@@ -1490,7 +1549,6 @@ export class Uppy<M extends Meta, B extends Body> {
           file.id,
           {
             progress: {
-              progress: 0,
               uploadStarted: Date.now(),
               uploadComplete: false,
               percentage: 0,
@@ -1838,7 +1896,7 @@ export class Uppy<M extends Meta, B extends Body> {
    * Passes messages to a function, provided in `opts.logger`.
    * If `opts.logger: Uppy.debugLogger` or `opts.debug: true`, logs to the browser console.
    */
-  log(message: string | Record<string, unknown> | Error, type?: string): void {
+  log(message: string | Record<any, any> | Error, type?: string): void {
     const { logger } = this.opts
     switch (type) {
       case 'error':
@@ -1870,7 +1928,7 @@ export class Uppy<M extends Meta, B extends Body> {
   }
 
   /** @protected */
-  getRequestClientForFile(file: UppyFile<M, B>): unknown {
+  getRequestClientForFile<Client>(file: UppyFile<M, B>): Client {
     if (!file.remote)
       throw new Error(
         `Tried to get RequestClient for a non-remote file ${file.id}`,
@@ -1882,7 +1940,7 @@ export class Uppy<M extends Meta, B extends Body> {
       throw new Error(
         `requestClientId "${file.remote.requestClientId}" not registered for file "${file.id}"`,
       )
-    return requestClient
+    return requestClient as Client
   }
 
   /**

@@ -1,5 +1,4 @@
 /* eslint-disable class-methods-use-this */
-/* eslint-disable @typescript-eslint/no-empty-function */
 
 /**
  * Core plugin logic that all plugins share.
@@ -22,12 +21,22 @@ import type { State, Uppy } from './Uppy'
 export type PluginOpts = {
   locale?: Locale
   id?: string
-  [key: string]: unknown
 }
 
+export type OnlyOptionals<T> = Pick<
+  T,
+  {
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    [K in keyof T]-?: {} extends Pick<T, K> ? K : never
+  }[keyof T]
+>
+
+/**
+ * DefinePluginOpts marks all of the passed AlwaysDefinedKeys as “required” or “always defined”.
+ */
 export type DefinePluginOpts<
-  Opts extends PluginOpts,
-  AlwaysDefinedKeys extends string,
+  Opts,
+  AlwaysDefinedKeys extends keyof OnlyOptionals<Opts>,
 > = Opts & Required<Pick<Opts, AlwaysDefinedKeys>>
 
 export default class BasePlugin<

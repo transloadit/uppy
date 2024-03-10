@@ -1,7 +1,7 @@
 import { h } from 'preact'
 
 import { UIPlugin } from '@uppy/core'
-import { Provider } from '@uppy/companion-client'
+import { Provider, tokenStorage, getAllowedHosts } from '@uppy/companion-client'
 import { ProviderViews } from '@uppy/provider-views'
 
 import packageJson from '../package.json'
@@ -12,9 +12,10 @@ export default class OneDrive extends UIPlugin {
 
   constructor (uppy, opts) {
     super(uppy, opts)
+    this.type = 'acquirer'
+    this.files = []
+    this.storage = this.opts.storage || tokenStorage
     this.id = this.opts.id || 'OneDrive'
-    Provider.initPlugin(this, opts)
-    this.title = this.opts.title || 'OneDrive'
     this.icon = () => (
       <svg aria-hidden="true" focusable="false" width="32" height="32" viewBox="0 0 32 32">
         <g fill="none" fillRule="nonzero">
@@ -26,9 +27,11 @@ export default class OneDrive extends UIPlugin {
       </svg>
     )
 
+    this.opts.companionAllowedHosts = getAllowedHosts(this.opts.companionAllowedHosts, this.opts.companionUrl)
     this.provider = new Provider(uppy, {
       companionUrl: this.opts.companionUrl,
       companionHeaders: this.opts.companionHeaders,
+      companionKeysParams: this.opts.companionKeysParams,
       companionCookiesRule: this.opts.companionCookiesRule,
       provider: 'onedrive',
       pluginId: this.id,
