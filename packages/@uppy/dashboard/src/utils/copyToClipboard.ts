@@ -8,7 +8,13 @@
  * @param {string} fallbackString
  * @returns {Promise}
  */
-export default function copyToClipboard (textToCopy, fallbackString = 'Copy the URL below') {
+
+type $TSFixMe = any
+
+export default function copyToClipboard(
+  textToCopy: $TSFixMe,
+  fallbackString = 'Copy the URL below',
+): $TSFixMe {
   return new Promise((resolve) => {
     const textArea = document.createElement('textarea')
     textArea.setAttribute('style', {

@@ -1,4 +1,4 @@
-import { h } from 'preact'
+import { h, type ComponentChild } from 'preact'
 
 type $TSFixMe = any
 
@@ -12,7 +12,12 @@ const uploadStates = {
   STATE_PAUSED: 'paused',
 }
 
-function getUploadingState (isAllErrored, isAllComplete, isAllPaused, files = {}) {
+function getUploadingState(
+  isAllErrored: $TSFixMe,
+  isAllComplete: $TSFixMe,
+  isAllPaused: $TSFixMe,
+  files = {},
+): $TSFixMe {
   if (isAllErrored) {
     return uploadStates.STATE_ERROR
   }
@@ -40,17 +45,27 @@ function getUploadingState (isAllErrored, isAllComplete, isAllPaused, files = {}
     }
     // If NO files are being preprocessed or uploaded right now, but some files are
     // being postprocessed, show the postprocess state.
-    if (progress.postprocess && state !== uploadStates.STATE_UPLOADING && state !== uploadStates.STATE_PREPROCESSING) {
+    if (
+      progress.postprocess &&
+      state !== uploadStates.STATE_UPLOADING &&
+      state !== uploadStates.STATE_PREPROCESSING
+    ) {
       state = uploadStates.STATE_POSTPROCESSING
     }
   }
   return state
 }
 
-function UploadStatus ({
-  files, i18n, isAllComplete, isAllErrored, isAllPaused,
-  inProgressNotPausedFiles, newFiles, processingFiles,
-}) {
+function UploadStatus({
+  files,
+  i18n,
+  isAllComplete,
+  isAllErrored,
+  isAllPaused,
+  inProgressNotPausedFiles,
+  newFiles,
+  processingFiles,
+}: $TSFixMe) {
   const uploadingState = getUploadingState(
     isAllErrored,
     isAllComplete,
@@ -60,7 +75,9 @@ function UploadStatus ({
 
   switch (uploadingState) {
     case 'uploading':
-      return i18n('uploadingXFiles', { smart_count: inProgressNotPausedFiles.length })
+      return i18n('uploadingXFiles', {
+        smart_count: inProgressNotPausedFiles.length,
+      })
     case 'preprocessing':
     case 'postprocessing':
       return i18n('processingXFiles', { smart_count: processingFiles.length })
@@ -76,8 +93,15 @@ function UploadStatus ({
   }
 }
 
-function PanelTopBar (props) {
-  const { i18n, isAllComplete, hideCancelButton, maxNumberOfFiles, toggleAddFilesPanel, uppy } = props
+function PanelTopBar(props: $TSFixMe): ComponentChild {
+  const {
+    i18n,
+    isAllComplete,
+    hideCancelButton,
+    maxNumberOfFiles,
+    toggleAddFilesPanel,
+    uppy,
+  } = props
   let { allowNewUpload } = props
   // TODO maybe this should be done in ../Dashboard.jsx, then just pass that down as `allowNewUpload`
   if (allowNewUpload && maxNumberOfFiles) {
@@ -87,7 +111,7 @@ function PanelTopBar (props) {
 
   return (
     <div className="uppy-DashboardContent-bar">
-      {!isAllComplete && !hideCancelButton ? (
+      {!isAllComplete && !hideCancelButton ?
         <button
           className="uppy-DashboardContent-back"
           type="button"
@@ -95,16 +119,18 @@ function PanelTopBar (props) {
         >
           {i18n('cancel')}
         </button>
-      ) : (
-        <div />
-      )}
+      : <div />}
 
-      <div className="uppy-DashboardContent-title" role="heading" aria-level="1">
+      <div
+        className="uppy-DashboardContent-title"
+        role="heading"
+        aria-level="1"
+      >
         {/* eslint-disable-next-line react/jsx-props-no-spreading */}
         <UploadStatus {...props} />
       </div>
 
-      {allowNewUpload ? (
+      {allowNewUpload ?
         <button
           className="uppy-DashboardContent-addMore"
           type="button"
@@ -112,14 +138,21 @@ function PanelTopBar (props) {
           title={i18n('addMoreFiles')}
           onClick={() => toggleAddFilesPanel(true)}
         >
-          <svg aria-hidden="true" focusable="false" className="uppy-c-icon" width="15" height="15" viewBox="0 0 15 15">
+          <svg
+            aria-hidden="true"
+            focusable="false"
+            className="uppy-c-icon"
+            width="15"
+            height="15"
+            viewBox="0 0 15 15"
+          >
             <path d="M8 6.5h6a.5.5 0 0 1 .5.5v.5a.5.5 0 0 1-.5.5H8v6a.5.5 0 0 1-.5.5H7a.5.5 0 0 1-.5-.5V8h-6a.5.5 0 0 1-.5-.5V7a.5.5 0 0 1 .5-.5h6v-6A.5.5 0 0 1 7 0h.5a.5.5 0 0 1 .5.5v6z" />
           </svg>
-          <span className="uppy-DashboardContent-addMoreCaption">{i18n('addMore')}</span>
+          <span className="uppy-DashboardContent-addMoreCaption">
+            {i18n('addMore')}
+          </span>
         </button>
-      ) : (
-        <div />
-      )}
+      : <div />}
     </div>
   )
 }

@@ -2,6 +2,8 @@ import debounce from 'lodash/debounce.js'
 import FOCUSABLE_ELEMENTS from '@uppy/utils/lib/FOCUSABLE_ELEMENTS'
 import getActiveOverlayEl from './getActiveOverlayEl.ts'
 
+type $TSFixMe = any
+
 /*
   Focuses on some element in the currently topmost overlay.
 
@@ -12,10 +14,10 @@ import getActiveOverlayEl from './getActiveOverlayEl.ts'
   2. If there are no [data-uppy-super-focusable] elements yet (or ever) - focuses
      on the first focusable element, but switches focus if superfocusable elements appear on next render.
 */
-export default function createSuperFocus () {
+export default function createSuperFocus(): $TSFixMe {
   let lastFocusWasOnSuperFocusableEl = false
 
-  const superFocus = (dashboardEl, activeOverlayType) => {
+  const superFocus = (dashboardEl: $TSFixMe, activeOverlayType: $TSFixMe) => {
     const overlayEl = getActiveOverlayEl(dashboardEl, activeOverlayType)
 
     const isFocusInOverlay = overlayEl.contains(document.activeElement)
@@ -24,7 +26,9 @@ export default function createSuperFocus () {
     // [Practical check] without this line, typing in the search input in googledrive overlay won't work.
     if (isFocusInOverlay && lastFocusWasOnSuperFocusableEl) return
 
-    const superFocusableEl = overlayEl.querySelector('[data-uppy-super-focusable]')
+    const superFocusableEl = overlayEl.querySelector(
+      '[data-uppy-super-focusable]',
+    )
     // If we are already in the topmost overlay, AND there are no super focusable elements yet, - leave focus up to the user.
     // [Practical check] without this line, if you are in an empty folder in google drive, and something's uploading in the
     // bg, - focus will be jumping to Done all the time.

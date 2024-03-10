@@ -1,4 +1,9 @@
-import {  cloneElement, Component, toChildArray  } from 'preact'
+import {
+  cloneElement,
+  Component,
+  toChildArray,
+  type ComponentChild,
+} from 'preact'
 import classNames from 'classnames'
 
 type $TSFixMe = any
@@ -16,7 +21,15 @@ const duration = 250
  * transition by setting the CSS name and duration as props.
  */
 class Slide extends Component {
-  constructor (props) {
+  animationFrame: $TSFixMe
+
+  enterTimeout: $TSFixMe
+
+  leaveTimeout: $TSFixMe
+
+  setState: $TSFixMe
+
+  constructor(props: $TSFixMe) {
     super(props)
 
     this.state = {
@@ -27,7 +40,7 @@ class Slide extends Component {
 
   // TODO: refactor to stable lifecycle method
   // eslint-disable-next-line
-  componentWillUpdate (nextProps) {
+  componentWillUpdate(nextProps: $TSFixMe) {
     const { cachedChildren } = this.state
     const child = toChildArray(nextProps.children)[0]
 
@@ -85,7 +98,7 @@ class Slide extends Component {
     this.setState(patch)
   }
 
-  render () {
+  render(): ComponentChild {
     const { cachedChildren, className } = this.state
 
     if (!cachedChildren) {

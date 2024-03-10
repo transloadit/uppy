@@ -1,4 +1,4 @@
-import { h } from 'preact'
+import { h, type ComponentChild } from 'preact'
 import { useEffect, useState, useCallback } from 'preact/hooks'
 import classNames from 'classnames'
 import { nanoid } from 'nanoid/non-secure'
@@ -9,7 +9,7 @@ import RenderMetaFields from './RenderMetaFields.tsx'
 
 type $TSFixMe = any
 
-export default function FileCard (props) {
+export default function FileCard(props: $TSFixMe): ComponentChild {
   const {
     files,
     fileCardFor,
@@ -25,8 +25,8 @@ export default function FileCard (props) {
   } = props
 
   const getMetaFields = () => {
-    return typeof metaFields === 'function'
-      ? metaFields(files[fileCardFor])
+    return typeof metaFields === 'function' ?
+        metaFields(files[fileCardFor])
       : metaFields
   }
 
@@ -35,18 +35,21 @@ export default function FileCard (props) {
   const showEditButton = canEditFile(file)
 
   const storedMetaData = {}
-  computedMetaFields.forEach((field) => {
+  computedMetaFields.forEach((field: $TSFixMe) => {
     storedMetaData[field.id] = file.meta[field.id] ?? ''
   })
 
   const [formState, setFormState] = useState(storedMetaData)
 
-  const handleSave = useCallback((ev) => {
-    ev.preventDefault()
-    saveFileCard(formState, fileCardFor)
-  }, [saveFileCard, formState, fileCardFor])
+  const handleSave = useCallback(
+    (ev: $TSFixMe) => {
+      ev.preventDefault()
+      saveFileCard(formState, fileCardFor)
+    },
+    [saveFileCard, formState, fileCardFor],
+  )
 
-  const updateMeta = (newVal, name) => {
+  const updateMeta = (newVal: $TSFixMe, name: $TSFixMe) => {
     setFormState({
       ...formState,
       [name]: newVal,
@@ -83,9 +86,17 @@ export default function FileCard (props) {
       onPaste={ignoreEvent}
     >
       <div className="uppy-DashboardContent-bar">
-        <div className="uppy-DashboardContent-title" role="heading" aria-level="1">
+        <div
+          className="uppy-DashboardContent-title"
+          role="heading"
+          aria-level="1"
+        >
           {i18nArray('editing', {
-            file: <span className="uppy-DashboardContent-titleFile">{file.meta ? file.meta.name : file.name}</span>,
+            file: (
+              <span className="uppy-DashboardContent-titleFile">
+                {file.meta ? file.meta.name : file.name}
+              </span>
+            ),
           })}
         </div>
         <button
@@ -100,14 +111,16 @@ export default function FileCard (props) {
       </div>
 
       <div className="uppy-Dashboard-FileCard-inner">
-        <div className="uppy-Dashboard-FileCard-preview" style={{ backgroundColor: getFileTypeIcon(file.type).color }}>
+        <div
+          className="uppy-Dashboard-FileCard-preview"
+          style={{ backgroundColor: getFileTypeIcon(file.type).color }}
+        >
           <FilePreview file={file} />
-          {showEditButton
-            && (
+          {showEditButton && (
             <button
               type="button"
               className="uppy-u-reset uppy-c-btn uppy-Dashboard-FileCard-edit"
-              onClick={(event) => {
+              onClick={(event: $TSFixMe) => {
                 // When opening the image editor we want to save any meta fields changes.
                 // Otherwise it's confusing for the user to click save in the editor,
                 // but the changes here are discarded. This bypasses validation,
@@ -121,7 +134,7 @@ export default function FileCard (props) {
               we can conditionally display i18n('editFile')/i18n('editImage'). */}
               {i18n('editImage')}
             </button>
-            )}
+          )}
         </div>
 
         <div className="uppy-Dashboard-FileCard-info">

@@ -1,9 +1,10 @@
-import { h } from 'preact'
+/* eslint-disable react/destructuring-assignment */
+import { h, type ComponentChild } from 'preact'
 import classNames from 'classnames'
 
 type $TSFixMe = any
 
-function EditorPanel (props) {
+function EditorPanel(props: $TSFixMe): ComponentChild {
   const file = props.files[props.fileCardFor]
 
   const handleCancel = () => {
@@ -19,9 +20,17 @@ function EditorPanel (props) {
       id="uppy-DashboardContent-panel--editor"
     >
       <div className="uppy-DashboardContent-bar">
-        <div className="uppy-DashboardContent-title" role="heading" aria-level="1">
+        <div
+          className="uppy-DashboardContent-title"
+          role="heading"
+          aria-level="1"
+        >
           {props.i18nArray('editing', {
-            file: <span className="uppy-DashboardContent-titleFile">{file.meta ? file.meta.name : file.name}</span>,
+            file: (
+              <span className="uppy-DashboardContent-titleFile">
+                {file.meta ? file.meta.name : file.name}
+              </span>
+            ),
           })}
         </div>
         <button
@@ -40,7 +49,7 @@ function EditorPanel (props) {
         </button>
       </div>
       <div className="uppy-DashboardContent-panelBody">
-        {props.editors.map((target) => {
+        {props.editors.map((target: $TSFixMe) => {
           return props.uppy.getPlugin(target.id).render(props.state)
         })}
       </div>
