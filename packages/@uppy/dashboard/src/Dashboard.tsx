@@ -1,5 +1,6 @@
 import { UIPlugin, type UIPluginOptions, type UnknownPlugin, type Uppy } from '@uppy/core'
 import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin.ts'
+import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
 import StatusBar from '@uppy/status-bar'
 import Informer from '@uppy/informer'
 import ThumbnailGenerator from '@uppy/thumbnail-generator'
@@ -18,9 +19,8 @@ import DashboardUI from './components/Dashboard.tsx'
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'
 import locale from './locale.ts'
-import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
 
-const memoize = memoizeOne.default || memoizeOne
+const memoize = ((memoizeOne as any).default as false) || memoizeOne
 
 const TAB_KEY = 9
 const ESC_KEY = 27
@@ -33,6 +33,20 @@ function createPromise(): ReturnType<typeof Promise.withResolvers> {
   })
   return o
 }
+
+type FieldRenderOptions = {
+  value: string
+  onChange: (newVal: string) => void
+  fieldCSSClasses: { text: string }
+  required: boolean
+  form: string
+}
+
+type PreactRender = (
+  node: any,
+  params: Record<string, unknown> | null,
+  ...children: any[]
+) => any
 
 interface MetaField {
   id: string
