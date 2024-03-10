@@ -177,7 +177,8 @@ export default class DragDrop<M extends Meta, B extends Body> extends UIPlugin<
         }}
         name={this.opts.inputName}
         multiple={restrictions.maxNumberOfFiles !== 1}
-        accept={`${restrictions.allowedFileTypes}`}
+        // @ts-expect-error We actually want to coerce the array to a string (or keep it as null/undefined)
+        accept={restrictions.allowedFileTypes}
         onChange={this.onInputChange}
       />
     )
