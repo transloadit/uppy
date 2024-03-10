@@ -7,6 +7,8 @@ import ignoreEvent from '../../utils/ignoreEvent.ts'
 import FilePreview from '../FilePreview.tsx'
 import RenderMetaFields from './RenderMetaFields.tsx'
 
+type $TSFixMe = any
+
 export default function FileCard (props) {
   const {
     files,

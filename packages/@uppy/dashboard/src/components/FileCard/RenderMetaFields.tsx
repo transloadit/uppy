@@ -1,5 +1,7 @@
 import { h } from 'preact'
 
+type $TSFixMe = any
+
 export default function RenderMetaFields (props)  {
   const {
     computedMetaFields,

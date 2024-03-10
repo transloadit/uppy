@@ -1,5 +1,7 @@
 import { h } from 'preact'
 
+type $TSFixMe = any
+
 function onPauseResumeCancelRetry (props) {
   if (props.isUploaded) return
 

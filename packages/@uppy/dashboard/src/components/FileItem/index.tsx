@@ -6,6 +6,8 @@ import FileProgress from './FileProgress/index.tsx'
 import FileInfo from './FileInfo/index.tsx'
 import Buttons from './Buttons/index.tsx'
 
+type $TSFixMe = any
+
 export default class FileItem extends Component {
   componentDidMount () {
     const { file } = this.props

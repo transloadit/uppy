@@ -3,6 +3,8 @@ import prettierBytes from '@transloadit/prettier-bytes'
 import truncateString from '@uppy/utils/lib/truncateString'
 import MetaErrorMessage from '../MetaErrorMessage.tsx'
 
+type $TSFixMe = any
+
 const renderFileName = (props) => {
   const { author, name } = props.file.meta
 

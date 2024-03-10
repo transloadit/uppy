@@ -2,6 +2,8 @@ import { h } from 'preact'
 import classNames from 'classnames'
 import AddFiles from './AddFiles.tsx'
 
+type $TSFixMe = any
+
 const AddFilesPanel = (props) => {
   return (
     <div

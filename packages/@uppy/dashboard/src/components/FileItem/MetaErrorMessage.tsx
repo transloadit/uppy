@@ -1,5 +1,7 @@
 import { h } from 'preact'
 
+type $TSFixMe = any
+
 const metaFieldIdToName = (metaFieldId, metaFields) => {
   const fields = typeof metaFields === 'function' ? metaFields() : metaFields
   const field = fields.filter(f => f.id === metaFieldId)

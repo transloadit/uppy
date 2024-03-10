@@ -1,5 +1,7 @@
 import { h } from 'preact'
 
+type $TSFixMe = any
+
 const uploadStates = {
   STATE_ERROR: 'error',
   STATE_WAITING: 'waiting',

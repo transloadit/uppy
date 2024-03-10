@@ -1,6 +1,8 @@
 import {  cloneElement, Component, toChildArray  } from 'preact'
 import classNames from 'classnames'
 
+type $TSFixMe = any
+
 const transitionName = 'uppy-transition-slideDownUp'
 const duration = 250
 

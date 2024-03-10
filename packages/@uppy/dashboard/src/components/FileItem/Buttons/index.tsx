@@ -1,6 +1,8 @@
 import { h } from 'preact'
 import copyToClipboard from '../../../utils/copyToClipboard.ts'
 
+type $TSFixMe = any
+
 function EditButton ({
   file,
   uploadInProgressOrComplete,

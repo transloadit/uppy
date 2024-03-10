@@ -1,6 +1,8 @@
 import { h } from 'preact'
 import classNames from 'classnames'
 
+type $TSFixMe = any
+
 function EditorPanel (props) {
   const file = props.files[props.fileCardFor]
 

@@ -2,6 +2,8 @@ import { h } from 'preact'
 import classNames from 'classnames'
 import ignoreEvent from '../utils/ignoreEvent.ts'
 
+type $TSFixMe = any
+
 function PickerPanelContent ({ activePickerPanel, className, hideAllPanels, i18n, state, uppy }) {
   return (
     <div

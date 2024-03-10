@@ -1,6 +1,8 @@
 import { h } from 'preact'
 import getFileTypeIcon from '../utils/getFileTypeIcon.tsx'
 
+type $TSFixMe = any
+
 export default function FilePreview (props) {
   const { file } = props
 

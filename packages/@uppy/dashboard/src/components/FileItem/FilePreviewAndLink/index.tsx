@@ -3,6 +3,8 @@ import FilePreview from '../../FilePreview.tsx'
 import MetaErrorMessage from '../MetaErrorMessage.tsx'
 import getFileTypeIcon from '../../../utils/getFileTypeIcon.tsx'
 
+type $TSFixMe = any
+
 export default function FilePreviewAndLink (props) {
   const { file, i18n, toggleFileCard, metaFields, showLinkToFileUploadResult } = props
   const white = 'rgba(255, 255, 255, 0.5)'

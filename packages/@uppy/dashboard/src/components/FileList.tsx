@@ -3,6 +3,8 @@ import { useMemo } from 'preact/hooks'
 import VirtualList from '@uppy/utils/lib/VirtualList'
 import FileItem from './FileItem/index.tsx'
 
+type $TSFixMe = any
+
 function chunks (list, size) {
   const chunked = []
   let currentChunk = []

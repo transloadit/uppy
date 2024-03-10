@@ -1,5 +1,7 @@
 import { h, Component, Fragment } from 'preact'
 
+$TSFixMe
+
 class AddFiles extends Component {
   private triggerFileInputClick = () => {
     this.fileInput.click()
