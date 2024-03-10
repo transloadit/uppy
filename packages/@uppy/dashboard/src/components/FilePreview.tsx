@@ -1,9 +1,9 @@
-import { h, type ComponentChild } from 'preact'
+import { h } from 'preact'
 import getFileTypeIcon from '../utils/getFileTypeIcon.tsx'
 
 type $TSFixMe = any
 
-export default function FilePreview(props: $TSFixMe): ComponentChild {
+export default function FilePreview(props: $TSFixMe): JSX.Element {
   const { file } = props
 
   if (file.preview) {

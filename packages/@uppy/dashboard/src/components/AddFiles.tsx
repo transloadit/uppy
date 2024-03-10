@@ -361,7 +361,7 @@ class AddFiles extends Component {
   }
 
   private renderPoweredByUppy() {
-    const { i18nArray } = this.props
+    const { i18nArray } = this.props as $TSFixMe
 
     const uppyBranding = (
       <span>

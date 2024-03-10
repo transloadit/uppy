@@ -1,4 +1,4 @@
-import { h, type ComponentChild } from 'preact'
+import { h } from 'preact'
 import { useMemo } from 'preact/hooks'
 import VirtualList from '@uppy/utils/lib/VirtualList'
 import FileItem from './FileItem/index.tsx'
@@ -47,7 +47,7 @@ export default function FileList({
   toggleAddFilesPanel,
   containerWidth,
   containerHeight,
-}: $TSFixMe): ComponentChild {
+}: $TSFixMe): JSX.Element {
   // It's not great that this is hardcoded!
   // It's ESPECIALLY not great that this is checking against `itemsPerRow`!
   const rowHeight =

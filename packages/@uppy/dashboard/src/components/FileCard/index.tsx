@@ -1,4 +1,4 @@
-import { h, type ComponentChild } from 'preact'
+import { h } from 'preact'
 import { useEffect, useState, useCallback } from 'preact/hooks'
 import classNames from 'classnames'
 import { nanoid } from 'nanoid/non-secure'
@@ -9,7 +9,7 @@ import RenderMetaFields from './RenderMetaFields.tsx'
 
 type $TSFixMe = any
 
-export default function FileCard(props: $TSFixMe): ComponentChild {
+export default function FileCard(props: $TSFixMe): JSX.Element {
   const {
     files,
     fileCardFor,

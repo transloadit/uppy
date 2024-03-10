@@ -1,8 +1,8 @@
-import { h, type ComponentChild } from 'preact'
+import { h } from 'preact'
 
 type $TSFixMe = any
 
-export default function RenderMetaFields(props: $TSFixMe): ComponentChild {
+export default function RenderMetaFields(props: $TSFixMe): JSX.Element {
   const {
     computedMetaFields,
     requiredMetaFields,
@@ -42,7 +42,9 @@ export default function RenderMetaFields(props: $TSFixMe): ComponentChild {
             required={required}
             value={formState[field.id]}
             placeholder={field.placeholder}
-            onInput={(ev) => updateMeta(ev.target.value, field.id)}
+            onInput={(ev) =>
+              updateMeta((ev.target as HTMLInputElement).value, field.id)
+            }
             data-uppy-super-focusable
           />
         }

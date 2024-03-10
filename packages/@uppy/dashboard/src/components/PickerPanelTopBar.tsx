@@ -1,4 +1,4 @@
-import { h, type ComponentChild } from 'preact'
+import { h } from 'preact'
 
 type $TSFixMe = any
 
@@ -93,7 +93,7 @@ function UploadStatus({
   }
 }
 
-function PanelTopBar(props: $TSFixMe): ComponentChild {
+function PanelTopBar(props: $TSFixMe): JSX.Element {
   const {
     i18n,
     isAllComplete,

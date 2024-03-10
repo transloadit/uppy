@@ -1,4 +1,4 @@
-import { h, type ComponentChild } from 'preact'
+import { h } from 'preact'
 import classNames from 'classnames'
 import ignoreEvent from '../utils/ignoreEvent.ts'
 
@@ -11,7 +11,7 @@ function PickerPanelContent({
   i18n,
   state,
   uppy,
-}: $TSFixMe): ComponentChild {
+}: $TSFixMe): JSX.Element {
   return (
     <div
       className={classNames('uppy-DashboardContent-panel', className)}
