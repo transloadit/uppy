@@ -1,6 +1,6 @@
 import debounce from 'lodash/debounce.js'
 import FOCUSABLE_ELEMENTS from '@uppy/utils/lib/FOCUSABLE_ELEMENTS'
-import getActiveOverlayEl from './getActiveOverlayEl.js'
+import getActiveOverlayEl from './getActiveOverlayEl.ts'
 
 /*
   Focuses on some element in the currently topmost overlay.

@@ -7,7 +7,7 @@ import WebcamPlugin from '@uppy/webcam'
 import Url from '@uppy/url'
 
 import resizeObserverPolyfill from 'resize-observer-polyfill'
-import DashboardPlugin from '../lib/index.js'
+import DashboardPlugin from '../lib/index.ts'
 
 describe('Dashboard', () => {
   beforeAll(() => {

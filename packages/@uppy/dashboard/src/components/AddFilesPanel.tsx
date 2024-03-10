@@ -1,6 +1,6 @@
 import { h } from 'preact'
 import classNames from 'classnames'
-import AddFiles from './AddFiles.jsx'
+import AddFiles from './AddFiles.tsx'
 
 const AddFilesPanel = (props) => {
   return (

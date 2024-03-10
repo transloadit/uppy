@@ -1,10 +1,10 @@
 import {  h, Component  } from 'preact'
 import classNames from 'classnames'
 import shallowEqual from 'is-shallow-equal'
-import FilePreviewAndLink from './FilePreviewAndLink/index.jsx'
-import FileProgress from './FileProgress/index.jsx'
-import FileInfo from './FileInfo/index.jsx'
-import Buttons from './Buttons/index.jsx'
+import FilePreviewAndLink from './FilePreviewAndLink/index.tsx'
+import FileProgress from './FileProgress/index.tsx'
+import FileInfo from './FileInfo/index.tsx'
+import Buttons from './Buttons/index.tsx'
 
 export default class FileItem extends Component {
   componentDidMount () {

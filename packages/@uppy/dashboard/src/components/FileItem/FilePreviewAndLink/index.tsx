@@ -1,7 +1,7 @@
 import { h } from 'preact'
-import FilePreview from '../../FilePreview.jsx'
-import MetaErrorMessage from '../MetaErrorMessage.jsx'
-import getFileTypeIcon from '../../../utils/getFileTypeIcon.jsx'
+import FilePreview from '../../FilePreview.tsx'
+import MetaErrorMessage from '../MetaErrorMessage.tsx'
+import getFileTypeIcon from '../../../utils/getFileTypeIcon.tsx'
 
 export default function FilePreviewAndLink (props) {
   const { file, i18n, toggleFileCard, metaFields, showLinkToFileUploadResult } = props

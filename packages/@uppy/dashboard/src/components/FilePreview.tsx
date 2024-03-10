@@ -1,5 +1,5 @@
 import { h } from 'preact'
-import getFileTypeIcon from '../utils/getFileTypeIcon.jsx'
+import getFileTypeIcon from '../utils/getFileTypeIcon.tsx'
 
 export default function FilePreview (props) {
   const { file } = props

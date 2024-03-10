@@ -1,5 +1,5 @@
 import { h } from 'preact'
-import copyToClipboard from '../../../utils/copyToClipboard.js'
+import copyToClipboard from '../../../utils/copyToClipboard.ts'
 
 function EditButton ({
   file,

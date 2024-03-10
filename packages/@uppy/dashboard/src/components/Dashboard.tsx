@@ -1,14 +1,14 @@
 import { h } from 'preact'
 import classNames from 'classnames'
 import isDragDropSupported from '@uppy/utils/lib/isDragDropSupported'
-import FileList from './FileList.jsx'
-import AddFiles from './AddFiles.jsx'
-import AddFilesPanel from './AddFilesPanel.jsx'
-import PickerPanelContent from './PickerPanelContent.jsx'
-import EditorPanel from './EditorPanel.jsx'
-import PanelTopBar from './PickerPanelTopBar.jsx'
-import FileCard from './FileCard/index.jsx'
-import Slide from './Slide.jsx'
+import FileList from './FileList.tsx'
+import AddFiles from './AddFiles.tsx'
+import AddFilesPanel from './AddFilesPanel.tsx'
+import PickerPanelContent from './PickerPanelContent.tsx'
+import EditorPanel from './EditorPanel.tsx'
+import PanelTopBar from './PickerPanelTopBar.tsx'
+import FileCard from './FileCard/index.tsx'
+import Slide from './Slide.tsx'
 
 // http://dev.edenspiekermann.com/2016/02/11/introducing-accessible-modal-dialog
 // https://github.com/ghosh/micromodal

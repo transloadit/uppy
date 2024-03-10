@@ -1,23 +1,23 @@
 import { h, Component, Fragment } from 'preact'
 
 class AddFiles extends Component {
-  triggerFileInputClick = () => {
+  private triggerFileInputClick = () => {
     this.fileInput.click()
   }
 
-  triggerFolderInputClick = () => {
+  private triggerFolderInputClick = () => {
     this.folderInput.click()
   }
 
-  triggerVideoCameraInputClick = () => {
+  private triggerVideoCameraInputClick = () => {
     this.mobileVideoFileInput.click()
   }
 
-  triggerPhotoCameraInputClick = () => {
+  private triggerPhotoCameraInputClick = () => {
     this.mobilePhotoFileInput.click()
   }
 
-  onFileInputChange = (event) => {
+  private onFileInputChange = (event) => {
     this.props.handleInputChange(event)
 
     // We clear the input after a file is selected, because otherwise

@@ -1,6 +1,6 @@
 import { h } from 'preact'
 import classNames from 'classnames'
-import ignoreEvent from '../utils/ignoreEvent.js'
+import ignoreEvent from '../utils/ignoreEvent.ts'
 
 function PickerPanelContent ({ activePickerPanel, className, hideAllPanels, i18n, state, uppy }) {
   return (
