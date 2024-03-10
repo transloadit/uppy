@@ -1,12 +1,12 @@
 import type { I18n } from '@uppy/utils/lib/Translator'
-import { h, type ComponentChild } from 'preact'
+import { h } from 'preact'
 
 interface SubmitButtonProps {
   onSubmit: () => void
   i18n: I18n
 }
 
-function SubmitButton({ onSubmit, i18n }: SubmitButtonProps): ComponentChild {
+function SubmitButton({ onSubmit, i18n }: SubmitButtonProps): JSX.Element {
   return (
     <button
       className="uppy-u-reset uppy-c-btn uppy-Webcam-button uppy-Webcam-button--submit"

@@ -1,6 +1,7 @@
 /* eslint-disable jsx-a11y/media-has-caption */
 import type { I18n } from '@uppy/utils/lib/Translator'
 import { h, Component, type ComponentChild } from 'preact'
+import type { HTMLAttributes } from 'preact/compat'
 import SnapshotButton from './SnapshotButton.tsx'
 import RecordButton from './RecordButton.tsx'
 import RecordingLength from './RecordingLength.tsx'
@@ -84,7 +85,7 @@ class CameraScreen extends Component<CameraScreenProps> {
     const shouldShowVideoSourceDropdown =
       showVideoSourceDropdown && videoSources && videoSources.length > 1
 
-    const videoProps: React.VideoHTMLAttributes<HTMLVideoElement> = {
+    const videoProps: HTMLAttributes<HTMLVideoElement> = {
       playsInline: true,
     }
 

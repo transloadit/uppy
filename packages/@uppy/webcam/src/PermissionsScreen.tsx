@@ -12,7 +12,7 @@ export default function PermissionsScreen({
   icon,
   i18n,
   hasCamera,
-}: PermissionScreenProps): ComponentChild {
+}: PermissionScreenProps): JSX.Element {
   return (
     <div className="uppy-Webcam-permissons">
       <div className="uppy-Webcam-permissonsIcon">{icon()}</div>

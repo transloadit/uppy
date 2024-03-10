@@ -1,5 +1,5 @@
 import type { I18n } from '@uppy/utils/lib/Translator'
-import { h, type ComponentChild } from 'preact'
+import { h } from 'preact'
 
 interface RecordButtonProps {
   recording: boolean
@@ -13,7 +13,7 @@ export default function RecordButton({
   onStartRecording,
   onStopRecording,
   i18n,
-}: RecordButtonProps): ComponentChild {
+}: RecordButtonProps): JSX.Element {
   if (recording) {
     return (
       <button

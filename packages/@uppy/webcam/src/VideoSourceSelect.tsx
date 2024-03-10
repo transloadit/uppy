@@ -15,7 +15,7 @@ export default function VideoSourceSelect({
       <select
         className="uppy-u-reset uppy-Webcam-videoSource-select"
         onChange={(event) => {
-          onChangeVideoSource(event.target.value)
+          onChangeVideoSource((event.target as HTMLInputElement).value)
         }}
       >
         {videoSources.map((videoSource) => (

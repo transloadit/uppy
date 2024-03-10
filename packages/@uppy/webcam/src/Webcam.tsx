@@ -1,11 +1,14 @@
-import { h } from 'preact'
+import { h, type ComponentChild } from 'preact'
 
 import { UIPlugin } from '@uppy/core'
 import type { Uppy, UIPluginOptions } from '@uppy/core'
 import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin.ts'
-import type { Body, Meta } from '@uppy/utils/lib/UppyFile.ts'
+import type {
+  Body,
+  Meta,
+  MinimalRequiredUppyFile,
+} from '@uppy/utils/lib/UppyFile.ts'
 import type { PluginTarget } from '@uppy/core/lib/UIPlugin.ts'
-import type { MinimalRequiredUppyFile } from '@uppy/core/lib/Uppy.ts'
 import getFileTypeExtension from '@uppy/utils/lib/getFileTypeExtension'
 import mimeTypes from '@uppy/utils/lib/mimeTypes'
 import isMobile from 'is-mobile'
@@ -666,7 +669,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
     })
   }
 
-  render(): JSX.Element {
+  render(): ComponentChild {
     if (!this.webcamActive) {
       this.start()
     }
