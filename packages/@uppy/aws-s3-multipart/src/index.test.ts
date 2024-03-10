@@ -93,6 +93,7 @@ describe('AwsS3Multipart', () => {
           ETag: 'test',
           location: 'http://example.com',
         },
+        status: 200,
         uploadURL: 'http://example.com',
       })
 

@@ -174,6 +174,7 @@ type AWSS3NonMultipartWithoutCompanionMandatory<
 > = {
   getUploadParameters: (
     file: UppyFile<M, B>,
+    options: RequestOptions,
   ) => MaybePromise<AwsS3UploadParameters>
 }
 type AWSS3NonMultipartWithCompanion = AWSS3WithCompanion &
@@ -368,21 +369,28 @@ export default class AwsS3Multipart<
     this.#client = new RequestClient(uppy, opts as any)
 
     const dynamicDefaultOptions = {
-      createMultipartUpload: this.createMultipartUpload.bind(this),
-      listParts: this.listParts.bind(this),
-      abortMultipartUpload: this.abortMultipartUpload.bind(this),
-      completeMultipartUpload: this.completeMultipartUpload.bind(this),
+      createMultipartUpload: this.createMultipartUpload,
+      listParts: this.listParts,
+      abortMultipartUpload: this.abortMultipartUpload,
+      completeMultipartUpload: this.completeMultipartUpload,
       signPart:
         opts?.getTemporarySecurityCredentials ?
-          this.createSignedURL.bind(this)
-        : this.signPart.bind(this),
+          this.createSignedURL
+        : this.signPart,
       getUploadParameters:
         opts?.getTemporarySecurityCredentials ?
-          this.createSignedURL.bind(this)
-        : this.getUploadParameters.bind(this),
+          (this.createSignedURL as any)
+        : this.getUploadParameters,
     } satisfies Partial<AwsS3MultipartOptions<M, B>>
 
-    this.opts = { ...dynamicDefaultOptions, ...this.opts }
+    for (const key of Object.keys(dynamicDefaultOptions)) {
+      if (this.opts[key as keyof typeof dynamicDefaultOptions] == null) {
+        this.opts[key as keyof typeof dynamicDefaultOptions] =
+          dynamicDefaultOptions[key as keyof typeof dynamicDefaultOptions].bind(
+            this,
+          )
+      }
+    }
     if (
       (opts as AWSS3MultipartWithoutCompanionMandatoryPrepareUploadParts<M, B>)
         ?.prepareUploadParts != null &&
@@ -628,20 +636,16 @@ export default class AwsS3Multipart<
     { key, uploadId, signal }: UploadResultWithSignal,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     oldSignal?: AbortSignal, // TODO: remove in next major
-  ): Promise<Record<string, never>> {
+  ): Promise<void> {
     signal ??= oldSignal // eslint-disable-line no-param-reassign
     this.assertHost('abortMultipartUpload')
 
     const filename = encodeURIComponent(key)
     const uploadIdEnc = encodeURIComponent(uploadId)
     return this.#client
-      .delete<Record<string, never>>(
-        `s3/multipart/${uploadIdEnc}?key=${filename}`,
-        undefined,
-        {
-          signal,
-        },
-      )
+      .delete<void>(`s3/multipart/${uploadIdEnc}?key=${filename}`, undefined, {
+        signal,
+      })
       .then(assertServerError)
   }
 
