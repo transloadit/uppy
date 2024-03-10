@@ -51,14 +51,7 @@ function canHandleRootDrop(e: DragEvent) {
 }
 
 function checkIfCorrectURL(url?: string) {
-  if (!url) return false
-
-  const protocol = url.match(/^([a-z0-9]+):\/\//)![1]
-  if (protocol !== 'http' && protocol !== 'https') {
-    return false
-  }
-
-  return true
+  return url?.startsWith('http://') || url?.startsWith('https://')
 }
 
 function getFileNameFromUrl(url: string) {
@@ -116,12 +109,6 @@ export default class Url<M extends Meta, B extends Body> extends UIPlugin<
       )
     }
 
-    // Bind all event handlers for referencability
-    this.getMeta = this.getMeta.bind(this)
-    this.addFile = this.addFile.bind(this)
-    this.handleRootDrop = this.handleRootDrop.bind(this)
-    this.handleRootPaste = this.handleRootPaste.bind(this)
-
     this.client = new RequestClient(uppy, {
       pluginId: this.id,
       provider: 'url',
@@ -133,17 +120,19 @@ export default class Url<M extends Meta, B extends Body> extends UIPlugin<
     this.uppy.registerRequestClient(Url.requestClientId, this.client)
   }
 
-  async getMeta(url: string): Promise<MetaResponse> {
-    try {
-      return this.client.post<MetaResponse>('url/meta', { url })
-    } catch (error) {
-      this.uppy.log('[URL] Error:')
-      this.uppy.log(error)
-      throw new Error('Failed to fetch the file')
-    }
+  private getMeta = (url: string): Promise<MetaResponse> => {
+    return this.client.post<MetaResponse>('url/meta', { url }).then((res) => {
+      // TODO: remove this handler in the next major
+      if ((res as any).errors) {
+        this.uppy.log('[URL] Error:')
+        this.uppy.log(error)
+        throw new Error('Failed to fetch the file')
+      }
+      return res
+    })
   }
 
-  async addFile(
+  private addFile = async (
     protocollessUrl: string,
     optionalMeta?: M,
   ): Promise<string | undefined> {
@@ -203,14 +192,14 @@ export default class Url<M extends Meta, B extends Body> extends UIPlugin<
     }
   }
 
-  handleRootDrop(e: DragEvent): void {
+  private handleRootDrop = (e: DragEvent) => {
     forEachDroppedOrPastedUrl(e.dataTransfer!, 'drop', (url) => {
       this.uppy.log(`[URL] Adding file from dropped url: ${url}`)
       this.addFile(url)
     })
   }
 
-  handleRootPaste(e: ClipboardEvent): void {
+  private handleRootPaste = (e: ClipboardEvent) => {
     forEachDroppedOrPastedUrl(e.clipboardData!, 'paste', (url) => {
       this.uppy.log(`[URL] Adding file from pasted url: ${url}`)
       this.addFile(url)
