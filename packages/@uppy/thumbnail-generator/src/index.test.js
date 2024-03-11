@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, it, expect, vi } from 'vitest'
 import { UIPlugin } from '@uppy/core'
 import emitter from 'namespace-emitter'
-import ThumbnailGeneratorPlugin from './index.js'
+import ThumbnailGeneratorPlugin from './index.ts'
 
 const delay = duration => new Promise(resolve => setTimeout(resolve, duration))
 

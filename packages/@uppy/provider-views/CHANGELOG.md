@@ -1,5 +1,12 @@
 # @uppy/provider-views
 
+## 3.10.0
+
+Released: 2024-02-28
+Included in: Uppy v3.23.0
+
+- @uppy/provider-views: migrate to TS (Merlijn Vos / #4919)
+
 ## 3.9.0
 
 Released: 2024-02-19

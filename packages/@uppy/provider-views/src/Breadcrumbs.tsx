@@ -45,7 +45,7 @@ export default function Breadcrumbs<M extends Meta, B extends Body>(
         <Breadcrumb
           key={directory.id}
           getFolder={() => getFolder(directory.requestPath, directory.name)}
-          title={i === 0 ? title : directory.name}
+          title={i === 0 ? title : (directory.name as string)}
           isLast={i + 1 === breadcrumbs.length}
         />
       ))}

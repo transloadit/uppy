@@ -1,3 +1,4 @@
+import type { ComponentChild } from 'preact'
 import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
 import type { Uppy, State } from '@uppy/core/src/Uppy.ts'
 import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin.ts'
@@ -151,7 +152,7 @@ export default class StatusBar<M extends Meta, B extends Body> extends UIPlugin<
     }) as () => undefined)
   }
 
-  render(state: State<M, B>): JSX.Element {
+  render(state: State<M, B>): ComponentChild {
     const {
       capabilities,
       files,

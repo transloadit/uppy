@@ -220,8 +220,8 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
 
     // Create a new tus upload
     return new Promise<tus.Upload | string>((resolve, reject) => {
-      let queuedRequest: RateLimitedQueue.QueueEntry
-      let qRequest: () => void
+      let queuedRequest: ReturnType<RateLimitedQueue['run']>
+      let qRequest: () => () => void
       let upload: tus.Upload
 
       const opts = {

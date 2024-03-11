@@ -479,7 +479,12 @@ export default class RequestClient<M extends Meta, B extends Body> {
                             break
                           }
                           case 'success': {
-                            // payload.response exists for xhr-upload but not for tus/transloadit
+                            // payload.response is sent from companion for xhr-upload (aka uploadMultipart in companion) and
+                            // s3 multipart (aka uploadS3Multipart)
+                            // but not for tus/transloadit (aka uploadTus)
+                            // responseText is a string which may or may not be in JSON format
+                            // this means that an upload destination of xhr or s3 multipart MUST respond with valid JSON
+                            // to companion, or the JSON.parse will crash
                             const text = payload.response?.responseText
 
                             this.uppy.emit(
@@ -488,7 +493,8 @@ export default class RequestClient<M extends Meta, B extends Body> {
                               {
                                 uploadURL: payload.url,
                                 status: payload.response?.status ?? 200,
-                                body: text ? JSON.parse(text) : undefined,
+                                body:
+                                  text ? (JSON.parse(text) as B) : undefined,
                               },
                             )
                             socketAbortController?.abort?.()
