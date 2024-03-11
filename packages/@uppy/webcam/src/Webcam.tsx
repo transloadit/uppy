@@ -1,73 +1,146 @@
-import { h } from 'preact'
+import { h, type ComponentChild } from 'preact'
 
 import { UIPlugin } from '@uppy/core'
+import type { Uppy, UIPluginOptions } from '@uppy/core'
+import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin.ts'
+import type {
+  Body,
+  Meta,
+  MinimalRequiredUppyFile,
+} from '@uppy/utils/lib/UppyFile.ts'
+import type { PluginTarget } from '@uppy/core/lib/UIPlugin.ts'
 import getFileTypeExtension from '@uppy/utils/lib/getFileTypeExtension'
 import mimeTypes from '@uppy/utils/lib/mimeTypes'
 import isMobile from 'is-mobile'
 import canvasToBlob from '@uppy/utils/lib/canvasToBlob'
-import supportsMediaRecorder from './supportsMediaRecorder.js'
-import CameraIcon from './CameraIcon.jsx'
-import CameraScreen from './CameraScreen.jsx'
-import PermissionsScreen from './PermissionsScreen.jsx'
-
+import supportsMediaRecorder from './supportsMediaRecorder.ts'
+import CameraIcon from './CameraIcon.tsx'
+import CameraScreen from './CameraScreen.tsx'
+import PermissionsScreen from './PermissionsScreen.tsx'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'
-import locale from './locale.js'
+import locale from './locale.ts'
 
 /**
  * Normalize a MIME type or file extension into a MIME type.
  *
- * @param {string} fileType - MIME type or a file extension prefixed with `.`.
- * @returns {string|undefined} The MIME type or `undefined` if the fileType is an extension and is not known.
+ * @param fileType - MIME type or a file extension prefixed with `.`.
+ * @returns The MIME type or `undefined` if the fileType is an extension and is not known.
  */
-function toMimeType (fileType) {
+function toMimeType(fileType: string): string | undefined {
   if (fileType[0] === '.') {
-    return mimeTypes[fileType.slice(1)]
+    return mimeTypes[fileType.slice(1) as keyof typeof mimeTypes]
   }
   return fileType
 }
 
 /**
  * Is this MIME type a video?
- *
- * @param {string} mimeType - MIME type.
- * @returns {boolean}
  */
-function isVideoMimeType (mimeType) {
-  return /^video\/[^*]+$/.test(mimeType)
+function isVideoMimeType(mimeType?: string): boolean {
+  return /^video\/[^*]+$/.test(mimeType!)
 }
 
 /**
  * Is this MIME type an image?
- *
- * @param {string} mimeType - MIME type.
- * @returns {boolean}
  */
-function isImageMimeType (mimeType) {
-  return /^image\/[^*]+$/.test(mimeType)
+function isImageMimeType(mimeType?: string): boolean {
+  return /^image\/[^*]+$/.test(mimeType!)
 }
 
-function getMediaDevices () {
+function getMediaDevices() {
   // bug in the compatibility data
   // eslint-disable-next-line compat/compat
   return navigator.mediaDevices
 }
 
-function isModeAvailable (modes, mode) {
-  return modes.includes(mode)
+function isModeAvailable<T>(modes: T[], mode: unknown): mode is T {
+  return modes.includes(mode as T)
 }
+
+interface WebcamOptions<M extends Meta, B extends Body>
+  extends UIPluginOptions {
+  target?: PluginTarget<M, B>
+  onBeforeSnapshot?: () => Promise<void>
+  countdown?: number | false
+  modes?: Array<'video-audio' | 'video-only' | 'audio-only' | 'picture'>
+  mirror?: boolean
+  showVideoSourceDropdown?: boolean
+  /** @deprecated */
+  facingMode?: MediaTrackConstraints['facingMode'] // @TODO: remove in the next major
+  title?: string
+  videoConstraints?: MediaTrackConstraints
+  showRecordingLength?: boolean
+  preferredImageMimeType?: string | null
+  preferredVideoMimeType?: string | null
+  mobileNativeCamera?: boolean
+}
+
+interface WebcamState {
+  hasCamera: boolean
+  cameraReady: boolean
+  cameraError: null
+  recordingLengthSeconds: number
+  videoSources: MediaDeviceInfo[]
+  currentDeviceId: null | string
+  isRecording: boolean
+  [key: string]: unknown
+}
+
+// set default options
+const defaultOptions = {
+  onBeforeSnapshot: () => Promise.resolve(),
+  countdown: false,
+  modes: ['video-audio', 'video-only', 'audio-only', 'picture'] as any,
+  mirror: true,
+  showVideoSourceDropdown: false,
+  facingMode: 'user', // @TODO: remove in the next major
+  preferredImageMimeType: null,
+  preferredVideoMimeType: null,
+  showRecordingLength: false,
+  mobileNativeCamera: isMobile({ tablet: true }),
+} satisfies WebcamOptions<any, any>
 
 /**
  * Webcam
  */
-export default class Webcam extends UIPlugin {
+export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
+  DefinePluginOpts<WebcamOptions<M, B>, keyof typeof defaultOptions>,
+  M,
+  B,
+  WebcamState
+> {
   static VERSION = packageJson.version
 
   // enableMirror is used to toggle mirroring, for instance when discarding the video,
   // while `opts.mirror` is used to remember the initial user setting
   #enableMirror
 
-  constructor (uppy, opts) {
-    super(uppy, opts)
+  private mediaDevices
+
+  private supportsUserMedia
+
+  private protocol: 'http' | 'https'
+
+  private capturedMediaFile: MinimalRequiredUppyFile<M, B> | null
+
+  private icon: () => JSX.Element
+
+  private webcamActive
+
+  private stream: MediaStream | null
+
+  private recorder: MediaRecorder | null
+
+  private recordingChunks: Blob[] | null
+
+  private recordingLengthTimer: ReturnType<typeof setInterval>
+
+  private captureInProgress: boolean
+
+  constructor(uppy: Uppy<M, B>, opts?: WebcamOptions<M, B>) {
+    super(uppy, { ...defaultOptions, ...opts })
     this.mediaDevices = getMediaDevices()
     this.supportsUserMedia = !!this.mediaDevices
     // eslint-disable-next-line no-restricted-globals
@@ -76,34 +149,23 @@ export default class Webcam extends UIPlugin {
     this.type = 'acquirer'
     this.capturedMediaFile = null
     this.icon = () => (
-      <svg aria-hidden="true" focusable="false" width="32" height="32" viewBox="0 0 32 32">
-        <path d="M23.5 9.5c1.417 0 2.5 1.083 2.5 2.5v9.167c0 1.416-1.083 2.5-2.5 2.5h-15c-1.417 0-2.5-1.084-2.5-2.5V12c0-1.417 1.083-2.5 2.5-2.5h2.917l1.416-2.167C13 7.167 13.25 7 13.5 7h5c.25 0 .5.167.667.333L20.583 9.5H23.5zM16 11.417a4.706 4.706 0 00-4.75 4.75 4.704 4.704 0 004.75 4.75 4.703 4.703 0 004.75-4.75c0-2.663-2.09-4.75-4.75-4.75zm0 7.825c-1.744 0-3.076-1.332-3.076-3.074 0-1.745 1.333-3.077 3.076-3.077 1.744 0 3.074 1.333 3.074 3.076s-1.33 3.075-3.074 3.075z" fill="#02B383" fillRule="nonzero" />
+      <svg
+        aria-hidden="true"
+        focusable="false"
+        width="32"
+        height="32"
+        viewBox="0 0 32 32"
+      >
+        <path
+          d="M23.5 9.5c1.417 0 2.5 1.083 2.5 2.5v9.167c0 1.416-1.083 2.5-2.5 2.5h-15c-1.417 0-2.5-1.084-2.5-2.5V12c0-1.417 1.083-2.5 2.5-2.5h2.917l1.416-2.167C13 7.167 13.25 7 13.5 7h5c.25 0 .5.167.667.333L20.583 9.5H23.5zM16 11.417a4.706 4.706 0 00-4.75 4.75 4.704 4.704 0 004.75 4.75 4.703 4.703 0 004.75-4.75c0-2.663-2.09-4.75-4.75-4.75zm0 7.825c-1.744 0-3.076-1.332-3.076-3.074 0-1.745 1.333-3.077 3.076-3.077 1.744 0 3.074 1.333 3.074 3.076s-1.33 3.075-3.074 3.075z"
+          fill="#02B383"
+          fillRule="nonzero"
+        />
       </svg>
     )
 
     this.defaultLocale = locale
 
-    // set default options
-    const defaultOptions = {
-      onBeforeSnapshot: () => Promise.resolve(),
-      countdown: false,
-      modes: [
-        'video-audio',
-        'video-only',
-        'audio-only',
-        'picture',
-      ],
-      mirror: true,
-      showVideoSourceDropdown: false,
-      facingMode: 'user', // @TODO: remove in the next major
-      videoConstraints: undefined,
-      preferredImageMimeType: null,
-      preferredVideoMimeType: null,
-      showRecordingLength: false,
-      mobileNativeCamera: isMobile({ tablet: true }),
-    }
-
-    this.opts = { ...defaultOptions, ...opts }
     this.i18nInit()
     this.title = this.i18n('pluginNameCamera')
 
@@ -141,7 +203,7 @@ export default class Webcam extends UIPlugin {
     })
   }
 
-  setOptions (newOpts) {
+  setOptions(newOpts: Partial<WebcamOptions<M, B>>): void {
     super.setOptions({
       ...newOpts,
       videoConstraints: {
@@ -152,33 +214,38 @@ export default class Webcam extends UIPlugin {
     })
   }
 
-  hasCameraCheck () {
+  hasCameraCheck(): Promise<boolean> {
     if (!this.mediaDevices) {
       return Promise.resolve(false)
     }
 
-    return this.mediaDevices.enumerateDevices().then(devices => {
-      return devices.some(device => device.kind === 'videoinput')
+    return this.mediaDevices.enumerateDevices().then((devices) => {
+      return devices.some((device) => device.kind === 'videoinput')
     })
   }
 
-  isAudioOnly () {
+  isAudioOnly(): boolean {
     return this.opts.modes.length === 1 && this.opts.modes[0] === 'audio-only'
   }
 
-  getConstraints (deviceId = null) {
-    const acceptsAudio = this.opts.modes.indexOf('video-audio') !== -1
-      || this.opts.modes.indexOf('audio-only') !== -1
-    const acceptsVideo = !this.isAudioOnly()
-        && (this.opts.modes.indexOf('video-audio') !== -1
-          || this.opts.modes.indexOf('video-only') !== -1
-          || this.opts.modes.indexOf('picture') !== -1)
+  getConstraints(deviceId: string | null = null): {
+    video: false | MediaTrackConstraints
+    audio: boolean
+  } {
+    const acceptsAudio =
+      this.opts.modes.indexOf('video-audio') !== -1 ||
+      this.opts.modes.indexOf('audio-only') !== -1
+    const acceptsVideo =
+      !this.isAudioOnly() &&
+      (this.opts.modes.indexOf('video-audio') !== -1 ||
+        this.opts.modes.indexOf('video-only') !== -1 ||
+        this.opts.modes.indexOf('picture') !== -1)
 
     const videoConstraints = {
       ...(this.opts.videoConstraints || { facingMode: this.opts.facingMode }),
       // facingMode takes precedence over deviceId, and not needed
       // when specific device is selected
-      ...(deviceId ? { deviceId, facingMode: null } : {}),
+      ...(deviceId ? { deviceId, facingMode: null as any as undefined } : {}),
     }
 
     return {
@@ -188,7 +255,11 @@ export default class Webcam extends UIPlugin {
   }
 
   // eslint-disable-next-line consistent-return
-  start (options = null) {
+  start(
+    options: {
+      deviceId: string
+    } | null = null,
+  ): Promise<never> | void {
     if (!this.supportsUserMedia) {
       return Promise.reject(new Error('Webcam access not supported'))
     }
@@ -199,20 +270,25 @@ export default class Webcam extends UIPlugin {
       this.#enableMirror = true
     }
 
-    const constraints = this.getConstraints(options && options.deviceId ? options.deviceId : null)
+    const constraints = this.getConstraints(options?.deviceId)
 
-    this.hasCameraCheck().then(hasCamera => {
+    // TODO: add a return and/or convert this to async/await
+    this.hasCameraCheck().then((hasCamera) => {
       this.setPluginState({
         hasCamera,
       })
 
       // ask user for access to their camera
-      return this.mediaDevices.getUserMedia(constraints)
+      return this.mediaDevices
+        .getUserMedia(constraints)
         .then((stream) => {
           this.stream = stream
 
           let currentDeviceId = null
-          const tracks = this.isAudioOnly() ? stream.getAudioTracks() : stream.getVideoTracks()
+          const tracks =
+            this.isAudioOnly() ?
+              stream.getAudioTracks()
+            : stream.getVideoTracks()
 
           if (!options || !options.deviceId) {
             currentDeviceId = tracks[0].getSettings().deviceId
@@ -242,27 +318,28 @@ export default class Webcam extends UIPlugin {
     })
   }
 
-  /**
-   * @returns {object}
-   */
-  getMediaRecorderOptions () {
-    const options = {}
+  getMediaRecorderOptions(): { mimeType?: string } {
+    const options: { mimeType?: string } = {}
 
     // Try to use the `opts.preferredVideoMimeType` or one of the `allowedFileTypes` for the recording.
     // If the browser doesn't support it, we'll fall back to the browser default instead.
     // Safari doesn't have the `isTypeSupported` API.
     if (MediaRecorder.isTypeSupported) {
       const { restrictions } = this.uppy.opts
-      let preferredVideoMimeTypes = []
+      let preferredVideoMimeTypes: Array<string | undefined> = []
       if (this.opts.preferredVideoMimeType) {
         preferredVideoMimeTypes = [this.opts.preferredVideoMimeType]
       } else if (restrictions.allowedFileTypes) {
-        preferredVideoMimeTypes = restrictions.allowedFileTypes.map(toMimeType).filter(isVideoMimeType)
+        preferredVideoMimeTypes = restrictions.allowedFileTypes
+          .map(toMimeType)
+          .filter(isVideoMimeType)
       }
 
-      const filterSupportedTypes = (candidateType) => MediaRecorder.isTypeSupported(candidateType)
-        && getFileTypeExtension(candidateType)
-      const acceptableMimeTypes = preferredVideoMimeTypes.filter(filterSupportedTypes)
+      const filterSupportedTypes = (candidateType?: string) =>
+        MediaRecorder.isTypeSupported(candidateType!) &&
+        getFileTypeExtension(candidateType!)
+      const acceptableMimeTypes =
+        preferredVideoMimeTypes.filter(filterSupportedTypes)
 
       if (acceptableMimeTypes.length > 0) {
         // eslint-disable-next-line prefer-destructuring
@@ -273,24 +350,37 @@ export default class Webcam extends UIPlugin {
     return options
   }
 
-  startRecording () {
+  startRecording(): void {
     // only used if supportsMediaRecorder() returned true
     // eslint-disable-next-line compat/compat
-    this.recorder = new MediaRecorder(this.stream, this.getMediaRecorderOptions())
+    this.recorder = new MediaRecorder(
+      this.stream!,
+      this.getMediaRecorderOptions(),
+    )
     this.recordingChunks = []
     let stoppingBecauseOfMaxSize = false
     this.recorder.addEventListener('dataavailable', (event) => {
-      this.recordingChunks.push(event.data)
+      this.recordingChunks!.push(event.data)
 
       const { restrictions } = this.uppy.opts
-      if (this.recordingChunks.length > 1
-          && restrictions.maxFileSize != null
-          && !stoppingBecauseOfMaxSize) {
-        const totalSize = this.recordingChunks.reduce((acc, chunk) => acc + chunk.size, 0)
+      if (
+        this.recordingChunks!.length > 1 &&
+        restrictions.maxFileSize != null &&
+        !stoppingBecauseOfMaxSize
+      ) {
+        const totalSize = this.recordingChunks!.reduce(
+          (acc, chunk) => acc + chunk.size,
+          0,
+        )
         // Exclude the initial chunk from the average size calculation because it is likely to be a very small outlier
-        const averageChunkSize = (totalSize - this.recordingChunks[0].size) / (this.recordingChunks.length - 1)
+        const averageChunkSize =
+          (totalSize - this.recordingChunks![0].size) /
+          (this.recordingChunks!.length - 1)
         const expectedEndChunkSize = averageChunkSize * 3
-        const maxSize = Math.max(0, restrictions.maxFileSize - expectedEndChunkSize)
+        const maxSize = Math.max(
+          0,
+          restrictions.maxFileSize - expectedEndChunkSize,
+        )
 
         if (totalSize > maxSize) {
           stoppingBecauseOfMaxSize = true
@@ -307,8 +397,11 @@ export default class Webcam extends UIPlugin {
     if (this.opts.showRecordingLength) {
       // Start the recordingLengthTimer if we are showing the recording length.
       this.recordingLengthTimer = setInterval(() => {
-        const currentRecordingLength = this.getPluginState().recordingLengthSeconds
-        this.setPluginState({ recordingLengthSeconds: currentRecordingLength + 1 })
+        const currentRecordingLength =
+          this.getPluginState().recordingLengthSeconds
+        this.setPluginState({
+          recordingLengthSeconds: currentRecordingLength + 1,
+        })
       }, 1000)
     }
 
@@ -317,12 +410,12 @@ export default class Webcam extends UIPlugin {
     })
   }
 
-  stopRecording () {
-    const stopped = new Promise((resolve) => {
-      this.recorder.addEventListener('stop', () => {
+  stopRecording(): Promise<void> {
+    const stopped = new Promise<void>((resolve) => {
+      this.recorder!.addEventListener('stop', () => {
         resolve()
       })
-      this.recorder.stop()
+      this.recorder!.stop()
 
       if (this.opts.showRecordingLength) {
         // Stop the recordingLengthTimer if we are showing the recording length.
@@ -331,37 +424,43 @@ export default class Webcam extends UIPlugin {
       }
     })
 
-    return stopped.then(() => {
-      this.setPluginState({
-        isRecording: false,
-      })
-      return this.getVideo()
-    }).then((file) => {
-      try {
-        this.capturedMediaFile = file
-        // create object url for capture result preview
+    return stopped
+      .then(() => {
         this.setPluginState({
-          // eslint-disable-next-line compat/compat
-          recordedVideo: URL.createObjectURL(file.data),
+          isRecording: false,
         })
-        this.#enableMirror = false
-      } catch (err) {
-        // Logging the error, exept restrictions, which is handled in Core
-        if (!err.isRestriction) {
-          this.uppy.log(err)
+        return this.getVideo()
+      })
+      .then((file) => {
+        try {
+          this.capturedMediaFile = file
+          // create object url for capture result preview
+          this.setPluginState({
+            // eslint-disable-next-line compat/compat
+            recordedVideo: URL.createObjectURL(file.data as Blob),
+          })
+          this.#enableMirror = false
+        } catch (err) {
+          // Logging the error, exept restrictions, which is handled in Core
+          if (!err.isRestriction) {
+            this.uppy.log(err)
+          }
         }
-      }
-    }).then(() => {
-      this.recordingChunks = null
-      this.recorder = null
-    }, (error) => {
-      this.recordingChunks = null
-      this.recorder = null
-      throw error
-    })
+      })
+      .then(
+        () => {
+          this.recordingChunks = null
+          this.recorder = null
+        },
+        (error) => {
+          this.recordingChunks = null
+          this.recorder = null
+          throw error
+        },
+      )
   }
 
-  discardRecordedVideo () {
+  discardRecordedVideo(): void {
     this.setPluginState({ recordedVideo: null })
 
     if (this.opts.mirror) {
@@ -371,7 +470,7 @@ export default class Webcam extends UIPlugin {
     this.capturedMediaFile = null
   }
 
-  submit () {
+  submit(): void {
     try {
       if (this.capturedMediaFile) {
         this.uppy.addFile(this.capturedMediaFile)
@@ -384,7 +483,7 @@ export default class Webcam extends UIPlugin {
     }
   }
 
-  async stop () {
+  async stop(): Promise<void> {
     if (this.stream) {
       const audioTracks = this.stream.getAudioTracks()
       const videoTracks = this.stream.getVideoTracks()
@@ -394,8 +493,8 @@ export default class Webcam extends UIPlugin {
 
     if (this.recorder) {
       await new Promise((resolve) => {
-        this.recorder.addEventListener('stop', resolve, { once: true })
-        this.recorder.stop()
+        this.recorder!.addEventListener('stop', resolve, { once: true })
+        this.recorder!.stop()
 
         if (this.opts.showRecordingLength) {
           clearInterval(this.recordingLengthTimer)
@@ -415,11 +514,11 @@ export default class Webcam extends UIPlugin {
     })
   }
 
-  getVideoElement () {
-    return this.el.querySelector('.uppy-Webcam-video')
+  getVideoElement(): HTMLVideoElement | null {
+    return this.el!.querySelector('.uppy-Webcam-video')
   }
 
-  oneTwoThreeSmile () {
+  oneTwoThreeSmile(): Promise<void> {
     return new Promise((resolve, reject) => {
       let count = this.opts.countdown
 
@@ -431,7 +530,7 @@ export default class Webcam extends UIPlugin {
           return reject(new Error('Webcam is not active'))
         }
 
-        if (count > 0) {
+        if (count) {
           this.uppy.info(`${count}...`, 'warning', 800)
           count--
         } else {
@@ -443,37 +542,48 @@ export default class Webcam extends UIPlugin {
     })
   }
 
-  takeSnapshot () {
+  takeSnapshot(): void {
     if (this.captureInProgress) return
 
     this.captureInProgress = true
 
-    this.opts.onBeforeSnapshot().catch((err) => {
-      const message = typeof err === 'object' ? err.message : err
-      this.uppy.info(message, 'error', 5000)
-      return Promise.reject(new Error(`onBeforeSnapshot: ${message}`))
-    }).then(() => {
-      return this.getImage()
-    }).then((tagFile) => {
-      this.captureInProgress = false
-      try {
-        this.uppy.addFile(tagFile)
-      } catch (err) {
-        // Logging the error, except restrictions, which is handled in Core
-        if (!err.isRestriction) {
-          this.uppy.log(err)
-        }
-      }
-    }, (error) => {
-      this.captureInProgress = false
-      throw error
-    })
+    this.opts
+      .onBeforeSnapshot()
+      .catch((err) => {
+        const message = typeof err === 'object' ? err.message : err
+        this.uppy.info(message, 'error', 5000)
+        return Promise.reject(new Error(`onBeforeSnapshot: ${message}`))
+      })
+      .then(() => {
+        return this.getImage()
+      })
+      .then(
+        (tagFile) => {
+          this.captureInProgress = false
+          try {
+            this.uppy.addFile(tagFile)
+          } catch (err) {
+            // Logging the error, except restrictions, which is handled in Core
+            if (!err.isRestriction) {
+              this.uppy.log(err)
+            }
+          }
+        },
+        (error) => {
+          this.captureInProgress = false
+          throw error
+        },
+      )
   }
 
-  getImage () {
+  getImage(): Promise<MinimalRequiredUppyFile<M, B>> {
     const video = this.getVideoElement()
     if (!video) {
-      return Promise.reject(new Error('No video element found, likely due to the Webcam tab being closed.'))
+      return Promise.reject(
+        new Error(
+          'No video element found, likely due to the Webcam tab being closed.',
+        ),
+      )
     }
 
     const width = video.videoWidth
@@ -483,14 +593,16 @@ export default class Webcam extends UIPlugin {
     canvas.width = width
     canvas.height = height
     const ctx = canvas.getContext('2d')
-    ctx.drawImage(video, 0, 0)
+    ctx!.drawImage(video, 0, 0)
 
     const { restrictions } = this.uppy.opts
-    let preferredImageMimeTypes = []
+    let preferredImageMimeTypes: string[] = []
     if (this.opts.preferredImageMimeType) {
       preferredImageMimeTypes = [this.opts.preferredImageMimeType]
     } else if (restrictions.allowedFileTypes) {
-      preferredImageMimeTypes = restrictions.allowedFileTypes.map(toMimeType).filter(isImageMimeType)
+      preferredImageMimeTypes = restrictions.allowedFileTypes
+        .map(toMimeType)
+        .filter(isImageMimeType) as string[]
     }
 
     const mimeType = preferredImageMimeTypes[0] || 'image/jpeg'
@@ -501,26 +613,32 @@ export default class Webcam extends UIPlugin {
       return {
         source: this.id,
         name,
-        data: new Blob([blob], { type: mimeType }),
+        data: new Blob([blob!], { type: mimeType }),
         type: mimeType,
       }
     })
   }
 
-  getVideo () {
+  getVideo(): Promise<MinimalRequiredUppyFile<M, B>> {
     // Sometimes in iOS Safari, Blobs (especially the first Blob in the recordingChunks Array)
     // have empty 'type' attributes (e.g. '') so we need to find a Blob that has a defined 'type'
     // attribute in order to determine the correct MIME type.
-    const mimeType = this.recordingChunks.find(blob => blob.type?.length > 0).type
+    const mimeType = this.recordingChunks!.find(
+      (blob) => blob.type?.length > 0,
+    )!.type
 
     const fileExtension = getFileTypeExtension(mimeType)
 
     if (!fileExtension) {
-      return Promise.reject(new Error(`Could not retrieve recording: Unsupported media type "${mimeType}"`))
+      return Promise.reject(
+        new Error(
+          `Could not retrieve recording: Unsupported media type "${mimeType}"`,
+        ),
+      )
     }
 
     const name = `webcam-${Date.now()}.${fileExtension}`
-    const blob = new Blob(this.recordingChunks, { type: mimeType })
+    const blob = new Blob(this.recordingChunks!, { type: mimeType })
     const file = {
       source: this.id,
       name,
@@ -531,27 +649,27 @@ export default class Webcam extends UIPlugin {
     return Promise.resolve(file)
   }
 
-  focus () {
+  focus(): void {
     if (!this.opts.countdown) return
     setTimeout(() => {
       this.uppy.info(this.i18n('smile'), 'success', 1500)
     }, 1000)
   }
 
-  changeVideoSource (deviceId) {
+  changeVideoSource(deviceId: string): void {
     this.stop()
     this.start({ deviceId })
   }
 
-  updateVideoSources () {
-    this.mediaDevices.enumerateDevices().then(devices => {
+  updateVideoSources(): void {
+    this.mediaDevices.enumerateDevices().then((devices) => {
       this.setPluginState({
         videoSources: devices.filter((device) => device.kind === 'videoinput'),
       })
     })
   }
 
-  render () {
+  render(): ComponentChild {
     if (!this.webcamActive) {
       this.start()
     }
@@ -592,13 +710,16 @@ export default class Webcam extends UIPlugin {
     )
   }
 
-  install () {
-    const { mobileNativeCamera, modes, facingMode, videoConstraints } = this.opts
+  install(): void {
+    const { mobileNativeCamera, modes, facingMode, videoConstraints } =
+      this.opts
 
     const { target } = this.opts
     if (mobileNativeCamera && target) {
-      this.getTargetPlugin(target)?.setOptions({
-        showNativeVideoCameraButton: isModeAvailable(modes, 'video-only') || isModeAvailable(modes, 'video-audio'),
+      this.getTargetPlugin<M, B>(target)?.setOptions({
+        showNativeVideoCameraButton:
+          isModeAvailable(modes, 'video-only') ||
+          isModeAvailable(modes, 'video-audio'),
         showNativePhotoCameraButton: isModeAvailable(modes, 'picture'),
         nativeCameraFacingMode: videoConstraints?.facingMode || facingMode,
       })
@@ -640,12 +761,12 @@ export default class Webcam extends UIPlugin {
     }
   }
 
-  uninstall () {
+  uninstall(): void {
     this.stop()
     this.unmount()
   }
 
-  onUnmount () {
+  onUnmount(): void {
     this.stop()
   }
 }
