@@ -1,6 +1,12 @@
+import type { I18n } from '@uppy/utils/lib/Translator'
 import { h } from 'preact'
 
-function SubmitButton ({ onSubmit, i18n }) {
+interface SubmitButtonProps {
+  onSubmit: () => void
+  i18n: I18n
+}
+
+function SubmitButton({ onSubmit, i18n }: SubmitButtonProps): JSX.Element {
   return (
     <button
       className="uppy-u-reset uppy-c-btn uppy-Webcam-button uppy-Webcam-button--submit"
@@ -19,7 +25,11 @@ function SubmitButton ({ onSubmit, i18n }) {
         focusable="false"
         className="uppy-c-icon"
       >
-        <path fill="#fff" fillRule="nonzero" d="M10.66 0L12 1.31 4.136 9 0 4.956l1.34-1.31L4.136 6.38z" />
+        <path
+          fill="#fff"
+          fillRule="nonzero"
+          d="M10.66 0L12 1.31 4.136 9 0 4.956l1.34-1.31L4.136 6.38z"
+        />
       </svg>
     </button>
   )
