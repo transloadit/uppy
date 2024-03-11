@@ -1,14 +1,12 @@
 import type { Uppy } from '@uppy/core'
 import { AbortController } from '@uppy/utils/lib/AbortController'
-import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
+import type { Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
 import type { HTTPCommunicationQueue } from './HTTPCommunicationQueue'
+import type { Body } from './utils'
 
 const MB = 1024 * 1024
 
-interface MultipartUploaderOptions<
-  M extends Meta,
-  B extends Body & { location: string },
-> {
+interface MultipartUploaderOptions<M extends Meta, B extends Body> {
   getChunkSize?: (file: { size: number }) => number
   onProgress?: (bytesUploaded: number, bytesTotal: number) => void
   onPartComplete?: (part: { PartNumber: number; ETag: string }) => void
@@ -63,7 +61,7 @@ export const pausingUploadReason = Symbol('pausing upload, not an actual error')
  * (based on the user-provided `shouldUseMultipart` option value) and to manage
  * the chunk splitting.
  */
-class MultipartUploader<M extends Meta, B extends Body & { location: string }> {
+class MultipartUploader<M extends Meta, B extends Body> {
   options: MultipartUploaderOptions<M, B> &
     Required<Pick<MultipartUploaderOptions<M, B>, keyof typeof defaultOptions>>
 

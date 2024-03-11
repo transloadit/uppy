@@ -1,11 +1,13 @@
 import type { Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
+import type {
+  RateLimitedQueue,
+  WrapPromiseFunctionType,
+} from '@uppy/utils/lib/RateLimitedQueue'
 import { pausingUploadReason, type Chunk } from './MultipartUploader.ts'
 import type AwsS3Multipart from './index.ts'
 import { throwIfAborted } from './utils.ts'
 import type { Body, UploadPartBytesResult, UploadResult } from './utils.ts'
 import type { AwsS3MultipartOptions, uploadPartBytes } from './index.ts'
-
-type RateLimitedQueue = any // untyped
 
 function removeMetadataFromURL(urlString: string) {
   const urlObject = new URL(urlString)
@@ -14,31 +16,24 @@ function removeMetadataFromURL(urlString: string) {
   return urlObject.href
 }
 
-type AbortablePromise<T extends (...args: any) => Promise<any>> = (
-  ...args: Parameters<T>
-) => ReturnType<T> & {
-  abort: (reason?: any) => void
-  abortOn: (signal?: AbortSignal) => ReturnType<T>
-}
-
 export class HTTPCommunicationQueue<M extends Meta, B extends Body> {
-  #abortMultipartUpload: AbortablePromise<
+  #abortMultipartUpload: WrapPromiseFunctionType<
     AwsS3Multipart<M, B>['abortMultipartUpload']
   >
 
   #cache = new WeakMap()
 
-  #createMultipartUpload: AbortablePromise<
+  #createMultipartUpload: WrapPromiseFunctionType<
     AwsS3Multipart<M, B>['createMultipartUpload']
   >
 
-  #fetchSignature: AbortablePromise<AwsS3Multipart<M, B>['signPart']>
+  #fetchSignature: WrapPromiseFunctionType<AwsS3Multipart<M, B>['signPart']>
 
-  #getUploadParameters: AbortablePromise<
+  #getUploadParameters: WrapPromiseFunctionType<
     AwsS3Multipart<M, B>['getUploadParameters']
   >
 
-  #listParts: AbortablePromise<AwsS3Multipart<M, B>['listParts']>
+  #listParts: WrapPromiseFunctionType<AwsS3Multipart<M, B>['listParts']>
 
   #previousRetryDelay: number
 
@@ -46,13 +41,13 @@ export class HTTPCommunicationQueue<M extends Meta, B extends Body> {
 
   #retryDelays: { values: () => Iterator<number> }
 
-  #sendCompletionRequest: AbortablePromise<
+  #sendCompletionRequest: WrapPromiseFunctionType<
     AwsS3Multipart<M, B>['completeMultipartUpload']
   >
 
   #setS3MultipartState
 
-  #uploadPartBytes: AbortablePromise<uploadPartBytes>
+  #uploadPartBytes: WrapPromiseFunctionType<uploadPartBytes>
 
   #getFile
 
@@ -73,25 +68,27 @@ export class HTTPCommunicationQueue<M extends Meta, B extends Body> {
 
     if ('abortMultipartUpload' in options) {
       this.#abortMultipartUpload = requests.wrapPromiseFunction(
-        options.abortMultipartUpload,
+        options.abortMultipartUpload as any,
         { priority: 1 },
       )
     }
     if ('createMultipartUpload' in options) {
       this.#createMultipartUpload = requests.wrapPromiseFunction(
-        options.createMultipartUpload,
+        options.createMultipartUpload as any,
         { priority: -1 },
       )
     }
     if ('signPart' in options) {
-      this.#fetchSignature = requests.wrapPromiseFunction(options.signPart)
+      this.#fetchSignature = requests.wrapPromiseFunction(
+        options.signPart as any,
+      )
     }
     if ('listParts' in options) {
-      this.#listParts = requests.wrapPromiseFunction(options.listParts)
+      this.#listParts = requests.wrapPromiseFunction(options.listParts as any)
     }
     if ('completeMultipartUpload' in options) {
       this.#sendCompletionRequest = requests.wrapPromiseFunction(
-        options.completeMultipartUpload,
+        options.completeMultipartUpload as any,
         { priority: 1 },
       )
     }
@@ -100,13 +97,13 @@ export class HTTPCommunicationQueue<M extends Meta, B extends Body> {
     }
     if ('uploadPartBytes' in options) {
       this.#uploadPartBytes = requests.wrapPromiseFunction(
-        options.uploadPartBytes,
+        options.uploadPartBytes as any,
         { priority: Infinity },
       )
     }
     if ('getUploadParameters' in options) {
       this.#getUploadParameters = requests.wrapPromiseFunction(
-        options.getUploadParameters,
+        options.getUploadParameters as any,
       )
     }
   }

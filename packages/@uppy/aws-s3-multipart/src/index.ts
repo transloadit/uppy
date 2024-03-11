@@ -7,8 +7,6 @@ import type { RequestOptions } from '@uppy/utils/lib/CompanionClientProvider.ts'
 import type { Body as _Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
 import type { Uppy } from '@uppy/core'
 import EventManager from '@uppy/core/lib/EventManager.js'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore untyped
 import { RateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
 import {
   filterNonFailedFiles,
