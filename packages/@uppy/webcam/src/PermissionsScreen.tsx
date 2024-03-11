@@ -7,7 +7,6 @@ interface PermissionScreenProps {
   i18n: I18n
 }
 
-// TODO: name that function
 export default function PermissionsScreen({
   icon,
   i18n,
