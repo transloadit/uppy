@@ -267,13 +267,13 @@ type UploadCompleteCallback<M extends Meta, B extends Body> = (
   result: UploadResult<M, B>,
 ) => void
 type ErrorCallback<M extends Meta, B extends Body> = (
-  error: { message?: string; details?: string },
+  error: { name: string; message: string; details?: string },
   file?: UppyFile<M, B>,
   response?: UppyFile<M, B>['response'],
 ) => void
 type UploadErrorCallback<M extends Meta, B extends Body> = (
   file: UppyFile<M, B> | undefined,
-  error: { message: string; details?: string },
+  error: { name: string; message: string; details?: string },
   response?:
     | Omit<NonNullable<UppyFile<M, B>['response']>, 'uploadURL'>
     | undefined,
@@ -317,7 +317,7 @@ export interface _UppyEventMap<M extends Meta, B extends Body> {
   'preprocess-progress': PreProcessProgressCallback<M, B>
   progress: ProgressCallback
   'reset-progress': GenericEventCallback
-  restored: GenericEventCallback
+  restored: (pluginData: any) => void
   'restore-confirmed': GenericEventCallback
   'restriction-failed': RestrictionFailedCallback<M, B>
   'resume-all': GenericEventCallback
@@ -786,6 +786,7 @@ export class Uppy<M extends Meta, B extends Body> {
 
   #informAndEmit(
     errors: {
+      name: string
       message: string
       isUserFacing?: boolean
       details?: string

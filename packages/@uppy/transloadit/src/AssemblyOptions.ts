@@ -1,9 +1,11 @@
 import ErrorWithCause from '@uppy/utils/lib/ErrorWithCause'
+import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
+import type { AssemblyParameters, Opts, AssemblyOptions as Options } from '.'
 
 /**
  * Check that Assembly parameters are present and include all required fields.
  */
-function validateParams (params) {
+function validateParams(params?: AssemblyParameters | null): void {
   if (params == null) {
     throw new Error('Transloadit: The `params` option is required.')
   }
@@ -14,23 +16,41 @@ function validateParams (params) {
       params = JSON.parse(params)
     } catch (err) {
       // Tell the user that this is not an Uppy bug!
-      throw new ErrorWithCause('Transloadit: The `params` option is a malformed JSON string.', { cause: err })
+      throw new ErrorWithCause(
+        'Transloadit: The `params` option is a malformed JSON string.',
+        { cause: err },
+      )
     }
   }
 
-  if (!params.auth || !params.auth.key) {
-    throw new Error('Transloadit: The `params.auth.key` option is required. '
-      + 'You can find your Transloadit API key at https://transloadit.com/c/template-credentials')
+  if (!params!.auth || !params!.auth.key) {
+    throw new Error(
+      'Transloadit: The `params.auth.key` option is required. ' +
+        'You can find your Transloadit API key at https://transloadit.com/c/template-credentials',
+    )
   }
+}
+export type OptionsWithRestructedFields = Omit<Options, 'fields'> & {
+  fields: Record<string, string | number>
 }
 
 /**
  * Combine Assemblies with the same options into a single Assembly for all the
  * relevant files.
  */
-function dedupe (list) {
-  const dedupeMap = Object.create(null)
-  for (const { fileIDs, options } of list.filter(Boolean)) {
+function dedupe(
+  list: Array<
+    { fileIDs: string[]; options: OptionsWithRestructedFields } | undefined
+  >,
+) {
+  const dedupeMap: Record<
+    string,
+    { fileIDArrays: string[][]; options: OptionsWithRestructedFields }
+  > = Object.create(null)
+  for (const { fileIDs, options } of list.filter(Boolean) as Array<{
+    fileIDs: string[]
+    options: OptionsWithRestructedFields
+  }>) {
     const id = JSON.stringify(options)
     if (id in dedupeMap) {
       dedupeMap[id].fileIDArrays.push(fileIDs)
@@ -48,18 +68,25 @@ function dedupe (list) {
   }))
 }
 
-async function getAssemblyOptions (file, options) {
-  const assemblyOptions = typeof options.assemblyOptions === 'function'
-    ? await options.assemblyOptions(file, options)
-    : options.assemblyOptions
+async function getAssemblyOptions<M extends Meta, B extends Body>(
+  file: UppyFile<M, B> | null,
+  options: Opts<M, B>,
+): Promise<OptionsWithRestructedFields> {
+  const assemblyOptions = (
+    typeof options.assemblyOptions === 'function' ?
+      await options.assemblyOptions(file)
+    : options.assemblyOptions) as OptionsWithRestructedFields
 
   validateParams(assemblyOptions.params)
 
   const { fields } = assemblyOptions
   if (Array.isArray(fields)) {
-    assemblyOptions.fields = file == null ? {} : Object.fromEntries(
-      fields.map((fieldName) => [fieldName, file.meta[fieldName]]),
-    )
+    assemblyOptions.fields =
+      file == null ?
+        {}
+      : Object.fromEntries(
+          fields.map((fieldName) => [fieldName, file.meta[fieldName]]),
+        )
   } else if (fields == null) {
     assemblyOptions.fields = {}
   }
@@ -71,8 +98,12 @@ async function getAssemblyOptions (file, options) {
  * Turn Transloadit plugin options and a list of files into a list of Assembly
  * options.
  */
-class AssemblyOptions {
-  constructor (files, opts) {
+class AssemblyOptions<M extends Meta, B extends Body> {
+  opts: Opts<M, B>
+
+  files: UppyFile<M, B>[]
+
+  constructor(files: UppyFile<M, B>[], opts: Opts<M, B>) {
     this.files = files
     this.opts = opts
   }
@@ -83,7 +114,9 @@ class AssemblyOptions {
    *  - fileIDs - an array of file IDs to add to this Assembly
    *  - options - Assembly options
    */
-  async build () {
+  async build(): Promise<
+    { fileIDs: string[]; options: OptionsWithRestructedFields }[]
+  > {
     const options = this.opts
 
     if (this.files.length > 0) {

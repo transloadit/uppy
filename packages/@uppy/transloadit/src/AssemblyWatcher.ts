@@ -1,4 +1,7 @@
+import type { Uppy } from '@uppy/core'
+import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import Emitter from 'component-emitter'
+import type { AssemblyResponse } from '.'
 
 /**
  * Track completion of multiple assemblies.
@@ -8,25 +11,30 @@ import Emitter from 'component-emitter'
  * Exposes a `.promise` property that resolves when all assemblies have
  * completed (or failed).
  */
-class TransloaditAssemblyWatcher extends Emitter {
+class TransloaditAssemblyWatcher<
+  M extends Meta,
+  B extends Body,
+> extends Emitter {
   #assemblyIDs
 
-  #reject
+  #remaining: number
 
-  #remaining
+  promise: Promise<void>
 
-  #resolve
+  #resolve: () => void
+
+  #reject: (reason?: string) => void
 
   #uppy
 
-  constructor (uppy, assemblyIDs) {
+  constructor(uppy: Uppy<M, B>, assemblyIDs: string[]) {
     super()
 
     this.#uppy = uppy
     this.#assemblyIDs = assemblyIDs
     this.#remaining = assemblyIDs.length
 
-    this.promise = new Promise((resolve, reject) => {
+    this.promise = new Promise<void>((resolve, reject) => {
       this.#resolve = resolve
       this.#reject = reject
     })
@@ -37,23 +45,25 @@ class TransloaditAssemblyWatcher extends Emitter {
   /**
    * Are we watching this assembly ID?
    */
-  #watching (id) {
+  #watching(id: string) {
     return this.#assemblyIDs.indexOf(id) !== -1
   }
 
-  #onAssemblyComplete = (assembly) => {
+  #onAssemblyComplete = (assembly: AssemblyResponse) => {
     if (!this.#watching(assembly.assembly_id)) {
       return
     }
 
-    this.#uppy.log(`[Transloadit] AssemblyWatcher: Got Assembly finish ${assembly.assembly_id}`)
+    this.#uppy.log(
+      `[Transloadit] AssemblyWatcher: Got Assembly finish ${assembly.assembly_id}`,
+    )
 
     this.emit('assembly-complete', assembly.assembly_id)
 
     this.#checkAllComplete()
   }
 
-  #onAssemblyCancel = (assembly) => {
+  #onAssemblyCancel = (assembly: AssemblyResponse) => {
     if (!this.#watching(assembly.assembly_id)) {
       return
     }
@@ -61,12 +71,14 @@ class TransloaditAssemblyWatcher extends Emitter {
     this.#checkAllComplete()
   }
 
-  #onAssemblyError = (assembly, error) => {
+  #onAssemblyError = (assembly: AssemblyResponse, error: Error) => {
     if (!this.#watching(assembly.assembly_id)) {
       return
     }
 
-    this.#uppy.log(`[Transloadit] AssemblyWatcher: Got Assembly error ${assembly.assembly_id}`)
+    this.#uppy.log(
+      `[Transloadit] AssemblyWatcher: Got Assembly error ${assembly.assembly_id}`,
+    )
     this.#uppy.log(error)
 
     this.emit('assembly-error', assembly.assembly_id, error)
@@ -74,7 +86,11 @@ class TransloaditAssemblyWatcher extends Emitter {
     this.#checkAllComplete()
   }
 
-  #onImportError = (assembly, fileID, error) => {
+  #onImportError = (
+    assembly: AssemblyResponse,
+    fileID: string,
+    error: Error,
+  ) => {
     if (!this.#watching(assembly.assembly_id)) {
       return
     }
@@ -87,7 +103,7 @@ class TransloaditAssemblyWatcher extends Emitter {
     this.#onAssemblyError(assembly, error)
   }
 
-  #checkAllComplete () {
+  #checkAllComplete() {
     this.#remaining -= 1
     if (this.#remaining === 0) {
       // We're done, these listeners can be removed
@@ -96,14 +112,14 @@ class TransloaditAssemblyWatcher extends Emitter {
     }
   }
 
-  #removeListeners () {
+  #removeListeners() {
     this.#uppy.off('transloadit:complete', this.#onAssemblyComplete)
     this.#uppy.off('transloadit:assembly-cancel', this.#onAssemblyCancel)
     this.#uppy.off('transloadit:assembly-error', this.#onAssemblyError)
     this.#uppy.off('transloadit:import-error', this.#onImportError)
   }
 
-  #addListeners () {
+  #addListeners() {
     this.#uppy.on('transloadit:complete', this.#onAssemblyComplete)
     this.#uppy.on('transloadit:assembly-cancel', this.#onAssemblyCancel)
     this.#uppy.on('transloadit:assembly-error', this.#onAssemblyError)
