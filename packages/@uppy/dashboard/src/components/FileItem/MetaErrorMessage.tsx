@@ -1,4 +1,4 @@
-import { h, type ComponentChild } from 'preact'
+import { h } from 'preact'
 
 type $TSFixMe = any
 
@@ -8,13 +8,11 @@ const metaFieldIdToName = (metaFieldId: $TSFixMe, metaFields: $TSFixMe) => {
   return field[0].name
 }
 
-export default function renderMissingMetaFieldsError(
-  props: $TSFixMe,
-): ComponentChild {
+export default function MetaErrorMessage(props: $TSFixMe): JSX.Element {
   const { file, toggleFileCard, i18n, metaFields } = props
   const { missingRequiredMetaFields } = file
   if (!missingRequiredMetaFields?.length) {
-    return null
+    return null as $TSFixMe
   }
 
   const metaFieldsString = missingRequiredMetaFields

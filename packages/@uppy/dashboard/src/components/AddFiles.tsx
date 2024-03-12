@@ -1,3 +1,6 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck Typing this file requires more work, skipping it to unblock the rest of the transition.
+
 /* eslint-disable react/destructuring-assignment */
 import { h, Component, Fragment, type ComponentChild } from 'preact'
 
@@ -386,7 +389,7 @@ class AddFiles extends Component {
 
     return (
       <a
-        tabIndex="-1"
+        tabIndex={-1}
         href="https://uppy.io"
         rel="noreferrer noopener"
         target="_blank"

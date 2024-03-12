@@ -41,14 +41,14 @@ class Slide extends Component {
   // TODO: refactor to stable lifecycle method
   // eslint-disable-next-line
   componentWillUpdate(nextProps: $TSFixMe) {
-    const { cachedChildren } = this.state
+    const { cachedChildren } = this.state as $TSFixMe
     const child = toChildArray(nextProps.children)[0]
 
     if (cachedChildren === child) return null
 
     const patch = {
       cachedChildren: child,
-    }
+    } as $TSFixMe
 
     // Enter transition
     if (child && !cachedChildren) {
@@ -99,7 +99,7 @@ class Slide extends Component {
   }
 
   render(): ComponentChild {
-    const { cachedChildren, className } = this.state
+    const { cachedChildren, className } = this.state as $TSFixMe
 
     if (!cachedChildren) {
       return null

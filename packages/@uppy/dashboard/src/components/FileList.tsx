@@ -6,8 +6,8 @@ import FileItem from './FileItem/index.tsx'
 type $TSFixMe = any
 
 function chunks(list: $TSFixMe, size: $TSFixMe) {
-  const chunked = []
-  let currentChunk: $TSFixMe = []
+  const chunked: $TSFixMe[] = []
+  let currentChunk: $TSFixMe[] = []
   list.forEach((item: $TSFixMe) => {
     if (currentChunk.length < size) {
       currentChunk.push(item)
@@ -76,6 +76,7 @@ export default function FileList({
       {row.map((fileID: $TSFixMe) => (
         <FileItem
           key={fileID}
+          // @ts-expect-error it's fine
           uppy={uppy}
           // FIXME This is confusing, it's actually the Dashboard's plugin ID
           id={id}

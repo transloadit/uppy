@@ -1,3 +1,6 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck Typing this file requires more work, skipping it to unblock the rest of the transition.
+
 /* eslint-disable react/destructuring-assignment */
 import { h, Component, type ComponentChild } from 'preact'
 import classNames from 'classnames'
