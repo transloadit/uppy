@@ -1,3 +1,6 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck Typing this file requires more work, skipping it to unblock the rest of the transition.
+
 import { h } from 'preact'
 import classNames from 'classnames'
 import isDragDropSupported from '@uppy/utils/lib/isDragDropSupported'
@@ -64,7 +67,7 @@ export default function Dashboard (props) {
   const numberOfGhosts = props.files ? Object.keys(props.files).filter((fileID) => props.files[fileID].isGhost).length : null
 
   const renderRestoredText = () => {
-    if (numberOfGhosts > 0) {
+    if (numberOfGhosts! > 0) {
       return props.i18n('recoveredXFiles', {
         smart_count: numberOfGhosts,
       })

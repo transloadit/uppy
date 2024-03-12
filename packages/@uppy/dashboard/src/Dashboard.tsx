@@ -35,14 +35,20 @@ declare module '@uppy/core' {
   }
 }
 
+interface PromiseWithResolvers<T> {
+  promise: Promise<T>;
+  resolve: (value: T | PromiseLike<T>) => void;
+  reject: (reason?: any) => void;
+}
+
 const memoize = ((memoizeOne as any).default as false) || memoizeOne
 
 const TAB_KEY = 9
 const ESC_KEY = 27
 
-function createPromise(): ReturnType<typeof Promise.withResolvers> {
-  const o = {} as ReturnType<typeof Promise.withResolvers>
-  o.promise = new Promise((resolve, reject) => {
+function createPromise<T>(): ReturnType<PromiseWithResolvers<T>> {
+  const o = {} as ReturnType<PromiseWithResolvers<T>>
+  o.promise = new Promise<T>((resolve, reject) => {
     o.resolve = resolve
     o.reject = reject
   })
