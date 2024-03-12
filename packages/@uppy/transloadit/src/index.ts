@@ -153,6 +153,7 @@ export type TransloaditOptions<M extends Meta, B extends Body> = BaseOptions &
           | AssemblyOptions
           | ((
               file?: UppyFile<M, B> | null,
+              options?: AssemblyOptions,
             ) => Promise<AssemblyOptions> | AssemblyOptions)
         /** @deprecated use `assemblyOptions` instead */
         getAssemblyOptions?: never | null

@@ -74,7 +74,7 @@ async function getAssemblyOptions<M extends Meta, B extends Body>(
 ): Promise<OptionsWithRestructedFields> {
   const assemblyOptions = (
     typeof options.assemblyOptions === 'function' ?
-      await options.assemblyOptions(file)
+      await options.assemblyOptions(file, options)
     : options.assemblyOptions) as OptionsWithRestructedFields
 
   validateParams(assemblyOptions.params)
@@ -117,12 +117,15 @@ class AssemblyOptions<M extends Meta, B extends Body> {
   async build(): Promise<
     { fileIDs: string[]; options: OptionsWithRestructedFields }[]
   > {
+    console.log('>>> before', this.opts)
     const options = this.opts
 
     if (this.files.length > 0) {
       return Promise.all(
         this.files.map(async (file) => {
           if (file == null) return undefined
+
+          console.log('>>> build', options)
 
           const assemblyOptions = await getAssemblyOptions(file, options)
 
