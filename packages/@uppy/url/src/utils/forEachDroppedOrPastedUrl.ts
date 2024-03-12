@@ -53,12 +53,12 @@ import toArray from '@uppy/utils/lib/toArray'
 
 /**
  * Finds all links dropped/pasted from one browser window to another.
- *
- * @param {object} dataTransfer - DataTransfer instance, e.g. e.clipboardData, or e.dataTransfer
- * @param {string} isDropOrPaste - either 'drop' or 'paste'
- * @param {Function} callback - (urlString) => {}
  */
-export default function forEachDroppedOrPastedUrl (dataTransfer, isDropOrPaste, callback) {
+export default function forEachDroppedOrPastedUrl(
+  dataTransfer: DataTransfer,
+  isDropOrPaste: 'drop' | 'paste',
+  callback: (url: string) => void,
+): void {
   const items = toArray(dataTransfer.items)
 
   let urlItems
@@ -69,18 +69,22 @@ export default function forEachDroppedOrPastedUrl (dataTransfer, isDropOrPaste, 
       if (atLeastOneFileIsDragged) {
         return
       }
-      urlItems = items.filter((item) => item.kind === 'string'
-          && item.type === 'text/plain')
+      urlItems = items.filter(
+        (item) => item.kind === 'string' && item.type === 'text/plain',
+      )
 
       break
     }
     case 'drop': {
-      urlItems = items.filter((item) => item.kind === 'string'
-        && item.type === 'text/uri-list')
+      urlItems = items.filter(
+        (item) => item.kind === 'string' && item.type === 'text/uri-list',
+      )
       break
     }
     default: {
-      throw new Error(`isDropOrPaste must be either 'drop' or 'paste', but it's ${isDropOrPaste}`)
+      throw new Error(
+        `isDropOrPaste must be either 'drop' or 'paste', but it's ${isDropOrPaste}`,
+      )
     }
   }
 
