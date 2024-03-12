@@ -199,71 +199,69 @@ export default class View<
    * toggle multiple checkboxes at once, which is done by getting all files
    * in between last checked file and current one.
    */
-  toggleCheckbox = (e: Event, file: CompanionFile): void => {
+  toggleCheckbox = (e, fileOrFolder) => {
     e.stopPropagation()
     e.preventDefault()
-    ;(e.currentTarget as HTMLInputElement).focus()
-    const { folders, files } = this.plugin.getPluginState()
-    const items = this.filterItems(folders.concat(files))
-    // Shift-clicking selects a single consecutive list of items
-    // starting at the previous click.
-    if (this.lastCheckbox && this.isShiftKeyPressed) {
-      const { currentSelection } = this.plugin.getPluginState()
-      const prevIndex = items.indexOf(this.lastCheckbox)
-      const currentIndex = items.indexOf(file)
-      const newSelection =
-        prevIndex < currentIndex ?
-          items.slice(prevIndex, currentIndex + 1)
-        : items.slice(currentIndex, prevIndex + 1)
-      const reducedNewSelection: CompanionFile[] = []
+    e.currentTarget.focus()
 
-      // Check restrictions on each file in currentSelection,
-      // reduce it to only contain files that pass restrictions
-      for (const item of newSelection) {
-        const { uppy } = this.plugin
-        const restrictionError = uppy.validateRestrictions(
-          remoteFileObjToLocal(item),
-          [...uppy.getFiles(), ...reducedNewSelection],
-        )
+    const { partialTree } = this.plugin.getPluginState()
+    const newPartialTree = JSON.parse(JSON.stringify(partialTree))
 
-        if (!restrictionError) {
-          reducedNewSelection.push(item)
-        } else {
-          uppy.info(
-            { message: restrictionError.message },
-            'error',
-            uppy.opts.infoTimeout,
-          )
-        }
+    const ourItem = newPartialTree.find((item) => item.requestPath === fileOrFolder.requestPath)
+    const newStatus = ourItem.status === "checked" ? "unchecked" : "checked"
+    ourItem.status = newStatus
+
+    // if newStatus is "checked" - percolate down "checked"
+    // if newStatus is "unchecked" - percolate down "unchecked"
+    const percolateDown = (currentFile, status) => {
+      const children = newPartialTree.filter((item) => item.parentId === currentFile.requestPath)
+      children.forEach((item) => {
+        item.status = status
+        percolateDown(item, status)
+      })
+    }
+
+    percolateDown(ourItem, newStatus)
+
+    // we do something to all of its parents.
+    const percolateUp = (currentFile) => {
+      const parentFolder = newPartialTree.find((item) => item.requestPath === currentFile.parentId)
+
+      if (!parentFolder) return
+
+      const parentsChildren = newPartialTree.filter((item) => item.parentId === parentFolder.requestPath)
+      const areAllChildrenChecked = parentsChildren.every((item) => item.status === "checked")
+      const areAllChildrenUnchecked = parentsChildren.every((item) => item.status === "unchecked")
+  
+      if (areAllChildrenChecked) {
+        parentFolder.status = "checked"
+      } else if (areAllChildrenUnchecked) {
+        parentFolder.status = "unchecked"
+      } else {
+        parentFolder.status = "partial"
       }
-      this.plugin.setPluginState({
-        currentSelection: [
-          ...new Set([...currentSelection, ...reducedNewSelection]),
-        ],
-      })
-      return
+
+      percolateUp(parentFolder)
     }
 
-    this.lastCheckbox = file
-    const { currentSelection } = this.plugin.getPluginState()
-    if (this.isChecked(file)) {
-      this.plugin.setPluginState({
-        currentSelection: currentSelection.filter(
-          (item) => item.id !== file.id,
-        ),
-      })
-    } else {
-      this.plugin.setPluginState({
-        currentSelection: currentSelection.concat([file]),
-      })
-    }
+    percolateUp(ourItem)
+
+    this.plugin.setPluginState({ partialTree: newPartialTree })
   }
 
-  isChecked = (file: CompanionFile): boolean => {
-    const { currentSelection } = this.plugin.getPluginState()
-    // comparing id instead of the file object, because the reference to the object
-    // changes when we switch folders, and the file list is updated
-    return currentSelection.some((item) => item.id === file.id)
+  isChecked = (file) => {
+    // Ohhh so it's actually called here......
+
+    const { partialTree } = this.plugin.getPluginState()
+    const ourFile = partialTree.find((item) => item.requestPath === file.requestPath)
+    // console.log({ourFile});
+
+    return ourFile.status
+   
+    // const { currentSelection } = this.plugin.getPluginState()
+    // // comparing id instead of the file object, because the reference to the object
+    // // changes when we switch folders, and the file list is updated
+    // return currentSelection.some((item) => item.id === file.id)
   }
 
   setLoading(loading: boolean | string): void {

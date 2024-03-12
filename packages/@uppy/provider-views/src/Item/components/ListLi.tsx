@@ -15,7 +15,7 @@ type ListItemProps<M extends Meta, B extends Body> = {
   isDisabled: boolean
   restrictionError?: RestrictionError<M, B> | null
   isCheckboxDisabled: boolean
-  isChecked: boolean
+  status: string
   toggleCheckbox: (event: Event) => void
   recordShiftKeyPress: (event: KeyboardEvent | MouseEvent) => void
   type: string
@@ -35,7 +35,7 @@ export default function ListItem<M extends Meta, B extends Body>(
     isDisabled,
     restrictionError,
     isCheckboxDisabled,
-    isChecked,
+    status,
     toggleCheckbox,
     recordShiftKeyPress,
     type,
@@ -47,6 +47,16 @@ export default function ListItem<M extends Meta, B extends Body>(
     i18n,
   } = props
 
+
+  let statusClassName
+  if (status === "checked") {
+    statusClassName = "uppy-ProviderBrowserItem-checkbox--is-checked"
+  } else if (status === "unchecked") {
+    statusClassName = ""
+  } else if (status === "partial") {
+    statusClassName = "uppy-ProviderBrowserItem-checkbox--is-partial"
+  }
+
   return (
     <li
       className={className}
@@ -55,19 +65,16 @@ export default function ListItem<M extends Meta, B extends Body>(
       {!isCheckboxDisabled ?
         <input
           type="checkbox"
-          className={`uppy-u-reset uppy-ProviderBrowserItem-checkbox ${isChecked ? 'uppy-ProviderBrowserItem-checkbox--is-checked' : ''}`}
+          className={`uppy-u-reset uppy-ProviderBrowserItem-checkbox ${statusClassName}`}
           onChange={toggleCheckbox}
           onKeyDown={recordShiftKeyPress}
           onMouseDown={recordShiftKeyPress}
           // for the <label/>
           name="listitem"
           id={id}
-          checked={isChecked}
-          aria-label={
-            type === 'file' ? null : (
-              i18n('allFilesFromFolderNamed', { name: title })
-            )
-          }
+          checked={status === "checked" ? true : false}
+          indeterminate={status === "indeterminate" ? true : false}
+          aria-label={type === 'file' ? null : i18n('allFilesFromFolderNamed', { name: title })}
           disabled={isDisabled}
           data-uppy-super-focusable
         />

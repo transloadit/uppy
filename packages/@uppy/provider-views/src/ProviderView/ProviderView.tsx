@@ -251,20 +251,67 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
           files = files.concat(newFiles)
           folders = folders.concat(newFolders)
 
-          this.setLoading(
-            this.plugin.uppy.i18n('loadedXFiles', {
-              numFiles: files.length + folders.length,
-            }),
-          )
+          this.setLoading(this.plugin.uppy.i18n('loadedXFiles', { numFiles: files.length + folders.length }))
         } while (this.opts.loadAllFiles && this.nextPagePath)
 
-        this.plugin.setPluginState({
-          folders,
-          files,
-          breadcrumbs,
-          filterInput: '',
-        })
+
+
+
+
+
+
+
+
+
+
+        const { partialTree } = this.plugin.getPluginState()
+
+        if (!partialTree) {
+          const newPartialTree = [
+            { requestPath: "root", cached: true },
+            ...folders.map((folder) => ({ ...folder, status: "unchecked", parentId: "root", cached: false })),
+            ...files.map((file) => ({ ...file, status: "unchecked", parentId: "root" })),
+          ]
+
+          this.plugin.setPluginState({ partialTree: newPartialTree })
+        } else {
+          const clickedFolder = partialTree.find((folder) => folder.requestPath === (requestPath || "root"))
+
+          // If selected folder is already filled in, don't refill it (because that would make it lose deep state!)
+          // Otherwise, cache the current folder!
+          if (!clickedFolder.cached) {
+            const clickedFolderContents = [
+              ...folders.map((folder) => ({ ...folder, status: clickedFolder.status, parentId: clickedFolder.requestPath, cached: false })),
+              ...files.map((file) => ({ ...file, status: clickedFolder.status, parentId: clickedFolder.requestPath })),
+            ]
+
+            // just doing `clickedFolder.cached = true` in a non-mutating way
+            const updatedClickedFolder = { ...clickedFolder, cached: true }
+            const partialTreeWithUpdatedClickedFolder = partialTree.map((folder) =>
+              folder.requestPath === updatedClickedFolder.requestPath ?
+                updatedClickedFolder :
+                folder
+            )
+
+            this.plugin.setPluginState({ partialTree: [
+              ...partialTreeWithUpdatedClickedFolder,
+              ...clickedFolderContents] })
+          }
+        }
+
+        this.plugin.setPluginState({ folders, files, breadcrumbs, filterInput: '' })
       })
+
+
+
+
+
+
+
+
+
+
+
     } catch (err) {
       // This is the first call that happens when the provider view loads, after auth, so it's probably nice to show any
       // error occurring here to the user.
