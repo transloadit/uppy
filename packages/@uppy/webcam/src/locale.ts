@@ -1,9 +1,13 @@
+import type { Locale } from '@uppy/utils/lib/Translator'
+
 export default {
   strings: {
     pluginNameCamera: 'Camera',
     noCameraTitle: 'Camera Not Available',
-    noCameraDescription: 'In order to take pictures or record video, please connect a camera device',
-    recordingStoppedMaxSize: 'Recording stopped because the file size is about to exceed the limit',
+    noCameraDescription:
+      'In order to take pictures or record video, please connect a camera device',
+    recordingStoppedMaxSize:
+      'Recording stopped because the file size is about to exceed the limit',
     submitRecordedFile: 'Submit recorded file',
     discardRecordedFile: 'Discard recorded file',
     // Shown before a picture is taken when the `countdown` option is set.
@@ -23,6 +27,7 @@ export default {
     // Title on the “allow access” screen
     allowAccessTitle: 'Please allow access to your camera',
     // Description on the “allow access” screen
-    allowAccessDescription: 'In order to take pictures or record video with your camera, please allow camera access for this site.',
-  },
-}
+    allowAccessDescription:
+      'In order to take pictures or record video with your camera, please allow camera access for this site.',
+  } as Locale<0>['strings'],
+} as any as Locale

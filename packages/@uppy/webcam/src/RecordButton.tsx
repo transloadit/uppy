@@ -1,6 +1,19 @@
+import type { I18n } from '@uppy/utils/lib/Translator'
 import { h } from 'preact'
 
-export default function RecordButton ({ recording, onStartRecording, onStopRecording, i18n }) {
+interface RecordButtonProps {
+  recording: boolean
+  onStartRecording: () => void
+  onStopRecording: () => void
+  i18n: I18n
+}
+
+export default function RecordButton({
+  recording,
+  onStartRecording,
+  onStopRecording,
+  i18n,
+}: RecordButtonProps): JSX.Element {
   if (recording) {
     return (
       <button
@@ -11,7 +24,14 @@ export default function RecordButton ({ recording, onStartRecording, onStopRecor
         onClick={onStopRecording}
         data-uppy-super-focusable
       >
-        <svg aria-hidden="true" focusable="false" className="uppy-c-icon" width="100" height="100" viewBox="0 0 100 100">
+        <svg
+          aria-hidden="true"
+          focusable="false"
+          className="uppy-c-icon"
+          width="100"
+          height="100"
+          viewBox="0 0 100 100"
+        >
           <rect x="15" y="15" width="70" height="70" />
         </svg>
       </button>
@@ -27,7 +47,14 @@ export default function RecordButton ({ recording, onStartRecording, onStopRecor
       onClick={onStartRecording}
       data-uppy-super-focusable
     >
-      <svg aria-hidden="true" focusable="false" className="uppy-c-icon" width="100" height="100" viewBox="0 0 100 100">
+      <svg
+        aria-hidden="true"
+        focusable="false"
+        className="uppy-c-icon"
+        width="100"
+        height="100"
+        viewBox="0 0 100 100"
+      >
         <circle cx="50" cy="50" r="40" />
       </svg>
     </button>

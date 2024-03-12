@@ -2,37 +2,11 @@ import type {
   UnknownProviderPlugin,
   UnknownSearchProviderPlugin,
 } from '@uppy/core/lib/Uppy'
-import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
+import type { Body, Meta, TagFile } from '@uppy/utils/lib/UppyFile'
 import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
 import getFileType from '@uppy/utils/lib/getFileType'
 import isPreviewSupported from '@uppy/utils/lib/isPreviewSupported'
 import remoteFileObjToLocal from '@uppy/utils/lib/remoteFileObjToLocal'
-
-type TagFile<M extends Meta> = {
-  id: string
-  source: string
-  data: Blob
-  name: string
-  type: string
-  isRemote: boolean
-  preview?: string
-  meta: {
-    authorName?: string
-    authorUrl?: string
-    relativePath?: string | null
-    absolutePath?: string
-  } & M
-  remote: {
-    companionUrl: string
-    url: string
-    body: {
-      fileId: string
-    }
-    providerName: string
-    provider: string
-    requestClientId: string
-  }
-}
 
 type PluginType = 'Provider' | 'SearchProvider'
 
@@ -155,7 +129,6 @@ export default class View<
       name: file.name || file.id,
       type: file.mimeType,
       isRemote: true,
-      // @ts-expect-error meta is filled conditionally below
       data: file,
       // @ts-expect-error meta is filled conditionally below
       meta: {},
@@ -184,17 +157,17 @@ export default class View<
 
     if (file.author) {
       if (file.author.name != null)
-        tagFile.meta.authorName = String(file.author.name)
-      if (file.author.url) tagFile.meta.authorUrl = file.author.url
+        tagFile.meta!.authorName = String(file.author.name)
+      if (file.author.url) tagFile.meta!.authorUrl = file.author.url
     }
 
     // add relativePath similar to non-remote files: https://github.com/transloadit/uppy/pull/4486#issuecomment-1579203717
     if (file.relDirPath != null)
-      tagFile.meta.relativePath =
+      tagFile.meta!.relativePath =
         file.relDirPath ? `${file.relDirPath}/${tagFile.name}` : null
     // and absolutePath (with leading slash) https://github.com/transloadit/uppy/pull/4537#issuecomment-1614236655
     if (file.absDirPath != null)
-      tagFile.meta.absolutePath =
+      tagFile.meta!.absolutePath =
         file.absDirPath ?
           `/${file.absDirPath}/${tagFile.name}`
         : `/${tagFile.name}`
