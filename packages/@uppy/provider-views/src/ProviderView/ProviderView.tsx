@@ -114,7 +114,8 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
       authenticated: undefined, // we don't know yet
       files: [],
       folders: [],
-      breadcrumbs: [],
+      partialTree: null,
+      currentRequestPath: null,
       filterInput: '',
       isSearchVisible: false,
       currentSelection: [],
@@ -224,29 +225,13 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
       await this.#withAbort(async (signal) => {
         this.lastCheckbox = undefined
 
-        let { breadcrumbs } = this.plugin.getPluginState()
-
-        const index = breadcrumbs.findIndex(
-          (dir) => requestPath === dir.requestPath,
-        )
-
-        if (index !== -1) {
-          // means we navigated back to a known directory (already in the stack), so cut the stack off there
-          breadcrumbs = breadcrumbs.slice(0, index + 1)
-        } else {
-          // we have navigated into a new (unknown) folder, add it to the stack
-          breadcrumbs = [...breadcrumbs, { requestPath, name }]
-        }
-
         this.nextPagePath = requestPath
         let files: CompanionFile[] = []
         let folders: CompanionFile[] = []
         do {
-          const { files: newFiles, folders: newFolders } =
-            await this.#listFilesAndFolders({
-              breadcrumbs,
-              signal,
-            })
+          const { files: newFiles, folders: newFolders } = await this.#listFilesAndFolders({
+            breadcrumbs: this.getBreadcrumbs(), signal,
+          })
 
           files = files.concat(newFiles)
           folders = folders.concat(newFolders)
@@ -299,7 +284,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
           }
         }
 
-        this.plugin.setPluginState({ folders, files, breadcrumbs, filterInput: '' })
+        this.plugin.setPluginState({ folders, files, currentRequestPath: requestPath, filterInput: '' })
       })
 
 
@@ -363,9 +348,10 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
 
           const newState = {
             authenticated: false,
+            currentRequestPath: null,
+            partialTree: null,
             files: [],
             folders: [],
-            breadcrumbs: [],
             filterInput: '',
           }
           this.plugin.setPluginState(newState)
@@ -414,13 +400,11 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
 
       try {
         await this.#withAbort(async (signal) => {
-          const { files, folders, breadcrumbs } = this.plugin.getPluginState()
+          const { files, folders } = this.plugin.getPluginState()
 
-          const { files: newFiles, folders: newFolders } =
-            await this.#listFilesAndFolders({
-              breadcrumbs,
-              signal,
-            })
+          const { files: newFiles, folders: newFolders } = await this.#listFilesAndFolders({
+            breadcrumbs: this.getBreadcrumbs(), signal,
+          })
 
           const combinedFiles = files.concat(newFiles)
           const combinedFolders = folders.concat(newFolders)
@@ -591,6 +575,20 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
     }
   }
 
+  getBreadcrumbs = () => {
+    const { partialTree, currentRequestPath } = this.plugin.getPluginState()
+    const breadcrumbs = []
+    if (partialTree && currentRequestPath) {
+      const currentFolder = partialTree.find((folder) => folder.requestPath === currentRequestPath)
+      let parent = currentFolder
+      while (parent) {
+        breadcrumbs.push(parent)
+        parent = partialTree.find((folder) => folder.requestPath === parent.parentId)
+      }
+    }
+    return breadcrumbs.toReversed()
+  }
+
   render(
     state: unknown,
     viewOptions: Omit<ViewOptions<M, B, PluginType>, 'provider'> = {},
@@ -612,7 +610,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
     const headerProps = {
       showBreadcrumbs: targetViewOptions.showBreadcrumbs,
       getFolder: this.getFolder,
-      breadcrumbs: this.plugin.getPluginState().breadcrumbs,
+      breadcrumbs: this.getBreadcrumbs(),
       pluginIcon,
       title: this.plugin.title,
       logout: this.logout,
