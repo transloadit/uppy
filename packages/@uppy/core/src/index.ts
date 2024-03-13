@@ -3,6 +3,7 @@ export {
   default as Uppy,
   type UppyEventMap,
   type State,
+  type UploadResult,
   type UnknownPlugin,
   type UnknownProviderPlugin,
   type UnknownSearchProviderPlugin,
