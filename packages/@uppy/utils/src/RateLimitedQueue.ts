@@ -30,10 +30,14 @@ type QueueOptions = {
   priority?: number
 }
 
-interface AbortablePromise<T> extends Promise<T> {
+export interface AbortablePromise<T> extends Promise<T> {
   abort(cause?: unknown): void
-  abortOn: typeof abortOn
+  abortOn: (...args: Parameters<typeof abortOn>) => AbortablePromise<T>
 }
+
+export type WrapPromiseFunctionType<T extends (...args: any[]) => any> = (
+  ...args: Parameters<T>
+) => AbortablePromise<Awaited<ReturnType<T>>>
 
 export class RateLimitedQueue {
   #activeRequests = 0
@@ -223,7 +227,7 @@ export class RateLimitedQueue {
       outerPromise.abort = (cause) => {
         queuedRequest.abort(cause)
       }
-      outerPromise.abortOn = abortOn
+      outerPromise.abortOn = abortOn as any
 
       return outerPromise
     }
