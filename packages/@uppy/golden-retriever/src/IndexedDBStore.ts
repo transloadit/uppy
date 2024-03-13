@@ -203,7 +203,7 @@ class IndexedDBStore {
   /**
    * Save a file in the store.
    */
-  async put(file: UppyFile<any, any>): Promise<unknown> {
+  async put<T>(file: UppyFile<any, any>): Promise<T> {
     if (file.data.size > this.opts.maxFileSize) {
       throw new Error('File is too big to store.')
     }
