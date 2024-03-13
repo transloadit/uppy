@@ -1412,7 +1412,7 @@ export class Uppy<M extends Meta, B extends Body> {
 
     const inProgress = files.filter((file) => {
       return (
-        file.progress.uploadStarted ||
+        !file.progress.uploadComplete ||
         file.progress.preprocess ||
         file.progress.postprocess
       )
