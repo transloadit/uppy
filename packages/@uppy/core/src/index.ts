@@ -4,6 +4,7 @@ export {
   type UploadResult,
   type UppyEventMap,
   type State,
+  type UploadResult,
   type UnknownPlugin,
   type UnknownProviderPlugin,
   type UnknownSearchProviderPlugin,
