@@ -64,7 +64,7 @@ export type UnknownPlugin<
 export type UnknownProviderPluginState = {
   authenticated: boolean | undefined
   breadcrumbs: {
-    requestPath: string
+    requestPath?: string
     name?: string
     id?: string
   }[]
