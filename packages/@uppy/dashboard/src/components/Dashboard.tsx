@@ -1,6 +1,4 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck Typing this file requires more work, skipping it to unblock the rest of the transition.
-
+/* eslint-disable react/destructuring-assignment, react/jsx-props-no-spreading */
 import { h } from 'preact'
 import classNames from 'classnames'
 import isDragDropSupported from '@uppy/utils/lib/isDragDropSupported'
@@ -25,7 +23,9 @@ const HEIGHT_MD = 330
 // const HEIGHT_LG = 400
 // const HEIGHT_XL = 460
 
-export default function Dashboard (props) {
+type $TSFixMe = any
+
+export default function Dashboard(props: $TSFixMe): JSX.Element {
   const isNoFiles = props.totalFileCount === 0
   const isSingleFile = props.totalFileCount === 1
   const isSizeMD = props.containerWidth > WIDTH_MD
@@ -48,7 +48,8 @@ export default function Dashboard (props) {
     'uppy-Dashboard--isAddFilesPanelVisible': props.showAddFilesPanel,
     'uppy-Dashboard--isInnerWrapVisible': props.areInsidesReadyToBeVisible,
     // Only enable “centered single file” mode when Dashboard is tall enough
-    'uppy-Dashboard--singleFile': props.singleFileFullScreen && isSingleFile && isSizeHeightMD,
+    'uppy-Dashboard--singleFile':
+      props.singleFileFullScreen && isSingleFile && isSizeHeightMD,
   })
 
   // Important: keep these in sync with the percent width values in `src/components/FileItem/index.scss`.
@@ -63,8 +64,13 @@ export default function Dashboard (props) {
 
   const showFileList = props.showSelectedFiles && !isNoFiles
 
-  const numberOfFilesForRecovery = props.recoveredState ? Object.keys(props.recoveredState.files).length : null
-  const numberOfGhosts = props.files ? Object.keys(props.files).filter((fileID) => props.files[fileID].isGhost).length : null
+  const numberOfFilesForRecovery =
+    props.recoveredState ? Object.keys(props.recoveredState.files).length : null
+  const numberOfGhosts =
+    props.files ?
+      Object.keys(props.files).filter((fileID) => props.files[fileID].isGhost)
+        .length
+    : null
 
   const renderRestoredText = () => {
     if (numberOfGhosts! > 0) {
@@ -81,10 +87,16 @@ export default function Dashboard (props) {
       className={dashboardClassName}
       data-uppy-theme={props.theme}
       data-uppy-num-acquirers={props.acquirers.length}
-      data-uppy-drag-drop-supported={!props.disableLocalFiles && isDragDropSupported()}
+      data-uppy-drag-drop-supported={
+        !props.disableLocalFiles && isDragDropSupported()
+      }
       aria-hidden={props.inline ? 'false' : props.isHidden}
       aria-disabled={props.disabled}
-      aria-label={!props.inline ? props.i18n('dashboardWindowTitle') : props.i18n('dashboardTitle')}
+      aria-label={
+        !props.inline ?
+          props.i18n('dashboardWindowTitle')
+        : props.i18n('dashboardTitle')
+      }
       onPaste={props.handlePaste}
       onDragOver={props.handleDragOver}
       onDragLeave={props.handleDragLeave}
@@ -106,8 +118,7 @@ export default function Dashboard (props) {
           height: props.inline && props.height ? props.height : '',
         }}
       >
-
-        {!props.inline ? (
+        {!props.inline ?
           <button
             className="uppy-u-reset uppy-Dashboard-close"
             type="button"
@@ -117,7 +128,7 @@ export default function Dashboard (props) {
           >
             <span aria-hidden="true">&times;</span>
           </button>
-        ) : null}
+        : null}
 
         <div className="uppy-Dashboard-innerWrap">
           <div className="uppy-Dashboard-dropFilesHereHint">
@@ -129,9 +140,19 @@ export default function Dashboard (props) {
 
           {numberOfFilesForRecovery && (
             <div className="uppy-Dashboard-serviceMsg">
-              <svg className="uppy-Dashboard-serviceMsg-icon" aria-hidden="true" focusable="false" width="21" height="16" viewBox="0 0 24 19">
+              <svg
+                className="uppy-Dashboard-serviceMsg-icon"
+                aria-hidden="true"
+                focusable="false"
+                width="21"
+                height="16"
+                viewBox="0 0 24 19"
+              >
                 <g transform="translate(0 -1)" fill="none" fillRule="evenodd">
-                  <path d="M12.857 1.43l10.234 17.056A1 1 0 0122.234 20H1.766a1 1 0 01-.857-1.514L11.143 1.429a1 1 0 011.714 0z" fill="#FFD300" />
+                  <path
+                    d="M12.857 1.43l10.234 17.056A1 1 0 0122.234 20H1.766a1 1 0 01-.857-1.514L11.143 1.429a1 1 0 011.714 0z"
+                    fill="#FFD300"
+                  />
                   <path fill="#000" d="M11 6h2l-.3 8h-1.4z" />
                   <circle fill="#000" cx="12" cy="17" r="1" />
                 </g>
@@ -145,60 +166,70 @@ export default function Dashboard (props) {
             </div>
           )}
 
-          {showFileList ? (
-            <FileList
-              id={props.id}
-              error={props.error}
-              i18n={props.i18n}
-              uppy={props.uppy}
-              files={props.files}
-              acquirers={props.acquirers}
-              resumableUploads={props.resumableUploads}
-              hideRetryButton={props.hideRetryButton}
-              hidePauseResumeButton={props.hidePauseResumeButton}
-              hideCancelButton={props.hideCancelButton}
-              showLinkToFileUploadResult={props.showLinkToFileUploadResult}
-              showRemoveButtonAfterComplete={props.showRemoveButtonAfterComplete}
-              isWide={props.isWide}
-              metaFields={props.metaFields}
-              toggleFileCard={props.toggleFileCard}
-              handleRequestThumbnail={props.handleRequestThumbnail}
-              handleCancelThumbnail={props.handleCancelThumbnail}
-              recoveredState={props.recoveredState}
-              individualCancellation={props.individualCancellation}
-              openFileEditor={props.openFileEditor}
-              canEditFile={props.canEditFile}
-              toggleAddFilesPanel={props.toggleAddFilesPanel}
-              isSingleFile={isSingleFile}
-              itemsPerRow={itemsPerRow}
-            />
-          ) : (
-            // eslint-disable-next-line react/jsx-props-no-spreading
-            <AddFiles {...props} isSizeMD={isSizeMD} />
-          )}
+          {
+            showFileList ?
+              <FileList
+                id={props.id}
+                error={props.error}
+                i18n={props.i18n}
+                uppy={props.uppy}
+                files={props.files}
+                acquirers={props.acquirers}
+                resumableUploads={props.resumableUploads}
+                hideRetryButton={props.hideRetryButton}
+                hidePauseResumeButton={props.hidePauseResumeButton}
+                hideCancelButton={props.hideCancelButton}
+                showLinkToFileUploadResult={props.showLinkToFileUploadResult}
+                showRemoveButtonAfterComplete={
+                  props.showRemoveButtonAfterComplete
+                }
+                isWide={props.isWide}
+                metaFields={props.metaFields}
+                toggleFileCard={props.toggleFileCard}
+                handleRequestThumbnail={props.handleRequestThumbnail}
+                handleCancelThumbnail={props.handleCancelThumbnail}
+                recoveredState={props.recoveredState}
+                individualCancellation={props.individualCancellation}
+                openFileEditor={props.openFileEditor}
+                canEditFile={props.canEditFile}
+                toggleAddFilesPanel={props.toggleAddFilesPanel}
+                isSingleFile={isSingleFile}
+                itemsPerRow={itemsPerRow}
+              />
+              // eslint-disable-next-line react/jsx-props-no-spreading
+            : <AddFiles {...props} isSizeMD={isSizeMD} />
+          }
 
           <Slide>
             {/* eslint-disable-next-line react/jsx-props-no-spreading */}
-            {props.showAddFilesPanel ? <AddFilesPanel key="AddFiles" {...props} isSizeMD={isSizeMD} /> : null}
+            {props.showAddFilesPanel ?
+              <AddFilesPanel key="AddFiles" {...props} isSizeMD={isSizeMD} />
+            : null}
           </Slide>
 
           <Slide>
             {/* eslint-disable-next-line react/jsx-props-no-spreading */}
-            {props.fileCardFor ? <FileCard key="FileCard" {...props} /> : null}
+            {props.fileCardFor ?
+              <FileCard key="FileCard" {...props} />
+            : null}
           </Slide>
 
           <Slide>
             {/* eslint-disable-next-line react/jsx-props-no-spreading */}
-            {props.activePickerPanel ? <PickerPanelContent key="Picker" {...props} /> : null}
+            {props.activePickerPanel ?
+              <PickerPanelContent key="Picker" {...props} />
+            : null}
           </Slide>
 
           <Slide>
             {/* eslint-disable-next-line react/jsx-props-no-spreading */}
-            {props.showFileEditor ? <EditorPanel key="Editor" {...props} /> : null}
+            {props.showFileEditor ?
+              <EditorPanel key="Editor" {...props} />
+            : null}
           </Slide>
 
           <div className="uppy-Dashboard-progressindicators">
-            {props.progressindicators.map((target) => {
+            {props.progressindicators.map((target: $TSFixMe) => {
               return props.uppy.getPlugin(target.id).render(props.state)
             })}
           </div>
