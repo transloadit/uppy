@@ -27391,10 +27391,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"resize-observer-polyfill@npm:^1.5.0, resize-observer-polyfill@npm:^1.5.1":
+"resize-observer-polyfill@npm:1.5.1":
   version: 1.5.1
   resolution: "resize-observer-polyfill@npm:1.5.1"
   checksum: 57e7f79489867b00ba43c9c051524a5c8f162a61d5547e99333549afc23e15c44fd43f2f318ea0261ea98c0eb3158cca261e6f48d66e1ed1cd1f340a43977094
+  languageName: node
+  linkType: hard
+
+"resize-observer-polyfill@patch:resize-observer-polyfill@npm%3A1.5.1#./.yarn/patches/resize-observer-polyfill-npm-1.5.1-603120e8a0.patch::locator=%40uppy-dev%2Fbuild%40workspace%3A.":
+  version: 1.5.1
+  resolution: "resize-observer-polyfill@patch:resize-observer-polyfill@npm%3A1.5.1#./.yarn/patches/resize-observer-polyfill-npm-1.5.1-603120e8a0.patch::version=1.5.1&hash=9a18c0&locator=%40uppy-dev%2Fbuild%40workspace%3A."
+  checksum: 77fe421d8aeb31ec823494ed7c7f5011fcdf83a6abba9020834c2f5c2e1e79ddf5d95e8db16b85d17022b59816553cd1749f9b00ab5522e766ccb5641338f2fe
   languageName: node
   linkType: hard
 
