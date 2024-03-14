@@ -132,7 +132,7 @@ export type UnknownSearchProviderPlugin<
   provider: CompanionClientSearchProvider
 }
 
-interface UploadResult<M extends Meta, B extends Body> {
+export interface UploadResult<M extends Meta, B extends Body> {
   successful?: UppyFile<M, B>[]
   failed?: UppyFile<M, B>[]
   uploadID?: string
@@ -156,10 +156,12 @@ export interface State<M extends Meta, B extends Body>
     uploadProgress: boolean
     individualCancellation: boolean
     resumableUploads: boolean
+    isMobileDevice?: boolean
+    darkMode?: boolean
   }
   currentUploads: Record<string, CurrentUpload<M, B>>
   allowNewUpload: boolean
-  recoveredState: null | State<M, B>
+  recoveredState: null | Required<Pick<State<M, B>, 'files' | 'currentUploads'>>
   error: string | null
   files: {
     [key: string]: UppyFile<M, B>
@@ -317,8 +319,9 @@ export interface _UppyEventMap<M extends Meta, B extends Body> {
   'preprocess-progress': PreProcessProgressCallback<M, B>
   progress: ProgressCallback
   'reset-progress': GenericEventCallback
-  restored: GenericEventCallback
+  restored: (pluginData: any) => void
   'restore-confirmed': GenericEventCallback
+  'restore-canceled': GenericEventCallback
   'restriction-failed': RestrictionFailedCallback<M, B>
   'resume-all': GenericEventCallback
   'retry-all': RetryAllCallback
@@ -635,7 +638,7 @@ export class Uppy<M extends Meta, B extends Body> {
 
   // @todo next major: rename to `clear()`, make it also cancel ongoing uploads
   // or throw and say you need to cancel manually
-  protected clearUploadedFiles(): void {
+  clearUploadedFiles(): void {
     this.setState({ ...defaultUploadState, files: {} })
   }
 
@@ -1713,7 +1716,7 @@ export class Uppy<M extends Meta, B extends Body> {
 
   #updateOnlineStatus = this.updateOnlineStatus.bind(this)
 
-  getID(): UppyOptions<M, B>['id'] {
+  getID(): string {
     return this.opts.id
   }
 
