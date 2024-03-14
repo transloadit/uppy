@@ -132,7 +132,7 @@ export type UnknownSearchProviderPlugin<
   provider: CompanionClientSearchProvider
 }
 
-interface UploadResult<M extends Meta, B extends Body> {
+export interface UploadResult<M extends Meta, B extends Body> {
   successful?: UppyFile<M, B>[]
   failed?: UppyFile<M, B>[]
   uploadID?: string
@@ -156,6 +156,8 @@ export interface State<M extends Meta, B extends Body>
     uploadProgress: boolean
     individualCancellation: boolean
     resumableUploads: boolean
+    isMobileDevice?: boolean
+    darkMode?: boolean
   }
   currentUploads: Record<string, CurrentUpload<M, B>>
   allowNewUpload: boolean
