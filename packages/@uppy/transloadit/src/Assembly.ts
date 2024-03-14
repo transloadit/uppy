@@ -248,7 +248,8 @@ class TransloaditAssembly extends Emitter {
     Object.keys(next.uploads)
       .filter((upload) => !has(prev.uploads, upload))
       .forEach((upload) => {
-        // @ts-expect-error either the types are wrong or the tests are wrong.
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore either the types are wrong or the tests are wrong.
         // types think next.uploads is an array, but the tests pass an object.
         this.emit('upload', next.uploads[upload])
       })
