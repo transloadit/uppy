@@ -112,7 +112,7 @@ export default function Dashboard(props: $TSFixMe): JSX.Element {
       <div
         className="uppy-Dashboard-inner"
         aria-modal={!props.inline && 'true'}
-        role={!props.inline && 'dialog'}
+        role={props.inline ? undefined : 'dialog'}
         style={{
           width: props.inline && props.width ? props.width : '',
           height: props.inline && props.height ? props.height : '',
