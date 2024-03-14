@@ -1,3 +1,4 @@
+import type { UppyFile } from '@uppy/utils/lib/UppyFile'
 import { h } from 'preact'
 
 type $TSFixMe = any
@@ -16,7 +17,7 @@ function getUploadingState(
   isAllErrored: $TSFixMe,
   isAllComplete: $TSFixMe,
   isAllPaused: $TSFixMe,
-  files = {},
+  files: Record<string, UppyFile<any, any>> = {},
 ): $TSFixMe {
   if (isAllErrored) {
     return uploadStates.STATE_ERROR
@@ -33,7 +34,7 @@ function getUploadingState(
   let state = uploadStates.STATE_WAITING
   const fileIDs = Object.keys(files)
   for (let i = 0; i < fileIDs.length; i++) {
-    const { progress } = files[fileIDs[i]]
+    const { progress } = files[fileIDs[i] as keyof typeof files]
     // If ANY files are being uploaded right now, show the uploading state.
     if (progress.uploadStarted && !progress.uploadComplete) {
       return uploadStates.STATE_UPLOADING

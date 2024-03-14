@@ -1,5 +1,7 @@
 import { h } from 'preact'
 import { useMemo } from 'preact/hooks'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore untyped
 import VirtualList from '@uppy/utils/lib/VirtualList'
 import FileItem from './FileItem/index.tsx'
 

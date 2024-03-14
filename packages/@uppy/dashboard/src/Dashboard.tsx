@@ -101,14 +101,14 @@ interface TargetWithRender extends Target {
   render: () => ComponentChild
 }
 
-interface DashboardState {
+interface DashboardState<M extends Meta, B extends Body> {
   targets: Target[]
   activePickerPanel: Target | undefined
   showAddFilesPanel: boolean
   activeOverlayType: string | null
   fileCardFor: string | null
   showFileEditor: boolean
-  metaFields?: MetaField[]
+  metaFields?: MetaField[] | ((file: UppyFile<M, B>) => MetaField[])
   [key: string]: unknown
 }
 
@@ -213,7 +213,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
   DefinePluginOpts<DashboardOptions<M, B>, keyof typeof defaultOptions>,
   M,
   B,
-  DashboardState
+  DashboardState<M, B>
 > {
   static VERSION = packageJson.version
 

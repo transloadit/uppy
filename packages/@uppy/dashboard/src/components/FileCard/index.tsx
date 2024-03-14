@@ -34,7 +34,7 @@ export default function FileCard(props: $TSFixMe): JSX.Element {
   const computedMetaFields = getMetaFields() ?? []
   const showEditButton = canEditFile(file)
 
-  const storedMetaData = {}
+  const storedMetaData: Record<string, string> = {}
   computedMetaFields.forEach((field: $TSFixMe) => {
     storedMetaData[field.id] = file.meta[field.id] ?? ''
   })
