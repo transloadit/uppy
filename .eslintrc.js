@@ -340,6 +340,7 @@ module.exports = {
     {
       files: [
         '*.test.js',
+        '*.test.ts',
         'test/endtoend/*.js',
         'bin/**.js',
       ],
