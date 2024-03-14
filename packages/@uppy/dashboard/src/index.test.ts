@@ -13,11 +13,14 @@ import Url from '@uppy/url'
 import resizeObserverPolyfill from 'resize-observer-polyfill'
 import DashboardPlugin from './index.ts'
 
+type $TSFixMe = any
+
 describe('Dashboard', () => {
   beforeAll(() => {
-    // @ts-expect-error we're touching globals for the test
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore we're touching globals for the test
     globalThis.ResizeObserver =
-      resizeObserverPolyfill.default || resizeObserverPolyfill
+      (resizeObserverPolyfill as any).default || resizeObserverPolyfill
   })
   afterAll(() => {
     // @ts-expect-error we're touching globals for the test
@@ -56,7 +59,7 @@ describe('Dashboard', () => {
         target: 'body',
       })
       core.use(GoogleDrivePlugin, {
-        target: DashboardPlugin,
+        target: DashboardPlugin as $TSFixMe,
         companionUrl: 'https://fake.uppy.io/',
       })
     }).not.toThrow()
@@ -86,7 +89,7 @@ describe('Dashboard', () => {
     core.use(WebcamPlugin)
 
     const dashboardPlugins = core.getState().plugins['Dashboard']!
-      .targets as UIPlugin[]
+      .targets as UIPlugin<any,any,any>[]
 
     // two built-in plugins + these ones below
     expect(dashboardPlugins.length).toEqual(4)
@@ -106,7 +109,7 @@ describe('Dashboard', () => {
     core.use(WebcamPlugin, { target: 'body' })
 
     const dashboardPlugins = core.getState().plugins['Dashboard']!
-      .targets as UIPlugin[]
+      .targets as UIPlugin<any,any,any>[]
 
     // two built-in plugins + these ones below
     expect(dashboardPlugins.length).toEqual(3)
