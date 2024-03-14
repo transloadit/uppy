@@ -286,9 +286,7 @@ class TransloaditAssembly extends Emitter {
       this.#sse.close()
       this.#sse = null
     }
-    if (this.pollInterval) {
-      clearInterval(this.pollInterval)
-    }
+    clearInterval(this.pollInterval!)
     this.pollInterval = null
   }
 }
