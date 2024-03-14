@@ -1,4 +1,10 @@
-import { UIPlugin, type UIPluginOptions, type UnknownPlugin, type Uppy, type GenericEventCallback } from '@uppy/core'
+import {
+  UIPlugin,
+  type UIPluginOptions,
+  type UnknownPlugin,
+  type Uppy,
+  type GenericEventCallback,
+} from '@uppy/core'
 import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin.ts'
 import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
 import StatusBar from '@uppy/status-bar'
@@ -21,24 +27,28 @@ import packageJson from '../package.json'
 import locale from './locale.ts'
 
 export type DashboardFileEditStartCallback<M extends Meta, B extends Body> = (
-  file?: UppyFile<M , B >,
+  file?: UppyFile<M, B>,
 ) => void
-export type DashboardFileEditCompleteCallback<M extends Meta, B extends Body> = (file?: UppyFile<M, B>) => void
+export type DashboardFileEditCompleteCallback<
+  M extends Meta,
+  B extends Body,
+> = (file?: UppyFile<M, B>) => void
 export type DashboardShowPlanelCallback = (id: string) => void
 declare module '@uppy/core' {
   export interface UppyEventMap<M extends Meta, B extends Body> {
     'dashboard:modal-open': GenericEventCallback
     'dashboard:modal-closed': GenericEventCallback
     'dashboard:show-panel': DashboardShowPlanelCallback
-    'dashboard:file-edit-start': DashboardFileEditStartCallback<M,B>
-    'dashboard:file-edit-complete': DashboardFileEditCompleteCallback<M,B>
+    'dashboard:file-edit-start': DashboardFileEditStartCallback<M, B>
+    'dashboard:file-edit-complete': DashboardFileEditCompleteCallback<M, B>
+    'dashboard:close-panel': GenericEventCallback
   }
 }
 
 interface PromiseWithResolvers<T> {
-  promise: Promise<T>;
-  resolve: (value: T | PromiseLike<T>) => void;
-  reject: (reason?: any) => void;
+  promise: Promise<T>
+  resolve: (value: T | PromiseLike<T>) => void
+  reject: (reason?: any) => void
 }
 
 const memoize = ((memoizeOne as any).default as false) || memoizeOne
@@ -46,8 +56,8 @@ const memoize = ((memoizeOne as any).default as false) || memoizeOne
 const TAB_KEY = 9
 const ESC_KEY = 27
 
-function createPromise<T>(): ReturnType<PromiseWithResolvers<T>> {
-  const o = {} as ReturnType<PromiseWithResolvers<T>>
+function createPromise<T>(): PromiseWithResolvers<T> {
+  const o = {} as PromiseWithResolvers<T>
   o.promise = new Promise<T>((resolve, reject) => {
     o.resolve = resolve
     o.reject = reject
@@ -76,6 +86,22 @@ interface MetaField {
   render?: (field: FieldRenderOptions, h: PreactRender) => any
 }
 
+interface Target {
+  id: string
+  name: string
+  type: string
+}
+
+interface DashboardState {
+  targets: Target[]
+  activePickerPanel: Target | undefined
+  showAddFilesPanel: boolean
+  activeOverlayType: string | null
+  fileCardFor: string | null
+  showFileEditor: boolean
+  [key: string]: unknown
+}
+
 interface DashboardOptions<M extends Meta, B extends Body>
   extends UIPluginOptions {
   animateOpenClose?: boolean
@@ -88,6 +114,10 @@ interface DashboardOptions<M extends Meta, B extends Body>
   disableStatusBar?: boolean
   disableThumbnailGenerator?: boolean
   height?: string | number
+  thumbnailWidth?: number
+  thumbnailType?: string
+  waitForThumbnailsBeforeUpload: boolean
+  defaultPickerIcon: typeof defaultPickerIcon
   hideCancelButton?: boolean
   hidePauseResumeButton?: boolean
   hideProgressAfterFinish?: boolean
@@ -122,7 +152,6 @@ interface DashboardOptions<M extends Meta, B extends Body>
 const defaultOptions = {
   target: 'body',
   metaFields: [],
-  trigger: null,
   inline: false,
   width: 750,
   height: 550,
@@ -137,10 +166,6 @@ const defaultOptions = {
   hideRetryButton: false,
   hidePauseResumeButton: false,
   hideProgressAfterFinish: false,
-  doneButtonHandler: () => {
-    this.uppy.clearUploadedFiles()
-    this.requestCloseModal()
-  },
   note: null,
   closeModalOnClickOutside: false,
   closeAfterFinish: false,
@@ -152,7 +177,6 @@ const defaultOptions = {
   animateOpenClose: true,
   fileManagerSelectionType: 'files',
   proudlyDisplayPoweredByUppy: true,
-  onRequestCloseModal: () => this.closeModal(),
   showSelectedFiles: true,
   showRemoveButtonAfterComplete: false,
   browserBackButtonClose: false,
@@ -162,6 +186,12 @@ const defaultOptions = {
   autoOpenFileEditor: false,
   disabled: false,
   disableLocalFiles: false,
+
+  // Dynamic default options, they have to be defined in the constructor (because
+  // they require access to the `this` keyword), but we still want them to
+  // appear in the default options so TS knows they'll be defined.
+  doneButtonHandler: null as any,
+  onRequestCloseModal: null as any,
 } satisfies Partial<DashboardOptions<any, any>>
 
 /**
@@ -170,29 +200,42 @@ const defaultOptions = {
 export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
   DefinePluginOpts<DashboardOptions<M, B>, keyof typeof defaultOptions>,
   M,
-  B
+  B,
+  DashboardState
 > {
   static VERSION = packageJson.version
 
   #disabledNodes = null
 
-  constructor(uppy: Uppy<M, B>, opts?: DashboardOptions) {
+  private modalName = `uppy-Dashboard-${nanoid()}`
+
+  private superFocus = createSuperFocus()
+
+  private ifFocusedOnUppyRecently = false
+
+  // Timeouts
+  private makeDashboardInsidesVisibleAnywayTimeout: ReturnType<
+    typeof setTimeout
+  >
+
+  private removeDragOverClassTimeout: ReturnType<typeof setTimeout>
+
+  constructor(uppy: Uppy<M, B>, opts?: DashboardOptions<M, B>) {
     super(uppy, { ...defaultOptions, ...opts })
     this.id = this.opts.id || 'Dashboard'
     this.title = 'Dashboard'
     this.type = 'orchestrator'
-    this.modalName = `uppy-Dashboard-${nanoid()}`
 
     this.defaultLocale = locale
 
+    // Dynamic default options:
+    this.opts.doneButtonHandler ??= () => {
+      this.uppy.clearUploadedFiles()
+      this.requestCloseModal()
+    }
+    this.opts.onRequestCloseModal ??= () => this.closeModal()
+
     this.i18nInit()
-
-    this.superFocus = createSuperFocus()
-    this.ifFocusedOnUppyRecently = false
-
-    // Timeouts
-    this.makeDashboardInsidesVisibleAnywayTimeout = null
-    this.removeDragOverClassTimeout = null
   }
 
   removeTarget = (plugin: UnknownPlugin<M, B>): void => {
@@ -207,9 +250,10 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     })
   }
 
-  addTarget = (plugin: UnknownPlugin<M, B>): HTMLElement|null => {
+  addTarget = (plugin: UnknownPlugin<M, B>): HTMLElement | null => {
     const callerPluginId = plugin.id || plugin.constructor.name
-    const callerPluginName = plugin.title || callerPluginId
+    const callerPluginName =
+      (plugin as any as { title: string }).title || callerPluginId
     const callerPluginType = plugin.type
 
     if (
@@ -220,7 +264,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
       const msg =
         'Dashboard: can only be targeted by plugins of types: acquirer, progressindicator, editor'
       this.uppy.log(msg, 'error')
-      return undefined
+      return null
     }
 
     const target = {
@@ -243,7 +287,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
   hideAllPanels = (): void => {
     const state = this.getPluginState()
     const update = {
-      activePickerPanel: false,
+      activePickerPanel: undefined,
       showAddFilesPanel: false,
       activeOverlayType: null,
       fileCardFor: null,
@@ -262,15 +306,15 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
 
     this.setPluginState(update)
 
-    this.uppy.emit('dashboard:close-panel', state.activePickerPanel.id)
+    this.uppy.emit('dashboard:close-panel', state.activePickerPanel?.id)
   }
 
   showPanel = (id: string): void => {
     const { targets } = this.getPluginState()
 
-    const activePickerPanel = targets.filter((target) => {
+    const activePickerPanel = targets.find((target) => {
       return target.type === 'acquirer' && target.id === id
-    })[0]
+    })
 
     this.setPluginState({
       activePickerPanel,
@@ -372,7 +416,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     return promise
   }
 
-  closeModal = (opts = {}): void|Promise<void> => {
+  closeModal = (opts = {}): void | Promise<void> => {
     const {
       // Whether the modal is being closed by the user (`true`) or by other means (e.g. browser back button)
       manualClose = true,
@@ -442,14 +486,14 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     return !this.getPluginState().isHidden || false
   }
 
-  requestCloseModal = (): void|Promise<void> => {
+  requestCloseModal = (): void | Promise<void> => {
     if (this.opts.onRequestCloseModal) {
       return this.opts.onRequestCloseModal()
     }
     return this.closeModal()
   }
 
-  setDarkModeCapability = (isDarkModeOn: boolean):void => {
+  setDarkModeCapability = (isDarkModeOn: boolean): void => {
     const { capabilities } = this.uppy.getState()
     this.uppy.setState({
       capabilities: {
@@ -1218,7 +1262,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
       fileCardFor: null,
       activeOverlayType: null,
       showAddFilesPanel: false,
-      activePickerPanel: false,
+      activePickerPanel: undefined,
       showFileEditor: false,
       metaFields: this.opts.metaFields,
       targets: [],
