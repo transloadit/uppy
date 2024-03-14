@@ -15,7 +15,7 @@ const renderDot = (): string => ` ${DOT} `
 interface UploadBtnProps<M extends Meta, B extends Body> {
   newFiles: number
   isUploadStarted: boolean
-  recoveredState: null | State<M, B>
+  recoveredState: State<M, B>['recoveredState']
   i18n: I18n
   uploadState: string
   isSomeGhost: boolean
