@@ -36,8 +36,6 @@ type RestTusUploadOptions = Omit<
   'onShouldRetry' | 'onBeforeRequest' | 'headers'
 >
 
-export type TusDetailedError = tus.DetailedError
-
 export interface TusOpts<M extends Meta, B extends Body>
   extends PluginOpts,
     RestTusUploadOptions {

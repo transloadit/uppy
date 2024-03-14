@@ -157,8 +157,6 @@ class TransloaditAssembly extends Emitter {
    * 'status'.
    */
   async #fetchStatus({ diff = true } = {}) {
-    console.log('fetchStatus')
-
     if (
       this.closed ||
       this.#rateLimitedQueue.isPaused ||
@@ -246,16 +244,12 @@ class TransloaditAssembly extends Emitter {
       this.emit('executing')
     }
 
-    // Find new uploaded files.
-    Object.keys(next.uploads)
-      .filter((upload) => !has(prev.uploads, upload))
-      .forEach((upload) => {
-        // TODO: what should this be?
-        // We can't use a random string to index an array.
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore this is a mistake
-        this.emit('upload', next.uploads[upload])
-      })
+    // Only emit if the upload is new (not in prev.uploads).
+    for (const upload of next.uploads) {
+      if (prev.uploads.findIndex(({ id }) => id === upload.id) === -1) {
+        this.emit('upload', upload)
+      }
+    }
 
     if (nowExecuting) {
       this.emit('metadata')

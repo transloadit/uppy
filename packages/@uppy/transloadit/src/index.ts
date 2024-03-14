@@ -10,7 +10,7 @@ import Assembly from './Assembly.ts'
 import Client, { AssemblyError } from './Client.ts'
 import AssemblyOptionsBuilder, {
   validateParams,
-  type OptionsWithRestructedFields,
+  type OptionsWithRestructuredFields,
 } from './AssemblyOptions.ts'
 import AssemblyWatcher from './AssemblyWatcher.ts'
 
@@ -231,6 +231,7 @@ type TransloaditState = {
 }
 
 declare module '@uppy/core' {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   export interface UppyEventMap<M extends Meta, B extends Body> {
     // We're also overriding the `restored` event as it is now populated with Transloadit state.
     restored: (pluginData: Record<string, TransloaditState>) => void
@@ -448,7 +449,7 @@ export default class Transloadit<
   #createAssembly(
     fileIDs: string[],
     uploadID: string,
-    assemblyOptions: OptionsWithRestructedFields,
+    assemblyOptions: OptionsWithRestructuredFields,
   ) {
     this.uppy.log('[Transloadit] Create Assembly')
 
@@ -976,7 +977,7 @@ export default class Transloadit<
       options,
     }: {
       fileIDs: string[]
-      options: OptionsWithRestructedFields
+      options: OptionsWithRestructuredFields
     }) => {
       try {
         const assembly = (await this.#createAssembly(

@@ -30,7 +30,7 @@ function validateParams(params?: AssemblyParameters | null): void {
     )
   }
 }
-export type OptionsWithRestructedFields = Omit<Options, 'fields'> & {
+export type OptionsWithRestructuredFields = Omit<Options, 'fields'> & {
   fields: Record<string, string | number>
 }
 
@@ -40,16 +40,16 @@ export type OptionsWithRestructedFields = Omit<Options, 'fields'> & {
  */
 function dedupe(
   list: Array<
-    { fileIDs: string[]; options: OptionsWithRestructedFields } | undefined
+    { fileIDs: string[]; options: OptionsWithRestructuredFields } | undefined
   >,
 ) {
   const dedupeMap: Record<
     string,
-    { fileIDArrays: string[][]; options: OptionsWithRestructedFields }
+    { fileIDArrays: string[][]; options: OptionsWithRestructuredFields }
   > = Object.create(null)
   for (const { fileIDs, options } of list.filter(Boolean) as Array<{
     fileIDs: string[]
-    options: OptionsWithRestructedFields
+    options: OptionsWithRestructuredFields
   }>) {
     const id = JSON.stringify(options)
     if (id in dedupeMap) {
@@ -71,11 +71,11 @@ function dedupe(
 async function getAssemblyOptions<M extends Meta, B extends Body>(
   file: UppyFile<M, B> | null,
   options: Opts<M, B>,
-): Promise<OptionsWithRestructedFields> {
+): Promise<OptionsWithRestructuredFields> {
   const assemblyOptions = (
     typeof options.assemblyOptions === 'function' ?
       await options.assemblyOptions(file, options)
-    : options.assemblyOptions) as OptionsWithRestructedFields
+    : options.assemblyOptions) as OptionsWithRestructuredFields
 
   validateParams(assemblyOptions.params)
 
@@ -115,17 +115,14 @@ class AssemblyOptions<M extends Meta, B extends Body> {
    *  - options - Assembly options
    */
   async build(): Promise<
-    { fileIDs: string[]; options: OptionsWithRestructedFields }[]
+    { fileIDs: string[]; options: OptionsWithRestructuredFields }[]
   > {
-    console.log('>>> before', this.opts)
     const options = this.opts
 
     if (this.files.length > 0) {
       return Promise.all(
         this.files.map(async (file) => {
           if (file == null) return undefined
-
-          console.log('>>> build', options)
 
           const assemblyOptions = await getAssemblyOptions(file, options)
 

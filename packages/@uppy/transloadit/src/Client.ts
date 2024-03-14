@@ -4,9 +4,8 @@ import type {
 } from '@uppy/utils/lib/RateLimitedQueue'
 import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
 import fetchWithNetworkError from '@uppy/utils/lib/fetchWithNetworkError'
-import type { TusDetailedError } from '@uppy/tus'
 import type { AssemblyResponse } from '.'
-import type { OptionsWithRestructedFields } from './AssemblyOptions'
+import type { OptionsWithRestructuredFields } from './AssemblyOptions'
 
 const ASSEMBLIES_ENDPOINT = '/assemblies'
 
@@ -104,7 +103,7 @@ export default class Client<M extends Meta, B extends Body> {
     fields,
     signature,
     expectedFiles,
-  }: OptionsWithRestructedFields & {
+  }: OptionsWithRestructuredFields & {
     expectedFiles: number
   }): Promise<AssemblyResponse> {
     const data = new FormData()
