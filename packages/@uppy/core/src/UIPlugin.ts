@@ -137,7 +137,7 @@ class UIPlugin<
 
       this.onMount()
 
-      return this.el
+      return this.el!
     }
 
     const targetPlugin = this.getTargetPlugin(target)
@@ -148,7 +148,7 @@ class UIPlugin<
       this.el = targetPlugin.addTarget(plugin)
 
       this.onMount()
-      return this.el
+      return this.el!
     }
 
     this.uppy.log(`Not installing ${callerPluginName}`)
