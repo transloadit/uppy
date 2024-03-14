@@ -637,7 +637,7 @@ export class Uppy<M extends Meta, B extends Body> {
 
   // @todo next major: rename to `clear()`, make it also cancel ongoing uploads
   // or throw and say you need to cancel manually
-  protected clearUploadedFiles(): void {
+  clearUploadedFiles(): void {
     this.setState({ ...defaultUploadState, files: {} })
   }
 
