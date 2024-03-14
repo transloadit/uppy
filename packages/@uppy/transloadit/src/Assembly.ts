@@ -245,11 +245,13 @@ class TransloaditAssembly extends Emitter {
     }
 
     // Only emit if the upload is new (not in prev.uploads).
-    for (const upload of next.uploads) {
-      if (prev.uploads.findIndex(({ id }) => id === upload.id) === -1) {
-        this.emit('upload', upload)
-      }
-    }
+    Object.keys(next.uploads)
+      .filter((upload) => !has(prev.uploads, upload))
+      .forEach((upload) => {
+        // @ts-expect-error either the types are wrong or the tests are wrong.
+        // types think next.uploads is an array, but the tests pass an object.
+        this.emit('upload', next.uploads[upload])
+      })
 
     if (nowExecuting) {
       this.emit('metadata')
