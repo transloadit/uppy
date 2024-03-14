@@ -1,6 +1,7 @@
 export { default } from './Uppy.ts'
 export {
   default as Uppy,
+  type UploadResult,
   type UppyEventMap,
   type State,
   type UnknownPlugin,
