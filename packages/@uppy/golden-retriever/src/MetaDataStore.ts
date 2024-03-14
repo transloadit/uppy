@@ -17,7 +17,7 @@ function findUppyInstances(): string[] {
   const instances: string[] = []
   for (let i = 0; i < localStorage.length; i++) {
     const key = localStorage.key(i)
-    if (key && key.startsWith('uppyState:')) {
+    if (key?.startsWith('uppyState:')) {
       instances.push(key.slice('uppyState:'.length))
     }
   }
