@@ -38,13 +38,12 @@ class Slide extends Component {
     }
   }
 
-  // TODO: refactor to stable lifecycle method
-  // eslint-disable-next-line
-  componentWillUpdate(nextProps: $TSFixMe) {
-    const { cachedChildren } = this.state as $TSFixMe
-    const child = toChildArray(nextProps.children)[0]
+  componentDidUpdate() {
+    const { cachedChildren } = this.state
+    const child = toChildArray(this.props.children)[0]
 
-    if (cachedChildren === child) return null
+    // Check if children have changed
+    if (cachedChildren === child) return
 
     const patch = {
       cachedChildren: child,
@@ -61,7 +60,6 @@ class Slide extends Component {
       this.animationFrame = requestAnimationFrame(() => {
         // Force it to render before we add the active class
         // this.base.getBoundingClientRect()
-
         this.setState({
           className: `${transitionName}-enter ${transitionName}-enter-active`,
         })
@@ -80,6 +78,7 @@ class Slide extends Component {
       cancelAnimationFrame(this.animationFrame)
       clearTimeout(this.enterTimeout)
       this.enterTimeout = undefined
+  
       this.animationFrame = requestAnimationFrame(() => {
         this.setState({
           className: `${transitionName}-leave ${transitionName}-leave-active`,
@@ -94,7 +93,7 @@ class Slide extends Component {
       })
     }
 
-    requestAnimationFrame(() => this.setState(patch))
+    this.setState(patch)
   }
 
   render(): ComponentChild {
