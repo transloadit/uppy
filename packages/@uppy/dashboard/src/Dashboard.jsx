@@ -89,6 +89,7 @@ export default class Dashboard extends UIPlugin {
       showNativeVideoCameraButton: false,
       theme: 'light',
       autoOpenFileEditor: false,
+      autoOpenView: 'meta',
       disabled: false,
       disableLocalFiles: false,
     }
@@ -752,8 +753,9 @@ export default class Dashboard extends UIPlugin {
     const {metaFields} = this.getPluginState()
     const isMetaEditorEnabled = metaFields && metaFields.length > 0
     const isFileEditorEnabled = this.canEditFile(firstFile)
+    const defaultView = this.opts.autoOpenView === 'meta' ? 'meta' : 'editor';
 
-    if (isMetaEditorEnabled) {
+    if (isMetaEditorEnabled && defaultView === 'meta') {
       this.toggleFileCard(true, firstFile.id)
     } else if (isFileEditorEnabled) {
       this.openFileEditor(firstFile)
