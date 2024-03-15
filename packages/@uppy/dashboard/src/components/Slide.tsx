@@ -94,8 +94,7 @@ class Slide extends Component {
       })
     }
 
-    // eslint-disable-next-line
-    this.setState(patch)
+    requestAnimationFrame(() => this.setState(patch))
   }
 
   render(): ComponentChild {

@@ -272,7 +272,7 @@ class AddFiles extends Component {
           tabIndex={0}
           data-cy={acquirer.id}
           aria-controls={`uppy-DashboardContent-panel--${acquirer.id}`}
-          aria-selected={this.props.activePickerPanel.id === acquirer.id}
+          aria-selected={this.props.activePickerPanel?.id === acquirer.id}
           data-uppy-super-focusable
           onClick={() => this.props.showPanel(acquirer.id)}
         >
