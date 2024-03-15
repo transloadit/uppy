@@ -1,9 +1,10 @@
 import {
   cloneElement,
-  Component,
   toChildArray,
   type ComponentChild,
+  type VNode,
 } from 'preact'
+import { useEffect, useState, useRef } from 'preact/hooks'
 import classNames from 'classnames'
 
 type $TSFixMe = any
@@ -20,93 +21,74 @@ const duration = 250
  * but it should be simple to extend this for any type of single-element
  * transition by setting the CSS name and duration as props.
  */
-class Slide extends Component {
-  animationFrame: $TSFixMe
+function Slide({ children }: $TSFixMe): JSX.Element | null {
+  const [cachedChildren, setCachedChildren] = useState<VNode<{
+    className?: string
+  }> | null>(null)
+  const [className, setClassName] = useState('')
+  const enterTimeoutRef = useRef<ReturnType<typeof setTimeout>>()
+  const leaveTimeoutRef = useRef<ReturnType<typeof setTimeout>>()
+  const animationFrameRef = useRef<ReturnType<typeof requestAnimationFrame>>()
 
-  enterTimeout: $TSFixMe
+  const handleEnterTransition = () => {
+    setClassName(`${transitionName}-enter`)
 
-  leaveTimeout: $TSFixMe
+    cancelAnimationFrame(animationFrameRef.current!)
+    clearTimeout(leaveTimeoutRef.current)
+    leaveTimeoutRef.current = undefined
 
-  setState: $TSFixMe
+    animationFrameRef.current = requestAnimationFrame(() => {
+      setClassName(`${transitionName}-enter ${transitionName}-enter-active`)
 
-  constructor(props: $TSFixMe) {
-    super(props)
-
-    this.state = {
-      cachedChildren: null,
-      className: '',
-    }
-  }
-
-  componentDidUpdate() {
-    const { cachedChildren } = this.state
-    const child = toChildArray(this.props.children)[0]
-
-    // Check if children have changed
-    if (cachedChildren === child) return
-
-    const patch = {
-      cachedChildren: child,
-    } as $TSFixMe
-
-    // Enter transition
-    if (child && !cachedChildren) {
-      patch.className = `${transitionName}-enter`
-
-      cancelAnimationFrame(this.animationFrame)
-      clearTimeout(this.leaveTimeout)
-      this.leaveTimeout = undefined
-
-      this.animationFrame = requestAnimationFrame(() => {
-        // Force it to render before we add the active class
-        // this.base.getBoundingClientRect()
-        this.setState({
-          className: `${transitionName}-enter ${transitionName}-enter-active`,
-        })
-
-        this.enterTimeout = setTimeout(() => {
-          this.setState({ className: '' })
-        }, duration)
-      })
-    }
-
-    // Leave transition
-    if (cachedChildren && !child && this.leaveTimeout === undefined) {
-      patch.cachedChildren = cachedChildren
-      patch.className = `${transitionName}-leave`
-
-      cancelAnimationFrame(this.animationFrame)
-      clearTimeout(this.enterTimeout)
-      this.enterTimeout = undefined
-  
-      this.animationFrame = requestAnimationFrame(() => {
-        this.setState({
-          className: `${transitionName}-leave ${transitionName}-leave-active`,
-        })
-
-        this.leaveTimeout = setTimeout(() => {
-          this.setState({
-            cachedChildren: null,
-            className: '',
-          })
-        }, duration)
-      })
-    }
-
-    this.setState(patch)
-  }
-
-  render(): ComponentChild {
-    const { cachedChildren, className } = this.state as $TSFixMe
-
-    if (!cachedChildren) {
-      return null
-    }
-
-    return cloneElement(cachedChildren, {
-      className: classNames(className, cachedChildren.props.className),
+      enterTimeoutRef.current = setTimeout(() => {
+        setClassName('')
+      }, duration)
     })
   }
+
+  const handleLeaveTransition = () => {
+    setClassName(`${transitionName}-leave`)
+
+    cancelAnimationFrame(animationFrameRef.current!)
+    clearTimeout(enterTimeoutRef.current)
+    enterTimeoutRef.current = undefined
+
+    animationFrameRef.current = requestAnimationFrame(() => {
+      setClassName(`${transitionName}-leave ${transitionName}-leave-active`)
+
+      leaveTimeoutRef.current = setTimeout(() => {
+        setCachedChildren(null)
+        setClassName('')
+      }, duration)
+    })
+  }
+
+  useEffect(() => {
+    const child = toChildArray(children)[0] as VNode
+    if (cachedChildren === child) return
+
+    if (child && !cachedChildren) {
+      handleEnterTransition()
+    } else if (cachedChildren && !child && !leaveTimeoutRef.current) {
+      handleLeaveTransition()
+    }
+
+    setCachedChildren(child)
+  }, [children, cachedChildren]) // Dependency array to trigger effect on children change
+
+  useEffect(() => {
+    return () => {
+      clearTimeout(enterTimeoutRef.current)
+      clearTimeout(leaveTimeoutRef.current)
+      cancelAnimationFrame(animationFrameRef.current!)
+    }
+  }, []) // Cleanup useEffect
+
+  if (!cachedChildren) return null
+
+  return cloneElement(cachedChildren, {
+    className: classNames(className, cachedChildren.props.className),
+  })
 }
 
 export default Slide
