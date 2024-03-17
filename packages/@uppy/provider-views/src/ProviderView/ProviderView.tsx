@@ -558,7 +558,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
     const targetViewOptions = { ...this.opts, ...viewOptions }
     const { files, folders, filterInput, loading, currentSelection } =
       this.plugin.getPluginState()
-    const { isChecked, toggleCheckbox, recordShiftKeyPress, filterItems } = this
+    const { isChecked, recordShiftKeyPress, filterItems } = this
     const hasInput = filterInput !== ''
     const pluginIcon = this.plugin.icon || defaultPickerIcon
 
@@ -575,7 +575,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
 
     const browserProps = {
       isChecked,
-      toggleCheckbox,
+      toggleCheckbox: this.toggleCheckbox.bind(this),
       recordShiftKeyPress,
       currentSelection,
       files: hasInput ? filterItems(files) : files,

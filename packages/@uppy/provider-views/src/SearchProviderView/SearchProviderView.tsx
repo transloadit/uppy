@@ -167,12 +167,12 @@ export default class SearchProviderView<
     const targetViewOptions = { ...this.opts, ...viewOptions }
     const { files, folders, filterInput, loading, currentSelection } =
       this.plugin.getPluginState()
-    const { isChecked, toggleCheckbox, filterItems, recordShiftKeyPress } = this
+    const { isChecked, filterItems, recordShiftKeyPress } = this
     const hasInput = filterInput !== ''
 
     const browserProps = {
       isChecked,
-      toggleCheckbox,
+      toggleCheckbox: this.toggleCheckbox.bind(this),
       recordShiftKeyPress,
       currentSelection,
       files: hasInput ? filterItems(files) : files,
