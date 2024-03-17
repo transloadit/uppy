@@ -8783,7 +8783,7 @@ __metadata:
     stylelint-config-standard-scss: ^10.0.0
     tar: ^6.1.0
     tsd: ^0.28.0
-    typescript: ~5.1
+    typescript: ^5.4.2
     vitest: ^1.2.1
     vue-template-compiler: "workspace:*"
   languageName: unknown
@@ -8894,7 +8894,7 @@ __metadata:
     karma-jasmine-html-reporter: ~2.1.0
     rxjs: ~7.8.0
     tslib: ^2.3.0
-    typescript: ~5.1
+    typescript: ^5.4.2
     zone.js: ~0.13.0
   languageName: unknown
   linkType: soft
@@ -9141,7 +9141,7 @@ __metadata:
     svelte-check: ^1.6.0
     svelte-preprocess: ^5.0.0
     tslib: ^2.0.0
-    typescript: ~5.1
+    typescript: ^5.4.2
   languageName: unknown
   linkType: soft
 
@@ -9389,7 +9389,7 @@ __metadata:
     serialize-javascript: ^6.0.0
     supertest: 6.2.4
     tus-js-client: ^3.1.3
-    typescript: ~5.1
+    typescript: ^5.4.2
     validator: ^13.0.0
     ws: 8.8.1
   bin:
@@ -10816,7 +10816,7 @@ __metadata:
     ng-packagr: ^16.2.0
     rxjs: ~7.8.0
     tslib: ^2.3.0
-    typescript: ~5.1
+    typescript: ^5.4.2
     zone.js: ~0.13.0
   languageName: unknown
   linkType: soft
@@ -14375,7 +14375,7 @@ __metadata:
     prompts: ^2.4.2
     react: ^18.1.0
     react-dom: ^18.1.0
-    typescript: ~5.1
+    typescript: ^5.4.2
     vue: ^3.2.33
   languageName: unknown
   linkType: soft
@@ -30687,13 +30687,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:~5.1":
-  version: 5.1.6
-  resolution: "typescript@npm:5.1.6"
+"typescript@npm:^5.4.2":
+  version: 5.4.2
+  resolution: "typescript@npm:5.4.2"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: b2f2c35096035fe1f5facd1e38922ccb8558996331405eb00a5111cc948b2e733163cc22fab5db46992aba7dd520fff637f2c1df4996ff0e134e77d3249a7350
+  checksum: 96d80fde25a09bcb04d399082fb27a808a9e17c2111e43849d2aafbd642d835e4f4ef0de09b0ba795ec2a700be6c4c2c3f62bf4660c05404c948727b5bbfb32a
   languageName: node
   linkType: hard
 
@@ -30717,13 +30717,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@~5.1#~builtin<compat/typescript>":
-  version: 5.1.6
-  resolution: "typescript@patch:typescript@npm%3A5.1.6#~builtin<compat/typescript>::version=5.1.6&hash=5da071"
+"typescript@patch:typescript@^5.4.2#~builtin<compat/typescript>":
+  version: 5.4.2
+  resolution: "typescript@patch:typescript@npm%3A5.4.2#~builtin<compat/typescript>::version=5.4.2&hash=d69c25"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: f53bfe97f7c8b2b6d23cf572750d4e7d1e0c5fff1c36d859d0ec84556a827b8785077bc27676bf7e71fae538e517c3ecc0f37e7f593be913d884805d931bc8be
+  checksum: c1b669146bca5529873aae60870e243fa8140c85f57ca32c42f898f586d73ce4a6b4f6bb02ae312729e214d7f5859a0c70da3e527a116fdf5ad00c9fc733ecc6
   languageName: node
   linkType: hard
 

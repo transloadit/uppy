@@ -28,7 +28,7 @@
     "svelte-check": "^1.6.0",
     "svelte-preprocess": "^5.0.0",
     "tslib": "^2.0.0",
-    "typescript": "~5.1"
+    "typescript": "^5.4.2"
   },
   "dependencies": {
     "@uppy/core": "workspace:*",
