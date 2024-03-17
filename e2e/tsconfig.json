@@ -1,9 +1,8 @@
 {
+  "extends": "../tsconfig.shared",
   "compilerOptions": {
-    "moduleResolution": "NodeNext",
+    "emitDeclarationOnly": false,
     "noEmit": true,
-    "target": "es2020",
-    "lib": ["es2020", "dom"],
     "types": ["cypress"],
   },
   "include": ["cypress/**/*.ts"],
