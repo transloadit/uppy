@@ -1,25 +1,25 @@
-// @ts-expect-error
-import type { Uppy, UIPlugin } from '@uppy/core';
+import type { Uppy, UIPlugin, UIPluginOptions } from '@uppy/core';
 import type { ElementRef, SimpleChanges } from '@angular/core';
-// @ts-expect-error
 import type { DragDropOptions } from '@uppy/drag-drop';
-// @ts-expect-error
 import type { StatusBarOptions } from '@uppy/status-bar';
-// @ts-expect-error
 import type { ProgressBarOptions } from '@uppy/progress-bar';
+import { Body, Meta } from '@uppy/utils/lib/UppyFile';
 
 export abstract class UppyAngularWrapper<
-  PluginType extends UIPlugin = UIPlugin,
+  M extends Meta,
+  B extends Body,
+  Opts extends UIPluginOptions,
+  PluginType extends UIPlugin<Opts, M, B> = UIPlugin<Opts, M, B>,
 > {
   abstract props: DragDropOptions | StatusBarOptions | ProgressBarOptions;
   abstract el: ElementRef;
-  abstract uppy: Uppy;
+  abstract uppy: Uppy<M, B>;
   private options: any;
   plugin: PluginType | undefined;
 
   onMount(
-    defaultOptions: Record<string, unknown>,
-    plugin: new (uppy: Uppy, opts?: Record<string, unknown>) => UIPlugin,
+    defaultOptions: Partial<Opts>,
+    plugin: new (uppy: Uppy<M, B>, opts?: Opts) => UIPlugin<Opts, M, B>,
   ) {
     this.options = {
       ...defaultOptions,
@@ -47,7 +47,6 @@ export abstract class UppyAngularWrapper<
       this.props !== changes['props'].previousValue &&
       changes['props'].previousValue !== undefined
     ) {
-      // @ts-expect-error
       this.plugin.setOptions({ ...this.options });
     }
   }
