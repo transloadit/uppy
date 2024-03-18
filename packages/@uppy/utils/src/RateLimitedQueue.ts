@@ -37,7 +37,7 @@ export interface AbortablePromise<T> extends Promise<T> {
 
 export type WrapPromiseFunctionType<T extends (...args: any[]) => any> = (
   ...args: Parameters<T>
-) => AbortablePromise<ReturnType<T>>
+) => AbortablePromise<Awaited<ReturnType<T>>>
 
 export class RateLimitedQueue {
   #activeRequests = 0
