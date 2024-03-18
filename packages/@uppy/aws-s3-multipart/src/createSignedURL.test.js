@@ -51,6 +51,8 @@ describe('createSignedURL', () => {
     )
   })
   it('should be able to sign multipart upload', async () => {
+    const url = new URL('https://example.com/?%21%27%28%29%2A')
+    console.log(url.search)
     const client = new S3Client(s3ClientOptions)
     const partNumber = 99
     const uploadId = 'dummyUploadId'
@@ -71,7 +73,40 @@ describe('createSignedURL', () => {
         UploadId: uploadId,
         PartNumber: partNumber,
         Key: 'some/key',
-      }, { expiresIn: 900 }))).searchParams.get('X-Amz-Signature'),
+      }), { expiresIn: 900 })).searchParams.get('X-Amz-Signature'),
     )
+  })
+  it('should escape path and query as restricted to RFC 3986', async () => {
+    const client = new S3Client(s3ClientOptions)
+    const partNumber = 99
+    const uploadId = 'Upload!\'()*Id'
+    const Key = '!\'()*/!\'()*.ext'
+    const implResult =
+      await createSignedURL({
+        accountKey: s3ClientOptions.credentials.accessKeyId,
+        accountSecret: s3ClientOptions.credentials.secretAccessKey,
+        sessionToken: s3ClientOptions.credentials.sessionToken,
+        uploadId,
+        partNumber,
+        bucketName,
+        Key,
+        Region: s3ClientOptions.region,
+        expires: 900,
+      })
+    const sdkResult =
+      new URL(
+        await getSignedUrl(client, new UploadPartCommand({
+          Bucket: bucketName,
+          UploadId: uploadId,
+          PartNumber: partNumber,
+          Key,
+        }), { expiresIn: 900 }
+      )
+    )
+    assert.strictEqual(implResult.pathname, sdkResult.pathname)
+
+    const extractUploadIdQueryValue = (result) =>
+      result.search.match(/uploadId=(.+?)(&|$)/)[1]
+    assert.strictEqual(extractUploadIdQueryValue(implResult), extractUploadIdQueryValue(sdkResult))
   })
 })
