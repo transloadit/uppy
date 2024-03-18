@@ -88,14 +88,19 @@ export default class Dashboard extends UIPlugin {
       showNativePhotoCameraButton: false,
       showNativeVideoCameraButton: false,
       theme: 'light',
-      autoOpenFileEditor: false,
-      autoOpenView: 'meta',
+      autoOpen: false,
       disabled: false,
       disableLocalFiles: false,
     }
 
+    // support for the legacy `autoOpenFileEditor` option,
+    // we can remove this code when we update the Uppy major version
+    let {autoOpen} = opts
+    if (opts.autoOpen === undefined) {
+      autoOpen = opts.autoOpenFileEditor ? "fileEditor" : false
+    }
     // merge default options with the ones set by user
-    this.opts = { ...defaultOptions, ...opts }
+    this.opts = { ...defaultOptions, ...opts, autoOpen }
 
     this.i18nInit()
 
@@ -753,11 +758,10 @@ export default class Dashboard extends UIPlugin {
     const {metaFields} = this.getPluginState()
     const isMetaEditorEnabled = metaFields && metaFields.length > 0
     const isFileEditorEnabled = this.canEditFile(firstFile)
-    const defaultView = this.opts.autoOpenView === 'meta' ? 'meta' : 'editor';
 
-    if (isMetaEditorEnabled && defaultView === 'meta') {
+    if (isMetaEditorEnabled && this.opts.autoOpen === 'metaEditor') {
       this.toggleFileCard(true, firstFile.id)
-    } else if (isFileEditorEnabled) {
+    } else if (isFileEditorEnabled && this.opts.autoOpen === 'fileEditor') {
       this.openFileEditor(firstFile)
     }
   }
@@ -794,7 +798,7 @@ export default class Dashboard extends UIPlugin {
       this.el.addEventListener('keydown', this.handleKeyDownInInline)
     }
 
-    if (this.opts.autoOpenFileEditor) {
+    if (this.opts.autoOpen) {
       this.uppy.on('files-added', this.#openFileEditorWhenFilesAdded)
     }
   }
@@ -825,7 +829,7 @@ export default class Dashboard extends UIPlugin {
       this.el.removeEventListener('keydown', this.handleKeyDownInInline)
     }
 
-    if (this.opts.autoOpenFileEditor) {
+    if (this.opts.autoOpen) {
       this.uppy.off('files-added', this.#openFileEditorWhenFilesAdded)
     }
   }

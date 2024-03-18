@@ -65,8 +65,7 @@ export interface DashboardOptions extends Options {
   theme?: 'auto' | 'dark' | 'light'
   trigger?: string
   width?: string | number
-  autoOpenFileEditor?: boolean
-  autoOpenView?: 'meta' | 'editor'
+  autoOpen?: 'metaEditor' | 'fileEditor' | false
   disabled?: boolean
   disableLocalFiles?: boolean
   onRequestCloseModal?: () => void
