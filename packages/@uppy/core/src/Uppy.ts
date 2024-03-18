@@ -156,6 +156,8 @@ export interface State<M extends Meta, B extends Body>
     uploadProgress: boolean
     individualCancellation: boolean
     resumableUploads: boolean
+    isMobileDevice?: boolean
+    darkMode?: boolean
   }
   currentUploads: Record<string, CurrentUpload<M, B>>
   allowNewUpload: boolean
@@ -636,7 +638,7 @@ export class Uppy<M extends Meta, B extends Body> {
 
   // @todo next major: rename to `clear()`, make it also cancel ongoing uploads
   // or throw and say you need to cancel manually
-  protected clearUploadedFiles(): void {
+  clearUploadedFiles(): void {
     this.setState({ ...defaultUploadState, files: {} })
   }
 
