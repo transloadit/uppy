@@ -1,7 +1,10 @@
-const isSupported = typeof navigator !== 'undefined' && 'serviceWorker' in navigator
+import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
 
-function waitForServiceWorker () {
-  return new Promise((resolve, reject) => {
+const isSupported =
+  typeof navigator !== 'undefined' && 'serviceWorker' in navigator
+
+function waitForServiceWorker() {
+  return new Promise<void>((resolve, reject) => {
     if (!isSupported) {
       reject(new Error('Unsupported'))
     } else if (navigator.serviceWorker.controller) {
@@ -15,28 +18,44 @@ function waitForServiceWorker () {
   })
 }
 
-class ServiceWorkerStore {
-  #ready
+export type ServiceWorkerStoredFile<M extends Meta, B extends Body> = {
+  type: string
+  store: string
+  file: UppyFile<M, B>
+}
 
-  constructor (opts) {
-    this.#ready = waitForServiceWorker().then((val) => { this.#ready = val })
+type ServiceWorkerStoreOptions = {
+  storeName: string
+}
+
+class ServiceWorkerStore<M extends Meta, B extends Body> {
+  #ready: void | Promise<void>
+
+  name: string
+
+  static isSupported: boolean
+
+  constructor(opts: ServiceWorkerStoreOptions) {
+    this.#ready = waitForServiceWorker().then((val) => {
+      this.#ready = val
+    })
     this.name = opts.storeName
   }
 
-  get ready () {
+  get ready(): Promise<void> {
     return Promise.resolve(this.#ready)
   }
 
   // TODO: remove this setter in the next major
-  set ready (val) {
+  set ready(val: void) {
     this.#ready = val
   }
 
-  async list () {
+  async list(): Promise<ServiceWorkerStoredFile<M, B>[]> {
     await this.#ready
 
     return new Promise((resolve, reject) => {
-      const onMessage = (event) => {
+      const onMessage = (event: MessageEvent) => {
         if (event.data.store !== this.name) {
           return
         }
@@ -52,25 +71,25 @@ class ServiceWorkerStore {
 
       navigator.serviceWorker.addEventListener('message', onMessage)
 
-      navigator.serviceWorker.controller.postMessage({
+      navigator.serviceWorker.controller!.postMessage({
         type: 'uppy/GET_FILES',
         store: this.name,
       })
     })
   }
 
-  async put (file) {
+  async put(file: UppyFile<any, any>): Promise<void> {
     await this.#ready
-    navigator.serviceWorker.controller.postMessage({
+    navigator.serviceWorker.controller!.postMessage({
       type: 'uppy/ADD_FILE',
       store: this.name,
       file,
     })
   }
 
-  async delete (fileID) {
+  async delete(fileID: string): Promise<void> {
     await this.#ready
-    navigator.serviceWorker.controller.postMessage({
+    navigator.serviceWorker.controller!.postMessage({
       type: 'uppy/REMOVE_FILE',
       store: this.name,
       fileID,
