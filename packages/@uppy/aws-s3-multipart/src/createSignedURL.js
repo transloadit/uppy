@@ -154,5 +154,5 @@ export default async function createSignedURL ({
   // Step 5: Add the signature to the request
   url.searchParams.set('X-Amz-Signature', signature)
 
-  return url;
+  return url
 }
