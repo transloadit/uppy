@@ -20,9 +20,9 @@ import {
 // @ts-ignore We don't want TS to generate types for the package.json
 import type { Meta, Body, UppyFile } from '@uppy/utils/lib/UppyFile'
 import type { State, Uppy } from '@uppy/core'
+import getAllowedMetaFields from '@uppy/utils/lib/getAllowedMetaFields'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
-import getAllowedMetaFields from '@uppy/utils/lib/getAllowedMetaFields'
 import packageJson from '../package.json'
 import locale from './locale.ts'
 
