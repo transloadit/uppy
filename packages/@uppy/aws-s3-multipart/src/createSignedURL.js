@@ -76,28 +76,8 @@ async function hash (key, data) {
   return subtle.sign(algorithm, await generateHmacKey(key), ec.encode(data))
 }
 
-/**
- * @see
- *   https://github.com/smithy-lang/smithy-typescript/blob/main/packages/smithy-client/src/extended-encode-uri-component.ts
- */
-function extendedEncodeURIComponent(str) {
-  return encodeURIComponent(str).replace(/[!'()*]/g, (c) =>
-    `%${c.charCodeAt(0).toString(16).toUpperCase()}`
-  )
-}
-
-class Query {
-  #params = []
-
-  append(key, value) {
-    this.#params.push([key, value])
-  }
-
-  toString() {
-    return this.#params
-      .map(([key, value]) => `${extendedEncodeURIComponent(key)}=${extendedEncodeURIComponent(value)}`)
-      .join('&')
-  }
+function percentEncode(c) {
+  return `%${c.charCodeAt(0).toString(16).toUpperCase()}`
 }
 
 /**
@@ -114,32 +94,38 @@ export default async function createSignedURL ({
 }) {
   const Service = 's3'
   const host = `${bucketName}.${Service}.${Region}.amazonaws.com`
-  const CanonicalUri = `/${Key.split('/').map(extendedEncodeURIComponent).join('/')}`
+  /**
+   * List of char out of `encodeURI()` is taken from ECMAScript spec
+   *
+   * @see https://tc39.es/ecma262/#sec-encodeuri-uri
+   */
+  const CanonicalUri = `/${encodeURI(Key).replace(/[;?:@&=+$,#!'()*]/g, percentEncode)}`
+  console.log(CanonicalUri)
   const payload = 'UNSIGNED-PAYLOAD'
 
   const requestDateTime = new Date().toISOString().replace(/[-:]|\.\d+/g, '') // YYYYMMDDTHHMMSSZ
   const date = requestDateTime.slice(0, 8) // YYYYMMDD
   const scope = `${date}/${Region}/${Service}/aws4_request`
 
-  const query = new Query();
+  const url = new URL(`https://${host}${CanonicalUri}`)
   // N.B.: URL search params needs to be added in the ASCII order
-  query.append('X-Amz-Algorithm', 'AWS4-HMAC-SHA256')
-  query.append('X-Amz-Content-Sha256', payload)
-  query.append('X-Amz-Credential', `${accountKey}/${scope}`)
-  query.append('X-Amz-Date', requestDateTime)
-  query.append('X-Amz-Expires', expires)
+  url.searchParams.set('X-Amz-Algorithm', 'AWS4-HMAC-SHA256')
+  url.searchParams.set('X-Amz-Content-Sha256', payload)
+  url.searchParams.set('X-Amz-Credential', `${accountKey}/${scope}`)
+  url.searchParams.set('X-Amz-Date', requestDateTime)
+  url.searchParams.set('X-Amz-Expires', expires)
   // We are signing on the client, so we expect there's going to be a session token:
-  query.append('X-Amz-Security-Token', sessionToken)
-  query.append('X-Amz-SignedHeaders', 'host')
+  url.searchParams.set('X-Amz-Security-Token', sessionToken)
+  url.searchParams.set('X-Amz-SignedHeaders', 'host')
   // Those two are present only for Multipart Uploads:
-  if (partNumber) query.append('partNumber', partNumber)
-  if (uploadId) query.append('uploadId', uploadId)
-  query.append('x-id', partNumber && uploadId ? 'UploadPart' : 'PutObject')
+  if (partNumber) url.searchParams.set('partNumber', partNumber)
+  if (uploadId) url.searchParams.set('uploadId', uploadId)
+  url.searchParams.set('x-id', partNumber && uploadId ? 'UploadPart' : 'PutObject')
 
   // Step 1: Create a canonical request
   const canonical = createCanonicalRequest({
     CanonicalUri,
-    CanonicalQueryString: query.toString(),
+    CanonicalQueryString: url.search.slice(1),
     SignedHeaders: {
       host,
     },
@@ -165,7 +151,7 @@ export default async function createSignedURL ({
   const signature = arrayBufferToHexString(await hash(kSigning, stringToSign))
 
   // Step 5: Add the signature to the request
-  query.append('X-Amz-Signature', signature)
+  url.searchParams.set('X-Amz-Signature', signature)
 
-  return new URL(`https://${host}${CanonicalUri}?${query.toString()}`)
+  return url;
 }

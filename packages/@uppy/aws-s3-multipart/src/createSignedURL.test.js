@@ -79,8 +79,10 @@ describe('createSignedURL', () => {
   it('should escape path and query as restricted to RFC 3986', async () => {
     const client = new S3Client(s3ClientOptions)
     const partNumber = 99
-    const uploadId = 'Upload!\'()*Id'
-    const Key = '!\'()*/!\'()*.ext'
+    const specialChars = ';?:@&=+$,#!\'()'
+    const uploadId = `Upload${specialChars}Id`
+    // '.*' chars of path should be encoded
+    const Key = `${specialChars}.*/${specialChars}.*.ext`
     const implResult =
       await createSignedURL({
         accountKey: s3ClientOptions.credentials.accessKeyId,
