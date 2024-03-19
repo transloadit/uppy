@@ -1,4 +1,5 @@
-import {  cloneElement, Component, toChildArray  } from 'preact'
+import { cloneElement, toChildArray } from 'preact'
+import { useEffect, useState, useRef } from 'preact/hooks'
 import classNames from 'classnames'
 
 const transitionName = 'uppy-transition-slideDownUp'
@@ -13,87 +14,73 @@ const duration = 250
  * but it should be simple to extend this for any type of single-element
  * transition by setting the CSS name and duration as props.
  */
-class Slide extends Component {
-  constructor (props) {
-    super(props)
+function Slide ({ children }) {
+  const [cachedChildren, setCachedChildren] = useState(null);
+  const [className, setClassName] = useState('');
+  const enterTimeoutRef = useRef();
+  const leaveTimeoutRef = useRef();
+  const animationFrameRef = useRef();
 
-    this.state = {
-      cachedChildren: null,
-      className: '',
-    }
-  }
+  const handleEnterTransition = () => {
+    setClassName(`${transitionName}-enter`);
 
-  // TODO: refactor to stable lifecycle method
-  // eslint-disable-next-line
-  componentWillUpdate (nextProps) {
-    const { cachedChildren } = this.state
-    const child = toChildArray(nextProps.children)[0]
+    cancelAnimationFrame(animationFrameRef.current);
+    clearTimeout(leaveTimeoutRef.current);
+    leaveTimeoutRef.current = undefined;
 
-    if (cachedChildren === child) return null
+    animationFrameRef.current = requestAnimationFrame(() => {
+      setClassName(`${transitionName}-enter ${transitionName}-enter-active`);
 
-    const patch = {
-      cachedChildren: child,
-    }
+      enterTimeoutRef.current = setTimeout(() => {
+        setClassName('');
+      }, duration);
+    });
+  };
 
-    // Enter transition
+  const handleLeaveTransition = () => {
+    setClassName(`${transitionName}-leave`);
+
+    cancelAnimationFrame(animationFrameRef.current);
+    clearTimeout(enterTimeoutRef.current);
+    enterTimeoutRef.current = undefined;
+
+    animationFrameRef.current = requestAnimationFrame(() => {
+      setClassName(`${transitionName}-leave ${transitionName}-leave-active`);
+
+      leaveTimeoutRef.current = setTimeout(() => {
+        setCachedChildren(null);
+        setClassName('');
+      }, duration);
+    });
+  };
+
+  useEffect(() => {
+    const child = toChildArray(children)[0];
+    if (cachedChildren === child) return;
+
     if (child && !cachedChildren) {
-      patch.className = `${transitionName}-enter`
-
-      cancelAnimationFrame(this.animationFrame)
-      clearTimeout(this.leaveTimeout)
-      this.leaveTimeout = undefined
-
-      this.animationFrame = requestAnimationFrame(() => {
-        // Force it to render before we add the active class
-        // this.base.getBoundingClientRect()
-
-        this.setState({
-          className: `${transitionName}-enter ${transitionName}-enter-active`,
-        })
-
-        this.enterTimeout = setTimeout(() => {
-          this.setState({ className: '' })
-        }, duration)
-      })
+      handleEnterTransition();
+    } else if (cachedChildren && !child && !leaveTimeoutRef.current) {
+      handleLeaveTransition();
     }
 
-    // Leave transition
-    if (cachedChildren && !child && this.leaveTimeout === undefined) {
-      patch.cachedChildren = cachedChildren
-      patch.className = `${transitionName}-leave`
+    setCachedChildren(child);
+  }, [children, cachedChildren]); // Dependency array to trigger effect on children change
 
-      cancelAnimationFrame(this.animationFrame)
-      clearTimeout(this.enterTimeout)
-      this.enterTimeout = undefined
-      this.animationFrame = requestAnimationFrame(() => {
-        this.setState({
-          className: `${transitionName}-leave ${transitionName}-leave-active`,
-        })
 
-        this.leaveTimeout = setTimeout(() => {
-          this.setState({
-            cachedChildren: null,
-            className: '',
-          })
-        }, duration)
-      })
-    }
+  useEffect(() => {
+    return () => {
+      clearTimeout(enterTimeoutRef.current);
+      clearTimeout(leaveTimeoutRef.current);
+      cancelAnimationFrame(animationFrameRef.current);
+    };
+  }, []); // Cleanup useEffect
 
-    // eslint-disable-next-line
-    this.setState(patch)
-  }
+  if (!cachedChildren) return null;
 
-  render () {
-    const { cachedChildren, className } = this.state
-
-    if (!cachedChildren) {
-      return null
-    }
-
-    return cloneElement(cachedChildren, {
-      className: classNames(className, cachedChildren.props.className),
-    })
-  }
-}
+  return cloneElement(cachedChildren, {
+    className: classNames(className, cachedChildren.props.className),
+  });
+};
 
 export default Slide
