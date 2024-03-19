@@ -101,7 +101,6 @@ export default async function createSignedURL ({
    * @see https://tc39.es/ecma262/#sec-encodeuri-uri
    */
   const CanonicalUri = `/${encodeURI(Key).replace(/[;?:@&=+$,#!'()*]/g, percentEncode)}`
-  console.log(CanonicalUri)
   const payload = 'UNSIGNED-PAYLOAD'
 
   const requestDateTime = new Date().toISOString().replace(/[-:]|\.\d+/g, '') // YYYYMMDDTHHMMSSZ
