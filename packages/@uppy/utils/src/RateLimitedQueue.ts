@@ -187,7 +187,9 @@ export class RateLimitedQueue {
     fn: T,
     queueOptions?: QueueOptions,
   ) {
-    return (...args: Parameters<T>): AbortablePromise<ReturnType<T>> => {
+    return (
+      ...args: Parameters<T>
+    ): AbortablePromise<Awaited<ReturnType<T>>> => {
       let queuedRequest: ReturnType<RateLimitedQueue['run']>
       const outerPromise = new Promise((resolve, reject) => {
         queuedRequest = this.run(() => {
@@ -222,7 +224,7 @@ export class RateLimitedQueue {
             cancelError = createCancelError(cause)
           }
         }, queueOptions)
-      }) as AbortablePromise<ReturnType<T>>
+      }) as AbortablePromise<Awaited<ReturnType<T>>>
 
       outerPromise.abort = (cause) => {
         queuedRequest.abort(cause)

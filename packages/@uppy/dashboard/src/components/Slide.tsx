@@ -1,9 +1,4 @@
-import {
-  cloneElement,
-  toChildArray,
-  type ComponentChild,
-  type VNode,
-} from 'preact'
+import { cloneElement, toChildArray, type VNode } from 'preact'
 import { useEffect, useState, useRef } from 'preact/hooks'
 import classNames from 'classnames'
 

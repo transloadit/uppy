@@ -13,7 +13,7 @@ import { h, type ComponentChild } from 'preact'
 import packageJson from '../package.json'
 import locale from './locale.ts'
 
-interface DragDropOptions extends UIPluginOptions {
+export interface DragDropOptions extends UIPluginOptions {
   inputName?: string
   allowMultipleFiles?: boolean
   width?: string | number

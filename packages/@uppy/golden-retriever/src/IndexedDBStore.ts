@@ -1,8 +1,16 @@
-/**
- * @type {typeof window.indexedDB}
- */
-const indexedDB = typeof window !== 'undefined'
-  && (window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB || window.OIndexedDB || window.msIndexedDB)
+import type { UppyFile } from '@uppy/utils/lib/UppyFile'
+
+const indexedDB =
+  typeof window !== 'undefined' &&
+  (window.indexedDB ||
+    // @ts-expect-error unknown
+    window.webkitIndexedDB ||
+    // @ts-expect-error unknown
+    window.mozIndexedDB ||
+    // @ts-expect-error unknown
+    window.OIndexedDB ||
+    // @ts-expect-error unknown
+    window.msIndexedDB)
 
 const isSupported = !!indexedDB
 
@@ -14,13 +22,11 @@ const MiB = 0x10_00_00
 
 /**
  * Set default `expires` dates on existing stored blobs.
- *
- * @param {IDBObjectStore} store
  */
-function migrateExpiration (store) {
+function migrateExpiration(store: IDBObjectStore) {
   const request = store.openCursor()
   request.onsuccess = (event) => {
-    const cursor = event.target.result
+    const cursor = (event.target as IDBRequest).result
     if (!cursor) {
       return
     }
@@ -30,22 +36,14 @@ function migrateExpiration (store) {
   }
 }
 
-/**
- * @param {string} dbName
- * @returns {Promise<IDBDatabase>}
- */
-function connect (dbName) {
-  const request = indexedDB.open(dbName, DB_VERSION)
+function connect(dbName: string): Promise<IDBDatabase> {
+  const request = (indexedDB as IDBFactory).open(dbName, DB_VERSION)
   return new Promise((resolve, reject) => {
     request.onupgradeneeded = (event) => {
-      /**
-       * @type {IDBDatabase}
-       */
-      const db = event.target.result
-      /**
-       * @type {IDBTransaction}
-       */
-      const { transaction } = event.currentTarget
+      const db: IDBDatabase = (event.target as IDBOpenDBRequest).result
+      // eslint-disable-next-line prefer-destructuring
+      const transaction = (event.currentTarget as IDBOpenDBRequest)
+        .transaction as IDBTransaction
 
       if (event.oldVersion < 2) {
         // Added in v2: DB structure changed to a single shared object store
@@ -66,34 +64,48 @@ function connect (dbName) {
       }
     }
     request.onsuccess = (event) => {
-      resolve(event.target.result)
+      resolve((event.target as IDBRequest).result)
     }
     request.onerror = reject
   })
 }
 
-/**
- * @template T
- * @param {IDBRequest<T>} request
- * @returns {Promise<T>}
- */
-function waitForRequest (request) {
+function waitForRequest<T>(request: IDBRequest): Promise<T> {
   return new Promise((resolve, reject) => {
     request.onsuccess = (event) => {
-      resolve(event.target.result)
+      resolve((event.target as IDBRequest).result)
     }
     request.onerror = reject
   })
+}
+
+type IndexedDBStoredFile = {
+  id: string
+  fileID: string
+  store: string
+  expires: number
+  data: Blob
+}
+
+type IndexedDBStoreOptions = {
+  dbName?: string
+  storeName?: string
+  expires?: number
+  maxFileSize?: number
+  maxTotalSize?: number
 }
 
 let cleanedUp = false
 class IndexedDBStore {
-  /**
-   * @type {Promise<IDBDatabase> | IDBDatabase}
-   */
-  #ready
+  #ready: Promise<IDBDatabase> | IDBDatabase
 
-  constructor (opts) {
+  opts: Required<IndexedDBStoreOptions>
+
+  name: string
+
+  static isSupported: boolean
+
+  constructor(opts?: IndexedDBStoreOptions) {
     this.opts = {
       dbName: DB_NAME,
       storeName: 'default',
@@ -113,48 +125,50 @@ class IndexedDBStore {
 
     if (!cleanedUp) {
       cleanedUp = true
-      this.#ready = IndexedDBStore.cleanup()
-        .then(createConnection, createConnection)
+      this.#ready = IndexedDBStore.cleanup().then(
+        createConnection,
+        createConnection,
+      )
     } else {
       this.#ready = createConnection()
     }
   }
 
-  get ready () {
+  get ready(): Promise<IDBDatabase> {
     return Promise.resolve(this.#ready)
   }
 
   // TODO: remove this setter in the next major
-  set ready (val) {
+  set ready(val: IDBDatabase) {
     this.#ready = val
   }
 
-  key (fileID) {
+  key(fileID: string): string {
     return `${this.name}!${fileID}`
   }
 
   /**
    * List all file blobs currently in the store.
    */
-  async list () {
+  async list(): Promise<Record<string, IndexedDBStoredFile['data']>> {
     const db = await this.#ready
     const transaction = db.transaction([STORE_NAME], 'readonly')
     const store = transaction.objectStore(STORE_NAME)
-    const request = store.index('store')
-      .getAll(IDBKeyRange.only(this.name))
-    const files = await waitForRequest(request)
-    return Object.fromEntries(files.map(file => [file.fileID, file.data]))
+    const request = store.index('store').getAll(IDBKeyRange.only(this.name))
+    const files = await waitForRequest<IndexedDBStoredFile[]>(request)
+    return Object.fromEntries(files.map((file) => [file.fileID, file.data]))
   }
 
   /**
    * Get one file blob from the store.
    */
-  async get (fileID) {
+  async get(fileID: string): Promise<{ id: string; data: Blob }> {
     const db = await this.#ready
     const transaction = db.transaction([STORE_NAME], 'readonly')
-    const request = transaction.objectStore(STORE_NAME)
-      .get(this.key(fileID))
-    const { data } = await waitForRequest(request)
+    const request = transaction.objectStore(STORE_NAME).get(this.key(fileID))
+    const { data } = await waitForRequest<{
+      data: { data: Blob; fileID: string }
+    }>(request)
     return {
       id: data.fileID,
       data: data.data,
@@ -163,20 +177,16 @@ class IndexedDBStore {
 
   /**
    * Get the total size of all stored files.
-   *
-   * @private
-   * @returns {Promise<number>}
    */
-  async getSize () {
+  async getSize(): Promise<number> {
     const db = await this.#ready
     const transaction = db.transaction([STORE_NAME], 'readonly')
     const store = transaction.objectStore(STORE_NAME)
-    const request = store.index('store')
-      .openCursor(IDBKeyRange.only(this.name))
+    const request = store.index('store').openCursor(IDBKeyRange.only(this.name))
     return new Promise((resolve, reject) => {
       let size = 0
       request.onsuccess = (event) => {
-        const cursor = event.target.result
+        const cursor = (event.target as IDBRequest).result
         if (cursor) {
           size += cursor.value.data.size
           cursor.continue()
@@ -193,7 +203,7 @@ class IndexedDBStore {
   /**
    * Save a file in the store.
    */
-  async put (file) {
+  async put<T>(file: UppyFile<any, any>): Promise<T> {
     if (file.data.size > this.opts.maxFileSize) {
       throw new Error('File is too big to store.')
     }
@@ -201,7 +211,7 @@ class IndexedDBStore {
     if (size > this.opts.maxTotalSize) {
       throw new Error('No space left')
     }
-    const db = this.#ready
+    const db = await this.#ready
     const transaction = db.transaction([STORE_NAME], 'readwrite')
     const request = transaction.objectStore(STORE_NAME).add({
       id: this.key(file.id),
@@ -216,11 +226,10 @@ class IndexedDBStore {
   /**
    * Delete a file blob from the store.
    */
-  async delete (fileID) {
+  async delete(fileID: string): Promise<unknown> {
     const db = await this.#ready
     const transaction = db.transaction([STORE_NAME], 'readwrite')
-    const request = transaction.objectStore(STORE_NAME)
-      .delete(this.key(fileID))
+    const request = transaction.objectStore(STORE_NAME).delete(this.key(fileID))
     return waitForRequest(request)
   }
 
@@ -228,15 +237,16 @@ class IndexedDBStore {
    * Delete all stored blobs that have an expiry date that is before Date.now().
    * This is a static method because it deletes expired blobs from _all_ Uppy instances.
    */
-  static async cleanup () {
+  static async cleanup(): Promise<void> {
     const db = await connect(DB_NAME)
     const transaction = db.transaction([STORE_NAME], 'readwrite')
     const store = transaction.objectStore(STORE_NAME)
-    const request = store.index('expires')
+    const request = store
+      .index('expires')
       .openCursor(IDBKeyRange.upperBound(Date.now()))
-    await new Promise((resolve, reject) => {
+    await new Promise<void>((resolve, reject) => {
       request.onsuccess = (event) => {
-        const cursor = event.target.result
+        const cursor = (event.target as IDBRequest).result
         if (cursor) {
           cursor.delete() // Ignoring return value … it's not terrible if this goes wrong.
           cursor.continue()
