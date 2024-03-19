@@ -51,8 +51,6 @@ describe('createSignedURL', () => {
     )
   })
   it('should be able to sign multipart upload', async () => {
-    const url = new URL('https://example.com/?%21%27%28%29%2A')
-    console.log(url.search)
     const client = new S3Client(s3ClientOptions)
     const partNumber = 99
     const uploadId = 'dummyUploadId'
