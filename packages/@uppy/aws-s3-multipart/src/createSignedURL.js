@@ -76,6 +76,10 @@ async function hash (key, data) {
   return subtle.sign(algorithm, await generateHmacKey(key), ec.encode(data))
 }
 
+function percentEncode(c) {
+  return `%${c.charCodeAt(0).toString(16).toUpperCase()}`
+}
+
 /**
  * @see https://docs.aws.amazon.com/IAM/latest/UserGuide/create-signed-request.html
  * @param {Record<string,string>} param0
@@ -90,7 +94,13 @@ export default async function createSignedURL ({
 }) {
   const Service = 's3'
   const host = `${bucketName}.${Service}.${Region}.amazonaws.com`
-  const CanonicalUri = `/${encodeURI(Key)}`
+  /**
+   * List of char out of `encodeURI()` is taken from ECMAScript spec.
+   * Note that the `/` character is purposefully not included in list below.
+   *
+   * @see https://tc39.es/ecma262/#sec-encodeuri-uri
+   */
+  const CanonicalUri = `/${encodeURI(Key).replace(/[;?:@&=+$,#!'()*]/g, percentEncode)}`
   const payload = 'UNSIGNED-PAYLOAD'
 
   const requestDateTime = new Date().toISOString().replace(/[-:]|\.\d+/g, '') // YYYYMMDDTHHMMSSZ
