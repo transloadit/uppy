@@ -94,7 +94,7 @@ export default class Dashboard extends UIPlugin {
     }
 
     // support for the legacy `autoOpenFileEditor` option,
-    // we can remove this code when we update the Uppy major version
+    // TODO: we can remove this code when we update the Uppy major version
     let autoOpen
     if (!opts) {
       autoOpen = false
