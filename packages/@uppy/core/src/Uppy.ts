@@ -49,7 +49,10 @@ import locale from './locale.ts'
 import type BasePlugin from './BasePlugin.ts'
 import type { Restrictions, ValidateableFile } from './Restricter.ts'
 
-type Processor = (fileIDs: string[], uploadID: string) => Promise<void> | void
+type Processor = (
+  fileIDs: string[],
+  uploadID: string,
+) => Promise<unknown> | void
 
 type FileRemoveReason = 'user' | 'cancel-all'
 

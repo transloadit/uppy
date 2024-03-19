@@ -3,7 +3,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import 'whatwg-fetch'
 import nock from 'nock'
 import Core from '@uppy/core'
-import AwsS3Multipart from './index.js'
+import AwsS3Multipart from './index.ts'
+import type { Body } from './utils.ts'
 
 const KB = 1024
 const MB = KB * KB
@@ -12,36 +13,41 @@ describe('AwsS3Multipart', () => {
   beforeEach(() => nock.disableNetConnect())
 
   it('Registers AwsS3Multipart upload plugin', () => {
-    const core = new Core()
+    const core = new Core<any, Body>()
     core.use(AwsS3Multipart)
 
-    const pluginNames = core[Symbol.for('uppy test: getPlugins')]('uploader').map((plugin) => plugin.constructor.name)
+    // @ts-expect-error private property
+    const pluginNames = core[Symbol.for('uppy test: getPlugins')](
+      'uploader',
+    ).map((plugin: AwsS3Multipart<any, Body>) => plugin.constructor.name)
     expect(pluginNames).toContain('AwsS3Multipart')
   })
 
   describe('companionUrl assertion', () => {
     it('Throws an error for main functions if configured without companionUrl', () => {
-      const core = new Core()
+      const core = new Core<any, Body>()
       core.use(AwsS3Multipart)
-      const awsS3Multipart = core.getPlugin('AwsS3Multipart')
+      const awsS3Multipart = core.getPlugin('AwsS3Multipart')!
 
       const err = 'Expected a `companionUrl` option'
       const file = {}
       const opts = {}
 
-      expect(() => awsS3Multipart.opts.createMultipartUpload(file)).toThrow(
-        err,
-      )
+      expect(() => awsS3Multipart.opts.createMultipartUpload(file)).toThrow(err)
       expect(() => awsS3Multipart.opts.listParts(file, opts)).toThrow(err)
-      expect(() => awsS3Multipart.opts.completeMultipartUpload(file, opts)).toThrow(err)
-      expect(() => awsS3Multipart.opts.abortMultipartUpload(file, opts)).toThrow(err)
+      expect(() =>
+        awsS3Multipart.opts.completeMultipartUpload(file, opts),
+      ).toThrow(err)
+      expect(() =>
+        awsS3Multipart.opts.abortMultipartUpload(file, opts),
+      ).toThrow(err)
       expect(() => awsS3Multipart.opts.signPart(file, opts)).toThrow(err)
     })
   })
 
   describe('non-multipart upload', () => {
     it('should handle POST uploads', async () => {
-      const core = new Core()
+      const core = new Core<any, Body>()
       core.use(AwsS3Multipart, {
         shouldUseMultipart: false,
         limit: 0,
@@ -71,7 +77,7 @@ describe('AwsS3Multipart', () => {
         source: 'vi',
         name: 'multitest.dat',
         type: 'application/octet-stream',
-        data: new File([new Uint8Array(fileSize)], {
+        data: new File([new Uint8Array(fileSize)], '', {
           type: 'application/octet-stream',
         }),
       })
@@ -87,6 +93,7 @@ describe('AwsS3Multipart', () => {
           ETag: 'test',
           location: 'http://example.com',
         },
+        status: 200,
         uploadURL: 'http://example.com',
       })
 
@@ -95,11 +102,11 @@ describe('AwsS3Multipart', () => {
   })
 
   describe('without companionUrl (custom main functions)', () => {
-    let core
-    let awsS3Multipart
+    let core: Core<any, Body>
+    let awsS3Multipart: AwsS3Multipart<any, Body>
 
     beforeEach(() => {
-      core = new Core()
+      core = new Core<any, Body>()
       core.use(AwsS3Multipart, {
         limit: 0,
         createMultipartUpload: vi.fn(() => {
@@ -110,17 +117,19 @@ describe('AwsS3Multipart', () => {
         }),
         completeMultipartUpload: vi.fn(async () => ({ location: 'test' })),
         abortMultipartUpload: vi.fn(),
-        prepareUploadParts: vi.fn(async (file, { parts }) => {
-          const presignedUrls = {}
-          parts.forEach(({ number }) => {
-            presignedUrls[
-              number
-            ] = `https://bucket.s3.us-east-2.amazonaws.com/test/upload/multitest.dat?partNumber=${number}&uploadId=6aeb1980f3fc7ce0b5454d25b71992&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIATEST%2F20210729%2Fus-east-2%2Fs3%2Faws4_request&X-Amz-Date=20210729T014044Z&X-Amz-Expires=600&X-Amz-SignedHeaders=host&X-Amz-Signature=test`
-          })
-          return { presignedUrls, headers: { 1: { 'Content-MD5': 'foo' } } }
-        }),
+        prepareUploadParts: vi.fn(
+          async (file, { parts }: { parts: { number: number }[] }) => {
+            const presignedUrls: Record<number, string> = {}
+            parts.forEach(({ number }) => {
+              presignedUrls[number] =
+                `https://bucket.s3.us-east-2.amazonaws.com/test/upload/multitest.dat?partNumber=${number}&uploadId=6aeb1980f3fc7ce0b5454d25b71992&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIATEST%2F20210729%2Fus-east-2%2Fs3%2Faws4_request&X-Amz-Date=20210729T014044Z&X-Amz-Expires=600&X-Amz-SignedHeaders=host&X-Amz-Signature=test`
+            })
+            return { presignedUrls, headers: { 1: { 'Content-MD5': 'foo' } } }
+          },
+        ),
+        listParts: undefined as any,
       })
-      awsS3Multipart = core.getPlugin('AwsS3Multipart')
+      awsS3Multipart = core.getPlugin('AwsS3Multipart') as any
     })
 
     it('Calls the prepareUploadParts function totalChunks / limit times', async () => {
@@ -137,15 +146,23 @@ describe('AwsS3Multipart', () => {
       const fileSize = 5 * MB + 1 * MB
 
       scope
-        .options((uri) => uri.includes('test/upload/multitest.dat?partNumber=1'))
-        .reply(function replyFn () {
-          expect(this.req.headers['access-control-request-headers']).toEqual('Content-MD5')
+        .options((uri) =>
+          uri.includes('test/upload/multitest.dat?partNumber=1'),
+        )
+        .reply(function replyFn() {
+          expect(this.req.headers['access-control-request-headers']).toEqual(
+            'Content-MD5',
+          )
           return [200, '']
         })
       scope
-        .options((uri) => uri.includes('test/upload/multitest.dat?partNumber=2'))
-        .reply(function replyFn () {
-          expect(this.req.headers['access-control-request-headers']).toBeUndefined()
+        .options((uri) =>
+          uri.includes('test/upload/multitest.dat?partNumber=2'),
+        )
+        .reply(function replyFn() {
+          expect(
+            this.req.headers['access-control-request-headers'],
+          ).toBeUndefined()
           return [200, '']
         })
       scope
@@ -159,7 +176,7 @@ describe('AwsS3Multipart', () => {
         source: 'vi',
         name: 'multitest.dat',
         type: 'application/octet-stream',
-        data: new File([new Uint8Array(fileSize)], {
+        data: new File([new Uint8Array(fileSize)], '', {
           type: 'application/octet-stream',
         }),
       })
@@ -167,7 +184,7 @@ describe('AwsS3Multipart', () => {
       await core.upload()
 
       expect(
-        awsS3Multipart.opts.prepareUploadParts.mock.calls.length,
+        (awsS3Multipart.opts as any).prepareUploadParts.mock.calls.length,
       ).toEqual(2)
 
       scope.done()
@@ -201,14 +218,17 @@ describe('AwsS3Multipart', () => {
         source: 'vi',
         name: 'multitest.dat',
         type: 'application/octet-stream',
-        data: new File([new Uint8Array(fileSize)], {
+        data: new File([new Uint8Array(fileSize)], '', {
           type: 'application/octet-stream',
         }),
       })
 
       await core.upload()
 
-      function validatePartData ({ parts }, expected) {
+      function validatePartData(
+        { parts }: { parts: { number: number; chunk: unknown }[] },
+        expected: number[],
+      ) {
         expect(parts.map((part) => part.number)).toEqual(expected)
 
         for (const part of parts) {
@@ -216,13 +236,25 @@ describe('AwsS3Multipart', () => {
         }
       }
 
-      expect(awsS3Multipart.opts.prepareUploadParts.mock.calls.length).toEqual(10)
+      expect(
+        (awsS3Multipart.opts as any).prepareUploadParts.mock.calls.length,
+      ).toEqual(10)
 
-      validatePartData(awsS3Multipart.opts.prepareUploadParts.mock.calls[0][1], [1])
-      validatePartData(awsS3Multipart.opts.prepareUploadParts.mock.calls[1][1], [2])
-      validatePartData(awsS3Multipart.opts.prepareUploadParts.mock.calls[2][1], [3])
+      validatePartData(
+        (awsS3Multipart.opts as any).prepareUploadParts.mock.calls[0][1],
+        [1],
+      )
+      validatePartData(
+        (awsS3Multipart.opts as any).prepareUploadParts.mock.calls[1][1],
+        [2],
+      )
+      validatePartData(
+        (awsS3Multipart.opts as any).prepareUploadParts.mock.calls[2][1],
+        [3],
+      )
 
-      const completeCall = awsS3Multipart.opts.completeMultipartUpload.mock.calls[0][1]
+      const completeCall = (awsS3Multipart.opts as any).completeMultipartUpload
+        .mock.calls[0][1]
 
       expect(completeCall.parts).toEqual([
         { ETag: 'test', PartNumber: 1 },
@@ -254,13 +286,21 @@ describe('AwsS3Multipart', () => {
         .options((uri) => uri.includes('test/upload/multitest.dat'))
         .reply(200, '')
       scope
-        .put((uri) => uri.includes('test/upload/multitest.dat') && !uri.includes('partNumber=7'))
+        .put(
+          (uri) =>
+            uri.includes('test/upload/multitest.dat') &&
+            !uri.includes('partNumber=7'),
+        )
         .reply(200, '', { ETag: 'test' })
 
       // Fail the part 7 upload once, then let it succeed
       let calls = 0
       scope
-        .put((uri) => uri.includes('test/upload/multitest.dat') && uri.includes('partNumber=7'))
+        .put(
+          (uri) =>
+            uri.includes('test/upload/multitest.dat') &&
+            uri.includes('partNumber=7'),
+        )
         .reply(() => (calls++ === 0 ? [500] : [200, '', { ETag: 'test' }]))
 
       scope.persist()
@@ -271,14 +311,25 @@ describe('AwsS3Multipart', () => {
       awsS3Multipart.setOptions({
         retryDelays: [10],
         createMultipartUpload: vi.fn((file) => {
-          const multipartUploader = awsS3Multipart.uploaders[file.id]
+          // @ts-expect-error protected property
+          const multipartUploader = awsS3Multipart.uploaders[file.id]!
           const testChunkState = multipartUploader.chunkState[6]
           let busy = false
           let done = false
-          busySpy = vi.fn((value) => { busy = value })
-          doneSpy = vi.fn((value) => { done = value })
-          Object.defineProperty(testChunkState, 'busy', { get: () => busy, set: busySpy })
-          Object.defineProperty(testChunkState, 'done', { get: () => done, set: doneSpy })
+          busySpy = vi.fn((value) => {
+            busy = value
+          })
+          doneSpy = vi.fn((value) => {
+            done = value
+          })
+          Object.defineProperty(testChunkState, 'busy', {
+            get: () => busy,
+            set: busySpy,
+          })
+          Object.defineProperty(testChunkState, 'done', {
+            get: () => done,
+            set: doneSpy,
+          })
 
           return {
             uploadId: '6aeb1980f3fc7ce0b5454d25b71992',
@@ -291,7 +342,7 @@ describe('AwsS3Multipart', () => {
         source: 'vi',
         name: 'multitest.dat',
         type: 'application/octet-stream',
-        data: new File([new Uint8Array(fileSize)], {
+        data: new File([new Uint8Array(fileSize)], '', {
           type: 'application/octet-stream',
         }),
       })
@@ -299,19 +350,23 @@ describe('AwsS3Multipart', () => {
       await core.upload()
 
       // The chunk should be marked as done once
-      expect(doneSpy.mock.calls.length).toEqual(1)
-      expect(doneSpy.mock.calls[0][0]).toEqual(true)
+      expect(doneSpy!.mock.calls.length).toEqual(1)
+      expect(doneSpy!.mock.calls[0][0]).toEqual(true)
 
       // Any changes that set busy to false should only happen after the chunk has been marked done,
       // otherwise a race condition occurs (see PR #3955)
-      const doneCallOrderNumber = doneSpy.mock.invocationCallOrder[0]
-      for (const [index, callArgs] of busySpy.mock.calls.entries()) {
+      const doneCallOrderNumber = doneSpy!.mock.invocationCallOrder[0]
+      for (const [index, callArgs] of busySpy!.mock.calls.entries()) {
         if (callArgs[0] === false) {
-          expect(busySpy.mock.invocationCallOrder[index]).toBeGreaterThan(doneCallOrderNumber)
+          expect(busySpy!.mock.invocationCallOrder[index]).toBeGreaterThan(
+            doneCallOrderNumber,
+          )
         }
       }
 
-      expect(awsS3Multipart.opts.prepareUploadParts.mock.calls.length).toEqual(10)
+      expect(
+        (awsS3Multipart.opts as any).prepareUploadParts.mock.calls.length,
+      ).toEqual(10)
     })
   })
 
@@ -323,36 +378,41 @@ describe('AwsS3Multipart', () => {
       }
     })
 
-    const signPart = vi
-      .fn(async (file, { partNumber }) => {
-        return { url: `https://bucket.s3.us-east-2.amazonaws.com/test/upload/multitest.dat?partNumber=${partNumber}&uploadId=6aeb1980f3fc7ce0b5454d25b71992&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIATEST%2F20210729%2Fus-east-2%2Fs3%2Faws4_request&X-Amz-Date=20210729T014044Z&X-Amz-Expires=600&X-Amz-SignedHeaders=host&X-Amz-Signature=test` }
-      })
+    const signPart = vi.fn(async (file, { partNumber }) => {
+      return {
+        url: `https://bucket.s3.us-east-2.amazonaws.com/test/upload/multitest.dat?partNumber=${partNumber}&uploadId=6aeb1980f3fc7ce0b5454d25b71992&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIATEST%2F20210729%2Fus-east-2%2Fs3%2Faws4_request&X-Amz-Date=20210729T014044Z&X-Amz-Expires=600&X-Amz-SignedHeaders=host&X-Amz-Signature=test`,
+      }
+    })
 
     const uploadPartBytes = vi.fn()
 
-    afterEach(() => vi.clearAllMocks())
+    afterEach(() => {
+      vi.clearAllMocks()
+    })
 
     it('retries uploadPartBytes when it fails once', async () => {
-      const core = new Core()
-        .use(AwsS3Multipart, {
-          createMultipartUpload,
-          completeMultipartUpload: vi.fn(async () => ({ location: 'test' })),
+      const core = new Core<any, Body>().use(AwsS3Multipart, {
+        createMultipartUpload,
+        completeMultipartUpload: vi.fn(async () => ({ location: 'test' })),
+        abortMultipartUpload: vi.fn(() => {
           // eslint-disable-next-line no-throw-literal
-          abortMultipartUpload: vi.fn(() => { throw 'should ignore' }),
-          signPart,
-          uploadPartBytes:
-            uploadPartBytes
-              // eslint-disable-next-line prefer-promise-reject-errors
-              .mockImplementationOnce(() => Promise.reject({ source: { status: 500 } })),
-        })
-      const awsS3Multipart = core.getPlugin('AwsS3Multipart')
+          throw 'should ignore'
+        }),
+        signPart,
+        uploadPartBytes: uploadPartBytes.mockImplementationOnce(() =>
+          // eslint-disable-next-line prefer-promise-reject-errors
+          Promise.reject({ source: { status: 500 } }),
+        ),
+        listParts: undefined as any,
+      })
+      const awsS3Multipart = core.getPlugin('AwsS3Multipart')!
       const fileSize = 5 * MB + 1 * MB
 
       core.addFile({
         source: 'vi',
         name: 'multitest.dat',
         type: 'application/octet-stream',
-        data: new File([new Uint8Array(fileSize)], {
+        data: new File([new Uint8Array(fileSize)], '', {
           type: 'application/octet-stream',
         }),
       })
@@ -363,18 +423,19 @@ describe('AwsS3Multipart', () => {
     })
 
     it('calls `upload-error` when uploadPartBytes fails after all retries', async () => {
-      const core = new Core()
-        .use(AwsS3Multipart, {
-          retryDelays: [10],
-          createMultipartUpload,
-          completeMultipartUpload: vi.fn(async () => ({ location: 'test' })),
-          abortMultipartUpload: vi.fn(),
-          signPart,
-          uploadPartBytes: uploadPartBytes
-            // eslint-disable-next-line prefer-promise-reject-errors
-            .mockImplementation(() => Promise.reject({ source: { status: 500 } })),
-        })
-      const awsS3Multipart = core.getPlugin('AwsS3Multipart')
+      const core = new Core<any, Body>().use(AwsS3Multipart, {
+        retryDelays: [10],
+        createMultipartUpload,
+        completeMultipartUpload: vi.fn(async () => ({ location: 'test' })),
+        abortMultipartUpload: vi.fn(),
+        signPart,
+        uploadPartBytes: uploadPartBytes.mockImplementation(() =>
+          // eslint-disable-next-line prefer-promise-reject-errors
+          Promise.reject({ source: { status: 500 } }),
+        ),
+        listParts: undefined as any,
+      })
+      const awsS3Multipart = core.getPlugin('AwsS3Multipart')!
       const fileSize = 5 * MB + 1 * MB
       const mock = vi.fn()
       core.on('upload-error', mock)
@@ -383,7 +444,7 @@ describe('AwsS3Multipart', () => {
         source: 'vi',
         name: 'multitest.dat',
         type: 'application/octet-stream',
-        data: new File([new Uint8Array(fileSize)], {
+        data: new File([new Uint8Array(fileSize)], '', {
           type: 'application/octet-stream',
         }),
       })
@@ -396,19 +457,20 @@ describe('AwsS3Multipart', () => {
   })
 
   describe('dynamic companionHeader', () => {
-    let core
-    let awsS3Multipart
+    let core: Core<any, any>
+    let awsS3Multipart: AwsS3Multipart<any, any>
     const oldToken = 'old token'
     const newToken = 'new token'
 
     beforeEach(() => {
-      core = new Core()
+      core = new Core<any, Body>()
       core.use(AwsS3Multipart, {
+        companionUrl: '',
         companionHeaders: {
           authorization: oldToken,
         },
       })
-      awsS3Multipart = core.getPlugin('AwsS3Multipart')
+      awsS3Multipart = core.getPlugin('AwsS3Multipart') as any
     })
 
     it('companionHeader is updated before uploading file', async () => {
@@ -420,23 +482,29 @@ describe('AwsS3Multipart', () => {
 
       await core.upload()
 
+      // @ts-expect-error private property
       const client = awsS3Multipart[Symbol.for('uppy test: getClient')]()
 
-      expect(client[Symbol.for('uppy test: getCompanionHeaders')]().authorization).toEqual(newToken)
+      expect(
+        client[Symbol.for('uppy test: getCompanionHeaders')]().authorization,
+      ).toEqual(newToken)
     })
   })
 
   describe('dynamic companionHeader using setOption', () => {
-    let core
-    let awsS3Multipart
+    let core: Core<any, Body>
+    let awsS3Multipart: AwsS3Multipart<any, Body>
     const newToken = 'new token'
 
     it('companionHeader is updated before uploading file', async () => {
-      core = new Core()
+      core = new Core<any, Body>()
       core.use(AwsS3Multipart)
       /* Set up preprocessor */
       core.addPreProcessor(() => {
-        awsS3Multipart = core.getPlugin('AwsS3Multipart')
+        awsS3Multipart = core.getPlugin('AwsS3Multipart') as AwsS3Multipart<
+          any,
+          Body
+        >
         awsS3Multipart.setOptions({
           companionHeaders: {
             authorization: newToken,
@@ -446,15 +514,18 @@ describe('AwsS3Multipart', () => {
 
       await core.upload()
 
+      // @ts-expect-error private property
       const client = awsS3Multipart[Symbol.for('uppy test: getClient')]()
 
-      expect(client[Symbol.for('uppy test: getCompanionHeaders')]().authorization).toEqual(newToken)
+      expect(
+        client[Symbol.for('uppy test: getCompanionHeaders')]().authorization,
+      ).toEqual(newToken)
     })
   })
 
   describe('file metadata across custom main functions', () => {
-    let core
-    const createMultipartUpload = vi.fn(file => {
+    let core: Core<any, Body>
+    const createMultipartUpload = vi.fn((file) => {
       core.setFileMeta(file.id, {
         ...file.meta,
         createMultipartUpload: true,
@@ -487,8 +558,10 @@ describe('AwsS3Multipart', () => {
         listParts: true,
       })
 
-      const partKeys = Object.keys(file.meta).filter(metaKey => metaKey.startsWith('part'))
-      return partKeys.map(metaKey => ({
+      const partKeys = Object.keys(file.meta).filter((metaKey) =>
+        metaKey.startsWith('part'),
+      )
+      return partKeys.map((metaKey) => ({
         PartNumber: file.meta[metaKey],
         ETag: metaKey,
         Size: 5 * MB,
@@ -508,7 +581,6 @@ describe('AwsS3Multipart', () => {
       expect(file.meta.createMultipartUpload).toBe(true)
       expect(file.meta.signPart).toBe(true)
       expect(file.meta.abortingPart).toBe(5)
-      return {}
     })
 
     beforeEach(() => {
@@ -520,14 +592,13 @@ describe('AwsS3Multipart', () => {
     })
 
     it('preserves file metadata if upload is completed', async () => {
-      core = new Core()
-        .use(AwsS3Multipart, {
-          createMultipartUpload,
-          signPart,
-          listParts,
-          completeMultipartUpload,
-          abortMultipartUpload,
-        })
+      core = new Core<any, Body>().use(AwsS3Multipart, {
+        createMultipartUpload,
+        signPart,
+        listParts,
+        completeMultipartUpload,
+        abortMultipartUpload,
+      })
 
       nock('https://bucket.s3.us-east-2.amazonaws.com')
         .defaultReplyHeaders({
@@ -545,7 +616,7 @@ describe('AwsS3Multipart', () => {
         source: 'vi',
         name: 'multitest.dat',
         type: 'application/octet-stream',
-        data: new File([new Uint8Array(fileSize)], {
+        data: new File([new Uint8Array(fileSize)], '', {
           type: 'application/octet-stream',
         }),
       })
@@ -565,7 +636,9 @@ describe('AwsS3Multipart', () => {
             abortingPart: partData.partNumber,
           })
           core.removeFile(file.id)
-          return {}
+          return {
+            url: undefined as any as string,
+          }
         }
 
         core.setFileMeta(file.id, {
@@ -579,14 +652,13 @@ describe('AwsS3Multipart', () => {
         }
       })
 
-      core = new Core()
-        .use(AwsS3Multipart, {
-          createMultipartUpload,
-          signPart: signPartWithAbort,
-          listParts,
-          completeMultipartUpload,
-          abortMultipartUpload,
-        })
+      core = new Core<any, Body>().use(AwsS3Multipart, {
+        createMultipartUpload,
+        signPart: signPartWithAbort,
+        listParts,
+        completeMultipartUpload,
+        abortMultipartUpload,
+      })
 
       nock('https://bucket.s3.us-east-2.amazonaws.com')
         .defaultReplyHeaders({
@@ -604,7 +676,7 @@ describe('AwsS3Multipart', () => {
         source: 'vi',
         name: 'multitest.dat',
         type: 'application/octet-stream',
-        data: new File([new Uint8Array(fileSize)], {
+        data: new File([new Uint8Array(fileSize)], '', {
           type: 'application/octet-stream',
         }),
       })
@@ -649,14 +721,13 @@ describe('AwsS3Multipart', () => {
         }
       })
 
-      core = new Core()
-        .use(AwsS3Multipart, {
-          createMultipartUpload,
-          signPart: signPartWithPause,
-          listParts,
-          completeMultipartUpload: completeMultipartUploadAfterPause,
-          abortMultipartUpload,
-        })
+      core = new Core<any, Body>().use(AwsS3Multipart, {
+        createMultipartUpload,
+        signPart: signPartWithPause,
+        listParts,
+        completeMultipartUpload: completeMultipartUploadAfterPause,
+        abortMultipartUpload,
+      })
 
       nock('https://bucket.s3.us-east-2.amazonaws.com')
         .defaultReplyHeaders({
@@ -674,7 +745,7 @@ describe('AwsS3Multipart', () => {
         source: 'vi',
         name: 'multitest.dat',
         type: 'application/octet-stream',
-        data: new File([new Uint8Array(fileSize)], {
+        data: new File([new Uint8Array(fileSize)], '', {
           type: 'application/octet-stream',
         }),
       })
