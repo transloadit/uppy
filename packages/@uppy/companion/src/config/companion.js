@@ -86,7 +86,13 @@ const validateConfig = (companionOptions) => {
     )
   }
 
-  const { providerOptions, periodicPingUrls } = companionOptions
+  const { providerOptions, periodicPingUrls, server } = companionOptions
+
+  if (server && server.path) {
+    // see https://github.com/transloadit/uppy/issues/4271
+    // todo fix the code so we can allow `/`
+    if (server.path === '/') throw new Error('server.path cannot be set to /')
+  }
 
   if (providerOptions) {
     const deprecatedOptions = { microsoft: 'providerOptions.onedrive', google: 'providerOptions.drive', s3: 's3' }
