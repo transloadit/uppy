@@ -105,8 +105,9 @@ describe('createSignedURL', () => {
     )
     assert.strictEqual(implResult.pathname, sdkResult.pathname)
 
-    const extractUploadIdQueryValue = (result) =>
-      result.search.match(/uploadId=(.+?)(&|$)/)[1]
-    assert.strictEqual(extractUploadIdQueryValue(implResult), extractUploadIdQueryValue(sdkResult))
+    const extractUploadId = /([?&])uploadId=([^&]+?)(&|$)/
+    const extractSignature = /([?&])X-Amz-Signature=([^&]+?)(&|$)/
+    assert.strictEqual(implResult.search.match(extractUploadId)[2], sdkResult.search.match(extractUploadId)[2])
+    assert.strictEqual(implResult.search.match(extractSignature)[2], sdkResult.search.match(extractSignature)[2])
   })
 })
