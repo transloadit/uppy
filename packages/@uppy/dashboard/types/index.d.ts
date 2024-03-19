@@ -65,6 +65,8 @@ export interface DashboardOptions extends Options {
   theme?: 'auto' | 'dark' | 'light'
   trigger?: string
   width?: string | number
+  /** @deprecated use option autoOpen instead */
+  autoOpenFileEditor?: boolean
   autoOpen?: 'metaEditor' | 'fileEditor' | false
   disabled?: boolean
   disableLocalFiles?: boolean
