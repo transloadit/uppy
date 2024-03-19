@@ -108,7 +108,7 @@
     "stylelint-config-standard-scss": "^10.0.0",
     "tar": "^6.1.0",
     "tsd": "^0.28.0",
-    "typescript": "^5.4.2",
+    "typescript": "~5.1",
     "vitest": "^1.2.1",
     "vue-template-compiler": "workspace:*"
   },
