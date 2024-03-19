@@ -8882,6 +8882,7 @@ __metadata:
     "@uppy/core": "workspace:*"
     "@uppy/drag-drop": "workspace:*"
     "@uppy/google-drive": "workspace:*"
+    "@uppy/google-photos": "workspace:*"
     "@uppy/progress-bar": "workspace:*"
     "@uppy/tus": "workspace:*"
     "@uppy/webcam": "workspace:*"
@@ -9547,6 +9548,19 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@uppy/google-photos@workspace:*, @uppy/google-photos@workspace:^, @uppy/google-photos@workspace:packages/@uppy/google-photos":
+  version: 0.0.0-use.local
+  resolution: "@uppy/google-photos@workspace:packages/@uppy/google-photos"
+  dependencies:
+    "@uppy/companion-client": "workspace:^"
+    "@uppy/provider-views": "workspace:^"
+    "@uppy/utils": "workspace:^"
+    preact: ^10.5.13
+  peerDependencies:
+    "@uppy/core": "workspace:^"
+  languageName: unknown
+  linkType: soft
+
 "@uppy/image-editor@workspace:*, @uppy/image-editor@workspace:^, @uppy/image-editor@workspace:packages/@uppy/image-editor":
   version: 0.0.0-use.local
   resolution: "@uppy/image-editor@workspace:packages/@uppy/image-editor"
@@ -9693,6 +9707,7 @@ __metadata:
     "@uppy/dropbox": "workspace:^"
     "@uppy/facebook": "workspace:^"
     "@uppy/google-drive": "workspace:^"
+    "@uppy/google-photos": "workspace:^"
     "@uppy/instagram": "workspace:^"
     "@uppy/onedrive": "workspace:^"
     "@uppy/unsplash": "workspace:^"
@@ -14349,6 +14364,7 @@ __metadata:
     "@uppy/form": "workspace:^"
     "@uppy/golden-retriever": "workspace:^"
     "@uppy/google-drive": "workspace:^"
+    "@uppy/google-photos": "workspace:^"
     "@uppy/image-editor": "workspace:^"
     "@uppy/informer": "workspace:^"
     "@uppy/instagram": "workspace:^"
@@ -31210,6 +31226,7 @@ __metadata:
     "@uppy/form": "workspace:^"
     "@uppy/golden-retriever": "workspace:^"
     "@uppy/google-drive": "workspace:^"
+    "@uppy/google-photos": "workspace:^"
     "@uppy/image-editor": "workspace:^"
     "@uppy/informer": "workspace:^"
     "@uppy/instagram": "workspace:^"
