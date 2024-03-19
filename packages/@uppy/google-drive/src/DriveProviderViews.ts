@@ -6,7 +6,7 @@ export default class DriveProviderViews<
   M extends Meta,
   B extends Body,
 > extends ProviderViews<M, B> {
-  toggleCheckbox = (e: Event, file: CompanionFile): void => {
+  toggleCheckbox(e: Event, file: CompanionFile): void {
     e.stopPropagation()
     e.preventDefault()
 

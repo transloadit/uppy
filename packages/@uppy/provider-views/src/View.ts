@@ -199,7 +199,7 @@ export default class View<
    * toggle multiple checkboxes at once, which is done by getting all files
    * in between last checked file and current one.
    */
-  toggleCheckbox = (e: Event, file: CompanionFile): void => {
+  toggleCheckbox(e: Event, file: CompanionFile): void {
     e.stopPropagation()
     e.preventDefault()
     ;(e.currentTarget as HTMLInputElement).focus()
