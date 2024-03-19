@@ -16,21 +16,22 @@ import ImageEditor from '@uppy/image-editor'
 import DropTarget from '@uppy/drop-target'
 import Audio from '@uppy/audio'
 import Compressor from '@uppy/compressor'
+// eslint-disable-next-line import/no-unresolved
+import Ftp from '@uppy/ftp'
 import GoogleDrive from '@uppy/google-drive'
-/* eslint-enable import/no-extraneous-dependencies */
 
 import generateSignatureIfSecret from './generateSignatureIfSecret.js'
 
 // DEV CONFIG: create a .env file in the project root directory to customize those values.
 const {
-  VITE_UPLOADER : UPLOADER,
-  VITE_COMPANION_URL : COMPANION_URL,
-  VITE_TUS_ENDPOINT : TUS_ENDPOINT,
-  VITE_XHR_ENDPOINT : XHR_ENDPOINT,
-  VITE_TRANSLOADIT_KEY : TRANSLOADIT_KEY,
-  VITE_TRANSLOADIT_SECRET : TRANSLOADIT_SECRET,
-  VITE_TRANSLOADIT_TEMPLATE : TRANSLOADIT_TEMPLATE,
-  VITE_TRANSLOADIT_SERVICE_URL : TRANSLOADIT_SERVICE_URL,
+  VITE_UPLOADER: UPLOADER,
+  VITE_COMPANION_URL: COMPANION_URL,
+  VITE_TUS_ENDPOINT: TUS_ENDPOINT,
+  VITE_XHR_ENDPOINT: XHR_ENDPOINT,
+  VITE_TRANSLOADIT_KEY: TRANSLOADIT_KEY,
+  VITE_TRANSLOADIT_SECRET: TRANSLOADIT_SECRET,
+  VITE_TRANSLOADIT_TEMPLATE: TRANSLOADIT_TEMPLATE,
+  VITE_TRANSLOADIT_SERVICE_URL: TRANSLOADIT_SERVICE_URL,
 } = import.meta.env
 
 const companionAllowedHosts = import.meta.env.VITE_COMPANION_ALLOWED_HOSTS
@@ -45,7 +46,7 @@ console.log(import.meta.env)
 const RESTORE = false
 const COMPRESS = false
 
-async function assemblyOptions () {
+async function assemblyOptions() {
   return generateSignatureIfSecret(TRANSLOADIT_SECRET, {
     auth: {
       key: TRANSLOADIT_KEY,
@@ -56,7 +57,7 @@ async function assemblyOptions () {
   })
 }
 
-function getCompanionKeysParams (name) {
+function getCompanionKeysParams(name) {
   const {
     [`VITE_COMPANION_${name}_KEYS_PARAMS_CREDENTIALS_NAME`]: credentialsName,
     [`VITE_COMPANION_${name}_KEYS_PARAMS_KEY`]: key,
@@ -102,6 +103,7 @@ export default () => {
       proudlyDisplayPoweredByUppy: true,
       note: `${JSON.stringify(restrictions)}`,
     })
+    .use(Ftp, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })
     .use(GoogleDrive, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts, ...getCompanionKeysParams('GOOGLE_DRIVE') })
     // .use(Instagram, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })
     // .use(Dropbox, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })

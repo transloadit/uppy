@@ -242,6 +242,7 @@ module.exports = {
         'packages/@uppy/utils/src/**/*.js',
         'packages/@uppy/vue/src/**/*.js',
         'packages/@uppy/webcam/src/**/*.js',
+        'packages/@uppy/ftp/src/**/*.js',
         'packages/@uppy/xhr-upload/src/**/*.js',
         'packages/@uppy/zoom/src/**/*.js',
       ],
