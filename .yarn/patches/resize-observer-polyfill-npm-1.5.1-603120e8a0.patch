@@ -1,0 +1,19 @@
+diff --git a/src/index.d.ts b/src/index.d.ts
+index 74aacc0526ff554e9248c3f6fb44c353b5465efc..1b236d215a9db4cbc1c83f4d8bce24add202483e 100644
+--- a/src/index.d.ts
++++ b/src/index.d.ts
+@@ -1,14 +1,3 @@
+-interface DOMRectReadOnly {
+-    readonly x: number;
+-    readonly y: number;
+-    readonly width: number;
+-    readonly height: number;
+-    readonly top: number;
+-    readonly right: number;
+-    readonly bottom: number;
+-    readonly left: number;
+-}
+-
+ declare global {
+     interface ResizeObserverCallback {
+         (entries: ResizeObserverEntry[], observer: ResizeObserver): void

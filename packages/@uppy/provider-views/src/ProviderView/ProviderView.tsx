@@ -233,7 +233,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
         if (index !== -1) {
           // means we navigated back to a known directory (already in the stack), so cut the stack off there
           breadcrumbs = breadcrumbs.slice(0, index + 1)
-        } else if (requestPath) {
+        } else {
           // we have navigated into a new (unknown) folder, add it to the stack
           breadcrumbs = [...breadcrumbs, { requestPath, name }]
         }

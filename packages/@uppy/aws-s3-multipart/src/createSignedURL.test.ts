@@ -57,6 +57,7 @@ describe('createSignedURL', () => {
             Bucket: bucketName,
             Key: 'some/key',
           }),
+          { expiresIn: 900 },
         ),
       ).searchParams.get('X-Amz-Signature'),
     )
@@ -88,8 +89,53 @@ describe('createSignedURL', () => {
             PartNumber: partNumber,
             Key: 'some/key',
           }),
+          { expiresIn: 900 },
         ),
       ).searchParams.get('X-Amz-Signature'),
+    )
+  })
+
+  it('should escape path and query as restricted to RFC 3986', async () => {
+    const client = new S3Client(s3ClientOptions)
+    const partNumber = 99
+    const specialChars = ";?:@&=+$,#!'()"
+    const uploadId = `Upload${specialChars}Id`
+    // '.*' chars of path should be encoded
+    const Key = `${specialChars}.*/${specialChars}.*.ext`
+    const implResult = await createSignedURL({
+      accountKey: s3ClientOptions.credentials.accessKeyId,
+      accountSecret: s3ClientOptions.credentials.secretAccessKey,
+      sessionToken: s3ClientOptions.credentials.sessionToken,
+      uploadId,
+      partNumber,
+      bucketName,
+      Key,
+      Region: s3ClientOptions.region,
+      expires: 900,
+    })
+    const sdkResult = new URL(
+      await getSignedUrl(
+        client,
+        new UploadPartCommand({
+          Bucket: bucketName,
+          UploadId: uploadId,
+          PartNumber: partNumber,
+          Key,
+        }),
+        { expiresIn: 900 },
+      ),
+    )
+    assert.strictEqual(implResult.pathname, sdkResult.pathname)
+
+    const extractUploadId = /([?&])uploadId=([^&]+?)(&|$)/
+    const extractSignature = /([?&])X-Amz-Signature=([^&]+?)(&|$)/
+    assert.strictEqual(
+      implResult.search.match(extractUploadId)![2],
+      sdkResult.search.match(extractUploadId)![2],
+    )
+    assert.strictEqual(
+      implResult.search.match(extractSignature)![2],
+      sdkResult.search.match(extractSignature)![2],
     )
   })
 })

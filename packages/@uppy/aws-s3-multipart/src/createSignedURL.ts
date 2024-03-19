@@ -115,7 +115,13 @@ export default async function createSignedURL({
 }): Promise<URL> {
   const Service = 's3'
   const host = `${bucketName}.${Service}.${Region}.amazonaws.com`
-  const CanonicalUri = `/${encodeURI(Key)}`
+  /**
+   * List of char out of `encodeURI()` is taken from ECMAScript spec.
+   * Note that the `/` character is purposefully not included in list below.
+   *
+   * @see https://tc39.es/ecma262/#sec-encodeuri-uri
+   */
+  const CanonicalUri = `/${encodeURI(Key).replace(/[;?:@&=+$,#!'()*]/g, (c) => `%${c.charCodeAt(0).toString(16).toUpperCase()}`)}`
   const payload = 'UNSIGNED-PAYLOAD'
 
   const requestDateTime = new Date().toISOString().replace(/[-:]|\.\d+/g, '') // YYYYMMDDTHHMMSSZ

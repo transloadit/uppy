@@ -16,7 +16,7 @@ import type {
   OptionalPluralizeLocale,
 } from '@uppy/utils/lib/Translator'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
-import type { State, Uppy } from './Uppy'
+import type { State, UnknownPlugin, Uppy } from './Uppy'
 
 export type PluginOpts = {
   locale?: Locale
@@ -111,7 +111,7 @@ export default class BasePlugin<
    */
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  addTarget(plugin: unknown): HTMLElement {
+  addTarget(plugin: UnknownPlugin<M, B>): HTMLElement | null {
     throw new Error(
       "Extend the addTarget method to add your plugin to another plugin's target",
     )
