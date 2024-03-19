@@ -95,7 +95,8 @@ export default async function createSignedURL ({
   const Service = 's3'
   const host = `${bucketName}.${Service}.${Region}.amazonaws.com`
   /**
-   * List of char out of `encodeURI()` is taken from ECMAScript spec
+   * List of char out of `encodeURI()` is taken from ECMAScript spec.
+   * Note that the `/` character is purposefully not included in list below.
    *
    * @see https://tc39.es/ecma262/#sec-encodeuri-uri
    */
