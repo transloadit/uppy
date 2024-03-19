@@ -49,6 +49,7 @@ pt_PT.strings = {
   dropPasteImportFiles: 'Arraste ficheiros, cole, %{browse} ou importe de',
   dropPasteImportFolders: 'Arraste ficheiros, cole, %{browse} ou importe de',
   editFile: 'Editar ficheiro',
+  editImage: 'Editar imagem',
   editing: 'A editar %{file}',
   emptyFolderAdded: 'A pasta está vazia e nenhum ficheiro foi adicionado.',
   encoding: 'A codificar...',

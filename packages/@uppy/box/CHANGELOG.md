@@ -1,5 +1,12 @@
 # @uppy/box
 
+## 2.2.1
+
+Released: 2024-02-28
+Included in: Uppy v3.23.0
+
+- @uppy/box: fetchPreAuthToken in box too (Mikael Finstad / #4969)
+
 ## 2.1.2
 
 Released: 2023-07-13

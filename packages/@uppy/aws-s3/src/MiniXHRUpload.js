@@ -134,7 +134,7 @@ export default class MiniXHRUpload {
         timer.progress()
 
         if (ev.lengthComputable) {
-          this.uppy.emit('upload-progress', file, {
+          this.uppy.emit('upload-progress', this.uppy.getFile(file.id), {
             uploader: this,
             bytesUploaded: ev.loaded,
             bytesTotal: ev.total,
@@ -162,7 +162,7 @@ export default class MiniXHRUpload {
             uploadURL,
           }
 
-          this.uppy.emit('upload-success', file, uploadResp)
+          this.uppy.emit('upload-success', this.uppy.getFile(file.id), uploadResp)
 
           if (uploadURL) {
             this.uppy.log(`Download ${file.name} from ${uploadURL}`)

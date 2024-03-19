@@ -1,5 +1,12 @@
 # @uppy/drop-target
 
+## 2.0.3
+
+Released: 2024-02-19
+Included in: Uppy v3.22.0
+
+- @uppy/drop-target: refactor to typescript (artur paikin / #4863)
+
 ## 2.0.1
 
 Released: 2022-09-25

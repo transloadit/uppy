@@ -340,6 +340,7 @@ module.exports = {
     {
       files: [
         '*.test.js',
+        '*.test.ts',
         'test/endtoend/*.js',
         'bin/**.js',
       ],
@@ -462,9 +463,11 @@ module.exports = {
       ],
       rules: {
         'import/prefer-default-export': 'off',
+        '@typescript-eslint/no-empty-function': 'off',
         '@typescript-eslint/no-explicit-any': 'off',
         '@typescript-eslint/no-extra-semi': 'off',
         '@typescript-eslint/no-namespace': 'off',
+        '@typescript-eslint/no-non-null-assertion': 'off',
       },
     },
     {

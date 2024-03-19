@@ -50,6 +50,7 @@ id_ID.strings = {
   dropPasteImportFolders:
     'Letakkan berkas, tempelkan, %{browse} atau impor dari',
   editFile: 'Ubah berkas',
+  editImage: 'Edit gambar',
   editing: 'Mengubah %{file}',
   emptyFolderAdded: 'Tidak ada berkas yang ditambahkan dari direktori kosong',
   encoding: 'Pengkodean...',

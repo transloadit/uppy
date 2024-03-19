@@ -16,7 +16,7 @@ export default ({
       <select
         className="uppy-u-reset uppy-Audio-audioSource-select"
         onChange={(event) => {
-          onChangeSource(event.target.value)
+          onChangeSource((event.target as HTMLSelectElement).value)
         }}
       >
         {audioSources.map((audioSource) => (

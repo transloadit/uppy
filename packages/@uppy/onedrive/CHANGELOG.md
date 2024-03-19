@@ -1,5 +1,12 @@
 # @uppy/onedrive
 
+## 3.2.1
+
+Released: 2024-02-28
+Included in: Uppy v3.23.0
+
+- @uppy/onedrive: fix custom oauth2 credentials for onedrive (Mikael Finstad / #4968)
+
 ## 3.1.2
 
 Released: 2023-07-13

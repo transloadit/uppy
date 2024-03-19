@@ -68,6 +68,7 @@ nl_NL.strings = {
   dropPasteImportFolders:
     'Sleep hier je bestanden naartoe, plak, %{browse} of importeer vanuit',
   editFile: 'Bestand aanpassen',
+  editImage: 'Afbeelding aanpassen',
   editFileWithFilename: 'Bestand aanpassen %{file}',
   editing: 'Bezig %{file} aan te passen',
   emptyFolderAdded: 'Er werden geen bestanden toegevoegd uit de lege map',
