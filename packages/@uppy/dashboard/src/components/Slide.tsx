@@ -1,8 +1,11 @@
-import { cloneElement, toChildArray, type VNode } from 'preact'
+import {
+  cloneElement,
+  toChildArray,
+  type VNode,
+  type ComponentChildren,
+} from 'preact'
 import { useEffect, useState, useRef } from 'preact/hooks'
 import classNames from 'classnames'
-
-type $TSFixMe = any
 
 const transitionName = 'uppy-transition-slideDownUp'
 const duration = 250
@@ -16,7 +19,11 @@ const duration = 250
  * but it should be simple to extend this for any type of single-element
  * transition by setting the CSS name and duration as props.
  */
-function Slide({ children }: $TSFixMe): JSX.Element | null {
+function Slide({
+  children,
+}: {
+  children: ComponentChildren
+}): JSX.Element | null {
   const [cachedChildren, setCachedChildren] = useState<VNode<{
     className?: string
   }> | null>(null)
