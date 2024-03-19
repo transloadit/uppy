@@ -47,7 +47,7 @@ describe('createSignedURL', () => {
         Bucket: bucketName,
         Fields: {},
         Key: 'some/key',
-      }, { expiresIn: 900 }))).searchParams.get('X-Amz-Signature'),
+      }), { expiresIn: 900 })).searchParams.get('X-Amz-Signature'),
     )
   })
   it('should be able to sign multipart upload', async () => {
