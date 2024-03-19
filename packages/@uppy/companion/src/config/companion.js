@@ -90,6 +90,7 @@ const validateConfig = (companionOptions) => {
 
   if (server && server.path) {
     // see https://github.com/transloadit/uppy/issues/4271
+    // todo fix the code so we can allow `/`
     if (server.path === '/') throw new Error('server.path cannot be set to /')
   }
 
