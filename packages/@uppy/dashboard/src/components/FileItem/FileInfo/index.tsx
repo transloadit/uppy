@@ -1,12 +1,15 @@
-import {  h, Fragment  } from 'preact'
+/* eslint-disable react/destructuring-assignment */
+import { h, Fragment, type ComponentChild } from 'preact'
 import prettierBytes from '@transloadit/prettier-bytes'
 import truncateString from '@uppy/utils/lib/truncateString'
-import MetaErrorMessage from '../MetaErrorMessage.jsx'
+import MetaErrorMessage from '../MetaErrorMessage.tsx'
 
-const renderFileName = (props) => {
+type $TSFixMe = any
+
+const renderFileName = (props: $TSFixMe) => {
   const { author, name } = props.file.meta
 
-  function getMaxNameLength () {
+  function getMaxNameLength() {
     if (props.isSingleFile && props.containerHeight >= 350) {
       return 90
     }
@@ -29,7 +32,7 @@ const renderFileName = (props) => {
   )
 }
 
-const renderAuthor = (props) => {
+const renderAuthor = (props: $TSFixMe) => {
   const { author } = props.file.meta
   const providerName = props.file.remote?.providerName
   const dot = `\u00B7`
@@ -47,37 +50,39 @@ const renderAuthor = (props) => {
       >
         {truncateString(author.name, 13)}
       </a>
-      {providerName ? (
+      {providerName ?
         <>
           {` ${dot} `}
           {providerName}
           {` ${dot} `}
         </>
-      ) : null}
+      : null}
     </div>
   )
 }
 
-const renderFileSize = (props) => props.file.size && (
-  <div className="uppy-Dashboard-Item-statusSize">
-    {prettierBytes(props.file.size)}
-  </div>
-)
+const renderFileSize = (props: $TSFixMe) =>
+  props.file.size && (
+    <div className="uppy-Dashboard-Item-statusSize">
+      {prettierBytes(props.file.size)}
+    </div>
+  )
 
-const ReSelectButton = (props) => props.file.isGhost && (
-  <span>
-    {' \u2022 '}
-    <button
-      className="uppy-u-reset uppy-c-btn uppy-Dashboard-Item-reSelect"
-      type="button"
-      onClick={props.toggleAddFilesPanel}
-    >
-      {props.i18n('reSelect')}
-    </button>
-  </span>
-)
+const ReSelectButton = (props: $TSFixMe) =>
+  props.file.isGhost && (
+    <span>
+      {' \u2022 '}
+      <button
+        className="uppy-u-reset uppy-c-btn uppy-Dashboard-Item-reSelect"
+        type="button"
+        onClick={props.toggleAddFilesPanel}
+      >
+        {props.i18n('reSelect')}
+      </button>
+    </span>
+  )
 
-const ErrorButton = ({ file, onClick }) => {
+const ErrorButton = ({ file, onClick }: $TSFixMe) => {
   if (file.error) {
     return (
       <button
@@ -95,7 +100,7 @@ const ErrorButton = ({ file, onClick }) => {
   return null
 }
 
-export default function FileInfo (props) {
+export default function FileInfo(props: $TSFixMe): ComponentChild {
   const { file } = props
   return (
     <div

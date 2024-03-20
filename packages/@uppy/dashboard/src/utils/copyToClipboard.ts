@@ -8,8 +8,14 @@
  * @param {string} fallbackString
  * @returns {Promise}
  */
-export default function copyToClipboard (textToCopy, fallbackString = 'Copy the URL below') {
-  return new Promise((resolve) => {
+
+type $TSFixMe = any
+
+export default function copyToClipboard(
+  textToCopy: $TSFixMe,
+  fallbackString = 'Copy the URL below',
+): $TSFixMe {
+  return new Promise<void>((resolve) => {
     const textArea = document.createElement('textarea')
     textArea.setAttribute('style', {
       position: 'fixed',
@@ -22,13 +28,13 @@ export default function copyToClipboard (textToCopy, fallbackString = 'Copy the 
       outline: 'none',
       boxShadow: 'none',
       background: 'transparent',
-    })
+    } as $TSFixMe as string)
 
     textArea.value = textToCopy
     document.body.appendChild(textArea)
     textArea.select()
 
-    const magicCopyFailed = () => {
+    const magicCopyFailed = (cause?: unknown) => {
       document.body.removeChild(textArea)
       // eslint-disable-next-line no-alert
       window.prompt(fallbackString, textToCopy)

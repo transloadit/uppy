@@ -1,29 +1,32 @@
 import { h } from 'preact'
 
-const metaFieldIdToName = (metaFieldId, metaFields) => {
+type $TSFixMe = any
+
+const metaFieldIdToName = (metaFieldId: $TSFixMe, metaFields: $TSFixMe) => {
   const fields = typeof metaFields === 'function' ? metaFields() : metaFields
-  const field = fields.filter(f => f.id === metaFieldId)
+  const field = fields.filter((f: $TSFixMe) => f.id === metaFieldId)
   return field[0].name
 }
 
-export default function renderMissingMetaFieldsError (props) {
+export default function MetaErrorMessage(props: $TSFixMe): JSX.Element {
   const { file, toggleFileCard, i18n, metaFields } = props
   const { missingRequiredMetaFields } = file
   if (!missingRequiredMetaFields?.length) {
-    return null
+    return null as $TSFixMe
   }
 
-  const metaFieldsString = missingRequiredMetaFields.map(missingMetaField => (
-    metaFieldIdToName(missingMetaField, metaFields)
-  )).join(', ')
+  const metaFieldsString = missingRequiredMetaFields
+    .map((missingMetaField: $TSFixMe) =>
+      metaFieldIdToName(missingMetaField, metaFields),
+    )
+    .join(', ')
 
   return (
     <div className="uppy-Dashboard-Item-errorMessage">
       {i18n('missingRequiredMetaFields', {
         smart_count: missingRequiredMetaFields.length,
         fields: metaFieldsString,
-      })}
-      {' '}
+      })}{' '}
       <button
         type="button"
         class="uppy-u-reset uppy-Dashboard-Item-errorMessageBtn"

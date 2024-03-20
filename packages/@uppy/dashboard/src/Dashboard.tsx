@@ -1,4 +1,14 @@
-import { UIPlugin } from '@uppy/core'
+import {
+  UIPlugin,
+  type UIPluginOptions,
+  type UnknownPlugin,
+  type Uppy,
+  type UploadResult,
+  type State,
+} from '@uppy/core'
+import type { ComponentChild, VNode } from 'preact'
+import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin.ts'
+import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
 import StatusBar from '@uppy/status-bar'
 import Informer from '@uppy/informer'
 import ThumbnailGenerator from '@uppy/thumbnail-generator'
@@ -9,124 +19,274 @@ import { defaultPickerIcon } from '@uppy/provider-views'
 
 import { nanoid } from 'nanoid/non-secure'
 import memoizeOne from 'memoize-one'
-import * as trapFocus from './utils/trapFocus.js'
-import createSuperFocus from './utils/createSuperFocus.js'
-import DashboardUI from './components/Dashboard.jsx'
+import * as trapFocus from './utils/trapFocus.ts'
+import createSuperFocus from './utils/createSuperFocus.ts'
+import DashboardUI from './components/Dashboard.tsx'
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'
-import locale from './locale.js'
+import locale from './locale.ts'
 
-const memoize = memoizeOne.default || memoizeOne
+type GenericEventCallback = () => void
+export type DashboardFileEditStartCallback<M extends Meta, B extends Body> = (
+  file?: UppyFile<M, B>,
+) => void
+export type DashboardFileEditCompleteCallback<
+  M extends Meta,
+  B extends Body,
+> = (file?: UppyFile<M, B>) => void
+export type DashboardShowPlanelCallback = (id: string) => void
+declare module '@uppy/core' {
+  export interface UppyEventMap<M extends Meta, B extends Body> {
+    'dashboard:modal-open': GenericEventCallback
+    'dashboard:modal-closed': GenericEventCallback
+    'dashboard:show-panel': DashboardShowPlanelCallback
+    'dashboard:file-edit-start': DashboardFileEditStartCallback<M, B>
+    'dashboard:file-edit-complete': DashboardFileEditCompleteCallback<M, B>
+    'dashboard:close-panel': (id: string | undefined) => void
+    'restore-canceled': GenericEventCallback
+  }
+}
+
+interface PromiseWithResolvers<T> {
+  promise: Promise<T>
+  resolve: (value: T | PromiseLike<T>) => void
+  reject: (reason?: any) => void
+}
+
+const memoize = ((memoizeOne as any).default as false) || memoizeOne
 
 const TAB_KEY = 9
 const ESC_KEY = 27
 
-function createPromise () {
-  const o = {}
-  o.promise = new Promise((resolve, reject) => {
+function createPromise<T>(): PromiseWithResolvers<T> {
+  const o = {} as PromiseWithResolvers<T>
+  o.promise = new Promise<T>((resolve, reject) => {
     o.resolve = resolve
     o.reject = reject
   })
   return o
 }
 
+type FieldRenderOptions = {
+  value: string
+  onChange: (newVal: string) => void
+  fieldCSSClasses: { text: string }
+  required: boolean
+  form: string
+}
+
+type PreactRender = (
+  node: any,
+  params: Record<string, unknown> | null,
+  ...children: any[]
+) => VNode<any>
+
+interface MetaField {
+  id: string
+  name: string
+  placeholder?: string
+  render?: (field: FieldRenderOptions, h: PreactRender) => VNode<any>
+}
+
+interface Target {
+  id: string
+  name: string
+  type: string
+}
+
+interface TargetWithRender extends Target {
+  icon: ComponentChild
+  render: () => ComponentChild
+}
+
+interface DashboardState<M extends Meta, B extends Body> {
+  targets: Target[]
+  activePickerPanel: Target | undefined
+  showAddFilesPanel: boolean
+  activeOverlayType: string | null
+  fileCardFor: string | null
+  showFileEditor: boolean
+  metaFields?: MetaField[] | ((file: UppyFile<M, B>) => MetaField[])
+  [key: string]: unknown
+}
+
+interface DashboardOptions<M extends Meta, B extends Body>
+  extends UIPluginOptions {
+  animateOpenClose?: boolean
+  browserBackButtonClose?: boolean
+  closeAfterFinish?: boolean
+  singleFileFullScreen?: boolean
+  closeModalOnClickOutside?: boolean
+  disableInformer?: boolean
+  disablePageScrollWhenModalOpen?: boolean
+  disableStatusBar?: boolean
+  disableThumbnailGenerator?: boolean
+  height?: string | number
+  thumbnailWidth?: number
+  thumbnailHeight?: number
+  thumbnailType?: string
+  nativeCameraFacingMode?: ConstrainDOMString
+  waitForThumbnailsBeforeUpload?: boolean
+  defaultPickerIcon?: typeof defaultPickerIcon
+  hideCancelButton?: boolean
+  hidePauseResumeButton?: boolean
+  hideProgressAfterFinish?: boolean
+  hideRetryButton?: boolean
+  hideUploadButton?: boolean
+  inline?: boolean
+  metaFields?: MetaField[] | ((file: UppyFile<M, B>) => MetaField[])
+  note?: string | null
+  plugins?: string[]
+  fileManagerSelectionType?: 'files' | 'folders' | 'both'
+  proudlyDisplayPoweredByUppy?: boolean
+  showLinkToFileUploadResult?: boolean
+  showProgressDetails?: boolean
+  showSelectedFiles?: boolean
+  showRemoveButtonAfterComplete?: boolean
+  showNativePhotoCameraButton?: boolean
+  showNativeVideoCameraButton?: boolean
+  theme?: 'auto' | 'dark' | 'light'
+  trigger?: string
+  width?: string | number
+  autoOpenFileEditor?: boolean
+  disabled?: boolean
+  disableLocalFiles?: boolean
+  onRequestCloseModal?: () => void
+  doneButtonHandler?: () => void
+  onDragOver?: (event: DragEvent) => void
+  onDragLeave?: (event: DragEvent) => void
+  onDrop?: (event: DragEvent) => void
+}
+
+// set default options, must be kept in sync with packages/@uppy/react/src/DashboardModal.js
+const defaultOptions = {
+  target: 'body',
+  metaFields: [],
+  inline: false,
+  width: 750,
+  height: 550,
+  thumbnailWidth: 280,
+  thumbnailType: 'image/jpeg',
+  waitForThumbnailsBeforeUpload: false,
+  defaultPickerIcon,
+  showLinkToFileUploadResult: false,
+  showProgressDetails: false,
+  hideUploadButton: false,
+  hideCancelButton: false,
+  hideRetryButton: false,
+  hidePauseResumeButton: false,
+  hideProgressAfterFinish: false,
+  note: null,
+  closeModalOnClickOutside: false,
+  closeAfterFinish: false,
+  singleFileFullScreen: true,
+  disableStatusBar: false,
+  disableInformer: false,
+  disableThumbnailGenerator: false,
+  disablePageScrollWhenModalOpen: true,
+  animateOpenClose: true,
+  fileManagerSelectionType: 'files',
+  proudlyDisplayPoweredByUppy: true,
+  showSelectedFiles: true,
+  showRemoveButtonAfterComplete: false,
+  browserBackButtonClose: false,
+  showNativePhotoCameraButton: false,
+  showNativeVideoCameraButton: false,
+  theme: 'light',
+  autoOpenFileEditor: false,
+  disabled: false,
+  disableLocalFiles: false,
+
+  // Dynamic default options, they have to be defined in the constructor (because
+  // they require access to the `this` keyword), but we still want them to
+  // appear in the default options so TS knows they'll be defined.
+  doneButtonHandler: null as any,
+  onRequestCloseModal: null as any,
+} satisfies Partial<DashboardOptions<any, any>>
+
 /**
  * Dashboard UI with previews, metadata editing, tabs for various services and more
  */
-export default class Dashboard extends UIPlugin {
+export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
+  DefinePluginOpts<DashboardOptions<M, B>, keyof typeof defaultOptions>,
+  M,
+  B,
+  DashboardState<M, B>
+> {
   static VERSION = packageJson.version
 
-  #disabledNodes = null
+  #disabledNodes: HTMLElement[] | null
 
-  constructor (uppy, opts) {
-    super(uppy, opts)
+  private modalName = `uppy-Dashboard-${nanoid()}`
+
+  private superFocus = createSuperFocus()
+
+  private ifFocusedOnUppyRecently = false
+
+  private dashboardIsDisabled: boolean
+
+  private savedScrollPosition: number
+
+  private savedActiveElement: HTMLElement
+
+  private resizeObserver: ResizeObserver
+
+  private darkModeMediaQuery: MediaQueryList | null
+
+  // Timeouts
+  private makeDashboardInsidesVisibleAnywayTimeout: ReturnType<
+    typeof setTimeout
+  >
+
+  private removeDragOverClassTimeout: ReturnType<typeof setTimeout>
+
+  constructor(uppy: Uppy<M, B>, opts?: DashboardOptions<M, B>) {
+    super(uppy, { ...defaultOptions, ...opts })
     this.id = this.opts.id || 'Dashboard'
     this.title = 'Dashboard'
     this.type = 'orchestrator'
-    this.modalName = `uppy-Dashboard-${nanoid()}`
 
     this.defaultLocale = locale
 
-    // set default options, must be kept in sync with packages/@uppy/react/src/DashboardModal.js
-    const defaultOptions = {
-      target: 'body',
-      metaFields: [],
-      trigger: null,
-      inline: false,
-      width: 750,
-      height: 550,
-      thumbnailWidth: 280,
-      thumbnailType: 'image/jpeg',
-      waitForThumbnailsBeforeUpload: false,
-      defaultPickerIcon,
-      showLinkToFileUploadResult: false,
-      showProgressDetails: false,
-      hideUploadButton: false,
-      hideCancelButton: false,
-      hideRetryButton: false,
-      hidePauseResumeButton: false,
-      hideProgressAfterFinish: false,
-      doneButtonHandler: () => {
-        this.uppy.clearUploadedFiles()
-        this.requestCloseModal()
-      },
-      note: null,
-      closeModalOnClickOutside: false,
-      closeAfterFinish: false,
-      singleFileFullScreen: true,
-      disableStatusBar: false,
-      disableInformer: false,
-      disableThumbnailGenerator: false,
-      disablePageScrollWhenModalOpen: true,
-      animateOpenClose: true,
-      fileManagerSelectionType: 'files',
-      proudlyDisplayPoweredByUppy: true,
-      onRequestCloseModal: () => this.closeModal(),
-      showSelectedFiles: true,
-      showRemoveButtonAfterComplete: false,
-      browserBackButtonClose: false,
-      showNativePhotoCameraButton: false,
-      showNativeVideoCameraButton: false,
-      theme: 'light',
-      autoOpenFileEditor: false,
-      disabled: false,
-      disableLocalFiles: false,
+    // Dynamic default options:
+    this.opts.doneButtonHandler ??= () => {
+      this.uppy.clearUploadedFiles()
+      this.requestCloseModal()
     }
-
-    // merge default options with the ones set by user
-    this.opts = { ...defaultOptions, ...opts }
+    this.opts.onRequestCloseModal ??= () => this.closeModal()
 
     this.i18nInit()
-
-    this.superFocus = createSuperFocus()
-    this.ifFocusedOnUppyRecently = false
-
-    // Timeouts
-    this.makeDashboardInsidesVisibleAnywayTimeout = null
-    this.removeDragOverClassTimeout = null
   }
 
-  removeTarget = (plugin) => {
+  removeTarget = (plugin: UnknownPlugin<M, B>): void => {
     const pluginState = this.getPluginState()
     // filter out the one we want to remove
-    const newTargets = pluginState.targets.filter(target => target.id !== plugin.id)
+    const newTargets = pluginState.targets.filter(
+      (target) => target.id !== plugin.id,
+    )
 
     this.setPluginState({
       targets: newTargets,
     })
   }
 
-  addTarget = (plugin) => {
+  addTarget = (plugin: UnknownPlugin<M, B>): HTMLElement | null => {
     const callerPluginId = plugin.id || plugin.constructor.name
-    const callerPluginName = plugin.title || callerPluginId
+    const callerPluginName =
+      (plugin as any as { title: string }).title || callerPluginId
     const callerPluginType = plugin.type
 
-    if (callerPluginType !== 'acquirer'
-        && callerPluginType !== 'progressindicator'
-        && callerPluginType !== 'editor') {
-      const msg = 'Dashboard: can only be targeted by plugins of types: acquirer, progressindicator, editor'
+    if (
+      callerPluginType !== 'acquirer' &&
+      callerPluginType !== 'progressindicator' &&
+      callerPluginType !== 'editor'
+    ) {
+      const msg =
+        'Dashboard: can only be targeted by plugins of types: acquirer, progressindicator, editor'
       this.uppy.log(msg, 'error')
-      return undefined
+      return null
     }
 
     const target = {
@@ -146,35 +306,37 @@ export default class Dashboard extends UIPlugin {
     return this.el
   }
 
-  hideAllPanels = () => {
+  hideAllPanels = (): void => {
     const state = this.getPluginState()
     const update = {
-      activePickerPanel: false,
+      activePickerPanel: undefined,
       showAddFilesPanel: false,
       activeOverlayType: null,
       fileCardFor: null,
       showFileEditor: false,
     }
 
-    if (state.activePickerPanel === update.activePickerPanel
-        && state.showAddFilesPanel === update.showAddFilesPanel
-        && state.showFileEditor === update.showFileEditor
-        && state.activeOverlayType === update.activeOverlayType) {
+    if (
+      state.activePickerPanel === update.activePickerPanel &&
+      state.showAddFilesPanel === update.showAddFilesPanel &&
+      state.showFileEditor === update.showFileEditor &&
+      state.activeOverlayType === update.activeOverlayType
+    ) {
       // avoid doing a state update if nothing changed
       return
     }
 
     this.setPluginState(update)
 
-    this.uppy.emit('dashboard:close-panel', state.activePickerPanel.id)
+    this.uppy.emit('dashboard:close-panel', state.activePickerPanel?.id)
   }
 
-  showPanel = (id) => {
+  showPanel = (id: string): void => {
     const { targets } = this.getPluginState()
 
-    const activePickerPanel = targets.filter((target) => {
+    const activePickerPanel = targets.find((target) => {
       return target.type === 'acquirer' && target.id === id
-    })[0]
+    })
 
     this.setPluginState({
       activePickerPanel,
@@ -184,16 +346,16 @@ export default class Dashboard extends UIPlugin {
     this.uppy.emit('dashboard:show-panel', id)
   }
 
-  canEditFile = (file) => {
+  private canEditFile = (file: UppyFile<M, B>): boolean => {
     const { targets } = this.getPluginState()
     const editors = this.#getEditors(targets)
 
-    return editors.some((target) => (
-      this.uppy.getPlugin(target.id).canEditFile(file)
-    ))
+    return editors.some((target) =>
+      (this.uppy.getPlugin(target.id) as any).canEditFile(file),
+    )
   }
 
-  openFileEditor = (file) => {
+  openFileEditor = (file: UppyFile<M, B>): void => {
     const { targets } = this.getPluginState()
     const editors = this.#getEditors(targets)
 
@@ -204,45 +366,45 @@ export default class Dashboard extends UIPlugin {
     })
 
     editors.forEach((editor) => {
-      this.uppy.getPlugin(editor.id).selectFile(file)
+      ;(this.uppy.getPlugin(editor.id) as any).selectFile(file)
     })
   }
 
-  closeFileEditor = () => {
+  closeFileEditor = (): void => {
     const { metaFields } = this.getPluginState()
     const isMetaEditorEnabled = metaFields && metaFields.length > 0
 
     if (isMetaEditorEnabled) {
       this.setPluginState({
         showFileEditor: false,
-        activeOverlayType: 'FileCard'
+        activeOverlayType: 'FileCard',
       })
     } else {
       this.setPluginState({
         showFileEditor: false,
         fileCardFor: null,
-        activeOverlayType: 'AddFiles'
+        activeOverlayType: 'AddFiles',
       })
     }
   }
 
-  saveFileEditor = () => {
+  saveFileEditor = (): void => {
     const { targets } = this.getPluginState()
     const editors = this.#getEditors(targets)
 
     editors.forEach((editor) => {
-      this.uppy.getPlugin(editor.id).save()
+      ;(this.uppy.getPlugin(editor.id) as any).save()
     })
 
     this.closeFileEditor()
   }
 
-  openModal = () => {
-    const { promise, resolve } = createPromise()
+  openModal = (): Promise<void> => {
+    const { promise, resolve } = createPromise<void>()
     // save scroll position
     this.savedScrollPosition = window.pageYOffset
     // save active element, so we can restore focus when modal is closed
-    this.savedActiveElement = document.activeElement
+    this.savedActiveElement = document.activeElement as HTMLElement
 
     if (this.opts.disablePageScrollWhenModalOpen) {
       document.body.classList.add('uppy-Dashboard-isFixed')
@@ -253,10 +415,10 @@ export default class Dashboard extends UIPlugin {
         this.setPluginState({
           isHidden: false,
         })
-        this.el.removeEventListener('animationend', handler, false)
+        this.el!.removeEventListener('animationend', handler, false)
         resolve()
       }
-      this.el.addEventListener('animationend', handler, false)
+      this.el!.addEventListener('animationend', handler, false)
     } else {
       this.setPluginState({
         isHidden: false,
@@ -276,11 +438,9 @@ export default class Dashboard extends UIPlugin {
     return promise
   }
 
-  closeModal = (opts = {}) => {
-    const {
-      // Whether the modal is being closed by the user (`true`) or by other means (e.g. browser back button)
-      manualClose = true,
-    } = opts
+  closeModal = (opts?: { manualClose: boolean }): void | Promise<void> => {
+    // Whether the modal is being closed by the user (`true`) or by other means (e.g. browser back button)
+    const manualClose = opts?.manualClose ?? true
 
     const { isHidden, isClosing } = this.getPluginState()
     if (isHidden || isClosing) {
@@ -288,7 +448,7 @@ export default class Dashboard extends UIPlugin {
       return undefined
     }
 
-    const { promise, resolve } = createPromise()
+    const { promise, resolve } = createPromise<void>()
 
     if (this.opts.disablePageScrollWhenModalOpen) {
       document.body.classList.remove('uppy-Dashboard-isFixed')
@@ -307,10 +467,10 @@ export default class Dashboard extends UIPlugin {
         this.superFocus.cancel()
         this.savedActiveElement.focus()
 
-        this.el.removeEventListener('animationend', handler, false)
+        this.el!.removeEventListener('animationend', handler, false)
         resolve()
       }
-      this.el.addEventListener('animationend', handler, false)
+      this.el!.addEventListener('animationend', handler, false)
     } else {
       this.setPluginState({
         isHidden: true,
@@ -342,18 +502,18 @@ export default class Dashboard extends UIPlugin {
     return promise
   }
 
-  isModalOpen = () => {
+  isModalOpen = (): boolean => {
     return !this.getPluginState().isHidden || false
   }
 
-  requestCloseModal = () => {
+  private requestCloseModal = (): void | Promise<void> => {
     if (this.opts.onRequestCloseModal) {
       return this.opts.onRequestCloseModal()
     }
     return this.closeModal()
   }
 
-  setDarkModeCapability = (isDarkModeOn) => {
+  setDarkModeCapability = (isDarkModeOn: boolean): void => {
     const { capabilities } = this.uppy.getState()
     this.uppy.setState({
       capabilities: {
@@ -363,13 +523,13 @@ export default class Dashboard extends UIPlugin {
     })
   }
 
-  handleSystemDarkModeChange = (event) => {
+  private handleSystemDarkModeChange = (event: MediaQueryListEvent) => {
     const isDarkModeOnNow = event.matches
     this.uppy.log(`[Dashboard] Dark mode is ${isDarkModeOnNow ? 'on' : 'off'}`)
     this.setDarkModeCapability(isDarkModeOnNow)
   }
 
-  toggleFileCard = (show, fileID) => {
+  private toggleFileCard = (show: boolean, fileID: string) => {
     const file = this.uppy.getFile(fileID)
     if (show) {
       this.uppy.emit('dashboard:file-edit-start', file)
@@ -383,14 +543,14 @@ export default class Dashboard extends UIPlugin {
     })
   }
 
-  toggleAddFilesPanel = (show) => {
+  private toggleAddFilesPanel = (show: boolean) => {
     this.setPluginState({
       showAddFilesPanel: show,
       activeOverlayType: show ? 'AddFiles' : null,
     })
   }
 
-  addFiles = (files) => {
+  addFiles = (files: File[]): void => {
     const descriptors = files.map((file) => ({
       source: this.id,
       name: file.name,
@@ -399,8 +559,9 @@ export default class Dashboard extends UIPlugin {
       meta: {
         // path of the file relative to the ancestor directory the user selected.
         // e.g. 'docs/Old Prague/airbnb.pdf'
-        relativePath: file.relativePath || file.webkitRelativePath || null,
-      },
+        relativePath:
+          (file as any).relativePath || file.webkitRelativePath || null,
+      } as any as M,
     }))
 
     try {
@@ -416,7 +577,7 @@ export default class Dashboard extends UIPlugin {
   // ___Why not apply visibility property to .uppy-Dashboard-inner?
   //    Because ideally, acc to specs, ResizeObserver should see invisible elements as of width 0. So even though applying
   //    invisibility to .uppy-Dashboard-inner works now, it may not work in the future.
-  startListeningToResize = () => {
+  private startListeningToResize = () => {
     // Watch for Dashboard container (`.uppy-Dashboard-inner`) resize
     // and update containerWidth/containerHeight in plugin state accordingly.
     // Emits first event on initialization.
@@ -430,20 +591,26 @@ export default class Dashboard extends UIPlugin {
         areInsidesReadyToBeVisible: true,
       })
     })
-    this.resizeObserver.observe(this.el.querySelector('.uppy-Dashboard-inner'))
+    this.resizeObserver.observe(
+      this.el!.querySelector('.uppy-Dashboard-inner')!,
+    )
 
     // If ResizeObserver fails to emit an event telling us what size to use - default to the mobile view
     this.makeDashboardInsidesVisibleAnywayTimeout = setTimeout(() => {
       const pluginState = this.getPluginState()
       const isModalAndClosed = !this.opts.inline && pluginState.isHidden
-      if (// We might want to enable this in the future
+      if (
+        // We might want to enable this in the future
 
         // if ResizeObserver hasn't yet fired,
-        !pluginState.areInsidesReadyToBeVisible
+        !pluginState.areInsidesReadyToBeVisible &&
         // and it's not due to the modal being closed
-        && !isModalAndClosed
+        !isModalAndClosed
       ) {
-        this.uppy.log('[Dashboard] resize event didn’t fire on time: defaulted to mobile layout', 'warning')
+        this.uppy.log(
+          '[Dashboard] resize event didn’t fire on time: defaulted to mobile layout',
+          'warning',
+        )
 
         this.setPluginState({
           areInsidesReadyToBeVisible: true,
@@ -452,7 +619,7 @@ export default class Dashboard extends UIPlugin {
     }, 1000)
   }
 
-  stopListeningToResize = () => {
+  private stopListeningToResize = () => {
     this.resizeObserver.disconnect()
 
     clearTimeout(this.makeDashboardInsidesVisibleAnywayTimeout)
@@ -460,8 +627,8 @@ export default class Dashboard extends UIPlugin {
 
   // Records whether we have been interacting with uppy right now,
   // which is then used to determine whether state updates should trigger a refocusing.
-  recordIfFocusedOnUppyRecently = (event) => {
-    if (this.el.contains(event.target)) {
+  private recordIfFocusedOnUppyRecently = (event: Event) => {
+    if (this.el!.contains(event.target as HTMLElement)) {
       this.ifFocusedOnUppyRecently = true
     } else {
       this.ifFocusedOnUppyRecently = false
@@ -472,7 +639,7 @@ export default class Dashboard extends UIPlugin {
     }
   }
 
-  disableInteractiveElements = (disable) => {
+  private disableInteractiveElements = (disable: boolean) => {
     const NODES_TO_DISABLE = [
       'a[href]',
       'input:not([disabled])',
@@ -482,8 +649,11 @@ export default class Dashboard extends UIPlugin {
       '[role="button"]:not([disabled])',
     ]
 
-    const nodesToDisable = this.#disabledNodes ?? toArray(this.el.querySelectorAll(NODES_TO_DISABLE))
-      .filter(node => !node.classList.contains('uppy-Dashboard-close'))
+    const nodesToDisable =
+      this.#disabledNodes ??
+      toArray(this.el!.querySelectorAll(NODES_TO_DISABLE as any)).filter(
+        (node) => !node.classList.contains('uppy-Dashboard-close'),
+      )
 
     for (const node of nodesToDisable) {
       // Links can’t have `disabled` attr, so we use `aria-disabled` for a11y
@@ -503,24 +673,27 @@ export default class Dashboard extends UIPlugin {
     this.dashboardIsDisabled = disable
   }
 
-  updateBrowserHistory = () => {
+  private updateBrowserHistory = () => {
     // Ensure history state does not already contain our modal name to avoid double-pushing
     // eslint-disable-next-line no-restricted-globals
     if (!history.state?.[this.modalName]) {
       // Push to history so that the page is not lost on browser back button press
       // eslint-disable-next-line no-restricted-globals
-      history.pushState({
-        // eslint-disable-next-line no-restricted-globals
-        ...history.state,
-        [this.modalName]: true,
-      }, '')
+      history.pushState(
+        {
+          // eslint-disable-next-line no-restricted-globals
+          ...history.state,
+          [this.modalName]: true,
+        },
+        '',
+      )
     }
 
     // Listen for back button presses
     window.addEventListener('popstate', this.handlePopState, false)
   }
 
-  handlePopState = (event) => {
+  private handlePopState = (event: PopStateEvent) => {
     // Close the modal if the history state no longer contains our modal name
     if (this.isModalOpen() && (!event.state || !event.state[this.modalName])) {
       this.closeModal({ manualClose: false })
@@ -538,44 +711,49 @@ export default class Dashboard extends UIPlugin {
     }
   }
 
-  handleKeyDownInModal = (event) => {
+  private handleKeyDownInModal = (event: KeyboardEvent) => {
     // close modal on esc key press
-    if (event.keyCode === ESC_KEY) this.requestCloseModal(event)
+    if (event.keyCode === ESC_KEY) this.requestCloseModal()
     // trap focus on tab key press
-    if (event.keyCode === TAB_KEY) trapFocus.forModal(event, this.getPluginState().activeOverlayType, this.el)
+    if (event.keyCode === TAB_KEY)
+      trapFocus.forModal(
+        event,
+        this.getPluginState().activeOverlayType,
+        this.el,
+      )
   }
 
-  handleClickOutside = () => {
+  private handleClickOutside = () => {
     if (this.opts.closeModalOnClickOutside) this.requestCloseModal()
   }
 
-  handlePaste = (event) => {
+  private handlePaste = (event: ClipboardEvent) => {
     // Let any acquirer plugin (Url/Webcam/etc.) handle pastes to the root
     this.uppy.iteratePlugins((plugin) => {
       if (plugin.type === 'acquirer') {
         // Every Plugin with .type acquirer can define handleRootPaste(event)
-        plugin.handleRootPaste?.(event)
+        ;(plugin as any).handleRootPaste?.(event)
       }
     })
 
     // Add all dropped files
-    const files = toArray(event.clipboardData.files)
+    const files = toArray(event.clipboardData!.files)
     if (files.length > 0) {
       this.uppy.log('[Dashboard] Files pasted')
       this.addFiles(files)
     }
   }
 
-  handleInputChange = (event) => {
+  private handleInputChange = (event: InputEvent) => {
     event.preventDefault()
-    const files = toArray(event.target.files)
+    const files = toArray((event.target as HTMLInputElement).files!)
     if (files.length > 0) {
       this.uppy.log('[Dashboard] Files selected through input')
       this.addFiles(files)
     }
   }
 
-  handleDragOver = (event) => {
+  private handleDragOver = (event: DragEvent) => {
     event.preventDefault()
     event.stopPropagation()
 
@@ -584,7 +762,7 @@ export default class Dashboard extends UIPlugin {
     const canSomePluginHandleRootDrop = () => {
       let somePluginCanHandleRootDrop = true
       this.uppy.iteratePlugins((plugin) => {
-        if (plugin.canHandleRootDrop?.(event)) {
+        if ((plugin as any).canHandleRootDrop?.(event)) {
           somePluginCanHandleRootDrop = true
         }
       })
@@ -593,23 +771,24 @@ export default class Dashboard extends UIPlugin {
 
     // Check if the "type" of the datatransfer object includes files
     const doesEventHaveFiles = () => {
-      const { types } = event.dataTransfer
-      return types.some(type => type === 'Files')
+      const { types } = event.dataTransfer!
+      return types.some((type) => type === 'Files')
     }
 
     // Deny drop, if no plugins can handle datatransfer, there are no files,
     // or when opts.disabled is set, or new uploads are not allowed
-    const somePluginCanHandleRootDrop = canSomePluginHandleRootDrop(event)
-    const hasFiles = doesEventHaveFiles(event)
+    const somePluginCanHandleRootDrop = canSomePluginHandleRootDrop()
+    const hasFiles = doesEventHaveFiles()
     if (
-      (!somePluginCanHandleRootDrop && !hasFiles)
-      || this.opts.disabled
+      (!somePluginCanHandleRootDrop && !hasFiles) ||
+      this.opts.disabled ||
       // opts.disableLocalFiles should only be taken into account if no plugins
       // can handle the datatransfer
-      || (this.opts.disableLocalFiles && (hasFiles || !somePluginCanHandleRootDrop))
-      || !this.uppy.getState().allowNewUpload
+      (this.opts.disableLocalFiles &&
+        (hasFiles || !somePluginCanHandleRootDrop)) ||
+      !this.uppy.getState().allowNewUpload
     ) {
-      event.dataTransfer.dropEffect = 'none' // eslint-disable-line no-param-reassign
+      event.dataTransfer!.dropEffect = 'none' // eslint-disable-line no-param-reassign
       clearTimeout(this.removeDragOverClassTimeout)
       return
     }
@@ -617,7 +796,7 @@ export default class Dashboard extends UIPlugin {
     // Add a small (+) icon on drop
     // (and prevent browsers from interpreting this as files being _moved_ into the
     // browser, https://github.com/transloadit/uppy/issues/1978).
-    event.dataTransfer.dropEffect = 'copy' // eslint-disable-line no-param-reassign
+    event.dataTransfer!.dropEffect = 'copy' // eslint-disable-line no-param-reassign
 
     clearTimeout(this.removeDragOverClassTimeout)
     this.setPluginState({ isDraggingOver: true })
@@ -625,7 +804,7 @@ export default class Dashboard extends UIPlugin {
     this.opts.onDragOver?.(event)
   }
 
-  handleDragLeave = (event) => {
+  private handleDragLeave = (event: DragEvent) => {
     event.preventDefault()
     event.stopPropagation()
 
@@ -639,7 +818,7 @@ export default class Dashboard extends UIPlugin {
     this.opts.onDragLeave?.(event)
   }
 
-  handleDrop = async (event) => {
+  private handleDrop = async (event: DragEvent) => {
     event.preventDefault()
     event.stopPropagation()
 
@@ -651,13 +830,13 @@ export default class Dashboard extends UIPlugin {
     this.uppy.iteratePlugins((plugin) => {
       if (plugin.type === 'acquirer') {
         // Every Plugin with .type acquirer can define handleRootDrop(event)
-        plugin.handleRootDrop?.(event)
+        ;(plugin as any).handleRootDrop?.(event)
       }
     })
 
     // Add all dropped files
     let executedDropErrorOnce = false
-    const logDropError = (error) => {
+    const logDropError = (error: any) => {
       this.uppy.log(error, 'error')
 
       // In practice all drop errors are most likely the same,
@@ -671,7 +850,7 @@ export default class Dashboard extends UIPlugin {
     this.uppy.log('[Dashboard] Processing dropped files')
 
     // Add all dropped files
-    const files = await getDroppedFiles(event.dataTransfer, { logDropError })
+    const files = await getDroppedFiles(event.dataTransfer!, { logDropError })
     if (files.length > 0) {
       this.uppy.log('[Dashboard] Files dropped')
       this.addFiles(files)
@@ -680,7 +859,7 @@ export default class Dashboard extends UIPlugin {
     this.opts.onDrop?.(event)
   }
 
-  handleRequestThumbnail = (file) => {
+  private handleRequestThumbnail = (file: UppyFile<M, B>) => {
     if (!this.opts.waitForThumbnailsBeforeUpload) {
       this.uppy.emit('thumbnail:request', file)
     }
@@ -690,15 +869,20 @@ export default class Dashboard extends UIPlugin {
    * We cancel thumbnail requests when a file item component unmounts to avoid
    * clogging up the queue when the user scrolls past many elements.
    */
-  handleCancelThumbnail = (file) => {
+  private handleCancelThumbnail = (file: UppyFile<M, B>) => {
     if (!this.opts.waitForThumbnailsBeforeUpload) {
       this.uppy.emit('thumbnail:cancel', file)
     }
   }
 
-  handleKeyDownInInline = (event) => {
+  private handleKeyDownInInline = (event: KeyboardEvent) => {
     // Trap focus on tab key press.
-    if (event.keyCode === TAB_KEY) trapFocus.forInline(event, this.getPluginState().activeOverlayType, this.el)
+    if (event.keyCode === TAB_KEY)
+      trapFocus.forInline(
+        event,
+        this.getPluginState().activeOverlayType,
+        this.el,
+      )
   }
 
   // ___Why do we listen to the 'paste' event on a document instead of onPaste={props.handlePaste} prop,
@@ -710,21 +894,21 @@ export default class Dashboard extends UIPlugin {
   //    Because if we click on the 'Drop files here' caption e.g., `document.activeElement` will be 'body'. Which means our
   //    standard determination of whether we're pasting into our Uppy instance won't work.
   //    => Therefore, we need a traditional onPaste={props.handlePaste} handler too.
-  handlePasteOnBody = (event) => {
-    const isFocusInOverlay = this.el.contains(document.activeElement)
+  private handlePasteOnBody = (event: ClipboardEvent) => {
+    const isFocusInOverlay = this.el!.contains(document.activeElement)
     if (isFocusInOverlay) {
       this.handlePaste(event)
     }
   }
 
-  handleComplete = ({ failed }) => {
-    if (this.opts.closeAfterFinish && failed.length === 0) {
+  private handleComplete = ({ failed }: UploadResult<M, B>) => {
+    if (this.opts.closeAfterFinish && !failed?.length) {
       // All uploads are done
       this.requestCloseModal()
     }
   }
 
-  handleCancelRestore = () => {
+  private handleCancelRestore = () => {
     this.uppy.emit('restore-canceled')
   }
 
@@ -737,19 +921,23 @@ export default class Dashboard extends UIPlugin {
     const files = this.uppy.getFiles()
 
     if (files.length === 1) {
-      const thumbnailGenerator = this.uppy.getPlugin(`${this.id}:ThumbnailGenerator`)
+      const thumbnailGenerator = this.uppy.getPlugin(
+        `${this.id}:ThumbnailGenerator`,
+      ) as ThumbnailGenerator<M, B> | undefined
       thumbnailGenerator?.setOptions({ thumbnailWidth: LARGE_THUMBNAIL })
       const fileForThumbnail = { ...files[0], preview: undefined }
-      thumbnailGenerator.requestThumbnail(fileForThumbnail).then(() => {
-        thumbnailGenerator?.setOptions({ thumbnailWidth: this.opts.thumbnailWidth })
+      thumbnailGenerator?.requestThumbnail(fileForThumbnail).then(() => {
+        thumbnailGenerator?.setOptions({
+          thumbnailWidth: this.opts.thumbnailWidth,
+        })
       })
     }
   }
 
-  #openFileEditorWhenFilesAdded = (files) => {
+  #openFileEditorWhenFilesAdded = (files: UppyFile<M, B>[]) => {
     const firstFile = files[0]
 
-    const {metaFields} = this.getPluginState()
+    const { metaFields } = this.getPluginState()
     const isMetaEditorEnabled = metaFields && metaFields.length > 0
     const isFileEditorEnabled = this.canEditFile(firstFile)
 
@@ -760,14 +948,19 @@ export default class Dashboard extends UIPlugin {
     }
   }
 
-  initEvents = () => {
+  initEvents = (): void => {
     // Modal open button
     if (this.opts.trigger && !this.opts.inline) {
       const showModalTrigger = findAllDOMElements(this.opts.trigger)
       if (showModalTrigger) {
-        showModalTrigger.forEach(trigger => trigger.addEventListener('click', this.openModal))
+        showModalTrigger.forEach((trigger) =>
+          trigger.addEventListener('click', this.openModal),
+        )
       } else {
-        this.uppy.log('Dashboard modal trigger not found. Make sure `trigger` is set in Dashboard options, unless you are planning to call `dashboard.openModal()` method yourself', 'warning')
+        this.uppy.log(
+          'Dashboard modal trigger not found. Make sure `trigger` is set in Dashboard options, unless you are planning to call `dashboard.openModal()` method yourself',
+          'warning',
+        )
       }
     }
 
@@ -789,7 +982,7 @@ export default class Dashboard extends UIPlugin {
     document.addEventListener('click', this.recordIfFocusedOnUppyRecently, true)
 
     if (this.opts.inline) {
-      this.el.addEventListener('keydown', this.handleKeyDownInInline)
+      this.el!.addEventListener('keydown', this.handleKeyDownInInline)
     }
 
     if (this.opts.autoOpenFileEditor) {
@@ -797,10 +990,12 @@ export default class Dashboard extends UIPlugin {
     }
   }
 
-  removeEvents = () => {
+  removeEvents = (): void => {
     const showModalTrigger = findAllDOMElements(this.opts.trigger)
     if (!this.opts.inline && showModalTrigger) {
-      showModalTrigger.forEach(trigger => trigger.removeEventListener('click', this.openModal))
+      showModalTrigger.forEach((trigger) =>
+        trigger.removeEventListener('click', this.openModal),
+      )
     }
 
     this.stopListeningToResize()
@@ -820,7 +1015,7 @@ export default class Dashboard extends UIPlugin {
     document.removeEventListener('click', this.recordIfFocusedOnUppyRecently)
 
     if (this.opts.inline) {
-      this.el.removeEventListener('keydown', this.handleKeyDownInInline)
+      this.el!.removeEventListener('keydown', this.handleKeyDownInInline)
     }
 
     if (this.opts.autoOpenFileEditor) {
@@ -828,22 +1023,23 @@ export default class Dashboard extends UIPlugin {
     }
   }
 
-  superFocusOnEachUpdate = () => {
-    const isFocusInUppy = this.el.contains(document.activeElement)
+  private superFocusOnEachUpdate = () => {
+    const isFocusInUppy = this.el!.contains(document.activeElement)
     // When focus is lost on the page (== focus is on body for most browsers, or focus is null for IE11)
-    const isFocusNowhere = document.activeElement === document.body || document.activeElement === null
+    const isFocusNowhere =
+      document.activeElement === document.body ||
+      document.activeElement === null
     const isInformerHidden = this.uppy.getState().info.length === 0
     const isModal = !this.opts.inline
 
     if (
       // If update is connected to showing the Informer - let the screen reader calmly read it.
-      isInformerHidden
-      && (
-        // If we are in a modal - always superfocus without concern for other elements
-        // on the page (user is unlikely to want to interact with the rest of the page)
-        isModal
+      isInformerHidden &&
+      // If we are in a modal - always superfocus without concern for other elements
+      // on the page (user is unlikely to want to interact with the rest of the page)
+      (isModal ||
         // If we are already inside of Uppy, or
-        || isFocusInUppy
+        isFocusInUppy ||
         // If we are not focused on anything BUT we have already, at least once, focused on uppy
         //   1. We focus when isFocusNowhere, because when the element we were focused
         //      on disappears (e.g. an overlay), - focus gets lost. If user is typing
@@ -853,8 +1049,7 @@ export default class Dashboard extends UIPlugin {
         //   [Practical check] Without '&& this.ifFocusedOnUppyRecently', in Safari, in inline mode,
         //                     when file is uploading, - navigate via tab to the checkbox,
         //                     try to press space multiple times. Focus will jump to Uppy.
-        || (isFocusNowhere && this.ifFocusedOnUppyRecently)
-      )
+        (isFocusNowhere && this.ifFocusedOnUppyRecently))
     ) {
       this.superFocus(this.el, this.getPluginState().activeOverlayType)
     } else {
@@ -862,7 +1057,7 @@ export default class Dashboard extends UIPlugin {
     }
   }
 
-  afterUpdate = () => {
+  readonly afterUpdate = (): void => {
     if (this.opts.disabled && !this.dashboardIsDisabled) {
       this.disableInteractiveElements(true)
       return
@@ -875,13 +1070,13 @@ export default class Dashboard extends UIPlugin {
     this.superFocusOnEachUpdate()
   }
 
-  saveFileCard = (meta, fileID) => {
+  saveFileCard = (meta: M, fileID: string): void => {
     this.uppy.setFileMeta(fileID, meta)
     this.toggleFileCard(false, fileID)
   }
 
-  #attachRenderFunctionToTarget = (target) => {
-    const plugin = this.uppy.getPlugin(target.id)
+  #attachRenderFunctionToTarget = (target: Target): TargetWithRender => {
+    const plugin = this.uppy.getPlugin(target.id) as any
     return {
       ...target,
       icon: plugin.icon || this.opts.defaultPickerIcon,
@@ -889,8 +1084,10 @@ export default class Dashboard extends UIPlugin {
     }
   }
 
-  #isTargetSupported = (target) => {
-    const plugin = this.uppy.getPlugin(target.id)
+  #isTargetSupported = (target: Target) => {
+    const plugin = this.uppy.getPlugin(target.id) as any as {
+      isSupported?: () => boolean
+    }
     // If the plugin does not provide a `supported` check, assume the plugin works everywhere.
     if (typeof plugin.isSupported !== 'function') {
       return true
@@ -898,25 +1095,28 @@ export default class Dashboard extends UIPlugin {
     return plugin.isSupported()
   }
 
-  #getAcquirers = memoize((targets) => {
+  #getAcquirers = memoize((targets: Target[]) => {
     return targets
-      .filter(target => target.type === 'acquirer' && this.#isTargetSupported(target))
+      .filter(
+        (target) =>
+          target.type === 'acquirer' && this.#isTargetSupported(target),
+      )
       .map(this.#attachRenderFunctionToTarget)
   })
 
-  #getProgressIndicators = memoize((targets) => {
+  #getProgressIndicators = memoize((targets: Target[]) => {
     return targets
-      .filter(target => target.type === 'progressindicator')
+      .filter((target) => target.type === 'progressindicator')
       .map(this.#attachRenderFunctionToTarget)
   })
 
-  #getEditors = memoize((targets) => {
+  #getEditors = memoize((targets: Target[]) => {
     return targets
-      .filter(target => target.type === 'editor')
+      .filter((target) => target.type === 'editor')
       .map(this.#attachRenderFunctionToTarget)
   })
 
-  render = (state) => {
+  render = (state: State<M, B>): JSX.Element => {
     const pluginState = this.getPluginState()
     const { files, capabilities, allowNewUpload } = state
     const {
@@ -945,10 +1145,15 @@ export default class Dashboard extends UIPlugin {
       theme = this.opts.theme
     }
 
-    if (['files', 'folders', 'both'].indexOf(this.opts.fileManagerSelectionType) < 0) {
+    if (
+      ['files', 'folders', 'both'].indexOf(this.opts.fileManagerSelectionType) <
+      0
+    ) {
       this.opts.fileManagerSelectionType = 'files'
       // eslint-disable-next-line no-console
-      console.warn(`Unsupported option for "fileManagerSelectionType". Using default of "${this.opts.fileManagerSelectionType}".`)
+      console.warn(
+        `Unsupported option for "fileManagerSelectionType". Using default of "${this.opts.fileManagerSelectionType}".`,
+      )
     }
 
     return DashboardUI({
@@ -1047,9 +1252,12 @@ export default class Dashboard extends UIPlugin {
     plugins.forEach((pluginID) => {
       const plugin = this.uppy.getPlugin(pluginID)
       if (plugin) {
-        plugin.mount(this, plugin)
+        ;(plugin as any).mount(this, plugin)
       } else {
-        this.uppy.log(`[Uppy] Dashboard could not find plugin '${pluginID}', make sure to uppy.use() the plugins you are specifying`, 'warning')
+        this.uppy.log(
+          `[Uppy] Dashboard could not find plugin '${pluginID}', make sure to uppy.use() the plugins you are specifying`,
+          'warning',
+        )
       }
     })
   }
@@ -1058,28 +1266,28 @@ export default class Dashboard extends UIPlugin {
     this.uppy.iteratePlugins(this.#addSupportedPluginIfNoTarget)
   }
 
-  #addSupportedPluginIfNoTarget = (plugin) => {
+  #addSupportedPluginIfNoTarget = (plugin?: UnknownPlugin<M, B>) => {
     // Only these types belong on the Dashboard,
     // we wouldn’t want to try and mount Compressor or Tus, for example.
     const typesAllowed = ['acquirer', 'editor']
     if (plugin && !plugin.opts?.target && typesAllowed.includes(plugin.type)) {
       const pluginAlreadyAdded = this.getPluginState().targets.some(
-        installedPlugin => plugin.id === installedPlugin.id,
+        (installedPlugin) => plugin.id === installedPlugin.id,
       )
       if (!pluginAlreadyAdded) {
-        plugin.mount(this, plugin)
+        ;(plugin as any).mount(this, plugin)
       }
     }
   }
 
-  install = () => {
+  install = (): void => {
     // Set default state for Dashboard
     this.setPluginState({
       isHidden: true,
       fileCardFor: null,
       activeOverlayType: null,
       showAddFilesPanel: false,
-      activePickerPanel: false,
+      activePickerPanel: undefined,
       showFileEditor: false,
       metaFields: this.opts.metaFields,
       targets: [],
@@ -1090,12 +1298,20 @@ export default class Dashboard extends UIPlugin {
 
     const { inline, closeAfterFinish } = this.opts
     if (inline && closeAfterFinish) {
-      throw new Error('[Dashboard] `closeAfterFinish: true` cannot be used on an inline Dashboard, because an inline Dashboard cannot be closed at all. Either set `inline: false`, or disable the `closeAfterFinish` option.')
+      throw new Error(
+        '[Dashboard] `closeAfterFinish: true` cannot be used on an inline Dashboard, because an inline Dashboard cannot be closed at all. Either set `inline: false`, or disable the `closeAfterFinish` option.',
+      )
     }
 
     const { allowMultipleUploads, allowMultipleUploadBatches } = this.uppy.opts
-    if ((allowMultipleUploads || allowMultipleUploadBatches) && closeAfterFinish) {
-      this.uppy.log('[Dashboard] When using `closeAfterFinish`, we recommended setting the `allowMultipleUploadBatches` option to `false` in the Uppy constructor. See https://uppy.io/docs/uppy/#allowMultipleUploads-true', 'warning')
+    if (
+      (allowMultipleUploads || allowMultipleUploadBatches) &&
+      closeAfterFinish
+    ) {
+      this.uppy.log(
+        '[Dashboard] When using `closeAfterFinish`, we recommended setting the `allowMultipleUploadBatches` option to `false` in the Uppy constructor. See https://uppy.io/docs/uppy/#allowMultipleUploads-true',
+        'warning',
+      )
     }
 
     const { target } = this.opts
@@ -1139,16 +1355,20 @@ export default class Dashboard extends UIPlugin {
     }
 
     // Dark Mode / theme
-    this.darkModeMediaQuery = (typeof window !== 'undefined' && window.matchMedia)
-      ? window.matchMedia('(prefers-color-scheme: dark)')
+    this.darkModeMediaQuery =
+      typeof window !== 'undefined' && window.matchMedia ?
+        window.matchMedia('(prefers-color-scheme: dark)')
       : null
 
-    const isDarkModeOnFromTheStart = this.darkModeMediaQuery ? this.darkModeMediaQuery.matches : false
-    this.uppy.log(`[Dashboard] Dark mode is ${isDarkModeOnFromTheStart ? 'on' : 'off'}`)
+    const isDarkModeOnFromTheStart =
+      this.darkModeMediaQuery ? this.darkModeMediaQuery.matches : false
+    this.uppy.log(
+      `[Dashboard] Dark mode is ${isDarkModeOnFromTheStart ? 'on' : 'off'}`,
+    )
     this.setDarkModeCapability(isDarkModeOnFromTheStart)
 
     if (this.opts.theme === 'auto') {
-      this.darkModeMediaQuery.addListener(this.handleSystemDarkModeChange)
+      this.darkModeMediaQuery?.addListener(this.handleSystemDarkModeChange)
     }
 
     this.#addSpecifiedPluginsFromOptions()
@@ -1156,7 +1376,7 @@ export default class Dashboard extends UIPlugin {
     this.initEvents()
   }
 
-  uninstall = () => {
+  uninstall = (): void => {
     if (!this.opts.disableInformer) {
       const informer = this.uppy.getPlugin(`${this.id}:Informer`)
       // Checking if this plugin exists, in case it was removed by uppy-core
@@ -1177,11 +1397,11 @@ export default class Dashboard extends UIPlugin {
     const plugins = this.opts.plugins || []
     plugins.forEach((pluginID) => {
       const plugin = this.uppy.getPlugin(pluginID)
-      if (plugin) plugin.unmount()
+      if (plugin) (plugin as any).unmount()
     })
 
     if (this.opts.theme === 'auto') {
-      this.darkModeMediaQuery.removeListener(this.handleSystemDarkModeChange)
+      this.darkModeMediaQuery?.removeListener(this.handleSystemDarkModeChange)
     }
 
     if (this.opts.disablePageScrollWhenModalOpen) {

@@ -3,10 +3,11 @@
 // draging UI elements or pasting anything into any field triggers those events —
 // Url treats them as URLs that need to be imported
 
-function ignoreEvent (ev) {
+type $TSFixMe = any
+
+function ignoreEvent(ev: $TSFixMe): void {
   const { tagName } = ev.target
-  if (tagName === 'INPUT'
-      || tagName === 'TEXTAREA') {
+  if (tagName === 'INPUT' || tagName === 'TEXTAREA') {
     ev.stopPropagation()
     return
   }

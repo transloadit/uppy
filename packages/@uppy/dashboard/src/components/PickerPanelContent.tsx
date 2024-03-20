@@ -1,8 +1,17 @@
 import { h } from 'preact'
 import classNames from 'classnames'
-import ignoreEvent from '../utils/ignoreEvent.js'
+import ignoreEvent from '../utils/ignoreEvent.ts'
 
-function PickerPanelContent ({ activePickerPanel, className, hideAllPanels, i18n, state, uppy }) {
+type $TSFixMe = any
+
+function PickerPanelContent({
+  activePickerPanel,
+  className,
+  hideAllPanels,
+  i18n,
+  state,
+  uppy,
+}: $TSFixMe): JSX.Element {
   return (
     <div
       className={classNames('uppy-DashboardContent-panel', className)}
@@ -15,7 +24,11 @@ function PickerPanelContent ({ activePickerPanel, className, hideAllPanels, i18n
       onPaste={ignoreEvent}
     >
       <div className="uppy-DashboardContent-bar">
-        <div className="uppy-DashboardContent-title" role="heading" aria-level="1">
+        <div
+          className="uppy-DashboardContent-title"
+          role="heading"
+          aria-level="1"
+        >
           {i18n('importFrom', { name: activePickerPanel.name })}
         </div>
         <button
