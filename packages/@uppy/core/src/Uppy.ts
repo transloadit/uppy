@@ -49,7 +49,10 @@ import locale from './locale.ts'
 import type BasePlugin from './BasePlugin.ts'
 import type { Restrictions, ValidateableFile } from './Restricter.ts'
 
-type Processor = (fileIDs: string[], uploadID: string) => Promise<void> | void
+type Processor = (
+  fileIDs: string[],
+  uploadID: string,
+) => Promise<unknown> | void
 
 type FileRemoveReason = 'user' | 'cancel-all'
 
@@ -269,13 +272,13 @@ type UploadCompleteCallback<M extends Meta, B extends Body> = (
   result: UploadResult<M, B>,
 ) => void
 type ErrorCallback<M extends Meta, B extends Body> = (
-  error: { message?: string; details?: string },
+  error: { name: string; message: string; details?: string },
   file?: UppyFile<M, B>,
   response?: UppyFile<M, B>['response'],
 ) => void
 type UploadErrorCallback<M extends Meta, B extends Body> = (
   file: UppyFile<M, B> | undefined,
-  error: { message: string; details?: string },
+  error: { name: string; message: string; details?: string },
   response?:
     | Omit<NonNullable<UppyFile<M, B>['response']>, 'uploadURL'>
     | undefined,
@@ -789,6 +792,7 @@ export class Uppy<M extends Meta, B extends Body> {
 
   #informAndEmit(
     errors: {
+      name: string
       message: string
       isUserFacing?: boolean
       details?: string
