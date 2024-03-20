@@ -6,7 +6,7 @@ import {
   type UploadResult,
   type State,
 } from '@uppy/core'
-import type { ComponentChild } from 'preact'
+import type { ComponentChild, VNode } from 'preact'
 import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin.ts'
 import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
 import StatusBar from '@uppy/status-bar'
@@ -81,13 +81,13 @@ type PreactRender = (
   node: any,
   params: Record<string, unknown> | null,
   ...children: any[]
-) => any
+) => VNode<any>
 
 interface MetaField {
   id: string
   name: string
   placeholder?: string
-  render?: (field: FieldRenderOptions, h: PreactRender) => any
+  render?: (field: FieldRenderOptions, h: PreactRender) => VNode<any>
 }
 
 interface Target {
