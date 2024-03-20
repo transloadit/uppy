@@ -150,7 +150,8 @@ interface DashboardOptions<M extends Meta, B extends Body>
   theme?: 'auto' | 'dark' | 'light'
   trigger?: string
   width?: string | number
-  autoOpen?: boolean | 'imageEditor' | 'metaEditor'
+  autoOpen?: 'metaEditor' | 'imageEditor' | false
+  /** @deprecated use option autoOpen instead */
   autoOpenFileEditor?: boolean
   disabled?: boolean
   disableLocalFiles?: boolean
