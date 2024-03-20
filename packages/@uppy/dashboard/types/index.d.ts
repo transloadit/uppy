@@ -67,7 +67,7 @@ export interface DashboardOptions extends Options {
   width?: string | number
   /** @deprecated use option autoOpen instead */
   autoOpenFileEditor?: boolean
-  autoOpen?: 'metaEditor' | 'fileEditor' | false
+  autoOpen?: 'metaEditor' | 'imageEditor' | false
   disabled?: boolean
   disableLocalFiles?: boolean
   onRequestCloseModal?: () => void

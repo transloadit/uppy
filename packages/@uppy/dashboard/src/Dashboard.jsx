@@ -99,7 +99,7 @@ export default class Dashboard extends UIPlugin {
     if (!opts) {
       autoOpen = false
     } else if (opts.autoOpen === undefined) {
-      autoOpen = opts.autoOpenFileEditor ? "fileEditor" : false
+      autoOpen = opts.autoOpenFileEditor ? "imageEditor" : false
     } else {
       autoOpen = opts.autoOpen
     }
@@ -761,11 +761,11 @@ export default class Dashboard extends UIPlugin {
 
     const {metaFields} = this.getPluginState()
     const isMetaEditorEnabled = metaFields && metaFields.length > 0
-    const isFileEditorEnabled = this.canEditFile(firstFile)
+    const isImageEditorEnabled = this.canEditFile(firstFile)
 
     if (isMetaEditorEnabled && this.opts.autoOpen === 'metaEditor') {
       this.toggleFileCard(true, firstFile.id)
-    } else if (isFileEditorEnabled && this.opts.autoOpen === 'fileEditor') {
+    } else if (isImageEditorEnabled && this.opts.autoOpen === 'imageEditor') {
       this.openFileEditor(firstFile)
     }
   }
