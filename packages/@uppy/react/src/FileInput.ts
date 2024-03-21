@@ -64,7 +64,6 @@ class FileInput<M extends Meta, B extends Body> extends Component<
       inputName,
       target: this.container,
     }
-    delete options.uppy
 
     uppy.use(FileInputPlugin, options)
 

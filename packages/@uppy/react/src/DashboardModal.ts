@@ -1,6 +1,5 @@
 import { createElement as h, Component } from 'react'
 import PropTypes from 'prop-types'
-import type { UnknownPlugin } from '@uppy/core'
 import DashboardPlugin from '@uppy/dashboard'
 import type { PluginTarget } from '@uppy/core/lib/UIPlugin'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
@@ -23,9 +22,9 @@ interface DashboardModalProps<M extends Meta, B extends Body>
   browserBackButtonClose?: boolean
   showRemoveButtonAfterComplete?: boolean
   showSelectedFiles?: boolean
-  theme?: string
+  theme?: 'auto' | 'dark' | 'light'
   waitForThumbnailsBeforeUpload?: boolean
-  fileManagerSelectionType?: string
+  fileManagerSelectionType?: 'files' | 'folders' | 'both'
   hideRetryButton?: boolean
   showLinkToFileUploadResult?: boolean
   closeAfterFinish?: boolean
@@ -135,20 +134,23 @@ class DashboardModal<M extends Meta, B extends Body> extends Component<
 
   private container: HTMLElement
 
-  private plugin: UnknownPlugin<M, B>
+  private plugin: DashboardPlugin<M, B>
 
   componentDidMount(): void {
     this.installPlugin()
   }
 
-  componentDidUpdate(prevProps: DashboardModalProps<M, B>): void {
+  componentDidUpdate(prevProps: DashboardModal<M, B>['props']): void {
     const { uppy, open, onRequestClose } = this.props
     if (prevProps.uppy !== uppy) {
       this.uninstallPlugin(prevProps)
       this.installPlugin()
     } else if (nonHtmlPropsHaveChanged(this.props, prevProps)) {
-      const options = { ...this.props, onRequestCloseModal: onRequestClose }
-      delete options.uppy
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars,no-shadow
+      const { uppy, ...options } = {
+        ...this.props,
+        onRequestCloseModal: onRequestClose,
+      }
       this.plugin.setOptions(options)
     }
     if (prevProps.open && !open) {
@@ -164,7 +166,6 @@ class DashboardModal<M extends Meta, B extends Body> extends Component<
 
   installPlugin(): void {
     const {
-      id = 'react:DashboardModal',
       uppy,
       target,
       open,
@@ -204,7 +205,7 @@ class DashboardModal<M extends Meta, B extends Body> extends Component<
       locale, // eslint-disable-line no-shadow
     } = this.props
     const options = {
-      id,
+      id: 'react:DashboardModal',
       target,
       closeModalOnClickOutside,
       disablePageScrollWhenModalOpen,
@@ -246,10 +247,9 @@ class DashboardModal<M extends Meta, B extends Body> extends Component<
       options.target = this.container
     }
 
-    delete options.uppy
     uppy.use(DashboardPlugin, options)
 
-    this.plugin = uppy.getPlugin(options.id)!
+    this.plugin = uppy.getPlugin(options.id) as DashboardPlugin<M, B>
     if (open) {
       this.plugin.openModal()
     }

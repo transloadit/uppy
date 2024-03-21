@@ -1,69 +1,115 @@
 import { createElement as h, Component } from 'react'
+import PropTypes from 'prop-types'
+import type { UnknownPlugin, Uppy } from '@uppy/core'
 import DashboardPlugin from '@uppy/dashboard'
-import { dashboard as basePropTypes } from './propTypes.ts'
+import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
+import type { DashboardOptions } from '@uppy/dashboard'
+import {
+  locale,
+  uppy as uppyPropType,
+  plugins,
+  metaFields,
+  cssSize,
+} from './propTypes.ts'
 import getHTMLProps from './getHTMLProps.ts'
 import nonHtmlPropsHaveChanged from './nonHtmlPropsHaveChanged.ts'
+
+export interface DashboardProps<M extends Meta, B extends Body>
+  extends Omit<
+    DashboardOptions<M, B>,
+    // Remove the modal-only props
+    | 'animateOpenClose'
+    | 'browserBackButtonClose'
+    | 'onRequestCloseModal'
+    | 'trigger'
+  > {
+  uppy: Uppy<M, B>
+}
 
 /**
  * React Component that renders a Dashboard for an Uppy instance. This component
  * renders the Dashboard inline, so you can put it anywhere you want.
  */
 
-class Dashboard extends Component {
-  componentDidMount () {
+class Dashboard<M extends Meta, B extends Body> extends Component<
+  DashboardProps<M, B>
+> {
+  static propsTypes = {
+    uppy: uppyPropType,
+    disableInformer: PropTypes.bool,
+    disableStatusBar: PropTypes.bool,
+    disableThumbnailGenerator: PropTypes.bool,
+    height: cssSize,
+    hideProgressAfterFinish: PropTypes.bool,
+    hideUploadButton: PropTypes.bool,
+    inline: PropTypes.bool,
+    locale,
+    metaFields,
+    note: PropTypes.string,
+    plugins,
+    proudlyDisplayPoweredByUppy: PropTypes.bool,
+    showProgressDetails: PropTypes.bool,
+    width: cssSize,
+    // pass-through to ThumbnailGenerator
+    thumbnailType: PropTypes.string,
+    thumbnailWidth: PropTypes.number,
+  }
+
+  static defaultProps = {
+    // eslint-disable-next-line react/default-props-match-prop-types
+    inline: true,
+  }
+
+  private container: HTMLElement
+
+  private plugin: UnknownPlugin<M, B>
+
+  componentDidMount(): void {
     this.installPlugin()
   }
 
-  componentDidUpdate (prevProps) {
+  componentDidUpdate(prevProps: Dashboard<M, B>['props']): void {
     // eslint-disable-next-line react/destructuring-assignment
     if (prevProps.uppy !== this.props.uppy) {
       this.uninstallPlugin(prevProps)
       this.installPlugin()
     } else if (nonHtmlPropsHaveChanged(this.props, prevProps)) {
-      const options = { ...this.props, target: this.container }
-      delete options.uppy
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { uppy, ...options } = { ...this.props, target: this.container }
       this.plugin.setOptions(options)
     }
   }
 
-  componentWillUnmount () {
+  componentWillUnmount(): void {
     this.uninstallPlugin()
   }
 
-  installPlugin () {
-    const { uppy } = this.props
-    const options = {
+  installPlugin(): void {
+    const { uppy, ...options } = {
       id: 'react:Dashboard',
       ...this.props,
       target: this.container,
     }
-    delete options.uppy
     uppy.use(DashboardPlugin, options)
 
-    this.plugin = uppy.getPlugin(options.id)
+    this.plugin = uppy.getPlugin(options.id)!
   }
 
-  uninstallPlugin (props = this.props) {
+  uninstallPlugin(props = this.props): void {
     const { uppy } = props
 
     uppy.removePlugin(this.plugin)
   }
 
-  render () {
+  render(): JSX.Element {
     return h('div', {
       className: 'uppy-Container',
-      ref: (container) => {
+      ref: (container: HTMLElement): void => {
         this.container = container
       },
       ...getHTMLProps(this.props),
     })
   }
-}
-
-Dashboard.propTypes = basePropTypes
-
-Dashboard.defaultProps = {
-  inline: true,
 }
 
 export default Dashboard

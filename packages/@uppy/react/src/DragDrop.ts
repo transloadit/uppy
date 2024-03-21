@@ -51,14 +51,14 @@ class DragDrop<M extends Meta, B extends Body> extends Component<
     this.installPlugin()
   }
 
-  componentDidUpdate(prevProps: DragDropProps<M, B>): void {
+  componentDidUpdate(prevProps: DragDrop<M, B>['props']): void {
     // eslint-disable-next-line react/destructuring-assignment
     if (prevProps.uppy !== this.props.uppy) {
       this.uninstallPlugin(prevProps)
       this.installPlugin()
     } else if (nonHtmlPropsHaveChanged(this.props, prevProps)) {
-      const options = { ...this.props, target: this.container }
-      delete options.uppy
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { uppy, ...options } = { ...this.props, target: this.container }
       this.plugin.setOptions(options)
     }
   }
@@ -78,7 +78,6 @@ class DragDrop<M extends Meta, B extends Body> extends Component<
       note,
       target: this.container,
     }
-    delete options.uppy
 
     uppy.use(DragDropPlugin, options)
 

@@ -1,21 +1,15 @@
 import { createElement as h, Component } from 'react'
 import PropTypes from 'prop-types'
 import type { UnknownPlugin, Uppy } from '@uppy/core'
-import StatusBarPlugin from '@uppy/status-bar'
+import StatusBarPlugin, { type StatusBarOptions } from '@uppy/status-bar'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import { uppy as uppyPropType } from './propTypes.ts'
 import getHTMLProps from './getHTMLProps.ts'
 import nonHtmlPropsHaveChanged from './nonHtmlPropsHaveChanged.ts'
 
-interface StatusBarProps<M extends Meta, B extends Body> {
+interface StatusBarProps<M extends Meta, B extends Body>
+  extends StatusBarOptions {
   uppy: Uppy<M, B>
-  hideUploadButton?: boolean
-  hideRetryButton?: boolean
-  hidePauseResumeButton?: boolean
-  hideCancelButton?: boolean
-  showProgressDetails?: boolean
-  hideAfterFinish?: boolean
-  doneButtonHandler?: boolean
 }
 
 /**
@@ -56,14 +50,14 @@ class StatusBar<M extends Meta, B extends Body> extends Component<
     this.installPlugin()
   }
 
-  componentDidUpdate(prevProps: StatusBarProps<M, B>): void {
+  componentDidUpdate(prevProps: StatusBar<M, B>['props']): void {
     // eslint-disable-next-line react/destructuring-assignment
     if (prevProps.uppy !== this.props.uppy) {
       this.uninstallPlugin(prevProps)
       this.installPlugin()
     } else if (nonHtmlPropsHaveChanged(this.props, prevProps)) {
-      const options = { ...this.props, target: this.container }
-      delete options.uppy
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { uppy, ...options } = { ...this.props, target: this.container }
       this.plugin.setOptions(options)
     }
   }
@@ -94,7 +88,6 @@ class StatusBar<M extends Meta, B extends Body> extends Component<
       doneButtonHandler,
       target: this.container,
     }
-    delete options.uppy
 
     uppy.use(StatusBarPlugin, options)
 
