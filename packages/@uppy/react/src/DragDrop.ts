@@ -1,4 +1,4 @@
-import { createElement as h, Component, type Ref } from 'react'
+import { createElement as h, Component } from 'react'
 import PropTypes from 'prop-types'
 import type { UnknownPlugin, Uppy } from '@uppy/core'
 import DragDropPlugin from '@uppy/drag-drop'
@@ -43,7 +43,7 @@ class DragDrop<M extends Meta, B extends Body> extends Component<
     note: null,
   }
 
-  private container: Ref<HTMLElement>
+  private container: HTMLElement
 
   private plugin: UnknownPlugin<M, B>
 
@@ -94,7 +94,7 @@ class DragDrop<M extends Meta, B extends Body> extends Component<
   render(): JSX.Element {
     return h('div', {
       className: 'uppy-Container',
-      ref: (container: Ref<HTMLElement>) => {
+      ref: (container: HTMLElement) => {
         this.container = container
       },
       ...getHTMLProps(this.props),

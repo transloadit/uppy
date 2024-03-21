@@ -1,4 +1,4 @@
-import { createElement as h, Component, type Ref } from 'react'
+import { createElement as h, Component } from 'react'
 import PropTypes from 'prop-types'
 import type { UnknownPlugin, Uppy } from '@uppy/core'
 import StatusBarPlugin from '@uppy/status-bar'
@@ -48,7 +48,7 @@ class StatusBar<M extends Meta, B extends Body> extends Component<
     doneButtonHandler: null,
   }
 
-  private container: Ref<HTMLElement>
+  private container: HTMLElement
 
   private plugin: UnknownPlugin<M, B>
 
@@ -110,7 +110,7 @@ class StatusBar<M extends Meta, B extends Body> extends Component<
   render(): JSX.Element {
     return h('div', {
       className: 'uppy-Container',
-      ref: (container: Ref<HTMLElement>) => {
+      ref: (container: HTMLElement) => {
         this.container = container
       },
       ...getHTMLProps(this.props),

@@ -1,4 +1,4 @@
-import { createElement as h, Component, type Ref } from 'react'
+import { createElement as h, Component } from 'react'
 import PropTypes from 'prop-types'
 import type { UnknownPlugin } from '@uppy/core'
 import DashboardPlugin from '@uppy/dashboard'
@@ -133,7 +133,7 @@ class DashboardModal<M extends Meta, B extends Body> extends Component<
     onRequestClose: undefined,
   }
 
-  private container: Ref<HTMLElement>
+  private container: HTMLElement
 
   private plugin: UnknownPlugin<M, B>
 
@@ -264,7 +264,7 @@ class DashboardModal<M extends Meta, B extends Body> extends Component<
   render(): JSX.Element {
     return h('div', {
       className: 'uppy-Container',
-      ref: (container: Ref<HTMLElement>) => {
+      ref: (container: HTMLElement) => {
         this.container = container
       },
       ...getHTMLProps(this.props),

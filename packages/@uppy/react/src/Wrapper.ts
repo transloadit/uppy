@@ -1,5 +1,4 @@
 import { createElement as h, Component } from 'react'
-import type * as React from 'react'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import type { UIPlugin, Uppy } from '@uppy/core'
 import PropTypes from 'prop-types'
@@ -18,7 +17,7 @@ class UppyWrapper<M extends Meta, B extends Body> extends Component<
     plugin: PropTypes.string.isRequired,
   }
 
-  private container: React.Ref<HTMLDivElement>
+  private container: HTMLDivElement
 
   componentDidMount(): void {
     this.installPlugin()

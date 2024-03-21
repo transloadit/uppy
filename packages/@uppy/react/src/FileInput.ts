@@ -1,4 +1,4 @@
-import { createElement as h, Component, type Ref } from 'react'
+import { createElement as h, Component } from 'react'
 import PropTypes from 'prop-types'
 import type { UnknownPlugin, Uppy } from '@uppy/core'
 import FileInputPlugin from '@uppy/file-input'
@@ -35,7 +35,7 @@ class FileInput<M extends Meta, B extends Body> extends Component<
     inputName: 'files[]',
   }
 
-  private container: Ref<HTMLElement>
+  private container: HTMLElement
 
   private plugin: UnknownPlugin<M, B>
 
@@ -80,7 +80,7 @@ class FileInput<M extends Meta, B extends Body> extends Component<
   render(): JSX.Element {
     return h('div', {
       className: 'uppy-Container',
-      ref: (container: Ref<HTMLElement>) => {
+      ref: (container: HTMLElement) => {
         this.container = container
       },
     })
