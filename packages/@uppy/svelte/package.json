@@ -35,6 +35,11 @@
     "@uppy/status-bar": "workspace:^",
     "svelte": "^3.0.0 || ^4.0.0"
   },
+  "exports": {
+    ".": {
+      "svelte": "./dist/index.js"
+    }
+  },
   "publishConfig": {
     "access": "public"
   },
