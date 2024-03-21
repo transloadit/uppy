@@ -1,5 +1,6 @@
-import { createElement as h, Component } from 'react'
+import { createElement as h, Component, type Ref } from 'react'
 import PropTypes from 'prop-types'
+import type { UnknownPlugin } from '@uppy/core'
 import DashboardPlugin from '@uppy/dashboard'
 import type { PluginTarget } from '@uppy/core/lib/UIPlugin'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
@@ -132,6 +133,10 @@ class DashboardModal<M extends Meta, B extends Body> extends Component<
     onRequestClose: undefined,
   }
 
+  private container: Ref<HTMLElement>
+
+  private plugin: UnknownPlugin<M, B>
+
   componentDidMount(): void {
     this.installPlugin()
   }
@@ -244,7 +249,7 @@ class DashboardModal<M extends Meta, B extends Body> extends Component<
     delete options.uppy
     uppy.use(DashboardPlugin, options)
 
-    this.plugin = uppy.getPlugin(options.id)
+    this.plugin = uppy.getPlugin(options.id)!
     if (open) {
       this.plugin.openModal()
     }
@@ -259,7 +264,7 @@ class DashboardModal<M extends Meta, B extends Body> extends Component<
   render(): JSX.Element {
     return h('div', {
       className: 'uppy-Container',
-      ref: (container) => {
+      ref: (container: Ref<HTMLElement>) => {
         this.container = container
       },
       ...getHTMLProps(this.props),

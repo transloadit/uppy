@@ -1,5 +1,6 @@
-import { createElement as h, Component } from 'react'
+import { createElement as h, Component, type Ref } from 'react'
 import PropTypes from 'prop-types'
+import type { UnknownPlugin, Uppy } from '@uppy/core'
 import ProgressBarPlugin from '@uppy/progress-bar'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import { uppy as uppyPropType } from './propTypes.ts'
@@ -30,6 +31,10 @@ class ProgressBar<M extends Meta, B extends Body> extends Component<
     fixed: false,
     hideAfterFinish: true,
   }
+
+  private container: Ref<HTMLElement>
+
+  private plugin: UnknownPlugin<M, B>
 
   componentDidMount(): void {
     this.installPlugin()
@@ -63,7 +68,7 @@ class ProgressBar<M extends Meta, B extends Body> extends Component<
 
     uppy.use(ProgressBarPlugin, options)
 
-    this.plugin = uppy.getPlugin(options.id)
+    this.plugin = uppy.getPlugin(options.id)!
   }
 
   uninstallPlugin(props = this.props): void {
@@ -75,7 +80,7 @@ class ProgressBar<M extends Meta, B extends Body> extends Component<
   render(): JSX.Element {
     return h('div', {
       className: 'uppy-Container',
-      ref: (container) => {
+      ref: (container: Ref<HTMLElement>) => {
         this.container = container
       },
       ...getHTMLProps(this.props),

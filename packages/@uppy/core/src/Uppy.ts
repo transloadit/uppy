@@ -54,7 +54,7 @@ type Processor = (
   uploadID: string,
 ) => Promise<unknown> | void
 
-type FileRemoveReason = 'user' | 'cancel-all'
+type FileRemoveReason = 'user' | 'cancel-all' | 'unmount'
 
 type LogLevel = 'info' | 'warning' | 'error' | 'success'
 

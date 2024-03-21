@@ -1,8 +1,9 @@
-import { createElement as h, Component } from 'react'
+import { createElement as h, Component, type Ref } from 'react'
 import PropTypes from 'prop-types'
-import type { Locale } from '@uppy/core'
+import type { UnknownPlugin, Uppy } from '@uppy/core'
 import DragDropPlugin from '@uppy/drag-drop'
-import type { Meta } from '@uppy/utils/lib/UppyFile'
+import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
+import type { Locale } from '@uppy/utils/lib/Translator'
 import * as propTypes from './propTypes.ts'
 import getHTMLProps from './getHTMLProps.ts'
 import nonHtmlPropsHaveChanged from './nonHtmlPropsHaveChanged.ts'
@@ -42,6 +43,10 @@ class DragDrop<M extends Meta, B extends Body> extends Component<
     note: null,
   }
 
+  private container: Ref<HTMLElement>
+
+  private plugin: UnknownPlugin<M, B>
+
   componentDidMount(): void {
     this.installPlugin()
   }
@@ -77,7 +82,7 @@ class DragDrop<M extends Meta, B extends Body> extends Component<
 
     uppy.use(DragDropPlugin, options)
 
-    this.plugin = uppy.getPlugin(options.id)
+    this.plugin = uppy.getPlugin(options.id)!
   }
 
   uninstallPlugin(props = this.props): void {
@@ -89,7 +94,7 @@ class DragDrop<M extends Meta, B extends Body> extends Component<
   render(): JSX.Element {
     return h('div', {
       className: 'uppy-Container',
-      ref: (container) => {
+      ref: (container: Ref<HTMLElement>) => {
         this.container = container
       },
       ...getHTMLProps(this.props),

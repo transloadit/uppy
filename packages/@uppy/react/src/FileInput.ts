@@ -1,8 +1,9 @@
-import { createElement as h, Component } from 'react'
+import { createElement as h, Component, type Ref } from 'react'
 import PropTypes from 'prop-types'
-import type { Locale } from '@uppy/core'
+import type { UnknownPlugin, Uppy } from '@uppy/core'
 import FileInputPlugin from '@uppy/file-input'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
+import type { Locale } from '@uppy/utils/lib/Translator'
 import * as propTypes from './propTypes.ts'
 
 interface FileInputProps<M extends Meta, B extends Body> {
@@ -34,6 +35,10 @@ class FileInput<M extends Meta, B extends Body> extends Component<
     inputName: 'files[]',
   }
 
+  private container: Ref<HTMLElement>
+
+  private plugin: UnknownPlugin<M, B>
+
   componentDidMount(): void {
     this.installPlugin()
   }
@@ -63,7 +68,7 @@ class FileInput<M extends Meta, B extends Body> extends Component<
 
     uppy.use(FileInputPlugin, options)
 
-    this.plugin = uppy.getPlugin(options.id)
+    this.plugin = uppy.getPlugin(options.id)!
   }
 
   uninstallPlugin(props = this.props): void {
@@ -75,7 +80,7 @@ class FileInput<M extends Meta, B extends Body> extends Component<
   render(): JSX.Element {
     return h('div', {
       className: 'uppy-Container',
-      ref: (container) => {
+      ref: (container: Ref<HTMLElement>) => {
         this.container = container
       },
     })

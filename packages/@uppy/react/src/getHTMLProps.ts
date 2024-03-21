@@ -249,7 +249,7 @@ const reactSupportedHtmlAttr = [
   // Transition Events
   'onTransitionEnd',
   'onTransitionEndCapture',
-] as const
+]
 
 const validHTMLAttribute = /^(aria-|data-)/
 
