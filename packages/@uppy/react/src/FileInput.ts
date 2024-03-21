@@ -1,19 +1,44 @@
 import { createElement as h, Component } from 'react'
 import PropTypes from 'prop-types'
+import type { Locale } from '@uppy/core'
 import FileInputPlugin from '@uppy/file-input'
+import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import * as propTypes from './propTypes.ts'
+
+interface FileInputProps<M extends Meta, B extends Body> {
+  uppy: Uppy<M, B>
+  locale?: Locale
+  pretty?: boolean
+  inputName?: string
+}
 
 /**
  * React component that renders an area in which files can be dropped to be
  * uploaded.
  */
 
-class FileInput extends Component {
-  componentDidMount () {
+class FileInput<M extends Meta, B extends Body> extends Component<
+  FileInputProps<M, B>
+> {
+  static propTypes = {
+    uppy: propTypes.uppy.isRequired,
+    locale: propTypes.locale,
+    pretty: PropTypes.bool,
+    inputName: PropTypes.string,
+  }
+
+  // Must be kept in sync with @uppy/file-input/src/FileInput.jsx
+  static defaultProps = {
+    locale: undefined,
+    pretty: true,
+    inputName: 'files[]',
+  }
+
+  componentDidMount(): void {
     this.installPlugin()
   }
 
-  componentDidUpdate (prevProps) {
+  componentDidUpdate(prevProps: FileInputProps<M, B>): void {
     // eslint-disable-next-line react/destructuring-assignment
     if (prevProps.uppy !== this.props.uppy) {
       this.uninstallPlugin(prevProps)
@@ -21,11 +46,11 @@ class FileInput extends Component {
     }
   }
 
-  componentWillUnmount () {
+  componentWillUnmount(): void {
     this.uninstallPlugin()
   }
 
-  installPlugin () {
+  installPlugin(): void {
     const { uppy, locale, pretty, inputName } = this.props
     const options = {
       id: 'react:FileInput',
@@ -41,13 +66,13 @@ class FileInput extends Component {
     this.plugin = uppy.getPlugin(options.id)
   }
 
-  uninstallPlugin (props = this.props) {
+  uninstallPlugin(props = this.props): void {
     const { uppy } = props
 
     uppy.removePlugin(this.plugin)
   }
 
-  render () {
+  render(): JSX.Element {
     return h('div', {
       className: 'uppy-Container',
       ref: (container) => {
@@ -55,19 +80,6 @@ class FileInput extends Component {
       },
     })
   }
-}
-
-FileInput.propTypes = {
-  uppy: propTypes.uppy.isRequired,
-  locale: propTypes.locale,
-  pretty: PropTypes.bool,
-  inputName: PropTypes.string,
-}
-// Must be kept in sync with @uppy/file-input/src/FileInput.jsx
-FileInput.defaultProps = {
-  locale: undefined,
-  pretty: true,
-  inputName: 'files[]',
 }
 
 export default FileInput
