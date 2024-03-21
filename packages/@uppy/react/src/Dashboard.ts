@@ -90,7 +90,7 @@ class Dashboard<M extends Meta, B extends Body> extends Component<
       ...this.props,
       target: this.container,
     }
-    uppy.use(DashboardPlugin, options)
+    uppy.use(DashboardPlugin<M, B>, options)
 
     this.plugin = uppy.getPlugin(options.id)!
   }
