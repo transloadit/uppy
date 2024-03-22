@@ -8,7 +8,7 @@ import toArray from '@uppy/utils/lib/toArray'
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'
 
-interface DropTargetOptions extends PluginOpts {
+export interface DropTargetOptions extends PluginOpts {
   target?: HTMLElement | string | null
   onDrop?: (event: DragEvent) => void
   onDragOver?: (event: DragEvent) => void
