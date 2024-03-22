@@ -19,7 +19,7 @@ export abstract class UppyAngularWrapper<
 
   onMount(
     defaultOptions: Partial<Opts>,
-    plugin: new (uppy: Uppy<M, B>, opts?: Opts) => UIPlugin<Opts, M, B>,
+    plugin: new (uppy: any, opts?: Opts) => UIPlugin<Opts, M, B>,
   ) {
     this.options = {
       ...defaultOptions,

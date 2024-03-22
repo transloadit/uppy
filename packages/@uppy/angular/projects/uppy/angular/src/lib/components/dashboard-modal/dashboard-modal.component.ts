@@ -19,11 +19,11 @@ import { Body, Meta } from '@uppy/utils/lib/UppyFile';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardModalComponent<M extends Meta, B extends Body>
-  extends UppyAngularWrapper<M, B, DashboardOptions, Dashboard<M, B>>
+  extends UppyAngularWrapper<M, B, DashboardOptions<M, B>, Dashboard<M, B>>
   implements OnDestroy, OnChanges
 {
   @Input() uppy: Uppy<M, B> = new Uppy();
-  @Input() props: DashboardOptions = {};
+  @Input() props: DashboardOptions<M, B> = {};
   @Input() open: boolean = false;
 
   constructor(public el: ElementRef) {
