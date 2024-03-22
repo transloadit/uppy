@@ -7,7 +7,7 @@ import {
   OnChanges,
   SimpleChanges,
 } from '@angular/core';
-import { UIPlugin, Uppy } from '@uppy/core';
+import { Uppy } from '@uppy/core';
 import StatusBar from '@uppy/status-bar';
 import type { StatusBarOptions } from '@uppy/status-bar';
 import { Body, Meta } from '@uppy/utils/lib/UppyFile';
