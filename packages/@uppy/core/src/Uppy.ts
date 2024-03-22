@@ -31,20 +31,32 @@ import type {
   I18n,
   OptionalPluralizeLocale,
 } from '@uppy/utils/lib/Translator'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore For some reason the Angular build script chokes on this import
 import supportsUploadProgress from './supportsUploadProgress.ts'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore For some reason the Angular build script chokes on this import
 import getFileName from './getFileName.ts'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore For some reason the Angular build script chokes on this import
 import { justErrorsLogger, debugLogger } from './loggers.ts'
 import {
   Restricter,
   defaultOptions as defaultRestrictionOptions,
   RestrictionError,
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore For some reason the Angular build script chokes on this import
 } from './Restricter.ts'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore For some reason the Angular build script chokes on this import
 import locale from './locale.ts'
 
 import type BasePlugin from './BasePlugin.ts'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore For some reason the Angular build script chokes on this import
 import type { Restrictions, ValidateableFile } from './Restricter.ts'
 
 type Processor = (
