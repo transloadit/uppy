@@ -379,7 +379,7 @@ export class Uppy<M extends Meta, B extends Body> {
 
   defaultLocale: Locale
 
-  locale: Locale
+  locale!: Locale
 
   // The user optionally passes in options, but we set defaults for missing options.
   // We consider all options present after the contructor has run.
@@ -387,9 +387,9 @@ export class Uppy<M extends Meta, B extends Body> {
 
   store: NonNullableUppyOptions<M, B>['store']
 
-  i18n: I18n
+  i18n!: I18n
 
-  i18nArray: Translator['translateArray']
+  i18nArray!: Translator['translateArray']
 
   scheduledAutoProceed: ReturnType<typeof setTimeout> | null = null
 
@@ -839,7 +839,7 @@ export class Uppy<M extends Meta, B extends Body> {
     try {
       this.#restricter.validate(files, [file])
     } catch (err) {
-      return err
+      return err as any
     }
     return null
   }
@@ -1030,7 +1030,7 @@ export class Uppy<M extends Meta, B extends Body> {
         nextFilesState[newFile.id] = newFile
         validFilesToAdd.push(newFile)
       } catch (err) {
-        errors.push(err)
+        errors.push(err as any)
       }
     }
 
@@ -1042,7 +1042,7 @@ export class Uppy<M extends Meta, B extends Body> {
         validFilesToAdd,
       )
     } catch (err) {
-      errors.push(err)
+      errors.push(err as any)
 
       // If we have any aggregate error, don't allow adding this batch
       return {
@@ -2146,7 +2146,7 @@ export class Uppy<M extends Meta, B extends Body> {
    * Start an upload for all the files that are not currently being uploaded.
    */
   upload(): Promise<NonNullable<UploadResult<M, B>> | undefined> {
-    if (!this.#plugins.uploader?.length) {
+    if (!this.#plugins['uploader']?.length) {
       this.log('No uploader type plugins are used', 'warning')
     }
 
