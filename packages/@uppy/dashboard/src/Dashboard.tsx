@@ -112,7 +112,7 @@ interface DashboardState<M extends Meta, B extends Body> {
   [key: string]: unknown
 }
 
-interface DashboardOptions<M extends Meta, B extends Body>
+export interface DashboardOptions<M extends Meta, B extends Body>
   extends UIPluginOptions {
   animateOpenClose?: boolean
   browserBackButtonClose?: boolean
