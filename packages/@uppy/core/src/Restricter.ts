@@ -41,7 +41,7 @@ const defaultOptions = {
 class RestrictionError<M extends Meta, B extends Body> extends Error {
   isUserFacing: boolean
 
-  file: UppyFile<M, B>
+  file!: UppyFile<M, B>
 
   constructor(
     message: string,
