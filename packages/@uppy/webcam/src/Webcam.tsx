@@ -59,7 +59,7 @@ function isModeAvailable<T>(modes: T[], mode: unknown): mode is T {
   return modes.includes(mode as T)
 }
 
-interface WebcamOptions<M extends Meta, B extends Body>
+export interface WebcamOptions<M extends Meta, B extends Body>
   extends UIPluginOptions {
   target?: PluginTarget<M, B>
   onBeforeSnapshot?: () => Promise<void>
