@@ -14,11 +14,11 @@ import Unsplash from '@uppy/unsplash'
 import Url from '@uppy/url'
 import Zoom from '@uppy/zoom'
 
+import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin'
+import type { Body, Meta } from '../../utils/src/UppyFile'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
-import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin'
 import packageJson from '../package.json'
-import type { Body, Meta } from '../../utils/src/UppyFile'
 
 const availablePlugins = {
   // Using a null-prototype object to avoid prototype pollution.
