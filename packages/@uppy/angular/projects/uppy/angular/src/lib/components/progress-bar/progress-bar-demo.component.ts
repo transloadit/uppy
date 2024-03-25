@@ -56,9 +56,11 @@ import { Body, Meta } from '@uppy/utils/lib/UppyFile';
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ProgressBarDemoComponent<M extends Meta, B extends Body> implements OnInit {
-  uppyOne!: Uppy<M,B>;
-  uppyTwo!: Uppy<M,B>;
+export class ProgressBarDemoComponent<M extends Meta, B extends Body>
+  implements OnInit
+{
+  uppyOne!: Uppy<M, B>;
+  uppyTwo!: Uppy<M, B>;
   fileListOne: { url: string; fileName: string }[] = [];
   fileListTwo: { url: string; fileName: string }[] = [];
   props: ProgressBarOptions = {
@@ -85,7 +87,7 @@ export class ProgressBarDemoComponent<M extends Meta, B extends Body> implements
     this.uppyOne = new Uppy<M, B>({ debug: true, autoProceed: true })
       .use(Tus, { endpoint: 'https://master.tus.io/files/' })
       .on('upload-success', this.updateFileList('fileListOne'));
-    this.uppyTwo = new Uppy<M,B>({ debug: true, autoProceed: false })
+    this.uppyTwo = new Uppy<M, B>({ debug: true, autoProceed: false })
       .use(Tus, { endpoint: 'https://master.tus.io/files/' })
       .on('upload-success', this.updateFileList('fileListTwo'));
   }

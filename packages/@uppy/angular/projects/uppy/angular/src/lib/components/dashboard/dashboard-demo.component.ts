@@ -9,6 +9,6 @@ import { Body, Meta } from '@uppy/utils/lib/UppyFile';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardDemoComponent<M extends Meta, B extends Body> {
-  uppy: Uppy<M,B> = new Uppy({ debug: true, autoProceed: true });
+  uppy: Uppy<M, B> = new Uppy({ debug: true, autoProceed: true });
   props?: Dashboard.DashboardOptions<M, B>;
 }

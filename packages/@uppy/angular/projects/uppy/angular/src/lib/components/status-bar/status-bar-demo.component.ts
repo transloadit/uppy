@@ -15,7 +15,7 @@ import { Body, Meta } from '@uppy/utils/lib/UppyFile';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StatusBarDemoComponent<M extends Meta, B extends Body> implements OnInit {
-  uppy: Uppy<M,B> = new Uppy({ debug: true, autoProceed: true });
+  uppy: Uppy<M, B> = new Uppy({ debug: true, autoProceed: true });
   props: StatusBar.StatusBarOptions = {
     hideUploadButton: true,
     hideAfterFinish: false,
