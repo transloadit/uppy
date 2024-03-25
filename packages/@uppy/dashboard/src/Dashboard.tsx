@@ -250,9 +250,9 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     // TODO: we can remove this code when we update the Uppy major version
     let autoOpen: DashboardOptions<M, B>['autoOpen']
     if (!opts) {
-      autoOpen = false
+      autoOpen = null
     } else if (opts.autoOpen === undefined) {
-      autoOpen = opts.autoOpenFileEditor ? 'imageEditor' : false
+      autoOpen = opts.autoOpenFileEditor ? 'imageEditor' : null
     } else {
       autoOpen = opts.autoOpen
     }
