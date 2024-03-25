@@ -87,7 +87,7 @@ DashboardModal.propTypes = {
   note: PropTypes.string,
   metaFields,
   proudlyDisplayPoweredByUppy: PropTypes.bool,
-  autoOpen: PropTypes.oneOf(['imageEditor', 'metaEditor', false]),
+  autoOpen: PropTypes.oneOf(['imageEditor', 'metaEditor', null]),
   animateOpenClose: PropTypes.bool,
   browserBackButtonClose: PropTypes.bool,
   closeAfterFinish: PropTypes.bool,

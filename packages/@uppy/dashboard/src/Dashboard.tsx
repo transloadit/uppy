@@ -150,7 +150,7 @@ interface DashboardOptions<M extends Meta, B extends Body>
   theme?: 'auto' | 'dark' | 'light'
   trigger?: string
   width?: string | number
-  autoOpen?: 'metaEditor' | 'imageEditor' | false
+  autoOpen?: 'metaEditor' | 'imageEditor' | null
   /** @deprecated use option autoOpen instead */
   autoOpenFileEditor?: boolean
   disabled?: boolean
@@ -197,7 +197,7 @@ const defaultOptions = {
   showNativePhotoCameraButton: false,
   showNativeVideoCameraButton: false,
   theme: 'light',
-  autoOpen: false,
+  autoOpen: null,
   autoOpenFileEditor: false,
   disabled: false,
   disableLocalFiles: false,
