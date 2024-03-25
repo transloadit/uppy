@@ -69,7 +69,8 @@
     "./lib/CompanionClientProvider": "./lib/CompanionClientProvider.js",
     "./lib/FileProgress": "./lib/FileProgress.js",
     "./src/microtip.scss": "./src/microtip.scss",
-    "./lib/UserFacingApiError": "./lib/UserFacingApiError.js"
+    "./lib/UserFacingApiError": "./lib/UserFacingApiError.js",
+    "./lib/getAllowedMetaFields": "./lib/getAllowedMetaFields.js"
   },
   "dependencies": {
     "lodash": "^4.17.21",
