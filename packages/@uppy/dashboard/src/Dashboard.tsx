@@ -150,6 +150,8 @@ export interface DashboardOptions<M extends Meta, B extends Body>
   theme?: 'auto' | 'dark' | 'light'
   trigger?: string
   width?: string | number
+  autoOpen?: 'metaEditor' | 'imageEditor' | null
+  /** @deprecated use option autoOpen instead */
   autoOpenFileEditor?: boolean
   disabled?: boolean
   disableLocalFiles?: boolean
@@ -195,6 +197,7 @@ const defaultOptions = {
   showNativePhotoCameraButton: false,
   showNativeVideoCameraButton: false,
   theme: 'light',
+  autoOpen: null,
   autoOpenFileEditor: false,
   disabled: false,
   disableLocalFiles: false,
@@ -243,7 +246,17 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
   private removeDragOverClassTimeout: ReturnType<typeof setTimeout>
 
   constructor(uppy: Uppy<M, B>, opts?: DashboardOptions<M, B>) {
-    super(uppy, { ...defaultOptions, ...opts })
+    // support for the legacy `autoOpenFileEditor` option,
+    // TODO: we can remove this code when we update the Uppy major version
+    let autoOpen: DashboardOptions<M, B>['autoOpen']
+    if (!opts) {
+      autoOpen = null
+    } else if (opts.autoOpen === undefined) {
+      autoOpen = opts.autoOpenFileEditor ? 'imageEditor' : null
+    } else {
+      autoOpen = opts.autoOpen
+    }
+    super(uppy, { ...defaultOptions, ...opts, autoOpen })
     this.id = this.opts.id || 'Dashboard'
     this.title = 'Dashboard'
     this.type = 'orchestrator'
@@ -939,11 +952,11 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
 
     const { metaFields } = this.getPluginState()
     const isMetaEditorEnabled = metaFields && metaFields.length > 0
-    const isFileEditorEnabled = this.canEditFile(firstFile)
+    const isImageEditorEnabled = this.canEditFile(firstFile)
 
-    if (isMetaEditorEnabled) {
+    if (isMetaEditorEnabled && this.opts.autoOpen === 'metaEditor') {
       this.toggleFileCard(true, firstFile.id)
-    } else if (isFileEditorEnabled) {
+    } else if (isImageEditorEnabled && this.opts.autoOpen === 'imageEditor') {
       this.openFileEditor(firstFile)
     }
   }
@@ -985,7 +998,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
       this.el!.addEventListener('keydown', this.handleKeyDownInInline)
     }
 
-    if (this.opts.autoOpenFileEditor) {
+    if (this.opts.autoOpen) {
       this.uppy.on('files-added', this.#openFileEditorWhenFilesAdded)
     }
   }
@@ -1018,7 +1031,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
       this.el!.removeEventListener('keydown', this.handleKeyDownInInline)
     }
 
-    if (this.opts.autoOpenFileEditor) {
+    if (this.opts.autoOpen) {
       this.uppy.off('files-added', this.#openFileEditorWhenFilesAdded)
     }
   }
