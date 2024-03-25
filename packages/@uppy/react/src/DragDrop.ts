@@ -1,20 +1,15 @@
 import { createElement as h, Component } from 'react'
 import PropTypes from 'prop-types'
 import type { UnknownPlugin, Uppy } from '@uppy/core'
-import DragDropPlugin from '@uppy/drag-drop'
+import DragDropPlugin, { type DragDropOptions } from '@uppy/drag-drop'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
-import type { Locale } from '@uppy/utils/lib/Translator'
 import * as propTypes from './propTypes.ts'
 import getHTMLProps from './getHTMLProps.ts'
 import nonHtmlPropsHaveChanged from './nonHtmlPropsHaveChanged.ts'
 
-interface DragDropProps<M extends Meta, B extends Body> {
+interface DragDropProps<M extends Meta, B extends Body>
+  extends DragDropOptions {
   uppy: Uppy<M, B>
-  locale?: Locale
-  inputName?: string
-  width?: string
-  height?: string
-  note?: string
 }
 
 /**
