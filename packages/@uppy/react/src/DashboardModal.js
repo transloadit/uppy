@@ -37,90 +37,15 @@ class DashboardModal extends Component {
   }
 
   installPlugin () {
-    const {
-      id = 'react:DashboardModal',
-      uppy,
-      target,
-      open,
-      onRequestClose,
-      closeModalOnClickOutside,
-      disablePageScrollWhenModalOpen,
-      inline,
-      plugins, // eslint-disable-line no-shadow
-      width,
-      height,
-      showProgressDetails,
-      note,
-      metaFields, // eslint-disable-line no-shadow
-      proudlyDisplayPoweredByUppy,
-      autoOpenFileEditor,
-      animateOpenClose,
-      browserBackButtonClose,
-      closeAfterFinish,
-      disableStatusBar,
-      disableInformer,
-      disableThumbnailGenerator,
-      disableLocalFiles,
-      disabled,
-      hideCancelButton,
-      hidePauseResumeButton,
-      hideProgressAfterFinish,
-      hideRetryButton,
-      hideUploadButton,
-      showLinkToFileUploadResult,
-      showRemoveButtonAfterComplete,
-      showSelectedFiles,
-      waitForThumbnailsBeforeUpload,
-      fileManagerSelectionType,
-      theme,
-      thumbnailType,
-      thumbnailWidth,
-      locale, // eslint-disable-line no-shadow
-    } = this.props
+    const { id='react:DashboardModal', target=this.container, open, onRequestClose, uppy } = this.props
     const options = {
+      ...this.props,
       id,
       target,
-      closeModalOnClickOutside,
-      disablePageScrollWhenModalOpen,
-      inline,
-      plugins,
-      width,
-      height,
-      showProgressDetails,
-      note,
-      metaFields,
-      proudlyDisplayPoweredByUppy,
-      autoOpenFileEditor,
-      animateOpenClose,
-      browserBackButtonClose,
-      closeAfterFinish,
-      disableStatusBar,
-      disableInformer,
-      disableThumbnailGenerator,
-      disableLocalFiles,
-      disabled,
-      hideCancelButton,
-      hidePauseResumeButton,
-      hideProgressAfterFinish,
-      hideRetryButton,
-      hideUploadButton,
-      showLinkToFileUploadResult,
-      showRemoveButtonAfterComplete,
-      showSelectedFiles,
-      waitForThumbnailsBeforeUpload,
-      fileManagerSelectionType,
-      theme,
-      thumbnailType,
-      thumbnailWidth,
-      locale,
       onRequestCloseModal: onRequestClose,
     }
-
-    if (!options.target) {
-      options.target = this.container
-    }
-
     delete options.uppy
+
     uppy.use(DashboardPlugin, options)
 
     this.plugin = uppy.getPlugin(options.id)
@@ -146,6 +71,7 @@ class DashboardModal extends Component {
   }
 }
 
+/* eslint-disable react/no-unused-prop-types */
 DashboardModal.propTypes = {
   uppy: uppyPropType.isRequired,
   target: typeof window !== 'undefined' ? PropTypes.instanceOf(window.HTMLElement) : PropTypes.any,
@@ -161,7 +87,7 @@ DashboardModal.propTypes = {
   note: PropTypes.string,
   metaFields,
   proudlyDisplayPoweredByUppy: PropTypes.bool,
-  autoOpenFileEditor: PropTypes.bool,
+  autoOpen: PropTypes.oneOf(['imageEditor', 'metaEditor', null]),
   animateOpenClose: PropTypes.bool,
   browserBackButtonClose: PropTypes.bool,
   closeAfterFinish: PropTypes.bool,
@@ -186,7 +112,7 @@ DashboardModal.propTypes = {
   thumbnailWidth: PropTypes.number,
   locale,
 }
-// Must be kept in sync with @uppy/dashboard/src/Dashboard.jsx.
+// Must be kept in sync with @uppy/dashboard/src/Dashboard.tsx.
 DashboardModal.defaultProps = {
   metaFields: [],
   plugins: [],
@@ -217,7 +143,7 @@ DashboardModal.defaultProps = {
   showRemoveButtonAfterComplete: false,
   browserBackButtonClose: false,
   theme: 'light',
-  autoOpenFileEditor: false,
+  autoOpen: false,
   disabled: false,
   disableLocalFiles: false,
 
