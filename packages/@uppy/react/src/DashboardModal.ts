@@ -16,7 +16,8 @@ import nonHtmlPropsHaveChanged from './nonHtmlPropsHaveChanged.ts'
 type DashboardInlineOptions<M extends Meta, B extends Body> = Omit<
   DashboardOptions<M, B> & { inline: false },
   'inline' | 'onRequestCloseModal'
->
+> &
+  React.BaseHTMLAttributes<HTMLDivElement>
 
 export interface DashboardModalProps<M extends Meta, B extends Body>
   extends DashboardInlineOptions<M, B> {
@@ -161,6 +162,7 @@ class DashboardModal<M extends Meta, B extends Body> extends Component<
     const options = {
       ...rest,
       id: 'react:DashboardModal',
+      inline: false,
       target,
       open,
       onRequestCloseModal: onRequestClose,

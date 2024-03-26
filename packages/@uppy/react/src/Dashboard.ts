@@ -17,7 +17,8 @@ import nonHtmlPropsHaveChanged from './nonHtmlPropsHaveChanged.ts'
 type DashboardInlineOptions<M extends Meta, B extends Body> = Omit<
   DashboardOptions<M, B> & { inline: true },
   'inline'
->
+> &
+  React.BaseHTMLAttributes<HTMLDivElement>
 
 export interface DashboardProps<M extends Meta, B extends Body>
   extends DashboardInlineOptions<M, B> {
