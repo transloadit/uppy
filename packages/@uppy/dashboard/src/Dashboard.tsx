@@ -228,6 +228,7 @@ const defaultOptions = {
  */
 export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
   DefinePluginOpts<
+    // The options object inside the class is not the discriminated union but and intersection of the different subtypes.
     DashboardMiscOptions<M, B> &
       Omit<DashboardInlineOptions, 'inline'> &
       Omit<DashboardModalOptions, 'inline'> & { inline?: boolean },
