@@ -14,15 +14,13 @@ import {
 import getHTMLProps from './getHTMLProps.ts'
 import nonHtmlPropsHaveChanged from './nonHtmlPropsHaveChanged.ts'
 
+type DashboardInlineOptions<M extends Meta, B extends Body> = Omit<
+  DashboardOptions<M, B> & { inline: true },
+  'inline'
+>
+
 export interface DashboardProps<M extends Meta, B extends Body>
-  extends Omit<
-    DashboardOptions<M, B>,
-    // Remove the modal-only props
-    | 'animateOpenClose'
-    | 'browserBackButtonClose'
-    | 'onRequestCloseModal'
-    | 'trigger'
-  > {
+  extends DashboardInlineOptions<M, B> {
   uppy: Uppy<M, B>
 }
 
@@ -42,7 +40,6 @@ class Dashboard<M extends Meta, B extends Body> extends Component<
     height: cssSize,
     hideProgressAfterFinish: PropTypes.bool,
     hideUploadButton: PropTypes.bool,
-    inline: PropTypes.bool,
     locale,
     metaFields,
     note: PropTypes.string,
@@ -53,11 +50,6 @@ class Dashboard<M extends Meta, B extends Body> extends Component<
     // pass-through to ThumbnailGenerator
     thumbnailType: PropTypes.string,
     thumbnailWidth: PropTypes.number,
-  }
-
-  static defaultProps = {
-    // eslint-disable-next-line react/default-props-match-prop-types
-    inline: true,
   }
 
   private container: HTMLElement
@@ -87,6 +79,7 @@ class Dashboard<M extends Meta, B extends Body> extends Component<
   installPlugin(): void {
     const { uppy, ...options } = {
       id: 'react:Dashboard',
+      inline: true,
       ...this.props,
       target: this.container,
     }

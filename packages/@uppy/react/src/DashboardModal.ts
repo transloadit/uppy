@@ -1,8 +1,8 @@
 import { createElement as h, Component } from 'react'
 import PropTypes from 'prop-types'
-import DashboardPlugin from '@uppy/dashboard'
-import type { PluginTarget } from '@uppy/core/lib/UIPlugin'
+import DashboardPlugin, { type DashboardOptions } from '@uppy/dashboard'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
+import type { Uppy } from '@uppy/core'
 import {
   cssSize,
   locale,
@@ -12,30 +12,17 @@ import {
 } from './propTypes.ts'
 import getHTMLProps from './getHTMLProps.ts'
 import nonHtmlPropsHaveChanged from './nonHtmlPropsHaveChanged.ts'
-import type { DashboardProps } from './Dashboard.ts'
 
-interface DashboardModalProps<M extends Meta, B extends Body>
-  extends DashboardProps<M, B> {
-  animateOpenClose?: boolean
-  disableLocalFiles?: boolean
-  autoOpenFileEditor?: boolean
-  browserBackButtonClose?: boolean
-  showRemoveButtonAfterComplete?: boolean
-  showSelectedFiles?: boolean
-  theme?: 'auto' | 'dark' | 'light'
-  waitForThumbnailsBeforeUpload?: boolean
-  fileManagerSelectionType?: 'files' | 'folders' | 'both'
-  hideRetryButton?: boolean
-  showLinkToFileUploadResult?: boolean
-  closeAfterFinish?: boolean
-  disabled?: boolean
-  target?: PluginTarget<M, B>
-  open?: boolean
+type DashboardInlineOptions<M extends Meta, B extends Body> = Omit<
+  DashboardOptions<M, B> & { inline: false },
+  'inline' | 'onRequestCloseModal'
+>
+
+export interface DashboardModalProps<M extends Meta, B extends Body>
+  extends DashboardInlineOptions<M, B> {
+  uppy: Uppy<M, B>
   onRequestClose: () => void
-  closeModalOnClickOutside?: boolean
-  disablePageScrollWhenModalOpen?: boolean
-  hideCancelButton?: boolean
-  hidePauseResumeButton?: boolean
+  open: boolean
 }
 
 /**
@@ -56,7 +43,6 @@ class DashboardModal<M extends Meta, B extends Body> extends Component<
     onRequestClose: PropTypes.func,
     closeModalOnClickOutside: PropTypes.bool,
     disablePageScrollWhenModalOpen: PropTypes.bool,
-    inline: PropTypes.bool,
     plugins,
     width: cssSize,
     height: cssSize,
@@ -94,7 +80,6 @@ class DashboardModal<M extends Meta, B extends Body> extends Component<
   static defaultProps = {
     metaFields: [],
     plugins: [],
-    inline: false,
     width: 750,
     height: 550,
     thumbnailWidth: 280,
@@ -149,6 +134,7 @@ class DashboardModal<M extends Meta, B extends Body> extends Component<
       // eslint-disable-next-line @typescript-eslint/no-unused-vars,no-shadow
       const { uppy, ...options } = {
         ...this.props,
+        inline: false,
         onRequestCloseModal: onRequestClose,
       }
       this.plugin.setOptions(options)
