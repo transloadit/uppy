@@ -43,7 +43,7 @@ const defaultOptions = {
   sources: Object.keys(availablePlugins) as Array<
     keyof Omit<typeof availablePlugins, '__proto__'>
   >,
-}
+} satisfies Partial<RemoteSourcesOptions>
 
 type Opts = DefinePluginOpts<RemoteSourcesOptions, keyof typeof defaultOptions>
 
