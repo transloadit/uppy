@@ -2,11 +2,14 @@
   import { onMount, onDestroy } from 'svelte'
   import type { Uppy } from '@uppy/core';
   import DragDropPlugin from '@uppy/drag-drop'
+  
+  type M = any
+  type B = any
 
   let container: HTMLElement;
-  let plugin: DragDropPlugin; 
+  let plugin: DragDropPlugin<M, B>; 
 
-  export let uppy: Uppy;
+  export let uppy: Uppy<M, B>;
   export let props: Object | undefined = {};
 
   const installPlugin = () => {
@@ -18,9 +21,9 @@
     }
 
     uppy.use(DragDropPlugin, options);
-    plugin = uppy.getPlugin(options.id) as DragDropPlugin;
+    plugin = uppy.getPlugin(options.id) as DragDropPlugin<M, B>;
   }
-  const uninstallPlugin = (uppyInstance: Uppy = uppy) => {
+  const uninstallPlugin = (uppyInstance: Uppy<M, B> = uppy) => {
     uppyInstance.removePlugin(plugin);
   }
 

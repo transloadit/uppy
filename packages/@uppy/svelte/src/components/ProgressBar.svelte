@@ -2,11 +2,14 @@
   import { onMount, onDestroy } from 'svelte'
   import type { Uppy } from '@uppy/core';
   import ProgressBarPlugin from '@uppy/progress-bar'
+  
+  type M = any
+  type B = any
 
   let container: HTMLElement;
-  let plugin: ProgressBarPlugin; 
+  let plugin: ProgressBarPlugin<M, B>; 
 
-  export let uppy: Uppy;
+  export let uppy: Uppy<M, B>;
   export let props: Object | undefined = {};
 
   const installPlugin = () => {
@@ -18,9 +21,9 @@
     }
 
     uppy.use(ProgressBarPlugin, options);
-    plugin = uppy.getPlugin(options.id) as ProgressBarPlugin;
+    plugin = uppy.getPlugin(options.id) as ProgressBarPlugin<M, B>;
   }
-  const uninstallPlugin = (uppyInstance: Uppy = uppy) => {
+  const uninstallPlugin = (uppyInstance: Uppy<M, B> = uppy) => {
     uppyInstance.removePlugin(plugin);
   }
 
