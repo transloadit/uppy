@@ -45,15 +45,15 @@ class UIPlugin<
   B extends Body,
   PluginState extends Record<string, unknown> = Record<string, unknown>,
 > extends BasePlugin<Opts, M, B, PluginState> {
-  #updateUI: (state: Partial<State<M, B>>) => void
+  #updateUI!: (state: Partial<State<M, B>>) => void
 
-  isTargetDOMEl: boolean
+  isTargetDOMEl!: boolean
 
-  el: HTMLElement | null
+  el!: HTMLElement | null
 
   parent: unknown
 
-  title: string
+  title!: string
 
   getTargetPlugin<Me extends Meta, Bo extends Body>(
     target: PluginTarget<Me, Bo>, // eslint-disable-line no-use-before-define
