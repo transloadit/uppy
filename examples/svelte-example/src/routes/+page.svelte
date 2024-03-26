@@ -4,6 +4,8 @@
 	import Webcam from '@uppy/webcam'
 	import XHRUpload from '@uppy/xhr-upload'
 
+    import './global.scss'
+
 	const createUppy = () => {
 		return new Uppy().use(Webcam).use(XHRUpload, {
 			bundle: true,
@@ -62,12 +64,3 @@
 		}}
 	/>
 </main>
-<style global>
-	@import "@uppy/core/dist/style.min.css";
-	@import "@uppy/dashboard/dist/style.min.css";
-	@import "@uppy/drag-drop/dist/style.min.css";
-	@import "@uppy/progress-bar/dist/style.min.css";
-	input[type="checkbox"] {
-		user-select: none;
-	}
-</style>
