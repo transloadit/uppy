@@ -25,37 +25,6 @@ const metaFields = PropTypes.oneOfType([
 ])
 
 // A size in pixels (number) or with some other unit (string).
-const cssSize = PropTypes.oneOfType([
-  PropTypes.string,
-  PropTypes.number,
-])
+const cssSize = PropTypes.oneOfType([PropTypes.string, PropTypes.number])
 
-// Common props for dashboardy components (Dashboard and DashboardModal).
-const dashboard = {
-  uppy,
-  inline: PropTypes.bool,
-  plugins,
-  width: cssSize,
-  height: cssSize,
-  showProgressDetails: PropTypes.bool,
-  hideUploadButton: PropTypes.bool,
-  hideProgressAfterFinish: PropTypes.bool,
-  note: PropTypes.string,
-  metaFields,
-  proudlyDisplayPoweredByUppy: PropTypes.bool,
-  disableStatusBar: PropTypes.bool,
-  disableInformer: PropTypes.bool,
-  disableThumbnailGenerator: PropTypes.bool,
-  // pass-through to ThumbnailGenerator
-  thumbnailWidth: PropTypes.number,
-  locale,
-}
-
-export {
-  uppy,
-  locale,
-  dashboard,
-  plugins,
-  metaFields,
-  cssSize,
-}
+export { uppy, locale, plugins, metaFields, cssSize }

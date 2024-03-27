@@ -240,7 +240,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
 > {
   static VERSION = packageJson.version
 
-  #disabledNodes: HTMLElement[] | null
+  #disabledNodes!: HTMLElement[] | null
 
   private modalName = `uppy-Dashboard-${nanoid()}`
 
@@ -248,22 +248,22 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
 
   private ifFocusedOnUppyRecently = false
 
-  private dashboardIsDisabled: boolean
+  private dashboardIsDisabled!: boolean
 
-  private savedScrollPosition: number
+  private savedScrollPosition!: number
 
-  private savedActiveElement: HTMLElement
+  private savedActiveElement!: HTMLElement
 
-  private resizeObserver: ResizeObserver
+  private resizeObserver!: ResizeObserver
 
-  private darkModeMediaQuery: MediaQueryList | null
+  private darkModeMediaQuery!: MediaQueryList | null
 
   // Timeouts
-  private makeDashboardInsidesVisibleAnywayTimeout: ReturnType<
+  private makeDashboardInsidesVisibleAnywayTimeout!: ReturnType<
     typeof setTimeout
   >
 
-  private removeDragOverClassTimeout: ReturnType<typeof setTimeout>
+  private removeDragOverClassTimeout!: ReturnType<typeof setTimeout>
 
   constructor(uppy: Uppy<M, B>, opts?: DashboardOptions<M, B>) {
     // support for the legacy `autoOpenFileEditor` option,
@@ -600,7 +600,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     try {
       this.uppy.addFiles(descriptors)
     } catch (err) {
-      this.uppy.log(err)
+      this.uppy.log(err as any)
     }
   }
 
