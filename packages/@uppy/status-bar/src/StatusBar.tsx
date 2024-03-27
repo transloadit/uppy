@@ -57,7 +57,6 @@ function getUploadingState(
   return state
 }
 
-// set default options, must be kept in sync with @uppy/react/src/StatusBar.js
 const defaultOptions = {
   hideUploadButton: false,
   hideRetryButton: false,

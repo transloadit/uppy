@@ -1,16 +1,8 @@
 import { createElement as h, Component } from 'react'
-import PropTypes from 'prop-types'
 import type { UnknownPlugin, Uppy } from '@uppy/core'
 import DashboardPlugin from '@uppy/dashboard'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import type { DashboardOptions } from '@uppy/dashboard'
-import {
-  locale,
-  uppy as uppyPropType,
-  plugins,
-  metaFields,
-  cssSize,
-} from './propTypes.ts'
 import getHTMLProps from './getHTMLProps.ts'
 import nonHtmlPropsHaveChanged from './nonHtmlPropsHaveChanged.ts'
 
@@ -33,26 +25,6 @@ export interface DashboardProps<M extends Meta, B extends Body>
 class Dashboard<M extends Meta, B extends Body> extends Component<
   DashboardProps<M, B>
 > {
-  static propsTypes = {
-    uppy: uppyPropType,
-    disableInformer: PropTypes.bool,
-    disableStatusBar: PropTypes.bool,
-    disableThumbnailGenerator: PropTypes.bool,
-    height: cssSize,
-    hideProgressAfterFinish: PropTypes.bool,
-    hideUploadButton: PropTypes.bool,
-    locale,
-    metaFields,
-    note: PropTypes.string,
-    plugins,
-    proudlyDisplayPoweredByUppy: PropTypes.bool,
-    showProgressDetails: PropTypes.bool,
-    width: cssSize,
-    // pass-through to ThumbnailGenerator
-    thumbnailType: PropTypes.string,
-    thumbnailWidth: PropTypes.number,
-  }
-
   private container: HTMLElement
 
   private plugin: UnknownPlugin<M, B>

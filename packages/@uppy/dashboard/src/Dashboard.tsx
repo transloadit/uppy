@@ -176,7 +176,6 @@ export type DashboardOptions<
 > = DashboardMiscOptions<M, B> &
   (DashboardModalOptions | DashboardInlineOptions)
 
-// set default options, must be kept in sync with packages/@uppy/react/src/DashboardModal.js
 const defaultOptions = {
   target: 'body',
   metaFields: [],
