@@ -6,14 +6,15 @@ import type ProviderView from './ProviderView'
 type BreadcrumbProps = {
   getFolder: () => void
   title: string
-  isLast: boolean
+  isFirst?: boolean
 }
 
 const Breadcrumb = (props: BreadcrumbProps) => {
-  const { getFolder, title, isLast } = props
+  const { getFolder, title, isFirst } = props
 
   return (
     <Fragment>
+      {!isFirst ? ' / ' : ''}
       <button
         type="button"
         className="uppy-u-reset uppy-c-btn"
@@ -21,7 +22,6 @@ const Breadcrumb = (props: BreadcrumbProps) => {
       >
         {title}
       </button>
-      {!isLast ? ' / ' : ''}
     </Fragment>
   )
 }
@@ -45,14 +45,13 @@ export default function Breadcrumbs<M extends Meta, B extends Body>(
         key="root"
         getFolder={() => getFolder("root")}
         title={title}
-        isLast={breadcrumbs.length === 0}
+        isFirst
       />
       {breadcrumbs.map((directory, i) => (
         <Breadcrumb
           key={directory.id}
           getFolder={() => getFolder(directory.data.requestPath)}
           title={directory.data.name}
-          isLast={i + 1 === breadcrumbs.length}
         />
       ))}
     </div>
