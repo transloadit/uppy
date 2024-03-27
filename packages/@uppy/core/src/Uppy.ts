@@ -76,11 +76,6 @@ export type PartialTree = FileInPartialTree[]
 
 export type UnknownProviderPluginState = {
   authenticated: boolean | undefined
-  breadcrumbs: {
-    requestPath?: string
-    name?: string
-    id?: string
-  }[]
   didFirstRender: boolean
   filterInput: string
   loading: boolean | string

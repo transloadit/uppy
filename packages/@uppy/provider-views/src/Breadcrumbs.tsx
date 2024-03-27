@@ -1,4 +1,4 @@
-import type { UnknownProviderPluginState } from '@uppy/core/lib/Uppy'
+import type { FileInPartialTree, UnknownProviderPluginState } from '@uppy/core/lib/Uppy'
 import { h, Fragment } from 'preact'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import type ProviderView from './ProviderView'
@@ -30,7 +30,7 @@ type BreadcrumbsProps<M extends Meta, B extends Body> = {
   getFolder: ProviderView<M, B>['getFolder']
   title: string
   breadcrumbsIcon: JSX.Element
-  breadcrumbs: UnknownProviderPluginState['breadcrumbs']
+  breadcrumbs: FileInPartialTree[]
 }
 
 export default function Breadcrumbs<M extends Meta, B extends Body>(
@@ -41,11 +41,17 @@ export default function Breadcrumbs<M extends Meta, B extends Body>(
   return (
     <div className="uppy-Provider-breadcrumbs">
       <div className="uppy-Provider-breadcrumbsIcon">{breadcrumbsIcon}</div>
+      <Breadcrumb
+        key="root"
+        getFolder={() => getFolder("root")}
+        title={title}
+        isLast={breadcrumbs.length === 0}
+      />
       {breadcrumbs.map((directory, i) => (
         <Breadcrumb
           key={directory.id}
-          getFolder={() => getFolder(directory.requestPath, directory.name)}
-          title={i === 0 ? title : (directory.name as string)}
+          getFolder={() => getFolder(directory.data.requestPath, directory.data.name)}
+          title={directory.data.name}
           isLast={i + 1 === breadcrumbs.length}
         />
       ))}

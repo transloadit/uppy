@@ -24,12 +24,9 @@ import View, { type ViewOptions } from '../View.ts'
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../../package.json'
 
-function formatBreadcrumbs(
-  breadcrumbs: UnknownProviderPluginState['breadcrumbs'],
-): string {
+function formatBreadcrumbs(breadcrumbs: FileInPartialTree[]): string {
   return breadcrumbs
-    .slice(1)
-    .map((directory) => directory.name)
+    .map((directory) => directory.data.name)
     .join('/')
 }
 
@@ -183,7 +180,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
   }
 
   async #listFilesAndFolders({ breadcrumbs, signal }: {
-    breadcrumbs: UnknownProviderPluginState['breadcrumbs']
+    breadcrumbs: FileInPartialTree[],
     signal: AbortSignal
   }) {
     const absDirPath = formatBreadcrumbs(breadcrumbs)
@@ -607,6 +604,8 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
         parent = partialTree.find((folder) => folder.id === parent!.parentId)
       }
     }
+    console.log("_____________________________calculated breadcrumbs:");
+    console.log({ breadcrumbs });
     return breadcrumbs.toReversed()
   }
 
