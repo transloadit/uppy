@@ -9643,7 +9643,6 @@ __metadata:
   dependencies:
     "@types/react": ^18.0.8
     "@uppy/utils": "workspace:^"
-    prop-types: ^15.6.1
     react: ^18.1.0
   peerDependencies:
     "@uppy/core": "workspace:^"
@@ -26050,7 +26049,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prop-types@npm:^15.6.0, prop-types@npm:^15.6.1, prop-types@npm:^15.7.2, prop-types@npm:^15.8.1":
+"prop-types@npm:^15.6.0, prop-types@npm:^15.7.2, prop-types@npm:^15.8.1":
   version: 15.8.1
   resolution: "prop-types@npm:15.8.1"
   dependencies:
