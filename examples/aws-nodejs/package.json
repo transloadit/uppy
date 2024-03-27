@@ -15,6 +15,6 @@
     "@aws-sdk/s3-request-presigner": "^3.338.0",
     "body-parser": "^1.20.0",
     "dotenv": "^16.0.0",
-    "express": "^4.18.1"
+    "express": "^4.19.2"
   }
 }
