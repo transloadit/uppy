@@ -1,10 +1,8 @@
 import { createElement as h, Component } from 'react'
-import PropTypes from 'prop-types'
 import type { UnknownPlugin, Uppy } from '@uppy/core'
 import FileInputPlugin from '@uppy/file-input'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import type { Locale } from '@uppy/utils/lib/Translator'
-import * as propTypes from './propTypes.ts'
 
 interface FileInputProps<M extends Meta, B extends Body> {
   uppy: Uppy<M, B>
@@ -21,13 +19,6 @@ interface FileInputProps<M extends Meta, B extends Body> {
 class FileInput<M extends Meta, B extends Body> extends Component<
   FileInputProps<M, B>
 > {
-  static propTypes = {
-    uppy: propTypes.uppy.isRequired,
-    locale: propTypes.locale,
-    pretty: PropTypes.bool,
-    inputName: PropTypes.string,
-  }
-
   // Must be kept in sync with @uppy/file-input/src/FileInput.jsx
   static defaultProps = {
     locale: undefined,

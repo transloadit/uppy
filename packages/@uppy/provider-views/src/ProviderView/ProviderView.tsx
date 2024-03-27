@@ -9,9 +9,9 @@ import type {
   Uppy,
 } from '@uppy/core/lib/Uppy.ts'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
-import type { CompanionFile } from '@uppy/utils/lib/CompanionFile.ts'
+import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
 import type Translator from '@uppy/utils/lib/Translator'
-import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin.ts'
+import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin'
 import AuthView from './AuthView.tsx'
 import Header from './Header.tsx'
 import Browser from '../Browser.tsx'

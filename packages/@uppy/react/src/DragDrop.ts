@@ -1,9 +1,7 @@
 import { createElement as h, Component } from 'react'
-import PropTypes from 'prop-types'
 import type { UnknownPlugin, Uppy } from '@uppy/core'
 import DragDropPlugin, { type DragDropOptions } from '@uppy/drag-drop'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
-import * as propTypes from './propTypes.ts'
 import getHTMLProps from './getHTMLProps.ts'
 import nonHtmlPropsHaveChanged from './nonHtmlPropsHaveChanged.ts'
 
@@ -20,24 +18,6 @@ interface DragDropProps<M extends Meta, B extends Body>
 class DragDrop<M extends Meta, B extends Body> extends Component<
   DragDropProps<M, B>
 > {
-  static propTypes = {
-    uppy: propTypes.uppy.isRequired,
-    locale: propTypes.locale,
-    inputName: PropTypes.string,
-    width: PropTypes.string,
-    height: PropTypes.string,
-    note: PropTypes.string,
-  }
-
-  // Must be kept in sync with @uppy/drag-drop/src/DragDrop.jsx.
-  static defaultProps = {
-    locale: null,
-    inputName: 'files[]',
-    width: '100%',
-    height: '100%',
-    note: null,
-  }
-
   private container: HTMLElement
 
   private plugin: UnknownPlugin<M, B>
