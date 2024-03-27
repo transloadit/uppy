@@ -6,7 +6,7 @@ export default class InvalidPluginWithoutName extends UIPlugin<any, any, any> {
 
   public name: string
 
-  constructor(uppy: Uppy<any, any>, opts: any) {
+  constructor(uppy: Uppy<any, any>, opts?: any) {
     super(uppy, opts)
     this.type = 'acquirer'
     this.name = this.constructor.name

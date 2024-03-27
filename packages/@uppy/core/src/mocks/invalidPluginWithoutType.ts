@@ -6,7 +6,7 @@ export default class InvalidPluginWithoutType extends UIPlugin<any, any, any> {
 
   public name: string
 
-  constructor(uppy: Uppy<any, any>, opts: any) {
+  constructor(uppy: Uppy<any, any>, opts?: any) {
     super(uppy, opts)
     this.id = 'InvalidPluginWithoutType'
     this.name = this.constructor.name

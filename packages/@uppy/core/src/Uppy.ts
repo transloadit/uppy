@@ -62,6 +62,9 @@ export type UnknownPlugin<
   PluginState extends Record<string, unknown> = Record<string, unknown>,
 > = BasePlugin<any, M, B, PluginState>
 
+// `OmitFirstArg<typeof someArray>` is the type of the returned value of `someArray.slice(1)`.
+type OmitFirstArg<T> = T extends [any, ...infer U] ? U : never
+
 export type UnknownProviderPluginState = {
   authenticated: boolean | undefined
   breadcrumbs: {
@@ -1718,7 +1721,9 @@ export class Uppy<M extends Meta, B extends Body> {
    */
   use<T extends typeof BasePlugin<any, M, B>>(
     Plugin: T,
-    opts?: ConstructorParameters<T>[1],
+    // We want to let the plugin decide whether `opts` is optional or not
+    // so we spread the argument rather than defining `opts:` ourselves.
+    ...args: OmitFirstArg<ConstructorParameters<T>>
   ): this {
     if (typeof Plugin !== 'function') {
       const msg =
@@ -1730,7 +1735,7 @@ export class Uppy<M extends Meta, B extends Body> {
     }
 
     // Instantiate
-    const plugin = new Plugin(this, opts)
+    const plugin = new Plugin(this, ...args)
     const pluginId = plugin.id
 
     if (!pluginId) {
