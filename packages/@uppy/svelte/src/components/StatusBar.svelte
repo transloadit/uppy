@@ -20,7 +20,7 @@
       target: container
     }
 
-    uppy.use(StatusBarPlugin as new(uppy: any, opts: typeof options) => StatusBarPlugin<M, B>, options);
+    uppy.use(StatusBarPlugin, options);
     plugin = uppy.getPlugin(options.id) as StatusBarPlugin<M, B>;
   }
   const uninstallPlugin = (uppyInstance: Uppy<M, B> = uppy) => {
