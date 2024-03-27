@@ -1,10 +1,10 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
-// @ts-expect-error
 import * as StatusBar from '@uppy/status-bar';
-// @ts-expect-error
 import { Uppy } from '@uppy/core';
-// @ts-expect-error
-import { FileInput, Tus } from 'uppy';
+import FileInput from '@uppy/file-input';
+import Tus from '@uppy/tus';
+import { Body, Meta } from '@uppy/utils/lib/UppyFile';
+
 
 @Component({
   selector: 'uppy-status-bar-demo',
@@ -14,8 +14,8 @@ import { FileInput, Tus } from 'uppy';
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class StatusBarDemoComponent implements OnInit {
-  uppy: Uppy = new Uppy({ debug: true, autoProceed: true });
+export class StatusBarDemoComponent<M extends Meta, B extends Body> implements OnInit {
+  uppy: Uppy<M, B> = new Uppy({ debug: true, autoProceed: true });
   props: StatusBar.StatusBarOptions = {
     hideUploadButton: true,
     hideAfterFinish: false,

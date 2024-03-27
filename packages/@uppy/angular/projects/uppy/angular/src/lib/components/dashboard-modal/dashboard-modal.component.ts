@@ -7,25 +7,23 @@ import {
   OnChanges,
   SimpleChanges,
 } from '@angular/core';
-// @ts-expect-error
 import Dashboard from '@uppy/dashboard';
-// @ts-expect-error
 import type { DashboardOptions } from '@uppy/dashboard';
-// @ts-expect-error
 import { Uppy } from '@uppy/core';
 import { UppyAngularWrapper } from '../../utils/wrapper';
+import { Body, Meta } from '@uppy/utils/lib/UppyFile';
 
 @Component({
   selector: 'uppy-dashboard-modal',
   template: '',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DashboardModalComponent
-  extends UppyAngularWrapper<Dashboard>
+export class DashboardModalComponent<M extends Meta, B extends Body>
+  extends UppyAngularWrapper<M, B, DashboardOptions<M, B>, Dashboard<M, B>>
   implements OnDestroy, OnChanges
 {
-  @Input() uppy: Uppy = new Uppy();
-  @Input() props: DashboardOptions = {};
+  @Input() uppy: Uppy<M, B> = new Uppy();
+  @Input() props: DashboardOptions<M, B> = {};
   @Input() open: boolean = false;
 
   constructor(public el: ElementRef) {

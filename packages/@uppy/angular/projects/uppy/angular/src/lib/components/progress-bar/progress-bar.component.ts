@@ -7,12 +7,10 @@ import {
   OnChanges,
   SimpleChanges,
 } from '@angular/core';
-// @ts-expect-error
 import { Uppy } from '@uppy/core';
-// @ts-expect-error
 import ProgressBar from '@uppy/progress-bar';
-// @ts-expect-error
 import type { ProgressBarOptions } from '@uppy/progress-bar';
+import { Body, Meta } from '@uppy/utils/lib/UppyFile';
 import { UppyAngularWrapper } from '../../utils/wrapper';
 
 @Component({
@@ -20,11 +18,11 @@ import { UppyAngularWrapper } from '../../utils/wrapper';
   template: '',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ProgressBarComponent
-  extends UppyAngularWrapper
+export class ProgressBarComponent<M extends Meta, B extends Body>
+  extends UppyAngularWrapper<M, B, ProgressBarOptions>
   implements OnDestroy, OnChanges
 {
-  @Input() uppy: Uppy = new Uppy();
+  @Input() uppy: Uppy<M, B> = new Uppy();
   @Input() props: ProgressBarOptions = {};
 
   constructor(public el: ElementRef) {

@@ -4,10 +4,10 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
 } from '@angular/core';
-// @ts-expect-error
 import { Uppy } from '@uppy/core';
-// @ts-expect-error
-import { Tus, ProgressBar } from 'uppy';
+import Tus from '@uppy/tus';
+import type {ProgressBarOptions} from '@uppy/progress-bar';
+import { Body, Meta } from '@uppy/utils/lib/UppyFile';
 
 @Component({
   selector: 'uppy-progress-bar-demo',
@@ -56,12 +56,14 @@ import { Tus, ProgressBar } from 'uppy';
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ProgressBarDemoComponent implements OnInit {
-  uppyOne: Uppy;
-  uppyTwo: Uppy;
+export class ProgressBarDemoComponent<M extends Meta, B extends Body>
+  implements OnInit
+{
+  uppyOne!: Uppy<M, B>;
+  uppyTwo!: Uppy<M, B>;
   fileListOne: { url: string; fileName: string }[] = [];
   fileListTwo: { url: string; fileName: string }[] = [];
-  props: ProgressBar.ProgressBarOptions = {
+  props: ProgressBarOptions = {
     hideAfterFinish: false,
   };
 
@@ -82,10 +84,10 @@ export class ProgressBarDemoComponent implements OnInit {
     };
 
   ngOnInit(): void {
-    this.uppyOne = new Uppy({ debug: true, autoProceed: true })
+    this.uppyOne = new Uppy<M, B>({ debug: true, autoProceed: true })
       .use(Tus, { endpoint: 'https://master.tus.io/files/' })
       .on('upload-success', this.updateFileList('fileListOne'));
-    this.uppyTwo = new Uppy({ debug: true, autoProceed: false })
+    this.uppyTwo = new Uppy<M, B>({ debug: true, autoProceed: false })
       .use(Tus, { endpoint: 'https://master.tus.io/files/' })
       .on('upload-success', this.updateFileList('fileListTwo'));
   }
