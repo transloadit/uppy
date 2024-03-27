@@ -6,8 +6,6 @@ import Translator from '@uppy/utils/lib/Translator'
 // @ts-ignore untyped
 import ee from 'namespace-emitter'
 import { nanoid } from 'nanoid/non-secure'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore For some reason the Angular build script chokes on this import
 import throttle from 'lodash/throttle.js'
 import DefaultStore from '@uppy/store-default'
 import getFileType from '@uppy/utils/lib/getFileType'
@@ -33,32 +31,20 @@ import type {
   I18n,
   OptionalPluralizeLocale,
 } from '@uppy/utils/lib/Translator'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore For some reason the Angular build script chokes on this import
 import supportsUploadProgress from './supportsUploadProgress.ts'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore For some reason the Angular build script chokes on this import
 import getFileName from './getFileName.ts'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore For some reason the Angular build script chokes on this import
 import { justErrorsLogger, debugLogger } from './loggers.ts'
 import {
   Restricter,
   defaultOptions as defaultRestrictionOptions,
   RestrictionError,
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore For some reason the Angular build script chokes on this import
 } from './Restricter.ts'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore For some reason the Angular build script chokes on this import
 import locale from './locale.ts'
 
 import type BasePlugin from './BasePlugin.ts'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore For some reason the Angular build script chokes on this import
 import type { Restrictions, ValidateableFile } from './Restricter.ts'
 
 type Processor = (
@@ -1378,10 +1364,9 @@ export class Uppy<M extends Meta, B extends Body> {
   // todo when uploading multiple files, this will cause problems because they share the same throttle,
   // meaning some files might never get their progress reported (eaten up by progress events from other files)
   calculateProgress = throttle(
-    (file: UppyFile<M, B> | null | undefined, data: FileProgressStarted) => {
-      let fileInState: UppyFile<M, B>
-      // eslint-disable-next-line no-cond-assign
-      if (file == null || (fileInState = this.getFile(file.id)) == null) {
+    (file, data) => {
+      const fileInState = this.getFile(file?.id)
+      if (file == null || !fileInState) {
         this.log(
           `Not setting progress for a file that has been removed: ${file?.id}`,
         )
@@ -1397,17 +1382,17 @@ export class Uppy<M extends Meta, B extends Body> {
 
       // bytesTotal may be null or zero; in that case we can't divide by it
       const canHavePercentage =
-        Number.isFinite(data.bytesTotal) && data.bytesTotal! > 0
+        Number.isFinite(data.bytesTotal) && data.bytesTotal > 0
       this.setFileState(file.id, {
         progress: {
-          ...(fileInState.progress as FileProgressStarted),
+          ...fileInState.progress,
           bytesUploaded: data.bytesUploaded,
           bytesTotal: data.bytesTotal,
           percentage:
             canHavePercentage ?
-              Math.round((data.bytesUploaded / data.bytesTotal!) * 100)
+              Math.round((data.bytesUploaded / data.bytesTotal) * 100)
             : 0,
-        } satisfies FileProgressStarted,
+        },
       })
 
       this.calculateTotalProgress()

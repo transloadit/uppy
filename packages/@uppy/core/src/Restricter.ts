@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable max-classes-per-file, class-methods-use-this */
-// @ts-ignore For some reason the Angular build script chokes on this import
 import prettierBytes from '@transloadit/prettier-bytes'
 // @ts-ignore untyped
 import match from 'mime-match'
