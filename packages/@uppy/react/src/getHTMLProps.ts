@@ -253,11 +253,15 @@ const reactSupportedHtmlAttr = [
 
 const validHTMLAttribute = /^(aria-|data-)/
 
-const getHTMLProps = (props) => {
+const getHTMLProps = (
+  props: Record<string, unknown>,
+): Record<string, unknown> => {
   // Gets all the React props
   return Object.fromEntries(
-    Object.entries(props)
-      .filter(([key]) => validHTMLAttribute.test(key) || reactSupportedHtmlAttr.includes(key)),
+    Object.entries(props).filter(
+      ([key]) =>
+        validHTMLAttribute.test(key) || reactSupportedHtmlAttr.includes(key),
+    ),
   )
 }
 
