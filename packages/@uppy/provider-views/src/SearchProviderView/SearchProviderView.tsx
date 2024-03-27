@@ -1,8 +1,8 @@
 import { h } from 'preact'
 
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
-import type { UnknownSearchProviderPlugin } from '@uppy/core/lib/Uppy.ts'
-import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin.ts'
+import type { UnknownSearchProviderPlugin } from '@uppy/core/lib/Uppy'
+import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin'
 import type Uppy from '@uppy/core'
 import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
 import SearchFilterInput from '../SearchFilterInput.tsx'
