@@ -93,6 +93,7 @@ module.exports = {
     'react/prefer-stateless-function': 'error',
     'react/sort-comp': 'error',
     'react/style-prop-object': 'error',
+    'react/static-property-placement': 'off',
 
     // accessibility
     'jsx-a11y/alt-text': 'error',
@@ -340,6 +341,7 @@ module.exports = {
     {
       files: [
         '*.test.js',
+        '*.test.ts',
         'test/endtoend/*.js',
         'bin/**.js',
       ],
@@ -462,9 +464,11 @@ module.exports = {
       ],
       rules: {
         'import/prefer-default-export': 'off',
+        '@typescript-eslint/no-empty-function': 'off',
         '@typescript-eslint/no-explicit-any': 'off',
         '@typescript-eslint/no-extra-semi': 'off',
         '@typescript-eslint/no-namespace': 'off',
+        '@typescript-eslint/no-non-null-assertion': 'off',
       },
     },
     {

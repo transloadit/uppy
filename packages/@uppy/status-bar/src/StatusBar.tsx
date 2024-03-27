@@ -1,3 +1,4 @@
+import type { ComponentChild } from 'preact'
 import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
 import type { Uppy, State } from '@uppy/core/src/Uppy.ts'
 import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin.ts'
@@ -56,9 +57,7 @@ function getUploadingState(
   return state
 }
 
-// set default options, must be kept in sync with @uppy/react/src/StatusBar.js
 const defaultOptions = {
-  target: 'body',
   hideUploadButton: false,
   hideRetryButton: false,
   hidePauseResumeButton: false,
@@ -79,13 +78,13 @@ export default class StatusBar<M extends Meta, B extends Body> extends UIPlugin<
 > {
   static VERSION = packageJson.version
 
-  #lastUpdateTime: ReturnType<typeof performance.now>
+  #lastUpdateTime!: ReturnType<typeof performance.now>
 
-  #previousUploadedBytes: number | null
+  #previousUploadedBytes!: number | null
 
-  #previousSpeed: number | null
+  #previousSpeed!: number | null
 
-  #previousETA: number | null
+  #previousETA!: number | null
 
   constructor(uppy: Uppy<M, B>, opts?: StatusBarOptions) {
     super(uppy, { ...defaultOptions, ...opts })
@@ -128,17 +127,17 @@ export default class StatusBar<M extends Meta, B extends Body> extends UIPlugin<
     }
     const currentSpeed = uploadedBytesSinceLastTick / dt
     const filteredSpeed =
-      this.#previousSpeed == null
-        ? currentSpeed
-        : emaFilter(currentSpeed, this.#previousSpeed, speedFilterHalfLife, dt)
+      this.#previousSpeed == null ?
+        currentSpeed
+      : emaFilter(currentSpeed, this.#previousSpeed, speedFilterHalfLife, dt)
     this.#previousSpeed = filteredSpeed
     const instantETA = totalBytes.remaining / filteredSpeed
 
     const updatedPreviousETA = Math.max(this.#previousETA! - dt, 0)
     const filteredETA =
-      this.#previousETA == null
-        ? instantETA
-        : emaFilter(instantETA, updatedPreviousETA, ETAFilterHalfLife, dt)
+      this.#previousETA == null ?
+        instantETA
+      : emaFilter(instantETA, updatedPreviousETA, ETAFilterHalfLife, dt)
     this.#previousETA = filteredETA
     this.#lastUpdateTime = performance.now()
 
@@ -151,7 +150,7 @@ export default class StatusBar<M extends Meta, B extends Body> extends UIPlugin<
     }) as () => undefined)
   }
 
-  render(state: State<M, B>): JSX.Element {
+  render(state: State<M, B>): ComponentChild {
     const {
       capabilities,
       files,
@@ -238,10 +237,10 @@ export default class StatusBar<M extends Meta, B extends Body> extends UIPlugin<
 
   onMount(): void {
     // Set the text direction if the page has not defined one.
-    const element = this.el
-    const direction = getTextDirection(element!)
+    const element = this.el!
+    const direction = getTextDirection(element)
     if (!direction) {
-      element!.dir = 'ltr'
+      element.dir = 'ltr'
     }
   }
 

@@ -184,17 +184,14 @@ jobs:
     needs: [compare_diff]
     if:
       github.event.pull_request.state == 'open' &&
-      github.event.pull_request.head.repo.full_name != github.repository &&
-      github.event.action != 'labeled'
+      github.event.pull_request.head.repo.full_name != github.repository
     runs-on: ubuntu-latest
     steps:
       - name: Add label
         if:
           (needs.compare_diff.outputs.diff != '' ||
-          !needs.compare_diff.outputs.is_accurate_diff) &&
-          (!contains(github.event.pull_request.labels.*.name, 'safe to test') &&
-          !contains(github.event.pull_request.labels.*.name, 'pending end-to-end
-          tests'))
+          !needs.compare_diff.outputs.is_accurate_diff) && (github.event.action
+          != 'labeled' || github.event.label.name != 'safe to test')
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -204,10 +201,8 @@ jobs:
       - name: Remove label
         if:
           needs.compare_diff.outputs.diff == '' &&
-          needs.compare_diff.outputs.is_accurate_diff &&
-          (contains(github.event.pull_request.labels.*.name, 'safe to test') ||
-          contains(github.event.pull_request.labels.*.name, 'pending end-to-end
-          tests'))
+          needs.compare_diff.outputs.is_accurate_diff && github.event.action ==
+          'labeled' && github.event.label.name == 'safe to test'
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

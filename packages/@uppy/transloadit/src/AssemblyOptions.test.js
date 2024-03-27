@@ -1,11 +1,9 @@
 import { describe, expect, it } from 'vitest'
-import AssemblyOptions from './AssemblyOptions.js'
+import AssemblyOptions from './AssemblyOptions.ts'
 
 describe('Transloadit/AssemblyOptions', () => {
   it('Validates response from assemblyOptions()', async () => {
-    const options = new AssemblyOptions([
-      { name: 'testfile' },
-    ], {
+    const options = new AssemblyOptions([{ name: 'testfile' }], {
       assemblyOptions: (file) => {
         expect(file.name).toBe('testfile')
         return {
@@ -23,21 +21,24 @@ describe('Transloadit/AssemblyOptions', () => {
     const data = new Uint8Array(10)
     data.size = data.byteLength
 
-    const options = new AssemblyOptions([
-      { name: 'a.png', data },
-      { name: 'b.png', data },
-      { name: 'c.png', data },
-      { name: 'd.png', data },
-    ], {
-      assemblyOptions: (file) => ({
-        params: {
-          auth: { key: 'fake key' },
-          steps: {
-            fake_step: { data: file.name },
+    const options = new AssemblyOptions(
+      [
+        { name: 'a.png', data },
+        { name: 'b.png', data },
+        { name: 'c.png', data },
+        { name: 'd.png', data },
+      ],
+      {
+        assemblyOptions: (file) => ({
+          params: {
+            auth: { key: 'fake key' },
+            steps: {
+              fake_step: { data: file.name },
+            },
           },
-        },
-      }),
-    })
+        }),
+      },
+    )
 
     const assemblies = await options.build()
     expect(assemblies).toHaveLength(4)
@@ -51,21 +52,24 @@ describe('Transloadit/AssemblyOptions', () => {
     const data = new Uint8Array(10)
     const data2 = new Uint8Array(20)
 
-    const options = new AssemblyOptions([
-      { name: 'a.png', data, size: data.byteLength },
-      { name: 'b.png', data, size: data.byteLength },
-      { name: 'c.png', data, size: data.byteLength },
-      { name: 'd.png', data: data2, size: data2.byteLength },
-    ], {
-      assemblyOptions: (file) => ({
-        params: {
-          auth: { key: 'fake key' },
-          steps: {
-            fake_step: { data: file.size },
+    const options = new AssemblyOptions(
+      [
+        { name: 'a.png', data, size: data.byteLength },
+        { name: 'b.png', data, size: data.byteLength },
+        { name: 'c.png', data, size: data.byteLength },
+        { name: 'd.png', data: data2, size: data2.byteLength },
+      ],
+      {
+        assemblyOptions: (file) => ({
+          params: {
+            auth: { key: 'fake key' },
+            steps: {
+              fake_step: { data: file.size },
+            },
           },
-        },
-      }),
-    })
+        }),
+      },
+    )
 
     const assemblies = await options.build()
     expect(assemblies).toHaveLength(2)
@@ -77,7 +81,7 @@ describe('Transloadit/AssemblyOptions', () => {
 
   it('Does not create an Assembly if no files are being uploaded', async () => {
     const options = new AssemblyOptions([], {
-      assemblyOptions () {
+      assemblyOptions() {
         throw new Error('should not create Assembly')
       },
     })
@@ -88,7 +92,7 @@ describe('Transloadit/AssemblyOptions', () => {
   it('Creates an Assembly if no files are being uploaded but `alwaysRunAssembly` is enabled', async () => {
     const options = new AssemblyOptions([], {
       alwaysRunAssembly: true,
-      async assemblyOptions (file) {
+      async assemblyOptions(file) {
         expect(file).toBe(null)
         return {
           params: {
@@ -103,7 +107,7 @@ describe('Transloadit/AssemblyOptions', () => {
   })
 
   it('Collects metadata if `fields` is an array', async () => {
-    function defaultGetAssemblyOptions (file, options) {
+    function defaultGetAssemblyOptions(file, options) {
       return {
         params: options.params,
         signature: options.signature,
@@ -111,19 +115,25 @@ describe('Transloadit/AssemblyOptions', () => {
       }
     }
 
-    const options = new AssemblyOptions([{
-      id: 1,
-      meta: { watermark: 'Some text' },
-    }, {
-      id: 2,
-      meta: { watermark: 'ⓒ Transloadit GmbH' },
-    }], {
-      fields: ['watermark'],
-      params: {
-        auth: { key: 'fake key' },
+    const options = new AssemblyOptions(
+      [
+        {
+          id: 1,
+          meta: { watermark: 'Some text' },
+        },
+        {
+          id: 2,
+          meta: { watermark: 'ⓒ Transloadit GmbH' },
+        },
+      ],
+      {
+        fields: ['watermark'],
+        params: {
+          auth: { key: 'fake key' },
+        },
+        assemblyOptions: defaultGetAssemblyOptions,
       },
-      assemblyOptions: defaultGetAssemblyOptions,
-    })
+    )
 
     const assemblies = await options.build()
     expect(assemblies).toHaveLength(2)

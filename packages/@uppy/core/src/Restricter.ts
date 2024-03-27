@@ -18,6 +18,16 @@ export type Restrictions = {
   requiredMetaFields: string[]
 }
 
+/**
+ * The minimal required properties to be present from UppyFile in order to validate it.
+ */
+export type ValidateableFile<M extends Meta, B extends Body> = Pick<
+  UppyFile<M, B>,
+  'type' | 'extension' | 'size' | 'name'
+  // Both UppyFile and CompanionFile need to be passable as a ValidateableFile
+  // CompanionFile's do not have `isGhost`, so we mark it optional.
+> & { isGhost?: boolean }
+
 const defaultOptions = {
   maxFileSize: null,
   minFileSize: null,
@@ -31,7 +41,7 @@ const defaultOptions = {
 class RestrictionError<M extends Meta, B extends Body> extends Error {
   isUserFacing: boolean
 
-  file: UppyFile<M, B>
+  file!: UppyFile<M, B>
 
   constructor(
     message: string,
@@ -69,8 +79,8 @@ class Restricter<M extends Meta, B extends Body> {
 
   // Because these operations are slow, we cannot run them for every file (if we are adding multiple files)
   validateAggregateRestrictions(
-    existingFiles: UppyFile<M, B>[],
-    addingFiles: UppyFile<M, B>[],
+    existingFiles: ValidateableFile<M, B>[],
+    addingFiles: ValidateableFile<M, B>[],
   ): void {
     const { maxTotalFileSize, maxNumberOfFiles } = this.getOpts().restrictions
 
@@ -109,7 +119,7 @@ class Restricter<M extends Meta, B extends Body> {
     }
   }
 
-  validateSingleFile(file: UppyFile<M, B>): void {
+  validateSingleFile(file: ValidateableFile<M, B>): void {
     const { maxFileSize, minFileSize, allowedFileTypes } =
       this.getOpts().restrictions
 
@@ -134,7 +144,7 @@ class Restricter<M extends Meta, B extends Body> {
           this.i18n('youCanOnlyUploadFileTypes', {
             types: allowedFileTypesString,
           }),
-          { file },
+          { file } as { file: UppyFile<M, B> },
         )
       }
     }
@@ -146,7 +156,7 @@ class Restricter<M extends Meta, B extends Body> {
           size: prettierBytes(maxFileSize),
           file: file.name,
         }),
-        { file },
+        { file } as { file: UppyFile<M, B> },
       )
     }
 
@@ -156,14 +166,14 @@ class Restricter<M extends Meta, B extends Body> {
         this.i18n('inferiorSize', {
           size: prettierBytes(minFileSize),
         }),
-        { file },
+        { file } as { file: UppyFile<M, B> },
       )
     }
   }
 
   validate(
-    existingFiles: UppyFile<M, B>[],
-    addingFiles: UppyFile<M, B>[],
+    existingFiles: ValidateableFile<M, B>[],
+    addingFiles: ValidateableFile<M, B>[],
   ): void {
     addingFiles.forEach((addingFile) => {
       this.validateSingleFile(addingFile)
@@ -180,7 +190,7 @@ class Restricter<M extends Meta, B extends Body> {
     }
   }
 
-  getMissingRequiredMetaFields(file: UppyFile<M, B>): {
+  getMissingRequiredMetaFields(file: ValidateableFile<M, B> & { meta: M }): {
     missingFields: string[]
     error: RestrictionError<M, B>
   } {

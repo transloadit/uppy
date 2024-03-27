@@ -1,5 +1,4 @@
 /* eslint-disable class-methods-use-this */
-/* eslint-disable @typescript-eslint/no-empty-function */
 import { render, type ComponentChild } from 'preact'
 import findDOMElement from '@uppy/utils/lib/findDOMElement'
 import getTextDirection from '@uppy/utils/lib/getTextDirection'
@@ -33,11 +32,6 @@ function debounce<T extends (...args: any[]) => any>(
   }
 }
 
-export interface UIPluginOptions extends PluginOpts {
-  replaceTargetContent?: boolean
-  direction?: 'ltr' | 'rtl'
-}
-
 /**
  * UIPlugin is the extended version of BasePlugin to incorporate rendering with Preact.
  * Use this for plugins that need a user interface.
@@ -45,28 +39,38 @@ export interface UIPluginOptions extends PluginOpts {
  * For plugins without an user interface, see BasePlugin.
  */
 class UIPlugin<
+  // eslint-disable-next-line no-use-before-define
   Opts extends UIPluginOptions,
   M extends Meta,
   B extends Body,
   PluginState extends Record<string, unknown> = Record<string, unknown>,
 > extends BasePlugin<Opts, M, B, PluginState> {
-  #updateUI: (state: Partial<State<M, B>>) => void
+  #updateUI!: (state: Partial<State<M, B>>) => void
 
-  isTargetDOMEl: boolean
+  isTargetDOMEl!: boolean
 
-  el: HTMLElement | null
+  el!: HTMLElement | null
 
   parent: unknown
 
-  title: string
+  title!: string
 
   getTargetPlugin<Me extends Meta, Bo extends Body>(
     target: PluginTarget<Me, Bo>, // eslint-disable-line no-use-before-define
   ): UIPlugin<any, Me, Bo> | undefined {
     let targetPlugin
-    if (typeof target === 'object' && target instanceof UIPlugin) {
+    if (typeof (target as UIPlugin<any, any, any>)?.addTarget === 'function') {
       // Targeting a plugin *instance*
-      targetPlugin = target
+      targetPlugin = target as UIPlugin<any, any, any>
+      if (!(targetPlugin instanceof UIPlugin)) {
+        // eslint-disable-next-line no-console
+        console.warn(
+          new Error(
+            'The provided plugin is not an instance of UIPlugin. This is an indication of a bug with the way Uppy is bundled.',
+            { cause: { targetPlugin, UIPlugin } },
+          ),
+        )
+      }
     } else if (typeof target === 'function') {
       // Targeting a plugin type
       const Target = target
@@ -133,7 +137,7 @@ class UIPlugin<
 
       this.onMount()
 
-      return this.el
+      return this.el!
     }
 
     const targetPlugin = this.getTargetPlugin(target)
@@ -144,7 +148,7 @@ class UIPlugin<
       this.el = targetPlugin.addTarget(plugin)
 
       this.onMount()
-      return this.el
+      return this.el!
     }
 
     this.uppy.log(`Not installing ${callerPluginName}`)
@@ -205,3 +209,9 @@ export type PluginTarget<M extends Meta, B extends Body> =
   | typeof BasePlugin
   | typeof UIPlugin
   | BasePlugin<any, M, B>
+
+export interface UIPluginOptions extends PluginOpts {
+  target?: PluginTarget<any, any>
+  replaceTargetContent?: boolean
+  direction?: 'ltr' | 'rtl'
+}

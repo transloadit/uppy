@@ -27,7 +27,7 @@
     "node": "^16.15.0 || >=18.0.0",
     "yarn": "3.6.1"
   },
-  "packageManager": "yarn@3.6.1+sha224.679d48a4db29f6beed7fe901a71e56b5e0619cdd615e140d9f33ce92",
+  "packageManager": "yarn@3.8.0+sha256.a1a53a88823c9f5bcd36e465791b7e490837ebf94dc6ef96282ab558a00c0811",
   "workspaces": [
     "examples/*",
     "packages/@uppy/*",
@@ -63,7 +63,7 @@
     "concat-stream": "^2.0.0",
     "cssnano": "^5.0.6",
     "dotenv": "^16.0.0",
-    "esbuild": "^0.17.1",
+    "esbuild": "^0.20.1",
     "esbuild-plugin-babel": "^0.2.3",
     "eslint": "^8.0.0",
     "eslint-config-prettier": "^9.0.0",
@@ -134,9 +134,9 @@
     "lint:css:fix": "stylelint ./packages/**/*.scss --fix",
     "lint": "eslint . --cache",
     "format:show-diff": "git diff --quiet || (echo 'Unable to show a diff because there are unstaged changes'; false) && (prettier . -w --loglevel silent && git --no-pager diff; git restore .)",
-    "format:check": "prettier -c .",
+    "format:check": "prettier  -c .",
     "format:check-diff": "yarn format:check || (yarn format:show-diff && false)",
-    "format": "prettier -w .",
+    "format": "prettier  -w .",
     "release": "PACKAGES=$(yarn workspaces list --json) yarn workspace @uppy-dev/release interactive",
     "size": "echo 'JS Bundle mingz:' && cat ./packages/uppy/dist/uppy.min.js | gzip | wc -c && echo 'CSS Bundle mingz:' && cat ./packages/uppy/dist/uppy.min.css | gzip | wc -c",
     "e2e": "yarn build:clean && yarn build && yarn e2e:skip-build",
@@ -162,6 +162,9 @@
     "watch:js": "npm-run-all --parallel watch:js:bundle watch:js:lib",
     "watch": "npm-run-all --parallel watch:css watch:js"
   },
+  "alias": {
+    "preact/jsx-dev-runtime": "preact/jsx-runtime"
+  },
   "resolutions": {
     "@types/eslint@^7.2.13": "^8.2.0",
     "@types/react": "^17",
@@ -172,6 +175,8 @@
     "preact": "patch:preact@npm:10.10.0#.yarn/patches/preact-npm-10.10.0-dd04de05e8.patch",
     "start-server-and-test": "patch:start-server-and-test@npm:1.14.0#.yarn/patches/start-server-and-test-npm-1.14.0-841aa34fdf.patch",
     "stylelint-config-rational-order": "patch:stylelint-config-rational-order@npm%3A0.1.2#./.yarn/patches/stylelint-config-rational-order-npm-0.1.2-d8336e84ed.patch",
-    "uuid@^8.3.2": "patch:uuid@npm:8.3.2#.yarn/patches/uuid-npm-8.3.2-eca0baba53.patch"
+    "uuid@^8.3.2": "patch:uuid@npm:8.3.2#.yarn/patches/uuid-npm-8.3.2-eca0baba53.patch",
+    "tus-js-client": "patch:tus-js-client@npm%3A3.1.3#./.yarn/patches/tus-js-client-npm-3.1.3-dc57874d23.patch",
+    "resize-observer-polyfill": "patch:resize-observer-polyfill@npm%3A1.5.1#./.yarn/patches/resize-observer-polyfill-npm-1.5.1-603120e8a0.patch"
   }
 }

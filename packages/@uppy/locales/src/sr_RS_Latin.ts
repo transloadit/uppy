@@ -52,6 +52,7 @@ sr_RS_Latin.strings = {
   dropPasteImportFolders:
     'Spusti datoteke ovde, umetni (eng. "paste"), %{browse} ili preuzmi sa',
   editFile: 'Izmeni datoteku',
+  editImage: 'Uredi sliku',
   editing: 'Menjanje %{file}',
   emptyFolderAdded: 'Ni jedna datoteka nije dodata iz praznog foldera',
   encoding: 'Šifrovanje...',

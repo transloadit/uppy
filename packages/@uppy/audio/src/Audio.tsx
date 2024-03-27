@@ -1,8 +1,12 @@
 import { h } from 'preact'
 
 import { UIPlugin, type UIPluginOptions } from '@uppy/core'
-import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
-import type { Uppy, MinimalRequiredUppyFile } from '@uppy/core/lib/Uppy.ts'
+import type {
+  Body,
+  Meta,
+  MinimalRequiredUppyFile,
+} from '@uppy/utils/lib/UppyFile'
+import type { Uppy } from '@uppy/core/lib/Uppy.ts'
 
 import getFileTypeExtension from '@uppy/utils/lib/getFileTypeExtension'
 import supportsMediaRecorder from './supportsMediaRecorder.ts'
@@ -13,8 +17,7 @@ import locale from './locale.ts'
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'
 
-interface AudioOptions extends UIPluginOptions {
-  target?: HTMLElement | string
+export interface AudioOptions extends UIPluginOptions {
   showAudioSourceDropdown?: boolean
 }
 interface AudioState {

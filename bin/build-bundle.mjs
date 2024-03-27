@@ -17,8 +17,9 @@ function buildBundle (srcFile, bundleFile, { minify = true, standalone = '', plu
     outfile: bundleFile,
     platform: 'browser',
     minify,
-    keepNames: true,
+    keepNames: target !== 'es5',
     plugins,
+    tsconfigRaw: '{}',
     target,
     format,
   }).then(() => {

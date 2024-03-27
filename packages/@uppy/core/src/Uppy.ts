@@ -11,7 +11,17 @@ import DefaultStore from '@uppy/store-default'
 import getFileType from '@uppy/utils/lib/getFileType'
 import getFileNameAndExtension from '@uppy/utils/lib/getFileNameAndExtension'
 import { getSafeFileId } from '@uppy/utils/lib/generateFileID'
-import type { UppyFile, Meta, Body } from '@uppy/utils/lib/UppyFile'
+import type {
+  UppyFile,
+  Meta,
+  Body,
+  MinimalRequiredUppyFile,
+} from '@uppy/utils/lib/UppyFile'
+import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
+import type {
+  CompanionClientProvider,
+  CompanionClientSearchProvider,
+} from '@uppy/utils/lib/CompanionClientProvider'
 import type {
   FileProgressNotStarted,
   FileProgressStarted,
@@ -35,43 +45,98 @@ import packageJson from '../package.json'
 import locale from './locale.ts'
 
 import type BasePlugin from './BasePlugin.ts'
-import type UIPlugin from './UIPlugin.ts'
-import type { Restrictions } from './Restricter.ts'
+import type { Restrictions, ValidateableFile } from './Restricter.ts'
 
-type Processor = (fileIDs: string[], uploadID: string) => Promise<void> | void
+type Processor = (
+  fileIDs: string[],
+  uploadID: string,
+) => Promise<unknown> | void
 
-type FileRemoveReason = 'user' | 'cancel-all'
+type FileRemoveReason = 'user' | 'cancel-all' | 'unmount'
 
 type LogLevel = 'info' | 'warning' | 'error' | 'success'
 
-type UnknownPlugin<M extends Meta, B extends Body> = InstanceType<
-  typeof BasePlugin<any, M, B> | typeof UIPlugin<any, M, B>
->
+export type UnknownPlugin<
+  M extends Meta,
+  B extends Body,
+  PluginState extends Record<string, unknown> = Record<string, unknown>,
+> = BasePlugin<any, M, B, PluginState>
 
 // `OmitFirstArg<typeof someArray>` is the type of the returned value of `someArray.slice(1)`.
 type OmitFirstArg<T> = T extends [any, ...infer U] ? U : never
 
-type UnknownProviderPlugin<M extends Meta, B extends Body> = UnknownPlugin<
-  M,
-  B
-> & {
-  provider: {
-    logout: () => void
+export type UnknownProviderPluginState = {
+  authenticated: boolean | undefined
+  breadcrumbs: {
+    requestPath?: string
+    name?: string
+    id?: string
+  }[]
+  didFirstRender: boolean
+  currentSelection: CompanionFile[]
+  filterInput: string
+  loading: boolean | string
+  folders: CompanionFile[]
+  files: CompanionFile[]
+  isSearchVisible: boolean
+}
+/*
+ * UnknownProviderPlugin can be any Companion plugin (such as Google Drive).
+ * As the plugins are passed around throughout Uppy we need a generic type for this.
+ * It may seems like duplication, but this type safe. Changing the type of `storage`
+ * will error in the `Provider` class of @uppy/companion-client and vice versa.
+ *
+ * Note that this is the *plugin* class, not a version of the `Provider` class.
+ * `Provider` does operate on Companion plugins with `uppy.getPlugin()`.
+ */
+export type UnknownProviderPlugin<
+  M extends Meta,
+  B extends Body,
+> = UnknownPlugin<M, B, UnknownProviderPluginState> & {
+  onFirstRender: () => void
+  title: string
+  files: UppyFile<M, B>[]
+  icon: () => JSX.Element
+  provider: CompanionClientProvider
+  storage: {
+    getItem: (key: string) => Promise<string | null>
+    setItem: (key: string, value: string) => Promise<void>
+    removeItem: (key: string) => Promise<void>
   }
 }
 
-// The user facing type for UppyFile used in uppy.addFile() and uppy.setOptions()
-export type MinimalRequiredUppyFile<M extends Meta, B extends Body> = Required<
-  Pick<UppyFile<M, B>, 'name' | 'data' | 'type' | 'source'>
-> &
-  Partial<
-    Omit<UppyFile<M, B>, 'name' | 'data' | 'type' | 'source' | 'meta'>
-    // We want to omit the 'meta' from UppyFile because of internal metadata
-    // (see InternalMetadata in `UppyFile.ts`), as when adding a new file
-    // that is not required.
-  > & { meta?: M }
+/*
+ * UnknownSearchProviderPlugin can be any search Companion plugin (such as Unsplash).
+ * As the plugins are passed around throughout Uppy we need a generic type for this.
+ * It may seems like duplication, but this type safe. Changing the type of `title`
+ * will error in the `SearchProvider` class of @uppy/companion-client and vice versa.
+ *
+ * Note that this is the *plugin* class, not a version of the `SearchProvider` class.
+ * `SearchProvider` does operate on Companion plugins with `uppy.getPlugin()`.
+ */
+export type UnknownSearchProviderPluginState = {
+  isInputMode?: boolean
+  searchTerm?: string | null
+} & Pick<
+  UnknownProviderPluginState,
+  | 'loading'
+  | 'files'
+  | 'folders'
+  | 'currentSelection'
+  | 'filterInput'
+  | 'didFirstRender'
+>
+export type UnknownSearchProviderPlugin<
+  M extends Meta,
+  B extends Body,
+> = UnknownPlugin<M, B, UnknownSearchProviderPluginState> & {
+  onFirstRender: () => void
+  title: string
+  icon: () => JSX.Element
+  provider: CompanionClientSearchProvider
+}
 
-interface UploadResult<M extends Meta, B extends Body> {
+export interface UploadResult<M extends Meta, B extends Body> {
   successful?: UppyFile<M, B>[]
   failed?: UppyFile<M, B>[]
   uploadID?: string
@@ -95,10 +160,12 @@ export interface State<M extends Meta, B extends Body>
     uploadProgress: boolean
     individualCancellation: boolean
     resumableUploads: boolean
+    isMobileDevice?: boolean
+    darkMode?: boolean
   }
   currentUploads: Record<string, CurrentUpload<M, B>>
   allowNewUpload: boolean
-  recoveredState: null | State<M, B>
+  recoveredState: null | Required<Pick<State<M, B>, 'files' | 'currentUploads'>>
   error: string | null
   files: {
     [key: string]: UppyFile<M, B>
@@ -111,6 +178,7 @@ export interface State<M extends Meta, B extends Body>
   }>
   plugins: Plugins
   totalProgress: number
+  companion?: Record<string, string>
 }
 
 export interface UppyOptions<M extends Meta, B extends Body> {
@@ -204,14 +272,16 @@ type UploadCompleteCallback<M extends Meta, B extends Body> = (
   result: UploadResult<M, B>,
 ) => void
 type ErrorCallback<M extends Meta, B extends Body> = (
-  error: { message?: string; details?: string },
+  error: { name: string; message: string; details?: string },
   file?: UppyFile<M, B>,
   response?: UppyFile<M, B>['response'],
 ) => void
 type UploadErrorCallback<M extends Meta, B extends Body> = (
   file: UppyFile<M, B> | undefined,
-  error: { message: string; details?: string },
-  response: UppyFile<M, B>['response'] | undefined,
+  error: { name: string; message: string; details?: string },
+  response?:
+    | Omit<NonNullable<UppyFile<M, B>['response']>, 'uploadURL'>
+    | undefined,
 ) => void
 type UploadStalledCallback<M extends Meta, B extends Body> = (
   error: { message: string; details?: string },
@@ -252,8 +322,9 @@ export interface _UppyEventMap<M extends Meta, B extends Body> {
   'preprocess-progress': PreProcessProgressCallback<M, B>
   progress: ProgressCallback
   'reset-progress': GenericEventCallback
-  restored: GenericEventCallback
+  restored: (pluginData: any) => void
   'restore-confirmed': GenericEventCallback
+  'restore-canceled': GenericEventCallback
   'restriction-failed': RestrictionFailedCallback<M, B>
   'resume-all': GenericEventCallback
   'retry-all': RetryAllCallback
@@ -308,7 +379,7 @@ export class Uppy<M extends Meta, B extends Body> {
 
   defaultLocale: Locale
 
-  locale: Locale
+  locale!: Locale
 
   // The user optionally passes in options, but we set defaults for missing options.
   // We consider all options present after the contructor has run.
@@ -316,9 +387,9 @@ export class Uppy<M extends Meta, B extends Body> {
 
   store: NonNullableUppyOptions<M, B>['store']
 
-  i18n: I18n
+  i18n!: I18n
 
-  i18nArray: Translator['translateArray']
+  i18nArray!: Translator['translateArray']
 
   scheduledAutoProceed: ReturnType<typeof setTimeout> | null = null
 
@@ -413,17 +484,6 @@ export class Uppy<M extends Meta, B extends Body> {
   ): void {
     this.#emitter.emit(event, ...args)
   }
-
-  /** @deprecated */
-  on<K extends keyof DeprecatedUppyEventMap<M, B>>(
-    event: K,
-    callback: DeprecatedUppyEventMap<M, B>[K],
-  ): this
-
-  on<K extends keyof _UppyEventMap<M, B>>(
-    event: K,
-    callback: _UppyEventMap<M, B>[K],
-  ): this
 
   on<K extends keyof UppyEventMap<M, B>>(
     event: K,
@@ -573,7 +633,7 @@ export class Uppy<M extends Meta, B extends Body> {
 
   // @todo next major: rename to `clear()`, make it also cancel ongoing uploads
   // or throw and say you need to cancel manually
-  protected clearUploadedFiles(): void {
+  clearUploadedFiles(): void {
     this.setState({ ...defaultUploadState, files: {} })
   }
 
@@ -724,6 +784,7 @@ export class Uppy<M extends Meta, B extends Body> {
 
   #informAndEmit(
     errors: {
+      name: string
       message: string
       isUserFacing?: boolean
       details?: string
@@ -764,13 +825,13 @@ export class Uppy<M extends Meta, B extends Body> {
   }
 
   validateRestrictions(
-    file: UppyFile<M, B>,
-    files = this.getFiles(),
+    file: ValidateableFile<M, B>,
+    files: ValidateableFile<M, B>[] = this.getFiles(),
   ): RestrictionError<M, B> | null {
     try {
       this.#restricter.validate(files, [file])
     } catch (err) {
-      return err
+      return err as any
     }
     return null
   }
@@ -802,9 +863,12 @@ export class Uppy<M extends Meta, B extends Body> {
     const { allowNewUpload } = this.getState()
 
     if (allowNewUpload === false) {
-      const error = new RestrictionError(this.i18n('noMoreFilesAllowed'), {
-        file,
-      })
+      const error = new RestrictionError<M, B>(
+        this.i18n('noMoreFilesAllowed'),
+        {
+          file,
+        },
+      )
       this.#informAndEmit([error])
       throw error
     }
@@ -827,15 +891,14 @@ export class Uppy<M extends Meta, B extends Body> {
     // If the actual File object is passed from input[type=file] or drag-drop,
     // we normalize it to match Uppy file object
     const file = (
-      fileDescriptorOrFile instanceof File
-        ? {
-            name: fileDescriptorOrFile.name,
-            type: fileDescriptorOrFile.type,
-            size: fileDescriptorOrFile.size,
-            data: fileDescriptorOrFile,
-          }
-        : fileDescriptorOrFile
-    ) as UppyFile<M, B>
+      fileDescriptorOrFile instanceof File ?
+        {
+          name: fileDescriptorOrFile.name,
+          type: fileDescriptorOrFile.type,
+          size: fileDescriptorOrFile.size,
+          data: fileDescriptorOrFile,
+        }
+      : fileDescriptorOrFile) as UppyFile<M, B>
 
     const fileType = getFileType(file)
     const fileName = getFileName(fileType, file)
@@ -866,7 +929,7 @@ export class Uppy<M extends Meta, B extends Body> {
         bytesTotal: size,
         uploadComplete: false,
         uploadStarted: null,
-      } as FileProgressNotStarted,
+      } satisfies FileProgressNotStarted,
       size,
       isGhost: false,
       isRemote: file.isRemote || false,
@@ -959,7 +1022,7 @@ export class Uppy<M extends Meta, B extends Body> {
         nextFilesState[newFile.id] = newFile
         validFilesToAdd.push(newFile)
       } catch (err) {
-        errors.push(err)
+        errors.push(err as any)
       }
     }
 
@@ -971,7 +1034,7 @@ export class Uppy<M extends Meta, B extends Body> {
         validFilesToAdd,
       )
     } catch (err) {
-      errors.push(err)
+      errors.push(err as any)
 
       // If we have any aggregate error, don't allow adding this batch
       return {
@@ -1301,6 +1364,8 @@ export class Uppy<M extends Meta, B extends Body> {
   //    and click 'ADD MORE FILES', - focus won't activate in Firefox.
   //    - We must throttle at around >500ms to avoid performance lags.
   //    [Practical Check] Firefox, try to upload a big file for a prolonged period of time. Laptop will start to heat up.
+  // todo when uploading multiple files, this will cause problems because they share the same throttle,
+  // meaning some files might never get their progress reported (eaten up by progress events from other files)
   calculateProgress = throttle(
     (file, data) => {
       const fileInState = this.getFile(file?.id)
@@ -1326,8 +1391,9 @@ export class Uppy<M extends Meta, B extends Body> {
           ...fileInState.progress,
           bytesUploaded: data.bytesUploaded,
           bytesTotal: data.bytesTotal,
-          percentage: canHavePercentage
-            ? Math.round((data.bytesUploaded / data.bytesTotal) * 100)
+          percentage:
+            canHavePercentage ?
+              Math.round((data.bytesUploaded / data.bytesTotal) * 100)
             : 0,
         },
       })
@@ -1367,7 +1433,7 @@ export class Uppy<M extends Meta, B extends Body> {
     if (sizedFiles.length === 0) {
       const progressMax = inProgress.length * 100
       const currentProgress = unsizedFiles.reduce((acc, file) => {
-        return acc + file.progress.percentage
+        return acc + (file.progress.percentage as number)
       }, 0)
       const totalProgress = Math.round((currentProgress / progressMax) * 100)
       this.setState({ totalProgress })
@@ -1482,7 +1548,6 @@ export class Uppy<M extends Meta, B extends Body> {
           file.id,
           {
             progress: {
-              progress: 0,
               uploadStarted: Date.now(),
               uploadComplete: false,
               percentage: 0,
@@ -1519,11 +1584,11 @@ export class Uppy<M extends Meta, B extends Body> {
         progress: {
           ...currentProgress,
           postprocess:
-            this.#postProcessors.size > 0
-              ? {
-                  mode: 'indeterminate',
-                }
-              : undefined,
+            this.#postProcessors.size > 0 ?
+              {
+                mode: 'indeterminate',
+              }
+            : undefined,
           uploadComplete: true,
           percentage: 100,
           bytesUploaded: currentProgress.bytesTotal,
@@ -1647,7 +1712,7 @@ export class Uppy<M extends Meta, B extends Body> {
 
   #updateOnlineStatus = this.updateOnlineStatus.bind(this)
 
-  getID(): UppyOptions<M, B>['id'] {
+  getID(): string {
     return this.opts.id
   }
 
@@ -1832,7 +1897,7 @@ export class Uppy<M extends Meta, B extends Body> {
    * Passes messages to a function, provided in `opts.logger`.
    * If `opts.logger: Uppy.debugLogger` or `opts.debug: true`, logs to the browser console.
    */
-  log(message: string | Record<string, unknown> | Error, type?: string): void {
+  log(message: string | Record<any, any> | Error, type?: string): void {
     const { logger } = this.opts
     switch (type) {
       case 'error':
@@ -1864,7 +1929,7 @@ export class Uppy<M extends Meta, B extends Body> {
   }
 
   /** @protected */
-  getRequestClientForFile(file: UppyFile<M, B>): unknown {
+  getRequestClientForFile<Client>(file: UppyFile<M, B>): Client {
     if (!file.remote)
       throw new Error(
         `Tried to get RequestClient for a non-remote file ${file.id}`,
@@ -1876,7 +1941,7 @@ export class Uppy<M extends Meta, B extends Body> {
       throw new Error(
         `requestClientId "${file.remote.requestClientId}" not registered for file "${file.id}"`,
       )
-    return requestClient
+    return requestClient as Client
   }
 
   /**
@@ -2075,7 +2140,7 @@ export class Uppy<M extends Meta, B extends Body> {
    * Start an upload for all the files that are not currently being uploaded.
    */
   upload(): Promise<NonNullable<UploadResult<M, B>> | undefined> {
-    if (!this.#plugins.uploader?.length) {
+    if (!this.#plugins['uploader']?.length) {
       this.log('No uploader type plugins are used', 'warning')
     }
 

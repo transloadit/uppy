@@ -176,21 +176,21 @@ describe('Dashboard with Transloadit', () => {
   })
 
   it('should not create assembly when all individual files have been cancelled', () => {
-    cy.get('@file-input').selectFile(
-      [
-        'cypress/fixtures/images/cat.jpg',
-        'cypress/fixtures/images/traffic.jpg',
-      ],
-      { force: true },
-    )
-    cy.get('.uppy-StatusBar-actionBtn--upload').click()
-
     cy.window().then(({ uppy }) => {
+      cy.get('@file-input').selectFile(
+        [
+          'cypress/fixtures/images/cat.jpg',
+          'cypress/fixtures/images/traffic.jpg',
+        ],
+        { force: true },
+      )
       // eslint-disable-next-line
       // @ts-ignore fix me
       expect(
         Object.values(uppy.getPlugin('Transloadit').activeAssemblies).length,
       ).to.equal(0)
+
+      cy.get('.uppy-StatusBar-actionBtn--upload').click()
 
       const { files } = uppy.getState()
       // eslint-disable-next-line

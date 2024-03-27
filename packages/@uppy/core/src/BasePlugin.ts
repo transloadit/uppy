@@ -1,5 +1,4 @@
 /* eslint-disable class-methods-use-this */
-/* eslint-disable @typescript-eslint/no-empty-function */
 
 /**
  * Core plugin logic that all plugins share.
@@ -11,19 +10,33 @@
  */
 
 import Translator from '@uppy/utils/lib/Translator'
-import type { I18n, Locale } from '@uppy/utils/lib/Translator'
+import type {
+  I18n,
+  Locale,
+  OptionalPluralizeLocale,
+} from '@uppy/utils/lib/Translator'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
-import type { State, Uppy } from './Uppy'
+import type { State, UnknownPlugin, Uppy } from './Uppy'
 
 export type PluginOpts = {
   locale?: Locale
   id?: string
-  [key: string]: unknown
 }
 
+export type OnlyOptionals<T> = Pick<
+  T,
+  {
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    [K in keyof T]-?: {} extends Pick<T, K> ? K : never
+  }[keyof T]
+>
+
+/**
+ * DefinePluginOpts marks all of the passed AlwaysDefinedKeys as “required” or “always defined”.
+ */
 export type DefinePluginOpts<
-  Opts extends PluginOpts,
-  AlwaysDefinedKeys extends string,
+  Opts,
+  AlwaysDefinedKeys extends keyof OnlyOptionals<Opts>,
 > = Opts & Required<Pick<Opts, AlwaysDefinedKeys>>
 
 export default class BasePlugin<
@@ -36,17 +49,17 @@ export default class BasePlugin<
 
   opts: Opts
 
-  id: string
+  id!: string
 
-  defaultLocale: Locale
+  defaultLocale: OptionalPluralizeLocale
 
-  i18n: I18n
+  i18n!: I18n
 
-  i18nArray: Translator['translateArray']
+  i18nArray!: Translator['translateArray']
 
-  type: string
+  type!: string
 
-  VERSION: string
+  VERSION!: string
 
   constructor(uppy: Uppy<M, B>, opts?: Opts) {
     this.uppy = uppy
@@ -98,7 +111,7 @@ export default class BasePlugin<
    */
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  addTarget(plugin: unknown): HTMLElement {
+  addTarget(plugin: UnknownPlugin<M, B>): HTMLElement | null {
     throw new Error(
       "Extend the addTarget method to add your plugin to another plugin's target",
     )
