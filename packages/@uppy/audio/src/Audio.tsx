@@ -6,7 +6,7 @@ import type {
   Meta,
   MinimalRequiredUppyFile,
 } from '@uppy/utils/lib/UppyFile'
-import type { Uppy } from '@uppy/core/lib/Uppy.ts'
+import type { Uppy } from '@uppy/core/lib/Uppy'
 
 import getFileTypeExtension from '@uppy/utils/lib/getFileTypeExtension'
 import supportsMediaRecorder from './supportsMediaRecorder.ts'

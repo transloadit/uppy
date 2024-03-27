@@ -7,7 +7,7 @@ import {
   type State,
 } from '@uppy/core'
 import type { ComponentChild, VNode } from 'preact'
-import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin.ts'
+import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin'
 import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
 import StatusBar from '@uppy/status-bar'
 import Informer from '@uppy/informer'

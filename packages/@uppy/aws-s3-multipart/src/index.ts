@@ -3,7 +3,7 @@ import BasePlugin, {
   type PluginOpts,
 } from '@uppy/core/lib/BasePlugin.js'
 import { RequestClient } from '@uppy/companion-client'
-import type { RequestOptions } from '@uppy/utils/lib/CompanionClientProvider.ts'
+import type { RequestOptions } from '@uppy/utils/lib/CompanionClientProvider'
 import type { Body as _Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
 import type { Uppy } from '@uppy/core'
 import EventManager from '@uppy/core/lib/EventManager.js'
