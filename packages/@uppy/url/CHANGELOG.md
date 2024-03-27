@@ -1,5 +1,12 @@
 # @uppy/url
 
+## 3.6.0
+
+Released: 2024-03-27
+Included in: Uppy v3.24.0
+
+- @uppy/url: migrate to TS (Merlijn Vos / #4980)
+
 ## 3.1.0
 
 Released: 2022-10-19

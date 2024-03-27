@@ -1,5 +1,17 @@
 # @uppy/dashboard
 
+## 3.8.0
+
+Released: 2024-03-27
+Included in: Uppy v3.24.0
+
+- @uppy/dashboard: refine type of private variables (Antoine du Hamel / #5027)
+- @uppy/dashboard: refine option types (Antoine du Hamel / #5022)
+- @uppy/dashboard: add new `autoOpen` option (Chris Grigg / #5001)
+- @uppy/audio,@uppy/dashboard,@uppy/drop-target,@uppy/webcam: add missing exports (Antoine du Hamel / #5014)
+- @uppy/dashboard: refactor to TypeScript (Antoine du Hamel / #4984)
+- @uppy/dashboard: refactor to stable lifecycle method (Antoine du Hamel / #4999)
+
 ## 3.7.4
 
 Released: 2024-02-22

@@ -1,5 +1,12 @@
 # @uppy/react
 
+## 3.3.0
+
+Released: 2024-03-27
+Included in: Uppy v3.24.0
+
+- @uppy/react: refactor to TS (Antoine du Hamel / #5012)
+
 ## 3.2.1
 
 Released: 2023-11-12
