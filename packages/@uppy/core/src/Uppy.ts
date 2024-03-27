@@ -6,6 +6,8 @@ import Translator from '@uppy/utils/lib/Translator'
 // @ts-ignore untyped
 import ee from 'namespace-emitter'
 import { nanoid } from 'nanoid/non-secure'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore For some reason the Angular build script chokes on this import
 import throttle from 'lodash/throttle.js'
 import DefaultStore from '@uppy/store-default'
 import getFileType from '@uppy/utils/lib/getFileType'
@@ -1376,9 +1378,10 @@ export class Uppy<M extends Meta, B extends Body> {
   // todo when uploading multiple files, this will cause problems because they share the same throttle,
   // meaning some files might never get their progress reported (eaten up by progress events from other files)
   calculateProgress = throttle(
-    (file, data) => {
-      const fileInState = this.getFile(file?.id)
-      if (file == null || !fileInState) {
+    (file: UppyFile<M, B> | null | undefined, data: FileProgressStarted) => {
+      let fileInState: UppyFile<M, B>
+      // eslint-disable-next-line no-cond-assign
+      if (file == null || (fileInState = this.getFile(file.id)) == null) {
         this.log(
           `Not setting progress for a file that has been removed: ${file?.id}`,
         )
@@ -1394,17 +1397,17 @@ export class Uppy<M extends Meta, B extends Body> {
 
       // bytesTotal may be null or zero; in that case we can't divide by it
       const canHavePercentage =
-        Number.isFinite(data.bytesTotal) && data.bytesTotal > 0
+        Number.isFinite(data.bytesTotal) && data.bytesTotal! > 0
       this.setFileState(file.id, {
         progress: {
-          ...fileInState.progress,
+          ...(fileInState.progress as FileProgressStarted),
           bytesUploaded: data.bytesUploaded,
           bytesTotal: data.bytesTotal,
           percentage:
             canHavePercentage ?
-              Math.round((data.bytesUploaded / data.bytesTotal) * 100)
+              Math.round((data.bytesUploaded / data.bytesTotal!) * 100)
             : 0,
-        },
+        } satisfies FileProgressStarted,
       })
 
       this.calculateTotalProgress()
