@@ -1,11 +1,8 @@
-<script lang="ts">
+<script lang="ts" generics="M extends import('@uppy/utils/lib/UppyFile').Meta, B extends import('@uppy/utils/lib/UppyFile').Body">
   import { onMount, onDestroy } from 'svelte'
   import type { Uppy } from '@uppy/core';
   import ProgressBarPlugin from '@uppy/progress-bar'
   
-  type M = any
-  type B = any
-
   let container: HTMLElement;
   let plugin: ProgressBarPlugin<M, B>; 
 

@@ -23,6 +23,9 @@
     "type": "git",
     "url": "git+https://github.com/transloadit/uppy.git"
   },
+  "dependencies": {
+    "@uppy/utils": "workspace:^"
+  },
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^13.0.0",
     "@tsconfig/svelte": "^5.0.0",
