@@ -1,7 +1,7 @@
 import type { ComponentChild } from 'preact'
 import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
-import type { Uppy, State } from '@uppy/core/src/Uppy.ts'
-import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin.ts'
+import type { Uppy, State } from '@uppy/core/lib/Uppy'
+import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin'
 import { UIPlugin } from '@uppy/core'
 import emaFilter from '@uppy/utils/lib/emaFilter'
 import getTextDirection from '@uppy/utils/lib/getTextDirection'
@@ -57,9 +57,7 @@ function getUploadingState(
   return state
 }
 
-// set default options, must be kept in sync with @uppy/react/src/StatusBar.js
 const defaultOptions = {
-  target: 'body',
   hideUploadButton: false,
   hideRetryButton: false,
   hidePauseResumeButton: false,

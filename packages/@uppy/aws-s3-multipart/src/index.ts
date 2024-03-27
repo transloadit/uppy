@@ -3,7 +3,7 @@ import BasePlugin, {
   type PluginOpts,
 } from '@uppy/core/lib/BasePlugin.js'
 import { RequestClient } from '@uppy/companion-client'
-import type { RequestOptions } from '@uppy/utils/lib/CompanionClientProvider.ts'
+import type { RequestOptions } from '@uppy/utils/lib/CompanionClientProvider'
 import type { Body as _Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
 import type { Uppy } from '@uppy/core'
 import EventManager from '@uppy/core/lib/EventManager.js'
@@ -344,7 +344,7 @@ export default class AwsS3Multipart<
 
   protected uploaderSockets: Record<string, never>
 
-  constructor(uppy: Uppy<M, B>, opts: AwsS3MultipartOptions<M, B>) {
+  constructor(uppy: Uppy<M, B>, opts?: AwsS3MultipartOptions<M, B>) {
     super(uppy, {
       ...defaultOptions,
       uploadPartBytes: AwsS3Multipart.uploadPartBytes,

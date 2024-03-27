@@ -21,8 +21,7 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
-    "@uppy/utils": "workspace:^",
-    "prop-types": "^15.6.1"
+    "@uppy/utils": "workspace:^"
   },
   "devDependencies": {
     "@types/react": "^18.0.8",
