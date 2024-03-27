@@ -346,7 +346,7 @@ export default class AwsS3Multipart<
 
   protected uploaderSockets: Record<string, never>
 
-  constructor(uppy: Uppy<M, B>, opts: AwsS3MultipartOptions<M, B>) {
+  constructor(uppy: Uppy<M, B>, opts?: AwsS3MultipartOptions<M, B>) {
     super(uppy, {
       ...defaultOptions,
       uploadPartBytes: AwsS3Multipart.uploadPartBytes,
