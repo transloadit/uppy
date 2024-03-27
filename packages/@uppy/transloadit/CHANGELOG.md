@@ -1,5 +1,12 @@
 # @uppy/transloadit
 
+## 3.6.0
+
+Released: 2024-03-27
+Included in: Uppy v3.24.0
+
+- @uppy/transloadit: migrate to TS (Merlijn Vos / #4987)
+
 ## 3.5.0
 
 Released: 2024-02-19
