@@ -212,7 +212,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
    * TODO rename to something better like selectFolder or navigateToFolder (breaking change?)
    *
    */
-  async getFolder(requestPath?: string, name?: string): Promise<void> {
+  async getFolder(requestPath?: string): Promise<void> {
     this.setLoading(true)
     console.log(`____________________________________________GETTING FOLDER "${requestPath}"`);
     try {
@@ -331,7 +331,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
    * Fetches new folder
    */
   getNextFolder(folder: FileInPartialTree): void {
-    this.getFolder(folder.data.requestPath, folder.data.name)
+    this.getFolder(folder.data.requestPath)
     this.lastCheckbox = undefined
   }
 

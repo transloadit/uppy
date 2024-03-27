@@ -50,7 +50,7 @@ export default function Breadcrumbs<M extends Meta, B extends Body>(
       {breadcrumbs.map((directory, i) => (
         <Breadcrumb
           key={directory.id}
-          getFolder={() => getFolder(directory.data.requestPath, directory.data.name)}
+          getFolder={() => getFolder(directory.data.requestPath)}
           title={directory.data.name}
           isLast={i + 1 === breadcrumbs.length}
         />
