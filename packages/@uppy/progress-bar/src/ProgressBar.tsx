@@ -13,7 +13,6 @@ export interface ProgressBarOptions extends UIPluginOptions {
 }
 // set default options, must kept in sync with @uppy/react/src/ProgressBar.js
 const defaultOptions = {
-  target: 'body',
   fixed: false,
   hideAfterFinish: true,
 }
