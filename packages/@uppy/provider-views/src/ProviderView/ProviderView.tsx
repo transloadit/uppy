@@ -411,7 +411,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
 
       try {
         await this.#withAbort(async (signal) => {
-          const { partialTree } = this.plugin.getPluginState()
+          const { partialTree, currentFolderId } = this.plugin.getPluginState()
 
           const { files, folders } = await this.#listFilesAndFolders({
             breadcrumbs: this.getBreadcrumbs(), signal,
@@ -420,12 +420,12 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
           const newPartialTree = [
             ...partialTree,
             ...folders.map((folder) => ({
-              id: folder.requestPath, parentId: this.nextPagePath, data: folder,
+              id: folder.requestPath, parentId: currentFolderId, data: folder,
               status: "unchecked", cached: false,
             })) as FileInPartialTree[],
             ...files.map((file) => ({
-              id: file.requestPath, parentId: this.nextPagePath,
-              status: "unchecked", cached: null, data: file
+              id: file.requestPath, parentId: currentFolderId, data: file,
+              status: "unchecked", cached: null
             })) as FileInPartialTree[]
           ]
 
@@ -604,8 +604,6 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
         parent = partialTree.find((folder) => folder.id === parent!.parentId)
       }
     }
-    console.log("_____________________________calculated breadcrumbs:");
-    console.log({ breadcrumbs });
     return breadcrumbs.toReversed()
   }
 
