@@ -23,7 +23,7 @@ export class DashboardComponent<M extends Meta, B extends Body>
   implements OnDestroy, OnChanges
 {
   @Input() uppy: Uppy<M, B> = new Uppy();
-  @Input() props: DashboardOptions<M,B> = {};
+  @Input() props: DashboardOptions<M, B> = {};
 
   constructor(public el: ElementRef) {
     super();
