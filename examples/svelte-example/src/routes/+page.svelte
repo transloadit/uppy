@@ -4,7 +4,7 @@
 	import Webcam from '@uppy/webcam'
 	import XHRUpload from '@uppy/xhr-upload'
 
-    import './global.scss'
+	import './global.scss'
 
 	const createUppy = () => {
 		return new Uppy().use(Webcam).use(XHRUpload, {
