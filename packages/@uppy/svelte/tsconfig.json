@@ -4,7 +4,7 @@
     "@tsconfig/svelte/tsconfig.json",
   ],
   "compilerOptions": {
-    "emitDeclarationOnly": true,
+    "noEmit": true,
     "rootDir": "./src",
     "outDir": "./lib",
   },

@@ -9829,6 +9829,7 @@ __metadata:
     "@tsconfig/svelte": ^5.0.0
     rollup: ^4.0.0
     rollup-plugin-svelte: ^7.0.0
+    rollup-plugin-svelte-types: ^1.0.6
     svelte: ^4.0.0
     svelte-check: ^3.0.0
     svelte-preprocess: ^5.0.0
@@ -13908,6 +13909,13 @@ __metadata:
   dependencies:
     mimic-response: ^3.1.0
   checksum: d377cf47e02d805e283866c3f50d3d21578b779731e8c5072d6ce8c13cc31493db1c2f6784da9d1d5250822120cefa44f1deab112d5981015f2e17444b763812
+  languageName: node
+  linkType: hard
+
+"dedent-js@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "dedent-js@npm:1.0.1"
+  checksum: 3a86f4b11176b387c0633b4b201aef884f9bc83eb9485bd1156c5d9b3984a58fd7686f8213b67212b714a1abf00279bef5cd4eea6a9a7f033e37ce33352af9a9
   languageName: node
   linkType: hard
 
@@ -21514,6 +21522,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"lower-case@npm:^2.0.2":
+  version: 2.0.2
+  resolution: "lower-case@npm:2.0.2"
+  dependencies:
+    tslib: ^2.0.3
+  checksum: 83a0a5f159ad7614bee8bf976b96275f3954335a84fad2696927f609ddae902802c4f3312d86668722e668bef41400254807e1d3a7f2e8c3eede79691aa1f010
+  languageName: node
+  linkType: hard
+
 "lowercase-keys@npm:^2.0.0":
   version: 2.0.0
   resolution: "lowercase-keys@npm:2.0.0"
@@ -23498,6 +23515,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"no-case@npm:^3.0.4":
+  version: 3.0.4
+  resolution: "no-case@npm:3.0.4"
+  dependencies:
+    lower-case: ^2.0.2
+    tslib: ^2.0.3
+  checksum: 0b2ebc113dfcf737d48dde49cfebf3ad2d82a8c3188e7100c6f375e30eafbef9e9124aadc3becef237b042fd5eb0aad2fd78669c20972d045bbe7fea8ba0be5c
+  languageName: node
+  linkType: hard
+
 "nocache@npm:^2.1.0":
   version: 2.1.0
   resolution: "nocache@npm:2.1.0"
@@ -24967,6 +24994,16 @@ __metadata:
   version: 1.3.3
   resolution: "parseurl@npm:1.3.3"
   checksum: 407cee8e0a3a4c5cd472559bca8b6a45b82c124e9a4703302326e9ab60fc1081442ada4e02628efef1eb16197ddc7f8822f5a91fd7d7c86b51f530aedb17dfa2
+  languageName: node
+  linkType: hard
+
+"pascal-case@npm:^3.1.1":
+  version: 3.1.2
+  resolution: "pascal-case@npm:3.1.2"
+  dependencies:
+    no-case: ^3.0.4
+    tslib: ^2.0.3
+  checksum: ba98bfd595fc91ef3d30f4243b1aee2f6ec41c53b4546bfa3039487c367abaa182471dcfc830a1f9e1a0df00c14a370514fa2b3a1aacc68b15a460c31116873e
   languageName: node
   linkType: hard
 
@@ -27696,6 +27733,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"rollup-plugin-svelte-types@npm:^1.0.6":
+  version: 1.0.6
+  resolution: "rollup-plugin-svelte-types@npm:1.0.6"
+  dependencies:
+    svelte2tsx: ^0.5.16
+  peerDependencies:
+    rollup: ^2.67.1
+  checksum: 7259754a0397421f9d066ef2bd85730874e08f60d582a1268ba048b3527f3a134b8e307a7b5ba69a96de46e4271ebf4b183cbc2b47c09e9e65e278b751fb912c
+  languageName: node
+  linkType: hard
+
 "rollup-plugin-svelte@npm:^7.0.0":
   version: 7.1.0
   resolution: "rollup-plugin-svelte@npm:7.1.0"
@@ -29907,6 +29955,19 @@ __metadata:
     typescript:
       optional: true
   checksum: 2acd36ccdf5e8d624e753a3dbcd3ca947e87e01509ab3eb3d862551b4278ca684763baf87f0240eab1646c16b0d59fa82227079cce762908f29dd359d1ac69ca
+  languageName: node
+  linkType: hard
+
+"svelte2tsx@npm:^0.5.16":
+  version: 0.5.23
+  resolution: "svelte2tsx@npm:0.5.23"
+  dependencies:
+    dedent-js: ^1.0.1
+    pascal-case: ^3.1.1
+  peerDependencies:
+    svelte: ^3.24
+    typescript: ^4.1.2
+  checksum: bcb29c95922984b305cf1278e3d8ccfa03bffe521045980dee4d90e833debaca755d59174548693d67fda8fea7321dc1f2aee303f044b4a7c6db45639de88be0
   languageName: node
   linkType: hard
 

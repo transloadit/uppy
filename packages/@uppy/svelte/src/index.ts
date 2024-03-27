@@ -1,5 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/triple-slash-reference
-/// <reference path="../typings/index.d.ts"/>
 export { default as Dashboard } from './components/Dashboard.svelte'
 export { default as DashboardModal } from './components/DashboardModal.svelte'
 export { default as DragDrop } from './components/DragDrop.svelte'
