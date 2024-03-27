@@ -20,6 +20,7 @@ import {
 // @ts-ignore We don't want TS to generate types for the package.json
 import type { Meta, Body, UppyFile } from '@uppy/utils/lib/UppyFile'
 import type { State, Uppy } from '@uppy/core'
+import getAllowedMetaFields from '@uppy/utils/lib/getAllowedMetaFields'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'
@@ -61,7 +62,7 @@ export interface XhrUploadOpts<M extends Meta, B extends Body>
   ) => boolean
   getResponseData?: (body: string, xhr: XMLHttpRequest) => B
   getResponseError?: (body: string, xhr: XMLHttpRequest) => Error | NetworkError
-  allowedMetaFields?: string[] | null
+  allowedMetaFields?: string[] | boolean
   bundle?: boolean
   responseUrlFieldName?: string
 }
@@ -105,7 +106,7 @@ const defaultOptions = {
   formData: true,
   fieldName: 'file',
   method: 'post',
-  allowedMetaFields: null,
+  allowedMetaFields: true,
   responseUrlFieldName: 'url',
   bundle: false,
   headers: {},
@@ -240,10 +241,7 @@ export default class XHRUpload<
     meta: State<M, B>['meta'],
     opts: Opts<M, B>,
   ): void {
-    const allowedMetaFields =
-      Array.isArray(opts.allowedMetaFields) ?
-        opts.allowedMetaFields
-      : Object.keys(meta) // Send along all fields by default.
+    const allowedMetaFields = getAllowedMetaFields(opts.allowedMetaFields, meta)
 
     allowedMetaFields.forEach((item) => {
       const value = meta[item]
@@ -560,11 +558,10 @@ export default class XHRUpload<
 
   #getCompanionClientArgs(file: UppyFile<M, B>) {
     const opts = this.getOptions(file)
-    const allowedMetaFields =
-      Array.isArray(opts.allowedMetaFields) ?
-        opts.allowedMetaFields
-        // Send along all fields by default.
-      : Object.keys(file.meta)
+    const allowedMetaFields = getAllowedMetaFields(
+      opts.allowedMetaFields,
+      file.meta,
+    )
     return {
       ...file.remote?.body,
       protocol: 'multipart',

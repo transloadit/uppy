@@ -13,7 +13,7 @@ import {
   filterFilesToEmitUploadStarted,
 } from '@uppy/utils/lib/fileFilters'
 import { createAbortError } from '@uppy/utils/lib/AbortController'
-
+import getAllowedMetaFields from '@uppy/utils/lib/getAllowedMetaFields'
 import MultipartUploader from './MultipartUploader.ts'
 import { throwIfAborted } from './utils.ts'
 import type {
@@ -280,7 +280,7 @@ type RequestClientOptions = Partial<
 >
 
 interface _AwsS3MultipartOptions extends PluginOpts, RequestClientOptions {
-  allowedMetaFields?: string[] | null
+  allowedMetaFields?: string[] | boolean
   limit?: number
   retryDelays?: number[] | null
 }
@@ -299,9 +299,7 @@ export type AwsS3MultipartOptions<
   )
 
 const defaultOptions = {
-  // TODO: null here means “include all”, [] means include none.
-  // This is inconsistent with @uppy/aws-s3 and @uppy/transloadit
-  allowedMetaFields: null,
+  allowedMetaFields: true,
   limit: 6,
   getTemporarySecurityCredentials: false as any,
   shouldUseMultipart: ((file: UppyFile<any, any>) =>
@@ -487,10 +485,11 @@ export default class AwsS3Multipart<
     this.assertHost('createMultipartUpload')
     throwIfAborted(signal)
 
-    const metadata = getAllowedMetadata({
-      meta: file.meta,
-      allowedMetaFields: this.opts.allowedMetaFields,
-    })
+    const allowedMetaFields = getAllowedMetaFields(
+      this.opts.allowedMetaFields,
+      file.meta,
+    )
+    const metadata = getAllowedMetadata({ meta: file.meta, allowedMetaFields })
 
     return this.#client
       .post<UploadResult>(
@@ -653,9 +652,13 @@ export default class AwsS3Multipart<
   ): Promise<AwsS3UploadParameters> {
     const { meta } = file
     const { type, name: filename } = meta
+    const allowedMetaFields = getAllowedMetaFields(
+      this.opts.allowedMetaFields,
+      file.meta,
+    )
     const metadata = getAllowedMetadata({
       meta,
-      allowedMetaFields: this.opts.allowedMetaFields,
+      allowedMetaFields,
       querify: true,
     })
 

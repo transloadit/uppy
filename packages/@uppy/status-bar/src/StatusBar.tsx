@@ -80,13 +80,13 @@ export default class StatusBar<M extends Meta, B extends Body> extends UIPlugin<
 > {
   static VERSION = packageJson.version
 
-  #lastUpdateTime: ReturnType<typeof performance.now>
+  #lastUpdateTime!: ReturnType<typeof performance.now>
 
-  #previousUploadedBytes: number | null
+  #previousUploadedBytes!: number | null
 
-  #previousSpeed: number | null
+  #previousSpeed!: number | null
 
-  #previousETA: number | null
+  #previousETA!: number | null
 
   constructor(uppy: Uppy<M, B>, opts?: StatusBarOptions) {
     super(uppy, { ...defaultOptions, ...opts })

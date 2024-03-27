@@ -112,59 +112,75 @@ interface DashboardState<M extends Meta, B extends Body> {
   [key: string]: unknown
 }
 
-export interface DashboardOptions<M extends Meta, B extends Body>
-  extends UIPluginOptions {
+export interface DashboardModalOptions {
+  inline?: false
   animateOpenClose?: boolean
   browserBackButtonClose?: boolean
   closeAfterFinish?: boolean
-  singleFileFullScreen?: boolean
   closeModalOnClickOutside?: boolean
-  disableInformer?: boolean
   disablePageScrollWhenModalOpen?: boolean
+}
+
+export interface DashboardInlineOptions {
+  inline: true
+
+  height?: string | number
+  width?: string | number
+}
+
+interface DashboardMiscOptions<M extends Meta, B extends Body>
+  extends UIPluginOptions {
+  autoOpen?: 'metaEditor' | 'imageEditor' | null
+  /** @deprecated use option autoOpen instead */
+  autoOpenFileEditor?: boolean
+  defaultPickerIcon?: typeof defaultPickerIcon
+  disabled?: boolean
+  disableInformer?: boolean
+  disableLocalFiles?: boolean
   disableStatusBar?: boolean
   disableThumbnailGenerator?: boolean
-  height?: string | number
-  thumbnailWidth?: number
-  thumbnailHeight?: number
-  thumbnailType?: string
-  nativeCameraFacingMode?: ConstrainDOMString
-  waitForThumbnailsBeforeUpload?: boolean
-  defaultPickerIcon?: typeof defaultPickerIcon
+  doneButtonHandler?: () => void
+  fileManagerSelectionType?: 'files' | 'folders' | 'both'
   hideCancelButton?: boolean
   hidePauseResumeButton?: boolean
   hideProgressAfterFinish?: boolean
   hideRetryButton?: boolean
   hideUploadButton?: boolean
-  inline?: boolean
   metaFields?: MetaField[] | ((file: UppyFile<M, B>) => MetaField[])
+  nativeCameraFacingMode?: ConstrainDOMString
   note?: string | null
+  onDragLeave?: (event: DragEvent) => void
+  onDragOver?: (event: DragEvent) => void
+  onDrop?: (event: DragEvent) => void
+  onRequestCloseModal?: () => void
   plugins?: string[]
-  fileManagerSelectionType?: 'files' | 'folders' | 'both'
   proudlyDisplayPoweredByUppy?: boolean
   showLinkToFileUploadResult?: boolean
-  showProgressDetails?: boolean
-  showSelectedFiles?: boolean
-  showRemoveButtonAfterComplete?: boolean
   showNativePhotoCameraButton?: boolean
   showNativeVideoCameraButton?: boolean
+  showProgressDetails?: boolean
+  showRemoveButtonAfterComplete?: boolean
+  showSelectedFiles?: boolean
+  singleFileFullScreen?: boolean
   theme?: 'auto' | 'dark' | 'light'
+  thumbnailHeight?: number
+  thumbnailType?: string
+  thumbnailWidth?: number
   trigger?: string
-  width?: string | number
-  autoOpenFileEditor?: boolean
-  disabled?: boolean
-  disableLocalFiles?: boolean
-  onRequestCloseModal?: () => void
-  doneButtonHandler?: () => void
-  onDragOver?: (event: DragEvent) => void
-  onDragLeave?: (event: DragEvent) => void
-  onDrop?: (event: DragEvent) => void
+  waitForThumbnailsBeforeUpload?: boolean
 }
+
+export type DashboardOptions<
+  M extends Meta,
+  B extends Body,
+> = DashboardMiscOptions<M, B> &
+  (DashboardModalOptions | DashboardInlineOptions)
 
 // set default options, must be kept in sync with packages/@uppy/react/src/DashboardModal.js
 const defaultOptions = {
   target: 'body',
   metaFields: [],
-  inline: false,
+  inline: false as boolean,
   width: 750,
   height: 550,
   thumbnailWidth: 280,
@@ -195,6 +211,7 @@ const defaultOptions = {
   showNativePhotoCameraButton: false,
   showNativeVideoCameraButton: false,
   theme: 'light',
+  autoOpen: null,
   autoOpenFileEditor: false,
   disabled: false,
   disableLocalFiles: false,
@@ -210,14 +227,20 @@ const defaultOptions = {
  * Dashboard UI with previews, metadata editing, tabs for various services and more
  */
 export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
-  DefinePluginOpts<DashboardOptions<M, B>, keyof typeof defaultOptions>,
+  DefinePluginOpts<
+    // The options object inside the class is not the discriminated union but and intersection of the different subtypes.
+    DashboardMiscOptions<M, B> &
+      Omit<DashboardInlineOptions, 'inline'> &
+      Omit<DashboardModalOptions, 'inline'> & { inline?: boolean },
+    keyof typeof defaultOptions
+  >,
   M,
   B,
   DashboardState<M, B>
 > {
   static VERSION = packageJson.version
 
-  #disabledNodes: HTMLElement[] | null
+  #disabledNodes!: HTMLElement[] | null
 
   private modalName = `uppy-Dashboard-${nanoid()}`
 
@@ -225,25 +248,35 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
 
   private ifFocusedOnUppyRecently = false
 
-  private dashboardIsDisabled: boolean
+  private dashboardIsDisabled!: boolean
 
-  private savedScrollPosition: number
+  private savedScrollPosition!: number
 
-  private savedActiveElement: HTMLElement
+  private savedActiveElement!: HTMLElement
 
-  private resizeObserver: ResizeObserver
+  private resizeObserver!: ResizeObserver
 
-  private darkModeMediaQuery: MediaQueryList | null
+  private darkModeMediaQuery!: MediaQueryList | null
 
   // Timeouts
-  private makeDashboardInsidesVisibleAnywayTimeout: ReturnType<
+  private makeDashboardInsidesVisibleAnywayTimeout!: ReturnType<
     typeof setTimeout
   >
 
-  private removeDragOverClassTimeout: ReturnType<typeof setTimeout>
+  private removeDragOverClassTimeout!: ReturnType<typeof setTimeout>
 
   constructor(uppy: Uppy<M, B>, opts?: DashboardOptions<M, B>) {
-    super(uppy, { ...defaultOptions, ...opts })
+    // support for the legacy `autoOpenFileEditor` option,
+    // TODO: we can remove this code when we update the Uppy major version
+    let autoOpen: DashboardOptions<M, B>['autoOpen']
+    if (!opts) {
+      autoOpen = null
+    } else if (opts.autoOpen === undefined) {
+      autoOpen = opts.autoOpenFileEditor ? 'imageEditor' : null
+    } else {
+      autoOpen = opts.autoOpen
+    }
+    super(uppy, { ...defaultOptions, ...opts, autoOpen })
     this.id = this.opts.id || 'Dashboard'
     this.title = 'Dashboard'
     this.type = 'orchestrator'
@@ -567,7 +600,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     try {
       this.uppy.addFiles(descriptors)
     } catch (err) {
-      this.uppy.log(err)
+      this.uppy.log(err as any)
     }
   }
 
@@ -939,11 +972,11 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
 
     const { metaFields } = this.getPluginState()
     const isMetaEditorEnabled = metaFields && metaFields.length > 0
-    const isFileEditorEnabled = this.canEditFile(firstFile)
+    const isImageEditorEnabled = this.canEditFile(firstFile)
 
-    if (isMetaEditorEnabled) {
+    if (isMetaEditorEnabled && this.opts.autoOpen === 'metaEditor') {
       this.toggleFileCard(true, firstFile.id)
-    } else if (isFileEditorEnabled) {
+    } else if (isImageEditorEnabled && this.opts.autoOpen === 'imageEditor') {
       this.openFileEditor(firstFile)
     }
   }
@@ -985,7 +1018,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
       this.el!.addEventListener('keydown', this.handleKeyDownInInline)
     }
 
-    if (this.opts.autoOpenFileEditor) {
+    if (this.opts.autoOpen) {
       this.uppy.on('files-added', this.#openFileEditorWhenFilesAdded)
     }
   }
@@ -1018,7 +1051,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
       this.el!.removeEventListener('keydown', this.handleKeyDownInInline)
     }
 
-    if (this.opts.autoOpenFileEditor) {
+    if (this.opts.autoOpen) {
       this.uppy.off('files-added', this.#openFileEditorWhenFilesAdded)
     }
   }

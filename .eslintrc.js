@@ -93,6 +93,7 @@ module.exports = {
     'react/prefer-stateless-function': 'error',
     'react/sort-comp': 'error',
     'react/style-prop-object': 'error',
+    'react/static-property-placement': 'off',
 
     // accessibility
     'jsx-a11y/alt-text': 'error',
