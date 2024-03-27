@@ -24,7 +24,6 @@ export interface DragDropOptions extends UIPluginOptions {
   onDrop?: (event: DragEvent) => void
 }
 
-// Default options, must be kept in sync with @uppy/react/src/DragDrop.js.
 const defaultOptions = {
   inputName: 'files[]',
   width: '100%',
