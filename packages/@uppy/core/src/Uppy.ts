@@ -1676,8 +1676,7 @@ export class Uppy<M extends Meta, B extends Body> {
       this.calculateTotalProgress()
     })
 
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore This event is defined in @uppy/dashboard
+    // @ts-expect-error should fix itself when dashboard it typed (also this doesn't belong here)
     this.on('dashboard:file-edit-complete', (file) => {
       if (file) {
         this.#checkRequiredMetaFieldsOnFile(file)
