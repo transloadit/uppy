@@ -9,6 +9,7 @@ import type { Meta, Body } from '@uppy/utils/lib/UppyFile'
 import ItemIcon from './components/ItemIcon.tsx'
 import GridListItem from './components/GridLi.tsx'
 import ListItem from './components/ListLi.tsx'
+import type { StatusInPartialTree } from '@uppy/core/lib/Uppy.ts'
 
 type ItemProps<M extends Meta, B extends Body> = {
   showTitles: boolean
@@ -23,7 +24,7 @@ type ItemProps<M extends Meta, B extends Body> = {
   type: 'folder' | 'file'
   author?: CompanionFile['author']
   getItemIcon: () => string
-  isChecked: boolean
+  status: StatusInPartialTree | null
   isDisabled: boolean
   viewType: string
 }
@@ -31,12 +32,12 @@ type ItemProps<M extends Meta, B extends Body> = {
 export default function Item<M extends Meta, B extends Body>(
   props: ItemProps<M, B>,
 ): h.JSX.Element {
-  const { author, getItemIcon, isChecked, isDisabled, viewType } = props
+  const { author, getItemIcon, status, isDisabled, viewType } = props
   const itemIconString = getItemIcon()
 
   const className = classNames(
     'uppy-ProviderBrowserItem',
-    { 'uppy-ProviderBrowserItem--selected': isChecked },
+    // { 'uppy-ProviderBrowserItem--selected': isChecked },
     { 'uppy-ProviderBrowserItem--disabled': isDisabled },
     { 'uppy-ProviderBrowserItem--noPreview': itemIconString === 'video' },
   )

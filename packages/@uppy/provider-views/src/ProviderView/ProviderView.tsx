@@ -7,6 +7,8 @@ import type {
   UnknownProviderPlugin,
   UnknownProviderPluginState,
   Uppy,
+  PartialTree,
+  FileInPartialTree
 } from '@uppy/core/lib/Uppy.ts'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import type { CompanionFile } from '@uppy/utils/lib/CompanionFile.ts'
@@ -112,13 +114,10 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
     // Set default state for the plugin
     this.plugin.setPluginState({
       authenticated: undefined, // we don't know yet
-      files: [],
-      folders: [],
-      partialTree: null,
-      currentRequestPath: null,
+      partialTree: [],
+      currentFolderId: null,
       filterInput: '',
       isSearchVisible: false,
-      currentSelection: [],
     })
 
     this.registerRequestClient()
@@ -183,10 +182,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
     }
   }
 
-  async #listFilesAndFolders({
-    breadcrumbs,
-    signal,
-  }: {
+  async #listFilesAndFolders({ breadcrumbs, signal }: {
     breadcrumbs: UnknownProviderPluginState['breadcrumbs']
     signal: AbortSignal
   }) {
@@ -221,6 +217,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
    */
   async getFolder(requestPath?: string, name?: string): Promise<void> {
     this.setLoading(true)
+    console.log(`____________________________________________GETTING FOLDER "${requestPath}"`);
     try {
       await this.#withAbort(async (signal) => {
         this.lastCheckbox = undefined
@@ -250,41 +247,59 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
 
 
         const { partialTree } = this.plugin.getPluginState()
-
-        if (!partialTree) {
-          const newPartialTree = [
-            { requestPath: "root", cached: true },
-            ...folders.map((folder) => ({ ...folder, status: "unchecked", parentId: "root", cached: false })),
-            ...files.map((file) => ({ ...file, status: "unchecked", parentId: "root" })),
+        console.log({ partialTree });
+        if (partialTree.length === 0) {
+          console.log("creating a new partial tree!");
+          const newPartialTree : PartialTree = [
+            ...folders.map((folder) => ({
+              id: folder.requestPath, parentId: (requestPath || null), data: folder,
+              status: "unchecked", cached: false,
+            })) as FileInPartialTree[],
+            ...files.map((file) => ({
+              id: file.requestPath, parentId: (requestPath || null),
+              status: "unchecked", cached: null, data: file
+            })) as FileInPartialTree[]
           ]
+
+          console.log({ newPartialTree });
 
           this.plugin.setPluginState({ partialTree: newPartialTree })
         } else {
-          const clickedFolder = partialTree.find((folder) => folder.requestPath === (requestPath || "root"))
+          console.log("appending to existing partial tree!");
+          const clickedFolder : FileInPartialTree = partialTree.find((folder) => folder.id === requestPath)!
 
           // If selected folder is already filled in, don't refill it (because that would make it lose deep state!)
           // Otherwise, cache the current folder!
-          if (!clickedFolder.cached) {
-            const clickedFolderContents = [
-              ...folders.map((folder) => ({ ...folder, status: clickedFolder.status, parentId: clickedFolder.requestPath, cached: false })),
-              ...files.map((file) => ({ ...file, status: clickedFolder.status, parentId: clickedFolder.requestPath })),
+          if (clickedFolder && !clickedFolder.cached) {
+            const clickedFolderContents : FileInPartialTree[] = [
+              ...folders.map((folder) => ({
+                id: folder.requestPath, parentId: clickedFolder.id, data: folder,
+                status: clickedFolder.status, cached: false,
+              })),
+              ...files.map((file) => ({
+                id: file.requestPath, parentId: clickedFolder.id, data: file,
+                status: clickedFolder.status, cached: null,
+              })),
             ]
 
             // just doing `clickedFolder.cached = true` in a non-mutating way
-            const updatedClickedFolder = { ...clickedFolder, cached: true }
+            const updatedClickedFolder : FileInPartialTree = { ...clickedFolder, cached: true }
             const partialTreeWithUpdatedClickedFolder = partialTree.map((folder) =>
-              folder.requestPath === updatedClickedFolder.requestPath ?
+              folder.id === updatedClickedFolder.id ?
                 updatedClickedFolder :
                 folder
             )
 
-            this.plugin.setPluginState({ partialTree: [
-              ...partialTreeWithUpdatedClickedFolder,
-              ...clickedFolderContents] })
+            this.plugin.setPluginState({
+              partialTree: [
+                ...partialTreeWithUpdatedClickedFolder,
+                ...clickedFolderContents
+              ]
+            })
           }
         }
 
-        this.plugin.setPluginState({ folders, files, currentRequestPath: requestPath, filterInput: '' })
+        this.plugin.setPluginState({ currentFolderId: (requestPath || null), filterInput: '' })
       })
 
 
@@ -318,8 +333,8 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
   /**
    * Fetches new folder
    */
-  getNextFolder(folder: CompanionFile): void {
-    this.getFolder(folder.requestPath, folder.name)
+  getNextFolder(folder: FileInPartialTree): void {
+    this.getFolder(folder.data.requestPath, folder.data.name)
     this.lastCheckbox = undefined
   }
 
@@ -348,10 +363,8 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
 
           const newState = {
             authenticated: false,
-            currentRequestPath: null,
-            partialTree: null,
-            files: [],
-            folders: [],
+            currentFolderId: null,
+            partialTree: [],
             filterInput: '',
           }
           this.plugin.setPluginState(newState)
@@ -395,24 +408,31 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
   }
 
   async handleScroll(event: Event): Promise<void> {
+    console.log("handleScrolll");
     if (this.shouldHandleScroll(event) && this.nextPagePath) {
       this.isHandlingScroll = true
 
       try {
         await this.#withAbort(async (signal) => {
-          const { files, folders } = this.plugin.getPluginState()
+          const { partialTree } = this.plugin.getPluginState()
 
-          const { files: newFiles, folders: newFolders } = await this.#listFilesAndFolders({
+          const { files, folders } = await this.#listFilesAndFolders({
             breadcrumbs: this.getBreadcrumbs(), signal,
           })
 
-          const combinedFiles = files.concat(newFiles)
-          const combinedFolders = folders.concat(newFolders)
+          const newPartialTree = [
+            ...partialTree,
+            ...folders.map((folder) => ({
+              id: folder.requestPath, parentId: this.nextPagePath, data: folder,
+              status: "unchecked", cached: false,
+            })) as FileInPartialTree[],
+            ...files.map((file) => ({
+              id: file.requestPath, parentId: this.nextPagePath,
+              status: "unchecked", cached: null, data: file
+            })) as FileInPartialTree[]
+          ]
 
-          this.plugin.setPluginState({
-            folders: combinedFolders,
-            files: combinedFiles,
-          })
+          this.plugin.setPluginState({ partialTree: newPartialTree })
         })
       } catch (error) {
         this.handleError(error)
@@ -469,24 +489,25 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
     this.setLoading(true)
     try {
       await this.#withAbort(async (signal) => {
-        const { currentSelection } = this.plugin.getPluginState()
+        const { partialTree } = this.plugin.getPluginState()
+        const currentSelection = partialTree.filter((item) => item.status === "checked")
 
         const messages: string[] = []
         const newFiles: CompanionFile[] = []
 
         for (const selectedItem of currentSelection) {
-          const { requestPath } = selectedItem
+          const requestPath = selectedItem.id
 
           const withRelDirPath = (newItem: CompanionFile) => ({
             ...newItem,
             // calculate the file's path relative to the user's selected item's path
             // see https://github.com/transloadit/uppy/pull/4537#issuecomment-1614236655
             relDirPath: (newItem.absDirPath as string)
-              .replace(selectedItem.absDirPath as string, '')
+              .replace(selectedItem.data!.absDirPath as string, '')
               .replace(/^\//, ''),
           })
 
-          if (selectedItem.isFolder) {
+          if (selectedItem.data!.isFolder) {
             let isEmpty = true
             let numNewFiles = 0
 
@@ -517,10 +538,10 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
             await this.#recursivelyListAllFiles({
               requestPath,
               absDirPath: prependPath(
-                selectedItem.absDirPath,
-                selectedItem.name,
+                selectedItem.data!.absDirPath,
+                selectedItem.data!.name,
               ),
-              relDirPath: selectedItem.name,
+              relDirPath: selectedItem.data!.name,
               queue,
               onFiles,
               signal,
@@ -532,7 +553,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
               message = this.plugin.uppy.i18n('emptyFolderAdded')
             } else if (numNewFiles === 0) {
               message = this.plugin.uppy.i18n('folderAlreadyAdded', {
-                folder: selectedItem.name,
+                folder: selectedItem.data!.name,
               })
             } else {
               // TODO we don't really know at this point whether any files were actually added
@@ -540,13 +561,13 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
               // Example: If all files fail to add due to restriction error, it will still say "Added 100 files from folder"
               message = this.plugin.uppy.i18n('folderAdded', {
                 smart_count: numNewFiles,
-                folder: selectedItem.name,
+                folder: selectedItem.data!.name,
               })
             }
 
             messages.push(message)
           } else {
-            newFiles.push(withRelDirPath(selectedItem))
+            newFiles.push(withRelDirPath(selectedItem.data!))
           }
         }
 
@@ -576,14 +597,14 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
   }
 
   getBreadcrumbs = () => {
-    const { partialTree, currentRequestPath } = this.plugin.getPluginState()
+    const { partialTree, currentFolderId } = this.plugin.getPluginState()
     const breadcrumbs = []
-    if (partialTree && currentRequestPath) {
-      const currentFolder = partialTree.find((folder) => folder.requestPath === currentRequestPath)
+    if (partialTree && currentFolderId) {
+      const currentFolder = partialTree.find((folder) => folder.id === currentFolderId)
       let parent = currentFolder
       while (parent) {
         breadcrumbs.push(parent)
-        parent = partialTree.find((folder) => folder.requestPath === parent.parentId)
+        parent = partialTree.find((folder) => folder.id === parent!.parentId)
       }
     }
     return breadcrumbs.toReversed()
@@ -601,10 +622,9 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
     }
 
     const targetViewOptions = { ...this.opts, ...viewOptions }
-    const { files, folders, filterInput, loading, currentSelection } =
+    const { partialTree, currentFolderId, filterInput, loading } =
       this.plugin.getPluginState()
-    const { isChecked, toggleCheckbox, recordShiftKeyPress, filterItems } = this
-    const hasInput = filterInput !== ''
+    const { toggleCheckbox, recordShiftKeyPress, filterItems } = this
     const pluginIcon = this.plugin.icon || defaultPickerIcon
 
     const headerProps = {
@@ -618,13 +638,17 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
       i18n,
     }
 
+    // console.log("_______________________rendering_________________");
+    
+    const displayedPartialTree = filterItems(partialTree.filter((item) => item.parentId === currentFolderId))
+    // console.log({ partialTree, displayedPartialTree, currentFolderId });
+
+    // console.log("________________________________________________");
+
     const browserProps = {
-      isChecked,
       toggleCheckbox,
       recordShiftKeyPress,
-      currentSelection,
-      files: hasInput ? filterItems(files) : files,
-      folders: hasInput ? filterItems(folders) : folders,
+      displayedPartialTree,
       getNextFolder: this.getNextFolder,
       getFolder: this.getFolder,
       loadAllFiles: this.opts.loadAllFiles,
@@ -637,6 +661,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
       searchOnInput: true,
       searchInputLabel: i18n('filter'),
       clearSearchLabel: i18n('resetFilter'),
+      currentSelection: partialTree.filter((item) => item.status === "checked"),
 
       noResultsLabel: i18n('noFilesFound'),
       logout: this.logout,

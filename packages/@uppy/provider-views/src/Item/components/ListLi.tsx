@@ -1,5 +1,6 @@
 /* eslint-disable react/require-default-props */
 import type { RestrictionError } from '@uppy/core/lib/Restricter'
+import type { StatusInPartialTree } from '@uppy/core/lib/Uppy'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import { h } from 'preact'
 
@@ -15,7 +16,7 @@ type ListItemProps<M extends Meta, B extends Body> = {
   isDisabled: boolean
   restrictionError?: RestrictionError<M, B> | null
   isCheckboxDisabled: boolean
-  status: string
+  status: StatusInPartialTree | null
   toggleCheckbox: (event: Event) => void
   recordShiftKeyPress: (event: KeyboardEvent | MouseEvent) => void
   type: string
@@ -73,7 +74,6 @@ export default function ListItem<M extends Meta, B extends Body>(
           name="listitem"
           id={id}
           checked={status === "checked" ? true : false}
-          indeterminate={status === "indeterminate" ? true : false}
           aria-label={type === 'file' ? null : i18n('allFilesFromFolderNamed', { name: title })}
           disabled={isDisabled}
           data-uppy-super-focusable

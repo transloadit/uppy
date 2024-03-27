@@ -61,6 +61,19 @@ export type UnknownPlugin<
   PluginState extends Record<string, unknown> = Record<string, unknown>,
 > = BasePlugin<any, M, B, PluginState>
 
+export type StatusInPartialTree = "checked" | "unchecked" | "partial"
+
+export type FileInPartialTree = {
+  id: string
+  // really .cached is always a `boolean` for "folder"s, and `null` for "file"s
+  cached: boolean | null
+  status: StatusInPartialTree
+  parentId: string | null
+  data: CompanionFile
+}
+
+export type PartialTree = FileInPartialTree[]
+
 export type UnknownProviderPluginState = {
   authenticated: boolean | undefined
   breadcrumbs: {
@@ -69,12 +82,11 @@ export type UnknownProviderPluginState = {
     id?: string
   }[]
   didFirstRender: boolean
-  currentSelection: CompanionFile[]
   filterInput: string
   loading: boolean | string
-  folders: CompanionFile[]
-  files: CompanionFile[]
   isSearchVisible: boolean
+  partialTree: PartialTree
+  currentFolderId: string | null
 }
 /*
  * UnknownProviderPlugin can be any Companion plugin (such as Google Drive).
@@ -116,11 +128,9 @@ export type UnknownSearchProviderPluginState = {
 } & Pick<
   UnknownProviderPluginState,
   | 'loading'
-  | 'files'
-  | 'folders'
-  | 'currentSelection'
   | 'filterInput'
   | 'didFirstRender'
+  | 'partialTree'
 >
 export type UnknownSearchProviderPlugin<
   M extends Meta,

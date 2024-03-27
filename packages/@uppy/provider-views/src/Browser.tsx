@@ -14,6 +14,7 @@ import type Uppy from '@uppy/core'
 import SearchFilterInput from './SearchFilterInput.tsx'
 import FooterActions from './FooterActions.tsx'
 import Item from './Item/index.tsx'
+import type { FileInPartialTree, PartialTree } from '@uppy/core/lib/Uppy.ts'
 
 const VIRTUAL_SHARED_DIR = 'shared-with-me'
 
@@ -21,14 +22,13 @@ type ListItemProps<M extends Meta, B extends Body> = {
   currentSelection: any[]
   uppyFiles: UppyFile<M, B>[]
   viewType: string
-  isChecked: (file: any) => boolean
-  toggleCheckbox: (event: Event, file: CompanionFile) => void
+  toggleCheckbox: (event: Event, file: FileInPartialTree) => void
   recordShiftKeyPress: (event: KeyboardEvent | MouseEvent) => void
   showTitles: boolean
   i18n: I18n
   validateRestrictions: Uppy<M, B>['validateRestrictions']
-  getNextFolder?: (folder: any) => void
-  f: CompanionFile
+  getNextFolder?: (folder: FileInPartialTree) => void
+  f: FileInPartialTree
 }
 
 function ListItem<M extends Meta, B extends Body>(
@@ -38,7 +38,6 @@ function ListItem<M extends Meta, B extends Body>(
     currentSelection,
     uppyFiles,
     viewType,
-    isChecked,
     toggleCheckbox,
     recordShiftKeyPress,
     showTitles,
@@ -48,15 +47,15 @@ function ListItem<M extends Meta, B extends Body>(
     f,
   } = props
 
-  if (f.isFolder) {
+  if (f.data?.isFolder) {
     return Item<M, B>({
       showTitles,
       viewType,
       i18n,
       id: f.id,
-      title: f.name,
-      getItemIcon: () => f.icon,
-      status: isChecked(f),
+      title: f.data!.name,
+      getItemIcon: () => f.data!.icon,
+      status: f.status,
       toggleCheckbox: (event: Event) => toggleCheckbox(event, f),
       recordShiftKeyPress,
       type: 'folder',
@@ -67,39 +66,37 @@ function ListItem<M extends Meta, B extends Body>(
       handleFolderClick: () => getNextFolder!(f),
     })
   }
-  const restrictionError = validateRestrictions(remoteFileObjToLocal(f), [
+  const restrictionError = validateRestrictions(remoteFileObjToLocal(f.data!), [
     ...uppyFiles,
     ...currentSelection,
   ])
 
   return Item<M, B>({
     id: f.id,
-    title: f.name,
-    author: f.author,
-    getItemIcon: () => f.icon,
+    title: f.data!.name,
+    author: f.data!.author,
+    getItemIcon: () => f.data!.icon,
     toggleCheckbox: (event: Event) => toggleCheckbox(event, f),
     isCheckboxDisabled: false,
-    status: isChecked(f),
+    status: f.status,
     recordShiftKeyPress,
     showTitles,
     viewType,
     i18n,
     type: 'file',
-    isDisabled: Boolean(restrictionError) && !isChecked(f),
+    isDisabled: Boolean(restrictionError),
     restrictionError,
   })
 }
 
 type BrowserProps<M extends Meta, B extends Body> = {
-  currentSelection: any[]
-  folders: CompanionFile[]
-  files: CompanionFile[]
+  displayedPartialTree: PartialTree,
+  currentSelection: FileInPartialTree[],
   uppyFiles: UppyFile<M, B>[]
   viewType: string
   headerComponent?: JSX.Element
   showBreadcrumbs: boolean
-  isChecked: (file: any) => boolean
-  toggleCheckbox: (event: Event, file: CompanionFile) => void
+  toggleCheckbox: (event: Event, file: FileInPartialTree) => void
   recordShiftKeyPress: (event: KeyboardEvent | MouseEvent) => void
   handleScroll: (event: Event) => Promise<void>
   showTitles: boolean
@@ -124,14 +121,11 @@ function Browser<M extends Meta, B extends Body>(
   props: BrowserProps<M, B>,
 ): JSX.Element {
   const {
-    currentSelection,
-    folders,
-    files,
+    displayedPartialTree,
     uppyFiles,
     viewType,
     headerComponent,
     showBreadcrumbs,
-    isChecked,
     toggleCheckbox,
     recordShiftKeyPress,
     handleScroll,
@@ -151,11 +145,10 @@ function Browser<M extends Meta, B extends Body>(
     done,
     noResultsLabel,
     loadAllFiles,
+    currentSelection
   } = props
 
   const selected = currentSelection.length
-
-  const rows = useMemo(() => [...folders, ...files], [folders, files])
 
   return (
     <div
@@ -200,7 +193,7 @@ function Browser<M extends Meta, B extends Body>(
           )
         }
 
-        if (!folders.length && !files.length) {
+        if (displayedPartialTree.length === 0) {
           return <div className="uppy-Provider-empty">{noResultsLabel}</div>
         }
 
@@ -209,13 +202,12 @@ function Browser<M extends Meta, B extends Body>(
             <div className="uppy-ProviderBrowser-body">
               <ul className="uppy-ProviderBrowser-list">
                 <VirtualList
-                  data={rows}
-                  renderRow={(f: CompanionFile) => (
+                  data={displayedPartialTree}
+                  renderRow={(f: FileInPartialTree) => (
                     <ListItem
                       currentSelection={currentSelection}
                       uppyFiles={uppyFiles}
                       viewType={viewType}
-                      isChecked={isChecked}
                       toggleCheckbox={toggleCheckbox}
                       recordShiftKeyPress={recordShiftKeyPress}
                       showTitles={showTitles}
@@ -241,12 +233,11 @@ function Browser<M extends Meta, B extends Body>(
               // making <ul> not focusable for firefox
               tabIndex={-1}
             >
-              {rows.map((f) => (
+              {displayedPartialTree.map((f) => (
                 <ListItem
                   currentSelection={currentSelection}
                   uppyFiles={uppyFiles}
                   viewType={viewType}
-                  isChecked={isChecked}
                   toggleCheckbox={toggleCheckbox}
                   recordShiftKeyPress={recordShiftKeyPress}
                   showTitles={showTitles}

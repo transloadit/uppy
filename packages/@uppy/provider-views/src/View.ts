@@ -1,4 +1,7 @@
 import type {
+  FileInPartialTree,
+  PartialTree,
+  StatusInPartialTree,
   UnknownProviderPlugin,
   UnknownSearchProviderPlugin,
 } from '@uppy/core/lib/Uppy'
@@ -83,7 +86,7 @@ export default class View<
   }
 
   clearSelection(): void {
-    this.plugin.setPluginState({ currentSelection: [], filterInput: '' })
+    this.plugin.setPluginState({ filterInput: '' })
   }
 
   cancelPicking(): void {
@@ -175,14 +178,14 @@ export default class View<
     return tagFile
   }
 
-  filterItems = (items: CompanionFile[]): CompanionFile[] => {
+  filterItems = (items: FileInPartialTree[]): FileInPartialTree[] => {
     const state = this.plugin.getPluginState()
     if (!state.filterInput || state.filterInput === '') {
       return items
     }
-    return items.filter((folder) => {
+    return items.filter((item) => {
       return (
-        folder.name.toLowerCase().indexOf(state.filterInput.toLowerCase()) !==
+        item.data?.name.toLowerCase().indexOf(state.filterInput.toLowerCase()) !==
         -1
       )
     })
@@ -199,22 +202,22 @@ export default class View<
    * toggle multiple checkboxes at once, which is done by getting all files
    * in between last checked file and current one.
    */
-  toggleCheckbox = (e, fileOrFolder) => {
+  toggleCheckbox = (e: Event, ourItem: FileInPartialTree) => {
+    console.log({ ourItem });
     e.stopPropagation()
     e.preventDefault()
-    e.currentTarget.focus()
 
     const { partialTree } = this.plugin.getPluginState()
-    const newPartialTree = JSON.parse(JSON.stringify(partialTree))
+    const newPartialTree : PartialTree = JSON.parse(JSON.stringify(partialTree))
 
-    const ourItem = newPartialTree.find((item) => item.requestPath === fileOrFolder.requestPath)
     const newStatus = ourItem.status === "checked" ? "unchecked" : "checked"
-    ourItem.status = newStatus
+    const ourItemInNewTree = newPartialTree.find((item) => item.id === ourItem.id)!
+    ourItemInNewTree.status = newStatus
 
     // if newStatus is "checked" - percolate down "checked"
     // if newStatus is "unchecked" - percolate down "unchecked"
-    const percolateDown = (currentFile, status) => {
-      const children = newPartialTree.filter((item) => item.parentId === currentFile.requestPath)
+    const percolateDown = (currentFile: FileInPartialTree, status: StatusInPartialTree) => {
+      const children : FileInPartialTree[] = newPartialTree.filter((item) => item.parentId === currentFile.id) as FileInPartialTree[]
       children.forEach((item) => {
         item.status = status
         percolateDown(item, status)
@@ -224,12 +227,12 @@ export default class View<
     percolateDown(ourItem, newStatus)
 
     // we do something to all of its parents.
-    const percolateUp = (currentFile) => {
-      const parentFolder = newPartialTree.find((item) => item.requestPath === currentFile.parentId)
+    const percolateUp = (currentFile: FileInPartialTree) => {
+      const parentFolder = newPartialTree.find((item) => item.id === currentFile.parentId)
 
       if (!parentFolder) return
 
-      const parentsChildren = newPartialTree.filter((item) => item.parentId === parentFolder.requestPath)
+      const parentsChildren = newPartialTree.filter((item) => item.parentId === parentFolder.id) as FileInPartialTree[]
       const areAllChildrenChecked = parentsChildren.every((item) => item.status === "checked")
       const areAllChildrenUnchecked = parentsChildren.every((item) => item.status === "unchecked")
   
@@ -247,21 +250,6 @@ export default class View<
     percolateUp(ourItem)
 
     this.plugin.setPluginState({ partialTree: newPartialTree })
-  }
-
-  isChecked = (file) => {
-    // Ohhh so it's actually called here......
-
-    const { partialTree } = this.plugin.getPluginState()
-    const ourFile = partialTree.find((item) => item.requestPath === file.requestPath)
-    // console.log({ourFile});
-
-    return ourFile.status
-   
-    // const { currentSelection } = this.plugin.getPluginState()
-    // // comparing id instead of the file object, because the reference to the object
-    // // changes when we switch folders, and the file list is updated
-    // return currentSelection.some((item) => item.id === file.id)
   }
 
   setLoading(loading: boolean | string): void {

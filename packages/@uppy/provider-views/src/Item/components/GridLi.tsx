@@ -3,12 +3,13 @@ import { h } from 'preact'
 import classNames from 'classnames'
 import type { RestrictionError } from '@uppy/core/lib/Restricter'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
+import type { StatusInPartialTree } from '@uppy/core/lib/Uppy'
 
 type GridListItemProps<M extends Meta, B extends Body> = {
   className: string
   isDisabled: boolean
   restrictionError?: RestrictionError<M, B> | null
-  isChecked: boolean
+  status: StatusInPartialTree | null
   title?: string
   itemIconEl: any
   showTitles?: boolean
@@ -25,7 +26,7 @@ function GridListItem<M extends Meta, B extends Body>(
     className,
     isDisabled,
     restrictionError,
-    isChecked,
+    status,
     title,
     itemIconEl,
     showTitles,
@@ -35,11 +36,20 @@ function GridListItem<M extends Meta, B extends Body>(
     children,
   } = props
 
+  let statusClassName
+  if (status === "checked") {
+    statusClassName = "uppy-ProviderBrowserItem-checkbox--is-checked"
+  } else if (status === "unchecked") {
+    statusClassName = ""
+  } else if (status === "partial") {
+    statusClassName = "uppy-ProviderBrowserItem-checkbox--is-partial"
+  }
+
   const checkBoxClassName = classNames(
     'uppy-u-reset',
     'uppy-ProviderBrowserItem-checkbox',
     'uppy-ProviderBrowserItem-checkbox--grid',
-    { 'uppy-ProviderBrowserItem-checkbox--is-checked': isChecked },
+    statusClassName
   )
 
   return (
@@ -56,7 +66,7 @@ function GridListItem<M extends Meta, B extends Body>(
         onMouseDown={recordShiftKeyPress}
         name="listitem"
         id={id}
-        checked={isChecked}
+        checked={status === "checked" ? true : false}
         disabled={isDisabled}
         data-uppy-super-focusable
       />
