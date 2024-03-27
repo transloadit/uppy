@@ -3,9 +3,7 @@ import { Uppy } from '@uppy/core'
 import Webcam from '@uppy/webcam'
 import Tus from '@uppy/tus'
 import GoogleDrive from '@uppy/google-drive'
-
-type M = any
-type B = any
+import { Body, Meta } from '@uppy/utils/lib/UppyFile'
 
 @Component({
   selector: 'app-root',
@@ -68,7 +66,7 @@ export class AppComponent implements OnInit {
     },
   }
 
-  uppy: Uppy<M, B> = new Uppy({ debug: true, autoProceed: true })
+  uppy: Uppy<Meta, Body> = new Uppy({ debug: true, autoProceed: true })
 
   ngOnInit(): void {
     this.uppy
