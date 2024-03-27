@@ -210,7 +210,7 @@ const defaultOptions = {
   browserBackButtonClose: false,
   showNativePhotoCameraButton: false,
   showNativeVideoCameraButton: false,
-  theme: 'light',
+  theme: '' || 'light',
   autoOpen: null,
   autoOpenFileEditor: false,
   disabled: false,
