@@ -5,9 +5,10 @@
   ],
   "compilerOptions": {
     "noEmit": true,
+    "emitDeclarationOnly": false,
     "rootDir": "./src",
     "outDir": "./lib",
   },
-  "include": ["./src/**/*.*", "src/**/*.svelte"],
+  "include": ["./src/**/*.*", "./typings/index.d.ts"],
   "exclude": ["node_modules/*"],
 }
