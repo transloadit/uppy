@@ -1,7 +1,7 @@
 import type { ComponentChild } from 'preact'
 import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
-import type { Uppy, State } from '@uppy/core/src/Uppy.ts'
-import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin.ts'
+import type { Uppy, State } from '@uppy/core/lib/Uppy'
+import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin'
 import { UIPlugin } from '@uppy/core'
 import emaFilter from '@uppy/utils/lib/emaFilter'
 import getTextDirection from '@uppy/utils/lib/getTextDirection'
@@ -57,9 +57,7 @@ function getUploadingState(
   return state
 }
 
-// set default options, must be kept in sync with @uppy/react/src/StatusBar.js
 const defaultOptions = {
-  target: 'body',
   hideUploadButton: false,
   hideRetryButton: false,
   hidePauseResumeButton: false,
@@ -80,13 +78,13 @@ export default class StatusBar<M extends Meta, B extends Body> extends UIPlugin<
 > {
   static VERSION = packageJson.version
 
-  #lastUpdateTime: ReturnType<typeof performance.now>
+  #lastUpdateTime!: ReturnType<typeof performance.now>
 
-  #previousUploadedBytes: number | null
+  #previousUploadedBytes!: number | null
 
-  #previousSpeed: number | null
+  #previousSpeed!: number | null
 
-  #previousETA: number | null
+  #previousETA!: number | null
 
   constructor(uppy: Uppy<M, B>, opts?: StatusBarOptions) {
     super(uppy, { ...defaultOptions, ...opts })
