@@ -207,7 +207,7 @@ export default class View<
    * toggle multiple checkboxes at once, which is done by getting all files
    * in between last checked file and current one.
    */
-  toggleCheckbox = (e: Event, ourItem: FileInPartialTree) => {
+  toggleCheckbox(e: Event, ourItem: FileInPartialTree) {
     e.stopPropagation()
     e.preventDefault()
 
