@@ -1,5 +1,13 @@
 # @uppy/angular
 
+## 1.0.0-beta.1
+
+Released: 2024-03-28
+Included in: Uppy v4.0.0-beta.1
+
+- @uppy/angular: upgrade to Angular 17.x and to TS 5.4 (Antoine du Hamel / #5008)
+- @uppy/angular: fix build (Antoine du Hamel)
+
 ## 0.6.0
 
 Released: 2023-09-05

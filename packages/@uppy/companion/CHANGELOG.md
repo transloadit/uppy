@@ -1,5 +1,13 @@
 # @uppy/companion
 
+## 5.0.0-beta.1
+
+Released: 2024-03-28
+Included in: Uppy v4.0.0-beta.1
+
+- @uppy/companion: improve error msg (Mikael Finstad / #5010)
+- @uppy/companion: crash if trying to set path to / (Mikael Finstad / #5003)
+
 ## 4.13.0
 
 Released: 2024-03-27

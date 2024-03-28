@@ -1,5 +1,12 @@
 # @uppy/vue
 
+## 2.0.0-beta.1
+
+Released: 2024-03-28
+Included in: Uppy v4.0.0-beta.1
+
+- @uppy/vue: [v4.x] remove manual types (Antoine du Hamel / #4803)
+
 ## 1.1.0
 
 Released: 2023-10-20

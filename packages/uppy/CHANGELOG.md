@@ -1,5 +1,12 @@
 # uppy
 
+## 4.0.0-beta.1
+
+Released: 2024-03-28
+Included in: Uppy v4.0.0-beta.1
+
+- uppy: remove legacy bundle (Antoine du Hamel)
+
 ## 3.1.0
 
 Released: 2022-09-25
