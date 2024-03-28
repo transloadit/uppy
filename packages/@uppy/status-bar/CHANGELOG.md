@@ -1,5 +1,14 @@
 # @uppy/status-bar
 
+## 3.3.1
+
+Released: 2024-03-27
+Included in: Uppy v3.24.0
+
+- @uppy/box,@uppy/companion-client,@uppy/provider-views,@uppy/status-bar: fix type imports (Antoine du Hamel / #5038)
+- @uppy/status-bar: refine type of private variables (Antoine du Hamel / #5025)
+- @uppy/status-bar: fix `recoveredState` type (Antoine du Hamel / #4996)
+
 ## 3.2.7
 
 Released: 2024-02-20
