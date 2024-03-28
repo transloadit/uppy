@@ -1,8 +1,7 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
-// @ts-expect-error
 import * as Dashboard from '@uppy/dashboard';
-// @ts-expect-error
 import { Uppy } from '@uppy/core';
+import { Body, Meta } from '@uppy/utils/lib/UppyFile';
 
 @Component({
   selector: 'uppy-dashboard-demo',
@@ -12,7 +11,7 @@ import { Uppy } from '@uppy/core';
   ></uppy-dashboard-modal>`,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DashboardModalDemoComponent {
-  uppy: Uppy = new Uppy({ debug: true, autoProceed: true });
-  props: Dashboard.DashboardOptions;
+export class DashboardModalDemoComponent<M extends Meta, B extends Body> {
+  uppy: Uppy<M, B> = new Uppy({ debug: true, autoProceed: true });
+  props?: Dashboard.DashboardOptions<M, B>;
 }
