@@ -618,7 +618,11 @@ class Uploader {
 
       Object.entries(this.options.metadata).forEach(([key, value]) => formData.append(key, value))
 
-      formData.append(this.options.fieldname, await blob(stream), this.uploadFileName)
+      formData.append(
+        this.options.fieldname,
+        // @ts-expect-error Node.js Blob is actually spec compliant
+        await blob(stream),
+        this.uploadFileName)
 
       reqOptions.body = formData
     } else {
