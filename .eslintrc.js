@@ -518,5 +518,11 @@ module.exports = {
         'no-unused-expressions': 'off',
       },
     },
+    {
+      files: ["packages/@uppy/vue/**"],
+      rules: {
+        'react-hooks/rules-of-hooks': 'off',
+      },
+    },
   ],
 }
