@@ -158,7 +158,7 @@
     "version": "yarn node ./bin/after-version-bump.js",
     "watch:css": "onchange 'packages/{@uppy/,}*/src/*.scss' --initial --verbose -- yarn run build:css",
     "watch:js:bundle": "onchange 'packages/{@uppy/,}*/src/**/*.js' --initial --verbose -- yarn run build:bundle",
-    "watch:js:lib": "onchange 'packages/{@uppy/,}*/src/**/*.{js,ts}' --initial --verbose -- yarn run build:lib",
+    "watch:js:lib": "onchange 'packages/{@uppy/,}*/src/**/*.js' --initial --verbose -- yarn run build:lib",
     "watch:js": "npm-run-all --parallel watch:js:bundle watch:js:lib",
     "watch": "npm-run-all --parallel watch:css watch:js"
   },
