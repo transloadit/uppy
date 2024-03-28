@@ -5,7 +5,6 @@ import { getSafeFileId } from '@uppy/utils/lib/generateFileID'
 
 import type {
   UnknownProviderPlugin,
-  UnknownProviderPluginState,
   Uppy,
   PartialTree,
   FileInPartialTree
@@ -621,7 +620,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
     const targetViewOptions = { ...this.opts, ...viewOptions }
     const { partialTree, currentFolderId, filterInput, loading } =
       this.plugin.getPluginState()
-    const { toggleCheckbox, recordShiftKeyPress, filterItems } = this
+    const { recordShiftKeyPress, filterItems } = this
     const pluginIcon = this.plugin.icon || defaultPickerIcon
 
     const headerProps = {
@@ -635,15 +634,10 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
       i18n,
     }
 
-    // console.log("_______________________rendering_________________");
-    
     const displayedPartialTree = filterItems(partialTree.filter((item) => item.parentId === currentFolderId))
-    // console.log({ partialTree, displayedPartialTree, currentFolderId });
-
-    // console.log("________________________________________________");
 
     const browserProps = {
-      toggleCheckbox,
+      toggleCheckbox: this.toggleCheckbox.bind(this),
       recordShiftKeyPress,
       displayedPartialTree,
       getNextFolder: this.getNextFolder,

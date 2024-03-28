@@ -126,6 +126,7 @@ export type UnknownSearchProviderPluginState = {
   | 'filterInput'
   | 'didFirstRender'
   | 'partialTree'
+  | 'currentFolderId'
 >
 export type UnknownSearchProviderPlugin<
   M extends Meta,

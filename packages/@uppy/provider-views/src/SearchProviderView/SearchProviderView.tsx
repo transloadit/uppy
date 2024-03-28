@@ -1,7 +1,7 @@
 import { h } from 'preact'
 
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
-import type { UnknownSearchProviderPlugin } from '@uppy/core/lib/Uppy.ts'
+import type { PartialTree, StatusInPartialTree, UnknownSearchProviderPlugin } from '@uppy/core/lib/Uppy.ts'
 import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin.ts'
 import type Uppy from '@uppy/core'
 import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
@@ -16,12 +16,11 @@ import packageJson from '../../package.json'
 
 const defaultState = {
   isInputMode: true,
-  files: [],
-  folders: [],
   breadcrumbs: [],
   filterInput: '',
-  currentSelection: [],
   searchTerm: null,
+  partialTree: [],
+  currentFolderId: null,
 }
 
 type PluginType = 'SearchProvider'
@@ -85,15 +84,22 @@ export default class SearchProviderView<
     this.plugin.setPluginState(defaultState)
   }
 
-  #updateFilesAndInputMode(res: Res, files: CompanionFile[]): void {
+  #updateFilesAndInputMode(res: Res, files: PartialTree): void {
     this.nextPageQuery = res.nextPageQuery
-    res.items.forEach((item) => {
-      files.push(item)
-    })
+    const { partialTree } = this.plugin.getPluginState()
+    const newPartialTree : PartialTree = [
+      ...partialTree,
+      ...res.items.map((item) => ({
+        id: item.requestPath,
+        cached: null,
+        status: "unchecked" as StatusInPartialTree,
+        parentId: null,
+        data: item
+      }))
+    ]
     this.plugin.setPluginState({
-      currentSelection: [],
+      partialTree: newPartialTree,
       isInputMode: false,
-      files,
       searchTerm: res.searchedFor,
     })
   }
@@ -118,8 +124,8 @@ export default class SearchProviderView<
 
   clearSearch(): void {
     this.plugin.setPluginState({
-      currentSelection: [],
-      files: [],
+      partialTree: [],
+      currentFolderId: null,
       searchTerm: null,
     })
   }
@@ -131,10 +137,10 @@ export default class SearchProviderView<
       this.isHandlingScroll = true
 
       try {
-        const { files, searchTerm } = this.plugin.getPluginState()
+        const { partialTree, searchTerm } = this.plugin.getPluginState()
         const response = await this.provider.search<Res>(searchTerm!, query)
 
-        this.#updateFilesAndInputMode(response, files)
+        this.#updateFilesAndInputMode(response, partialTree)
       } catch (error) {
         this.handleError(error)
       } finally {
@@ -144,10 +150,10 @@ export default class SearchProviderView<
   }
 
   donePicking(): void {
-    const { currentSelection } = this.plugin.getPluginState()
+    const { partialTree } = this.plugin.getPluginState()
     this.plugin.uppy.log('Adding remote search provider files')
     this.plugin.uppy.addFiles(
-      currentSelection.map((file) => this.getTagFile(file)),
+      partialTree.map((file) => this.getTagFile(file.data)),
     )
     this.resetPluginState()
   }
@@ -165,18 +171,17 @@ export default class SearchProviderView<
     }
 
     const targetViewOptions = { ...this.opts, ...viewOptions }
-    const { files, folders, filterInput, loading, currentSelection } =
+    const { loading, partialTree, currentFolderId } =
       this.plugin.getPluginState()
-    const { isChecked, toggleCheckbox, filterItems, recordShiftKeyPress } = this
-    const hasInput = filterInput !== ''
+    const { filterItems, recordShiftKeyPress } = this
+
+    const displayedPartialTree = filterItems(partialTree.filter((item) => item.parentId === currentFolderId))
 
     const browserProps = {
-      isChecked,
-      toggleCheckbox,
+      toggleCheckbox: this.toggleCheckbox.bind(this),
       recordShiftKeyPress,
-      currentSelection,
-      files: hasInput ? filterItems(files) : files,
-      folders: hasInput ? filterItems(folders) : folders,
+      currentSelection: partialTree.filter((item) => item.status === "checked"),
+      displayedPartialTree,
       handleScroll: this.handleScroll,
       done: this.donePicking,
       cancel: this.cancelPicking,

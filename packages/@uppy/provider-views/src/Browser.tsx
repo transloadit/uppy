@@ -3,11 +3,9 @@ import { h } from 'preact'
 
 import classNames from 'classnames'
 import remoteFileObjToLocal from '@uppy/utils/lib/remoteFileObjToLocal'
-import { useMemo } from 'preact/hooks'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore untyped
 import VirtualList from '@uppy/utils/lib/VirtualList'
-import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
 import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
 import type { I18n } from '@uppy/utils/lib/Translator'
 import type Uppy from '@uppy/core'
