@@ -1,6 +1,6 @@
 import { UIPlugin, type Uppy } from '@uppy/core'
-import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin.ts'
-import type { UIPluginOptions } from '@uppy/core/lib/UIPlugin.ts'
+import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin'
+import type { UIPluginOptions } from '@uppy/core/lib/UIPlugin'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import type { ChangeEvent } from 'preact/compat'
 import toArray from '@uppy/utils/lib/toArray'
