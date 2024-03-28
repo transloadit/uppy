@@ -1,4 +1,3 @@
-const atob = require('atob')
 const { htmlEscape } = require('escape-goat')
 const logger = require('../logger')
 const oAuthState = require('../helpers/oauth-state')

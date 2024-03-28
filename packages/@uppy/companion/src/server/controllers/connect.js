@@ -1,4 +1,3 @@
-const atob = require('atob')
 const oAuthState = require('../helpers/oauth-state')
 
 const queryString = (params, prefix = '?') => {
