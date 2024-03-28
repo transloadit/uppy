@@ -3,7 +3,6 @@ import { Uppy } from '@uppy/core'
 import Webcam from '@uppy/webcam'
 import Tus from '@uppy/tus'
 import GoogleDrive from '@uppy/google-drive'
-import { Body, Meta } from '@uppy/utils/lib/UppyFile'
 
 @Component({
   selector: 'app-root',
@@ -66,7 +65,8 @@ export class AppComponent implements OnInit {
     },
   }
 
-  uppy: Uppy<Meta, Body> = new Uppy({ debug: true, autoProceed: true })
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  uppy: Uppy<any, any> = new Uppy({ debug: true, autoProceed: true })
 
   ngOnInit(): void {
     this.uppy
