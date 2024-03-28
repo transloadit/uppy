@@ -1,4 +1,5 @@
 // eslint-disable-next-line max-classes-per-file
+const { blob } = require('node:stream/consumers');
 const tus = require('tus-js-client')
 const { randomUUID } = require('node:crypto')
 const validator = require('validator')
@@ -6,7 +7,6 @@ const { pipeline: pipelineCb } = require('node:stream')
 const { join } = require('node:path')
 const fs = require('node:fs')
 const { promisify } = require('node:util')
-const FormData = require('form-data')
 const throttle = require('lodash/throttle')
 
 const { Upload } = require('@aws-sdk/lib-storage')
@@ -614,16 +614,11 @@ class Uploader {
     }
 
     if (this.options.useFormData) {
-      // todo refactor once upgraded to got 12
       const formData = new FormData()
 
       Object.entries(this.options.metadata).forEach(([key, value]) => formData.append(key, value))
 
-      formData.append(this.options.fieldname, stream, {
-        filename: this.uploadFileName,
-        contentType: this.options.metadata.type,
-        knownLength: this.size,
-      })
+      formData.append(this.options.fieldname, await blob(stream), this.uploadFileName)
 
       reqOptions.body = formData
     } else {
@@ -663,7 +658,7 @@ class Uploader {
           extraData: getRespObj(err.response),
         })
       }
-      throw new Error('Unknown multipart upload error')
+      throw new Error('Unknown multipart upload error', {cause: err})
     }
   }
 
