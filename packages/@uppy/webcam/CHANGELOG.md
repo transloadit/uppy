@@ -1,5 +1,21 @@
 # @uppy/webcam
 
+## 4.0.0-beta.1
+
+Released: 2024-03-28
+Included in: Uppy v4.0.0-beta.1
+
+- @uppy/audio,@uppy/dashboard,@uppy/drop-target,@uppy/webcam: add missing exports (Antoine du Hamel / #5014)
+- @uppy/webcam: refactor to TypeScript (Antoine du Hamel / #4870)
+
+## 3.4.0
+
+Released: 2024-03-27
+Included in: Uppy v3.24.0
+
+- @uppy/audio,@uppy/dashboard,@uppy/drop-target,@uppy/webcam: add missing exports (Antoine du Hamel / #5014)
+- @uppy/webcam: refactor to TypeScript (Antoine du Hamel / #4870)
+
 ## 3.2.1
 
 Released: 2022-10-19
