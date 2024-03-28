@@ -2,7 +2,6 @@
 const tus = require('tus-js-client')
 const { randomUUID } = require('node:crypto')
 const validator = require('validator')
-const got = require('got').default
 const { pipeline: pipelineCb } = require('node:stream')
 const { join } = require('node:path')
 const fs = require('node:fs')
@@ -13,6 +12,8 @@ const throttle = require('lodash/throttle')
 const { Upload } = require('@aws-sdk/lib-storage')
 
 const { rfc2047EncodeMetadata, getBucket } = require('./helpers/utils')
+
+const got = require('./got')
 
 // TODO move to `require('streams/promises').pipeline` when dropping support for Node.js 14.x.
 const pipeline = promisify(pipelineCb)
@@ -632,7 +633,7 @@ class Uploader {
 
     try {
       const httpMethod = (this.options.httpMethod || '').toUpperCase() === 'PUT' ? 'put' : 'post'
-      const runRequest = got[httpMethod]
+      const runRequest = (await got)[httpMethod]
 
       const response = await runRequest(url, reqOptions)
 

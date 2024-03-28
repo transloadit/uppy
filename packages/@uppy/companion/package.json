@@ -49,7 +49,7 @@
     "express-request-id": "1.4.1",
     "express-session": "1.17.3",
     "form-data": "^3.0.0",
-    "got": "11",
+    "got": "^12.6.0",
     "grant": "5.4.21",
     "helmet": "^4.6.0",
     "ipaddr.js": "^2.0.1",
@@ -109,7 +109,7 @@
     "deploy": "kubectl apply -f infra/kube/companion-kube.yml",
     "prepublishOnly": "yarn run build",
     "start": "node ./lib/standalone/start-server.js",
-    "test": "jest"
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest"
   },
   "engines": {
     "node": "^18.20.0 || ^20.10.0 || >=22.0.0"
