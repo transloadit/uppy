@@ -84,7 +84,7 @@ function ListItem<M extends Meta, B extends Body>(
     viewType,
     i18n,
     type: 'file',
-    isDisabled: Boolean(restrictionError),
+    isDisabled: Boolean(restrictionError) && (f.status !== "checked"),
     restrictionError,
   })
 }
