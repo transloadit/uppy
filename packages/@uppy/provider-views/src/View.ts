@@ -86,7 +86,12 @@ export default class View<
   }
 
   clearSelection(): void {
-    this.plugin.setPluginState({ filterInput: '' })
+    const { partialTree } = this.plugin.getPluginState()
+    const newPartialTree : PartialTree = partialTree.map((item) => ({
+      ...item,
+      status: "unchecked"
+    }))
+    this.plugin.setPluginState({ partialTree: newPartialTree, filterInput: '' })
   }
 
   cancelPicking(): void {
@@ -203,7 +208,6 @@ export default class View<
    * in between last checked file and current one.
    */
   toggleCheckbox = (e: Event, ourItem: FileInPartialTree) => {
-    console.log({ ourItem });
     e.stopPropagation()
     e.preventDefault()
 

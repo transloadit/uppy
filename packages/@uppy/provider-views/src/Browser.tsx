@@ -47,7 +47,7 @@ function ListItem<M extends Meta, B extends Body>(
     f,
   } = props
 
-  if (f.data?.isFolder) {
+  if (f.data.isFolder) {
     return Item<M, B>({
       showTitles,
       viewType,
@@ -66,7 +66,7 @@ function ListItem<M extends Meta, B extends Body>(
       handleFolderClick: () => getNextFolder!(f),
     })
   }
-  const restrictionError = validateRestrictions(remoteFileObjToLocal(f.data!), [
+  const restrictionError = validateRestrictions(remoteFileObjToLocal(f.data), [
     ...uppyFiles,
     ...currentSelection,
   ])
