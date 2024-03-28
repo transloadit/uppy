@@ -1,5 +1,12 @@
 # @uppy/audio
 
+## 2.0.0-beta.1
+
+Released: 2024-03-28
+Included in: Uppy v4.0.0-beta.1
+
+- @uppy/audio,@uppy/dashboard,@uppy/drop-target,@uppy/webcam: add missing exports (Antoine du Hamel / #5014)
+
 ## 1.1.8
 
 Released: 2024-03-27

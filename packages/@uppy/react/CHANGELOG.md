@@ -1,5 +1,14 @@
 # @uppy/react
 
+## 4.0.0-beta.1
+
+Released: 2024-03-28
+Included in: Uppy v4.0.0-beta.1
+
+- @uppy/react: remove `prop-types` dependency (Antoine du Hamel / #5031)
+- @uppy/react: remove `Wrapper.ts` (Antoine du Hamel / #5032)
+- @uppy/react: refactor to TS (Antoine du Hamel / #5012)
+
 ## 3.3.0
 
 Released: 2024-03-27

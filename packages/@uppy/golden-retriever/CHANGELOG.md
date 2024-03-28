@@ -1,5 +1,12 @@
 # @uppy/golden-retriever
 
+## 4.0.0-beta.1
+
+Released: 2024-03-28
+Included in: Uppy v4.0.0-beta.1
+
+- @uppy/golden-retriever: migrate to TS (Merlijn Vos / #4989)
+
 ## 3.2.0
 
 Released: 2024-03-27
