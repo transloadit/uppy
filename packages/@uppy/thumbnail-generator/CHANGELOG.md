@@ -1,5 +1,26 @@
 # @uppy/thumbnail-generator
 
+## 4.0.0-beta.1
+
+Released: 2024-03-28
+Included in: Uppy v4.0.0-beta.1
+
+- @uppy/thumbnail-generator: migrate to TS (Merlijn Vos / #4978)
+
+## 3.1.0
+
+Released: 2024-03-27
+Included in: Uppy v3.24.0
+
+- @uppy/thumbnail-generator: migrate to TS (Merlijn Vos / #4978)
+
+## 3.0.7
+
+Released: 2024-02-19
+Included in: Uppy v3.22.0
+
+- @uppy/thumbnail-generator: fix broken previews after cropping (evgenia karunus / #4926)
+
 ## 3.0.2
 
 Released: 2022-09-25

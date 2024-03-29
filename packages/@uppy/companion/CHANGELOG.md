@@ -1,5 +1,62 @@
 # @uppy/companion
 
+## 5.0.0-beta.1
+
+Released: 2024-03-28
+Included in: Uppy v4.0.0-beta.1
+
+- @uppy/companion: improve error msg (Mikael Finstad / #5010)
+- @uppy/companion: crash if trying to set path to / (Mikael Finstad / #5003)
+
+## 4.13.0
+
+Released: 2024-03-27
+Included in: Uppy v3.24.0
+
+- @uppy/companion: improve error msg (Mikael Finstad / #5010)
+- @uppy/companion: crash if trying to set path to / (Mikael Finstad / #5003)
+
+## 4.12.1
+
+Released: 2024-02-19
+Included in: Uppy v3.22.0
+
+- @uppy/companion: fix companion dns and allow redirects from http->https again (mikael finstad / #4895)
+- @uppy/companion,@uppy/tus: bump `tus-js-client` version range (merlijn vos / #4848)
+
+## 4.12.0
+
+Released: 2023-12-12
+Included in: Uppy v3.21.0
+
+- @uppy/companion: fix double tus uploads (Mikael Finstad / #4816)
+- @uppy/companion: fix accelerated endpoints for presigned POST  (Mikael Finstad / #4817)
+- @uppy/companion: fix `authProvider` property inconsistency (Mikael Finstad / #4672)
+- @uppy/companion:  send certain onedrive errors to the user (Mikael Finstad / #4671)
+- @uppy/companion: Provider user sessions (Mikael Finstad / #4619)
+
+## 4.11.0
+
+Released: 2023-11-08
+Included in: Uppy v3.19.0
+
+- @uppy/companion: Companion+client stability fixes, error handling and retry (Mikael Finstad / #4734)
+- @uppy/companion: add getBucket metadata argument (Mikael Finstad / #4770)
+
+## 4.10.1
+
+Released: 2023-10-23
+Included in: Uppy v3.18.1
+
+- @uppy/companion: Bump jsonwebtoken from 8.5.1 to 9.0.0 in /packages/@uppy/companion (dependabot[bot] / #4751)
+
+## 4.10.0
+
+Released: 2023-10-20
+Included in: Uppy v3.18.0
+
+- @uppy/companion: Bucket fn also remote files (Mikael Finstad / #4693)
+
 ## 4.9.1
 
 Released: 2023-09-29

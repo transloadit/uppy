@@ -1,7 +1,3 @@
-<script setup>
-import { Dashboard, DashboardModal, DragDrop, ProgressBar } from '@uppy/vue'
-</script>
-
 <template>
   <div id="app">
     <!-- <HelloWorld msg="Welcome to Uppy Vue Demo"/> -->
@@ -61,10 +57,15 @@ import { Dashboard, DashboardModal, DragDrop, ProgressBar } from '@uppy/vue'
   </div>
 </template>
 
+<script setup>
+import { Dashboard, DashboardModal, DragDrop, ProgressBar } from '@uppy/vue'
+</script>
+
 <script>
 import Uppy from '@uppy/core'
 import Tus from '@uppy/tus'
 import RemoteSources from '@uppy/remote-sources'
+import Webcam from '@uppy/webcam'
 import { defineComponent } from 'vue'
 
 const { VITE_TUS_ENDPOINT: TUS_ENDPOINT } = import.meta.env
@@ -86,6 +87,13 @@ export default defineComponent({
         .use(RemoteSources, {
           companionUrl: 'https://companion.uppy.io',
       }),
+        .use(Webcam),
+    uppy2: () =>
+      new Uppy({ id: 'uppy2', autoProceed: false, debug: true })
+        .use(Tus, {
+          endpoint: TUS_ENDPOINT,
+        })
+        .use(Webcam),
   },
   data() {
     return {

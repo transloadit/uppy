@@ -4,8 +4,9 @@ const { S3Client } = require('@aws-sdk/client-s3')
  * instantiates the aws-sdk s3 client that will be used for s3 uploads.
  *
  * @param {object} companionOptions the companion options object
+ * @param {boolean} createPresignedPostMode whether this s3 client is for createPresignedPost
  */
-module.exports = (companionOptions) => {
+module.exports = (companionOptions, createPresignedPostMode = false) => {
   let s3Client = null
   if (companionOptions.s3) {
     const { s3 } = companionOptions
@@ -19,23 +20,39 @@ module.exports = (companionOptions) => {
       throw new Error('Found unsupported `providerOptions.s3.awsClientOptions.accessKeyId` or `providerOptions.s3.awsClientOptions.secretAccessKey` configuration. Please use the `providerOptions.s3.key` and `providerOptions.s3.secret` options instead.')
     }
 
-    let s3ClientOptions = {
-      endpoint: s3.endpoint,
-      region: s3.region,
-    }
-    if (typeof s3.endpoint === 'string') {
+    let { endpoint } = s3
+    if (typeof endpoint === 'string') {
       // TODO: deprecate those replacements in favor of what AWS SDK supports out of the box.
-      s3ClientOptions.endpoint = s3.endpoint.replace(/{service}/, 's3').replace(/{region}/, s3.region)
+      endpoint = endpoint.replace(/{service}/, 's3').replace(/{region}/, s3.region)
     }
 
-    if (s3.useAccelerateEndpoint && s3.bucket != null) {
+    /** @type {import('@aws-sdk/client-s3').S3ClientConfig} */
+    let s3ClientOptions = {
+      region: s3.region,
+    }
+
+    if (s3.useAccelerateEndpoint) {
+      // https://github.com/transloadit/uppy/issues/4809#issuecomment-1847320742
+      if (createPresignedPostMode) {
+        if (s3.bucket != null) {
+          s3ClientOptions = {
+            ...s3ClientOptions,
+            useAccelerateEndpoint: true,
+            // This is a workaround for lacking support for useAccelerateEndpoint in createPresignedPost
+            // See https://github.com/transloadit/uppy/issues/4135#issuecomment-1276450023
+            endpoint: `https://${s3.bucket}.s3-accelerate.amazonaws.com/`,
+          }
+        }
+      } else { // normal useAccelerateEndpoint mode
+        s3ClientOptions = {
+          ...s3ClientOptions,
+          useAccelerateEndpoint: true,
+        }
+      }
+    } else { // no accelearate, we allow custom s3 endpoint
       s3ClientOptions = {
         ...s3ClientOptions,
-        useAccelerateEndpoint: true,
-        bucketEndpoint: true,
-        // This is a workaround for lacking support for useAccelerateEndpoint in createPresignedPost
-        // See https://github.com/transloadit/uppy/issues/4135#issuecomment-1276450023
-        endpoint: `https://${s3.bucket}.s3-accelerate.amazonaws.com/`,
+        endpoint,
       }
     }
 

@@ -1,5 +1,19 @@
 # @uppy/svelte
 
+## 4.0.0-beta.1
+
+Released: 2024-03-28
+Included in: Uppy v4.0.0-beta.1
+
+- @uppy/svelte: remove UMD output and make it use newer types (Antoine du Hamel / #5023)
+
+## 3.1.1
+
+Released: 2023-10-20
+Included in: Uppy v3.18.0
+
+- @uppy/svelte: fix TS build command (Antoine du Hamel / #4720)
+
 ## 3.1.0
 
 Released: 2023-09-29

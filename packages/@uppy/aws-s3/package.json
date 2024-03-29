@@ -1,11 +1,10 @@
 {
   "name": "@uppy/aws-s3",
   "description": "Upload to Amazon S3 with Uppy",
-  "version": "3.3.1",
+  "version": "4.0.0-beta.1",
   "license": "MIT",
   "main": "lib/index.js",
   "type": "module",
-  "types": "types/index.d.ts",
   "keywords": [
     "file uploader",
     "aws s3",
@@ -30,10 +29,11 @@
     "nanoid": "^4.0.0"
   },
   "devDependencies": {
-    "vitest": "^0.34.5",
+    "vitest": "^1.2.1",
     "whatwg-fetch": "3.6.2"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^"
-  }
+  },
+  "stableVersion": "3.6.2"
 }

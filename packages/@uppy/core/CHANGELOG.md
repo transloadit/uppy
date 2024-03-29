@@ -1,5 +1,98 @@
 # @uppy/core
 
+## 4.0.0-beta.1
+
+Released: 2024-03-28
+Included in: Uppy v4.0.0-beta.1
+
+- @uppy/core: refine type of private variables (Antoine du Hamel / #5028)
+- @uppy/core: fix some type errors (Antoine du Hamel / #5015)
+- @uppy/core: various type fixes (Antoine du Hamel / #4995)
+- @uppy/core,@uppy/provider-views: Fix breadcrumbs (Evgenia Karunus / #4986)
+
+## 3.10.0
+
+Released: 2024-03-27
+Included in: Uppy v3.24.0
+
+- @uppy/core: refine type of private variables (Antoine du Hamel / #5028)
+- @uppy/core: fix some type errors (Antoine du Hamel / #5015)
+- @uppy/core: various type fixes (Antoine du Hamel / #4995)
+- @uppy/core,@uppy/provider-views: Fix breadcrumbs (Evgenia Karunus / #4986)
+
+## 3.9.3
+
+Released: 2024-02-28
+Included in: Uppy v3.23.0
+
+- @uppy/core: remove unused import (Antoine du Hamel / #4972)
+
+## 3.9.2
+
+Released: 2024-02-22
+Included in: Uppy v3.22.2
+
+- @uppy/core: fix plugin detection (Antoine du Hamel / #4951)
+- @uppy/core,@uppy/utils: Introduce `ValidateableFile` & move `MinimalRequiredUppyFile` into utils (Antoine du Hamel / #4944)
+- @uppy/core: improve `UIPluginOptions` types (Merlijn Vos / #4946)
+
+## 3.9.1
+
+Released: 2024-02-20
+Included in: Uppy v3.22.1
+
+- @uppy/compressor,@uppy/core,@uppy/dashboard,@uppy/status-bar: bump `@transloadit/prettier-bytes` (Antoine du Hamel / #4933)
+
+## 3.9.0
+
+Released: 2024-02-19
+Included in: Uppy v3.22.0
+
+- @uppy/core: add utility type to help define plugin option types (antoine du hamel / #4885)
+- @uppy/core: improve types of .use() (merlijn vos / #4882)
+- @uppy/core: add `plugintarget` type and mark options as optional (antoine du hamel / #4874)
+- @uppy/core: add `debuglogger` as export in manual types (antoine du hamel / #4831)
+- @uppy/core: add missing requiredmetafields key in restrictions (darthf1 / #4819)
+- @uppy/core: fix types (antoine du hamel / #4842)
+- @uppy/core: refactor to ts (murderlon)
+
+## 3.8.0
+
+Released: 2023-12-12
+Included in: Uppy v3.21.0
+
+- @uppy/core: Fix onBeforeFileAdded with Golden Retriever (Merlijn Vos / #4799)
+
+## 3.7.1
+
+Released: 2023-11-12
+Included in: Uppy v3.19.1
+
+- @uppy/core,@uppy/dashboard,@uppy/react-native: Update Uppy's blue color to meet WCAG contrast requirements (Alexander Zaytsev / #4777)
+
+## 3.7.0
+
+Released: 2023-11-08
+Included in: Uppy v3.19.0
+
+- @uppy/core,@uppy/dashboard: don't cancel all files when clicking "done" (Mikael Finstad / #4771)
+- @uppy/core: simplify types with class generic (JokcyLou / #4761)
+
+## 3.6.1
+
+Released: 2023-10-23
+Included in: Uppy v3.18.1
+
+- @uppy/core: fix `sideEffects` declaration (Antoine du Hamel / #4759)
+
+## 3.6.0
+
+Released: 2023-10-20
+Included in: Uppy v3.18.0
+
+- @uppy/core: mark the package as side-effect free (Antoine du Hamel / #4730)
+- @uppy/core: type more events (Antoine du Hamel / #4719)
+
 ## 3.5.0
 
 Released: 2023-09-05

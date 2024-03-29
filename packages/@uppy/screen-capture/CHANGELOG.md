@@ -1,5 +1,19 @@
 # @uppy/screen-capture
 
+## 4.0.0-beta.1
+
+Released: 2024-03-28
+Included in: Uppy v4.0.0-beta.1
+
+- @uppy/screen-capture: migrate to TS (Merlijn Vos / #4965)
+
+## 3.2.0
+
+Released: 2024-03-27
+Included in: Uppy v3.24.0
+
+- @uppy/screen-capture: migrate to TS (Merlijn Vos / #4965)
+
 ## 3.0.2
 
 Released: 2023-02-13

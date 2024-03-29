@@ -170,12 +170,6 @@
   }
 }
 
-.uppy-Dashboard-Item.is-inprogress:not(.is-resumable) {
-  .uppy-Dashboard-Item-action--remove {
-    display: none;
-  }
-}
-
 .uppy-Dashboard-Item-errorDetails {
   position: relative;
   top: 0;

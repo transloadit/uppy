@@ -1,5 +1,45 @@
 # @uppy/provider-views
 
+## 4.0.0-beta.1
+
+Released: 2024-03-28
+Included in: Uppy v4.0.0-beta.1
+
+- @uppy/companion-client,@uppy/provider-views,@uppy/status-bar: fix type imports (Antoine du Hamel / #5038)
+- @uppy/provider-views: fix `super.toggleCheckbox` bug (Mikael Finstad / #5004)
+- @uppy/core,@uppy/provider-views: Fix breadcrumbs (Evgenia Karunus / #4986)
+
+## 3.11.0
+
+Released: 2024-03-27
+Included in: Uppy v3.24.0
+
+- @uppy/box,@uppy/companion-client,@uppy/provider-views,@uppy/status-bar: fix type imports (Antoine du Hamel / #5038)
+- @uppy/provider-views: fix `super.toggleCheckbox` bug (Mikael Finstad / #5004)
+- @uppy/core,@uppy/provider-views: Fix breadcrumbs (Evgenia Karunus / #4986)
+
+## 3.10.0
+
+Released: 2024-02-28
+Included in: Uppy v3.23.0
+
+- @uppy/provider-views: migrate to TS (Merlijn Vos / #4919)
+
+## 3.9.0
+
+Released: 2024-02-19
+Included in: Uppy v3.22.0
+
+- @uppy/provider-views: update uppy-providerbrowser-viewtype--list.scss (aditya patadia / #4913)
+- @uppy/provider-views: add referrerpolicy to images (merlijn vos / #4853)
+
+## 3.8.0
+
+Released: 2023-12-12
+Included in: Uppy v3.21.0
+
+- @uppy/provider-views: fix uploadRemoteFile undefined (Mikael Finstad / #4814)
+
 ## 3.5.0
 
 Released: 2023-08-15

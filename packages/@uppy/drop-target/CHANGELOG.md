@@ -1,5 +1,26 @@
 # @uppy/drop-target
 
+## 3.0.0-beta.1
+
+Released: 2024-03-28
+Included in: Uppy v4.0.0-beta.1
+
+- @uppy/audio,@uppy/dashboard,@uppy/drop-target,@uppy/webcam: add missing exports (Antoine du Hamel / #5014)
+
+## 2.0.5
+
+Released: 2024-03-27
+Included in: Uppy v3.24.0
+
+- @uppy/audio,@uppy/dashboard,@uppy/drop-target,@uppy/webcam: add missing exports (Antoine du Hamel / #5014)
+
+## 2.0.3
+
+Released: 2024-02-19
+Included in: Uppy v3.22.0
+
+- @uppy/drop-target: refactor to typescript (artur paikin / #4863)
+
 ## 2.0.1
 
 Released: 2022-09-25

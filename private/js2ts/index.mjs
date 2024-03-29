@@ -5,9 +5,17 @@
  * TS source. It will rename the files, update the imports, and add a `tsconfig.json`.
  */
 
-import { opendir, readFile, open, writeFile, rm } from 'node:fs/promises'
+import {
+  appendFile,
+  opendir,
+  readFile,
+  open,
+  writeFile,
+  rm,
+} from 'node:fs/promises'
+import { createRequire } from 'node:module'
 import { argv } from 'node:process'
-import { extname } from 'node:path'
+import { basename, extname, join } from 'node:path'
 import { existsSync } from 'node:fs'
 
 const packageRoot = new URL(`../../packages/${argv[2]}/`, import.meta.url)
@@ -26,13 +34,34 @@ if (packageJSON.type !== 'module') {
   throw new Error('Cannot convert non-ESM package to TS')
 }
 
-const references = Object.keys(packageJSON.dependencies || {})
-  .concat(Object.keys(packageJSON.peerDependencies || {}))
-  .concat(Object.keys(packageJSON.devDependencies || {}))
-  .filter((pkg) => pkg.startsWith('@uppy/'))
-  .map((pkg) => ({
-    path: `../${pkg.slice('@uppy/'.length)}/tsconfig.build.json`,
-  }))
+const uppyDeps = new Set(
+  Object.keys(packageJSON.dependencies || {})
+    .concat(Object.keys(packageJSON.peerDependencies || {}))
+    .concat(Object.keys(packageJSON.devDependencies || {}))
+    .filter((pkg) => pkg.startsWith('@uppy/')),
+)
+
+// We want TS to check the source files so it doesn't use outdated (or missing) types:
+const paths = Object.fromEntries(
+  (function* generatePaths() {
+    const require = createRequire(packageRoot)
+    for (const pkg of uppyDeps) {
+      const nickname = pkg.slice('@uppy/'.length)
+      // eslint-disable-next-line import/no-dynamic-require
+      const pkgJson = require(`../${nickname}/package.json`)
+      if (pkgJson.main) {
+        yield [
+          pkg,
+          [`../${nickname}/${pkgJson.main.replace(/^(\.\/)?lib\//, 'src/')}`],
+        ]
+      }
+      yield [`${pkg}/lib/*`, [`../${nickname}/src/*`]]
+    }
+  })(),
+)
+const references = Array.from(uppyDeps, (pkg) => ({
+  path: `../${pkg.slice('@uppy/'.length)}/tsconfig.build.json`,
+}))
 
 const depsNotYetConvertedToTS = references.filter(
   (ref) => !existsSync(new URL(ref.path, packageRoot)),
@@ -58,16 +87,31 @@ try {
 
 for await (const dirent of dir) {
   if (!dirent.isDirectory()) {
-    const { path: filepath } = dirent
-    const ext = extname(filepath)
+    const { name } = dirent
+    const ext = extname(name)
+    if (ext !== '.js' && ext !== '.jsx') continue // eslint-disable-line no-continue
+    const filePath =
+      basename(dirent.path) === name ?
+        dirent.path // Some versions of Node.js give the full path as dirent.path.
+      : join(dirent.path, name) // Others supply only the path to the parent.
     await writeFile(
-      filepath.replace(ext, ext.replace('js', 'ts')),
-      (await readFile(filepath, 'utf-8')).replace(
-        /((?:^|\n)import[^\n]*["']\.\.?\/[^'"]+\.)js(x?["'])/g,
-        '$1ts$2',
-      ),
+      `${filePath.slice(0, -ext.length)}${ext.replace('js', 'ts')}`,
+      (await readFile(filePath, 'utf-8'))
+        .replace(
+          // The following regex aims to capture all imports and reexports of local .js(x) files to replace it to .ts(x)
+          // It's far from perfect and will have false positives and false negatives.
+          /((?:^|\n)(?:import(?:\s+\w+\s+from)?|export\s*\*\s*from|(?:import|export)\s*(?:\{[^}]*\}|\*\s*as\s+\w+\s)\s*from)\s*["']\.\.?\/[^'"]+\.)js(x?["'])/g, // eslint-disable-line max-len
+          '$1ts$2',
+        )
+        .replace(
+          // The following regex aims to capture all local package.json imports.
+          /\nimport \w+ from ['"]..\/([^'"]+\/)*package.json['"]\n/g,
+          (originalImport) =>
+            `\n// eslint-disable-next-line @typescript-eslint/ban-ts-comment\n` +
+            `// @ts-ignore We don't want TS to generate types for the package.json${originalImport}`,
+        ),
     )
-    await rm(filepath)
+    await rm(filePath)
   }
 }
 
@@ -78,8 +122,9 @@ await tsConfig.writeFile(
       compilerOptions: {
         emitDeclarationOnly: false,
         noEmit: true,
+        paths,
       },
-      include: ['./package.json', './src/**/*.'],
+      include: ['./package.json', './src/**/*.*'],
       references,
     },
     undefined,
@@ -90,18 +135,19 @@ await tsConfig.writeFile(
 await tsConfig.close()
 
 await writeFile(
-  new URL('./tsconfig.build.json', import.meta.url),
+  new URL('./tsconfig.build.json', packageRoot),
   `${JSON.stringify(
     {
       extends: '../../../tsconfig.shared',
       compilerOptions: {
-        outDir: './lib',
-        rootDir: './src',
-        resolveJsonModule: false,
         noImplicitAny: false,
+        outDir: './lib',
+        paths,
+        resolveJsonModule: false,
+        rootDir: './src',
         skipLibCheck: true,
       },
-      include: ['./src/**/*.'],
+      include: ['./src/**/*.*'],
       exclude: ['./src/**/*.test.ts'],
       references,
     },
@@ -109,5 +155,7 @@ await writeFile(
     2,
   )}\n`,
 )
+
+await appendFile(new URL('./.npmignore', packageRoot), `\ntsconfig.*\n`)
 
 console.log('Done')

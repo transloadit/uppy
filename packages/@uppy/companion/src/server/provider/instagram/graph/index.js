@@ -23,11 +23,6 @@ async function getMediaUrl ({ token, id }) {
  * Adapter for API https://developers.facebook.com/docs/instagram-api/overview
  */
 class Instagram extends Provider {
-  constructor (options) {
-    super(options)
-    this.authProvider = Instagram.authProvider
-  }
-
   // for "grant"
   static getExtraConfig () {
     return {
@@ -86,11 +81,12 @@ class Instagram extends Provider {
     return { revoked: false, manual_revoke_url: 'https://www.instagram.com/accounts/manage_access/' }
   }
 
+  // eslint-disable-next-line class-methods-use-this
   async #withErrorHandling (tag, fn) {
     return withProviderErrorHandling({
       fn,
       tag,
-      providerName: this.authProvider,
+      providerName: Instagram.authProvider,
       isAuthError: (response) => typeof response.body === 'object' && response.body?.error?.code === 190, // Invalid OAuth 2.0 Access Token
       getJsonErrorMessage: (body) => body?.error?.message,
     })

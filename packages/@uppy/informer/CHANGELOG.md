@@ -1,5 +1,12 @@
 # @uppy/informer
 
+## 3.1.0
+
+Released: 2024-02-28
+Included in: Uppy v3.23.0
+
+- @uppy/informer: migrate to TS (Merlijn Vos / #4967)
+
 ## 3.0.2
 
 Released: 2023-04-18
