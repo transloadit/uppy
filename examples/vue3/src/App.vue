@@ -79,19 +79,15 @@ export default defineComponent({
         })
         .use(RemoteSources, {
           companionUrl: 'https://companion.uppy.io',
-        }),
-    uppy2: () =>
-      new Uppy({ id: 'uppy2', autoProceed: false, debug: true }).use(Tus, {
-        endpoint: TUS_ENDPOINT,
-      })
-        .use(RemoteSources, {
-          companionUrl: 'https://companion.uppy.io',
-      }),
+        })
         .use(Webcam),
     uppy2: () =>
       new Uppy({ id: 'uppy2', autoProceed: false, debug: true })
         .use(Tus, {
           endpoint: TUS_ENDPOINT,
+        })
+        .use(RemoteSources, {
+          companionUrl: 'https://companion.uppy.io',
         })
         .use(Webcam),
   },
