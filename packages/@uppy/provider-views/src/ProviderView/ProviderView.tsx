@@ -499,11 +499,11 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
             // calculate the file's path relative to the user's selected item's path
             // see https://github.com/transloadit/uppy/pull/4537#issuecomment-1614236655
             relDirPath: (newItem.absDirPath as string)
-              .replace(selectedItem.data!.absDirPath as string, '')
+              .replace(selectedItem.data.absDirPath as string, '')
               .replace(/^\//, ''),
           })
 
-          if (selectedItem.data!.isFolder) {
+          if (selectedItem.data.isFolder) {
             let isEmpty = true
             let numNewFiles = 0
 
@@ -534,10 +534,10 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
             await this.#recursivelyListAllFiles({
               requestPath,
               absDirPath: prependPath(
-                selectedItem.data!.absDirPath,
-                selectedItem.data!.name,
+                selectedItem.data.absDirPath,
+                selectedItem.data.name,
               ),
-              relDirPath: selectedItem.data!.name,
+              relDirPath: selectedItem.data.name,
               queue,
               onFiles,
               signal,
@@ -549,7 +549,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
               message = this.plugin.uppy.i18n('emptyFolderAdded')
             } else if (numNewFiles === 0) {
               message = this.plugin.uppy.i18n('folderAlreadyAdded', {
-                folder: selectedItem.data!.name,
+                folder: selectedItem.data.name,
               })
             } else {
               // TODO we don't really know at this point whether any files were actually added
@@ -557,13 +557,13 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
               // Example: If all files fail to add due to restriction error, it will still say "Added 100 files from folder"
               message = this.plugin.uppy.i18n('folderAdded', {
                 smart_count: numNewFiles,
-                folder: selectedItem.data!.name,
+                folder: selectedItem.data.name,
               })
             }
 
             messages.push(message)
           } else {
-            newFiles.push(withRelDirPath(selectedItem.data!))
+            newFiles.push(withRelDirPath(selectedItem.data))
           }
         }
 

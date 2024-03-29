@@ -51,8 +51,8 @@ function ListItem<M extends Meta, B extends Body>(
       viewType,
       i18n,
       id: f.id,
-      title: f.data!.name,
-      getItemIcon: () => f.data!.icon,
+      title: f.data.name,
+      getItemIcon: () => f.data.icon,
       status: f.status,
       toggleCheckbox: (event: Event) => toggleCheckbox(event, f),
       recordShiftKeyPress,
@@ -71,9 +71,9 @@ function ListItem<M extends Meta, B extends Body>(
 
   return Item<M, B>({
     id: f.id,
-    title: f.data!.name,
-    author: f.data!.author,
-    getItemIcon: () => f.data!.icon,
+    title: f.data.name,
+    author: f.data.author,
+    getItemIcon: () => f.data.icon,
     toggleCheckbox: (event: Event) => toggleCheckbox(event, f),
     isCheckboxDisabled: false,
     status: f.status,
