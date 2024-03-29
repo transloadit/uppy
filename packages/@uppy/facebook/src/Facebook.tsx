@@ -114,10 +114,9 @@ export default class Facebook<M extends Meta, B extends Body> extends UIPlugin<
       showFilter?: boolean
       showTitles?: boolean
     } = {}
-    if (
-      this.getPluginState().files.length &&
-      !this.getPluginState().folders.length
-    ) {
+    const { partialTree } = this.getPluginState()
+    const nOfFolders = partialTree.filter((item) => item.data.type === "folder").length
+    if (nOfFolders === 0) {
       viewOptions.viewType = 'grid'
       viewOptions.showFilter = false
       viewOptions.showTitles = false
