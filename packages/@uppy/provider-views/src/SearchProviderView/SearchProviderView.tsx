@@ -185,6 +185,7 @@ export default class SearchProviderView<
       handleScroll: this.handleScroll,
       done: this.donePicking,
       cancel: this.cancelPicking,
+      getFolder: () => {},
 
       // For SearchFilterInput component
       showSearchFilter: targetViewOptions.showFilter,

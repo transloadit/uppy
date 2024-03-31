@@ -107,7 +107,7 @@ type BrowserProps<M extends Meta, B extends Body> = {
   searchOnInput: boolean
   searchInputLabel: string
   clearSearchLabel: string
-  getFolder: (folder: any) => void
+  getFolder: (folderId: any) => void
   cancel: () => void
   done: () => void
   noResultsLabel: string

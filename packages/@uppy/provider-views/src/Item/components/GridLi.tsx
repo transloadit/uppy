@@ -9,7 +9,7 @@ type GridListItemProps<M extends Meta, B extends Body> = {
   className: string
   isDisabled: boolean
   restrictionError?: RestrictionError<M, B> | null
-  status: StatusInPartialTree | null
+  status: StatusInPartialTree
   title?: string
   itemIconEl: any
   showTitles?: boolean

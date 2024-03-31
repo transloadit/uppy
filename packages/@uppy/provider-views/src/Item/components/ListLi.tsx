@@ -16,7 +16,7 @@ type ListItemProps<M extends Meta, B extends Body> = {
   isDisabled: boolean
   restrictionError?: RestrictionError<M, B> | null
   isCheckboxDisabled: boolean
-  status: StatusInPartialTree | null
+  status: StatusInPartialTree
   toggleCheckbox: (event: Event) => void
   recordShiftKeyPress: (event: KeyboardEvent | MouseEvent) => void
   type: string

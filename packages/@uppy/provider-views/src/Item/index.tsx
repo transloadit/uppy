@@ -24,7 +24,7 @@ type ItemProps<M extends Meta, B extends Body> = {
   type: 'folder' | 'file'
   author?: CompanionFile['author']
   getItemIcon: () => string
-  status: StatusInPartialTree | null
+  status: StatusInPartialTree
   isDisabled: boolean
   viewType: string
 }
@@ -32,7 +32,7 @@ type ItemProps<M extends Meta, B extends Body> = {
 export default function Item<M extends Meta, B extends Body>(
   props: ItemProps<M, B>,
 ): h.JSX.Element {
-  const { author, getItemIcon, status, isDisabled, viewType } = props
+  const { author, getItemIcon, isDisabled, viewType } = props
   const itemIconString = getItemIcon()
 
   const className = classNames(
