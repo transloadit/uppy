@@ -212,9 +212,18 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
    *
    */
   async getFolder(requestPath?: string): Promise<void> {
-    this.setLoading(true)
     console.log(`____________________________________________GETTING FOLDER "${requestPath}"`);
+    // Returning cached folder
+    const { partialTree } = this.plugin.getPluginState()
+    const thisFolderIsCached = partialTree.find((item) => item.id === requestPath)?.cached
+    if (thisFolderIsCached) {
+      console.log("Folder was cached____________________________________________");
+      this.plugin.setPluginState({ currentFolderId: requestPath, filterInput: '' })
+      return
+    }
+
     try {
+      this.setLoading(true)
       await this.#withAbort(async (signal) => {
         this.lastCheckbox = undefined
 
@@ -242,7 +251,6 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
 
 
 
-        const { partialTree } = this.plugin.getPluginState()
         console.log({ partialTree });
         if (partialTree.length === 0) {
           console.log("creating a new partial tree!");
@@ -330,6 +338,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
    * Fetches new folder
    */
   getNextFolder(folder: FileInPartialTree): void {
+    console.log("____GET NEXT FOLDER____");
     this.getFolder(folder.data.requestPath)
     this.lastCheckbox = undefined
   }
