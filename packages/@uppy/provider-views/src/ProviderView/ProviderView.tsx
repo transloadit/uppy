@@ -98,7 +98,6 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
     this.filterQuery = this.filterQuery.bind(this)
     this.clearFilter = this.clearFilter.bind(this)
     this.getFolder = this.getFolder.bind(this)
-    this.getNextFolder = this.getNextFolder.bind(this)
     this.logout = this.logout.bind(this)
     this.handleAuth = this.handleAuth.bind(this)
     this.handleScroll = this.handleScroll.bind(this)
@@ -332,14 +331,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
     } finally {
       this.setLoading(false)
     }
-  }
 
-  /**
-   * Fetches new folder
-   */
-  getNextFolder(folder: FileInPartialTree): void {
-    console.log("____GET NEXT FOLDER____");
-    this.getFolder(folder.data.requestPath)
     this.lastCheckbox = undefined
   }
 
@@ -649,7 +641,6 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
       toggleCheckbox: this.toggleCheckbox.bind(this),
       recordShiftKeyPress,
       displayedPartialTree,
-      getNextFolder: this.getNextFolder,
       getFolder: this.getFolder,
       loadAllFiles: this.opts.loadAllFiles,
 

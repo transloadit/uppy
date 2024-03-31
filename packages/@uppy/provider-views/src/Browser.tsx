@@ -25,7 +25,7 @@ type ListItemProps<M extends Meta, B extends Body> = {
   showTitles: boolean
   i18n: I18n
   validateRestrictions: Uppy<M, B>['validateRestrictions']
-  getNextFolder?: (folder: FileInPartialTree) => void
+  getFolder: (folderId: string) => void
   f: FileInPartialTree
 }
 
@@ -41,7 +41,7 @@ function ListItem<M extends Meta, B extends Body>(
     showTitles,
     i18n,
     validateRestrictions,
-    getNextFolder,
+    getFolder,
     f,
   } = props
 
@@ -60,8 +60,7 @@ function ListItem<M extends Meta, B extends Body>(
       // TODO: when was this supposed to be true?
       isDisabled: false,
       isCheckboxDisabled: f.id === VIRTUAL_SHARED_DIR,
-      // getNextFolder always exists when f.isFolder is true
-      handleFolderClick: () => getNextFolder!(f),
+      handleFolderClick: () => getFolder(f.id),
     })
   }
   const restrictionError = validateRestrictions(remoteFileObjToLocal(f.data), [
@@ -108,7 +107,7 @@ type BrowserProps<M extends Meta, B extends Body> = {
   searchOnInput: boolean
   searchInputLabel: string
   clearSearchLabel: string
-  getNextFolder?: (folder: any) => void
+  getFolder: (folder: any) => void
   cancel: () => void
   done: () => void
   noResultsLabel: string
@@ -138,7 +137,7 @@ function Browser<M extends Meta, B extends Body>(
     searchOnInput,
     searchInputLabel,
     clearSearchLabel,
-    getNextFolder,
+    getFolder,
     cancel,
     done,
     noResultsLabel,
@@ -211,7 +210,7 @@ function Browser<M extends Meta, B extends Body>(
                       showTitles={showTitles}
                       i18n={i18n}
                       validateRestrictions={validateRestrictions}
-                      getNextFolder={getNextFolder}
+                      getFolder={getFolder}
                       f={f}
                     />
                   )}
@@ -241,7 +240,7 @@ function Browser<M extends Meta, B extends Body>(
                   showTitles={showTitles}
                   i18n={i18n}
                   validateRestrictions={validateRestrictions}
-                  getNextFolder={getNextFolder}
+                  getFolder={getFolder}
                   f={f}
                 />
               ))}
