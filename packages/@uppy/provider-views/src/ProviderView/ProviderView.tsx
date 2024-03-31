@@ -210,14 +210,14 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
    * TODO rename to something better like selectFolder or navigateToFolder (breaking change?)
    *
    */
-  async getFolder(requestPath?: string): Promise<void> {
-    console.log(`____________________________________________GETTING FOLDER "${requestPath}"`);
+  async getFolder(folderId?: string): Promise<void> {
+    console.log(`____________________________________________GETTING FOLDER "${folderId}"`);
     // Returning cached folder
     const { partialTree } = this.plugin.getPluginState()
-    const thisFolderIsCached = partialTree.find((item) => item.id === requestPath)?.cached
+    const thisFolderIsCached = partialTree.find((item) => item.id === folderId)?.cached
     if (thisFolderIsCached) {
       console.log("Folder was cached____________________________________________");
-      this.plugin.setPluginState({ currentFolderId: requestPath, filterInput: '' })
+      this.plugin.setPluginState({ currentFolderId: folderId, filterInput: '' })
       return
     }
 
@@ -226,7 +226,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
       await this.#withAbort(async (signal) => {
         this.lastCheckbox = undefined
 
-        this.nextPagePath = requestPath
+        this.nextPagePath = folderId
         let files: CompanionFile[] = []
         let folders: CompanionFile[] = []
         do {
@@ -255,11 +255,11 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
           console.log("creating a new partial tree!");
           const newPartialTree : PartialTree = [
             ...folders.map((folder) => ({
-              id: folder.requestPath, parentId: (requestPath || null), data: folder,
+              id: folder.requestPath, parentId: (folderId || null), data: folder,
               status: "unchecked", cached: false,
             })) as FileInPartialTree[],
             ...files.map((file) => ({
-              id: file.requestPath, parentId: (requestPath || null),
+              id: file.requestPath, parentId: (folderId || null),
               status: "unchecked", cached: null, data: file
             })) as FileInPartialTree[]
           ]
@@ -269,7 +269,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
           this.plugin.setPluginState({ partialTree: newPartialTree })
         } else {
           console.log("appending to existing partial tree!");
-          const clickedFolder : FileInPartialTree = partialTree.find((folder) => folder.id === requestPath)!
+          const clickedFolder : FileInPartialTree = partialTree.find((folder) => folder.id === folderId)!
 
           // If selected folder is already filled in, don't refill it (because that would make it lose deep state!)
           // Otherwise, cache the current folder!
@@ -302,7 +302,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
           }
         }
 
-        this.plugin.setPluginState({ currentFolderId: (requestPath || null), filterInput: '' })
+        this.plugin.setPluginState({ currentFolderId: (folderId || null), filterInput: '' })
       })
 
 
