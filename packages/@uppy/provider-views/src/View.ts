@@ -55,7 +55,7 @@ export default class View<
 
   isShiftKeyPressed: boolean
 
-  lastCheckbox: CompanionFile | undefined
+  lastCheckbox: string | undefined
 
   protected opts: O
 
@@ -211,12 +211,8 @@ export default class View<
     e.stopPropagation()
     e.preventDefault()
 
-    const { partialTree } = this.plugin.getPluginState()
+    const { partialTree, currentFolderId } = this.plugin.getPluginState()
     const newPartialTree : PartialTree = JSON.parse(JSON.stringify(partialTree))
-
-    const newStatus = ourItem.status === "checked" ? "unchecked" : "checked"
-    const ourItemInNewTree = newPartialTree.find((item) => item.id === ourItem.id)!
-    ourItemInNewTree.status = newStatus
 
     // if newStatus is "checked" - percolate down "checked"
     // if newStatus is "unchecked" - percolate down "unchecked"
@@ -227,9 +223,6 @@ export default class View<
         percolateDown(item, status)
       })
     }
-
-    percolateDown(ourItem, newStatus)
-
     // we do something to all of its parents.
     const percolateUp = (currentFile: FileInPartialTree) => {
       const parentFolder = newPartialTree.find((item) => item.id === currentFile.parentId)
@@ -239,7 +232,7 @@ export default class View<
       const parentsChildren = newPartialTree.filter((item) => item.parentId === parentFolder.id) as FileInPartialTree[]
       const areAllChildrenChecked = parentsChildren.every((item) => item.status === "checked")
       const areAllChildrenUnchecked = parentsChildren.every((item) => item.status === "unchecked")
-  
+
       if (areAllChildrenChecked) {
         parentFolder.status = "checked"
       } else if (areAllChildrenUnchecked) {
@@ -251,9 +244,35 @@ export default class View<
       percolateUp(parentFolder)
     }
 
-    percolateUp(ourItem)
+    // Shift-clicking selects a single consecutive list of items
+    // starting at the previous click.
+    const inThisFolder = this.filterItems(newPartialTree.filter((item) => item.parentId === currentFolderId))
+    const prevIndex = inThisFolder.findIndex((item) => item.id === this.lastCheckbox)
+    if (prevIndex !== -1 && this.isShiftKeyPressed) {
+      const newIndex = inThisFolder.findIndex((item) => item.id === ourItem.id)
+      const toMarkAsChecked = (prevIndex < newIndex ?
+          inThisFolder.slice(prevIndex, newIndex + 1)
+        : inThisFolder.slice(newIndex, prevIndex + 1)
+      ).map((item) => item.id)
+
+      const newlyCheckedItems = newPartialTree
+        .filter((item) => toMarkAsChecked.includes(item.id))
+
+      newlyCheckedItems.forEach((item) => item.status = "checked")
+
+      newlyCheckedItems.forEach((item) => {
+        percolateDown(item, "checked")
+      })
+      percolateUp(ourItem)
+    } else {
+      const ourItemInNewTree = newPartialTree.find((item) => item.id === ourItem.id)!
+      ourItemInNewTree.status = ourItem.status === "checked" ? "unchecked" : "checked"
+      percolateDown(ourItem, ourItemInNewTree.status)
+      percolateUp(ourItem)
+    }
 
     this.plugin.setPluginState({ partialTree: newPartialTree })
+    this.lastCheckbox = ourItem.id
   }
 
   setLoading(loading: boolean | string): void {
