@@ -34,6 +34,8 @@ export default class GoogleDrive<
 
   files: UppyFile<M, B>[]
 
+  rootFolderId: string | null
+
   constructor(uppy: Uppy<M, B>, opts: GoogleDriveOptions) {
     super(uppy, opts)
     this.type = 'acquirer'
@@ -76,6 +78,7 @@ export default class GoogleDrive<
         </g>
       </svg>
     )
+    this.rootFolderId = 'root'
 
     this.opts.companionAllowedHosts = getAllowedHosts(
       this.opts.companionAllowedHosts,
@@ -96,7 +99,6 @@ export default class GoogleDrive<
     this.i18nInit()
     this.title = this.i18n('pluginNameGoogleDrive')
 
-    this.onFirstRender = this.onFirstRender.bind(this)
     this.render = this.render.bind(this)
   }
 
@@ -115,13 +117,6 @@ export default class GoogleDrive<
   uninstall(): void {
     this.view.tearDown()
     this.unmount()
-  }
-
-  async onFirstRender(): Promise<void> {
-    await Promise.all([
-      this.provider.fetchPreAuthToken(),
-      this.view.getFolder('root'),
-    ])
   }
 
   render(state: unknown): ComponentChild {

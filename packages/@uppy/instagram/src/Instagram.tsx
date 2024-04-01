@@ -35,6 +35,8 @@ export default class Instagram<M extends Meta, B extends Body> extends UIPlugin<
 
   files: UppyFile<M, B>[]
 
+  rootFolderId: string | null
+
   constructor(uppy: Uppy<M, B>, opts: InstagramOptions) {
     super(uppy, opts)
     this.type = 'acquirer'
@@ -70,6 +72,7 @@ export default class Instagram<M extends Meta, B extends Body> extends UIPlugin<
         </g>
       </svg>
     )
+    this.rootFolderId = 'recent'
 
     this.defaultLocale = locale
 
@@ -90,7 +93,6 @@ export default class Instagram<M extends Meta, B extends Body> extends UIPlugin<
       supportsRefreshToken: false,
     })
 
-    this.onFirstRender = this.onFirstRender.bind(this)
     this.render = this.render.bind(this)
   }
 
@@ -112,13 +114,6 @@ export default class Instagram<M extends Meta, B extends Body> extends UIPlugin<
   uninstall(): void {
     this.view.tearDown()
     this.unmount()
-  }
-
-  async onFirstRender(): Promise<void> {
-    await Promise.all([
-      this.provider.fetchPreAuthToken(),
-      this.view.getFolder('recent'),
-    ])
   }
 
   render(state: unknown): ComponentChild {

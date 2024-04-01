@@ -35,6 +35,8 @@ export default class Facebook<M extends Meta, B extends Body> extends UIPlugin<
 
   files: UppyFile<M, B>[]
 
+  rootFolderId: string | null
+
   constructor(uppy: Uppy<M, B>, opts: FacebookOptions) {
     super(uppy, opts)
     this.id = this.opts.id || 'Facebook'
@@ -61,6 +63,7 @@ export default class Facebook<M extends Meta, B extends Body> extends UIPlugin<
         </g>
       </svg>
     )
+    this.rootFolderId = null
 
     this.opts.companionAllowedHosts = getAllowedHosts(
       this.opts.companionAllowedHosts,
@@ -81,7 +84,6 @@ export default class Facebook<M extends Meta, B extends Body> extends UIPlugin<
     this.i18nInit()
     this.title = this.i18n('pluginNameFacebook')
 
-    this.onFirstRender = this.onFirstRender.bind(this)
     this.render = this.render.bind(this)
   }
 
@@ -101,13 +103,6 @@ export default class Facebook<M extends Meta, B extends Body> extends UIPlugin<
     this.unmount()
   }
 
-  async onFirstRender(): Promise<void> {
-    await Promise.all([
-      this.provider.fetchPreAuthToken(),
-      this.view.getFolder(),
-    ])
-  }
-
   render(state: unknown): ComponentChild {
     const viewOptions: {
       viewType?: string
@@ -115,7 +110,9 @@ export default class Facebook<M extends Meta, B extends Body> extends UIPlugin<
       showTitles?: boolean
     } = {}
     const { partialTree } = this.getPluginState()
-    const nOfFolders = partialTree.filter((item) => item.data.type === "folder").length
+    const nOfFolders = partialTree.filter(
+      (item) => item.data.type === 'folder',
+    ).length
     if (nOfFolders === 0) {
       viewOptions.viewType = 'grid'
       viewOptions.showFilter = false
