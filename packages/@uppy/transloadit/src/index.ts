@@ -148,7 +148,8 @@ export interface TransloaditOptions<M extends Meta, B extends Body>
   assemblyOptions?:
     | AssemblyOptions
     | ((
-        meta: M & Record<string, unknown>,
+        file?: UppyFile<M, B> | null,
+        options?: TransloaditOptions<M, B>,
       ) => Promise<AssemblyOptions> | AssemblyOptions)
 }
 
