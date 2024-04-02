@@ -210,11 +210,11 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
    * TODO rename to something better like selectFolder or navigateToFolder (breaking change?)
    *
    */
-  async getFolder(folderId?: string): Promise<void> {
+  async getFolder(folderId: string | null): Promise<void> {
     console.log(`____________________________________________GETTING FOLDER "${folderId}"`);
     // Returning cached folder
     const { partialTree } = this.plugin.getPluginState()
-    const thisFolderIsCached = partialTree.find((item) => item.id === folderId)?.cached
+    const thisFolderIsCached = partialTree.find((folder) => folder.id === folderId)?.cached
     if (thisFolderIsCached) {
       console.log("Folder was cached____________________________________________");
       this.plugin.setPluginState({ currentFolderId: folderId, filterInput: '' })
@@ -226,7 +226,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
       await this.#withAbort(async (signal) => {
         this.lastCheckbox = undefined
 
-        this.nextPagePath = folderId
+        this.nextPagePath = folderId || undefined
         let files: CompanionFile[] = []
         let folders: CompanionFile[] = []
         do {
@@ -386,7 +386,10 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
         this.setLoading(true)
         await this.provider.login({ authFormData, signal })
         this.plugin.setPluginState({ authenticated: true })
-        this.preFirstRender()
+        await Promise.all([
+          this.provider.fetchPreAuthToken(),
+          this.getFolder(this.plugin.rootFolderId),
+        ])
       })
     } catch (err) {
       if (err.name === 'UserFacingApiError') {
@@ -615,7 +618,9 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
     const { i18n } = this.plugin.uppy
 
     if (!didFirstRender) {
-      this.preFirstRender()
+      this.plugin.setPluginState({ didFirstRender: true })
+      this.provider.fetchPreAuthToken()
+      this.getFolder(this.plugin.rootFolderId)
     }
 
     const targetViewOptions = { ...this.opts, ...viewOptions }

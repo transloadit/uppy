@@ -96,8 +96,8 @@ export type UnknownProviderPlugin<
   M extends Meta,
   B extends Body,
 > = UnknownPlugin<M, B, UnknownProviderPluginState> & {
-  onFirstRender: () => void
   title: string
+  rootFolderId: string | null
   files: UppyFile<M, B>[]
   icon: () => JSX.Element
   provider: CompanionClientProvider
