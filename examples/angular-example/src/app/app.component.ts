@@ -65,7 +65,8 @@ export class AppComponent implements OnInit {
     },
   }
 
-  uppy: Uppy = new Uppy({ debug: true, autoProceed: true })
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  uppy: Uppy<any, any> = new Uppy({ debug: true, autoProceed: true })
 
   ngOnInit(): void {
     this.uppy

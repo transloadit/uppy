@@ -1,5 +1,25 @@
 # @uppy/core
 
+## 4.0.0-beta.1
+
+Released: 2024-03-28
+Included in: Uppy v4.0.0-beta.1
+
+- @uppy/core: refine type of private variables (Antoine du Hamel / #5028)
+- @uppy/core: fix some type errors (Antoine du Hamel / #5015)
+- @uppy/core: various type fixes (Antoine du Hamel / #4995)
+- @uppy/core,@uppy/provider-views: Fix breadcrumbs (Evgenia Karunus / #4986)
+
+## 3.10.0
+
+Released: 2024-03-27
+Included in: Uppy v3.24.0
+
+- @uppy/core: refine type of private variables (Antoine du Hamel / #5028)
+- @uppy/core: fix some type errors (Antoine du Hamel / #5015)
+- @uppy/core: various type fixes (Antoine du Hamel / #4995)
+- @uppy/core,@uppy/provider-views: Fix breadcrumbs (Evgenia Karunus / #4986)
+
 ## 3.9.3
 
 Released: 2024-02-28

@@ -14,7 +14,6 @@ export interface FileInputOptions extends UIPluginOptions {
   pretty?: boolean
   inputName?: string
 }
-// Default options, must be kept in sync with @uppy/react/src/FileInput.js.
 const defaultOptions = {
   pretty: true,
   inputName: 'files[]',

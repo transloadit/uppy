@@ -1,5 +1,24 @@
 # @uppy/aws-s3-multipart
 
+## 4.0.0-beta.1
+
+Released: 2024-03-28
+Included in: Uppy v4.0.0-beta.1
+
+- @uppy/aws-s3-multipart: mark `opts` as optional (Antoine du Hamel / #5039)
+- @uppy/aws-s3-multipart,@uppy/tus,@uppy/utils,@uppy/xhr-upload: Make `allowedMetaFields` consistent (Merlijn Vos / #5011)
+- @uppy/aws-s3-multipart: refactor to TS (Antoine du Hamel / #4902)
+- @uppy/aws-s3-multipart: fix escaping issue with client signed request (Hiroki Shimizu / #5006)
+
+## 3.11.0
+
+Released: 2024-03-27
+Included in: Uppy v3.24.0
+
+- @uppy/aws-s3-multipart: mark `opts` as optional (Antoine du Hamel / #5039)
+- @uppy/aws-s3-multipart: refactor to TS (Antoine du Hamel / #4902)
+- @uppy/aws-s3-multipart: fix escaping issue with client signed request (Hiroki Shimizu / #5006)
+
 ## 3.8.0
 
 Released: 2023-10-20
