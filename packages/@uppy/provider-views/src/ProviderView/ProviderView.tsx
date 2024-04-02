@@ -88,6 +88,8 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
 
   nextPagePath: string | undefined
 
+  isRootFolderFetched: boolean = false;
+
   constructor(
     plugin: UnknownProviderPlugin<M, B>,
     opts: ProviderViewOptions<M, B>,
@@ -214,7 +216,9 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
     console.log(`____________________________________________GETTING FOLDER "${folderId}"`);
     // Returning cached folder
     const { partialTree } = this.plugin.getPluginState()
-    const thisFolderIsCached = partialTree.find((folder) => folder.id === folderId)?.cached
+    const thisFolderIsCached =
+      partialTree.find((folder) => folder.id === folderId)?.cached ||
+      (folderId === this.plugin.rootFolderId && this.isRootFolderFetched)
     if (thisFolderIsCached) {
       console.log("Folder was cached____________________________________________");
       this.plugin.setPluginState({ currentFolderId: folderId, filterInput: '' })
@@ -251,7 +255,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
 
 
         console.log({ partialTree });
-        if (partialTree.length === 0) {
+        if (!this.isRootFolderFetched) {
           console.log("creating a new partial tree!");
           const newPartialTree : PartialTree = [
             ...folders.map((folder) => ({
@@ -266,7 +270,8 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
 
           console.log({ newPartialTree });
 
-          this.plugin.setPluginState({ partialTree: newPartialTree })
+          this.isRootFolderFetched = true
+          this.plugin.setPluginState({ partialTree: newPartialTree, currentFolderId: folderId, filterInput: '' })
         } else {
           console.log("appending to existing partial tree!");
           const clickedFolder : FileInPartialTree = partialTree.find((folder) => folder.id === folderId)!
@@ -297,12 +302,13 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
               partialTree: [
                 ...partialTreeWithUpdatedClickedFolder,
                 ...clickedFolderContents
-              ]
+              ],
+              currentFolderId: folderId,
+              filterInput: ''
             })
           }
         }
 
-        this.plugin.setPluginState({ currentFolderId: (folderId || null), filterInput: '' })
       })
 
 
