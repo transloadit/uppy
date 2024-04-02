@@ -105,7 +105,7 @@ export default class GoogleDrive<
   install(): void {
     this.view = new DriveProviderViews(this, {
       provider: this.provider,
-      loadAllFiles: true,
+      loadAllFiles: false,
     })
 
     const { target } = this.opts
