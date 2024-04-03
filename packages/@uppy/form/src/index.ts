@@ -57,12 +57,6 @@ export default class Form<M extends Meta, B extends Body> extends BasePlugin<
     this.type = 'acquirer'
     this.id = this.opts.id || 'Form'
 
-    if (this.opts.submitOnSuccess && this.opts.triggerUploadOnSubmit) {
-      throw new Error(
-        'Can not have both `submitOnSuccess` and `triggerUploadOnSubmit` options enabled at the same time',
-      )
-    }
-
     this.handleFormSubmit = this.handleFormSubmit.bind(this)
     this.handleUploadStart = this.handleUploadStart.bind(this)
     this.handleSuccess = this.handleSuccess.bind(this)
@@ -87,7 +81,11 @@ export default class Form<M extends Meta, B extends Body> extends BasePlugin<
   }
 
   handleFormSubmit(ev: Event): void {
-    if (this.opts.triggerUploadOnSubmit) {
+    // If `submitOnSuccess` is enabled, Uppy already uploaded the files
+    // and then calls `form.requestSubmit()`. In that case we don’t want to upload the files again.
+    const allowUpload = this.uppy.getState().allowNewUpload
+
+    if (this.opts.triggerUploadOnSubmit && allowUpload) {
       ev.preventDefault()
       const elements = toArray((ev.target as HTMLFormElement).elements)
       const disabledByUppy: HTMLButtonElement[] = []
