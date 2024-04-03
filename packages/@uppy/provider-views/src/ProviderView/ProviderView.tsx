@@ -159,7 +159,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
     absDirPath,
     signal,
   }: {
-    requestPath?: string
+    requestPath: string | null
     absDirPath: string
     signal: AbortSignal
   }) {
@@ -167,7 +167,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
       username: string
       nextPagePath: string
       items: CompanionFile[]
-    }>(requestPath, { signal })
+    }>(requestPath || undefined, { signal })
     this.username = username || this.username
 
     return {
@@ -179,40 +179,13 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
     }
   }
 
-  async #listFilesAndFolders({ breadcrumbs, signal }: {
-    breadcrumbs: FileInPartialTree[],
-    signal: AbortSignal
-  }) {
-    const absDirPath = formatBreadcrumbs(breadcrumbs)
-
-    const { items, nextPagePath } = await this.#list({
-      requestPath: this.nextPagePath,
-      absDirPath,
-      signal,
-    })
-
-    this.nextPagePath = nextPagePath
-
-    const files: CompanionFile[] = []
-    const folders: CompanionFile[] = []
-
-    items.forEach((item) => {
-      if (item.isFolder) {
-        folders.push(item)
-      } else {
-        files.push(item)
-      }
-    })
-
-    return { files, folders }
-  }
-
   /**
    * Select a folder based on its id: fetches the folder and then updates state with its contents
    * TODO rename to something better like selectFolder or navigateToFolder (breaking change?)
    *
    */
   async getFolder(folderId: string | null): Promise<void> {
+    this.lastCheckbox = undefined
     console.log(`____________________________________________GETTING FOLDER "${folderId}"`);
     // Returning cached folder
     const { partialTree } = this.plugin.getPluginState()
@@ -228,28 +201,24 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
     try {
       this.setLoading(true)
       await this.#withAbort(async (signal) => {
-        this.lastCheckbox = undefined
 
-        this.nextPagePath = folderId || undefined
-        let files: CompanionFile[] = []
-        let folders: CompanionFile[] = []
+        let currentPagePath = folderId
+        let currentItems: CompanionFile[] = []
         do {
-          const { files: newFiles, folders: newFolders } = await this.#listFilesAndFolders({
-            breadcrumbs: this.getBreadcrumbs(), signal,
+          const { items, nextPagePath } = await this.#list({
+            requestPath: currentPagePath,
+            absDirPath: formatBreadcrumbs(this.getBreadcrumbs()),
+            signal
           })
+          currentPagePath = nextPagePath
+          currentItems = currentItems.concat(items)
+          this.setLoading(this.plugin.uppy.i18n('loadedXFiles', { numFiles: items.length }))
+        } while (this.opts.loadAllFiles && currentPagePath)
 
-          files = files.concat(newFiles)
-          folders = folders.concat(newFolders)
+        let newFolders = currentItems.filter((i) => i.isFolder === true)
+        let newFiles = currentItems.filter((i) => i.isFolder === false)
 
-          this.setLoading(this.plugin.uppy.i18n('loadedXFiles', { numFiles: files.length + folders.length }))
-        } while (this.opts.loadAllFiles && this.nextPagePath)
-
-
-
-
-
-
-
+        console.log({ newFolders, newFiles});
 
 
 
@@ -257,13 +226,14 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
         console.log({ partialTree });
         if (!this.isRootFolderFetched) {
           console.log("creating a new partial tree!");
+
           const newPartialTree : PartialTree = [
-            ...folders.map((folder) => ({
-              id: folder.requestPath, parentId: (folderId || null), data: folder,
+            ...newFolders.map((folder) => ({
+              id: folder.requestPath, parentId: folderId, data: folder,
               status: "unchecked", cached: false,
             })) as FileInPartialTree[],
-            ...files.map((file) => ({
-              id: file.requestPath, parentId: (folderId || null),
+            ...newFiles.map((file) => ({
+              id: file.requestPath, parentId: folderId,
               status: "unchecked", cached: null, data: file
             })) as FileInPartialTree[]
           ]
@@ -280,11 +250,11 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
           // Otherwise, cache the current folder!
           if (clickedFolder && !clickedFolder.cached) {
             const clickedFolderContents : FileInPartialTree[] = [
-              ...folders.map((folder) => ({
+              ...newFolders.map((folder) => ({
                 id: folder.requestPath, parentId: clickedFolder.id, data: folder,
                 status: clickedFolder.status, cached: false,
               })),
-              ...files.map((file) => ({
+              ...newFiles.map((file) => ({
                 id: file.requestPath, parentId: clickedFolder.id, data: file,
                 status: clickedFolder.status, cached: null,
               })),
@@ -298,11 +268,15 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
                 folder
             )
 
+            const newPartialTree = [
+              ...partialTreeWithUpdatedClickedFolder,
+              ...clickedFolderContents
+            ]
+
+            console.log({ newPartialTree, folderId });
+
             this.plugin.setPluginState({
-              partialTree: [
-                ...partialTreeWithUpdatedClickedFolder,
-                ...clickedFolderContents
-              ],
+              partialTree: newPartialTree,
               currentFolderId: folderId,
               filterInput: ''
             })
@@ -422,17 +396,23 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
         await this.#withAbort(async (signal) => {
           const { partialTree, currentFolderId } = this.plugin.getPluginState()
 
-          const { files, folders } = await this.#listFilesAndFolders({
-            breadcrumbs: this.getBreadcrumbs(), signal,
+          const { items, nextPagePath } = await this.#list({
+            requestPath: this.nextPagePath,
+            absDirPath: formatBreadcrumbs(this.getBreadcrumbs()),
+            signal
           })
+          let newFolders = items.filter((i) => i.isFolder === true)
+          let newFiles = items.filter((i) => i.isFolder === false)
+
+          // TODO nextPagePath shoud be inserted into .partialTree here
 
           const newPartialTree = [
             ...partialTree,
-            ...folders.map((folder) => ({
+            ...newFolders.map((folder) => ({
               id: folder.requestPath, parentId: currentFolderId, data: folder,
               status: "unchecked", cached: false,
             })) as FileInPartialTree[],
-            ...files.map((file) => ({
+            ...newFiles.map((file) => ({
               id: file.requestPath, parentId: currentFolderId, data: file,
               status: "unchecked", cached: null
             })) as FileInPartialTree[]
