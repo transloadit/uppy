@@ -9,7 +9,6 @@ import type { Uppy } from '@uppy/core'
 import Assembly from './Assembly.ts'
 import Client, { AssemblyError } from './Client.ts'
 import AssemblyOptionsBuilder, {
-  validateParams,
   type OptionsWithRestructuredFields,
 } from './AssemblyOptions.ts'
 import AssemblyWatcher from './AssemblyWatcher.ts'
@@ -134,7 +133,9 @@ export interface AssemblyOptions {
   signature?: string | null
 }
 
-interface BaseOptions extends PluginOpts {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export interface TransloaditOptions<M extends Meta, B extends Body>
+  extends PluginOpts {
   service?: string
   errorReporting?: boolean
   waitForEncoding?: boolean
@@ -144,51 +145,13 @@ interface BaseOptions extends PluginOpts {
   limit?: number
   clientName?: string | null
   retryDelays?: number[]
+  assemblyOptions?:
+    | AssemblyOptions
+    | ((
+        file?: UppyFile<M, B> | null,
+        options?: TransloaditOptions<M, B>,
+      ) => Promise<AssemblyOptions> | AssemblyOptions)
 }
-
-export type TransloaditOptions<M extends Meta, B extends Body> = BaseOptions &
-  (
-    | {
-        assemblyOptions?:
-          | AssemblyOptions
-          | ((
-              file?: UppyFile<M, B> | null,
-              options?: AssemblyOptions,
-            ) => Promise<AssemblyOptions> | AssemblyOptions)
-        /** @deprecated use `assemblyOptions` instead */
-        getAssemblyOptions?: never | null
-        /** @deprecated use `assemblyOptions` instead */
-        params?: never | null
-        /** @deprecated use `assemblyOptions` instead */
-        fields?: never | null
-        /** @deprecated use `assemblyOptions` instead */
-        signature?: never | null
-      }
-    | {
-        /** @deprecated use `assemblyOptions` instead */
-        getAssemblyOptions?: (
-          file?: UppyFile<M, B> | null,
-        ) => AssemblyOptions | Promise<AssemblyOptions>
-        assemblyOptions?: never
-        /** @deprecated use `assemblyOptions` instead */
-        params?: never | null
-        /** @deprecated use `assemblyOptions` instead */
-        fields?: never | null
-        /** @deprecated use `assemblyOptions` instead */
-        signature?: never | null
-      }
-    | {
-        /** @deprecated use `assemblyOptions` instead */
-        params?: AssemblyParameters | null
-        /** @deprecated use `assemblyOptions` instead */
-        fields?: { [name: string]: number | string } | string[] | null
-        /** @deprecated use `assemblyOptions` instead */
-        signature?: string | null
-        /** @deprecated use `assemblyOptions` instead */
-        getAssemblyOptions?: never | null
-        assemblyOptions?: never
-      }
-  )
 
 const defaultOptions = {
   service: 'https://api2.transloadit.com',
@@ -197,14 +160,6 @@ const defaultOptions = {
   waitForMetadata: false,
   alwaysRunAssembly: false,
   importFromUploadURLs: false,
-  /** @deprecated use `assemblyOptions` instead */
-  signature: null,
-  /** @deprecated use `assemblyOptions` instead */
-  params: null,
-  /** @deprecated use `assemblyOptions` instead */
-  fields: null,
-  /** @deprecated use `assemblyOptions` instead */
-  getAssemblyOptions: null,
   limit: 20,
   retryDelays: [7_000, 10_000, 15_000, 20_000],
   clientName: null,
@@ -292,12 +247,6 @@ export default class Transloadit<
 > extends BasePlugin<Opts<M, B>, M, B, TransloaditState> {
   static VERSION = packageJson.version
 
-  /** @deprecated use `import { COMPANION_URL } from '@uppy/transloadit'` instead. */
-  static COMPANION = COMPANION_URL
-
-  /** @deprecated use `import { COMPANION_ALLOWED_HOSTS } from '@uppy/transloadit'` instead. */
-  static COMPANION_PATTERN = COMPANION_ALLOWED_HOSTS
-
   #rateLimitedQueue: RateLimitedQueue
 
   client: Client<M, B>
@@ -316,22 +265,6 @@ export default class Transloadit<
     this.id = this.opts.id || 'Transloadit'
 
     this.defaultLocale = locale
-
-    // TODO: remove this fallback in the next major
-    this.opts.assemblyOptions ??= this.opts.getAssemblyOptions ?? {
-      params: this.opts.params,
-      signature: this.opts.signature,
-      fields: this.opts.fields,
-    }
-
-    // TODO: remove this check in the next major (validating params when creating the assembly should be enough)
-    if (
-      opts?.params != null &&
-      opts.getAssemblyOptions == null &&
-      opts.assemblyOptions == null
-    ) {
-      validateParams((this.opts.assemblyOptions as AssemblyOptions).params)
-    }
 
     this.#rateLimitedQueue = new RateLimitedQueue(this.opts.limit)
 
@@ -1013,12 +946,9 @@ export default class Transloadit<
       },
     })
 
-    const assemblyOptions = new AssemblyOptionsBuilder(
-      filesWithoutErrors,
-      this.opts,
-    )
+    const builder = new AssemblyOptionsBuilder(filesWithoutErrors, this.opts)
 
-    await assemblyOptions
+    await builder
       .build()
       .then((assemblies) => Promise.all(assemblies.map(createAssembly)))
       .then((maybeCreatedAssemblies) => {
