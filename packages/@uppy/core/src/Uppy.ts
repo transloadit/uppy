@@ -65,8 +65,11 @@ export type StatusInPartialTree = "checked" | "unchecked" | "partial"
 
 export type FileInPartialTree = {
   id: string
-  // really .cached is always a `boolean` for "folder"s, and `null` for "file"s
-  cached: boolean | null
+
+  // this is only for folders
+  cached?: boolean
+  nextPagePath?: string
+
   status: StatusInPartialTree
   parentId: string | null
   data: CompanionFile

@@ -218,23 +218,17 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
         let newFolders = currentItems.filter((i) => i.isFolder === true)
         let newFiles = currentItems.filter((i) => i.isFolder === false)
 
-        console.log({ newFolders, newFiles});
-
-
-
-
-        console.log({ partialTree });
         if (!this.isRootFolderFetched) {
           console.log("creating a new partial tree!");
 
           const newPartialTree : PartialTree = [
             ...newFolders.map((folder) => ({
               id: folder.requestPath, parentId: folderId, data: folder,
-              status: "unchecked", cached: false,
+              status: "unchecked", cached: false, nextPagePath: folder.requestPath
             })) as FileInPartialTree[],
             ...newFiles.map((file) => ({
               id: file.requestPath, parentId: folderId,
-              status: "unchecked", cached: null, data: file
+              status: "unchecked", data: file
             })) as FileInPartialTree[]
           ]
 
@@ -256,12 +250,12 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
               })),
               ...newFiles.map((file) => ({
                 id: file.requestPath, parentId: clickedFolder.id, data: file,
-                status: clickedFolder.status, cached: null,
+                status: clickedFolder.status
               })),
             ]
 
             // just doing `clickedFolder.cached = true` in a non-mutating way
-            const updatedClickedFolder : FileInPartialTree = { ...clickedFolder, cached: true }
+            const updatedClickedFolder : FileInPartialTree = { ...clickedFolder, cached: true, nextPagePath: currentPagePath }
             const partialTreeWithUpdatedClickedFolder = partialTree.map((folder) =>
               folder.id === updatedClickedFolder.id ?
                 updatedClickedFolder :
@@ -388,16 +382,16 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
   }
 
   async handleScroll(event: Event): Promise<void> {
-    console.log("handleScrolll");
-    if (this.shouldHandleScroll(event) && this.nextPagePath) {
+    const { partialTree, currentFolderId } = this.plugin.getPluginState()
+    const currentFolder = partialTree.find((i) => i.id === currentFolderId)!
+    if (this.shouldHandleScroll(event) && currentFolder.nextPagePath) {
       this.isHandlingScroll = true
 
       try {
         await this.#withAbort(async (signal) => {
-          const { partialTree, currentFolderId } = this.plugin.getPluginState()
 
           const { items, nextPagePath } = await this.#list({
-            requestPath: this.nextPagePath,
+            requestPath: currentFolder.nextPagePath!,
             absDirPath: formatBreadcrumbs(this.getBreadcrumbs()),
             signal
           })
@@ -406,15 +400,23 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
 
           // TODO nextPagePath shoud be inserted into .partialTree here
 
+          // just doing `clickedFolder.cached = true` in a non-mutating way
+          const updatedClickedFolder : FileInPartialTree = { ...currentFolder, nextPagePath }
+          const partialTreeWithUpdatedCurrentFolder = partialTree.map((folder) =>
+            folder.id === updatedClickedFolder.id ?
+              updatedClickedFolder :
+              folder
+          )
+
           const newPartialTree = [
-            ...partialTree,
+            ...partialTreeWithUpdatedCurrentFolder,
             ...newFolders.map((folder) => ({
               id: folder.requestPath, parentId: currentFolderId, data: folder,
-              status: "unchecked", cached: false,
+              status: "unchecked", cached: false, nextPagePath: folder.requestPath
             })) as FileInPartialTree[],
             ...newFiles.map((file) => ({
               id: file.requestPath, parentId: currentFolderId, data: file,
-              status: "unchecked", cached: null
+              status: "unchecked"
             })) as FileInPartialTree[]
           ]
 
