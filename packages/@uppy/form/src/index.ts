@@ -57,6 +57,12 @@ export default class Form<M extends Meta, B extends Body> extends BasePlugin<
     this.type = 'acquirer'
     this.id = this.opts.id || 'Form'
 
+    if (this.opts.submitOnSuccess && this.opts.triggerUploadOnSubmit) {
+      throw new Error(
+        'Can not have both `submitOnSuccess` and `triggerUploadOnSubmit` options enabled at the same time',
+      )
+    }
+
     this.handleFormSubmit = this.handleFormSubmit.bind(this)
     this.handleUploadStart = this.handleUploadStart.bind(this)
     this.handleSuccess = this.handleSuccess.bind(this)
