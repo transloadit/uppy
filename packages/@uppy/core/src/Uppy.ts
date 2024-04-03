@@ -61,21 +61,41 @@ export type UnknownPlugin<
   PluginState extends Record<string, unknown> = Record<string, unknown>,
 > = BasePlugin<any, M, B, PluginState>
 
-export type StatusInPartialTree = "checked" | "unchecked" | "partial"
+// ids are always `string`s, except the root folder's id can be `null`
+export type PartialTreeId = string | null
 
-export type FileInPartialTree = {
+export type PartialTreeFile = {
+  type: 'file'
   id: string
 
-  // this is only for folders
-  cached?: boolean
-  nextPagePath?: string
-
-  status: StatusInPartialTree
-  parentId: string | null
+  status: 'checked' | 'unchecked'
+  parentId: PartialTreeId
   data: CompanionFile
 }
 
-export type PartialTree = FileInPartialTree[]
+export type PartialTreeFolder = PartialTreeFolderNode | PartialTreeFolderRoot
+
+export type PartialTreeFolderNode = {
+  type: 'folder'
+  id: string
+
+  cached: boolean
+  nextPagePath: PartialTreeId
+
+  status: 'checked' | 'unchecked' | 'partial'
+  parentId: PartialTreeId
+  data: CompanionFile
+}
+
+export type PartialTreeFolderRoot = {
+  type: 'root'
+  id: PartialTreeId
+
+  cached: boolean
+  nextPagePath: PartialTreeId
+}
+
+export type PartialTree = (PartialTreeFile | PartialTreeFolder)[]
 
 export type UnknownProviderPluginState = {
   authenticated: boolean | undefined

@@ -12,7 +12,7 @@ import type Uppy from '@uppy/core'
 import SearchFilterInput from './SearchFilterInput.tsx'
 import FooterActions from './FooterActions.tsx'
 import Item from './Item/index.tsx'
-import type { FileInPartialTree, PartialTree } from '@uppy/core/lib/Uppy.ts'
+import type { PartialTree, PartialTreeFile, PartialTreeFolderNode, PartialTreeId } from '@uppy/core/lib/Uppy.ts'
 
 const VIRTUAL_SHARED_DIR = 'shared-with-me'
 
@@ -20,13 +20,13 @@ type ListItemProps<M extends Meta, B extends Body> = {
   currentSelection: any[]
   uppyFiles: UppyFile<M, B>[]
   viewType: string
-  toggleCheckbox: (event: Event, file: FileInPartialTree) => void
+  toggleCheckbox: (event: Event, file: (PartialTreeFile | PartialTreeFolderNode)) => void
   recordShiftKeyPress: (event: KeyboardEvent | MouseEvent) => void
   showTitles: boolean
   i18n: I18n
   validateRestrictions: Uppy<M, B>['validateRestrictions']
-  getFolder: (folderId: string) => void
-  f: FileInPartialTree
+  getFolder: (folderId: PartialTreeId) => void
+  f: (PartialTreeFile | PartialTreeFolderNode)
 }
 
 function ListItem<M extends Meta, B extends Body>(
@@ -87,13 +87,13 @@ function ListItem<M extends Meta, B extends Body>(
 }
 
 type BrowserProps<M extends Meta, B extends Body> = {
-  displayedPartialTree: PartialTree,
-  currentSelection: FileInPartialTree[],
+  displayedPartialTree: (PartialTreeFile | PartialTreeFolderNode)[],
+  currentSelection: (PartialTreeFile | PartialTreeFolderNode)[],
   uppyFiles: UppyFile<M, B>[]
   viewType: string
   headerComponent?: JSX.Element
   showBreadcrumbs: boolean
-  toggleCheckbox: (event: Event, file: FileInPartialTree) => void
+  toggleCheckbox: (event: Event, file: PartialTreeFile | PartialTreeFolderNode) => void
   recordShiftKeyPress: (event: KeyboardEvent | MouseEvent) => void
   handleScroll: (event: Event) => Promise<void>
   showTitles: boolean
@@ -200,7 +200,7 @@ function Browser<M extends Meta, B extends Body>(
               <ul className="uppy-ProviderBrowser-list">
                 <VirtualList
                   data={displayedPartialTree}
-                  renderRow={(f: FileInPartialTree) => (
+                  renderRow={(f: PartialTreeFile | PartialTreeFolderNode) => (
                     <ListItem
                       currentSelection={currentSelection}
                       uppyFiles={uppyFiles}

@@ -7,7 +7,9 @@ import type {
   UnknownProviderPlugin,
   Uppy,
   PartialTree,
-  FileInPartialTree
+  PartialTreeFolder,
+  PartialTreeFolderNode,
+  PartialTreeFile,
 } from '@uppy/core/lib/Uppy.ts'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import type { CompanionFile } from '@uppy/utils/lib/CompanionFile.ts'
@@ -23,9 +25,11 @@ import View, { type ViewOptions } from '../View.ts'
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../../package.json'
 
-function formatBreadcrumbs(breadcrumbs: FileInPartialTree[]): string {
-  return breadcrumbs
-    .map((directory) => directory.data.name)
+function formatBreadcrumbs(breadcrumbs: PartialTreeFolder[]): string {
+  const nonrootFoldes = breadcrumbs
+    .filter((folder) => folder.type === 'folder') as PartialTreeFolderNode[]
+  return nonrootFoldes
+    .map((folder) => folder.data.name)
     .join('/')
 }
 
@@ -86,10 +90,6 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
 
   username: string | undefined
 
-  nextPagePath: string | undefined
-
-  isRootFolderFetched: boolean = false;
-
   constructor(
     plugin: UnknownProviderPlugin<M, B>,
     opts: ProviderViewOptions<M, B>,
@@ -111,7 +111,14 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
     // Set default state for the plugin
     this.plugin.setPluginState({
       authenticated: undefined, // we don't know yet
-      partialTree: [],
+      partialTree: [
+        {
+          type: 'root',
+          id: this.plugin.rootFolderId,
+          cached: false,
+          nextPagePath: this.plugin.rootFolderId
+        }
+      ],
       currentFolderId: null,
       filterInput: '',
       isSearchVisible: false,
@@ -189,9 +196,8 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
     console.log(`____________________________________________GETTING FOLDER "${folderId}"`);
     // Returning cached folder
     const { partialTree } = this.plugin.getPluginState()
-    const thisFolderIsCached =
-      partialTree.find((folder) => folder.id === folderId)?.cached ||
-      (folderId === this.plugin.rootFolderId && this.isRootFolderFetched)
+    const clickedFolder = partialTree.find((folder) => folder.id === folderId) as PartialTreeFolder | undefined
+    const thisFolderIsCached = clickedFolder && clickedFolder.cached
     if (thisFolderIsCached) {
       console.log("Folder was cached____________________________________________");
       this.plugin.setPluginState({ currentFolderId: folderId, filterInput: '' })
@@ -218,65 +224,56 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
         let newFolders = currentItems.filter((i) => i.isFolder === true)
         let newFiles = currentItems.filter((i) => i.isFolder === false)
 
-        if (!this.isRootFolderFetched) {
-          console.log("creating a new partial tree!");
+        const clickedFolder : PartialTreeFolder = partialTree.find((folder) => folder.id === folderId)! as PartialTreeFolder
 
-          const newPartialTree : PartialTree = [
-            ...newFolders.map((folder) => ({
-              id: folder.requestPath, parentId: folderId, data: folder,
-              status: "unchecked", cached: false, nextPagePath: folder.requestPath
-            })) as FileInPartialTree[],
-            ...newFiles.map((file) => ({
-              id: file.requestPath, parentId: folderId,
-              status: "unchecked", data: file
-            })) as FileInPartialTree[]
+        // If selected folder is already filled in, don't refill it (because that would make it lose deep state!)
+        // Otherwise, cache the current folder!
+        if (clickedFolder && !clickedFolder.cached) {
+          const newlyAddedItemStatus = (clickedFolder.type === 'folder' && clickedFolder.status === 'checked') ? 'checked' : 'unchecked';
+          const folders : PartialTreeFolderNode[] = newFolders.map((folder) => ({
+            type: 'folder',
+            id: folder.requestPath,
+
+            cached: false,
+            nextPagePath: folder.requestPath,
+
+            status: newlyAddedItemStatus,
+            parentId: clickedFolder.id,
+            data: folder,
+          }))
+          const files : PartialTreeFile[] = newFiles.map((file) => ({
+            type: 'file',
+            id: file.requestPath,
+
+            status: newlyAddedItemStatus,
+            parentId: clickedFolder.id,
+            data: file,
+          }))
+
+          // just doing `clickedFolder.cached = true` in a non-mutating way
+          const updatedClickedFolder : PartialTreeFolder = {
+            ...clickedFolder,
+            cached: true,
+            nextPagePath: currentPagePath
+          }
+          const partialTreeWithUpdatedClickedFolder = partialTree.map((folder) =>
+            folder.id === updatedClickedFolder.id ?
+              updatedClickedFolder :
+              folder
+          )
+
+          const newPartialTree = [
+            ...partialTreeWithUpdatedClickedFolder,
+            ...folders,
+            ...files
           ]
 
-          console.log({ newPartialTree });
-
-          this.isRootFolderFetched = true
-          this.plugin.setPluginState({ partialTree: newPartialTree, currentFolderId: folderId, filterInput: '' })
-        } else {
-          console.log("appending to existing partial tree!");
-          const clickedFolder : FileInPartialTree = partialTree.find((folder) => folder.id === folderId)!
-
-          // If selected folder is already filled in, don't refill it (because that would make it lose deep state!)
-          // Otherwise, cache the current folder!
-          if (clickedFolder && !clickedFolder.cached) {
-            const clickedFolderContents : FileInPartialTree[] = [
-              ...newFolders.map((folder) => ({
-                id: folder.requestPath, parentId: clickedFolder.id, data: folder,
-                status: clickedFolder.status, cached: false,
-              })),
-              ...newFiles.map((file) => ({
-                id: file.requestPath, parentId: clickedFolder.id, data: file,
-                status: clickedFolder.status
-              })),
-            ]
-
-            // just doing `clickedFolder.cached = true` in a non-mutating way
-            const updatedClickedFolder : FileInPartialTree = { ...clickedFolder, cached: true, nextPagePath: currentPagePath }
-            const partialTreeWithUpdatedClickedFolder = partialTree.map((folder) =>
-              folder.id === updatedClickedFolder.id ?
-                updatedClickedFolder :
-                folder
-            )
-
-            const newPartialTree = [
-              ...partialTreeWithUpdatedClickedFolder,
-              ...clickedFolderContents
-            ]
-
-            console.log({ newPartialTree, folderId });
-
-            this.plugin.setPluginState({
-              partialTree: newPartialTree,
-              currentFolderId: folderId,
-              filterInput: ''
-            })
-          }
+          this.plugin.setPluginState({
+            partialTree: newPartialTree,
+            currentFolderId: folderId,
+            filterInput: ''
+          })
         }
-
       })
 
 
@@ -305,8 +302,6 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
     } finally {
       this.setLoading(false)
     }
-
-    this.lastCheckbox = undefined
   }
 
   /**
@@ -383,7 +378,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
 
   async handleScroll(event: Event): Promise<void> {
     const { partialTree, currentFolderId } = this.plugin.getPluginState()
-    const currentFolder = partialTree.find((i) => i.id === currentFolderId)!
+    const currentFolder = partialTree.find((i) => i.id === currentFolderId) as PartialTreeFolder
     if (this.shouldHandleScroll(event) && currentFolder.nextPagePath) {
       this.isHandlingScroll = true
 
@@ -398,26 +393,36 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
           let newFolders = items.filter((i) => i.isFolder === true)
           let newFiles = items.filter((i) => i.isFolder === false)
 
-          // TODO nextPagePath shoud be inserted into .partialTree here
-
           // just doing `clickedFolder.cached = true` in a non-mutating way
-          const updatedClickedFolder : FileInPartialTree = { ...currentFolder, nextPagePath }
-          const partialTreeWithUpdatedCurrentFolder = partialTree.map((folder) =>
-            folder.id === updatedClickedFolder.id ?
-              updatedClickedFolder :
-              folder
+          const scrolledFolder : PartialTreeFolder = {...currentFolder, nextPagePath }
+          const partialTreeWithUpdatedScrolledFolder = partialTree.map((folder) =>
+            folder.id === scrolledFolder.id ? scrolledFolder : folder
           )
+          const newlyAddedItemStatus = (scrolledFolder.type === 'folder' && scrolledFolder.status === 'checked') ? 'checked' : 'unchecked';
+          const folders : PartialTreeFolderNode[] = newFolders.map((folder) => ({
+            type: 'folder',
+            id: folder.requestPath,
 
-          const newPartialTree = [
-            ...partialTreeWithUpdatedCurrentFolder,
-            ...newFolders.map((folder) => ({
-              id: folder.requestPath, parentId: currentFolderId, data: folder,
-              status: "unchecked", cached: false, nextPagePath: folder.requestPath
-            })) as FileInPartialTree[],
-            ...newFiles.map((file) => ({
-              id: file.requestPath, parentId: currentFolderId, data: file,
-              status: "unchecked"
-            })) as FileInPartialTree[]
+            cached: false,
+            nextPagePath: folder.requestPath,
+
+            status: newlyAddedItemStatus,
+            parentId: scrolledFolder.id,
+            data: folder,
+          }))
+          const files : PartialTreeFile[] = newFiles.map((file) => ({
+            type: 'file',
+            id: file.requestPath,
+
+            status: newlyAddedItemStatus,
+            parentId: scrolledFolder.id,
+            data: file,
+          }))
+
+          const newPartialTree : PartialTree = [
+            ...partialTreeWithUpdatedScrolledFolder,
+            ...folders,
+            ...files
           ]
 
           this.plugin.setPluginState({ partialTree: newPartialTree })
@@ -474,127 +479,129 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
   }
 
   async donePicking(): Promise<void> {
-    this.setLoading(true)
-    try {
-      await this.#withAbort(async (signal) => {
-        const { partialTree } = this.plugin.getPluginState()
-        const currentSelection = partialTree.filter((item) => item.status === "checked")
+    // this.setLoading(true)
+    // try {
+    //   await this.#withAbort(async (signal) => {
+    //     const { partialTree } = this.plugin.getPluginState()
+    //     const currentSelection = partialTree.filter((item) => item.status === "checked")
 
-        const messages: string[] = []
-        const newFiles: CompanionFile[] = []
+    //     const messages: string[] = []
+    //     const newFiles: CompanionFile[] = []
 
-        for (const selectedItem of currentSelection) {
-          const requestPath = selectedItem.id
+    //     for (const selectedItem of currentSelection) {
+    //       const requestPath = selectedItem.id
 
-          const withRelDirPath = (newItem: CompanionFile) => ({
-            ...newItem,
-            // calculate the file's path relative to the user's selected item's path
-            // see https://github.com/transloadit/uppy/pull/4537#issuecomment-1614236655
-            relDirPath: (newItem.absDirPath as string)
-              .replace(selectedItem.data.absDirPath as string, '')
-              .replace(/^\//, ''),
-          })
+    //       const withRelDirPath = (newItem: CompanionFile) => ({
+    //         ...newItem,
+    //         // calculate the file's path relative to the user's selected item's path
+    //         // see https://github.com/transloadit/uppy/pull/4537#issuecomment-1614236655
+    //         relDirPath: (newItem.absDirPath as string)
+    //           .replace(selectedItem.data.absDirPath as string, '')
+    //           .replace(/^\//, ''),
+    //       })
 
-          if (selectedItem.data.isFolder) {
-            let isEmpty = true
-            let numNewFiles = 0
+    //       if (selectedItem.data.isFolder) {
+    //         let isEmpty = true
+    //         let numNewFiles = 0
 
-            const queue = new PQueue({ concurrency: 6 })
+    //         const queue = new PQueue({ concurrency: 6 })
 
-            const onFiles = (files: CompanionFile[]) => {
-              for (const newFile of files) {
-                const tagFile = this.getTagFile(newFile)
+    //         const onFiles = (files: CompanionFile[]) => {
+    //           for (const newFile of files) {
+    //             const tagFile = this.getTagFile(newFile)
 
-                const id = getSafeFileId(tagFile)
-                // If the same folder is added again, we don't want to send
-                // X amount of duplicate file notifications, we want to say
-                // the folder was already added. This checks if all files are duplicate,
-                // if that's the case, we don't add the files.
-                if (!this.plugin.uppy.checkIfFileAlreadyExists(id)) {
-                  newFiles.push(withRelDirPath(newFile))
-                  numNewFiles++
-                  this.setLoading(
-                    this.plugin.uppy.i18n('addedNumFiles', {
-                      numFiles: numNewFiles,
-                    }),
-                  )
-                }
-                isEmpty = false
-              }
-            }
+    //             const id = getSafeFileId(tagFile)
+    //             // If the same folder is added again, we don't want to send
+    //             // X amount of duplicate file notifications, we want to say
+    //             // the folder was already added. This checks if all files are duplicate,
+    //             // if that's the case, we don't add the files.
+    //             if (!this.plugin.uppy.checkIfFileAlreadyExists(id)) {
+    //               newFiles.push(withRelDirPath(newFile))
+    //               numNewFiles++
+    //               this.setLoading(
+    //                 this.plugin.uppy.i18n('addedNumFiles', {
+    //                   numFiles: numNewFiles,
+    //                 }),
+    //               )
+    //             }
+    //             isEmpty = false
+    //           }
+    //         }
 
-            await this.#recursivelyListAllFiles({
-              requestPath,
-              absDirPath: prependPath(
-                selectedItem.data.absDirPath,
-                selectedItem.data.name,
-              ),
-              relDirPath: selectedItem.data.name,
-              queue,
-              onFiles,
-              signal,
-            })
-            await queue.onIdle()
+    //         await this.#recursivelyListAllFiles({
+    //           requestPath,
+    //           absDirPath: prependPath(
+    //             selectedItem.data.absDirPath,
+    //             selectedItem.data.name,
+    //           ),
+    //           relDirPath: selectedItem.data.name,
+    //           queue,
+    //           onFiles,
+    //           signal,
+    //         })
+    //         await queue.onIdle()
 
-            let message
-            if (isEmpty) {
-              message = this.plugin.uppy.i18n('emptyFolderAdded')
-            } else if (numNewFiles === 0) {
-              message = this.plugin.uppy.i18n('folderAlreadyAdded', {
-                folder: selectedItem.data.name,
-              })
-            } else {
-              // TODO we don't really know at this point whether any files were actually added
-              // (only later after addFiles has been called) so we should probably rewrite this.
-              // Example: If all files fail to add due to restriction error, it will still say "Added 100 files from folder"
-              message = this.plugin.uppy.i18n('folderAdded', {
-                smart_count: numNewFiles,
-                folder: selectedItem.data.name,
-              })
-            }
+    //         let message
+    //         if (isEmpty) {
+    //           message = this.plugin.uppy.i18n('emptyFolderAdded')
+    //         } else if (numNewFiles === 0) {
+    //           message = this.plugin.uppy.i18n('folderAlreadyAdded', {
+    //             folder: selectedItem.data.name,
+    //           })
+    //         } else {
+    //           // TODO we don't really know at this point whether any files were actually added
+    //           // (only later after addFiles has been called) so we should probably rewrite this.
+    //           // Example: If all files fail to add due to restriction error, it will still say "Added 100 files from folder"
+    //           message = this.plugin.uppy.i18n('folderAdded', {
+    //             smart_count: numNewFiles,
+    //             folder: selectedItem.data.name,
+    //           })
+    //         }
 
-            messages.push(message)
-          } else {
-            newFiles.push(withRelDirPath(selectedItem.data))
-          }
-        }
+    //         messages.push(message)
+    //       } else {
+    //         newFiles.push(withRelDirPath(selectedItem.data))
+    //       }
+    //     }
 
-        // Note: this.plugin.uppy.addFiles must be only run once we are done fetching all files,
-        // because it will cause the loading screen to disappear,
-        // and that will allow the user to start the upload, so we need to make sure we have
-        // finished all async operations before we add any file
-        // see https://github.com/transloadit/uppy/pull/4384
-        this.plugin.uppy.log('Adding files from a remote provider')
-        this.plugin.uppy.addFiles(
-          // @ts-expect-error `addFiles` expects `body` to be `File` or `Blob`,
-          // but as the todo comment in `View.ts` indicates, we strangly pass `CompanionFile` as `body`.
-          // For now it's better to ignore than to have a potential breaking change.
-          newFiles.map((file) => this.getTagFile(file, this.requestClientId)),
-        )
+    //     // Note: this.plugin.uppy.addFiles must be only run once we are done fetching all files,
+    //     // because it will cause the loading screen to disappear,
+    //     // and that will allow the user to start the upload, so we need to make sure we have
+    //     // finished all async operations before we add any file
+    //     // see https://github.com/transloadit/uppy/pull/4384
+    //     this.plugin.uppy.log('Adding files from a remote provider')
+    //     this.plugin.uppy.addFiles(
+    //       // @ts-expect-error `addFiles` expects `body` to be `File` or `Blob`,
+    //       // but as the todo comment in `View.ts` indicates, we strangly pass `CompanionFile` as `body`.
+    //       // For now it's better to ignore than to have a potential breaking change.
+    //       newFiles.map((file) => this.getTagFile(file, this.requestClientId)),
+    //     )
 
-        this.plugin.setPluginState({ filterInput: '' })
-        messages.forEach((message) => this.plugin.uppy.info(message))
+    //     this.plugin.setPluginState({ filterInput: '' })
+    //     messages.forEach((message) => this.plugin.uppy.info(message))
 
-        this.clearSelection()
-      })
-    } catch (err) {
-      this.handleError(err)
-    } finally {
-      this.setLoading(false)
-    }
+    //     this.clearSelection()
+    //   })
+    // } catch (err) {
+    //   this.handleError(err)
+    // } finally {
+    //   this.setLoading(false)
+    // }
   }
 
-  getBreadcrumbs = () => {
+  getBreadcrumbs = () : PartialTreeFolder[] => {
     const { partialTree, currentFolderId } = this.plugin.getPluginState()
-    const breadcrumbs = []
-    if (partialTree && currentFolderId) {
-      const currentFolder = partialTree.find((folder) => folder.id === currentFolderId)
-      let parent = currentFolder
-      while (parent) {
-        breadcrumbs.push(parent)
-        parent = partialTree.find((folder) => folder.id === parent!.parentId)
-      }
+    if (!currentFolderId) return []
+
+    const breadcrumbs : PartialTreeFolder[] = []
+    let parent = partialTree.find((folder) => folder.id === currentFolderId) as PartialTreeFolder
+    while (true) {
+      breadcrumbs.push(parent)
+      if (parent.type === 'root') break
+
+      parent = partialTree.find((folder) => folder.id === (parent as PartialTreeFolderNode).parentId) as PartialTreeFolder
     }
+
     return breadcrumbs.toReversed()
   }
 
@@ -628,7 +635,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
       i18n,
     }
 
-    const displayedPartialTree = filterItems(partialTree.filter((item) => item.parentId === currentFolderId))
+    const displayedPartialTree = filterItems(partialTree.filter((item) => item.type !== 'root' && item.parentId === currentFolderId)) as (PartialTreeFile | PartialTreeFolderNode)[]
 
     const browserProps = {
       toggleCheckbox: this.toggleCheckbox.bind(this),
@@ -645,7 +652,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
       searchOnInput: true,
       searchInputLabel: i18n('filter'),
       clearSearchLabel: i18n('resetFilter'),
-      currentSelection: partialTree.filter((item) => item.status === "checked"),
+      currentSelection: partialTree.filter((item) => item.type !== 'root' && item.status === "checked") as (PartialTreeFile | PartialTreeFolderNode)[],
 
       noResultsLabel: i18n('noFilesFound'),
       logout: this.logout,

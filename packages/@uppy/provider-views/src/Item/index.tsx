@@ -9,7 +9,6 @@ import type { Meta, Body } from '@uppy/utils/lib/UppyFile'
 import ItemIcon from './components/ItemIcon.tsx'
 import GridListItem from './components/GridLi.tsx'
 import ListItem from './components/ListLi.tsx'
-import type { StatusInPartialTree } from '@uppy/core/lib/Uppy.ts'
 
 type ItemProps<M extends Meta, B extends Body> = {
   showTitles: boolean
@@ -24,7 +23,7 @@ type ItemProps<M extends Meta, B extends Body> = {
   type: 'folder' | 'file'
   author?: CompanionFile['author']
   getItemIcon: () => string
-  status: StatusInPartialTree
+  status: 'checked' | 'unchecked' | 'partial'
   isDisabled: boolean
   viewType: string
 }
@@ -37,7 +36,6 @@ export default function Item<M extends Meta, B extends Body>(
 
   const className = classNames(
     'uppy-ProviderBrowserItem',
-    // { 'uppy-ProviderBrowserItem--selected': isChecked },
     { 'uppy-ProviderBrowserItem--disabled': isDisabled },
     { 'uppy-ProviderBrowserItem--noPreview': itemIconString === 'video' },
   )

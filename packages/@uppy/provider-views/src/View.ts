@@ -1,7 +1,8 @@
 import type {
-  FileInPartialTree,
   PartialTree,
-  StatusInPartialTree,
+  PartialTreeFile,
+  PartialTreeFolder,
+  PartialTreeFolderNode,
   UnknownProviderPlugin,
   UnknownSearchProviderPlugin,
 } from '@uppy/core/lib/Uppy'
@@ -177,14 +178,15 @@ export default class View<
     return tagFile
   }
 
-  filterItems = (items: FileInPartialTree[]): FileInPartialTree[] => {
-    const state = this.plugin.getPluginState()
-    if (!state.filterInput || state.filterInput === '') {
+  filterItems = (items: PartialTree): PartialTree => {
+    const { filterInput } = this.plugin.getPluginState()
+    if (!filterInput || filterInput === '') {
       return items
     }
     return items.filter((item) => {
       return (
-        item.data?.name.toLowerCase().indexOf(state.filterInput.toLowerCase()) !==
+        item.type !== 'root' &&
+        item.data.name.toLowerCase().indexOf(filterInput.toLowerCase()) !==
         -1
       )
     })
@@ -201,7 +203,7 @@ export default class View<
    * toggle multiple checkboxes at once, which is done by getting all files
    * in between last checked file and current one.
    */
-  toggleCheckbox(e: Event, ourItem: FileInPartialTree) {
+  toggleCheckbox(e: Event, ourItem: PartialTreeFolderNode | PartialTreeFile) {
     e.stopPropagation()
     e.preventDefault()
 
@@ -210,20 +212,19 @@ export default class View<
 
     // if newStatus is "checked" - percolate down "checked"
     // if newStatus is "unchecked" - percolate down "unchecked"
-    const percolateDown = (currentFile: FileInPartialTree, status: StatusInPartialTree) => {
-      const children : FileInPartialTree[] = newPartialTree.filter((item) => item.parentId === currentFile.id) as FileInPartialTree[]
+    const percolateDown = (clickedItem: PartialTreeFolderNode | PartialTreeFile, status: 'checked' | 'unchecked') => {
+      const children = newPartialTree.filter((item) => item.type !== 'root' && item.parentId === clickedItem.id) as (PartialTreeFolderNode | PartialTreeFile)[]
       children.forEach((item) => {
         item.status = status
         percolateDown(item, status)
       })
     }
     // we do something to all of its parents.
-    const percolateUp = (currentFile: FileInPartialTree) => {
-      const parentFolder = newPartialTree.find((item) => item.id === currentFile.parentId)
+    const percolateUp = (currentItem: PartialTreeFolderNode | PartialTreeFile) => {
+      const parentFolder = newPartialTree.find((item) => item.id === currentItem.parentId)! as PartialTreeFolder
+      if (parentFolder.type === 'root') return
 
-      if (!parentFolder) return
-
-      const parentsChildren = newPartialTree.filter((item) => item.parentId === parentFolder.id) as FileInPartialTree[]
+      const parentsChildren = newPartialTree.filter((item) => item.type !== 'root' && item.parentId === parentFolder.id) as (PartialTreeFile | PartialTreeFolderNode)[]
       const areAllChildrenChecked = parentsChildren.every((item) => item.status === "checked")
       const areAllChildrenUnchecked = parentsChildren.every((item) => item.status === "unchecked")
 
@@ -240,7 +241,7 @@ export default class View<
 
     // Shift-clicking selects a single consecutive list of items
     // starting at the previous click.
-    const inThisFolder = this.filterItems(newPartialTree.filter((item) => item.parentId === currentFolderId))
+    const inThisFolder  = this.filterItems(newPartialTree.filter((item) => item.type !== 'root' && item.parentId === currentFolderId)) as (PartialTreeFile | PartialTreeFolderNode)[]
     const prevIndex = inThisFolder.findIndex((item) => item.id === this.lastCheckbox)
     if (prevIndex !== -1 && this.isShiftKeyPressed) {
       const newIndex = inThisFolder.findIndex((item) => item.id === ourItem.id)
@@ -250,23 +251,23 @@ export default class View<
       ).map((item) => item.id)
 
       const newlyCheckedItems = newPartialTree
-        .filter((item) => toMarkAsChecked.includes(item.id))
+        .filter((item) => item.type !== 'root' && toMarkAsChecked.includes(item.id)) as (PartialTreeFile | PartialTreeFolderNode)[] 
 
-      newlyCheckedItems.forEach((item) => item.status = "checked")
+      newlyCheckedItems.forEach((item) => item.status = 'checked')
 
       newlyCheckedItems.forEach((item) => {
-        percolateDown(item, "checked")
+        percolateDown(item, 'checked')
       })
       percolateUp(ourItem)
     } else {
-      const ourItemInNewTree = newPartialTree.find((item) => item.id === ourItem.id)!
-      ourItemInNewTree.status = ourItem.status === "checked" ? "unchecked" : "checked"
+      const ourItemInNewTree = newPartialTree.find((item) => item.id === ourItem.id) as (PartialTreeFile | PartialTreeFolderNode)
+      ourItemInNewTree.status = ourItem.status === 'checked' ? 'unchecked' : 'checked'
       percolateDown(ourItem, ourItemInNewTree.status)
       percolateUp(ourItem)
     }
 
     this.plugin.setPluginState({ partialTree: newPartialTree })
-    this.lastCheckbox = ourItem.id
+    this.lastCheckbox = ourItem.id!
   }
 
   setLoading(loading: boolean | string): void {
