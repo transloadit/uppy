@@ -158,7 +158,6 @@ export type UnknownSearchProviderPlugin<
   M extends Meta,
   B extends Body,
 > = UnknownPlugin<M, B, UnknownSearchProviderPluginState> & {
-  onFirstRender: () => void
   title: string
   icon: () => JSX.Element
   provider: CompanionClientSearchProvider

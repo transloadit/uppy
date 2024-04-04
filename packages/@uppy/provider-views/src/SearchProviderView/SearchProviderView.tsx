@@ -1,7 +1,7 @@
 import { h } from 'preact'
 
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
-import type { PartialTree, StatusInPartialTree, UnknownSearchProviderPlugin } from '@uppy/core/lib/Uppy.ts'
+import type { PartialTree, PartialTreeFile, PartialTreeFolderNode, PartialTreeStatusFile, UnknownSearchProviderPlugin, UnknownSearchProviderPluginState } from '@uppy/core/lib/Uppy.ts'
 import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin.ts'
 import type Uppy from '@uppy/core'
 import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
@@ -14,12 +14,18 @@ import View, { type ViewOptions } from '../View.ts'
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../../package.json'
 
-const defaultState = {
+const defaultState : Partial<UnknownSearchProviderPluginState> = {
   isInputMode: true,
-  breadcrumbs: [],
   filterInput: '',
   searchTerm: null,
-  partialTree: [],
+  partialTree: [
+    {
+      type: 'root',
+      id: null,
+      cached: false,
+      nextPagePath: null
+    }
+  ],
   currentFolderId: null,
 }
 
@@ -84,18 +90,18 @@ export default class SearchProviderView<
     this.plugin.setPluginState(defaultState)
   }
 
-  #updateFilesAndInputMode(res: Res, files: PartialTree): void {
+  #updateFilesAndInputMode(res: Res): void {
     this.nextPageQuery = res.nextPageQuery
     const { partialTree } = this.plugin.getPluginState()
     const newPartialTree : PartialTree = [
       ...partialTree,
       ...res.items.map((item) => ({
+        type: 'file',
         id: item.requestPath,
-        cached: null,
-        status: "unchecked" as StatusInPartialTree,
+        status: 'unchecked',
         parentId: null,
         data: item
-      }))
+      }) as PartialTreeFile)
     ]
     this.plugin.setPluginState({
       partialTree: newPartialTree,
@@ -114,7 +120,7 @@ export default class SearchProviderView<
     this.setLoading(true)
     try {
       const res = await this.provider.search<Res>(query)
-      this.#updateFilesAndInputMode(res, [])
+      this.#updateFilesAndInputMode(res)
     } catch (err) {
       this.handleError(err)
     } finally {
@@ -137,10 +143,10 @@ export default class SearchProviderView<
       this.isHandlingScroll = true
 
       try {
-        const { partialTree, searchTerm } = this.plugin.getPluginState()
+        const { searchTerm } = this.plugin.getPluginState()
         const response = await this.provider.search<Res>(searchTerm!, query)
 
-        this.#updateFilesAndInputMode(response, partialTree)
+        this.#updateFilesAndInputMode(response)
       } catch (error) {
         this.handleError(error)
       } finally {
@@ -152,8 +158,9 @@ export default class SearchProviderView<
   donePicking(): void {
     const { partialTree } = this.plugin.getPluginState()
     this.plugin.uppy.log('Adding remote search provider files')
+    const files = partialTree.filter((i) => i.type !== 'root' && i.status === 'checked') as PartialTreeFile[]
     this.plugin.uppy.addFiles(
-      partialTree.map((file) => this.getTagFile(file.data)),
+      files.map((file) => this.getTagFile(file.data)),
     )
     this.resetPluginState()
   }
@@ -162,25 +169,21 @@ export default class SearchProviderView<
     state: unknown,
     viewOptions: Omit<ViewOptions<M, B, PluginType>, 'provider'> = {},
   ): JSX.Element {
-    const { didFirstRender, isInputMode, searchTerm } =
+    const { isInputMode, searchTerm } =
       this.plugin.getPluginState()
     const { i18n } = this.plugin.uppy
-
-    if (!didFirstRender) {
-      this.preFirstRender()
-    }
 
     const targetViewOptions = { ...this.opts, ...viewOptions }
     const { loading, partialTree, currentFolderId } =
       this.plugin.getPluginState()
     const { filterItems, recordShiftKeyPress } = this
 
-    const displayedPartialTree = filterItems(partialTree.filter((item) => item.parentId === currentFolderId))
+    const displayedPartialTree = filterItems(partialTree.filter((item) => item.type !== 'root' && item.parentId === currentFolderId)) as PartialTreeFile[]
 
     const browserProps = {
       toggleCheckbox: this.toggleCheckbox.bind(this),
       recordShiftKeyPress,
-      currentSelection: partialTree.filter((item) => item.status === "checked"),
+      currentSelection: partialTree.filter((i) => i.type !== 'root' && i.status === 'checked') as PartialTreeFile[],
       displayedPartialTree,
       handleScroll: this.handleScroll,
       done: this.donePicking,

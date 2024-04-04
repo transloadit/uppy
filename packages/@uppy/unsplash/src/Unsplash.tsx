@@ -93,11 +93,6 @@ export default class Unsplash<M extends Meta, B extends Body> extends UIPlugin<
     }
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  async onFirstRender(): Promise<void> {
-    // do nothing
-  }
-
   render(state: unknown): ComponentChild {
     return this.view.render(state)
   }
