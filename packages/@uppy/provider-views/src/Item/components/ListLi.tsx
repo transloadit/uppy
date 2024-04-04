@@ -1,6 +1,6 @@
 /* eslint-disable react/require-default-props */
 import type { RestrictionError } from '@uppy/core/lib/Restricter'
-import type { StatusInPartialTree } from '@uppy/core/lib/Uppy'
+import type { PartialTreeStatus } from '@uppy/core/lib/Uppy'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import { h } from 'preact'
 
@@ -16,7 +16,7 @@ type ListItemProps<M extends Meta, B extends Body> = {
   isDisabled: boolean
   restrictionError?: RestrictionError<M, B> | null
   isCheckboxDisabled: boolean
-  status: StatusInPartialTree
+  status: PartialTreeStatus
   toggleCheckbox: (event: Event) => void
   recordShiftKeyPress: (event: KeyboardEvent | MouseEvent) => void
   type: string

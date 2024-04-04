@@ -64,16 +64,17 @@ export type UnknownPlugin<
 // ids are always `string`s, except the root folder's id can be `null`
 export type PartialTreeId = string | null
 
+export type PartialTreeStatusFile = 'checked' | 'unchecked'
+export type PartialTreeStatus = PartialTreeStatusFile | 'partial'
+
 export type PartialTreeFile = {
   type: 'file'
   id: string
 
-  status: 'checked' | 'unchecked'
+  status: PartialTreeStatusFile
   parentId: PartialTreeId
   data: CompanionFile
 }
-
-export type PartialTreeFolder = PartialTreeFolderNode | PartialTreeFolderRoot
 
 export type PartialTreeFolderNode = {
   type: 'folder'
@@ -82,7 +83,7 @@ export type PartialTreeFolderNode = {
   cached: boolean
   nextPagePath: PartialTreeId
 
-  status: 'checked' | 'unchecked' | 'partial'
+  status: PartialTreeStatus
   parentId: PartialTreeId
   data: CompanionFile
 }
@@ -94,6 +95,8 @@ export type PartialTreeFolderRoot = {
   cached: boolean
   nextPagePath: PartialTreeId
 }
+
+export type PartialTreeFolder = PartialTreeFolderNode | PartialTreeFolderRoot
 
 export type PartialTree = (PartialTreeFile | PartialTreeFolder)[]
 

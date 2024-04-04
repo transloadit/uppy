@@ -9,6 +9,7 @@ import type { Meta, Body } from '@uppy/utils/lib/UppyFile'
 import ItemIcon from './components/ItemIcon.tsx'
 import GridListItem from './components/GridLi.tsx'
 import ListItem from './components/ListLi.tsx'
+import type { PartialTreeStatus } from '@uppy/core/lib/Uppy.ts'
 
 type ItemProps<M extends Meta, B extends Body> = {
   showTitles: boolean
@@ -23,7 +24,7 @@ type ItemProps<M extends Meta, B extends Body> = {
   type: 'folder' | 'file'
   author?: CompanionFile['author']
   getItemIcon: () => string
-  status: 'checked' | 'unchecked' | 'partial'
+  status: PartialTreeStatus
   isDisabled: boolean
   viewType: string
 }

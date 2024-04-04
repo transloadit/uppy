@@ -3,13 +3,13 @@ import { h } from 'preact'
 import classNames from 'classnames'
 import type { RestrictionError } from '@uppy/core/lib/Restricter'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
-import type { StatusInPartialTree } from '@uppy/core/lib/Uppy'
+import type { PartialTreeStatus } from '@uppy/core/lib/Uppy'
 
 type GridListItemProps<M extends Meta, B extends Body> = {
   className: string
   isDisabled: boolean
   restrictionError?: RestrictionError<M, B> | null
-  status: StatusInPartialTree
+  status: PartialTreeStatus
   title?: string
   itemIconEl: any
   showTitles?: boolean
