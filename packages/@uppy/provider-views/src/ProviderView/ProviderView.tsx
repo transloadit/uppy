@@ -116,7 +116,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
           type: 'root',
           id: this.plugin.rootFolderId,
           cached: false,
-          nextPagePath: undefined
+          nextPagePath: null
         }
       ],
       currentFolderId: null,
@@ -216,7 +216,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
             id: folder.requestPath,
 
             cached: false,
-            nextPagePath: undefined,
+            nextPagePath: null,
 
             status: newlyAddedItemStatus,
             parentId: clickedFolder.id,
@@ -384,7 +384,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
             id: folder.requestPath,
 
             cached: false,
-            nextPagePath: undefined,
+            nextPagePath: null,
 
             status: newlyAddedItemStatus,
             parentId: scrolledFolder.id,
