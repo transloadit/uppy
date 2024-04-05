@@ -81,7 +81,12 @@ export type PartialTreeFolderNode = {
   id: string
 
   cached: boolean
-  nextPagePath: PartialTreeId
+  // .nextPagePath can be:
+  // `undefined` - when we don't yet know the next page's url.
+  // `null` - *strictly* when we fetched all pages already.
+  // string - *strictly* when there are still pages to fetch.
+  // Notice we can't get away with just `null` and string, because some root folders have id: `null`, meaning we'd confuse "we're done with all pages in this folder" state with "we didn't yet fetch this folder at all" state.
+  nextPagePath: PartialTreeId | undefined
 
   status: PartialTreeStatus
   parentId: PartialTreeId
@@ -93,7 +98,7 @@ export type PartialTreeFolderRoot = {
   id: PartialTreeId
 
   cached: boolean
-  nextPagePath: PartialTreeId
+  nextPagePath: PartialTreeId | undefined
 }
 
 export type PartialTreeFolder = PartialTreeFolderNode | PartialTreeFolderRoot

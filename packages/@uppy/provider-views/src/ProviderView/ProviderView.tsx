@@ -116,7 +116,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
           type: 'root',
           id: this.plugin.rootFolderId,
           cached: false,
-          nextPagePath: this.plugin.rootFolderId
+          nextPagePath: undefined
         }
       ],
       currentFolderId: null,
@@ -162,11 +162,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
   }
 
   async #list({ requestPath, signal }: { requestPath: string | null, signal: AbortSignal }) {
-    const { username, nextPagePath, items } = await this.provider.list<{
-      username: string
-      nextPagePath: string
-      items: CompanionFile[]
-    }>(requestPath || undefined, { signal })
+    const { username, nextPagePath, items } = await this.provider.list(requestPath, { signal })
     this.username = username || this.username
 
     return { items, nextPagePath }
@@ -220,7 +216,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
             id: folder.requestPath,
 
             cached: false,
-            nextPagePath: folder.requestPath,
+            nextPagePath: undefined,
 
             status: newlyAddedItemStatus,
             parentId: clickedFolder.id,
@@ -371,13 +367,13 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
         await this.#withAbort(async (signal) => {
 
           const { items, nextPagePath } = await this.#list({
-            requestPath: currentFolder.nextPagePath,
+            requestPath: currentFolder.nextPagePath!,
             signal
           })
           let newFolders = items.filter((i) => i.isFolder === true)
           let newFiles = items.filter((i) => i.isFolder === false)
 
-          // just doing `clickedFolder.cached = true` in a non-mutating way
+          // just doing `scrolledFolder.nextPagePath = ...` in a non-mutating way
           const scrolledFolder : PartialTreeFolder = {...currentFolder, nextPagePath }
           const partialTreeWithUpdatedScrolledFolder = partialTree.map((folder) =>
             folder.id === scrolledFolder.id ? scrolledFolder : folder
@@ -388,7 +384,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
             id: folder.requestPath,
 
             cached: false,
-            nextPagePath: folder.requestPath,
+            nextPagePath: undefined,
 
             status: newlyAddedItemStatus,
             parentId: scrolledFolder.id,
