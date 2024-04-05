@@ -161,15 +161,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
     }
   }
 
-  async #list({
-    requestPath,
-    absDirPath,
-    signal,
-  }: {
-    requestPath: string | null
-    absDirPath: string
-    signal: AbortSignal
-  }) {
+  async #list({ requestPath, signal }: { requestPath: string | null, signal: AbortSignal }) {
     const { username, nextPagePath, items } = await this.provider.list<{
       username: string
       nextPagePath: string
@@ -177,13 +169,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
     }>(requestPath || undefined, { signal })
     this.username = username || this.username
 
-    return {
-      items: items.map((item) => ({
-        ...item,
-        absDirPath,
-      })),
-      nextPagePath,
-    }
+    return { items, nextPagePath }
   }
 
   /**
@@ -213,7 +199,6 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
         do {
           const { items, nextPagePath } = await this.#list({
             requestPath: currentPagePath,
-            absDirPath: formatBreadcrumbs(this.getBreadcrumbs()),
             signal
           })
           currentPagePath = nextPagePath
@@ -386,8 +371,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
         await this.#withAbort(async (signal) => {
 
           const { items, nextPagePath } = await this.#list({
-            requestPath: currentFolder.nextPagePath!,
-            absDirPath: formatBreadcrumbs(this.getBreadcrumbs()),
+            requestPath: currentFolder.nextPagePath,
             signal
           })
           let newFolders = items.filter((i) => i.isFolder === true)
@@ -453,7 +437,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
     let curPath = requestPath
 
     while (curPath) {
-      const res = await this.#list({ requestPath: curPath, absDirPath, signal })
+      const res = await this.#list({ requestPath: curPath, signal })
       curPath = res.nextPagePath
 
       const files = res.items.filter((item) => !item.isFolder)
