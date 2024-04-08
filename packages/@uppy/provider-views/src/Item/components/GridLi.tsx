@@ -36,22 +36,6 @@ function GridListItem<M extends Meta, B extends Body>(
     children,
   } = props
 
-  let statusClassName
-  if (status === "checked") {
-    statusClassName = "uppy-ProviderBrowserItem-checkbox--is-checked"
-  } else if (status === "unchecked") {
-    statusClassName = ""
-  } else if (status === "partial") {
-    statusClassName = "uppy-ProviderBrowserItem-checkbox--is-partial"
-  }
-
-  const checkBoxClassName = classNames(
-    'uppy-u-reset',
-    'uppy-ProviderBrowserItem-checkbox',
-    'uppy-ProviderBrowserItem-checkbox--grid',
-    statusClassName
-  )
-
   return (
     <li
       className={className}
@@ -59,7 +43,7 @@ function GridListItem<M extends Meta, B extends Body>(
     >
       <input
         type="checkbox"
-        className={checkBoxClassName}
+        className="uppy-u-reset uppy-ProviderBrowserItem-checkbox uppy-ProviderBrowserItem-checkbox--grid"
         onChange={toggleCheckbox}
         onKeyDown={recordShiftKeyPress}
         // @ts-expect-error this is fine onMouseDown too

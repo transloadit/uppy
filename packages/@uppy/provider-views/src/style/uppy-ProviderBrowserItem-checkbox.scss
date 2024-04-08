@@ -17,7 +17,7 @@
   }
 }
 
-.uppy-ProviderBrowserItem-checkbox--is-checked {
+.uppy-ProviderBrowserItem--is-checked .uppy-ProviderBrowserItem-checkbox {
   [data-uppy-theme='dark'] & {
     background-color: $gray-800;
   }
@@ -34,7 +34,7 @@
   }
 }
 
-.uppy-ProviderBrowserItem-checkbox--is-partial{
+.uppy-ProviderBrowserItem--is-partial .uppy-ProviderBrowserItem-checkbox {
   &::after {
     content: '' !important;
     position: absolute !important;

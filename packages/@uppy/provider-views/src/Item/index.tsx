@@ -47,6 +47,8 @@ export default function Item<M extends Meta, B extends Body>(
       'uppy-ProviderBrowserItem',
       { 'uppy-ProviderBrowserItem--disabled': isDisabled },
       { 'uppy-ProviderBrowserItem--noPreview': file.data.icon === 'video' },
+      { 'uppy-ProviderBrowserItem--is-checked': file.status === 'checked' },
+      { 'uppy-ProviderBrowserItem--is-partial': file.status === 'partial' }
     ),
     itemIconEl: <ItemIcon itemIconString={file.data.icon} />,
     isDisabled,

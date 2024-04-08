@@ -48,16 +48,6 @@ export default function ListItem<M extends Meta, B extends Body>(
     i18n,
   } = props
 
-
-  let statusClassName
-  if (status === "checked") {
-    statusClassName = "uppy-ProviderBrowserItem-checkbox--is-checked"
-  } else if (status === "unchecked") {
-    statusClassName = ""
-  } else if (status === "partial") {
-    statusClassName = "uppy-ProviderBrowserItem-checkbox--is-partial"
-  }
-
   return (
     <li
       className={className}
@@ -66,7 +56,7 @@ export default function ListItem<M extends Meta, B extends Body>(
       {!isCheckboxDisabled ?
         <input
           type="checkbox"
-          className={`uppy-u-reset uppy-ProviderBrowserItem-checkbox ${statusClassName}`}
+          className="uppy-u-reset uppy-ProviderBrowserItem-checkbox"
           onChange={toggleCheckbox}
           onKeyDown={recordShiftKeyPress}
           onMouseDown={recordShiftKeyPress}
