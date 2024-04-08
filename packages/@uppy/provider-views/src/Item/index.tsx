@@ -3,24 +3,22 @@ import { h } from 'preact'
 
 import classNames from 'classnames'
 import type { I18n } from '@uppy/utils/lib/Translator'
-import type { Meta, Body, UppyFile } from '@uppy/utils/lib/UppyFile'
+import type { Meta, Body } from '@uppy/utils/lib/UppyFile'
 import ItemIcon from './components/ItemIcon.tsx'
 import GridListItem from './components/GridLi.tsx'
 import ListItem from './components/ListLi.tsx'
 import type { PartialTreeFile, PartialTreeFolderNode, PartialTreeId, Uppy } from '@uppy/core/lib/Uppy.ts'
-import remoteFileObjToLocal from '@uppy/utils/lib/remoteFileObjToLocal'
+import type { RestrictionError } from '@uppy/core/lib/Restricter.ts'
 
 const VIRTUAL_SHARED_DIR = 'shared-with-me'
 
 type ItemProps<M extends Meta, B extends Body> = {
-  currentSelection: any[]
-  uppyFiles: UppyFile<M, B>[]
   viewType: string
   toggleCheckbox: (event: Event, file: (PartialTreeFile | PartialTreeFolderNode)) => void
   recordShiftKeyPress: (event: KeyboardEvent | MouseEvent) => void
   showTitles: boolean
   i18n: I18n
-  validateRestrictions: Uppy<M, B>['validateRestrictions']
+  validateRestrictions: (file: PartialTreeFile | PartialTreeFolderNode) => RestrictionError<M, B> | null
   getFolder: (folderId: PartialTreeId) => void
   file: PartialTreeFile | PartialTreeFolderNode
 }
@@ -28,9 +26,9 @@ type ItemProps<M extends Meta, B extends Body> = {
 export default function Item<M extends Meta, B extends Body>(
   props: ItemProps<M, B>,
 ): h.JSX.Element {
-  const { currentSelection, uppyFiles, viewType, toggleCheckbox, recordShiftKeyPress, showTitles, i18n, validateRestrictions, getFolder, file } = props
+  const { viewType, toggleCheckbox, recordShiftKeyPress, showTitles, i18n, validateRestrictions, getFolder, file } = props
 
-  const restrictionError = file.data.isFolder ? null : validateRestrictions(remoteFileObjToLocal(file.data), [...uppyFiles, ...currentSelection])
+  const restrictionError = validateRestrictions(file)
   const isDisabled = file.data.isFolder ? false : (Boolean(restrictionError) && (file.status !== "checked"))
 
   const sharedProps = {
@@ -52,6 +50,7 @@ export default function Item<M extends Meta, B extends Body>(
     ),
     itemIconEl: <ItemIcon itemIconString={file.data.icon} />,
     isDisabled,
+    restrictionError
   }
 
   let ourProps = file.data.isFolder ?
@@ -64,8 +63,7 @@ export default function Item<M extends Meta, B extends Body>(
     {
       ...sharedProps,
       isCheckboxDisabled: false,
-      type: 'file',
-      restrictionError,
+      type: 'file'
     }
 
   switch (viewType) {

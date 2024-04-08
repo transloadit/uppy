@@ -11,7 +11,7 @@ import type {
   PartialTreeFolderNode,
   PartialTreeFile,
 } from '@uppy/core/lib/Uppy.ts'
-import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
+import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
 import type { CompanionFile } from '@uppy/utils/lib/CompanionFile.ts'
 import type Translator from '@uppy/utils/lib/Translator'
 import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin.ts'
@@ -632,7 +632,6 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
       searchOnInput: true,
       searchInputLabel: i18n('filter'),
       clearSearchLabel: i18n('resetFilter'),
-      currentSelection: partialTree.filter((item) => item.type !== 'root' && item.status === "checked") as (PartialTreeFile | PartialTreeFolderNode)[],
 
       noResultsLabel: i18n('noFilesFound'),
       logout: this.logout,
@@ -647,10 +646,8 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
       showBreadcrumbs: targetViewOptions.showBreadcrumbs,
       pluginIcon,
       i18n: this.plugin.uppy.i18n,
-      uppyFiles: this.plugin.uppy.getFiles(),
-      validateRestrictions: (
-        ...args: Parameters<Uppy<M, B>['validateRestrictions']>
-      ) => this.plugin.uppy.validateRestrictions(...args),
+
+      validateRestrictions: this.validateRestrictions,
       isLoading: loading,
     }
 

@@ -12,11 +12,11 @@ import SearchFilterInput from './SearchFilterInput.tsx'
 import FooterActions from './FooterActions.tsx'
 import Item from './Item/index.tsx'
 import type { PartialTreeFile, PartialTreeFolderNode } from '@uppy/core/lib/Uppy.ts'
+import type { RestrictionError } from '@uppy/core/lib/Restricter.ts'
 
 type BrowserProps<M extends Meta, B extends Body> = {
   displayedPartialTree: (PartialTreeFile | PartialTreeFolderNode)[],
-  currentSelection: (PartialTreeFile | PartialTreeFolderNode)[],
-  uppyFiles: UppyFile<M, B>[]
+
   viewType: string
   headerComponent?: JSX.Element
   showBreadcrumbs: boolean
@@ -25,7 +25,7 @@ type BrowserProps<M extends Meta, B extends Body> = {
   handleScroll: (event: Event) => Promise<void>
   showTitles: boolean
   i18n: I18n
-  validateRestrictions: Uppy<M, B>['validateRestrictions']
+  validateRestrictions: (file: PartialTreeFile | PartialTreeFolderNode) => RestrictionError<M, B> | null
   isLoading: boolean | string
   showSearchFilter: boolean
   search: (query: string) => void
@@ -46,7 +46,6 @@ function Browser<M extends Meta, B extends Body>(
 ): JSX.Element {
   const {
     displayedPartialTree,
-    uppyFiles,
     viewType,
     headerComponent,
     showBreadcrumbs,
@@ -69,10 +68,9 @@ function Browser<M extends Meta, B extends Body>(
     done,
     noResultsLabel,
     loadAllFiles,
-    currentSelection
   } = props
 
-  const selected = currentSelection.length
+  const selected = 0; // TODO// currentSelection.length
 
   return (
     <div
@@ -129,8 +127,6 @@ function Browser<M extends Meta, B extends Body>(
                   data={displayedPartialTree}
                   renderRow={(file: PartialTreeFile | PartialTreeFolderNode) => (
                     <Item
-                      currentSelection={currentSelection}
-                      uppyFiles={uppyFiles}
                       viewType={viewType}
                       toggleCheckbox={toggleCheckbox}
                       recordShiftKeyPress={recordShiftKeyPress}
@@ -159,8 +155,6 @@ function Browser<M extends Meta, B extends Body>(
             >
               {displayedPartialTree.map((file) => (
                 <Item
-                  currentSelection={currentSelection}
-                  uppyFiles={uppyFiles}
                   viewType={viewType}
                   toggleCheckbox={toggleCheckbox}
                   recordShiftKeyPress={recordShiftKeyPress}

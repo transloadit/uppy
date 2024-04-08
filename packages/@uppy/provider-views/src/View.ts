@@ -11,6 +11,7 @@ import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
 import getFileType from '@uppy/utils/lib/getFileType'
 import isPreviewSupported from '@uppy/utils/lib/isPreviewSupported'
 import remoteFileObjToLocal from '@uppy/utils/lib/remoteFileObjToLocal'
+import type { RestrictionError } from '@uppy/core/lib/Restricter'
 
 type PluginType = 'Provider' | 'SearchProvider'
 
@@ -70,6 +71,20 @@ export default class View<
     this.handleError = this.handleError.bind(this)
     this.clearSelection = this.clearSelection.bind(this)
     this.cancelPicking = this.cancelPicking.bind(this)
+    this.validateRestrictions = this.validateRestrictions.bind(this)
+  }
+
+  validateRestrictions (file: PartialTreeFile | PartialTreeFolderNode) : RestrictionError<M, B> | null {
+    if (file.data.isFolder) return null
+
+    const localData = remoteFileObjToLocal(file.data)
+
+    const { partialTree } = this.plugin.getPluginState()
+    const aleadyAddedFiles = this.plugin.uppy.getFiles()
+    const checkedFiles = partialTree.filter((item) => item.type === 'file' && item.status === 'checked') as PartialTreeFile[]
+    const checkedFilesData = checkedFiles.map((item) => item.data)
+
+    return this.plugin.uppy.validateRestrictions(localData, [...aleadyAddedFiles, ...checkedFilesData])
   }
 
   shouldHandleScroll(event: Event): boolean {

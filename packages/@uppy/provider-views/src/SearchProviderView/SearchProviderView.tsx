@@ -183,7 +183,6 @@ export default class SearchProviderView<
     const browserProps = {
       toggleCheckbox: this.toggleCheckbox.bind(this),
       recordShiftKeyPress,
-      currentSelection: partialTree.filter((i) => i.type !== 'root' && i.status === 'checked') as PartialTreeFile[],
       displayedPartialTree,
       handleScroll: this.handleScroll,
       done: this.donePicking,
@@ -208,10 +207,7 @@ export default class SearchProviderView<
       showBreadcrumbs: targetViewOptions.showBreadcrumbs,
       pluginIcon: this.plugin.icon,
       i18n,
-      uppyFiles: this.plugin.uppy.getFiles(),
-      validateRestrictions: (
-        ...args: Parameters<Uppy<M, B>['validateRestrictions']>
-      ) => this.plugin.uppy.validateRestrictions(...args),
+      validateRestrictions: this.validateRestrictions,
     }
 
     if (isInputMode) {
