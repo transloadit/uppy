@@ -1,5 +1,13 @@
 # @uppy/companion-client
 
+## 3.8.0
+
+Released: 2024-03-27
+Included in: Uppy v3.24.0
+
+- @uppy/box,@uppy/companion-client,@uppy/provider-views,@uppy/status-bar: fix type imports (Antoine du Hamel / #5038)
+- @uppy/companion-client: Replace Provider.initPlugin with composition (Merlijn Vos / #4977)
+
 ## 3.7.4
 
 Released: 2024-02-28

@@ -49,17 +49,17 @@ export default class BasePlugin<
 
   opts: Opts
 
-  id: string
+  id!: string
 
   defaultLocale: OptionalPluralizeLocale
 
-  i18n: I18n
+  i18n!: I18n
 
-  i18nArray: Translator['translateArray']
+  i18nArray!: Translator['translateArray']
 
-  type: string
+  type!: string
 
-  VERSION: string
+  VERSION!: string
 
   constructor(uppy: Uppy<M, B>, opts?: Opts) {
     this.uppy = uppy

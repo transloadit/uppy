@@ -1,6 +1,6 @@
 import { UIPlugin, type Uppy } from '@uppy/core'
-import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin.ts'
-import type { UIPluginOptions } from '@uppy/core/lib/UIPlugin.ts'
+import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin'
+import type { UIPluginOptions } from '@uppy/core/lib/UIPlugin'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import type { ChangeEvent } from 'preact/compat'
 import toArray from '@uppy/utils/lib/toArray'
@@ -45,9 +45,9 @@ export default class DragDrop<M extends Meta, B extends Body> extends UIPlugin<
   // Check for browser dragDrop support
   private isDragDropSupported = isDragDropSupported()
 
-  private removeDragOverClassTimeout: ReturnType<typeof setTimeout>
+  private removeDragOverClassTimeout!: ReturnType<typeof setTimeout>
 
-  private fileInputRef: HTMLInputElement
+  private fileInputRef!: HTMLInputElement
 
   constructor(uppy: Uppy<M, B>, opts?: DragDropOptions) {
     super(uppy, {
@@ -79,7 +79,7 @@ export default class DragDrop<M extends Meta, B extends Body> extends UIPlugin<
     try {
       this.uppy.addFiles(descriptors)
     } catch (err) {
-      this.uppy.log(err)
+      this.uppy.log(err as any)
     }
   }
 

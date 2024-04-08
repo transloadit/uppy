@@ -1,0 +1,60 @@
+{
+  "extends": "../../../tsconfig.shared",
+  "compilerOptions": {
+    "noImplicitAny": false,
+    "outDir": "./lib",
+    "paths": {
+      "@uppy/informer": ["../informer/src/index.js"],
+      "@uppy/informer/lib/*": ["../informer/src/*"],
+      "@uppy/provider-views": ["../provider-views/src/index.js"],
+      "@uppy/provider-views/lib/*": ["../provider-views/src/*"],
+      "@uppy/status-bar": ["../status-bar/src/index.js"],
+      "@uppy/status-bar/lib/*": ["../status-bar/src/*"],
+      "@uppy/thumbnail-generator": ["../thumbnail-generator/src/index.js"],
+      "@uppy/thumbnail-generator/lib/*": ["../thumbnail-generator/src/*"],
+      "@uppy/utils/lib/*": ["../utils/src/*"],
+      "@uppy/core": ["../core/src/index.js"],
+      "@uppy/core/lib/*": ["../core/src/*"],
+      "@uppy/google-drive": ["../google-drive/src/index.js"],
+      "@uppy/google-drive/lib/*": ["../google-drive/src/*"],
+      "@uppy/url": ["../url/src/index.js"],
+      "@uppy/url/lib/*": ["../url/src/*"],
+      "@uppy/webcam": ["../webcam/src/index.js"],
+      "@uppy/webcam/lib/*": ["../webcam/src/*"]
+    },
+    "resolveJsonModule": false,
+    "rootDir": "./src",
+    "skipLibCheck": true
+  },
+  "include": ["./src/**/*.*"],
+  "exclude": ["./src/**/*.test.ts"],
+  "references": [
+    {
+      "path": "../informer/tsconfig.build.json"
+    },
+    {
+      "path": "../provider-views/tsconfig.build.json"
+    },
+    {
+      "path": "../status-bar/tsconfig.build.json"
+    },
+    {
+      "path": "../thumbnail-generator/tsconfig.build.json"
+    },
+    {
+      "path": "../utils/tsconfig.build.json"
+    },
+    {
+      "path": "../core/tsconfig.build.json"
+    },
+    {
+      "path": "../google-drive/tsconfig.build.json"
+    },
+    {
+      "path": "../url/tsconfig.build.json"
+    },
+    {
+      "path": "../webcam/tsconfig.build.json"
+    }
+  ]
+}

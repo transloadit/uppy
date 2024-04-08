@@ -1,5 +1,6 @@
 import { h, type ComponentChild } from 'preact'
-import { UIPlugin, Uppy, type UIPluginOptions, type State } from '@uppy/core'
+import { UIPlugin, type UIPluginOptions } from '@uppy/core'
+import type { Uppy, State } from '@uppy/core/lib/Uppy'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin.js'
 
