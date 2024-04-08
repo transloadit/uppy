@@ -208,6 +208,7 @@ export default class SearchProviderView<
       pluginIcon: this.plugin.icon,
       i18n,
       validateRestrictions: this.validateRestrictions,
+      getNOfSelectedFiles: this.getNOfSelectedFiles
     }
 
     if (isInputMode) {

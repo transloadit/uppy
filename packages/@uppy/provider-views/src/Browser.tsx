@@ -26,6 +26,7 @@ type BrowserProps<M extends Meta, B extends Body> = {
   showTitles: boolean
   i18n: I18n
   validateRestrictions: (file: PartialTreeFile | PartialTreeFolderNode) => RestrictionError<M, B> | null
+  getNOfSelectedFiles: () => number
   isLoading: boolean | string
   showSearchFilter: boolean
   search: (query: string) => void
@@ -70,7 +71,7 @@ function Browser<M extends Meta, B extends Body>(
     loadAllFiles,
   } = props
 
-  const selected = 0; // TODO// currentSelection.length
+  const nOfSelectedFiles = props.getNOfSelectedFiles(); // TODO// currentSelection.length
 
   return (
     <div
@@ -170,9 +171,9 @@ function Browser<M extends Meta, B extends Body>(
         )
       })()}
 
-      {selected > 0 && (
+      {nOfSelectedFiles > 0 && (
         <FooterActions
-          selected={selected}
+          selected={nOfSelectedFiles}
           done={done}
           cancel={cancel}
           i18n={i18n}

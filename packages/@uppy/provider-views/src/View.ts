@@ -72,6 +72,24 @@ export default class View<
     this.clearSelection = this.clearSelection.bind(this)
     this.cancelPicking = this.cancelPicking.bind(this)
     this.validateRestrictions = this.validateRestrictions.bind(this)
+    this.getNOfSelectedFiles = this.getNOfSelectedFiles.bind(this)
+  }
+
+  getNOfSelectedFiles () : number {
+    const { partialTree } = this.plugin.getPluginState()
+    // We're interested in all 'checked' leaves.
+    const checkedLeaves = partialTree.filter((item) => {
+      if (item.type === 'file' && item.status === 'checked') {
+        return true
+      } else if (item.type === 'folder' && item.status === 'checked') {
+        const doesItHaveChildren = partialTree.some((i) =>
+          i.type !== 'root' && i.parentId === item.id
+        )
+        return !doesItHaveChildren
+      }
+      return false
+    })
+    return checkedLeaves.length
   }
 
   validateRestrictions (file: PartialTreeFile | PartialTreeFolderNode) : RestrictionError<M, B> | null {

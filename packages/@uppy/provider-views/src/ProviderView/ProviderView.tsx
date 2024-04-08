@@ -648,6 +648,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
       i18n: this.plugin.uppy.i18n,
 
       validateRestrictions: this.validateRestrictions,
+      getNOfSelectedFiles: this.getNOfSelectedFiles,
       isLoading: loading,
     }
 
