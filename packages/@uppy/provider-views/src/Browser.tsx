@@ -2,7 +2,6 @@
 import { h } from 'preact'
 
 import classNames from 'classnames'
-import remoteFileObjToLocal from '@uppy/utils/lib/remoteFileObjToLocal'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore untyped
 import VirtualList from '@uppy/utils/lib/VirtualList'
@@ -12,79 +11,7 @@ import type Uppy from '@uppy/core'
 import SearchFilterInput from './SearchFilterInput.tsx'
 import FooterActions from './FooterActions.tsx'
 import Item from './Item/index.tsx'
-import type { PartialTree, PartialTreeFile, PartialTreeFolderNode, PartialTreeId } from '@uppy/core/lib/Uppy.ts'
-
-const VIRTUAL_SHARED_DIR = 'shared-with-me'
-
-type ListItemProps<M extends Meta, B extends Body> = {
-  currentSelection: any[]
-  uppyFiles: UppyFile<M, B>[]
-  viewType: string
-  toggleCheckbox: (event: Event, file: (PartialTreeFile | PartialTreeFolderNode)) => void
-  recordShiftKeyPress: (event: KeyboardEvent | MouseEvent) => void
-  showTitles: boolean
-  i18n: I18n
-  validateRestrictions: Uppy<M, B>['validateRestrictions']
-  getFolder: (folderId: PartialTreeId) => void
-  f: (PartialTreeFile | PartialTreeFolderNode)
-}
-
-function ListItem<M extends Meta, B extends Body>(
-  props: ListItemProps<M, B>,
-): JSX.Element {
-  const {
-    currentSelection,
-    uppyFiles,
-    viewType,
-    toggleCheckbox,
-    recordShiftKeyPress,
-    showTitles,
-    i18n,
-    validateRestrictions,
-    getFolder,
-    f,
-  } = props
-
-  if (f.data.isFolder) {
-    return Item<M, B>({
-      showTitles,
-      viewType,
-      i18n,
-      id: f.id,
-      title: f.data.name,
-      getItemIcon: () => f.data.icon,
-      status: f.status,
-      toggleCheckbox: (event: Event) => toggleCheckbox(event, f),
-      recordShiftKeyPress,
-      type: 'folder',
-      // TODO: when was this supposed to be true?
-      isDisabled: false,
-      isCheckboxDisabled: f.id === VIRTUAL_SHARED_DIR,
-      handleFolderClick: () => getFolder(f.id),
-    })
-  }
-  const restrictionError = validateRestrictions(remoteFileObjToLocal(f.data), [
-    ...uppyFiles,
-    ...currentSelection,
-  ])
-
-  return Item<M, B>({
-    id: f.id,
-    title: f.data.name,
-    author: f.data.author,
-    getItemIcon: () => f.data.icon,
-    toggleCheckbox: (event: Event) => toggleCheckbox(event, f),
-    isCheckboxDisabled: false,
-    status: f.status,
-    recordShiftKeyPress,
-    showTitles,
-    viewType,
-    i18n,
-    type: 'file',
-    isDisabled: Boolean(restrictionError) && (f.status !== "checked"),
-    restrictionError,
-  })
-}
+import type { PartialTreeFile, PartialTreeFolderNode } from '@uppy/core/lib/Uppy.ts'
 
 type BrowserProps<M extends Meta, B extends Body> = {
   displayedPartialTree: (PartialTreeFile | PartialTreeFolderNode)[],
@@ -200,8 +127,8 @@ function Browser<M extends Meta, B extends Body>(
               <ul className="uppy-ProviderBrowser-list">
                 <VirtualList
                   data={displayedPartialTree}
-                  renderRow={(f: PartialTreeFile | PartialTreeFolderNode) => (
-                    <ListItem
+                  renderRow={(file: PartialTreeFile | PartialTreeFolderNode) => (
+                    <Item
                       currentSelection={currentSelection}
                       uppyFiles={uppyFiles}
                       viewType={viewType}
@@ -211,7 +138,7 @@ function Browser<M extends Meta, B extends Body>(
                       i18n={i18n}
                       validateRestrictions={validateRestrictions}
                       getFolder={getFolder}
-                      f={f}
+                      file={file}
                     />
                   )}
                   rowHeight={31}
@@ -230,8 +157,8 @@ function Browser<M extends Meta, B extends Body>(
               // making <ul> not focusable for firefox
               tabIndex={-1}
             >
-              {displayedPartialTree.map((f) => (
-                <ListItem
+              {displayedPartialTree.map((file) => (
+                <Item
                   currentSelection={currentSelection}
                   uppyFiles={uppyFiles}
                   viewType={viewType}
@@ -241,7 +168,7 @@ function Browser<M extends Meta, B extends Body>(
                   i18n={i18n}
                   validateRestrictions={validateRestrictions}
                   getFolder={getFolder}
-                  f={f}
+                  file={file}
                 />
               ))}
             </ul>

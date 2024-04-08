@@ -3,81 +3,87 @@ import { h } from 'preact'
 
 import classNames from 'classnames'
 import type { I18n } from '@uppy/utils/lib/Translator'
-import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
-import type { RestrictionError } from '@uppy/core/lib/Restricter.ts'
-import type { Meta, Body } from '@uppy/utils/lib/UppyFile'
+import type { Meta, Body, UppyFile } from '@uppy/utils/lib/UppyFile'
 import ItemIcon from './components/ItemIcon.tsx'
 import GridListItem from './components/GridLi.tsx'
 import ListItem from './components/ListLi.tsx'
-import type { PartialTreeStatus } from '@uppy/core/lib/Uppy.ts'
+import type { PartialTreeFile, PartialTreeFolderNode, PartialTreeId, Uppy } from '@uppy/core/lib/Uppy.ts'
+import remoteFileObjToLocal from '@uppy/utils/lib/remoteFileObjToLocal'
+
+const VIRTUAL_SHARED_DIR = 'shared-with-me'
 
 type ItemProps<M extends Meta, B extends Body> = {
+  currentSelection: any[]
+  uppyFiles: UppyFile<M, B>[]
+  viewType: string
+  toggleCheckbox: (event: Event, file: (PartialTreeFile | PartialTreeFolderNode)) => void
+  recordShiftKeyPress: (event: KeyboardEvent | MouseEvent) => void
   showTitles: boolean
   i18n: I18n
-  id: string
-  title: string
-  toggleCheckbox: (event: Event) => void
-  recordShiftKeyPress: (event: KeyboardEvent | MouseEvent) => void
-  handleFolderClick?: () => void
-  restrictionError?: RestrictionError<M, B> | null
-  isCheckboxDisabled: boolean
-  type: 'folder' | 'file'
-  author?: CompanionFile['author']
-  getItemIcon: () => string
-  status: PartialTreeStatus
-  isDisabled: boolean
-  viewType: string
+  validateRestrictions: Uppy<M, B>['validateRestrictions']
+  getFolder: (folderId: PartialTreeId) => void
+  file: PartialTreeFile | PartialTreeFolderNode
 }
 
 export default function Item<M extends Meta, B extends Body>(
   props: ItemProps<M, B>,
 ): h.JSX.Element {
-  const { author, getItemIcon, isDisabled, viewType } = props
-  const itemIconString = getItemIcon()
+  const { currentSelection, uppyFiles, viewType, toggleCheckbox, recordShiftKeyPress, showTitles, i18n, validateRestrictions, getFolder, file } = props
 
-  const className = classNames(
-    'uppy-ProviderBrowserItem',
-    { 'uppy-ProviderBrowserItem--disabled': isDisabled },
-    { 'uppy-ProviderBrowserItem--noPreview': itemIconString === 'video' },
-  )
+  const restrictionError = file.data.isFolder ? null : validateRestrictions(remoteFileObjToLocal(file.data), [...uppyFiles, ...currentSelection])
+  const isDisabled = file.data.isFolder ? false : (Boolean(restrictionError) && (file.status !== "checked"))
 
-  const itemIconEl = <ItemIcon itemIconString={itemIconString} />
+  const sharedProps = {
+    id: file.id,
+    title: file.data.name,
+    status: file.status,
+
+    i18n,
+    toggleCheckbox: (event: Event) => toggleCheckbox(event, file),
+    viewType,
+    showTitles,
+    recordShiftKeyPress,
+    className: classNames(
+      'uppy-ProviderBrowserItem',
+      { 'uppy-ProviderBrowserItem--disabled': isDisabled },
+      { 'uppy-ProviderBrowserItem--noPreview': file.data.icon === 'video' },
+    ),
+    itemIconEl: <ItemIcon itemIconString={file.data.icon} />,
+    isDisabled,
+  }
+
+  let ourProps = file.data.isFolder ?
+    {
+      ...sharedProps,
+      type: 'folder',
+      isCheckboxDisabled: file.id === VIRTUAL_SHARED_DIR,
+      handleFolderClick: () => getFolder(file.id),
+    } :
+    {
+      ...sharedProps,
+      isCheckboxDisabled: false,
+      type: 'file',
+      restrictionError,
+    }
 
   switch (viewType) {
     case 'grid':
-      return (
-        <GridListItem<M, B>
-          // eslint-disable-next-line react/jsx-props-no-spreading
-          {...props}
-          className={className}
-          itemIconEl={itemIconEl}
-        />
-      )
+      return <GridListItem<M, B> {...ourProps} />
     case 'list':
       return (
-        <ListItem<M, B>
-          // eslint-disable-next-line react/jsx-props-no-spreading
-          {...props}
-          className={className}
-          itemIconEl={itemIconEl}
-        />
+        <ListItem<M, B> {...ourProps} />
       )
     case 'unsplash':
       return (
-        <GridListItem<M, B>
-          // eslint-disable-next-line react/jsx-props-no-spreading
-          {...props}
-          className={className}
-          itemIconEl={itemIconEl}
-        >
+        <GridListItem<M, B> {...ourProps} >
           <a
-            href={`${author!.url}?utm_source=Companion&utm_medium=referral`}
+            href={`${file.data.author!.url}?utm_source=Companion&utm_medium=referral`}
             target="_blank"
             rel="noopener noreferrer"
             className="uppy-ProviderBrowserItem-author"
             tabIndex={-1}
           >
-            {author!.name}
+            {file.data.author!.name}
           </a>
         </GridListItem>
       )
