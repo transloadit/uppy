@@ -165,11 +165,14 @@ module.exports.StreamHttpJsonError = StreamHttpJsonError
 
 module.exports.prepareStream = async (stream) => new Promise((resolve, reject) => {
   stream
-    .on('response', () => {
+    .on('response', (response) => {
+      const contentLengthStr = response.headers['content-length']
+      const contentLength = parseInt(contentLengthStr, 10);
+      const size = !Number.isNaN(contentLength) && contentLength >= 0 ? contentLength : undefined;
       // Don't allow any more data to flow yet.
       // https://github.com/request/request/issues/1990#issuecomment-184712275
       stream.pause()
-      resolve()
+      resolve({ size })
     })
     .on('error', (err) => {
       // In this case the error object is not a normal GOT HTTPError where json is already parsed,

@@ -1,12 +1,12 @@
 const got = require('got').default
 
-const Provider = require('../Provider')
-const logger = require('../../logger')
+const GoogleProvider = require('../index')
+const logger = require('../../../logger')
 const { VIRTUAL_SHARED_DIR, adaptData, isShortcut, isGsuiteFile, getGsuiteExportType } = require('./adapter')
-const { withProviderErrorHandling } = require('../providerErrors')
-const { prepareStream } = require('../../helpers/utils')
-const { MAX_AGE_REFRESH_TOKEN } = require('../../helpers/jwt')
-const { ProviderAuthError } = require('../error')
+const { withProviderErrorHandling } = require('../../providerErrors')
+const { prepareStream } = require('../../../helpers/utils')
+const { MAX_AGE_REFRESH_TOKEN } = require('../../../helpers/jwt')
+const { ProviderAuthError } = require('../../error')
 
 
 // For testing refresh token:
@@ -29,10 +29,6 @@ const getClient = ({ token }) => got.extend({
   },
 })
 
-const getOauthClient = () => got.extend({
-  prefixUrl: 'https://oauth2.googleapis.com',
-})
-
 async function getStats ({ id, token }) {
   const client = getClient({ token })
 
@@ -50,9 +46,9 @@ async function getStats ({ id, token }) {
 /**
  * Adapter for API https://developers.google.com/drive/api/v3/
  */
-class Drive extends Provider {
+class Drive extends GoogleProvider {
   static get authProvider () {
-    return 'google'
+    return 'googledrive'
   }
 
   static get authStateExpiry () {
@@ -156,13 +152,6 @@ class Drive extends Provider {
     })
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  async thumbnail () {
-    // not implementing this because a public thumbnail from googledrive will be used instead
-    logger.error('call to thumbnail is not implemented', 'provider.drive.thumbnail.error')
-    throw new Error('call to thumbnail is not implemented')
-  }
-
   async size ({ id, token }) {
     return this.#withErrorHandling('provider.drive.size.error', async () => {
       const { mimeType, size } = await getStats({ id, token })
@@ -174,24 +163,6 @@ class Drive extends Provider {
       }
 
       return parseInt(size, 10)
-    })
-  }
-
-  logout ({ token }) {
-    return this.#withErrorHandling('provider.drive.logout.error', async () => {
-      await got.post('https://accounts.google.com/o/oauth2/revoke', {
-        searchParams: { token },
-        responseType: 'json',
-      })
-
-      return { revoked: true }
-    })
-  }
-
-  async refreshToken ({ clientId, clientSecret, refreshToken }) {
-    return this.#withErrorHandling('provider.drive.token.refresh.error', async () => {
-      const { access_token: accessToken } = await getOauthClient().post('token', { responseType: 'json', form: { refresh_token: refreshToken, grant_type: 'refresh_token', client_id: clientId, client_secret: clientSecret } }).json()
-      return { accessToken }
     })
   }
 

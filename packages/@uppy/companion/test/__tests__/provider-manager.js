@@ -23,8 +23,11 @@ describe('Test Provider options', () => {
     expect(grantConfig.box.key).toBe('box_key')
     expect(grantConfig.box.secret).toBe('box_secret')
 
-    expect(grantConfig.google.key).toBe('google_key')
-    expect(grantConfig.google.secret).toBe('google_secret')
+    expect(grantConfig.googledrive.key).toBe('google_key')
+    expect(grantConfig.googledrive.secret).toBe('google_secret')
+
+    expect(grantConfig.googlephotos.key).toBe('google_key')
+    expect(grantConfig.googledrive.secret).toBe('google_secret')
 
     expect(grantConfig.instagram.key).toBe('instagram_key')
     expect(grantConfig.instagram.secret).toBe('instagram_secret')
@@ -69,7 +72,12 @@ describe('Test Provider options', () => {
       callback: '/box/callback',
     })
 
-    expect(grantConfig.google).toEqual({
+    expect(grantConfig.googledrive).toEqual({
+      access_url: "https://oauth2.googleapis.com/token",
+      authorize_url: "https://accounts.google.com/o/oauth2/v2/auth",
+      oauth: 2,
+      scope_delimiter: " ",
+
       key: 'google_key',
       secret: 'google_secret',
       transport: 'session',
@@ -83,6 +91,25 @@ describe('Test Provider options', () => {
         prompt: 'consent',
       },
     })
+
+    expect(grantConfig.googlephotos).toEqual({
+      access_url: "https://oauth2.googleapis.com/token",
+      authorize_url: "https://accounts.google.com/o/oauth2/v2/auth",
+      oauth: 2,
+      scope_delimiter: " ",
+
+      key: 'google_key',
+      secret: 'google_secret',
+      transport: 'session',
+      redirect_uri: 'http://localhost:3020/googlephotos/redirect',
+      scope: ['https://www.googleapis.com/auth/photoslibrary.readonly'],
+      callback: '/googlephotos/callback',
+      custom_params: {
+        access_type: 'offline',
+        prompt: 'consent',
+      },
+    })
+
     expect(grantConfig.zoom).toEqual({
       key: 'zoom_key',
       secret: 'zoom_secret',
@@ -108,7 +135,8 @@ describe('Test Provider options', () => {
 
     expect(grantConfig.dropbox.secret).toBe('xobpord')
     expect(grantConfig.box.secret).toBe('xwbepqd')
-    expect(grantConfig.google.secret).toBe('elgoog')
+    expect(grantConfig.googledrive.secret).toBe('elgoog')
+    expect(grantConfig.googlephotos.secret).toBe('elgoog')
     expect(grantConfig.instagram.secret).toBe('margatsni')
     expect(grantConfig.zoom.secret).toBe('u8Z5ceq')
     expect(companionOptions.providerOptions.zoom.verificationToken).toBe('o0u8Z5c')
@@ -125,8 +153,11 @@ describe('Test Provider options', () => {
     expect(grantConfig.box.key).toBeUndefined()
     expect(grantConfig.box.secret).toBeUndefined()
 
-    expect(grantConfig.google.key).toBeUndefined()
-    expect(grantConfig.google.secret).toBeUndefined()
+    expect(grantConfig.googledrive.key).toBeUndefined()
+    expect(grantConfig.googledrive.secret).toBeUndefined()
+
+    expect(grantConfig.googlephotos.key).toBeUndefined()
+    expect(grantConfig.googlephotos.secret).toBeUndefined()
 
     expect(grantConfig.instagram.key).toBeUndefined()
     expect(grantConfig.instagram.secret).toBeUndefined()
@@ -141,7 +172,8 @@ describe('Test Provider options', () => {
 
     expect(grantConfig.dropbox.redirect_uri).toBe('http://domain.com/dropbox/redirect')
     expect(grantConfig.box.redirect_uri).toBe('http://domain.com/box/redirect')
-    expect(grantConfig.google.redirect_uri).toBe('http://domain.com/drive/redirect')
+    expect(grantConfig.googledrive.redirect_uri).toBe('http://domain.com/drive/redirect')
+    expect(grantConfig.googlephotos.redirect_uri).toBe('http://domain.com/googlephotos/redirect')
     expect(grantConfig.instagram.redirect_uri).toBe('http://domain.com/instagram/redirect')
     expect(grantConfig.zoom.redirect_uri).toBe('http://domain.com/zoom/redirect')
   })
