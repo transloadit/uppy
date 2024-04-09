@@ -92,6 +92,7 @@ jobs:
         with:
           path: uppy
       - run: mv uppy/docs . && rm -r uppy
+      - run: find .
       - name: Install dependencies
         run: corepack yarn --immutable
       - name: Lint files
