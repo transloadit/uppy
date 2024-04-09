@@ -89,7 +89,11 @@ jobs:
       - name: Checkout docs
         uses: actions/checkout@v3
         with:
-          path: docs
-          sparse-checkout: |
-            docs/
-      - run: find .
+          path: uppy
+      - run: ln -s uppy/docs docs
+      - name: Install dependencies
+        run: corepack yarn --immutable
+      - name: Lint files
+        run: corepack yarn lint
+      - name: Test build website
+        run: corepack yarn build
