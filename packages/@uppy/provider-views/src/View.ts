@@ -239,6 +239,8 @@ export default class View<
   toggleCheckbox(e: Event, ourItem: PartialTreeFolderNode | PartialTreeFile) {
     e.stopPropagation()
     e.preventDefault()
+    // Prevent shift-clicking from highlighting file names (https://stackoverflow.com/a/1527797/3192470)
+    document.getSelection()?.removeAllRanges()
 
     const { partialTree, currentFolderId } = this.plugin.getPluginState()
     const newPartialTree : PartialTree = JSON.parse(JSON.stringify(partialTree))
