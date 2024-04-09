@@ -3,6 +3,7 @@
   "compilerOptions": {
     "emitDeclarationOnly": false,
     "noEmit": true,
+    "jsxImportSource": "react",
     "paths": {
       "@uppy/utils/lib/*": ["../utils/src/*"],
       "@uppy/core": ["../core/src/index.js"],

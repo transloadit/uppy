@@ -20,12 +20,20 @@
     "type": "git",
     "url": "git+https://github.com/transloadit/uppy.git"
   },
+  "scripts": {
+    "test": "vitest"
+  },
   "dependencies": {
-    "@uppy/utils": "workspace:^"
+    "@uppy/utils": "workspace:^",
+    "use-sync-external-store": "^1.2.0"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.4.2",
+    "@testing-library/react": "^14.2.2",
     "@types/react": "^18.0.8",
-    "react": "^18.1.0"
+    "@types/use-sync-external-store": "^0.0.6",
+    "react": "^18.1.0",
+    "vitest": "^1.4.0"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^",

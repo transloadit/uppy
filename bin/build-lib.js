@@ -10,7 +10,7 @@ const { mkdir, stat, writeFile } = fs.promises
 const PACKAGE_JSON_IMPORT = /^\..*\/package.json$/
 const SOURCE = 'packages/{*,@uppy/*}/src/**/*.{js,ts}?(x)'
 // Files not to build (such as tests)
-const IGNORE = /\.test\.[jt]s$|__mocks__|svelte|angular|companion\//
+const IGNORE = /\.test\.[jt]s[x]$|__mocks__|svelte|angular|companion\//
 // Files that should trigger a rebuild of everything on change
 const META_FILES = [
   'babel.config.js',
