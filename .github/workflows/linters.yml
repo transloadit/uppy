@@ -91,7 +91,8 @@ jobs:
         uses: actions/checkout@v3
         with:
           path: uppy
-      - run: mv uppy /tmp/uppy && ln -s /tmp/uppy/docs/ docs
+      - name: Create symbolic links
+        run: mv uppy /tmp/uppy && ln -s /tmp/uppy/docs/ docs && ln -s "$(pwd)/src/" /tmp/uppy/src
       - name: Install dependencies
         run: corepack yarn --immutable
       - name: Lint files
