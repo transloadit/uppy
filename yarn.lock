@@ -9848,9 +9848,9 @@ __metadata:
     "@types/react": ^18.0.8
     "@types/use-sync-external-store": ^0.0.6
     "@uppy/utils": "workspace:^"
-    react: ^18.1.0
+    react: ^18.2.0
+    react-dom: ^18.2.0
     use-sync-external-store: ^1.2.0
-    vitest: ^1.4.0
   peerDependencies:
     "@uppy/core": "workspace:^"
     "@uppy/dashboard": "workspace:^"
@@ -10159,17 +10159,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vitest/expect@npm:1.4.0":
-  version: 1.4.0
-  resolution: "@vitest/expect@npm:1.4.0"
-  dependencies:
-    "@vitest/spy": 1.4.0
-    "@vitest/utils": 1.4.0
-    chai: ^4.3.10
-  checksum: aca8b0b592bc020febb08767a230a2f4118453904972df06b2a34c76a669e8eb260ddfd8b0cdc152e93dbf21e0d7ae98bdf09fa80477b21145ac21c01fc5a0d3
-  languageName: node
-  linkType: hard
-
 "@vitest/runner@npm:1.2.1":
   version: 1.2.1
   resolution: "@vitest/runner@npm:1.2.1"
@@ -10178,17 +10167,6 @@ __metadata:
     p-limit: ^5.0.0
     pathe: ^1.1.1
   checksum: 3a3941392e8c6359e19c3ac5c2923150251d9d32bf1252bc2951487d799ac19a7cc43eb3c02eb642c1b02f65ad365273f053bcb37153659c35a345b628baef65
-  languageName: node
-  linkType: hard
-
-"@vitest/runner@npm:1.4.0":
-  version: 1.4.0
-  resolution: "@vitest/runner@npm:1.4.0"
-  dependencies:
-    "@vitest/utils": 1.4.0
-    p-limit: ^5.0.0
-    pathe: ^1.1.1
-  checksum: 41a847d1ba916c64e482a69342222a40b81014ad06da7ccb7d8cd4119c5718564c22b00367574803642e6ca6ab5678509073b5c460bedc2b385d4e990351012f
   languageName: node
   linkType: hard
 
@@ -10203,32 +10181,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vitest/snapshot@npm:1.4.0":
-  version: 1.4.0
-  resolution: "@vitest/snapshot@npm:1.4.0"
-  dependencies:
-    magic-string: ^0.30.5
-    pathe: ^1.1.1
-    pretty-format: ^29.7.0
-  checksum: fe495661d682534b41f3ac373c017ac84c04263087a715307715bb41a69c307d6f237b18cc8195bc22d82bf38a1a1a773b0c99715d5de5f40c6169e916b8f4a4
-  languageName: node
-  linkType: hard
-
 "@vitest/spy@npm:1.2.1":
   version: 1.2.1
   resolution: "@vitest/spy@npm:1.2.1"
   dependencies:
     tinyspy: ^2.2.0
   checksum: 22a4b4539f69b28f6b0d907d6b7997972a09d85c9a136e0f953dfea45a12bc2ec8678f8d62cbc1ecfc803a0926df8901c6b5d9f8625196f68785965e1c14172c
-  languageName: node
-  linkType: hard
-
-"@vitest/spy@npm:1.4.0":
-  version: 1.4.0
-  resolution: "@vitest/spy@npm:1.4.0"
-  dependencies:
-    tinyspy: ^2.2.0
-  checksum: 3b1c422760e5840e9e4aa804de7619f3d14e0b364b29f8f030df528206b84c5706792c5d680ac668077d5663f8648a17a783df11cd90ddf2a11000359f1a6286
   languageName: node
   linkType: hard
 
@@ -20296,13 +20254,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"js-tokens@npm:^9.0.0":
-  version: 9.0.0
-  resolution: "js-tokens@npm:9.0.0"
-  checksum: 427d0db681caab0c906cfc78a0235bbe7b41712cee83f3f14785c1de079a1b1a85693cc8f99a3f71685d0d76acaa5b9c8920850b67f93d3eeb7ef186987d186c
-  languageName: node
-  linkType: hard
-
 "js-yaml@npm:4.1.0, js-yaml@npm:^4.1.0":
   version: 4.1.0
   resolution: "js-yaml@npm:4.1.0"
@@ -26524,7 +26475,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:^18.0.0, react-dom@npm:^18.1.0":
+"react-dom@npm:^18.0.0, react-dom@npm:^18.1.0, react-dom@npm:^18.2.0":
   version: 18.2.0
   resolution: "react-dom@npm:18.2.0"
   dependencies:
@@ -26680,7 +26631,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:^18.0.0, react@npm:^18.1.0":
+"react@npm:^18.0.0, react@npm:^18.1.0, react@npm:^18.2.0":
   version: 18.2.0
   resolution: "react@npm:18.2.0"
   dependencies:
@@ -29633,15 +29584,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"strip-literal@npm:^2.0.0":
-  version: 2.1.0
-  resolution: "strip-literal@npm:2.1.0"
-  dependencies:
-    js-tokens: ^9.0.0
-  checksum: 37c2072634d2de11a3644fe1bcf4abd566d85e89f0d8e8b10d35d04e7bef962e7c112fbe5b805ce63e59dfacedc240356eeef57976351502966b7c64b742c6ac
-  languageName: node
-  linkType: hard
-
 "strnum@npm:^1.0.5":
   version: 1.0.5
   resolution: "strnum@npm:1.0.5"
@@ -30450,13 +30392,6 @@ __metadata:
   version: 0.8.2
   resolution: "tinypool@npm:0.8.2"
   checksum: b0993207b89ab8ab565e1eb03287aa3f15bc648c2e1da889bcfad003244271a5efe5c215d8074c3b8798ae7ea9c54678b6c9b09e7e5c8e82285177792e7ac30a
-  languageName: node
-  linkType: hard
-
-"tinypool@npm:^0.8.2":
-  version: 0.8.3
-  resolution: "tinypool@npm:0.8.3"
-  checksum: 61ba2514b19db23a67920055b27a613a70b1a65eccd25a40d0a87c83506667bdf228bb51443042fe04ab79c92e1e6777cfe4624d318a8b0d2acc346f4cf713ee
   languageName: node
   linkType: hard
 
@@ -31751,21 +31686,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite-node@npm:1.4.0":
-  version: 1.4.0
-  resolution: "vite-node@npm:1.4.0"
-  dependencies:
-    cac: ^6.7.14
-    debug: ^4.3.4
-    pathe: ^1.1.1
-    picocolors: ^1.0.0
-    vite: ^5.0.0
-  bin:
-    vite-node: vite-node.mjs
-  checksum: 1abbeac935a5e1e3b6161974ae28b6a3ec88766b06bc082ab3f2883345ee74f5643f3004df1c7808c2b52d445ffbd067bb79a1a3920c2eaa7ca8084b11b7de46
-  languageName: node
-  linkType: hard
-
 "vite@npm:5.1.5":
   version: 5.1.5
   resolution: "vite@npm:5.1.5"
@@ -31894,56 +31814,6 @@ __metadata:
   bin:
     vitest: vitest.mjs
   checksum: be5cf1ebde0ff7fd534d4c5c710b9d63b3bd7a899f1fcceab82779949cfb8c962f82bb827652debe2d0553d6f786cf76998e6f346e46e03b14e720b121ff540e
-  languageName: node
-  linkType: hard
-
-"vitest@npm:^1.4.0":
-  version: 1.4.0
-  resolution: "vitest@npm:1.4.0"
-  dependencies:
-    "@vitest/expect": 1.4.0
-    "@vitest/runner": 1.4.0
-    "@vitest/snapshot": 1.4.0
-    "@vitest/spy": 1.4.0
-    "@vitest/utils": 1.4.0
-    acorn-walk: ^8.3.2
-    chai: ^4.3.10
-    debug: ^4.3.4
-    execa: ^8.0.1
-    local-pkg: ^0.5.0
-    magic-string: ^0.30.5
-    pathe: ^1.1.1
-    picocolors: ^1.0.0
-    std-env: ^3.5.0
-    strip-literal: ^2.0.0
-    tinybench: ^2.5.1
-    tinypool: ^0.8.2
-    vite: ^5.0.0
-    vite-node: 1.4.0
-    why-is-node-running: ^2.2.2
-  peerDependencies:
-    "@edge-runtime/vm": "*"
-    "@types/node": ^18.0.0 || >=20.0.0
-    "@vitest/browser": 1.4.0
-    "@vitest/ui": 1.4.0
-    happy-dom: "*"
-    jsdom: "*"
-  peerDependenciesMeta:
-    "@edge-runtime/vm":
-      optional: true
-    "@types/node":
-      optional: true
-    "@vitest/browser":
-      optional: true
-    "@vitest/ui":
-      optional: true
-    happy-dom:
-      optional: true
-    jsdom:
-      optional: true
-  bin:
-    vitest: vitest.mjs
-  checksum: e7141c0ecc629c350d8c718051fb19219ca88a100d335fedbe481c4320f285380e3235316a69a330514c34663fcafa37c801151162d0a538e92821e7faad71a6
   languageName: node
   linkType: hard
 
