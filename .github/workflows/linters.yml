@@ -77,3 +77,19 @@ jobs:
         run: corepack yarn workspaces focus @uppy-dev/build
       - name: Run linter
         run: corepack yarn run lint:markdown
+
+  lint_docs:
+    name: Lint Docs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Uppy.io sources
+        uses: actions/checkout@v3
+        with:
+          repository: transloadit/uppy.io
+      - name: Checkout docs
+        uses: actions/checkout@v3
+        with:
+          path: docs
+          sparse-checkout: |
+            docs/
+      - run: find .
