@@ -89,9 +89,8 @@ jobs:
       - name: Checkout docs
         uses: actions/checkout@v3
         with:
-          # Using `build` because it's git-ignored
-          path: build/
-      - run: ln -s build/docs docs
+          path: uppy
+      - run: mv uppy /tmp/uppy && ln -s /tmp/uppy/docs docs
       - name: Install dependencies
         run: corepack yarn --immutable
       - name: Lint files
