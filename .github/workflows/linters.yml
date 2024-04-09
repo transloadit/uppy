@@ -86,12 +86,12 @@ jobs:
         uses: actions/checkout@v3
         with:
           repository: transloadit/uppy.io
+      - run: rm -rf docs # the other PR has not landed
       - name: Checkout docs
         uses: actions/checkout@v3
         with:
           path: uppy
       - run: mv uppy /tmp/uppy && ln -s /tmp/uppy/docs/ docs
-      - run: find .
       - name: Install dependencies
         run: corepack yarn --immutable
       - name: Lint files
