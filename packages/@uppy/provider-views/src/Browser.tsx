@@ -13,6 +13,7 @@ import FooterActions from './FooterActions.tsx'
 import Item from './Item/index.tsx'
 import type { PartialTreeFile, PartialTreeFolderNode } from '@uppy/core/lib/Uppy.ts'
 import type { RestrictionError } from '@uppy/core/lib/Restricter.ts'
+import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
 
 type BrowserProps<M extends Meta, B extends Body> = {
   displayedPartialTree: (PartialTreeFile | PartialTreeFolderNode)[],
@@ -25,7 +26,7 @@ type BrowserProps<M extends Meta, B extends Body> = {
   handleScroll: (event: Event) => Promise<void>
   showTitles: boolean
   i18n: I18n
-  validateRestrictions: (file: PartialTreeFile | PartialTreeFolderNode) => RestrictionError<M, B> | null
+  validateRestrictions: (file: CompanionFile) => RestrictionError<M, B> | null
   getNOfSelectedFiles: () => number
   isLoading: boolean | string
   showSearchFilter: boolean

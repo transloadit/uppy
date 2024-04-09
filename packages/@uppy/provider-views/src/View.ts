@@ -92,10 +92,10 @@ export default class View<
     return checkedLeaves.length
   }
 
-  validateRestrictions (file: PartialTreeFile | PartialTreeFolderNode) : RestrictionError<M, B> | null {
-    if (file.data.isFolder) return null
+  validateRestrictions (file: CompanionFile) : RestrictionError<M, B> | null {
+    if (file.isFolder) return null
 
-    const localData = remoteFileObjToLocal(file.data)
+    const localData = remoteFileObjToLocal(file)
 
     const { partialTree } = this.plugin.getPluginState()
     const aleadyAddedFiles = this.plugin.uppy.getFiles()

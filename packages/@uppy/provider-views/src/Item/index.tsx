@@ -9,6 +9,7 @@ import GridListItem from './components/GridLi.tsx'
 import ListItem from './components/ListLi.tsx'
 import type { PartialTreeFile, PartialTreeFolderNode, PartialTreeId, Uppy } from '@uppy/core/lib/Uppy.ts'
 import type { RestrictionError } from '@uppy/core/lib/Restricter.ts'
+import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
 
 const VIRTUAL_SHARED_DIR = 'shared-with-me'
 
@@ -18,7 +19,7 @@ type ItemProps<M extends Meta, B extends Body> = {
   recordShiftKeyPress: (event: KeyboardEvent | MouseEvent) => void
   showTitles: boolean
   i18n: I18n
-  validateRestrictions: (file: PartialTreeFile | PartialTreeFolderNode) => RestrictionError<M, B> | null
+  validateRestrictions: (file: CompanionFile) => RestrictionError<M, B> | null
   getFolder: (folderId: PartialTreeId) => void
   file: PartialTreeFile | PartialTreeFolderNode
 }
@@ -28,7 +29,7 @@ export default function Item<M extends Meta, B extends Body>(
 ): h.JSX.Element {
   const { viewType, toggleCheckbox, recordShiftKeyPress, showTitles, i18n, validateRestrictions, getFolder, file } = props
 
-  const restrictionError = validateRestrictions(file)
+  const restrictionError = validateRestrictions(file.data)
   const isDisabled = file.data.isFolder ? false : (Boolean(restrictionError) && (file.status !== "checked"))
 
   const sharedProps = {
