@@ -1,5 +1,13 @@
 # @uppy/companion
 
+## 4.13.1
+
+Released: 2024-04-10
+Included in: Uppy v3.24.1
+
+- @uppy/companion: upgrade redis (Mikael Finstad / #5065)
+- @uppy/companion: Bump express from 4.18.1 to 4.19.2 (dependabot[bot] / #5037)
+
 ## 4.13.0
 
 Released: 2024-03-27
