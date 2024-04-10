@@ -324,40 +324,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
             requestPath: currentFolder.nextPagePath!,
             signal
           })
-          let newFolders = items.filter((i) => i.isFolder === true)
-          let newFiles = items.filter((i) => i.isFolder === false)
-
-          // just doing `scrolledFolder.nextPagePath = ...` in a non-mutating way
-          const scrolledFolder : PartialTreeFolder = {...currentFolder, nextPagePath }
-          const partialTreeWithUpdatedScrolledFolder = partialTree.map((folder) =>
-            folder.id === scrolledFolder.id ? scrolledFolder : folder
-          )
-          const newlyAddedItemStatus = (scrolledFolder.type === 'folder' && scrolledFolder.status === 'checked') ? 'checked' : 'unchecked';
-          const folders : PartialTreeFolderNode[] = newFolders.map((folder) => ({
-            type: 'folder',
-            id: folder.requestPath,
-
-            cached: false,
-            nextPagePath: null,
-
-            status: newlyAddedItemStatus,
-            parentId: scrolledFolder.id,
-            data: folder,
-          }))
-          const files : PartialTreeFile[] = newFiles.map((file) => ({
-            type: 'file',
-            id: file.requestPath,
-
-            status: newlyAddedItemStatus === 'checked' && this.validateRestrictions(file) ? 'unchecked' : newlyAddedItemStatus,
-            parentId: scrolledFolder.id,
-            data: file,
-          }))
-
-          const newPartialTree : PartialTree = [
-            ...partialTreeWithUpdatedScrolledFolder,
-            ...folders,
-            ...files
-          ]
+          const newPartialTree = PartialTreeUtils.getPartialTreeAfterScroll(partialTree, currentFolderId, items, nextPagePath, this.validateRestrictions)
 
           this.plugin.setPluginState({ partialTree: newPartialTree })
         })
