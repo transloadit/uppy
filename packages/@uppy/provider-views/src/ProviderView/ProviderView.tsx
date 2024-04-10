@@ -178,9 +178,8 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
     console.log(`____________________________________________GETTING FOLDER "${folderId}"`);
     // Returning cached folder
     const { partialTree } = this.plugin.getPluginState()
-    const clickedFolder = partialTree.find((folder) => folder.id === folderId) as PartialTreeFolder | undefined
-    const thisFolderIsCached = clickedFolder && clickedFolder.cached
-    if (thisFolderIsCached) {
+    const clickedFolder = partialTree.find((folder) => folder.id === folderId)! as PartialTreeFolder
+    if (clickedFolder.cached) {
       console.log("Folder was cached____________________________________________");
       this.plugin.setPluginState({ currentFolderId: folderId, filterInput: '' })
       return
@@ -205,56 +204,50 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
         let newFolders = currentItems.filter((i) => i.isFolder === true)
         let newFiles = currentItems.filter((i) => i.isFolder === false)
 
-        const clickedFolder : PartialTreeFolder = partialTree.find((folder) => folder.id === folderId)! as PartialTreeFolder
+        const newlyAddedItemStatus = (clickedFolder.type === 'folder' && clickedFolder.status === 'checked') ? 'checked' : 'unchecked';
+        const folders : PartialTreeFolderNode[] = newFolders.map((folder) => ({
+          type: 'folder',
+          id: folder.requestPath,
 
-        // If selected folder is already filled in, don't refill it (because that would make it lose deep state!)
-        // Otherwise, cache the current folder!
-        if (clickedFolder && !clickedFolder.cached) {
-          const newlyAddedItemStatus = (clickedFolder.type === 'folder' && clickedFolder.status === 'checked') ? 'checked' : 'unchecked';
-          const folders : PartialTreeFolderNode[] = newFolders.map((folder) => ({
-            type: 'folder',
-            id: folder.requestPath,
+          cached: false,
+          nextPagePath: null,
 
-            cached: false,
-            nextPagePath: null,
+          status: newlyAddedItemStatus,
+          parentId: clickedFolder.id,
+          data: folder,
+        }))
+        const files : PartialTreeFile[] = newFiles.map((file) => ({
+          type: 'file',
+          id: file.requestPath,
 
-            status: newlyAddedItemStatus,
-            parentId: clickedFolder.id,
-            data: folder,
-          }))
-          const files : PartialTreeFile[] = newFiles.map((file) => ({
-            type: 'file',
-            id: file.requestPath,
+          status: newlyAddedItemStatus,
+          parentId: clickedFolder.id,
+          data: file,
+        }))
 
-            status: newlyAddedItemStatus,
-            parentId: clickedFolder.id,
-            data: file,
-          }))
-
-          // just doing `clickedFolder.cached = true` in a non-mutating way
-          const updatedClickedFolder : PartialTreeFolder = {
-            ...clickedFolder,
-            cached: true,
-            nextPagePath: currentPagePath
-          }
-          const partialTreeWithUpdatedClickedFolder = partialTree.map((folder) =>
-            folder.id === updatedClickedFolder.id ?
-              updatedClickedFolder :
-              folder
-          )
-
-          const newPartialTree = [
-            ...partialTreeWithUpdatedClickedFolder,
-            ...folders,
-            ...files
-          ]
-
-          this.plugin.setPluginState({
-            partialTree: newPartialTree,
-            currentFolderId: folderId,
-            filterInput: ''
-          })
+        // just doing `clickedFolder.cached = true` in a non-mutating way
+        const updatedClickedFolder : PartialTreeFolder = {
+          ...clickedFolder,
+          cached: true,
+          nextPagePath: currentPagePath
         }
+        const partialTreeWithUpdatedClickedFolder = partialTree.map((folder) =>
+          folder.id === updatedClickedFolder.id ?
+            updatedClickedFolder :
+            folder
+        )
+
+        const newPartialTree = [
+          ...partialTreeWithUpdatedClickedFolder,
+          ...folders,
+          ...files
+        ]
+
+        this.plugin.setPluginState({
+          partialTree: newPartialTree,
+          currentFolderId: folderId,
+          filterInput: ''
+        })
       })
 
 
