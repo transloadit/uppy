@@ -245,7 +245,7 @@ export default class View<
 
     const { partialTree, currentFolderId } = this.plugin.getPluginState()
 
-    const newPartialTree = PartialTreeUtils.getPartialTreeAfterTogglingCheckboxes(partialTree, ourItem, this.validateRestrictions, this.filterItems, currentFolderId, this.isShiftKeyPressed, this.lastCheckbox)
+    const newPartialTree = PartialTreeUtils.afterToggleCheckbox(partialTree, ourItem, this.validateRestrictions, this.filterItems, currentFolderId, this.isShiftKeyPressed, this.lastCheckbox)
 
     this.plugin.setPluginState({ partialTree: newPartialTree })
     this.lastCheckbox = ourItem.id!

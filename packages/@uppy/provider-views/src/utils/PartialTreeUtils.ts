@@ -1,7 +1,7 @@
 import type { PartialTree, PartialTreeFile, PartialTreeFolder, PartialTreeFolderNode } from "@uppy/core/lib/Uppy"
 import type { CompanionFile } from "@uppy/utils/lib/CompanionFile"
 
-const getPartialTreeAfterTogglingCheckboxes = (
+const afterToggleCheckbox = (
   oldPartialTree: PartialTree,
   ourItem: PartialTreeFolderNode | PartialTreeFile,
   validateRestrictions: (file: CompanionFile) => object | null,
@@ -84,7 +84,7 @@ const getPartialTreeAfterTogglingCheckboxes = (
   return newPartialTree
 }
 
-const clickOnFolder = (
+const afterClickOnFolder = (
   oldPartialTree: PartialTree,
   currentItems: CompanionFile[],
   clickedFolder: PartialTreeFolder,
@@ -135,7 +135,7 @@ const clickOnFolder = (
   return newPartialTree
 }
 
-const getPartialTreeAfterScroll = (
+const afterScroll = (
   oldPartialTree: PartialTree,
   currentFolderId: string | null,
   items: CompanionFile[],
@@ -181,4 +181,4 @@ const getPartialTreeAfterScroll = (
   return newPartialTree
 }
 
-export default { getPartialTreeAfterTogglingCheckboxes, clickOnFolder, getPartialTreeAfterScroll }
+export default { afterToggleCheckbox, afterClickOnFolder, afterScroll }

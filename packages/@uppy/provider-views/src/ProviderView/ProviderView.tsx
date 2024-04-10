@@ -202,7 +202,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
           this.setLoading(this.plugin.uppy.i18n('loadedXFiles', { numFiles: items.length }))
         } while (this.opts.loadAllFiles && currentPagePath)
 
-        const newPartialTree = PartialTreeUtils.clickOnFolder(partialTree, currentItems, clickedFolder, this.validateRestrictions, currentPagePath)
+        const newPartialTree = PartialTreeUtils.afterClickOnFolder(partialTree, currentItems, clickedFolder, this.validateRestrictions, currentPagePath)
 
         this.plugin.setPluginState({
           partialTree: newPartialTree,
@@ -324,7 +324,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
             requestPath: currentFolder.nextPagePath!,
             signal
           })
-          const newPartialTree = PartialTreeUtils.getPartialTreeAfterScroll(partialTree, currentFolderId, items, nextPagePath, this.validateRestrictions)
+          const newPartialTree = PartialTreeUtils.afterScroll(partialTree, currentFolderId, items, nextPagePath, this.validateRestrictions)
 
           this.plugin.setPluginState({ partialTree: newPartialTree })
         })
