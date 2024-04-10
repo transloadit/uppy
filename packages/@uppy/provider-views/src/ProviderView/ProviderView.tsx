@@ -220,7 +220,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
           type: 'file',
           id: file.requestPath,
 
-          status: newlyAddedItemStatus,
+          status: newlyAddedItemStatus === 'checked' && this.validateRestrictions(file) ? 'unchecked' : newlyAddedItemStatus,
           parentId: clickedFolder.id,
           data: file,
         }))
@@ -387,7 +387,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
             type: 'file',
             id: file.requestPath,
 
-            status: newlyAddedItemStatus,
+            status: newlyAddedItemStatus === 'checked' && this.validateRestrictions(file) ? 'unchecked' : newlyAddedItemStatus,
             parentId: scrolledFolder.id,
             data: file,
           }))

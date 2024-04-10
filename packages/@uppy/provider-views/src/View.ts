@@ -250,7 +250,11 @@ export default class View<
     const percolateDown = (clickedItem: PartialTreeFolderNode | PartialTreeFile, status: 'checked' | 'unchecked') => {
       const children = newPartialTree.filter((item) => item.type !== 'root' && item.parentId === clickedItem.id) as (PartialTreeFolderNode | PartialTreeFile)[]
       children.forEach((item) => {
-        item.status = status
+        if (item.type === 'file') {
+          item.status = status === 'checked' && this.validateRestrictions(item.data) ? 'unchecked' : status
+        } else {
+          item.status = status
+        }
         percolateDown(item, status)
       })
     }
@@ -260,8 +264,11 @@ export default class View<
       if (parentFolder.type === 'root') return
 
       const parentsChildren = newPartialTree.filter((item) => item.type !== 'root' && item.parentId === parentFolder.id) as (PartialTreeFile | PartialTreeFolderNode)[]
-      const areAllChildrenChecked = parentsChildren.every((item) => item.status === "checked")
-      const areAllChildrenUnchecked = parentsChildren.every((item) => item.status === "unchecked")
+      const parentsValidChildren = parentsChildren.filter((item) =>
+        !this.validateRestrictions(item.data)
+      )
+      const areAllChildrenChecked = parentsValidChildren.every((item) => item.status === "checked")
+      const areAllChildrenUnchecked = parentsValidChildren.every((item) => item.status === "unchecked")
 
       if (areAllChildrenChecked) {
         parentFolder.status = "checked"
@@ -288,7 +295,13 @@ export default class View<
       const newlyCheckedItems = newPartialTree
         .filter((item) => item.type !== 'root' && toMarkAsChecked.includes(item.id)) as (PartialTreeFile | PartialTreeFolderNode)[] 
 
-      newlyCheckedItems.forEach((item) => item.status = 'checked')
+      newlyCheckedItems.forEach((item) => {
+        if (item.type === 'file') {
+          item.status = this.validateRestrictions(item.data) ? 'unchecked' : 'checked'
+        } else {
+          item.status = 'checked'
+        }
+      })
 
       newlyCheckedItems.forEach((item) => {
         percolateDown(item, 'checked')
