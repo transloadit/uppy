@@ -9347,8 +9347,8 @@ __metadata:
   dependencies:
     tslib: ^2.0.0
   peerDependencies:
-    "@angular/common": ^16.2.0
-    "@angular/core": ^16.2.0
+    "@angular/common": ^17.3.0
+    "@angular/core": ^17.3.0
     "@uppy/core": "workspace:^"
     "@uppy/dashboard": "workspace:^"
     "@uppy/drag-drop": "workspace:^"
@@ -9374,15 +9374,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/aws-s3-multipart@workspace:packages/@uppy/aws-s3-multipart"
   dependencies:
-    "@aws-sdk/client-s3": ^3.362.0
-    "@aws-sdk/s3-request-presigner": ^3.362.0
-    "@uppy/companion-client": "workspace:^"
-    "@uppy/utils": "workspace:^"
-    nock: ^13.1.0
-    vitest: ^1.2.1
-    whatwg-fetch: 3.6.2
-  peerDependencies:
-    "@uppy/core": "workspace:^"
+    "@uppy/aws-s3": "workspace:^"
   languageName: unknown
   linkType: soft
 
@@ -9390,11 +9382,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/aws-s3@workspace:packages/@uppy/aws-s3"
   dependencies:
-    "@uppy/aws-s3-multipart": "workspace:^"
+    "@aws-sdk/client-s3": ^3.362.0
+    "@aws-sdk/s3-request-presigner": ^3.362.0
     "@uppy/companion-client": "workspace:^"
     "@uppy/utils": "workspace:^"
-    "@uppy/xhr-upload": "workspace:^"
-    nanoid: ^4.0.0
+    nock: ^13.1.0
     vitest: ^1.2.1
     whatwg-fetch: 3.6.2
   peerDependencies:

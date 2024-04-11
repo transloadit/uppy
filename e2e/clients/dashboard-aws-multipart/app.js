@@ -10,6 +10,7 @@ const uppy = new Uppy()
   .use(AwsS3Multipart, {
     limit: 2,
     companionUrl: process.env.VITE_COMPANION_URL,
+    shouldUseMultipart: true,
     // This way we can test that the user provided API still works
     // as expected in the flow. We call the default internal function for this,
     // otherwise we would have to run another server to pre-sign requests
