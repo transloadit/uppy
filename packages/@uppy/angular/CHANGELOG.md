@@ -1,5 +1,12 @@
 # @uppy/angular
 
+## 0.7.0-beta.2
+
+Released: 2024-04-11
+Included in: Uppy v4.0.0-beta.2
+
+- @uppy/angular: fix Angular version requirement in peerDeps (Antoine du Hamel / #5067)
+
 ## 0.7.0-beta.1
 
 Released: 2024-03-28

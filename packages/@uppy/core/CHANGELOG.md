@@ -1,5 +1,12 @@
 # @uppy/core
 
+## 4.0.0-beta.2
+
+Released: 2024-04-11
+Included in: Uppy v4.0.0-beta.2
+
+- @uppy/core: use variadic arguments for `uppy.use` (Antoine du Hamel / #4888)
+
 ## 4.0.0-beta.1
 
 Released: 2024-03-28
