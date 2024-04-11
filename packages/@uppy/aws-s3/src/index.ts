@@ -337,8 +337,6 @@ export default class AwsS3Multipart<
     // We need the `as any` here because of the dynamic default options.
     this.type = 'uploader'
     this.id = this.opts.id || 'AwsS3Multipart'
-    // @ts-expect-error TODO: remove unused
-    this.title = 'AWS S3 Multipart'
     // TODO: only initiate `RequestClient` is `companionUrl` is defined.
     this.#client = new RequestClient(uppy, opts as any)
 

@@ -108,6 +108,7 @@ describe('AwsS3Multipart', () => {
     beforeEach(() => {
       core = new Core<any, Body>()
       core.use(AwsS3Multipart, {
+        shouldUseMultipart: true,
         limit: 0,
         createMultipartUpload: vi.fn(() => {
           return {
@@ -167,6 +168,7 @@ describe('AwsS3Multipart', () => {
       let busySpy
       let doneSpy
       awsS3Multipart.setOptions({
+        shouldUseMultipart: true,
         retryDelays: [10],
         createMultipartUpload: vi.fn((file) => {
           // @ts-expect-error protected property
@@ -250,6 +252,7 @@ describe('AwsS3Multipart', () => {
 
     it('retries uploadPartBytes when it fails once', async () => {
       const core = new Core<any, Body>().use(AwsS3Multipart, {
+        shouldUseMultipart: true,
         createMultipartUpload,
         completeMultipartUpload: vi.fn(async () => ({ location: 'test' })),
         abortMultipartUpload: vi.fn(() => {
@@ -282,6 +285,7 @@ describe('AwsS3Multipart', () => {
 
     it('calls `upload-error` when uploadPartBytes fails after all retries', async () => {
       const core = new Core<any, Body>().use(AwsS3Multipart, {
+        shouldUseMultipart: true,
         retryDelays: [10],
         createMultipartUpload,
         completeMultipartUpload: vi.fn(async () => ({ location: 'test' })),
@@ -451,6 +455,7 @@ describe('AwsS3Multipart', () => {
 
     it('preserves file metadata if upload is completed', async () => {
       core = new Core<any, Body>().use(AwsS3Multipart, {
+        shouldUseMultipart: true,
         createMultipartUpload,
         signPart,
         listParts,
@@ -511,6 +516,7 @@ describe('AwsS3Multipart', () => {
       })
 
       core = new Core<any, Body>().use(AwsS3Multipart, {
+        shouldUseMultipart: true,
         createMultipartUpload,
         signPart: signPartWithAbort,
         listParts,
@@ -580,6 +586,7 @@ describe('AwsS3Multipart', () => {
       })
 
       core = new Core<any, Body>().use(AwsS3Multipart, {
+        shouldUseMultipart: true,
         createMultipartUpload,
         signPart: signPartWithPause,
         listParts,
