@@ -1,15 +1,8 @@
 import type { PartialTree, PartialTreeFile, PartialTreeFolder, PartialTreeFolderNode, PartialTreeId } from "@uppy/core/lib/Uppy"
-import type { RequestOptions } from "@uppy/utils/lib/CompanionClientProvider"
+import type { CompanionClientProvider, RequestOptions } from "@uppy/utils/lib/CompanionClientProvider"
 import type { CompanionFile } from "@uppy/utils/lib/CompanionFile"
 import PQueue from "p-queue"
 
-interface ApiProviderList {
-  (directory: string | null, options: RequestOptions): Promise<{
-    username: string;
-    nextPagePath: string | null;
-    items: CompanionFile[];
-  }>
-}
 
 const getAbsPath = (partialTree: PartialTree, file: PartialTreeFile) : (PartialTreeFile | PartialTreeFolderNode)[] => {
   const path : (PartialTreeFile | PartialTreeFolderNode)[] = []
@@ -29,12 +22,12 @@ const getRelPath = (absPath: (PartialTreeFile | PartialTreeFolderNode)[]) : (Par
   return relPath
 }
 
-
-const recursivelyFetch = async (queue: PQueue, fullTree: PartialTree, poorFolder: PartialTreeFolderNode, apiProviderList: ApiProviderList): Promise<PartialTree> => {
+const recursivelyFetch = async (queue: PQueue, poorTree: PartialTree, poorFolder: PartialTreeFolderNode, provider: CompanionClientProvider): Promise<PartialTree> => {
   let items : CompanionFile[] = []
   let currentPath : PartialTreeId = poorFolder.cached ? poorFolder.nextPagePath : poorFolder.id
   while (currentPath) {
-    const response = await apiProviderList(currentPath, {})
+    const response = await provider.list(currentPath, {})
+    console.log({ currentPath, response });
     items = items.concat(response.items)
     currentPath = response.nextPagePath
   }
@@ -64,22 +57,22 @@ const recursivelyFetch = async (queue: PQueue, fullTree: PartialTree, poorFolder
 
   poorFolder.cached = true
   poorFolder.nextPagePath = null
-  fullTree.push(...files, ...folders)
+  poorTree.push(...files, ...folders)
 
   folders.forEach(async (folder) => {
     queue.add(async () =>
-      await recursivelyFetch(queue, fullTree, folder, apiProviderList)
+      await recursivelyFetch(queue, poorTree, folder, provider)
     )
   })
 
   return []
 }
 
-const donePickingReal = async (partialTree: PartialTree, apiProviderList: ApiProviderList) : Promise<CompanionFile[]> => {
+const fillPartialTree = async (partialTree: PartialTree, provider: CompanionClientProvider) : Promise<CompanionFile[]> => {
   const queue = new PQueue({ concurrency: 6 })
 
   // fill up the missing parts of a partialTree!
-  let fullTree : PartialTree = JSON.parse(JSON.stringify(partialTree))
+  let poorTree : PartialTree = JSON.parse(JSON.stringify(partialTree))
   const poorFolders = partialTree.filter((item) =>
     item.type === 'folder' &&
     item.status === 'checked' &&
@@ -89,17 +82,17 @@ const donePickingReal = async (partialTree: PartialTree, apiProviderList: ApiPro
   // per each poor folder, recursively fetch all files and make them .checked!!!
   poorFolders.forEach((poorFolder) => {
     queue.add(async () =>
-      await recursivelyFetch(queue, fullTree, poorFolder, apiProviderList)
+      await recursivelyFetch(queue, poorTree, poorFolder, provider)
     )
   })
 
   await queue.onIdle()
 
   // Return all 'checked' files
-  const checkedFiles = partialTree.filter((item) => item.type === 'file' && item.status === 'checked') as PartialTreeFile[]
+  const checkedFiles = poorTree.filter((item) => item.type === 'file' && item.status === 'checked') as PartialTreeFile[]
 
   const uppyFiles = checkedFiles.map((file) => {
-    const absPath = getAbsPath(partialTree, file)
+    const absPath = getAbsPath(poorTree, file)
     const relPath = getRelPath(absPath)
 
     return {
@@ -112,4 +105,4 @@ const donePickingReal = async (partialTree: PartialTree, apiProviderList: ApiPro
   return uppyFiles
 }
 
-export default donePickingReal;
+export default fillPartialTree;

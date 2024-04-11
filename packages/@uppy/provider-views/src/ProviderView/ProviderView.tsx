@@ -25,6 +25,7 @@ import View, { type ViewOptions } from '../View.ts'
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../../package.json'
 import PartialTreeUtils from '../utils/PartialTreeUtils.ts'
+import fillPartialTree from '../utils/fillPartialTree.ts'
 
 function formatBreadcrumbs(breadcrumbs: PartialTreeFolder[]): string {
   const nonrootFoldes = breadcrumbs
@@ -336,158 +337,13 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
     }
   }
 
-  async #recursivelyListAllFiles({
-    requestPath,
-    absDirPath,
-    relDirPath,
-    queue,
-    onFiles,
-    signal,
-  }: {
-    requestPath: string
-    absDirPath: string
-    relDirPath: string
-    queue: PQueue
-    onFiles: (files: CompanionFile[]) => void
-    signal: AbortSignal
-  }) {
-    let curPath = requestPath
-
-    while (curPath) {
-      const res = await this.#list({ requestPath: curPath, signal })
-      curPath = res.nextPagePath
-
-      const files = res.items.filter((item) => !item.isFolder)
-      const folders = res.items.filter((item) => item.isFolder)
-
-      onFiles(files)
-
-      // recursively queue call to self for each folder
-      const promises = folders.map(async (folder) =>
-        queue.add(async () =>
-          this.#recursivelyListAllFiles({
-            requestPath: folder.requestPath,
-            absDirPath: prependPath(absDirPath, folder.name),
-            relDirPath: prependPath(relDirPath, folder.name),
-            queue,
-            onFiles,
-            signal,
-          }),
-        ),
-      )
-      await Promise.all(promises) // in case we get an error
-    }
-  }
-
   async donePicking(): Promise<void> {
-    // this.setLoading(true)
-    // try {
-    //   await this.#withAbort(async (signal) => {
-    //     const { partialTree } = this.plugin.getPluginState()
-    //     const currentSelection = partialTree.filter((item) => item.status === "checked")
-
-    //     const messages: string[] = []
-    //     const newFiles: CompanionFile[] = []
-
-    //     for (const selectedItem of currentSelection) {
-    //       const requestPath = selectedItem.id
-
-    //       const withRelDirPath = (newItem: CompanionFile) => ({
-    //         ...newItem,
-    //         // calculate the file's path relative to the user's selected item's path
-    //         // see https://github.com/transloadit/uppy/pull/4537#issuecomment-1614236655
-    //         relDirPath: (newItem.absDirPath as string)
-    //           .replace(selectedItem.data.absDirPath as string, '')
-    //           .replace(/^\//, ''),
-    //       })
-
-    //       if (selectedItem.data.isFolder) {
-    //         let isEmpty = true
-    //         let numNewFiles = 0
-
-    //         const queue = new PQueue({ concurrency: 6 })
-
-    //         const onFiles = (files: CompanionFile[]) => {
-    //           for (const newFile of files) {
-    //             const tagFile = this.getTagFile(newFile)
-
-    //             const id = getSafeFileId(tagFile)
-    //             // If the same folder is added again, we don't want to send
-    //             // X amount of duplicate file notifications, we want to say
-    //             // the folder was already added. This checks if all files are duplicate,
-    //             // if that's the case, we don't add the files.
-    //             if (!this.plugin.uppy.checkIfFileAlreadyExists(id)) {
-    //               newFiles.push(withRelDirPath(newFile))
-    //               numNewFiles++
-    //               this.setLoading(
-    //                 this.plugin.uppy.i18n('addedNumFiles', {
-    //                   numFiles: numNewFiles,
-    //                 }),
-    //               )
-    //             }
-    //             isEmpty = false
-    //           }
-    //         }
-
-    //         await this.#recursivelyListAllFiles({
-    //           requestPath,
-    //           absDirPath: prependPath(
-    //             selectedItem.data.absDirPath,
-    //             selectedItem.data.name,
-    //           ),
-    //           relDirPath: selectedItem.data.name,
-    //           queue,
-    //           onFiles,
-    //           signal,
-    //         })
-    //         await queue.onIdle()
-
-    //         let message
-    //         if (isEmpty) {
-    //           message = this.plugin.uppy.i18n('emptyFolderAdded')
-    //         } else if (numNewFiles === 0) {
-    //           message = this.plugin.uppy.i18n('folderAlreadyAdded', {
-    //             folder: selectedItem.data.name,
-    //           })
-    //         } else {
-    //           // TODO we don't really know at this point whether any files were actually added
-    //           // (only later after addFiles has been called) so we should probably rewrite this.
-    //           // Example: If all files fail to add due to restriction error, it will still say "Added 100 files from folder"
-    //           message = this.plugin.uppy.i18n('folderAdded', {
-    //             smart_count: numNewFiles,
-    //             folder: selectedItem.data.name,
-    //           })
-    //         }
-
-    //         messages.push(message)
-    //       } else {
-    //         newFiles.push(withRelDirPath(selectedItem.data))
-    //       }
-    //     }
-
-    //     // Note: this.plugin.uppy.addFiles must be only run once we are done fetching all files,
-    //     // because it will cause the loading screen to disappear,
-    //     // and that will allow the user to start the upload, so we need to make sure we have
-    //     // finished all async operations before we add any file
-    //     // see https://github.com/transloadit/uppy/pull/4384
-    //     this.plugin.uppy.log('Adding files from a remote provider')
-    //     this.plugin.uppy.addFiles(
-    //       // @ts-expect-error `addFiles` expects `body` to be `File` or `Blob`,
-    //       // but as the todo comment in `View.ts` indicates, we strangly pass `CompanionFile` as `body`.
-    //       // For now it's better to ignore than to have a potential breaking change.
-    //       newFiles.map((file) => this.getTagFile(file, this.requestClientId)),
-    //     )
-
-    //     this.plugin.setPluginState({ filterInput: '' })
-    //     messages.forEach((message) => this.plugin.uppy.info(message))
-
-    //     this.clearSelection()
-    //   })
-    // } catch (err) {
-    //   this.handleError(err)
-    // } finally {
-    //   this.setLoading(false)
-    // }
+    const { partialTree } = this.plugin.getPluginState()
+    this.setLoading(true)
+    const uppyFiles: CompanionFile[] = await fillPartialTree(partialTree, this.provider)
+    const filesToAdd = uppyFiles.map((file) => this.getTagFile(file))
+    this.plugin.uppy.addFiles(filesToAdd)
+    this.setLoading(false)
   }
 
   getBreadcrumbs = () : PartialTreeFolder[] => {
