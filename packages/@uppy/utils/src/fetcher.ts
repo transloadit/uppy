@@ -8,7 +8,7 @@ export type FetcherOptions = {
   method?: string
 
   /** The request payload, if any. Default is null. */
-  body?: string | null
+  body?: Document | XMLHttpRequestBodyInit | null
 
   /** Milliseconds between XMLHttpRequest upload progress events before the request is aborted. Default is 30000 ms. */
   timeout?: number
