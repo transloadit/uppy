@@ -3,9 +3,6 @@ import ProgressTimeout from './ProgressTimeout.ts'
 
 const noop = (): void => {}
 
-/**
- * Optional settings for the fetch operation.
- */
 export type FetcherOptions = {
   /** The HTTP method to use for the request. Default is 'GET'. */
   method?: string
@@ -28,14 +25,23 @@ export type FetcherOptions = {
   /** The number of retry attempts to make if the request fails. Default is 3. */
   retries?: number
 
-  /** A callback function for tracking upload progress. */
-  onBeforeRequest?: (xhr: XMLHttpRequest) => void | Promise<void>
+  /** Called before the request is made. */
+  onBeforeRequest?: (
+    xhr: XMLHttpRequest,
+    retryCount: number,
+  ) => void | Promise<void>
 
-  /** A callback function for tracking upload progress. */
+  /** Function for tracking upload progress. */
   onUploadProgress?: (event: ProgressEvent) => void
 
   /** A function to determine whether to retry the request. */
   shouldRetry?: (xhr: XMLHttpRequest) => boolean
+
+  /** Called after the response has succeeded or failed but before the promise is resolved. */
+  onAfterRequest?: (
+    xhr: XMLHttpRequest,
+    retryCount: number,
+  ) => void | Promise<void>
 
   /** Called when no XMLHttpRequest upload progress events have been received for `timeout` ms. */
   onTimeout?: () => void
@@ -61,6 +67,7 @@ export function fetcher(
     onBeforeRequest = noop,
     onUploadProgress = noop,
     shouldRetry = () => true,
+    onAfterRequest = noop,
     onTimeout = noop,
     responseType,
     retries = 3,
@@ -93,7 +100,9 @@ export function fetcher(
         })
       }
 
-      xhr.onload = () => {
+      xhr.onload = async () => {
+        await onAfterRequest(xhr, retryCount)
+
         if (xhr.status >= 200 && xhr.status < 300) {
           timer.done()
           resolve(xhr)
@@ -129,7 +138,7 @@ export function fetcher(
         })
       }
 
-      await onBeforeRequest(xhr)
+      await onBeforeRequest(xhr, retryCount)
       xhr.send(body)
     })
   }
