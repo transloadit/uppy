@@ -6,41 +6,11 @@ import Transloadit from './index.ts'
 import 'whatwg-fetch'
 
 describe('Transloadit', () => {
-  it('Throws errors if options are missing', () => {
-    const uppy = new Core()
-
-    expect(() => {
-      uppy.use(Transloadit, { params: {} })
-    }).toThrowError(/The `params\.auth\.key` option is required/)
-  })
-
-  it('Accepts a JSON string as `params` for signature authentication', () => {
-    const uppy = new Core()
-
-    expect(() => {
-      uppy.use(Transloadit, {
-        params: 'not json',
-      })
-    }).toThrowError(/The `params` option is a malformed JSON string/)
-
-    expect(() => {
-      uppy.use(Transloadit, {
-        params: '{"template_id":"some template id string"}',
-      })
-    }).toThrowError(/The `params\.auth\.key` option is required/)
-    expect(() => {
-      uppy.use(Transloadit, {
-        params:
-          '{"auth":{"key":"some auth key string"},"template_id":"some template id string"}',
-      })
-    }).not.toThrowError(/The `params\.auth\.key` option is required/)
-  })
-
   it('Does not leave lingering progress if getAssemblyOptions fails', () => {
     const error = new Error('expected failure')
     const uppy = new Core()
     uppy.use(Transloadit, {
-      getAssemblyOptions() {
+      assemblyOptions() {
         return Promise.reject(error)
       },
     })
@@ -67,9 +37,11 @@ describe('Transloadit', () => {
   it('Does not leave lingering progress if creating assembly fails', () => {
     const uppy = new Core()
     uppy.use(Transloadit, {
-      params: {
-        auth: { key: 'some auth key string' },
-        template_id: 'some template id string',
+      assemblyOptions: {
+        params: {
+          auth: { key: 'some auth key string' },
+          template_id: 'some template id string',
+        },
       },
     })
 

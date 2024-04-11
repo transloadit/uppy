@@ -1,11 +1,11 @@
 import type { Uppy } from '@uppy/core'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
-import type { PluginOpts } from '@uppy/core/lib/BasePlugin.ts'
+import type { PluginOpts } from '@uppy/core/lib/BasePlugin'
 import type {
   RequestOptions,
   CompanionClientProvider,
 } from '@uppy/utils/lib/CompanionClientProvider'
-import type { UnknownProviderPlugin } from '@uppy/core/lib/Uppy.ts'
+import type { UnknownProviderPlugin } from '@uppy/core/lib/Uppy'
 import RequestClient, { authErrorStatusCode } from './RequestClient.ts'
 import type { CompanionPluginOptions } from '.'
 
