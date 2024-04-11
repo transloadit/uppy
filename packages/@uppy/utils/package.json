@@ -70,7 +70,8 @@
     "./lib/CompanionClientProvider": "./lib/CompanionClientProvider.js",
     "./lib/FileProgress": "./lib/FileProgress.js",
     "./src/microtip.scss": "./src/microtip.scss",
-    "./lib/UserFacingApiError": "./lib/UserFacingApiError.js"
+    "./lib/UserFacingApiError": "./lib/UserFacingApiError.js",
+    "./lib/fetcher": "./lib/fetcher.js"
   },
   "dependencies": {
     "lodash": "^4.17.21",
