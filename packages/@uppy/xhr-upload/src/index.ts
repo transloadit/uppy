@@ -2,7 +2,6 @@ import BasePlugin from '@uppy/core/lib/BasePlugin.js'
 import type { DefinePluginOpts, PluginOpts } from '@uppy/core/lib/BasePlugin.js'
 import type { RequestClient } from '@uppy/companion-client'
 import EventManager from '@uppy/core/lib/EventManager.js'
-import ProgressTimeout from '@uppy/utils/lib/ProgressTimeout'
 import {
   RateLimitedQueue,
   internalRateLimitedQueue,
@@ -365,151 +364,74 @@ export default class XHRUpload<
   }
 
   async #uploadLocalFile(file: UppyFile<M, B>) {
-    return new Promise((resolve, reject) => {
-      const events = new EventManager(this.uppy)
-      const controller = new AbortController()
-      const uppyFetch = this.requests.wrapPromiseFunction(async () => {
-        const opts = this.getOptions(file)
-        const fetch = this.#getFetcher([file])
-        const body =
-          opts.formData ? this.createFormDataUpload(file, opts) : file.data
-        return fetch(opts.endpoint, {
-          ...opts,
-          body,
-          signal: controller.signal,
-        })
+    const events = new EventManager(this.uppy)
+    const controller = new AbortController()
+    const uppyFetch = this.requests.wrapPromiseFunction(async () => {
+      const opts = this.getOptions(file)
+      const fetch = this.#getFetcher([file])
+      const body =
+        opts.formData ? this.createFormDataUpload(file, opts) : file.data
+      return fetch(opts.endpoint, {
+        ...opts,
+        body,
+        signal: controller.signal,
       })
-
-      events.onFileRemove(file.id, () => {
-        controller.abort()
-        reject(new Error('File removed'))
-      })
-
-      events.onCancelAll(file.id, ({ reason }) => {
-        if (reason === 'user') {
-          controller.abort()
-        }
-        reject(new Error('Upload cancelled'))
-      })
-
-      uppyFetch()
-        .abortOn(controller.signal)
-        .then(resolve, reject)
-        .finally(() => {
-          events.remove()
-        })
     })
+
+    events.onFileRemove(file.id, () => controller.abort())
+    events.onCancelAll(file.id, ({ reason }) => {
+      if (reason === 'user') {
+        controller.abort()
+      }
+    })
+
+    try {
+      await uppyFetch().abortOn(controller.signal)
+    } catch (error) {
+      // TODO: create formal error with name 'AbortError' (this comes from RateLimitedQueue)
+      if (error.message !== 'Cancelled') {
+        throw error
+      }
+    } finally {
+      events.remove()
+    }
   }
 
-  #uploadBundle(files: UppyFile<M, B>[]): Promise<void> {
-    return new Promise((resolve, reject) => {
-      const { endpoint } = this.opts
-      const { method } = this.opts
-      const uploadStarted = Date.now()
-
-      const optsFromState = this.uppy.getState().xhrUpload
-      const formData = this.createBundledUpload(files, {
+  async #uploadBundle(files: UppyFile<M, B>[]) {
+    const controller = new AbortController()
+    const uppyFetch = this.requests.wrapPromiseFunction(async () => {
+      const optsFromState = this.uppy.getState().xhrUpload ?? {}
+      const fetch = this.#getFetcher(files)
+      const body = this.createBundledUpload(files, {
         ...this.opts,
-        ...(optsFromState || {}),
+        ...optsFromState,
       })
-
-      const xhr = new XMLHttpRequest()
-
-      const emitError = (error: Error) => {
-        files.forEach((file) => {
-          this.uppy.emit('upload-error', file, error)
-        })
-      }
-
-      const timer = new ProgressTimeout(this.opts.timeout, () => {
-        const error = new Error(
-          this.i18n('uploadStalled', {
-            seconds: Math.ceil(this.opts.timeout / 1000),
-          }),
-        )
-        this.uppy.emit('upload-stalled', error, files)
+      return fetch(this.opts.endpoint, {
+        // headers can't be a function with bundle: true
+        ...(this.opts as OptsWithHeaders<M, B>),
+        body,
+        signal: controller.signal,
       })
-
-      xhr.upload.addEventListener('loadstart', () => {
-        this.uppy.log('[XHRUpload] started uploading bundle')
-        timer.progress()
-      })
-
-      xhr.upload.addEventListener('progress', (ev) => {
-        timer.progress()
-
-        if (!ev.lengthComputable) return
-
-        files.forEach((file) => {
-          this.uppy.emit('upload-progress', this.uppy.getFile(file.id), {
-            // TODO: do not send `uploader` in next major
-            // @ts-expect-error we can't type this and we should remove it
-            uploader: this,
-            uploadStarted,
-            bytesUploaded: (ev.loaded / ev.total) * (file.size as number),
-            bytesTotal: file.size as number,
-          })
-        })
-      })
-
-      xhr.addEventListener('load', () => {
-        timer.done()
-
-        if (this.opts.validateStatus(xhr.status, xhr.responseText, xhr)) {
-          const body = this.opts.getResponseData(xhr.responseText, xhr)
-          const uploadResp = {
-            status: xhr.status,
-            body,
-          }
-          files.forEach((file) => {
-            this.uppy.emit(
-              'upload-success',
-              this.uppy.getFile(file.id),
-              uploadResp,
-            )
-          })
-          return resolve()
-        }
-
-        const error =
-          this.opts.getResponseError(xhr.responseText, xhr) ||
-          new NetworkError('Upload error', xhr)
-        emitError(error)
-        return reject(error)
-      })
-
-      xhr.addEventListener('error', () => {
-        timer.done()
-
-        const error =
-          this.opts.getResponseError(xhr.responseText, xhr) ||
-          new Error('Upload error')
-        emitError(error)
-        return reject(error)
-      })
-
-      this.uppy.on('cancel-all', ({ reason } = {}) => {
-        if (reason !== 'user') return
-        timer.done()
-        xhr.abort()
-      })
-
-      xhr.open(method.toUpperCase(), endpoint, true)
-      // IE10 does not allow setting `withCredentials` and `responseType`
-      // before `open()` is called.
-      xhr.withCredentials = this.opts.withCredentials
-      if (this.opts.responseType !== '') {
-        xhr.responseType = this.opts.responseType
-      }
-
-      // In bundle mode headers can not be a function
-      const headers = this.opts.headers as Record<string, string>
-      Object.keys(headers).forEach((header) => {
-        xhr.setRequestHeader(header, headers[header] as string)
-      })
-
-      xhr.send(formData)
     })
+
+    function abort() {
+      controller.abort()
+    }
+
+    // We only need to abort on cancel all because
+    // individual cancellations are not possible with bundle: true
+    this.uppy.once('cancel-all', abort)
+
+    try {
+      await uppyFetch().abortOn(controller.signal)
+    } catch (error) {
+      // TODO: create formal error with name 'AbortError' (this comes from RateLimitedQueue)
+      if (error.message !== 'Cancelled') {
+        throw error
+      }
+    } finally {
+      this.uppy.off('cancel-all', abort)
+    }
   }
 
   #getCompanionClientArgs(file: UppyFile<M, B>) {
