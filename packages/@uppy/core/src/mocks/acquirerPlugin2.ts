@@ -9,7 +9,7 @@ export default class TestSelector2 extends UIPlugin<any, any, any> {
 
   mocks: { run: mock; update: mock; uninstall: mock }
 
-  constructor(uppy: Uppy<any, any>, opts: any) {
+  constructor(uppy: Uppy<any, any>, opts?: any) {
     super(uppy, opts)
     this.type = 'acquirer'
     this.id = 'TestSelector2'
