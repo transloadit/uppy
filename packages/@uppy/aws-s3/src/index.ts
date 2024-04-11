@@ -280,10 +280,10 @@ const defaultOptions = {
   allowedMetaFields: true,
   limit: 6,
   getTemporarySecurityCredentials: false as any,
-  shouldUseMultipart: ((file: UppyFile<any, any>) =>
-    file.size !== 0) as any as true, // TODO: Switch default to:
   // eslint-disable-next-line no-bitwise
-  // shouldUseMultipart: (file) => file.size >> 10 >> 10 > 100,
+  shouldUseMultipart: ((file: UppyFile<any, any>) =>
+    // eslint-disable-next-line no-bitwise
+    (file.size! >> 10) >> 10 > 100) as any as true,
   retryDelays: [0, 1000, 3000, 5000],
   companionHeaders: {},
 } satisfies Partial<AwsS3MultipartOptions<any, any>>
@@ -337,8 +337,6 @@ export default class AwsS3Multipart<
     // We need the `as any` here because of the dynamic default options.
     this.type = 'uploader'
     this.id = this.opts.id || 'AwsS3Multipart'
-    // @ts-expect-error TODO: remove unused
-    this.title = 'AWS S3 Multipart'
     // TODO: only initiate `RequestClient` is `companionUrl` is defined.
     this.#client = new RequestClient(uppy, opts as any)
 
