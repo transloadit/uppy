@@ -117,16 +117,12 @@ describe('AwsS3Multipart', () => {
         }),
         completeMultipartUpload: vi.fn(async () => ({ location: 'test' })),
         abortMultipartUpload: vi.fn(),
-        prepareUploadParts: vi.fn(
-          async (file, { parts }: { parts: { number: number }[] }) => {
-            const presignedUrls: Record<number, string> = {}
-            parts.forEach(({ number }) => {
-              presignedUrls[number] =
-                `https://bucket.s3.us-east-2.amazonaws.com/test/upload/multitest.dat?partNumber=${number}&uploadId=6aeb1980f3fc7ce0b5454d25b71992&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIATEST%2F20210729%2Fus-east-2%2Fs3%2Faws4_request&X-Amz-Date=20210729T014044Z&X-Amz-Expires=600&X-Amz-SignedHeaders=host&X-Amz-Signature=test`
-            })
-            return { presignedUrls, headers: { 1: { 'Content-MD5': 'foo' } } }
-          },
-        ),
+        signPart: vi.fn(async (file, { number }) => {
+          return {
+            url: `https://bucket.s3.us-east-2.amazonaws.com/test/upload/multitest.dat?partNumber=${number}&uploadId=6aeb1980f3fc7ce0b5454d25b71992&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIATEST%2F20210729%2Fus-east-2%2Fs3%2Faws4_request&X-Amz-Date=20210729T014044Z&X-Amz-Expires=600&X-Amz-SignedHeaders=host&X-Amz-Signature=test`,
+            headers: { 'Content-MD5': 'foo' },
+          }
+        }),
         listParts: undefined as any,
       })
       awsS3Multipart = core.getPlugin('AwsS3Multipart') as any
