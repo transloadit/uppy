@@ -105,6 +105,23 @@ Released: 2024-03-28
 - meta: prepare release workflow for beta versions (Antoine du Hamel)
 
 
+## 3.24.1
+
+Released: 2024-04-10
+
+| Package          | Version | Package          | Version |
+| ---------------- | ------- | ---------------- | ------- |
+| @uppy/companion  |  4.13.1 | uppy             |  3.24.1 |
+| @uppy/file-input |   3.1.1 |                  |         |
+
+- @uppy/companion: upgrade redis (Mikael Finstad / #5065)
+- meta: fix `watch:*` scripts (Antoine du Hamel / #5046)
+- meta: include more packages in `compare_diff` CI (Antoine du Hamel / #5044)
+- @uppy/file-input: add missing export (Antoine du Hamel / #5045)
+- meta: Bump express from 4.18.1 to 4.19.2 in /packages/@uppy/companion (dependabot[bot] / #5036)
+- @uppy/companion: Bump express from 4.18.1 to 4.19.2 (dependabot[bot] / #5037)
+
+
 ## 3.24.0
 
 Released: 2024-03-27
