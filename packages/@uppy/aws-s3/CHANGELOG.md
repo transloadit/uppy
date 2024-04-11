@@ -1,4 +1,11 @@
-# @uppy/aws-s3-multipart
+# @uppy/aws-s3-
+## 4.0.0-beta.2
+
+Released: 2024-04-11
+Included in: Uppy v4.0.0-beta.2
+
+- @uppy/aws-s3: remove legacy plugin (Antoine du Hamel / #5070)
+multipart
 
 ## 4.0.0-beta.1
 

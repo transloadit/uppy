@@ -12,6 +12,37 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 4.0.0-beta.2
+
+Released: 2024-04-11
+
+| Package                   |      Version | Package                   |      Version |
+| ------------------------- | ------------ | ------------------------- | ------------ |
+| @uppy/angular             | 0.7.0-beta.2 | @uppy/instagram           | 4.0.0-beta.2 |
+| @uppy/audio               | 2.0.0-beta.2 | @uppy/onedrive            | 4.0.0-beta.2 |
+| @uppy/aws-s3              | 4.0.0-beta.2 | @uppy/progress-bar        | 4.0.0-beta.2 |
+| @uppy/aws-s3-multipart    | 4.0.0-beta.2 | @uppy/provider-views      | 4.0.0-beta.2 |
+| @uppy/box                 | 3.0.0-beta.2 | @uppy/react               | 4.0.0-beta.2 |
+| @uppy/companion           | 5.0.0-beta.2 | @uppy/remote-sources      | 2.0.0-beta.2 |
+| @uppy/companion-client    | 4.0.0-beta.2 | @uppy/screen-capture      | 4.0.0-beta.2 |
+| @uppy/compressor          | 2.0.0-beta.2 | @uppy/status-bar          | 4.0.0-beta.2 |
+| @uppy/core                | 4.0.0-beta.2 | @uppy/thumbnail-generator | 4.0.0-beta.2 |
+| @uppy/dashboard           | 4.0.0-beta.2 | @uppy/transloadit         | 4.0.0-beta.2 |
+| @uppy/drag-drop           | 4.0.0-beta.2 | @uppy/tus                 | 4.0.0-beta.2 |
+| @uppy/drop-target         | 3.0.0-beta.2 | @uppy/unsplash            | 4.0.0-beta.2 |
+| @uppy/dropbox             | 4.0.0-beta.2 | @uppy/url                 | 4.0.0-beta.2 |
+| @uppy/facebook            | 4.0.0-beta.2 | @uppy/utils               | 6.0.0-beta.2 |
+| @uppy/file-input          | 4.0.0-beta.2 | @uppy/webcam              | 4.0.0-beta.2 |
+| @uppy/golden-retriever    | 4.0.0-beta.2 | @uppy/zoom                | 3.0.0-beta.2 |
+| @uppy/google-drive        | 4.0.0-beta.2 | uppy                      | 4.0.0-beta.2 |
+
+- @uppy/core: use variadic arguments for `uppy.use` (Antoine du Hamel / #4888)
+- @uppy/aws-s3: remove legacy plugin (Antoine du Hamel / #5070)
+- @uppy/locales: do not build `dist/` folder (Merlijn Vos / #5055)
+- @uppy/angular: fix Angular version requirement in peerDeps (Antoine du Hamel / #5067)
+- @uppy/transloadit: remove deprecated options (Merlijn Vos / #5056)
+
+
 ## 4.0.0-beta.1
 
 Released: 2024-03-28
