@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
 import fs from 'node:fs/promises'
-import path from 'node:path'
 import chalk from 'chalk'
 
 import esbuild from 'esbuild'
@@ -32,7 +31,6 @@ function buildBundle (srcFile, bundleFile, { minify = true, standalone = '', plu
 }
 
 await fs.mkdir(new URL('./uppy/dist', PACKAGES_ROOT), { recursive: true })
-await fs.mkdir(new URL('./@uppy/locales/dist', PACKAGES_ROOT), { recursive: true })
 
 const methods = [
   buildBundle(
@@ -46,21 +44,6 @@ const methods = [
     { standalone: 'Uppy', format: 'iife' },
   ),
 ]
-
-// Build minified versions of all the locales
-const localesModules = await fs.opendir(new URL('./@uppy/locales/src/', PACKAGES_ROOT))
-for await (const dirent of localesModules) {
-  if (!dirent.isDirectory() && dirent.name.endsWith('.js')) {
-    const localeName = path.basename(dirent.name, '.js')
-    methods.push(
-      buildBundle(
-        `./packages/@uppy/locales/src/${localeName}.js`,
-        `./packages/@uppy/locales/dist/${localeName}.min.js`,
-        { minify: true },
-      ),
-    )
-  }
-}
 
 // Add BUNDLE-README.MD
 methods.push(
