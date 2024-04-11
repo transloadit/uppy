@@ -197,25 +197,6 @@ type AWSS3MultipartWithoutCompanionMandatorySignPart<
     opts: SignPartOptions,
   ) => MaybePromise<AwsS3UploadParameters>
 }
-/** @deprecated Use signPart instead */
-type AWSS3MultipartWithoutCompanionMandatoryPrepareUploadParts<
-  M extends Meta,
-  B extends Body,
-> = {
-  /** @deprecated Use signPart instead */
-  prepareUploadParts: (
-    file: UppyFile<M, B>,
-    partData: {
-      uploadId: string
-      key: string
-      parts: [{ number: number; chunk: Blob }]
-      signal?: AbortSignal
-    },
-  ) => MaybePromise<{
-    presignedUrls: Record<number, string>
-    headers?: Record<number, Record<string, string>>
-  }>
-}
 type AWSS3MultipartWithoutCompanionMandatory<M extends Meta, B extends Body> = {
   getChunkSize?: (file: UppyFile<M, B>) => number
   createMultipartUpload: (file: UppyFile<M, B>) => MaybePromise<UploadResult>
@@ -236,10 +217,7 @@ type AWSS3MultipartWithoutCompanionMandatory<M extends Meta, B extends Body> = {
       signal: AbortSignal
     },
   ) => MaybePromise<{ location?: string }>
-} & (
-  | AWSS3MultipartWithoutCompanionMandatorySignPart<M, B>
-  | AWSS3MultipartWithoutCompanionMandatoryPrepareUploadParts<M, B>
-)
+} & AWSS3MultipartWithoutCompanionMandatorySignPart<M, B>
 
 type AWSS3MultipartWithoutCompanion<
   M extends Meta,
@@ -385,33 +363,6 @@ export default class AwsS3Multipart<
           dynamicDefaultOptions[key as keyof typeof dynamicDefaultOptions].bind(
             this,
           )
-      }
-    }
-    if (
-      (opts as AWSS3MultipartWithoutCompanionMandatoryPrepareUploadParts<M, B>)
-        ?.prepareUploadParts != null &&
-      (opts as AWSS3MultipartWithoutCompanionMandatorySignPart<M, B>)
-        .signPart == null
-    ) {
-      this.opts.signPart = async (
-        file: UppyFile<M, B>,
-        { uploadId, key, partNumber, body, signal }: SignPartOptions,
-      ) => {
-        const { presignedUrls, headers } = await (
-          opts as AWSS3MultipartWithoutCompanionMandatoryPrepareUploadParts<
-            M,
-            B
-          >
-        ).prepareUploadParts(file, {
-          uploadId,
-          key,
-          parts: [{ number: partNumber, chunk: body }],
-          signal,
-        })
-        return {
-          url: presignedUrls?.[partNumber],
-          headers: headers?.[partNumber],
-        }
       }
     }
 
@@ -729,7 +680,7 @@ export default class AwsS3Multipart<
         ;(error as any).source = { status: 403 }
         reject(error)
       })
-      xhr.addEventListener('load', (ev) => {
+      xhr.addEventListener('load', () => {
         cleanup()
 
         if (
