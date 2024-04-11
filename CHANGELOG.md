@@ -12,6 +12,39 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 4.0.0-beta.2
+
+Released: 2024-04-11
+
+| Package                   |      Version | Package                   |      Version |
+| ------------------------- | ------------ | ------------------------- | ------------ |
+| @uppy/angular             | 0.7.0-beta.2 | @uppy/instagram           | 4.0.0-beta.2 |
+| @uppy/audio               | 2.0.0-beta.2 | @uppy/onedrive            | 4.0.0-beta.2 |
+| @uppy/aws-s3              | 4.0.0-beta.2 | @uppy/progress-bar        | 4.0.0-beta.2 |
+| @uppy/aws-s3-multipart    | 4.0.0-beta.2 | @uppy/provider-views      | 4.0.0-beta.2 |
+| @uppy/box                 | 3.0.0-beta.2 | @uppy/react               | 4.0.0-beta.2 |
+| @uppy/companion           | 5.0.0-beta.2 | @uppy/remote-sources      | 2.0.0-beta.2 |
+| @uppy/companion-client    | 4.0.0-beta.2 | @uppy/screen-capture      | 4.0.0-beta.2 |
+| @uppy/compressor          | 2.0.0-beta.2 | @uppy/status-bar          | 4.0.0-beta.2 |
+| @uppy/core                | 4.0.0-beta.2 | @uppy/thumbnail-generator | 4.0.0-beta.2 |
+| @uppy/dashboard           | 4.0.0-beta.2 | @uppy/transloadit         | 4.0.0-beta.2 |
+| @uppy/drag-drop           | 4.0.0-beta.2 | @uppy/tus                 | 4.0.0-beta.2 |
+| @uppy/drop-target         | 3.0.0-beta.2 | @uppy/unsplash            | 4.0.0-beta.2 |
+| @uppy/dropbox             | 4.0.0-beta.2 | @uppy/url                 | 4.0.0-beta.2 |
+| @uppy/facebook            | 4.0.0-beta.2 | @uppy/utils               | 6.0.0-beta.2 |
+| @uppy/file-input          | 4.0.0-beta.2 | @uppy/webcam              | 4.0.0-beta.2 |
+| @uppy/golden-retriever    | 4.0.0-beta.2 | @uppy/zoom                | 3.0.0-beta.2 |
+| @uppy/google-drive        | 4.0.0-beta.2 | uppy                      | 4.0.0-beta.2 |
+
+- @uppy/aws-s3: default to multipart depending on the size of input (Antoine du Hamel / #5076)
+- @uppy/aws-s3: remove deprecated `prepareUploadParts` option (Antoine du Hamel / #5075)
+- @uppy/core: use variadic arguments for `uppy.use` (Antoine du Hamel / #4888)
+- @uppy/aws-s3: remove legacy plugin (Antoine du Hamel / #5070)
+- @uppy/locales: do not build `dist/` folder (Merlijn Vos / #5055)
+- @uppy/angular: fix Angular version requirement in peerDeps (Antoine du Hamel / #5067)
+- @uppy/transloadit: remove deprecated options (Merlijn Vos / #5056)
+
+
 ## 4.0.0-beta.1
 
 Released: 2024-03-28
@@ -103,6 +136,23 @@ Released: 2024-03-28
 - meta: enable CI on `4.x` branch (Antoine du Hamel)
 - @uppy/vue: [v4.x] remove manual types (Antoine du Hamel / #4803)
 - meta: prepare release workflow for beta versions (Antoine du Hamel)
+
+
+## 3.24.1
+
+Released: 2024-04-10
+
+| Package          | Version | Package          | Version |
+| ---------------- | ------- | ---------------- | ------- |
+| @uppy/companion  |  4.13.1 | uppy             |  3.24.1 |
+| @uppy/file-input |   3.1.1 |                  |         |
+
+- @uppy/companion: upgrade redis (Mikael Finstad / #5065)
+- meta: fix `watch:*` scripts (Antoine du Hamel / #5046)
+- meta: include more packages in `compare_diff` CI (Antoine du Hamel / #5044)
+- @uppy/file-input: add missing export (Antoine du Hamel / #5045)
+- meta: Bump express from 4.18.1 to 4.19.2 in /packages/@uppy/companion (dependabot[bot] / #5036)
+- @uppy/companion: Bump express from 4.18.1 to 4.19.2 (dependabot[bot] / #5037)
 
 
 ## 3.24.0
