@@ -3,6 +3,9 @@ import ProgressTimeout from './ProgressTimeout.ts'
 
 const noop = (): void => {}
 
+/**
+ * Optional settings for the fetch operation.
+ */
 export type FetcherOptions = {
   /** The HTTP method to use for the request. Default is 'GET'. */
   method?: string
@@ -31,7 +34,7 @@ export type FetcherOptions = {
     retryCount: number,
   ) => void | Promise<void>
 
-  /** Function for tracking upload progress. */
+  /** A callback function for tracking upload progress. */
   onUploadProgress?: (event: ProgressEvent) => void
 
   /** A function to determine whether to retry the request. */
