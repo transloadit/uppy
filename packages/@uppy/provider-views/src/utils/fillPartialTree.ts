@@ -73,7 +73,7 @@ const fillPartialTree = async (partialTree: PartialTree, provider: CompanionClie
 
   // fill up the missing parts of a partialTree!
   let poorTree : PartialTree = JSON.parse(JSON.stringify(partialTree))
-  const poorFolders = partialTree.filter((item) =>
+  const poorFolders = poorTree.filter((item) =>
     item.type === 'folder' &&
     item.status === 'checked' &&
     // either "not yet cached at all" or "some pages are left to fetch"

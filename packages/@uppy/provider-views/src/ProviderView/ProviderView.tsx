@@ -11,7 +11,7 @@ import type {
   PartialTreeFolderNode,
   PartialTreeFile,
 } from '@uppy/core/lib/Uppy.ts'
-import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
+import type { Body, Meta, TagFile, UppyFile } from '@uppy/utils/lib/UppyFile'
 import type { CompanionFile } from '@uppy/utils/lib/CompanionFile.ts'
 import type Translator from '@uppy/utils/lib/Translator'
 import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin.ts'
@@ -341,7 +341,37 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
     const { partialTree } = this.plugin.getPluginState()
     this.setLoading(true)
     const uppyFiles: CompanionFile[] = await fillPartialTree(partialTree, this.provider)
-    const filesToAdd = uppyFiles.map((file) => this.getTagFile(file))
+    const filesToAdd : TagFile<M>[] = []
+    const filesAlreadyAdded : TagFile<M>[] = []
+    const filesNotPassingRestrictions : TagFile<M>[] = []
+
+    uppyFiles.forEach((uppyFile) => {
+      const tagFile = this.getTagFile(uppyFile)
+
+      if (this.validateRestrictions(uppyFile)) {
+        filesNotPassingRestrictions.push(tagFile)
+        return
+      }
+
+      const id = getSafeFileId(tagFile)
+      if (this.plugin.uppy.checkIfFileAlreadyExists(id)) {
+        filesAlreadyAdded.push(tagFile)
+        return
+      }
+
+      filesToAdd.push(tagFile)
+    })
+
+    if (filesToAdd.length > 0) {
+      this.plugin.uppy.info(`${filesToAdd.length} files added`)
+    }
+    if (filesAlreadyAdded.length > 0) {
+      this.plugin.uppy.info(`Not adding ${filesAlreadyAdded.length} files because they already exist`)
+    }
+    if (filesNotPassingRestrictions.length > 0) {
+      this.plugin.uppy.info(`Not adding ${filesNotPassingRestrictions.length} files they didn't pass restrictions`)
+    }
+
     this.plugin.uppy.addFiles(filesToAdd)
     this.setLoading(false)
   }
