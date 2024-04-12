@@ -10,7 +10,7 @@ import UppyCdnExample from '/src/components/UppyCdnExample';
 # Google Drive
 
 The `@uppy/google-drive` plugin lets users import files from their
-[Google Drive](https://www.drive.google.com) account.
+[Google Drive](https://drive.google.com) account.
 
 :::tip
 
@@ -22,7 +22,7 @@ The `@uppy/google-drive` plugin lets users import files from their
 ## When should I use this?
 
 When you want to let users import files from their
-[Google Drive](https://www.drive.google.com) account.
+[Google Drive](https://drive.google.com) account.
 
 A [Companion](/docs/companion) instance is required for the Google Drive plugin
 to work. Companion handles authentication with Google Drive, downloads the
@@ -115,12 +115,12 @@ https://api2.transloadit.com/companion/drive/redirect
 
 Google will give you an OAuth client ID and client secret.
 
-Configure the Google Drive key and secret in Companion. With the standalone
+Configure the Google key and secret in Companion. With the standalone
 Companion server, specify environment variables:
 
 ```shell
-export COMPANION_GOOGLE_KEY="Google Drive OAuth client ID"
-export COMPANION_GOOGLE_SECRET="Google Drive OAuth client secret"
+export COMPANION_GOOGLE_KEY="Google OAuth client ID"
+export COMPANION_GOOGLE_SECRET="Google OAuth client secret"
 ```
 
 When using the Companion Node.js API, configure these options:
@@ -129,8 +129,8 @@ When using the Companion Node.js API, configure these options:
 companion.app({
 	providerOptions: {
 		drive: {
-			key: 'Google Drive OAuth client ID',
-			secret: 'Google Drive OAuth client secret',
+			key: 'Google OAuth client ID',
+			secret: 'Google OAuth client secret',
 		},
 	},
 });

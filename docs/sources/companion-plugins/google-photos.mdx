@@ -1,5 +1,5 @@
 ---
-slug: /instagram
+slug: /google-photos
 ---
 
 import Tabs from '@theme/Tabs';
@@ -7,10 +7,10 @@ import TabItem from '@theme/TabItem';
 
 import UppyCdnExample from '/src/components/UppyCdnExample';
 
-# Instagram
+# Google Photos
 
-The `@uppy/instagram` plugin lets users import files from their
-[Instagram](https://instagram.com) account.
+The `@uppy/google-photos` plugin lets users import files from their
+[Google Photos](https://photos.google.com) account.
 
 :::tip
 
@@ -22,12 +22,12 @@ The `@uppy/instagram` plugin lets users import files from their
 ## When should I use this?
 
 When you want to let users import files from their
-[Instagram](https://instagram.com) account.
+[Google Photos](https://photos.google.com) account.
 
-A [Companion](/docs/companion) instance is required for the Instagram plugin to
-work. Companion handles authentication with Instagram, downloads the files, and
-uploads them to the destination. This saves the user bandwidth, especially
-helpful if they are on a mobile connection.
+A [Companion](/docs/companion) instance is required for the Google Photos plugin
+to work. Companion handles authentication with Google Photos, downloads the
+photos/videos, and uploads them to the destination. This saves the user bandwidth,
+especially helpful if they are on a mobile connection.
 
 You can self-host Companion or get a hosted version with any
 [Transloadit plan](https://transloadit.com/pricing/).
@@ -36,7 +36,7 @@ You can self-host Companion or get a hosted version with any
   <TabItem value="npm" label="NPM" default>
 
 ```shell
-npm install @uppy/instagram
+npm install @uppy/google-photos
 ```
 
   </TabItem>
@@ -44,7 +44,7 @@ npm install @uppy/instagram
   <TabItem value="yarn" label="Yarn">
 
 ```shell
-yarn add @uppy/instagram
+yarn add @uppy/google-photos
 ```
 
   </TabItem>
@@ -52,9 +52,9 @@ yarn add @uppy/instagram
   <TabItem value="cdn" label="CDN">
     <UppyCdnExample>
       {`
-        import { Uppy, Instagram } from "{{UPPY_JS_URL}}"
+        import { Uppy, GooglePhotos } from "{{UPPY_JS_URL}}"
         const uppy = new Uppy()
-        uppy.use(Instagram, {
+        uppy.use(GooglePhotos, {
           // Options
         })
       `}
@@ -64,21 +64,21 @@ yarn add @uppy/instagram
 
 ## Use
 
-Using Instagram requires setup in both Uppy and Companion.
+Using Google Photos requires setup in both Uppy and Companion.
 
 ### Use in Uppy
 
 ```js {10-13} showLineNumbers
 import Uppy from '@uppy/core';
 import Dashboard from '@uppy/dashboard';
-import Instagram from '@uppy/instagram';
+import GooglePhotos from '@uppy/google-photos';
 
 import '@uppy/core/dist/style.min.css';
 import '@uppy/dashboard/dist/style.min.css';
 
 new Uppy()
 	.use(Dashboard, { inline: true, target: '#dashboard' })
-	.use(Instagram, {
+	.use(GooglePhotos, {
 		target: Dashboard,
 		companionUrl: 'https://your-companion.com',
 	});
@@ -87,30 +87,34 @@ new Uppy()
 ### Use in Companion
 
 To sign up for API keys, go to the
-[Instagram Platform from Meta](https://developers.facebook.com/products/instagram/).
+[Google Developer Console](https://console.developers.google.com/).
 
 Create a project for your app if you don’t have one yet.
+
+- On the project’s dashboard,
+  [enable the Google Photos API](https://developers.google.com/photos).
+- [Set up OAuth authorization](https://developers.google.com/photos/library/guides/authorization).
 
 The app page has a `"Redirect URIs"` field. Here, add:
 
 ```
-https://$YOUR_COMPANION_HOST_NAME/instagram/redirect
+https://$YOUR_COMPANION_HOST_NAME/googlephotos/redirect
 ```
 
 If you are using Transloadit hosted Companion:
 
 ```
-https://api2.transloadit.com/companion/instagram/redirect
+https://api2.transloadit.com/companion/googlephotos/redirect
 ```
 
-Meta will give you an OAuth client ID and client secret.
+Google will give you an OAuth client ID and client secret.
 
-Configure the Instagram key and secret in Companion. With the standalone
+Configure the Google key and secret in Companion. With the standalone
 Companion server, specify environment variables:
 
 ```shell
-export COMPANION_INSTAGRAM_KEY="Instagram OAuth client ID"
-export COMPANION_INSTAGRAM_SECRET="Instagram OAuth client secret"
+export COMPANION_GOOGLE_KEY="Google OAuth client ID"
+export COMPANION_GOOGLE_SECRET="Google OAuth client secret"
 ```
 
 When using the Companion Node.js API, configure these options:
@@ -118,9 +122,9 @@ When using the Companion Node.js API, configure these options:
 ```js
 companion.app({
 	providerOptions: {
-		instagram: {
-			key: 'Instagram OAuth client ID',
-			secret: 'Instagram OAuth client secret',
+		googlephotos: {
+			key: 'Google OAuth client ID',
+			secret: 'Google OAuth client secret',
 		},
 	},
 });
@@ -132,12 +136,12 @@ companion.app({
 
 #### `id`
 
-A unique identifier for this plugin (`string`, default: `'Instagram'`).
+A unique identifier for this plugin (`string`, default: `'GooglePhotos'`).
 
 #### `title`
 
 Title / name shown in the UI, such as Dashboard tabs (`string`, default:
-`'Instagram'`).
+`'GooglePhotos'`).
 
 #### `target`
 
@@ -175,7 +179,7 @@ This tells the plugin whether to send cookies to [Companion](/docs/companion).
 ```js
 export default {
 	strings: {
-		pluginNameInstagram: 'Instagram',
+		pluginNameGooglePhotos: 'GooglePhotos',
 	},
 };
 ```

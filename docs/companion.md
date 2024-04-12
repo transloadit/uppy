@@ -22,7 +22,7 @@ OAuth.
 ## When should I use it?
 
 If you want to let users download files from [Box][], [Dropbox][], [Facebook][],
-[Google Drive][googledrive], [Instagram][], [OneDrive][], [Unsplash][], [Import
+[Google Drive][googledrive], [Google Photos][googlephotos], [Instagram][], [OneDrive][], [Unsplash][], [Import
 from URL][url], or [Zoom][] — you need Companion.
 
 Companion supports the same [uploaders](/docs/guides/choosing-uploader) as Uppy:
@@ -441,6 +441,7 @@ the secret, nothing else.
 | Dropbox      | `dropbox`   | `COMPANION_DROPBOX_KEY`, `COMPANION_DROPBOX_SECRET`, `COMPANION_DROPBOX_SECRET_FILE`                                                                                                                                                   |
 | Facebook     | `facebook`  | `COMPANION_FACEBOOK_KEY`, `COMPANION_FACEBOOK_SECRET`, `COMPANION_FACEBOOK_SECRET_FILE`                                                                                                                                                |
 | Google Drive | `drive`     | `COMPANION_GOOGLE_KEY`, `COMPANION_GOOGLE_SECRET`, `COMPANION_GOOGLE_SECRET_FILE`                                                                                                                                                      |
+| Google Photos | `googlephotos`     | `COMPANION_GOOGLE_KEY`, `COMPANION_GOOGLE_SECRET`, `COMPANION_GOOGLE_SECRET_FILE`                                                                                                                                                      |
 | Instagram    | `instagram` | `COMPANION_INSTAGRAM_KEY`, `COMPANION_INSTAGRAM_SECRET`, `COMPANION_INSTAGRAM_SECRET_FILE`                                                                                                                                             |
 | OneDrive     | `onedrive`  | `COMPANION_ONEDRIVE_KEY`, `COMPANION_ONEDRIVE_SECRET`, `COMPANION_ONEDRIVE_SECRET_FILE`, `COMPANION_ONEDRIVE_DOMAIN_VALIDATION` (Settings this variable to `true` enables a route that can be used to validate your app with OneDrive) |
 | Zoom         | `zoom`      | `COMPANION_ZOOM_KEY`, `COMPANION_ZOOM_SECRET`, `COMPANION_ZOOM_SECRET_FILE`, `COMPANION_ZOOM_VERIFICATION_TOKEN`                                                                                                                       |
@@ -921,6 +922,8 @@ when files are changed.
 [facebook]: /docs/facebook
 
 [googledrive]: /docs/google-drive
+
+[googlephotos]: /docs/google-photos
 
 [instagram]: /docs/instagram
 
