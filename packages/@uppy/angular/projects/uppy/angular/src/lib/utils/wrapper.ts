@@ -38,6 +38,7 @@ export abstract class UppyAngularWrapper<
       changes['uppy'].previousValue !== undefined
     ) {
       this.uninstall(changes['uppy'].previousValue);
+      // @ts-expect-error The options correspond to the plugin, I swear
       this.uppy.use(plugin, this.options);
     }
     this.options = { ...this.options, ...this.props };

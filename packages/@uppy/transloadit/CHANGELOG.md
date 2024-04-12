@@ -1,5 +1,26 @@
 # @uppy/transloadit
 
+## 4.0.0-beta.2
+
+Released: 2024-04-11
+Included in: Uppy v4.0.0-beta.2
+
+- @uppy/transloadit: remove deprecated options (Merlijn Vos / #5056)
+
+## 4.0.0-beta.1
+
+Released: 2024-03-28
+Included in: Uppy v4.0.0-beta.1
+
+- @uppy/transloadit: migrate to TS (Merlijn Vos / #4987)
+
+## 3.6.0
+
+Released: 2024-03-27
+Included in: Uppy v3.24.0
+
+- @uppy/transloadit: migrate to TS (Merlijn Vos / #4987)
+
 ## 3.5.0
 
 Released: 2024-02-19
