@@ -1,17 +1,14 @@
 import { h } from 'preact'
-import PQueue from 'p-queue'
 
 import { getSafeFileId } from '@uppy/utils/lib/generateFileID'
 
 import type {
   UnknownProviderPlugin,
-  Uppy,
-  PartialTree,
   PartialTreeFolder,
   PartialTreeFolderNode,
   PartialTreeFile,
 } from '@uppy/core/lib/Uppy.ts'
-import type { Body, Meta, TagFile, UppyFile } from '@uppy/utils/lib/UppyFile'
+import type { Body, Meta, TagFile } from '@uppy/utils/lib/UppyFile'
 import type { CompanionFile } from '@uppy/utils/lib/CompanionFile.ts'
 import type Translator from '@uppy/utils/lib/Translator'
 import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin.ts'
@@ -26,19 +23,6 @@ import View, { type ViewOptions } from '../View.ts'
 import packageJson from '../../package.json'
 import PartialTreeUtils from '../utils/PartialTreeUtils.ts'
 import fillPartialTree from '../utils/fillPartialTree.ts'
-
-function formatBreadcrumbs(breadcrumbs: PartialTreeFolder[]): string {
-  const nonrootFoldes = breadcrumbs
-    .filter((folder) => folder.type === 'folder') as PartialTreeFolderNode[]
-  return nonrootFoldes
-    .map((folder) => folder.data.name)
-    .join('/')
-}
-
-function prependPath(path: string | undefined, component: string): string {
-  if (!path) return component
-  return `${path}/${component}`
-}
 
 export function defaultPickerIcon(): JSX.Element {
   return (
@@ -163,13 +147,6 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
     }
   }
 
-  async #list({ requestPath, signal }: { requestPath: string | null, signal: AbortSignal }) {
-    const { username, nextPagePath, items } = await this.provider.list(requestPath, { signal })
-    this.username = username || this.username
-
-    return { items, nextPagePath }
-  }
-
   /**
    * Select a folder based on its id: fetches the folder and then updates state with its contents
    * TODO rename to something better like selectFolder or navigateToFolder (breaking change?)
@@ -194,10 +171,10 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
         let currentPagePath = folderId
         let currentItems: CompanionFile[] = []
         do {
-          const { items, nextPagePath } = await this.#list({
-            requestPath: currentPagePath,
-            signal
-          })
+          const { username, nextPagePath, items } = await this.provider.list(currentPagePath, { signal })
+          // It's important to set the username during one of our first fetches
+          this.username = username
+
           currentPagePath = nextPagePath
           currentItems = currentItems.concat(items)
           this.setLoading(this.plugin.uppy.i18n('loadedXFiles', { numFiles: items.length }))
@@ -211,16 +188,6 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
           filterInput: ''
         })
       })
-
-
-
-
-
-
-
-
-
-
 
     } catch (err) {
       // This is the first call that happens when the provider view loads, after auth, so it's probably nice to show any
@@ -320,11 +287,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
 
       try {
         await this.#withAbort(async (signal) => {
-
-          const { items, nextPagePath } = await this.#list({
-            requestPath: currentFolder.nextPagePath!,
-            signal
-          })
+          const { nextPagePath, items } = await this.provider.list(currentFolder.nextPagePath!, { signal })
           const newPartialTree = PartialTreeUtils.afterScroll(partialTree, currentFolderId, items, nextPagePath, this.validateRestrictions)
 
           this.plugin.setPluginState({ partialTree: newPartialTree })
