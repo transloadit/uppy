@@ -9420,6 +9420,8 @@ __metadata:
     express-prom-bundle: 6.5.0
     express-request-id: 1.4.1
     express-session: 1.17.3
+    form-data-encoder: ^4.0.2
+    formdata-node: ^6.0.3
     got: ^13.0.0
     grant: 5.4.22
     helmet: ^4.6.0
@@ -16852,6 +16854,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"form-data-encoder@npm:^4.0.2":
+  version: 4.0.2
+  resolution: "form-data-encoder@npm:4.0.2"
+  checksum: 12769f21af2d750c20111f8a626560eaf613c2c62769d5924d9e5a44ba4ef52406f973844129151efd35533eb79ecf8e0b95b0839560e335204d2212efb9a9ef
+  languageName: node
+  linkType: hard
+
 "form-data@npm:^2.5.0":
   version: 2.5.1
   resolution: "form-data@npm:2.5.1"
@@ -16889,6 +16898,13 @@ __metadata:
   version: 0.2.2
   resolution: "format@npm:0.2.2"
   checksum: 646a60e1336250d802509cf24fb801e43bd4a70a07510c816fa133aa42cdbc9c21e66e9cc0801bb183c5b031c9d68be62e7fbb6877756e52357850f92aa28799
+  languageName: node
+  linkType: hard
+
+"formdata-node@npm:^6.0.3":
+  version: 6.0.3
+  resolution: "formdata-node@npm:6.0.3"
+  checksum: 0c404dad51aac1e570bef1c20b702da9f4facac9db889398d333ca92a7ae4ab8c005ad249e2df184870fe388aedfe28fc81e8a0aabda7295a19316c1fbaf7407
   languageName: node
   linkType: hard
 

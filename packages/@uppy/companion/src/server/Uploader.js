@@ -1,5 +1,4 @@
 // eslint-disable-next-line max-classes-per-file
-const { blob } = require('node:stream/consumers');
 const tus = require('tus-js-client')
 const { randomUUID } = require('node:crypto')
 const validator = require('validator')
@@ -8,6 +7,12 @@ const { join } = require('node:path')
 const fs = require('node:fs')
 const { promisify } = require('node:util')
 const throttle = require('lodash/throttle')
+const { Readable } = require('node:stream')
+// eslint-disable-next-line import/no-extraneous-dependencies
+const { FormData } = require('formdata-node')
+// eslint-disable-next-line import/no-extraneous-dependencies
+const { FormDataEncoder } = require('form-data-encoder')
+
 
 const { Upload } = require('@aws-sdk/lib-storage')
 
@@ -618,13 +623,17 @@ class Uploader {
 
       Object.entries(this.options.metadata).forEach(([key, value]) => formData.append(key, value))
 
-      formData.append(
-        this.options.fieldname,
-        // @ts-expect-error Node.js Blob is actually spec compliant
-        await blob(stream),
-        this.uploadFileName)
+      formData.set(this.options.fieldname, {
+        type: this.options.metadata.type,
+        name: this.uploadFileName,
+        [Symbol.toStringTag]: "File",
+        stream() { return stream }
+      })
 
-      reqOptions.body = formData
+      const encoder = new FormDataEncoder(formData)
+
+      reqOptions.body = Readable.from(encoder)
+      reqOptions.headers['content-type'] = encoder.contentType
     } else {
       reqOptions.headers['content-length'] = this.size
       reqOptions.body = stream
