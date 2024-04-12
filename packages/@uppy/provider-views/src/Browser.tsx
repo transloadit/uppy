@@ -76,7 +76,8 @@ function ListItem<M extends Meta, B extends Body>(
     id: f.id,
     title: f.name,
     author: f.author,
-    getItemIcon: () => f.icon,
+    getItemIcon: () =>
+      viewType === 'grid' && f.thumbnail ? f.thumbnail : f.icon,
     isChecked: isChecked(f),
     toggleCheckbox: (event: Event) => toggleCheckbox(event, f),
     isCheckboxDisabled: false,
@@ -117,7 +118,7 @@ type BrowserProps<M extends Meta, B extends Body> = {
   cancel: () => void
   done: () => void
   noResultsLabel: string
-  loadAllFiles?: boolean
+  virtualList?: boolean
 }
 
 function Browser<M extends Meta, B extends Body>(
@@ -150,7 +151,7 @@ function Browser<M extends Meta, B extends Body>(
     cancel,
     done,
     noResultsLabel,
-    loadAllFiles,
+    virtualList,
   } = props
 
   const selected = currentSelection.length
@@ -204,7 +205,7 @@ function Browser<M extends Meta, B extends Body>(
           return <div className="uppy-Provider-empty">{noResultsLabel}</div>
         }
 
-        if (loadAllFiles) {
+        if (virtualList) {
           return (
             <div className="uppy-ProviderBrowser-body">
               <ul className="uppy-ProviderBrowser-list">

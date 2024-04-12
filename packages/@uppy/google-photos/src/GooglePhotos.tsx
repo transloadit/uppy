@@ -121,6 +121,16 @@ export default class GooglePhotos<
   }
 
   render(state: unknown): ComponentChild {
+    if (
+      this.getPluginState().files.length &&
+      !this.getPluginState().folders.length
+    ) {
+      return this.view.render(state, {
+        viewType: 'grid',
+        showFilter: false,
+        showTitles: false,
+      })
+    }
     return this.view.render(state)
   }
 }
