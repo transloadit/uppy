@@ -8,10 +8,11 @@ const fs = require('node:fs')
 const { promisify } = require('node:util')
 const throttle = require('lodash/throttle')
 const { Readable } = require('node:stream')
+
 // eslint-disable-next-line import/no-extraneous-dependencies
-const { FormData } = require('formdata-node')
+const formDataPromise = import('formdata-node')
 // eslint-disable-next-line import/no-extraneous-dependencies
-const { FormDataEncoder } = require('form-data-encoder')
+const formDataEncoderPromise = import('form-data-encoder')
 
 
 const { Upload } = require('@aws-sdk/lib-storage')
@@ -619,6 +620,7 @@ class Uploader {
     }
 
     if (this.options.useFormData) {
+      const { FormData } = await formDataPromise;
       const formData = new FormData()
 
       Object.entries(this.options.metadata).forEach(([key, value]) => formData.append(key, value))
@@ -630,6 +632,7 @@ class Uploader {
         stream() { return stream }
       })
 
+      const { FormDataEncoder } = await formDataEncoderPromise;
       const encoder = new FormDataEncoder(formData)
 
       reqOptions.body = Readable.from(encoder)
