@@ -23,7 +23,9 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [18.x, 20.x, latest]
+        node-version: [18.x, 20.9.0]
+        # TODO instead once got upgraded to 13
+        # node-version: [20.x, latest]
     steps:
       - name: Checkout sources
         uses: actions/checkout@v3
