@@ -21,11 +21,12 @@ function encodeFilename(name: string): string {
  */
 export default function generateFileID(
   file: MinimalRequiredUppyFile<any, any>,
+  instanceId: string,
 ): string {
   // It's tempting to do `[items].filter(Boolean).join('-')` here, but that
   // is slower! simple string concatenation is fast
 
-  let id = 'uppy'
+  let id = instanceId || 'uppy'
   if (typeof file.name === 'string') {
     id += `-${encodeFilename(file.name.toLowerCase())}`
   }
@@ -63,13 +64,19 @@ function hasFileStableId(file: MinimalRequiredUppyFile<any, any>): boolean {
   return stableIdProviders.has(file.remote.provider as any)
 }
 
-export function getSafeFileId(file: MinimalRequiredUppyFile<any, any>): string {
+export function getSafeFileId(
+  file: MinimalRequiredUppyFile<any, any>,
+  instanceId: string,
+): string {
   if (hasFileStableId(file)) return file.id!
 
   const fileType = getFileType(file)
 
-  return generateFileID({
-    ...file,
-    type: fileType,
-  })
+  return generateFileID(
+    {
+      ...file,
+      type: fileType,
+    },
+    instanceId,
+  )
 }

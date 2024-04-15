@@ -911,7 +911,7 @@ export class Uppy<M extends Meta, B extends Body> {
     const fileType = getFileType(file)
     const fileName = getFileName(fileType, file)
     const fileExtension = getFileNameAndExtension(fileName).extension
-    const id = getSafeFileId(file)
+    const id = getSafeFileId(file, this.getID())
 
     const meta = file.meta || {}
     meta.name = fileName
