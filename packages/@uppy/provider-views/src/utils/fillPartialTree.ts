@@ -22,11 +22,11 @@ const getRelPath = (absPath: (PartialTreeFile | PartialTreeFolderNode)[]) : (Par
   return relPath
 }
 
-const recursivelyFetch = async (queue: PQueue, poorTree: PartialTree, poorFolder: PartialTreeFolderNode, provider: CompanionClientProvider): Promise<PartialTree> => {
+const recursivelyFetch = async (queue: PQueue, poorTree: PartialTree, poorFolder: PartialTreeFolderNode, provider: CompanionClientProvider, signal: AbortSignal): Promise<PartialTree> => {
   let items : CompanionFile[] = []
   let currentPath : PartialTreeId = poorFolder.cached ? poorFolder.nextPagePath : poorFolder.id
   while (currentPath) {
-    const response = await provider.list(currentPath, {})
+    const response = await provider.list(currentPath, { signal })
     console.log({ currentPath, response });
     items = items.concat(response.items)
     currentPath = response.nextPagePath
@@ -61,14 +61,14 @@ const recursivelyFetch = async (queue: PQueue, poorTree: PartialTree, poorFolder
 
   folders.forEach(async (folder) => {
     queue.add(async () =>
-      await recursivelyFetch(queue, poorTree, folder, provider)
+      await recursivelyFetch(queue, poorTree, folder, provider, signal)
     )
   })
 
   return []
 }
 
-const fillPartialTree = async (partialTree: PartialTree, provider: CompanionClientProvider) : Promise<CompanionFile[]> => {
+const fillPartialTree = async (partialTree: PartialTree, provider: CompanionClientProvider, signal: AbortSignal) : Promise<CompanionFile[]> => {
   const queue = new PQueue({ concurrency: 6 })
 
   // fill up the missing parts of a partialTree!
@@ -82,7 +82,7 @@ const fillPartialTree = async (partialTree: PartialTree, provider: CompanionClie
   // per each poor folder, recursively fetch all files and make them .checked!!!
   poorFolders.forEach((poorFolder) => {
     queue.add(async () =>
-      await recursivelyFetch(queue, poorTree, poorFolder, provider)
+      await recursivelyFetch(queue, poorTree, poorFolder, provider, signal)
     )
   })
 

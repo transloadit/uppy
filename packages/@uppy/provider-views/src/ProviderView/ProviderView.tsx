@@ -164,32 +164,28 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
       return
     }
 
-    try {
-      this.setLoading(true)
-      await this.#withAbort(async (signal) => {
+    this.setLoading(true)
+    await this.#withAbort(async (signal) => {
+      let currentPagePath = folderId
+      let currentItems: CompanionFile[] = []
+      do {
+        const { username, nextPagePath, items } = await this.provider.list(currentPagePath, { signal })
+        // It's important to set the username during one of our first fetches
+        this.username = username
 
-        let currentPagePath = folderId
-        let currentItems: CompanionFile[] = []
-        do {
-          const { username, nextPagePath, items } = await this.provider.list(currentPagePath, { signal })
-          // It's important to set the username during one of our first fetches
-          this.username = username
+        currentPagePath = nextPagePath
+        currentItems = currentItems.concat(items)
+        this.setLoading(this.plugin.uppy.i18n('loadedXFiles', { numFiles: items.length }))
+      } while (this.opts.loadAllFiles && currentPagePath)
 
-          currentPagePath = nextPagePath
-          currentItems = currentItems.concat(items)
-          this.setLoading(this.plugin.uppy.i18n('loadedXFiles', { numFiles: items.length }))
-        } while (this.opts.loadAllFiles && currentPagePath)
+      const newPartialTree = PartialTreeUtils.afterClickOnFolder(partialTree, currentItems, clickedFolder, this.validateRestrictions, currentPagePath)
 
-        const newPartialTree = PartialTreeUtils.afterClickOnFolder(partialTree, currentItems, clickedFolder, this.validateRestrictions, currentPagePath)
-
-        this.plugin.setPluginState({
-          partialTree: newPartialTree,
-          currentFolderId: folderId,
-          filterInput: ''
-        })
+      this.plugin.setPluginState({
+        partialTree: newPartialTree,
+        currentFolderId: folderId,
+        filterInput: ''
       })
-
-    } catch (err) {
+    }).catch((err) => {
       // This is the first call that happens when the provider view loads, after auth, so it's probably nice to show any
       // error occurring here to the user.
       if (err?.name === 'UserFacingApiError') {
@@ -200,48 +196,43 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
         )
         return
       }
-
       this.handleError(err)
-    } finally {
-      this.setLoading(false)
-    }
+    })
+
+    this.setLoading(false)
   }
 
   /**
    * Removes session token on client side.
    */
   async logout(): Promise<void> {
-    try {
-      await this.#withAbort(async (signal) => {
-        const res = await this.provider.logout<{
-          ok: boolean
-          revoked: boolean
-          manual_revoke_url: string
-        }>({
-          signal,
-        })
-        // res.ok is from the JSON body, not to be confused with Response.ok
-        if (res.ok) {
-          if (!res.revoked) {
-            const message = this.plugin.uppy.i18n('companionUnauthorizeHint', {
-              provider: this.plugin.title,
-              url: res.manual_revoke_url,
-            })
-            this.plugin.uppy.info(message, 'info', 7000)
-          }
-
-          const newState = {
-            authenticated: false,
-            currentFolderId: null,
-            partialTree: [],
-            filterInput: '',
-          }
-          this.plugin.setPluginState(newState)
-        }
+    await this.#withAbort(async (signal) => {
+      const res = await this.provider.logout<{
+        ok: boolean
+        revoked: boolean
+        manual_revoke_url: string
+      }>({
+        signal,
       })
-    } catch (err) {
-      this.handleError(err)
-    }
+      // res.ok is from the JSON body, not to be confused with Response.ok
+      if (res.ok) {
+        if (!res.revoked) {
+          const message = this.plugin.uppy.i18n('companionUnauthorizeHint', {
+            provider: this.plugin.title,
+            url: res.manual_revoke_url,
+          })
+          this.plugin.uppy.info(message, 'info', 7000)
+        }
+
+        const newState = {
+          authenticated: false,
+          currentFolderId: null,
+          partialTree: [],
+          filterInput: '',
+        }
+        this.plugin.setPluginState(newState)
+      }
+    }).catch(this.handleError)
   }
 
   filterQuery(input: string): void {
@@ -253,17 +244,15 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
   }
 
   async handleAuth(authFormData?: unknown): Promise<void> {
-    try {
-      await this.#withAbort(async (signal) => {
-        this.setLoading(true)
-        await this.provider.login({ authFormData, signal })
-        this.plugin.setPluginState({ authenticated: true })
-        await Promise.all([
-          this.provider.fetchPreAuthToken(),
-          this.getFolder(this.plugin.rootFolderId),
-        ])
-      })
-    } catch (err) {
+    await this.#withAbort(async (signal) => {
+      this.setLoading(true)
+      await this.provider.login({ authFormData, signal })
+      this.plugin.setPluginState({ authenticated: true })
+      await Promise.all([
+        this.provider.fetchPreAuthToken(),
+        this.getFolder(this.plugin.rootFolderId),
+      ])
+    }).catch((err) => {
       if (err.name === 'UserFacingApiError') {
         this.plugin.uppy.info(
           { message: this.plugin.uppy.i18n(err.message) },
@@ -274,9 +263,8 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
       }
 
       this.plugin.uppy.log(`login failed: ${err.message}`)
-    } finally {
-      this.setLoading(false)
-    }
+    })
+    this.setLoading(false)
   }
 
   async handleScroll(event: Event): Promise<void> {
@@ -284,58 +272,55 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
     const currentFolder = partialTree.find((i) => i.id === currentFolderId) as PartialTreeFolder
     if (this.shouldHandleScroll(event) && currentFolder.nextPagePath) {
       this.isHandlingScroll = true
+      await this.#withAbort(async (signal) => {
+        const { nextPagePath, items } = await this.provider.list(currentFolder.nextPagePath!, { signal })
+        const newPartialTree = PartialTreeUtils.afterScroll(partialTree, currentFolderId, items, nextPagePath, this.validateRestrictions)
 
-      try {
-        await this.#withAbort(async (signal) => {
-          const { nextPagePath, items } = await this.provider.list(currentFolder.nextPagePath!, { signal })
-          const newPartialTree = PartialTreeUtils.afterScroll(partialTree, currentFolderId, items, nextPagePath, this.validateRestrictions)
-
-          this.plugin.setPluginState({ partialTree: newPartialTree })
-        })
-      } catch (error) {
-        this.handleError(error)
-      } finally {
-        this.isHandlingScroll = false
-      }
+        this.plugin.setPluginState({ partialTree: newPartialTree })
+      }).catch(this.handleError)
+      this.isHandlingScroll = false
     }
   }
 
   async donePicking(): Promise<void> {
     const { partialTree } = this.plugin.getPluginState()
     this.setLoading(true)
-    const uppyFiles: CompanionFile[] = await fillPartialTree(partialTree, this.provider)
-    const filesToAdd : TagFile<M>[] = []
-    const filesAlreadyAdded : TagFile<M>[] = []
-    const filesNotPassingRestrictions : TagFile<M>[] = []
 
-    uppyFiles.forEach((uppyFile) => {
-      const tagFile = this.getTagFile(uppyFile)
+    await this.#withAbort(async (signal) => {
+      const uppyFiles: CompanionFile[] = await fillPartialTree(partialTree, this.provider, signal)
 
-      if (this.validateRestrictions(uppyFile)) {
-        filesNotPassingRestrictions.push(tagFile)
-        return
+      const filesToAdd : TagFile<M>[] = []
+      const filesAlreadyAdded : TagFile<M>[] = []
+      const filesNotPassingRestrictions : TagFile<M>[] = []
+  
+      uppyFiles.forEach((uppyFile) => {
+        const tagFile = this.getTagFile(uppyFile)
+  
+        if (this.validateRestrictions(uppyFile)) {
+          filesNotPassingRestrictions.push(tagFile)
+          return
+        }
+  
+        const id = getSafeFileId(tagFile)
+        if (this.plugin.uppy.checkIfFileAlreadyExists(id)) {
+          filesAlreadyAdded.push(tagFile)
+          return
+        }
+        filesToAdd.push(tagFile)
+      })
+
+      if (filesToAdd.length > 0) {
+        this.plugin.uppy.info(`${filesToAdd.length} files added`)
       }
-
-      const id = getSafeFileId(tagFile)
-      if (this.plugin.uppy.checkIfFileAlreadyExists(id)) {
-        filesAlreadyAdded.push(tagFile)
-        return
+      if (filesAlreadyAdded.length > 0) {
+        this.plugin.uppy.info(`Not adding ${filesAlreadyAdded.length} files because they already exist`)
       }
+      if (filesNotPassingRestrictions.length > 0) {
+        this.plugin.uppy.info(`Not adding ${filesNotPassingRestrictions.length} files they didn't pass restrictions`)
+      }
+      this.plugin.uppy.addFiles(filesToAdd)
+    }).catch((err) => this.handleError(err))
 
-      filesToAdd.push(tagFile)
-    })
-
-    if (filesToAdd.length > 0) {
-      this.plugin.uppy.info(`${filesToAdd.length} files added`)
-    }
-    if (filesAlreadyAdded.length > 0) {
-      this.plugin.uppy.info(`Not adding ${filesAlreadyAdded.length} files because they already exist`)
-    }
-    if (filesNotPassingRestrictions.length > 0) {
-      this.plugin.uppy.info(`Not adding ${filesNotPassingRestrictions.length} files they didn't pass restrictions`)
-    }
-
-    this.plugin.uppy.addFiles(filesToAdd)
     this.setLoading(false)
   }
 
