@@ -4,6 +4,7 @@
     "noImplicitAny": false,
     "outDir": "./lib",
     "jsxImportSource": "react",
+    "jsx": "react-jsx",
     "paths": {
       "@uppy/utils/lib/*": ["../utils/src/*"],
       "@uppy/core": ["../core/src/index.js"],
