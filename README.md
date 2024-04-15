@@ -508,4 +508,3 @@ We use Browserstack for manual testing <a href="https://www.browserstack.com" ta
 ## License
 
 [The MIT License](LICENSE).
-E).
