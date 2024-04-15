@@ -72,7 +72,7 @@ export function fetcher(
     responseType,
     retries = 3,
     signal = null,
-    timeout = 30 * 1000,
+    timeout = 30_000,
     withCredentials = false,
   } = options
 
@@ -91,14 +91,12 @@ export function fetcher(
         xhr.responseType = responseType
       }
 
-      if (signal) {
-        signal.addEventListener('abort', () => {
+      signal?.addEventListener('abort', () => {
           xhr.abort()
           // Using DOMException for abort errors aligns with
           // the convention established by the Fetch API.
           reject(new DOMException('Aborted', 'AbortError'))
-        })
-      }
+      })
 
       xhr.onload = async () => {
         await onAfterRequest(xhr, retryCount)
