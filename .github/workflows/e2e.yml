@@ -251,7 +251,7 @@ jobs:
           node-version: lts/*
 
       - name: Start Redis
-        uses: supercharge/redis-github-action@1.4.0
+        uses: supercharge/redis-github-action@1.8.0
         with:
           redis-version: 7
 
