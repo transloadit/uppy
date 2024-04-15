@@ -12,6 +12,33 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 4.0.0-beta.3
+
+Released: 2024-04-15
+
+| Package                   |      Version | Package                   |      Version |
+| ------------------------- | ------------ | ------------------------- | ------------ |
+| @uppy/angular             | 0.7.0-beta.3 | @uppy/onedrive            | 4.0.0-beta.3 |
+| @uppy/audio               | 2.0.0-beta.3 | @uppy/progress-bar        | 4.0.0-beta.3 |
+| @uppy/aws-s3-multipart    | 4.0.0-beta.3 | @uppy/provider-views      | 4.0.0-beta.3 |
+| @uppy/box                 | 3.0.0-beta.3 | @uppy/react               | 4.0.0-beta.3 |
+| @uppy/companion           | 5.0.0-beta.3 | @uppy/remote-sources      | 2.0.0-beta.3 |
+| @uppy/companion-client    | 4.0.0-beta.3 | @uppy/screen-capture      | 4.0.0-beta.3 |
+| @uppy/compressor          | 2.0.0-beta.3 | @uppy/status-bar          | 4.0.0-beta.3 |
+| @uppy/core                | 4.0.0-beta.3 | @uppy/thumbnail-generator | 4.0.0-beta.3 |
+| @uppy/dashboard           | 4.0.0-beta.3 | @uppy/transloadit         | 4.0.0-beta.3 |
+| @uppy/drag-drop           | 4.0.0-beta.3 | @uppy/tus                 | 4.0.0-beta.3 |
+| @uppy/drop-target         | 3.0.0-beta.3 | @uppy/unsplash            | 4.0.0-beta.3 |
+| @uppy/dropbox             | 4.0.0-beta.3 | @uppy/url                 | 4.0.0-beta.3 |
+| @uppy/facebook            | 4.0.0-beta.3 | @uppy/utils               | 6.0.0-beta.3 |
+| @uppy/file-input          | 4.0.0-beta.3 | @uppy/webcam              | 4.0.0-beta.3 |
+| @uppy/golden-retriever    | 4.0.0-beta.3 | @uppy/zoom                | 3.0.0-beta.3 |
+| @uppy/google-drive        | 4.0.0-beta.3 | uppy                      | 4.0.0-beta.3 |
+| @uppy/instagram           | 4.0.0-beta.3 |                           |              |
+
+- @uppy/core: fix `setOptions` not re-rendereing plugin UI (Antoine du Hamel / #5082)
+
+
 ## 4.0.0-beta.2
 
 Released: 2024-04-11
