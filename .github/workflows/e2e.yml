@@ -78,7 +78,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
       - name: Install Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: lts/*
       - name: Install dependencies
@@ -246,7 +246,7 @@ jobs:
           path: ${{ steps.cypress-cache-dir-path.outputs.dir }}
           key: ${{ runner.os }}-cypress
       - name: Install Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: lts/*
 
