@@ -137,20 +137,24 @@ export default class View<
 
   handleError(error: Error): void {
     const { uppy } = this.plugin
-    const message = uppy.i18n('companionError')
-
-    uppy.log(error.toString())
-
-    if (
-      (error as any).isAuthError ||
-      (error.cause as Error)?.name === 'AbortError'
-    ) {
-      // authError just means we're not authenticated, don't show to user
-      // AbortError means the user has clicked "cancel" on an operation
+    // authError just means we're not authenticated, don't report it
+    if ((error as any).isAuthError) {
       return
     }
+    // AbortError means the user has clicked "cancel" on an operation
+    if (error.name === 'AbortError') {
+      uppy.log('Aborting request', 'warning')
+      return
+    }
+    uppy.log(error, 'error')
 
-    uppy.info({ message, details: error.toString() }, 'error', 5000)
+    if (error.name === 'UserFacingApiError') {
+      uppy.info({
+        message: uppy.i18n('companionError'),
+        details: uppy.i18n(error.message)
+      }, 'warning', 5000)
+    }
+
   }
 
   registerRequestClient(): void {

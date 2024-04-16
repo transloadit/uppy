@@ -185,19 +185,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
         currentFolderId: folderId,
         filterInput: ''
       })
-    }).catch((err) => {
-      // This is the first call that happens when the provider view loads, after auth, so it's probably nice to show any
-      // error occurring here to the user.
-      if (err?.name === 'UserFacingApiError') {
-        this.plugin.uppy.info(
-          { message: this.plugin.uppy.i18n(err.message) },
-          'warning',
-          5000,
-        )
-        return
-      }
-      this.handleError(err)
-    })
+    }).catch(this.handleError)
 
     this.setLoading(false)
   }
@@ -252,18 +240,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
         this.provider.fetchPreAuthToken(),
         this.getFolder(this.plugin.rootFolderId),
       ])
-    }).catch((err) => {
-      if (err.name === 'UserFacingApiError') {
-        this.plugin.uppy.info(
-          { message: this.plugin.uppy.i18n(err.message) },
-          'warning',
-          5000,
-        )
-        return
-      }
-
-      this.plugin.uppy.log(`login failed: ${err.message}`)
-    })
+    }).catch(this.handleError)
     this.setLoading(false)
   }
 
@@ -319,7 +296,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
         this.plugin.uppy.info(`Not adding ${filesNotPassingRestrictions.length} files they didn't pass restrictions`)
       }
       this.plugin.uppy.addFiles(filesToAdd)
-    }).catch((err) => this.handleError(err))
+    }).catch(this.handleError)
 
     this.setLoading(false)
   }
