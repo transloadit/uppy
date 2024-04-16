@@ -7,6 +7,7 @@ import type {
   PartialTreeFolder,
   PartialTreeFolderNode,
   PartialTreeFile,
+  UnknownProviderPluginState,
 } from '@uppy/core/lib/Uppy.ts'
 import type { Body, Meta, TagFile } from '@uppy/utils/lib/UppyFile'
 import type { CompanionFile } from '@uppy/utils/lib/CompanionFile.ts'
@@ -63,6 +64,20 @@ type Opts<M extends Meta, B extends Body> = DefinePluginOpts<
   keyof typeof defaultOptions
 >
 
+const getDefaultState = (rootFolderId: string | null) : Partial<UnknownProviderPluginState> => ({
+  authenticated: undefined, // we don't know yet
+  partialTree: [
+    {
+      type: 'root',
+      id: rootFolderId,
+      cached: false,
+      nextPagePath: null
+    }
+  ],
+  currentFolderId: null,
+  filterInput: ''
+})
+
 /**
  * Class to easily generate generic views for Provider plugins
  */
@@ -95,19 +110,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
     this.render = this.render.bind(this)
 
     // Set default state for the plugin
-    this.plugin.setPluginState({
-      authenticated: undefined, // we don't know yet
-      partialTree: [
-        {
-          type: 'root',
-          id: this.plugin.rootFolderId,
-          cached: false,
-          nextPagePath: null
-        }
-      ],
-      currentFolderId: null,
-      filterInput: '',
-    })
+    this.plugin.setPluginState(getDefaultState(this.plugin.rootFolderId))
 
     this.registerRequestClient()
   }
@@ -211,13 +214,10 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
           this.plugin.uppy.info(message, 'info', 7000)
         }
 
-        const newState = {
-          authenticated: false,
-          currentFolderId: null,
-          partialTree: [],
-          filterInput: '',
-        }
-        this.plugin.setPluginState(newState)
+        this.plugin.setPluginState({
+          ...getDefaultState(this.plugin.rootFolderId),
+          authenticated: false
+        })
       }
     }).catch(this.handleError)
   }
