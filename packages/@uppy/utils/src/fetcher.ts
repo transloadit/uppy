@@ -92,10 +92,10 @@ export function fetcher(
       }
 
       signal?.addEventListener('abort', () => {
-          xhr.abort()
-          // Using DOMException for abort errors aligns with
-          // the convention established by the Fetch API.
-          reject(new DOMException('Aborted', 'AbortError'))
+        xhr.abort()
+        // Using DOMException for abort errors aligns with
+        // the convention established by the Fetch API.
+        reject(new DOMException('Aborted', 'AbortError'))
       })
 
       xhr.onload = async () => {
