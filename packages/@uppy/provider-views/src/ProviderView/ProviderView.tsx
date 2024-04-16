@@ -16,7 +16,6 @@ import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin.ts'
 import AuthView from './AuthView.tsx'
 import Header from './Header.tsx'
 import Browser from '../Browser.tsx'
-import CloseWrapper from '../CloseWrapper.ts'
 import View, { type ViewOptions } from '../View.ts'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -131,7 +130,6 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
     this.#abortController = abortController
     const cancelRequest = () => {
       abortController.abort()
-      this.clearSelection()
     }
     try {
       // @ts-expect-error this should be typed in @uppy/dashboard.
@@ -379,24 +377,18 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
 
     if (authenticated === false) {
       return (
-        <CloseWrapper onUnmount={this.clearSelection}>
-          <AuthView
-            pluginName={this.plugin.title}
-            pluginIcon={pluginIcon}
-            handleAuth={this.handleAuth}
-            i18n={this.plugin.uppy.i18nArray}
-            renderForm={this.opts.renderAuthForm}
-            loading={loading}
-          />
-        </CloseWrapper>
+        <AuthView
+          pluginName={this.plugin.title}
+          pluginIcon={pluginIcon}
+          handleAuth={this.handleAuth}
+          i18n={this.plugin.uppy.i18nArray}
+          renderForm={this.opts.renderAuthForm}
+          loading={loading}
+        />
       )
     }
 
-    return (
-      <CloseWrapper onUnmount={this.clearSelection}>
-        {/* eslint-disable-next-line react/jsx-props-no-spreading */}
-        <Browser<M, B> {...browserProps} />
-      </CloseWrapper>
-    )
+    // eslint-disable-next-line react/jsx-props-no-spreading
+    return <Browser<M, B> {...browserProps} />
   }
 }

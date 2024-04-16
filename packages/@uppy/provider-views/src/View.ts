@@ -1,7 +1,6 @@
 import type {
   PartialTree,
   PartialTreeFile,
-  PartialTreeFolder,
   PartialTreeFolderNode,
   UnknownProviderPlugin,
   UnknownSearchProviderPlugin,
@@ -70,7 +69,6 @@ export default class View<
     this.isHandlingScroll = false
 
     this.handleError = this.handleError.bind(this)
-    this.clearSelection = this.clearSelection.bind(this)
     this.cancelPicking = this.cancelPicking.bind(this)
     this.validateRestrictions = this.validateRestrictions.bind(this)
     this.getNOfSelectedFiles = this.getNOfSelectedFiles.bind(this)
@@ -114,18 +112,7 @@ export default class View<
     return scrollPosition < 50 && !this.isHandlingScroll
   }
 
-  clearSelection(): void {
-    const { partialTree } = this.plugin.getPluginState()
-    const newPartialTree : PartialTree = partialTree.map((item) => ({
-      ...item,
-      status: "unchecked"
-    }))
-    this.plugin.setPluginState({ partialTree: newPartialTree, filterInput: '' })
-  }
-
   cancelPicking(): void {
-    this.clearSelection()
-
     const dashboard = this.plugin.uppy.getPlugin('Dashboard')
 
     if (dashboard) {
@@ -154,7 +141,6 @@ export default class View<
         details: uppy.i18n(error.message)
       }, 'warning', 5000)
     }
-
   }
 
   registerRequestClient(): void {
