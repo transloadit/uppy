@@ -11,6 +11,13 @@ Included in: Uppy v4.0.0-beta.1
 - @uppy/utils: fix `AbortablePromise` type (Antoine du Hamel / #4988)
 - @uppy/utils: migrate RateLimitedQueue to TS (Merlijn Vos / #4981)
 
+## 5.8.0
+
+Released: 2024-04-16
+Included in: Uppy v3.24.3
+
+- @uppy/utils: add fetcher (Merlijn Vos / #5073)
+
 ## 5.7.5
 
 Released: 2024-03-27

@@ -12,5 +12,12 @@ module.exports = {
         semi: true,
       },
     },
+    {
+      files: "docs/**",
+      options: {
+        semi: true,
+        useTabs: true,
+      }
+    }
   ],
 }
