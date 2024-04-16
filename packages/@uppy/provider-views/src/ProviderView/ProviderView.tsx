@@ -98,16 +98,11 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
   ) {
     super(plugin, { ...defaultOptions, ...opts })
 
-    // Logic
-    this.filterQuery = this.filterQuery.bind(this)
-    this.clearFilter = this.clearFilter.bind(this)
     this.getFolder = this.getFolder.bind(this)
     this.logout = this.logout.bind(this)
     this.handleAuth = this.handleAuth.bind(this)
     this.handleScroll = this.handleScroll.bind(this)
     this.donePicking = this.donePicking.bind(this)
-
-    // Visual
     this.render = this.render.bind(this)
 
     // Set default state for the plugin
@@ -227,14 +222,6 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
         })
       }
     }).catch(this.handleError)
-  }
-
-  filterQuery(input: string): void {
-    this.plugin.setPluginState({ filterInput: input })
-  }
-
-  clearFilter(): void {
-    this.plugin.setPluginState({ filterInput: '' })
   }
 
   async handleAuth(authFormData?: unknown): Promise<void> {
@@ -364,8 +351,8 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
 
       // For SearchFilterInput component
       showSearchFilter: targetViewOptions.showFilter,
-      search: this.filterQuery,
-      clearSearch: this.clearFilter,
+      search: (input: string | undefined) => this.plugin.setPluginState({ filterInput: input }),
+      clearSearch: () => this.plugin.setPluginState({ filterInput: '' }),
       searchTerm: filterInput,
       searchOnInput: true,
       searchInputLabel: i18n('filter'),
