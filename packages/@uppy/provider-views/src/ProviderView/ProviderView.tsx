@@ -107,7 +107,6 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
       ],
       currentFolderId: null,
       filterInput: '',
-      isSearchVisible: false,
     })
 
     this.registerRequestClient()

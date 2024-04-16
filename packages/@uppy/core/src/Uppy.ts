@@ -112,7 +112,6 @@ export type UnknownProviderPluginState = {
   didFirstRender: boolean
   filterInput: string
   loading: boolean | string
-  isSearchVisible: boolean
   partialTree: PartialTree
   currentFolderId: string | null
 }
