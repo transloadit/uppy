@@ -23,6 +23,7 @@ import View, { type ViewOptions } from '../View.ts'
 import packageJson from '../../package.json'
 import PartialTreeUtils from '../utils/PartialTreeUtils.ts'
 import fillPartialTree from '../utils/fillPartialTree.ts'
+import getTagFile from '../utils/getTagFile.ts'
 
 export function defaultPickerIcon(): JSX.Element {
   return (
@@ -262,8 +263,8 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
       const filesNotPassingRestrictions : TagFile<M>[] = []
   
       uppyFiles.forEach((uppyFile) => {
-        const tagFile = this.getTagFile(uppyFile)
-  
+        const tagFile = getTagFile<M>(uppyFile, this.plugin.id, this.provider, this.plugin.opts.companionUrl)
+
         if (this.validateRestrictions(uppyFile)) {
           filesNotPassingRestrictions.push(tagFile)
           return

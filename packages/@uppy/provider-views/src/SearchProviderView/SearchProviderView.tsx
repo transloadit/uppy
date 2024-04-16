@@ -13,6 +13,7 @@ import View, { type ViewOptions } from '../View.ts'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../../package.json'
+import getTagFile from '../utils/getTagFile.ts'
 
 const defaultState : Partial<UnknownSearchProviderPluginState> = {
   isInputMode: true,
@@ -159,9 +160,11 @@ export default class SearchProviderView<
     const { partialTree } = this.plugin.getPluginState()
     this.plugin.uppy.log('Adding remote search provider files')
     const files = partialTree.filter((i) => i.type !== 'root' && i.status === 'checked') as PartialTreeFile[]
-    this.plugin.uppy.addFiles(
-      files.map((file) => this.getTagFile(file.data)),
+    const tagFiles = files.map((file) =>
+      getTagFile<M>(file.data, this.plugin.id, this.provider, this.plugin.opts.companionUrl)
     )
+    this.plugin.uppy.addFiles(tagFiles)
+
     this.resetPluginState()
   }
 
