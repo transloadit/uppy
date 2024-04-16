@@ -1,5 +1,12 @@
 # @uppy/dashboard
 
+## 3.8.1
+
+Released: 2024-04-16
+Included in: Uppy v3.24.3
+
+- @uppy/dashboard: add missing `x-zip-compress` archive type (Younes / #5081)
+
 ## 3.8.0
 
 Released: 2024-03-27

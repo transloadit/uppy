@@ -12,6 +12,28 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 3.24.3
+
+Released: 2024-04-16
+
+| Package         | Version | Package         | Version |
+| --------------- | ------- | --------------- | ------- |
+| @uppy/dashboard |   3.8.1 | uppy            |  3.24.3 |
+| @uppy/utils     |   5.8.0 |                 |         |
+
+- docs: add back markdown files (Antoine du Hamel / #5064)
+- meta: fix custom provider example (Merlijn Vos / #5079)
+- @uppy/utils: add fetcher (Merlijn Vos / #5073)
+- meta: Fix prettier (Murderlon)
+- @uppy/dashboard: add missing `x-zip-compress` archive type (Younes / #5081)
+- meta: Bump docker/metadata-action from 4 to 5 (dependabot[bot] / #5086)
+- meta: Bump actions/setup-node from 3 to 4 (dependabot[bot] / #5087)
+- meta: Bump docker/setup-qemu-action from 2 to 3 (dependabot[bot] / #5089)
+- meta: bump supercharge/redis-github-action from 1.4.0 to 1.8.0 (dependabot[bot] / #5090)
+- meta: bump actions/cache from 3 to 4 (dependabot[bot] / #5088)
+- meta: add `dependabot.yml` to keep GHA up-to-date (Antoine du Hamel / #5083)
+
+
 ## 3.24.2
 
 Released: 2024-04-15
