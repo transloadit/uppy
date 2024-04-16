@@ -5,9 +5,8 @@ These cover all the major Uppy versions and how to migrate to them.
 ## Migrate from Robodog to Uppy plugins
 
 Uppy is flexible and extensible through plugins. But the integration code could
-sometimes be daunting. This is what brought [Robodog](/docs/robodog/) to life.
-An alternative with the same features, but with a more ergonomic and minimal
-API.
+sometimes be daunting. This is what brought Robodog to life. An alternative with
+the same features, but with a more ergonomic and minimal API.
 
 But, it didn’t come with its own set of new problems:
 
@@ -23,7 +22,7 @@ something to take away some repetitive integration code:
 
 To mimic the Robodog implementation with all its features, you can use the code
 snippet below. But chances are Robodog did more than you need so feel free to
-remove things or go through the [list of plugins](/docs/plugins/) and install
+remove things or go through the [list of plugins](/docs/companion/) and install
 and use the ones you need.
 
 You can also checkout how we migrated the Robodog example ourselves in this
@@ -271,8 +270,8 @@ confusion we moved the `s3` settings to the root settings object.
 
 ### Removed compatibility for legacy Custom Provider implementations
 
-[Custom Provider](/uppy/docs/companion/#Adding-custom-providers) implementations
-must use the Promise API. The callback API is no longer supported.
+[Custom Provider](/docs/companion/#Adding-custom-providers) implementations must
+use the Promise API. The callback API is no longer supported.
 
 ### Default to no ACL for AWS S3
 
@@ -442,9 +441,9 @@ const otherUppy = Uppy(); // incorrect, will throw.
 
 ### Rename `allowMultipleUploads` to `allowMultipleUploadBatches`
 
-[`allowMultipleUploadBatches`](/uppy/docs/uppy/#allowMultipleUploadBatches-true)
-means allowing several calls to [`.upload()`](/uppy/docs/uppy/#uppy-upload), in
-other words, a user can add more files after already having uploaded some.
+[`allowMultipleUploadBatches`](/docs/uppy/#allowmultipleuploadbatches) means
+allowing several calls to [`.upload()`](/docs/uppy/#upload), in other words, a
+user can add more files after already having uploaded some.
 
 <!--retext-simplify ignore multiple-->
 
@@ -567,10 +566,10 @@ uppy.on('dashboard:file-edit-start', (file) => {
 ### Changes to pre-signing URLs for [`@uppy/aws-s3-multipart`][aws-s3-multipart]
 
 See the Uppy 2.0.0 announcement post about the batch
-[pre-signing URLs change](/uppy/blog/2021/08/2.0/#Batch-pre-signing-URLs-for-AWS-S3-Multipart).
+[pre-signing URLs change](/blog/2021/08/2.0/#Batch-pre-signing-URLs-for-AWS-S3-Multipart).
 
 `prepareUploadPart` has been renamed to
-[`prepareUploadParts`](/uppy/docs/aws-s3-multipart/#prepareUploadParts-file-partData)
+[`prepareUploadParts`](/docs/aws-s3-multipart/#prepareUploadParts-file-partData)
 (plural). See the documentation link on how to use this function.
 
 ### Removed the `.run` method from [`@uppy/core`][core]
@@ -610,9 +609,8 @@ Since v2, you now need to be running `node.js >= v10.20.1` to use Companion.
 
 ### ProviderOptions
 
-In v2 the `google` and `microsoft`
-[providerOptions](/uppy/docs/companion/#Options) have been changed to `drive`
-and `onedrive` respectively.
+In v2 the `google` and `microsoft` [providerOptions](/docs/companion/#Options)
+have been changed to `drive` and `onedrive` respectively.
 
 ### OAuth Redirect URIs
 

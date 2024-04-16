@@ -66,7 +66,7 @@ yarn add @uppy/core
 ### Working with Uppy files
 
 Uppy keeps files in state with the [`File`][] browser API, but it’s wrapped in
-an `Object` to be able to add more data to it, which we call an Uppy file. All
+an `Object` to be able to add more data to it, which we call an _Uppy file_. All
 these properties can be useful for plugins and side-effects (such as
 [events](#events)).
 
@@ -90,7 +90,41 @@ The name of the file.
 
 #### `file.meta`
 
-Object containing file metadata. Any file metadata should be JSON-serializable.
+Object containing standard as well as user-defined metadata for each file. Any
+custom file metadata should be JSON-serializable. The following standard
+metadata will be stored on all file objects, but plugins may add more metadata.
+
+- `file.meta.name`
+  - Same as `file.name`.
+- `file.meta.type`
+  - Same as `file.type`.
+- `file.meta.relativePath`
+  - For any local folder that was drag-dropped or opened in Uppy, the files
+    inside the folder will have the `relativePath` metadata field set to their
+    path, relative to the folder. `relativePath` begins with the folder’s name
+    and ends with the file’s name. If opening or drag-dropping a file instead of
+    a folder, `relativePath` will be `null`. The same behaviour exists for
+    remote (provider) files, but the path will instead be relative to the user’s
+    selection (checkboxes). No leading or trailing slashes.
+  - **Local file example:** When drag-dropping a local folder `folder1` which
+    has a folder inside of it named `folder2` which has a file named `file`
+    inside of it, the `relativePath` meta field of the file will be
+    `folder1/folder2/file`. However if drag-dropping or opening `file` directly,
+    `relativePath` will be `null`.
+  - **Remote file example:** Suppose we have a remote provider folder structure
+    such as `/folder1/folder2/file`. Then, if the user checks the checkbox next
+    to `folder1`, `file`’s `relativePath` will be `"folder1/folder2/file"`.
+    However if the user first navigates into `folder1`, and only then checks the
+    checkbox next to `folder2`, `relativePath` will be `"folder2/file"`.
+- `file.meta.absolutePath`
+  - The `absolutePath` meta field will only be set for remote files. Regardless
+    of user selection, it will always be the path relative to the root of the
+    provider’s list of files, as presented to the user. `absolutePath` always
+    begins with a `/` and will always end with the file’s name. To clarify: The
+    difference between `absolutePath` and `relativePath` is that `absolutePath`
+    only exists for remote files, and always has the full path to the file,
+    while `relativePath` is the file’s path _relative to the user’s selected
+    folder_.
 
 #### `file.type`
 
@@ -1434,7 +1468,7 @@ uninstall () {
 #### `i18nInit`
 
 Call `this.i18nInit()` once in the constructor of your plugin class to
-initialize [internationalisation](/docs/guides/using-locales).
+initialize [internationalisation](/docs/locales).
 
 #### `addTarget`
 

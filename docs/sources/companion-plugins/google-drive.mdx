@@ -94,11 +94,17 @@ Create a project for your app if you don’t have one yet.
 - On the project’s dashboard,
   [enable the Google Drive API](https://developers.google.com/drive/api/v3/enable-drive-api).
 - [Set up OAuth authorization](https://developers.google.com/drive/api/v3/about-auth).
+  - Under scopes, add the `https://www.googleapis.com/auth/drive.readonly` Drive
+    API scope.
+  - Due to this being a sensitive scope, your app must complete Google’s OAuth
+    app verification before being granted access. See
+    [OAuth App Verification Help Center](https://support.google.com/cloud/answer/13463073)
+    for more information.
 
 The app page has a `"Redirect URIs"` field. Here, add:
 
 ```
-https://$YOUR_COMPANION_HOST_NAME/box/redirect
+https://$YOUR_COMPANION_HOST_NAME/drive/redirect
 ```
 
 If you are using Transloadit hosted Companion:

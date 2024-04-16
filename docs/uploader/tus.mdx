@@ -134,7 +134,9 @@ const headers = (file) => {
 #### `chunkSize`
 
 A number indicating the maximum size of a `PATCH` request body in bytes
-(`number`, default: `Infinity`).
+(`number`, default: `Infinity`). Note that this option only affects local
+browser uploads. If you need a max chunk size for remote (Companion) uploads,
+you must set the `chunkSize` Companion option as well.
 
 :::caution
 

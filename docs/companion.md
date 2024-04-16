@@ -70,89 +70,28 @@ files to arrive at Transloadit servers, much like Uppy.
 
 Companion is installed from npm. Depending on how you want to run Companion, the
 install process is slightly different. Companion can be integrated as middleware
-into your [Express](https://expressjs.com/) app or as a standalone server.
-
-```bash
-npm install @uppy/companion
-```
+into your [Express](https://expressjs.com/) app or as a standalone server. Most
+people probably want to run it as a standalone server, while the middleware
+could be used to further customise Companion or integrate it into your own HTTP
+server code.
 
 :::note
 
 Since v2, you need to be running `node.js >= v10.20.1` to use Companion. More
-information in the [migrating to 2.0](/docs/guides/migrate-2.0) guide.
+information in the
+[migrating to 2.0](/docs/guides/migration-guides/#migrate-from-uppy-1x-to-2x)
+guide.
 
 Windows is not a supported platform right now. It may work, and we’re happy to
 accept improvements in this area, but we can’t provide support.
 
 :::
 
-### Express middleware
+### Standalone mode
 
-First install it into your Node.js project with your favorite package manager:
-
-```bash
-npm install @uppy/companion
-```
-
-To plug Companion into an existing server, call its `.app` method, passing in an
-[options](#options) object as a parameter. This returns a server instance that
-you can mount on a route in your Express app.
-
-```js
-import express from 'express';
-import bodyParser from 'body-parser';
-import session from 'express-session';
-import companion from '@uppy/companion';
-
-const app = express();
-
-// Companion requires body-parser and express-session middleware.
-// You can add it like this if you use those throughout your app.
-//
-// If you are using something else in your app, you can add these
-// middlewares in the same subpath as Companion instead.
-app.use(bodyParser.json());
-app.use(session({ secret: 'some secrety secret' }));
-
-const options = {
-	providerOptions: {
-		drive: {
-			key: 'GOOGLE_DRIVE_KEY',
-			secret: 'GOOGLE_DRIVE_SECRET',
-		},
-	},
-	server: {
-		host: 'localhost:3020',
-		protocol: 'http',
-		// This MUST match the path you specify in `app.use()` below:
-		path: '/companion',
-	},
-	filePath: '/path/to/folder/',
-};
-
-const { app: companionApp } = companion.app(companionOptions);
-app.use(companionApp);
-```
-
-Companion uses WebSockets to communicate progress, errors, and successes to the
-client. This is what Uppy listens to to update it’s internal state and UI.
-
-Add the Companion WebSocket server using the `companion.socket` function:
-
-```js
-const server = app.listen(PORT);
-
-companion.socket(server);
-```
-
-If WebSockets fail for some reason Uppy and Companion will fallback to HTTP
-polling.
-
-### Standalone
-
-You can use the standalone version if you want to run Companion as it’s own Node
-process. It’s a configured Express server with sessions, logging, and security
-best practices. First you’ll typically want to install it globally:
+You can use the standalone version if you want to run Companion as it’s own
+Node.js process. It’s a configured Express server with sessions, logging, and
+security best practices. First you’ll typically want to install it globally:
 
 ```bash
 npm install -g @uppy/companion
@@ -196,6 +135,71 @@ companion --config /path/to/companion.json
 You may also want to run Companion in a process manager like
 [PM2](https://pm2.keymetrics.io/) to make sure it gets restarted on upon
 crashing as well as allowing scaling to many instances.
+
+### Express middleware mode
+
+First install it into your Node.js project with your favorite package manager:
+
+```bash
+npm install @uppy/companion
+```
+
+To plug Companion into an existing server, call its `.app` method, passing in an
+[options](#options) object as a parameter. This returns a server instance that
+you can mount on a route in your Express app.
+
+```js
+import express from 'express';
+import bodyParser from 'body-parser';
+import session from 'express-session';
+import companion from '@uppy/companion';
+
+const app = express();
+
+// Companion requires body-parser and express-session middleware.
+// You can add it like this if you use those throughout your app.
+//
+// If you are using something else in your app, you can add these
+// middlewares in the same subpath as Companion instead.
+app.use(bodyParser.json());
+app.use(session({ secret: 'some secrety secret' }));
+
+const companionOptions = {
+	providerOptions: {
+		drive: {
+			key: 'GOOGLE_DRIVE_KEY',
+			secret: 'GOOGLE_DRIVE_SECRET',
+		},
+	},
+	server: {
+		host: 'localhost:3020',
+		protocol: 'http',
+		// Default installations normally don't need a path.
+		// However if you specify a `path`, you MUST specify
+		// the same path in `app.use()` below,
+		// e.g. app.use('/companion', companionApp)
+		// path: '/companion',
+	},
+	filePath: '/path/to/folder/',
+};
+
+const { app: companionApp } = companion.app(companionOptions);
+app.use(companionApp);
+```
+
+Companion uses WebSockets to communicate progress, errors, and successes to the
+client. This is what Uppy listens to to update it’s internal state and UI.
+
+Add the Companion WebSocket server using the `companion.socket` function:
+
+```js
+const server = app.listen(PORT);
+
+companion.socket(server);
+```
+
+If WebSockets fail for some reason Uppy and Companion will fallback to HTTP
+polling.
 
 ### Running many instances
 
@@ -828,7 +832,9 @@ with an `Error`):
 The class must also have:
 
 * A unique `static authProvider` string property - a lowercased value which
-  typically indicates the name of the provider (e.g “dropbox”).
+  indicates name of the [`grant`](https://github.com/simov/grant) OAuth2
+  provider to use (e.g `google` for Google). If your provider doesn’t use
+  OAuth2, you can omit this property.
 * A `static` property `static version = 2`, which is the current version of the
   Companion Provider API.
 

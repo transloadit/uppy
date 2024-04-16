@@ -136,20 +136,9 @@ bucket in question. In-depth documentation about CORS rules is available on the
 The recommended approach is to integrate `@uppy/aws-s3` with your own server.
 You will need to do the following things:
 
-1. [Setup up a S3 bucket](#setting-up-your-s3-bucket).
-2. Create endpoints in your server. You can create them as edge functions (such
-   as AWS Lambdas), inside Next.js as an API route, or wherever your server
-   runs.
-   - `GET` > `/uppy/sts`: get the temporary security credentials (optional).
-   - `POST` > `/uppy/s3`: get parameters and pre-signed URL for non-multipart
-     upload.
-   - `POST` > `/uppy/s3-multipart`: create the multipart upload.
-   - `GET` > `/uppy/s3-multipart/:id`: get the uploaded parts.
-   - `GET` > `/uppy/s3-multipart/:id/:partNumber`: sign the part and return a
-     pre-signed URL.
-   - `POST` > `/uppy/s3-multipart/:id/complete`: complete the multipart upload.
-   - `DELETE` > `/uppy/s3-multipart/:id`: abort the multipart upload.
-3. [Setup Uppy](https://github.com/transloadit/uppy/blob/main/examples/aws-nodejs/public/index.html).
+1. [Setup a S3 bucket](#setting-up-your-s3-bucket).
+2. [Setup your server](https://github.com/transloadit/uppy/blob/main/examples/aws-nodejs/index.js)
+3. [Setup Uppy client](https://github.com/transloadit/uppy/blob/main/examples/aws-nodejs/public/index.html).
 
 ### Use with Companion
 
@@ -191,7 +180,7 @@ const uppy = new Uppy()
 :::warning
 
 Until the next major version, not setting this option uses the
-[legacy version of this plugin](./aws-s3). This is a suboptimal experience for
+[legacy version of this plugin](../aws-s3/). This is a suboptimal experience for
 some of your user’s uploads. It’s best for speed and stability to upload large
 (100&nbsp;MiB+) files with multipart and small files with regular uploads.
 
