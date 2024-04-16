@@ -75,7 +75,8 @@ const getDefaultState = (rootFolderId: string | null) : Partial<UnknownProviderP
     }
   ],
   currentFolderId: null,
-  filterInput: ''
+  filterInput: '',
+  didFirstRender: false
 })
 
 /**
@@ -112,10 +113,16 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
     // Set default state for the plugin
     this.plugin.setPluginState(getDefaultState(this.plugin.rootFolderId))
 
+    const onClosePanel = () => {
+      this.plugin.setPluginState(getDefaultState(this.plugin.rootFolderId))
+    }
+    // @ts-expect-error this should be typed in @uppy/dashboard.
+    this.plugin.uppy.on('dashboard:close-panel', onClosePanel)
+    this.plugin.uppy.on('cancel-all', onClosePanel)
+
     this.registerRequestClient()
   }
 
-  // eslint-disable-next-line class-methods-use-this
   tearDown(): void {
     // Nothing.
   }
