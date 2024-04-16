@@ -1,7 +1,7 @@
 {
   "name": "@uppy/utils",
   "description": "Shared utility functions for Uppy Core and plugins maintained by the Uppy team.",
-  "version": "5.7.5",
+  "version": "5.8.0",
   "license": "MIT",
   "types": "types/index.d.ts",
   "type": "module",
@@ -70,7 +70,8 @@
     "./lib/CompanionClientProvider": "./lib/CompanionClientProvider.js",
     "./lib/FileProgress": "./lib/FileProgress.js",
     "./src/microtip.scss": "./src/microtip.scss",
-    "./lib/UserFacingApiError": "./lib/UserFacingApiError.js"
+    "./lib/UserFacingApiError": "./lib/UserFacingApiError.js",
+    "./lib/fetcher": "./lib/fetcher.js"
   },
   "dependencies": {
     "lodash": "^4.17.21",

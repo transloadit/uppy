@@ -415,7 +415,14 @@ module.exports = {
       processor: 'markdown/markdown',
     },
     {
+      files: ['docs/**/*.md/*.js'],
+      parserOptions: {
+        sourceType: 'module',
+      },
+    },
+    {
       files: ['**/*.md/*.js', '**/*.md/*.javascript'],
+      excludedFiles: ["docs/**/*"],
       parserOptions: {
         sourceType: 'module',
       },
