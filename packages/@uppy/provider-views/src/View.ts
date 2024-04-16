@@ -53,8 +53,6 @@ export default class View<
 
   isHandlingScroll: boolean
 
-  requestClientId: string
-
   isShiftKeyPressed: boolean
 
   lastCheckbox: string | undefined
@@ -144,8 +142,7 @@ export default class View<
   }
 
   registerRequestClient(): void {
-    this.requestClientId = this.provider.provider
-    this.plugin.uppy.registerRequestClient(this.requestClientId, this.provider)
+    this.plugin.uppy.registerRequestClient(this.provider.provider, this.provider)
   }
 
   // TODO: document what is a "tagFile" or get rid of this concept
@@ -171,7 +168,7 @@ export default class View<
         },
         providerName: this.provider.name,
         provider: this.provider.provider,
-        requestClientId: this.requestClientId,
+        requestClientId: this.provider.provider,
       },
     }
 
