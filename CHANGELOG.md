@@ -12,6 +12,32 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 4.0.0-beta.4
+
+Released: 2024-04-16
+
+| Package                   |      Version | Package                   |      Version |
+| ------------------------- | ------------ | ------------------------- | ------------ |
+| @uppy/audio               | 2.0.0-beta.4 | @uppy/onedrive            | 4.0.0-beta.4 |
+| @uppy/aws-s3-multipart    | 4.0.0-beta.4 | @uppy/progress-bar        | 4.0.0-beta.4 |
+| @uppy/box                 | 3.0.0-beta.4 | @uppy/provider-views      | 4.0.0-beta.4 |
+| @uppy/companion           | 5.0.0-beta.4 | @uppy/react               | 4.0.0-beta.4 |
+| @uppy/companion-client    | 4.0.0-beta.4 | @uppy/remote-sources      | 2.0.0-beta.4 |
+| @uppy/compressor          | 2.0.0-beta.4 | @uppy/screen-capture      | 4.0.0-beta.4 |
+| @uppy/core                | 4.0.0-beta.4 | @uppy/status-bar          | 4.0.0-beta.4 |
+| @uppy/dashboard           | 4.0.0-beta.4 | @uppy/thumbnail-generator | 4.0.0-beta.4 |
+| @uppy/drag-drop           | 4.0.0-beta.4 | @uppy/transloadit         | 4.0.0-beta.4 |
+| @uppy/drop-target         | 3.0.0-beta.4 | @uppy/tus                 | 4.0.0-beta.4 |
+| @uppy/dropbox             | 4.0.0-beta.4 | @uppy/unsplash            | 4.0.0-beta.4 |
+| @uppy/facebook            | 4.0.0-beta.4 | @uppy/url                 | 4.0.0-beta.4 |
+| @uppy/file-input          | 4.0.0-beta.4 | @uppy/utils               | 6.0.0-beta.4 |
+| @uppy/golden-retriever    | 4.0.0-beta.4 | @uppy/webcam              | 4.0.0-beta.4 |
+| @uppy/google-drive        | 4.0.0-beta.4 | @uppy/zoom                | 3.0.0-beta.4 |
+| @uppy/instagram           | 4.0.0-beta.4 | uppy                      | 4.0.0-beta.4 |
+
+
+
+
 ## 4.0.0-beta.3
 
 Released: 2024-04-15
