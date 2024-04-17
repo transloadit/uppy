@@ -18,7 +18,6 @@ type ListItemProps<M extends Meta, B extends Body> = {
   isCheckboxDisabled: boolean
   status: PartialTreeStatus
   toggleCheckbox: (event: Event) => void
-  recordShiftKeyPress: (event: KeyboardEvent | MouseEvent) => void
   type: string
   id: string
   itemIconEl: any
@@ -38,7 +37,6 @@ export default function ListItem<M extends Meta, B extends Body>(
     isCheckboxDisabled,
     status,
     toggleCheckbox,
-    recordShiftKeyPress,
     type,
     id,
     itemIconEl,
@@ -58,8 +56,6 @@ export default function ListItem<M extends Meta, B extends Body>(
           type="checkbox"
           className="uppy-u-reset uppy-ProviderBrowserItem-checkbox"
           onChange={toggleCheckbox}
-          onKeyDown={recordShiftKeyPress}
-          onMouseDown={recordShiftKeyPress}
           // for the <label/>
           name="listitem"
           id={id}

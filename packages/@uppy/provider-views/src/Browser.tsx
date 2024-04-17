@@ -22,7 +22,6 @@ type BrowserProps<M extends Meta, B extends Body> = {
   headerComponent?: JSX.Element
   showBreadcrumbs: boolean
   toggleCheckbox: (event: Event, file: PartialTreeFile | PartialTreeFolderNode) => void
-  recordShiftKeyPress: (event: KeyboardEvent | MouseEvent) => void
   handleScroll: (event: Event) => Promise<void>
   showTitles: boolean
   i18n: I18n
@@ -52,7 +51,6 @@ function Browser<M extends Meta, B extends Body>(
     headerComponent,
     showBreadcrumbs,
     toggleCheckbox,
-    recordShiftKeyPress,
     handleScroll,
     showTitles,
     i18n,
@@ -131,7 +129,6 @@ function Browser<M extends Meta, B extends Body>(
                     <Item
                       viewType={viewType}
                       toggleCheckbox={toggleCheckbox}
-                      recordShiftKeyPress={recordShiftKeyPress}
                       showTitles={showTitles}
                       i18n={i18n}
                       validateRestrictions={validateRestrictions}
@@ -159,7 +156,6 @@ function Browser<M extends Meta, B extends Body>(
                 <Item
                   viewType={viewType}
                   toggleCheckbox={toggleCheckbox}
-                  recordShiftKeyPress={recordShiftKeyPress}
                   showTitles={showTitles}
                   i18n={i18n}
                   validateRestrictions={validateRestrictions}

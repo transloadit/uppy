@@ -179,13 +179,12 @@ export default class SearchProviderView<
     const targetViewOptions = { ...this.opts, ...viewOptions }
     const { loading, partialTree, currentFolderId } =
       this.plugin.getPluginState()
-    const { filterItems, recordShiftKeyPress } = this
+    const { filterItems } = this
 
     const displayedPartialTree = filterItems(partialTree.filter((item) => item.type !== 'root' && item.parentId === currentFolderId)) as PartialTreeFile[]
 
     const browserProps = {
       toggleCheckbox: this.toggleCheckbox.bind(this),
-      recordShiftKeyPress,
       displayedPartialTree,
       handleScroll: this.handleScroll,
       done: this.donePicking,

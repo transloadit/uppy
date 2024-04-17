@@ -68,6 +68,19 @@ export default class View<
     this.cancelPicking = this.cancelPicking.bind(this)
     this.validateRestrictions = this.validateRestrictions.bind(this)
     this.getNOfSelectedFiles = this.getNOfSelectedFiles.bind(this)
+
+    // This records whether the user is holding the SHIFT key this very moment.
+    // Typically this is implemented using `onClick((e) => e.shiftKey)` - but we can't use that, because for accessibility reasons we're using html tags that don't support `e.shiftKey` property (see #3768).
+    document.addEventListener('keyup', (e) => {
+      if (e.key == 'Shift') {
+        this.isShiftKeyPressed = false
+      }
+    })
+    document.addEventListener('keydown', (e) => {
+      if (e.key == 'Shift') {
+        this.isShiftKeyPressed = true
+      }
+    })
   }
 
   getNOfSelectedFiles () : number {
@@ -155,10 +168,6 @@ export default class View<
         -1
       )
     })
-  }
-
-  recordShiftKeyPress = (e: KeyboardEvent | MouseEvent): void => {
-    this.isShiftKeyPressed = e.shiftKey
   }
 
   /**

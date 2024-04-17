@@ -14,7 +14,6 @@ type GridListItemProps<M extends Meta, B extends Body> = {
   itemIconEl: any
   showTitles?: boolean
   toggleCheckbox: (event: Event) => void
-  recordShiftKeyPress: (event: KeyboardEvent) => void
   id: string
   children?: JSX.Element
 }
@@ -31,7 +30,6 @@ function GridListItem<M extends Meta, B extends Body>(
     itemIconEl,
     showTitles,
     toggleCheckbox,
-    recordShiftKeyPress,
     id,
     children,
   } = props
@@ -45,9 +43,6 @@ function GridListItem<M extends Meta, B extends Body>(
         type="checkbox"
         className="uppy-u-reset uppy-ProviderBrowserItem-checkbox uppy-ProviderBrowserItem-checkbox--grid"
         onChange={toggleCheckbox}
-        onKeyDown={recordShiftKeyPress}
-        // @ts-expect-error this is fine onMouseDown too
-        onMouseDown={recordShiftKeyPress}
         name="listitem"
         id={id}
         checked={status === "checked" ? true : false}

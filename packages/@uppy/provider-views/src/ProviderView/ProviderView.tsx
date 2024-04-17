@@ -325,7 +325,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
     const targetViewOptions = { ...this.opts, ...viewOptions }
     const { partialTree, currentFolderId, filterInput, loading } =
       this.plugin.getPluginState()
-    const { recordShiftKeyPress, filterItems } = this
+    const { filterItems } = this
     const pluginIcon = this.plugin.icon || defaultPickerIcon
 
     const headerProps = {
@@ -343,7 +343,6 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
 
     const browserProps = {
       toggleCheckbox: this.toggleCheckbox.bind(this),
-      recordShiftKeyPress,
       displayedPartialTree,
       getFolder: this.getFolder,
       loadAllFiles: this.opts.loadAllFiles,

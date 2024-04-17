@@ -16,7 +16,6 @@ const VIRTUAL_SHARED_DIR = 'shared-with-me'
 type ItemProps<M extends Meta, B extends Body> = {
   viewType: string
   toggleCheckbox: (event: Event, file: (PartialTreeFile | PartialTreeFolderNode)) => void
-  recordShiftKeyPress: (event: KeyboardEvent | MouseEvent) => void
   showTitles: boolean
   i18n: I18n
   validateRestrictions: (file: CompanionFile) => RestrictionError<M, B> | null
@@ -27,7 +26,7 @@ type ItemProps<M extends Meta, B extends Body> = {
 export default function Item<M extends Meta, B extends Body>(
   props: ItemProps<M, B>,
 ): h.JSX.Element {
-  const { viewType, toggleCheckbox, recordShiftKeyPress, showTitles, i18n, validateRestrictions, getFolder, file } = props
+  const { viewType, toggleCheckbox, showTitles, i18n, validateRestrictions, getFolder, file } = props
 
   const restrictionError = validateRestrictions(file.data)
   const isDisabled = file.data.isFolder ? false : (Boolean(restrictionError) && (file.status !== "checked"))
@@ -41,7 +40,6 @@ export default function Item<M extends Meta, B extends Body>(
     toggleCheckbox: (event: Event) => toggleCheckbox(event, file),
     viewType,
     showTitles,
-    recordShiftKeyPress,
     className: classNames(
       'uppy-ProviderBrowserItem',
       { 'uppy-ProviderBrowserItem--disabled': isDisabled },
