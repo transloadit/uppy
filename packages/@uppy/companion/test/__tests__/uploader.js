@@ -192,9 +192,7 @@ describe('uploader with tus protocol', () => {
   })
 
   // eslint-disable-next-line max-len
-  const formDataNoMetaMatch = /^--form-data-boundary-[a-z0-9]+\r\nContent-Disposition: form-data; name="files\[\]"; filename="uppy-file-[^"]+"\r\nContent-Type: application\/octet-stream\r\n\r\nSome file content\r\n--form-data-boundary-[a-z0-9]+--\r\n\r\n$/
-  // eslint-disable-next-line max-len
-  const formDataWithMetaMatch = /^--form-data-boundary-[a-z0-9]+\r\nContent-Disposition: form-data; name="key1"\r\n\r\nnull\r\n--form-data-boundary-[a-z0-9]+\r\nContent-Disposition: form-data; name="key2"\r\n\r\ntrue\r\n--form-data-boundary-[a-z0-9]+\r\nContent-Disposition: form-data; name="key3"\r\n\r\n1234\r\n--form-data-boundary-[a-z0-9]+\r\nContent-Disposition: form-data; name="key4"\r\n\r\n\[object Object\]\r\n--form-data-boundary-[a-z0-9]+\r\nContent-Disposition: form-data; name="key5"\r\n\r\n\(\) => {}\r\n--form-data-boundary-[a-z0-9]+\r\nContent-Disposition: form-data; name="key6"\r\n\r\nSymbol\(\)\r\n--form-data-boundary-[a-z0-9]+\r\nContent-Disposition: form-data; name="files\[\]"; filename="uppy-file-[^"]+"\r\nContent-Type: application\/octet-stream\r\n\r\nSome file content\r\n--form-data-boundary-[a-z0-9]+--\r\n\r\n$/
+  const formDataNoMetaMatch = /^--form-data-boundary-[a-z0-9]+\r\nContent-Disposition: form-data; name="files\[\]"; filename="uppy-file-[^"]+"\r\nContent-Type: application\/octet-stream\r\n\r\n$/
 
   test('upload functions with xhr formdata', async () => {
     nock('http://localhost').post('/', formDataNoMetaMatch)
@@ -216,7 +214,7 @@ describe('uploader with tus protocol', () => {
   // https://github.com/transloadit/uppy/issues/3477
   test('upload functions with xhr formdata and metadata', async () => {
     // eslint-disable-next-line max-len
-    nock('http://localhost').post('/', formDataWithMetaMatch)
+    nock('http://localhost').post('/', /^--form-data-boundary-[a-z0-9]+\r\nContent-Disposition: form-data; name="key1"\r\n\r\n$/)
       .reply(200)
 
     const metadata = {
