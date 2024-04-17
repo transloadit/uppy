@@ -24,6 +24,7 @@ import packageJson from '../../package.json'
 import PartialTreeUtils from '../utils/PartialTreeUtils.ts'
 import fillPartialTree from '../utils/fillPartialTree.ts'
 import getTagFile from '../utils/getTagFile.ts'
+import filterItems from '../utils/filterItems.ts'
 
 export function defaultPickerIcon(): JSX.Element {
   return (
@@ -325,7 +326,6 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
     const targetViewOptions = { ...this.opts, ...viewOptions }
     const { partialTree, currentFolderId, filterInput, loading } =
       this.plugin.getPluginState()
-    const { filterItems } = this
     const pluginIcon = this.plugin.icon || defaultPickerIcon
 
     const headerProps = {
@@ -339,11 +339,10 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
       i18n,
     }
 
-    const displayedPartialTree = filterItems(partialTree.filter((item) => item.type !== 'root' && item.parentId === currentFolderId)) as (PartialTreeFile | PartialTreeFolderNode)[]
-
     const browserProps = {
       toggleCheckbox: this.toggleCheckbox.bind(this),
-      displayedPartialTree,
+      partialTree,
+      currentFolderId,
       getFolder: this.getFolder,
       loadAllFiles: this.opts.loadAllFiles,
 
@@ -371,7 +370,6 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
       i18n: this.plugin.uppy.i18n,
 
       validateRestrictions: this.validateRestrictions,
-      getNOfSelectedFiles: this.getNOfSelectedFiles,
       isLoading: loading,
     }
 

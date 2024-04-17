@@ -67,7 +67,6 @@ export default class View<
     this.handleError = this.handleError.bind(this)
     this.cancelPicking = this.cancelPicking.bind(this)
     this.validateRestrictions = this.validateRestrictions.bind(this)
-    this.getNOfSelectedFiles = this.getNOfSelectedFiles.bind(this)
 
     // This records whether the user is holding the SHIFT key this very moment.
     // Typically this is implemented using `onClick((e) => e.shiftKey)` - but we can't use that, because for accessibility reasons we're using html tags that don't support `e.shiftKey` property (see #3768).
@@ -81,23 +80,6 @@ export default class View<
         this.isShiftKeyPressed = true
       }
     })
-  }
-
-  getNOfSelectedFiles () : number {
-    const { partialTree } = this.plugin.getPluginState()
-    // We're interested in all 'checked' leaves.
-    const checkedLeaves = partialTree.filter((item) => {
-      if (item.type === 'file' && item.status === 'checked') {
-        return true
-      } else if (item.type === 'folder' && item.status === 'checked') {
-        const doesItHaveChildren = partialTree.some((i) =>
-          i.type !== 'root' && i.parentId === item.id
-        )
-        return !doesItHaveChildren
-      }
-      return false
-    })
-    return checkedLeaves.length
   }
 
   validateRestrictions (file: CompanionFile) : RestrictionError<M, B> | null {
@@ -156,20 +138,6 @@ export default class View<
     this.plugin.uppy.registerRequestClient(this.provider.provider, this.provider)
   }
 
-  filterItems = (items: PartialTree): PartialTree => {
-    const { filterInput } = this.plugin.getPluginState()
-    if (!filterInput || filterInput === '') {
-      return items
-    }
-    return items.filter((item) => {
-      return (
-        item.type !== 'root' &&
-        item.data.name.toLowerCase().indexOf(filterInput.toLowerCase()) !==
-        -1
-      )
-    })
-  }
-
   /**
    * Toggles file/folder checkbox to on/off state while updating files list.
    *
@@ -183,9 +151,9 @@ export default class View<
     // Prevent shift-clicking from highlighting file names (https://stackoverflow.com/a/1527797/3192470)
     document.getSelection()?.removeAllRanges()
 
-    const { partialTree, currentFolderId } = this.plugin.getPluginState()
+    const { partialTree, currentFolderId, filterInput } = this.plugin.getPluginState()
 
-    const newPartialTree = PartialTreeUtils.afterToggleCheckbox(partialTree, ourItem, this.validateRestrictions, this.filterItems, currentFolderId, this.isShiftKeyPressed, this.lastCheckbox)
+    const newPartialTree = PartialTreeUtils.afterToggleCheckbox(partialTree, ourItem, this.validateRestrictions, filterInput, currentFolderId, this.isShiftKeyPressed, this.lastCheckbox)
 
     this.plugin.setPluginState({ partialTree: newPartialTree })
     this.lastCheckbox = ourItem.id!

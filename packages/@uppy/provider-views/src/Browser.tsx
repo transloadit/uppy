@@ -11,12 +11,15 @@ import type Uppy from '@uppy/core'
 import SearchFilterInput from './SearchFilterInput.tsx'
 import FooterActions from './FooterActions.tsx'
 import Item from './Item/index.tsx'
-import type { PartialTreeFile, PartialTreeFolderNode } from '@uppy/core/lib/Uppy.ts'
+import type { PartialTree, PartialTreeFile, PartialTreeFolderNode } from '@uppy/core/lib/Uppy.ts'
 import type { RestrictionError } from '@uppy/core/lib/Restricter.ts'
 import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
+import getNOfSelectedFiles from './utils/getNOfSelectedFiles.ts'
+import filterItems from './utils/filterItems.ts'
 
 type BrowserProps<M extends Meta, B extends Body> = {
-  displayedPartialTree: (PartialTreeFile | PartialTreeFolderNode)[],
+  partialTree: PartialTree,
+  currentFolderId: string | null,
 
   viewType: string
   headerComponent?: JSX.Element
@@ -26,11 +29,10 @@ type BrowserProps<M extends Meta, B extends Body> = {
   showTitles: boolean
   i18n: I18n
   validateRestrictions: (file: CompanionFile) => RestrictionError<M, B> | null
-  getNOfSelectedFiles: () => number
   isLoading: boolean | string
   showSearchFilter: boolean
   search: (query: string) => void
-  searchTerm?: string | null
+  searchTerm: string
   clearSearch: () => void
   searchOnInput: boolean
   searchInputLabel: string
@@ -46,7 +48,8 @@ function Browser<M extends Meta, B extends Body>(
   props: BrowserProps<M, B>,
 ): JSX.Element {
   const {
-    displayedPartialTree,
+    partialTree,
+    currentFolderId,
     viewType,
     headerComponent,
     showBreadcrumbs,
@@ -70,7 +73,10 @@ function Browser<M extends Meta, B extends Body>(
     loadAllFiles,
   } = props
 
-  const nOfSelectedFiles = props.getNOfSelectedFiles(); // TODO// currentSelection.length
+  const itemsInThisFolder = partialTree.filter((item) => item.type !== 'root' && item.parentId === currentFolderId)
+  const displayedPartialTree = filterItems(itemsInThisFolder, searchTerm) as (PartialTreeFile | PartialTreeFolderNode)[]
+
+  const nOfSelectedFiles = getNOfSelectedFiles(partialTree)
 
   return (
     <div

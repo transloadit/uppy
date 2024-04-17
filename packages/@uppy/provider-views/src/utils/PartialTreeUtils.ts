@@ -1,11 +1,12 @@
 import type { PartialTree, PartialTreeFile, PartialTreeFolder, PartialTreeFolderNode } from "@uppy/core/lib/Uppy"
 import type { CompanionFile } from "@uppy/utils/lib/CompanionFile"
+import filterItems from "./filterItems"
 
 const afterToggleCheckbox = (
   oldPartialTree: PartialTree,
   ourItem: PartialTreeFolderNode | PartialTreeFile,
   validateRestrictions: (file: CompanionFile) => object | null,
-  filterItems : (items: PartialTree) => PartialTree,
+  filterInput : string,
   currentFolderId:  string | null,
   isShiftKeyPressed: boolean,
   lastCheckbox: string | undefined
@@ -50,13 +51,15 @@ const afterToggleCheckbox = (
 
   // Shift-clicking selects a single consecutive list of items
   // starting at the previous click.
-  const inThisFolder  = filterItems(newPartialTree.filter((item) => item.type !== 'root' && item.parentId === currentFolderId)) as (PartialTreeFile | PartialTreeFolderNode)[]
-  const prevIndex = inThisFolder.findIndex((item) => item.id === lastCheckbox)
+  const itemsInThisFolder = newPartialTree.filter((item) => item.type !== 'root' && item.parentId === currentFolderId)
+  const visibleItems = filterItems(itemsInThisFolder, filterInput) as (PartialTreeFile | PartialTreeFolderNode)[]
+
+  const prevIndex = visibleItems.findIndex((item) => item.id === lastCheckbox)
   if (prevIndex !== -1 && isShiftKeyPressed) {
-    const newIndex = inThisFolder.findIndex((item) => item.id === ourItem.id)
+    const newIndex = visibleItems.findIndex((item) => item.id === ourItem.id)
     const toMarkAsChecked = (prevIndex < newIndex ?
-        inThisFolder.slice(prevIndex, newIndex + 1)
-      : inThisFolder.slice(newIndex, prevIndex + 1)
+        visibleItems.slice(prevIndex, newIndex + 1)
+      : visibleItems.slice(newIndex, prevIndex + 1)
     ).map((item) => item.id)
 
     const newlyCheckedItems = newPartialTree

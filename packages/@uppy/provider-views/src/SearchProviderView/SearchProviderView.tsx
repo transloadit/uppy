@@ -14,6 +14,7 @@ import View, { type ViewOptions } from '../View.ts'
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../../package.json'
 import getTagFile from '../utils/getTagFile.ts'
+import filterItems from '../utils/filterItems.ts'
 
 const defaultState : Partial<UnknownSearchProviderPluginState> = {
   isInputMode: true,
@@ -179,13 +180,11 @@ export default class SearchProviderView<
     const targetViewOptions = { ...this.opts, ...viewOptions }
     const { loading, partialTree, currentFolderId } =
       this.plugin.getPluginState()
-    const { filterItems } = this
-
-    const displayedPartialTree = filterItems(partialTree.filter((item) => item.type !== 'root' && item.parentId === currentFolderId)) as PartialTreeFile[]
 
     const browserProps = {
       toggleCheckbox: this.toggleCheckbox.bind(this),
-      displayedPartialTree,
+      partialTree,
+      currentFolderId,
       handleScroll: this.handleScroll,
       done: this.donePicking,
       cancel: this.cancelPicking,
@@ -210,7 +209,6 @@ export default class SearchProviderView<
       pluginIcon: this.plugin.icon,
       i18n,
       validateRestrictions: this.validateRestrictions,
-      getNOfSelectedFiles: this.getNOfSelectedFiles
     }
 
     if (isInputMode) {
