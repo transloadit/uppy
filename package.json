@@ -170,7 +170,7 @@
   },
   "resolutions": {
     "@types/eslint@^7.2.13": "^8.2.0",
-    "@types/react": "^17",
+    "@types/react": "^18",
     "@types/webpack-dev-server": "^4",
     "@vitest/utils": "patch:@vitest/utils@npm%3A1.2.1#./.yarn/patches/@vitest-utils-npm-1.2.1-3028846845.patch",
     "p-queue": "patch:p-queue@npm%3A7.4.1#./.yarn/patches/p-queue-npm-7.4.1-e0cf0a6f17.patch",

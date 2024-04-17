@@ -1,7 +1,7 @@
 {
   "name": "@uppy/react",
   "description": "React component wrappers around Uppy's official UI plugins.",
-  "version": "4.0.0-beta.2",
+  "version": "4.0.0-beta.3",
   "license": "MIT",
   "main": "lib/index.js",
   "type": "module",
@@ -21,11 +21,16 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
-    "@uppy/utils": "workspace:^"
+    "@uppy/utils": "workspace:^",
+    "use-sync-external-store": "^1.2.0"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.4.2",
+    "@testing-library/react": "^14.2.2",
     "@types/react": "^18.0.8",
-    "react": "^18.1.0"
+    "@types/use-sync-external-store": "^0.0.6",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^",
@@ -34,7 +39,7 @@
     "@uppy/file-input": "workspace:^",
     "@uppy/progress-bar": "workspace:^",
     "@uppy/status-bar": "workspace:^",
-    "react": "^16.0.0 || ^17.0.0 || ^18.0.0"
+    "react": "^18.0.0"
   },
   "peerDependenciesMeta": {
     "@uppy/dashboard": {
