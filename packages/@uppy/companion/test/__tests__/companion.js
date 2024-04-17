@@ -230,7 +230,7 @@ it('periodically pings', (done) => {
   getServer({
     COMPANION_PERIODIC_PING_URLS: 'http://localhost/ping',
     COMPANION_PERIODIC_PING_STATIC_JSON_PAYLOAD: '{"some": "value"}',
-    COMPANION_PERIODIC_PING_INTERVAL: '100',
+    COMPANION_PERIODIC_PING_INTERVAL: '10',
     COMPANION_PERIODIC_PING_COUNT: '1',
   })
 }, 3000)

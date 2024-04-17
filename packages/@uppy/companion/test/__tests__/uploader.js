@@ -2,15 +2,14 @@
 
 jest.mock('tus-js-client')
 
+const { Readable } = require('node:stream')
 const fs = require('node:fs')
 const nock = require('nock')
-const { Readable } = require('node:stream')
 
 const Uploader = require('../../src/server/Uploader')
 const socketClient = require('../mocksocket')
 const standalone = require('../../src/standalone')
 const Emitter = require('../../src/server/emitter')
-
 
 afterAll(() => {
   nock.cleanAll()
@@ -19,7 +18,6 @@ afterAll(() => {
 
 process.env.COMPANION_DATADIR = './test/output'
 process.env.COMPANION_DOMAIN = 'localhost:3020'
-// process.env.COMPANION_STREAMING_UPLOAD = 'true'
 const { companionOptions } = standalone()
 
 describe('uploader with tus protocol', () => {
@@ -207,8 +205,8 @@ describe('uploader with tus protocol', () => {
     nock('http://localhost').post('/', formDataNoMetaMatch)
       .reply(200)
 
-      const ret = await runMultipartTest({ useFormData: true, includeSize: false })
-      expect(ret).toMatchObject({ url: null, extraData: { response: expect.anything(), bytesUploaded: 17 } })
+    const ret = await runMultipartTest({ useFormData: true, includeSize: false })
+    expect(ret).toMatchObject({ url: null, extraData: { response: expect.anything(), bytesUploaded: 17 } })
   })
 
   // https://github.com/transloadit/uppy/issues/3477
