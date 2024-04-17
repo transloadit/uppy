@@ -21,14 +21,14 @@ const DRIVE_FILES_FIELDS = `kind,nextPageToken,incompleteSearch,files(${DRIVE_FI
 // using wildcard to get all 'drive' fields because specifying fields seems no to work for the /drives endpoint
 const SHARED_DRIVE_FIELDS = '*'
 
-const getClient = async ({ token }) => (await got).extend({
+const getClient = async ({ token }) => got.extend({
   prefixUrl: 'https://www.googleapis.com/drive/v3',
   headers: {
     authorization: `Bearer ${token}`,
   },
 })
 
-const getOauthClient = async () => (await got).extend({
+const getOauthClient = async () => got.extend({
   prefixUrl: 'https://oauth2.googleapis.com',
 })
 
@@ -178,7 +178,7 @@ class Drive extends Provider {
 
   logout ({ token }) {
     return this.#withErrorHandling('provider.drive.logout.error', async () => {
-      await (await got).post('https://accounts.google.com/o/oauth2/revoke', {
+      await got.post('https://accounts.google.com/o/oauth2/revoke', {
         searchParams: { token },
         responseType: 'json',
       })

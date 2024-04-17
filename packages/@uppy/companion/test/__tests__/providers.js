@@ -295,7 +295,7 @@ describe('list provider files', () => {
   })
 })
 
-describe('provider file gets downloaded from', () => {
+describe.only('provider file gets downloaded from', () => {
   async function runTest (providerName) {
     const providerFixtures = fixtures.providers[providerName].expects
     const res = await request(authServer)

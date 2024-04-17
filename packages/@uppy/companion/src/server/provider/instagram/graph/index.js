@@ -7,7 +7,7 @@ const { prepareStream } = require('../../../helpers/utils')
 
 const got = require('../../../got')
 
-const getClient = async ({ token }) => (await got).extend({
+const getClient = async ({ token }) => got.extend({
   prefixUrl: 'https://graph.instagram.com',
   headers: {
     authorization: `Bearer ${token}`,

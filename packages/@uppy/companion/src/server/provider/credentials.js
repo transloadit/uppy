@@ -14,7 +14,7 @@ const got = require('../got')
  */
 async function fetchKeys (url, providerName, credentialRequestParams) {
   try {
-    const { credentials } = await (await got).post(url, {
+    const { credentials } = await got.post(url, {
       json: { provider: providerName, parameters: credentialRequestParams },
     }).json()
 
