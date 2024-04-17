@@ -632,8 +632,9 @@ class Uploader {
 
     try {
       const httpMethod = (this.options.httpMethod || '').toUpperCase() === 'PUT' ? 'put' : 'post'
+      const runRequest = (await got)[httpMethod]
 
-      const response = await got[httpMethod](url, reqOptions)
+      const response = await runRequest(url, reqOptions)
 
       if (bytesUploaded !== this.size) {
         const errMsg = `uploaded only ${bytesUploaded} of ${this.size} with status: ${response.statusCode}`

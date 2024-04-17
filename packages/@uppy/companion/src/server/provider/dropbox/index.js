@@ -18,14 +18,14 @@ function httpHeaderSafeJson (v) {
     })
 }
 
-const getClient = async ({ token }) => got.extend({
+const getClient = async ({ token }) => (await got).extend({
   prefixUrl: 'https://api.dropboxapi.com/2',
   headers: {
     authorization: `Bearer ${token}`,
   },
 })
 
-const getOauthClient = async () => got.extend({
+const getOauthClient = async () => (await got).extend({
   prefixUrl: 'https://api.dropboxapi.com/oauth2',
 })
 

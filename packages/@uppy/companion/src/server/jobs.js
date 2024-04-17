@@ -66,7 +66,7 @@ async function runPeriodicPing ({ urls, payload, requestTimeout }) {
   // Run requests in parallel
   await Promise.all(urls.map(async (url) => {
     try {
-      await got.post(url, { json: payload, timeout: { request: requestTimeout } })
+      await (await got).post(url, { json: payload, timeout: { request: requestTimeout } })
     } catch (err) {
       logger.warn(err, 'jobs.periodic.ping')
     }

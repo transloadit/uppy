@@ -9,7 +9,7 @@ const got = require('../../got')
 
 const BASE_URL = 'https://api.unsplash.com'
 
-const getClient = async ({ token }) => got.extend({
+const getClient = async ({ token }) => (await got).extend({
   prefixUrl: BASE_URL,
   headers: {
     authorization: `Client-ID ${token}`,
@@ -42,7 +42,7 @@ class Unsplash extends Provider {
 
       const { links: { download: url, download_location: attributionUrl } } = await getPhotoMeta(client, id)
 
-      const stream = got.stream.get(url, { responseType: 'json' })
+      const stream = (await got).stream.get(url, { responseType: 'json' })
       await prepareStream(stream)
 
       // To attribute the author of the image, we call the `download_location`

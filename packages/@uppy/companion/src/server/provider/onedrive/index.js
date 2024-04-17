@@ -6,14 +6,14 @@ const { prepareStream } = require('../../helpers/utils')
 
 const got = require('../../got')
 
-const getClient = async ({ token }) => got.extend({
+const getClient = async ({ token }) => (await got).extend({
   prefixUrl: 'https://graph.microsoft.com/v1.0',
   headers: {
     authorization: `Bearer ${token}`,
   },
 })
 
-const getOauthClient = async () => got.extend({
+const getOauthClient = async () => (await got).extend({
   prefixUrl: 'https://login.live.com',
 })
 

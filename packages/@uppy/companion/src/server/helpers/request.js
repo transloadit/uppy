@@ -93,7 +93,7 @@ async function getProtectedGot ({ blockLocalIPs }) {
 
 
   // @ts-ignore
-  return got.extend({ agent: { http: httpAgent, https: httpsAgent } })
+  return (await got).extend({ agent: { http: httpAgent, https: httpsAgent } })
 }
 
 module.exports.getProtectedGot = getProtectedGot
