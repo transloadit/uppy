@@ -38,4 +38,3 @@ const loadingModule = import('got').then(({ default: got }) => {
       },
     },
   )
-  
