@@ -193,6 +193,7 @@ export default function getIconByMime(fileType: $TSFixMe): $TSFixMe {
   const archiveTypes = [
     'zip',
     'x-7z-compressed',
+    'x-zip-compressed',
     'x-rar-compressed',
     'x-tar',
     'x-gzip',

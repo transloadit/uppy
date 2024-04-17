@@ -12,6 +12,66 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 4.0.0-beta.3
+
+Released: 2024-04-15
+
+| Package                   |      Version | Package                   |      Version |
+| ------------------------- | ------------ | ------------------------- | ------------ |
+| @uppy/angular             | 0.7.0-beta.3 | @uppy/onedrive            | 4.0.0-beta.3 |
+| @uppy/audio               | 2.0.0-beta.3 | @uppy/progress-bar        | 4.0.0-beta.3 |
+| @uppy/aws-s3-multipart    | 4.0.0-beta.3 | @uppy/provider-views      | 4.0.0-beta.3 |
+| @uppy/box                 | 3.0.0-beta.3 | @uppy/react               | 4.0.0-beta.3 |
+| @uppy/companion           | 5.0.0-beta.3 | @uppy/remote-sources      | 2.0.0-beta.3 |
+| @uppy/companion-client    | 4.0.0-beta.3 | @uppy/screen-capture      | 4.0.0-beta.3 |
+| @uppy/compressor          | 2.0.0-beta.3 | @uppy/status-bar          | 4.0.0-beta.3 |
+| @uppy/core                | 4.0.0-beta.3 | @uppy/thumbnail-generator | 4.0.0-beta.3 |
+| @uppy/dashboard           | 4.0.0-beta.3 | @uppy/transloadit         | 4.0.0-beta.3 |
+| @uppy/drag-drop           | 4.0.0-beta.3 | @uppy/tus                 | 4.0.0-beta.3 |
+| @uppy/drop-target         | 3.0.0-beta.3 | @uppy/unsplash            | 4.0.0-beta.3 |
+| @uppy/dropbox             | 4.0.0-beta.3 | @uppy/url                 | 4.0.0-beta.3 |
+| @uppy/facebook            | 4.0.0-beta.3 | @uppy/utils               | 6.0.0-beta.3 |
+| @uppy/file-input          | 4.0.0-beta.3 | @uppy/webcam              | 4.0.0-beta.3 |
+| @uppy/golden-retriever    | 4.0.0-beta.3 | @uppy/zoom                | 3.0.0-beta.3 |
+| @uppy/google-drive        | 4.0.0-beta.3 | uppy                      | 4.0.0-beta.3 |
+| @uppy/instagram           | 4.0.0-beta.3 |                           |              |
+
+- @uppy/core: fix `setOptions` not re-rendereing plugin UI (Antoine du Hamel / #5082)
+
+
+## 4.0.0-beta.2
+
+Released: 2024-04-11
+
+| Package                   |      Version | Package                   |      Version |
+| ------------------------- | ------------ | ------------------------- | ------------ |
+| @uppy/angular             | 0.7.0-beta.2 | @uppy/instagram           | 4.0.0-beta.2 |
+| @uppy/audio               | 2.0.0-beta.2 | @uppy/onedrive            | 4.0.0-beta.2 |
+| @uppy/aws-s3              | 4.0.0-beta.2 | @uppy/progress-bar        | 4.0.0-beta.2 |
+| @uppy/aws-s3-multipart    | 4.0.0-beta.2 | @uppy/provider-views      | 4.0.0-beta.2 |
+| @uppy/box                 | 3.0.0-beta.2 | @uppy/react               | 4.0.0-beta.2 |
+| @uppy/companion           | 5.0.0-beta.2 | @uppy/remote-sources      | 2.0.0-beta.2 |
+| @uppy/companion-client    | 4.0.0-beta.2 | @uppy/screen-capture      | 4.0.0-beta.2 |
+| @uppy/compressor          | 2.0.0-beta.2 | @uppy/status-bar          | 4.0.0-beta.2 |
+| @uppy/core                | 4.0.0-beta.2 | @uppy/thumbnail-generator | 4.0.0-beta.2 |
+| @uppy/dashboard           | 4.0.0-beta.2 | @uppy/transloadit         | 4.0.0-beta.2 |
+| @uppy/drag-drop           | 4.0.0-beta.2 | @uppy/tus                 | 4.0.0-beta.2 |
+| @uppy/drop-target         | 3.0.0-beta.2 | @uppy/unsplash            | 4.0.0-beta.2 |
+| @uppy/dropbox             | 4.0.0-beta.2 | @uppy/url                 | 4.0.0-beta.2 |
+| @uppy/facebook            | 4.0.0-beta.2 | @uppy/utils               | 6.0.0-beta.2 |
+| @uppy/file-input          | 4.0.0-beta.2 | @uppy/webcam              | 4.0.0-beta.2 |
+| @uppy/golden-retriever    | 4.0.0-beta.2 | @uppy/zoom                | 3.0.0-beta.2 |
+| @uppy/google-drive        | 4.0.0-beta.2 | uppy                      | 4.0.0-beta.2 |
+
+- @uppy/aws-s3: default to multipart depending on the size of input (Antoine du Hamel / #5076)
+- @uppy/aws-s3: remove deprecated `prepareUploadParts` option (Antoine du Hamel / #5075)
+- @uppy/core: use variadic arguments for `uppy.use` (Antoine du Hamel / #4888)
+- @uppy/aws-s3: remove legacy plugin (Antoine du Hamel / #5070)
+- @uppy/locales: do not build `dist/` folder (Merlijn Vos / #5055)
+- @uppy/angular: fix Angular version requirement in peerDeps (Antoine du Hamel / #5067)
+- @uppy/transloadit: remove deprecated options (Merlijn Vos / #5056)
+
+
 ## 4.0.0-beta.1
 
 Released: 2024-03-28
@@ -103,6 +163,58 @@ Released: 2024-03-28
 - meta: enable CI on `4.x` branch (Antoine du Hamel)
 - @uppy/vue: [v4.x] remove manual types (Antoine du Hamel / #4803)
 - meta: prepare release workflow for beta versions (Antoine du Hamel)
+
+
+## 3.24.3
+
+Released: 2024-04-16
+
+| Package         | Version | Package         | Version |
+| --------------- | ------- | --------------- | ------- |
+| @uppy/dashboard |   3.8.1 | uppy            |  3.24.3 |
+| @uppy/utils     |   5.8.0 |                 |         |
+
+- docs: add back markdown files (Antoine du Hamel / #5064)
+- meta: fix custom provider example (Merlijn Vos / #5079)
+- @uppy/utils: add fetcher (Merlijn Vos / #5073)
+- meta: Fix prettier (Murderlon)
+- @uppy/dashboard: add missing `x-zip-compress` archive type (Younes / #5081)
+- meta: Bump docker/metadata-action from 4 to 5 (dependabot[bot] / #5086)
+- meta: Bump actions/setup-node from 3 to 4 (dependabot[bot] / #5087)
+- meta: Bump docker/setup-qemu-action from 2 to 3 (dependabot[bot] / #5089)
+- meta: bump supercharge/redis-github-action from 1.4.0 to 1.8.0 (dependabot[bot] / #5090)
+- meta: bump actions/cache from 3 to 4 (dependabot[bot] / #5088)
+- meta: add `dependabot.yml` to keep GHA up-to-date (Antoine du Hamel / #5083)
+
+
+## 3.24.2
+
+Released: 2024-04-15
+
+| Package    | Version | Package    | Version |
+| ---------- | ------- | ---------- | ------- |
+| @uppy/core |  3.10.1 | uppy       |  3.24.2 |
+
+- @uppy/core: fix `setOptions` not re-rendereing plugin UI (Antoine du Hamel / #5082)
+- meta: bump vite from 5.0.12 to 5.0.13 (dependabot[bot] / #5060)
+- meta: bump tar from 6.1.11 to 6.2.1 (dependabot[bot] / #5068)
+
+
+## 3.24.1
+
+Released: 2024-04-10
+
+| Package          | Version | Package          | Version |
+| ---------------- | ------- | ---------------- | ------- |
+| @uppy/companion  |  4.13.1 | uppy             |  3.24.1 |
+| @uppy/file-input |   3.1.1 |                  |         |
+
+- @uppy/companion: upgrade redis (Mikael Finstad / #5065)
+- meta: fix `watch:*` scripts (Antoine du Hamel / #5046)
+- meta: include more packages in `compare_diff` CI (Antoine du Hamel / #5044)
+- @uppy/file-input: add missing export (Antoine du Hamel / #5045)
+- meta: Bump express from 4.18.1 to 4.19.2 in /packages/@uppy/companion (dependabot[bot] / #5036)
+- @uppy/companion: Bump express from 4.18.1 to 4.19.2 (dependabot[bot] / #5037)
 
 
 ## 3.24.0

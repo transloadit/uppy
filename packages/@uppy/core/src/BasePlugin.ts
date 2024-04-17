@@ -72,7 +72,6 @@ export default class BasePlugin<
   }
 
   setPluginState(update?: Partial<PluginState>): void {
-    if (!update) return
     const { plugins } = this.uppy.getState()
 
     this.uppy.setState({

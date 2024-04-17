@@ -10,6 +10,7 @@ const uppy = new Uppy()
   .use(AwsS3, {
     limit: 2,
     companionUrl: process.env.VITE_COMPANION_URL,
+    shouldUseMultipart: false,
   })
 
 // Keep this here to access uppy in tests

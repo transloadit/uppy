@@ -12,6 +12,13 @@ Included in: Uppy v4.0.0-beta.1
 - @uppy/dashboard: refactor to TypeScript (Antoine du Hamel / #4984)
 - @uppy/dashboard: refactor to stable lifecycle method (Antoine du Hamel / #4999)
 
+## 3.8.1
+
+Released: 2024-04-16
+Included in: Uppy v3.24.3
+
+- @uppy/dashboard: add missing `x-zip-compress` archive type (Younes / #5081)
+
 ## 3.8.0
 
 Released: 2024-03-27
