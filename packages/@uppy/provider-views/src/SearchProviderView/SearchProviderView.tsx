@@ -1,7 +1,7 @@
 import { h } from 'preact'
 
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
-import type { PartialTree, PartialTreeFile, PartialTreeFolderNode, UnknownSearchProviderPlugin, UnknownSearchProviderPluginState } from '@uppy/core/lib/Uppy.ts'
+import type { PartialTree, PartialTreeFile, PartialTreeFolderNode, PartialTreeFolderRoot, UnknownSearchProviderPlugin, UnknownSearchProviderPluginState } from '@uppy/core/lib/Uppy.ts'
 import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin.ts'
 import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
 import SearchFilterInput from '../SearchFilterInput.tsx'
@@ -61,8 +61,6 @@ export default class SearchProviderView<
 > extends View<M, B, PluginType, Opts<M, B, PluginType>> {
   static VERSION = packageJson.version
 
-  nextPageQuery: string | null = null
-
   constructor(
     plugin: UnknownSearchProviderPlugin<M, B>,
     opts: ViewOptions<M, B, PluginType>,
@@ -91,42 +89,36 @@ export default class SearchProviderView<
     this.plugin.setPluginState(defaultState)
   }
 
-  #updateFilesAndInputMode(res: Res): void {
-    this.nextPageQuery = res.nextPageQuery
-    const { partialTree } = this.plugin.getPluginState()
-    const newPartialTree : PartialTree = [
-      ...partialTree,
-      ...res.items.map((item) => ({
-        type: 'file',
-        id: item.requestPath,
-        status: 'unchecked',
-        parentId: null,
-        data: item
-      }) as PartialTreeFile)
-    ]
-    this.plugin.setPluginState({
-      partialTree: newPartialTree,
-      isInputMode: false,
-      searchString: res.searchedFor,
-    })
-  }
-
-  async search(query: string): Promise<void> {
-    const { searchString } = this.plugin.getPluginState()
-    if (query && query === searchString) {
-      // no need to search again as this is the same as the previous search
-      return
-    }
+  async search(searchString: string): Promise<void> {
+    this.plugin.setPluginState({ searchString })
 
     this.setLoading(true)
     try {
-      const res = await this.provider.search<Res>(query)
-      this.#updateFilesAndInputMode(res)
+      const response = await this.provider.search<Res>(searchString)
+
+      const newPartialTree : PartialTree = [
+        {
+          type: 'root',
+          id: null,
+          cached: false,
+          nextPagePath: response.nextPageQuery
+        },
+        ...response.items.map((item) => ({
+          type: 'file',
+          id: item.requestPath,
+          status: 'unchecked',
+          parentId: null,
+          data: item
+        }) as PartialTreeFile)
+      ]
+      this.plugin.setPluginState({
+        partialTree: newPartialTree,
+        isInputMode: false
+      })
     } catch (err) {
       this.handleError(err)
-    } finally {
-      this.setLoading(false)
     }
+    this.setLoading(false)
   }
 
   clearSearch(): void {
@@ -138,21 +130,36 @@ export default class SearchProviderView<
   }
 
   async handleScroll(event: Event): Promise<void> {
-    const query = this.nextPageQuery || null
+    const { partialTree, searchString } = this.plugin.getPluginState()
+    const root = partialTree.find((i) => i.type === 'root') as PartialTreeFolderRoot
 
-    if (this.shouldHandleScroll(event) && query) {
+    if (this.shouldHandleScroll(event) && root.nextPagePath) {
       this.isHandlingScroll = true
-
       try {
-        const { searchString } = this.plugin.getPluginState()
-        const response = await this.provider.search<Res>(searchString, query)
+        const response = await this.provider.search<Res>(searchString, root.nextPagePath)
 
-        this.#updateFilesAndInputMode(response)
+        const newRoot : PartialTreeFolderRoot = {
+          ...root,
+          nextPagePath: response.nextPageQuery
+        }
+        const oldItems = partialTree.filter((i) => i.type !== 'root')
+
+        const newPartialTree : PartialTree = [
+          newRoot,
+          ...oldItems,
+          ...response.items.map((item) => ({
+            type: 'file',
+            id: item.requestPath,
+            status: 'unchecked',
+            parentId: null,
+            data: item
+          }) as PartialTreeFile)
+        ]
+        this.plugin.setPluginState({ partialTree: newPartialTree })
       } catch (error) {
         this.handleError(error)
-      } finally {
-        this.isHandlingScroll = false
       }
+      this.isHandlingScroll = false
     }
   }
 
@@ -175,7 +182,7 @@ export default class SearchProviderView<
     // (https://stackoverflow.com/a/1527797/3192470)
     document.getSelection()?.removeAllRanges()
 
-    const { partialTree, currentFolderId, searchString } = this.plugin.getPluginState()
+    const { partialTree, currentFolderId } = this.plugin.getPluginState()
 
     const displayedPartialTree = partialTree.filter((item) => item.type !== 'root' && item.parentId === currentFolderId) as (PartialTreeFolderNode | PartialTreeFile)[]
     const newPartialTree = PartialTreeUtils.afterToggleCheckbox(partialTree, displayedPartialTree, ourItem, this.validateRestrictions, this.isShiftKeyPressed, this.lastCheckbox)
