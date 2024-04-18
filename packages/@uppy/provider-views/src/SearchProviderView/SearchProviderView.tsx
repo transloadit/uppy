@@ -203,37 +203,6 @@ export default class SearchProviderView<
     const { loading, partialTree, currentFolderId } =
       this.plugin.getPluginState()
 
-    const browserProps = {
-      toggleCheckbox: this.toggleCheckbox.bind(this),
-      displayedPartialTree: partialTree.filter((item) => item.type !== 'root' && item.parentId === currentFolderId) as (PartialTreeFolderNode | PartialTreeFile)[],
-      nOfSelectedFiles: getNOfSelectedFiles(partialTree),
-      currentFolderId,
-      handleScroll: this.handleScroll,
-      done: this.donePicking,
-      cancel: this.cancelPicking,
-      getFolder: () => {},
-
-      // For SearchFilterInput component
-      showSearchFilter: targetViewOptions.showFilter,
-      search: this.search,
-      clearSearch: this.clearSearch,
-      searchString,
-      searchOnInput: false,
-      searchInputLabel: i18n('search'),
-      clearSearchLabel: i18n('resetSearch'),
-
-      noResultsLabel: i18n('noSearchResults'),
-      title: this.plugin.title,
-      viewType: targetViewOptions.viewType,
-      showTitles: targetViewOptions.showTitles,
-      showFilter: targetViewOptions.showFilter,
-      isLoading: loading,
-      showBreadcrumbs: targetViewOptions.showBreadcrumbs,
-      pluginIcon: this.plugin.icon,
-      i18n,
-      validateRestrictions: this.validateRestrictions,
-    }
-
     if (isInputMode) {
       return (
         <CloseWrapper onUnmount={this.resetPluginState}>
@@ -253,8 +222,29 @@ export default class SearchProviderView<
 
     return (
       <CloseWrapper onUnmount={this.resetPluginState}>
-        {/* eslint-disable-next-line react/jsx-props-no-spreading */}
-        <Browser {...browserProps} />
+        <Browser
+          toggleCheckbox={this.toggleCheckbox.bind(this)}
+          displayedPartialTree={partialTree.filter((item) => item.type !== 'root' && item.parentId === currentFolderId) as (PartialTreeFolderNode | PartialTreeFile)[]}
+          nOfSelectedFiles={getNOfSelectedFiles(partialTree)}
+          handleScroll={this.handleScroll}
+          done={this.donePicking}
+          cancel={this.cancelPicking}
+          getFolder={() => {}}
+          showSearchFilter={targetViewOptions.showFilter}
+          search={this.search}
+          clearSearch={this.clearSearch}
+          searchString={searchString}
+          searchOnInput={false}
+          searchInputLabel={i18n('search')}
+          clearSearchLabel={i18n('resetSearch')}
+          noResultsLabel={i18n('noSearchResults')}
+          viewType={targetViewOptions.viewType}
+          showTitles={targetViewOptions.showTitles}
+          isLoading={loading}
+          showBreadcrumbs={targetViewOptions.showBreadcrumbs}
+          i18n={i18n}
+          validateRestrictions={this.validateRestrictions}
+        />
       </CloseWrapper>
     )
   }

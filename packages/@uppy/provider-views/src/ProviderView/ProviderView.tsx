@@ -346,53 +346,8 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
       this.plugin.getPluginState()
     const pluginIcon = this.plugin.icon || defaultPickerIcon
 
-    const headerProps = {
-      showBreadcrumbs: targetViewOptions.showBreadcrumbs,
-      getFolder: this.getFolder,
-      breadcrumbs: this.getBreadcrumbs(),
-      pluginIcon,
-      title: this.plugin.title,
-      logout: this.logout,
-      username: this.username,
-      i18n,
-    }
-
     const itemsInThisFolder = partialTree.filter((item) => item.type !== 'root' && item.parentId === currentFolderId)
     const displayedPartialTree = filterItems(itemsInThisFolder, searchString) as (PartialTreeFile | PartialTreeFolderNode)[]
-
-    const browserProps = {
-      toggleCheckbox: this.toggleCheckbox.bind(this),
-      displayedPartialTree,
-      nOfSelectedFiles: getNOfSelectedFiles(partialTree),
-      getFolder: this.getFolder,
-      loadAllFiles: this.opts.loadAllFiles,
-
-      // For SearchFilterInput component
-      showSearchFilter: targetViewOptions.showFilter,
-      search: (input: string | undefined) => this.plugin.setPluginState({ searchString: input }),
-      clearSearch: () => this.plugin.setPluginState({ searchString: '' }),
-      searchString,
-      searchOnInput: true,
-      searchInputLabel: i18n('filter'),
-      clearSearchLabel: i18n('resetFilter'),
-
-      noResultsLabel: i18n('noFilesFound'),
-      logout: this.logout,
-      handleScroll: this.handleScroll,
-      done: this.donePicking,
-      cancel: this.cancelPicking,
-      // eslint-disable-next-line react/jsx-props-no-spreading
-      headerComponent: <Header<M, B> {...headerProps} />,
-      title: this.plugin.title,
-      viewType: targetViewOptions.viewType,
-      showTitles: targetViewOptions.showTitles,
-      showBreadcrumbs: targetViewOptions.showBreadcrumbs,
-      pluginIcon,
-      i18n: this.plugin.uppy.i18n,
-
-      validateRestrictions: this.validateRestrictions,
-      isLoading: loading,
-    }
 
     if (authenticated === false) {
       return (
@@ -407,7 +362,45 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
       )
     }
 
-    // eslint-disable-next-line react/jsx-props-no-spreading
-    return <Browser<M, B> {...browserProps} />
+    return <Browser<M, B>
+      toggleCheckbox={this.toggleCheckbox.bind(this)}
+      displayedPartialTree={displayedPartialTree}
+      nOfSelectedFiles={getNOfSelectedFiles(partialTree)}
+      getFolder={this.getFolder}
+      loadAllFiles={this.opts.loadAllFiles}
+
+      // For SearchFilterInput component
+      showSearchFilter={targetViewOptions.showFilter}
+      search={(input: string | undefined) => this.plugin.setPluginState({ searchString: input })}
+      clearSearch={() => this.plugin.setPluginState({ searchString: '' })}
+      searchString={searchString}
+      searchOnInput={true}
+      searchInputLabel={i18n('filter')}
+      clearSearchLabel={i18n('resetFilter')}
+
+      noResultsLabel={i18n('noFilesFound')}
+      handleScroll={this.handleScroll}
+      done={this.donePicking}
+      cancel={this.cancelPicking}
+      headerComponent={
+        <Header<M, B>
+          showBreadcrumbs={targetViewOptions.showBreadcrumbs}
+          getFolder={this.getFolder}
+          breadcrumbs={this.getBreadcrumbs}
+          pluginIcon={pluginIcon}
+          title={this.plugin.title}
+          logout={this.logout}
+          username={this.username}
+          i18n={i18n}
+        />
+      }
+      viewType={targetViewOptions.viewType}
+      showTitles={targetViewOptions.showTitles}
+      showBreadcrumbs={targetViewOptions.showBreadcrumbs}
+      i18n={this.plugin.uppy.i18n}
+
+      validateRestrictions={this.validateRestrictions}
+      isLoading={loading}
+    />
   }
 }
