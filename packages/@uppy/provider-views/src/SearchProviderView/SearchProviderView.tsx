@@ -1,9 +1,8 @@
 import { h } from 'preact'
 
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
-import type { PartialTree, PartialTreeFile, PartialTreeFolderNode, PartialTreeStatusFile, UnknownSearchProviderPlugin, UnknownSearchProviderPluginState } from '@uppy/core/lib/Uppy.ts'
+import type { PartialTree, PartialTreeFile, PartialTreeFolderNode, UnknownSearchProviderPlugin, UnknownSearchProviderPluginState } from '@uppy/core/lib/Uppy.ts'
 import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin.ts'
-import type Uppy from '@uppy/core'
 import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
 import SearchFilterInput from '../SearchFilterInput.tsx'
 import Browser from '../Browser.tsx'
@@ -14,13 +13,11 @@ import View, { type ViewOptions } from '../View.ts'
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../../package.json'
 import getTagFile from '../utils/getTagFile.ts'
-import filterItems from '../utils/filterItems.ts'
 import getNOfSelectedFiles from '../utils/getNOfSelectedFiles.ts'
 
 const defaultState : Partial<UnknownSearchProviderPluginState> = {
   isInputMode: true,
-  filterInput: '',
-  searchTerm: null,
+  searchString: '',
   partialTree: [
     {
       type: 'root',
@@ -109,13 +106,13 @@ export default class SearchProviderView<
     this.plugin.setPluginState({
       partialTree: newPartialTree,
       isInputMode: false,
-      searchTerm: res.searchedFor,
+      searchString: res.searchedFor,
     })
   }
 
   async search(query: string): Promise<void> {
-    const { searchTerm } = this.plugin.getPluginState()
-    if (query && query === searchTerm) {
+    const { searchString } = this.plugin.getPluginState()
+    if (query && query === searchString) {
       // no need to search again as this is the same as the previous search
       return
     }
@@ -135,7 +132,7 @@ export default class SearchProviderView<
     this.plugin.setPluginState({
       partialTree: [],
       currentFolderId: null,
-      searchTerm: null,
+      searchString: '',
     })
   }
 
@@ -146,8 +143,8 @@ export default class SearchProviderView<
       this.isHandlingScroll = true
 
       try {
-        const { searchTerm } = this.plugin.getPluginState()
-        const response = await this.provider.search<Res>(searchTerm!, query)
+        const { searchString } = this.plugin.getPluginState()
+        const response = await this.provider.search<Res>(searchString, query)
 
         this.#updateFilesAndInputMode(response)
       } catch (error) {
@@ -174,7 +171,7 @@ export default class SearchProviderView<
     state: unknown,
     viewOptions: Omit<ViewOptions<M, B, PluginType>, 'provider'> = {},
   ): JSX.Element {
-    const { isInputMode, searchTerm } =
+    const { isInputMode, searchString } =
       this.plugin.getPluginState()
     const { i18n } = this.plugin.uppy
 
@@ -184,7 +181,7 @@ export default class SearchProviderView<
 
     const browserProps = {
       toggleCheckbox: this.toggleCheckbox.bind(this),
-      displayedPartialTree: partialTree.filter((item) => item.type !== 'root' && item.parentId === currentFolderId),
+      displayedPartialTree: partialTree.filter((item) => item.type !== 'root' && item.parentId === currentFolderId) as (PartialTreeFolderNode | PartialTreeFile)[],
       nOfSelectedFiles: getNOfSelectedFiles(partialTree),
       currentFolderId,
       handleScroll: this.handleScroll,
@@ -196,7 +193,7 @@ export default class SearchProviderView<
       showSearchFilter: targetViewOptions.showFilter,
       search: this.search,
       clearSearch: this.clearSearch,
-      searchTerm,
+      searchString,
       searchOnInput: false,
       searchInputLabel: i18n('search'),
       clearSearchLabel: i18n('resetSearch'),

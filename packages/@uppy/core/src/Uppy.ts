@@ -110,7 +110,7 @@ export type PartialTree = (PartialTreeFile | PartialTreeFolder)[]
 export type UnknownProviderPluginState = {
   authenticated: boolean | undefined
   didFirstRender: boolean
-  filterInput: string
+  searchString: string
   loading: boolean | string
   partialTree: PartialTree
   currentFolderId: string | null
@@ -151,11 +151,10 @@ export type UnknownProviderPlugin<
  */
 export type UnknownSearchProviderPluginState = {
   isInputMode?: boolean
-  searchTerm?: string | null
 } & Pick<
   UnknownProviderPluginState,
   | 'loading'
-  | 'filterInput'
+  | 'searchString'
   | 'didFirstRender'
   | 'partialTree'
   | 'currentFolderId'

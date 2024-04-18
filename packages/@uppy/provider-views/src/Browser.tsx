@@ -29,7 +29,7 @@ type BrowserProps<M extends Meta, B extends Body> = {
   isLoading: boolean | string
   showSearchFilter: boolean
   search: (query: string) => void
-  searchTerm: string
+  searchString: string
   clearSearch: () => void
   searchOnInput: boolean
   searchInputLabel: string
@@ -58,7 +58,7 @@ function Browser<M extends Meta, B extends Body>(
     isLoading,
     showSearchFilter,
     search,
-    searchTerm,
+    searchString,
     clearSearch,
     searchOnInput,
     searchInputLabel,
@@ -94,7 +94,7 @@ function Browser<M extends Meta, B extends Body>(
         <div class="uppy-ProviderBrowser-searchFilter">
           <SearchFilterInput
             search={search}
-            searchTerm={searchTerm}
+            searchTerm={searchString}
             clearSearch={clearSearch}
             inputLabel={searchInputLabel}
             clearSearchLabel={clearSearchLabel}

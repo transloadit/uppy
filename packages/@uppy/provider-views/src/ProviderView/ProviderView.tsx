@@ -77,7 +77,7 @@ const getDefaultState = (rootFolderId: string | null) : Partial<UnknownProviderP
     }
   ],
   currentFolderId: null,
-  filterInput: '',
+  searchString: '',
   didFirstRender: false
 })
 
@@ -165,7 +165,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
     const clickedFolder = partialTree.find((folder) => folder.id === folderId)! as PartialTreeFolder
     if (clickedFolder.cached) {
       console.log("Folder was cached____________________________________________");
-      this.plugin.setPluginState({ currentFolderId: folderId, filterInput: '' })
+      this.plugin.setPluginState({ currentFolderId: folderId, searchString: '' })
       return
     }
 
@@ -188,7 +188,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
       this.plugin.setPluginState({
         partialTree: newPartialTree,
         currentFolderId: folderId,
-        filterInput: ''
+        searchString: ''
       })
     }).catch(this.handleError)
 
@@ -325,7 +325,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
     }
 
     const targetViewOptions = { ...this.opts, ...viewOptions }
-    const { partialTree, currentFolderId, filterInput, loading } =
+    const { partialTree, currentFolderId, searchString, loading } =
       this.plugin.getPluginState()
     const pluginIcon = this.plugin.icon || defaultPickerIcon
 
@@ -341,7 +341,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
     }
 
     const itemsInThisFolder = partialTree.filter((item) => item.type !== 'root' && item.parentId === currentFolderId)
-    const displayedPartialTree = filterItems(itemsInThisFolder, filterInput) as (PartialTreeFile | PartialTreeFolderNode)[]
+    const displayedPartialTree = filterItems(itemsInThisFolder, searchString) as (PartialTreeFile | PartialTreeFolderNode)[]
 
     const browserProps = {
       toggleCheckbox: this.toggleCheckbox.bind(this),
@@ -352,9 +352,9 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
 
       // For SearchFilterInput component
       showSearchFilter: targetViewOptions.showFilter,
-      search: (input: string | undefined) => this.plugin.setPluginState({ filterInput: input }),
-      clearSearch: () => this.plugin.setPluginState({ filterInput: '' }),
-      searchTerm: filterInput,
+      search: (input: string | undefined) => this.plugin.setPluginState({ searchString: input }),
+      clearSearch: () => this.plugin.setPluginState({ searchString: '' }),
+      searchString,
       searchOnInput: true,
       searchInputLabel: i18n('filter'),
       clearSearchLabel: i18n('resetFilter'),
