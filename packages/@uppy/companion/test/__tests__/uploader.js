@@ -16,9 +16,13 @@ afterAll(() => {
   nock.restore()
 })
 
+// Workaround a limitation in Nock+got+Node.js 20.9+ when the body of the request
+// is a stream. Setting this env variable causes the Nock to receive only the
+// first chunk of the request body, which is OK for most of our tests anyway.
+process.env.UPPY_TEST_DO_NOT_WAIT_FOR_COMPLETE_BODY = true
+
 process.env.COMPANION_DATADIR = './test/output'
 process.env.COMPANION_DOMAIN = 'localhost:3020'
-process.env.UPPY_TEST_DO_NOT_WAIT_FOR_COMPLETE_BODY = true // workaround a limitation in Nock+got+Node.js 20.9+
 const { companionOptions } = standalone()
 
 describe('uploader with tus protocol', () => {
