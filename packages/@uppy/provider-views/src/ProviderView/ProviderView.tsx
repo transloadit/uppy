@@ -25,6 +25,7 @@ import PartialTreeUtils from '../utils/PartialTreeUtils.ts'
 import fillPartialTree from '../utils/fillPartialTree.ts'
 import getTagFile from '../utils/getTagFile.ts'
 import filterItems from '../utils/filterItems.ts'
+import getNOfSelectedFiles from '../utils/getNOfSelectedFiles.ts'
 
 export function defaultPickerIcon(): JSX.Element {
   return (
@@ -339,10 +340,13 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
       i18n,
     }
 
+    const itemsInThisFolder = partialTree.filter((item) => item.type !== 'root' && item.parentId === currentFolderId)
+    const displayedPartialTree = filterItems(itemsInThisFolder, filterInput) as (PartialTreeFile | PartialTreeFolderNode)[]
+
     const browserProps = {
       toggleCheckbox: this.toggleCheckbox.bind(this),
-      partialTree,
-      currentFolderId,
+      displayedPartialTree,
+      nOfSelectedFiles: getNOfSelectedFiles(partialTree),
       getFolder: this.getFolder,
       loadAllFiles: this.opts.loadAllFiles,
 

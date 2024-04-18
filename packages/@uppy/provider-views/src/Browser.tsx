@@ -5,21 +5,18 @@ import classNames from 'classnames'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore untyped
 import VirtualList from '@uppy/utils/lib/VirtualList'
-import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
+import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import type { I18n } from '@uppy/utils/lib/Translator'
-import type Uppy from '@uppy/core'
 import SearchFilterInput from './SearchFilterInput.tsx'
 import FooterActions from './FooterActions.tsx'
 import Item from './Item/index.tsx'
 import type { PartialTree, PartialTreeFile, PartialTreeFolderNode } from '@uppy/core/lib/Uppy.ts'
 import type { RestrictionError } from '@uppy/core/lib/Restricter.ts'
 import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
-import getNOfSelectedFiles from './utils/getNOfSelectedFiles.ts'
-import filterItems from './utils/filterItems.ts'
 
 type BrowserProps<M extends Meta, B extends Body> = {
-  partialTree: PartialTree,
-  currentFolderId: string | null,
+  displayedPartialTree: (PartialTreeFile | PartialTreeFolderNode)[],
+  nOfSelectedFiles: number,
 
   viewType: string
   headerComponent?: JSX.Element
@@ -48,8 +45,8 @@ function Browser<M extends Meta, B extends Body>(
   props: BrowserProps<M, B>,
 ): JSX.Element {
   const {
-    partialTree,
-    currentFolderId,
+    displayedPartialTree,
+    nOfSelectedFiles,
     viewType,
     headerComponent,
     showBreadcrumbs,
@@ -72,11 +69,6 @@ function Browser<M extends Meta, B extends Body>(
     noResultsLabel,
     loadAllFiles,
   } = props
-
-  const itemsInThisFolder = partialTree.filter((item) => item.type !== 'root' && item.parentId === currentFolderId)
-  const displayedPartialTree = filterItems(itemsInThisFolder, searchTerm) as (PartialTreeFile | PartialTreeFolderNode)[]
-
-  const nOfSelectedFiles = getNOfSelectedFiles(partialTree)
 
   return (
     <div

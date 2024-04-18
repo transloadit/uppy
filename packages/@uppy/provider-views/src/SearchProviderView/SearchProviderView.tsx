@@ -15,6 +15,7 @@ import View, { type ViewOptions } from '../View.ts'
 import packageJson from '../../package.json'
 import getTagFile from '../utils/getTagFile.ts'
 import filterItems from '../utils/filterItems.ts'
+import getNOfSelectedFiles from '../utils/getNOfSelectedFiles.ts'
 
 const defaultState : Partial<UnknownSearchProviderPluginState> = {
   isInputMode: true,
@@ -183,7 +184,8 @@ export default class SearchProviderView<
 
     const browserProps = {
       toggleCheckbox: this.toggleCheckbox.bind(this),
-      partialTree,
+      displayedPartialTree: partialTree.filter((item) => item.type !== 'root' && item.parentId === currentFolderId),
+      nOfSelectedFiles: getNOfSelectedFiles(partialTree),
       currentFolderId,
       handleScroll: this.handleScroll,
       done: this.donePicking,
