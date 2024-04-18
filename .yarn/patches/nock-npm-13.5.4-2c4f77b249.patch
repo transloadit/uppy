@@ -7,7 +7,7 @@ index d82c2446b540759cbc54ad7b26222a80109b8ec9..bf24add845d12e436c97b3ea5e2e38f8
      // This flag is set when playback is triggered if we haven't yet gotten the
      // socket event to indicate that playback should start as soon as it comes in.
 -    this.readyToStartPlaybackOnSocketEvent = false
-+    this.readyToStartPlaybackOnSocketEvent = true
++    this.readyToStartPlaybackOnSocketEvent = 'UPPY_TEST_DO_NOT_WAIT_FOR_COMPLETE_BODY' in process.env
  
      this.attachToReq()
  

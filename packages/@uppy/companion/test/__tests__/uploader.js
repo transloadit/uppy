@@ -18,6 +18,7 @@ afterAll(() => {
 
 process.env.COMPANION_DATADIR = './test/output'
 process.env.COMPANION_DOMAIN = 'localhost:3020'
+process.env.UPPY_TEST_DO_NOT_WAIT_FOR_COMPLETE_BODY = true // workaround a limitation in Nock+got+Node.js 20.9+
 const { companionOptions } = standalone()
 
 describe('uploader with tus protocol', () => {
@@ -190,9 +191,10 @@ describe('uploader with tus protocol', () => {
   })
 
   // eslint-disable-next-line max-len
-  const formDataNoMetaMatch = /^--form-data-boundary-[a-z0-9]+\r\nContent-Disposition: form-data; name="files\[\]"; filename="uppy-file-[^"]+"\r\nContent-Type: application\/octet-stream\r\n\r\n$/
+  const formDataNoMetaMatch = /^--form-data-boundary-[a-z0-9]+\r\nContent-Disposition: form-data; name="files\[\]"; filename="uppy-file-[^"]+"\r\nContent-Type: application\/octet-stream\r\n\r\nSome file content\r\n--form-data-boundary-[a-z0-9]+--\r\n\r\n$/
 
   test('upload functions with xhr formdata', async () => {
+    delete process.env.UPPY_TEST_DO_NOT_WAIT_FOR_COMPLETE_BODY
     nock('http://localhost').post('/', formDataNoMetaMatch)
       .reply(200)
 
@@ -201,7 +203,7 @@ describe('uploader with tus protocol', () => {
   })
 
   test('upload functions with unknown file size', async () => {
-    // eslint-disable-next-line max-len
+    delete process.env.UPPY_TEST_DO_NOT_WAIT_FOR_COMPLETE_BODY
     nock('http://localhost').post('/', formDataNoMetaMatch)
       .reply(200)
 
@@ -211,8 +213,8 @@ describe('uploader with tus protocol', () => {
 
   // https://github.com/transloadit/uppy/issues/3477
   test('upload functions with xhr formdata and metadata', async () => {
-    // eslint-disable-next-line max-len
-    nock('http://localhost').post('/', /^--form-data-boundary-[a-z0-9]+\r\nContent-Disposition: form-data; name="key1"\r\n\r\n$/)
+    delete process.env.UPPY_TEST_DO_NOT_WAIT_FOR_COMPLETE_BODY
+    nock('http://localhost').post('/', /^--form-data-boundary-[a-z0-9]+\r\nContent-Disposition: form-data; name="key1"\r\n\r\nnull\r\n--form-data-boundary-[a-z0-9]+\r\nContent-Disposition: form-data; name="key2"\r\n\r\ntrue\r\n--form-data-boundary-[a-z0-9]+\r\nContent-Disposition: form-data; name="key3"\r\n\r\n\d+\r\n--form-data-boundary-[a-z0-9]+\r\nContent-Disposition: form-data; name="key4"\r\n\r\n\[object Object\]\r\n--form-data-boundary-[a-z0-9]+\r\nContent-Disposition: form-data; name="key5"\r\n\r\n\(\) => \{\}\r\n--form-data-boundary-[a-z0-9]+\r\nContent-Disposition: form-data; name="key6"\r\n\r\nSymbol\(\)\r\n--form-data-boundary-[a-z0-9]+\r\nContent-Disposition: form-data; name="files\[\]"; filename="uppy-file-[^"]+"\r\nContent-Type: application\/octet-stream\r\n\r\nSome file content\r\n--form-data-boundary-[a-z0-9]+--\r\n\r\n$/)
       .reply(200)
 
     const metadata = {

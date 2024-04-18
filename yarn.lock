@@ -24373,12 +24373,12 @@ __metadata:
 
 "nock@patch:nock@npm%3A13.5.4#./.yarn/patches/nock-npm-13.5.4-2c4f77b249.patch::locator=%40uppy-dev%2Fbuild%40workspace%3A.":
   version: 13.5.4
-  resolution: "nock@patch:nock@npm%3A13.5.4#./.yarn/patches/nock-npm-13.5.4-2c4f77b249.patch::version=13.5.4&hash=8a9abd&locator=%40uppy-dev%2Fbuild%40workspace%3A."
+  resolution: "nock@patch:nock@npm%3A13.5.4#./.yarn/patches/nock-npm-13.5.4-2c4f77b249.patch::version=13.5.4&hash=3af473&locator=%40uppy-dev%2Fbuild%40workspace%3A."
   dependencies:
     debug: ^4.1.0
     json-stringify-safe: ^5.0.1
     propagate: ^2.0.0
-  checksum: fdd3760996dc48213779713a67bb9e1d21725d063dbca00a5f82c988f07f400c2bc1c2cf91ec4572273a0e68ed8f2eb0872cd926e3d7ab53e23f0725d25768eb
+  checksum: ec5476a5c4bba1a976499533e1aee26edbc9b0fbf41d4b6443edac696cd70b6f0d50e1f19f1536cd6dd709c262af8a8727955fc7387919d196517cbb42f200fe
   languageName: node
   linkType: hard
 
