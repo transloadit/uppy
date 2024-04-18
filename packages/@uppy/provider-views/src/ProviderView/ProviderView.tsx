@@ -311,6 +311,23 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
     return breadcrumbs.toReversed()
   }
 
+  toggleCheckbox(e: Event, ourItem: PartialTreeFolderNode | PartialTreeFile) {
+    e.stopPropagation()
+    e.preventDefault()
+    // Prevent shift-clicking from highlighting file names
+    // (https://stackoverflow.com/a/1527797/3192470)
+    document.getSelection()?.removeAllRanges()
+
+    const { partialTree, currentFolderId, searchString } = this.plugin.getPluginState()
+
+    const itemsInThisFolder = partialTree.filter((item) => item.type !== 'root' && item.parentId === currentFolderId)
+    const displayedPartialTree = filterItems(itemsInThisFolder, searchString) as (PartialTreeFile | PartialTreeFolderNode)[]
+    const newPartialTree = PartialTreeUtils.afterToggleCheckbox(partialTree, displayedPartialTree, ourItem, this.validateRestrictions, this.isShiftKeyPressed, this.lastCheckbox)
+
+    this.plugin.setPluginState({ partialTree: newPartialTree })
+    this.lastCheckbox = ourItem.id!
+  }
+
   render(
     state: unknown,
     viewOptions: Omit<ViewOptions<M, B, PluginType>, 'provider'> = {},

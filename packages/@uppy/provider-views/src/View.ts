@@ -1,15 +1,12 @@
 import type {
-  PartialTree,
   PartialTreeFile,
-  PartialTreeFolderNode,
   UnknownProviderPlugin,
   UnknownSearchProviderPlugin,
 } from '@uppy/core/lib/Uppy'
-import type { Body, Meta, TagFile } from '@uppy/utils/lib/UppyFile'
+import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
 import remoteFileObjToLocal from '@uppy/utils/lib/remoteFileObjToLocal'
 import type { RestrictionError } from '@uppy/core/lib/Restricter'
-import PartialTreeUtils from './utils/PartialTreeUtils'
 
 type PluginType = 'Provider' | 'SearchProvider'
 
@@ -136,27 +133,6 @@ export default class View<
 
   registerRequestClient(): void {
     this.plugin.uppy.registerRequestClient(this.provider.provider, this.provider)
-  }
-
-  /**
-   * Toggles file/folder checkbox to on/off state while updating files list.
-   *
-   * Note that some extra complexity comes from supporting shift+click to
-   * toggle multiple checkboxes at once, which is done by getting all files
-   * in between last checked file and current one.
-   */
-  toggleCheckbox(e: Event, ourItem: PartialTreeFolderNode | PartialTreeFile) {
-    e.stopPropagation()
-    e.preventDefault()
-    // Prevent shift-clicking from highlighting file names (https://stackoverflow.com/a/1527797/3192470)
-    document.getSelection()?.removeAllRanges()
-
-    const { partialTree, currentFolderId, filterInput } = this.plugin.getPluginState()
-
-    const newPartialTree = PartialTreeUtils.afterToggleCheckbox(partialTree, ourItem, this.validateRestrictions, filterInput, currentFolderId, this.isShiftKeyPressed, this.lastCheckbox)
-
-    this.plugin.setPluginState({ partialTree: newPartialTree })
-    this.lastCheckbox = ourItem.id!
   }
 
   setLoading(loading: boolean | string): void {

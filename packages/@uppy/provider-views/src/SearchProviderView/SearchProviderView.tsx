@@ -14,6 +14,7 @@ import View, { type ViewOptions } from '../View.ts'
 import packageJson from '../../package.json'
 import getTagFile from '../utils/getTagFile.ts'
 import getNOfSelectedFiles from '../utils/getNOfSelectedFiles.ts'
+import PartialTreeUtils from '../utils/PartialTreeUtils.ts'
 
 const defaultState : Partial<UnknownSearchProviderPluginState> = {
   isInputMode: true,
@@ -165,6 +166,22 @@ export default class SearchProviderView<
     this.plugin.uppy.addFiles(tagFiles)
 
     this.resetPluginState()
+  }
+
+  toggleCheckbox(e: Event, ourItem: PartialTreeFolderNode | PartialTreeFile) {
+    e.stopPropagation()
+    e.preventDefault()
+    // Prevent shift-clicking from highlighting file names
+    // (https://stackoverflow.com/a/1527797/3192470)
+    document.getSelection()?.removeAllRanges()
+
+    const { partialTree, currentFolderId, searchString } = this.plugin.getPluginState()
+
+    const displayedPartialTree = partialTree.filter((item) => item.type !== 'root' && item.parentId === currentFolderId) as (PartialTreeFolderNode | PartialTreeFile)[]
+    const newPartialTree = PartialTreeUtils.afterToggleCheckbox(partialTree, displayedPartialTree, ourItem, this.validateRestrictions, this.isShiftKeyPressed, this.lastCheckbox)
+
+    this.plugin.setPluginState({ partialTree: newPartialTree })
+    this.lastCheckbox = ourItem.id!
   }
 
   render(
