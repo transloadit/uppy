@@ -28,7 +28,6 @@ type BrowserProps<M extends Meta, B extends Body> = {
   validateRestrictions: (file: CompanionFile) => RestrictionError<M, B> | null
   isLoading: boolean | string
   showSearchFilter: boolean
-  search: (query: string) => void
   searchString: string
   setSearchString: (s: string) => void
   submitSearchString: () => void

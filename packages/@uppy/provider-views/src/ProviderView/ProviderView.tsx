@@ -24,7 +24,6 @@ import packageJson from '../../package.json'
 import PartialTreeUtils from '../utils/PartialTreeUtils.ts'
 import fillPartialTree from '../utils/fillPartialTree.ts'
 import getTagFile from '../utils/getTagFile.ts'
-import filterItems from '../utils/filterItems.ts'
 import getNOfSelectedFiles from '../utils/getNOfSelectedFiles.ts'
 
 export function defaultPickerIcon(): JSX.Element {
@@ -318,14 +317,21 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
     // (https://stackoverflow.com/a/1527797/3192470)
     document.getSelection()?.removeAllRanges()
 
-    const { partialTree, currentFolderId, searchString } = this.plugin.getPluginState()
-
-    const itemsInThisFolder = partialTree.filter((item) => item.type !== 'root' && item.parentId === currentFolderId)
-    const displayedPartialTree = filterItems(itemsInThisFolder, searchString) as (PartialTreeFile | PartialTreeFolderNode)[]
-    const newPartialTree = PartialTreeUtils.afterToggleCheckbox(partialTree, displayedPartialTree, ourItem, this.validateRestrictions, this.isShiftKeyPressed, this.lastCheckbox)
+    const { partialTree } = this.plugin.getPluginState()
+    const newPartialTree = PartialTreeUtils.afterToggleCheckbox(partialTree, this.getDisplayedPartialTree(), ourItem, this.validateRestrictions, this.isShiftKeyPressed, this.lastCheckbox)
 
     this.plugin.setPluginState({ partialTree: newPartialTree })
     this.lastCheckbox = ourItem.id!
+  }
+
+  getDisplayedPartialTree = () : (PartialTreeFile | PartialTreeFolderNode)[] => {
+    const { partialTree, currentFolderId, searchString } = this.plugin.getPluginState()
+    const inThisFolder = partialTree.filter((item) => item.type !== 'root' && item.parentId === currentFolderId) as (PartialTreeFile | PartialTreeFolderNode)[]
+    const filtered = searchString === ''
+      ? inThisFolder
+      : inThisFolder.filter((item) => item.data.name.toLowerCase().indexOf(searchString.toLowerCase()) !== -1)
+
+    return filtered
   }
 
   render(
@@ -346,9 +352,6 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
       this.plugin.getPluginState()
     const pluginIcon = this.plugin.icon || defaultPickerIcon
 
-    const itemsInThisFolder = partialTree.filter((item) => item.type !== 'root' && item.parentId === currentFolderId)
-    const displayedPartialTree = filterItems(itemsInThisFolder, searchString) as (PartialTreeFile | PartialTreeFolderNode)[]
-
     if (authenticated === false) {
       return (
         <AuthView
@@ -364,7 +367,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
 
     return <Browser<M, B>
       toggleCheckbox={this.toggleCheckbox.bind(this)}
-      displayedPartialTree={displayedPartialTree}
+      displayedPartialTree={this.getDisplayedPartialTree()}
       nOfSelectedFiles={getNOfSelectedFiles(partialTree)}
       getFolder={this.getFolder}
       loadAllFiles={this.opts.loadAllFiles}
