@@ -21,8 +21,7 @@ import View, { type ViewOptions } from '../View.ts'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../../package.json'
-import PartialTreeUtils from '../utils/PartialTreeUtils.ts'
-import fillPartialTree from '../utils/fillPartialTree.ts'
+import PartialTreeUtils from '../utils/PartialTreeUtils'
 import getTagFile from '../utils/getTagFile.ts'
 import getNOfSelectedFiles from '../utils/getNOfSelectedFiles.ts'
 
@@ -257,7 +256,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
     this.setLoading(true)
 
     await this.#withAbort(async (signal) => {
-      const uppyFiles: CompanionFile[] = await fillPartialTree(partialTree, this.provider, signal)
+      const uppyFiles: CompanionFile[] = await PartialTreeUtils.fill(partialTree, this.provider, signal)
 
       const filesToAdd : TagFile<M>[] = []
       const filesAlreadyAdded : TagFile<M>[] = []

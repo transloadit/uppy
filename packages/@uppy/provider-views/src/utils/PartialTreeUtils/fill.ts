@@ -3,7 +3,6 @@ import type { CompanionClientProvider, RequestOptions } from "@uppy/utils/lib/Co
 import type { CompanionFile } from "@uppy/utils/lib/CompanionFile"
 import PQueue from "p-queue"
 
-
 const getAbsPath = (partialTree: PartialTree, file: PartialTreeFile) : (PartialTreeFile | PartialTreeFolderNode)[] => {
   const path : (PartialTreeFile | PartialTreeFolderNode)[] = []
   let parent: PartialTreeFile | PartialTreeFolder = file
@@ -68,7 +67,7 @@ const recursivelyFetch = async (queue: PQueue, poorTree: PartialTree, poorFolder
   return []
 }
 
-const fillPartialTree = async (partialTree: PartialTree, provider: CompanionClientProvider, signal: AbortSignal) : Promise<CompanionFile[]> => {
+const fill = async (partialTree: PartialTree, provider: CompanionClientProvider, signal: AbortSignal) : Promise<CompanionFile[]> => {
   const queue = new PQueue({ concurrency: 6 })
 
   // fill up the missing parts of a partialTree!
@@ -105,4 +104,4 @@ const fillPartialTree = async (partialTree: PartialTree, provider: CompanionClie
   return uppyFiles
 }
 
-export default fillPartialTree;
+export default fill;

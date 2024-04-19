@@ -14,7 +14,7 @@ import View, { type ViewOptions } from '../View.ts'
 import packageJson from '../../package.json'
 import getTagFile from '../utils/getTagFile.ts'
 import getNOfSelectedFiles from '../utils/getNOfSelectedFiles.ts'
-import PartialTreeUtils from '../utils/PartialTreeUtils.ts'
+import PartialTreeUtils from '../utils/PartialTreeUtils'
 
 const defaultState : Partial<UnknownSearchProviderPluginState> = {
   isInputMode: true,
@@ -230,7 +230,6 @@ export default class SearchProviderView<
           cancel={this.cancelPicking}
           getFolder={() => {}}
           showSearchFilter={targetViewOptions.showFilter}
-          search={this.search}
           searchString={searchString}
           setSearchString={this.setSearchString}
           submitSearchString={this.search}
