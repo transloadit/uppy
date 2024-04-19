@@ -24,6 +24,7 @@ import packageJson from '../../package.json'
 import PartialTreeUtils from '../utils/PartialTreeUtils'
 import getTagFile from '../utils/getTagFile.ts'
 import getNOfSelectedFiles from '../utils/getNOfSelectedFiles.ts'
+import shouldHandleScroll from '../utils/shouldHandleScroll.ts'
 
 export function defaultPickerIcon(): JSX.Element {
   return (
@@ -239,7 +240,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
   async handleScroll(event: Event): Promise<void> {
     const { partialTree, currentFolderId } = this.plugin.getPluginState()
     const currentFolder = partialTree.find((i) => i.id === currentFolderId) as PartialTreeFolder
-    if (this.shouldHandleScroll(event) && currentFolder.nextPagePath) {
+    if (shouldHandleScroll(event) && !this.isHandlingScroll && currentFolder.nextPagePath) {
       this.isHandlingScroll = true
       await this.#withAbort(async (signal) => {
         const { nextPagePath, items } = await this.provider.list(currentFolder.nextPagePath!, { signal })

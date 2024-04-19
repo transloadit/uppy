@@ -92,14 +92,6 @@ export default class View<
     return this.plugin.uppy.validateRestrictions(localData, [...aleadyAddedFiles, ...checkedFilesData])
   }
 
-  shouldHandleScroll(event: Event): boolean {
-    const { scrollHeight, scrollTop, offsetHeight } =
-      event.target as HTMLElement
-    const scrollPosition = scrollHeight - (scrollTop + offsetHeight)
-
-    return scrollPosition < 50 && !this.isHandlingScroll
-  }
-
   cancelPicking(): void {
     const dashboard = this.plugin.uppy.getPlugin('Dashboard')
 

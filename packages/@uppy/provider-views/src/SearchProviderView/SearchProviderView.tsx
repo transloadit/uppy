@@ -15,6 +15,7 @@ import packageJson from '../../package.json'
 import getTagFile from '../utils/getTagFile.ts'
 import getNOfSelectedFiles from '../utils/getNOfSelectedFiles.ts'
 import PartialTreeUtils from '../utils/PartialTreeUtils'
+import shouldHandleScroll from '../utils/shouldHandleScroll.ts'
 
 const defaultState : Partial<UnknownSearchProviderPluginState> = {
   isInputMode: true,
@@ -126,7 +127,7 @@ export default class SearchProviderView<
     const { partialTree, searchString } = this.plugin.getPluginState()
     const root = partialTree.find((i) => i.type === 'root') as PartialTreeFolderRoot
 
-    if (this.shouldHandleScroll(event) && root.nextPagePath) {
+    if (shouldHandleScroll(event) && !this.isHandlingScroll && root.nextPagePath) {
       this.isHandlingScroll = true
       try {
         const response = await this.provider.search<Res>(searchString, root.nextPagePath)
