@@ -67,8 +67,8 @@ export default class SearchProviderView<
   ) {
     super(plugin, { ...defaultOptions, ...opts })
 
+    this.setSearchString = this.setSearchString.bind(this)
     this.search = this.search.bind(this)
-    this.clearSearch = this.clearSearch.bind(this)
     this.resetPluginState = this.resetPluginState.bind(this)
     this.handleScroll = this.handleScroll.bind(this)
     this.donePicking = this.donePicking.bind(this)
@@ -89,8 +89,9 @@ export default class SearchProviderView<
     this.plugin.setPluginState(defaultState)
   }
 
-  async search(searchString: string): Promise<void> {
-    this.plugin.setPluginState({ searchString })
+  async search(): Promise<void> {
+    const { searchString } = this.plugin.getPluginState()
+    if (searchString === '') return
 
     this.setLoading(true)
     try {
@@ -119,14 +120,6 @@ export default class SearchProviderView<
       this.handleError(err)
     }
     this.setLoading(false)
-  }
-
-  clearSearch(): void {
-    this.plugin.setPluginState({
-      partialTree: [],
-      currentFolderId: null,
-      searchString: '',
-    })
   }
 
   async handleScroll(event: Event): Promise<void> {
@@ -191,31 +184,37 @@ export default class SearchProviderView<
     this.lastCheckbox = ourItem.id!
   }
 
+  setSearchString = (searchString: string) => {
+    this.plugin.setPluginState({ searchString })
+    if (searchString === '') {
+      this.plugin.setPluginState({ partialTree: [] })
+    }
+  }
+
   render(
     state: unknown,
     viewOptions: Omit<ViewOptions<M, B, PluginType>, 'provider'> = {},
   ): JSX.Element {
-    const { isInputMode, searchString } =
+    const { isInputMode, searchString, loading, partialTree, currentFolderId } =
       this.plugin.getPluginState()
     const { i18n } = this.plugin.uppy
-
     const targetViewOptions = { ...this.opts, ...viewOptions }
-    const { loading, partialTree, currentFolderId } =
-      this.plugin.getPluginState()
 
     if (isInputMode) {
       return (
         <CloseWrapper onUnmount={this.resetPluginState}>
-          <div className="uppy-SearchProvider">
-            <SearchFilterInput
-              search={this.search}
-              inputLabel={i18n('enterTextToSearch')}
-              buttonLabel={i18n('searchImages')}
-              inputClassName="uppy-c-textInput uppy-SearchProvider-input"
-              buttonCSSClassName="uppy-SearchProvider-searchButton"
-              showButton
-            />
-          </div>
+          <SearchFilterInput
+            searchString={searchString}
+            setSearchString={this.setSearchString}
+            submitSearchString={this.search}
+
+            inputLabel={i18n('enterTextToSearch')}
+            buttonLabel={i18n('searchImages')}
+            wrapperClassName="uppy-SearchProvider"
+            inputClassName="uppy-c-textInput uppy-SearchProvider-input"
+            buttonCSSClassName="uppy-SearchProvider-searchButton"
+            showButton
+          />
         </CloseWrapper>
       )
     }
@@ -232,9 +231,9 @@ export default class SearchProviderView<
           getFolder={() => {}}
           showSearchFilter={targetViewOptions.showFilter}
           search={this.search}
-          clearSearch={this.clearSearch}
           searchString={searchString}
-          searchOnInput={false}
+          setSearchString={this.setSearchString}
+          submitSearchString={this.search}
           searchInputLabel={i18n('search')}
           clearSearchLabel={i18n('resetSearch')}
           noResultsLabel={i18n('noSearchResults')}

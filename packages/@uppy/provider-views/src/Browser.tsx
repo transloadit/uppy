@@ -30,8 +30,8 @@ type BrowserProps<M extends Meta, B extends Body> = {
   showSearchFilter: boolean
   search: (query: string) => void
   searchString: string
-  clearSearch: () => void
-  searchOnInput: boolean
+  setSearchString: (s: string) => void
+  submitSearchString: () => void
   searchInputLabel: string
   clearSearchLabel: string
   getFolder: (folderId: any) => void
@@ -57,10 +57,11 @@ function Browser<M extends Meta, B extends Body>(
     validateRestrictions,
     isLoading,
     showSearchFilter,
-    search,
+
     searchString,
-    clearSearch,
-    searchOnInput,
+    setSearchString,
+    submitSearchString,
+
     searchInputLabel,
     clearSearchLabel,
     getFolder,
@@ -91,17 +92,15 @@ function Browser<M extends Meta, B extends Body>(
       )}
 
       {showSearchFilter && (
-        <div class="uppy-ProviderBrowser-searchFilter">
-          <SearchFilterInput
-            search={search}
-            searchTerm={searchString}
-            clearSearch={clearSearch}
-            inputLabel={searchInputLabel}
-            clearSearchLabel={clearSearchLabel}
-            inputClassName="uppy-ProviderBrowser-searchFilterInput"
-            searchOnInput={searchOnInput}
-          />
-        </div>
+        <SearchFilterInput
+          searchString={searchString}
+          setSearchString={setSearchString}
+          submitSearchString={submitSearchString}
+          inputLabel={searchInputLabel}
+          clearSearchLabel={clearSearchLabel}
+          wrapperClassName="uppy-ProviderBrowser-searchFilter"
+          inputClassName="uppy-ProviderBrowser-searchFilterInput"
+        />
       )}
 
       {(() => {

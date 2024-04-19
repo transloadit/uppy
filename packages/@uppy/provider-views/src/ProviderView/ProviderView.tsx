@@ -371,12 +371,14 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
 
       // For SearchFilterInput component
       showSearchFilter={targetViewOptions.showFilter}
-      search={(input: string | undefined) => this.plugin.setPluginState({ searchString: input })}
-      clearSearch={() => this.plugin.setPluginState({ searchString: '' })}
-      searchString={searchString}
-      searchOnInput={true}
       searchInputLabel={i18n('filter')}
       clearSearchLabel={i18n('resetFilter')}
+      searchString={searchString}
+      setSearchString={(searchString: string) => {
+        console.log('setting searchString!', searchString);
+        this.plugin.setPluginState({ searchString })
+      }}
+      submitSearchString={() => {}}
 
       noResultsLabel={i18n('noFilesFound')}
       handleScroll={this.handleScroll}
@@ -386,7 +388,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
         <Header<M, B>
           showBreadcrumbs={targetViewOptions.showBreadcrumbs}
           getFolder={this.getFolder}
-          breadcrumbs={this.getBreadcrumbs}
+          breadcrumbs={this.getBreadcrumbs()}
           pluginIcon={pluginIcon}
           title={this.plugin.title}
           logout={this.logout}
