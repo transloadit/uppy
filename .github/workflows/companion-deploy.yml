@@ -82,7 +82,7 @@ jobs:
         run: |
           sed -i 's/^EXPOSE 3020$/EXPOSE $PORT/g' Dockerfile
       - name: Deploy to heroku
-        uses: akhileshns/heroku-deploy@v3.13.15
+        uses: akhileshns/heroku-deploy@581dd286c962b6972d427fcf8980f60755c15520  # v3.13.15
         with:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
           heroku_app_name: companion-demo
