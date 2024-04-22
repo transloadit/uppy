@@ -20,7 +20,6 @@ type BrowserProps<M extends Meta, B extends Body> = {
 
   viewType: string
   headerComponent?: JSX.Element
-  showBreadcrumbs: boolean
   toggleCheckbox: (event: Event, file: PartialTreeFile | PartialTreeFolderNode) => void
   handleScroll: (event: Event) => Promise<void>
   showTitles: boolean
@@ -48,7 +47,6 @@ function Browser<M extends Meta, B extends Body>(
     nOfSelectedFiles,
     viewType,
     headerComponent,
-    showBreadcrumbs,
     toggleCheckbox,
     handleScroll,
     showTitles,
@@ -77,18 +75,7 @@ function Browser<M extends Meta, B extends Body>(
         `uppy-ProviderBrowser-viewType--${viewType}`,
       )}
     >
-      {headerComponent && (
-        <div className="uppy-ProviderBrowser-header">
-          <div
-            className={classNames(
-              'uppy-ProviderBrowser-headerBar',
-              !showBreadcrumbs && 'uppy-ProviderBrowser-headerBar--simple',
-            )}
-          >
-            {headerComponent}
-          </div>
-        </div>
-      )}
+      {headerComponent || null}
 
       {showSearchFilter && (
         <SearchFilterInput

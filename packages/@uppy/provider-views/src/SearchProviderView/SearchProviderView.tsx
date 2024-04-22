@@ -251,7 +251,6 @@ export default class SearchProviderView<
         viewType={targetViewOptions.viewType}
         showTitles={targetViewOptions.showTitles}
         isLoading={loading}
-        showBreadcrumbs={targetViewOptions.showBreadcrumbs}
         i18n={i18n}
         validateRestrictions={this.validateRestrictions}
       />

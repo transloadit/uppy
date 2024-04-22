@@ -412,7 +412,6 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
       }
       viewType={targetViewOptions.viewType}
       showTitles={targetViewOptions.showTitles}
-      showBreadcrumbs={targetViewOptions.showBreadcrumbs}
       i18n={this.plugin.uppy.i18n}
 
       validateRestrictions={this.validateRestrictions}

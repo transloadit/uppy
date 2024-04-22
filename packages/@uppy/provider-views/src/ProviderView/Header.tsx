@@ -1,11 +1,12 @@
 /* eslint-disable react/destructuring-assignment */
-import { h, Fragment } from 'preact'
+import { h } from 'preact'
 import type { I18n } from '@uppy/utils/lib/Translator'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import type { PartialTreeFolder } from '@uppy/core/lib/Uppy.ts'
 import User from './User.tsx'
 import Breadcrumbs from '../Breadcrumbs.tsx'
 import type ProviderView from './ProviderView.tsx'
+import classNames from 'classnames'
 
 type HeaderProps<M extends Meta, B extends Body> = {
   showBreadcrumbs: boolean
@@ -22,16 +23,23 @@ export default function Header<M extends Meta, B extends Body>(
   props: HeaderProps<M, B>,
 ): JSX.Element {
   return (
-    <Fragment>
-      {props.showBreadcrumbs && (
-        <Breadcrumbs
-          getFolder={props.getFolder}
-          breadcrumbs={props.breadcrumbs}
-          breadcrumbsIcon={props.pluginIcon && props.pluginIcon()}
-          title={props.title}
-        />
-      )}
-      <User logout={props.logout} username={props.username} i18n={props.i18n} />
-    </Fragment>
+    <div className="uppy-ProviderBrowser-header">
+      <div
+        className={classNames(
+          'uppy-ProviderBrowser-headerBar',
+          !props.showBreadcrumbs && 'uppy-ProviderBrowser-headerBar--simple',
+        )}
+      >
+        {props.showBreadcrumbs && (
+          <Breadcrumbs
+            getFolder={props.getFolder}
+            breadcrumbs={props.breadcrumbs}
+            breadcrumbsIcon={props.pluginIcon && props.pluginIcon()}
+            title={props.title}
+          />
+        )}
+        <User logout={props.logout} username={props.username} i18n={props.i18n} />
+      </div>
+    </div>
   )
 }
