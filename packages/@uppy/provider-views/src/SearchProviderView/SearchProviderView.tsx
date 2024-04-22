@@ -213,7 +213,7 @@ export default class SearchProviderView<
     const { isInputMode, searchString, loading, partialTree, currentFolderId } =
       this.plugin.getPluginState()
     const { i18n } = this.plugin.uppy
-    const targetViewOptions = { ...this.opts, ...viewOptions }
+    const opts : Opts<M, B, 'SearchProvider'> = { ...this.opts, ...viewOptions }
 
     if (isInputMode) {
       return (
@@ -241,15 +241,15 @@ export default class SearchProviderView<
         done={this.donePicking}
         cancel={this.cancelPicking}
         getFolder={() => {}}
-        showSearchFilter={targetViewOptions.showFilter}
+        showSearchFilter={opts.showFilter}
         searchString={searchString}
         setSearchString={this.setSearchString}
         submitSearchString={this.search}
         searchInputLabel={i18n('search')}
         clearSearchLabel={i18n('resetSearch')}
         noResultsLabel={i18n('noSearchResults')}
-        viewType={targetViewOptions.viewType}
-        showTitles={targetViewOptions.showTitles}
+        viewType={opts.viewType}
+        showTitles={opts.showTitles}
         isLoading={loading}
         i18n={i18n}
         validateRestrictions={this.validateRestrictions}

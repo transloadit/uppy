@@ -349,7 +349,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
     state: unknown,
     viewOptions: Omit<ViewOptions<M, B, PluginType>, 'provider'> = {},
   ): JSX.Element {
-    const { authenticated, didFirstRender } = this.plugin.getPluginState()
+    const { didFirstRender } = this.plugin.getPluginState()
     const { i18n } = this.plugin.uppy
 
     if (!didFirstRender) {
@@ -358,8 +358,8 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
       this.getFolder(this.plugin.rootFolderId)
     }
 
-    const targetViewOptions = { ...this.opts, ...viewOptions }
-    const { partialTree, username, searchString, loading } =
+    const opts : Opts<M, B> = { ...this.opts, ...viewOptions }
+    const { authenticated, partialTree, username, searchString, loading } =
       this.plugin.getPluginState()
     const pluginIcon = this.plugin.icon || defaultPickerIcon
 
@@ -370,7 +370,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
           pluginIcon={pluginIcon}
           handleAuth={this.handleAuth}
           i18n={this.plugin.uppy.i18nArray}
-          renderForm={this.opts.renderAuthForm}
+          renderForm={opts.renderAuthForm}
           loading={loading}
         />
       )
@@ -381,10 +381,10 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
       displayedPartialTree={this.getDisplayedPartialTree()}
       nOfSelectedFiles={getNOfSelectedFiles(partialTree)}
       getFolder={this.getFolder}
-      loadAllFiles={this.opts.loadAllFiles}
+      loadAllFiles={opts.loadAllFiles}
 
       // For SearchFilterInput component
-      showSearchFilter={targetViewOptions.showFilter}
+      showSearchFilter={opts.showFilter}
       searchInputLabel={i18n('filter')}
       clearSearchLabel={i18n('resetFilter')}
       searchString={searchString}
@@ -400,7 +400,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
       cancel={this.cancelPicking}
       headerComponent={
         <Header<M, B>
-          showBreadcrumbs={targetViewOptions.showBreadcrumbs}
+          showBreadcrumbs={opts.showBreadcrumbs}
           getFolder={this.getFolder}
           breadcrumbs={this.getBreadcrumbs()}
           pluginIcon={pluginIcon}
@@ -410,8 +410,8 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
           i18n={i18n}
         />
       }
-      viewType={targetViewOptions.viewType}
-      showTitles={targetViewOptions.showTitles}
+      viewType={opts.viewType}
+      showTitles={opts.showTitles}
       i18n={this.plugin.uppy.i18n}
 
       validateRestrictions={this.validateRestrictions}
