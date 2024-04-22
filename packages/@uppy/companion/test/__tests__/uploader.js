@@ -155,7 +155,7 @@ describe('uploader with tus protocol', () => {
       })
       socketClient.onUploadSuccess(uploadToken, (message) => {
         try {
-          expect(firstReceivedProgress.bytesUploaded).toBeGreaterThan(0)
+          expect(firstReceivedProgress.bytesUploaded).toBe(500_000)
 
           // see __mocks__/tus-js-client.js
           expect(message.payload.url).toBe('https://tus.endpoint/files/foo-bar')
@@ -189,7 +189,7 @@ describe('uploader with tus protocol', () => {
     const server = createServer((req,res) => {
       if (alreadyCalled) throw new Error('already called')
       alreadyCalled = true
-      if (req.url === '/' && req.method==='POST') {
+      if (req.url === '/' && req.method === 'POST') {
         res.writeHead(200)
         res.end('OK')
       }
