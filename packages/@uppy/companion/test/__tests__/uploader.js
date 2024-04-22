@@ -183,17 +183,17 @@ describe('uploader with tus protocol', () => {
     const uploader = new Uploader(opts)
     return uploader.uploadStream(stream)
   }
-  
+
   test('upload functions with xhr protocol', async () => {
     let alreadyCalled = false
-  const server = createServer((req,res) => {
-    if (alreadyCalled) throw new Error('already called')
-    alreadyCalled = true
-    if (req.url === '/' && req.method==='POST') {
-      res.writeHead(200)
-      res.end('OK')
-    }
-  }).listen()
+    const server = createServer((req,res) => {
+      if (alreadyCalled) throw new Error('already called')
+      alreadyCalled = true
+      if (req.url === '/' && req.method==='POST') {
+        res.writeHead(200)
+        res.end('OK')
+      }
+    }).listen()
     try {
       await once(server, 'listening')
       
