@@ -167,7 +167,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
    *
    */
   async getFolder(folderId: string | null): Promise<void> {
-    this.lastCheckbox = undefined
+    this.lastCheckbox = null
     console.log(`____________________________________________GETTING FOLDER "${folderId}"`);
     // Returning cached folder
     const { partialTree } = this.plugin.getPluginState()

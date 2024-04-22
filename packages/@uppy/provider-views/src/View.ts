@@ -50,7 +50,7 @@ export default class View<
 
   isShiftKeyPressed: boolean
 
-  lastCheckbox: string | undefined
+  lastCheckbox: string | null
 
   protected opts: O
 
@@ -60,6 +60,8 @@ export default class View<
     this.opts = opts
 
     this.isHandlingScroll = false
+    this.isShiftKeyPressed = false
+    this.lastCheckbox = null
 
     this.handleError = this.handleError.bind(this)
     this.validateRestrictions = this.validateRestrictions.bind(this)

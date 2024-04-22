@@ -7,7 +7,7 @@ const afterToggleCheckbox = (
   ourItem: PartialTreeFolderNode | PartialTreeFile,
   validateRestrictions: (file: CompanionFile) => object | null,
   isShiftKeyPressed: boolean,
-  lastCheckbox: string | undefined
+  lastCheckbox: string | null
 ) : PartialTree => {
   const newPartialTree : PartialTree = JSON.parse(JSON.stringify(oldPartialTree))
 
