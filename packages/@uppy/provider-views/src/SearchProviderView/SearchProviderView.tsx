@@ -16,8 +16,8 @@ import getNOfSelectedFiles from '../utils/getNOfSelectedFiles.ts'
 import PartialTreeUtils from '../utils/PartialTreeUtils'
 import shouldHandleScroll from '../utils/shouldHandleScroll.ts'
 
-const defaultState : Partial<UnknownSearchProviderPluginState> = {
-  isInputMode: true,
+const defaultState : UnknownSearchProviderPluginState = {
+  loading: false,
   searchString: '',
   partialTree: [
     {
@@ -28,6 +28,7 @@ const defaultState : Partial<UnknownSearchProviderPluginState> = {
     }
   ],
   currentFolderId: null,
+  isInputMode: true,
 }
 
 type PluginType = 'SearchProvider'

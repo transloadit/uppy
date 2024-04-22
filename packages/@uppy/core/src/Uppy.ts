@@ -151,12 +151,11 @@ export type UnknownProviderPlugin<
  * `SearchProvider` does operate on Companion plugins with `uppy.getPlugin()`.
  */
 export type UnknownSearchProviderPluginState = {
-  isInputMode?: boolean
+  isInputMode: boolean
 } & Pick<
   UnknownProviderPluginState,
   | 'loading'
   | 'searchString'
-  | 'didFirstRender'
   | 'partialTree'
   | 'currentFolderId'
 >

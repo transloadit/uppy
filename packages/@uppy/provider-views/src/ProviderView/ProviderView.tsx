@@ -103,6 +103,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
     this.logout = this.logout.bind(this)
     this.handleAuth = this.handleAuth.bind(this)
     this.handleScroll = this.handleScroll.bind(this)
+    this.resetPluginState = this.resetPluginState.bind(this)
     this.donePicking = this.donePicking.bind(this)
     this.render = this.render.bind(this)
     this.cancelPicking = this.cancelPicking.bind(this)
