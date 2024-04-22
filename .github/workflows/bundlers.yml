@@ -73,7 +73,7 @@ jobs:
           pack --install-if-needed -o /tmp/artifacts/%s-${{ github.sha }}.tgz
       - name: Upload artifact
         if: success()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: packages
           path: /tmp/artifacts/
@@ -87,7 +87,7 @@ jobs:
         bundler-version: [latest]
     steps:
       - name: Download uppy tarball
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: /tmp/
       - name: Extract tarball
@@ -125,7 +125,7 @@ jobs:
         bundler-version: [latest]
     steps:
       - name: Download uppy tarball
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: /tmp/
       - name: Extract tarball
@@ -151,7 +151,7 @@ jobs:
         bundler-version: [latest]
     steps:
       - name: Download uppy tarball
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: /tmp/
       - name: Extract tarball
@@ -181,7 +181,7 @@ jobs:
         bundler-version: [latest]
     steps:
       - name: Download uppy tarball
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: /tmp/
       - name: Extract tarball
@@ -206,7 +206,7 @@ jobs:
         bundler-version: [latest]
     steps:
       - name: Download uppy tarball
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: /tmp/
       - name: Extract tarball
