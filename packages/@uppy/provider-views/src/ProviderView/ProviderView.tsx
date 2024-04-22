@@ -65,7 +65,7 @@ type Opts<M extends Meta, B extends Body> = DefinePluginOpts<
   keyof typeof defaultOptions
 >
 
-const getDefaultState = (rootFolderId: string | null) : Partial<UnknownProviderPluginState> => ({
+const getDefaultState = (rootFolderId: string | null) : UnknownProviderPluginState => ({
   authenticated: undefined, // we don't know yet
   partialTree: [
     {
@@ -77,7 +77,9 @@ const getDefaultState = (rootFolderId: string | null) : Partial<UnknownProviderP
   ],
   currentFolderId: null,
   searchString: '',
-  didFirstRender: false
+  didFirstRender: false,
+  username: null,
+  loading: false
 })
 
 /**
@@ -90,8 +92,6 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
   Opts<M, B>
 > {
   static VERSION = packageJson.version
-
-  username: string | undefined
 
   constructor(
     plugin: UnknownProviderPlugin<M, B>,
@@ -185,7 +185,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
       do {
         const { username, nextPagePath, items } = await this.provider.list(currentPagePath, { signal })
         // It's important to set the username during one of our first fetches
-        this.username = username
+        this.plugin.setPluginState({ username })
 
         currentPagePath = nextPagePath
         currentItems = currentItems.concat(items)
@@ -358,7 +358,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
     }
 
     const targetViewOptions = { ...this.opts, ...viewOptions }
-    const { partialTree, currentFolderId, searchString, loading } =
+    const { partialTree, username, searchString, loading } =
       this.plugin.getPluginState()
     const pluginIcon = this.plugin.icon || defaultPickerIcon
 
@@ -405,7 +405,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
           pluginIcon={pluginIcon}
           title={this.plugin.title}
           logout={this.logout}
-          username={this.username}
+          username={username}
           i18n={i18n}
         />
       }

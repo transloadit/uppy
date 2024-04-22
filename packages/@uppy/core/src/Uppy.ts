@@ -114,6 +114,7 @@ export type UnknownProviderPluginState = {
   loading: boolean | string
   partialTree: PartialTree
   currentFolderId: string | null
+  username: string | null
 }
 /*
  * UnknownProviderPlugin can be any Companion plugin (such as Google Drive).
