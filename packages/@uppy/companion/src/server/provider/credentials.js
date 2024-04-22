@@ -1,11 +1,11 @@
-const got = require('got').default
-const atob = require('atob')
 const { htmlEscape } = require('escape-goat')
 const logger = require('../logger')
 const oAuthState = require('../helpers/oauth-state')
 const tokenService = require('../helpers/jwt')
 // eslint-disable-next-line
 const Provider = require('./Provider')
+
+const got = require('../got')
 
 /**
  * @param {string} url
@@ -14,7 +14,7 @@ const Provider = require('./Provider')
  */
 async function fetchKeys (url, providerName, credentialRequestParams) {
   try {
-    const { credentials } = await got.post(url, {
+    const { credentials } = await (await got).post(url, {
       json: { provider: providerName, parameters: credentialRequestParams },
     }).json()
 

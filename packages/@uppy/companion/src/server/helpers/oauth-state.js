@@ -1,5 +1,4 @@
 const crypto = require('node:crypto')
-const atob = require('atob')
 const { encrypt, decrypt } = require('./utils')
 
 module.exports.encodeState = (state, secret) => {

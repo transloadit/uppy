@@ -2,17 +2,17 @@
 const tus = require('tus-js-client')
 const { randomUUID } = require('node:crypto')
 const validator = require('validator')
-const got = require('got').default
 const { pipeline: pipelineCb } = require('node:stream')
 const { join } = require('node:path')
 const fs = require('node:fs')
 const { promisify } = require('node:util')
-const FormData = require('form-data')
 const throttle = require('lodash/throttle')
 
 const { Upload } = require('@aws-sdk/lib-storage')
 
 const { rfc2047EncodeMetadata, getBucket } = require('./helpers/utils')
+
+const got = require('./got')
 
 // TODO move to `require('streams/promises').pipeline` when dropping support for Node.js 14.x.
 const pipeline = promisify(pipelineCb)
@@ -140,6 +140,21 @@ const states = {
   uploading: 'uploading',
   paused: 'paused',
   done: 'done',
+}
+
+class StreamableBlob {
+  #stream
+
+  constructor(stream) {
+    this.#stream = stream
+  }
+
+  stream(){
+    return this.#stream
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  get [Symbol.toStringTag]() { return "File" }
 }
 
 class Uploader {
@@ -613,16 +628,15 @@ class Uploader {
     }
 
     if (this.options.useFormData) {
-      // todo refactor once upgraded to got 12
       const formData = new FormData()
 
       Object.entries(this.options.metadata).forEach(([key, value]) => formData.append(key, value))
 
-      formData.append(this.options.fieldname, stream, {
-        filename: this.uploadFileName,
-        contentType: this.options.metadata.type,
-        knownLength: this.size,
-      })
+      formData.append(
+        this.options.fieldname,
+        // @ts-expect-error Our StreamableBlob is actually spec compliant enough for our purpose
+        new StreamableBlob(stream),
+        this.uploadFileName)
 
       reqOptions.body = formData
     } else {
@@ -632,7 +646,7 @@ class Uploader {
 
     try {
       const httpMethod = (this.options.httpMethod || '').toUpperCase() === 'PUT' ? 'put' : 'post'
-      const runRequest = got[httpMethod]
+      const runRequest = (await got)[httpMethod]
 
       const response = await runRequest(url, reqOptions)
 
@@ -662,7 +676,7 @@ class Uploader {
           extraData: getRespObj(err.response),
         })
       }
-      throw new Error('Unknown multipart upload error')
+      throw new Error('Unknown multipart upload error', {cause: err})
     }
   }
 
