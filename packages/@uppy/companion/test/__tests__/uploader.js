@@ -198,6 +198,7 @@ describe('uploader with tus protocol', () => {
   const formDataNoMetaMatch = /^--form-data-boundary-[a-z0-9]+\r\nContent-Disposition: form-data; name="files\[\]"; filename="uppy-file-[^"]+"\r\nContent-Type: application\/octet-stream\r\n\r\nSome file content\r\n--form-data-boundary-[a-z0-9]+--\r\n\r\n$/
 
   test('upload functions with xhr formdata', async () => {
+    // We want the complete body for this test:
     delete process.env.UPPY_TEST_DO_NOT_WAIT_FOR_COMPLETE_BODY
     nock('http://localhost').post('/', formDataNoMetaMatch)
       .reply(200)
