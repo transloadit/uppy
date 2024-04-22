@@ -6,7 +6,6 @@ import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin.ts'
 import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
 import SearchFilterInput from '../SearchFilterInput.tsx'
 import Browser from '../Browser.tsx'
-import CloseWrapper from '../CloseWrapper.ts'
 import View, { type ViewOptions } from '../View.ts'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -73,10 +72,15 @@ export default class SearchProviderView<
     this.resetPluginState = this.resetPluginState.bind(this)
     this.handleScroll = this.handleScroll.bind(this)
     this.donePicking = this.donePicking.bind(this)
+    this.cancelPicking = this.cancelPicking.bind(this)
 
     this.render = this.render.bind(this)
 
-    this.plugin.setPluginState(defaultState)
+    // Set default state for the plugin
+    this.resetPluginState()
+
+    // @ts-expect-error this should be typed in @uppy/dashboard.
+    this.plugin.uppy.on('dashboard:close-panel', this.resetPluginState)
 
     this.registerRequestClient()
   }
@@ -88,6 +92,15 @@ export default class SearchProviderView<
 
   resetPluginState(): void {
     this.plugin.setPluginState(defaultState)
+  }
+
+  cancelPicking(): void {
+    const dashboard = this.plugin.uppy.getPlugin('Dashboard')
+    if (dashboard) {
+      // @ts-expect-error impossible to type this correctly without adding dashboard
+      // as a dependency to this package.
+      dashboard.hideAllPanels()
+    }
   }
 
   async search(): Promise<void> {
@@ -203,48 +216,44 @@ export default class SearchProviderView<
 
     if (isInputMode) {
       return (
-        <CloseWrapper onUnmount={this.resetPluginState}>
-          <SearchFilterInput
-            searchString={searchString}
-            setSearchString={this.setSearchString}
-            submitSearchString={this.search}
+        <SearchFilterInput
+          searchString={searchString}
+          setSearchString={this.setSearchString}
+          submitSearchString={this.search}
 
-            inputLabel={i18n('enterTextToSearch')}
-            buttonLabel={i18n('searchImages')}
-            wrapperClassName="uppy-SearchProvider"
-            inputClassName="uppy-c-textInput uppy-SearchProvider-input"
-            buttonCSSClassName="uppy-SearchProvider-searchButton"
-            showButton
-          />
-        </CloseWrapper>
+          inputLabel={i18n('enterTextToSearch')}
+          buttonLabel={i18n('searchImages')}
+          wrapperClassName="uppy-SearchProvider"
+          inputClassName="uppy-c-textInput uppy-SearchProvider-input"
+          buttonCSSClassName="uppy-SearchProvider-searchButton"
+          showButton
+        />
       )
     }
 
     return (
-      <CloseWrapper onUnmount={this.resetPluginState}>
-        <Browser
-          toggleCheckbox={this.toggleCheckbox.bind(this)}
-          displayedPartialTree={partialTree.filter((item) => item.type !== 'root' && item.parentId === currentFolderId) as (PartialTreeFolderNode | PartialTreeFile)[]}
-          nOfSelectedFiles={getNOfSelectedFiles(partialTree)}
-          handleScroll={this.handleScroll}
-          done={this.donePicking}
-          cancel={this.cancelPicking}
-          getFolder={() => {}}
-          showSearchFilter={targetViewOptions.showFilter}
-          searchString={searchString}
-          setSearchString={this.setSearchString}
-          submitSearchString={this.search}
-          searchInputLabel={i18n('search')}
-          clearSearchLabel={i18n('resetSearch')}
-          noResultsLabel={i18n('noSearchResults')}
-          viewType={targetViewOptions.viewType}
-          showTitles={targetViewOptions.showTitles}
-          isLoading={loading}
-          showBreadcrumbs={targetViewOptions.showBreadcrumbs}
-          i18n={i18n}
-          validateRestrictions={this.validateRestrictions}
-        />
-      </CloseWrapper>
+      <Browser
+        toggleCheckbox={this.toggleCheckbox.bind(this)}
+        displayedPartialTree={partialTree.filter((item) => item.type !== 'root' && item.parentId === currentFolderId) as (PartialTreeFolderNode | PartialTreeFile)[]}
+        nOfSelectedFiles={getNOfSelectedFiles(partialTree)}
+        handleScroll={this.handleScroll}
+        done={this.donePicking}
+        cancel={this.cancelPicking}
+        getFolder={() => {}}
+        showSearchFilter={targetViewOptions.showFilter}
+        searchString={searchString}
+        setSearchString={this.setSearchString}
+        submitSearchString={this.search}
+        searchInputLabel={i18n('search')}
+        clearSearchLabel={i18n('resetSearch')}
+        noResultsLabel={i18n('noSearchResults')}
+        viewType={targetViewOptions.viewType}
+        showTitles={targetViewOptions.showTitles}
+        isLoading={loading}
+        showBreadcrumbs={targetViewOptions.showBreadcrumbs}
+        i18n={i18n}
+        validateRestrictions={this.validateRestrictions}
+      />
     )
   }
 }

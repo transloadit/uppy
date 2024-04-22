@@ -105,22 +105,32 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
     this.handleScroll = this.handleScroll.bind(this)
     this.donePicking = this.donePicking.bind(this)
     this.render = this.render.bind(this)
+    this.cancelPicking = this.cancelPicking.bind(this)
 
     // Set default state for the plugin
-    this.plugin.setPluginState(getDefaultState(this.plugin.rootFolderId))
+    this.resetPluginState()
 
-    const onClosePanel = () => {
-      this.plugin.setPluginState(getDefaultState(this.plugin.rootFolderId))
-    }
     // @ts-expect-error this should be typed in @uppy/dashboard.
-    this.plugin.uppy.on('dashboard:close-panel', onClosePanel)
-    this.plugin.uppy.on('cancel-all', onClosePanel)
+    this.plugin.uppy.on('dashboard:close-panel', this.resetPluginState)
 
     this.registerRequestClient()
   }
 
+  resetPluginState(): void {
+    this.plugin.setPluginState(getDefaultState(this.plugin.rootFolderId))
+  }
+
   tearDown(): void {
     // Nothing.
+  }
+
+  cancelPicking(): void {
+    const dashboard = this.plugin.uppy.getPlugin('Dashboard')
+    if (dashboard) {
+      // @ts-expect-error impossible to type this correctly without adding dashboard
+      // as a dependency to this package.
+      dashboard.hideAllPanels()
+    }
   }
 
   #abortController: AbortController | undefined

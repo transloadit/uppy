@@ -62,7 +62,6 @@ export default class View<
     this.isHandlingScroll = false
 
     this.handleError = this.handleError.bind(this)
-    this.cancelPicking = this.cancelPicking.bind(this)
     this.validateRestrictions = this.validateRestrictions.bind(this)
 
     // This records whether the user is holding the SHIFT key this very moment.
@@ -90,16 +89,6 @@ export default class View<
     const checkedFilesData = checkedFiles.map((item) => item.data)
 
     return this.plugin.uppy.validateRestrictions(localData, [...aleadyAddedFiles, ...checkedFilesData])
-  }
-
-  cancelPicking(): void {
-    const dashboard = this.plugin.uppy.getPlugin('Dashboard')
-
-    if (dashboard) {
-      // @ts-expect-error impossible to type this correctly without adding dashboard
-      // as a dependency to this package.
-      dashboard.hideAllPanels()
-    }
   }
 
   handleError(error: Error): void {
