@@ -1,5 +1,4 @@
 // eslint-disable-next-line max-classes-per-file
-const { blob } = require('node:stream/consumers');
 const tus = require('tus-js-client')
 const { randomUUID } = require('node:crypto')
 const validator = require('validator')
@@ -141,6 +140,21 @@ const states = {
   uploading: 'uploading',
   paused: 'paused',
   done: 'done',
+}
+
+class StreamableBlob {
+  #stream
+
+  constructor(stream) {
+    this.#stream = stream
+  }
+
+  stream(){
+    return this.#stream
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  get [Symbol.toStringTag]() { return "File" }
 }
 
 class Uploader {
@@ -620,8 +634,8 @@ class Uploader {
 
       formData.append(
         this.options.fieldname,
-        // @ts-expect-error Node.js Blob is actually spec compliant
-        await blob(stream),
+        // @ts-expect-error Our StreamableBlob is actually spec compliant enough for our purpose
+        new StreamableBlob(stream),
         this.uploadFileName)
 
       reqOptions.body = formData
