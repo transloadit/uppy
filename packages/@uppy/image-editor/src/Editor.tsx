@@ -170,14 +170,11 @@ export default class Editor<M extends Meta, B extends Body> extends Component<
     const { i18n, opts } = this.props
 
     return (
-      <label
-        role="tooltip"
-        aria-label={i18n('revert')}
-        data-microtip-position="top"
-      >
+      <label role="tooltip" data-microtip-position="top">
         <button
           type="button"
           className="uppy-u-reset uppy-c-btn"
+          aria-label={i18n('revert')}
           onClick={() => {
             this.cropper.reset()
             this.cropper.setAspectRatio(
@@ -205,14 +202,11 @@ export default class Editor<M extends Meta, B extends Body> extends Component<
     const { i18n } = this.props
 
     return (
-      <label
-        role="tooltip"
-        aria-label={i18n('rotate')}
-        data-microtip-position="top"
-      >
+      <label role="tooltip" data-microtip-position="top">
         <button
           type="button"
           className="uppy-u-reset uppy-c-btn"
+          aria-label={i18n('rotate')}
           onClick={this.onRotate90Deg}
         >
           <svg
@@ -234,14 +228,11 @@ export default class Editor<M extends Meta, B extends Body> extends Component<
     const { i18n } = this.props
 
     return (
-      <label
-        role="tooltip"
-        aria-label={i18n('flipHorizontal')}
-        data-microtip-position="top"
-      >
+      <label role="tooltip" data-microtip-position="top">
         <button
           type="button"
           className="uppy-u-reset uppy-c-btn"
+          aria-label={i18n('flipHorizontal')}
           onClick={() =>
             this.cropper.scaleX(-this.cropper.getData().scaleX || -1)
           }
@@ -265,14 +256,11 @@ export default class Editor<M extends Meta, B extends Body> extends Component<
     const { i18n } = this.props
 
     return (
-      <label
-        role="tooltip"
-        aria-label={i18n('zoomIn')}
-        data-microtip-position="top"
-      >
+      <label role="tooltip" data-microtip-position="top">
         <button
           type="button"
           className="uppy-u-reset uppy-c-btn"
+          aria-label={i18n('zoomIn')}
           onClick={() => this.cropper.zoom(0.1)}
         >
           <svg
@@ -295,14 +283,11 @@ export default class Editor<M extends Meta, B extends Body> extends Component<
     const { i18n } = this.props
 
     return (
-      <label
-        role="tooltip"
-        aria-label={i18n('zoomOut')}
-        data-microtip-position="top"
-      >
+      <label role="tooltip" data-microtip-position="top">
         <button
           type="button"
           className="uppy-u-reset uppy-c-btn"
+          aria-label={i18n('zoomOut')}
           onClick={() => this.cropper.zoom(-0.1)}
         >
           <svg
@@ -324,14 +309,11 @@ export default class Editor<M extends Meta, B extends Body> extends Component<
     const { i18n } = this.props
 
     return (
-      <label
-        role="tooltip"
-        aria-label={i18n('aspectRatioSquare')}
-        data-microtip-position="top"
-      >
+      <label role="tooltip" data-microtip-position="top">
         <button
           type="button"
           className="uppy-u-reset uppy-c-btn"
+          aria-label={i18n('aspectRatioSquare')}
           onClick={() => this.cropper.setAspectRatio(1)}
         >
           <svg
@@ -353,14 +335,11 @@ export default class Editor<M extends Meta, B extends Body> extends Component<
     const { i18n } = this.props
 
     return (
-      <label
-        role="tooltip"
-        aria-label={i18n('aspectRatioLandscape')}
-        data-microtip-position="top"
-      >
+      <label role="tooltip" data-microtip-position="top">
         <button
           type="button"
           className="uppy-u-reset uppy-c-btn"
+          aria-label={i18n('aspectRatioLandscape')}
           onClick={() => this.cropper.setAspectRatio(16 / 9)}
         >
           <svg
@@ -382,13 +361,10 @@ export default class Editor<M extends Meta, B extends Body> extends Component<
     const { i18n } = this.props
 
     return (
-      <label
-        role="tooltip"
-        aria-label={i18n('aspectRatioPortrait')}
-        data-microtip-position="top"
-      >
+      <label role="tooltip" data-microtip-position="top">
         <button
           type="button"
+          aria-label={i18n('aspectRatioPortrait')}
           className="uppy-u-reset uppy-c-btn"
           onClick={() => this.cropper.setAspectRatio(9 / 16)}
         >
