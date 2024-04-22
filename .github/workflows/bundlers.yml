@@ -73,7 +73,7 @@ jobs:
           pack --install-if-needed -o /tmp/artifacts/%s-${{ github.sha }}.tgz
       - name: Upload artifact
         if: success()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: packages
           path: /tmp/artifacts/
