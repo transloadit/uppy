@@ -186,6 +186,9 @@ describe('uploader with tus protocol', () => {
 
   test('upload functions with xhr protocol', async () => {
     let alreadyCalled = false
+    // We are creating our own test server for this test
+    // instead of using nock because of a bug when passing a Node.js stream to got.
+    // Ref: https://github.com/nock/nock/issues/2595
     const server = createServer((req,res) => {
       if (alreadyCalled) throw new Error('already called')
       alreadyCalled = true
