@@ -4,6 +4,8 @@ jest.mock('tus-js-client')
 
 const { Readable } = require('node:stream')
 const fs = require('node:fs')
+const { createServer } = require('node:http')
+const { once } = require('node:events')
 const nock = require('nock')
 
 const Uploader = require('../../src/server/Uploader')
@@ -15,11 +17,6 @@ afterAll(() => {
   nock.cleanAll()
   nock.restore()
 })
-
-// Workaround a limitation in Nock+got+Node.js 20.9+ when the body of the request
-// is a stream. Setting this env variable causes the Nock to receive only the
-// first chunk of the request body, which is OK for most of our tests anyway.
-process.env.UPPY_TEST_DO_NOT_WAIT_FOR_COMPLETE_BODY = true
 
 process.env.COMPANION_DATADIR = './test/output'
 process.env.COMPANION_DOMAIN = 'localhost:3020'
@@ -169,13 +166,13 @@ describe('uploader with tus protocol', () => {
     })
   })
 
-  async function runMultipartTest ({ metadata, useFormData, includeSize = true  } = {}) {
+  async function runMultipartTest ({ metadata, useFormData, includeSize = true, address = 'localhost'  } = {}) {
     const fileContent = Buffer.from('Some file content')
     const stream = Readable.from([fileContent])
 
     const opts = {
       companionOptions,
-      endpoint: 'http://localhost',
+      endpoint: `http://${address}`,
       protocol: 'multipart',
       size: includeSize ? fileContent.length : undefined,
       metadata,
@@ -186,20 +183,31 @@ describe('uploader with tus protocol', () => {
     const uploader = new Uploader(opts)
     return uploader.uploadStream(stream)
   }
-
+  
   test('upload functions with xhr protocol', async () => {
-    nock('http://localhost').post('/').reply(200)
-
-    const ret = await runMultipartTest()
-    expect(ret).toMatchObject({ url: null, extraData: { response: expect.anything(), bytesUploaded: 17 } })
+    let alreadyCalled = false
+  const server = createServer((req,res) => {
+    if (alreadyCalled) throw new Error('already called')
+    alreadyCalled = true
+    if (req.url === '/' && req.method==='POST') {
+      res.writeHead(200)
+      res.end('OK')
+    }
+  }).listen()
+    try {
+      await once(server, 'listening')
+      
+      const ret = await runMultipartTest({ address: `localhost:${server.address().port}` })
+      expect(ret).toMatchObject({ url: null, extraData: { response: expect.anything(), bytesUploaded: 17 } })
+    } finally {
+      server.close()
+    }
   })
 
   // eslint-disable-next-line max-len
   const formDataNoMetaMatch = /^--form-data-boundary-[a-z0-9]+\r\nContent-Disposition: form-data; name="files\[\]"; filename="uppy-file-[^"]+"\r\nContent-Type: application\/octet-stream\r\n\r\nSome file content\r\n--form-data-boundary-[a-z0-9]+--\r\n\r\n$/
 
   test('upload functions with xhr formdata', async () => {
-    // We want the complete body for this test:
-    delete process.env.UPPY_TEST_DO_NOT_WAIT_FOR_COMPLETE_BODY
     nock('http://localhost').post('/', formDataNoMetaMatch)
       .reply(200)
 
@@ -208,7 +216,6 @@ describe('uploader with tus protocol', () => {
   })
 
   test('upload functions with unknown file size', async () => {
-    delete process.env.UPPY_TEST_DO_NOT_WAIT_FOR_COMPLETE_BODY
     nock('http://localhost').post('/', formDataNoMetaMatch)
       .reply(200)
 
@@ -218,7 +225,6 @@ describe('uploader with tus protocol', () => {
 
   // https://github.com/transloadit/uppy/issues/3477
   test('upload functions with xhr formdata and metadata', async () => {
-    delete process.env.UPPY_TEST_DO_NOT_WAIT_FOR_COMPLETE_BODY
     nock('http://localhost').post('/', /^--form-data-boundary-[a-z0-9]+\r\nContent-Disposition: form-data; name="key1"\r\n\r\nnull\r\n--form-data-boundary-[a-z0-9]+\r\nContent-Disposition: form-data; name="key2"\r\n\r\ntrue\r\n--form-data-boundary-[a-z0-9]+\r\nContent-Disposition: form-data; name="key3"\r\n\r\n\d+\r\n--form-data-boundary-[a-z0-9]+\r\nContent-Disposition: form-data; name="key4"\r\n\r\n\[object Object\]\r\n--form-data-boundary-[a-z0-9]+\r\nContent-Disposition: form-data; name="key5"\r\n\r\n\(\) => \{\}\r\n--form-data-boundary-[a-z0-9]+\r\nContent-Disposition: form-data; name="key6"\r\n\r\nSymbol\(\)\r\n--form-data-boundary-[a-z0-9]+\r\nContent-Disposition: form-data; name="files\[\]"; filename="uppy-file-[^"]+"\r\nContent-Type: application\/octet-stream\r\n\r\nSome file content\r\n--form-data-boundary-[a-z0-9]+--\r\n\r\n$/)
       .reply(200)
 

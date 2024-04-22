@@ -23538,7 +23538,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nock@npm:13.5.4":
+"nock@npm:^13.1.0, nock@npm:^13.1.3":
   version: 13.5.4
   resolution: "nock@npm:13.5.4"
   dependencies:
@@ -23546,17 +23546,6 @@ __metadata:
     json-stringify-safe: ^5.0.1
     propagate: ^2.0.0
   checksum: d31f924e34c87ae985edfb7b5a56e8a4dcfc3a072334ceb6d686326581f93090b3e23492663a64ce61b8df4f365b113231d926bc300bcfe9e5eb309c3e4b8628
-  languageName: node
-  linkType: hard
-
-"nock@patch:nock@npm%3A13.5.4#./.yarn/patches/nock-npm-13.5.4-2c4f77b249.patch::locator=%40uppy-dev%2Fbuild%40workspace%3A.":
-  version: 13.5.4
-  resolution: "nock@patch:nock@npm%3A13.5.4#./.yarn/patches/nock-npm-13.5.4-2c4f77b249.patch::version=13.5.4&hash=3af473&locator=%40uppy-dev%2Fbuild%40workspace%3A."
-  dependencies:
-    debug: ^4.1.0
-    json-stringify-safe: ^5.0.1
-    propagate: ^2.0.0
-  checksum: ec5476a5c4bba1a976499533e1aee26edbc9b0fbf41d4b6443edac696cd70b6f0d50e1f19f1536cd6dd709c262af8a8727955fc7387919d196517cbb42f200fe
   languageName: node
   linkType: hard
 
