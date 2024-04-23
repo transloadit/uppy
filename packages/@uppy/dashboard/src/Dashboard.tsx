@@ -166,7 +166,7 @@ interface DashboardMiscOptions<M extends Meta, B extends Body>
   thumbnailHeight?: number
   thumbnailType?: string
   thumbnailWidth?: number
-  trigger?: string
+  trigger?: string | Element
   waitForThumbnailsBeforeUpload?: boolean
 }
 
