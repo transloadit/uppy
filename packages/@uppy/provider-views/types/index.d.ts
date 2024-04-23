@@ -9,12 +9,8 @@ interface ProviderViewOptions {
   showBreadcrumbs?: boolean
 }
 
-interface OnFirstRenderer {
-  onFirstRender: () => any
-}
-
 declare class ProviderView {
-  constructor(plugin: UIPlugin & OnFirstRenderer, opts: ProviderViewOptions)
+  constructor(plugin: UIPlugin, opts: ProviderViewOptions)
   // @todo add other provider view methods
 }
 
