@@ -129,6 +129,10 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
     // Nothing.
   }
 
+  setLoading(loading: boolean | string): void {
+    this.plugin.setPluginState({ loading })
+  }
+
   cancelPicking(): void {
     const dashboard = this.plugin.uppy.getPlugin('Dashboard')
     if (dashboard) {

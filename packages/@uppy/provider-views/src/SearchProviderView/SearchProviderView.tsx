@@ -95,6 +95,10 @@ export default class SearchProviderView<
     // Nothing.
   }
 
+  setLoading(loading: boolean | string): void {
+    this.plugin.setPluginState({ loading })
+  }
+
   resetPluginState(): void {
     this.plugin.setPluginState(defaultState)
   }
