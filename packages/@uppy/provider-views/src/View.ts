@@ -1,12 +1,8 @@
 import type {
-  PartialTreeFile,
   UnknownProviderPlugin,
   UnknownSearchProviderPlugin,
 } from '@uppy/core/lib/Uppy'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
-import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
-import remoteFileObjToLocal from '@uppy/utils/lib/remoteFileObjToLocal'
-import type { RestrictionError } from '@uppy/core/lib/Restricter'
 
 type PluginType = 'Provider' | 'SearchProvider'
 
@@ -52,20 +48,5 @@ export default class View<
     this.plugin = plugin
     this.provider = opts.provider
     this.opts = opts
-
-    this.validateRestrictions = this.validateRestrictions.bind(this)
-  }
-
-  validateRestrictions (file: CompanionFile) : RestrictionError<M, B> | null {
-    if (file.isFolder) return null
-
-    const localData = remoteFileObjToLocal(file)
-
-    const { partialTree } = this.plugin.getPluginState()
-    const aleadyAddedFiles = this.plugin.uppy.getFiles()
-    const checkedFiles = partialTree.filter((item) => item.type === 'file' && item.status === 'checked') as PartialTreeFile[]
-    const checkedFilesData = checkedFiles.map((item) => item.data)
-
-    return this.plugin.uppy.validateRestrictions(localData, [...aleadyAddedFiles, ...checkedFilesData])
   }
 }

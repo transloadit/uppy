@@ -26,6 +26,7 @@ import getTagFile from '../utils/getTagFile.ts'
 import getNOfSelectedFiles from '../utils/getNOfSelectedFiles.ts'
 import shouldHandleScroll from '../utils/shouldHandleScroll.ts'
 import handleError from '../utils/handleError.ts'
+import validateRestrictions from '../utils/validateRestrictions.ts'
 
 export function defaultPickerIcon(): JSX.Element {
   return (
@@ -201,7 +202,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
         this.setLoading(this.plugin.uppy.i18n('loadedXFiles', { numFiles: items.length }))
       } while (this.opts.loadAllFiles && currentPagePath)
 
-      const newPartialTree = PartialTreeUtils.afterClickOnFolder(partialTree, currentItems, clickedFolder, this.validateRestrictions, currentPagePath)
+      const newPartialTree = PartialTreeUtils.afterClickOnFolder(partialTree, currentItems, clickedFolder, validateRestrictions(this.plugin), currentPagePath)
 
       this.plugin.setPluginState({
         partialTree: newPartialTree,
@@ -263,7 +264,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
       this.isHandlingScroll = true
       await this.#withAbort(async (signal) => {
         const { nextPagePath, items } = await this.provider.list(currentFolder.nextPagePath!, { signal })
-        const newPartialTree = PartialTreeUtils.afterScroll(partialTree, currentFolderId, items, nextPagePath, this.validateRestrictions)
+        const newPartialTree = PartialTreeUtils.afterScroll(partialTree, currentFolderId, items, nextPagePath, validateRestrictions(this.plugin))
 
         this.plugin.setPluginState({ partialTree: newPartialTree })
       }).catch(handleError(this.plugin.uppy))
@@ -285,7 +286,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
       uppyFiles.forEach((uppyFile) => {
         const tagFile = getTagFile<M>(uppyFile, this.plugin.id, this.provider, this.plugin.opts.companionUrl)
 
-        if (this.validateRestrictions(uppyFile)) {
+        if (validateRestrictions(this.plugin)(uppyFile)) {
           filesNotPassingRestrictions.push(tagFile)
           return
         }
@@ -337,7 +338,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
     document.getSelection()?.removeAllRanges()
 
     const { partialTree } = this.plugin.getPluginState()
-    const newPartialTree = PartialTreeUtils.afterToggleCheckbox(partialTree, this.getDisplayedPartialTree(), ourItem, this.validateRestrictions, isShiftKeyPressed, this.lastCheckbox)
+    const newPartialTree = PartialTreeUtils.afterToggleCheckbox(partialTree, this.getDisplayedPartialTree(), ourItem, validateRestrictions(this.plugin), isShiftKeyPressed, this.lastCheckbox)
 
     this.plugin.setPluginState({ partialTree: newPartialTree })
     this.lastCheckbox = ourItem.id!
@@ -422,7 +423,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
       showTitles={opts.showTitles}
       i18n={this.plugin.uppy.i18n}
 
-      validateRestrictions={this.validateRestrictions}
+      validateRestrictions={validateRestrictions(this.plugin)}
       isLoading={loading}
     />
   }

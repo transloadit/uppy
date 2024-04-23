@@ -16,6 +16,7 @@ import getNOfSelectedFiles from '../utils/getNOfSelectedFiles.ts'
 import PartialTreeUtils from '../utils/PartialTreeUtils'
 import shouldHandleScroll from '../utils/shouldHandleScroll.ts'
 import handleError from '../utils/handleError.ts'
+import validateRestrictions from '../utils/validateRestrictions.ts'
 
 const defaultState : UnknownSearchProviderPluginState = {
   loading: false,
@@ -201,7 +202,7 @@ export default class SearchProviderView<
     const { partialTree, currentFolderId } = this.plugin.getPluginState()
 
     const displayedPartialTree = partialTree.filter((item) => item.type !== 'root' && item.parentId === currentFolderId) as (PartialTreeFolderNode | PartialTreeFile)[]
-    const newPartialTree = PartialTreeUtils.afterToggleCheckbox(partialTree, displayedPartialTree, ourItem, this.validateRestrictions, isShiftKeyPressed, this.lastCheckbox)
+    const newPartialTree = PartialTreeUtils.afterToggleCheckbox(partialTree, displayedPartialTree, ourItem, validateRestrictions(this.plugin), isShiftKeyPressed, this.lastCheckbox)
 
     this.plugin.setPluginState({ partialTree: newPartialTree })
     this.lastCheckbox = ourItem.id!
@@ -260,7 +261,7 @@ export default class SearchProviderView<
         showTitles={opts.showTitles}
         isLoading={loading}
         i18n={i18n}
-        validateRestrictions={this.validateRestrictions}
+        validateRestrictions={validateRestrictions(this.plugin)}
       />
     )
   }
