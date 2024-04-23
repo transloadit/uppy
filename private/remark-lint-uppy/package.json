@@ -29,7 +29,7 @@
     "retext-simplify": "^8.0.0",
     "retext-syntax-mentions": "^4.0.0",
     "unified": "^11.0.0",
-    "unified-message-control": "^5.0.0"
+    "unified-message-control": "^4.0.0"
   },
   "type": "module",
   "private": true
