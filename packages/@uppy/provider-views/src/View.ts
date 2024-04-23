@@ -60,7 +60,6 @@ export default class View<
     this.isHandlingScroll = false
     this.lastCheckbox = null
 
-    this.handleError = this.handleError.bind(this)
     this.validateRestrictions = this.validateRestrictions.bind(this)
   }
 
@@ -75,27 +74,6 @@ export default class View<
     const checkedFilesData = checkedFiles.map((item) => item.data)
 
     return this.plugin.uppy.validateRestrictions(localData, [...aleadyAddedFiles, ...checkedFilesData])
-  }
-
-  handleError(error: Error): void {
-    const { uppy } = this.plugin
-    // authError just means we're not authenticated, don't report it
-    if ((error as any).isAuthError) {
-      return
-    }
-    // AbortError means the user has clicked "cancel" on an operation
-    if (error.name === 'AbortError') {
-      uppy.log('Aborting request', 'warning')
-      return
-    }
-    uppy.log(error, 'error')
-
-    if (error.name === 'UserFacingApiError') {
-      uppy.info({
-        message: uppy.i18n('companionError'),
-        details: uppy.i18n(error.message)
-      }, 'warning', 5000)
-    }
   }
 
   registerRequestClient(): void {

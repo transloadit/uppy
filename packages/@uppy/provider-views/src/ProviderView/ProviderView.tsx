@@ -25,6 +25,7 @@ import PartialTreeUtils from '../utils/PartialTreeUtils'
 import getTagFile from '../utils/getTagFile.ts'
 import getNOfSelectedFiles from '../utils/getNOfSelectedFiles.ts'
 import shouldHandleScroll from '../utils/shouldHandleScroll.ts'
+import handleError from '../utils/handleError.ts'
 
 export function defaultPickerIcon(): JSX.Element {
   return (
@@ -200,7 +201,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
         currentFolderId: folderId,
         searchString: ''
       })
-    }).catch(this.handleError)
+    }).catch(handleError(this.plugin.uppy))
 
     this.setLoading(false)
   }
@@ -232,7 +233,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
           authenticated: false
         })
       }
-    }).catch(this.handleError)
+    }).catch(handleError(this.plugin.uppy))
   }
 
   async handleAuth(authFormData?: unknown): Promise<void> {
@@ -244,7 +245,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
         this.provider.fetchPreAuthToken(),
         this.getFolder(this.plugin.rootFolderId),
       ])
-    }).catch(this.handleError)
+    }).catch(handleError(this.plugin.uppy))
     this.setLoading(false)
   }
 
@@ -258,7 +259,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
         const newPartialTree = PartialTreeUtils.afterScroll(partialTree, currentFolderId, items, nextPagePath, this.validateRestrictions)
 
         this.plugin.setPluginState({ partialTree: newPartialTree })
-      }).catch(this.handleError)
+      }).catch(handleError(this.plugin.uppy))
       this.isHandlingScroll = false
     }
   }
@@ -300,7 +301,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
         this.plugin.uppy.info(`Not adding ${filesNotPassingRestrictions.length} files they didn't pass restrictions`)
       }
       this.plugin.uppy.addFiles(filesToAdd)
-    }).catch(this.handleError)
+    }).catch(handleError(this.plugin.uppy))
 
     this.setLoading(false)
   }

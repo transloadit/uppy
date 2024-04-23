@@ -15,6 +15,7 @@ import getTagFile from '../utils/getTagFile.ts'
 import getNOfSelectedFiles from '../utils/getNOfSelectedFiles.ts'
 import PartialTreeUtils from '../utils/PartialTreeUtils'
 import shouldHandleScroll from '../utils/shouldHandleScroll.ts'
+import handleError from '../utils/handleError.ts'
 
 const defaultState : UnknownSearchProviderPluginState = {
   loading: false,
@@ -131,8 +132,8 @@ export default class SearchProviderView<
         partialTree: newPartialTree,
         isInputMode: false
       })
-    } catch (err) {
-      this.handleError(err)
+    } catch (error) {
+      handleError(this.plugin.uppy)(error)
     }
     this.setLoading(false)
   }
@@ -165,7 +166,7 @@ export default class SearchProviderView<
         ]
         this.plugin.setPluginState({ partialTree: newPartialTree })
       } catch (error) {
-        this.handleError(error)
+        handleError(this.plugin.uppy)(error)
       }
       this.isHandlingScroll = false
     }
