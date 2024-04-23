@@ -239,7 +239,12 @@ export default class XHRUpload<
           }
 
           const body = this.opts.getResponseData(res.responseText, res)
-          const uploadURL = body[this.opts.responseUrlFieldName] as string
+          const uploadURL = body[this.opts.responseUrlFieldName]
+          if (typeof uploadURL !== 'string') {
+            throw new Error(
+              `The received response did not include a valid URL for key ${this.opts.responseUrlFieldName}`,
+            )
+          }
 
           for (const file of files) {
             this.uppy.emit('upload-success', file, {
@@ -255,7 +260,7 @@ export default class XHRUpload<
             return undefined
           }
           if (error instanceof NetworkError) {
-            const request = error.request as XMLHttpRequest
+            const request = error.request!
             const customError = buildResponseError(
               request,
               this.opts.getResponseError(request.responseText, request),
