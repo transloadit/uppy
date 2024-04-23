@@ -2,3 +2,4 @@
 /dist/
 /src/empty.*
 .svelte-kit
+!src/lib
