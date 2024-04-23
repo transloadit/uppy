@@ -233,7 +233,6 @@ module.exports = {
         'packages/@uppy/status-bar/src/**/*.js',
         'packages/@uppy/store-default/src/**/*.js',
         'packages/@uppy/store-redux/src/**/*.js',
-        'packages/@uppy/svelte/rollup.config.js',
         'packages/@uppy/svelte/src/**/*.js',
         'packages/@uppy/thumbnail-generator/src/**/*.js',
         'packages/@uppy/transloadit/src/**/*.js',
@@ -511,6 +510,14 @@ module.exports = {
         'no-lone-blocks': 'off',
         'no-unused-expressions': 'off',
         'no-unused-vars': 'off',
+      },
+    },
+    {
+      files: [
+        'packages/@uppy/svelte/**',
+      ],
+      parserOptions: {
+        sourceType: 'module',
       },
     },
     {
