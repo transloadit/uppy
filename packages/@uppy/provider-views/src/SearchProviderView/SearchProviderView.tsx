@@ -2,11 +2,9 @@ import { h } from 'preact'
 
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import type { PartialTree, PartialTreeFile, PartialTreeFolderNode, PartialTreeFolderRoot, UnknownSearchProviderPlugin, UnknownSearchProviderPluginState } from '@uppy/core/lib/Uppy.ts'
-import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin.ts'
 import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
 import SearchFilterInput from '../SearchFilterInput.tsx'
 import Browser from '../Browser.tsx'
-import View, { type ViewOptions } from '../View.ts'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
@@ -33,20 +31,16 @@ const defaultState : UnknownSearchProviderPluginState = {
   isInputMode: true,
 }
 
-type PluginType = 'SearchProvider'
+type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>
 
-const defaultOptions = {
-  viewType: 'grid',
-  showTitles: true,
-  showFilter: true,
-  showBreadcrumbs: true,
+interface Opts<M extends Meta, B extends Body> {
+  provider: UnknownSearchProviderPlugin<M, B>['provider']
+  viewType: string
+  showTitles: boolean
+  showFilter: boolean
 }
-
-type Opts<
-  M extends Meta,
-  B extends Body,
-  T extends PluginType,
-> = DefinePluginOpts<ViewOptions<M, B, T>, keyof typeof defaultOptions>
+type PassedOpts<M extends Meta, B extends Body> = Optional<Opts<M, B>, 'viewType' | 'showTitles' | 'showFilter'>
+type DefaultOpts<M extends Meta, B extends Body> = Omit<Opts<M, B>, 'provider'>
 
 type Res = {
   items: CompanionFile[]
@@ -58,20 +52,28 @@ type Res = {
  * SearchProviderView, used for Unsplash and future image search providers.
  * Extends generic View, shared with regular providers like Google Drive and Instagram.
  */
-export default class SearchProviderView<
-  M extends Meta,
-  B extends Body,
-> extends View<M, B, PluginType, Opts<M, B, PluginType>> {
+export default class SearchProviderView<M extends Meta, B extends Body> {
   static VERSION = packageJson.version
+
+  plugin: UnknownSearchProviderPlugin<M, B>
+  provider: UnknownSearchProviderPlugin<M, B>['provider']
+  opts: Opts<M, B>
 
   isHandlingScroll: boolean = false
   lastCheckbox: string | null = null
 
   constructor(
     plugin: UnknownSearchProviderPlugin<M, B>,
-    opts: ViewOptions<M, B, PluginType>,
+    opts: PassedOpts<M, B>,
   ) {
-    super(plugin, { ...defaultOptions, ...opts })
+    this.plugin = plugin
+    this.provider = opts.provider
+    const defaultOptions : DefaultOpts<M, B> = {
+      viewType: 'grid',
+      showTitles: true,
+      showFilter: true,
+    }
+    this.opts = { ...defaultOptions, ...opts }
 
     this.setSearchString = this.setSearchString.bind(this)
     this.search = this.search.bind(this)
@@ -217,12 +219,12 @@ export default class SearchProviderView<
 
   render(
     state: unknown,
-    viewOptions: Omit<ViewOptions<M, B, PluginType>, 'provider'> = {},
+    viewOptions: Partial<Opts<M, B>>,
   ): JSX.Element {
     const { isInputMode, searchString, loading, partialTree, currentFolderId } =
       this.plugin.getPluginState()
     const { i18n } = this.plugin.uppy
-    const opts : Opts<M, B, 'SearchProvider'> = { ...this.opts, ...viewOptions }
+    const opts : Opts<M, B> = { ...this.opts, ...viewOptions }
 
     if (isInputMode) {
       return (

@@ -12,11 +12,9 @@ import type {
 import type { Body, Meta, TagFile } from '@uppy/utils/lib/UppyFile'
 import type { CompanionFile } from '@uppy/utils/lib/CompanionFile.ts'
 import type Translator from '@uppy/utils/lib/Translator'
-import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin.ts'
 import AuthView from './AuthView.tsx'
 import Header from './Header.tsx'
 import Browser from '../Browser.tsx'
-import View, { type ViewOptions } from '../View.ts'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
@@ -42,31 +40,6 @@ export function defaultPickerIcon(): JSX.Element {
   )
 }
 
-type PluginType = 'Provider'
-
-const defaultOptions = {
-  viewType: 'list',
-  showTitles: true,
-  showFilter: true,
-  showBreadcrumbs: true,
-  loadAllFiles: false,
-}
-
-export interface ProviderViewOptions<M extends Meta, B extends Body>
-  extends ViewOptions<M, B, PluginType> {
-  renderAuthForm?: (args: {
-    pluginName: string
-    i18n: Translator['translateArray']
-    loading: boolean | string
-    onAuth: (authFormData: unknown) => Promise<void>
-  }) => JSX.Element
-}
-
-type Opts<M extends Meta, B extends Body> = DefinePluginOpts<
-  ProviderViewOptions<M, B>,
-  keyof typeof defaultOptions
->
-
 const getDefaultState = (rootFolderId: string | null) : UnknownProviderPluginState => ({
   authenticated: undefined, // we don't know yet
   partialTree: [
@@ -84,25 +57,53 @@ const getDefaultState = (rootFolderId: string | null) : UnknownProviderPluginSta
   loading: false
 })
 
+type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>
+
+interface Opts<M extends Meta, B extends Body> {
+  provider: UnknownProviderPlugin<M, B>['provider']
+  viewType: string
+  showTitles: boolean
+  showFilter: boolean
+  showBreadcrumbs: boolean
+  loadAllFiles: boolean
+  renderAuthForm?: (args: {
+    pluginName: string
+    i18n: Translator['translateArray']
+    loading: boolean | string
+    onAuth: (authFormData: unknown) => Promise<void>
+  }) => JSX.Element
+}
+type PassedOpts<M extends Meta, B extends Body> = Optional<Opts<M, B>, 'viewType' | 'showTitles' | 'showFilter' | 'showBreadcrumbs' | 'loadAllFiles'>
+type DefaultOpts<M extends Meta, B extends Body> = Omit<Opts<M, B>, 'provider'>
+
 /**
  * Class to easily generate generic views for Provider plugins
  */
-export default class ProviderView<M extends Meta, B extends Body> extends View<
-  M,
-  B,
-  PluginType,
-  Opts<M, B>
-> {
+export default class ProviderView<M extends Meta, B extends Body>{
   static VERSION = packageJson.version
+
+  plugin: UnknownProviderPlugin<M, B>
+  provider: UnknownProviderPlugin<M, B>['provider']
+  opts: Opts<M, B>
 
   isHandlingScroll: boolean = false
   lastCheckbox: string | null = null
 
   constructor(
     plugin: UnknownProviderPlugin<M, B>,
-    opts: ProviderViewOptions<M, B>,
+    opts: PassedOpts<M, B>,
   ) {
-    super(plugin, { ...defaultOptions, ...opts })
+    this.plugin = plugin
+    this.provider = opts.provider
+
+    const defaultOptions : DefaultOpts<M, B> = {
+      viewType: 'list',
+      showTitles: true,
+      showFilter: true,
+      showBreadcrumbs: true,
+      loadAllFiles: false,
+    }
+    this.opts = { ...defaultOptions, ...opts }
 
     this.getFolder = this.getFolder.bind(this)
     this.logout = this.logout.bind(this)
@@ -356,7 +357,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
 
   render(
     state: unknown,
-    viewOptions: Omit<ViewOptions<M, B, PluginType>, 'provider'> = {},
+    viewOptions: Partial<Opts<M, B>>,
   ): JSX.Element {
     const { didFirstRender } = this.plugin.getPluginState()
     const { i18n } = this.plugin.uppy
