@@ -1,13 +1,8 @@
 {
-  "extends": [
-    "../../../tsconfig.shared.json",
-    "@tsconfig/svelte/tsconfig.json",
-  ],
+  "extends": "../../../tsconfig.shared.json",
   "compilerOptions": {
-    "noEmit": true,
-    "emitDeclarationOnly": false,
-    "rootDir": "./src",
-    "outDir": "./lib",
+    "verbatimModuleSyntax": true,
+    "sourceMap": true,
   },
   "include": ["./src/**/*.*", "./typings/index.d.ts"],
   "exclude": ["node_modules/*"],

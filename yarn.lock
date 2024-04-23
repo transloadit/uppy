@@ -7867,13 +7867,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tsconfig/svelte@npm:^5.0.0":
-  version: 5.0.2
-  resolution: "@tsconfig/svelte@npm:5.0.2"
-  checksum: c16608913db89c8bfc2df805224f12403dd9d2f6f9480cc293e3aae8d1897f3a2de44db14d7c039f0325358e139fb071ec843ee46445a7e10d5265fe48f6ae80
-  languageName: node
-  linkType: hard
-
 "@tufjs/canonical-json@npm:2.0.0":
   version: 2.0.0
   resolution: "@tufjs/canonical-json@npm:2.0.0"
@@ -9901,7 +9894,6 @@ __metadata:
   resolution: "@uppy/svelte@workspace:packages/@uppy/svelte"
   dependencies:
     "@rollup/plugin-node-resolve": ^13.0.0
-    "@tsconfig/svelte": ^5.0.0
     "@uppy/utils": "workspace:^"
     rollup: ^4.0.0
     rollup-plugin-svelte: ^7.0.0
