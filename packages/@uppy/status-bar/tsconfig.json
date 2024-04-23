@@ -5,17 +5,17 @@
     "paths": {
       "@uppy/core": ["../core/src/index.js"],
       "@uppy/core/lib/*": ["../core/src/*"],
-      "@uppy/utils/lib/*": ["../utils/src/*"]
+      "@uppy/utils/lib/*": ["../utils/src/*"],
     },
-    "noEmit": true
+    "noEmit": true,
   },
   "include": ["./package.json", "./src/**/*.*"],
   "references": [
     {
-      "path": "../utils/tsconfig.build.json"
+      "path": "../utils/tsconfig.build.json",
     },
     {
-      "path": "../core/tsconfig.build.json"
-    }
-  ]
+      "path": "../core/tsconfig.build.json",
+    },
+  ],
 }

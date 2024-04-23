@@ -20,37 +20,37 @@
       "@uppy/url": ["../url/src/index.js"],
       "@uppy/url/lib/*": ["../url/src/*"],
       "@uppy/webcam": ["../webcam/src/index.js"],
-      "@uppy/webcam/lib/*": ["../webcam/src/*"]
-    }
+      "@uppy/webcam/lib/*": ["../webcam/src/*"],
+    },
   },
   "include": ["./package.json", "./src/**/*.*"],
   "references": [
     {
-      "path": "../informer/tsconfig.build.json"
+      "path": "../informer/tsconfig.build.json",
     },
     {
-      "path": "../provider-views/tsconfig.build.json"
+      "path": "../provider-views/tsconfig.build.json",
     },
     {
-      "path": "../status-bar/tsconfig.build.json"
+      "path": "../status-bar/tsconfig.build.json",
     },
     {
-      "path": "../thumbnail-generator/tsconfig.build.json"
+      "path": "../thumbnail-generator/tsconfig.build.json",
     },
     {
-      "path": "../utils/tsconfig.build.json"
+      "path": "../utils/tsconfig.build.json",
     },
     {
-      "path": "../core/tsconfig.build.json"
+      "path": "../core/tsconfig.build.json",
     },
     {
-      "path": "../google-drive/tsconfig.build.json"
+      "path": "../google-drive/tsconfig.build.json",
     },
     {
-      "path": "../url/tsconfig.build.json"
+      "path": "../url/tsconfig.build.json",
     },
     {
-      "path": "../webcam/tsconfig.build.json"
-    }
-  ]
+      "path": "../webcam/tsconfig.build.json",
+    },
+  ],
 }
