@@ -29,7 +29,7 @@
     "lodash": "^4.17.21",
     "mime-match": "^1.0.2",
     "namespace-emitter": "^2.0.1",
-    "nanoid": "^4.0.0",
+    "nanoid": "^5.0.0",
     "preact": "^10.5.13"
   },
   "devDependencies": {

@@ -24,7 +24,7 @@
   "dependencies": {
     "@uppy/companion-client": "workspace:^",
     "@uppy/utils": "workspace:^",
-    "nanoid": "^4.0.0",
+    "nanoid": "^5.0.0",
     "preact": "^10.5.13"
   },
   "peerDependencies": {

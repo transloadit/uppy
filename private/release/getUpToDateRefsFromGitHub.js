@@ -1,5 +1,3 @@
-import fetch from 'node-fetch'
-
 import { spawnSync } from 'node:child_process'
 import prompts from 'prompts'
 import { TARGET_BRANCH, REPO_NAME, REPO_OWNER, STABLE_BRANCH } from './config.js'

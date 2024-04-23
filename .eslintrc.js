@@ -117,7 +117,6 @@ module.exports = {
     'jsdoc/check-syntax': 'error',
     'jsdoc/check-tag-names': ['error', { jsxTags: true }],
     'jsdoc/check-types': 'error',
-    'jsdoc/newline-after-description': 'error',
     'jsdoc/valid-types': 'error',
     'jsdoc/check-indentation': ['off'],
   },
