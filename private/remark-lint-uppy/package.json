@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "main": "index.js",
   "dependencies": {
-    "mdast-comment-marker": "^2.1.0",
+    "mdast-comment-marker": "^3.0.0",
     "remark-frontmatter": "^5.0.0",
     "remark-lint": "^9.0.0",
     "remark-lint-emphasis-marker": "^4.0.0",
@@ -29,7 +29,7 @@
     "retext-simplify": "^8.0.0",
     "retext-syntax-mentions": "^4.0.0",
     "unified": "^11.0.0",
-    "unified-message-control": "^5.0.0"
+    "unified-message-control": "^4.0.0"
   },
   "type": "module",
   "private": true
