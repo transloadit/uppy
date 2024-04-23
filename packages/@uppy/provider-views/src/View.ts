@@ -46,8 +46,6 @@ export default class View<
 
   provider: SelectedProvider<M, B, T>
 
-  isHandlingScroll: boolean
-
   lastCheckbox: string | null
 
   protected opts: O
@@ -57,7 +55,6 @@ export default class View<
     this.provider = opts.provider
     this.opts = opts
 
-    this.isHandlingScroll = false
     this.lastCheckbox = null
 
     this.validateRestrictions = this.validateRestrictions.bind(this)

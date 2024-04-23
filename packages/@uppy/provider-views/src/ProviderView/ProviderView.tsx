@@ -94,6 +94,8 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
 > {
   static VERSION = packageJson.version
 
+  isHandlingScroll: boolean = false
+
   constructor(
     plugin: UnknownProviderPlugin<M, B>,
     opts: ProviderViewOptions<M, B>,

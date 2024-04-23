@@ -63,6 +63,8 @@ export default class SearchProviderView<
 > extends View<M, B, PluginType, Opts<M, B, PluginType>> {
   static VERSION = packageJson.version
 
+  isHandlingScroll: boolean = false
+
   constructor(
     plugin: UnknownSearchProviderPlugin<M, B>,
     opts: ViewOptions<M, B, PluginType>,
