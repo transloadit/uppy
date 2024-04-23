@@ -64,6 +64,7 @@ export default class SearchProviderView<
   static VERSION = packageJson.version
 
   isHandlingScroll: boolean = false
+  lastCheckbox: string | null = null
 
   constructor(
     plugin: UnknownSearchProviderPlugin<M, B>,

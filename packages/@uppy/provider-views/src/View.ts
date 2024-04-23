@@ -46,16 +46,12 @@ export default class View<
 
   provider: SelectedProvider<M, B, T>
 
-  lastCheckbox: string | null
-
   protected opts: O
 
   constructor(plugin: SelectedPlugin<M, B, T>, opts: O) {
     this.plugin = plugin
     this.provider = opts.provider
     this.opts = opts
-
-    this.lastCheckbox = null
 
     this.validateRestrictions = this.validateRestrictions.bind(this)
   }
