@@ -13,6 +13,7 @@ import Item from './Item/index.tsx'
 import type { PartialTree, PartialTreeFile, PartialTreeFolderNode } from '@uppy/core/lib/Uppy.ts'
 import type { RestrictionError } from '@uppy/core/lib/Restricter.ts'
 import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
+import { useEffect, useState } from 'preact/hooks'
 
 type BrowserProps<M extends Meta, B extends Body> = {
   displayedPartialTree: (PartialTreeFile | PartialTreeFolderNode)[],
@@ -20,7 +21,7 @@ type BrowserProps<M extends Meta, B extends Body> = {
 
   viewType: string
   headerComponent?: JSX.Element
-  toggleCheckbox: (event: Event, file: PartialTreeFile | PartialTreeFolderNode) => void
+  toggleCheckbox: (event: Event, file: PartialTreeFile | PartialTreeFolderNode, isShiftKeyPressed: boolean) => void
   handleScroll: (event: Event) => Promise<void>
   showTitles: boolean
   i18n: I18n
@@ -68,6 +69,25 @@ function Browser<M extends Meta, B extends Body>(
     loadAllFiles,
   } = props
 
+  const [isShiftKeyPressed, setIsShiftKeyPressed] = useState(false)
+
+  // This records whether the user is holding the SHIFT key this very moment.
+  // Typically this is implemented using `onClick((e) => e.shiftKey)` - but we can't use that, because for accessibility reasons we're using html tags that don't support `e.shiftKey` property (see #3768).
+  useEffect(() => {
+    const handleKeyUp = (e: KeyboardEvent) => {
+      if (e.key == 'Shift') setIsShiftKeyPressed(false)
+    }
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key == 'Shift') setIsShiftKeyPressed(true)
+    }
+    document.addEventListener('keyup', handleKeyUp)
+    document.addEventListener('keydown', handleKeyDown)
+    return () => {
+      document.removeEventListener('keyup', handleKeyUp)
+      document.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [])
+
   return (
     <div
       className={classNames(
@@ -111,7 +131,7 @@ function Browser<M extends Meta, B extends Body>(
                   renderRow={(file: PartialTreeFile | PartialTreeFolderNode) => (
                     <Item
                       viewType={viewType}
-                      toggleCheckbox={toggleCheckbox}
+                      toggleCheckbox={(event: Event) => toggleCheckbox(event, file, isShiftKeyPressed)}
                       showTitles={showTitles}
                       i18n={i18n}
                       validateRestrictions={validateRestrictions}
@@ -138,7 +158,7 @@ function Browser<M extends Meta, B extends Body>(
               {displayedPartialTree.map((file) => (
                 <Item
                   viewType={viewType}
-                  toggleCheckbox={toggleCheckbox}
+                  toggleCheckbox={(event: Event) => toggleCheckbox(event, file, isShiftKeyPressed)}
                   showTitles={showTitles}
                   i18n={i18n}
                   validateRestrictions={validateRestrictions}

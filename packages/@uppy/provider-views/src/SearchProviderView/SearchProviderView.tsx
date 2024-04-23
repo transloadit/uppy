@@ -183,7 +183,7 @@ export default class SearchProviderView<
     this.resetPluginState()
   }
 
-  toggleCheckbox(e: Event, ourItem: PartialTreeFolderNode | PartialTreeFile) {
+  toggleCheckbox(e: Event, ourItem: PartialTreeFolderNode | PartialTreeFile, isShiftKeyPressed: boolean) {
     e.stopPropagation()
     e.preventDefault()
     // Prevent shift-clicking from highlighting file names
@@ -193,7 +193,7 @@ export default class SearchProviderView<
     const { partialTree, currentFolderId } = this.plugin.getPluginState()
 
     const displayedPartialTree = partialTree.filter((item) => item.type !== 'root' && item.parentId === currentFolderId) as (PartialTreeFolderNode | PartialTreeFile)[]
-    const newPartialTree = PartialTreeUtils.afterToggleCheckbox(partialTree, displayedPartialTree, ourItem, this.validateRestrictions, this.isShiftKeyPressed, this.lastCheckbox)
+    const newPartialTree = PartialTreeUtils.afterToggleCheckbox(partialTree, displayedPartialTree, ourItem, this.validateRestrictions, isShiftKeyPressed, this.lastCheckbox)
 
     this.plugin.setPluginState({ partialTree: newPartialTree })
     this.lastCheckbox = ourItem.id!

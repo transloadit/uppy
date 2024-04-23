@@ -321,7 +321,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
     return breadcrumbs.toReversed()
   }
 
-  toggleCheckbox(e: Event, ourItem: PartialTreeFolderNode | PartialTreeFile) {
+  toggleCheckbox(e: Event, ourItem: PartialTreeFolderNode | PartialTreeFile, isShiftKeyPressed: boolean) {
     e.stopPropagation()
     e.preventDefault()
     // Prevent shift-clicking from highlighting file names
@@ -329,7 +329,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
     document.getSelection()?.removeAllRanges()
 
     const { partialTree } = this.plugin.getPluginState()
-    const newPartialTree = PartialTreeUtils.afterToggleCheckbox(partialTree, this.getDisplayedPartialTree(), ourItem, this.validateRestrictions, this.isShiftKeyPressed, this.lastCheckbox)
+    const newPartialTree = PartialTreeUtils.afterToggleCheckbox(partialTree, this.getDisplayedPartialTree(), ourItem, this.validateRestrictions, isShiftKeyPressed, this.lastCheckbox)
 
     this.plugin.setPluginState({ partialTree: newPartialTree })
     this.lastCheckbox = ourItem.id!

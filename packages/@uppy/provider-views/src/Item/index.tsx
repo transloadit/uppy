@@ -15,7 +15,7 @@ const VIRTUAL_SHARED_DIR = 'shared-with-me'
 
 type ItemProps<M extends Meta, B extends Body> = {
   viewType: string
-  toggleCheckbox: (event: Event, file: (PartialTreeFile | PartialTreeFolderNode)) => void
+  toggleCheckbox: (event: Event) => void
   showTitles: boolean
   i18n: I18n
   validateRestrictions: (file: CompanionFile) => RestrictionError<M, B> | null
@@ -37,7 +37,7 @@ export default function Item<M extends Meta, B extends Body>(
     status: file.status,
 
     i18n,
-    toggleCheckbox: (event: Event) => toggleCheckbox(event, file),
+    toggleCheckbox,
     viewType,
     showTitles,
     className: classNames(
