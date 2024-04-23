@@ -73,10 +73,6 @@ export default class View<
     return this.plugin.uppy.validateRestrictions(localData, [...aleadyAddedFiles, ...checkedFilesData])
   }
 
-  registerRequestClient(): void {
-    this.plugin.uppy.registerRequestClient(this.provider.provider, this.provider)
-  }
-
   setLoading(loading: boolean | string): void {
     this.plugin.setPluginState({ loading })
   }

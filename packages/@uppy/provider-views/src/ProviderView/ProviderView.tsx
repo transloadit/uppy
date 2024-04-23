@@ -117,7 +117,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
     // @ts-expect-error this should be typed in @uppy/dashboard.
     this.plugin.uppy.on('dashboard:close-panel', this.resetPluginState)
 
-    this.registerRequestClient()
+    this.plugin.uppy.registerRequestClient(this.provider.provider, this.provider)
   }
 
   resetPluginState(): void {

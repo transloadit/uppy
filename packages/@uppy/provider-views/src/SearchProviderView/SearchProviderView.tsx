@@ -86,7 +86,7 @@ export default class SearchProviderView<
     // @ts-expect-error this should be typed in @uppy/dashboard.
     this.plugin.uppy.on('dashboard:close-panel', this.resetPluginState)
 
-    this.registerRequestClient()
+    this.plugin.uppy.registerRequestClient(this.provider.provider, this.provider)
   }
 
   // eslint-disable-next-line class-methods-use-this
