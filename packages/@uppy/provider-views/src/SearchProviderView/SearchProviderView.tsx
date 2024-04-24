@@ -41,6 +41,7 @@ interface Opts<M extends Meta, B extends Body> {
 }
 type PassedOpts<M extends Meta, B extends Body> = Optional<Opts<M, B>, 'viewType' | 'showTitles' | 'showFilter'>
 type DefaultOpts<M extends Meta, B extends Body> = Omit<Opts<M, B>, 'provider'>
+type RenderOpts<M extends Meta, B extends Body> = Omit<PassedOpts<M, B>, 'provider'>
 
 type Res = {
   items: CompanionFile[]
@@ -219,7 +220,7 @@ export default class SearchProviderView<M extends Meta, B extends Body> {
 
   render(
     state: unknown,
-    viewOptions: Partial<Opts<M, B>>,
+    viewOptions: RenderOpts<M, B>
   ): JSX.Element {
     const { isInputMode, searchString, loading, partialTree, currentFolderId } =
       this.plugin.getPluginState()

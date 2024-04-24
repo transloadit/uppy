@@ -75,6 +75,7 @@ interface Opts<M extends Meta, B extends Body> {
 }
 type PassedOpts<M extends Meta, B extends Body> = Optional<Opts<M, B>, 'viewType' | 'showTitles' | 'showFilter' | 'showBreadcrumbs' | 'loadAllFiles'>
 type DefaultOpts<M extends Meta, B extends Body> = Omit<Opts<M, B>, 'provider'>
+type RenderOpts<M extends Meta, B extends Body> = Omit<PassedOpts<M, B>, 'provider'>
 
 /**
  * Class to easily generate generic views for Provider plugins
@@ -357,7 +358,7 @@ export default class ProviderView<M extends Meta, B extends Body>{
 
   render(
     state: unknown,
-    viewOptions: Partial<Opts<M, B>>,
+    viewOptions: RenderOpts<M, B>
   ): JSX.Element {
     const { didFirstRender } = this.plugin.getPluginState()
     const { i18n } = this.plugin.uppy
