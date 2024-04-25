@@ -141,7 +141,7 @@ export default class Editor<M extends Meta, B extends Body> extends Component<
     this.cropper.scale(scaleFactorX, scaleFactor)
   }
 
-  renderGranularRotate(): JSX.Element {
+  renderGranularRotate() {
     const { i18n } = this.props
     const { angleGranular } = this.state
 
@@ -166,7 +166,7 @@ export default class Editor<M extends Meta, B extends Body> extends Component<
     )
   }
 
-  renderRevert(): JSX.Element {
+  renderRevert() {
     const { i18n, opts } = this.props
 
     return (
@@ -198,7 +198,7 @@ export default class Editor<M extends Meta, B extends Body> extends Component<
     )
   }
 
-  renderRotate(): JSX.Element {
+  renderRotate() {
     const { i18n } = this.props
 
     return (
@@ -224,7 +224,7 @@ export default class Editor<M extends Meta, B extends Body> extends Component<
     )
   }
 
-  renderFlip(): JSX.Element {
+  renderFlip() {
     const { i18n } = this.props
 
     return (
@@ -252,7 +252,7 @@ export default class Editor<M extends Meta, B extends Body> extends Component<
     )
   }
 
-  renderZoomIn(): JSX.Element {
+  renderZoomIn() {
     const { i18n } = this.props
 
     return (
@@ -279,7 +279,7 @@ export default class Editor<M extends Meta, B extends Body> extends Component<
     )
   }
 
-  renderZoomOut(): JSX.Element {
+  renderZoomOut() {
     const { i18n } = this.props
 
     return (
@@ -305,7 +305,7 @@ export default class Editor<M extends Meta, B extends Body> extends Component<
     )
   }
 
-  renderCropSquare(): JSX.Element {
+  renderCropSquare() {
     const { i18n } = this.props
 
     return (
@@ -331,7 +331,7 @@ export default class Editor<M extends Meta, B extends Body> extends Component<
     )
   }
 
-  renderCropWidescreen(): JSX.Element {
+  renderCropWidescreen() {
     const { i18n } = this.props
 
     return (
@@ -357,7 +357,7 @@ export default class Editor<M extends Meta, B extends Body> extends Component<
     )
   }
 
-  renderCropWidescreenVertical(): JSX.Element {
+  renderCropWidescreenVertical() {
     const { i18n } = this.props
 
     return (
@@ -383,7 +383,7 @@ export default class Editor<M extends Meta, B extends Body> extends Component<
     )
   }
 
-  render(): JSX.Element {
+  render() {
     const { currentImage, opts } = this.props
     const { actions } = opts
     const imageURL = URL.createObjectURL(currentImage.data)

@@ -1149,7 +1149,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
       .map(this.#attachRenderFunctionToTarget)
   })
 
-  render = (state: State<M, B>): JSX.Element => {
+  render = (state: State<M, B>) => {
     const pluginState = this.getPluginState()
     const { files, capabilities, allowNewUpload } = state
     const {

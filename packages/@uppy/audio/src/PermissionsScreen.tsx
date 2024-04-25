@@ -2,12 +2,12 @@ import type { I18n } from '@uppy/utils/lib/Translator'
 import { h } from 'preact'
 
 interface PermissionsScreenProps {
-  icon: () => JSX.Element | null
+  icon: () => h.JSX.Element | null
   hasAudio: boolean
   i18n: I18n
 }
 
-export default (props: PermissionsScreenProps): JSX.Element => {
+export default (props: PermissionsScreenProps) => {
   const { icon, hasAudio, i18n } = props
   return (
     <div className="uppy-Audio-permissons">

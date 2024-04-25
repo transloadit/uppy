@@ -348,7 +348,7 @@ export default class Audio<M extends Meta, B extends Body> extends UIPlugin<
     })
   }
 
-  render(): JSX.Element {
+  render() {
     if (!this.#audioActive) {
       this.#start()
     }

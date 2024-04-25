@@ -4,7 +4,7 @@ import classNames from 'classnames'
 
 type $TSFixMe = any
 
-function EditorPanel(props: $TSFixMe): JSX.Element {
+function EditorPanel(props: $TSFixMe) {
   const file = props.files[props.fileCardFor]
 
   const handleCancel = () => {

@@ -6,7 +6,7 @@ interface DiscardButtonProps {
   i18n: I18n
 }
 
-function DiscardButton({ onDiscard, i18n }: DiscardButtonProps): JSX.Element {
+function DiscardButton({ onDiscard, i18n }: DiscardButtonProps) {
   return (
     <button
       className="uppy-u-reset uppy-c-btn uppy-Audio-button"

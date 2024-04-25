@@ -3,7 +3,7 @@ import getFileTypeIcon from '../utils/getFileTypeIcon.tsx'
 
 type $TSFixMe = any
 
-export default function FilePreview(props: $TSFixMe): JSX.Element {
+export default function FilePreview(props: $TSFixMe) {
   const { file } = props
 
   if (file.preview) {
