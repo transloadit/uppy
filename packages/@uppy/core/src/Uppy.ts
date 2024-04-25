@@ -459,10 +459,7 @@ export class Uppy<M extends Meta, B extends Body> {
       info: [],
     })
 
-    this.#restricter = new Restricter<M, B>(
-      () => this.opts,
-      () => this.i18n,
-    )
+    this.#restricter = new Restricter<M, B>(() => this.opts, this.i18n)
 
     this.#storeUnsubscribe = this.store.subscribe(
       // eslint-disable-next-line

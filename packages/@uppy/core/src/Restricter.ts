@@ -3,6 +3,7 @@
 import prettierBytes from '@transloadit/prettier-bytes'
 // @ts-ignore untyped
 import match from 'mime-match'
+import Translator from '@uppy/utils/lib/Translator'
 import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
 import type { I18n } from '@uppy/utils/lib/Translator'
 import type { State, NonNullableUppyOptions } from './Uppy'
@@ -57,15 +58,12 @@ class RestrictionError<M extends Meta, B extends Body> extends Error {
 }
 
 class Restricter<M extends Meta, B extends Body> {
-  getI18n: () => I18n
+  i18n: Translator['translate']
 
   getOpts: () => NonNullableUppyOptions<M, B>
 
-  constructor(
-    getOpts: () => NonNullableUppyOptions<M, B>,
-    getI18n: () => I18n,
-  ) {
-    this.getI18n = getI18n
+  constructor(getOpts: () => NonNullableUppyOptions<M, B>, i18n: I18n) {
+    this.i18n = i18n
     this.getOpts = (): NonNullableUppyOptions<M, B> => {
       const opts = getOpts()
 
@@ -90,7 +88,7 @@ class Restricter<M extends Meta, B extends Body> {
       const nonGhostFiles = existingFiles.filter((f) => !f.isGhost)
       if (nonGhostFiles.length + addingFiles.length > maxNumberOfFiles) {
         throw new RestrictionError(
-          `${this.getI18n()('youCanOnlyUploadX', {
+          `${this.i18n('youCanOnlyUploadX', {
             smart_count: maxNumberOfFiles,
           })}`,
         )
@@ -110,7 +108,7 @@ class Restricter<M extends Meta, B extends Body> {
 
           if (totalFilesSize > maxTotalFileSize) {
             throw new RestrictionError(
-              this.getI18n()('exceedsSize', {
+              this.i18n('exceedsSize', {
                 size: prettierBytes(maxTotalFileSize),
                 file: addingFile.name,
               }),
@@ -143,7 +141,7 @@ class Restricter<M extends Meta, B extends Body> {
       if (!isCorrectFileType) {
         const allowedFileTypesString = allowedFileTypes.join(', ')
         throw new RestrictionError(
-          this.getI18n()('youCanOnlyUploadFileTypes', {
+          this.i18n('youCanOnlyUploadFileTypes', {
             types: allowedFileTypesString,
           }),
           { file } as { file: UppyFile<M, B> },
@@ -154,7 +152,7 @@ class Restricter<M extends Meta, B extends Body> {
     // We can't check maxFileSize if the size is unknown.
     if (maxFileSize && file.size != null && file.size > maxFileSize) {
       throw new RestrictionError(
-        this.getI18n()('exceedsSize', {
+        this.i18n('exceedsSize', {
           size: prettierBytes(maxFileSize),
           file: file.name,
         }),
@@ -165,7 +163,7 @@ class Restricter<M extends Meta, B extends Body> {
     // We can't check minFileSize if the size is unknown.
     if (minFileSize && file.size != null && file.size < minFileSize) {
       throw new RestrictionError(
-        this.getI18n()('inferiorSize', {
+        this.i18n('inferiorSize', {
           size: prettierBytes(minFileSize),
         }),
         { file } as { file: UppyFile<M, B> },
@@ -187,9 +185,7 @@ class Restricter<M extends Meta, B extends Body> {
     const { minNumberOfFiles } = this.getOpts().restrictions
     if (minNumberOfFiles && Object.keys(files).length < minNumberOfFiles) {
       throw new RestrictionError(
-        this.getI18n()('youHaveToAtLeastSelectX', {
-          smart_count: minNumberOfFiles,
-        }),
+        this.i18n('youHaveToAtLeastSelectX', { smart_count: minNumberOfFiles }),
       )
     }
   }
@@ -199,7 +195,7 @@ class Restricter<M extends Meta, B extends Body> {
     error: RestrictionError<M, B>
   } {
     const error = new RestrictionError<M, B>(
-      this.getI18n()('missingRequiredMetaFieldOnFile', { fileName: file.name }),
+      this.i18n('missingRequiredMetaFieldOnFile', { fileName: file.name }),
     )
     const { requiredMetaFields } = this.getOpts().restrictions
     const missingFields: string[] = []
