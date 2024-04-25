@@ -9,7 +9,7 @@ import type ProviderViews from './ProviderView'
 type AuthViewProps<M extends Meta, B extends Body> = {
   loading: boolean | string
   pluginName: string
-  pluginIcon: () => JSX.Element
+  pluginIcon: () => h.JSX.Element
   i18n: Translator['translateArray']
   handleAuth: ProviderViews<M, B>['handleAuth']
   renderForm?: ProviderViewOptions<M, B>['renderAuthForm']
@@ -107,7 +107,7 @@ const defaultRenderForm = ({
 
 export default function AuthView<M extends Meta, B extends Body>(
   props: AuthViewProps<M, B>,
-): JSX.Element {
+) {
   const {
     loading,
     pluginName,

@@ -26,9 +26,7 @@ interface RecordingScreenProps extends AudioSourceSelectProps {
   recordingLengthSeconds: number
 }
 
-export default function RecordingScreen(
-  props: RecordingScreenProps,
-): JSX.Element {
+export default function RecordingScreen(props: RecordingScreenProps) {
   const {
     stream,
     recordedAudio,

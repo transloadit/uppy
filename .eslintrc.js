@@ -479,7 +479,7 @@ module.exports = {
       },
     },
     {
-      files: ['packages/@uppy/*/src/**/*.ts', 'packages/@uppy/*/src/**/*.tsx'],
+      files: ['packages/@uppy/*/src/**/*.ts'],
       excludedFiles: ['packages/@uppy/**/*.test.ts', 'packages/@uppy/core/src/mocks/*.ts'],
       rules: {
         '@typescript-eslint/explicit-module-boundary-types': 'error',

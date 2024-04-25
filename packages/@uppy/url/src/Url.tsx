@@ -81,7 +81,7 @@ export default class Url<M extends Meta, B extends Body> extends UIPlugin<
 
   static requestClientId = Url.name
 
-  icon: () => JSX.Element
+  icon: () => h.JSX.Element
 
   hostname: string
 

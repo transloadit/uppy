@@ -155,7 +155,7 @@ export default class SearchProviderView<
   render(
     state: unknown,
     viewOptions: Omit<ViewOptions<M, B, PluginType>, 'provider'> = {},
-  ): JSX.Element {
+  ) {
     const { didFirstRender, isInputMode, searchTerm } =
       this.plugin.getPluginState()
     const { i18n } = this.plugin.uppy

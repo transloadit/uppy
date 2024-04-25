@@ -25,7 +25,7 @@ const HEIGHT_MD = 330
 
 type $TSFixMe = any
 
-export default function Dashboard(props: $TSFixMe): JSX.Element {
+export default function Dashboard(props: $TSFixMe) {
   const isNoFiles = props.totalFileCount === 0
   const isSingleFile = props.totalFileCount === 1
   const isSizeMD = props.containerWidth > WIDTH_MD

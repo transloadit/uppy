@@ -10,7 +10,7 @@ export default ({
   currentDeviceId,
   audioSources,
   onChangeSource,
-}: AudioSourceSelectProps): JSX.Element => {
+}: AudioSourceSelectProps) => {
   return (
     <div className="uppy-Audio-videoSource">
       <select
