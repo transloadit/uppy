@@ -15,6 +15,7 @@ import PartialTreeUtils from '../utils/PartialTreeUtils'
 import shouldHandleScroll from '../utils/shouldHandleScroll.ts'
 import handleError from '../utils/handleError.ts'
 import validateRestrictions from '../utils/validateRestrictions.ts'
+import getClickedRange from '../utils/getClickedRange.ts'
 
 const defaultState : UnknownSearchProviderPluginState = {
   loading: false,
@@ -203,13 +204,18 @@ export default class SearchProviderView<M extends Meta, B extends Body> {
     // (https://stackoverflow.com/a/1527797/3192470)
     document.getSelection()?.removeAllRanges()
 
-    const { partialTree, currentFolderId } = this.plugin.getPluginState()
+    const { partialTree } = this.plugin.getPluginState()
 
-    const displayedPartialTree = partialTree.filter((item) => item.type !== 'root' && item.parentId === currentFolderId) as (PartialTreeFolderNode | PartialTreeFile)[]
-    const newPartialTree = PartialTreeUtils.afterToggleCheckbox(partialTree, displayedPartialTree, ourItem.id, validateRestrictions(this.plugin), isShiftKeyPressed, this.lastCheckbox)
+    const clickedRange = getClickedRange(ourItem.id, this.getDisplayedPartialTree(), isShiftKeyPressed, this.lastCheckbox)
+    const newPartialTree = PartialTreeUtils.afterToggleCheckbox(partialTree, clickedRange, validateRestrictions(this.plugin))
 
     this.plugin.setPluginState({ partialTree: newPartialTree })
     this.lastCheckbox = ourItem.id!
+  }
+
+  getDisplayedPartialTree = () : (PartialTreeFile | PartialTreeFolderNode)[] => {
+    const { partialTree } = this.plugin.getPluginState()
+    return partialTree.filter((item) => item.type !== 'root') as (PartialTreeFolderNode | PartialTreeFile)[]
   }
 
   setSearchString = (searchString: string) => {
@@ -223,7 +229,7 @@ export default class SearchProviderView<M extends Meta, B extends Body> {
     state: unknown,
     viewOptions: RenderOpts<M, B> = {}
   ): JSX.Element {
-    const { isInputMode, searchString, loading, partialTree, currentFolderId } =
+    const { isInputMode, searchString, loading, partialTree } =
       this.plugin.getPluginState()
     const { i18n } = this.plugin.uppy
     const opts : Opts<M, B> = { ...this.opts, ...viewOptions }
@@ -248,7 +254,7 @@ export default class SearchProviderView<M extends Meta, B extends Body> {
     return (
       <Browser
         toggleCheckbox={this.toggleCheckbox}
-        displayedPartialTree={partialTree.filter((item) => item.type !== 'root' && item.parentId === currentFolderId) as (PartialTreeFolderNode | PartialTreeFile)[]}
+        displayedPartialTree={this.getDisplayedPartialTree()}
         nOfSelectedFiles={getNOfSelectedFiles(partialTree)}
         handleScroll={this.handleScroll}
         done={this.donePicking}

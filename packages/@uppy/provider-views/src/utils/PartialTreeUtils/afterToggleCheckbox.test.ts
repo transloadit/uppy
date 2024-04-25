@@ -45,12 +45,6 @@ const oldPartialTree : PartialTree = [
       _file('4', { parentId: 'ourRoot' }),
 ]
 
-const getDisplayedTree = (tree: PartialTree, folderId: string) => {
-  return tree.filter((i) =>
-    i.type !== 'root' && i.parentId === folderId
-  ) as (PartialTreeFolderNode | PartialTreeFile)[]
-}
-
 const getFolder = (tree: PartialTree, id: string) =>
   tree.find((i) => i.id === id) as PartialTreeFolderNode
 const getFile = (tree: PartialTree, id: string) =>
@@ -58,11 +52,7 @@ const getFile = (tree: PartialTree, id: string) =>
 
 describe('afterToggleCheckbox', () => {
   it('check folder: percolates up and down', () => {
-    const newTree = afterToggleCheckbox(
-      oldPartialTree, getDisplayedTree(oldPartialTree, '2'),
-      '2_4',
-      () => null, false, null
-    )
+    const newTree = afterToggleCheckbox(oldPartialTree, ['2_4'], () => null)
 
     expect(getFolder(newTree, '2_4').status).toEqual('checked')
     // percolates down
@@ -73,21 +63,10 @@ describe('afterToggleCheckbox', () => {
     expect(getFolder(newTree, '2').status).toEqual('partial')
   })
 
-  // Hmm we can be passing fewer redundancies if we
-  // - make `getDisplayedTree` a function
-  // - make `ourItem` just .id
-  it('unchecked folder: percolates up and down', () => {
-    const treeAfterClick1 = afterToggleCheckbox(
-      oldPartialTree, getDisplayedTree(oldPartialTree, '2'),
-      '2_4',
-      () => null, false, null
-    )
+  it('uncheck folder: percolates up and down', () => {
+    const treeAfterClick1 = afterToggleCheckbox(oldPartialTree, ['2_4'], () => null)
 
-    const tree = afterToggleCheckbox(
-      treeAfterClick1, getDisplayedTree(treeAfterClick1, '2'),
-      '2_4',
-      () => null, false, null
-    )
+    const tree = afterToggleCheckbox(treeAfterClick1, ['2_4'], () => null)
 
     expect(getFolder(tree, '2_4').status).toEqual('unchecked')
     // percolates down
@@ -97,5 +76,4 @@ describe('afterToggleCheckbox', () => {
     // percolates up
     expect(getFolder(tree, '2').status).toEqual('unchecked')
   })
-
 })

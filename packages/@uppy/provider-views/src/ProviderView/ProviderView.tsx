@@ -25,6 +25,7 @@ import getNOfSelectedFiles from '../utils/getNOfSelectedFiles.ts'
 import shouldHandleScroll from '../utils/shouldHandleScroll.ts'
 import handleError from '../utils/handleError.ts'
 import validateRestrictions from '../utils/validateRestrictions.ts'
+import getClickedRange from '../utils/getClickedRange.ts'
 
 export function defaultPickerIcon(): JSX.Element {
   return (
@@ -341,7 +342,9 @@ export default class ProviderView<M extends Meta, B extends Body>{
     document.getSelection()?.removeAllRanges()
 
     const { partialTree } = this.plugin.getPluginState()
-    const newPartialTree = PartialTreeUtils.afterToggleCheckbox(partialTree, this.getDisplayedPartialTree(), ourItem.id, validateRestrictions(this.plugin), isShiftKeyPressed, this.lastCheckbox)
+
+    const clickedRange = getClickedRange(ourItem.id, this.getDisplayedPartialTree(), isShiftKeyPressed, this.lastCheckbox)
+    const newPartialTree = PartialTreeUtils.afterToggleCheckbox(partialTree, clickedRange, validateRestrictions(this.plugin))
 
     this.plugin.setPluginState({ partialTree: newPartialTree })
     this.lastCheckbox = ourItem.id!

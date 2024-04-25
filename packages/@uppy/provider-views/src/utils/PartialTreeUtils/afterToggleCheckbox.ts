@@ -3,14 +3,12 @@ import type { CompanionFile } from "@uppy/utils/lib/CompanionFile"
 
 const afterToggleCheckbox = (
   oldPartialTree: PartialTree,
-  displayedPartialTree: (PartialTreeFolderNode | PartialTreeFile)[],
-  clickedItemId: string,
+  clickedRange: string[],
   validateRestrictions: (file: CompanionFile) => object | null,
-  isShiftKeyPressed: boolean,
-  lastCheckbox: string | null
 ) : PartialTree => {
-  const ourItem = oldPartialTree.find((i) => i.id === clickedItemId) as PartialTreeFolderNode | PartialTreeFile
   const newPartialTree : PartialTree = JSON.parse(JSON.stringify(oldPartialTree))
+  const ourItemOld = oldPartialTree.find((item) => item.id === clickedRange[0]) as (PartialTreeFile | PartialTreeFolderNode)
+  const ourItem = newPartialTree.find((item) => item.id === clickedRange[0]) as (PartialTreeFile | PartialTreeFolderNode)
 
   // if newStatus is "checked" - percolate down "checked"
   // if newStatus is "unchecked" - percolate down "unchecked"
@@ -48,18 +46,9 @@ const afterToggleCheckbox = (
     percolateUp(parentFolder)
   }
 
-  // Shift-clicking selects a single consecutive list of items
-  // starting at the previous click.
-  const prevIndex = displayedPartialTree.findIndex((item) => item.id === lastCheckbox)
-  if (prevIndex !== -1 && isShiftKeyPressed) {
-    const newIndex = displayedPartialTree.findIndex((item) => item.id === ourItem.id)
-    const toMarkAsChecked = (prevIndex < newIndex ?
-        displayedPartialTree.slice(prevIndex, newIndex + 1)
-      : displayedPartialTree.slice(newIndex, prevIndex + 1)
-    ).map((item) => item.id)
-
+  if (clickedRange.length >= 2) {
     const newlyCheckedItems = newPartialTree
-      .filter((item) => item.type !== 'root' && toMarkAsChecked.includes(item.id)) as (PartialTreeFile | PartialTreeFolderNode)[] 
+      .filter((item) => item.type !== 'root' && clickedRange.includes(item.id)) as (PartialTreeFile | PartialTreeFolderNode)[] 
 
     newlyCheckedItems.forEach((item) => {
       if (item.type === 'file') {
@@ -74,9 +63,8 @@ const afterToggleCheckbox = (
     })
     percolateUp(ourItem)
   } else {
-    const ourItemInNewTree = newPartialTree.find((item) => item.id === ourItem.id) as (PartialTreeFile | PartialTreeFolderNode)
-    ourItemInNewTree.status = ourItem.status === 'checked' ? 'unchecked' : 'checked'
-    percolateDown(ourItem, ourItemInNewTree.status)
+    ourItem.status = ourItemOld.status === 'checked' ? 'unchecked' : 'checked'
+    percolateDown(ourItem, ourItem.status)
     percolateUp(ourItem)
   }
 
