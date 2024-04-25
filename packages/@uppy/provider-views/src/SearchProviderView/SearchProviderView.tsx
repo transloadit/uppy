@@ -221,7 +221,7 @@ export default class SearchProviderView<M extends Meta, B extends Body> {
 
   render(
     state: unknown,
-    viewOptions: RenderOpts<M, B>
+    viewOptions: RenderOpts<M, B> = {}
   ): JSX.Element {
     const { isInputMode, searchString, loading, partialTree, currentFolderId } =
       this.plugin.getPluginState()

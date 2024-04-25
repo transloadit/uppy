@@ -87,7 +87,7 @@ export type PartialTreeFolderNode = {
   //          OR
   //          when { cached: false } and our .nextPagePath is simply .id
   // string - *strictly* when { cached: true } and there are still pages to fetch.
-  // So, consider .cached and .nextPagePath a composite key of sorts, their combination create a specific meaning.
+  // So, consider .cached and .nextPagePath a composite key of sorts, their combination creates a specific meaning.
   nextPagePath: PartialTreeId
 
   status: PartialTreeStatus
