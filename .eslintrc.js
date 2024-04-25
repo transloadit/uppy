@@ -175,6 +175,10 @@ module.exports = {
             name: 'require',
             message: 'Use import instead',
           },
+          {
+            name: 'JSX',
+            message: 'Use h.JSX.Element, ComponentChild, or ComponentChildren from Preact',
+          },
         ],
         'import/extensions': ['error', 'ignorePackages'],
       },
