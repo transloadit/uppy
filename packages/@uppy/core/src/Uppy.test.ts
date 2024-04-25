@@ -1540,7 +1540,7 @@ describe('src/Core', () => {
       })
     })
 
-    it.only('should change restrictions on the fly', () => {
+    it('should change restrictions on the fly', () => {
       const fr_FR: Locale<0 | 1> = {
         strings: {
           youCanOnlyUploadFileTypes:
