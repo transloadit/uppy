@@ -341,7 +341,7 @@ export default class ProviderView<M extends Meta, B extends Body>{
     document.getSelection()?.removeAllRanges()
 
     const { partialTree } = this.plugin.getPluginState()
-    const newPartialTree = PartialTreeUtils.afterToggleCheckbox(partialTree, this.getDisplayedPartialTree(), ourItem, validateRestrictions(this.plugin), isShiftKeyPressed, this.lastCheckbox)
+    const newPartialTree = PartialTreeUtils.afterToggleCheckbox(partialTree, this.getDisplayedPartialTree(), ourItem.id, validateRestrictions(this.plugin), isShiftKeyPressed, this.lastCheckbox)
 
     this.plugin.setPluginState({ partialTree: newPartialTree })
     this.lastCheckbox = ourItem.id!

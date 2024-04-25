@@ -206,7 +206,7 @@ export default class SearchProviderView<M extends Meta, B extends Body> {
     const { partialTree, currentFolderId } = this.plugin.getPluginState()
 
     const displayedPartialTree = partialTree.filter((item) => item.type !== 'root' && item.parentId === currentFolderId) as (PartialTreeFolderNode | PartialTreeFile)[]
-    const newPartialTree = PartialTreeUtils.afterToggleCheckbox(partialTree, displayedPartialTree, ourItem, validateRestrictions(this.plugin), isShiftKeyPressed, this.lastCheckbox)
+    const newPartialTree = PartialTreeUtils.afterToggleCheckbox(partialTree, displayedPartialTree, ourItem.id, validateRestrictions(this.plugin), isShiftKeyPressed, this.lastCheckbox)
 
     this.plugin.setPluginState({ partialTree: newPartialTree })
     this.lastCheckbox = ourItem.id!
