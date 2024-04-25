@@ -7,6 +7,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import prettierBytes from '@transloadit/prettier-bytes'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
+import type { Locale } from '@uppy/utils/lib/Translator'
 import Core from './index.ts'
 import UIPlugin from './UIPlugin.ts'
 import BasePlugin, {
@@ -1539,7 +1540,19 @@ describe('src/Core', () => {
       })
     })
 
-    it('should change restrictions on the fly', () => {
+    it.only('should change restrictions on the fly', () => {
+      const fr_FR: Locale<0 | 1> = {
+        strings: {
+          youCanOnlyUploadFileTypes:
+            'Vous pouvez seulement téléverser: %{types}',
+        },
+        pluralize(n) {
+          if (n <= 1) {
+            return 0
+          }
+          return 1
+        },
+      }
       const core = new Core({
         restrictions: {
           allowedFileTypes: ['image/jpeg'],
@@ -1560,6 +1573,25 @@ describe('src/Core', () => {
       }
 
       core.setOptions({
+        locale: fr_FR,
+      })
+
+      try {
+        core.addFile({
+          source: 'vi',
+          name: 'foo1.png',
+          type: 'image/png',
+          // @ts-ignore
+          data: new File([sampleImage], { type: 'image/png' }),
+        })
+      } catch (err) {
+        expect(err).toMatchObject(
+          new Error('Vous pouvez seulement téléverser: image/jpeg'),
+        )
+      }
+
+      core.setOptions({
+        locale: fr_FR,
         restrictions: {
           allowedFileTypes: ['image/png'],
         },
