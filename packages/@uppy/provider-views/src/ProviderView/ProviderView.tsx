@@ -67,7 +67,7 @@ export interface ProviderViewOptions<M extends Meta, B extends Body>
     i18n: Translator['translateArray']
     loading: boolean | string
     onAuth: (authFormData: unknown) => Promise<void>
-  }) => JSX.Element
+  }) => h.JSX.Element
 }
 
 type Opts<M extends Meta, B extends Body> = DefinePluginOpts<
