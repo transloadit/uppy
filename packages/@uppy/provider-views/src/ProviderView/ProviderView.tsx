@@ -114,6 +114,7 @@ export default class ProviderView<M extends Meta, B extends Body>{
     this.donePicking = this.donePicking.bind(this)
     this.render = this.render.bind(this)
     this.cancelPicking = this.cancelPicking.bind(this)
+    this.toggleCheckbox = this.toggleCheckbox.bind(this)
 
     // Set default state for the plugin
     this.resetPluginState()
@@ -388,7 +389,7 @@ export default class ProviderView<M extends Meta, B extends Body>{
     }
 
     return <Browser<M, B>
-      toggleCheckbox={this.toggleCheckbox.bind(this)}
+      toggleCheckbox={this.toggleCheckbox}
       displayedPartialTree={this.getDisplayedPartialTree()}
       nOfSelectedFiles={getNOfSelectedFiles(partialTree)}
       getFolder={this.getFolder}

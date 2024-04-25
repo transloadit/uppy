@@ -82,6 +82,7 @@ export default class SearchProviderView<M extends Meta, B extends Body> {
     this.handleScroll = this.handleScroll.bind(this)
     this.donePicking = this.donePicking.bind(this)
     this.cancelPicking = this.cancelPicking.bind(this)
+    this.toggleCheckbox = this.toggleCheckbox.bind(this)
 
     this.render = this.render.bind(this)
 
@@ -246,7 +247,7 @@ export default class SearchProviderView<M extends Meta, B extends Body> {
 
     return (
       <Browser
-        toggleCheckbox={this.toggleCheckbox.bind(this)}
+        toggleCheckbox={this.toggleCheckbox}
         displayedPartialTree={partialTree.filter((item) => item.type !== 'root' && item.parentId === currentFolderId) as (PartialTreeFolderNode | PartialTreeFile)[]}
         nOfSelectedFiles={getNOfSelectedFiles(partialTree)}
         handleScroll={this.handleScroll}
