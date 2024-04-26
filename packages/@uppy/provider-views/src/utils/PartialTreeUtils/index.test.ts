@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import afterToggleCheckbox from './afterToggleCheckbox.ts'
 import type { PartialTree, PartialTreeFile, PartialTreeFolderNode, PartialTreeFolderRoot } from '@uppy/core/lib/Uppy.ts'
 import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
+import afterClickOnFolder from './afterClickOnFolder.ts'
 
 const _root = (id: string, options: any = {}) : PartialTreeFolderRoot => ({
   type: 'root',
@@ -30,20 +31,7 @@ const _file = (id: string, options: any) : PartialTreeFile => ({
   ...options
 })
 
-const oldPartialTree : PartialTree = [
-  _root('ourRoot'),
-      _folder('1', { parentId: 'ourRoot' }),
-      _folder('2', { parentId: 'ourRoot' }),
-          _file('2_1', { parentId: '2' }),
-          _file('2_2', { parentId: '2' }),
-          _file('2_3', { parentId: '2' }),
-          _folder('2_4', { parentId: '2' }), // click
-              _file('2_4_1', { parentId: '2_4' }),
-              _file('2_4_2', { parentId: '2_4' }),
-              _file('2_4_3', { parentId: '2_4' }),
-      _file('3', { parentId: 'ourRoot' }),
-      _file('4', { parentId: 'ourRoot' }),
-]
+
 
 const getFolder = (tree: PartialTree, id: string) =>
   tree.find((i) => i.id === id) as PartialTreeFolderNode
@@ -51,6 +39,21 @@ const getFile = (tree: PartialTree, id: string) =>
   tree.find((i) => i.id === id) as PartialTreeFile
 
 describe('afterToggleCheckbox', () => {
+  const oldPartialTree : PartialTree = [
+    _root('ourRoot'),
+        _folder('1', { parentId: 'ourRoot' }),
+        _folder('2', { parentId: 'ourRoot' }),
+            _file('2_1', { parentId: '2' }),
+            _file('2_2', { parentId: '2' }),
+            _file('2_3', { parentId: '2' }),
+            _folder('2_4', { parentId: '2' }), // click
+                _file('2_4_1', { parentId: '2_4' }),
+                _file('2_4_2', { parentId: '2_4' }),
+                _file('2_4_3', { parentId: '2_4' }),
+        _file('3', { parentId: 'ourRoot' }),
+        _file('4', { parentId: 'ourRoot' }),
+  ]
+
   it('check folder: percolates up and down', () => {
     const newTree = afterToggleCheckbox(oldPartialTree, ['2_4'], () => null)
 
@@ -124,5 +127,43 @@ describe('afterToggleCheckbox', () => {
     const oldPartialTreeCopy = JSON.parse(JSON.stringify(oldPartialTree));
     afterToggleCheckbox(oldPartialTree, ['2_4_1'], () => null);
     expect(oldPartialTree).toEqual(oldPartialTreeCopy);
+  })
+})
+
+describe('afterClickOnFolder', () => {
+  it('open "checked" folder - all discovered files are marked as "checked"', () => {
+    const oldPartialTree : PartialTree = [
+      _root('ourRoot'),
+          _folder('1', { parentId: 'ourRoot' }),
+          _folder('2', { parentId: 'ourRoot', cached: false, status: 'checked' }),
+    ]
+
+    const fakeCompanionFiles = [{ requestPath: '666', isFolder: true }, { requestPath: '777', isFolder: false }, { requestPath: '888', isFolder: false }] as CompanionFile[]
+
+    const clickedFolder = oldPartialTree.find((f) => f.id === '2') as PartialTreeFolderNode
+
+    const newTree = afterClickOnFolder(oldPartialTree, fakeCompanionFiles, clickedFolder, () => null, null)
+
+    expect(getFolder(newTree, '666').status).toEqual('checked')
+    expect(getFile(newTree, '777').status).toEqual('checked')
+    expect(getFile(newTree, '888').status).toEqual('checked')
+  })
+
+  it('open "unchecked" folder - all discovered files are marked as "unchecked"', () => {
+    const oldPartialTree : PartialTree = [
+      _root('ourRoot'),
+          _folder('1', { parentId: 'ourRoot' }),
+          _folder('2', { parentId: 'ourRoot', cached: false, status: 'unchecked' }),
+    ]
+
+    const fakeCompanionFiles = [{ requestPath: '666', isFolder: true }, { requestPath: '777', isFolder: false }, { requestPath: '888', isFolder: false }] as CompanionFile[]
+
+    const clickedFolder = oldPartialTree.find((f) => f.id === '2') as PartialTreeFolderNode
+
+    const newTree = afterClickOnFolder(oldPartialTree, fakeCompanionFiles, clickedFolder, () => null, null)
+
+    expect(getFolder(newTree, '666').status).toEqual('unchecked')
+    expect(getFile(newTree, '777').status).toEqual('unchecked')
+    expect(getFile(newTree, '888').status).toEqual('unchecked')
   })
 })

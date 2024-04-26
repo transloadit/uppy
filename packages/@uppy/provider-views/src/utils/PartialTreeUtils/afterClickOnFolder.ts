@@ -3,30 +3,29 @@ import type { CompanionFile } from "@uppy/utils/lib/CompanionFile"
 
 const afterClickOnFolder = (
   oldPartialTree: PartialTree,
-  currentItems: CompanionFile[],
+  discoveredItems: CompanionFile[],
   clickedFolder: PartialTreeFolder,
   validateRestrictions: (file: CompanionFile) => object | null,
   currentPagePath: string | null
 ) : PartialTree => {
-  let newFolders = currentItems.filter((i) => i.isFolder === true)
-  let newFiles = currentItems.filter((i) => i.isFolder === false)
+  let discoveredFolders = discoveredItems.filter((i) => i.isFolder === true)
+  let discoveredFiles = discoveredItems.filter((i) => i.isFolder === false)
 
-  const newlyAddedItemStatus = (clickedFolder.type === 'folder' && clickedFolder.status === 'checked') ? 'checked' : 'unchecked';
-  const folders : PartialTreeFolderNode[] = newFolders.map((folder) => ({
+  const newlyAddedItemStatus = clickedFolder.type === 'folder' && clickedFolder.status === 'checked'
+    ? 'checked'
+    : 'unchecked'
+  const folders : PartialTreeFolderNode[] = discoveredFolders.map((folder) => ({
     type: 'folder',
     id: folder.requestPath,
-
     cached: false,
     nextPagePath: null,
-
     status: newlyAddedItemStatus,
     parentId: clickedFolder.id,
     data: folder,
   }))
-  const files : PartialTreeFile[] = newFiles.map((file) => ({
+  const files : PartialTreeFile[] = discoveredFiles.map((file) => ({
     type: 'file',
     id: file.requestPath,
-
     status: newlyAddedItemStatus === 'checked' && validateRestrictions(file) ? 'unchecked' : newlyAddedItemStatus,
     parentId: clickedFolder.id,
     data: file,
