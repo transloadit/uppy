@@ -7,8 +7,7 @@ const afterToggleCheckbox = (
   validateRestrictions: (file: CompanionFile) => object | null,
 ) : PartialTree => {
   const newPartialTree : PartialTree = JSON.parse(JSON.stringify(oldPartialTree))
-  const ourItemOld = oldPartialTree.find((item) => item.id === clickedRange[0]) as (PartialTreeFile | PartialTreeFolderNode)
-  const ourItem = newPartialTree.find((item) => item.id === clickedRange[0]) as (PartialTreeFile | PartialTreeFolderNode)
+  const ourItem = newPartialTree.find((item) => item.id === clickedRange[0]) as PartialTreeFile | PartialTreeFolderNode
 
   // if newStatus is "checked" - percolate down "checked"
   // if newStatus is "unchecked" - percolate down "unchecked"
@@ -32,15 +31,15 @@ const afterToggleCheckbox = (
     const parentsValidChildren = parentsChildren.filter((item) =>
       !validateRestrictions(item.data)
     )
-    const areAllChildrenChecked = parentsValidChildren.every((item) => item.status === "checked")
-    const areAllChildrenUnchecked = parentsValidChildren.every((item) => item.status === "unchecked")
+    const areAllChildrenChecked = parentsValidChildren.every((item) => item.status === 'checked')
+    const areAllChildrenUnchecked = parentsValidChildren.every((item) => item.status === 'unchecked')
 
     if (areAllChildrenChecked) {
-      parentFolder.status = "checked"
+      parentFolder.status = 'checked'
     } else if (areAllChildrenUnchecked) {
-      parentFolder.status = "unchecked"
+      parentFolder.status = 'unchecked'
     } else {
-      parentFolder.status = "partial"
+      parentFolder.status = 'partial'
     }
 
     percolateUp(parentFolder)
@@ -63,7 +62,8 @@ const afterToggleCheckbox = (
     })
     percolateUp(ourItem)
   } else {
-    ourItem.status = ourItemOld.status === 'checked' ? 'unchecked' : 'checked'
+    const oldStatus = (oldPartialTree.find((item) => item.id === clickedRange[0]) as PartialTreeFile | PartialTreeFolderNode).status
+    ourItem.status = oldStatus === 'checked' ? 'unchecked' : 'checked'
     percolateDown(ourItem, ourItem.status)
     percolateUp(ourItem)
   }
