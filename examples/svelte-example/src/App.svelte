@@ -3,6 +3,7 @@
 	import Uppy from '@uppy/core'
 	import Webcam from '@uppy/webcam'
 	import XHRUpload from '@uppy/xhr-upload'
+	import RemoteSources from '@uppy/remote-sources'
 
 	const createUppy = () => {
 		return new Uppy().use(Webcam).use(XHRUpload, {
@@ -11,6 +12,9 @@
 			allowedMetaFields: ['something'],
 			fieldName: 'files',
 		})
+		.use(RemoteSources, {
+      companionUrl: 'https://companion.uppy.io',
+    })
 	}
 
 	let uppy1 = createUppy()
