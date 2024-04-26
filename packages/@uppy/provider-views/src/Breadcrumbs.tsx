@@ -4,7 +4,7 @@ import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import type ProviderView from './ProviderView'
 
 type BreadcrumbsProps<M extends Meta, B extends Body> = {
-  getFolder: ProviderView<M, B>['getFolder']
+  openFolder: ProviderView<M, B>['openFolder']
   title: string
   breadcrumbsIcon: JSX.Element
   breadcrumbs: PartialTreeFolder[]
@@ -13,7 +13,7 @@ type BreadcrumbsProps<M extends Meta, B extends Body> = {
 export default function Breadcrumbs<M extends Meta, B extends Body>(
   props: BreadcrumbsProps<M, B>,
 ): JSX.Element {
-  const { getFolder, title, breadcrumbsIcon, breadcrumbs } = props
+  const { openFolder, title, breadcrumbsIcon, breadcrumbs } = props
 
   return (
     <div className="uppy-Provider-breadcrumbs">
@@ -24,7 +24,7 @@ export default function Breadcrumbs<M extends Meta, B extends Body>(
             key={folder.id}
             type="button"
             className="uppy-u-reset uppy-c-btn"
-            onClick={() => getFolder(folder.id)}
+            onClick={() => openFolder(folder.id)}
             >
             {folder.type === 'root' ? title : folder.data.name}
           </button>

@@ -1,7 +1,7 @@
 import type { PartialTree, PartialTreeFile, PartialTreeFolder, PartialTreeFolderNode } from "@uppy/core/lib/Uppy"
 import type { CompanionFile } from "@uppy/utils/lib/CompanionFile"
 
-const afterClickOnFolder = (
+const afterOpenFolder = (
   oldPartialTree: PartialTree,
   discoveredItems: CompanionFile[],
   clickedFolder: PartialTreeFolder,
@@ -51,4 +51,4 @@ const afterClickOnFolder = (
   return newPartialTree
 }
 
-export default afterClickOnFolder
+export default afterOpenFolder

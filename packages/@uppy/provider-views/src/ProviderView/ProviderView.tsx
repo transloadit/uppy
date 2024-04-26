@@ -107,7 +107,7 @@ export default class ProviderView<M extends Meta, B extends Body>{
     }
     this.opts = { ...defaultOptions, ...opts }
 
-    this.getFolder = this.getFolder.bind(this)
+    this.openFolder = this.openFolder.bind(this)
     this.logout = this.logout.bind(this)
     this.handleAuth = this.handleAuth.bind(this)
     this.handleScroll = this.handleScroll.bind(this)
@@ -175,12 +175,7 @@ export default class ProviderView<M extends Meta, B extends Body>{
     }
   }
 
-  /**
-   * Select a folder based on its id: fetches the folder and then updates state with its contents
-   * TODO rename to something better like selectFolder or navigateToFolder (breaking change?)
-   *
-   */
-  async getFolder(folderId: string | null): Promise<void> {
+  async openFolder(folderId: string | null): Promise<void> {
     this.lastCheckbox = null
     console.log(`____________________________________________GETTING FOLDER "${folderId}"`);
     // Returning cached folder
@@ -206,7 +201,7 @@ export default class ProviderView<M extends Meta, B extends Body>{
         this.setLoading(this.plugin.uppy.i18n('loadedXFiles', { numFiles: items.length }))
       } while (this.opts.loadAllFiles && currentPagePath)
 
-      const newPartialTree = PartialTreeUtils.afterClickOnFolder(partialTree, currentItems, clickedFolder, validateRestrictions(this.plugin), currentPagePath)
+      const newPartialTree = PartialTreeUtils.afterOpenFolder(partialTree, currentItems, clickedFolder, validateRestrictions(this.plugin), currentPagePath)
 
       this.plugin.setPluginState({
         partialTree: newPartialTree,
@@ -255,7 +250,7 @@ export default class ProviderView<M extends Meta, B extends Body>{
       this.plugin.setPluginState({ authenticated: true })
       await Promise.all([
         this.provider.fetchPreAuthToken(),
-        this.getFolder(this.plugin.rootFolderId),
+        this.openFolder(this.plugin.rootFolderId),
       ])
     }).catch(handleError(this.plugin.uppy))
     this.setLoading(false)
@@ -370,7 +365,7 @@ export default class ProviderView<M extends Meta, B extends Body>{
     if (!didFirstRender) {
       this.plugin.setPluginState({ didFirstRender: true })
       this.provider.fetchPreAuthToken()
-      this.getFolder(this.plugin.rootFolderId)
+      this.openFolder(this.plugin.rootFolderId)
     }
 
     const opts : Opts<M, B> = { ...this.opts, ...viewOptions }
@@ -395,7 +390,7 @@ export default class ProviderView<M extends Meta, B extends Body>{
       toggleCheckbox={this.toggleCheckbox}
       displayedPartialTree={this.getDisplayedPartialTree()}
       nOfSelectedFiles={getNOfSelectedFiles(partialTree)}
-      getFolder={this.getFolder}
+      openFolder={this.openFolder}
       loadAllFiles={opts.loadAllFiles}
 
       // For SearchFilterInput component
@@ -416,7 +411,7 @@ export default class ProviderView<M extends Meta, B extends Body>{
       headerComponent={
         <Header<M, B>
           showBreadcrumbs={opts.showBreadcrumbs}
-          getFolder={this.getFolder}
+          openFolder={this.openFolder}
           breadcrumbs={this.getBreadcrumbs()}
           pluginIcon={pluginIcon}
           title={this.plugin.title}

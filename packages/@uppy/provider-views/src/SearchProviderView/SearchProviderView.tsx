@@ -259,7 +259,7 @@ export default class SearchProviderView<M extends Meta, B extends Body> {
         handleScroll={this.handleScroll}
         done={this.donePicking}
         cancel={this.cancelPicking}
-        getFolder={() => {}}
+        openFolder={() => {}}
         showSearchFilter={opts.showFilter}
         searchString={searchString}
         setSearchString={this.setSearchString}

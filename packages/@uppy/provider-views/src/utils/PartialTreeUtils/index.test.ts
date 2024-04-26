@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import afterToggleCheckbox from './afterToggleCheckbox.ts'
 import type { PartialTree, PartialTreeFile, PartialTreeFolderNode, PartialTreeFolderRoot } from '@uppy/core/lib/Uppy.ts'
 import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
-import afterClickOnFolder from './afterClickOnFolder.ts'
+import afterOpenFolder from './afterOpenFolder.ts'
 
 const _root = (id: string, options: any = {}) : PartialTreeFolderRoot => ({
   type: 'root',
@@ -130,7 +130,7 @@ describe('afterToggleCheckbox', () => {
   })
 })
 
-describe('afterClickOnFolder', () => {
+describe('afterOpenFolder', () => {
   it('open "checked" folder - all discovered files are marked as "checked"', () => {
     const oldPartialTree : PartialTree = [
       _root('ourRoot'),
@@ -142,7 +142,7 @@ describe('afterClickOnFolder', () => {
 
     const clickedFolder = oldPartialTree.find((f) => f.id === '2') as PartialTreeFolderNode
 
-    const newTree = afterClickOnFolder(oldPartialTree, fakeCompanionFiles, clickedFolder, () => null, null)
+    const newTree = afterOpenFolder(oldPartialTree, fakeCompanionFiles, clickedFolder, () => null, null)
 
     expect(getFolder(newTree, '666').status).toEqual('checked')
     expect(getFile(newTree, '777').status).toEqual('checked')
@@ -160,7 +160,7 @@ describe('afterClickOnFolder', () => {
 
     const clickedFolder = oldPartialTree.find((f) => f.id === '2') as PartialTreeFolderNode
 
-    const newTree = afterClickOnFolder(oldPartialTree, fakeCompanionFiles, clickedFolder, () => null, null)
+    const newTree = afterOpenFolder(oldPartialTree, fakeCompanionFiles, clickedFolder, () => null, null)
 
     expect(getFolder(newTree, '666').status).toEqual('unchecked')
     expect(getFile(newTree, '777').status).toEqual('unchecked')

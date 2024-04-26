@@ -10,7 +10,7 @@ import classNames from 'classnames'
 
 type HeaderProps<M extends Meta, B extends Body> = {
   showBreadcrumbs: boolean
-  getFolder: ProviderView<M, B>['getFolder']
+  openFolder: ProviderView<M, B>['openFolder']
   breadcrumbs: PartialTreeFolder[]
   pluginIcon: () => JSX.Element
   title: string
@@ -32,7 +32,7 @@ export default function Header<M extends Meta, B extends Body>(
       >
         {props.showBreadcrumbs && (
           <Breadcrumbs
-            getFolder={props.getFolder}
+            openFolder={props.openFolder}
             breadcrumbs={props.breadcrumbs}
             breadcrumbsIcon={props.pluginIcon && props.pluginIcon()}
             title={props.title}

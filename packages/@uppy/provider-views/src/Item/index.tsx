@@ -19,14 +19,14 @@ type ItemProps<M extends Meta, B extends Body> = {
   showTitles: boolean
   i18n: I18n
   validateRestrictions: (file: CompanionFile) => RestrictionError<M, B> | null
-  getFolder: (folderId: PartialTreeId) => void
+  openFolder: (folderId: PartialTreeId) => void
   file: PartialTreeFile | PartialTreeFolderNode
 }
 
 export default function Item<M extends Meta, B extends Body>(
   props: ItemProps<M, B>,
 ): h.JSX.Element {
-  const { viewType, toggleCheckbox, showTitles, i18n, validateRestrictions, getFolder, file } = props
+  const { viewType, toggleCheckbox, showTitles, i18n, validateRestrictions, openFolder, file } = props
 
   const restrictionError = validateRestrictions(file.data)
   const isDisabled = file.data.isFolder ? false : (Boolean(restrictionError) && (file.status !== "checked"))
@@ -57,7 +57,7 @@ export default function Item<M extends Meta, B extends Body>(
       ...sharedProps,
       type: 'folder',
       isCheckboxDisabled: file.id === VIRTUAL_SHARED_DIR,
-      handleFolderClick: () => getFolder(file.id),
+      handleFolderClick: () => openFolder(file.id),
     } :
     {
       ...sharedProps,

@@ -33,7 +33,7 @@ type BrowserProps<M extends Meta, B extends Body> = {
   submitSearchString: () => void
   searchInputLabel: string
   clearSearchLabel: string
-  getFolder: (folderId: any) => void
+  openFolder: (folderId: any) => void
   cancel: () => void
   done: () => void
   noResultsLabel: string
@@ -62,7 +62,7 @@ function Browser<M extends Meta, B extends Body>(
 
     searchInputLabel,
     clearSearchLabel,
-    getFolder,
+    openFolder,
     cancel,
     done,
     noResultsLabel,
@@ -135,7 +135,7 @@ function Browser<M extends Meta, B extends Body>(
                       showTitles={showTitles}
                       i18n={i18n}
                       validateRestrictions={validateRestrictions}
-                      getFolder={getFolder}
+                      openFolder={openFolder}
                       file={file}
                     />
                   )}
@@ -162,7 +162,7 @@ function Browser<M extends Meta, B extends Body>(
                   showTitles={showTitles}
                   i18n={i18n}
                   validateRestrictions={validateRestrictions}
-                  getFolder={getFolder}
+                  openFolder={openFolder}
                   file={file}
                 />
               ))}
