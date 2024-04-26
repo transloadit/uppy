@@ -1,7 +1,7 @@
 import type { PartialTree, PartialTreeFile, PartialTreeFolder, PartialTreeFolderNode } from "@uppy/core/lib/Uppy"
 import type { CompanionFile } from "@uppy/utils/lib/CompanionFile"
 
-const afterScroll = (
+const afterScrollFolder = (
   oldPartialTree: PartialTree,
   currentFolderId: string | null,
   items: CompanionFile[],
@@ -47,4 +47,4 @@ const afterScroll = (
   return newPartialTree
 }
 
-export default afterScroll
+export default afterScrollFolder

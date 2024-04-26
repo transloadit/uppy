@@ -263,7 +263,7 @@ export default class ProviderView<M extends Meta, B extends Body>{
       this.isHandlingScroll = true
       await this.#withAbort(async (signal) => {
         const { nextPagePath, items } = await this.provider.list(currentFolder.nextPagePath!, { signal })
-        const newPartialTree = PartialTreeUtils.afterScroll(partialTree, currentFolderId, items, nextPagePath, validateRestrictions(this.plugin))
+        const newPartialTree = PartialTreeUtils.afterScrollFolder(partialTree, currentFolderId, items, nextPagePath, validateRestrictions(this.plugin))
 
         this.plugin.setPluginState({ partialTree: newPartialTree })
       }).catch(handleError(this.plugin.uppy))

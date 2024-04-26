@@ -3,6 +3,7 @@ import afterToggleCheckbox from './afterToggleCheckbox.ts'
 import type { PartialTree, PartialTreeFile, PartialTreeFolderNode, PartialTreeFolderRoot } from '@uppy/core/lib/Uppy.ts'
 import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
 import afterOpenFolder from './afterOpenFolder.ts'
+import afterScrollFolder from './afterScrollFolderFolder.ts'
 
 const _root = (id: string, options: any = {}) : PartialTreeFolderRoot => ({
   type: 'root',
@@ -161,6 +162,46 @@ describe('afterOpenFolder', () => {
     const clickedFolder = oldPartialTree.find((f) => f.id === '2') as PartialTreeFolderNode
 
     const newTree = afterOpenFolder(oldPartialTree, fakeCompanionFiles, clickedFolder, () => null, null)
+
+    expect(getFolder(newTree, '666').status).toEqual('unchecked')
+    expect(getFile(newTree, '777').status).toEqual('unchecked')
+    expect(getFile(newTree, '888').status).toEqual('unchecked')
+  })
+})
+
+describe('afterScrollFolder', () => {
+  it('scroll "checked" folder - all discovered files are marked as "checked"', () => {
+    const oldPartialTree : PartialTree = [
+      _root('ourRoot'),
+          _folder('1', { parentId: 'ourRoot' }),
+          _folder('2', { parentId: 'ourRoot', cached: true, status: 'checked' }),
+              _file('2_1', { parentId: '2' }),
+              _file('2_2', { parentId: '2' }),
+              _file('2_3', { parentId: '2' }),
+    ]
+
+    const fakeCompanionFiles = [{ requestPath: '666', isFolder: true }, { requestPath: '777', isFolder: false }, { requestPath: '888', isFolder: false }] as CompanionFile[]
+
+    const newTree = afterScrollFolder(oldPartialTree, '2', fakeCompanionFiles, null, () => null)
+
+    expect(getFolder(newTree, '666').status).toEqual('checked')
+    expect(getFile(newTree, '777').status).toEqual('checked')
+    expect(getFile(newTree, '888').status).toEqual('checked')
+  })
+
+  it('scroll "checked" folder - all discovered files are marked as "unchecked"', () => {
+    const oldPartialTree : PartialTree = [
+      _root('ourRoot'),
+          _folder('1', { parentId: 'ourRoot' }),
+          _folder('2', { parentId: 'ourRoot', cached: true, status: 'unchecked' }),
+              _file('2_1', { parentId: '2' }),
+              _file('2_2', { parentId: '2' }),
+              _file('2_3', { parentId: '2' }),
+    ]
+
+    const fakeCompanionFiles = [{ requestPath: '666', isFolder: true }, { requestPath: '777', isFolder: false }, { requestPath: '888', isFolder: false }] as CompanionFile[]
+
+    const newTree = afterScrollFolder(oldPartialTree, '2', fakeCompanionFiles, null, () => null)
 
     expect(getFolder(newTree, '666').status).toEqual('unchecked')
     expect(getFile(newTree, '777').status).toEqual('unchecked')
