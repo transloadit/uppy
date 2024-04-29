@@ -115,7 +115,7 @@ ru_RU.strings = {
     '2': 'Добавлено %{smart_count} файлов из %{folder}',
   },
   folderAlreadyAdded: 'Папка "%{folder}" уже была добавлена',
-  generatingThumbnails: 'Создание обложек...',
+  generatingThumbnails: 'Создание превью...',
   import: 'Импортировать',
   importFiles: 'Импортировать файлы из:',
   importFrom: 'Импортировать из %{name}',
@@ -248,7 +248,7 @@ ru_RU.strings = {
     '1': 'Вы должны выбрать хотя бы %{smart_count} файла',
     '2': 'Вы должны выбрать хотя бы %{smart_count} файлов',
   },
-  zoomIn: 'Приоблизить',
+  zoomIn: 'Приблизить',
   zoomOut: 'Отдалить',
 }
 
