@@ -2,24 +2,7 @@ import type { PartialTree, PartialTreeFile, PartialTreeFolder, PartialTreeFolder
 import type { CompanionClientProvider, RequestOptions } from "@uppy/utils/lib/CompanionClientProvider"
 import type { CompanionFile } from "@uppy/utils/lib/CompanionFile"
 import PQueue from "p-queue"
-
-const getAbsPath = (partialTree: PartialTree, file: PartialTreeFile) : (PartialTreeFile | PartialTreeFolderNode)[] => {
-  const path : (PartialTreeFile | PartialTreeFolderNode)[] = []
-  let parent: PartialTreeFile | PartialTreeFolder = file
-  while (true) {
-    if (parent.type === 'root') break
-    path.push(parent)
-    parent = partialTree.find((folder) => folder.id === (parent as PartialTreeFolderNode).parentId) as PartialTreeFolder
-  }
-
-  return path.toReversed()
-}
-
-const getRelPath = (absPath: (PartialTreeFile | PartialTreeFolderNode)[]) : (PartialTreeFile | PartialTreeFolderNode)[] => {
-  const firstCheckedFolderIndex = absPath.findIndex((i) => i.type === 'folder' && i.status === 'checked')
-  const relPath = absPath.slice(firstCheckedFolderIndex)
-  return relPath
-}
+import getPaths from "./getPaths"
 
 const recursivelyFetch = async (queue: PQueue, poorTree: PartialTree, poorFolder: PartialTreeFolderNode, provider: CompanionClientProvider, signal: AbortSignal): Promise<PartialTree> => {
   let items : CompanionFile[] = []
@@ -91,14 +74,8 @@ const fill = async (partialTree: PartialTree, provider: CompanionClientProvider,
   const checkedFiles = poorTree.filter((item) => item.type === 'file' && item.status === 'checked') as PartialTreeFile[]
 
   const uppyFiles = checkedFiles.map((file) => {
-    const absPath = getAbsPath(poorTree, file)
-    const relPath = getRelPath(absPath)
-
-    return {
-      ...file.data,
-      absDirPath: absPath.join('/'),
-      relDirPath: relPath.join('/')
-    }
+    const paths = getPaths(poorTree, file)
+    return { ...file.data, ...paths }
   })
 
   return uppyFiles

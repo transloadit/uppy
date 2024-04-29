@@ -3,7 +3,9 @@ import afterToggleCheckbox from './afterToggleCheckbox.ts'
 import type { PartialTree, PartialTreeFile, PartialTreeFolderNode, PartialTreeFolderRoot } from '@uppy/core/lib/Uppy.ts'
 import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
 import afterOpenFolder from './afterOpenFolder.ts'
-import afterScrollFolder from './afterScrollFolderFolder.ts'
+import afterScrollFolder from './afterScrollFolder.ts'
+import fill from './fill.ts'
+import type { CompanionClientProvider } from '@uppy/utils/lib/CompanionClientProvider'
 
 const _root = (id: string, options: any = {}) : PartialTreeFolderRoot => ({
   type: 'root',
@@ -19,7 +21,7 @@ const _folder = (id: string, options: any) : PartialTreeFolderNode => ({
   cached: true,
   nextPagePath: null,
   status: 'unchecked',
-  data: ({} as CompanionFile),
+  data: ({ id, name: `name_${id}` } as CompanionFile),
   ...options
 })
 
@@ -28,7 +30,7 @@ const _file = (id: string, options: any) : PartialTreeFile => ({
   id,
   status: 'unchecked',
   parentId: options.parentId,
-  data: ({} as CompanionFile),
+  data: ({ id, name: `name_${id}.jpg` } as CompanionFile),
   ...options
 })
 
@@ -39,7 +41,7 @@ const getFolder = (tree: PartialTree, id: string) =>
 const getFile = (tree: PartialTree, id: string) =>
   tree.find((i) => i.id === id) as PartialTreeFile
 
-describe('afterToggleCheckbox', () => {
+describe('afterToggleCheckbox()', () => {
   const oldPartialTree : PartialTree = [
     _root('ourRoot'),
         _folder('1', { parentId: 'ourRoot' }),
@@ -131,7 +133,7 @@ describe('afterToggleCheckbox', () => {
   })
 })
 
-describe('afterOpenFolder', () => {
+describe('afterOpenFolder()', () => {
   it('open "checked" folder - all discovered files are marked as "checked"', () => {
     const oldPartialTree : PartialTree = [
       _root('ourRoot'),
@@ -169,7 +171,7 @@ describe('afterOpenFolder', () => {
   })
 })
 
-describe('afterScrollFolder', () => {
+describe('afterScrollFolder()', () => {
   it('scroll "checked" folder - all discovered files are marked as "checked"', () => {
     const oldPartialTree : PartialTree = [
       _root('ourRoot'),
@@ -206,5 +208,45 @@ describe('afterScrollFolder', () => {
     expect(getFolder(newTree, '666').status).toEqual('unchecked')
     expect(getFile(newTree, '777').status).toEqual('unchecked')
     expect(getFile(newTree, '888').status).toEqual('unchecked')
+  })
+})
+
+// Based on documentation for .absolutePath and .relativePath (https://uppy.io/docs/uppy/#filemeta)
+describe('getPaths(): .absolutePath, .relativePath)', () => {
+  // Note that this is a tree that doesn't require any api calls, everything is cached already
+  const tree : PartialTree = [
+    _root('ourRoot'),
+        _folder('1', { parentId: 'ourRoot' }),
+        _folder('2', { parentId: 'ourRoot' }),
+            _file('2_1', { parentId: '2' }),
+            _file('2_2', { parentId: '2', status: 'checked' }),
+            _file('2_3', { parentId: '2' }),
+            _folder('2_4', { parentId: '2', status: 'checked' }),
+                _file('2_4_1', { parentId: '2_4', status: 'checked' }),
+                _file('2_4_2', { parentId: '2_4', status: 'checked' }),
+                _file('2_4_3', { parentId: '2_4', status: 'checked' }),
+        _file('3', { parentId: 'ourRoot' }),
+        _file('4', { parentId: 'ourRoot' }),
+  ]
+  const fakeProvider = {} as CompanionClientProvider
+  const fakeSignal = {} as AbortSignal
+
+  it('.absolutePath always begins with / + always ends with the file’s name.', async () => {
+    const result = await fill(tree, fakeProvider, fakeSignal)
+
+    expect(result.find((f) => f.id === '2_2')!.absDirPath).toEqual('/name_2/name_2_2.jpg')
+    expect(result.find((f) => f.id === '2_4_3')!.absDirPath).toEqual('/name_2/name_2_4/name_2_4_3.jpg')
+  })
+
+  it('.relativePath is null when file is selected independently', async () => {
+    const result = await fill(tree, fakeProvider, fakeSignal)
+
+    expect(result.find((f) => f.id === '2_2')!.relDirPath).toEqual(undefined)
+  })
+
+  it('.relativePath attends to highest checked folder', async () => {
+    const result = await fill(tree, fakeProvider, fakeSignal)
+
+    expect(result.find((f) => f.id === '2_4_1')!.relDirPath).toEqual('name_2_4/name_2_4_1.jpg')
   })
 })
