@@ -73,7 +73,7 @@ export default class Compressor<
             `[Image Compressor] Image ${file.id} compressed by ${prettierBytes(compressedSavingsSize)}`,
           )
           totalCompressedSize += compressedSavingsSize
-          const { name, type, size } = compressedBlob
+          const { name, type, size } = compressedBlob as File
 
           const compressedFileName = getFileNameAndExtension(name)
           const metaFileName = getFileNameAndExtension(file.meta.name)

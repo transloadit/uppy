@@ -69,8 +69,9 @@ jobs:
           EOF
       - name: Eject public packages from repo
         run:
-          mkdir /tmp/artifacts && corepack yarn workspaces foreach --no-private
-          pack --install-if-needed -o /tmp/artifacts/%s-${{ github.sha }}.tgz
+          mkdir /tmp/artifacts && corepack yarn workspaces foreach --all
+          --no-private pack --install-if-needed -o /tmp/artifacts/%s-${{
+          github.sha }}.tgz
       - name: Upload artifact
         if: success()
         uses: actions/upload-artifact@v4

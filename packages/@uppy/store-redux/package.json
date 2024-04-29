@@ -20,7 +20,7 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
-    "nanoid": "^4.0.0"
+    "nanoid": "^5.0.0"
   },
   "devDependencies": {
     "redux": "^4.0.0",

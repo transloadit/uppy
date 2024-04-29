@@ -117,7 +117,6 @@ module.exports = {
     'jsdoc/check-syntax': 'error',
     'jsdoc/check-tag-names': ['error', { jsxTags: true }],
     'jsdoc/check-types': 'error',
-    'jsdoc/newline-after-description': 'error',
     'jsdoc/valid-types': 'error',
     'jsdoc/check-indentation': ['off'],
   },
@@ -474,6 +473,7 @@ module.exports = {
         'plugin:@typescript-eslint/recommended',
       ],
       rules: {
+        'no-extra-semi': 'off',
         'import/prefer-default-export': 'off',
         '@typescript-eslint/no-empty-function': 'off',
         '@typescript-eslint/no-explicit-any': 'off',
