@@ -465,7 +465,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
               for (const newFile of files) {
                 const tagFile = this.getTagFile(newFile)
 
-                const id = getSafeFileId(tagFile)
+                const id = getSafeFileId(tagFile, this.plugin.uppy.getID())
                 // If the same folder is added again, we don't want to send
                 // X amount of duplicate file notifications, we want to say
                 // the folder was already added. This checks if all files are duplicate,

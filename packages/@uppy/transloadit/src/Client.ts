@@ -4,8 +4,8 @@ import type {
 } from '@uppy/utils/lib/RateLimitedQueue'
 import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
 import fetchWithNetworkError from '@uppy/utils/lib/fetchWithNetworkError'
-import type { AssemblyResponse } from '.'
-import type { OptionsWithRestructuredFields } from './AssemblyOptions'
+import type { AssemblyResponse } from './index.js'
+import type { OptionsWithRestructuredFields } from './AssemblyOptions.js'
 
 const ASSEMBLIES_ENDPOINT = '/assemblies'
 
