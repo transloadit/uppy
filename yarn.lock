@@ -9747,7 +9747,6 @@ __metadata:
   dependencies:
     "@uppy/companion-client": "workspace:^"
     "@uppy/utils": "workspace:^"
-    nanoid: ^4.0.0
     nock: ^13.1.0
     vitest: ^1.2.1
   peerDependencies:
