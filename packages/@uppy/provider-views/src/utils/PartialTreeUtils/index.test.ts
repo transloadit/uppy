@@ -6,6 +6,7 @@ import afterOpenFolder from './afterOpenFolder.ts'
 import afterScrollFolder from './afterScrollFolder.ts'
 import fill from './fill.ts'
 import type { CompanionClientProvider } from '@uppy/utils/lib/CompanionClientProvider'
+import injectPaths from './injectPaths.ts'
 
 const _root = (id: string, options: any = {}) : PartialTreeFolderRoot => ({
   type: 'root',
@@ -212,7 +213,7 @@ describe('afterScrollFolder()', () => {
 })
 
 // Based on documentation for .absolutePath and .relativePath (https://uppy.io/docs/uppy/#filemeta)
-describe('getPaths(): .absolutePath, .relativePath)', () => {
+describe('injectPaths()', () => {
   // Note that this is a tree that doesn't require any api calls, everything is cached already
   const tree : PartialTree = [
     _root('ourRoot'),
@@ -228,25 +229,25 @@ describe('getPaths(): .absolutePath, .relativePath)', () => {
         _file('3', { parentId: 'ourRoot' }),
         _file('4', { parentId: 'ourRoot' }),
   ]
-  const fakeProvider = {} as CompanionClientProvider
-  const fakeSignal = {} as AbortSignal
+  const checkedFiles = tree.filter((item) => item.type === 'file' && item.status === 'checked') as PartialTreeFile[]
 
-  it('.absolutePath always begins with / + always ends with the file’s name.', async () => {
-    const result = await fill(tree, fakeProvider, fakeSignal)
+  it('.absolutePath always begins with / + always ends with the file’s name.', () => {
+    const result = injectPaths(tree, checkedFiles)
 
     expect(result.find((f) => f.id === '2_2')!.absDirPath).toEqual('/name_2/name_2_2.jpg')
     expect(result.find((f) => f.id === '2_4_3')!.absDirPath).toEqual('/name_2/name_2_4/name_2_4_3.jpg')
   })
 
-  it('.relativePath is null when file is selected independently', async () => {
-    const result = await fill(tree, fakeProvider, fakeSignal)
+  it('.relativePath is null when file is selected independently', () => {
+    const result = injectPaths(tree, checkedFiles)
 
     expect(result.find((f) => f.id === '2_2')!.relDirPath).toEqual(undefined)
   })
 
-  it('.relativePath attends to highest checked folder', async () => {
-    const result = await fill(tree, fakeProvider, fakeSignal)
+  it('.relativePath attends to highest checked folder', () => {
+    const result = injectPaths(tree, checkedFiles)
 
     expect(result.find((f) => f.id === '2_4_1')!.relDirPath).toEqual('name_2_4/name_2_4_1.jpg')
   })
+
 })

@@ -2,7 +2,7 @@ import type { PartialTree, PartialTreeFile, PartialTreeFolder, PartialTreeFolder
 import type { CompanionClientProvider, RequestOptions } from "@uppy/utils/lib/CompanionClientProvider"
 import type { CompanionFile } from "@uppy/utils/lib/CompanionFile"
 import PQueue from "p-queue"
-import getPaths from "./getPaths"
+import injectPaths from "./injectPaths"
 
 const recursivelyFetch = async (queue: PQueue, poorTree: PartialTree, poorFolder: PartialTreeFolderNode, provider: CompanionClientProvider, signal: AbortSignal): Promise<PartialTree> => {
   let items : CompanionFile[] = []
@@ -72,13 +72,8 @@ const fill = async (partialTree: PartialTree, provider: CompanionClientProvider,
 
   // Return all 'checked' files
   const checkedFiles = poorTree.filter((item) => item.type === 'file' && item.status === 'checked') as PartialTreeFile[]
-
-  const uppyFiles = checkedFiles.map((file) => {
-    const paths = getPaths(poorTree, file)
-    return { ...file.data, ...paths }
-  })
-
+  const uppyFiles = injectPaths(poorTree, checkedFiles)
   return uppyFiles
 }
 
-export default fill;
+export default fill
