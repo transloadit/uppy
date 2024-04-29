@@ -26,7 +26,7 @@ jobs:
         node-version: [14.x, 16.x, 18.x]
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run:
