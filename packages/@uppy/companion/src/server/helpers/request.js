@@ -120,7 +120,7 @@ exports.getURLMeta = async (url, blockLocalIPs = false) => {
           // we add random string to avoid duplicate files
           const filename = response.headers['content-disposition']
             ? contentDisposition.parse(response.headers['content-disposition']).parameters.filename
-            : path.basename(response.request.requestUrl)
+            : path.basename(`${response.request.requestUrl}`)
 
           // No need to get the rest of the response, as we only want header (not really relevant for HEAD, but why not)
           stream.destroy()
