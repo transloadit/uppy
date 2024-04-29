@@ -2,6 +2,7 @@ import { expectError, expectType } from 'tsd'
 import Uppy from '@uppy/core'
 import type { UppyFile } from '@uppy/core'
 import AwsS3Multipart from '..'
+// eslint-disable-next-line no-restricted-syntax
 import type { AwsS3Part } from '..'
 
 {
