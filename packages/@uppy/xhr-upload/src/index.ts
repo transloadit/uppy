@@ -208,9 +208,9 @@ export default class XHRUpload<
             },
           })
 
-          const body = JSON.parse(res.responseText)
+          const body = JSON.parse(res.responseText) as B
 
-          if (!body?.url) {
+          if (typeof body?.url !== 'string') {
             throw new Error(
               'Expected body to be JSON and have a `url` property.',
             )
