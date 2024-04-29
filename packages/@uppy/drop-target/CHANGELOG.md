@@ -1,5 +1,12 @@
 # @uppy/drop-target
 
+## 2.1.0
+
+Released: 2024-04-29
+Included in: Uppy v3.25.0
+
+- @uppy/drop-target: change drop event type to DragEvent (Alireza Heydari / #5107)
+
 ## 2.0.5
 
 Released: 2024-03-27
