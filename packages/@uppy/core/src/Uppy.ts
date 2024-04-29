@@ -1,6 +1,7 @@
 /* eslint-disable max-classes-per-file */
 /* global AggregateError */
 
+import type { h } from 'preact'
 import Translator from '@uppy/utils/lib/Translator'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore untyped
@@ -95,7 +96,7 @@ export type UnknownProviderPlugin<
   onFirstRender: () => void
   title: string
   files: UppyFile<M, B>[]
-  icon: () => JSX.Element
+  icon: () => h.JSX.Element
   provider: CompanionClientProvider
   storage: {
     getItem: (key: string) => Promise<string | null>
@@ -131,7 +132,7 @@ export type UnknownSearchProviderPlugin<
 > = UnknownPlugin<M, B, UnknownSearchProviderPluginState> & {
   onFirstRender: () => void
   title: string
-  icon: () => JSX.Element
+  icon: () => h.JSX.Element
   provider: CompanionClientSearchProvider
 }
 

@@ -11,7 +11,7 @@ type HeaderProps<M extends Meta, B extends Body> = {
   showBreadcrumbs: boolean
   getFolder: ProviderView<M, B>['getFolder']
   breadcrumbs: UnknownProviderPluginState['breadcrumbs']
-  pluginIcon: () => JSX.Element
+  pluginIcon: () => h.JSX.Element
   title: string
   logout: () => void
   username: string | undefined
@@ -20,7 +20,7 @@ type HeaderProps<M extends Meta, B extends Body> = {
 
 export default function Header<M extends Meta, B extends Body>(
   props: HeaderProps<M, B>,
-): JSX.Element {
+) {
   return (
     <Fragment>
       {props.showBreadcrumbs && (

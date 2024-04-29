@@ -125,7 +125,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
 
   private capturedMediaFile: MinimalRequiredUppyFile<M, B> | null
 
-  private icon: () => JSX.Element
+  private icon: () => h.JSX.Element
 
   private webcamActive
 

@@ -19,11 +19,7 @@ const duration = 250
  * but it should be simple to extend this for any type of single-element
  * transition by setting the CSS name and duration as props.
  */
-function Slide({
-  children,
-}: {
-  children: ComponentChildren
-}): JSX.Element | null {
+function Slide({ children }: { children: ComponentChildren }) {
   const [cachedChildren, setCachedChildren] = useState<VNode<{
     className?: string
   }> | null>(null)

@@ -24,7 +24,7 @@ export default class Unsplash<M extends Meta, B extends Body> extends UIPlugin<
 > {
   static VERSION = packageJson.version
 
-  icon: () => JSX.Element
+  icon: () => h.JSX.Element
 
   provider: SearchProvider<M, B>
 

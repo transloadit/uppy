@@ -10,7 +10,7 @@ interface RecordingLengthProps {
 export default function RecordingLength({
   recordingLengthSeconds,
   i18n,
-}: RecordingLengthProps): JSX.Element {
+}: RecordingLengthProps) {
   const formattedRecordingLengthSeconds = formatSeconds(recordingLengthSeconds)
 
   return (

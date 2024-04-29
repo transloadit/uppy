@@ -182,7 +182,8 @@ class DashboardModal<M extends Meta, B extends Body> extends Component<
     uppy.removePlugin(this.plugin)
   }
 
-  render(): JSX.Element {
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+  render() {
     return h('div', {
       className: 'uppy-Container',
       ref: (container: HTMLElement) => {

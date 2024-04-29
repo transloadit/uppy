@@ -31,9 +31,7 @@ type ListItemProps<M extends Meta, B extends Body> = {
   f: CompanionFile
 }
 
-function ListItem<M extends Meta, B extends Body>(
-  props: ListItemProps<M, B>,
-): JSX.Element {
+function ListItem<M extends Meta, B extends Body>(props: ListItemProps<M, B>) {
   const {
     currentSelection,
     uppyFiles,
@@ -96,7 +94,7 @@ type BrowserProps<M extends Meta, B extends Body> = {
   files: CompanionFile[]
   uppyFiles: UppyFile<M, B>[]
   viewType: string
-  headerComponent?: JSX.Element
+  headerComponent?: h.JSX.Element
   showBreadcrumbs: boolean
   isChecked: (file: any) => boolean
   toggleCheckbox: (event: Event, file: CompanionFile) => void
@@ -120,9 +118,7 @@ type BrowserProps<M extends Meta, B extends Body> = {
   loadAllFiles?: boolean
 }
 
-function Browser<M extends Meta, B extends Body>(
-  props: BrowserProps<M, B>,
-): JSX.Element {
+function Browser<M extends Meta, B extends Body>(props: BrowserProps<M, B>) {
   const {
     currentSelection,
     folders,
@@ -195,7 +191,9 @@ function Browser<M extends Meta, B extends Body>(
         if (isLoading) {
           return (
             <div className="uppy-Provider-loading">
-              <span>{i18n('loading')}</span>
+              <span>
+                {typeof isLoading === 'string' ? isLoading : i18n('loading')}
+              </span>
             </div>
           )
         }

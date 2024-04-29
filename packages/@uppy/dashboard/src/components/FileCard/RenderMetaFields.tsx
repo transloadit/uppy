@@ -2,7 +2,7 @@ import { h } from 'preact'
 
 type $TSFixMe = any
 
-export default function RenderMetaFields(props: $TSFixMe): JSX.Element {
+export default function RenderMetaFields(props: $TSFixMe) {
   const {
     computedMetaFields,
     requiredMetaFields,

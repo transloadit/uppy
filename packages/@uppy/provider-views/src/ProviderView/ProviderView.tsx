@@ -36,7 +36,7 @@ function prependPath(path: string | undefined, component: string): string {
   return `${path}/${component}`
 }
 
-export function defaultPickerIcon(): JSX.Element {
+export function defaultPickerIcon() {
   return (
     <svg
       aria-hidden="true"
@@ -67,7 +67,7 @@ export interface ProviderViewOptions<M extends Meta, B extends Body>
     i18n: Translator['translateArray']
     loading: boolean | string
     onAuth: (authFormData: unknown) => Promise<void>
-  }) => JSX.Element
+  }) => h.JSX.Element
 }
 
 type Opts<M extends Meta, B extends Body> = DefinePluginOpts<
@@ -547,7 +547,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
   render(
     state: unknown,
     viewOptions: Omit<ViewOptions<M, B, PluginType>, 'provider'> = {},
-  ): JSX.Element {
+  ) {
     const { authenticated, didFirstRender } = this.plugin.getPluginState()
     const { i18n } = this.plugin.uppy
 
