@@ -24,6 +24,15 @@ Included in: Uppy v4.0.0-beta.1
 - @uppy/core: various type fixes (Antoine du Hamel / #4995)
 - @uppy/core,@uppy/provider-views: Fix breadcrumbs (Evgenia Karunus / #4986)
 
+
+## 3.11.0
+
+Released: 2024-04-29
+Included in: Uppy v3.25.0
+
+- @uppy/core: add instance ID to generated IDs (Merlijn Vos / #5080)
+- @uppy/core: reference updated i18n in Restricter (Merlijn Vos / #5118)
+
 ## 3.10.1
 
 Released: 2024-04-15

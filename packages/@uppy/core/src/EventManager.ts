@@ -4,7 +4,7 @@ import type {
   Uppy,
   UppyEventMap,
   _UppyEventMap,
-} from './Uppy'
+} from './Uppy.js'
 
 /**
  * Create a wrapper around an event emitter with a `remove` method to remove

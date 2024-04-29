@@ -474,6 +474,10 @@ module.exports = {
       ],
       rules: {
         'no-extra-semi': 'off',
+        'no-restricted-syntax': ['error', {
+          selector: 'ImportDeclaration[importKind="type"][source.value=/^\\./]:not([source.value=/\\.js$/])',
+          message: 'Use ".js" file extension for import type declarations',
+        }],
         'import/prefer-default-export': 'off',
         '@typescript-eslint/no-empty-function': 'off',
         '@typescript-eslint/no-explicit-any': 'off',

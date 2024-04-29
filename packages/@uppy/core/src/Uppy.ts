@@ -45,8 +45,8 @@ import {
 import packageJson from '../package.json'
 import locale from './locale.ts'
 
-import type BasePlugin from './BasePlugin.ts'
-import type { Restrictions, ValidateableFile } from './Restricter.ts'
+import type BasePlugin from './BasePlugin.js'
+import type { Restrictions, ValidateableFile } from './Restricter.js'
 
 type Processor = (
   fileIDs: string[],
@@ -460,7 +460,10 @@ export class Uppy<M extends Meta, B extends Body> {
       info: [],
     })
 
-    this.#restricter = new Restricter<M, B>(() => this.opts, this.i18n)
+    this.#restricter = new Restricter<M, B>(
+      () => this.opts,
+      () => this.i18n,
+    )
 
     this.#storeUnsubscribe = this.store.subscribe(
       (prevState, nextState, patch) => {
@@ -904,7 +907,7 @@ export class Uppy<M extends Meta, B extends Body> {
     const fileType = getFileType(file)
     const fileName = getFileName(fileType, file)
     const fileExtension = getFileNameAndExtension(fileName).extension
-    const id = getSafeFileId(file)
+    const id = getSafeFileId(file, this.getID())
 
     const meta = file.meta || {}
     meta.name = fileName

@@ -7,6 +7,14 @@ Included in: Uppy v4.0.0-beta.1
 
 - @uppy/svelte: remove UMD output and make it use newer types (Antoine du Hamel / #5023)
 
+
+## 3.1.4
+
+Released: 2024-04-29
+Included in: Uppy v3.25.0
+
+- @uppy/svelte: Add svelte 5 as peer dep (frederikhors / #5122)
+
 ## 3.1.1
 
 Released: 2023-10-20
