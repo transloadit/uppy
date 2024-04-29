@@ -7,7 +7,7 @@ import type {
 } from '@uppy/utils/lib/CompanionClientProvider'
 import type { UnknownProviderPlugin } from '@uppy/core/lib/Uppy'
 import RequestClient, { authErrorStatusCode } from './RequestClient.ts'
-import type { CompanionPluginOptions } from '.'
+import type { CompanionPluginOptions } from './index.js'
 
 // TODO: remove deprecated options in next major release
 export interface Opts extends PluginOpts, CompanionPluginOptions {

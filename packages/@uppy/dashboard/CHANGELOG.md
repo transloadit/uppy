@@ -12,6 +12,15 @@ Included in: Uppy v4.0.0-beta.1
 - @uppy/dashboard: refactor to TypeScript (Antoine du Hamel / #4984)
 - @uppy/dashboard: refactor to stable lifecycle method (Antoine du Hamel / #4999)
 
+
+## 3.8.2
+
+Released: 2024-04-29
+Included in: Uppy v3.25.0
+
+- @uppy/dashboard,@uppy/provider-views: Remove JSX global type everywhere (Merlijn Vos / #5117)
+- @uppy/dashboard: fix type of trigger option (Merlijn Vos / #5106)
+
 ## 3.8.1
 
 Released: 2024-04-16

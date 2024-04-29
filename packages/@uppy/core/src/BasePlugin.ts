@@ -16,7 +16,7 @@ import type {
   OptionalPluralizeLocale,
 } from '@uppy/utils/lib/Translator'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
-import type { State, UnknownPlugin, Uppy } from './Uppy'
+import type { State, UnknownPlugin, Uppy } from './Uppy.js'
 
 export type PluginOpts = {
   locale?: Locale

@@ -1,7 +1,7 @@
 import { createAbortError } from '@uppy/utils/lib/AbortController'
 import type { Body as _Body } from '@uppy/utils/lib/UppyFile'
 
-import type { AwsS3Part } from './index'
+import type { AwsS3Part } from './index.js'
 
 export function throwIfAborted(signal?: AbortSignal | null): void {
   if (signal?.aborted) {

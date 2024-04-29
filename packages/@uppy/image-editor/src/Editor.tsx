@@ -7,7 +7,7 @@ import getCanvasDataThatFitsPerfectlyIntoContainer from './utils/getCanvasDataTh
 import getScaleFactorThatRemovesDarkCorners from './utils/getScaleFactorThatRemovesDarkCorners.ts'
 import limitCropboxMovementOnMove from './utils/limitCropboxMovementOnMove.ts'
 import limitCropboxMovementOnResize from './utils/limitCropboxMovementOnResize.ts'
-import type ImageEditor from './ImageEditor.tsx'
+import type ImageEditor from './ImageEditor.js'
 
 type Props<M extends Meta, B extends Body> = {
   currentImage: UppyFile<M, B>
