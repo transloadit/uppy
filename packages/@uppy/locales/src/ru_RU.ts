@@ -115,7 +115,7 @@ ru_RU.strings = {
     '2': 'Добавлено %{smart_count} файлов из %{folder}',
   },
   folderAlreadyAdded: 'Папка "%{folder}" уже была добавлена',
-  generatingThumbnails: 'Создание превью...',
+  generatingThumbnails: 'Создание превью изображений...',
   import: 'Импортировать',
   importFiles: 'Импортировать файлы из:',
   importFrom: 'Импортировать из %{name}',
