@@ -1,5 +1,13 @@
 # @uppy/provider-views
 
+## 4.0.0-beta.4
+
+Released: 2024-04-29
+Included in: Uppy v4.0.0-beta.4
+
+- @uppy/dashboard,@uppy/provider-views: Remove JSX global type everywhere (Merlijn Vos / #5117)
+- @uppy/provider-views: bring back "loaded X files..." (Mikael Finstad / #5097)
+
 ## 4.0.0-beta.1
 
 Released: 2024-03-28

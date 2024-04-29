@@ -1,5 +1,14 @@
 # @uppy/utils
 
+## 6.0.0-beta.4
+
+Released: 2024-04-29
+Included in: Uppy v4.0.0-beta.4
+
+- @uppy/utils: fix fetcher export (Murderlon)
+- @uppy/utils: improve return type of `dataURItoFile` (Antoine du Hamel / #5112)
+- @uppy/utils: add fetcher (Merlijn Vos / #5073)
+
 ## 6.0.0-beta.1
 
 Released: 2024-03-28

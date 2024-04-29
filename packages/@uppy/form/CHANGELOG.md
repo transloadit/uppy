@@ -1,5 +1,12 @@
 # @uppy/form
 
+## 4.0.0-beta.2
+
+Released: 2024-04-29
+Included in: Uppy v4.0.0-beta.4
+
+- @uppy/form: fix `submitOnSuccess` and `triggerUploadOnSubmit` combination (Merlijn Vos / #5058)
+
 ## 3.2.1
 
 Released: 2024-04-29

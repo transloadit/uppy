@@ -12,6 +12,77 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 4.0.0-beta.4
+
+Released: 2024-04-29
+
+| Package                |      Version | Package                |      Version |
+| ---------------------- | ------------ | ---------------------- | ------------ |
+| @uppy/angular          | 0.7.0-beta.4 | @uppy/instagram        | 4.0.0-beta.4 |
+| @uppy/audio            | 2.0.0-beta.4 | @uppy/onedrive         | 4.0.0-beta.4 |
+| @uppy/aws-s3-multipart | 4.0.0-beta.4 | @uppy/provider-views   | 4.0.0-beta.4 |
+| @uppy/box              | 3.0.0-beta.4 | @uppy/react            | 4.0.0-beta.4 |
+| @uppy/companion        | 5.0.0-beta.4 | @uppy/status-bar       | 4.0.0-beta.4 |
+| @uppy/companion-client | 4.0.0-beta.4 | @uppy/store-redux      | 4.0.0-beta.2 |
+| @uppy/compressor       | 2.0.0-beta.4 | @uppy/svelte           | 4.0.0-beta.2 |
+| @uppy/core             | 4.0.0-beta.4 | @uppy/transloadit      | 4.0.0-beta.4 |
+| @uppy/dashboard        | 4.0.0-beta.4 | @uppy/unsplash         | 4.0.0-beta.4 |
+| @uppy/drop-target      | 3.0.0-beta.4 | @uppy/url              | 4.0.0-beta.4 |
+| @uppy/dropbox          | 4.0.0-beta.4 | @uppy/utils            | 6.0.0-beta.4 |
+| @uppy/facebook         | 4.0.0-beta.4 | @uppy/webcam           | 4.0.0-beta.4 |
+| @uppy/file-input       | 4.0.0-beta.4 | @uppy/xhr-upload       | 4.0.0-beta.2 |
+| @uppy/form             | 4.0.0-beta.2 | @uppy/zoom             | 3.0.0-beta.4 |
+| @uppy/google-drive     | 4.0.0-beta.4 | uppy                   | 4.0.0-beta.4 |
+| @uppy/image-editor     | 3.0.0-beta.2 |                        |              |
+
+- meta: Upgrade Yarn to 4.x (Merlijn Vos / #4849)
+- @uppy/utils: fix fetcher export (Murderlon)
+- @uppy/xhr-upload: refactor to use `fetcher` (Merlijn Vos / #5074)
+- docs: use StackBlitz for all examples/issue template (Merlijn Vos / #5125)
+- meta: Update yarn.lock (Murderlon)
+- @uppy/svelte: Add svelte 5 as peer dep (frederikhors / #5122)
+- meta: Bump docker/setup-buildx-action from 2 to 3 (dependabot[bot] / #5124)
+- meta: Bump actions/checkout from 3 to 4 (dependabot[bot] / #5123)
+- @uppy/dashboard,@uppy/provider-views: Remove JSX global type everywhere (Merlijn Vos / #5117)
+- @uppy/utils: improve return type of `dataURItoFile` (Antoine du Hamel / #5112)
+- @uppy/drop-target: change drop event type to DragEvent (Alireza Heydari / #5107)
+- @uppy/image-editor: fix label definitions (Antoine du Hamel / #5111)
+- meta: bump Prettier version (Antoine du Hamel / #5114)
+- @uppy/provider-views: bring back "loaded X files..." (Mikael Finstad / #5097)
+- @uppy/dashboard: fix type of trigger option (Merlijn Vos / #5106)
+- meta: fix linter (Antoine du Hamel)
+- @uppy/companion: bump Node.js version support matrix (Antoine du Hamel / #5035)
+- @uppy/form: fix `submitOnSuccess` and `triggerUploadOnSubmit` combination (Merlijn Vos / #5058)
+- meta: Bump docker/build-push-action from 3 to 5 (dependabot[bot] / #5105)
+- meta: Bump akhileshns/heroku-deploy from 3.12.12 to 3.13.15 (dependabot[bot] / #5102)
+- meta: Bump docker/login-action from 2 to 3 (dependabot[bot] / #5101)
+- meta: Bump actions/download-artifact from 3 to 4 (dependabot[bot])
+- meta: Bump actions/upload-artifact from 3 to 4 (dependabot[bot])
+- @uppy/react: remove `useUppy` & reintroduce `useUppyState` (Merlijn Vos / #5059)
+- meta: docs: add back markdown files (Antoine du Hamel / #5064)
+- meta: fix custom provider example (Merlijn Vos / #5079)
+- @uppy/utils: add fetcher (Merlijn Vos / #5073)
+- meta: Fix prettier (Murderlon)
+- @uppy/dashboard: add missing `x-zip-compress` archive type (Younes / #5081)
+- meta: Bump docker/metadata-action from 4 to 5 (dependabot[bot] / #5086)
+- meta: Bump actions/setup-node from 3 to 4 (dependabot[bot] / #5087)
+- meta: Bump docker/setup-qemu-action from 2 to 3 (dependabot[bot] / #5089)
+- meta: bump supercharge/redis-github-action from 1.4.0 to 1.8.0 (dependabot[bot] / #5090)
+- meta: bump actions/cache from 3 to 4 (dependabot[bot] / #5088)
+- meta: add `dependabot.yml` to keep GHA up-to-date (Antoine du Hamel / #5083)
+- @uppy/core: Release: uppy@3.24.2 (github-actions[bot] / #5084)
+- @uppy/core: fix `setOptions` not re-rendereing plugin UI (Antoine du Hamel / #5082)
+- meta: bump vite from 5.0.12 to 5.0.13 (dependabot[bot] / #5060)
+- meta: bump tar from 6.1.11 to 6.2.1 (dependabot[bot] / #5068)
+- @uppy/companion,@uppy/file-input: Release: uppy@3.24.1 (github-actions[bot] / #5069)
+- @uppy/companion: upgrade redis (Mikael Finstad / #5065)
+- meta: fix `watch:*` scripts (Antoine du Hamel / #5046)
+- meta: include more packages in `compare_diff` CI (Antoine du Hamel / #5044)
+- @uppy/file-input: add missing export (Antoine du Hamel / #5045)
+- meta: Bump express from 4.18.1 to 4.19.2 in /packages/@uppy/companion (dependabot[bot] / #5036)
+- @uppy/companion: Bump express from 4.18.1 to 4.19.2 (dependabot[bot] / #5037)
+
+
 ## 4.0.0-beta.3
 
 Released: 2024-04-15
