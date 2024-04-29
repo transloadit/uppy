@@ -16,6 +16,7 @@ import shouldHandleScroll from '../utils/shouldHandleScroll.ts'
 import handleError from '../utils/handleError.ts'
 import validateRestrictions from '../utils/validateRestrictions.ts'
 import getClickedRange from '../utils/getClickedRange.ts'
+import injectPaths from '../utils/PartialTreeUtils/injectPaths.ts'
 
 const defaultState : UnknownSearchProviderPluginState = {
   loading: false,
@@ -188,9 +189,10 @@ export default class SearchProviderView<M extends Meta, B extends Body> {
   donePicking(): void {
     const { partialTree } = this.plugin.getPluginState()
     this.plugin.uppy.log('Adding remote search provider files')
-    const files = partialTree.filter((i) => i.type !== 'root' && i.status === 'checked') as PartialTreeFile[]
-    const tagFiles = files.map((file) =>
-      getTagFile<M>(file.data, this.plugin.id, this.provider, this.plugin.opts.companionUrl)
+    const checkedFiles = partialTree.filter((i) => i.type !== 'root' && i.status === 'checked') as PartialTreeFile[]
+    const withPaths = injectPaths(partialTree, checkedFiles)
+    const tagFiles = withPaths.map((file) =>
+      getTagFile<M>(file, this.plugin.id, this.provider, this.plugin.opts.companionUrl)
     )
     this.plugin.uppy.addFiles(tagFiles)
 

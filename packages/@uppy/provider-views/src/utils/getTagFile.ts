@@ -43,10 +43,11 @@ const getTagFile = <M extends Meta>(file: CompanionFile, pluginId: string, provi
     if (file.author.url) tagFile.meta.authorUrl = file.author.url
   }
 
-  // add relativePath similar to non-remote files: https://github.com/transloadit/uppy/pull/4486#issuecomment-1579203717
-  // and absolutePath (with leading slash) https://github.com/transloadit/uppy/pull/4537#issuecomment-1614236655
+  // We need to do this `|| null`
+  // because .relDirPath is `undefined` and .relativePath is `null`.
+  // I do think we should just use `null` everywhere.
   tagFile.meta.relativePath = file.relDirPath || null
-  tagFile.meta.absolutePath = file.absDirPath || `/${tagFile.name}`
+  tagFile.meta.absolutePath = file.absDirPath
   return tagFile
 }
 
