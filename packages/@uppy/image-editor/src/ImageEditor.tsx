@@ -218,7 +218,7 @@ export default class ImageEditor<
     this.unmount()
   }
 
-  render(): JSX.Element | null {
+  render() {
     const { currentImage } = this.getPluginState()
 
     if (currentImage === null || currentImage.isRemote) {

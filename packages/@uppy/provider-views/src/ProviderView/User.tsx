@@ -6,11 +6,7 @@ type UserProps = {
   username: string | undefined
 }
 
-export default function User({
-  i18n,
-  logout,
-  username,
-}: UserProps): JSX.Element {
+export default function User({ i18n, logout, username }: UserProps) {
   return (
     <Fragment>
       <span className="uppy-ProviderBrowser-user" key="username">

@@ -24,7 +24,7 @@ export default class GoogleDrive<
 > extends UIPlugin<GoogleDriveOptions, M, B, UnknownProviderPluginState> {
   static VERSION = packageJson.version
 
-  icon: () => JSX.Element
+  icon: () => h.JSX.Element
 
   provider: Provider<M, B>
 

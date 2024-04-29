@@ -25,7 +25,7 @@ export default class Facebook<M extends Meta, B extends Body> extends UIPlugin<
 > {
   static VERSION = packageJson.version
 
-  icon: () => JSX.Element
+  icon: () => h.JSX.Element
 
   provider: Provider<M, B>
 

@@ -11,7 +11,7 @@ export default function FooterActions({
   done: () => void
   i18n: I18n
   selected: number
-}): JSX.Element {
+}) {
   return (
     <div className="uppy-ProviderBrowser-footer">
       <button

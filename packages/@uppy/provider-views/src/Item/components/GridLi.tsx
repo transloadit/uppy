@@ -1,5 +1,5 @@
 /* eslint-disable react/require-default-props */
-import { h } from 'preact'
+import { h, type ComponentChildren } from 'preact'
 import classNames from 'classnames'
 import type { RestrictionError } from '@uppy/core/lib/Restricter'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
@@ -15,7 +15,7 @@ type GridListItemProps<M extends Meta, B extends Body> = {
   toggleCheckbox: (event: Event) => void
   recordShiftKeyPress: (event: KeyboardEvent) => void
   id: string
-  children?: JSX.Element
+  children?: ComponentChildren
 }
 
 function GridListItem<M extends Meta, B extends Body>(
