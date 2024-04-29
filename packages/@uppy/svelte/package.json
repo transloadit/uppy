@@ -2,7 +2,7 @@
   "name": "@uppy/svelte",
   "description": "Uppy plugin that helps integrate Uppy into your Svelte project.",
   "type": "module",
-  "version": "4.0.0-beta.1",
+  "version": "4.0.0-beta.2",
   "scripts": {
     "build": "rollup -c",
     "prepublishOnly": "yarn run build",

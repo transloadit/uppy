@@ -1,5 +1,12 @@
 # @uppy/svelte
 
+## 4.0.0-beta.2
+
+Released: 2024-04-29
+Included in: Uppy v4.0.0-beta.4
+
+- @uppy/svelte: Add svelte 5 as peer dep (frederikhors / #5122)
+
 ## 4.0.0-beta.1
 
 Released: 2024-03-28

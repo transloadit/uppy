@@ -1,5 +1,12 @@
 # @uppy/image-editor
 
+## 3.0.0-beta.2
+
+Released: 2024-04-29
+Included in: Uppy v4.0.0-beta.4
+
+- @uppy/image-editor: fix label definitions (Antoine du Hamel / #5111)
+
 ## 2.4.5
 
 Released: 2024-04-29

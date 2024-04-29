@@ -1,5 +1,14 @@
 # @uppy/dashboard
 
+## 4.0.0-beta.4
+
+Released: 2024-04-29
+Included in: Uppy v4.0.0-beta.4
+
+- @uppy/dashboard,@uppy/provider-views: Remove JSX global type everywhere (Merlijn Vos / #5117)
+- @uppy/dashboard: fix type of trigger option (Merlijn Vos / #5106)
+- @uppy/dashboard: add missing `x-zip-compress` archive type (Younes / #5081)
+
 ## 4.0.0-beta.1
 
 Released: 2024-03-28

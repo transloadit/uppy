@@ -1,5 +1,13 @@
 # @uppy/core
 
+## 4.0.0-beta.4
+
+Released: 2024-04-29
+Included in: Uppy v4.0.0-beta.4
+
+- @uppy/core: Release: uppy@3.24.2 (github-actions[bot] / #5084)
+- @uppy/core: fix `setOptions` not re-rendereing plugin UI (Antoine du Hamel / #5082)
+
 ## 4.0.0-beta.3
 
 Released: 2024-04-15
