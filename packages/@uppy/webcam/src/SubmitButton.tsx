@@ -6,7 +6,7 @@ interface SubmitButtonProps {
   i18n: I18n
 }
 
-function SubmitButton({ onSubmit, i18n }: SubmitButtonProps): JSX.Element {
+function SubmitButton({ onSubmit, i18n }: SubmitButtonProps) {
   return (
     <button
       className="uppy-u-reset uppy-c-btn uppy-Webcam-button uppy-Webcam-button--submit"

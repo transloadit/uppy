@@ -26,7 +26,9 @@ body:
 
         Starters:
 
-        - [Uppy Dashboard](https://codesandbox.io/s/uppy-dashboard-xpxuhd?file=/src/index.js)
+        - [Uppy Dashboard](https://stackblitz.com/edit/vitejs-vite-zaqyaf?file=main.js)
+        - [Uppy React](https://stackblitz.com/edit/vitejs-vite-vehvbq?file=src%2FApp.tsx)
+        - [Uppy Vue](https://stackblitz.com/edit/vitejs-vite-ubjwys?file=src%2FApp.vue)
     validations:
       required: false
   - type: textarea

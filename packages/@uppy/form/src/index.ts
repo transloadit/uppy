@@ -52,6 +52,12 @@ export default class Form<M extends Meta, B extends Body> extends BasePlugin<
 
   form: HTMLFormElement // TODO: make this private (or at least, mark it as readonly)
 
+  /**
+   * Unfortunately Uppy isn't a state machine in which we can guarantee it's
+   * currently in one state and one state only so we use this completed property which is set on `upload-success'.
+   */
+  #completed = false
+
   constructor(uppy: Uppy<M, B>, opts?: FormOptions) {
     super(uppy, { ...defaultOptions, ...opts })
     this.type = 'acquirer'
@@ -65,12 +71,14 @@ export default class Form<M extends Meta, B extends Body> extends BasePlugin<
   }
 
   handleUploadStart(): void {
+    this.#completed = false
     if (this.opts.getMetaFromForm) {
       this.getMetaFromForm()
     }
   }
 
   handleSuccess(result: Result<M, B>): void {
+    this.#completed = true
     if (this.opts.addResultToForm) {
       this.addResultToForm(result)
     }
@@ -81,7 +89,7 @@ export default class Form<M extends Meta, B extends Body> extends BasePlugin<
   }
 
   handleFormSubmit(ev: Event): void {
-    if (this.opts.triggerUploadOnSubmit) {
+    if (this.opts.triggerUploadOnSubmit && !this.#completed) {
       ev.preventDefault()
       const elements = toArray((ev.target as HTMLFormElement).elements)
       const disabledByUppy: HTMLButtonElement[] = []

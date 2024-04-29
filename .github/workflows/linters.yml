@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run:
@@ -56,7 +56,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run:
@@ -83,12 +83,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Uppy.io sources
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: transloadit/uppy.io
       - run: rm -rf docs # the other PR has not landed
       - name: Checkout docs
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           path: uppy
       - run: mv uppy /tmp/uppy && ln -s /tmp/uppy/docs docs

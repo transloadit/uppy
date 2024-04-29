@@ -7,7 +7,7 @@ export default function Loader({
 }: {
   i18n: I18n
   loading: string | boolean
-}): JSX.Element {
+}) {
   return (
     <div className="uppy-Provider-loading">
       <span>{i18n('loading')}</span>

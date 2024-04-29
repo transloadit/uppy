@@ -25,8 +25,7 @@
   },
   "dependencies": {
     "@uppy/companion-client": "workspace:^",
-    "@uppy/utils": "workspace:^",
-    "nanoid": "^4.0.0"
+    "@uppy/utils": "workspace:^"
   },
   "devDependencies": {
     "nock": "^13.1.0",

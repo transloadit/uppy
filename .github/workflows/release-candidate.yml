@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           branch: release-beta
           fetch-depth: 3 # the prepare commit, the merge commit, and the base ones.

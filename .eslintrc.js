@@ -175,6 +175,10 @@ module.exports = {
             name: 'require',
             message: 'Use import instead',
           },
+          {
+            name: 'JSX',
+            message: 'Use h.JSX.Element, ComponentChild, or ComponentChildren from Preact',
+          },
         ],
         'import/extensions': ['error', 'ignorePackages'],
       },
@@ -479,7 +483,7 @@ module.exports = {
       },
     },
     {
-      files: ['packages/@uppy/*/src/**/*.ts', 'packages/@uppy/*/src/**/*.tsx'],
+      files: ['packages/@uppy/*/src/**/*.ts'],
       excludedFiles: ['packages/@uppy/**/*.test.ts', 'packages/@uppy/core/src/mocks/*.ts'],
       rules: {
         '@typescript-eslint/explicit-module-boundary-types': 'error',

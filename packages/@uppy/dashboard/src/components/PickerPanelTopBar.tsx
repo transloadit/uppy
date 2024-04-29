@@ -94,7 +94,7 @@ function UploadStatus({
   }
 }
 
-function PanelTopBar(props: $TSFixMe): JSX.Element {
+function PanelTopBar(props: $TSFixMe) {
   const {
     i18n,
     isAllComplete,

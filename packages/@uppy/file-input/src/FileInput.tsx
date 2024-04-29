@@ -93,7 +93,7 @@ export default class FileInput<M extends Meta, B extends Body> extends UIPlugin<
       overflow: 'hidden',
       position: 'absolute',
       zIndex: -1,
-    } satisfies JSX.IntrinsicElements['input']['style']
+    } satisfies h.JSX.IntrinsicElements['input']['style']
 
     const { restrictions } = this.uppy.opts
     const accept =

@@ -49,7 +49,7 @@ export default function FileList({
   toggleAddFilesPanel,
   containerWidth,
   containerHeight,
-}: $TSFixMe): JSX.Element {
+}: $TSFixMe) {
   // It's not great that this is hardcoded!
   // It's ESPECIALLY not great that this is checking against `itemsPerRow`!
   const rowHeight =

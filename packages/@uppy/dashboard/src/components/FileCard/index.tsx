@@ -9,7 +9,7 @@ import RenderMetaFields from './RenderMetaFields.tsx'
 
 type $TSFixMe = any
 
-export default function FileCard(props: $TSFixMe): JSX.Element {
+export default function FileCard(props: $TSFixMe) {
   const {
     files,
     fileCardFor,

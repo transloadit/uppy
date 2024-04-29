@@ -62,7 +62,7 @@ export interface StatusBarUIProps<M extends Meta, B extends Body> {
 // TODO: rename the function to StatusBarUI on the next major.
 export default function StatusBar<M extends Meta, B extends Body>(
   props: StatusBarUIProps<M, B>,
-): JSX.Element {
+) {
   const {
     newFiles,
     allowNewUpload,
@@ -204,7 +204,7 @@ export default function StatusBar<M extends Meta, B extends Body>(
         aria-valuenow={progressValue!}
       />
 
-      {((): JSX.Element | null => {
+      {(() => {
         switch (uploadState) {
           case STATE_PREPROCESSING:
           case STATE_POSTPROCESSING:

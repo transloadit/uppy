@@ -11,7 +11,7 @@ function PickerPanelContent({
   i18n,
   state,
   uppy,
-}: $TSFixMe): JSX.Element {
+}: $TSFixMe) {
   return (
     <div
       className={classNames('uppy-DashboardContent-panel', className)}
