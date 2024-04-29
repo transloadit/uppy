@@ -34,9 +34,8 @@ export default function copyToClipboard(
     document.body.appendChild(textArea)
     textArea.select()
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const magicCopyFailed = (cause?: unknown) => {
-      // eslint-disable-next-line no-console
-      if (false as any) console.warn(cause)
       document.body.removeChild(textArea)
       // eslint-disable-next-line no-alert
       window.prompt(fallbackString, textToCopy)

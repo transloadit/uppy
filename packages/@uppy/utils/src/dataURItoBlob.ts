@@ -37,7 +37,7 @@ function dataURItoBlob(
     return new File(data, opts.name || '', { type: mimeType })
   }
 
-  return new Blob(data, { type: mimeType }) as any
+  return new Blob(data, { type: mimeType })
 }
 
 export default dataURItoBlob
