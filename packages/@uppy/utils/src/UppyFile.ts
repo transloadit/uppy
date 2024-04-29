@@ -1,4 +1,4 @@
-import type { FileProgress } from './FileProgress'
+import type { FileProgress } from './FileProgress.js'
 
 export type Meta = Record<string, unknown>
 

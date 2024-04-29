@@ -6,7 +6,7 @@ import match from 'mime-match'
 import Translator from '@uppy/utils/lib/Translator'
 import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
 import type { I18n } from '@uppy/utils/lib/Translator'
-import type { State, NonNullableUppyOptions } from './Uppy'
+import type { State, NonNullableUppyOptions } from './Uppy.js'
 
 export type Restrictions = {
   maxFileSize: number | null

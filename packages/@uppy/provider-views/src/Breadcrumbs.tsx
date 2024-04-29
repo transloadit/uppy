@@ -1,7 +1,7 @@
 import type { UnknownProviderPluginState } from '@uppy/core/lib/Uppy'
 import { h, Fragment } from 'preact'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
-import type ProviderView from './ProviderView'
+import type ProviderView from './ProviderView.js'
 
 type BreadcrumbProps = {
   getFolder: () => void

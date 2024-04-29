@@ -9,7 +9,7 @@ import type {
   PluginOptions,
   UppyFile,
   SuccessResponse,
-} from '..'
+} from '../index.js'
 
 type anyObject = Record<string, unknown>
 

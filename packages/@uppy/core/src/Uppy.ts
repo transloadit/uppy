@@ -47,8 +47,8 @@ import {
 import packageJson from '../package.json'
 import locale from './locale.ts'
 
-import type BasePlugin from './BasePlugin.ts'
-import type { Restrictions, ValidateableFile } from './Restricter.ts'
+import type BasePlugin from './BasePlugin.js'
+import type { Restrictions, ValidateableFile } from './Restricter.js'
 
 type Processor = (
   fileIDs: string[],

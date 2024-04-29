@@ -1,6 +1,10 @@
 import ErrorWithCause from '@uppy/utils/lib/ErrorWithCause'
 import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
-import type { AssemblyParameters, Opts, AssemblyOptions as Options } from '.'
+import type {
+  AssemblyParameters,
+  Opts,
+  AssemblyOptions as Options,
+} from './index.js'
 
 /**
  * Check that Assembly parameters are present and include all required fields.

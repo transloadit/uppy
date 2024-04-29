@@ -5,7 +5,7 @@ import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import type { UnknownProviderPluginState } from '@uppy/core/lib/Uppy'
 import User from './User.tsx'
 import Breadcrumbs from '../Breadcrumbs.tsx'
-import type ProviderView from './ProviderView.tsx'
+import type ProviderView from './ProviderView.js'
 
 type HeaderProps<M extends Meta, B extends Body> = {
   showBreadcrumbs: boolean
