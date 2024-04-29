@@ -1,5 +1,12 @@
 # @uppy/xhr-upload
 
+## 3.6.5
+
+Released: 2024-04-29
+Included in: Uppy v3.25.0
+
+- @uppy/xhr-upload: refactor to use `fetcher` (Merlijn Vos / #5074)
+
 ## 3.6.4
 
 Released: 2024-02-28

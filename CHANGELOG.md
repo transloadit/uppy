@@ -12,6 +12,52 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 3.25.0
+
+Released: 2024-04-29
+
+| Package                | Version | Package                | Version |
+| ---------------------- | ------- | ---------------------- | ------- |
+| @uppy/audio            |   1.1.9 | @uppy/instagram        |   3.3.1 |
+| @uppy/aws-s3-multipart |  3.11.1 | @uppy/onedrive         |   3.3.1 |
+| @uppy/box              |   2.3.1 | @uppy/provider-views   |  3.12.0 |
+| @uppy/companion-client |   3.8.1 | @uppy/react            |   3.3.1 |
+| @uppy/compressor       |   1.1.3 | @uppy/status-bar       |   3.3.2 |
+| @uppy/core             |  3.11.0 | @uppy/svelte           |   3.1.4 |
+| @uppy/dashboard        |   3.8.2 | @uppy/transloadit      |   3.6.1 |
+| @uppy/drop-target      |   2.1.0 | @uppy/unsplash         |   3.3.1 |
+| @uppy/dropbox          |   3.3.1 | @uppy/url              |   3.6.1 |
+| @uppy/facebook         |   3.3.1 | @uppy/utils            |   5.9.0 |
+| @uppy/file-input       |   3.1.2 | @uppy/webcam           |   3.4.1 |
+| @uppy/form             |   3.2.1 | @uppy/xhr-upload       |   3.6.5 |
+| @uppy/google-drive     |   3.5.1 | @uppy/zoom             |   2.3.1 |
+| @uppy/image-editor     |   2.4.5 | uppy                   |  3.25.0 |
+
+- meta: enforce use of `.js` extension in `import type` declarations (Antoine du Hamel / #5126)
+- @uppy/core: add instance ID to generated IDs (Merlijn Vos / #5080)
+- @uppy/core: reference updated i18n in Restricter (Merlijn Vos / #5118)
+- @uppy/xhr-upload: refactor to use `fetcher` (Merlijn Vos / #5074)
+- meta: docs: use StackBlitz for all examples/issue template (Merlijn Vos / #5125)
+- meta: Update yarn.lock (Murderlon)
+- @uppy/svelte: Add svelte 5 as peer dep (frederikhors / #5122)
+- meta: Bump docker/setup-buildx-action from 2 to 3 (dependabot[bot] / #5124)
+- meta: Bump actions/checkout from 3 to 4 (dependabot[bot] / #5123)
+- @uppy/dashboard,@uppy/provider-views: Remove JSX global type everywhere (Merlijn Vos / #5117)
+- @uppy/utils: improve return type of `dataURItoFile` (Antoine du Hamel / #5112)
+- @uppy/drop-target: change drop event type to DragEvent (Alireza Heydari / #5107)
+- @uppy/image-editor: fix label definitions (Antoine du Hamel / #5111)
+- meta: bump Prettier version (Antoine du Hamel / #5114)
+- @uppy/provider-views: bring back "loaded X files..." (Mikael Finstad / #5097)
+- @uppy/dashboard: fix type of trigger option (Merlijn Vos / #5106)
+- meta: fix linter (Antoine du Hamel)
+- @uppy/form: fix `submitOnSuccess` and `triggerUploadOnSubmit` combination (Merlijn Vos / #5058)
+- meta: Bump docker/build-push-action from 3 to 5 (dependabot[bot] / #5105)
+- meta: Bump akhileshns/heroku-deploy from 3.12.12 to 3.13.15 (dependabot[bot] / #5102)
+- meta: Bump docker/login-action from 2 to 3 (dependabot[bot] / #5101)
+- meta: Bump actions/download-artifact from 3 to 4 (dependabot[bot])
+- meta: Bump actions/upload-artifact from 3 to 4 (dependabot[bot])
+
+
 ## 3.24.3
 
 Released: 2024-04-16
