@@ -56,8 +56,8 @@ jobs:
         run: corepack yarn workspace @uppy/angular prepublishOnly
       - name: Publish to the npm registry
         run:
-          corepack yarn workspaces foreach --no-private npm publish --access
-          public --tag next --tolerate-republish
+          corepack yarn workspaces foreach --all --no-private npm publish
+          --access public --tag next --tolerate-republish
         env:
           YARN_NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Merge PR
