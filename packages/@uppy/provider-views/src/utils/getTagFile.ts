@@ -6,6 +6,8 @@ import isPreviewSupported from "@uppy/utils/lib/isPreviewSupported"
 
 // TODO: document what is a "tagFile" or get rid of this concept
 const getTagFile = <M extends Meta>(file: CompanionFile, pluginId: string, provider: CompanionClientProvider | CompanionClientSearchProvider, companionUrl: string) : TagFile<M> => {
+  const fileType = getFileType({ type: file.mimeType, name: file.name })
+  
   const tagFile: TagFile<any> = {
     id: file.id,
     source: pluginId,
@@ -13,7 +15,17 @@ const getTagFile = <M extends Meta>(file: CompanionFile, pluginId: string, provi
     type: file.mimeType,
     isRemote: true,
     data: file,
-    meta: {},
+    // TODO Should we just always use the thumbnail URL if it exists?
+    preview: isPreviewSupported(fileType) ? file.thumbnail : undefined,
+    meta: {
+      authorName: file.author?.name,
+      authorUrl: file.author?.url,
+      // We need to do this `|| null` check, because null value
+      // for .relDirPath is `undefined` and for .relativePath is `null`.
+      // I do think we should just use `null` everywhere.
+      relativePath: file.relDirPath || null,
+      absolutePath: file.absDirPath
+    },
     body: {
       fileId: file.id,
     },
@@ -30,24 +42,6 @@ const getTagFile = <M extends Meta>(file: CompanionFile, pluginId: string, provi
     },
   }
 
-  const fileType = getFileType(tagFile)
-
-  // TODO Should we just always use the thumbnail URL if it exists?
-  if (fileType && isPreviewSupported(fileType)) {
-    tagFile.preview = file.thumbnail
-  }
-
-  if (file.author) {
-    if (file.author.name != null)
-      tagFile.meta.authorName = String(file.author.name)
-    if (file.author.url) tagFile.meta.authorUrl = file.author.url
-  }
-
-  // We need to do this `|| null`
-  // because .relDirPath is `undefined` and .relativePath is `null`.
-  // I do think we should just use `null` everywhere.
-  tagFile.meta.relativePath = file.relDirPath || null
-  tagFile.meta.absolutePath = file.absDirPath
   return tagFile
 }
 
