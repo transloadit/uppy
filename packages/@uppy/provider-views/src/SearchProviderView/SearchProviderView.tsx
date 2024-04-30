@@ -10,7 +10,7 @@ import Browser from '../Browser.tsx'
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../../package.json'
 import getTagFile from '../utils/getTagFile.ts'
-import getNOfSelectedFiles from '../utils/getNOfSelectedFiles.ts'
+import getNOfSelectedFiles from '../utils/PartialTreeUtils/getNOfSelectedFiles.ts'
 import PartialTreeUtils from '../utils/PartialTreeUtils'
 import shouldHandleScroll from '../utils/shouldHandleScroll.ts'
 import handleError from '../utils/handleError.ts'

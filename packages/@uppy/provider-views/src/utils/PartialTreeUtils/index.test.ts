@@ -6,6 +6,7 @@ import afterOpenFolder from './afterOpenFolder.ts'
 import afterScrollFolder from './afterScrollFolder.ts'
 import fill from './fill.ts'
 import injectPaths from './injectPaths.ts'
+import getNOfSelectedFiles from './getNOfSelectedFiles.ts'
 
 const _root = (id: string, options: any = {}) : PartialTreeFolderRoot => ({
   type: 'root',
@@ -391,5 +392,35 @@ describe('fill()', () => {
 
     expect(result.length).toEqual(8)
     expect(result.map((f) => f.id)).toEqual(['2_1', '2_2', '3_1', '2_3', '666_1', '777_1', '777_2_1', '777_2_1_1'])
+  })
+})
+
+describe('getNOfSelectedFiles()', () => {
+  it('gets all leaf items', () => {
+    const tree : PartialTree = [
+      _root('ourRoot'),
+          // leaf .checked folder
+          _folder('1', { parentId: 'ourRoot', cached: false, status: 'checked' }),
+          // NON-left .checked folder
+          _folder('2', { parentId: 'ourRoot', status: 'checked' }),
+              // leaf .checked file
+              _file('2_1', { parentId: '2', status: 'checked' }),
+              // leaf .checked file
+              _file('2_2', { parentId: '2', status: 'checked' })
+    ]
+    const result = getNOfSelectedFiles(tree)
+
+    expect(result).toEqual(3)
+  })
+
+  it('empty folder, even after being opened, counts as leaf node', () => {
+    const tree : PartialTree = [
+      _root('ourRoot'),
+          // empty .checked .cached folder
+          _folder('1', { parentId: 'ourRoot', cached: true, status: 'checked' }),
+    ]
+    const result = getNOfSelectedFiles(tree)
+    // This should be "1" for more pleasant UI - if the user unchecks this folder, they should immediately see "Selected (1)" turning into "Selected (0)".
+    expect(result).toEqual(1)
   })
 })
