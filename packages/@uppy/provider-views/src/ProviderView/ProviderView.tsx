@@ -8,6 +8,7 @@ import type {
   PartialTreeFolderNode,
   PartialTreeFile,
   UnknownProviderPluginState,
+  PartialTreeId,
 } from '@uppy/core/lib/Uppy.ts'
 import type { Body, Meta, TagFile } from '@uppy/utils/lib/UppyFile'
 import type { CompanionFile } from '@uppy/utils/lib/CompanionFile.ts'
@@ -276,7 +277,10 @@ export default class ProviderView<M extends Meta, B extends Body>{
     this.setLoading(true)
 
     await this.#withAbort(async (signal) => {
-      const uppyFiles: CompanionFile[] = await PartialTreeUtils.fill(partialTree, this.provider, signal)
+      const uppyFiles: CompanionFile[] = await PartialTreeUtils.fill(
+        partialTree,
+        (path: PartialTreeId) => this.provider.list(path, { signal })
+      )
 
       const filesToAdd : TagFile<M>[] = []
       const filesAlreadyAdded : TagFile<M>[] = []

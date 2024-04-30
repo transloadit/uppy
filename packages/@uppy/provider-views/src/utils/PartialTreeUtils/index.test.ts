@@ -35,8 +35,6 @@ const _file = (id: string, options: any) : PartialTreeFile => ({
   ...options
 })
 
-
-
 const getFolder = (tree: PartialTree, id: string) =>
   tree.find((i) => i.id === id) as PartialTreeFolderNode
 const getFile = (tree: PartialTree, id: string) =>
@@ -212,7 +210,6 @@ describe('afterScrollFolder()', () => {
   })
 })
 
-// Based on documentation for .absolutePath and .relativePath (https://uppy.io/docs/uppy/#filemeta)
 describe('injectPaths()', () => {
   // Note that this is a tree that doesn't require any api calls, everything is cached already
   const tree : PartialTree = [
@@ -231,6 +228,7 @@ describe('injectPaths()', () => {
   ]
   const checkedFiles = tree.filter((item) => item.type === 'file' && item.status === 'checked') as PartialTreeFile[]
 
+  // These test cases are based on documentation for .absolutePath and .relativePath (https://uppy.io/docs/uppy/#filemeta)
   it('.absolutePath always begins with / + always ends with the file’s name.', () => {
     const result = injectPaths(tree, checkedFiles)
 
@@ -241,6 +239,7 @@ describe('injectPaths()', () => {
   it('.relativePath is null when file is selected independently', () => {
     const result = injectPaths(tree, checkedFiles)
 
+    // .relDirPath should be `undefined`, which will make .relativePath `null` eventually
     expect(result.find((f) => f.id === '2_2')!.relDirPath).toEqual(undefined)
   })
 
@@ -249,5 +248,4 @@ describe('injectPaths()', () => {
 
     expect(result.find((f) => f.id === '2_4_1')!.relDirPath).toEqual('name_2_4/name_2_4_1.jpg')
   })
-
 })

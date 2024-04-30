@@ -1,14 +1,20 @@
-import type { PartialTree, PartialTreeFile, PartialTreeFolder, PartialTreeFolderNode, PartialTreeId } from "@uppy/core/lib/Uppy"
-import type { CompanionClientProvider, RequestOptions } from "@uppy/utils/lib/CompanionClientProvider"
+import type { PartialTree, PartialTreeFile, PartialTreeFolderNode, PartialTreeId } from "@uppy/core/lib/Uppy"
 import type { CompanionFile } from "@uppy/utils/lib/CompanionFile"
 import PQueue from "p-queue"
 import injectPaths from "./injectPaths"
 
-const recursivelyFetch = async (queue: PQueue, poorTree: PartialTree, poorFolder: PartialTreeFolderNode, provider: CompanionClientProvider, signal: AbortSignal): Promise<PartialTree> => {
+interface ApiList {
+  (directory: PartialTreeId): Promise<{
+    nextPagePath: PartialTreeId
+    items: CompanionFile[]
+  }>
+}
+
+const recursivelyFetch = async (queue: PQueue, poorTree: PartialTree, poorFolder: PartialTreeFolderNode, apiList: ApiList): Promise<PartialTree> => {
   let items : CompanionFile[] = []
   let currentPath : PartialTreeId = poorFolder.cached ? poorFolder.nextPagePath : poorFolder.id
   while (currentPath) {
-    const response = await provider.list(currentPath, { signal })
+    const response = await apiList(currentPath)
     console.log({ currentPath, response });
     items = items.concat(response.items)
     currentPath = response.nextPagePath
@@ -43,14 +49,14 @@ const recursivelyFetch = async (queue: PQueue, poorTree: PartialTree, poorFolder
 
   folders.forEach(async (folder) => {
     queue.add(async () =>
-      await recursivelyFetch(queue, poorTree, folder, provider, signal)
+      await recursivelyFetch(queue, poorTree, folder, apiList)
     )
   })
 
   return []
 }
 
-const fill = async (partialTree: PartialTree, provider: CompanionClientProvider, signal: AbortSignal) : Promise<CompanionFile[]> => {
+const fill = async (partialTree: PartialTree, apiList: ApiList) : Promise<CompanionFile[]> => {
   const queue = new PQueue({ concurrency: 6 })
 
   // fill up the missing parts of a partialTree!
@@ -64,7 +70,7 @@ const fill = async (partialTree: PartialTree, provider: CompanionClientProvider,
   // per each poor folder, recursively fetch all files and make them .checked!!!
   poorFolders.forEach((poorFolder) => {
     queue.add(async () =>
-      await recursivelyFetch(queue, poorTree, poorFolder, provider, signal)
+      await recursivelyFetch(queue, poorTree, poorFolder, apiList)
     )
   })
 
