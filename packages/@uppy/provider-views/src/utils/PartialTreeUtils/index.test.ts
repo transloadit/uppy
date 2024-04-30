@@ -1,11 +1,10 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import afterToggleCheckbox from './afterToggleCheckbox.ts'
-import type { PartialTree, PartialTreeFile, PartialTreeFolderNode, PartialTreeFolderRoot } from '@uppy/core/lib/Uppy.ts'
+import type { PartialTree, PartialTreeFile, PartialTreeFolderNode, PartialTreeFolderRoot, PartialTreeId } from '@uppy/core/lib/Uppy.ts'
 import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
 import afterOpenFolder from './afterOpenFolder.ts'
 import afterScrollFolder from './afterScrollFolder.ts'
 import fill from './fill.ts'
-import type { CompanionClientProvider } from '@uppy/utils/lib/CompanionClientProvider'
 import injectPaths from './injectPaths.ts'
 
 const _root = (id: string, options: any = {}) : PartialTreeFolderRoot => ({
@@ -16,13 +15,27 @@ const _root = (id: string, options: any = {}) : PartialTreeFolderRoot => ({
   ...options
 })
 
+const _cFile = (id: string) => ({
+  id,
+  requestPath: id,
+  name: `name_${id}.jpg`,
+  isFolder: false
+} as CompanionFile)
+
+const _cFolder = (id: string) => ({
+  id,
+  requestPath: id,
+  name: `name_${id}`,
+  isFolder: true
+} as CompanionFile)
+
 const _folder = (id: string, options: any) : PartialTreeFolderNode => ({
   type: 'folder',
   id,
   cached: true,
   nextPagePath: null,
   status: 'unchecked',
-  data: ({ id, name: `name_${id}` } as CompanionFile),
+  data: _cFolder(id),
   ...options
 })
 
@@ -31,7 +44,7 @@ const _file = (id: string, options: any) : PartialTreeFile => ({
   id,
   status: 'unchecked',
   parentId: options.parentId,
-  data: ({ id, name: `name_${id}.jpg` } as CompanionFile),
+  data: _cFile(id),
   ...options
 })
 
@@ -247,5 +260,136 @@ describe('injectPaths()', () => {
     const result = injectPaths(tree, checkedFiles)
 
     expect(result.find((f) => f.id === '2_4_1')!.relDirPath).toEqual('name_2_4/name_2_4_1.jpg')
+  })
+})
+
+describe('fill()', () => {
+  it('fetches an already loaded file', async () => {
+    const tree : PartialTree = [
+      _root('ourRoot'),
+          _folder('1', { parentId: 'ourRoot' }),
+          _folder('2', { parentId: 'ourRoot' }),
+              _file('2_1', { parentId: '2' }),
+              _file('2_2', { parentId: '2', status: 'checked' }),
+              _file('2_3', { parentId: '2' }),
+              _folder('2_4', { parentId: '2' }),
+          _file('3', { parentId: 'ourRoot' }),
+          _file('4', { parentId: 'ourRoot' }),
+    ]
+    const mock = vi.fn()
+    const result = await fill(tree, mock)
+
+    // While we're at it - make sure we're not doing excessive api calls!
+    expect(mock.mock.calls.length).toEqual(0)
+
+    expect(result.length).toEqual(1)
+    expect(result[0].id).toEqual('2_2')
+  })
+
+  it('fetches a .checked folder', async () => {
+    const tree : PartialTree = [
+      _root('ourRoot'),
+          _folder('1', { parentId: 'ourRoot' }),
+          _folder('2', { parentId: 'ourRoot', cached: false, status: 'checked' }),
+    ]
+    const mock = (path: PartialTreeId) => {
+      if (path === '2') {
+        const items = [_cFile('2_1'), _cFile('2_2')]
+        return Promise.resolve({ nextPagePath: '666', items })
+      } else if (path === '666') {
+        const items = [_cFile('2_3'), _cFile('2_4')]
+        return Promise.resolve({ nextPagePath: null, items })
+      }
+      return Promise.reject()
+    }
+    const result = await fill(tree, mock)
+
+    expect(result.length).toEqual(4)
+    expect(result.map((f) => f.id)).toEqual(['2_1', '2_2', '2_3', '2_4'])
+  })
+
+  it('fetches remaining pages in a folder', async () => {
+    const tree : PartialTree = [
+      _root('ourRoot'),
+          _folder('1', { parentId: 'ourRoot' }),
+          _folder('2', { parentId: 'ourRoot', cached: true, nextPagePath: '666', status: 'checked' }),
+    ]
+    const mock = (path: PartialTreeId) => {
+      if (path === '666') {
+        const items = [_cFile('111'), _cFile('222')]
+        return Promise.resolve({ nextPagePath: null, items })
+      }
+      return Promise.reject()
+    }
+    const result = await fill(tree, mock)
+
+    expect(result.length).toEqual(2)
+    expect(result.map((f) => f.id)).toEqual(['111', '222'])
+  })
+
+  it('fetches a folder two levels deep', async () => {
+    const tree : PartialTree = [
+      _root('ourRoot'),
+          _folder('1', { parentId: 'ourRoot' }),
+          _folder('2', { parentId: 'ourRoot', cached: true, nextPagePath: '2_next', status: 'checked' }),
+              _file('2_1', { parentId: '2', status: 'checked' }),
+              _file('2_2', { parentId: '2', status: 'checked' })
+    ]
+    const mock = (path: PartialTreeId) => {
+      if (path === '2_next') {
+        const items = [_cFile('2_3'), _cFolder('666')]
+        return Promise.resolve({ nextPagePath: null, items })
+      } else if (path === '666') {
+        const items = [_cFile('666_1'), _cFile('666_2')]
+        return Promise.resolve({ nextPagePath: null, items })
+      }
+      return Promise.reject()
+    }
+    const result = await fill(tree, mock)
+
+    expect(result.length).toEqual(5)
+    expect(result.map((f) => f.id)).toEqual(['2_1', '2_2', '2_3', '666_1', '666_2'])
+  })
+
+  it('complex situation', async () => {
+    const tree : PartialTree = [
+      _root('ourRoot'),
+          _folder('1', { parentId: 'ourRoot' }),
+          // folder we'll be recursively fetching really deeply
+          _folder('2', { parentId: 'ourRoot', cached: true, nextPagePath: '2_next', status: 'checked' }),
+            _file('2_1', { parentId: '2', status: 'checked' }),
+            _file('2_2', { parentId: '2', status: 'checked' }),
+          // folder with only some files checked
+          _folder('3', { parentId: 'ourRoot', cached: true, status: 'partial' }),
+            // empty folder
+            _folder('0', { parentId: '3', cached: false, status: 'checked' }),
+            _file('3_1', { parentId: '3', status: 'checked' }),
+            _file('3_2', { parentId: '3', status: 'unchecked' }),
+    ]
+    const mock = (path: PartialTreeId) => {
+      if (path === '2_next') {
+        const items = [_cFile('2_3'), _cFolder('666')]
+        return Promise.resolve({ nextPagePath: null, items })
+      } else if (path === '666') {
+        const items = [_cFile('666_1'), _cFolder('777')]
+        return Promise.resolve({ nextPagePath: null, items })
+      } else if (path === '777') {
+        const items = [_cFile('777_1'), _cFolder('777_2')]
+        return Promise.resolve({ nextPagePath: null, items })
+      } else if (path === '777_2') {
+        const items = [_cFile('777_2_1')]
+        return Promise.resolve({ nextPagePath: '777_2_next', items })
+      } else if (path === '777_2_next') {
+        const items = [_cFile('777_2_1_1')]
+        return Promise.resolve({ nextPagePath: null, items })
+      } else if (path === '0') {
+        return Promise.resolve({ nextPagePath: null, items: [] })
+      }
+      return Promise.reject()
+    }
+    const result = await fill(tree, mock)
+
+    expect(result.length).toEqual(8)
+    expect(result.map((f) => f.id)).toEqual(['2_1', '2_2', '3_1', '2_3', '666_1', '777_1', '777_2_1', '777_2_1_1'])
   })
 })

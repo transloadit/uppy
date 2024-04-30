@@ -10,12 +10,11 @@ interface ApiList {
   }>
 }
 
-const recursivelyFetch = async (queue: PQueue, poorTree: PartialTree, poorFolder: PartialTreeFolderNode, apiList: ApiList): Promise<PartialTree> => {
+const recursivelyFetch = async (queue: PQueue, poorTree: PartialTree, poorFolder: PartialTreeFolderNode, apiList: ApiList) => {
   let items : CompanionFile[] = []
   let currentPath : PartialTreeId = poorFolder.cached ? poorFolder.nextPagePath : poorFolder.id
   while (currentPath) {
     const response = await apiList(currentPath)
-    console.log({ currentPath, response });
     items = items.concat(response.items)
     currentPath = response.nextPagePath
   }
@@ -48,12 +47,8 @@ const recursivelyFetch = async (queue: PQueue, poorTree: PartialTree, poorFolder
   poorTree.push(...files, ...folders)
 
   folders.forEach(async (folder) => {
-    queue.add(async () =>
-      await recursivelyFetch(queue, poorTree, folder, apiList)
-    )
+    queue.add(() => recursivelyFetch(queue, poorTree, folder, apiList))
   })
-
-  return []
 }
 
 const fill = async (partialTree: PartialTree, apiList: ApiList) : Promise<CompanionFile[]> => {
@@ -69,9 +64,7 @@ const fill = async (partialTree: PartialTree, apiList: ApiList) : Promise<Compan
   ) as PartialTreeFolderNode[]
   // per each poor folder, recursively fetch all files and make them .checked!!!
   poorFolders.forEach((poorFolder) => {
-    queue.add(async () =>
-      await recursivelyFetch(queue, poorTree, poorFolder, apiList)
-    )
+    queue.add(() => recursivelyFetch(queue, poorTree, poorFolder, apiList))
   })
 
   await queue.onIdle()
