@@ -5,3 +5,4 @@ node_modules/
 *.mjs
 !private/js2ts/*
 *.lock
+CHANGELOG.md
