@@ -4,5 +4,4 @@ node_modules/
 *.cjs
 *.mjs
 !private/js2ts/*
-*.md
 *.lock

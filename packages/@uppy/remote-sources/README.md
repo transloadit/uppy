@@ -24,11 +24,15 @@ npm install @uppy/remote-sources
 yarn add @uppy/remote-sources
 ```
 
-Alternatively, you can also use this plugin in a pre-built bundle from Transloadit’s CDN: Edgly. In that case `Uppy.RemoteSources` will attach itself to the global `window.Uppy` object. See the [main Uppy documentation](https://uppy.io/docs/#Installation) for instructions.
+Alternatively, you can also use this plugin in a pre-built bundle from
+Transloadit’s CDN: Edgly. In that case `Uppy.RemoteSources` will attach itself
+to the global `window.Uppy` object. See the
+[main Uppy documentation](https://uppy.io/docs/#Installation) for instructions.
 
 ## Documentation
 
-Documentation for this plugin can be found on the [Uppy website](https://uppy.io/docs/remote-sources).
+Documentation for this plugin can be found on the
+[Uppy website](https://uppy.io/docs/remote-sources).
 
 ## License
 
