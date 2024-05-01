@@ -1,12 +1,13 @@
 import type { PartialTree, PartialTreeFile, PartialTreeFolder, PartialTreeFolderNode } from "@uppy/core/lib/Uppy"
 import type { CompanionFile } from "@uppy/utils/lib/CompanionFile"
+import clone from "./clone"
 
 const afterToggleCheckbox = (
   oldPartialTree: PartialTree,
   clickedRange: string[],
   validateRestrictions: (file: CompanionFile) => object | null,
 ) : PartialTree => {
-  const newPartialTree : PartialTree = JSON.parse(JSON.stringify(oldPartialTree))
+  const newPartialTree : PartialTree = clone(oldPartialTree)
   const ourItem = newPartialTree.find((item) => item.id === clickedRange[0]) as PartialTreeFile | PartialTreeFolderNode
 
   // if newStatus is "checked" - percolate down "checked"

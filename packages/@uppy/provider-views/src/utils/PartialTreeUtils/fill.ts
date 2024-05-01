@@ -2,6 +2,7 @@ import type { PartialTree, PartialTreeFile, PartialTreeFolderNode, PartialTreeId
 import type { CompanionFile } from "@uppy/utils/lib/CompanionFile"
 import PQueue from "p-queue"
 import injectPaths from "./injectPaths"
+import clone from "./clone"
 
 interface ApiList {
   (directory: PartialTreeId): Promise<{
@@ -55,7 +56,7 @@ const fill = async (partialTree: PartialTree, apiList: ApiList) : Promise<Compan
   const queue = new PQueue({ concurrency: 6 })
 
   // fill up the missing parts of a partialTree!
-  let poorTree : PartialTree = JSON.parse(JSON.stringify(partialTree))
+  let poorTree : PartialTree = clone(partialTree)
   const poorFolders = poorTree.filter((item) =>
     item.type === 'folder' &&
     item.status === 'checked' &&
