@@ -184,6 +184,15 @@ uppy.setFileState(fileID, {
 });
 ```
 
+#### `timeout: 30 * 1000`
+
+Abort the connection if no upload progress events have been received for this
+milliseconds amount (`number`, default: `30_000`).
+
+Note that unlike the [`XMLHttpRequest.timeout`][xhr.timeout] property, this is a
+timer between progress events: the total upload can take longer than this value.
+Set to `0` to disable this check.
+
 #### `limit`
 
 The maximum amount of files to upload in parallel (`number`, default: `5`).
