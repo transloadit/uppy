@@ -303,13 +303,16 @@ export default class ProviderView<M extends Meta, B extends Body>{
       })
 
       if (filesToAdd.length > 0) {
-        this.plugin.uppy.info(`${filesToAdd.length} files added`)
+        // TODO I don't think we need to be showing this - we don't show this info when we're dropping files e.g.
+        this.plugin.uppy.info(
+          this.plugin.uppy.i18n('addedNumFiles', { numFiles: filesToAdd.length })
+        )
       }
       if (filesAlreadyAdded.length > 0) {
         this.plugin.uppy.info(`Not adding ${filesAlreadyAdded.length} files because they already exist`)
       }
       if (filesNotPassingRestrictions.length > 0) {
-        this.plugin.uppy.info(`Not adding ${filesNotPassingRestrictions.length} files they didn't pass restrictions`)
+        this.plugin.uppy.info(`Not adding ${filesNotPassingRestrictions.length} files because they didn't pass restrictions`)
       }
       this.plugin.uppy.addFiles(filesToAdd)
     }).catch(handleError(this.plugin.uppy))
