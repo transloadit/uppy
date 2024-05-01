@@ -1,11 +1,11 @@
 import afterOpenFolder from './afterOpenFolder'
 import afterScrollFolder from './afterScrollFolder'
 import afterToggleCheckbox from './afterToggleCheckbox'
-import fill from './fill'
+import afterFill from './afterFill'
 
 export default {
   afterOpenFolder,
   afterScrollFolder,
   afterToggleCheckbox,
-  fill
+  afterFill
 }

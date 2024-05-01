@@ -277,7 +277,7 @@ export default class ProviderView<M extends Meta, B extends Body>{
     this.setLoading(true)
 
     await this.#withAbort(async (signal) => {
-      const uppyFiles: CompanionFile[] = await PartialTreeUtils.fill(
+      const uppyFiles: CompanionFile[] = await PartialTreeUtils.afterFill(
         partialTree,
         (path: PartialTreeId) => this.provider.list(path, { signal })
       )

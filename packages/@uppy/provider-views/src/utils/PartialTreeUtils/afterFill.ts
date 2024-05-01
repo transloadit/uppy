@@ -52,7 +52,7 @@ const recursivelyFetch = async (queue: PQueue, poorTree: PartialTree, poorFolder
   })
 }
 
-const fill = async (partialTree: PartialTree, apiList: ApiList) : Promise<CompanionFile[]> => {
+const afterFill = async (partialTree: PartialTree, apiList: ApiList) : Promise<CompanionFile[]> => {
   const queue = new PQueue({ concurrency: 6 })
 
   // fill up the missing parts of a partialTree!
@@ -76,4 +76,4 @@ const fill = async (partialTree: PartialTree, apiList: ApiList) : Promise<Compan
   return uppyFiles
 }
 
-export default fill
+export default afterFill
