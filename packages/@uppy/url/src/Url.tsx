@@ -92,7 +92,6 @@ export default class Url<M extends Meta, B extends Body> extends UIPlugin<
   constructor(uppy: Uppy<M, B>, opts: UrlOptions) {
     super(uppy, opts)
     this.id = this.opts.id || 'Url'
-    this.title = this.opts.title || 'Link'
     this.type = 'acquirer'
     this.icon = () => <UrlIcon />
 
@@ -100,6 +99,7 @@ export default class Url<M extends Meta, B extends Body> extends UIPlugin<
     this.defaultLocale = locale
 
     this.i18nInit()
+    this.title = this.i18n('pluginNameUrl')
 
     this.hostname = this.opts.companionUrl
 
