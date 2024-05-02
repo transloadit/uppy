@@ -9,7 +9,11 @@
 ![CI status for Companion tests](https://github.com/transloadit/uppy/workflows/Companion/badge.svg)
 ![CI status for browser tests](https://github.com/transloadit/uppy/workflows/End-to-end%20tests/badge.svg)
 
-Basic Uppy component for React Native with Expo. It’s in Beta, and is not full-featured. You can select local images or videos, take pictures with a camera or add any files from [remote urls](https://uppy.io/docs/url), with the help of our server-side component, [Uppy Companion](https://uppy.io/docs/companion).
+Basic Uppy component for React Native with Expo. It’s in Beta, and is not
+full-featured. You can select local images or videos, take pictures with a
+camera or add any files from [remote urls](https://uppy.io/docs/url), with the
+help of our server-side component,
+[Uppy Companion](https://uppy.io/docs/companion).
 
 ## Installation
 
@@ -19,7 +23,8 @@ $ npm install @uppy/react-native
 
 ## Documentation
 
-Documentation for this plugin can be found on the [Uppy website](https://uppy.io/docs/react/native/).
+Documentation for this plugin can be found on the
+[Uppy website](https://uppy.io/docs/react/native/).
 
 ## License
 

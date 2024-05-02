@@ -240,12 +240,9 @@ export default class XHRUpload<
           }
 
           const body = this.opts.getResponseData(res.responseText, res)
-          const uploadURL = body[this.opts.responseUrlFieldName]
-          if (typeof uploadURL !== 'string') {
-            throw new Error(
-              `The received response did not include a valid URL for key ${this.opts.responseUrlFieldName}`,
-            )
-          }
+          const uploadURL = body?.[this.opts.responseUrlFieldName] as
+            | string
+            | undefined
 
           for (const file of files) {
             this.uppy.emit('upload-success', file, {
