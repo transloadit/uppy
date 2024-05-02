@@ -11,8 +11,6 @@ import type { PartialTreeFile, PartialTreeFolderNode, PartialTreeId, Uppy } from
 import type { RestrictionError } from '@uppy/core/lib/Restricter.ts'
 import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
 
-const VIRTUAL_SHARED_DIR = 'shared-with-me'
-
 type ItemProps<M extends Meta, B extends Body> = {
   viewType: string
   toggleCheckbox: (event: Event) => void
@@ -56,12 +54,10 @@ export default function Item<M extends Meta, B extends Body>(
     {
       ...sharedProps,
       type: 'folder',
-      isCheckboxDisabled: file.id === VIRTUAL_SHARED_DIR,
       handleFolderClick: () => openFolder(file.id),
     } :
     {
       ...sharedProps,
-      isCheckboxDisabled: false,
       type: 'file'
     }
 

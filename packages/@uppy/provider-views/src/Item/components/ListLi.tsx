@@ -15,7 +15,6 @@ type ListItemProps<M extends Meta, B extends Body> = {
   className: string
   isDisabled: boolean
   restrictionError?: RestrictionError<M, B> | null
-  isCheckboxDisabled: boolean
   status: PartialTreeStatus
   toggleCheckbox: (event: Event) => void
   type: string
@@ -34,7 +33,6 @@ export default function ListItem<M extends Meta, B extends Body>(
     className,
     isDisabled,
     restrictionError,
-    isCheckboxDisabled,
     status,
     toggleCheckbox,
     type,
@@ -51,20 +49,18 @@ export default function ListItem<M extends Meta, B extends Body>(
       className={className}
       title={isDisabled ? restrictionError?.message : undefined}
     >
-      {!isCheckboxDisabled ?
-        <input
-          type="checkbox"
-          className="uppy-u-reset uppy-ProviderBrowserItem-checkbox"
-          onChange={toggleCheckbox}
-          // for the <label/>
-          name="listitem"
-          id={id}
-          checked={status === "checked" ? true : false}
-          aria-label={type === 'file' ? null : i18n('allFilesFromFolderNamed', { name: title })}
-          disabled={isDisabled}
-          data-uppy-super-focusable
-        />
-      : null}
+      <input
+        type="checkbox"
+        className="uppy-u-reset uppy-ProviderBrowserItem-checkbox"
+        onChange={toggleCheckbox}
+        // for the <label/>
+        name="listitem"
+        id={id}
+        checked={status === "checked" ? true : false}
+        aria-label={type === 'file' ? null : i18n('allFilesFromFolderNamed', { name: title })}
+        disabled={isDisabled}
+        data-uppy-super-focusable
+      />
 
       {
         type === 'file' ?

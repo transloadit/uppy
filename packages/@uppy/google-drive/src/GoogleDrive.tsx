@@ -10,7 +10,6 @@ import { h, type ComponentChild } from 'preact'
 
 import type { UppyFile, Body, Meta } from '@uppy/utils/lib/UppyFile'
 import type { UnknownProviderPluginState } from '@uppy/core/lib/Uppy.ts'
-import DriveProviderViews from './DriveProviderViews.ts'
 import locale from './locale.ts'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
@@ -103,7 +102,7 @@ export default class GoogleDrive<
   }
 
   install(): void {
-    this.view = new DriveProviderViews(this, {
+    this.view = new ProviderViews(this, {
       provider: this.provider,
       loadAllFiles: false,
     })
