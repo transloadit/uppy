@@ -1,5 +1,14 @@
 # @uppy/dashboard
 
+## 4.0.0-beta.4
+
+Released: 2024-04-29
+Included in: Uppy v4.0.0-beta.4
+
+- @uppy/dashboard,@uppy/provider-views: Remove JSX global type everywhere (Merlijn Vos / #5117)
+- @uppy/dashboard: fix type of trigger option (Merlijn Vos / #5106)
+- @uppy/dashboard: add missing `x-zip-compress` archive type (Younes / #5081)
+
 ## 4.0.0-beta.1
 
 Released: 2024-03-28
@@ -11,6 +20,15 @@ Included in: Uppy v4.0.0-beta.1
 - @uppy/audio,@uppy/dashboard,@uppy/drop-target,@uppy/webcam: add missing exports (Antoine du Hamel / #5014)
 - @uppy/dashboard: refactor to TypeScript (Antoine du Hamel / #4984)
 - @uppy/dashboard: refactor to stable lifecycle method (Antoine du Hamel / #4999)
+
+
+## 3.8.2
+
+Released: 2024-04-29
+Included in: Uppy v3.25.0
+
+- @uppy/dashboard,@uppy/provider-views: Remove JSX global type everywhere (Merlijn Vos / #5117)
+- @uppy/dashboard: fix type of trigger option (Merlijn Vos / #5106)
 
 ## 3.8.1
 

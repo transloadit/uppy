@@ -719,7 +719,6 @@ class Uploader {
 
     const data = await upload.done()
     return {
-      // @ts-expect-error For some reason `|| null` is not enough for TS
       url: data?.Location || null,
       extraData: {
         response: {

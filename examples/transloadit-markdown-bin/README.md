@@ -4,7 +4,8 @@ This example uses Uppy to handle images in a markdown editor.
 
 ## Run it
 
-To run this example, make sure you've correctly installed the **repository root**:
+To run this example, make sure you've correctly installed the **repository
+root**:
 
 ```sh
 corepack yarn install

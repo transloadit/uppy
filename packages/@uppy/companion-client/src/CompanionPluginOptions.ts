@@ -1,5 +1,5 @@
 import type { UIPluginOptions } from '@uppy/core'
-import type { tokenStorage } from '.'
+import type { tokenStorage } from './index.js'
 
 export interface CompanionPluginOptions extends UIPluginOptions {
   title?: string

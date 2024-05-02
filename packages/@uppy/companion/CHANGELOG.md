@@ -1,5 +1,15 @@
 # @uppy/companion
 
+## 5.0.0-beta.4
+
+Released: 2024-04-29
+Included in: Uppy v4.0.0-beta.4
+
+- @uppy/companion: bump Node.js version support matrix (Antoine du Hamel / #5035)
+- @uppy/companion,@uppy/file-input: Release: uppy@3.24.1 (github-actions[bot] / #5069)
+- @uppy/companion: upgrade redis (Mikael Finstad / #5065)
+- @uppy/companion: Bump express from 4.18.1 to 4.19.2 (dependabot[bot] / #5037)
+
 ## 5.0.0-beta.1
 
 Released: 2024-03-28

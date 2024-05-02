@@ -9,7 +9,8 @@
 
 Svelte component wrappers around Uppy’s officially maintained UI plugins.
 
-Uppy is being developed by the folks at [Transloadit](https://transloadit.com), a versatile file encoding service.
+Uppy is being developed by the folks at [Transloadit](https://transloadit.com),
+a versatile file encoding service.
 
 ## Installation
 
@@ -25,7 +26,9 @@ yarn add @uppy/svelte
 
 ## Documentation
 
-Documentation for this plugin can be found on the [Uppy website](https://uppy.io/docs/svelte). At the moment, there’s no documentation yet, so this link won’t work. Stay tuned for more info
+Documentation for this plugin can be found on the
+[Uppy website](https://uppy.io/docs/svelte). At the moment, there’s no
+documentation yet, so this link won’t work. Stay tuned for more info
 
 ## License
 

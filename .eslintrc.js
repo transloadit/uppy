@@ -117,7 +117,6 @@ module.exports = {
     'jsdoc/check-syntax': 'error',
     'jsdoc/check-tag-names': ['error', { jsxTags: true }],
     'jsdoc/check-types': 'error',
-    'jsdoc/newline-after-description': 'error',
     'jsdoc/valid-types': 'error',
     'jsdoc/check-indentation': ['off'],
   },
@@ -474,6 +473,11 @@ module.exports = {
         'plugin:@typescript-eslint/recommended',
       ],
       rules: {
+        'no-extra-semi': 'off',
+        'no-restricted-syntax': ['error', {
+          selector: 'ImportDeclaration[importKind="type"][source.value=/^\\./]:not([source.value=/\\.js$/])',
+          message: 'Use ".js" file extension for import type declarations',
+        }],
         'import/prefer-default-export': 'off',
         '@typescript-eslint/no-empty-function': 'off',
         '@typescript-eslint/no-explicit-any': 'off',

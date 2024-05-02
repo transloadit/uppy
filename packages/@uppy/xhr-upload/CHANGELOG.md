@@ -1,11 +1,26 @@
 # @uppy/xhr-upload
 
+## 4.0.0-beta.2
+
+Released: 2024-04-29
+Included in: Uppy v4.0.0-beta.4
+
+- @uppy/xhr-upload: refactor to use `fetcher` (Merlijn Vos / #5074)
+
 ## 4.0.0-beta.1
 
 Released: 2024-03-28
 Included in: Uppy v4.0.0-beta.1
 
 - @uppy/aws-s3-multipart,@uppy/tus,@uppy/utils,@uppy/xhr-upload: Make `allowedMetaFields` consistent (Merlijn Vos / #5011)
+
+
+## 3.6.5
+
+Released: 2024-04-29
+Included in: Uppy v3.25.0
+
+- @uppy/xhr-upload: refactor to use `fetcher` (Merlijn Vos / #5074)
 
 ## 3.6.4
 

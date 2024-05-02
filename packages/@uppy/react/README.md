@@ -9,7 +9,8 @@
 
 React component wrappers around Uppy’s officially maintained UI plugins.
 
-Uppy is being developed by the folks at [Transloadit](https://transloadit.com), a versatile file encoding service.
+Uppy is being developed by the folks at [Transloadit](https://transloadit.com),
+a versatile file encoding service.
 
 ## Example
 
@@ -25,7 +26,7 @@ const uppy = new Uppy()
 class Example extends React.Component {
   state = { open: false }
 
-  render () {
+  render() {
     return (
       <DashboardModal
         uppy={uppy}
@@ -44,11 +45,15 @@ class Example extends React.Component {
 $ npm install @uppy/react
 ```
 
-Alternatively, you can also use this plugin in a pre-built bundle from Transloadit’s CDN: Edgly. In that case `Uppy` will attach itself to the global `window.Uppy` object. See the [main Uppy documentation](https://uppy.io/docs/#Installation) for instructions.
+Alternatively, you can also use this plugin in a pre-built bundle from
+Transloadit’s CDN: Edgly. In that case `Uppy` will attach itself to the global
+`window.Uppy` object. See the
+[main Uppy documentation](https://uppy.io/docs/#Installation) for instructions.
 
 ## Documentation
 
-Documentation for this plugin can be found on the [Uppy website](https://uppy.io/docs/react).
+Documentation for this plugin can be found on the
+[Uppy website](https://uppy.io/docs/react).
 
 ## License
 

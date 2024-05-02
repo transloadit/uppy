@@ -7,11 +7,14 @@
 ![CI status for Companion tests](https://github.com/transloadit/uppy/workflows/Companion/badge.svg)
 ![CI status for browser tests](https://github.com/transloadit/uppy/workflows/End-to-end%20tests/badge.svg)
 
-FileInput is the most barebones UI for selecting files—it shows a single button that, when clicked, opens up the browser’s file selector.
+FileInput is the most barebones UI for selecting files—it shows a single button
+that, when clicked, opens up the browser’s file selector.
 
-**[Read the docs](https://uppy.io/docs/fileinput)** | **[Try it](https://uppy.io/examples/xhrupload/)**
+**[Read the docs](https://uppy.io/docs/fileinput)** |
+**[Try it](https://uppy.io/examples/xhrupload/)**
 
-Uppy is being developed by the folks at [Transloadit](https://transloadit.com), a versatile file encoding service.
+Uppy is being developed by the folks at [Transloadit](https://transloadit.com),
+a versatile file encoding service.
 
 ## Example
 
@@ -31,11 +34,15 @@ uppy.use(FileInput, {
 $ npm install @uppy/file-input
 ```
 
-Alternatively, you can also use this plugin in a pre-built bundle from Transloadit’s CDN: Edgly. In that case `Uppy` will attach itself to the global `window.Uppy` object. See the [main Uppy documentation](https://uppy.io/docs/#Installation) for instructions.
+Alternatively, you can also use this plugin in a pre-built bundle from
+Transloadit’s CDN: Edgly. In that case `Uppy` will attach itself to the global
+`window.Uppy` object. See the
+[main Uppy documentation](https://uppy.io/docs/#Installation) for instructions.
 
 ## Documentation
 
-Documentation for this plugin can be found on the [Uppy website](https://uppy.io/docs/fileinput).
+Documentation for this plugin can be found on the
+[Uppy website](https://uppy.io/docs/fileinput).
 
 ## License
 

@@ -210,17 +210,11 @@ export default class XHRUpload<
 
           const body = JSON.parse(res.responseText) as B
 
-          if (typeof body?.url !== 'string') {
-            throw new Error(
-              'Expected body to be JSON and have a `url` property.',
-            )
-          }
-
           for (const file of files) {
             this.uppy.emit('upload-success', file, {
               status: res.status,
               body,
-              uploadURL: body.url,
+              uploadURL: body.url as string | undefined,
             })
           }
 
