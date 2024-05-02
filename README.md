@@ -6,10 +6,10 @@ Uppy is a sleek, modular JavaScript file uploader that integrates seamlessly
 with any application. It’s fast, has a comprehensible API and lets you worry
 about more important problems than building a file uploader.
 
-* **Fetch** files from local disk, remote URLs, Google Drive, Dropbox, Box,
+- **Fetch** files from local disk, remote URLs, Google Drive, Dropbox, Box,
   Instagram or snap and record selfies with a camera
-* **Preview** and edit metadata with a nice interface
-* **Upload** to the final destination, optionally process/encode
+- **Preview** and edit metadata with a nice interface
+- **Upload** to the final destination, optionally process/encode
 
 <img src="https://github.com/transloadit/uppy/raw/main/assets/uppy-2-0-demo-aug-2021.gif">
 
@@ -55,22 +55,22 @@ and its plugins.
 
 ## Features
 
-* Lightweight, modular plugin-based architecture, light on dependencies :zap:
-* Resumable file uploads via the open [tus](https://tus.io/) standard, so large
+- Lightweight, modular plugin-based architecture, light on dependencies :zap:
+- Resumable file uploads via the open [tus](https://tus.io/) standard, so large
   uploads survive network hiccups
-* Supports picking files from: Webcam, Dropbox, Box, Google Drive, Instagram,
+- Supports picking files from: Webcam, Dropbox, Box, Google Drive, Instagram,
   bypassing the user’s device where possible, syncing between servers directly
   via [@uppy/companion](https://uppy.io/docs/companion)
-* Works great with file encoding and processing backends, such as
+- Works great with file encoding and processing backends, such as
   [Transloadit](https://transloadit.com), works great without (all you need is
   to roll your own Apache/Nginx/Node/FFmpeg/etc backend)
-* Sleek user interface :sparkles:
-* Optional file recovery (after a browser crash) with
+- Sleek user interface :sparkles:
+- Optional file recovery (after a browser crash) with
   [Golden Retriever](https://uppy.io/docs/golden-retriever/)
-* Speaks several languages (i18n) :earth\_africa:
-* Built with accessibility in mind
-* Free for the world, forever (as in beer 🍺, pizza 🍕, and liberty 🗽)
-* Cute as a puppy, also accepts cat pictures :dog:
+- Speaks several languages (i18n) :earth_africa:
+- Built with accessibility in mind
+- Free for the world, forever (as in beer 🍺, pizza 🍕, and liberty 🗽)
+- Cute as a puppy, also accepts cat pictures :dog:
 
 ## Installation
 
@@ -115,15 +115,15 @@ object.
 
 ## Documentation
 
-* [Uppy](https://uppy.io/docs/uppy/) — full list of options, methods and events
-* [Plugins](https://uppy.io/docs/plugins/) — list of Uppy plugins and their
+- [Uppy](https://uppy.io/docs/uppy/) — full list of options, methods and events
+- [Plugins](https://uppy.io/docs/plugins/) — list of Uppy plugins and their
   options
-* [Companion](https://uppy.io/docs/companion/) — setting up and running a
+- [Companion](https://uppy.io/docs/companion/) — setting up and running a
   Companion instance, which adds support for Instagram, Dropbox, Box, Google
   Drive and remote URLs
-* [React](https://uppy.io/docs/react/) — components to integrate Uppy UI plugins
+- [React](https://uppy.io/docs/react/) — components to integrate Uppy UI plugins
   with React apps
-* [Architecture & Writing a Plugin](https://uppy.io/docs/writing-plugins/) — how
+- [Architecture & Writing a Plugin](https://uppy.io/docs/writing-plugins/) — how
   to write a plugin for Uppy
 
 ## Plugins
@@ -132,35 +132,35 @@ object.
 
 ### UI Elements
 
-* [`Dashboard`](https://uppy.io/docs/dashboard/) — universal UI with previews,
+- [`Dashboard`](https://uppy.io/docs/dashboard/) — universal UI with previews,
   progress bars, metadata editor and all the cool stuff. Required for most UI
   plugins like Webcam and Instagram
-* [`Progress Bar`](https://uppy.io/docs/progress-bar/) — minimal progress bar
+- [`Progress Bar`](https://uppy.io/docs/progress-bar/) — minimal progress bar
   that fills itself when upload progresses
-* [`Status Bar`](https://uppy.io/docs/status-bar/) — more detailed progress,
+- [`Status Bar`](https://uppy.io/docs/status-bar/) — more detailed progress,
   pause/resume/cancel buttons, percentage, speed, uploaded/total sizes (included
   by default with `Dashboard`)
-* [`Informer`](https://uppy.io/docs/informer/) — send notifications like “smile”
+- [`Informer`](https://uppy.io/docs/informer/) — send notifications like “smile”
   before taking a selfie or “upload failed” when all is lost (also included by
   default with `Dashboard`)
 
 ### Sources
 
-* [`Drag & Drop`](https://uppy.io/docs/drag-drop/) — plain drag and drop area
-* [`File Input`](https://uppy.io/docs/file-input/) — even plainer “select files”
+- [`Drag & Drop`](https://uppy.io/docs/drag-drop/) — plain drag and drop area
+- [`File Input`](https://uppy.io/docs/file-input/) — even plainer “select files”
   button
-* [`Webcam`](https://uppy.io/docs/webcam/) — snap and record those selfies 📷
-* ⓒ [`Google Drive`](https://uppy.io/docs/google-drive/) — import files from
+- [`Webcam`](https://uppy.io/docs/webcam/) — snap and record those selfies 📷
+- ⓒ [`Google Drive`](https://uppy.io/docs/google-drive/) — import files from
   Google Drive
-* ⓒ [`Dropbox`](https://uppy.io/docs/dropbox/) — import files from Dropbox
-* ⓒ [`Box`](https://uppy.io/docs/box/) — import files from Box
-* ⓒ [`Instagram`](https://uppy.io/docs/instagram/) — import images and videos
+- ⓒ [`Dropbox`](https://uppy.io/docs/dropbox/) — import files from Dropbox
+- ⓒ [`Box`](https://uppy.io/docs/box/) — import files from Box
+- ⓒ [`Instagram`](https://uppy.io/docs/instagram/) — import images and videos
   from Instagram
-* ⓒ [`Facebook`](https://uppy.io/docs/facebook/) — import images and videos from
+- ⓒ [`Facebook`](https://uppy.io/docs/facebook/) — import images and videos from
   Facebook
-* ⓒ [`OneDrive`](https://uppy.io/docs/onedrive/) — import files from Microsoft
+- ⓒ [`OneDrive`](https://uppy.io/docs/onedrive/) — import files from Microsoft
   OneDrive
-* ⓒ [`Import From URL`](https://uppy.io/docs/url/) — import direct URLs from
+- ⓒ [`Import From URL`](https://uppy.io/docs/url/) — import direct URLs from
   anywhere on the web
 
 The ⓒ mark means that [`@uppy/companion`](https://uppy.io/docs/companion), a
@@ -168,37 +168,37 @@ server-side component, is needed for a plugin to work.
 
 ### Destinations
 
-* [`Tus`](https://uppy.io/docs/tus/) — resumable uploads via the open
+- [`Tus`](https://uppy.io/docs/tus/) — resumable uploads via the open
   [tus](http://tus.io) standard
-* [`XHR Upload`](https://uppy.io/docs/xhr-upload/) — regular uploads for any
+- [`XHR Upload`](https://uppy.io/docs/xhr-upload/) — regular uploads for any
   backend out there (like Apache, Nginx)
-* [`AWS S3`](https://uppy.io/docs/aws-s3/) — plain upload to AWS S3 or
+- [`AWS S3`](https://uppy.io/docs/aws-s3/) — plain upload to AWS S3 or
   compatible services
-* [`AWS S3 Multipart`](https://uppy.io/docs/aws-s3-multipart/) — S3-style
+- [`AWS S3 Multipart`](https://uppy.io/docs/aws-s3-multipart/) — S3-style
   “Multipart” upload to AWS or compatible services
 
 ### File Processing
 
-* [`Transloadit`](https://uppy.io/docs/transloadit/) — support for
+- [`Transloadit`](https://uppy.io/docs/transloadit/) — support for
   [Transloadit](http://transloadit.com)’s robust file uploading and encoding
   backend
 
 ### Miscellaneous
 
-* [`Golden Retriever`](https://uppy.io/docs/golden-retriever/) — restores files
+- [`Golden Retriever`](https://uppy.io/docs/golden-retriever/) — restores files
   after a browser crash, like it’s nothing
-* [`Thumbnail Generator`](https://uppy.io/docs/thumbnail-generator/) — generates
+- [`Thumbnail Generator`](https://uppy.io/docs/thumbnail-generator/) — generates
   image previews (included by default with `Dashboard`)
-* [`Form`](https://uppy.io/docs/form/) — collects metadata from `<form>` right
+- [`Form`](https://uppy.io/docs/form/) — collects metadata from `<form>` right
   before an Uppy upload, then optionally appends results back to the form
-* [`Redux`](https://uppy.io/docs/redux/) — for your emerging
+- [`Redux`](https://uppy.io/docs/redux/) — for your emerging
   [time traveling](https://github.com/gaearon/redux-devtools) needs
 
 ## React
 
-* [React](https://uppy.io/docs/react/) — components to integrate Uppy UI plugins
+- [React](https://uppy.io/docs/react/) — components to integrate Uppy UI plugins
   with React apps
-* [React Native](./examples/react-native-expo/) — basic Uppy component for React
+- [React Native](./examples/react-native-expo/) — basic Uppy component for React
   Native with Expo
 
 ## Browser Support
@@ -213,29 +213,29 @@ Having no JavaScript beats having a lot of it, so that’s a fair question!
 Running an uploading & encoding business for ten years though we found that in
 cases, the file input leaves some to be desired:
 
-* We received complaints about broken uploads and found that resumable uploads
+- We received complaints about broken uploads and found that resumable uploads
   are important, especially for big files and to be inclusive towards people on
   poorer connections (we also launched [tus.io](https://tus.io) to attack that
   problem). Uppy uploads can survive network outages and browser crashes or
   accidental navigate-aways.
-* Uppy supports editing meta information before uploading.
-* Uppy allows cropping images before uploading.
-* There’s the situation where people are using their mobile devices and want to
+- Uppy supports editing meta information before uploading.
+- Uppy allows cropping images before uploading.
+- There’s the situation where people are using their mobile devices and want to
   upload on the go, but they have their picture on Instagram, files in Dropbox
   or a plain file URL from anywhere on the open web. Uppy allows to pick files
   from those and push it to the destination without downloading it to your
   mobile device first.
-* Accurate upload progress reporting is an issue on many platforms.
-* Some file validation — size, type, number of files — can be done on the client
+- Accurate upload progress reporting is an issue on many platforms.
+- Some file validation — size, type, number of files — can be done on the client
   with Uppy.
-* Uppy integrates webcam support, in case your users want to upload a
+- Uppy integrates webcam support, in case your users want to upload a
   picture/video/audio that does not exist yet :)
-* A larger drag and drop surface can be pleasant to work with. Some people also
+- A larger drag and drop surface can be pleasant to work with. Some people also
   like that you can control the styling, language, etc.
-* Uppy is aware of encoding backends. Often after an upload, the server needs to
+- Uppy is aware of encoding backends. Often after an upload, the server needs to
   rotate, detect faces, optimize for iPad, or what have you. Uppy can track
   progress of this and report back to the user in different ways.
-* Sometimes you might want your uploads to happen while you continue to interact
+- Sometimes you might want your uploads to happen while you continue to interact
   on the same single page.
 
 Not all apps need all these features. An `<input type="file">` is fine in many
@@ -276,8 +276,8 @@ or via direct URLs (with more services coming).
 
 ## Contributions are welcome
 
-* Contributor’s guide in [`.github/CONTRIBUTING.md`](.github/CONTRIBUTING.md)
-* Changelog to track our release progress (we aim to roll out a release every
+- Contributor’s guide in [`.github/CONTRIBUTING.md`](.github/CONTRIBUTING.md)
+- Changelog to track our release progress (we aim to roll out a release every
   month): [`CHANGELOG.md`](CHANGELOG.md)
 
 ## Used by
@@ -562,7 +562,10 @@ Use Uppy in your project?
 
 ## Software
 
-We use Browserstack for manual testing <a href="https://www.browserstack.com" target="_blank"> <img align="left" width="117" alt="BrowserStack logo" src="https://i.ibb.co/HDRDHmx/Browserstack-logo-2x.png"> </a>
+We use Browserstack for manual testing
+<a href="https://www.browserstack.com" target="_blank">
+<img align="left" width="117" alt="BrowserStack logo" src="https://i.ibb.co/HDRDHmx/Browserstack-logo-2x.png">
+</a>
 
 ## License
 

@@ -2,7 +2,10 @@
 
 <img src="https://uppy.io/img/logo.svg" width="120" alt="Uppy logo: a smiling puppy above a pink upwards arrow" align="right">
 
-<a href="https://www.npmjs.com/package/@uppy/compressor"><img src="https://img.shields.io/npm/v/@uppy/compressor.svg?style=flat-square"></a> <img src="https://github.com/transloadit/uppy/workflows/Tests/badge.svg" alt="CI status for Uppy tests"> <img src="https://github.com/transloadit/uppy/workflows/Companion/badge.svg" alt="CI status for Companion tests"> <img src="https://github.com/transloadit/uppy/workflows/End-to-end%20tests/badge.svg" alt="CI status for browser tests">
+<a href="https://www.npmjs.com/package/@uppy/compressor"><img src="https://img.shields.io/npm/v/@uppy/compressor.svg?style=flat-square"></a>
+<img src="https://github.com/transloadit/uppy/workflows/Tests/badge.svg" alt="CI status for Uppy tests">
+<img src="https://github.com/transloadit/uppy/workflows/Companion/badge.svg" alt="CI status for Companion tests">
+<img src="https://github.com/transloadit/uppy/workflows/End-to-end%20tests/badge.svg" alt="CI status for browser tests">
 
 The Compressor plugin for Uppy optimizes images (JPEG, PNG, WEBP), saving on
 average up to 60% in size (roughly 18 MB for 10 images). It uses

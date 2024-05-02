@@ -247,11 +247,11 @@ Redis so that any instance can serve the client’s requests. Note that sticky
 sessions are **not** needed with this setup. Here are the requirements for this
 setup:
 
-* The instances need to be connected to the same Redis server.
-* You need to set `COMPANION_SECRET` to the same value on both servers.
-* if you use the `companionKeysParams` feature (Transloadit), you also need
+- The instances need to be connected to the same Redis server.
+- You need to set `COMPANION_SECRET` to the same value on both servers.
+- if you use the `companionKeysParams` feature (Transloadit), you also need
   `COMPANION_PREAUTH_SECRET` to be the same on each instance.
-* All other configuration needs to be the same, except if you’re running many
+- All other configuration needs to be the same, except if you’re running many
   instances on the same machine, then `COMPANION_PORT` should be different for
   each instance.
 
@@ -479,9 +479,9 @@ The name of the bucket to store uploaded files in.
 It can be function that returns the name of the bucket as a `string` and takes
 the following arguments:
 
-* [`http.IncomingMessage`][], the HTTP request (will be `null` for remote
+- [`http.IncomingMessage`][], the HTTP request (will be `null` for remote
   uploads)
-* metadata provided by the user for the file (will be `undefined` for local
+- metadata provided by the user for the file (will be `undefined` for local
   uploads)
 
 ##### `s3.region` `COMPANION_AWS_REGION`
@@ -499,9 +499,9 @@ You can supply any
 [S3 option supported by the AWS SDK](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html#constructor-property)
 in the `providerOptions.s3.awsClientOptions` object, _except for_ the below:
 
-* `accessKeyId`. Instead, use the `providerOptions.s3.key` property. This is to
+- `accessKeyId`. Instead, use the `providerOptions.s3.key` property. This is to
   make configuration names consistent between different Companion features.
-* `secretAccessKey`. Instead, use the `providerOptions.s3.secret` property. This
+- `secretAccessKey`. Instead, use the `providerOptions.s3.secret` property. This
   is to make configuration names consistent between different Companion
   features.
 
@@ -517,12 +517,12 @@ Get the key name for a file. The key is the file path to which the file will be
 uploaded in your bucket. This option should be a function receiving three
 arguments:
 
-* `req` [`http.IncomingMessage`][], the HTTP request, for _regular_ S3 uploads
+- `req` [`http.IncomingMessage`][], the HTTP request, for _regular_ S3 uploads
   using the `@uppy/aws-s3` plugin. This parameter is _not_ available for
   multipart uploads using the `@uppy/aws-s3` or `@uppy/aws-s3-multipart`
   plugins. This parameter is `null` for remote uploads.
-* `filename`, the original name of the uploaded file;
-* `metadata`, user-provided metadata for the file.
+- `filename`, the original name of the uploaded file;
+- `metadata`, user-provided metadata for the file.
 
 This function should return a string `key`. The `req` parameter can be used to
 upload to a user-specific folder in your bucket, for example:
@@ -638,7 +638,7 @@ Allowed CORS Origins (default `true`). Passed as the `origin` option in
 
 #### `COMPANION_CLIENT_ORIGINS_REGEX`
 
-Like COMPANION\_CLIENT\_ORIGINS, but allows a single regex instead.
+Like COMPANION_CLIENT_ORIGINS, but allows a single regex instead.
 `COMPANION_CLIENT_ORIGINS` will be ignored if this is used. This is a
 standalone-only option.
 
@@ -662,14 +662,14 @@ Set this to `false` to disable the
 The object returned by `companion.app()` also has a property `companionEmitter`
 which is an `EventEmitter` that emits the following events:
 
-* `upload-start` - When an upload starts, this event is emitted with an object
+- `upload-start` - When an upload starts, this event is emitted with an object
   containing the property `token`, which is a unique ID for the upload.
-* **token** - The event name is the token from `upload-start`. The event has an
+- **token** - The event name is the token from `upload-start`. The event has an
   object with the following properties:
-  * `action` - One of the following strings:
-    * `success` - When the upload succeeds.
-    * `error` - When the upload fails with an error.
-  * `payload` - the error or success payload.
+  - `action` - One of the following strings:
+    - `success` - When the upload succeeds.
+    - `error` - When the upload fails with an error.
+  - `payload` - the error or success payload.
 
 Example code for using the `EventEmitter` to handle a finished file upload:
 
@@ -711,28 +711,28 @@ throughout this section.
 The following steps describe the actions that take place when a user
 Authenticates and Uploads from Dropbox through Companion:
 
-* The visitor to a website with Uppy clicks `Connect to Dropbox`.
-* Uppy sends a request to Companion, which in turn sends an OAuth request to
+- The visitor to a website with Uppy clicks `Connect to Dropbox`.
+- Uppy sends a request to Companion, which in turn sends an OAuth request to
   Dropbox (Requires that OAuth credentials from Dropbox have been added to
   Companion).
-* Dropbox asks the visitor to log in, and whether the Website should be allowed
+- Dropbox asks the visitor to log in, and whether the Website should be allowed
   to access your files
-* If the visitor agrees, Companion will receive a token from Dropbox, with which
+- If the visitor agrees, Companion will receive a token from Dropbox, with which
   we can temporarily download files.
-* Companion encrypts the token with a secret key and sends the encrypted token
+- Companion encrypts the token with a secret key and sends the encrypted token
   to Uppy (client)
-* Every time the visitor clicks on a folder in Uppy, it asks Companion for the
+- Every time the visitor clicks on a folder in Uppy, it asks Companion for the
   new list of files, with this question, the token (still encrypted by
   Companion) is sent along.
-* Companion decrypts the token, requests the list of files from Dropbox and
+- Companion decrypts the token, requests the list of files from Dropbox and
   sends it to Uppy.
-* When a file is selected for upload, Companion receives the token again
+- When a file is selected for upload, Companion receives the token again
   according to this procedure, decrypts it again, and thereby downloads the file
   from Dropbox.
-* As the bytes arrive, Companion uploads the bytes to the final destination
+- As the bytes arrive, Companion uploads the bytes to the final destination
   (depending on the configuration: Apache, a Tus server, S3 bucket, etc).
-* Companion reports progress to Uppy, as if it were a local upload.
-* Completed!
+- Companion reports progress to Uppy, as if it were a local upload.
+- Completed!
 
 ### How to use provider redirect URIs?
 
@@ -805,9 +805,9 @@ with an `Error`):
    directory). See [example returned list data structure](#list-data). `token` -
    authorization token (retrieved from oauth process) to send along with your
    request
-   * `directory` - the id/name of the directory from which data is to be
+   - `directory` - the id/name of the directory from which data is to be
      retrieved. This may be ignored if it doesn’t apply to your provider
-   * `query` - expressjs query params object received by the server (in case
+   - `query` - expressjs query params object received by the server (in case
      some data you need in there).
 2. `async download ({ token, id, query })` - Downloads a particular file from
    the provider. Returns an object with a single property `{ stream }` - a
@@ -815,27 +815,27 @@ with an `Error`):
    which will be read from and uploaded to the destination. To prevent memory
    leaks, make sure you release your stream if you reject this method with an
    error.
-   * `token` - authorization token (retrieved from oauth process) to send along
+   - `token` - authorization token (retrieved from oauth process) to send along
      with your request.
-   * `id` - ID of the file being downloaded.
-   * `query` - expressjs query params object received by the server (in case
+   - `id` - ID of the file being downloaded.
+   - `query` - expressjs query params object received by the server (in case
      some data you need in there).
 3. `async size ({ token, id, query })` - Returns the byte size of the file that
    needs to be downloaded as a `Number`. If the size of the object is not known,
    `null` may be returned.
-   * `token` - authorization token (retrieved from oauth process) to send along
+   - `token` - authorization token (retrieved from oauth process) to send along
      with your request.
-   * `id` - ID of the file being downloaded.
-   * `query` - expressjs query params object received by the server (in case
+   - `id` - ID of the file being downloaded.
+   - `query` - expressjs query params object received by the server (in case
      some data you need in there).
 
 The class must also have:
 
-* A unique `static authProvider` string property - a lowercased value which
+- A unique `static authProvider` string property - a lowercased value which
   indicates name of the [`grant`](https://github.com/simov/grant) OAuth2
   provider to use (e.g `google` for Google). If your provider doesn’t use
   OAuth2, you can omit this property.
-* A `static` property `static version = 2`, which is the current version of the
+- A `static` property `static version = 2`, which is the current version of the
   Companion Provider API.
 
 See also
@@ -912,24 +912,15 @@ This would get the Companion instance running on `http://localhost:3020`. It
 uses [nodemon](https://github.com/remy/nodemon) so it will automatically restart
 when files are changed.
 
-[`http.incomingmessage`]: https://nodejs.org/api/http.html#class-httpincomingmessage
-
+[`http.incomingmessage`]:
+	https://nodejs.org/api/http.html#class-httpincomingmessage
 [box]: /docs/box
-
 [dropbox]: /docs/dropbox
-
 [facebook]: /docs/facebook
-
 [googledrive]: /docs/google-drive
-
 [instagram]: /docs/instagram
-
 [onedrive]: /docs/onedrive
-
 [unsplash]: /docs/unsplash
-
 [url]: /docs/url
-
 [zoom]: /docs/zoom
-
 [transloadit]: https://transloadit.com

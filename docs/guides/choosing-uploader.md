@@ -73,21 +73,12 @@ using the powers of Transloadit services.
 uploads using the HTTP `PUT` method.
 
 [s3-robot]: https://transloadit.com/services/file-exporting/s3-store/
-
 [transloadit-services]: https://transloadit.com/services/
-
 [transloadit-concepts]: https://transloadit.com/docs/getting-started/concepts/
-
 [`@uppy/transloadit`]: /docs/transloadit
-
 [`@uppy/tus`]: /docs/tus
-
 [`@uppy/aws-s3-multipart`]: /docs/aws-s3-multipart
-
 [`@uppy/aws-s3`]: /docs/aws-s3-multipart
-
 [`@uppy/xhr-upload`]: /docs/xhr-upload
-
 [tus]: https://tus.io/
-
 [tus-implementations]: https://tus.io/implementations.html

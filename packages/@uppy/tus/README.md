@@ -48,5 +48,4 @@ Documentation for this plugin can be found on the
 [The MIT License](./LICENSE).
 
 [tus.io]: https://tus.io
-
 [tus-js-client]: https://github.com/tus/tus-js-client
