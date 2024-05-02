@@ -1,25 +1,24 @@
 /* eslint-disable react/require-default-props */
 import { h } from 'preact'
-import classNames from 'classnames'
 import type { RestrictionError } from '@uppy/core/lib/Restricter'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import type { PartialTreeStatus } from '@uppy/core/lib/Uppy'
 
-type GridListItemProps<M extends Meta, B extends Body> = {
+type GridItemProps<M extends Meta, B extends Body> = {
   className: string
   isDisabled: boolean
-  restrictionError?: RestrictionError<M, B> | null
+  restrictionError: RestrictionError<M, B> | null
   status: PartialTreeStatus
-  title?: string
+  title: string
   itemIconEl: any
-  showTitles?: boolean
+  showTitles: boolean
   toggleCheckbox: (event: Event) => void
   id: string
   children?: JSX.Element
 }
 
-function GridListItem<M extends Meta, B extends Body>(
-  props: GridListItemProps<M, B>,
+function GridItem<M extends Meta, B extends Body>(
+  props: GridItemProps<M, B>,
 ): h.JSX.Element {
   const {
     className,
@@ -62,4 +61,4 @@ function GridListItem<M extends Meta, B extends Body>(
   )
 }
 
-export default GridListItem
+export default GridItem

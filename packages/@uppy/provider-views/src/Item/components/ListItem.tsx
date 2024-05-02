@@ -14,7 +14,7 @@ import { h } from 'preact'
 type ListItemProps<M extends Meta, B extends Body> = {
   className: string
   isDisabled: boolean
-  restrictionError?: RestrictionError<M, B> | null
+  restrictionError: RestrictionError<M, B> | null
   status: PartialTreeStatus
   toggleCheckbox: (event: Event) => void
   type: string

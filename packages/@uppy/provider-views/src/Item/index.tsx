@@ -5,9 +5,9 @@ import classNames from 'classnames'
 import type { I18n } from '@uppy/utils/lib/Translator'
 import type { Meta, Body } from '@uppy/utils/lib/UppyFile'
 import ItemIcon from './components/ItemIcon.tsx'
-import GridListItem from './components/GridLi.tsx'
-import ListItem from './components/ListLi.tsx'
-import type { PartialTreeFile, PartialTreeFolderNode, PartialTreeId, Uppy } from '@uppy/core/lib/Uppy.ts'
+import GridItem from './components/GridItem.tsx'
+import ListItem from './components/ListItem.tsx'
+import type { PartialTreeFile, PartialTreeFolderNode, PartialTreeId } from '@uppy/core/lib/Uppy.ts'
 import type { RestrictionError } from '@uppy/core/lib/Restricter.ts'
 import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
 
@@ -63,14 +63,12 @@ export default function Item<M extends Meta, B extends Body>(
 
   switch (viewType) {
     case 'grid':
-      return <GridListItem<M, B> {...ourProps} />
+      return <GridItem<M, B> {...ourProps} />
     case 'list':
-      return (
-        <ListItem<M, B> {...ourProps} />
-      )
+      return <ListItem<M, B> {...ourProps} />
     case 'unsplash':
       return (
-        <GridListItem<M, B> {...ourProps} >
+        <GridItem<M, B> {...ourProps} >
           <a
             href={`${file.data.author!.url}?utm_source=Companion&utm_medium=referral`}
             target="_blank"
@@ -80,7 +78,7 @@ export default function Item<M extends Meta, B extends Body>(
           >
             {file.data.author!.name}
           </a>
-        </GridListItem>
+        </GridItem>
       )
     default:
       throw new Error(`There is no such type ${viewType}`)
