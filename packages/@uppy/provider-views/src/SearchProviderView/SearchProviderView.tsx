@@ -83,7 +83,7 @@ export default class SearchProviderView<M extends Meta, B extends Body> {
     this.resetPluginState = this.resetPluginState.bind(this)
     this.handleScroll = this.handleScroll.bind(this)
     this.donePicking = this.donePicking.bind(this)
-    this.cancelPicking = this.cancelPicking.bind(this)
+    this.cancelSelection = this.cancelSelection.bind(this)
     this.toggleCheckbox = this.toggleCheckbox.bind(this)
 
     this.render = this.render.bind(this)
@@ -110,13 +110,12 @@ export default class SearchProviderView<M extends Meta, B extends Body> {
     this.plugin.setPluginState(defaultState)
   }
 
-  cancelPicking(): void {
-    const dashboard = this.plugin.uppy.getPlugin('Dashboard')
-    if (dashboard) {
-      // @ts-expect-error impossible to type this correctly without adding dashboard
-      // as a dependency to this package.
-      dashboard.hideAllPanels()
-    }
+  cancelSelection(): void {
+    const { partialTree } = this.plugin.getPluginState()
+    const newPartialTree : PartialTree = partialTree.map((item) =>
+      item.type === 'root' ? item : { ...item, status: 'unchecked' }
+    )
+    this.plugin.setPluginState({ partialTree: newPartialTree })
   }
 
   async search(): Promise<void> {
@@ -260,7 +259,7 @@ export default class SearchProviderView<M extends Meta, B extends Body> {
         nOfSelectedFiles={getNOfSelectedFiles(partialTree)}
         handleScroll={this.handleScroll}
         done={this.donePicking}
-        cancel={this.cancelPicking}
+        cancel={this.cancelSelection}
         openFolder={() => {}}
         showSearchFilter={opts.showFilter}
         searchString={searchString}
