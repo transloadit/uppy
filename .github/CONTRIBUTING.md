@@ -20,7 +20,6 @@ corepack enable
 ```
 
 [Corepack]: https://nodejs.org/api/corepack.html
-
 [Yarn]: https://yarnpkg.com/
 
 ## Development
@@ -79,28 +78,28 @@ throughout this section.
 The following steps describe the actions that take place when a user
 Authenticates and Uploads from Dropbox through Companion:
 
-* The visitor to a website with Uppy clicks `Connect to Dropbox`.
-* Uppy sends a request to Companion, which in turn sends an OAuth request to
+- The visitor to a website with Uppy clicks `Connect to Dropbox`.
+- Uppy sends a request to Companion, which in turn sends an OAuth request to
   Dropbox (Requires that OAuth credentials from Dropbox have been added to
   Companion).
-* Dropbox asks the visitor to log in, and whether the Website should be allowed
+- Dropbox asks the visitor to log in, and whether the Website should be allowed
   to access your files
-* If the visitor agrees, Companion will receive a token from Dropbox, with which
+- If the visitor agrees, Companion will receive a token from Dropbox, with which
   we can temporarily download files.
-* Companion encrypts the token with a secret key and sends the encrypted token
+- Companion encrypts the token with a secret key and sends the encrypted token
   to Uppy (client)
-* Every time the visitor clicks on a folder in Uppy, it asks Companion for the
+- Every time the visitor clicks on a folder in Uppy, it asks Companion for the
   new list of files, with this question, the token (still encrypted by
   Companion) is sent along.
-* Companion decrypts the token, requests the list of files from Dropbox and
+- Companion decrypts the token, requests the list of files from Dropbox and
   sends it to Uppy.
-* When a file is selected for upload, Companion receives the token again
+- When a file is selected for upload, Companion receives the token again
   according to this procedure, decrypts it again, and thereby downloads the file
   from Dropbox.
-* As the bytes arrive, Companion uploads the bytes to the final destination
+- As the bytes arrive, Companion uploads the bytes to the final destination
   (depending on the configuration: Apache, a Tus server, S3 bucket, etc).
-* Companion reports progress to Uppy, as if it were a local upload.
-* Completed!
+- Companion reports progress to Uppy, as if it were a local upload.
+- Completed!
 
 ### Instagram integration
 
@@ -153,11 +152,11 @@ Now you should be able to test the Instagram integration.
 
 ### Requiring files
 
-* If we are `require()`ing a file from the same subpackage, we can freely use
+- If we are `require()`ing a file from the same subpackage, we can freely use
   relative imports as long as the required file is under the `src` directory
   (for example to import `@uppy/dashboard/src/utils/hi.js` from
   `@uppy/dashboard/src/index.js`, use `require('./utils/hi.js')`).
-* But if we want to `require()` some file from another subpackage - we should
+- But if we want to `require()` some file from another subpackage - we should
   use global @uppy requires, and they should always be in the form of
   `@uppy/:packageName/(lib instead of src)/(same path).js`
 
@@ -219,25 +218,25 @@ cancelled later), for example using their iOS app.
 Releases are managed by GitHub Actions, here’s an overview of the process to
 release a new Uppy version:
 
-* Run `yarn release` on your local machine.
-* Follow the instructions and select what packages to release. **Warning:**
+- Run `yarn release` on your local machine.
+- Follow the instructions and select what packages to release. **Warning:**
   skipping packages results in those changes being “lost”, meaning they won’t be
   picked up in the changelog automatically next release. Always try to release
   all.
-* Before committing, check if the generated files look good.
-* When asked to edit the next CHANGELOG, only include changes related to the
+- Before committing, check if the generated files look good.
+- When asked to edit the next CHANGELOG, only include changes related to the
   package(s) you selected for release.
-* Push to the Transloadit repository using the command given by the tool. Do not
+- Push to the Transloadit repository using the command given by the tool. Do not
   open a PR yourself, the GitHub Actions will create one and assign you to it.
-* Wait for all the GitHub Actions checks to pass. If one fails, try to figure
+- Wait for all the GitHub Actions checks to pass. If one fails, try to figure
   out why. Do not go ahead without consulting the rest of the team.
-* Review the PR thoroughly, and if everything looks good to you, approve the PR.
+- Review the PR thoroughly, and if everything looks good to you, approve the PR.
   Do not merge it manually!
-* After the PR is automatically merged, the demos on transloadit.com should also
+- After the PR is automatically merged, the demos on transloadit.com should also
   be updated. Check that some things work locally:
-  * the demos in the demo section work (try one that uses an import robot, and
+  - the demos in the demo section work (try one that uses an import robot, and
     one that you need to upload to)
-  * the demos on the homepage work and can import from Google Drive, Instagram,
+  - the demos on the homepage work and can import from Google Drive, Instagram,
     Dropbox, etc.
 
 If you don’t have access to the transloadit.com source code ping @arturi or
@@ -383,9 +382,9 @@ queries to add any styles to the tablet or desktop breakpoints.
 
 ### Selector, rule ordering
 
-* All selectors are sorted alphabetically and by type.
-* HTML elements go above classes and IDs in a file.
-* Rules are sorted alphabetically.
+- All selectors are sorted alphabetically and by type.
+- HTML elements go above classes and IDs in a file.
+- Rules are sorted alphabetically.
 
 ```scss
 /* BAD */
@@ -426,11 +425,11 @@ said integration with the Uppy team. After discussing the integration, you can
 get started on it. First off, you need to construct the basic components for
 your integration. The following components are the current standard:
 
-* `Dashboard`: Inline Dashboard (`inline: true`)
-* `DashboardModal`: Dashboard as a modal
-* `DragDrop`
-* `ProgressBar`
-* `StatusBar`
+- `Dashboard`: Inline Dashboard (`inline: true`)
+- `DashboardModal`: Dashboard as a modal
+- `DragDrop`
+- `ProgressBar`
+- `StatusBar`
 
 All these components should function as references to the normal component.
 Depending on how the framework you’re using handles references to the DOM, your
@@ -445,10 +444,10 @@ through the code of those integrations, as they lay out a pretty good structure.
 After the basic components have been built, here are a few more important tasks
 to get done:
 
-* Add TypeScript support in some capacity (if possible)
-* Write documentation
-* Add an example
-* Configuring the build system
+- Add TypeScript support in some capacity (if possible)
+- Write documentation
+- Add an example
+- Configuring the build system
 
 ### Common issues
 
@@ -497,12 +496,12 @@ Generally, documentation for integrations can be broken down into a few pieces
 that apply to every component, and then documentation for each component. The
 structure should look something like this:
 
-* Installation
-* Initializing Uppy (may vary depending on how the framework handles reactivity)
-* Usage
-* _For each component_
-  * Loading CSS
-  * Props
+- Installation
+- Initializing Uppy (may vary depending on how the framework handles reactivity)
+- Usage
+- _For each component_
+  - Loading CSS
+  - Props
 
 It may be easier to copy the documentation of earlier integrations and change
 the parts that need to be changed rather than writing this from scratch.
