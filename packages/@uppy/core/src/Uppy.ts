@@ -282,15 +282,12 @@ export interface _UppyEventMap<M extends Meta, B extends Body> {
       | Omit<NonNullable<UppyFile<M, B>['response']>, 'uploadURL'>
       | undefined,
   ) => void
-  'upload-pause': (
-    fileID: UppyFile<M, B>['id'] | undefined,
-    isPaused: boolean,
-  ) => void
+  'upload-pause': (file: UppyFile<M, B> | undefined, isPaused: boolean) => void
   'upload-progress': (
     file: UppyFile<M, B> | undefined,
     progress: FileProgressStarted,
   ) => void
-  'upload-retry': (fileID: string) => void
+  'upload-retry': (file: UppyFile<M, B>) => void
   'upload-stalled': (
     error: { message: string; details?: string },
     files: UppyFile<M, B>[],
@@ -1200,14 +1197,15 @@ export class Uppy<M extends Meta, B extends Body> {
       return undefined
     }
 
-    const wasPaused = this.getFile(fileID).isPaused || false
+    const file = this.getFile(fileID)
+    const wasPaused = file.isPaused || false
     const isPaused = !wasPaused
 
     this.setFileState(fileID, {
       isPaused,
     })
 
-    this.emit('upload-pause', fileID, isPaused)
+    this.emit('upload-pause', file, isPaused)
 
     return isPaused
   }
@@ -1309,7 +1307,7 @@ export class Uppy<M extends Meta, B extends Body> {
       isPaused: false,
     })
 
-    this.emit('upload-retry', fileID)
+    this.emit('upload-retry', this.getFile(fileID))
 
     const uploadID = this.#createUpload([fileID], {
       forceAllowNewUpload: true, // create new upload even if allowNewUpload: false
