@@ -1,7 +1,9 @@
 # Uppy
 
-Hi, thanks for trying out the bundled version of the Uppy File Uploader. You can use
-this from a CDN (`<script src="https://releases.transloadit.com/uppy/v4.0.0-beta.4/uppy.min.js"></script>`) or bundle it with your webapp.
+Hi, thanks for trying out the bundled version of the Uppy File Uploader. You can
+use this from a CDN
+(`<script src="https://releases.transloadit.com/uppy/v4.0.0-beta.4/uppy.min.js"></script>`)
+or bundle it with your webapp.
 
 Note that the recommended way to use Uppy is to install it with yarn/npm and use
 a bundler like Webpack so that you can create a smaller custom build with only
