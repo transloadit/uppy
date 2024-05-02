@@ -226,123 +226,85 @@ export type NonNullableUppyOptions<M extends Meta, B extends Body> = Required<
   UppyOptions<M, B>
 >
 
-type GenericEventCallback = () => void
-type FileAddedCallback<M extends Meta, B extends Body> = (
-  file: UppyFile<M, B>,
-) => void
-type FilesAddedCallback<M extends Meta, B extends Body> = (
-  files: UppyFile<M, B>[],
-) => void
-type FileRemovedCallback<M extends Meta, B extends Body> = (
-  file: UppyFile<M, B>,
-  reason?: FileRemoveReason,
-) => void
-type UploadCallback = (data: { id: string; fileIDs: string[] }) => void
-type ProgressCallback = (progress: number) => void
-type PreProcessProgressCallback<M extends Meta, B extends Body> = (
-  file: UppyFile<M, B> | undefined,
-  progress: NonNullable<FileProgressStarted['preprocess']>,
-) => void
-type PostProcessProgressCallback<M extends Meta, B extends Body> = (
-  file: UppyFile<M, B> | undefined,
-  progress: NonNullable<FileProgressStarted['postprocess']>,
-) => void
-type ProcessCompleteCallback<M extends Meta, B extends Body> = (
-  file: UppyFile<M, B> | undefined,
-  progress?: NonNullable<FileProgressStarted['preprocess']>,
-) => void
-type UploadPauseCallback<M extends Meta, B extends Body> = (
-  fileID: UppyFile<M, B>['id'] | undefined,
-  isPaused: boolean,
-) => void
-type UploadStartCallback<M extends Meta, B extends Body> = (
-  files: UppyFile<M, B>[],
-) => void
-type UploadStartedCallback<M extends Meta, B extends Body> = (
-  file: UppyFile<M, B>,
-) => void
-type UploadProgressCallback<M extends Meta, B extends Body> = (
-  file: UppyFile<M, B> | undefined,
-  progress: FileProgressStarted,
-) => void
-type UploadSuccessCallback<M extends Meta, B extends Body> = (
-  file: UppyFile<M, B> | undefined,
-  response: NonNullable<UppyFile<M, B>['response']>,
-) => void
-type UploadCompleteCallback<M extends Meta, B extends Body> = (
-  result: UploadResult<M, B>,
-) => void
-type ErrorCallback<M extends Meta, B extends Body> = (
-  error: { name: string; message: string; details?: string },
-  file?: UppyFile<M, B>,
-  response?: UppyFile<M, B>['response'],
-) => void
-type UploadErrorCallback<M extends Meta, B extends Body> = (
-  file: UppyFile<M, B> | undefined,
-  error: { name: string; message: string; details?: string },
-  response?:
-    | Omit<NonNullable<UppyFile<M, B>['response']>, 'uploadURL'>
-    | undefined,
-) => void
-type UploadStalledCallback<M extends Meta, B extends Body> = (
-  error: { message: string; details?: string },
-  files: UppyFile<M, B>[],
-) => void
-type UploadRetryCallback = (fileID: string) => void
-type RetryAllCallback = (fileIDs: string[]) => void
-type RestrictionFailedCallback<M extends Meta, B extends Body> = (
-  file: UppyFile<M, B> | undefined,
-  error: Error,
-) => void
-type StateUpdateCallback<M extends Meta, B extends Body> = (
-  prevState: State<M, B>,
-  nextState: State<M, B>,
-  patch?: Partial<State<M, B>>,
-) => void
-type CancelAllCallback = (reason: { reason?: FileRemoveReason }) => void
-type PluginCallback = (plugin: UnknownPlugin<any, any>) => void
-
 export interface _UppyEventMap<M extends Meta, B extends Body> {
-  'back-online': GenericEventCallback
-  'cancel-all': CancelAllCallback
-  complete: UploadCompleteCallback<M, B>
-  error: ErrorCallback<M, B>
-  'file-added': FileAddedCallback<M, B>
-  'file-removed': FileRemovedCallback<M, B>
-  'files-added': FilesAddedCallback<M, B>
-  'info-hidden': GenericEventCallback
-  'info-visible': GenericEventCallback
-  'is-offline': GenericEventCallback
-  'is-online': GenericEventCallback
-  'pause-all': GenericEventCallback
-  'plugin-added': PluginCallback
-  'plugin-remove': PluginCallback
-  'postprocess-complete': ProcessCompleteCallback<M, B>
-  'postprocess-progress': PostProcessProgressCallback<M, B>
-  'preprocess-complete': ProcessCompleteCallback<M, B>
-  'preprocess-progress': PreProcessProgressCallback<M, B>
-  progress: ProgressCallback
-  'reset-progress': GenericEventCallback
+  'back-online': () => void
+  'cancel-all': (reason: { reason?: FileRemoveReason }) => void
+  complete: (result: UploadResult<M, B>) => void
+  error: (
+    error: { name: string; message: string; details?: string },
+    file?: UppyFile<M, B>,
+    response?: UppyFile<M, B>['response'],
+  ) => void
+  'file-added': (file: UppyFile<M, B>) => void
+  'file-removed': (file: UppyFile<M, B>, reason?: FileRemoveReason) => void
+  'files-added': (files: UppyFile<M, B>[]) => void
+  'info-hidden': () => void
+  'info-visible': () => void
+  'is-offline': () => void
+  'is-online': () => void
+  'pause-all': () => void
+  'plugin-added': (plugin: UnknownPlugin<any, any>) => void
+  'plugin-remove': (plugin: UnknownPlugin<any, any>) => void
+  'postprocess-complete': (
+    file: UppyFile<M, B> | undefined,
+    progress?: NonNullable<FileProgressStarted['preprocess']>,
+  ) => void
+  'postprocess-progress': (
+    file: UppyFile<M, B> | undefined,
+    progress: NonNullable<FileProgressStarted['postprocess']>,
+  ) => void
+  'preprocess-complete': (
+    file: UppyFile<M, B> | undefined,
+    progress?: NonNullable<FileProgressStarted['preprocess']>,
+  ) => void
+  'preprocess-progress': (
+    file: UppyFile<M, B> | undefined,
+    progress: NonNullable<FileProgressStarted['preprocess']>,
+  ) => void
+  progress: (progress: number) => void
+  'reset-progress': () => void
   restored: (pluginData: any) => void
-  'restore-confirmed': GenericEventCallback
-  'restore-canceled': GenericEventCallback
-  'restriction-failed': RestrictionFailedCallback<M, B>
-  'resume-all': GenericEventCallback
-  'retry-all': RetryAllCallback
-  'state-update': StateUpdateCallback<M, B>
-  upload: UploadCallback
-  'upload-error': UploadErrorCallback<M, B>
-  'upload-pause': UploadPauseCallback<M, B>
-  'upload-progress': UploadProgressCallback<M, B>
-  'upload-retry': UploadRetryCallback
-  'upload-stalled': UploadStalledCallback<M, B>
-  'upload-success': UploadSuccessCallback<M, B>
+  'restore-confirmed': () => void
+  'restore-canceled': () => void
+  'restriction-failed': (file: UppyFile<M, B> | undefined, error: Error) => void
+  'resume-all': () => void
+  'retry-all': (fileIDs: string[]) => void
+  'state-update': (
+    prevState: State<M, B>,
+    nextState: State<M, B>,
+    patch?: Partial<State<M, B>>,
+  ) => void
+  upload: (data: { id: string; fileIDs: string[] }) => void
+  'upload-error': (
+    file: UppyFile<M, B> | undefined,
+    error: { name: string; message: string; details?: string },
+    response?:
+      | Omit<NonNullable<UppyFile<M, B>['response']>, 'uploadURL'>
+      | undefined,
+  ) => void
+  'upload-pause': (
+    fileID: UppyFile<M, B>['id'] | undefined,
+    isPaused: boolean,
+  ) => void
+  'upload-progress': (
+    file: UppyFile<M, B> | undefined,
+    progress: FileProgressStarted,
+  ) => void
+  'upload-retry': (fileID: string) => void
+  'upload-stalled': (
+    error: { message: string; details?: string },
+    files: UppyFile<M, B>[],
+  ) => void
+  'upload-success': (
+    file: UppyFile<M, B> | undefined,
+    response: NonNullable<UppyFile<M, B>['response']>,
+  ) => void
 }
 
 /** @deprecated */
 export interface DeprecatedUppyEventMap<M extends Meta, B extends Body> {
-  'upload-start': UploadStartCallback<M, B>
-  'upload-started': UploadStartedCallback<M, B>
+  'upload-start': (files: UppyFile<M, B>[]) => void
+  'upload-started': (file: UppyFile<M, B>) => void
 }
 
 export interface UppyEventMap<M extends Meta, B extends Body>
