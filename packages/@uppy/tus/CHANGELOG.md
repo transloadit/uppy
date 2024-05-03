@@ -1,5 +1,12 @@
 # @uppy/tus
 
+## 4.0.0-beta.4
+
+Released: 2024-05-03
+Included in: Uppy v4.0.0-beta.5
+
+- @uppy/audio,@uppy/compressor,@uppy/core,@uppy/dashboard,@uppy/remote-sources,@uppy/tus,@uppy/utils: Format (Murderlon)
+
 ## 4.0.0-beta.1
 
 Released: 2024-03-28

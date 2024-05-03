@@ -1,5 +1,15 @@
 # @uppy/core
 
+## 4.0.0-beta.5
+
+Released: 2024-05-03
+Included in: Uppy v4.0.0-beta.5
+
+- @uppy/core: make UppyEventMap more readable (Murderlon)
+- @uppy/audio,@uppy/compressor,@uppy/core,@uppy/dashboard,@uppy/remote-sources,@uppy/tus,@uppy/utils: Format (Murderlon)
+- @uppy/core: add instance ID to generated IDs (Merlijn Vos / #5080)
+- @uppy/core: reference updated i18n in Restricter (Merlijn Vos / #5118)
+
 ## 4.0.0-beta.4
 
 Released: 2024-04-29
