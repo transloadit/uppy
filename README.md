@@ -67,7 +67,7 @@ and its plugins.
 - Sleek user interface :sparkles:
 - Optional file recovery (after a browser crash) with
   [Golden Retriever](https://uppy.io/docs/golden-retriever/)
-- Speaks several languages (i18n) :earth\_africa:
+- Speaks several languages (i18n) :earth_africa:
 - Built with accessibility in mind
 - Free for the world, forever (as in beer 🍺, pizza 🍕, and liberty 🗽)
 - Cute as a puppy, also accepts cat pictures :dog:
