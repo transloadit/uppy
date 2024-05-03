@@ -1,5 +1,12 @@
 # @uppy/core
 
+## 3.11.1
+
+Released: 2024-05-03
+Included in: Uppy v3.25.1
+
+- @uppy/core: make UppyEventMap more readable (Murderlon)
+
 ## 3.11.0
 
 Released: 2024-04-29
