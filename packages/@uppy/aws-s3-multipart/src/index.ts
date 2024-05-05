@@ -726,7 +726,7 @@ export default class AwsS3Multipart<
         ;(error as any).source = { status: 403 }
         reject(error)
       })
-      xhr.addEventListener('load', (ev) => {
+      xhr.addEventListener('load', () => {
         cleanup()
 
         if (

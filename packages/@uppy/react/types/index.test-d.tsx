@@ -8,6 +8,7 @@ const { useUppy } = components
 const uppy = new Uppy()
 
 {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   function TestComponent() {
     return (
       <components.Dashboard uppy={uppy} closeAfterFinish hideCancelButton />
@@ -27,6 +28,7 @@ const uppy = new Uppy()
 }
 
 {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const el = (
     <components.DragDrop
       width={200}
@@ -47,6 +49,7 @@ const uppy = new Uppy()
 }
 
 {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const el = (
     <components.DashboardModal
       target="body"
@@ -64,6 +67,7 @@ const uppy = new Uppy()
 }
 
 {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   function TestHook() {
     expectType<Uppy>(useUppy(() => uppy))
     expectType<Uppy>(useUppy(() => new Uppy()))

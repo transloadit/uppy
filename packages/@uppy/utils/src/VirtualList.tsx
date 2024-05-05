@@ -55,7 +55,7 @@ const STYLE_CONTENT = {
 type Props<T> = Omit<HTMLAttributes<HTMLDivElement>, 'data'> & {
   data: T[]
   rowHeight: number
-  renderRow: (item: T) => JSX.Element
+  renderRow: (item: T) => h.JSX.Element
   // eslint-disable-next-line react/require-default-props
   overscanCount?: number | undefined
 }
@@ -133,7 +133,7 @@ class VirtualList<T> extends Component<
     renderRow,
     overscanCount = 10,
     ...props
-  }: Props<T>): JSX.Element {
+  }: Props<T>): h.JSX.Element {
     const { offset, height } = this.state
     // first visible row index
     let start = Math.floor(offset / rowHeight)
