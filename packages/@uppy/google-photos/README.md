@@ -7,11 +7,16 @@
 ![CI status for Companion tests](https://github.com/transloadit/uppy/workflows/Companion/badge.svg)
 ![CI status for browser tests](https://github.com/transloadit/uppy/workflows/End-to-end%20tests/badge.svg)
 
-The Google Photos plugin for Uppy lets users import photos from their Google Photos account.
+The Google Photos plugin for Uppy lets users import photos from their Google
+Photos account.
 
-A Companion instance is required for the GooglePhotos plugin to work. Companion handles authentication with Google, downloads photos from Google Photos and uploads them to the destination. This saves the user bandwidth, especially helpful if they are on a mobile connection.
+A Companion instance is required for the GooglePhotos plugin to work. Companion
+handles authentication with Google, downloads photos from Google Photos and
+uploads them to the destination. This saves the user bandwidth, especially
+helpful if they are on a mobile connection.
 
-Uppy is being developed by the folks at [Transloadit](https://transloadit.com), a versatile file encoding service.
+Uppy is being developed by the folks at [Transloadit](https://transloadit.com),
+a versatile file encoding service.
 
 ## Example
 
@@ -31,11 +36,15 @@ uppy.use(GooglePhotos, {
 $ npm install @uppy/google-photos
 ```
 
-Alternatively, you can also use this plugin in a pre-built bundle from Transloadit’s CDN: Edgly. In that case `Uppy` will attach itself to the global `window.Uppy` object. See the [main Uppy documentation](https://uppy.io/docs/#Installation) for instructions.
+Alternatively, you can also use this plugin in a pre-built bundle from
+Transloadit’s CDN: Edgly. In that case `Uppy` will attach itself to the global
+`window.Uppy` object. See the
+[main Uppy documentation](https://uppy.io/docs/#Installation) for instructions.
 
 ## Documentation
 
-Documentation for this plugin can be found on the [Uppy website](https://uppy.io/docs/google-photos).
+Documentation for this plugin can be found on the
+[Uppy website](https://uppy.io/docs/google-photos).
 
 ## License
 
