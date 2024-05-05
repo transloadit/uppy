@@ -7,11 +7,18 @@ const { MAX_AGE_REFRESH_TOKEN } = require('../../../helpers/jwt')
 const logger = require('../../../logger')
 
 
-const getClient = ({ token }) => got.extend({
-  prefixUrl: 'https://photoslibrary.googleapis.com/v1',
+const getBaseClient = ({ token }) => got.extend({
   headers: {
     authorization: `Bearer ${token}`,
   },
+})
+
+const getPhotosClient = ({ token }) => getBaseClient({ token }).extend({
+  prefixUrl: 'https://photoslibrary.googleapis.com/v1',
+})
+
+const getOauthClient = ({ token }) => getBaseClient({ token }).extend({
+  prefixUrl: 'https://www.googleapis.com/oauth2/v1',
 })
 
 async function paginate(fn, getter, limit = 5) {
@@ -49,7 +56,7 @@ class GooglePhotos extends GoogleProvider {
 
       const isRoot = !directory
 
-      const client = getClient({ token })
+      const client = getPhotosClient({ token })
 
 
       async function fetchAlbums () {
@@ -122,10 +129,10 @@ class GooglePhotos extends GoogleProvider {
         })),
       ];
 
+      const { email: username } = await getOauthClient({ token }).get('userinfo').json()
+
       return {
-        // Google Photos does not provide a username API. We could get it from
-        // https://people.googleapis.com/v1/people/me?personFields=names however it requires an additional scope
-        username: undefined,
+        username,
         items: adaptedItems,
         nextPagePath: newSp.size > 0 ? `${directory ?? ''}?${newSp.toString()}` : null,
       }
@@ -134,7 +141,7 @@ class GooglePhotos extends GoogleProvider {
 
   async download ({ id, token }) {
     return this.#withErrorHandling('provider.photos.download.error', async () => {
-      const client = getClient({ token })
+      const client = getPhotosClient({ token })
 
       const { baseUrl } = await client.get(`mediaItems/${encodeURIComponent(id)}`, { responseType: 'json' }).json()
 

@@ -28,7 +28,7 @@ module.exports = () => {
     googlephotos: {
       ...google,
       callback: '/googlephotos/callback',
-      scope: ['https://www.googleapis.com/auth/photoslibrary.readonly'],
+      scope: ['https://www.googleapis.com/auth/photoslibrary.readonly', 'https://www.googleapis.com/auth/userinfo.email'], // if name is needed, then add https://www.googleapis.com/auth/userinfo.profile too
     },
     dropbox: {
       transport: 'session',
