@@ -1,5 +1,48 @@
 # @uppy/transloadit
 
+## 4.0.0-beta.2
+
+Released: 2024-04-11
+Included in: Uppy v4.0.0-beta.2
+
+- @uppy/transloadit: remove deprecated options (Merlijn Vos / #5056)
+
+## 4.0.0-beta.1
+
+Released: 2024-03-28
+Included in: Uppy v4.0.0-beta.1
+
+- @uppy/transloadit: migrate to TS (Merlijn Vos / #4987)
+
+## 3.6.0
+
+Released: 2024-03-27
+Included in: Uppy v3.24.0
+
+- @uppy/transloadit: migrate to TS (Merlijn Vos / #4987)
+
+## 3.5.0
+
+Released: 2024-02-19
+Included in: Uppy v3.22.0
+
+- @uppy/transloadit: add `clientname` option (marius / #4920)
+
+## 3.3.0
+
+Released: 2023-09-05
+Included in: Uppy v3.15.0
+
+- @uppy/transloadit: Emit assembly progress events (Marius / #4603)
+- @uppy/transloadit: remove Socket.io (Antoine du Hamel / #4281)
+
+## 3.2.1
+
+Released: 2023-08-15
+Included in: Uppy v3.14.0
+
+- @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/companion,@uppy/transloadit,@uppy/xhr-upload: use uppercase HTTP method names (Antoine du Hamel / #4612)
+
 ## 3.2.0
 
 Released: 2023-07-13

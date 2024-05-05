@@ -1,29 +1,39 @@
-const got = require('got').default
-
 const Provider = require('../Provider')
 const logger = require('../../logger')
 const { VIRTUAL_SHARED_DIR, adaptData, isShortcut, isGsuiteFile, getGsuiteExportType } = require('./adapter')
 const { withProviderErrorHandling } = require('../providerErrors')
 const { prepareStream } = require('../../helpers/utils')
+const { MAX_AGE_REFRESH_TOKEN } = require('../../helpers/jwt')
+const { ProviderAuthError } = require('../error')
+
+const got = require('../../got')
+
+// For testing refresh token:
+// first run a download with mockAccessTokenExpiredError = true 
+// then when you want to test expiry, set to mockAccessTokenExpiredError to the logged access token
+// This will trigger companion/nodemon to restart, and it will respond with a simulated invalid token response
+const mockAccessTokenExpiredError = undefined
+// const mockAccessTokenExpiredError = true
+// const mockAccessTokenExpiredError = ''
 
 const DRIVE_FILE_FIELDS = 'kind,id,imageMediaMetadata,name,mimeType,ownedByMe,size,modifiedTime,iconLink,thumbnailLink,teamDriveId,videoMediaMetadata,shortcutDetails(targetId,targetMimeType)'
 const DRIVE_FILES_FIELDS = `kind,nextPageToken,incompleteSearch,files(${DRIVE_FILE_FIELDS})`
 // using wildcard to get all 'drive' fields because specifying fields seems no to work for the /drives endpoint
 const SHARED_DRIVE_FIELDS = '*'
 
-const getClient = ({ token }) => got.extend({
+const getClient = async ({ token }) => (await got).extend({
   prefixUrl: 'https://www.googleapis.com/drive/v3',
   headers: {
     authorization: `Bearer ${token}`,
   },
 })
 
-const getOauthClient = () => got.extend({
+const getOauthClient = async () => (await got).extend({
   prefixUrl: 'https://oauth2.googleapis.com',
 })
 
 async function getStats ({ id, token }) {
-  const client = getClient({ token })
+  const client = await getClient({ token })
 
   const getStatsInner = async (statsOfId) => (
     client.get(`files/${encodeURIComponent(statsOfId)}`, { searchParams: { fields: DRIVE_FILE_FIELDS, supportsAllDrives: true }, responseType: 'json' }).json()
@@ -40,13 +50,12 @@ async function getStats ({ id, token }) {
  * Adapter for API https://developers.google.com/drive/api/v3/
  */
 class Drive extends Provider {
-  constructor (options) {
-    super(options)
-    this.authProvider = Drive.authProvider
-  }
-
   static get authProvider () {
     return 'google'
+  }
+
+  static get authStateExpiry () {
+    return MAX_AGE_REFRESH_TOKEN
   }
 
   async list (options) {
@@ -58,7 +67,7 @@ class Drive extends Provider {
       const isRoot = directory === 'root'
       const isVirtualSharedDirRoot = directory === VIRTUAL_SHARED_DIR
 
-      const client = getClient({ token })
+      const client = await getClient({ token })
 
       async function fetchSharedDrives (pageToken = null) {
         const shouldListSharedDrives = isRoot && !query.cursor
@@ -117,8 +126,17 @@ class Drive extends Provider {
   }
 
   async download ({ id: idIn, token }) {
+    if (mockAccessTokenExpiredError != null) {
+      logger.warn(`Access token: ${token}`)
+
+      if (mockAccessTokenExpiredError === token) {
+        logger.warn('Mocking expired access token!')
+        throw new ProviderAuthError()
+      }
+    }
+
     return this.#withErrorHandling('provider.drive.download.error', async () => {
-      const client = getClient({ token })
+      const client = await getClient({ token })
 
       const { mimeType, id } = await getStats({ id: idIn, token })
 
@@ -160,7 +178,7 @@ class Drive extends Provider {
 
   logout ({ token }) {
     return this.#withErrorHandling('provider.drive.logout.error', async () => {
-      await got.post('https://accounts.google.com/o/oauth2/revoke', {
+      await (await got).post('https://accounts.google.com/o/oauth2/revoke', {
         searchParams: { token },
         responseType: 'json',
       })
@@ -171,17 +189,21 @@ class Drive extends Provider {
 
   async refreshToken ({ clientId, clientSecret, refreshToken }) {
     return this.#withErrorHandling('provider.drive.token.refresh.error', async () => {
-      const { access_token: accessToken } = await getOauthClient().post('token', { form: { refresh_token: refreshToken, grant_type: 'refresh_token', client_id: clientId, client_secret: clientSecret } }).json()
+      const { access_token: accessToken } = await (await getOauthClient()).post('token', { responseType: 'json', form: { refresh_token: refreshToken, grant_type: 'refresh_token', client_id: clientId, client_secret: clientSecret } }).json()
       return { accessToken }
     })
   }
 
+  // eslint-disable-next-line class-methods-use-this
   async #withErrorHandling (tag, fn) {
     return withProviderErrorHandling({
       fn,
       tag,
-      providerName: this.authProvider,
-      isAuthError: (response) => response.statusCode === 401,
+      providerName: Drive.authProvider,
+      isAuthError: (response) => (
+        response.statusCode === 401
+        || (response.statusCode === 400 && response.body?.error === 'invalid_grant') // Refresh token has expired or been revoked
+      ),
       getJsonErrorMessage: (body) => body?.error?.message,
     })
   }

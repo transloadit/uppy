@@ -10,13 +10,13 @@ const oAuthState = require('../helpers/oauth-state')
  */
 module.exports = function oauthRedirect (req, res) {
   const params = qs.stringify(req.query)
-  const { authProvider } = req.companion.provider
+  const { authProvider } = req.companion.providerClass
   if (!req.companion.options.server.oauthDomain) {
     res.redirect(req.companion.buildURL(`/connect/${authProvider}/callback?${params}`, true))
     return
   }
 
-  const state = oAuthState.getDynamicStateFromRequest(req)
+  const { state } = oAuthState.getGrantDynamicFromRequest(req)
   if (!state) {
     res.status(400).send('Cannot find state in session')
     return

@@ -2,7 +2,8 @@
 
 ## Run it
 
-To run this example, make sure you've correctly installed the **repository root**:
+To run this example, make sure you've correctly installed the **repository
+root**:
 
 ```sh
 corepack yarn install

@@ -43,7 +43,7 @@ describe('test authentication callback', () => {
   test('the token gets sent via html', () => {
     // see mock ../../src/server/helpers/oauth-state above for state values
     return request(authServer)
-      .get(`/dropbox/send-token?uppyAuthToken=${token}&state=state-with-newer-version`)
+      .get(`/dropbox/send-token?uppyAuthToken=${token}`)
       .expect(200)
       .expect((res) => {
         const body = `

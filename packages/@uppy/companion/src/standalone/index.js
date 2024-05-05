@@ -17,7 +17,7 @@ const { getCompanionOptions, generateSecret, buildHelpfulStartupMessage } = requ
  *
  * @returns {object}
  */
-module.exports = function server (inputCompanionOptions) {
+module.exports = function server(inputCompanionOptions) {
   const companionOptions = getCompanionOptions(inputCompanionOptions)
 
   companion.setLoggerProcessName(companionOptions)
@@ -52,7 +52,7 @@ module.exports = function server (inputCompanionOptions) {
    *   censored: boolean
    * }}
    */
-  function censorQuery (rawQuery) {
+  function censorQuery(rawQuery) {
     /** @type {Record<string, any>} */
     const query = {}
     let censored = false
@@ -172,7 +172,7 @@ module.exports = function server (inputCompanionOptions) {
     if (app.get('env') === 'production') {
       // if the error is a URIError from the requested URL we only log the error message
       // to avoid uneccessary error alerts
-      if (err.status === 400 && err instanceof URIError) {
+      if (err.status === 400 && err.name === 'URIError') {
         logger.error(err.message, 'root.error', req.id)
       } else {
         logger.error(err, 'root.error', req.id)

@@ -1,10 +1,9 @@
 {
   "name": "@uppy/store-default",
   "description": "The default simple object-based store for Uppy.",
-  "version": "3.0.3",
+  "version": "4.0.0-beta.2",
   "license": "MIT",
   "main": "lib/index.js",
-  "types": "types/index.d.ts",
   "type": "module",
   "keywords": [
     "file uploader",
@@ -16,10 +15,11 @@
     "url": "https://github.com/transloadit/uppy/issues"
   },
   "devDependencies": {
-    "@jest/globals": "^29.0.0"
+    "vitest": "^1.2.1"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/transloadit/uppy.git"
-  }
+  },
+  "stableVersion": "3.2.2"
 }

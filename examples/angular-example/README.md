@@ -1,14 +1,16 @@
 # AngularExample
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 14.1.2.
+This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 16.2.0.
 
 ## Development server
 
 ```
 corepack yarn install
+corepack yarn build:clean
 corepack yarn build
+rm packages/@uppy/*/tsconfig.json
 corepack yarn workspace @uppy/angular prepublishOnly
-corepack yarn workspace @uppy-example/angular ng serve
+corepack yarn workspace @uppy-example/angular start
 ```
 
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.

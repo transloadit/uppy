@@ -1,5 +1,48 @@
 # @uppy/locales
 
+## 3.5.3
+
+Released: 2024-05-03
+Included in: Uppy v3.25.1
+
+- @uppy/locales: Update ru_RU locale  (Uladzislau Bodryi / #5120)
+
+## 3.5.2
+
+Released: 2024-02-20
+Included in: Uppy v3.22.1
+
+- @uppy/locales: update vi_VN translation (David Nguyen / #4930)
+
+## 3.5.1
+
+Released: 2024-02-19
+Included in: Uppy v3.22.0
+
+- @uppy/locales: fix "save" button translation in hr_hr.ts (žan žlender / #4830)
+
+## 3.5.0
+
+Released: 2023-11-24
+Included in: Uppy v3.20.0
+
+- @uppy/locales: Add missing translations to de_DE (Leonhard Melzer / #4800)
+- @uppy/locales: use TypeScript for source files (Antoine du Hamel / #4779)
+
+## 3.4.0
+
+Released: 2023-11-08
+Included in: Uppy v3.19.0
+
+- @uppy/locales: locales: add ca_ES (ordago / #4772)
+
+## 3.3.1
+
+Released: 2023-09-18
+Included in: Uppy v3.16.0
+
+- @uppy/locales: Feature/updating i18n farsi (Parsa Arvaneh / #4638)
+
 ## 3.2.4
 
 Released: 2023-07-20

@@ -1,5 +1,20 @@
 # @uppy/vue
 
+## 2.0.0-beta.1
+
+Released: 2024-03-28
+Included in: Uppy v4.0.0-beta.1
+
+- @uppy/vue: migrate to Composition API with TS & drop Vue 2 support (Merlijn Vos / #5043)
+- @uppy/vue: [v4.x] remove manual types (Antoine du Hamel / #4803)
+
+## 1.1.0
+
+Released: 2023-10-20
+Included in: Uppy v3.18.0
+
+- @uppy/vue: export FileInput (mdxiaohu / #4736)
+
 ## 1.0.1
 
 Released: 2022-09-25

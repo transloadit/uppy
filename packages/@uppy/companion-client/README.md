@@ -7,9 +7,11 @@
 ![CI status for Companion tests](https://github.com/transloadit/uppy/workflows/Companion/badge.svg)
 ![CI status for browser tests](https://github.com/transloadit/uppy/workflows/End-to-end%20tests/badge.svg)
 
-Client library for communication with Companion. Intended for use in Uppy plugins.
+Client library for communication with Companion. Intended for use in Uppy
+plugins.
 
-Uppy is being developed by the folks at [Transloadit](https://transloadit.com), a versatile file encoding service.
+Uppy is being developed by the folks at [Transloadit](https://transloadit.com),
+a versatile file encoding service.
 
 ## Example
 
@@ -19,7 +21,9 @@ import { Provider, RequestClient, Socket } from '@uppy/companion-client'
 
 const uppy = new Uppy()
 
-const client = new RequestClient(uppy, { companionUrl: 'https://uppy.mywebsite.com/' })
+const client = new RequestClient(uppy, {
+  companionUrl: 'https://uppy.mywebsite.com/',
+})
 client.get('/drive/list').then(() => {})
 
 const provider = new Provider(uppy, {
@@ -34,7 +38,8 @@ socket.on('progress', () => {})
 
 ## Installation
 
-> Unless you are writing a custom provider plugin, you do not need to install this.
+> Unless you are writing a custom provider plugin, you do not need to install
+> this.
 
 ```bash
 $ npm install @uppy/companion-client

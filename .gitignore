@@ -14,6 +14,8 @@ node_modules
 yarn-error.log
 .idea
 .env
+tsconfig.tsbuildinfo
+tsconfig.build.tsbuildinfo
 
 dist/
 lib/
@@ -24,6 +26,7 @@ test/endtoend/create-react-app/build/
 test/endtoend/create-react-app/coverage/
 uppy-*.tgz
 generatedLocale.d.ts
+packages/@uppy/locales/src/en_US.js
 
 **/output/*
 !output/.keep

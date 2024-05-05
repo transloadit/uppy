@@ -9,20 +9,25 @@ env:
 jobs:
   release:
     name: Publish releases
-    if: ${{ github.event.review.state == 'approved' && github.event.sender.login == github.event.pull_request.assignee.login && github.event.pull_request.head.ref == 'release-candidate' }}
+    if:
+      ${{ github.event.review.state == 'approved' && github.event.sender.login
+      == github.event.pull_request.assignee.login &&
+      github.event.pull_request.head.ref == 'release-candidate' }}
     outputs:
-      companionWasReleased: ${{ steps.checkIfCompanionWasReleased.outputs.version }}
+      companionWasReleased:
+        ${{ steps.checkIfCompanionWasReleased.outputs.version }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 2
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
-        run: echo "dir=$(corepack yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+        run:
+          echo "dir=$(corepack yarn config get cacheFolder)" >> $GITHUB_OUTPUT
 
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
         with:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
@@ -30,7 +35,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
       - name: Install Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: lts/*
       - name: Install dependencies
@@ -39,7 +44,10 @@ jobs:
           # https://docs.cypress.io/guides/references/advanced-installation#Skipping-installation
           CYPRESS_INSTALL_BINARY: 0
       - name: Get CHANGELOG diff
-        run: git --no-pager diff HEAD^ -- CHANGELOG.md | awk '{ if( substr($0,0,1) == "+" && $1 != "+##" && $1 != "+Released:" && $1 != "+++" ) { print substr($0,2) } }' > CHANGELOG.diff.md
+        run:
+          git --no-pager diff HEAD^ -- CHANGELOG.md | awk '{ if( substr($0,0,1)
+          == "+" && $1 != "+##" && $1 != "+Released:" && $1 != "+++" ) { print
+          substr($0,2) } }' > CHANGELOG.diff.md
       - name: Copy README for `uppy` package
         run: cp README.md packages/uppy/.
       - name: Build before publishing
@@ -47,7 +55,9 @@ jobs:
       - name: Hack to allow the publish of the Angular package
         run: corepack yarn workspace @uppy/angular prepublishOnly
       - name: Publish to the npm registry
-        run: corepack yarn workspaces foreach --no-private npm publish --access public --tolerate-republish
+        run:
+          corepack yarn workspaces foreach --all --no-private npm publish
+          --access public --tag next --tolerate-republish
         env:
           YARN_NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Merge PR
@@ -68,9 +78,14 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Get Uppy version number
         id: uppyVersion
-        run: jq -r '"version="+.version' < packages/uppy/package.json >> $GITHUB_OUTPUT
+        run:
+          jq -r '"version="+.version' < packages/uppy/package.json >>
+          $GITHUB_OUTPUT
       - name: Create GitHub release
-        run: gh release create uppy@${{ steps.uppyVersion.outputs.version }} -t "Uppy ${{ steps.uppyVersion.outputs.version }}" -F CHANGELOG.diff.md
+        run:
+          gh release create uppy@${{ steps.uppyVersion.outputs.version }} -t
+          "Uppy ${{ steps.uppyVersion.outputs.version }}" -F CHANGELOG.diff.md
+          --prerelease
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload `uppy` to CDN
@@ -79,19 +94,29 @@ jobs:
           EDGLY_KEY: ${{secrets.EDGLY_KEY}}
           EDGLY_SECRET: ${{secrets.EDGLY_SECRET}}
       - name: Upload `@uppy/locales` to CDN if it was released
-        run: git diff --exit-code --quiet HEAD^ -- packages/@uppy/locales/package.json ||corepack yarn run uploadcdn @uppy/locales
+        run:
+          git diff --exit-code --quiet HEAD^ --
+          packages/@uppy/locales/package.json ||corepack yarn run uploadcdn
+          @uppy/locales
         env:
           EDGLY_KEY: ${{secrets.EDGLY_KEY}}
           EDGLY_SECRET: ${{secrets.EDGLY_SECRET}}
       - name: Check if Companion was released
         id: checkIfCompanionWasReleased
-        run: git diff --exit-code --quiet HEAD^ -- packages/@uppy/companion/package.json || echo "version=$(jq -r .version < packages/@uppy/companion/package.json)" >> $GITHUB_OUTPUT
+        run:
+          git diff --exit-code --quiet HEAD^ --
+          packages/@uppy/companion/package.json || echo "version=$(jq -r
+          .version < packages/@uppy/companion/package.json)" >> $GITHUB_OUTPUT
       - name: Remove release-candidate branch
-        run: gh api -X DELETE repos/${{ github.repository }}/git/refs/heads/release-candidate || echo "Already deleted"
+        run:
+          gh api -X DELETE repos/${{ github.repository
+          }}/git/refs/heads/release-candidate || echo "Already deleted"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Remove release branch
-        run: gh api -X DELETE repos/${{ github.repository }}/git/refs/heads/release
+      - name: Remove release-beta branch
+        run:
+          gh api -X DELETE repos/${{ github.repository
+          }}/git/refs/heads/release-beta
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Disable Release workflow
@@ -100,7 +125,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: In case of failure
         if: ${{ failure() }}
-        run: gh pr comment ${{ github.event.pull_request.number }} --body "Release job failed, please take action."
+        run:
+          gh pr comment ${{ github.event.pull_request.number }} --body "Release
+          job failed, please take action."
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -115,10 +142,10 @@ jobs:
       COMPOSE_DOCKER_CLI_BUILD: 0
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Docker meta
         id: docker_meta
-        uses: docker/metadata-action@v4
+        uses: docker/metadata-action@8e5442c4ef9f78752691e2d8f8d19755c6f78e81 # v5.5.1
         with:
           images: transloadit/companion
           tags: |
@@ -126,15 +153,15 @@ jobs:
             type=semver,pattern={{version}},value=${{ needs.release.outputs.companionWasReleased }}
             # set latest tag for default branch
             type=raw,value=latest,enable=true
-      - uses: docker/setup-qemu-action@v2
-      - uses: docker/setup-buildx-action@v2
+      - uses: docker/setup-qemu-action@68827325e0b33c7199eb31dd4e31fbe9023e06e3 # v3.0.0
+      - uses: docker/setup-buildx-action@v3
       - name: Log in to DockerHub
-        uses: docker/login-action@v2
+        uses: docker/login-action@e92390c5fb421da1463c202d546fed0ec5c39f20 # v3.1.0
         with:
           username: ${{secrets.DOCKER_USERNAME}}
           password: ${{secrets.DOCKER_PASSWORD}}
       - name: Build and push
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@2cdde995de11925a030ce8070c3d77a52ffcf1c0 # v5.3.0
         with:
           push: true
           context: .

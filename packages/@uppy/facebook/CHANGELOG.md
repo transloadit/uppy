@@ -1,5 +1,19 @@
 # @uppy/facebook
 
+## 4.0.0-beta.1
+
+Released: 2024-03-28
+Included in: Uppy v4.0.0-beta.1
+
+- @uppy/facebook: refactor to TypeScript (Murderlon / #4979)
+
+## 3.3.0
+
+Released: 2024-03-27
+Included in: Uppy v3.24.0
+
+- @uppy/facebook: refactor to TypeScript (Murderlon / #4979)
+
 ## 3.0.1
 
 Released: 2022-09-25

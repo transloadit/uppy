@@ -1,43 +1,43 @@
 {
-  "ignorePatterns": [
-    "projects/**/*"
-  ],
+  "ignorePatterns": ["projects/**/*"],
   "overrides": [
     {
-      "files": [
-        "*.ts"
-      ],
-      "parserOptions": {
-        "project": [
-          "packages/@uppy/angular/tsconfig.json"
-        ],
-        "createDefaultProgram": true
-      },
+      "files": ["*.ts"],
       "extends": [
-        "plugin:@angular-eslint/ng-cli-compat",
-        "plugin:@angular-eslint/ng-cli-compat--formatting-add-on",
+        "eslint:recommended",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:@angular-eslint/recommended",
         "plugin:@angular-eslint/template/process-inline-templates"
       ],
       "rules": {
+        // eslint-disable-line import/newline-after-import
+        "@angular-eslint/directive-selector": [
+          "error",
+          {
+            "type": "attribute",
+            "prefix": "app",
+            "style": "camelCase"
+          }
+        ],
         "@typescript-eslint/semi": ["error", "never"],
-        "dot-notation": "error",
         "import/no-unresolved": "off",
         "import/prefer-default-export": "off",
-        "indent": "error",
-        "no-empty-function": "off",
-        "no-shadow": "error",
-        "no-unused-expressions": "error",
-        "no-use-before-define": "off",
-        "quotes": "error",
+        "@angular-eslint/component-selector": [
+          "error",
+          {
+            "type": "element",
+            "prefix": "app",
+            "style": "kebab-case"
+          }
+        ],
         "semi": ["error", "never"]
       }
     },
     {
-      "files": [
-        "*.html"
-      ],
+      "files": ["*.html"],
       "extends": [
-        "plugin:@angular-eslint/template/recommended"
+        "plugin:@angular-eslint/template/recommended",
+        "plugin:@angular-eslint/template/accessibility"
       ],
       "rules": {}
     }

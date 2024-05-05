@@ -1,5 +1,49 @@
 # @uppy/tus
 
+## 4.0.0-beta.4
+
+Released: 2024-05-03
+Included in: Uppy v4.0.0-beta.5
+
+- @uppy/audio,@uppy/compressor,@uppy/core,@uppy/dashboard,@uppy/remote-sources,@uppy/tus,@uppy/utils: Format (Murderlon)
+
+## 4.0.0-beta.1
+
+Released: 2024-03-28
+Included in: Uppy v4.0.0-beta.1
+
+- @uppy/aws-s3-multipart,@uppy/tus,@uppy/utils,@uppy/xhr-upload: Make `allowedMetaFields` consistent (Merlijn Vos / #5011)
+
+## 3.5.1
+
+Released: 2024-02-19
+Included in: Uppy v3.22.0
+
+-  @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/companion-client,@uppy/tus,@uppy/xhr-upload: update `uppyfile` objects before emitting events (antoine du hamel / #4928)
+- @uppy/tus: migrate to ts (merlijn vos / #4899)
+- @uppy/companion,@uppy/tus: bump `tus-js-client` version range (merlijn vos / #4848)
+
+## 3.3.0
+
+Released: 2023-09-18
+Included in: Uppy v3.16.0
+
+- @uppy/tus: Fix: Utilize user-defined onSuccess, onError, and onProgress callbacks in @uppy/tus (choi sung keun / #4674)
+
+## 3.2.0
+
+Released: 2023-09-05
+Included in: Uppy v3.15.0
+
+- @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/companion-client,@uppy/core,@uppy/tus,@uppy/utils,@uppy/xhr-upload: Move remote file upload logic into companion-client (Merlijn Vos / #4573)
+
+## 3.1.3
+
+Released: 2023-08-15
+Included in: Uppy v3.14.0
+
+- @uppy/aws-s3,@uppy/tus,@uppy/xhr-upload:  Invoke headers function for remote uploads (Dominik Schmidt / #4596)
+
 ## 3.1.2
 
 Released: 2023-07-06

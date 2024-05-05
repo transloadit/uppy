@@ -1,7 +1,6 @@
 const chalk = require('chalk')
 const escapeStringRegexp = require('escape-string-regexp')
 const util = require('node:util')
-const { ProviderApiError, ProviderAuthError } = require('./provider/error')
 
 const valuesToMask = []
 /**
@@ -24,7 +23,7 @@ exports.setMaskables = (maskables) => {
  * @param {string} msg the message whose content should be masked
  * @returns {string}
  */
-function maskMessage (msg) {
+function maskMessage(msg) {
   let out = msg
   for (const toBeMasked of valuesToMask) {
     const toBeReplaced = new RegExp(toBeMasked, 'gi')
@@ -53,10 +52,11 @@ const log = ({ arg, tag = '', level, traceId = '', color = (message) => message 
   const time = new Date().toISOString()
   const whitespace = tag && traceId ? ' ' : ''
 
-  function msgToString () {
+  function msgToString() {
     // We don't need to log stack trace on special errors that we ourselves have produced
     // (to reduce log noise)
-    if ((arg instanceof ProviderApiError || arg instanceof ProviderAuthError) && typeof arg.message === 'string') {
+    // @ts-ignore
+    if ((arg instanceof Error && arg.name === 'ProviderApiError') && typeof arg.message === 'string') {
       return arg.message
     }
     if (typeof arg === 'string') return arg

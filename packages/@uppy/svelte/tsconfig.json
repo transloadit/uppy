@@ -1,13 +1,14 @@
 {
-  "extends": "@tsconfig/svelte/tsconfig.json",
-  "compilerOptions": {
-    "esModuleInterop": true,
-    "sourceMap": true
-  },
-  "include": [
-    "src/**/*"
+  "extends": [
+    "../../../tsconfig.shared.json",
+    "@tsconfig/svelte/tsconfig.json",
   ],
-  "exclude": [
-    "node_modules/*"
-  ]
+  "compilerOptions": {
+    "noEmit": true,
+    "emitDeclarationOnly": false,
+    "rootDir": "./src",
+    "outDir": "./lib",
+  },
+  "include": ["./src/**/*.*", "./typings/index.d.ts"],
+  "exclude": ["node_modules/*"],
 }

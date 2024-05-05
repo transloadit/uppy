@@ -89,6 +89,7 @@ const getConfigFromEnv = () => {
       box: {
         key: process.env.COMPANION_BOX_KEY,
         secret: getSecret('COMPANION_BOX_SECRET'),
+        credentialsURL: process.env.COMPANION_BOX_KEYS_ENDPOINT,
       },
       instagram: {
         key: process.env.COMPANION_INSTAGRAM_KEY,
@@ -136,6 +137,8 @@ const getConfigFromEnv = () => {
       oauthDomain: process.env.COMPANION_OAUTH_DOMAIN,
       validHosts,
     },
+    // todo next major make this default false
+    enableUrlEndpoint: process.env.COMPANION_ENABLE_URL_ENDPOINT == null || process.env.COMPANION_ENABLE_URL_ENDPOINT === 'true',
     periodicPingUrls: process.env.COMPANION_PERIODIC_PING_URLS ? process.env.COMPANION_PERIODIC_PING_URLS.split(',') : [],
     periodicPingInterval: process.env.COMPANION_PERIODIC_PING_INTERVAL
       ? parseInt(process.env.COMPANION_PERIODIC_PING_INTERVAL, 10) : undefined,
@@ -173,6 +176,8 @@ const getConfigFromEnv = () => {
     metrics: process.env.COMPANION_HIDE_METRICS !== 'true',
     loggerProcessName: process.env.COMPANION_LOGGER_PROCESS_NAME,
     corsOrigins: getCorsOrigins(),
+    testDynamicOauthCredentials: process.env.COMPANION_TEST_DYNAMIC_OAUTH_CREDENTIALS === 'true',
+    testDynamicOauthCredentialsSecret: process.env.COMPANION_TEST_DYNAMIC_OAUTH_CREDENTIALS_SECRET,
   }
 }
 

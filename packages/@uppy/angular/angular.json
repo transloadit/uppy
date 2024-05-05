@@ -27,15 +27,13 @@
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "main": "projects/uppy/angular/src/test.ts",
             "tsConfig": "projects/uppy/angular/tsconfig.spec.json",
-            "karmaConfig": "projects/uppy/angular/karma.conf.js"
+            "polyfills": ["zone.js", "zone.js/testing"]
           }
         }
       }
     }
   },
-  "defaultProject": "@uppy/angular",
   "cli": {
     "analytics": false
   }

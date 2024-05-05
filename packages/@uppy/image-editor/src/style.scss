@@ -1,6 +1,24 @@
+@use 'inputrange' with (
+  $track-color: rgba(#fff, 0.2),
+  $thumb-color: #fff,
+
+  $thumb-radius: 9px,
+  $thumb-height: 16px,
+  $thumb-width: 16px,
+  $thumb-shadow-size: 0,
+  $thumb-border-width: 0,
+  $thumb-border-color: transparent,
+
+  // If you change this `$track-height`, also change `::-moz-range-track` way below
+  $track-height: 4px,
+  $track-shadow-size: 0,
+  $track-shadow-blur: 0,
+  $track-shadow-color: transparent,
+  $track-border-width: 0,
+  $track-border-color: transparent
+);
 @import '@uppy/core/src/_utils.scss';
 @import '@uppy/core/src/_variables.scss';
-@import './inputrange.scss';
 @import './cropper.scss';
 
 .uppy-ImageCropper {
@@ -15,7 +33,11 @@
 }
 
 .uppy-ImageCropper-image {
+  // Note that exactly these styles are demanded by cropperjs
+  // (https: //github.com/fengyuanchen/cropperjs#example)
   display: block;
+  max-width: 100%;
+  // And this style is required for rendering tall and narrow images
   max-height: 400px;
 }
 
@@ -30,6 +52,7 @@
   color: $white;
   background-color: rgba($black, 0.6);
   transform: translateX(-50%);
+  border-radius: 5px;
 
   .uppy-size--md & {
     padding-top: 0;
@@ -39,6 +62,7 @@
 .uppy-ImageCropper-controls button {
   width: 35px;
   height: 35px;
+  border-radius: 5px;
 
   svg {
     padding: 3px;
@@ -54,35 +78,30 @@
   }
 
   &:hover {
-    background-color: rgba($blue, 0.8);
+    background-color: rgba(white, 0.5);
   }
 
   &:focus {
-    background-color: rgba($blue, 0.8);
+    background-color: rgba(white, 0.5);
     outline: none;
   }
 }
 
-.uppy-ImageCropper-rangeWrapper {
+.uppy-Dashboard:not(.uppy-size--md) .uppy-ImageCropper-rangeWrapper {
   position: absolute !important;
   top: 0;
   right: 10px;
   left: 10px;
   height: 38px;
-
-  .uppy-size--md & {
-    position: static !important;
-    height: auto;
-  }
 }
 
 .uppy-size--md .uppy-ImageCropper-range {
   width: 180px;
-  margin-right: 15px;
+  margin-right: 5px;
   margin-left: 5px;
 }
 
-// Cropper overrides
+// Overrides: cropper.scss
 
 .uppy-ImageCropper .cropper-point {
   width: 8px;
@@ -91,4 +110,57 @@
 
 .uppy-ImageCropper .cropper-view-box {
   outline: 2px solid #39f;
+
+  // This adds a checkered background to transparent pngs
+  // (see https://github.com/transloadit/uppy/pull/4194).
+  // Cropper handles checkered bgs via the `background: true` option and a `.cropper-bg` css class, however those will span through the entire cropper background, and we only want the checkered background for transparent pngs.
+  background: repeating-conic-gradient(
+      rgba(189, 189, 189, 0.2) 0% 25%,
+      white 0% 50%
+    )
+    50% / 16px 16px;
+  [data-uppy-theme='dark'] & {
+    background: repeating-conic-gradient(rgb(43, 42, 42) 0% 25%, black 0% 50%)
+      50%/16px 16px;
+  }
+}
+
+.uppy-ImageCropper .cropper-modal {
+  opacity: 0.9;
+  background-color: white;
+
+  [data-uppy-theme='dark'] & {
+    opacity: 0.7;
+    background-color: black;
+  }
+}
+
+.uppy-ImageCropper .cropper-face {
+  opacity: 0;
+}
+
+// Overrides: inputrange.scss
+
+.uppy-ImageCropper-range {
+  &::-moz-range-track {
+    // We have to adjust this manually every time we change `$track-height`
+    // in the beginning of the file.
+    height: 4px;
+  }
+
+  &:focus,
+  &:hover {
+    &::-webkit-slider-runnable-track {
+      background: rgba(white, 0.5);
+    }
+    &::-ms-fill-lower {
+      background: rgba(white, 0.5);
+    }
+    &::-ms-fill-upper {
+      background: rgba(white, 0.5);
+    }
+    &::-moz-range-track {
+      background: rgba(white, 0.5);
+    }
+  }
 }

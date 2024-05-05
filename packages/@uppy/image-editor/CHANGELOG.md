@@ -1,5 +1,62 @@
 # @uppy/image-editor
 
+## 3.0.0-beta.2
+
+Released: 2024-04-29
+Included in: Uppy v4.0.0-beta.4
+
+- @uppy/image-editor: fix label definitions (Antoine du Hamel / #5111)
+
+## 2.4.5
+
+Released: 2024-04-29
+Included in: Uppy v3.25.0
+
+- @uppy/image-editor: fix label definitions (Antoine du Hamel / #5111)
+
+## 2.4.4
+
+Released: 2024-02-28
+Included in: Uppy v3.23.0
+
+- @uppy/image-editor: remove default target (Merlijn Vos / #4966)
+
+## 2.4.1
+
+Released: 2024-02-19
+Included in: Uppy v3.22.0
+
+- @uppy/image-editor: image editor: make compressor work after the image editor, too (evgenia karunus / #4918)
+- @uppy/image-editor: migrate to ts (merlijn vos / #4880)
+
+## 2.4.0
+
+Released: 2023-12-12
+Included in: Uppy v3.21.0
+
+- @uppy/image-editor: respect `cropperOptions.initialAspectRatio` (Lucklj521 / #4805)
+
+## 2.3.0
+
+Released: 2023-11-08
+Included in: Uppy v3.19.0
+
+- @uppy/image-editor: More image editor improvements (Evgenia Karunus / #4676)
+
+## 2.2.1
+
+Released: 2023-09-29
+Included in: Uppy v3.17.0
+
+- @uppy/image-editor: ImageEditor.jsx - remove 1px black lines (Evgenia Karunus / #4678)
+
+## 2.2.0
+
+Released: 2023-09-18
+Included in: Uppy v3.16.0
+
+- @uppy/image-editor: Improve image rotation (Evgenia Karunus / #4639)
+
 ## 2.1.1
 
 Released: 2023-03-07

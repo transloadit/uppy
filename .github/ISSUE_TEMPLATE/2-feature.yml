@@ -7,9 +7,14 @@ body:
     attributes:
       label: Initial checklist
       options:
-        - label: I understand this is a feature request and questions should be posted in the [Community Forum](https://community.transloadit.com/)
+        - label:
+            I understand this is a feature request and questions should be
+            posted in the [Community Forum](https://community.transloadit.com/)
           required: true
-        - label: I searched [issues](https://github.com/transloadit/uppy/issues?q=is%3Aissue) and couldn’t find anything (or linked relevant results below)
+        - label:
+            I searched
+            [issues](https://github.com/transloadit/uppy/issues?q=is%3Aissue)
+            and couldn’t find anything (or linked relevant results below)
           required: true
   - type: textarea
     id: problem
@@ -29,6 +34,8 @@ body:
     id: alternatives
     attributes:
       label: Alternatives
-      description: What are the alternative solutions? Can this be solved in a different way?
+      description:
+        What are the alternative solutions? Can this be solved in a different
+        way?
     validations:
       required: true

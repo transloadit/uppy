@@ -2,7 +2,7 @@ declare global {
   namespace Cypress {
     interface Chainable {
       // eslint-disable-next-line no-use-before-define
-      createFakeFile: typeof createFakeFile;
+      createFakeFile: typeof createFakeFile
     }
   }
 }
@@ -14,14 +14,21 @@ interface File {
   data: Blob
 }
 
-export function createFakeFile (name?: string, type?: string, b64?: string): File {
-  // eslint-disable-next-line no-param-reassign
-  if (!b64) b64 = 'PHN2ZyB2aWV3Qm94PSIwIDAgMTIwIDEyMCI+CiAgPGNpcmNsZSBjeD0iNjAiIGN5PSI2MCIgcj0iNTAiLz4KPC9zdmc+Cg=='
+export function createFakeFile(
+  name?: string,
+  type?: string,
+  b64?: string,
+): File {
+  if (!b64) {
+    // eslint-disable-next-line no-param-reassign
+    b64 =
+      'PHN2ZyB2aWV3Qm94PSIwIDAgMTIwIDEyMCI+CiAgPGNpcmNsZSBjeD0iNjAiIGN5PSI2MCIgcj0iNTAiLz4KPC9zdmc+Cg=='
+  }
   // eslint-disable-next-line no-param-reassign
   if (!type) type = 'image/svg+xml'
 
   // https://stackoverflow.com/questions/16245767/creating-a-blob-from-a-base64-string-in-javascript
-  function base64toBlob (base64Data: string, contentType = '') {
+  function base64toBlob(base64Data: string, contentType = '') {
     const sliceSize = 1024
     const byteCharacters = atob(base64Data)
     const bytesLength = byteCharacters.length

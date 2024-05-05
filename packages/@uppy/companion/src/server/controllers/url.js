@@ -25,7 +25,7 @@ const downloadURL = async (url, blockLocalIPs, traceId) => {
   // TODO in next major, rename all blockLocalIPs to allowLocalUrls and invert the bool, to make it consistent
   // see discussion https://github.com/transloadit/uppy/pull/4554/files#r1268677162
   try {
-    const protectedGot = getProtectedGot({ url, blockLocalIPs })
+    const protectedGot = await getProtectedGot({ blockLocalIPs })
     const stream = protectedGot.stream.get(url, { responseType: 'json' })
     await prepareStream(stream)
     return stream
@@ -36,7 +36,7 @@ const downloadURL = async (url, blockLocalIPs, traceId) => {
 }
 
 /**
- * Fteches the size and content type of a URL
+ * Fetches the size and content type of a URL
  *
  * @param {object} req expressJS request object
  * @param {object} res expressJS response object
@@ -83,12 +83,12 @@ const get = async (req, res) => {
     return downloadURL(req.body.url, !allowLocalUrls, req.id)
   }
 
-  function onUnhandledError (err) {
+  try {
+    await startDownUpload({ req, res, getSize, download })
+  } catch (err) {
     logger.error(err, 'controller.url.error', req.id)
     res.status(err.status || 500).json({ message: 'failed to fetch URL' })
   }
-
-  startDownUpload({ req, res, getSize, download, onUnhandledError })
 }
 
 module.exports = () => express.Router()

@@ -102,6 +102,16 @@ module.exports = (redisClient, redisPubSubScope) => {
   }
 
   /**
+   * Remove an event listener
+   *
+   * @param {string} eventName name of the event
+   * @param {any} handler the handler of the event
+   */
+  function off (eventName, handler) {
+    return removeListener(eventName, handler)
+  }
+
+  /**
    * Add an event listener (will be triggered at most once)
    *
    * @param {string} eventName name of the event
@@ -138,6 +148,7 @@ module.exports = (redisClient, redisPubSubScope) => {
 
   return {
     on,
+    off,
     once,
     emit,
     removeListener,

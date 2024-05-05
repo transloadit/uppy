@@ -1,5 +1,72 @@
 # @uppy/xhr-upload
 
+## 4.0.0-beta.3
+
+Released: 2024-05-03
+Included in: Uppy v4.0.0-beta.5
+
+- @uppy/xhr-upload: do not throw when res is missing url (Merlijn Vos / #5132)
+
+## 4.0.0-beta.2
+
+Released: 2024-04-29
+Included in: Uppy v4.0.0-beta.4
+
+- @uppy/xhr-upload: refactor to use `fetcher` (Merlijn Vos / #5074)
+
+## 4.0.0-beta.1
+
+Released: 2024-03-28
+Included in: Uppy v4.0.0-beta.1
+
+- @uppy/aws-s3-multipart,@uppy/tus,@uppy/utils,@uppy/xhr-upload: Make `allowedMetaFields` consistent (Merlijn Vos / #5011)
+
+## 3.6.6
+
+Released: 2024-05-03
+Included in: Uppy v3.25.1
+
+- @uppy/xhr-upload: do not throw when res is missing url (Merlijn Vos / #5132)
+
+## 3.6.5
+
+Released: 2024-04-29
+Included in: Uppy v3.25.0
+
+- @uppy/xhr-upload: refactor to use `fetcher` (Merlijn Vos / #5074)
+
+## 3.6.4
+
+Released: 2024-02-28
+Included in: Uppy v3.23.0
+
+- @uppy/companion-client,@uppy/utils,@uppy/xhr-upload: improvements for #4922 (Mikael Finstad / #4960)
+- @uppy/xhr-upload: fix getResponseData regression (Merlijn Vos / #4964)
+
+## 3.6.1
+
+Released: 2024-02-19
+Included in: Uppy v3.22.0
+
+-  @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/companion-client,@uppy/tus,@uppy/xhr-upload: update `uppyfile` objects before emitting events (antoine du hamel / #4928)
+- @uppy/xhr-upload: migrate to ts (merlijn vos / #4892)
+- @uppy/xhr-upload: show remove button (merlijn vos / #4851)
+
+## 3.4.0
+
+Released: 2023-09-05
+Included in: Uppy v3.15.0
+
+- @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/companion-client,@uppy/core,@uppy/tus,@uppy/utils,@uppy/xhr-upload: Move remote file upload logic into companion-client (Merlijn Vos / #4573)
+
+## 3.3.2
+
+Released: 2023-08-15
+Included in: Uppy v3.14.0
+
+- @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/companion,@uppy/transloadit,@uppy/xhr-upload: use uppercase HTTP method names (Antoine du Hamel / #4612)
+- @uppy/aws-s3,@uppy/tus,@uppy/xhr-upload:  Invoke headers function for remote uploads (Dominik Schmidt / #4596)
+
 ## 3.3.1
 
 Released: 2023-07-06

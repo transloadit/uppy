@@ -1,18 +1,15 @@
 // eslint-disable-next-line max-classes-per-file
 const http = require('node:http')
 const https = require('node:https')
-const { URL } = require('node:url')
 const dns = require('node:dns')
 const ipaddr = require('ipaddr.js')
-const got = require('got').default
 const path = require('node:path')
 const contentDisposition = require('content-disposition')
 const validator = require('validator')
 
-const logger = require('../logger')
+const got = require('../got')
 
 const FORBIDDEN_IP_ADDRESS = 'Forbidden IP address'
-const FORBIDDEN_RESOLVED_IP_ADDRESS = 'Forbidden resolved IP address'
 
 // Example scary IPs that should return false (ipv6-to-ipv4 mapped):
 // ::FFFF:127.0.0.1
@@ -20,31 +17,6 @@ const FORBIDDEN_RESOLVED_IP_ADDRESS = 'Forbidden resolved IP address'
 const isDisallowedIP = (ipAddress) => ipaddr.parse(ipAddress).range() !== 'unicast'
 
 module.exports.FORBIDDEN_IP_ADDRESS = FORBIDDEN_IP_ADDRESS
-module.exports.FORBIDDEN_RESOLVED_IP_ADDRESS = FORBIDDEN_RESOLVED_IP_ADDRESS
-
-module.exports.getRedirectEvaluator = (rawRequestURL, isEnabled) => {
-  const requestURL = new URL(rawRequestURL)
-
-  return ({ headers }) => {
-    if (!isEnabled) return true
-
-    let redirectURL = null
-    try {
-      redirectURL = new URL(headers.location, requestURL)
-    } catch (err) {
-      return false
-    }
-
-    const shouldRedirect = redirectURL.protocol === requestURL.protocol
-    if (!shouldRedirect) {
-      logger.info(
-        `blocking redirect from ${requestURL} to ${redirectURL}`, 'redirect.protection',
-      )
-    }
-
-    return shouldRedirect
-  }
-}
 
 /**
  * Validates that the download URL is secure
@@ -83,22 +55,25 @@ const getProtectedHttpAgent = ({ protocol, blockLocalIPs }) => {
       }
 
       const toValidate = Array.isArray(addresses) ? addresses : [{ address: addresses }]
-      for (const record of toValidate) {
-        if (blockLocalIPs && isDisallowedIP(record.address)) {
-          callback(new Error(FORBIDDEN_RESOLVED_IP_ADDRESS), addresses, maybeFamily)
-          return
-        }
+      // because dns.lookup seems to be called with option `all: true`, if we are on an ipv6 system,
+      // `addresses` could contain a list of ipv4 addresses as well as ipv6 mapped addresses (rfc6052) which we cannot allow
+      // however we should still allow any valid ipv4 addresses, so we filter out the invalid addresses
+      const validAddresses = !blockLocalIPs ? toValidate : toValidate.filter(({ address }) => !isDisallowedIP(address))
+
+      // and check if there's anything left after we filtered:
+      if (validAddresses.length === 0) {
+        callback(new Error(`Forbidden resolved IP address ${hostname} -> ${toValidate.map(({ address }) => address).join(', ')}`), addresses, maybeFamily)
+        return
       }
 
-      callback(err, addresses, maybeFamily)
+      const ret = Array.isArray(addresses) ? validAddresses : validAddresses[0].address;
+      callback(err, ret, maybeFamily)
     })
   }
 
-  const isBlocked = (options) => ipaddr.isValid(options.host) && blockLocalIPs && isDisallowedIP(options.host)
-
-  class HttpAgent extends http.Agent {
+  return class HttpAgent extends (protocol.startsWith('https') ? https : http).Agent {
     createConnection (options, callback) {
-      if (isBlocked(options)) {
+      if (ipaddr.isValid(options.host) && blockLocalIPs && isDisallowedIP(options.host)) {
         callback(new Error(FORBIDDEN_IP_ADDRESS))
         return undefined
       }
@@ -106,40 +81,19 @@ const getProtectedHttpAgent = ({ protocol, blockLocalIPs }) => {
       return super.createConnection({ ...options, lookup: dnsLookup }, callback)
     }
   }
-
-  class HttpsAgent extends https.Agent {
-    createConnection (options, callback) {
-      if (isBlocked(options)) {
-        callback(new Error(FORBIDDEN_IP_ADDRESS))
-        return undefined
-      }
-      // @ts-ignore
-      return super.createConnection({ ...options, lookup: dnsLookup }, callback)
-    }
-  }
-
-  return protocol.startsWith('https') ? HttpsAgent : HttpAgent
 }
 
 module.exports.getProtectedHttpAgent = getProtectedHttpAgent
 
-function getProtectedGot ({ url, blockLocalIPs }) {
+async function getProtectedGot ({ blockLocalIPs }) {
   const HttpAgent = getProtectedHttpAgent({ protocol: 'http', blockLocalIPs })
   const HttpsAgent = getProtectedHttpAgent({ protocol: 'https', blockLocalIPs })
   const httpAgent = new HttpAgent()
   const httpsAgent = new HttpsAgent()
 
-  const redirectEvaluator = module.exports.getRedirectEvaluator(url, blockLocalIPs)
-
-  const beforeRedirect = (options, response) => {
-    const allowRedirect = redirectEvaluator(response)
-    if (!allowRedirect) {
-      throw new Error(`Redirect evaluator does not allow the redirect to ${response.headers.location}`)
-    }
-  }
 
   // @ts-ignore
-  return got.extend({ hooks: { beforeRedirect: [beforeRedirect] }, agent: { http: httpAgent, https: httpsAgent } })
+  return (await got).extend({ agent: { http: httpAgent, https: httpsAgent } })
 }
 
 module.exports.getProtectedGot = getProtectedGot
@@ -153,7 +107,7 @@ module.exports.getProtectedGot = getProtectedGot
  */
 exports.getURLMeta = async (url, blockLocalIPs = false) => {
   async function requestWithMethod (method) {
-    const protectedGot = getProtectedGot({ url, blockLocalIPs })
+    const protectedGot = await getProtectedGot({ blockLocalIPs })
     const stream = protectedGot.stream(url, { method, throwHttpErrors: false })
 
     return new Promise((resolve, reject) => (
@@ -166,7 +120,7 @@ exports.getURLMeta = async (url, blockLocalIPs = false) => {
           // we add random string to avoid duplicate files
           const filename = response.headers['content-disposition']
             ? contentDisposition.parse(response.headers['content-disposition']).parameters.filename
-            : path.basename(response.request.requestUrl)
+            : path.basename(`${response.request.requestUrl}`)
 
           // No need to get the rest of the response, as we only want header (not really relevant for HEAD, but why not)
           stream.destroy()
