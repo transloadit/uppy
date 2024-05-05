@@ -4,10 +4,14 @@
 
 [![Build Status](https://travis-ci.org/transloadit/uppy.svg?branch=main)](https://travis-ci.org/transloadit/uppy)
 
-Companion is a server integration for [Uppy](https://github.com/transloadit/uppy) file uploader.
+Companion is a server integration for
+[Uppy](https://github.com/transloadit/uppy) file uploader.
 
-It handles the server-to-server communication between your server and file storage providers such as Google Drive, Dropbox,
-Instagram, etc. **Companion is not a target to upload files to**. For this, use a <https://tus.io> server (if you want resumable) or your existing Apache/Nginx server (if you don’t). [See here for full documentation](https://uppy.io/docs/companion/)
+It handles the server-to-server communication between your server and file
+storage providers such as Google Drive, Dropbox, Instagram, etc. **Companion is
+not a target to upload files to**. For this, use a <https://tus.io> server (if
+you want resumable) or your existing Apache/Nginx server (if you don’t).
+[See here for full documentation](https://uppy.io/docs/companion/)
 
 ## Install
 
@@ -15,11 +19,16 @@ Instagram, etc. **Companion is not a target to upload files to**. For this, use 
 npm install @uppy/companion
 ```
 
-If you don’t have a Node.js project with a `package.json` you might want to install/run Companion globally like so: `[sudo] npm install -g @uppy/companion@1.x` (best check the actual latest version, and use that, so (re)installs are reproducible, and upgrades intentional).
+If you don’t have a Node.js project with a `package.json` you might want to
+install/run Companion globally like so:
+`[sudo] npm install -g @uppy/companion@1.x` (best check the actual latest
+version, and use that, so (re)installs are reproducible, and upgrades
+intentional).
 
 ## Usage
 
-companion may either be used as pluggable express app, which you plug to your existing server, or it may also be run as a standalone server:
+companion may either be used as pluggable express app, which you plug to your
+existing server, or it may also be run as a standalone server:
 
 ### Plug to an existing server
 
@@ -52,7 +61,8 @@ const { app: companionApp } = companion.app(options)
 app.use(companionApp)
 ```
 
-To enable companion socket for realtime feed to the client while upload is going on, you call the `socket` method like so.
+To enable companion socket for realtime feed to the client while upload is going
+on, you call the `socket` method like so.
 
 ```javascript
 // ...
@@ -63,14 +73,16 @@ companion.socket(server)
 
 ### Run as standalone server
 
-Please make sure that the required env variables are set before runnning/using companion as a standalone server. [See](https://uppy.io/docs/companion/#Configure-Standalone).
+Please make sure that the required env variables are set before runnning/using
+companion as a standalone server.
+[See](https://uppy.io/docs/companion/#Configure-Standalone).
 
 ```bash
 $ companion
 ```
 
-If you cloned the repo from GitHub and want to run it as a standalone server, you may also run the following command from within its
-directory
+If you cloned the repo from GitHub and want to run it as a standalone server,
+you may also run the following command from within its directory
 
 ```bash
 npm start
@@ -107,6 +119,7 @@ heroku create
 git push heroku master
 ```
 
-Make sure you set the required [environment variables](https://uppy.io/docs/companion/#Configure-Standalone).
+Make sure you set the required
+[environment variables](https://uppy.io/docs/companion/#Configure-Standalone).
 
 See [full documentation](https://uppy.io/docs/companion/)

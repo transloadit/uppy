@@ -10,9 +10,9 @@ the same features, but with a more ergonomic and minimal API.
 
 But, it didn’t come with its own set of new problems:
 
-* It tries to do the exact same, but it looks like a different product.
-* It’s confusing for users whether they want to use Robodog or Uppy directly.
-* Robodog is more ergonomic because it’s limited. When you hit such a limit, you
+- It tries to do the exact same, but it looks like a different product.
+- It’s confusing for users whether they want to use Robodog or Uppy directly.
+- Robodog is more ergonomic because it’s limited. When you hit such a limit, you
   need to refactor everything to Uppy with plugins.
 
 This has now led us to deprecating Robodog and embrace Uppy for its strong
@@ -238,8 +238,8 @@ To migrate: use exposed options only.
 
 ### Known issues
 
-* [`ERESOLVE could not resolve` on npm install](https://github.com/transloadit/uppy/issues/4057).
-* [@uppy/svelte reports a broken dependency with the Vite bundler](https://github.com/transloadit/uppy/issues/4069).
+- [`ERESOLVE could not resolve` on npm install](https://github.com/transloadit/uppy/issues/4057).
+- [@uppy/svelte reports a broken dependency with the Vite bundler](https://github.com/transloadit/uppy/issues/4069).
 
 ## Migrate from Companion 3.x to 4.x
 
@@ -319,11 +319,11 @@ bundle size is **25% smaller**! If you want your app to still support older
 browsers (such as IE11), you may need to add the following polyfills to your
 bundle:
 
-* [abortcontroller-polyfill](https://github.com/mo/abortcontroller-polyfill)
-* [core-js](https://github.com/zloirock/core-js)
-* [md-gum-polyfill](https://github.com/mozdevs/mediaDevices-getUserMedia-polyfill)
-* [resize-observer-polyfill](https://github.com/que-etc/resize-observer-polyfill)
-* [whatwg-fetch](https://github.com/github/fetch)
+- [abortcontroller-polyfill](https://github.com/mo/abortcontroller-polyfill)
+- [core-js](https://github.com/zloirock/core-js)
+- [md-gum-polyfill](https://github.com/mozdevs/mediaDevices-getUserMedia-polyfill)
+- [resize-observer-polyfill](https://github.com/que-etc/resize-observer-polyfill)
+- [whatwg-fetch](https://github.com/github/fetch)
 
 If you’re using a bundler, you need import these before Uppy:
 
@@ -589,7 +589,8 @@ obsolete too.
 
 ### That’s it!
 
-Uppy 1.0 will continue to receive bug fixes for three more months (until <time datetime="2021-12-01">1 December 2021</time>), security fixes for one more
+Uppy 1.0 will continue to receive bug fixes for three more months (until
+<time datetime="2021-12-01">1 December 2021</time>), security fixes for one more
 year (until <time datetime="2022-09-01">1 September 2022</time>), but no more
 new features after today. Exceptions are unlikely, but _can_ be made – to
 accommodate those with commercial support contracts, for example.
@@ -642,11 +643,7 @@ to:
 <!-- definitions -->
 
 [core]: /docs/uppy/
-
 [xhr]: /docs/xhr-upload/
-
 [dashboard]: /docs/dashboard/
-
 [aws-s3-multipart]: /docs/aws-s3-multipart/
-
 [tus]: /docs/tus/

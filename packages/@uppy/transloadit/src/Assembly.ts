@@ -8,7 +8,7 @@ import type {
   RateLimitedQueue,
   WrapPromiseFunctionType,
 } from '@uppy/utils/lib/RateLimitedQueue'
-import type { AssemblyResponse } from '.'
+import type { AssemblyResponse } from './index.js'
 
 const ASSEMBLY_UPLOADING = 'ASSEMBLY_UPLOADING'
 const ASSEMBLY_EXECUTING = 'ASSEMBLY_EXECUTING'

@@ -1,6 +1,6 @@
 import type { PluginOptions, BasePlugin } from '@uppy/core'
 import { UppyFile } from '@uppy/utils'
-import type CompressorLocale from './generatedLocale'
+import type CompressorLocale from './generatedLocale.js'
 
 export interface CompressorOptions extends PluginOptions {
   quality?: number

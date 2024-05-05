@@ -13,7 +13,9 @@
     "*.{css,html,json,scss,vue,yaml,yml}": "prettier -w",
     "*.md": [
       "remark --silently-ignore -i .remarkignore -foq",
-      "eslint --fix"
+      "eslint --fix",
+      "prettier -w",
+      "eslint"
     ]
   },
   "remarkConfig": {

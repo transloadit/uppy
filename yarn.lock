@@ -9632,7 +9632,7 @@ __metadata:
     "@uppy/drag-drop": "workspace:^"
     "@uppy/progress-bar": "workspace:^"
     "@uppy/status-bar": "workspace:^"
-    svelte: ^3.0.0 || ^4.0.0
+    svelte: ^3.0.0 || ^4.0.0 || ^5.0.0
   languageName: unknown
   linkType: soft
 
@@ -9762,7 +9762,6 @@ __metadata:
   dependencies:
     "@uppy/companion-client": "workspace:^"
     "@uppy/utils": "workspace:^"
-    nanoid: ^4.0.0
     nock: ^13.1.0
     vitest: ^1.2.1
   peerDependencies:
@@ -14323,13 +14322,13 @@ __metadata:
   linkType: hard
 
 "ejs@npm:^3.1.7":
-  version: 3.1.9
-  resolution: "ejs@npm:3.1.9"
+  version: 3.1.10
+  resolution: "ejs@npm:3.1.10"
   dependencies:
     jake: ^10.8.5
   bin:
     ejs: bin/cli.js
-  checksum: af6f10eb815885ff8a8cfacc42c6b6cf87daf97a4884f87a30e0c3271fedd85d76a3a297d9c33a70e735b97ee632887f85e32854b9cdd3a2d97edf931519a35f
+  checksum: ce90637e9c7538663ae023b8a7a380b2ef7cc4096de70be85abf5a3b9641912dde65353211d05e24d56b1f242d71185c6d00e02cb8860701d571786d92c71f05
   languageName: node
   linkType: hard
 

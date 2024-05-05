@@ -1,5 +1,12 @@
 # @uppy/utils
 
+## 5.9.0
+
+Released: 2024-04-29
+Included in: Uppy v3.25.0
+
+- @uppy/utils: improve return type of `dataURItoFile` (Antoine du Hamel / #5112)
+
 ## 5.8.0
 
 Released: 2024-04-16

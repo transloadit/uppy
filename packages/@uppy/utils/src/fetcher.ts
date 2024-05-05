@@ -44,7 +44,7 @@ export type FetcherOptions = {
   ) => void | Promise<void>
 
   /** Called when no XMLHttpRequest upload progress events have been received for `timeout` ms. */
-  onTimeout?: () => void
+  onTimeout?: (timeout: number) => void
 
   /** Signal to abort the upload. */
   signal?: AbortSignal

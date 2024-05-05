@@ -1,5 +1,19 @@
 # @uppy/xhr-upload
 
+## 3.6.6
+
+Released: 2024-05-03
+Included in: Uppy v3.25.1
+
+- @uppy/xhr-upload: do not throw when res is missing url (Merlijn Vos / #5132)
+
+## 3.6.5
+
+Released: 2024-04-29
+Included in: Uppy v3.25.0
+
+- @uppy/xhr-upload: refactor to use `fetcher` (Merlijn Vos / #5074)
+
 ## 3.6.4
 
 Released: 2024-02-28

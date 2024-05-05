@@ -1,4 +1,4 @@
-import type { FileProgress, FileProgressStarted } from './FileProgress'
+import type { FileProgress, FileProgressStarted } from './FileProgress.js'
 
 export default function getSpeed(fileProgress: FileProgress): number {
   if (!fileProgress.bytesUploaded) return 0

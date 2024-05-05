@@ -3,6 +3,7 @@ import { expectError, expectType } from 'tsd'
 import DefaultStore from '@uppy/store-default'
 // eslint-disable-next-line import/no-named-as-default
 import Uppy, { UIPlugin } from '..'
+// eslint-disable-next-line no-restricted-syntax
 import type {
   UploadedUppyFile,
   FailedUppyFile,

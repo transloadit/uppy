@@ -7,12 +7,12 @@ same way as the other components in the application.
 
 Uppy comes with two state management solutions (stores):
 
-* `@uppy/store-default`, a basic object-based store.
-* `@uppy/store-redux`, a store that uses a key in a Redux store.
+- `@uppy/store-default`, a basic object-based store.
+- `@uppy/store-redux`, a store that uses a key in a Redux store.
 
 You can also use a third-party store:
 
-* [uppy-store-ngrx](https://github.com/rimlin/uppy-store-ngrx/), keeping Uppy
+- [uppy-store-ngrx](https://github.com/rimlin/uppy-store-ngrx/), keeping Uppy
   state in a key in an [Ngrx](https://github.com/ngrx/platform) store for use
   with Angular.
 
@@ -92,9 +92,9 @@ work well with this!
 
 An Uppy store is an object with three methods.
 
-* `getState()` - Return the current state object.
-* `setState(patch)` - Merge the object `patch` into the current state.
-* `subscribe(listener)` - Call `listener` whenever the state changes. `listener`
+- `getState()` - Return the current state object.
+- `setState(patch)` - Merge the object `patch` into the current state.
+- `subscribe(listener)` - Call `listener` whenever the state changes. `listener`
   is a function that should receive three parameters:
   `(prevState, nextState, patch)`
 

@@ -1,5 +1,12 @@
 # @uppy/companion
 
+## 4.13.2
+
+Released: 2024-05-03
+Included in: Uppy v3.25.1
+
+- @uppy/companion: coerce `requestUrl` to a string (Antoine du Hamel / #5128)
+
 ## 4.13.1
 
 Released: 2024-04-10

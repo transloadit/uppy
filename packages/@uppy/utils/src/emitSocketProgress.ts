@@ -1,6 +1,6 @@
 import throttle from 'lodash/throttle.js'
-import type { UppyFile } from './UppyFile'
-import type { FileProgress } from './FileProgress'
+import type { UppyFile } from './UppyFile.js'
+import type { FileProgress } from './FileProgress.js'
 
 function emitSocketProgress(
   uploader: any,
