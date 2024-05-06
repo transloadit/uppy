@@ -78,10 +78,7 @@ import '@uppy/dashboard/dist/style.min.css';
 
 new Uppy()
 	.use(Dashboard, { inline: true, target: '#dashboard' })
-	.use(Facebook, {
-		target: Dashboard,
-		companionUrl: 'https://your-companion.com',
-	});
+	.use(Facebook, { companionUrl: 'https://your-companion.com' });
 ```
 
 ### Use in Companion

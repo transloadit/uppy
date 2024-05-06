@@ -76,10 +76,9 @@ import Dropbox from '@uppy/dropbox';
 import '@uppy/core/dist/style.min.css';
 import '@uppy/dashboard/dist/style.min.css';
 
-new Uppy().use(Dashboard, { inline: true, target: '#dashboard' }).use(Dropbox, {
-	target: Dashboard,
-	companionUrl: 'https://your-companion.com',
-});
+new Uppy()
+	.use(Dashboard, { inline: true, target: '#dashboard' })
+	.use(Dropbox, { companionUrl: 'https://your-companion.com' });
 ```
 
 ### Use in Companion

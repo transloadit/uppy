@@ -50,7 +50,7 @@ yarn add @uppy/audio
         import { Uppy, Dashboard, Audio } from "{{UPPY_JS_URL}}"
         const uppy = new Uppy()
         uppy.use(Dashboard, { inline: true, target: 'body' })
-        uppy.use(Audio, { target: Uppy.Dashboard })
+        uppy.use(Audio)
       `}
     </UppyCdnExample>
   </TabItem>
@@ -67,9 +67,7 @@ import '@uppy/core/dist/style.min.css';
 import '@uppy/dashboard/dist/style.min.css';
 import '@uppy/audio/dist/style.min.css';
 
-new Uppy()
-	.use(Dashboard, { inline: true, target: 'body' })
-	.use(Audio, { target: Dashboard });
+new Uppy().use(Dashboard, { inline: true, target: 'body' }).use(Audio);
 ```
 
 ### API

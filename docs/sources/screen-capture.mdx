@@ -62,7 +62,7 @@ yarn add @uppy/screen-capture
         import { Uppy, Dashboard, ScreenCapture } from "{{UPPY_JS_URL}}"
         const uppy = new Uppy()
         uppy.use(Dashboard, { inline: true, target: 'body' })
-        uppy.use(ScreenCapture, { target: Uppy.Dashboard })
+        uppy.use(ScreenCapture)
       `}
     </UppyCdnExample>
   </TabItem>
@@ -79,9 +79,7 @@ import '@uppy/core/dist/style.min.css';
 import '@uppy/dashboard/dist/style.min.css';
 import '@uppy/screen-capture/dist/style.min.css';
 
-new Uppy()
-	.use(Dashboard, { inline: true, target: 'body' })
-	.use(ScreenCapture, { target: Dashboard });
+new Uppy().use(Dashboard, { inline: true, target: 'body' }).use(ScreenCapture);
 ```
 
 ### API
