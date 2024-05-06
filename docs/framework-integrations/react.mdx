@@ -122,7 +122,7 @@ function Component() {
 	// IMPORTANT: passing an initializer function to prevent Uppy from being reinstantiated on every render.
 	const [uppy] = useState(() => new Uppy().use(Webcam));
 
-	return <Dashboard uppy={uppy} plugins={['Webcam']} />;
+	return <Dashboard uppy={uppy} />;
 }
 ```
 
@@ -180,7 +180,7 @@ function Component(props) {
 		uppy.getPlugin('Webcam').setOptions({ modes: props.webcamModes });
 	}, [props.webcamModes]);
 
-	return <Dashboard uppy={uppy} plugins={['Webcam']} />;
+	return <Dashboard uppy={uppy} />;
 }
 ```
 
