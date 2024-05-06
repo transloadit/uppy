@@ -150,8 +150,9 @@ The function syntax is not available when [`bundle`](#bundle) is set to `true`.
 
 :::note
 
-Failed requests are retried with the same headers.
-If you want to change the headers on retry, [such as refreshing an auth token](how-can-I-refresh-auth-tokens-after-they-expire),
+Failed requests are retried with the same headers. If you want to change the
+headers on retry,
+[such as refreshing an auth token](how-can-I-refresh-auth-tokens-after-they-expire),
 you can use `onBeforeRequest`.
 
 :::
@@ -215,18 +216,23 @@ credentials (`boolean`, default: `false`).
 
 ### `onBeforeRequest`
 
-An optional function that will be called before a HTTP request is sent out (`(xhr: XMLHttpRequest, retryCount: number) => void | Promise<void>`).
+An optional function that will be called before a HTTP request is sent out
+(`(xhr: XMLHttpRequest, retryCount: number) => void | Promise<void>`).
 
 ### `shouldRetry`
 
-An optional function called once an error appears and before retrying (`(xhr: XMLHttpRequesT) => boolean`).
+An optional function called once an error appears and before retrying
+(`(xhr: XMLHttpRequesT) => boolean`).
 
-The amount of retries is 3, even if you continue to return `true`.
-The default behavior uses [exponential backoff](https://en.wikipedia.org/wiki/Exponential_backoff) with a maximum of 3 retries.
+The amount of retries is 3, even if you continue to return `true`. The default
+behavior uses
+[exponential backoff](https://en.wikipedia.org/wiki/Exponential_backoff) with a
+maximum of 3 retries.
 
 ### `onAfterResponse`
 
-An optional function that will be called after a HTTP response has been received (`(xhr: XMLHttpRequest, retryCount: number) => void | Promise<void>`).
+An optional function that will be called after a HTTP response has been received
+(`(xhr: XMLHttpRequest, retryCount: number) => void | Promise<void>`).
 
 #### `locale: {}`
 
@@ -247,13 +253,13 @@ export default {
 import Uppy from '@uppy/core';
 import XHR from '@uppy/xhr-upload';
 
-let token
+let token;
 
 async function getAuthToken(refresh = false) {
-  if (!refresh && token) {
-    return token;
-  }
-  // fetch it
+	if (!refresh && token) {
+		return token;
+	}
+	// fetch it
 }
 
 new Uppy().use(XHR, {
