@@ -50,7 +50,7 @@
     "got": "^13.0.0",
     "grant": "5.4.22",
     "helmet": "^4.6.0",
-    "ioredis": "5.3.2",
+    "ioredis": "^5.3.2",
     "ipaddr.js": "^2.0.1",
     "jsonwebtoken": "9.0.2",
     "lodash": "^4.17.21",
