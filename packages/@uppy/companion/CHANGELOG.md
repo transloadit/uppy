@@ -1,5 +1,12 @@
 # @uppy/companion
 
+## 5.0.0-beta.5
+
+Released: 2024-05-03
+Included in: Uppy v4.0.0-beta.5
+
+- @uppy/companion: coerce `requestUrl` to a string (Antoine du Hamel / #5128)
+
 ## 5.0.0-beta.4
 
 Released: 2024-04-29
@@ -17,6 +24,13 @@ Included in: Uppy v4.0.0-beta.1
 
 - @uppy/companion: improve error msg (Mikael Finstad / #5010)
 - @uppy/companion: crash if trying to set path to / (Mikael Finstad / #5003)
+
+## 4.13.2
+
+Released: 2024-05-03
+Included in: Uppy v3.25.1
+
+- @uppy/companion: coerce `requestUrl` to a string (Antoine du Hamel / #5128)
 
 ## 4.13.1
 

@@ -12,6 +12,45 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 4.0.0-beta.5
+
+Released: 2024-05-03
+
+| Package                   |      Version | Package                   |      Version |
+| ------------------------- | ------------ | ------------------------- | ------------ |
+| @uppy/audio               | 2.0.0-beta.5 | @uppy/progress-bar        | 4.0.0-beta.4 |
+| @uppy/aws-s3              | 4.0.0-beta.3 | @uppy/provider-views      | 4.0.0-beta.5 |
+| @uppy/aws-s3-multipart    | 4.0.0-beta.5 | @uppy/react               | 4.0.0-beta.5 |
+| @uppy/box                 | 3.0.0-beta.5 | @uppy/redux-dev-tools     | 4.0.0-beta.2 |
+| @uppy/companion           | 5.0.0-beta.5 | @uppy/remote-sources      | 2.0.0-beta.4 |
+| @uppy/companion-client    | 4.0.0-beta.5 | @uppy/screen-capture      | 4.0.0-beta.4 |
+| @uppy/compressor          | 2.0.0-beta.5 | @uppy/status-bar          | 4.0.0-beta.5 |
+| @uppy/core                | 4.0.0-beta.5 | @uppy/store-default       | 4.0.0-beta.2 |
+| @uppy/dashboard           | 4.0.0-beta.5 | @uppy/store-redux         | 4.0.0-beta.3 |
+| @uppy/drag-drop           | 4.0.0-beta.4 | @uppy/svelte              | 4.0.0-beta.3 |
+| @uppy/dropbox             | 4.0.0-beta.5 | @uppy/thumbnail-generator | 4.0.0-beta.4 |
+| @uppy/facebook            | 4.0.0-beta.5 | @uppy/transloadit         | 4.0.0-beta.5 |
+| @uppy/file-input          | 4.0.0-beta.5 | @uppy/tus                 | 4.0.0-beta.4 |
+| @uppy/form                | 4.0.0-beta.3 | @uppy/unsplash            | 4.0.0-beta.5 |
+| @uppy/golden-retriever    | 4.0.0-beta.4 | @uppy/url                 | 4.0.0-beta.5 |
+| @uppy/google-drive        | 4.0.0-beta.5 | @uppy/utils               | 6.0.0-beta.5 |
+| @uppy/image-editor        | 3.0.0-beta.3 | @uppy/vue                 | 2.0.0-beta.2 |
+| @uppy/informer            | 4.0.0-beta.2 | @uppy/webcam              | 4.0.0-beta.5 |
+| @uppy/instagram           | 4.0.0-beta.5 | @uppy/xhr-upload          | 4.0.0-beta.3 |
+| @uppy/locales             | 4.0.0-beta.1 | @uppy/zoom                | 3.0.0-beta.5 |
+| @uppy/onedrive            | 4.0.0-beta.5 | uppy                      | 4.0.0-beta.5 |
+
+- @uppy/core: make UppyEventMap more readable (Murderlon)
+- @uppy/audio,@uppy/compressor,@uppy/core,@uppy/dashboard,@uppy/remote-sources,@uppy/tus,@uppy/utils: Format (Murderlon)
+- @uppy/aws-s3-multipart: Format (Murderlon)
+- meta: enable prettier for markdown (Merlijn Vos / #5133)
+- @uppy/xhr-upload: do not throw when res is missing url (Merlijn Vos / #5132)
+- @uppy/companion: coerce `requestUrl` to a string (Antoine du Hamel / #5128)
+- meta: enforce use of `.js` extension in `import type` declarations (Antoine du Hamel / #5126)
+- @uppy/core: add instance ID to generated IDs (Merlijn Vos / #5080)
+- @uppy/core: reference updated i18n in Restricter (Merlijn Vos / #5118)
+
+
 ## 4.0.0-beta.4
 
 Released: 2024-04-29
@@ -235,6 +274,25 @@ Released: 2024-03-28
 - @uppy/vue: [v4.x] remove manual types (Antoine du Hamel / #4803)
 - meta: prepare release workflow for beta versions (Antoine du Hamel)
 
+
+## 3.25.1
+
+Released: 2024-05-03
+
+| Package          | Version | Package          | Version |
+| ---------------- | ------- | ---------------- | ------- |
+| @uppy/companion  |  4.13.2 | @uppy/xhr-upload |   3.6.6 |
+| @uppy/core       |  3.11.1 | uppy             |  3.25.1 |
+| @uppy/locales    |   3.5.3 |                  |         |
+
+- @uppy/locales: Update ru_RU locale  (Uladzislau Bodryi / #5120)
+- meta: fix `update-contributors` script (Antoine du Hamel / #5137)
+- meta: fix `bullet` setting for ReMark (Antoine du Hamel)
+- meta: add prettier to `.md` pre-commit hooks (Antoine du Hamel)
+- @uppy/core: make UppyEventMap more readable (Murderlon)
+- meta: enable prettier for markdown (Merlijn Vos / #5133)
+- @uppy/xhr-upload: do not throw when res is missing url (Merlijn Vos / #5132)
+- @uppy/companion: coerce `requestUrl` to a string (Antoine du Hamel / #5128)
 
 
 ## 3.25.0
