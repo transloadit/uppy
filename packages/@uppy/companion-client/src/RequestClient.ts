@@ -584,10 +584,10 @@ export default class RequestClient<M extends Meta, B extends Body> {
         }
 
         const onFilePausedChange = (
-          targetFileId: string | undefined,
+          targetFile: UppyFile<M, B> | undefined,
           newPausedState: boolean,
         ) => {
-          if (targetFileId !== file.id) return
+          if (targetFile?.id !== file.id) return
           pause(newPausedState)
         }
 
