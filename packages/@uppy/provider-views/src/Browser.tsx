@@ -14,6 +14,7 @@ import type { PartialTree, PartialTreeFile, PartialTreeFolderNode } from '@uppy/
 import type { RestrictionError } from '@uppy/core/lib/Restricter.ts'
 import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
 import { useEffect, useState } from 'preact/hooks'
+import type ProviderView from './ProviderView/ProviderView.tsx'
 
 type BrowserProps<M extends Meta, B extends Body> = {
   displayedPartialTree: (PartialTreeFile | PartialTreeFolderNode)[],
@@ -21,7 +22,7 @@ type BrowserProps<M extends Meta, B extends Body> = {
 
   viewType: string
   headerComponent?: JSX.Element
-  toggleCheckbox: (event: Event, file: PartialTreeFile | PartialTreeFolderNode, isShiftKeyPressed: boolean) => void
+  toggleCheckbox: ProviderView<M, B>['toggleCheckbox']
   handleScroll: (event: Event) => Promise<void>
   showTitles: boolean
   i18n: I18n
@@ -88,6 +89,25 @@ function Browser<M extends Meta, B extends Body>(
     }
   }, [])
 
+  const renderItem = (item: PartialTreeFile | PartialTreeFolderNode) => (
+    <Item
+      viewType={viewType}
+      toggleCheckbox={(event: Event) => {
+        event.stopPropagation()
+        event.preventDefault()
+        // Prevent shift-clicking from highlighting file names
+        // (https://stackoverflow.com/a/1527797/3192470)
+        document.getSelection()?.removeAllRanges()
+        toggleCheckbox(item, isShiftKeyPressed)
+      }}
+      showTitles={showTitles}
+      i18n={i18n}
+      validateRestrictions={validateRestrictions}
+      openFolder={openFolder}
+      file={item}
+    />
+  )
+
   return (
     <div
       className={classNames(
@@ -128,17 +148,7 @@ function Browser<M extends Meta, B extends Body>(
               <ul className="uppy-ProviderBrowser-list">
                 <VirtualList
                   data={displayedPartialTree}
-                  renderRow={(file: PartialTreeFile | PartialTreeFolderNode) => (
-                    <Item
-                      viewType={viewType}
-                      toggleCheckbox={(event: Event) => toggleCheckbox(event, file, isShiftKeyPressed)}
-                      showTitles={showTitles}
-                      i18n={i18n}
-                      validateRestrictions={validateRestrictions}
-                      openFolder={openFolder}
-                      file={file}
-                    />
-                  )}
+                  renderRow={renderItem}
                   rowHeight={31}
                 />
               </ul>
@@ -155,17 +165,7 @@ function Browser<M extends Meta, B extends Body>(
               // making <ul> not focusable for firefox
               tabIndex={-1}
             >
-              {displayedPartialTree.map((file) => (
-                <Item
-                  viewType={viewType}
-                  toggleCheckbox={(event: Event) => toggleCheckbox(event, file, isShiftKeyPressed)}
-                  showTitles={showTitles}
-                  i18n={i18n}
-                  validateRestrictions={validateRestrictions}
-                  openFolder={openFolder}
-                  file={file}
-                />
-              ))}
+              {displayedPartialTree.map(renderItem)}
             </ul>
           </div>
         )

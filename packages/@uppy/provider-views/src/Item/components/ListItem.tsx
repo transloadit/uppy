@@ -86,7 +86,6 @@ export default function ListItem<M extends Meta, B extends Body>(
             </div>
             {showTitles && <span>{title}</span>}
           </button>
-
       }
     </li>
   )

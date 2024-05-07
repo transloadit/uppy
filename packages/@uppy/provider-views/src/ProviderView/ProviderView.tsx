@@ -336,20 +336,14 @@ export default class ProviderView<M extends Meta, B extends Body>{
     return breadcrumbs.toReversed()
   }
 
-  toggleCheckbox(e: Event, ourItem: PartialTreeFolderNode | PartialTreeFile, isShiftKeyPressed: boolean) {
-    e.stopPropagation()
-    e.preventDefault()
-    // Prevent shift-clicking from highlighting file names
-    // (https://stackoverflow.com/a/1527797/3192470)
-    document.getSelection()?.removeAllRanges()
-
+  toggleCheckbox(ourItem: PartialTreeFolderNode | PartialTreeFile, isShiftKeyPressed: boolean) {
     const { partialTree } = this.plugin.getPluginState()
 
     const clickedRange = getClickedRange(ourItem.id, this.getDisplayedPartialTree(), isShiftKeyPressed, this.lastCheckbox)
     const newPartialTree = PartialTreeUtils.afterToggleCheckbox(partialTree, clickedRange, validateRestrictions(this.plugin))
 
     this.plugin.setPluginState({ partialTree: newPartialTree })
-    this.lastCheckbox = ourItem.id!
+    this.lastCheckbox = ourItem.id
   }
 
   getDisplayedPartialTree = () : (PartialTreeFile | PartialTreeFolderNode)[] => {
