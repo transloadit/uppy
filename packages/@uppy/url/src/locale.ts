@@ -1,6 +1,6 @@
 export default {
   strings: {
-    pluginNameUrl: 'Url',
+    pluginNameUrl: 'Link',
     // Label for the "Import" button.
     import: 'Import',
     // Placeholder text for the URL input.
