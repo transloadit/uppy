@@ -571,6 +571,31 @@ export class Uppy<M extends Meta, B extends Body> {
     this.setState(undefined) // so that UI re-renders with new options
   }
 
+  resetProgress(): void {
+    const defaultProgress: Omit<FileProgressNotStarted, 'bytesTotal'> = {
+      percentage: 0,
+      bytesUploaded: 0,
+      uploadComplete: false,
+      uploadStarted: null,
+    }
+    const files = { ...this.getState().files }
+    const updatedFiles: State<M, B>['files'] = {}
+
+    Object.keys(files).forEach((fileID) => {
+      updatedFiles[fileID] = {
+        ...files[fileID],
+        progress: {
+          ...files[fileID].progress,
+          ...defaultProgress,
+        },
+      }
+    })
+
+    this.setState({ files: updatedFiles, ...defaultUploadState })
+
+    this.emit('reset-progress')
+  }
+
   clear(): void {
     this.setState({ ...defaultUploadState, files: {} })
   }
