@@ -41,8 +41,8 @@ import Tus from '@uppy/tus'
 const uppy = new Uppy()
   .use(Dashboard, { trigger: '#select-files' })
   .use(RemoteSources, { companionUrl: 'https://companion.uppy.io' })
-  .use(Webcam, { target: Dashboard })
-  .use(ImageEditor, { target: Dashboard })
+  .use(Webcam)
+  .use(ImageEditor)
   .use(Tus, { endpoint: 'https://tusd.tusdemo.net/files/' })
   .on('complete', (result) => {
     console.log('Upload result:', result)
@@ -79,7 +79,7 @@ npm install @uppy/core @uppy/dashboard @uppy/tus
 ```
 
 Add CSS
-[uppy.min.css](https://releases.transloadit.com/uppy/v3.25.1/uppy.min.css),
+[uppy.min.css](https://releases.transloadit.com/uppy/v3.25.2/uppy.min.css),
 either to your HTML page’s `<head>` or include in JS, if your bundler of choice
 supports it.
 
@@ -94,7 +94,7 @@ object.
 ```html
 <!-- 1. Add CSS to `<head>` -->
 <link
-  href="https://releases.transloadit.com/uppy/v3.25.1/uppy.min.css"
+  href="https://releases.transloadit.com/uppy/v3.25.2/uppy.min.css"
   rel="stylesheet"
 />
 
@@ -105,7 +105,7 @@ object.
     Uppy,
     Dashboard,
     Tus,
-  } from 'https://releases.transloadit.com/uppy/v3.25.1/uppy.min.mjs'
+  } from 'https://releases.transloadit.com/uppy/v3.25.2/uppy.min.mjs'
 
   const uppy = new Uppy()
   uppy.use(Dashboard, { target: '#files-drag-drop' })
@@ -240,7 +240,7 @@ If you’re using Uppy from CDN, those polyfills are already included in the
 legacy bundle, so no need to include anything additionally:
 
 ```html
-<script src="https://releases.transloadit.com/uppy/v3.25.1/uppy.legacy.min.js"></script>
+<script src="https://releases.transloadit.com/uppy/v3.25.2/uppy.legacy.min.js"></script>
 ```
 
 ## FAQ
