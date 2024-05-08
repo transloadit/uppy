@@ -2,12 +2,18 @@ import { expectTypeOf, test } from 'vitest'
 
 import type { Body, InternalMetadata, Meta } from '@uppy/utils/lib/UppyFile'
 import Uppy from './Uppy'
-import UIPlugin, { UIPluginOptions } from './UIPlugin'
+import UIPlugin, { type UIPluginOptions } from './UIPlugin'
 
 interface Opts extends UIPluginOptions {
   foo: string
 }
-class TestPlugin<M extends Meta, B extends Body> extends UIPlugin<Opts, M, B> {}
+class TestPlugin<M extends Meta, B extends Body> extends UIPlugin<Opts, M, B> {
+  constructor(uppy: Uppy<M, B>, opts?: Opts) {
+    super(uppy, opts)
+    this.id = 'TestPlugin'
+    this.type = 'acquirer'
+  }
+}
 
 test('can use Uppy class without generics', async () => {
   const core = new Uppy()
