@@ -23,7 +23,6 @@ function getMediaDevices() {
 }
 
 export interface ScreenCaptureOptions extends UIPluginOptions {
-  title?: string
   displayMediaConstraints?: MediaStreamConstraints
   userMediaConstraints?: MediaStreamConstraints
   preferredVideoMimeType?: string
@@ -102,14 +101,13 @@ export default class ScreenCapture<
     // eslint-disable-next-line no-restricted-globals
     this.protocol = location.protocol === 'https:' ? 'https' : 'http'
     this.id = this.opts.id || 'ScreenCapture'
-    this.title = this.opts.title || 'Screencast'
     this.type = 'acquirer'
     this.icon = ScreenRecIcon
 
     this.defaultLocale = locale
 
-    // i18n
     this.i18nInit()
+    this.title = this.i18n('pluginNameScreenCapture')
 
     // uppy plugin class related
     this.install = this.install.bind(this)
