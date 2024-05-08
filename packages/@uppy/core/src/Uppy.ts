@@ -571,7 +571,6 @@ export class Uppy<M extends Meta, B extends Body> {
     this.setState(undefined) // so that UI re-renders with new options
   }
 
-  // todo next major: remove
   resetProgress(): void {
     const defaultProgress: Omit<FileProgressNotStarted, 'bytesTotal'> = {
       percentage: 0,
@@ -597,9 +596,7 @@ export class Uppy<M extends Meta, B extends Body> {
     this.emit('reset-progress')
   }
 
-  // @todo next major: rename to `clear()`, make it also cancel ongoing uploads
-  // or throw and say you need to cancel manually
-  clearUploadedFiles(): void {
+  clear(): void {
     this.setState({ ...defaultUploadState, files: {} })
   }
 
@@ -1799,11 +1796,7 @@ export class Uppy<M extends Meta, B extends Body> {
   /**
    * Uninstall all plugins and close down this Uppy instance.
    */
-  // @todo next major: rename to `destroy`.
-  // Cancel local uploads, cancel remote uploads, DON'T cancel assemblies
-  // document that if you do want to cancel assemblies, you need to call smth manually.
-  // Potentially remove reason, as it’s confusing, just come up with a default behaviour.
-  close({ reason }: { reason?: FileRemoveReason } | undefined = {}): void {
+  destroy({ reason }: { reason?: FileRemoveReason } | undefined = {}): void {
     this.log(
       `Closing Uppy instance ${this.opts.id}: removing all files and uninstalling plugins`,
     )
