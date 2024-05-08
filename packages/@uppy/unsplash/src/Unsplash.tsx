@@ -10,6 +10,7 @@ import { h, type ComponentChild } from 'preact'
 
 import type { UppyFile, Body, Meta } from '@uppy/utils/lib/UppyFile'
 import type { UnknownSearchProviderPluginState } from '@uppy/core/lib/Uppy'
+import locale from './locale.ts'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'
@@ -42,7 +43,10 @@ export default class Unsplash<M extends Meta, B extends Body> extends UIPlugin<
     this.files = []
     this.storage = this.opts.storage || tokenStorage
     this.id = this.opts.id || 'Unsplash'
-    this.title = this.opts.title || 'Unsplash'
+
+    this.defaultLocale = locale
+    this.i18nInit()
+    this.title = this.i18n('pluginNameUnsplash')
 
     this.icon = () => (
       <svg

@@ -35,7 +35,7 @@ describe('Dashboard', () => {
       core.use(DashboardPlugin, { inline: false })
     }).not.toThrow()
 
-    core.close()
+    core.destroy()
   })
 
   it('works without any remote provider plugins', () => {
@@ -48,7 +48,7 @@ describe('Dashboard', () => {
       })
     }).not.toThrow()
 
-    core.close()
+    core.destroy()
   })
 
   it('works when targeting remote provider plugins using `target`', () => {
@@ -64,7 +64,7 @@ describe('Dashboard', () => {
       })
     }).not.toThrow()
 
-    core.close()
+    core.destroy()
   })
 
   it('works when passing plugins in `plugins` array', () => {
@@ -79,7 +79,7 @@ describe('Dashboard', () => {
       })
     }).not.toThrow()
 
-    core.close()
+    core.destroy()
   })
 
   it('should automatically add plugins which have no target', () => {
@@ -98,7 +98,7 @@ describe('Dashboard', () => {
       true,
     )
 
-    core.close()
+    core.destroy()
   })
 
   it('should not automatically add plugins which have a non-Dashboard target', () => {
@@ -118,7 +118,7 @@ describe('Dashboard', () => {
       false,
     )
 
-    core.close()
+    core.destroy()
   })
 
   it('should change options on the fly', () => {
@@ -168,6 +168,6 @@ describe('Dashboard', () => {
       })
     }).not.toThrow()
 
-    core.close()
+    core.destroy()
   })
 })

@@ -1,5 +1,6 @@
 export default {
   strings: {
+    pluginNameScreenCapture: 'Screencast',
     startCapturing: 'Begin screen capturing',
     stopCapturing: 'Stop screen capturing',
     submitRecordedFile: 'Submit recorded file',

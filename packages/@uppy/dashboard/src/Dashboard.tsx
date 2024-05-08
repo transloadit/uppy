@@ -284,7 +284,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
 
     // Dynamic default options:
     this.opts.doneButtonHandler ??= () => {
-      this.uppy.clearUploadedFiles()
+      this.uppy.clear()
       this.requestCloseModal()
     }
     this.opts.onRequestCloseModal ??= () => this.closeModal()

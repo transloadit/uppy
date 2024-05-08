@@ -75,7 +75,7 @@ export default class Dropbox<M extends Meta, B extends Body> extends UIPlugin<
     this.defaultLocale = locale
 
     this.i18nInit()
-    this.title = this.opts.title || this.i18n('pluginNameDropbox')
+    this.title = this.i18n('pluginNameDropbox')
 
     this.onFirstRender = this.onFirstRender.bind(this)
     this.render = this.render.bind(this)

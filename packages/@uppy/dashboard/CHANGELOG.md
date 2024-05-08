@@ -28,6 +28,12 @@ Included in: Uppy v4.0.0-beta.1
 - @uppy/dashboard: refactor to TypeScript (Antoine du Hamel / #4984)
 - @uppy/dashboard: refactor to stable lifecycle method (Antoine du Hamel / #4999)
 
+## 3.8.3
+
+Released: 2024-05-07
+Included in: Uppy v3.25.2
+
+- @uppy/compressor,@uppy/core,@uppy/dashboard,@uppy/status-bar: Upgrade @transloadit/prettier-bytes (Merlijn Vos / #5150)
 
 ## 3.8.2
 
