@@ -12,6 +12,19 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 4.0.0-beta.6
+
+Released: 2024-05-08
+
+| Package          |      Version | Package          |      Version |
+| ---------------- | ------------ | ---------------- | ------------ |
+| @uppy/compressor | 2.0.0-beta.6 | @uppy/status-bar | 4.0.0-beta.6 |
+| @uppy/core       | 4.0.0-beta.6 | uppy             | 4.0.0-beta.6 |
+| @uppy/dashboard  | 4.0.0-beta.6 |                  |              |
+
+
+
+
 ## 4.0.0-beta.5
 
 Released: 2024-05-03
@@ -273,6 +286,19 @@ Released: 2024-03-28
 - meta: enable CI on `4.x` branch (Antoine du Hamel)
 - @uppy/vue: [v4.x] remove manual types (Antoine du Hamel / #4803)
 - meta: prepare release workflow for beta versions (Antoine du Hamel)
+
+## 3.25.2
+
+Released: 2024-05-07
+
+| Package          | Version | Package          | Version |
+| ---------------- | ------- | ---------------- | ------- |
+| @uppy/compressor |   1.1.4 | @uppy/status-bar |   3.3.3 |
+| @uppy/core       |  3.11.2 | uppy             |  3.25.2 |
+| @uppy/dashboard  |   3.8.3 |                  |         |
+
+- @uppy/compressor,@uppy/core,@uppy/dashboard,@uppy/status-bar: Upgrade @transloadit/prettier-bytes (Merlijn Vos / #5150)
+- meta: run Prettier in the release workflow (Antoine du Hamel)
 
 
 ## 3.25.1
@@ -3049,7 +3075,7 @@ In this release we’ve improved testing DX and CORS handling in Companion, adde
 - @uppy/aws-s3: removeUploader triggered on uninstall (#2824 / @slawexxx44)
 - @uppy/companion: Add additional Google Drive Metadata (#2795 / @ajh-sr)
 - @uppy/companion: Feature: add redis pubsub scope setting (#2804 / @coreprocess)
-- @uppy/companion: fix running on a subpath (#2841, #2797 / @coreprocess, @goto-bus-stop) 
+- @uppy/companion: fix running on a subpath (#2841, #2797 / @coreprocess, @goto-bus-stop)
 - @uppy/companion: Fix videoMediaMetadata property name (6cb90c613c5d3b256194e039bfce30d6de6a6dac / @goto-bus-stop)
 - @uppy/companion: Improve companion unit testing DX (#2827 / @mifi)
 - @uppy/companion: Use `cors` module instead of custom cors logic (#2823 / @mifi)
