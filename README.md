@@ -41,8 +41,8 @@ import Tus from '@uppy/tus'
 const uppy = new Uppy()
   .use(Dashboard, { trigger: '#select-files' })
   .use(RemoteSources, { companionUrl: 'https://companion.uppy.io' })
-  .use(Webcam, { target: Dashboard })
-  .use(ImageEditor, { target: Dashboard })
+  .use(Webcam)
+  .use(ImageEditor)
   .use(Tus, { endpoint: 'https://tusd.tusdemo.net/files/' })
   .on('complete', (result) => {
     console.log('Upload result:', result)
