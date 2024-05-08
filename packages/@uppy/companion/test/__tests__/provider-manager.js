@@ -102,7 +102,7 @@ describe('Test Provider options', () => {
       secret: 'google_secret',
       transport: 'session',
       redirect_uri: 'http://localhost:3020/googlephotos/redirect',
-      scope: ['https://www.googleapis.com/auth/photoslibrary.readonly'],
+      scope: ['https://www.googleapis.com/auth/photoslibrary.readonly', 'https://www.googleapis.com/auth/userinfo.email'],
       callback: '/googlephotos/callback',
       custom_params: {
         access_type: 'offline',

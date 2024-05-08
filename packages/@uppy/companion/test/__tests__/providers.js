@@ -212,6 +212,10 @@ describe('list provider files', () => {
       ]
     })
 
+    nock('https://www.googleapis.com').get('/oauth2/v1/userinfo').reply(200, {
+      email: defaults.USERNAME,
+    })
+
     const { items } = await runTest('googlephotos')
 
     expect(items[0].isFolder).toBe(true)
