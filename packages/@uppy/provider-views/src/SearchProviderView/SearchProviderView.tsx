@@ -185,7 +185,7 @@ export default class SearchProviderView<M extends Meta, B extends Body> {
     }
   }
 
-  donePicking(): void {
+  async donePicking(): Promise<void> {
     const { partialTree } = this.plugin.getPluginState()
     this.plugin.uppy.log('Adding remote search provider files')
     const checkedFiles = partialTree.filter((i) => i.type !== 'root' && i.status === 'checked') as PartialTreeFile[]
@@ -252,9 +252,9 @@ export default class SearchProviderView<M extends Meta, B extends Body> {
         displayedPartialTree={this.getDisplayedPartialTree()}
         nOfSelectedFiles={getNOfSelectedFiles(partialTree)}
         handleScroll={this.handleScroll}
-        done={this.donePicking}
-        cancel={this.cancelSelection}
-        openFolder={() => {}}
+        donePicking={this.donePicking}
+        cancelSelection={this.cancelSelection}
+        openFolder={async () => {}}
         showSearchFilter={opts.showFilter}
         searchString={searchString}
         setSearchString={this.setSearchString}
@@ -267,6 +267,7 @@ export default class SearchProviderView<M extends Meta, B extends Body> {
         isLoading={loading}
         i18n={i18n}
         validateRestrictions={validateRestrictions(this.plugin)}
+        loadAllFiles={false}
       />
     )
   }

@@ -407,8 +407,8 @@ export default class ProviderView<M extends Meta, B extends Body>{
 
       noResultsLabel={i18n('noFilesFound')}
       handleScroll={this.handleScroll}
-      done={this.donePicking}
-      cancel={this.cancelSelection}
+      donePicking={this.donePicking}
+      cancelSelection={this.cancelSelection}
       headerComponent={
         <Header<M, B>
           showBreadcrumbs={opts.showBreadcrumbs}

@@ -10,7 +10,7 @@ import type { I18n } from '@uppy/utils/lib/Translator'
 import SearchFilterInput from './SearchFilterInput.tsx'
 import FooterActions from './FooterActions.tsx'
 import Item from './Item/index.tsx'
-import type { PartialTree, PartialTreeFile, PartialTreeFolderNode } from '@uppy/core/lib/Uppy.ts'
+import type { PartialTreeFile, PartialTreeFolderNode } from '@uppy/core/lib/Uppy.ts'
 import type { RestrictionError } from '@uppy/core/lib/Restricter.ts'
 import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
 import { useEffect, useState } from 'preact/hooks'
@@ -19,7 +19,6 @@ import type ProviderView from './ProviderView/ProviderView.tsx'
 type BrowserProps<M extends Meta, B extends Body> = {
   displayedPartialTree: (PartialTreeFile | PartialTreeFolderNode)[],
   nOfSelectedFiles: number,
-
   viewType: string
   headerComponent?: JSX.Element
   toggleCheckbox: ProviderView<M, B>['toggleCheckbox']
@@ -34,11 +33,11 @@ type BrowserProps<M extends Meta, B extends Body> = {
   submitSearchString: () => void
   searchInputLabel: string
   clearSearchLabel: string
-  openFolder: (folderId: any) => void
-  cancel: () => void
-  done: () => void
+  openFolder: ProviderView<M, B>['openFolder']
+  cancelSelection: ProviderView<M, B>['cancelSelection']
+  donePicking: ProviderView<M, B>['donePicking']
   noResultsLabel: string
-  loadAllFiles?: boolean
+  loadAllFiles: boolean
 }
 
 function Browser<M extends Meta, B extends Body>(
@@ -64,8 +63,8 @@ function Browser<M extends Meta, B extends Body>(
     searchInputLabel,
     clearSearchLabel,
     openFolder,
-    cancel,
-    done,
+    cancelSelection,
+    donePicking,
     noResultsLabel,
     loadAllFiles,
   } = props
@@ -173,9 +172,9 @@ function Browser<M extends Meta, B extends Body>(
 
       {nOfSelectedFiles > 0 && (
         <FooterActions
-          selected={nOfSelectedFiles}
-          done={done}
-          cancel={cancel}
+          nOfSelectedFiles={nOfSelectedFiles}
+          donePicking={donePicking}
+          cancelSelection={cancelSelection}
           i18n={i18n}
         />
       )}
