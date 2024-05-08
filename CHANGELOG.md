@@ -12,6 +12,19 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 4.0.0-beta.6
+
+Released: 2024-05-08
+
+| Package          |      Version | Package          |      Version |
+| ---------------- | ------------ | ---------------- | ------------ |
+| @uppy/compressor | 2.0.0-beta.6 | @uppy/status-bar | 4.0.0-beta.6 |
+| @uppy/core       | 4.0.0-beta.6 | uppy             | 4.0.0-beta.6 |
+| @uppy/dashboard  | 4.0.0-beta.6 |                  |              |
+
+
+
+
 ## 4.0.0-beta.5
 
 Released: 2024-05-03
