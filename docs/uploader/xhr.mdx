@@ -253,24 +253,24 @@ export default {
 import Uppy from '@uppy/core';
 import XHR from '@uppy/xhr-upload';
 
-let token;
+let token = null;
 
-async function getAuthToken(refresh = false) {
-	if (!refresh && token) {
-		return token;
-	}
-	// fetch it
+async function getAuthToken() {
+	token = await fetch('/auth/token').then((res) => res.json());
 }
 
 new Uppy().use(XHR, {
 	endpoint: '<your-endpoint>',
+	// Called again for every retry too.
 	async onBeforeRequest(xhr) {
-		const token = await getAuthToken();
+		if (!token) {
+			token = await getAuthToken();
+		}
 		xhr.setRequestHeader('Authorization', `Bearer ${token}`);
 	},
 	async onAfterResponse(xhr) {
 		if (xhr.status === 401) {
-			await getAuthToken(true);
+			token = null;
 		}
 	},
 });
