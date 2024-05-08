@@ -708,15 +708,15 @@ export class Uppy<M extends Meta, B extends Body> {
     const { files: filesObject, totalProgress, error } = this.getState()
     const files = Object.values(filesObject)
 
-    const inProgressFiles = []
-    const newFiles = []
-    const startedFiles = []
-    const uploadStartedFiles = []
-    const pausedFiles = []
-    const completeFiles = []
-    const erroredFiles = []
-    const inProgressNotPausedFiles = []
-    const processingFiles = []
+    const inProgressFiles: UppyFile<M, B>[] = []
+    const newFiles: UppyFile<M, B>[] = []
+    const startedFiles: UppyFile<M, B>[] = []
+    const uploadStartedFiles: UppyFile<M, B>[] = []
+    const pausedFiles: UppyFile<M, B>[] = []
+    const completeFiles: UppyFile<M, B>[] = []
+    const erroredFiles: UppyFile<M, B>[] = []
+    const inProgressNotPausedFiles: UppyFile<M, B>[] = []
+    const processingFiles: UppyFile<M, B>[] = []
 
     for (const file of files) {
       const { progress } = file
