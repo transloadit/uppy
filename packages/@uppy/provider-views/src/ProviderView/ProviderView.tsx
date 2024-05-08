@@ -28,6 +28,9 @@ import shouldHandleScroll from '../utils/shouldHandleScroll.ts'
 import handleError from '../utils/handleError.ts'
 import validateRestrictions from '../utils/validateRestrictions.ts'
 import getClickedRange from '../utils/getClickedRange.ts'
+import classNames from 'classnames'
+import SearchFilterInput from '../SearchFilterInput.tsx'
+import FooterActions from '../FooterActions.tsx'
 
 export function defaultPickerIcon(): JSX.Element {
   return (
@@ -387,46 +390,62 @@ export default class ProviderView<M extends Meta, B extends Body>{
       )
     }
 
-    return <Browser<M, B>
-      toggleCheckbox={this.toggleCheckbox}
-      displayedPartialTree={this.getDisplayedPartialTree()}
-      nOfSelectedFiles={getNOfSelectedFiles(partialTree)}
-      openFolder={this.openFolder}
-      loadAllFiles={opts.loadAllFiles}
+    const nOfSelectedFiles = getNOfSelectedFiles(partialTree)
 
-      // For SearchFilterInput component
-      showSearchFilter={opts.showFilter}
-      searchInputLabel={i18n('filter')}
-      clearSearchLabel={i18n('resetFilter')}
-      searchString={searchString}
-      setSearchString={(searchString: string) => {
-        console.log('setting searchString!', searchString);
-        this.plugin.setPluginState({ searchString })
-      }}
-      submitSearchString={() => {}}
+    return <div
+      className={classNames(
+        'uppy-ProviderBrowser',
+        `uppy-ProviderBrowser-viewType--${opts.viewType}`,
+      )}
+    >
+      <Header<M, B>
+        showBreadcrumbs={opts.showBreadcrumbs}
+        openFolder={this.openFolder}
+        breadcrumbs={this.getBreadcrumbs()}
+        pluginIcon={pluginIcon}
+        title={this.plugin.title}
+        logout={this.logout}
+        username={username}
+        i18n={i18n}
+      />
 
-      noResultsLabel={i18n('noFilesFound')}
-      handleScroll={this.handleScroll}
-      donePicking={this.donePicking}
-      cancelSelection={this.cancelSelection}
-      headerComponent={
-        <Header<M, B>
-          showBreadcrumbs={opts.showBreadcrumbs}
-          openFolder={this.openFolder}
-          breadcrumbs={this.getBreadcrumbs()}
-          pluginIcon={pluginIcon}
-          title={this.plugin.title}
-          logout={this.logout}
-          username={username}
+      {opts.showFilter && (
+        <SearchFilterInput
+          searchString={searchString}
+          setSearchString={(searchString: string) => {
+            console.log('setting searchString!', searchString);
+            this.plugin.setPluginState({ searchString })
+          }}
+          submitSearchString={() => {}}
+          inputLabel={i18n('filter')}
+          clearSearchLabel={i18n('resetFilter')}
+          wrapperClassName="uppy-ProviderBrowser-searchFilter"
+          inputClassName="uppy-ProviderBrowser-searchFilterInput"
+        />
+      )}
+
+      <Browser<M, B>
+        toggleCheckbox={this.toggleCheckbox}
+        displayedPartialTree={this.getDisplayedPartialTree()}
+        openFolder={this.openFolder}
+        loadAllFiles={opts.loadAllFiles}
+        noResultsLabel={i18n('noFilesFound')}
+        handleScroll={this.handleScroll}
+        viewType={opts.viewType}
+        showTitles={opts.showTitles}
+        i18n={this.plugin.uppy.i18n}
+        validateRestrictions={validateRestrictions(this.plugin)}
+        isLoading={loading}
+      />
+
+      {nOfSelectedFiles > 0 && (
+        <FooterActions
+          nOfSelectedFiles={nOfSelectedFiles}
+          donePicking={this.donePicking}
+          cancelSelection={this.cancelSelection}
           i18n={i18n}
         />
-      }
-      viewType={opts.viewType}
-      showTitles={opts.showTitles}
-      i18n={this.plugin.uppy.i18n}
-
-      validateRestrictions={validateRestrictions(this.plugin)}
-      isLoading={loading}
-    />
+      )}
+    </div>
   }
 }

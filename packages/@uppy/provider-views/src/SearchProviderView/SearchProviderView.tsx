@@ -17,6 +17,8 @@ import handleError from '../utils/handleError.ts'
 import validateRestrictions from '../utils/validateRestrictions.ts'
 import getClickedRange from '../utils/getClickedRange.ts'
 import injectPaths from '../utils/PartialTreeUtils/injectPaths.ts'
+import classNames from 'classnames'
+import FooterActions from '../FooterActions.tsx'
 
 const defaultState : UnknownSearchProviderPluginState = {
   loading: false,
@@ -246,21 +248,32 @@ export default class SearchProviderView<M extends Meta, B extends Body> {
       )
     }
 
-    return (
+    const nOfSelectedFiles = getNOfSelectedFiles(partialTree)
+
+    return <div
+      className={classNames(
+        'uppy-ProviderBrowser',
+        `uppy-ProviderBrowser-viewType--${opts.viewType}`,
+      )}
+    >
+      {opts.showFilter && (
+        <SearchFilterInput
+          searchString={searchString}
+          setSearchString={this.setSearchString}
+          submitSearchString={this.search}
+          inputLabel={i18n('search')}
+          clearSearchLabel={i18n('resetSearch')}
+          wrapperClassName="uppy-ProviderBrowser-searchFilter"
+          inputClassName="uppy-ProviderBrowser-searchFilterInput"
+        />
+      )}
+
       <Browser
         toggleCheckbox={this.toggleCheckbox}
         displayedPartialTree={this.getDisplayedPartialTree()}
-        nOfSelectedFiles={getNOfSelectedFiles(partialTree)}
         handleScroll={this.handleScroll}
-        donePicking={this.donePicking}
-        cancelSelection={this.cancelSelection}
         openFolder={async () => {}}
-        showSearchFilter={opts.showFilter}
-        searchString={searchString}
-        setSearchString={this.setSearchString}
-        submitSearchString={this.search}
-        searchInputLabel={i18n('search')}
-        clearSearchLabel={i18n('resetSearch')}
+    
         noResultsLabel={i18n('noSearchResults')}
         viewType={opts.viewType}
         showTitles={opts.showTitles}
@@ -269,6 +282,15 @@ export default class SearchProviderView<M extends Meta, B extends Body> {
         validateRestrictions={validateRestrictions(this.plugin)}
         loadAllFiles={false}
       />
-    )
+
+      {nOfSelectedFiles > 0 && (
+        <FooterActions
+          nOfSelectedFiles={nOfSelectedFiles}
+          donePicking={this.donePicking}
+          cancelSelection={this.cancelSelection}
+          i18n={i18n}
+        />
+      )}
+    </div>
   }
 }

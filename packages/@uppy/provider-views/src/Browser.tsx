@@ -1,14 +1,11 @@
 /* eslint-disable react/require-default-props */
 import { h } from 'preact'
 
-import classNames from 'classnames'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore untyped
 import VirtualList from '@uppy/utils/lib/VirtualList'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import type { I18n } from '@uppy/utils/lib/Translator'
-import SearchFilterInput from './SearchFilterInput.tsx'
-import FooterActions from './FooterActions.tsx'
 import Item from './Item/index.tsx'
 import type { PartialTreeFile, PartialTreeFolderNode } from '@uppy/core/lib/Uppy.ts'
 import type { RestrictionError } from '@uppy/core/lib/Restricter.ts'
@@ -18,24 +15,14 @@ import type ProviderView from './ProviderView/ProviderView.tsx'
 
 type BrowserProps<M extends Meta, B extends Body> = {
   displayedPartialTree: (PartialTreeFile | PartialTreeFolderNode)[],
-  nOfSelectedFiles: number,
   viewType: string
-  headerComponent?: JSX.Element
   toggleCheckbox: ProviderView<M, B>['toggleCheckbox']
-  handleScroll: (event: Event) => Promise<void>
+  handleScroll: ProviderView<M, B>['handleScroll']
   showTitles: boolean
   i18n: I18n
   validateRestrictions: (file: CompanionFile) => RestrictionError<M, B> | null
   isLoading: boolean | string
-  showSearchFilter: boolean
-  searchString: string
-  setSearchString: (s: string) => void
-  submitSearchString: () => void
-  searchInputLabel: string
-  clearSearchLabel: string
   openFolder: ProviderView<M, B>['openFolder']
-  cancelSelection: ProviderView<M, B>['cancelSelection']
-  donePicking: ProviderView<M, B>['donePicking']
   noResultsLabel: string
   loadAllFiles: boolean
 }
@@ -45,26 +32,14 @@ function Browser<M extends Meta, B extends Body>(
 ): JSX.Element {
   const {
     displayedPartialTree,
-    nOfSelectedFiles,
     viewType,
-    headerComponent,
     toggleCheckbox,
     handleScroll,
     showTitles,
     i18n,
     validateRestrictions,
     isLoading,
-    showSearchFilter,
-
-    searchString,
-    setSearchString,
-    submitSearchString,
-
-    searchInputLabel,
-    clearSearchLabel,
     openFolder,
-    cancelSelection,
-    donePicking,
     noResultsLabel,
     loadAllFiles,
   } = props
@@ -88,6 +63,22 @@ function Browser<M extends Meta, B extends Body>(
     }
   }, [])
 
+  if (isLoading) {
+    return (
+      <div className="uppy-Provider-loading">
+        <span>{i18n('loading')}</span>
+      </div>
+    )
+  }
+
+  if (displayedPartialTree.length === 0) {
+    return (
+      <div className="uppy-Provider-empty">
+        {noResultsLabel}
+      </div>
+    )
+  }
+
   const renderItem = (item: PartialTreeFile | PartialTreeFolderNode) => (
     <Item
       viewType={viewType}
@@ -107,79 +98,33 @@ function Browser<M extends Meta, B extends Body>(
     />
   )
 
-  return (
-    <div
-      className={classNames(
-        'uppy-ProviderBrowser',
-        `uppy-ProviderBrowser-viewType--${viewType}`,
-      )}
-    >
-      {headerComponent || null}
-
-      {showSearchFilter && (
-        <SearchFilterInput
-          searchString={searchString}
-          setSearchString={setSearchString}
-          submitSearchString={submitSearchString}
-          inputLabel={searchInputLabel}
-          clearSearchLabel={clearSearchLabel}
-          wrapperClassName="uppy-ProviderBrowser-searchFilter"
-          inputClassName="uppy-ProviderBrowser-searchFilterInput"
-        />
-      )}
-
-      {(() => {
-        if (isLoading) {
-          return (
-            <div className="uppy-Provider-loading">
-              <span>{i18n('loading')}</span>
-            </div>
-          )
-        }
-
-        if (displayedPartialTree.length === 0) {
-          return <div className="uppy-Provider-empty">{noResultsLabel}</div>
-        }
-
-        if (loadAllFiles) {
-          return (
-            <div className="uppy-ProviderBrowser-body">
-              <ul className="uppy-ProviderBrowser-list">
-                <VirtualList
-                  data={displayedPartialTree}
-                  renderRow={renderItem}
-                  rowHeight={31}
-                />
-              </ul>
-            </div>
-          )
-        }
-
-        return (
-          <div className="uppy-ProviderBrowser-body">
-            <ul
-              className="uppy-ProviderBrowser-list"
-              onScroll={handleScroll}
-              role="listbox"
-              // making <ul> not focusable for firefox
-              tabIndex={-1}
-            >
-              {displayedPartialTree.map(renderItem)}
-            </ul>
-          </div>
-        )
-      })()}
-
-      {nOfSelectedFiles > 0 && (
-        <FooterActions
-          nOfSelectedFiles={nOfSelectedFiles}
-          donePicking={donePicking}
-          cancelSelection={cancelSelection}
-          i18n={i18n}
-        />
-      )}
-    </div>
-  )
+  if (loadAllFiles) {
+    return (
+      <div className="uppy-ProviderBrowser-body">
+        <ul className="uppy-ProviderBrowser-list">
+          <VirtualList
+            data={displayedPartialTree}
+            renderRow={renderItem}
+            rowHeight={31}
+          />
+        </ul>
+      </div>
+    )
+  } else {
+    return (
+      <div className="uppy-ProviderBrowser-body">
+        <ul
+          className="uppy-ProviderBrowser-list"
+          onScroll={handleScroll}
+          role="listbox"
+          // making <ul> not focusable for firefox
+          tabIndex={-1}
+        >
+          {displayedPartialTree.map(renderItem)}
+        </ul>
+      </div>
+    )
+  }
 }
 
 export default Browser
