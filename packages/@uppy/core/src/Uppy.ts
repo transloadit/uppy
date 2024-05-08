@@ -688,7 +688,6 @@ export class Uppy<M extends Meta, B extends Body> {
     return ids.map((id) => this.getFile(id))
   }
 
-  // TODO: remove or refactor this method. It's very inefficient
   getObjectOfFilesPerState(): {
     newFiles: UppyFile<M, B>[]
     startedFiles: UppyFile<M, B>[]
@@ -708,28 +707,52 @@ export class Uppy<M extends Meta, B extends Body> {
   } {
     const { files: filesObject, totalProgress, error } = this.getState()
     const files = Object.values(filesObject)
-    const inProgressFiles = files.filter(
-      ({ progress }) => !progress.uploadComplete && progress.uploadStarted,
-    )
-    const newFiles = files.filter((file) => !file.progress.uploadStarted)
-    const startedFiles = files.filter(
-      (file) =>
-        file.progress.uploadStarted ||
-        file.progress.preprocess ||
-        file.progress.postprocess,
-    )
-    const uploadStartedFiles = files.filter(
-      (file) => file.progress.uploadStarted,
-    )
-    const pausedFiles = files.filter((file) => file.isPaused)
-    const completeFiles = files.filter((file) => file.progress.uploadComplete)
-    const erroredFiles = files.filter((file) => file.error)
-    const inProgressNotPausedFiles = inProgressFiles.filter(
-      (file) => !file.isPaused,
-    )
-    const processingFiles = files.filter(
-      (file) => file.progress.preprocess || file.progress.postprocess,
-    )
+
+    const inProgressFiles = []
+    const newFiles = []
+    const startedFiles = []
+    const uploadStartedFiles = []
+    const pausedFiles = []
+    const completeFiles = []
+    const erroredFiles = []
+    const inProgressNotPausedFiles = []
+    const processingFiles = []
+
+    for (const file of files) {
+      const { progress } = file
+
+      if (!progress.uploadComplete && progress.uploadStarted) {
+        inProgressFiles.push(file)
+        if (!file.isPaused) {
+          inProgressNotPausedFiles.push(file)
+        }
+      }
+      if (!progress.uploadStarted) {
+        newFiles.push(file)
+      }
+      if (
+        progress.uploadStarted ||
+        progress.preprocess ||
+        progress.postprocess
+      ) {
+        startedFiles.push(file)
+      }
+      if (progress.uploadStarted) {
+        uploadStartedFiles.push(file)
+      }
+      if (file.isPaused) {
+        pausedFiles.push(file)
+      }
+      if (progress.uploadComplete) {
+        completeFiles.push(file)
+      }
+      if (file.error) {
+        erroredFiles.push(file)
+      }
+      if (progress.preprocess || progress.postprocess) {
+        processingFiles.push(file)
+      }
+    }
 
     return {
       newFiles,
