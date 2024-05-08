@@ -23,7 +23,6 @@ function getMediaDevices() {
 }
 
 export interface ScreenCaptureOptions extends UIPluginOptions {
-  title?: string
   displayMediaConstraints?: MediaStreamConstraints
   userMediaConstraints?: MediaStreamConstraints
   preferredVideoMimeType?: string
