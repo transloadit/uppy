@@ -268,13 +268,13 @@ export interface _UppyEventMap<M extends Meta, B extends Body> {
   'restore-canceled': () => void
   'restriction-failed': (file: UppyFile<M, B> | undefined, error: Error) => void
   'resume-all': () => void
-  'retry-all': (fileIDs: string[]) => void
+  'retry-all': (files: UppyFile<M, B>[]) => void
   'state-update': (
     prevState: State<M, B>,
     nextState: State<M, B>,
     patch?: Partial<State<M, B>>,
   ) => void
-  upload: (data: { id: string; fileIDs: string[] }) => void
+  upload: (uploadID: string, files: UppyFile<M, B>[]) => void
   'upload-error': (
     file: UppyFile<M, B> | undefined,
     error: { name: string; message: string; details?: string },
@@ -1269,7 +1269,7 @@ export class Uppy<M extends Meta, B extends Body> {
       error: null,
     })
 
-    this.emit('retry-all', filesToRetry)
+    this.emit('retry-all', Object.values(updatedFiles))
 
     if (filesToRetry.length === 0) {
       return Promise.resolve({
@@ -1940,10 +1940,7 @@ export class Uppy<M extends Meta, B extends Body> {
 
     const uploadID = nanoid()
 
-    this.emit('upload', {
-      id: uploadID,
-      fileIDs,
-    })
+    this.emit('upload', uploadID, this.getFiles())
 
     this.setState({
       allowNewUpload:
