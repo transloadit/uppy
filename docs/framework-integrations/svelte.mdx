@@ -50,7 +50,7 @@ instance can be passed into components as an `uppy` prop. Due to the way Svelte
 handles reactivity, you can initialize Uppy the same way you would with vanilla
 JavaScript.
 
-```html
+```svelte
 <script>
 	import { Dashboard } from '@uppy/svelte';
 	import Uppy from '@uppy/core';
@@ -64,7 +64,7 @@ JavaScript.
 	const uppy = new Uppy().use(Webcam);
 </script>
 
-<main><Dashboard uppy="{uppy}" /></main>
+<main><Dashboard uppy={uppy} /></main>
 ```
 
 [svelte]: https://svelte.dev
