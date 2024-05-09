@@ -8,7 +8,8 @@ import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
 import type { Uppy } from '@uppy/core'
 import Assembly from './Assembly.ts'
 import Client, { AssemblyError } from './Client.ts'
-import AssemblyOptionsBuilder, {
+import {
+  validateParams,
   type OptionsWithRestructuredFields,
 } from './AssemblyOptions.ts'
 import AssemblyWatcher from './AssemblyWatcher.ts'
@@ -147,10 +148,7 @@ export interface TransloaditOptions<M extends Meta, B extends Body>
   retryDelays?: number[]
   assemblyOptions?:
     | AssemblyOptions
-    | ((
-        file?: UppyFile<M, B> | null,
-        options?: TransloaditOptions<M, B>,
-      ) => Promise<AssemblyOptions> | AssemblyOptions)
+    | (() => Promise<AssemblyOptions> | AssemblyOptions)
 }
 
 const defaultOptions = {
@@ -892,84 +890,44 @@ export default class Transloadit<
   }
 
   #prepareUpload = async (fileIDs: string[], uploadID: string) => {
-    const files = fileIDs.map((id) => this.uppy.getFile(id))
-    const filesWithoutErrors = files.filter((file) => {
-      if (!file.error) {
-        this.uppy.emit('preprocess-progress', file, {
-          mode: 'indeterminate',
-          message: this.i18n('creatingAssembly'),
-        })
-        return true
-      }
-      return false
-    })
-
-    const createAssembly = async ({
-      // eslint-disable-next-line no-shadow
-      fileIDs,
-      options,
-    }: {
-      fileIDs: string[]
-      options: OptionsWithRestructuredFields
-    }) => {
-      try {
-        const assembly = (await this.#createAssembly(
-          fileIDs,
-          uploadID,
-          options,
-        )) as Assembly
-        if (this.opts.importFromUploadURLs) {
-          await this.#reserveFiles(assembly, fileIDs)
-        }
-        fileIDs.forEach((fileID) => {
-          const file = this.uppy.getFile(fileID)
-          this.uppy.emit('preprocess-complete', file)
-        })
-        return assembly
-      } catch (err) {
-        fileIDs.forEach((fileID) => {
-          const file = this.uppy.getFile(fileID)
-          // Clear preprocessing state when the Assembly could not be created,
-          // otherwise the UI gets confused about the lingering progress keys
-          this.uppy.emit('preprocess-complete', file)
-          this.uppy.emit('upload-error', file, err)
-        })
-        throw err
-      }
-    }
-
     const { uploadsAssemblies } = this.getPluginState()
     this.setPluginState({
-      uploadsAssemblies: {
-        ...uploadsAssemblies,
-        [uploadID]: [],
-      },
+      uploadsAssemblies: { ...uploadsAssemblies, [uploadID]: [] },
     })
 
-    const builder = new AssemblyOptionsBuilder(filesWithoutErrors, this.opts)
+    const assemblyOptions = (
+      typeof this.opts.assemblyOptions === 'function' ?
+        await this.opts.assemblyOptions()
+      : this.opts.assemblyOptions) as OptionsWithRestructuredFields
 
-    await builder
-      .build()
-      .then((assemblies) => Promise.all(assemblies.map(createAssembly)))
-      .then((maybeCreatedAssemblies) => {
-        const createdAssemblies = maybeCreatedAssemblies.filter(Boolean)
-        const assemblyIDs = createdAssemblies.map(
-          (assembly) => assembly.status.assembly_id,
-        )
-        this.#createAssemblyWatcher(assemblyIDs, uploadID)
-        return Promise.all(
-          createdAssemblies.map((assembly) => this.#connectAssembly(assembly)),
-        )
+    assemblyOptions.fields ??= {}
+    validateParams(assemblyOptions.params)
+
+    try {
+      const assembly = (await this.#createAssembly(
+        fileIDs,
+        uploadID,
+        assemblyOptions,
+      )) as Assembly
+      if (this.opts.importFromUploadURLs) {
+        await this.#reserveFiles(assembly, fileIDs)
+      }
+      fileIDs.forEach((fileID) => {
+        const file = this.uppy.getFile(fileID)
+        this.uppy.emit('preprocess-complete', file)
       })
-      // If something went wrong before any Assemblies could be created,
-      // clear all processing state.
-      .catch((err) => {
-        filesWithoutErrors.forEach((file) => {
-          this.uppy.emit('preprocess-complete', file)
-          this.uppy.emit('upload-error', file, err)
-        })
-        throw err
+      this.#createAssemblyWatcher(assembly.status.assembly_id, uploadID)
+      this.#connectAssembly(assembly)
+    } catch (err) {
+      fileIDs.forEach((fileID) => {
+        const file = this.uppy.getFile(fileID)
+        // Clear preprocessing state when the Assembly could not be created,
+        // otherwise the UI gets confused about the lingering progress keys
+        this.uppy.emit('preprocess-complete', file)
+        this.uppy.emit('upload-error', file, err)
       })
+      throw err
+    }
   }
 
   #afterUpload = (fileIDs: string[], uploadID: string): Promise<void> => {

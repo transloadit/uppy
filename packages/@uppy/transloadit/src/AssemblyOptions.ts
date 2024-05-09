@@ -9,7 +9,7 @@ import type {
 /**
  * Check that Assembly parameters are present and include all required fields.
  */
-function validateParams(params?: AssemblyParameters | null): void {
+export function validateParams(params?: AssemblyParameters | null): void {
   if (params == null) {
     throw new Error('Transloadit: The `params` option is required.')
   }
@@ -72,13 +72,13 @@ function dedupe(
   }))
 }
 
-async function getAssemblyOptions<M extends Meta, B extends Body>(
+export async function getAssemblyOptions<M extends Meta, B extends Body>(
   file: UppyFile<M, B> | null,
   options: Opts<M, B>,
 ): Promise<OptionsWithRestructuredFields> {
   const assemblyOptions = (
     typeof options.assemblyOptions === 'function' ?
-      await options.assemblyOptions(file, options)
+      await options.assemblyOptions()
     : options.assemblyOptions) as OptionsWithRestructuredFields
 
   validateParams(assemblyOptions.params)
@@ -102,7 +102,7 @@ async function getAssemblyOptions<M extends Meta, B extends Body>(
  * Turn Transloadit plugin options and a list of files into a list of Assembly
  * options.
  */
-class AssemblyOptions<M extends Meta, B extends Body> {
+export default class AssemblyOptions<M extends Meta, B extends Body> {
   opts: Opts<M, B>
 
   files: UppyFile<M, B>[]
@@ -160,6 +160,3 @@ class AssemblyOptions<M extends Meta, B extends Body> {
     return []
   }
 }
-
-export default AssemblyOptions
-export { validateParams }
