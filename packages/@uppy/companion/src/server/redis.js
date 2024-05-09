@@ -2,6 +2,7 @@ const Redis = require('ioredis').default
 
 const logger = require('./logger')
 
+/** @type {import('ioredis').Redis} */
 let redisClient
 
 /**

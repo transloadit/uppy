@@ -6,12 +6,17 @@ const logger = require('../logger')
  * This module simulates the builtin events.EventEmitter but with the use of redis.
  * This is useful for when companion is running on multiple instances and events need
  * to be distributed across.
+ * 
+ * @param {import('ioredis').Redis} redisClient 
+ * @param {string} redisPubSubScope 
+ * @returns 
  */
 module.exports = (redisClient, redisPubSubScope) => {
   const prefix = redisPubSubScope ? `${redisPubSubScope}:` : ''
   const getPrefixedEventName = (eventName) => `${prefix}${eventName}`
   const publisher = redisClient.duplicate({ lazyConnect: true })
   publisher.on('error', err => logger.error('publisher redis error', err.toString()))
+  /** @type {import('ioredis').Redis} */
   let subscriber
 
   const connectedPromise = publisher.connect().then(() => {
@@ -60,6 +65,12 @@ module.exports = (redisClient, redisPubSubScope) => {
     })
   }
 
+  /**
+   * 
+   * @param {string} eventName 
+   * @param {*} handler 
+   * @param {*} _once 
+   */
   function addListener (eventName, handler, _once = false) {
     function actualHandler (pattern, channel, message) {
       if (pattern !== getPrefixedEventName(eventName)) {
