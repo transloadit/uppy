@@ -60,7 +60,7 @@ module.exports = (redisClient, redisPubSubScope) => {
       handlersByThisEventName.delete(handler)
       if (handlersByThisEventName.size === 0) handlersByEvent.delete(eventName)
 
-      subscriber.off('message', actualHandler)
+      subscriber.off('pmessage', actualHandler)
       return subscriber.punsubscribe(getPrefixedEventName(eventName))
     })
   }
