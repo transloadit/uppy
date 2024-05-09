@@ -209,12 +209,13 @@ export default class XHRUpload<
           })
 
           const body = JSON.parse(res.responseText) as B
+          const uploadURL = typeof body?.url === 'string' ? body.url : undefined
 
           for (const file of files) {
             this.uppy.emit('upload-success', file, {
               status: res.status,
               body,
-              uploadURL: body.url as string | undefined,
+              uploadURL,
             })
           }
 

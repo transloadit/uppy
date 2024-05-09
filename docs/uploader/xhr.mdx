@@ -256,7 +256,9 @@ import XHR from '@uppy/xhr-upload';
 let token = null;
 
 async function getAuthToken() {
-	token = await fetch('/auth/token').then((res) => res.json());
+	const res = await fetch('/auth/token');
+	const json = await res.json();
+	return json.token;
 }
 
 new Uppy().use(XHR, {
@@ -270,7 +272,7 @@ new Uppy().use(XHR, {
 	},
 	async onAfterResponse(xhr) {
 		if (xhr.status === 401) {
-			token = null;
+			token = await getAuthToken();
 		}
 	},
 });
