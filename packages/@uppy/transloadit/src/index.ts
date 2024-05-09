@@ -8,10 +8,6 @@ import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
 import type { Uppy } from '@uppy/core'
 import Assembly from './Assembly.ts'
 import Client, { AssemblyError } from './Client.ts'
-import {
-  validateParams,
-  type OptionsWithRestructuredFields,
-} from './AssemblyOptions.ts'
 import AssemblyWatcher from './AssemblyWatcher.ts'
 
 import locale from './locale.ts'
@@ -103,20 +99,6 @@ export interface AssemblyResponse {
   reason?: string
 }
 
-const sendErrorToConsole = (originalErr: Error) => (err: Error) => {
-  const error = new ErrorWithCause('Failed to send error to the client', {
-    cause: err,
-  })
-  // eslint-disable-next-line no-console
-  console.error(error, originalErr)
-}
-
-const COMPANION_URL = 'https://api2.transloadit.com/companion'
-// Regex matching acceptable postMessage() origins for authentication feedback from companion.
-const COMPANION_ALLOWED_HOSTS = /\.transloadit\.com$/
-// Regex used to check if a Companion address is run by Transloadit.
-const TL_COMPANION = /https?:\/\/api2(?:-\w+)?\.transloadit\.com\/companion/
-
 export interface AssemblyParameters {
   auth: {
     key: string
@@ -132,6 +114,10 @@ export interface AssemblyOptions {
   params?: AssemblyParameters | null
   fields?: Record<string, string | number> | string[] | null
   signature?: string | null
+}
+
+export type OptionsWithRestructuredFields = Omit<AssemblyOptions, 'fields'> & {
+  fields: Record<string, string | number>
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -235,6 +221,46 @@ declare module '@uppy/utils/lib/UppyFile' {
     tus?: { uploadUrl?: string | null }
   }
 }
+
+const sendErrorToConsole = (originalErr: Error) => (err: Error) => {
+  const error = new ErrorWithCause('Failed to send error to the client', {
+    cause: err,
+  })
+  // eslint-disable-next-line no-console
+  console.error(error, originalErr)
+}
+
+function validateParams(params?: AssemblyParameters | null): void {
+  if (params == null) {
+    throw new Error('Transloadit: The `params` option is required.')
+  }
+
+  if (typeof params === 'string') {
+    try {
+      // eslint-disable-next-line no-param-reassign
+      params = JSON.parse(params)
+    } catch (err) {
+      // Tell the user that this is not an Uppy bug!
+      throw new ErrorWithCause(
+        'Transloadit: The `params` option is a malformed JSON string.',
+        { cause: err },
+      )
+    }
+  }
+
+  if (!params!.auth || !params!.auth.key) {
+    throw new Error(
+      'Transloadit: The `params.auth.key` option is required. ' +
+        'You can find your Transloadit API key at https://transloadit.com/c/template-credentials',
+    )
+  }
+}
+
+const COMPANION_URL = 'https://api2.transloadit.com/companion'
+// Regex matching acceptable postMessage() origins for authentication feedback from companion.
+const COMPANION_ALLOWED_HOSTS = /\.transloadit\.com$/
+// Regex used to check if a Companion address is run by Transloadit.
+const TL_COMPANION = /https?:\/\/api2(?:-\w+)?\.transloadit\.com\/companion/
 
 /**
  * Upload files to Transloadit using Tus.
