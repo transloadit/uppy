@@ -10094,7 +10094,6 @@ __metadata:
     nock: "npm:^13.1.3"
     node-schedule: "npm:2.1.1"
     prom-client: "npm:14.0.1"
-    semver: "npm:7.5.3"
     serialize-error: "npm:^2.1.0"
     serialize-javascript: "npm:^6.0.0"
     supertest: "npm:6.2.4"
@@ -28865,17 +28864,6 @@ __metadata:
   bin:
     semver: bin/semver.js
   checksum: 10/52f87756b6f0d5de0fc896a3367cfe8dbf7c1947d846d021c9c621095579e62d2aa7ca0d5c5a6dcf1a123a63e1ac7cbd5ae0d5238f2a8de581bd6892f547f41f
-  languageName: node
-  linkType: hard
-
-"semver@npm:7.5.3":
-  version: 7.5.3
-  resolution: "semver@npm:7.5.3"
-  dependencies:
-    lru-cache: "npm:^6.0.0"
-  bin:
-    semver: bin/semver.js
-  checksum: 10/80b4b3784abff33bacf200727e012dc66768ed5835441e0a802ba9f3f5dd6b10ee366294711f5e7e13d73b82a6127ea55f11f9884d35e76a6a618dc11bc16ccf
   languageName: node
   linkType: hard
 
