@@ -1,12 +1,13 @@
 const got = require('got').default
 
-const GoogleProvider = require('../index')
+const { logout, refreshToken } = require('../index')
 const logger = require('../../../logger')
 const { VIRTUAL_SHARED_DIR, adaptData, isShortcut, isGsuiteFile, getGsuiteExportType } = require('./adapter')
-const { withProviderErrorHandling } = require('../../providerErrors')
 const { prepareStream } = require('../../../helpers/utils')
 const { MAX_AGE_REFRESH_TOKEN } = require('../../../helpers/jwt')
 const { ProviderAuthError } = require('../../error')
+const { withGoogleErrorHandling } = require('../../providerErrors')
+const Provider = require('../../Provider')
 
 
 // For testing refresh token:
@@ -46,7 +47,7 @@ async function getStats ({ id, token }) {
 /**
  * Adapter for API https://developers.google.com/drive/api/v3/
  */
-class Drive extends GoogleProvider {
+class Drive extends Provider {
   static get authProvider () {
     return 'googledrive'
   }
@@ -55,8 +56,9 @@ class Drive extends GoogleProvider {
     return MAX_AGE_REFRESH_TOKEN
   }
 
+  // eslint-disable-next-line class-methods-use-this
   async list (options) {
-    return this.#withErrorHandling('provider.drive.list.error', async () => {
+    return withGoogleErrorHandling(Drive.authProvider, 'provider.drive.list.error', async () => {
       const directory = options.directory || 'root'
       const query = options.query || {}
       const { token } = options
@@ -122,6 +124,7 @@ class Drive extends GoogleProvider {
     })
   }
 
+  // eslint-disable-next-line class-methods-use-this
   async download ({ id: idIn, token }) {
     if (mockAccessTokenExpiredError != null) {
       logger.warn(`Access token: ${token}`)
@@ -132,7 +135,7 @@ class Drive extends GoogleProvider {
       }
     }
 
-    return this.#withErrorHandling('provider.drive.download.error', async () => {
+    return withGoogleErrorHandling(Drive.authProvider, 'provider.drive.download.error', async () => {
       const client = getClient({ token })
 
       const { mimeType, id } = await getStats({ id: idIn, token })
@@ -152,8 +155,9 @@ class Drive extends GoogleProvider {
     })
   }
 
+  // eslint-disable-next-line class-methods-use-this
   async size ({ id, token }) {
-    return this.#withErrorHandling('provider.drive.size.error', async () => {
+    return withGoogleErrorHandling(Drive.authProvider, 'provider.drive.size.error', async () => {
       const { mimeType, size } = await getStats({ id, token })
 
       if (isGsuiteFile(mimeType)) {
@@ -167,17 +171,13 @@ class Drive extends GoogleProvider {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  async #withErrorHandling (tag, fn) {
-    return withProviderErrorHandling({
-      fn,
-      tag,
-      providerName: Drive.authProvider,
-      isAuthError: (response) => (
-        response.statusCode === 401
-        || (response.statusCode === 400 && response.body?.error === 'invalid_grant') // Refresh token has expired or been revoked
-      ),
-      getJsonErrorMessage: (body) => body?.error?.message,
-    })
+  async logout(...args) {
+    return logout(...args)
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  async refreshToken(...args) {
+    return refreshToken(...args)
   }
 }
 

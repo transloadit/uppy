@@ -1,10 +1,11 @@
 const got = require('got').default
 
-const GoogleProvider = require('../index')
-const { withProviderErrorHandling } = require('../../providerErrors')
+const { logout, refreshToken } = require('../index')
+const { withGoogleErrorHandling } = require('../../providerErrors')
 const { prepareStream } = require('../../../helpers/utils')
 const { MAX_AGE_REFRESH_TOKEN } = require('../../../helpers/jwt')
 const logger = require('../../../logger')
+const Provider = require('../../Provider')
 
 
 const getBaseClient = ({ token }) => got.extend({
@@ -40,7 +41,7 @@ async function paginate(fn, getter, limit = 5) {
 /**
  * Provider for Google Photos API
  */
-class GooglePhotos extends GoogleProvider {
+class GooglePhotos extends Provider {
   static get authProvider () {
     return 'googlephotos'
   }
@@ -49,8 +50,9 @@ class GooglePhotos extends GoogleProvider {
     return MAX_AGE_REFRESH_TOKEN
   }
 
+  // eslint-disable-next-line class-methods-use-this
   async list (options) {
-    return this.#withErrorHandling('provider.photos.list.error', async () => {
+    return withGoogleErrorHandling(GooglePhotos.authProvider, 'provider.photos.list.error', async () => {
       const { directory, query } = options
       const { token } = options
 
@@ -139,8 +141,9 @@ class GooglePhotos extends GoogleProvider {
     })
   }
 
+  // eslint-disable-next-line class-methods-use-this
   async download ({ id, token }) {
-    return this.#withErrorHandling('provider.photos.download.error', async () => {
+    return withGoogleErrorHandling(GooglePhotos.authProvider, 'provider.photos.download.error', async () => {
       const client = getPhotosClient({ token })
 
       const { baseUrl } = await client.get(`mediaItems/${encodeURIComponent(id)}`, { responseType: 'json' }).json()
@@ -154,17 +157,13 @@ class GooglePhotos extends GoogleProvider {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  async #withErrorHandling (tag, fn) {
-    return withProviderErrorHandling({
-      fn,
-      tag,
-      providerName: GooglePhotos.authProvider,
-      isAuthError: (response) => (
-        response.statusCode === 401
-        || (response.statusCode === 400 && response.body?.error === 'invalid_grant') // Refresh token has expired or been revoked
-      ),
-      getJsonErrorMessage: (body) => body?.error?.message,
-    })
+  async logout(...args) {
+    return logout(...args)
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  async refreshToken(...args) {
+    return refreshToken(...args)
   }
 }
 
