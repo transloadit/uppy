@@ -14,7 +14,6 @@ import type { UnknownProviderPluginState } from '@uppy/core/lib/Uppy.ts'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'
-import GooglePhotosProviderViews from './GooglePhotosProviderViews.ts'
 import locale from './locale.ts'
 
 export type GooglePhotosOptions = CompanionPluginOptions
@@ -97,7 +96,7 @@ export default class GooglePhotos<
   }
 
   install(): void {
-    this.view = new GooglePhotosProviderViews(this, {
+    this.view = new ProviderViews(this, {
       provider: this.provider,
       loadAllFiles: true,
     })
