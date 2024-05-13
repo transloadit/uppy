@@ -155,7 +155,7 @@ export type Opts<M extends Meta, B extends Body> = DefinePluginOpts<
 >
 
 type TransloaditState = {
-  assembly: AssemblyResponse
+  assemblyResponse: AssemblyResponse
   files: Record<
     string,
     { assembly: string; id: string; uploadedFile: AssemblyFile }
@@ -178,7 +178,7 @@ declare module '@uppy/core' {
       setData: (
         arg: Record<
           string,
-          Pick<TransloaditState, 'assembly' | 'uploadsAssemblies'>
+          Pick<TransloaditState, 'assemblyResponse' | 'uploadsAssemblies'>
         >,
       ) => void,
     ) => void
@@ -439,7 +439,7 @@ export default class Transloadit<
         const { uploadsAssemblies } = this.getPluginState()
         this.setPluginState({
           // Store the Assembly status.
-          assembly: status,
+          assemblyResponse: status,
           // Store the list of Assemblies related to this upload.
           uploadsAssemblies: {
             ...uploadsAssemblies,
@@ -583,7 +583,7 @@ export default class Transloadit<
       return
     }
 
-    const { assembly } = this.getPluginState()
+    const { assemblyResponse: assembly } = this.getPluginState()
 
     this.client.addFile(assembly, file).catch((err) => {
       this.uppy.log(err)
@@ -664,7 +664,7 @@ export default class Transloadit<
   #onAssemblyFinished(status: AssemblyResponse) {
     const url = status.assembly_ssl_url
     this.client.getAssemblyStatus(url).then((finalStatus) => {
-      this.setPluginState({ assembly: finalStatus })
+      this.setPluginState({ assemblyResponse: finalStatus })
       this.uppy.emit('transloadit:complete', finalStatus)
     })
   }
@@ -702,19 +702,21 @@ export default class Transloadit<
     setData: (
       arg: Record<
         string,
-        Pick<TransloaditState, 'assembly' | 'uploadsAssemblies'>
+        Pick<TransloaditState, 'assemblyResponse' | 'uploadsAssemblies'>
       >,
     ) => void,
   ) => {
-    const { assembly, uploadsAssemblies } = this.getPluginState()
+    const { assemblyResponse: assembly, uploadsAssemblies } =
+      this.getPluginState()
 
-    setData({ [this.id]: { assembly, uploadsAssemblies } })
+    setData({ [this.id]: { assemblyResponse: assembly, uploadsAssemblies } })
   }
 
   #onRestored = (pluginData: Record<string, TransloaditState>) => {
     const savedState =
       pluginData && pluginData[this.id] ? pluginData[this.id] : {}
-    const previousAssembly = (savedState as TransloaditState).assembly || {}
+    const previousAssembly =
+      (savedState as TransloaditState).assemblyResponse || {}
     const uploadsAssemblies =
       (savedState as TransloaditState).uploadsAssemblies || {}
 
@@ -724,7 +726,7 @@ export default class Transloadit<
     }
 
     // Convert loaded Assembly statuses to a Transloadit plugin state object.
-    const restoreState = (assembly: TransloaditState['assembly']) => {
+    const restoreState = (assembly: TransloaditState['assemblyResponse']) => {
       const files: Record<
         string,
         { id: string; assembly: string; uploadedFile: AssemblyFile }
@@ -761,7 +763,7 @@ export default class Transloadit<
       })
 
       this.setPluginState({
-        assembly,
+        assemblyResponse: assembly,
         files,
         results,
         uploadsAssemblies,
@@ -771,7 +773,8 @@ export default class Transloadit<
     // Set up the Assembly instances and AssemblyWatchers for existing Assemblies.
     const restoreAssemblies = () => {
       // eslint-disable-next-line no-shadow
-      const { assembly, uploadsAssemblies } = this.getPluginState()
+      const { assemblyResponse: assembly, uploadsAssemblies } =
+        this.getPluginState()
 
       // Set up the assembly watchers again for all the ongoing uploads.
       Object.keys(uploadsAssemblies).forEach((uploadID) => {
@@ -784,7 +787,7 @@ export default class Transloadit<
 
     // Force-update all Assemblies to check for missed events.
     const updateAssemblies = () => {
-      const { assembly } = this.getPluginState()
+      const { assemblyResponse: assembly } = this.getPluginState()
       return this.activeAssemblies[assembly.assembly_id].update()
     }
 
@@ -807,7 +810,7 @@ export default class Transloadit<
 
     // Sync local `assemblies` state
     assembly.on('status', (newStatus: AssemblyResponse) => {
-      this.setPluginState({ assembly: newStatus })
+      this.setPluginState({ assemblyResponse: newStatus })
     })
 
     assembly.on('upload', (file: AssemblyFile) => {
@@ -1096,7 +1099,7 @@ export default class Transloadit<
   }
 
   getAssembly(): AssemblyResponse {
-    return this.getPluginState().assembly
+    return this.getPluginState().assemblyResponse
   }
 
   getAssemblyFiles(assemblyID: string): UppyFile<M, B>[] {
