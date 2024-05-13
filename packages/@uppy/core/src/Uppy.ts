@@ -1940,7 +1940,7 @@ export class Uppy<M extends Meta, B extends Body> {
 
     const uploadID = nanoid()
 
-    this.emit('upload', uploadID, this.getFiles())
+    this.emit('upload', uploadID, this.getFilesByIds(fileIDs))
 
     this.setState({
       allowNewUpload:
