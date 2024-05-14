@@ -42,6 +42,13 @@ Included in: Uppy v4.0.0-beta.1
 - @uppy/core: various type fixes (Antoine du Hamel / #4995)
 - @uppy/core,@uppy/provider-views: Fix breadcrumbs (Evgenia Karunus / #4986)
 
+## 3.11.3
+
+Released: 2024-05-14
+Included in: Uppy v3.25.3
+
+- @uppy/core: make getObjectOfFilesPerState more efficient (Merlijn Vos / #5155)
+
 ## 3.11.2
 
 Released: 2024-05-07
