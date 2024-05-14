@@ -1,5 +1,12 @@
 # @uppy/core
 
+## 4.0.0-beta.7
+
+Released: 2024-05-14
+Included in: Uppy v4.0.0-beta.7
+
+- @uppy/core: close->destroy, clearUploadedFiles->clear (Merlijn Vos / #5154)
+
 ## 4.0.0-beta.5
 
 Released: 2024-05-03

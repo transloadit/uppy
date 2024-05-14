@@ -12,6 +12,28 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 4.0.0-beta.7
+
+Released: 2024-05-14
+
+| Package                |      Version | Package                |      Version |
+| ---------------------- | ------------ | ---------------------- | ------------ |
+| @uppy/companion        | 5.0.0-beta.6 | @uppy/status-bar       | 4.0.0-beta.7 |
+| @uppy/companion-client | 4.0.0-beta.6 | @uppy/unsplash         | 4.0.0-beta.6 |
+| @uppy/compressor       | 2.0.0-beta.7 | @uppy/url              | 4.0.0-beta.6 |
+| @uppy/core             | 4.0.0-beta.7 | @uppy/utils            | 6.0.0-beta.6 |
+| @uppy/dashboard        | 4.0.0-beta.7 | @uppy/webcam           | 4.0.0-beta.6 |
+| @uppy/dropbox          | 4.0.0-beta.6 | @uppy/xhr-upload       | 4.0.0-beta.4 |
+| @uppy/image-editor     | 3.0.0-beta.4 | uppy                   | 4.0.0-beta.7 |
+| @uppy/screen-capture   | 4.0.0-beta.5 |                        |              |
+
+- @uppy/companion: switch from `node-redis` to `ioredis` (Dominik Schmidt / #4623)
+- meta: Fix headings in xhr.mdx (Merlijn Vos)
+- @uppy/xhr-upload: introduce hooks similar to tus (Merlijn Vos / #5094)
+- @uppy/core: close->destroy, clearUploadedFiles->clear (Merlijn Vos / #5154)
+- @uppy/companion-client,@uppy/dropbox,@uppy/screen-capture,@uppy/unsplash,@uppy/url,@uppy/webcam: Use `title` consistently from locales (Merlijn Vos / #5134)
+
+
 ## 4.0.0-beta.6
 
 Released: 2024-05-08
