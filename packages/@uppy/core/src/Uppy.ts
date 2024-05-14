@@ -53,8 +53,6 @@ type Processor = (
   uploadID: string,
 ) => Promise<unknown> | void
 
-type FileRemoveReason = 'user' | 'cancel-all' | 'unmount'
-
 type LogLevel = 'info' | 'warning' | 'error' | 'success'
 
 export type UnknownPlugin<
@@ -228,7 +226,7 @@ export type NonNullableUppyOptions<M extends Meta, B extends Body> = Required<
 
 export interface _UppyEventMap<M extends Meta, B extends Body> {
   'back-online': () => void
-  'cancel-all': (reason: { reason?: FileRemoveReason }) => void
+  'cancel-all': () => void
   complete: (result: UploadResult<M, B>) => void
   error: (
     error: { name: string; message: string; details?: string },
@@ -236,7 +234,7 @@ export interface _UppyEventMap<M extends Meta, B extends Body> {
     response?: UppyFile<M, B>['response'],
   ) => void
   'file-added': (file: UppyFile<M, B>) => void
-  'file-removed': (file: UppyFile<M, B>, reason?: FileRemoveReason) => void
+  'file-removed': (file: UppyFile<M, B>) => void
   'files-added': (files: UppyFile<M, B>[]) => void
   'info-hidden': () => void
   'info-visible': () => void
@@ -1283,21 +1281,18 @@ export class Uppy<M extends Meta, B extends Body> {
     return this.#runUpload(uploadID)
   }
 
-  cancelAll({ reason = 'user' }: { reason?: FileRemoveReason } = {}): void {
-    this.emit('cancel-all', { reason })
+  cancelAll(): void {
+    this.emit('cancel-all')
 
-    // Only remove existing uploads if user is canceling
-    if (reason === 'user') {
-      const { files } = this.getState()
+    const { files } = this.getState()
 
-      const fileIDs = Object.keys(files)
-      if (fileIDs.length) {
-        this.removeFiles(fileIDs, 'cancel-all')
-      }
-
-      this.setState(defaultUploadState)
-      // todo should we call this.emit('reset-progress') like we do for resetProgress?
+    const fileIDs = Object.keys(files)
+    if (fileIDs.length) {
+      this.removeFiles(fileIDs, 'cancel-all')
     }
+
+    this.setState(defaultUploadState)
+    // todo should we call this.emit('reset-progress') like we do for resetProgress?
   }
 
   retryUpload(fileID: string): Promise<UploadResult<M, B> | undefined> {
@@ -1796,12 +1791,12 @@ export class Uppy<M extends Meta, B extends Body> {
   /**
    * Uninstall all plugins and close down this Uppy instance.
    */
-  destroy({ reason }: { reason?: FileRemoveReason } | undefined = {}): void {
+  destroy(): void {
     this.log(
       `Closing Uppy instance ${this.opts.id}: removing all files and uninstalling plugins`,
     )
 
-    this.cancelAll({ reason })
+    this.cancelAll()
 
     this.#storeUnsubscribe()
 
