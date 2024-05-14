@@ -1,5 +1,12 @@
 # @uppy/core
 
+## 4.0.0-beta.7
+
+Released: 2024-05-14
+Included in: Uppy v4.0.0-beta.7
+
+- @uppy/core: close->destroy, clearUploadedFiles->clear (Merlijn Vos / #5154)
+
 ## 4.0.0-beta.5
 
 Released: 2024-05-03
@@ -41,6 +48,13 @@ Included in: Uppy v4.0.0-beta.1
 - @uppy/core: fix some type errors (Antoine du Hamel / #5015)
 - @uppy/core: various type fixes (Antoine du Hamel / #4995)
 - @uppy/core,@uppy/provider-views: Fix breadcrumbs (Evgenia Karunus / #4986)
+
+## 3.11.3
+
+Released: 2024-05-14
+Included in: Uppy v3.25.3
+
+- @uppy/core: make getObjectOfFilesPerState more efficient (Merlijn Vos / #5155)
 
 ## 3.11.2
 

@@ -1,5 +1,12 @@
 # @uppy/companion
 
+## 5.0.0-beta.6
+
+Released: 2024-05-14
+Included in: Uppy v4.0.0-beta.7
+
+- @uppy/companion: switch from `node-redis` to `ioredis` (Dominik Schmidt / #4623)
+
 ## 5.0.0-beta.5
 
 Released: 2024-05-03
