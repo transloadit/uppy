@@ -158,6 +158,9 @@ class StreamableBlob {
 }
 
 class Uploader {
+  /** @type {import('ioredis').Redis} */
+  storage
+
   /**
    * Uploads file to destination based on the supplied protocol (tus, s3-multipart, multipart)
    * For tus uploads, the deferredLength option is enabled, because file size value can be unreliable
@@ -446,9 +449,7 @@ class Uploader {
     // https://github.com/transloadit/uppy/issues/3748
     const keyExpirySec = 60 * 60 * 24
     const redisKey = `${Uploader.STORAGE_PREFIX}:${this.token}`
-    this.storage.set(redisKey, jsonStringify(state), {
-      EX: keyExpirySec,
-    })
+    this.storage.set(redisKey, jsonStringify(state), 'EX', keyExpirySec)
   }
 
   throttledEmitProgress = throttle((dataToEmit) => {

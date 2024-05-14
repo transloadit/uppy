@@ -214,12 +214,12 @@ by browsers, so it’s recommended to use one of those.
 Indicates whether cross-site Access-Control requests should be made using
 credentials (`boolean`, default: `false`).
 
-### `onBeforeRequest`
+#### `onBeforeRequest`
 
 An optional function that will be called before a HTTP request is sent out
 (`(xhr: XMLHttpRequest, retryCount: number) => void | Promise<void>`).
 
-### `shouldRetry`
+#### `shouldRetry`
 
 An optional function called once an error appears and before retrying
 (`(xhr: XMLHttpRequesT) => boolean`).
@@ -229,7 +229,7 @@ behavior uses
 [exponential backoff](https://en.wikipedia.org/wiki/Exponential_backoff) with a
 maximum of 3 retries.
 
-### `onAfterResponse`
+#### `onAfterResponse`
 
 An optional function that will be called after a HTTP response has been received
 (`(xhr: XMLHttpRequest, retryCount: number) => void | Promise<void>`).

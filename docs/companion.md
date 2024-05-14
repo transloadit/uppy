@@ -381,11 +381,12 @@ in the future, we plan and changing the default to `companion:` and possibly
 remove this option. This is a standalone-only option. See also
 `COMPANION_REDIS_PUBSUB_SCOPE`.
 
-#### `redisOptions`
+#### `redisOptions` `COMPANION_REDIS_OPTIONS`
 
 An object of
-[options supported by redis client](https://www.npmjs.com/package/redis#options-object-properties).
-This option can be used in place of `redisUrl`.
+[options supported by the `ioredis` client](https://github.com/redis/ioredis).
+See also
+[`RedisOptions`](https://github.com/redis/ioredis/blob/af832752040e616daf51621681bcb40cab965a9b/lib/redis/RedisOptions.ts#L8).
 
 #### `redisPubSubScope` `COMPANION_REDIS_PUBSUB_SCOPE`
 
