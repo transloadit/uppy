@@ -12,6 +12,21 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 3.25.3
+
+Released: 2024-05-14
+
+| Package            | Version | Package            | Version |
+| ------------------ | ------- | ------------------ | ------- |
+| @uppy/core         |  3.11.3 | uppy               |  3.25.3 |
+| @uppy/image-editor |   2.4.6 |                    |         |
+
+- @uppy/image-editor: fix tooltips (Avneet Singh Malhotra / #5156)
+- meta: Remove redundant `plugins` prop from examples (Merlijn Vos / #5145)
+- @uppy/image-editor: Remove `target` option from examples and document consistently (Merlijn Vos / #5146)
+- @uppy/core: make getObjectOfFilesPerState more efficient (Merlijn Vos / #5155)
+
+
 ## 3.25.2
 
 Released: 2024-05-07

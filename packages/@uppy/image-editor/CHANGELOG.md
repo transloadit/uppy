@@ -1,5 +1,13 @@
 # @uppy/image-editor
 
+## 2.4.6
+
+Released: 2024-05-14
+Included in: Uppy v3.25.3
+
+- @uppy/image-editor: fix tooltips (Avneet Singh Malhotra / #5156)
+- @uppy/image-editor: Remove `target` option from examples and document consistently (Merlijn Vos / #5146)
+
 ## 2.4.5
 
 Released: 2024-04-29
