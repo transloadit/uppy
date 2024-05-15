@@ -836,11 +836,9 @@ export default class AwsS3Multipart<
         resolve(`upload ${removed} was removed`)
       })
 
-      eventManager.onCancelAll(file.id, (options) => {
-        if (options?.reason === 'user') {
-          upload.abort()
-          this.resetUploaderReferences(file.id, { abort: true })
-        }
+      eventManager.onCancelAll(file.id, () => {
+        upload.abort()
+        this.resetUploaderReferences(file.id, { abort: true })
         resolve(`upload ${file.id} was canceled`)
       })
 

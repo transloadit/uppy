@@ -1113,7 +1113,7 @@ export class Uppy<M extends Meta, B extends Body> {
     }
   }
 
-  removeFiles(fileIDs: string[], reason?: FileRemoveReason): void {
+  removeFiles(fileIDs: string[]): void {
     const { files, currentUploads } = this.getState()
     const updatedFiles = { ...files }
     const updatedUploads = { ...currentUploads }
@@ -1173,7 +1173,7 @@ export class Uppy<M extends Meta, B extends Body> {
 
     const removedFileIDs = Object.keys(removedFiles)
     removedFileIDs.forEach((fileID) => {
-      this.emit('file-removed', removedFiles[fileID], reason)
+      this.emit('file-removed', removedFiles[fileID])
     })
 
     if (removedFileIDs.length > 5) {
@@ -1183,8 +1183,8 @@ export class Uppy<M extends Meta, B extends Body> {
     }
   }
 
-  removeFile(fileID: string, reason?: FileRemoveReason): void {
-    this.removeFiles([fileID], reason)
+  removeFile(fileID: string): void {
+    this.removeFiles([fileID])
   }
 
   pauseResume(fileID: string): boolean | undefined {
@@ -1288,7 +1288,7 @@ export class Uppy<M extends Meta, B extends Body> {
 
     const fileIDs = Object.keys(files)
     if (fileIDs.length) {
-      this.removeFiles(fileIDs, 'cancel-all')
+      this.removeFiles(fileIDs)
     }
 
     this.setState(defaultUploadState)

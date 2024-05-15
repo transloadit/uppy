@@ -347,10 +347,8 @@ export default class XHRUpload<
     })
 
     events.onFileRemove(file.id, () => controller.abort())
-    events.onCancelAll(file.id, ({ reason }) => {
-      if (reason === 'user') {
-        controller.abort()
-      }
+    events.onCancelAll(file.id, () => {
+      controller.abort()
     })
 
     try {
