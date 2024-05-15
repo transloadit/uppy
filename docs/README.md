@@ -1,3 +1,3 @@
 # Uppy documentation
 
-To build the documentation, see <https://github.com/transloadit/uppy.io>.
+To lint/build the documentation, see <https://github.com/transloadit/uppy.io>.
