@@ -464,7 +464,7 @@ export default class AwsS3Multipart<
 
     const filename = encodeURIComponent(key)
     return this.#client
-      .get<AwsS3Part[]>(`s3/multipart/${uploadId}?key=${filename}`, { signal })
+      .get<AwsS3Part[]>(`s3/multipart/${encodeURIComponent(uploadId)}?key=${filename}`, { signal })
       .then(assertServerError)
   }
 
@@ -571,7 +571,7 @@ export default class AwsS3Multipart<
     const filename = encodeURIComponent(key)
     return this.#client
       .get<AwsS3UploadParameters>(
-        `s3/multipart/${uploadId}/${partNumber}?key=${filename}`,
+        `s3/multipart/${encodeURIComponent(uploadId)}/${partNumber}?key=${filename}`,
         { signal },
       )
       .then(assertServerError)
