@@ -5,7 +5,7 @@
   "type": "module",
   "main": "lib/index.js",
   "dependencies": {
-    "shallow-equal": "^1.2.1"
+    "shallow-equal": "^3.0.0"
   },
   "devDependencies": {
     "vue": "^3.4.21"
