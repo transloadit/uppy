@@ -363,7 +363,7 @@ describe('src/Core', () => {
     core.cancelAll()
 
     expect(coreCancelEventMock).toHaveBeenCalledWith(
-      { reason: 'user' },
+      undefined,
       undefined,
       undefined,
       undefined,
@@ -555,7 +555,7 @@ describe('src/Core', () => {
     core.destroy()
 
     expect(coreCancelEventMock).toHaveBeenCalledWith(
-      { reason: 'user' },
+      undefined,
       undefined,
       undefined,
       undefined,
