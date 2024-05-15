@@ -9,8 +9,8 @@ import UppyCdnExample from '/src/components/UppyCdnExample';
 
 # Zoom
 
-The `@uppy/zoom` plugin lets users import files from their
-[Zoom](https://zoom.com) account.
+The `@uppy/zoom` plugin lets users import cloud video recordings from their
+[Zoom](https://zoom.com) account. Note that [only licensed](https://support.zoom.com/hc/en/article?id=zm_kb&sysparm_article=KB0063923) Zoom accounts can store their recordings in the cloud, so this functionality will only be available to users with a paid Zoom account.
 
 :::tip
 
@@ -21,7 +21,7 @@ The `@uppy/zoom` plugin lets users import files from their
 
 ## When should I use this?
 
-When you want to let users import files from their [Zoom](https://zoom.com)
+When you want to let users import cloud video recordings from their [Zoom](https://zoom.com)
 account.
 
 A [Companion](/docs/companion) instance is required for the Zoom plugin to work.
@@ -83,26 +83,48 @@ new Uppy()
 
 ### Use in Companion
 
-Configure the Zoom key and secret. With the standalone Companion server, specify
-environment variables:
+To sign up for API keys, go through the following steps:
 
-```shell
-export COMPANION_ZOOM_KEY="Zoom API key"
-export COMPANION_ZOOM_SECRET="Zoom API secret"
-```
+1. Sign up on [Zoom Marketplace](https://marketplace.zoom.us)  
 
-When using the Companion Node.js API, configure these options:
+2. Go to [https://marketplace.zoom.us](https://marketplace.zoom.us). There will be a dropdown in the header called "Develop". From that dropdown, select "Build app".  
 
-```js
-companion.app({
-	providerOptions: {
-		zoom: {
-			key: 'Zoom API key',
-			secret: 'Zoom API secret',
-		},
-	},
-});
-```
+3. In the "Basic Information" tab, Zoom shows your new "Client ID" and "Client Secret" - copy them.
+
+    With the standalone Companion server, specify
+    environment variables:
+
+    ```shell
+    export COMPANION_ZOOM_KEY="Zoom API key"
+    export COMPANION_ZOOM_SECRET="Zoom API secret"
+    ```
+
+    When using the Companion Node.js API, configure these options:
+
+    ```js
+    companion.app({
+      providerOptions: {
+        zoom: {
+          key: 'Zoom API key',
+          secret: 'Zoom API secret',
+        },
+      },
+    });
+    ```
+
+3. In the "Basic Information" tab, set "OAuth Redirect URL" input field to:
+
+    ```
+    https://$YOUR_COMPANION_HOST_NAME/zoom/redirect
+    ```
+
+    If you are using Transloadit hosted Companion:
+
+    ```
+    https://api2.transloadit.com/companion/zoom/redirect
+    ```
+
+4. In the "Scopes" tab, add "cloud_recording:read:list_user_recordings" and "user:read:user" scopes. If Zoom asks for further permissions when you interact with your Zoom integration - add those too.
 
 ## API
 
