@@ -29,11 +29,11 @@
     "@uppy/thumbnail-generator": "workspace:^",
     "@uppy/utils": "workspace:^",
     "classnames": "^2.2.6",
-    "is-shallow-equal": "^1.0.1",
     "lodash": "^4.17.21",
     "memoize-one": "^6.0.0",
     "nanoid": "^5.0.0",
-    "preact": "^10.5.13"
+    "preact": "^10.5.13",
+    "shallow-equal": "^3.0.0"
   },
   "devDependencies": {
     "@uppy/google-drive": "workspace:^",
