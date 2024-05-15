@@ -694,13 +694,14 @@ class Uploader {
      * @type {{client: import('@aws-sdk/client-s3').S3Client, options: Record<string, any>}}
      */
     const s3Options = this.options.s3
+    const { metadata } = this.options
     const { client, options } = s3Options
 
     const params = {
-      Bucket: getBucket(options.bucket, null, this.options.metadata),
-      Key: options.getKey(null, filename, this.options.metadata),
-      ContentType: this.options.metadata.type,
-      Metadata: rfc2047EncodeMetadata(this.options.metadata),
+      Bucket: getBucket(options.bucket, metadata),
+      Key: options.getKey({ filename, metadata }),
+      ContentType: metadata.type,
+      Metadata: rfc2047EncodeMetadata(metadata),
       Body: stream,
     }
 

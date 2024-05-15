@@ -283,7 +283,7 @@ const options = {
 		endpoint: 'https://{service}.{region}.amazonaws.com',
 		conditions: [],
 		useAccelerateEndpoint: false,
-		getKey: (req, filename) => `${crypto.randomUUID()}-${filename}`,
+		getKey: ({ filename }) => `${crypto.randomUUID()}-${filename}`,
 		expires: 800, // seconds
 	},
 	allowLocalUrls: false,
@@ -477,13 +477,11 @@ from the AWS SDK.
 
 The name of the bucket to store uploaded files in.
 
-It can be function that returns the name of the bucket as a `string` and takes
-the following arguments:
+A `string` or function that returns the name of the bucket as a `string` and
+takes one argument which is an object with the following properties:
 
-- [`http.IncomingMessage`][], the HTTP request (will be `null` for remote
-  uploads)
-- metadata provided by the user for the file (will be `undefined` for local
-  uploads)
+- `metadata` provided by the user for the file (will only be provided during the
+  initial calls for each uploaded files, otherwise it will be `undefined`)
 
 ##### `s3.region` `COMPANION_AWS_REGION`
 
@@ -512,16 +510,12 @@ expected, please
 [open an issue on the Uppy repository](https://github.com/transloadit/uppy/issues/new)
 so we can document it here.
 
-##### `s3.getKey(req, filename, metadata)`
+##### `s3.getKey({ filename, metadata })`
 
 Get the key name for a file. The key is the file path to which the file will be
 uploaded in your bucket. This option should be a function receiving three
 arguments:
 
-- `req` [`http.IncomingMessage`][], the HTTP request, for _regular_ S3 uploads
-  using the `@uppy/aws-s3` plugin. This parameter is _not_ available for
-  multipart uploads using the `@uppy/aws-s3` or `@uppy/aws-s3-multipart`
-  plugins. This parameter is `null` for remote uploads.
 - `filename`, the original name of the uploaded file;
 - `metadata`, user-provided metadata for the file.
 
@@ -534,7 +528,7 @@ app.use(
 	uppy.app({
 		providerOptions: {
 			s3: {
-				getKey: (req, filename, metadata) => `${req.user.id}/${filename}`,
+				getKey: ({ filename, metadata }) => `${req.user.id}/${filename}`,
 				/* auth options */
 			},
 		},
@@ -550,7 +544,7 @@ app.use(
 	uppy.app({
 		providerOptions: {
 			s3: {
-				getKey: (req, filename, metadata) => filename,
+				getKey: ({ filename, metadata }) => filename,
 			},
 		},
 	}),
