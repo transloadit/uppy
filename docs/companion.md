@@ -907,8 +907,6 @@ This would get the Companion instance running on `http://localhost:3020`. It
 uses [nodemon](https://github.com/remy/nodemon) so it will automatically restart
 when files are changed.
 
-[`http.incomingmessage`]:
-	https://nodejs.org/api/http.html#class-httpincomingmessage
 [box]: /docs/box
 [dropbox]: /docs/dropbox
 [facebook]: /docs/facebook
