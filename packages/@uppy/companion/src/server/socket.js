@@ -51,8 +51,8 @@ module.exports = (server) => {
     ws.on('error', (err) => {
       // https://github.com/websockets/ws/issues/1543
       // https://github.com/websockets/ws/blob/b73b11828d166e9692a9bffe9c01a7e93bab04a8/test/receiver.test.js#L936
-      if (err instanceof RangeError && 'code' in err && err.code === 'WS_ERR_UNSUPPORTED_MESSAGE_LENGTH') {
-        logger.warn('WebSocket message too large', 'websocket.error', shortenToken(token))
+      if (err?.name === 'RangeError' && 'code' in err && err.code === 'WS_ERR_UNSUPPORTED_MESSAGE_LENGTH') {
+        logger.error('WebSocket message too large', 'websocket.error', shortenToken(token))
       } else {
         logger.error(err, 'websocket.error', shortenToken(token))
       }
