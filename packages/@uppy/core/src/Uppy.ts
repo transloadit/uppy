@@ -71,6 +71,10 @@ export type PartialTreeFile = {
   type: 'file'
   id: string
 
+  // There exist individual restrictions (`allowedFileTypes`, `minFileSize`, `maxFileSize`), and aggregate restrictions (`maxNumberOfFiles`, `maxTotalFileSize`).
+  // .restrictionError reports whether this file passes individual restrictions.
+  restrictionError: string | null
+
   status: PartialTreeStatusFile
   parentId: PartialTreeId
   data: CompanionFile
@@ -869,6 +873,15 @@ export class Uppy<M extends Meta, B extends Body> {
       this.#restricter.validate(files, [file])
     } catch (err) {
       return err
+    }
+    return null
+  }
+
+  validateSingleFile(file: ValidateableFile<M, B>): string | null {
+    try {
+      this.#restricter.validateSingleFile(file)
+    } catch (err) {
+      return err.message
     }
     return null
   }

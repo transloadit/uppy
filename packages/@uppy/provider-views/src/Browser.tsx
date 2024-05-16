@@ -20,7 +20,6 @@ type BrowserProps<M extends Meta, B extends Body> = {
   handleScroll: ProviderView<M, B>['handleScroll']
   showTitles: boolean
   i18n: I18n
-  validateRestrictions: (file: CompanionFile) => RestrictionError<M, B> | null
   isLoading: boolean | string
   openFolder: ProviderView<M, B>['openFolder']
   noResultsLabel: string
@@ -37,7 +36,6 @@ function Browser<M extends Meta, B extends Body>(
     handleScroll,
     showTitles,
     i18n,
-    validateRestrictions,
     isLoading,
     openFolder,
     noResultsLabel,
@@ -92,7 +90,6 @@ function Browser<M extends Meta, B extends Body>(
       }}
       showTitles={showTitles}
       i18n={i18n}
-      validateRestrictions={validateRestrictions}
       openFolder={openFolder}
       file={item}
     />

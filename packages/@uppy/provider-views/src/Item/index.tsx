@@ -8,15 +8,12 @@ import ItemIcon from './components/ItemIcon.tsx'
 import GridItem from './components/GridItem.tsx'
 import ListItem from './components/ListItem.tsx'
 import type { PartialTreeFile, PartialTreeFolderNode, PartialTreeId } from '@uppy/core/lib/Uppy.ts'
-import type { RestrictionError } from '@uppy/core/lib/Restricter.ts'
-import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
 
 type ItemProps<M extends Meta, B extends Body> = {
   viewType: string
   toggleCheckbox: (event: Event) => void
   showTitles: boolean
   i18n: I18n
-  validateRestrictions: (file: CompanionFile) => RestrictionError<M, B> | null
   openFolder: (folderId: PartialTreeId) => void
   file: PartialTreeFile | PartialTreeFolderNode
 }
@@ -24,10 +21,10 @@ type ItemProps<M extends Meta, B extends Body> = {
 export default function Item<M extends Meta, B extends Body>(
   props: ItemProps<M, B>,
 ): h.JSX.Element {
-  const { viewType, toggleCheckbox, showTitles, i18n, validateRestrictions, openFolder, file } = props
+  const { viewType, toggleCheckbox, showTitles, i18n, openFolder, file } = props
 
-  const restrictionError = validateRestrictions(file.data)
-  const isDisabled = file.data.isFolder ? false : (Boolean(restrictionError) && (file.status !== "checked"))
+  const restrictionError = file.type === 'folder' ? null : file.restrictionError
+  const isDisabled = Boolean(restrictionError) && file.status !== 'checked'
 
   const sharedProps = {
     id: file.id,

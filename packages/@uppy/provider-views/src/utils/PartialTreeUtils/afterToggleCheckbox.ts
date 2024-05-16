@@ -5,22 +5,20 @@ import clone from "./clone"
 const afterToggleCheckbox = (
   oldPartialTree: PartialTree,
   clickedRange: string[],
-  validateRestrictions: (file: CompanionFile) => object | null,
+  validateSingleFile: (file: CompanionFile) => string | null,
 ) : PartialTree => {
   const newPartialTree : PartialTree = clone(oldPartialTree)
   const ourItem = newPartialTree.find((item) => item.id === clickedRange[0]) as PartialTreeFile | PartialTreeFolderNode
 
-  // if newStatus is "checked" - percolate down "checked"
-  // if newStatus is "unchecked" - percolate down "unchecked"
-  const percolateDown = (clickedItem: PartialTreeFolderNode | PartialTreeFile, status: 'checked' | 'unchecked') => {
+  const percolateDown = (clickedItem: PartialTreeFolderNode | PartialTreeFile, isParentFolderChecked: Boolean) => {
     const children = newPartialTree.filter((item) => item.type !== 'root' && item.parentId === clickedItem.id) as (PartialTreeFolderNode | PartialTreeFile)[]
     children.forEach((item) => {
       if (item.type === 'file') {
-        item.status = status === 'checked' && validateRestrictions(item.data) ? 'unchecked' : status
+        item.status = isParentFolderChecked && !item.restrictionError ? 'checked' : 'unchecked'
       } else {
-        item.status = status
+        item.status = isParentFolderChecked ? 'checked' : 'unchecked'
       }
-      percolateDown(item, status)
+      percolateDown(item, isParentFolderChecked)
     })
   }
   // we do something to all of its parents.
@@ -30,7 +28,7 @@ const afterToggleCheckbox = (
 
     const parentsChildren = newPartialTree.filter((item) => item.type !== 'root' && item.parentId === parentFolder.id) as (PartialTreeFile | PartialTreeFolderNode)[]
     const parentsValidChildren = parentsChildren.filter((item) =>
-      !validateRestrictions(item.data)
+      !validateSingleFile(item.data)
     )
     const areAllChildrenChecked = parentsValidChildren.every((item) => item.status === 'checked')
     const areAllChildrenUnchecked = parentsValidChildren.every((item) => item.status === 'unchecked')
@@ -52,20 +50,20 @@ const afterToggleCheckbox = (
 
     newlyCheckedItems.forEach((item) => {
       if (item.type === 'file') {
-        item.status = validateRestrictions(item.data) ? 'unchecked' : 'checked'
+        item.status = item.restrictionError ? 'unchecked' : 'checked'
       } else {
         item.status = 'checked'
       }
     })
 
     newlyCheckedItems.forEach((item) => {
-      percolateDown(item, 'checked')
+      percolateDown(item, true)
     })
     percolateUp(ourItem)
   } else {
     const oldStatus = (oldPartialTree.find((item) => item.id === clickedRange[0]) as PartialTreeFile | PartialTreeFolderNode).status
     ourItem.status = oldStatus === 'checked' ? 'unchecked' : 'checked'
-    percolateDown(ourItem, ourItem.status)
+    percolateDown(ourItem, ourItem.status === 'checked')
     percolateUp(ourItem)
   }
 

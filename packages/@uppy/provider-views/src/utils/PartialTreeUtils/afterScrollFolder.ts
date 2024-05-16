@@ -6,7 +6,7 @@ const afterScrollFolder = (
   currentFolderId: string | null,
   items: CompanionFile[],
   nextPagePath: string | null,
-  validateRestrictions: (file: CompanionFile) => object | null,
+  validateSingleFile: (file: CompanionFile) => string | null,
 ) : PartialTree => {
   const currentFolder = oldPartialTree.find((i) => i.id === currentFolderId) as PartialTreeFolder
 
@@ -18,7 +18,7 @@ const afterScrollFolder = (
   const partialTreeWithUpdatedScrolledFolder = oldPartialTree.map((folder) =>
     folder.id === scrolledFolder.id ? scrolledFolder : folder
   )
-  const newlyAddedItemStatus = (scrolledFolder.type === 'folder' && scrolledFolder.status === 'checked') ? 'checked' : 'unchecked';
+  const isParentFolderChecked = scrolledFolder.type === 'folder' && scrolledFolder.status === 'checked'
   const folders : PartialTreeFolderNode[] = newFolders.map((folder) => ({
     type: 'folder',
     id: folder.requestPath,
@@ -26,18 +26,23 @@ const afterScrollFolder = (
     cached: false,
     nextPagePath: null,
 
-    status: newlyAddedItemStatus,
+    status: isParentFolderChecked ? 'checked' : 'unchecked',
     parentId: scrolledFolder.id,
     data: folder,
   }))
-  const files : PartialTreeFile[] = newFiles.map((file) => ({
-    type: 'file',
-    id: file.requestPath,
+  const files : PartialTreeFile[] = newFiles.map((file) => {
+    const restrictionError = validateSingleFile(file)
+    return {
+      type: 'file',
+      id: file.requestPath,
 
-    status: newlyAddedItemStatus === 'checked' && validateRestrictions(file) ? 'unchecked' : newlyAddedItemStatus,
-    parentId: scrolledFolder.id,
-    data: file,
-  }))
+      restrictionError,
+
+      status: isParentFolderChecked && !restrictionError ? 'checked' : 'unchecked',
+      parentId: scrolledFolder.id,
+      data: file,
+    }
+  })
 
   const newPartialTree : PartialTree = [
     ...partialTreeWithUpdatedScrolledFolder,

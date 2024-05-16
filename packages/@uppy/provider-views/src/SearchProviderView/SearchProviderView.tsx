@@ -14,11 +14,12 @@ import getNOfSelectedFiles from '../utils/PartialTreeUtils/getNOfSelectedFiles.t
 import PartialTreeUtils from '../utils/PartialTreeUtils'
 import shouldHandleScroll from '../utils/shouldHandleScroll.ts'
 import handleError from '../utils/handleError.ts'
-import validateRestrictions from '../utils/validateRestrictions.ts'
 import getClickedRange from '../utils/getClickedRange.ts'
 import injectPaths from '../utils/PartialTreeUtils/injectPaths.ts'
 import classNames from 'classnames'
 import FooterActions from '../FooterActions.tsx'
+import type { ValidateableFile } from '@uppy/core/lib/Restricter.ts'
+import remoteFileObjToLocal from '@uppy/utils/lib/remoteFileObjToLocal'
 
 const defaultState : UnknownSearchProviderPluginState = {
   loading: false,
@@ -204,10 +205,16 @@ export default class SearchProviderView<M extends Meta, B extends Body> {
     const { partialTree } = this.plugin.getPluginState()
 
     const clickedRange = getClickedRange(ourItem.id, this.getDisplayedPartialTree(), isShiftKeyPressed, this.lastCheckbox)
-    const newPartialTree = PartialTreeUtils.afterToggleCheckbox(partialTree, clickedRange, validateRestrictions(this.plugin))
+    const newPartialTree = PartialTreeUtils.afterToggleCheckbox(partialTree, clickedRange, this.validateSingleFile)
 
     this.plugin.setPluginState({ partialTree: newPartialTree })
     this.lastCheckbox = ourItem.id
+  }
+
+  validateSingleFile = (file: CompanionFile) : string | null => {
+    const companionFile : ValidateableFile<M, B> = remoteFileObjToLocal(file)
+    const result = this.plugin.uppy.validateSingleFile(companionFile)
+    return result
   }
 
   getDisplayedPartialTree = () : (PartialTreeFile | PartialTreeFolderNode)[] => {
@@ -279,7 +286,6 @@ export default class SearchProviderView<M extends Meta, B extends Body> {
         showTitles={opts.showTitles}
         isLoading={loading}
         i18n={i18n}
-        validateRestrictions={validateRestrictions(this.plugin)}
         loadAllFiles={false}
       />
 

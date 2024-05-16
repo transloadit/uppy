@@ -1,13 +1,12 @@
 /* eslint-disable react/require-default-props */
 import { h } from 'preact'
-import type { RestrictionError } from '@uppy/core/lib/Restricter'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import type { PartialTreeStatus } from '@uppy/core/lib/Uppy'
 
 type GridItemProps<M extends Meta, B extends Body> = {
   className: string
   isDisabled: boolean
-  restrictionError: RestrictionError<M, B> | null
+  restrictionError: string | null
   status: PartialTreeStatus
   title: string
   itemIconEl: any
@@ -36,7 +35,7 @@ function GridItem<M extends Meta, B extends Body>(
   return (
     <li
       className={className}
-      title={isDisabled ? restrictionError?.message : undefined}
+      title={isDisabled && restrictionError ? restrictionError : undefined}
     >
       <input
         type="checkbox"

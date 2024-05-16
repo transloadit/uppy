@@ -26,11 +26,12 @@ import getTagFile from '../utils/getTagFile.ts'
 import getNOfSelectedFiles from '../utils/PartialTreeUtils/getNOfSelectedFiles.ts'
 import shouldHandleScroll from '../utils/shouldHandleScroll.ts'
 import handleError from '../utils/handleError.ts'
-import validateRestrictions from '../utils/validateRestrictions.ts'
 import getClickedRange from '../utils/getClickedRange.ts'
 import classNames from 'classnames'
 import SearchFilterInput from '../SearchFilterInput.tsx'
 import FooterActions from '../FooterActions.tsx'
+import type { ValidateableFile } from '@uppy/core/lib/Restricter.ts'
+import remoteFileObjToLocal from '@uppy/utils/lib/remoteFileObjToLocal'
 
 export function defaultPickerIcon(): JSX.Element {
   return (
@@ -205,7 +206,7 @@ export default class ProviderView<M extends Meta, B extends Body>{
         this.setLoading(this.plugin.uppy.i18n('loadedXFiles', { numFiles: items.length }))
       } while (this.opts.loadAllFiles && currentPagePath)
 
-      const newPartialTree = PartialTreeUtils.afterOpenFolder(partialTree, currentItems, clickedFolder, validateRestrictions(this.plugin), currentPagePath)
+      const newPartialTree = PartialTreeUtils.afterOpenFolder(partialTree, currentItems, clickedFolder, currentPagePath, this.validateSingleFile)
 
       this.plugin.setPluginState({
         partialTree: newPartialTree,
@@ -266,13 +267,19 @@ export default class ProviderView<M extends Meta, B extends Body>{
     if (shouldHandleScroll(event) && !this.isHandlingScroll && currentFolder.nextPagePath) {
       this.isHandlingScroll = true
       await this.#withAbort(async (signal) => {
-        const { nextPagePath, items } = await this.provider.list(currentFolder.nextPagePath!, { signal })
-        const newPartialTree = PartialTreeUtils.afterScrollFolder(partialTree, currentFolderId, items, nextPagePath, validateRestrictions(this.plugin))
+        const { nextPagePath, items } = await this.provider.list(currentFolder.nextPagePath, { signal })
+        const newPartialTree = PartialTreeUtils.afterScrollFolder(partialTree, currentFolderId, items, nextPagePath, this.validateSingleFile)
 
         this.plugin.setPluginState({ partialTree: newPartialTree })
       }).catch(handleError(this.plugin.uppy))
       this.isHandlingScroll = false
     }
+  }
+
+  validateSingleFile = (file: CompanionFile) : string | null => {
+    const companionFile : ValidateableFile<M, B> = remoteFileObjToLocal(file)
+    const result = this.plugin.uppy.validateSingleFile(companionFile)
+    return result
   }
 
   async donePicking(): Promise<void> {
@@ -282,7 +289,8 @@ export default class ProviderView<M extends Meta, B extends Body>{
     await this.#withAbort(async (signal) => {
       const uppyFiles: CompanionFile[] = await PartialTreeUtils.afterFill(
         partialTree,
-        (path: PartialTreeId) => this.provider.list(path, { signal })
+        (path: PartialTreeId) => this.provider.list(path, { signal }),
+        this.validateSingleFile
       )
 
       const filesToAdd : TagFile<M>[] = []
@@ -343,7 +351,7 @@ export default class ProviderView<M extends Meta, B extends Body>{
     const { partialTree } = this.plugin.getPluginState()
 
     const clickedRange = getClickedRange(ourItem.id, this.getDisplayedPartialTree(), isShiftKeyPressed, this.lastCheckbox)
-    const newPartialTree = PartialTreeUtils.afterToggleCheckbox(partialTree, clickedRange, validateRestrictions(this.plugin))
+    const newPartialTree = PartialTreeUtils.afterToggleCheckbox(partialTree, clickedRange, this.validateSingleFile)
 
     this.plugin.setPluginState({ partialTree: newPartialTree })
     this.lastCheckbox = ourItem.id
@@ -434,7 +442,6 @@ export default class ProviderView<M extends Meta, B extends Body>{
         viewType={opts.viewType}
         showTitles={opts.showTitles}
         i18n={this.plugin.uppy.i18n}
-        validateRestrictions={validateRestrictions(this.plugin)}
         isLoading={loading}
       />
 

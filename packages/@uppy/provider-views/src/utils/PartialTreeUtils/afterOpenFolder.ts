@@ -5,31 +5,35 @@ const afterOpenFolder = (
   oldPartialTree: PartialTree,
   discoveredItems: CompanionFile[],
   clickedFolder: PartialTreeFolder,
-  validateRestrictions: (file: CompanionFile) => object | null,
-  currentPagePath: string | null
+  currentPagePath: string | null,
+  validateSingleFile: (file: CompanionFile) => string | null,
 ) : PartialTree => {
   let discoveredFolders = discoveredItems.filter((i) => i.isFolder === true)
   let discoveredFiles = discoveredItems.filter((i) => i.isFolder === false)
 
-  const newlyAddedItemStatus = clickedFolder.type === 'folder' && clickedFolder.status === 'checked'
-    ? 'checked'
-    : 'unchecked'
+  const isParentFolderChecked = clickedFolder.type === 'folder' && clickedFolder.status === 'checked'
   const folders : PartialTreeFolderNode[] = discoveredFolders.map((folder) => ({
     type: 'folder',
     id: folder.requestPath,
     cached: false,
     nextPagePath: null,
-    status: newlyAddedItemStatus,
+    status: isParentFolderChecked ? 'checked' : 'unchecked',
     parentId: clickedFolder.id,
     data: folder,
   }))
-  const files : PartialTreeFile[] = discoveredFiles.map((file) => ({
-    type: 'file',
-    id: file.requestPath,
-    status: newlyAddedItemStatus === 'checked' && validateRestrictions(file) ? 'unchecked' : newlyAddedItemStatus,
-    parentId: clickedFolder.id,
-    data: file,
-  }))
+  const files : PartialTreeFile[] = discoveredFiles.map((file) => {
+    const restrictionError = validateSingleFile(file)
+    return {
+      type: 'file',
+      id: file.requestPath,
+
+      restrictionError,
+
+      status: isParentFolderChecked && !restrictionError ? 'checked' : 'unchecked',
+      parentId: clickedFolder.id,
+      data: file,
+    }
+  })
 
   // just doing `clickedFolder.cached = true` in a non-mutating way
   const updatedClickedFolder : PartialTreeFolder = {
