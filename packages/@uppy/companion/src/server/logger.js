@@ -89,7 +89,7 @@ exports.info = (msg, tag, traceId) => {
  * @param {string} [traceId] a unique id to easily trace logs tied to a request
  */
 exports.warn = (msg, tag, traceId) => {
-  log({ arg: msg, tag, level: 'warn', traceId, color: ['bold', 'yellow'] })
+  log({ arg: msg, tag, level: 'warn', traceId, color: ['yellow', 'bold'] })
 }
 
 /**
@@ -100,7 +100,7 @@ exports.warn = (msg, tag, traceId) => {
  * @param {string} [traceId] a unique id to easily trace logs tied to a request
  */
 exports.error = (msg, tag, traceId) => {
-  log({ arg: msg, tag, level: 'error', traceId, color: ['bold','red'] })
+  log({ arg: msg, tag, level: 'error', traceId, color: ['red', 'bold'] })
 }
 
 /**
@@ -112,6 +112,6 @@ exports.error = (msg, tag, traceId) => {
  */
 exports.debug = (msg, tag, traceId) => {
   if (process.env.NODE_ENV !== 'production') {
-    log({ arg: msg, tag, level: 'debug', traceId, color: ['bold','blue'] })
+    log({ arg: msg, tag, level: 'debug', traceId, color: ['blue', 'bold'] })
   }
 }
