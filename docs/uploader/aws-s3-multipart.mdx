@@ -41,8 +41,8 @@ milliseconds on uploading.
 
 **In short**
 
-- We recommend the default value of [`shouldUseMultipart`][], which enable multipart uploads only
-  for large files.
+- We recommend the default value of [`shouldUseMultipart`][], which enable
+  multipart uploads only for large files.
 - If you prefer to have less overhead (+20% upload speed) you can use temporary
   S3 credentials with [`getTemporarySecurityCredentials`][]. This means users
   get a single token which allows them to do bucket operations for longer,
@@ -179,8 +179,8 @@ const uppy = new Uppy()
 A boolean, or a function that returns a boolean which is called for each file
 that is uploaded with the corresponding `UppyFile` instance as argument.
 
-By default, all files with a `file.size` ≤ 100&nbsp;MiB will be uploaded in a single chunk, all files
-larger than that as multipart.
+By default, all files with a `file.size` ≤ 100&nbsp;MiB will be uploaded in a
+single chunk, all files larger than that as multipart.
 
 Here’s how to use it:
 
@@ -245,10 +245,10 @@ disable automatic retries, and fail instantly if any chunk fails to upload.
 A function that returns the minimum chunk size to use when uploading the given
 file as multipart.
 
-For multipart uploads, chunks are sent in batches to
-have presigned URLs generated with [`signPart()`](#signpartfile-partdata). To
-reduce the amount of requests for large files, you can choose a larger chunk
-size, at the cost of having to re-upload more data if one chunk fails to upload.
+For multipart uploads, chunks are sent in batches to have presigned URLs
+generated with [`signPart()`](#signpartfile-partdata). To reduce the amount of
+requests for large files, you can choose a larger chunk size, at the cost of
+having to re-upload more data if one chunk fails to upload.
 
 S3 requires a minimum chunk size of 5MiB, and supports at most 10,000 chunks per
 multipart upload. If `getChunkSize()` returns a size that’s too small, Uppy will
@@ -453,6 +453,8 @@ uppy.use(AwsS3, {
 	shouldUseMultipart: (file) => file.size > 100 * 2 ** 20,
 });
 ```
+
+</details>
 
 [`gettemporarysecuritycredentials`]: #gettemporarysecuritycredentialsoptions
 [`shouldusemultipart`]: #shouldusemultipartfile
