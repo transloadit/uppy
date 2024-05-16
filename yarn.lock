@@ -7784,15 +7784,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^18.0.3":
-  version: 18.19.33
-  resolution: "@types/node@npm:18.19.33"
-  dependencies:
-    undici-types: "npm:~5.26.4"
-  checksum: 10/e5816356e3bcf1af272587d6a95c172199532a86bdb379e4d314a10605463908b36316af51ff6d3c19d9f1965e14a6f62c6a5cbab876aafffe71e1211512084a
-  languageName: node
-  linkType: hard
-
 "@types/normalize-package-data@npm:^2.4.0":
   version: 2.4.4
   resolution: "@types/normalize-package-data@npm:2.4.4"
@@ -8885,7 +8876,7 @@ __metadata:
     "@types/lodash": "npm:4.14.191"
     "@types/morgan": "npm:1.7.37"
     "@types/ms": "npm:0.7.31"
-    "@types/node": "npm:^18.0.3"
+    "@types/node": "npm:^20.0.0"
     "@types/react": "npm:^18.0.0"
     "@types/request": "npm:2.48.8"
     "@types/webpack": "npm:^5.28.0"

@@ -52,7 +52,7 @@ const styleText =
  * @param {string} params.tag a unique tag to easily search for this message
  * @param {string} params.level error | info | debug
  * @param {string} [params.traceId] a unique id to easily trace logs tied to a request
- * @param {Parameters<util.styleText>[0]} [params.color] Format(s) that can be passed to `util.styleText`.
+ * @param {string[]} [params.color] Format(s) that can be passed to `util.styleText`.
  */
 const log = ({ arg, tag = '', level, traceId = '', color = [] }) => {
   const time = new Date().toISOString()
