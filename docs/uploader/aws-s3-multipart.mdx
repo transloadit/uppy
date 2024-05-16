@@ -41,7 +41,7 @@ milliseconds on uploading.
 
 **In short**
 
-- We recommend to set [`shouldUseMultipart`][] to enable multipart uploads only
+- We recommend the default value of [`shouldUseMultipart`][], which enable multipart uploads only
   for large files.
 - If you prefer to have less overhead (+20% upload speed) you can use temporary
   S3 credentials with [`getTemporarySecurityCredentials`][]. This means users
@@ -166,7 +166,6 @@ import '@uppy/dashboard/dist/style.min.css';
 const uppy = new Uppy()
 	.use(Dashboard, { inline: true, target: 'body' })
 	.use(AwsS3, {
-		shouldUseMultipart: (file) => file.size > 100 * 2 ** 20,
 		companionUrl: 'https://companion.uppy.io',
 	});
 ```
@@ -177,20 +176,10 @@ const uppy = new Uppy()
 
 #### `shouldUseMultipart(file)`
 
-:::warning
-
-Until the next major version, not setting this option uses the
-[legacy version of this plugin](../aws-s3/). This is a suboptimal experience for
-some of your user’s uploads. It’s best for speed and stability to upload large
-(100&nbsp;MiB+) files with multipart and small files with regular uploads.
-
-:::
-
 A boolean, or a function that returns a boolean which is called for each file
 that is uploaded with the corresponding `UppyFile` instance as argument.
 
-By default, all files are uploaded as multipart. In a future version, all files
-with a `file.size` ≤ 100&nbsp;MiB will be uploaded in a single chunk, all files
+By default, all files with a `file.size` ≤ 100&nbsp;MiB will be uploaded in a single chunk, all files
 larger than that as multipart.
 
 Here’s how to use it:
@@ -254,9 +243,9 @@ disable automatic retries, and fail instantly if any chunk fails to upload.
 #### `getChunkSize(file)`
 
 A function that returns the minimum chunk size to use when uploading the given
-file.
+file as multipart.
 
-The S3 Multipart plugin uploads files in chunks. Chunks are sent in batches to
+For multipart uploads, chunks are sent in batches to
 have presigned URLs generated with [`signPart()`](#signpartfile-partdata). To
 reduce the amount of requests for large files, you can choose a larger chunk
 size, at the cost of having to re-upload more data if one chunk fails to upload.
@@ -403,57 +392,6 @@ upload as query parameters.
 
 <details>
 <summary>Deprecated options</summary>
-
-#### `prepareUploadParts(file, partData)`
-
-A function that generates a batch of signed URLs for the specified part numbers.
-
-Receives the `file` object from Uppy’s state. The `partData` argument is an
-object with keys:
-
-- `uploadId` - The UploadID of this Multipart upload.
-- `key` - The object key in the S3 bucket.
-- `parts` - An array of objects with the part number and chunk
-  (`Array<{ number: number, chunk: blob }>`). `number` can’t be zero.
-
-`prepareUploadParts` should return a `Promise` with an `Object` with keys:
-
-- `presignedUrls` - A JavaScript object with the part numbers as keys and the
-  presigned URL for each part as the value.
-- `headers` - **(Optional)** Custom headers to send along with every request per
-  part (`{ 1: { 'Content-MD5': 'hash' }}`). These are (1-based) indexed by part
-  number too so you can for instance send the MD5 hash validation for each part
-  to S3.
-
-An example of what the return value should look like:
-
-```json
-{
-	"presignedUrls": {
-		"1": "https://bucket.region.amazonaws.com/path/to/file.jpg?partNumber=1&...",
-		"2": "https://bucket.region.amazonaws.com/path/to/file.jpg?partNumber=2&...",
-		"3": "https://bucket.region.amazonaws.com/path/to/file.jpg?partNumber=3&..."
-	},
-	"headers": {
-		"1": { "Content-MD5": "foo" },
-		"2": { "Content-MD5": "bar" },
-		"3": { "Content-MD5": "baz" }
-	}
-}
-```
-
-If an error occurred, reject the `Promise` with an `Object` with the following
-keys:
-
-```json
-{ "source": { "status": 500 } }
-```
-
-`status` is the HTTP code and is required for determining whether to retry the
-request. `prepareUploadParts` will be retried if the code is `0`, `409`, `423`,
-or between `500` and `600`.
-
-</details>
 
 #### `getTemporarySecurityCredentials(options)`
 
