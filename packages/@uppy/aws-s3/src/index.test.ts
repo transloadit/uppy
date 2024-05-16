@@ -29,7 +29,7 @@ describe('AwsS3Multipart', () => {
       core.use(AwsS3Multipart)
       const awsS3Multipart = core.getPlugin('AwsS3Multipart')!
 
-      const err = 'Expected a `companionUrl` option'
+      const err = 'Expected a `endpoint` option'
       const file = {}
       const opts = {}
 
@@ -337,6 +337,7 @@ describe('AwsS3Multipart', () => {
 
     it('companionHeader is updated before uploading file', async () => {
       awsS3Multipart.setOptions({
+        endpoint: 'http://localhost',
         companionHeaders: {
           authorization: newToken,
         },
@@ -368,6 +369,7 @@ describe('AwsS3Multipart', () => {
           Body
         >
         awsS3Multipart.setOptions({
+          endpoint: 'http://localhost',
           companionHeaders: {
             authorization: newToken,
           },

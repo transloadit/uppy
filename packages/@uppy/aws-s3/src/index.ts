@@ -344,14 +344,7 @@ export default class AwsS3Multipart<
     // We need the `as any` here because of the dynamic default options.
     this.type = 'uploader'
     this.id = this.opts.id || 'AwsS3Multipart'
-    if (opts?.endpoint || opts?.companionUrl) {
-      this.#client = new RequestClient(
-        uppy,
-        opts.endpoint ?
-          { ...opts, companionUrl: opts.endpoint }
-        : (opts as any),
-      )
-    }
+    this.#setClient(opts)
 
     const dynamicDefaultOptions = {
       createMultipartUpload: this.createMultipartUpload,
@@ -401,9 +394,21 @@ export default class AwsS3Multipart<
     return this.#client
   }
 
+  #setClient(opts: Partial<AwsS3MultipartOptions<M, B>>) {
+    if (opts?.endpoint || opts?.companionUrl) {
+      this.#client = new RequestClient(
+        this.uppy,
+        opts.endpoint ?
+          { ...opts, companionUrl: opts.endpoint }
+        : (opts as any),
+      )
+    }
+  }
+
   setOptions(newOptions: Partial<AwsS3MultipartOptions<M, B>>): void {
     this.#companionCommunicationQueue.setOptions(newOptions)
     super.setOptions(newOptions)
+    this.#setClient(newOptions)
     this.#setCompanionHeaders()
   }
 
@@ -431,11 +436,10 @@ export default class AwsS3Multipart<
     }
   }
 
-  // TODO: make this a private method in the next major
-  assertHost(method: string): void {
-    if (!this.opts.endpoint) {
+  #assertHost(method: string): void {
+    if (!this.#client) {
       throw new Error(
-        `Expected a \`endpoint\` option containing a Companion address, or if you are not using Companion, a custom \`${method}\` implementation.`,
+        `Expected a \`endpoint\` option containing a URL, or if you are not using Companion, a custom \`${method}\` implementation.`,
       )
     }
   }
@@ -444,7 +448,7 @@ export default class AwsS3Multipart<
     file: UppyFile<M, B>,
     signal?: AbortSignal,
   ): Promise<UploadResult> {
-    this.assertHost('createMultipartUpload')
+    this.#assertHost('createMultipartUpload')
     throwIfAborted(signal)
 
     const allowedMetaFields = getAllowedMetaFields(
@@ -472,7 +476,7 @@ export default class AwsS3Multipart<
     oldSignal?: AbortSignal,
   ): Promise<AwsS3Part[]> {
     signal ??= oldSignal // eslint-disable-line no-param-reassign
-    this.assertHost('listParts')
+    this.#assertHost('listParts')
     throwIfAborted(signal)
 
     const filename = encodeURIComponent(key)
@@ -487,7 +491,7 @@ export default class AwsS3Multipart<
     oldSignal?: AbortSignal,
   ): Promise<B> {
     signal ??= oldSignal // eslint-disable-line no-param-reassign
-    this.assertHost('completeMultipartUpload')
+    this.#assertHost('completeMultipartUpload')
     throwIfAborted(signal)
 
     const filename = encodeURIComponent(key)
@@ -509,7 +513,7 @@ export default class AwsS3Multipart<
     if (this.#cachedTemporaryCredentials == null) {
       // We do not await it just yet, so concurrent calls do not try to override it:
       if (this.opts.getTemporarySecurityCredentials === true) {
-        this.assertHost('getTemporarySecurityCredentials')
+        this.#assertHost('getTemporarySecurityCredentials')
         this.#cachedTemporaryCredentials = this.#client
           .get<AwsS3STSResponse>('s3/sts', options)
           .then(assertServerError)
@@ -572,7 +576,7 @@ export default class AwsS3Multipart<
     file: UppyFile<M, B>,
     { uploadId, key, partNumber, signal }: SignPartOptions,
   ): Promise<AwsS3UploadParameters> {
-    this.assertHost('signPart')
+    this.#assertHost('signPart')
     throwIfAborted(signal)
 
     if (uploadId == null || key == null || partNumber == null) {
@@ -597,7 +601,7 @@ export default class AwsS3Multipart<
     oldSignal?: AbortSignal, // TODO: remove in next major
   ): Promise<void> {
     signal ??= oldSignal // eslint-disable-line no-param-reassign
-    this.assertHost('abortMultipartUpload')
+    this.#assertHost('abortMultipartUpload')
 
     const filename = encodeURIComponent(key)
     const uploadIdEnc = encodeURIComponent(uploadId)
@@ -935,7 +939,7 @@ export default class AwsS3Multipart<
   }
 
   #setCompanionHeaders = () => {
-    this.#client.setCompanionHeaders(this.opts.companionHeaders)
+    this.#client?.setCompanionHeaders(this.opts.companionHeaders)
   }
 
   #setResumableUploadsCapability = (boolean: boolean) => {
