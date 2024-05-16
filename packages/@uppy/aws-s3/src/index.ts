@@ -394,15 +394,30 @@ export default class AwsS3Multipart<
     return this.#client
   }
 
-  #setClient(opts: Partial<AwsS3MultipartOptions<M, B>>) {
-    if (opts?.endpoint || opts?.companionUrl) {
-      this.#client = new RequestClient(
-        this.uppy,
-        opts.endpoint ?
-          { ...opts, companionUrl: opts.endpoint }
-        : (opts as any),
+  #setClient(opts?: Partial<AwsS3MultipartOptions<M, B>>) {
+    if (
+      opts == null ||
+      !(
+        'endpoint' in opts ||
+        'companionUrl' in opts ||
+        'companionHeaders' in opts ||
+        'companionCookiesRule' in opts ||
+        'companionKeysParams' in opts
       )
+    )
+      return
+    if (opts.endpoint) {
+      // eslint-disable-next-line no-param-reassign
+      opts = { ...this.opts, companionUrl: opts.endpoint }
+    } else if (opts.companionUrl) {
+      this.uppy.log(
+        '`companionUrl` option is deprecated in @uppy/aws-s3, use `endpoint` instead.',
+        'warning',
+      )
+      // eslint-disable-next-line no-param-reassign
+      opts = this.opts
     }
+    this.#client = new RequestClient(this.uppy, opts as any)
   }
 
   setOptions(newOptions: Partial<AwsS3MultipartOptions<M, B>>): void {
