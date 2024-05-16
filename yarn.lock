@@ -8902,7 +8902,6 @@ __metadata:
     express: "npm:4.19.2"
     express-interceptor: "npm:1.2.0"
     express-prom-bundle: "npm:7.0.0"
-    express-request-id: "npm:1.4.1"
     express-session: "npm:1.17.3"
     got: "npm:^13.0.0"
     grant: "npm:5.4.22"
@@ -15509,15 +15508,6 @@ __metadata:
   peerDependencies:
     prom-client: ">=15.0.0"
   checksum: 10/82c0d97d1ecfec9f56b22595aeb8840687543b02899989a2f4a36ee6bee738cc199c4acaede01cf2d5d7ee0e25a84953fd48522563ab411b2b6d85d6672fa011
-  languageName: node
-  linkType: hard
-
-"express-request-id@npm:1.4.1":
-  version: 1.4.1
-  resolution: "express-request-id@npm:1.4.1"
-  dependencies:
-    uuid: "npm:^3.3.2"
-  checksum: 10/32ca1fcaf5701f7348b6726720966c3a8c15228d52f79dbd4c4c54add0088f4debeedec3fd109024bb0577bdafe72d64a85bb28fb1e6c8e10473157e11652fae
   languageName: node
   linkType: hard
 

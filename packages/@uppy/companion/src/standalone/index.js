@@ -1,10 +1,10 @@
 const express = require('express')
 const qs = require('node:querystring')
+const { randomUUID } = require('node:crypto')
 const helmet = require('helmet')
 const morgan = require('morgan')
 const { URL } = require('node:url')
 const session = require('express-session')
-const addRequestId = require('express-request-id')()
 const RedisStore = require('connect-redis').default
 
 const logger = require('../server/logger')
@@ -71,7 +71,17 @@ module.exports = function server(inputCompanionOptions) {
     return { query, censored }
   }
 
-  router.use(addRequestId)
+  router.use((request, response, next) => {
+  const headerName = 'X-Request-Id'
+		const oldValue = request.get(headerName);
+    if (oldValue === undefined) {
+      response.set(headerName, request.id = randomUUID());
+    } else {
+      request.id = oldValue;
+    }
+
+		next();
+	})
   // log server requests.
   router.use(morgan('combined'))
   morgan.token('url', (req) => {
