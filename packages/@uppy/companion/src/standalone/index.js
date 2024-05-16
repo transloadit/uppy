@@ -72,13 +72,9 @@ module.exports = function server(inputCompanionOptions) {
   }
 
   router.use((request, response, next) => {
-  const headerName = 'X-Request-Id'
+    const headerName = 'X-Request-Id'
 		const oldValue = request.get(headerName);
-    if (oldValue === undefined) {
-      response.set(headerName, request.id = randomUUID());
-    } else {
-      request.id = oldValue;
-    }
+    response.set(headerName, oldValue ?? randomUUID());
 
 		next();
 	})
