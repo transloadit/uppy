@@ -61,6 +61,7 @@
     "prom-client": "15.1.2",
     "serialize-error": "^11.0.0",
     "serialize-javascript": "^6.0.0",
+    "supports-color": "8.x",
     "tus-js-client": "^4.1.0",
     "validator": "^13.0.0",
     "ws": "8.17.0"

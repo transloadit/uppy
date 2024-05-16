@@ -1,5 +1,6 @@
 const escapeStringRegexp = require('escape-string-regexp')
 const util = require('node:util')
+const supportsColors = require('supports-color')
 
 const valuesToMask = []
 /**
@@ -37,7 +38,11 @@ exports.setProcessName = (newProcessName) => {
   processName = newProcessName
 }
 
-const styleText = typeof util.styleText === 'function' ? util.styleText : (style, text) => text
+const styleText =
+  typeof util.styleText === "function" && supportsColors.stderr ?
+    util.styleText
+  : (style, text) => text;
+
 
 /**
  * message log
@@ -89,7 +94,7 @@ exports.info = (msg, tag, traceId) => {
  * @param {string} [traceId] a unique id to easily trace logs tied to a request
  */
 exports.warn = (msg, tag, traceId) => {
-  log({ arg: msg, tag, level: 'warn', traceId, color: ['yellow', 'bold'] })
+  log({ arg: msg, tag, level: 'warn', traceId, color: ['bold', 'yellow'] })
 }
 
 /**
@@ -100,7 +105,7 @@ exports.warn = (msg, tag, traceId) => {
  * @param {string} [traceId] a unique id to easily trace logs tied to a request
  */
 exports.error = (msg, tag, traceId) => {
-  log({ arg: msg, tag, level: 'error', traceId, color: ['red', 'bold'] })
+  log({ arg: msg, tag, level: 'error', traceId, color: ['bold', 'red'] })
 }
 
 /**
@@ -112,6 +117,6 @@ exports.error = (msg, tag, traceId) => {
  */
 exports.debug = (msg, tag, traceId) => {
   if (process.env.NODE_ENV !== 'production') {
-    log({ arg: msg, tag, level: 'debug', traceId, color: ['blue', 'bold'] })
+    log({ arg: msg, tag, level: 'debug', traceId, color: ['bold', 'blue'] })
   }
 }
