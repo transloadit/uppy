@@ -142,8 +142,15 @@ export interface AwsS3Part {
   ETag?: string
 }
 
-type AWSS3WithCompanion = {
-  companionUrl: string
+type AWSS3WithCompanion = (
+  | {
+      /** @deprecated use `endpoint` instead */
+      companionUrl: string
+    }
+  | {
+      endpoint: string
+    }
+) & {
   companionHeaders?: Record<string, string>
   companionCookiesRule?: string
   getTemporarySecurityCredentials?: true
@@ -337,8 +344,14 @@ export default class AwsS3Multipart<
     // We need the `as any` here because of the dynamic default options.
     this.type = 'uploader'
     this.id = this.opts.id || 'AwsS3Multipart'
-    // TODO: only initiate `RequestClient` is `companionUrl` is defined.
-    this.#client = new RequestClient(uppy, opts as any)
+    if (opts?.endpoint || opts?.companionUrl) {
+      this.#client = new RequestClient(
+        uppy,
+        opts.endpoint ?
+          { ...opts, companionUrl: opts.endpoint }
+        : (opts as any),
+      )
+    }
 
     const dynamicDefaultOptions = {
       createMultipartUpload: this.createMultipartUpload,
@@ -420,9 +433,9 @@ export default class AwsS3Multipart<
 
   // TODO: make this a private method in the next major
   assertHost(method: string): void {
-    if (!this.opts.companionUrl) {
+    if (!this.opts.endpoint) {
       throw new Error(
-        `Expected a \`companionUrl\` option containing a Companion address, or if you are not using Companion, a custom \`${method}\` implementation.`,
+        `Expected a \`endpoint\` option containing a Companion address, or if you are not using Companion, a custom \`${method}\` implementation.`,
       )
     }
   }

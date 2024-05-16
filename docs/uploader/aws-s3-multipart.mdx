@@ -166,7 +166,7 @@ import '@uppy/dashboard/dist/style.min.css';
 const uppy = new Uppy()
 	.use(Dashboard, { inline: true, target: 'body' })
 	.use(AwsS3, {
-		companionUrl: 'https://companion.uppy.io',
+		endpoint: 'https://companion.uppy.io',
 	});
 ```
 
@@ -215,9 +215,9 @@ uploaded.
 
 :::
 
-#### `companionUrl`
+#### `endpoint`
 
-URL to a [Companion](/docs/companion) instance (`string`, default: `null`).
+URL to a [Companion](/docs/companion) or Companion-like instance (`string`, default: `null`).
 
 #### `companionHeaders`
 
@@ -432,7 +432,7 @@ upload sources), you can pass a boolean:
 ```js
 uppy.use(AwsS3, {
 	// This is an example using Companion:
-	companionUrl: 'http://companion.uppy.io',
+	endpoint: 'http://companion.uppy.io',
 	getTemporarySecurityCredentials: true,
 	shouldUseMultipart: (file) => file.size > 100 * 2 ** 20,
 });
