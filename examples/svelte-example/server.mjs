@@ -34,17 +34,16 @@ http.createServer((req, res) => {
     })
 
     form.parse(req, (err, fields, files) => {
+      res.writeHead(200, headers)
       if (err) {
         console.log('some error', err)
-        res.writeHead(200, headers)
         res.write(JSON.stringify(err))
-        return res.end()
+      } else {
+        const { files: { filepath, originalFilename, mimetype, size } } = files
+        console.log('saved file', { filepath, originalFilename, mimetype, size })
+        res.write(JSON.stringify({ fields, files }))
       }
-      const { files: { filepath, originalFilename, mimetype, size } } = files
-      console.log('saved file', { filepath, originalFilename, mimetype, size })
-      res.writeHead(200, headers)
-      res.write(JSON.stringify({ fields, files }))
-      return res.end()
+      res.end()
     })
   }
 }).listen(9967, () => {

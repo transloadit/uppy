@@ -1,0 +1,12 @@
+// eslint-disable-next-line import/no-unresolved
+import { sveltekit } from '@sveltejs/kit/vite'
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { defineConfig } from 'vite'
+
+export default defineConfig({
+  plugins: [sveltekit()],
+  define: {
+    navigator: {},
+    location: { protocol: 'about:', href: 'about:blank' },
+  },
+})
