@@ -305,7 +305,7 @@ export default class ProviderView<M extends Meta, B extends Body>{
       // 3. Add files
       const companionFiles = getCheckedFilesWithPaths(enrichedTree)
       const tagFiles = companionFiles.map((f) =>
-        getTagFile<M>(f, this.plugin.id, this.provider, this.plugin.opts.companionUrl)
+        getTagFile<M, B>(f, this.plugin, this.provider)
       )
       addFiles(tagFiles, this.plugin.uppy)
 

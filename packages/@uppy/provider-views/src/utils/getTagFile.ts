@@ -1,16 +1,21 @@
+import type { UnknownPlugin } from "@uppy/core"
 import type { CompanionClientProvider, CompanionClientSearchProvider } from "@uppy/utils/lib/CompanionClientProvider"
 import type { CompanionFile } from "@uppy/utils/lib/CompanionFile"
-import type { Meta, TagFile } from "@uppy/utils/lib/UppyFile"
+import type { Meta, Body, TagFile } from "@uppy/utils/lib/UppyFile"
 import getFileType from "@uppy/utils/lib/getFileType"
 import isPreviewSupported from "@uppy/utils/lib/isPreviewSupported"
 
 // TODO: document what is a "tagFile" or get rid of this concept
-const getTagFile = <M extends Meta>(file: CompanionFile, pluginId: string, provider: CompanionClientProvider | CompanionClientSearchProvider, companionUrl: string) : TagFile<M> => {
+const getTagFile = <M extends Meta, B extends Body>(
+  file: CompanionFile,
+  plugin: UnknownPlugin<M, B>,
+  provider: CompanionClientProvider | CompanionClientSearchProvider,
+) : TagFile<M> => {
   const fileType = getFileType({ type: file.mimeType, name: file.name })
   
   const tagFile: TagFile<any> = {
     id: file.id,
-    source: pluginId,
+    source: plugin.id,
     name: file.name || file.id,
     type: file.mimeType,
     isRemote: true,
@@ -30,7 +35,7 @@ const getTagFile = <M extends Meta>(file: CompanionFile, pluginId: string, provi
       fileId: file.id,
     },
     remote: {
-      companionUrl,
+      companionUrl: plugin.opts.companionUrl,
       // @ts-expect-error untyped for now
       url: `${provider.fileUrl(file.requestPath)}`,
       body: {
