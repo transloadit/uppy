@@ -23,17 +23,20 @@ const getPath = (
 }
 
 // See "Uppy file properties" documentation for `.absolutePath` and `.relativePath` (https://uppy.io/docs/uppy/#working-with-uppy-files)
-const injectPaths = (partialTree: PartialTree, files: PartialTreeFile[]) : PartialTreeFile[] => {
+const getCheckedFilesWithPaths = (partialTree: PartialTree) : CompanionFile[] => {
   const cache : Cache = {}
 
-  const injectedFiles = files.map((file) => {
+  // We're only interested in injecting paths into 'checked' files
+  const checkedFiles = partialTree.filter((item) => item.type === 'file' && item.status === 'checked') as PartialTreeFile[]
+
+  const companionFilesWithInjectedPaths = checkedFiles.map((file) => {
     const path : (PartialTreeFile | PartialTreeFolderNode)[] = getPath(partialTree, file.id, cache)
 
     const absFolders = path.toReversed()
 
     const firstCheckedFolderIndex = absFolders.findIndex((i) => i.type === 'folder' && i.status === 'checked')
     const relFolders = absFolders.slice(firstCheckedFolderIndex)
-    
+
     const absDirPath = '/' + absFolders.map((i) => i.data.name).join('/')
     const relDirPath = relFolders.length === 1
       // Must return `undefined` (which later turns into `null` in `.getTagFile()`)
@@ -42,16 +45,13 @@ const injectPaths = (partialTree: PartialTree, files: PartialTreeFile[]) : Parti
       : relFolders.map((i) => i.data.name).join('/')
 
     return {
-      ...file,
-      data: {
-        ...file.data,
-        absDirPath,
-        relDirPath
-      }
+      ...file.data,
+      absDirPath,
+      relDirPath
     }
   })
 
-  return injectedFiles
+  return companionFilesWithInjectedPaths
 }
 
-export default injectPaths
+export default getCheckedFilesWithPaths

@@ -10,16 +10,16 @@ import Browser from '../Browser.tsx'
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../../package.json'
 import getTagFile from '../utils/getTagFile.ts'
-import getNOfSelectedFiles from '../utils/PartialTreeUtils/getNOfSelectedFiles.ts'
 import PartialTreeUtils from '../utils/PartialTreeUtils'
 import shouldHandleScroll from '../utils/shouldHandleScroll.ts'
 import handleError from '../utils/handleError.ts'
 import getClickedRange from '../utils/getClickedRange.ts'
-import injectPaths from '../utils/PartialTreeUtils/injectPaths.ts'
 import classNames from 'classnames'
 import FooterActions from '../FooterActions.tsx'
 import type { ValidateableFile } from '@uppy/core/lib/Restricter.ts'
 import remoteFileObjToLocal from '@uppy/utils/lib/remoteFileObjToLocal'
+import addFiles from '../utils/addFiles.ts'
+import getCheckedFilesWithPaths from '../utils/PartialTreeUtils/getCheckedFilesWithPaths.ts'
 
 const defaultState : UnknownSearchProviderPluginState = {
   loading: false,
@@ -190,14 +190,12 @@ export default class SearchProviderView<M extends Meta, B extends Body> {
 
   async donePicking(): Promise<void> {
     const { partialTree } = this.plugin.getPluginState()
-    this.plugin.uppy.log('Adding remote search provider files')
-    const checkedFiles = partialTree.filter((i) => i.type !== 'root' && i.status === 'checked') as PartialTreeFile[]
-    const checkedFilesWithPaths = injectPaths(partialTree, checkedFiles)
-    const uppyFiles = checkedFilesWithPaths.map((file) => file.data)
-    const tagFiles = uppyFiles.map((file) =>
-      getTagFile<M>(file, this.plugin.id, this.provider, this.plugin.opts.companionUrl)
+
+    const companionFiles = getCheckedFilesWithPaths(partialTree)
+    const tagFiles = companionFiles.map((f) =>
+      getTagFile<M>(f, this.plugin.id, this.provider, this.plugin.opts.companionUrl)
     )
-    this.plugin.uppy.addFiles(tagFiles)
+    addFiles(tagFiles, this.plugin.uppy)
 
     this.resetPluginState()
   }
@@ -228,6 +226,14 @@ export default class SearchProviderView<M extends Meta, B extends Body> {
     if (searchString === '') {
       this.plugin.setPluginState({ partialTree: [] })
     }
+  }
+
+  validateAggregateRestrictions = (partialTree: PartialTree) => {
+    const checkedFiles = partialTree.filter((item) =>
+      item.type === 'file' && item.status === 'checked'
+    ) as PartialTreeFile[]
+    const uppyFiles = checkedFiles.map((file) => file.data)
+    return this.plugin.uppy.validateAggregateRestrictions(uppyFiles)
   }
 
   render(
@@ -293,7 +299,7 @@ export default class SearchProviderView<M extends Meta, B extends Body> {
         donePicking={this.donePicking}
         cancelSelection={this.cancelSelection}
         i18n={i18n}
-        validateAggregateRestrictions={this.plugin.uppy.validateAggregateRestrictions.bind(this.plugin.uppy)}
+        validateAggregateRestrictions={this.validateAggregateRestrictions}
       />
     </div>
   }

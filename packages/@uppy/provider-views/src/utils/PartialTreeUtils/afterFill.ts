@@ -1,7 +1,6 @@
 import type { PartialTree, PartialTreeFile, PartialTreeFolderNode, PartialTreeId } from "@uppy/core/lib/Uppy"
 import type { CompanionFile } from "@uppy/utils/lib/CompanionFile"
 import PQueue from "p-queue"
-import injectPaths from "./injectPaths"
 import clone from "./clone"
 
 interface ApiList {

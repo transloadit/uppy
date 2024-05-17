@@ -31,7 +31,8 @@ import SearchFilterInput from '../SearchFilterInput.tsx'
 import FooterActions from '../FooterActions.tsx'
 import type { ValidateableFile } from '@uppy/core/lib/Restricter.ts'
 import remoteFileObjToLocal from '@uppy/utils/lib/remoteFileObjToLocal'
-import injectPaths from '../utils/PartialTreeUtils/injectPaths.ts'
+import addFiles from '../utils/addFiles.ts'
+import getCheckedFilesWithPaths from '../utils/PartialTreeUtils/getCheckedFilesWithPaths.ts'
 
 export function defaultPickerIcon(): JSX.Element {
   return (
@@ -287,49 +288,30 @@ export default class ProviderView<M extends Meta, B extends Body>{
 
     this.setLoading(true)
     await this.#withAbort(async (signal) => {
-      const newPartialTree: PartialTree = await PartialTreeUtils.afterFill(
+      // 1. Enrich our partialTree by fetching all 'checked' but not-yet-fetched folders
+      const enrichedTree: PartialTree = await PartialTreeUtils.afterFill(
         partialTree,
         (path: PartialTreeId) => this.provider.list(path, { signal }),
         this.validateSingleFile
       )
 
-      const checkedFiles = newPartialTree.filter((item) => item.type === 'file' && item.status === 'checked') as PartialTreeFile[]
-      const checkedFilesWithPaths = injectPaths(newPartialTree, checkedFiles)
-      const uppyFiles = checkedFilesWithPaths.map((file) => file.data)
-
-      const aggregateRestrictionError = this.plugin.uppy.validateAggregateRestrictions(uppyFiles)
-
+      // 2. Now that we know how many files there are - recheck aggregateRestrictions!
+      const aggregateRestrictionError = this.validateAggregateRestrictions(enrichedTree)
       if (aggregateRestrictionError) {
-        this.plugin.setPluginState({ partialTree: newPartialTree })
+        this.plugin.setPluginState({ partialTree: enrichedTree })
         return
       }
 
-      const filesToAdd : TagFile<M>[] = []
-      const filesAlreadyAdded : TagFile<M>[] = []
-  
-      uppyFiles.forEach((uppyFile) => {
-        const tagFile = getTagFile<M>(uppyFile, this.plugin.id, this.provider, this.plugin.opts.companionUrl)
+      // 3. Add files
+      const companionFiles = getCheckedFilesWithPaths(enrichedTree)
+      const tagFiles = companionFiles.map((f) =>
+        getTagFile<M>(f, this.plugin.id, this.provider, this.plugin.opts.companionUrl)
+      )
+      addFiles(tagFiles, this.plugin.uppy)
 
-        const id = getSafeFileId(tagFile)
-        if (this.plugin.uppy.checkIfFileAlreadyExists(id)) {
-          filesAlreadyAdded.push(tagFile)
-          return
-        }
-        filesToAdd.push(tagFile)
-      })
-
-      if (filesToAdd.length > 0) {
-        // TODO I don't think we need to be showing this - we don't show this info when we're dropping files e.g.
-        this.plugin.uppy.info(
-          this.plugin.uppy.i18n('addedNumFiles', { numFiles: filesToAdd.length })
-        )
-      }
-      if (filesAlreadyAdded.length > 0) {
-        this.plugin.uppy.info(`Not adding ${filesAlreadyAdded.length} files because they already exist`)
-      }
-      this.plugin.uppy.addFiles(filesToAdd)
+      // 4. Reset state
+      this.resetPluginState()
     }).catch(handleError(this.plugin.uppy))
-
     this.setLoading(false)
   }
 
@@ -367,6 +349,14 @@ export default class ProviderView<M extends Meta, B extends Body>{
       : inThisFolder.filter((item) => item.data.name.toLowerCase().indexOf(searchString.toLowerCase()) !== -1)
 
     return filtered
+  }
+
+  validateAggregateRestrictions = (partialTree: PartialTree) => {
+    const checkedFiles = partialTree.filter((item) =>
+      item.type === 'file' && item.status === 'checked'
+    ) as PartialTreeFile[]
+    const uppyFiles = checkedFiles.map((file) => file.data)
+    return this.plugin.uppy.validateAggregateRestrictions(uppyFiles)
   }
 
   render(
@@ -450,7 +440,7 @@ export default class ProviderView<M extends Meta, B extends Body>{
         donePicking={this.donePicking}
         cancelSelection={this.cancelSelection}
         i18n={i18n}
-        validateAggregateRestrictions={this.plugin.uppy.validateAggregateRestrictions.bind(this.plugin.uppy)}
+        validateAggregateRestrictions={this.validateAggregateRestrictions}
       />
     </div>
   }

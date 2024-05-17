@@ -3,9 +3,8 @@ import type { I18n } from '@uppy/utils/lib/Translator'
 import type ProviderView from './ProviderView'
 import type { Meta, Body } from '@uppy/utils/lib/UppyFile'
 import classNames from 'classnames'
-import type { PartialTree, PartialTreeFile } from '@uppy/core/lib/Uppy'
+import type { PartialTree } from '@uppy/core/lib/Uppy'
 import getNOfSelectedFiles from './utils/PartialTreeUtils/getNOfSelectedFiles'
-import type { ValidateableFile } from '@uppy/core/lib/Restricter'
 import { useMemo } from 'preact/hooks'
 
 export default function FooterActions<M extends Meta, B extends Body>({
@@ -19,14 +18,10 @@ export default function FooterActions<M extends Meta, B extends Body>({
   donePicking: ProviderView<M, B>['donePicking']
   i18n: I18n
   partialTree: PartialTree
-  validateAggregateRestrictions: (addingFiles: ValidateableFile<M, B>[]) => string | null
+  validateAggregateRestrictions: ProviderView<M, B>['validateAggregateRestrictions']
 }) {
   const aggregateRestrictionError = useMemo(() => {
-    const checkedFiles = partialTree.filter((item) =>
-      item.type === 'file' && item.status === 'checked'
-    ) as PartialTreeFile[]
-    const uppyFiles = checkedFiles.map((file) => file.data)
-    return validateAggregateRestrictions(uppyFiles)
+    return validateAggregateRestrictions(partialTree)
   }, [partialTree])
 
   const nOfSelectedFiles = useMemo(() => {
