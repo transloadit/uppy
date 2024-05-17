@@ -1,7 +1,7 @@
 {
   "name": "@uppy/compressor",
   "description": "Uppy plugin that compresses images before upload, saving up to 60% in size",
-  "version": "1.1.3",
+  "version": "1.1.4",
   "license": "MIT",
   "main": "lib/index.js",
   "style": "dist/style.min.css",
@@ -23,7 +23,7 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
-    "@transloadit/prettier-bytes": "^0.3.0",
+    "@transloadit/prettier-bytes": "^0.3.4",
     "@uppy/utils": "workspace:^",
     "compressorjs": "^1.2.1",
     "preact": "^10.5.13",

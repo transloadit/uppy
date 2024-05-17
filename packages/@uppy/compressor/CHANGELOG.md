@@ -1,5 +1,12 @@
 # @uppy/compressor
 
+## 1.1.4
+
+Released: 2024-05-07
+Included in: Uppy v3.25.2
+
+- @uppy/compressor,@uppy/core,@uppy/dashboard,@uppy/status-bar: Upgrade @transloadit/prettier-bytes (Merlijn Vos / #5150)
+
 ## 1.1.1
 
 Released: 2024-02-20

@@ -12,6 +12,35 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 3.25.3
+
+Released: 2024-05-14
+
+| Package            | Version | Package            | Version |
+| ------------------ | ------- | ------------------ | ------- |
+| @uppy/core         |  3.11.3 | uppy               |  3.25.3 |
+| @uppy/image-editor |   2.4.6 |                    |         |
+
+- @uppy/image-editor: fix tooltips (Avneet Singh Malhotra / #5156)
+- meta: Remove redundant `plugins` prop from examples (Merlijn Vos / #5145)
+- @uppy/image-editor: Remove `target` option from examples and document consistently (Merlijn Vos / #5146)
+- @uppy/core: make getObjectOfFilesPerState more efficient (Merlijn Vos / #5155)
+
+
+## 3.25.2
+
+Released: 2024-05-07
+
+| Package          | Version | Package          | Version |
+| ---------------- | ------- | ---------------- | ------- |
+| @uppy/compressor |   1.1.4 | @uppy/status-bar |   3.3.3 |
+| @uppy/core       |  3.11.2 | uppy             |  3.25.2 |
+| @uppy/dashboard  |   3.8.3 |                  |         |
+
+- @uppy/compressor,@uppy/core,@uppy/dashboard,@uppy/status-bar: Upgrade @transloadit/prettier-bytes (Merlijn Vos / #5150)
+- meta: run Prettier in the release workflow (Antoine du Hamel)
+
+
 ## 3.25.1
 
 Released: 2024-05-03
