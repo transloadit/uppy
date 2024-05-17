@@ -23,7 +23,6 @@ import Browser from '../Browser.tsx'
 import packageJson from '../../package.json'
 import PartialTreeUtils from '../utils/PartialTreeUtils'
 import getTagFile from '../utils/getTagFile.ts'
-import getNOfSelectedFiles from '../utils/PartialTreeUtils/getNOfSelectedFiles.ts'
 import shouldHandleScroll from '../utils/shouldHandleScroll.ts'
 import handleError from '../utils/handleError.ts'
 import getClickedRange from '../utils/getClickedRange.ts'
@@ -32,6 +31,7 @@ import SearchFilterInput from '../SearchFilterInput.tsx'
 import FooterActions from '../FooterActions.tsx'
 import type { ValidateableFile } from '@uppy/core/lib/Restricter.ts'
 import remoteFileObjToLocal from '@uppy/utils/lib/remoteFileObjToLocal'
+import injectPaths from '../utils/PartialTreeUtils/injectPaths.ts'
 
 export function defaultPickerIcon(): JSX.Element {
   return (
@@ -284,27 +284,32 @@ export default class ProviderView<M extends Meta, B extends Body>{
 
   async donePicking(): Promise<void> {
     const { partialTree } = this.plugin.getPluginState()
-    this.setLoading(true)
 
+    this.setLoading(true)
     await this.#withAbort(async (signal) => {
-      const uppyFiles: CompanionFile[] = await PartialTreeUtils.afterFill(
+      const newPartialTree: PartialTree = await PartialTreeUtils.afterFill(
         partialTree,
         (path: PartialTreeId) => this.provider.list(path, { signal }),
         this.validateSingleFile
       )
 
+      const checkedFiles = newPartialTree.filter((item) => item.type === 'file' && item.status === 'checked') as PartialTreeFile[]
+      const checkedFilesWithPaths = injectPaths(newPartialTree, checkedFiles)
+      const uppyFiles = checkedFilesWithPaths.map((file) => file.data)
+
+      const aggregateRestrictionError = this.plugin.uppy.validateAggregateRestrictions(uppyFiles)
+
+      if (aggregateRestrictionError) {
+        this.plugin.setPluginState({ partialTree: newPartialTree })
+        return
+      }
+
       const filesToAdd : TagFile<M>[] = []
       const filesAlreadyAdded : TagFile<M>[] = []
-      const filesNotPassingRestrictions : TagFile<M>[] = []
   
       uppyFiles.forEach((uppyFile) => {
         const tagFile = getTagFile<M>(uppyFile, this.plugin.id, this.provider, this.plugin.opts.companionUrl)
 
-        if (validateRestrictions(this.plugin)(uppyFile)) {
-          filesNotPassingRestrictions.push(tagFile)
-          return
-        }
-  
         const id = getSafeFileId(tagFile)
         if (this.plugin.uppy.checkIfFileAlreadyExists(id)) {
           filesAlreadyAdded.push(tagFile)
@@ -321,9 +326,6 @@ export default class ProviderView<M extends Meta, B extends Body>{
       }
       if (filesAlreadyAdded.length > 0) {
         this.plugin.uppy.info(`Not adding ${filesAlreadyAdded.length} files because they already exist`)
-      }
-      if (filesNotPassingRestrictions.length > 0) {
-        this.plugin.uppy.info(`Not adding ${filesNotPassingRestrictions.length} files because they didn't pass restrictions`)
       }
       this.plugin.uppy.addFiles(filesToAdd)
     }).catch(handleError(this.plugin.uppy))
@@ -398,8 +400,6 @@ export default class ProviderView<M extends Meta, B extends Body>{
       )
     }
 
-    const nOfSelectedFiles = getNOfSelectedFiles(partialTree)
-
     return <div
       className={classNames(
         'uppy-ProviderBrowser',
@@ -445,14 +445,13 @@ export default class ProviderView<M extends Meta, B extends Body>{
         isLoading={loading}
       />
 
-      {nOfSelectedFiles > 0 && (
-        <FooterActions
-          nOfSelectedFiles={nOfSelectedFiles}
-          donePicking={this.donePicking}
-          cancelSelection={this.cancelSelection}
-          i18n={i18n}
-        />
-      )}
+      <FooterActions
+        partialTree={partialTree}
+        donePicking={this.donePicking}
+        cancelSelection={this.cancelSelection}
+        i18n={i18n}
+        validateAggregateRestrictions={this.plugin.uppy.validateAggregateRestrictions.bind(this.plugin.uppy)}
+      />
     </div>
   }
 }

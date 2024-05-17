@@ -23,7 +23,7 @@ const getPath = (
 }
 
 // See "Uppy file properties" documentation for `.absolutePath` and `.relativePath` (https://uppy.io/docs/uppy/#working-with-uppy-files)
-const injectPaths = (partialTree: PartialTree, files: PartialTreeFile[]) : CompanionFile[] => {
+const injectPaths = (partialTree: PartialTree, files: PartialTreeFile[]) : PartialTreeFile[] => {
   const cache : Cache = {}
 
   const injectedFiles = files.map((file) => {
@@ -36,15 +36,18 @@ const injectPaths = (partialTree: PartialTree, files: PartialTreeFile[]) : Compa
     
     const absDirPath = '/' + absFolders.map((i) => i.data.name).join('/')
     const relDirPath = relFolders.length === 1
-      // Must return null
+      // Must return `undefined` (which later turns into `null` in `.getTagFile()`)
       // (https://github.com/transloadit/uppy/pull/4537#issuecomment-1629136652)
       ? undefined
       : relFolders.map((i) => i.data.name).join('/')
 
     return {
-      ...file.data,
-      absDirPath,
-      relDirPath
+      ...file,
+      data: {
+        ...file.data,
+        absDirPath,
+        relDirPath
+      }
     }
   })
 

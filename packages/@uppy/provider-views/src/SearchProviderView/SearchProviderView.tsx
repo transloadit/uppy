@@ -192,8 +192,9 @@ export default class SearchProviderView<M extends Meta, B extends Body> {
     const { partialTree } = this.plugin.getPluginState()
     this.plugin.uppy.log('Adding remote search provider files')
     const checkedFiles = partialTree.filter((i) => i.type !== 'root' && i.status === 'checked') as PartialTreeFile[]
-    const withPaths = injectPaths(partialTree, checkedFiles)
-    const tagFiles = withPaths.map((file) =>
+    const checkedFilesWithPaths = injectPaths(partialTree, checkedFiles)
+    const uppyFiles = checkedFilesWithPaths.map((file) => file.data)
+    const tagFiles = uppyFiles.map((file) =>
       getTagFile<M>(file, this.plugin.id, this.provider, this.plugin.opts.companionUrl)
     )
     this.plugin.uppy.addFiles(tagFiles)
@@ -255,8 +256,6 @@ export default class SearchProviderView<M extends Meta, B extends Body> {
       )
     }
 
-    const nOfSelectedFiles = getNOfSelectedFiles(partialTree)
-
     return <div
       className={classNames(
         'uppy-ProviderBrowser',
@@ -289,14 +288,13 @@ export default class SearchProviderView<M extends Meta, B extends Body> {
         loadAllFiles={false}
       />
 
-      {nOfSelectedFiles > 0 && (
-        <FooterActions
-          nOfSelectedFiles={nOfSelectedFiles}
-          donePicking={this.donePicking}
-          cancelSelection={this.cancelSelection}
-          i18n={i18n}
-        />
-      )}
+      <FooterActions
+        partialTree={partialTree}
+        donePicking={this.donePicking}
+        cancelSelection={this.cancelSelection}
+        i18n={i18n}
+        validateAggregateRestrictions={this.plugin.uppy.validateAggregateRestrictions.bind(this.plugin.uppy)}
+      />
     </div>
   }
 }

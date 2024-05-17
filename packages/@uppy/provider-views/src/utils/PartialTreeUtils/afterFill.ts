@@ -67,7 +67,7 @@ const afterFill = async (
   partialTree: PartialTree,
   apiList: ApiList,
   validateSingleFile: (file: CompanionFile) => string | null,
-) : Promise<CompanionFile[]> => {
+) : Promise<PartialTree> => {
   const queue = new PQueue({ concurrency: 6 })
 
   // fill up the missing parts of a partialTree!
@@ -85,10 +85,7 @@ const afterFill = async (
 
   await queue.onIdle()
 
-  // Return all 'checked' files
-  const checkedFiles = poorTree.filter((item) => item.type === 'file' && item.status === 'checked') as PartialTreeFile[]
-  const uppyFiles = injectPaths(poorTree, checkedFiles)
-  return uppyFiles
+  return poorTree
 }
 
 export default afterFill

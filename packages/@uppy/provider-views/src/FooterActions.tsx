@@ -2,22 +2,49 @@ import { h } from 'preact'
 import type { I18n } from '@uppy/utils/lib/Translator'
 import type ProviderView from './ProviderView'
 import type { Meta, Body } from '@uppy/utils/lib/UppyFile'
+import classNames from 'classnames'
+import type { PartialTree, PartialTreeFile } from '@uppy/core/lib/Uppy'
+import getNOfSelectedFiles from './utils/PartialTreeUtils/getNOfSelectedFiles'
+import type { ValidateableFile } from '@uppy/core/lib/Restricter'
+import { useMemo } from 'preact/hooks'
 
 export default function FooterActions<M extends Meta, B extends Body>({
   cancelSelection,
   donePicking,
   i18n,
-  nOfSelectedFiles,
+  partialTree,
+  validateAggregateRestrictions
 }: {
   cancelSelection: ProviderView<M, B>['cancelSelection']
   donePicking: ProviderView<M, B>['donePicking']
   i18n: I18n
-  nOfSelectedFiles: number
-}): JSX.Element {
+  partialTree: PartialTree
+  validateAggregateRestrictions: (addingFiles: ValidateableFile<M, B>[]) => string | null
+}) {
+  const aggregateRestrictionError = useMemo(() => {
+    const checkedFiles = partialTree.filter((item) =>
+      item.type === 'file' && item.status === 'checked'
+    ) as PartialTreeFile[]
+    const uppyFiles = checkedFiles.map((file) => file.data)
+    return validateAggregateRestrictions(uppyFiles)
+  }, [partialTree])
+
+  const nOfSelectedFiles = useMemo(() => {
+    return getNOfSelectedFiles(partialTree)
+  }, [partialTree])
+
+  if (nOfSelectedFiles === 0) {
+    return null
+  }
+
   return (
     <div className="uppy-ProviderBrowser-footer">
       <button
-        className="uppy-u-reset uppy-c-btn uppy-c-btn-primary"
+        className={classNames(
+          'uppy-u-reset uppy-c-btn uppy-c-btn-primary',
+          { 'uppy-c-btn--disabled': aggregateRestrictionError }
+        )}
+        disabled={!!aggregateRestrictionError}
         onClick={donePicking}
         type="button"
       >
@@ -32,6 +59,13 @@ export default function FooterActions<M extends Meta, B extends Body>({
       >
         {i18n('cancel')}
       </button>
+
+      {
+        aggregateRestrictionError &&
+        <div style={{ color: 'red' }}>
+          {aggregateRestrictionError}
+        </div>
+      }
     </div>
   )
 }

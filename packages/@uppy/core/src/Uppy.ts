@@ -886,6 +886,16 @@ export class Uppy<M extends Meta, B extends Body> {
     return null
   }
 
+  validateAggregateRestrictions(files: ValidateableFile<M, B>[]): string | null {
+    const existingFiles = this.getFiles()
+    try {
+      this.#restricter.validateAggregateRestrictions(existingFiles, files)
+    } catch (err) {
+      return err.message
+    }
+    return null
+  }
+
   #checkRequiredMetaFieldsOnFile(file: UppyFile<M, B>): boolean {
     const { missingFields, error } =
       this.#restricter.getMissingRequiredMetaFields(file)
