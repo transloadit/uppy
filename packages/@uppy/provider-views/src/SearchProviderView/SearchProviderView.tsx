@@ -191,12 +191,11 @@ export default class SearchProviderView<M extends Meta, B extends Body> {
   async donePicking(): Promise<void> {
     const { partialTree } = this.plugin.getPluginState()
 
+    // 1. Add files
     const companionFiles = getCheckedFilesWithPaths(partialTree)
-    const tagFiles = companionFiles.map((f) =>
-      getTagFile<M, B>(f, this.plugin, this.provider)
-    )
-    addFiles(tagFiles, this.plugin.uppy)
+    addFiles(companionFiles, this.plugin, this.provider)
 
+    // 2. Reset state
     this.resetPluginState()
   }
 

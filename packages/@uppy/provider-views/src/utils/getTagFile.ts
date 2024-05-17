@@ -12,7 +12,7 @@ const getTagFile = <M extends Meta, B extends Body>(
   provider: CompanionClientProvider | CompanionClientSearchProvider,
 ) : TagFile<M> => {
   const fileType = getFileType({ type: file.mimeType, name: file.name })
-  
+
   const tagFile: TagFile<any> = {
     id: file.id,
     source: plugin.id,
