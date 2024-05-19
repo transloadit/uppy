@@ -109,7 +109,7 @@ unique `id`.
 :::
 
 ```js
-import React, { useEffect, useState } from 'react';
+import React, { useMemo } from 'react';
 import Uppy from '@uppy/core';
 import Webcam from '@uppy/webcam';
 import { Dashboard } from '@uppy/react';
@@ -120,7 +120,11 @@ import '@uppy/webcam/dist/style.min.css';
 
 function Component() {
 	// IMPORTANT: passing an initializer function to prevent Uppy from being reinstantiated on every render.
-	const [uppy] = useState(() => new Uppy().use(Webcam));
+	const uppy = useMemo(() => {
+		const instance = new Uppy().use(Webcam)
+
+		return instance;
+	}, []);
 
 	return <Dashboard uppy={uppy} />;
 }
@@ -133,7 +137,7 @@ you can
 [lift the state up](https://react.dev/learn/sharing-state-between-components#lifting-state-up-by-example).
 
 ```js
-import React, { useState, useEffect } from 'react';
+import React, { useMemo } from 'react';
 import Uppy from '@uppy/core';
 import { Dashboard } from '@uppy/react';
 
@@ -152,7 +156,7 @@ function Page2({ uppy }) {
 
 export default function App() {
 	// keeping the uppy instance alive above the pages the user can switch during uploading
-	const [uppy] = useState(() => new Uppy());
+	const uppy = useMemo(() => new Uppy(), []);
 
 	return (
 		// Add your router here
@@ -170,7 +174,11 @@ export default function App() {
 // ...
 function Component(props) {
 	// IMPORTANT: passing an initializer function to prevent the state from recreating.
-	const [uppy] = useState(() => new Uppy().use(Webcam));
+	const uppy = useMemo(() => {
+		const instance = new Uppy().use(Webcam)
+
+		return instance;
+	}, []);
 
 	useEffect(() => {
 		uppy.setOptions({ restrictions: props.restrictions });
