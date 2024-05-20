@@ -12,6 +12,7 @@ export default {
       0: 'You have to select at least %{smart_count} file',
       1: 'You have to select at least %{smart_count} files',
     },
+    aggregateExceedsSize: 'You selected %{size} of files, but maximum allowed size is %{sizeAllowed}',
     exceedsSize: '%{file} exceeds maximum allowed size of %{size}',
     missingRequiredMetaField: 'Missing required meta fields',
     missingRequiredMetaFieldOnFile:
