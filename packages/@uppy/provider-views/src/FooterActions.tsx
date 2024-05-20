@@ -34,30 +34,32 @@ export default function FooterActions<M extends Meta, B extends Body>({
 
   return (
     <div className="uppy-ProviderBrowser-footer">
-      <button
-        className={classNames(
-          'uppy-u-reset uppy-c-btn uppy-c-btn-primary',
-          { 'uppy-c-btn--disabled': aggregateRestrictionError }
-        )}
-        disabled={!!aggregateRestrictionError}
-        onClick={donePicking}
-        type="button"
-      >
-        {i18n('selectX', {
-          smart_count: nOfSelectedFiles,
-        })}
-      </button>
-      <button
-        className="uppy-u-reset uppy-c-btn uppy-c-btn-link"
-        onClick={cancelSelection}
-        type="button"
-      >
-        {i18n('cancel')}
-      </button>
+      <div className="uppy-ProviderBrowser-footer-buttons">
+        <button
+          className={classNames(
+            'uppy-u-reset uppy-c-btn uppy-c-btn-primary',
+            { 'uppy-c-btn--disabled': aggregateRestrictionError }
+          )}
+          disabled={!!aggregateRestrictionError}
+          onClick={donePicking}
+          type="button"
+        >
+          {i18n('selectX', {
+            smart_count: nOfSelectedFiles,
+          })}
+        </button>
+        <button
+          className="uppy-u-reset uppy-c-btn uppy-c-btn-link"
+          onClick={cancelSelection}
+          type="button"
+        >
+          {i18n('cancel')}
+        </button>
+      </div>
 
       {
         aggregateRestrictionError &&
-        <div style={{ color: 'red' }}>
+        <div className="uppy-ProviderBrowser-footer-error">
           {aggregateRestrictionError}
         </div>
       }
