@@ -5,7 +5,7 @@ import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
 import afterOpenFolder from './afterOpenFolder.ts'
 import afterScrollFolder from './afterScrollFolder.ts'
 import afterFill from './afterFill.ts'
-import injectPaths from './injectPaths.ts'
+import getCheckedFilesWithPaths from './getCheckedFilesWithPaths.ts'
 import getNOfSelectedFiles from './getNOfSelectedFiles.ts'
 
 const _root = (id: string, options: any = {}) : PartialTreeFolderRoot => ({
@@ -55,11 +55,11 @@ const getFile = (tree: PartialTree, id: string) =>
   tree.find((i) => i.id === id) as PartialTreeFile
 
 describe('afterFill()', () => {
-  it('fetches an already loaded file', async () => {
+  it('preserves .checked files in an already .cached folder', async () => {
     const tree : PartialTree = [
       _root('ourRoot'),
           _folder('1', { parentId: 'ourRoot' }),
-          _folder('2', { parentId: 'ourRoot' }),
+          _folder('2', { parentId: 'ourRoot', cached: true }),
               _file('2_1', { parentId: '2' }),
               _file('2_2', { parentId: '2', status: 'checked' }),
               _file('2_3', { parentId: '2' }),
@@ -68,13 +68,14 @@ describe('afterFill()', () => {
           _file('4', { parentId: 'ourRoot' }),
     ]
     const mock = vi.fn()
-    const result = await afterFill(tree, mock)
+    const enrichedTree = await afterFill(tree, mock, () => null)
 
     // While we're at it - make sure we're not doing excessive api calls!
     expect(mock.mock.calls.length).toEqual(0)
 
-    expect(result.length).toEqual(1)
-    expect(result[0].id).toEqual('2_2')
+    const checkedFiles = enrichedTree.filter((item) => item.type === 'file' && item.status === 'checked')
+    expect(checkedFiles.length).toEqual(1)
+    expect(checkedFiles[0].id).toEqual('2_2')
   })
 
   it('fetches a .checked folder', async () => {
@@ -93,10 +94,11 @@ describe('afterFill()', () => {
       }
       return Promise.reject()
     }
-    const result = await afterFill(tree, mock)
+    const enrichedTree = await afterFill(tree, mock, () => null)
 
-    expect(result.length).toEqual(4)
-    expect(result.map((f) => f.id)).toEqual(['2_1', '2_2', '2_3', '2_4'])
+    const checkedFiles = enrichedTree.filter((item) => item.type === 'file' && item.status === 'checked')
+    expect(checkedFiles.length).toEqual(4)
+    expect(checkedFiles.map((f) => f.id)).toEqual(['2_1', '2_2', '2_3', '2_4'])
   })
 
   it('fetches remaining pages in a folder', async () => {
@@ -112,10 +114,11 @@ describe('afterFill()', () => {
       }
       return Promise.reject()
     }
-    const result = await afterFill(tree, mock)
+    const enrichedTree = await afterFill(tree, mock, () => null)
 
-    expect(result.length).toEqual(2)
-    expect(result.map((f) => f.id)).toEqual(['111', '222'])
+    const checkedFiles = enrichedTree.filter((item) => item.type === 'file' && item.status === 'checked')
+    expect(checkedFiles.length).toEqual(2)
+    expect(checkedFiles.map((f) => f.id)).toEqual(['111', '222'])
   })
 
   it('fetches a folder two levels deep', async () => {
@@ -136,10 +139,11 @@ describe('afterFill()', () => {
       }
       return Promise.reject()
     }
-    const result = await afterFill(tree, mock)
+    const enrichedTree = await afterFill(tree, mock, () => null)
 
-    expect(result.length).toEqual(5)
-    expect(result.map((f) => f.id)).toEqual(['2_1', '2_2', '2_3', '666_1', '666_2'])
+    const checkedFiles = enrichedTree.filter((item) => item.type === 'file' && item.status === 'checked')
+    expect(checkedFiles.length).toEqual(5)
+    expect(checkedFiles.map((f) => f.id)).toEqual(['2_1', '2_2', '2_3', '666_1', '666_2'])
   })
 
   it('complex situation', async () => {
@@ -178,10 +182,11 @@ describe('afterFill()', () => {
       }
       return Promise.reject()
     }
-    const result = await afterFill(tree, mock)
+    const enrichedTree = await afterFill(tree, mock, () => null)
 
-    expect(result.length).toEqual(8)
-    expect(result.map((f) => f.id)).toEqual(['2_1', '2_2', '3_1', '2_3', '666_1', '777_1', '777_2_1', '777_2_1_1'])
+    const checkedFiles = enrichedTree.filter((item) => item.type === 'file' && item.status === 'checked')
+    expect(checkedFiles.length).toEqual(8)
+    expect(checkedFiles.map((f) => f.id)).toEqual(['2_1', '2_2', '3_1', '2_3', '666_1', '777_1', '777_2_1', '777_2_1_1'])
   })
 })
 
@@ -197,7 +202,7 @@ describe('afterOpenFolder()', () => {
 
     const clickedFolder = oldPartialTree.find((f) => f.id === '2') as PartialTreeFolderNode
 
-    const newTree = afterOpenFolder(oldPartialTree, fakeCompanionFiles, clickedFolder, () => null, null)
+    const newTree = afterOpenFolder(oldPartialTree, fakeCompanionFiles, clickedFolder, null, () => null)
 
     expect(getFolder(newTree, '666').status).toEqual('checked')
     expect(getFile(newTree, '777').status).toEqual('checked')
@@ -215,7 +220,7 @@ describe('afterOpenFolder()', () => {
 
     const clickedFolder = oldPartialTree.find((f) => f.id === '2') as PartialTreeFolderNode
 
-    const newTree = afterOpenFolder(oldPartialTree, fakeCompanionFiles, clickedFolder, () => null, null)
+    const newTree = afterOpenFolder(oldPartialTree, fakeCompanionFiles, clickedFolder, null, () => null)
 
     expect(getFolder(newTree, '666').status).toEqual('unchecked')
     expect(getFile(newTree, '777').status).toEqual('unchecked')
@@ -401,25 +406,24 @@ describe('injectPaths()', () => {
         _file('3', { parentId: 'ourRoot' }),
         _file('4', { parentId: 'ourRoot' }),
   ]
-  const checkedFiles = tree.filter((item) => item.type === 'file' && item.status === 'checked') as PartialTreeFile[]
 
   // These test cases are based on documentation for .absolutePath and .relativePath (https://uppy.io/docs/uppy/#filemeta)
   it('.absolutePath always begins with / + always ends with the file’s name.', () => {
-    const result = injectPaths(tree, checkedFiles)
+    const result = getCheckedFilesWithPaths(tree)
 
     expect(result.find((f) => f.id === '2_2')!.absDirPath).toEqual('/name_2/name_2_2.jpg')
     expect(result.find((f) => f.id === '2_4_3')!.absDirPath).toEqual('/name_2/name_2_4/name_2_4_3.jpg')
   })
 
   it('.relativePath is null when file is selected independently', () => {
-    const result = injectPaths(tree, checkedFiles)
+    const result = getCheckedFilesWithPaths(tree)
 
     // .relDirPath should be `undefined`, which will make .relativePath `null` eventually
     expect(result.find((f) => f.id === '2_2')!.relDirPath).toEqual(undefined)
   })
 
   it('.relativePath attends to highest checked folder', () => {
-    const result = injectPaths(tree, checkedFiles)
+    const result = getCheckedFilesWithPaths(tree)
 
     expect(result.find((f) => f.id === '2_4_1')!.relDirPath).toEqual('name_2_4/name_2_4_1.jpg')
   })
