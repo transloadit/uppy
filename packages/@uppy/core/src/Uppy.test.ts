@@ -2150,7 +2150,7 @@ describe('src/Core', () => {
       )
     })
 
-    it('should check if a file validateRestrictions', () => {
+    it('should report error on validateSingleFile', () => {
       const core = new Core({
         restrictions: {
           minFileSize: 300000,
@@ -2175,15 +2175,13 @@ describe('src/Core', () => {
         size: 270733,
       }
 
-      // @ts-ignore
-      const validateRestrictions1 = core.validateRestrictions(newFile)
-      // @ts-ignore
-      const validateRestrictions2 = core2.validateRestrictions(newFile)
+      const validateRestrictions1 = core.validateSingleFile(newFile)
+      const validateRestrictions2 = core2.validateSingleFile(newFile)
 
-      expect(validateRestrictions1!.message).toEqual(
+      expect(validateRestrictions1).toEqual(
         'This file is smaller than the allowed size of 293 KB',
       )
-      expect(validateRestrictions2!.message).toEqual(
+      expect(validateRestrictions2).toEqual(
         'You can only upload: image/png',
       )
     })

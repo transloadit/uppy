@@ -865,18 +865,6 @@ export class Uppy<M extends Meta, B extends Body> {
     }
   }
 
-  validateRestrictions(
-    file: ValidateableFile<M, B>,
-    files: ValidateableFile<M, B>[] = this.getFiles(),
-  ): RestrictionError<M, B> | null {
-    try {
-      this.#restricter.validate(files, [file])
-    } catch (err) {
-      return err
-    }
-    return null
-  }
-
   validateSingleFile(file: ValidateableFile<M, B>): string | null {
     try {
       this.#restricter.validateSingleFile(file)
