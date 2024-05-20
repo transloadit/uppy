@@ -2127,7 +2127,7 @@ describe('src/Core', () => {
     it('should enforce the maxTotalFileSize rule', () => {
       const core = new Core({
         restrictions: {
-          maxTotalFileSize: 34000,
+          maxTotalFileSize: 20000,
         },
       })
 
@@ -2146,7 +2146,9 @@ describe('src/Core', () => {
           data: testImage,
         })
       }).toThrowError(
-        new Error('foo1.jpg exceeds maximum allowed size of 33 KB'),
+        new Error(
+          'You selected 34 KB of files, but maximum allowed size is 20 KB',
+        ),
       )
     })
 
@@ -2181,9 +2183,7 @@ describe('src/Core', () => {
       expect(validateRestrictions1).toEqual(
         'This file is smaller than the allowed size of 293 KB',
       )
-      expect(validateRestrictions2).toEqual(
-        'You can only upload: image/png',
-      )
+      expect(validateRestrictions2).toEqual('You can only upload: image/png')
     })
 
     it('should emit `restriction-failed` event when some rule is violated', () => {
