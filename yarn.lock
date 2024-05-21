@@ -7022,14 +7022,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sveltejs/adapter-auto@npm:^3.0.0":
-  version: 3.2.0
-  resolution: "@sveltejs/adapter-auto@npm:3.2.0"
-  dependencies:
-    import-meta-resolve: "npm:^4.0.0"
+"@sveltejs/adapter-static@npm:^3.0.1":
+  version: 3.0.1
+  resolution: "@sveltejs/adapter-static@npm:3.0.1"
   peerDependencies:
     "@sveltejs/kit": ^2.0.0
-  checksum: 10/e5d5b59b1572ccc2badb8d4d5ebb8860c8867b2d616c5b6d8c939f651fd474ce40d0f241ab6ba7e70607511defb6d434beaac18fabcdc3603362fa339a9bbe83
+  checksum: 10/d0b4be4acd62be17d20223b6da4683db86d636c8f969293ef43abb3d82ec0516402f162d48ddd8f68ed5b7103589545642c2e9cb8e7f93c12d8cdcc9ab83bcd1
   languageName: node
   linkType: hard
 
@@ -8702,11 +8700,14 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy-example/svelte-app@workspace:examples/svelte-example"
   dependencies:
-    "@sveltejs/adapter-auto": "npm:^3.0.0"
+    "@sveltejs/adapter-static": "npm:^3.0.1"
     "@sveltejs/kit": "npm:^2.0.0"
     "@sveltejs/vite-plugin-svelte": "npm:^3.0.0"
     "@types/formidable": "npm:^3"
     "@uppy/core": "workspace:*"
+    "@uppy/dashboard": "workspace:*"
+    "@uppy/drag-drop": "workspace:*"
+    "@uppy/progress-bar": "workspace:*"
     "@uppy/svelte": "workspace:*"
     "@uppy/webcam": "workspace:*"
     "@uppy/xhr-upload": "workspace:*"
