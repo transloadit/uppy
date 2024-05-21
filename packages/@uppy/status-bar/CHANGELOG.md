@@ -10,6 +10,13 @@ Included in: Uppy v4.0.0-beta.1
 - @uppy/status-bar: refine type of private variables (Antoine du Hamel / #5025)
 - @uppy/status-bar: fix `recoveredState` type (Antoine du Hamel / #4996)
 
+## 3.3.3
+
+Released: 2024-05-07
+Included in: Uppy v3.25.2
+
+- @uppy/compressor,@uppy/core,@uppy/dashboard,@uppy/status-bar: Upgrade @transloadit/prettier-bytes (Merlijn Vos / #5150)
+
 ## 3.3.1
 
 Released: 2024-03-27

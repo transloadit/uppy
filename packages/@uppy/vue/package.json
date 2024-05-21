@@ -1,11 +1,11 @@
 {
   "name": "@uppy/vue",
-  "version": "2.0.0-beta.1",
+  "version": "2.0.0-beta.2",
   "license": "MIT",
   "type": "module",
   "main": "lib/index.js",
   "dependencies": {
-    "shallow-equal": "^1.2.1"
+    "shallow-equal": "^3.0.0"
   },
   "devDependencies": {
     "vue": "^3.4.21"

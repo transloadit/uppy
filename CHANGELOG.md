@@ -12,6 +12,80 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 4.0.0-beta.7
+
+Released: 2024-05-14
+
+| Package                |      Version | Package                |      Version |
+| ---------------------- | ------------ | ---------------------- | ------------ |
+| @uppy/companion        | 5.0.0-beta.6 | @uppy/status-bar       | 4.0.0-beta.7 |
+| @uppy/companion-client | 4.0.0-beta.6 | @uppy/unsplash         | 4.0.0-beta.6 |
+| @uppy/compressor       | 2.0.0-beta.7 | @uppy/url              | 4.0.0-beta.6 |
+| @uppy/core             | 4.0.0-beta.7 | @uppy/utils            | 6.0.0-beta.6 |
+| @uppy/dashboard        | 4.0.0-beta.7 | @uppy/webcam           | 4.0.0-beta.6 |
+| @uppy/dropbox          | 4.0.0-beta.6 | @uppy/xhr-upload       | 4.0.0-beta.4 |
+| @uppy/image-editor     | 3.0.0-beta.4 | uppy                   | 4.0.0-beta.7 |
+| @uppy/screen-capture   | 4.0.0-beta.5 |                        |              |
+
+- @uppy/companion: switch from `node-redis` to `ioredis` (Dominik Schmidt / #4623)
+- meta: Fix headings in xhr.mdx (Merlijn Vos)
+- @uppy/xhr-upload: introduce hooks similar to tus (Merlijn Vos / #5094)
+- @uppy/core: close->destroy, clearUploadedFiles->clear (Merlijn Vos / #5154)
+- @uppy/companion-client,@uppy/dropbox,@uppy/screen-capture,@uppy/unsplash,@uppy/url,@uppy/webcam: Use `title` consistently from locales (Merlijn Vos / #5134)
+
+
+## 4.0.0-beta.6
+
+Released: 2024-05-08
+
+| Package          |      Version | Package          |      Version |
+| ---------------- | ------------ | ---------------- | ------------ |
+| @uppy/compressor | 2.0.0-beta.6 | @uppy/status-bar | 4.0.0-beta.6 |
+| @uppy/core       | 4.0.0-beta.6 | uppy             | 4.0.0-beta.6 |
+| @uppy/dashboard  | 4.0.0-beta.6 |                  |              |
+
+
+
+
+## 4.0.0-beta.5
+
+Released: 2024-05-03
+
+| Package                   |      Version | Package                   |      Version |
+| ------------------------- | ------------ | ------------------------- | ------------ |
+| @uppy/audio               | 2.0.0-beta.5 | @uppy/progress-bar        | 4.0.0-beta.4 |
+| @uppy/aws-s3              | 4.0.0-beta.3 | @uppy/provider-views      | 4.0.0-beta.5 |
+| @uppy/aws-s3-multipart    | 4.0.0-beta.5 | @uppy/react               | 4.0.0-beta.5 |
+| @uppy/box                 | 3.0.0-beta.5 | @uppy/redux-dev-tools     | 4.0.0-beta.2 |
+| @uppy/companion           | 5.0.0-beta.5 | @uppy/remote-sources      | 2.0.0-beta.4 |
+| @uppy/companion-client    | 4.0.0-beta.5 | @uppy/screen-capture      | 4.0.0-beta.4 |
+| @uppy/compressor          | 2.0.0-beta.5 | @uppy/status-bar          | 4.0.0-beta.5 |
+| @uppy/core                | 4.0.0-beta.5 | @uppy/store-default       | 4.0.0-beta.2 |
+| @uppy/dashboard           | 4.0.0-beta.5 | @uppy/store-redux         | 4.0.0-beta.3 |
+| @uppy/drag-drop           | 4.0.0-beta.4 | @uppy/svelte              | 4.0.0-beta.3 |
+| @uppy/dropbox             | 4.0.0-beta.5 | @uppy/thumbnail-generator | 4.0.0-beta.4 |
+| @uppy/facebook            | 4.0.0-beta.5 | @uppy/transloadit         | 4.0.0-beta.5 |
+| @uppy/file-input          | 4.0.0-beta.5 | @uppy/tus                 | 4.0.0-beta.4 |
+| @uppy/form                | 4.0.0-beta.3 | @uppy/unsplash            | 4.0.0-beta.5 |
+| @uppy/golden-retriever    | 4.0.0-beta.4 | @uppy/url                 | 4.0.0-beta.5 |
+| @uppy/google-drive        | 4.0.0-beta.5 | @uppy/utils               | 6.0.0-beta.5 |
+| @uppy/image-editor        | 3.0.0-beta.3 | @uppy/vue                 | 2.0.0-beta.2 |
+| @uppy/informer            | 4.0.0-beta.2 | @uppy/webcam              | 4.0.0-beta.5 |
+| @uppy/instagram           | 4.0.0-beta.5 | @uppy/xhr-upload          | 4.0.0-beta.3 |
+| @uppy/locales             | 4.0.0-beta.1 | @uppy/zoom                | 3.0.0-beta.5 |
+| @uppy/onedrive            | 4.0.0-beta.5 | uppy                      | 4.0.0-beta.5 |
+
+- @uppy/core: make UppyEventMap more readable (Murderlon)
+- @uppy/audio,@uppy/compressor,@uppy/core,@uppy/dashboard,@uppy/remote-sources,@uppy/tus,@uppy/utils: Format (Murderlon)
+- @uppy/aws-s3-multipart: Format (Murderlon)
+- meta: enable prettier for markdown (Merlijn Vos / #5133)
+- @uppy/xhr-upload: do not throw when res is missing url (Merlijn Vos / #5132)
+- @uppy/companion: coerce `requestUrl` to a string (Antoine du Hamel / #5128)
+- meta: enforce use of `.js` extension in `import type` declarations (Antoine du Hamel / #5126)
+- @uppy/core: add instance ID to generated IDs (Merlijn Vos / #5080)
+- @uppy/core: reference updated i18n in Restricter (Merlijn Vos / #5118)
+
+
 ## 4.0.0-beta.4
 
 Released: 2024-04-29
@@ -235,6 +309,53 @@ Released: 2024-03-28
 - @uppy/vue: [v4.x] remove manual types (Antoine du Hamel / #4803)
 - meta: prepare release workflow for beta versions (Antoine du Hamel)
 
+## 3.25.3
+
+Released: 2024-05-14
+
+| Package            | Version | Package            | Version |
+| ------------------ | ------- | ------------------ | ------- |
+| @uppy/core         |  3.11.3 | uppy               |  3.25.3 |
+| @uppy/image-editor |   2.4.6 |                    |         |
+
+- @uppy/image-editor: fix tooltips (Avneet Singh Malhotra / #5156)
+- meta: Remove redundant `plugins` prop from examples (Merlijn Vos / #5145)
+- @uppy/image-editor: Remove `target` option from examples and document consistently (Merlijn Vos / #5146)
+- @uppy/core: make getObjectOfFilesPerState more efficient (Merlijn Vos / #5155)
+
+
+## 3.25.2
+
+Released: 2024-05-07
+
+| Package          | Version | Package          | Version |
+| ---------------- | ------- | ---------------- | ------- |
+| @uppy/compressor |   1.1.4 | @uppy/status-bar |   3.3.3 |
+| @uppy/core       |  3.11.2 | uppy             |  3.25.2 |
+| @uppy/dashboard  |   3.8.3 |                  |         |
+
+- @uppy/compressor,@uppy/core,@uppy/dashboard,@uppy/status-bar: Upgrade @transloadit/prettier-bytes (Merlijn Vos / #5150)
+- meta: run Prettier in the release workflow (Antoine du Hamel)
+
+
+## 3.25.1
+
+Released: 2024-05-03
+
+| Package          | Version | Package          | Version |
+| ---------------- | ------- | ---------------- | ------- |
+| @uppy/companion  |  4.13.2 | @uppy/xhr-upload |   3.6.6 |
+| @uppy/core       |  3.11.1 | uppy             |  3.25.1 |
+| @uppy/locales    |   3.5.3 |                  |         |
+
+- @uppy/locales: Update ru_RU locale  (Uladzislau Bodryi / #5120)
+- meta: fix `update-contributors` script (Antoine du Hamel / #5137)
+- meta: fix `bullet` setting for ReMark (Antoine du Hamel)
+- meta: add prettier to `.md` pre-commit hooks (Antoine du Hamel)
+- @uppy/core: make UppyEventMap more readable (Murderlon)
+- meta: enable prettier for markdown (Merlijn Vos / #5133)
+- @uppy/xhr-upload: do not throw when res is missing url (Merlijn Vos / #5132)
+- @uppy/companion: coerce `requestUrl` to a string (Antoine du Hamel / #5128)
 
 
 ## 3.25.0
@@ -2991,7 +3112,7 @@ In this release we’ve improved testing DX and CORS handling in Companion, adde
 - @uppy/aws-s3: removeUploader triggered on uninstall (#2824 / @slawexxx44)
 - @uppy/companion: Add additional Google Drive Metadata (#2795 / @ajh-sr)
 - @uppy/companion: Feature: add redis pubsub scope setting (#2804 / @coreprocess)
-- @uppy/companion: fix running on a subpath (#2841, #2797 / @coreprocess, @goto-bus-stop) 
+- @uppy/companion: fix running on a subpath (#2841, #2797 / @coreprocess, @goto-bus-stop)
 - @uppy/companion: Fix videoMediaMetadata property name (6cb90c613c5d3b256194e039bfce30d6de6a6dac / @goto-bus-stop)
 - @uppy/companion: Improve companion unit testing DX (#2827 / @mifi)
 - @uppy/companion: Use `cors` module instead of custom cors logic (#2823 / @mifi)

@@ -552,7 +552,7 @@ describe('src/Core', () => {
     core.on('cancel-all', coreCancelEventMock)
     core.on('state-update', coreStateUpdateEventMock)
 
-    core.close()
+    core.destroy()
 
     expect(coreCancelEventMock).toHaveBeenCalledWith(
       { reason: 'user' },
@@ -1808,7 +1808,7 @@ describe('src/Core', () => {
 
       await uploadPromise
 
-      core.close()
+      core.destroy()
     })
 
     it('should estimate progress for unsized files', () => {
@@ -1852,7 +1852,7 @@ describe('src/Core', () => {
       // foo.jpg at 35%, bar.jpg at 0%
       expect(core.getState().totalProgress).toBe(18)
 
-      core.close()
+      core.destroy()
     })
 
     it('should calculate the total progress of all file uploads', () => {

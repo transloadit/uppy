@@ -51,7 +51,7 @@ yarn add @uppy/webcam
         import { Uppy, Dashboard, Webcam } from "{{UPPY_JS_URL}}"
         const uppy = new Uppy()
         uppy.use(Dashboard, { inline: true, target: 'body' })
-        uppy.use(Webcam, { target: Uppy.Dashboard })
+        uppy.use(Webcam)
       `}
     </UppyCdnExample>
   </TabItem>
@@ -77,9 +77,7 @@ import '@uppy/core/dist/style.min.css';
 import '@uppy/dashboard/dist/style.min.css';
 import '@uppy/webcam/dist/style.min.css';
 
-new Uppy()
-	.use(Dashboard, { inline: true, target: 'body' })
-	.use(Webcam, { target: Dashboard });
+new Uppy().use(Dashboard, { inline: true, target: 'body' }).use(Webcam);
 ```
 
 ## API
@@ -92,8 +90,9 @@ A unique identifier for this plugin (`string`, default: `'Webcam'`).
 
 #### `target`
 
-DOM element, CSS selector, or plugin to place the webcam into (`string` or
-`Element`, default: `null`).
+DOM element, CSS selector, or plugin to place the drag and drop area into
+(`string`, `Element`, `Function`, or `UIPlugin`, default:
+[`Dashboard`](/docs/dashboard)).
 
 #### `countdown`
 

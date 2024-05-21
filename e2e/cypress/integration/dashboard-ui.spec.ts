@@ -5,7 +5,7 @@ describe('dashboard-ui', () => {
     cy.get('.uppy-Dashboard-AddFiles').as('drop-target')
   })
 
-  it('should not throw when calling uppy.close()', () => {
+  it('should not throw when calling uppy.destroy()', () => {
     cy.get('@file-input').selectFile(
       [
         'cypress/fixtures/images/cat.jpg',
@@ -15,7 +15,7 @@ describe('dashboard-ui', () => {
     )
 
     cy.window().then(({ uppy }) => {
-      expect(uppy.close()).to.not.throw
+      expect(uppy.destroy()).to.not.throw
     })
   })
 

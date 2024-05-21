@@ -1,5 +1,19 @@
 # @uppy/xhr-upload
 
+## 4.0.0-beta.4
+
+Released: 2024-05-14
+Included in: Uppy v4.0.0-beta.7
+
+- @uppy/xhr-upload: introduce hooks similar to tus (Merlijn Vos / #5094)
+
+## 4.0.0-beta.3
+
+Released: 2024-05-03
+Included in: Uppy v4.0.0-beta.5
+
+- @uppy/xhr-upload: do not throw when res is missing url (Merlijn Vos / #5132)
+
 ## 4.0.0-beta.2
 
 Released: 2024-04-29
@@ -14,6 +28,12 @@ Included in: Uppy v4.0.0-beta.1
 
 - @uppy/aws-s3-multipart,@uppy/tus,@uppy/utils,@uppy/xhr-upload: Make `allowedMetaFields` consistent (Merlijn Vos / #5011)
 
+## 3.6.6
+
+Released: 2024-05-03
+Included in: Uppy v3.25.1
+
+- @uppy/xhr-upload: do not throw when res is missing url (Merlijn Vos / #5132)
 
 ## 3.6.5
 

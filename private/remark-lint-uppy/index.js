@@ -2,6 +2,7 @@ const importDefault = (specifier) => import(specifier).then((module) => module.d
 
 export default {
   settings: {
+    bullet: "-",
     emphasis: '_',
     strong: '*',
     listItemIndent: 'one',

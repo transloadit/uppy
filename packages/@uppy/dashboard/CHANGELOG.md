@@ -1,5 +1,12 @@
 # @uppy/dashboard
 
+## 4.0.0-beta.5
+
+Released: 2024-05-03
+Included in: Uppy v4.0.0-beta.5
+
+- @uppy/audio,@uppy/compressor,@uppy/core,@uppy/dashboard,@uppy/remote-sources,@uppy/tus,@uppy/utils: Format (Murderlon)
+
 ## 4.0.0-beta.4
 
 Released: 2024-04-29
@@ -21,6 +28,12 @@ Included in: Uppy v4.0.0-beta.1
 - @uppy/dashboard: refactor to TypeScript (Antoine du Hamel / #4984)
 - @uppy/dashboard: refactor to stable lifecycle method (Antoine du Hamel / #4999)
 
+## 3.8.3
+
+Released: 2024-05-07
+Included in: Uppy v3.25.2
+
+- @uppy/compressor,@uppy/core,@uppy/dashboard,@uppy/status-bar: Upgrade @transloadit/prettier-bytes (Merlijn Vos / #5150)
 
 ## 3.8.2
 

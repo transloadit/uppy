@@ -76,10 +76,9 @@ import Dropbox from '@uppy/dropbox';
 import '@uppy/core/dist/style.min.css';
 import '@uppy/dashboard/dist/style.min.css';
 
-new Uppy().use(Dashboard, { inline: true, target: '#dashboard' }).use(Dropbox, {
-	target: Dashboard,
-	companionUrl: 'https://your-companion.com',
-});
+new Uppy()
+	.use(Dashboard, { inline: true, target: '#dashboard' })
+	.use(Dropbox, { companionUrl: 'https://your-companion.com' });
 ```
 
 ### Use in Companion
@@ -149,7 +148,8 @@ Title / name shown in the UI, such as Dashboard tabs (`string`, default:
 #### `target`
 
 DOM element, CSS selector, or plugin to place the drag and drop area into
-(`string` or `Element`, default: `null`).
+(`string`, `Element`, `Function`, or `UIPlugin`, default:
+[`Dashboard`](/docs/dashboard)).
 
 #### `companionUrl`
 

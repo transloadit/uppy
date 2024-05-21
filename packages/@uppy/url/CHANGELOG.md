@@ -1,5 +1,12 @@
 # @uppy/url
 
+## 4.0.0-beta.6
+
+Released: 2024-05-14
+Included in: Uppy v4.0.0-beta.7
+
+- @uppy/companion-client,@uppy/dropbox,@uppy/screen-capture,@uppy/unsplash,@uppy/url,@uppy/webcam: Use `title` consistently from locales (Merlijn Vos / #5134)
+
 ## 4.0.0-beta.1
 
 Released: 2024-03-28

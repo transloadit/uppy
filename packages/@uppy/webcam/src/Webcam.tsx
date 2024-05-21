@@ -69,7 +69,6 @@ export interface WebcamOptions<M extends Meta, B extends Body>
   showVideoSourceDropdown?: boolean
   /** @deprecated */
   facingMode?: MediaTrackConstraints['facingMode'] // @TODO: remove in the next major
-  title?: string
   videoConstraints?: MediaTrackConstraints
   showRecordingLength?: boolean
   preferredImageMimeType?: string | null
