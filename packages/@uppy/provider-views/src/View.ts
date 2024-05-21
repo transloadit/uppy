@@ -63,15 +63,9 @@ export default class View<
 
     this.isHandlingScroll = false
 
-    this.preFirstRender = this.preFirstRender.bind(this)
     this.handleError = this.handleError.bind(this)
     this.clearSelection = this.clearSelection.bind(this)
     this.cancelPicking = this.cancelPicking.bind(this)
-  }
-
-  preFirstRender(): void {
-    this.plugin.setPluginState({ didFirstRender: true })
-    this.plugin.onFirstRender()
   }
 
   shouldHandleScroll(event: Event): boolean {

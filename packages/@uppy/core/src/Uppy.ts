@@ -92,7 +92,7 @@ export type UnknownProviderPlugin<
   M extends Meta,
   B extends Body,
 > = UnknownPlugin<M, B, UnknownProviderPluginState> & {
-  onFirstRender: () => void
+  rootFolderId: string | null
   title: string
   files: UppyFile<M, B>[]
   icon: () => h.JSX.Element
@@ -129,7 +129,6 @@ export type UnknownSearchProviderPlugin<
   M extends Meta,
   B extends Body,
 > = UnknownPlugin<M, B, UnknownSearchProviderPluginState> & {
-  onFirstRender: () => void
   title: string
   icon: () => h.JSX.Element
   provider: CompanionClientSearchProvider
