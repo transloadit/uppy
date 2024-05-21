@@ -73,7 +73,7 @@ function fetchYouTubeVideoMetadata(videoUrl) {
     'https://us-east1-maestro-218920.cloudfunctions.net/getYoutubeURLMeta2'
   ];
 
-  const options = {
+  const baseOptions = {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -88,7 +88,10 @@ function fetchYouTubeVideoMetadata(videoUrl) {
         return;
       }
 
-      options.url = endpoints[endpointIndex];
+      const options = {
+        ...baseOptions,
+        url: endpoints[endpointIndex],
+      };
 
       request(options, (error, response, body) => {
         if (error) {
@@ -115,40 +118,6 @@ function fetchYouTubeVideoMetadata(videoUrl) {
     };
 
     tryFetch(0);
-  });
-}
-
-function fetchYouTubeVideoMetadata2(videoUrl) {
-  const endpoint = 'https://us-east4-maestro-218920.cloudfunctions.net/getYoutubeURLMeta';
-  const options = {
-    method: 'POST',
-    url: endpoint,
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ videoUrl }),
-  };
-
-  return new Promise((resolve, reject) => {
-    request(options, (error, response, body) => {
-      if (error) {
-        console.error('Error fetching YouTube video metadata:', error);
-        reject(error);
-        return;
-      }
-
-      if (response && response.statusCode === 200) {
-        const data = JSON.parse(body);
-        resolve({
-          videoID: data.videoID,
-          name: data.name,
-          type: data.type,
-          size: data.size,
-        });
-      } else {
-        reject(new Error(`Failed to fetch metadata. Status code: ${response ? response.statusCode : 'N/A'}`));
-      }
-    });
   });
 }
 
