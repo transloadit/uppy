@@ -547,7 +547,7 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
 
     if (typeof opts.headers === 'function') {
       opts.headers = opts.headers(file)
-    } 
+    }
 
     return {
       ...file.remote?.body,
