@@ -5,8 +5,4 @@ import { defineConfig } from 'vite'
 
 export default defineConfig({
   plugins: [sveltekit()],
-  define: {
-    navigator: {},
-    location: { protocol: 'about:', href: 'about:blank' },
-  },
 })

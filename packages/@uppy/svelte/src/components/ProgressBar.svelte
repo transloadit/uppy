@@ -21,7 +21,7 @@
     plugin = uppy.getPlugin(options.id) as ProgressBarPlugin<M, B>;
   }
   const uninstallPlugin = (uppyInstance: Uppy<M, B> = uppy) => {
-    uppyInstance.removePlugin(plugin);
+    if (plugin != null) uppyInstance.removePlugin(plugin);
   }
 
   onMount(() => installPlugin())

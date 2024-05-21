@@ -8711,6 +8711,7 @@ __metadata:
     "@uppy/webcam": "workspace:*"
     "@uppy/xhr-upload": "workspace:*"
     formidable: "npm:^3.5.1"
+    npm-run-all: "npm:^4.1.5"
     svelte: "npm:^4.2.7"
     svelte-check: "npm:^3.6.0"
     tslib: "npm:^2.4.1"
