@@ -21,7 +21,7 @@
     plugin = uppy.getPlugin(options.id) as StatusBarPlugin;
   }
   const uninstallPlugin = (uppyInstance: Uppy = uppy) => {
-    uppyInstance.removePlugin(plugin);
+    if (plugin != null) uppyInstance.removePlugin(plugin);
   }
 
   onMount(() => installPlugin())
