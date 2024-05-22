@@ -1,5 +1,12 @@
 # @uppy/xhr-upload
 
+## 4.0.0-beta.4
+
+Released: 2024-05-14
+Included in: Uppy v4.0.0-beta.7
+
+- @uppy/xhr-upload: introduce hooks similar to tus (Merlijn Vos / #5094)
+
 ## 4.0.0-beta.3
 
 Released: 2024-05-03

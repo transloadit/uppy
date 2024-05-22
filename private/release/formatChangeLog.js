@@ -4,12 +4,12 @@ import { spawn } from 'node:child_process'
 
 import prompts from 'prompts'
 
-const atUppyPackagePath = /^packages\/(@uppy\/[a-z0-9-]+)\//
+const subsystem = /((?<=^packages\/)@uppy\/[a-z0-9-]+|(?<=^)(?:docs|e2e|examples))\//
 async function inferPackageForCommit (sha, spawnOptions) {
   const cp = spawn('git', ['--no-pager', 'log', '-1', '--name-only', sha], spawnOptions)
   const candidates = {}
   for await (const path of createInterface({ input: cp.stdout })) {
-    const match = atUppyPackagePath.exec(path)
+    const match = subsystem.exec(path)
     if (match != null) {
       candidates[match[1]] ??= 0
       candidates[match[1]]++
@@ -39,7 +39,7 @@ export default async function formatChangeLog (
     '--format="%H::%s::%an"',
     `${LAST_RELEASE_COMMIT}..HEAD`,
   ], spawnOptions)
-  const expectedFormat = /^"([a-f0-9]+)::(?:((?:@uppy\/[a-z0-9-]+(?:,@uppy\/[a-z0-9-]+)*)|meta|website):\s?)?(.+?)(\s\(#\d+\))?::(.+)"$/ // eslint-disable-line max-len
+  const expectedFormat = /^"([a-f0-9]+)::(?:((?:@uppy\/[a-z0-9-]+(?:,@uppy\/[a-z0-9-]+)*)|meta|docs|e2e|examples):\s?)?(.+?)(\s\(#\d+\))?::(.+)"$/ // eslint-disable-line max-len
   for await (const log of createInterface({ input: gitLog.stdout })) {
     const [, sha, packageName, title, PR, authorName] = expectedFormat.exec(log)
 
@@ -71,6 +71,7 @@ export default async function formatChangeLog (
           message: 'Which package(s) does this commit belong to?',
           min: 1,
           choices: [
+            { title: 'Docs', value: 'docs' },
             { title: 'Meta', value: 'meta' },
             ...Object.entries(candidates)
               .sort((a, b) => a[1] > b[1])

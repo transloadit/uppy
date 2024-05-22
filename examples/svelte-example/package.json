@@ -2,41 +2,36 @@
   "name": "@uppy-example/svelte-app",
   "version": "0.0.0",
   "scripts": {
-    "build": "rollup -c",
-    "serve": "sirv public",
-    "start:client": "rollup -c -w",
-    "start:server": "node ./server.mjs",
-    "start": "npm-run-all --parallel start:client start:server",
-    "validate": "svelte-check"
+    "dev": "npm-run-all --parallel dev:frontend dev:backend",
+    "dev:frontend": "vite dev",
+    "dev:backend": "node --watch ./server.js",
+    "build": "vite build",
+    "preview": "vite preview",
+    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+    "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
   },
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^22.0.0",
-    "@rollup/plugin-json": "^4.1.0",
-    "@rollup/plugin-node-resolve": "^13.0.0",
-    "@rollup/plugin-typescript": "^8.0.0",
-    "@tsconfig/svelte": "^1.0.0",
+    "@sveltejs/adapter-static": "^3.0.1",
+    "@sveltejs/kit": "^2.0.0",
+    "@sveltejs/vite-plugin-svelte": "^3.0.0",
+    "@types/formidable": "^3",
     "npm-run-all": "^4.1.5",
-    "postcss": "^8.4.31",
-    "postcss-import": "^13.0.0",
-    "postcss-load-config": "^3.0.0",
-    "rollup": "^2.60.2",
-    "rollup-plugin-css-only": "^3.0.0",
-    "rollup-plugin-livereload": "^2.0.0",
-    "rollup-plugin-svelte": "^7.0.0",
-    "rollup-plugin-terser": "^7.0.0",
-    "svelte": ">=3.24.0",
-    "svelte-check": "^1.6.0",
-    "svelte-preprocess": "^5.0.0",
-    "tslib": "^2.0.0",
-    "typescript": "~5.4"
+    "svelte": "^4.2.7",
+    "svelte-check": "^3.6.0",
+    "tslib": "^2.4.1",
+    "typescript": "~5.4",
+    "vite": "^5.0.0"
   },
   "dependencies": {
     "@uppy/core": "workspace:*",
+    "@uppy/dashboard": "workspace:*",
+    "@uppy/drag-drop": "workspace:*",
+    "@uppy/progress-bar": "workspace:*",
     "@uppy/svelte": "workspace:*",
     "@uppy/webcam": "workspace:*",
     "@uppy/xhr-upload": "workspace:*",
-    "formidable": "^2.0.1",
-    "sirv-cli": "^1.0.0"
+    "formidable": "^3.5.1"
   },
+  "type": "module",
   "private": true
 }

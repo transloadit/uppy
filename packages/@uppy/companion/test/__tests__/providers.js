@@ -157,7 +157,7 @@ describe('list provider files', () => {
       kind: 'drive#driveList', drives: [],
     })
 
-    nock('https://www.googleapis.com').get('/drive/v3/files?fields=kind%2CnextPageToken%2CincompleteSearch%2Cfiles%28kind%2Cid%2CimageMediaMetadata%2Cname%2CmimeType%2CownedByMe%2Csize%2CmodifiedTime%2CiconLink%2CthumbnailLink%2CteamDriveId%2CvideoMediaMetadata%2CshortcutDetails%28targetId%2CtargetMimeType%29%29&q=%28%27root%27+in+parents%29+and+trashed%3Dfalse&pageSize=1000&orderBy=folder%2Cname&includeItemsFromAllDrives=true&supportsAllDrives=true').reply(200, {
+    nock('https://www.googleapis.com').get('/drive/v3/files?fields=kind%2CnextPageToken%2CincompleteSearch%2Cfiles%28kind%2Cid%2CimageMediaMetadata%2Cname%2CmimeType%2CownedByMe%2Csize%2CmodifiedTime%2CiconLink%2CthumbnailLink%2CteamDriveId%2CvideoMediaMetadata%2CexportLinks%2CshortcutDetails%28targetId%2CtargetMimeType%29%29&q=%28%27root%27+in+parents%29+and+trashed%3Dfalse&pageSize=1000&orderBy=folder%2Cname&includeItemsFromAllDrives=true&supportsAllDrives=true').reply(200, {
       kind: 'drive#fileList',
       nextPageToken: defaults.NEXT_PAGE_TOKEN,
       files: [

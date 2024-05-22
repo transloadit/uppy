@@ -60,16 +60,14 @@ new Uppy()
 		companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
 	})
 	.use(Webcam, {
-		target: Dashboard,
 		showVideoSourceDropdown: true,
 		showRecordingLength: true,
 	})
 	.use(Audio, {
-		target: Dashboard,
 		showRecordingLength: true,
 	})
-	.use(ScreenCapture, { target: Dashboard })
-	.use(ImageEditor, { target: Dashboard })
+	.use(ScreenCapture)
+	.use(ImageEditor)
 	.use(Transloadit, {
 		service: 'https://api2.transloadit.com',
 		async getAssemblyOptions(file) {

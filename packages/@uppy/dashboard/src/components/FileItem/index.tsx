@@ -4,7 +4,7 @@
 /* eslint-disable react/destructuring-assignment */
 import { h, Component, type ComponentChild } from 'preact'
 import classNames from 'classnames'
-import shallowEqual from 'is-shallow-equal'
+import { shallowEqualObjects } from 'shallow-equal'
 import FilePreviewAndLink from './FilePreviewAndLink/index.tsx'
 import FileProgress from './FileProgress/index.tsx'
 import FileInfo from './FileInfo/index.tsx'
@@ -21,7 +21,7 @@ export default class FileItem extends Component {
   }
 
   shouldComponentUpdate(nextProps: $TSFixMe): boolean {
-    return !shallowEqual(this.props, nextProps)
+    return !shallowEqualObjects(this.props, nextProps)
   }
 
   // VirtualList mounts FileItems again and they emit `thumbnail:request`

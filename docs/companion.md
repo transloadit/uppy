@@ -910,8 +910,8 @@ See also
    ```
 
 This would get the Companion instance running on `http://localhost:3020`. It
-uses [nodemon](https://github.com/remy/nodemon) so it will automatically restart
-when files are changed.
+uses [`node --watch`](https://nodejs.org/api/cli.html#--watch) so it will
+automatically restart when files are changed.
 
 [`http.incomingmessage`]:
 	https://nodejs.org/api/http.html#class-httpincomingmessage
