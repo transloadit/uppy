@@ -146,7 +146,7 @@ function renderSnippet (title, text) {
   const contentEl = newSnippet.querySelector('.snippet-content')
 
   titleEl.appendChild(document.createTextNode(title))
-  contentEl.innerHTML = marked(text)
+  contentEl.innerHTML = marked.parse(text)
 
   const list = document.querySelector('#snippets')
   list.insertBefore(newSnippet, list.firstChild)

@@ -27,10 +27,7 @@ import ImageEditor from '@uppy/image-editor'
 
 const uppy = new Uppy()
 uppy.use(Dashboard)
-uppy.use(ImageEditor, {
-  target: Dashboard,
-  quality: 0.7,
-})
+uppy.use(ImageEditor, { quality: 0.7 })
 ```
 
 ## Installation

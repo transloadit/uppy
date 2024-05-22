@@ -20,11 +20,6 @@ const pipeline = promisify(pipelineCb)
 const { createReadStream, createWriteStream, ReadStream } = fs
 const { stat, unlink } = fs.promises
 
-/** @type {any} */
-// @ts-ignore - typescript resolves this this to a hoisted version of
-// serialize-error that ships with a declaration file, we are using a version
-// here that does not have a declaration file
-const serializeError = require('serialize-error') // eslint-disable-line import/order
 const emitter = require('./emitter')
 const { jsonStringify, hasMatch } = require('./helpers/utils')
 const logger = require('./logger')
@@ -517,10 +512,11 @@ class Uploader {
    *
    * @param {Error} err
    */
-  #emitError(err) {
+  async #emitError(err) {
     // delete stack to avoid sending server info to client
     // todo remove also extraData from serializedErr in next major,
     // see PR discussion https://github.com/transloadit/uppy/pull/3832
+    const { serializeError } = await import('serialize-error')
     const { stack, ...serializedErr } = serializeError(err)
     const dataToEmit = {
       action: 'error',
