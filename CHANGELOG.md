@@ -12,6 +12,32 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 4.0.0-beta.8
+
+Released: 2024-05-22
+
+| Package              |      Version | Package              |      Version |
+| -------------------- | ------------ | -------------------- | ------------ |
+| @uppy/aws-s3         | 4.0.0-beta.4 | @uppy/status-bar     | 4.0.0-beta.8 |
+| @uppy/companion      | 5.0.0-beta.7 | @uppy/svelte         | 4.0.0-beta.4 |
+| @uppy/compressor     | 2.0.0-beta.8 | @uppy/tus            | 4.0.0-beta.5 |
+| @uppy/core           | 4.0.0-beta.8 | @uppy/utils          | 6.0.0-beta.7 |
+| @uppy/dashboard      | 4.0.0-beta.8 | @uppy/vue            | 2.0.0-beta.3 |
+| @uppy/image-editor   | 3.0.0-beta.5 | @uppy/webcam         | 4.0.0-beta.7 |
+| @uppy/provider-views | 4.0.0-beta.6 | uppy                 | 4.0.0-beta.8 |
+
+- @uppy/core: resolve some (breaking) TODOs (Antoine du Hamel / #4824)
+- @uppy/companion: encode `uploadId` (Mikael Finstad / #5168)
+- @uppy/companion: bump `express-session` (Antoine du Hamel / #5177)
+- @uppy/companion: remove dependency on `express-request-id` (Antoine du Hamel / #5176)
+- @uppy/companion: bump prom to v15 (Antoine du Hamel / #5175)
+- docs: fix linter (Antoine du Hamel)
+- meta: remove `nodemon` from the deps (Antoine du Hamel / #5172)
+- docs: update `@uppy/aws-s3` docs (Antoine du Hamel / #5093)
+- meta: update more dependencies (Antoine du Hamel / #5171)
+- @uppy/companion: upgrade deps (Antoine du Hamel / #5119)
+
+
 ## 4.0.0-beta.7
 
 Released: 2024-05-14

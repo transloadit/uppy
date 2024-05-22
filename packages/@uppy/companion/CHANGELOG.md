@@ -1,5 +1,16 @@
 # @uppy/companion
 
+## 5.0.0-beta.7
+
+Released: 2024-05-22
+Included in: Uppy v4.0.0-beta.8
+
+- @uppy/companion: encode `uploadId` (Mikael Finstad / #5168)
+- @uppy/companion: bump `express-session` (Antoine du Hamel / #5177)
+- @uppy/companion: remove dependency on `express-request-id` (Antoine du Hamel / #5176)
+- @uppy/companion: bump prom to v15 (Antoine du Hamel / #5175)
+- @uppy/companion: upgrade deps (Antoine du Hamel / #5119)
+
 ## 5.0.0-beta.6
 
 Released: 2024-05-14
