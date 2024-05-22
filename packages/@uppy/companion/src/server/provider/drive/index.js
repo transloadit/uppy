@@ -152,7 +152,7 @@ class Drive extends Provider {
         // Implemented based on the answer from StackOverflow: https://stackoverflow.com/a/59168288
         const mimeTypeExportLink = exportLinks?.[mimeType2]
         if (mimeTypeExportLink) {
-          const gSuiteFilesClient = got.extend({
+          const gSuiteFilesClient = (await got).extend({
             headers: {
               authorization: `Bearer ${token}`,
             },
