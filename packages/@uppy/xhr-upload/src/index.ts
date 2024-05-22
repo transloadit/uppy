@@ -214,6 +214,7 @@ export default class XHRUpload<
         try {
           const res = await fetcher(url, {
             ...options,
+            method: options?.method?.toUpperCase(),
             onTimeout: (timeout) => {
               const seconds = Math.ceil(timeout / 1000)
               const error = new Error(this.i18n('uploadStalled', { seconds }))

@@ -87,7 +87,14 @@ URL of the HTTP server (`string`, default: `null`).
 #### `method`
 
 Configures which HTTP method to use for the upload (`string`, default:
-`'post'`).
+`'POST'`).
+
+:::note
+
+Uppy is not following the standard and will uppercase the method name. This
+behavior will be removed in a future version to align Uppy with the web APIs.
+
+:::
 
 #### `formData`
 
