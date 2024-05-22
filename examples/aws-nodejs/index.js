@@ -190,7 +190,7 @@ app.get('/s3/multipart/:uploadId/:partNumber', (req, res, next) => {
   }, next)
 })
 
-app.get('/s3/multipart/:uploadId', (req, res, next) => {
+app.get('/s3/multipart/:uploadId', async (req, res) => {
   const client = getS3Client()
   const { uploadId } = req.params
   const { key } = req.query
@@ -200,31 +200,33 @@ app.get('/s3/multipart/:uploadId', (req, res, next) => {
     return
   }
 
-  const parts = []
+  const parts = [];
 
-  function listPartsPage (startAt) {
-    client.send(new ListPartsCommand({
+  let data = await client.send(
+    new ListPartsCommand({
       Bucket: process.env.COMPANION_AWS_BUCKET,
       Key: key,
       UploadId: uploadId,
-      PartNumberMarker: startAt,
-    }), (err, data) => {
-      if (err) {
-        next(err)
-        return
-      }
-
-      parts.push(...data.Parts)
-
-      if (data.IsTruncated) {
-        // Get the next page.
-        listPartsPage(data.NextPartNumberMarker)
-      } else {
-        res.json(parts)
-      }
+      MaxParts: 1000,
     })
+  );
+  parts.push(...data.Parts);
+
+  // continue to get list of all uploaded parts until the IsTruncated flag is false
+  while (data.IsTruncated) {
+    data = await client.send(
+      new ListPartsCommand({
+        Bucket: process.env.COMPANION_AWS_BUCKET,
+        Key: key,
+        UploadId: uploadId,
+        MaxParts: 1000,
+        PartNumberMarker: data.NextPartNumberMarker,
+      })
+    );
+    parts.push(...data.Parts);
   }
-  listPartsPage(0)
+
+  res.json(parts);
 })
 
 function isValidPart (part) {
