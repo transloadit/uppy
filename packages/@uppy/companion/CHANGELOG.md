@@ -1,5 +1,16 @@
 # @uppy/companion
 
+## 5.0.0-beta.7
+
+Released: 2024-05-22
+Included in: Uppy v4.0.0-beta.8
+
+- @uppy/companion: encode `uploadId` (Mikael Finstad / #5168)
+- @uppy/companion: bump `express-session` (Antoine du Hamel / #5177)
+- @uppy/companion: remove dependency on `express-request-id` (Antoine du Hamel / #5176)
+- @uppy/companion: bump prom to v15 (Antoine du Hamel / #5175)
+- @uppy/companion: upgrade deps (Antoine du Hamel / #5119)
+
 ## 5.0.0-beta.6
 
 Released: 2024-05-14
@@ -31,6 +42,14 @@ Included in: Uppy v4.0.0-beta.1
 
 - @uppy/companion: improve error msg (Mikael Finstad / #5010)
 - @uppy/companion: crash if trying to set path to / (Mikael Finstad / #5003)
+
+## 4.13.3
+
+Released: 2024-05-22
+Included in: Uppy v3.25.4
+
+- @uppy/companion: fix google drive gsuite export large size (Milan Nakum / #5144)
+- @uppy/companion: handle ws `'error'` event (Mikael Finstad / #5167)
 
 ## 4.13.2
 

@@ -26,7 +26,7 @@
     if(open) plugin.openModal();
   }
   const uninstallPlugin = (uppyInstance: Uppy<M, B> = uppy) => {
-    uppyInstance.removePlugin(plugin);
+    if (plugin != null) uppyInstance.removePlugin(plugin);
   }
 
   onMount(() => installPlugin())

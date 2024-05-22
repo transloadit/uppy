@@ -1,5 +1,12 @@
 # @uppy/core
 
+## 4.0.0-beta.8
+
+Released: 2024-05-22
+Included in: Uppy v4.0.0-beta.8
+
+- @uppy/core: resolve some (breaking) TODOs (Antoine du Hamel / #4824)
+
 ## 4.0.0-beta.7
 
 Released: 2024-05-14
