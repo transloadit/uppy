@@ -91,8 +91,9 @@ Configures which HTTP method to use for the upload (`string`, default:
 
 :::note
 
-Using non-uppercase string for `method` is deprecated and won’t be supported in
-future versions of Uppy.
+Uppy is not following the standard and will uppercase the method name. This
+behavior will be removed in a future version to align Uppy with the web APIs.
+This will affect only users who use custom HTTP method (e.g. `'PATCH'`).
 
 :::
 
