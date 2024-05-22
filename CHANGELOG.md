@@ -12,6 +12,24 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 3.25.4
+
+Released: 2024-05-22
+
+| Package         | Version | Package         | Version |
+| --------------- | ------- | --------------- | ------- |
+| @uppy/companion |  4.13.3 | @uppy/tus       |   3.5.5 |
+| @uppy/svelte    |   3.1.5 | uppy            |  3.25.4 |
+
+- @uppy/svelte: do not attempt removing plugin before it's created (Antoine du Hamel / #5186)
+- docs: Update `facebook.mdx` (Evgenia Karunus)
+- @uppy/tus: fix no headers passed to companion if argument is a function (netdown / #5182)
+- @uppy/companion: fix google drive gsuite export large size (Milan Nakum / #5144)
+- meta: Improve provider docs: Box & Zoom (Evgenia Karunus / #5166)
+- meta: add MDX file to `lint-staged` list (Antoine du Hamel / #5174)
+- @uppy/companion: handle ws `'error'` event (Mikael Finstad / #5167)
+
+
 ## 3.25.3
 
 Released: 2024-05-14
