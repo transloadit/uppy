@@ -1372,6 +1372,15 @@ Checkout the [building plugins](/docs/guides/building-plugins) guide.
 
 :::
 
+:::note
+
+If you don’t use any UI plugins, any modern bundler should be able to tree-shake
+Preact-code away. If you are not using a bundler that supports tree-shaking,
+it's also possible to import `BasePlugin` like this:
+`import BasePlugin from '@uppy/core/lib/BasePlugin.js`.
+
+:::
+
 ### Options
 
 The options passed to `BasePlugin` are all you options you wish to support in
