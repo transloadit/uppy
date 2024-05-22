@@ -1,5 +1,12 @@
 # @uppy/svelte
 
+## 3.1.5
+
+Released: 2024-05-22
+Included in: Uppy v3.25.4
+
+- @uppy/svelte: do not attempt removing plugin before it's created (Antoine du Hamel / #5186)
+
 ## 3.1.4
 
 Released: 2024-04-29
