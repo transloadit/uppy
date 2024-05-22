@@ -457,19 +457,12 @@ export default class Transloadit<
           } else if (fileRemoved.id in updatedFiles) {
             delete updatedFiles[fileRemoved.id]
             const nbOfRemainingFiles = Object.keys(updatedFiles).length
-            if (nbOfRemainingFiles === 0) {
-              assembly.close()
-              this.#cancelAssembly(newAssembly).catch(() => {
+
+            this.client
+              .updateNumberOfFilesInAssembly(newAssembly, nbOfRemainingFiles)
+              .catch(() => {
                 /* ignore potential errors */
               })
-              this.uppy.off('file-removed', fileRemovedHandler)
-            } else {
-              this.client
-                .updateNumberOfFilesInAssembly(newAssembly, nbOfRemainingFiles)
-                .catch(() => {
-                  /* ignore potential errors */
-                })
-            }
           }
         }
         this.uppy.on('file-removed', fileRemovedHandler)
