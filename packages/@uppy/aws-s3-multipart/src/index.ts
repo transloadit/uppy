@@ -726,7 +726,7 @@ export default class AwsS3Multipart<
         ;(error as any).source = { status: 403 }
         reject(error)
       })
-      xhr.addEventListener('load', (ev) => {
+      xhr.addEventListener('load', () => {
         cleanup()
 
         if (
@@ -752,6 +752,19 @@ export default class AwsS3Multipart<
         const etag = xhr.getResponseHeader('ETag')
         const location = xhr.getResponseHeader('Location')
 
+        // https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/getAllResponseHeaders#examples
+        const arr = xhr
+          .getAllResponseHeaders()
+          .trim()
+          .split(/[\r\n]+/)
+        const headersMap: Record<string, string> = {}
+        for (const line of arr) {
+          const parts = line.split(': ')
+          const header = parts.shift() as string
+          const value = parts.join(': ')
+          headersMap[header] = value
+        }
+
         if (method.toUpperCase() === 'POST' && location === null) {
           // Not being able to read the Location header is not a fatal error.
           // eslint-disable-next-line no-console
@@ -770,8 +783,8 @@ export default class AwsS3Multipart<
 
         onComplete?.(etag)
         resolve({
-          ETag: etag,
-          ...(location ? { location } : undefined),
+          ...headersMap,
+          ETag: etag, // keep capitalised ETag for backwards compatiblity
         })
       })
 
