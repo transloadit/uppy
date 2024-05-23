@@ -72,9 +72,7 @@ Use this hook when you need to access Uppy’s state reactively. Most of the
 times, this is needed if you are building a custom UI for Uppy in React.
 
 ```js
-// IMPORTANT: passing an initializer function to prevent Uppy from being reinstantiated on every render.
-const [uppy] = useState(() => new Uppy());
-
+const uppy = useMemo(() => new Uppy(), []);
 const files = useUppyState(uppy, (state) => state.files);
 const totalProgress = useUppyState(uppy, (state) => state.totalProgress);
 // We can also get specific plugin state.
@@ -119,13 +117,7 @@ import '@uppy/dashboard/dist/style.min.css';
 import '@uppy/webcam/dist/style.min.css';
 
 function Component() {
-	// IMPORTANT: passing an initializer function to prevent Uppy from being reinstantiated on every render.
-	const uppy = useMemo(() => {
-		const instance = new Uppy().use(Webcam)
-
-		return instance;
-	}, []);
-
+	const uppy = useMemo(() => new Uppy().use(Webcam), []);
 	return <Dashboard uppy={uppy} />;
 }
 ```
@@ -155,7 +147,6 @@ function Page2({ uppy }) {
 }
 
 export default function App() {
-	// keeping the uppy instance alive above the pages the user can switch during uploading
 	const uppy = useMemo(() => new Uppy(), []);
 
 	return (
@@ -173,12 +164,7 @@ export default function App() {
 ```js
 // ...
 function Component(props) {
-	// IMPORTANT: passing an initializer function to prevent the state from recreating.
-	const uppy = useMemo(() => {
-		const instance = new Uppy().use(Webcam)
-
-		return instance;
-	}, []);
+	const uppy = useMemo(() => new Uppy().use(Webcam), []);
 
 	useEffect(() => {
 		uppy.setOptions({ restrictions: props.restrictions });
@@ -220,8 +206,7 @@ function createUppy(userId) {
 }
 
 function Component({ userId }) {
-	// IMPORTANT: passing an initializer function to prevent Uppy from being reinstantiated on every render.
-	const [uppy] = useState(() => createUppy(userId));
+	const uppy = useMemo(() => createUppy(userId), []);
 
 	useEffect(() => {
 		if (userId) {
