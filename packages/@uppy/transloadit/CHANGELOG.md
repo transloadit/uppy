@@ -1,5 +1,12 @@
 # @uppy/transloadit
 
+## 4.0.0-beta.6
+
+Released: 2024-05-23
+Included in: Uppy v4.0.0-beta.9
+
+- @uppy/transloadit: do not cancel assembly when removing all files (Merlijn Vos / #5191)
+
 ## 4.0.0-beta.2
 
 Released: 2024-04-11

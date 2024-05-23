@@ -12,6 +12,21 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 4.0.0-beta.9
+
+Released: 2024-05-23
+
+| Package           |      Version | Package           |      Version |
+| ----------------- | ------------ | ----------------- | ------------ |
+| @uppy/companion   | 5.0.0-beta.8 | @uppy/xhr-upload  | 4.0.0-beta.5 |
+| @uppy/transloadit | 4.0.0-beta.6 | uppy              | 4.0.0-beta.9 |
+
+- @uppy/companion: remove `chalk` from dependencies (Antoine du Hamel / #5178)
+- @uppy/transloadit: do not cancel assembly when removing all files (Merlijn Vos / #5191)
+- @uppy/xhr-upload: fix regression for lowercase HTTP methods (Antoine du Hamel / #5179)
+- meta: improve changelog generator (Antoine du Hamel / #5190)
+
+
 ## 4.0.0-beta.8
 
 Released: 2024-05-22
