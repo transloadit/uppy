@@ -1,5 +1,12 @@
 # @uppy/companion
 
+## 5.0.0-beta.8
+
+Released: 2024-05-23
+Included in: Uppy v4.0.0-beta.9
+
+- @uppy/companion: remove `chalk` from dependencies (Antoine du Hamel / #5178)
+
 ## 5.0.0-beta.7
 
 Released: 2024-05-22
