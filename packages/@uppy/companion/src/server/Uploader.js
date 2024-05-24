@@ -37,17 +37,6 @@ function exceedsMaxFileSize(maxFileSize, size) {
   return maxFileSize && size && size > maxFileSize
 }
 
-// TODO remove once we migrate away from form-data
-function sanitizeMetadata(inputMetadata) {
-  if (inputMetadata == null) return {}
-
-  const outputMetadata = {}
-  Object.keys(inputMetadata).forEach((key) => {
-    outputMetadata[key] = String(inputMetadata[key])
-  })
-  return outputMetadata
-}
-
 class ValidationError extends Error {
   name = 'ValidationError'
 }
@@ -178,7 +167,7 @@ class Uploader {
     this.options = options
     this.token = randomUUID()
     this.fileName = `${Uploader.FILE_NAME_PREFIX}-${this.token}`
-    this.options.metadata = sanitizeMetadata(this.options.metadata)
+    this.options.metadata = this.options.metadata || {}
     this.options.fieldname = this.options.fieldname || DEFAULT_FIELD_NAME
     this.size = options.size
     this.uploadFileName = this.options.metadata.name
