@@ -377,7 +377,7 @@ describe('connect to provider', () => {
 
     if (authProvider.authProvider == null) return
 
-    request(authServer)
+    await request(authServer)
       .get(`/${providerName}/connect?foo=bar`)
       .set('uppy-auth-token', token)
       .expect(302)

@@ -9,6 +9,9 @@ These cover all the major Uppy versions and how to migrate to them.
 - `COMPANION_REDIS_EXPRESS_SESSION_PREFIX` now defaults to `companion-session:`
   (before `sess:`). To revert keep backwards compatibility, set the environment
   variable `COMPANION_REDIS_EXPRESS_SESSION_PREFIX=sess:`.
+- The URL endpoint (used by the `Url`/`Link` plugin) is now turned off by
+  default and must be explicitly enabled with
+  `COMPANION_ENABLE_URL_ENDPOINT=true` or `enableUrlEndpoint: true`.
 
 ## Migrate from Robodog to Uppy plugins
 
