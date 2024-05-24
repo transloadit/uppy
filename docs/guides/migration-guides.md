@@ -28,6 +28,8 @@ These cover all the major Uppy versions and how to migrate to them.
   implemented a custom provider, this might affect you.
 - `Socket` class is no longer in use and has been removed. Unless you used this
   class you don’t need to do anything.
+- Remove deprecated options `serverUrl` and `serverPattern` (they were merely
+  defined in Typescript, not in use).
 
 ## Migrate from Robodog to Uppy plugins
 
