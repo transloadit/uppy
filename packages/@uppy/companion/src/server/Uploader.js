@@ -2,20 +2,17 @@
 const tus = require('tus-js-client')
 const { randomUUID } = require('node:crypto')
 const validator = require('validator')
-const { pipeline: pipelineCb } = require('node:stream')
+const { pipeline } = require('node:stream/promises')
 const { join } = require('node:path')
 const fs = require('node:fs')
-const { promisify } = require('node:util')
 const throttle = require('lodash/throttle')
+const { once } = require('node:events')
 
 const { Upload } = require('@aws-sdk/lib-storage')
 
 const { rfc2047EncodeMetadata, getBucket } = require('./helpers/utils')
 
 const got = require('./got')
-
-// TODO move to `require('streams/promises').pipeline` when dropping support for Node.js 14.x.
-const pipeline = promisify(pipelineCb)
 
 const { createReadStream, createWriteStream, ReadStream } = fs
 const { stat, unlink } = fs.promises
@@ -403,33 +400,9 @@ class Uploader {
   async awaitReady(timeout) {
     logger.debug('waiting for socket connection', 'uploader.socket.wait', this.shortToken)
 
-    // TODO: replace the Promise constructor call when dropping support for Node.js <16 with
-    // await once(emitter, eventName, timeout && { signal: AbortSignal.timeout(timeout) })
-    await new Promise((resolve, reject) => {
-      const eventName = `connection:${this.token}`
-      let timer
-      let onEvent
-
-      function cleanup() {
-        emitter().removeListener(eventName, onEvent)
-        clearTimeout(timer)
-      }
-
-      if (timeout) {
-        // Need to timeout after a while, or we could leak emitters
-        timer = setTimeout(() => {
-          cleanup()
-          reject(new Error('Timed out waiting for socket connection'))
-        }, timeout)
-      }
-
-      onEvent = () => {
-        cleanup()
-        resolve()
-      }
-
-      emitter().once(eventName, onEvent)
-    })
+    const eventName = `connection:${this.token}`
+    // eslint-disable-next-line compat/compat
+    await once(emitter(), eventName, timeout && { signal: AbortSignal.timeout(timeout) })
 
     logger.debug('socket connection received', 'uploader.socket.wait', this.shortToken)
   }
