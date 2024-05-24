@@ -18,6 +18,9 @@ These cover all the major Uppy versions and how to migrate to them.
     `getExtraGrantConfig`.
 - Endpoint `GET /s3/params` now returns `{ method: "POST" }` instead of
   `{ method: "post" }`. This will not affect most people.
+- The Companion [`error` event](https://uppy.io/docs/companion/#events) now no
+  longer includes `extraData` inside the `payload.error` property. `extraData`
+  is (and was also before) included in the `payload`.
 
 ### `@uppy/companion-client`
 

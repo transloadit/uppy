@@ -49,11 +49,7 @@ function sanitizeMetadata(inputMetadata) {
 }
 
 class ValidationError extends Error {
-  constructor(message) {
-    super(message)
-
-    this.name = 'ValidationError'
-  }
+  name = 'ValidationError'
 }
 
 /**
@@ -340,7 +336,7 @@ class Uploader {
         return
       }
       logger.error(err, 'uploader.error', this.shortToken)
-      this.#emitError(err)
+      await this.#emitError(err)
     } finally {
       emitter().removeAllListeners(`pause:${this.token}`)
       emitter().removeAllListeners(`resume:${this.token}`)
@@ -487,14 +483,13 @@ class Uploader {
    */
   async #emitError(err) {
     // delete stack to avoid sending server info to client
-    // todo remove also extraData from serializedErr in next major,
     // see PR discussion https://github.com/transloadit/uppy/pull/3832
+    // @ts-ignore
     const { serializeError } = await import('serialize-error')
     const { stack, ...serializedErr } = serializeError(err)
     const dataToEmit = {
       action: 'error',
-      // @ts-ignore
-      payload: { ...err.extraData, error: serializedErr },
+      payload: { error: serializedErr },
     }
     this.saveState(dataToEmit)
     emitter().emit(this.token, dataToEmit)
