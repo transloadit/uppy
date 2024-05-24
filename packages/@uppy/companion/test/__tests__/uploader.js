@@ -22,6 +22,8 @@ process.env.COMPANION_DATADIR = './test/output'
 process.env.COMPANION_DOMAIN = 'localhost:3020'
 const { companionOptions } = standalone()
 
+const mockReq = {}
+
 describe('uploader with tus protocol', () => {
   test('uploader respects uploadUrls', async () => {
     const opts = {
@@ -87,7 +89,7 @@ describe('uploader with tus protocol', () => {
     })
     socketClient.onUploadSuccess(uploadToken, onUploadSuccess)
     await promise
-    await uploader.tryUploadStream(stream)
+    await uploader.tryUploadStream(stream, mockReq)
 
     expect(firstReceivedProgress).toBe(8)
 
@@ -136,7 +138,7 @@ describe('uploader with tus protocol', () => {
     return new Promise((resolve, reject) => {
       // validate that the test is resolved on socket connection
       uploader.awaitReady(60000).then(() => {
-        uploader.tryUploadStream(stream).then(() => {
+        uploader.tryUploadStream(stream, mockReq).then(() => {
           try {
             expect(fs.existsSync(uploader.path)).toBe(false)
             resolve()
@@ -286,7 +288,7 @@ describe('uploader with tus protocol', () => {
     const uploadToken = uploader.token
 
     // validate that the test is resolved on socket connection
-    uploader.awaitReady(60000).then(() => uploader.tryUploadStream(stream))
+    uploader.awaitReady(60000).then(() => uploader.tryUploadStream(stream, mockReq))
     socketClient.connect(uploadToken)
 
     return new Promise((resolve, reject) => {

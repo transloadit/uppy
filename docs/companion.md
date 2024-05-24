@@ -480,8 +480,11 @@ The name of the bucket to store uploaded files in.
 A `string` or function that returns the name of the bucket as a `string` and
 takes one argument which is an object with the following properties:
 
+- `filename`, the original name of the uploaded file;
 - `metadata` provided by the user for the file (will only be provided during the
   initial calls for each uploaded files, otherwise it will be `undefined`).
+- `req`, Express.js `Request` object. Do not use any Companion internals from
+  the req object, as these might change in any minor version of Companion.
 
 ##### `s3.region` `COMPANION_AWS_REGION`
 
@@ -510,7 +513,7 @@ expected, please
 [open an issue on the Uppy repository](https://github.com/transloadit/uppy/issues/new)
 so we can document it here.
 
-##### `s3.getKey({ filename, metadata })`
+##### `s3.getKey({ filename, metadata, req })`
 
 Get the key name for a file. The key is the file path to which the file will be
 uploaded in your bucket. This option should be a function receiving three
@@ -518,6 +521,8 @@ arguments:
 
 - `filename`, the original name of the uploaded file;
 - `metadata`, user-provided metadata for the file.
+- `req`, Express.js `Request` object. Do not use any Companion internals from
+  the req object, as these might change in any minor version of Companion.
 
 This function should return a string `key`. The `req` parameter can be used to
 upload to a user-specific folder in your bucket, for example:
@@ -528,7 +533,7 @@ app.use(
 	uppy.app({
 		providerOptions: {
 			s3: {
-				getKey: ({ filename, metadata }) => `${req.user.id}/${filename}`,
+				getKey: ({ req, filename, metadata }) => `${req.user.id}/${filename}`,
 				/* auth options */
 			},
 		},
