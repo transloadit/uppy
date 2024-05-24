@@ -24,7 +24,7 @@ async function getMediaUrl ({ token, id }) {
  */
 class Instagram extends Provider {
   // for "grant"
-  static getExtraConfig () {
+  static getExtraGrantConfig () {
     return {
       protocol: 'https',
       scope: ['user_profile', 'user_media'],

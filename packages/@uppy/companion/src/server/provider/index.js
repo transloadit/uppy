@@ -138,7 +138,7 @@ module.exports.addProviderOptions = (companionOptions, grantConfig, getAuthProvi
       }
 
       const provider = exports.getDefaultProviders()[providerName]
-      Object.assign(grantConfig[authProvider], provider.getExtraConfig())
+      Object.assign(grantConfig[authProvider], provider.getExtraGrantConfig())
 
       // override grant.js redirect uri with companion's custom redirect url
       const isExternal = !!server.implicitPath

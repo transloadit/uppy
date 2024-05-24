@@ -12,6 +12,10 @@ These cover all the major Uppy versions and how to migrate to them.
 - The URL endpoint (used by the `Url`/`Link` plugin) is now turned off by
   default and must be explicitly enabled with
   `COMPANION_ENABLE_URL_ENDPOINT=true` or `enableUrlEndpoint: true`.
+- Custom provider breaking changes. If you have not implemented a custom
+  provider, you should not be affected.
+  - The static `getExtraConfig` property has been renamed to
+    `getExtraGrantConfig`.
 
 ## Migrate from Robodog to Uppy plugins
 

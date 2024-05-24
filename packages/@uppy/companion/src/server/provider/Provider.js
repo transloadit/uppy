@@ -18,9 +18,8 @@ class Provider {
 
   /**
    * config to extend the grant config
-   * todo major: rename to getExtraGrantConfig
    */
-  static getExtraConfig () {
+  static getExtraGrantConfig () {
     return {}
   }
 
