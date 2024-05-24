@@ -228,7 +228,7 @@ app.get('/s3/multipart/:uploadId', (req, res, next) => {
     });
   }
 
-  return listPartsPage();
+    listPartsPage();
 
 })
 
