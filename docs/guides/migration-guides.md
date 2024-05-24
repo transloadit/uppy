@@ -17,6 +17,11 @@ These cover all the major Uppy versions and how to migrate to them.
   - The static `getExtraConfig` property has been renamed to
     `getExtraGrantConfig`.
 
+### `@uppy/companion-client`
+
+- `Socket` class is no longer in use and has been removed. Unless you used this
+  class you don’t need to do anything.
+
 ## Migrate from Robodog to Uppy plugins
 
 Uppy is flexible and extensible through plugins. But the integration code could
