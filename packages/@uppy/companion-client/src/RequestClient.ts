@@ -27,10 +27,6 @@ export type Opts = {
   companionKeysParams?: Record<string, string>
 }
 
-type _RequestOptions =
-  | boolean // TODO: remove this on the next major
-  | RequestOptions
-
 // Remove the trailing slash so we can always safely append /xyz.
 function stripSlash(url: string) {
   return url.replace(/\/$/, '')
@@ -195,33 +191,24 @@ export default class RequestClient<M extends Meta, B extends Body> {
 
   async get<PostBody>(
     path: string,
-    options?: _RequestOptions,
+    options?: RequestOptions,
   ): Promise<PostBody> {
-    // TODO: remove boolean support for options that was added for backward compatibility.
-    // eslint-disable-next-line no-param-reassign
-    if (typeof options === 'boolean') options = { skipPostResponse: options }
     return this.request({ ...options, path })
   }
 
   async post<PostBody>(
     path: string,
     data: Record<string, unknown>,
-    options?: _RequestOptions,
+    options?: RequestOptions,
   ): Promise<PostBody> {
-    // TODO: remove boolean support for options that was added for backward compatibility.
-    // eslint-disable-next-line no-param-reassign
-    if (typeof options === 'boolean') options = { skipPostResponse: options }
     return this.request<PostBody>({ ...options, path, method: 'POST', data })
   }
 
   async delete<T>(
     path: string,
     data?: Record<string, unknown>,
-    options?: _RequestOptions,
+    options?: RequestOptions,
   ): Promise<T> {
-    // TODO: remove boolean support for options that was added for backward compatibility.
-    // eslint-disable-next-line no-param-reassign
-    if (typeof options === 'boolean') options = { skipPostResponse: options }
     return this.request({ ...options, path, method: 'DELETE', data })
   }
 

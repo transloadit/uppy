@@ -30,6 +30,9 @@ These cover all the major Uppy versions and how to migrate to them.
   class you don’t need to do anything.
 - Remove deprecated options `serverUrl` and `serverPattern` (they were merely
   defined in Typescript, not in use).
+- `RequestClient` methods `get`, `post`, `delete` no longer accepts a boolean as
+  the third argument. Instead, pass `{ skipPostResponse: true | false }`. This
+  won’t affect you unless you’ve been using `RequestClient`.
 
 ## Migrate from Robodog to Uppy plugins
 
