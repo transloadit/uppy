@@ -2,6 +2,14 @@
 
 These cover all the major Uppy versions and how to migrate to them.
 
+## Migrate from Uppy 3.x to 4.x
+
+### Companion
+
+- `COMPANION_REDIS_EXPRESS_SESSION_PREFIX` now defaults to `companion-session:`
+  (before `sess:`). To revert keep backwards compatibility, set the environment
+  variable `COMPANION_REDIS_EXPRESS_SESSION_PREFIX=sess:`.
+
 ## Migrate from Robodog to Uppy plugins
 
 Uppy is flexible and extensible through plugins. But the integration code could

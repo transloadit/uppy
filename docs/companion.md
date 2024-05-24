@@ -372,14 +372,10 @@ using many instances. See [How to scale Companion](#how-to-scale-companion).
 #### `COMPANION_REDIS_EXPRESS_SESSION_PREFIX`
 
 Set a custom prefix for redis keys created by
-[connect-redis](https://github.com/tj/connect-redis). Defaults to `sess:`.
-Sessions are used for storing authentication state and for allowing thumbnails
-to be loaded by the browser via Companion. You might want to change this because
-if you run a redis with many different apps in the same redis server, it’s hard
-to know where `sess:` comes from and it might collide with other apps. **Note:**
-in the future, we plan and changing the default to `companion:` and possibly
-remove this option. This is a standalone-only option. See also
-`COMPANION_REDIS_PUBSUB_SCOPE`.
+[connect-redis](https://github.com/tj/connect-redis). Defaults to
+`companion-session:`. Sessions are used for storing authentication state and for
+allowing thumbnails to be loaded by the browser via Companion and for OAuth2.
+See also `COMPANION_REDIS_PUBSUB_SCOPE`.
 
 #### `redisOptions` `COMPANION_REDIS_OPTIONS`
 
