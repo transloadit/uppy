@@ -21,6 +21,8 @@ These cover all the major Uppy versions and how to migrate to them.
 
 ### `@uppy/companion-client`
 
+- `supportsRefreshToken` now defaults to `false` instead of `true`. If you have
+  implemented a custom provider, this might affect you.
 - `Socket` class is no longer in use and has been removed. Unless you used this
   class you don’t need to do anything.
 

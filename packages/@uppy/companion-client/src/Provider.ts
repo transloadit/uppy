@@ -87,7 +87,7 @@ export default class Provider<M extends Meta, B extends Body>
     this.tokenKey = `companion-${this.pluginId}-auth-token`
     this.companionKeysParams = this.opts.companionKeysParams
     this.preAuthToken = null
-    this.supportsRefreshToken = opts.supportsRefreshToken ?? true // todo false in next major
+    this.supportsRefreshToken = !!opts.supportsRefreshToken
   }
 
   async headers(): Promise<Record<string, string>> {
