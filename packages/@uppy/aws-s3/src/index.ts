@@ -338,7 +338,7 @@ export default class AwsS3Multipart<
     this.type = 'uploader'
     this.id = this.opts.id || 'AwsS3Multipart'
     // TODO: only initiate `RequestClient` is `companionUrl` is defined.
-    this.#client = new RequestClient(uppy, opts as any)
+    this.#client = new RequestClient(uppy, (opts as any) ?? {})
 
     const dynamicDefaultOptions = {
       createMultipartUpload: this.createMultipartUpload,
