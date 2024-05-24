@@ -481,7 +481,7 @@ A `string` or function that returns the name of the bucket as a `string` and
 takes one argument which is an object with the following properties:
 
 - `metadata` provided by the user for the file (will only be provided during the
-  initial calls for each uploaded files, otherwise it will be `undefined`)
+  initial calls for each uploaded files, otherwise it will be `undefined`).
 
 ##### `s3.region` `COMPANION_AWS_REGION`
 
