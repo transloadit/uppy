@@ -16,6 +16,8 @@ These cover all the major Uppy versions and how to migrate to them.
   provider, you should not be affected.
   - The static `getExtraConfig` property has been renamed to
     `getExtraGrantConfig`.
+- Endpoint `GET /s3/params` now returns `{ method: "POST" }` instead of
+  `{ method: "post" }`. This will not affect most people.
 
 ### `@uppy/companion-client`
 
