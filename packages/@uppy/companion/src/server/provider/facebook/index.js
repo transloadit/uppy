@@ -69,7 +69,7 @@ class Facebook extends Provider {
   async size ({ id, token }) {
     return this.#withErrorHandling('provider.facebook.size.error', async () => {
       const url = await getMediaUrl({ token, id })
-      const { size } = await getURLMeta(url, true)
+      const { size } = await getURLMeta(url)
       return size
     })
   }

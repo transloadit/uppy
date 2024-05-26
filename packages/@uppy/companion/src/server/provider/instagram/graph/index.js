@@ -70,7 +70,7 @@ class Instagram extends Provider {
   async size ({ id, token }) {
     return this.#withErrorHandling('provider.instagram.size.error', async () => {
       const url = await getMediaUrl({ token, id })
-      const { size } = await getURLMeta(url, true)
+      const { size } = await getURLMeta(url)
       return size
     })
   }

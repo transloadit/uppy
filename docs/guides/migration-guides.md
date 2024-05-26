@@ -25,6 +25,13 @@ These cover all the major Uppy versions and how to migrate to them.
 - `access-control-allow-headers` is no longer included in
   `Access-Control-Expose-Headers`, and `uppy-versions` is no longer an allowed
   header. We are not aware of any issues this might cause.
+- Internal refactoring (probably won’t affect you)
+  - `getProtectedGot` parameter `blockLocalIPs` changed to `allowLocalIPs`
+    (inverted boolean).
+  - `getURLMeta` 2nd (boolean) argument inverted.
+  - `getProtectedHttpAgent` parameter `blockLocalIPs` changed to `allowLocalIPs`
+    (inverted boolean).
+  - `downloadURL` 2nd (boolean) argument inverted.
 
 ### `@uppy/companion-client`
 
