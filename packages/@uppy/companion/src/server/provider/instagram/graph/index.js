@@ -31,7 +31,7 @@ class Instagram extends Provider {
     }
   }
 
-  static get authProvider () {
+  static get oauthProvider () {
     return 'instagram'
   }
 
@@ -86,7 +86,7 @@ class Instagram extends Provider {
     return withProviderErrorHandling({
       fn,
       tag,
-      providerName: Instagram.authProvider,
+      providerName: Instagram.oauthProvider,
       isAuthError: (response) => typeof response.body === 'object' && response.body?.error?.code === 190, // Invalid OAuth 2.0 Access Token
       getJsonErrorMessage: (body) => body?.error?.message,
     })

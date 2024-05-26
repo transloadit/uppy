@@ -30,7 +30,7 @@ async function findFile ({ client, meetingId, fileId, recordingStart }) {
  * Adapter for API https://marketplace.zoom.us/docs/api-reference/zoom-api
  */
 class Zoom extends Provider {
-  static get authProvider () {
+  static get oauthProvider () {
     return 'zoom'
   }
 
@@ -163,7 +163,7 @@ class Zoom extends Provider {
     return withProviderErrorHandling({
       fn,
       tag,
-      providerName: Zoom.authProvider,
+      providerName: Zoom.oauthProvider,
       isAuthError: (response) => authErrorCodes.includes(response.statusCode),
       getJsonErrorMessage: (body) => body?.message,
     })

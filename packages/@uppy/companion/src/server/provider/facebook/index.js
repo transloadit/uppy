@@ -24,7 +24,7 @@ async function getMediaUrl ({ token, id }) {
  * Adapter for API https://developers.facebook.com/docs/graph-api/using-graph-api/
  */
 class Facebook extends Provider {
-  static get authProvider () {
+  static get oauthProvider () {
     return 'facebook'
   }
 
@@ -86,7 +86,7 @@ class Facebook extends Provider {
     return withProviderErrorHandling({
       fn,
       tag,
-      providerName: Facebook.authProvider,
+      providerName: Facebook.oauthProvider,
       isAuthError: (response) => typeof response.body === 'object' && response.body?.error?.code === 190, // Invalid OAuth 2.0 Access Token
       getJsonErrorMessage: (body) => body?.error?.message,
     })

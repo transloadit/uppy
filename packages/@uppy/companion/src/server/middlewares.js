@@ -23,7 +23,7 @@ exports.hasSessionAndProvider = (req, res, next) => {
   return next()
 }
 
-const isOAuthProviderReq = (req) => isOAuthProvider(req.companion.providerClass.authProvider)
+const isOAuthProviderReq = (req) => isOAuthProvider(req.companion.providerClass.oauthProvider)
 const isSimpleAuthProviderReq = (req) => !!req.companion.providerClass.hasSimpleAuth
 
 /**
@@ -122,7 +122,7 @@ exports.gentleVerifyToken = (req, res, next) => {
 }
 
 exports.cookieAuthToken = (req, res, next) => {
-  req.companion.authToken = req.cookies[`uppyAuthToken--${req.companion.providerClass.authProvider}`]
+  req.companion.authToken = req.cookies[`uppyAuthToken--${req.companion.providerClass.oauthProvider}`]
   return next()
 }
 

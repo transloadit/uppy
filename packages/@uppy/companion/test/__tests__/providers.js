@@ -25,10 +25,11 @@ const OAUTH_STATE = 'some-cool-nice-encrytpion'
 const providers = require('../../src/server/provider').getDefaultProviders()
 
 const providerNames = Object.keys(providers)
-const AUTH_PROVIDERS = {
-  drive: 'google',
-  onedrive: 'microsoft',
-}
+const oauthProviders = Object.fromEntries(
+  Object.entries(providers).flatMap(([name, provider]) => (
+    provider.oauthProvider != null ? [[name, provider.oauthProvider]] : []
+  ))
+)
 const authData = {}
 providerNames.forEach((provider) => {
   authData[provider] = { accessToken: 'token value' }
@@ -372,16 +373,16 @@ describe('provider file gets downloaded from', () => {
 })
 
 describe('connect to provider', () => {
-  test.each(providerNames)('connect to %s via grant.js endpoint', (providerName) => {
-    const authProvider = AUTH_PROVIDERS[providerName] || providerName
+  test.each(providerNames)('connect to %s via grant.js endpoint', async (providerName) => {
+    const oauthProvider = oauthProviders[providerName]
 
-    if (authProvider.authProvider == null) return
+    if (oauthProvider == null) return
 
     await request(authServer)
       .get(`/${providerName}/connect?foo=bar`)
       .set('uppy-auth-token', token)
       .expect(302)
-      .expect('Location', `http://localhost:3020/connect/${authProvider}?state=${OAUTH_STATE}`)
+      .expect('Location', `http://localhost:3020/connect/${oauthProvider}?state=${OAUTH_STATE}`)
   })
 })
 

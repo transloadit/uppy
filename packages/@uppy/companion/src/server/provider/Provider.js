@@ -101,8 +101,7 @@ class Provider {
    *
    * @returns {string}
    */
-  // todo next major: rename authProvider to oauthProvider (we have other non-oauth auth types too now)
-  static get authProvider () {
+  static get oauthProvider () {
     return undefined
   }
 
@@ -121,5 +120,5 @@ class Provider {
 }
 
 module.exports = Provider
-// OAuth providers are those that have an `authProvider` set. It means they require OAuth authentication to work
-module.exports.isOAuthProvider = (authProvider) => typeof authProvider === 'string' && authProvider.length > 0
+// OAuth providers are those that have an `oauthProvider` set. It means they require OAuth authentication to work
+module.exports.isOAuthProvider = (oauthProvider) => typeof oauthProvider === 'string' && oauthProvider.length > 0
