@@ -748,15 +748,12 @@ export default class AwsS3Multipart<
         // todo make a proper onProgress API (breaking change)
         onProgress?.({ loaded: size, lengthComputable: true })
 
-        // NOTE This must be allowed by CORS.
-        const etag = xhr.getResponseHeader('ETag')
-        const location = xhr.getResponseHeader('Location')
-
         // https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/getAllResponseHeaders#examples
         const arr = xhr
           .getAllResponseHeaders()
           .trim()
           .split(/[\r\n]+/)
+        // @ts-expect-error null is allowed to avoid inherited properties
         const headersMap: Record<string, string> = { __proto__: null }
         for (const line of arr) {
           const parts = line.split(': ')
@@ -764,6 +761,7 @@ export default class AwsS3Multipart<
           const value = parts.join(': ')
           headersMap[header] = value
         }
+        const { etag, location } = headersMap
 
         if (method.toUpperCase() === 'POST' && location === null) {
           // Not being able to read the Location header is not a fatal error.
