@@ -53,8 +53,6 @@ type Processor = (
   uploadID: string,
 ) => Promise<unknown> | void
 
-type FileRemoveReason = 'user' | 'cancel-all' | 'unmount'
-
 type LogLevel = 'info' | 'warning' | 'error' | 'success'
 
 export type UnknownPlugin<
@@ -228,7 +226,7 @@ export type NonNullableUppyOptions<M extends Meta, B extends Body> = Required<
 
 export interface _UppyEventMap<M extends Meta, B extends Body> {
   'back-online': () => void
-  'cancel-all': (reason: { reason?: FileRemoveReason }) => void
+  'cancel-all': () => void
   complete: (result: UploadResult<M, B>) => void
   error: (
     error: { name: string; message: string; details?: string },
@@ -236,7 +234,7 @@ export interface _UppyEventMap<M extends Meta, B extends Body> {
     response?: UppyFile<M, B>['response'],
   ) => void
   'file-added': (file: UppyFile<M, B>) => void
-  'file-removed': (file: UppyFile<M, B>, reason?: FileRemoveReason) => void
+  'file-removed': (file: UppyFile<M, B>) => void
   'files-added': (files: UppyFile<M, B>[]) => void
   'info-hidden': () => void
   'info-visible': () => void
@@ -574,7 +572,7 @@ export class Uppy<M extends Meta, B extends Body> {
   resetProgress(): void {
     const defaultProgress: Omit<FileProgressNotStarted, 'bytesTotal'> = {
       percentage: 0,
-      bytesUploaded: 0,
+      bytesUploaded: false,
       uploadComplete: false,
       uploadStarted: null,
     }
@@ -677,7 +675,6 @@ export class Uppy<M extends Meta, B extends Body> {
     return ids.map((id) => this.getFile(id))
   }
 
-  // TODO: remove or refactor this method. It's very inefficient
   getObjectOfFilesPerState(): {
     newFiles: UppyFile<M, B>[]
     startedFiles: UppyFile<M, B>[]
@@ -697,28 +694,52 @@ export class Uppy<M extends Meta, B extends Body> {
   } {
     const { files: filesObject, totalProgress, error } = this.getState()
     const files = Object.values(filesObject)
-    const inProgressFiles = files.filter(
-      ({ progress }) => !progress.uploadComplete && progress.uploadStarted,
-    )
-    const newFiles = files.filter((file) => !file.progress.uploadStarted)
-    const startedFiles = files.filter(
-      (file) =>
-        file.progress.uploadStarted ||
-        file.progress.preprocess ||
-        file.progress.postprocess,
-    )
-    const uploadStartedFiles = files.filter(
-      (file) => file.progress.uploadStarted,
-    )
-    const pausedFiles = files.filter((file) => file.isPaused)
-    const completeFiles = files.filter((file) => file.progress.uploadComplete)
-    const erroredFiles = files.filter((file) => file.error)
-    const inProgressNotPausedFiles = inProgressFiles.filter(
-      (file) => !file.isPaused,
-    )
-    const processingFiles = files.filter(
-      (file) => file.progress.preprocess || file.progress.postprocess,
-    )
+
+    const inProgressFiles: UppyFile<M, B>[] = []
+    const newFiles: UppyFile<M, B>[] = []
+    const startedFiles: UppyFile<M, B>[] = []
+    const uploadStartedFiles: UppyFile<M, B>[] = []
+    const pausedFiles: UppyFile<M, B>[] = []
+    const completeFiles: UppyFile<M, B>[] = []
+    const erroredFiles: UppyFile<M, B>[] = []
+    const inProgressNotPausedFiles: UppyFile<M, B>[] = []
+    const processingFiles: UppyFile<M, B>[] = []
+
+    for (const file of files) {
+      const { progress } = file
+
+      if (!progress.uploadComplete && progress.uploadStarted) {
+        inProgressFiles.push(file)
+        if (!file.isPaused) {
+          inProgressNotPausedFiles.push(file)
+        }
+      }
+      if (!progress.uploadStarted) {
+        newFiles.push(file)
+      }
+      if (
+        progress.uploadStarted ||
+        progress.preprocess ||
+        progress.postprocess
+      ) {
+        startedFiles.push(file)
+      }
+      if (progress.uploadStarted) {
+        uploadStartedFiles.push(file)
+      }
+      if (file.isPaused) {
+        pausedFiles.push(file)
+      }
+      if (progress.uploadComplete) {
+        completeFiles.push(file)
+      }
+      if (file.error) {
+        erroredFiles.push(file)
+      }
+      if (progress.preprocess || progress.postprocess) {
+        processingFiles.push(file)
+      }
+    }
 
     return {
       newFiles,
@@ -873,7 +894,8 @@ export class Uppy<M extends Meta, B extends Body> {
     meta.type = fileType
 
     // `null` means the size is unknown.
-    const size = Number.isFinite(file.data.size) ? file.data.size : null
+    const size =
+      Number.isFinite(file.data.size) ? file.data.size : (null as never)
 
     return {
       source: file.source || '',
@@ -888,17 +910,15 @@ export class Uppy<M extends Meta, B extends Body> {
       data: file.data,
       progress: {
         percentage: 0,
-        bytesUploaded: 0,
+        bytesUploaded: false,
         bytesTotal: size,
         uploadComplete: false,
         uploadStarted: null,
-      } satisfies FileProgressNotStarted,
+      },
       size,
       isGhost: false,
       isRemote: file.isRemote || false,
-      // TODO: this should not be a string
-      // @ts-expect-error wrong
-      remote: file.remote || '',
+      remote: file.remote,
       preview: file.preview,
     }
   }
@@ -1115,7 +1135,7 @@ export class Uppy<M extends Meta, B extends Body> {
     }
   }
 
-  removeFiles(fileIDs: string[], reason?: FileRemoveReason): void {
+  removeFiles(fileIDs: string[]): void {
     const { files, currentUploads } = this.getState()
     const updatedFiles = { ...files }
     const updatedUploads = { ...currentUploads }
@@ -1175,7 +1195,7 @@ export class Uppy<M extends Meta, B extends Body> {
 
     const removedFileIDs = Object.keys(removedFiles)
     removedFileIDs.forEach((fileID) => {
-      this.emit('file-removed', removedFiles[fileID], reason)
+      this.emit('file-removed', removedFiles[fileID])
     })
 
     if (removedFileIDs.length > 5) {
@@ -1185,8 +1205,8 @@ export class Uppy<M extends Meta, B extends Body> {
     }
   }
 
-  removeFile(fileID: string, reason?: FileRemoveReason): void {
-    this.removeFiles([fileID], reason)
+  removeFile(fileID: string): void {
+    this.removeFiles([fileID])
   }
 
   pauseResume(fileID: string): boolean | undefined {
@@ -1283,21 +1303,18 @@ export class Uppy<M extends Meta, B extends Body> {
     return this.#runUpload(uploadID)
   }
 
-  cancelAll({ reason = 'user' }: { reason?: FileRemoveReason } = {}): void {
-    this.emit('cancel-all', { reason })
+  cancelAll(): void {
+    this.emit('cancel-all')
 
-    // Only remove existing uploads if user is canceling
-    if (reason === 'user') {
-      const { files } = this.getState()
+    const { files } = this.getState()
 
-      const fileIDs = Object.keys(files)
-      if (fileIDs.length) {
-        this.removeFiles(fileIDs, 'cancel-all')
-      }
-
-      this.setState(defaultUploadState)
-      // todo should we call this.emit('reset-progress') like we do for resetProgress?
+    const fileIDs = Object.keys(files)
+    if (fileIDs.length) {
+      this.removeFiles(fileIDs)
     }
+
+    this.setState(defaultUploadState)
+    // todo should we call this.emit('reset-progress') like we do for resetProgress?
   }
 
   retryUpload(fileID: string): Promise<UploadResult<M, B> | undefined> {
@@ -1796,12 +1813,12 @@ export class Uppy<M extends Meta, B extends Body> {
   /**
    * Uninstall all plugins and close down this Uppy instance.
    */
-  destroy({ reason }: { reason?: FileRemoveReason } | undefined = {}): void {
+  destroy(): void {
     this.log(
       `Closing Uppy instance ${this.opts.id}: removing all files and uninstalling plugins`,
     )
 
-    this.cancelAll({ reason })
+    this.cancelAll()
 
     this.#storeUnsubscribe()
 

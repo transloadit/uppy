@@ -448,35 +448,22 @@ export default class Transloadit<
         // TODO: this should not live inside a `file-removed` event but somewhere more deterministic.
         // Such as inside the function where the assembly has succeeded or cancelled.
         // For the use case of cancelling the assembly when needed, we should try to do that with just `cancel-all`.
-        const fileRemovedHandler = (
-          fileRemoved: UppyFile<M, B>,
-          reason?: string,
-        ) => {
+        const fileRemovedHandler = (fileRemoved: UppyFile<M, B>) => {
           // If the assembly has successfully completed, we do not need these checks.
           // Otherwise we may cancel an assembly after it already succeeded
           if (assembly.status?.ok === 'ASSEMBLY_COMPLETED') {
             this.uppy.off('file-removed', fileRemovedHandler)
             return
           }
-          if (reason === 'cancel-all') {
-            assembly.close()
-            this.uppy.off('file-removed', fileRemovedHandler)
-          } else if (fileRemoved.id in updatedFiles) {
+          if (fileRemoved.id in updatedFiles) {
             delete updatedFiles[fileRemoved.id]
             const nbOfRemainingFiles = Object.keys(updatedFiles).length
-            if (nbOfRemainingFiles === 0) {
-              assembly.close()
-              this.#cancelAssembly(newAssembly).catch(() => {
+
+            this.client
+              .updateNumberOfFilesInAssembly(newAssembly, nbOfRemainingFiles)
+              .catch(() => {
                 /* ignore potential errors */
               })
-              this.uppy.off('file-removed', fileRemovedHandler)
-            } else {
-              this.client
-                .updateNumberOfFilesInAssembly(newAssembly, nbOfRemainingFiles)
-                .catch(() => {
-                  /* ignore potential errors */
-                })
-            }
           }
         }
         this.uppy.on('file-removed', fileRemovedHandler)
@@ -665,10 +652,8 @@ export default class Transloadit<
   /**
    * When all files are removed, cancel in-progress Assemblies.
    */
-  #onCancelAll = async ({ reason }: { reason?: string } = {}) => {
+  #onCancelAll = async () => {
     try {
-      if (reason !== 'user') return
-
       await this.#cancelAssembly(this.assembly.status)
     } catch (err) {
       this.uppy.log(err)

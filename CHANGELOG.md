@@ -12,6 +12,69 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 4.0.0-beta.9
+
+Released: 2024-05-23
+
+| Package           |      Version | Package           |      Version |
+| ----------------- | ------------ | ----------------- | ------------ |
+| @uppy/companion   | 5.0.0-beta.8 | @uppy/xhr-upload  | 4.0.0-beta.5 |
+| @uppy/transloadit | 4.0.0-beta.6 | uppy              | 4.0.0-beta.9 |
+
+- @uppy/companion: remove `chalk` from dependencies (Antoine du Hamel / #5178)
+- @uppy/transloadit: do not cancel assembly when removing all files (Merlijn Vos / #5191)
+- @uppy/xhr-upload: fix regression for lowercase HTTP methods (Antoine du Hamel / #5179)
+- meta: improve changelog generator (Antoine du Hamel / #5190)
+
+
+## 4.0.0-beta.8
+
+Released: 2024-05-22
+
+| Package              |      Version | Package              |      Version |
+| -------------------- | ------------ | -------------------- | ------------ |
+| @uppy/aws-s3         | 4.0.0-beta.4 | @uppy/status-bar     | 4.0.0-beta.8 |
+| @uppy/companion      | 5.0.0-beta.7 | @uppy/svelte         | 4.0.0-beta.4 |
+| @uppy/compressor     | 2.0.0-beta.8 | @uppy/tus            | 4.0.0-beta.5 |
+| @uppy/core           | 4.0.0-beta.8 | @uppy/utils          | 6.0.0-beta.7 |
+| @uppy/dashboard      | 4.0.0-beta.8 | @uppy/vue            | 2.0.0-beta.3 |
+| @uppy/image-editor   | 3.0.0-beta.5 | @uppy/webcam         | 4.0.0-beta.7 |
+| @uppy/provider-views | 4.0.0-beta.6 | uppy                 | 4.0.0-beta.8 |
+
+- @uppy/core: resolve some (breaking) TODOs (Antoine du Hamel / #4824)
+- @uppy/companion: encode `uploadId` (Mikael Finstad / #5168)
+- @uppy/companion: bump `express-session` (Antoine du Hamel / #5177)
+- @uppy/companion: remove dependency on `express-request-id` (Antoine du Hamel / #5176)
+- @uppy/companion: bump prom to v15 (Antoine du Hamel / #5175)
+- docs: fix linter (Antoine du Hamel)
+- meta: remove `nodemon` from the deps (Antoine du Hamel / #5172)
+- docs: update `@uppy/aws-s3` docs (Antoine du Hamel / #5093)
+- meta: update more dependencies (Antoine du Hamel / #5171)
+- @uppy/companion: upgrade deps (Antoine du Hamel / #5119)
+
+
+## 4.0.0-beta.7
+
+Released: 2024-05-14
+
+| Package                |      Version | Package                |      Version |
+| ---------------------- | ------------ | ---------------------- | ------------ |
+| @uppy/companion        | 5.0.0-beta.6 | @uppy/status-bar       | 4.0.0-beta.7 |
+| @uppy/companion-client | 4.0.0-beta.6 | @uppy/unsplash         | 4.0.0-beta.6 |
+| @uppy/compressor       | 2.0.0-beta.7 | @uppy/url              | 4.0.0-beta.6 |
+| @uppy/core             | 4.0.0-beta.7 | @uppy/utils            | 6.0.0-beta.6 |
+| @uppy/dashboard        | 4.0.0-beta.7 | @uppy/webcam           | 4.0.0-beta.6 |
+| @uppy/dropbox          | 4.0.0-beta.6 | @uppy/xhr-upload       | 4.0.0-beta.4 |
+| @uppy/image-editor     | 3.0.0-beta.4 | uppy                   | 4.0.0-beta.7 |
+| @uppy/screen-capture   | 4.0.0-beta.5 |                        |              |
+
+- @uppy/companion: switch from `node-redis` to `ioredis` (Dominik Schmidt / #4623)
+- meta: Fix headings in xhr.mdx (Merlijn Vos)
+- @uppy/xhr-upload: introduce hooks similar to tus (Merlijn Vos / #5094)
+- @uppy/core: close->destroy, clearUploadedFiles->clear (Merlijn Vos / #5154)
+- @uppy/companion-client,@uppy/dropbox,@uppy/screen-capture,@uppy/unsplash,@uppy/url,@uppy/webcam: Use `title` consistently from locales (Merlijn Vos / #5134)
+
+
 ## 4.0.0-beta.6
 
 Released: 2024-05-08
@@ -286,6 +349,53 @@ Released: 2024-03-28
 - meta: enable CI on `4.x` branch (Antoine du Hamel)
 - @uppy/vue: [v4.x] remove manual types (Antoine du Hamel / #4803)
 - meta: prepare release workflow for beta versions (Antoine du Hamel)
+
+## 3.25.5
+
+Released: 2024-05-23
+
+| Package           | Version | Package           | Version |
+| ----------------- | ------- | ----------------- | ------- |
+| @uppy/transloadit |   3.6.2 | uppy              |  3.25.5 |
+| @uppy/xhr-upload  |   3.6.7 |                   |         |
+
+- @uppy/transloadit: do not cancel assembly when removing all files (Merlijn Vos / #5191)
+- @uppy/xhr-upload: fix regression for lowercase HTTP methods (Antoine du Hamel / #5179)
+- meta: improve changelog generator (Antoine du Hamel / #5190)
+
+
+## 3.25.4
+
+Released: 2024-05-22
+
+| Package         | Version | Package         | Version |
+| --------------- | ------- | --------------- | ------- |
+| @uppy/companion |  4.13.3 | @uppy/tus       |   3.5.5 |
+| @uppy/svelte    |   3.1.5 | uppy            |  3.25.4 |
+
+- @uppy/svelte: do not attempt removing plugin before it's created (Antoine du Hamel / #5186)
+- docs: Update `facebook.mdx` (Evgenia Karunus)
+- @uppy/tus: fix no headers passed to companion if argument is a function (netdown / #5182)
+- @uppy/companion: fix google drive gsuite export large size (Milan Nakum / #5144)
+- meta: Improve provider docs: Box & Zoom (Evgenia Karunus / #5166)
+- meta: add MDX file to `lint-staged` list (Antoine du Hamel / #5174)
+- @uppy/companion: handle ws `'error'` event (Mikael Finstad / #5167)
+
+
+## 3.25.3
+
+Released: 2024-05-14
+
+| Package            | Version | Package            | Version |
+| ------------------ | ------- | ------------------ | ------- |
+| @uppy/core         |  3.11.3 | uppy               |  3.25.3 |
+| @uppy/image-editor |   2.4.6 |                    |         |
+
+- @uppy/image-editor: fix tooltips (Avneet Singh Malhotra / #5156)
+- meta: Remove redundant `plugins` prop from examples (Merlijn Vos / #5145)
+- @uppy/image-editor: Remove `target` option from examples and document consistently (Merlijn Vos / #5146)
+- @uppy/core: make getObjectOfFilesPerState more efficient (Merlijn Vos / #5155)
+
 
 ## 3.25.2
 

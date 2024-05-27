@@ -464,7 +464,9 @@ export default class AwsS3Multipart<
 
     const filename = encodeURIComponent(key)
     return this.#client
-      .get<AwsS3Part[]>(`s3/multipart/${uploadId}?key=${filename}`, { signal })
+      .get<
+        AwsS3Part[]
+      >(`s3/multipart/${encodeURIComponent(uploadId)}?key=${filename}`, { signal })
       .then(assertServerError)
   }
 
@@ -571,7 +573,7 @@ export default class AwsS3Multipart<
     const filename = encodeURIComponent(key)
     return this.#client
       .get<AwsS3UploadParameters>(
-        `s3/multipart/${uploadId}/${partNumber}?key=${filename}`,
+        `s3/multipart/${encodeURIComponent(uploadId)}/${partNumber}?key=${filename}`,
         { signal },
       )
       .then(assertServerError)
@@ -836,11 +838,9 @@ export default class AwsS3Multipart<
         resolve(`upload ${removed} was removed`)
       })
 
-      eventManager.onCancelAll(file.id, (options) => {
-        if (options?.reason === 'user') {
-          upload.abort()
-          this.resetUploaderReferences(file.id, { abort: true })
-        }
+      eventManager.onCancelAll(file.id, () => {
+        upload.abort()
+        this.resetUploaderReferences(file.id, { abort: true })
         resolve(`upload ${file.id} was canceled`)
       })
 

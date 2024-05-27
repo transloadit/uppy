@@ -363,7 +363,7 @@ describe('src/Core', () => {
     core.cancelAll()
 
     expect(coreCancelEventMock).toHaveBeenCalledWith(
-      { reason: 'user' },
+      undefined,
       undefined,
       undefined,
       undefined,
@@ -555,7 +555,7 @@ describe('src/Core', () => {
     core.destroy()
 
     expect(coreCancelEventMock).toHaveBeenCalledWith(
-      { reason: 'user' },
+      undefined,
       undefined,
       undefined,
       undefined,
@@ -692,7 +692,7 @@ describe('src/Core', () => {
       })
       expect(core.getFile(fileId).progress).toEqual({
         percentage: 0,
-        bytesUploaded: 0,
+        bytesUploaded: false,
         bytesTotal: 17175,
         uploadComplete: false,
         uploadStarted: null,
@@ -719,7 +719,7 @@ describe('src/Core', () => {
       })
       expect(core.getFile(fileID).progress).toEqual({
         percentage: 0,
-        bytesUploaded: 0,
+        bytesUploaded: false,
         bytesTotal: 17175,
         uploadComplete: false,
         uploadStarted: null,
@@ -788,7 +788,7 @@ describe('src/Core', () => {
       })
       expect(core.getFile(fileId).progress).toEqual({
         percentage: 0,
-        bytesUploaded: 0,
+        bytesUploaded: false,
         bytesTotal: 17175,
         uploadComplete: false,
         uploadStarted: null,
@@ -815,7 +815,7 @@ describe('src/Core', () => {
       })
       expect(core.getFile(fileId).progress).toEqual({
         percentage: 0,
-        bytesUploaded: 0,
+        bytesUploaded: false,
         bytesTotal: 17175,
         uploadComplete: false,
         uploadStarted: null,
@@ -919,12 +919,12 @@ describe('src/Core', () => {
         isGhost: false,
         progress: {
           bytesTotal: 17175,
-          bytesUploaded: 0,
+          bytesUploaded: false,
           percentage: 0,
           uploadComplete: false,
           uploadStarted: null,
         },
-        remote: '',
+        remote: undefined,
         size: 17175,
         source: 'vi',
         type: 'image/jpeg',
@@ -1951,14 +1951,14 @@ describe('src/Core', () => {
 
       expect(core.getFile(file1.id).progress).toEqual({
         percentage: 0,
-        bytesUploaded: 0,
+        bytesUploaded: false,
         bytesTotal: 17175,
         uploadComplete: false,
         uploadStarted: null,
       })
       expect(core.getFile(file2.id).progress).toEqual({
         percentage: 0,
-        bytesUploaded: 0,
+        bytesUploaded: false,
         bytesTotal: 17175,
         uploadComplete: false,
         uploadStarted: null,

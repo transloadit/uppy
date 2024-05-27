@@ -501,11 +501,9 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
         upload.abort()
       })
 
-      eventManager.onCancelAll(file.id, ({ reason } = {}) => {
-        if (reason === 'user') {
-          queuedRequest.abort()
-          this.resetUploaderReferences(file.id, { abort: !!upload.url })
-        }
+      eventManager.onCancelAll(file.id, () => {
+        queuedRequest.abort()
+        this.resetUploaderReferences(file.id, { abort: !!upload.url })
         resolve(`upload ${file.id} was canceled`)
       })
 
@@ -544,6 +542,10 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
     if (file.tus) {
       // Install file-specific upload overrides.
       Object.assign(opts, file.tus)
+    }
+
+    if (typeof opts.headers === 'function') {
+      opts.headers = opts.headers(file)
     }
 
     return {

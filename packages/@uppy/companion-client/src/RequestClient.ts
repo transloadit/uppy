@@ -574,10 +574,8 @@ export default class RequestClient<M extends Meta, B extends Body> {
           resolve()
         }
 
-        const onCancelAll = ({ reason }: { reason?: string }) => {
-          if (reason === 'user') {
-            socketSend('cancel')
-          }
+        const onCancelAll = () => {
+          socketSend('cancel')
           socketAbortController?.abort?.()
           this.uppy.log(`upload ${file.id} was canceled`, 'info')
           resolve()
