@@ -757,10 +757,10 @@ export default class AwsS3Multipart<
           .getAllResponseHeaders()
           .trim()
           .split(/[\r\n]+/)
-        const headersMap: Record<string, string> = {}
+        const headersMap: Record<string, string> = { __proto__: null }
         for (const line of arr) {
           const parts = line.split(': ')
-          const header = parts.shift() as string
+          const header = parts.shift()!
           const value = parts.join(': ')
           headersMap[header] = value
         }
