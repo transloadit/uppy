@@ -767,9 +767,9 @@ export default class AwsS3Multipart<
   #uploadLocalFile(file: UppyFile<M, B>) {
     return new Promise<void | string>((resolve, reject) => {
       const onProgress = (bytesUploaded: number, bytesTotal: number) => {
-        this.uppy.emit('upload-progress', this.uppy.getFile(file.id), {
-          // @ts-expect-error TODO: figure out if we need this
-          uploader: this,
+        const latestFile = this.uppy.getFile(file.id)
+        this.uppy.emit('upload-progress', latestFile, {
+          uploadStarted: latestFile.progress.uploadStarted ?? 0,
           bytesUploaded,
           bytesTotal,
         })
