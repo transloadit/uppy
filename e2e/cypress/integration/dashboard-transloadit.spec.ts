@@ -1,9 +1,17 @@
+import Uppy from '@uppy/core'
+import Transloadit from '@uppy/transloadit'
+
+function getPlugin(uppy: Uppy<any, any>) {
+  return uppy.getPlugin('Transloadit') as Transloadit<any, any>
+}
+
 describe('Dashboard with Transloadit', () => {
   beforeEach(() => {
     cy.visit('/dashboard-transloadit')
     cy.get('.uppy-Dashboard-input:first').as('file-input')
-    cy.intercept('/assemblies').as('createAssemblies')
+    cy.intercept({ path: '/assemblies', method: 'POST' }).as('createAssemblies')
     cy.intercept('/assemblies/*').as('assemblies')
+    cy.intercept({ path: '/resumable/*', method: 'POST' }).as('tusCreate')
     cy.intercept('/resumable/*').as('resumable')
   })
 
@@ -39,25 +47,17 @@ describe('Dashboard with Transloadit', () => {
       )
       cy.get('.uppy-StatusBar-actionBtn--upload').click()
 
-      cy.wait(['@createAssemblies']).then(() => {
-        // eslint-disable-next-line
-        // @ts-ignore fix me
-        expect(
-          Object.values(uppy.getPlugin('Transloadit').activeAssemblies).every(
-            (a: any) => a.pollInterval,
-          ),
-        ).to.equal(true)
+      cy.wait(['@createAssemblies', '@tusCreate']).then(() => {
+        const plugin = getPlugin(uppy)
+
+        expect(plugin.getPluginState().assemblyResponse.ok).to.equal(
+          'ASSEMBLY_UPLOADING',
+        )
 
         uppy.cancelAll()
 
         cy.wait(['@delete']).then(() => {
-          // eslint-disable-next-line
-          // @ts-ignore fix me
-          expect(
-            Object.values(uppy.getPlugin('Transloadit').activeAssemblies).some(
-              (a: any) => a.pollInterval,
-            ),
-          ).to.equal(false)
+          expect(plugin.getPluginState().assemblyResponse).to.be.undefined
         })
       })
     })

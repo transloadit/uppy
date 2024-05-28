@@ -199,9 +199,9 @@ export default class Client<M extends Meta, B extends Body> {
   /**
    * Cancel a running Assembly.
    */
-  async cancelAssembly(assembly: AssemblyResponse): Promise<AssemblyResponse> {
+  async cancelAssembly(assembly: AssemblyResponse): Promise<void> {
     const url = assembly.assembly_ssl_url
-    return this.#fetchJSON(url, {
+    await this.#fetchWithNetworkError(url, {
       method: 'DELETE',
       headers: this.#headers,
     }).catch((err) => this.#reportError(err, { url, type: 'API_ERROR' }))
