@@ -320,8 +320,6 @@ export default class AwsS3Multipart<
 
   protected uploaders: Record<string, MultipartUploader<M, B> | null>
 
-  protected uploaderSockets: Record<string, never>
-
   constructor(uppy: Uppy<M, B>, opts?: AwsS3MultipartOptions<M, B>) {
     super(uppy, {
       ...defaultOptions,
@@ -381,7 +379,6 @@ export default class AwsS3Multipart<
 
     this.uploaders = Object.create(null)
     this.uploaderEvents = Object.create(null)
-    this.uploaderSockets = Object.create(null)
   }
 
   private [Symbol.for('uppy test: getClient')]() {
@@ -409,12 +406,6 @@ export default class AwsS3Multipart<
     if (this.uploaderEvents[fileID]) {
       this.uploaderEvents[fileID]!.remove()
       this.uploaderEvents[fileID] = null
-    }
-    if (this.uploaderSockets[fileID]) {
-      // @ts-expect-error TODO: remove this block in the next major
-      this.uploaderSockets[fileID].close()
-      // @ts-expect-error TODO: remove this block in the next major
-      this.uploaderSockets[fileID] = null
     }
   }
 
