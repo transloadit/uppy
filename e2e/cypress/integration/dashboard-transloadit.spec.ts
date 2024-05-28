@@ -50,14 +50,12 @@ describe('Dashboard with Transloadit', () => {
       cy.wait(['@createAssemblies', '@tusCreate']).then(() => {
         const plugin = getPlugin(uppy)
 
-        expect(plugin.getPluginState().assemblyResponse.ok).to.equal(
-          'ASSEMBLY_UPLOADING',
-        )
+        expect(plugin.assembly.closed).to.be.false
 
         uppy.cancelAll()
 
         cy.wait(['@delete']).then(() => {
-          expect(plugin.getPluginState().assemblyResponse).to.be.undefined
+          expect(plugin.assembly.closed).to.be.true
         })
       })
     })
@@ -171,40 +169,6 @@ describe('Dashboard with Transloadit', () => {
           ),
         ).to.equal(false)
         expect(spy).to.be.calledOnce
-      })
-    })
-  })
-
-  it('should not create assembly when all individual files have been cancelled', () => {
-    cy.window().then(({ uppy }) => {
-      cy.get('@file-input').selectFile(
-        [
-          'cypress/fixtures/images/cat.jpg',
-          'cypress/fixtures/images/traffic.jpg',
-        ],
-        { force: true },
-      )
-      // eslint-disable-next-line
-      // @ts-ignore fix me
-      expect(
-        Object.values(uppy.getPlugin('Transloadit').activeAssemblies).length,
-      ).to.equal(0)
-
-      cy.get('.uppy-StatusBar-actionBtn--upload').click()
-
-      const { files } = uppy.getState()
-      // eslint-disable-next-line
-      // @ts-ignore fix me
-      uppy.removeFiles(Object.keys(files))
-
-      cy.wait('@createAssemblies').then(() => {
-        // eslint-disable-next-line
-        // @ts-ignore fix me
-        expect(
-          Object.values(uppy.getPlugin('Transloadit').activeAssemblies).some(
-            (a: any) => a.pollInterval,
-          ),
-        ).to.equal(false)
       })
     })
   })
