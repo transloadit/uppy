@@ -1306,7 +1306,6 @@ export class Uppy<M extends Meta, B extends Body> {
     }
 
     this.setState(defaultUploadState)
-    // todo should we call this.emit('reset-progress') like we do for resetProgress?
   }
 
   retryUpload(fileID: string): Promise<UploadResult<M, B> | undefined> {
