@@ -574,9 +574,7 @@ export default class AwsS3Multipart<
     file: UppyFile<M, B>,
     { key, uploadId, signal }: UploadResultWithSignal,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    oldSignal?: AbortSignal, // TODO: remove in next major
   ): Promise<void> {
-    signal ??= oldSignal // eslint-disable-line no-param-reassign
     this.assertHost('abortMultipartUpload')
 
     const filename = encodeURIComponent(key)
