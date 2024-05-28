@@ -91,6 +91,7 @@ describe('AwsS3Multipart', () => {
       expect(uploadSuccessHandler.mock.calls[0][1]).toStrictEqual({
         body: {
           ETag: 'test',
+          etag: 'test',
           location: 'http://example.com',
         },
         status: 200,
@@ -127,6 +128,144 @@ describe('AwsS3Multipart', () => {
         listParts: undefined as any,
       })
       awsS3Multipart = core.getPlugin('AwsS3Multipart') as any
+    })
+
+    it('Calls the prepareUploadParts function totalChunks / limit times', async () => {
+      const scope = nock(
+        'https://bucket.s3.us-east-2.amazonaws.com',
+      ).defaultReplyHeaders({
+        'access-control-allow-headers': '*',
+        'access-control-allow-method': 'PUT',
+        'access-control-allow-origin': '*',
+        'access-control-expose-headers': 'ETag, Content-MD5',
+      })
+      // 6MB file will give us 2 chunks, so there will be 2 PUT and 2 OPTIONS
+      // calls to the presigned URL from 1 prepareUploadParts calls
+      const fileSize = 5 * MB + 1 * MB
+
+      scope
+        .options((uri) =>
+          uri.includes('test/upload/multitest.dat?partNumber=1'),
+        )
+        .reply(function replyFn() {
+          expect(this.req.headers['access-control-request-headers']).toEqual(
+            'Content-MD5',
+          )
+          return [200, '']
+        })
+      scope
+        .options((uri) =>
+          uri.includes('test/upload/multitest.dat?partNumber=2'),
+        )
+        .reply(function replyFn() {
+          expect(
+            this.req.headers['access-control-request-headers'],
+          ).toBeUndefined()
+          return [200, '']
+        })
+      scope
+        .put((uri) => uri.includes('test/upload/multitest.dat?partNumber=1'))
+        .reply(200, '', { ETag: 'test1' })
+      scope
+        .put((uri) => uri.includes('test/upload/multitest.dat?partNumber=2'))
+        .reply(200, '', { ETag: 'test2' })
+
+      core.addFile({
+        source: 'vi',
+        name: 'multitest.dat',
+        type: 'application/octet-stream',
+        data: new File([new Uint8Array(fileSize)], '', {
+          type: 'application/octet-stream',
+        }),
+      })
+
+      await core.upload()
+
+      expect(
+        (awsS3Multipart.opts as any).prepareUploadParts.mock.calls.length,
+      ).toEqual(2)
+
+      scope.done()
+    })
+
+    it('Calls prepareUploadParts with a Math.ceil(limit / 2) minimum, instead of one at a time for the remaining chunks after the first limit batch', async () => {
+      const scope = nock(
+        'https://bucket.s3.us-east-2.amazonaws.com',
+      ).defaultReplyHeaders({
+        'access-control-allow-headers': '*',
+        'access-control-allow-method': 'PUT',
+        'access-control-allow-origin': '*',
+        'access-control-expose-headers': 'ETag',
+      })
+      // 50MB file will give us 10 chunks, so there will be 10 PUT and 10 OPTIONS
+      // calls to the presigned URL from 3 prepareUploadParts calls
+      //
+      // The first prepareUploadParts call will be for 5 parts, the second
+      // will be for 3 parts, the third will be for 2 parts.
+      const fileSize = 50 * MB
+
+      scope
+        .options((uri) => uri.includes('test/upload/multitest.dat'))
+        .reply(200, '')
+      scope
+        .put((uri) => uri.includes('test/upload/multitest.dat'))
+        .reply(200, '', { ETag: 'test' })
+      scope.persist()
+
+      core.addFile({
+        source: 'vi',
+        name: 'multitest.dat',
+        type: 'application/octet-stream',
+        data: new File([new Uint8Array(fileSize)], '', {
+          type: 'application/octet-stream',
+        }),
+      })
+
+      await core.upload()
+
+      function validatePartData(
+        { parts }: { parts: { number: number; chunk: unknown }[] },
+        expected: number[],
+      ) {
+        expect(parts.map((part) => part.number)).toEqual(expected)
+
+        for (const part of parts) {
+          expect(part.chunk).toBeDefined()
+        }
+      }
+
+      expect(
+        (awsS3Multipart.opts as any).prepareUploadParts.mock.calls.length,
+      ).toEqual(10)
+
+      validatePartData(
+        (awsS3Multipart.opts as any).prepareUploadParts.mock.calls[0][1],
+        [1],
+      )
+      validatePartData(
+        (awsS3Multipart.opts as any).prepareUploadParts.mock.calls[1][1],
+        [2],
+      )
+      validatePartData(
+        (awsS3Multipart.opts as any).prepareUploadParts.mock.calls[2][1],
+        [3],
+      )
+
+      const completeCall = (awsS3Multipart.opts as any).completeMultipartUpload
+        .mock.calls[0][1]
+
+      expect(completeCall.parts).toEqual([
+        { ETag: 'test', etag: 'test', PartNumber: 1 },
+        { ETag: 'test', etag: 'test', PartNumber: 2 },
+        { ETag: 'test', etag: 'test', PartNumber: 3 },
+        { ETag: 'test', etag: 'test', PartNumber: 4 },
+        { ETag: 'test', etag: 'test', PartNumber: 5 },
+        { ETag: 'test', etag: 'test', PartNumber: 6 },
+        { ETag: 'test', etag: 'test', PartNumber: 7 },
+        { ETag: 'test', etag: 'test', PartNumber: 8 },
+        { ETag: 'test', etag: 'test', PartNumber: 9 },
+        { ETag: 'test', etag: 'test', PartNumber: 10 },
+      ])
     })
 
     it('Keeps chunks marked as busy through retries until they complete', async () => {
