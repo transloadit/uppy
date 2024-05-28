@@ -608,6 +608,14 @@ export class Uppy<M extends Meta, B extends Body> {
   // @todo next major: rename to `clear()`, make it also cancel ongoing uploads
   // or throw and say you need to cancel manually
   clearUploadedFiles(): void {
+    const { capabilities, currentUploads } = this.getState()
+    if (
+      Object.keys(currentUploads).length > 0 &&
+      !capabilities.individualCancellation
+    ) {
+      throw new Error('individualCancellation is disabled')
+    }
+
     this.setState({ ...defaultUploadState, files: {} })
   }
 
