@@ -257,9 +257,8 @@ class MultipartUploader<M extends Meta, B extends Body> {
     else this.pause()
   }
 
-  // TODO: remove this in the next major
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  get chunkState() {
+  private [Symbol.for('uppy test: getChunkState')]() {
     return this.#chunkState
   }
 }
