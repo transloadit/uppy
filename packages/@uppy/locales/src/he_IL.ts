@@ -141,11 +141,4 @@ he_IL.strings = {
   },
 }
 
-// TODO: remove this in the next major?
-// @ts-expect-error Uppy can be a global in legacy bundle
-if (typeof Uppy !== 'undefined') {
-  // @ts-expect-error Uppy can be a global in legacy bundle
-  globalThis.Uppy.locales.he_IL = he_IL
-}
-
 export default he_IL

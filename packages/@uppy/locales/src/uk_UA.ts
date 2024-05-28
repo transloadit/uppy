@@ -241,11 +241,4 @@ uk_UA.strings = {
   zoomOut: 'Зменшити',
 }
 
-// TODO: remove this in the next major?
-// @ts-expect-error Uppy can be a global in legacy bundle
-if (typeof Uppy !== 'undefined') {
-  // @ts-expect-error Uppy can be a global in legacy bundle
-  globalThis.Uppy.locales.uk_UA = uk_UA
-}
-
 export default uk_UA
