@@ -295,15 +295,10 @@ export interface _UppyEventMap<M extends Meta, B extends Body> {
   ) => void
 }
 
-/** @deprecated */
-export interface DeprecatedUppyEventMap<M extends Meta, B extends Body> {
-  'upload-start': (files: UppyFile<M, B>[]) => void
-  'upload-started': (file: UppyFile<M, B>) => void
-}
-
 export interface UppyEventMap<M extends Meta, B extends Body>
-  extends _UppyEventMap<M, B>,
-    DeprecatedUppyEventMap<M, B> {}
+  extends _UppyEventMap<M, B> {
+  'upload-start': (files: UppyFile<M, B>[]) => void
+}
 
 const defaultUploadState = {
   totalProgress: 0,
@@ -1538,13 +1533,7 @@ export class Uppy<M extends Meta, B extends Body> {
       this.patchFilesState(filesState)
     }
 
-    this.on('upload-start', (files) => {
-      files.forEach((file: UppyFile<M, B>) => {
-        // todo backward compat, remove this event in a next major
-        this.emit('upload-started', file)
-      })
-      onUploadStarted(files)
-    })
+    this.on('upload-start', onUploadStarted)
 
     this.on('upload-progress', this.calculateProgress)
 

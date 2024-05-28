@@ -1766,10 +1766,7 @@ describe('src/Core', () => {
 
       const uploadPromise = core.upload()
       await Promise.all([
-        // @ts-ignore deprecated
         new Promise((resolve) => core.once('upload-start', resolve)),
-        // todo backward compat: remove in next major
-        new Promise((resolve) => core.once('upload-started', resolve)),
       ])
 
       expect(core.getFiles()[0].size).toBeNull()
