@@ -131,8 +131,6 @@ export interface DashboardInlineOptions {
 interface DashboardMiscOptions<M extends Meta, B extends Body>
   extends UIPluginOptions {
   autoOpen?: 'metaEditor' | 'imageEditor' | null
-  /** @deprecated use option autoOpen instead */
-  autoOpenFileEditor?: boolean
   defaultPickerIcon?: typeof defaultPickerIcon
   disabled?: boolean
   disableInformer?: boolean
@@ -211,7 +209,6 @@ const defaultOptions = {
   showNativeVideoCameraButton: false,
   theme: 'light',
   autoOpen: null,
-  autoOpenFileEditor: false,
   disabled: false,
   disableLocalFiles: false,
 
@@ -265,16 +262,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
   private removeDragOverClassTimeout!: ReturnType<typeof setTimeout>
 
   constructor(uppy: Uppy<M, B>, opts?: DashboardOptions<M, B>) {
-    // support for the legacy `autoOpenFileEditor` option,
-    // TODO: we can remove this code when we update the Uppy major version
-    let autoOpen: DashboardOptions<M, B>['autoOpen']
-    if (!opts) {
-      autoOpen = null
-    } else if (opts.autoOpen === undefined) {
-      autoOpen = opts.autoOpenFileEditor ? 'imageEditor' : null
-    } else {
-      autoOpen = opts.autoOpen
-    }
+    const autoOpen = opts?.autoOpen ?? null
     super(uppy, { ...defaultOptions, ...opts, autoOpen })
     this.id = this.opts.id || 'Dashboard'
     this.title = 'Dashboard'
