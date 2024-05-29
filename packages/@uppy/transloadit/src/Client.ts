@@ -173,30 +173,6 @@ export default class Client<M extends Meta, B extends Body> {
   }
 
   /**
-   * Update the number of expected files in an already created assembly.
-   */
-  async updateNumberOfFilesInAssembly(
-    assembly: AssemblyResponse,
-    num_expected_upload_files: number,
-  ): Promise<AssemblyResponse> {
-    const url = new URL(assembly.assembly_ssl_url)
-    url.pathname = '/update_assemblies'
-    const body = JSON.stringify({
-      assembly_updates: [
-        {
-          assembly_id: assembly.assembly_id,
-          num_expected_upload_files,
-        },
-      ],
-    })
-    return this.#fetchJSON(url, {
-      method: 'POST',
-      headers: this.#headers,
-      body,
-    }).catch((err) => this.#reportError(err, { url, type: 'API_ERROR' }))
-  }
-
-  /**
    * Cancel a running Assembly.
    */
   async cancelAssembly(assembly: AssemblyResponse): Promise<void> {

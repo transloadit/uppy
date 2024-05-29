@@ -411,17 +411,10 @@ export default class Transloadit<
         const files = this.uppy
           .getFiles()
           .filter(({ id }) => fileIDs.includes(id))
-        if (files.length !== fileIDs.length) {
-          if (files.length === 0) {
-            // All files have been removed, cancelling.
-            await this.client.cancelAssembly(newAssembly)
-            return null
-          }
-          // At least one file has been removed.
-          await this.client.updateNumberOfFilesInAssembly(
-            newAssembly,
-            files.length,
-          )
+        if (files.length === 0) {
+          // All files have been removed, cancelling.
+          await this.client.cancelAssembly(newAssembly)
+          return null
         }
 
         const assembly = new Assembly(newAssembly, this.#rateLimitedQueue)
@@ -444,29 +437,6 @@ export default class Transloadit<
             ...updatedFiles,
           },
         })
-
-        // TODO: this should not live inside a `file-removed` event but somewhere more deterministic.
-        // Such as inside the function where the assembly has succeeded or cancelled.
-        // For the use case of cancelling the assembly when needed, we should try to do that with just `cancel-all`.
-        const fileRemovedHandler = (fileRemoved: UppyFile<M, B>) => {
-          // If the assembly has successfully completed, we do not need these checks.
-          // Otherwise we may cancel an assembly after it already succeeded
-          if (assembly.status?.ok === 'ASSEMBLY_COMPLETED') {
-            this.uppy.off('file-removed', fileRemovedHandler)
-            return
-          }
-          if (fileRemoved.id in updatedFiles) {
-            delete updatedFiles[fileRemoved.id]
-            const nbOfRemainingFiles = Object.keys(updatedFiles).length
-
-            this.client
-              .updateNumberOfFilesInAssembly(newAssembly, nbOfRemainingFiles)
-              .catch(() => {
-                /* ignore potential errors */
-              })
-          }
-        }
-        this.uppy.on('file-removed', fileRemovedHandler)
 
         this.uppy.emit('transloadit:assembly-created', status, fileIDs)
 
