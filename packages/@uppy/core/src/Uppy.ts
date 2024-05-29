@@ -266,13 +266,13 @@ export interface _UppyEventMap<M extends Meta, B extends Body> {
   'restore-canceled': () => void
   'restriction-failed': (file: UppyFile<M, B> | undefined, error: Error) => void
   'resume-all': () => void
-  'retry-all': (fileIDs: string[]) => void
+  'retry-all': (files: UppyFile<M, B>[]) => void
   'state-update': (
     prevState: State<M, B>,
     nextState: State<M, B>,
     patch?: Partial<State<M, B>>,
   ) => void
-  upload: (data: { id: string; fileIDs: string[] }) => void
+  upload: (uploadID: string, files: UppyFile<M, B>[]) => void
   'upload-error': (
     file: UppyFile<M, B> | undefined,
     error: { name: string; message: string; details?: string },
@@ -280,15 +280,12 @@ export interface _UppyEventMap<M extends Meta, B extends Body> {
       | Omit<NonNullable<UppyFile<M, B>['response']>, 'uploadURL'>
       | undefined,
   ) => void
-  'upload-pause': (
-    fileID: UppyFile<M, B>['id'] | undefined,
-    isPaused: boolean,
-  ) => void
+  'upload-pause': (file: UppyFile<M, B> | undefined, isPaused: boolean) => void
   'upload-progress': (
     file: UppyFile<M, B> | undefined,
     progress: FileProgressStarted,
   ) => void
-  'upload-retry': (fileID: string) => void
+  'upload-retry': (file: UppyFile<M, B>) => void
   'upload-stalled': (
     error: { message: string; details?: string },
     files: UppyFile<M, B>[],
@@ -1217,14 +1214,15 @@ export class Uppy<M extends Meta, B extends Body> {
       return undefined
     }
 
-    const wasPaused = this.getFile(fileID).isPaused || false
+    const file = this.getFile(fileID)
+    const wasPaused = file.isPaused || false
     const isPaused = !wasPaused
 
     this.setFileState(fileID, {
       isPaused,
     })
 
-    this.emit('upload-pause', fileID, isPaused)
+    this.emit('upload-pause', file, isPaused)
 
     return isPaused
   }
@@ -1288,7 +1286,7 @@ export class Uppy<M extends Meta, B extends Body> {
       error: null,
     })
 
-    this.emit('retry-all', filesToRetry)
+    this.emit('retry-all', Object.values(updatedFiles))
 
     if (filesToRetry.length === 0) {
       return Promise.resolve({
@@ -1323,7 +1321,7 @@ export class Uppy<M extends Meta, B extends Body> {
       isPaused: false,
     })
 
-    this.emit('upload-retry', fileID)
+    this.emit('upload-retry', this.getFile(fileID))
 
     const uploadID = this.#createUpload([fileID], {
       forceAllowNewUpload: true, // create new upload even if allowNewUpload: false
@@ -1952,10 +1950,7 @@ export class Uppy<M extends Meta, B extends Body> {
 
     const uploadID = nanoid()
 
-    this.emit('upload', {
-      id: uploadID,
-      fileIDs,
-    })
+    this.emit('upload', uploadID, this.getFilesByIds(fileIDs))
 
     this.setState({
       allowNewUpload:
