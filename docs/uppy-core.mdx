@@ -701,6 +701,13 @@ that upload.
 uppy.removeFile('uppyteamkongjpg1501851828779');
 ```
 
+#### `clearUploadedFiles`
+
+Clear the state. Can be useful for manually resetting Uppy after a successful
+upload.
+
+Upload plugins may choose to throw an error if called during an upload.
+
 #### `getFile(fileID)`
 
 Get a specific [Uppy file](#working-with-uppy-files) by its ID.
