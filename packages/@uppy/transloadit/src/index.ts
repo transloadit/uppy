@@ -155,7 +155,6 @@ export type Opts<M extends Meta, B extends Body> = DefinePluginOpts<
 >
 
 type TransloaditState = {
-  assemblyResponse: AssemblyResponse | undefined
   files: Record<
     string,
     { assembly: string; id: string; uploadedFile: AssemblyFile }
@@ -168,15 +167,20 @@ type TransloaditState = {
   }>
 }
 
+/**
+ * State we want to store in Golden Retriever to be able to recover uploads.
+ */
+type PersistentState = {
+  assemblyResponse: AssemblyResponse
+}
+
 declare module '@uppy/core' {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   export interface UppyEventMap<M extends Meta, B extends Body> {
     // We're also overriding the `restored` event as it is now populated with Transloadit state.
     restored: (pluginData: Record<string, TransloaditState>) => void
     'restore:get-data': (
-      setData: (
-        arg: Record<string, Pick<TransloaditState, 'assemblyResponse'>>,
-      ) => void,
+      setData: (arg: Record<string, PersistentState>) => void,
     ) => void
     'transloadit:assembly-created': (
       assembly: AssemblyResponse,
@@ -421,11 +425,6 @@ export default class Transloadit<
         const { status } = assembly
         const assemblyID = status.assembly_id
 
-        this.setPluginState({
-          // Store the Assembly status.
-          assemblyResponse: status,
-        })
-
         const updatedFiles: Record<string, UppyFile<M, B>> = {}
         files.forEach((file) => {
           updatedFiles[file.id] = this.#attachAssemblyMetadata(file, status)
@@ -526,12 +525,11 @@ export default class Transloadit<
       return
     }
 
-    const assemblyResponse = this.getPluginState()
-      .assemblyResponse as AssemblyResponse
+    const { status } = this.assembly
 
-    this.client.addFile(assemblyResponse, file).catch((err) => {
+    this.client.addFile(status, file).catch((err) => {
       this.uppy.log(err)
-      this.uppy.emit('transloadit:import-error', assemblyResponse, file.id, err)
+      this.uppy.emit('transloadit:import-error', status, file.id, err)
     })
   }
 
@@ -608,14 +606,13 @@ export default class Transloadit<
   #onAssemblyFinished(status: AssemblyResponse) {
     const url = status.assembly_ssl_url
     this.client.getAssemblyStatus(url).then((finalStatus) => {
-      this.setPluginState({ assemblyResponse: finalStatus })
+      this.assembly.status = finalStatus
       this.uppy.emit('transloadit:complete', finalStatus)
     })
   }
 
   async #cancelAssembly(assembly: AssemblyResponse) {
     await this.client.cancelAssembly(assembly)
-    this.setPluginState({ assemblyResponse: undefined })
     // TODO bubble this through AssemblyWatcher so its event handlers can clean up correctly
     this.uppy.emit('transloadit:assembly-cancelled', assembly)
   }
@@ -636,19 +633,19 @@ export default class Transloadit<
    * It will pass this back to the `_onRestored` function.
    */
   #getPersistentData = (
-    setData: (
-      arg: Record<string, Pick<TransloaditState, 'assemblyResponse'>>,
-    ) => void,
+    setData: (arg: Record<string, PersistentState>) => void,
   ) => {
-    const { assemblyResponse: assembly } = this.getPluginState()
-
-    setData({ [this.id]: { assemblyResponse: assembly } })
+    if (this.assembly) {
+      setData({ [this.id]: { assemblyResponse: this.assembly.status } })
+    }
   }
 
-  #onRestored = (pluginData: Record<string, TransloaditState>) => {
-    const savedState =
-      pluginData && pluginData[this.id] ? pluginData[this.id] : {}
-    const previousAssembly = (savedState as TransloaditState).assemblyResponse
+  #onRestored = (pluginData: Record<string, unknown>) => {
+    const savedState = (
+      pluginData && pluginData[this.id] ?
+        pluginData[this.id]
+      : {}) as PersistentState
+    const previousAssembly = savedState.assemblyResponse
 
     if (!previousAssembly) {
       // Nothing to restore.
@@ -656,9 +653,7 @@ export default class Transloadit<
     }
 
     // Convert loaded Assembly statuses to a Transloadit plugin state object.
-    const restoreState = (
-      assembly: NonNullable<TransloaditState['assemblyResponse']>,
-    ) => {
+    const restoreState = () => {
       const files: Record<
         string,
         { id: string; assembly: string; uploadedFile: AssemblyFile }
@@ -669,9 +664,9 @@ export default class Transloadit<
         id: string
         assembly: string
       }[] = []
-      const { assembly_id: id } = assembly
+      const { assembly_id: id } = previousAssembly
 
-      assembly.uploads.forEach((uploadedFile) => {
+      previousAssembly.uploads.forEach((uploadedFile) => {
         const file = this.#findFile(uploadedFile)
         files[uploadedFile.id] = {
           id: file!.id,
@@ -681,8 +676,8 @@ export default class Transloadit<
       })
 
       const state = this.getPluginState()
-      Object.keys(assembly.results).forEach((stepName) => {
-        for (const result of assembly.results[stepName]) {
+      Object.keys(previousAssembly.results).forEach((stepName) => {
+        for (const result of previousAssembly.results[stepName]) {
           const file = state.files[result.original_id]
           result.localId = file ? file.id : null
           results.push({
@@ -694,19 +689,15 @@ export default class Transloadit<
         }
       })
 
-      this.setPluginState({
-        assemblyResponse: assembly,
-        files,
-        results,
-      })
+      this.assembly = new Assembly(previousAssembly, this.#rateLimitedQueue)
+      this.assembly.status = previousAssembly
+      this.setPluginState({ files, results })
     }
 
     // Set up the Assembly instances and AssemblyWatchers for existing Assemblies.
     const restoreAssemblies = () => {
       this.#createAssemblyWatcher(previousAssembly.assembly_id)
-      this.#connectAssembly(
-        new Assembly(previousAssembly, this.#rateLimitedQueue),
-      )
+      this.#connectAssembly(this.assembly)
     }
 
     // Force-update all Assemblies to check for missed events.
@@ -716,7 +707,7 @@ export default class Transloadit<
 
     // Restore all Assembly state.
     this.restored = Promise.resolve().then(() => {
-      restoreState(previousAssembly)
+      restoreState()
       restoreAssemblies()
       updateAssemblies()
     })
@@ -733,7 +724,7 @@ export default class Transloadit<
 
     // Sync local `assemblies` state
     assembly.on('status', (newStatus: AssemblyResponse) => {
-      this.setPluginState({ assemblyResponse: newStatus })
+      this.assembly.status = newStatus
     })
 
     assembly.on('upload', (file: AssemblyFile) => {
@@ -861,7 +852,7 @@ export default class Transloadit<
     if (!this.#shouldWaitAfterUpload()) {
       closeSocketConnections()
       this.uppy.addResultData(uploadID, {
-        transloadit: [this.getPluginState().assemblyResponse],
+        transloadit: [this.assembly.status],
       })
       return Promise.resolve()
     }
@@ -886,7 +877,7 @@ export default class Transloadit<
     return this.watcher.promise.then(() => {
       closeSocketConnections()
       this.uppy.addResultData(uploadID, {
-        transloadit: [this.getPluginState().assemblyResponse],
+        transloadit: [this.assembly.status],
       })
     })
   }
@@ -999,7 +990,7 @@ export default class Transloadit<
   }
 
   getAssembly(): AssemblyResponse | undefined {
-    return this.getPluginState().assemblyResponse
+    return this.assembly.status
   }
 
   getAssemblyFiles(assemblyID: string): UppyFile<M, B>[] {
