@@ -687,7 +687,6 @@ export default class AwsS3Multipart<
           return
         }
 
-        // todo make a proper onProgress API (breaking change)
         onProgress?.({ loaded: size, lengthComputable: true })
 
         // NOTE This must be allowed by CORS.
