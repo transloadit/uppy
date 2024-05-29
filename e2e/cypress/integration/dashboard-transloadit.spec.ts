@@ -9,13 +9,12 @@ describe('Dashboard with Transloadit', () => {
   beforeEach(() => {
     cy.visit('/dashboard-transloadit')
     cy.get('.uppy-Dashboard-input:first').as('file-input')
-    cy.intercept({ path: '/assemblies', method: 'POST' }).as('createAssemblies')
-    cy.intercept('/assemblies/*').as('assemblies')
-    cy.intercept({ path: '/resumable/*', method: 'POST' }).as('tusCreate')
-    cy.intercept('/resumable/*').as('resumable')
   })
 
   it('should upload cat image successfully', () => {
+    cy.intercept('/assemblies/*').as('assemblies')
+    cy.intercept('/resumable/*').as('resumable')
+
     cy.get('@file-input').selectFile('cypress/fixtures/images/cat.jpg', {
       force: true,
     })
@@ -26,15 +25,13 @@ describe('Dashboard with Transloadit', () => {
     })
   })
 
-  it('should close assembly polling when cancelled', () => {
-    cy.intercept({
-      method: 'GET',
-      url: '/assemblies/*',
-    }).as('assemblyPolling')
-    cy.intercept(
-      { method: 'DELETE', pathname: '/assemblies/*', times: 1 },
-      { statusCode: 204, body: {} },
-    ).as('delete')
+  it('should close assembly when cancelled', () => {
+    cy.intercept({ path: '/resumable/*', method: 'POST' }).as('tusCreate')
+    cy.intercept({ path: '/assemblies', method: 'POST' }).as('createAssemblies')
+    cy.intercept({ path: '/assemblies/*', method: 'DELETE' }).as('delete')
+    cy.intercept({ path: '/resumable/files/*', method: 'DELETE' }).as(
+      'tusDelete',
+    )
 
     cy.window().then(({ uppy }) => {
       cy.get('@file-input').selectFile(
@@ -54,7 +51,7 @@ describe('Dashboard with Transloadit', () => {
 
         uppy.cancelAll()
 
-        cy.wait(['@delete']).then(() => {
+        cy.wait(['@delete', '@tusDelete']).then(() => {
           expect(plugin.assembly.closed).to.be.true
         })
       })
@@ -226,6 +223,8 @@ describe('Dashboard with Transloadit', () => {
   })
 
   it('should not emit error if upload is cancelled right away', () => {
+    cy.intercept({ path: '/assemblies', method: 'POST' }).as('createAssemblies')
+
     cy.get('@file-input').selectFile('cypress/fixtures/images/cat.jpg', {
       force: true,
     })
@@ -460,6 +459,9 @@ describe('Dashboard with Transloadit', () => {
   })
 
   it('should complete on retry', () => {
+    cy.intercept('/assemblies/*').as('assemblies')
+    cy.intercept('/resumable/*').as('resumable')
+
     cy.get('@file-input').selectFile(
       [
         'cypress/fixtures/images/cat.jpg',
@@ -489,6 +491,9 @@ describe('Dashboard with Transloadit', () => {
   })
 
   it('should complete when resuming after pause', () => {
+    cy.intercept({ path: '/assemblies', method: 'POST' }).as('createAssemblies')
+    cy.intercept('/resumable/*').as('resumable')
+
     cy.get('@file-input').selectFile(
       [
         'cypress/fixtures/images/cat.jpg',
