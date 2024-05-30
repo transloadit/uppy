@@ -491,7 +491,7 @@ describe('src/Core', () => {
 
     assert.throws(
       () => core.removeFile(fileIDs[0]),
-      /individualCancellation is disabled/,
+      /The installed uploader plugin does not allow removing files during an upload/,
     )
 
     expect(core.getState().currentUploads[id]).toBeDefined()
