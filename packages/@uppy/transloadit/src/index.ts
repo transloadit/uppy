@@ -401,7 +401,6 @@ export default class Transloadit<
 
   #createAssembly(
     fileIDs: string[],
-    uploadID: string,
     assemblyOptions: OptionsWithRestructuredFields,
   ) {
     this.uppy.log('[Transloadit] Create Assembly')
@@ -791,7 +790,7 @@ export default class Transloadit<
     return assembly
   }
 
-  #prepareUpload = async (fileIDs: string[], uploadID: string) => {
+  #prepareUpload = async (fileIDs: string[]) => {
     const assemblyOptions = (
       typeof this.opts.assemblyOptions === 'function' ?
         await this.opts.assemblyOptions()
@@ -803,7 +802,6 @@ export default class Transloadit<
     try {
       const assembly = (await this.#createAssembly(
         fileIDs,
-        uploadID,
         assemblyOptions,
       )) as Assembly
       if (this.opts.importFromUploadURLs) {
@@ -859,7 +857,7 @@ export default class Transloadit<
 
     // If no Assemblies were created for this upload, we also do not have to wait.
     // There's also no sockets or anything to close, so just return immediately.
-    if (assemblyID.length === 0) {
+    if (!assemblyID) {
       this.uppy.addResultData(uploadID, { transloadit: [] })
       return Promise.resolve()
     }
@@ -887,12 +885,7 @@ export default class Transloadit<
   }
 
   #onError = (err: { name: string; message: string; details?: string }) => {
-    // TODO: uploadID is not accessible here. The state in core has many upload IDs,
-    // so we don't know which one to get. This code never worked and no one complained.
-    // See if we run into problems with this.
-    // const state = this.getPluginState()
-    // const assemblyIDs = state.uploadsAssemblies[uploadID]
-    // assemblyIDs?.forEach(this.#closeAssemblyIfExists)
+    this.#closeAssemblyIfExists()
 
     this.client
       .submitError(err)
