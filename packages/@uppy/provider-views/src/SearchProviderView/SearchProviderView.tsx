@@ -156,13 +156,8 @@ export default class SearchProviderView<
     state: unknown,
     viewOptions: Omit<ViewOptions<M, B, PluginType>, 'provider'> = {},
   ) {
-    const { didFirstRender, isInputMode, searchTerm } =
-      this.plugin.getPluginState()
+    const { isInputMode, searchTerm } = this.plugin.getPluginState()
     const { i18n } = this.plugin.uppy
-
-    if (!didFirstRender) {
-      this.preFirstRender()
-    }
 
     const targetViewOptions = { ...this.opts, ...viewOptions }
     const { files, folders, filterInput, loading, currentSelection } =
