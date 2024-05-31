@@ -6,7 +6,6 @@ import { h } from 'preact'
 import VirtualList from '@uppy/utils/lib/VirtualList'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import type { I18n } from '@uppy/utils/lib/Translator'
-import Item from './Item/index.tsx'
 import type {
   PartialTreeFile,
   PartialTreeFolderNode,
@@ -14,6 +13,7 @@ import type {
 import type { RestrictionError } from '@uppy/core/lib/Restricter.ts'
 import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
 import { useEffect, useState } from 'preact/hooks'
+import Item from './Item/index.tsx'
 import type ProviderView from './ProviderView/ProviderView.tsx'
 
 type BrowserProps<M extends Meta, B extends Body> = {
@@ -104,7 +104,7 @@ function Browser<M extends Meta, B extends Body>(props: BrowserProps<M, B>) {
         </ul>
       </div>
     )
-  } else {
+  } 
     return (
       <div className="uppy-ProviderBrowser-body">
         <ul
@@ -118,7 +118,7 @@ function Browser<M extends Meta, B extends Body>(props: BrowserProps<M, B>) {
         </ul>
       </div>
     )
-  }
+  
 }
 
 export default Browser

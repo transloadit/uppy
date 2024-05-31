@@ -52,7 +52,7 @@ const getCheckedFilesWithPaths = (
     )
     const relFolders = absFolders.slice(firstCheckedFolderIndex)
 
-    const absDirPath = '/' + absFolders.map((i) => i.data.name).join('/')
+    const absDirPath = `/${  absFolders.map((i) => i.data.name).join('/')}`
     const relDirPath =
       relFolders.length === 1 ?
         // Must return `undefined` (which later turns into `null` in `.getTagFile()`)

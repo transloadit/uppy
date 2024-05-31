@@ -31,8 +31,8 @@ const recursivelyFetch = async (
     currentPath = response.nextPagePath
   }
 
-  let newFolders = items.filter((i) => i.isFolder === true)
-  let newFiles = items.filter((i) => i.isFolder === false)
+  const newFolders = items.filter((i) => i.isFolder === true)
+  const newFiles = items.filter((i) => i.isFolder === false)
 
   const folders: PartialTreeFolderNode[] = newFolders.map((folder) => ({
     type: 'folder',
@@ -78,7 +78,7 @@ const afterFill = async (
   const queue = new PQueue({ concurrency: 6 })
 
   // fill up the missing parts of a partialTree!
-  let poorTree: PartialTree = clone(partialTree)
+  const poorTree: PartialTree = clone(partialTree)
   const poorFolders = poorTree.filter(
     (item) =>
       item.type === 'folder' &&

@@ -14,6 +14,9 @@ import type {
 import type { Body, Meta, TagFile } from '@uppy/utils/lib/UppyFile'
 import type { CompanionFile } from '@uppy/utils/lib/CompanionFile.ts'
 import type Translator from '@uppy/utils/lib/Translator'
+import classNames from 'classnames'
+import type { ValidateableFile } from '@uppy/core/lib/Restricter.ts'
+import remoteFileObjToLocal from '@uppy/utils/lib/remoteFileObjToLocal'
 import AuthView from './AuthView.tsx'
 import Header from './Header.tsx'
 import Browser from '../Browser.tsx'
@@ -26,11 +29,8 @@ import getTagFile from '../utils/getTagFile.ts'
 import shouldHandleScroll from '../utils/shouldHandleScroll.ts'
 import handleError from '../utils/handleError.ts'
 import getClickedRange from '../utils/getClickedRange.ts'
-import classNames from 'classnames'
 import SearchFilterInput from '../SearchFilterInput.tsx'
 import FooterActions from '../FooterActions.tsx'
-import type { ValidateableFile } from '@uppy/core/lib/Restricter.ts'
-import remoteFileObjToLocal from '@uppy/utils/lib/remoteFileObjToLocal'
 import addFiles from '../utils/addFiles.ts'
 import getCheckedFilesWithPaths from '../utils/PartialTreeUtils/getCheckedFilesWithPaths.ts'
 
@@ -100,10 +100,13 @@ export default class ProviderView<M extends Meta, B extends Body> {
   static VERSION = packageJson.version
 
   plugin: UnknownProviderPlugin<M, B>
+
   provider: UnknownProviderPlugin<M, B>['provider']
+
   opts: Opts<M, B>
 
   isHandlingScroll: boolean = false
+
   lastCheckbox: string | null = null
 
   constructor(plugin: UnknownProviderPlugin<M, B>, opts: PassedOpts<M, B>) {

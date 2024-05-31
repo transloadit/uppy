@@ -13,8 +13,8 @@ const afterOpenFolder = (
   currentPagePath: string | null,
   validateSingleFile: (file: CompanionFile) => string | null,
 ): PartialTree => {
-  let discoveredFolders = discoveredItems.filter((i) => i.isFolder === true)
-  let discoveredFiles = discoveredItems.filter((i) => i.isFolder === false)
+  const discoveredFolders = discoveredItems.filter((i) => i.isFolder === true)
+  const discoveredFiles = discoveredItems.filter((i) => i.isFolder === false)
 
   const isParentFolderChecked =
     clickedFolder.type === 'folder' && clickedFolder.status === 'checked'

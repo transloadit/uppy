@@ -19,7 +19,7 @@ const afterToggleCheckbox = (
 
   const percolateDown = (
     clickedItem: PartialTreeFolderNode | PartialTreeFile,
-    isParentFolderChecked: Boolean,
+    isParentFolderChecked: boolean,
   ) => {
     const children = newPartialTree.filter(
       (item) => item.type !== 'root' && item.parentId === clickedItem.id,

@@ -3,10 +3,10 @@ import { h } from 'preact'
 import type { I18n } from '@uppy/utils/lib/Translator'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import type { PartialTreeFolder } from '@uppy/core/lib/Uppy.ts'
+import classNames from 'classnames'
 import User from './User.tsx'
 import Breadcrumbs from '../Breadcrumbs.tsx'
 import type ProviderView from './ProviderView.tsx'
-import classNames from 'classnames'
 
 type HeaderProps<M extends Meta, B extends Body> = {
   showBreadcrumbs: boolean

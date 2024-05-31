@@ -98,7 +98,7 @@ class Restricter<M extends Meta, B extends Body> {
     }
 
     if (maxTotalFileSize) {
-      let totalFilesSize = [...existingFiles, ...addingFiles].reduce(
+      const totalFilesSize = [...existingFiles, ...addingFiles].reduce(
         (total, f) => total + (f.size ?? 0),
         0,
       )

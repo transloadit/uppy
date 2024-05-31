@@ -55,7 +55,7 @@ export default function ListItem<M extends Meta, B extends Body>(
         // for the <label/>
         name="listitem"
         id={id}
-        checked={status === 'checked' ? true : false}
+        checked={status === 'checked'}
         aria-label={
           type === 'file' ? null : (
             i18n('allFilesFromFolderNamed', { name: title })

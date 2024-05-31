@@ -17,8 +17,8 @@ const afterScrollFolder = (
     (i) => i.id === currentFolderId,
   ) as PartialTreeFolder
 
-  let newFolders = items.filter((i) => i.isFolder === true)
-  let newFiles = items.filter((i) => i.isFolder === false)
+  const newFolders = items.filter((i) => i.isFolder === true)
+  const newFiles = items.filter((i) => i.isFolder === false)
 
   // just doing `scrolledFolder.nextPagePath = ...` in a non-mutating way
   const scrolledFolder: PartialTreeFolder = { ...currentFolder, nextPagePath }

@@ -4,14 +4,14 @@ import { h } from 'preact'
 import classNames from 'classnames'
 import type { I18n } from '@uppy/utils/lib/Translator'
 import type { Meta, Body } from '@uppy/utils/lib/UppyFile'
-import ItemIcon from './components/ItemIcon.tsx'
-import GridItem from './components/GridItem.tsx'
-import ListItem from './components/ListItem.tsx'
 import type {
   PartialTreeFile,
   PartialTreeFolderNode,
   PartialTreeId,
 } from '@uppy/core/lib/Uppy.ts'
+import ItemIcon from './components/ItemIcon.tsx'
+import GridItem from './components/GridItem.tsx'
+import ListItem from './components/ListItem.tsx'
 
 type ItemProps<M extends Meta, B extends Body> = {
   viewType: string
@@ -51,7 +51,7 @@ export default function Item<M extends Meta, B extends Body>(
     restrictionError,
   }
 
-  let ourProps =
+  const ourProps =
     file.data.isFolder ?
       {
         ...sharedProps,

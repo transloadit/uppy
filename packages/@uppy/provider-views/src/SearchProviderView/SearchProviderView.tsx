@@ -10,6 +10,9 @@ import type {
   UnknownSearchProviderPluginState,
 } from '@uppy/core/lib/Uppy.ts'
 import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
+import classNames from 'classnames'
+import type { ValidateableFile } from '@uppy/core/lib/Restricter.ts'
+import remoteFileObjToLocal from '@uppy/utils/lib/remoteFileObjToLocal'
 import SearchFilterInput from '../SearchFilterInput.tsx'
 import Browser from '../Browser.tsx'
 
@@ -21,10 +24,7 @@ import PartialTreeUtils from '../utils/PartialTreeUtils'
 import shouldHandleScroll from '../utils/shouldHandleScroll.ts'
 import handleError from '../utils/handleError.ts'
 import getClickedRange from '../utils/getClickedRange.ts'
-import classNames from 'classnames'
 import FooterActions from '../FooterActions.tsx'
-import type { ValidateableFile } from '@uppy/core/lib/Restricter.ts'
-import remoteFileObjToLocal from '@uppy/utils/lib/remoteFileObjToLocal'
 import addFiles from '../utils/addFiles.ts'
 import getCheckedFilesWithPaths from '../utils/PartialTreeUtils/getCheckedFilesWithPaths.ts'
 
@@ -75,10 +75,13 @@ export default class SearchProviderView<M extends Meta, B extends Body> {
   static VERSION = packageJson.version
 
   plugin: UnknownSearchProviderPlugin<M, B>
+
   provider: UnknownSearchProviderPlugin<M, B>['provider']
+
   opts: Opts<M, B>
 
   isHandlingScroll: boolean = false
+
   lastCheckbox: string | null = null
 
   constructor(
