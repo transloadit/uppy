@@ -1,5 +1,6 @@
+/* eslint-disable no-underscore-dangle */
 import { describe, expect, it, vi } from 'vitest'
-import afterToggleCheckbox from './afterToggleCheckbox.ts'
+import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
 import type {
   PartialTree,
   PartialTreeFile,
@@ -7,7 +8,7 @@ import type {
   PartialTreeFolderRoot,
   PartialTreeId,
 } from '@uppy/core/lib/Uppy.ts'
-import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
+import afterToggleCheckbox from './afterToggleCheckbox.ts'
 import afterOpenFolder from './afterOpenFolder.ts'
 import afterScrollFolder from './afterScrollFolder.ts'
 import afterFill from './afterFill.ts'
@@ -98,7 +99,8 @@ describe('afterFill()', () => {
       if (path === '2') {
         const items = [_cFile('2_1'), _cFile('2_2')]
         return Promise.resolve({ nextPagePath: '666', items })
-      } else if (path === '666') {
+      }
+      if (path === '666') {
         const items = [_cFile('2_3'), _cFile('2_4')]
         return Promise.resolve({ nextPagePath: null, items })
       }
@@ -157,7 +159,8 @@ describe('afterFill()', () => {
       if (path === '2_next') {
         const items = [_cFile('2_3'), _cFolder('666')]
         return Promise.resolve({ nextPagePath: null, items })
-      } else if (path === '666') {
+      }
+      if (path === '666') {
         const items = [_cFile('666_1'), _cFile('666_2')]
         return Promise.resolve({ nextPagePath: null, items })
       }
@@ -202,19 +205,24 @@ describe('afterFill()', () => {
       if (path === '2_next') {
         const items = [_cFile('2_3'), _cFolder('666')]
         return Promise.resolve({ nextPagePath: null, items })
-      } else if (path === '666') {
+      }
+      if (path === '666') {
         const items = [_cFile('666_1'), _cFolder('777')]
         return Promise.resolve({ nextPagePath: null, items })
-      } else if (path === '777') {
+      }
+      if (path === '777') {
         const items = [_cFile('777_1'), _cFolder('777_2')]
         return Promise.resolve({ nextPagePath: null, items })
-      } else if (path === '777_2') {
+      }
+      if (path === '777_2') {
         const items = [_cFile('777_2_1')]
         return Promise.resolve({ nextPagePath: '777_2_next', items })
-      } else if (path === '777_2_next') {
+      }
+      if (path === '777_2_next') {
         const items = [_cFile('777_2_1_1')]
         return Promise.resolve({ nextPagePath: null, items })
-      } else if (path === '0') {
+      }
+      if (path === '0') {
         return Promise.resolve({ nextPagePath: null, items: [] })
       }
       return Promise.reject()
@@ -485,7 +493,8 @@ describe('getNOfSelectedFiles()', () => {
       _folder('1', { parentId: 'ourRoot', cached: true, status: 'checked' }),
     ]
     const result = getNOfSelectedFiles(tree)
-    // This should be "1" for more pleasant UI - if the user unchecks this folder, they should immediately see "Selected (1)" turning into "Selected (0)".
+    // This should be "1" for more pleasant UI - if the user unchecks this folder,
+    // they should immediately see "Selected (1)" turning into "Selected (0)".
     expect(result).toEqual(1)
   })
 })

@@ -6,13 +6,13 @@ import type { PartialTreeFolder } from '@uppy/core/lib/Uppy.ts'
 import classNames from 'classnames'
 import User from './User.tsx'
 import Breadcrumbs from '../Breadcrumbs.tsx'
-import type ProviderView from './ProviderView.tsx'
+import type ProviderView from './ProviderView.js'
 
 type HeaderProps<M extends Meta, B extends Body> = {
   showBreadcrumbs: boolean
   openFolder: ProviderView<M, B>['openFolder']
   breadcrumbs: PartialTreeFolder[]
-  pluginIcon: () => JSX.Element
+  pluginIcon: () => h.JSX.Element
   title: string
   logout: () => void
   username: string | null

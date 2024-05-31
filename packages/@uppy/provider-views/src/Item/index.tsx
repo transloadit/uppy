@@ -1,9 +1,8 @@
-/* eslint-disable react/require-default-props */
+/* eslint-disable react/jsx-props-no-spreading */
 import { h } from 'preact'
 
 import classNames from 'classnames'
 import type { I18n } from '@uppy/utils/lib/Translator'
-import type { Meta, Body } from '@uppy/utils/lib/UppyFile'
 import type {
   PartialTreeFile,
   PartialTreeFolderNode,
@@ -13,7 +12,7 @@ import ItemIcon from './components/ItemIcon.tsx'
 import GridItem from './components/GridItem.tsx'
 import ListItem from './components/ListItem.tsx'
 
-type ItemProps<M extends Meta, B extends Body> = {
+type ItemProps = {
   viewType: string
   toggleCheckbox: (event: Event) => void
   showTitles: boolean
@@ -22,9 +21,7 @@ type ItemProps<M extends Meta, B extends Body> = {
   file: PartialTreeFile | PartialTreeFolderNode
 }
 
-export default function Item<M extends Meta, B extends Body>(
-  props: ItemProps<M, B>,
-): h.JSX.Element {
+export default function Item(props: ItemProps): h.JSX.Element {
   const { viewType, toggleCheckbox, showTitles, i18n, openFolder, file } = props
 
   const restrictionError = file.type === 'folder' ? null : file.restrictionError
@@ -65,12 +62,12 @@ export default function Item<M extends Meta, B extends Body>(
 
   switch (viewType) {
     case 'grid':
-      return <GridItem<M, B> {...ourProps} />
+      return <GridItem {...ourProps} />
     case 'list':
-      return <ListItem<M, B> {...ourProps} />
+      return <ListItem {...ourProps} />
     case 'unsplash':
       return (
-        <GridItem<M, B> {...ourProps}>
+        <GridItem {...ourProps}>
           <a
             href={`${file.data.author!.url}?utm_source=Companion&utm_medium=referral`}
             target="_blank"

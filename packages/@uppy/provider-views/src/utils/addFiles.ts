@@ -12,7 +12,7 @@ const addFiles = <M extends Meta, B extends Body>(
   companionFiles: CompanionFile[],
   plugin: UnknownPlugin<M, B>,
   provider: CompanionClientProvider | CompanionClientSearchProvider,
-) => {
+): void => {
   const tagFiles: TagFile<M>[] = companionFiles.map((f) =>
     getTagFile<M, B>(f, plugin, provider),
   )
@@ -20,7 +20,11 @@ const addFiles = <M extends Meta, B extends Body>(
   const filesToAdd: TagFile<M>[] = []
   const filesAlreadyAdded: TagFile<M>[] = []
   tagFiles.forEach((tagFile) => {
-    if (plugin.uppy.checkIfFileAlreadyExists(getSafeFileId(tagFile))) {
+    if (
+      plugin.uppy.checkIfFileAlreadyExists(
+        getSafeFileId(tagFile, plugin.uppy.getID()),
+      )
+    ) {
       filesAlreadyAdded.push(tagFile)
     } else {
       filesToAdd.push(tagFile)

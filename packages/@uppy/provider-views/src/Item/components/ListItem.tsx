@@ -1,6 +1,5 @@
 /* eslint-disable react/require-default-props */
 import type { PartialTreeStatus } from '@uppy/core/lib/Uppy'
-import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import { h } from 'preact'
 
 // if folder:
@@ -10,7 +9,7 @@ import { h } from 'preact'
 //   + checkbox (selects file)
 //   + file name (selects file)
 
-type ListItemProps<M extends Meta, B extends Body> = {
+type ListItemProps = {
   className: string
   isDisabled: boolean
   restrictionError: string | null
@@ -25,9 +24,7 @@ type ListItemProps<M extends Meta, B extends Body> = {
   i18n: any
 }
 
-export default function ListItem<M extends Meta, B extends Body>(
-  props: ListItemProps<M, B>,
-): h.JSX.Element {
+export default function ListItem(props: ListItemProps): h.JSX.Element {
   const {
     className,
     isDisabled,

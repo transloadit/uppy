@@ -6,13 +6,13 @@ import type ProviderView from './ProviderView/index.js'
 type BreadcrumbsProps<M extends Meta, B extends Body> = {
   openFolder: ProviderView<M, B>['openFolder']
   title: string
-  breadcrumbsIcon: JSX.Element
+  breadcrumbsIcon: h.JSX.Element
   breadcrumbs: PartialTreeFolder[]
 }
 
 export default function Breadcrumbs<M extends Meta, B extends Body>(
   props: BreadcrumbsProps<M, B>,
-): JSX.Element {
+): h.JSX.Element {
   const { openFolder, title, breadcrumbsIcon, breadcrumbs } = props
 
   return (

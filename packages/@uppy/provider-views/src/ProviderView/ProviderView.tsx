@@ -1,7 +1,4 @@
 import { h } from 'preact'
-
-import { getSafeFileId } from '@uppy/utils/lib/generateFileID'
-
 import type {
   UnknownProviderPlugin,
   PartialTreeFolder,
@@ -11,7 +8,7 @@ import type {
   PartialTreeId,
   PartialTree,
 } from '@uppy/core/lib/Uppy.ts'
-import type { Body, Meta, TagFile } from '@uppy/utils/lib/UppyFile'
+import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import type { CompanionFile } from '@uppy/utils/lib/CompanionFile.ts'
 import type Translator from '@uppy/utils/lib/Translator'
 import classNames from 'classnames'
@@ -24,8 +21,7 @@ import Browser from '../Browser.tsx'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../../package.json'
-import PartialTreeUtils from '../utils/PartialTreeUtils'
-import getTagFile from '../utils/getTagFile.ts'
+import PartialTreeUtils from '../utils/PartialTreeUtils/index.ts'
 import shouldHandleScroll from '../utils/shouldHandleScroll.ts'
 import handleError from '../utils/handleError.ts'
 import getClickedRange from '../utils/getClickedRange.ts'
@@ -34,7 +30,7 @@ import FooterActions from '../FooterActions.tsx'
 import addFiles from '../utils/addFiles.ts'
 import getCheckedFilesWithPaths from '../utils/PartialTreeUtils/getCheckedFilesWithPaths.ts'
 
-export function defaultPickerIcon(): JSX.Element {
+export function defaultPickerIcon(): h.JSX.Element {
   return (
     <svg
       aria-hidden="true"
@@ -148,6 +144,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
     this.plugin.setPluginState(getDefaultState(this.plugin.rootFolderId))
   }
 
+  // eslint-disable-next-line class-methods-use-this
   tearDown(): void {
     // Nothing.
   }
@@ -194,18 +191,12 @@ export default class ProviderView<M extends Meta, B extends Body> {
 
   async openFolder(folderId: string | null): Promise<void> {
     this.lastCheckbox = null
-    console.log(
-      `____________________________________________GETTING FOLDER "${folderId}"`,
-    )
     // Returning cached folder
     const { partialTree } = this.plugin.getPluginState()
     const clickedFolder = partialTree.find(
       (folder) => folder.id === folderId,
     )! as PartialTreeFolder
     if (clickedFolder.cached) {
-      console.log(
-        'Folder was cached____________________________________________',
-      )
       this.plugin.setPluginState({
         currentFolderId: folderId,
         searchString: '',
@@ -427,7 +418,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
     return this.plugin.uppy.validateAggregateRestrictions(uppyFiles)
   }
 
-  render(state: unknown, viewOptions: RenderOpts<M, B> = {}): JSX.Element {
+  render(state: unknown, viewOptions: RenderOpts<M, B> = {}): h.JSX.Element {
     const { didFirstRender } = this.plugin.getPluginState()
     const { i18n } = this.plugin.uppy
 
@@ -476,9 +467,8 @@ export default class ProviderView<M extends Meta, B extends Body> {
         {opts.showFilter && (
           <SearchFilterInput
             searchString={searchString}
-            setSearchString={(searchString: string) => {
-              console.log('setting searchString!', searchString)
-              this.plugin.setPluginState({ searchString })
+            setSearchString={(s: string) => {
+              this.plugin.setPluginState({ searchString: s })
             }}
             submitSearchString={() => {}}
             inputLabel={i18n('filter')}

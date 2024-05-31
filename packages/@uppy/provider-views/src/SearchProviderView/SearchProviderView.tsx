@@ -19,8 +19,7 @@ import Browser from '../Browser.tsx'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../../package.json'
-import getTagFile from '../utils/getTagFile.ts'
-import PartialTreeUtils from '../utils/PartialTreeUtils'
+import PartialTreeUtils from '../utils/PartialTreeUtils/index.ts'
 import shouldHandleScroll from '../utils/shouldHandleScroll.ts'
 import handleError from '../utils/handleError.ts'
 import getClickedRange from '../utils/getClickedRange.ts'
@@ -284,7 +283,7 @@ export default class SearchProviderView<M extends Meta, B extends Body> {
     return this.plugin.uppy.validateAggregateRestrictions(uppyFiles)
   }
 
-  render(state: unknown, viewOptions: RenderOpts<M, B> = {}): JSX.Element {
+  render(state: unknown, viewOptions: RenderOpts<M, B> = {}): h.JSX.Element {
     const { isInputMode, searchString, loading, partialTree } =
       this.plugin.getPluginState()
     const { i18n } = this.plugin.uppy
