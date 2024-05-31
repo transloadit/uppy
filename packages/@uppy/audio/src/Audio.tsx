@@ -369,9 +369,6 @@ export default class Audio<M extends Meta, B extends Body> extends UIPlugin<
       <RecordingScreen
         // eslint-disable-next-line react/jsx-props-no-spreading
         {...audioState}
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore TODO: remove unused
-        audioActive={this.#audioActive}
         onChangeSource={this.#changeSource}
         onStartRecording={this.#startRecording}
         onStopRecording={this.#stopRecording}

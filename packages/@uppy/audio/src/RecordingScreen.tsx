@@ -13,7 +13,7 @@ import DiscardButton from './DiscardButton.tsx'
 
 interface RecordingScreenProps extends AudioSourceSelectProps {
   stream: MediaStream | null | undefined
-  recordedAudio: string
+  recordedAudio?: string | undefined
   recording: boolean
   supportsRecording: boolean
   showAudioSourceDropdown: boolean | undefined
@@ -125,4 +125,8 @@ export default function RecordingScreen(props: RecordingScreenProps) {
       </div>
     </div>
   )
+}
+
+RecordingScreen.defaultProps = {
+  recordedAudio: undefined,
 }
