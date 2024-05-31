@@ -4,20 +4,20 @@ import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import type ProviderView from './ProviderView/index.js'
 
 type BreadcrumbProps = {
-  getFolder: () => void
+  navigateToFolder: () => void
   title: string
   isLast: boolean
 }
 
 const Breadcrumb = (props: BreadcrumbProps) => {
-  const { getFolder, title, isLast } = props
+  const { navigateToFolder, title, isLast } = props
 
   return (
     <Fragment>
       <button
         type="button"
         className="uppy-u-reset uppy-c-btn"
-        onClick={getFolder}
+        onClick={navigateToFolder}
       >
         {title}
       </button>
@@ -27,7 +27,7 @@ const Breadcrumb = (props: BreadcrumbProps) => {
 }
 
 type BreadcrumbsProps<M extends Meta, B extends Body> = {
-  getFolder: ProviderView<M, B>['getFolder']
+  navigateToFolder: ProviderView<M, B>['navigateToFolder']
   title: string
   breadcrumbsIcon: h.JSX.Element
   breadcrumbs: UnknownProviderPluginState['breadcrumbs']
@@ -36,7 +36,7 @@ type BreadcrumbsProps<M extends Meta, B extends Body> = {
 export default function Breadcrumbs<M extends Meta, B extends Body>(
   props: BreadcrumbsProps<M, B>,
 ) {
-  const { getFolder, title, breadcrumbsIcon, breadcrumbs } = props
+  const { navigateToFolder, title, breadcrumbsIcon, breadcrumbs } = props
 
   return (
     <div className="uppy-Provider-breadcrumbs">
@@ -44,7 +44,9 @@ export default function Breadcrumbs<M extends Meta, B extends Body>(
       {breadcrumbs.map((directory, i) => (
         <Breadcrumb
           key={directory.id}
-          getFolder={() => getFolder(directory.requestPath, directory.name)}
+          navigateToFolder={() =>
+            navigateToFolder(directory.requestPath, directory.name)
+          }
           title={i === 0 ? title : (directory.name as string)}
           isLast={i + 1 === breadcrumbs.length}
         />

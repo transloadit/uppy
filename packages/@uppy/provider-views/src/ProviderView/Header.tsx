@@ -9,7 +9,7 @@ import type ProviderView from './ProviderView.js'
 
 type HeaderProps<M extends Meta, B extends Body> = {
   showBreadcrumbs: boolean
-  getFolder: ProviderView<M, B>['getFolder']
+  navigateToFolder: ProviderView<M, B>['navigateToFolder']
   breadcrumbs: UnknownProviderPluginState['breadcrumbs']
   pluginIcon: () => h.JSX.Element
   title: string
@@ -25,7 +25,7 @@ export default function Header<M extends Meta, B extends Body>(
     <Fragment>
       {props.showBreadcrumbs && (
         <Breadcrumbs
-          getFolder={props.getFolder}
+          navigateToFolder={props.navigateToFolder}
           breadcrumbs={props.breadcrumbs}
           breadcrumbsIcon={props.pluginIcon && props.pluginIcon()}
           title={props.title}

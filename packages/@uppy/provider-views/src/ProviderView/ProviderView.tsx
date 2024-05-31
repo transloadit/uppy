@@ -99,7 +99,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
     // Logic
     this.filterQuery = this.filterQuery.bind(this)
     this.clearFilter = this.clearFilter.bind(this)
-    this.getFolder = this.getFolder.bind(this)
+    this.navigateToFolder = this.navigateToFolder.bind(this)
     this.getNextFolder = this.getNextFolder.bind(this)
     this.logout = this.logout.bind(this)
     this.handleAuth = this.handleAuth.bind(this)
@@ -213,12 +213,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
     return { files, folders }
   }
 
-  /**
-   * Select a folder based on its id: fetches the folder and then updates state with its contents
-   * TODO rename to something better like selectFolder or navigateToFolder (breaking change?)
-   *
-   */
-  async getFolder(requestPath?: string, name?: string): Promise<void> {
+  async navigateToFolder(requestPath?: string, name?: string): Promise<void> {
     this.setLoading(true)
     try {
       await this.#withAbort(async (signal) => {
@@ -287,7 +282,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
    * Fetches new folder
    */
   getNextFolder(folder: CompanionFile): void {
-    this.getFolder(folder.requestPath, folder.name)
+    this.navigateToFolder(folder.requestPath, folder.name)
     this.lastCheckbox = undefined
   }
 
@@ -343,7 +338,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
         this.setLoading(true)
         await this.provider.login({ authFormData, signal })
         this.plugin.setPluginState({ authenticated: true })
-        await this.getFolder(this.plugin.rootFolderId || undefined)
+        await this.navigateToFolder(this.plugin.rootFolderId || undefined)
       })
     } catch (err) {
       if (err.name === 'UserFacingApiError') {
@@ -554,7 +549,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
     if (!didFirstRender) {
       this.plugin.setPluginState({ didFirstRender: true })
       this.provider.fetchPreAuthToken()
-      this.getFolder(this.plugin.rootFolderId || undefined)
+      this.navigateToFolder(this.plugin.rootFolderId || undefined)
     }
 
     const targetViewOptions = { ...this.opts, ...viewOptions }
@@ -566,7 +561,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
 
     const headerProps = {
       showBreadcrumbs: targetViewOptions.showBreadcrumbs,
-      getFolder: this.getFolder,
+      navigateToFolder: this.navigateToFolder,
       breadcrumbs: this.plugin.getPluginState().breadcrumbs,
       pluginIcon,
       title: this.plugin.title,
@@ -583,7 +578,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
       files: hasInput ? filterItems(files) : files,
       folders: hasInput ? filterItems(folders) : folders,
       getNextFolder: this.getNextFolder,
-      getFolder: this.getFolder,
+      navigateToFolder: this.navigateToFolder,
       loadAllFiles: this.opts.loadAllFiles,
 
       // For SearchFilterInput component
