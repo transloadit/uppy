@@ -1150,7 +1150,6 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
 
       isUploadStarted,
       isAllComplete,
-      isAllErrored,
       isAllPaused,
     } = this.uppy.getObjectOfFilesPerState()
 
@@ -1189,7 +1188,6 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
       processingFiles,
       isUploadStarted,
       isAllComplete,
-      isAllErrored,
       isAllPaused,
       totalFileCount: Object.keys(files).length,
       totalProgress: state.totalProgress,
@@ -1245,7 +1243,6 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
       containerWidth: pluginState.containerWidth,
       containerHeight: pluginState.containerHeight,
       areInsidesReadyToBeVisible: pluginState.areInsidesReadyToBeVisible,
-      isTargetDOMEl: this.isTargetDOMEl,
       parentElement: this.el,
       allowedFileTypes: this.uppy.opts.restrictions.allowedFileTypes,
       maxNumberOfFiles: this.uppy.opts.restrictions.maxNumberOfFiles,
