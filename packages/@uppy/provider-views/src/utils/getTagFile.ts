@@ -1,16 +1,19 @@
-import type { UnknownPlugin } from "@uppy/core"
-import type { CompanionClientProvider, CompanionClientSearchProvider } from "@uppy/utils/lib/CompanionClientProvider"
-import type { CompanionFile } from "@uppy/utils/lib/CompanionFile"
-import type { Meta, Body, TagFile } from "@uppy/utils/lib/UppyFile"
-import getFileType from "@uppy/utils/lib/getFileType"
-import isPreviewSupported from "@uppy/utils/lib/isPreviewSupported"
+import type { UnknownPlugin } from '@uppy/core'
+import type {
+  CompanionClientProvider,
+  CompanionClientSearchProvider,
+} from '@uppy/utils/lib/CompanionClientProvider'
+import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
+import type { Meta, Body, TagFile } from '@uppy/utils/lib/UppyFile'
+import getFileType from '@uppy/utils/lib/getFileType'
+import isPreviewSupported from '@uppy/utils/lib/isPreviewSupported'
 
 // TODO: document what is a "tagFile" or get rid of this concept
 const getTagFile = <M extends Meta, B extends Body>(
   file: CompanionFile,
   plugin: UnknownPlugin<M, B>,
   provider: CompanionClientProvider | CompanionClientSearchProvider,
-) : TagFile<M> => {
+): TagFile<M> => {
   const fileType = getFileType({ type: file.mimeType, name: file.name })
 
   const tagFile: TagFile<any> = {
@@ -29,7 +32,7 @@ const getTagFile = <M extends Meta, B extends Body>(
       // for .relDirPath is `undefined` and for .relativePath is `null`.
       // I do think we should just use `null` everywhere.
       relativePath: file.relDirPath || null,
-      absolutePath: file.absDirPath
+      absolutePath: file.absDirPath,
     },
     body: {
       fileId: file.id,

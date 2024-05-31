@@ -7,5 +7,5 @@ export default {
   afterOpenFolder,
   afterScrollFolder,
   afterToggleCheckbox,
-  afterFill
+  afterFill,
 }

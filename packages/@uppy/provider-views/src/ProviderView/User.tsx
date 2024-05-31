@@ -9,12 +9,11 @@ type UserProps = {
 export default function User({ i18n, logout, username }: UserProps) {
   return (
     <Fragment>
-      {
-        username &&
+      {username && (
         <span className="uppy-ProviderBrowser-user" key="username">
           {username}
         </span>
-      }
+      )}
       <button
         type="button"
         onClick={logout}

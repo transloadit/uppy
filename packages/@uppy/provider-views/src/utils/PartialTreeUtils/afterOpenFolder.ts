@@ -1,5 +1,10 @@
-import type { PartialTree, PartialTreeFile, PartialTreeFolder, PartialTreeFolderNode } from "@uppy/core/lib/Uppy"
-import type { CompanionFile } from "@uppy/utils/lib/CompanionFile"
+import type {
+  PartialTree,
+  PartialTreeFile,
+  PartialTreeFolder,
+  PartialTreeFolderNode,
+} from '@uppy/core/lib/Uppy'
+import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
 
 const afterOpenFolder = (
   oldPartialTree: PartialTree,
@@ -7,12 +12,13 @@ const afterOpenFolder = (
   clickedFolder: PartialTreeFolder,
   currentPagePath: string | null,
   validateSingleFile: (file: CompanionFile) => string | null,
-) : PartialTree => {
+): PartialTree => {
   let discoveredFolders = discoveredItems.filter((i) => i.isFolder === true)
   let discoveredFiles = discoveredItems.filter((i) => i.isFolder === false)
 
-  const isParentFolderChecked = clickedFolder.type === 'folder' && clickedFolder.status === 'checked'
-  const folders : PartialTreeFolderNode[] = discoveredFolders.map((folder) => ({
+  const isParentFolderChecked =
+    clickedFolder.type === 'folder' && clickedFolder.status === 'checked'
+  const folders: PartialTreeFolderNode[] = discoveredFolders.map((folder) => ({
     type: 'folder',
     id: folder.requestPath,
     cached: false,
@@ -21,7 +27,7 @@ const afterOpenFolder = (
     parentId: clickedFolder.id,
     data: folder,
   }))
-  const files : PartialTreeFile[] = discoveredFiles.map((file) => {
+  const files: PartialTreeFile[] = discoveredFiles.map((file) => {
     const restrictionError = validateSingleFile(file)
     return {
       type: 'file',
@@ -29,28 +35,27 @@ const afterOpenFolder = (
 
       restrictionError,
 
-      status: isParentFolderChecked && !restrictionError ? 'checked' : 'unchecked',
+      status:
+        isParentFolderChecked && !restrictionError ? 'checked' : 'unchecked',
       parentId: clickedFolder.id,
       data: file,
     }
   })
 
   // just doing `clickedFolder.cached = true` in a non-mutating way
-  const updatedClickedFolder : PartialTreeFolder = {
+  const updatedClickedFolder: PartialTreeFolder = {
     ...clickedFolder,
     cached: true,
-    nextPagePath: currentPagePath
+    nextPagePath: currentPagePath,
   }
   const partialTreeWithUpdatedClickedFolder = oldPartialTree.map((folder) =>
-    folder.id === updatedClickedFolder.id ?
-      updatedClickedFolder :
-      folder
+    folder.id === updatedClickedFolder.id ? updatedClickedFolder : folder,
   )
 
   const newPartialTree = [
     ...partialTreeWithUpdatedClickedFolder,
     ...folders,
-    ...files
+    ...files,
   ]
   return newPartialTree
 }

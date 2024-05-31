@@ -1,6 +1,12 @@
 import { describe, expect, it, vi } from 'vitest'
 import afterToggleCheckbox from './afterToggleCheckbox.ts'
-import type { PartialTree, PartialTreeFile, PartialTreeFolderNode, PartialTreeFolderRoot, PartialTreeId } from '@uppy/core/lib/Uppy.ts'
+import type {
+  PartialTree,
+  PartialTreeFile,
+  PartialTreeFolderNode,
+  PartialTreeFolderRoot,
+  PartialTreeId,
+} from '@uppy/core/lib/Uppy.ts'
 import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
 import afterOpenFolder from './afterOpenFolder.ts'
 import afterScrollFolder from './afterScrollFolder.ts'
@@ -8,45 +14,47 @@ import afterFill from './afterFill.ts'
 import getCheckedFilesWithPaths from './getCheckedFilesWithPaths.ts'
 import getNOfSelectedFiles from './getNOfSelectedFiles.ts'
 
-const _root = (id: string, options: any = {}) : PartialTreeFolderRoot => ({
+const _root = (id: string, options: any = {}): PartialTreeFolderRoot => ({
   type: 'root',
   id,
   cached: true,
   nextPagePath: null,
-  ...options
+  ...options,
 })
 
-const _cFile = (id: string) => ({
-  id,
-  requestPath: id,
-  name: `name_${id}.jpg`,
-  isFolder: false
-} as CompanionFile)
+const _cFile = (id: string) =>
+  ({
+    id,
+    requestPath: id,
+    name: `name_${id}.jpg`,
+    isFolder: false,
+  }) as CompanionFile
 
-const _cFolder = (id: string) => ({
-  id,
-  requestPath: id,
-  name: `name_${id}`,
-  isFolder: true
-} as CompanionFile)
+const _cFolder = (id: string) =>
+  ({
+    id,
+    requestPath: id,
+    name: `name_${id}`,
+    isFolder: true,
+  }) as CompanionFile
 
-const _folder = (id: string, options: any) : PartialTreeFolderNode => ({
+const _folder = (id: string, options: any): PartialTreeFolderNode => ({
   type: 'folder',
   id,
   cached: true,
   nextPagePath: null,
   status: 'unchecked',
   data: _cFolder(id),
-  ...options
+  ...options,
 })
 
-const _file = (id: string, options: any) : PartialTreeFile => ({
+const _file = (id: string, options: any): PartialTreeFile => ({
   type: 'file',
   id,
   status: 'unchecked',
   parentId: options.parentId,
   data: _cFile(id),
-  ...options
+  ...options,
 })
 
 const getFolder = (tree: PartialTree, id: string) =>
@@ -56,16 +64,16 @@ const getFile = (tree: PartialTree, id: string) =>
 
 describe('afterFill()', () => {
   it('preserves .checked files in an already .cached folder', async () => {
-    const tree : PartialTree = [
+    const tree: PartialTree = [
       _root('ourRoot'),
-          _folder('1', { parentId: 'ourRoot' }),
-          _folder('2', { parentId: 'ourRoot', cached: true }),
-              _file('2_1', { parentId: '2' }),
-              _file('2_2', { parentId: '2', status: 'checked' }),
-              _file('2_3', { parentId: '2' }),
-              _folder('2_4', { parentId: '2' }),
-          _file('3', { parentId: 'ourRoot' }),
-          _file('4', { parentId: 'ourRoot' }),
+      _folder('1', { parentId: 'ourRoot' }),
+      _folder('2', { parentId: 'ourRoot', cached: true }),
+      _file('2_1', { parentId: '2' }),
+      _file('2_2', { parentId: '2', status: 'checked' }),
+      _file('2_3', { parentId: '2' }),
+      _folder('2_4', { parentId: '2' }),
+      _file('3', { parentId: 'ourRoot' }),
+      _file('4', { parentId: 'ourRoot' }),
     ]
     const mock = vi.fn()
     const enrichedTree = await afterFill(tree, mock, () => null)
@@ -73,16 +81,18 @@ describe('afterFill()', () => {
     // While we're at it - make sure we're not doing excessive api calls!
     expect(mock.mock.calls.length).toEqual(0)
 
-    const checkedFiles = enrichedTree.filter((item) => item.type === 'file' && item.status === 'checked')
+    const checkedFiles = enrichedTree.filter(
+      (item) => item.type === 'file' && item.status === 'checked',
+    )
     expect(checkedFiles.length).toEqual(1)
     expect(checkedFiles[0].id).toEqual('2_2')
   })
 
   it('fetches a .checked folder', async () => {
-    const tree : PartialTree = [
+    const tree: PartialTree = [
       _root('ourRoot'),
-          _folder('1', { parentId: 'ourRoot' }),
-          _folder('2', { parentId: 'ourRoot', cached: false, status: 'checked' }),
+      _folder('1', { parentId: 'ourRoot' }),
+      _folder('2', { parentId: 'ourRoot', cached: false, status: 'checked' }),
     ]
     const mock = (path: PartialTreeId) => {
       if (path === '2') {
@@ -96,16 +106,23 @@ describe('afterFill()', () => {
     }
     const enrichedTree = await afterFill(tree, mock, () => null)
 
-    const checkedFiles = enrichedTree.filter((item) => item.type === 'file' && item.status === 'checked')
+    const checkedFiles = enrichedTree.filter(
+      (item) => item.type === 'file' && item.status === 'checked',
+    )
     expect(checkedFiles.length).toEqual(4)
     expect(checkedFiles.map((f) => f.id)).toEqual(['2_1', '2_2', '2_3', '2_4'])
   })
 
   it('fetches remaining pages in a folder', async () => {
-    const tree : PartialTree = [
+    const tree: PartialTree = [
       _root('ourRoot'),
-          _folder('1', { parentId: 'ourRoot' }),
-          _folder('2', { parentId: 'ourRoot', cached: true, nextPagePath: '666', status: 'checked' }),
+      _folder('1', { parentId: 'ourRoot' }),
+      _folder('2', {
+        parentId: 'ourRoot',
+        cached: true,
+        nextPagePath: '666',
+        status: 'checked',
+      }),
     ]
     const mock = (path: PartialTreeId) => {
       if (path === '666') {
@@ -116,18 +133,25 @@ describe('afterFill()', () => {
     }
     const enrichedTree = await afterFill(tree, mock, () => null)
 
-    const checkedFiles = enrichedTree.filter((item) => item.type === 'file' && item.status === 'checked')
+    const checkedFiles = enrichedTree.filter(
+      (item) => item.type === 'file' && item.status === 'checked',
+    )
     expect(checkedFiles.length).toEqual(2)
     expect(checkedFiles.map((f) => f.id)).toEqual(['111', '222'])
   })
 
   it('fetches a folder two levels deep', async () => {
-    const tree : PartialTree = [
+    const tree: PartialTree = [
       _root('ourRoot'),
-          _folder('1', { parentId: 'ourRoot' }),
-          _folder('2', { parentId: 'ourRoot', cached: true, nextPagePath: '2_next', status: 'checked' }),
-              _file('2_1', { parentId: '2', status: 'checked' }),
-              _file('2_2', { parentId: '2', status: 'checked' })
+      _folder('1', { parentId: 'ourRoot' }),
+      _folder('2', {
+        parentId: 'ourRoot',
+        cached: true,
+        nextPagePath: '2_next',
+        status: 'checked',
+      }),
+      _file('2_1', { parentId: '2', status: 'checked' }),
+      _file('2_2', { parentId: '2', status: 'checked' }),
     ]
     const mock = (path: PartialTreeId) => {
       if (path === '2_next') {
@@ -141,25 +165,38 @@ describe('afterFill()', () => {
     }
     const enrichedTree = await afterFill(tree, mock, () => null)
 
-    const checkedFiles = enrichedTree.filter((item) => item.type === 'file' && item.status === 'checked')
+    const checkedFiles = enrichedTree.filter(
+      (item) => item.type === 'file' && item.status === 'checked',
+    )
     expect(checkedFiles.length).toEqual(5)
-    expect(checkedFiles.map((f) => f.id)).toEqual(['2_1', '2_2', '2_3', '666_1', '666_2'])
+    expect(checkedFiles.map((f) => f.id)).toEqual([
+      '2_1',
+      '2_2',
+      '2_3',
+      '666_1',
+      '666_2',
+    ])
   })
 
   it('complex situation', async () => {
-    const tree : PartialTree = [
+    const tree: PartialTree = [
       _root('ourRoot'),
-          _folder('1', { parentId: 'ourRoot' }),
-          // folder we'll be recursively fetching really deeply
-          _folder('2', { parentId: 'ourRoot', cached: true, nextPagePath: '2_next', status: 'checked' }),
-            _file('2_1', { parentId: '2', status: 'checked' }),
-            _file('2_2', { parentId: '2', status: 'checked' }),
-          // folder with only some files checked
-          _folder('3', { parentId: 'ourRoot', cached: true, status: 'partial' }),
-            // empty folder
-            _folder('0', { parentId: '3', cached: false, status: 'checked' }),
-            _file('3_1', { parentId: '3', status: 'checked' }),
-            _file('3_2', { parentId: '3', status: 'unchecked' }),
+      _folder('1', { parentId: 'ourRoot' }),
+      // folder we'll be recursively fetching really deeply
+      _folder('2', {
+        parentId: 'ourRoot',
+        cached: true,
+        nextPagePath: '2_next',
+        status: 'checked',
+      }),
+      _file('2_1', { parentId: '2', status: 'checked' }),
+      _file('2_2', { parentId: '2', status: 'checked' }),
+      // folder with only some files checked
+      _folder('3', { parentId: 'ourRoot', cached: true, status: 'partial' }),
+      // empty folder
+      _folder('0', { parentId: '3', cached: false, status: 'checked' }),
+      _file('3_1', { parentId: '3', status: 'checked' }),
+      _file('3_2', { parentId: '3', status: 'unchecked' }),
     ]
     const mock = (path: PartialTreeId) => {
       if (path === '2_next') {
@@ -184,25 +221,48 @@ describe('afterFill()', () => {
     }
     const enrichedTree = await afterFill(tree, mock, () => null)
 
-    const checkedFiles = enrichedTree.filter((item) => item.type === 'file' && item.status === 'checked')
+    const checkedFiles = enrichedTree.filter(
+      (item) => item.type === 'file' && item.status === 'checked',
+    )
     expect(checkedFiles.length).toEqual(8)
-    expect(checkedFiles.map((f) => f.id)).toEqual(['2_1', '2_2', '3_1', '2_3', '666_1', '777_1', '777_2_1', '777_2_1_1'])
+    expect(checkedFiles.map((f) => f.id)).toEqual([
+      '2_1',
+      '2_2',
+      '3_1',
+      '2_3',
+      '666_1',
+      '777_1',
+      '777_2_1',
+      '777_2_1_1',
+    ])
   })
 })
 
 describe('afterOpenFolder()', () => {
   it('open "checked" folder - all discovered files are marked as "checked"', () => {
-    const oldPartialTree : PartialTree = [
+    const oldPartialTree: PartialTree = [
       _root('ourRoot'),
-          _folder('1', { parentId: 'ourRoot' }),
-          _folder('2', { parentId: 'ourRoot', cached: false, status: 'checked' }),
+      _folder('1', { parentId: 'ourRoot' }),
+      _folder('2', { parentId: 'ourRoot', cached: false, status: 'checked' }),
     ]
 
-    const fakeCompanionFiles = [{ requestPath: '666', isFolder: true }, { requestPath: '777', isFolder: false }, { requestPath: '888', isFolder: false }] as CompanionFile[]
+    const fakeCompanionFiles = [
+      { requestPath: '666', isFolder: true },
+      { requestPath: '777', isFolder: false },
+      { requestPath: '888', isFolder: false },
+    ] as CompanionFile[]
 
-    const clickedFolder = oldPartialTree.find((f) => f.id === '2') as PartialTreeFolderNode
+    const clickedFolder = oldPartialTree.find(
+      (f) => f.id === '2',
+    ) as PartialTreeFolderNode
 
-    const newTree = afterOpenFolder(oldPartialTree, fakeCompanionFiles, clickedFolder, null, () => null)
+    const newTree = afterOpenFolder(
+      oldPartialTree,
+      fakeCompanionFiles,
+      clickedFolder,
+      null,
+      () => null,
+    )
 
     expect(getFolder(newTree, '666').status).toEqual('checked')
     expect(getFile(newTree, '777').status).toEqual('checked')
@@ -210,17 +270,29 @@ describe('afterOpenFolder()', () => {
   })
 
   it('open "unchecked" folder - all discovered files are marked as "unchecked"', () => {
-    const oldPartialTree : PartialTree = [
+    const oldPartialTree: PartialTree = [
       _root('ourRoot'),
-          _folder('1', { parentId: 'ourRoot' }),
-          _folder('2', { parentId: 'ourRoot', cached: false, status: 'unchecked' }),
+      _folder('1', { parentId: 'ourRoot' }),
+      _folder('2', { parentId: 'ourRoot', cached: false, status: 'unchecked' }),
     ]
 
-    const fakeCompanionFiles = [{ requestPath: '666', isFolder: true }, { requestPath: '777', isFolder: false }, { requestPath: '888', isFolder: false }] as CompanionFile[]
+    const fakeCompanionFiles = [
+      { requestPath: '666', isFolder: true },
+      { requestPath: '777', isFolder: false },
+      { requestPath: '888', isFolder: false },
+    ] as CompanionFile[]
 
-    const clickedFolder = oldPartialTree.find((f) => f.id === '2') as PartialTreeFolderNode
+    const clickedFolder = oldPartialTree.find(
+      (f) => f.id === '2',
+    ) as PartialTreeFolderNode
 
-    const newTree = afterOpenFolder(oldPartialTree, fakeCompanionFiles, clickedFolder, null, () => null)
+    const newTree = afterOpenFolder(
+      oldPartialTree,
+      fakeCompanionFiles,
+      clickedFolder,
+      null,
+      () => null,
+    )
 
     expect(getFolder(newTree, '666').status).toEqual('unchecked')
     expect(getFile(newTree, '777').status).toEqual('unchecked')
@@ -230,18 +302,28 @@ describe('afterOpenFolder()', () => {
 
 describe('afterScrollFolder()', () => {
   it('scroll "checked" folder - all discovered files are marked as "checked"', () => {
-    const oldPartialTree : PartialTree = [
+    const oldPartialTree: PartialTree = [
       _root('ourRoot'),
-          _folder('1', { parentId: 'ourRoot' }),
-          _folder('2', { parentId: 'ourRoot', cached: true, status: 'checked' }),
-              _file('2_1', { parentId: '2' }),
-              _file('2_2', { parentId: '2' }),
-              _file('2_3', { parentId: '2' }),
+      _folder('1', { parentId: 'ourRoot' }),
+      _folder('2', { parentId: 'ourRoot', cached: true, status: 'checked' }),
+      _file('2_1', { parentId: '2' }),
+      _file('2_2', { parentId: '2' }),
+      _file('2_3', { parentId: '2' }),
     ]
 
-    const fakeCompanionFiles = [{ requestPath: '666', isFolder: true }, { requestPath: '777', isFolder: false }, { requestPath: '888', isFolder: false }] as CompanionFile[]
+    const fakeCompanionFiles = [
+      { requestPath: '666', isFolder: true },
+      { requestPath: '777', isFolder: false },
+      { requestPath: '888', isFolder: false },
+    ] as CompanionFile[]
 
-    const newTree = afterScrollFolder(oldPartialTree, '2', fakeCompanionFiles, null, () => null)
+    const newTree = afterScrollFolder(
+      oldPartialTree,
+      '2',
+      fakeCompanionFiles,
+      null,
+      () => null,
+    )
 
     expect(getFolder(newTree, '666').status).toEqual('checked')
     expect(getFile(newTree, '777').status).toEqual('checked')
@@ -249,18 +331,28 @@ describe('afterScrollFolder()', () => {
   })
 
   it('scroll "checked" folder - all discovered files are marked as "unchecked"', () => {
-    const oldPartialTree : PartialTree = [
+    const oldPartialTree: PartialTree = [
       _root('ourRoot'),
-          _folder('1', { parentId: 'ourRoot' }),
-          _folder('2', { parentId: 'ourRoot', cached: true, status: 'unchecked' }),
-              _file('2_1', { parentId: '2' }),
-              _file('2_2', { parentId: '2' }),
-              _file('2_3', { parentId: '2' }),
+      _folder('1', { parentId: 'ourRoot' }),
+      _folder('2', { parentId: 'ourRoot', cached: true, status: 'unchecked' }),
+      _file('2_1', { parentId: '2' }),
+      _file('2_2', { parentId: '2' }),
+      _file('2_3', { parentId: '2' }),
     ]
 
-    const fakeCompanionFiles = [{ requestPath: '666', isFolder: true }, { requestPath: '777', isFolder: false }, { requestPath: '888', isFolder: false }] as CompanionFile[]
+    const fakeCompanionFiles = [
+      { requestPath: '666', isFolder: true },
+      { requestPath: '777', isFolder: false },
+      { requestPath: '888', isFolder: false },
+    ] as CompanionFile[]
 
-    const newTree = afterScrollFolder(oldPartialTree, '2', fakeCompanionFiles, null, () => null)
+    const newTree = afterScrollFolder(
+      oldPartialTree,
+      '2',
+      fakeCompanionFiles,
+      null,
+      () => null,
+    )
 
     expect(getFolder(newTree, '666').status).toEqual('unchecked')
     expect(getFile(newTree, '777').status).toEqual('unchecked')
@@ -269,19 +361,19 @@ describe('afterScrollFolder()', () => {
 })
 
 describe('afterToggleCheckbox()', () => {
-  const oldPartialTree : PartialTree = [
+  const oldPartialTree: PartialTree = [
     _root('ourRoot'),
-        _folder('1', { parentId: 'ourRoot' }),
-        _folder('2', { parentId: 'ourRoot' }),
-            _file('2_1', { parentId: '2' }),
-            _file('2_2', { parentId: '2' }),
-            _file('2_3', { parentId: '2' }),
-            _folder('2_4', { parentId: '2' }), // click
-                _file('2_4_1', { parentId: '2_4' }),
-                _file('2_4_2', { parentId: '2_4' }),
-                _file('2_4_3', { parentId: '2_4' }),
-        _file('3', { parentId: 'ourRoot' }),
-        _file('4', { parentId: 'ourRoot' }),
+    _folder('1', { parentId: 'ourRoot' }),
+    _folder('2', { parentId: 'ourRoot' }),
+    _file('2_1', { parentId: '2' }),
+    _file('2_2', { parentId: '2' }),
+    _file('2_3', { parentId: '2' }),
+    _folder('2_4', { parentId: '2' }), // click
+    _file('2_4_1', { parentId: '2_4' }),
+    _file('2_4_2', { parentId: '2_4' }),
+    _file('2_4_3', { parentId: '2_4' }),
+    _file('3', { parentId: 'ourRoot' }),
+    _file('4', { parentId: 'ourRoot' }),
   ]
 
   it('check folder: percolates up and down', () => {
@@ -297,7 +389,11 @@ describe('afterToggleCheckbox()', () => {
   })
 
   it('uncheck folder: percolates up and down', () => {
-    const treeAfterClick1 = afterToggleCheckbox(oldPartialTree, ['2_4'], () => null)
+    const treeAfterClick1 = afterToggleCheckbox(
+      oldPartialTree,
+      ['2_4'],
+      () => null,
+    )
 
     const tree = afterToggleCheckbox(treeAfterClick1, ['2_4'], () => null)
 
@@ -311,7 +407,11 @@ describe('afterToggleCheckbox()', () => {
   })
 
   it('gradually check all subfolders: marks parent folder as checked', () => {
-    const tree = afterToggleCheckbox(oldPartialTree, ['2_4_1', '2_4_2', '2_4_3'], () => null)
+    const tree = afterToggleCheckbox(
+      oldPartialTree,
+      ['2_4_1', '2_4_2', '2_4_3'],
+      () => null,
+    )
 
     // marks children as checked
     expect(getFolder(tree, '2_4_1').status).toEqual('checked')
@@ -354,24 +454,24 @@ describe('afterToggleCheckbox()', () => {
   })
 
   it('old partialTree is NOT mutated', () => {
-    const oldPartialTreeCopy = JSON.parse(JSON.stringify(oldPartialTree));
-    afterToggleCheckbox(oldPartialTree, ['2_4_1'], () => null);
-    expect(oldPartialTree).toEqual(oldPartialTreeCopy);
+    const oldPartialTreeCopy = JSON.parse(JSON.stringify(oldPartialTree))
+    afterToggleCheckbox(oldPartialTree, ['2_4_1'], () => null)
+    expect(oldPartialTree).toEqual(oldPartialTreeCopy)
   })
 })
 
 describe('getNOfSelectedFiles()', () => {
   it('gets all leaf items', () => {
-    const tree : PartialTree = [
+    const tree: PartialTree = [
       _root('ourRoot'),
-          // leaf .checked folder
-          _folder('1', { parentId: 'ourRoot', cached: false, status: 'checked' }),
-          // NON-left .checked folder
-          _folder('2', { parentId: 'ourRoot', status: 'checked' }),
-              // leaf .checked file
-              _file('2_1', { parentId: '2', status: 'checked' }),
-              // leaf .checked file
-              _file('2_2', { parentId: '2', status: 'checked' })
+      // leaf .checked folder
+      _folder('1', { parentId: 'ourRoot', cached: false, status: 'checked' }),
+      // NON-left .checked folder
+      _folder('2', { parentId: 'ourRoot', status: 'checked' }),
+      // leaf .checked file
+      _file('2_1', { parentId: '2', status: 'checked' }),
+      // leaf .checked file
+      _file('2_2', { parentId: '2', status: 'checked' }),
     ]
     const result = getNOfSelectedFiles(tree)
 
@@ -379,10 +479,10 @@ describe('getNOfSelectedFiles()', () => {
   })
 
   it('empty folder, even after being opened, counts as leaf node', () => {
-    const tree : PartialTree = [
+    const tree: PartialTree = [
       _root('ourRoot'),
-          // empty .checked .cached folder
-          _folder('1', { parentId: 'ourRoot', cached: true, status: 'checked' }),
+      // empty .checked .cached folder
+      _folder('1', { parentId: 'ourRoot', cached: true, status: 'checked' }),
     ]
     const result = getNOfSelectedFiles(tree)
     // This should be "1" for more pleasant UI - if the user unchecks this folder, they should immediately see "Selected (1)" turning into "Selected (0)".
@@ -392,27 +492,31 @@ describe('getNOfSelectedFiles()', () => {
 
 describe('injectPaths()', () => {
   // Note that this is a tree that doesn't require any api calls, everything is cached already
-  const tree : PartialTree = [
+  const tree: PartialTree = [
     _root('ourRoot'),
-        _folder('1', { parentId: 'ourRoot' }),
-        _folder('2', { parentId: 'ourRoot' }),
-            _file('2_1', { parentId: '2' }),
-            _file('2_2', { parentId: '2', status: 'checked' }),
-            _file('2_3', { parentId: '2' }),
-            _folder('2_4', { parentId: '2', status: 'checked' }),
-                _file('2_4_1', { parentId: '2_4', status: 'checked' }),
-                _file('2_4_2', { parentId: '2_4', status: 'checked' }),
-                _file('2_4_3', { parentId: '2_4', status: 'checked' }),
-        _file('3', { parentId: 'ourRoot' }),
-        _file('4', { parentId: 'ourRoot' }),
+    _folder('1', { parentId: 'ourRoot' }),
+    _folder('2', { parentId: 'ourRoot' }),
+    _file('2_1', { parentId: '2' }),
+    _file('2_2', { parentId: '2', status: 'checked' }),
+    _file('2_3', { parentId: '2' }),
+    _folder('2_4', { parentId: '2', status: 'checked' }),
+    _file('2_4_1', { parentId: '2_4', status: 'checked' }),
+    _file('2_4_2', { parentId: '2_4', status: 'checked' }),
+    _file('2_4_3', { parentId: '2_4', status: 'checked' }),
+    _file('3', { parentId: 'ourRoot' }),
+    _file('4', { parentId: 'ourRoot' }),
   ]
 
   // These test cases are based on documentation for .absolutePath and .relativePath (https://uppy.io/docs/uppy/#filemeta)
   it('.absolutePath always begins with / + always ends with the file’s name.', () => {
     const result = getCheckedFilesWithPaths(tree)
 
-    expect(result.find((f) => f.id === '2_2')!.absDirPath).toEqual('/name_2/name_2_2.jpg')
-    expect(result.find((f) => f.id === '2_4_3')!.absDirPath).toEqual('/name_2/name_2_4/name_2_4_3.jpg')
+    expect(result.find((f) => f.id === '2_2')!.absDirPath).toEqual(
+      '/name_2/name_2_2.jpg',
+    )
+    expect(result.find((f) => f.id === '2_4_3')!.absDirPath).toEqual(
+      '/name_2/name_2_4/name_2_4_3.jpg',
+    )
   })
 
   it('.relativePath is null when file is selected independently', () => {
@@ -425,6 +529,8 @@ describe('injectPaths()', () => {
   it('.relativePath attends to highest checked folder', () => {
     const result = getCheckedFilesWithPaths(tree)
 
-    expect(result.find((f) => f.id === '2_4_1')!.relDirPath).toEqual('name_2_4/name_2_4_1.jpg')
+    expect(result.find((f) => f.id === '2_4_1')!.relDirPath).toEqual(
+      'name_2_4/name_2_4_1.jpg',
+    )
   })
 })

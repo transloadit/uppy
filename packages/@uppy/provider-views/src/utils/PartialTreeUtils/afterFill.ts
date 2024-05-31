@@ -1,7 +1,12 @@
-import type { PartialTree, PartialTreeFile, PartialTreeFolderNode, PartialTreeId } from "@uppy/core/lib/Uppy"
-import type { CompanionFile } from "@uppy/utils/lib/CompanionFile"
-import PQueue from "p-queue"
-import clone from "./clone"
+import type {
+  PartialTree,
+  PartialTreeFile,
+  PartialTreeFolderNode,
+  PartialTreeId,
+} from '@uppy/core/lib/Uppy'
+import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
+import PQueue from 'p-queue'
+import clone from './clone'
 
 interface ApiList {
   (directory: PartialTreeId): Promise<{
@@ -17,8 +22,9 @@ const recursivelyFetch = async (
   apiList: ApiList,
   validateSingleFile: (file: CompanionFile) => string | null,
 ) => {
-  let items : CompanionFile[] = []
-  let currentPath : PartialTreeId = poorFolder.cached ? poorFolder.nextPagePath : poorFolder.id
+  let items: CompanionFile[] = []
+  let currentPath: PartialTreeId =
+    poorFolder.cached ? poorFolder.nextPagePath : poorFolder.id
   while (currentPath) {
     const response = await apiList(currentPath)
     items = items.concat(response.items)
@@ -28,7 +34,7 @@ const recursivelyFetch = async (
   let newFolders = items.filter((i) => i.isFolder === true)
   let newFiles = items.filter((i) => i.isFolder === false)
 
-  const folders : PartialTreeFolderNode[] = newFolders.map((folder) => ({
+  const folders: PartialTreeFolderNode[] = newFolders.map((folder) => ({
     type: 'folder',
     id: folder.requestPath,
 
@@ -39,7 +45,7 @@ const recursivelyFetch = async (
     parentId: poorFolder.id,
     data: folder,
   }))
-  const files : PartialTreeFile[] = newFiles.map((file) => {
+  const files: PartialTreeFile[] = newFiles.map((file) => {
     const restrictionError = validateSingleFile(file)
     return {
       type: 'file',
@@ -58,7 +64,9 @@ const recursivelyFetch = async (
   poorTree.push(...files, ...folders)
 
   folders.forEach(async (folder) => {
-    queue.add(() => recursivelyFetch(queue, poorTree, folder, apiList, validateSingleFile))
+    queue.add(() =>
+      recursivelyFetch(queue, poorTree, folder, apiList, validateSingleFile),
+    )
   })
 }
 
@@ -66,20 +74,29 @@ const afterFill = async (
   partialTree: PartialTree,
   apiList: ApiList,
   validateSingleFile: (file: CompanionFile) => string | null,
-) : Promise<PartialTree> => {
+): Promise<PartialTree> => {
   const queue = new PQueue({ concurrency: 6 })
 
   // fill up the missing parts of a partialTree!
-  let poorTree : PartialTree = clone(partialTree)
-  const poorFolders = poorTree.filter((item) =>
-    item.type === 'folder' &&
-    item.status === 'checked' &&
-    // either "not yet cached at all" or "some pages are left to fetch"
-    (item.cached === false || item.nextPagePath)
+  let poorTree: PartialTree = clone(partialTree)
+  const poorFolders = poorTree.filter(
+    (item) =>
+      item.type === 'folder' &&
+      item.status === 'checked' &&
+      // either "not yet cached at all" or "some pages are left to fetch"
+      (item.cached === false || item.nextPagePath),
   ) as PartialTreeFolderNode[]
   // per each poor folder, recursively fetch all files and make them .checked!!!
   poorFolders.forEach((poorFolder) => {
-    queue.add(() => recursivelyFetch(queue, poorTree, poorFolder, apiList, validateSingleFile))
+    queue.add(() =>
+      recursivelyFetch(
+        queue,
+        poorTree,
+        poorFolder,
+        apiList,
+        validateSingleFile,
+      ),
+    )
   })
 
   await queue.onIdle()

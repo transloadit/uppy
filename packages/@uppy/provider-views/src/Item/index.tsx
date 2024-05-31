@@ -7,7 +7,11 @@ import type { Meta, Body } from '@uppy/utils/lib/UppyFile'
 import ItemIcon from './components/ItemIcon.tsx'
 import GridItem from './components/GridItem.tsx'
 import ListItem from './components/ListItem.tsx'
-import type { PartialTreeFile, PartialTreeFolderNode, PartialTreeId } from '@uppy/core/lib/Uppy.ts'
+import type {
+  PartialTreeFile,
+  PartialTreeFolderNode,
+  PartialTreeId,
+} from '@uppy/core/lib/Uppy.ts'
 
 type ItemProps<M extends Meta, B extends Body> = {
   viewType: string
@@ -40,23 +44,24 @@ export default function Item<M extends Meta, B extends Body>(
       { 'uppy-ProviderBrowserItem--disabled': isDisabled },
       { 'uppy-ProviderBrowserItem--noPreview': file.data.icon === 'video' },
       { 'uppy-ProviderBrowserItem--is-checked': file.status === 'checked' },
-      { 'uppy-ProviderBrowserItem--is-partial': file.status === 'partial' }
+      { 'uppy-ProviderBrowserItem--is-partial': file.status === 'partial' },
     ),
     itemIconEl: <ItemIcon itemIconString={file.data.icon} />,
     isDisabled,
-    restrictionError
+    restrictionError,
   }
 
-  let ourProps = file.data.isFolder ?
-    {
-      ...sharedProps,
-      type: 'folder',
-      handleFolderClick: () => openFolder(file.id),
-    } :
-    {
-      ...sharedProps,
-      type: 'file'
-    }
+  let ourProps =
+    file.data.isFolder ?
+      {
+        ...sharedProps,
+        type: 'folder',
+        handleFolderClick: () => openFolder(file.id),
+      }
+    : {
+        ...sharedProps,
+        type: 'file',
+      }
 
   switch (viewType) {
     case 'grid':
@@ -65,7 +70,7 @@ export default function Item<M extends Meta, B extends Body>(
       return <ListItem<M, B> {...ourProps} />
     case 'unsplash':
       return (
-        <GridItem<M, B> {...ourProps} >
+        <GridItem<M, B> {...ourProps}>
           <a
             href={`${file.data.author!.url}?utm_source=Companion&utm_medium=referral`}
             target="_blank"

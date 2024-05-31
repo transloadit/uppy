@@ -48,21 +48,23 @@ export function defaultPickerIcon(): JSX.Element {
   )
 }
 
-const getDefaultState = (rootFolderId: string | null) : UnknownProviderPluginState => ({
+const getDefaultState = (
+  rootFolderId: string | null,
+): UnknownProviderPluginState => ({
   authenticated: undefined, // we don't know yet
   partialTree: [
     {
       type: 'root',
       id: rootFolderId,
       cached: false,
-      nextPagePath: null
-    }
+      nextPagePath: null,
+    },
   ],
   currentFolderId: rootFolderId,
   searchString: '',
   didFirstRender: false,
   username: null,
-  loading: false
+  loading: false,
 })
 
 type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>
@@ -81,14 +83,20 @@ interface Opts<M extends Meta, B extends Body> {
     onAuth: (authFormData: unknown) => Promise<void>
   }) => h.JSX.Element
 }
-type PassedOpts<M extends Meta, B extends Body> = Optional<Opts<M, B>, 'viewType' | 'showTitles' | 'showFilter' | 'showBreadcrumbs' | 'loadAllFiles'>
+type PassedOpts<M extends Meta, B extends Body> = Optional<
+  Opts<M, B>,
+  'viewType' | 'showTitles' | 'showFilter' | 'showBreadcrumbs' | 'loadAllFiles'
+>
 type DefaultOpts<M extends Meta, B extends Body> = Omit<Opts<M, B>, 'provider'>
-type RenderOpts<M extends Meta, B extends Body> = Omit<PassedOpts<M, B>, 'provider'>
+type RenderOpts<M extends Meta, B extends Body> = Omit<
+  PassedOpts<M, B>,
+  'provider'
+>
 
 /**
  * Class to easily generate generic views for Provider plugins
  */
-export default class ProviderView<M extends Meta, B extends Body>{
+export default class ProviderView<M extends Meta, B extends Body> {
   static VERSION = packageJson.version
 
   plugin: UnknownProviderPlugin<M, B>
@@ -98,14 +106,11 @@ export default class ProviderView<M extends Meta, B extends Body>{
   isHandlingScroll: boolean = false
   lastCheckbox: string | null = null
 
-  constructor(
-    plugin: UnknownProviderPlugin<M, B>,
-    opts: PassedOpts<M, B>,
-  ) {
+  constructor(plugin: UnknownProviderPlugin<M, B>, opts: PassedOpts<M, B>) {
     this.plugin = plugin
     this.provider = opts.provider
 
-    const defaultOptions : DefaultOpts<M, B> = {
+    const defaultOptions: DefaultOpts<M, B> = {
       viewType: 'list',
       showTitles: true,
       showFilter: true,
@@ -130,7 +135,10 @@ export default class ProviderView<M extends Meta, B extends Body>{
     // @ts-expect-error this should be typed in @uppy/dashboard.
     this.plugin.uppy.on('dashboard:close-panel', this.resetPluginState)
 
-    this.plugin.uppy.registerRequestClient(this.provider.provider, this.provider)
+    this.plugin.uppy.registerRequestClient(
+      this.provider.provider,
+      this.provider,
+    )
   }
 
   resetPluginState(): void {
@@ -147,8 +155,8 @@ export default class ProviderView<M extends Meta, B extends Body>{
 
   cancelSelection(): void {
     const { partialTree } = this.plugin.getPluginState()
-    const newPartialTree : PartialTree = partialTree.map((item) =>
-      item.type === 'root' ? item : { ...item, status: 'unchecked' }
+    const newPartialTree: PartialTree = partialTree.map((item) =>
+      item.type === 'root' ? item : { ...item, status: 'unchecked' },
     )
     this.plugin.setPluginState({ partialTree: newPartialTree })
   }
@@ -183,13 +191,22 @@ export default class ProviderView<M extends Meta, B extends Body>{
 
   async openFolder(folderId: string | null): Promise<void> {
     this.lastCheckbox = null
-    console.log(`____________________________________________GETTING FOLDER "${folderId}"`);
+    console.log(
+      `____________________________________________GETTING FOLDER "${folderId}"`,
+    )
     // Returning cached folder
     const { partialTree } = this.plugin.getPluginState()
-    const clickedFolder = partialTree.find((folder) => folder.id === folderId)! as PartialTreeFolder
+    const clickedFolder = partialTree.find(
+      (folder) => folder.id === folderId,
+    )! as PartialTreeFolder
     if (clickedFolder.cached) {
-      console.log("Folder was cached____________________________________________");
-      this.plugin.setPluginState({ currentFolderId: folderId, searchString: '' })
+      console.log(
+        'Folder was cached____________________________________________',
+      )
+      this.plugin.setPluginState({
+        currentFolderId: folderId,
+        searchString: '',
+      })
       return
     }
 
@@ -198,21 +215,32 @@ export default class ProviderView<M extends Meta, B extends Body>{
       let currentPagePath = folderId
       let currentItems: CompanionFile[] = []
       do {
-        const { username, nextPagePath, items } = await this.provider.list(currentPagePath, { signal })
+        const { username, nextPagePath, items } = await this.provider.list(
+          currentPagePath,
+          { signal },
+        )
         // It's important to set the username during one of our first fetches
         this.plugin.setPluginState({ username })
 
         currentPagePath = nextPagePath
         currentItems = currentItems.concat(items)
-        this.setLoading(this.plugin.uppy.i18n('loadedXFiles', { numFiles: items.length }))
+        this.setLoading(
+          this.plugin.uppy.i18n('loadedXFiles', { numFiles: items.length }),
+        )
       } while (this.opts.loadAllFiles && currentPagePath)
 
-      const newPartialTree = PartialTreeUtils.afterOpenFolder(partialTree, currentItems, clickedFolder, currentPagePath, this.validateSingleFile)
+      const newPartialTree = PartialTreeUtils.afterOpenFolder(
+        partialTree,
+        currentItems,
+        clickedFolder,
+        currentPagePath,
+        this.validateSingleFile,
+      )
 
       this.plugin.setPluginState({
         partialTree: newPartialTree,
         currentFolderId: folderId,
-        searchString: ''
+        searchString: '',
       })
     }).catch(handleError(this.plugin.uppy))
 
@@ -243,7 +271,7 @@ export default class ProviderView<M extends Meta, B extends Body>{
 
         this.plugin.setPluginState({
           ...getDefaultState(this.plugin.rootFolderId),
-          authenticated: false
+          authenticated: false,
         })
       }
     }).catch(handleError(this.plugin.uppy))
@@ -264,12 +292,27 @@ export default class ProviderView<M extends Meta, B extends Body>{
 
   async handleScroll(event: Event): Promise<void> {
     const { partialTree, currentFolderId } = this.plugin.getPluginState()
-    const currentFolder = partialTree.find((i) => i.id === currentFolderId) as PartialTreeFolder
-    if (shouldHandleScroll(event) && !this.isHandlingScroll && currentFolder.nextPagePath) {
+    const currentFolder = partialTree.find(
+      (i) => i.id === currentFolderId,
+    ) as PartialTreeFolder
+    if (
+      shouldHandleScroll(event) &&
+      !this.isHandlingScroll &&
+      currentFolder.nextPagePath
+    ) {
       this.isHandlingScroll = true
       await this.#withAbort(async (signal) => {
-        const { nextPagePath, items } = await this.provider.list(currentFolder.nextPagePath, { signal })
-        const newPartialTree = PartialTreeUtils.afterScrollFolder(partialTree, currentFolderId, items, nextPagePath, this.validateSingleFile)
+        const { nextPagePath, items } = await this.provider.list(
+          currentFolder.nextPagePath,
+          { signal },
+        )
+        const newPartialTree = PartialTreeUtils.afterScrollFolder(
+          partialTree,
+          currentFolderId,
+          items,
+          nextPagePath,
+          this.validateSingleFile,
+        )
 
         this.plugin.setPluginState({ partialTree: newPartialTree })
       }).catch(handleError(this.plugin.uppy))
@@ -277,8 +320,8 @@ export default class ProviderView<M extends Meta, B extends Body>{
     }
   }
 
-  validateSingleFile = (file: CompanionFile) : string | null => {
-    const companionFile : ValidateableFile<M, B> = remoteFileObjToLocal(file)
+  validateSingleFile = (file: CompanionFile): string | null => {
+    const companionFile: ValidateableFile<M, B> = remoteFileObjToLocal(file)
     const result = this.plugin.uppy.validateSingleFile(companionFile)
     return result
   }
@@ -292,11 +335,12 @@ export default class ProviderView<M extends Meta, B extends Body>{
       const enrichedTree: PartialTree = await PartialTreeUtils.afterFill(
         partialTree,
         (path: PartialTreeId) => this.provider.list(path, { signal }),
-        this.validateSingleFile
+        this.validateSingleFile,
       )
 
       // 2. Now that we know how many files there are - recheck aggregateRestrictions!
-      const aggregateRestrictionError = this.validateAggregateRestrictions(enrichedTree)
+      const aggregateRestrictionError =
+        this.validateAggregateRestrictions(enrichedTree)
       if (aggregateRestrictionError) {
         this.plugin.setPluginState({ partialTree: enrichedTree })
         return
@@ -312,54 +356,75 @@ export default class ProviderView<M extends Meta, B extends Body>{
     this.setLoading(false)
   }
 
-  getBreadcrumbs = () : PartialTreeFolder[] => {
+  getBreadcrumbs = (): PartialTreeFolder[] => {
     const { partialTree, currentFolderId } = this.plugin.getPluginState()
     if (!currentFolderId) return []
 
-    const breadcrumbs : PartialTreeFolder[] = []
-    let parent = partialTree.find((folder) => folder.id === currentFolderId) as PartialTreeFolder
+    const breadcrumbs: PartialTreeFolder[] = []
+    let parent = partialTree.find(
+      (folder) => folder.id === currentFolderId,
+    ) as PartialTreeFolder
     while (true) {
       breadcrumbs.push(parent)
       if (parent.type === 'root') break
 
-      parent = partialTree.find((folder) => folder.id === (parent as PartialTreeFolderNode).parentId) as PartialTreeFolder
+      parent = partialTree.find(
+        (folder) => folder.id === (parent as PartialTreeFolderNode).parentId,
+      ) as PartialTreeFolder
     }
 
     return breadcrumbs.toReversed()
   }
 
-  toggleCheckbox(ourItem: PartialTreeFolderNode | PartialTreeFile, isShiftKeyPressed: boolean) {
+  toggleCheckbox(
+    ourItem: PartialTreeFolderNode | PartialTreeFile,
+    isShiftKeyPressed: boolean,
+  ) {
     const { partialTree } = this.plugin.getPluginState()
 
-    const clickedRange = getClickedRange(ourItem.id, this.getDisplayedPartialTree(), isShiftKeyPressed, this.lastCheckbox)
-    const newPartialTree = PartialTreeUtils.afterToggleCheckbox(partialTree, clickedRange, this.validateSingleFile)
+    const clickedRange = getClickedRange(
+      ourItem.id,
+      this.getDisplayedPartialTree(),
+      isShiftKeyPressed,
+      this.lastCheckbox,
+    )
+    const newPartialTree = PartialTreeUtils.afterToggleCheckbox(
+      partialTree,
+      clickedRange,
+      this.validateSingleFile,
+    )
 
     this.plugin.setPluginState({ partialTree: newPartialTree })
     this.lastCheckbox = ourItem.id
   }
 
-  getDisplayedPartialTree = () : (PartialTreeFile | PartialTreeFolderNode)[] => {
-    const { partialTree, currentFolderId, searchString } = this.plugin.getPluginState()
-    const inThisFolder = partialTree.filter((item) => item.type !== 'root' && item.parentId === currentFolderId) as (PartialTreeFile | PartialTreeFolderNode)[]
-    const filtered = searchString === ''
-      ? inThisFolder
-      : inThisFolder.filter((item) => item.data.name.toLowerCase().indexOf(searchString.toLowerCase()) !== -1)
+  getDisplayedPartialTree = (): (PartialTreeFile | PartialTreeFolderNode)[] => {
+    const { partialTree, currentFolderId, searchString } =
+      this.plugin.getPluginState()
+    const inThisFolder = partialTree.filter(
+      (item) => item.type !== 'root' && item.parentId === currentFolderId,
+    ) as (PartialTreeFile | PartialTreeFolderNode)[]
+    const filtered =
+      searchString === '' ? inThisFolder : (
+        inThisFolder.filter(
+          (item) =>
+            item.data.name.toLowerCase().indexOf(searchString.toLowerCase()) !==
+            -1,
+        )
+      )
 
     return filtered
   }
 
   validateAggregateRestrictions = (partialTree: PartialTree) => {
-    const checkedFiles = partialTree.filter((item) =>
-      item.type === 'file' && item.status === 'checked'
+    const checkedFiles = partialTree.filter(
+      (item) => item.type === 'file' && item.status === 'checked',
     ) as PartialTreeFile[]
     const uppyFiles = checkedFiles.map((file) => file.data)
     return this.plugin.uppy.validateAggregateRestrictions(uppyFiles)
   }
 
-  render(
-    state: unknown,
-    viewOptions: RenderOpts<M, B> = {}
-  ): JSX.Element {
+  render(state: unknown, viewOptions: RenderOpts<M, B> = {}): JSX.Element {
     const { didFirstRender } = this.plugin.getPluginState()
     const { i18n } = this.plugin.uppy
 
@@ -369,7 +434,7 @@ export default class ProviderView<M extends Meta, B extends Body>{
       this.openFolder(this.plugin.rootFolderId)
     }
 
-    const opts : Opts<M, B> = { ...this.opts, ...viewOptions }
+    const opts: Opts<M, B> = { ...this.opts, ...viewOptions }
     const { authenticated, partialTree, username, searchString, loading } =
       this.plugin.getPluginState()
     const pluginIcon = this.plugin.icon || defaultPickerIcon
@@ -387,58 +452,60 @@ export default class ProviderView<M extends Meta, B extends Body>{
       )
     }
 
-    return <div
-      className={classNames(
-        'uppy-ProviderBrowser',
-        `uppy-ProviderBrowser-viewType--${opts.viewType}`,
-      )}
-    >
-      <Header<M, B>
-        showBreadcrumbs={opts.showBreadcrumbs}
-        openFolder={this.openFolder}
-        breadcrumbs={this.getBreadcrumbs()}
-        pluginIcon={pluginIcon}
-        title={this.plugin.title}
-        logout={this.logout}
-        username={username}
-        i18n={i18n}
-      />
-
-      {opts.showFilter && (
-        <SearchFilterInput
-          searchString={searchString}
-          setSearchString={(searchString: string) => {
-            console.log('setting searchString!', searchString);
-            this.plugin.setPluginState({ searchString })
-          }}
-          submitSearchString={() => {}}
-          inputLabel={i18n('filter')}
-          clearSearchLabel={i18n('resetFilter')}
-          wrapperClassName="uppy-ProviderBrowser-searchFilter"
-          inputClassName="uppy-ProviderBrowser-searchFilterInput"
+    return (
+      <div
+        className={classNames(
+          'uppy-ProviderBrowser',
+          `uppy-ProviderBrowser-viewType--${opts.viewType}`,
+        )}
+      >
+        <Header<M, B>
+          showBreadcrumbs={opts.showBreadcrumbs}
+          openFolder={this.openFolder}
+          breadcrumbs={this.getBreadcrumbs()}
+          pluginIcon={pluginIcon}
+          title={this.plugin.title}
+          logout={this.logout}
+          username={username}
+          i18n={i18n}
         />
-      )}
 
-      <Browser<M, B>
-        toggleCheckbox={this.toggleCheckbox}
-        displayedPartialTree={this.getDisplayedPartialTree()}
-        openFolder={this.openFolder}
-        loadAllFiles={opts.loadAllFiles}
-        noResultsLabel={i18n('noFilesFound')}
-        handleScroll={this.handleScroll}
-        viewType={opts.viewType}
-        showTitles={opts.showTitles}
-        i18n={this.plugin.uppy.i18n}
-        isLoading={loading}
-      />
+        {opts.showFilter && (
+          <SearchFilterInput
+            searchString={searchString}
+            setSearchString={(searchString: string) => {
+              console.log('setting searchString!', searchString)
+              this.plugin.setPluginState({ searchString })
+            }}
+            submitSearchString={() => {}}
+            inputLabel={i18n('filter')}
+            clearSearchLabel={i18n('resetFilter')}
+            wrapperClassName="uppy-ProviderBrowser-searchFilter"
+            inputClassName="uppy-ProviderBrowser-searchFilterInput"
+          />
+        )}
 
-      <FooterActions
-        partialTree={partialTree}
-        donePicking={this.donePicking}
-        cancelSelection={this.cancelSelection}
-        i18n={i18n}
-        validateAggregateRestrictions={this.validateAggregateRestrictions}
-      />
-    </div>
+        <Browser<M, B>
+          toggleCheckbox={this.toggleCheckbox}
+          displayedPartialTree={this.getDisplayedPartialTree()}
+          openFolder={this.openFolder}
+          loadAllFiles={opts.loadAllFiles}
+          noResultsLabel={i18n('noFilesFound')}
+          handleScroll={this.handleScroll}
+          viewType={opts.viewType}
+          showTitles={opts.showTitles}
+          i18n={this.plugin.uppy.i18n}
+          isLoading={loading}
+        />
+
+        <FooterActions
+          partialTree={partialTree}
+          donePicking={this.donePicking}
+          cancelSelection={this.cancelSelection}
+          i18n={i18n}
+          validateAggregateRestrictions={this.validateAggregateRestrictions}
+        />
+      </div>
+    )
   }
 }

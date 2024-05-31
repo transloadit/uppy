@@ -110,7 +110,7 @@ export default class Facebook<M extends Meta, B extends Body> extends UIPlugin<
       return this.view.render(state, {
         viewType: 'grid',
         showFilter: false,
-        showTitles: false
+        showTitles: false,
       })
     } else {
       return this.view.render(state)

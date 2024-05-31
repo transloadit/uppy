@@ -43,7 +43,7 @@ function GridItem<M extends Meta, B extends Body>(
         onChange={toggleCheckbox}
         name="listitem"
         id={id}
-        checked={status === "checked" ? true : false}
+        checked={status === 'checked' ? true : false}
         disabled={isDisabled}
         data-uppy-super-focusable
       />

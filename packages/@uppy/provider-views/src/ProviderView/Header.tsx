@@ -38,7 +38,11 @@ export default function Header<M extends Meta, B extends Body>(
             title={props.title}
           />
         )}
-        <User logout={props.logout} username={props.username} i18n={props.i18n} />
+        <User
+          logout={props.logout}
+          username={props.username}
+          i18n={props.i18n}
+        />
       </div>
     </div>
   )

@@ -55,8 +55,12 @@ export default function ListItem<M extends Meta, B extends Body>(
         // for the <label/>
         name="listitem"
         id={id}
-        checked={status === "checked" ? true : false}
-        aria-label={type === 'file' ? null : i18n('allFilesFromFolderNamed', { name: title })}
+        checked={status === 'checked' ? true : false}
+        aria-label={
+          type === 'file' ? null : (
+            i18n('allFilesFromFolderNamed', { name: title })
+          )
+        }
         disabled={isDisabled}
         data-uppy-super-focusable
       />
@@ -85,6 +89,7 @@ export default function ListItem<M extends Meta, B extends Body>(
             </div>
             {showTitles && <span>{title}</span>}
           </button>
+
       }
     </li>
   )

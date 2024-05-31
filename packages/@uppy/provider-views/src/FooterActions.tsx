@@ -12,13 +12,16 @@ export default function FooterActions<M extends Meta, B extends Body>({
   donePicking,
   i18n,
   partialTree,
-  validateAggregateRestrictions
+  validateAggregateRestrictions,
 }: {
   cancelSelection: ProviderView<M, B>['cancelSelection']
   donePicking: ProviderView<M, B>['donePicking']
   i18n: I18n
   partialTree: PartialTree
-  validateAggregateRestrictions: ProviderView<M, B>['validateAggregateRestrictions']
+  validateAggregateRestrictions: ProviderView<
+    M,
+    B
+  >['validateAggregateRestrictions']
 }) {
   const aggregateRestrictionError = useMemo(() => {
     return validateAggregateRestrictions(partialTree)
@@ -36,10 +39,9 @@ export default function FooterActions<M extends Meta, B extends Body>({
     <div className="uppy-ProviderBrowser-footer">
       <div className="uppy-ProviderBrowser-footer-buttons">
         <button
-          className={classNames(
-            'uppy-u-reset uppy-c-btn uppy-c-btn-primary',
-            { 'uppy-c-btn--disabled': aggregateRestrictionError }
-          )}
+          className={classNames('uppy-u-reset uppy-c-btn uppy-c-btn-primary', {
+            'uppy-c-btn--disabled': aggregateRestrictionError,
+          })}
           disabled={!!aggregateRestrictionError}
           onClick={donePicking}
           type="button"
@@ -57,12 +59,11 @@ export default function FooterActions<M extends Meta, B extends Body>({
         </button>
       </div>
 
-      {
-        aggregateRestrictionError &&
+      {aggregateRestrictionError && (
         <div className="uppy-ProviderBrowser-footer-error">
           {aggregateRestrictionError}
         </div>
-      }
+      )}
     </div>
   )
 }

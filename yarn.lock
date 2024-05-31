@@ -9156,9 +9156,9 @@ __metadata:
   resolution: "@uppy/provider-views@workspace:packages/@uppy/provider-views"
   dependencies:
     "@uppy/utils": "workspace:^"
-    classnames: ^2.2.6
-    p-queue: ^7.3.4
-    preact: ^10.5.13
+    classnames: "npm:^2.2.6"
+    p-queue: "npm:^8.0.0"
+    preact: "npm:^10.5.13"
   peerDependencies:
     "@uppy/core": "workspace:^"
   languageName: unknown

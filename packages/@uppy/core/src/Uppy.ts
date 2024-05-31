@@ -161,10 +161,7 @@ export type UnknownSearchProviderPluginState = {
   isInputMode: boolean
 } & Pick<
   UnknownProviderPluginState,
-  | 'loading'
-  | 'searchString'
-  | 'partialTree'
-  | 'currentFolderId'
+  'loading' | 'searchString' | 'partialTree' | 'currentFolderId'
 >
 export type UnknownSearchProviderPlugin<
   M extends Meta,
@@ -854,7 +851,9 @@ export class Uppy<M extends Meta, B extends Body> {
     return null
   }
 
-  validateAggregateRestrictions(files: ValidateableFile<M, B>[]): string | null {
+  validateAggregateRestrictions(
+    files: ValidateableFile<M, B>[],
+  ): string | null {
     const existingFiles = this.getFiles()
     try {
       this.#restricter.validateAggregateRestrictions(existingFiles, files)

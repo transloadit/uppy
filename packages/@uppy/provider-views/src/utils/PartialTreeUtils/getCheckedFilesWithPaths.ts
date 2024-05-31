@@ -1,5 +1,10 @@
-import type { PartialTree, PartialTreeFile, PartialTreeFolderNode, PartialTreeId } from "@uppy/core/lib/Uppy"
-import type { CompanionFile } from "@uppy/utils/lib/CompanionFile"
+import type {
+  PartialTree,
+  PartialTreeFile,
+  PartialTreeFolderNode,
+  PartialTreeId,
+} from '@uppy/core/lib/Uppy'
+import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
 
 export interface Cache {
   [key: string]: (PartialTreeFile | PartialTreeFolderNode)[]
@@ -8,8 +13,8 @@ export interface Cache {
 const getPath = (
   partialTree: PartialTree,
   id: PartialTreeId,
-  cache: Cache
-) : (PartialTreeFile | PartialTreeFolderNode)[] => {
+  cache: Cache,
+): (PartialTreeFile | PartialTreeFolderNode)[] => {
   const sId = id === null ? 'null' : id
   if (cache[sId]) return cache[sId]
 
@@ -23,31 +28,42 @@ const getPath = (
 }
 
 // See "Uppy file properties" documentation for `.absolutePath` and `.relativePath` (https://uppy.io/docs/uppy/#working-with-uppy-files)
-const getCheckedFilesWithPaths = (partialTree: PartialTree) : CompanionFile[] => {
-  const cache : Cache = {}
+const getCheckedFilesWithPaths = (
+  partialTree: PartialTree,
+): CompanionFile[] => {
+  const cache: Cache = {}
 
   // We're only interested in injecting paths into 'checked' files
-  const checkedFiles = partialTree.filter((item) => item.type === 'file' && item.status === 'checked') as PartialTreeFile[]
+  const checkedFiles = partialTree.filter(
+    (item) => item.type === 'file' && item.status === 'checked',
+  ) as PartialTreeFile[]
 
   const companionFilesWithInjectedPaths = checkedFiles.map((file) => {
-    const path : (PartialTreeFile | PartialTreeFolderNode)[] = getPath(partialTree, file.id, cache)
+    const path: (PartialTreeFile | PartialTreeFolderNode)[] = getPath(
+      partialTree,
+      file.id,
+      cache,
+    )
 
     const absFolders = path.toReversed()
 
-    const firstCheckedFolderIndex = absFolders.findIndex((i) => i.type === 'folder' && i.status === 'checked')
+    const firstCheckedFolderIndex = absFolders.findIndex(
+      (i) => i.type === 'folder' && i.status === 'checked',
+    )
     const relFolders = absFolders.slice(firstCheckedFolderIndex)
 
     const absDirPath = '/' + absFolders.map((i) => i.data.name).join('/')
-    const relDirPath = relFolders.length === 1
-      // Must return `undefined` (which later turns into `null` in `.getTagFile()`)
-      // (https://github.com/transloadit/uppy/pull/4537#issuecomment-1629136652)
-      ? undefined
+    const relDirPath =
+      relFolders.length === 1 ?
+        // Must return `undefined` (which later turns into `null` in `.getTagFile()`)
+        // (https://github.com/transloadit/uppy/pull/4537#issuecomment-1629136652)
+        undefined
       : relFolders.map((i) => i.data.name).join('/')
 
     return {
       ...file.data,
       absDirPath,
-      relDirPath
+      relDirPath,
     }
   })
 

@@ -25,7 +25,7 @@ export default function Breadcrumbs<M extends Meta, B extends Body>(
             type="button"
             className="uppy-u-reset uppy-c-btn"
             onClick={() => openFolder(folder.id)}
-            >
+          >
             {folder.type === 'root' ? title : folder.data.name}
           </button>
           {breadcrumbs.length === index + 1 ? '' : ' / '}

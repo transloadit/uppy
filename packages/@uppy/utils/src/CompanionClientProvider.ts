@@ -1,4 +1,4 @@
-import type { CompanionFile } from "./CompanionFile"
+import type { CompanionFile } from './CompanionFile'
 
 export type RequestOptions = {
   method?: string

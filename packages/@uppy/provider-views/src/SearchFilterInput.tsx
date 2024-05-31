@@ -70,7 +70,9 @@ export default function SearchFilterInput(props: Props) {
           type="button"
           aria-label={clearSearchLabel}
           title={clearSearchLabel}
-          onClick={() => { setSearchString('') }}
+          onClick={() => {
+            setSearchString('')
+          }}
         >
           <svg
             aria-hidden="true"

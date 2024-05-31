@@ -7,14 +7,17 @@ import VirtualList from '@uppy/utils/lib/VirtualList'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import type { I18n } from '@uppy/utils/lib/Translator'
 import Item from './Item/index.tsx'
-import type { PartialTreeFile, PartialTreeFolderNode } from '@uppy/core/lib/Uppy.ts'
+import type {
+  PartialTreeFile,
+  PartialTreeFolderNode,
+} from '@uppy/core/lib/Uppy.ts'
 import type { RestrictionError } from '@uppy/core/lib/Restricter.ts'
 import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
 import { useEffect, useState } from 'preact/hooks'
 import type ProviderView from './ProviderView/ProviderView.tsx'
 
 type BrowserProps<M extends Meta, B extends Body> = {
-  displayedPartialTree: (PartialTreeFile | PartialTreeFolderNode)[],
+  displayedPartialTree: (PartialTreeFile | PartialTreeFolderNode)[]
   viewType: string
   toggleCheckbox: ProviderView<M, B>['toggleCheckbox']
   handleScroll: ProviderView<M, B>['handleScroll']
@@ -68,11 +71,7 @@ function Browser<M extends Meta, B extends Body>(props: BrowserProps<M, B>) {
   }
 
   if (displayedPartialTree.length === 0) {
-    return (
-      <div className="uppy-Provider-empty">
-        {noResultsLabel}
-      </div>
-    )
+    return <div className="uppy-Provider-empty">{noResultsLabel}</div>
   }
 
   const renderItem = (item: PartialTreeFile | PartialTreeFolderNode) => (
