@@ -27,5 +27,8 @@
   "peerDependencies": {
     "@uppy/core": "workspace:^"
   },
-  "stableVersion": "3.11.0"
+  "stableVersion": "3.11.0",
+  "devDependencies": {
+    "vitest": "^1.6.0"
+  }
 }

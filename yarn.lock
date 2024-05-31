@@ -9159,6 +9159,7 @@ __metadata:
     classnames: "npm:^2.2.6"
     p-queue: "npm:^8.0.0"
     preact: "npm:^10.5.13"
+    vitest: "npm:^1.6.0"
   peerDependencies:
     "@uppy/core": "workspace:^"
   languageName: unknown
@@ -30371,7 +30372,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vitest@npm:^1.2.1":
+"vitest@npm:^1.2.1, vitest@npm:^1.6.0":
   version: 1.6.0
   resolution: "vitest@npm:1.6.0"
   dependencies:
