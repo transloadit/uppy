@@ -79,7 +79,7 @@ interface Opts<M extends Meta, B extends Body> {
     i18n: Translator['translateArray']
     loading: boolean | string
     onAuth: (authFormData: unknown) => Promise<void>
-  }) => JSX.Element
+  }) => h.JSX.Element
 }
 type PassedOpts<M extends Meta, B extends Body> = Optional<Opts<M, B>, 'viewType' | 'showTitles' | 'showFilter' | 'showBreadcrumbs' | 'loadAllFiles'>
 type DefaultOpts<M extends Meta, B extends Body> = Omit<Opts<M, B>, 'provider'>

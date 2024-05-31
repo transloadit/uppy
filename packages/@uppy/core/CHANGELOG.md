@@ -1,5 +1,107 @@
 # @uppy/core
 
+## 4.0.0-beta.8
+
+Released: 2024-05-22
+Included in: Uppy v4.0.0-beta.8
+
+- @uppy/core: resolve some (breaking) TODOs (Antoine du Hamel / #4824)
+
+## 4.0.0-beta.7
+
+Released: 2024-05-14
+Included in: Uppy v4.0.0-beta.7
+
+- @uppy/core: close->destroy, clearUploadedFiles->clear (Merlijn Vos / #5154)
+
+## 4.0.0-beta.5
+
+Released: 2024-05-03
+Included in: Uppy v4.0.0-beta.5
+
+- @uppy/core: make UppyEventMap more readable (Murderlon)
+- @uppy/audio,@uppy/compressor,@uppy/core,@uppy/dashboard,@uppy/remote-sources,@uppy/tus,@uppy/utils: Format (Murderlon)
+- @uppy/core: add instance ID to generated IDs (Merlijn Vos / #5080)
+- @uppy/core: reference updated i18n in Restricter (Merlijn Vos / #5118)
+
+## 4.0.0-beta.4
+
+Released: 2024-04-29
+Included in: Uppy v4.0.0-beta.4
+
+- @uppy/core: Release: uppy@3.24.2 (github-actions[bot] / #5084)
+- @uppy/core: fix `setOptions` not re-rendereing plugin UI (Antoine du Hamel / #5082)
+
+## 4.0.0-beta.3
+
+Released: 2024-04-15
+Included in: Uppy v4.0.0-beta.3
+
+- @uppy/core: fix `setOptions` not re-rendereing plugin UI (Antoine du Hamel / #5082)
+
+## 4.0.0-beta.2
+
+Released: 2024-04-11
+Included in: Uppy v4.0.0-beta.2
+
+- @uppy/core: use variadic arguments for `uppy.use` (Antoine du Hamel / #4888)
+
+## 4.0.0-beta.1
+
+Released: 2024-03-28
+Included in: Uppy v4.0.0-beta.1
+
+- @uppy/core: refine type of private variables (Antoine du Hamel / #5028)
+- @uppy/core: fix some type errors (Antoine du Hamel / #5015)
+- @uppy/core: various type fixes (Antoine du Hamel / #4995)
+- @uppy/core,@uppy/provider-views: Fix breadcrumbs (Evgenia Karunus / #4986)
+
+## 3.11.3
+
+Released: 2024-05-14
+Included in: Uppy v3.25.3
+
+- @uppy/core: make getObjectOfFilesPerState more efficient (Merlijn Vos / #5155)
+
+## 3.11.2
+
+Released: 2024-05-07
+Included in: Uppy v3.25.2
+
+- @uppy/compressor,@uppy/core,@uppy/dashboard,@uppy/status-bar: Upgrade @transloadit/prettier-bytes (Merlijn Vos / #5150)
+
+## 3.11.1
+
+Released: 2024-05-03
+Included in: Uppy v3.25.1
+
+- @uppy/core: make UppyEventMap more readable (Murderlon)
+
+## 3.11.0
+
+Released: 2024-04-29
+Included in: Uppy v3.25.0
+
+- @uppy/core: add instance ID to generated IDs (Merlijn Vos / #5080)
+- @uppy/core: reference updated i18n in Restricter (Merlijn Vos / #5118)
+
+## 3.10.1
+
+Released: 2024-04-15
+Included in: Uppy v3.24.2
+
+- @uppy/core: fix `setOptions` not re-rendereing plugin UI (Antoine du Hamel / #5082)
+
+## 3.10.0
+
+Released: 2024-03-27
+Included in: Uppy v3.24.0
+
+- @uppy/core: refine type of private variables (Antoine du Hamel / #5028)
+- @uppy/core: fix some type errors (Antoine du Hamel / #5015)
+- @uppy/core: various type fixes (Antoine du Hamel / #4995)
+- @uppy/core,@uppy/provider-views: Fix breadcrumbs (Evgenia Karunus / #4986)
+
 ## 3.9.3
 
 Released: 2024-02-28

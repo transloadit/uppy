@@ -3,13 +3,13 @@ import { h } from 'preact'
 import { useCallback } from 'preact/hooks'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import type Translator from '@uppy/utils/lib/Translator'
-import type { ProviderViewOptions } from './ProviderView'
-import type ProviderViews from './ProviderView'
+import type { ProviderViewOptions } from './ProviderView.js'
+import type ProviderViews from './ProviderView.js'
 
 type AuthViewProps<M extends Meta, B extends Body> = {
   loading: boolean | string
   pluginName: string
-  pluginIcon: () => JSX.Element
+  pluginIcon: () => h.JSX.Element
   i18n: Translator['translateArray']
   handleAuth: ProviderViews<M, B>['handleAuth']
   renderForm?: ProviderViewOptions<M, B>['renderAuthForm']
@@ -107,7 +107,7 @@ const defaultRenderForm = ({
 
 export default function AuthView<M extends Meta, B extends Body>(
   props: AuthViewProps<M, B>,
-): JSX.Element {
+) {
   const {
     loading,
     pluginName,

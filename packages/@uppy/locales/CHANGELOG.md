@@ -1,5 +1,12 @@
 # @uppy/locales
 
+## 3.5.3
+
+Released: 2024-05-03
+Included in: Uppy v3.25.1
+
+- @uppy/locales: Update ru_RU locale  (Uladzislau Bodryi / #5120)
+
 ## 3.5.2
 
 Released: 2024-02-20

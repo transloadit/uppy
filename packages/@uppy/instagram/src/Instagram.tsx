@@ -9,7 +9,7 @@ import { ProviderViews } from '@uppy/provider-views'
 import { h, type ComponentChild } from 'preact'
 
 import type { UppyFile, Body, Meta } from '@uppy/utils/lib/UppyFile'
-import type { UnknownProviderPluginState } from '@uppy/core/lib/Uppy.ts'
+import type { UnknownProviderPluginState } from '@uppy/core/lib/Uppy'
 import locale from './locale.ts'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
@@ -25,7 +25,7 @@ export default class Instagram<M extends Meta, B extends Body> extends UIPlugin<
 > {
   static VERSION = packageJson.version
 
-  icon: () => JSX.Element
+  icon: () => h.JSX.Element
 
   provider: Provider<M, B>
 
@@ -35,7 +35,7 @@ export default class Instagram<M extends Meta, B extends Body> extends UIPlugin<
 
   files: UppyFile<M, B>[]
 
-  rootFolderId: string | null
+  rootFolderId: string | null = 'recent'
 
   constructor(uppy: Uppy<M, B>, opts: InstagramOptions) {
     super(uppy, opts)

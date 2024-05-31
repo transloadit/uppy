@@ -106,16 +106,16 @@ function getCommonCookieOptions ({ companionOptions }) {
   return cookieOptions
 }
 
-const getCookieName = (authProvider) => `uppyAuthToken--${authProvider}`
+const getCookieName = (oauthProvider) => `uppyAuthToken--${oauthProvider}`
 
-const addToCookies = ({ res, token, companionOptions, authProvider, maxAge = MAX_AGE_24H * 1000 }) => {
+const addToCookies = ({ res, token, companionOptions, oauthProvider, maxAge = MAX_AGE_24H * 1000 }) => {
   const cookieOptions = {
     ...getCommonCookieOptions({ companionOptions }),
     maxAge,
   }
 
   // send signed token to client.
-  res.cookie(getCookieName(authProvider), token, cookieOptions)
+  res.cookie(getCookieName(oauthProvider), token, cookieOptions)
 }
 
 module.exports.addToCookiesIfNeeded = (req, res, uppyAuthToken, maxAge) => {
@@ -125,7 +125,7 @@ module.exports.addToCookiesIfNeeded = (req, res, uppyAuthToken, maxAge) => {
       res,
       token: uppyAuthToken,
       companionOptions: req.companion.options,
-      authProvider: req.companion.providerClass.authProvider,
+      oauthProvider: req.companion.providerClass.oauthProvider,
       maxAge,
     })
   }
@@ -135,12 +135,12 @@ module.exports.addToCookiesIfNeeded = (req, res, uppyAuthToken, maxAge) => {
  *
  * @param {object} res
  * @param {object} companionOptions
- * @param {string} authProvider
+ * @param {string} oauthProvider
  */
-module.exports.removeFromCookies = (res, companionOptions, authProvider) => {
+module.exports.removeFromCookies = (res, companionOptions, oauthProvider) => {
   // options must be identical to those given to res.cookie(), excluding expires and maxAge.
   // https://expressjs.com/en/api.html#res.clearCookie
   const cookieOptions = getCommonCookieOptions({ companionOptions })
 
-  res.clearCookie(getCookieName(authProvider), cookieOptions)
+  res.clearCookie(getCookieName(oauthProvider), cookieOptions)
 }

@@ -9,7 +9,7 @@ import getSocketHost from '@uppy/utils/lib/getSocketHost'
 
 import type Uppy from '@uppy/core'
 import type { UppyFile, Meta, Body } from '@uppy/utils/lib/UppyFile'
-import type { RequestOptions } from '@uppy/utils/lib/CompanionClientProvider.ts'
+import type { RequestOptions } from '@uppy/utils/lib/CompanionClientProvider'
 import AuthError from './AuthError.ts'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
@@ -26,10 +26,6 @@ export type Opts = {
   companionHeaders?: CompanionHeaders
   companionKeysParams?: Record<string, string>
 }
-
-type _RequestOptions =
-  | boolean // TODO: remove this on the next major
-  | RequestOptions
 
 // Remove the trailing slash so we can always safely append /xyz.
 function stripSlash(url: string) {
@@ -98,8 +94,7 @@ export default class RequestClient<M extends Meta, B extends Body> {
     this.uppy = uppy
     this.opts = opts
     this.onReceiveResponse = this.onReceiveResponse.bind(this)
-    // TODO: Remove optional chaining
-    this.#companionHeaders = opts?.companionHeaders
+    this.#companionHeaders = opts.companionHeaders
   }
 
   setCompanionHeaders(headers: Record<string, string>): void {
@@ -196,33 +191,24 @@ export default class RequestClient<M extends Meta, B extends Body> {
 
   async get<PostBody>(
     path: string,
-    options?: _RequestOptions,
+    options?: RequestOptions,
   ): Promise<PostBody> {
-    // TODO: remove boolean support for options that was added for backward compatibility.
-    // eslint-disable-next-line no-param-reassign
-    if (typeof options === 'boolean') options = { skipPostResponse: options }
     return this.request({ ...options, path })
   }
 
   async post<PostBody>(
     path: string,
     data: Record<string, unknown>,
-    options?: _RequestOptions,
+    options?: RequestOptions,
   ): Promise<PostBody> {
-    // TODO: remove boolean support for options that was added for backward compatibility.
-    // eslint-disable-next-line no-param-reassign
-    if (typeof options === 'boolean') options = { skipPostResponse: options }
     return this.request<PostBody>({ ...options, path, method: 'POST', data })
   }
 
   async delete<T>(
     path: string,
     data?: Record<string, unknown>,
-    options?: _RequestOptions,
+    options?: RequestOptions,
   ): Promise<T> {
-    // TODO: remove boolean support for options that was added for backward compatibility.
-    // eslint-disable-next-line no-param-reassign
-    if (typeof options === 'boolean') options = { skipPostResponse: options }
     return this.request({ ...options, path, method: 'DELETE', data })
   }
 
@@ -574,20 +560,18 @@ export default class RequestClient<M extends Meta, B extends Body> {
           resolve()
         }
 
-        const onCancelAll = ({ reason }: { reason?: string }) => {
-          if (reason === 'user') {
-            socketSend('cancel')
-          }
+        const onCancelAll = () => {
+          socketSend('cancel')
           socketAbortController?.abort?.()
           this.uppy.log(`upload ${file.id} was canceled`, 'info')
           resolve()
         }
 
         const onFilePausedChange = (
-          targetFileId: string | undefined,
+          targetFile: UppyFile<M, B> | undefined,
           newPausedState: boolean,
         ) => {
-          if (targetFileId !== file.id) return
+          if (targetFile?.id !== file.id) return
           pause(newPausedState)
         }
 

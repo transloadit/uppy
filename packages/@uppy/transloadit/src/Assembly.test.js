@@ -1,10 +1,10 @@
 import { describe, expect, it, vi } from 'vitest'
 import { RateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
-import Assembly from './Assembly.js'
+import Assembly from './Assembly.ts'
 
 describe('Transloadit/Assembly', () => {
   describe('status diffing', () => {
-    function attemptDiff (prev, next) {
+    function attemptDiff(prev, next) {
       const assembly = new Assembly(prev, new RateLimitedQueue())
       const events = []
       assembly.emit = vi.fn((name, ...args) => {
@@ -17,43 +17,52 @@ describe('Transloadit/Assembly', () => {
     }
 
     it('ASSEMBLY_UPLOADING → ASSEMBLY_EXECUTING', () => {
-      const result = attemptDiff({
-        ok: 'ASSEMBLY_UPLOADING',
-        uploads: {},
-        results: {},
-      }, {
-        ok: 'ASSEMBLY_EXECUTING',
-        uploads: {},
-        results: {},
-      })
+      const result = attemptDiff(
+        {
+          ok: 'ASSEMBLY_UPLOADING',
+          uploads: {},
+          results: {},
+        },
+        {
+          ok: 'ASSEMBLY_EXECUTING',
+          uploads: {},
+          results: {},
+        },
+      )
 
       expect(result[0]).toEqual(['executing'])
     })
 
     it('ASSEMBLY_EXECUTING → ASSEMBLY_COMPLETED', () => {
-      const result = attemptDiff({
-        ok: 'ASSEMBLY_EXECUTING',
-        uploads: {},
-        results: {},
-      }, {
-        ok: 'ASSEMBLY_COMPLETED',
-        uploads: {},
-        results: {},
-      })
+      const result = attemptDiff(
+        {
+          ok: 'ASSEMBLY_EXECUTING',
+          uploads: {},
+          results: {},
+        },
+        {
+          ok: 'ASSEMBLY_COMPLETED',
+          uploads: {},
+          results: {},
+        },
+      )
 
       expect(result[0]).toEqual(['finished'])
     })
 
     it('ASSEMBLY_UPLOADING → ASSEMBLY_COMPLETED', () => {
-      const result = attemptDiff({
-        ok: 'ASSEMBLY_UPLOADING',
-        uploads: {},
-        results: {},
-      }, {
-        ok: 'ASSEMBLY_COMPLETED',
-        uploads: {},
-        results: {},
-      })
+      const result = attemptDiff(
+        {
+          ok: 'ASSEMBLY_UPLOADING',
+          uploads: {},
+          results: {},
+        },
+        {
+          ok: 'ASSEMBLY_COMPLETED',
+          uploads: {},
+          results: {},
+        },
+      )
 
       expect(result[0]).toEqual(['executing'])
       expect(result[1]).toEqual(['metadata'])
@@ -61,33 +70,39 @@ describe('Transloadit/Assembly', () => {
     })
 
     it('emits events for new files', () => {
-      const result = attemptDiff({
-        ok: 'ASSEMBLY_UPLOADING',
-        uploads: {},
-        results: {},
-      }, {
-        ok: 'ASSEMBLY_UPLOADING',
-        uploads: {
-          some_id: { id: 'some_id' },
+      const result = attemptDiff(
+        {
+          ok: 'ASSEMBLY_UPLOADING',
+          uploads: {},
+          results: {},
         },
-        results: {},
-      })
+        {
+          ok: 'ASSEMBLY_UPLOADING',
+          uploads: {
+            some_id: { id: 'some_id' },
+          },
+          results: {},
+        },
+      )
 
       expect(result[0]).toEqual(['upload', { id: 'some_id' }])
     })
 
     it('emits executing, then upload, on new files + status change', () => {
-      const result = attemptDiff({
-        ok: 'ASSEMBLY_UPLOADING',
-        uploads: {},
-        results: {},
-      }, {
-        ok: 'ASSEMBLY_EXECUTING',
-        uploads: {
-          some_id: { id: 'some_id' },
+      const result = attemptDiff(
+        {
+          ok: 'ASSEMBLY_UPLOADING',
+          uploads: {},
+          results: {},
         },
-        results: {},
-      })
+        {
+          ok: 'ASSEMBLY_EXECUTING',
+          uploads: {
+            some_id: { id: 'some_id' },
+          },
+          results: {},
+        },
+      )
 
       expect(result[0]).toEqual(['executing'])
       expect(result[1]).toEqual(['upload', { id: 'some_id' }])
@@ -108,11 +123,7 @@ describe('Transloadit/Assembly', () => {
           cool_video: { id: 'cool_video' },
         },
         results: {
-          step_one: [
-            { id: 'thumb1' },
-            { id: 'thumb2' },
-            { id: 'thumb3' },
-          ],
+          step_one: [{ id: 'thumb1' }, { id: 'thumb2' }, { id: 'thumb3' }],
         },
       }
       const three = {
@@ -127,9 +138,7 @@ describe('Transloadit/Assembly', () => {
             { id: 'thumb3' },
             { id: 'thumb4' },
           ],
-          step_two: [
-            { id: 'transcript' },
-          ],
+          step_two: [{ id: 'transcript' }],
         },
       }
 
@@ -162,9 +171,7 @@ describe('Transloadit/Assembly', () => {
             { id: 'thumb3' },
             { id: 'thumb4' },
           ],
-          step_two: [
-            { id: 'transcript' },
-          ],
+          step_two: [{ id: 'transcript' }],
         },
       }
 

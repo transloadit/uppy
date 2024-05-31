@@ -6,7 +6,7 @@ import type {
   Meta,
   MinimalRequiredUppyFile,
 } from '@uppy/utils/lib/UppyFile'
-import type { Uppy } from '@uppy/core/lib/Uppy.ts'
+import type { Uppy } from '@uppy/core/lib/Uppy'
 
 import getFileTypeExtension from '@uppy/utils/lib/getFileTypeExtension'
 import supportsMediaRecorder from './supportsMediaRecorder.ts'
@@ -17,7 +17,7 @@ import locale from './locale.ts'
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'
 
-interface AudioOptions extends UIPluginOptions {
+export interface AudioOptions extends UIPluginOptions {
   showAudioSourceDropdown?: boolean
 }
 interface AudioState {
@@ -348,7 +348,7 @@ export default class Audio<M extends Meta, B extends Body> extends UIPlugin<
     })
   }
 
-  render(): JSX.Element {
+  render() {
     if (!this.#audioActive) {
       this.#start()
     }

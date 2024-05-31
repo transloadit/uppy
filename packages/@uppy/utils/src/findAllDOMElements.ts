@@ -1,11 +1,16 @@
 import isDOMElement from './isDOMElement.ts'
 
+function findAllDOMElements<T>(
+  element: T,
+  context?: ParentNode,
+): T extends Element ? [T]
+: T extends Node | string ? Element[] | null
+: null
+
 /**
  * Find one or more DOM elements.
  */
-export default function findAllDOMElements(
-  element: string | Node,
-): Node[] | null {
+function findAllDOMElements(element: unknown): Node[] | null {
   if (typeof element === 'string') {
     const elements = document.querySelectorAll(element)
     return elements.length === 0 ? null : Array.from(elements)
@@ -17,3 +22,5 @@ export default function findAllDOMElements(
 
   return null
 }
+
+export default findAllDOMElements

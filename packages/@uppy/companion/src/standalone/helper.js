@@ -137,8 +137,7 @@ const getConfigFromEnv = () => {
       oauthDomain: process.env.COMPANION_OAUTH_DOMAIN,
       validHosts,
     },
-    // todo next major make this default false
-    enableUrlEndpoint: process.env.COMPANION_ENABLE_URL_ENDPOINT == null || process.env.COMPANION_ENABLE_URL_ENDPOINT === 'true',
+    enableUrlEndpoint: process.env.COMPANION_ENABLE_URL_ENDPOINT === 'true',
     periodicPingUrls: process.env.COMPANION_PERIODIC_PING_URLS ? process.env.COMPANION_PERIODIC_PING_URLS.split(',') : [],
     periodicPingInterval: process.env.COMPANION_PERIODIC_PING_INTERVAL
       ? parseInt(process.env.COMPANION_PERIODIC_PING_INTERVAL, 10) : undefined,
@@ -147,9 +146,9 @@ const getConfigFromEnv = () => {
     periodicPingCount: process.env.COMPANION_PERIODIC_PING_COUNT
       ? parseInt(process.env.COMPANION_PERIODIC_PING_COUNT, 10) : undefined,
     filePath: process.env.COMPANION_DATADIR,
-    redisUrl: process.env.COMPANION_REDIS_URL,
     redisPubSubScope: process.env.COMPANION_REDIS_PUBSUB_SCOPE,
-    //  redisOptions refers to https://www.npmjs.com/package/redis#options-object-properties
+    redisUrl: process.env.COMPANION_REDIS_URL,
+    //  redisOptions refers to https://redis.github.io/ioredis/index.html#RedisOptions
     redisOptions: (() => {
       try {
         if (!process.env.COMPANION_REDIS_OPTIONS) {

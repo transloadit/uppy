@@ -1,4 +1,5 @@
-const chalk = require('chalk')
+// We don't care about colors in our tests, so force `supports-color` to disable colors.
+process.env.FORCE_COLOR = 'false'
 const logger = require('../../src/server/logger')
 
 const maskables = ['ToBeMasked1', 'toBeMasked2', 'toBeMasked(And)?Escaped']
@@ -43,7 +44,7 @@ describe('Test Logger secret mask', () => {
       logger.warn('this warning has ToBeMasked1 and toBeMasked2 and case-insensitive TOBEMasKED2')
     })
 
-    const exptectedMsg = chalk.bold.yellow('this warning has ****** and ****** and case-insensitive ******')
+    const exptectedMsg = 'this warning has ****** and ****** and case-insensitive ******'
 
     expect(loggedMessage).toBeTruthy()
     expect(loggedMessage).toBe(exptectedMsg)
@@ -54,7 +55,7 @@ describe('Test Logger secret mask', () => {
       logger.error(new Error('this error has ToBeMasked1 and toBeMasked2 and case-insensitive TOBEMasKED2'))
     })
 
-    const exptectedMsg = chalk.bold.red('Error: this error has ****** and ****** and case-insensitive ******')
+    const exptectedMsg = 'Error: this error has ****** and ****** and case-insensitive ******'
 
     expect(loggedMessage.startsWith(exptectedMsg)).toBeTruthy()
   })
@@ -65,7 +66,7 @@ describe('Test Logger secret mask', () => {
       logger.error(err, '', '')
     })
 
-    const exptectedMsg = chalk.bold.red('Error: this error has ****** and ****** and case-insensitive ******')
+    const exptectedMsg = 'Error: this error has ****** and ****** and case-insensitive ******'
 
     expect(loggedMessage).toBeTruthy()
     expect(loggedMessage.startsWith(exptectedMsg)).toBe(true)
@@ -79,7 +80,7 @@ describe('Test Logger secret mask', () => {
       logger.warn('this warning has ToBeMasked(And)?Escaped but not toBeMaskedEscaped ')
     })
 
-    const exptectedMsg = chalk.bold.yellow('this warning has ****** but not toBeMaskedEscaped ')
+    const exptectedMsg = 'this warning has ****** but not toBeMaskedEscaped '
 
     expect(loggedMessage).toBeTruthy()
     expect(loggedMessage).toBe(exptectedMsg)

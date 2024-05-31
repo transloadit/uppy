@@ -21,7 +21,7 @@ type HeaderProps<M extends Meta, B extends Body> = {
 
 export default function Header<M extends Meta, B extends Body>(
   props: HeaderProps<M, B>,
-): JSX.Element {
+) {
   return (
     <div className="uppy-ProviderBrowser-header">
       <div

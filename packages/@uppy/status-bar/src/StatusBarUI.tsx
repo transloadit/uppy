@@ -1,6 +1,6 @@
 import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
 import type { I18n } from '@uppy/utils/lib/Translator'
-import type { Uppy, State } from '@uppy/core/src/Uppy.ts'
+import type { Uppy, State } from '@uppy/core/lib/Uppy'
 import { h } from 'preact'
 import classNames from 'classnames'
 import statusBarStates from './StatusBarStates.ts'
@@ -38,7 +38,7 @@ export interface StatusBarUIProps<M extends Meta, B extends Body> {
   hidePauseResumeButton?: boolean
   hideCancelButton?: boolean
   hideRetryButton?: boolean
-  recoveredState: null | State<M, B>
+  recoveredState: State<M, B>['recoveredState']
   uploadState: (typeof statusBarStates)[keyof typeof statusBarStates]
   totalProgress: number
   files: Record<string, UppyFile<M, B>>
@@ -62,7 +62,7 @@ export interface StatusBarUIProps<M extends Meta, B extends Body> {
 // TODO: rename the function to StatusBarUI on the next major.
 export default function StatusBar<M extends Meta, B extends Body>(
   props: StatusBarUIProps<M, B>,
-): JSX.Element {
+) {
   const {
     newFiles,
     allowNewUpload,
@@ -204,7 +204,7 @@ export default function StatusBar<M extends Meta, B extends Body>(
         aria-valuenow={progressValue!}
       />
 
-      {((): JSX.Element | null => {
+      {(() => {
         switch (uploadState) {
           case STATE_PREPROCESSING:
           case STATE_POSTPROCESSING:

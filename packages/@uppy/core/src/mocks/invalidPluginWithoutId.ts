@@ -1,12 +1,12 @@
 import UIPlugin from '../UIPlugin.ts'
-import type Uppy from '../Uppy.ts'
+import type Uppy from '../Uppy.js'
 
 export default class InvalidPluginWithoutName extends UIPlugin<any, any, any> {
   public type: string
 
   public name: string
 
-  constructor(uppy: Uppy<any, any>, opts: any) {
+  constructor(uppy: Uppy<any, any>, opts?: any) {
     super(uppy, opts)
     this.type = 'acquirer'
     this.name = this.constructor.name

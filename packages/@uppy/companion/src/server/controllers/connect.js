@@ -1,4 +1,3 @@
-const atob = require('atob')
 const oAuthState = require('../helpers/oauth-state')
 
 const queryString = (params, prefix = '?') => {
@@ -45,12 +44,12 @@ module.exports = function connect(req, res) {
     ]]
   }) || [])
 
-  const { authProvider } = providerClass
+  const { oauthProvider } = providerClass
   const qs = queryString({
     ...grantDynamicConfig,
     state,
   })
 
   // Now we redirect to grant's /connect endpoint, see `app.use(Grant(grantConfig))`
-  res.redirect(req.companion.buildURL(`/connect/${authProvider}${qs}`, true))
+  res.redirect(req.companion.buildURL(`/connect/${oauthProvider}${qs}`, true))
 }

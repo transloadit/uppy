@@ -7,7 +7,7 @@ import CompressorPlugin from './index.ts'
 
 // Compressor uses browser canvas API, so need to mock compress()
 // @ts-expect-error mocked
-CompressorPlugin.prototype.compress = async (blob: Blob) => {
+CompressorPlugin.prototype.compress = async (blob: File) => {
   return {
     name: `${getFileNameAndExtension(blob.name).name}.webp`,
     type: 'image/webp',

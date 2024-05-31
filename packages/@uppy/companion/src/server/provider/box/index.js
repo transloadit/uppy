@@ -1,14 +1,14 @@
-const got = require('got').default
-
 const Provider = require('../Provider')
 const adaptData = require('./adapter')
 const { withProviderErrorHandling } = require('../providerErrors')
 const { prepareStream } = require('../../helpers/utils')
 
+const got = require('../../got')
+
 const BOX_FILES_FIELDS = 'id,modified_at,name,permissions,size,type'
 const BOX_THUMBNAIL_SIZE = 256
 
-const getClient = ({ token }) => got.extend({
+const getClient = async ({ token }) => (await got).extend({
   prefixUrl: 'https://api.box.com/2.0',
   headers: {
     authorization: `Bearer ${token}`,
@@ -16,13 +16,12 @@ const getClient = ({ token }) => got.extend({
 })
 
 async function getUserInfo ({ token }) {
-  return getClient({ token }).get('users/me', { responseType: 'json' }).json()
+  return (await getClient({ token })).get('users/me', { responseType: 'json' }).json()
 }
 
 async function list ({ directory, query, token }) {
   const rootFolderID = '0'
-  // https://developer.box.com/reference/resources/items/
-  return getClient({ token }).get(`folders/${directory || rootFolderID}/items`, { searchParams: { fields: BOX_FILES_FIELDS, offset: query.cursor, limit: 1000 }, responseType: 'json' }).json()
+  return (await getClient({ token })).get(`folders/${directory || rootFolderID}/items`, { searchParams: { fields: BOX_FILES_FIELDS, offset: query.cursor, limit: 1000 }, responseType: 'json' }).json()
 }
 
 /**
@@ -35,7 +34,7 @@ class Box extends Provider {
     this.needsCookieAuth = true
   }
 
-  static get authProvider () {
+  static get oauthProvider () {
     return 'box'
   }
 
@@ -61,7 +60,7 @@ class Box extends Provider {
 
   async download ({ id, token }) {
     return this.#withErrorHandling('provider.box.download.error', async () => {
-      const stream = getClient({ token }).stream.get(`files/${id}/content`, { responseType: 'json' })
+      const stream = (await getClient({ token })).stream.get(`files/${id}/content`, { responseType: 'json' })
 
       await prepareStream(stream)
       return { stream }
@@ -81,7 +80,7 @@ class Box extends Provider {
       // At that time, retry this endpoint to retrieve the thumbnail.
       //
       // This can be reproduced more easily by changing extension to png and trying on a newly uploaded image
-      const stream = getClient({ token }).stream.get(`files/${id}/thumbnail.${extension}`, {
+      const stream = (await getClient({ token })).stream.get(`files/${id}/thumbnail.${extension}`, {
         searchParams: { max_height: BOX_THUMBNAIL_SIZE, max_width: BOX_THUMBNAIL_SIZE },
         responseType: 'json',
       })
@@ -93,7 +92,7 @@ class Box extends Provider {
 
   async size ({ id, token }) {
     return this.#withErrorHandling('provider.box.size.error', async () => {
-      const { size } = await getClient({ token }).get(`files/${id}`, { responseType: 'json' }).json()
+      const { size } = await (await getClient({ token })).get(`files/${id}`, { responseType: 'json' }).json()
       return parseInt(size, 10)
     })
   }
@@ -101,7 +100,7 @@ class Box extends Provider {
   logout ({ companion, token }) {
     return this.#withErrorHandling('provider.box.logout.error', async () => {
       const { key, secret } = companion.options.providerOptions.box
-      await getClient({ token }).post('oauth2/revoke', {
+      await (await getClient({ token })).post('oauth2/revoke', {
         prefixUrl: 'https://api.box.com',
         form: {
           client_id: key,
@@ -120,7 +119,7 @@ class Box extends Provider {
     return withProviderErrorHandling({
       fn,
       tag,
-      providerName: Box.authProvider,
+      providerName: Box.oauthProvider,
       isAuthError: (response) => response.statusCode === 401,
       getJsonErrorMessage: (body) => body?.message,
     })

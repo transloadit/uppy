@@ -65,6 +65,7 @@ const startCompanion = ({ name, port }) => {
       COMPANION_SECRET: 'development', // multi instance will not work without secret set
       COMPANION_PREAUTH_SECRET: 'development', // multi instance will not work without secret set
       COMPANION_ALLOW_LOCAL_URLS: 'true',
+      COMPANION_ENABLE_URL_ENDPOINT: 'true',
       COMPANION_LOGGER_PROCESS_NAME: name,
     },
   })

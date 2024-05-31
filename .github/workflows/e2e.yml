@@ -1,7 +1,7 @@
 name: End-to-end tests
 on:
   push:
-    branches: [main]
+    branches: [main, 4.x]
     paths-ignore:
       - '**.md'
       - '**.d.ts'
@@ -48,7 +48,7 @@ jobs:
       is_accurate_diff: ${{ steps.diff.outputs.IS_ACCURATE_DIFF }}
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 2
           ref:
@@ -70,7 +70,7 @@ jobs:
         run:
           echo "dir=$(corepack yarn config get cacheFolder)" >> $GITHUB_OUTPUT
 
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
         with:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
@@ -78,7 +78,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
       - name: Install Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: lts/*
       - name: Install dependencies
@@ -89,7 +89,7 @@ jobs:
         env:
           # https://docs.cypress.io/guides/references/advanced-installation#Skipping-installation
           CYPRESS_INSTALL_BINARY: 0
-      - run: corepack yarn build:lib
+      - run: corepack yarn build:js:typeless
       - name: Store output file
         run: tar cf /tmp/previousVersion.tar packages/@uppy/*/lib
       - name: Fetch source from the PR
@@ -124,7 +124,7 @@ jobs:
           to test')
         run: |
           git checkout FETCH_HEAD -- packages
-      - run: corepack yarn build:lib
+      - run: corepack yarn build:js:typeless
       - name: Store output file
         run: tar cf /tmp/newVersion.tar packages/@uppy/*/lib
       - name: Setup git
@@ -222,7 +222,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Get yarn cache directory path
@@ -230,7 +230,7 @@ jobs:
         run:
           echo "dir=$(corepack yarn config get cacheFolder)" >> $GITHUB_OUTPUT
 
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
         with:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
@@ -241,17 +241,17 @@ jobs:
       - name: Create cache folder for Cypress
         id: cypress-cache-dir-path
         run: echo "dir=$(mktemp -d)" >> $GITHUB_OUTPUT
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         with:
           path: ${{ steps.cypress-cache-dir-path.outputs.dir }}
           key: ${{ runner.os }}-cypress
       - name: Install Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: lts/*
 
       - name: Start Redis
-        uses: supercharge/redis-github-action@1.4.0
+        uses: supercharge/redis-github-action@ea9b21c6ecece47bd99595c532e481390ea0f044 # 1.8.0
         with:
           redis-version: 7
 
@@ -283,7 +283,7 @@ jobs:
           # https://docs.cypress.io/guides/references/advanced-installation#Binary-cache
           CYPRESS_CACHE_FOLDER: ${{ steps.cypress-cache-dir-path.outputs.dir }}
       - name: Upload videos in case of failure
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: failure()
         with:
           name: videos-and-screenshots

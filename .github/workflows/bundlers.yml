@@ -2,7 +2,7 @@ name: Test different bundlers with Uppy
 
 on:
   push:
-    branches: [main]
+    branches: [main, 4.x]
   pull_request:
     # We want all branches so we configure types to be the GH default again
     types: [opened, synchronize, reopened]
@@ -24,12 +24,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run:
           echo "dir=$(corepack yarn config get cacheFolder)" >> $GITHUB_OUTPUT
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
         with:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
@@ -37,7 +37,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
       - name: Install Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: lts/*
       - name: Install dependencies
@@ -69,11 +69,12 @@ jobs:
           EOF
       - name: Eject public packages from repo
         run:
-          mkdir /tmp/artifacts && corepack yarn workspaces foreach --no-private
-          pack --install-if-needed -o /tmp/artifacts/%s-${{ github.sha }}.tgz
+          mkdir /tmp/artifacts && corepack yarn workspaces foreach --all
+          --no-private pack --install-if-needed -o /tmp/artifacts/%s-${{
+          github.sha }}.tgz
       - name: Upload artifact
         if: success()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: packages
           path: /tmp/artifacts/
@@ -87,7 +88,7 @@ jobs:
         bundler-version: [latest]
     steps:
       - name: Download uppy tarball
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: /tmp/
       - name: Extract tarball
@@ -125,7 +126,7 @@ jobs:
         bundler-version: [latest]
     steps:
       - name: Download uppy tarball
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: /tmp/
       - name: Extract tarball
@@ -151,7 +152,7 @@ jobs:
         bundler-version: [latest]
     steps:
       - name: Download uppy tarball
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: /tmp/
       - name: Extract tarball
@@ -181,7 +182,7 @@ jobs:
         bundler-version: [latest]
     steps:
       - name: Download uppy tarball
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: /tmp/
       - name: Extract tarball
@@ -206,7 +207,7 @@ jobs:
         bundler-version: [latest]
     steps:
       - name: Download uppy tarball
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: /tmp/
       - name: Extract tarball

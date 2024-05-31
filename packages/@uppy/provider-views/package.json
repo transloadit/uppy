@@ -1,11 +1,10 @@
 {
   "name": "@uppy/provider-views",
   "description": "View library for Uppy remote provider plugins.",
-  "version": "3.10.0",
+  "version": "4.0.0-beta.6",
   "license": "MIT",
   "main": "lib/index.js",
   "style": "dist/style.min.css",
-  "types": "types/index.d.ts",
   "type": "module",
   "keywords": [
     "file uploader",
@@ -22,10 +21,11 @@
   "dependencies": {
     "@uppy/utils": "workspace:^",
     "classnames": "^2.2.6",
-    "p-queue": "^7.3.4",
+    "p-queue": "^8.0.0",
     "preact": "^10.5.13"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^"
-  }
+  },
+  "stableVersion": "3.11.0"
 }

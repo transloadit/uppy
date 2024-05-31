@@ -1,8 +1,8 @@
 # Uppy + AWS S3 Example
 
-This example uses @uppy/companion with a custom AWS S3 configuration.
-Files are uploaded to a randomly named directory inside the `whatever/`
-directory in a bucket.
+This example uses @uppy/companion with a custom AWS S3 configuration. Files are
+uploaded to a randomly named directory inside the `whatever/` directory in a
+bucket.
 
 ## Run it
 

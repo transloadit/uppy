@@ -23,7 +23,7 @@ export default class GoogleDrive<
 > extends UIPlugin<GoogleDriveOptions, M, B, UnknownProviderPluginState> {
   static VERSION = packageJson.version
 
-  icon: () => JSX.Element
+  icon: () => h.JSX.Element
 
   provider: Provider<M, B>
 
@@ -33,7 +33,7 @@ export default class GoogleDrive<
 
   files: UppyFile<M, B>[]
 
-  rootFolderId: string | null
+  rootFolderId: string | null = 'root'
 
   constructor(uppy: Uppy<M, B>, opts: GoogleDriveOptions) {
     super(uppy, opts)

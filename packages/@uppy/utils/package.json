@@ -1,9 +1,8 @@
 {
   "name": "@uppy/utils",
   "description": "Shared utility functions for Uppy Core and plugins maintained by the Uppy team.",
-  "version": "5.7.4",
+  "version": "6.0.0-beta.7",
   "license": "MIT",
-  "types": "types/index.d.ts",
   "type": "module",
   "keywords": [
     "file uploader",
@@ -70,7 +69,9 @@
     "./lib/CompanionClientProvider": "./lib/CompanionClientProvider.js",
     "./lib/FileProgress": "./lib/FileProgress.js",
     "./src/microtip.scss": "./src/microtip.scss",
-    "./lib/UserFacingApiError": "./lib/UserFacingApiError.js"
+    "./lib/UserFacingApiError": "./lib/UserFacingApiError.js",
+    "./lib/getAllowedMetaFields": "./lib/getAllowedMetaFields.js",
+    "./lib/fetcher": "./lib/fetcher.js"
   },
   "dependencies": {
     "lodash": "^4.17.21",
@@ -79,5 +80,6 @@
   "devDependencies": {
     "@types/lodash": "^4.14.199",
     "vitest": "^1.2.1"
-  }
+  },
+  "stableVersion": "5.7.5"
 }

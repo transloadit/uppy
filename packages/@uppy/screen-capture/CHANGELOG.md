@@ -1,5 +1,26 @@
 # @uppy/screen-capture
 
+## 4.0.0-beta.5
+
+Released: 2024-05-14
+Included in: Uppy v4.0.0-beta.7
+
+- @uppy/companion-client,@uppy/dropbox,@uppy/screen-capture,@uppy/unsplash,@uppy/url,@uppy/webcam: Use `title` consistently from locales (Merlijn Vos / #5134)
+
+## 4.0.0-beta.1
+
+Released: 2024-03-28
+Included in: Uppy v4.0.0-beta.1
+
+- @uppy/screen-capture: migrate to TS (Merlijn Vos / #4965)
+
+## 3.2.0
+
+Released: 2024-03-27
+Included in: Uppy v3.24.0
+
+- @uppy/screen-capture: migrate to TS (Merlijn Vos / #4965)
+
 ## 3.0.2
 
 Released: 2023-02-13

@@ -5,7 +5,8 @@ This example shows how to make advantage of Uppy API to upload files to
 
 ## Run it
 
-To run this example, make sure you've correctly installed the **repository root**:
+To run this example, make sure you've correctly installed the **repository
+root**:
 
 ```sh
 corepack yarn install

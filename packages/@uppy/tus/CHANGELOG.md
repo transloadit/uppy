@@ -1,5 +1,26 @@
 # @uppy/tus
 
+## 4.0.0-beta.4
+
+Released: 2024-05-03
+Included in: Uppy v4.0.0-beta.5
+
+- @uppy/audio,@uppy/compressor,@uppy/core,@uppy/dashboard,@uppy/remote-sources,@uppy/tus,@uppy/utils: Format (Murderlon)
+
+## 4.0.0-beta.1
+
+Released: 2024-03-28
+Included in: Uppy v4.0.0-beta.1
+
+- @uppy/aws-s3-multipart,@uppy/tus,@uppy/utils,@uppy/xhr-upload: Make `allowedMetaFields` consistent (Merlijn Vos / #5011)
+
+## 3.5.5
+
+Released: 2024-05-22
+Included in: Uppy v3.25.4
+
+- @uppy/tus: fix no headers passed to companion if argument is a function (netdown / #5182)
+
 ## 3.5.1
 
 Released: 2024-02-19

@@ -9,5 +9,6 @@ module.exports = () => {
 
       return 'http://localhost:3020'
     },
+    encodeState: () => 'some-cool-nice-encrytpion',
   }
 }

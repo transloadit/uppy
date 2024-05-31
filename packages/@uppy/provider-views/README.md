@@ -9,7 +9,8 @@
 
 View library for Uppy remote provider plugins.
 
-Uppy is being developed by the folks at [Transloadit](https://transloadit.com), a versatile file encoding service.
+Uppy is being developed by the folks at [Transloadit](https://transloadit.com),
+a versatile file encoding service.
 
 ## Example
 
@@ -18,12 +19,12 @@ import Plugin from '@uppy/core/lib/plugin'
 import { ProviderViews } from '@uppy/provider-views'
 
 class GoogleDrive extends UIPlugin {
-  install () {
+  install() {
     this.view = new ProviderViews(this)
     // snip
   }
 
-  render (state) {
+  render(state) {
     return this.view.render(state)
   }
 }
@@ -31,7 +32,8 @@ class GoogleDrive extends UIPlugin {
 
 ## Installation
 
-> Unless you are creating a custom provider plugin, you do not need to install this.
+> Unless you are creating a custom provider plugin, you do not need to install
+> this.
 
 ```bash
 $ npm install @uppy/provider-views

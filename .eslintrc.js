@@ -93,6 +93,7 @@ module.exports = {
     'react/prefer-stateless-function': 'error',
     'react/sort-comp': 'error',
     'react/style-prop-object': 'error',
+    'react/static-property-placement': 'off',
 
     // accessibility
     'jsx-a11y/alt-text': 'error',
@@ -116,7 +117,6 @@ module.exports = {
     'jsdoc/check-syntax': 'error',
     'jsdoc/check-tag-names': ['error', { jsxTags: true }],
     'jsdoc/check-types': 'error',
-    'jsdoc/newline-after-description': 'error',
     'jsdoc/valid-types': 'error',
     'jsdoc/check-indentation': ['off'],
   },
@@ -173,6 +173,10 @@ module.exports = {
           {
             name: 'require',
             message: 'Use import instead',
+          },
+          {
+            name: 'JSX',
+            message: 'Use h.JSX.Element, ComponentChild, or ComponentChildren from Preact',
           },
         ],
         'import/extensions': ['error', 'ignorePackages'],
@@ -413,7 +417,14 @@ module.exports = {
       processor: 'markdown/markdown',
     },
     {
+      files: ['docs/**/*.md/*.js'],
+      parserOptions: {
+        sourceType: 'module',
+      },
+    },
+    {
       files: ['**/*.md/*.js', '**/*.md/*.javascript'],
+      excludedFiles: ["docs/**/*"],
       parserOptions: {
         sourceType: 'module',
       },
@@ -462,6 +473,11 @@ module.exports = {
         'plugin:@typescript-eslint/recommended',
       ],
       rules: {
+        'no-extra-semi': 'off',
+        'no-restricted-syntax': ['error', {
+          selector: 'ImportDeclaration[importKind="type"][source.value=/^\\./]:not([source.value=/\\.js$/])',
+          message: 'Use ".js" file extension for import type declarations',
+        }],
         'import/prefer-default-export': 'off',
         '@typescript-eslint/no-empty-function': 'off',
         '@typescript-eslint/no-explicit-any': 'off',
@@ -471,7 +487,7 @@ module.exports = {
       },
     },
     {
-      files: ['packages/@uppy/*/src/**/*.ts', 'packages/@uppy/*/src/**/*.tsx'],
+      files: ['packages/@uppy/*/src/**/*.ts'],
       excludedFiles: ['packages/@uppy/**/*.test.ts', 'packages/@uppy/core/src/mocks/*.ts'],
       rules: {
         '@typescript-eslint/explicit-module-boundary-types': 'error',
@@ -516,6 +532,12 @@ module.exports = {
         'no-console': 'off',
         'no-only-tests/no-only-tests': 'error',
         'no-unused-expressions': 'off',
+      },
+    },
+    {
+      files: ["packages/@uppy/vue/**"],
+      rules: {
+        'react-hooks/rules-of-hooks': 'off',
       },
     },
   ],

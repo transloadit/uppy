@@ -6,7 +6,9 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 
 ```
 corepack yarn install
+corepack yarn build:clean
 corepack yarn build
+rm packages/@uppy/*/tsconfig.json
 corepack yarn workspace @uppy/angular prepublishOnly
 corepack yarn workspace @uppy-example/angular start
 ```

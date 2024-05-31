@@ -1,7 +1,7 @@
 import type { PartialTreeFolder } from '@uppy/core/lib/Uppy'
 import { h, Fragment } from 'preact'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
-import type ProviderView from './ProviderView'
+import type ProviderView from './ProviderView/index.js'
 
 type BreadcrumbsProps<M extends Meta, B extends Body> = {
   openFolder: ProviderView<M, B>['openFolder']

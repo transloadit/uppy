@@ -5,8 +5,8 @@ import getTextDirection from '@uppy/utils/lib/getTextDirection'
 
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import BasePlugin from './BasePlugin.ts'
-import type { PluginOpts } from './BasePlugin.ts'
-import type { State } from './Uppy.ts'
+import type { PluginOpts } from './BasePlugin.js'
+import type { State } from './Uppy.js'
 
 /**
  * Defer a frequent call to the microtask queue.
@@ -45,15 +45,15 @@ class UIPlugin<
   B extends Body,
   PluginState extends Record<string, unknown> = Record<string, unknown>,
 > extends BasePlugin<Opts, M, B, PluginState> {
-  #updateUI: (state: Partial<State<M, B>>) => void
+  #updateUI!: (state: Partial<State<M, B>>) => void
 
-  isTargetDOMEl: boolean
+  isTargetDOMEl!: boolean
 
-  el: HTMLElement | null
+  el!: HTMLElement | null
 
   parent: unknown
 
-  title: string
+  title!: string
 
   getTargetPlugin<Me extends Meta, Bo extends Body>(
     target: PluginTarget<Me, Bo>, // eslint-disable-line no-use-before-define
@@ -109,7 +109,7 @@ class UIPlugin<
       // API for plugins that require a synchronous rerender.
       this.#updateUI = debounce((state) => {
         // plugin could be removed, but this.rerender is debounced below,
-        // so it could still be called even after uppy.removePlugin or uppy.close
+        // so it could still be called even after uppy.removePlugin or uppy.destroy
         // hence the check
         if (!this.uppy.getPlugin(this.id)) return
         render(this.render(state), uppyRootElement)
@@ -137,7 +137,7 @@ class UIPlugin<
 
       this.onMount()
 
-      return this.el
+      return this.el!
     }
 
     const targetPlugin = this.getTargetPlugin(target)
@@ -148,7 +148,7 @@ class UIPlugin<
       this.el = targetPlugin.addTarget(plugin)
 
       this.onMount()
-      return this.el
+      return this.el!
     }
 
     this.uppy.log(`Not installing ${callerPluginName}`)

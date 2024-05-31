@@ -15,7 +15,7 @@ type Props = {
   buttonCSSClassName?: string
 }
 
-export default function SearchFilterInput(props: Props): JSX.Element {
+export default function SearchFilterInput(props: Props) {
   const {
     searchString,
     setSearchString,

@@ -1,5 +1,26 @@
 # @uppy/remote-sources
 
+## 2.0.0-beta.4
+
+Released: 2024-05-03
+Included in: Uppy v4.0.0-beta.5
+
+- @uppy/audio,@uppy/compressor,@uppy/core,@uppy/dashboard,@uppy/remote-sources,@uppy/tus,@uppy/utils: Format (Murderlon)
+
+## 2.0.0-beta.1
+
+Released: 2024-03-28
+Included in: Uppy v4.0.0-beta.1
+
+- @uppy/remote-sources: migrate to TS (Merlijn Vos / #5020)
+
+## 1.2.0
+
+Released: 2024-03-27
+Included in: Uppy v3.24.0
+
+- @uppy/remote-sources: migrate to TS (Merlijn Vos / #5020)
+
 ## 1.0.2
 
 Released: 2022-09-25

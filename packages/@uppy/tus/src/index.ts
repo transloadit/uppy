@@ -17,6 +17,7 @@ import {
 import type { Meta, Body, UppyFile } from '@uppy/utils/lib/UppyFile'
 import type { Uppy } from '@uppy/core'
 import type { RequestClient } from '@uppy/companion-client'
+import getAllowedMetaFields from '@uppy/utils/lib/getAllowedMetaFields'
 import getFingerprint from './getFingerprint.ts'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -36,6 +37,8 @@ type RestTusUploadOptions = Omit<
   'onShouldRetry' | 'onBeforeRequest' | 'headers'
 >
 
+export type TusDetailedError = tus.DetailedError
+
 export interface TusOpts<M extends Meta, B extends Body>
   extends PluginOpts,
     RestTusUploadOptions {
@@ -54,7 +57,7 @@ export interface TusOpts<M extends Meta, B extends Body>
   ) => boolean
   retryDelays?: number[]
   withCredentials?: boolean
-  allowedMetaFields?: string[]
+  allowedMetaFields?: boolean | string[]
   rateLimitedQueue?: RateLimitedQueue
 }
 
@@ -90,6 +93,7 @@ const defaultOptions = {
   limit: 20,
   retryDelays: tusDefaultOptions.retryDelays,
   withCredentials: false,
+  allowedMetaFields: true,
 } satisfies Partial<TusOpts<any, any>>
 
 type Opts<M extends Meta, B extends Body> = DefinePluginOpts<
@@ -425,11 +429,10 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
       // and we also don't care about the type specifically here,
       // we just want to pass the meta fields along.
       const meta: Record<string, string> = {}
-      const allowedMetaFields =
-        Array.isArray(opts.allowedMetaFields) ?
-          opts.allowedMetaFields
-          // Send along all fields by default.
-        : Object.keys(file.meta)
+      const allowedMetaFields = getAllowedMetaFields(
+        opts.allowedMetaFields,
+        file.meta,
+      )
       allowedMetaFields.forEach((item) => {
         // tus type definition for metadata only accepts `Record<string, string>`
         // but in reality (at runtime) it accepts `Record<string, unknown>`
@@ -498,11 +501,9 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
         upload.abort()
       })
 
-      eventManager.onCancelAll(file.id, ({ reason } = {}) => {
-        if (reason === 'user') {
-          queuedRequest.abort()
-          this.resetUploaderReferences(file.id, { abort: !!upload.url })
-        }
+      eventManager.onCancelAll(file.id, () => {
+        queuedRequest.abort()
+        this.resetUploaderReferences(file.id, { abort: !!upload.url })
         resolve(`upload ${file.id} was canceled`)
       })
 
@@ -541,6 +542,10 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
     if (file.tus) {
       // Install file-specific upload overrides.
       Object.assign(opts, file.tus)
+    }
+
+    if (typeof opts.headers === 'function') {
+      opts.headers = opts.headers(file)
     }
 
     return {

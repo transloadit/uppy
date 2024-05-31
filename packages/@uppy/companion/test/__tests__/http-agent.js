@@ -11,24 +11,24 @@ describe('test protected request Agent', () => {
   test('allows URLs without IP addresses', async () => {
     nock('https://transloadit.com').get('/').reply(200)
     const url = 'https://transloadit.com'
-    await getProtectedGot({ blockLocalIPs: true }).get(url)
+    return (await getProtectedGot({ allowLocalIPs: false })).get(url)
   })
 
   test('blocks url that resolves to forbidden IP', async () => {
     const url = 'https://localhost'
-    const promise = getProtectedGot({ blockLocalIPs: true }).get(url)
+    const promise = getProtectedGot({ allowLocalIPs: false }).then(got => got.get(url))
     await expect(promise).rejects.toThrow(/^Forbidden resolved IP address/)
   })
 
   test('blocks private http IP address', async () => {
     const url = 'http://172.20.10.4:8090'
-    const promise = getProtectedGot({ blockLocalIPs: true }).get(url)
+    const promise = getProtectedGot({ allowLocalIPs: false }).then(got => got.get(url))
     await expect(promise).rejects.toThrow(new Error(FORBIDDEN_IP_ADDRESS))
   })
 
   test('blocks private https IP address', async () => {
     const url = 'https://172.20.10.4:8090'
-    const promise = getProtectedGot({ blockLocalIPs: true }).get(url)
+    const promise = getProtectedGot({ allowLocalIPs: false }).then(got => got.get(url))
     await expect(promise).rejects.toThrow(new Error(FORBIDDEN_IP_ADDRESS))
   })
 
@@ -57,12 +57,12 @@ describe('test protected request Agent', () => {
 
     for (const ip of ipv4s) {
       const url = `http://${ip}:8090`
-      const promise = getProtectedGot({ blockLocalIPs: true }).get(url)
+      const promise = getProtectedGot({ allowLocalIPs: false }).then(got => got.get(url))
       await expect(promise).rejects.toThrow(new Error(FORBIDDEN_IP_ADDRESS))
     }
     for (const ip of ipv6s) {
       const url = `http://[${ip}]:8090`
-      const promise = getProtectedGot({ blockLocalIPs: true }).get(url)
+      const promise = getProtectedGot({ allowLocalIPs: false }).then(got => got.get(url))
       await expect(promise).rejects.toThrow(new Error(FORBIDDEN_IP_ADDRESS))
     }
   })

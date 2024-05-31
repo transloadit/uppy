@@ -2,13 +2,13 @@ import { h, type ComponentChild } from 'preact'
 
 import { UIPlugin } from '@uppy/core'
 import type { Uppy, UIPluginOptions } from '@uppy/core'
-import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin.ts'
+import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin'
 import type {
   Body,
   Meta,
   MinimalRequiredUppyFile,
 } from '@uppy/utils/lib/UppyFile.ts'
-import type { PluginTarget } from '@uppy/core/lib/UIPlugin.ts'
+import type { PluginTarget } from '@uppy/core/lib/UIPlugin'
 import getFileTypeExtension from '@uppy/utils/lib/getFileTypeExtension'
 import mimeTypes from '@uppy/utils/lib/mimeTypes'
 import isMobile from 'is-mobile'
@@ -59,7 +59,7 @@ function isModeAvailable<T>(modes: T[], mode: unknown): mode is T {
   return modes.includes(mode as T)
 }
 
-interface WebcamOptions<M extends Meta, B extends Body>
+export interface WebcamOptions<M extends Meta, B extends Body>
   extends UIPluginOptions {
   target?: PluginTarget<M, B>
   onBeforeSnapshot?: () => Promise<void>
@@ -69,7 +69,6 @@ interface WebcamOptions<M extends Meta, B extends Body>
   showVideoSourceDropdown?: boolean
   /** @deprecated */
   facingMode?: MediaTrackConstraints['facingMode'] // @TODO: remove in the next major
-  title?: string
   videoConstraints?: MediaTrackConstraints
   showRecordingLength?: boolean
   preferredImageMimeType?: string | null
@@ -125,7 +124,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
 
   private capturedMediaFile: MinimalRequiredUppyFile<M, B> | null
 
-  private icon: () => JSX.Element
+  private icon: () => h.JSX.Element
 
   private webcamActive
 

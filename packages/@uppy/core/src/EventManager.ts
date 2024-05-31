@@ -4,7 +4,7 @@ import type {
   Uppy,
   UppyEventMap,
   _UppyEventMap,
-} from './Uppy'
+} from './Uppy.js'
 
 /**
  * Create a wrapper around an event emitter with a `remove` method to remove
@@ -48,8 +48,8 @@ export default class EventManager<M extends Meta, B extends Body> {
     fileID: UppyFile<M, B>['id'],
     cb: (isPaused: boolean) => void,
   ): void {
-    this.on('upload-pause', (targetFileID, isPaused) => {
-      if (fileID === targetFileID) {
+    this.on('upload-pause', (file, isPaused) => {
+      if (fileID === file?.id) {
         cb(isPaused)
       }
     })
@@ -65,8 +65,8 @@ export default class EventManager<M extends Meta, B extends Body> {
   }
 
   onPause(fileID: UppyFile<M, B>['id'], cb: (isPaused: boolean) => void): void {
-    this.on('upload-pause', (targetFileID, isPaused) => {
-      if (fileID === targetFileID) {
+    this.on('upload-pause', (file, isPaused) => {
+      if (fileID === file?.id) {
         // const isPaused = this.#uppy.pauseResume(fileID)
         cb(isPaused)
       }
@@ -74,8 +74,8 @@ export default class EventManager<M extends Meta, B extends Body> {
   }
 
   onRetry(fileID: UppyFile<M, B>['id'], cb: () => void): void {
-    this.on('upload-retry', (targetFileID) => {
-      if (fileID === targetFileID) {
+    this.on('upload-retry', (file) => {
+      if (fileID === file?.id) {
         cb()
       }
     })

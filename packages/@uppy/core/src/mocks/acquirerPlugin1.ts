@@ -1,6 +1,6 @@
 import { vi } from 'vitest' // eslint-disable-line import/no-extraneous-dependencies
 import UIPlugin from '../UIPlugin.ts'
-import type Uppy from '../Uppy.ts'
+import type Uppy from '../Uppy.js'
 
 type mock = ReturnType<typeof vi.fn>
 
@@ -9,7 +9,7 @@ export default class TestSelector1 extends UIPlugin<any, any, any> {
 
   mocks: { run: mock; update: mock; uninstall: mock }
 
-  constructor(uppy: Uppy<any, any>, opts: any) {
+  constructor(uppy: Uppy<any, any>, opts?: any) {
     super(uppy, opts)
     this.type = 'acquirer'
     this.id = 'TestSelector1'

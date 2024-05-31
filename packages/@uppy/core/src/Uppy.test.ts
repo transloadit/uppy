@@ -7,6 +7,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import prettierBytes from '@transloadit/prettier-bytes'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
+import type { Locale } from '@uppy/utils/lib/Translator'
 import Core from './index.ts'
 import UIPlugin from './UIPlugin.ts'
 import BasePlugin, {
@@ -88,6 +89,7 @@ describe('src/Core', () => {
             this.bar = this.opts.bar
           }
         }
+        // @ts-expect-error missing mandatory option foo
         new Core().use(TestPlugin)
         new Core().use(TestPlugin, { foo: '', bar: '' })
         // @ts-expect-error boolean not allowed
@@ -361,7 +363,7 @@ describe('src/Core', () => {
     core.cancelAll()
 
     expect(coreCancelEventMock).toHaveBeenCalledWith(
-      { reason: 'user' },
+      undefined,
       undefined,
       undefined,
       undefined,
@@ -550,10 +552,10 @@ describe('src/Core', () => {
     core.on('cancel-all', coreCancelEventMock)
     core.on('state-update', coreStateUpdateEventMock)
 
-    core.close()
+    core.destroy()
 
     expect(coreCancelEventMock).toHaveBeenCalledWith(
-      { reason: 'user' },
+      undefined,
       undefined,
       undefined,
       undefined,
@@ -690,7 +692,7 @@ describe('src/Core', () => {
       })
       expect(core.getFile(fileId).progress).toEqual({
         percentage: 0,
-        bytesUploaded: 0,
+        bytesUploaded: false,
         bytesTotal: 17175,
         uploadComplete: false,
         uploadStarted: null,
@@ -717,7 +719,7 @@ describe('src/Core', () => {
       })
       expect(core.getFile(fileID).progress).toEqual({
         percentage: 0,
-        bytesUploaded: 0,
+        bytesUploaded: false,
         bytesTotal: 17175,
         uploadComplete: false,
         uploadStarted: null,
@@ -786,7 +788,7 @@ describe('src/Core', () => {
       })
       expect(core.getFile(fileId).progress).toEqual({
         percentage: 0,
-        bytesUploaded: 0,
+        bytesUploaded: false,
         bytesTotal: 17175,
         uploadComplete: false,
         uploadStarted: null,
@@ -813,7 +815,7 @@ describe('src/Core', () => {
       })
       expect(core.getFile(fileId).progress).toEqual({
         percentage: 0,
-        bytesUploaded: 0,
+        bytesUploaded: false,
         bytesTotal: 17175,
         uploadComplete: false,
         uploadStarted: null,
@@ -917,12 +919,12 @@ describe('src/Core', () => {
         isGhost: false,
         progress: {
           bytesTotal: 17175,
-          bytesUploaded: 0,
+          bytesUploaded: false,
           percentage: 0,
           uploadComplete: false,
           uploadStarted: null,
         },
-        remote: '',
+        remote: undefined,
         size: 17175,
         source: 'vi',
         type: 'image/jpeg',
@@ -1540,6 +1542,18 @@ describe('src/Core', () => {
     })
 
     it('should change restrictions on the fly', () => {
+      const fr_FR: Locale<0 | 1> = {
+        strings: {
+          youCanOnlyUploadFileTypes:
+            'Vous pouvez seulement téléverser: %{types}',
+        },
+        pluralize(n) {
+          if (n <= 1) {
+            return 0
+          }
+          return 1
+        },
+      }
       const core = new Core({
         restrictions: {
           allowedFileTypes: ['image/jpeg'],
@@ -1560,6 +1574,25 @@ describe('src/Core', () => {
       }
 
       core.setOptions({
+        locale: fr_FR,
+      })
+
+      try {
+        core.addFile({
+          source: 'vi',
+          name: 'foo1.png',
+          type: 'image/png',
+          // @ts-ignore
+          data: new File([sampleImage], { type: 'image/png' }),
+        })
+      } catch (err) {
+        expect(err).toMatchObject(
+          new Error('Vous pouvez seulement téléverser: image/jpeg'),
+        )
+      }
+
+      core.setOptions({
+        locale: fr_FR,
         restrictions: {
           allowedFileTypes: ['image/png'],
         },
@@ -1775,7 +1808,7 @@ describe('src/Core', () => {
 
       await uploadPromise
 
-      core.close()
+      core.destroy()
     })
 
     it('should estimate progress for unsized files', () => {
@@ -1819,7 +1852,7 @@ describe('src/Core', () => {
       // foo.jpg at 35%, bar.jpg at 0%
       expect(core.getState().totalProgress).toBe(18)
 
-      core.close()
+      core.destroy()
     })
 
     it('should calculate the total progress of all file uploads', () => {
@@ -1918,14 +1951,14 @@ describe('src/Core', () => {
 
       expect(core.getFile(file1.id).progress).toEqual({
         percentage: 0,
-        bytesUploaded: 0,
+        bytesUploaded: false,
         bytesTotal: 17175,
         uploadComplete: false,
         uploadStarted: null,
       })
       expect(core.getFile(file2.id).progress).toEqual({
         percentage: 0,
-        bytesUploaded: 0,
+        bytesUploaded: false,
         bytesTotal: 17175,
         uploadComplete: false,
         uploadStarted: null,

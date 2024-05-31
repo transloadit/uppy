@@ -1,5 +1,3 @@
-const got = require('got').default
-
 const Provider = require('../Provider')
 const { getURLMeta } = require('../../helpers/request')
 const logger = require('../../logger')
@@ -7,7 +5,9 @@ const { adaptData, sortImages } = require('./adapter')
 const { withProviderErrorHandling } = require('../providerErrors')
 const { prepareStream } = require('../../helpers/utils')
 
-const getClient = ({ token }) => got.extend({
+const got = require('../../got')
+
+const getClient = async ({ token }) => (await got).extend({
   prefixUrl: 'https://graph.facebook.com',
   headers: {
     authorization: `Bearer ${token}`,
@@ -15,7 +15,7 @@ const getClient = ({ token }) => got.extend({
 })
 
 async function getMediaUrl ({ token, id }) {
-  const body = await getClient({ token }).get(String(id), { searchParams: { fields: 'images' }, responseType: 'json' }).json()
+  const body = await (await getClient({ token })).get(String(id), { searchParams: { fields: 'images' }, responseType: 'json' }).json()
   const sortedImages = sortImages(body.images)
   return sortedImages[sortedImages.length - 1].source
 }
@@ -24,7 +24,7 @@ async function getMediaUrl ({ token, id }) {
  * Adapter for API https://developers.facebook.com/docs/graph-api/using-graph-api/
  */
 class Facebook extends Provider {
-  static get authProvider () {
+  static get oauthProvider () {
     return 'facebook'
   }
 
@@ -40,7 +40,7 @@ class Facebook extends Provider {
         qs.fields = 'icon,images,name,width,height,created_time'
       }
 
-      const client = getClient({ token })
+      const client = await getClient({ token })
 
       const [{ email }, list] = await Promise.all([
         client.get('me', { searchParams: { fields: 'email' }, responseType: 'json' }).json(),
@@ -53,7 +53,7 @@ class Facebook extends Provider {
   async download ({ id, token }) {
     return this.#withErrorHandling('provider.facebook.download.error', async () => {
       const url = await getMediaUrl({ token, id })
-      const stream = got.stream.get(url, { responseType: 'json' })
+      const stream = (await got).stream.get(url, { responseType: 'json' })
       await prepareStream(stream)
       return { stream }
     })
@@ -69,14 +69,14 @@ class Facebook extends Provider {
   async size ({ id, token }) {
     return this.#withErrorHandling('provider.facebook.size.error', async () => {
       const url = await getMediaUrl({ token, id })
-      const { size } = await getURLMeta(url, true)
+      const { size } = await getURLMeta(url)
       return size
     })
   }
 
   async logout ({ token }) {
     return this.#withErrorHandling('provider.facebook.logout.error', async () => {
-      await getClient({ token }).delete('me/permissions', { responseType: 'json' }).json()
+      await (await getClient({ token })).delete('me/permissions', { responseType: 'json' }).json()
       return { revoked: true }
     })
   }
@@ -86,7 +86,7 @@ class Facebook extends Provider {
     return withProviderErrorHandling({
       fn,
       tag,
-      providerName: Facebook.authProvider,
+      providerName: Facebook.oauthProvider,
       isAuthError: (response) => typeof response.body === 'object' && response.body?.error?.code === 190, // Invalid OAuth 2.0 Access Token
       getJsonErrorMessage: (body) => body?.error?.message,
     })

@@ -15,10 +15,11 @@ class ProgressTimeout {
 
   constructor(
     timeout: number,
-    timeoutHandler: Parameters<typeof setTimeout>[0],
+    // eslint-disable-next-line no-shadow
+    timeoutHandler: (timeout: number) => void,
   ) {
     this.#timeout = timeout
-    this.#onTimedOut = timeoutHandler
+    this.#onTimedOut = () => timeoutHandler(timeout)
   }
 
   progress(): void {

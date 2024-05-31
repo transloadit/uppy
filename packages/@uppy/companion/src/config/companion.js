@@ -16,7 +16,7 @@ const defaultOptions = {
     getKey: defaultGetKey,
     expires: 800, // seconds
   },
-  enableUrlEndpoint: true, // todo next major make this default false
+  enableUrlEndpoint: false,
   allowLocalUrls: false,
   periodicPingUrls: [],
   streamingUpload: false,
@@ -86,7 +86,13 @@ const validateConfig = (companionOptions) => {
     )
   }
 
-  const { providerOptions, periodicPingUrls } = companionOptions
+  const { providerOptions, periodicPingUrls, server } = companionOptions
+
+  if (server && server.path) {
+    // see https://github.com/transloadit/uppy/issues/4271
+    // todo fix the code so we can allow `/`
+    if (server.path === '/') throw new Error('If you want to use \'/\' as server.path, leave the \'path\' variable unset')
+  }
 
   if (providerOptions) {
     const deprecatedOptions = { microsoft: 'providerOptions.onedrive', google: 'providerOptions.drive', s3: 's3' }

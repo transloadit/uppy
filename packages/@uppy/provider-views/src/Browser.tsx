@@ -26,9 +26,7 @@ type BrowserProps<M extends Meta, B extends Body> = {
   loadAllFiles: boolean
 }
 
-function Browser<M extends Meta, B extends Body>(
-  props: BrowserProps<M, B>,
-): JSX.Element {
+function Browser<M extends Meta, B extends Body>(props: BrowserProps<M, B>) {
   const {
     displayedPartialTree,
     viewType,

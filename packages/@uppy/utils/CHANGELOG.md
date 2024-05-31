@@ -1,5 +1,57 @@
 # @uppy/utils
 
+## 6.0.0-beta.5
+
+Released: 2024-05-03
+Included in: Uppy v4.0.0-beta.5
+
+- @uppy/audio,@uppy/compressor,@uppy/core,@uppy/dashboard,@uppy/remote-sources,@uppy/tus,@uppy/utils: Format (Murderlon)
+
+## 6.0.0-beta.4
+
+Released: 2024-04-29
+Included in: Uppy v4.0.0-beta.4
+
+- @uppy/utils: fix fetcher export (Murderlon)
+- @uppy/utils: improve return type of `dataURItoFile` (Antoine du Hamel / #5112)
+- @uppy/utils: add fetcher (Merlijn Vos / #5073)
+
+## 6.0.0-beta.1
+
+Released: 2024-03-28
+Included in: Uppy v4.0.0-beta.1
+
+- @uppy/aws-s3-multipart,@uppy/tus,@uppy/utils,@uppy/xhr-upload: Make `allowedMetaFields` consistent (Merlijn Vos / #5011)
+- @uppy/utils: fix `RateLimitedQueue#wrapPromiseFunction` types (Antoine du Hamel / #5007)
+- @uppy/utils: fix `findAllDOMElements` type (Antoine du Hamel / #4997)
+- @uppy/utils: fix `AbortablePromise` type (Antoine du Hamel / #4988)
+- @uppy/utils: migrate RateLimitedQueue to TS (Merlijn Vos / #4981)
+
+
+## 5.9.0
+
+Released: 2024-04-29
+Included in: Uppy v3.25.0
+
+- @uppy/utils: improve return type of `dataURItoFile` (Antoine du Hamel / #5112)
+
+## 5.8.0
+
+Released: 2024-04-16
+Included in: Uppy v3.24.3
+
+- @uppy/utils: add fetcher (Merlijn Vos / #5073)
+
+## 5.7.5
+
+Released: 2024-03-27
+Included in: Uppy v3.24.0
+
+- @uppy/utils: fix `RateLimitedQueue#wrapPromiseFunction` types (Antoine du Hamel / #5007)
+- @uppy/utils: fix `findAllDOMElements` type (Antoine du Hamel / #4997)
+- @uppy/utils: fix `AbortablePromise` type (Antoine du Hamel / #4988)
+- @uppy/utils: migrate RateLimitedQueue to TS (Merlijn Vos / #4981)
+
 ## 5.7.4
 
 Released: 2024-02-28

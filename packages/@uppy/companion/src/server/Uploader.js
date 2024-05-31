@@ -2,29 +2,21 @@
 const tus = require('tus-js-client')
 const { randomUUID } = require('node:crypto')
 const validator = require('validator')
-const got = require('got').default
-const { pipeline: pipelineCb } = require('node:stream')
+const { pipeline } = require('node:stream/promises')
 const { join } = require('node:path')
 const fs = require('node:fs')
-const { promisify } = require('node:util')
-const FormData = require('form-data')
 const throttle = require('lodash/throttle')
+const { once } = require('node:events')
 
 const { Upload } = require('@aws-sdk/lib-storage')
 
 const { rfc2047EncodeMetadata, getBucket } = require('./helpers/utils')
 
-// TODO move to `require('streams/promises').pipeline` when dropping support for Node.js 14.x.
-const pipeline = promisify(pipelineCb)
+const got = require('./got')
 
 const { createReadStream, createWriteStream, ReadStream } = fs
 const { stat, unlink } = fs.promises
 
-/** @type {any} */
-// @ts-ignore - typescript resolves this this to a hoisted version of
-// serialize-error that ships with a declaration file, we are using a version
-// here that does not have a declaration file
-const serializeError = require('serialize-error') // eslint-disable-line import/order
 const emitter = require('./emitter')
 const { jsonStringify, hasMatch } = require('./helpers/utils')
 const logger = require('./logger')
@@ -45,23 +37,8 @@ function exceedsMaxFileSize(maxFileSize, size) {
   return maxFileSize && size && size > maxFileSize
 }
 
-// TODO remove once we migrate away from form-data
-function sanitizeMetadata(inputMetadata) {
-  if (inputMetadata == null) return {}
-
-  const outputMetadata = {}
-  Object.keys(inputMetadata).forEach((key) => {
-    outputMetadata[key] = String(inputMetadata[key])
-  })
-  return outputMetadata
-}
-
 class ValidationError extends Error {
-  constructor(message) {
-    super(message)
-
-    this.name = 'ValidationError'
-  }
+  name = 'ValidationError'
 }
 
 /**
@@ -142,7 +119,25 @@ const states = {
   done: 'done',
 }
 
+class StreamableBlob {
+  #stream
+
+  constructor(stream) {
+    this.#stream = stream
+  }
+
+  stream(){
+    return this.#stream
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  get [Symbol.toStringTag]() { return "File" }
+}
+
 class Uploader {
+  /** @type {import('ioredis').Redis} */
+  storage
+
   /**
    * Uploads file to destination based on the supplied protocol (tus, s3-multipart, multipart)
    * For tus uploads, the deferredLength option is enabled, because file size value can be unreliable
@@ -172,7 +167,7 @@ class Uploader {
     this.options = options
     this.token = randomUUID()
     this.fileName = `${Uploader.FILE_NAME_PREFIX}-${this.token}`
-    this.options.metadata = sanitizeMetadata(this.options.metadata)
+    this.options.metadata = this.options.metadata || {}
     this.options.fieldname = this.options.fieldname || DEFAULT_FIELD_NAME
     this.size = options.size
     this.uploadFileName = this.options.metadata.name
@@ -330,7 +325,7 @@ class Uploader {
         return
       }
       logger.error(err, 'uploader.error', this.shortToken)
-      this.#emitError(err)
+      await this.#emitError(err)
     } finally {
       emitter().removeAllListeners(`pause:${this.token}`)
       emitter().removeAllListeners(`resume:${this.token}`)
@@ -390,33 +385,9 @@ class Uploader {
   async awaitReady(timeout) {
     logger.debug('waiting for socket connection', 'uploader.socket.wait', this.shortToken)
 
-    // TODO: replace the Promise constructor call when dropping support for Node.js <16 with
-    // await once(emitter, eventName, timeout && { signal: AbortSignal.timeout(timeout) })
-    await new Promise((resolve, reject) => {
-      const eventName = `connection:${this.token}`
-      let timer
-      let onEvent
-
-      function cleanup() {
-        emitter().removeListener(eventName, onEvent)
-        clearTimeout(timer)
-      }
-
-      if (timeout) {
-        // Need to timeout after a while, or we could leak emitters
-        timer = setTimeout(() => {
-          cleanup()
-          reject(new Error('Timed out waiting for socket connection'))
-        }, timeout)
-      }
-
-      onEvent = () => {
-        cleanup()
-        resolve()
-      }
-
-      emitter().once(eventName, onEvent)
-    })
+    const eventName = `connection:${this.token}`
+    // eslint-disable-next-line compat/compat
+    await once(emitter(), eventName, timeout && { signal: AbortSignal.timeout(timeout) })
 
     logger.debug('socket connection received', 'uploader.socket.wait', this.shortToken)
   }
@@ -431,9 +402,7 @@ class Uploader {
     // https://github.com/transloadit/uppy/issues/3748
     const keyExpirySec = 60 * 60 * 24
     const redisKey = `${Uploader.STORAGE_PREFIX}:${this.token}`
-    this.storage.set(redisKey, jsonStringify(state), {
-      EX: keyExpirySec,
-    })
+    this.storage.set(redisKey, jsonStringify(state), 'EX', keyExpirySec)
   }
 
   throttledEmitProgress = throttle((dataToEmit) => {
@@ -501,15 +470,15 @@ class Uploader {
    *
    * @param {Error} err
    */
-  #emitError(err) {
+  async #emitError(err) {
     // delete stack to avoid sending server info to client
-    // todo remove also extraData from serializedErr in next major,
     // see PR discussion https://github.com/transloadit/uppy/pull/3832
+    // @ts-ignore
+    const { serializeError } = await import('serialize-error')
     const { stack, ...serializedErr } = serializeError(err)
     const dataToEmit = {
       action: 'error',
-      // @ts-ignore
-      payload: { ...err.extraData, error: serializedErr },
+      payload: { error: serializedErr },
     }
     this.saveState(dataToEmit)
     emitter().emit(this.token, dataToEmit)
@@ -613,16 +582,15 @@ class Uploader {
     }
 
     if (this.options.useFormData) {
-      // todo refactor once upgraded to got 12
       const formData = new FormData()
 
       Object.entries(this.options.metadata).forEach(([key, value]) => formData.append(key, value))
 
-      formData.append(this.options.fieldname, stream, {
-        filename: this.uploadFileName,
-        contentType: this.options.metadata.type,
-        knownLength: this.size,
-      })
+      formData.append(
+        this.options.fieldname,
+        // @ts-expect-error Our StreamableBlob is actually spec compliant enough for our purpose
+        new StreamableBlob(stream),
+        this.uploadFileName)
 
       reqOptions.body = formData
     } else {
@@ -632,7 +600,7 @@ class Uploader {
 
     try {
       const httpMethod = (this.options.httpMethod || '').toUpperCase() === 'PUT' ? 'put' : 'post'
-      const runRequest = got[httpMethod]
+      const runRequest = (await got)[httpMethod]
 
       const response = await runRequest(url, reqOptions)
 
@@ -662,7 +630,7 @@ class Uploader {
           extraData: getRespObj(err.response),
         })
       }
-      throw new Error('Unknown multipart upload error')
+      throw new Error('Unknown multipart upload error', {cause: err})
     }
   }
 
@@ -705,7 +673,6 @@ class Uploader {
 
     const data = await upload.done()
     return {
-      // @ts-expect-error For some reason `|| null` is not enough for TS
       url: data?.Location || null,
       extraData: {
         response: {

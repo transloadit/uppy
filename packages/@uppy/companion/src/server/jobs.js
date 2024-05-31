@@ -1,14 +1,12 @@
 const schedule = require('node-schedule')
 const fs = require('node:fs')
 const path = require('node:path')
-const { promisify } = require('node:util')
-const got = require('got').default
+const { setTimeout: sleep } = require('node:timers/promises')
+
+const got = require('./got')
 
 const { FILE_NAME_PREFIX } = require('./Uploader')
 const logger = require('./logger')
-
-// TODO rewrite to use require('timers/promises').setTimeout when we support newer node versions
-const sleep = promisify(setTimeout)
 
 const cleanUpFinishedUploads = (dirPath) => {
   logger.info(`running clean up job for path: ${dirPath}`, 'jobs.cleanup.progress.read')
@@ -65,7 +63,7 @@ async function runPeriodicPing ({ urls, payload, requestTimeout }) {
   // Run requests in parallel
   await Promise.all(urls.map(async (url) => {
     try {
-      await got.post(url, { json: payload, timeout: { request: requestTimeout } })
+      await (await got).post(url, { json: payload, timeout: { request: requestTimeout } })
     } catch (err) {
       logger.warn(err, 'jobs.periodic.ping')
     }
