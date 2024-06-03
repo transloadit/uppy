@@ -61,7 +61,9 @@ export type UnknownPlugin<
   PluginState extends Record<string, unknown> = Record<string, unknown>,
 > = BasePlugin<any, M, B, PluginState>
 
-// ids are always `string`s, except the root folder's id can be `null`
+/**
+ * ids are always `string`s, except the root folder's id can be `null`
+ */
 export type PartialTreeId = string | null
 
 export type PartialTreeStatusFile = 'checked' | 'unchecked'
@@ -71,8 +73,14 @@ export type PartialTreeFile = {
   type: 'file'
   id: string
 
-  // There exist individual restrictions (`allowedFileTypes`, `minFileSize`, `maxFileSize`), and aggregate restrictions (`maxNumberOfFiles`, `maxTotalFileSize`).
-  // .restrictionError reports whether this file passes individual restrictions.
+  /**
+   * There exist two types of restrictions:
+   * - individual restrictions (`allowedFileTypes`, `minFileSize`, `maxFileSize`), and
+   * - aggregate restrictions (`maxNumberOfFiles`, `maxTotalFileSize`).
+   * 
+   * `.restrictionError` reports whether this file passes individual restrictions.
+   * 
+   */
   restrictionError: string | null
 
   status: PartialTreeStatusFile
@@ -84,14 +92,14 @@ export type PartialTreeFolderNode = {
   type: 'folder'
   id: string
 
+  /**
+   * Consider `(.nextPagePath, .cached)` a composite key that can represent 4 states:
+   * - `{ cached: true, nextPagePath: null }` - we fetched all pages in this folder
+   * - `{ cached: true, nextPagePath: 'smth' }` - we fetched 1st page, and there are still pages left to fetch in this folder
+   * - `{ cached: false, nextPagePath: null }` - we didn't fetch the 1st page in this folder
+   * - `{ cached: false, nextPagePath: 'someString' }` - ❌ CAN'T HAPPEN ❌
+   */
   cached: boolean
-  // .nextPagePath can be:
-  // `null` - *strictly*
-  //          when { cached: true } and we fetched all pages already
-  //          OR
-  //          when { cached: false } and our .nextPagePath is simply .id
-  // string - *strictly* when { cached: true } and there are still pages to fetch.
-  // So, consider .cached and .nextPagePath a composite key of sorts, their combination creates a specific meaning.
   nextPagePath: PartialTreeId
 
   status: PartialTreeStatus
@@ -109,18 +117,29 @@ export type PartialTreeFolderRoot = {
 
 export type PartialTreeFolder = PartialTreeFolderNode | PartialTreeFolderRoot
 
+/**
+ * PartialTree has the following structure.
+ *
+ *           FolderRoot     
+ *         ┌─────┴─────┐    
+ *     FolderNode     File  
+ *   ┌─────┴────┐           
+ *  File      File          
+ *
+ * Root folder is called `PartialTreeFolderRoot`,  
+ * all other folders are called `PartialTreeFolderNode`, because they are "internal nodes".
+ *
+ * It's possible for `PartialTreeFolderNode` to be a leaf node if it doesn't contain any files.
+ */
 export type PartialTree = (PartialTreeFile | PartialTreeFolder)[]
 
-// `OmitFirstArg<typeof someArray>` is the type of the returned value of `someArray.slice(1)`.
-
-type OmitFirstArg<T> = T extends [any, ...infer U] ? U : never
 export type UnknownProviderPluginState = {
   authenticated: boolean | undefined
   didFirstRender: boolean
   searchString: string
   loading: boolean | string
   partialTree: PartialTree
-  currentFolderId: string | null
+  currentFolderId: PartialTreeId
   username: string | null
 }
 /*
@@ -342,6 +361,9 @@ export interface DeprecatedUppyEventMap<M extends Meta, B extends Body> {
 export interface UppyEventMap<M extends Meta, B extends Body>
   extends _UppyEventMap<M, B>,
     DeprecatedUppyEventMap<M, B> {}
+
+/** `OmitFirstArg<typeof someArray>` is the type of the returned value of `someArray.slice(1)`. */
+type OmitFirstArg<T> = T extends [any, ...infer U] ? U : never
 
 const defaultUploadState = {
   totalProgress: 0,

@@ -3,12 +3,13 @@ import type {
   PartialTreeFile,
   PartialTreeFolder,
   PartialTreeFolderNode,
+  PartialTreeId,
 } from '@uppy/core/lib/Uppy'
 import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
 
 const afterScrollFolder = (
   oldPartialTree: PartialTree,
-  currentFolderId: string | null,
+  currentFolderId: PartialTreeId,
   items: CompanionFile[],
   nextPagePath: string | null,
   validateSingleFile: (file: CompanionFile) => string | null,
