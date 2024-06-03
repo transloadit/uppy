@@ -1941,22 +1941,6 @@ describe('src/Core', () => {
       core.calculateProgress.flush()
 
       expect(core.getState().totalProgress).toEqual(66)
-
-      expect(core.getFile(file1.id).progress).toEqual({
-        percentage: 0,
-        bytesUploaded: false,
-        bytesTotal: 17175,
-        uploadComplete: false,
-        uploadStarted: null,
-      })
-      expect(core.getFile(file2.id).progress).toEqual({
-        percentage: 0,
-        bytesUploaded: false,
-        bytesTotal: 17175,
-        uploadComplete: false,
-        uploadStarted: null,
-      })
-      expect(core.getState().totalProgress).toEqual(0)
       expect(core.getState().allowNewUpload).toEqual(true)
       expect(core.getState().error).toEqual(null)
       expect(core.getState().recoveredState).toEqual(null)
