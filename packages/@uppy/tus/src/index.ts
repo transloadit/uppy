@@ -147,22 +147,6 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
 
     this.uploaders = Object.create(null)
     this.uploaderEvents = Object.create(null)
-
-    this.handleResetProgress = this.handleResetProgress.bind(this)
-  }
-
-  handleResetProgress(): void {
-    const files = { ...this.uppy.getState().files }
-    Object.keys(files).forEach((fileID) => {
-      // Only clone the file object if it has a Tus `uploadUrl` attached.
-      if (files[fileID]?.tus?.uploadUrl) {
-        const tusState = { ...files[fileID].tus }
-        delete tusState.uploadUrl
-        files[fileID] = { ...files[fileID], tus: tusState }
-      }
-    })
-
-    this.uppy.setState({ files })
   }
 
   /**
@@ -623,8 +607,6 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
       },
     })
     this.uppy.addUploader(this.#handleUpload)
-
-    this.uppy.on('reset-progress', this.handleResetProgress)
   }
 
   uninstall(): void {

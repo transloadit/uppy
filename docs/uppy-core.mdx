@@ -1328,17 +1328,6 @@ uppy.on('restriction-failed', (file, error) => {
 });
 ```
 
-#### `reset-progress`
-
-Fired when `resetProgress()` is called, each file has its upload progress reset
-to zero.
-
-```js
-uppy.on('reset-progress', () => {
-	// progress was reset
-});
-```
-
 ## `new BasePlugin(uppy, options?)`
 
 The initial building block for a plugin.

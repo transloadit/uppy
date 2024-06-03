@@ -1899,10 +1899,8 @@ describe('src/Core', () => {
       expect(core.getState().totalProgress).toEqual(66)
     })
 
-    it('should reset the progress', () => {
-      const resetProgressEvent = vi.fn()
+    it('should emit the progress', () => {
       const core = new Core()
-      core.on('reset-progress', resetProgressEvent)
 
       core.addFile({
         source: 'vi',
@@ -1944,8 +1942,6 @@ describe('src/Core', () => {
 
       expect(core.getState().totalProgress).toEqual(66)
 
-      core.resetProgress()
-
       expect(core.getFile(file1.id).progress).toEqual({
         percentage: 0,
         bytesUploaded: false,
@@ -1964,8 +1960,6 @@ describe('src/Core', () => {
       expect(core.getState().allowNewUpload).toEqual(true)
       expect(core.getState().error).toEqual(null)
       expect(core.getState().recoveredState).toEqual(null)
-
-      expect(resetProgressEvent.mock.calls.length).toEqual(1)
     })
   })
 
