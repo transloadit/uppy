@@ -22,7 +22,7 @@ const defaultProps = {
   buttonLabel: '',
 }
 
-export default function SearchFilterInput(props: Props) {
+export default function SearchInput(props: Props) {
   const {
     searchString,
     setSearchString,
@@ -100,4 +100,4 @@ export default function SearchFilterInput(props: Props) {
   )
 }
 
-SearchFilterInput.defaultProps = defaultProps
+SearchInput.defaultProps = defaultProps

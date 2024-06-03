@@ -13,7 +13,7 @@ import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
 import classNames from 'classnames'
 import type { ValidateableFile } from '@uppy/core/lib/Restricter.ts'
 import remoteFileObjToLocal from '@uppy/utils/lib/remoteFileObjToLocal'
-import SearchFilterInput from '../SearchFilterInput.tsx'
+import SearchInput from '../SearchInput.tsx'
 import Browser from '../Browser.tsx'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -291,7 +291,7 @@ export default class SearchProviderView<M extends Meta, B extends Body> {
 
     if (isInputMode) {
       return (
-        <SearchFilterInput
+        <SearchInput
           searchString={searchString}
           setSearchString={this.setSearchString}
           submitSearchString={this.search}
@@ -312,7 +312,7 @@ export default class SearchProviderView<M extends Meta, B extends Body> {
         )}
       >
         {opts.showFilter && (
-          <SearchFilterInput
+          <SearchInput
             searchString={searchString}
             setSearchString={this.setSearchString}
             submitSearchString={this.search}

@@ -25,7 +25,7 @@ import PartialTreeUtils from '../utils/PartialTreeUtils/index.ts'
 import shouldHandleScroll from '../utils/shouldHandleScroll.ts'
 import handleError from '../utils/handleError.ts'
 import getClickedRange from '../utils/getClickedRange.ts'
-import SearchFilterInput from '../SearchFilterInput.tsx'
+import SearchInput from '../SearchInput.tsx'
 import FooterActions from '../FooterActions.tsx'
 import addFiles from '../utils/addFiles.ts'
 import getCheckedFilesWithPaths from '../utils/PartialTreeUtils/getCheckedFilesWithPaths.ts'
@@ -465,7 +465,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
         />
 
         {opts.showFilter && (
-          <SearchFilterInput
+          <SearchInput
             searchString={searchString}
             setSearchString={(s: string) => {
               this.plugin.setPluginState({ searchString: s })
