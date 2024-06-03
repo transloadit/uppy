@@ -23,10 +23,7 @@ import type {
   CompanionClientProvider,
   CompanionClientSearchProvider,
 } from '@uppy/utils/lib/CompanionClientProvider'
-import type {
-  FileProgressNotStarted,
-  FileProgressStarted,
-} from '@uppy/utils/lib/FileProgress'
+import type { FileProgressStarted } from '@uppy/utils/lib/FileProgress'
 import type {
   Locale,
   I18n,
