@@ -6,13 +6,20 @@ type Props = {
   setSearchString: (s: string) => void
   submitSearchString: () => void
 
-  showButton?: boolean
-  inputLabel: string
-  clearSearchLabel?: string
-  buttonLabel?: string
   wrapperClassName: string
   inputClassName: string
-  buttonCSSClassName?: string
+
+  inputLabel: string
+  clearSearchLabel?: string
+
+  showButton?: boolean
+  buttonLabel?: string
+}
+
+const defaultProps = {
+  showButton: false,
+  clearSearchLabel: '',
+  buttonLabel: '',
 }
 
 export default function SearchFilterInput(props: Props) {
@@ -27,7 +34,6 @@ export default function SearchFilterInput(props: Props) {
     buttonLabel,
     wrapperClassName,
     inputClassName,
-    buttonCSSClassName,
   } = props
 
   const onSubmit = (e: Event) => {
@@ -70,9 +76,7 @@ export default function SearchFilterInput(props: Props) {
           type="button"
           aria-label={clearSearchLabel}
           title={clearSearchLabel}
-          onClick={() => {
-            setSearchString('')
-          }}
+          onClick={() => setSearchString('')}
         >
           <svg
             aria-hidden="true"
@@ -86,7 +90,7 @@ export default function SearchFilterInput(props: Props) {
       )}
       {showButton && (
         <button
-          className={`uppy-u-reset uppy-c-btn uppy-c-btn-primary ${buttonCSSClassName}`}
+          className="uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-SearchProvider-searchButton"
           type="submit"
         >
           {buttonLabel}
@@ -95,3 +99,5 @@ export default function SearchFilterInput(props: Props) {
     </form>
   )
 }
+
+SearchFilterInput.defaultProps = defaultProps

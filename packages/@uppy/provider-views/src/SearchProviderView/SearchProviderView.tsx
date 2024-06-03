@@ -299,7 +299,6 @@ export default class SearchProviderView<M extends Meta, B extends Body> {
           buttonLabel={i18n('searchImages')}
           wrapperClassName="uppy-SearchProvider"
           inputClassName="uppy-c-textInput uppy-SearchProvider-input"
-          buttonCSSClassName="uppy-SearchProvider-searchButton"
           showButton
         />
       )
