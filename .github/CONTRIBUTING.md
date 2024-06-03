@@ -286,6 +286,7 @@ mkdir -p .git && npm version --workspaces-update=false --tag-version-prefix='@up
 ```
 
 **Important:** Build Companion lib folder
+
 ```bash
 yarn run build
 ```
