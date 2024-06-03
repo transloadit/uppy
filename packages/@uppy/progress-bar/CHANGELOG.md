@@ -1,5 +1,19 @@
 # @uppy/progress-bar
 
+## 3.1.1
+
+Released: 2024-03-27
+Included in: Uppy v3.24.0
+
+- @uppy/drag-drop,@uppy/progress-bar: add missing exports (Antoine du Hamel / #5009)
+
+## 3.1.0
+
+Released: 2024-02-28
+Included in: Uppy v3.23.0
+
+- @uppy/progress-bar: refactor to TypeScript (Mikael Finstad / #4921)
+
 ## 3.0.1
 
 Released: 2022-09-25

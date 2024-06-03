@@ -1,5 +1,26 @@
 # @uppy/onedrive
 
+## 3.3.0
+
+Released: 2024-03-27
+Included in: Uppy v3.24.0
+
+- @uppy/onedrive: refactor to TypeScript (Murderlon / #4979)
+
+## 3.2.1
+
+Released: 2024-02-28
+Included in: Uppy v3.23.0
+
+- @uppy/onedrive: fix custom oauth2 credentials for onedrive (Mikael Finstad / #4968)
+
+## 3.1.2
+
+Released: 2023-07-13
+Included in: Uppy v3.12.0
+
+- @uppy/box,@uppy/companion,@uppy/dropbox,@uppy/google-drive,@uppy/onedrive,@uppy/provider-views: Load Google Drive / OneDrive lists 5-10x faster & always load all files (Merlijn Vos / #4513)
+
 ## 3.0.1
 
 Released: 2022-09-25

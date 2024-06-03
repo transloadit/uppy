@@ -5,7 +5,7 @@ const morgan = require('morgan')
 const { URL } = require('node:url')
 const session = require('express-session')
 const addRequestId = require('express-request-id')()
-const connectRedis = require('connect-redis')
+const RedisStore = require('connect-redis').default
 
 const logger = require('../server/logger')
 const redis = require('../server/redis')
@@ -17,7 +17,7 @@ const { getCompanionOptions, generateSecret, buildHelpfulStartupMessage } = requ
  *
  * @returns {object}
  */
-module.exports = function server (inputCompanionOptions) {
+module.exports = function server(inputCompanionOptions) {
   const companionOptions = getCompanionOptions(inputCompanionOptions)
 
   companion.setLoggerProcessName(companionOptions)
@@ -52,7 +52,7 @@ module.exports = function server (inputCompanionOptions) {
    *   censored: boolean
    * }}
    */
-  function censorQuery (rawQuery) {
+  function censorQuery(rawQuery) {
     /** @type {Record<string, any>} */
     const query = {}
     let censored = false
@@ -109,9 +109,8 @@ module.exports = function server (inputCompanionOptions) {
     saveUninitialized: true,
   }
 
-  if (companionOptions.redisUrl) {
-    const RedisStore = connectRedis(session)
-    const redisClient = redis.client(companionOptions)
+  const redisClient = redis.client(companionOptions)
+  if (redisClient) {
     // todo next major: change default prefix to something like "companion-session:" and possibly remove this option
     sessionOptions.store = new RedisStore({ client: redisClient, prefix: process.env.COMPANION_REDIS_EXPRESS_SESSION_PREFIX || 'sess:' })
   }
@@ -173,7 +172,7 @@ module.exports = function server (inputCompanionOptions) {
     if (app.get('env') === 'production') {
       // if the error is a URIError from the requested URL we only log the error message
       // to avoid uneccessary error alerts
-      if (err.status === 400 && err instanceof URIError) {
+      if (err.status === 400 && err.name === 'URIError') {
         logger.error(err.message, 'root.error', req.id)
       } else {
         logger.error(err, 'root.error', req.id)

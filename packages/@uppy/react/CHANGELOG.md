@@ -1,5 +1,33 @@
 # @uppy/react
 
+## 3.3.0
+
+Released: 2024-03-27
+Included in: Uppy v3.24.0
+
+- @uppy/react: refactor to TS (Antoine du Hamel / #5012)
+
+## 3.2.1
+
+Released: 2023-11-12
+Included in: Uppy v3.19.1
+
+- @uppy/react: Revert "@uppy/react: add useUppyState (#4711)" (Artur Paikin / #4789)
+
+## 3.2.0
+
+Released: 2023-11-08
+Included in: Uppy v3.19.0
+
+- @uppy/react: add useUppyState (Merlijn Vos / #4711)
+
+## 3.1.3
+
+Released: 2023-07-13
+Included in: Uppy v3.12.0
+
+- @uppy/react: allow `id` from props (Merlijn Vos / #4570)
+
 ## 3.1.0
 
 Released: 2023-01-26

@@ -27,7 +27,7 @@ async function fetchKeys (url, providerName, credentialRequestParams) {
 }
 
 /**
- * Fetches for a providers OAuth credentials. If the config for thtat provider allows fetching
+ * Fetches for a providers OAuth credentials. If the config for that provider allows fetching
  * of the credentials via http, and the `credentialRequestParams` argument is provided, the oauth
  * credentials will be fetched via http. Otherwise, the credentials provided via companion options
  * will be used instead.
@@ -69,41 +69,45 @@ async function fetchProviderKeys (providerName, companionOptions, credentialRequ
  * @returns {import('express').RequestHandler}
  */
 exports.getCredentialsOverrideMiddleware = (providers, companionOptions) => {
-  return (req, res, next) => {
-    const { authProvider, override } = req.params
-    const [providerName] = Object.keys(providers).filter((name) => providers[name].authProvider === authProvider)
-    if (!providerName) {
-      next()
-      return
-    }
+  return async (req, res, next) => {
+    try {
+      const { authProvider, override } = req.params
+      const [providerName] = Object.keys(providers).filter((name) => providers[name].authProvider === authProvider)
+      if (!providerName) {
+        next()
+        return
+      }
 
-    if (!companionOptions.providerOptions[providerName]?.credentialsURL) {
-      next()
-      return
-    }
+      if (!companionOptions.providerOptions[providerName]?.credentialsURL) {
+        next()
+        return
+      }
 
-    const dynamic = oAuthState.getDynamicStateFromRequest(req)
-    // only use state via session object if user isn't making intial "connect" request.
-    // override param indicates subsequent requests from the oauth flow
-    const state = override ? dynamic : req.query.state
-    if (!state) {
-      next()
-      return
-    }
+      const grantDynamic = oAuthState.getGrantDynamicFromRequest(req)
+      // only use state via session object if user isn't making intial "connect" request.
+      // override param indicates subsequent requests from the oauth flow
+      const state = override ? grantDynamic.state : req.query.state
+      if (!state) {
+        next()
+        return
+      }
 
-    const preAuthToken = oAuthState.getFromState(state, 'preAuthToken', companionOptions.secret)
-    if (!preAuthToken) {
-      next()
-      return
-    }
+      const preAuthToken = oAuthState.getFromState(state, 'preAuthToken', companionOptions.secret)
+      if (!preAuthToken) {
+        next()
+        return
+      }
 
-    const { err, payload } = tokenService.verifyEncryptedToken(preAuthToken, companionOptions.preAuthSecret)
-    if (err || !payload) {
-      next()
-      return
-    }
+      let payload
+      try {
+        payload = tokenService.verifyEncryptedToken(preAuthToken, companionOptions.preAuthSecret)
+      } catch (err) {
+        next()
+        return
+      }
 
-    fetchProviderKeys(providerName, companionOptions, payload).then((credentials) => {
+      const credentials = await fetchProviderKeys(providerName, companionOptions, payload)
+
       res.locals.grant = {
         dynamic: {
           key: credentials.key,
@@ -116,7 +120,7 @@ exports.getCredentialsOverrideMiddleware = (providers, companionOptions) => {
       }
 
       next()
-    }).catch((keyErr) => {
+    } catch (keyErr) {
       // TODO we should return an html page here that can communicate the error
       // back to the Uppy client, just like /send-token does
       res.send(`
@@ -134,7 +138,7 @@ exports.getCredentialsOverrideMiddleware = (providers, companionOptions) => {
         </body>
         </html>
       `)
-    })
+    }
   }
 }
 

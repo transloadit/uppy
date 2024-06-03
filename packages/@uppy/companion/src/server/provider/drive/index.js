@@ -5,8 +5,19 @@ const logger = require('../../logger')
 const { VIRTUAL_SHARED_DIR, adaptData, isShortcut, isGsuiteFile, getGsuiteExportType } = require('./adapter')
 const { withProviderErrorHandling } = require('../providerErrors')
 const { prepareStream } = require('../../helpers/utils')
+const { MAX_AGE_REFRESH_TOKEN } = require('../../helpers/jwt')
+const { ProviderAuthError } = require('../error')
 
-const DRIVE_FILE_FIELDS = 'kind,id,imageMediaMetadata,name,mimeType,ownedByMe,permissions(role,emailAddress),size,modifiedTime,iconLink,thumbnailLink,teamDriveId,videoMediaMetadata,shortcutDetails(targetId,targetMimeType)'
+
+// For testing refresh token:
+// first run a download with mockAccessTokenExpiredError = true 
+// then when you want to test expiry, set to mockAccessTokenExpiredError to the logged access token
+// This will trigger companion/nodemon to restart, and it will respond with a simulated invalid token response
+const mockAccessTokenExpiredError = undefined
+// const mockAccessTokenExpiredError = true
+// const mockAccessTokenExpiredError = ''
+
+const DRIVE_FILE_FIELDS = 'kind,id,imageMediaMetadata,name,mimeType,ownedByMe,size,modifiedTime,iconLink,thumbnailLink,teamDriveId,videoMediaMetadata,exportLinks,shortcutDetails(targetId,targetMimeType)'
 const DRIVE_FILES_FIELDS = `kind,nextPageToken,incompleteSearch,files(${DRIVE_FILE_FIELDS})`
 // using wildcard to get all 'drive' fields because specifying fields seems no to work for the /drives endpoint
 const SHARED_DRIVE_FIELDS = '*'
@@ -16,6 +27,10 @@ const getClient = ({ token }) => got.extend({
   headers: {
     authorization: `Bearer ${token}`,
   },
+})
+
+const getOauthClient = () => got.extend({
+  prefixUrl: 'https://oauth2.googleapis.com',
 })
 
 async function getStats ({ id, token }) {
@@ -36,13 +51,12 @@ async function getStats ({ id, token }) {
  * Adapter for API https://developers.google.com/drive/api/v3/
  */
 class Drive extends Provider {
-  constructor (options) {
-    super(options)
-    this.authProvider = Drive.authProvider
-  }
-
   static get authProvider () {
     return 'google'
+  }
+
+  static get authStateExpiry () {
+    return MAX_AGE_REFRESH_TOKEN
   }
 
   async list (options) {
@@ -82,18 +96,9 @@ class Drive extends Provider {
           fields: DRIVE_FILES_FIELDS,
           pageToken: query.cursor,
           q,
-          // pageSize: The maximum number of files to return per page.
-          // Partial or empty result pages are possible even before the end of the files list has been reached.
-          // Acceptable values are 1 to 1000, inclusive. (Default: 100)
-          //
-          // @TODO:
-          // SAD WARNING: doesn’t work if you have multiple `fields`, defaults to 100 anyway.
-          // Works if we remove `permissions(role,emailAddress)`, which we use to set the email address
-          // of logged in user in the Provider View header on the frontend.
-          // See https://stackoverflow.com/questions/42592125/list-request-page-size-being-ignored
-          //
-          // pageSize: 1000,
-          // pageSize: 10, // can be used for testing pagination if you don't have many files
+          // We can only do a page size of 1000 because we do not request permissions in DRIVE_FILES_FIELDS.
+          // Otherwise we are limited to 100. Instead we get the user info from `this.user()`
+          pageSize: 1000,
           orderBy: 'folder,name',
           includeItemsFromAllDrives: true,
           supportsAllDrives: true,
@@ -102,8 +107,13 @@ class Drive extends Provider {
         return client.get('files', { searchParams, responseType: 'json' }).json()
       }
 
-      const [sharedDrives, filesResponse] = await Promise.all([fetchSharedDrives(), fetchFiles()])
-      // console.log({ directory, sharedDrives, filesResponse })
+      async function fetchAbout () {
+        const searchParams = { fields: 'user' }
+
+        return client.get('about', { searchParams, responseType: 'json' }).json()
+      }
+
+      const [sharedDrives, filesResponse, about] = await Promise.all([fetchSharedDrives(), fetchFiles(), fetchAbout()])
 
       return adaptData(
         filesResponse,
@@ -111,22 +121,47 @@ class Drive extends Provider {
         directory,
         query,
         isRoot && !query.cursor, // we can only show it on the first page request, or else we will have duplicates of it
+        about,
       )
     })
   }
 
   async download ({ id: idIn, token }) {
+    if (mockAccessTokenExpiredError != null) {
+      logger.warn(`Access token: ${token}`)
+
+      if (mockAccessTokenExpiredError === token) {
+        logger.warn('Mocking expired access token!')
+        throw new ProviderAuthError()
+      }
+    }
+
     return this.#withErrorHandling('provider.drive.download.error', async () => {
       const client = getClient({ token })
 
-      const { mimeType, id } = await getStats({ id: idIn, token })
+      const { mimeType, id, exportLinks } = await getStats({ id: idIn, token })
 
       let stream
 
       if (isGsuiteFile(mimeType)) {
         const mimeType2 = getGsuiteExportType(mimeType)
         logger.info(`calling google file export for ${id} to ${mimeType2}`, 'provider.drive.export')
-        stream = client.stream.get(`files/${encodeURIComponent(id)}/export`, { searchParams: { supportsAllDrives: true, mimeType: mimeType2 }, responseType: 'json' })
+
+        // GSuite files exported with large converted size results in error using standard export method.
+        // Error message: "This file is too large to be exported.".
+        // Issue logged in Google APIs: https://github.com/googleapis/google-api-nodejs-client/issues/3446
+        // Implemented based on the answer from StackOverflow: https://stackoverflow.com/a/59168288
+        const mimeTypeExportLink = exportLinks?.[mimeType2]
+        if (mimeTypeExportLink) {
+          const gSuiteFilesClient = got.extend({
+            headers: {
+              authorization: `Bearer ${token}`,
+            },
+          })
+          stream = gSuiteFilesClient.stream.get(mimeTypeExportLink, { responseType: 'json' })
+        } else {
+          stream = client.stream.get(`files/${encodeURIComponent(id)}/export`, { searchParams: { supportsAllDrives: true, mimeType: mimeType2 }, responseType: 'json' })
+        }
       } else {
         stream = client.stream.get(`files/${encodeURIComponent(id)}`, { searchParams: { alt: 'media', supportsAllDrives: true }, responseType: 'json' })
       }
@@ -168,12 +203,23 @@ class Drive extends Provider {
     })
   }
 
+  async refreshToken ({ clientId, clientSecret, refreshToken }) {
+    return this.#withErrorHandling('provider.drive.token.refresh.error', async () => {
+      const { access_token: accessToken } = await getOauthClient().post('token', { responseType: 'json', form: { refresh_token: refreshToken, grant_type: 'refresh_token', client_id: clientId, client_secret: clientSecret } }).json()
+      return { accessToken }
+    })
+  }
+
+  // eslint-disable-next-line class-methods-use-this
   async #withErrorHandling (tag, fn) {
     return withProviderErrorHandling({
       fn,
       tag,
-      providerName: this.authProvider,
-      isAuthError: (response) => response.statusCode === 401,
+      providerName: Drive.authProvider,
+      isAuthError: (response) => (
+        response.statusCode === 401
+        || (response.statusCode === 400 && response.body?.error === 'invalid_grant') // Refresh token has expired or been revoked
+      ),
       getJsonErrorMessage: (body) => body?.error?.message,
     })
   }

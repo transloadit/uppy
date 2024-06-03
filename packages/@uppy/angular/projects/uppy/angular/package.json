@@ -1,7 +1,7 @@
 {
   "name": "@uppy/angular",
   "description": "Angular component wrappers around Uppy's official UI plugins.",
-  "version": "0.5.2",
+  "version": "0.6.1",
   "license": "MIT",
   "homepage": "https://uppy.io",
   "keywords": [
@@ -19,19 +19,20 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "scripts": {
-    "prepublishOnly": "rm -fr * && cp -r ../../dist/angular .."
+    "prepublishOnly": "rm -fr * && cp -r ../../../dist/uppy/angular .."
   },
   "dependencies": {
     "tslib": "^2.0.0"
   },
   "peerDependencies": {
-    "@angular/common": ">= 14",
-    "@angular/core": ">= 14",
+    "@angular/common": "^16.2.0",
+    "@angular/core": "^16.2.0",
     "@uppy/core": "workspace:^",
     "@uppy/dashboard": "workspace:^",
     "@uppy/drag-drop": "workspace:^",
     "@uppy/progress-bar": "workspace:^",
     "@uppy/status-bar": "workspace:^",
     "@uppy/utils": "workspace:^"
-  }
+  },
+  "sideEffects": false
 }

@@ -24,6 +24,7 @@ exports.hasSessionAndProvider = (req, res, next) => {
 }
 
 const isOAuthProviderReq = (req) => isOAuthProvider(req.companion.providerClass.authProvider)
+const isSimpleAuthProviderReq = (req) => !!req.companion.providerClass.hasSimpleAuth
 
 /**
  * Middleware can be used to verify that the current request is to an OAuth provider
@@ -32,6 +33,15 @@ const isOAuthProviderReq = (req) => isOAuthProvider(req.companion.providerClass.
 exports.hasOAuthProvider = (req, res, next) => {
   if (!isOAuthProviderReq(req)) {
     logger.debug('Provider does not support OAuth.', null, req.id)
+    return res.sendStatus(400)
+  }
+
+  return next()
+}
+
+exports.hasSimpleAuthProvider = (req, res, next) => {
+  if (!isSimpleAuthProviderReq(req)) {
+    logger.debug('Provider does not support simple auth.', null, req.id)
     return res.sendStatus(400)
   }
 
@@ -57,7 +67,28 @@ exports.hasSearchQuery = (req, res, next) => {
 }
 
 exports.verifyToken = (req, res, next) => {
-  // for non oauth providers, we just load the static key from options
+  if (isOAuthProviderReq(req) || isSimpleAuthProviderReq(req)) {
+    // For OAuth / simple auth provider, we find the encrypted auth token from the header:
+    const token = req.companion.authToken
+    if (token == null) {
+      logger.info('cannot auth token', 'token.verify.unset', req.id)
+      res.sendStatus(401)
+      return
+    }
+    const { providerName } = req.params
+    try {
+      const payload = tokenService.verifyEncryptedAuthToken(token, req.companion.options.secret, providerName)
+      req.companion.providerUserSession = payload[providerName]
+    } catch (err) {
+      logger.error(err.message, 'token.verify.error', req.id)
+      res.sendStatus(401)
+      return
+    }
+    next()
+    return
+  }
+
+  // for non auth providers, we just load the static key from options
   if (!isOAuthProviderReq(req)) {
     const { providerOptions } = req.companion.options
     const { providerName } = req.params
@@ -67,46 +98,31 @@ exports.verifyToken = (req, res, next) => {
       return
     }
 
-    req.companion.providerToken = providerOptions[providerName].key
-    next()
-    return
-  }
-
-  // Ok, OAuth provider, we fetch the token:
-  const token = req.companion.authToken
-  if (token == null) {
-    logger.info('cannot auth token', 'token.verify.unset', req.id)
-    res.sendStatus(401)
-    return
-  }
-  const { providerName } = req.params
-  const { err, payload } = tokenService.verifyEncryptedToken(token, req.companion.options.secret)
-  if (err || !payload[providerName]) {
-    if (err) {
-      logger.error(err.message, 'token.verify.error', req.id)
+    req.companion.providerUserSession = {
+      accessToken: providerOptions[providerName].key,
     }
-    res.sendStatus(401)
-    return
+    next()
   }
-  req.companion.providerTokens = payload
-  req.companion.providerToken = payload[providerName]
-  next()
 }
 
 // does not fail if token is invalid
 exports.gentleVerifyToken = (req, res, next) => {
   const { providerName } = req.params
   if (req.companion.authToken) {
-    const { err, payload } = tokenService.verifyEncryptedToken(req.companion.authToken, req.companion.options.secret)
-    if (!err && payload[providerName]) {
-      req.companion.providerTokens = payload
+    try {
+      const payload = tokenService.verifyEncryptedAuthToken(
+        req.companion.authToken, req.companion.options.secret, providerName,
+      )
+      req.companion.providerUserSession = payload[providerName]
+    } catch (err) {
+      logger.error(err.message, 'token.gentle.verify.error', req.id)
     }
   }
   next()
 }
 
 exports.cookieAuthToken = (req, res, next) => {
-  req.companion.authToken = req.cookies[`uppyAuthToken--${req.companion.provider.authProvider}`]
+  req.companion.authToken = req.cookies[`uppyAuthToken--${req.companion.providerClass.authProvider}`]
   return next()
 }
 
@@ -118,13 +134,13 @@ exports.cors = (options = {}) => (req, res, next) => {
   const exposeHeadersSet = new Set(existingExposeHeaders?.split(',')?.map((method) => method.trim().toLowerCase()))
 
   // exposed so it can be accessed for our custom uppy client preflight
-  exposeHeadersSet.add('access-control-allow-headers')
+  exposeHeadersSet.add('access-control-allow-headers') // todo remove in next major, see https://github.com/transloadit/uppy/pull/4462
   if (options.sendSelfEndpoint) exposeHeadersSet.add('i-am')
 
   // Needed for basic operation: https://github.com/transloadit/uppy/issues/3021
   const allowedHeaders = [
     'uppy-auth-token',
-    'uppy-versions',
+    'uppy-versions', // todo remove in the future? see https://github.com/transloadit/uppy/pull/4462
     'uppy-credentials-params',
     'authorization',
     'origin',
@@ -186,17 +202,12 @@ exports.getCompanionMiddleware = (options) => {
    * @param {Function} next
    */
   const middleware = (req, res, next) => {
-    const versionFromQuery = req.query.uppyVersions ? decodeURIComponent(req.query.uppyVersions) : null
     req.companion = {
       options,
-      s3Client: getS3Client(options),
+      s3Client: getS3Client(options, false),
+      s3ClientCreatePresignedPost: getS3Client(options, true),
       authToken: req.header('uppy-auth-token') || req.query.uppyAuthToken,
-      clientVersion: req.header('uppy-versions') || versionFromQuery || '1.0.0',
       buildURL: getURLBuilder(options),
-    }
-
-    if (options.logClientVersion) {
-      logger.info(`uppy client version ${req.companion.clientVersion}`, 'companion.client.version')
     }
     next()
   }

@@ -1,31 +1,43 @@
 /** @jsx h */
 
 import { UIPlugin } from '@uppy/core'
-import { Provider } from '@uppy/companion-client'
+import { Provider, getAllowedHosts, tokenStorage } from '@uppy/companion-client'
 import { ProviderViews } from '@uppy/provider-views'
 import { h } from 'preact'
 
 const defaultOptions = {}
 
 export default class MyCustomProvider extends UIPlugin {
-  constructor (uppy, opts) {
+  constructor(uppy, opts) {
     super(uppy, opts)
     this.type = 'acquirer'
     this.id = this.opts.id || 'MyCustomProvider'
-    Provider.initPlugin(this, opts)
+    this.type = 'acquirer'
+    this.storage = this.opts.storage || tokenStorage
+    this.files = []
 
     this.icon = () => (
       <svg width="32" height="32" xmlns="http://www.w3.org/2000/svg">
-        <path d="M10 9V0h12v9H10zm12 5h10v18H0V14h10v9h12v-9z" fill="#000000" fillRule="nonzero" />
+        <path
+          d="M10 9V0h12v9H10zm12 5h10v18H0V14h10v9h12v-9z"
+          fill="#000000"
+          fillRule="nonzero"
+        />
       </svg>
     )
 
+    this.opts.companionAllowedHosts = getAllowedHosts(
+      this.opts.companionAllowedHosts,
+      this.opts.companionUrl,
+    )
     this.provider = new Provider(uppy, {
       companionUrl: this.opts.companionUrl,
       companionHeaders: this.opts.companionHeaders,
       provider: 'myunsplash',
       pluginId: this.id,
     })
+
+    uppy.registerRequestClient(MyCustomProvider.name, this.provider)
 
     this.defaultLocale = {
       strings: {
@@ -42,7 +54,7 @@ export default class MyCustomProvider extends UIPlugin {
     this.files = []
   }
 
-  install () {
+  install() {
     this.view = new ProviderViews(this, {
       provider: this.provider,
     })
@@ -53,16 +65,16 @@ export default class MyCustomProvider extends UIPlugin {
     }
   }
 
-  uninstall () {
+  uninstall() {
     this.view.tearDown()
     this.unmount()
   }
 
-  onFirstRender () {
+  onFirstRender() {
     return this.view.getFolder()
   }
 
-  render (state) {
+  render(state) {
     return this.view.render(state)
   }
 }

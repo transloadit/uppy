@@ -3,7 +3,14 @@ import { expectError, expectType } from 'tsd'
 import DefaultStore from '@uppy/store-default'
 // eslint-disable-next-line import/no-named-as-default
 import Uppy, { UIPlugin } from '..'
-import type { UploadedUppyFile, FailedUppyFile, PluginOptions, UppyFile, SuccessResponse } from '..'
+// eslint-disable-next-line no-restricted-syntax
+import type {
+  UploadedUppyFile,
+  FailedUppyFile,
+  PluginOptions,
+  UppyFile,
+  SuccessResponse,
+} from '..'
 
 type anyObject = Record<string, unknown>
 
@@ -45,8 +52,8 @@ type anyObject = Record<string, unknown>
   type ResponseBody = {
     averageColor: string
   }
-  const uppy = new Uppy()
-  const f = uppy.getFile<Meta, ResponseBody>('virtual')
+  const uppy = new Uppy<Meta, ResponseBody>()
+  const f = uppy.getFile('virtual')
   expectType<ResponseBody>(f.response!.body) // eslint-disable-line @typescript-eslint/no-non-null-assertion
 }
 
@@ -72,8 +79,9 @@ type anyObject = Record<string, unknown>
 }
 
 {
-  /* eslint-disable @typescript-eslint/no-empty-function */
-  const uppy = new Uppy()
+  // Meta signature
+  type Meta = { myCustomMetadata: string }
+  const uppy = new Uppy<Meta>()
   // can emit events with internal event types
   uppy.emit('upload')
   uppy.emit('complete', () => {})
@@ -89,7 +97,6 @@ type anyObject = Record<string, unknown>
   uppy.once('upload', () => {})
   uppy.once('complete', () => {})
   uppy.once('error', () => {})
-  /* eslint-enable @typescript-eslint/no-empty-function */
 
   // Normal event signature
   uppy.on('complete', (result) => {
@@ -97,9 +104,7 @@ type anyObject = Record<string, unknown>
     const successResults = result.successful
   })
 
-  // Meta signature
-  type Meta = {myCustomMetadata: string}
-  uppy.on<'complete', Meta>('complete', (result) => {
+  uppy.on('complete', (result) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const meta = result.successful[0].meta.myCustomMetadata
   })
@@ -109,16 +114,19 @@ type anyObject = Record<string, unknown>
     const meta = file?.meta.myCustomMetadata
   }
 
-  uppy.off<'upload-success', Meta>('upload-success', handleUpload)
+  uppy.off('upload-success', handleUpload)
 
   interface CustomResponse extends SuccessResponse {
     body?: { someValue: string }
   }
 
-  const onUploadSuccess = async (file: UppyFile<Meta, any> | undefined, response: CustomResponse) => {
+  const onUploadSuccess = async (
+    file: UppyFile<Meta, any> | undefined,
+    response: CustomResponse,
+  ) => {
     const res = response.body?.someValue
   }
-  uppy.on<'upload-success', Meta>('upload-success', onUploadSuccess)
+  uppy.on('upload-success', onUploadSuccess)
 }
 
 {
@@ -136,16 +144,23 @@ type anyObject = Record<string, unknown>
   interface TestOptions extends PluginOptions {
     testOption: string
   }
-  class TestPlugin extends UIPlugin<TestOptions> {
-  }
+  class TestPlugin extends UIPlugin<TestOptions> {}
 
   const strict = new Uppy().use(TestPlugin, { testOption: 'hello' })
 
   /* eslint-disable @typescript-eslint/no-non-null-assertion */
-  strict.getPlugin<TestPlugin>('TestPlugin')!.setOptions({ testOption: 'world' })
+  strict
+    .getPlugin<TestPlugin>('TestPlugin')!
+    .setOptions({ testOption: 'world' })
 
-  expectError(strict.getPlugin<TestPlugin>('TestPlugin')!.setOptions({ testOption: 0 }))
+  expectError(
+    strict.getPlugin<TestPlugin>('TestPlugin')!.setOptions({ testOption: 0 }),
+  )
 
-  expectError(strict.getPlugin<TestPlugin>('TestPlugin')!.setOptions({ unknownKey: false }))
+  expectError(
+    strict
+      .getPlugin<TestPlugin>('TestPlugin')!
+      .setOptions({ unknownKey: false }),
+  )
   /* eslint-enable @typescript-eslint/no-non-null-assertion */
 }

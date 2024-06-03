@@ -1,5 +1,49 @@
 # @uppy/tus
 
+## 3.5.5
+
+Released: 2024-05-22
+Included in: Uppy v3.25.4
+
+- @uppy/tus: fix no headers passed to companion if argument is a function (netdown / #5182)
+
+## 3.5.1
+
+Released: 2024-02-19
+Included in: Uppy v3.22.0
+
+-  @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/companion-client,@uppy/tus,@uppy/xhr-upload: update `uppyfile` objects before emitting events (antoine du hamel / #4928)
+- @uppy/tus: migrate to ts (merlijn vos / #4899)
+- @uppy/companion,@uppy/tus: bump `tus-js-client` version range (merlijn vos / #4848)
+
+## 3.3.0
+
+Released: 2023-09-18
+Included in: Uppy v3.16.0
+
+- @uppy/tus: Fix: Utilize user-defined onSuccess, onError, and onProgress callbacks in @uppy/tus (choi sung keun / #4674)
+
+## 3.2.0
+
+Released: 2023-09-05
+Included in: Uppy v3.15.0
+
+- @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/companion-client,@uppy/core,@uppy/tus,@uppy/utils,@uppy/xhr-upload: Move remote file upload logic into companion-client (Merlijn Vos / #4573)
+
+## 3.1.3
+
+Released: 2023-08-15
+Included in: Uppy v3.14.0
+
+- @uppy/aws-s3,@uppy/tus,@uppy/xhr-upload:  Invoke headers function for remote uploads (Dominik Schmidt / #4596)
+
+## 3.1.2
+
+Released: 2023-07-06
+Included in: Uppy v3.11.0
+
+- @uppy/tus: retry on 423 HTTP error code (Antoine du Hamel / #4512)
+
 ## 3.1.1
 
 Released: 2023-06-19

@@ -1,3 +1,6 @@
+// This references the old types on purpose, to make sure to not create breaking changes for TS consumers.
+// eslint-disable-next-line @typescript-eslint/triple-slash-reference
+/// <reference path="../../utils/types/index.d.ts"/>
 import * as UppyUtils from '@uppy/utils'
 
 // Utility types
@@ -13,18 +16,18 @@ export interface IndexedObject<T> {
 // These are defined in @uppy/utils instead of core so it can be used there without creating import cycles
 export type UppyFile<
   TMeta extends IndexedObject<any> = Record<string, unknown>,
-  TBody extends IndexedObject<any> = Record<string, unknown>
-  > = UppyUtils.UppyFile<TMeta, TBody>
+  TBody extends IndexedObject<any> = Record<string, unknown>,
+> = UppyUtils.UppyFile<TMeta, TBody>
 
-export type FileProgress = UppyUtils.FileProgress;
+export type FileProgress = UppyUtils.FileProgress
 
-export type FileRemoveReason = 'removed-by-user' | 'cancel-all';
+export type FileRemoveReason = 'removed-by-user' | 'cancel-all'
 
 // Replace the `meta` property type with one that allows omitting internal metadata addFile() will add that
-type UppyFileWithoutMeta<TMeta extends IndexedObject<any>, TBody extends IndexedObject<any>> = OmitKey<
-  UppyFile<TMeta, TBody>,
-  'meta'
->
+type UppyFileWithoutMeta<
+  TMeta extends IndexedObject<any>,
+  TBody extends IndexedObject<any>,
+> = OmitKey<UppyFile<TMeta, TBody>, 'meta'>
 
 type LocaleStrings<TNames extends string> = {
   [K in TNames]?: string | { [n: number]: string }
@@ -39,23 +42,23 @@ export type Store = UppyUtils.Store
 export type InternalMetadata = UppyUtils.InternalMetadata
 
 export interface UploadedUppyFile<
-    TMeta extends IndexedObject<any>,
-    TBody extends IndexedObject<any>
-  > extends UppyFile<TMeta, TBody> {
+  TMeta extends IndexedObject<any>,
+  TBody extends IndexedObject<any>,
+> extends UppyFile<TMeta, TBody> {
   uploadURL: string
 }
 
 export interface FailedUppyFile<
-    TMeta extends IndexedObject<any>,
-    TBody extends IndexedObject<any>
-  > extends UppyFile<TMeta, TBody> {
+  TMeta extends IndexedObject<any>,
+  TBody extends IndexedObject<any>,
+> extends UppyFile<TMeta, TBody> {
   error: string
 }
 
 export interface AddFileOptions<
-    TMeta extends IndexedObject<any> = IndexedObject<any>,
-    TBody extends IndexedObject<any> = IndexedObject<any>
-  > extends Partial<UppyFileWithoutMeta<TMeta, TBody>> {
+  TMeta extends IndexedObject<any> = IndexedObject<any>,
+  TBody extends IndexedObject<any> = IndexedObject<any>,
+> extends Partial<UppyFileWithoutMeta<TMeta, TBody>> {
   // `.data` is the only required property here.
   data: Blob | File
   meta?: Partial<InternalMetadata> & TMeta
@@ -63,6 +66,9 @@ export interface AddFileOptions<
 
 export interface PluginOptions {
   id?: string
+}
+
+export interface UIPluginOptions extends PluginOptions {
   replaceTargetContent?: boolean
 }
 
@@ -92,7 +98,9 @@ export class BasePlugin<TOptions extends PluginOptions = DefaultPluginOptions> {
   uninstall(): void
 }
 
-export class UIPlugin<TOptions extends PluginOptions = DefaultPluginOptions> extends BasePlugin<TOptions> {
+export class UIPlugin<
+  TOptions extends UIPluginOptions = DefaultPluginOptions,
+> extends BasePlugin<TOptions> {
   id: string
 
   // eslint-disable-next-line no-use-before-define
@@ -134,10 +142,12 @@ export interface Locale<TNames extends string = string> {
 }
 
 export interface Logger {
-  debug: (...args: any[]) => void;
-  warn: (...args: any[]) => void;
-  error: (...args: any[]) => void;
+  debug: (...args: any[]) => void
+  warn: (...args: any[]) => void
+  error: (...args: any[]) => void
 }
+
+export const debugLogger: Logger
 
 export interface Restrictions {
   maxFileSize?: number | null
@@ -146,9 +156,12 @@ export interface Restrictions {
   maxNumberOfFiles?: number | null
   minNumberOfFiles?: number | null
   allowedFileTypes?: string[] | null
+  requiredMetaFields?: string[]
 }
 
-export interface UppyOptions<TMeta extends IndexedObject<any> = Record<string, unknown>> {
+export interface UppyOptions<
+  TMeta extends IndexedObject<any> = Record<string, unknown>,
+> {
   id?: string
   autoProceed?: boolean
   /**
@@ -162,7 +175,7 @@ export interface UppyOptions<TMeta extends IndexedObject<any> = Record<string, u
   meta?: TMeta
   onBeforeFileAdded?: (
     currentFile: UppyFile<TMeta>,
-    files: { [key: string]: UppyFile<TMeta> }
+    files: { [key: string]: UppyFile<TMeta> },
   ) => UppyFile<TMeta> | boolean | undefined
   onBeforeUpload?: (files: {
     [key: string]: UppyFile<TMeta>
@@ -174,23 +187,21 @@ export interface UppyOptions<TMeta extends IndexedObject<any> = Record<string, u
 
 export interface UploadResult<
   TMeta extends IndexedObject<any> = Record<string, unknown>,
-  TBody extends IndexedObject<any> = Record<string, unknown>
-  > {
+  TBody extends IndexedObject<any> = Record<string, unknown>,
+> {
   successful: UploadedUppyFile<TMeta, TBody>[]
   failed: FailedUppyFile<TMeta, TBody>[]
 }
 
 export interface State<
   TMeta extends IndexedObject<any> = Record<string, unknown>,
-  TBody extends IndexedObject<any> = Record<string, unknown>
-  > extends IndexedObject<any> {
+  TBody extends IndexedObject<any> = Record<string, unknown>,
+> extends IndexedObject<any> {
   capabilities?: { resumableUploads?: boolean }
   currentUploads: Record<string, unknown>
   error?: string
   files: {
-    [key: string]:
-    | UploadedUppyFile<TMeta, TBody>
-    | FailedUppyFile<TMeta, TBody>
+    [key: string]: UploadedUppyFile<TMeta, TBody> | FailedUppyFile<TMeta, TBody>
   }
   info?: Array<{
     isHidden: boolean
@@ -210,66 +221,102 @@ export interface ErrorResponse {
 export interface SuccessResponse {
   uploadURL?: string
   status?: number
-  body?: any,
+  body?: any
   bytesUploaded?: number
 }
 
-export type GenericEventCallback = () => void;
-export type FileAddedCallback<TMeta extends IndexedObject<any>> = (file: UppyFile<TMeta>) => void;
-export type FilesAddedCallback<TMeta extends IndexedObject<any>> = (files: UppyFile<TMeta>[]) => void;
-export type FileRemovedCallback<TMeta extends IndexedObject<any>> =
-  (file: UppyFile<TMeta>, reason: FileRemoveReason) => void;
-export type UploadCallback = (data: { id: string, fileIDs: string[] }) => void;
-export type ProgressCallback = (progress: number) => void;
-export type PreProcessCompleteCallback<TMeta extends IndexedObject<any>> = (file: UppyFile<TMeta> | undefined) => void;
-export type UploadProgressCallback<TMeta extends IndexedObject<any>> =
-  (file: UppyFile<TMeta> | undefined, progress: FileProgress) => void;
-export type UploadSuccessCallback<TMeta extends IndexedObject<any>> =
-  (file: UppyFile<TMeta> | undefined, response: SuccessResponse) => void
-export type UploadCompleteCallback<TMeta extends IndexedObject<any>> = (result: UploadResult<TMeta>) => void
-export type ErrorCallback = (error: Error) => void;
-export type UploadErrorCallback<TMeta extends IndexedObject<any>> =
-  (file: UppyFile<TMeta> | undefined, error: Error, response?: ErrorResponse) => void;
-export type UploadRetryCallback = (fileID: string) => void;
-export type RetryAllCallback = (fileIDs: string[]) => void;
-export type RestrictionFailedCallback<TMeta extends IndexedObject<any>> =
-  (file: UppyFile<TMeta> | undefined, error: Error) => void;
+export type GenericEventCallback = () => void
+export type FileAddedCallback<TMeta extends IndexedObject<any>> = (
+  file: UppyFile<TMeta>,
+) => void
+export type FilesAddedCallback<TMeta extends IndexedObject<any>> = (
+  files: UppyFile<TMeta>[],
+) => void
+export type FileRemovedCallback<TMeta extends IndexedObject<any>> = (
+  file: UppyFile<TMeta>,
+  reason: FileRemoveReason,
+) => void
+export type UploadCallback = (data: { id: string; fileIDs: string[] }) => void
+export type ProgressCallback = (progress: number) => void
+export type PreProcessCompleteCallback<TMeta extends IndexedObject<any>> = (
+  file: UppyFile<TMeta> | undefined,
+) => void
+export type UploadPauseCallback = (
+  fileID: UppyFile['id'] | undefined,
+  isPaused: boolean,
+) => void
+export type UploadProgressCallback<TMeta extends IndexedObject<any>> = (
+  file: UppyFile<TMeta> | undefined,
+  progress: FileProgress,
+) => void
+export type UploadSuccessCallback<TMeta extends IndexedObject<any>> = (
+  file: UppyFile<TMeta> | undefined,
+  response: SuccessResponse,
+) => void
+export type UploadCompleteCallback<TMeta extends IndexedObject<any>> = (
+  result: UploadResult<TMeta>,
+) => void
+export type ErrorCallback = (error: Error) => void
+export type UploadErrorCallback<TMeta extends IndexedObject<any>> = (
+  file: UppyFile<TMeta> | undefined,
+  error: Error,
+  response?: ErrorResponse,
+) => void
+export type UploadRetryCallback = (fileID: string) => void
+export type PauseAllCallback = (fileIDs: string[]) => void
+export type ResumeAllCallback = (fileIDs: string[]) => void
+export type RetryAllCallback = (fileIDs: string[]) => void
+export type RestrictionFailedCallback<TMeta extends IndexedObject<any>> = (
+  file: UppyFile<TMeta> | undefined,
+  error: Error,
+) => void
 
-export interface UppyEventMap<TMeta extends IndexedObject<any> = Record<string, unknown>> {
-  'file-added': FileAddedCallback<TMeta>
-  'files-added': FilesAddedCallback<TMeta>
-  'file-removed': FileRemovedCallback<TMeta>
-  'upload': UploadCallback
-  'progress': ProgressCallback
-  'preprocess-complete': PreProcessCompleteCallback<TMeta>
-  'upload-progress': UploadProgressCallback<TMeta>
-  'upload-success': UploadSuccessCallback<TMeta>
-  'complete': UploadCompleteCallback<TMeta>
-  'error': ErrorCallback
-  'upload-error': UploadErrorCallback<TMeta>
-  'upload-retry': UploadRetryCallback
-  'retry-all': RetryAllCallback
-  'info-visible': GenericEventCallback
-  'info-hidden': GenericEventCallback
+export interface UppyEventMap<
+  TMeta extends IndexedObject<any> = Record<string, unknown>,
+> {
   'cancel-all': GenericEventCallback
-  'restriction-failed': RestrictionFailedCallback<TMeta>
+  complete: UploadCompleteCallback<TMeta>
+  error: ErrorCallback
+  'file-added': FileAddedCallback<TMeta>
+  'file-removed': FileRemovedCallback<TMeta>
+  'files-added': FilesAddedCallback<TMeta>
+  'info-hidden': GenericEventCallback
+  'info-visible': GenericEventCallback
+  'pause-all': PauseAllCallback
+  'preprocess-complete': PreProcessCompleteCallback<TMeta>
+  progress: ProgressCallback
   'reset-progress': GenericEventCallback
+  'resume-all': ResumeAllCallback
+  'restriction-failed': RestrictionFailedCallback<TMeta>
+  'retry-all': RetryAllCallback
+  'upload-error': UploadErrorCallback<TMeta>
+  'upload-pause': UploadPauseCallback
+  'upload-progress': UploadProgressCallback<TMeta>
+  'upload-retry': UploadRetryCallback
+  'upload-success': UploadSuccessCallback<TMeta>
+  upload: UploadCallback
 }
 
-export class Uppy {
+export class Uppy<
+  TMeta extends IndexedObject<any> = Record<string, unknown>,
+  TBody extends IndexedObject<any> = Record<string, unknown>,
+> {
   constructor(opts?: UppyOptions)
 
-  on<K extends keyof UppyEventMap>(event: K, callback: UppyEventMap[K]): this
+  on<K extends keyof UppyEventMap>(
+    event: K,
+    callback: UppyEventMap<TMeta>[K],
+  ): this
 
-  on<K extends keyof UppyEventMap, TMeta extends IndexedObject<any>>(event: K, callback: UppyEventMap<TMeta>[K]): this
+  once<K extends keyof UppyEventMap>(
+    event: K,
+    callback: UppyEventMap<TMeta>[K],
+  ): this
 
-  once<K extends keyof UppyEventMap>(event: K, callback: UppyEventMap[K]): this
-
-  once<K extends keyof UppyEventMap, TMeta extends IndexedObject<any>>(event: K, callback: UppyEventMap<TMeta>[K]): this
-
-  off<K extends keyof UppyEventMap>(event: K, callback: UppyEventMap[K]): this
-
-  off<K extends keyof UppyEventMap, TMeta extends IndexedObject<any>>(event: K, callback: UppyEventMap<TMeta>[K]): this
+  off<K extends keyof UppyEventMap>(
+    event: K,
+    callback: UppyEventMap<TMeta>[K],
+  ): this
 
   /**
    * For use by plugins only.
@@ -282,7 +329,7 @@ export class Uppy {
 
   setState(patch: Record<string, unknown>): void
 
-  getState<TMeta extends IndexedObject<any> = Record<string, unknown>>(): State<TMeta>
+  getState(): State<TMeta>
 
   setFileState(fileID: string, state: Record<string, unknown>): void
 
@@ -300,22 +347,13 @@ export class Uppy {
 
   removeUploader(fn: UploadHandler): void
 
-  setMeta<TMeta extends IndexedObject<any> = Record<string, unknown>>(data: TMeta): void
+  setMeta(data: TMeta): void
 
-  setFileMeta<TMeta extends IndexedObject<any> = Record<string, unknown>>(
-    fileID: string,
-    data: TMeta
-  ): void
+  setFileMeta(fileID: string, data: TMeta): void
 
-  getFile<
-    TMeta extends IndexedObject<any> = Record<string, unknown>,
-    TBody extends IndexedObject<any> = Record<string, unknown>
-  >(fileID: string): UppyFile<TMeta, TBody>
+  getFile(fileID: string): UppyFile<TMeta, TBody>
 
-  getFiles<
-    TMeta extends IndexedObject<any> = Record<string, unknown>,
-    TBody extends IndexedObject<any> = Record<string, unknown>
-  >(): Array<UppyFile<TMeta, TBody>>
+  getFiles(): Array<UppyFile<TMeta, TBody>>
 
   getObjectOfFilesPerState(): {
     newFiles: Array<UppyFile>
@@ -335,13 +373,9 @@ export class Uppy {
     isSomeGhost: boolean
   }
 
-  addFile<TMeta extends IndexedObject<any> = Record<string, unknown>>(
-    file: AddFileOptions<TMeta>
-  ): string
+  addFile(file: AddFileOptions<TMeta>): string
 
-  addFiles<TMeta extends IndexedObject<any> = Record<string, unknown>>(
-    files: AddFileOptions<TMeta>[]
-  ): void
+  addFiles(files: AddFileOptions<TMeta>[]): void
 
   removeFile(fileID: string, reason?: FileRemoveReason): void
 
@@ -351,24 +385,25 @@ export class Uppy {
 
   resumeAll(): void
 
-  retryAll<TMeta extends IndexedObject<any> = Record<string, unknown>>(): Promise<
-    UploadResult<TMeta>
-  >
+  retryAll(): Promise<UploadResult<TMeta>>
 
   cancelAll(options?: CancelOptions): void
 
-  retryUpload<TMeta extends IndexedObject<any> = Record<string, unknown>>(
-    fileID: string
-  ): Promise<UploadResult<TMeta>>
+  retryUpload(fileID: string): Promise<UploadResult<TMeta>>
 
   getID(): string
 
-  use<TOptions extends PluginOptions, TInstance extends UIPlugin | BasePlugin<TOptions>>(
+  use<
+    TOptions extends PluginOptions,
+    TInstance extends UIPlugin | BasePlugin<TOptions>,
+  >(
     pluginClass: new (uppy: this, opts?: TOptions) => TInstance,
-    opts?: TOptions
+    opts?: TOptions,
   ): this
 
-  getPlugin<TPlugin extends UIPlugin | BasePlugin>(name: string): TPlugin | undefined
+  getPlugin<TPlugin extends UIPlugin | BasePlugin>(
+    name: string,
+  ): TPlugin | undefined
 
   iteratePlugins(callback: (plugin: UIPlugin | BasePlugin) => void): void
 
@@ -381,20 +416,18 @@ export class Uppy {
   info(
     message: string | { message: string; details: string },
     type?: LogLevel,
-    duration?: number
+    duration?: number,
   ): void
 
   hideInfo(): void
 
   log(msg: string, type?: LogLevel): void
 
-  restore<TMeta extends IndexedObject<any> = Record<string, unknown>>(
-    uploadID: string
-  ): Promise<UploadResult<TMeta>>
+  restore(uploadID: string): Promise<UploadResult<TMeta>>
 
   addResultData(uploadID: string, data: Record<string, unknown>): void
 
-  upload<TMeta extends IndexedObject<any> = Record<string, unknown>>(): Promise<UploadResult<TMeta>>
+  upload(): Promise<UploadResult<TMeta>>
 }
 
 export default Uppy

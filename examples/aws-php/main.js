@@ -11,6 +11,8 @@ uppy.use(Dashboard, {
   target: 'body',
 })
 uppy.use(AwsS3, {
+  shouldUseMultipart: false, // The PHP backend only supports non-multipart uploads
+
   getUploadParameters (file) {
     // Send a request to our PHP signing endpoint.
     return fetch('/s3-sign.php', {

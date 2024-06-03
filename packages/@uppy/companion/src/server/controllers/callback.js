@@ -31,21 +31,32 @@ const closePageHtml = (origin) => `
 module.exports = function callback (req, res, next) { // eslint-disable-line no-unused-vars
   const { providerName } = req.params
 
-  if (!req.companion.providerTokens) {
-    req.companion.providerTokens = {}
-  }
-
   const grant = req.session.grant || {}
-  if (grant.response && grant.response.access_token) {
-    req.companion.providerTokens[providerName] = grant.response.access_token
-    logger.debug(`Generating auth token for provider ${providerName}`, null, req.id)
-    const uppyAuthToken = tokenService.generateEncryptedToken(req.companion.providerTokens, req.companion.options.secret)
-    return res.redirect(req.companion.buildURL(`/${providerName}/send-token?uppyAuthToken=${uppyAuthToken}`, true))
+
+  const grantDynamic = oAuthState.getGrantDynamicFromRequest(req)
+  const origin = grantDynamic.state && oAuthState.getFromState(grantDynamic.state, 'origin', req.companion.options.secret)
+
+  if (!grant.response?.access_token) {
+    logger.debug(`Did not receive access token for provider ${providerName}`, null, req.id)
+    logger.debug(grant.response, 'callback.oauth.resp', req.id)
+    return res.status(400).send(closePageHtml(origin))
   }
 
-  logger.debug(`Did not receive access token for provider ${providerName}`, null, req.id)
-  logger.debug(grant.response, 'callback.oauth.resp', req.id)
-  const state = oAuthState.getDynamicStateFromRequest(req)
-  const origin = state && oAuthState.getFromState(state, 'origin', req.companion.options.secret)
-  return res.status(400).send(closePageHtml(origin))
+  const { access_token: accessToken, refresh_token: refreshToken } = grant.response
+
+  req.companion.providerUserSession = {
+    accessToken,
+    refreshToken, // might be undefined for some providers
+    ...req.companion.providerClass.grantDynamicToUserSession({ grantDynamic }),
+  }
+
+  logger.debug(`Generating auth token for provider ${providerName}. refreshToken: ${refreshToken ? 'yes' : 'no'}`, null, req.id)
+  const uppyAuthToken = tokenService.generateEncryptedAuthToken(
+    { [providerName]: req.companion.providerUserSession },
+    req.companion.options.secret, req.companion.providerClass.authStateExpiry,
+  )
+
+  tokenService.addToCookiesIfNeeded(req, res, uppyAuthToken, req.companion.providerClass.authStateExpiry)
+
+  return res.redirect(req.companion.buildURL(`/${providerName}/send-token?uppyAuthToken=${uppyAuthToken}`, true))
 }

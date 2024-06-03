@@ -1,5 +1,20 @@
 # @uppy/audio
 
+## 1.1.8
+
+Released: 2024-03-27
+Included in: Uppy v3.24.0
+
+- @uppy/audio,@uppy/dashboard,@uppy/drop-target,@uppy/webcam: add missing exports (Antoine du Hamel / #5014)
+
+## 1.1.5
+
+Released: 2024-02-19
+Included in: Uppy v3.22.0
+
+- @uppy/audio: fix `audiooptions` (antoine du hamel / #4884)
+- @uppy/audio: refactor to typescript (antoine du hamel / #4860)
+
 ## 1.0.4
 
 Released: 2023-02-13

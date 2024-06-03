@@ -1,5 +1,65 @@
 # @uppy/status-bar
 
+## 3.3.3
+
+Released: 2024-05-07
+Included in: Uppy v3.25.2
+
+- @uppy/compressor,@uppy/core,@uppy/dashboard,@uppy/status-bar: Upgrade @transloadit/prettier-bytes (Merlijn Vos / #5150)
+
+## 3.3.1
+
+Released: 2024-03-27
+Included in: Uppy v3.24.0
+
+- @uppy/box,@uppy/companion-client,@uppy/provider-views,@uppy/status-bar: fix type imports (Antoine du Hamel / #5038)
+- @uppy/status-bar: refine type of private variables (Antoine du Hamel / #5025)
+- @uppy/status-bar: fix `recoveredState` type (Antoine du Hamel / #4996)
+
+## 3.2.7
+
+Released: 2024-02-20
+Included in: Uppy v3.22.1
+
+- @uppy/compressor,@uppy/core,@uppy/dashboard,@uppy/status-bar: bump `@transloadit/prettier-bytes` (Antoine du Hamel / #4933)
+
+## 3.2.6
+
+Released: 2024-02-19
+Included in: Uppy v3.22.0
+
+- @uppy/status-bar: fix `statusbaroptions` type (antoine du hamel / #4883)
+- @uppy/status-bar: refactor to typescript (antoine du hamel / #4839)
+
+## 3.2.4
+
+Released: 2023-08-15
+Included in: Uppy v3.14.0
+
+- @uppy/status-bar: e2e: add test for retrying and pausing uploads (Antoine du Hamel / #3599)
+
+## 3.2.3
+
+Released: 2023-07-20
+Included in: Uppy v3.13.0
+
+- @uppy/status-bar: fix ETA when status bar is installed during upload (Antoine du Hamel / #4588)
+
+## 3.2.2
+
+Released: 2023-07-13
+Included in: Uppy v3.12.0
+
+- @uppy/status-bar: listen to `upload` event instead of button click (Antoine du Hamel / #4563)
+
+## 3.2.1
+
+Released: 2023-07-06
+Included in: Uppy v3.11.0
+
+- @uppy/status-bar: remove throttled component (Artur Paikin / #4396)
+- @uppy/status-bar: fix ETA when Uppy recovers its state (Antoine du Hamel / #4525)
+
 ## 3.2.0
 
 Released: 2023-06-19

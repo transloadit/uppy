@@ -1,5 +1,27 @@
 # @uppy/box
 
+## 2.3.0
+
+Released: 2024-03-27
+Included in: Uppy v3.24.0
+
+- @uppy/box,@uppy/companion-client,@uppy/provider-views,@uppy/status-bar: fix type imports (Antoine du Hamel / #5038)
+- @uppy/box: refactor to TypeScript (Murderlon / #4979)
+
+## 2.2.1
+
+Released: 2024-02-28
+Included in: Uppy v3.23.0
+
+- @uppy/box: fetchPreAuthToken in box too (Mikael Finstad / #4969)
+
+## 2.1.2
+
+Released: 2023-07-13
+Included in: Uppy v3.12.0
+
+- @uppy/box,@uppy/companion,@uppy/dropbox,@uppy/google-drive,@uppy/onedrive,@uppy/provider-views: Load Google Drive / OneDrive lists 5-10x faster & always load all files (Merlijn Vos / #4513)
+
 ## 2.0.1
 
 Released: 2022-09-25

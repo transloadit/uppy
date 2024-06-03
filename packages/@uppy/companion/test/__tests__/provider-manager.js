@@ -5,6 +5,8 @@ const { setDefaultEnv } = require('../mockserver')
 let grantConfig
 let companionOptions
 
+const getAuthProvider = (providerName) => providerManager.getDefaultProviders()[providerName]?.authProvider
+
 describe('Test Provider options', () => {
   beforeEach(() => {
     setDefaultEnv()
@@ -14,7 +16,7 @@ describe('Test Provider options', () => {
   })
 
   test('adds provider options', () => {
-    providerManager.addProviderOptions(companionOptions, grantConfig)
+    providerManager.addProviderOptions(companionOptions, grantConfig, getAuthProvider)
     expect(grantConfig.dropbox.key).toBe('dropbox_key')
     expect(grantConfig.dropbox.secret).toBe('dropbox_secret')
 
@@ -33,7 +35,7 @@ describe('Test Provider options', () => {
 
   test('adds extra provider config', () => {
     process.env.COMPANION_INSTAGRAM_KEY = '123456'
-    providerManager.addProviderOptions(getCompanionOptions(), grantConfig)
+    providerManager.addProviderOptions(getCompanionOptions(), grantConfig, getAuthProvider)
     expect(grantConfig.instagram).toEqual({
       transport: 'session',
       callback: '/instagram/callback',
@@ -52,6 +54,9 @@ describe('Test Provider options', () => {
       authorize_url: 'https://www.dropbox.com/oauth2/authorize',
       access_url: 'https://api.dropbox.com/oauth2/token',
       callback: '/dropbox/callback',
+      custom_params: {
+        token_access_type: 'offline',
+      },
     })
 
     expect(grantConfig.box).toEqual({
@@ -73,6 +78,10 @@ describe('Test Provider options', () => {
         'https://www.googleapis.com/auth/drive.readonly',
       ],
       callback: '/drive/callback',
+      custom_params: {
+        access_type: 'offline',
+        prompt: 'consent',
+      },
     })
     expect(grantConfig.zoom).toEqual({
       key: 'zoom_key',
@@ -95,7 +104,7 @@ describe('Test Provider options', () => {
 
     companionOptions = getCompanionOptions()
 
-    providerManager.addProviderOptions(companionOptions, grantConfig)
+    providerManager.addProviderOptions(companionOptions, grantConfig, getAuthProvider)
 
     expect(grantConfig.dropbox.secret).toBe('xobpord')
     expect(grantConfig.box.secret).toBe('xwbepqd')
@@ -109,7 +118,7 @@ describe('Test Provider options', () => {
     delete companionOptions.server.host
     delete companionOptions.server.protocol
 
-    providerManager.addProviderOptions(companionOptions, grantConfig)
+    providerManager.addProviderOptions(companionOptions, grantConfig, getAuthProvider)
     expect(grantConfig.dropbox.key).toBeUndefined()
     expect(grantConfig.dropbox.secret).toBeUndefined()
 
@@ -128,7 +137,7 @@ describe('Test Provider options', () => {
 
   test('sets a main redirect uri, if oauthDomain is set', () => {
     companionOptions.server.oauthDomain = 'domain.com'
-    providerManager.addProviderOptions(companionOptions, grantConfig)
+    providerManager.addProviderOptions(companionOptions, grantConfig, getAuthProvider)
 
     expect(grantConfig.dropbox.redirect_uri).toBe('http://domain.com/dropbox/redirect')
     expect(grantConfig.box.redirect_uri).toBe('http://domain.com/box/redirect')
@@ -151,8 +160,8 @@ describe('Test Custom Provider options', () => {
       },
     }, providers, grantConfig)
 
-    expect(grantConfig.foo.key).toBe('foo_key')
-    expect(grantConfig.foo.secret).toBe('foo_secret')
+    expect(grantConfig.some_provider.key).toBe('foo_key')
+    expect(grantConfig.some_provider.secret).toBe('foo_secret')
     expect(providers.foo).toBeTruthy()
   })
 })

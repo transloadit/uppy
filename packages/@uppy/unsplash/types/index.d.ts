@@ -1,9 +1,9 @@
-import type { PluginOptions, UIPlugin, PluginTarget } from '@uppy/core'
 import type { RequestClientOptions } from '@uppy/companion-client'
+import type { PluginTarget, UIPlugin, UIPluginOptions } from '@uppy/core'
 
-interface UnsplashOptions extends PluginOptions, RequestClientOptions {
-    target?: PluginTarget
-    title?: string
+interface UnsplashOptions extends UIPluginOptions, RequestClientOptions {
+  target?: PluginTarget
+  title?: string
 }
 
 declare class Unsplash extends UIPlugin<UnsplashOptions> {}

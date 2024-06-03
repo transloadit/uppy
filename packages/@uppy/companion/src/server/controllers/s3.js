@@ -6,17 +6,15 @@ const {
   AbortMultipartUploadCommand,
   CompleteMultipartUploadCommand,
 } = require('@aws-sdk/client-s3')
+const {
+  STSClient,
+  GetFederationTokenCommand,
+} = require('@aws-sdk/client-sts')
 
 const { createPresignedPost } = require('@aws-sdk/s3-presigned-post')
 const { getSignedUrl } = require('@aws-sdk/s3-request-presigner')
 
-function rfc2047Encode (data) {
-  // eslint-disable-next-line no-param-reassign
-  data = `${data}`
-  // eslint-disable-next-line no-control-regex
-  if (/^[\x00-\x7F]*$/.test(data)) return data // we return ASCII as is
-  return `=?UTF-8?B?${Buffer.from(data).toString('base64')}?=` // We encode non-ASCII strings
-}
+const { rfc2047EncodeMetadata, getBucket } = require('../helpers/utils')
 
 module.exports = function s3 (config) {
   if (typeof config.acl !== 'string' && config.acl != null) {
@@ -24,6 +22,15 @@ module.exports = function s3 (config) {
   }
   if (typeof config.getKey !== 'function') {
     throw new TypeError('s3: The `getKey` option must be a function')
+  }
+
+  function getS3Client (req, res, createPresignedPostMode = false) {
+    /**
+     * @type {import('@aws-sdk/client-s3').S3Client}
+     */
+    const client = createPresignedPostMode ? req.companion.s3ClientCreatePresignedPost : req.companion.s3Client
+    if (!client) res.status(400).json({ error: 'This Companion server does not support uploading to S3' })
+    return client
   }
 
   /**
@@ -42,15 +49,10 @@ module.exports = function s3 (config) {
    *  - fields - Form fields to send along.
    */
   function getUploadParameters (req, res, next) {
-    /**
-     * @type {import('@aws-sdk/client-s3').S3Client}
-     */
-    const client = req.companion.s3Client
+    const client = getS3Client(req, res)
+    if (!client) return
 
-    if (!client || typeof config.bucket !== 'string') {
-      res.status(400).json({ error: 'This Companion server does not support uploading to S3' })
-      return
-    }
+    const bucket = getBucket(config.bucket, req)
 
     const metadata = req.query.metadata || {}
     const key = config.getKey(req, req.query.filename, metadata)
@@ -71,14 +73,14 @@ module.exports = function s3 (config) {
     })
 
     createPresignedPost(client, {
-      Bucket: config.bucket,
+      Bucket: bucket,
       Expires: config.expires,
       Fields: fields,
       Conditions: config.conditions,
       Key: key,
     }).then(data => {
       res.json({
-        method: 'post',
+        method: 'post', // TODO: switch to the uppercase 'POST' in the next major
         url: data.url,
         fields: data.fields,
         expires: config.expires,
@@ -101,10 +103,9 @@ module.exports = function s3 (config) {
    *  - uploadId - The ID of this multipart upload, to be used in later requests.
    */
   function createMultipartUpload (req, res, next) {
-    /**
-     * @type {import('@aws-sdk/client-s3').S3Client}
-     */
-    const client = req.companion.s3Client
+    const client = getS3Client(req, res)
+    if (!client) return
+
     const key = config.getKey(req, req.body.filename, req.body.metadata || {})
     const { type, metadata } = req.body
     if (typeof key !== 'string') {
@@ -115,12 +116,13 @@ module.exports = function s3 (config) {
       res.status(400).json({ error: 's3: content type must be a string' })
       return
     }
+    const bucket = getBucket(config.bucket, req)
 
     const params = {
-      Bucket: config.bucket,
+      Bucket: bucket,
       Key: key,
       ContentType: type,
-      Metadata: Object.fromEntries(Object.entries(metadata).map(entry => entry.map(rfc2047Encode))),
+      Metadata: rfc2047EncodeMetadata(metadata),
     }
 
     if (config.acl != null) params.ACL = config.acl
@@ -147,10 +149,9 @@ module.exports = function s3 (config) {
    *     - Size - size of this part.
    */
   function getUploadedParts (req, res, next) {
-    /**
-     * @type {import('@aws-sdk/client-s3').S3Client}
-     */
-    const client = req.companion.s3Client
+    const client = getS3Client(req, res)
+    if (!client) return
+
     const { uploadId } = req.params
     const { key } = req.query
 
@@ -159,26 +160,28 @@ module.exports = function s3 (config) {
       return
     }
 
-    let parts = []
+    const bucket = getBucket(config.bucket, req)
+
+    const parts = []
 
     function listPartsPage (startAt) {
       client.send(new ListPartsCommand({
-        Bucket: config.bucket,
+        Bucket: bucket,
         Key: key,
         UploadId: uploadId,
         PartNumberMarker: startAt,
-      })).then(data => {
-        parts = parts.concat(data.Parts)
+      })).then(({ Parts, IsTruncated, NextPartNumberMarker }) => {
+        if (Parts) parts.push(...Parts)
 
-        if (data.IsTruncated) {
+        if (IsTruncated) {
           // Get the next page.
-          listPartsPage(data.NextPartNumberMarker)
+          listPartsPage(NextPartNumberMarker)
         } else {
           res.json(parts)
         }
       }, next)
     }
-    listPartsPage(0)
+    listPartsPage()
   }
 
   /**
@@ -193,10 +196,9 @@ module.exports = function s3 (config) {
    *  - url - The URL to upload to, including signed query parameters.
    */
   function signPartUpload (req, res, next) {
-    /**
-     * @type {import('@aws-sdk/client-s3').S3Client}
-     */
-    const client = req.companion.s3Client
+    const client = getS3Client(req, res)
+    if (!client) return
+
     const { uploadId, partNumber } = req.params
     const { key } = req.query
 
@@ -209,8 +211,10 @@ module.exports = function s3 (config) {
       return
     }
 
+    const bucket = getBucket(config.bucket, req)
+
     getSignedUrl(client, new UploadPartCommand({
-      Bucket: config.bucket,
+      Bucket: bucket,
       Key: key,
       UploadId: uploadId,
       PartNumber: partNumber,
@@ -234,10 +238,9 @@ module.exports = function s3 (config) {
    *                    in an object mapped to part numbers.
    */
   function batchSignPartsUpload (req, res, next) {
-    /**
-     * @type {import('@aws-sdk/client-s3').S3Client}
-     */
-    const client = req.companion.s3Client
+    const client = getS3Client(req, res)
+    if (!client) return
+
     const { uploadId } = req.params
     const { key, partNumbers } = req.query
 
@@ -257,10 +260,12 @@ module.exports = function s3 (config) {
       return
     }
 
+    const bucket = getBucket(config.bucket, req)
+
     Promise.all(
       partNumbersArray.map((partNumber) => {
         return getSignedUrl(client, new UploadPartCommand({
-          Bucket: config.bucket,
+          Bucket: bucket,
           Key: key,
           UploadId: uploadId,
           PartNumber: Number(partNumber),
@@ -287,10 +292,9 @@ module.exports = function s3 (config) {
    *   Empty.
    */
   function abortMultipartUpload (req, res, next) {
-    /**
-     * @type {import('@aws-sdk/client-s3').S3Client}
-     */
-    const client = req.companion.s3Client
+    const client = getS3Client(req, res)
+    if (!client) return
+
     const { uploadId } = req.params
     const { key } = req.query
 
@@ -299,8 +303,10 @@ module.exports = function s3 (config) {
       return
     }
 
+    const bucket = getBucket(config.bucket, req)
+
     client.send(new AbortMultipartUploadCommand({
-      Bucket: config.bucket,
+      Bucket: bucket,
       Key: key,
       UploadId: uploadId,
     })).then(() => res.json({}), next)
@@ -319,10 +325,9 @@ module.exports = function s3 (config) {
    *  - location - The full URL to the object in the S3 bucket.
    */
   function completeMultipartUpload (req, res, next) {
-    /**
-     * @type {import('@aws-sdk/client-s3').S3Client}
-     */
-    const client = req.companion.s3Client
+    const client = getS3Client(req, res)
+    if (!client) return
+
     const { uploadId } = req.params
     const { key } = req.query
     const { parts } = req.body
@@ -339,8 +344,10 @@ module.exports = function s3 (config) {
       return
     }
 
+    const bucket = getBucket(config.bucket, req)
+
     client.send(new CompleteMultipartUploadCommand({
-      Bucket: config.bucket,
+      Bucket: bucket,
       Key: key,
       UploadId: uploadId,
       MultipartUpload: {
@@ -353,7 +360,83 @@ module.exports = function s3 (config) {
     }, next)
   }
 
+  const policy = {
+    Version: '2012-10-17', // latest at the time of writing
+    Statement: [
+      {
+        Effect: 'Allow',
+        Action: [
+          's3:PutObject',
+        ],
+        Resource: [
+          `arn:aws:s3:::${config.bucket}/*`,
+          `arn:aws:s3:::${config.bucket}`,
+        ],
+      },
+    ],
+  }
+
+  let stsClient
+  function getSTSClient () {
+    if (stsClient == null) {
+      stsClient = new STSClient({
+        region: config.region,
+        credentials : {
+          accessKeyId: config.key,
+          secretAccessKey: config.secret,
+        },
+      })
+    }
+    return stsClient
+  }
+
+  /**
+   * Create STS credentials with the permission for sending PutObject/UploadPart to the bucket.
+   *
+   * Clients should cache the response and re-use it until they can reasonably
+   * expect uploads to complete before the token expires. To this effect, the
+   * Cache-Control header is set to invalidate the cache 5 minutes before the
+   * token expires.
+   *
+   * Response JSON:
+   * - credentials: the credentials including the SessionToken.
+   * - bucket: the S3 bucket name.
+   * - region: the region where that bucket is stored.
+   */
+  function getTemporarySecurityCredentials (req, res, next) {
+    getSTSClient().send(new GetFederationTokenCommand({
+      // Name of the federated user. The name is used as an identifier for the
+      // temporary security credentials (such as Bob). For example, you can
+      // reference the federated user name in a resource-based policy, such as
+      // in an Amazon S3 bucket policy.
+      // Companion is configured by default as an unprotected public endpoint,
+      // if you implement your own custom endpoint with user authentication you
+      // should probably use different names for each of your users.
+      Name: 'companion',
+      // The duration, in seconds, of the role session. The value specified
+      // can range from 900 seconds (15 minutes) up to the maximum session
+      // duration set for the role.
+      DurationSeconds: config.expires,
+      Policy: JSON.stringify(policy),
+    })).then(response => {
+      // This is a public unprotected endpoint.
+      // If you implement your own custom endpoint with user authentication you
+      // should probably use `private` instead of `public`.
+      res.setHeader('Cache-Control', `public,max-age=${config.expires - 300}`) // 300s is 5min.
+      res.json({
+        credentials: response.Credentials,
+        bucket: config.bucket,
+        region: config.region,
+      })
+    }, next)
+  }
+
+  if (config.bucket == null) {
+    return express.Router() // empty router because s3 is not enabled
+  }
+
   return express.Router()
+    .get('/sts', getTemporarySecurityCredentials)
     .get('/params', getUploadParameters)
     .post('/multipart', express.json(), createMultipartUpload)
     .get('/multipart/:uploadId', getUploadedParts)

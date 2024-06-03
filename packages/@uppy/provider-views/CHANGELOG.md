@@ -1,5 +1,69 @@
 # @uppy/provider-views
 
+## 3.12.0
+
+Released: 2024-04-29
+Included in: Uppy v3.25.0
+
+- @uppy/dashboard,@uppy/provider-views: Remove JSX global type everywhere (Merlijn Vos / #5117)
+- @uppy/provider-views: bring back "loaded X files..." (Mikael Finstad / #5097)
+
+## 3.11.0
+
+Released: 2024-03-27
+Included in: Uppy v3.24.0
+
+- @uppy/box,@uppy/companion-client,@uppy/provider-views,@uppy/status-bar: fix type imports (Antoine du Hamel / #5038)
+- @uppy/provider-views: fix `super.toggleCheckbox` bug (Mikael Finstad / #5004)
+- @uppy/core,@uppy/provider-views: Fix breadcrumbs (Evgenia Karunus / #4986)
+
+## 3.10.0
+
+Released: 2024-02-28
+Included in: Uppy v3.23.0
+
+- @uppy/provider-views: migrate to TS (Merlijn Vos / #4919)
+
+## 3.9.0
+
+Released: 2024-02-19
+Included in: Uppy v3.22.0
+
+- @uppy/provider-views: update uppy-providerbrowser-viewtype--list.scss (aditya patadia / #4913)
+- @uppy/provider-views: add referrerpolicy to images (merlijn vos / #4853)
+
+## 3.8.0
+
+Released: 2023-12-12
+Included in: Uppy v3.21.0
+
+- @uppy/provider-views: fix uploadRemoteFile undefined (Mikael Finstad / #4814)
+
+## 3.5.0
+
+Released: 2023-08-15
+Included in: Uppy v3.14.0
+
+- @uppy/companion-client,@uppy/provider-views: make authentication optional (Dominik Schmidt / #4556)
+- @uppy/provider-views: fix ProviderView error on empty plugin.icon (Dominik Schmidt / #4553)
+
+## 3.4.1
+
+Released: 2023-07-20
+Included in: Uppy v3.13.0
+
+- @uppy/provider-views: Add VirtualList to ProviderView (Merlijn Vos / #4566)
+- @uppy/provider-views: fix race conditions with folder loading (Mikael Finstad / #4578)
+- @uppy/provider-views: fix infinite folder loading  (Mikael Finstad / #4590)
+
+## 3.4.0
+
+Released: 2023-07-13
+Included in: Uppy v3.12.0
+
+- @uppy/provider-views: add support for remote file paths (Mikael Finstad / #4537)
+- @uppy/box,@uppy/companion,@uppy/dropbox,@uppy/google-drive,@uppy/onedrive,@uppy/provider-views: Load Google Drive / OneDrive lists 5-10x faster & always load all files (Merlijn Vos / #4513)
+
 ## 3.3.1
 
 Released: 2023-06-19

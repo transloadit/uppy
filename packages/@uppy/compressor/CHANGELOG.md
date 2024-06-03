@@ -1,5 +1,34 @@
 # @uppy/compressor
 
+## 1.1.4
+
+Released: 2024-05-07
+Included in: Uppy v3.25.2
+
+- @uppy/compressor,@uppy/core,@uppy/dashboard,@uppy/status-bar: Upgrade @transloadit/prettier-bytes (Merlijn Vos / #5150)
+
+## 1.1.1
+
+Released: 2024-02-20
+Included in: Uppy v3.22.1
+
+- @uppy/compressor,@uppy/core,@uppy/dashboard,@uppy/status-bar: bump `@transloadit/prettier-bytes` (Antoine du Hamel / #4933)
+
+## 1.1.0
+
+Released: 2024-02-19
+Included in: Uppy v3.22.0
+
+- @uppy/compressor: upgrade compressorjs (merlijn vos / #4924)
+- @uppy/compressor: migrate to ts (mikael finstad / #4907)
+
+## 1.0.3
+
+Released: 2023-09-18
+Included in: Uppy v3.16.0
+
+- @uppy/compressor: update file.meta.name after compression, becase format/extension might have changed (Artur Paikin / #4645)
+
 ## 1.0.1
 
 Released: 2022-09-25

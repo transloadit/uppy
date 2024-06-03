@@ -29,11 +29,6 @@ async function findFile ({ client, meetingId, fileId, recordingStart }) {
  * Adapter for API https://marketplace.zoom.us/docs/api-reference/zoom-api
  */
 class Zoom extends Provider {
-  constructor (options) {
-    super(options)
-    this.authProvider = Zoom.authProvider
-  }
-
   static get authProvider () {
     return 'zoom'
   }
@@ -157,6 +152,7 @@ class Zoom extends Provider {
     })
   }
 
+  // eslint-disable-next-line class-methods-use-this
   async #withErrorHandling (tag, fn) {
     const authErrorCodes = [
       124, // expired token
@@ -166,7 +162,7 @@ class Zoom extends Provider {
     return withProviderErrorHandling({
       fn,
       tag,
-      providerName: this.authProvider,
+      providerName: Zoom.authProvider,
       isAuthError: (response) => authErrorCodes.includes(response.statusCode),
       getJsonErrorMessage: (body) => body?.message,
     })
