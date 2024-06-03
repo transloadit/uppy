@@ -277,7 +277,7 @@ export default class Transloadit<
 
   assembly: Assembly
 
-  watcher: AssemblyWatcher<M, B>
+  #watcher: AssemblyWatcher<M, B>
 
   completedFiles: Record<string, boolean>
 
@@ -494,7 +494,7 @@ export default class Transloadit<
       this.uppy.emit('error', error)
     })
 
-    this.watcher = watcher
+    this.#watcher = watcher
   }
 
   #shouldWaitAfterUpload() {
@@ -872,7 +872,7 @@ export default class Transloadit<
       })
     })
 
-    return this.watcher.promise.then(() => {
+    return this.#watcher.promise.then(() => {
       closeSocketConnections()
       this.uppy.addResultData(uploadID, {
         transloadit: [this.assembly.status],
