@@ -1,11 +1,14 @@
-const fs = require('node:fs')
-const merge = require('lodash/merge')
-const stripIndent = require('common-tags/lib/stripIndent')
-const crypto = require('node:crypto')
+import fs = require('node:fs')
+import merge = require('lodash/merge')
+import stripIndent = require('common-tags/lib/stripIndent')
+import crypto = require('node:crypto')
 
-const utils = require('../server/helpers/utils')
-const logger = require('../server/logger')
-const { version } = require('../../package.json')
+import utils = require('../server/helpers/utils')
+import logger = require('../server/logger')
+
+// We don't want TS to resolve the following require, otherwise it wraps the
+// output files in `lib/src/` instead of `lib/`.
+const { version } = require('../../package.json') as { version: string }
 
 /**
  * Tries to read the secret from a file if the according environment variable is set.
@@ -49,7 +52,7 @@ const s3Prefix = process.env.COMPANION_AWS_PREFIX || ''
 /**
  * Default getKey for Companion standalone variant
  */
-const defaultStandaloneGetKey = (...args) => `${s3Prefix}${utils.defaultGetKey(...args)}`
+const defaultStandaloneGetKey = (...args: Parameters<typeof utils.defaultGetKey>) => `${s3Prefix}${utils.defaultGetKey(...args)}`
 
 /**
  * Loads the config from environment variables
@@ -190,7 +193,7 @@ const getConfigFromFile = () => {
   const path = getConfigPath()
   if (!path) return {}
 
-  const rawdata = fs.readFileSync(getConfigPath())
+  const rawdata = fs.readFileSync(getConfigPath(), 'utf-8')
   return JSON.parse(rawdata)
 }
 
@@ -202,7 +205,7 @@ export const getCompanionOptions = (options = {}) => {
   return merge({}, getConfigFromEnv(), getConfigFromFile(), options)
 }
 
-export const buildHelpfulStartupMessage = (companionOptions) => {
+export const buildHelpfulStartupMessage = (companionOptions: Record<string, unknown>) => {
   const buildURL = utils.getURLBuilder(companionOptions)
   const callbackURLs = []
   Object.keys(companionOptions.providerOptions).forEach((providerName) => {

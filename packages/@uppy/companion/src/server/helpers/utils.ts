@@ -1,23 +1,12 @@
-const crypto = require('node:crypto')
+import crypto = require('node:crypto')
 
-/**
- *
- * @param {string} value
- * @param {string[]} criteria
- * @returns {boolean}
- */
-exports.hasMatch = (value, criteria) => {
+export const hasMatch = (value: string, criteria: string[]) => {
   return criteria.some((i) => {
     return value === i || (new RegExp(i)).test(value)
   })
 }
 
-/**
- *
- * @param {object} data
- * @returns {string}
- */
-exports.jsonStringify = (data) => {
+export const jsonStringify = (data: object) => {
   const cache = []
   return JSON.stringify(data, (key, value) => {
     if (typeof value === 'object' && value !== null) {
@@ -34,26 +23,23 @@ exports.jsonStringify = (data) => {
 // all paths are assumed to be '/' prepended
 /**
  * Returns a url builder
- *
- * @param {object} options companion options
  */
-module.exports.getURLBuilder = (options) => {
+export const getURLBuilder = (options: Record<string, unknown>) => {
   /**
    * Builds companion targeted url
-   *
-   * @param {string} subPath the tail path of the url
-   * @param {boolean} isExternal if the url is for the external world
-   * @param {boolean} [excludeHost] if the server domain and protocol should be included
    */
-  const buildURL = (subPath, isExternal, excludeHost) => {
+  const buildURL = (subPath: string, isExternal: boolean, excludeHost?: boolean) => {
+    const server = options.server as Record<string, unknown>
+    const { implicitPath, path: serverPath } = server
+
     let path = ''
 
-    if (isExternal && options.server.implicitPath) {
-      path += options.server.implicitPath
+    if (isExternal && implicitPath) {
+      path += implicitPath
     }
 
-    if (options.server.path) {
-      path += options.server.path
+    if (serverPath) {
+      path += serverPath
     }
 
     path += subPath
@@ -62,7 +48,7 @@ module.exports.getURLBuilder = (options) => {
       return path
     }
 
-    return `${options.server.protocol}://${options.server.host}${path}`
+    return `${server.protocol}://${server.host}${path}`
   }
 
   return buildURL
@@ -82,29 +68,25 @@ function createSecret(secret) {
 
 /**
  * Create an initialization vector for AES256.
- *
- * @returns {Buffer}
  */
 function createIv() {
   return crypto.randomBytes(16)
 }
 
-function urlEncode(unencoded) {
+function urlEncode(unencoded: string) {
   return unencoded.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '~')
 }
 
-function urlDecode(encoded) {
+function urlDecode(encoded: string) {
   return encoded.replace(/-/g, '+').replace(/_/g, '/').replace(/~/g, '=')
 }
 
 /**
  * Encrypt a buffer or string with AES256 and a random iv.
  *
- * @param {string} input
- * @param {string|Buffer} secret
- * @returns {string} Ciphertext as a hex string, prefixed with 32 hex characters containing the iv.
+ * @returns Ciphertext as a hex string, prefixed with 32 hex characters containing the iv.
  */
-module.exports.encrypt = (input, secret) => {
+export const encrypt = (input: string, secret: string | Buffer) => {
   const iv = createIv()
   const cipher = crypto.createCipheriv('aes256', createSecret(secret), iv)
   let encrypted = cipher.update(input, 'utf8', 'base64')
@@ -116,11 +98,9 @@ module.exports.encrypt = (input, secret) => {
 /**
  * Decrypt an iv-prefixed or string with AES256. The iv should be in the first 32 hex characters.
  *
- * @param {string} encrypted
- * @param {string|Buffer} secret
- * @returns {string} Decrypted value.
+ * @returns Decrypted value.
  */
-module.exports.decrypt = (encrypted, secret) => {
+export const decrypt = (encrypted: string, secret: string | Buffer) => {
   // Need at least 32 chars for the iv
   if (encrypted.length < 32) {
     throw new Error('Invalid encrypted value. Maybe it was generated with an old Companion version?')
@@ -130,7 +110,7 @@ module.exports.decrypt = (encrypted, secret) => {
   const iv = Buffer.from(encrypted.slice(0, 32), 'hex')
   const encryptionWithoutIv = encrypted.slice(32)
 
-  let decipher
+  let decipher: crypto.Decipher
   try {
     decipher = crypto.createDecipheriv('aes256', createSecret(secret), iv)
   } catch (err) {
@@ -146,7 +126,7 @@ module.exports.decrypt = (encrypted, secret) => {
   return decrypted
 }
 
-module.exports.defaultGetKey = (req, filename) => `${crypto.randomUUID()}-${filename}`
+export const defaultGetKey = (req: never, filename: string) => `${crypto.randomUUID()}-${filename}`
 
 class StreamHttpJsonError extends Error {
   statusCode
@@ -163,7 +143,7 @@ class StreamHttpJsonError extends Error {
 
 module.exports.StreamHttpJsonError = StreamHttpJsonError
 
-module.exports.prepareStream = async (stream) => new Promise((resolve, reject) => {
+export const prepareStream = async (stream) => new Promise<void>((resolve, reject) => (
   stream
     .on('response', () => {
       // Don't allow any more data to flow yet.
@@ -189,21 +169,21 @@ module.exports.prepareStream = async (stream) => new Promise((resolve, reject) =
 
       reject(err)
     })
-})
+))
 
-module.exports.getBasicAuthHeader = (key, secret) => {
+export const getBasicAuthHeader = (key: string, secret: string) => {
   const base64 = Buffer.from(`${key}:${secret}`, 'binary').toString('base64')
   return `Basic ${base64}`
 }
 
-const rfc2047Encode = (dataIn) => {
+const rfc2047Encode = (dataIn: string) => {
   const data = `${dataIn}`
   // eslint-disable-next-line no-control-regex
   if (/^[\x00-\x7F]*$/.test(data)) return data // we return ASCII as is
   return `=?UTF-8?B?${Buffer.from(data).toString('base64')}?=` // We encode non-ASCII strings
 }
 
-module.exports.rfc2047EncodeMetadata = (metadata) => (
+export const rfc2047EncodeMetadata = (metadata: Record<string, string>) => (
   Object.fromEntries(Object.entries(metadata).map((entry) => entry.map(rfc2047Encode)))
 )
 
