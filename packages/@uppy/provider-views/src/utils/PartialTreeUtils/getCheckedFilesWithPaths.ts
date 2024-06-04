@@ -27,7 +27,8 @@ const getPath = (
   return meAndParentPath
 }
 
-// See "Uppy file properties" documentation for `.absolutePath` and `.relativePath` (https://uppy.io/docs/uppy/#working-with-uppy-files)
+// See "Uppy file properties" documentation for `.absolutePath` and `.relativePath`
+// (https://uppy.io/docs/uppy/#working-with-uppy-files)
 const getCheckedFilesWithPaths = (
   partialTree: PartialTree,
 ): CompanionFile[] => {

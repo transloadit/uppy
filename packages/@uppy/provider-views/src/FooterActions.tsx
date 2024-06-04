@@ -4,8 +4,8 @@ import type { Meta, Body } from '@uppy/utils/lib/UppyFile'
 import classNames from 'classnames'
 import type { PartialTree } from '@uppy/core/lib/Uppy'
 import { useMemo } from 'preact/hooks'
-import getNOfSelectedFiles from './utils/PartialTreeUtils/getNOfSelectedFiles'
-import type ProviderView from './ProviderView'
+import getNOfSelectedFiles from './utils/PartialTreeUtils/getNOfSelectedFiles.ts'
+import ProviderView from './ProviderView/ProviderView.tsx'
 
 export default function FooterActions<M extends Meta, B extends Body>({
   cancelSelection,
@@ -25,7 +25,7 @@ export default function FooterActions<M extends Meta, B extends Body>({
 }) {
   const aggregateRestrictionError = useMemo(() => {
     return validateAggregateRestrictions(partialTree)
-  }, [partialTree])
+  }, [partialTree, validateAggregateRestrictions])
 
   const nOfSelectedFiles = useMemo(() => {
     return getNOfSelectedFiles(partialTree)

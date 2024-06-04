@@ -10,11 +10,9 @@ import type {
   PartialTreeFile,
   PartialTreeFolderNode,
 } from '@uppy/core/lib/Uppy.ts'
-import type { RestrictionError } from '@uppy/core/lib/Restricter.ts'
-import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
 import { useEffect, useState } from 'preact/hooks'
 import Item from './Item/index.tsx'
-import type ProviderView from './ProviderView/ProviderView.tsx'
+import ProviderView from './ProviderView/ProviderView.tsx'
 
 type BrowserProps<M extends Meta, B extends Body> = {
   displayedPartialTree: (PartialTreeFile | PartialTreeFolderNode)[]
@@ -46,13 +44,15 @@ function Browser<M extends Meta, B extends Body>(props: BrowserProps<M, B>) {
   const [isShiftKeyPressed, setIsShiftKeyPressed] = useState(false)
 
   // This records whether the user is holding the SHIFT key this very moment.
-  // Typically this is implemented using `onClick((e) => e.shiftKey)` - but we can't use that, because for accessibility reasons we're using html tags that don't support `e.shiftKey` property (see #3768).
+  // Typically, this is implemented using `onClick((e) => e.shiftKey)` -
+  // however we can't use that, because for accessibility reasons
+  // we're using html tags that don't support `e.shiftKey` property (see #3768).
   useEffect(() => {
     const handleKeyUp = (e: KeyboardEvent) => {
-      if (e.key == 'Shift') setIsShiftKeyPressed(false)
+      if (e.key === 'Shift') setIsShiftKeyPressed(false)
     }
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key == 'Shift') setIsShiftKeyPressed(true)
+      if (e.key === 'Shift') setIsShiftKeyPressed(true)
     }
     document.addEventListener('keyup', handleKeyUp)
     document.addEventListener('keydown', handleKeyDown)
