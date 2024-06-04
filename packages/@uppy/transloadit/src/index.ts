@@ -922,8 +922,9 @@ export default class Transloadit<
       // No uploader needed when importing; instead we take the upload URL from an existing uploader.
       this.uppy.on('upload-success', this.#onFileUploadURLAvailable)
     } else {
-      // @ts-expect-error endpoint has to be required for @uppy/tus but for some reason
       // we don't need it here.
+      // @ts-expect-error `endpoint` is required but we first have to fetch
+      // the regional endpoint from the Transloadit API before we can set it.
       this.uppy.use(Tus, {
         // Disable tus-js-client fingerprinting, otherwise uploading the same file at different times
         // will upload to an outdated Assembly, and we won't get socket events for it.
@@ -935,8 +936,9 @@ export default class Transloadit<
         // Golden Retriever. So, Golden Retriever is required to do resumability with the Transloadit plugin,
         // and we disable Tus's default resume implementation to prevent bad behaviours.
         storeFingerprintForResuming: false,
-        // Only send Assembly metadata to the tus endpoint.
-        allowedMetaFields: ['assembly_url', 'filename', 'fieldname'],
+        // Send all metadata to Transloadit. Metadata set by the user
+        // ends up as in the template as `file.user_meta`
+        allowedMetaFields: true,
         // Pass the limit option to @uppy/tus
         limit: this.opts.limit,
         rateLimitedQueue: this.#rateLimitedQueue,
