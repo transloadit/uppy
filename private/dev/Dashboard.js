@@ -78,8 +78,8 @@ function getCompanionKeysParams (name) {
 // Rest is implementation! Obviously edit as necessary...
 
 export default () => {
-  // const restrictions = undefined
-  const restrictions = undefined;// { maxFileSize: 1, maxNumberOfFiles: 3 }
+  const restrictions = undefined
+  // const restrictions = { requiredMetaFields: ['caption'], maxNumberOfFiles: 3 }
 
   const uppyDashboard = new Uppy({
     logger: debugLogger,
