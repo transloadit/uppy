@@ -43,7 +43,7 @@ export default class Audio<M extends Meta, B extends Body> extends UIPlugin<
 > {
   static VERSION = packageJson.version
 
-  private recordingLengthTimer: ReturnType<typeof setInterval>
+  #recordingLengthTimer: ReturnType<typeof setInterval>
 
   private icon
 
@@ -201,8 +201,7 @@ export default class Audio<M extends Meta, B extends Body> extends UIPlugin<
     this.#recorder.start(500)
 
     // Start the recordingLengthTimer if we are showing the recording length.
-    // TODO: switch this to a private field
-    this.recordingLengthTimer = setInterval(() => {
+    this.#recordingLengthTimer = setInterval(() => {
       const currentRecordingLength = this.getPluginState()
         .recordingLengthSeconds as number
       this.setPluginState({
@@ -222,7 +221,7 @@ export default class Audio<M extends Meta, B extends Body> extends UIPlugin<
       })
       this.#recorder!.stop()
 
-      clearInterval(this.recordingLengthTimer)
+      clearInterval(this.#recordingLengthTimer)
       this.setPluginState({ recordingLengthSeconds: 0 })
     })
 
@@ -289,7 +288,7 @@ export default class Audio<M extends Meta, B extends Body> extends UIPlugin<
         this.#recorder!.addEventListener('stop', resolve, { once: true })
         this.#recorder!.stop()
 
-        clearInterval(this.recordingLengthTimer)
+        clearInterval(this.#recordingLengthTimer)
       })
     }
 
