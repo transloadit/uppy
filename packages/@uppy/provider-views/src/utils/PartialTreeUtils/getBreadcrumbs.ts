@@ -11,13 +11,13 @@ const getBreadcrumbs = (
 ): PartialTreeFolder[] => {
   if (!currentFolderId) return []
 
-  const breadcrumbs: PartialTreeFolder[] = []
+  let breadcrumbs: PartialTreeFolder[] = []
 
   let parent = partialTree.find(
     (folder) => folder.id === currentFolderId,
   ) as PartialTreeFolder
   while (parent.type !== 'root') {
-    breadcrumbs.push(parent)
+    breadcrumbs = [parent, ...breadcrumbs]
     const currentParentId = (parent as PartialTreeFolderNode).parentId
     parent = partialTree.find(
       (folder) => folder.id === currentParentId,

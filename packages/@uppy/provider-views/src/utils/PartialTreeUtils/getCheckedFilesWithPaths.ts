@@ -23,7 +23,7 @@ const getPath = (
 
   if (file.type === 'root') return []
 
-  const meAndParentPath = [file, ...getPath(partialTree, file.parentId, cache)]
+  const meAndParentPath = [...getPath(partialTree, file.parentId, cache), file]
   cache[sId] = meAndParentPath
   return meAndParentPath
 }
@@ -41,13 +41,11 @@ const getCheckedFilesWithPaths = (
   ) as PartialTreeFile[]
 
   const companionFilesWithInjectedPaths = checkedFiles.map((file) => {
-    const path: (PartialTreeFile | PartialTreeFolderNode)[] = getPath(
+    const absFolders: (PartialTreeFile | PartialTreeFolderNode)[] = getPath(
       partialTree,
       file.id,
       cache,
     )
-
-    const absFolders = path.toReversed()
 
     const firstCheckedFolderIndex = absFolders.findIndex(
       (i) => i.type === 'folder' && i.status === 'checked',
