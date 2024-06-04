@@ -65,16 +65,17 @@ const getFile = (tree: PartialTree, id: string) =>
 
 describe('afterFill()', () => {
   it('preserves .checked files in an already .cached folder', async () => {
+    // prettier-ignore
     const tree: PartialTree = [
       _root('ourRoot'),
-      _folder('1', { parentId: 'ourRoot' }),
-      _folder('2', { parentId: 'ourRoot', cached: true }),
-      _file('2_1', { parentId: '2' }),
-      _file('2_2', { parentId: '2', status: 'checked' }),
-      _file('2_3', { parentId: '2' }),
-      _folder('2_4', { parentId: '2' }),
-      _file('3', { parentId: 'ourRoot' }),
-      _file('4', { parentId: 'ourRoot' }),
+          _folder('1', { parentId: 'ourRoot' }),
+          _folder('2', { parentId: 'ourRoot', cached: true }),
+              _file('2_1', { parentId: '2' }),
+              _file('2_2', { parentId: '2', status: 'checked' }),
+              _file('2_3', { parentId: '2' }),
+              _folder('2_4', { parentId: '2' }),
+          _file('3', { parentId: 'ourRoot' }),
+          _file('4', { parentId: 'ourRoot' }),
     ]
     const mock = vi.fn()
     const enrichedTree = await afterFill(tree, mock, () => null)
@@ -143,17 +144,18 @@ describe('afterFill()', () => {
   })
 
   it('fetches a folder two levels deep', async () => {
+    // prettier-ignore
     const tree: PartialTree = [
       _root('ourRoot'),
-      _folder('1', { parentId: 'ourRoot' }),
-      _folder('2', {
-        parentId: 'ourRoot',
-        cached: true,
-        nextPagePath: '2_next',
-        status: 'checked',
-      }),
-      _file('2_1', { parentId: '2', status: 'checked' }),
-      _file('2_2', { parentId: '2', status: 'checked' }),
+          _folder('1', { parentId: 'ourRoot' }),
+          _folder('2', {
+              parentId: 'ourRoot',
+              cached: true,
+              nextPagePath: '2_next',
+              status: 'checked',
+          }),
+              _file('2_1', { parentId: '2', status: 'checked' }),
+              _file('2_2', { parentId: '2', status: 'checked' }),
     ]
     const mock = (path: PartialTreeId) => {
       if (path === '2_next') {
@@ -248,10 +250,11 @@ describe('afterFill()', () => {
 
 describe('afterOpenFolder()', () => {
   it('open "checked" folder - all discovered files are marked as "checked"', () => {
+    // prettier-ignore
     const oldPartialTree: PartialTree = [
       _root('ourRoot'),
-      _folder('1', { parentId: 'ourRoot' }),
-      _folder('2', { parentId: 'ourRoot', cached: false, status: 'checked' }),
+          _folder('1', { parentId: 'ourRoot' }),
+          _folder('2', { parentId: 'ourRoot', cached: false, status: 'checked' }),
     ]
 
     const fakeCompanionFiles = [
@@ -278,10 +281,11 @@ describe('afterOpenFolder()', () => {
   })
 
   it('open "unchecked" folder - all discovered files are marked as "unchecked"', () => {
+    // prettier-ignore
     const oldPartialTree: PartialTree = [
       _root('ourRoot'),
-      _folder('1', { parentId: 'ourRoot' }),
-      _folder('2', { parentId: 'ourRoot', cached: false, status: 'unchecked' }),
+          _folder('1', { parentId: 'ourRoot' }),
+          _folder('2', { parentId: 'ourRoot', cached: false, status: 'unchecked' }),
     ]
 
     const fakeCompanionFiles = [
@@ -310,13 +314,14 @@ describe('afterOpenFolder()', () => {
 
 describe('afterScrollFolder()', () => {
   it('scroll "checked" folder - all discovered files are marked as "checked"', () => {
+    // prettier-ignore
     const oldPartialTree: PartialTree = [
       _root('ourRoot'),
-      _folder('1', { parentId: 'ourRoot' }),
-      _folder('2', { parentId: 'ourRoot', cached: true, status: 'checked' }),
-      _file('2_1', { parentId: '2' }),
-      _file('2_2', { parentId: '2' }),
-      _file('2_3', { parentId: '2' }),
+          _folder('1', { parentId: 'ourRoot' }),
+          _folder('2', { parentId: 'ourRoot', cached: true, status: 'checked' }),
+              _file('2_1', { parentId: '2' }),
+              _file('2_2', { parentId: '2' }),
+              _file('2_3', { parentId: '2' }),
     ]
 
     const fakeCompanionFiles = [
@@ -339,13 +344,14 @@ describe('afterScrollFolder()', () => {
   })
 
   it('scroll "checked" folder - all discovered files are marked as "unchecked"', () => {
+    // prettier-ignore
     const oldPartialTree: PartialTree = [
       _root('ourRoot'),
-      _folder('1', { parentId: 'ourRoot' }),
-      _folder('2', { parentId: 'ourRoot', cached: true, status: 'unchecked' }),
-      _file('2_1', { parentId: '2' }),
-      _file('2_2', { parentId: '2' }),
-      _file('2_3', { parentId: '2' }),
+          _folder('1', { parentId: 'ourRoot' }),
+          _folder('2', { parentId: 'ourRoot', cached: true, status: 'unchecked' }),
+              _file('2_1', { parentId: '2' }),
+              _file('2_2', { parentId: '2' }),
+              _file('2_3', { parentId: '2' }),
     ]
 
     const fakeCompanionFiles = [
@@ -369,19 +375,20 @@ describe('afterScrollFolder()', () => {
 })
 
 describe('afterToggleCheckbox()', () => {
+  // prettier-ignore
   const oldPartialTree: PartialTree = [
     _root('ourRoot'),
-    _folder('1', { parentId: 'ourRoot' }),
-    _folder('2', { parentId: 'ourRoot' }),
-    _file('2_1', { parentId: '2' }),
-    _file('2_2', { parentId: '2' }),
-    _file('2_3', { parentId: '2' }),
-    _folder('2_4', { parentId: '2' }), // click
-    _file('2_4_1', { parentId: '2_4' }),
-    _file('2_4_2', { parentId: '2_4' }),
-    _file('2_4_3', { parentId: '2_4' }),
-    _file('3', { parentId: 'ourRoot' }),
-    _file('4', { parentId: 'ourRoot' }),
+        _folder('1', { parentId: 'ourRoot' }),
+        _folder('2', { parentId: 'ourRoot' }),
+            _file('2_1', { parentId: '2' }),
+            _file('2_2', { parentId: '2' }),
+            _file('2_3', { parentId: '2' }),
+            _folder('2_4', { parentId: '2' }), // click
+                _file('2_4_1', { parentId: '2_4' }),
+                _file('2_4_2', { parentId: '2_4' }),
+                _file('2_4_3', { parentId: '2_4' }),
+        _file('3', { parentId: 'ourRoot' }),
+        _file('4', { parentId: 'ourRoot' }),
   ]
 
   it('check folder: percolates up and down', () => {
@@ -470,16 +477,17 @@ describe('afterToggleCheckbox()', () => {
 
 describe('getNOfSelectedFiles()', () => {
   it('gets all leaf items', () => {
+    // prettier-ignore
     const tree: PartialTree = [
       _root('ourRoot'),
-      // leaf .checked folder
-      _folder('1', { parentId: 'ourRoot', cached: false, status: 'checked' }),
-      // NON-left .checked folder
-      _folder('2', { parentId: 'ourRoot', status: 'checked' }),
-      // leaf .checked file
-      _file('2_1', { parentId: '2', status: 'checked' }),
-      // leaf .checked file
-      _file('2_2', { parentId: '2', status: 'checked' }),
+          // leaf .checked folder
+          _folder('1', { parentId: 'ourRoot', cached: false, status: 'checked' }),
+          // NON-left .checked folder
+          _folder('2', { parentId: 'ourRoot', status: 'checked' }),
+              // leaf .checked file
+              _file('2_1', { parentId: '2', status: 'checked' }),
+              // leaf .checked file
+              _file('2_2', { parentId: '2', status: 'checked' }),
     ]
     const result = getNOfSelectedFiles(tree)
 
@@ -501,19 +509,20 @@ describe('getNOfSelectedFiles()', () => {
 
 describe('injectPaths()', () => {
   // Note that this is a tree that doesn't require any api calls, everything is cached already
+  // prettier-ignore
   const tree: PartialTree = [
     _root('ourRoot'),
-    _folder('1', { parentId: 'ourRoot' }),
-    _folder('2', { parentId: 'ourRoot' }),
-    _file('2_1', { parentId: '2' }),
-    _file('2_2', { parentId: '2', status: 'checked' }),
-    _file('2_3', { parentId: '2' }),
-    _folder('2_4', { parentId: '2', status: 'checked' }),
-    _file('2_4_1', { parentId: '2_4', status: 'checked' }),
-    _file('2_4_2', { parentId: '2_4', status: 'checked' }),
-    _file('2_4_3', { parentId: '2_4', status: 'checked' }),
-    _file('3', { parentId: 'ourRoot' }),
-    _file('4', { parentId: 'ourRoot' }),
+        _folder('1', { parentId: 'ourRoot' }),
+        _folder('2', { parentId: 'ourRoot' }),
+            _file('2_1', { parentId: '2' }),
+            _file('2_2', { parentId: '2', status: 'checked' }),
+            _file('2_3', { parentId: '2' }),
+            _folder('2_4', { parentId: '2', status: 'checked' }),
+                _file('2_4_1', { parentId: '2_4', status: 'checked' }),
+                _file('2_4_2', { parentId: '2_4', status: 'checked' }),
+                _file('2_4_3', { parentId: '2_4', status: 'checked' }),
+        _file('3', { parentId: 'ourRoot' }),
+        _file('4', { parentId: 'ourRoot' }),
   ]
 
   // These test cases are based on documentation for .absolutePath and .relativePath (https://uppy.io/docs/uppy/#filemeta)
