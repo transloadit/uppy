@@ -1,7 +1,7 @@
 import { h } from 'preact'
 
 export interface AudioSourceSelectProps {
-  currentDeviceId: string
+  currentDeviceId: string | MediaStreamTrack | null | undefined
   audioSources: MediaDeviceInfo[]
   onChangeSource: (value: string) => void
 }

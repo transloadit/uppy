@@ -1036,14 +1036,10 @@ uppy.on('file-removed', (file) => {
 
 Fired when the upload starts.
 
-```js
-uppy.on('upload', (data) => {
-	// data object consists of `id` with upload ID and `fileIDs` array
-	// with file IDs in current upload
-	// data: { id, fileIDs }
-	console.log(`Starting upload ${id} for files ${fileIDs}`);
-});
-```
+**Parameters**
+
+- `uploadID` (`string)`
+- `files` (`UppyFile<M,B>`)
 
 #### `preprocess-progress`
 
@@ -1096,6 +1092,15 @@ uppy.on('upload-progress', (file, progress) => {
 	console.log(file.id, progress.bytesUploaded, progress.bytesTotal);
 });
 ```
+
+#### `upload-pause`
+
+Fired when an individual upload is (un)paused.
+
+**Parameters**
+
+- `file` (`UppyFile<M,B>`)
+- `isPaused` (`boolean`)
 
 #### `postprocess-progress`
 
@@ -1236,7 +1241,7 @@ the `retry-all` event instead.
 
 **Parameters**
 
-- `fileID` - ID of the file that is being retried.
+- `file` (`UppyFile<M,B>`)
 
 **Example**
 
@@ -1272,7 +1277,7 @@ Fired when all failed uploads are retried
 
 **Parameters**
 
-- `fileIDs` - Arrays of IDs of the files being retried.
+- `files` (`UppyFile<M,B>[]`)
 
 **Example**
 
@@ -1320,17 +1325,6 @@ upload restrictions.
 ```js
 uppy.on('restriction-failed', (file, error) => {
 	// do some customized logic like showing system notice to users
-});
-```
-
-#### `reset-progress`
-
-Fired when `resetProgress()` is called, each file has its upload progress reset
-to zero.
-
-```js
-uppy.on('reset-progress', () => {
-	// progress was reset
 });
 ```
 

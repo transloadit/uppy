@@ -2,20 +2,17 @@
 const tus = require('tus-js-client')
 const { randomUUID } = require('node:crypto')
 const validator = require('validator')
-const { pipeline: pipelineCb } = require('node:stream')
+const { pipeline } = require('node:stream/promises')
 const { join } = require('node:path')
 const fs = require('node:fs')
-const { promisify } = require('node:util')
 const throttle = require('lodash/throttle')
+const { once } = require('node:events')
 
 const { Upload } = require('@aws-sdk/lib-storage')
 
 const { rfc2047EncodeMetadata, getBucket } = require('./helpers/utils')
 
 const got = require('./got')
-
-// TODO move to `require('streams/promises').pipeline` when dropping support for Node.js 14.x.
-const pipeline = promisify(pipelineCb)
 
 const { createReadStream, createWriteStream, ReadStream } = fs
 const { stat, unlink } = fs.promises
@@ -40,23 +37,8 @@ function exceedsMaxFileSize(maxFileSize, size) {
   return maxFileSize && size && size > maxFileSize
 }
 
-// TODO remove once we migrate away from form-data
-function sanitizeMetadata(inputMetadata) {
-  if (inputMetadata == null) return {}
-
-  const outputMetadata = {}
-  Object.keys(inputMetadata).forEach((key) => {
-    outputMetadata[key] = String(inputMetadata[key])
-  })
-  return outputMetadata
-}
-
 class ValidationError extends Error {
-  constructor(message) {
-    super(message)
-
-    this.name = 'ValidationError'
-  }
+  name = 'ValidationError'
 }
 
 /**
@@ -185,7 +167,7 @@ class Uploader {
     this.options = options
     this.token = randomUUID()
     this.fileName = `${Uploader.FILE_NAME_PREFIX}-${this.token}`
-    this.options.metadata = sanitizeMetadata(this.options.metadata)
+    this.options.metadata = this.options.metadata || {}
     this.options.fieldname = this.options.fieldname || DEFAULT_FIELD_NAME
     this.size = options.size
     this.uploadFileName = this.options.metadata.name
@@ -343,7 +325,7 @@ class Uploader {
         return
       }
       logger.error(err, 'uploader.error', this.shortToken)
-      this.#emitError(err)
+      await this.#emitError(err)
     } finally {
       emitter().removeAllListeners(`pause:${this.token}`)
       emitter().removeAllListeners(`resume:${this.token}`)
@@ -403,33 +385,9 @@ class Uploader {
   async awaitReady(timeout) {
     logger.debug('waiting for socket connection', 'uploader.socket.wait', this.shortToken)
 
-    // TODO: replace the Promise constructor call when dropping support for Node.js <16 with
-    // await once(emitter, eventName, timeout && { signal: AbortSignal.timeout(timeout) })
-    await new Promise((resolve, reject) => {
-      const eventName = `connection:${this.token}`
-      let timer
-      let onEvent
-
-      function cleanup() {
-        emitter().removeListener(eventName, onEvent)
-        clearTimeout(timer)
-      }
-
-      if (timeout) {
-        // Need to timeout after a while, or we could leak emitters
-        timer = setTimeout(() => {
-          cleanup()
-          reject(new Error('Timed out waiting for socket connection'))
-        }, timeout)
-      }
-
-      onEvent = () => {
-        cleanup()
-        resolve()
-      }
-
-      emitter().once(eventName, onEvent)
-    })
+    const eventName = `connection:${this.token}`
+    // eslint-disable-next-line compat/compat
+    await once(emitter(), eventName, timeout && { signal: AbortSignal.timeout(timeout) })
 
     logger.debug('socket connection received', 'uploader.socket.wait', this.shortToken)
   }
@@ -514,14 +472,13 @@ class Uploader {
    */
   async #emitError(err) {
     // delete stack to avoid sending server info to client
-    // todo remove also extraData from serializedErr in next major,
     // see PR discussion https://github.com/transloadit/uppy/pull/3832
+    // @ts-ignore
     const { serializeError } = await import('serialize-error')
     const { stack, ...serializedErr } = serializeError(err)
     const dataToEmit = {
       action: 'error',
-      // @ts-ignore
-      payload: { ...err.extraData, error: serializedErr },
+      payload: { error: serializedErr },
     }
     this.saveState(dataToEmit)
     emitter().emit(this.token, dataToEmit)

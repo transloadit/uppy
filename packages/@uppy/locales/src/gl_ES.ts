@@ -145,11 +145,4 @@ gl_ES.strings = {
   openFolderNamed: 'Cartafol aberto %{name}',
 }
 
-// TODO: remove this in the next major?
-// @ts-expect-error Uppy can be a global in legacy bundle
-if (typeof Uppy !== 'undefined') {
-  // @ts-expect-error Uppy can be a global in legacy bundle
-  globalThis.Uppy.locales.gl_ES = gl_ES
-}
-
 export default gl_ES

@@ -91,9 +91,13 @@ module.exports = {
     'react/no-this-in-sfc': 'error',
     'react/no-will-update-set-state': 'error',
     'react/prefer-stateless-function': 'error',
+    'react/require-default-props': ['error', {
+      forbidDefaultForRequired: true,
+      functions: 'defaultArguments',
+    }],
     'react/sort-comp': 'error',
-    'react/style-prop-object': 'error',
     'react/static-property-placement': 'off',
+    'react/style-prop-object': 'error',
 
     // accessibility
     'jsx-a11y/alt-text': 'error',

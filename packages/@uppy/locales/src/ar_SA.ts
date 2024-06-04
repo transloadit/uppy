@@ -137,11 +137,4 @@ ar_SA.strings = {
   openFolderNamed: '%{name} افتح المجلد',
 }
 
-// TODO: remove this in the next major?
-// @ts-expect-error Uppy can be a global in legacy bundle
-if (typeof Uppy !== 'undefined') {
-  // @ts-expect-error Uppy can be a global in legacy bundle
-  globalThis.Uppy.locales.ar_SA = ar_SA
-}
-
 export default ar_SA

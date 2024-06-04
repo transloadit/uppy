@@ -71,8 +71,8 @@ async function fetchProviderKeys (providerName, companionOptions, credentialRequ
 exports.getCredentialsOverrideMiddleware = (providers, companionOptions) => {
   return async (req, res, next) => {
     try {
-      const { authProvider, override } = req.params
-      const [providerName] = Object.keys(providers).filter((name) => providers[name].authProvider === authProvider)
+      const { oauthProvider, override } = req.params
+      const [providerName] = Object.keys(providers).filter((name) => providers[name].oauthProvider === oauthProvider)
       if (!providerName) {
         next()
         return

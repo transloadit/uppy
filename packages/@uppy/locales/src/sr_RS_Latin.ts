@@ -145,11 +145,4 @@ sr_RS_Latin.strings = {
   openFolderNamed: 'Otvori folder %{name}',
 }
 
-// TODO: remove this in the next major?
-// @ts-expect-error Uppy can be a global in legacy bundle
-if (typeof Uppy !== 'undefined') {
-  // @ts-expect-error Uppy can be a global in legacy bundle
-  globalThis.Uppy.locales.sr_RS_Latin = sr_RS_Latin
-}
-
 export default sr_RS_Latin

@@ -215,11 +215,4 @@ nl_NL.strings = {
   zoomOut: 'Zoom uit',
 }
 
-// TODO: remove this in the next major?
-// @ts-expect-error Uppy can be a global in legacy bundle
-if (typeof Uppy !== 'undefined') {
-  // @ts-expect-error Uppy can be a global in legacy bundle
-  globalThis.Uppy.locales.nl_NL = nl_NL
-}
-
 export default nl_NL

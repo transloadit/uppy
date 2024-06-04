@@ -232,11 +232,4 @@ ca_ES.strings = {
   unselectFileNamed: 'Desselecciona arxiu %{name}',
 }
 
-// TODO: remove this in the next major?
-// @ts-expect-error Uppy can be a global in legacy bundle
-if (typeof Uppy !== 'undefined') {
-  // @ts-expect-error Uppy can be a global in legacy bundle
-  globalThis.Uppy.locales.ca_ES = ca_ES
-}
-
 export default ca_ES

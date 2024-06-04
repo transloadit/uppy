@@ -154,7 +154,7 @@
               return data
             },
 
-            async abortMultipartUpload(file, { key, uploadId }, signal) {
+            async abortMultipartUpload(file, { key, uploadId, signal }) {
               const filename = encodeURIComponent(key)
               const uploadIdEnc = encodeURIComponent(uploadId)
               const response = await fetch(

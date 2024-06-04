@@ -23,10 +23,7 @@ import type {
   CompanionClientProvider,
   CompanionClientSearchProvider,
 } from '@uppy/utils/lib/CompanionClientProvider'
-import type {
-  FileProgressNotStarted,
-  FileProgressStarted,
-} from '@uppy/utils/lib/FileProgress'
+import type { FileProgressStarted } from '@uppy/utils/lib/FileProgress'
 import type {
   Locale,
   I18n,
@@ -92,7 +89,7 @@ export type UnknownProviderPlugin<
   M extends Meta,
   B extends Body,
 > = UnknownPlugin<M, B, UnknownProviderPluginState> & {
-  onFirstRender: () => void
+  rootFolderId: string | null
   title: string
   files: UppyFile<M, B>[]
   icon: () => h.JSX.Element
@@ -129,7 +126,6 @@ export type UnknownSearchProviderPlugin<
   M extends Meta,
   B extends Body,
 > = UnknownPlugin<M, B, UnknownSearchProviderPluginState> & {
-  onFirstRender: () => void
   title: string
   icon: () => h.JSX.Element
   provider: CompanionClientSearchProvider
@@ -260,19 +256,18 @@ export interface _UppyEventMap<M extends Meta, B extends Body> {
     progress: NonNullable<FileProgressStarted['preprocess']>,
   ) => void
   progress: (progress: number) => void
-  'reset-progress': () => void
   restored: (pluginData: any) => void
   'restore-confirmed': () => void
   'restore-canceled': () => void
   'restriction-failed': (file: UppyFile<M, B> | undefined, error: Error) => void
   'resume-all': () => void
-  'retry-all': (fileIDs: string[]) => void
+  'retry-all': (files: UppyFile<M, B>[]) => void
   'state-update': (
     prevState: State<M, B>,
     nextState: State<M, B>,
     patch?: Partial<State<M, B>>,
   ) => void
-  upload: (data: { id: string; fileIDs: string[] }) => void
+  upload: (uploadID: string, files: UppyFile<M, B>[]) => void
   'upload-error': (
     file: UppyFile<M, B> | undefined,
     error: { name: string; message: string; details?: string },
@@ -280,15 +275,12 @@ export interface _UppyEventMap<M extends Meta, B extends Body> {
       | Omit<NonNullable<UppyFile<M, B>['response']>, 'uploadURL'>
       | undefined,
   ) => void
-  'upload-pause': (
-    fileID: UppyFile<M, B>['id'] | undefined,
-    isPaused: boolean,
-  ) => void
+  'upload-pause': (file: UppyFile<M, B> | undefined, isPaused: boolean) => void
   'upload-progress': (
     file: UppyFile<M, B> | undefined,
     progress: FileProgressStarted,
   ) => void
-  'upload-retry': (fileID: string) => void
+  'upload-retry': (file: UppyFile<M, B>) => void
   'upload-stalled': (
     error: { message: string; details?: string },
     files: UppyFile<M, B>[],
@@ -299,15 +291,10 @@ export interface _UppyEventMap<M extends Meta, B extends Body> {
   ) => void
 }
 
-/** @deprecated */
-export interface DeprecatedUppyEventMap<M extends Meta, B extends Body> {
-  'upload-start': (files: UppyFile<M, B>[]) => void
-  'upload-started': (file: UppyFile<M, B>) => void
-}
-
 export interface UppyEventMap<M extends Meta, B extends Body>
-  extends _UppyEventMap<M, B>,
-    DeprecatedUppyEventMap<M, B> {}
+  extends _UppyEventMap<M, B> {
+  'upload-start': (files: UppyFile<M, B>[]) => void
+}
 
 const defaultUploadState = {
   totalProgress: 0,
@@ -567,31 +554,6 @@ export class Uppy<M extends Meta, B extends Body> {
 
     // Note: this is not the preact `setState`, it's an internal function that has the same name.
     this.setState(undefined) // so that UI re-renders with new options
-  }
-
-  resetProgress(): void {
-    const defaultProgress: Omit<FileProgressNotStarted, 'bytesTotal'> = {
-      percentage: 0,
-      bytesUploaded: false,
-      uploadComplete: false,
-      uploadStarted: null,
-    }
-    const files = { ...this.getState().files }
-    const updatedFiles: State<M, B>['files'] = {}
-
-    Object.keys(files).forEach((fileID) => {
-      updatedFiles[fileID] = {
-        ...files[fileID],
-        progress: {
-          ...files[fileID].progress,
-          ...defaultProgress,
-        },
-      }
-    })
-
-    this.setState({ files: updatedFiles, ...defaultUploadState })
-
-    this.emit('reset-progress')
   }
 
   clear(): void {
@@ -1217,14 +1179,15 @@ export class Uppy<M extends Meta, B extends Body> {
       return undefined
     }
 
-    const wasPaused = this.getFile(fileID).isPaused || false
+    const file = this.getFile(fileID)
+    const wasPaused = file.isPaused || false
     const isPaused = !wasPaused
 
     this.setFileState(fileID, {
       isPaused,
     })
 
-    this.emit('upload-pause', fileID, isPaused)
+    this.emit('upload-pause', file, isPaused)
 
     return isPaused
   }
@@ -1288,7 +1251,7 @@ export class Uppy<M extends Meta, B extends Body> {
       error: null,
     })
 
-    this.emit('retry-all', filesToRetry)
+    this.emit('retry-all', Object.values(updatedFiles))
 
     if (filesToRetry.length === 0) {
       return Promise.resolve({
@@ -1314,7 +1277,6 @@ export class Uppy<M extends Meta, B extends Body> {
     }
 
     this.setState(defaultUploadState)
-    // todo should we call this.emit('reset-progress') like we do for resetProgress?
   }
 
   retryUpload(fileID: string): Promise<UploadResult<M, B> | undefined> {
@@ -1323,7 +1285,7 @@ export class Uppy<M extends Meta, B extends Body> {
       isPaused: false,
     })
 
-    this.emit('upload-retry', fileID)
+    this.emit('upload-retry', this.getFile(fileID))
 
     const uploadID = this.#createUpload([fileID], {
       forceAllowNewUpload: true, // create new upload even if allowNewUpload: false
@@ -1541,13 +1503,7 @@ export class Uppy<M extends Meta, B extends Body> {
       this.patchFilesState(filesState)
     }
 
-    this.on('upload-start', (files) => {
-      files.forEach((file: UppyFile<M, B>) => {
-        // todo backward compat, remove this event in a next major
-        this.emit('upload-started', file)
-      })
-      onUploadStarted(files)
-    })
+    this.on('upload-start', onUploadStarted)
 
     this.on('upload-progress', this.calculateProgress)
 
@@ -1952,10 +1908,7 @@ export class Uppy<M extends Meta, B extends Body> {
 
     const uploadID = nanoid()
 
-    this.emit('upload', {
-      id: uploadID,
-      fileIDs,
-    })
+    this.emit('upload', uploadID, this.getFilesByIds(fileIDs))
 
     this.setState({
       allowNewUpload:

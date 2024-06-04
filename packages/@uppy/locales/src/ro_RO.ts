@@ -156,11 +156,4 @@ ro_RO.strings = {
   },
 }
 
-// TODO: remove this in the next major?
-// @ts-expect-error Uppy can be a global in legacy bundle
-if (typeof Uppy !== 'undefined') {
-  // @ts-expect-error Uppy can be a global in legacy bundle
-  globalThis.Uppy.locales.ro_RO = ro_RO
-}
-
 export default ro_RO
