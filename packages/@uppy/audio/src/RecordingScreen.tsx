@@ -13,7 +13,7 @@ import DiscardButton from './DiscardButton.tsx'
 
 interface RecordingScreenProps extends AudioSourceSelectProps {
   stream: MediaStream | null | undefined
-  recordedAudio: string
+  recordedAudio?: string | undefined
   recording: boolean
   supportsRecording: boolean
   showAudioSourceDropdown: boolean | undefined
@@ -26,23 +26,21 @@ interface RecordingScreenProps extends AudioSourceSelectProps {
   recordingLengthSeconds: number
 }
 
-export default function RecordingScreen(props: RecordingScreenProps) {
-  const {
-    stream,
-    recordedAudio,
-    onStop,
-    recording,
-    supportsRecording,
-    audioSources,
-    showAudioSourceDropdown,
-    onSubmit,
-    i18n,
-    onStartRecording,
-    onStopRecording,
-    onDiscardRecordedAudio,
-    recordingLengthSeconds,
-  } = props
-
+export default function RecordingScreen({
+  stream,
+  recordedAudio = undefined,
+  onStop,
+  recording,
+  supportsRecording,
+  audioSources,
+  showAudioSourceDropdown,
+  onSubmit,
+  i18n,
+  onStartRecording,
+  onStopRecording,
+  onDiscardRecordedAudio,
+  recordingLengthSeconds,
+}: RecordingScreenProps) {
   const canvasEl = useRef<HTMLCanvasElement>(null)
   const oscilloscope = useRef<AudioOscilloscope | null>()
 

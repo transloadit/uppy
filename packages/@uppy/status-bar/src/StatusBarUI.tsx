@@ -59,41 +59,37 @@ export interface StatusBarUIProps<M extends Meta, B extends Body> {
   totalUploadedSize: number
 }
 
-export default function StatusBarUI<M extends Meta, B extends Body>(
-  props: StatusBarUIProps<M, B>,
-) {
-  const {
-    newFiles,
-    allowNewUpload,
-    isUploadInProgress,
-    isAllPaused,
-    resumableUploads,
-    error,
-    hideUploadButton,
-    hidePauseResumeButton,
-    hideCancelButton,
-    hideRetryButton,
-    recoveredState,
-    uploadState,
-    totalProgress,
-    files,
-    supportsUploadProgress,
-    hideAfterFinish,
-    isSomeGhost,
-    doneButtonHandler,
-    isUploadStarted,
-    i18n,
-    startUpload,
-    uppy,
-    isAllComplete,
-    showProgressDetails,
-    numUploads,
-    complete,
-    totalSize,
-    totalETA,
-    totalUploadedSize,
-  } = props
-
+export default function StatusBarUI<M extends Meta, B extends Body>({
+  newFiles,
+  allowNewUpload,
+  isUploadInProgress,
+  isAllPaused,
+  resumableUploads,
+  error,
+  hideUploadButton = undefined,
+  hidePauseResumeButton = false,
+  hideCancelButton = false,
+  hideRetryButton = false,
+  recoveredState,
+  uploadState,
+  totalProgress,
+  files,
+  supportsUploadProgress,
+  hideAfterFinish = false,
+  isSomeGhost,
+  doneButtonHandler = undefined,
+  isUploadStarted,
+  i18n,
+  startUpload,
+  uppy,
+  isAllComplete,
+  showProgressDetails = undefined,
+  numUploads,
+  complete,
+  totalSize,
+  totalETA,
+  totalUploadedSize,
+}: StatusBarUIProps<M, B>) {
   function getProgressValue(): number | null {
     switch (uploadState) {
       case STATE_POSTPROCESSING:
@@ -284,14 +280,4 @@ export default function StatusBarUI<M extends Meta, B extends Body>(
       </div>
     </div>
   )
-}
-
-StatusBarUI.defaultProps = {
-  doneButtonHandler: undefined,
-  hideAfterFinish: false,
-  hideCancelButton: false,
-  hidePauseResumeButton: false,
-  hideRetryButton: false,
-  hideUploadButton: undefined,
-  showProgressDetails: undefined,
 }
