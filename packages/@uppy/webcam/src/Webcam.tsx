@@ -81,6 +81,7 @@ interface WebcamState {
   recordingLengthSeconds: number
   videoSources: MediaDeviceInfo[]
   currentDeviceId: string | MediaStreamTrack | null | undefined
+  recordedVideo: null | string
   isRecording: boolean
   [key: string]: unknown
 }

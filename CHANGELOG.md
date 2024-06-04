@@ -350,6 +350,26 @@ Released: 2024-03-28
 - @uppy/vue: [v4.x] remove manual types (Antoine du Hamel / #4803)
 - meta: prepare release workflow for beta versions (Antoine du Hamel)
 
+## 3.26.0
+
+Released: 2024-06-04
+
+| Package                | Version | Package                | Version |
+| ---------------------- | ------- | ---------------------- | ------- |
+| @uppy/aws-s3-multipart |  3.12.0 | @uppy/webcam           |   3.4.2 |
+| @uppy/core             |  3.12.0 | uppy                   |  3.26.0 |
+| @uppy/transloadit      |   3.7.0 |                        |         |
+
+- meta: remove Companion's `prepublishOnly` (Mikael Finstad / #5220)
+- docs: document clearUploadedFiles (Merlijn Vos / #5204)
+- @uppy/webcam: add missing types for `recordedVideo` (Antoine du Hamel / #5208)
+- @uppy/core: check capabilities in clearUploadedFiles (Merlijn Vos / #5201)
+- @uppy/core: PartialTree - change the `maxTotalFileSize` error (Evgenia Karunus / #5203)
+- @uppy/transloadit: remove `updateNumberOfFilesInAssembly` (Merlijn Vos / #5202)
+- @uppy/aws-s3: resolve all headers on response (Merlijn Vos / #5195)
+- docs: Improve provider docs: OneDrive (Evgenia Karunus / #5196)
+
+
 ## 3.25.5
 
 Released: 2024-05-23
