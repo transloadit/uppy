@@ -46,11 +46,6 @@ class ServiceWorkerStore<M extends Meta, B extends Body> {
     return Promise.resolve(this.#ready)
   }
 
-  // TODO: remove this setter in the next major
-  set ready(val: void) {
-    this.#ready = val
-  }
-
   async list(): Promise<ServiceWorkerStoredFile<M, B>[]> {
     await this.#ready
 

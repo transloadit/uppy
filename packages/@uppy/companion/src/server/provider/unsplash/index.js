@@ -58,7 +58,7 @@ class Unsplash extends Provider {
   async size ({ id, token }) {
     return this.#withErrorHandling('provider.unsplash.size.error', async () => {
       const { links: { download: url } } = await getPhotoMeta(await getClient({ token }), id)
-      const { size } = await getURLMeta(url, true)
+      const { size } = await getURLMeta(url)
       return size
     })
   }

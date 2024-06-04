@@ -119,11 +119,4 @@ zh_CN.strings = {
   youHaveToAtLeastSelectX: '您至少要选择 %{smart_count} 个文件',
 }
 
-// TODO: remove this in the next major?
-// @ts-expect-error Uppy can be a global in legacy bundle
-if (typeof Uppy !== 'undefined') {
-  // @ts-expect-error Uppy can be a global in legacy bundle
-  globalThis.Uppy.locales.zh_CN = zh_CN
-}
-
 export default zh_CN

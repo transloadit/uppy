@@ -145,11 +145,4 @@ hr_HR.strings = {
   openFolderNamed: 'Otvori mapu %{name}',
 }
 
-// TODO: remove this in the next major?
-// @ts-expect-error Uppy can be a global in legacy bundle
-if (typeof Uppy !== 'undefined') {
-  // @ts-expect-error Uppy can be a global in legacy bundle
-  globalThis.Uppy.locales.hr_HR = hr_HR
-}
-
 export default hr_HR

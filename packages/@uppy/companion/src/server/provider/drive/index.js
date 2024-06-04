@@ -50,7 +50,7 @@ async function getStats ({ id, token }) {
  * Adapter for API https://developers.google.com/drive/api/v3/
  */
 class Drive extends Provider {
-  static get authProvider () {
+  static get oauthProvider () {
     return 'google'
   }
 
@@ -214,7 +214,7 @@ class Drive extends Provider {
     return withProviderErrorHandling({
       fn,
       tag,
-      providerName: Drive.authProvider,
+      providerName: Drive.oauthProvider,
       isAuthError: (response) => (
         response.statusCode === 401
         || (response.statusCode === 400 && response.body?.error === 'invalid_grant') // Refresh token has expired or been revoked

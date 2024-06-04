@@ -148,11 +148,4 @@ fi_FI.strings = {
   recording: 'Tallennetaan',
 }
 
-// TODO: remove this in the next major?
-// @ts-expect-error Uppy can be a global in legacy bundle
-if (typeof Uppy !== 'undefined') {
-  // @ts-expect-error Uppy can be a global in legacy bundle
-  globalThis.Uppy.locales.fi_FI = fi_FI
-}
-
 export default fi_FI

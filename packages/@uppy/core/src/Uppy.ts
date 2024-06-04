@@ -23,10 +23,7 @@ import type {
   CompanionClientProvider,
   CompanionClientSearchProvider,
 } from '@uppy/utils/lib/CompanionClientProvider'
-import type {
-  FileProgressNotStarted,
-  FileProgressStarted,
-} from '@uppy/utils/lib/FileProgress'
+import type { FileProgressStarted } from '@uppy/utils/lib/FileProgress'
 import type {
   Locale,
   I18n,
@@ -92,7 +89,7 @@ export type UnknownProviderPlugin<
   M extends Meta,
   B extends Body,
 > = UnknownPlugin<M, B, UnknownProviderPluginState> & {
-  onFirstRender: () => void
+  rootFolderId: string | null
   title: string
   files: UppyFile<M, B>[]
   icon: () => h.JSX.Element
@@ -129,7 +126,6 @@ export type UnknownSearchProviderPlugin<
   M extends Meta,
   B extends Body,
 > = UnknownPlugin<M, B, UnknownSearchProviderPluginState> & {
-  onFirstRender: () => void
   title: string
   icon: () => h.JSX.Element
   provider: CompanionClientSearchProvider
@@ -260,7 +256,6 @@ export interface _UppyEventMap<M extends Meta, B extends Body> {
     progress: NonNullable<FileProgressStarted['preprocess']>,
   ) => void
   progress: (progress: number) => void
-  'reset-progress': () => void
   restored: (pluginData: any) => void
   'restore-confirmed': () => void
   'restore-canceled': () => void
@@ -296,15 +291,10 @@ export interface _UppyEventMap<M extends Meta, B extends Body> {
   ) => void
 }
 
-/** @deprecated */
-export interface DeprecatedUppyEventMap<M extends Meta, B extends Body> {
-  'upload-start': (files: UppyFile<M, B>[]) => void
-  'upload-started': (file: UppyFile<M, B>) => void
-}
-
 export interface UppyEventMap<M extends Meta, B extends Body>
-  extends _UppyEventMap<M, B>,
-    DeprecatedUppyEventMap<M, B> {}
+  extends _UppyEventMap<M, B> {
+  'upload-start': (files: UppyFile<M, B>[]) => void
+}
 
 const defaultUploadState = {
   totalProgress: 0,
@@ -564,31 +554,6 @@ export class Uppy<M extends Meta, B extends Body> {
 
     // Note: this is not the preact `setState`, it's an internal function that has the same name.
     this.setState(undefined) // so that UI re-renders with new options
-  }
-
-  resetProgress(): void {
-    const defaultProgress: Omit<FileProgressNotStarted, 'bytesTotal'> = {
-      percentage: 0,
-      bytesUploaded: false,
-      uploadComplete: false,
-      uploadStarted: null,
-    }
-    const files = { ...this.getState().files }
-    const updatedFiles: State<M, B>['files'] = {}
-
-    Object.keys(files).forEach((fileID) => {
-      updatedFiles[fileID] = {
-        ...files[fileID],
-        progress: {
-          ...files[fileID].progress,
-          ...defaultProgress,
-        },
-      }
-    })
-
-    this.setState({ files: updatedFiles, ...defaultUploadState })
-
-    this.emit('reset-progress')
   }
 
   clear(): void {
@@ -1312,7 +1277,6 @@ export class Uppy<M extends Meta, B extends Body> {
     }
 
     this.setState(defaultUploadState)
-    // todo should we call this.emit('reset-progress') like we do for resetProgress?
   }
 
   retryUpload(fileID: string): Promise<UploadResult<M, B> | undefined> {
@@ -1539,13 +1503,7 @@ export class Uppy<M extends Meta, B extends Body> {
       this.patchFilesState(filesState)
     }
 
-    this.on('upload-start', (files) => {
-      files.forEach((file: UppyFile<M, B>) => {
-        // todo backward compat, remove this event in a next major
-        this.emit('upload-started', file)
-      })
-      onUploadStarted(files)
-    })
+    this.on('upload-start', onUploadStarted)
 
     this.on('upload-progress', this.calculateProgress)
 

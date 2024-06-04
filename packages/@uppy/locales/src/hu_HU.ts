@@ -107,11 +107,4 @@ hu_HU.strings = {
   openFolderNamed: 'Nyitott mappa %{name}',
 }
 
-// TODO: remove this in the next major?
-// @ts-expect-error Uppy can be a global in legacy bundle
-if (typeof Uppy !== 'undefined') {
-  // @ts-expect-error Uppy can be a global in legacy bundle
-  globalThis.Uppy.locales.hu_HU = hu_HU
-}
-
 export default hu_HU
