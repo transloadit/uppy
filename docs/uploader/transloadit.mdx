@@ -224,43 +224,27 @@ The object you can pass or return from a function has this structure:
   be
   [used dynamically in your template](https://transloadit.com/docs/topics/assembly-instructions/#form-fields-in-instructions).
 
+:::info
+
+All your files end up in a single assembly and your `fields` are available
+globally in your template. The metadata in your Uppy files is also sent along so
+you can do things dynamically per file with `file.user_meta` in your template.
+
+:::
+
 <details>
   <summary>Examples</summary>
 
 **As a function**
 
-A custom `assemblyOptions()` option should return an object or a promise for an
-object.
-
-```js
-uppy.use(Transloadit, {
-	assemblyOptions(file) {
-		return {
-			params: {
-				auth: { key: 'TRANSLOADIT_AUTH_KEY_HERE' },
-				template_id: 'xyz',
-			},
-			fields: {
-				caption: file.meta.caption,
-			},
-		};
-	},
-});
-```
-
-The `${fields.caption}` variable will be available in the Assembly spawned from
-Template `xyz`. You can use this to dynamically watermark images for example.
-
-`assemblyOptions()` may also return a Promise, so it could retrieve signed
-Assembly parameters from a server. For example, assuming an endpoint
-`/transloadit-params` that responds with a JSON object with
-`{ params, signature }` properties:
+Most likely you want to use a function to call your backend to generate a
+signature and return your configuration.
 
 ```js
 uppy.use(Transloadit, {
 	async assemblyOptions(file) {
 		const res = await fetch('/transloadit-params');
-		return response.json();
+		return res.json();
 	},
 });
 ```
@@ -287,17 +271,9 @@ pass user input from a `<form>` to a Transloadit Assembly:
 // This will add form field values to each file's `.meta` object:
 uppy.use(Form, { getMetaFromForm: true });
 uppy.use(Transloadit, {
-	getAssemblyOptions(file) {
-		return {
-			params: {
-				/* ... */
-			},
-			// Pass through the fields you need:
-			fields: {
-				message: file.meta.message,
-			},
-		};
-	},
+	assemblyOptions() {
+      // ...
+  };
 });
 ```
 
@@ -379,8 +355,7 @@ uppy.use(Transloadit, {
 ```
 
 Tranloadit will download the files and expose them to your Template as
-`:original`, as if they were directly uploaded from the Uppy client.  
-:::note
+`:original`, as if they were directly uploaded from the Uppy client. :::note
 
 For this to work, the upload plugin must assign a publicly accessible
 `uploadURL` property to the uploaded file object. The Tus and S3 plugins both do
