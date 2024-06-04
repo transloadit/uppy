@@ -9,7 +9,7 @@ import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
 import PQueue from 'p-queue'
 import clone from './clone'
 
-interface ApiList {
+export interface ApiList {
   (directory: PartialTreeId): Promise<{
     nextPagePath: PartialTreeId
     items: CompanionFile[]

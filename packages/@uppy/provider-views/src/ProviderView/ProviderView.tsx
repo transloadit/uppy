@@ -66,7 +66,7 @@ const getDefaultState = (
 
 type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>
 
-interface Opts<M extends Meta, B extends Body> {
+export interface Opts<M extends Meta, B extends Body> {
   provider: UnknownProviderPlugin<M, B>['provider']
   viewType: 'list' | 'grid'
   showTitles: boolean

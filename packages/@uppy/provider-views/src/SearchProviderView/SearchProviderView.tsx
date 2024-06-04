@@ -46,7 +46,7 @@ type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>
 
 interface Opts<M extends Meta, B extends Body> {
   provider: UnknownSearchProviderPlugin<M, B>['provider']
-  viewType: 'list' | 'grid'
+  viewType: 'list' | 'grid' | 'unsplash'
   showTitles: boolean
   showFilter: boolean
 }
