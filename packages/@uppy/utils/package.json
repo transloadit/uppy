@@ -46,7 +46,6 @@
     "./lib/isTouchDevice": "./lib/isTouchDevice.js",
     "./lib/prettyETA": "./lib/prettyETA.js",
     "./lib/secondsToTime": "./lib/secondsToTime.js",
-    "./lib/settle": "./lib/settle.js",
     "./lib/toArray": "./lib/toArray.js",
     "./lib/FOCUSABLE_ELEMENTS": "./lib/FOCUSABLE_ELEMENTS.js",
     "./lib/AbortController": "./lib/AbortController.js",

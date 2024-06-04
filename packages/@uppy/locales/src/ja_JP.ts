@@ -150,11 +150,4 @@ ja_JP.strings = {
   openFolderNamed: '開いたフォルダ %{name}',
 }
 
-// TODO: remove this in the next major?
-// @ts-expect-error Uppy can be a global in legacy bundle
-if (typeof Uppy !== 'undefined') {
-  // @ts-expect-error Uppy can be a global in legacy bundle
-  globalThis.Uppy.locales.ja_JP = ja_JP
-}
-
 export default ja_JP

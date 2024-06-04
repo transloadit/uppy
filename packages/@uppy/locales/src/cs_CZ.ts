@@ -162,11 +162,4 @@ cs_CZ.strings = {
   },
 }
 
-// TODO: remove this in the next major?
-// @ts-expect-error Uppy can be a global in legacy bundle
-if (typeof Uppy !== 'undefined') {
-  // @ts-expect-error Uppy can be a global in legacy bundle
-  globalThis.Uppy.locales.cs_CZ = cs_CZ
-}
-
 export default cs_CZ

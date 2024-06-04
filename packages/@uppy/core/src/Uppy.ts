@@ -352,15 +352,10 @@ export interface _UppyEventMap<M extends Meta, B extends Body> {
   ) => void
 }
 
-/** @deprecated */
-export interface DeprecatedUppyEventMap<M extends Meta, B extends Body> {
-  'upload-start': (files: UppyFile<M, B>[]) => void
-  'upload-started': (file: UppyFile<M, B>) => void
-}
-
 export interface UppyEventMap<M extends Meta, B extends Body>
-  extends _UppyEventMap<M, B>,
-    DeprecatedUppyEventMap<M, B> {}
+  extends _UppyEventMap<M, B> {
+  'upload-start': (files: UppyFile<M, B>[]) => void
+}
 
 /** `OmitFirstArg<typeof someArray>` is the type of the returned value of `someArray.slice(1)`. */
 type OmitFirstArg<T> = T extends [any, ...infer U] ? U : never
@@ -1380,7 +1375,6 @@ export class Uppy<M extends Meta, B extends Body> {
     }
 
     this.setState(defaultUploadState)
-    // todo should we call this.emit('reset-progress') like we do for resetProgress?
   }
 
   retryUpload(fileID: string): Promise<UploadResult<M, B> | undefined> {
@@ -1607,13 +1601,7 @@ export class Uppy<M extends Meta, B extends Body> {
       this.patchFilesState(filesState)
     }
 
-    this.on('upload-start', (files) => {
-      files.forEach((file: UppyFile<M, B>) => {
-        // todo backward compat, remove this event in a next major
-        this.emit('upload-started', file)
-      })
-      onUploadStarted(files)
-    })
+    this.on('upload-start', onUploadStarted)
 
     this.on('upload-progress', this.calculateProgress)
 

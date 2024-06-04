@@ -145,11 +145,4 @@ sr_RS_Cyrillic.strings = {
   openFolderNamed: 'Отвори фолдер %{name}',
 }
 
-// TODO: remove this in the next major?
-// @ts-expect-error Uppy can be a global in legacy bundle
-if (typeof Uppy !== 'undefined') {
-  // @ts-expect-error Uppy can be a global in legacy bundle
-  globalThis.Uppy.locales.sr_RS_Cyrillic = sr_RS_Cyrillic
-}
-
 export default sr_RS_Cyrillic

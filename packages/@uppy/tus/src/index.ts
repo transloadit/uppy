@@ -315,10 +315,9 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
         if (typeof opts.onProgress === 'function') {
           opts.onProgress(bytesUploaded, bytesTotal)
         }
-        this.uppy.emit('upload-progress', this.uppy.getFile(file.id), {
-          // TODO: remove `uploader` in next major
-          // @ts-expect-error untyped
-          uploader: this,
+        const latestFile = this.uppy.getFile(file.id)
+        this.uppy.emit('upload-progress', latestFile, {
+          uploadStarted: latestFile.progress.uploadStarted ?? 0,
           bytesUploaded,
           bytesTotal,
         })

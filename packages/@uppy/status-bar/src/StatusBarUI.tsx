@@ -59,8 +59,7 @@ export interface StatusBarUIProps<M extends Meta, B extends Body> {
   totalUploadedSize: number
 }
 
-// TODO: rename the function to StatusBarUI on the next major.
-export default function StatusBar<M extends Meta, B extends Body>(
+export default function StatusBarUI<M extends Meta, B extends Body>(
   props: StatusBarUIProps<M, B>,
 ) {
   const {
@@ -287,7 +286,7 @@ export default function StatusBar<M extends Meta, B extends Body>(
   )
 }
 
-StatusBar.defaultProps = {
+StatusBarUI.defaultProps = {
   doneButtonHandler: undefined,
   hideAfterFinish: false,
   hideCancelButton: false,
