@@ -1,5 +1,12 @@
 # @uppy/transloadit
 
+## 3.7.0
+
+Released: 2024-06-04
+Included in: Uppy v3.26.0
+
+- @uppy/transloadit: remove `updateNumberOfFilesInAssembly` (Merlijn Vos / #5202)
+
 ## 3.6.2
 
 Released: 2024-05-23
