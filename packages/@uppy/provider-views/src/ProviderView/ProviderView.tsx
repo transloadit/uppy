@@ -29,6 +29,7 @@ import SearchInput from '../SearchInput.tsx'
 import FooterActions from '../FooterActions.tsx'
 import addFiles from '../utils/addFiles.ts'
 import getCheckedFilesWithPaths from '../utils/PartialTreeUtils/getCheckedFilesWithPaths.ts'
+import getBreadcrumbs from '../utils/PartialTreeUtils/getBreadcrumbs.ts'
 
 export function defaultPickerIcon(): h.JSX.Element {
   return (
@@ -350,26 +351,6 @@ export default class ProviderView<M extends Meta, B extends Body> {
     this.setLoading(false)
   }
 
-  getBreadcrumbs = (): PartialTreeFolder[] => {
-    const { partialTree, currentFolderId } = this.plugin.getPluginState()
-    if (!currentFolderId) return []
-
-    const breadcrumbs: PartialTreeFolder[] = []
-    let parent = partialTree.find(
-      (folder) => folder.id === currentFolderId,
-    ) as PartialTreeFolder
-    while (true) {
-      breadcrumbs.push(parent)
-      if (parent.type === 'root') break
-
-      parent = partialTree.find(
-        (folder) => folder.id === (parent as PartialTreeFolderNode).parentId,
-      ) as PartialTreeFolder
-    }
-
-    return breadcrumbs.toReversed()
-  }
-
   toggleCheckbox(
     ourItem: PartialTreeFolderNode | PartialTreeFile,
     isShiftKeyPressed: boolean,
@@ -429,8 +410,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
     }
 
     const opts: Opts<M, B> = { ...this.opts, ...viewOptions }
-    const { authenticated, partialTree, username, searchString, loading } =
-      this.plugin.getPluginState()
+    const { authenticated, loading } = this.plugin.getPluginState()
     const pluginIcon = this.plugin.icon || defaultPickerIcon
 
     if (authenticated === false) {
@@ -446,6 +426,10 @@ export default class ProviderView<M extends Meta, B extends Body> {
       )
     }
 
+    const { partialTree, currentFolderId, username, searchString } =
+      this.plugin.getPluginState()
+    const breadcrumbs = getBreadcrumbs(partialTree, currentFolderId)
+
     return (
       <div
         className={classNames(
@@ -456,7 +440,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
         <Header<M, B>
           showBreadcrumbs={opts.showBreadcrumbs}
           openFolder={this.openFolder}
-          breadcrumbs={this.getBreadcrumbs()}
+          breadcrumbs={breadcrumbs}
           pluginIcon={pluginIcon}
           title={this.plugin.title}
           logout={this.logout}
