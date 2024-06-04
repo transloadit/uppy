@@ -104,7 +104,7 @@ class Restricter<M extends Meta, B extends Body> {
       )
       if (totalFilesSize > maxTotalFileSize) {
         throw new RestrictionError(
-          this.i18n('aggregateExceedsSize', {
+          this.getI18n()('aggregateExceedsSize', {
             sizeAllowed: prettierBytes(maxTotalFileSize),
             size: prettierBytes(totalFilesSize),
           }),
