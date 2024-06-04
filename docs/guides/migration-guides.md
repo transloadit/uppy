@@ -2,182 +2,182 @@
 
 These cover all the major Uppy versions and how to migrate to them.
 
-## Migrate from 3.x to 4.x
+## Migrate from Companion 4.x to 5.x
 
-### Companion changes
+- Node.js `>=16.15.0` is now required.
+- `COMPANION_REDIS_EXPRESS_SESSION_PREFIX` now defaults to `companion-session:`
+  (before `sess:`). To revert keep backwards compatibility, set the environment
+  variable `COMPANION_REDIS_EXPRESS_SESSION_PREFIX=sess:`.
+- The URL endpoint (used by the `Url`/`Link` plugin) is now turned off by
+  default and must be explicitly enabled with
+  `COMPANION_ENABLE_URL_ENDPOINT=true` or `enableUrlEndpoint: true`.
+- Custom provider breaking changes. If you have not implemented a custom
+  provider, you should not be affected.
+  - The static `getExtraConfig` property has been renamed to
+    `getExtraGrantConfig`.
+  - The static `authProvider` property has been renamed to `oauthProvider`.
+- Endpoint `GET /s3/params` now returns `{ method: "POST" }` instead of
+  `{ method: "post" }`. This will not affect most people.
+- The Companion [`error` event](https://uppy.io/docs/companion/#events) now no
+  longer includes `extraData` inside the `payload.error` property. `extraData`
+  is (and was also before) included in the `payload`.
+- `access-control-allow-headers` is no longer included in
+  `Access-Control-Expose-Headers`, and `uppy-versions` is no longer an allowed
+  header. We are not aware of any issues this might cause.
+- Internal refactoring (probably won’t affect you)
+  - `getProtectedGot` parameter `blockLocalIPs` changed to `allowLocalIPs`
+    (inverted boolean).
+  - `getURLMeta` 2nd (boolean) argument inverted.
+  - `getProtectedHttpAgent` parameter `blockLocalIPs` changed to `allowLocalIPs`
+    (inverted boolean).
+  - `downloadURL` 2nd (boolean) argument inverted.
 
-- @uppy/companion: bump Node.js version support matrix (Antoine du Hamel / #5035)
-- @uppy/companion: encode `uploadId` (Mikael Finstad / #5168)
-- @uppy/companion: coerce `requestUrl` to a string (Antoine du Hamel / #5128)
-- @uppy/companion: improve error msg (Mikael Finstad / #5010)
-- @uppy/companion: crash if trying to set path to / (Mikael Finstad / #5003)
+### `@uppy/companion-client`
 
-### AWS Plugin
+:::info
 
-- @uppy/aws-s3: remove legacy plugin (Antoine du Hamel / #5070)
-- @uppy/aws-s3: default to multipart depending on the size of input (Antoine du Hamel / #5076)
-- @uppy/aws-s3: remove deprecated `prepareUploadParts` option (Antoine du Hamel / #5075)
-- @uppy/aws-s3-multipart: fix escaping issue with client signed request (Hiroki Shimizu / #5006)
+Unless you built a custom provider, you don’t use `@uppy/companion-client`
+directly but through provider plugins such as `@uppy/google-drive`. In which
+case you don’t have to do anything.
 
-### Core
+:::
 
-- @uppy/core: resolve some (breaking) TODOs (Antoine du Hamel / #4824)
-- @uppy/core: close->destroy, clearUploadedFiles->clear (Merlijn Vos / #5154)
-- @uppy/core: add instance ID to generated IDs (Merlijn Vos / #5080)
-- @uppy/core: reference updated i18n in Restricter (Merlijn Vos / #5118)
-- @uppy/core: fix `setOptions` not re-rendereing plugin UI (Antoine du Hamel / #5082)
+- `supportsRefreshToken` now defaults to `false` instead of `true`. If you have
+  implemented a custom provider, this might affect you.
+- `Socket` class is no longer in use and has been removed. Unless you used this
+  class you don’t need to do anything.
+- Remove deprecated options `serverUrl` and `serverPattern` (they were merely
+  defined in Typescript, not in use).
+- `RequestClient` methods `get`, `post`, `delete` no longer accepts a boolean as
+  the third argument. Instead, pass `{ skipPostResponse: true | false }`. This
+  won’t affect you unless you’ve been using `RequestClient`.
 
-### Misc.
+## Migrate from Uppy 3.x to 4.x
 
-- @uppy/aws-s3-multipart,@uppy/tus,@uppy/utils,@uppy/xhr-upload: Make `allowedMetaFields` consistent (Merlijn Vos / #5011)
-- @uppy/companion-client,@uppy/dropbox,@uppy/screen-capture,@uppy/unsplash,@uppy/url,@uppy/webcam: Use `title` consistently from locales (Merlijn Vos / #5134)
-- @uppy/dashboard: add missing `x-zip-compress` archive type (Younes / #5081)
-- @uppy/dashboard: add new `autoOpen` option (Chris Grigg / #5001)
-- @uppy/drop-target: change drop event type to DragEvent (Alireza Heydari / #5107)
-- @uppy/form: fix `submitOnSuccess` and `triggerUploadOnSubmit` combination (Merlijn Vos / #5058)
-- @uppy/image-editor: fix label definitions (Antoine du Hamel / #5111)
-- @uppy/transloadit: do not cancel assembly when removing all files (Merlijn Vos / #5191)
-- @uppy/transloadit: remove deprecated options (Merlijn Vos / #5056)
-- @uppy/xhr-upload: do not throw when res is missing url (Merlijn Vos / #5132)
-- @uppy/xhr-upload: fix regression for lowercase HTTP methods (Antoine du Hamel / #5179)
-- @uppy/xhr-upload: introduce hooks similar to tus (Merlijn Vos / #5094)
-- docs: use StackBlitz for all examples/issue template (Merlijn Vos / #5125)
+### TypeScript rewrite
+
+Almost all plugins have been completely rewritten in TypeScript! This means you
+may run into type error all over the place, but the types now accurately show
+Uppy’s state and files.
+
+There are too many small changes to cover, so you have to upgrade and see where
+TypeScript complains.
+
+One important thing to note are the new generics on `@uppy/core`.
+
+<!-- eslint-disable @typescript-eslint/no-unused-vars -->
+
+```ts
+import Uppy from '@uppy/core';
+// xhr-upload is for uploading to your own backend.
+import XHRUpload from '@uppy/xhr-upload';
+
+// Your own metadata on files
+type Meta = { myCustomMetadata: string };
+// The response from your server
+type Body = { someThingMyBackendReturns: string };
+
+const uppy = new Uppy<Meta, Body>().use(XHRUpload, {
+	endpoint: '/upload',
+});
+
+const id = uppy.addFile({
+	name: 'example.jpg',
+	data: new Blob(),
+	meta: { myCustomMetadata: 'foo' },
+});
+
+// This is now typed
+const { myCustomMetadata } = uppy.getFile(id).meta;
+
+await uppy.upload();
+
+// This is strictly typed too
+const { someThingMyBackendReturns } = uppy.getFile(id).response;
+```
+
+### `@uppy/aws-s3`
+
+- `@uppy/aws-s3` and `@uppy/aws-s3-multipart` have been combined into a single
+  plugin. You should now only use `@uppy/aws-s3` with the new option,
+  [`shouldUseMultipart()`](/docs/aws-s3-multipart/#shouldusemultipartfile), to
+  allow you to switch between regular and multipart uploads. You can read more
+  about this in the
+  [plugin docs](https://uppy.io/docs/aws-s3-multipart/#when-should-i-use-it)
+- @uppy/aws-s3: remove deprecated `prepareUploadParts` option (Antoine du Hamel
+  / #5075)
+
+### `@uppy/core`
+
+- The `close()` method has been renamed to `destroy()` to more accurately
+  reflect you can not recover from it without creating a new Uppy instance.
+- The `clearUploadedFiles()` method has been renamed to `clear()` as a
+  convenience method to clear all the state. This can be useful when a user
+  navigates away and you want to clear the state on success.
+- `bytesUploaded`, in `file.progress.bytesUploaded`, is now always a `boolean`,
+  instead of a `boolean` or `number`.
+
+### `@uppy/xhr-upload`
+
+Before the plugin had the options `getResponseData`, `getResponseError`,
+`validateStatus` and `responseUrlFieldName`. These were inflexible and too
+specific. Now we have hooks similar to `@uppy/tus`:
+
+- `onBeforeRequest` to manipulate the request before it is sent.
+- `shouldRetry` to determine if a request should be retried. By default 3
+  retries with exponential backoff. After three attempts it will throw an error,
+  regardless of whether you returned `true`.
+- `onAfterResponse` called after a successful response but before Uppy resolves
+  the upload.
+
+Checkout the [docs](/docs/xhr-upload/) for more info.
+
+### `@uppy/transloadit`
+
+The options `signature`, `params`, `fields`, and `getAssemblyOptions` have been
+removed in favor of [`assemblyOptions`](/docs/transloadit/#assemblyoptions),
+which can be an object or an (async) function returning an object.
+
+When using `assemblyOptions()` as a function, it is now called only once for all
+files, instead of per file. Before `@uppy/transloadit` was trying to be too
+smart, creating multiple assemblies in which each assembly has files with
+identical `fields`. This was done so you can use `fields` dynamically in your
+template per file, instead of per assembly.
+
+Now we sent all metadata of a file inside the tus upload (which
+`@uppy/transloadit` uses under the hood) and make it accessible in your
+Transloadit template as `file_user_meta`. You should use `fields` for global
+values in your template and `file_user_meta` for per file values.
+
+Another benefit of running `assemblyOptions()` only once, is that when
+generating a
+[secret](https://transloadit.com/docs/topics/signature-authentication/) on your
+server (which you should), a network request is made only once for all files,
+instead of per file.
+
+### CDN
+
+- We no longer build and serve the legacy build, made for IE11, on our CDN.
+
+### Miscellaneous
+
+- All uploaders plugins now consistently use
+  [`allowedMetaFields`](/docs/xhr-upload/#allowedmetafields). Before there were
+  inconsistencies between plugins.
+- All plugin `titles` (what you see in the Dashboard when you open a plugin) are
+  now set from the `locale` option. See the
+  [docs](/docs/locales/#overriding-locale-strings-for-a-specific-plugin) on how
+  to overide a string.
 
 ### Framework updates
 
-- @uppy/angular: upgrade to Angular 17.x and to TS 5.4 (Antoine du Hamel / #5008)
-- @uppy/react: remove `useUppy` & reintroduce `useUppyState` (Merlijn Vos / #5059)
-- @uppy/svelte: Add svelte 5 as peer dep (frederikhors / #5122)
-- @uppy/svelte: remove UMD output and make it use newer types (Antoine du Hamel / #5023)
-- @uppy/vue: migrate to Composition API with TS & drop Vue 2 support (Merlijn Vos / #5043)
-
-
-### Backward compatibility (only relevant to folks who use old build tools / target old browsers)
-
-- uppy: remove legacy bundle (Antoine du Hamel)
-
-### Types changes (only relevant to TS users)
-
-Can you summurized to "We're now using TS, so types should be more stable and correct – oh and you have to define a `Meta` and a `Body` and pass those as generics".
-
-- @uppy/dashboard: refactor to TypeScript (Antoine du Hamel / #4984)
-- @uppy/remote-sources: migrate to TS (Merlijn Vos / #5020)
-- @uppy/aws-s3-multipart: refactor to TS (Antoine du Hamel / #4902)
-- @uppy/golden-retriever: migrate to TS (Merlijn Vos / #4989)
-- @uppy/dashboard,@uppy/provider-views: Remove JSX global type everywhere (Merlijn Vos / #5117)
-- @uppy/react: refactor to TS (Antoine du Hamel / #5012)
-- @uppy/transloadit: migrate to TS (Merlijn Vos / #4987)
-- @uppy/utils: improve return type of `dataURItoFile` (Antoine du Hamel / #5112)
-- @uppy/core,@uppy/provider-views: Fix breadcrumbs (Evgenia Karunus / #4986)
-- @uppy/drag-drop: refactor to TypeScript (Antoine du Hamel / #4983)
-- @uppy/webcam: refactor to TypeScript (Antoine du Hamel / #4870)
-- @uppy/url: migrate to TS (Merlijn Vos / #4980)
-- @uppy/dashboard: fix type of trigger option (Merlijn Vos / #5106)
-- @uppy/zoom: refactor to TypeScript (Murderlon / #4979)
-- @uppy/unsplash: refactor to TypeScript (Murderlon / #4979)
-- @uppy/onedrive: refactor to TypeScript (Murderlon / #4979)
-- @uppy/instagram: refactor to TypeScript (Murderlon / #4979)
-- @uppy/google-drive: refactor to TypeScript (Murderlon / #4979)
-- @uppy/facebook: refactor to TypeScript (Murderlon / #4979)
-- @uppy/dropbox: refactor to TypeScript (Murderlon / #4979)
-- @uppy/box: refactor to TypeScript (Murderlon / #4979)
-- @uppy/utils: migrate RateLimitedQueue to TS (Merlijn Vos / #4981)
-- @uppy/thumbnail-generator: migrate to TS (Merlijn Vos / #4978)
-- @uppy/screen-capture: migrate to TS (Merlijn Vos / #4965)
-- @uppy/companion-client: Replace Provider.initPlugin with composition (Merlijn Vos / #4977)
-- meta: include types in npm archive (Antoine du Hamel)
-- @uppy/angular: fix build (Antoine du Hamel)
-- meta: Remove generate types from locale-pack (Murderlon)
-- @uppy/vue: [v4.x] remove manual types (Antoine du Hamel / #4803)
-
-
-### Various internal changes irrelevant to users
-
-- @uppy/angular: fix Angular version requirement in peerDeps (Antoine du Hamel / #5067)
-- @uppy/audio,@uppy/compressor,@uppy/core,@uppy/dashboard,@uppy/remote-sources,@uppy/tus,@uppy/utils: Format (Murderlon)
-- @uppy/audio,@uppy/dashboard,@uppy/drop-target,@uppy/webcam: add missing exports (Antoine du Hamel / #5014)
-- @uppy/aws-s3-multipart: Format (Murderlon)
-- @uppy/aws-s3-multipart: mark `opts` as optional (Antoine du Hamel / #5039)
-- @uppy/companion-client,@uppy/provider-views,@uppy/status-bar: fix type imports (Antoine du Hamel / #5038)
-- @uppy/core: fix `setOptions` not re-rendereing plugin UI (Antoine du Hamel / #5082)
-- @uppy/core: fix some type errors (Antoine du Hamel / #5015)
-- @uppy/core: make UppyEventMap more readable (Murderlon)
-- @uppy/core: refine type of private variables (Antoine du Hamel / #5028)
-- @uppy/core: use variadic arguments for `uppy.use` (Antoine du Hamel / #4888)
-- @uppy/core: various type fixes (Antoine du Hamel / #4995)
-- @uppy/dashboard: refactor to stable lifecycle method (Antoine du Hamel / #4999)
-- @uppy/dashboard: refine option types (Antoine du Hamel / #5022)
-- @uppy/dashboard: refine type of private variables (Antoine du Hamel / #5027)
-- @uppy/drag-drop,@uppy/progress-bar: add missing exports (Antoine du Hamel / #5009)
-- @uppy/drag-drop: refine type of private variables (Antoine du Hamel / #5026)
-- @uppy/file-input: add missing export (Antoine du Hamel / #5045)
-- @uppy/locales: do not build `dist/` folder (Merlijn Vos / #5055)
-- @uppy/progress-bar: remove default target (Antoine du Hamel / #4971)
-- @uppy/provider-views: bring back "loaded X files..." (Mikael Finstad / #5097)
-- @uppy/provider-views: fix `super.toggleCheckbox` bug (Mikael Finstad / #5004)
-- @uppy/react: remove `Wrapper.ts` (Antoine du Hamel / #5032)
-- @uppy/status-bar: fix `recoveredState` type (Antoine du Hamel / #4996)
-- @uppy/status-bar: refine type of private variables (Antoine du Hamel / #5025)
-- @uppy/status-bar: remove default target (Antoine du Hamel / #4970)
-- @uppy/utils: add fetcher (Merlijn Vos / #5073)
-- @uppy/utils: fix `AbortablePromise` type (Antoine du Hamel / #4988)
-- @uppy/utils: fix `findAllDOMElements` type (Antoine du Hamel / #4997)
-- @uppy/utils: fix `RateLimitedQueue#wrapPromiseFunction` types (Antoine du Hamel / #5007)
-- @uppy/utils: fix fetcher export (Murderlon)
-- @uppy/xhr-upload: refactor to use `fetcher` (Merlijn Vos / #5074)
-- docs: fix linter (Antoine du Hamel)
-- docs: update `@uppy/aws-s3` docs (Antoine du Hamel / #5093)
-- meta: docs: add back markdown files (Antoine du Hamel / #5064)
-- meta: enable CI on `4.x` branch (Antoine du Hamel)
-- meta: enable prettier for markdown (Merlijn Vos / #5133)
-- meta: enforce use of `.js` extension in `import type` declarations (Antoine du Hamel / #5126)
-- meta: fix `resize-observer-polyfill` types (Antoine du Hamel / #4994)
-- meta: fix `watch:*` scripts (Antoine du Hamel / #5046)
-- meta: fix custom provider example (Merlijn Vos / #5079)
-- meta: Fix headings in xhr.mdx (Merlijn Vos)
-- meta: fix linter (Antoine du Hamel)
-- meta: Fix prettier (Murderlon)
-- meta: improve changelog generator (Antoine du Hamel / #5190)
-- meta: include more packages in `compare_diff` CI (Antoine du Hamel / #5044)
-- meta: prepare release workflow for beta versions (Antoine du Hamel)
-- meta: Update yarn.lock (Murderlon)
-
-### Dependencies update
-
-- @uppy/companion: bump `express-session` (Antoine du Hamel / #5177)
-- @uppy/companion: Bump express from 4.18.1 to 4.19.2 (dependabot[bot] / #5037)
-- @uppy/companion: bump prom to v15 (Antoine du Hamel / #5175)
-- @uppy/companion: remove `chalk` from dependencies (Antoine du Hamel / #5178)
-- @uppy/companion: remove dependency on `express-request-id` (Antoine du Hamel / #5176)
-- @uppy/companion: switch from `node-redis` to `ioredis` (Dominik Schmidt / #4623)
-- @uppy/companion: upgrade deps (Antoine du Hamel / #5119)
-- @uppy/companion: upgrade redis (Mikael Finstad / #5065)
-- @uppy/react: remove `prop-types` dependency (Antoine du Hamel / #5031)
-- e2e: bump Cypress version (Antoine du Hamel / #5034)
-- meta: add `dependabot.yml` to keep GHA up-to-date (Antoine du Hamel / #5083)
-- meta: bump actions/cache from 3 to 4 (dependabot[bot] / #5088)
-- meta: Bump actions/checkout from 3 to 4 (dependabot[bot] / #5123)
-- meta: Bump actions/download-artifact from 3 to 4 (dependabot[bot])
-- meta: Bump actions/setup-node from 3 to 4 (dependabot[bot] / #5087)
-- meta: Bump actions/upload-artifact from 3 to 4 (dependabot[bot])
-- meta: Bump akhileshns/heroku-deploy from 3.12.12 to 3.13.15 (dependabot[bot] / #5102)
-- meta: Bump docker/build-push-action from 3 to 5 (dependabot[bot] / #5105)
-- meta: Bump docker/login-action from 2 to 3 (dependabot[bot] / #5101)
-- meta: Bump docker/metadata-action from 4 to 5 (dependabot[bot] / #5086)
-- meta: Bump docker/setup-buildx-action from 2 to 3 (dependabot[bot] / #5124)
-- meta: Bump docker/setup-qemu-action from 2 to 3 (dependabot[bot] / #5089)
-- meta: Bump express from 4.18.1 to 4.19.2 in /packages/@uppy/companion (dependabot[bot] / #5036)
-- meta: Bump follow-redirects from 1.15.4 to 1.15.6 (dependabot[bot] / #5002)
-- meta: bump Prettier version (Antoine du Hamel / #5114)
-- meta: bump supercharge/redis-github-action from 1.4.0 to 1.8.0 (dependabot[bot] / #5090)
-- meta: bump tar from 6.1.11 to 6.2.1 (dependabot[bot] / #5068)
-- meta: bump vite from 5.0.12 to 5.0.13 (dependabot[bot] / #5060)
-- meta: Bump webpack-dev-middleware from 5.3.3 to 5.3.4 (dependabot[bot] / #5013)
-- meta: remove `nodemon` from the deps (Antoine du Hamel / #5172)
-- meta: update more dependencies (Antoine du Hamel / #5171)
-- meta: Upgrade Yarn to 4.x (Merlijn Vos / #4849)
-
-
+- @uppy/angular: upgrade to Angular 17.x and to TS 5.4
+- @uppy/react: remove deprecated `useUppy` & reintroduce
+  [`useUppyState`](docs/react/#hooks)
+- @uppy/svelte: make Svelte 5 the peer dependency
+- @uppy/svelte: remove UMD output
+- @uppy/vue: migrate to Composition API with TypeScript & drop Vue 2 support
+- @uppy/vue: drop Vue 2 support
 
 ## Migrate from Robodog to Uppy plugins
 
