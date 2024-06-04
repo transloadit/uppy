@@ -12,6 +12,76 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 4.0.0-beta.10
+
+Released: 2024-06-04
+
+| Package                |       Version | Package                |       Version |
+| ---------------------- | ------------- | ---------------------- | ------------- |
+| @uppy/angular          |  0.7.0-beta.5 | @uppy/instagram        |  4.0.0-beta.6 |
+| @uppy/audio            |  2.0.0-beta.6 | @uppy/locales          |  4.0.0-beta.2 |
+| @uppy/aws-s3           |  4.0.0-beta.5 | @uppy/onedrive         |  4.0.0-beta.6 |
+| @uppy/aws-s3-multipart |  4.0.0-beta.6 | @uppy/provider-views   |  4.0.0-beta.7 |
+| @uppy/box              |  3.0.0-beta.6 | @uppy/status-bar       |  4.0.0-beta.9 |
+| @uppy/companion        |  5.0.0-beta.9 | @uppy/transloadit      |  4.0.0-beta.7 |
+| @uppy/companion-client |  4.0.0-beta.7 | @uppy/tus              |  4.0.0-beta.6 |
+| @uppy/core             |  4.0.0-beta.9 | @uppy/unsplash         |  4.0.0-beta.7 |
+| @uppy/dashboard        |  4.0.0-beta.9 | @uppy/url              |  4.0.0-beta.7 |
+| @uppy/drop-target      |  3.0.0-beta.5 | @uppy/utils            |  6.0.0-beta.8 |
+| @uppy/dropbox          |  4.0.0-beta.7 | @uppy/webcam           |  4.0.0-beta.8 |
+| @uppy/facebook         |  4.0.0-beta.6 | @uppy/xhr-upload       |  4.0.0-beta.6 |
+| @uppy/form             |  4.0.0-beta.4 | @uppy/zoom             |  3.0.0-beta.6 |
+| @uppy/golden-retriever |  4.0.0-beta.5 | uppy                   | 4.0.0-beta.10 |
+| @uppy/google-drive     |  4.0.0-beta.6 |                        |               |
+
+- @uppy/audio: remove unused component props (Antoine du Hamel / #5209)
+- @uppy/angular: fix invalid char in `package.json` (Antoine du Hamel / #5224)
+- meta: use default argument value instead of `defaultProps` (Antoine du Hamel / #5222)
+- @uppy/angular: upgrade to Angular 18 (Antoine du Hamel / #5215)
+- @uppy/utils: remove unused `settle` (Antoine du Hamel / #5210)
+- @uppy/form: move internal property to private field (Antoine du Hamel / #5214)
+- @uppy/dashboard: remove unused component props (Antoine du Hamel / #5213)
+- @uppy/status-bar: remove unused component props (Antoine du Hamel / #5211)
+- @uppy/audio: move internal property to private field (Antoine du Hamel / #5207)
+- @uppy/aws-s3: remove todo (Mikael Finstad / #5200)
+- @uppy/core: remove unnecessary todo (Mikael Finstad / #5200)
+- @uppy/aws-s3: do not expose internal `assertHost` method (Mikael Finstad / #5200)
+- @uppy/aws-s3: make passing `signal` consistent (Mikael Finstad / #5200)
+- @uppy/core: remove `'upload-started'` event (Mikael Finstad / #5200)
+- @uppy/aws-s3: remove `chunkState` getter (Mikael Finstad / #5200)
+- @uppy/drop-target: remove `title` property (Mikael Finstad / #5200)
+- @uppy/golden-retriever: remove unused `ready` setters (Mikael Finstad / #5200)
+- @uppy/dashboard: remove deprecated `autoOpenFileEditor` option (Mikael Finstad / #5200)
+- @uppy/aws-s3: remove `uploaderSockets` (Mikael Finstad / #5200)
+- @uppy/locales: remove hacks for legacy bundle (Mikael Finstad / #5200)
+- @uppy/status-bar: rename `StatusBar` to `StatusBarUI` (Mikael Finstad / #5200)
+- @uppy/url: remove unused error handler (Mikael Finstad / #5200)
+- @uppy/aws-s3,@uppy/tus,@uppy/utils,@uppy/xhr-upload: remove `uploader` from `upload-progress` event (Mikael Finstad / #5200)
+- @uppy/webcam: remove `facingMode` option (Mikael Finstad / #5200)
+- @uppy/companion: invert some internal boolean options (Mikael Finstad / #5198)
+- @uppy/companion: rename `authProvider` to `oauthProvider` (Mikael Finstad / #5198)
+- @uppy/companion: remove unused headers (Mikael Finstad / #5198)
+- @uppy/companion: remove sanitizing of metadata (Mikael Finstad / #5198)
+- @uppy/companion-client: do not allow boolean `RequestOptions` (Mikael Finstad / #5198)
+- @uppy/companion-client: remove deprecated options (Mikael Finstad / #5198)
+- @uppy/companion: remove `error.extraData` (Mikael Finstad / #5198)
+- @uppy/companion-client: make `supportsRefreshToken` default (Mikael Finstad / #5198)
+- @uppy/companion-client: remove optional chaining (Mikael Finstad / #5198)
+- @uppy/companion: capitalize POST (Mikael Finstad / #5198)
+- @uppy/companion: simplify code by using modern Node.js APIs (Mikael Finstad / #5198)
+- @uppy/companion-client: remove `Socket` (Mikael Finstad / #5198)
+- @uppy/companion: rename `getExtraConfig` to `getExtraGrantConfig` (Mikael Finstad / #5198)
+- @uppy/companion: change `COMPANION_ENABLE_URL_ENDPOINT` default (Mikael Finstad / #5198)
+- @uppy/companion: change default value for Redis session prefix (Mikael Finstad / #5198)
+- examples: make React example up-to-date (Merlijn Vos / #5205)
+- @uppy/core: add type tests (Merlijn Vos / #5153)
+- @uppy/provider-views: PartialTree - get rid of `.onFirstRender()` (Evgenia Karunus / #5187)
+- @uppy/core: pass file to events consistently (Merlijn Vos / #5136)
+- docs: assume tree-shaking bundler is the most common case (Antoine du Hamel / #5160)
+- @uppy/core: remove `reason` (Antoine du Hamel / #5159)
+- @uppy/core: remove `resetProgress` and `reset-progress` (Mikael Finstad / #5221)
+
+
 ## 4.0.0-beta.9
 
 Released: 2024-05-23

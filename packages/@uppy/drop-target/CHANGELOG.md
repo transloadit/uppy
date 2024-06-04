@@ -1,5 +1,12 @@
 # @uppy/drop-target
 
+## 3.0.0-beta.5
+
+Released: 2024-06-04
+Included in: Uppy v4.0.0-beta.10
+
+- @uppy/drop-target: remove `title` property (Mikael Finstad / #5200)
+
 ## 3.0.0-beta.4
 
 Released: 2024-04-29

@@ -1,5 +1,17 @@
 # @uppy/core
 
+## 4.0.0-beta.9
+
+Released: 2024-06-04
+Included in: Uppy v4.0.0-beta.10
+
+- @uppy/core: remove unnecessary todo (Mikael Finstad / #5200)
+- @uppy/core: remove `'upload-started'` event (Mikael Finstad / #5200)
+- @uppy/core: add type tests (Merlijn Vos / #5153)
+- @uppy/core: pass file to events consistently (Merlijn Vos / #5136)
+- @uppy/core: remove `reason` (Antoine du Hamel / #5159)
+- @uppy/core: remove `resetProgress` and `reset-progress` (Mikael Finstad / #5221)
+
 ## 4.0.0-beta.8
 
 Released: 2024-05-22

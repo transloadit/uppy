@@ -1,5 +1,12 @@
 # @uppy/webcam
 
+## 4.0.0-beta.8
+
+Released: 2024-06-04
+Included in: Uppy v4.0.0-beta.10
+
+- @uppy/webcam: remove `facingMode` option (Mikael Finstad / #5200)
+
 ## 4.0.0-beta.6
 
 Released: 2024-05-14
