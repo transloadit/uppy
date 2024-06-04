@@ -8422,7 +8422,6 @@ __metadata:
     retext-equality: "npm:^7.0.0"
     retext-profanities: "npm:^8.0.0"
     retext-quotes: "npm:^6.0.0"
-    retext-simplify: "npm:^8.0.0"
     retext-syntax-mentions: "npm:^4.0.0"
     unified: "npm:^11.0.0"
     unified-message-control: "npm:^4.0.0"
@@ -26529,20 +26528,6 @@ __metadata:
     unist-util-visit: "npm:^5.0.0"
     vfile: "npm:^6.0.0"
   checksum: 10/e130ffcb4f86d62c6e586607c4b5e6b68efca63139dec50a96be1fd3711ad9a604f738749d78d1b3126117ba794a7b1c14ba8b2bc8a68385e6c9673f87cc590f
-  languageName: node
-  linkType: hard
-
-"retext-simplify@npm:^8.0.0":
-  version: 8.0.0
-  resolution: "retext-simplify@npm:8.0.0"
-  dependencies:
-    "@types/nlcst": "npm:^2.0.0"
-    nlcst-search: "npm:^4.0.0"
-    nlcst-to-string: "npm:^4.0.0"
-    quotation: "npm:^2.0.0"
-    unist-util-position: "npm:^5.0.0"
-    vfile: "npm:^6.0.0"
-  checksum: 10/f17f5a27abc857383ba6dc78263e970cac42100d6de408e6c883c30d906ba7c399e1a21967585b9f1edd97b101bd586530ecca17b8c42a253e6f5df2a72323e5
   languageName: node
   linkType: hard
 
