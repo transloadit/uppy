@@ -77,9 +77,9 @@ export type PartialTreeFile = {
    * There exist two types of restrictions:
    * - individual restrictions (`allowedFileTypes`, `minFileSize`, `maxFileSize`), and
    * - aggregate restrictions (`maxNumberOfFiles`, `maxTotalFileSize`).
-   * 
+   *
    * `.restrictionError` reports whether this file passes individual restrictions.
-   * 
+   *
    */
   restrictionError: string | null
 
@@ -120,13 +120,13 @@ export type PartialTreeFolder = PartialTreeFolderNode | PartialTreeFolderRoot
 /**
  * PartialTree has the following structure.
  *
- *           FolderRoot     
- *         ┌─────┴─────┐    
- *     FolderNode     File  
- *   ┌─────┴────┐           
- *  File      File          
+ *           FolderRoot
+ *         ┌─────┴─────┐
+ *     FolderNode     File
+ *   ┌─────┴────┐
+ *  File      File
  *
- * Root folder is called `PartialTreeFolderRoot`,  
+ * Root folder is called `PartialTreeFolderRoot`,
  * all other folders are called `PartialTreeFolderNode`, because they are "internal nodes".
  *
  * It's possible for `PartialTreeFolderNode` to be a leaf node if it doesn't contain any files.

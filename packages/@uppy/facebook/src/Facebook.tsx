@@ -112,8 +112,7 @@ export default class Facebook<M extends Meta, B extends Body> extends UIPlugin<
         showFilter: false,
         showTitles: false,
       })
-    } 
-      return this.view.render(state)
-    
+    }
+    return this.view.render(state)
   }
 }

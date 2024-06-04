@@ -104,21 +104,20 @@ function Browser<M extends Meta, B extends Body>(props: BrowserProps<M, B>) {
         </ul>
       </div>
     )
-  } 
-    return (
-      <div className="uppy-ProviderBrowser-body">
-        <ul
-          className="uppy-ProviderBrowser-list"
-          onScroll={handleScroll}
-          role="listbox"
-          // making <ul> not focusable for firefox
-          tabIndex={-1}
-        >
-          {displayedPartialTree.map(renderItem)}
-        </ul>
-      </div>
-    )
-  
+  }
+  return (
+    <div className="uppy-ProviderBrowser-body">
+      <ul
+        className="uppy-ProviderBrowser-list"
+        onScroll={handleScroll}
+        role="listbox"
+        // making <ul> not focusable for firefox
+        tabIndex={-1}
+      >
+        {displayedPartialTree.map(renderItem)}
+      </ul>
+    </div>
+  )
 }
 
 export default Browser
