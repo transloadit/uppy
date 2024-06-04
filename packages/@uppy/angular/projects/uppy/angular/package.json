@@ -25,7 +25,7 @@
     "tslib": "^2.0.0"
   },
   "peerDependencies": {
-    "@angular/common": "ˆ17.0.0 || ^18.0.0",
+    "@angular/common": "^17.0.0 || ^18.0.0",
     "@angular/core": "^17.0.0 || ^18.0.0",
     "@uppy/core": "workspace:^",
     "@uppy/dashboard": "workspace:^",
