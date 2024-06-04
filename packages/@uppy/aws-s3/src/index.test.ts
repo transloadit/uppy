@@ -91,6 +91,7 @@ describe('AwsS3Multipart', () => {
       expect(uploadSuccessHandler.mock.calls[0][1]).toStrictEqual({
         body: {
           ETag: 'test',
+          etag: 'test',
           location: 'http://example.com',
         },
         status: 200,
