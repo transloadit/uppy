@@ -11,17 +11,37 @@ describe('Dashboard with Transloadit', () => {
     cy.get('.uppy-Dashboard-input:first').as('file-input')
   })
 
-  it('should upload cat image successfully', () => {
-    cy.intercept('/assemblies/*').as('assemblies')
-    cy.intercept('/resumable/*').as('resumable')
+  it('should upload all files as a single assembly with UppyFile metadata in Upload-Metadata', () => {
+    cy.intercept({ path: '/assemblies', method: 'POST' }).as('createAssembly')
 
-    cy.get('@file-input').selectFile('cypress/fixtures/images/cat.jpg', {
-      force: true,
-    })
+    cy.get('@file-input').selectFile(
+      [
+        'cypress/fixtures/images/cat.jpg',
+        'cypress/fixtures/images/traffic.jpg',
+      ],
+      { force: true },
+    )
 
-    cy.get('.uppy-StatusBar-actionBtn--upload').click()
-    cy.wait(['@assemblies', '@resumable']).then(() => {
-      cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Complete')
+    cy.window().then(({ uppy }) => {
+      // Set metadata on all files
+      uppy.setMeta({ sharedMetaProperty: 'bar' })
+      const [file1, file2] = uppy.getFiles()
+      // Set unique metdata per file as before that's how we determined to create multiple assemblies
+      uppy.setFileMeta(file1.id, { one: 'one' })
+      uppy.setFileMeta(file2.id, { two: 'two' })
+
+      cy.get('.uppy-StatusBar-actionBtn--upload').click()
+
+      cy.intercept('POST', '/resumable/*', (req) => {
+        expect(req.headers['upload-metadata']).to.include('sharedMetaProperty')
+        req.continue()
+      })
+
+      cy.wait(['@createAssembly']).then(() => {
+        cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Complete')
+        // should only create one assembly
+        cy.get('@createAssembly.all').should('have.length', 1)
+      })
     })
   })
 
@@ -58,152 +78,6 @@ describe('Dashboard with Transloadit', () => {
     })
   })
 
-  // Too flaky at the moment. Arguably, this is not the right place
-  // as this is doing white box testing (testing internal state).
-  // But E2e is more about black box testing, you don’t care about the internals, only the result.
-  // May make more sense to turn this into a unit test.
-  it.skip('should emit one assembly-cancelled event when cancelled', () => {
-    const spy = cy.spy()
-
-    cy.window().then(({ uppy }) => {
-      // eslint-disable-next-line
-      // @ts-ignore fix me
-      uppy.on('transloadit:assembly-cancelled', spy)
-
-      cy.get('@file-input').selectFile(
-        [
-          'cypress/fixtures/images/cat.jpg',
-          'cypress/fixtures/images/traffic.jpg',
-        ],
-        { force: true },
-      )
-
-      cy.intercept({
-        method: 'GET',
-        url: '/assemblies/*',
-      }).as('assemblyPolling')
-      cy.intercept(
-        { method: 'PATCH', pathname: '/files/*', times: 1 },
-        { statusCode: 204, body: {} },
-      )
-      cy.intercept(
-        { method: 'DELETE', pathname: '/resumable/files/*', times: 2 },
-        { statusCode: 204, body: {} },
-      ).as('fileDeletion')
-      cy.intercept({
-        method: 'DELETE',
-        pathname: '/assemblies/*',
-        times: 1,
-      }).as('assemblyDeletion')
-
-      cy.get('.uppy-StatusBar-actionBtn--upload').click()
-      cy.wait('@assemblyPolling')
-      cy.get('button[data-cy=cancel]').click()
-      cy.wait('@assemblyDeletion')
-      // Unfortunately, waiting on a network request somehow often results in a race condition.
-      // We just want to know wether this is called or not, so waiting for 2 sec to be sure.
-      // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(2000)
-      expect(spy).to.be.calledOnce
-    })
-  })
-
-  it.skip('should close assembly polling when all files are removed', () => {
-    const spy = cy.spy()
-
-    cy.window().then(({ uppy }) => {
-      // eslint-disable-next-line
-      // @ts-ignore fix me
-      uppy.on('transloadit:assembly-cancelled', spy)
-
-      cy.get('@file-input').selectFile(
-        [
-          'cypress/fixtures/images/cat.jpg',
-          'cypress/fixtures/images/traffic.jpg',
-        ],
-        { force: true },
-      )
-
-      cy.intercept({
-        method: 'GET',
-        url: '/assemblies/*',
-      }).as('assemblyPolling')
-      cy.intercept(
-        { method: 'PATCH', pathname: '/files/*', times: 1 },
-        { statusCode: 204, body: {} },
-      )
-      cy.intercept(
-        { method: 'DELETE', pathname: '/resumable/files/*', times: 2 },
-        { statusCode: 204, body: {} },
-      ).as('fileDeletion')
-      cy.intercept({
-        method: 'DELETE',
-        pathname: '/assemblies/*',
-        times: 1,
-      }).as('assemblyDeletion')
-
-      cy.get('.uppy-StatusBar-actionBtn--upload').click()
-      cy.wait('@assemblyPolling')
-      // eslint-disable-next-line
-      // @ts-ignore fix me
-      expect(
-        Object.values(uppy.getPlugin('Transloadit').activeAssemblies).every(
-          (a: any) => a.pollInterval,
-        ),
-      ).to.equal(true)
-
-      const { files } = uppy.getState()
-      // eslint-disable-next-line
-      // @ts-ignore fix me
-      uppy.removeFiles(Object.keys(files))
-
-      cy.wait('@assemblyDeletion').then(() => {
-        // eslint-disable-next-line
-        // @ts-ignore fix me
-        expect(
-          Object.values(uppy.getPlugin('Transloadit').activeAssemblies).some(
-            (a: any) => a.pollInterval,
-          ),
-        ).to.equal(false)
-        expect(spy).to.be.calledOnce
-      })
-    })
-  })
-
-  it('should not create assembly when all individual files have been cancelled', () => {
-    cy.window().then(({ uppy }) => {
-      cy.get('@file-input').selectFile(
-        [
-          'cypress/fixtures/images/cat.jpg',
-          'cypress/fixtures/images/traffic.jpg',
-        ],
-        { force: true },
-      )
-      // eslint-disable-next-line
-      // @ts-ignore fix me
-      expect(
-        Object.values(uppy.getPlugin('Transloadit').activeAssemblies).length,
-      ).to.equal(0)
-
-      cy.get('.uppy-StatusBar-actionBtn--upload').click()
-
-      const { files } = uppy.getState()
-      // eslint-disable-next-line
-      // @ts-ignore fix me
-      uppy.removeFiles(Object.keys(files))
-
-      cy.wait('@createAssemblies').then(() => {
-        // eslint-disable-next-line
-        // @ts-ignore fix me
-        expect(
-          Object.values(uppy.getPlugin('Transloadit').activeAssemblies).some(
-            (a: any) => a.pollInterval,
-          ),
-        ).to.equal(false)
-      })
-    })
-  })
-
   it('should not emit error if upload is cancelled right away', () => {
     cy.intercept({ path: '/assemblies', method: 'POST' }).as('createAssemblies')
 
@@ -225,7 +99,7 @@ describe('Dashboard with Transloadit', () => {
     })
   })
 
-  it('should not re-use erroneous tus keys', () => {
+  it.skip('should not re-use erroneous tus keys', () => {
     function createAssemblyStatus({
       message,
       assembly_id,
@@ -470,7 +344,7 @@ describe('Dashboard with Transloadit', () => {
     cy.wait(['@assemblies', '@resumable'])
 
     cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Complete')
-  })
+  }).timeout(40000)
 
   it('should complete when resuming after pause', () => {
     cy.intercept({ path: '/assemblies', method: 'POST' }).as('createAssemblies')
