@@ -1,5 +1,12 @@
 # @uppy/locales
 
+## 4.0.0-beta.2
+
+Released: 2024-06-04
+Included in: Uppy v4.0.0-beta.10
+
+- @uppy/locales: remove hacks for legacy bundle (Mikael Finstad / #5200)
+
 ## 3.5.3
 
 Released: 2024-05-03

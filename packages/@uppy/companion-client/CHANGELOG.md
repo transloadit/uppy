@@ -1,5 +1,16 @@
 # @uppy/companion-client
 
+## 4.0.0-beta.7
+
+Released: 2024-06-04
+Included in: Uppy v4.0.0-beta.10
+
+- @uppy/companion-client: do not allow boolean `RequestOptions` (Mikael Finstad / #5198)
+- @uppy/companion-client: remove deprecated options (Mikael Finstad / #5198)
+- @uppy/companion-client: make `supportsRefreshToken` default (Mikael Finstad / #5198)
+- @uppy/companion-client: remove optional chaining (Mikael Finstad / #5198)
+- @uppy/companion-client: remove `Socket` (Mikael Finstad / #5198)
+
 ## 4.0.0-beta.6
 
 Released: 2024-05-14

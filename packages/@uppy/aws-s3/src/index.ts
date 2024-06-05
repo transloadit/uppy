@@ -689,9 +689,20 @@ export default class AwsS3Multipart<
 
         onProgress?.({ loaded: size, lengthComputable: true })
 
-        // NOTE This must be allowed by CORS.
-        const etag = xhr.getResponseHeader('ETag')
-        const location = xhr.getResponseHeader('Location')
+        // https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/getAllResponseHeaders#examples
+        const arr = xhr
+          .getAllResponseHeaders()
+          .trim()
+          .split(/[\r\n]+/)
+        // @ts-expect-error null is allowed to avoid inherited properties
+        const headersMap: Record<string, string> = { __proto__: null }
+        for (const line of arr) {
+          const parts = line.split(': ')
+          const header = parts.shift()!
+          const value = parts.join(': ')
+          headersMap[header] = value
+        }
+        const { etag, location } = headersMap
 
         if (method.toUpperCase() === 'POST' && location === null) {
           // Not being able to read the Location header is not a fatal error.
@@ -711,8 +722,8 @@ export default class AwsS3Multipart<
 
         onComplete?.(etag)
         resolve({
-          ETag: etag,
-          ...(location ? { location } : undefined),
+          ...headersMap,
+          ETag: etag, // keep capitalised ETag for backwards compatiblity
         })
       })
 

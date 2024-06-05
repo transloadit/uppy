@@ -701,6 +701,13 @@ that upload.
 uppy.removeFile('uppyteamkongjpg1501851828779');
 ```
 
+#### `clear()`
+
+Clear the state. Can be useful for manually resetting Uppy after a successful
+upload.
+
+Upload plugins may choose to throw an error if called during an upload.
+
 #### `getFile(fileID)`
 
 Get a specific [Uppy file](#working-with-uppy-files) by its ID.
@@ -1325,17 +1332,6 @@ upload restrictions.
 ```js
 uppy.on('restriction-failed', (file, error) => {
 	// do some customized logic like showing system notice to users
-});
-```
-
-#### `reset-progress`
-
-Fired when `resetProgress()` is called, each file has its upload progress reset
-to zero.
-
-```js
-uppy.on('reset-progress', () => {
-	// progress was reset
 });
 ```
 

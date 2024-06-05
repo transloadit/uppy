@@ -1,5 +1,13 @@
 # @uppy/angular
 
+## 0.7.0-beta.5
+
+Released: 2024-06-04
+Included in: Uppy v4.0.0-beta.10
+
+- @uppy/angular: fix invalid char in `package.json` (Antoine du Hamel / #5224)
+- @uppy/angular: upgrade to Angular 18 (Antoine du Hamel / #5215)
+
 ## 0.7.0-beta.2
 
 Released: 2024-04-11

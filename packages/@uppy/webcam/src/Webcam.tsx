@@ -80,7 +80,8 @@ interface WebcamState {
   cameraError: null
   recordingLengthSeconds: number
   videoSources: MediaDeviceInfo[]
-  currentDeviceId: null | string
+  currentDeviceId: string | MediaStreamTrack | null | undefined
+  recordedVideo: null | string
   isRecording: boolean
   [key: string]: unknown
 }

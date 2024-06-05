@@ -8518,7 +8518,7 @@ __metadata:
   dependencies:
     tslib: "npm:^2.0.0"
   peerDependencies:
-    "@angular/common": "*"
+    "@angular/common": ^17.0.0 || ^18.0.0
     "@angular/core": ^17.0.0 || ^18.0.0
     "@uppy/core": "workspace:^"
     "@uppy/dashboard": "workspace:^"

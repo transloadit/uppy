@@ -23,10 +23,7 @@ import type {
   CompanionClientProvider,
   CompanionClientSearchProvider,
 } from '@uppy/utils/lib/CompanionClientProvider'
-import type {
-  FileProgressNotStarted,
-  FileProgressStarted,
-} from '@uppy/utils/lib/FileProgress'
+import type { FileProgressStarted } from '@uppy/utils/lib/FileProgress'
 import type {
   Locale,
   I18n,
@@ -316,7 +313,6 @@ export interface _UppyEventMap<M extends Meta, B extends Body> {
     progress: NonNullable<FileProgressStarted['preprocess']>,
   ) => void
   progress: (progress: number) => void
-  'reset-progress': () => void
   restored: (pluginData: any) => void
   'restore-confirmed': () => void
   'restore-canceled': () => void
@@ -620,32 +616,17 @@ export class Uppy<M extends Meta, B extends Body> {
     this.setState(undefined) // so that UI re-renders with new options
   }
 
-  resetProgress(): void {
-    const defaultProgress: Omit<FileProgressNotStarted, 'bytesTotal'> = {
-      percentage: 0,
-      bytesUploaded: false,
-      uploadComplete: false,
-      uploadStarted: null,
-    }
-    const files = { ...this.getState().files }
-    const updatedFiles: State<M, B>['files'] = {}
-
-    Object.keys(files).forEach((fileID) => {
-      updatedFiles[fileID] = {
-        ...files[fileID],
-        progress: {
-          ...files[fileID].progress,
-          ...defaultProgress,
-        },
-      }
-    })
-
-    this.setState({ files: updatedFiles, ...defaultUploadState })
-
-    this.emit('reset-progress')
-  }
-
   clear(): void {
+    const { capabilities, currentUploads } = this.getState()
+    if (
+      Object.keys(currentUploads).length > 0 &&
+      !capabilities.individualCancellation
+    ) {
+      throw new Error(
+        'The installed uploader plugin does not allow removing files during an upload.',
+      )
+    }
+
     this.setState({ ...defaultUploadState, files: {} })
   }
 
@@ -1228,7 +1209,9 @@ export class Uppy<M extends Meta, B extends Body> {
         newFileIDs.length !== currentUploads[uploadID].fileIDs.length &&
         !capabilities.individualCancellation
       ) {
-        throw new Error('individualCancellation is disabled')
+        throw new Error(
+          'The installed uploader plugin does not allow removing files during an upload.',
+        )
       }
 
       updatedUploads[uploadID] = {
