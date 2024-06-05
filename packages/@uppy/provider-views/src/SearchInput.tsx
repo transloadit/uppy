@@ -16,26 +16,20 @@ type Props = {
   buttonLabel?: string
 }
 
-const defaultProps = {
-  showButton: false,
-  clearSearchLabel: '',
-  buttonLabel: '',
-}
+function SearchInput({
+  searchString,
+  setSearchString,
+  submitSearchString,
 
-export default function SearchInput(props: Props) {
-  const {
-    searchString,
-    setSearchString,
-    submitSearchString,
+  wrapperClassName,
+  inputClassName,
 
-    showButton,
-    inputLabel,
-    clearSearchLabel,
-    buttonLabel,
-    wrapperClassName,
-    inputClassName,
-  } = props
+  inputLabel,
+  clearSearchLabel = '',
 
+  showButton = false,
+  buttonLabel = '',
+}: Props) {
   const onSubmit = (e: Event) => {
     e.preventDefault()
     submitSearchString()
@@ -100,4 +94,4 @@ export default function SearchInput(props: Props) {
   )
 }
 
-SearchInput.defaultProps = defaultProps
+export default SearchInput
