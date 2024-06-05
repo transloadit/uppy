@@ -386,9 +386,9 @@ The default implementation calls out to Companion’s S3 signing endpoints.
 Pass an array of field names to limit the metadata fields that will be added to
 upload as query parameters.
 
-- Set this to an empty array `false` to not send any fields.
-- Set this to `['name']` to only send the `name` field.
-- Set this to `true` (the default) to send _all_ metadata fields.
+- Set it to `false` to not send any fields (or an empty array).
+- Set it to `['name']` to only send the `name` field.
+- Set it to `true` (the default) to send _all_ metadata fields.
 
 <details>
 <summary>Deprecated options</summary>
