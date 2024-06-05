@@ -98,25 +98,17 @@ class Restricter<M extends Meta, B extends Body> {
     }
 
     if (maxTotalFileSize) {
-      let totalFilesSize = existingFiles.reduce(
-        (total, f) => (total + (f.size ?? 0)) as number,
+      const totalFilesSize = [...existingFiles, ...addingFiles].reduce(
+        (total, f) => total + (f.size ?? 0),
         0,
       )
-
-      for (const addingFile of addingFiles) {
-        if (addingFile.size != null) {
-          // We can't check maxTotalFileSize if the size is unknown.
-          totalFilesSize += addingFile.size
-
-          if (totalFilesSize > maxTotalFileSize) {
-            throw new RestrictionError(
-              this.getI18n()('exceedsSize', {
-                size: prettierBytes(maxTotalFileSize),
-                file: addingFile.name,
-              }),
-            )
-          }
-        }
+      if (totalFilesSize > maxTotalFileSize) {
+        throw new RestrictionError(
+          this.getI18n()('aggregateExceedsSize', {
+            sizeAllowed: prettierBytes(maxTotalFileSize),
+            size: prettierBytes(totalFilesSize),
+          }),
+        )
       }
     }
   }
