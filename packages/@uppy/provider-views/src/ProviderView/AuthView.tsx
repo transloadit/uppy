@@ -1,4 +1,3 @@
-/* eslint-disable react/require-default-props */
 import { h } from 'preact'
 import { useCallback } from 'preact/hooks'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
@@ -105,18 +104,14 @@ const defaultRenderForm = ({
   onAuth: AuthViewProps<Meta, Body>['handleAuth']
 }) => <DefaultForm pluginName={pluginName} i18n={i18n} onAuth={onAuth} />
 
-export default function AuthView<M extends Meta, B extends Body>(
-  props: AuthViewProps<M, B>,
-) {
-  const {
-    loading,
-    pluginName,
-    pluginIcon,
-    i18n,
-    handleAuth,
-    renderForm = defaultRenderForm,
-  } = props
-
+export default function AuthView<M extends Meta, B extends Body>({
+  loading,
+  pluginName,
+  pluginIcon,
+  i18n,
+  handleAuth,
+  renderForm = defaultRenderForm,
+}: AuthViewProps<M, B>) {
   return (
     <div className="uppy-Provider-auth">
       <div className="uppy-Provider-authIcon">{pluginIcon()}</div>

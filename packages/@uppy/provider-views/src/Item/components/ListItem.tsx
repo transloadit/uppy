@@ -1,4 +1,3 @@
-/* eslint-disable react/require-default-props */
 import type { PartialTreeStatus } from '@uppy/core/lib/Uppy'
 import { h } from 'preact'
 
@@ -24,22 +23,20 @@ type ListItemProps = {
   i18n: any
 }
 
-export default function ListItem(props: ListItemProps): h.JSX.Element {
-  const {
-    className,
-    isDisabled,
-    restrictionError,
-    status,
-    toggleCheckbox,
-    type,
-    id,
-    itemIconEl,
-    title,
-    handleFolderClick,
-    showTitles,
-    i18n,
-  } = props
-
+export default function ListItem({
+  className,
+  isDisabled,
+  restrictionError,
+  status,
+  toggleCheckbox,
+  type,
+  id,
+  itemIconEl,
+  title,
+  handleFolderClick = undefined,
+  showTitles,
+  i18n,
+}: ListItemProps): h.JSX.Element {
   return (
     <li
       className={className}
