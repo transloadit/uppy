@@ -9,22 +9,23 @@ const getBreadcrumbs = (
   partialTree: PartialTree,
   currentFolderId: PartialTreeId,
 ): PartialTreeFolder[] => {
-  if (!currentFolderId) return []
+  let folder = partialTree.find(
+    (f) => f.id === currentFolderId,
+  ) as PartialTreeFolder
 
   let breadcrumbs: PartialTreeFolder[] = []
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    breadcrumbs = [folder, ...breadcrumbs]
 
-  let parent = partialTree.find(
-    (folder) => folder.id === currentFolderId,
-  ) as PartialTreeFolder
-  while (parent.type !== 'root') {
-    breadcrumbs = [parent, ...breadcrumbs]
-    const currentParentId = (parent as PartialTreeFolderNode).parentId
-    parent = partialTree.find(
-      (folder) => folder.id === currentParentId,
+    if (folder.type === 'root') break
+    const currentParentId = (folder as PartialTreeFolderNode).parentId
+    folder = partialTree.find(
+      (f) => f.id === currentParentId,
     ) as PartialTreeFolder
   }
 
-  return breadcrumbs.toReversed()
+  return breadcrumbs
 }
 
 export default getBreadcrumbs

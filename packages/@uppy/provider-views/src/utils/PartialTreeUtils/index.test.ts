@@ -14,6 +14,7 @@ import afterScrollFolder from './afterScrollFolder.ts'
 import afterFill from './afterFill.ts'
 import getCheckedFilesWithPaths from './getCheckedFilesWithPaths.ts'
 import getNOfSelectedFiles from './getNOfSelectedFiles.ts'
+import getBreadcrumbs from './getBreadcrumbs.ts'
 
 const _root = (id: string, options: any = {}): PartialTreeFolderRoot => ({
   type: 'root',
@@ -550,5 +551,48 @@ describe('injectPaths()', () => {
     expect(result.find((f) => f.id === '2_4_1')!.relDirPath).toEqual(
       'name_2_4/name_2_4_1.jpg',
     )
+  })
+})
+
+describe('getBreadcrumbs()', () => {
+  // prettier-ignore
+  const tree: PartialTree = [
+    _root('ourRoot'),
+        _folder('1', { parentId: 'ourRoot' }),
+        _folder('2', { parentId: 'ourRoot' }),
+            _file('2_1', { parentId: '2' }),
+            _file('2_2', { parentId: '2' }),
+            _file('2_3', { parentId: '2' }),
+            _folder('2_4', { parentId: '2' }),
+                _file('2_4_1', { parentId: '2_4' }),
+                _file('2_4_2', { parentId: '2_4' }),
+                _file('2_4_3', { parentId: '2_4' }),
+        _file('3', { parentId: 'ourRoot' }),
+        _file('4', { parentId: 'ourRoot' }),
+  ]
+
+  it('returns root folder: "/ourRoot"', () => {
+    const result = getBreadcrumbs(tree, 'ourRoot')
+    expect(result.map((f) => f.id)).toEqual(['ourRoot'])
+  })
+
+  it('returns nested folder: "/ourRoot/4"', () => {
+    const result = getBreadcrumbs(tree, '4')
+    expect(result.map((f) => f.id)).toEqual(['ourRoot', '4'])
+  })
+
+  it('returns deeply nested folder: "/ourRoot/2/2_4"', () => {
+    const result = getBreadcrumbs(tree, '2_4')
+    expect(result.map((f) => f.id)).toEqual(['ourRoot', '2', '2_4'])
+  })
+
+  it('returns folders when currentFolderId=null', () => {
+    // prettier-ignore
+    const treeWithNullRoot: PartialTree = [
+      _root(null!),
+          _folder('1', { parentId: null })
+    ]
+    const result = getBreadcrumbs(treeWithNullRoot, null)
+    expect(result.map((f) => f.id)).toEqual([null])
   })
 })
