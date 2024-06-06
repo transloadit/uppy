@@ -8,32 +8,30 @@ import type {
   PartialTreeFolderNode,
   PartialTreeId,
 } from '@uppy/core/lib/Uppy.ts'
-import ItemIcon from './components/ItemIcon.tsx'
 import GridItem from './components/GridItem.tsx'
 import ListItem from './components/ListItem.tsx'
 
 type ItemProps = {
-  viewType: string
+  file: PartialTreeFile | PartialTreeFolderNode
+  openFolder: (folderId: PartialTreeId) => void
   toggleCheckbox: (event: Event) => void
+  viewType: string
   showTitles: boolean
   i18n: I18n
-  openFolder: (folderId: PartialTreeId) => void
-  file: PartialTreeFile | PartialTreeFolderNode
 }
 
 export default function Item(props: ItemProps): h.JSX.Element {
   const { viewType, toggleCheckbox, showTitles, i18n, openFolder, file } = props
 
   const restrictionError = file.type === 'folder' ? null : file.restrictionError
-  const isDisabled = Boolean(restrictionError) && file.status !== 'checked'
+  const isDisabled = !!restrictionError && file.status !== 'checked'
 
-  const sharedProps = {
-    id: file.id,
-    title: file.data.name,
-    status: file.status,
+  const ourProps = {
+    file,
+    openFolder,
+    toggleCheckbox,
 
     i18n,
-    toggleCheckbox,
     viewType,
     showTitles,
     className: classNames(
@@ -43,22 +41,9 @@ export default function Item(props: ItemProps): h.JSX.Element {
       { 'uppy-ProviderBrowserItem--is-checked': file.status === 'checked' },
       { 'uppy-ProviderBrowserItem--is-partial': file.status === 'partial' },
     ),
-    itemIconEl: <ItemIcon itemIconString={file.data.icon} />,
     isDisabled,
     restrictionError,
   }
-
-  const ourProps =
-    file.data.isFolder ?
-      {
-        ...sharedProps,
-        type: 'folder',
-        handleFolderClick: () => openFolder(file.id),
-      }
-    : {
-        ...sharedProps,
-        type: 'file',
-      }
 
   switch (viewType) {
     case 'grid':

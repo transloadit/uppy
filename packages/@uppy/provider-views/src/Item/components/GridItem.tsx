@@ -1,29 +1,27 @@
 import { h } from 'preact'
-import type { PartialTreeStatus } from '@uppy/core/lib/Uppy'
+import type {
+  PartialTreeFile,
+  PartialTreeFolderNode,
+} from '@uppy/core/lib/Uppy'
+import ItemIcon from './ItemIcon.tsx'
 
 type GridItemProps = {
+  file: PartialTreeFile | PartialTreeFolderNode
+  toggleCheckbox: (event: Event) => void
   className: string
   isDisabled: boolean
   restrictionError: string | null
-  status: PartialTreeStatus
-  title: string
-  itemIconEl: any
   showTitles: boolean
-  toggleCheckbox: (event: Event) => void
-  id: string
   children?: h.JSX.Element | null
 }
 
 function GridItem({
+  file,
+  toggleCheckbox,
   className,
   isDisabled,
   restrictionError,
-  status,
-  title,
-  itemIconEl,
   showTitles,
-  toggleCheckbox,
-  id,
   children = null,
 }: GridItemProps): h.JSX.Element {
   return (
@@ -36,18 +34,18 @@ function GridItem({
         className="uppy-u-reset uppy-ProviderBrowserItem-checkbox uppy-ProviderBrowserItem-checkbox--grid"
         onChange={toggleCheckbox}
         name="listitem"
-        id={id}
-        checked={status === 'checked'}
+        id={file.id}
+        checked={file.status === 'checked'}
         disabled={isDisabled}
         data-uppy-super-focusable
       />
       <label
-        htmlFor={id}
-        aria-label={title}
+        htmlFor={file.id}
+        aria-label={file.data.name}
         className="uppy-u-reset uppy-ProviderBrowserItem-inner"
       >
-        {itemIconEl}
-        {showTitles && title}
+        <ItemIcon itemIconString={file.data.icon} />
+        {showTitles && file.data.name}
         {children}
       </label>
     </li>
