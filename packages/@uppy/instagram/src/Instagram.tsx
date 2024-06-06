@@ -72,7 +72,6 @@ export default class Instagram<M extends Meta, B extends Body> extends UIPlugin<
         </g>
       </svg>
     )
-    this.rootFolderId = 'recent'
 
     this.defaultLocale = locale
 
