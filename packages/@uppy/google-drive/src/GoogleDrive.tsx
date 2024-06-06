@@ -77,7 +77,6 @@ export default class GoogleDrive<
         </g>
       </svg>
     )
-    this.rootFolderId = 'root'
 
     this.opts.companionAllowedHosts = getAllowedHosts(
       this.opts.companionAllowedHosts,
