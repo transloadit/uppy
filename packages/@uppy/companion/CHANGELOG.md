@@ -1,5 +1,21 @@
 # @uppy/companion
 
+## 5.0.0-beta.9
+
+Released: 2024-06-04
+Included in: Uppy v4.0.0-beta.10
+
+- @uppy/companion: invert some internal boolean options (Mikael Finstad / #5198)
+- @uppy/companion: rename `authProvider` to `oauthProvider` (Mikael Finstad / #5198)
+- @uppy/companion: remove unused headers (Mikael Finstad / #5198)
+- @uppy/companion: remove sanitizing of metadata (Mikael Finstad / #5198)
+- @uppy/companion: remove `error.extraData` (Mikael Finstad / #5198)
+- @uppy/companion: capitalize POST (Mikael Finstad / #5198)
+- @uppy/companion: simplify code by using modern Node.js APIs (Mikael Finstad / #5198)
+- @uppy/companion: rename `getExtraConfig` to `getExtraGrantConfig` (Mikael Finstad / #5198)
+- @uppy/companion: change `COMPANION_ENABLE_URL_ENDPOINT` default (Mikael Finstad / #5198)
+- @uppy/companion: change default value for Redis session prefix (Mikael Finstad / #5198)
+
 ## 5.0.0-beta.8
 
 Released: 2024-05-23
