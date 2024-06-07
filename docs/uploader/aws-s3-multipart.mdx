@@ -220,18 +220,18 @@ uploaded.
 URL to a [Companion](/docs/companion) or Companion-like instance (`string`,
 default: `null`).
 
-#### `companionHeaders`
+#### `headers`
 
-Custom headers that should be sent along to [Companion](/docs/companion) on
-every request (`Object`, default: `{}`).
+Custom headers that should be sent along to the [`endpoint`](#endpoint) on every
+request (`Object`, default: `{}`).
 
-#### `companionCookiesRule`
+#### `cookiesRule`
 
 This option correlates to the
 [RequestCredentials value](https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials)
 (`string`, default: `'same-origin'`).
 
-This tells the plugin whether to send cookies to [Companion](/docs/companion).
+This tells the plugin whether to send cookies to the [`endpoint`](#endpoint).
 
 #### `retryDelays`
 
@@ -454,10 +454,6 @@ uppy.use(AwsS3, {
 	shouldUseMultipart: (file) => file.size > 100 * 2 ** 20,
 });
 ```
-
-#### `companionUrl`
-
-Alias for [`endpoint`](#endpoint).
 
 </details>
 

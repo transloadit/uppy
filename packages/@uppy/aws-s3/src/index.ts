@@ -142,17 +142,16 @@ export interface AwsS3Part {
   ETag?: string
 }
 
-type AWSS3WithCompanion = (
-  | {
-      /** @deprecated use `endpoint` instead */
-      companionUrl: string
-    }
-  | {
-      endpoint: string
-    }
-) & {
-  companionHeaders?: Record<string, string>
-  companionCookiesRule?: string
+type AWSS3WithCompanion = {
+  endpoint: ConstructorParameters<
+    typeof RequestClient<any, any>
+  >[1]['companionUrl']
+  headers?: ConstructorParameters<
+    typeof RequestClient<any, any>
+  >[1]['companionHeaders']
+  cookiesRule?: ConstructorParameters<
+    typeof RequestClient<any, any>
+  >[1]['companionCookiesRule']
   getTemporarySecurityCredentials?: true
 }
 type AWSS3WithoutCompanion = {
@@ -260,11 +259,7 @@ type AWSS3MaybeMultipartWithoutCompanion<
     shouldUseMultipart: (file: UppyFile<M, B>) => boolean
   }
 
-type RequestClientOptions = Partial<
-  ConstructorParameters<typeof RequestClient<any, any>>[1]
->
-
-interface _AwsS3MultipartOptions extends PluginOpts, RequestClientOptions {
+interface _AwsS3MultipartOptions extends PluginOpts {
   allowedMetaFields?: string[] | boolean
   limit?: number
   retryDelays?: number[] | null
@@ -292,7 +287,6 @@ const defaultOptions = {
     // eslint-disable-next-line no-bitwise
     (file.size! >> 10) >> 10 > 100) as any as true,
   retryDelays: [0, 1000, 3000, 5000],
-  companionHeaders: {},
 } satisfies Partial<AwsS3MultipartOptions<any, any>>
 
 export default class AwsS3Multipart<
@@ -310,6 +304,7 @@ export default class AwsS3Multipart<
       | 'completeMultipartUpload'
     > &
     Required<Pick<AWSS3WithoutCompanion, 'uploadPartBytes'>> &
+    Partial<AWSS3WithCompanion> &
     AWSS3MultipartWithoutCompanionMandatorySignPart<M, B> &
     AWSS3NonMultipartWithoutCompanionMandatory<M, B>,
   M,
@@ -397,29 +392,43 @@ export default class AwsS3Multipart<
       !(
         'endpoint' in opts ||
         'companionUrl' in opts ||
+        'headers' in opts ||
         'companionHeaders' in opts ||
-        'companionCookiesRule' in opts ||
-        'companionKeysParams' in opts
+        'cookiesRule' in opts ||
+        'companionCookiesRule' in opts
       )
     )
       return
-    if (opts.endpoint) {
-      // eslint-disable-next-line no-param-reassign
-      opts = { ...this.opts, companionUrl: opts.endpoint }
-    } else if (opts.companionUrl) {
+    if ('companionUrl' in opts && !('endpoint' in opts)) {
       this.uppy.log(
-        '`companionUrl` option is deprecated in @uppy/aws-s3, use `endpoint` instead.',
+        '`companionUrl` option has been removed in @uppy/aws-s3, use `endpoint` instead.',
         'warning',
       )
-      // eslint-disable-next-line no-param-reassign
-      opts = this.opts
     }
-    this.#client = new RequestClient(this.uppy, opts as any)
+    if ('companionHeaders' in opts && !('headers' in opts)) {
+      this.uppy.log(
+        '`companionHeaders` option has been removed in @uppy/aws-s3, use `headers` instead.',
+        'warning',
+      )
+    }
+    if ('companionCookiesRule' in opts && !('cookiesRule' in opts)) {
+      this.uppy.log(
+        '`companionCookiesRule` option has been removed in @uppy/aws-s3, use `cookiesRule` instead.',
+        'warning',
+      )
+    }
+    this.#client = new RequestClient(this.uppy, {
+      pluginId: this.id,
+      provider: 'AWS',
+      companionUrl: this.opts.endpoint!,
+      companionHeaders: this.opts.headers,
+      companionCookiesRule: this.opts.cookiesRule,
+    })
   }
 
   setOptions(newOptions: Partial<AwsS3MultipartOptions<M, B>>): void {
     this.#companionCommunicationQueue.setOptions(newOptions)
-    super.setOptions(newOptions)
+    super.setOptions(newOptions as any)
     this.#setClient(newOptions)
     this.#setCompanionHeaders()
   }
@@ -519,15 +528,17 @@ export default class AwsS3Multipart<
     throwIfAborted(options?.signal)
 
     if (this.#cachedTemporaryCredentials == null) {
+      const { getTemporarySecurityCredentials } = this.opts
       // We do not await it just yet, so concurrent calls do not try to override it:
-      if (this.opts.getTemporarySecurityCredentials === true) {
+      if (getTemporarySecurityCredentials === true) {
         this.#assertHost('getTemporarySecurityCredentials')
         this.#cachedTemporaryCredentials = this.#client
           .get<AwsS3STSResponse>('s3/sts', options)
           .then(assertServerError)
       } else {
         this.#cachedTemporaryCredentials =
-          this.opts.getTemporarySecurityCredentials(options)
+          // @ts-expect-error It's either a function or `false`, which should error.
+          getTemporarySecurityCredentials(options)
       }
       this.#cachedTemporaryCredentials = await this.#cachedTemporaryCredentials
       setTimeout(
@@ -952,7 +963,7 @@ export default class AwsS3Multipart<
   }
 
   #setCompanionHeaders = () => {
-    this.#client?.setCompanionHeaders(this.opts.companionHeaders)
+    this.#client?.setCompanionHeaders(this.opts.headers!)
   }
 
   #setResumableUploadsCapability = (boolean: boolean) => {

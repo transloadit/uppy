@@ -330,8 +330,8 @@ describe('AwsS3Multipart', () => {
     beforeEach(() => {
       core = new Core<any, Body>()
       core.use(AwsS3Multipart, {
-        companionUrl: '',
-        companionHeaders: {
+        endpoint: '',
+        headers: {
           authorization: oldToken,
         },
       })
@@ -341,7 +341,7 @@ describe('AwsS3Multipart', () => {
     it('companionHeader is updated before uploading file', async () => {
       awsS3Multipart.setOptions({
         endpoint: 'http://localhost',
-        companionHeaders: {
+        headers: {
           authorization: newToken,
         },
       })
@@ -373,7 +373,7 @@ describe('AwsS3Multipart', () => {
         >
         awsS3Multipart.setOptions({
           endpoint: 'http://localhost',
-          companionHeaders: {
+          headers: {
             authorization: newToken,
           },
         })
