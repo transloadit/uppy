@@ -82,14 +82,14 @@ const percolateUp = (tree: PartialTree, id: PartialTreeId) => {
 }
 
 const afterToggleCheckbox = (
-  oldPartialTree: PartialTree,
+  oldTree: PartialTree,
   clickedRange: string[],
 ): PartialTree => {
-  const newPartialTree: PartialTree = clone(oldPartialTree)
+  const tree: PartialTree = clone(oldTree)
 
-  // We checked two or more items
   if (clickedRange.length >= 2) {
-    const newlyCheckedItems = newPartialTree.filter(
+    // We checked two or more items
+    const newlyCheckedItems = tree.filter(
       (item) => item.type !== 'root' && clickedRange.includes(item.id),
     ) as (PartialTreeFile | PartialTreeFolderNode)[]
 
@@ -102,25 +102,21 @@ const afterToggleCheckbox = (
     })
 
     newlyCheckedItems.forEach((item) => {
-      percolateDown(newPartialTree, item.id, true)
+      percolateDown(tree, item.id, true)
     })
-    percolateUp(newPartialTree, newlyCheckedItems[0].parentId)
-    // We checked exactly one item
+    percolateUp(tree, newlyCheckedItems[0].parentId)
   } else {
-    const clickedItem = newPartialTree.find(
-      (item) => item.id === clickedRange[0],
-    ) as PartialTreeFile | PartialTreeFolderNode
+    // We checked exactly one item
+    const clickedItem = tree.find((item) => item.id === clickedRange[0]) as
+      | PartialTreeFile
+      | PartialTreeFolderNode
     clickedItem.status =
       clickedItem.status === 'checked' ? 'unchecked' : 'checked'
-    percolateDown(
-      newPartialTree,
-      clickedItem.id,
-      clickedItem.status === 'checked',
-    )
-    percolateUp(newPartialTree, clickedItem.parentId)
+    percolateDown(tree, clickedItem.id, clickedItem.status === 'checked')
+    percolateUp(tree, clickedItem.parentId)
   }
 
-  return newPartialTree
+  return tree
 }
 
 export default afterToggleCheckbox
