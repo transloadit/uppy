@@ -393,7 +393,7 @@ describe('afterToggleCheckbox()', () => {
   ]
 
   it('check folder: percolates up and down', () => {
-    const newTree = afterToggleCheckbox(oldPartialTree, ['2_4'], () => null)
+    const newTree = afterToggleCheckbox(oldPartialTree, ['2_4'])
 
     expect(getFolder(newTree, '2_4').status).toEqual('checked')
     // percolates down
@@ -405,13 +405,9 @@ describe('afterToggleCheckbox()', () => {
   })
 
   it('uncheck folder: percolates up and down', () => {
-    const treeAfterClick1 = afterToggleCheckbox(
-      oldPartialTree,
-      ['2_4'],
-      () => null,
-    )
+    const treeAfterClick1 = afterToggleCheckbox(oldPartialTree, ['2_4'])
 
-    const tree = afterToggleCheckbox(treeAfterClick1, ['2_4'], () => null)
+    const tree = afterToggleCheckbox(treeAfterClick1, ['2_4'])
 
     expect(getFolder(tree, '2_4').status).toEqual('unchecked')
     // percolates down
@@ -423,11 +419,11 @@ describe('afterToggleCheckbox()', () => {
   })
 
   it('gradually check all subfolders: marks parent folder as checked', () => {
-    const tree = afterToggleCheckbox(
-      oldPartialTree,
-      ['2_4_1', '2_4_2', '2_4_3'],
-      () => null,
-    )
+    const tree = afterToggleCheckbox(oldPartialTree, [
+      '2_4_1',
+      '2_4_2',
+      '2_4_3',
+    ])
 
     // marks children as checked
     expect(getFolder(tree, '2_4_1').status).toEqual('checked')
@@ -444,14 +440,14 @@ describe('afterToggleCheckbox()', () => {
 
   it('clicking partial folder: partial => checked => unchecked', () => {
     // 1. click on 2_4_1, thus making 2_4 "partial"
-    const tree_1 = afterToggleCheckbox(oldPartialTree, ['2_4_1'], () => null)
+    const tree_1 = afterToggleCheckbox(oldPartialTree, ['2_4_1'])
 
     expect(getFolder(tree_1, '2_4').status).toEqual('partial')
     // and test children while we're at it
     expect(getFolder(tree_1, '2_4_1').status).toEqual('checked')
 
     // 2. click on 2_4, thus making 2_4 "checked"
-    const tree_2 = afterToggleCheckbox(tree_1, ['2_4'], () => null)
+    const tree_2 = afterToggleCheckbox(tree_1, ['2_4'])
 
     expect(getFolder(tree_2, '2_4').status).toEqual('checked')
     // and test children while we're at it
@@ -460,7 +456,7 @@ describe('afterToggleCheckbox()', () => {
     expect(getFolder(tree_2, '2_4_3').status).toEqual('checked')
 
     // 3. click on 2_4, thus making 2_4 "unchecked"
-    const tree_3 = afterToggleCheckbox(tree_2, ['2_4'], () => null)
+    const tree_3 = afterToggleCheckbox(tree_2, ['2_4'])
 
     expect(getFolder(tree_3, '2_4').status).toEqual('unchecked')
     // and test children while we're at it
@@ -471,7 +467,7 @@ describe('afterToggleCheckbox()', () => {
 
   it('old partialTree is NOT mutated', () => {
     const oldPartialTreeCopy = JSON.parse(JSON.stringify(oldPartialTree))
-    afterToggleCheckbox(oldPartialTree, ['2_4_1'], () => null)
+    afterToggleCheckbox(oldPartialTree, ['2_4_1'])
     expect(oldPartialTree).toEqual(oldPartialTreeCopy)
   })
 })

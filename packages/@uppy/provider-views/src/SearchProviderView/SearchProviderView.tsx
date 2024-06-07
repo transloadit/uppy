@@ -247,7 +247,6 @@ export default class SearchProviderView<M extends Meta, B extends Body> {
     const newPartialTree = PartialTreeUtils.afterToggleCheckbox(
       partialTree,
       clickedRange,
-      this.validateSingleFile,
     )
 
     this.plugin.setPluginState({ partialTree: newPartialTree })
