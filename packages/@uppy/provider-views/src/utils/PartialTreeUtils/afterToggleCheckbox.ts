@@ -7,69 +7,94 @@ import type {
 } from '@uppy/core/lib/Uppy'
 import clone from './clone'
 
+/*
+  FROM        | TO
+
+  root        |  root
+    folder    |    folder
+    folder ✅︎  |    folder ✅︎
+      file    |      file ✅︎
+      file    |      file ✅︎
+      folder  |      folder ✅︎
+        file  |        file ✅︎
+    file      |    file
+    file      |    file
+*/
+const percolateDown = (
+  tree: PartialTree,
+  clickedItem: PartialTreeFolderNode | PartialTreeFile,
+  isParentFolderChecked: boolean,
+) => {
+  const children = tree.filter(
+    (item) => item.type !== 'root' && item.parentId === clickedItem.id,
+  ) as (PartialTreeFolderNode | PartialTreeFile)[]
+  children.forEach((item) => {
+    if (item.type === 'file') {
+      item.status =
+        isParentFolderChecked && !item.restrictionError ?
+          'checked'
+        : 'unchecked'
+    } else {
+      item.status = isParentFolderChecked ? 'checked' : 'unchecked'
+    }
+    percolateDown(tree, item, isParentFolderChecked)
+  })
+}
+
+/*
+  FROM         | TO
+
+  root         |  root
+    folder     |    folder
+    folder     |    folder [▬] ('partial' status)
+      file     |      file
+      folder   |      folder ✅︎
+        file ✅︎ |       file ✅︎
+    file       |    file
+    file       |    file
+*/
+const percolateUp = (
+  tree: PartialTree,
+  currentItem: PartialTreeFolderNode | PartialTreeFile,
+) => {
+  const parentFolder = tree.find(
+    (item) => item.id === currentItem.parentId,
+  )! as PartialTreeFolder
+  if (parentFolder.type === 'root') return
+
+  const validChildren = tree.filter(
+    (item) =>
+      // is a child
+      item.type !== 'root' &&
+      item.parentId === parentFolder.id &&
+      // does pass validations
+      !(item.type === 'file' && item.restrictionError),
+  ) as (PartialTreeFile | PartialTreeFolderNode)[]
+  const areAllChildrenChecked = validChildren.every(
+    (item) => item.status === 'checked',
+  )
+  const areAllChildrenUnchecked = validChildren.every(
+    (item) => item.status === 'unchecked',
+  )
+
+  if (areAllChildrenChecked) {
+    parentFolder.status = 'checked'
+  } else if (areAllChildrenUnchecked) {
+    parentFolder.status = 'unchecked'
+  } else {
+    parentFolder.status = 'partial'
+  }
+
+  percolateUp(tree, parentFolder)
+}
+
 const afterToggleCheckbox = (
   oldPartialTree: PartialTree,
   clickedRange: string[],
 ): PartialTree => {
   const newPartialTree: PartialTree = clone(oldPartialTree)
-  const ourItem = newPartialTree.find((item) => item.id === clickedRange[0]) as
-    | PartialTreeFile
-    | PartialTreeFolderNode
 
-  const percolateDown = (
-    clickedItem: PartialTreeFolderNode | PartialTreeFile,
-    isParentFolderChecked: boolean,
-  ) => {
-    const children = newPartialTree.filter(
-      (item) => item.type !== 'root' && item.parentId === clickedItem.id,
-    ) as (PartialTreeFolderNode | PartialTreeFile)[]
-    children.forEach((item) => {
-      if (item.type === 'file') {
-        item.status =
-          isParentFolderChecked && !item.restrictionError ?
-            'checked'
-          : 'unchecked'
-      } else {
-        item.status = isParentFolderChecked ? 'checked' : 'unchecked'
-      }
-      percolateDown(item, isParentFolderChecked)
-    })
-  }
-
-  const percolateUp = (
-    currentItem: PartialTreeFolderNode | PartialTreeFile,
-  ) => {
-    const parentFolder = newPartialTree.find(
-      (item) => item.id === currentItem.parentId,
-    )! as PartialTreeFolder
-    if (parentFolder.type === 'root') return
-
-    const validChildren = newPartialTree.filter(
-      (item) =>
-        // is a child
-        item.type !== 'root' &&
-        item.parentId === parentFolder.id &&
-        // does pass validations
-        !(item.type === 'file' && item.restrictionError),
-    ) as (PartialTreeFile | PartialTreeFolderNode)[]
-    const areAllChildrenChecked = validChildren.every(
-      (item) => item.status === 'checked',
-    )
-    const areAllChildrenUnchecked = validChildren.every(
-      (item) => item.status === 'unchecked',
-    )
-
-    if (areAllChildrenChecked) {
-      parentFolder.status = 'checked'
-    } else if (areAllChildrenUnchecked) {
-      parentFolder.status = 'unchecked'
-    } else {
-      parentFolder.status = 'partial'
-    }
-
-    percolateUp(parentFolder)
-  }
-
+  // We checked two or more items
   if (clickedRange.length >= 2) {
     const newlyCheckedItems = newPartialTree.filter(
       (item) => item.type !== 'root' && clickedRange.includes(item.id),
@@ -84,18 +109,18 @@ const afterToggleCheckbox = (
     })
 
     newlyCheckedItems.forEach((item) => {
-      percolateDown(item, true)
+      percolateDown(newPartialTree, item, true)
     })
-    percolateUp(ourItem)
+    percolateUp(newPartialTree, newlyCheckedItems[0])
+    // We checked exactly one item
   } else {
-    const oldStatus = (
-      oldPartialTree.find((item) => item.id === clickedRange[0]) as
-        | PartialTreeFile
-        | PartialTreeFolderNode
-    ).status
-    ourItem.status = oldStatus === 'checked' ? 'unchecked' : 'checked'
-    percolateDown(ourItem, ourItem.status === 'checked')
-    percolateUp(ourItem)
+    const clickedItem = newPartialTree.find(
+      (item) => item.id === clickedRange[0],
+    ) as PartialTreeFile | PartialTreeFolderNode
+    clickedItem.status =
+      clickedItem.status === 'checked' ? 'unchecked' : 'checked'
+    percolateDown(newPartialTree, clickedItem, clickedItem.status === 'checked')
+    percolateUp(newPartialTree, clickedItem)
   }
 
   return newPartialTree
