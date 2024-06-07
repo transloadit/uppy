@@ -417,20 +417,28 @@ export default class AwsS3Multipart<
         'warning',
       )
     }
-    this.#client = new RequestClient(this.uppy, {
-      pluginId: this.id,
-      provider: 'AWS',
-      companionUrl: this.opts.endpoint!,
-      companionHeaders: this.opts.headers,
-      companionCookiesRule: this.opts.cookiesRule,
-    })
+    if ('endpoint' in opts) {
+      this.#client = new RequestClient(this.uppy, {
+        pluginId: this.id,
+        provider: 'AWS',
+        companionUrl: this.opts.endpoint!,
+        companionHeaders: this.opts.headers,
+        companionCookiesRule: this.opts.cookiesRule,
+      })
+    } else {
+      if ('headers' in opts) {
+        this.#setCompanionHeaders()
+      }
+      if ('cookiesRule' in opts) {
+        this.#client.opts.companionCookiesRule = opts.cookiesRule
+      }
+    }
   }
 
   setOptions(newOptions: Partial<AwsS3MultipartOptions<M, B>>): void {
     this.#companionCommunicationQueue.setOptions(newOptions)
     super.setOptions(newOptions as any)
     this.#setClient(newOptions)
-    this.#setCompanionHeaders()
   }
 
   /**
