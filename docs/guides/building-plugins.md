@@ -33,7 +33,7 @@ The plugin constructor receives the Uppy instance in the first parameter, and
 any options passed to `uppy.use()` in the second parameter.
 
 ```js
-import BasePlugin from '@uppy/core/lib/BasePlugin.js';
+import BasePlugin from '@uppy/core';
 
 export default class MyPlugin extends BasePlugin {
 	constructor(uppy, opts) {

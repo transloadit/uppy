@@ -701,6 +701,13 @@ that upload.
 uppy.removeFile('uppyteamkongjpg1501851828779');
 ```
 
+#### `clear()`
+
+Clear the state. Can be useful for manually resetting Uppy after a successful
+upload.
+
+Upload plugins may choose to throw an error if called during an upload.
+
 #### `getFile(fileID)`
 
 Get a specific [Uppy file](#working-with-uppy-files) by its ID.
@@ -764,11 +771,7 @@ Retry an upload (after an error, for example).
 
 Retry all uploads (after an error, for example).
 
-#### `cancelAll({ reason: 'user' })`
-
-| Argument | Type     | Description                                                                                                                                                                                                                                                                                                 |
-| -------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `reason` | `string` | The reason for canceling. Plugins can use this to provide different cleanup behavior (Transloadit plugin cancels an Assembly if user clicked on the “cancel” button). Possible values are: `user` (default) - The user has pressed “cancel”; `unmount` - The Uppy instance has been closed programmatically |
+#### `cancelAll()`
 
 Cancel all uploads, reset progress and remove all files.
 
@@ -874,11 +877,7 @@ uppy.getPlugin('Dashboard').setOptions({
 });
 ```
 
-#### `close({ reason: 'user' })`
-
-| Argument | Type     | Description                                                                                                                                                                                                                                                                                                 |
-| -------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `reason` | `string` | The reason for canceling. Plugins can use this to provide different cleanup behavior (Transloadit plugin cancels an Assembly if user clicked on the “cancel” button). Possible values are: `user` (default) - The user has pressed “cancel”; `unmount` - The Uppy instance has been closed programmatically |
+#### `destroy()`
 
 Uninstall all plugins and close down this Uppy instance. Also runs
 `uppy.cancelAll()` before uninstalling.
@@ -1024,25 +1023,19 @@ Fired each time a file is removed.
 **Parameters**
 
 - `file` - The [Uppy file](#working-with-uppy-files) that was removed.
-- `reason` - A string explaining why the file was removed. See
-  [#2301](https://github.com/transloadit/uppy/issues/2301#issue-628931176) for
-  details. Current reasons are: `removed-by-user` and `cancel-all`.
 
 **Example**
 
 ```js
-uppy.on('file-removed', (file, reason) => {
+uppy.on('file-removed', (file) => {
 	console.log('Removed file', file);
 });
 ```
 
 ```js
-uppy.on('file-removed', (file, reason) => {
+uppy.on('file-removed', (file) => {
 	removeFileFromUploadingCounterUI(file);
-
-	if (reason === 'removed-by-user') {
-		sendDeleteRequestForFile(file);
-	}
+	sendDeleteRequestForFile(file);
 });
 ```
 
@@ -1050,14 +1043,10 @@ uppy.on('file-removed', (file, reason) => {
 
 Fired when the upload starts.
 
-```js
-uppy.on('upload', (data) => {
-	// data object consists of `id` with upload ID and `fileIDs` array
-	// with file IDs in current upload
-	// data: { id, fileIDs }
-	console.log(`Starting upload ${id} for files ${fileIDs}`);
-});
-```
+**Parameters**
+
+- `uploadID` (`string)`
+- `files` (`UppyFile<M,B>`)
 
 #### `preprocess-progress`
 
@@ -1110,6 +1099,15 @@ uppy.on('upload-progress', (file, progress) => {
 	console.log(file.id, progress.bytesUploaded, progress.bytesTotal);
 });
 ```
+
+#### `upload-pause`
+
+Fired when an individual upload is (un)paused.
+
+**Parameters**
+
+- `file` (`UppyFile<M,B>`)
+- `isPaused` (`boolean`)
 
 #### `postprocess-progress`
 
@@ -1250,7 +1248,7 @@ the `retry-all` event instead.
 
 **Parameters**
 
-- `fileID` - ID of the file that is being retried.
+- `file` (`UppyFile<M,B>`)
 
 **Example**
 
@@ -1286,7 +1284,7 @@ Fired when all failed uploads are retried
 
 **Parameters**
 
-- `fileIDs` - Arrays of IDs of the files being retried.
+- `files` (`UppyFile<M,B>[]`)
 
 **Example**
 
@@ -1322,10 +1320,6 @@ Fired when “info” message should be hidden in the UI. See
 
 #### `cancel-all`
 
-| Argument | Type     | Description                         |
-| -------- | -------- | ----------------------------------- |
-| `reason` | `string` | See [uppy.cancelAll](####cancelAll) |
-
 Fired when `cancelAll()` is called, all uploads are canceled, files removed and
 progress is reset.
 
@@ -1338,17 +1332,6 @@ upload restrictions.
 ```js
 uppy.on('restriction-failed', (file, error) => {
 	// do some customized logic like showing system notice to users
-});
-```
-
-#### `reset-progress`
-
-Fired when `resetProgress()` is called, each file has its upload progress reset
-to zero.
-
-```js
-uppy.on('reset-progress', () => {
-	// progress was reset
 });
 ```
 
@@ -1374,9 +1357,10 @@ Checkout the [building plugins](/docs/guides/building-plugins) guide.
 
 :::note
 
-If you don’t use any UI plugins and want to make sure Preact isn’t bundled into
-your app, import `BasePlugin` like this:
-`import BasePlugin from '@uppy/core/lib/BasePlugin`.
+If you don’t use any UI plugins, any modern bundler should be able to tree-shake
+Preact code away. If you are not using a bundler that supports tree-shaking,
+it’s also possible to import `BasePlugin` like this:
+`import BasePlugin from '@uppy/core/lib/BasePlugin.js`.
 
 :::
 

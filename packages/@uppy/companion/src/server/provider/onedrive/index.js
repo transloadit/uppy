@@ -23,7 +23,7 @@ const getRootPath = (query) => (query.driveId ? `drives/${query.driveId}` : 'me/
  * Adapter for API https://docs.microsoft.com/en-us/onedrive/developer/rest-api/
  */
 class OneDrive extends Provider {
-  static get authProvider () {
+  static get oauthProvider () {
     return 'microsoft'
   }
 
@@ -98,7 +98,7 @@ class OneDrive extends Provider {
     return withProviderErrorHandling({
       fn,
       tag,
-      providerName: OneDrive.authProvider,
+      providerName: OneDrive.oauthProvider,
       isAuthError: (response) => response.statusCode === 401,
       isUserFacingError: (response) => [400, 403].includes(response.statusCode),
       // onedrive gives some errors here that the user might want to know about

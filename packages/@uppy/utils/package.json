@@ -1,7 +1,7 @@
 {
   "name": "@uppy/utils",
   "description": "Shared utility functions for Uppy Core and plugins maintained by the Uppy team.",
-  "version": "6.0.0-beta.6",
+  "version": "6.0.0-beta.8",
   "license": "MIT",
   "type": "module",
   "keywords": [
@@ -46,7 +46,6 @@
     "./lib/isTouchDevice": "./lib/isTouchDevice.js",
     "./lib/prettyETA": "./lib/prettyETA.js",
     "./lib/secondsToTime": "./lib/secondsToTime.js",
-    "./lib/settle": "./lib/settle.js",
     "./lib/toArray": "./lib/toArray.js",
     "./lib/FOCUSABLE_ELEMENTS": "./lib/FOCUSABLE_ELEMENTS.js",
     "./lib/AbortController": "./lib/AbortController.js",

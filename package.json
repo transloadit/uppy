@@ -16,6 +16,9 @@
       "eslint --fix",
       "prettier -w",
       "eslint"
+    ],
+    "*.mdx": [
+      "prettier -w"
     ]
   },
   "remarkConfig": {
@@ -89,7 +92,6 @@
     "jsdom": "^24.0.0",
     "lint-staged": "^15.0.0",
     "mime-types": "^2.1.26",
-    "nodemon": "^2.0.8",
     "npm-packlist": "^5.0.0",
     "npm-run-all": "^4.1.5",
     "onchange": "^7.1.0",

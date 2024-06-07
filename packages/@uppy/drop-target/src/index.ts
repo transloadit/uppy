@@ -50,8 +50,6 @@ export default class DropTarget<
     super(uppy, { ...defaultOpts, ...opts })
     this.type = 'acquirer'
     this.id = this.opts.id || 'DropTarget'
-    // @ts-expect-error TODO: remove in major
-    this.title = 'Drop Target'
   }
 
   addFiles = (files: Array<File>): void => {

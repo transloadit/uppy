@@ -151,11 +151,4 @@ pt_BR.strings = {
   openFolderNamed: 'Pasta aberta %{name}',
 }
 
-// TODO: remove this in the next major?
-// @ts-expect-error Uppy can be a global in legacy bundle
-if (typeof Uppy !== 'undefined') {
-  // @ts-expect-error Uppy can be a global in legacy bundle
-  globalThis.Uppy.locales.pt_BR = pt_BR
-}
-
 export default pt_BR

@@ -1,5 +1,13 @@
 # @uppy/audio
 
+## 2.0.0-beta.6
+
+Released: 2024-06-04
+Included in: Uppy v4.0.0-beta.10
+
+- @uppy/audio: remove unused component props (Antoine du Hamel / #5209)
+- @uppy/audio: move internal property to private field (Antoine du Hamel / #5207)
+
 ## 2.0.0-beta.5
 
 Released: 2024-05-03

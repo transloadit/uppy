@@ -138,11 +138,6 @@ class IndexedDBStore {
     return Promise.resolve(this.#ready)
   }
 
-  // TODO: remove this setter in the next major
-  set ready(val: IDBDatabase) {
-    this.#ready = val
-  }
-
   key(fileID: string): string {
     return `${this.name}!${fileID}`
   }

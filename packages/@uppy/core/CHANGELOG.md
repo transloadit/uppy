@@ -1,5 +1,24 @@
 # @uppy/core
 
+## 4.0.0-beta.9
+
+Released: 2024-06-04
+Included in: Uppy v4.0.0-beta.10
+
+- @uppy/core: remove unnecessary todo (Mikael Finstad / #5200)
+- @uppy/core: remove `'upload-started'` event (Mikael Finstad / #5200)
+- @uppy/core: add type tests (Merlijn Vos / #5153)
+- @uppy/core: pass file to events consistently (Merlijn Vos / #5136)
+- @uppy/core: remove `reason` (Antoine du Hamel / #5159)
+- @uppy/core: remove `resetProgress` and `reset-progress` (Mikael Finstad / #5221)
+
+## 4.0.0-beta.8
+
+Released: 2024-05-22
+Included in: Uppy v4.0.0-beta.8
+
+- @uppy/core: resolve some (breaking) TODOs (Antoine du Hamel / #4824)
+
 ## 4.0.0-beta.7
 
 Released: 2024-05-14
@@ -48,6 +67,14 @@ Included in: Uppy v4.0.0-beta.1
 - @uppy/core: fix some type errors (Antoine du Hamel / #5015)
 - @uppy/core: various type fixes (Antoine du Hamel / #4995)
 - @uppy/core,@uppy/provider-views: Fix breadcrumbs (Evgenia Karunus / #4986)
+
+## 3.12.0
+
+Released: 2024-06-04
+Included in: Uppy v3.26.0
+
+- @uppy/core: check capabilities in clearUploadedFiles (Merlijn Vos / #5201)
+- @uppy/core: PartialTree - change the `maxTotalFileSize` error (Evgenia Karunus / #5203)
 
 ## 3.11.3
 

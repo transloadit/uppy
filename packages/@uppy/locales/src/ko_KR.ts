@@ -110,11 +110,4 @@ ko_KR.strings = {
   youHaveToAtLeastSelectX: '최소 %{smart_count}개의 파일을 선택해야 합니다',
 }
 
-// TODO: remove this in the next major?
-// @ts-expect-error Uppy can be a global in legacy bundle
-if (typeof Uppy !== 'undefined') {
-  // @ts-expect-error Uppy can be a global in legacy bundle
-  globalThis.Uppy.locales.ko_KR = ko_KR
-}
-
 export default ko_KR

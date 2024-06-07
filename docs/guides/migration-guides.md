@@ -2,6 +2,46 @@
 
 These cover all the major Uppy versions and how to migrate to them.
 
+## Migrate from Uppy 3.x to 4.x
+
+### Companion
+
+- `COMPANION_REDIS_EXPRESS_SESSION_PREFIX` now defaults to `companion-session:`
+  (before `sess:`). To revert keep backwards compatibility, set the environment
+  variable `COMPANION_REDIS_EXPRESS_SESSION_PREFIX=sess:`.
+- The URL endpoint (used by the `Url`/`Link` plugin) is now turned off by
+  default and must be explicitly enabled with
+  `COMPANION_ENABLE_URL_ENDPOINT=true` or `enableUrlEndpoint: true`.
+- Custom provider breaking changes. If you have not implemented a custom
+  provider, you should not be affected.
+  - The static `getExtraConfig` property has been renamed to
+    `getExtraGrantConfig`.
+  - The static `authProvider` property has been renamed to `oauthProvider`.
+- Endpoint `GET /s3/params` now returns `{ method: "POST" }` instead of
+  `{ method: "post" }`. This will not affect most people.
+- `access-control-allow-headers` is no longer included in
+  `Access-Control-Expose-Headers`, and `uppy-versions` is no longer an allowed
+  header. We are not aware of any issues this might cause.
+- Internal refactoring (probably won’t affect you)
+  - `getProtectedGot` parameter `blockLocalIPs` changed to `allowLocalIPs`
+    (inverted boolean).
+  - `getURLMeta` 2nd (boolean) argument inverted.
+  - `getProtectedHttpAgent` parameter `blockLocalIPs` changed to `allowLocalIPs`
+    (inverted boolean).
+  - `downloadURL` 2nd (boolean) argument inverted.
+
+### `@uppy/companion-client`
+
+- `supportsRefreshToken` now defaults to `false` instead of `true`. If you have
+  implemented a custom provider, this might affect you.
+- `Socket` class is no longer in use and has been removed. Unless you used this
+  class you don’t need to do anything.
+- Remove deprecated options `serverUrl` and `serverPattern` (they were merely
+  defined in Typescript, not in use).
+- `RequestClient` methods `get`, `post`, `delete` no longer accepts a boolean as
+  the third argument. Instead, pass `{ skipPostResponse: true | false }`. This
+  won’t affect you unless you’ve been using `RequestClient`.
+
 ## Migrate from Robodog to Uppy plugins
 
 Uppy is flexible and extensible through plugins. But the integration code could

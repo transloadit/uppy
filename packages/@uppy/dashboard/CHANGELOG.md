@@ -1,5 +1,13 @@
 # @uppy/dashboard
 
+## 4.0.0-beta.9
+
+Released: 2024-06-04
+Included in: Uppy v4.0.0-beta.10
+
+- @uppy/dashboard: remove unused component props (Antoine du Hamel / #5213)
+- @uppy/dashboard: remove deprecated `autoOpenFileEditor` option (Mikael Finstad / #5200)
+
 ## 4.0.0-beta.5
 
 Released: 2024-05-03

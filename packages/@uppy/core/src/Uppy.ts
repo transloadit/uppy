@@ -23,10 +23,7 @@ import type {
   CompanionClientProvider,
   CompanionClientSearchProvider,
 } from '@uppy/utils/lib/CompanionClientProvider'
-import type {
-  FileProgressNotStarted,
-  FileProgressStarted,
-} from '@uppy/utils/lib/FileProgress'
+import type { FileProgressStarted } from '@uppy/utils/lib/FileProgress'
 import type {
   Locale,
   I18n,
@@ -52,8 +49,6 @@ type Processor = (
   fileIDs: string[],
   uploadID: string,
 ) => Promise<unknown> | void
-
-type FileRemoveReason = 'user' | 'cancel-all' | 'unmount'
 
 type LogLevel = 'info' | 'warning' | 'error' | 'success'
 
@@ -94,7 +89,7 @@ export type UnknownProviderPlugin<
   M extends Meta,
   B extends Body,
 > = UnknownPlugin<M, B, UnknownProviderPluginState> & {
-  onFirstRender: () => void
+  rootFolderId: string | null
   title: string
   files: UppyFile<M, B>[]
   icon: () => h.JSX.Element
@@ -131,7 +126,6 @@ export type UnknownSearchProviderPlugin<
   M extends Meta,
   B extends Body,
 > = UnknownPlugin<M, B, UnknownSearchProviderPluginState> & {
-  onFirstRender: () => void
   title: string
   icon: () => h.JSX.Element
   provider: CompanionClientSearchProvider
@@ -228,7 +222,7 @@ export type NonNullableUppyOptions<M extends Meta, B extends Body> = Required<
 
 export interface _UppyEventMap<M extends Meta, B extends Body> {
   'back-online': () => void
-  'cancel-all': (reason: { reason?: FileRemoveReason }) => void
+  'cancel-all': () => void
   complete: (result: UploadResult<M, B>) => void
   error: (
     error: { name: string; message: string; details?: string },
@@ -236,7 +230,7 @@ export interface _UppyEventMap<M extends Meta, B extends Body> {
     response?: UppyFile<M, B>['response'],
   ) => void
   'file-added': (file: UppyFile<M, B>) => void
-  'file-removed': (file: UppyFile<M, B>, reason?: FileRemoveReason) => void
+  'file-removed': (file: UppyFile<M, B>) => void
   'files-added': (files: UppyFile<M, B>[]) => void
   'info-hidden': () => void
   'info-visible': () => void
@@ -262,19 +256,18 @@ export interface _UppyEventMap<M extends Meta, B extends Body> {
     progress: NonNullable<FileProgressStarted['preprocess']>,
   ) => void
   progress: (progress: number) => void
-  'reset-progress': () => void
   restored: (pluginData: any) => void
   'restore-confirmed': () => void
   'restore-canceled': () => void
   'restriction-failed': (file: UppyFile<M, B> | undefined, error: Error) => void
   'resume-all': () => void
-  'retry-all': (fileIDs: string[]) => void
+  'retry-all': (files: UppyFile<M, B>[]) => void
   'state-update': (
     prevState: State<M, B>,
     nextState: State<M, B>,
     patch?: Partial<State<M, B>>,
   ) => void
-  upload: (data: { id: string; fileIDs: string[] }) => void
+  upload: (uploadID: string, files: UppyFile<M, B>[]) => void
   'upload-error': (
     file: UppyFile<M, B> | undefined,
     error: { name: string; message: string; details?: string },
@@ -282,15 +275,12 @@ export interface _UppyEventMap<M extends Meta, B extends Body> {
       | Omit<NonNullable<UppyFile<M, B>['response']>, 'uploadURL'>
       | undefined,
   ) => void
-  'upload-pause': (
-    fileID: UppyFile<M, B>['id'] | undefined,
-    isPaused: boolean,
-  ) => void
+  'upload-pause': (file: UppyFile<M, B> | undefined, isPaused: boolean) => void
   'upload-progress': (
     file: UppyFile<M, B> | undefined,
     progress: FileProgressStarted,
   ) => void
-  'upload-retry': (fileID: string) => void
+  'upload-retry': (file: UppyFile<M, B>) => void
   'upload-stalled': (
     error: { message: string; details?: string },
     files: UppyFile<M, B>[],
@@ -301,15 +291,10 @@ export interface _UppyEventMap<M extends Meta, B extends Body> {
   ) => void
 }
 
-/** @deprecated */
-export interface DeprecatedUppyEventMap<M extends Meta, B extends Body> {
-  'upload-start': (files: UppyFile<M, B>[]) => void
-  'upload-started': (file: UppyFile<M, B>) => void
-}
-
 export interface UppyEventMap<M extends Meta, B extends Body>
-  extends _UppyEventMap<M, B>,
-    DeprecatedUppyEventMap<M, B> {}
+  extends _UppyEventMap<M, B> {
+  'upload-start': (files: UppyFile<M, B>[]) => void
+}
 
 const defaultUploadState = {
   totalProgress: 0,
@@ -571,32 +556,17 @@ export class Uppy<M extends Meta, B extends Body> {
     this.setState(undefined) // so that UI re-renders with new options
   }
 
-  resetProgress(): void {
-    const defaultProgress: Omit<FileProgressNotStarted, 'bytesTotal'> = {
-      percentage: 0,
-      bytesUploaded: 0,
-      uploadComplete: false,
-      uploadStarted: null,
-    }
-    const files = { ...this.getState().files }
-    const updatedFiles: State<M, B>['files'] = {}
-
-    Object.keys(files).forEach((fileID) => {
-      updatedFiles[fileID] = {
-        ...files[fileID],
-        progress: {
-          ...files[fileID].progress,
-          ...defaultProgress,
-        },
-      }
-    })
-
-    this.setState({ files: updatedFiles, ...defaultUploadState })
-
-    this.emit('reset-progress')
-  }
-
   clear(): void {
+    const { capabilities, currentUploads } = this.getState()
+    if (
+      Object.keys(currentUploads).length > 0 &&
+      !capabilities.individualCancellation
+    ) {
+      throw new Error(
+        'The installed uploader plugin does not allow removing files during an upload.',
+      )
+    }
+
     this.setState({ ...defaultUploadState, files: {} })
   }
 
@@ -896,7 +866,8 @@ export class Uppy<M extends Meta, B extends Body> {
     meta.type = fileType
 
     // `null` means the size is unknown.
-    const size = Number.isFinite(file.data.size) ? file.data.size : null
+    const size =
+      Number.isFinite(file.data.size) ? file.data.size : (null as never)
 
     return {
       source: file.source || '',
@@ -911,17 +882,15 @@ export class Uppy<M extends Meta, B extends Body> {
       data: file.data,
       progress: {
         percentage: 0,
-        bytesUploaded: 0,
+        bytesUploaded: false,
         bytesTotal: size,
         uploadComplete: false,
         uploadStarted: null,
-      } satisfies FileProgressNotStarted,
+      },
       size,
       isGhost: false,
       isRemote: file.isRemote || false,
-      // TODO: this should not be a string
-      // @ts-expect-error wrong
-      remote: file.remote || '',
+      remote: file.remote,
       preview: file.preview,
     }
   }
@@ -1138,7 +1107,7 @@ export class Uppy<M extends Meta, B extends Body> {
     }
   }
 
-  removeFiles(fileIDs: string[], reason?: FileRemoveReason): void {
+  removeFiles(fileIDs: string[]): void {
     const { files, currentUploads } = this.getState()
     const updatedFiles = { ...files }
     const updatedUploads = { ...currentUploads }
@@ -1171,7 +1140,9 @@ export class Uppy<M extends Meta, B extends Body> {
         newFileIDs.length !== currentUploads[uploadID].fileIDs.length &&
         !capabilities.individualCancellation
       ) {
-        throw new Error('individualCancellation is disabled')
+        throw new Error(
+          'The installed uploader plugin does not allow removing files during an upload.',
+        )
       }
 
       updatedUploads[uploadID] = {
@@ -1198,7 +1169,7 @@ export class Uppy<M extends Meta, B extends Body> {
 
     const removedFileIDs = Object.keys(removedFiles)
     removedFileIDs.forEach((fileID) => {
-      this.emit('file-removed', removedFiles[fileID], reason)
+      this.emit('file-removed', removedFiles[fileID])
     })
 
     if (removedFileIDs.length > 5) {
@@ -1208,8 +1179,8 @@ export class Uppy<M extends Meta, B extends Body> {
     }
   }
 
-  removeFile(fileID: string, reason?: FileRemoveReason): void {
-    this.removeFiles([fileID], reason)
+  removeFile(fileID: string): void {
+    this.removeFiles([fileID])
   }
 
   pauseResume(fileID: string): boolean | undefined {
@@ -1220,14 +1191,15 @@ export class Uppy<M extends Meta, B extends Body> {
       return undefined
     }
 
-    const wasPaused = this.getFile(fileID).isPaused || false
+    const file = this.getFile(fileID)
+    const wasPaused = file.isPaused || false
     const isPaused = !wasPaused
 
     this.setFileState(fileID, {
       isPaused,
     })
 
-    this.emit('upload-pause', fileID, isPaused)
+    this.emit('upload-pause', file, isPaused)
 
     return isPaused
   }
@@ -1291,7 +1263,7 @@ export class Uppy<M extends Meta, B extends Body> {
       error: null,
     })
 
-    this.emit('retry-all', filesToRetry)
+    this.emit('retry-all', Object.values(updatedFiles))
 
     if (filesToRetry.length === 0) {
       return Promise.resolve({
@@ -1306,21 +1278,17 @@ export class Uppy<M extends Meta, B extends Body> {
     return this.#runUpload(uploadID)
   }
 
-  cancelAll({ reason = 'user' }: { reason?: FileRemoveReason } = {}): void {
-    this.emit('cancel-all', { reason })
+  cancelAll(): void {
+    this.emit('cancel-all')
 
-    // Only remove existing uploads if user is canceling
-    if (reason === 'user') {
-      const { files } = this.getState()
+    const { files } = this.getState()
 
-      const fileIDs = Object.keys(files)
-      if (fileIDs.length) {
-        this.removeFiles(fileIDs, 'cancel-all')
-      }
-
-      this.setState(defaultUploadState)
-      // todo should we call this.emit('reset-progress') like we do for resetProgress?
+    const fileIDs = Object.keys(files)
+    if (fileIDs.length) {
+      this.removeFiles(fileIDs)
     }
+
+    this.setState(defaultUploadState)
   }
 
   retryUpload(fileID: string): Promise<UploadResult<M, B> | undefined> {
@@ -1329,7 +1297,7 @@ export class Uppy<M extends Meta, B extends Body> {
       isPaused: false,
     })
 
-    this.emit('upload-retry', fileID)
+    this.emit('upload-retry', this.getFile(fileID))
 
     const uploadID = this.#createUpload([fileID], {
       forceAllowNewUpload: true, // create new upload even if allowNewUpload: false
@@ -1547,13 +1515,7 @@ export class Uppy<M extends Meta, B extends Body> {
       this.patchFilesState(filesState)
     }
 
-    this.on('upload-start', (files) => {
-      files.forEach((file: UppyFile<M, B>) => {
-        // todo backward compat, remove this event in a next major
-        this.emit('upload-started', file)
-      })
-      onUploadStarted(files)
-    })
+    this.on('upload-start', onUploadStarted)
 
     this.on('upload-progress', this.calculateProgress)
 
@@ -1819,12 +1781,12 @@ export class Uppy<M extends Meta, B extends Body> {
   /**
    * Uninstall all plugins and close down this Uppy instance.
    */
-  destroy({ reason }: { reason?: FileRemoveReason } | undefined = {}): void {
+  destroy(): void {
     this.log(
       `Closing Uppy instance ${this.opts.id}: removing all files and uninstalling plugins`,
     )
 
-    this.cancelAll({ reason })
+    this.cancelAll()
 
     this.#storeUnsubscribe()
 
@@ -1958,10 +1920,7 @@ export class Uppy<M extends Meta, B extends Body> {
 
     const uploadID = nanoid()
 
-    this.emit('upload', {
-      id: uploadID,
-      fileIDs,
-    })
+    this.emit('upload', uploadID, this.getFilesByIds(fileIDs))
 
     this.setState({
       allowNewUpload:

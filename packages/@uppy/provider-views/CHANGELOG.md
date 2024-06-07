@@ -1,5 +1,12 @@
 # @uppy/provider-views
 
+## 4.0.0-beta.7
+
+Released: 2024-06-04
+Included in: Uppy v4.0.0-beta.10
+
+- @uppy/provider-views: PartialTree - get rid of `.onFirstRender()` (Evgenia Karunus / #5187)
+
 ## 4.0.0-beta.4
 
 Released: 2024-04-29

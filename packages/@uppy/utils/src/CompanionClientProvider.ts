@@ -23,6 +23,7 @@ export interface CompanionClientProvider {
   provider: string
   login(options?: RequestOptions): Promise<void>
   logout<ResBody>(options?: RequestOptions): Promise<ResBody>
+  fetchPreAuthToken(): Promise<void>
   list<ResBody>(
     directory: string | undefined,
     options: RequestOptions,

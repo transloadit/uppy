@@ -297,6 +297,12 @@ Now let’s create the version & tag:
 mkdir -p .git && npm version --workspaces-update=false --tag-version-prefix='@uppy/companion@' patch
 ```
 
+**Important:** Build Companion lib folder
+
+```bash
+yarn run build
+```
+
 Run a “dry-run” first:
 
 ```bash

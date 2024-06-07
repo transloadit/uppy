@@ -327,8 +327,6 @@ export default class AwsS3Multipart<
 
   protected uploaders: Record<string, MultipartUploader<M, B> | null>
 
-  protected uploaderSockets: Record<string, never>
-
   constructor(uppy: Uppy<M, B>, opts?: AwsS3MultipartOptions<M, B>) {
     super(uppy, {
       ...defaultOptions,
@@ -387,7 +385,6 @@ export default class AwsS3Multipart<
 
     this.uploaders = Object.create(null)
     this.uploaderEvents = Object.create(null)
-    this.uploaderSockets = Object.create(null)
   }
 
   private [Symbol.for('uppy test: getClient')]() {
@@ -443,12 +440,6 @@ export default class AwsS3Multipart<
       this.uploaderEvents[fileID]!.remove()
       this.uploaderEvents[fileID] = null
     }
-    if (this.uploaderSockets[fileID]) {
-      // @ts-expect-error TODO: remove this block in the next major
-      this.uploaderSockets[fileID].close()
-      // @ts-expect-error TODO: remove this block in the next major
-      this.uploaderSockets[fileID] = null
-    }
   }
 
   #assertHost(method: string): void {
@@ -496,7 +487,9 @@ export default class AwsS3Multipart<
 
     const filename = encodeURIComponent(key)
     return this.#client
-      .get<AwsS3Part[]>(`s3/multipart/${uploadId}?key=${filename}`, { signal })
+      .get<
+        AwsS3Part[]
+      >(`s3/multipart/${encodeURIComponent(uploadId)}?key=${filename}`, { signal })
       .then(assertServerError)
   }
 
@@ -603,7 +596,7 @@ export default class AwsS3Multipart<
     const filename = encodeURIComponent(key)
     return this.#client
       .get<AwsS3UploadParameters>(
-        `s3/multipart/${uploadId}/${partNumber}?key=${filename}`,
+        `s3/multipart/${encodeURIComponent(uploadId)}/${partNumber}?key=${filename}`,
         { signal },
       )
       .then(assertServerError)
@@ -612,10 +605,7 @@ export default class AwsS3Multipart<
   abortMultipartUpload(
     file: UppyFile<M, B>,
     { key, uploadId, signal }: UploadResultWithSignal,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    oldSignal?: AbortSignal, // TODO: remove in next major
   ): Promise<void> {
-    signal ??= oldSignal // eslint-disable-line no-param-reassign
     this.#assertHost('abortMultipartUpload')
 
     const filename = encodeURIComponent(key)
@@ -729,12 +719,22 @@ export default class AwsS3Multipart<
           return
         }
 
-        // todo make a proper onProgress API (breaking change)
         onProgress?.({ loaded: size, lengthComputable: true })
 
-        // NOTE This must be allowed by CORS.
-        const etag = xhr.getResponseHeader('ETag')
-        const location = xhr.getResponseHeader('Location')
+        // https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/getAllResponseHeaders#examples
+        const arr = xhr
+          .getAllResponseHeaders()
+          .trim()
+          .split(/[\r\n]+/)
+        // @ts-expect-error null is allowed to avoid inherited properties
+        const headersMap: Record<string, string> = { __proto__: null }
+        for (const line of arr) {
+          const parts = line.split(': ')
+          const header = parts.shift()!
+          const value = parts.join(': ')
+          headersMap[header] = value
+        }
+        const { etag, location } = headersMap
 
         if (method.toUpperCase() === 'POST' && location === null) {
           // Not being able to read the Location header is not a fatal error.
@@ -754,8 +754,8 @@ export default class AwsS3Multipart<
 
         onComplete?.(etag)
         resolve({
-          ETag: etag,
-          ...(location ? { location } : undefined),
+          ...headersMap,
+          ETag: etag, // keep capitalised ETag for backwards compatiblity
         })
       })
 
@@ -797,9 +797,9 @@ export default class AwsS3Multipart<
   #uploadLocalFile(file: UppyFile<M, B>) {
     return new Promise<void | string>((resolve, reject) => {
       const onProgress = (bytesUploaded: number, bytesTotal: number) => {
-        this.uppy.emit('upload-progress', this.uppy.getFile(file.id), {
-          // @ts-expect-error TODO: figure out if we need this
-          uploader: this,
+        const latestFile = this.uppy.getFile(file.id)
+        this.uppy.emit('upload-progress', latestFile, {
+          uploadStarted: latestFile.progress.uploadStarted ?? 0,
           bytesUploaded,
           bytesTotal,
         })
@@ -868,11 +868,9 @@ export default class AwsS3Multipart<
         resolve(`upload ${removed} was removed`)
       })
 
-      eventManager.onCancelAll(file.id, (options) => {
-        if (options?.reason === 'user') {
-          upload.abort()
-          this.resetUploaderReferences(file.id, { abort: true })
-        }
+      eventManager.onCancelAll(file.id, () => {
+        upload.abort()
+        this.resetUploaderReferences(file.id, { abort: true })
         resolve(`upload ${file.id} was canceled`)
       })
 

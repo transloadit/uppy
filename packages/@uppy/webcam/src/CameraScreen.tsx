@@ -21,6 +21,7 @@ interface CameraScreenProps extends VideoSourceSelectProps {
 
   src: MediaStream | null
   recording: boolean
+  recordedVideo: string | null
   modes: string[]
   supportsRecording: boolean
   showVideoSourceDropdown: boolean
@@ -53,7 +54,6 @@ class CameraScreen extends Component<CameraScreenProps> {
   render(): ComponentChild {
     const {
       src,
-      // @ts-expect-error TODO: remove unused
       recordedVideo,
       recording,
       modes,

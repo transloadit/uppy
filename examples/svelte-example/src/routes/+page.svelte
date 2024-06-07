@@ -14,7 +14,7 @@
 	}
 
 	let uppy1 = createUppy()
-	let uppy2 = createUppy() 
+	let uppy2 = createUppy()
 
 	let open = false;
 	let showInlineDashboard = true;
@@ -31,7 +31,7 @@
       Show Dashboard
 	</label>
 	{#if showInlineDashboard}
-		<Dashboard 
+		<Dashboard
 			uppy={uppy1}
 			plugins={['Webcam']}
 		/>
@@ -39,23 +39,23 @@
 	<h2>Modal Dashboard</h2>
 	<div>
 		<button on:click={() => open = true}>Show Dashboard</button>
-		<DashboardModal 
-			uppy={uppy2} 
-			open={open} 
+		<DashboardModal
+			uppy={uppy2}
+			open={open}
 			props={{
 				onRequestCloseModal: () => open = false,
 				plugins: ['Webcam']
-			}} 
+			}}
 		/>
 	</div>
 
 	<h2>Drag Drop Area</h2>
-	<DragDrop 
+	<DragDrop
 		uppy={uppy1}
 	/>
 
 	<h2>Progress Bar</h2>
-	<ProgressBar 
+	<ProgressBar
 		uppy={uppy1}
 		props={{
 			hideAfterFinish: false
@@ -63,10 +63,6 @@
 	/>
 </main>
 <style global>
-	@import "@uppy/core/dist/style.min.css";
-	@import "@uppy/dashboard/dist/style.min.css";
-	@import "@uppy/drag-drop/dist/style.min.css";
-	@import "@uppy/progress-bar/dist/style.min.css";
 	input[type="checkbox"] {
 		user-select: none;
 	}

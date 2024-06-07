@@ -91,6 +91,7 @@ describe('AwsS3Multipart', () => {
       expect(uploadSuccessHandler.mock.calls[0][1]).toStrictEqual({
         body: {
           ETag: 'test',
+          etag: 'test',
           location: 'http://example.com',
         },
         status: 200,
@@ -173,7 +174,9 @@ describe('AwsS3Multipart', () => {
         createMultipartUpload: vi.fn((file) => {
           // @ts-expect-error protected property
           const multipartUploader = awsS3Multipart.uploaders[file.id]!
-          const testChunkState = multipartUploader.chunkState[6]
+          const testChunkState =
+            // @ts-expect-error private method
+            multipartUploader[Symbol.for('uppy test: getChunkState')]()[6]
           let busy = false
           let done = false
           busySpy = vi.fn((value) => {

@@ -1,5 +1,19 @@
 # @uppy/xhr-upload
 
+## 4.0.0-beta.6
+
+Released: 2024-06-04
+Included in: Uppy v4.0.0-beta.10
+
+- @uppy/aws-s3,@uppy/tus,@uppy/utils,@uppy/xhr-upload: remove `uploader` from `upload-progress` event (Mikael Finstad / #5200)
+
+## 4.0.0-beta.5
+
+Released: 2024-05-23
+Included in: Uppy v4.0.0-beta.9
+
+- @uppy/xhr-upload: fix regression for lowercase HTTP methods (Antoine du Hamel / #5179)
+
 ## 4.0.0-beta.4
 
 Released: 2024-05-14
@@ -27,6 +41,13 @@ Released: 2024-03-28
 Included in: Uppy v4.0.0-beta.1
 
 - @uppy/aws-s3-multipart,@uppy/tus,@uppy/utils,@uppy/xhr-upload: Make `allowedMetaFields` consistent (Merlijn Vos / #5011)
+
+## 3.6.7
+
+Released: 2024-05-23
+Included in: Uppy v3.25.5
+
+- @uppy/xhr-upload: fix regression for lowercase HTTP methods (Antoine du Hamel / #5179)
 
 ## 3.6.6
 

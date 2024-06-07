@@ -9,12 +9,7 @@ import type { UnknownProviderPlugin } from '@uppy/core/lib/Uppy'
 import RequestClient, { authErrorStatusCode } from './RequestClient.ts'
 import type { CompanionPluginOptions } from './index.js'
 
-// TODO: remove deprecated options in next major release
 export interface Opts extends PluginOpts, CompanionPluginOptions {
-  /** @deprecated */
-  serverUrl?: string
-  /** @deprecated */
-  serverPattern?: string
   pluginId: string
   name?: string
   supportsRefreshToken?: boolean
@@ -87,7 +82,7 @@ export default class Provider<M extends Meta, B extends Body>
     this.tokenKey = `companion-${this.pluginId}-auth-token`
     this.companionKeysParams = this.opts.companionKeysParams
     this.preAuthToken = null
-    this.supportsRefreshToken = opts.supportsRefreshToken ?? true // todo false in next major
+    this.supportsRefreshToken = !!opts.supportsRefreshToken
   }
 
   async headers(): Promise<Record<string, string>> {

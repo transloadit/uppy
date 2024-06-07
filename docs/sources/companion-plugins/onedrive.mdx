@@ -100,7 +100,15 @@ If you are using Transloadit hosted Companion:
 https://api2.transloadit.com/companion/onedrive/redirect
 ```
 
-Microsoft will give you an OAuth client ID and client secret.
+Go to the “Manifest” tab, and find the `"signInAudience"` key.  
+Change it to `"signInAudience": "AzureADandPersonalMicrosoftAccount"`, and click
+“Save”.
+
+Go to the “Overview” tab.  
+Copy the `Application (client) ID` field - this will be your Oauth client ID.
+
+Go to the “Certificates & secrets” tab, and click “+ New client secret”.  
+Copy the `Value` field - this will be your OAuth client secret.
 
 Configure the OneDrive key and secret in Companion. With the standalone
 Companion server, specify environment variables:

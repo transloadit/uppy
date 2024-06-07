@@ -142,11 +142,4 @@ id_ID.strings = {
   },
 }
 
-// TODO: remove this in the next major?
-// @ts-expect-error Uppy can be a global in legacy bundle
-if (typeof Uppy !== 'undefined') {
-  // @ts-expect-error Uppy can be a global in legacy bundle
-  globalThis.Uppy.locales.id_ID = id_ID
-}
-
 export default id_ID
