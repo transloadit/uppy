@@ -19,9 +19,6 @@ These cover all the major Uppy versions and how to migrate to them.
   - The static `authProvider` property has been renamed to `oauthProvider`.
 - Endpoint `GET /s3/params` now returns `{ method: "POST" }` instead of
   `{ method: "post" }`. This will not affect most people.
-- The Companion [`error` event](https://uppy.io/docs/companion/#events) now no
-  longer includes `extraData` inside the `payload.error` property. `extraData`
-  is (and was also before) included in the `payload`.
 - `access-control-allow-headers` is no longer included in
   `Access-Control-Expose-Headers`, and `uppy-versions` is no longer an allowed
   header. We are not aware of any issues this might cause.
