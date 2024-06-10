@@ -168,16 +168,25 @@ instead of per file.
   [docs](/docs/locales/#overriding-locale-strings-for-a-specific-plugin) on how
   to overide a string.
 
-### Framework updates
+### `@uppy/angular`
 
-- @uppy/angular: upgrade to Angular 18.x (17.x is still supported too) and to TS
-  5.4
-- @uppy/react: remove deprecated `useUppy` & reintroduce
-  [`useUppyState`](docs/react/#hooks)
-- @uppy/svelte: make Svelte 5 the peer dependency
-- @uppy/svelte: remove UMD output
-- @uppy/vue: migrate to Composition API with TypeScript & drop Vue 2 support
-- @uppy/vue: drop Vue 2 support
+- Upgrade to Angular 18.x (17.x is still supported too) and to TS 5.4
+
+### `@uppy/react`
+
+- Remove deprecated `useUppy` & reintroduce [`useUppyState`](docs/react/#hooks)
+- You can no longer set `inline` on the `Dashboard` component, use `Dashboard`
+  or `DashboardModal` components respectively.
+
+### `@uppy/svelte`
+
+- Make Svelte 5 the peer dependency
+- Remove UMD output
+
+### `@uppy/vue`
+
+- Migrate to Composition API with TypeScript & drop Vue 2 support
+- Drop Vue 2 support
 
 ## Migrate from Robodog to Uppy plugins
 
