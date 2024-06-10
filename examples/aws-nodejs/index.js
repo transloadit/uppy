@@ -2,6 +2,7 @@
 
 const path = require('node:path')
 const crypto = require('node:crypto')
+const { existsSync } = require('node:fs')
 require('dotenv').config({ path: path.join(__dirname, '..', '..', '.env') })
 
 const express = require('express')
@@ -79,8 +80,38 @@ function getSTSClient () {
 app.use(bodyParser.urlencoded({ extended: true }), bodyParser.json())
 
 app.get('/', (req, res) => {
+  res.setHeader('Content-Type', 'text/html')
   const htmlPath = path.join(__dirname, 'public', 'index.html')
   res.sendFile(htmlPath)
+})
+app.get('/index.html', (req, res) => {
+  res.setHeader('Location', '/').sendStatus(308).end();
+})
+app.get('/withCustomEndpoints.html', (req, res) => {
+  res.setHeader('Content-Type', 'text/html')
+  const htmlPath = path.join(__dirname, 'public', 'withCustomEndpoints.html')
+  res.sendFile(htmlPath)
+})
+
+app.get('/uppy.min.mjs', (req, res) => {
+  res.setHeader('Content-Type', 'text/javascript')
+  const bundlePath = path.join(__dirname, '../..', 'packages/uppy/dist', 'uppy.min.mjs')
+  if (existsSync(bundlePath)) {
+    res.sendFile(bundlePath)
+  } else {
+    console.warn('No local JS bundle found, using the CDN as a fallback. Run `corepack yarn build` to make this warning disappear.')
+    res.end('export * from "https://releases.transloadit.com/uppy/v4.0.0-beta.10/uppy.min.mjs";\n');
+  }
+})
+app.get('/uppy.min.css', (req, res) => {
+  res.setHeader('Content-Type', 'text/css')
+  const bundlePath = path.join(__dirname, '../..', 'packages/uppy/dist', 'uppy.min.css')
+  if (existsSync(bundlePath)) {
+    res.sendFile(bundlePath)
+  } else {
+    console.warn('No local CSS bundle found, using the CDN as a fallback. Run `corepack yarn build` to make this warning disappear.')
+    res.end('@import "https://releases.transloadit.com/uppy/v4.0.0-beta.10/uppy.min.css";\n');
+  }
 })
 
 app.get('/drag', (req, res) => {
@@ -88,7 +119,7 @@ app.get('/drag', (req, res) => {
   res.sendFile(htmlPath)
 })
 
-app.get('/sts', (req, res, next) => {
+app.get('/s3/sts', (req, res, next) => {
   getSTSClient().send(new GetFederationTokenCommand({
     Name: '123user',
     // The duration, in seconds, of the role session. The value specified
@@ -108,7 +139,7 @@ app.get('/sts', (req, res, next) => {
     })
   }, next)
 })
-app.post('/sign-s3', (req, res, next) => {
+app.post('/s3/sign-s3', (req, res, next) => {
   const Key = `${crypto.randomUUID()}-${req.body.filename}`
   const { contentType } = req.body
 
@@ -287,5 +318,6 @@ app.delete('/s3/multipart/:uploadId', (req, res, next) => {
 // === </S3 MULTIPART> ===
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
+  console.log(`Example app listening on port ${port}.`)
+  console.log(`Visit http://localhost:${port}/ on your browser to try it.`)
 })
