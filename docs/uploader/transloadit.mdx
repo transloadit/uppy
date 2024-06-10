@@ -271,8 +271,9 @@ pass user input from a `<form>` to a Transloadit Assembly:
 // This will add form field values to each file's `.meta` object:
 uppy.use(Form, { getMetaFromForm: true });
 uppy.use(Transloadit, {
-	assemblyOptions() {
-      // ...
+	async assemblyOptions() {
+    const res = await fetch('/transloadit-params');
+		return res.json();
   };
 });
 ```
