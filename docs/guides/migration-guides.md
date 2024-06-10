@@ -96,7 +96,7 @@ await uppy.upload();
 const { someThingMyBackendReturns } = uppy.getFile(id).response;
 ```
 
-### `@uppy/aws-s3`
+### `@uppy/aws-s3` and `@uppy/aws-s3-multipart`
 
 - `@uppy/aws-s3` and `@uppy/aws-s3-multipart` have been combined into a single
   plugin. You should now only use `@uppy/aws-s3` with the new option,
