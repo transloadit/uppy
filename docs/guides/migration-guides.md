@@ -104,13 +104,12 @@ const { someThingMyBackendReturns } = uppy.getFile(id).response;
   allow you to switch between regular and multipart uploads. You can read more
   about this in the
   [plugin docs](https://uppy.io/docs/aws-s3-multipart/#when-should-i-use-it)
-- @uppy/aws-s3: remove deprecated `prepareUploadParts` option (Antoine du Hamel
-  / #5075)
+- Remove deprecated `prepareUploadParts` option.
 
 ### `@uppy/core`
 
 - The `close()` method has been renamed to `destroy()` to more accurately
-  reflect you can not recover from it without creating a new Uppy instance.
+  reflect you can not recover from it without creating a new `Uppy` instance.
 - The `clearUploadedFiles()` method has been renamed to `clear()` as a
   convenience method to clear all the state. This can be useful when a user
   navigates away and you want to clear the state on success.
@@ -171,7 +170,7 @@ instead of per file.
 
 ### Framework updates
 
-- @uppy/angular: upgrade to Angular 17.x and to TS 5.4
+- @uppy/angular: upgrade to Angular 18.x (17.x is still supported too) and to TS 5.4
 - @uppy/react: remove deprecated `useUppy` & reintroduce
   [`useUppyState`](docs/react/#hooks)
 - @uppy/svelte: make Svelte 5 the peer dependency
