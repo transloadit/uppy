@@ -1,10 +1,11 @@
 import { createElement as h, Component } from 'react'
-import type { UnknownPlugin, Uppy } from '@uppy/core'
+import type { UIPluginOptions, UnknownPlugin, Uppy } from '@uppy/core'
 import FileInputPlugin from '@uppy/file-input'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import type { Locale } from '@uppy/utils/lib/Translator'
 
-interface FileInputProps<M extends Meta, B extends Body> {
+interface FileInputProps<M extends Meta, B extends Body>
+  extends UIPluginOptions {
   uppy: Uppy<M, B>
   locale?: Locale
   pretty?: boolean
@@ -47,9 +48,9 @@ class FileInput<M extends Meta, B extends Body> extends Component<
   }
 
   installPlugin(): void {
-    const { uppy, locale, pretty, inputName } = this.props
+    const { uppy, locale, pretty, inputName, id } = this.props
     const options = {
-      id: 'react:FileInput',
+      id: id || 'FileInput',
       locale,
       pretty,
       inputName,
