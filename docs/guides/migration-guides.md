@@ -4,7 +4,7 @@ These cover all the major Uppy versions and how to migrate to them.
 
 ## Migrate from Companion 4.x to 5.x
 
-- Node.js `>=16.15.0` is now required.
+- Node.js `>=18.20.0` is now required.
 - `COMPANION_REDIS_EXPRESS_SESSION_PREFIX` now defaults to `companion-session:`
   (before `sess:`). To revert keep backwards compatibility, set the environment
   variable `COMPANION_REDIS_EXPRESS_SESSION_PREFIX=sess:`.
