@@ -3,7 +3,8 @@ const { startDownUpload } = require('../helpers/upload')
 
 async function get (req, res) {
   const { id } = req.params
-  const { accessToken } = req.companion.providerTokens
+  const { providerUserSession } = req.companion
+  const { accessToken } = providerUserSession
   const { provider } = req.companion
 
   async function getSize () {
@@ -11,7 +12,7 @@ async function get (req, res) {
   }
 
   async function download () {
-    const { stream } = await provider.download({ id, token: accessToken, query: req.query })
+    const { stream } = await provider.download({ id, token: accessToken, providerUserSession, query: req.query })
     return stream
   }
 

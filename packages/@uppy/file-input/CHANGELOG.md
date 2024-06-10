@@ -1,5 +1,19 @@
 # @uppy/file-input
 
+## 3.1.1
+
+Released: 2024-04-10
+Included in: Uppy v3.24.1
+
+- @uppy/file-input: add missing export (Antoine du Hamel / #5045)
+
+## 3.1.0
+
+Released: 2024-02-28
+Included in: Uppy v3.23.0
+
+- @uppy/file-input: refactor to TypeScript (Antoine du Hamel / #4954)
+
 ## 3.0.1
 
 Released: 2022-09-25

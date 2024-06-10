@@ -33,27 +33,30 @@ module.exports = function callback (req, res, next) { // eslint-disable-line no-
 
   const grant = req.session.grant || {}
 
+  const grantDynamic = oAuthState.getGrantDynamicFromRequest(req)
+  const origin = grantDynamic.state && oAuthState.getFromState(grantDynamic.state, 'origin', req.companion.options.secret)
+
   if (!grant.response?.access_token) {
     logger.debug(`Did not receive access token for provider ${providerName}`, null, req.id)
     logger.debug(grant.response, 'callback.oauth.resp', req.id)
-    const state = oAuthState.getDynamicStateFromRequest(req)
-    const origin = state && oAuthState.getFromState(state, 'origin', req.companion.options.secret)
     return res.status(400).send(closePageHtml(origin))
   }
 
   const { access_token: accessToken, refresh_token: refreshToken } = grant.response
 
-  if (!req.companion.allProvidersTokens) req.companion.allProvidersTokens = {}
-  req.companion.allProvidersTokens[providerName] = {
+  req.companion.providerUserSession = {
     accessToken,
     refreshToken, // might be undefined for some providers
+    ...req.companion.providerClass.grantDynamicToUserSession({ grantDynamic }),
   }
+
   logger.debug(`Generating auth token for provider ${providerName}. refreshToken: ${refreshToken ? 'yes' : 'no'}`, null, req.id)
   const uppyAuthToken = tokenService.generateEncryptedAuthToken(
-    req.companion.allProvidersTokens, req.companion.options.secret,
+    { [providerName]: req.companion.providerUserSession },
+    req.companion.options.secret, req.companion.providerClass.authStateExpiry,
   )
 
-  tokenService.addToCookiesIfNeeded(req, res, uppyAuthToken)
+  tokenService.addToCookiesIfNeeded(req, res, uppyAuthToken, req.companion.providerClass.authStateExpiry)
 
   return res.redirect(req.companion.buildURL(`/${providerName}/send-token?uppyAuthToken=${uppyAuthToken}`, true))
 }

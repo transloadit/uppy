@@ -36,7 +36,7 @@ const config = {
         replacement: `${PACKAGES_ROOT}@uppy/$1/src/index`,
       },
       {
-        find: /^@uppy\/([^/]+)\/lib\/(.+)$/,
+        find: /^@uppy\/([^/]+)\/lib\/(.+?)(\.js)?$/,
         replacement: `${PACKAGES_ROOT}@uppy/$1/src/$2`,
       },
       //   {

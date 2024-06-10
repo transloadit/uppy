@@ -93,6 +93,7 @@ module.exports = {
     'react/prefer-stateless-function': 'error',
     'react/sort-comp': 'error',
     'react/style-prop-object': 'error',
+    'react/static-property-placement': 'off',
 
     // accessibility
     'jsx-a11y/alt-text': 'error',
@@ -173,6 +174,10 @@ module.exports = {
           {
             name: 'require',
             message: 'Use import instead',
+          },
+          {
+            name: 'JSX',
+            message: 'Use h.JSX.Element, ComponentChild, or ComponentChildren from Preact',
           },
         ],
         'import/extensions': ['error', 'ignorePackages'],
@@ -340,6 +345,7 @@ module.exports = {
     {
       files: [
         '*.test.js',
+        '*.test.ts',
         'test/endtoend/*.js',
         'bin/**.js',
       ],
@@ -412,7 +418,14 @@ module.exports = {
       processor: 'markdown/markdown',
     },
     {
+      files: ['docs/**/*.md/*.js'],
+      parserOptions: {
+        sourceType: 'module',
+      },
+    },
+    {
       files: ['**/*.md/*.js', '**/*.md/*.javascript'],
+      excludedFiles: ["docs/**/*"],
       parserOptions: {
         sourceType: 'module',
       },
@@ -444,7 +457,7 @@ module.exports = {
       },
     },
     {
-      files: ['**/*.ts', '**/*.md/*.ts', '**/*.md/*.typescript'],
+      files: ['**/*.ts', '**/*.md/*.ts', '**/*.md/*.typescript', '**/*.tsx', '**/*.md/*.tsx'],
       excludedFiles: ['examples/angular-example/**/*.ts', 'packages/@uppy/angular/**/*.ts'],
       parser: '@typescript-eslint/parser',
       settings: {
@@ -461,17 +474,23 @@ module.exports = {
         'plugin:@typescript-eslint/recommended',
       ],
       rules: {
+        'no-restricted-syntax': ['error', {
+          selector: 'ImportDeclaration[importKind="type"][source.value=/^\\./]:not([source.value=/\\.js$/])',
+          message: 'Use ".js" file extension for import type declarations',
+        }],
         'import/prefer-default-export': 'off',
+        '@typescript-eslint/no-empty-function': 'off',
         '@typescript-eslint/no-explicit-any': 'off',
         '@typescript-eslint/no-extra-semi': 'off',
         '@typescript-eslint/no-namespace': 'off',
+        '@typescript-eslint/no-non-null-assertion': 'off',
       },
     },
     {
-      files: ['packages/@uppy/*/src/**/*.ts', 'packages/@uppy/*/src/**/*.tsx'],
-      excludedFiles: ['packages/@uppy/**/*.test.ts'],
+      files: ['packages/@uppy/*/src/**/*.ts'],
+      excludedFiles: ['packages/@uppy/**/*.test.ts', 'packages/@uppy/core/src/mocks/*.ts'],
       rules: {
-        '@typescript-eslint/explicit-function-return-type': 'error',
+        '@typescript-eslint/explicit-module-boundary-types': 'error',
       },
     },
     {

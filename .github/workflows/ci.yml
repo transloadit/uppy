@@ -37,13 +37,13 @@ jobs:
         node-version: [18.x, 20.x]
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run:
           echo "dir=$(corepack yarn config get cacheFolder)" >> $GITHUB_OUTPUT
 
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
         with:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
@@ -51,7 +51,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
       - name: Install Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{matrix.node-version}}
       - name: Install dependencies
@@ -70,13 +70,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run:
           echo "dir=$(corepack yarn config get cacheFolder)" >> $GITHUB_OUTPUT
 
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
         with:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
@@ -84,7 +84,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
       - name: Install Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: lts/*
       - name: Install dependencies
@@ -101,6 +101,7 @@ jobs:
           corepack yarn run build:lib
           corepack yarn run build:companion
           corepack yarn run build:locale-pack
+          find packages/@uppy -name 'tsconfig.json' -delete
       - name: Run type tests
         run: corepack yarn run test:type
       - name: Drop manual tyoes
@@ -108,6 +109,7 @@ jobs:
         # We don't want to remove that file to not break users.
         # However, we want to validate the types based on the types inferred from source.
         run: |
+          git checkout -- packages/@uppy
           node --input-type=module <<'EOF'
             import { existsSync } from 'node:fs';
             import { opendir, readFile, writeFile } from 'node:fs/promises';
@@ -119,6 +121,12 @@ jobs:
                 await writeFile(pjsonPath, JSON.stringify(pjson))
               }
             }
+            const pjsonPath = `./packages/uppy/package.json`
+            const pjson = JSON.parse(await readFile(pjsonPath));
+            delete pjson.types
+            await writeFile(pjsonPath, JSON.stringify(pjson))
           EOF
+          echo > packages/uppy/types/index.test-d.ts
+          rm -r packages/@uppy/*/types
       - name: Attempt building TS packages
         run: corepack yarn run build:ts

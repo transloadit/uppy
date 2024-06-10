@@ -23,11 +23,6 @@ const getRootPath = (query) => (query.driveId ? `drives/${query.driveId}` : 'me/
  * Adapter for API https://docs.microsoft.com/en-us/onedrive/developer/rest-api/
  */
 class OneDrive extends Provider {
-  constructor (options) {
-    super(options)
-    this.authProvider = OneDrive.authProvider
-  }
-
   static get authProvider () {
     return 'microsoft'
   }
@@ -98,12 +93,19 @@ class OneDrive extends Provider {
     })
   }
 
+  // eslint-disable-next-line class-methods-use-this
   async #withErrorHandling (tag, fn) {
     return withProviderErrorHandling({
       fn,
       tag,
-      providerName: this.authProvider,
+      providerName: OneDrive.authProvider,
       isAuthError: (response) => response.statusCode === 401,
+      isUserFacingError: (response) => [400, 403].includes(response.statusCode),
+      // onedrive gives some errors here that the user might want to know about
+      // e.g. these happen if you try to login to a users in an organization,
+      // without an Office365 licence or OneDrive account setup completed
+      // 400: Tenant does not have a SPO license
+      // 403: You do not have access to create this personal site or you do not have a valid license
       getJsonErrorMessage: (body) => body?.error?.message,
     })
   }

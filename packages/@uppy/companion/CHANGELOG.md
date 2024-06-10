@@ -1,5 +1,55 @@
 # @uppy/companion
 
+## 4.13.3
+
+Released: 2024-05-22
+Included in: Uppy v3.25.4
+
+- @uppy/companion: fix google drive gsuite export large size (Milan Nakum / #5144)
+- @uppy/companion: handle ws `'error'` event (Mikael Finstad / #5167)
+
+## 4.13.2
+
+Released: 2024-05-03
+Included in: Uppy v3.25.1
+
+- @uppy/companion: coerce `requestUrl` to a string (Antoine du Hamel / #5128)
+
+## 4.13.1
+
+Released: 2024-04-10
+Included in: Uppy v3.24.1
+
+- @uppy/companion: upgrade redis (Mikael Finstad / #5065)
+- @uppy/companion: Bump express from 4.18.1 to 4.19.2 (dependabot[bot] / #5037)
+
+## 4.13.0
+
+Released: 2024-03-27
+Included in: Uppy v3.24.0
+
+- @uppy/companion: improve error msg (Mikael Finstad / #5010)
+- @uppy/companion: crash if trying to set path to / (Mikael Finstad / #5003)
+
+## 4.12.1
+
+Released: 2024-02-19
+Included in: Uppy v3.22.0
+
+- @uppy/companion: fix companion dns and allow redirects from http->https again (mikael finstad / #4895)
+- @uppy/companion,@uppy/tus: bump `tus-js-client` version range (merlijn vos / #4848)
+
+## 4.12.0
+
+Released: 2023-12-12
+Included in: Uppy v3.21.0
+
+- @uppy/companion: fix double tus uploads (Mikael Finstad / #4816)
+- @uppy/companion: fix accelerated endpoints for presigned POST  (Mikael Finstad / #4817)
+- @uppy/companion: fix `authProvider` property inconsistency (Mikael Finstad / #4672)
+- @uppy/companion:  send certain onedrive errors to the user (Mikael Finstad / #4671)
+- @uppy/companion: Provider user sessions (Mikael Finstad / #4619)
+
 ## 4.11.0
 
 Released: 2023-11-08

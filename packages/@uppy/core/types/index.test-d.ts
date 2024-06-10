@@ -3,6 +3,7 @@ import { expectError, expectType } from 'tsd'
 import DefaultStore from '@uppy/store-default'
 // eslint-disable-next-line import/no-named-as-default
 import Uppy, { UIPlugin } from '..'
+// eslint-disable-next-line no-restricted-syntax
 import type {
   UploadedUppyFile,
   FailedUppyFile,
@@ -80,7 +81,6 @@ type anyObject = Record<string, unknown>
 {
   // Meta signature
   type Meta = { myCustomMetadata: string }
-  /* eslint-disable @typescript-eslint/no-empty-function */
   const uppy = new Uppy<Meta>()
   // can emit events with internal event types
   uppy.emit('upload')
@@ -97,7 +97,6 @@ type anyObject = Record<string, unknown>
   uppy.once('upload', () => {})
   uppy.once('complete', () => {})
   uppy.once('error', () => {})
-  /* eslint-enable @typescript-eslint/no-empty-function */
 
   // Normal event signature
   uppy.on('complete', (result) => {

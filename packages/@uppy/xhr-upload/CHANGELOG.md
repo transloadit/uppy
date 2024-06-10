@@ -1,5 +1,43 @@
 # @uppy/xhr-upload
 
+## 3.6.7
+
+Released: 2024-05-23
+Included in: Uppy v3.25.5
+
+- @uppy/xhr-upload: fix regression for lowercase HTTP methods (Antoine du Hamel / #5179)
+
+## 3.6.6
+
+Released: 2024-05-03
+Included in: Uppy v3.25.1
+
+- @uppy/xhr-upload: do not throw when res is missing url (Merlijn Vos / #5132)
+
+## 3.6.5
+
+Released: 2024-04-29
+Included in: Uppy v3.25.0
+
+- @uppy/xhr-upload: refactor to use `fetcher` (Merlijn Vos / #5074)
+
+## 3.6.4
+
+Released: 2024-02-28
+Included in: Uppy v3.23.0
+
+- @uppy/companion-client,@uppy/utils,@uppy/xhr-upload: improvements for #4922 (Mikael Finstad / #4960)
+- @uppy/xhr-upload: fix getResponseData regression (Merlijn Vos / #4964)
+
+## 3.6.1
+
+Released: 2024-02-19
+Included in: Uppy v3.22.0
+
+-  @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/companion-client,@uppy/tus,@uppy/xhr-upload: update `uppyfile` objects before emitting events (antoine du hamel / #4928)
+- @uppy/xhr-upload: migrate to ts (merlijn vos / #4892)
+- @uppy/xhr-upload: show remove button (merlijn vos / #4851)
+
 ## 3.4.0
 
 Released: 2023-09-05

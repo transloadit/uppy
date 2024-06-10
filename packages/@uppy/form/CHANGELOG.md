@@ -1,5 +1,26 @@
 # @uppy/form
 
+## 3.2.1
+
+Released: 2024-04-29
+Included in: Uppy v3.25.0
+
+- @uppy/form: fix `submitOnSuccess` and `triggerUploadOnSubmit` combination (Merlijn Vos / #5058)
+
+## 3.2.0
+
+Released: 2024-02-28
+Included in: Uppy v3.23.0
+
+- @uppy/form: migrate to TS (Merlijn Vos / #4937)
+
+## 3.1.0
+
+Released: 2024-02-19
+Included in: Uppy v3.22.0
+
+- @uppy/form: use requestsubmit (merlijn vos / #4852)
+
 ## 3.0.1
 
 Released: 2022-09-25

@@ -1,8 +1,23 @@
+export interface DeterminateFileProcessing {
+  mode: 'determinate'
+  message: string
+  value: number
+}
+export interface IndeterminateFileProcessing {
+  mode: 'indeterminate'
+  message?: string
+  value?: 0
+}
+export type FileProcessingInfo =
+  | IndeterminateFileProcessing
+  | DeterminateFileProcessing
+
 interface FileProgressBase {
-  progress: number
-  uploadComplete: boolean
-  percentage: number
-  bytesTotal: number
+  uploadComplete?: boolean
+  percentage?: number
+  bytesTotal: number | null
+  preprocess?: FileProcessingInfo
+  postprocess?: FileProcessingInfo
 }
 
 // FileProgress is either started or not started. We want to make sure TS doesn't
@@ -13,6 +28,7 @@ export type FileProgressStarted = FileProgressBase & {
 }
 export type FileProgressNotStarted = FileProgressBase & {
   uploadStarted: null
-  bytesUploaded: false
+  // TODO: remove `|0` (or maybe `false|`?)
+  bytesUploaded: false | 0
 }
 export type FileProgress = FileProgressStarted | FileProgressNotStarted

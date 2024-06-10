@@ -2,7 +2,7 @@ import { createServer } from 'node:http'
 import { once } from 'node:events'
 import { describe, expect, it } from 'vitest'
 import Core from '@uppy/core'
-import Transloadit from './index.js'
+import Transloadit from './index.ts'
 import 'whatwg-fetch'
 
 describe('Transloadit', () => {
@@ -30,7 +30,8 @@ describe('Transloadit', () => {
     }).toThrowError(/The `params\.auth\.key` option is required/)
     expect(() => {
       uppy.use(Transloadit, {
-        params: '{"auth":{"key":"some auth key string"},"template_id":"some template id string"}',
+        params:
+          '{"auth":{"key":"some auth key string"},"template_id":"some template id string"}',
       })
     }).not.toThrowError(/The `params\.auth\.key` option is required/)
   })
@@ -39,7 +40,7 @@ describe('Transloadit', () => {
     const error = new Error('expected failure')
     const uppy = new Core()
     uppy.use(Transloadit, {
-      getAssemblyOptions () {
+      getAssemblyOptions() {
         return Promise.reject(error)
       },
     })
@@ -50,14 +51,17 @@ describe('Transloadit', () => {
       data: new Uint8Array(100),
     })
 
-    return uppy.upload().then(() => {
-      throw new Error('Should not have succeeded')
-    }).catch((err) => {
-      const fileID = Object.keys(uppy.getState().files)[0]
+    return uppy
+      .upload()
+      .then(() => {
+        throw new Error('Should not have succeeded')
+      })
+      .catch((err) => {
+        const fileID = Object.keys(uppy.getState().files)[0]
 
-      expect(err).toBe(error)
-      expect(uppy.getFile(fileID).progress.uploadStarted).toBe(null)
-    })
+        expect(err).toBe(error)
+        expect(uppy.getFile(fileID).progress.uploadStarted).toBe(null)
+      })
   })
 
   it('Does not leave lingering progress if creating assembly fails', () => {
@@ -69,7 +73,8 @@ describe('Transloadit', () => {
       },
     })
 
-    uppy.getPlugin('Transloadit').client.createAssembly = () => Promise.reject(new Error('VIDEO_ENCODE_VALIDATION'))
+    uppy.getPlugin('Transloadit').client.createAssembly = () =>
+      Promise.reject(new Error('VIDEO_ENCODE_VALIDATION'))
 
     uppy.addFile({
       source: 'jest',
@@ -77,14 +82,19 @@ describe('Transloadit', () => {
       data: new Uint8Array(100),
     })
 
-    return uppy.upload().then(() => {
-      throw new Error('Should not have succeeded')
-    }, (err) => {
-      const fileID = Object.keys(uppy.getState().files)[0]
+    return uppy.upload().then(
+      () => {
+        throw new Error('Should not have succeeded')
+      },
+      (err) => {
+        const fileID = Object.keys(uppy.getState().files)[0]
 
-      expect(err.message).toBe('Transloadit: Could not create Assembly: VIDEO_ENCODE_VALIDATION')
-      expect(uppy.getFile(fileID).progress.uploadStarted).toBe(null)
-    })
+        expect(err.message).toBe(
+          'Transloadit: Could not create Assembly: VIDEO_ENCODE_VALIDATION',
+        )
+        expect(uppy.getFile(fileID).progress.uploadStarted).toBe(null)
+      },
+    )
   })
 
   // For some reason this test doesn't pass on CI
@@ -110,7 +120,7 @@ describe('Transloadit', () => {
 
     await uppy.upload()
     server.closeAllConnections()
-    await new Promise(resolve => server.close(resolve))
+    await new Promise((resolve) => server.close(resolve))
   })
 
   // For some reason this test doesn't pass on CI
@@ -137,6 +147,6 @@ describe('Transloadit', () => {
 
     await uppy.upload()
     server.closeAllConnections()
-    await new Promise(resolve => server.close(resolve))
+    await new Promise((resolve) => server.close(resolve))
   })
 })

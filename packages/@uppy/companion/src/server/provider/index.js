@@ -12,7 +12,6 @@ const zoom = require('./zoom')
 const { getURLBuilder } = require('../helpers/utils')
 const logger = require('../logger')
 const { getCredentialsResolver } = require('./credentials')
-// eslint-disable-next-line
 const Provider = require('./Provider')
 
 const { isOAuthProvider } = Provider
@@ -24,26 +23,6 @@ const { isOAuthProvider } = Provider
 const validOptions = (options) => {
   return options.server.host && options.server.protocol
 }
-
-/**
- *
- * @param {string} name of the provider
- * @param {{server: object, providerOptions: object}} options
- * @returns {string} the authProvider for this provider
- */
-const providerNameToAuthName = (name, options) => { // eslint-disable-line no-unused-vars
-  const providers = exports.getDefaultProviders()
-  return (providers[name] || {}).authProvider
-}
-
-function getGrantConfigForProvider ({ providerName, companionOptions, grantConfig }) {
-  const authProvider = providerNameToAuthName(providerName, companionOptions)
-
-  if (!isOAuthProvider(authProvider)) return undefined
-  return grantConfig[authProvider]
-}
-
-module.exports.getGrantConfigForProvider = getGrantConfigForProvider
 
 /**
  * adds the desired provider module to the request object,
@@ -63,13 +42,17 @@ module.exports.getProviderMiddleware = (providers, grantConfig) => {
     const ProviderClass = providers[providerName]
     if (ProviderClass && validOptions(req.companion.options)) {
       const { allowLocalUrls } = req.companion.options
-      req.companion.provider = new ProviderClass({ providerName, allowLocalUrls })
-      req.companion.providerClass = ProviderClass
-      req.companion.providerGrantConfig = grantConfig[ProviderClass.authProvider]
+      const { authProvider } = ProviderClass
 
-      if (isOAuthProvider(ProviderClass.authProvider)) {
+      let providerGrantConfig
+      if (isOAuthProvider(authProvider)) {
         req.companion.getProviderCredentials = getCredentialsResolver(providerName, req.companion.options, req)
+        providerGrantConfig = grantConfig[authProvider]
+        req.companion.providerGrantConfig = providerGrantConfig
       }
+
+      req.companion.provider = new ProviderClass({ providerName, providerGrantConfig, allowLocalUrls })
+      req.companion.providerClass = ProviderClass
     } else {
       logger.warn('invalid provider options detected. Provider will not be loaded', 'provider.middleware.invalid', req.id)
     }
@@ -102,10 +85,11 @@ module.exports.addCustomProviders = (customProviders, providers, grantConfig) =>
 
     // eslint-disable-next-line no-param-reassign
     providers[providerName] = customProvider.module
+    const { authProvider } = customProvider.module
 
-    if (isOAuthProvider(customProvider.module.authProvider)) {
+    if (isOAuthProvider(authProvider)) {
       // eslint-disable-next-line no-param-reassign
-      grantConfig[providerName] = {
+      grantConfig[authProvider] = {
         ...customProvider.config,
         // todo: consider setting these options from a universal point also used
         // by official providers. It'll prevent these from getting left out if the
@@ -121,8 +105,9 @@ module.exports.addCustomProviders = (customProviders, providers, grantConfig) =>
  *
  * @param {{server: object, providerOptions: object}} companionOptions
  * @param {object} grantConfig
+ * @param {(a: string) => string} getAuthProvider
  */
-module.exports.addProviderOptions = (companionOptions, grantConfig) => {
+module.exports.addProviderOptions = (companionOptions, grantConfig, getAuthProvider) => {
   const { server, providerOptions } = companionOptions
   if (!validOptions({ server })) {
     logger.warn('invalid provider options detected. Providers will not be loaded', 'provider.options.invalid')
@@ -139,7 +124,8 @@ module.exports.addProviderOptions = (companionOptions, grantConfig) => {
   const { oauthDomain } = server
   const keys = Object.keys(providerOptions).filter((key) => key !== 'server')
   keys.forEach((providerName) => {
-    const authProvider = providerNameToAuthName(providerName, companionOptions)
+    const authProvider = getAuthProvider?.(providerName)
+
     if (isOAuthProvider(authProvider) && grantConfig[authProvider]) {
       // explicitly add providerOptions so users don't override other providerOptions.
       // eslint-disable-next-line no-param-reassign

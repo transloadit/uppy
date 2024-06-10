@@ -65,6 +65,7 @@ de_DE.strings = {
   dropPasteImportFolders:
     'Dateien hier ablegen/einfügen, %{browseFolders} oder von folgenden Quellen importieren:',
   editFile: 'Datei bearbeiten',
+  editImage: 'Bild bearbeiten',
   editFileWithFilename: 'Datei %{file} bearbeiten',
   editing: '%{file} bearbeiten',
   emptyFolderAdded: 'Keine Dateien hinzugefügt, da der Ordner leer war',

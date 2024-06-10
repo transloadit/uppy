@@ -1,5 +1,61 @@
 # @uppy/utils
 
+## 5.9.0
+
+Released: 2024-04-29
+Included in: Uppy v3.25.0
+
+- @uppy/utils: improve return type of `dataURItoFile` (Antoine du Hamel / #5112)
+
+## 5.8.0
+
+Released: 2024-04-16
+Included in: Uppy v3.24.3
+
+- @uppy/utils: add fetcher (Merlijn Vos / #5073)
+
+## 5.7.5
+
+Released: 2024-03-27
+Included in: Uppy v3.24.0
+
+- @uppy/utils: fix `RateLimitedQueue#wrapPromiseFunction` types (Antoine du Hamel / #5007)
+- @uppy/utils: fix `findAllDOMElements` type (Antoine du Hamel / #4997)
+- @uppy/utils: fix `AbortablePromise` type (Antoine du Hamel / #4988)
+- @uppy/utils: migrate RateLimitedQueue to TS (Merlijn Vos / #4981)
+
+## 5.7.4
+
+Released: 2024-02-28
+Included in: Uppy v3.23.0
+
+- @uppy/companion-client,@uppy/utils,@uppy/xhr-upload: improvements for #4922 (Mikael Finstad / #4960)
+- @uppy/utils: fix various type issues (Mikael Finstad / #4958)
+- @uppy/utils: simplify `findDOMElements` (Mikael Finstad / #4957)
+
+## 5.7.3
+
+Released: 2024-02-22
+Included in: Uppy v3.22.2
+
+- @uppy/core,@uppy/utils: Introduce `ValidateableFile` & move `MinimalRequiredUppyFile` into utils (Antoine du Hamel / #4944)
+- @uppy/utils: remove EventManager circular reference (Merlijn Vos / #4949)
+
+## 5.7.1
+
+Released: 2024-02-19
+Included in: Uppy v3.22.0
+
+- @uppy/utils: improve types for `finddomelement` (antoine du hamel / #4873)
+- @uppy/utils: improve `preprocess` and `postprocess` types (antoine du hamel / #4841)
+
+## 5.7.0
+
+Released: 2023-12-12
+Included in: Uppy v3.21.0
+
+- @uppy/utils: fix import in test files (Antoine du Hamel / #4806)
+
 ## 5.6.0
 
 Released: 2023-11-08

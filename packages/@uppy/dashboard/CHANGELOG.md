@@ -1,5 +1,62 @@
 # @uppy/dashboard
 
+## 3.8.3
+
+Released: 2024-05-07
+Included in: Uppy v3.25.2
+
+- @uppy/compressor,@uppy/core,@uppy/dashboard,@uppy/status-bar: Upgrade @transloadit/prettier-bytes (Merlijn Vos / #5150)
+
+## 3.8.2
+
+Released: 2024-04-29
+Included in: Uppy v3.25.0
+
+- @uppy/dashboard,@uppy/provider-views: Remove JSX global type everywhere (Merlijn Vos / #5117)
+- @uppy/dashboard: fix type of trigger option (Merlijn Vos / #5106)
+
+## 3.8.1
+
+Released: 2024-04-16
+Included in: Uppy v3.24.3
+
+- @uppy/dashboard: add missing `x-zip-compress` archive type (Younes / #5081)
+
+## 3.8.0
+
+Released: 2024-03-27
+Included in: Uppy v3.24.0
+
+- @uppy/dashboard: refine type of private variables (Antoine du Hamel / #5027)
+- @uppy/dashboard: refine option types (Antoine du Hamel / #5022)
+- @uppy/dashboard: add new `autoOpen` option (Chris Grigg / #5001)
+- @uppy/audio,@uppy/dashboard,@uppy/drop-target,@uppy/webcam: add missing exports (Antoine du Hamel / #5014)
+- @uppy/dashboard: refactor to TypeScript (Antoine du Hamel / #4984)
+- @uppy/dashboard: refactor to stable lifecycle method (Antoine du Hamel / #4999)
+
+## 3.7.4
+
+Released: 2024-02-22
+Included in: Uppy v3.22.2
+
+- @uppy/dashboard: MetaEditor + ImageEditor - new state machine logic (Evgenia Karunus / #4939)
+
+## 3.7.3
+
+Released: 2024-02-20
+Included in: Uppy v3.22.1
+
+- @uppy/compressor,@uppy/core,@uppy/dashboard,@uppy/status-bar: bump `@transloadit/prettier-bytes` (Antoine du Hamel / #4933)
+
+## 3.7.2
+
+Released: 2024-02-19
+Included in: Uppy v3.22.0
+
+- @uppy/dashboard: autoopenfileeditor - rename "edit file" to "edit image" (evgenia karunus / #4925)
+- @uppy/dashboard: Uncouple native camera and video buttons from the `disableLocalFiles` option (jake mcallister / #4894)
+- @uppy/dashboard: fix `typeerror` when `file.remote` is nullish (antoine du hamel / #4825)
+
 ## 3.7.1
 
 Released: 2023-11-12

@@ -1,5 +1,102 @@
 # @uppy/core
 
+## 3.12.0
+
+Released: 2024-06-04
+Included in: Uppy v3.26.0
+
+- @uppy/core: check capabilities in clearUploadedFiles (Merlijn Vos / #5201)
+- @uppy/core: PartialTree - change the `maxTotalFileSize` error (Evgenia Karunus / #5203)
+
+## 3.11.3
+
+Released: 2024-05-14
+Included in: Uppy v3.25.3
+
+- @uppy/core: make getObjectOfFilesPerState more efficient (Merlijn Vos / #5155)
+
+## 3.11.2
+
+Released: 2024-05-07
+Included in: Uppy v3.25.2
+
+- @uppy/compressor,@uppy/core,@uppy/dashboard,@uppy/status-bar: Upgrade @transloadit/prettier-bytes (Merlijn Vos / #5150)
+
+## 3.11.1
+
+Released: 2024-05-03
+Included in: Uppy v3.25.1
+
+- @uppy/core: make UppyEventMap more readable (Murderlon)
+
+## 3.11.0
+
+Released: 2024-04-29
+Included in: Uppy v3.25.0
+
+- @uppy/core: add instance ID to generated IDs (Merlijn Vos / #5080)
+- @uppy/core: reference updated i18n in Restricter (Merlijn Vos / #5118)
+
+## 3.10.1
+
+Released: 2024-04-15
+Included in: Uppy v3.24.2
+
+- @uppy/core: fix `setOptions` not re-rendereing plugin UI (Antoine du Hamel / #5082)
+
+## 3.10.0
+
+Released: 2024-03-27
+Included in: Uppy v3.24.0
+
+- @uppy/core: refine type of private variables (Antoine du Hamel / #5028)
+- @uppy/core: fix some type errors (Antoine du Hamel / #5015)
+- @uppy/core: various type fixes (Antoine du Hamel / #4995)
+- @uppy/core,@uppy/provider-views: Fix breadcrumbs (Evgenia Karunus / #4986)
+
+## 3.9.3
+
+Released: 2024-02-28
+Included in: Uppy v3.23.0
+
+- @uppy/core: remove unused import (Antoine du Hamel / #4972)
+
+## 3.9.2
+
+Released: 2024-02-22
+Included in: Uppy v3.22.2
+
+- @uppy/core: fix plugin detection (Antoine du Hamel / #4951)
+- @uppy/core,@uppy/utils: Introduce `ValidateableFile` & move `MinimalRequiredUppyFile` into utils (Antoine du Hamel / #4944)
+- @uppy/core: improve `UIPluginOptions` types (Merlijn Vos / #4946)
+
+## 3.9.1
+
+Released: 2024-02-20
+Included in: Uppy v3.22.1
+
+- @uppy/compressor,@uppy/core,@uppy/dashboard,@uppy/status-bar: bump `@transloadit/prettier-bytes` (Antoine du Hamel / #4933)
+
+## 3.9.0
+
+Released: 2024-02-19
+Included in: Uppy v3.22.0
+
+- @uppy/core: add utility type to help define plugin option types (antoine du hamel / #4885)
+- @uppy/core: improve types of .use() (merlijn vos / #4882)
+- @uppy/core: add `plugintarget` type and mark options as optional (antoine du hamel / #4874)
+- @uppy/core: add `debuglogger` as export in manual types (antoine du hamel / #4831)
+- @uppy/core: add missing requiredmetafields key in restrictions (darthf1 / #4819)
+- @uppy/core: fix types (antoine du hamel / #4842)
+- @uppy/core: refactor to ts (murderlon)
+
+## 3.8.0
+
+Released: 2023-12-12
+Included in: Uppy v3.21.0
+
+- @uppy/core: Fix onBeforeFileAdded with Golden Retriever (Merlijn Vos / #4799)
+
 ## 3.7.1
 
 Released: 2023-11-12

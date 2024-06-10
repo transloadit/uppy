@@ -1,8 +1,17 @@
 const DATA_URL_PATTERN = /^data:([^/]+\/[^,;]+(?:[^,]*?))(;base64)?,([\s\S]*)$/
 
-export default function dataURItoBlob(
+type dataURItoBlobOptions = { mimeType?: string; name?: string }
+
+function dataURItoBlob(dataURI: string, opts: dataURItoBlobOptions): Blob
+function dataURItoBlob(
   dataURI: string,
-  opts: { mimeType?: string; name?: string },
+  opts: dataURItoBlobOptions,
+  toFile: true,
+): File
+
+function dataURItoBlob(
+  dataURI: string,
+  opts: dataURItoBlobOptions,
   toFile?: boolean,
 ): Blob | File {
   // get the base64 data
@@ -30,3 +39,5 @@ export default function dataURItoBlob(
 
   return new Blob(data, { type: mimeType })
 }
+
+export default dataURItoBlob

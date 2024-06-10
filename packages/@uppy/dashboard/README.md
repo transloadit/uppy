@@ -9,16 +9,20 @@
 
 Dashboard is a universal UI plugin for Uppy:
 
-* Drag and Drop, paste, select from local disk / my device
-* UI for Webcam and remote sources: Google Drive, Dropbox, Instagram (all optional, added via plugins)
-* File previews and info
-* Metadata editor
-* Progress: total and for individual files
-* Ability to pause/resume or cancel (depending on uploader plugin) individual or all files
+- Drag and Drop, paste, select from local disk / my device
+- UI for Webcam and remote sources: Google Drive, Dropbox, Instagram (all
+  optional, added via plugins)
+- File previews and info
+- Metadata editor
+- Progress: total and for individual files
+- Ability to pause/resume or cancel (depending on uploader plugin) individual or
+  all files
 
-**[Read the docs](https://uppy.io/docs/dashboard/)** | **[Try it](https://uppy.io/examples/dashboard/)**
+**[Read the docs](https://uppy.io/docs/dashboard/)** |
+**[Try it](https://uppy.io/examples/dashboard/)**
 
-Uppy is being developed by the folks at [Transloadit](https://transloadit.com), a versatile file encoding service.
+Uppy is being developed by the folks at [Transloadit](https://transloadit.com),
+a versatile file encoding service.
 
 ## Example
 
@@ -39,11 +43,15 @@ uppy.use(Dashboard, {
 $ npm install @uppy/dashboard
 ```
 
-Alternatively, you can also use this plugin in a pre-built bundle from Transloadit’s CDN: Edgly. In that case `Uppy` will attach itself to the global `window.Uppy` object. See the [main Uppy documentation](https://uppy.io/docs/#Installation) for instructions.
+Alternatively, you can also use this plugin in a pre-built bundle from
+Transloadit’s CDN: Edgly. In that case `Uppy` will attach itself to the global
+`window.Uppy` object. See the
+[main Uppy documentation](https://uppy.io/docs/#Installation) for instructions.
 
 ## Documentation
 
-Documentation for this plugin can be found on the [Uppy website](https://uppy.io/docs/dashboard).
+Documentation for this plugin can be found on the
+[Uppy website](https://uppy.io/docs/dashboard).
 
 ## License
 

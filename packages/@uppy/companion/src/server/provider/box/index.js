@@ -31,7 +31,6 @@ async function list ({ directory, query, token }) {
 class Box extends Provider {
   constructor (options) {
     super(options)
-    this.authProvider = Box.authProvider
     // needed for the thumbnails fetched via companion
     this.needsCookieAuth = true
   }
@@ -88,7 +87,7 @@ class Box extends Provider {
       })
 
       await prepareStream(stream)
-      return { stream }
+      return { stream, contentType: 'image/jpeg' }
     })
   }
 
@@ -116,11 +115,12 @@ class Box extends Provider {
     })
   }
 
+  // eslint-disable-next-line class-methods-use-this
   async #withErrorHandling (tag, fn) {
     return withProviderErrorHandling({
       fn,
       tag,
-      providerName: this.authProvider,
+      providerName: Box.authProvider,
       isAuthError: (response) => response.statusCode === 401,
       getJsonErrorMessage: (body) => body?.message,
     })

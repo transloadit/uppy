@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           branch: release
       - name: Rebase
@@ -26,7 +26,7 @@ jobs:
         run:
           echo "dir=$(corepack yarn config get cacheFolder)" >> $GITHUB_OUTPUT
 
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
         with:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
@@ -34,7 +34,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
       - name: Install Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: lts/*
       - name: Install dependencies
@@ -51,7 +51,7 @@ jobs:
       - name: Update contributors table
         run:
           corepack yarn contributors:save && corepack yarn remark -foq README.md
-          && git add README.md
+          && corepack yarn prettier -w README.md && git add README.md
       - name: Update CDN URLs
         run:
           corepack yarn workspace @uppy-dev/release update-version-URLs | xargs
