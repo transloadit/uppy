@@ -170,7 +170,8 @@ instead of per file.
 
 ### Framework updates
 
-- @uppy/angular: upgrade to Angular 18.x (17.x is still supported too) and to TS 5.4
+- @uppy/angular: upgrade to Angular 18.x (17.x is still supported too) and to TS
+  5.4
 - @uppy/react: remove deprecated `useUppy` & reintroduce
   [`useUppyState`](docs/react/#hooks)
 - @uppy/svelte: make Svelte 5 the peer dependency
