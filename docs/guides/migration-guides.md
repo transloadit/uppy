@@ -103,7 +103,7 @@ const { someThingMyBackendReturns } = uppy.getFile(id).response;
   [`shouldUseMultipart()`](/docs/aws-s3-multipart/#shouldusemultipartfile), to
   allow you to switch between regular and multipart uploads. You can read more
   about this in the
-  [plugin docs](https://uppy.io/docs/aws-s3-multipart/#when-should-i-use-it)
+  [plugin docs](https://uppy.io/docs/aws-s3-multipart/#when-should-i-use-it).
 - Remove deprecated `prepareUploadParts` option.
 
 ### `@uppy/core`
