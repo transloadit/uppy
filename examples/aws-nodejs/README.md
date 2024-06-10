@@ -19,75 +19,56 @@ get STS Federated Token and upload files to `MY-UPPY-BUCKET`:
 
 1. Set CORS settings on `MY-UPPY-BUCKET` bucket:
 
-    ```json
-    [
-        {
-            "AllowedHeaders": [
-                "*"
-            ],
-            "AllowedMethods": [
-                "GET",
-                "PUT",
-                "HEAD",
-                "POST",
-                "DELETE"
-            ],
-            "AllowedOrigins": [
-                "*"
-            ],
-            "ExposeHeaders": [
-                "ETag",
-                "Location"
-            ]
-        }
-    ]
-    ```
+   ```json
+   [
+     {
+       "AllowedHeaders": ["*"],
+       "AllowedMethods": ["GET", "PUT", "HEAD", "POST", "DELETE"],
+       "AllowedOrigins": ["*"],
+       "ExposeHeaders": ["ETag", "Location"]
+     }
+   ]
+   ```
 
 2. Add the following Policy to `MY-UPPY-BUCKET`:
 
-    ```json
-    {
-        "Version": "2012-10-17",
-        "Statement": [
-            {
-                "Sid": "MyMultipartPolicyStatement1",
-                "Effect": "Allow",
-                "Principal": {
-                    "AWS": "arn:aws:iam::*:user/MY-UPPY-USER"
-                },
-                "Action": [
-                    "s3:PutObject",
-                    "s3:PutObjectAcl",
-                    "s3:ListMultipartUploadParts",
-                    "s3:AbortMultipartUpload"
-                ],
-                "Resource": "arn:aws:s3:::MY-UPPY-BUCKET/*"
-            }
-        ]
-    }
-    ```
+   ```json
+   {
+     "Version": "2012-10-17",
+     "Statement": [
+       {
+         "Sid": "MyMultipartPolicyStatement1",
+         "Effect": "Allow",
+         "Principal": {
+           "AWS": "arn:aws:iam::*:user/MY-UPPY-USER"
+         },
+         "Action": [
+           "s3:PutObject",
+           "s3:PutObjectAcl",
+           "s3:ListMultipartUploadParts",
+           "s3:AbortMultipartUpload"
+         ],
+         "Resource": "arn:aws:s3:::MY-UPPY-BUCKET/*"
+       }
+     ]
+   }
+   ```
 
-3. Add the following Policy to `MY-UPPY-USER`:
-    
-   (if you don’t want to enable signing on the client, you can skip this step)
-    
-    ```json
-    {
-        "Version": "2012-10-17",
-        "Statement": [
-            {
-                "Sid": "MyStsPolicyStatement1",
-                "Effect": "Allow",
-                "Action": [
-                    "sts:GetFederationToken"
-                ],
-                "Resource": [
-                    "arn:aws:sts::*:federated-user/*"
-                ]
-            }
-        ]
-    }
-    ```
+3. Add the following Policy to `MY-UPPY-USER`: (if you don’t want to enable
+   signing on the client, you can skip this step)
+   ```json
+   {
+     "Version": "2012-10-17",
+     "Statement": [
+       {
+         "Sid": "MyStsPolicyStatement1",
+         "Effect": "Allow",
+         "Action": ["sts:GetFederationToken"],
+         "Resource": ["arn:aws:sts::*:federated-user/*"]
+       }
+     ]
+   }
+   ```
 
 ### AWS Credentials
 
