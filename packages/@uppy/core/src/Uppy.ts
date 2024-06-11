@@ -308,7 +308,7 @@ const defaultUploadState = {
  * Manages plugins, state updates, acts as an event bus,
  * adds/removes files and metadata.
  */
-export class Uppy<M extends Meta, B extends Body> {
+export class Uppy<M extends Meta, B extends Body = Record<string, never>> {
   static VERSION = packageJson.version
 
   #plugins: Record<string, UnknownPlugin<M, B>[]> = Object.create(null)
