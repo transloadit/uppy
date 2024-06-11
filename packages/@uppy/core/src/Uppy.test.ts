@@ -491,7 +491,7 @@ describe('src/Core', () => {
 
     assert.throws(
       () => core.removeFile(fileIDs[0]),
-      /individualCancellation is disabled/,
+      /The installed uploader plugin does not allow removing files during an upload/,
     )
 
     expect(core.getState().currentUploads[id]).toBeDefined()
@@ -2159,7 +2159,7 @@ describe('src/Core', () => {
     it('should enforce the maxTotalFileSize rule', () => {
       const core = new Core({
         restrictions: {
-          maxTotalFileSize: 34000,
+          maxTotalFileSize: 20000,
         },
       })
 
@@ -2178,7 +2178,9 @@ describe('src/Core', () => {
           data: testImage,
         })
       }).toThrowError(
-        new Error('foo1.jpg exceeds maximum allowed size of 33 KB'),
+        new Error(
+          'You selected 34 KB of files, but maximum allowed size is 20 KB',
+        ),
       )
     })
 

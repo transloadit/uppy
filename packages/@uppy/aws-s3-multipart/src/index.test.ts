@@ -91,6 +91,7 @@ describe('AwsS3Multipart', () => {
       expect(uploadSuccessHandler.mock.calls[0][1]).toStrictEqual({
         body: {
           ETag: 'test',
+          etag: 'test',
           location: 'http://example.com',
         },
         status: 200,
@@ -257,16 +258,16 @@ describe('AwsS3Multipart', () => {
         .mock.calls[0][1]
 
       expect(completeCall.parts).toEqual([
-        { ETag: 'test', PartNumber: 1 },
-        { ETag: 'test', PartNumber: 2 },
-        { ETag: 'test', PartNumber: 3 },
-        { ETag: 'test', PartNumber: 4 },
-        { ETag: 'test', PartNumber: 5 },
-        { ETag: 'test', PartNumber: 6 },
-        { ETag: 'test', PartNumber: 7 },
-        { ETag: 'test', PartNumber: 8 },
-        { ETag: 'test', PartNumber: 9 },
-        { ETag: 'test', PartNumber: 10 },
+        { ETag: 'test', etag: 'test', PartNumber: 1 },
+        { ETag: 'test', etag: 'test', PartNumber: 2 },
+        { ETag: 'test', etag: 'test', PartNumber: 3 },
+        { ETag: 'test', etag: 'test', PartNumber: 4 },
+        { ETag: 'test', etag: 'test', PartNumber: 5 },
+        { ETag: 'test', etag: 'test', PartNumber: 6 },
+        { ETag: 'test', etag: 'test', PartNumber: 7 },
+        { ETag: 'test', etag: 'test', PartNumber: 8 },
+        { ETag: 'test', etag: 'test', PartNumber: 9 },
+        { ETag: 'test', etag: 'test', PartNumber: 10 },
       ])
     })
 

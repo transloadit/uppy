@@ -1,5 +1,12 @@
 # @uppy/provider-views
 
+## 3.12.1
+
+Released: 2024-06-11
+Included in: Uppy v3.26.1
+
+- @uppy/provider-views: fix wrong font for files (Merlijn Vos / #5234)
+
 ## 3.12.0
 
 Released: 2024-04-29

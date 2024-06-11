@@ -462,17 +462,10 @@ export default class Transloadit<
         const files = this.uppy
           .getFiles()
           .filter(({ id }) => fileIDs.includes(id))
-        if (files.length !== fileIDs.length) {
-          if (files.length === 0) {
-            // All files have been removed, cancelling.
-            await this.client.cancelAssembly(newAssembly)
-            return null
-          }
-          // At least one file has been removed.
-          await this.client.updateNumberOfFilesInAssembly(
-            newAssembly,
-            files.length,
-          )
+        if (files.length === 0) {
+          // All files have been removed, cancelling.
+          await this.client.cancelAssembly(newAssembly)
+          return null
         }
 
         const assembly = new Assembly(newAssembly, this.#rateLimitedQueue)
@@ -521,15 +514,6 @@ export default class Transloadit<
           if (reason === 'cancel-all') {
             assembly.close()
             this.uppy.off('file-removed', fileRemovedHandler)
-          } else if (fileRemoved.id in updatedFiles) {
-            delete updatedFiles[fileRemoved.id]
-            const nbOfRemainingFiles = Object.keys(updatedFiles).length
-
-            this.client
-              .updateNumberOfFilesInAssembly(newAssembly, nbOfRemainingFiles)
-              .catch(() => {
-                /* ignore potential errors */
-              })
           }
         }
         this.uppy.on('file-removed', fileRemovedHandler)
