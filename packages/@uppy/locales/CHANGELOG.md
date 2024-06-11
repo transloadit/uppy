@@ -1,5 +1,12 @@
 # @uppy/locales
 
+## 3.5.4
+
+Released: 2024-06-11
+Included in: Uppy v3.26.1
+
+- @uppy/locales: Added translation string (it_IT) (Samuel / #5237)
+
 ## 3.5.3
 
 Released: 2024-05-03

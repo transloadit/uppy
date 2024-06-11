@@ -12,6 +12,21 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 3.26.1
+
+Released: 2024-06-11
+
+| Package              | Version | Package              | Version |
+| -------------------- | ------- | -------------------- | ------- |
+| @uppy/locales        |   3.5.4 | @uppy/transloadit    |   3.7.1 |
+| @uppy/provider-views |  3.12.1 | uppy                 |  3.26.1 |
+
+- meta: Improve aws-node example readme (Artur Paikin / #4753)
+- @uppy/locales: Added translation string (it_IT) (Samuel / #5237)
+- @uppy/transloadit: fix transloadit:result event (Merlijn Vos / #5231)
+- @uppy/provider-views: fix wrong font for files (Merlijn Vos / #5234)
+
+
 ## 3.26.0
 
 Released: 2024-06-04

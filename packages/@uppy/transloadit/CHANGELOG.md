@@ -1,5 +1,12 @@
 # @uppy/transloadit
 
+## 3.7.1
+
+Released: 2024-06-11
+Included in: Uppy v3.26.1
+
+- @uppy/transloadit: fix transloadit:result event (Merlijn Vos / #5231)
+
 ## 3.7.0
 
 Released: 2024-06-04
