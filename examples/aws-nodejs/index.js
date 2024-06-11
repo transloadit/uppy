@@ -10,6 +10,7 @@ const express = require('express')
 const app = express()
 
 const port = process.env.PORT ?? 8080
+const accessControlAllowOrigin = '*' // You should define the actual domain(s) that are allowed to make requests.
 const bodyParser = require('body-parser')
 
 const {
@@ -79,47 +80,16 @@ function getSTSClient () {
 
 app.use(bodyParser.urlencoded({ extended: true }), bodyParser.json())
 
-app.get('/', (req, res) => {
-  res.setHeader('Content-Type', 'text/html')
-  const htmlPath = path.join(__dirname, 'public', 'index.html')
-  res.sendFile(htmlPath)
-})
-app.get('/index.html', (req, res) => {
-  res.setHeader('Location', '/').sendStatus(308).end();
-})
-app.get('/withCustomEndpoints.html', (req, res) => {
-  res.setHeader('Content-Type', 'text/html')
-  const htmlPath = path.join(__dirname, 'public', 'withCustomEndpoints.html')
-  res.sendFile(htmlPath)
-})
-
-app.get('/uppy.min.mjs', (req, res) => {
-  res.setHeader('Content-Type', 'text/javascript')
-  const bundlePath = path.join(__dirname, '../..', 'packages/uppy/dist', 'uppy.min.mjs')
-  if (existsSync(bundlePath)) {
-    res.sendFile(bundlePath)
-  } else {
-    console.warn('No local JS bundle found, using the CDN as a fallback. Run `corepack yarn build` to make this warning disappear.')
-    res.end('export * from "https://releases.transloadit.com/uppy/v4.0.0-beta.10/uppy.min.mjs";\n');
-  }
-})
-app.get('/uppy.min.css', (req, res) => {
-  res.setHeader('Content-Type', 'text/css')
-  const bundlePath = path.join(__dirname, '../..', 'packages/uppy/dist', 'uppy.min.css')
-  if (existsSync(bundlePath)) {
-    res.sendFile(bundlePath)
-  } else {
-    console.warn('No local CSS bundle found, using the CDN as a fallback. Run `corepack yarn build` to make this warning disappear.')
-    res.end('@import "https://releases.transloadit.com/uppy/v4.0.0-beta.10/uppy.min.css";\n');
-  }
-})
-
 app.get('/drag', (req, res) => {
   const htmlPath = path.join(__dirname, 'public', 'drag.html')
   res.sendFile(htmlPath)
 })
 
 app.get('/s3/sts', (req, res, next) => {
+  // Before giving the STS token to the client, you should first check is they
+  // are authorized to perform that operation, and if the request is legit.
+  // For the sake of simplification, we skip that check in this example.
+
   getSTSClient().send(new GetFederationTokenCommand({
     Name: '123user',
     // The duration, in seconds, of the role session. The value specified
@@ -130,7 +100,7 @@ app.get('/s3/sts', (req, res, next) => {
   })).then(response => {
     // Test creating multipart upload from the server — it works
     // createMultipartUploadYo(response)
-    res.setHeader('Access-Control-Allow-Origin', '*')
+    res.setHeader('Access-Control-Allow-Origin',accessControlAllowOrigin)
     res.setHeader('Cache-Control', `public,max-age=${expiresIn}`)
     res.json({
       credentials: response.Credentials,
@@ -139,7 +109,11 @@ app.get('/s3/sts', (req, res, next) => {
     })
   }, next)
 })
-app.post('/s3/sign-s3', (req, res, next) => {
+app.get('/s3/params', (req, res, next) => {
+  // Before giving the signature to the user, you should first check is they
+  // are authorized to perform that operation, and if the request is legit.
+  // For the sake of simplification, we skip that check in this example.
+
   const Key = `${crypto.randomUUID()}-${req.body.filename}`
   const { contentType } = req.body
 
@@ -148,7 +122,7 @@ app.post('/s3/sign-s3', (req, res, next) => {
     Key,
     ContentType: contentType,
   }), { expiresIn }).then((url) => {
-    res.setHeader('Access-Control-Allow-Origin', '*')
+    res.setHeader('Access-Control-Allow-Origin',accessControlAllowOrigin)
     res.json({
       url,
       method: 'PUT',
@@ -185,7 +159,7 @@ app.post('/s3/multipart', (req, res, next) => {
       next(err)
       return
     }
-    res.setHeader('Access-Control-Allow-Origin', '*')
+    res.setHeader('Access-Control-Allow-Origin',accessControlAllowOrigin)
     res.json({
       key: data.Key,
       uploadId: data.UploadId,
@@ -216,7 +190,7 @@ app.get('/s3/multipart/:uploadId/:partNumber', (req, res, next) => {
     PartNumber: partNumber,
     Body: '',
   }), { expiresIn }).then((url) => {
-    res.setHeader('Access-Control-Allow-Origin', '*')
+    res.setHeader('Access-Control-Allow-Origin',accessControlAllowOrigin)
     res.json({ url, expires: expiresIn })
   }, next)
 })
@@ -286,7 +260,7 @@ app.post('/s3/multipart/:uploadId/complete', (req, res, next) => {
       next(err)
       return
     }
-    res.setHeader('Access-Control-Allow-Origin', '*')
+    res.setHeader('Access-Control-Allow-Origin',accessControlAllowOrigin)
     res.json({
       location: data.Location,
     })
@@ -317,7 +291,46 @@ app.delete('/s3/multipart/:uploadId', (req, res, next) => {
 
 // === </S3 MULTIPART> ===
 
+// === <some plumbing to make the example work> ===
+
+app.get('/', (req, res) => {
+  res.setHeader('Content-Type', 'text/html')
+  const htmlPath = path.join(__dirname, 'public', 'index.html')
+  res.sendFile(htmlPath)
+})
+app.get('/index.html', (req, res) => {
+  res.setHeader('Location', '/').sendStatus(308).end();
+})
+app.get('/withCustomEndpoints.html', (req, res) => {
+  res.setHeader('Content-Type', 'text/html')
+  const htmlPath = path.join(__dirname, 'public', 'withCustomEndpoints.html')
+  res.sendFile(htmlPath)
+})
+
+app.get('/uppy.min.mjs', (req, res) => {
+  res.setHeader('Content-Type', 'text/javascript')
+  const bundlePath = path.join(__dirname, '../..', 'packages/uppy/dist', 'uppy.min.mjs')
+  if (existsSync(bundlePath)) {
+    res.sendFile(bundlePath)
+  } else {
+    console.warn('No local JS bundle found, using the CDN as a fallback. Run `corepack yarn build` to make this warning disappear.')
+    res.end('export * from "https://releases.transloadit.com/uppy/v4.0.0-beta.10/uppy.min.mjs";\n');
+  }
+})
+app.get('/uppy.min.css', (req, res) => {
+  res.setHeader('Content-Type', 'text/css')
+  const bundlePath = path.join(__dirname, '../..', 'packages/uppy/dist', 'uppy.min.css')
+  if (existsSync(bundlePath)) {
+    res.sendFile(bundlePath)
+  } else {
+    console.warn('No local CSS bundle found, using the CDN as a fallback. Run `corepack yarn build` to make this warning disappear.')
+    res.end('@import "https://releases.transloadit.com/uppy/v4.0.0-beta.10/uppy.min.css";\n');
+  }
+})
+
+
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}.`)
   console.log(`Visit http://localhost:${port}/ on your browser to try it.`)
 })
+// === </some plumbing to make the example work> ===

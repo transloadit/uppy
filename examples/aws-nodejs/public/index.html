@@ -7,7 +7,14 @@
   </head>
   <body>
     <h1>AWS upload example</h1>
-    <div id="uppy"></div>
+    <details open name="uppy">
+      <summary>Sign on the server</summary>
+      <div id="uppy-sign-on-server"></div>
+    </details>
+    <details name="uppy">
+      <summary>Sign on the client</summary>
+      <div id="uppy-sign-on-client"></div>
+    </details>
     <footer>
       You seeing the simplified example, with a backend that mimicks a
       Companion-like instance. See
@@ -18,62 +25,46 @@
     <noscript>You need JavaScript to run this example.</noscript>
     <script type="module">
       import { Uppy, Dashboard, AwsS3 } from './uppy.min.mjs'
-      /**
-       * This generator transforms a deep object into URL-encodable pairs
-       * to work with `URLSearchParams` on the client and `body-parser` on the server.
-       */
-      function* serializeSubPart(key, value) {
-        if (typeof value !== 'object') {
-          yield [key, value]
-          return
-        }
-        if (Array.isArray(value)) {
-          for (const val of value) {
-            yield* serializeSubPart(`${key}[]`, val)
-          }
-          return
-        }
-        for (const [subkey, val] of Object.entries(value)) {
-          yield* serializeSubPart(key ? `${key}[${subkey}]` : subkey, val)
-        }
+      function onUploadComplete(result) {
+        console.log(
+          'Upload complete! We’ve uploaded these files:',
+          result.successful,
+        )
       }
-      function serialize(data) {
-        // If you want to avoid preflight requests, use URL-encoded syntax:
-        return new URLSearchParams(serializeSubPart(null, data))
-        // If you don't care about additional preflight requests, you can also use:
-        // return JSON.stringify(data)
-        // You'd also have to add `Content-Type` header with value `application/json`.
+      function onUploadSuccess(file, data) {
+        console.log(
+          'Upload success! We’ve uploaded this file:',
+          file.meta['name'],
+        )
       }
       {
-        const MiB = 0x10_00_00
-
         const uppy = new Uppy()
           .use(Dashboard, {
             inline: true,
-            target: '#uppy',
+            target: '#uppy-sign-on-server',
+          })
+          .use(AwsS3, {
+            id: 'myAWSPlugin',
+            endpoint: '/',
+          })
+
+        uppy.on('complete', onUploadComplete)
+        uppy.on('upload-success', onUploadSuccess)
+      }
+      {
+        const uppy = new Uppy()
+          .use(Dashboard, {
+            inline: true,
+            target: '#uppy-sign-on-client',
           })
           .use(AwsS3, {
             id: 'myAWSPlugin',
             endpoint: '/',
             getTemporarySecurityCredentials: true,
-
-            // Files that are more than 100MiB should be uploaded in multiple parts.
-            shouldUseMultipart: (file) => file.size > 100 * MiB,
           })
 
-        uppy.on('complete', (result) => {
-          console.log(
-            'Upload complete! We’ve uploaded these files:',
-            result.successful,
-          )
-        })
-
-        uppy.on('upload-success', (file, data) => {
-          console.log(
-            'Upload success! We’ve uploaded this file:',
-            file.meta['name'],
-          )
-        })
+        uppy.on('complete', onUploadComplete)
+        uppy.on('upload-success', onUploadSuccess)
       }
     </script>
   </body>
