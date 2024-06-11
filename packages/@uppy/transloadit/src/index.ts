@@ -682,12 +682,8 @@ export default class Transloadit<
     this.setPluginState({
       results: [...state.results, entry],
     })
-    this.uppy.emit(
-      'transloadit:result',
-      stepName,
-      result,
-      this.getAssembly(assemblyId),
-    )
+    const assembly = this.activeAssemblies[assemblyId].status
+    this.uppy.emit('transloadit:result', stepName, result, assembly)
   }
 
   /**
