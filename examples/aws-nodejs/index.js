@@ -108,7 +108,7 @@ app.get('/s3/sts', (req, res, next) => {
       })
     }, next)
 })
-app.get('/s3/params', (req, res, next) => {
+const signOnServer = (req, res, next) => {
   // Before giving the signature to the user, you should first check is they
   // are authorized to perform that operation, and if the request is legit.
   // For the sake of simplification, we skip that check in this example.
@@ -132,7 +132,9 @@ app.get('/s3/params', (req, res, next) => {
     })
     res.end()
   }, next)
-})
+}
+app.get('/s3/params', signOnServer)
+app.post('/s3/sign', signOnServer)
 
 //  === <S3 Multipart> ===
 // You can remove those endpoints if you only want to support the non-multipart uploads.
