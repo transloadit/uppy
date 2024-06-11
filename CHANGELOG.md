@@ -12,6 +12,23 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 4.0.0-beta.11
+
+Released: 2024-06-11
+
+| Package              |       Version | Package              |       Version |
+| -------------------- | ------------- | -------------------- | ------------- |
+| @uppy/aws-s3         |  4.0.0-beta.6 | @uppy/react          |  4.0.0-beta.6 |
+| @uppy/locales        |  4.0.0-beta.3 | @uppy/transloadit    |  4.0.0-beta.8 |
+| @uppy/provider-views |  4.0.0-beta.8 | uppy                 | 4.0.0-beta.11 |
+
+- docs: clarify assemblyOptions for @uppy/transloadit (Merlijn Vos / #5226)
+- @uppy/react: remove `react:` prefix from `id` & allow `id` as a prop (Merlijn Vos / #5228)
+- docs: correct allowedMetaFields (Merlijn Vos / #5227)
+- docs: remove `extraData` note from migration guide (Mikael Finstad / #5219)
+- meta: fix AWS test suite (Antoine du Hamel / #5229)
+
+
 ## 4.0.0-beta.10
 
 Released: 2024-06-04
