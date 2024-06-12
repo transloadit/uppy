@@ -45,6 +45,7 @@
     "@uppy/facebook": "workspace:^",
     "@uppy/file-input": "workspace:^",
     "@uppy/form": "workspace:^",
+    "@uppy/ftp": "workspace:^",
     "@uppy/golden-retriever": "workspace:^",
     "@uppy/google-drive": "workspace:^",
     "@uppy/image-editor": "workspace:^",
