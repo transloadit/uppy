@@ -2,10 +2,9 @@
 
 These cover all the major Uppy versions and how to migrate to them.
 
-## Migrate from Uppy 3.x to 4.x
+## Migrate from Companion 4.x to 5.x
 
-### Companion
-
+- Node.js `>=18.20.0` is now required.
 - `COMPANION_REDIS_EXPRESS_SESSION_PREFIX` now defaults to `companion-session:`
   (before `sess:`). To revert keep backwards compatibility, set the environment
   variable `COMPANION_REDIS_EXPRESS_SESSION_PREFIX=sess:`.
@@ -32,6 +31,14 @@ These cover all the major Uppy versions and how to migrate to them.
 
 ### `@uppy/companion-client`
 
+:::info
+
+Unless you built a custom provider, you don’t use `@uppy/companion-client`
+directly but through provider plugins such as `@uppy/google-drive`. In which
+case you don’t have to do anything.
+
+:::
+
 - `supportsRefreshToken` now defaults to `false` instead of `true`. If you have
   implemented a custom provider, this might affect you.
 - `Socket` class is no longer in use and has been removed. Unless you used this
@@ -41,6 +48,142 @@ These cover all the major Uppy versions and how to migrate to them.
 - `RequestClient` methods `get`, `post`, `delete` no longer accepts a boolean as
   the third argument. Instead, pass `{ skipPostResponse: true | false }`. This
   won’t affect you unless you’ve been using `RequestClient`.
+
+## Migrate from Uppy 3.x to 4.x
+
+### TypeScript rewrite
+
+Almost all plugins have been completely rewritten in TypeScript! This means you
+may run into type error all over the place, but the types now accurately show
+Uppy’s state and files.
+
+There are too many small changes to cover, so you have to upgrade and see where
+TypeScript complains.
+
+One important thing to note are the new generics on `@uppy/core`.
+
+<!-- eslint-disable @typescript-eslint/no-unused-vars -->
+
+```ts
+import Uppy from '@uppy/core';
+// xhr-upload is for uploading to your own backend.
+import XHRUpload from '@uppy/xhr-upload';
+
+// Your own metadata on files
+type Meta = { myCustomMetadata: string };
+// The response from your server
+type Body = { someThingMyBackendReturns: string };
+
+const uppy = new Uppy<Meta, Body>().use(XHRUpload, {
+	endpoint: '/upload',
+});
+
+const id = uppy.addFile({
+	name: 'example.jpg',
+	data: new Blob(),
+	meta: { myCustomMetadata: 'foo' },
+});
+
+// This is now typed
+const { myCustomMetadata } = uppy.getFile(id).meta;
+
+await uppy.upload();
+
+// This is strictly typed too
+const { someThingMyBackendReturns } = uppy.getFile(id).response;
+```
+
+### `@uppy/aws-s3` and `@uppy/aws-s3-multipart`
+
+- `@uppy/aws-s3` and `@uppy/aws-s3-multipart` have been combined into a single
+  plugin. You should now only use `@uppy/aws-s3` with the new option,
+  [`shouldUseMultipart()`](/docs/aws-s3-multipart/#shouldusemultipartfile), to
+  allow you to switch between regular and multipart uploads. You can read more
+  about this in the
+  [plugin docs](https://uppy.io/docs/aws-s3-multipart/#when-should-i-use-it).
+- Remove deprecated `prepareUploadParts` option.
+
+### `@uppy/core`
+
+- The `close()` method has been renamed to `destroy()` to more accurately
+  reflect you can not recover from it without creating a new `Uppy` instance.
+- The `clearUploadedFiles()` method has been renamed to `clear()` as a
+  convenience method to clear all the state. This can be useful when a user
+  navigates away and you want to clear the state on success.
+- `bytesUploaded`, in `file.progress.bytesUploaded`, is now always a `boolean`,
+  instead of a `boolean` or `number`.
+
+### `@uppy/xhr-upload`
+
+Before the plugin had the options `getResponseData`, `getResponseError`,
+`validateStatus` and `responseUrlFieldName`. These were inflexible and too
+specific. Now we have hooks similar to `@uppy/tus`:
+
+- `onBeforeRequest` to manipulate the request before it is sent.
+- `shouldRetry` to determine if a request should be retried. By default 3
+  retries with exponential backoff. After three attempts it will throw an error,
+  regardless of whether you returned `true`.
+- `onAfterResponse` called after a successful response but before Uppy resolves
+  the upload.
+
+Checkout the [docs](/docs/xhr-upload/) for more info.
+
+### `@uppy/transloadit`
+
+The options `signature`, `params`, `fields`, and `getAssemblyOptions` have been
+removed in favor of [`assemblyOptions`](/docs/transloadit/#assemblyoptions),
+which can be an object or an (async) function returning an object.
+
+When using `assemblyOptions()` as a function, it is now called only once for all
+files, instead of per file. Before `@uppy/transloadit` was trying to be too
+smart, creating multiple assemblies in which each assembly has files with
+identical `fields`. This was done so you can use `fields` dynamically in your
+template per file, instead of per assembly.
+
+Now we sent all metadata of a file inside the tus upload (which
+`@uppy/transloadit` uses under the hood) and make it accessible in your
+Transloadit template as `file_user_meta`. You should use `fields` for global
+values in your template and `file_user_meta` for per file values.
+
+Another benefit of running `assemblyOptions()` only once, is that when
+generating a
+[secret](https://transloadit.com/docs/topics/signature-authentication/) on your
+server (which you should), a network request is made only once for all files,
+instead of per file.
+
+### CDN
+
+- We no longer build and serve the legacy build, made for IE11, on our CDN.
+
+### Miscellaneous
+
+- All uploaders plugins now consistently use
+  [`allowedMetaFields`](/docs/xhr-upload/#allowedmetafields). Before there were
+  inconsistencies between plugins.
+- All plugin `titles` (what you see in the Dashboard when you open a plugin) are
+  now set from the `locale` option. See the
+  [docs](/docs/locales/#overriding-locale-strings-for-a-specific-plugin) on how
+  to overide a string.
+
+### `@uppy/angular`
+
+- Upgrade to Angular 18.x (17.x is still supported too) and to TS 5.4
+
+### `@uppy/react`
+
+- Remove deprecated `useUppy` & reintroduce [`useUppyState`](docs/react/#hooks)
+- You can no longer set `inline` on the `Dashboard` component, use `Dashboard`
+  or `DashboardModal` components respectively.
+
+### `@uppy/svelte`
+
+- Make Svelte 5 the peer dependency
+- Remove UMD output
+
+### `@uppy/vue`
+
+- Migrate to Composition API with TypeScript & drop Vue 2 support
+- Drop Vue 2 support
 
 ## Migrate from Robodog to Uppy plugins
 
