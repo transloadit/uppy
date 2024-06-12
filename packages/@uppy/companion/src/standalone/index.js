@@ -22,8 +22,8 @@ module.exports = function server(inputCompanionOptions) {
 
   companion.setLoggerProcessName(companionOptions)
 
-  if (!companionOptions.secret) companionOptions.secret = generateSecret()
-  if (!companionOptions.preAuthSecret) companionOptions.preAuthSecret = generateSecret()
+  if (!companionOptions.secret) companionOptions.secret = generateSecret('secret')
+  if (!companionOptions.preAuthSecret) companionOptions.preAuthSecret = generateSecret('preAuthSecret')
 
   const app = express()
 
