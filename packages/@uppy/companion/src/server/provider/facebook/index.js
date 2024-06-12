@@ -6,7 +6,7 @@ const logger = require('../../logger')
 const { adaptData, sortImages } = require('./adapter')
 const { withProviderErrorHandling } = require('../providerErrors')
 const { prepareStream } = require('../../helpers/utils')
-const { StreamHttpJsonError } = require('../../helpers/utils')
+const { HttpError } = require('../../helpers/utils')
 
 const got = require('../../got')
 
@@ -41,7 +41,7 @@ class Facebook extends Provider {
 
     responses.forEach((response) => {
       if (response.code !== 200) {
-        throw new StreamHttpJsonError({ statusCode: response.code, responseJson: response.body })
+        throw new HttpError({ statusCode: response.code, responseJson: response.body })
       }
     })
 

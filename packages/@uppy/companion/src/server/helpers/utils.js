@@ -148,7 +148,7 @@ module.exports.decrypt = (encrypted, secret) => {
 
 module.exports.defaultGetKey = (req, filename) => `${crypto.randomUUID()}-${filename}`
 
-class StreamHttpJsonError extends Error {
+class HttpError extends Error {
   statusCode
 
   responseJson
@@ -157,11 +157,11 @@ class StreamHttpJsonError extends Error {
     super(`Request failed with status ${statusCode}`)
     this.statusCode = statusCode
     this.responseJson = responseJson
-    this.name = 'StreamHttpJsonError'
+    this.name = 'HttpError'
   }
 }
 
-module.exports.StreamHttpJsonError = StreamHttpJsonError
+module.exports.HttpError = HttpError
 
 module.exports.prepareStream = async (stream) => new Promise((resolve, reject) => {
   stream
@@ -173,7 +173,7 @@ module.exports.prepareStream = async (stream) => new Promise((resolve, reject) =
     })
     .on('error', (err) => {
       // In this case the error object is not a normal GOT HTTPError where json is already parsed,
-      // we create our own StreamHttpJsonError error for this case
+      // we create our own HttpError error for this case
       if (typeof err.response?.body === 'string' && typeof err.response?.statusCode === 'number') {
         let responseJson
         try {
@@ -183,7 +183,7 @@ module.exports.prepareStream = async (stream) => new Promise((resolve, reject) =
           return
         }
 
-        reject(new StreamHttpJsonError({ statusCode: err.response.statusCode, responseJson }))
+        reject(new HttpError({ statusCode: err.response.statusCode, responseJson }))
         return
       }
 

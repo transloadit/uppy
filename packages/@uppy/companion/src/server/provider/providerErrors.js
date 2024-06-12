@@ -43,7 +43,7 @@ async function withProviderErrorHandling({
     if (err?.name === 'HTTPError') {
       statusCode = err.response?.statusCode
       body = err.response?.body
-    } else if (err?.name === 'StreamHttpJsonError') {
+    } else if (err?.name === 'HttpError') {
       statusCode = err.statusCode
       body = err.responseJson
     }
