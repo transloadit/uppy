@@ -19,9 +19,8 @@ const defaults = require('../fixtures/constants')
 const tokenService = require('../../src/server/helpers/jwt')
 const { getServer } = require('../mockserver')
 
-const secret = process.env.COMPANION_SECRET
 // todo don't share server between tests. rewrite to not use env variables
-const authServer = getServer({ COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT: '0', COMPANION_SECRET: secret })
+const authServer = getServer({ COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT: '0' })
 const OAUTH_STATE = 'some-cool-nice-encrytpion'
 const providers = require('../../src/server/provider').getDefaultProviders()
 
@@ -35,7 +34,7 @@ const authData = {}
 providerNames.forEach((provider) => {
   authData[provider] = { accessToken: 'token value' }
 })
-const token = tokenService.generateEncryptedAuthToken(authData, secret)
+const token = tokenService.generateEncryptedAuthToken(authData, process.env.COMPANION_SECRET)
 
 const thisOrThat = (value1, value2) => {
   if (value1 !== undefined) {
@@ -184,29 +183,44 @@ describe('list provider files', () => {
   })
 
   test('facebook', async () => {
-    nock('https://graph.facebook.com').get('/me?fields=email').reply(200, {
-      name: 'Fiona Fox',
-      birthday: '01/01/1985',
-      email: defaults.USERNAME,
-    })
-    nock('https://graph.facebook.com').get('/ALBUM-ID/photos?fields=icon%2Cimages%2Cname%2Cwidth%2Cheight%2Ccreated_time').reply(200, {
-      data: [
-        {
-          images: [
+    nock('https://graph.facebook.com').post('/',
+    [
+      'access_token=token+value',
+      'appsecret_proof=ee28d8152093b877f193f5fe84a34544ec27160e7f34c7645d02930b3fa95160',
+      `batch=${encodeURIComponent('[{"method":"GET","relative_url":"me?fields=email"},{"method":"GET","relative_url":"ALBUM-ID/photos?fields=icon%2Cimages%2Cname%2Cwidth%2Cheight%2Ccreated_time"}]')}`,
+    ].join('&')
+  ).reply(200,
+    [
+      {
+        code: 200,
+        body: JSON.stringify({
+          name: 'Fiona Fox',
+          birthday: '01/01/1985',
+          email: defaults.USERNAME,
+        }),
+      },
+      {
+        code: 200,
+        body: JSON.stringify({
+          data: [
             {
-              height: 1365,
-              source: defaults.THUMBNAIL_URL,
-              width: 2048,
+              images: [
+                {
+                  height: 1365,
+                  source: defaults.THUMBNAIL_URL,
+                  width: 2048,
+                },
+              ],
+              width: 720,
+              height: 479,
+              created_time: '2015-07-17T17:26:50+0000',
+              id: defaults.ITEM_ID,
             },
           ],
-          width: 720,
-          height: 479,
-          created_time: '2015-07-17T17:26:50+0000',
-          id: defaults.ITEM_ID,
-        },
-      ],
-      paging: {},
-    })
+          paging: {},
+        }),
+      },
+    ])
 
     await runTest('facebook')
   })
@@ -333,16 +347,27 @@ describe('provider file gets downloaded from', () => {
 
   test('facebook', async () => {
     // times(2) because of size request
-    nock('https://graph.facebook.com').get(`/${defaults.ITEM_ID}?fields=images`).times(2).reply(200, {
-      images: [
-        {
-          height: 1365,
-          source: defaults.THUMBNAIL_URL,
-          width: 2048,
-        },
-      ],
-      id: defaults.ITEM_ID,
-    })
+    nock('https://graph.facebook.com').post('/',
+      [
+        'access_token=token+value',
+        'appsecret_proof=ee28d8152093b877f193f5fe84a34544ec27160e7f34c7645d02930b3fa95160',
+        `batch=${encodeURIComponent('[{"method":"GET","relative_url":"DUMMY-FILE-ID?fields=images"}]')}`,
+      ].join('&')
+    ).times(2).reply(200,
+      [{
+        code: 200,
+        body: JSON.stringify({
+          images: [
+            {
+              height: 1365,
+              source: defaults.THUMBNAIL_URL,
+              width: 2048,
+            },
+          ],
+          id: defaults.ITEM_ID,
+        }),
+      }])
+
     await runTest('facebook')
   })
 
@@ -424,7 +449,19 @@ describe('logout of provider', () => {
   })
 
   test('facebook', async () => {
-    nock('https://graph.facebook.com').delete('/me/permissions').reply(200, {})
+        // times(2) because of size request
+        nock('https://graph.facebook.com').post('/',
+        [
+          'access_token=token+value',
+          'appsecret_proof=ee28d8152093b877f193f5fe84a34544ec27160e7f34c7645d02930b3fa95160',
+          `batch=${encodeURIComponent('[{"method":"DELETE","relative_url":"me/permissions"}]')}`,
+        ].join('&')
+      ).reply(200,
+        [{
+          code: 200,
+          body: JSON.stringify({}),
+        }])
+  
     await runTest('facebook')
   })
 

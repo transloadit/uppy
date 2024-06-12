@@ -28,16 +28,14 @@ class Facebook extends Provider {
       .update(token)
       .digest('hex');
   
-    const form = new FormData()
-    form.append('access_token', token)
-    form.append('appsecret_proof', appSecretProof)
-    // form.append('appsecret_time', String(time))
-    form.append('batch', JSON.stringify(requests))
+    const form = {
+      access_token: token,
+      appsecret_proof: appSecretProof,
+      // appsecret_time: String(time),
+      batch: JSON.stringify(requests),
+    }
   
-    const responsesRaw = await (await got).post('https://graph.facebook.com', {
-      // @ts-expect-error todo types
-      body: form,
-    }).json()
+    const responsesRaw = await (await got).post('https://graph.facebook.com', { form }).json()
 
     const responses = responsesRaw.map((response) => ({ ...response, body: JSON.parse(response.body) }))
 
