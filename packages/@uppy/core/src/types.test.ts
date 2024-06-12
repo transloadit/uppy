@@ -1,7 +1,7 @@
 import { expectTypeOf, test } from 'vitest'
 
 import type { Body, InternalMetadata, Meta } from '@uppy/utils/lib/UppyFile'
-import Uppy from './Uppy'
+import Uppy, { type UnknownPlugin } from './Uppy'
 import UIPlugin, { type UIPluginOptions } from './UIPlugin'
 
 interface Opts extends UIPluginOptions {
@@ -28,7 +28,13 @@ test('can .use() a plugin', async () => {
 test('can .getPlugin() with a generic', async () => {
   const core = new Uppy().use(TestPlugin)
   const plugin = core.getPlugin<TestPlugin<any, any>>('TestPlugin')
+  const plugin2 = core.getPlugin('TestPlugin')
   expectTypeOf(plugin).toEqualTypeOf<TestPlugin<any, any> | undefined>()
+  expectTypeOf(plugin2).toEqualTypeOf<
+    // The default type
+    | UnknownPlugin<Meta, Record<string, never>, Record<string, unknown>>
+    | undefined
+  >()
 })
 
 test('Meta and Body generic move through the Uppy class', async () => {
