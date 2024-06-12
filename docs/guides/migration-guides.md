@@ -102,6 +102,20 @@ const { someThingMyBackendReturns } = uppy.getFile(id).response;
   about this in the
   [plugin docs](https://uppy.io/docs/aws-s3-multipart/#when-should-i-use-it).
 - Remove deprecated `prepareUploadParts` option.
+- Companion’s options (`companionUrl`, `companionHeaders`, and
+  `companionCookieRules`) are renamed to more generic names (`endpoint`,
+  `headers`, and `cookieRules`)
+
+  Using Companion with the `@uppy/aws-s3` plugin only makes sense if you want to
+  support upload from remote providers (such as Google Drive). Unfortunately,
+  because the option was referencing Companion, it was a bit hard for us to
+  document a simpler way to setup a server to work well with Uppy without having
+  to reimplement virtually all network calls, when it would be possible to use
+  the ones already in Uppy – the only condition is to configure the server to
+  use the same endpoints as Companion.
+
+  Long story short, the options have been renamed. If you are using Companion,
+  you need to update the your code to use the new option names.
 
 ### `@uppy/core`
 
@@ -341,19 +355,6 @@ uppy.use(Dropbox, {
 ```
 
 ### `@uppy/aws-s3-multipart`
-
-#### Companion’s options (`companionUrl`, `companionHeaders`, and `companionCookieRules`) are renamed to more generic names (`endpoint`, `headers`, and `cookieRules`)
-
-Using Companion with the `@uppy/aws-s3` plugin only makes sense if you want to
-support upload from remote providers (such as Google Drive). Unfortunately,
-because the option was referencing Companion, it was a bit hard for us to
-document a simpler way to setup a server to work well with Uppy without having
-to reimplement virtually all network calls, when it would be possible to use the
-ones already in Uppy – the only condition is to configure the server to use the
-same endpoints as Companion.
-
-Long story short, the options have been renamed. If you are using Companion, you
-need to update the your code to use the new option names.
 
 #### Make `headers` inside the return value of [`prepareUploadParts`](/docs/aws-s3-multipart/#prepareUploadParts-file-partData) part-indexed too.
 
