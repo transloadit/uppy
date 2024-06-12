@@ -42,9 +42,9 @@ class ProgressBar<M extends Meta, B extends Body> extends Component<
   }
 
   installPlugin(): void {
-    const { uppy, fixed, hideAfterFinish } = this.props
+    const { uppy, fixed, hideAfterFinish, id } = this.props
     const options = {
-      id: 'react:ProgressBar',
+      id: id || 'ProgressBar',
       fixed,
       hideAfterFinish,
       target: this.container,

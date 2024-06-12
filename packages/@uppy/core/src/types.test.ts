@@ -17,12 +17,12 @@ class TestPlugin<M extends Meta, B extends Body> extends UIPlugin<Opts, M, B> {
 
 test('can use Uppy class without generics', async () => {
   const core = new Uppy()
-  expectTypeOf(core).toEqualTypeOf<Uppy<Meta, Body>>()
+  expectTypeOf(core).toEqualTypeOf<Uppy<Meta, Record<string, never>>>()
 })
 
 test('can .use() a plugin', async () => {
   const core = new Uppy().use(TestPlugin)
-  expectTypeOf(core).toEqualTypeOf<Uppy<Meta, Body>>()
+  expectTypeOf(core).toEqualTypeOf<Uppy<Meta, Record<string, never>>>()
 })
 
 test('Meta and Body generic move through the Uppy class', async () => {
