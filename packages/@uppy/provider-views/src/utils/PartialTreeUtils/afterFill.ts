@@ -7,7 +7,7 @@ import type {
 } from '@uppy/core/lib/Uppy'
 import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
 import PQueue from 'p-queue'
-import clone from './clone'
+import clone from './clone.ts'
 
 export interface ApiList {
   (directory: PartialTreeId): Promise<{

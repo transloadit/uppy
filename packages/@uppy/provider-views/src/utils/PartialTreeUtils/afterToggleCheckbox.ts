@@ -6,7 +6,7 @@ import type {
   PartialTreeFolderNode,
   PartialTreeId,
 } from '@uppy/core/lib/Uppy'
-import clone from './clone'
+import clone from './clone.ts'
 
 /*
   FROM        | TO
