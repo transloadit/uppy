@@ -1724,10 +1724,10 @@ export class Uppy<M extends Meta, B extends Body = Record<string, never>> {
   /**
    * Find one Plugin by name.
    */
-  getPlugin(id: string): UnknownPlugin<M, B> | undefined {
+  getPlugin<T extends UnknownPlugin<M, B>>(id: string): T | undefined {
     for (const plugins of Object.values(this.#plugins)) {
       const foundPlugin = plugins.find((plugin) => plugin.id === id)
-      if (foundPlugin != null) return foundPlugin
+      if (foundPlugin != null) return foundPlugin as T
     }
     return undefined
   }

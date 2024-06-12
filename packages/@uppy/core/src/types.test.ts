@@ -25,6 +25,12 @@ test('can .use() a plugin', async () => {
   expectTypeOf(core).toEqualTypeOf<Uppy<Meta, Record<string, never>>>()
 })
 
+test('can .getPlugin() with a generic', async () => {
+  const core = new Uppy().use(TestPlugin)
+  const plugin = core.getPlugin<TestPlugin<any, any>>('TestPlugin')
+  expectTypeOf(plugin).toEqualTypeOf<TestPlugin<any, any> | undefined>()
+})
+
 test('Meta and Body generic move through the Uppy class', async () => {
   type M = { foo: string }
   type B = { bar: string }
