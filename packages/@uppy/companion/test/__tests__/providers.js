@@ -222,14 +222,14 @@ describe('list provider files', () => {
     expect(items[0].name).toBe('album')
     expect(items[0].id).toBe('1')
     expect(items[0].requestPath).toBe('1')
-    expect(items[0].icon).toBe('https://test=w64-h64-c')
+    expect(items[0].icon).toBe('https://drive-thirdparty.googleusercontent.com/32/type/application/vnd.google-apps.folder')
     expect(items[0].thumbnail).toBe('https://test=w300-h300-c')
 
     expect(items[1].isFolder).toBe(true)
     expect(items[1].name).toBe('shared album')
     expect(items[1].id).toBe('2')
     expect(items[1].requestPath).toBe('2')
-    expect(items[1].icon).toBe('https://test2=w64-h64-c')
+    expect(items[1].icon).toBe('https://drive-thirdparty.googleusercontent.com/32/type/application/vnd.google-apps.folder')
     expect(items[1].thumbnail).toBe('https://test2=w300-h300-c')
   })
 
