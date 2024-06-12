@@ -209,58 +209,6 @@ describe('Dashboard with Transloadit', () => {
     })
   })
 
-  // Not working, the upstream changes have not landed yet.
-  it.skip('should create assembly if there is still one file to upload', () => {
-    cy.get('@file-input').selectFile(
-      [
-        'cypress/fixtures/images/cat.jpg',
-        'cypress/fixtures/images/traffic.jpg',
-      ],
-      { force: true },
-    )
-    cy.get('.uppy-StatusBar-actionBtn--upload').click()
-
-    cy.window().then(({ uppy }) => {
-      // eslint-disable-next-line
-      // @ts-ignore fix me
-      expect(
-        Object.values(uppy.getPlugin('Transloadit').activeAssemblies).length,
-      ).to.equal(0)
-
-      const { files } = uppy.getState()
-      const [fileID] = Object.keys(files)
-      uppy.removeFile(fileID)
-
-      cy.wait('@createAssemblies').then(() => {
-        cy.wait('@resumable')
-        cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Complete')
-      })
-    })
-  })
-
-  // Not working, the upstream changes have not landed yet.
-  it.skip('should complete upload if one gets cancelled mid-flight', () => {
-    cy.get('@file-input').selectFile(
-      [
-        'cypress/fixtures/images/cat.jpg',
-        'cypress/fixtures/images/traffic.jpg',
-      ],
-      { force: true },
-    )
-    cy.get('.uppy-StatusBar-actionBtn--upload').click()
-
-    cy.wait('@createAssemblies')
-    cy.wait('@resumable')
-
-    cy.window().then(({ uppy }) => {
-      const { files } = uppy.getState()
-      const [fileID] = Object.keys(files)
-      uppy.removeFile(fileID)
-
-      cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Complete')
-    })
-  })
-
   it('should not emit error if upload is cancelled right away', () => {
     cy.get('@file-input').selectFile('cypress/fixtures/images/cat.jpg', {
       force: true,

@@ -1,5 +1,26 @@
 # @uppy/transloadit
 
+## 3.7.1
+
+Released: 2024-06-11
+Included in: Uppy v3.26.1
+
+- @uppy/transloadit: fix transloadit:result event (Merlijn Vos / #5231)
+
+## 3.7.0
+
+Released: 2024-06-04
+Included in: Uppy v3.26.0
+
+- @uppy/transloadit: remove `updateNumberOfFilesInAssembly` (Merlijn Vos / #5202)
+
+## 3.6.2
+
+Released: 2024-05-23
+Included in: Uppy v3.25.5
+
+- @uppy/transloadit: do not cancel assembly when removing all files (Merlijn Vos / #5191)
+
 ## 3.6.0
 
 Released: 2024-03-27

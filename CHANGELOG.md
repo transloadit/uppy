@@ -12,6 +12,88 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 3.26.1
+
+Released: 2024-06-11
+
+| Package              | Version | Package              | Version |
+| -------------------- | ------- | -------------------- | ------- |
+| @uppy/locales        |   3.5.4 | @uppy/transloadit    |   3.7.1 |
+| @uppy/provider-views |  3.12.1 | uppy                 |  3.26.1 |
+
+- meta: Improve aws-node example readme (Artur Paikin / #4753)
+- @uppy/locales: Added translation string (it_IT) (Samuel / #5237)
+- @uppy/transloadit: fix transloadit:result event (Merlijn Vos / #5231)
+- @uppy/provider-views: fix wrong font for files (Merlijn Vos / #5234)
+
+
+## 3.26.0
+
+Released: 2024-06-04
+
+| Package                | Version | Package                | Version |
+| ---------------------- | ------- | ---------------------- | ------- |
+| @uppy/aws-s3-multipart |  3.12.0 | @uppy/webcam           |   3.4.2 |
+| @uppy/core             |  3.12.0 | uppy                   |  3.26.0 |
+| @uppy/transloadit      |   3.7.0 |                        |         |
+
+- meta: remove Companion's `prepublishOnly` (Mikael Finstad / #5220)
+- docs: document clearUploadedFiles (Merlijn Vos / #5204)
+- @uppy/webcam: add missing types for `recordedVideo` (Antoine du Hamel / #5208)
+- @uppy/core: check capabilities in clearUploadedFiles (Merlijn Vos / #5201)
+- @uppy/core: PartialTree - change the `maxTotalFileSize` error (Evgenia Karunus / #5203)
+- @uppy/transloadit: remove `updateNumberOfFilesInAssembly` (Merlijn Vos / #5202)
+- @uppy/aws-s3: resolve all headers on response (Merlijn Vos / #5195)
+- docs: Improve provider docs: OneDrive (Evgenia Karunus / #5196)
+
+
+## 3.25.5
+
+Released: 2024-05-23
+
+| Package           | Version | Package           | Version |
+| ----------------- | ------- | ----------------- | ------- |
+| @uppy/transloadit |   3.6.2 | uppy              |  3.25.5 |
+| @uppy/xhr-upload  |   3.6.7 |                   |         |
+
+- @uppy/transloadit: do not cancel assembly when removing all files (Merlijn Vos / #5191)
+- @uppy/xhr-upload: fix regression for lowercase HTTP methods (Antoine du Hamel / #5179)
+- meta: improve changelog generator (Antoine du Hamel / #5190)
+
+
+## 3.25.4
+
+Released: 2024-05-22
+
+| Package         | Version | Package         | Version |
+| --------------- | ------- | --------------- | ------- |
+| @uppy/companion |  4.13.3 | @uppy/tus       |   3.5.5 |
+| @uppy/svelte    |   3.1.5 | uppy            |  3.25.4 |
+
+- @uppy/svelte: do not attempt removing plugin before it's created (Antoine du Hamel / #5186)
+- docs: Update `facebook.mdx` (Evgenia Karunus)
+- @uppy/tus: fix no headers passed to companion if argument is a function (netdown / #5182)
+- @uppy/companion: fix google drive gsuite export large size (Milan Nakum / #5144)
+- meta: Improve provider docs: Box & Zoom (Evgenia Karunus / #5166)
+- meta: add MDX file to `lint-staged` list (Antoine du Hamel / #5174)
+- @uppy/companion: handle ws `'error'` event (Mikael Finstad / #5167)
+
+
+## 3.25.3
+
+Released: 2024-05-14
+
+| Package            | Version | Package            | Version |
+| ------------------ | ------- | ------------------ | ------- |
+| @uppy/core         |  3.11.3 | uppy               |  3.25.3 |
+| @uppy/image-editor |   2.4.6 |                    |         |
+
+- @uppy/image-editor: fix tooltips (Avneet Singh Malhotra / #5156)
+- meta: Remove redundant `plugins` prop from examples (Merlijn Vos / #5145)
+- @uppy/image-editor: Remove `target` option from examples and document consistently (Merlijn Vos / #5146)
+- @uppy/core: make getObjectOfFilesPerState more efficient (Merlijn Vos / #5155)
+
+
 ## 3.25.2
 
 Released: 2024-05-07

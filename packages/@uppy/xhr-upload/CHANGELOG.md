@@ -1,5 +1,12 @@
 # @uppy/xhr-upload
 
+## 3.6.7
+
+Released: 2024-05-23
+Included in: Uppy v3.25.5
+
+- @uppy/xhr-upload: fix regression for lowercase HTTP methods (Antoine du Hamel / #5179)
+
 ## 3.6.6
 
 Released: 2024-05-03

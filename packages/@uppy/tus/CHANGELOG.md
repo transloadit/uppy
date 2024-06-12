@@ -1,5 +1,12 @@
 # @uppy/tus
 
+## 3.5.5
+
+Released: 2024-05-22
+Included in: Uppy v3.25.4
+
+- @uppy/tus: fix no headers passed to companion if argument is a function (netdown / #5182)
+
 ## 3.5.1
 
 Released: 2024-02-19

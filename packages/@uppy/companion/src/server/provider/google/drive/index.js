@@ -18,7 +18,7 @@ const mockAccessTokenExpiredError = undefined
 // const mockAccessTokenExpiredError = true
 // const mockAccessTokenExpiredError = ''
 
-const DRIVE_FILE_FIELDS = 'kind,id,imageMediaMetadata,name,mimeType,ownedByMe,size,modifiedTime,iconLink,thumbnailLink,teamDriveId,videoMediaMetadata,shortcutDetails(targetId,targetMimeType)'
+const DRIVE_FILE_FIELDS = 'kind,id,imageMediaMetadata,name,mimeType,ownedByMe,size,modifiedTime,iconLink,thumbnailLink,teamDriveId,videoMediaMetadata,exportLinks,shortcutDetails(targetId,targetMimeType)'
 const DRIVE_FILES_FIELDS = `kind,nextPageToken,incompleteSearch,files(${DRIVE_FILE_FIELDS})`
 // using wildcard to get all 'drive' fields because specifying fields seems no to work for the /drives endpoint
 const SHARED_DRIVE_FIELDS = '*'
@@ -138,14 +138,29 @@ class Drive extends Provider {
     return withGoogleErrorHandling(Drive.authProvider, 'provider.drive.download.error', async () => {
       const client = getClient({ token })
 
-      const { mimeType, id } = await getStats({ id: idIn, token })
+      const { mimeType, id, exportLinks } = await getStats({ id: idIn, token })
 
       let stream
 
       if (isGsuiteFile(mimeType)) {
         const mimeType2 = getGsuiteExportType(mimeType)
         logger.info(`calling google file export for ${id} to ${mimeType2}`, 'provider.drive.export')
-        stream = client.stream.get(`files/${encodeURIComponent(id)}/export`, { searchParams: { supportsAllDrives: true, mimeType: mimeType2 }, responseType: 'json' })
+
+        // GSuite files exported with large converted size results in error using standard export method.
+        // Error message: "This file is too large to be exported.".
+        // Issue logged in Google APIs: https://github.com/googleapis/google-api-nodejs-client/issues/3446
+        // Implemented based on the answer from StackOverflow: https://stackoverflow.com/a/59168288
+        const mimeTypeExportLink = exportLinks?.[mimeType2]
+        if (mimeTypeExportLink) {
+          const gSuiteFilesClient = got.extend({
+            headers: {
+              authorization: `Bearer ${token}`,
+            },
+          })
+          stream = gSuiteFilesClient.stream.get(mimeTypeExportLink, { responseType: 'json' })
+        } else {
+          stream = client.stream.get(`files/${encodeURIComponent(id)}/export`, { searchParams: { supportsAllDrives: true, mimeType: mimeType2 }, responseType: 'json' })
+        }
       } else {
         stream = client.stream.get(`files/${encodeURIComponent(id)}`, { searchParams: { alt: 'media', supportsAllDrives: true }, responseType: 'json' })
       }

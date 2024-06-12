@@ -608,6 +608,16 @@ export class Uppy<M extends Meta, B extends Body> {
   // @todo next major: rename to `clear()`, make it also cancel ongoing uploads
   // or throw and say you need to cancel manually
   clearUploadedFiles(): void {
+    const { capabilities, currentUploads } = this.getState()
+    if (
+      Object.keys(currentUploads).length > 0 &&
+      !capabilities.individualCancellation
+    ) {
+      throw new Error(
+        'The installed uploader plugin does not allow removing files during an upload.',
+      )
+    }
+
     this.setState({ ...defaultUploadState, files: {} })
   }
 
@@ -1182,7 +1192,9 @@ export class Uppy<M extends Meta, B extends Body> {
         newFileIDs.length !== currentUploads[uploadID].fileIDs.length &&
         !capabilities.individualCancellation
       ) {
-        throw new Error('individualCancellation is disabled')
+        throw new Error(
+          'The installed uploader plugin does not allow removing files during an upload.',
+        )
       }
 
       updatedUploads[uploadID] = {

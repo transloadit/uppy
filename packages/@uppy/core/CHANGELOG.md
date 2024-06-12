@@ -1,5 +1,20 @@
 # @uppy/core
 
+## 3.12.0
+
+Released: 2024-06-04
+Included in: Uppy v3.26.0
+
+- @uppy/core: check capabilities in clearUploadedFiles (Merlijn Vos / #5201)
+- @uppy/core: PartialTree - change the `maxTotalFileSize` error (Evgenia Karunus / #5203)
+
+## 3.11.3
+
+Released: 2024-05-14
+Included in: Uppy v3.25.3
+
+- @uppy/core: make getObjectOfFilesPerState more efficient (Merlijn Vos / #5155)
+
 ## 3.11.2
 
 Released: 2024-05-07

@@ -1,5 +1,12 @@
 # @uppy/webcam
 
+## 3.4.2
+
+Released: 2024-06-04
+Included in: Uppy v3.26.0
+
+- @uppy/webcam: add missing types for `recordedVideo` (Antoine du Hamel / #5208)
+
 ## 3.4.0
 
 Released: 2024-03-27
