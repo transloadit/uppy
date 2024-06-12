@@ -1,45 +1,28 @@
 import remarkRetext from 'remark-retext'
 import { unified } from 'unified'
 import retextEnglish from 'retext-english'
+// eslint-disable-next-line import/no-unresolved
 import retextEquality from 'retext-equality'
+// eslint-disable-next-line import/no-unresolved
 import retextProfanities from 'retext-profanities'
 import retextQuotes from 'retext-quotes'
-import retextSimplify from 'retext-simplify'
 import retextSyntaxMentions from 'retext-syntax-mentions'
 
 export default [
   remarkRetext,
   unified()
     .use(retextEnglish)
-    .use(retextEquality, { ignore: ['disabled', 'host', 'hosts', 'invalid', 'whitespace', 'of course'] })
-    .use(retextProfanities, { sureness: 1 })
-    .use(retextQuotes)
-    .use(retextSimplify, {
+    .use(retextEquality, {
       ignore: [
-        'accurate',
-        'address',
-        'alternatively',
-        'component',
-        'equivalent',
-        'function',
-        'identify',
-        'implement',
-        'initial',
-        'interface',
-        'maintain',
-        'maximum',
-        'minimum',
-        'option',
-        'parameters',
-        'provide',
-        'render',
-        'request',
-        'selection',
-        'submit',
-        'type',
-        'validate',
-        'however',
+        'disabled',
+        'host',
+        'hosts',
+        'invalid',
+        'whitespace',
+        'of course',
       ],
     })
+    .use(retextProfanities, { sureness: 1 })
+    .use(retextQuotes)
     .use(retextSyntaxMentions),
 ]
