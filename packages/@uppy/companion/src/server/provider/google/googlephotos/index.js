@@ -99,7 +99,8 @@ class GooglePhotos extends Provider {
       const adaptedItems = [
         ...albums.map((album) => ({
           isFolder: true,
-          icon: getIcon(album.coverPhotoBaseUrl),
+          icon: 'https://drive-thirdparty.googleusercontent.com/32/type/application/vnd.google-apps.folder',
+          mimeType: 'application/vnd.google-apps.folder',
           thumbnail: getThumbnail(album.coverPhotoBaseUrl),
           name: album.title,
           id: album.id,
@@ -107,7 +108,8 @@ class GooglePhotos extends Provider {
         })),
         ...sharedAlbums.map((sharedAlbum) => ({
           isFolder: true,
-          icon: getIcon(sharedAlbum.coverPhotoBaseUrl),
+          icon: 'https://drive-thirdparty.googleusercontent.com/32/type/application/vnd.google-apps.folder',
+          mimeType: 'application/vnd.google-apps.folder',
           thumbnail: getThumbnail(sharedAlbum.coverPhotoBaseUrl),
           name: sharedAlbum.title,
           id: sharedAlbum.id,
