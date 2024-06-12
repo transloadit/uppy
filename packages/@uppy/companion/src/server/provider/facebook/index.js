@@ -1,24 +1,15 @@
+const crypto = require('node:crypto');
+
 const Provider = require('../Provider')
 const { getURLMeta } = require('../../helpers/request')
 const logger = require('../../logger')
 const { adaptData, sortImages } = require('./adapter')
 const { withProviderErrorHandling } = require('../providerErrors')
 const { prepareStream } = require('../../helpers/utils')
+const { StreamHttpJsonError } = require('../../helpers/utils')
 
 const got = require('../../got')
 
-const getClient = async ({ token }) => (await got).extend({
-  prefixUrl: 'https://graph.facebook.com',
-  headers: {
-    authorization: `Bearer ${token}`,
-  },
-})
-
-async function getMediaUrl ({ token, id }) {
-  const body = await (await getClient({ token })).get(String(id), { searchParams: { fields: 'images' }, responseType: 'json' }).json()
-  const sortedImages = sortImages(body.images)
-  return sortedImages[sortedImages.length - 1].source
-}
 
 /**
  * Adapter for API https://developers.facebook.com/docs/graph-api/using-graph-api/
@@ -27,6 +18,49 @@ class Facebook extends Provider {
   static get oauthProvider () {
     return 'facebook'
   }
+
+  async runRequestBatch({ token, requests }) {
+    // https://developers.facebook.com/docs/facebook-login/security/#appsecret
+    // couldn't get `appsecret_time` working, but it seems to be working without it
+    // const time = Math.floor(Date.now() / 1000)
+    const appSecretProof = crypto.createHmac('sha256', this.secret)
+      // .update(`${token}|${time}`)
+      .update(token)
+      .digest('hex');
+  
+    const form = new FormData()
+    form.append('access_token', token)
+    form.append('appsecret_proof', appSecretProof)
+    // form.append('appsecret_time', String(time))
+    form.append('batch', JSON.stringify(requests))
+  
+    const responsesRaw = await (await got).post('https://graph.facebook.com', {
+      // @ts-expect-error todo types
+      body: form,
+    }).json()
+
+    const responses = responsesRaw.map((response) => ({ ...response, body: JSON.parse(response.body) }))
+
+    responses.forEach((response) => {
+      if (response.code !== 200) {
+        throw new StreamHttpJsonError({ statusCode: response.code, responseJson: response.body })
+      }
+    })
+
+    return responses
+  }
+  
+  async getMediaUrl ({ token, id }) {
+    const [{ body }] = await this.runRequestBatch({
+      token,
+      requests: [
+        { method: 'GET', relative_url: `${id}?${new URLSearchParams({ fields: 'images' }).toString()}` },
+      ],
+    });
+  
+    const sortedImages = sortImages(body.images)
+    return sortedImages[sortedImages.length - 1].source
+  }  
 
   async list ({ directory, token, query = { cursor: null } }) {
     return this.#withErrorHandling('provider.facebook.list.error', async () => {
@@ -40,19 +74,23 @@ class Facebook extends Provider {
         qs.fields = 'icon,images,name,width,height,created_time'
       }
 
-      const client = await getClient({ token })
+      const [response1, response2] = await this.runRequestBatch({
+        token,
+        requests: [
+          { method: 'GET', relative_url: `me?${new URLSearchParams({ fields: 'email' }).toString()}` },
+          { method: 'GET', relative_url: `${path}?${new URLSearchParams(qs)}` },
+        ],
+      });
 
-      const [{ email }, list] = await Promise.all([
-        client.get('me', { searchParams: { fields: 'email' }, responseType: 'json' }).json(),
-        client.get(path, { searchParams: qs, responseType: 'json' }).json(),
-      ])
+      const { email } = response1.body
+      const list = response2.body
       return adaptData(list, email, directory, query)
     })
   }
 
   async download ({ id, token }) {
     return this.#withErrorHandling('provider.facebook.download.error', async () => {
-      const url = await getMediaUrl({ token, id })
+      const url = await this.getMediaUrl({ token, id })
       const stream = (await got).stream.get(url, { responseType: 'json' })
       await prepareStream(stream)
       return { stream }
@@ -68,7 +106,7 @@ class Facebook extends Provider {
 
   async size ({ id, token }) {
     return this.#withErrorHandling('provider.facebook.size.error', async () => {
-      const url = await getMediaUrl({ token, id })
+      const url = await this.getMediaUrl({ token, id })
       const { size } = await getURLMeta(url)
       return size
     })
@@ -76,7 +114,13 @@ class Facebook extends Provider {
 
   async logout ({ token }) {
     return this.#withErrorHandling('provider.facebook.logout.error', async () => {
-      await (await getClient({ token })).delete('me/permissions', { responseType: 'json' }).json()
+      await this.runRequestBatch({
+        token,
+        requests: [
+          { method: 'DELETE', relative_url: 'me/permissions' },
+        ],
+      });
+  
       return { revoked: true }
     })
   }

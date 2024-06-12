@@ -19,8 +19,9 @@ const defaults = require('../fixtures/constants')
 const tokenService = require('../../src/server/helpers/jwt')
 const { getServer } = require('../mockserver')
 
+const secret = process.env.COMPANION_SECRET
 // todo don't share server between tests. rewrite to not use env variables
-const authServer = getServer({ COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT: '0' })
+const authServer = getServer({ COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT: '0', COMPANION_SECRET: secret })
 const OAUTH_STATE = 'some-cool-nice-encrytpion'
 const providers = require('../../src/server/provider').getDefaultProviders()
 
@@ -34,7 +35,7 @@ const authData = {}
 providerNames.forEach((provider) => {
   authData[provider] = { accessToken: 'token value' }
 })
-const token = tokenService.generateEncryptedAuthToken(authData, process.env.COMPANION_SECRET)
+const token = tokenService.generateEncryptedAuthToken(authData, secret)
 
 const thisOrThat = (value1, value2) => {
   if (value1 !== undefined) {
