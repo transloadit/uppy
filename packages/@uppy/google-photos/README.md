@@ -48,4 +48,4 @@ Documentation for this plugin can be found on the
 
 ## License
 
-[The MIT License](./LICENSE).
+The [MIT License](./LICENSE).
