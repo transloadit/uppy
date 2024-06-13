@@ -75,11 +75,6 @@ function getSTSClient() {
 
 app.use(bodyParser.urlencoded({ extended: true }), bodyParser.json())
 
-app.get('/drag', (req, res) => {
-  const htmlPath = path.join(__dirname, 'public', 'drag.html')
-  res.sendFile(htmlPath)
-})
-
 app.get('/s3/sts', (req, res, next) => {
   // Before giving the STS token to the client, you should first check is they
   // are authorized to perform that operation, and if the request is legit.
