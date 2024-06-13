@@ -2,6 +2,13 @@
 
 These cover all the major Uppy versions and how to migrate to them.
 
+## Migrate from Uppy 3.x to 4.x
+
+### Companion
+
+- The option `getKey(req, filename, metadata)` has changed signature to `getKey({ filename, metadata, req })`
+- The option `bucket(req, metadata)` has changed signature to `bucketOrFn({ req, metadata, filename })`
+
 ## Migrate from Robodog to Uppy plugins
 
 Uppy is flexible and extensible through plugins. But the integration code could
