@@ -102,6 +102,22 @@ const { someThingMyBackendReturns } = uppy.getFile(id).response;
   about this in the
   [plugin docs](https://uppy.io/docs/aws-s3-multipart/#when-should-i-use-it).
 - Remove deprecated `prepareUploadParts` option.
+- Companion’s options (`companionUrl`, `companionHeaders`, and
+  `companionCookieRules`) are renamed to more generic names (`endpoint`,
+  `headers`, and `cookieRules`).
+
+  Using Companion with the `@uppy/aws-s3` plugin only makes sense if you already
+  need Companion for remote providers (such as Google Drive). When using your
+  own backend, you can let Uppy do all the heavy lifting on the client which it
+  would normally do for Companion, so you don’t have to implement that yourself.
+
+  As long as you return the JSON for the expected endpoints (see our
+  [server example](https://github.com/transloadit/uppy/blob/main/examples/aws-nodejs/index.js)),
+  you only need to set `endpoint`.
+
+  If you are using Companion, rename the options. If you have a lot of
+  client-side complexity (`createMultipartUpload`, `signPart`, etc), consider
+  letting Uppy do this for you.
 
 ### `@uppy/core`
 

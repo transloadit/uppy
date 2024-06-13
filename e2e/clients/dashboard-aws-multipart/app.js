@@ -9,7 +9,7 @@ const uppy = new Uppy()
   .use(Dashboard, { target: '#app', inline: true })
   .use(AwsS3Multipart, {
     limit: 2,
-    companionUrl: process.env.VITE_COMPANION_URL,
+    endpoint: process.env.VITE_COMPANION_URL,
     shouldUseMultipart: true,
   })
 

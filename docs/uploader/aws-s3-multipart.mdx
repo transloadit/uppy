@@ -166,7 +166,7 @@ import '@uppy/dashboard/dist/style.min.css';
 const uppy = new Uppy()
 	.use(Dashboard, { inline: true, target: 'body' })
 	.use(AwsS3, {
-		companionUrl: 'https://companion.uppy.io',
+		endpoint: 'https://companion.uppy.io',
 	});
 ```
 
@@ -215,22 +215,23 @@ uploaded.
 
 :::
 
-#### `companionUrl`
+#### `endpoint`
 
-URL to a [Companion](/docs/companion) instance (`string`, default: `null`).
+URL to your backend or to [Companion](/docs/companion) (`string`, default:
+`null`).
 
-#### `companionHeaders`
+#### `headers`
 
-Custom headers that should be sent along to [Companion](/docs/companion) on
-every request (`Object`, default: `{}`).
+Custom headers that should be sent along to the [`endpoint`](#endpoint) on every
+request (`Object`, default: `{}`).
 
-#### `companionCookiesRule`
+#### `cookiesRule`
 
 This option correlates to the
 [RequestCredentials value](https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials)
 (`string`, default: `'same-origin'`).
 
-This tells the plugin whether to send cookies to [Companion](/docs/companion).
+This tells the plugin whether to send cookies to the [`endpoint`](#endpoint).
 
 #### `retryDelays`
 
@@ -432,7 +433,7 @@ upload sources), you can pass a boolean:
 ```js
 uppy.use(AwsS3, {
 	// This is an example using Companion:
-	companionUrl: 'http://companion.uppy.io',
+	endpoint: 'http://companion.uppy.io',
 	getTemporarySecurityCredentials: true,
 	shouldUseMultipart: (file) => file.size > 100 * 2 ** 20,
 });
