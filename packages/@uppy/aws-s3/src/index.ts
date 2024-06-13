@@ -545,8 +545,9 @@ export default class AwsS3Multipart<
           .then(assertServerError)
       } else {
         this.#cachedTemporaryCredentials =
-          // @ts-expect-error It's either a function or `false`, which should error.
-          getTemporarySecurityCredentials(options)
+          (getTemporarySecurityCredentials as AWSS3WithoutCompanion['getTemporarySecurityCredentials'])!(
+            options,
+          )
       }
       this.#cachedTemporaryCredentials = await this.#cachedTemporaryCredentials
       setTimeout(
