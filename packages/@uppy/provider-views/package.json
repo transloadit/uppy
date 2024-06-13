@@ -24,11 +24,11 @@
     "p-queue": "^8.0.0",
     "preact": "^10.5.13"
   },
+  "devDependencies": {
+    "vitest": "^1.6.0"
+  },
   "peerDependencies": {
     "@uppy/core": "workspace:^"
   },
-  "stableVersion": "3.11.0",
-  "devDependencies": {
-    "vitest": "^1.6.0"
-  }
+  "stableVersion": "3.11.0"
 }
