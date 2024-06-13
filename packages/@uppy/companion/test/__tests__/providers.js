@@ -25,10 +25,11 @@ const OAUTH_STATE = 'some-cool-nice-encrytpion'
 const providers = require('../../src/server/provider').getDefaultProviders()
 
 const providerNames = Object.keys(providers)
-const AUTH_PROVIDERS = {
-  drive: 'google',
-  onedrive: 'microsoft',
-}
+const oauthProviders = Object.fromEntries(
+  Object.entries(providers).flatMap(([name, provider]) => (
+    provider.oauthProvider != null ? [[name, provider.oauthProvider]] : []
+  ))
+)
 const authData = {}
 providerNames.forEach((provider) => {
   authData[provider] = { accessToken: 'token value' }
@@ -157,7 +158,7 @@ describe('list provider files', () => {
       kind: 'drive#driveList', drives: [],
     })
 
-    nock('https://www.googleapis.com').get('/drive/v3/files?fields=kind%2CnextPageToken%2CincompleteSearch%2Cfiles%28kind%2Cid%2CimageMediaMetadata%2Cname%2CmimeType%2CownedByMe%2Csize%2CmodifiedTime%2CiconLink%2CthumbnailLink%2CteamDriveId%2CvideoMediaMetadata%2CshortcutDetails%28targetId%2CtargetMimeType%29%29&q=%28%27root%27+in+parents%29+and+trashed%3Dfalse&pageSize=1000&orderBy=folder%2Cname&includeItemsFromAllDrives=true&supportsAllDrives=true').reply(200, {
+    nock('https://www.googleapis.com').get('/drive/v3/files?fields=kind%2CnextPageToken%2CincompleteSearch%2Cfiles%28kind%2Cid%2CimageMediaMetadata%2Cname%2CmimeType%2CownedByMe%2Csize%2CmodifiedTime%2CiconLink%2CthumbnailLink%2CteamDriveId%2CvideoMediaMetadata%2CexportLinks%2CshortcutDetails%28targetId%2CtargetMimeType%29%29&q=%28%27root%27+in+parents%29+and+trashed%3Dfalse&pageSize=1000&orderBy=folder%2Cname&includeItemsFromAllDrives=true&supportsAllDrives=true').reply(200, {
       kind: 'drive#fileList',
       nextPageToken: defaults.NEXT_PAGE_TOKEN,
       files: [
@@ -372,16 +373,16 @@ describe('provider file gets downloaded from', () => {
 })
 
 describe('connect to provider', () => {
-  test.each(providerNames)('connect to %s via grant.js endpoint', (providerName) => {
-    const authProvider = AUTH_PROVIDERS[providerName] || providerName
+  test.each(providerNames)('connect to %s via grant.js endpoint', async (providerName) => {
+    const oauthProvider = oauthProviders[providerName]
 
-    if (authProvider.authProvider == null) return
+    if (oauthProvider == null) return
 
-    request(authServer)
+    await request(authServer)
       .get(`/${providerName}/connect?foo=bar`)
       .set('uppy-auth-token', token)
       .expect(302)
-      .expect('Location', `http://localhost:3020/connect/${authProvider}?state=${OAUTH_STATE}`)
+      .expect('Location', `http://localhost:3020/connect/${oauthProvider}?state=${OAUTH_STATE}`)
   })
 })
 

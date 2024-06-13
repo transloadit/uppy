@@ -24,14 +24,14 @@ async function getMediaUrl ({ token, id }) {
  */
 class Instagram extends Provider {
   // for "grant"
-  static getExtraConfig () {
+  static getExtraGrantConfig () {
     return {
       protocol: 'https',
       scope: ['user_profile', 'user_media'],
     }
   }
 
-  static get authProvider () {
+  static get oauthProvider () {
     return 'instagram'
   }
 
@@ -70,7 +70,7 @@ class Instagram extends Provider {
   async size ({ id, token }) {
     return this.#withErrorHandling('provider.instagram.size.error', async () => {
       const url = await getMediaUrl({ token, id })
-      const { size } = await getURLMeta(url, true)
+      const { size } = await getURLMeta(url)
       return size
     })
   }
@@ -86,7 +86,7 @@ class Instagram extends Provider {
     return withProviderErrorHandling({
       fn,
       tag,
-      providerName: Instagram.authProvider,
+      providerName: Instagram.oauthProvider,
       isAuthError: (response) => typeof response.body === 'object' && response.body?.error?.code === 190, // Invalid OAuth 2.0 Access Token
       getJsonErrorMessage: (body) => body?.error?.message,
     })

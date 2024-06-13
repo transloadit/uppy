@@ -197,9 +197,7 @@ export default class XHRUpload<
               if (event.lengthComputable) {
                 for (const file of files) {
                   this.uppy.emit('upload-progress', file, {
-                    // TODO: do not send `uploader` in next major
-                    // @ts-expect-error we can't type this and we should remove it
-                    uploader: this,
+                    uploadStarted: file.progress.uploadStarted ?? 0,
                     bytesUploaded: (event.loaded / event.total) * file.size!,
                     bytesTotal: file.size,
                   })
@@ -347,10 +345,8 @@ export default class XHRUpload<
     })
 
     events.onFileRemove(file.id, () => controller.abort())
-    events.onCancelAll(file.id, ({ reason }) => {
-      if (reason === 'user') {
-        controller.abort()
-      }
+    events.onCancelAll(file.id, () => {
+      controller.abort()
     })
 
     try {

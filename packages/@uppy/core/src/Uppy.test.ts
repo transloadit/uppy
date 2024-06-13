@@ -363,7 +363,7 @@ describe('src/Core', () => {
     core.cancelAll()
 
     expect(coreCancelEventMock).toHaveBeenCalledWith(
-      { reason: 'user' },
+      undefined,
       undefined,
       undefined,
       undefined,
@@ -492,7 +492,7 @@ describe('src/Core', () => {
 
     assert.throws(
       () => core.removeFile(fileIDs[0]),
-      /individualCancellation is disabled/,
+      /The installed uploader plugin does not allow removing files during an upload/,
     )
 
     expect(core.getState().currentUploads[id]).toBeDefined()
@@ -555,7 +555,7 @@ describe('src/Core', () => {
     core.destroy()
 
     expect(coreCancelEventMock).toHaveBeenCalledWith(
-      { reason: 'user' },
+      undefined,
       undefined,
       undefined,
       undefined,
@@ -692,7 +692,7 @@ describe('src/Core', () => {
       })
       expect(core.getFile(fileId).progress).toEqual({
         percentage: 0,
-        bytesUploaded: 0,
+        bytesUploaded: false,
         bytesTotal: 17175,
         uploadComplete: false,
         uploadStarted: null,
@@ -719,7 +719,7 @@ describe('src/Core', () => {
       })
       expect(core.getFile(fileID).progress).toEqual({
         percentage: 0,
-        bytesUploaded: 0,
+        bytesUploaded: false,
         bytesTotal: 17175,
         uploadComplete: false,
         uploadStarted: null,
@@ -788,7 +788,7 @@ describe('src/Core', () => {
       })
       expect(core.getFile(fileId).progress).toEqual({
         percentage: 0,
-        bytesUploaded: 0,
+        bytesUploaded: false,
         bytesTotal: 17175,
         uploadComplete: false,
         uploadStarted: null,
@@ -815,7 +815,7 @@ describe('src/Core', () => {
       })
       expect(core.getFile(fileId).progress).toEqual({
         percentage: 0,
-        bytesUploaded: 0,
+        bytesUploaded: false,
         bytesTotal: 17175,
         uploadComplete: false,
         uploadStarted: null,
@@ -919,12 +919,12 @@ describe('src/Core', () => {
         isGhost: false,
         progress: {
           bytesTotal: 17175,
-          bytesUploaded: 0,
+          bytesUploaded: false,
           percentage: 0,
           uploadComplete: false,
           uploadStarted: null,
         },
-        remote: '',
+        remote: undefined,
         size: 17175,
         source: 'vi',
         type: 'image/jpeg',
@@ -1766,10 +1766,7 @@ describe('src/Core', () => {
 
       const uploadPromise = core.upload()
       await Promise.all([
-        // @ts-ignore deprecated
         new Promise((resolve) => core.once('upload-start', resolve)),
-        // todo backward compat: remove in next major
-        new Promise((resolve) => core.once('upload-started', resolve)),
       ])
 
       expect(core.getFiles()[0].size).toBeNull()
@@ -1902,10 +1899,8 @@ describe('src/Core', () => {
       expect(core.getState().totalProgress).toEqual(66)
     })
 
-    it('should reset the progress', () => {
-      const resetProgressEvent = vi.fn()
+    it('should emit the progress', () => {
       const core = new Core()
-      core.on('reset-progress', resetProgressEvent)
 
       core.addFile({
         source: 'vi',
@@ -1946,29 +1941,9 @@ describe('src/Core', () => {
       core.calculateProgress.flush()
 
       expect(core.getState().totalProgress).toEqual(66)
-
-      core.resetProgress()
-
-      expect(core.getFile(file1.id).progress).toEqual({
-        percentage: 0,
-        bytesUploaded: 0,
-        bytesTotal: 17175,
-        uploadComplete: false,
-        uploadStarted: null,
-      })
-      expect(core.getFile(file2.id).progress).toEqual({
-        percentage: 0,
-        bytesUploaded: 0,
-        bytesTotal: 17175,
-        uploadComplete: false,
-        uploadStarted: null,
-      })
-      expect(core.getState().totalProgress).toEqual(0)
       expect(core.getState().allowNewUpload).toEqual(true)
       expect(core.getState().error).toEqual(null)
       expect(core.getState().recoveredState).toEqual(null)
-
-      expect(resetProgressEvent.mock.calls.length).toEqual(1)
     })
   })
 
@@ -2160,7 +2135,7 @@ describe('src/Core', () => {
     it('should enforce the maxTotalFileSize rule', () => {
       const core = new Core({
         restrictions: {
-          maxTotalFileSize: 34000,
+          maxTotalFileSize: 20000,
         },
       })
 
@@ -2179,7 +2154,9 @@ describe('src/Core', () => {
           data: testImage,
         })
       }).toThrowError(
-        new Error('foo1.jpg exceeds maximum allowed size of 33 KB'),
+        new Error(
+          'You selected 34 KB of files, but maximum allowed size is 20 KB',
+        ),
       )
     })
 

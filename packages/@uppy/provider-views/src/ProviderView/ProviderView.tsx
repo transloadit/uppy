@@ -343,7 +343,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
         this.setLoading(true)
         await this.provider.login({ authFormData, signal })
         this.plugin.setPluginState({ authenticated: true })
-        this.preFirstRender()
+        await this.getFolder(this.plugin.rootFolderId || undefined)
       })
     } catch (err) {
       if (err.name === 'UserFacingApiError') {
@@ -552,7 +552,9 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
     const { i18n } = this.plugin.uppy
 
     if (!didFirstRender) {
-      this.preFirstRender()
+      this.plugin.setPluginState({ didFirstRender: true })
+      this.provider.fetchPreAuthToken()
+      this.getFolder(this.plugin.rootFolderId || undefined)
     }
 
     const targetViewOptions = { ...this.opts, ...viewOptions }

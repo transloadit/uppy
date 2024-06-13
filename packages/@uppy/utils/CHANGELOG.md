@@ -1,5 +1,13 @@
 # @uppy/utils
 
+## 6.0.0-beta.8
+
+Released: 2024-06-04
+Included in: Uppy v4.0.0-beta.10
+
+- @uppy/utils: remove unused `settle` (Antoine du Hamel / #5210)
+- @uppy/aws-s3,@uppy/tus,@uppy/utils,@uppy/xhr-upload: remove `uploader` from `upload-progress` event (Mikael Finstad / #5200)
+
 ## 6.0.0-beta.5
 
 Released: 2024-05-03

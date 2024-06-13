@@ -15,6 +15,7 @@ export default class MyCustomProvider extends UIPlugin {
     this.type = 'acquirer'
     this.storage = this.opts.storage || tokenStorage
     this.files = []
+    this.rootFolderId = null
 
     this.icon = () => (
       <svg width="32" height="32" xmlns="http://www.w3.org/2000/svg">
@@ -68,10 +69,6 @@ export default class MyCustomProvider extends UIPlugin {
   uninstall() {
     this.view.tearDown()
     this.unmount()
-  }
-
-  onFirstRender() {
-    return this.view.getFolder()
   }
 
   render(state) {

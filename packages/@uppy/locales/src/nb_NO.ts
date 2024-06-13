@@ -177,11 +177,4 @@ nb_NO.strings = {
   zoomOut: 'Zoom ut',
 }
 
-// TODO: remove this in the next major?
-// @ts-expect-error Uppy can be a global in legacy bundle
-if (typeof Uppy !== 'undefined') {
-  // @ts-expect-error Uppy can be a global in legacy bundle
-  globalThis.Uppy.locales.nb_NO = nb_NO
-}
-
 export default nb_NO

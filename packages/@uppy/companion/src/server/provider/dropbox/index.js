@@ -60,7 +60,7 @@ class DropBox extends Provider {
     this.needsCookieAuth = true
   }
 
-  static get authProvider () {
+  static get oauthProvider () {
     return 'dropbox'
   }
 
@@ -141,7 +141,7 @@ class DropBox extends Provider {
     return withProviderErrorHandling({
       fn,
       tag,
-      providerName: DropBox.authProvider,
+      providerName: DropBox.oauthProvider,
       isAuthError: (response) => response.statusCode === 401,
       getJsonErrorMessage: (body) => body?.error_summary,
     })

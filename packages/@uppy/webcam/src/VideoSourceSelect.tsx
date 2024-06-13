@@ -1,7 +1,7 @@
 import { h, type ComponentChild } from 'preact'
 
 export interface VideoSourceSelectProps {
-  currentDeviceId: string | null
+  currentDeviceId: string | MediaStreamTrack | null | undefined
   videoSources: MediaDeviceInfo[]
   onChangeVideoSource: (deviceId: string) => void
 }

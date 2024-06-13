@@ -169,11 +169,4 @@ zh_TW.strings = {
   zoomOut: '縮小',
 }
 
-// TODO: remove this in the next major?
-// @ts-expect-error Uppy can be a global in legacy bundle
-if (typeof Uppy !== 'undefined') {
-  // @ts-expect-error Uppy can be a global in legacy bundle
-  globalThis.Uppy.locales.zh_TW = zh_TW
-}
-
 export default zh_TW

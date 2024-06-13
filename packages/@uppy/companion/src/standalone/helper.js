@@ -28,8 +28,8 @@ const getSecret = (baseEnvVar) => {
  *
  * @returns {string}
  */
-exports.generateSecret = () => {
-  logger.warn('auto-generating server secret because none was specified', 'startup.secret')
+exports.generateSecret = (secretName) => {
+  logger.warn(`auto-generating server ${secretName} because none was specified`, 'startup.secret')
   return crypto.randomBytes(64).toString('hex')
 }
 
@@ -137,8 +137,7 @@ const getConfigFromEnv = () => {
       oauthDomain: process.env.COMPANION_OAUTH_DOMAIN,
       validHosts,
     },
-    // todo next major make this default false
-    enableUrlEndpoint: process.env.COMPANION_ENABLE_URL_ENDPOINT == null || process.env.COMPANION_ENABLE_URL_ENDPOINT === 'true',
+    enableUrlEndpoint: process.env.COMPANION_ENABLE_URL_ENDPOINT === 'true',
     periodicPingUrls: process.env.COMPANION_PERIODIC_PING_URLS ? process.env.COMPANION_PERIODIC_PING_URLS.split(',') : [],
     periodicPingInterval: process.env.COMPANION_PERIODIC_PING_INTERVAL
       ? parseInt(process.env.COMPANION_PERIODIC_PING_INTERVAL, 10) : undefined,

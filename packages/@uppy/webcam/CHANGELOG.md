@@ -1,5 +1,12 @@
 # @uppy/webcam
 
+## 4.0.0-beta.8
+
+Released: 2024-06-04
+Included in: Uppy v4.0.0-beta.10
+
+- @uppy/webcam: remove `facingMode` option (Mikael Finstad / #5200)
+
 ## 4.0.0-beta.6
 
 Released: 2024-05-14
@@ -14,6 +21,13 @@ Included in: Uppy v4.0.0-beta.1
 
 - @uppy/audio,@uppy/dashboard,@uppy/drop-target,@uppy/webcam: add missing exports (Antoine du Hamel / #5014)
 - @uppy/webcam: refactor to TypeScript (Antoine du Hamel / #4870)
+
+## 3.4.2
+
+Released: 2024-06-04
+Included in: Uppy v3.26.0
+
+- @uppy/webcam: add missing types for `recordedVideo` (Antoine du Hamel / #5208)
 
 ## 3.4.0
 

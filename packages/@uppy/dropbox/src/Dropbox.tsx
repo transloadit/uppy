@@ -35,6 +35,8 @@ export default class Dropbox<M extends Meta, B extends Body> extends UIPlugin<
 
   files: UppyFile<M, B>[]
 
+  rootFolderId: string | null = null
+
   constructor(uppy: Uppy<M, B>, opts: DropboxOptions) {
     super(uppy, opts)
     this.id = this.opts.id || 'Dropbox'
@@ -77,7 +79,6 @@ export default class Dropbox<M extends Meta, B extends Body> extends UIPlugin<
     this.i18nInit()
     this.title = this.i18n('pluginNameDropbox')
 
-    this.onFirstRender = this.onFirstRender.bind(this)
     this.render = this.render.bind(this)
   }
 
@@ -96,13 +97,6 @@ export default class Dropbox<M extends Meta, B extends Body> extends UIPlugin<
   uninstall(): void {
     this.view.tearDown()
     this.unmount()
-  }
-
-  async onFirstRender(): Promise<void> {
-    await Promise.all([
-      this.provider.fetchPreAuthToken(),
-      this.view.getFolder(),
-    ])
   }
 
   render(state: unknown): ComponentChild {

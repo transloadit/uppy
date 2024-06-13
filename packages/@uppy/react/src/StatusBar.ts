@@ -52,9 +52,10 @@ class StatusBar<M extends Meta, B extends Body> extends Component<
       showProgressDetails,
       hideAfterFinish,
       doneButtonHandler,
+      id,
     } = this.props
     const options = {
-      id: 'react:StatusBar',
+      id: id || 'StatusBar',
       hideUploadButton,
       hideRetryButton,
       hidePauseResumeButton,

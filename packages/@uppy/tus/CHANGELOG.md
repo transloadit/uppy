@@ -1,5 +1,12 @@
 # @uppy/tus
 
+## 4.0.0-beta.6
+
+Released: 2024-06-04
+Included in: Uppy v4.0.0-beta.10
+
+- @uppy/aws-s3,@uppy/tus,@uppy/utils,@uppy/xhr-upload: remove `uploader` from `upload-progress` event (Mikael Finstad / #5200)
+
 ## 4.0.0-beta.4
 
 Released: 2024-05-03
@@ -13,6 +20,13 @@ Released: 2024-03-28
 Included in: Uppy v4.0.0-beta.1
 
 - @uppy/aws-s3-multipart,@uppy/tus,@uppy/utils,@uppy/xhr-upload: Make `allowedMetaFields` consistent (Merlijn Vos / #5011)
+
+## 3.5.5
+
+Released: 2024-05-22
+Included in: Uppy v3.25.4
+
+- @uppy/tus: fix no headers passed to companion if argument is a function (netdown / #5182)
 
 ## 3.5.1
 
