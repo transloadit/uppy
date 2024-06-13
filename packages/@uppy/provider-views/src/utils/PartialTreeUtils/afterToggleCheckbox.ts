@@ -6,7 +6,7 @@ import type {
   PartialTreeFolderNode,
   PartialTreeId,
 } from '@uppy/core/lib/Uppy'
-import clone from './clone.ts'
+import shallowClone from './shallowClone.ts'
 
 /*
   FROM        | TO
@@ -85,7 +85,7 @@ const afterToggleCheckbox = (
   oldTree: PartialTree,
   clickedRange: string[],
 ): PartialTree => {
-  const tree: PartialTree = clone(oldTree)
+  const tree: PartialTree = shallowClone(oldTree)
 
   if (clickedRange.length >= 2) {
     // We checked two or more items

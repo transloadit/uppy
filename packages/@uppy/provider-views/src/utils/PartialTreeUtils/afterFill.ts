@@ -7,7 +7,7 @@ import type {
 } from '@uppy/core/lib/Uppy'
 import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
 import PQueue from 'p-queue'
-import clone from './clone.ts'
+import shallowClone from './shallowClone.ts'
 
 export interface ApiList {
   (directory: PartialTreeId): Promise<{
@@ -79,7 +79,7 @@ const afterFill = async (
   const queue = new PQueue({ concurrency: 6 })
 
   // fill up the missing parts of a partialTree!
-  const poorTree: PartialTree = clone(partialTree)
+  const poorTree: PartialTree = shallowClone(partialTree)
   const poorFolders = poorTree.filter(
     (item) =>
       item.type === 'folder' &&
