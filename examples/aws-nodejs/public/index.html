@@ -12,7 +12,7 @@
       <div id="uppy-sign-on-server"></div>
     </details>
     <details name="uppy">
-      <summary>Sign on the client</summary>
+      <summary>Sign on the client (if WebCrypto is available)</summary>
       <div id="uppy-sign-on-client"></div>
     </details>
     <footer>
@@ -60,7 +60,7 @@
           .use(AwsS3, {
             id: 'myAWSPlugin',
             endpoint: '/',
-            getTemporarySecurityCredentials: true,
+            getTemporarySecurityCredentials: typeof crypto?.subtle === 'object',
           })
 
         uppy.on('complete', onUploadComplete)
