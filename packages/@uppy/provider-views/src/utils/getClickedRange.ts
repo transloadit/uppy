@@ -19,13 +19,10 @@ const getClickedRange = (
     const newCheckboxIndex = displayedPartialTree.findIndex(
       (item) => item.id === clickedId,
     )
-    const clickedRange = (
-      lastCheckboxIndex < newCheckboxIndex ?
-        displayedPartialTree.slice(lastCheckboxIndex, newCheckboxIndex + 1)
-      : displayedPartialTree.slice(
-          newCheckboxIndex,
-          lastCheckboxIndex + 1,
-        )).map((item) => item.id)
+    const clickedRange = displayedPartialTree.slice(
+      Math.min(lastCheckboxIndex, newCheckboxIndex),
+      Math.max(lastCheckboxIndex, newCheckboxIndex) + 1,
+    ).map((item) => item.id)
 
     return clickedRange
   }
