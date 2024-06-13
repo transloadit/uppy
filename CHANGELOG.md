@@ -12,6 +12,23 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 4.0.0-beta.11
+
+Released: 2024-06-11
+
+| Package              |       Version | Package              |       Version |
+| -------------------- | ------------- | -------------------- | ------------- |
+| @uppy/aws-s3         |  4.0.0-beta.6 | @uppy/react          |  4.0.0-beta.6 |
+| @uppy/locales        |  4.0.0-beta.3 | @uppy/transloadit    |  4.0.0-beta.8 |
+| @uppy/provider-views |  4.0.0-beta.8 | uppy                 | 4.0.0-beta.11 |
+
+- docs: clarify assemblyOptions for @uppy/transloadit (Merlijn Vos / #5226)
+- @uppy/react: remove `react:` prefix from `id` & allow `id` as a prop (Merlijn Vos / #5228)
+- docs: correct allowedMetaFields (Merlijn Vos / #5227)
+- docs: remove `extraData` note from migration guide (Mikael Finstad / #5219)
+- meta: fix AWS test suite (Antoine du Hamel / #5229)
+
+
 ## 4.0.0-beta.10
 
 Released: 2024-06-04
@@ -419,6 +436,21 @@ Released: 2024-03-28
 - meta: enable CI on `4.x` branch (Antoine du Hamel)
 - @uppy/vue: [v4.x] remove manual types (Antoine du Hamel / #4803)
 - meta: prepare release workflow for beta versions (Antoine du Hamel)
+
+## 3.26.1
+
+Released: 2024-06-11
+
+| Package              | Version | Package              | Version |
+| -------------------- | ------- | -------------------- | ------- |
+| @uppy/locales        |   3.5.4 | @uppy/transloadit    |   3.7.1 |
+| @uppy/provider-views |  3.12.1 | uppy                 |  3.26.1 |
+
+- meta: Improve aws-node example readme (Artur Paikin / #4753)
+- @uppy/locales: Added translation string (it_IT) (Samuel / #5237)
+- @uppy/transloadit: fix transloadit:result event (Merlijn Vos / #5231)
+- @uppy/provider-views: fix wrong font for files (Merlijn Vos / #5234)
+
 
 ## 3.26.0
 
