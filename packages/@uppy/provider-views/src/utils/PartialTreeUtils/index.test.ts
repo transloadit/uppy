@@ -13,7 +13,7 @@ import afterOpenFolder from './afterOpenFolder.ts'
 import afterScrollFolder from './afterScrollFolder.ts'
 import afterFill from './afterFill.ts'
 import getCheckedFilesWithPaths from './getCheckedFilesWithPaths.ts'
-import getNOfSelectedFiles from './getNOfSelectedFiles.ts'
+import getNumberOfSelectedFiles from './getNumberOfSelectedFiles.ts'
 import getBreadcrumbs from './getBreadcrumbs.ts'
 
 const _root = (id: string, options: any = {}): PartialTreeFolderRoot => ({
@@ -472,7 +472,7 @@ describe('afterToggleCheckbox()', () => {
   })
 })
 
-describe('getNOfSelectedFiles()', () => {
+describe('getNumberOfSelectedFiles()', () => {
   it('gets all leaf items', () => {
     // prettier-ignore
     const tree: PartialTree = [
@@ -486,7 +486,7 @@ describe('getNOfSelectedFiles()', () => {
               // leaf .checked file
               _file('2_2', { parentId: '2', status: 'checked' }),
     ]
-    const result = getNOfSelectedFiles(tree)
+    const result = getNumberOfSelectedFiles(tree)
 
     expect(result).toEqual(3)
   })
@@ -497,7 +497,7 @@ describe('getNOfSelectedFiles()', () => {
       // empty .checked .cached folder
       _folder('1', { parentId: 'ourRoot', cached: true, status: 'checked' }),
     ]
-    const result = getNOfSelectedFiles(tree)
+    const result = getNumberOfSelectedFiles(tree)
     // This should be "1" for more pleasant UI - if the user unchecks this folder,
     // they should immediately see "Selected (1)" turning into "Selected (0)".
     expect(result).toEqual(1)
