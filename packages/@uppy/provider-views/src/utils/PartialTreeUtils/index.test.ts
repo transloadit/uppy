@@ -504,7 +504,7 @@ describe('getNumberOfSelectedFiles()', () => {
   })
 })
 
-describe('injectPaths()', () => {
+describe('getCheckedFilesWithPaths()', () => {
   // Note that this is a tree that doesn't require any api calls, everything is cached already
   // prettier-ignore
   const tree: PartialTree = [
@@ -546,6 +546,20 @@ describe('injectPaths()', () => {
 
     expect(result.find((f) => f.id === '2_4_1')!.relDirPath).toEqual(
       'name_2_4/name_2_4_1.jpg',
+    )
+  })
+
+  // (See github.com/transloadit/uppy/pull/5050#discussion_r1638523560)
+  it('file ids such as "hasOwnProperty" are safe', () => {
+    const weirdIdsTree = [
+      _root('ourRoot'),
+      _folder('1', { parentId: 'ourRoot', status: 'checked' }),
+      _file('hasOwnProperty', { parentId: '1', status: 'checked' }),
+    ]
+    const result = getCheckedFilesWithPaths(weirdIdsTree)
+
+    expect(result.find((f) => f.id === 'hasOwnProperty')!.relDirPath).toEqual(
+      'name_1/name_hasOwnProperty.jpg',
     )
   })
 })

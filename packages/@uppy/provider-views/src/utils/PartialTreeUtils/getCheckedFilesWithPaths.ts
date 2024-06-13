@@ -33,7 +33,8 @@ const getPath = (
 const getCheckedFilesWithPaths = (
   partialTree: PartialTree,
 ): CompanionFile[] => {
-  const cache: Cache = {}
+  // Equivalent to `const cache = {}`, but makes keys such as 'hasOwnProperty' safe too
+  const cache: Cache = Object.create(null)
 
   // We're only interested in injecting paths into 'checked' files
   const checkedFiles = partialTree.filter(
