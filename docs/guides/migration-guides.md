@@ -11,6 +11,10 @@ These cover all the major Uppy versions and how to migrate to them.
 - The URL endpoint (used by the `Url`/`Link` plugin) is now turned off by
   default and must be explicitly enabled with
   `COMPANION_ENABLE_URL_ENDPOINT=true` or `enableUrlEndpoint: true`.
+- The option `getKey(req, filename, metadata)` has changed signature to
+  `getKey({ filename, metadata, req })`.
+- The option `bucket(req, metadata)` has changed signature to
+  `bucketOrFn({ req, metadata, filename })`.
 - Custom provider breaking changes. If you have not implemented a custom
   provider, you should not be affected.
   - The static `getExtraConfig` property has been renamed to

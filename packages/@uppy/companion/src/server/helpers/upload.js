@@ -21,7 +21,7 @@ async function startDownUpload({ req, res, getSize, download }) {
         await uploader.awaitReady(clientSocketConnectTimeout)
         logger.debug('Socket connection received. Starting remote download/upload.', null, req.id)
 
-        await uploader.tryUploadStream(stream)
+        await uploader.tryUploadStream(stream, req)
       })().catch((err) => logger.error(err))
 
     // Respond the request
