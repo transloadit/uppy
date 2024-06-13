@@ -22,9 +22,9 @@ const getClickedRange = (
     const clickedRange = displayedPartialTree.slice(
       Math.min(lastCheckboxIndex, newCheckboxIndex),
       Math.max(lastCheckboxIndex, newCheckboxIndex) + 1,
-    ).map((item) => item.id)
+    )
 
-    return clickedRange
+    return clickedRange.map((item) => item.id)
   }
 
   return [clickedId]
