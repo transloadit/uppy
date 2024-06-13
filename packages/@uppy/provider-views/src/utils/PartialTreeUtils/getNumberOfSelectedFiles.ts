@@ -1,8 +1,11 @@
 import type { PartialTree } from '@uppy/core/lib/Uppy'
 
-// We're interested in all 'checked' leaves of this tree -
-// I believe it's the most intuitive number we can show to the user
-// given we don't have full information about how many files are inside of each selected folder.
+/**
+ * We're interested in all 'checked' leaves of this tree,
+ * but we don't yet know how many files there are inside of each checked folder.
+ * `getNumberOfSelectedFiles()` returns the most intuitive number we can show to the user
+ * in this situation.
+ */
 const getNumberOfSelectedFiles = (partialTree: PartialTree): number => {
   const checkedLeaves = partialTree.filter((item) => {
     if (item.type === 'file' && item.status === 'checked') {
