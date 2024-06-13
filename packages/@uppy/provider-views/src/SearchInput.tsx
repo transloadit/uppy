@@ -30,8 +30,15 @@ function SearchInput({
   showButton = false,
   buttonLabel = '',
 }: Props) {
-  const onSubmit = (e: Event) => {
-    e.preventDefault()
+  const onSubmitFromInput = (
+    e: h.JSX.TargetedKeyboardEvent<HTMLInputElement>,
+  ) => {
+    if (e.key === 'Enter' || e.keyCode === 13) {
+      submitSearchString()
+    }
+  }
+
+  const onSubmitFromButton = () => {
     submitSearchString()
   }
 
@@ -40,7 +47,10 @@ function SearchInput({
   }
 
   return (
-    <form className={wrapperClassName} onSubmit={onSubmit}>
+    // Notice we intentionally do not use the <form/> tag here,
+    // because we're trying to avoid the "nested <form/> tags" issue
+    // (see github.com/transloadit/uppy/pull/5050#discussion_r1638260456)
+    <section className={wrapperClassName} role="search">
       <input
         className={`uppy-u-reset ${inputClassName}`}
         type="search"
@@ -48,6 +58,7 @@ function SearchInput({
         placeholder={inputLabel}
         value={searchString}
         onInput={onInput}
+        onKeyDown={onSubmitFromInput}
         data-uppy-super-focusable
       />
       {!showButton && (
@@ -85,12 +96,13 @@ function SearchInput({
       {showButton && (
         <button
           className="uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-SearchProvider-searchButton"
-          type="submit"
+          type="button"
+          onClick={onSubmitFromButton}
         >
           {buttonLabel}
         </button>
       )}
-    </form>
+    </section>
   )
 }
 
