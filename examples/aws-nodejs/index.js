@@ -375,7 +375,7 @@ app.get('/uppy.min.mjs', (req, res) => {
       'No local JS bundle found, using the CDN as a fallback. Run `corepack yarn build` to make this warning disappear.',
     )
     res.end(
-      'export * from "https://releases.transloadit.com/uppy/v4.0.0-beta.10/uppy.min.mjs";\n',
+      'export * from "https://releases.transloadit.com/uppy/v4.0.0-beta.11/uppy.min.mjs";\n',
     )
   }
 })
@@ -394,7 +394,7 @@ app.get('/uppy.min.css', (req, res) => {
       'No local CSS bundle found, using the CDN as a fallback. Run `corepack yarn build` to make this warning disappear.',
     )
     res.end(
-      '@import "https://releases.transloadit.com/uppy/v4.0.0-beta.10/uppy.min.css";\n',
+      '@import "https://releases.transloadit.com/uppy/v4.0.0-beta.11/uppy.min.css";\n',
     )
   }
 })

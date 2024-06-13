@@ -28,8 +28,8 @@ const getSecret = (baseEnvVar) => {
  *
  * @returns {string}
  */
-exports.generateSecret = () => {
-  logger.warn('auto-generating server secret because none was specified', 'startup.secret')
+exports.generateSecret = (secretName) => {
+  logger.warn(`auto-generating server ${secretName} because none was specified`, 'startup.secret')
   return crypto.randomBytes(64).toString('hex')
 }
 
