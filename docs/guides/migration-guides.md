@@ -106,16 +106,11 @@ const { someThingMyBackendReturns } = uppy.getFile(id).response;
   `companionCookieRules`) are renamed to more generic names (`endpoint`,
   `headers`, and `cookieRules`)
 
-  Using Companion with the `@uppy/aws-s3` plugin only makes sense if you want to
-  support upload from remote providers (such as Google Drive). Unfortunately,
-  because the option was referencing Companion, it was a bit hard for us to
-  document a simpler way to setup a server to work well with Uppy without having
-  to reimplement virtually all network calls, when it would be possible to use
-  the ones already in Uppy – the only condition is to configure the server to
-  use the same endpoints as Companion.
+  Using Companion with the `@uppy/aws-s3` plugin only makes sense if you already need Companion from remote providers (such as Google Drive). When using your own backend, you can still let Uppy do all the heavy lifting on the client which it would normally do for Companion, so you don't have to implement that yourself.
+ 
+As long as you return the JSON for the expected endpoints (see our [server example](https://github.com/transloadit/uppy/blob/main/examples/aws-nodejs/index.js)) you only need to set `endpoint`.
 
-  Long story short, the options have been renamed. If you are using Companion,
-  you need to update the your code to use the new option names.
+If you are using Companion, rename the options. If you have a lot of client-side complexity (`createMultipartUpload`, `signPart`, etc) you could consider letting Uppy do this for you.
 
 ### `@uppy/core`
 
