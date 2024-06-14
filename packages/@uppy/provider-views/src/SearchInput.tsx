@@ -16,6 +16,7 @@ type Props = {
 
   showButton?: boolean
   buttonLabel?: string
+  buttonCSSClassName?: string
 }
 
 function SearchInput({
@@ -31,6 +32,7 @@ function SearchInput({
 
   showButton = false,
   buttonLabel = '',
+  buttonCSSClassName = '',
 }: Props) {
   const onInput = (e: ChangeEvent) => {
     setSearchString((e.target as HTMLInputElement).value)
@@ -108,7 +110,7 @@ function SearchInput({
       )}
       {showButton && (
         <button
-          className="uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-SearchProvider-searchButton"
+          className={`uppy-u-reset uppy-c-btn uppy-c-btn-primary ${buttonCSSClassName}`}
           type="submit"
           form={form.id}
         >

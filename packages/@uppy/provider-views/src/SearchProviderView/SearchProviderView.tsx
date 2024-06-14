@@ -299,6 +299,7 @@ export default class SearchProviderView<M extends Meta, B extends Body> {
           wrapperClassName="uppy-SearchProvider"
           inputClassName="uppy-c-textInput uppy-SearchProvider-input"
           showButton
+          buttonCSSClassName="uppy-SearchProvider-searchButton"
         />
       )
     }
