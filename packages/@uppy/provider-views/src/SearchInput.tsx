@@ -1,5 +1,7 @@
 import { h } from 'preact'
-import type { ChangeEvent } from 'preact/compat'
+import { useEffect, useState, useCallback } from 'preact/hooks'
+import { type ChangeEvent } from 'preact/compat'
+import { nanoid } from 'nanoid/non-secure'
 
 type Props = {
   searchString: string
@@ -30,27 +32,38 @@ function SearchInput({
   showButton = false,
   buttonLabel = '',
 }: Props) {
-  const onSubmitFromInput = (
-    e: h.JSX.TargetedKeyboardEvent<HTMLInputElement>,
-  ) => {
-    if (e.key === 'Enter' || e.keyCode === 13) {
-      submitSearchString()
-    }
-  }
-
-  const onSubmitFromButton = () => {
-    submitSearchString()
-  }
-
   const onInput = (e: ChangeEvent) => {
     setSearchString((e.target as HTMLInputElement).value)
   }
 
+  const submit = useCallback(
+    (ev: Event) => {
+      ev.preventDefault()
+      submitSearchString()
+    },
+    [submitSearchString],
+  )
+
+  // We do this to avoid nested <form>s
+  // (See https://github.com/transloadit/uppy/pull/5050#discussion_r1640392516)
+  const [form] = useState(() => {
+    const formEl = document.createElement('form')
+    formEl.setAttribute('tabindex', '-1')
+    formEl.id = nanoid()
+    return formEl
+  })
+
+  useEffect(() => {
+    document.body.appendChild(form)
+    form.addEventListener('submit', submit)
+    return () => {
+      form.removeEventListener('submit', submit)
+      document.body.removeChild(form)
+    }
+  }, [form, submit])
+
   return (
-    // Notice we intentionally do not use the <form/> tag here,
-    // because we're trying to avoid the "nested <form/> tags" issue
-    // (see github.com/transloadit/uppy/pull/5050#discussion_r1638260456)
-    <section className={wrapperClassName} role="search">
+    <section className={wrapperClassName}>
       <input
         className={`uppy-u-reset ${inputClassName}`}
         type="search"
@@ -58,7 +71,7 @@ function SearchInput({
         placeholder={inputLabel}
         value={searchString}
         onInput={onInput}
-        onKeyDown={onSubmitFromInput}
+        form={form.id}
         data-uppy-super-focusable
       />
       {!showButton && (
@@ -96,8 +109,8 @@ function SearchInput({
       {showButton && (
         <button
           className="uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-SearchProvider-searchButton"
-          type="button"
-          onClick={onSubmitFromButton}
+          type="submit"
+          form={form.id}
         >
           {buttonLabel}
         </button>

@@ -8879,6 +8879,7 @@ __metadata:
   dependencies:
     "@uppy/utils": "workspace:^"
     classnames: "npm:^2.2.6"
+    nanoid: "npm:^5.0.0"
     p-queue: "npm:^8.0.0"
     preact: "npm:^10.5.13"
     vitest: "npm:^1.6.0"
