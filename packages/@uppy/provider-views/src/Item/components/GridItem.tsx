@@ -4,7 +4,7 @@ import classNames from 'classnames'
 import type { RestrictionError } from '@uppy/core/lib/Restricter'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 
-type GridListItemProps<M extends Meta, B extends Body> = {
+type GridItemProps<M extends Meta, B extends Body> = {
   className: string
   isDisabled: boolean
   restrictionError?: RestrictionError<M, B> | null
@@ -18,8 +18,8 @@ type GridListItemProps<M extends Meta, B extends Body> = {
   children?: ComponentChildren
 }
 
-function GridListItem<M extends Meta, B extends Body>(
-  props: GridListItemProps<M, B>,
+function GridItem<M extends Meta, B extends Body>(
+  props: GridItemProps<M, B>,
 ): h.JSX.Element {
   const {
     className,
@@ -73,4 +73,4 @@ function GridListItem<M extends Meta, B extends Body>(
   )
 }
 
-export default GridListItem
+export default GridItem

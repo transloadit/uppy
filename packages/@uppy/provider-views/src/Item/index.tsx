@@ -7,8 +7,8 @@ import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
 import type { RestrictionError } from '@uppy/core/lib/Restricter'
 import type { Meta, Body } from '@uppy/utils/lib/UppyFile'
 import ItemIcon from './components/ItemIcon.tsx'
-import GridListItem from './components/GridLi.tsx'
-import ListItem from './components/ListLi.tsx'
+import GridItem from './components/GridItem.tsx'
+import ListItem from './components/ListItem.tsx'
 
 type ItemProps<M extends Meta, B extends Body> = {
   showTitles: boolean
@@ -46,7 +46,7 @@ export default function Item<M extends Meta, B extends Body>(
   switch (viewType) {
     case 'grid':
       return (
-        <GridListItem<M, B>
+        <GridItem<M, B>
           // eslint-disable-next-line react/jsx-props-no-spreading
           {...props}
           className={className}
@@ -64,7 +64,7 @@ export default function Item<M extends Meta, B extends Body>(
       )
     case 'unsplash':
       return (
-        <GridListItem<M, B>
+        <GridItem<M, B>
           // eslint-disable-next-line react/jsx-props-no-spreading
           {...props}
           className={className}
@@ -79,7 +79,7 @@ export default function Item<M extends Meta, B extends Body>(
           >
             {author!.name}
           </a>
-        </GridListItem>
+        </GridItem>
       )
     default:
       throw new Error(`There is no such type ${viewType}`)
