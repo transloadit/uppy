@@ -99,7 +99,7 @@ describe('Dashboard with Transloadit', () => {
     })
   })
 
-  it.skip('should not re-use erroneous tus keys', () => {
+  it('should not re-use erroneous tus keys', () => {
     function createAssemblyStatus({
       message,
       assembly_id,

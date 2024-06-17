@@ -275,7 +275,7 @@ export default class Transloadit<
 
   client: Client<M, B>
 
-  assembly: Assembly
+  assembly: Assembly | null
 
   #watcher: AssemblyWatcher<M, B>
 
@@ -524,7 +524,7 @@ export default class Transloadit<
       return
     }
 
-    const { status } = this.assembly
+    const { status } = this.assembly!
 
     this.client.addFile(status, file).catch((err) => {
       this.uppy.log(err)
@@ -605,7 +605,7 @@ export default class Transloadit<
   #onAssemblyFinished(status: AssemblyResponse) {
     const url = status.assembly_ssl_url
     this.client.getAssemblyStatus(url).then((finalStatus) => {
-      this.assembly.status = finalStatus
+      this.assembly!.status = finalStatus
       this.uppy.emit('transloadit:complete', finalStatus)
     })
   }
@@ -621,7 +621,7 @@ export default class Transloadit<
    */
   #onCancelAll = async () => {
     try {
-      await this.#cancelAssembly(this.assembly.status)
+      await this.#cancelAssembly(this.assembly!.status)
     } catch (err) {
       this.uppy.log(err)
     }
@@ -696,12 +696,12 @@ export default class Transloadit<
     // Set up the Assembly instances and AssemblyWatchers for existing Assemblies.
     const restoreAssemblies = () => {
       this.#createAssemblyWatcher(previousAssembly.assembly_id)
-      this.#connectAssembly(this.assembly)
+      this.#connectAssembly(this.assembly!)
     }
 
     // Force-update all Assemblies to check for missed events.
     const updateAssemblies = () => {
-      return this.assembly.update()
+      return this.assembly!.update()
     }
 
     // Restore all Assembly state.
@@ -720,11 +720,6 @@ export default class Transloadit<
     const { status } = assembly
     const id = status.assembly_id
     this.assembly = assembly
-
-    // Sync local `assemblies` state
-    assembly.on('status', (newStatus: AssemblyResponse) => {
-      this.assembly.status = newStatus
-    })
 
     assembly.on('upload', (file: AssemblyFile) => {
       this.#onFileUploadComplete(id, file)
@@ -791,12 +786,6 @@ export default class Transloadit<
   }
 
   #prepareUpload = async (fileIDs: string[]) => {
-    // When restored files with Golden Retriever
-    // the assembly is restarted in `#onRestored` so we can bail early.
-    // Ideally, the flow would be more deterministic where it goes through
-    // prepareUpload in both cases.
-    if (this.assembly) return
-
     const assemblyOptions = (
       typeof this.opts.assemblyOptions === 'function' ?
         await this.opts.assemblyOptions()
@@ -806,10 +795,10 @@ export default class Transloadit<
     validateParams(assemblyOptions.params)
 
     try {
-      const assembly = (await this.#createAssembly(
-        fileIDs,
-        assemblyOptions,
-      )) as Assembly
+      const assembly =
+        // this.assembly can already be defined if we recovered files with Golden Retriever (this.#onRestored)
+        (this.assembly ??
+          (await this.#createAssembly(fileIDs, assemblyOptions))) as Assembly
       if (this.opts.importFromUploadURLs) {
         await this.#reserveFiles(assembly, fileIDs)
       }
@@ -845,10 +834,10 @@ export default class Transloadit<
       })
     }
 
-    const assemblyID = this.assembly.status.assembly_id
+    const assemblyID = this.assembly!.status.assembly_id
 
     const closeSocketConnections = () => {
-      this.assembly.close()
+      this.assembly!.close()
     }
 
     // If we don't have to wait for encoding metadata or results, we can close
@@ -856,7 +845,7 @@ export default class Transloadit<
     if (!this.#shouldWaitAfterUpload()) {
       closeSocketConnections()
       this.uppy.addResultData(uploadID, {
-        transloadit: [this.assembly.status],
+        transloadit: [this.assembly!.status],
       })
       return Promise.resolve()
     }
@@ -881,7 +870,7 @@ export default class Transloadit<
     return this.#watcher.promise.then(() => {
       closeSocketConnections()
       this.uppy.addResultData(uploadID, {
-        transloadit: [this.assembly.status],
+        transloadit: [this.assembly!.status],
       })
     })
   }
@@ -892,6 +881,7 @@ export default class Transloadit<
 
   #onError = (err: { name: string; message: string; details?: string }) => {
     this.#closeAssemblyIfExists()
+    this.assembly = null
 
     this.client
       .submitError(err)
@@ -991,7 +981,7 @@ export default class Transloadit<
   }
 
   getAssembly(): AssemblyResponse | undefined {
-    return this.assembly.status
+    return this.assembly!.status
   }
 
   getAssemblyFiles(assemblyID: string): UppyFile<M, B>[] {
