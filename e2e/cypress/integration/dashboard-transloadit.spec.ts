@@ -1,8 +1,8 @@
 import Uppy from '@uppy/core'
 import Transloadit from '@uppy/transloadit'
 
-function getPlugin(uppy: Uppy<any, any>) {
-  return uppy.getPlugin('Transloadit') as Transloadit<any, any>
+function getPlugin<M = any, B = any>(uppy: Uppy<M, B>) {
+  return uppy.getPlugin<Transloadit<M, B>>('Transloadit')!
 }
 
 describe('Dashboard with Transloadit', () => {
