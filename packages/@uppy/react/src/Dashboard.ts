@@ -51,9 +51,9 @@ class Dashboard<M extends Meta, B extends Body> extends Component<
 
   installPlugin(): void {
     const { uppy, ...options } = {
-      id: 'react:Dashboard',
-      inline: true,
+      id: 'Dashboard',
       ...this.props,
+      inline: true,
       target: this.container,
     }
     uppy.use(DashboardPlugin<M, B>, options)

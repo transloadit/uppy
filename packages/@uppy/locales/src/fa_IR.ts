@@ -223,3 +223,5 @@ fa_IR.strings = {
   zoomIn: 'بزرگ‌نمایی',
   zoomOut: 'کوچک‌نمایی',
 }
+
+export default fa_IR

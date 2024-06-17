@@ -93,7 +93,7 @@ module.exports = {
     'react/prefer-stateless-function': 'error',
     'react/require-default-props': ['error', {
       forbidDefaultForRequired: true,
-      functions: 'defaultArguments',
+      functions: 'ignore',
     }],
     'react/sort-comp': 'error',
     'react/static-property-placement': 'off',

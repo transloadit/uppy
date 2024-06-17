@@ -220,7 +220,7 @@ class Uploader {
     if (this.readStream) this.readStream.destroy(err)
   }
 
-  async _uploadByProtocol() {
+  async _uploadByProtocol(req) {
     // todo a default protocol should not be set. We should ensure that the user specifies their protocol.
     // after we drop old versions of uppy client we can remove this
     const protocol = this.options.protocol || PROTOCOLS.multipart
@@ -229,7 +229,7 @@ class Uploader {
       case PROTOCOLS.multipart:
         return this.#uploadMultipart(this.readStream)
       case PROTOCOLS.s3Multipart:
-        return this.#uploadS3Multipart(this.readStream)
+        return this.#uploadS3Multipart(this.readStream, req)
       case PROTOCOLS.tus:
         return this.#uploadTus(this.readStream)
       default:
@@ -271,8 +271,9 @@ class Uploader {
   /**
    *
    * @param {import('stream').Readable} stream
+   * @param {import('express').Request} req
    */
-  async uploadStream(stream) {
+  async uploadStream(stream, req) {
     try {
       if (this.#uploadState !== states.idle) throw new Error('Can only start an upload in the idle state')
       if (this.readStream) throw new Error('Already uploading')
@@ -290,7 +291,7 @@ class Uploader {
       if (this.#uploadState !== states.uploading) return undefined
 
       const { url, extraData } = await Promise.race([
-        this._uploadByProtocol(),
+        this._uploadByProtocol(req),
         // If we don't handle stream errors, we get unhandled error in node.
         new Promise((resolve, reject) => this.readStream.on('error', reject)),
       ])
@@ -310,12 +311,13 @@ class Uploader {
   /**
    *
    * @param {import('stream').Readable} stream
+   * @param {import('express').Request} req
    */
-  async tryUploadStream(stream) {
+  async tryUploadStream(stream, req) {
     try {
       emitter().emit('upload-start', { token: this.token })
 
-      const ret = await this.uploadStream(stream)
+      const ret = await this.uploadStream(stream, req)
       if (!ret) return
       const { url, extraData } = ret
       this.#emitSuccess(url, extraData)
@@ -637,7 +639,7 @@ class Uploader {
   /**
    * Upload the file to S3 using a Multipart upload.
    */
-  async #uploadS3Multipart(stream) {
+  async #uploadS3Multipart(stream, req) {
     if (!this.options.s3) {
       throw new Error('The S3 client is not configured on this companion instance.')
     }
@@ -647,13 +649,14 @@ class Uploader {
      * @type {{client: import('@aws-sdk/client-s3').S3Client, options: Record<string, any>}}
      */
     const s3Options = this.options.s3
+    const { metadata } = this.options
     const { client, options } = s3Options
 
     const params = {
-      Bucket: getBucket(options.bucket, null, this.options.metadata),
-      Key: options.getKey(null, filename, this.options.metadata),
-      ContentType: this.options.metadata.type,
-      Metadata: rfc2047EncodeMetadata(this.options.metadata),
+      Bucket: getBucket({ bucketOrFn: options.bucket, req, metadata }),
+      Key: options.getKey({ req, filename, metadata }),
+      ContentType: metadata.type,
+      Metadata: rfc2047EncodeMetadata(metadata),
       Body: stream,
     }
 
