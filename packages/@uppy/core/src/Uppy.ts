@@ -308,7 +308,7 @@ const defaultUploadState = {
  * Manages plugins, state updates, acts as an event bus,
  * adds/removes files and metadata.
  */
-export class Uppy<M extends Meta, B extends Body> {
+export class Uppy<M extends Meta, B extends Body = Record<string, never>> {
   static VERSION = packageJson.version
 
   #plugins: Record<string, UnknownPlugin<M, B>[]> = Object.create(null)
@@ -1724,10 +1724,12 @@ export class Uppy<M extends Meta, B extends Body> {
   /**
    * Find one Plugin by name.
    */
-  getPlugin(id: string): UnknownPlugin<M, B> | undefined {
+  getPlugin<T extends UnknownPlugin<M, B> = UnknownPlugin<M, B>>(
+    id: string,
+  ): T | undefined {
     for (const plugins of Object.values(this.#plugins)) {
       const foundPlugin = plugins.find((plugin) => plugin.id === id)
-      if (foundPlugin != null) return foundPlugin
+      if (foundPlugin != null) return foundPlugin as T
     }
     return undefined
   }

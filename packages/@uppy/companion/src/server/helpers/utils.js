@@ -146,7 +146,7 @@ module.exports.decrypt = (encrypted, secret) => {
   return decrypted
 }
 
-module.exports.defaultGetKey = (req, filename) => `${crypto.randomUUID()}-${filename}`
+module.exports.defaultGetKey = ({ filename }) => `${crypto.randomUUID()}-${filename}`
 
 class StreamHttpJsonError extends Error {
   statusCode
@@ -207,8 +207,22 @@ module.exports.rfc2047EncodeMetadata = (metadata) => (
   Object.fromEntries(Object.entries(metadata).map((entry) => entry.map(rfc2047Encode)))
 )
 
-module.exports.getBucket = (bucketOrFn, req, metadata) => {
-  const bucket = typeof bucketOrFn === 'function' ? bucketOrFn(req, metadata) : bucketOrFn
+/**
+ * 
+ * @param {{
+ * bucketOrFn: string | ((a: {
+ * req: import('express').Request,
+ * metadata: Record<string, string>,
+ * filename: string | undefined,
+ * }) => string),
+ * req: import('express').Request,
+ * metadata?: Record<string, string>,
+ * filename?: string,
+ * }} param0 
+ * @returns 
+ */
+module.exports.getBucket = ({ bucketOrFn, req, metadata, filename }) => {
+  const bucket = typeof bucketOrFn === 'function' ? bucketOrFn({ req, metadata, filename }) : bucketOrFn
 
   if (typeof bucket !== 'string' || bucket === '') {
     // This means a misconfiguration or bug

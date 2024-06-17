@@ -283,7 +283,7 @@ const options = {
 		endpoint: 'https://{service}.{region}.amazonaws.com',
 		conditions: [],
 		useAccelerateEndpoint: false,
-		getKey: (req, filename) => `${crypto.randomUUID()}-${filename}`,
+		getKey: ({ filename }) => `${crypto.randomUUID()}-${filename}`,
 		expires: 800, // seconds
 	},
 	allowLocalUrls: false,
@@ -473,13 +473,14 @@ from the AWS SDK.
 
 The name of the bucket to store uploaded files in.
 
-It can be function that returns the name of the bucket as a `string` and takes
-the following arguments:
+A `string` or function that returns the name of the bucket as a `string` and
+takes one argument which is an object with the following properties:
 
-- [`http.IncomingMessage`][], the HTTP request (will be `null` for remote
-  uploads)
-- metadata provided by the user for the file (will be `undefined` for local
-  uploads)
+- `filename`, the original name of the uploaded file;
+- `metadata` provided by the user for the file (will only be provided during the
+  initial calls for each uploaded files, otherwise it will be `undefined`).
+- `req`, Express.js `Request` object. Do not use any Companion internals from
+  the req object, as these might change in any minor version of Companion.
 
 ##### `s3.region` `COMPANION_AWS_REGION`
 
@@ -508,18 +509,16 @@ expected, please
 [open an issue on the Uppy repository](https://github.com/transloadit/uppy/issues/new)
 so we can document it here.
 
-##### `s3.getKey(req, filename, metadata)`
+##### `s3.getKey({ filename, metadata, req })`
 
 Get the key name for a file. The key is the file path to which the file will be
 uploaded in your bucket. This option should be a function receiving three
 arguments:
 
-- `req` [`http.IncomingMessage`][], the HTTP request, for _regular_ S3 uploads
-  using the `@uppy/aws-s3` plugin. This parameter is _not_ available for
-  multipart uploads using the `@uppy/aws-s3` or `@uppy/aws-s3-multipart`
-  plugins. This parameter is `null` for remote uploads.
 - `filename`, the original name of the uploaded file;
 - `metadata`, user-provided metadata for the file.
+- `req`, Express.js `Request` object. Do not use any Companion internals from
+  the req object, as these might change in any minor version of Companion.
 
 This function should return a string `key`. The `req` parameter can be used to
 upload to a user-specific folder in your bucket, for example:
@@ -530,7 +529,7 @@ app.use(
 	uppy.app({
 		providerOptions: {
 			s3: {
-				getKey: (req, filename, metadata) => `${req.user.id}/${filename}`,
+				getKey: ({ req, filename, metadata }) => `${req.user.id}/${filename}`,
 				/* auth options */
 			},
 		},
@@ -546,7 +545,7 @@ app.use(
 	uppy.app({
 		providerOptions: {
 			s3: {
-				getKey: (req, filename, metadata) => filename,
+				getKey: ({ filename, metadata }) => filename,
 			},
 		},
 	}),
@@ -909,8 +908,6 @@ This would get the Companion instance running on `http://localhost:3020`. It
 uses [`node --watch`](https://nodejs.org/api/cli.html#--watch) so it will
 automatically restart when files are changed.
 
-[`http.incomingmessage`]:
-	https://nodejs.org/api/http.html#class-httpincomingmessage
 [box]: /docs/box
 [dropbox]: /docs/dropbox
 [facebook]: /docs/facebook

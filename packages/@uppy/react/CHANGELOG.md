@@ -1,5 +1,12 @@
 # @uppy/react
 
+## 4.0.0-beta.6
+
+Released: 2024-06-11
+Included in: Uppy v4.0.0-beta.11
+
+- @uppy/react: remove `react:` prefix from `id` & allow `id` as a prop (Merlijn Vos / #5228)
+
 ## 4.0.0-beta.4
 
 Released: 2024-04-29

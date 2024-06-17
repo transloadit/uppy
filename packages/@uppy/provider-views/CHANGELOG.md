@@ -24,6 +24,12 @@ Included in: Uppy v4.0.0-beta.1
 - @uppy/provider-views: fix `super.toggleCheckbox` bug (Mikael Finstad / #5004)
 - @uppy/core,@uppy/provider-views: Fix breadcrumbs (Evgenia Karunus / #4986)
 
+## 3.12.1
+
+Released: 2024-06-11
+Included in: Uppy v3.26.1
+
+- @uppy/provider-views: fix wrong font for files (Merlijn Vos / #5234)
 
 ## 3.12.0
 

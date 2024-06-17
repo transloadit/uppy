@@ -73,8 +73,8 @@ class DashboardModal<M extends Meta, B extends Body> extends Component<
       ...rest
     } = this.props
     const options = {
+      id: 'DashboardModal',
       ...rest,
-      id: 'react:DashboardModal',
       inline: false,
       target,
       open,

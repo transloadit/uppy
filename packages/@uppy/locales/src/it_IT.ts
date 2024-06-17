@@ -91,6 +91,7 @@ it_IT.strings = {
   resumeUpload: "Riprendi l'upload",
   retry: 'Riprova',
   retryUpload: "Riprova l'upload",
+  save: 'Salva',
   saveChanges: 'Salva le modifiche',
   selectX: {
     '0': 'Seleziona %{smart_count}',

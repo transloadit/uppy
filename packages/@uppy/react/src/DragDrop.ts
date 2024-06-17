@@ -43,9 +43,9 @@ class DragDrop<M extends Meta, B extends Body> extends Component<
   }
 
   installPlugin(): void {
-    const { uppy, locale, inputName, width, height, note } = this.props
+    const { uppy, locale, inputName, width, height, note, id } = this.props
     const options = {
-      id: 'react:DragDrop',
+      id: id || 'DragDrop',
       locale,
       inputName,
       width,
