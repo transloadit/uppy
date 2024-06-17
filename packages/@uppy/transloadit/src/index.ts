@@ -791,6 +791,12 @@ export default class Transloadit<
   }
 
   #prepareUpload = async (fileIDs: string[]) => {
+    // When restored files with Golden Retriever
+    // the assembly is restarted in `#onRestored` so we can bail early.
+    // Ideally, the flow would be more deterministic where it goes through
+    // prepareUpload in both cases.
+    if (this.assembly) return
+
     const assemblyOptions = (
       typeof this.opts.assemblyOptions === 'function' ?
         await this.opts.assemblyOptions()
