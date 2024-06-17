@@ -202,12 +202,12 @@ app.get('/s3/multipart/:uploadId', (req, res, next) => {
 
   const parts = []
 
-  function listPartsPage (startAt) {
+  function listPartsPage(startsAt = undefined) {
     client.send(new ListPartsCommand({
       Bucket: process.env.COMPANION_AWS_BUCKET,
       Key: key,
       UploadId: uploadId,
-      PartNumberMarker: startAt,
+      PartNumberMarker: startsAt,
     }), (err, data) => {
       if (err) {
         next(err)
@@ -216,15 +216,15 @@ app.get('/s3/multipart/:uploadId', (req, res, next) => {
 
       parts.push(...data.Parts)
 
+      // continue to get list of all uploaded parts until the IsTruncated flag is false
       if (data.IsTruncated) {
-        // Get the next page.
         listPartsPage(data.NextPartNumberMarker)
       } else {
         res.json(parts)
       }
     })
   }
-  listPartsPage(0)
+  listPartsPage()
 })
 
 function isValidPart (part) {
