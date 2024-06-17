@@ -191,9 +191,9 @@ class Drive extends Provider {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  async refreshToken(...args) {
-    return refreshToken(...args)
-  }
 }
+
+Drive.prototype.logout = logout
+Drive.prototype.refreshToken = refreshToken
 
 module.exports = Drive
