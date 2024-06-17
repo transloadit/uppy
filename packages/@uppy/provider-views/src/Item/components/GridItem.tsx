@@ -1,3 +1,4 @@
+/* eslint-disable react/require-default-props */
 import { h, type ComponentChildren } from 'preact'
 import classNames from 'classnames'
 import type { RestrictionError } from '@uppy/core/lib/Restricter'
@@ -17,19 +18,23 @@ type GridItemProps<M extends Meta, B extends Body> = {
   children?: ComponentChildren
 }
 
-function GridItem<M extends Meta, B extends Body>({
-  className,
-  isDisabled,
-  restrictionError = undefined,
-  isChecked,
-  title = undefined,
-  itemIconEl,
-  showTitles = undefined,
-  toggleCheckbox,
-  recordShiftKeyPress,
-  id,
-  children = undefined,
-}: GridItemProps<M, B>): h.JSX.Element {
+function GridItem<M extends Meta, B extends Body>(
+  props: GridItemProps<M, B>,
+): h.JSX.Element {
+  const {
+    className,
+    isDisabled,
+    restrictionError,
+    isChecked,
+    title,
+    itemIconEl,
+    showTitles,
+    toggleCheckbox,
+    recordShiftKeyPress,
+    id,
+    children,
+  } = props
+
   const checkBoxClassName = classNames(
     'uppy-u-reset',
     'uppy-ProviderBrowserItem-checkbox',
