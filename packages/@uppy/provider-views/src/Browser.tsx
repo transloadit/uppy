@@ -15,8 +15,6 @@ import SearchFilterInput from './SearchFilterInput.tsx'
 import FooterActions from './FooterActions.tsx'
 import Item from './Item/index.tsx'
 
-const VIRTUAL_SHARED_DIR = 'shared-with-me'
-
 type ListItemProps<M extends Meta, B extends Body> = {
   currentSelection: any[]
   uppyFiles: UppyFile<M, B>[]
@@ -60,7 +58,9 @@ function ListItem<M extends Meta, B extends Body>(props: ListItemProps<M, B>) {
       type: 'folder',
       // TODO: when was this supposed to be true?
       isDisabled: false,
-      isCheckboxDisabled: f.id === VIRTUAL_SHARED_DIR,
+      // Disable checkboxes for GoogleDrive's team drives
+      // (github.com/transloadit/uppy/issues/5232)
+      isCheckboxDisabled: !!f.custom?.isSharedDrive,
       // getNextFolder always exists when f.isFolder is true
       handleFolderClick: () => getNextFolder!(f),
     })
