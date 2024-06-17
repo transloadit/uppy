@@ -1,4 +1,3 @@
-/* eslint-disable react/require-default-props */
 import { h } from 'preact'
 
 import classNames from 'classnames'
@@ -28,10 +27,13 @@ type ItemProps<M extends Meta, B extends Body> = {
   viewType: string
 }
 
-export default function Item<M extends Meta, B extends Body>(
-  props: ItemProps<M, B>,
-): h.JSX.Element {
-  const { author, getItemIcon, isChecked, isDisabled, viewType } = props
+export default function Item<M extends Meta, B extends Body>({
+  author = undefined,
+  getItemIcon,
+  isChecked,
+  isDisabled,
+  viewType,
+}: ItemProps<M, B>): h.JSX.Element {
   const itemIconString = getItemIcon()
 
   const className = classNames(

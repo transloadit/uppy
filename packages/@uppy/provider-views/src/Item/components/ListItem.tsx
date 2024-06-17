@@ -1,4 +1,3 @@
-/* eslint-disable react/require-default-props */
 import type { RestrictionError } from '@uppy/core/lib/Restricter'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import { h } from 'preact'
@@ -27,26 +26,22 @@ type ListItemProps<M extends Meta, B extends Body> = {
   i18n: any
 }
 
-export default function ListItem<M extends Meta, B extends Body>(
-  props: ListItemProps<M, B>,
-): h.JSX.Element {
-  const {
-    className,
-    isDisabled,
-    restrictionError,
-    isCheckboxDisabled,
-    isChecked,
-    toggleCheckbox,
-    recordShiftKeyPress,
-    type,
-    id,
-    itemIconEl,
-    title,
-    handleFolderClick,
-    showTitles,
-    i18n,
-  } = props
-
+export default function ListItem<M extends Meta, B extends Body>({
+  className,
+  isDisabled,
+  restrictionError = undefined,
+  isCheckboxDisabled,
+  isChecked,
+  toggleCheckbox,
+  recordShiftKeyPress,
+  type,
+  id,
+  itemIconEl,
+  title,
+  handleFolderClick = undefined,
+  showTitles,
+  i18n,
+}: ListItemProps<M, B>): h.JSX.Element {
   return (
     <li
       className={className}

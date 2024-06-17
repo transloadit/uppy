@@ -1,4 +1,3 @@
-/* eslint-disable react/require-default-props */
 import { h, Fragment } from 'preact'
 import { useEffect, useState, useCallback } from 'preact/hooks'
 import { nanoid } from 'nanoid/non-secure'
@@ -11,25 +10,23 @@ type Props = {
   inputLabel: string
   clearSearchLabel?: string
   buttonLabel?: string
-  // eslint-disable-next-line react/require-default-props
   clearSearch?: () => void
   inputClassName: string
   buttonCSSClassName?: string
 }
 
-export default function SearchFilterInput(props: Props) {
-  const {
-    search,
-    searchOnInput,
-    searchTerm,
-    showButton,
-    inputLabel,
-    clearSearchLabel,
-    buttonLabel,
-    clearSearch,
-    inputClassName,
-    buttonCSSClassName,
-  } = props
+export default function SearchFilterInput({
+  search,
+  searchOnInput = undefined,
+  searchTerm = undefined,
+  showButton = undefined,
+  inputLabel,
+  clearSearchLabel = undefined,
+  buttonLabel = undefined,
+  clearSearch = undefined,
+  inputClassName,
+  buttonCSSClassName = undefined,
+}: Props) {
   const [searchText, setSearchText] = useState(searchTerm ?? '')
   // const debouncedSearch = debounce((q) => search(q), 1000)
 

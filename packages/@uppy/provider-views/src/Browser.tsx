@@ -1,4 +1,3 @@
-/* eslint-disable react/require-default-props */
 import { h } from 'preact'
 
 import classNames from 'classnames'
@@ -118,37 +117,35 @@ type BrowserProps<M extends Meta, B extends Body> = {
   loadAllFiles?: boolean
 }
 
-function Browser<M extends Meta, B extends Body>(props: BrowserProps<M, B>) {
-  const {
-    currentSelection,
-    folders,
-    files,
-    uppyFiles,
-    viewType,
-    headerComponent,
-    showBreadcrumbs,
-    isChecked,
-    toggleCheckbox,
-    recordShiftKeyPress,
-    handleScroll,
-    showTitles,
-    i18n,
-    validateRestrictions,
-    isLoading,
-    showSearchFilter,
-    search,
-    searchTerm,
-    clearSearch,
-    searchOnInput,
-    searchInputLabel,
-    clearSearchLabel,
-    getNextFolder,
-    cancel,
-    done,
-    noResultsLabel,
-    loadAllFiles,
-  } = props
-
+function Browser<M extends Meta, B extends Body>({
+  currentSelection,
+  folders,
+  files,
+  uppyFiles,
+  viewType,
+  headerComponent = undefined,
+  showBreadcrumbs,
+  isChecked,
+  toggleCheckbox,
+  recordShiftKeyPress,
+  handleScroll,
+  showTitles,
+  i18n,
+  validateRestrictions,
+  isLoading,
+  showSearchFilter,
+  search,
+  searchTerm = undefined,
+  clearSearch,
+  searchOnInput,
+  searchInputLabel,
+  clearSearchLabel,
+  getNextFolder = undefined,
+  cancel,
+  done,
+  noResultsLabel,
+  loadAllFiles = undefined,
+}: BrowserProps<M, B>) {
   const selected = currentSelection.length
 
   const rows = useMemo(() => [...folders, ...files], [folders, files])
