@@ -344,7 +344,7 @@ describe('Dashboard with Transloadit', () => {
     cy.wait(['@assemblies', '@resumable'])
 
     cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Complete')
-  }).timeout(40000)
+  })
 
   it('should complete when resuming after pause', () => {
     cy.intercept({ path: '/assemblies', method: 'POST' }).as('createAssemblies')
