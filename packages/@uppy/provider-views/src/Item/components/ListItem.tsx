@@ -33,9 +33,6 @@ export default function ListItem({
   showTitles,
   i18n,
 }: ListItemProps): h.JSX.Element {
-  // Disable checkboxes for GoogleDrive's team drives (github.com/transloadit/uppy/issues/5232)
-  const isCheckboxHidden = file.data.custom?.isSharedDrive
-
   return (
     <li
       className={className}
@@ -45,24 +42,22 @@ export default function ListItem({
         : undefined
       }
     >
-      {!isCheckboxHidden && (
-        <input
-          type="checkbox"
-          className="uppy-u-reset uppy-ProviderBrowserItem-checkbox"
-          onChange={toggleCheckbox}
-          // for the <label/>
-          name="listitem"
-          id={file.id}
-          checked={file.status === 'checked'}
-          aria-label={
-            file.data.isFolder ?
-              i18n('allFilesFromFolderNamed', { name: file.data.name })
-            : null
-          }
-          disabled={isDisabled}
-          data-uppy-super-focusable
-        />
-      )}
+      <input
+        type="checkbox"
+        className="uppy-u-reset uppy-ProviderBrowserItem-checkbox"
+        onChange={toggleCheckbox}
+        // for the <label/>
+        name="listitem"
+        id={file.id}
+        checked={file.status === 'checked'}
+        aria-label={
+          file.data.isFolder ?
+            i18n('allFilesFromFolderNamed', { name: file.data.name })
+          : null
+        }
+        disabled={isDisabled}
+        data-uppy-super-focusable
+      />
 
       {
         file.data.isFolder ?
