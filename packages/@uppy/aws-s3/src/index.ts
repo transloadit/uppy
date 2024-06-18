@@ -204,7 +204,7 @@ type AWSS3MultipartWithoutCompanionMandatorySignPart<
   ) => MaybePromise<AwsS3UploadParameters>
 }
 type AWSS3MultipartWithoutCompanionMandatory<M extends Meta, B extends Body> = {
-  getChunkSize?: (file: UppyFile<M, B>) => number
+  getChunkSize?: (file: { size: number }) => number
   createMultipartUpload: (file: UppyFile<M, B>) => MaybePromise<UploadResult>
   listParts: (
     file: UppyFile<M, B>,
@@ -314,7 +314,7 @@ export default class AwsS3Multipart<
 
   #companionCommunicationQueue
 
-  #client: RequestClient<M, B>
+  #client!: RequestClient<M, B>
 
   protected requests: any
 
@@ -530,7 +530,7 @@ export default class AwsS3Multipart<
       .then(assertServerError)
   }
 
-  #cachedTemporaryCredentials: MaybePromise<AwsS3STSResponse>
+  #cachedTemporaryCredentials: MaybePromise<AwsS3STSResponse> | undefined
 
   async #getTemporarySecurityCredentials(options?: RequestOptions) {
     throwIfAborted(options?.signal)
@@ -859,7 +859,9 @@ export default class AwsS3Multipart<
 
         log: (...args: Parameters<Uppy<M, B>['log']>) => this.uppy.log(...args),
         getChunkSize:
-          this.opts.getChunkSize ? this.opts.getChunkSize.bind(this) : null,
+          this.opts.getChunkSize ?
+            this.opts.getChunkSize.bind(this)
+          : undefined,
 
         onProgress,
         onError,

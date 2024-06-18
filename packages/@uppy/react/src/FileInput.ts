@@ -27,9 +27,9 @@ class FileInput<M extends Meta, B extends Body> extends Component<
     inputName: 'files[]',
   }
 
-  private container: HTMLElement
+  private container!: HTMLElement
 
-  private plugin: UnknownPlugin<M, B>
+  private plugin: UnknownPlugin<M, B> | undefined
 
   componentDidMount(): void {
     this.installPlugin()
@@ -65,7 +65,7 @@ class FileInput<M extends Meta, B extends Body> extends Component<
   uninstallPlugin(props = this.props): void {
     const { uppy } = props
 
-    uppy.removePlugin(this.plugin)
+    uppy.removePlugin(this.plugin!)
   }
 
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
