@@ -1310,7 +1310,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     }
   }
 
-  setOptions(opts: DashboardOptions<Meta, Body>) {
+  setOptions(opts: Partial<DashboardOptions<M, B>>) {
     super.setOptions(opts)
     this.uppy
       .getPlugin(this.#getStatusBarId())
