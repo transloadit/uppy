@@ -26,7 +26,8 @@ const providers = require('../../src/server/provider').getDefaultProviders()
 
 const providerNames = Object.keys(providers)
 const AUTH_PROVIDERS = {
-  drive: 'google',
+  drive: 'googledrive',
+  googlephotos: 'googlephotos',
   onedrive: 'microsoft',
 }
 const authData = {}
@@ -55,37 +56,33 @@ afterAll(() => {
 
 describe('list provider files', () => {
   async function runTest (providerName) {
-    const providerFixtures = fixtures.providers[providerName].expects
+    const providerFixture = fixtures.providers[providerName]?.expects ?? {}
     return request(authServer)
-      .get(`/${providerName}/list/${providerFixtures.listPath || ''}`)
+      .get(`/${providerName}/list/${providerFixture.listPath || ''}`)
       .set('uppy-auth-token', token)
       .expect(200)
       .then((res) => {
         expect(res.header['i-am']).toBe('http://localhost:3020')
-        expect(res.body.username).toBe(defaults.USERNAME)
 
-        const items = [...res.body.items]
-
-        // Drive has a virtual "shared-with-me" folder as the first item
-        if (providerName === 'drive') {
-          const item0 = items.shift()
-          expect(item0.isFolder).toBe(true)
-          expect(item0.name).toBe('Shared with me')
-          expect(item0.mimeType).toBe('application/vnd.google-apps.folder')
-          expect(item0.id).toBe('shared-with-me')
-          expect(item0.requestPath).toBe('shared-with-me')
-          expect(item0.icon).toBe('folder')
+        return {
+          username: res.body.username,
+          items: res.body.items,
+          providerFixture,
         }
-
-        const item = items[0]
-        expect(item.isFolder).toBe(false)
-        expect(item.name).toBe(providerFixtures.itemName || defaults.ITEM_NAME)
-        expect(item.mimeType).toBe(providerFixtures.itemMimeType || defaults.MIME_TYPE)
-        expect(item.id).toBe(providerFixtures.itemId || defaults.ITEM_ID)
-        expect(item.size).toBe(thisOrThat(providerFixtures.itemSize, defaults.FILE_SIZE))
-        expect(item.requestPath).toBe(providerFixtures.itemRequestPath || defaults.ITEM_ID)
-        expect(item.icon).toBe(providerFixtures.itemIcon || defaults.THUMBNAIL_URL)
       })
+  }
+
+  function expect1({ username, items, providerFixture }) {
+    expect(username).toBe(defaults.USERNAME)
+
+    const item = items[0]
+    expect(item.isFolder).toBe(false)
+    expect(item.name).toBe(providerFixture.itemName || defaults.ITEM_NAME)
+    expect(item.mimeType).toBe(providerFixture.itemMimeType || defaults.MIME_TYPE)
+    expect(item.id).toBe(providerFixture.itemId || defaults.ITEM_ID)
+    expect(item.size).toBe(thisOrThat(providerFixture.itemSize, defaults.FILE_SIZE))
+    expect(item.requestPath).toBe(providerFixture.itemRequestPath || defaults.ITEM_ID)
+    expect(item.icon).toBe(providerFixture.itemIcon || defaults.THUMBNAIL_URL)
   }
 
   test('dropbox', async () => {
@@ -130,7 +127,8 @@ describe('list provider files', () => {
       has_more: false,
     })
 
-    await runTest('dropbox')
+    const { username, items, providerFixture } = await runTest('dropbox')
+    expect1({ username, items, providerFixture })
   })
 
   test('box', async () => {
@@ -149,7 +147,8 @@ describe('list provider files', () => {
       ],
     })
 
-    await runTest('box')
+    const { username, items, providerFixture } = await runTest('box')
+    expect1({ username, items, providerFixture })
   })
 
   test('drive', async () => {
@@ -178,7 +177,60 @@ describe('list provider files', () => {
 
     nock('https://www.googleapis.com').get((uri) => uri.includes('about')).reply(200, { user: { emailAddress: 'john.doe@transloadit.com' } })
 
-    await runTest('drive')
+    const { username, items, providerFixture } = await runTest('drive')
+
+    // Drive has a virtual "shared-with-me" folder as the first item
+    const [item0, ...rest] = items
+    expect(item0.isFolder).toBe(true)
+    expect(item0.name).toBe('Shared with me')
+    expect(item0.mimeType).toBe('application/vnd.google-apps.folder')
+    expect(item0.id).toBe('shared-with-me')
+    expect(item0.requestPath).toBe('shared-with-me')
+    expect(item0.icon).toBe('folder')
+
+    expect1({ username, items: rest, providerFixture })
+  })
+
+  test('googlephotos', async () => {
+    nock('https://photoslibrary.googleapis.com').get('/v1/albums?pageSize=50').reply(200, {
+      albums: [
+        {
+          coverPhotoBaseUrl: 'https://test',
+          title: 'album',
+          id: '1',
+        }
+      ]
+    })
+
+    nock('https://photoslibrary.googleapis.com').get('/v1/sharedAlbums?pageSize=50').reply(200, {
+      sharedAlbums: [
+        {
+          coverPhotoBaseUrl: 'https://test2',
+          title: 'shared album',
+          id: '2',
+        }
+      ]
+    })
+
+    nock('https://www.googleapis.com').get('/oauth2/v1/userinfo').reply(200, {
+      email: defaults.USERNAME,
+    })
+
+    const { items } = await runTest('googlephotos')
+
+    expect(items[0].isFolder).toBe(true)
+    expect(items[0].name).toBe('album')
+    expect(items[0].id).toBe('1')
+    expect(items[0].requestPath).toBe('1')
+    expect(items[0].icon).toBe('https://drive-thirdparty.googleusercontent.com/32/type/application/vnd.google-apps.folder')
+    expect(items[0].thumbnail).toBe('https://test=w300-h300-c')
+
+    expect(items[1].isFolder).toBe(true)
+    expect(items[1].name).toBe('shared album')
+    expect(items[1].id).toBe('2')
+    expect(items[1].requestPath).toBe('2')
+    expect(items[1].icon).toBe('https://drive-thirdparty.googleusercontent.com/32/type/application/vnd.google-apps.folder')
+    expect(items[1].thumbnail).toBe('https://test2=w300-h300-c')
   })
 
   test('facebook', async () => {
@@ -206,7 +258,8 @@ describe('list provider files', () => {
       paging: {},
     })
 
-    await runTest('facebook')
+    const { username, items, providerFixture } = await runTest('facebook')
+    expect1({ username, items, providerFixture })
   })
 
   test('instagram', async () => {
@@ -225,7 +278,8 @@ describe('list provider files', () => {
       ],
     })
 
-    await runTest('instagram')
+    const { username, items, providerFixture } = await runTest('instagram')
+    expect1({ username, items, providerFixture })
   })
 
   test('onedrive', async () => {
@@ -271,7 +325,8 @@ describe('list provider files', () => {
       ],
     })
 
-    await runTest('onedrive')
+    const { username, items, providerFixture } = await runTest('onedrive')
+    expect1({ username, items, providerFixture })
   })
 
   test('zoom', async () => {
@@ -291,15 +346,16 @@ describe('list provider files', () => {
     })
     nockZoomRecordings()
 
-    await runTest('zoom')
+    const { username, items, providerFixture } = await runTest('zoom')
+    expect1({ username, items, providerFixture })
   })
 })
 
 describe('provider file gets downloaded from', () => {
   async function runTest (providerName) {
-    const providerFixtures = fixtures.providers[providerName].expects
+    const providerFixture = fixtures.providers[providerName]?.expects ?? {}
     const res = await request(authServer)
-      .post(`/${providerName}/get/${providerFixtures.itemRequestPath || defaults.ITEM_ID}`)
+      .post(`/${providerName}/get/${providerFixture.itemRequestPath || defaults.ITEM_ID}`)
       .set('uppy-auth-token', token)
       .set('Content-Type', 'application/json')
       .send({
@@ -324,9 +380,18 @@ describe('provider file gets downloaded from', () => {
   })
 
   test('drive', async () => {
-    // times(2) because of size request
-    nockGoogleDownloadFile({ times: 2 })
+    nockGoogleDownloadFile()
     await runTest('drive')
+  })
+
+  test('googlephotos', async () => {
+    nock('https://photoslibrary.googleapis.com').get(`/v1/mediaItems/${defaults.ITEM_ID}`).reply(200, {
+      baseUrl: 'https://lh3.googleusercontent.com/test',
+    })
+
+    nock('https://lh3.googleusercontent.com').get(`/test=d`).reply(200, ' ', { 'content-length': 1 })
+
+    await runTest('googlephotos')
   })
 
   test('facebook', async () => {
@@ -393,7 +458,7 @@ describe('logout of provider', () => {
       .expect(200)
 
     // only some providers can actually be revoked
-    const expectRevoked = ['box', 'dropbox', 'drive', 'facebook', 'zoom'].includes(providerName)
+    const expectRevoked = ['box', 'dropbox', 'drive', 'googlephotos', 'facebook', 'zoom'].includes(providerName)
 
     expect(res.body).toMatchObject({
       ok: true,
@@ -419,6 +484,11 @@ describe('logout of provider', () => {
   test('drive', async () => {
     nock('https://accounts.google.com').post('/o/oauth2/revoke?token=token+value').reply(200, {})
     await runTest('drive')
+  })
+
+  test('googlephotos', async () => {
+    nock('https://accounts.google.com').post('/o/oauth2/revoke?token=token+value').reply(200, {})
+    await runTest('googlephotos')
   })
 
   test('facebook', async () => {

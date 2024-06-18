@@ -1,12 +1,13 @@
 const got = require('got').default
 
-const Provider = require('../Provider')
-const logger = require('../../logger')
+const { logout, refreshToken } = require('../index')
+const logger = require('../../../logger')
 const { VIRTUAL_SHARED_DIR, adaptData, isShortcut, isGsuiteFile, getGsuiteExportType } = require('./adapter')
-const { withProviderErrorHandling } = require('../providerErrors')
-const { prepareStream } = require('../../helpers/utils')
-const { MAX_AGE_REFRESH_TOKEN } = require('../../helpers/jwt')
-const { ProviderAuthError } = require('../error')
+const { prepareStream } = require('../../../helpers/utils')
+const { MAX_AGE_REFRESH_TOKEN } = require('../../../helpers/jwt')
+const { ProviderAuthError } = require('../../error')
+const { withGoogleErrorHandling } = require('../../providerErrors')
+const Provider = require('../../Provider')
 
 
 // For testing refresh token:
@@ -29,10 +30,6 @@ const getClient = ({ token }) => got.extend({
   },
 })
 
-const getOauthClient = () => got.extend({
-  prefixUrl: 'https://oauth2.googleapis.com',
-})
-
 async function getStats ({ id, token }) {
   const client = getClient({ token })
 
@@ -52,15 +49,16 @@ async function getStats ({ id, token }) {
  */
 class Drive extends Provider {
   static get authProvider () {
-    return 'google'
+    return 'googledrive'
   }
 
   static get authStateExpiry () {
     return MAX_AGE_REFRESH_TOKEN
   }
 
+  // eslint-disable-next-line class-methods-use-this
   async list (options) {
-    return this.#withErrorHandling('provider.drive.list.error', async () => {
+    return withGoogleErrorHandling(Drive.authProvider, 'provider.drive.list.error', async () => {
       const directory = options.directory || 'root'
       const query = options.query || {}
       const { token } = options
@@ -126,6 +124,7 @@ class Drive extends Provider {
     })
   }
 
+  // eslint-disable-next-line class-methods-use-this
   async download ({ id: idIn, token }) {
     if (mockAccessTokenExpiredError != null) {
       logger.warn(`Access token: ${token}`)
@@ -136,7 +135,7 @@ class Drive extends Provider {
       }
     }
 
-    return this.#withErrorHandling('provider.drive.download.error', async () => {
+    return withGoogleErrorHandling(Drive.authProvider, 'provider.drive.download.error', async () => {
       const client = getClient({ token })
 
       const { mimeType, id, exportLinks } = await getStats({ id: idIn, token })
@@ -172,14 +171,8 @@ class Drive extends Provider {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  async thumbnail () {
-    // not implementing this because a public thumbnail from googledrive will be used instead
-    logger.error('call to thumbnail is not implemented', 'provider.drive.thumbnail.error')
-    throw new Error('call to thumbnail is not implemented')
-  }
-
   async size ({ id, token }) {
-    return this.#withErrorHandling('provider.drive.size.error', async () => {
+    return withGoogleErrorHandling(Drive.authProvider, 'provider.drive.size.error', async () => {
       const { mimeType, size } = await getStats({ id, token })
 
       if (isGsuiteFile(mimeType)) {
@@ -192,37 +185,15 @@ class Drive extends Provider {
     })
   }
 
-  logout ({ token }) {
-    return this.#withErrorHandling('provider.drive.logout.error', async () => {
-      await got.post('https://accounts.google.com/o/oauth2/revoke', {
-        searchParams: { token },
-        responseType: 'json',
-      })
-
-      return { revoked: true }
-    })
-  }
-
-  async refreshToken ({ clientId, clientSecret, refreshToken }) {
-    return this.#withErrorHandling('provider.drive.token.refresh.error', async () => {
-      const { access_token: accessToken } = await getOauthClient().post('token', { responseType: 'json', form: { refresh_token: refreshToken, grant_type: 'refresh_token', client_id: clientId, client_secret: clientSecret } }).json()
-      return { accessToken }
-    })
+  // eslint-disable-next-line class-methods-use-this
+  async logout(...args) {
+    return logout(...args)
   }
 
   // eslint-disable-next-line class-methods-use-this
-  async #withErrorHandling (tag, fn) {
-    return withProviderErrorHandling({
-      fn,
-      tag,
-      providerName: Drive.authProvider,
-      isAuthError: (response) => (
-        response.statusCode === 401
-        || (response.statusCode === 400 && response.body?.error === 'invalid_grant') // Refresh token has expired or been revoked
-      ),
-      getJsonErrorMessage: (body) => body?.error?.message,
-    })
-  }
 }
+
+Drive.prototype.logout = logout
+Drive.prototype.refreshToken = refreshToken
 
 module.exports = Drive

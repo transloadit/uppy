@@ -47,6 +47,7 @@
     "@uppy/form": "workspace:^",
     "@uppy/golden-retriever": "workspace:^",
     "@uppy/google-drive": "workspace:^",
+    "@uppy/google-photos": "workspace:^",
     "@uppy/image-editor": "workspace:^",
     "@uppy/informer": "workspace:^",
     "@uppy/instagram": "workspace:^",

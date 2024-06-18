@@ -97,6 +97,7 @@ export default class OneDrive<M extends Meta, B extends Body> extends UIPlugin<
     this.view = new ProviderViews(this, {
       provider: this.provider,
       loadAllFiles: true,
+      virtualList: true,
     })
 
     const { target } = this.opts
