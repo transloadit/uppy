@@ -34,8 +34,7 @@ export default function copyToClipboard(
     document.body.appendChild(textArea)
     textArea.select()
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const magicCopyFailed = (cause?: unknown) => {
+    const magicCopyFailed = () => {
       document.body.removeChild(textArea)
       // eslint-disable-next-line no-alert
       window.prompt(fallbackString, textToCopy)
@@ -45,13 +44,13 @@ export default function copyToClipboard(
     try {
       const successful = document.execCommand('copy')
       if (!successful) {
-        return magicCopyFailed('copy command unavailable')
+        return magicCopyFailed()
       }
       document.body.removeChild(textArea)
       return resolve()
     } catch (err) {
       document.body.removeChild(textArea)
-      return magicCopyFailed(err)
+      return magicCopyFailed()
     }
   })
 }
