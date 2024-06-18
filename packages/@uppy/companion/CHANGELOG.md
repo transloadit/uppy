@@ -1,5 +1,13 @@
 # @uppy/companion
 
+## 4.14.0
+
+Released: 2024-06-18
+Included in: Uppy v3.27.0
+
+- @uppy/google-photos: add plugin (Mikael Finstad / #5061)
+- @uppy/companion: Bump ws from 8.8.1 to 8.17.1 (#5256) 
+
 ## 4.13.3
 
 Released: 2024-05-22
