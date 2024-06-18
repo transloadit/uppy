@@ -1,2 +1,2 @@
-export { default } from './Audio.tsx'
-export type { AudioOptions } from './Audio.tsx'
+export { default } from './Audio'
+export type { AudioOptions } from './Audio'

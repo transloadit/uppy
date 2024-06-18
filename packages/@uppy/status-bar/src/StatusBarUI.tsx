@@ -3,8 +3,8 @@ import type { I18n } from '@uppy/utils/lib/Translator'
 import type { Uppy, State } from '@uppy/core/lib/Uppy'
 import { h } from 'preact'
 import classNames from 'classnames'
-import statusBarStates from './StatusBarStates.ts'
-import calculateProcessingProgress from './calculateProcessingProgress.ts'
+import statusBarStates from './StatusBarStates'
+import calculateProcessingProgress from './calculateProcessingProgress'
 
 import {
   UploadBtn,
@@ -16,7 +16,7 @@ import {
   ProgressBarError,
   ProgressBarUploading,
   ProgressBarComplete,
-} from './Components.tsx'
+} from './Components'
 
 const {
   STATE_ERROR,

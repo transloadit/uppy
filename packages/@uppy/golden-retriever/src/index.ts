@@ -6,9 +6,9 @@ import type Uppy from '@uppy/core'
 import type { UploadResult } from '@uppy/core'
 import ServiceWorkerStore, {
   type ServiceWorkerStoredFile,
-} from './ServiceWorkerStore.ts'
-import IndexedDBStore from './IndexedDBStore.ts'
-import MetaDataStore from './MetaDataStore.ts'
+} from './ServiceWorkerStore'
+import IndexedDBStore from './IndexedDBStore'
+import MetaDataStore from './MetaDataStore'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json

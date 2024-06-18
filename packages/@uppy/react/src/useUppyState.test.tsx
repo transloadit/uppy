@@ -5,7 +5,7 @@ import { describe, expect, expectTypeOf, it } from 'vitest'
 import { renderHook, render, act } from '@testing-library/react'
 import Uppy from '@uppy/core'
 
-import useUppyState from './useUppyState.ts'
+import useUppyState from './useUppyState'
 
 describe('useUppyState', () => {
   it('should return and update value with the correct type', () => {

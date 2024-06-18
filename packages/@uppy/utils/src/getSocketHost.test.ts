@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import getSocketHost from './getSocketHost.ts'
+import getSocketHost from './getSocketHost'
 
 describe('getSocketHost', () => {
   it('should get the host from the specified url', () => {

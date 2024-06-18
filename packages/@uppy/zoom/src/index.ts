@@ -1,1 +1,1 @@
-export { default } from './Zoom.tsx'
+export { default } from './Zoom'

@@ -3,7 +3,7 @@ import Core from '@uppy/core'
 import getFileNameAndExtension from '@uppy/utils/lib/getFileNameAndExtension'
 import fs from 'node:fs'
 import path from 'node:path'
-import CompressorPlugin from './index.ts'
+import CompressorPlugin from './index'
 
 // Compressor uses browser canvas API, so need to mock compress()
 // @ts-expect-error mocked

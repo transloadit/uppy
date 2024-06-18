@@ -8,21 +8,21 @@ import path from 'node:path'
 import prettierBytes from '@transloadit/prettier-bytes'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import type { Locale } from '@uppy/utils/lib/Translator'
-import Core from './index.ts'
-import UIPlugin from './UIPlugin.ts'
+import Core from './index'
+import UIPlugin from './UIPlugin'
 import BasePlugin, {
   type DefinePluginOpts,
   type PluginOpts,
-} from './BasePlugin.ts'
-import { debugLogger } from './loggers.ts'
-import AcquirerPlugin1 from './mocks/acquirerPlugin1.ts'
-import AcquirerPlugin2 from './mocks/acquirerPlugin2.ts'
-import InvalidPlugin from './mocks/invalidPlugin.ts'
-import InvalidPluginWithoutId from './mocks/invalidPluginWithoutId.ts'
-import InvalidPluginWithoutType from './mocks/invalidPluginWithoutType.ts'
+} from './BasePlugin'
+import { debugLogger } from './loggers'
+import AcquirerPlugin1 from './mocks/acquirerPlugin1'
+import AcquirerPlugin2 from './mocks/acquirerPlugin2'
+import InvalidPlugin from './mocks/invalidPlugin'
+import InvalidPluginWithoutId from './mocks/invalidPluginWithoutId'
+import InvalidPluginWithoutType from './mocks/invalidPluginWithoutType'
 // @ts-expect-error trying to import a file from outside the package
 import DeepFrozenStore from '../../../../e2e/cypress/fixtures/DeepFrozenStore.mjs'
-import type { State } from './Uppy.ts'
+import type { State } from './Uppy'
 
 // eslint-disable-next-line no-restricted-globals
 const sampleImage = fs.readFileSync(

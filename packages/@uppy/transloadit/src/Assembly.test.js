@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest'
 import { RateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
-import Assembly from './Assembly.ts'
+// eslint-disable-next-line import/no-unresolved
+import Assembly from './Assembly'
 
 describe('Transloadit/Assembly', () => {
   describe('status diffing', () => {

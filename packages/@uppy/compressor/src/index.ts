@@ -9,7 +9,7 @@ import CompressorJS from 'compressorjs'
 import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
 import type { PluginOpts } from '@uppy/core/lib/BasePlugin'
 
-import locale from './locale.ts'
+import locale from './locale'
 
 declare module '@uppy/core' {
   export interface UppyEventMap<M extends Meta, B extends Body> {

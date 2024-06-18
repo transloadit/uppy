@@ -6,9 +6,9 @@ import type { I18n } from '@uppy/utils/lib/Translator'
 import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
 import type { RestrictionError } from '@uppy/core/lib/Restricter'
 import type { Meta, Body } from '@uppy/utils/lib/UppyFile'
-import ItemIcon from './components/ItemIcon.tsx'
-import GridItem from './components/GridItem.tsx'
-import ListItem from './components/ListItem.tsx'
+import ItemIcon from './components/ItemIcon'
+import GridItem from './components/GridItem'
+import ListItem from './components/ListItem'
 
 type ItemProps<M extends Meta, B extends Body> = {
   showTitles: boolean

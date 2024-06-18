@@ -1,4 +1,4 @@
-import { createAbortError } from './AbortController.ts'
+import { createAbortError } from './AbortController'
 
 /**
  * Return a Promise that resolves after `ms` milliseconds.

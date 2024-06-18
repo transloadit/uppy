@@ -7,16 +7,16 @@ import type {
   UnknownProviderPlugin,
   UnknownProviderPluginState,
   Uppy,
-} from '@uppy/core/lib/Uppy.ts'
+} from '@uppy/core/lib/Uppy'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
 import type Translator from '@uppy/utils/lib/Translator'
 import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin'
-import AuthView from './AuthView.tsx'
-import Header from './Header.tsx'
-import Browser from '../Browser.tsx'
-import CloseWrapper from '../CloseWrapper.ts'
-import View, { type ViewOptions } from '../View.ts'
+import AuthView from './AuthView'
+import Header from './Header'
+import Browser from '../Browser'
+import CloseWrapper from '../CloseWrapper'
+import View, { type ViewOptions } from '../View'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json

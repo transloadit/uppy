@@ -5,10 +5,10 @@ import type { UnknownSearchProviderPlugin } from '@uppy/core/lib/Uppy'
 import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin'
 import type Uppy from '@uppy/core'
 import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
-import SearchFilterInput from '../SearchFilterInput.tsx'
-import Browser from '../Browser.tsx'
-import CloseWrapper from '../CloseWrapper.ts'
-import View, { type ViewOptions } from '../View.ts'
+import SearchFilterInput from '../SearchFilterInput'
+import Browser from '../Browser'
+import CloseWrapper from '../CloseWrapper'
+import View, { type ViewOptions } from '../View'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json

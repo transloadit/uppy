@@ -3,8 +3,8 @@ import type { UnknownPlugin, Uppy } from '@uppy/core'
 import DashboardPlugin from '@uppy/dashboard'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import type { DashboardOptions } from '@uppy/dashboard'
-import getHTMLProps from './getHTMLProps.ts'
-import nonHtmlPropsHaveChanged from './nonHtmlPropsHaveChanged.ts'
+import getHTMLProps from './getHTMLProps'
+import nonHtmlPropsHaveChanged from './nonHtmlPropsHaveChanged'
 
 type DashboardInlineOptions<M extends Meta, B extends Body> = Omit<
   DashboardOptions<M, B> & { inline: true },

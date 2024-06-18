@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import Translator, { type Locale } from './Translator.ts'
+import Translator, { type Locale } from './Translator'
 
 const english: Locale<0 | 1> = {
   strings: {

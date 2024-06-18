@@ -14,8 +14,8 @@ import {
 } from '@uppy/utils/lib/fileFilters'
 import { createAbortError } from '@uppy/utils/lib/AbortController'
 import getAllowedMetaFields from '@uppy/utils/lib/getAllowedMetaFields'
-import MultipartUploader from './MultipartUploader.ts'
-import { throwIfAborted } from './utils.ts'
+import MultipartUploader from './MultipartUploader'
+import { throwIfAborted } from './utils'
 import type {
   UploadResult,
   UploadResultWithSignal,
@@ -23,8 +23,8 @@ import type {
   UploadPartBytesResult,
   Body,
 } from './utils.js'
-import createSignedURL from './createSignedURL.ts'
-import { HTTPCommunicationQueue } from './HTTPCommunicationQueue.ts'
+import createSignedURL from './createSignedURL'
+import { HTTPCommunicationQueue } from './HTTPCommunicationQueue'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'

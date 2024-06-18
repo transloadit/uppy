@@ -1,1 +1,1 @@
-export { default } from './Dropbox.tsx'
+export { default } from './Dropbox'

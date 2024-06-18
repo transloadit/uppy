@@ -1,4 +1,4 @@
-import dataURItoBlob from './dataURItoBlob.ts'
+import dataURItoBlob from './dataURItoBlob'
 
 export default function dataURItoFile(
   dataURI: string,

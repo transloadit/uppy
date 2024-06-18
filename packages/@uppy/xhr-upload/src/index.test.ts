@@ -1,7 +1,7 @@
 import { vi, describe, it, expect } from 'vitest'
 import nock from 'nock'
 import Core from '@uppy/core'
-import XHRUpload from './index.ts'
+import XHRUpload from './index'
 
 describe('XHRUpload', () => {
   it('should leverage hooks from fetcher', () => {

@@ -183,7 +183,6 @@ module.exports = {
             message: 'Use h.JSX.Element, ComponentChild, or ComponentChildren from Preact',
           },
         ],
-        'import/extensions': ['error', 'ignorePackages'],
       },
     },
     {
@@ -287,7 +286,6 @@ module.exports = {
             message: 'Use import instead',
           },
         ],
-        'import/extensions': ['error', 'ignorePackages'],
       },
     },
     {

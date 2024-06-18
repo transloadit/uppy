@@ -1,1 +1,1 @@
-export { default } from './Unsplash.tsx'
+export { default } from './Unsplash'

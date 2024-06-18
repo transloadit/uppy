@@ -1,5 +1,5 @@
 import type { MinimalRequiredUppyFile } from './UppyFile.js'
-import getFileType from './getFileType.ts'
+import getFileType from './getFileType'
 
 function encodeCharacter(character: string): string {
   return character.charCodeAt(0).toString(32)

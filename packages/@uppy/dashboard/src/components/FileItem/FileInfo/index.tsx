@@ -2,7 +2,7 @@
 import { h, Fragment, type ComponentChild } from 'preact'
 import prettierBytes from '@transloadit/prettier-bytes'
 import truncateString from '@uppy/utils/lib/truncateString'
-import MetaErrorMessage from '../MetaErrorMessage.tsx'
+import MetaErrorMessage from '../MetaErrorMessage'
 
 type $TSFixMe = any
 

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import AssemblyOptions from './AssemblyOptions.ts'
+// eslint-disable-next-line import/no-unresolved
+import AssemblyOptions from './AssemblyOptions'
 
 describe('Transloadit/AssemblyOptions', () => {
   it('Validates response from assemblyOptions()', async () => {

@@ -5,10 +5,10 @@
 import { h, Component, type ComponentChild } from 'preact'
 import classNames from 'classnames'
 import { shallowEqualObjects } from 'shallow-equal'
-import FilePreviewAndLink from './FilePreviewAndLink/index.tsx'
-import FileProgress from './FileProgress/index.tsx'
-import FileInfo from './FileInfo/index.tsx'
-import Buttons from './Buttons/index.tsx'
+import FilePreviewAndLink from './FilePreviewAndLink/index'
+import FileProgress from './FileProgress/index'
+import FileInfo from './FileInfo/index'
+import Buttons from './Buttons/index'
 
 type $TSFixMe = any
 

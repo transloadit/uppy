@@ -1,1 +1,1 @@
-export { default } from './Facebook.tsx'
+export { default } from './Facebook'

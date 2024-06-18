@@ -11,9 +11,9 @@ import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
 import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
 import type { I18n } from '@uppy/utils/lib/Translator'
 import type Uppy from '@uppy/core'
-import SearchFilterInput from './SearchFilterInput.tsx'
-import FooterActions from './FooterActions.tsx'
-import Item from './Item/index.tsx'
+import SearchFilterInput from './SearchFilterInput'
+import FooterActions from './FooterActions'
+import Item from './Item/index'
 
 const VIRTUAL_SHARED_DIR = 'shared-with-me'
 

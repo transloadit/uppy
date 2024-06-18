@@ -2,10 +2,10 @@ import { h } from 'preact'
 import { useEffect, useState, useCallback } from 'preact/hooks'
 import classNames from 'classnames'
 import { nanoid } from 'nanoid/non-secure'
-import getFileTypeIcon from '../../utils/getFileTypeIcon.tsx'
-import ignoreEvent from '../../utils/ignoreEvent.ts'
-import FilePreview from '../FilePreview.tsx'
-import RenderMetaFields from './RenderMetaFields.tsx'
+import getFileTypeIcon from '../../utils/getFileTypeIcon'
+import ignoreEvent from '../../utils/ignoreEvent'
+import FilePreview from '../FilePreview'
+import RenderMetaFields from './RenderMetaFields'
 
 type $TSFixMe = any
 

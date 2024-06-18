@@ -1,1 +1,1 @@
-export { default } from './Instagram.tsx'
+export { default } from './Instagram'

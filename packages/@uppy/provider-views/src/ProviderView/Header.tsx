@@ -3,8 +3,8 @@ import { h, Fragment } from 'preact'
 import type { I18n } from '@uppy/utils/lib/Translator'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import type { UnknownProviderPluginState } from '@uppy/core/lib/Uppy'
-import User from './User.tsx'
-import Breadcrumbs from '../Breadcrumbs.tsx'
+import User from './User'
+import Breadcrumbs from '../Breadcrumbs'
 import type ProviderView from './ProviderView.js'
 
 type HeaderProps<M extends Meta, B extends Body> = {

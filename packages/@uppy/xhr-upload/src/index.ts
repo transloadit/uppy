@@ -23,7 +23,7 @@ import getAllowedMetaFields from '@uppy/utils/lib/getAllowedMetaFields'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'
-import locale from './locale.ts'
+import locale from './locale'
 
 declare module '@uppy/utils/lib/UppyFile' {
   // eslint-disable-next-line no-shadow, @typescript-eslint/no-unused-vars

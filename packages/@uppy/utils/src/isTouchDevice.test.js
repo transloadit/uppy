@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
-import isTouchDevice from './isTouchDevice.ts'
+// eslint-disable-next-line import/no-unresolved
+import isTouchDevice from './isTouchDevice'
 
 describe('isTouchDevice', () => {
   const RealTouchStart = globalThis.window.ontouchstart

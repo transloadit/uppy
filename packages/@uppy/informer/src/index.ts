@@ -1,1 +1,1 @@
-export { default } from './Informer.tsx'
+export { default } from './Informer'

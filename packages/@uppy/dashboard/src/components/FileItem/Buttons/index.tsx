@@ -1,5 +1,5 @@
 import { h, type ComponentChild } from 'preact'
-import copyToClipboard from '../../../utils/copyToClipboard.ts'
+import copyToClipboard from '../../../utils/copyToClipboard'
 
 type $TSFixMe = any
 

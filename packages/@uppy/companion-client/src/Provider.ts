@@ -6,7 +6,7 @@ import type {
   CompanionClientProvider,
 } from '@uppy/utils/lib/CompanionClientProvider'
 import type { UnknownProviderPlugin } from '@uppy/core/lib/Uppy'
-import RequestClient, { authErrorStatusCode } from './RequestClient.ts'
+import RequestClient, { authErrorStatusCode } from './RequestClient'
 import type { CompanionPluginOptions } from './index.js'
 
 export interface Opts extends PluginOpts, CompanionPluginOptions {

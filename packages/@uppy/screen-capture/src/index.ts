@@ -1,1 +1,1 @@
-export { default } from './ScreenCapture.tsx'
+export { default } from './ScreenCapture'

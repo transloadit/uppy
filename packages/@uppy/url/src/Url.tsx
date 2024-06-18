@@ -6,13 +6,13 @@ import {
 } from '@uppy/companion-client'
 import toArray from '@uppy/utils/lib/toArray'
 import type { TagFile, Meta, Body } from '@uppy/utils/lib/UppyFile'
-import UrlUI from './UrlUI.tsx'
-import forEachDroppedOrPastedUrl from './utils/forEachDroppedOrPastedUrl.ts'
+import UrlUI from './UrlUI'
+import forEachDroppedOrPastedUrl from './utils/forEachDroppedOrPastedUrl'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'
-import locale from './locale.ts'
+import locale from './locale'
 
 function UrlIcon() {
   return (

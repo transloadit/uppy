@@ -19,14 +19,14 @@ import { defaultPickerIcon } from '@uppy/provider-views'
 
 import { nanoid } from 'nanoid/non-secure'
 import memoizeOne from 'memoize-one'
-import * as trapFocus from './utils/trapFocus.ts'
-import createSuperFocus from './utils/createSuperFocus.ts'
-import DashboardUI from './components/Dashboard.tsx'
+import * as trapFocus from './utils/trapFocus'
+import createSuperFocus from './utils/createSuperFocus'
+import DashboardUI from './components/Dashboard'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'
-import locale from './locale.ts'
+import locale from './locale'
 
 type GenericEventCallback = () => void
 export type DashboardFileEditStartCallback<M extends Meta, B extends Body> = (

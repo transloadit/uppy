@@ -1,12 +1,12 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import { h, Component, type ComponentChild } from 'preact'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
-import RecordButton from './RecordButton.tsx'
-import SubmitButton from './SubmitButton.tsx'
-import StopWatch from './StopWatch.tsx'
-import StreamStatus from './StreamStatus.tsx'
+import RecordButton from './RecordButton'
+import SubmitButton from './SubmitButton'
+import StopWatch from './StopWatch'
+import StreamStatus from './StreamStatus'
 
-import ScreenCapture, { type ScreenCaptureState } from './ScreenCapture.tsx'
+import ScreenCapture, { type ScreenCaptureState } from './ScreenCapture'
 
 type RecorderScreenProps<M extends Meta, B extends Body> = {
   onStartRecording: ScreenCapture<M, B>['startRecording']

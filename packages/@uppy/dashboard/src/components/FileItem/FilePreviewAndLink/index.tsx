@@ -1,7 +1,7 @@
 import { h, type ComponentChild } from 'preact'
-import FilePreview from '../../FilePreview.tsx'
-import MetaErrorMessage from '../MetaErrorMessage.tsx'
-import getFileTypeIcon from '../../../utils/getFileTypeIcon.tsx'
+import FilePreview from '../../FilePreview'
+import MetaErrorMessage from '../MetaErrorMessage'
+import getFileTypeIcon from '../../../utils/getFileTypeIcon'
 
 type $TSFixMe = any
 

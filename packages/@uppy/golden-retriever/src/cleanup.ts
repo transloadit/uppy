@@ -1,5 +1,5 @@
-import IndexedDBStore from './IndexedDBStore.ts'
-import MetaDataStore from './MetaDataStore.ts'
+import IndexedDBStore from './IndexedDBStore'
+import MetaDataStore from './MetaDataStore'
 
 /**
  * Clean old blobs without needing to import all of Uppy.

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import getFileType from './getFileType.ts'
+import getFileType from './getFileType'
 import type { UppyFile } from './UppyFile.js'
 
 describe('getFileType', () => {

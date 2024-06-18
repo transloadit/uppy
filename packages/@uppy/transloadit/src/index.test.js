@@ -2,7 +2,8 @@ import { createServer } from 'node:http'
 import { once } from 'node:events'
 import { describe, expect, it } from 'vitest'
 import Core from '@uppy/core'
-import Transloadit from './index.ts'
+// eslint-disable-next-line import/no-unresolved
+import Transloadit from './index'
 import 'whatwg-fetch'
 
 describe('Transloadit', () => {

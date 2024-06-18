@@ -1,4 +1,4 @@
-import NetworkError from './NetworkError.ts'
+import NetworkError from './NetworkError'
 
 /**
  * Wrapper around window.fetch that throws a NetworkError when appropriate

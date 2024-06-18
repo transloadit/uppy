@@ -1,4 +1,4 @@
-import getFileNameAndExtension from './getFileNameAndExtension.ts'
+import getFileNameAndExtension from './getFileNameAndExtension'
 
 interface ObjectWithMIMEAndName {
   name?: string

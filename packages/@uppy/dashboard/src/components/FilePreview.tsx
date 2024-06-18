@@ -1,5 +1,5 @@
 import { h } from 'preact'
-import getFileTypeIcon from '../utils/getFileTypeIcon.tsx'
+import getFileTypeIcon from '../utils/getFileTypeIcon'
 
 type $TSFixMe = any
 

@@ -1,4 +1,4 @@
-import UIPlugin from '../UIPlugin.ts'
+import UIPlugin from '../UIPlugin'
 import type Uppy from '../Uppy.js'
 
 export default class InvalidPluginWithoutName extends UIPlugin<any, any, any> {

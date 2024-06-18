@@ -2,14 +2,14 @@
 import { h } from 'preact'
 import { useEffect, useRef } from 'preact/hooks'
 import type { I18n } from '@uppy/utils/lib/Translator'
-import RecordButton from './RecordButton.tsx'
-import RecordingLength from './RecordingLength.tsx'
+import RecordButton from './RecordButton'
+import RecordingLength from './RecordingLength'
 import AudioSourceSelect, {
   type AudioSourceSelectProps,
-} from './AudioSourceSelect.tsx'
-import AudioOscilloscope from './audio-oscilloscope/index.ts'
-import SubmitButton from './SubmitButton.tsx'
-import DiscardButton from './DiscardButton.tsx'
+} from './AudioSourceSelect'
+import AudioOscilloscope from './audio-oscilloscope/index'
+import SubmitButton from './SubmitButton'
+import DiscardButton from './DiscardButton'
 
 interface RecordingScreenProps extends AudioSourceSelectProps {
   stream: MediaStream | null | undefined

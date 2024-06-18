@@ -1,1 +1,1 @@
-export { default } from './GoogleDrive.tsx'
+export { default } from './GoogleDrive'

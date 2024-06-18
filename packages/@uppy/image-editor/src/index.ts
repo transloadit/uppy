@@ -1,1 +1,1 @@
-export { default } from './ImageEditor.tsx'
+export { default } from './ImageEditor'

@@ -1,6 +1,6 @@
 import { h } from 'preact'
 import classNames from 'classnames'
-import ignoreEvent from '../utils/ignoreEvent.ts'
+import ignoreEvent from '../utils/ignoreEvent'
 
 type $TSFixMe = any
 

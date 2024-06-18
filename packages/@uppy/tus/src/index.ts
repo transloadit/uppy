@@ -18,7 +18,7 @@ import type { Meta, Body, UppyFile } from '@uppy/utils/lib/UppyFile'
 import type { Uppy } from '@uppy/core'
 import type { RequestClient } from '@uppy/companion-client'
 import getAllowedMetaFields from '@uppy/utils/lib/getAllowedMetaFields'
-import getFingerprint from './getFingerprint.ts'
+import getFingerprint from './getFingerprint'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json

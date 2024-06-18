@@ -1,1 +1,1 @@
-export { default } from './OneDrive.tsx'
+export { default } from './OneDrive'

@@ -6,7 +6,7 @@ import {
   PutObjectCommand,
 } from '@aws-sdk/client-s3'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
-import createSignedURL from './createSignedURL.ts'
+import createSignedURL from './createSignedURL'
 
 const bucketName = 'some-bucket'
 const s3ClientOptions = {

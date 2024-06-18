@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import getETA from './getETA.ts'
+// eslint-disable-next-line import/no-unresolved
+import getETA from './getETA'
 
 describe('getETA', () => {
   it('should get the ETA remaining based on a fileProgress object', () => {

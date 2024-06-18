@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import Core from '@uppy/core'
-import Tus from './index.ts'
+import Tus from './index'
 
 describe('Tus', () => {
   it('Throws errors if autoRetry option is true', () => {

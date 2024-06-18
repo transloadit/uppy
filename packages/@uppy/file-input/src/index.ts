@@ -1,2 +1,2 @@
-export { default } from './FileInput.tsx'
-export type { FileInputOptions } from './FileInput.tsx'
+export { default } from './FileInput'
+export type { FileInputOptions } from './FileInput'

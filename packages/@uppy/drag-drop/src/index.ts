@@ -1,2 +1,2 @@
-export { default } from './DragDrop.tsx'
-export type { DragDropOptions } from './DragDrop.tsx'
+export { default } from './DragDrop'
+export type { DragDropOptions } from './DragDrop'

@@ -11,7 +11,7 @@ const globals = {
 }
 
 export default {
-  input: 'src/index.ts',
+  input: 'src/index',
   output: [
     {
       file: 'lib/index.js',

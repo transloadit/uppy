@@ -4,7 +4,7 @@ import findDOMElement from '@uppy/utils/lib/findDOMElement'
 import getTextDirection from '@uppy/utils/lib/getTextDirection'
 
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
-import BasePlugin from './BasePlugin.ts'
+import BasePlugin from './BasePlugin'
 import type { PluginOpts } from './BasePlugin.js'
 import type { State } from './Uppy.js'
 

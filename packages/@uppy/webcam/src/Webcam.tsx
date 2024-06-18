@@ -7,20 +7,20 @@ import type {
   Body,
   Meta,
   MinimalRequiredUppyFile,
-} from '@uppy/utils/lib/UppyFile.ts'
+} from '@uppy/utils/lib/UppyFile'
 import type { PluginTarget } from '@uppy/core/lib/UIPlugin'
 import getFileTypeExtension from '@uppy/utils/lib/getFileTypeExtension'
 import mimeTypes from '@uppy/utils/lib/mimeTypes'
 import isMobile from 'is-mobile'
 import canvasToBlob from '@uppy/utils/lib/canvasToBlob'
-import supportsMediaRecorder from './supportsMediaRecorder.ts'
-import CameraIcon from './CameraIcon.tsx'
-import CameraScreen from './CameraScreen.tsx'
-import PermissionsScreen from './PermissionsScreen.tsx'
+import supportsMediaRecorder from './supportsMediaRecorder'
+import CameraIcon from './CameraIcon'
+import CameraScreen from './CameraScreen'
+import PermissionsScreen from './PermissionsScreen'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'
-import locale from './locale.ts'
+import locale from './locale'
 
 /**
  * Normalize a MIME type or file extension into a MIME type.
