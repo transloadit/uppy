@@ -5,8 +5,6 @@ import type {
 } from '@uppy/utils/lib/CompanionClientProvider'
 import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
 import type { Meta, Body, TagFile } from '@uppy/utils/lib/UppyFile'
-import getFileType from '@uppy/utils/lib/getFileType'
-import isPreviewSupported from '@uppy/utils/lib/isPreviewSupported'
 
 // TODO: document what is a "tagFile" or get rid of this concept
 const getTagFile = <M extends Meta, B extends Body>(
@@ -14,8 +12,6 @@ const getTagFile = <M extends Meta, B extends Body>(
   plugin: UnknownPlugin<M, B>,
   provider: CompanionClientProvider | CompanionClientSearchProvider,
 ): TagFile<M> => {
-  const fileType = getFileType({ type: file.mimeType, name: file.name })
-
   const tagFile: TagFile<any> = {
     id: file.id,
     source: plugin.id,
@@ -23,8 +19,7 @@ const getTagFile = <M extends Meta, B extends Body>(
     type: file.mimeType,
     isRemote: true,
     data: file,
-    // TODO Should we just always use the thumbnail URL if it exists?
-    preview: isPreviewSupported(fileType) ? file.thumbnail : undefined,
+    preview: file.thumbnail || undefined,
     meta: {
       authorName: file.author?.name,
       authorUrl: file.author?.url,

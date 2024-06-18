@@ -79,10 +79,11 @@ export interface Opts<M extends Meta, B extends Body> {
     loading: boolean | string
     onAuth: (authFormData: unknown) => Promise<void>
   }) => h.JSX.Element
+  virtualList: boolean
 }
 type PassedOpts<M extends Meta, B extends Body> = Optional<
   Opts<M, B>,
-  'viewType' | 'showTitles' | 'showFilter' | 'showBreadcrumbs' | 'loadAllFiles'
+  'viewType' | 'showTitles' | 'showFilter' | 'showBreadcrumbs' | 'loadAllFiles' | 'virtualList'
 >
 type DefaultOpts<M extends Meta, B extends Body> = Omit<Opts<M, B>, 'provider'>
 type RenderOpts<M extends Meta, B extends Body> = Omit<
@@ -116,6 +117,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
       showFilter: true,
       showBreadcrumbs: true,
       loadAllFiles: false,
+      virtualList: false
     }
     this.opts = { ...defaultOptions, ...opts }
 
@@ -465,7 +467,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
           toggleCheckbox={this.toggleCheckbox}
           displayedPartialTree={this.getDisplayedPartialTree()}
           openFolder={this.openFolder}
-          loadAllFiles={opts.loadAllFiles}
+          virtualList={opts.virtualList}
           noResultsLabel={i18n('noFilesFound')}
           handleScroll={this.handleScroll}
           viewType={opts.viewType}

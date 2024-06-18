@@ -23,7 +23,7 @@ type BrowserProps<M extends Meta, B extends Body> = {
   isLoading: boolean | string
   openFolder: ProviderView<M, B>['openFolder']
   noResultsLabel: string
-  loadAllFiles: boolean
+  virtualList: boolean
 }
 
 function Browser<M extends Meta, B extends Body>(props: BrowserProps<M, B>) {
@@ -37,7 +37,7 @@ function Browser<M extends Meta, B extends Body>(props: BrowserProps<M, B>) {
     isLoading,
     openFolder,
     noResultsLabel,
-    loadAllFiles,
+    virtualList,
   } = props
 
   const [isShiftKeyPressed, setIsShiftKeyPressed] = useState(false)
@@ -91,7 +91,7 @@ function Browser<M extends Meta, B extends Body>(props: BrowserProps<M, B>) {
     />
   )
 
-  if (loadAllFiles) {
+  if (virtualList) {
     return (
       <div className="uppy-ProviderBrowser-body">
         <ul className="uppy-ProviderBrowser-list">

@@ -71,7 +71,9 @@ export default function ListItem({
             <div className="uppy-ProviderBrowserItem-iconWrap">
               <ItemIcon itemIconString={file.data.icon} />
             </div>
-            {showTitles && <span>{file.data.name}</span>}
+            {showTitles && title ?
+              <span>{title}</span>
+            : i18n('unnamed')}
           </button>
           // label for a checkbox
         : <label

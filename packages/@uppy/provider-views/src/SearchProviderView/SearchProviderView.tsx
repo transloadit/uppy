@@ -333,7 +333,7 @@ export default class SearchProviderView<M extends Meta, B extends Body> {
           showTitles={opts.showTitles}
           isLoading={loading}
           i18n={i18n}
-          loadAllFiles={false}
+          virtualList={false}
         />
 
         <FooterActions
