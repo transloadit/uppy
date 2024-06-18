@@ -1310,15 +1310,45 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     }
   }
 
+  #getThumbnailGeneratorOpts() {
+    return {
+      thumbnailWidth: this.opts.thumbnailWidth,
+      thumbnailHeight: this.opts.thumbnailHeight,
+      thumbnailType: this.opts.thumbnailType,
+      waitForThumbnailsBeforeUpload: this.opts.waitForThumbnailsBeforeUpload,
+      // If we don't block on thumbnails, we can lazily generate them
+      lazy: !this.opts.waitForThumbnailsBeforeUpload,
+    }
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  #getInformerOpts() {
+    return {
+      // currently no options
+    }
+  }
+
   setOptions(opts: Partial<DashboardOptions<M, B>>) {
     super.setOptions(opts)
     this.uppy
       .getPlugin(this.#getStatusBarId())
       ?.setOptions(this.#getStatusBarOpts())
+
+    this.uppy
+      .getPlugin(this.#getThumbnailGeneratorId())
+      ?.setOptions(this.#getThumbnailGeneratorOpts())
   }
 
   #getStatusBarId() {
     return `${this.id}:StatusBar`
+  }
+
+  #getThumbnailGeneratorId() {
+    return `${this.id}:ThumbnailGenerator`
+  }
+
+  #getInformerId() {
+    return `${this.id}:Informer`
   }
 
   install = (): void => {
@@ -1371,20 +1401,16 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
 
     if (!this.opts.disableInformer) {
       this.uppy.use(Informer, {
-        id: `${this.id}:Informer`,
+        id: this.#getInformerId(),
         target: this,
+        ...this.#getInformerOpts(),
       })
     }
 
     if (!this.opts.disableThumbnailGenerator) {
       this.uppy.use(ThumbnailGenerator, {
-        id: `${this.id}:ThumbnailGenerator`,
-        thumbnailWidth: this.opts.thumbnailWidth,
-        thumbnailHeight: this.opts.thumbnailHeight,
-        thumbnailType: this.opts.thumbnailType,
-        waitForThumbnailsBeforeUpload: this.opts.waitForThumbnailsBeforeUpload,
-        // If we don't block on thumbnails, we can lazily generate them
-        lazy: !this.opts.waitForThumbnailsBeforeUpload,
+        id: this.#getThumbnailGeneratorId(),
+        ...this.#getThumbnailGeneratorOpts(),
       })
     }
 
