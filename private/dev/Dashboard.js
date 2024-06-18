@@ -1,7 +1,6 @@
 // The @uppy/ dependencies are resolved from source
 /* eslint-disable import/no-extraneous-dependencies */
 import Uppy, { debugLogger } from '@uppy/core'
-import Dashboard from '@uppy/dashboard'
 import RemoteSources from '@uppy/remote-sources'
 import Webcam from '@uppy/webcam'
 import ScreenCapture from '@uppy/screen-capture'
@@ -11,7 +10,6 @@ import AwsS3 from '@uppy/aws-s3'
 import AwsS3Multipart from '@uppy/aws-s3-multipart'
 import XHRUpload from '@uppy/xhr-upload'
 import Transloadit from '@uppy/transloadit'
-import Form from '@uppy/form'
 import ImageEditor from '@uppy/image-editor'
 import DropTarget from '@uppy/drop-target'
 import Audio from '@uppy/audio'
@@ -77,10 +75,7 @@ function getCompanionKeysParams (name) {
 
 // Rest is implementation! Obviously edit as necessary...
 
-export default () => {
-  const restrictions = undefined
-  // const restrictions = { requiredMetaFields: ['caption'], maxNumberOfFiles: 3 }
-
+export default ({ restrictions } = {}) => {
   const uppyDashboard = new Uppy({
     logger: debugLogger,
     meta: {
@@ -90,44 +85,29 @@ export default () => {
     allowMultipleUploadBatches: false,
     restrictions,
   })
-    .use(Dashboard, {
-      trigger: '#pick-files',
-      // inline: true,
-      target: '.foo',
-      metaFields: [
-        { id: 'license', name: 'License', placeholder: 'specify license' },
-        { id: 'caption', name: 'Caption', placeholder: 'add caption' },
-      ],
-      showProgressDetails: true,
-      proudlyDisplayPoweredByUppy: true,
-      note: `${JSON.stringify(restrictions)}`,
-    })
-    .use(GoogleDrive, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts, ...getCompanionKeysParams('GOOGLE_DRIVE') })
-    // .use(Instagram, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })
-    // .use(Dropbox, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })
-    // .use(Box, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })
-    // .use(Facebook, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })
-    // .use(OneDrive, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })
-    // .use(Zoom, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })
-    // .use(Url, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })
-    // .use(Unsplash, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })
+    .use(GoogleDrive, { companionUrl: COMPANION_URL, companionAllowedHosts, ...getCompanionKeysParams('GOOGLE_DRIVE') })
+    // .use(Instagram, { companionUrl: COMPANION_URL, companionAllowedHosts })
+    // .use(Dropbox, { companionUrl: COMPANION_URL, companionAllowedHosts })
+    // .use(Box, { companionUrl: COMPANION_URL, companionAllowedHosts })
+    // .use(Facebook, { companionUrl: COMPANION_URL, companionAllowedHosts })
+    // .use(OneDrive, { companionUrl: COMPANION_URL, companionAllowedHosts })
+    // .use(Zoom, { companionUrl: COMPANION_URL, companionAllowedHosts })
+    // .use(Url, { companionUrl: COMPANION_URL, companionAllowedHosts })
+    // .use(Unsplash, { companionUrl: COMPANION_URL, companionAllowedHosts })
     .use(RemoteSources, {
       companionUrl: COMPANION_URL,
       sources: ['Box', 'Dropbox', 'Facebook', 'Instagram', 'OneDrive', 'Unsplash', 'Zoom', 'Url'],
       companionAllowedHosts,
     })
     .use(Webcam, {
-      target: Dashboard,
       showVideoSourceDropdown: true,
       showRecordingLength: true,
     })
     .use(Audio, {
-      target: Dashboard,
       showRecordingLength: true,
     })
-    .use(ScreenCapture, { target: Dashboard })
-    .use(Form, { target: '#upload-form' })
-    .use(ImageEditor, { target: Dashboard })
+    .use(ScreenCapture)
+    .use(ImageEditor)
     .use(DropTarget, {
       target: document.body,
     })
@@ -185,8 +165,6 @@ export default () => {
     uppyDashboard.use(GoldenRetriever, { serviceWorker: true })
   }
 
-  window.uppy = uppyDashboard
-
   uppyDashboard.on('complete', (result) => {
     if (result.failed.length === 0) {
       console.log('Upload successful 😀')
@@ -200,6 +178,5 @@ export default () => {
     }
   })
 
-  const modalTrigger = document.querySelector('#pick-files')
-  if (modalTrigger) modalTrigger.click()
+  return uppyDashboard
 }
