@@ -12,6 +12,35 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 4.0.0-beta.12
+
+Released: 2024-06-18
+
+| Package              |       Version | Package              |       Version |
+| -------------------- | ------------- | -------------------- | ------------- |
+| @uppy/aws-s3         |  4.0.0-beta.7 | @uppy/locales        |  4.0.0-beta.4 |
+| @uppy/box            |  3.0.0-beta.7 | @uppy/onedrive       |  4.0.0-beta.7 |
+| @uppy/companion      | 5.0.0-beta.10 | @uppy/provider-views |  4.0.0-beta.9 |
+| @uppy/core           | 4.0.0-beta.10 | @uppy/react          |  4.0.0-beta.7 |
+| @uppy/dashboard      | 4.0.0-beta.10 | @uppy/remote-sources |  2.0.0-beta.5 |
+| @uppy/dropbox        |  4.0.0-beta.8 | @uppy/transloadit    |  4.0.0-beta.9 |
+| @uppy/google-drive   |  3.6.0-beta.1 | uppy                 | 4.0.0-beta.12 |
+
+- meta: ignore `require-default-props` lint rule for function components (Antoine du Hamel / #5253)
+- @uppy/provider-views: Renames & `eslint-disable react/require-default-props` removal (Evgenia Karunus / #5251)
+- @uppy/companion: coalesce options `bucket` and `getKey` (Mikael Finstad / #5169)
+- @uppy/aws-s3: add `endpoint` option (Antoine du Hamel / #5173)
+- @uppy/locales: fix `fa_IR` export (Merlijn Vos / #5241)
+- @uppy/companion: improve companion logging (Mikael Finstad / #5250)
+- @uppy/transloadit: also fix outdated assembly transloadit:result (Merlijn Vos / #5246)
+- docs: fix typo in the url (Evgenia Karunus)
+- examples,@uppy/locales,@uppy/provider-views,@uppy/transloadit: Release: uppy@3.26.1 (github-actions[bot] / #5242)
+- meta: Improve aws-node example readme (Artur Paikin / #4753)
+- @uppy/locales: Added translation string (it_IT) (Samuel / #5237)
+- @uppy/transloadit: fix transloadit:result event (Merlijn Vos / #5231)
+- @uppy/provider-views: fix wrong font for files (Merlijn Vos / #5234)
+
+
 ## 4.0.0-beta.11
 
 Released: 2024-06-11

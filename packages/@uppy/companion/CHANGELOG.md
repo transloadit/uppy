@@ -1,5 +1,13 @@
 # @uppy/companion
 
+## 5.0.0-beta.10
+
+Released: 2024-06-18
+Included in: Uppy v4.0.0-beta.12
+
+- @uppy/companion: coalesce options `bucket` and `getKey` (Mikael Finstad / #5169)
+- @uppy/companion: improve companion logging (Mikael Finstad / #5250)
+
 ## 5.0.0-beta.9
 
 Released: 2024-06-04

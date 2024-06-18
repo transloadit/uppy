@@ -1,5 +1,14 @@
 # @uppy/locales
 
+## 4.0.0-beta.4
+
+Released: 2024-06-18
+Included in: Uppy v4.0.0-beta.12
+
+- @uppy/locales: fix `fa_IR` export (Merlijn Vos / #5241)
+- examples,@uppy/locales,@uppy/provider-views,@uppy/transloadit: Release: uppy@3.26.1 (github-actions[bot] / #5242)
+- @uppy/locales: Added translation string (it_IT) (Samuel / #5237)
+
 ## 4.0.0-beta.2
 
 Released: 2024-06-04
