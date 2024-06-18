@@ -1297,6 +1297,30 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     }
   }
 
+  #getStatusBarOpts() {
+    return {
+      hideUploadButton: this.opts.hideUploadButton,
+      hideRetryButton: this.opts.hideRetryButton,
+      hidePauseResumeButton: this.opts.hidePauseResumeButton,
+      hideCancelButton: this.opts.hideCancelButton,
+      showProgressDetails: this.opts.showProgressDetails,
+      hideAfterFinish: this.opts.hideProgressAfterFinish,
+      locale: this.opts.locale,
+      doneButtonHandler: this.opts.doneButtonHandler,
+    }
+  }
+
+  setOptions(opts: DashboardOptions<Meta, Body>) {
+    super.setOptions(opts)
+    this.uppy
+      .getPlugin(this.#getStatusBarId())
+      ?.setOptions(this.#getStatusBarOpts())
+  }
+
+  #getStatusBarId() {
+    return `${this.id}:StatusBar`
+  }
+
   install = (): void => {
     // Set default state for Dashboard
     this.setPluginState({
@@ -1339,16 +1363,9 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
 
     if (!this.opts.disableStatusBar) {
       this.uppy.use(StatusBar, {
-        id: `${this.id}:StatusBar`,
+        id: this.#getStatusBarId(),
         target: this,
-        hideUploadButton: this.opts.hideUploadButton,
-        hideRetryButton: this.opts.hideRetryButton,
-        hidePauseResumeButton: this.opts.hidePauseResumeButton,
-        hideCancelButton: this.opts.hideCancelButton,
-        showProgressDetails: this.opts.showProgressDetails,
-        hideAfterFinish: this.opts.hideProgressAfterFinish,
-        locale: this.opts.locale,
-        doneButtonHandler: this.opts.doneButtonHandler,
+        ...this.#getStatusBarOpts(),
       })
     }
 
