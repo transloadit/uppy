@@ -28,10 +28,11 @@ Released: 2024-06-18
 
 - @uppy/google-photos: add plugin (Mikael Finstad / #5061)
 - examples: updating aws-nodejs example listParts logic for resuming uploads (Mitchell Rhoads / #5192)
-- meta: Bump docker/login-action from 3.1.0 to 3.2.0 (dependabot[bot] / #5217)
-- meta: Bump docker/build-push-action from 5.3.0 to 5.4.0 (dependabot[bot] / #5252)
+- meta: Bump docker/login-action from 3.1.0 to 3.2.0 (dependabot\[bot] / #5217)
+- meta: Bump docker/build-push-action from 5.3.0 to 5.4.0 (dependabot\[bot] / #5252)
 - @uppy/transloadit: also fix outdated assembly transloadit:result (Merlijn Vos / #5246)
 - docs: fix typo in the url (Evgenia Karunus)
+- @uppy/companion: Bump ws from 8.8.1 to 8.17.1 (dependabot\[bot] / #5256)
 
 
 ## 3.26.1
