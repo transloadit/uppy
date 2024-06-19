@@ -1,4 +1,4 @@
-const got = require('got').default
+const got = require('../../../got')
 
 const { logout, refreshToken } = require('../index')
 const logger = require('../../../logger')
@@ -23,7 +23,7 @@ const DRIVE_FILES_FIELDS = `kind,nextPageToken,incompleteSearch,files(${DRIVE_FI
 // using wildcard to get all 'drive' fields because specifying fields seems no to work for the /drives endpoint
 const SHARED_DRIVE_FIELDS = '*'
 
-const getClient = ({ token }) => got.extend({
+const getClient = async ({ token }) => (await got).extend({
   prefixUrl: 'https://www.googleapis.com/drive/v3',
   headers: {
     authorization: `Bearer ${token}`,
@@ -31,7 +31,7 @@ const getClient = ({ token }) => got.extend({
 })
 
 async function getStats ({ id, token }) {
-  const client = getClient({ token })
+  const client = await getClient({ token })
 
   const getStatsInner = async (statsOfId) => (
     client.get(`files/${encodeURIComponent(statsOfId)}`, { searchParams: { fields: DRIVE_FILE_FIELDS, supportsAllDrives: true }, responseType: 'json' }).json()
@@ -66,7 +66,7 @@ class Drive extends Provider {
       const isRoot = directory === 'root'
       const isVirtualSharedDirRoot = directory === VIRTUAL_SHARED_DIR
 
-      const client = getClient({ token })
+      const client = await getClient({ token })
 
       async function fetchSharedDrives (pageToken = null) {
         const shouldListSharedDrives = isRoot && !query.cursor
@@ -136,7 +136,7 @@ class Drive extends Provider {
     }
 
     return withGoogleErrorHandling(Drive.authProvider, 'provider.drive.download.error', async () => {
-      const client = getClient({ token })
+      const client = await getClient({ token })
 
       const { mimeType, id, exportLinks } = await getStats({ id: idIn, token })
 
@@ -152,7 +152,7 @@ class Drive extends Provider {
         // Implemented based on the answer from StackOverflow: https://stackoverflow.com/a/59168288
         const mimeTypeExportLink = exportLinks?.[mimeType2]
         if (mimeTypeExportLink) {
-          const gSuiteFilesClient = got.extend({
+          const gSuiteFilesClient = (await got).extend({
             headers: {
               authorization: `Bearer ${token}`,
             },

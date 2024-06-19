@@ -9,7 +9,7 @@ const { ProviderAuthError } = require('../error')
 const got = require('../../got')
 
 // For testing refresh token:
-// first run a download with mockAccessTokenExpiredError = true
+// first run a download with mockAccessTokenExpiredError = true 
 // then when you want to test expiry, set to mockAccessTokenExpiredError to the logged access token
 // This will trigger companion/nodemon to restart, and it will respond with a simulated invalid token response
 const mockAccessTokenExpiredError = undefined
