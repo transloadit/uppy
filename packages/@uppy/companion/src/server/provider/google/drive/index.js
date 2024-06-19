@@ -1,3 +1,5 @@
+const got = require('../../../got')
+
 const { logout, refreshToken } = require('../index')
 const logger = require('../../../logger')
 const { VIRTUAL_SHARED_DIR, adaptData, isShortcut, isGsuiteFile, getGsuiteExportType } = require('./adapter')
@@ -6,8 +8,6 @@ const { MAX_AGE_REFRESH_TOKEN } = require('../../../helpers/jwt')
 const { ProviderAuthError } = require('../../error')
 const { withGoogleErrorHandling } = require('../../providerErrors')
 const Provider = require('../../Provider')
-
-const got = require('../../../got')
 
 // For testing refresh token:
 // first run a download with mockAccessTokenExpiredError = true 

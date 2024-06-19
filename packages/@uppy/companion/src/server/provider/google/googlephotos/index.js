@@ -1,11 +1,11 @@
+const got = require('../../../got')
+
 const { logout, refreshToken } = require('../index')
 const { withGoogleErrorHandling } = require('../../providerErrors')
 const { prepareStream } = require('../../../helpers/utils')
 const { MAX_AGE_REFRESH_TOKEN } = require('../../../helpers/jwt')
 const logger = require('../../../logger')
 const Provider = require('../../Provider')
-
-const got = require('../../../got')
 
 
 const getBaseClient = async ({ token }) => (await got).extend({
