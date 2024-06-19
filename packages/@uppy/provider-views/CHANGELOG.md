@@ -1,5 +1,14 @@
 # @uppy/provider-views
 
+## 4.0.0-beta.9
+
+Released: 2024-06-18
+Included in: Uppy v4.0.0-beta.12
+
+- @uppy/provider-views: Renames & `eslint-disable react/require-default-props` removal (Evgenia Karunus / #5251)
+- examples,@uppy/locales,@uppy/provider-views,@uppy/transloadit: Release: uppy@3.26.1 (github-actions[bot] / #5242)
+- @uppy/provider-views: fix wrong font for files (Merlijn Vos / #5234)
+
 ## 4.0.0-beta.7
 
 Released: 2024-06-04
