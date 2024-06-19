@@ -83,7 +83,12 @@ export interface Opts<M extends Meta, B extends Body> {
 }
 type PassedOpts<M extends Meta, B extends Body> = Optional<
   Opts<M, B>,
-  'viewType' | 'showTitles' | 'showFilter' | 'showBreadcrumbs' | 'loadAllFiles' | 'virtualList'
+  | 'viewType'
+  | 'showTitles'
+  | 'showFilter'
+  | 'showBreadcrumbs'
+  | 'loadAllFiles'
+  | 'virtualList'
 >
 type DefaultOpts<M extends Meta, B extends Body> = Omit<Opts<M, B>, 'provider'>
 type RenderOpts<M extends Meta, B extends Body> = Omit<
@@ -117,7 +122,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
       showFilter: true,
       showBreadcrumbs: true,
       loadAllFiles: false,
-      virtualList: false
+      virtualList: false,
     }
     this.opts = { ...defaultOptions, ...opts }
 
