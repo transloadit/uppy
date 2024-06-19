@@ -132,6 +132,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
     // Set default state for the plugin
     this.resetPluginState()
 
+    // todo
     // @ts-expect-error this should be typed in @uppy/dashboard.
     this.plugin.uppy.on('dashboard:close-panel', this.resetPluginState)
 
