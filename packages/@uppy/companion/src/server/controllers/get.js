@@ -11,10 +11,7 @@ async function get (req, res) {
     return provider.size({ id, token: accessToken, query: req.query })
   }
 
-  async function download () {
-    const { stream } = await provider.download({ id, token: accessToken, providerUserSession, query: req.query })
-    return stream
-  }
+  const download = () => provider.download({ id, token: accessToken, providerUserSession, query: req.query })
 
   try {
     await startDownUpload({ req, res, getSize, download })

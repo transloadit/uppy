@@ -9,7 +9,6 @@ const { ProviderAuthError } = require('../../error')
 const { withGoogleErrorHandling } = require('../../providerErrors')
 const Provider = require('../../Provider')
 
-
 // For testing refresh token:
 // first run a download with mockAccessTokenExpiredError = true 
 // then when you want to test expiry, set to mockAccessTokenExpiredError to the logged access token
@@ -48,7 +47,7 @@ async function getStats ({ id, token }) {
  * Adapter for API https://developers.google.com/drive/api/v3/
  */
 class Drive extends Provider {
-  static get authProvider () {
+  static get oauthProvider () {
     return 'googledrive'
   }
 
@@ -58,7 +57,7 @@ class Drive extends Provider {
 
   // eslint-disable-next-line class-methods-use-this
   async list (options) {
-    return withGoogleErrorHandling(Drive.authProvider, 'provider.drive.list.error', async () => {
+    return withGoogleErrorHandling(Drive.oauthProvider, 'provider.drive.list.error', async () => {
       const directory = options.directory || 'root'
       const query = options.query || {}
       const { token } = options
@@ -135,7 +134,7 @@ class Drive extends Provider {
       }
     }
 
-    return withGoogleErrorHandling(Drive.authProvider, 'provider.drive.download.error', async () => {
+    return withGoogleErrorHandling(Drive.oauthProvider, 'provider.drive.download.error', async () => {
       const client = await getClient({ token })
 
       const { mimeType, id, exportLinks } = await getStats({ id: idIn, token })
@@ -172,7 +171,7 @@ class Drive extends Provider {
 
   // eslint-disable-next-line class-methods-use-this
   async size ({ id, token }) {
-    return withGoogleErrorHandling(Drive.authProvider, 'provider.drive.size.error', async () => {
+    return withGoogleErrorHandling(Drive.oauthProvider, 'provider.drive.size.error', async () => {
       const { mimeType, size } = await getStats({ id, token })
 
       if (isGsuiteFile(mimeType)) {
@@ -184,13 +183,6 @@ class Drive extends Provider {
       return parseInt(size, 10)
     })
   }
-
-  // eslint-disable-next-line class-methods-use-this
-  async logout(...args) {
-    return logout(...args)
-  }
-
-  // eslint-disable-next-line class-methods-use-this
 }
 
 Drive.prototype.logout = logout
