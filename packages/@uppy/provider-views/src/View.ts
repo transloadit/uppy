@@ -4,8 +4,6 @@ import type {
 } from '@uppy/core/lib/Uppy'
 import type { Body, Meta, TagFile } from '@uppy/utils/lib/UppyFile'
 import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
-import getFileType from '@uppy/utils/lib/getFileType'
-import isPreviewSupported from '@uppy/utils/lib/isPreviewSupported'
 import remoteFileObjToLocal from '@uppy/utils/lib/remoteFileObjToLocal'
 
 type PluginType = 'Provider' | 'SearchProvider'
@@ -142,10 +140,7 @@ export default class View<
       },
     }
 
-    const fileType = getFileType(tagFile)
-
-    // TODO Should we just always use the thumbnail URL if it exists?
-    if (fileType && isPreviewSupported(fileType)) {
+    if (file.thumbnail) {
       tagFile.preview = file.thumbnail
     }
 

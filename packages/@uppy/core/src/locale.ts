@@ -62,5 +62,6 @@ export default {
     },
     additionalRestrictionsFailed:
       '%{count} additional restrictions were not fulfilled',
+    unnamed: 'Unnamed',
   },
 }

@@ -1,5 +1,12 @@
 # @uppy/aws-s3
 
+## 4.0.0-beta.7
+
+Released: 2024-06-18
+Included in: Uppy v4.0.0-beta.12
+
+- @uppy/aws-s3: add `endpoint` option (Antoine du Hamel / #5173)
+
 ## 4.0.0-beta.5
 
 Released: 2024-06-04

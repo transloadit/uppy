@@ -1,5 +1,13 @@
 # @uppy/companion
 
+## 5.0.0-beta.10
+
+Released: 2024-06-18
+Included in: Uppy v4.0.0-beta.12
+
+- @uppy/companion: coalesce options `bucket` and `getKey` (Mikael Finstad / #5169)
+- @uppy/companion: improve companion logging (Mikael Finstad / #5250)
+
 ## 5.0.0-beta.9
 
 Released: 2024-06-04
@@ -65,6 +73,14 @@ Included in: Uppy v4.0.0-beta.1
 
 - @uppy/companion: improve error msg (Mikael Finstad / #5010)
 - @uppy/companion: crash if trying to set path to / (Mikael Finstad / #5003)
+
+## 4.14.0
+
+Released: 2024-06-18
+Included in: Uppy v3.27.0
+
+- @uppy/google-photos: add plugin (Mikael Finstad / #5061)
+- @uppy/companion: Bump ws from 8.8.1 to 8.17.1 (#5256) 
 
 ## 4.13.3
 
