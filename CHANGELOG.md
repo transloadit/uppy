@@ -25,6 +25,7 @@ Released: 2024-06-18
 | @uppy/dashboard      | 4.0.0-beta.10 | @uppy/remote-sources |  2.0.0-beta.5 |
 | @uppy/dropbox        |  4.0.0-beta.8 | @uppy/transloadit    |  4.0.0-beta.9 |
 | @uppy/google-drive   |  3.6.0-beta.1 | uppy                 | 4.0.0-beta.12 |
+| @uppy/google-photos  |  0.2.0-beta.1 |                      |               |
 
 - meta: ignore `require-default-props` lint rule for function components (Antoine du Hamel / #5253)
 - @uppy/provider-views: Renames & `eslint-disable react/require-default-props` removal (Evgenia Karunus / #5251)
