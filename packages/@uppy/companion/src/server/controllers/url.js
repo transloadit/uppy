@@ -25,8 +25,8 @@ const downloadURL = async (url, allowLocalIPs, traceId) => {
   try {
     const protectedGot = await getProtectedGot({ allowLocalIPs })
     const stream = protectedGot.stream.get(url, { responseType: 'json' })
-    await prepareStream(stream)
-    return stream
+    const { size } = await prepareStream(stream)
+    return { stream, size }
   } catch (err) {
     logger.error(err, 'controller.url.download.error', traceId)
     throw err
@@ -77,9 +77,7 @@ const get = async (req, res) => {
     return size
   }
 
-  async function download () {
-    return downloadURL(req.body.url, allowLocalUrls, req.id)
-  }
+  const download = () => downloadURL(req.body.url, allowLocalUrls, req.id)
 
   try {
     await startDownUpload({ req, res, getSize, download })

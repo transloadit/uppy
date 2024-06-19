@@ -6,7 +6,7 @@ module.exports.encodeState = (state, secret) => {
   return encrypt(encodedState, secret)
 }
 
-const decodeState = (state, secret) => {
+module.exports.decodeState = (state, secret) => {
   const encodedState = decrypt(state, secret)
   return JSON.parse(atob(encodedState))
 }
@@ -18,7 +18,7 @@ module.exports.generateState = () => {
 }
 
 module.exports.getFromState = (state, name, secret) => {
-  return decodeState(state, secret)[name]
+  return module.exports.decodeState(state, secret)[name]
 }
 
 module.exports.getGrantDynamicFromRequest = (req) => {

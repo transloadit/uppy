@@ -1,4 +1,4 @@
-const got = require('got').default
+const got = require('../../../got')
 
 const { logout, refreshToken } = require('../index')
 const logger = require('../../../logger')
@@ -8,7 +8,6 @@ const { MAX_AGE_REFRESH_TOKEN } = require('../../../helpers/jwt')
 const { ProviderAuthError } = require('../../error')
 const { withGoogleErrorHandling } = require('../../providerErrors')
 const Provider = require('../../Provider')
-
 
 // For testing refresh token:
 // first run a download with mockAccessTokenExpiredError = true 
@@ -23,7 +22,7 @@ const DRIVE_FILES_FIELDS = `kind,nextPageToken,incompleteSearch,files(${DRIVE_FI
 // using wildcard to get all 'drive' fields because specifying fields seems no to work for the /drives endpoint
 const SHARED_DRIVE_FIELDS = '*'
 
-const getClient = ({ token }) => got.extend({
+const getClient = async ({ token }) => (await got).extend({
   prefixUrl: 'https://www.googleapis.com/drive/v3',
   headers: {
     authorization: `Bearer ${token}`,
@@ -31,7 +30,7 @@ const getClient = ({ token }) => got.extend({
 })
 
 async function getStats ({ id, token }) {
-  const client = getClient({ token })
+  const client = await getClient({ token })
 
   const getStatsInner = async (statsOfId) => (
     client.get(`files/${encodeURIComponent(statsOfId)}`, { searchParams: { fields: DRIVE_FILE_FIELDS, supportsAllDrives: true }, responseType: 'json' }).json()
@@ -48,7 +47,7 @@ async function getStats ({ id, token }) {
  * Adapter for API https://developers.google.com/drive/api/v3/
  */
 class Drive extends Provider {
-  static get authProvider () {
+  static get oauthProvider () {
     return 'googledrive'
   }
 
@@ -58,7 +57,7 @@ class Drive extends Provider {
 
   // eslint-disable-next-line class-methods-use-this
   async list (options) {
-    return withGoogleErrorHandling(Drive.authProvider, 'provider.drive.list.error', async () => {
+    return withGoogleErrorHandling(Drive.oauthProvider, 'provider.drive.list.error', async () => {
       const directory = options.directory || 'root'
       const query = options.query || {}
       const { token } = options
@@ -66,7 +65,7 @@ class Drive extends Provider {
       const isRoot = directory === 'root'
       const isVirtualSharedDirRoot = directory === VIRTUAL_SHARED_DIR
 
-      const client = getClient({ token })
+      const client = await getClient({ token })
 
       async function fetchSharedDrives (pageToken = null) {
         const shouldListSharedDrives = isRoot && !query.cursor
@@ -135,8 +134,8 @@ class Drive extends Provider {
       }
     }
 
-    return withGoogleErrorHandling(Drive.authProvider, 'provider.drive.download.error', async () => {
-      const client = getClient({ token })
+    return withGoogleErrorHandling(Drive.oauthProvider, 'provider.drive.download.error', async () => {
+      const client = await getClient({ token })
 
       const { mimeType, id, exportLinks } = await getStats({ id: idIn, token })
 
@@ -152,7 +151,7 @@ class Drive extends Provider {
         // Implemented based on the answer from StackOverflow: https://stackoverflow.com/a/59168288
         const mimeTypeExportLink = exportLinks?.[mimeType2]
         if (mimeTypeExportLink) {
-          const gSuiteFilesClient = got.extend({
+          const gSuiteFilesClient = (await got).extend({
             headers: {
               authorization: `Bearer ${token}`,
             },
@@ -172,7 +171,7 @@ class Drive extends Provider {
 
   // eslint-disable-next-line class-methods-use-this
   async size ({ id, token }) {
-    return withGoogleErrorHandling(Drive.authProvider, 'provider.drive.size.error', async () => {
+    return withGoogleErrorHandling(Drive.oauthProvider, 'provider.drive.size.error', async () => {
       const { mimeType, size } = await getStats({ id, token })
 
       if (isGsuiteFile(mimeType)) {
@@ -184,13 +183,6 @@ class Drive extends Provider {
       return parseInt(size, 10)
     })
   }
-
-  // eslint-disable-next-line class-methods-use-this
-  async logout(...args) {
-    return logout(...args)
-  }
-
-  // eslint-disable-next-line class-methods-use-this
 }
 
 Drive.prototype.logout = logout
