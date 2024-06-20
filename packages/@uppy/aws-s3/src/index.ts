@@ -530,7 +530,7 @@ export default class AwsS3Multipart<
       .then(assertServerError)
   }
 
-  #cachedTemporaryCredentials: MaybePromise<AwsS3STSResponse> | undefined
+  #cachedTemporaryCredentials?: MaybePromise<AwsS3STSResponse>
 
   async #getTemporarySecurityCredentials(options?: RequestOptions) {
     throwIfAborted(options?.signal)
