@@ -68,50 +68,6 @@
           .use(AwsS3, {
             id: 'myAWSPlugin',
             endpoint: '/',
-            async getUploadParameters(file, options) {
-              const arrayBuffer = await file.data.arrayBuffer()
-              const hashBuffer = await crypto.subtle.digest(
-                'SHA-256',
-                arrayBuffer,
-              )
-              const stringifiedHash = String.fromCharCode(
-                ...new Uint8Array(hashBuffer),
-              )
-              const ChecksumSHA256 = window.btoa(stringifiedHash)
-
-              // Send a request to our Express.js signing endpoint.
-              const response = await fetch('/s3/sign', {
-                method: 'POST',
-                headers: {
-                  accept: 'application/json',
-                },
-                body: serialize({
-                  filename: file.name,
-                  contentType: file.type,
-                  ChecksumSHA256,
-                }),
-                signal: options.signal,
-              })
-
-              if (!response.ok)
-                throw new Error('Unsuccessful request', { cause: response })
-
-              // Parse the JSON response.
-              const data = await response.json()
-
-              // Return an object in the correct shape.
-              return {
-                method: data.method,
-                url: data.url,
-                fields: {}, // For presigned PUT uploads, this should be left empty.
-                // Provide content type header required by S3
-                headers: {
-                  'Content-Type': file.type,
-                  'x-amz-checksum-sha256': ChecksumSHA256,
-                  'x-amz-sdk-checksum-algorithm': 'SHA256',
-                },
-              }
-            },
           })
 
         uppy.on('complete', onUploadComplete)

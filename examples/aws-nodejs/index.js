@@ -13,6 +13,11 @@ const port = process.env.PORT ?? 8080
 const accessControlAllowOrigin = '*' // You should define the actual domain(s) that are allowed to make requests.
 const bodyParser = require('body-parser')
 
+const unhoistableHeaders = new Set([
+  'x-amz-sdk-checksum-algorithm',
+  'x-amz-checksum-sha256',
+])
+
 const {
   S3Client,
   AbortMultipartUploadCommand,
@@ -125,10 +130,7 @@ const signOnServer = (req, res, next) => {
       // If not supplied, the presigner moves all the AWS-specific headers
       // (starting with `x-amz-`) to the request query string.
       // If supplied, these headers remain in the presigned request's header.
-      unhoistableHeaders: new Set([
-        'x-amz-sdk-checksum-algorithm',
-        'x-amz-checksum-sha256',
-      ]),
+      unhoistableHeaders,
     },
   ).then((url) => {
     res.setHeader('Access-Control-Allow-Origin', accessControlAllowOrigin)
@@ -163,6 +165,7 @@ app.post('/s3/multipart', (req, res, next) => {
     Key,
     ContentType: type,
     Metadata: metadata,
+    ChecksumAlgorithm: 'SHA256',
   }
 
   const command = new CreateMultipartUploadCommand(params)
@@ -187,7 +190,7 @@ function validatePartNumber(partNumber) {
 }
 app.get('/s3/multipart/:uploadId/:partNumber', (req, res, next) => {
   const { uploadId, partNumber } = req.params
-  const { key } = req.query
+  const { key, sha256 } = req.query
 
   if (!validatePartNumber(partNumber)) {
     return res
@@ -212,12 +215,20 @@ app.get('/s3/multipart/:uploadId/:partNumber', (req, res, next) => {
       Key: key,
       UploadId: uploadId,
       PartNumber: partNumber,
-      Body: '',
+      ChecksumSHA256: sha256,
     }),
-    { expiresIn },
+    {
+      expiresIn,
+      // If not supplied, the presigner moves all the AWS-specific headers
+      // (starting with `x-amz-`) to the request query string.
+      // If supplied, these headers remain in the presigned request's header.
+      unhoistableHeaders,
+    },
   ).then((url) => {
     res.setHeader('Access-Control-Allow-Origin', accessControlAllowOrigin)
-    res.json({ url, expires: expiresIn })
+    res.json({ url, expires: expiresIn, headers: {
+      'x-amz-checksum-sha256': sha256,
+    } })
   }, next)
 })
 
@@ -275,7 +286,12 @@ app.post('/s3/multipart/:uploadId/complete', (req, res, next) => {
   const client = getS3Client()
   const { uploadId } = req.params
   const { key } = req.query
-  const { parts } = req.body
+
+  const parts = Array.from(req.body.parts[0].ETag, (ETag, i) => ({
+    ETag,
+    PartNumber: req.body.parts[0].PartNumber[i],
+    ChecksumSHA256: req.body.parts[0].ChecksumSHA256[i],
+  }))
 
   if (typeof key !== 'string') {
     return res
