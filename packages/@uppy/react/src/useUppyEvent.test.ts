@@ -1,6 +1,6 @@
 /* eslint-disable react/react-in-jsx-scope */
 /* eslint-disable import/no-extraneous-dependencies */
-import { describe, expect, expectTypeOf, it } from 'vitest'
+import { describe, expect, expectTypeOf, it, vi } from 'vitest'
 import { renderHook, act } from '@testing-library/react'
 
 import Uppy from '@uppy/core'
@@ -10,8 +10,9 @@ import useUppyEvent from './useUppyEvent.ts'
 describe('useUppyEvent', () => {
   it('should return and update value with the correct type', () => {
     const uppy = new Uppy()
+    const callback = vi.fn()
     const { result, rerender } = renderHook(() =>
-      useUppyEvent(uppy, 'file-added'),
+      useUppyEvent(uppy, 'file-added', callback),
     )
     act(() =>
       uppy.addFile({
@@ -22,10 +23,16 @@ describe('useUppyEvent', () => {
       }),
     )
     expectTypeOf(result.current).toEqualTypeOf<
-      [file: UppyFile<Meta, Record<string, never>>] | []
+      [[file: UppyFile<Meta, Record<string, never>>] | [], () => void]
     >()
-    expect(result.current[0]!.name).toBe('foo1.jpg')
+    expect(result.current[0][0]!.name).toBe('foo1.jpg')
     rerender()
-    expect(result.current[0]!.name).toBe('foo1.jpg')
+    expect(result.current[0][0]!.name).toBe('foo1.jpg')
+    act(() => result.current[1]())
+    expectTypeOf(result.current).toEqualTypeOf<
+      [[file: UppyFile<Meta, Record<string, never>>] | [], () => void]
+    >()
+    expect(result.current[0]).toStrictEqual([])
+    expect(callback).toHaveBeenCalledTimes(1)
   })
 })
