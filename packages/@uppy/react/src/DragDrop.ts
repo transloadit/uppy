@@ -18,9 +18,9 @@ interface DragDropProps<M extends Meta, B extends Body>
 class DragDrop<M extends Meta, B extends Body> extends Component<
   DragDropProps<M, B>
 > {
-  private container: HTMLElement
+  private container!: HTMLElement
 
-  private plugin: UnknownPlugin<M, B>
+  private plugin!: UnknownPlugin<M, B>
 
   componentDidMount(): void {
     this.installPlugin()

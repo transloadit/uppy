@@ -42,7 +42,7 @@ export default class DropTarget<
 > {
   static VERSION = packageJson.version
 
-  private removeDragOverClassTimeout: ReturnType<typeof setTimeout>
+  private removeDragOverClassTimeout?: ReturnType<typeof setTimeout>
 
   private nodes?: Array<HTMLElement>
 

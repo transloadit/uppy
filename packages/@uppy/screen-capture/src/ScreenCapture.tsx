@@ -83,17 +83,17 @@ export default class ScreenCapture<
     type: string
   }
 
-  videoStream: null | MediaStream
+  videoStream: null | MediaStream = null
 
-  audioStream: null | MediaStream
+  audioStream: null | MediaStream = null
 
-  userDenied: boolean
+  userDenied: boolean = false
 
-  recorder: null | MediaRecorder
+  recorder: null | MediaRecorder = null
 
-  outputStream: null | MediaStream
+  outputStream: null | MediaStream = null
 
-  recordingChunks: Blob[] | null
+  recordingChunks: Blob[] | null = null
 
   constructor(uppy: Uppy<M, B>, opts?: ScreenCaptureOptions) {
     super(uppy, { ...defaultOptions, ...opts })

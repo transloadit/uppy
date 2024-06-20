@@ -50,7 +50,7 @@ export default class Form<M extends Meta, B extends Body> extends BasePlugin<
 > {
   static VERSION = packageJson.version
 
-  #form: HTMLFormElement
+  #form!: HTMLFormElement
 
   /**
    * Unfortunately Uppy isn't a state machine in which we can guarantee it's

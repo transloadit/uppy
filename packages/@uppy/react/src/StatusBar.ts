@@ -18,9 +18,9 @@ interface StatusBarProps<M extends Meta, B extends Body>
 class StatusBar<M extends Meta, B extends Body> extends Component<
   StatusBarProps<M, B>
 > {
-  private container: HTMLElement
+  private container!: HTMLElement
 
-  private plugin: UnknownPlugin<M, B>
+  private plugin!: UnknownPlugin<M, B>
 
   componentDidMount(): void {
     this.installPlugin()

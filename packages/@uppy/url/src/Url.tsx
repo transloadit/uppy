@@ -87,7 +87,7 @@ export default class Url<M extends Meta, B extends Body> extends UIPlugin<
 
   client: RequestClient<M, B>
 
-  canHandleRootDrop: typeof canHandleRootDrop
+  canHandleRootDrop!: typeof canHandleRootDrop
 
   constructor(uppy: Uppy<M, B>, opts: UrlOptions) {
     super(uppy, opts)

@@ -60,7 +60,7 @@ export default class GoldenRetriever<
 
   IndexedDBStore: IndexedDBStore
 
-  savedPluginData: Record<string, unknown>
+  savedPluginData?: Record<string, unknown>
 
   constructor(uppy: Uppy<M, B>, opts?: GoldenRetrieverOptions) {
     super(uppy, { ...defaultOptions, ...opts })
