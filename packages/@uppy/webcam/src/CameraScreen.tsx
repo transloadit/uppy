@@ -37,7 +37,7 @@ interface CameraScreenProps extends VideoSourceSelectProps {
 }
 
 class CameraScreen extends Component<CameraScreenProps> {
-  private videoElement: HTMLVideoElement
+  private videoElement?: HTMLVideoElement
 
   refs: any
 

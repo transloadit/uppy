@@ -31,9 +31,9 @@ class DashboardModal<M extends Meta, B extends Body> extends Component<
     onRequestClose: undefined,
   }
 
-  private container: HTMLElement
+  private container!: HTMLElement
 
-  private plugin: DashboardPlugin<M, B>
+  private plugin!: DashboardPlugin<M, B>
 
   componentDidMount(): void {
     this.installPlugin()

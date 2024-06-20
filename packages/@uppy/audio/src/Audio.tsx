@@ -44,7 +44,7 @@ export default class Audio<M extends Meta, B extends Body> extends UIPlugin<
 > {
   static VERSION = packageJson.version
 
-  #recordingLengthTimer: ReturnType<typeof setInterval>
+  #recordingLengthTimer?: ReturnType<typeof setInterval>
 
   private icon
 

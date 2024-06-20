@@ -110,7 +110,7 @@ export default class ImageEditor<
 > extends UIPlugin<InternalImageEditorOpts, M, B, PluginState<M, B>> {
   static VERSION = packageJson.version
 
-  cropper: Cropper
+  cropper!: Cropper
 
   constructor(uppy: Uppy<M, B>, opts?: Opts) {
     super(uppy, {

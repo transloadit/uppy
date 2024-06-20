@@ -29,7 +29,7 @@ export default class Unsplash<M extends Meta, B extends Body> extends UIPlugin<
 
   provider: SearchProvider<M, B>
 
-  view: SearchProviderViews<M, B>
+  view!: SearchProviderViews<M, B>
 
   storage: typeof tokenStorage
 

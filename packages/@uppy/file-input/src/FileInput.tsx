@@ -33,7 +33,7 @@ export default class FileInput<M extends Meta, B extends Body> extends UIPlugin<
 > {
   static VERSION = packageJson.version
 
-  input: HTMLFileInputElement | null
+  input: HTMLFileInputElement | null = null
 
   constructor(uppy: Uppy<M, B>, opts?: FileInputOptions) {
     super(uppy, { ...defaultOptions, ...opts })
