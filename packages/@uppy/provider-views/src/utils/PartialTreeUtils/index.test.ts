@@ -92,10 +92,11 @@ describe('afterFill()', () => {
   })
 
   it('fetches a .checked folder', async () => {
+    // prettier-ignore
     const tree: PartialTree = [
       _root('ourRoot'),
-      _folder('1', { parentId: 'ourRoot' }),
-      _folder('2', { parentId: 'ourRoot', cached: false, status: 'checked' }),
+          _folder('1', { parentId: 'ourRoot' }),
+          _folder('2', { parentId: 'ourRoot', cached: false, status: 'checked' }),
     ]
     const mock = (path: PartialTreeId) => {
       if (path === '2') {
@@ -118,15 +119,16 @@ describe('afterFill()', () => {
   })
 
   it('fetches remaining pages in a folder', async () => {
+    // prettier-ignore
     const tree: PartialTree = [
       _root('ourRoot'),
-      _folder('1', { parentId: 'ourRoot' }),
-      _folder('2', {
-        parentId: 'ourRoot',
-        cached: true,
-        nextPagePath: '666',
-        status: 'checked',
-      }),
+          _folder('1', { parentId: 'ourRoot' }),
+          _folder('2', {
+            parentId: 'ourRoot',
+            cached: true,
+            nextPagePath: '666',
+            status: 'checked',
+          }),
     ]
     const mock = (path: PartialTreeId) => {
       if (path === '666') {
@@ -185,24 +187,25 @@ describe('afterFill()', () => {
   })
 
   it('complex situation', async () => {
+    // prettier-ignore
     const tree: PartialTree = [
       _root('ourRoot'),
-      _folder('1', { parentId: 'ourRoot' }),
-      // folder we'll be recursively fetching really deeply
-      _folder('2', {
-        parentId: 'ourRoot',
-        cached: true,
-        nextPagePath: '2_next',
-        status: 'checked',
-      }),
-      _file('2_1', { parentId: '2', status: 'checked' }),
-      _file('2_2', { parentId: '2', status: 'checked' }),
-      // folder with only some files checked
-      _folder('3', { parentId: 'ourRoot', cached: true, status: 'partial' }),
-      // empty folder
-      _folder('0', { parentId: '3', cached: false, status: 'checked' }),
-      _file('3_1', { parentId: '3', status: 'checked' }),
-      _file('3_2', { parentId: '3', status: 'unchecked' }),
+          _folder('1', { parentId: 'ourRoot' }),
+          // folder we'll be recursively fetching really deeply
+          _folder('2', {
+            parentId: 'ourRoot',
+            cached: true,
+            nextPagePath: '2_next',
+            status: 'checked',
+          }),
+              _file('2_1', { parentId: '2', status: 'checked' }),
+              _file('2_2', { parentId: '2', status: 'checked' }),
+          // folder with only some files checked
+          _folder('3', { parentId: 'ourRoot', cached: true, status: 'partial' }),
+              // empty folder
+              _folder('0', { parentId: '3', cached: false, status: 'checked' }),
+              _file('3_1', { parentId: '3', status: 'checked' }),
+              _file('3_2', { parentId: '3', status: 'unchecked' }),
     ]
     const mock = (path: PartialTreeId) => {
       if (path === '2_next') {
@@ -492,10 +495,11 @@ describe('getNumberOfSelectedFiles()', () => {
   })
 
   it('empty folder, even after being opened, counts as leaf node', () => {
+    // prettier-ignore
     const tree: PartialTree = [
       _root('ourRoot'),
-      // empty .checked .cached folder
-      _folder('1', { parentId: 'ourRoot', cached: true, status: 'checked' }),
+          // empty .checked .cached folder
+          _folder('1', { parentId: 'ourRoot', cached: true, status: 'checked' }),
     ]
     const result = getNumberOfSelectedFiles(tree)
     // This should be "1" for more pleasant UI - if the user unchecks this folder,
