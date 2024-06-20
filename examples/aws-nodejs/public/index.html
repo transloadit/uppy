@@ -37,28 +37,6 @@
           file.meta['name'],
         )
       }
-      function* serializeSubPart(key, value) {
-        if (typeof value !== 'object') {
-          yield [key, value]
-          return
-        }
-        if (Array.isArray(value)) {
-          for (const val of value) {
-            yield* serializeSubPart(`${key}[]`, val)
-          }
-          return
-        }
-        for (const [subkey, val] of Object.entries(value)) {
-          yield* serializeSubPart(key ? `${key}[${subkey}]` : subkey, val)
-        }
-      }
-      function serialize(data) {
-        // If you want to avoid preflight requests, use URL-encoded syntax:
-        return new URLSearchParams(serializeSubPart(null, data))
-        // If you don't care about additional preflight requests, you can also use:
-        // return JSON.stringify(data)
-        // You'd also have to add `Content-Type` header with value `application/json`.
-      }
       {
         const uppy = new Uppy()
           .use(Dashboard, {
