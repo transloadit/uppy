@@ -48,9 +48,9 @@ export default class View<
 
   isHandlingScroll: boolean
 
-  requestClientId: string
+  requestClientId?: string
 
-  isShiftKeyPressed: boolean
+  isShiftKeyPressed: boolean = false
 
   lastCheckbox: CompanionFile | undefined
 
@@ -138,7 +138,7 @@ export default class View<
         },
         providerName: this.provider.name,
         provider: this.provider.provider,
-        requestClientId: this.requestClientId,
+        requestClientId: this.requestClientId!,
       },
     }
 

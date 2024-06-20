@@ -37,7 +37,7 @@ class TransloaditAssembly extends Emitter {
 
   #previousFetchStatusStillPending = false
 
-  #sse: EventSource | null
+  #sse: EventSource | null = null
 
   status: AssemblyResponse
 

@@ -257,7 +257,7 @@ export default class Transloadit<
 
   completedFiles: Record<string, boolean>
 
-  restored: Promise<void> | null
+  restored: Promise<void> | null = null
 
   constructor(uppy: Uppy<M, B>, opts: TransloaditOptions<M, B>) {
     super(uppy, { ...defaultOptions, ...opts })

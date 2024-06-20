@@ -21,9 +21,9 @@ class TransloaditAssemblyWatcher<
 
   promise: Promise<void>
 
-  #resolve: () => void
+  #resolve!: () => void
 
-  #reject: (reason?: string) => void
+  #reject!: (reason?: string) => void
 
   #uppy
 

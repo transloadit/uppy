@@ -29,7 +29,7 @@ export default class Instagram<M extends Meta, B extends Body> extends UIPlugin<
 
   provider: Provider<M, B>
 
-  view: ProviderViews<M, B>
+  view!: ProviderViews<M, B>
 
   storage: typeof tokenStorage
 
