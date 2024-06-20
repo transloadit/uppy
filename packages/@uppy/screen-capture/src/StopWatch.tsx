@@ -50,7 +50,7 @@ class StopWatch extends Component {
 
   private timerRunning: boolean = false
 
-  private timer: ReturnType<typeof setTimeout> | undefined
+  private timer?: ReturnType<typeof setTimeout>
 
   constructor(props: $TSFixMe) {
     super(props)

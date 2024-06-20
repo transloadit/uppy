@@ -29,7 +29,7 @@ class FileInput<M extends Meta, B extends Body> extends Component<
 
   private container!: HTMLElement
 
-  private plugin: UnknownPlugin<M, B> | undefined
+  private plugin?: UnknownPlugin<M, B>
 
   componentDidMount(): void {
     this.installPlugin()

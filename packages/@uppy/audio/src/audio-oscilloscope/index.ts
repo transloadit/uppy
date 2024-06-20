@@ -42,16 +42,16 @@ export default class AudioOscilloscope {
 
   private bufferLength: number
 
-  private dataArray: Uint8Array | undefined
+  private dataArray?: Uint8Array
 
   // eslint-disable-next-line no-use-before-define
   private onDrawFrame: (oscilloscope: AudioOscilloscope) => void
 
   private streamSource?: MediaStreamAudioSourceNode
 
-  private audioContext: BaseAudioContext | undefined
+  private audioContext?: BaseAudioContext
 
-  public source: AudioBufferSourceNode | undefined
+  public source?: AudioBufferSourceNode
 
   constructor(
     canvas: HTMLCanvasElement,

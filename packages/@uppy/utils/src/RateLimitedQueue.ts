@@ -46,13 +46,13 @@ export class RateLimitedQueue {
 
   #paused = false
 
-  #pauseTimer: ReturnType<typeof setTimeout> | undefined
+  #pauseTimer?: ReturnType<typeof setTimeout>
 
   #downLimit = 1
 
-  #upperLimit: number | undefined
+  #upperLimit?: number
 
-  #rateLimitingTimer: ReturnType<typeof setTimeout> | undefined
+  #rateLimitingTimer?: ReturnType<typeof setTimeout>
 
   limit: number
 

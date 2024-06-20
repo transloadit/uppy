@@ -132,7 +132,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
 
   private recordingChunks: Blob[] | null = null
 
-  private recordingLengthTimer: ReturnType<typeof setInterval> | undefined
+  private recordingLengthTimer?: ReturnType<typeof setInterval>
 
   private captureInProgress: boolean = false
 
