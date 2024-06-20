@@ -66,7 +66,7 @@
             id: 'myAWSPlugin',
 
             // Files that are more than 100MiB should be uploaded in multiple parts.
-            shouldUseMultipart: true,
+            shouldUseMultipart: (file) => file.size > 100 * MiB,
 
             // ========== Non-Multipart Uploads ==========
 
