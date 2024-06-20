@@ -120,7 +120,15 @@ const signOnServer = (req, res, next) => {
       ChecksumAlgorithm: 'SHA256',
       ChecksumSHA256,
     }),
-    { expiresIn },
+    {
+      expiresIn,
+      // IMPORTANT: the SDK strips x-amz headers by default
+      // but we need the checksum headers
+      unhoistableHeaders: new Set([
+        'x-amz-sdk-checksum-algorithm',
+        'x-amz-checksum-sha256',
+      ]),
+    },
   ).then((url) => {
     res.setHeader('Access-Control-Allow-Origin', accessControlAllowOrigin)
     res.json({
@@ -181,19 +189,15 @@ app.get('/s3/multipart/:uploadId/:partNumber', (req, res, next) => {
   const { key } = req.query
 
   if (!validatePartNumber(partNumber)) {
-    return res
-      .status(400)
-      .json({
-        error: 's3: the part number must be an integer between 1 and 10000.',
-      })
+    return res.status(400).json({
+      error: 's3: the part number must be an integer between 1 and 10000.',
+    })
   }
   if (typeof key !== 'string') {
-    return res
-      .status(400)
-      .json({
-        error:
-          's3: the object key must be passed as a query parameter. For example: "?key=abc.jpg"',
-      })
+    return res.status(400).json({
+      error:
+        's3: the object key must be passed as a query parameter. For example: "?key=abc.jpg"',
+    })
   }
 
   return getSignedUrl(
@@ -218,38 +222,39 @@ app.get('/s3/multipart/:uploadId', (req, res, next) => {
   const { key } = req.query
 
   if (typeof key !== 'string') {
-    res
-      .status(400)
-      .json({
-        error:
-          's3: the object key must be passed as a query parameter. For example: "?key=abc.jpg"',
-      })
+    res.status(400).json({
+      error:
+        's3: the object key must be passed as a query parameter. For example: "?key=abc.jpg"',
+    })
     return
   }
 
   const parts = []
 
   function listPartsPage(startsAt = undefined) {
-    client.send(new ListPartsCommand({
-      Bucket: process.env.COMPANION_AWS_BUCKET,
-      Key: key,
-      UploadId: uploadId,
-      PartNumberMarker: startsAt,
-    }), (err, data) => {
-      if (err) {
-        next(err)
-        return
-      }
+    client.send(
+      new ListPartsCommand({
+        Bucket: process.env.COMPANION_AWS_BUCKET,
+        Key: key,
+        UploadId: uploadId,
+        PartNumberMarker: startsAt,
+      }),
+      (err, data) => {
+        if (err) {
+          next(err)
+          return
+        }
 
         parts.push(...data.Parts)
 
-      // continue to get list of all uploaded parts until the IsTruncated flag is false
-      if (data.IsTruncated) {
-        listPartsPage(data.NextPartNumberMarker)
-      } else {
-        res.json(parts)
-      }
-    })
+        // continue to get list of all uploaded parts until the IsTruncated flag is false
+        if (data.IsTruncated) {
+          listPartsPage(data.NextPartNumberMarker)
+        } else {
+          res.json(parts)
+        }
+      },
+    )
   }
   listPartsPage()
 })
@@ -269,19 +274,15 @@ app.post('/s3/multipart/:uploadId/complete', (req, res, next) => {
   const { parts } = req.body
 
   if (typeof key !== 'string') {
-    return res
-      .status(400)
-      .json({
-        error:
-          's3: the object key must be passed as a query parameter. For example: "?key=abc.jpg"',
-      })
+    return res.status(400).json({
+      error:
+        's3: the object key must be passed as a query parameter. For example: "?key=abc.jpg"',
+    })
   }
   if (!Array.isArray(parts) || !parts.every(isValidPart)) {
-    return res
-      .status(400)
-      .json({
-        error: 's3: `parts` must be an array of {ETag, PartNumber} objects.',
-      })
+    return res.status(400).json({
+      error: 's3: `parts` must be an array of {ETag, PartNumber} objects.',
+    })
   }
 
   return client.send(
@@ -312,12 +313,10 @@ app.delete('/s3/multipart/:uploadId', (req, res, next) => {
   const { key } = req.query
 
   if (typeof key !== 'string') {
-    return res
-      .status(400)
-      .json({
-        error:
-          's3: the object key must be passed as a query parameter. For example: "?key=abc.jpg"',
-      })
+    return res.status(400).json({
+      error:
+        's3: the object key must be passed as a query parameter. For example: "?key=abc.jpg"',
+    })
   }
 
   return client.send(
@@ -355,12 +354,9 @@ app.get('/withCustomEndpoints.html', (req, res) => {
 })
 
 app.get('/uppy.min.mjs.map', (req, res) => {
-  res.sendFile(path.join(
-    __dirname,
-    '../..',
-    'packages/uppy/dist',
-    'uppy.min.mjs.map',
-  ))
+  res.sendFile(
+    path.join(__dirname, '../..', 'packages/uppy/dist', 'uppy.min.mjs.map'),
+  )
 })
 app.get('/uppy.min.mjs', (req, res) => {
   res.setHeader('Content-Type', 'text/javascript')
