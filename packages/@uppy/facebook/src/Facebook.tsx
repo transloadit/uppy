@@ -103,10 +103,13 @@ export default class Facebook<M extends Meta, B extends Body> extends UIPlugin<
   }
 
   render(state: unknown): ComponentChild {
-    const { partialTree } = this.getPluginState()
-    const folders = partialTree.filter((i) => i.type === 'folder')
+    const { partialTree, currentFolderId } = this.getPluginState()
 
-    if (folders.length === 0) {
+    const foldersInThisFolder = partialTree.filter(
+      (i) => i.type === 'folder' && i.parentId === currentFolderId,
+    )
+
+    if (foldersInThisFolder.length === 0) {
       return this.view.render(state, {
         viewType: 'grid',
         showFilter: false,
