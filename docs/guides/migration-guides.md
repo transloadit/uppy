@@ -829,14 +829,15 @@ to:
 
 <div class="table-responsive">
 
-| Provider     | New Redirect URI                                  |
-| ------------ | ------------------------------------------------- |
-| Dropbox      | `https://$COMPANION_HOST_NAME/dropbox/redirect`   |
-| Google Drive | `https://$COMPANION_HOST_NAME/drive/redirect`     |
-| OneDrive     | `https://$COMPANION_HOST_NAME/onedrive/redirect`  |
-| Box          | `https://$YOUR_COMPANION_HOST_NAME/box/redirect`  |
-| Facebook     | `https://$COMPANION_HOST_NAME/facebook/redirect`  |
-| Instagram    | `https://$COMPANION_HOST_NAME/instagram/redirect` |
+| Provider      | New Redirect URI                                     |
+| ------------- | ---------------------------------------------------- |
+| Dropbox       | `https://$COMPANION_HOST_NAME/dropbox/redirect`      |
+| Google Drive  | `https://$COMPANION_HOST_NAME/drive/redirect`        |
+| Google Photos | `https://$COMPANION_HOST_NAME/googlephotos/redirect` |
+| OneDrive      | `https://$COMPANION_HOST_NAME/onedrive/redirect`     |
+| Box           | `https://$YOUR_COMPANION_HOST_NAME/box/redirect`     |
+| Facebook      | `https://$COMPANION_HOST_NAME/facebook/redirect`     |
+| Instagram     | `https://$COMPANION_HOST_NAME/instagram/redirect`    |
 
 </div>
 

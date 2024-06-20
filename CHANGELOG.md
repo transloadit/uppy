@@ -437,6 +437,29 @@ Released: 2024-03-28
 - @uppy/vue: [v4.x] remove manual types (Antoine du Hamel / #4803)
 - meta: prepare release workflow for beta versions (Antoine du Hamel)
 
+## 3.27.0
+
+Released: 2024-06-18
+
+| Package              | Version | Package              | Version |
+| -------------------- | ------- | -------------------- | ------- |
+| @uppy/box            |   2.4.0 | @uppy/onedrive       |   3.4.0 |
+| @uppy/companion      |  4.14.0 | @uppy/provider-views |  3.13.0 |
+| @uppy/core           |  3.13.0 | @uppy/react          |   3.4.0 |
+| @uppy/dashboard      |   3.9.0 | @uppy/remote-sources |   1.3.0 |
+| @uppy/dropbox        |   3.4.0 | @uppy/transloadit    |   3.8.0 |
+| @uppy/google-drive   |   3.6.0 | uppy                 |  3.27.0 |
+| @uppy/google-photos  |   0.1.0 |                      |         |
+
+- @uppy/google-photos: add plugin (Mikael Finstad / #5061)
+- examples: updating aws-nodejs example listParts logic for resuming uploads (Mitchell Rhoads / #5192)
+- meta: Bump docker/login-action from 3.1.0 to 3.2.0 (dependabot\[bot] / #5217)
+- meta: Bump docker/build-push-action from 5.3.0 to 5.4.0 (dependabot\[bot] / #5252)
+- @uppy/transloadit: also fix outdated assembly transloadit:result (Merlijn Vos / #5246)
+- docs: fix typo in the url (Evgenia Karunus)
+- @uppy/companion: Bump ws from 8.8.1 to 8.17.1 (dependabot\[bot] / #5256)
+
+
 ## 3.26.1
 
 Released: 2024-06-11

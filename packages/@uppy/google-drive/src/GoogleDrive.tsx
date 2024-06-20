@@ -105,6 +105,7 @@ export default class GoogleDrive<
     this.view = new DriveProviderViews(this, {
       provider: this.provider,
       loadAllFiles: true,
+      virtualList: true,
     })
 
     const { target } = this.opts

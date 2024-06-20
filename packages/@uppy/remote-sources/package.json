@@ -31,6 +31,7 @@
     "@uppy/dropbox": "workspace:^",
     "@uppy/facebook": "workspace:^",
     "@uppy/google-drive": "workspace:^",
+    "@uppy/google-photos": "workspace:^",
     "@uppy/instagram": "workspace:^",
     "@uppy/onedrive": "workspace:^",
     "@uppy/unsplash": "workspace:^",

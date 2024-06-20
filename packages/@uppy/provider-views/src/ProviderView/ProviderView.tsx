@@ -58,6 +58,7 @@ const defaultOptions = {
   showFilter: true,
   showBreadcrumbs: true,
   loadAllFiles: false,
+  virtualList: false,
 }
 
 export interface ProviderViewOptions<M extends Meta, B extends Body>
@@ -68,6 +69,7 @@ export interface ProviderViewOptions<M extends Meta, B extends Body>
     loading: boolean | string
     onAuth: (authFormData: unknown) => Promise<void>
   }) => h.JSX.Element
+  virtualList?: boolean
 }
 
 type Opts<M extends Meta, B extends Body> = DefinePluginOpts<
@@ -585,6 +587,7 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
       getNextFolder: this.getNextFolder,
       getFolder: this.getFolder,
       loadAllFiles: this.opts.loadAllFiles,
+      virtualList: this.opts.virtualList,
 
       // For SearchFilterInput component
       showSearchFilter: targetViewOptions.showFilter,

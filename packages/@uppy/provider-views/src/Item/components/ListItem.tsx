@@ -95,7 +95,9 @@ export default function ListItem<M extends Meta, B extends Body>(
             <div className="uppy-ProviderBrowserItem-iconWrap">
               {itemIconEl}
             </div>
-            {showTitles && <span>{title}</span>}
+            {showTitles && title ?
+              <span>{title}</span>
+            : i18n('unnamed')}
           </button>
 
       }
