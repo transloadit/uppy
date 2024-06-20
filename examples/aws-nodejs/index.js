@@ -122,8 +122,9 @@ const signOnServer = (req, res, next) => {
     }),
     {
       expiresIn,
-      // IMPORTANT: the SDK strips x-amz headers by default
-      // but we need the checksum headers
+      // If not supplied, the presigner moves all the AWS-specific headers
+      // (starting with `x-amz-`) to the request query string.
+      // If supplied, these headers remain in the presigned request's header.
       unhoistableHeaders: new Set([
         'x-amz-sdk-checksum-algorithm',
         'x-amz-checksum-sha256',
