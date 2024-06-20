@@ -109,7 +109,7 @@ const signOnServer = (req, res, next) => {
   // For the sake of simplification, we skip that check in this example.
 
   const Key = `${crypto.randomUUID()}-${req.body.filename}`
-  const { contentType } = req.body
+  const { contentType, ChecksumSHA256 } = req.body
 
   getSignedUrl(
     getS3Client(),
@@ -117,6 +117,8 @@ const signOnServer = (req, res, next) => {
       Bucket: process.env.COMPANION_AWS_BUCKET,
       Key,
       ContentType: contentType,
+      ChecksumAlgorithm: 'SHA256',
+      ChecksumSHA256,
     }),
     { expiresIn },
   ).then((url) => {
@@ -352,6 +354,14 @@ app.get('/withCustomEndpoints.html', (req, res) => {
   res.sendFile(htmlPath)
 })
 
+app.get('/uppy.min.mjs.map', (req, res) => {
+  res.sendFile(path.join(
+    __dirname,
+    '../..',
+    'packages/uppy/dist',
+    'uppy.min.mjs.map',
+  ))
+})
 app.get('/uppy.min.mjs', (req, res) => {
   res.setHeader('Content-Type', 'text/javascript')
   const bundlePath = path.join(
