@@ -44,7 +44,7 @@ function GridItem({
         aria-label={file.data.name}
         className="uppy-u-reset uppy-ProviderBrowserItem-inner"
       >
-        <ItemIcon itemIconString={file.data.icon} />
+        <ItemIcon itemIconString={file.data.thumbnail || file.data.icon} />
         {showTitles && file.data.name}
         {children}
       </label>
