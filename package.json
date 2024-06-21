@@ -32,7 +32,7 @@
     "node": "^16.15.0 || >=18.0.0",
     "yarn": "3.6.1"
   },
-  "packageManager": "yarn@4.2.2+sha224.1e50daf19e5e249a025569752c60b88005fddf57d10fcde5fc68b88f",
+  "packageManager": "yarn@4.3.1+sha224.934d21773e22af4b69a7032a2d3b4cb38c1f7c019624777cc9916b23",
   "workspaces": [
     "examples/*",
     "packages/@uppy/*",
