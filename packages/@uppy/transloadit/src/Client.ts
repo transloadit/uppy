@@ -4,8 +4,10 @@ import type {
 } from '@uppy/utils/lib/RateLimitedQueue'
 import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
 import fetchWithNetworkError from '@uppy/utils/lib/fetchWithNetworkError'
-import type { AssemblyResponse } from './index.js'
-import type { OptionsWithRestructuredFields } from './AssemblyOptions.js'
+import type {
+  AssemblyResponse,
+  OptionsWithRestructuredFields,
+} from './index.js'
 
 const ASSEMBLIES_ENDPOINT = '/assemblies'
 
@@ -173,9 +175,9 @@ export default class Client<M extends Meta, B extends Body> {
   /**
    * Cancel a running Assembly.
    */
-  async cancelAssembly(assembly: AssemblyResponse): Promise<AssemblyResponse> {
+  async cancelAssembly(assembly: AssemblyResponse): Promise<void> {
     const url = assembly.assembly_ssl_url
-    return this.#fetchJSON(url, {
+    await this.#fetchWithNetworkError(url, {
       method: 'DELETE',
       headers: this.#headers,
     }).catch((err) => this.#reportError(err, { url, type: 'API_ERROR' }))

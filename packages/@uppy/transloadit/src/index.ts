@@ -8,9 +8,6 @@ import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
 import type { Uppy } from '@uppy/core'
 import Assembly from './Assembly.ts'
 import Client, { AssemblyError } from './Client.ts'
-import AssemblyOptionsBuilder, {
-  type OptionsWithRestructuredFields,
-} from './AssemblyOptions.ts'
 import AssemblyWatcher from './AssemblyWatcher.ts'
 
 import locale from './locale.ts'
@@ -102,20 +99,6 @@ export interface AssemblyResponse {
   reason?: string
 }
 
-const sendErrorToConsole = (originalErr: Error) => (err: Error) => {
-  const error = new ErrorWithCause('Failed to send error to the client', {
-    cause: err,
-  })
-  // eslint-disable-next-line no-console
-  console.error(error, originalErr)
-}
-
-const COMPANION_URL = 'https://api2.transloadit.com/companion'
-// Regex matching acceptable postMessage() origins for authentication feedback from companion.
-const COMPANION_ALLOWED_HOSTS = /\.transloadit\.com$/
-// Regex used to check if a Companion address is run by Transloadit.
-const TL_COMPANION = /https?:\/\/api2(?:-\w+)?\.transloadit\.com\/companion/
-
 export interface AssemblyParameters {
   auth: {
     key: string
@@ -133,6 +116,10 @@ export interface AssemblyOptions {
   signature?: string | null
 }
 
+export type OptionsWithRestructuredFields = Omit<AssemblyOptions, 'fields'> & {
+  fields: Record<string, string | number>
+}
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export interface TransloaditOptions<M extends Meta, B extends Body>
   extends PluginOpts {
@@ -147,10 +134,7 @@ export interface TransloaditOptions<M extends Meta, B extends Body>
   retryDelays?: number[]
   assemblyOptions?:
     | AssemblyOptions
-    | ((
-        file?: UppyFile<M, B> | null,
-        options?: TransloaditOptions<M, B>,
-      ) => Promise<AssemblyOptions> | AssemblyOptions)
+    | (() => Promise<AssemblyOptions> | AssemblyOptions)
 }
 
 const defaultOptions = {
@@ -171,7 +155,6 @@ export type Opts<M extends Meta, B extends Body> = DefinePluginOpts<
 >
 
 type TransloaditState = {
-  assemblies: Record<string, AssemblyResponse>
   files: Record<
     string,
     { assembly: string; id: string; uploadedFile: AssemblyFile }
@@ -182,7 +165,13 @@ type TransloaditState = {
     id: string
     assembly: string
   }>
-  uploadsAssemblies: Record<string, string[]>
+}
+
+/**
+ * State we want to store in Golden Retriever to be able to recover uploads.
+ */
+type PersistentState = {
+  assemblyResponse: AssemblyResponse
 }
 
 declare module '@uppy/core' {
@@ -191,12 +180,7 @@ declare module '@uppy/core' {
     // We're also overriding the `restored` event as it is now populated with Transloadit state.
     restored: (pluginData: Record<string, TransloaditState>) => void
     'restore:get-data': (
-      setData: (
-        arg: Record<
-          string,
-          Pick<TransloaditState, 'assemblies' | 'uploadsAssemblies'>
-        >,
-      ) => void,
+      setData: (arg: Record<string, PersistentState>) => void,
     ) => void
     'transloadit:assembly-created': (
       assembly: AssemblyResponse,
@@ -238,6 +222,46 @@ declare module '@uppy/utils/lib/UppyFile' {
   }
 }
 
+const sendErrorToConsole = (originalErr: Error) => (err: Error) => {
+  const error = new ErrorWithCause('Failed to send error to the client', {
+    cause: err,
+  })
+  // eslint-disable-next-line no-console
+  console.error(error, originalErr)
+}
+
+function validateParams(params?: AssemblyParameters | null): void {
+  if (params == null) {
+    throw new Error('Transloadit: The `params` option is required.')
+  }
+
+  if (typeof params === 'string') {
+    try {
+      // eslint-disable-next-line no-param-reassign
+      params = JSON.parse(params)
+    } catch (err) {
+      // Tell the user that this is not an Uppy bug!
+      throw new ErrorWithCause(
+        'Transloadit: The `params` option is a malformed JSON string.',
+        { cause: err },
+      )
+    }
+  }
+
+  if (!params!.auth || !params!.auth.key) {
+    throw new Error(
+      'Transloadit: The `params.auth.key` option is required. ' +
+        'You can find your Transloadit API key at https://transloadit.com/c/template-credentials',
+    )
+  }
+}
+
+const COMPANION_URL = 'https://api2.transloadit.com/companion'
+// Regex matching acceptable postMessage() origins for authentication feedback from companion.
+const COMPANION_ALLOWED_HOSTS = /\.transloadit\.com$/
+// Regex used to check if a Companion address is run by Transloadit.
+const TL_COMPANION = /https?:\/\/api2(?:-\w+)?\.transloadit\.com\/companion/
+
 /**
  * Upload files to Transloadit using Tus.
  */
@@ -251,9 +275,9 @@ export default class Transloadit<
 
   client: Client<M, B>
 
-  activeAssemblies: Record<string, Assembly>
+  assembly: Assembly | null
 
-  assemblyWatchers: Record<string, AssemblyWatcher<M, B>>
+  #watcher: AssemblyWatcher<M, B>
 
   completedFiles: Record<string, boolean>
 
@@ -276,10 +300,6 @@ export default class Transloadit<
       errorReporting: this.opts.errorReporting,
       rateLimitedQueue: this.#rateLimitedQueue,
     })
-    // Contains Assembly instances for in-progress Assemblies.
-    this.activeAssemblies = {}
-    // Contains a mapping of uploadID to AssemblyWatcher
-    this.assemblyWatchers = {}
     // Contains a file IDs that have completed postprocessing before the upload
     // they belong to has entered the postprocess stage.
     this.completedFiles = Object.create(null)
@@ -382,7 +402,6 @@ export default class Transloadit<
 
   #createAssembly(
     fileIDs: string[],
-    uploadID: string,
     assemblyOptions: OptionsWithRestructuredFields,
   ) {
     this.uppy.log('[Transloadit] Create Assembly')
@@ -406,20 +425,6 @@ export default class Transloadit<
         const { status } = assembly
         const assemblyID = status.assembly_id
 
-        const { assemblies, uploadsAssemblies } = this.getPluginState()
-        this.setPluginState({
-          // Store the Assembly status.
-          assemblies: {
-            ...assemblies,
-            [assemblyID]: status,
-          },
-          // Store the list of Assemblies related to this upload.
-          uploadsAssemblies: {
-            ...uploadsAssemblies,
-            [uploadID]: [...uploadsAssemblies[uploadID], assemblyID],
-          },
-        })
-
         const updatedFiles: Record<string, UppyFile<M, B>> = {}
         files.forEach((file) => {
           updatedFiles[file.id] = this.#attachAssemblyMetadata(file, status)
@@ -431,18 +436,6 @@ export default class Transloadit<
             ...updatedFiles,
           },
         })
-
-        // TODO: this should not live inside a `file-removed` event but somewhere more deterministic.
-        // Such as inside the function where the assembly has succeeded or cancelled.
-        // For the use case of cancelling the assembly when needed, we should try to do that with just `cancel-all`.
-        const fileRemovedHandler = () => {
-          // If the assembly has successfully completed, we do not need these checks.
-          // Otherwise we may cancel an assembly after it already succeeded
-          if (assembly.status?.ok === 'ASSEMBLY_COMPLETED') {
-            this.uppy.off('file-removed', fileRemovedHandler)
-          }
-        }
-        this.uppy.on('file-removed', fileRemovedHandler)
 
         this.uppy.emit('transloadit:assembly-created', status, fileIDs)
 
@@ -467,7 +460,7 @@ export default class Transloadit<
       })
   }
 
-  #createAssemblyWatcher(idOrArrayOfIds: string | string[], uploadID: string) {
+  #createAssemblyWatcher(idOrArrayOfIds: string | string[]) {
     // AssemblyWatcher tracks completion states of all Assemblies in this upload.
     const ids =
       Array.isArray(idOrArrayOfIds) ? idOrArrayOfIds : [idOrArrayOfIds]
@@ -502,7 +495,7 @@ export default class Transloadit<
       this.uppy.emit('error', error)
     })
 
-    this.assemblyWatchers[uploadID] = watcher
+    this.#watcher = watcher
   }
 
   #shouldWaitAfterUpload() {
@@ -532,12 +525,11 @@ export default class Transloadit<
       return
     }
 
-    const { assemblies } = this.getPluginState()
-    const assembly = assemblies[file.transloadit.assembly]
+    const { status } = this.assembly!
 
-    this.client.addFile(assembly, file).catch((err) => {
+    this.client.addFile(status, file).catch((err) => {
       this.uppy.log(err)
-      this.uppy.emit('transloadit:import-error', assembly, file.id, err)
+      this.uppy.emit('transloadit:import-error', status, file.id, err)
     })
   }
 
@@ -585,11 +577,7 @@ export default class Transloadit<
         },
       },
     })
-    this.uppy.emit(
-      'transloadit:upload',
-      uploadedFile,
-      this.getAssembly(assemblyId),
-    )
+    this.uppy.emit('transloadit:upload', uploadedFile, this.getAssembly()!)
   }
 
   #onResult(assemblyId: string, stepName: string, result: AssemblyResult) {
@@ -608,12 +596,7 @@ export default class Transloadit<
     this.setPluginState({
       results: [...state.results, entry],
     })
-    this.uppy.emit(
-      'transloadit:result',
-      stepName,
-      result,
-      this.getAssembly(assemblyId),
-    )
+    this.uppy.emit('transloadit:result', stepName, result, this.getAssembly()!)
   }
 
   /**
@@ -623,14 +606,7 @@ export default class Transloadit<
   #onAssemblyFinished(status: AssemblyResponse) {
     const url = status.assembly_ssl_url
     this.client.getAssemblyStatus(url).then((finalStatus) => {
-      const assemblyId = finalStatus.assembly_id
-      const state = this.getPluginState()
-      this.setPluginState({
-        assemblies: {
-          ...state.assemblies,
-          [assemblyId]: finalStatus,
-        },
-      })
+      this.assembly!.status = finalStatus
       this.uppy.emit('transloadit:complete', finalStatus)
     })
   }
@@ -646,15 +622,7 @@ export default class Transloadit<
    */
   #onCancelAll = async () => {
     try {
-      const { uploadsAssemblies } = this.getPluginState()
-      const assemblyIDs = Object.values(uploadsAssemblies).flat(1)
-      const assemblies = assemblyIDs.map((assemblyID) =>
-        this.getAssembly(assemblyID),
-      )
-
-      await Promise.all(
-        assemblies.map((assembly) => this.#cancelAssembly(assembly)),
-      )
+      await this.#cancelAssembly(this.assembly!.status)
     } catch (err) {
       this.uppy.log(err)
     }
@@ -665,37 +633,27 @@ export default class Transloadit<
    * It will pass this back to the `_onRestored` function.
    */
   #getPersistentData = (
-    setData: (
-      arg: Record<
-        string,
-        Pick<TransloaditState, 'assemblies' | 'uploadsAssemblies'>
-      >,
-    ) => void,
+    setData: (arg: Record<string, PersistentState>) => void,
   ) => {
-    const { assemblies, uploadsAssemblies } = this.getPluginState()
-
-    setData({
-      [this.id]: {
-        assemblies,
-        uploadsAssemblies,
-      },
-    })
+    if (this.assembly) {
+      setData({ [this.id]: { assemblyResponse: this.assembly.status } })
+    }
   }
 
-  #onRestored = (pluginData: Record<string, TransloaditState>) => {
-    const savedState =
-      pluginData && pluginData[this.id] ? pluginData[this.id] : {}
-    const previousAssemblies = (savedState as TransloaditState).assemblies || {}
-    const uploadsAssemblies =
-      (savedState as TransloaditState).uploadsAssemblies || {}
+  #onRestored = (pluginData: Record<string, unknown>) => {
+    const savedState = (
+      pluginData && pluginData[this.id] ?
+        pluginData[this.id]
+      : {}) as PersistentState
+    const previousAssembly = savedState.assemblyResponse
 
-    if (Object.keys(uploadsAssemblies).length === 0) {
+    if (!previousAssembly) {
       // Nothing to restore.
       return
     }
 
     // Convert loaded Assembly statuses to a Transloadit plugin state object.
-    const restoreState = (assemblies: TransloaditState['assemblies']) => {
+    const restoreState = () => {
       const files: Record<
         string,
         { id: string; assembly: string; uploadedFile: AssemblyFile }
@@ -706,70 +664,50 @@ export default class Transloadit<
         id: string
         assembly: string
       }[] = []
-      for (const [id, status] of Object.entries(assemblies)) {
-        status.uploads.forEach((uploadedFile) => {
-          const file = this.#findFile(uploadedFile)
-          files[uploadedFile.id] = {
-            id: file!.id,
-            assembly: id,
-            uploadedFile,
-          }
-        })
+      const { assembly_id: id } = previousAssembly
 
-        const state = this.getPluginState()
-        Object.keys(status.results).forEach((stepName) => {
-          for (const result of status.results[stepName]) {
-            const file = state.files[result.original_id]
-            result.localId = file ? file.id : null
-            results.push({
-              id: result.id,
-              result,
-              stepName,
-              assembly: id,
-            })
-          }
-        })
-      }
-
-      this.setPluginState({
-        assemblies,
-        files,
-        results,
-        uploadsAssemblies,
+      previousAssembly.uploads.forEach((uploadedFile) => {
+        const file = this.#findFile(uploadedFile)
+        files[uploadedFile.id] = {
+          id: file!.id,
+          assembly: id,
+          uploadedFile,
+        }
       })
+
+      const state = this.getPluginState()
+      Object.keys(previousAssembly.results).forEach((stepName) => {
+        for (const result of previousAssembly.results[stepName]) {
+          const file = state.files[result.original_id]
+          result.localId = file ? file.id : null
+          results.push({
+            id: result.id,
+            result,
+            stepName,
+            assembly: id,
+          })
+        }
+      })
+
+      this.assembly = new Assembly(previousAssembly, this.#rateLimitedQueue)
+      this.assembly.status = previousAssembly
+      this.setPluginState({ files, results })
     }
 
     // Set up the Assembly instances and AssemblyWatchers for existing Assemblies.
     const restoreAssemblies = () => {
-      // eslint-disable-next-line no-shadow
-      const { assemblies, uploadsAssemblies } = this.getPluginState()
-
-      // Set up the assembly watchers again for all the ongoing uploads.
-      Object.keys(uploadsAssemblies).forEach((uploadID) => {
-        const assemblyIDs = uploadsAssemblies[uploadID]
-        this.#createAssemblyWatcher(assemblyIDs, uploadID)
-      })
-
-      const allAssemblyIDs = Object.keys(assemblies)
-      allAssemblyIDs.forEach((id) => {
-        const assembly = new Assembly(assemblies[id], this.#rateLimitedQueue)
-        this.#connectAssembly(assembly)
-      })
+      this.#createAssemblyWatcher(previousAssembly.assembly_id)
+      this.#connectAssembly(this.assembly!)
     }
 
     // Force-update all Assemblies to check for missed events.
     const updateAssemblies = () => {
-      const { assemblies } = this.getPluginState()
-      return Promise.all(
-        Object.keys(assemblies).map((id) => {
-          return this.activeAssemblies[id].update()
-        }),
-      )
+      return this.assembly!.update()
     }
 
     // Restore all Assembly state.
     this.restored = Promise.resolve().then(() => {
-      restoreState(previousAssemblies)
+      restoreState()
       restoreAssemblies()
       updateAssemblies()
     })
@@ -782,18 +720,7 @@ export default class Transloadit<
   #connectAssembly(assembly: Assembly) {
     const { status } = assembly
     const id = status.assembly_id
-    this.activeAssemblies[id] = assembly
-
-    // Sync local `assemblies` state
-    assembly.on('status', (newStatus: AssemblyResponse) => {
-      const { assemblies } = this.getPluginState()
-      this.setPluginState({
-        assemblies: {
-          ...assemblies,
-          [id]: newStatus,
-        },
-      })
-    })
+    this.assembly = assembly
 
     assembly.on('upload', (file: AssemblyFile) => {
       this.#onFileUploadComplete(id, file)
@@ -859,85 +786,39 @@ export default class Transloadit<
     return assembly
   }
 
-  #prepareUpload = async (fileIDs: string[], uploadID: string) => {
-    const files = fileIDs.map((id) => this.uppy.getFile(id))
-    const filesWithoutErrors = files.filter((file) => {
-      if (!file.error) {
-        this.uppy.emit('preprocess-progress', file, {
-          mode: 'indeterminate',
-          message: this.i18n('creatingAssembly'),
-        })
-        return true
-      }
-      return false
-    })
+  #prepareUpload = async (fileIDs: string[]) => {
+    const assemblyOptions = (
+      typeof this.opts.assemblyOptions === 'function' ?
+        await this.opts.assemblyOptions()
+      : this.opts.assemblyOptions) as OptionsWithRestructuredFields
 
-    const createAssembly = async ({
-      // eslint-disable-next-line no-shadow
-      fileIDs,
-      options,
-    }: {
-      fileIDs: string[]
-      options: OptionsWithRestructuredFields
-    }) => {
-      try {
-        const assembly = (await this.#createAssembly(
-          fileIDs,
-          uploadID,
-          options,
-        )) as Assembly
-        if (this.opts.importFromUploadURLs) {
-          await this.#reserveFiles(assembly, fileIDs)
-        }
-        fileIDs.forEach((fileID) => {
-          const file = this.uppy.getFile(fileID)
-          this.uppy.emit('preprocess-complete', file)
-        })
-        return assembly
-      } catch (err) {
-        fileIDs.forEach((fileID) => {
-          const file = this.uppy.getFile(fileID)
-          // Clear preprocessing state when the Assembly could not be created,
-          // otherwise the UI gets confused about the lingering progress keys
-          this.uppy.emit('preprocess-complete', file)
-          this.uppy.emit('upload-error', file, err)
-        })
-        throw err
+    assemblyOptions.fields ??= {}
+    validateParams(assemblyOptions.params)
+
+    try {
+      const assembly =
+        // this.assembly can already be defined if we recovered files with Golden Retriever (this.#onRestored)
+        (this.assembly ??
+          (await this.#createAssembly(fileIDs, assemblyOptions))) as Assembly
+      if (this.opts.importFromUploadURLs) {
+        await this.#reserveFiles(assembly, fileIDs)
       }
+      fileIDs.forEach((fileID) => {
+        const file = this.uppy.getFile(fileID)
+        this.uppy.emit('preprocess-complete', file)
+      })
+      this.#createAssemblyWatcher(assembly.status.assembly_id)
+      this.#connectAssembly(assembly)
+    } catch (err) {
+      fileIDs.forEach((fileID) => {
+        const file = this.uppy.getFile(fileID)
+        // Clear preprocessing state when the Assembly could not be created,
+        // otherwise the UI gets confused about the lingering progress keys
+        this.uppy.emit('preprocess-complete', file)
+        this.uppy.emit('upload-error', file, err)
+      })
+      throw err
     }
-
-    const { uploadsAssemblies } = this.getPluginState()
-    this.setPluginState({
-      uploadsAssemblies: {
-        ...uploadsAssemblies,
-        [uploadID]: [],
-      },
-    })
-
-    const builder = new AssemblyOptionsBuilder(filesWithoutErrors, this.opts)
-
-    await builder
-      .build()
-      .then((assemblies) => Promise.all(assemblies.map(createAssembly)))
-      .then((maybeCreatedAssemblies) => {
-        const createdAssemblies = maybeCreatedAssemblies.filter(Boolean)
-        const assemblyIDs = createdAssemblies.map(
-          (assembly) => assembly.status.assembly_id,
-        )
-        this.#createAssemblyWatcher(assemblyIDs, uploadID)
-        return Promise.all(
-          createdAssemblies.map((assembly) => this.#connectAssembly(assembly)),
-        )
-      })
-      // If something went wrong before any Assemblies could be created,
-      // clear all processing state.
-      .catch((err) => {
-        filesWithoutErrors.forEach((file) => {
-          this.uppy.emit('preprocess-complete', file)
-          this.uppy.emit('upload-error', file, err)
-        })
-        throw err
-      })
   }
 
   #afterUpload = (fileIDs: string[], uploadID: string): Promise<void> => {
@@ -947,8 +828,6 @@ export default class Transloadit<
       .filter((file) => !file.error)
       .map((file) => file.id)
 
-    const state = this.getPluginState()
-
     // If we're still restoring state, wait for that to be done.
     if (this.restored) {
       return this.restored.then(() => {
@@ -956,28 +835,25 @@ export default class Transloadit<
       })
     }
 
-    const assemblyIDs = state.uploadsAssemblies[uploadID]
+    const assemblyID = this.assembly!.status.assembly_id
 
     const closeSocketConnections = () => {
-      assemblyIDs.forEach((assemblyID) => {
-        const assembly = this.activeAssemblies[assemblyID]
-        assembly.close()
-        delete this.activeAssemblies[assemblyID]
-      })
+      this.assembly!.close()
     }
 
     // If we don't have to wait for encoding metadata or results, we can close
     // the socket immediately and finish the upload.
     if (!this.#shouldWaitAfterUpload()) {
       closeSocketConnections()
-      const assemblies = assemblyIDs.map((id) => this.getAssembly(id))
-      this.uppy.addResultData(uploadID, { transloadit: assemblies })
+      this.uppy.addResultData(uploadID, {
+        transloadit: [this.assembly!.status],
+      })
       return Promise.resolve()
     }
 
     // If no Assemblies were created for this upload, we also do not have to wait.
     // There's also no sockets or anything to close, so just return immediately.
-    if (assemblyIDs.length === 0) {
+    if (!assemblyID) {
       this.uppy.addResultData(uploadID, { transloadit: [] })
       return Promise.resolve()
     }
@@ -992,36 +868,21 @@ export default class Transloadit<
       })
     })
 
-    const watcher = this.assemblyWatchers[uploadID]
-    return watcher.promise.then(() => {
+    return this.#watcher.promise.then(() => {
       closeSocketConnections()
-
-      const assemblies = assemblyIDs.map((id) => this.getAssembly(id))
-
-      // Remove the Assembly ID list for this upload,
-      // it's no longer going to be used anywhere.
-      const uploadsAssemblies = { ...this.getPluginState().uploadsAssemblies }
-      delete uploadsAssemblies[uploadID]
-      this.setPluginState({ uploadsAssemblies })
-
       this.uppy.addResultData(uploadID, {
-        transloadit: assemblies,
+        transloadit: [this.assembly!.status],
       })
     })
   }
 
-  #closeAssemblyIfExists = (assemblyID?: string) => {
-    if (!assemblyID) return
-    this.activeAssemblies[assemblyID]?.close()
+  #closeAssemblyIfExists = () => {
+    this.assembly?.close()
   }
 
   #onError = (err: { name: string; message: string; details?: string }) => {
-    // TODO: uploadID is not accessible here. The state in core has many upload IDs,
-    // so we don't know which one to get. This code never worked and no one complained.
-    // See if we run into problems with this.
-    // const state = this.getPluginState()
-    // const assemblyIDs = state.uploadsAssemblies[uploadID]
-    // assemblyIDs?.forEach(this.#closeAssemblyIfExists)
+    this.#closeAssemblyIfExists()
+    this.assembly = null
 
     this.client
       .submitError(err)
@@ -1029,8 +890,8 @@ export default class Transloadit<
       .catch(sendErrorToConsole(err))
   }
 
-  #onTusError = (file: UppyFile<M, B> | undefined, err: Error) => {
-    this.#closeAssemblyIfExists(file?.transloadit?.assembly)
+  #onTusError = (_: UppyFile<M, B> | undefined, err: Error) => {
+    this.#closeAssemblyIfExists()
     if (err?.message?.startsWith('tus: ')) {
       const endpoint = (
         err as TusDetailedError
@@ -1058,8 +919,9 @@ export default class Transloadit<
       // No uploader needed when importing; instead we take the upload URL from an existing uploader.
       this.uppy.on('upload-success', this.#onFileUploadURLAvailable)
     } else {
-      // @ts-expect-error endpoint has to be required for @uppy/tus but for some reason
       // we don't need it here.
+      // @ts-expect-error `endpoint` is required but we first have to fetch
+      // the regional endpoint from the Transloadit API before we can set it.
       this.uppy.use(Tus, {
         // Disable tus-js-client fingerprinting, otherwise uploading the same file at different times
         // will upload to an outdated Assembly, and we won't get socket events for it.
@@ -1071,8 +933,9 @@ export default class Transloadit<
         // Golden Retriever. So, Golden Retriever is required to do resumability with the Transloadit plugin,
         // and we disable Tus's default resume implementation to prevent bad behaviours.
         storeFingerprintForResuming: false,
-        // Only send Assembly metadata to the tus endpoint.
-        allowedMetaFields: ['assembly_url', 'filename', 'fieldname'],
+        // Send all metadata to Transloadit. Metadata set by the user
+        // ends up as in the template as `file.user_meta`
+        allowedMetaFields: true,
         // Pass the limit option to @uppy/tus
         limit: this.opts.limit,
         rateLimitedQueue: this.#rateLimitedQueue,
@@ -1084,10 +947,6 @@ export default class Transloadit<
     this.uppy.on('restored', this.#onRestored)
 
     this.setPluginState({
-      // Contains Assembly status objects, indexed by their ID.
-      assemblies: {},
-      // Contains arrays of Assembly IDs, indexed by the upload ID that they belong to.
-      uploadsAssemblies: {},
       // Contains file data from Transloadit, indexed by their Transloadit-assigned ID.
       files: {},
       // Contains result data from Transloadit.
@@ -1122,9 +981,8 @@ export default class Transloadit<
     })
   }
 
-  getAssembly(id: string): AssemblyResponse {
-    const { assemblies } = this.getPluginState()
-    return assemblies[id]
+  getAssembly(): AssemblyResponse | undefined {
+    return this.assembly!.status
   }
 
   getAssemblyFiles(assemblyID: string): UppyFile<M, B>[] {
