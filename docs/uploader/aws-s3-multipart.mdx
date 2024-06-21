@@ -34,10 +34,9 @@ it uploads a single object as a set of parts. This has certain benefits, such as
 improved throughput (uploading parts in parallel) and quick recovery from
 network issues (only the failed parts need to be retried). The downside is
 request overhead, as it needs to do creation, signing (unless you are [signing
-on the client][]), and completion requests besides the upload requests. For
-example, if you are uploading files that are only a couple kilobytes with a
-100ms roundtrip latency, you are spending 400ms on overhead and only a few
-milliseconds on uploading.
+on the client][]), and completion requests besides the upload requests. For example,
+if you are uploading files that are only a couple kilobytes with a 100ms roundtrip
+latency, you are spending 400ms on overhead and only a few milliseconds on uploading.
 
 **In short**
 
