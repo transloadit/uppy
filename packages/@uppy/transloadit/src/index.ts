@@ -275,9 +275,9 @@ export default class Transloadit<
 
   client: Client<M, B>
 
-  assembly: Assembly | null
+  assembly?: Assembly
 
-  #watcher: AssemblyWatcher<M, B>
+  #watcher!: AssemblyWatcher<M, B>
 
   completedFiles: Record<string, boolean>
 
@@ -799,7 +799,7 @@ export default class Transloadit<
       const assembly =
         // this.assembly can already be defined if we recovered files with Golden Retriever (this.#onRestored)
         (this.assembly ??
-          (await this.#createAssembly(fileIDs, assemblyOptions))) as Assembly
+          (await this.#createAssembly(fileIDs, assemblyOptions)))!
       if (this.opts.importFromUploadURLs) {
         await this.#reserveFiles(assembly, fileIDs)
       }
@@ -882,7 +882,7 @@ export default class Transloadit<
 
   #onError = (err: { name: string; message: string; details?: string }) => {
     this.#closeAssemblyIfExists()
-    this.assembly = null
+    this.assembly = undefined
 
     this.client
       .submitError(err)
