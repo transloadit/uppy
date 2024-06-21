@@ -103,19 +103,19 @@ export default class Facebook<M extends Meta, B extends Body> extends UIPlugin<
   }
 
   render(state: unknown): ComponentChild {
-    const viewOptions: {
-      viewType?: string
-      showFilter?: boolean
-      showTitles?: boolean
-    } = {}
-    if (
-      this.getPluginState().files.length &&
-      !this.getPluginState().folders.length
-    ) {
-      viewOptions.viewType = 'grid'
-      viewOptions.showFilter = false
-      viewOptions.showTitles = false
+    const { partialTree, currentFolderId } = this.getPluginState()
+
+    const foldersInThisFolder = partialTree.filter(
+      (i) => i.type === 'folder' && i.parentId === currentFolderId,
+    )
+
+    if (foldersInThisFolder.length === 0) {
+      return this.view.render(state, {
+        viewType: 'grid',
+        showFilter: false,
+        showTitles: false,
+      })
     }
-    return this.view.render(state, viewOptions)
+    return this.view.render(state)
   }
 }

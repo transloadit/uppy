@@ -127,7 +127,7 @@
   background-color: $blue;
   border-radius: 4px;
 
-  &:hover {
+  &:not(:disabled):hover {
     background-color: darken($blue, 10%);
   }
 
@@ -144,6 +144,10 @@
     color: $gray-200;
 
     @include blue-border-focus--dark;
+  }
+
+  &.uppy-c-btn--disabled {
+    background-color: rgb(142, 178, 219);
   }
 }
 

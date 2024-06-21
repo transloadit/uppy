@@ -114,10 +114,13 @@ export default class GooglePhotos<
   }
 
   render(state: unknown): ComponentChild {
-    if (
-      this.getPluginState().files.length &&
-      !this.getPluginState().folders.length
-    ) {
+    const { partialTree, currentFolderId } = this.getPluginState()
+
+    const foldersInThisFolder = partialTree.filter(
+      (i) => i.type === 'folder' && i.parentId === currentFolderId,
+    )
+
+    if (foldersInThisFolder.length === 0) {
       return this.view.render(state, {
         viewType: 'grid',
         showFilter: false,
