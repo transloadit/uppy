@@ -42,6 +42,8 @@ const defaultEnv = {
   COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT: '',
 
   COMPANION_ENABLE_URL_ENDPOINT: 'true',
+
+  COMPANION_OAUTH_ORIGIN: '*',
 }
 
 function updateEnv (env) {
