@@ -155,7 +155,9 @@ export default class ImageEditor<
 
       this.uppy.setFileState(currentImage!.id, {
         // Reinserting image's name and type, because .toBlob loses both.
-        data: new File([blob!], currentImage!.name, { type: blob!.type }),
+        data: new File([blob!], currentImage!.name ?? this.i18n('unnamed'), {
+          type: blob!.type,
+        }),
         size: blob!.size,
         preview: undefined,
       })

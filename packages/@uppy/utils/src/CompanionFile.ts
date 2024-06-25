@@ -3,7 +3,7 @@
  */
 export type CompanionFile = {
   id: string
-  name: string
+  name?: string
   /*
    * Url to the thumbnail icon
    */

@@ -52,7 +52,9 @@ export default function ListItem({
         checked={file.status === 'checked'}
         aria-label={
           file.data.isFolder ?
-            i18n('allFilesFromFolderNamed', { name: file.data.name })
+            i18n('allFilesFromFolderNamed', {
+              name: file.data.name ?? i18n('unnamed'),
+            })
           : null
         }
         disabled={isDisabled}
@@ -66,7 +68,9 @@ export default function ListItem({
             type="button"
             className="uppy-u-reset uppy-c-btn uppy-ProviderBrowserItem-inner"
             onClick={() => openFolder(file.id)}
-            aria-label={i18n('openFolderNamed', { name: file.data.name })}
+            aria-label={i18n('openFolderNamed', {
+              name: file.data.name ?? i18n('unnamed'),
+            })}
           >
             <div className="uppy-ProviderBrowserItem-iconWrap">
               <ItemIcon itemIconString={file.data.icon} />
@@ -83,7 +87,7 @@ export default function ListItem({
             <div className="uppy-ProviderBrowserItem-iconWrap">
               <ItemIcon itemIconString={file.data.icon} />
             </div>
-            {showTitles && file.data.name}
+            {showTitles && (file.data.name ?? i18n('unnamed'))}
           </label>
 
       }

@@ -390,8 +390,9 @@ export default class ProviderView<M extends Meta, B extends Body> {
       searchString === '' ? inThisFolder : (
         inThisFolder.filter(
           (item) =>
-            item.data.name.toLowerCase().indexOf(searchString.toLowerCase()) !==
-            -1,
+            (item.data.name ?? this.plugin.uppy.i18n('unnamed'))
+              .toLowerCase()
+              .indexOf(searchString.toLowerCase()) !== -1,
         )
       )
 
