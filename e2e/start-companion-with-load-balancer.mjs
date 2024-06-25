@@ -66,6 +66,7 @@ const startCompanion = ({ name, port }) => {
       COMPANION_PREAUTH_SECRET: 'development', // multi instance will not work without secret set
       COMPANION_ALLOW_LOCAL_URLS: 'true',
       COMPANION_LOGGER_PROCESS_NAME: name,
+      COMPANION_OAUTH_ORIGIN: '*',
     },
   })
   // Adding a `then` property so the return value is awaitable:
