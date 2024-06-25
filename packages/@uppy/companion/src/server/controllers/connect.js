@@ -12,13 +12,12 @@ const queryString = (params, prefix = '?') => {
  * @param {object} res
  */
 module.exports = function connect(req, res) {
-  const { secret } = req.companion.options
+  const { secret, oauthOrigin } = req.companion.options
   const stateObj = oAuthState.generateState()
 
-  if (req.query.state) {
-    const { origin } = JSON.parse(atob(req.query.state))
-    stateObj.origin = origin
-  }
+  // not sure if we need to store origin in the session state (e.g. we could've just gotten it directly inside send-token)
+  // but we're afraid to change the logic there
+  stateObj.origin = oauthOrigin
 
   if (req.companion.options.server.oauthDomain) {
     stateObj.companionInstance = req.companion.buildURL('', true)

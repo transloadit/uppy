@@ -182,6 +182,7 @@ const getConfigFromEnv = () => {
     corsOrigins: getCorsOrigins(),
     testDynamicOauthCredentials: process.env.COMPANION_TEST_DYNAMIC_OAUTH_CREDENTIALS === 'true',
     testDynamicOauthCredentialsSecret: process.env.COMPANION_TEST_DYNAMIC_OAUTH_CREDENTIALS_SECRET,
+    oauthOrigin: process.env.COMPANION_OAUTH_ORIGIN,
   }
 }
 

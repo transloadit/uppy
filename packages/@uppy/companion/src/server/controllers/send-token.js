@@ -1,7 +1,5 @@
-const { URL } = require('node:url')
 const serialize = require('serialize-javascript')
 
-const { hasMatch } = require('../helpers/utils')
 const oAuthState = require('../helpers/oauth-state')
 
 /**
@@ -36,12 +34,8 @@ module.exports = function sendToken (req, res, next) {
   const { state } = oAuthState.getGrantDynamicFromRequest(req)
   if (state) {
     const origin = oAuthState.getFromState(state, 'origin', req.companion.options.secret)
-    const allowedClients = req.companion.options.clients
-    // if no preset clients then allow any client
-    if (!allowedClients || hasMatch(origin, allowedClients) || hasMatch((new URL(origin)).host, allowedClients)) {
-      res.send(htmlContent(uppyAuthToken, origin))
-      return
-    }
+    res.send(htmlContent(uppyAuthToken, origin))
+    return
   }
   next()
 }
