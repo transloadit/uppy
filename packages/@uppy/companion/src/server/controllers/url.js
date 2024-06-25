@@ -70,7 +70,7 @@ const downloadURL = async (url, blockLocalIPs, traceId) => {
 function fetchYouTubeVideoMetadata(videoUrl) {
   const endpoints = [
     'https://us-east4-maestro-218920.cloudfunctions.net/getYoutubeURLMeta',
-    'https://us-east1-maestro-218920.cloudfunctions.net/getYoutubeURLMeta2'
+    'https://us-east4-maestro-218920.cloudfunctions.net/getYoutubeURLMeta2'
   ];
 
   const baseOptions = {
@@ -108,7 +108,7 @@ function fetchYouTubeVideoMetadata(videoUrl) {
             type: data.type,
             size: data.size,
           });
-        } else if (response && response.statusCode === 403) {
+        } else if (response && (response.statusCode === 403 || response.statusCode === 500)) {
           console.warn(`Access forbidden at endpoint ${endpoints[endpointIndex]}. Trying next endpoint...`);
           tryFetch(endpointIndex + 1);
         } else {

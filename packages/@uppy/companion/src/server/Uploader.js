@@ -730,18 +730,21 @@ class Uploader {
   async _uploadYoutube(url) {
     const filename = this.uploadFileName;
     const { options } = this.options.s3;
-    this.#uploadState = states.uploading
+    this.#uploadState = states.uploading;
     const speakerCount = (this.options?.metadata?.speakerCount && this.options.metadata.speakerCount.toString()) || '1';
     const requestBody = {
       path: options.getKey(null, filename, this.options.metadata),
       metadata: { ...removeMetadataProperties(this.options.metadata), speakerCount },
       fileSize: this.size,
       videoUrl: url,
-      uploadToken: this.token
+      uploadToken: this.token,
     };
 
-    // Define your Cloud Function URL
-    const cloudFunctionUrl = 'https://us-east4-maestro-218920.cloudfunctions.net/uploadYouTubeVideoToGCS';
+    const cloudFunctionUrls = [
+      'https://us-east4-maestro-218920.cloudfunctions.net/uploadYouTubeVideoToGCS',
+      'https://us-east4-maestro-218920.cloudfunctions.net/uploadYouTubeVideoToGCS2'
+    ];
+
     const uploadProgressRef = db.ref(`uploadTokens/${this.token}`);
     uploadProgressRef.on('value', (snapshot) => {
       const val = snapshot.val();
@@ -751,27 +754,41 @@ class Uploader {
     });
 
     return new Promise((resolve, reject) => {
-      request.post({
-        url: cloudFunctionUrl,
-        json: true,
-        body: requestBody,
-      }, (error, response, body) => {
-        if (error) {
-          reject(error);
-        } else if (response.statusCode < 200 || response.statusCode > 299) {
-          reject(new Error('Failed to upload video, status code: ' + response.statusCode));
-        } else {
-          resolve({
-            url: body && body.Location ? body.Location : null,
-            extraData: {
-              response: {
-                responseText: JSON.stringify(body),
-                headers: response.headers,
-              },
-            },
-          });
+      const tryUpload = (endpointIndex) => {
+        if (endpointIndex >= cloudFunctionUrls.length) {
+          reject(new Error('All endpoints failed.'));
+          return;
         }
-      });
+
+        request.post({
+          url: cloudFunctionUrls[endpointIndex],
+          json: true,
+          body: requestBody,
+        }, (error, response, body) => {
+          if (error) {
+            console.error('Error uploading YouTube video:', error);
+            reject(error);
+            return;
+          }
+
+          if (response.statusCode >= 200 && response.statusCode < 300) {
+            resolve({
+              url: body && body.Location ? body.Location : null,
+              extraData: {
+                response: {
+                  responseText: JSON.stringify(body),
+                  headers: response.headers,
+                },
+              },
+            });
+          } else {
+            console.warn(`Failed to upload video at endpoint ${cloudFunctionUrls[endpointIndex]}. Status code: ${response.statusCode}. Trying next endpoint...`);
+            tryUpload(endpointIndex + 1);
+          }
+        });
+      };
+
+      tryUpload(0);
     });
   }
 }
