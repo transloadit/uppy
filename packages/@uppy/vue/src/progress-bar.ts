@@ -22,7 +22,7 @@ export default defineComponent({
       const { uppy } = props
       const options = {
         id: 'ProgressBar',
-        ...props,
+        ...props.props,
         target: containerRef.value,
       }
       uppy.use(ProgressBarPlugin, options)
