@@ -27,13 +27,13 @@ export default defineComponent({
   setup(props) {
     const containerRef = ref<string>()
     const pluginRef = ref<DashboardPlugin<any, any>>()
-    const propsRef = ref(props)
+    const propsRef = ref(props.props)
     const onMount = () => {
       const { uppy } = props
       const options = {
         id: 'DashboardModal',
         inline: false,
-        ...props,
+        ...props.props,
         target: containerRef.value,
       }
       uppy.use(DashboardPlugin, options)
