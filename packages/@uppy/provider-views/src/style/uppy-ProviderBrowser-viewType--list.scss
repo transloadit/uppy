@@ -55,12 +55,15 @@
     }
   }
   // Checked: color the background, show the checkmark
-  .uppy-ProviderBrowserItem-checkbox--is-checked {
-    background-color: $blue;
-    border-color: $blue;
+  .uppy-ProviderBrowserItem--is-checked,
+  .uppy-ProviderBrowserItem--is-partial {
+    .uppy-ProviderBrowserItem-checkbox {
+      background-color: $blue;
+      border-color: $blue;
 
-    &::after {
-      opacity: 1;
+      &::after {
+        opacity: 1;
+      }
     }
   }
 

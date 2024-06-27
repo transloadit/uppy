@@ -126,15 +126,15 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
 
   private webcamActive
 
-  private stream: MediaStream | null
+  private stream: MediaStream | null = null
 
-  private recorder: MediaRecorder | null
+  private recorder: MediaRecorder | null = null
 
-  private recordingChunks: Blob[] | null
+  private recordingChunks: Blob[] | null = null
 
-  private recordingLengthTimer: ReturnType<typeof setInterval>
+  private recordingLengthTimer?: ReturnType<typeof setInterval>
 
-  private captureInProgress: boolean
+  private captureInProgress: boolean = false
 
   constructor(uppy: Uppy<M, B>, opts?: WebcamOptions<M, B>) {
     super(uppy, { ...defaultOptions, ...opts })

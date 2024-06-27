@@ -28,9 +28,9 @@ export default class Editor<M extends Meta, B extends Body> extends Component<
   Props<M, B>,
   State
 > {
-  imgElement: HTMLImageElement
+  imgElement!: HTMLImageElement
 
-  cropper: Cropper
+  cropper!: Cropper
 
   constructor(props: Props<M, B>) {
     super(props)

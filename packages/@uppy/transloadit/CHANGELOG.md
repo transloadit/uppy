@@ -1,5 +1,14 @@
 # @uppy/transloadit
 
+## 4.0.0-beta.9
+
+Released: 2024-06-18
+Included in: Uppy v4.0.0-beta.12
+
+- @uppy/transloadit: also fix outdated assembly transloadit:result (Merlijn Vos / #5246)
+- examples,@uppy/locales,@uppy/provider-views,@uppy/transloadit: Release: uppy@3.26.1 (github-actions[bot] / #5242)
+- @uppy/transloadit: fix transloadit:result event (Merlijn Vos / #5231)
+
 ## 4.0.0-beta.6
 
 Released: 2024-05-23
@@ -20,6 +29,20 @@ Released: 2024-03-28
 Included in: Uppy v4.0.0-beta.1
 
 - @uppy/transloadit: migrate to TS (Merlijn Vos / #4987)
+
+## 3.8.0
+
+Released: 2024-06-18
+Included in: Uppy v3.27.0
+
+- @uppy/transloadit: also fix outdated assembly transloadit:result (Merlijn Vos / #5246)
+
+## 3.7.1
+
+Released: 2024-06-11
+Included in: Uppy v3.26.1
+
+- @uppy/transloadit: fix transloadit:result event (Merlijn Vos / #5231)
 
 ## 3.7.0
 

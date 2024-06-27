@@ -12,6 +12,36 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 4.0.0-beta.12
+
+Released: 2024-06-18
+
+| Package              |       Version | Package              |       Version |
+| -------------------- | ------------- | -------------------- | ------------- |
+| @uppy/aws-s3         |  4.0.0-beta.7 | @uppy/locales        |  4.0.0-beta.4 |
+| @uppy/box            |  3.0.0-beta.7 | @uppy/onedrive       |  4.0.0-beta.7 |
+| @uppy/companion      | 5.0.0-beta.10 | @uppy/provider-views |  4.0.0-beta.9 |
+| @uppy/core           | 4.0.0-beta.10 | @uppy/react          |  4.0.0-beta.7 |
+| @uppy/dashboard      | 4.0.0-beta.10 | @uppy/remote-sources |  2.0.0-beta.5 |
+| @uppy/dropbox        |  4.0.0-beta.8 | @uppy/transloadit    |  4.0.0-beta.9 |
+| @uppy/google-drive   |  3.6.0-beta.1 | uppy                 | 4.0.0-beta.12 |
+| @uppy/google-photos  |  0.2.0-beta.1 |                      |               |
+
+- meta: ignore `require-default-props` lint rule for function components (Antoine du Hamel / #5253)
+- @uppy/provider-views: Renames & `eslint-disable react/require-default-props` removal (Evgenia Karunus / #5251)
+- @uppy/companion: coalesce options `bucket` and `getKey` (Mikael Finstad / #5169)
+- @uppy/aws-s3: add `endpoint` option (Antoine du Hamel / #5173)
+- @uppy/locales: fix `fa_IR` export (Merlijn Vos / #5241)
+- @uppy/companion: improve companion logging (Mikael Finstad / #5250)
+- @uppy/transloadit: also fix outdated assembly transloadit:result (Merlijn Vos / #5246)
+- docs: fix typo in the url (Evgenia Karunus)
+- examples,@uppy/locales,@uppy/provider-views,@uppy/transloadit: Release: uppy@3.26.1 (github-actions[bot] / #5242)
+- meta: Improve aws-node example readme (Artur Paikin / #4753)
+- @uppy/locales: Added translation string (it_IT) (Samuel / #5237)
+- @uppy/transloadit: fix transloadit:result event (Merlijn Vos / #5231)
+- @uppy/provider-views: fix wrong font for files (Merlijn Vos / #5234)
+
+
 ## 4.0.0-beta.11
 
 Released: 2024-06-11
@@ -436,6 +466,29 @@ Released: 2024-03-28
 - meta: enable CI on `4.x` branch (Antoine du Hamel)
 - @uppy/vue: [v4.x] remove manual types (Antoine du Hamel / #4803)
 - meta: prepare release workflow for beta versions (Antoine du Hamel)
+
+## 3.27.0
+
+Released: 2024-06-18
+
+| Package              | Version | Package              | Version |
+| -------------------- | ------- | -------------------- | ------- |
+| @uppy/box            |   2.4.0 | @uppy/onedrive       |   3.4.0 |
+| @uppy/companion      |  4.14.0 | @uppy/provider-views |  3.13.0 |
+| @uppy/core           |  3.13.0 | @uppy/react          |   3.4.0 |
+| @uppy/dashboard      |   3.9.0 | @uppy/remote-sources |   1.3.0 |
+| @uppy/dropbox        |   3.4.0 | @uppy/transloadit    |   3.8.0 |
+| @uppy/google-drive   |   3.6.0 | uppy                 |  3.27.0 |
+| @uppy/google-photos  |   0.1.0 |                      |         |
+
+- @uppy/google-photos: add plugin (Mikael Finstad / #5061)
+- examples: updating aws-nodejs example listParts logic for resuming uploads (Mitchell Rhoads / #5192)
+- meta: Bump docker/login-action from 3.1.0 to 3.2.0 (dependabot\[bot] / #5217)
+- meta: Bump docker/build-push-action from 5.3.0 to 5.4.0 (dependabot\[bot] / #5252)
+- @uppy/transloadit: also fix outdated assembly transloadit:result (Merlijn Vos / #5246)
+- docs: fix typo in the url (Evgenia Karunus)
+- @uppy/companion: Bump ws from 8.8.1 to 8.17.1 (dependabot\[bot] / #5256)
+
 
 ## 3.26.1
 

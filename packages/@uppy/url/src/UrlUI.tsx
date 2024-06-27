@@ -10,7 +10,8 @@ type UrlUIProps = {
 class UrlUI extends Component<UrlUIProps> {
   form = document.createElement('form')
 
-  input: HTMLInputElement
+  // Ref is always defined after render
+  input!: HTMLInputElement
 
   constructor(props: UrlUIProps) {
     super(props)

@@ -29,7 +29,7 @@ export default class OneDrive<M extends Meta, B extends Body> extends UIPlugin<
 
   provider: Provider<M, B>
 
-  view: ProviderViews<M, B>
+  view!: ProviderViews<M, B>
 
   storage: typeof tokenStorage
 
@@ -98,6 +98,7 @@ export default class OneDrive<M extends Meta, B extends Body> extends UIPlugin<
     this.view = new ProviderViews(this, {
       provider: this.provider,
       loadAllFiles: true,
+      virtualList: true,
     })
 
     const { target } = this.opts

@@ -28,7 +28,7 @@ export default class GoogleDrive<
 
   provider: Provider<M, B>
 
-  view: ProviderViews<M, B>
+  view!: ProviderViews<M, B>
 
   storage: typeof tokenStorage
 
@@ -105,6 +105,7 @@ export default class GoogleDrive<
     this.view = new DriveProviderViews(this, {
       provider: this.provider,
       loadAllFiles: true,
+      virtualList: true,
     })
 
     const { target } = this.opts

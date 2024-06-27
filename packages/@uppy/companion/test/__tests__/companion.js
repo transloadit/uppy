@@ -19,10 +19,10 @@ jest.mock('node:dns', () => {
   return {
     ...actual,
     lookup: (hostname, options, callback) => {
-      if (fakeLocalhost === hostname) {
+      if (fakeLocalhost === hostname || hostname === 'localhost') {
         return callback(null, '127.0.0.1', 4)
       }
-      return actual.lookup(hostname, options, callback)
+      return callback(new Error(`Unexpected call to hostname ${hostname}`))
     },
   }
 })
@@ -52,7 +52,7 @@ describe('validate upload data', () => {
       mimeType: 'video/mp4',
       id: defaults.ITEM_ID,
     }
-    nock('https://www.googleapis.com').get(`/drive/v3/files/${defaults.ITEM_ID}`).query(() => true).times(2).reply(200, meta)
+    nock('https://www.googleapis.com').get(`/drive/v3/files/${defaults.ITEM_ID}`).query(() => true).reply(200, meta)
 
     nock('https://www.googleapis.com').get(`/drive/v3/files/${defaults.ITEM_ID}?alt=media&supportsAllDrives=true`).reply(401, {
       "error": {
@@ -155,7 +155,7 @@ describe('validate upload data', () => {
   })
 
   test('valid upload data is allowed - tus', () => {
-    nockGoogleDownloadFile({ times: 2 })
+    nockGoogleDownloadFile()
 
     return request(authServer)
       .post('/drive/get/DUMMY-FILE-ID')
@@ -177,7 +177,7 @@ describe('validate upload data', () => {
   })
 
   test('valid upload data is allowed - s3-multipart', () => {
-    nockGoogleDownloadFile({ times: 2 })
+    nockGoogleDownloadFile()
 
     return request(authServer)
       .post('/drive/get/DUMMY-FILE-ID')
@@ -268,12 +268,16 @@ it('respects allowLocalUrls, localhost', async () => {
   expect(res.body).toEqual({ error: 'Invalid request body' })
 })
 
-it('respects allowLocalUrls, valid hostname that resolves to localhost', async () => {
-  let res = await runUrlMetaTest(`http://${fakeLocalhost}/`)
-  expect(res.statusCode).toBe(500)
-  expect(res.body).toEqual({ message: 'failed to fetch URL metadata' })
+describe('respects allowLocalUrls, valid hostname that resolves to localhost', () => {
+  test('meta', async () => {
+    const res = await runUrlMetaTest(`http://${fakeLocalhost}/`)
+    expect(res.statusCode).toBe(500)
+    expect(res.body).toEqual({ message: 'failed to fetch URL metadata' })
+  })
 
-  res = await runUrlGetTest(`http://${fakeLocalhost}/`)
-  expect(res.statusCode).toBe(500)
-  expect(res.body).toEqual({ message: 'failed to fetch URL' })
+  test('get', async () => {
+    const res = await runUrlGetTest(`http://${fakeLocalhost}/`)
+    expect(res.statusCode).toBe(500)
+    expect(res.body).toEqual({ message: 'failed to fetch URL' })
+  })
 })

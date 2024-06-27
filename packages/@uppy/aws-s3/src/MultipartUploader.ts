@@ -67,9 +67,9 @@ class MultipartUploader<M extends Meta, B extends Body> {
 
   #abortController = new AbortController()
 
-  #chunks: Array<Chunk | null>
+  #chunks: Array<Chunk | null> = []
 
-  #chunkState: { uploaded: number; etag?: string; done?: boolean }[]
+  #chunkState: { uploaded: number; etag?: string; done?: boolean }[] = []
 
   /**
    * The (un-chunked) data to upload.
@@ -131,7 +131,7 @@ class MultipartUploader<M extends Meta, B extends Body> {
     if (shouldUseMultipart && fileSize > this.#minPartSize) {
       // At least 5MB per request:
       let chunkSize = Math.max(
-        this.options.getChunkSize(this.#data),
+        this.options.getChunkSize(this.#data) as number, // Math.max can take undefined but TS does not think so
         this.#minPartSize,
       )
       let arraySize = Math.floor(fileSize / chunkSize)

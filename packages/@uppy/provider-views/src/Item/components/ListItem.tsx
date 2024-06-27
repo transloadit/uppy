@@ -1,7 +1,10 @@
-/* eslint-disable react/require-default-props */
-import type { RestrictionError } from '@uppy/core/lib/Restricter'
-import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
+import type {
+  PartialTreeFile,
+  PartialTreeFolderNode,
+  PartialTreeId,
+} from '@uppy/core/lib/Uppy'
 import { h } from 'preact'
+import ItemIcon from './ItemIcon.tsx'
 
 // if folder:
 //   + checkbox (selects all files from folder)
@@ -9,94 +12,83 @@ import { h } from 'preact'
 // if file:
 //   + checkbox (selects file)
 //   + file name (selects file)
-
-type ListItemProps<M extends Meta, B extends Body> = {
+type ListItemProps = {
+  file: PartialTreeFile | PartialTreeFolderNode
+  openFolder: (folderId: PartialTreeId) => void
+  toggleCheckbox: (event: Event) => void
   className: string
   isDisabled: boolean
-  restrictionError?: RestrictionError<M, B> | null
-  isCheckboxDisabled: boolean
-  isChecked: boolean
-  toggleCheckbox: (event: Event) => void
-  recordShiftKeyPress: (event: KeyboardEvent | MouseEvent) => void
-  type: string
-  id: string
-  itemIconEl: any
-  title: string
-  handleFolderClick?: () => void
+  restrictionError: string | null
   showTitles: boolean
   i18n: any
 }
 
-export default function ListItem<M extends Meta, B extends Body>(
-  props: ListItemProps<M, B>,
-): h.JSX.Element {
-  const {
-    className,
-    isDisabled,
-    restrictionError,
-    isCheckboxDisabled,
-    isChecked,
-    toggleCheckbox,
-    recordShiftKeyPress,
-    type,
-    id,
-    itemIconEl,
-    title,
-    handleFolderClick,
-    showTitles,
-    i18n,
-  } = props
-
+export default function ListItem({
+  file,
+  openFolder,
+  className,
+  isDisabled,
+  restrictionError,
+  toggleCheckbox,
+  showTitles,
+  i18n,
+}: ListItemProps): h.JSX.Element {
   return (
     <li
       className={className}
-      title={isDisabled ? restrictionError?.message : undefined}
+      title={
+        file.status !== 'checked' && restrictionError ?
+          restrictionError
+        : undefined
+      }
     >
-      {!isCheckboxDisabled ?
-        <input
-          type="checkbox"
-          className={`uppy-u-reset uppy-ProviderBrowserItem-checkbox ${isChecked ? 'uppy-ProviderBrowserItem-checkbox--is-checked' : ''}`}
-          onChange={toggleCheckbox}
-          onKeyDown={recordShiftKeyPress}
-          onMouseDown={recordShiftKeyPress}
-          // for the <label/>
-          name="listitem"
-          id={id}
-          checked={isChecked}
-          aria-label={
-            type === 'file' ? null : (
-              i18n('allFilesFromFolderNamed', { name: title })
-            )
-          }
-          disabled={isDisabled}
-          data-uppy-super-focusable
-        />
-      : null}
+      <input
+        type="checkbox"
+        className="uppy-u-reset uppy-ProviderBrowserItem-checkbox"
+        onChange={toggleCheckbox}
+        // for the <label/>
+        name="listitem"
+        id={file.id}
+        checked={file.status === 'checked'}
+        aria-label={
+          file.data.isFolder ?
+            i18n('allFilesFromFolderNamed', {
+              name: file.data.name ?? i18n('unnamed'),
+            })
+          : null
+        }
+        disabled={isDisabled}
+        data-uppy-super-focusable
+      />
 
       {
-        type === 'file' ?
+        file.data.isFolder ?
+          // button to open a folder
+          <button
+            type="button"
+            className="uppy-u-reset uppy-c-btn uppy-ProviderBrowserItem-inner"
+            onClick={() => openFolder(file.id)}
+            aria-label={i18n('openFolderNamed', {
+              name: file.data.name ?? i18n('unnamed'),
+            })}
+          >
+            <div className="uppy-ProviderBrowserItem-iconWrap">
+              <ItemIcon itemIconString={file.data.icon} />
+            </div>
+            {showTitles && file.data.name ?
+              <span>{file.data.name}</span>
+            : i18n('unnamed')}
+          </button>
           // label for a checkbox
-          <label
-            htmlFor={id}
+        : <label
+            htmlFor={file.id}
             className="uppy-u-reset uppy-ProviderBrowserItem-inner"
           >
             <div className="uppy-ProviderBrowserItem-iconWrap">
-              {itemIconEl}
+              <ItemIcon itemIconString={file.data.icon} />
             </div>
-            {showTitles && title}
+            {showTitles && (file.data.name ?? i18n('unnamed'))}
           </label>
-          // button to open a folder
-        : <button
-            type="button"
-            className="uppy-u-reset uppy-c-btn uppy-ProviderBrowserItem-inner"
-            onClick={handleFolderClick}
-            aria-label={i18n('openFolderNamed', { name: title })}
-          >
-            <div className="uppy-ProviderBrowserItem-iconWrap">
-              {itemIconEl}
-            </div>
-            {showTitles && <span>{title}</span>}
-          </button>
 
       }
     </li>

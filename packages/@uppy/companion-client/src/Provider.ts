@@ -366,7 +366,7 @@ export default class Provider<M extends Meta, B extends Body>
   }
 
   list<ResBody>(
-    directory: string | undefined,
+    directory: string | null,
     options: RequestOptions,
   ): Promise<ResBody> {
     return this.get<ResBody>(`${this.id}/list/${directory || ''}`, options)

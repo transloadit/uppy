@@ -58,23 +58,86 @@ export type UnknownPlugin<
   PluginState extends Record<string, unknown> = Record<string, unknown>,
 > = BasePlugin<any, M, B, PluginState>
 
-// `OmitFirstArg<typeof someArray>` is the type of the returned value of `someArray.slice(1)`.
-type OmitFirstArg<T> = T extends [any, ...infer U] ? U : never
+/**
+ * ids are always `string`s, except the root folder's id can be `null`
+ */
+export type PartialTreeId = string | null
+
+export type PartialTreeStatusFile = 'checked' | 'unchecked'
+export type PartialTreeStatus = PartialTreeStatusFile | 'partial'
+
+export type PartialTreeFile = {
+  type: 'file'
+  id: string
+
+  /**
+   * There exist two types of restrictions:
+   * - individual restrictions (`allowedFileTypes`, `minFileSize`, `maxFileSize`), and
+   * - aggregate restrictions (`maxNumberOfFiles`, `maxTotalFileSize`).
+   *
+   * `.restrictionError` reports whether this file passes individual restrictions.
+   *
+   */
+  restrictionError: string | null
+
+  status: PartialTreeStatusFile
+  parentId: PartialTreeId
+  data: CompanionFile
+}
+
+export type PartialTreeFolderNode = {
+  type: 'folder'
+  id: string
+
+  /**
+   * Consider `(.nextPagePath, .cached)` a composite key that can represent 4 states:
+   * - `{ cached: true, nextPagePath: null }` - we fetched all pages in this folder
+   * - `{ cached: true, nextPagePath: 'smth' }` - we fetched 1st page, and there are still pages left to fetch in this folder
+   * - `{ cached: false, nextPagePath: null }` - we didn't fetch the 1st page in this folder
+   * - `{ cached: false, nextPagePath: 'someString' }` - ❌ CAN'T HAPPEN ❌
+   */
+  cached: boolean
+  nextPagePath: PartialTreeId
+
+  status: PartialTreeStatus
+  parentId: PartialTreeId
+  data: CompanionFile
+}
+
+export type PartialTreeFolderRoot = {
+  type: 'root'
+  id: PartialTreeId
+
+  cached: boolean
+  nextPagePath: PartialTreeId
+}
+
+export type PartialTreeFolder = PartialTreeFolderNode | PartialTreeFolderRoot
+
+/**
+ * PartialTree has the following structure.
+ *
+ *           FolderRoot
+ *         ┌─────┴─────┐
+ *     FolderNode     File
+ *   ┌─────┴────┐
+ *  File      File
+ *
+ * Root folder is called `PartialTreeFolderRoot`,
+ * all other folders are called `PartialTreeFolderNode`, because they are "internal nodes".
+ *
+ * It's possible for `PartialTreeFolderNode` to be a leaf node if it doesn't contain any files.
+ */
+export type PartialTree = (PartialTreeFile | PartialTreeFolder)[]
 
 export type UnknownProviderPluginState = {
   authenticated: boolean | undefined
-  breadcrumbs: {
-    requestPath?: string
-    name?: string
-    id?: string
-  }[]
   didFirstRender: boolean
-  currentSelection: CompanionFile[]
-  filterInput: string
+  searchString: string
   loading: boolean | string
-  folders: CompanionFile[]
-  files: CompanionFile[]
-  isSearchVisible: boolean
+  partialTree: PartialTree
+  currentFolderId: PartialTreeId
+  username: string | null
 }
 /*
  * UnknownProviderPlugin can be any Companion plugin (such as Google Drive).
@@ -89,8 +152,8 @@ export type UnknownProviderPlugin<
   M extends Meta,
   B extends Body,
 > = UnknownPlugin<M, B, UnknownProviderPluginState> & {
-  rootFolderId: string | null
   title: string
+  rootFolderId: string | null
   files: UppyFile<M, B>[]
   icon: () => h.JSX.Element
   provider: CompanionClientProvider
@@ -111,16 +174,10 @@ export type UnknownProviderPlugin<
  * `SearchProvider` does operate on Companion plugins with `uppy.getPlugin()`.
  */
 export type UnknownSearchProviderPluginState = {
-  isInputMode?: boolean
-  searchTerm?: string | null
+  isInputMode: boolean
 } & Pick<
   UnknownProviderPluginState,
-  | 'loading'
-  | 'files'
-  | 'folders'
-  | 'currentSelection'
-  | 'filterInput'
-  | 'didFirstRender'
+  'loading' | 'searchString' | 'partialTree' | 'currentFolderId'
 >
 export type UnknownSearchProviderPlugin<
   M extends Meta,
@@ -295,6 +352,9 @@ export interface UppyEventMap<M extends Meta, B extends Body>
   extends _UppyEventMap<M, B> {
   'upload-start': (files: UppyFile<M, B>[]) => void
 }
+
+/** `OmitFirstArg<typeof someArray>` is the type of the returned value of `someArray.slice(1)`. */
+type OmitFirstArg<T> = T extends [any, ...infer U] ? U : never
 
 const defaultUploadState = {
   totalProgress: 0,
@@ -780,14 +840,23 @@ export class Uppy<M extends Meta, B extends Body = Record<string, never>> {
     }
   }
 
-  validateRestrictions(
-    file: ValidateableFile<M, B>,
-    files: ValidateableFile<M, B>[] = this.getFiles(),
-  ): RestrictionError<M, B> | null {
+  validateSingleFile(file: ValidateableFile<M, B>): string | null {
     try {
-      this.#restricter.validate(files, [file])
+      this.#restricter.validateSingleFile(file)
     } catch (err) {
-      return err as any
+      return err.message
+    }
+    return null
+  }
+
+  validateAggregateRestrictions(
+    files: ValidateableFile<M, B>[],
+  ): string | null {
+    const existingFiles = this.getFiles()
+    try {
+      this.#restricter.validateAggregateRestrictions(existingFiles, files)
+    } catch (err) {
+      return err.message
     }
     return null
   }
@@ -952,7 +1021,9 @@ export class Uppy<M extends Meta, B extends Body = Record<string, never>> {
           this.checkIfFileAlreadyExists(newFile.id)
         ) {
           throw new RestrictionError(
-            this.i18n('noDuplicates', { fileName: newFile.name }),
+            this.i18n('noDuplicates', {
+              fileName: newFile.name ?? this.i18n('unnamed'),
+            }),
             { file: fileToAdd },
           )
         }

@@ -1,72 +1,53 @@
-/* eslint-disable react/require-default-props */
-import { h, type ComponentChildren } from 'preact'
-import classNames from 'classnames'
-import type { RestrictionError } from '@uppy/core/lib/Restricter'
-import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
+import { h } from 'preact'
+import type {
+  PartialTreeFile,
+  PartialTreeFolderNode,
+} from '@uppy/core/lib/Uppy'
+import ItemIcon from './ItemIcon.tsx'
 
-type GridItemProps<M extends Meta, B extends Body> = {
+type GridItemProps = {
+  file: PartialTreeFile | PartialTreeFolderNode
+  toggleCheckbox: (event: Event) => void
   className: string
   isDisabled: boolean
-  restrictionError?: RestrictionError<M, B> | null
-  isChecked: boolean
-  title?: string
-  itemIconEl: any
-  showTitles?: boolean
-  toggleCheckbox: (event: Event) => void
-  recordShiftKeyPress: (event: KeyboardEvent) => void
-  id: string
-  children?: ComponentChildren
+  restrictionError: string | null
+  showTitles: boolean
+  children?: h.JSX.Element | null
+  i18n: any
 }
 
-function GridItem<M extends Meta, B extends Body>(
-  props: GridItemProps<M, B>,
-): h.JSX.Element {
-  const {
-    className,
-    isDisabled,
-    restrictionError,
-    isChecked,
-    title,
-    itemIconEl,
-    showTitles,
-    toggleCheckbox,
-    recordShiftKeyPress,
-    id,
-    children,
-  } = props
-
-  const checkBoxClassName = classNames(
-    'uppy-u-reset',
-    'uppy-ProviderBrowserItem-checkbox',
-    'uppy-ProviderBrowserItem-checkbox--grid',
-    { 'uppy-ProviderBrowserItem-checkbox--is-checked': isChecked },
-  )
-
+function GridItem({
+  file,
+  toggleCheckbox,
+  className,
+  isDisabled,
+  restrictionError,
+  showTitles,
+  children = null,
+  i18n,
+}: GridItemProps): h.JSX.Element {
   return (
     <li
       className={className}
-      title={isDisabled ? restrictionError?.message : undefined}
+      title={isDisabled && restrictionError ? restrictionError : undefined}
     >
       <input
         type="checkbox"
-        className={checkBoxClassName}
+        className="uppy-u-reset uppy-ProviderBrowserItem-checkbox uppy-ProviderBrowserItem-checkbox--grid"
         onChange={toggleCheckbox}
-        onKeyDown={recordShiftKeyPress}
-        // @ts-expect-error this is fine onMouseDown too
-        onMouseDown={recordShiftKeyPress}
         name="listitem"
-        id={id}
-        checked={isChecked}
+        id={file.id}
+        checked={file.status === 'checked'}
         disabled={isDisabled}
         data-uppy-super-focusable
       />
       <label
-        htmlFor={id}
-        aria-label={title}
+        htmlFor={file.id}
+        aria-label={file.data.name ?? i18n('unnamed')}
         className="uppy-u-reset uppy-ProviderBrowserItem-inner"
       >
-        {itemIconEl}
-        {showTitles && title}
+        <ItemIcon itemIconString={file.data.thumbnail || file.data.icon} />
+        {showTitles && (file.data.name ?? i18n('unnamed'))}
         {children}
       </label>
     </li>

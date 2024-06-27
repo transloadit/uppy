@@ -1,60 +1,53 @@
-/* eslint-disable react/require-default-props */
-import { h, Fragment } from 'preact'
+import { h } from 'preact'
 import { useEffect, useState, useCallback } from 'preact/hooks'
+import { type ChangeEvent } from 'preact/compat'
 import { nanoid } from 'nanoid/non-secure'
 
 type Props = {
-  search: (query: string) => void
-  searchOnInput?: boolean
-  searchTerm?: string | null
-  showButton?: boolean
+  searchString: string
+  setSearchString: (s: string) => void
+  submitSearchString: () => void
+
+  wrapperClassName: string
+  inputClassName: string
+
   inputLabel: string
   clearSearchLabel?: string
+
+  showButton?: boolean
   buttonLabel?: string
-  // eslint-disable-next-line react/require-default-props
-  clearSearch?: () => void
-  inputClassName: string
   buttonCSSClassName?: string
 }
 
-export default function SearchFilterInput(props: Props) {
-  const {
-    search,
-    searchOnInput,
-    searchTerm,
-    showButton,
-    inputLabel,
-    clearSearchLabel,
-    buttonLabel,
-    clearSearch,
-    inputClassName,
-    buttonCSSClassName,
-  } = props
-  const [searchText, setSearchText] = useState(searchTerm ?? '')
-  // const debouncedSearch = debounce((q) => search(q), 1000)
+function SearchInput({
+  searchString,
+  setSearchString,
+  submitSearchString,
 
-  const validateAndSearch = useCallback(
-    (ev: Event) => {
-      ev.preventDefault()
-      search(searchText)
-    },
-    [search, searchText],
-  )
+  wrapperClassName,
+  inputClassName,
 
-  const handleInput = useCallback(
-    (ev: Event) => {
-      const inputValue = (ev.target as HTMLInputElement).value
-      setSearchText(inputValue)
-      if (searchOnInput) search(inputValue)
-    },
-    [setSearchText, searchOnInput, search],
-  )
+  inputLabel,
+  clearSearchLabel = '',
 
-  const handleReset = () => {
-    setSearchText('')
-    if (clearSearch) clearSearch()
+  showButton = false,
+  buttonLabel = '',
+  buttonCSSClassName = '',
+}: Props) {
+  const onInput = (e: ChangeEvent) => {
+    setSearchString((e.target as HTMLInputElement).value)
   }
 
+  const submit = useCallback(
+    (ev: Event) => {
+      ev.preventDefault()
+      submitSearchString()
+    },
+    [submitSearchString],
+  )
+
+  // We do this to avoid nested <form>s
+  // (See https://github.com/transloadit/uppy/pull/5050#discussion_r1640392516)
   const [form] = useState(() => {
     const formEl = document.createElement('form')
     formEl.setAttribute('tabindex', '-1')
@@ -64,26 +57,27 @@ export default function SearchFilterInput(props: Props) {
 
   useEffect(() => {
     document.body.appendChild(form)
-    form.addEventListener('submit', validateAndSearch)
+    form.addEventListener('submit', submit)
     return () => {
-      form.removeEventListener('submit', validateAndSearch)
+      form.removeEventListener('submit', submit)
       document.body.removeChild(form)
     }
-  }, [form, validateAndSearch])
+  }, [form, submit])
 
   return (
-    <Fragment>
+    <section className={wrapperClassName}>
       <input
         className={`uppy-u-reset ${inputClassName}`}
         type="search"
         aria-label={inputLabel}
         placeholder={inputLabel}
-        value={searchText}
-        onInput={handleInput}
+        value={searchString}
+        onInput={onInput}
         form={form.id}
         data-uppy-super-focusable
       />
       {!showButton && (
+        // 🔍
         <svg
           aria-hidden="true"
           focusable="false"
@@ -95,13 +89,14 @@ export default function SearchFilterInput(props: Props) {
           <path d="M8.638 7.99l3.172 3.172a.492.492 0 1 1-.697.697L7.91 8.656a4.977 4.977 0 0 1-2.983.983C2.206 9.639 0 7.481 0 4.819 0 2.158 2.206 0 4.927 0c2.721 0 4.927 2.158 4.927 4.82a4.74 4.74 0 0 1-1.216 3.17zm-3.71.685c2.176 0 3.94-1.726 3.94-3.856 0-2.129-1.764-3.855-3.94-3.855C2.75.964.984 2.69.984 4.819c0 2.13 1.765 3.856 3.942 3.856z" />
         </svg>
       )}
-      {!showButton && searchText && (
+      {!showButton && searchString && (
+        // ❌
         <button
           className="uppy-u-reset uppy-ProviderBrowser-searchFilterReset"
           type="button"
           aria-label={clearSearchLabel}
           title={clearSearchLabel}
-          onClick={handleReset}
+          onClick={() => setSearchString('')}
         >
           <svg
             aria-hidden="true"
@@ -122,6 +117,8 @@ export default function SearchFilterInput(props: Props) {
           {buttonLabel}
         </button>
       )}
-    </Fragment>
+    </section>
   )
 }
+
+export default SearchInput
