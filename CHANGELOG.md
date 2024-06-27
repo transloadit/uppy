@@ -12,6 +12,22 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 3.27.1
+
+Released: 2024-06-27
+
+| Package          | Version | Package          | Version |
+| ---------------- | ------- | ---------------- | ------- |
+| @uppy/dashboard  |   3.9.1 | uppy             |  3.27.1 |
+| @uppy/xhr-upload |   3.6.8 |                  |         |
+
+- @uppy/xhr-upload: add `'PATCH'` as valid method (Quinn Daley / #5279)
+- @uppy/dashboard: fix handling of `null` for `doneButtonHandler` (Antoine du Hamel / #5283)
+- meta: Bump docker/build-push-action from 5.4.0 to 6.1.0 (dependabot[bot] / #5272)
+- docs: rewrite Instagram dev setup section (Evgenia Karunus / #5274)
+- meta: remove the Zoom section from `CONTRIBUTING.md` (Evgenia Karunus / #5273)
+
+
 ## 3.27.0
 
 Released: 2024-06-18
