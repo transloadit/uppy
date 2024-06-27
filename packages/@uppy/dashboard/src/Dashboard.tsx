@@ -139,7 +139,7 @@ interface DashboardMiscOptions<M extends Meta, B extends Body>
   disableLocalFiles?: boolean
   disableStatusBar?: boolean
   disableThumbnailGenerator?: boolean
-  doneButtonHandler?: () => void
+  doneButtonHandler?: null | (() => void)
   fileManagerSelectionType?: 'files' | 'folders' | 'both'
   hideCancelButton?: boolean
   hidePauseResumeButton?: boolean
@@ -219,7 +219,7 @@ const defaultOptions = {
   // Dynamic default options, they have to be defined in the constructor (because
   // they require access to the `this` keyword), but we still want them to
   // appear in the default options so TS knows they'll be defined.
-  doneButtonHandler: null as any,
+  doneButtonHandler: undefined as any,
   onRequestCloseModal: null as any,
 } satisfies Partial<DashboardOptions<any, any>>
 
@@ -284,9 +284,13 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     this.defaultLocale = locale
 
     // Dynamic default options:
-    this.opts.doneButtonHandler ??= () => {
-      this.uppy.clearUploadedFiles()
-      this.requestCloseModal()
+    if (this.opts.doneButtonHandler === undefined) {
+      // `null` means "do not display a Done button", while `undefined` means
+      // "I want the default behavior". For this reason, we need to differentiate `null` and `undefined`.
+      this.opts.doneButtonHandler = () => {
+        this.uppy.clearUploadedFiles()
+        this.requestCloseModal()
+      }
     }
     this.opts.onRequestCloseModal ??= () => this.closeModal()
 
