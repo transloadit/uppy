@@ -31,6 +31,9 @@ const defaultEnv = {
   COMPANION_INSTAGRAM_KEY: 'instagram_key',
   COMPANION_INSTAGRAM_SECRET: 'instagram_secret',
 
+  COMPANION_FACEBOOK_KEY: 'facebook_key',
+  COMPANION_FACEBOOK_SECRET: 'facebook_secret',
+
   COMPANION_ZOOM_KEY: localZoomKey,
   COMPANION_ZOOM_SECRET: localZoomSecret,
   COMPANION_ZOOM_VERIFICATION_TOKEN: localZoomVerificationToken,
