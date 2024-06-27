@@ -8,12 +8,13 @@ type BreadcrumbsProps<M extends Meta, B extends Body> = {
   title: string
   breadcrumbsIcon: h.JSX.Element
   breadcrumbs: PartialTreeFolder[]
+  i18n: any
 }
 
 export default function Breadcrumbs<M extends Meta, B extends Body>(
   props: BreadcrumbsProps<M, B>,
 ): h.JSX.Element {
-  const { openFolder, title, breadcrumbsIcon, breadcrumbs } = props
+  const { openFolder, title, breadcrumbsIcon, breadcrumbs, i18n } = props
 
   return (
     <div className="uppy-Provider-breadcrumbs">
@@ -26,7 +27,9 @@ export default function Breadcrumbs<M extends Meta, B extends Body>(
             className="uppy-u-reset uppy-c-btn"
             onClick={() => openFolder(folder.id)}
           >
-            {folder.type === 'root' ? title : folder.data.name}
+            {folder.type === 'root' ?
+              title
+            : folder.data.name ?? i18n('unnamed')}
           </button>
           {breadcrumbs.length === index + 1 ? '' : ' / '}
         </Fragment>

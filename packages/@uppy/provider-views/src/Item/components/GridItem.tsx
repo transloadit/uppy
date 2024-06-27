@@ -13,6 +13,7 @@ type GridItemProps = {
   restrictionError: string | null
   showTitles: boolean
   children?: h.JSX.Element | null
+  i18n: any
 }
 
 function GridItem({
@@ -23,6 +24,7 @@ function GridItem({
   restrictionError,
   showTitles,
   children = null,
+  i18n,
 }: GridItemProps): h.JSX.Element {
   return (
     <li
@@ -41,11 +43,11 @@ function GridItem({
       />
       <label
         htmlFor={file.id}
-        aria-label={file.data.name}
+        aria-label={file.data.name ?? i18n('unnamed')}
         className="uppy-u-reset uppy-ProviderBrowserItem-inner"
       >
         <ItemIcon itemIconString={file.data.thumbnail || file.data.icon} />
-        {showTitles && file.data.name}
+        {showTitles && (file.data.name ?? i18n('unnamed'))}
         {children}
       </label>
     </li>

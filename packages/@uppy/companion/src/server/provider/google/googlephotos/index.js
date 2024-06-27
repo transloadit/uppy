@@ -66,7 +66,7 @@ class GooglePhotos extends Provider {
 
         return paginate(
           (pageToken) => client.get('albums', { searchParams: { pageToken, pageSize: 50 }, responseType: 'json' }).json(),
-          (response) => response.albums,
+          (response) => response.albums ?? [], // seems to be undefined if no albums
         )
       }
 
@@ -85,7 +85,8 @@ class GooglePhotos extends Provider {
         return resp
       }
 
-      const [sharedAlbums, albums, { mediaItems, nextPageToken }] = await Promise.all([
+      // mediaItems seems to be undefined if empty folder
+      const [sharedAlbums, albums, { mediaItems = [], nextPageToken }] = await Promise.all([
         fetchSharedAlbums(), fetchAlbums(), fetchMediaItems()
       ])
 
