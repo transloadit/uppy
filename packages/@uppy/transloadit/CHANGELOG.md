@@ -1,5 +1,13 @@
 # @uppy/transloadit
 
+## 4.0.0-beta.10
+
+Released: 2024-06-27
+Included in: Uppy v4.0.0-beta.13
+
+- @uppy/transloadit: fix strict type errors (Antoine du Hamel / #5271)
+- @uppy/transloadit: simplify plugin to always run a single assembly (Merlijn Vos / #5158)
+
 ## 4.0.0-beta.9
 
 Released: 2024-06-18

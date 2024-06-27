@@ -1,5 +1,12 @@
 # @uppy/vue
 
+## 2.0.0-beta.4
+
+Released: 2024-06-27
+Included in: Uppy v4.0.0-beta.13
+
+- @uppy/vue: fix passing of `props` (Antoine du Hamel / #5281)
+
 ## 2.0.0-beta.1
 
 Released: 2024-03-28
