@@ -201,18 +201,6 @@ To generate the boilerplate for a new test run:
 
     yarn e2e:generate
 
-## Zoom
-
-See above Instagram instructions for setting up a tunnel, but replace
-`instagram` with `zoom` in the URL. Note that **you also have to add the OAuth
-redirect URL to `OAuth allow list`** in the Zoom Oauth app settings or it will
-not work.
-
-Add the following scopes: `recording:read`, `user:read`, `user_info:read`
-
-To test recording a meeting, you need to sign up for a Zoom Pro trial (can be
-cancelled later), for example using their iOS app.
-
 ## Releases
 
 Releases are managed by GitHub Actions, here’s an overview of the process to
