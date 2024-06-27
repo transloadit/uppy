@@ -6,13 +6,14 @@ const { MAX_AGE_24H } = require('../helpers/jwt')
 class Provider {
   /**
    *
-   * @param {{providerName: string, allowLocalUrls: boolean, providerGrantConfig?: object}} options
+   * @param {{providerName: string, allowLocalUrls: boolean, providerGrantConfig?: object, secret: string}} options
    */
-  constructor ({ allowLocalUrls, providerGrantConfig }) {
+  constructor ({ allowLocalUrls, providerGrantConfig, secret }) {
     // Some providers might need cookie auth for the thumbnails fetched via companion
     this.needsCookieAuth = false
     this.allowLocalUrls = allowLocalUrls
     this.providerGrantConfig = providerGrantConfig
+    this.secret = secret
     return this
   }
 
