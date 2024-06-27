@@ -1,5 +1,12 @@
 # @uppy/react
 
+## 4.0.0-beta.8
+
+Released: 2024-06-27
+Included in: Uppy v4.0.0-beta.13
+
+- @uppy/react: TS strict mode (Merlijn Vos / #5258)
+
 ## 4.0.0-beta.6
 
 Released: 2024-06-11

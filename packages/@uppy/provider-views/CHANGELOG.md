@@ -1,5 +1,13 @@
 # @uppy/provider-views
 
+## 4.0.0-beta.10
+
+Released: 2024-06-27
+Included in: Uppy v4.0.0-beta.13
+
+- @uppy/provider-views: `Loader.tsx` - delete the file (Evgenia Karunus / #5284)
+- @uppy/provider-views: Provider views rewrite (.files, .folders => .partialTree) (Evgenia Karunus / #5050)
+
 ## 4.0.0-beta.9
 
 Released: 2024-06-18

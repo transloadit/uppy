@@ -1,5 +1,12 @@
 # @uppy/companion
 
+## 5.0.0-beta.11
+
+Released: 2024-06-27
+Included in: Uppy v4.0.0-beta.13
+
+- @uppy/companion: implement facebook app secret proof (Mikael Finstad / #5249)
+
 ## 5.0.0-beta.10
 
 Released: 2024-06-18
