@@ -339,6 +339,11 @@ export default class ProviderView<M extends Meta, B extends Body> {
         partialTree,
         (path: PartialTreeId) => this.provider.list(path, { signal }),
         this.validateSingleFile,
+        (n) => {
+          this.setLoading(
+            this.plugin.uppy.i18n('addedNumFiles', { numFiles: n }),
+          )
+        },
       )
 
       // 2. Now that we know how many files there are - recheck aggregateRestrictions!
