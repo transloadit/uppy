@@ -17,7 +17,18 @@ module.exports = function connect(req, res) {
 
   // not sure if we need to store origin in the session state (e.g. we could've just gotten it directly inside send-token)
   // but we're afraid to change the logic there
-  stateObj.origin = oauthOrigin
+  if (!Array.isArray(oauthOrigin)) {
+    // If the server only allows a single origin, we ignore the client-supplied
+    // origin from query because we don't need it.
+    stateObj.origin = oauthOrigin
+  } else if (oauthOrigin.length < 2) {
+    stateObj.origin = oauthOrigin[0]
+  } else {
+    // If we have multiple allowed origins, we need to check the client-supplied origin from query.
+    // If the client provides an untrusted origin, we want to send `undefined`.
+    const { origin } = JSON.parse(atob(req.query.state))
+    stateObj.origin = oauthOrigin.find(o => o === origin)
+  }
 
   if (req.companion.options.server.oauthDomain) {
     stateObj.companionInstance = req.companion.buildURL('', true)
