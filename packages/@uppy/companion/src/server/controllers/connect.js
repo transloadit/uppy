@@ -22,10 +22,12 @@ module.exports = function connect(req, res) {
     // origin from query because we don't need it.
     stateObj.origin = oauthOrigin
   } else if (oauthOrigin.length < 2) {
+    // eslint-disable-next-line prefer-destructuring
     stateObj.origin = oauthOrigin[0]
   } else {
     // If we have multiple allowed origins, we need to check the client-supplied origin from query.
-    // If the client provides an untrusted origin, we want to send `undefined`. `undefined` means `/`, which is the same origin when passed to `postMessage`.
+    // If the client provides an untrusted origin,
+    // we want to send `undefined`. `undefined` means `/`, which is the same origin when passed to `postMessage`.
     // https://html.spec.whatwg.org/multipage/web-messaging.html#dom-window-postmessage-options-dev
     const { origin } = JSON.parse(atob(req.query.state))
     stateObj.origin = oauthOrigin.find(o => o === origin)
