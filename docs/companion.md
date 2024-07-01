@@ -346,8 +346,11 @@ which has only the secret, nothing else.
 ### `oauthOrigin` `COMPANION_OAUTH_ORIGIN` (required)
 
 An [origin](https://developer.mozilla.org/en-US/docs/Glossary/Origin) specifying
-allowed origins. Any browser request from a different origin will not receive
-OAuth2 tokens. Set it to `*` to allow all (not recommended).
+allowed origins, or an array of origins (comma-separated origins in
+`COMPANION_OAUTH_ORIGIN`). Any browser request from a different origin will not
+receive OAuth2 tokens. Set it to `*` to allow all (not recommended). If an array
+is provided and none matches, or if Uppy is served from an origin that is not
+listed, the OAuth request won’t complete.
 
 #### `uploadUrls` `COMPANION_UPLOAD_URLS`
 
