@@ -166,7 +166,7 @@ export default class Provider<M extends Meta, B extends Body>
   }): string {
     const params = new URLSearchParams({
       ...query,
-      // todo remove some time in the future, but be careful because old versions of Companion expect this (#5276)
+      // This is only used for Companion instances configured to accept multiple origins.
       state: btoa(JSON.stringify({ origin: getOrigin() })),
       ...this.authQuery({ authFormData }),
     })
