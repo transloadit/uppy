@@ -16,7 +16,7 @@ export interface UppyFile<M extends Meta, B extends Body> {
   isRemote: boolean
   isGhost: boolean
   meta: InternalMetadata & M
-  name: string
+  name?: string
   preview?: string
   progress: FileProgress
   missingRequiredMetaFields?: string[]

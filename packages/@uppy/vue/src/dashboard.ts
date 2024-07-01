@@ -29,7 +29,7 @@ export default defineComponent({
       const options = {
         id: 'Dashboard',
         inline: true,
-        ...props,
+        ...props.props,
         target: containerRef.value,
       }
       uppy.use(DashboardPlugin, options)

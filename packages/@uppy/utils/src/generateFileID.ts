@@ -1,4 +1,4 @@
-import type { MinimalRequiredUppyFile } from './UppyFile.js'
+import type { MinimalRequiredUppyFile, UppyFile } from './UppyFile.js'
 import getFileType from './getFileType.ts'
 
 function encodeCharacter(character: string): string {
@@ -20,7 +20,8 @@ function encodeFilename(name: string): string {
  * removing extra characters and adding type, size and lastModified
  */
 export default function generateFileID(
-  file: MinimalRequiredUppyFile<any, any>,
+  file: Omit<MinimalRequiredUppyFile<any, any>, 'name'> &
+    Pick<UppyFile<any, any>, 'name'>,
   instanceId: string,
 ): string {
   // It's tempting to do `[items].filter(Boolean).join('-')` here, but that
@@ -51,7 +52,10 @@ export default function generateFileID(
 
 // If the provider has a stable, unique ID, then we can use that to identify the file.
 // Then we don't have to generate our own ID, and we can add the same file many times if needed (different path)
-function hasFileStableId(file: MinimalRequiredUppyFile<any, any>): boolean {
+function hasFileStableId(
+  file: Omit<MinimalRequiredUppyFile<any, any>, 'name'> &
+    Pick<UppyFile<any, any>, 'name'>,
+): boolean {
   if (!file.isRemote || !file.remote) return false
   // These are the providers that it seems like have stable IDs for their files. The other's I haven't checked yet.
   const stableIdProviders = new Set([
@@ -65,7 +69,8 @@ function hasFileStableId(file: MinimalRequiredUppyFile<any, any>): boolean {
 }
 
 export function getSafeFileId(
-  file: MinimalRequiredUppyFile<any, any>,
+  file: Omit<MinimalRequiredUppyFile<any, any>, 'name'> &
+    Pick<UppyFile<any, any>, 'name'>,
   instanceId: string,
 ): string {
   if (hasFileStableId(file)) return file.id!

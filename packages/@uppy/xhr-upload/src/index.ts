@@ -44,7 +44,21 @@ declare module '@uppy/core' {
 export interface XhrUploadOpts<M extends Meta, B extends Body>
   extends PluginOpts {
   endpoint: string
-  method?: 'post' | 'put'
+  method?:
+    | 'GET'
+    | 'HEAD'
+    | 'POST'
+    | 'PUT'
+    | 'DELETE'
+    | 'OPTIONS'
+    | 'PATCH'
+    | 'delete'
+    | 'get'
+    | 'head'
+    | 'options'
+    | 'post'
+    | 'put'
+    | string
   formData?: boolean
   fieldName?: string
   headers?:

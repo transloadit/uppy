@@ -12,6 +12,41 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 4.0.0-beta.13
+
+Released: 2024-06-27
+
+| Package                |       Version | Package                |       Version |
+| ---------------------- | ------------- | ---------------------- | ------------- |
+| @uppy/audio            |  2.0.0-beta.7 | @uppy/image-editor     |  3.0.0-beta.6 |
+| @uppy/aws-s3           |  4.0.0-beta.8 | @uppy/instagram        |  4.0.0-beta.7 |
+| @uppy/box              |  3.0.0-beta.8 | @uppy/onedrive         |  4.0.0-beta.8 |
+| @uppy/companion        | 5.0.0-beta.11 | @uppy/provider-views   | 4.0.0-beta.10 |
+| @uppy/companion-client |  4.0.0-beta.8 | @uppy/react            |  4.0.0-beta.8 |
+| @uppy/core             | 4.0.0-beta.11 | @uppy/screen-capture   |  4.0.0-beta.6 |
+| @uppy/dashboard        | 4.0.0-beta.11 | @uppy/transloadit      | 4.0.0-beta.10 |
+| @uppy/drop-target      |  3.0.0-beta.6 | @uppy/unsplash         |  4.0.0-beta.8 |
+| @uppy/dropbox          |  4.0.0-beta.9 | @uppy/url              |  4.0.0-beta.8 |
+| @uppy/facebook         |  4.0.0-beta.7 | @uppy/utils            |  6.0.0-beta.9 |
+| @uppy/file-input       |  4.0.0-beta.6 | @uppy/vue              |  2.0.0-beta.4 |
+| @uppy/form             |  4.0.0-beta.5 | @uppy/webcam           |  4.0.0-beta.9 |
+| @uppy/golden-retriever |  4.0.0-beta.6 | @uppy/xhr-upload       |  4.0.0-beta.7 |
+| @uppy/google-drive     |  4.0.0-beta.1 | @uppy/zoom             |  3.0.0-beta.7 |
+| @uppy/google-photos    |  0.2.0-beta.2 | uppy                   | 4.0.0-beta.13 |
+
+- @uppy/companion: implement facebook app secret proof (Mikael Finstad / #5249)
+- @uppy/provider-views: `Loader.tsx` - delete the file (Evgenia Karunus / #5284)
+- @uppy/vue: fix passing of `props` (Antoine du Hamel / #5281)
+- @uppy/google-photos: fix various issues (Mikael Finstad / #5275)
+- @uppy/transloadit: fix strict type errors (Antoine du Hamel / #5271)
+- @uppy/transloadit: simplify plugin to always run a single assembly (Merlijn Vos / #5158)
+- meta: update Yarn version and npm deps (Antoine du Hamel / #5269)
+- docs: prettier: 3.2.5 -> 3.3.2 (Antoine du Hamel / #5270)
+- @uppy/provider-views: Provider views rewrite (.files, .folders => .partialTree) (Evgenia Karunus / #5050)
+- @uppy/react: TS strict mode (Merlijn Vos / #5258)
+- meta: simplify `build:ts` script (Antoine du Hamel / #5262)
+
+
 ## 4.0.0-beta.12
 
 Released: 2024-06-18
@@ -466,6 +501,23 @@ Released: 2024-03-28
 - meta: enable CI on `4.x` branch (Antoine du Hamel)
 - @uppy/vue: [v4.x] remove manual types (Antoine du Hamel / #4803)
 - meta: prepare release workflow for beta versions (Antoine du Hamel)
+
+
+## 3.27.1
+
+Released: 2024-06-27
+
+| Package          | Version | Package          | Version |
+| ---------------- | ------- | ---------------- | ------- |
+| @uppy/dashboard  |   3.9.1 | uppy             |  3.27.1 |
+| @uppy/xhr-upload |   3.6.8 |                  |         |
+
+- @uppy/xhr-upload: add `'PATCH'` as valid method (Quinn Daley / #5279)
+- @uppy/dashboard: fix handling of `null` for `doneButtonHandler` (Antoine du Hamel / #5283)
+- meta: Bump docker/build-push-action from 5.4.0 to 6.1.0 (dependabot[bot] / #5272)
+- docs: rewrite Instagram dev setup section (Evgenia Karunus / #5274)
+- meta: remove the Zoom section from `CONTRIBUTING.md` (Evgenia Karunus / #5273)
+
 
 ## 3.27.0
 

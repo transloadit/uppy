@@ -36,6 +36,7 @@ export default function Header<M extends Meta, B extends Body>(
             breadcrumbs={props.breadcrumbs}
             breadcrumbsIcon={props.pluginIcon && props.pluginIcon()}
             title={props.title}
+            i18n={props.i18n}
           />
         )}
         <User

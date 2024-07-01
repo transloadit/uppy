@@ -42,7 +42,7 @@ module.exports.getProviderMiddleware = (providers, grantConfig) => {
   const middleware = (req, res, next, providerName) => {
     const ProviderClass = providers[providerName]
     if (ProviderClass && validOptions(req.companion.options)) {
-      const { allowLocalUrls } = req.companion.options
+      const { allowLocalUrls, providerOptions } = req.companion.options
       const { oauthProvider } = ProviderClass
 
       let providerGrantConfig
@@ -52,7 +52,8 @@ module.exports.getProviderMiddleware = (providers, grantConfig) => {
         req.companion.providerGrantConfig = providerGrantConfig
       }
 
-      req.companion.provider = new ProviderClass({ providerName, providerGrantConfig, allowLocalUrls })
+      const { secret } = providerOptions[providerName]
+      req.companion.provider = new ProviderClass({ secret, providerName, providerGrantConfig, allowLocalUrls })
       req.companion.providerClass = ProviderClass
     } else {
       logger.warn('invalid provider options detected. Provider will not be loaded', 'provider.middleware.invalid', req.id)

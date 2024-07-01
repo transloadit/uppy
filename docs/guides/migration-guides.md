@@ -36,6 +36,7 @@ These cover all the major Uppy versions and how to migrate to them.
   - `getProtectedHttpAgent` parameter `blockLocalIPs` changed to `allowLocalIPs`
     (inverted boolean).
   - `downloadURL` 2nd (boolean) argument inverted.
+  - `StreamHttpJsonError` renamed to `HttpError`.
 - Removed (undocumented) option `clients`.
 
 ### `@uppy/companion-client`

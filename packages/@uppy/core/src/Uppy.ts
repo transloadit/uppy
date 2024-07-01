@@ -1021,7 +1021,9 @@ export class Uppy<M extends Meta, B extends Body = Record<string, never>> {
           this.checkIfFileAlreadyExists(newFile.id)
         ) {
           throw new RestrictionError(
-            this.i18n('noDuplicates', { fileName: newFile.name }),
+            this.i18n('noDuplicates', {
+              fileName: newFile.name ?? this.i18n('unnamed'),
+            }),
             { file: fileToAdd },
           )
         }

@@ -159,7 +159,7 @@ export default class Client<M extends Meta, B extends Body> {
     }
     const size = encodeURIComponent(file.size!)
     const uploadUrl = encodeURIComponent(file.uploadURL)
-    const filename = encodeURIComponent(file.name)
+    const filename = encodeURIComponent(file.name ?? 'Unnamed')
     const fieldname = 'file'
 
     const qs = `size=${size}&filename=${filename}&fieldname=${fieldname}&s3Url=${uploadUrl}`

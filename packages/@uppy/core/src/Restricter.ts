@@ -148,7 +148,7 @@ class Restricter<M extends Meta, B extends Body> {
       throw new RestrictionError(
         this.getI18n()('exceedsSize', {
           size: prettierBytes(maxFileSize),
-          file: file.name,
+          file: file.name ?? this.getI18n()('unnamed'),
         }),
         { file } as { file: UppyFile<M, B> },
       )
@@ -191,7 +191,9 @@ class Restricter<M extends Meta, B extends Body> {
     error: RestrictionError<M, B>
   } {
     const error = new RestrictionError<M, B>(
-      this.getI18n()('missingRequiredMetaFieldOnFile', { fileName: file.name }),
+      this.getI18n()('missingRequiredMetaFieldOnFile', {
+        fileName: file.name ?? this.getI18n()('unnamed'),
+      }),
     )
     const { requiredMetaFields } = this.getOpts().restrictions
     const missingFields: string[] = []
