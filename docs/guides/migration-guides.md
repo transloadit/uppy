@@ -5,10 +5,8 @@ These cover all the major Uppy versions and how to migrate to them.
 ## Migrate from Companion 4.x to 5.x
 
 - Node.js `>=18.20.0` is now required.
-- New required option `oauthOrigin` - an
-  [origin](https://developer.mozilla.org/en-US/docs/Glossary/Origin) specifying
-  allowed origins. Any browser request from a different origin will not receive
-  OAuth2 tokens. Set it to `*` to allow all (not recommended).
+- Setting the `oauthOrigin` option is now required. To get back to the unsafe
+  behavior of the previous version, set it to `'*'`.
 - `COMPANION_REDIS_EXPRESS_SESSION_PREFIX` now defaults to `companion-session:`
   (before `sess:`). To revert keep backwards compatibility, set the environment
   variable `COMPANION_REDIS_EXPRESS_SESSION_PREFIX=sess:`.
