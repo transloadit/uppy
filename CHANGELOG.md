@@ -12,6 +12,21 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 4.0.0-beta.14
+
+Released: 2024-07-02
+
+| Package                |       Version | Package                |       Version |
+| ---------------------- | ------------- | ---------------------- | ------------- |
+| @uppy/companion        | 5.0.0-beta.12 | @uppy/form             |  4.0.0-beta.6 |
+| @uppy/companion-client |  4.0.0-beta.9 | @uppy/provider-views   | 4.0.0-beta.11 |
+| @uppy/core             | 4.0.0-beta.12 | uppy                   | 4.0.0-beta.14 |
+| @uppy/drag-drop        |  4.0.0-beta.5 |                        |               |
+
+- @uppy/companion: make `oauthOrigin` option required (Mikael Finstad / #5276)
+- @uppy/provider-views: `afterFill()` - add loading progress (Evgenia Karunus / #5288)
+
+
 ## 4.0.0-beta.13
 
 Released: 2024-06-27
