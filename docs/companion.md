@@ -505,10 +505,7 @@ the following arguments:
 
 This adds support for setting the S3 client’s `forcePathStyle` option. That is
 necessary to use Uppy/Companion alongside localstack in development
-environments.
-
-Subdomain based access to localstack S3 buckets is not supported and AWS has not
-announced a sunset date for path style access yet.
+environments. **Default**: `false`.
 
 ##### `s3.region` `COMPANION_AWS_REGION`
 
