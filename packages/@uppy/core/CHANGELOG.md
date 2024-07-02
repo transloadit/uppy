@@ -68,6 +68,13 @@ Included in: Uppy v4.0.0-beta.1
 - @uppy/core: various type fixes (Antoine du Hamel / #4995)
 - @uppy/core,@uppy/provider-views: Fix breadcrumbs (Evgenia Karunus / #4986)
 
+## 3.13.1
+
+Released: 2024-07-02
+Included in: Uppy v3.27.2
+
+- @uppy/core: add `clearUploadedFiles` to type definition (Augustine Smith / #5295)
+
 ## 3.12.0
 
 Released: 2024-06-04

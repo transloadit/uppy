@@ -14,6 +14,13 @@ Included in: Uppy v4.0.0-beta.4
 
 - @uppy/form: fix `submitOnSuccess` and `triggerUploadOnSubmit` combination (Merlijn Vos / #5058)
 
+## 3.2.2
+
+Released: 2024-07-02
+Included in: Uppy v3.27.2
+
+- @uppy/form: do not emit `'submit'` event more than once (Merlijn Vos / #5299)
+
 ## 3.2.1
 
 Released: 2024-04-29

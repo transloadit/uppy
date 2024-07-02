@@ -81,6 +81,14 @@ Included in: Uppy v4.0.0-beta.1
 - @uppy/companion: improve error msg (Mikael Finstad / #5010)
 - @uppy/companion: crash if trying to set path to / (Mikael Finstad / #5003)
 
+## 4.15.0
+
+Released: 2024-07-02
+Included in: Uppy v3.27.2
+
+- @uppy/companion: add `s3.forcePathStyle` option (Nadeem Reinhardt / #5066)
+- @uppy/companion: add `oauthOrigin` option (Antoine du Hamel / #5297)
+
 ## 4.14.0
 
 Released: 2024-06-18

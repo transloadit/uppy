@@ -502,6 +502,25 @@ Released: 2024-03-28
 - @uppy/vue: [v4.x] remove manual types (Antoine du Hamel / #4803)
 - meta: prepare release workflow for beta versions (Antoine du Hamel)
 
+## 3.27.2
+
+Released: 2024-07-02
+
+| Package                | Version | Package                | Version |
+| ---------------------- | ------- | ---------------------- | ------- |
+| @uppy/companion        |  4.15.0 | @uppy/drag-drop        |   3.1.1 |
+| @uppy/companion-client |   3.8.2 | @uppy/form             |   3.2.2 |
+| @uppy/core             |  3.13.1 | uppy                   |  3.27.2 |
+
+- @uppy/form: do not emit `'submit'` event more than once (Merlijn Vos / #5299)
+- @uppy/companion: add `s3.forcePathStyle` option (Nadeem Reinhardt / #5066)
+- meta: fix broken workflow status badges in README (Alexander Zaytsev / #5298)
+- @uppy/core: add `clearUploadedFiles` to type definition (Augustine Smith / #5295)
+- @uppy/companion: add `oauthOrigin` option (Antoine du Hamel / #5297)
+- meta: add dark-mode Transloadit logo in README (Alexander Zaytsev / #5291)
+- docs,@uppy/drag-drop: `uppy.io/docs` - fix typos/broken links (Evgenia Karunus / #5296)
+- meta: Bump docker/build-push-action from 6.1.0 to 6.2.0 (dependabot[bot] / #5290)
+
 
 ## 3.27.1
 
