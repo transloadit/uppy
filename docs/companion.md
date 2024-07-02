@@ -347,8 +347,8 @@ which has only the secret, nothing else.
 
 :::caution
 
-We strongly recommend setting this option or untrusted clients
-may be able to request OAuth tokens.
+Setting this option is strongly recommended. If left unset (or set to `'*'`), your app
+could be impersonated.
 
 :::
 An [origin](https://developer.mozilla.org/en-US/docs/Glossary/Origin) specifying
