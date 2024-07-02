@@ -343,6 +343,21 @@ which has only the secret, nothing else.
 
 :::
 
+### `oauthOrigin` `COMPANION_OAUTH_ORIGIN`
+
+:::caution
+
+Setting this option is strongly recommended. If left unset (or set to `'*'`),
+your app could be impersonated.
+
+:::
+
+An [origin](https://developer.mozilla.org/en-US/docs/Glossary/Origin) specifying
+allowed origins, or an array of origins (comma-separated origins in
+`COMPANION_OAUTH_ORIGIN`). Any browser request from an origin that is not listed
+will not receive OAuth2 tokens, and the OAuth request won’t complete. Set it to
+`'*'` to allow all origins (not recommended). Default: `'*'`.
+
 #### `uploadUrls` `COMPANION_UPLOAD_URLS`
 
 An allowlist (array) of strings (exact URLs) or regular expressions. Companion

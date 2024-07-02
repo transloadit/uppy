@@ -18,6 +18,7 @@ afterAll(() => {
 
 process.env.COMPANION_DATADIR = './test/output'
 process.env.COMPANION_DOMAIN = 'localhost:3020'
+process.env.COMPANION_OAUTH_ORIGIN = '*'
 const { companionOptions } = standalone()
 
 describe('uploader with tus protocol', () => {

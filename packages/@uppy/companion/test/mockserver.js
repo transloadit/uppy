@@ -40,6 +40,8 @@ const defaultEnv = {
   COMPANION_PERIODIC_PING_URLS: '',
 
   COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT: '',
+
+  COMPANION_OAUTH_ORIGIN: '*',
 }
 
 function updateEnv (env) {
