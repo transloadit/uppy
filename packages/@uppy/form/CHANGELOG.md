@@ -1,5 +1,12 @@
 # @uppy/form
 
+## 3.2.2
+
+Released: 2024-07-02
+Included in: Uppy v3.28.0
+
+- @uppy/form: do not emit `'submit'` event more than once (Merlijn Vos / #5299)
+
 ## 3.2.1
 
 Released: 2024-04-29

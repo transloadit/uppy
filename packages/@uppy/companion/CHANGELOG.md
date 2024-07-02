@@ -1,5 +1,13 @@
 # @uppy/companion
 
+## 4.14.1
+
+Released: 2024-07-02
+Included in: Uppy v3.28.0
+
+- @uppy/companion: add `s3.forcePathStyle` option (Nadeem Reinhardt / #5066)
+- @uppy/companion: add `oauthOrigin` option (Antoine du Hamel / #5297)
+
 ## 4.14.0
 
 Released: 2024-06-18

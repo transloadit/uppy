@@ -1,5 +1,12 @@
 # @uppy/core
 
+## 3.13.1
+
+Released: 2024-07-02
+Included in: Uppy v3.28.0
+
+- @uppy/core: add `clearUploadedFiles` to type definition (Augustine Smith / #5295)
+
 ## 3.12.0
 
 Released: 2024-06-04
