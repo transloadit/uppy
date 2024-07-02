@@ -501,6 +501,15 @@ the following arguments:
 - metadata provided by the user for the file (will be `undefined` for local
   uploads)
 
+#### `s3.forcePathStyle` `COMPANION_AWS_FORCE_PATH_STYLE`
+
+This adds support for setting the S3 client’s `forcePathStyle` option. That is
+necessary to use Uppy/Companion alongside localstack in development
+environments.
+
+Subdomain based access to localstack S3 buckets is not supported and AWS has not
+announced a sunset date for path style access yet.
+
 ##### `s3.region` `COMPANION_AWS_REGION`
 
 The datacenter region where the target bucket is located.
