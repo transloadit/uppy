@@ -108,6 +108,10 @@ const validateConfig = (companionOptions) => {
     logger.error('Running without uploadUrls is a security risk and Companion will refuse to start up when running in production (NODE_ENV=production)', 'startup.uploadUrls')
   }
 
+  if (!companionOptions.oauthOrigin) {
+    throw new TypeError('Option oauthOrigin is required. To disable security, pass "*"')
+  }
+
   if (periodicPingUrls != null && (
     !Array.isArray(periodicPingUrls)
     || periodicPingUrls.some((url2) => !isURL(url2, { protocols: ['http', 'https'], require_protocol: true, require_tld: false }))

@@ -17,11 +17,11 @@ module.exports = function connect(req, res) {
 
   // not sure if we need to store origin in the session state (e.g. we could've just gotten it directly inside send-token)
   // but we're afraid to change the logic there
-  if (oauthOrigin && !Array.isArray(oauthOrigin)) {
+  if (!Array.isArray(oauthOrigin)) {
     // If the server only allows a single origin, we ignore the client-supplied
     // origin from query because we don't need it.
     stateObj.origin = oauthOrigin
-  } else if (oauthOrigin && oauthOrigin.length < 2) {
+  } else if (oauthOrigin.length < 2) {
     // eslint-disable-next-line prefer-destructuring
     stateObj.origin = oauthOrigin[0]
   } else {
@@ -30,7 +30,7 @@ module.exports = function connect(req, res) {
     // we want to send `undefined`. `undefined` means `/`, which is the same origin when passed to `postMessage`.
     // https://html.spec.whatwg.org/multipage/web-messaging.html#dom-window-postmessage-options-dev
     const { origin } = JSON.parse(atob(req.query.state))
-    stateObj.origin = oauthOrigin ? oauthOrigin.find(o => o === origin) : origin
+    stateObj.origin = oauthOrigin.find(o => o === origin)
   }
 
   if (req.companion.options.server.oauthDomain) {

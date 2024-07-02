@@ -5,6 +5,8 @@ These cover all the major Uppy versions and how to migrate to them.
 ## Migrate from Companion 4.x to 5.x
 
 - Node.js `>=18.20.0` is now required.
+- Setting the `oauthOrigin` option is now required. To get back to the unsafe
+  behavior of the previous version, set it to `'*'`.
 - `COMPANION_REDIS_EXPRESS_SESSION_PREFIX` now defaults to `companion-session:`
   (before `sess:`). To revert keep backwards compatibility, set the environment
   variable `COMPANION_REDIS_EXPRESS_SESSION_PREFIX=sess:`.
@@ -33,6 +35,7 @@ These cover all the major Uppy versions and how to migrate to them.
     (inverted boolean).
   - `downloadURL` 2nd (boolean) argument inverted.
   - `StreamHttpJsonError` renamed to `HttpError`.
+- Removed (undocumented) option `clients`.
 
 ### `@uppy/companion-client`
 
