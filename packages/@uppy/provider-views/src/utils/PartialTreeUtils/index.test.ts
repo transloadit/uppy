@@ -79,7 +79,12 @@ describe('afterFill()', () => {
           _file('4', { parentId: 'ourRoot' }),
     ]
     const mock = vi.fn()
-    const enrichedTree = await afterFill(tree, mock, () => null)
+    const enrichedTree = await afterFill(
+      tree,
+      mock,
+      () => null,
+      () => {},
+    )
 
     // While we're at it - make sure we're not doing excessive api calls!
     expect(mock.mock.calls.length).toEqual(0)
@@ -109,7 +114,12 @@ describe('afterFill()', () => {
       }
       return Promise.reject()
     }
-    const enrichedTree = await afterFill(tree, mock, () => null)
+    const enrichedTree = await afterFill(
+      tree,
+      mock,
+      () => null,
+      () => {},
+    )
 
     const checkedFiles = enrichedTree.filter(
       (item) => item.type === 'file' && item.status === 'checked',
@@ -137,7 +147,12 @@ describe('afterFill()', () => {
       }
       return Promise.reject()
     }
-    const enrichedTree = await afterFill(tree, mock, () => null)
+    const enrichedTree = await afterFill(
+      tree,
+      mock,
+      () => null,
+      () => {},
+    )
 
     const checkedFiles = enrichedTree.filter(
       (item) => item.type === 'file' && item.status === 'checked',
@@ -171,7 +186,12 @@ describe('afterFill()', () => {
       }
       return Promise.reject()
     }
-    const enrichedTree = await afterFill(tree, mock, () => null)
+    const enrichedTree = await afterFill(
+      tree,
+      mock,
+      () => null,
+      () => {},
+    )
 
     const checkedFiles = enrichedTree.filter(
       (item) => item.type === 'file' && item.status === 'checked',
@@ -233,7 +253,12 @@ describe('afterFill()', () => {
       }
       return Promise.reject()
     }
-    const enrichedTree = await afterFill(tree, mock, () => null)
+    const enrichedTree = await afterFill(
+      tree,
+      mock,
+      () => null,
+      () => {},
+    )
 
     const checkedFiles = enrichedTree.filter(
       (item) => item.type === 'file' && item.status === 'checked',

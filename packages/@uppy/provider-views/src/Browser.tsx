@@ -64,7 +64,7 @@ function Browser<M extends Meta, B extends Body>(props: BrowserProps<M, B>) {
   if (isLoading) {
     return (
       <div className="uppy-Provider-loading">
-        <span>{i18n('loading')}</span>
+        {typeof isLoading === 'string' ? isLoading : i18n('loading')}
       </div>
     )
   }
