@@ -1,0 +1,8 @@
+- @uppy/form: do not emit `'submit'` event more than once (Merlijn Vos / #5299)
+- @uppy/companion: add `s3.forcePathStyle` option (Nadeem Reinhardt / #5066)
+- meta: fix broken workflow status badges in README (Alexander Zaytsev / #5298)
+- @uppy/core: add `clearUploadedFiles` to type definition (Augustine Smith / #5295)
+- @uppy/companion: add `oauthOrigin` option (Antoine du Hamel / #5297)
+- meta: add dark-mode Transloadit logo in README (Alexander Zaytsev / #5291)
+- docs,@uppy/drag-drop: `uppy.io/docs` - fix typos/broken links (Evgenia Karunus / #5296)
+- meta: Bump docker/build-push-action from 6.1.0 to 6.2.0 (dependabot[bot] / #5290)

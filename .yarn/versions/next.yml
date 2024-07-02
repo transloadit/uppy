@@ -1,0 +1,7 @@
+releases:
+  "@uppy/companion": minor
+  "@uppy/companion-client": patch
+  "@uppy/core": patch
+  "@uppy/drag-drop": patch
+  "@uppy/form": patch
+  "uppy": patch
