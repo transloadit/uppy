@@ -16,7 +16,15 @@ about more important problems than building a file uploader.
 **[Read the docs](https://uppy.io/docs)** |
 **[Try Uppy](https://uppy.io/examples/dashboard/)**
 
-<a href="https://transloadit.com" target="_blank"><img width="185" src="https://github.com/transloadit/uppy/raw/main/assets/developed-by-transloadit.png"></a>
+<p>
+  <a href="https://transloadit.com" target="_blank">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="https://github.com/transloadit/uppy/assets/375537/6651e57e-cb57-4336-8745-6473ae68d0bd">
+      <source media="(prefers-color-scheme: light)" srcset="https://github.com/transloadit/uppy/assets/375537/7f14421d-1e37-464e-8203-ade121216c88">
+      <img src="https://github.com/transloadit/uppy/assets/375537/7f14421d-1e37-464e-8203-ade121216c88" alt="Developed by Transloadit">
+    </picture>
+  </a>
+</p>
 
 Uppy is being developed by the folks at [Transloadit](https://transloadit.com),
 a versatile API to handle any file in your app.
