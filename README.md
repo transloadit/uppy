@@ -16,14 +16,22 @@ about more important problems than building a file uploader.
 **[Read the docs](https://uppy.io/docs)** |
 **[Try Uppy](https://uppy.io/examples/dashboard/)**
 
-<a href="https://transloadit.com" target="_blank"><img width="185" src="https://github.com/transloadit/uppy/raw/main/assets/developed-by-transloadit.png"></a>
+<p>
+  <a href="https://transloadit.com" target="_blank">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="https://github.com/transloadit/uppy/assets/375537/6651e57e-cb57-4336-8745-6473ae68d0bd">
+      <source media="(prefers-color-scheme: light)" srcset="https://github.com/transloadit/uppy/assets/375537/7f14421d-1e37-464e-8203-ade121216c88">
+      <img src="https://github.com/transloadit/uppy/assets/375537/7f14421d-1e37-464e-8203-ade121216c88" alt="Developed by Transloadit">
+    </picture>
+  </a>
+</p>
 
 Uppy is being developed by the folks at [Transloadit](https://transloadit.com),
 a versatile API to handle any file in your app.
 
 <table>
-<tr><th>Tests</th><td><img src="https://github.com/transloadit/uppy/workflows/Tests/badge.svg" alt="CI status for Uppy tests"></td><td><img src="https://github.com/transloadit/uppy/workflows/Companion/badge.svg" alt="CI status for Companion tests"></td><td><img src="https://github.com/transloadit/uppy/workflows/End-to-end%20tests/badge.svg" alt="CI status for browser tests"></td></tr>
-<tr><th>Deploys</th><td><img src="https://github.com/transloadit/uppy/workflows/Release/badge.svg" alt="CI status for CDN deployment"></td><td><img src="https://github.com/transloadit/uppy/workflows/Companion%20Deploy/badge.svg" alt="CI status for Companion deployment"></td><td><img src="https://github.com/transloadit/uppy.io/workflows/Deploy%20to%20GitHub%20Pages/badge.svg" alt="CI status for website deployment"></td></tr>
+<tr><th>Tests</th><td><img src="https://github.com/transloadit/uppy/workflows/CI/badge.svg" alt="CI status for Uppy tests"></td><td><img src="https://github.com/transloadit/uppy/workflows/Companion/badge.svg" alt="CI status for Companion tests"></td><td><img src="https://github.com/transloadit/uppy/workflows/End-to-end%20tests/badge.svg" alt="CI status for browser tests"></td></tr>
+<tr><th>Deploys</th><td><img src="https://github.com/transloadit/uppy/workflows/Release/badge.svg" alt="CI status for CDN deployment"></td><td><img src="https://github.com/transloadit/uppy/workflows/Companion%20Edge%20Deploy/badge.svg" alt="CI status for Companion deployment"></td><td><img src="https://github.com/transloadit/uppy.io/workflows/Deploy%20to%20GitHub%20Pages/badge.svg" alt="CI status for website deployment"></td></tr>
 </table>
 
 ## Example

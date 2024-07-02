@@ -492,6 +492,12 @@ takes one argument which is an object with the following properties:
 - `req`, Express.js `Request` object. Do not use any Companion internals from
   the req object, as these might change in any minor version of Companion.
 
+#### `s3.forcePathStyle` `COMPANION_AWS_FORCE_PATH_STYLE`
+
+This adds support for setting the S3 client’s `forcePathStyle` option. That is
+necessary to use Uppy/Companion alongside localstack in development
+environments. **Default**: `false`.
+
 ##### `s3.region` `COMPANION_AWS_REGION`
 
 The datacenter region where the target bucket is located.
