@@ -1301,6 +1301,60 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     }
   }
 
+  #getStatusBarOpts() {
+    return {
+      hideUploadButton: this.opts.hideUploadButton,
+      hideRetryButton: this.opts.hideRetryButton,
+      hidePauseResumeButton: this.opts.hidePauseResumeButton,
+      hideCancelButton: this.opts.hideCancelButton,
+      showProgressDetails: this.opts.showProgressDetails,
+      hideAfterFinish: this.opts.hideProgressAfterFinish,
+      locale: this.opts.locale,
+      doneButtonHandler: this.opts.doneButtonHandler,
+    }
+  }
+
+  #getThumbnailGeneratorOpts() {
+    return {
+      thumbnailWidth: this.opts.thumbnailWidth,
+      thumbnailHeight: this.opts.thumbnailHeight,
+      thumbnailType: this.opts.thumbnailType,
+      waitForThumbnailsBeforeUpload: this.opts.waitForThumbnailsBeforeUpload,
+      // If we don't block on thumbnails, we can lazily generate them
+      lazy: !this.opts.waitForThumbnailsBeforeUpload,
+    }
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  #getInformerOpts() {
+    return {
+      // currently no options
+    }
+  }
+
+  setOptions(opts: Partial<DashboardOptions<M, B>>) {
+    super.setOptions(opts)
+    this.uppy
+      .getPlugin(this.#getStatusBarId())
+      ?.setOptions(this.#getStatusBarOpts())
+
+    this.uppy
+      .getPlugin(this.#getThumbnailGeneratorId())
+      ?.setOptions(this.#getThumbnailGeneratorOpts())
+  }
+
+  #getStatusBarId() {
+    return `${this.id}:StatusBar`
+  }
+
+  #getThumbnailGeneratorId() {
+    return `${this.id}:ThumbnailGenerator`
+  }
+
+  #getInformerId() {
+    return `${this.id}:Informer`
+  }
+
   install = (): void => {
     // Set default state for Dashboard
     this.setPluginState({
@@ -1343,35 +1397,24 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
 
     if (!this.opts.disableStatusBar) {
       this.uppy.use(StatusBar, {
-        id: `${this.id}:StatusBar`,
+        id: this.#getStatusBarId(),
         target: this,
-        hideUploadButton: this.opts.hideUploadButton,
-        hideRetryButton: this.opts.hideRetryButton,
-        hidePauseResumeButton: this.opts.hidePauseResumeButton,
-        hideCancelButton: this.opts.hideCancelButton,
-        showProgressDetails: this.opts.showProgressDetails,
-        hideAfterFinish: this.opts.hideProgressAfterFinish,
-        locale: this.opts.locale,
-        doneButtonHandler: this.opts.doneButtonHandler,
+        ...this.#getStatusBarOpts(),
       })
     }
 
     if (!this.opts.disableInformer) {
       this.uppy.use(Informer, {
-        id: `${this.id}:Informer`,
+        id: this.#getInformerId(),
         target: this,
+        ...this.#getInformerOpts(),
       })
     }
 
     if (!this.opts.disableThumbnailGenerator) {
       this.uppy.use(ThumbnailGenerator, {
-        id: `${this.id}:ThumbnailGenerator`,
-        thumbnailWidth: this.opts.thumbnailWidth,
-        thumbnailHeight: this.opts.thumbnailHeight,
-        thumbnailType: this.opts.thumbnailType,
-        waitForThumbnailsBeforeUpload: this.opts.waitForThumbnailsBeforeUpload,
-        // If we don't block on thumbnails, we can lazily generate them
-        lazy: !this.opts.waitForThumbnailsBeforeUpload,
+        id: this.#getThumbnailGeneratorId(),
+        ...this.#getThumbnailGeneratorOpts(),
       })
     }
 
