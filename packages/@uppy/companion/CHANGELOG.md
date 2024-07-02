@@ -1,5 +1,12 @@
 # @uppy/companion
 
+## 5.0.0-beta.12
+
+Released: 2024-07-02
+Included in: Uppy v4.0.0-beta.14
+
+- @uppy/companion: make `oauthOrigin` option required (Mikael Finstad / #5276)
+
 ## 5.0.0-beta.11
 
 Released: 2024-06-27
