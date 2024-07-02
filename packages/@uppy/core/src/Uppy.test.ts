@@ -1947,7 +1947,7 @@ describe('src/Core', () => {
     })
   })
 
-  describe('clearUploadedFiles', () => {
+  describe('clear', () => {
     it('should reset state to default', () => {
       const core = new Core()
       core.addFile({
@@ -1962,7 +1962,7 @@ describe('src/Core', () => {
         type: 'image/jpeg',
         data: testImage,
       })
-      core.clearUploadedFiles()
+      core.clear()
       expect(core.getState()).toMatchObject({
         totalProgress: 0,
         allowNewUpload: true,
@@ -1993,7 +1993,7 @@ describe('src/Core', () => {
       // @ts-ignore
       core.setState(newState)
       expect(() => {
-        core.clearUploadedFiles()
+        core.clear()
       }).toThrowError()
     })
   })
