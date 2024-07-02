@@ -1971,6 +1971,57 @@ describe('src/Core', () => {
     })
   })
 
+  describe('clearUploadedFiles', () => {
+    it('should reset state to default', () => {
+      const core = new Core()
+      core.addFile({
+        source: 'vi',
+        name: 'foo.jpg',
+        type: 'image/jpeg',
+        data: testImage,
+      })
+      core.addFile({
+        source: 'vi',
+        name: 'foo2.jpg',
+        type: 'image/jpeg',
+        data: testImage,
+      })
+      core.clearUploadedFiles()
+      expect(core.getState()).toMatchObject({
+        totalProgress: 0,
+        allowNewUpload: true,
+        error: null,
+        recoveredState: null,
+        files: {},
+      })
+    })
+
+    it('should throw error if plugin does not allow removing files during an upload', () => {
+      const core = new Core()
+      const newState = {
+        capabilities: {
+          individualCancellation: false,
+          uploadProgress: true,
+          resumableUploads: false,
+        },
+        currentUploads: {
+          upload1: {
+            fileIDs: [
+              'uppy-file1/jpg-1e-image/jpeg',
+              'uppy-file2/jpg-1e-image/jpeg',
+              'uppy-file3/jpg-1e-image/jpeg',
+            ],
+          },
+        },
+      }
+      // @ts-ignore
+      core.setState(newState)
+      expect(() => {
+        core.clearUploadedFiles()
+      }).toThrowError()
+    })
+  })
+
   describe('checkRestrictions', () => {
     it('should enforce the maxNumberOfFiles rule', () => {
       const core = new Core({

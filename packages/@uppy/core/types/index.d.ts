@@ -335,6 +335,8 @@ export class Uppy<
 
   resetProgress(): void
 
+  clearUploadedFiles(): void
+
   addPreProcessor(fn: UploadHandler): void
 
   removePreProcessor(fn: UploadHandler): void
