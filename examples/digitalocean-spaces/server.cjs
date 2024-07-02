@@ -14,6 +14,7 @@ const companion = require('../../packages/@uppy/companion')
  *   - COMPANION_AWS_KEY - Your access key ID
  *   - COMPANION_AWS_SECRET - Your secret access key
  *   - COMPANION_AWS_BUCKET - Your space's name.
+ *   - COMPANION_AWS_FORCE_PATH_STYLE - Indicates if s3ForcePathStyle should be used rather than subdomain for S3 buckets.
  */
 
 if (!process.env.COMPANION_AWS_REGION) throw new Error('Missing Space region, please set the COMPANION_AWS_REGION environment variable (eg. "COMPANION_AWS_REGION=ams3")')
@@ -43,6 +44,7 @@ const { app: companionApp } = companion.app({
     secret: process.env.COMPANION_AWS_SECRET,
     bucket: process.env.COMPANION_AWS_BUCKET,
     region: process.env.COMPANION_AWS_REGION,
+    forcePathStyle: process.env.COMPANION_AWS_FORCE_PATH_STYLE === 'true',
   },
   server: { host },
   filePath: DATA_DIR,

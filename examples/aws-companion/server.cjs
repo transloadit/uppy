@@ -35,6 +35,7 @@ const options = {
     bucket: process.env.COMPANION_AWS_BUCKET,
     region: process.env.COMPANION_AWS_REGION,
     endpoint: process.env.COMPANION_AWS_ENDPOINT,
+    forcePathStyle: process.env.COMPANION_AWS_FORCE_PATH_STYLE === 'true',
   },
   server: { host: 'localhost:3020' },
   filePath: DATA_DIR,
