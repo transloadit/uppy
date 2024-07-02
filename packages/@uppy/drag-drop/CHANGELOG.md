@@ -1,5 +1,12 @@
 # @uppy/drag-drop
 
+## 3.1.1
+
+Released: 2024-07-02
+Included in: Uppy v3.27.2
+
+- docs,@uppy/drag-drop: `uppy.io/docs` - fix typos/broken links (Evgenia Karunus / #5296)
+
 ## 3.1.0
 
 Released: 2024-03-27
