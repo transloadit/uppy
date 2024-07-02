@@ -123,6 +123,25 @@ companion.app({
 });
 ```
 
+### Development
+
+Among Uppy-supported providers, Instagram is the only provider at the time of
+writing that requires https even in dev mode. So, to test your integration in
+development, you need to use some reverse proxy. The easiest way to do it is to
+use [https://redirectmeto.com](https://redirectmeto.com).
+
+In your `.env`, set:
+
+```sh
+COMPANION_DOMAIN="redirectmeto.com/http://localhost:3020"
+COMPANION_PROTOCOL="https"
+```
+
+On
+[https://developers.facebook.com/apps/.../instagram-basic-display/basic-display](https://developers.facebook.com/apps/.../instagram-basic-display/basic-display)
+page, in the “Valid OAuth Redirect URIs” field, add
+`https://redirectmeto.com/http://localhost:3020/instagram/redirect`.
+
 ## API
 
 ### Options

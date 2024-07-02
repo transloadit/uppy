@@ -15,7 +15,21 @@ export interface XHRUploadOptions extends PluginOptions {
   timeout?: number
   responseUrlFieldName?: string
   endpoint: string
-  method?: 'GET' | 'POST' | 'PUT' | 'HEAD' | 'get' | 'post' | 'put' | 'head'
+  method?:
+    | 'GET'
+    | 'HEAD'
+    | 'POST'
+    | 'PUT'
+    | 'DELETE'
+    | 'OPTIONS'
+    | 'PATCH'
+    | 'delete'
+    | 'get'
+    | 'head'
+    | 'options'
+    | 'post'
+    | 'put'
+    | string
   locale?: XHRUploadLocale
   responseType?: string
   withCredentials?: boolean

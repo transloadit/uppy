@@ -1,5 +1,12 @@
 # @uppy/dashboard
 
+## 3.9.1
+
+Released: 2024-06-27
+Included in: Uppy v3.27.1
+
+- @uppy/dashboard: fix handling of `null` for `doneButtonHandler` (Antoine du Hamel / #5283)
+
 ## 3.8.3
 
 Released: 2024-05-07
