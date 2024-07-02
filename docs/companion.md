@@ -345,6 +345,12 @@ which has only the secret, nothing else.
 
 ### `oauthOrigin` `COMPANION_OAUTH_ORIGIN`
 
+:::caution
+
+We strongly recommend setting this option or untrusted clients
+may be able to request OAuth tokens.
+
+:::
 An [origin](https://developer.mozilla.org/en-US/docs/Glossary/Origin) specifying
 allowed origins, or an array of origins (comma-separated origins in
 `COMPANION_OAUTH_ORIGIN`). Any browser request from an origin that is not listed
