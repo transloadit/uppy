@@ -76,6 +76,9 @@ export default class Form<M extends Meta, B extends Body> extends BasePlugin<
     }
 
     if (this.opts.submitOnSuccess) {
+      // When false is returned, cancelable invalid events are fired
+      // for each invalid child and validation problems are reported to the user.
+      this.form.reportValidity()
       this.form.submit()
     }
   }
