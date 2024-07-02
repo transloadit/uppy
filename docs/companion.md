@@ -343,6 +343,21 @@ which has only the secret, nothing else.
 
 :::
 
+### `oauthOrigin` `COMPANION_OAUTH_ORIGIN`
+
+:::caution
+
+Setting this option is strongly recommended. If left unset (or set to `'*'`),
+your app could be impersonated.
+
+:::
+
+An [origin](https://developer.mozilla.org/en-US/docs/Glossary/Origin) specifying
+allowed origins, or an array of origins (comma-separated origins in
+`COMPANION_OAUTH_ORIGIN`). Any browser request from an origin that is not listed
+will not receive OAuth2 tokens, and the OAuth request won’t complete. Set it to
+`'*'` to allow all origins (not recommended). Default: `'*'`.
+
 #### `uploadUrls` `COMPANION_UPLOAD_URLS`
 
 An allowlist (array) of strings (exact URLs) or regular expressions. Companion
@@ -483,6 +498,12 @@ takes one argument which is an object with the following properties:
   initial calls for each uploaded files, otherwise it will be `undefined`).
 - `req`, Express.js `Request` object. Do not use any Companion internals from
   the req object, as these might change in any minor version of Companion.
+
+#### `s3.forcePathStyle` `COMPANION_AWS_FORCE_PATH_STYLE`
+
+This adds support for setting the S3 client’s `forcePathStyle` option. That is
+necessary to use Uppy/Companion alongside localstack in development
+environments. **Default**: `false`.
 
 ##### `s3.region` `COMPANION_AWS_REGION`
 
