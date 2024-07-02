@@ -347,10 +347,11 @@ which has only the secret, nothing else.
 
 :::caution
 
-Setting this option is strongly recommended. If left unset (or set to `'*'`), your app
-could be impersonated.
+Setting this option is strongly recommended. If left unset (or set to `'*'`),
+your app could be impersonated.
 
 :::
+
 An [origin](https://developer.mozilla.org/en-US/docs/Glossary/Origin) specifying
 allowed origins, or an array of origins (comma-separated origins in
 `COMPANION_OAUTH_ORIGIN`). Any browser request from an origin that is not listed
