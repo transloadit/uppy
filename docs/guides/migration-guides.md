@@ -4,7 +4,8 @@ These cover all the major Uppy versions and how to migrate to them.
 
 ## Migrate from Companion 4.x to 5.x
 
-- Node.js `>=18.20.0` is now required.
+- End-of-Life versions of Node.js are no longer supported (use latest 18.x LTS,
+  20.x LTS, or 22.x current).
 - Setting the `corsOrigin` option is now required. You should define the list of
   origins you expect your app to be served from, otherwise it can be
   impersonated from a different origin you don’t control. Set it to `true` if
