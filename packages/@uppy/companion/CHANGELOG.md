@@ -1,5 +1,12 @@
 # @uppy/companion
 
+## 4.15.1
+
+Released: 2024-07-03
+Included in: Uppy v3.27.3
+
+- @uppy/companion: fix `TypeError` when parsing request (Antoine du Hamel / #5303)
+
 ## 4.15.0
 
 Released: 2024-07-02

@@ -12,6 +12,17 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 3.27.3
+
+Released: 2024-07-03
+
+| Package         | Version | Package         | Version |
+| --------------- | ------- | --------------- | ------- |
+| @uppy/companion |  4.15.1 | uppy            |  3.27.3 |
+
+- @uppy/companion: fix `TypeError` when parsing request (Antoine du Hamel / #5303)
+
+
 ## 3.27.2
 
 Released: 2024-07-02
