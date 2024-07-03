@@ -4,7 +4,8 @@ These cover all the major Uppy versions and how to migrate to them.
 
 ## Migrate from Companion 4.x to 5.x
 
-- Node.js `>=18.20.0` is now required.
+- End-of-Life versions of Node.js are no longer supported (use latest 18.x LTS,
+  20.x LTS, or 22.x current).
 - Setting the `oauthOrigin` option is now required. To get back to the unsafe
   behavior of the previous version, set it to `'*'`.
 - `COMPANION_REDIS_EXPRESS_SESSION_PREFIX` now defaults to `companion-session:`
