@@ -343,14 +343,6 @@ which has only the secret, nothing else.
 
 :::
 
-### `oauthOrigin` `COMPANION_OAUTH_ORIGIN` (required)
-
-An [origin](https://developer.mozilla.org/en-US/docs/Glossary/Origin) specifying
-allowed origins, or an array of origins (comma-separated origins in
-`COMPANION_OAUTH_ORIGIN`). Any browser request from an origin that is not listed
-will not receive OAuth2 tokens, and the OAuth request won’t complete. Set it to
-`'*'` to allow all origins (not recommended).
-
 #### `uploadUrls` `COMPANION_UPLOAD_URLS`
 
 An allowlist (array) of strings (exact URLs) or regular expressions. Companion
@@ -643,10 +635,12 @@ risk.**
 
 :::
 
-#### `corsOrigins` `COMPANION_CLIENT_ORIGINS`
+#### `corsOrigins` `COMPANION_CLIENT_ORIGINS` (required)
 
-Allowed CORS Origins (default `true`). Passed as the `origin` option in
-[cors](https://github.com/expressjs/cors#configuration-options))
+Allowed CORS Origins. Passed as the `origin` option in
+[cors](https://github.com/expressjs/cors#configuration-options), and as the
+[`targetOrigin`](https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage#targetorigin)
+for `postMessage` calls in the context of OAuth.
 
 #### `COMPANION_CLIENT_ORIGINS_REGEX`
 
