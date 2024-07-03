@@ -228,7 +228,9 @@ export default class ProviderView<M extends Meta, B extends Body> {
         currentPagePath = nextPagePath
         currentItems = currentItems.concat(items)
         this.setLoading(
-          this.plugin.uppy.i18n('loadedXFiles', { numFiles: items.length }),
+          this.plugin.uppy.i18n('loadedXFiles', {
+            numFiles: currentItems.length,
+          }),
         )
       } while (this.opts.loadAllFiles && currentPagePath)
 
