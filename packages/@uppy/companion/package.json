@@ -107,7 +107,7 @@
     "test": "NODE_OPTIONS=--experimental-vm-modules jest --runInBand"
   },
   "engines": {
-    "node": "^18.20.0 || ^20.10.0 || >=22.0.0"
+    "node": "^18.20.0 || ^20.15.0 || >=22.0.0"
   },
   "installConfig": {
     "hoistingLimits": "workspaces"
