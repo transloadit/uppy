@@ -1,30 +1,23 @@
 const oAuthState = require('../helpers/oauth-state')
 
+function isOriginAllowed(origin, allowedOrigins) {
+  if (Array.isArray(allowedOrigins)) {
+    return allowedOrigins.some(allowedOrigin => isOriginAllowed(origin, allowedOrigin))
+  }
+  if (typeof allowedOrigins === 'string'){
+    return origin === allowedOrigins;
+  }
+  return allowedOrigins.test?.(origin) ?? !!allowedOrigins;
+}
+
+
 const queryString = (params, prefix = '?') => {
   const str = new URLSearchParams(params).toString()
   return str ? `${prefix}${str}` : ''
 }
 
-/**
- * initializes the oAuth flow for a provider.
- *
- * @param {object} req
- * @param {object} res
- */
-module.exports = function connect(req, res) {
+function encodeStateAndRedirect(req, res, stateObj) {
   const { secret } = req.companion.options
-  const stateObj = oAuthState.generateState()
-
-  stateObj.origin = res.getHeader('Access-Control-Allow-Origin')
-
-  if (req.companion.options.server.oauthDomain) {
-    stateObj.companionInstance = req.companion.buildURL('', true)
-  }
-
-  if (req.query.uppyPreAuthToken) {
-    stateObj.preAuthToken = req.query.uppyPreAuthToken
-  }
-
   const state = oAuthState.encodeState(stateObj, secret)
   const { providerClass, providerGrantConfig } = req.companion
 
@@ -49,4 +42,41 @@ module.exports = function connect(req, res) {
 
   // Now we redirect to grant's /connect endpoint, see `app.use(Grant(grantConfig))`
   res.redirect(req.companion.buildURL(`/connect/${oauthProvider}${qs}`, true))
+}
+
+
+/**
+ * initializes the oAuth flow for a provider.
+ *
+ * @param {object} req
+ * @param {object} res
+ */
+module.exports = function connect(req, res, next) {
+  const stateObj = oAuthState.generateState()
+
+  if (req.companion.options.server.oauthDomain) {
+    stateObj.companionInstance = req.companion.buildURL('', true)
+  }
+
+  if (req.query.uppyPreAuthToken) {
+    stateObj.preAuthToken = req.query.uppyPreAuthToken
+  }
+
+  stateObj.origin = res.getHeader('Access-Control-Allow-Origin')
+  if (!stateObj.origin) {
+    const { corsOrigins } = req.companion.options
+    const { origin } = JSON.parse(atob(req.query.state))
+    if (typeof corsOrigins === 'function') {
+      corsOrigins(origin, (err, finalOrigin) => {
+        if (err) next(err)
+        stateObj.origin = finalOrigin
+        encodeStateAndRedirect(req, res, stateObj)
+      })
+      return
+    }
+    if (isOriginAllowed(origin, req.companion.options.corsOrigins)) {
+      stateObj.origin = origin
+    }
+  }
+  encodeStateAndRedirect(req, res, stateObj)
 }
