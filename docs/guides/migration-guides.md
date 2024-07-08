@@ -57,6 +57,9 @@ case you don’t have to do anything.
 - `RequestClient` methods `get`, `post`, `delete` no longer accepts a boolean as
   the third argument. Instead, pass `{ skipPostResponse: true | false }`. This
   won’t affect you unless you’ve been using `RequestClient`.
+- When pausing uploads, the WebSocket towards companion will no longer be
+  closed. This allows paused uploads to be cancelled, but once a file has been
+  paused it will still occupy its place in the concurrency queue.
 
 ## Migrate from Uppy 3.x to 4.x
 

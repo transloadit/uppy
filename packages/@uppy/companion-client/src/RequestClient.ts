@@ -540,15 +540,6 @@ export default class RequestClient<M extends Meta, B extends Body> {
 
           isPaused = newPausedState
           if (socket) sendState()
-
-          if (newPausedState) {
-            // Remove this file from the queue so another file can start in its place.
-            socketAbortController?.abort?.() // close socket to free up the request for other uploads
-          } else {
-            // Resuming an upload should be queued, else you could pause and then
-            // resume a queued upload to make it skip the queue.
-            createWebsocket()
-          }
         }
 
         const onFileRemove = (targetFile: UppyFile<M, B>) => {
