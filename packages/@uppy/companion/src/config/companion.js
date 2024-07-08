@@ -19,7 +19,7 @@ const defaultOptions = {
   enableUrlEndpoint: false,
   allowLocalUrls: false,
   periodicPingUrls: [],
-  streamingUpload: false,
+  streamingUpload: true,
   clientSocketConnectTimeout: 60000,
   metrics: true,
 }

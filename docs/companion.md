@@ -290,7 +290,7 @@ const options = {
 	allowLocalUrls: false,
 	logClientVersion: true,
 	periodicPingUrls: [],
-	streamingUpload: false,
+	streamingUpload: true,
 	clientSocketConnectTimeout: 60000,
 	metrics: true,
 };
@@ -608,9 +608,7 @@ Prometheus metrics (by default metrics are enabled.)
 A boolean flag to tell Companion whether to enable streaming uploads. If
 enabled, it will lead to _faster uploads_ because companion will start uploading
 at the same time as downloading using `stream.pipe`. If `false`, files will be
-fully downloaded first, then uploaded. Defaults to `false`, but we recommended
-enabling it, especially if you’re expecting to upload large files. In future
-versions the default might change to `true`.
+fully downloaded first, then uploaded. Defaults to `true`.
 
 #### `maxFileSize` `COMPANION_MAX_FILE_SIZE`
 
