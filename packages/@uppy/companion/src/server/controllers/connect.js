@@ -1,5 +1,12 @@
 const oAuthState = require('../helpers/oauth-state')
 
+/**
+ * Derived from `cors` npm package.
+ * @see https://github.com/expressjs/cors/blob/791983ebc0407115bc8ae8e64830d440da995938/lib/index.js#L19-L34
+ * @param {string} origin 
+ * @param {*} allowedOrigins 
+ * @returns {boolean}
+ */
 function isOriginAllowed(origin, allowedOrigins) {
   if (Array.isArray(allowedOrigins)) {
     return allowedOrigins.some(allowedOrigin => isOriginAllowed(origin, allowedOrigin))
@@ -46,7 +53,22 @@ function encodeStateAndRedirect(req, res, stateObj) {
 
 
 /**
- * initializes the oAuth flow for a provider.
+ * Initializes the oAuth flow for a provider.
+ *
+ * The client has open a new tab and is about to be redirected to the auth
+ * provider. When the user will return to companion, we'll have to send the auth
+ * token back to Uppy with `window.postMessage()`. 
+ * To prevent other tabs and unauthorized origins from accessing that token, we
+ * reuse origin(s) from `corsOrigins` to limit the scope of `postMessage()`, which
+ * has `targetOrigin` parameter, required for cross-origin messages (i.e. if Uppy
+ * and Companion are served from different origins).
+ * We support multiple origins in `corsOrigins`, we have to figure out which
+ * origin the current connect request is coming from. Because the OAuth window
+ * was opened with `window.open()`, starting a new browsing context, the request
+ * is not cross origin and we don't have a `Origin` header to work with.
+ * That's why we use the client-provided base64-encoded parameter, check if it
+ * matches origin(s) allowed in `corsOrigins` Companion option, and use that as
+ * our `targetOrigin` for the `window.postMessage()` call (see `send-token.js`).
  *
  * @param {object} req
  * @param {object} res

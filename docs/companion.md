@@ -635,14 +635,27 @@ risk.**
 
 :::
 
-#### `corsOrigins` `COMPANION_CLIENT_ORIGINS` (required)
+#### `corsOrigins` (required)
 
 Allowed CORS Origins. Passed as the `origin` option in
-[cors](https://github.com/expressjs/cors#configuration-options), and as the
+[cors](https://github.com/expressjs/cors#configuration-options).
+
+Note this is used for both CORS’ `Access-Control-Allow-Origin` header, and for
+the
 [`targetOrigin`](https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage#targetorigin)
 for `postMessage` calls in the context of OAuth.
 
-#### `COMPANION_CLIENT_ORIGINS_REGEX`
+Setting it to `true` treats any origin as a trusted one, making it easier to
+impersonate your brand. Setting it to `false` disables cross-origin supports,
+use this if you’re serving Companion and Uppy from the same domain name.
+
+##### `COMPANION_CLIENT_ORIGINS`
+
+A comma-separated string of origins, or `'true'` (which will be interpreted as
+the boolean value `true`), or `'false'` (which will be interpreted as the
+boolean value `false`).
+
+##### `COMPANION_CLIENT_ORIGINS_REGEX`
 
 Like COMPANION_CLIENT_ORIGINS, but allows a single regex instead.
 `COMPANION_CLIENT_ORIGINS` will be ignored if this is used. This is a
