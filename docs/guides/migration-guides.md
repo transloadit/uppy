@@ -14,6 +14,8 @@ These cover all the major Uppy versions and how to migrate to them.
 - The URL endpoint (used by the `Url`/`Link` plugin) is now turned off by
   default and must be explicitly enabled with
   `COMPANION_ENABLE_URL_ENDPOINT=true` or `enableUrlEndpoint: true`.
+- The option `streamingUpload` / `COMPANION_STREAMING_UPLOAD` now defaults to
+  `true`.
 - The option `getKey(req, filename, metadata)` has changed signature to
   `getKey({ filename, metadata, req })`.
 - The option `bucket(req, metadata)` has changed signature to
