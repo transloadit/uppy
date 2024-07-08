@@ -151,7 +151,7 @@ jobs:
             type=semver,pattern={{version}},value=${{ needs.release.outputs.companionWasReleased }}
             # set latest tag for default branch
             type=raw,value=latest,enable=true
-      - uses: docker/setup-qemu-action@68827325e0b33c7199eb31dd4e31fbe9023e06e3 # v3.0.0
+      - uses: docker/setup-qemu-action@5927c834f5b4fdf503fca6f4c7eccda82949e1ee # v3.1.0
       - uses: docker/setup-buildx-action@v3
       - name: Log in to DockerHub
         uses: docker/login-action@0d4c9c5ea7693da7b068278f7b52bda2a190a446 # v3.2.0
