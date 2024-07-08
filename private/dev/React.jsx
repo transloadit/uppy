@@ -9,11 +9,11 @@ import '@uppy/dashboard/dist/style.css';
 
 import { Dashboard } from '@uppy/react';
 
-import DashboardUppy from './Dashboard.js'
+import { UppyDashboard } from './Dashboard.js'
 
 
 function App() {
-  const [uppy] = useState(() => DashboardUppy());
+  const [uppy] = useState(() => UppyDashboard());
 
   const [i, setI] = useState(0);
 

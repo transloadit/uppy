@@ -1,6 +1,10 @@
 // The @uppy/ dependencies are resolved from source
 /* eslint-disable import/no-extraneous-dependencies */
 import Uppy, { debugLogger } from '@uppy/core'
+// eslint-disable-next-line import/no-extraneous-dependencies
+import Dashboard from '@uppy/dashboard'
+// eslint-disable-next-line import/no-extraneous-dependencies
+import Form from '@uppy/form'
 import RemoteSources from '@uppy/remote-sources'
 import Webcam from '@uppy/webcam'
 import ScreenCapture from '@uppy/screen-capture'
@@ -75,7 +79,7 @@ function getCompanionKeysParams (name) {
 
 // Rest is implementation! Obviously edit as necessary...
 
-export default ({ restrictions } = {}) => {
+export function UppyDashboard({ restrictions } = {}) {
   const uppyDashboard = new Uppy({
     logger: debugLogger,
     meta: {
@@ -179,4 +183,29 @@ export default ({ restrictions } = {}) => {
   })
 
   return uppyDashboard
+}
+
+export default () => {
+  const restrictions = undefined
+  // const restrictions = { requiredMetaFields: ['caption'], maxNumberOfFiles: 3 }
+
+  const uppy = UppyDashboard({ restrictions })
+    .use(Dashboard, {
+      trigger: '#pick-files',
+      // inline: true,
+      target: '.foo',
+      metaFields: [
+        { id: 'license', name: 'License', placeholder: 'specify license' },
+        { id: 'caption', name: 'Caption', placeholder: 'add caption' },
+      ],
+      showProgressDetails: true,
+      proudlyDisplayPoweredByUppy: true,
+      note: `${JSON.stringify(restrictions)}`,
+    })
+    .use(Form, { target: '#upload-form' })
+
+  window.uppy = uppy
+
+  const modalTrigger = document.querySelector('#pick-files')
+  if (modalTrigger) modalTrigger.click()
 }
