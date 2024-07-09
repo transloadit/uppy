@@ -9,7 +9,7 @@ import type {
   PartialTree,
 } from '@uppy/core/lib/Uppy.js'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
-import type { CompanionFile } from '@uppy/utils/lib/CompanionFile.ts'
+import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
 import type Translator from '@uppy/utils/lib/Translator'
 import classNames from 'classnames'
 import type { ValidateableFile } from '@uppy/core/lib/Restricter.js'
