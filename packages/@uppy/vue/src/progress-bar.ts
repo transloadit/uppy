@@ -1,7 +1,7 @@
 import { defineComponent, ref, h, type PropType } from 'vue'
 import ProgressBarPlugin, { type ProgressBarOptions } from '@uppy/progress-bar'
 import { Uppy } from '@uppy/core'
-import useUppy from './useUppy'
+import useUppy from './useUppy.ts'
 
 export default defineComponent({
   name: 'ProgressBar',

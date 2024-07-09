@@ -24,8 +24,8 @@ import InvalidPluginWithoutType from './mocks/invalidPluginWithoutType.ts'
 import DeepFrozenStore from '../../../../e2e/cypress/fixtures/DeepFrozenStore.mjs'
 import type { State } from './Uppy.ts'
 
-// eslint-disable-next-line no-restricted-globals
 const sampleImage = fs.readFileSync(
+  // eslint-disable-next-line no-restricted-globals
   path.join(__dirname, '../../../../e2e/cypress/fixtures/images/image.jpg'),
 )
 

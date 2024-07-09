@@ -2,7 +2,7 @@ import { defineComponent, ref, watch, h, type PropType } from 'vue'
 import DashboardPlugin, { type DashboardOptions } from '@uppy/dashboard'
 import { Uppy } from '@uppy/core'
 import type { Meta, Body } from '../../utils/src/UppyFile.js'
-import useUppy from './useUppy'
+import useUppy from './useUppy.ts'
 
 type DashboardModalOptions<M extends Meta, B extends Body> = Omit<
   DashboardOptions<M, B> & { inline: false },
