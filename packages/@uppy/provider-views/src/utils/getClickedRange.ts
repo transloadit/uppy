@@ -1,7 +1,7 @@
 import type {
   PartialTreeFile,
   PartialTreeFolderNode,
-} from '@uppy/core/lib/Uppy'
+} from '@uppy/core/lib/Uppy.js'
 
 // Shift-clicking selects a single consecutive list of items
 // starting at the previous click.

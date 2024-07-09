@@ -7,12 +7,12 @@ import type {
   UnknownProviderPluginState,
   PartialTreeId,
   PartialTree,
-} from '@uppy/core/lib/Uppy.ts'
+} from '@uppy/core/lib/Uppy.js'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import type { CompanionFile } from '@uppy/utils/lib/CompanionFile.ts'
 import type Translator from '@uppy/utils/lib/Translator'
 import classNames from 'classnames'
-import type { ValidateableFile } from '@uppy/core/lib/Restricter.ts'
+import type { ValidateableFile } from '@uppy/core/lib/Restricter.js'
 import remoteFileObjToLocal from '@uppy/utils/lib/remoteFileObjToLocal'
 import AuthView from './AuthView.tsx'
 import Header from './Header.tsx'
