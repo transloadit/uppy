@@ -51,6 +51,15 @@ function encodeStateAndRedirect(req, res, stateObj) {
   res.redirect(req.companion.buildURL(`/connect/${oauthProvider}${qs}`, true))
 }
 
+function getClientOrigin(base64EncodedState) {
+  try {
+    const { origin } = JSON.parse(atob(base64EncodedState))
+    return origin
+  } catch {
+    return undefined
+  }
+}
+
 
 /**
  * Initializes the oAuth flow for a provider.
@@ -85,19 +94,20 @@ module.exports = function connect(req, res, next) {
   }
 
   stateObj.origin = res.getHeader('Access-Control-Allow-Origin')
-  if (!stateObj.origin) {
+  let clientOrigin
+  if (!stateObj.origin && (clientOrigin = getClientOrigin(req.query.state))) {
     const { corsOrigins } = req.companion.options
-    const { origin } = JSON.parse(atob(req.query.state))
+
     if (typeof corsOrigins === 'function') {
-      corsOrigins(origin, (err, finalOrigin) => {
+      corsOrigins(clientOrigin, (err, finalOrigin) => {
         if (err) next(err)
         stateObj.origin = finalOrigin
         encodeStateAndRedirect(req, res, stateObj)
       })
       return
     }
-    if (isOriginAllowed(origin, req.companion.options.corsOrigins)) {
-      stateObj.origin = origin
+    if (isOriginAllowed(clientOrigin, req.companion.options.corsOrigins)) {
+      stateObj.origin = clientOrigin
     }
   }
   encodeStateAndRedirect(req, res, stateObj)
