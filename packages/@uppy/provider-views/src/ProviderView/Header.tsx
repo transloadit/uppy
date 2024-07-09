@@ -2,7 +2,7 @@
 import { h } from 'preact'
 import type { I18n } from '@uppy/utils/lib/Translator'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
-import type { PartialTreeFolder } from '@uppy/core/lib/Uppy.ts'
+import type { PartialTreeFolder } from '@uppy/core/lib/Uppy.js'
 import classNames from 'classnames'
 import User from './User.tsx'
 import Breadcrumbs from '../Breadcrumbs.tsx'

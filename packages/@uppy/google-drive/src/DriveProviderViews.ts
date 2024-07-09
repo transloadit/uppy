@@ -1,7 +1,7 @@
 import type {
   PartialTreeFile,
   PartialTreeFolderNode,
-} from '@uppy/core/lib/Uppy'
+} from '@uppy/core/lib/Uppy.js'
 import { ProviderViews } from '@uppy/provider-views'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 
