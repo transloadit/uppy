@@ -1,7 +1,7 @@
 import {
   runRemoteUrlImageUploadTest,
   runRemoteUnsplashUploadTest,
-} from './reusable-tests'
+} from './reusable-tests.ts'
 
 // NOTE: we have to use different files to upload per test
 // because we are uploading to https://tusd.tusdemo.net,

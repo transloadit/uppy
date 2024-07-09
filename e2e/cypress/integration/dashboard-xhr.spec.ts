@@ -2,7 +2,7 @@ import {
   interceptCompanionUrlMetaRequest,
   runRemoteUrlImageUploadTest,
   runRemoteUnsplashUploadTest,
-} from './reusable-tests'
+} from './reusable-tests.ts'
 
 describe('Dashboard with XHR', () => {
   beforeEach(() => {
