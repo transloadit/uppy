@@ -23,7 +23,10 @@ import type {
   CompanionClientProvider,
   CompanionClientSearchProvider,
 } from '@uppy/utils/lib/CompanionClientProvider'
-import type { FileProgressStarted } from '@uppy/utils/lib/FileProgress'
+import type {
+  FileProgressNotStarted,
+  FileProgressStarted,
+} from '@uppy/utils/lib/FileProgress'
 import type {
   Locale,
   I18n,
@@ -614,6 +617,29 @@ export class Uppy<M extends Meta, B extends Body = Record<string, never>> {
 
     // Note: this is not the preact `setState`, it's an internal function that has the same name.
     this.setState(undefined) // so that UI re-renders with new options
+  }
+
+  resetProgress(): void {
+    const defaultProgress: Omit<FileProgressNotStarted, 'bytesTotal'> = {
+      percentage: 0,
+      bytesUploaded: false,
+      uploadComplete: false,
+      uploadStarted: null,
+    }
+    const files = { ...this.getState().files }
+    const updatedFiles: State<M, B>['files'] = {}
+
+    Object.keys(files).forEach((fileID) => {
+      updatedFiles[fileID] = {
+        ...files[fileID],
+        progress: {
+          ...files[fileID].progress,
+          ...defaultProgress,
+        },
+      }
+    })
+
+    this.setState({ files: updatedFiles, ...defaultUploadState })
   }
 
   clear(): void {
