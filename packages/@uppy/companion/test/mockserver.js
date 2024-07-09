@@ -46,7 +46,7 @@ const defaultEnv = {
 
   COMPANION_ENABLE_URL_ENDPOINT: 'true',
 
-  COMPANION_OAUTH_ORIGIN: '*',
+  COMPANION_CLIENT_ORIGINS: 'true',
 }
 
 function updateEnv (env) {

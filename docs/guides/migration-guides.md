@@ -6,8 +6,10 @@ These cover all the major Uppy versions and how to migrate to them.
 
 - End-of-Life versions of Node.js are no longer supported (use latest 18.x LTS,
   20.x LTS, or 22.x current).
-- Setting the `oauthOrigin` option is now required. To get back to the unsafe
-  behavior of the previous version, set it to `'*'`.
+- Setting the `corsOrigin` option is now required. You should define the list of
+  origins you expect your app to be served from, otherwise it can be
+  impersonated from a different origin you don’t control. Set it to `true` if
+  you don’t care about impersonating.
 - `COMPANION_REDIS_EXPRESS_SESSION_PREFIX` now defaults to `companion-session:`
   (before `sess:`). To revert keep backwards compatibility, set the environment
   variable `COMPANION_REDIS_EXPRESS_SESSION_PREFIX=sess:`.
@@ -36,7 +38,8 @@ These cover all the major Uppy versions and how to migrate to them.
     (inverted boolean).
   - `downloadURL` 2nd (boolean) argument inverted.
   - `StreamHttpJsonError` renamed to `HttpError`.
-- Removed (undocumented) option `clients`.
+- Removed the `oauthOrigin` option, as well as the (undocumented) option
+  `clients`. Use `corsOrigin` instead.
 
 ### `@uppy/companion-client`
 
