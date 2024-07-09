@@ -8,10 +8,10 @@ import type {
   PartialTreeFolderRoot,
   UnknownSearchProviderPlugin,
   UnknownSearchProviderPluginState,
-} from '@uppy/core/lib/Uppy.ts'
+} from '@uppy/core/lib/Uppy.js'
 import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
 import classNames from 'classnames'
-import type { ValidateableFile } from '@uppy/core/lib/Restricter.ts'
+import type { ValidateableFile } from '@uppy/core/lib/Restricter.js'
 import remoteFileObjToLocal from '@uppy/utils/lib/remoteFileObjToLocal'
 import SearchInput from '../SearchInput.tsx'
 import Browser from '../Browser.tsx'

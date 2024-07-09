@@ -1,4 +1,4 @@
-import type { PartialTreeFolder } from '@uppy/core/lib/Uppy'
+import type { PartialTreeFolder } from '@uppy/core/lib/Uppy.js'
 import { h, Fragment } from 'preact'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import type ProviderView from './ProviderView/index.js'

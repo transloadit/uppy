@@ -9,7 +9,7 @@ import { SearchProviderViews } from '@uppy/provider-views'
 import { h, type ComponentChild } from 'preact'
 
 import type { UppyFile, Body, Meta } from '@uppy/utils/lib/UppyFile'
-import type { UnknownSearchProviderPluginState } from '@uppy/core/lib/Uppy'
+import type { UnknownSearchProviderPluginState } from '@uppy/core/lib/Uppy.js'
 import locale from './locale.ts'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json

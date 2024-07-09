@@ -2,7 +2,7 @@ import { h } from 'preact'
 import type {
   PartialTreeFile,
   PartialTreeFolderNode,
-} from '@uppy/core/lib/Uppy'
+} from '@uppy/core/lib/Uppy.js'
 import ItemIcon from './ItemIcon.tsx'
 
 type GridItemProps = {

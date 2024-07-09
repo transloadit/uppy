@@ -447,8 +447,11 @@ module.exports = {
       rules: {
         'no-extra-semi': 'off',
         'no-restricted-syntax': ['error', {
-          selector: 'ImportDeclaration[importKind="type"][source.value=/^\\./]:not([source.value=/\\.js$/])',
+          selector: 'ImportDeclaration[importKind="type"][source.value=/^(\\.+|@uppy\\x2F[a-z-0-9]+)\\x2F/]:not([source.value=/^@uppy\\x2Futils\\x2F/]):not([source.value=/\\.js$/])',
           message: 'Use ".js" file extension for import type declarations',
+        }, {
+          selector: 'ImportDeclaration[source.value=/^@uppy\\x2Futils\\x2Flib\\x2F.+\\.[mc]?[jt]sx?$/]',
+          message: 'Do not use file extension when importing from @uppy/utils',
         }],
         'import/prefer-default-export': 'off',
         '@typescript-eslint/no-empty-function': 'off',
