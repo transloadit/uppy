@@ -22,7 +22,7 @@ Released: 2024-07-10
 | @uppy/audio               |   2.0.0 | @uppy/progress-bar        |   4.0.0 |
 | @uppy/aws-s3              |   4.0.0 | @uppy/provider-views      |   4.0.0 |
 | @uppy/aws-s3-multipart    |   4.0.0 | @uppy/react               |   4.0.0 |
-| @uppy/box                 |   3.0.0 | @uppy/react-native        |   1.0.0 |
+| @uppy/box                 |   3.0.0 | @uppy/react-native        |   0.6.0 |
 | @uppy/companion           |   5.0.0 | @uppy/redux-dev-tools     |   4.0.0 |
 | @uppy/companion-client    |   4.0.0 | @uppy/remote-sources      |   2.0.0 |
 | @uppy/compressor          |   2.0.0 | @uppy/screen-capture      |   4.0.0 |
