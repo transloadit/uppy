@@ -181,7 +181,7 @@ const getConfigFromEnv = () => {
     allowLocalUrls: process.env.COMPANION_ALLOW_LOCAL_URLS === 'true',
     // cookieDomain is kind of a hack to support distributed systems. This should be improved but we never got so far.
     cookieDomain: process.env.COMPANION_COOKIE_DOMAIN,
-    streamingUpload: process.env.COMPANION_STREAMING_UPLOAD === 'true',
+    streamingUpload: process.env.COMPANION_STREAMING_UPLOAD ? process.env.COMPANION_STREAMING_UPLOAD === 'true' : undefined,
     maxFileSize: process.env.COMPANION_MAX_FILE_SIZE ? parseInt(process.env.COMPANION_MAX_FILE_SIZE, 10) : undefined,
     chunkSize: process.env.COMPANION_CHUNK_SIZE ? parseInt(process.env.COMPANION_CHUNK_SIZE, 10) : undefined,
     clientSocketConnectTimeout: process.env.COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT
