@@ -627,7 +627,7 @@ export class Uppy<M extends Meta, B extends Body = Record<string, never>> {
       uploadStarted: null,
     }
     const files = { ...this.getState().files }
-    const updatedFiles: State<M, B>['files'] = {}
+    const updatedFiles: State<M, B>['files'] = Object.create(null)
 
     Object.keys(files).forEach((fileID) => {
       updatedFiles[fileID] = {
