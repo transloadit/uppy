@@ -102,8 +102,6 @@ export default class DragDrop<M extends Meta, B extends Body> extends UIPlugin<
     event.preventDefault()
     event.stopPropagation()
 
-    if (this.getPluginState().isDraggingOver) return
-
     // Check if the "type" of the datatransfer object includes files. If not, deny drop.
     const { types } = event.dataTransfer!
     const hasFiles = types.some((type) => type === 'Files')
