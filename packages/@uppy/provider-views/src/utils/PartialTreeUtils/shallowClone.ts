@@ -1,4 +1,4 @@
-import type { PartialTree } from '@uppy/core/lib/Uppy'
+import type { PartialTree } from '@uppy/core/lib/Uppy.js'
 
 /**
  * One-level copying is sufficient as mutations within our `partialTree` are limited to properties

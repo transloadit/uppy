@@ -343,14 +343,6 @@ which has only the secret, nothing else.
 
 :::
 
-### `oauthOrigin` `COMPANION_OAUTH_ORIGIN` (required)
-
-An [origin](https://developer.mozilla.org/en-US/docs/Glossary/Origin) specifying
-allowed origins, or an array of origins (comma-separated origins in
-`COMPANION_OAUTH_ORIGIN`). Any browser request from an origin that is not listed
-will not receive OAuth2 tokens, and the OAuth request won’t complete. Set it to
-`'*'` to allow all origins (not recommended).
-
 #### `uploadUrls` `COMPANION_UPLOAD_URLS`
 
 An allowlist (array) of strings (exact URLs) or regular expressions. Companion
@@ -641,12 +633,27 @@ risk.**
 
 :::
 
-#### `corsOrigins` `COMPANION_CLIENT_ORIGINS`
+#### `corsOrigins` (required)
 
-Allowed CORS Origins (default `true`). Passed as the `origin` option in
-[cors](https://github.com/expressjs/cors#configuration-options))
+Allowed CORS Origins. Passed as the `origin` option in
+[cors](https://github.com/expressjs/cors#configuration-options).
 
-#### `COMPANION_CLIENT_ORIGINS_REGEX`
+Note this is used for both CORS’ `Access-Control-Allow-Origin` header, and for
+the
+[`targetOrigin`](https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage#targetorigin)
+for `postMessage` calls in the context of OAuth.
+
+Setting it to `true` treats any origin as a trusted one, making it easier to
+impersonate your brand. Setting it to `false` disables cross-origin supports,
+use this if you’re serving Companion and Uppy from the same domain name.
+
+##### `COMPANION_CLIENT_ORIGINS`
+
+A comma-separated string of origins, or `'true'` (which will be interpreted as
+the boolean value `true`), or `'false'` (which will be interpreted as the
+boolean value `false`).
+
+##### `COMPANION_CLIENT_ORIGINS_REGEX`
 
 Like COMPANION_CLIENT_ORIGINS, but allows a single regex instead.
 `COMPANION_CLIENT_ORIGINS` will be ignored if this is used. This is a

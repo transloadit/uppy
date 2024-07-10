@@ -25,6 +25,6 @@
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 //
 
-import { createFakeFile } from './createFakeFile'
+import { createFakeFile } from './createFakeFile.ts'
 
 Cypress.Commands.add('createFakeFile', createFakeFile)

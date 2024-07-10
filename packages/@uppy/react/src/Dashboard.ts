@@ -1,4 +1,5 @@
 import { createElement as h, Component } from 'react'
+import type React from 'react'
 import type { UnknownPlugin, Uppy } from '@uppy/core'
 import DashboardPlugin from '@uppy/dashboard'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'

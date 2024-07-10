@@ -45,9 +45,17 @@ const companionProtocol = process.env.COMPANION_PROTOCOL || 'http'
 
 function getCorsOrigins () {
   if (process.env.COMPANION_CLIENT_ORIGINS) {
-    return process.env.COMPANION_CLIENT_ORIGINS
-      .split(',')
-      .map((url) => (hasProtocol(url) ? url : `${companionProtocol}://${url}`))
+    switch (process.env.COMPANION_CLIENT_ORIGINS) {
+
+      case 'true': return true
+      case 'false': return false
+      case '*': return '*'
+
+      default:
+      return process.env.COMPANION_CLIENT_ORIGINS
+        .split(',')
+        .map((url) => (hasProtocol(url) ? url : `${companionProtocol}://${url}`))
+  }
   }
   if (process.env.COMPANION_CLIENT_ORIGINS_REGEX) {
     return new RegExp(process.env.COMPANION_CLIENT_ORIGINS_REGEX)
@@ -183,9 +191,6 @@ const getConfigFromEnv = () => {
     corsOrigins: getCorsOrigins(),
     testDynamicOauthCredentials: process.env.COMPANION_TEST_DYNAMIC_OAUTH_CREDENTIALS === 'true',
     testDynamicOauthCredentialsSecret: process.env.COMPANION_TEST_DYNAMIC_OAUTH_CREDENTIALS_SECRET,
-    oauthOrigin: process.env.COMPANION_OAUTH_ORIGIN?.includes(',') ?
-      process.env.COMPANION_OAUTH_ORIGIN.split(',') :
-      process.env.COMPANION_OAUTH_ORIGIN,
   }
 }
 
