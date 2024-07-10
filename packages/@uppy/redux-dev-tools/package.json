@@ -1,7 +1,7 @@
 {
   "name": "@uppy/redux-dev-tools",
   "description": "Redux developer tools plugin for Uppy that simply syncs Uppy’s state with redux-devtools browser or JS extensions, and allows for basic time travel",
-  "version": "4.0.0-beta.2",
+  "version": "4.0.0",
   "license": "MIT",
   "main": "lib/index.js",
   "type": "module",
@@ -22,6 +22,5 @@
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^"
-  },
-  "stableVersion": "3.0.3"
+  }
 }

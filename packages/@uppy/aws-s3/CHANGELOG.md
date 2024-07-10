@@ -1,5 +1,12 @@
 # @uppy/aws-s3
 
+## 4.0.0
+
+Released: 2024-07-10
+Included in: Uppy v4.0.0
+
+- @uppy/aws-s3: fix signing on client for bucket name with dots (Antoine du Hamel / #5312)
+
 ## 4.0.0-beta.7
 
 Released: 2024-06-18

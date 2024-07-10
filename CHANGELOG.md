@@ -12,6 +12,55 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 4.0.0
+
+Released: 2024-07-10
+
+| Package                   | Version | Package                   | Version |
+| ------------------------- | ------- | ------------------------- | ------- |
+| @uppy/angular             |   0.7.0 | @uppy/onedrive            |   4.0.0 |
+| @uppy/audio               |   2.0.0 | @uppy/progress-bar        |   4.0.0 |
+| @uppy/aws-s3              |   4.0.0 | @uppy/provider-views      |   4.0.0 |
+| @uppy/aws-s3-multipart    |   4.0.0 | @uppy/react               |   4.0.0 |
+| @uppy/box                 |   3.0.0 | @uppy/react-native        |   0.6.0 |
+| @uppy/companion           |   5.0.0 | @uppy/redux-dev-tools     |   4.0.0 |
+| @uppy/companion-client    |   4.0.0 | @uppy/remote-sources      |   2.0.0 |
+| @uppy/compressor          |   2.0.0 | @uppy/screen-capture      |   4.0.0 |
+| @uppy/core                |   4.0.0 | @uppy/status-bar          |   4.0.0 |
+| @uppy/dashboard           |   4.0.0 | @uppy/store-default       |   4.0.0 |
+| @uppy/drag-drop           |   4.0.0 | @uppy/store-redux         |   4.0.0 |
+| @uppy/drop-target         |   3.0.0 | @uppy/svelte              |   4.0.0 |
+| @uppy/dropbox             |   4.0.0 | @uppy/thumbnail-generator |   4.0.0 |
+| @uppy/facebook            |   4.0.0 | @uppy/transloadit         |   4.0.0 |
+| @uppy/file-input          |   4.0.0 | @uppy/tus                 |   4.0.0 |
+| @uppy/form                |   4.0.0 | @uppy/unsplash            |   4.0.0 |
+| @uppy/golden-retriever    |   4.0.0 | @uppy/url                 |   4.0.0 |
+| @uppy/google-drive        |   4.0.0 | @uppy/utils               |   6.0.0 |
+| @uppy/google-photos       |   0.2.0 | @uppy/vue                 |   2.0.0 |
+| @uppy/image-editor        |   3.0.0 | @uppy/webcam              |   4.0.0 |
+| @uppy/informer            |   4.0.0 | @uppy/xhr-upload          |   4.0.0 |
+| @uppy/instagram           |   4.0.0 | @uppy/zoom                |   3.0.0 |
+| @uppy/locales             |   4.0.0 | uppy                      |   4.0.0 |
+
+- meta: Bump docker/setup-qemu-action from 3.0.0 to 3.1.0 (dependabot[bot] / #5314)
+- meta: Bump docker/build-push-action from 6.2.0 to 6.3.0 (dependabot[bot] / #5313)
+- @uppy/core: bring back resetProgress (Merlijn Vos / #5320)
+- docs: add note regarding `COMPANION_CLIENT_ORIGINS_REGEX` (Antoine du Hamel / #5322)
+- @uppy/companion: make streaming upload default to `true` (Mikael Finstad / #5315)
+- docs: change slug for aws docs (Merlijn Vos / #5321)
+- @uppy/core: export UppyOptions, UppyFile, Meta, Body (Merlijn Vos / #5319)
+- meta: fix React linter rules (Antoine du Hamel / #5317)
+- meta: enforce use of extension in import type declarations (Antoine du Hamel / #5316)
+- @uppy/companion: remove `oauthOrigin` (Antoine du Hamel / #5311)
+- docs,@uppy/companion-client: don't close socket when pausing (Mikael Finstad / #4821)
+- @uppy/aws-s3: fix signing on client for bucket name with dots (Antoine du Hamel / #5312)
+- @uppy/react: introduce useUppyEvent (Merlijn Vos / #5264)
+- @uppy/companion: do not list Node.js 20.12 as compatible (Antoine du Hamel / #5309)
+- @uppy/provider-views: `.openFolder()` - return progress indication (Evgenia Karunus / #5306)
+- examples,@uppy/companion: Release: uppy@3.27.3 (github-actions[bot] / #5304)
+- @uppy/companion: fix `TypeError` when parsing request (Antoine du Hamel / #5303)
+
+
 ## 4.0.0-beta.14
 
 Released: 2024-07-02

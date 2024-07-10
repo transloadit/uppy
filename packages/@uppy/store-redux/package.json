@@ -1,7 +1,7 @@
 {
   "name": "@uppy/store-redux",
   "description": "Make Uppy use your existing Redux store.",
-  "version": "4.0.0-beta.3",
+  "version": "4.0.0",
   "license": "MIT",
   "main": "lib/index.js",
   "type": "module",
@@ -25,6 +25,5 @@
   "devDependencies": {
     "redux": "^4.0.0",
     "vitest": "^1.2.1"
-  },
-  "stableVersion": "3.0.7"
+  }
 }

@@ -1,5 +1,12 @@
 # @uppy/react
 
+## 4.0.0
+
+Released: 2024-07-10
+Included in: Uppy v4.0.0
+
+- @uppy/react: introduce useUppyEvent (Merlijn Vos / #5264)
+
 ## 4.0.0-beta.8
 
 Released: 2024-06-27
