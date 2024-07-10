@@ -45,8 +45,6 @@ export default class DragDrop<M extends Meta, B extends Body> extends UIPlugin<
   // Check for browser dragDrop support
   private isDragDropSupported = isDragDropSupported()
 
-  private removeDragOverClassTimeout!: ReturnType<typeof setTimeout>
-
   private fileInputRef!: HTMLInputElement
 
   constructor(uppy: Uppy<M, B>, opts?: DragDropOptions) {
@@ -105,6 +103,8 @@ export default class DragDrop<M extends Meta, B extends Body> extends UIPlugin<
     event.preventDefault()
     event.stopPropagation()
 
+    if (this.getPluginState().isDraggingOver) return
+
     // Check if the "type" of the datatransfer object includes files. If not, deny drop.
     const { types } = event.dataTransfer!
     const hasFiles = types.some((type) => type === 'Files')
@@ -112,7 +112,6 @@ export default class DragDrop<M extends Meta, B extends Body> extends UIPlugin<
     if (!hasFiles || !allowNewUpload) {
       // eslint-disable-next-line no-param-reassign
       event.dataTransfer!.dropEffect = 'none'
-      clearTimeout(this.removeDragOverClassTimeout)
       return
     }
 
@@ -123,7 +122,6 @@ export default class DragDrop<M extends Meta, B extends Body> extends UIPlugin<
     // eslint-disable-next-line no-param-reassign
     event.dataTransfer!.dropEffect = 'copy'
 
-    clearTimeout(this.removeDragOverClassTimeout)
     this.setPluginState({ isDraggingOver: true })
 
     this.opts.onDragOver?.(event)
@@ -133,12 +131,7 @@ export default class DragDrop<M extends Meta, B extends Body> extends UIPlugin<
     event.preventDefault()
     event.stopPropagation()
 
-    clearTimeout(this.removeDragOverClassTimeout)
-    // Timeout against flickering, this solution is taken from drag-drop library.
-    // Solution with 'pointer-events: none' didn't work across browsers.
-    this.removeDragOverClassTimeout = setTimeout(() => {
-      this.setPluginState({ isDraggingOver: false })
-    }, 50)
+    this.setPluginState({ isDraggingOver: false })
 
     this.opts.onDragLeave?.(event)
   }
@@ -146,9 +139,7 @@ export default class DragDrop<M extends Meta, B extends Body> extends UIPlugin<
   private handleDrop = async (event: DragEvent) => {
     event.preventDefault()
     event.stopPropagation()
-    clearTimeout(this.removeDragOverClassTimeout)
 
-    // Remove dragover class
     this.setPluginState({ isDraggingOver: false })
 
     const logDropError = (error: any) => {

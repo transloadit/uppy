@@ -263,8 +263,6 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     typeof setTimeout
   >
 
-  private removeDragOverClassTimeout!: ReturnType<typeof setTimeout>
-
   constructor(uppy: Uppy<M, B>, opts?: DashboardOptions<M, B>) {
     // support for the legacy `autoOpenFileEditor` option,
     // TODO: we can remove this code when we update the Uppy major version
@@ -826,7 +824,6 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
       !this.uppy.getState().allowNewUpload
     ) {
       event.dataTransfer!.dropEffect = 'none' // eslint-disable-line no-param-reassign
-      clearTimeout(this.removeDragOverClassTimeout)
       return
     }
 
@@ -835,7 +832,6 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     // browser, https://github.com/transloadit/uppy/issues/1978).
     event.dataTransfer!.dropEffect = 'copy' // eslint-disable-line no-param-reassign
 
-    clearTimeout(this.removeDragOverClassTimeout)
     this.setPluginState({ isDraggingOver: true })
 
     this.opts.onDragOver?.(event)
@@ -845,12 +841,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     event.preventDefault()
     event.stopPropagation()
 
-    clearTimeout(this.removeDragOverClassTimeout)
-    // Timeout against flickering, this solution is taken from drag-drop library.
-    // Solution with 'pointer-events: none' didn't work across browsers.
-    this.removeDragOverClassTimeout = setTimeout(() => {
-      this.setPluginState({ isDraggingOver: false })
-    }, 50)
+    this.setPluginState({ isDraggingOver: false })
 
     this.opts.onDragLeave?.(event)
   }
@@ -858,8 +849,6 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
   private handleDrop = async (event: DragEvent) => {
     event.preventDefault()
     event.stopPropagation()
-
-    clearTimeout(this.removeDragOverClassTimeout)
 
     this.setPluginState({ isDraggingOver: false })
 
