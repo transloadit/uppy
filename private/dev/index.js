@@ -4,7 +4,6 @@ import 'uppy/src/style.scss'
 import DragDrop from './DragDrop.js'
 import Dashboard from './Dashboard.js'
 
-
 switch (window.location.pathname.toLowerCase()) {
   case '/':
   case '/dashboard.html': Dashboard(); break
