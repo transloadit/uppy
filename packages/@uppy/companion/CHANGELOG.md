@@ -88,6 +88,13 @@ Included in: Uppy v4.0.0-beta.1
 - @uppy/companion: improve error msg (Mikael Finstad / #5010)
 - @uppy/companion: crash if trying to set path to / (Mikael Finstad / #5003)
 
+## 4.15.1
+
+Released: 2024-07-03
+Included in: Uppy v3.27.3
+
+- @uppy/companion: fix `TypeError` when parsing request (Antoine du Hamel / #5303)
+
 ## 4.15.0
 
 Released: 2024-07-02

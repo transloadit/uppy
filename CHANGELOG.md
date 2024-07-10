@@ -517,6 +517,17 @@ Released: 2024-03-28
 - @uppy/vue: [v4.x] remove manual types (Antoine du Hamel / #4803)
 - meta: prepare release workflow for beta versions (Antoine du Hamel)
 
+## 3.27.3
+
+Released: 2024-07-03
+
+| Package         | Version | Package         | Version |
+| --------------- | ------- | --------------- | ------- |
+| @uppy/companion |  4.15.1 | uppy            |  3.27.3 |
+
+- @uppy/companion: fix `TypeError` when parsing request (Antoine du Hamel / #5303)
+
+
 ## 3.27.2
 
 Released: 2024-07-02
