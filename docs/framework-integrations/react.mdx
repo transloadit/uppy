@@ -7,7 +7,7 @@ import TabItem from '@theme/TabItem';
 
 # React
 
-[React][] components for the Uppy UI plugins and a `useUppyState` hook.
+[React][] components for the Uppy UI plugins and hooks.
 
 ## Install
 
@@ -61,12 +61,9 @@ The following components are exported from `@uppy/react`:
 - `<ProgressBar />` renders [`@uppy/progress-bar`](/docs/progress-bar)
 - `<StatusBar />` renders [`@uppy/status-bar`](/docs/status-bar)
 
-{/* prettier-ignore */}
-{/* Commented out until the hook is live
-
 ### Hooks
 
-`useUppyState(uppy, selector)`
+#### `useUppyState(uppy, selector)`
 
 Use this hook when you need to access Uppy’s state reactively. Most of the
 times, this is needed if you are building a custom UI for Uppy in React.
@@ -86,11 +83,29 @@ const metaFields = useUppyState(
 ```
 
 You can see all the values you can access on the
-[`State`](https://github.com/transloadit/uppy/blob/main/packages/%40uppy/core/types/index.d.ts#L190)
+[`State`](https://github.com/transloadit/uppy/blob/c45407d099d87e25cecaf03c5d9ce59c582ca0dc/packages/%40uppy/core/src/Uppy.ts#L155-L181)
 type. If you are accessing plugin state, you would have to look at the types of
 the plugin.
 
-\*/}
+#### `useUppyEvent(uppy, event, callback)`
+
+Listen to Uppy events in a React component.
+
+The first item in the array is an array of results from the event. Depending on
+the event, that can be empty or have up to three values. The second item is a
+function to clear the results. Values remain in state until the next event (if
+that ever comes). Depending on your use case, you may want to keep the values in
+state or clear the state after something else happenend.
+
+```ts
+// IMPORTANT: passing an initializer function to prevent Uppy from being reinstantiated on every render.
+const [uppy] = useState(() => new Uppy());
+
+const [results, clearResults] = useUppyEvent(uppy, 'transloadit:result');
+const [stepName, result, assembly] = results; // strongly typed
+
+useUppyEvent(uppy, 'cancel-all', clearResults);
+```
 
 ## Examples
 

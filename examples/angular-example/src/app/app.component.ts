@@ -65,7 +65,7 @@ export class AppComponent implements OnInit {
     },
   }
 
-  uppy: Uppy = new Uppy({ debug: true, autoProceed: true })
+  uppy = new Uppy({ debug: true, autoProceed: true })
 
   ngOnInit(): void {
     this.uppy

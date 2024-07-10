@@ -255,11 +255,4 @@ ru_RU.strings = {
   zoomOut: 'Отдалить',
 }
 
-// TODO: remove this in the next major?
-// @ts-expect-error Uppy can be a global in legacy bundle
-if (typeof Uppy !== 'undefined') {
-  // @ts-expect-error Uppy can be a global in legacy bundle
-  globalThis.Uppy.locales.ru_RU = ru_RU
-}
-
 export default ru_RU

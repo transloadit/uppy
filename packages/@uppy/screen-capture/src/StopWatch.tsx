@@ -48,9 +48,9 @@ class StopWatch extends Component {
     fontFamily: 'Courier New',
   } as const
 
-  private timerRunning: boolean
+  private timerRunning: boolean = false
 
-  private timer: ReturnType<typeof setTimeout>
+  private timer?: ReturnType<typeof setTimeout>
 
   constructor(props: $TSFixMe) {
     super(props)

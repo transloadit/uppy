@@ -1,5 +1,12 @@
 # @uppy/thumbnail-generator
 
+## 4.0.0-beta.1
+
+Released: 2024-03-28
+Included in: Uppy v4.0.0-beta.1
+
+- @uppy/thumbnail-generator: migrate to TS (Merlijn Vos / #4978)
+
 ## 3.1.0
 
 Released: 2024-03-27

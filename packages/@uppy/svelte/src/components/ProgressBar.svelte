@@ -1,12 +1,12 @@
-<script lang="ts">
+<script lang="ts" generics="M extends import('@uppy/utils/lib/UppyFile').Meta, B extends import('@uppy/utils/lib/UppyFile').Body">
   import { onMount, onDestroy } from 'svelte'
   import type { Uppy } from '@uppy/core';
   import ProgressBarPlugin from '@uppy/progress-bar'
-
+  
   let container: HTMLElement;
-  let plugin: ProgressBarPlugin; 
+  let plugin: ProgressBarPlugin<M, B>; 
 
-  export let uppy: Uppy;
+  export let uppy: Uppy<M, B>;
   export let props: Object | undefined = {};
 
   const installPlugin = () => {
@@ -18,9 +18,9 @@
     }
 
     uppy.use(ProgressBarPlugin, options);
-    plugin = uppy.getPlugin(options.id) as ProgressBarPlugin;
+    plugin = uppy.getPlugin(options.id) as ProgressBarPlugin<M, B>;
   }
-  const uninstallPlugin = (uppyInstance: Uppy = uppy) => {
+  const uninstallPlugin = (uppyInstance: Uppy<M, B> = uppy) => {
     if (plugin != null) uppyInstance.removePlugin(plugin);
   }
 

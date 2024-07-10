@@ -25,11 +25,11 @@ const OAUTH_STATE = 'some-cool-nice-encrytpion'
 const providers = require('../../src/server/provider').getDefaultProviders()
 
 const providerNames = Object.keys(providers)
-const AUTH_PROVIDERS = {
-  drive: 'googledrive',
-  googlephotos: 'googlephotos',
-  onedrive: 'microsoft',
-}
+const oauthProviders = Object.fromEntries(
+  Object.entries(providers).flatMap(([name, provider]) => (
+    provider.oauthProvider != null ? [[name, provider.oauthProvider]] : []
+  ))
+)
 const authData = {}
 providerNames.forEach((provider) => {
   authData[provider] = { accessToken: 'token value' }
@@ -234,29 +234,44 @@ describe('list provider files', () => {
   })
 
   test('facebook', async () => {
-    nock('https://graph.facebook.com').get('/me?fields=email').reply(200, {
-      name: 'Fiona Fox',
-      birthday: '01/01/1985',
-      email: defaults.USERNAME,
-    })
-    nock('https://graph.facebook.com').get('/ALBUM-ID/photos?fields=icon%2Cimages%2Cname%2Cwidth%2Cheight%2Ccreated_time').reply(200, {
-      data: [
-        {
-          images: [
+    nock('https://graph.facebook.com').post('/',
+    [
+      'access_token=token+value',
+      'appsecret_proof=ee28d8152093b877f193f5fe84a34544ec27160e7f34c7645d02930b3fa95160',
+      `batch=${encodeURIComponent('[{"method":"GET","relative_url":"me?fields=email"},{"method":"GET","relative_url":"ALBUM-ID/photos?fields=icon%2Cimages%2Cname%2Cwidth%2Cheight%2Ccreated_time"}]')}`,
+    ].join('&')
+  ).reply(200,
+    [
+      {
+        code: 200,
+        body: JSON.stringify({
+          name: 'Fiona Fox',
+          birthday: '01/01/1985',
+          email: defaults.USERNAME,
+        }),
+      },
+      {
+        code: 200,
+        body: JSON.stringify({
+          data: [
             {
-              height: 1365,
-              source: defaults.THUMBNAIL_URL,
-              width: 2048,
+              images: [
+                {
+                  height: 1365,
+                  source: defaults.THUMBNAIL_URL,
+                  width: 2048,
+                },
+              ],
+              width: 720,
+              height: 479,
+              created_time: '2015-07-17T17:26:50+0000',
+              id: defaults.ITEM_ID,
             },
           ],
-          width: 720,
-          height: 479,
-          created_time: '2015-07-17T17:26:50+0000',
-          id: defaults.ITEM_ID,
-        },
-      ],
-      paging: {},
-    })
+          paging: {},
+        }),
+      },
+    ])
 
     const { username, items, providerFixture } = await runTest('facebook')
     expect1({ username, items, providerFixture })
@@ -396,16 +411,27 @@ describe('provider file gets downloaded from', () => {
 
   test('facebook', async () => {
     // times(2) because of size request
-    nock('https://graph.facebook.com').get(`/${defaults.ITEM_ID}?fields=images`).times(2).reply(200, {
-      images: [
-        {
-          height: 1365,
-          source: defaults.THUMBNAIL_URL,
-          width: 2048,
-        },
-      ],
-      id: defaults.ITEM_ID,
-    })
+    nock('https://graph.facebook.com').post('/',
+      [
+        'access_token=token+value',
+        'appsecret_proof=ee28d8152093b877f193f5fe84a34544ec27160e7f34c7645d02930b3fa95160',
+        `batch=${encodeURIComponent('[{"method":"GET","relative_url":"DUMMY-FILE-ID?fields=images"}]')}`,
+      ].join('&')
+    ).times(2).reply(200,
+      [{
+        code: 200,
+        body: JSON.stringify({
+          images: [
+            {
+              height: 1365,
+              source: defaults.THUMBNAIL_URL,
+              width: 2048,
+            },
+          ],
+          id: defaults.ITEM_ID,
+        }),
+      }])
+
     await runTest('facebook')
   })
 
@@ -437,16 +463,16 @@ describe('provider file gets downloaded from', () => {
 })
 
 describe('connect to provider', () => {
-  test.each(providerNames)('connect to %s via grant.js endpoint', (providerName) => {
-    const authProvider = AUTH_PROVIDERS[providerName] || providerName
+  test.each(providerNames)('connect to %s via grant.js endpoint', async (providerName) => {
+    const oauthProvider = oauthProviders[providerName]
 
-    if (authProvider.authProvider == null) return
+    if (oauthProvider == null) return
 
-    request(authServer)
+    await request(authServer)
       .get(`/${providerName}/connect?foo=bar`)
       .set('uppy-auth-token', token)
       .expect(302)
-      .expect('Location', `http://localhost:3020/connect/${authProvider}?state=${OAUTH_STATE}`)
+      .expect('Location', `http://localhost:3020/connect/${oauthProvider}?state=${OAUTH_STATE}`)
   })
 })
 
@@ -492,7 +518,19 @@ describe('logout of provider', () => {
   })
 
   test('facebook', async () => {
-    nock('https://graph.facebook.com').delete('/me/permissions').reply(200, {})
+        // times(2) because of size request
+        nock('https://graph.facebook.com').post('/',
+        [
+          'access_token=token+value',
+          'appsecret_proof=ee28d8152093b877f193f5fe84a34544ec27160e7f34c7645d02930b3fa95160',
+          `batch=${encodeURIComponent('[{"method":"DELETE","relative_url":"me/permissions"}]')}`,
+        ].join('&')
+      ).reply(200,
+        [{
+          code: 200,
+          body: JSON.stringify({}),
+        }])
+  
     await runTest('facebook')
   })
 

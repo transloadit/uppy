@@ -1,11 +1,10 @@
 {
   "name": "@uppy/form",
   "description": "Connect Uppy to an existing HTML <form>.",
-  "version": "3.2.2",
+  "version": "4.0.0",
   "license": "MIT",
   "main": "lib/index.js",
   "type": "module",
-  "types": "types/index.d.ts",
   "keywords": [
     "file uploader",
     "uppy",

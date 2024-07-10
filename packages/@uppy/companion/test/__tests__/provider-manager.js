@@ -5,7 +5,7 @@ const { setDefaultEnv } = require('../mockserver')
 let grantConfig
 let companionOptions
 
-const getAuthProvider = (providerName) => providerManager.getDefaultProviders()[providerName]?.authProvider
+const getOauthProvider = (providerName) => providerManager.getDefaultProviders()[providerName]?.oauthProvider
 
 describe('Test Provider options', () => {
   beforeEach(() => {
@@ -16,7 +16,7 @@ describe('Test Provider options', () => {
   })
 
   test('adds provider options', () => {
-    providerManager.addProviderOptions(companionOptions, grantConfig, getAuthProvider)
+    providerManager.addProviderOptions(companionOptions, grantConfig, getOauthProvider)
     expect(grantConfig.dropbox.key).toBe('dropbox_key')
     expect(grantConfig.dropbox.secret).toBe('dropbox_secret')
 
@@ -38,7 +38,7 @@ describe('Test Provider options', () => {
 
   test('adds extra provider config', () => {
     process.env.COMPANION_INSTAGRAM_KEY = '123456'
-    providerManager.addProviderOptions(getCompanionOptions(), grantConfig, getAuthProvider)
+    providerManager.addProviderOptions(getCompanionOptions(), grantConfig, getOauthProvider)
     expect(grantConfig.instagram).toEqual({
       transport: 'session',
       callback: '/instagram/callback',
@@ -131,7 +131,7 @@ describe('Test Provider options', () => {
 
     companionOptions = getCompanionOptions()
 
-    providerManager.addProviderOptions(companionOptions, grantConfig, getAuthProvider)
+    providerManager.addProviderOptions(companionOptions, grantConfig, getOauthProvider)
 
     expect(grantConfig.dropbox.secret).toBe('xobpord')
     expect(grantConfig.box.secret).toBe('xwbepqd')
@@ -146,7 +146,7 @@ describe('Test Provider options', () => {
     delete companionOptions.server.host
     delete companionOptions.server.protocol
 
-    providerManager.addProviderOptions(companionOptions, grantConfig, getAuthProvider)
+    providerManager.addProviderOptions(companionOptions, grantConfig, getOauthProvider)
     expect(grantConfig.dropbox.key).toBeUndefined()
     expect(grantConfig.dropbox.secret).toBeUndefined()
 
@@ -168,7 +168,7 @@ describe('Test Provider options', () => {
 
   test('sets a main redirect uri, if oauthDomain is set', () => {
     companionOptions.server.oauthDomain = 'domain.com'
-    providerManager.addProviderOptions(companionOptions, grantConfig, getAuthProvider)
+    providerManager.addProviderOptions(companionOptions, grantConfig, getOauthProvider)
 
     expect(grantConfig.dropbox.redirect_uri).toBe('http://domain.com/dropbox/redirect')
     expect(grantConfig.box.redirect_uri).toBe('http://domain.com/box/redirect')
@@ -188,7 +188,7 @@ describe('Test Custom Provider options', () => {
           key: 'foo_key',
           secret: 'foo_secret',
         },
-        module: { authProvider: 'some_provider' },
+        module: { oauthProvider: 'some_provider' },
       },
     }, providers, grantConfig)
 

@@ -17,15 +17,13 @@ const logger = require('../logger')
  * to the callback chunk by chunk.
  *
  * @param {string} url
- * @param {boolean} blockLocalIPs
+ * @param {boolean} allowLocalIPs
  * @param {string} traceId
  * @returns {Promise}
  */
-const downloadURL = async (url, blockLocalIPs, traceId) => {
-  // TODO in next major, rename all blockLocalIPs to allowLocalUrls and invert the bool, to make it consistent
-  // see discussion https://github.com/transloadit/uppy/pull/4554/files#r1268677162
+const downloadURL = async (url, allowLocalIPs, traceId) => {
   try {
-    const protectedGot = getProtectedGot({ blockLocalIPs })
+    const protectedGot = await getProtectedGot({ allowLocalIPs })
     const stream = protectedGot.stream.get(url, { responseType: 'json' })
     const { size } = await prepareStream(stream)
     return { stream, size }
@@ -50,7 +48,7 @@ const meta = async (req, res) => {
       return res.status(400).json({ error: 'Invalid request body' })
     }
 
-    const urlMeta = await getURLMeta(req.body.url, !allowLocalUrls)
+    const urlMeta = await getURLMeta(req.body.url, allowLocalUrls)
     return res.json(urlMeta)
   } catch (err) {
     logger.error(err, 'controller.url.meta.error', req.id)
@@ -75,11 +73,11 @@ const get = async (req, res) => {
   }
 
   async function getSize () {
-    const { size } = await getURLMeta(req.body.url, !allowLocalUrls)
+    const { size } = await getURLMeta(req.body.url, allowLocalUrls)
     return size
   }
 
-  const download = () => downloadURL(req.body.url, !allowLocalUrls, req.id)
+  const download = () => downloadURL(req.body.url, allowLocalUrls, req.id)
 
   try {
     await startDownUpload({ req, res, getSize, download })

@@ -1,0 +1,31 @@
+import type {
+  PartialTree,
+  PartialTreeFolder,
+  PartialTreeFolderNode,
+  PartialTreeId,
+} from '@uppy/core/lib/Uppy.js'
+
+const getBreadcrumbs = (
+  partialTree: PartialTree,
+  currentFolderId: PartialTreeId,
+): PartialTreeFolder[] => {
+  let folder = partialTree.find(
+    (f) => f.id === currentFolderId,
+  ) as PartialTreeFolder
+
+  let breadcrumbs: PartialTreeFolder[] = []
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    breadcrumbs = [folder, ...breadcrumbs]
+
+    if (folder.type === 'root') break
+    const currentParentId = (folder as PartialTreeFolderNode).parentId
+    folder = partialTree.find(
+      (f) => f.id === currentParentId,
+    ) as PartialTreeFolder
+  }
+
+  return breadcrumbs
+}
+
+export default getBreadcrumbs

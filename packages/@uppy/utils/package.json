@@ -1,9 +1,8 @@
 {
   "name": "@uppy/utils",
   "description": "Shared utility functions for Uppy Core and plugins maintained by the Uppy team.",
-  "version": "5.9.0",
+  "version": "6.0.0",
   "license": "MIT",
-  "types": "types/index.d.ts",
   "type": "module",
   "keywords": [
     "file uploader",
@@ -47,7 +46,6 @@
     "./lib/isTouchDevice": "./lib/isTouchDevice.js",
     "./lib/prettyETA": "./lib/prettyETA.js",
     "./lib/secondsToTime": "./lib/secondsToTime.js",
-    "./lib/settle": "./lib/settle.js",
     "./lib/toArray": "./lib/toArray.js",
     "./lib/FOCUSABLE_ELEMENTS": "./lib/FOCUSABLE_ELEMENTS.js",
     "./lib/AbortController": "./lib/AbortController.js",
@@ -71,6 +69,7 @@
     "./lib/FileProgress": "./lib/FileProgress.js",
     "./src/microtip.scss": "./src/microtip.scss",
     "./lib/UserFacingApiError": "./lib/UserFacingApiError.js",
+    "./lib/getAllowedMetaFields": "./lib/getAllowedMetaFields.js",
     "./lib/fetcher": "./lib/fetcher.js"
   },
   "dependencies": {

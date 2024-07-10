@@ -9,7 +9,7 @@ import { ProviderViews } from '@uppy/provider-views'
 import { h, type ComponentChild } from 'preact'
 
 import type { UppyFile, Body, Meta } from '@uppy/utils/lib/UppyFile'
-import type { UnknownProviderPluginState } from '@uppy/core/lib/Uppy'
+import type { UnknownProviderPluginState } from '@uppy/core/lib/Uppy.js'
 import locale from './locale.ts'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
@@ -29,11 +29,13 @@ export default class Facebook<M extends Meta, B extends Body> extends UIPlugin<
 
   provider: Provider<M, B>
 
-  view: ProviderViews<M, B>
+  view!: ProviderViews<M, B>
 
   storage: typeof tokenStorage
 
   files: UppyFile<M, B>[]
+
+  rootFolderId: string | null = null
 
   constructor(uppy: Uppy<M, B>, opts: FacebookOptions) {
     super(uppy, opts)
@@ -81,7 +83,6 @@ export default class Facebook<M extends Meta, B extends Body> extends UIPlugin<
     this.i18nInit()
     this.title = this.i18n('pluginNameFacebook')
 
-    this.onFirstRender = this.onFirstRender.bind(this)
     this.render = this.render.bind(this)
   }
 
@@ -101,27 +102,20 @@ export default class Facebook<M extends Meta, B extends Body> extends UIPlugin<
     this.unmount()
   }
 
-  async onFirstRender(): Promise<void> {
-    await Promise.all([
-      this.provider.fetchPreAuthToken(),
-      this.view.getFolder(),
-    ])
-  }
-
   render(state: unknown): ComponentChild {
-    const viewOptions: {
-      viewType?: string
-      showFilter?: boolean
-      showTitles?: boolean
-    } = {}
-    if (
-      this.getPluginState().files.length &&
-      !this.getPluginState().folders.length
-    ) {
-      viewOptions.viewType = 'grid'
-      viewOptions.showFilter = false
-      viewOptions.showTitles = false
+    const { partialTree, currentFolderId } = this.getPluginState()
+
+    const foldersInThisFolder = partialTree.filter(
+      (i) => i.type === 'folder' && i.parentId === currentFolderId,
+    )
+
+    if (foldersInThisFolder.length === 0) {
+      return this.view.render(state, {
+        viewType: 'grid',
+        showFilter: false,
+        showTitles: false,
+      })
     }
-    return this.view.render(state, viewOptions)
+    return this.view.render(state)
   }
 }

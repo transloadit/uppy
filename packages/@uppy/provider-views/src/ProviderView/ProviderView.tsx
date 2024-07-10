@@ -1,42 +1,37 @@
 import { h } from 'preact'
-import PQueue from 'p-queue'
-
-import { getSafeFileId } from '@uppy/utils/lib/generateFileID'
-
 import type {
   UnknownProviderPlugin,
+  PartialTreeFolder,
+  PartialTreeFolderNode,
+  PartialTreeFile,
   UnknownProviderPluginState,
-  Uppy,
-} from '@uppy/core/lib/Uppy.ts'
+  PartialTreeId,
+  PartialTree,
+} from '@uppy/core/lib/Uppy.js'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
 import type Translator from '@uppy/utils/lib/Translator'
-import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin'
+import classNames from 'classnames'
+import type { ValidateableFile } from '@uppy/core/lib/Restricter.js'
+import remoteFileObjToLocal from '@uppy/utils/lib/remoteFileObjToLocal'
 import AuthView from './AuthView.tsx'
 import Header from './Header.tsx'
 import Browser from '../Browser.tsx'
-import CloseWrapper from '../CloseWrapper.ts'
-import View, { type ViewOptions } from '../View.ts'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../../package.json'
+import PartialTreeUtils from '../utils/PartialTreeUtils/index.ts'
+import shouldHandleScroll from '../utils/shouldHandleScroll.ts'
+import handleError from '../utils/handleError.ts'
+import getClickedRange from '../utils/getClickedRange.ts'
+import SearchInput from '../SearchInput.tsx'
+import FooterActions from '../FooterActions.tsx'
+import addFiles from '../utils/addFiles.ts'
+import getCheckedFilesWithPaths from '../utils/PartialTreeUtils/getCheckedFilesWithPaths.ts'
+import getBreadcrumbs from '../utils/PartialTreeUtils/getBreadcrumbs.ts'
 
-function formatBreadcrumbs(
-  breadcrumbs: UnknownProviderPluginState['breadcrumbs'],
-): string {
-  return breadcrumbs
-    .slice(1)
-    .map((directory) => directory.name)
-    .join('/')
-}
-
-function prependPath(path: string | undefined, component: string): string {
-  if (!path) return component
-  return `${path}/${component}`
-}
-
-export function defaultPickerIcon() {
+export function defaultPickerIcon(): h.JSX.Element {
   return (
     <svg
       aria-hidden="true"
@@ -50,84 +45,129 @@ export function defaultPickerIcon() {
   )
 }
 
-type PluginType = 'Provider'
+const getDefaultState = (
+  rootFolderId: string | null,
+): UnknownProviderPluginState => ({
+  authenticated: undefined, // we don't know yet
+  partialTree: [
+    {
+      type: 'root',
+      id: rootFolderId,
+      cached: false,
+      nextPagePath: null,
+    },
+  ],
+  currentFolderId: rootFolderId,
+  searchString: '',
+  didFirstRender: false,
+  username: null,
+  loading: false,
+})
 
-const defaultOptions = {
-  viewType: 'list',
-  showTitles: true,
-  showFilter: true,
-  showBreadcrumbs: true,
-  loadAllFiles: false,
-  virtualList: false,
-}
+type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>
 
-export interface ProviderViewOptions<M extends Meta, B extends Body>
-  extends ViewOptions<M, B, PluginType> {
+export interface Opts<M extends Meta, B extends Body> {
+  provider: UnknownProviderPlugin<M, B>['provider']
+  viewType: 'list' | 'grid'
+  showTitles: boolean
+  showFilter: boolean
+  showBreadcrumbs: boolean
+  loadAllFiles: boolean
   renderAuthForm?: (args: {
     pluginName: string
     i18n: Translator['translateArray']
     loading: boolean | string
     onAuth: (authFormData: unknown) => Promise<void>
   }) => h.JSX.Element
-  virtualList?: boolean
+  virtualList: boolean
 }
-
-type Opts<M extends Meta, B extends Body> = DefinePluginOpts<
-  ProviderViewOptions<M, B>,
-  keyof typeof defaultOptions
+type PassedOpts<M extends Meta, B extends Body> = Optional<
+  Opts<M, B>,
+  | 'viewType'
+  | 'showTitles'
+  | 'showFilter'
+  | 'showBreadcrumbs'
+  | 'loadAllFiles'
+  | 'virtualList'
+>
+type DefaultOpts<M extends Meta, B extends Body> = Omit<Opts<M, B>, 'provider'>
+type RenderOpts<M extends Meta, B extends Body> = Omit<
+  PassedOpts<M, B>,
+  'provider'
 >
 
 /**
  * Class to easily generate generic views for Provider plugins
  */
-export default class ProviderView<M extends Meta, B extends Body> extends View<
-  M,
-  B,
-  PluginType,
-  Opts<M, B>
-> {
+export default class ProviderView<M extends Meta, B extends Body> {
   static VERSION = packageJson.version
 
-  username: string | undefined
+  plugin: UnknownProviderPlugin<M, B>
 
-  nextPagePath: string | undefined
+  provider: UnknownProviderPlugin<M, B>['provider']
 
-  constructor(
-    plugin: UnknownProviderPlugin<M, B>,
-    opts: ProviderViewOptions<M, B>,
-  ) {
-    super(plugin, { ...defaultOptions, ...opts })
+  opts: Opts<M, B>
 
-    // Logic
-    this.filterQuery = this.filterQuery.bind(this)
-    this.clearFilter = this.clearFilter.bind(this)
-    this.getFolder = this.getFolder.bind(this)
-    this.getNextFolder = this.getNextFolder.bind(this)
+  isHandlingScroll: boolean = false
+
+  lastCheckbox: string | null = null
+
+  constructor(plugin: UnknownProviderPlugin<M, B>, opts: PassedOpts<M, B>) {
+    this.plugin = plugin
+    this.provider = opts.provider
+
+    const defaultOptions: DefaultOpts<M, B> = {
+      viewType: 'list',
+      showTitles: true,
+      showFilter: true,
+      showBreadcrumbs: true,
+      loadAllFiles: false,
+      virtualList: false,
+    }
+    this.opts = { ...defaultOptions, ...opts }
+
+    this.openFolder = this.openFolder.bind(this)
     this.logout = this.logout.bind(this)
     this.handleAuth = this.handleAuth.bind(this)
     this.handleScroll = this.handleScroll.bind(this)
+    this.resetPluginState = this.resetPluginState.bind(this)
     this.donePicking = this.donePicking.bind(this)
-
-    // Visual
     this.render = this.render.bind(this)
+    this.cancelSelection = this.cancelSelection.bind(this)
+    this.toggleCheckbox = this.toggleCheckbox.bind(this)
 
     // Set default state for the plugin
-    this.plugin.setPluginState({
-      authenticated: undefined, // we don't know yet
-      files: [],
-      folders: [],
-      breadcrumbs: [],
-      filterInput: '',
-      isSearchVisible: false,
-      currentSelection: [],
-    })
+    this.resetPluginState()
 
-    this.registerRequestClient()
+    // todo
+    // @ts-expect-error this should be typed in @uppy/dashboard.
+    this.plugin.uppy.on('dashboard:close-panel', this.resetPluginState)
+
+    this.plugin.uppy.registerRequestClient(
+      this.provider.provider,
+      this.provider,
+    )
+  }
+
+  resetPluginState(): void {
+    this.plugin.setPluginState(getDefaultState(this.plugin.rootFolderId))
   }
 
   // eslint-disable-next-line class-methods-use-this
   tearDown(): void {
     // Nothing.
+  }
+
+  setLoading(loading: boolean | string): void {
+    this.plugin.setPluginState({ loading })
+  }
+
+  cancelSelection(): void {
+    const { partialTree } = this.plugin.getPluginState()
+    const newPartialTree: PartialTree = partialTree.map((item) =>
+      item.type === 'root' ? item : { ...item, status: 'unchecked' },
+    )
+    this.plugin.setPluginState({ partialTree: newPartialTree })
   }
 
   #abortController: AbortController | undefined
@@ -139,7 +179,6 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
     this.#abortController = abortController
     const cancelRequest = () => {
       abortController.abort()
-      this.clearSelection()
     }
     try {
       // @ts-expect-error this should be typed in @uppy/dashboard.
@@ -159,483 +198,306 @@ export default class ProviderView<M extends Meta, B extends Body> extends View<
     }
   }
 
-  async #list({
-    requestPath,
-    absDirPath,
-    signal,
-  }: {
-    requestPath?: string
-    absDirPath: string
-    signal: AbortSignal
-  }) {
-    const { username, nextPagePath, items } = await this.provider.list<{
-      username: string
-      nextPagePath: string
-      items: CompanionFile[]
-    }>(requestPath, { signal })
-    this.username = username || this.username
-
-    return {
-      items: items.map((item) => ({
-        ...item,
-        absDirPath,
-      })),
-      nextPagePath,
-    }
-  }
-
-  async #listFilesAndFolders({
-    breadcrumbs,
-    signal,
-  }: {
-    breadcrumbs: UnknownProviderPluginState['breadcrumbs']
-    signal: AbortSignal
-  }) {
-    const absDirPath = formatBreadcrumbs(breadcrumbs)
-
-    const { items, nextPagePath } = await this.#list({
-      requestPath: this.nextPagePath,
-      absDirPath,
-      signal,
-    })
-
-    this.nextPagePath = nextPagePath
-
-    const files: CompanionFile[] = []
-    const folders: CompanionFile[] = []
-
-    items.forEach((item) => {
-      if (item.isFolder) {
-        folders.push(item)
-      } else {
-        files.push(item)
-      }
-    })
-
-    return { files, folders }
-  }
-
-  /**
-   * Select a folder based on its id: fetches the folder and then updates state with its contents
-   * TODO rename to something better like selectFolder or navigateToFolder (breaking change?)
-   *
-   */
-  async getFolder(requestPath?: string, name?: string): Promise<void> {
-    this.setLoading(true)
-    try {
-      await this.#withAbort(async (signal) => {
-        this.lastCheckbox = undefined
-
-        let { breadcrumbs } = this.plugin.getPluginState()
-
-        const index = breadcrumbs.findIndex(
-          (dir) => requestPath === dir.requestPath,
-        )
-
-        if (index !== -1) {
-          // means we navigated back to a known directory (already in the stack), so cut the stack off there
-          breadcrumbs = breadcrumbs.slice(0, index + 1)
-        } else {
-          // we have navigated into a new (unknown) folder, add it to the stack
-          breadcrumbs = [...breadcrumbs, { requestPath, name }]
-        }
-
-        this.nextPagePath = requestPath
-        let files: CompanionFile[] = []
-        let folders: CompanionFile[] = []
-        do {
-          const { files: newFiles, folders: newFolders } =
-            await this.#listFilesAndFolders({
-              breadcrumbs,
-              signal,
-            })
-
-          files = files.concat(newFiles)
-          folders = folders.concat(newFolders)
-
-          this.setLoading(
-            this.plugin.uppy.i18n('loadedXFiles', {
-              numFiles: files.length + folders.length,
-            }),
-          )
-        } while (this.opts.loadAllFiles && this.nextPagePath)
-
-        this.plugin.setPluginState({
-          folders,
-          files,
-          breadcrumbs,
-          filterInput: '',
-        })
+  async openFolder(folderId: string | null): Promise<void> {
+    this.lastCheckbox = null
+    // Returning cached folder
+    const { partialTree } = this.plugin.getPluginState()
+    const clickedFolder = partialTree.find(
+      (folder) => folder.id === folderId,
+    )! as PartialTreeFolder
+    if (clickedFolder.cached) {
+      this.plugin.setPluginState({
+        currentFolderId: folderId,
+        searchString: '',
       })
-    } catch (err) {
-      // This is the first call that happens when the provider view loads, after auth, so it's probably nice to show any
-      // error occurring here to the user.
-      if (err?.name === 'UserFacingApiError') {
-        this.plugin.uppy.info(
-          { message: this.plugin.uppy.i18n(err.message) },
-          'warning',
-          5000,
-        )
-        return
-      }
-
-      this.handleError(err)
-    } finally {
-      this.setLoading(false)
+      return
     }
-  }
 
-  /**
-   * Fetches new folder
-   */
-  getNextFolder(folder: CompanionFile): void {
-    this.getFolder(folder.requestPath, folder.name)
-    this.lastCheckbox = undefined
+    this.setLoading(true)
+    await this.#withAbort(async (signal) => {
+      let currentPagePath = folderId
+      let currentItems: CompanionFile[] = []
+      do {
+        const { username, nextPagePath, items } = await this.provider.list(
+          currentPagePath,
+          { signal },
+        )
+        // It's important to set the username during one of our first fetches
+        this.plugin.setPluginState({ username })
+
+        currentPagePath = nextPagePath
+        currentItems = currentItems.concat(items)
+        this.setLoading(
+          this.plugin.uppy.i18n('loadedXFiles', {
+            numFiles: currentItems.length,
+          }),
+        )
+      } while (this.opts.loadAllFiles && currentPagePath)
+
+      const newPartialTree = PartialTreeUtils.afterOpenFolder(
+        partialTree,
+        currentItems,
+        clickedFolder,
+        currentPagePath,
+        this.validateSingleFile,
+      )
+
+      this.plugin.setPluginState({
+        partialTree: newPartialTree,
+        currentFolderId: folderId,
+        searchString: '',
+      })
+    }).catch(handleError(this.plugin.uppy))
+
+    this.setLoading(false)
   }
 
   /**
    * Removes session token on client side.
    */
   async logout(): Promise<void> {
-    try {
-      await this.#withAbort(async (signal) => {
-        const res = await this.provider.logout<{
-          ok: boolean
-          revoked: boolean
-          manual_revoke_url: string
-        }>({
-          signal,
-        })
-        // res.ok is from the JSON body, not to be confused with Response.ok
-        if (res.ok) {
-          if (!res.revoked) {
-            const message = this.plugin.uppy.i18n('companionUnauthorizeHint', {
-              provider: this.plugin.title,
-              url: res.manual_revoke_url,
-            })
-            this.plugin.uppy.info(message, 'info', 7000)
-          }
-
-          const newState = {
-            authenticated: false,
-            files: [],
-            folders: [],
-            breadcrumbs: [],
-            filterInput: '',
-          }
-          this.plugin.setPluginState(newState)
-        }
+    await this.#withAbort(async (signal) => {
+      const res = await this.provider.logout<{
+        ok: boolean
+        revoked: boolean
+        manual_revoke_url: string
+      }>({
+        signal,
       })
-    } catch (err) {
-      this.handleError(err)
-    }
-  }
+      // res.ok is from the JSON body, not to be confused with Response.ok
+      if (res.ok) {
+        if (!res.revoked) {
+          const message = this.plugin.uppy.i18n('companionUnauthorizeHint', {
+            provider: this.plugin.title,
+            url: res.manual_revoke_url,
+          })
+          this.plugin.uppy.info(message, 'info', 7000)
+        }
 
-  filterQuery(input: string): void {
-    this.plugin.setPluginState({ filterInput: input })
-  }
-
-  clearFilter(): void {
-    this.plugin.setPluginState({ filterInput: '' })
+        this.plugin.setPluginState({
+          ...getDefaultState(this.plugin.rootFolderId),
+          authenticated: false,
+        })
+      }
+    }).catch(handleError(this.plugin.uppy))
   }
 
   async handleAuth(authFormData?: unknown): Promise<void> {
-    try {
-      await this.#withAbort(async (signal) => {
-        this.setLoading(true)
-        await this.provider.login({ authFormData, signal })
-        this.plugin.setPluginState({ authenticated: true })
-        this.preFirstRender()
-      })
-    } catch (err) {
-      if (err.name === 'UserFacingApiError') {
-        this.plugin.uppy.info(
-          { message: this.plugin.uppy.i18n(err.message) },
-          'warning',
-          5000,
-        )
-        return
-      }
-
-      this.plugin.uppy.log(`login failed: ${err.message}`)
-    } finally {
-      this.setLoading(false)
-    }
+    await this.#withAbort(async (signal) => {
+      this.setLoading(true)
+      await this.provider.login({ authFormData, signal })
+      this.plugin.setPluginState({ authenticated: true })
+      await Promise.all([
+        this.provider.fetchPreAuthToken(),
+        this.openFolder(this.plugin.rootFolderId),
+      ])
+    }).catch(handleError(this.plugin.uppy))
+    this.setLoading(false)
   }
 
   async handleScroll(event: Event): Promise<void> {
-    if (this.shouldHandleScroll(event) && this.nextPagePath) {
+    const { partialTree, currentFolderId } = this.plugin.getPluginState()
+    const currentFolder = partialTree.find(
+      (i) => i.id === currentFolderId,
+    ) as PartialTreeFolder
+    if (
+      shouldHandleScroll(event) &&
+      !this.isHandlingScroll &&
+      currentFolder.nextPagePath
+    ) {
       this.isHandlingScroll = true
+      await this.#withAbort(async (signal) => {
+        const { nextPagePath, items } = await this.provider.list(
+          currentFolder.nextPagePath,
+          { signal },
+        )
+        const newPartialTree = PartialTreeUtils.afterScrollFolder(
+          partialTree,
+          currentFolderId,
+          items,
+          nextPagePath,
+          this.validateSingleFile,
+        )
 
-      try {
-        await this.#withAbort(async (signal) => {
-          const { files, folders, breadcrumbs } = this.plugin.getPluginState()
-
-          const { files: newFiles, folders: newFolders } =
-            await this.#listFilesAndFolders({
-              breadcrumbs,
-              signal,
-            })
-
-          const combinedFiles = files.concat(newFiles)
-          const combinedFolders = folders.concat(newFolders)
-
-          this.plugin.setPluginState({
-            folders: combinedFolders,
-            files: combinedFiles,
-          })
-        })
-      } catch (error) {
-        this.handleError(error)
-      } finally {
-        this.isHandlingScroll = false
-      }
+        this.plugin.setPluginState({ partialTree: newPartialTree })
+      }).catch(handleError(this.plugin.uppy))
+      this.isHandlingScroll = false
     }
   }
 
-  async #recursivelyListAllFiles({
-    requestPath,
-    absDirPath,
-    relDirPath,
-    queue,
-    onFiles,
-    signal,
-  }: {
-    requestPath: string
-    absDirPath: string
-    relDirPath: string
-    queue: PQueue
-    onFiles: (files: CompanionFile[]) => void
-    signal: AbortSignal
-  }) {
-    let curPath = requestPath
-
-    while (curPath) {
-      const res = await this.#list({ requestPath: curPath, absDirPath, signal })
-      curPath = res.nextPagePath
-
-      const files = res.items.filter((item) => !item.isFolder)
-      const folders = res.items.filter((item) => item.isFolder)
-
-      onFiles(files)
-
-      // recursively queue call to self for each folder
-      const promises = folders.map(async (folder) =>
-        queue.add(async () =>
-          this.#recursivelyListAllFiles({
-            requestPath: folder.requestPath,
-            absDirPath: prependPath(absDirPath, folder.name),
-            relDirPath: prependPath(relDirPath, folder.name),
-            queue,
-            onFiles,
-            signal,
-          }),
-        ),
-      )
-      await Promise.all(promises) // in case we get an error
-    }
+  validateSingleFile = (file: CompanionFile): string | null => {
+    const companionFile: ValidateableFile<M, B> = remoteFileObjToLocal(file)
+    const result = this.plugin.uppy.validateSingleFile(companionFile)
+    return result
   }
 
   async donePicking(): Promise<void> {
+    const { partialTree } = this.plugin.getPluginState()
+
     this.setLoading(true)
-    try {
-      await this.#withAbort(async (signal) => {
-        const { currentSelection } = this.plugin.getPluginState()
+    await this.#withAbort(async (signal) => {
+      // 1. Enrich our partialTree by fetching all 'checked' but not-yet-fetched folders
+      const enrichedTree: PartialTree = await PartialTreeUtils.afterFill(
+        partialTree,
+        (path: PartialTreeId) => this.provider.list(path, { signal }),
+        this.validateSingleFile,
+        (n) => {
+          this.setLoading(
+            this.plugin.uppy.i18n('addedNumFiles', { numFiles: n }),
+          )
+        },
+      )
 
-        const messages: string[] = []
-        const newFiles: CompanionFile[] = []
+      // 2. Now that we know how many files there are - recheck aggregateRestrictions!
+      const aggregateRestrictionError =
+        this.validateAggregateRestrictions(enrichedTree)
+      if (aggregateRestrictionError) {
+        this.plugin.setPluginState({ partialTree: enrichedTree })
+        return
+      }
 
-        for (const selectedItem of currentSelection) {
-          const { requestPath } = selectedItem
+      // 3. Add files
+      const companionFiles = getCheckedFilesWithPaths(enrichedTree)
+      addFiles(companionFiles, this.plugin, this.provider)
 
-          const withRelDirPath = (newItem: CompanionFile) => ({
-            ...newItem,
-            // calculate the file's path relative to the user's selected item's path
-            // see https://github.com/transloadit/uppy/pull/4537#issuecomment-1614236655
-            relDirPath: (newItem.absDirPath as string)
-              .replace(selectedItem.absDirPath as string, '')
-              .replace(/^\//, ''),
-          })
-
-          if (selectedItem.isFolder) {
-            let isEmpty = true
-            let numNewFiles = 0
-
-            const queue = new PQueue({ concurrency: 6 })
-
-            const onFiles = (files: CompanionFile[]) => {
-              for (const newFile of files) {
-                const tagFile = this.getTagFile(newFile)
-
-                const id = getSafeFileId(tagFile, this.plugin.uppy.getID())
-                // If the same folder is added again, we don't want to send
-                // X amount of duplicate file notifications, we want to say
-                // the folder was already added. This checks if all files are duplicate,
-                // if that's the case, we don't add the files.
-                if (!this.plugin.uppy.checkIfFileAlreadyExists(id)) {
-                  newFiles.push(withRelDirPath(newFile))
-                  numNewFiles++
-                  this.setLoading(
-                    this.plugin.uppy.i18n('addedNumFiles', {
-                      numFiles: numNewFiles,
-                    }),
-                  )
-                }
-                isEmpty = false
-              }
-            }
-
-            await this.#recursivelyListAllFiles({
-              requestPath,
-              absDirPath: prependPath(
-                selectedItem.absDirPath,
-                selectedItem.name,
-              ),
-              relDirPath: selectedItem.name,
-              queue,
-              onFiles,
-              signal,
-            })
-            await queue.onIdle()
-
-            let message
-            if (isEmpty) {
-              message = this.plugin.uppy.i18n('emptyFolderAdded')
-            } else if (numNewFiles === 0) {
-              message = this.plugin.uppy.i18n('folderAlreadyAdded', {
-                folder: selectedItem.name,
-              })
-            } else {
-              // TODO we don't really know at this point whether any files were actually added
-              // (only later after addFiles has been called) so we should probably rewrite this.
-              // Example: If all files fail to add due to restriction error, it will still say "Added 100 files from folder"
-              message = this.plugin.uppy.i18n('folderAdded', {
-                smart_count: numNewFiles,
-                folder: selectedItem.name,
-              })
-            }
-
-            messages.push(message)
-          } else {
-            newFiles.push(withRelDirPath(selectedItem))
-          }
-        }
-
-        // Note: this.plugin.uppy.addFiles must be only run once we are done fetching all files,
-        // because it will cause the loading screen to disappear,
-        // and that will allow the user to start the upload, so we need to make sure we have
-        // finished all async operations before we add any file
-        // see https://github.com/transloadit/uppy/pull/4384
-        this.plugin.uppy.log('Adding files from a remote provider')
-        this.plugin.uppy.addFiles(
-          // @ts-expect-error `addFiles` expects `body` to be `File` or `Blob`,
-          // but as the todo comment in `View.ts` indicates, we strangly pass `CompanionFile` as `body`.
-          // For now it's better to ignore than to have a potential breaking change.
-          newFiles.map((file) => this.getTagFile(file, this.requestClientId)),
-        )
-
-        this.plugin.setPluginState({ filterInput: '' })
-        messages.forEach((message) => this.plugin.uppy.info(message))
-
-        this.clearSelection()
-      })
-    } catch (err) {
-      this.handleError(err)
-    } finally {
-      this.setLoading(false)
-    }
+      // 4. Reset state
+      this.resetPluginState()
+    }).catch(handleError(this.plugin.uppy))
+    this.setLoading(false)
   }
 
-  render(
-    state: unknown,
-    viewOptions: Omit<ViewOptions<M, B, PluginType>, 'provider'> = {},
+  toggleCheckbox(
+    ourItem: PartialTreeFolderNode | PartialTreeFile,
+    isShiftKeyPressed: boolean,
   ) {
-    const { authenticated, didFirstRender } = this.plugin.getPluginState()
+    const { partialTree } = this.plugin.getPluginState()
+
+    const clickedRange = getClickedRange(
+      ourItem.id,
+      this.getDisplayedPartialTree(),
+      isShiftKeyPressed,
+      this.lastCheckbox,
+    )
+    const newPartialTree = PartialTreeUtils.afterToggleCheckbox(
+      partialTree,
+      clickedRange,
+    )
+
+    this.plugin.setPluginState({ partialTree: newPartialTree })
+    this.lastCheckbox = ourItem.id
+  }
+
+  getDisplayedPartialTree = (): (PartialTreeFile | PartialTreeFolderNode)[] => {
+    const { partialTree, currentFolderId, searchString } =
+      this.plugin.getPluginState()
+    const inThisFolder = partialTree.filter(
+      (item) => item.type !== 'root' && item.parentId === currentFolderId,
+    ) as (PartialTreeFile | PartialTreeFolderNode)[]
+    const filtered =
+      searchString === '' ? inThisFolder : (
+        inThisFolder.filter(
+          (item) =>
+            (item.data.name ?? this.plugin.uppy.i18n('unnamed'))
+              .toLowerCase()
+              .indexOf(searchString.toLowerCase()) !== -1,
+        )
+      )
+
+    return filtered
+  }
+
+  validateAggregateRestrictions = (partialTree: PartialTree) => {
+    const checkedFiles = partialTree.filter(
+      (item) => item.type === 'file' && item.status === 'checked',
+    ) as PartialTreeFile[]
+    const uppyFiles = checkedFiles.map((file) => file.data)
+    return this.plugin.uppy.validateAggregateRestrictions(uppyFiles)
+  }
+
+  render(state: unknown, viewOptions: RenderOpts<M, B> = {}): h.JSX.Element {
+    const { didFirstRender } = this.plugin.getPluginState()
     const { i18n } = this.plugin.uppy
 
     if (!didFirstRender) {
-      this.preFirstRender()
+      this.plugin.setPluginState({ didFirstRender: true })
+      this.provider.fetchPreAuthToken()
+      this.openFolder(this.plugin.rootFolderId)
     }
 
-    const targetViewOptions = { ...this.opts, ...viewOptions }
-    const { files, folders, filterInput, loading, currentSelection } =
-      this.plugin.getPluginState()
-    const { isChecked, recordShiftKeyPress, filterItems } = this
-    const hasInput = filterInput !== ''
+    const opts: Opts<M, B> = { ...this.opts, ...viewOptions }
+    const { authenticated, loading } = this.plugin.getPluginState()
     const pluginIcon = this.plugin.icon || defaultPickerIcon
-
-    const headerProps = {
-      showBreadcrumbs: targetViewOptions.showBreadcrumbs,
-      getFolder: this.getFolder,
-      breadcrumbs: this.plugin.getPluginState().breadcrumbs,
-      pluginIcon,
-      title: this.plugin.title,
-      logout: this.logout,
-      username: this.username,
-      i18n,
-    }
-
-    const browserProps = {
-      isChecked,
-      toggleCheckbox: this.toggleCheckbox.bind(this),
-      recordShiftKeyPress,
-      currentSelection,
-      files: hasInput ? filterItems(files) : files,
-      folders: hasInput ? filterItems(folders) : folders,
-      getNextFolder: this.getNextFolder,
-      getFolder: this.getFolder,
-      loadAllFiles: this.opts.loadAllFiles,
-      virtualList: this.opts.virtualList,
-
-      // For SearchFilterInput component
-      showSearchFilter: targetViewOptions.showFilter,
-      search: this.filterQuery,
-      clearSearch: this.clearFilter,
-      searchTerm: filterInput,
-      searchOnInput: true,
-      searchInputLabel: i18n('filter'),
-      clearSearchLabel: i18n('resetFilter'),
-
-      noResultsLabel: i18n('noFilesFound'),
-      logout: this.logout,
-      handleScroll: this.handleScroll,
-      done: this.donePicking,
-      cancel: this.cancelPicking,
-      // eslint-disable-next-line react/jsx-props-no-spreading
-      headerComponent: <Header<M, B> {...headerProps} />,
-      title: this.plugin.title,
-      viewType: targetViewOptions.viewType,
-      showTitles: targetViewOptions.showTitles,
-      showBreadcrumbs: targetViewOptions.showBreadcrumbs,
-      pluginIcon,
-      i18n: this.plugin.uppy.i18n,
-      uppyFiles: this.plugin.uppy.getFiles(),
-      validateRestrictions: (
-        ...args: Parameters<Uppy<M, B>['validateRestrictions']>
-      ) => this.plugin.uppy.validateRestrictions(...args),
-      isLoading: loading,
-    }
 
     if (authenticated === false) {
       return (
-        <CloseWrapper onUnmount={this.clearSelection}>
-          <AuthView
-            pluginName={this.plugin.title}
-            pluginIcon={pluginIcon}
-            handleAuth={this.handleAuth}
-            i18n={this.plugin.uppy.i18nArray}
-            renderForm={this.opts.renderAuthForm}
-            loading={loading}
-          />
-        </CloseWrapper>
+        <AuthView
+          pluginName={this.plugin.title}
+          pluginIcon={pluginIcon}
+          handleAuth={this.handleAuth}
+          i18n={this.plugin.uppy.i18nArray}
+          renderForm={opts.renderAuthForm}
+          loading={loading}
+        />
       )
     }
 
+    const { partialTree, currentFolderId, username, searchString } =
+      this.plugin.getPluginState()
+    const breadcrumbs = getBreadcrumbs(partialTree, currentFolderId)
+
     return (
-      <CloseWrapper onUnmount={this.clearSelection}>
-        {/* eslint-disable-next-line react/jsx-props-no-spreading */}
-        <Browser<M, B> {...browserProps} />
-      </CloseWrapper>
+      <div
+        className={classNames(
+          'uppy-ProviderBrowser',
+          `uppy-ProviderBrowser-viewType--${opts.viewType}`,
+        )}
+      >
+        <Header<M, B>
+          showBreadcrumbs={opts.showBreadcrumbs}
+          openFolder={this.openFolder}
+          breadcrumbs={breadcrumbs}
+          pluginIcon={pluginIcon}
+          title={this.plugin.title}
+          logout={this.logout}
+          username={username}
+          i18n={i18n}
+        />
+
+        {opts.showFilter && (
+          <SearchInput
+            searchString={searchString}
+            setSearchString={(s: string) => {
+              this.plugin.setPluginState({ searchString: s })
+            }}
+            submitSearchString={() => {}}
+            inputLabel={i18n('filter')}
+            clearSearchLabel={i18n('resetFilter')}
+            wrapperClassName="uppy-ProviderBrowser-searchFilter"
+            inputClassName="uppy-ProviderBrowser-searchFilterInput"
+          />
+        )}
+
+        <Browser<M, B>
+          toggleCheckbox={this.toggleCheckbox}
+          displayedPartialTree={this.getDisplayedPartialTree()}
+          openFolder={this.openFolder}
+          virtualList={opts.virtualList}
+          noResultsLabel={i18n('noFilesFound')}
+          handleScroll={this.handleScroll}
+          viewType={opts.viewType}
+          showTitles={opts.showTitles}
+          i18n={this.plugin.uppy.i18n}
+          isLoading={loading}
+        />
+
+        <FooterActions
+          partialTree={partialTree}
+          donePicking={this.donePicking}
+          cancelSelection={this.cancelSelection}
+          i18n={i18n}
+          validateAggregateRestrictions={this.validateAggregateRestrictions}
+        />
+      </div>
     )
   }
 }

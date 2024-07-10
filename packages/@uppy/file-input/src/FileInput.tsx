@@ -14,7 +14,6 @@ export interface FileInputOptions extends UIPluginOptions {
   pretty?: boolean
   inputName?: string
 }
-// Default options, must be kept in sync with @uppy/react/src/FileInput.js.
 const defaultOptions = {
   pretty: true,
   inputName: 'files[]',
@@ -34,7 +33,7 @@ export default class FileInput<M extends Meta, B extends Body> extends UIPlugin<
 > {
   static VERSION = packageJson.version
 
-  input: HTMLFileInputElement | null
+  input: HTMLFileInputElement | null = null
 
   constructor(uppy: Uppy<M, B>, opts?: FileInputOptions) {
     super(uppy, { ...defaultOptions, ...opts })

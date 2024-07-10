@@ -9,7 +9,7 @@ import { ProviderViews } from '@uppy/provider-views'
 import { h, type ComponentChild } from 'preact'
 
 import type { UppyFile, Body, Meta } from '@uppy/utils/lib/UppyFile'
-import type { UnknownProviderPluginState } from '@uppy/core/lib/Uppy'
+import type { UnknownProviderPluginState } from '@uppy/core/lib/Uppy.js'
 import DriveProviderViews from './DriveProviderViews.ts'
 import locale from './locale.ts'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -28,11 +28,13 @@ export default class GoogleDrive<
 
   provider: Provider<M, B>
 
-  view: ProviderViews<M, B>
+  view!: ProviderViews<M, B>
 
   storage: typeof tokenStorage
 
   files: UppyFile<M, B>[]
+
+  rootFolderId: string | null = 'root'
 
   constructor(uppy: Uppy<M, B>, opts: GoogleDriveOptions) {
     super(uppy, opts)
@@ -96,7 +98,6 @@ export default class GoogleDrive<
     this.i18nInit()
     this.title = this.i18n('pluginNameGoogleDrive')
 
-    this.onFirstRender = this.onFirstRender.bind(this)
     this.render = this.render.bind(this)
   }
 
@@ -116,13 +117,6 @@ export default class GoogleDrive<
   uninstall(): void {
     this.view.tearDown()
     this.unmount()
-  }
-
-  async onFirstRender(): Promise<void> {
-    await Promise.all([
-      this.provider.fetchPreAuthToken(),
-      this.view.getFolder('root'),
-    ])
   }
 
   render(state: unknown): ComponentChild {

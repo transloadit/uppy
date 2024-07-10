@@ -1,12 +1,12 @@
-<script lang="ts">
+<script lang="ts" generics="M extends import('@uppy/utils/lib/UppyFile').Meta, B extends import('@uppy/utils/lib/UppyFile').Body">
   import { onMount, onDestroy } from 'svelte'
   import type { Uppy } from '@uppy/core';
   import DashboardPlugin from '@uppy/dashboard'
 
   let container: HTMLElement;
-  let plugin: DashboardPlugin;
+  let plugin: DashboardPlugin<M, B>;
 
-  export let uppy: Uppy;
+  export let uppy: Uppy<M, B>;
   export let props: Object | undefined = {};
   export let plugins: string[] = [];
 
@@ -20,9 +20,9 @@
     }
 
     uppy.use(DashboardPlugin, options);
-    plugin = uppy.getPlugin(options.id) as DashboardPlugin;
+    plugin = uppy.getPlugin(options.id) as DashboardPlugin<M, B>;
   }
-  const uninstallPlugin = (uppyInstance: Uppy = uppy) => {
+  const uninstallPlugin = (uppyInstance: Uppy<M, B> = uppy) => {
     if (plugin != null) uppyInstance.removePlugin(plugin);
   }
 

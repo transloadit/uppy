@@ -10,9 +10,9 @@ const oAuthState = require('../helpers/oauth-state')
  */
 module.exports = function oauthRedirect (req, res) {
   const params = qs.stringify(req.query)
-  const { authProvider } = req.companion.providerClass
+  const { oauthProvider } = req.companion.providerClass
   if (!req.companion.options.server.oauthDomain) {
-    res.redirect(req.companion.buildURL(`/connect/${authProvider}/callback?${params}`, true))
+    res.redirect(req.companion.buildURL(`/connect/${oauthProvider}/callback?${params}`, true))
     return
   }
 
@@ -25,7 +25,7 @@ module.exports = function oauthRedirect (req, res) {
   const handlerHostName = (new URL(handler)).host
 
   if (hasMatch(handlerHostName, req.companion.options.server.validHosts)) {
-    const url = `${handler}/connect/${authProvider}/callback?${params}`
+    const url = `${handler}/connect/${oauthProvider}/callback?${params}`
     res.redirect(url)
     return
   }

@@ -1,12 +1,12 @@
-<script lang="ts">
+<script lang="ts" generics="M extends import('@uppy/utils/lib/UppyFile').Meta, B extends import('@uppy/utils/lib/UppyFile').Body">
   import { onMount, onDestroy } from 'svelte'
   import type { Uppy } from '@uppy/core';
   import StatusBarPlugin from '@uppy/status-bar'
-
+  
   let container: HTMLElement;
-  let plugin: StatusBarPlugin; 
+  let plugin: StatusBarPlugin<M, B>;
 
-  export let uppy: Uppy;
+  export let uppy: Uppy<M, B>;
   export let props: Object | undefined = {};
 
   const installPlugin = () => {
@@ -18,9 +18,9 @@
     }
 
     uppy.use(StatusBarPlugin, options);
-    plugin = uppy.getPlugin(options.id) as StatusBarPlugin;
+    plugin = uppy.getPlugin(options.id) as StatusBarPlugin<M, B>;
   }
-  const uninstallPlugin = (uppyInstance: Uppy = uppy) => {
+  const uninstallPlugin = (uppyInstance: Uppy<M, B> = uppy) => {
     if (plugin != null) uppyInstance.removePlugin(plugin);
   }
 

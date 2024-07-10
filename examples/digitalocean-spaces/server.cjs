@@ -38,7 +38,7 @@ const { app: companionApp } = companion.app({
   s3: {
     // This is the crucial part; set an endpoint template for the service you want to use.
     endpoint: 'https://{region}.digitaloceanspaces.com',
-    getKey: (req, filename) => `${crypto.randomUUID()}-${filename}`,
+    getKey: ({ filename }) => `${crypto.randomUUID()}-${filename}`,
 
     key: process.env.COMPANION_AWS_KEY,
     secret: process.env.COMPANION_AWS_SECRET,

@@ -1,273 +1,120 @@
-/* eslint-disable react/require-default-props */
 import { h } from 'preact'
 
-import classNames from 'classnames'
-import remoteFileObjToLocal from '@uppy/utils/lib/remoteFileObjToLocal'
-import { useMemo } from 'preact/hooks'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore untyped
 import VirtualList from '@uppy/utils/lib/VirtualList'
-import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
-import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
+import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import type { I18n } from '@uppy/utils/lib/Translator'
-import type Uppy from '@uppy/core'
-import SearchFilterInput from './SearchFilterInput.tsx'
-import FooterActions from './FooterActions.tsx'
+import type {
+  PartialTreeFile,
+  PartialTreeFolderNode,
+} from '@uppy/core/lib/Uppy.js'
+import { useEffect, useState } from 'preact/hooks'
 import Item from './Item/index.tsx'
-
-const VIRTUAL_SHARED_DIR = 'shared-with-me'
-
-type ListItemProps<M extends Meta, B extends Body> = {
-  currentSelection: any[]
-  uppyFiles: UppyFile<M, B>[]
-  viewType: string
-  isChecked: (file: any) => boolean
-  toggleCheckbox: (event: Event, file: CompanionFile) => void
-  recordShiftKeyPress: (event: KeyboardEvent | MouseEvent) => void
-  showTitles: boolean
-  i18n: I18n
-  validateRestrictions: Uppy<M, B>['validateRestrictions']
-  getNextFolder?: (folder: any) => void
-  f: CompanionFile
-}
-
-function ListItem<M extends Meta, B extends Body>(props: ListItemProps<M, B>) {
-  const {
-    currentSelection,
-    uppyFiles,
-    viewType,
-    isChecked,
-    toggleCheckbox,
-    recordShiftKeyPress,
-    showTitles,
-    i18n,
-    validateRestrictions,
-    getNextFolder,
-    f,
-  } = props
-
-  if (f.isFolder) {
-    return Item<M, B>({
-      showTitles,
-      viewType,
-      i18n,
-      id: f.id,
-      title: f.name,
-      getItemIcon: () => f.icon,
-      isChecked: isChecked(f),
-      toggleCheckbox: (event: Event) => toggleCheckbox(event, f),
-      recordShiftKeyPress,
-      type: 'folder',
-      // TODO: when was this supposed to be true?
-      isDisabled: false,
-      isCheckboxDisabled: f.id === VIRTUAL_SHARED_DIR,
-      // getNextFolder always exists when f.isFolder is true
-      handleFolderClick: () => getNextFolder!(f),
-    })
-  }
-  const restrictionError = validateRestrictions(remoteFileObjToLocal(f), [
-    ...uppyFiles,
-    ...currentSelection,
-  ])
-
-  return Item<M, B>({
-    id: f.id,
-    title: f.name,
-    author: f.author,
-    getItemIcon: () =>
-      viewType === 'grid' && f.thumbnail ? f.thumbnail : f.icon,
-    isChecked: isChecked(f),
-    toggleCheckbox: (event: Event) => toggleCheckbox(event, f),
-    isCheckboxDisabled: false,
-    recordShiftKeyPress,
-    showTitles,
-    viewType,
-    i18n,
-    type: 'file',
-    isDisabled: Boolean(restrictionError) && !isChecked(f),
-    restrictionError,
-  })
-}
+import ProviderView from './ProviderView/ProviderView.tsx'
 
 type BrowserProps<M extends Meta, B extends Body> = {
-  currentSelection: any[]
-  folders: CompanionFile[]
-  files: CompanionFile[]
-  uppyFiles: UppyFile<M, B>[]
+  displayedPartialTree: (PartialTreeFile | PartialTreeFolderNode)[]
   viewType: string
-  headerComponent?: h.JSX.Element
-  showBreadcrumbs: boolean
-  isChecked: (file: any) => boolean
-  toggleCheckbox: (event: Event, file: CompanionFile) => void
-  recordShiftKeyPress: (event: KeyboardEvent | MouseEvent) => void
-  handleScroll: (event: Event) => Promise<void>
+  toggleCheckbox: ProviderView<M, B>['toggleCheckbox']
+  handleScroll: ProviderView<M, B>['handleScroll']
   showTitles: boolean
   i18n: I18n
-  validateRestrictions: Uppy<M, B>['validateRestrictions']
   isLoading: boolean | string
-  showSearchFilter: boolean
-  search: (query: string) => void
-  searchTerm?: string | null
-  clearSearch: () => void
-  searchOnInput: boolean
-  searchInputLabel: string
-  clearSearchLabel: string
-  getNextFolder?: (folder: any) => void
-  cancel: () => void
-  done: () => void
+  openFolder: ProviderView<M, B>['openFolder']
   noResultsLabel: string
-  virtualList?: boolean
+  virtualList: boolean
 }
 
 function Browser<M extends Meta, B extends Body>(props: BrowserProps<M, B>) {
   const {
-    currentSelection,
-    folders,
-    files,
-    uppyFiles,
+    displayedPartialTree,
     viewType,
-    headerComponent,
-    showBreadcrumbs,
-    isChecked,
     toggleCheckbox,
-    recordShiftKeyPress,
     handleScroll,
     showTitles,
     i18n,
-    validateRestrictions,
     isLoading,
-    showSearchFilter,
-    search,
-    searchTerm,
-    clearSearch,
-    searchOnInput,
-    searchInputLabel,
-    clearSearchLabel,
-    getNextFolder,
-    cancel,
-    done,
+    openFolder,
     noResultsLabel,
     virtualList,
   } = props
 
-  const selected = currentSelection.length
+  const [isShiftKeyPressed, setIsShiftKeyPressed] = useState(false)
 
-  const rows = useMemo(() => [...folders, ...files], [folders, files])
+  // This records whether the user is holding the SHIFT key this very moment.
+  // Typically, this is implemented using `onClick((e) => e.shiftKey)` -
+  // however we can't use that, because for accessibility reasons
+  // we're using html tags that don't support `e.shiftKey` property (see #3768).
+  useEffect(() => {
+    const handleKeyUp = (e: KeyboardEvent) => {
+      if (e.key === 'Shift') setIsShiftKeyPressed(false)
+    }
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Shift') setIsShiftKeyPressed(true)
+    }
+    document.addEventListener('keyup', handleKeyUp)
+    document.addEventListener('keydown', handleKeyDown)
+    return () => {
+      document.removeEventListener('keyup', handleKeyUp)
+      document.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [])
 
-  return (
-    <div
-      className={classNames(
-        'uppy-ProviderBrowser',
-        `uppy-ProviderBrowser-viewType--${viewType}`,
-      )}
-    >
-      {headerComponent && (
-        <div className="uppy-ProviderBrowser-header">
-          <div
-            className={classNames(
-              'uppy-ProviderBrowser-headerBar',
-              !showBreadcrumbs && 'uppy-ProviderBrowser-headerBar--simple',
-            )}
-          >
-            {headerComponent}
-          </div>
-        </div>
-      )}
+  if (isLoading) {
+    return (
+      <div className="uppy-Provider-loading">
+        {typeof isLoading === 'string' ? isLoading : i18n('loading')}
+      </div>
+    )
+  }
 
-      {showSearchFilter && (
-        <div class="uppy-ProviderBrowser-searchFilter">
-          <SearchFilterInput
-            search={search}
-            searchTerm={searchTerm}
-            clearSearch={clearSearch}
-            inputLabel={searchInputLabel}
-            clearSearchLabel={clearSearchLabel}
-            inputClassName="uppy-ProviderBrowser-searchFilterInput"
-            searchOnInput={searchOnInput}
+  if (displayedPartialTree.length === 0) {
+    return <div className="uppy-Provider-empty">{noResultsLabel}</div>
+  }
+
+  const renderItem = (item: PartialTreeFile | PartialTreeFolderNode) => (
+    <Item
+      viewType={viewType}
+      toggleCheckbox={(event: Event) => {
+        event.stopPropagation()
+        event.preventDefault()
+        // Prevent shift-clicking from highlighting file names
+        // (https://stackoverflow.com/a/1527797/3192470)
+        document.getSelection()?.removeAllRanges()
+        toggleCheckbox(item, isShiftKeyPressed)
+      }}
+      showTitles={showTitles}
+      i18n={i18n}
+      openFolder={openFolder}
+      file={item}
+    />
+  )
+
+  if (virtualList) {
+    return (
+      <div className="uppy-ProviderBrowser-body">
+        <ul className="uppy-ProviderBrowser-list">
+          <VirtualList
+            data={displayedPartialTree}
+            renderRow={renderItem}
+            rowHeight={31}
           />
-        </div>
-      )}
-
-      {(() => {
-        if (isLoading) {
-          return (
-            <div className="uppy-Provider-loading">
-              <span>
-                {typeof isLoading === 'string' ? isLoading : i18n('loading')}
-              </span>
-            </div>
-          )
-        }
-
-        if (!folders.length && !files.length) {
-          return <div className="uppy-Provider-empty">{noResultsLabel}</div>
-        }
-
-        if (virtualList) {
-          return (
-            <div className="uppy-ProviderBrowser-body">
-              <ul className="uppy-ProviderBrowser-list">
-                <VirtualList
-                  data={rows}
-                  renderRow={(f: CompanionFile) => (
-                    <ListItem
-                      currentSelection={currentSelection}
-                      uppyFiles={uppyFiles}
-                      viewType={viewType}
-                      isChecked={isChecked}
-                      toggleCheckbox={toggleCheckbox}
-                      recordShiftKeyPress={recordShiftKeyPress}
-                      showTitles={showTitles}
-                      i18n={i18n}
-                      validateRestrictions={validateRestrictions}
-                      getNextFolder={getNextFolder}
-                      f={f}
-                    />
-                  )}
-                  rowHeight={31}
-                />
-              </ul>
-            </div>
-          )
-        }
-
-        return (
-          <div className="uppy-ProviderBrowser-body">
-            <ul
-              className="uppy-ProviderBrowser-list"
-              onScroll={handleScroll}
-              role="listbox"
-              // making <ul> not focusable for firefox
-              tabIndex={-1}
-            >
-              {rows.map((f) => (
-                <ListItem
-                  currentSelection={currentSelection}
-                  uppyFiles={uppyFiles}
-                  viewType={viewType}
-                  isChecked={isChecked}
-                  toggleCheckbox={toggleCheckbox}
-                  recordShiftKeyPress={recordShiftKeyPress}
-                  showTitles={showTitles}
-                  i18n={i18n}
-                  validateRestrictions={validateRestrictions}
-                  getNextFolder={getNextFolder}
-                  f={f}
-                />
-              ))}
-            </ul>
-          </div>
-        )
-      })()}
-
-      {selected > 0 && (
-        <FooterActions
-          selected={selected}
-          done={done}
-          cancel={cancel}
-          i18n={i18n}
-        />
-      )}
+        </ul>
+      </div>
+    )
+  }
+  return (
+    <div className="uppy-ProviderBrowser-body">
+      <ul
+        className="uppy-ProviderBrowser-list"
+        onScroll={handleScroll}
+        role="listbox"
+        // making <ul> not focusable for firefox
+        tabIndex={-1}
+      >
+        {displayedPartialTree.map(renderItem)}
+      </ul>
     </div>
   )
 }

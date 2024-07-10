@@ -1,5 +1,28 @@
 # @uppy/angular
 
+## 0.7.0-beta.5
+
+Released: 2024-06-04
+Included in: Uppy v4.0.0-beta.10
+
+- @uppy/angular: fix invalid char in `package.json` (Antoine du Hamel / #5224)
+- @uppy/angular: upgrade to Angular 18 (Antoine du Hamel / #5215)
+
+## 0.7.0-beta.2
+
+Released: 2024-04-11
+Included in: Uppy v4.0.0-beta.2
+
+- @uppy/angular: fix Angular version requirement in peerDeps (Antoine du Hamel / #5067)
+
+## 0.7.0-beta.1
+
+Released: 2024-03-28
+Included in: Uppy v4.0.0-beta.1
+
+- @uppy/angular: upgrade to Angular 17.x and to TS 5.4 (Antoine du Hamel / #5008)
+- @uppy/angular: fix build (Antoine du Hamel)
+
 ## 0.6.0
 
 Released: 2023-09-05

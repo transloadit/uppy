@@ -46,13 +46,13 @@ export class RateLimitedQueue {
 
   #paused = false
 
-  #pauseTimer: ReturnType<typeof setTimeout>
+  #pauseTimer?: ReturnType<typeof setTimeout>
 
   #downLimit = 1
 
-  #upperLimit: number
+  #upperLimit?: number
 
-  #rateLimitingTimer: ReturnType<typeof setTimeout>
+  #rateLimitingTimer?: ReturnType<typeof setTimeout>
 
   limit: number
 
@@ -285,11 +285,11 @@ export class RateLimitedQueue {
       return
     }
     this.#downLimit = this.limit
-    this.limit = Math.ceil((this.#upperLimit + this.#downLimit) / 2)
+    this.limit = Math.ceil((this.#upperLimit! + this.#downLimit) / 2)
     for (let i = this.#downLimit; i <= this.limit; i++) {
       this.#queueNext()
     }
-    if (this.#upperLimit - this.#downLimit > 3) {
+    if (this.#upperLimit! - this.#downLimit > 3) {
       this.#rateLimitingTimer = setTimeout(this.#increaseLimit, 2000)
     } else {
       this.#downLimit = Math.floor(this.#downLimit / 2)

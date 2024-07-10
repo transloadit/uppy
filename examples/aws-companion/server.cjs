@@ -29,7 +29,7 @@ const options = {
     },
   },
   s3: {
-    getKey: (req, filename) => `${crypto.randomUUID()}-${filename}`,
+    getKey: ({ filename }) => `${crypto.randomUUID()}-${filename}`,
     key: process.env.COMPANION_AWS_KEY,
     secret: process.env.COMPANION_AWS_SECRET,
     bucket: process.env.COMPANION_AWS_BUCKET,

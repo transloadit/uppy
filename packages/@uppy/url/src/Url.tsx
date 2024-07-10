@@ -87,12 +87,11 @@ export default class Url<M extends Meta, B extends Body> extends UIPlugin<
 
   client: RequestClient<M, B>
 
-  canHandleRootDrop: typeof canHandleRootDrop
+  canHandleRootDrop!: typeof canHandleRootDrop
 
   constructor(uppy: Uppy<M, B>, opts: UrlOptions) {
     super(uppy, opts)
     this.id = this.opts.id || 'Url'
-    this.title = this.opts.title || 'Link'
     this.type = 'acquirer'
     this.icon = () => <UrlIcon />
 
@@ -100,6 +99,7 @@ export default class Url<M extends Meta, B extends Body> extends UIPlugin<
     this.defaultLocale = locale
 
     this.i18nInit()
+    this.title = this.i18n('pluginNameUrl')
 
     this.hostname = this.opts.companionUrl
 
@@ -121,15 +121,7 @@ export default class Url<M extends Meta, B extends Body> extends UIPlugin<
   }
 
   private getMeta = (url: string): Promise<MetaResponse> => {
-    return this.client.post<MetaResponse>('url/meta', { url }).then((res) => {
-      // TODO: remove this handler in the next major
-      if ((res as any).error) {
-        this.uppy.log('[URL] Error:')
-        this.uppy.log((res as any).error)
-        throw new Error('Failed to fetch the file')
-      }
-      return res
-    })
+    return this.client.post<MetaResponse>('url/meta', { url })
   }
 
   private addFile = async (

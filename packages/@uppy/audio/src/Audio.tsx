@@ -6,7 +6,7 @@ import type {
   Meta,
   MinimalRequiredUppyFile,
 } from '@uppy/utils/lib/UppyFile'
-import type { Uppy } from '@uppy/core/lib/Uppy'
+import type { Uppy } from '@uppy/core/lib/Uppy.js'
 
 import getFileTypeExtension from '@uppy/utils/lib/getFileTypeExtension'
 import supportsMediaRecorder from './supportsMediaRecorder.ts'
@@ -23,10 +23,11 @@ export interface AudioOptions extends UIPluginOptions {
 interface AudioState {
   audioReady: boolean
   recordingLengthSeconds: number
+  recordedAudio: string | null | undefined
   hasAudio: boolean
   cameraError: null
   audioSources: MediaDeviceInfo[]
-  currentDeviceId?: null | string | MediaStreamTrack
+  currentDeviceId: string | MediaStreamTrack | null | undefined
   isRecording: boolean
   showAudioSourceDropdown: boolean
   [id: string]: unknown
@@ -43,7 +44,7 @@ export default class Audio<M extends Meta, B extends Body> extends UIPlugin<
 > {
   static VERSION = packageJson.version
 
-  private recordingLengthTimer: ReturnType<typeof setInterval>
+  #recordingLengthTimer?: ReturnType<typeof setInterval>
 
   private icon
 
@@ -130,7 +131,7 @@ export default class Audio<M extends Meta, B extends Body> extends UIPlugin<
         .then((stream) => {
           this.#stream = stream
 
-          let currentDeviceId = null
+          let currentDeviceId: AudioState['currentDeviceId'] = null
           const tracks = stream.getAudioTracks()
 
           if (!options?.deviceId) {
@@ -201,8 +202,7 @@ export default class Audio<M extends Meta, B extends Body> extends UIPlugin<
     this.#recorder.start(500)
 
     // Start the recordingLengthTimer if we are showing the recording length.
-    // TODO: switch this to a private field
-    this.recordingLengthTimer = setInterval(() => {
+    this.#recordingLengthTimer = setInterval(() => {
       const currentRecordingLength = this.getPluginState()
         .recordingLengthSeconds as number
       this.setPluginState({
@@ -222,7 +222,7 @@ export default class Audio<M extends Meta, B extends Body> extends UIPlugin<
       })
       this.#recorder!.stop()
 
-      clearInterval(this.recordingLengthTimer)
+      clearInterval(this.#recordingLengthTimer)
       this.setPluginState({ recordingLengthSeconds: 0 })
     })
 
@@ -289,7 +289,7 @@ export default class Audio<M extends Meta, B extends Body> extends UIPlugin<
         this.#recorder!.addEventListener('stop', resolve, { once: true })
         this.#recorder!.stop()
 
-        clearInterval(this.recordingLengthTimer)
+        clearInterval(this.#recordingLengthTimer)
       })
     }
 
@@ -369,9 +369,6 @@ export default class Audio<M extends Meta, B extends Body> extends UIPlugin<
       <RecordingScreen
         // eslint-disable-next-line react/jsx-props-no-spreading
         {...audioState}
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore TODO: remove unused
-        audioActive={this.#audioActive}
         onChangeSource={this.#changeSource}
         onStartRecording={this.#startRecording}
         onStopRecording={this.#stopRecording}

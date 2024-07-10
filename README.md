@@ -87,7 +87,7 @@ npm install @uppy/core @uppy/dashboard @uppy/tus
 ```
 
 Add CSS
-[uppy.min.css](https://releases.transloadit.com/uppy/v3.27.3/uppy.min.css),
+[uppy.min.css](https://releases.transloadit.com/uppy/v4.0.0/uppy.min.css),
 either to your HTML page’s `<head>` or include in JS, if your bundler of choice
 supports it.
 
@@ -102,7 +102,7 @@ object.
 ```html
 <!-- 1. Add CSS to `<head>` -->
 <link
-  href="https://releases.transloadit.com/uppy/v3.27.3/uppy.min.css"
+  href="https://releases.transloadit.com/uppy/v4.0.0/uppy.min.css"
   rel="stylesheet"
 />
 
@@ -113,7 +113,7 @@ object.
     Uppy,
     Dashboard,
     Tus,
-  } from 'https://releases.transloadit.com/uppy/v3.27.3/uppy.min.mjs'
+  } from 'https://releases.transloadit.com/uppy/v4.0.0/uppy.min.mjs'
 
   const uppy = new Uppy()
   uppy.use(Dashboard, { target: '#files-drag-drop' })
@@ -206,50 +206,12 @@ server-side component, is needed for a plugin to work.
 
 - [React](https://uppy.io/docs/react/) — components to integrate Uppy UI plugins
   with React apps
-- [React Native](https://uppy.io//docs/react/native/) — basic Uppy component for
-  React Native with Expo
+- [React Native](./examples/react-native-expo/) — basic Uppy component for React
+  Native with Expo
 
 ## Browser Support
 
-We aim to support recent versions of Chrome, Firefox, Safari and Edge.
-
-We still provide a bundle which should work on IE11, but we are not running
-tests on it.
-
-### Polyfills
-
-Here’s a list of polyfills you’ll need to include to make Uppy work in older
-browsers, such as IE11:
-
-- [abortcontroller-polyfill](https://github.com/mo/abortcontroller-polyfill)
-- [core-js](https://github.com/zloirock/core-js)
-- [md-gum-polyfill](https://github.com/mozdevs/mediaDevices-getUserMedia-polyfill)
-- [resize-observer-polyfill](https://github.com/que-etc/resize-observer-polyfill)
-- [whatwg-fetch](https://github.com/github/fetch)
-
-If you’re using a bundler, you need to import them before Uppy:
-
-```js
-import 'core-js'
-import 'whatwg-fetch'
-import 'abortcontroller-polyfill/dist/polyfill-patch-fetch'
-// Order matters: AbortController needs fetch which needs Promise (provided by core-js).
-
-import 'md-gum-polyfill'
-import ResizeObserver from 'resize-observer-polyfill'
-
-window.ResizeObserver ??= ResizeObserver
-
-export { default } from '@uppy/core'
-export * from '@uppy/core'
-```
-
-If you’re using Uppy from CDN, those polyfills are already included in the
-legacy bundle, so no need to include anything additionally:
-
-```html
-<script src="https://releases.transloadit.com/uppy/v3.27.3/uppy.legacy.min.js"></script>
-```
+We aim to support recent versions of Chrome, Firefox, and Safari.
 
 ## FAQ
 
@@ -340,7 +302,7 @@ Use Uppy in your project?
 
 <table id="contributors_table">
 <tr><td><a href=https://github.com/arturi><img width="117" alt="arturi" src="https://avatars.githubusercontent.com/u/1199054?v=4&s=117"></a></td><td><a href=https://github.com/goto-bus-stop><img width="117" alt="goto-bus-stop" src="https://avatars.githubusercontent.com/u/1006268?v=4&s=117"></a></td><td><a href=https://github.com/kvz><img width="117" alt="kvz" src="https://avatars.githubusercontent.com/u/26752?v=4&s=117"></a></td><td><a href=https://github.com/aduh95><img width="117" alt="aduh95" src="https://avatars.githubusercontent.com/u/14309773?v=4&s=117"></a></td><td><a href=https://github.com/ifedapoolarewaju><img width="117" alt="ifedapoolarewaju" src="https://avatars.githubusercontent.com/u/8383781?v=4&s=117"></a></td><td><a href=https://github.com/hedgerh><img width="117" alt="hedgerh" src="https://avatars.githubusercontent.com/u/2524280?v=4&s=117"></a></td></tr>
-<tr><td><a href=https://github.com/Murderlon><img width="117" alt="Murderlon" src="https://avatars.githubusercontent.com/u/9060226?v=4&s=117"></a></td><td><a href=https://github.com/nqst><img width="117" alt="nqst" src="https://avatars.githubusercontent.com/u/375537?v=4&s=117"></a></td><td><a href=https://github.com/AJvanLoon><img width="117" alt="AJvanLoon" src="https://avatars.githubusercontent.com/u/15716628?v=4&s=117"></a></td><td><a href=https://github.com/mifi><img width="117" alt="mifi" src="https://avatars.githubusercontent.com/u/402547?v=4&s=117"></a></td><td><a href=https://github.com/apps/github-actions><img width="117" alt="github-actions[bot]" src="https://avatars.githubusercontent.com/in/15368?v=4&s=117"></a></td><td><a href=https://github.com/lakesare><img width="117" alt="lakesare" src="https://avatars.githubusercontent.com/u/7578559?v=4&s=117"></a></td></tr>
+<tr><td><a href=https://github.com/Murderlon><img width="117" alt="Murderlon" src="https://avatars.githubusercontent.com/u/9060226?v=4&s=117"></a></td><td><a href=https://github.com/mifi><img width="117" alt="mifi" src="https://avatars.githubusercontent.com/u/402547?v=4&s=117"></a></td><td><a href=https://github.com/nqst><img width="117" alt="nqst" src="https://avatars.githubusercontent.com/u/375537?v=4&s=117"></a></td><td><a href=https://github.com/AJvanLoon><img width="117" alt="AJvanLoon" src="https://avatars.githubusercontent.com/u/15716628?v=4&s=117"></a></td><td><a href=https://github.com/apps/github-actions><img width="117" alt="github-actions[bot]" src="https://avatars.githubusercontent.com/in/15368?v=4&s=117"></a></td><td><a href=https://github.com/lakesare><img width="117" alt="lakesare" src="https://avatars.githubusercontent.com/u/7578559?v=4&s=117"></a></td></tr>
 <tr><td><a href=https://github.com/apps/dependabot><img width="117" alt="dependabot[bot]" src="https://avatars.githubusercontent.com/in/29110?v=4&s=117"></a></td><td><a href=https://github.com/kiloreux><img width="117" alt="kiloreux" src="https://avatars.githubusercontent.com/u/6282557?v=4&s=117"></a></td><td><a href=https://github.com/samuelayo><img width="117" alt="samuelayo" src="https://avatars.githubusercontent.com/u/14964486?v=4&s=117"></a></td><td><a href=https://github.com/sadovnychyi><img width="117" alt="sadovnychyi" src="https://avatars.githubusercontent.com/u/193864?v=4&s=117"></a></td><td><a href=https://github.com/richardwillars><img width="117" alt="richardwillars" src="https://avatars.githubusercontent.com/u/291004?v=4&s=117"></a></td><td><a href=https://github.com/ajkachnic><img width="117" alt="ajkachnic" src="https://avatars.githubusercontent.com/u/44317699?v=4&s=117"></a></td></tr>
 <tr><td><a href=https://github.com/zcallan><img width="117" alt="zcallan" src="https://avatars.githubusercontent.com/u/13760738?v=4&s=117"></a></td><td><a href=https://github.com/YukeshShr><img width="117" alt="YukeshShr" src="https://avatars.githubusercontent.com/u/71844521?v=4&s=117"></a></td><td><a href=https://github.com/janko><img width="117" alt="janko" src="https://avatars.githubusercontent.com/u/795488?v=4&s=117"></a></td><td><a href=https://github.com/oliverpool><img width="117" alt="oliverpool" src="https://avatars.githubusercontent.com/u/3864879?v=4&s=117"></a></td><td><a href=https://github.com/Botz><img width="117" alt="Botz" src="https://avatars.githubusercontent.com/u/2706678?v=4&s=117"></a></td><td><a href=https://github.com/mcallistertyler><img width="117" alt="mcallistertyler" src="https://avatars.githubusercontent.com/u/14939210?v=4&s=117"></a></td></tr>
 <tr><td><a href=https://github.com/mokutsu-coursera><img width="117" alt="mokutsu-coursera" src="https://avatars.githubusercontent.com/u/65177495?v=4&s=117"></a></td><td><a href=https://github.com/dschmidt><img width="117" alt="dschmidt" src="https://avatars.githubusercontent.com/u/448487?v=4&s=117"></a></td><td><a href=https://github.com/DJWassink><img width="117" alt="DJWassink" src="https://avatars.githubusercontent.com/u/1822404?v=4&s=117"></a></td><td><a href=https://github.com/mrbatista><img width="117" alt="mrbatista" src="https://avatars.githubusercontent.com/u/6544817?v=4&s=117"></a></td><td><a href=https://github.com/taoqf><img width="117" alt="taoqf" src="https://avatars.githubusercontent.com/u/15901911?v=4&s=117"></a></td><td><a href=https://github.com/timodwhit><img width="117" alt="timodwhit" src="https://avatars.githubusercontent.com/u/2761203?v=4&s=117"></a></td></tr>

@@ -1,5 +1,43 @@
 # @uppy/transloadit
 
+## 4.0.0-beta.10
+
+Released: 2024-06-27
+Included in: Uppy v4.0.0-beta.13
+
+- @uppy/transloadit: fix strict type errors (Antoine du Hamel / #5271)
+- @uppy/transloadit: simplify plugin to always run a single assembly (Merlijn Vos / #5158)
+
+## 4.0.0-beta.9
+
+Released: 2024-06-18
+Included in: Uppy v4.0.0-beta.12
+
+- @uppy/transloadit: also fix outdated assembly transloadit:result (Merlijn Vos / #5246)
+- examples,@uppy/locales,@uppy/provider-views,@uppy/transloadit: Release: uppy@3.26.1 (github-actions[bot] / #5242)
+- @uppy/transloadit: fix transloadit:result event (Merlijn Vos / #5231)
+
+## 4.0.0-beta.6
+
+Released: 2024-05-23
+Included in: Uppy v4.0.0-beta.9
+
+- @uppy/transloadit: do not cancel assembly when removing all files (Merlijn Vos / #5191)
+
+## 4.0.0-beta.2
+
+Released: 2024-04-11
+Included in: Uppy v4.0.0-beta.2
+
+- @uppy/transloadit: remove deprecated options (Merlijn Vos / #5056)
+
+## 4.0.0-beta.1
+
+Released: 2024-03-28
+Included in: Uppy v4.0.0-beta.1
+
+- @uppy/transloadit: migrate to TS (Merlijn Vos / #4987)
+
 ## 3.8.0
 
 Released: 2024-06-18

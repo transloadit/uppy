@@ -2,7 +2,7 @@
 
 # Load local env vars. In CI, these are injected.
 if [ -f .env ]; then
-  nodemon --watch packages/@uppy/companion/src --exec node -r dotenv/config ./packages/@uppy/companion/src/standalone/start-server.js
+  node --watch -r dotenv/config ./packages/@uppy/companion/src/standalone/start-server.js
 else
   env \
     COMPANION_DATADIR="./output" \
@@ -13,6 +13,6 @@ else
     COMPANION_SECRET="development" \
     COMPANION_PREAUTH_SECRET="development2" \
     COMPANION_ALLOW_LOCAL_URLS="true" \
-    nodemon --watch packages/@uppy/companion/src --exec node ./packages/@uppy/companion/src/standalone/start-server.js
+    node --watch ./packages/@uppy/companion/src/standalone/start-server.js
 fi
 

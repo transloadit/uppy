@@ -1,5 +1,3 @@
-const got = require('got').default
-
 const Provider = require('../../Provider')
 const { getURLMeta } = require('../../../helpers/request')
 const logger = require('../../../logger')
@@ -7,7 +5,9 @@ const adaptData = require('./adapter')
 const { withProviderErrorHandling } = require('../../providerErrors')
 const { prepareStream } = require('../../../helpers/utils')
 
-const getClient = ({ token }) => got.extend({
+const got = require('../../../got')
+
+const getClient = async ({ token }) => (await got).extend({
   prefixUrl: 'https://graph.instagram.com',
   headers: {
     authorization: `Bearer ${token}`,
@@ -15,7 +15,7 @@ const getClient = ({ token }) => got.extend({
 })
 
 async function getMediaUrl ({ token, id }) {
-  const body = await getClient({ token }).get(String(id), { searchParams: { fields: 'media_url' }, responseType: 'json' }).json()
+  const body = await (await getClient({ token })).get(String(id), { searchParams: { fields: 'media_url' }, responseType: 'json' }).json()
   return body.media_url
 }
 
@@ -24,14 +24,14 @@ async function getMediaUrl ({ token, id }) {
  */
 class Instagram extends Provider {
   // for "grant"
-  static getExtraConfig () {
+  static getExtraGrantConfig () {
     return {
       protocol: 'https',
       scope: ['user_profile', 'user_media'],
     }
   }
 
-  static get authProvider () {
+  static get oauthProvider () {
     return 'instagram'
   }
 
@@ -41,7 +41,7 @@ class Instagram extends Provider {
 
       if (query.cursor) qs.after = query.cursor
 
-      const client = getClient({ token })
+      const client = await getClient({ token })
 
       const [{ username }, list] = await Promise.all([
         client.get('me', { searchParams: { fields: 'username' }, responseType: 'json' }).json(),
@@ -54,7 +54,7 @@ class Instagram extends Provider {
   async download ({ id, token }) {
     return this.#withErrorHandling('provider.instagram.download.error', async () => {
       const url = await getMediaUrl({ token, id })
-      const stream = got.stream.get(url, { responseType: 'json' })
+      const stream = (await got).stream.get(url, { responseType: 'json' })
       await prepareStream(stream)
       return { stream }
     })
@@ -70,7 +70,7 @@ class Instagram extends Provider {
   async size ({ id, token }) {
     return this.#withErrorHandling('provider.instagram.size.error', async () => {
       const url = await getMediaUrl({ token, id })
-      const { size } = await getURLMeta(url, true)
+      const { size } = await getURLMeta(url)
       return size
     })
   }
@@ -86,7 +86,7 @@ class Instagram extends Provider {
     return withProviderErrorHandling({
       fn,
       tag,
-      providerName: Instagram.authProvider,
+      providerName: Instagram.oauthProvider,
       isAuthError: (response) => typeof response.body === 'object' && response.body?.error?.code === 190, // Invalid OAuth 2.0 Access Token
       getJsonErrorMessage: (body) => body?.error?.message,
     })

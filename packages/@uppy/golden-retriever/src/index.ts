@@ -1,6 +1,6 @@
 import throttle from 'lodash/throttle.js'
 import BasePlugin from '@uppy/core/lib/BasePlugin.js'
-import type { PluginOpts, DefinePluginOpts } from '@uppy/core/lib/BasePlugin'
+import type { PluginOpts, DefinePluginOpts } from '@uppy/core/lib/BasePlugin.js'
 import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
 import type Uppy from '@uppy/core'
 import type { UploadResult } from '@uppy/core'
@@ -60,7 +60,7 @@ export default class GoldenRetriever<
 
   IndexedDBStore: IndexedDBStore
 
-  savedPluginData: Record<string, unknown>
+  savedPluginData?: Record<string, unknown>
 
   constructor(uppy: Uppy<M, B>, opts?: GoldenRetrieverOptions) {
     super(uppy, { ...defaultOptions, ...opts })

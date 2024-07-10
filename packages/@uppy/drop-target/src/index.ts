@@ -1,5 +1,5 @@
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
-import type { Uppy } from '@uppy/core/lib/Uppy'
+import type { Uppy } from '@uppy/core/lib/Uppy.js'
 import type { DefinePluginOpts, PluginOpts } from '@uppy/core/lib/BasePlugin.js'
 import BasePlugin from '@uppy/core/lib/BasePlugin.js'
 import getDroppedFiles from '@uppy/utils/lib/getDroppedFiles'
@@ -48,8 +48,6 @@ export default class DropTarget<
     super(uppy, { ...defaultOpts, ...opts })
     this.type = 'acquirer'
     this.id = this.opts.id || 'DropTarget'
-    // @ts-expect-error TODO: remove in major
-    this.title = 'Drop Target'
   }
 
   addFiles = (files: Array<File>): void => {

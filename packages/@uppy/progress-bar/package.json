@@ -1,11 +1,10 @@
 {
   "name": "@uppy/progress-bar",
   "description": "A progress bar UI for Uppy",
-  "version": "3.1.1",
+  "version": "4.0.0",
   "license": "MIT",
   "main": "lib/index.js",
   "style": "dist/style.min.css",
-  "types": "types/index.d.ts",
   "type": "module",
   "keywords": [
     "file uploader",

@@ -1,5 +1,60 @@
 # @uppy/provider-views
 
+## 4.0.0
+
+Released: 2024-07-10
+Included in: Uppy v4.0.0
+
+- @uppy/provider-views: `.openFolder()` - return progress indication (Evgenia Karunus / #5306)
+
+## 4.0.0-beta.11
+
+Released: 2024-07-02
+Included in: Uppy v4.0.0-beta.14
+
+- @uppy/provider-views: `afterFill()` - add loading progress (Evgenia Karunus / #5288)
+
+## 4.0.0-beta.10
+
+Released: 2024-06-27
+Included in: Uppy v4.0.0-beta.13
+
+- @uppy/provider-views: `Loader.tsx` - delete the file (Evgenia Karunus / #5284)
+- @uppy/provider-views: Provider views rewrite (.files, .folders => .partialTree) (Evgenia Karunus / #5050)
+
+## 4.0.0-beta.9
+
+Released: 2024-06-18
+Included in: Uppy v4.0.0-beta.12
+
+- @uppy/provider-views: Renames & `eslint-disable react/require-default-props` removal (Evgenia Karunus / #5251)
+- examples,@uppy/locales,@uppy/provider-views,@uppy/transloadit: Release: uppy@3.26.1 (github-actions[bot] / #5242)
+- @uppy/provider-views: fix wrong font for files (Merlijn Vos / #5234)
+
+## 4.0.0-beta.7
+
+Released: 2024-06-04
+Included in: Uppy v4.0.0-beta.10
+
+- @uppy/provider-views: PartialTree - get rid of `.onFirstRender()` (Evgenia Karunus / #5187)
+
+## 4.0.0-beta.4
+
+Released: 2024-04-29
+Included in: Uppy v4.0.0-beta.4
+
+- @uppy/dashboard,@uppy/provider-views: Remove JSX global type everywhere (Merlijn Vos / #5117)
+- @uppy/provider-views: bring back "loaded X files..." (Mikael Finstad / #5097)
+
+## 4.0.0-beta.1
+
+Released: 2024-03-28
+Included in: Uppy v4.0.0-beta.1
+
+- @uppy/companion-client,@uppy/provider-views,@uppy/status-bar: fix type imports (Antoine du Hamel / #5038)
+- @uppy/provider-views: fix `super.toggleCheckbox` bug (Mikael Finstad / #5004)
+- @uppy/core,@uppy/provider-views: Fix breadcrumbs (Evgenia Karunus / #4986)
+
 ## 3.12.1
 
 Released: 2024-06-11

@@ -1,6 +1,6 @@
 import { UIPlugin, type Uppy } from '@uppy/core'
-import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin'
-import type { UIPluginOptions } from '@uppy/core/lib/UIPlugin'
+import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin.js'
+import type { UIPluginOptions } from '@uppy/core/lib/UIPlugin.js'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import type { ChangeEvent } from 'preact/compat'
 import toArray from '@uppy/utils/lib/toArray'
@@ -24,7 +24,6 @@ export interface DragDropOptions extends UIPluginOptions {
   onDrop?: (event: DragEvent) => void
 }
 
-// Default options, must be kept in sync with @uppy/react/src/DragDrop.js.
 const defaultOptions = {
   inputName: 'files[]',
   width: '100%',

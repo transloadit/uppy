@@ -9,7 +9,7 @@ import {
 import { h, type ComponentChild } from 'preact'
 
 import type { UppyFile, Body, Meta } from '@uppy/utils/lib/UppyFile'
-import type { UnknownProviderPluginState } from '@uppy/core/lib/Uppy.ts'
+import type { UnknownProviderPluginState } from '@uppy/core/lib/Uppy.js'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
@@ -28,11 +28,13 @@ export default class GooglePhotos<
 
   provider: Provider<M, B>
 
-  view: ProviderViews<M, B>
+  view!: ProviderViews<M, B>
 
   storage: typeof tokenStorage
 
   files: UppyFile<M, B>[]
+
+  rootFolderId: string | null = null
 
   constructor(uppy: Uppy<M, B>, opts: GooglePhotosOptions) {
     super(uppy, opts)
@@ -91,7 +93,6 @@ export default class GooglePhotos<
     this.i18nInit()
     this.title = this.i18n('pluginNameGooglePhotos')
 
-    this.onFirstRender = this.onFirstRender.bind(this)
     this.render = this.render.bind(this)
   }
 
@@ -112,18 +113,14 @@ export default class GooglePhotos<
     this.unmount()
   }
 
-  async onFirstRender(): Promise<void> {
-    await Promise.all([
-      this.provider.fetchPreAuthToken(),
-      this.view.getFolder(),
-    ])
-  }
-
   render(state: unknown): ComponentChild {
-    if (
-      this.getPluginState().files.length &&
-      !this.getPluginState().folders.length
-    ) {
+    const { partialTree, currentFolderId } = this.getPluginState()
+
+    const foldersInThisFolder = partialTree.filter(
+      (i) => i.type === 'folder' && i.parentId === currentFolderId,
+    )
+
+    if (foldersInThisFolder.length === 0) {
       return this.view.render(state, {
         viewType: 'grid',
         showFilter: false,

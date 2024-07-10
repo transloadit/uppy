@@ -7,7 +7,7 @@ import {
   type State,
 } from '@uppy/core'
 import type { ComponentChild, VNode } from 'preact'
-import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin'
+import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin.js'
 import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
 import StatusBar from '@uppy/status-bar'
 import Informer from '@uppy/informer'
@@ -131,8 +131,6 @@ export interface DashboardInlineOptions {
 interface DashboardMiscOptions<M extends Meta, B extends Body>
   extends UIPluginOptions {
   autoOpen?: 'metaEditor' | 'imageEditor' | null
-  /** @deprecated use option autoOpen instead */
-  autoOpenFileEditor?: boolean
   defaultPickerIcon?: typeof defaultPickerIcon
   disabled?: boolean
   disableInformer?: boolean
@@ -176,7 +174,6 @@ export type DashboardOptions<
 > = DashboardMiscOptions<M, B> &
   (DashboardModalOptions | DashboardInlineOptions)
 
-// set default options, must be kept in sync with packages/@uppy/react/src/DashboardModal.js
 const defaultOptions = {
   target: 'body',
   metaFields: [],
@@ -212,7 +209,6 @@ const defaultOptions = {
   showNativeVideoCameraButton: false,
   theme: 'light',
   autoOpen: null,
-  autoOpenFileEditor: false,
   disabled: false,
   disableLocalFiles: false,
 
@@ -264,16 +260,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
   >
 
   constructor(uppy: Uppy<M, B>, opts?: DashboardOptions<M, B>) {
-    // support for the legacy `autoOpenFileEditor` option,
-    // TODO: we can remove this code when we update the Uppy major version
-    let autoOpen: DashboardOptions<M, B>['autoOpen']
-    if (!opts) {
-      autoOpen = null
-    } else if (opts.autoOpen === undefined) {
-      autoOpen = opts.autoOpenFileEditor ? 'imageEditor' : null
-    } else {
-      autoOpen = opts.autoOpen
-    }
+    const autoOpen = opts?.autoOpen ?? null
     super(uppy, { ...defaultOptions, ...opts, autoOpen })
     this.id = this.opts.id || 'Dashboard'
     this.title = 'Dashboard'
@@ -286,7 +273,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
       // `null` means "do not display a Done button", while `undefined` means
       // "I want the default behavior". For this reason, we need to differentiate `null` and `undefined`.
       this.opts.doneButtonHandler = () => {
-        this.uppy.clearUploadedFiles()
+        this.uppy.clear()
         this.requestCloseModal()
       }
     }
@@ -1156,7 +1143,6 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
 
       isUploadStarted,
       isAllComplete,
-      isAllErrored,
       isAllPaused,
     } = this.uppy.getObjectOfFilesPerState()
 
@@ -1195,7 +1181,6 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
       processingFiles,
       isUploadStarted,
       isAllComplete,
-      isAllErrored,
       isAllPaused,
       totalFileCount: Object.keys(files).length,
       totalProgress: state.totalProgress,
@@ -1251,7 +1236,6 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
       containerWidth: pluginState.containerWidth,
       containerHeight: pluginState.containerHeight,
       areInsidesReadyToBeVisible: pluginState.areInsidesReadyToBeVisible,
-      isTargetDOMEl: this.isTargetDOMEl,
       parentElement: this.el,
       allowedFileTypes: this.uppy.opts.restrictions.allowedFileTypes,
       maxNumberOfFiles: this.uppy.opts.restrictions.maxNumberOfFiles,

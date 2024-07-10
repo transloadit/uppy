@@ -109,7 +109,7 @@ class UIPlugin<
       // API for plugins that require a synchronous rerender.
       this.#updateUI = debounce((state) => {
         // plugin could be removed, but this.rerender is debounced below,
-        // so it could still be called even after uppy.removePlugin or uppy.close
+        // so it could still be called even after uppy.removePlugin or uppy.destroy
         // hence the check
         if (!this.uppy.getPlugin(this.id)) return
         render(this.render(state), uppyRootElement)

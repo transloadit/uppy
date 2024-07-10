@@ -7,7 +7,7 @@ import prettierBytes from '@transloadit/prettier-bytes'
 import CompressorJS from 'compressorjs'
 
 import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
-import type { PluginOpts } from '@uppy/core/lib/BasePlugin'
+import type { PluginOpts } from '@uppy/core/lib/BasePlugin.js'
 
 import locale from './locale.ts'
 
@@ -73,7 +73,7 @@ export default class Compressor<
             `[Image Compressor] Image ${file.id} compressed by ${prettierBytes(compressedSavingsSize)}`,
           )
           totalCompressedSize += compressedSavingsSize
-          const { name, type, size } = compressedBlob
+          const { name, type, size } = compressedBlob as File
 
           const compressedFileName = getFileNameAndExtension(name)
           const metaFileName = getFileNameAndExtension(file.meta.name)

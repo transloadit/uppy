@@ -34,7 +34,7 @@ function adaptData (res) {
 class MyCustomProvider {
   static version = 2
 
-  static get authProvider () {
+  static get oauthProvider () {
     return 'myunsplash'
   }
 

@@ -42,16 +42,16 @@ export default class AudioOscilloscope {
 
   private bufferLength: number
 
-  private dataArray: Uint8Array
+  private dataArray?: Uint8Array
 
   // eslint-disable-next-line no-use-before-define
   private onDrawFrame: (oscilloscope: AudioOscilloscope) => void
 
   private streamSource?: MediaStreamAudioSourceNode
 
-  private audioContext: BaseAudioContext
+  private audioContext?: BaseAudioContext
 
-  public source: AudioBufferSourceNode
+  public source?: AudioBufferSourceNode
 
   constructor(
     canvas: HTMLCanvasElement,
@@ -98,7 +98,7 @@ export default class AudioOscilloscope {
     const h = this.height
 
     if (analyser) {
-      analyser.getByteTimeDomainData(dataArray)
+      analyser.getByteTimeDomainData(dataArray!)
     }
 
     ctx.fillRect(0, 0, w, h)
@@ -112,7 +112,7 @@ export default class AudioOscilloscope {
     }
 
     for (let i = 0; i < bufferLength; i++) {
-      const v = dataArray[i] / 128.0
+      const v = dataArray![i] / 128.0
       const y = v * (h / 2)
 
       if (i === 0) {

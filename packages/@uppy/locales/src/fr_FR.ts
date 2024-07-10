@@ -172,11 +172,4 @@ fr_FR.strings = {
   },
 }
 
-// TODO: remove this in the next major?
-// @ts-expect-error Uppy can be a global in legacy bundle
-if (typeof Uppy !== 'undefined') {
-  // @ts-expect-error Uppy can be a global in legacy bundle
-  globalThis.Uppy.locales.fr_FR = fr_FR
-}
-
 export default fr_FR

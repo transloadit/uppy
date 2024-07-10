@@ -9,7 +9,7 @@ import { ProviderViews } from '@uppy/provider-views'
 import { h, type ComponentChild } from 'preact'
 
 import type { UppyFile, Body, Meta } from '@uppy/utils/lib/UppyFile'
-import type { UnknownProviderPluginState } from '@uppy/core/lib/Uppy'
+import type { UnknownProviderPluginState } from '@uppy/core/lib/Uppy.js'
 import locale from './locale.ts'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
@@ -29,11 +29,13 @@ export default class Instagram<M extends Meta, B extends Body> extends UIPlugin<
 
   provider: Provider<M, B>
 
-  view: ProviderViews<M, B>
+  view!: ProviderViews<M, B>
 
   storage: typeof tokenStorage
 
   files: UppyFile<M, B>[]
+
+  rootFolderId: string | null = 'recent'
 
   constructor(uppy: Uppy<M, B>, opts: InstagramOptions) {
     super(uppy, opts)
@@ -90,7 +92,6 @@ export default class Instagram<M extends Meta, B extends Body> extends UIPlugin<
       supportsRefreshToken: false,
     })
 
-    this.onFirstRender = this.onFirstRender.bind(this)
     this.render = this.render.bind(this)
   }
 
@@ -112,13 +113,6 @@ export default class Instagram<M extends Meta, B extends Body> extends UIPlugin<
   uninstall(): void {
     this.view.tearDown()
     this.unmount()
-  }
-
-  async onFirstRender(): Promise<void> {
-    await Promise.all([
-      this.provider.fetchPreAuthToken(),
-      this.view.getFolder('recent'),
-    ])
   }
 
   render(state: unknown): ComponentChild {

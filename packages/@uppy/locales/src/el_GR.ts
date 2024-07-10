@@ -147,11 +147,4 @@ el_GR.strings = {
   },
 }
 
-// TODO: remove this in the next major?
-// @ts-expect-error Uppy can be a global in legacy bundle
-if (typeof Uppy !== 'undefined') {
-  // @ts-expect-error Uppy can be a global in legacy bundle
-  globalThis.Uppy.locales.el_GR = el_GR
-}
-
 export default el_GR

@@ -227,11 +227,4 @@ vi_VN.strings = {
   zoomOut: 'Thu nhỏ',
 }
 
-// TODO: remove this in the next major?
-// @ts-expect-error Uppy can be a global in legacy bundle
-if (typeof Uppy !== 'undefined') {
-  // @ts-expect-error Uppy can be a global in legacy bundle
-  globalThis.Uppy.locales.vi_VN = vi_VN
-}
-
 export default vi_VN

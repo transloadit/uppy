@@ -1,9 +1,7 @@
 import { createElement as h, Component } from 'react'
-import PropTypes from 'prop-types'
 import type { UnknownPlugin, Uppy } from '@uppy/core'
 import StatusBarPlugin, { type StatusBarOptions } from '@uppy/status-bar'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
-import { uppy as uppyPropType } from './propTypes.ts'
 import getHTMLProps from './getHTMLProps.ts'
 import nonHtmlPropsHaveChanged from './nonHtmlPropsHaveChanged.ts'
 
@@ -20,31 +18,9 @@ interface StatusBarProps<M extends Meta, B extends Body>
 class StatusBar<M extends Meta, B extends Body> extends Component<
   StatusBarProps<M, B>
 > {
-  static propTypes = {
-    uppy: uppyPropType.isRequired,
-    hideUploadButton: PropTypes.bool,
-    hideRetryButton: PropTypes.bool,
-    hidePauseResumeButton: PropTypes.bool,
-    hideCancelButton: PropTypes.bool,
-    showProgressDetails: PropTypes.bool,
-    hideAfterFinish: PropTypes.bool,
-    doneButtonHandler: PropTypes.func,
-  }
+  private container!: HTMLElement
 
-  // Must be kept in sync with @uppy/status-bar/src/StatusBar.jsx.
-  static defaultProps = {
-    hideUploadButton: false,
-    hideRetryButton: false,
-    hidePauseResumeButton: false,
-    hideCancelButton: false,
-    showProgressDetails: false,
-    hideAfterFinish: true,
-    doneButtonHandler: null,
-  }
-
-  private container: HTMLElement
-
-  private plugin: UnknownPlugin<M, B>
+  private plugin!: UnknownPlugin<M, B>
 
   componentDidMount(): void {
     this.installPlugin()
@@ -76,9 +52,10 @@ class StatusBar<M extends Meta, B extends Body> extends Component<
       showProgressDetails,
       hideAfterFinish,
       doneButtonHandler,
+      id,
     } = this.props
     const options = {
-      id: 'react:StatusBar',
+      id: id || 'StatusBar',
       hideUploadButton,
       hideRetryButton,
       hidePauseResumeButton,

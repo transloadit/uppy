@@ -1,4 +1,3 @@
-/* eslint-disable react/require-default-props */
 import { h } from 'preact'
 
 function FileIcon() {
@@ -44,11 +43,15 @@ function VideoIcon() {
   )
 }
 
-export default function ItemIcon(props: {
+type ItemIconProps = {
   itemIconString: string
   alt?: string
-}): h.JSX.Element | null {
-  const { itemIconString } = props
+}
+
+export default function ItemIcon({
+  itemIconString,
+  alt = undefined,
+}: ItemIconProps): h.JSX.Element | null {
   if (itemIconString === null) return null
 
   switch (itemIconString) {
@@ -59,7 +62,6 @@ export default function ItemIcon(props: {
     case 'video':
       return <VideoIcon />
     default: {
-      const { alt } = props
       return (
         <img
           src={itemIconString}

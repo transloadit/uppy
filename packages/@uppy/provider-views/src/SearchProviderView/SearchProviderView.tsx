@@ -1,43 +1,64 @@
 import { h } from 'preact'
 
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
-import type { UnknownSearchProviderPlugin } from '@uppy/core/lib/Uppy'
-import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin'
-import type Uppy from '@uppy/core'
+import type {
+  PartialTree,
+  PartialTreeFile,
+  PartialTreeFolderNode,
+  PartialTreeFolderRoot,
+  UnknownSearchProviderPlugin,
+  UnknownSearchProviderPluginState,
+} from '@uppy/core/lib/Uppy.js'
 import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
-import SearchFilterInput from '../SearchFilterInput.tsx'
+import classNames from 'classnames'
+import type { ValidateableFile } from '@uppy/core/lib/Restricter.js'
+import remoteFileObjToLocal from '@uppy/utils/lib/remoteFileObjToLocal'
+import SearchInput from '../SearchInput.tsx'
 import Browser from '../Browser.tsx'
-import CloseWrapper from '../CloseWrapper.ts'
-import View, { type ViewOptions } from '../View.ts'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../../package.json'
+import PartialTreeUtils from '../utils/PartialTreeUtils/index.ts'
+import shouldHandleScroll from '../utils/shouldHandleScroll.ts'
+import handleError from '../utils/handleError.ts'
+import getClickedRange from '../utils/getClickedRange.ts'
+import FooterActions from '../FooterActions.tsx'
+import addFiles from '../utils/addFiles.ts'
+import getCheckedFilesWithPaths from '../utils/PartialTreeUtils/getCheckedFilesWithPaths.ts'
 
-const defaultState = {
+const defaultState: UnknownSearchProviderPluginState = {
+  loading: false,
+  searchString: '',
+  partialTree: [
+    {
+      type: 'root',
+      id: null,
+      cached: false,
+      nextPagePath: null,
+    },
+  ],
+  currentFolderId: null,
   isInputMode: true,
-  files: [],
-  folders: [],
-  breadcrumbs: [],
-  filterInput: '',
-  currentSelection: [],
-  searchTerm: null,
 }
 
-type PluginType = 'SearchProvider'
+type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>
 
-const defaultOptions = {
-  viewType: 'grid',
-  showTitles: true,
-  showFilter: true,
-  showBreadcrumbs: true,
+interface Opts<M extends Meta, B extends Body> {
+  provider: UnknownSearchProviderPlugin<M, B>['provider']
+  viewType: 'list' | 'grid' | 'unsplash'
+  showTitles: boolean
+  showFilter: boolean
 }
-
-type Opts<
-  M extends Meta,
-  B extends Body,
-  T extends PluginType,
-> = DefinePluginOpts<ViewOptions<M, B, T>, keyof typeof defaultOptions>
+type PassedOpts<M extends Meta, B extends Body> = Optional<
+  Opts<M, B>,
+  'viewType' | 'showTitles' | 'showFilter'
+>
+type DefaultOpts<M extends Meta, B extends Body> = Omit<Opts<M, B>, 'provider'>
+type RenderOpts<M extends Meta, B extends Body> = Omit<
+  PassedOpts<M, B>,
+  'provider'
+>
 
 type Res = {
   items: CompanionFile[]
@@ -49,31 +70,52 @@ type Res = {
  * SearchProviderView, used for Unsplash and future image search providers.
  * Extends generic View, shared with regular providers like Google Drive and Instagram.
  */
-export default class SearchProviderView<
-  M extends Meta,
-  B extends Body,
-> extends View<M, B, PluginType, Opts<M, B, PluginType>> {
+export default class SearchProviderView<M extends Meta, B extends Body> {
   static VERSION = packageJson.version
 
-  nextPageQuery: string | null = null
+  plugin: UnknownSearchProviderPlugin<M, B>
+
+  provider: UnknownSearchProviderPlugin<M, B>['provider']
+
+  opts: Opts<M, B>
+
+  isHandlingScroll: boolean = false
+
+  lastCheckbox: string | null = null
 
   constructor(
     plugin: UnknownSearchProviderPlugin<M, B>,
-    opts: ViewOptions<M, B, PluginType>,
+    opts: PassedOpts<M, B>,
   ) {
-    super(plugin, { ...defaultOptions, ...opts })
+    this.plugin = plugin
+    this.provider = opts.provider
+    const defaultOptions: DefaultOpts<M, B> = {
+      viewType: 'grid',
+      showTitles: true,
+      showFilter: true,
+    }
+    this.opts = { ...defaultOptions, ...opts }
 
+    this.setSearchString = this.setSearchString.bind(this)
     this.search = this.search.bind(this)
-    this.clearSearch = this.clearSearch.bind(this)
     this.resetPluginState = this.resetPluginState.bind(this)
     this.handleScroll = this.handleScroll.bind(this)
     this.donePicking = this.donePicking.bind(this)
+    this.cancelSelection = this.cancelSelection.bind(this)
+    this.toggleCheckbox = this.toggleCheckbox.bind(this)
 
     this.render = this.render.bind(this)
 
-    this.plugin.setPluginState(defaultState)
+    // Set default state for the plugin
+    this.resetPluginState()
 
-    this.registerRequestClient()
+    // @ts-expect-error this should be typed in @uppy/dashboard.
+    this.plugin.uppy.on('dashboard:close-panel', this.resetPluginState)
+
+    this.plugin.uppy.registerRequestClient(
+      this.provider.provider,
+      this.provider,
+    )
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -81,152 +123,227 @@ export default class SearchProviderView<
     // Nothing.
   }
 
+  setLoading(loading: boolean | string): void {
+    this.plugin.setPluginState({ loading })
+  }
+
   resetPluginState(): void {
     this.plugin.setPluginState(defaultState)
   }
 
-  #updateFilesAndInputMode(res: Res, files: CompanionFile[]): void {
-    this.nextPageQuery = res.nextPageQuery
-    res.items.forEach((item) => {
-      files.push(item)
-    })
-    this.plugin.setPluginState({
-      currentSelection: [],
-      isInputMode: false,
-      files,
-      searchTerm: res.searchedFor,
-    })
+  cancelSelection(): void {
+    const { partialTree } = this.plugin.getPluginState()
+    const newPartialTree: PartialTree = partialTree.map((item) =>
+      item.type === 'root' ? item : { ...item, status: 'unchecked' },
+    )
+    this.plugin.setPluginState({ partialTree: newPartialTree })
   }
 
-  async search(query: string): Promise<void> {
-    const { searchTerm } = this.plugin.getPluginState()
-    if (query && query === searchTerm) {
-      // no need to search again as this is the same as the previous search
-      return
-    }
+  async search(): Promise<void> {
+    const { searchString } = this.plugin.getPluginState()
+    if (searchString === '') return
 
     this.setLoading(true)
     try {
-      const res = await this.provider.search<Res>(query)
-      this.#updateFilesAndInputMode(res, [])
-    } catch (err) {
-      this.handleError(err)
-    } finally {
-      this.setLoading(false)
-    }
-  }
+      const response = await this.provider.search<Res>(searchString)
 
-  clearSearch(): void {
-    this.plugin.setPluginState({
-      currentSelection: [],
-      files: [],
-      searchTerm: null,
-    })
+      const newPartialTree: PartialTree = [
+        {
+          type: 'root',
+          id: null,
+          cached: false,
+          nextPagePath: response.nextPageQuery,
+        },
+        ...response.items.map(
+          (item) =>
+            ({
+              type: 'file',
+              id: item.requestPath,
+              status: 'unchecked',
+              parentId: null,
+              data: item,
+            }) as PartialTreeFile,
+        ),
+      ]
+      this.plugin.setPluginState({
+        partialTree: newPartialTree,
+        isInputMode: false,
+      })
+    } catch (error) {
+      handleError(this.plugin.uppy)(error)
+    }
+    this.setLoading(false)
   }
 
   async handleScroll(event: Event): Promise<void> {
-    const query = this.nextPageQuery || null
+    const { partialTree, searchString } = this.plugin.getPluginState()
+    const root = partialTree.find(
+      (i) => i.type === 'root',
+    ) as PartialTreeFolderRoot
 
-    if (this.shouldHandleScroll(event) && query) {
+    if (
+      shouldHandleScroll(event) &&
+      !this.isHandlingScroll &&
+      root.nextPagePath
+    ) {
       this.isHandlingScroll = true
-
       try {
-        const { files, searchTerm } = this.plugin.getPluginState()
-        const response = await this.provider.search<Res>(searchTerm!, query)
+        const response = await this.provider.search<Res>(
+          searchString,
+          root.nextPagePath,
+        )
 
-        this.#updateFilesAndInputMode(response, files)
+        const newRoot: PartialTreeFolderRoot = {
+          ...root,
+          nextPagePath: response.nextPageQuery,
+        }
+        const oldItems = partialTree.filter((i) => i.type !== 'root')
+
+        const newPartialTree: PartialTree = [
+          newRoot,
+          ...oldItems,
+          ...response.items.map(
+            (item) =>
+              ({
+                type: 'file',
+                id: item.requestPath,
+                status: 'unchecked',
+                parentId: null,
+                data: item,
+              }) as PartialTreeFile,
+          ),
+        ]
+        this.plugin.setPluginState({ partialTree: newPartialTree })
       } catch (error) {
-        this.handleError(error)
-      } finally {
-        this.isHandlingScroll = false
+        handleError(this.plugin.uppy)(error)
       }
+      this.isHandlingScroll = false
     }
   }
 
-  donePicking(): void {
-    const { currentSelection } = this.plugin.getPluginState()
-    this.plugin.uppy.log('Adding remote search provider files')
-    this.plugin.uppy.addFiles(
-      currentSelection.map((file) => this.getTagFile(file)),
-    )
+  async donePicking(): Promise<void> {
+    const { partialTree } = this.plugin.getPluginState()
+
+    // 1. Add files
+    const companionFiles = getCheckedFilesWithPaths(partialTree)
+    addFiles(companionFiles, this.plugin, this.provider)
+
+    // 2. Reset state
     this.resetPluginState()
   }
 
-  render(
-    state: unknown,
-    viewOptions: Omit<ViewOptions<M, B, PluginType>, 'provider'> = {},
+  toggleCheckbox(
+    ourItem: PartialTreeFolderNode | PartialTreeFile,
+    isShiftKeyPressed: boolean,
   ) {
-    const { didFirstRender, isInputMode, searchTerm } =
+    const { partialTree } = this.plugin.getPluginState()
+
+    const clickedRange = getClickedRange(
+      ourItem.id,
+      this.getDisplayedPartialTree(),
+      isShiftKeyPressed,
+      this.lastCheckbox,
+    )
+    const newPartialTree = PartialTreeUtils.afterToggleCheckbox(
+      partialTree,
+      clickedRange,
+    )
+
+    this.plugin.setPluginState({ partialTree: newPartialTree })
+    this.lastCheckbox = ourItem.id
+  }
+
+  validateSingleFile = (file: CompanionFile): string | null => {
+    const companionFile: ValidateableFile<M, B> = remoteFileObjToLocal(file)
+    const result = this.plugin.uppy.validateSingleFile(companionFile)
+    return result
+  }
+
+  getDisplayedPartialTree = (): (PartialTreeFile | PartialTreeFolderNode)[] => {
+    const { partialTree } = this.plugin.getPluginState()
+    return partialTree.filter((item) => item.type !== 'root') as (
+      | PartialTreeFolderNode
+      | PartialTreeFile
+    )[]
+  }
+
+  setSearchString = (searchString: string) => {
+    this.plugin.setPluginState({ searchString })
+    if (searchString === '') {
+      this.plugin.setPluginState({ partialTree: [] })
+    }
+  }
+
+  validateAggregateRestrictions = (partialTree: PartialTree) => {
+    const checkedFiles = partialTree.filter(
+      (item) => item.type === 'file' && item.status === 'checked',
+    ) as PartialTreeFile[]
+    const uppyFiles = checkedFiles.map((file) => file.data)
+    return this.plugin.uppy.validateAggregateRestrictions(uppyFiles)
+  }
+
+  render(state: unknown, viewOptions: RenderOpts<M, B> = {}): h.JSX.Element {
+    const { isInputMode, searchString, loading, partialTree } =
       this.plugin.getPluginState()
     const { i18n } = this.plugin.uppy
-
-    if (!didFirstRender) {
-      this.preFirstRender()
-    }
-
-    const targetViewOptions = { ...this.opts, ...viewOptions }
-    const { files, folders, filterInput, loading, currentSelection } =
-      this.plugin.getPluginState()
-    const { isChecked, filterItems, recordShiftKeyPress } = this
-    const hasInput = filterInput !== ''
-
-    const browserProps = {
-      isChecked,
-      toggleCheckbox: this.toggleCheckbox.bind(this),
-      recordShiftKeyPress,
-      currentSelection,
-      files: hasInput ? filterItems(files) : files,
-      folders: hasInput ? filterItems(folders) : folders,
-      handleScroll: this.handleScroll,
-      done: this.donePicking,
-      cancel: this.cancelPicking,
-
-      // For SearchFilterInput component
-      showSearchFilter: targetViewOptions.showFilter,
-      search: this.search,
-      clearSearch: this.clearSearch,
-      searchTerm,
-      searchOnInput: false,
-      searchInputLabel: i18n('search'),
-      clearSearchLabel: i18n('resetSearch'),
-
-      noResultsLabel: i18n('noSearchResults'),
-      title: this.plugin.title,
-      viewType: targetViewOptions.viewType,
-      showTitles: targetViewOptions.showTitles,
-      showFilter: targetViewOptions.showFilter,
-      isLoading: loading,
-      showBreadcrumbs: targetViewOptions.showBreadcrumbs,
-      pluginIcon: this.plugin.icon,
-      i18n,
-      uppyFiles: this.plugin.uppy.getFiles(),
-      validateRestrictions: (
-        ...args: Parameters<Uppy<M, B>['validateRestrictions']>
-      ) => this.plugin.uppy.validateRestrictions(...args),
-    }
+    const opts: Opts<M, B> = { ...this.opts, ...viewOptions }
 
     if (isInputMode) {
       return (
-        <CloseWrapper onUnmount={this.resetPluginState}>
-          <div className="uppy-SearchProvider">
-            <SearchFilterInput
-              search={this.search}
-              inputLabel={i18n('enterTextToSearch')}
-              buttonLabel={i18n('searchImages')}
-              inputClassName="uppy-c-textInput uppy-SearchProvider-input"
-              buttonCSSClassName="uppy-SearchProvider-searchButton"
-              showButton
-            />
-          </div>
-        </CloseWrapper>
+        <SearchInput
+          searchString={searchString}
+          setSearchString={this.setSearchString}
+          submitSearchString={this.search}
+          inputLabel={i18n('enterTextToSearch')}
+          buttonLabel={i18n('searchImages')}
+          wrapperClassName="uppy-SearchProvider"
+          inputClassName="uppy-c-textInput uppy-SearchProvider-input"
+          showButton
+          buttonCSSClassName="uppy-SearchProvider-searchButton"
+        />
       )
     }
 
     return (
-      <CloseWrapper onUnmount={this.resetPluginState}>
-        {/* eslint-disable-next-line react/jsx-props-no-spreading */}
-        <Browser {...browserProps} />
-      </CloseWrapper>
+      <div
+        className={classNames(
+          'uppy-ProviderBrowser',
+          `uppy-ProviderBrowser-viewType--${opts.viewType}`,
+        )}
+      >
+        {opts.showFilter && (
+          <SearchInput
+            searchString={searchString}
+            setSearchString={this.setSearchString}
+            submitSearchString={this.search}
+            inputLabel={i18n('search')}
+            clearSearchLabel={i18n('resetSearch')}
+            wrapperClassName="uppy-ProviderBrowser-searchFilter"
+            inputClassName="uppy-ProviderBrowser-searchFilterInput"
+          />
+        )}
+
+        <Browser
+          toggleCheckbox={this.toggleCheckbox}
+          displayedPartialTree={this.getDisplayedPartialTree()}
+          handleScroll={this.handleScroll}
+          openFolder={async () => {}}
+          noResultsLabel={i18n('noSearchResults')}
+          viewType={opts.viewType}
+          showTitles={opts.showTitles}
+          isLoading={loading}
+          i18n={i18n}
+          virtualList={false}
+        />
+
+        <FooterActions
+          partialTree={partialTree}
+          donePicking={this.donePicking}
+          cancelSelection={this.cancelSelection}
+          i18n={i18n}
+          validateAggregateRestrictions={this.validateAggregateRestrictions}
+        />
+      </div>
     )
   }
 }

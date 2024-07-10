@@ -224,11 +224,4 @@ uz_UZ.strings = {
   zoomOut: 'Kichraytirish',
 }
 
-// TODO: remove this in the next major?
-// @ts-expect-error Uppy can be a global in legacy bundle
-if (typeof Uppy !== 'undefined') {
-  // @ts-expect-error Uppy can be a global in legacy bundle
-  globalThis.Uppy.locales.uz_UZ = uz_UZ
-}
-
 export default uz_UZ

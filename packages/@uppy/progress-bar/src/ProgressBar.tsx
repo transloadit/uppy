@@ -1,6 +1,6 @@
 import { h, type ComponentChild } from 'preact'
 import { UIPlugin, type UIPluginOptions } from '@uppy/core'
-import type { Uppy, State } from '@uppy/core/lib/Uppy'
+import type { Uppy, State } from '@uppy/core/lib/Uppy.js'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin.js'
 
@@ -14,7 +14,6 @@ export interface ProgressBarOptions extends UIPluginOptions {
 }
 // set default options, must kept in sync with @uppy/react/src/ProgressBar.js
 const defaultOptions = {
-  target: 'body',
   fixed: false,
   hideAfterFinish: true,
 }

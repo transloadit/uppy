@@ -1,5 +1,12 @@
 # @uppy/box
 
+## 3.0.0-beta.1
+
+Released: 2024-03-28
+Included in: Uppy v4.0.0-beta.1
+
+- @uppy/box: refactor to TypeScript (Murderlon / #4979)
+
 ## 2.3.0
 
 Released: 2024-03-27

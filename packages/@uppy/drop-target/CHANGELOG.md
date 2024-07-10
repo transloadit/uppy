@@ -1,5 +1,27 @@
 # @uppy/drop-target
 
+## 3.0.0-beta.5
+
+Released: 2024-06-04
+Included in: Uppy v4.0.0-beta.10
+
+- @uppy/drop-target: remove `title` property (Mikael Finstad / #5200)
+
+## 3.0.0-beta.4
+
+Released: 2024-04-29
+Included in: Uppy v4.0.0-beta.4
+
+- @uppy/drop-target: change drop event type to DragEvent (Alireza Heydari / #5107)
+
+## 3.0.0-beta.1
+
+Released: 2024-03-28
+Included in: Uppy v4.0.0-beta.1
+
+- @uppy/audio,@uppy/dashboard,@uppy/drop-target,@uppy/webcam: add missing exports (Antoine du Hamel / #5014)
+
+
 ## 2.1.0
 
 Released: 2024-04-29

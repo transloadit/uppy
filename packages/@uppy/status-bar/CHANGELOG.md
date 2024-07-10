@@ -1,5 +1,23 @@
 # @uppy/status-bar
 
+## 4.0.0-beta.9
+
+Released: 2024-06-04
+Included in: Uppy v4.0.0-beta.10
+
+- @uppy/status-bar: remove unused component props (Antoine du Hamel / #5211)
+- @uppy/status-bar: rename `StatusBar` to `StatusBarUI` (Mikael Finstad / #5200)
+
+## 4.0.0-beta.1
+
+Released: 2024-03-28
+Included in: Uppy v4.0.0-beta.1
+
+- @uppy/companion-client,@uppy/provider-views,@uppy/status-bar: fix type imports (Antoine du Hamel / #5038)
+- @uppy/status-bar: remove default target (Antoine du Hamel / #4970)
+- @uppy/status-bar: refine type of private variables (Antoine du Hamel / #5025)
+- @uppy/status-bar: fix `recoveredState` type (Antoine du Hamel / #4996)
+
 ## 3.3.3
 
 Released: 2024-05-07

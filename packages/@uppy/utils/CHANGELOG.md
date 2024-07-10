@@ -1,5 +1,41 @@
 # @uppy/utils
 
+## 6.0.0-beta.8
+
+Released: 2024-06-04
+Included in: Uppy v4.0.0-beta.10
+
+- @uppy/utils: remove unused `settle` (Antoine du Hamel / #5210)
+- @uppy/aws-s3,@uppy/tus,@uppy/utils,@uppy/xhr-upload: remove `uploader` from `upload-progress` event (Mikael Finstad / #5200)
+
+## 6.0.0-beta.5
+
+Released: 2024-05-03
+Included in: Uppy v4.0.0-beta.5
+
+- @uppy/audio,@uppy/compressor,@uppy/core,@uppy/dashboard,@uppy/remote-sources,@uppy/tus,@uppy/utils: Format (Murderlon)
+
+## 6.0.0-beta.4
+
+Released: 2024-04-29
+Included in: Uppy v4.0.0-beta.4
+
+- @uppy/utils: fix fetcher export (Murderlon)
+- @uppy/utils: improve return type of `dataURItoFile` (Antoine du Hamel / #5112)
+- @uppy/utils: add fetcher (Merlijn Vos / #5073)
+
+## 6.0.0-beta.1
+
+Released: 2024-03-28
+Included in: Uppy v4.0.0-beta.1
+
+- @uppy/aws-s3-multipart,@uppy/tus,@uppy/utils,@uppy/xhr-upload: Make `allowedMetaFields` consistent (Merlijn Vos / #5011)
+- @uppy/utils: fix `RateLimitedQueue#wrapPromiseFunction` types (Antoine du Hamel / #5007)
+- @uppy/utils: fix `findAllDOMElements` type (Antoine du Hamel / #4997)
+- @uppy/utils: fix `AbortablePromise` type (Antoine du Hamel / #4988)
+- @uppy/utils: migrate RateLimitedQueue to TS (Merlijn Vos / #4981)
+
+
 ## 5.9.0
 
 Released: 2024-04-29

@@ -2,8 +2,10 @@
 
 jest.mock('tus-js-client')
 
-const intoStream = require('into-stream')
+const { Readable } = require('node:stream')
 const fs = require('node:fs')
+const { createServer } = require('node:http')
+const { once } = require('node:events')
 const nock = require('nock')
 
 const Uploader = require('../../src/server/Uploader')
@@ -18,8 +20,10 @@ afterAll(() => {
 
 process.env.COMPANION_DATADIR = './test/output'
 process.env.COMPANION_DOMAIN = 'localhost:3020'
-process.env.COMPANION_OAUTH_ORIGIN = '*'
+process.env.COMPANION_CLIENT_ORIGINS = 'true'
 const { companionOptions } = standalone()
+
+const mockReq = {}
 
 describe('uploader with tus protocol', () => {
   test('uploader respects uploadUrls', async () => {
@@ -53,7 +57,7 @@ describe('uploader with tus protocol', () => {
 
   test('upload functions with tus protocol', async () => {
     const fileContent = Buffer.from('Some file content')
-    const stream = intoStream(fileContent)
+    const stream = Readable.from([fileContent])
     const opts = {
       companionOptions,
       endpoint: 'http://url.myendpoint.com/files',
@@ -86,7 +90,7 @@ describe('uploader with tus protocol', () => {
     })
     socketClient.onUploadSuccess(uploadToken, onUploadSuccess)
     await promise
-    await uploader.tryUploadStream(stream)
+    await uploader.tryUploadStream(stream, mockReq)
 
     expect(firstReceivedProgress).toBe(8)
 
@@ -109,7 +113,7 @@ describe('uploader with tus protocol', () => {
 
   test('upload functions with tus protocol without size', async () => {
     const fileContent = Buffer.alloc(1e6)
-    const stream = intoStream(fileContent)
+    const stream = Readable.from([fileContent])
     const opts = {
       companionOptions,
       endpoint: 'http://url.myendpoint.com/files',
@@ -135,7 +139,7 @@ describe('uploader with tus protocol', () => {
     return new Promise((resolve, reject) => {
       // validate that the test is resolved on socket connection
       uploader.awaitReady(60000).then(() => {
-        uploader.tryUploadStream(stream).then(() => {
+        uploader.tryUploadStream(stream, mockReq).then(() => {
           try {
             expect(fs.existsSync(uploader.path)).toBe(false)
             resolve()
@@ -154,7 +158,7 @@ describe('uploader with tus protocol', () => {
       })
       socketClient.onUploadSuccess(uploadToken, (message) => {
         try {
-          expect(firstReceivedProgress.bytesUploaded).toBe(8192)
+          expect(firstReceivedProgress.bytesUploaded).toBe(500_000)
 
           // see __mocks__/tus-js-client.js
           expect(message.payload.url).toBe('https://tus.endpoint/files/foo-bar')
@@ -165,13 +169,13 @@ describe('uploader with tus protocol', () => {
     })
   })
 
-  async function runMultipartTest ({ metadata, useFormData, includeSize = true  } = {}) {
+  async function runMultipartTest ({ metadata, useFormData, includeSize = true, address = 'localhost'  } = {}) {
     const fileContent = Buffer.from('Some file content')
-    const stream = intoStream(fileContent)
+    const stream = Readable.from([fileContent])
 
     const opts = {
       companionOptions,
-      endpoint: 'http://localhost',
+      endpoint: `http://${address}`,
       protocol: 'multipart',
       size: includeSize ? fileContent.length : undefined,
       metadata,
@@ -184,14 +188,30 @@ describe('uploader with tus protocol', () => {
   }
 
   test('upload functions with xhr protocol', async () => {
-    nock('http://localhost').post('/').reply(200)
-
-    const ret = await runMultipartTest()
-    expect(ret).toMatchObject({ url: null, extraData: { response: expect.anything(), bytesUploaded: 17 } })
+    let alreadyCalled = false
+    // We are creating our own test server for this test
+    // instead of using nock because of a bug when passing a Node.js stream to got.
+    // Ref: https://github.com/nock/nock/issues/2595
+    const server = createServer((req,res) => {
+      if (alreadyCalled) throw new Error('already called')
+      alreadyCalled = true
+      if (req.url === '/' && req.method === 'POST') {
+        res.writeHead(200)
+        res.end('OK')
+      }
+    }).listen()
+    try {
+      await once(server, 'listening')
+      
+      const ret = await runMultipartTest({ address: `localhost:${server.address().port}` })
+      expect(ret).toMatchObject({ url: null, extraData: { response: expect.anything(), bytesUploaded: 17 } })
+    } finally {
+      server.close()
+    }
   })
 
   // eslint-disable-next-line max-len
-  const formDataNoMetaMatch = /^----------------------------\d+\r\nContent-Disposition: form-data; name="files\[\]"; filename="uppy-file-[^"]+"\r\nContent-Type: application\/octet-stream\r\n\r\nSome file content\r\n----------------------------\d+--\r\n$/
+  const formDataNoMetaMatch = /^--form-data-boundary-[a-z0-9]+\r\nContent-Disposition: form-data; name="files\[\]"; filename="uppy-file-[^"]+"\r\nContent-Type: application\/octet-stream\r\n\r\nSome file content\r\n--form-data-boundary-[a-z0-9]+--\r\n\r\n$/
 
   test('upload functions with xhr formdata', async () => {
     nock('http://localhost').post('/', formDataNoMetaMatch)
@@ -202,7 +222,6 @@ describe('uploader with tus protocol', () => {
   })
 
   test('upload functions with unknown file size', async () => {
-    // eslint-disable-next-line max-len
     nock('http://localhost').post('/', formDataNoMetaMatch)
       .reply(200)
 
@@ -211,13 +230,12 @@ describe('uploader with tus protocol', () => {
   })
 
   // https://github.com/transloadit/uppy/issues/3477
-  test('upload functions with xhr formdata and metadata', async () => {
-    // eslint-disable-next-line max-len
-    nock('http://localhost').post('/', /^----------------------------\d+\r\nContent-Disposition: form-data; name="key1"\r\n\r\nnull\r\n----------------------------\d+\r\nContent-Disposition: form-data; name="key2"\r\n\r\ntrue\r\n----------------------------\d+\r\nContent-Disposition: form-data; name="key3"\r\n\r\n\d+\r\n----------------------------\d+\r\nContent-Disposition: form-data; name="key4"\r\n\r\n\[object Object\]\r\n----------------------------\d+\r\nContent-Disposition: form-data; name="key5"\r\n\r\n\(\) => {}\r\n----------------------------\d+\r\nContent-Disposition: form-data; name="key6"\r\n\r\nSymbol\(\)\r\n----------------------------\d+\r\nContent-Disposition: form-data; name="files\[\]"; filename="uppy-file-[^"]+"\r\nContent-Type: application\/octet-stream\r\n\r\nSome file content\r\n----------------------------\d+--\r\n$/)
+  test('upload functions with xhr formdata and metadata without crashing the node.js process', async () => {
+    nock('http://localhost').post('/', /^--form-data-boundary-[a-z0-9]+\r\nContent-Disposition: form-data; name="key1"\r\n\r\nnull\r\n--form-data-boundary-[a-z0-9]+\r\nContent-Disposition: form-data; name="key2"\r\n\r\ntrue\r\n--form-data-boundary-[a-z0-9]+\r\nContent-Disposition: form-data; name="key3"\r\n\r\n\d+\r\n--form-data-boundary-[a-z0-9]+\r\nContent-Disposition: form-data; name="key4"\r\n\r\n\[object Object\]\r\n--form-data-boundary-[a-z0-9]+\r\nContent-Disposition: form-data; name="key5"\r\n\r\n\(\) => \{\}\r\n--form-data-boundary-[a-z0-9]+\r\nContent-Disposition: form-data; name="files\[\]"; filename="uppy-file-[^"]+"\r\nContent-Type: application\/octet-stream\r\n\r\nSome file content\r\n--form-data-boundary-[a-z0-9]+--\r\n\r\n$/)
       .reply(200)
 
     const metadata = {
-      key1: null, key2: true, key3: 1234, key4: {}, key5: () => {}, key6: Symbol(''),
+      key1: null, key2: true, key3: 1234, key4: {}, key5: () => {},
     }
     const ret = await runMultipartTest({ useFormData: true, metadata })
     expect(ret).toMatchObject({ url: null, extraData: { response: expect.anything(), bytesUploaded: 17 } })
@@ -258,7 +276,7 @@ describe('uploader with tus protocol', () => {
 
   test('uploader respects maxFileSize with unknown size', async () => {
     const fileContent = Buffer.alloc(10000)
-    const stream = intoStream(fileContent)
+    const stream = Readable.from([fileContent])
     const opts = {
       companionOptions: { ...companionOptions, maxFileSize: 1000 },
       endpoint: 'http://url.myendpoint.com/files',
@@ -271,7 +289,7 @@ describe('uploader with tus protocol', () => {
     const uploadToken = uploader.token
 
     // validate that the test is resolved on socket connection
-    uploader.awaitReady(60000).then(() => uploader.tryUploadStream(stream))
+    uploader.awaitReady(60000).then(() => uploader.tryUploadStream(stream, mockReq))
     socketClient.connect(uploadToken)
 
     return new Promise((resolve, reject) => {

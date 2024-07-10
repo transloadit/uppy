@@ -1,5 +1,42 @@
 # @uppy/react
 
+## 4.0.0
+
+Released: 2024-07-10
+Included in: Uppy v4.0.0
+
+- @uppy/react: introduce useUppyEvent (Merlijn Vos / #5264)
+
+## 4.0.0-beta.8
+
+Released: 2024-06-27
+Included in: Uppy v4.0.0-beta.13
+
+- @uppy/react: TS strict mode (Merlijn Vos / #5258)
+
+## 4.0.0-beta.6
+
+Released: 2024-06-11
+Included in: Uppy v4.0.0-beta.11
+
+- @uppy/react: remove `react:` prefix from `id` & allow `id` as a prop (Merlijn Vos / #5228)
+
+## 4.0.0-beta.4
+
+Released: 2024-04-29
+Included in: Uppy v4.0.0-beta.4
+
+- @uppy/react: remove `useUppy` & reintroduce `useUppyState` (Merlijn Vos / #5059)
+
+## 4.0.0-beta.1
+
+Released: 2024-03-28
+Included in: Uppy v4.0.0-beta.1
+
+- @uppy/react: remove `prop-types` dependency (Antoine du Hamel / #5031)
+- @uppy/react: remove `Wrapper.ts` (Antoine du Hamel / #5032)
+- @uppy/react: refactor to TS (Antoine du Hamel / #5012)
+
 ## 3.3.0
 
 Released: 2024-03-27

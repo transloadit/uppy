@@ -24,13 +24,6 @@ class GoogleDrive extends UIPlugin {
     // snip
   }
 
-  onFirstRender() {
-    return Promise.all([
-      this.provider.fetchPreAuthToken(),
-      this.view.getFolder('root'),
-    ])
-  }
-
   render(state) {
     return this.view.render(state)
   }

@@ -1,5 +1,104 @@
 # @uppy/companion
 
+## 5.0.0
+
+Released: 2024-07-10
+Included in: Uppy v4.0.0
+
+- @uppy/companion: make streaming upload default to `true` (Mikael Finstad / #5315)
+- @uppy/companion: remove `oauthOrigin` (Antoine du Hamel / #5311)
+- @uppy/companion: do not list Node.js 20.12 as compatible (Antoine du Hamel / #5309)
+- examples,@uppy/companion: Release: uppy@3.27.3 (github-actions[bot] / #5304)
+- @uppy/companion: fix `TypeError` when parsing request (Antoine du Hamel / #5303)
+
+## 5.0.0-beta.12
+
+Released: 2024-07-02
+Included in: Uppy v4.0.0-beta.14
+
+- @uppy/companion: make `oauthOrigin` option required (Mikael Finstad / #5276)
+
+## 5.0.0-beta.11
+
+Released: 2024-06-27
+Included in: Uppy v4.0.0-beta.13
+
+- @uppy/companion: implement facebook app secret proof (Mikael Finstad / #5249)
+
+## 5.0.0-beta.10
+
+Released: 2024-06-18
+Included in: Uppy v4.0.0-beta.12
+
+- @uppy/companion: coalesce options `bucket` and `getKey` (Mikael Finstad / #5169)
+- @uppy/companion: improve companion logging (Mikael Finstad / #5250)
+
+## 5.0.0-beta.9
+
+Released: 2024-06-04
+Included in: Uppy v4.0.0-beta.10
+
+- @uppy/companion: invert some internal boolean options (Mikael Finstad / #5198)
+- @uppy/companion: rename `authProvider` to `oauthProvider` (Mikael Finstad / #5198)
+- @uppy/companion: remove unused headers (Mikael Finstad / #5198)
+- @uppy/companion: remove sanitizing of metadata (Mikael Finstad / #5198)
+- @uppy/companion: remove `error.extraData` (Mikael Finstad / #5198)
+- @uppy/companion: capitalize POST (Mikael Finstad / #5198)
+- @uppy/companion: simplify code by using modern Node.js APIs (Mikael Finstad / #5198)
+- @uppy/companion: rename `getExtraConfig` to `getExtraGrantConfig` (Mikael Finstad / #5198)
+- @uppy/companion: change `COMPANION_ENABLE_URL_ENDPOINT` default (Mikael Finstad / #5198)
+- @uppy/companion: change default value for Redis session prefix (Mikael Finstad / #5198)
+
+## 5.0.0-beta.8
+
+Released: 2024-05-23
+Included in: Uppy v4.0.0-beta.9
+
+- @uppy/companion: remove `chalk` from dependencies (Antoine du Hamel / #5178)
+
+## 5.0.0-beta.7
+
+Released: 2024-05-22
+Included in: Uppy v4.0.0-beta.8
+
+- @uppy/companion: encode `uploadId` (Mikael Finstad / #5168)
+- @uppy/companion: bump `express-session` (Antoine du Hamel / #5177)
+- @uppy/companion: remove dependency on `express-request-id` (Antoine du Hamel / #5176)
+- @uppy/companion: bump prom to v15 (Antoine du Hamel / #5175)
+- @uppy/companion: upgrade deps (Antoine du Hamel / #5119)
+
+## 5.0.0-beta.6
+
+Released: 2024-05-14
+Included in: Uppy v4.0.0-beta.7
+
+- @uppy/companion: switch from `node-redis` to `ioredis` (Dominik Schmidt / #4623)
+
+## 5.0.0-beta.5
+
+Released: 2024-05-03
+Included in: Uppy v4.0.0-beta.5
+
+- @uppy/companion: coerce `requestUrl` to a string (Antoine du Hamel / #5128)
+
+## 5.0.0-beta.4
+
+Released: 2024-04-29
+Included in: Uppy v4.0.0-beta.4
+
+- @uppy/companion: bump Node.js version support matrix (Antoine du Hamel / #5035)
+- @uppy/companion,@uppy/file-input: Release: uppy@3.24.1 (github-actions[bot] / #5069)
+- @uppy/companion: upgrade redis (Mikael Finstad / #5065)
+- @uppy/companion: Bump express from 4.18.1 to 4.19.2 (dependabot[bot] / #5037)
+
+## 5.0.0-beta.1
+
+Released: 2024-03-28
+Included in: Uppy v4.0.0-beta.1
+
+- @uppy/companion: improve error msg (Mikael Finstad / #5010)
+- @uppy/companion: crash if trying to set path to / (Mikael Finstad / #5003)
+
 ## 4.15.1
 
 Released: 2024-07-03

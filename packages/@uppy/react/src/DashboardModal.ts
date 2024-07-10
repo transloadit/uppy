@@ -1,15 +1,8 @@
 import { createElement as h, Component } from 'react'
-import PropTypes from 'prop-types'
+import type React from 'react'
 import DashboardPlugin, { type DashboardOptions } from '@uppy/dashboard'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import type { Uppy } from '@uppy/core'
-import {
-  cssSize,
-  locale,
-  metaFields,
-  plugins,
-  uppy as uppyPropType,
-} from './propTypes.ts'
 import getHTMLProps from './getHTMLProps.ts'
 import nonHtmlPropsHaveChanged from './nonHtmlPropsHaveChanged.ts'
 
@@ -22,8 +15,8 @@ type DashboardInlineOptions<M extends Meta, B extends Body> = Omit<
 export interface DashboardModalProps<M extends Meta, B extends Body>
   extends DashboardInlineOptions<M, B> {
   uppy: Uppy<M, B>
-  onRequestClose: () => void
-  open: boolean
+  onRequestClose?: () => void
+  open?: boolean
 }
 
 /**
@@ -34,93 +27,14 @@ export interface DashboardModalProps<M extends Meta, B extends Body>
 class DashboardModal<M extends Meta, B extends Body> extends Component<
   DashboardModalProps<M, B>
 > {
-  static propTypes = {
-    uppy: uppyPropType.isRequired,
-    target:
-      typeof window !== 'undefined' ?
-        PropTypes.instanceOf(window.HTMLElement)
-      : PropTypes.any,
-    open: PropTypes.bool,
-    onRequestClose: PropTypes.func,
-    closeModalOnClickOutside: PropTypes.bool,
-    disablePageScrollWhenModalOpen: PropTypes.bool,
-    plugins,
-    width: cssSize,
-    height: cssSize,
-    showProgressDetails: PropTypes.bool,
-    note: PropTypes.string,
-    metaFields,
-    proudlyDisplayPoweredByUppy: PropTypes.bool,
-    autoOpenFileEditor: PropTypes.bool,
-    animateOpenClose: PropTypes.bool,
-    browserBackButtonClose: PropTypes.bool,
-    closeAfterFinish: PropTypes.bool,
-    disableStatusBar: PropTypes.bool,
-    disableInformer: PropTypes.bool,
-    disableThumbnailGenerator: PropTypes.bool,
-    disableLocalFiles: PropTypes.bool,
-    disabled: PropTypes.bool,
-    hideCancelButton: PropTypes.bool,
-    hidePauseResumeButton: PropTypes.bool,
-    hideProgressAfterFinish: PropTypes.bool,
-    hideRetryButton: PropTypes.bool,
-    hideUploadButton: PropTypes.bool,
-    showLinkToFileUploadResult: PropTypes.bool,
-    showRemoveButtonAfterComplete: PropTypes.bool,
-    showSelectedFiles: PropTypes.bool,
-    waitForThumbnailsBeforeUpload: PropTypes.bool,
-    fileManagerSelectionType: PropTypes.string,
-    theme: PropTypes.string,
-    // pass-through to ThumbnailGenerator
-    thumbnailType: PropTypes.string,
-    thumbnailWidth: PropTypes.number,
-    locale,
-  }
-
-  // Must be kept in sync with @uppy/dashboard/src/Dashboard.jsx.
   static defaultProps = {
-    metaFields: [],
-    plugins: [],
-    width: 750,
-    height: 550,
-    thumbnailWidth: 280,
-    thumbnailType: 'image/jpeg',
-    waitForThumbnailsBeforeUpload: false,
-    showLinkToFileUploadResult: false,
-    showProgressDetails: false,
-    hideUploadButton: false,
-    hideCancelButton: false,
-    hideRetryButton: false,
-    hidePauseResumeButton: false,
-    hideProgressAfterFinish: false,
-    note: null,
-    closeModalOnClickOutside: false,
-    closeAfterFinish: false,
-    disableStatusBar: false,
-    disableInformer: false,
-    disableThumbnailGenerator: false,
-    disablePageScrollWhenModalOpen: true,
-    animateOpenClose: true,
-    fileManagerSelectionType: 'files',
-    proudlyDisplayPoweredByUppy: true,
-    showSelectedFiles: true,
-    showRemoveButtonAfterComplete: false,
-    browserBackButtonClose: false,
-    theme: 'light',
-    autoOpenFileEditor: false,
-    disabled: false,
-    disableLocalFiles: false,
-
-    // extra
     open: undefined,
-    target: undefined,
-    locale: null,
     onRequestClose: undefined,
   }
 
-  private container: HTMLElement
+  private container!: HTMLElement
 
-  private plugin: DashboardPlugin<M, B>
+  private plugin!: DashboardPlugin<M, B>
 
   componentDidMount(): void {
     this.installPlugin()
@@ -160,8 +74,8 @@ class DashboardModal<M extends Meta, B extends Body> extends Component<
       ...rest
     } = this.props
     const options = {
+      id: 'DashboardModal',
       ...rest,
-      id: 'react:DashboardModal',
       inline: false,
       target,
       open,

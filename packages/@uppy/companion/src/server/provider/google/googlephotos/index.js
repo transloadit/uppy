@@ -1,4 +1,4 @@
-const got = require('got').default
+const got = require('../../../got')
 
 const { logout, refreshToken } = require('../index')
 const { withGoogleErrorHandling } = require('../../providerErrors')
@@ -8,17 +8,17 @@ const logger = require('../../../logger')
 const Provider = require('../../Provider')
 
 
-const getBaseClient = ({ token }) => got.extend({
+const getBaseClient = async ({ token }) => (await got).extend({
   headers: {
     authorization: `Bearer ${token}`,
   },
 })
 
-const getPhotosClient = ({ token }) => getBaseClient({ token }).extend({
+const getPhotosClient = async ({ token }) => (await getBaseClient({ token })).extend({
   prefixUrl: 'https://photoslibrary.googleapis.com/v1',
 })
 
-const getOauthClient = ({ token }) => getBaseClient({ token }).extend({
+const getOauthClient = async ({ token }) => (await getBaseClient({ token })).extend({
   prefixUrl: 'https://www.googleapis.com/oauth2/v1',
 })
 
@@ -42,7 +42,7 @@ async function paginate(fn, getter, limit = 5) {
  * Provider for Google Photos API
  */
 class GooglePhotos extends Provider {
-  static get authProvider () {
+  static get oauthProvider () {
     return 'googlephotos'
   }
 
@@ -52,13 +52,13 @@ class GooglePhotos extends Provider {
 
   // eslint-disable-next-line class-methods-use-this
   async list (options) {
-    return withGoogleErrorHandling(GooglePhotos.authProvider, 'provider.photos.list.error', async () => {
+    return withGoogleErrorHandling(GooglePhotos.oauthProvider, 'provider.photos.list.error', async () => {
       const { directory, query } = options
       const { token } = options
 
       const isRoot = !directory
 
-      const client = getPhotosClient({ token })
+      const client = await getPhotosClient({ token })
 
 
       async function fetchAlbums () {
@@ -66,7 +66,7 @@ class GooglePhotos extends Provider {
 
         return paginate(
           (pageToken) => client.get('albums', { searchParams: { pageToken, pageSize: 50 }, responseType: 'json' }).json(),
-          (response) => response.albums,
+          (response) => response.albums ?? [], // seems to be undefined if no albums
         )
       }
 
@@ -85,7 +85,8 @@ class GooglePhotos extends Provider {
         return resp
       }
 
-      const [sharedAlbums, albums, { mediaItems, nextPageToken }] = await Promise.all([
+      // mediaItems seems to be undefined if empty folder
+      const [sharedAlbums, albums, { mediaItems = [], nextPageToken }] = await Promise.all([
         fetchSharedAlbums(), fetchAlbums(), fetchMediaItems()
       ])
 
@@ -133,7 +134,7 @@ class GooglePhotos extends Provider {
         })),
       ];
 
-      const { email: username } = await getOauthClient({ token }).get('userinfo').json()
+      const { email: username } = await (await getOauthClient({ token })).get('userinfo').json()
 
       return {
         username,
@@ -145,28 +146,21 @@ class GooglePhotos extends Provider {
 
   // eslint-disable-next-line class-methods-use-this
   async download ({ id, token }) {
-    return withGoogleErrorHandling(GooglePhotos.authProvider, 'provider.photos.download.error', async () => {
-      const client = getPhotosClient({ token })
+    return withGoogleErrorHandling(GooglePhotos.oauthProvider, 'provider.photos.download.error', async () => {
+      const client = await getPhotosClient({ token })
 
       const { baseUrl } = await client.get(`mediaItems/${encodeURIComponent(id)}`, { responseType: 'json' }).json()
 
       const url = `${baseUrl}=d`;
-      const stream = got.stream.get(url, { responseType: 'json' })
+      const stream = (await got).stream.get(url, { responseType: 'json' })
       const { size } = await prepareStream(stream)
 
       return { stream, size }
     })
   }
-
-  // eslint-disable-next-line class-methods-use-this
-  async logout(...args) {
-    return logout(...args)
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  async refreshToken(...args) {
-    return refreshToken(...args)
-  }
 }
+
+GooglePhotos.prototype.logout = logout
+GooglePhotos.prototype.refreshToken = refreshToken
 
 module.exports = GooglePhotos

@@ -1,6 +1,6 @@
 import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
 import type { I18n } from '@uppy/utils/lib/Translator'
-import type { Uppy, State } from '@uppy/core/lib/Uppy'
+import type { Uppy, State } from '@uppy/core/lib/Uppy.js'
 import { h } from 'preact'
 import classNames from 'classnames'
 import statusBarStates from './StatusBarStates.ts'
@@ -59,42 +59,37 @@ export interface StatusBarUIProps<M extends Meta, B extends Body> {
   totalUploadedSize: number
 }
 
-// TODO: rename the function to StatusBarUI on the next major.
-export default function StatusBar<M extends Meta, B extends Body>(
-  props: StatusBarUIProps<M, B>,
-) {
-  const {
-    newFiles,
-    allowNewUpload,
-    isUploadInProgress,
-    isAllPaused,
-    resumableUploads,
-    error,
-    hideUploadButton,
-    hidePauseResumeButton,
-    hideCancelButton,
-    hideRetryButton,
-    recoveredState,
-    uploadState,
-    totalProgress,
-    files,
-    supportsUploadProgress,
-    hideAfterFinish,
-    isSomeGhost,
-    doneButtonHandler,
-    isUploadStarted,
-    i18n,
-    startUpload,
-    uppy,
-    isAllComplete,
-    showProgressDetails,
-    numUploads,
-    complete,
-    totalSize,
-    totalETA,
-    totalUploadedSize,
-  } = props
-
+export default function StatusBarUI<M extends Meta, B extends Body>({
+  newFiles,
+  allowNewUpload,
+  isUploadInProgress,
+  isAllPaused,
+  resumableUploads,
+  error,
+  hideUploadButton = undefined,
+  hidePauseResumeButton = false,
+  hideCancelButton = false,
+  hideRetryButton = false,
+  recoveredState,
+  uploadState,
+  totalProgress,
+  files,
+  supportsUploadProgress,
+  hideAfterFinish = false,
+  isSomeGhost,
+  doneButtonHandler = undefined,
+  isUploadStarted,
+  i18n,
+  startUpload,
+  uppy,
+  isAllComplete,
+  showProgressDetails = undefined,
+  numUploads,
+  complete,
+  totalSize,
+  totalETA,
+  totalUploadedSize,
+}: StatusBarUIProps<M, B>) {
   function getProgressValue(): number | null {
     switch (uploadState) {
       case STATE_POSTPROCESSING:
@@ -285,14 +280,4 @@ export default function StatusBar<M extends Meta, B extends Body>(
       </div>
     </div>
   )
-}
-
-StatusBar.defaultProps = {
-  doneButtonHandler: undefined,
-  hideAfterFinish: false,
-  hideCancelButton: false,
-  hidePauseResumeButton: false,
-  hideRetryButton: false,
-  hideUploadButton: undefined,
-  showProgressDetails: undefined,
 }

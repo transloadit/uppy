@@ -1,12 +1,11 @@
 import { createElement as h, Component } from 'react'
-import PropTypes from 'prop-types'
-import type { UnknownPlugin, Uppy } from '@uppy/core'
+import type { UIPluginOptions, UnknownPlugin, Uppy } from '@uppy/core'
 import FileInputPlugin from '@uppy/file-input'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import type { Locale } from '@uppy/utils/lib/Translator'
-import * as propTypes from './propTypes.ts'
 
-interface FileInputProps<M extends Meta, B extends Body> {
+interface FileInputProps<M extends Meta, B extends Body>
+  extends UIPluginOptions {
   uppy: Uppy<M, B>
   locale?: Locale
   pretty?: boolean
@@ -21,13 +20,6 @@ interface FileInputProps<M extends Meta, B extends Body> {
 class FileInput<M extends Meta, B extends Body> extends Component<
   FileInputProps<M, B>
 > {
-  static propTypes = {
-    uppy: propTypes.uppy.isRequired,
-    locale: propTypes.locale,
-    pretty: PropTypes.bool,
-    inputName: PropTypes.string,
-  }
-
   // Must be kept in sync with @uppy/file-input/src/FileInput.jsx
   static defaultProps = {
     locale: undefined,
@@ -35,9 +27,9 @@ class FileInput<M extends Meta, B extends Body> extends Component<
     inputName: 'files[]',
   }
 
-  private container: HTMLElement
+  private container!: HTMLElement
 
-  private plugin: UnknownPlugin<M, B>
+  private plugin?: UnknownPlugin<M, B>
 
   componentDidMount(): void {
     this.installPlugin()
@@ -56,9 +48,9 @@ class FileInput<M extends Meta, B extends Body> extends Component<
   }
 
   installPlugin(): void {
-    const { uppy, locale, pretty, inputName } = this.props
+    const { uppy, locale, pretty, inputName, id } = this.props
     const options = {
-      id: 'react:FileInput',
+      id: id || 'FileInput',
       locale,
       pretty,
       inputName,
@@ -73,7 +65,7 @@ class FileInput<M extends Meta, B extends Body> extends Component<
   uninstallPlugin(props = this.props): void {
     const { uppy } = props
 
-    uppy.removePlugin(this.plugin)
+    uppy.removePlugin(this.plugin!)
   }
 
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types

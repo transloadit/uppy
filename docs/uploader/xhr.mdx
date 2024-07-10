@@ -89,13 +89,6 @@ URL of the HTTP server (`string`, default: `null`).
 Configures which HTTP method to use for the upload (`string`, default:
 `'POST'`).
 
-:::note
-
-Uppy is not following the standard and will uppercase the method name. This
-behavior will be removed in a future version to align Uppy with the web APIs.
-
-:::
-
 #### `formData`
 
 Configures whether to use a multipart form upload, using [FormData][]
@@ -118,9 +111,9 @@ defaults to `'file'`.
 Pass an array of field names to limit the metadata fields that will be added to
 upload.
 
-- Set this to an empty array `[]` to not send any fields.
-- Set this to `['name']` to only send the `name` field.
-- Set this to `null` (the default) to send _all_ metadata fields.
+- Set it to `false` to not send any fields (or an empty array).
+- Set it to `['name']` to only send the `name` field.
+- Set it to `true` (the default) to send _all_ metadata fields.
 
 If the [`formData`](#formData-true) option is set to false, `metaFields` is
 ignored.
@@ -137,8 +130,8 @@ const headers = {
 ```
 
 Header values can also be derived from file data by providing a function. The
-function receives an [Uppy file][] and must return an object where the keys are
-header names, and values are header values.
+function receives an [Uppy file][] and must return an object where the keys are header
+names, and values are header values.
 
 ```js
 const headers = (file) => {
@@ -152,6 +145,15 @@ const headers = (file) => {
 :::note
 
 The function syntax is not available when [`bundle`](#bundle) is set to `true`.
+
+:::
+
+:::note
+
+Failed requests are retried with the same headers. If you want to change the
+headers on retry,
+[such as refreshing an auth token](#how-can-I-refresh-auth-tokens-after-they-expire),
+you can use [`onBeforeRequest`](#onbeforerequest).
 
 :::
 
@@ -183,92 +185,6 @@ uppy.setFileState(fileID, {
 });
 ```
 
-#### `validateStatus`
-
-Check if the response was successful (`function`, default:
-`(status, responseText, response) => boolean`).
-
-- By default, responses with a 2xx HTTP status code are considered successful.
-- When `true`, [`getResponseData()`](#getResponseData-responseText-response)
-  will be called and the upload will be marked as successful.
-- When `false`, both
-  [`getResponseData()`](#getResponseData-responseText-response) and
-  [`getResponseError()`](#getResponseError-responseText-response) will be called
-  and the upload will be marked as unsuccessful.
-
-##### Parameters
-
-- The `statusCode` is the numeric HTTP status code returned by the endpoint.
-- The `responseText` is the XHR endpoint response as a string.
-- `response` is the [XMLHttpRequest][] object.
-
-:::note
-
-This option is only used for **local** uploads. Uploads from remote providers
-like Google Drive or Instagram do not support this and will always use the
-default.
-
-:::
-
-#### `getResponseData`
-
-Extract the response data from the successful upload (`function`, default:
-`(responseText, response) => void`).
-
-- `responseText` is the XHR endpoint response as a string.
-- `response` is the [XMLHttpRequest][] object.
-
-JSON is handled automatically, so you should only use this if the endpoint
-responds with a different format. For example, an endpoint that responds with an
-XML document:
-
-```js
-function getResponseData(responseText, response) {
-	const parser = new DOMParser();
-	const xmlDoc = parser.parseFromString(responseText, 'text/xml');
-	return {
-		url: xmlDoc.querySelector('Location').textContent,
-	};
-}
-```
-
-:::note
-
-This response data will be available on the file’s `.response` property and will
-be emitted in the [`upload-success`][uppy.upload-success] event.
-
-:::
-
-:::note
-
-When uploading files from remote providers such as Dropbox or Instagram,
-Companion sends upload response data to the client. This is made available in
-the `getResponseData()` function as well. The `response` object from Companion
-has some properties named after their [XMLHttpRequest][] counterparts.
-
-:::
-
-#### `getResponseError`
-
-Extract the error from the failed upload (`function`, default:
-`(responseText, response) => void`).
-
-For example, if the endpoint responds with a JSON object containing a
-`{ message }` property, this would show that message to the user:
-
-```js
-function getResponseError(responseText, response) {
-	return new Error(JSON.parse(responseText).message);
-}
-```
-
-#### `responseUrlFieldName`
-
-The field name containing the location of the uploaded file (`string`, default:
-`'url'`).
-
-This is returned by [`getResponseData()`](#getResponseData).
-
 #### `timeout: 30 * 1000`
 
 Abort the connection if no upload progress events have been received for this
@@ -298,6 +214,26 @@ by browsers, so it’s recommended to use one of those.
 Indicates whether cross-site Access-Control requests should be made using
 credentials (`boolean`, default: `false`).
 
+#### `onBeforeRequest`
+
+An optional function that will be called before a HTTP request is sent out
+(`(xhr: XMLHttpRequest, retryCount: number) => void | Promise<void>`).
+
+#### `shouldRetry`
+
+An optional function called once an error appears and before retrying
+(`(xhr: XMLHttpRequesT) => boolean`).
+
+The amount of retries is 3, even if you continue to return `true`. The default
+behavior uses
+[exponential backoff](https://en.wikipedia.org/wiki/Exponential_backoff) with a
+maximum of 3 retries.
+
+#### `onAfterResponse`
+
+An optional function that will be called after a HTTP response has been received
+(`(xhr: XMLHttpRequest, retryCount: number) => void | Promise<void>`).
+
 #### `locale: {}`
 
 ```js
@@ -310,6 +246,37 @@ export default {
 ```
 
 ## Frequently Asked Questions
+
+### How can I refresh auth tokens after they expire?
+
+```js
+import Uppy from '@uppy/core';
+import XHR from '@uppy/xhr-upload';
+
+let token = null;
+
+async function getAuthToken() {
+	const res = await fetch('/auth/token');
+	const json = await res.json();
+	return json.token;
+}
+
+new Uppy().use(XHR, {
+	endpoint: '<your-endpoint>',
+	// Called again for every retry too.
+	async onBeforeRequest(xhr) {
+		if (!token) {
+			token = await getAuthToken();
+		}
+		xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+	},
+	async onAfterResponse(xhr) {
+		if (xhr.status === 401) {
+			token = await getAuthToken();
+		}
+	},
+});
+```
 
 ### How to send along meta data with the upload?
 
@@ -391,13 +358,10 @@ move_uploaded_file($file_path, $_SERVER['DOCUMENT_ROOT'] . '/img/' . basename($f
 ```
 
 [formdata]: https://developer.mozilla.org/en-US/docs/Web/API/FormData
-[xmlhttprequest]:
-	https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest
 [xhr.timeout]:
 	https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/timeout
 [xhr.responsetype]:
 	https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/responseType
-[uppy.upload-success]: /docs/uppy/#upload-success
 [uppy file]: /docs/uppy#working-with-uppy-files
 [php.file-upload]: https://secure.php.net/manual/en/features.file-upload.php
 [php.multiple]:
