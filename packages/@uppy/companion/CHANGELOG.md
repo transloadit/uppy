@@ -1,5 +1,16 @@
 # @uppy/companion
 
+## 5.0.0
+
+Released: 2024-07-10
+Included in: Uppy v4.0.0
+
+- @uppy/companion: make streaming upload default to `true` (Mikael Finstad / #5315)
+- @uppy/companion: remove `oauthOrigin` (Antoine du Hamel / #5311)
+- @uppy/companion: do not list Node.js 20.12 as compatible (Antoine du Hamel / #5309)
+- examples,@uppy/companion: Release: uppy@3.27.3 (github-actions[bot] / #5304)
+- @uppy/companion: fix `TypeError` when parsing request (Antoine du Hamel / #5303)
+
 ## 5.0.0-beta.12
 
 Released: 2024-07-02

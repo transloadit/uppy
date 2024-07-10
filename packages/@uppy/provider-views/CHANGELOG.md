@@ -1,5 +1,12 @@
 # @uppy/provider-views
 
+## 4.0.0
+
+Released: 2024-07-10
+Included in: Uppy v4.0.0
+
+- @uppy/provider-views: `.openFolder()` - return progress indication (Evgenia Karunus / #5306)
+
 ## 4.0.0-beta.11
 
 Released: 2024-07-02

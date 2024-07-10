@@ -1,5 +1,13 @@
 # @uppy/core
 
+## 4.0.0
+
+Released: 2024-07-10
+Included in: Uppy v4.0.0
+
+- @uppy/core: bring back resetProgress (Merlijn Vos / #5320)
+- @uppy/core: export UppyOptions, UppyFile, Meta, Body (Merlijn Vos / #5319)
+
 ## 4.0.0-beta.9
 
 Released: 2024-06-04

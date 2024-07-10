@@ -1,7 +1,7 @@
 {
   "name": "@uppy/screen-capture",
   "description": "Uppy plugin that captures video from display or application.",
-  "version": "4.0.0-beta.6",
+  "version": "4.0.0",
   "license": "MIT",
   "main": "lib/index.js",
   "style": "dist/style.min.css",
@@ -32,6 +32,5 @@
   },
   "publishConfig": {
     "access": "public"
-  },
-  "stableVersion": "3.2.0"
+  }
 }
