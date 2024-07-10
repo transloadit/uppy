@@ -657,6 +657,15 @@ boolean value `false`).
 
 ##### `COMPANION_CLIENT_ORIGINS_REGEX`
 
+:::note
+
+In most cases, you should not be using a regex, and instead provide the list of
+accepted origins to `COMPANION_CLIENT_ORIGINS`. If you have to use this option,
+have in mind that this regex will be used to parse unfiltered user input, so
+make sure you’re validating the entirety of the string.
+
+:::
+
 Like COMPANION_CLIENT_ORIGINS, but allows a single regex instead.
 `COMPANION_CLIENT_ORIGINS` will be ignored if this is used. This is a
 standalone-only option.
