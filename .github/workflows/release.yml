@@ -57,7 +57,7 @@ jobs:
       - name: Publish to the npm registry
         run:
           corepack yarn workspaces foreach --all --no-private npm publish
-          --access public --tag next --tolerate-republish
+          --access public --tolerate-republish
         env:
           YARN_NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Merge PR
@@ -85,7 +85,6 @@ jobs:
         run:
           gh release create uppy@${{ steps.uppyVersion.outputs.version }} -t
           "Uppy ${{ steps.uppyVersion.outputs.version }}" -F CHANGELOG.diff.md
-          --prerelease
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload `uppy` to CDN
@@ -113,10 +112,9 @@ jobs:
           }}/git/refs/heads/release-candidate || echo "Already deleted"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Remove release-beta branch
+      - name: Remove release branch
         run:
-          gh api -X DELETE repos/${{ github.repository
-          }}/git/refs/heads/release-beta
+          gh api -X DELETE repos/${{ github.repository }}/git/refs/heads/release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Disable Release workflow
