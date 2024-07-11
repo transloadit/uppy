@@ -107,7 +107,7 @@ const { myCustomMetadata } = uppy.getFile(id).meta;
 await uppy.upload();
 
 // This is strictly typed too
-const { someThingMyBackendReturns } = uppy.getFile(id).response;
+const { someThingMyBackendReturns } = uppy.getFile(id).response.body!;
 ```
 
 ### `@uppy/aws-s3` and `@uppy/aws-s3-multipart`
@@ -204,7 +204,7 @@ instead of per file.
 
 ### `@uppy/react`
 
-- Remove deprecated `useUppy` & reintroduce [`useUppyState`](docs/react/#hooks)
+- Remove deprecated `useUppy`
 - You can no longer set `inline` on the `Dashboard` component, use `Dashboard`
   or `DashboardModal` components respectively.
 
