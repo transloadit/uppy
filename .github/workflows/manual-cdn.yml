@@ -44,7 +44,7 @@ jobs:
           node-version: lts/*
       - name: Install upload-to-cdn dependencies
         if: ${{ inputs.version }}
-        run: corepack yarn workspace focus upload-to-cdn
+        run: corepack yarn workspaces focus @uppy-dev/upload-to-cdn
         env:
           # https://docs.cypress.io/guides/references/advanced-installation#Skipping-installation
           CYPRESS_INSTALL_BINARY: 0
