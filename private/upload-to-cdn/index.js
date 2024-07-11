@@ -11,11 +11,11 @@
 //
 // Run as:
 //
-//  npm run uploadcdn <package-name> [version]
+//  yarn uploadcdn <package-name> [version]
 //
 // To override an existing release (DANGER!)
 //
-//  npm run uploadcdn <package-name> [version] -- --force
+//  yarn uploadcdn <package-name> [version] -- --force
 //
 // Authors:
 //

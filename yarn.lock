@@ -8010,7 +8010,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy-dev/build@workspace:."
   dependencies:
-    "@aws-sdk/client-s3": "npm:^3.338.0"
     "@babel/cli": "npm:^7.14.5"
     "@babel/core": "npm:^7.14.6"
     "@babel/eslint-parser": "npm:^7.11.3"
@@ -8028,11 +8027,9 @@ __metadata:
     "@typescript-eslint/eslint-plugin": "npm:^7.0.0"
     "@typescript-eslint/parser": "npm:^7.0.0"
     "@uppy-dev/remark-lint-uppy": "workspace:*"
-    adm-zip: "npm:^0.5.5"
     autoprefixer: "npm:^10.2.6"
     babel-plugin-inline-package-json: "npm:^2.0.0"
     chalk: "npm:^5.0.0"
-    concat-stream: "npm:^2.0.0"
     cssnano: "npm:^7.0.0"
     dotenv: "npm:^16.0.0"
     esbuild: "npm:^0.21.2"
@@ -8058,11 +8055,8 @@ __metadata:
     glob: "npm:^8.0.0"
     jsdom: "npm:^24.0.0"
     lint-staged: "npm:^15.0.0"
-    mime-types: "npm:^2.1.26"
-    npm-packlist: "npm:^5.0.0"
     npm-run-all: "npm:^4.1.5"
     onchange: "npm:^7.1.0"
-    pacote: "npm:^13.0.0"
     postcss: "npm:^8.4.31"
     postcss-dir-pseudo-class: "npm:^6.0.0"
     postcss-logical: "npm:^5.0.0"
@@ -8076,7 +8070,6 @@ __metadata:
     stylelint-config-rational-order: "npm:^0.1.2"
     stylelint-config-standard: "npm:^36.0.0"
     stylelint-config-standard-scss: "npm:^13.0.0"
-    tar: "npm:^6.1.0"
     typescript: "npm:~5.4"
     vitest: "npm:^1.2.1"
     vue-template-compiler: "workspace:*"
@@ -29400,6 +29393,20 @@ __metadata:
   checksum: 10/41bf4d5271c33b5377bf3f9270b347c93a39dec26c00f84e38d942eb1f7c15939ebc228b1b1abaa3b592e2de6f36bb3928edd5f41883ef7297799e6ec79ffaf1
   languageName: node
   linkType: hard
+
+"upload-to-cdn@workspace:private/upload-to-cdn":
+  version: 0.0.0-use.local
+  resolution: "upload-to-cdn@workspace:private/upload-to-cdn"
+  dependencies:
+    "@aws-sdk/client-s3": "npm:^3.338.0"
+    adm-zip: "npm:^0.5.5"
+    concat-stream: "npm:^2.0.0"
+    mime-types: "npm:^2.1.26"
+    npm-packlist: "npm:^5.0.0"
+    pacote: "npm:^13.0.0"
+    tar: "npm:^6.1.0"
+  languageName: unknown
+  linkType: soft
 
 "uppy@workspace:*, uppy@workspace:packages/uppy":
   version: 0.0.0-use.local
