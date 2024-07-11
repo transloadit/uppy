@@ -43,7 +43,7 @@ jobs:
         with:
           node-version: lts/*
       - name: Install upload-to-cdn dependencies
-        if: inputs.version
+        if: ${{ inputs.version }}
         run: corepack yarn workspace focus upload-to-cdn
         env:
           # https://docs.cypress.io/guides/references/advanced-installation#Skipping-installation
@@ -58,7 +58,7 @@ jobs:
         if: ${{ !inputs.version }}
         run: corepack yarn run build
       - name: Upload "${{ inputs.package }}" to CDN
-        if: !inputs.force
+        if: ${{ !inputs.force }}
         run: corepack yarn run uploadcdn "$PACKAGE" "$VERSION"
         env:
           PACKAGE: ${{inputs.package}}
@@ -66,7 +66,7 @@ jobs:
           EDGLY_KEY: ${{secrets.EDGLY_KEY}}
           EDGLY_SECRET: ${{secrets.EDGLY_SECRET}}
       - name: Upload "${{ inputs.package }}" to CDN
-        if: inputs.force
+        if: ${{ inputs.force }}
         run: corepack yarn run uploadcdn "$PACKAGE" "$VERSION" -- --force
         env:
           PACKAGE: ${{inputs.package}}
