@@ -2,10 +2,20 @@ name: Manually triggered CDN upload
 on:
   workflow_dispatch:
     inputs:
-      name:
-        description: 'Package to upload'
+      package:
+        description: Package to upload
         required: true
-        default: 'uppy'
+        type: choice
+        options:
+          - uppy
+          - '@uppy/locales'
+      version:
+        description: Version to upload (from npm)
+        type: string
+      force:
+        description: --force
+        type: boolean
+        default: false
 
 env:
   YARN_ENABLE_GLOBAL_CACHE: false
@@ -32,15 +42,34 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: lts/*
-      - name: Install dependencies
+      - name: Install upload-to-cdn dependencies
+        if: ${{ inputs.version }}
+        run: corepack yarn workspaces focus @uppy-dev/upload-to-cdn
+        env:
+          # https://docs.cypress.io/guides/references/advanced-installation#Skipping-installation
+          CYPRESS_INSTALL_BINARY: 0
+      - name: Install all dependencies
+        if: ${{ !inputs.version }}
         run: corepack yarn install --immutable
         env:
           # https://docs.cypress.io/guides/references/advanced-installation#Skipping-installation
           CYPRESS_INSTALL_BINARY: 0
       - name: Build before publishing
+        if: ${{ !inputs.version }}
         run: corepack yarn run build
-      - name: Upload `${{ github.event.inputs.name }}` to CDN
-        run: corepack yarn run uploadcdn ${{ github.event.inputs.name }}
+      - name: Upload "${{ inputs.package }}" to CDN
+        if: ${{ !inputs.force }}
+        run: corepack yarn run uploadcdn "$PACKAGE" "$VERSION"
         env:
+          PACKAGE: ${{inputs.package}}
+          VERSION: ${{inputs.version}}
+          EDGLY_KEY: ${{secrets.EDGLY_KEY}}
+          EDGLY_SECRET: ${{secrets.EDGLY_SECRET}}
+      - name: Upload "${{ inputs.package }}" to CDN
+        if: ${{ inputs.force }}
+        run: corepack yarn run uploadcdn "$PACKAGE" "$VERSION" -- --force
+        env:
+          PACKAGE: ${{inputs.package}}
+          VERSION: ${{inputs.version}}
           EDGLY_KEY: ${{secrets.EDGLY_KEY}}
           EDGLY_SECRET: ${{secrets.EDGLY_SECRET}}
