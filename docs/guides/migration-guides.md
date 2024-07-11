@@ -81,6 +81,8 @@ One important thing to note are the new generics on `@uppy/core`.
 
 <!-- eslint-disable @typescript-eslint/no-unused-vars -->
 
+<!-- eslint-disable @typescript-eslint/no-non-null-assertion -->
+
 ```ts
 import Uppy from '@uppy/core';
 // xhr-upload is for uploading to your own backend.
