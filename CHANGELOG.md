@@ -12,6 +12,105 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 4.0.0
+
+Released: 2024-07-10
+
+| Package                   | Version | Package                   | Version |
+| ------------------------- | ------- | ------------------------- | ------- |
+| @uppy/angular             |   0.7.0 | @uppy/onedrive            |   4.0.0 |
+| @uppy/audio               |   2.0.0 | @uppy/progress-bar        |   4.0.0 |
+| @uppy/aws-s3              |   4.0.0 | @uppy/provider-views      |   4.0.0 |
+| @uppy/aws-s3-multipart    |   4.0.0 | @uppy/react               |   4.0.0 |
+| @uppy/box                 |   3.0.0 | @uppy/react-native        |   0.6.0 |
+| @uppy/companion           |   5.0.0 | @uppy/redux-dev-tools     |   4.0.0 |
+| @uppy/companion-client    |   4.0.0 | @uppy/remote-sources      |   2.0.0 |
+| @uppy/compressor          |   2.0.0 | @uppy/screen-capture      |   4.0.0 |
+| @uppy/core                |   4.0.0 | @uppy/status-bar          |   4.0.0 |
+| @uppy/dashboard           |   4.0.0 | @uppy/store-default       |   4.0.0 |
+| @uppy/drag-drop           |   4.0.0 | @uppy/store-redux         |   4.0.0 |
+| @uppy/drop-target         |   3.0.0 | @uppy/svelte              |   4.0.0 |
+| @uppy/dropbox             |   4.0.0 | @uppy/thumbnail-generator |   4.0.0 |
+| @uppy/facebook            |   4.0.0 | @uppy/transloadit         |   4.0.0 |
+| @uppy/file-input          |   4.0.0 | @uppy/tus                 |   4.0.0 |
+| @uppy/form                |   4.0.0 | @uppy/unsplash            |   4.0.0 |
+| @uppy/golden-retriever    |   4.0.0 | @uppy/url                 |   4.0.0 |
+| @uppy/google-drive        |   4.0.0 | @uppy/utils               |   6.0.0 |
+| @uppy/google-photos       |   0.2.0 | @uppy/vue                 |   2.0.0 |
+| @uppy/image-editor        |   3.0.0 | @uppy/webcam              |   4.0.0 |
+| @uppy/informer            |   4.0.0 | @uppy/xhr-upload          |   4.0.0 |
+| @uppy/instagram           |   4.0.0 | @uppy/zoom                |   3.0.0 |
+| @uppy/locales             |   4.0.0 | uppy                      |   4.0.0 |
+
+- meta: Bump docker/setup-qemu-action from 3.0.0 to 3.1.0 (dependabot[bot] / #5314)
+- meta: Bump docker/build-push-action from 6.2.0 to 6.3.0 (dependabot[bot] / #5313)
+- @uppy/core: bring back resetProgress (Merlijn Vos / #5320)
+- docs: add note regarding `COMPANION_CLIENT_ORIGINS_REGEX` (Antoine du Hamel / #5322)
+- @uppy/companion: make streaming upload default to `true` (Mikael Finstad / #5315)
+- docs: change slug for aws docs (Merlijn Vos / #5321)
+- @uppy/core: export UppyOptions, UppyFile, Meta, Body (Merlijn Vos / #5319)
+- meta: fix React linter rules (Antoine du Hamel / #5317)
+- meta: enforce use of extension in import type declarations (Antoine du Hamel / #5316)
+- @uppy/companion: remove `oauthOrigin` (Antoine du Hamel / #5311)
+- docs,@uppy/companion-client: don't close socket when pausing (Mikael Finstad / #4821)
+- @uppy/aws-s3: fix signing on client for bucket name with dots (Antoine du Hamel / #5312)
+- @uppy/react: introduce useUppyEvent (Merlijn Vos / #5264)
+- @uppy/companion: do not list Node.js 20.12 as compatible (Antoine du Hamel / #5309)
+- @uppy/provider-views: `.openFolder()` - return progress indication (Evgenia Karunus / #5306)
+- examples,@uppy/companion: Release: uppy@3.27.3 (github-actions[bot] / #5304)
+- @uppy/companion: fix `TypeError` when parsing request (Antoine du Hamel / #5303)
+
+
+## 4.0.0-beta.14
+
+Released: 2024-07-02
+
+| Package                |       Version | Package                |       Version |
+| ---------------------- | ------------- | ---------------------- | ------------- |
+| @uppy/companion        | 5.0.0-beta.12 | @uppy/form             |  4.0.0-beta.6 |
+| @uppy/companion-client |  4.0.0-beta.9 | @uppy/provider-views   | 4.0.0-beta.11 |
+| @uppy/core             | 4.0.0-beta.12 | uppy                   | 4.0.0-beta.14 |
+| @uppy/drag-drop        |  4.0.0-beta.5 |                        |               |
+
+- @uppy/companion: make `oauthOrigin` option required (Mikael Finstad / #5276)
+- @uppy/provider-views: `afterFill()` - add loading progress (Evgenia Karunus / #5288)
+
+
+## 4.0.0-beta.13
+
+Released: 2024-06-27
+
+| Package                |       Version | Package                |       Version |
+| ---------------------- | ------------- | ---------------------- | ------------- |
+| @uppy/audio            |  2.0.0-beta.7 | @uppy/image-editor     |  3.0.0-beta.6 |
+| @uppy/aws-s3           |  4.0.0-beta.8 | @uppy/instagram        |  4.0.0-beta.7 |
+| @uppy/box              |  3.0.0-beta.8 | @uppy/onedrive         |  4.0.0-beta.8 |
+| @uppy/companion        | 5.0.0-beta.11 | @uppy/provider-views   | 4.0.0-beta.10 |
+| @uppy/companion-client |  4.0.0-beta.8 | @uppy/react            |  4.0.0-beta.8 |
+| @uppy/core             | 4.0.0-beta.11 | @uppy/screen-capture   |  4.0.0-beta.6 |
+| @uppy/dashboard        | 4.0.0-beta.11 | @uppy/transloadit      | 4.0.0-beta.10 |
+| @uppy/drop-target      |  3.0.0-beta.6 | @uppy/unsplash         |  4.0.0-beta.8 |
+| @uppy/dropbox          |  4.0.0-beta.9 | @uppy/url              |  4.0.0-beta.8 |
+| @uppy/facebook         |  4.0.0-beta.7 | @uppy/utils            |  6.0.0-beta.9 |
+| @uppy/file-input       |  4.0.0-beta.6 | @uppy/vue              |  2.0.0-beta.4 |
+| @uppy/form             |  4.0.0-beta.5 | @uppy/webcam           |  4.0.0-beta.9 |
+| @uppy/golden-retriever |  4.0.0-beta.6 | @uppy/xhr-upload       |  4.0.0-beta.7 |
+| @uppy/google-drive     |  4.0.0-beta.1 | @uppy/zoom             |  3.0.0-beta.7 |
+| @uppy/google-photos    |  0.2.0-beta.2 | uppy                   | 4.0.0-beta.13 |
+
+- @uppy/companion: implement facebook app secret proof (Mikael Finstad / #5249)
+- @uppy/provider-views: `Loader.tsx` - delete the file (Evgenia Karunus / #5284)
+- @uppy/vue: fix passing of `props` (Antoine du Hamel / #5281)
+- @uppy/google-photos: fix various issues (Mikael Finstad / #5275)
+- @uppy/transloadit: fix strict type errors (Antoine du Hamel / #5271)
+- @uppy/transloadit: simplify plugin to always run a single assembly (Merlijn Vos / #5158)
+- meta: update Yarn version and npm deps (Antoine du Hamel / #5269)
+- docs: prettier: 3.2.5 -> 3.3.2 (Antoine du Hamel / #5270)
+- @uppy/provider-views: Provider views rewrite (.files, .folders => .partialTree) (Evgenia Karunus / #5050)
+- @uppy/react: TS strict mode (Merlijn Vos / #5258)
+- meta: simplify `build:ts` script (Antoine du Hamel / #5262)
+
+
 ## 4.0.0-beta.12
 
 Released: 2024-06-18
@@ -466,6 +565,53 @@ Released: 2024-03-28
 - meta: enable CI on `4.x` branch (Antoine du Hamel)
 - @uppy/vue: [v4.x] remove manual types (Antoine du Hamel / #4803)
 - meta: prepare release workflow for beta versions (Antoine du Hamel)
+
+## 3.27.3
+
+Released: 2024-07-03
+
+| Package         | Version | Package         | Version |
+| --------------- | ------- | --------------- | ------- |
+| @uppy/companion |  4.15.1 | uppy            |  3.27.3 |
+
+- @uppy/companion: fix `TypeError` when parsing request (Antoine du Hamel / #5303)
+
+
+## 3.27.2
+
+Released: 2024-07-02
+
+| Package                | Version | Package                | Version |
+| ---------------------- | ------- | ---------------------- | ------- |
+| @uppy/companion        |  4.15.0 | @uppy/drag-drop        |   3.1.1 |
+| @uppy/companion-client |   3.8.2 | @uppy/form             |   3.2.2 |
+| @uppy/core             |  3.13.1 | uppy                   |  3.27.2 |
+
+- @uppy/form: do not emit `'submit'` event more than once (Merlijn Vos / #5299)
+- @uppy/companion: add `s3.forcePathStyle` option (Nadeem Reinhardt / #5066)
+- meta: fix broken workflow status badges in README (Alexander Zaytsev / #5298)
+- @uppy/core: add `clearUploadedFiles` to type definition (Augustine Smith / #5295)
+- @uppy/companion: add `oauthOrigin` option (Antoine du Hamel / #5297)
+- meta: add dark-mode Transloadit logo in README (Alexander Zaytsev / #5291)
+- docs,@uppy/drag-drop: `uppy.io/docs` - fix typos/broken links (Evgenia Karunus / #5296)
+- meta: Bump docker/build-push-action from 6.1.0 to 6.2.0 (dependabot[bot] / #5290)
+
+
+## 3.27.1
+
+Released: 2024-06-27
+
+| Package          | Version | Package          | Version |
+| ---------------- | ------- | ---------------- | ------- |
+| @uppy/dashboard  |   3.9.1 | uppy             |  3.27.1 |
+| @uppy/xhr-upload |   3.6.8 |                  |         |
+
+- @uppy/xhr-upload: add `'PATCH'` as valid method (Quinn Daley / #5279)
+- @uppy/dashboard: fix handling of `null` for `doneButtonHandler` (Antoine du Hamel / #5283)
+- meta: Bump docker/build-push-action from 5.4.0 to 6.1.0 (dependabot[bot] / #5272)
+- docs: rewrite Instagram dev setup section (Evgenia Karunus / #5274)
+- meta: remove the Zoom section from `CONTRIBUTING.md` (Evgenia Karunus / #5273)
+
 
 ## 3.27.0
 

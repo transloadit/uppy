@@ -3,6 +3,7 @@
 import { createWriteStream, mkdirSync } from 'node:fs'
 import { spawnSync } from 'node:child_process'
 
+import prompts from 'prompts'
 import { TARGET_BRANCH } from './config.js'
 
 function maxSemverness (a, b) {
@@ -18,7 +19,6 @@ function maxSemverness (a, b) {
 export default async function pickSemverness (
   spawnOptions,
   LAST_RELEASE_COMMIT,
-  STABLE_BRANCH_MERGE_BASE_RANGE,
   releaseFileUrl,
   packagesList,
 ) {
@@ -45,26 +45,7 @@ export default async function pickSemverness (
       spawnOptions,
     )
     if (stdout.length === 0) {
-      // eslint-disable-next-line no-shadow
-      const { stdout } = spawnSync(
-        'git',
-        [
-          '--no-pager',
-          'log',
-          '--format=- %s',
-          STABLE_BRANCH_MERGE_BASE_RANGE,
-          '--',
-          location,
-        ],
-        spawnOptions,
-      )
-      if (stdout.length === 0) {
-        console.log(`No commits since last release for ${name}, skipping.`)
-      } else {
-        console.log(`Some commits have landed on the stable branch since last release for ${name}.`)
-        releaseFile.write(`  ${JSON.stringify(name)}: major\n`)
-        uppySemverness = 'major'
-      }
+      console.log(`No commits since last release for ${name}, skipping.`)
       continue
     }
     console.log('\n')
@@ -79,7 +60,19 @@ export default async function pickSemverness (
       )}.`,
     )
 
-    const response = { value: 'major' }
+    const response = await prompts({
+      type: 'select',
+      name: 'value',
+      message: `What should be the semverness of next ${name} release?`,
+      choices: [
+        { title: 'Pre-release', value: 'prerelease' },
+        { title: 'Skip this package', value: '' },
+        { title: 'Patch', value: 'patch' },
+        { title: 'Minor', value: 'minor' },
+        { title: 'Major', value: 'major' },
+      ],
+      initial: 2,
+    })
 
     if (!response.value) {
       console.log('Skipping.')

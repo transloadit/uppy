@@ -8,7 +8,7 @@ import type { I18n } from '@uppy/utils/lib/Translator'
 import type {
   PartialTreeFile,
   PartialTreeFolderNode,
-} from '@uppy/core/lib/Uppy.ts'
+} from '@uppy/core/lib/Uppy.js'
 import { useEffect, useState } from 'preact/hooks'
 import Item from './Item/index.tsx'
 import ProviderView from './ProviderView/ProviderView.tsx'
@@ -64,7 +64,7 @@ function Browser<M extends Meta, B extends Body>(props: BrowserProps<M, B>) {
   if (isLoading) {
     return (
       <div className="uppy-Provider-loading">
-        <span>{i18n('loading')}</span>
+        {typeof isLoading === 'string' ? isLoading : i18n('loading')}
       </div>
     )
   }

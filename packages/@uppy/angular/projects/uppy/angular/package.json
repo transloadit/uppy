@@ -1,7 +1,7 @@
 {
   "name": "@uppy/angular",
   "description": "Angular component wrappers around Uppy's official UI plugins.",
-  "version": "0.7.0-beta.5",
+  "version": "0.7.0",
   "license": "MIT",
   "homepage": "https://uppy.io",
   "keywords": [
@@ -34,6 +34,5 @@
     "@uppy/status-bar": "workspace:^",
     "@uppy/utils": "workspace:^"
   },
-  "sideEffects": false,
-  "stableVersion": "0.6.1"
+  "sideEffects": false
 }

@@ -1,5 +1,27 @@
 # @uppy/provider-views
 
+## 4.0.0
+
+Released: 2024-07-10
+Included in: Uppy v4.0.0
+
+- @uppy/provider-views: `.openFolder()` - return progress indication (Evgenia Karunus / #5306)
+
+## 4.0.0-beta.11
+
+Released: 2024-07-02
+Included in: Uppy v4.0.0-beta.14
+
+- @uppy/provider-views: `afterFill()` - add loading progress (Evgenia Karunus / #5288)
+
+## 4.0.0-beta.10
+
+Released: 2024-06-27
+Included in: Uppy v4.0.0-beta.13
+
+- @uppy/provider-views: `Loader.tsx` - delete the file (Evgenia Karunus / #5284)
+- @uppy/provider-views: Provider views rewrite (.files, .folders => .partialTree) (Evgenia Karunus / #5050)
+
 ## 4.0.0-beta.9
 
 Released: 2024-06-18

@@ -1,6 +1,6 @@
 import { spawnSync } from 'node:child_process'
 import prompts from 'prompts'
-import { TARGET_BRANCH, REPO_NAME, REPO_OWNER, STABLE_BRANCH } from './config.js'
+import { TARGET_BRANCH, REPO_NAME, REPO_OWNER } from './config.js'
 
 async function apiCall (endpoint, errorMessage) {
   const response = await fetch(
@@ -34,15 +34,6 @@ async function getLatestReleaseSHA () {
       `Failed to fetch information for release ${JSON.stringify(tag_name)}`,
     )
   ).object.sha
-}
-
-function getStableBranchMergeBase (REMOTE_HEAD) {
-  spawnSync('git', ['fetch', `https://github.com/${REPO_OWNER}/${REPO_NAME}.git`, STABLE_BRANCH])
-  const STABLE_HEAD = spawnSync('git', ['rev-parse', 'FETCH_HEAD']).stdout.toString().trim()
-  return [[
-    spawnSync('git', ['merge-base', REMOTE_HEAD, 'FETCH_HEAD']).stdout.toString().trim(),
-    STABLE_HEAD,
-  ].join('..'), STABLE_HEAD]
 }
 
 async function getLocalHEAD () {
@@ -111,5 +102,5 @@ export async function validateGitStatus (spawnOptions) {
     }
   }
 
-  return [await latestRelease, LOCAL_HEAD, ...getStableBranchMergeBase(REMOTE_HEAD)]
+  return [await latestRelease, LOCAL_HEAD]
 }

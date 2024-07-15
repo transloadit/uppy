@@ -1,5 +1,12 @@
 # @uppy/companion-client
 
+## 4.0.0
+
+Released: 2024-07-10
+Included in: Uppy v4.0.0
+
+- docs,@uppy/companion-client: don't close socket when pausing (Mikael Finstad / #4821)
+
 ## 4.0.0-beta.7
 
 Released: 2024-06-04

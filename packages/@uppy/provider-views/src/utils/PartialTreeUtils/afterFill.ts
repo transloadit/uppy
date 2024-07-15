@@ -4,7 +4,7 @@ import type {
   PartialTreeFile,
   PartialTreeFolderNode,
   PartialTreeId,
-} from '@uppy/core/lib/Uppy'
+} from '@uppy/core/lib/Uppy.js'
 import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
 import PQueue from 'p-queue'
 import shallowClone from './shallowClone.ts'
@@ -75,6 +75,7 @@ const afterFill = async (
   partialTree: PartialTree,
   apiList: ApiList,
   validateSingleFile: (file: CompanionFile) => string | null,
+  reportProgress: (n: number) => void,
 ): Promise<PartialTree> => {
   const queue = new PQueue({ concurrency: 6 })
 
@@ -87,7 +88,7 @@ const afterFill = async (
       // either "not yet cached at all" or "some pages are left to fetch"
       (item.cached === false || item.nextPagePath),
   ) as PartialTreeFolderNode[]
-  // per each poor folder, recursively fetch all files and make them .checked!!!
+  // per each poor folder, recursively fetch all files and make them .checked!
   poorFolders.forEach((poorFolder) => {
     queue.add(() =>
       recursivelyFetch(
@@ -98,6 +99,13 @@ const afterFill = async (
         validateSingleFile,
       ),
     )
+  })
+
+  queue.on('completed', () => {
+    const nOfFilesChecked = poorTree.filter(
+      (i) => i.type === 'file' && i.status === 'checked',
+    ).length
+    reportProgress(nOfFilesChecked)
   })
 
   await queue.onIdle()

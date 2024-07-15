@@ -45,9 +45,17 @@ const companionProtocol = process.env.COMPANION_PROTOCOL || 'http'
 
 function getCorsOrigins () {
   if (process.env.COMPANION_CLIENT_ORIGINS) {
-    return process.env.COMPANION_CLIENT_ORIGINS
-      .split(',')
-      .map((url) => (hasProtocol(url) ? url : `${companionProtocol}://${url}`))
+    switch (process.env.COMPANION_CLIENT_ORIGINS) {
+
+      case 'true': return true
+      case 'false': return false
+      case '*': return '*'
+
+      default:
+      return process.env.COMPANION_CLIENT_ORIGINS
+        .split(',')
+        .map((url) => (hasProtocol(url) ? url : `${companionProtocol}://${url}`))
+  }
   }
   if (process.env.COMPANION_CLIENT_ORIGINS_REGEX) {
     return new RegExp(process.env.COMPANION_CLIENT_ORIGINS_REGEX)
@@ -133,6 +141,7 @@ const getConfigFromEnv = () => {
       process.env.COMPANION_AWS_USE_ACCELERATE_ENDPOINT === 'true',
       expires: parseInt(process.env.COMPANION_AWS_EXPIRES || '800', 10),
       acl: process.env.COMPANION_AWS_ACL,
+      forcePathStyle: process.env.COMPANION_AWS_FORCE_PATH_STYLE === 'true',
     },
     server: {
       host: process.env.COMPANION_DOMAIN,
@@ -172,7 +181,7 @@ const getConfigFromEnv = () => {
     allowLocalUrls: process.env.COMPANION_ALLOW_LOCAL_URLS === 'true',
     // cookieDomain is kind of a hack to support distributed systems. This should be improved but we never got so far.
     cookieDomain: process.env.COMPANION_COOKIE_DOMAIN,
-    streamingUpload: process.env.COMPANION_STREAMING_UPLOAD === 'true',
+    streamingUpload: process.env.COMPANION_STREAMING_UPLOAD ? process.env.COMPANION_STREAMING_UPLOAD === 'true' : undefined,
     maxFileSize: process.env.COMPANION_MAX_FILE_SIZE ? parseInt(process.env.COMPANION_MAX_FILE_SIZE, 10) : undefined,
     chunkSize: process.env.COMPANION_CHUNK_SIZE ? parseInt(process.env.COMPANION_CHUNK_SIZE, 10) : undefined,
     clientSocketConnectTimeout: process.env.COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT

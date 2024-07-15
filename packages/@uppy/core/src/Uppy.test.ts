@@ -24,8 +24,8 @@ import InvalidPluginWithoutType from './mocks/invalidPluginWithoutType.ts'
 import DeepFrozenStore from '../../../../e2e/cypress/fixtures/DeepFrozenStore.mjs'
 import type { State } from './Uppy.ts'
 
-// eslint-disable-next-line no-restricted-globals
 const sampleImage = fs.readFileSync(
+  // eslint-disable-next-line no-restricted-globals
   path.join(__dirname, '../../../../e2e/cypress/fixtures/images/image.jpg'),
 )
 
@@ -1944,6 +1944,57 @@ describe('src/Core', () => {
       expect(core.getState().allowNewUpload).toEqual(true)
       expect(core.getState().error).toEqual(null)
       expect(core.getState().recoveredState).toEqual(null)
+    })
+  })
+
+  describe('clear', () => {
+    it('should reset state to default', () => {
+      const core = new Core()
+      core.addFile({
+        source: 'vi',
+        name: 'foo.jpg',
+        type: 'image/jpeg',
+        data: testImage,
+      })
+      core.addFile({
+        source: 'vi',
+        name: 'foo2.jpg',
+        type: 'image/jpeg',
+        data: testImage,
+      })
+      core.clear()
+      expect(core.getState()).toMatchObject({
+        totalProgress: 0,
+        allowNewUpload: true,
+        error: null,
+        recoveredState: null,
+        files: {},
+      })
+    })
+
+    it('should throw error if plugin does not allow removing files during an upload', () => {
+      const core = new Core()
+      const newState = {
+        capabilities: {
+          individualCancellation: false,
+          uploadProgress: true,
+          resumableUploads: false,
+        },
+        currentUploads: {
+          upload1: {
+            fileIDs: [
+              'uppy-file1/jpg-1e-image/jpeg',
+              'uppy-file2/jpg-1e-image/jpeg',
+              'uppy-file3/jpg-1e-image/jpeg',
+            ],
+          },
+        },
+      }
+      // @ts-ignore
+      core.setState(newState)
+      expect(() => {
+        core.clear()
+      }).toThrowError()
     })
   })
 

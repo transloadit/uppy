@@ -7,12 +7,12 @@ import type {
   UnknownProviderPluginState,
   PartialTreeId,
   PartialTree,
-} from '@uppy/core/lib/Uppy.ts'
+} from '@uppy/core/lib/Uppy.js'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
-import type { CompanionFile } from '@uppy/utils/lib/CompanionFile.ts'
+import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
 import type Translator from '@uppy/utils/lib/Translator'
 import classNames from 'classnames'
-import type { ValidateableFile } from '@uppy/core/lib/Restricter.ts'
+import type { ValidateableFile } from '@uppy/core/lib/Restricter.js'
 import remoteFileObjToLocal from '@uppy/utils/lib/remoteFileObjToLocal'
 import AuthView from './AuthView.tsx'
 import Header from './Header.tsx'
@@ -228,7 +228,9 @@ export default class ProviderView<M extends Meta, B extends Body> {
         currentPagePath = nextPagePath
         currentItems = currentItems.concat(items)
         this.setLoading(
-          this.plugin.uppy.i18n('loadedXFiles', { numFiles: items.length }),
+          this.plugin.uppy.i18n('loadedXFiles', {
+            numFiles: currentItems.length,
+          }),
         )
       } while (this.opts.loadAllFiles && currentPagePath)
 
@@ -339,6 +341,11 @@ export default class ProviderView<M extends Meta, B extends Body> {
         partialTree,
         (path: PartialTreeId) => this.provider.list(path, { signal }),
         this.validateSingleFile,
+        (n) => {
+          this.setLoading(
+            this.plugin.uppy.i18n('addedNumFiles', { numFiles: n }),
+          )
+        },
       )
 
       // 2. Now that we know how many files there are - recheck aggregateRestrictions!

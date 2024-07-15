@@ -20,6 +20,7 @@ afterAll(() => {
 
 process.env.COMPANION_DATADIR = './test/output'
 process.env.COMPANION_DOMAIN = 'localhost:3020'
+process.env.COMPANION_CLIENT_ORIGINS = 'true'
 const { companionOptions } = standalone()
 
 const mockReq = {}

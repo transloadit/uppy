@@ -4,13 +4,20 @@ These cover all the major Uppy versions and how to migrate to them.
 
 ## Migrate from Companion 4.x to 5.x
 
-- Node.js `>=18.20.0` is now required.
+- End-of-Life versions of Node.js are no longer supported (use latest 18.x LTS,
+  20.x LTS, or 22.x current).
+- Setting the `corsOrigin` option is now required. You should define the list of
+  origins you expect your app to be served from, otherwise it can be
+  impersonated from a different origin you don’t control. Set it to `true` if
+  you don’t care about impersonating.
 - `COMPANION_REDIS_EXPRESS_SESSION_PREFIX` now defaults to `companion-session:`
   (before `sess:`). To revert keep backwards compatibility, set the environment
   variable `COMPANION_REDIS_EXPRESS_SESSION_PREFIX=sess:`.
 - The URL endpoint (used by the `Url`/`Link` plugin) is now turned off by
   default and must be explicitly enabled with
   `COMPANION_ENABLE_URL_ENDPOINT=true` or `enableUrlEndpoint: true`.
+- The option `streamingUpload` / `COMPANION_STREAMING_UPLOAD` now defaults to
+  `true`.
 - The option `getKey(req, filename, metadata)` has changed signature to
   `getKey({ filename, metadata, req })`.
 - The option `bucket(req, metadata)` has changed signature to
@@ -32,6 +39,9 @@ These cover all the major Uppy versions and how to migrate to them.
   - `getProtectedHttpAgent` parameter `blockLocalIPs` changed to `allowLocalIPs`
     (inverted boolean).
   - `downloadURL` 2nd (boolean) argument inverted.
+  - `StreamHttpJsonError` renamed to `HttpError`.
+- Removed the `oauthOrigin` option, as well as the (undocumented) option
+  `clients`. Use `corsOrigin` instead.
 
 ### `@uppy/companion-client`
 
@@ -52,6 +62,9 @@ case you don’t have to do anything.
 - `RequestClient` methods `get`, `post`, `delete` no longer accepts a boolean as
   the third argument. Instead, pass `{ skipPostResponse: true | false }`. This
   won’t affect you unless you’ve been using `RequestClient`.
+- When pausing uploads, the WebSocket towards companion will no longer be
+  closed. This allows paused uploads to be cancelled, but once a file has been
+  paused it will still occupy its place in the concurrency queue.
 
 ## Migrate from Uppy 3.x to 4.x
 
@@ -67,6 +80,8 @@ TypeScript complains.
 One important thing to note are the new generics on `@uppy/core`.
 
 <!-- eslint-disable @typescript-eslint/no-unused-vars -->
+
+<!-- eslint-disable @typescript-eslint/no-non-null-assertion -->
 
 ```ts
 import Uppy from '@uppy/core';
@@ -94,7 +109,7 @@ const { myCustomMetadata } = uppy.getFile(id).meta;
 await uppy.upload();
 
 // This is strictly typed too
-const { someThingMyBackendReturns } = uppy.getFile(id).response;
+const { someThingMyBackendReturns } = uppy.getFile(id).response.body!;
 ```
 
 ### `@uppy/aws-s3` and `@uppy/aws-s3-multipart`
@@ -191,7 +206,7 @@ instead of per file.
 
 ### `@uppy/react`
 
-- Remove deprecated `useUppy` & reintroduce [`useUppyState`](docs/react/#hooks)
+- Remove deprecated `useUppy`
 - You can no longer set `inline` on the `Dashboard` component, use `Dashboard`
   or `DashboardModal` components respectively.
 

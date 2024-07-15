@@ -290,7 +290,7 @@ const options = {
 	allowLocalUrls: false,
 	logClientVersion: true,
 	periodicPingUrls: [],
-	streamingUpload: false,
+	streamingUpload: true,
 	clientSocketConnectTimeout: 60000,
 	metrics: true,
 };
@@ -484,6 +484,12 @@ takes one argument which is an object with the following properties:
 - `req`, Express.js `Request` object. Do not use any Companion internals from
   the req object, as these might change in any minor version of Companion.
 
+#### `s3.forcePathStyle` `COMPANION_AWS_FORCE_PATH_STYLE`
+
+This adds support for setting the S3 client’s `forcePathStyle` option. That is
+necessary to use Uppy/Companion alongside localstack in development
+environments. **Default**: `false`.
+
 ##### `s3.region` `COMPANION_AWS_REGION`
 
 The datacenter region where the target bucket is located.
@@ -594,9 +600,7 @@ Prometheus metrics (by default metrics are enabled.)
 A boolean flag to tell Companion whether to enable streaming uploads. If
 enabled, it will lead to _faster uploads_ because companion will start uploading
 at the same time as downloading using `stream.pipe`. If `false`, files will be
-fully downloaded first, then uploaded. Defaults to `false`, but we recommended
-enabling it, especially if you’re expecting to upload large files. In future
-versions the default might change to `true`.
+fully downloaded first, then uploaded. Defaults to `true`.
 
 #### `maxFileSize` `COMPANION_MAX_FILE_SIZE`
 
@@ -629,12 +633,36 @@ risk.**
 
 :::
 
-#### `corsOrigins` `COMPANION_CLIENT_ORIGINS`
+#### `corsOrigins` (required)
 
-Allowed CORS Origins (default `true`). Passed as the `origin` option in
-[cors](https://github.com/expressjs/cors#configuration-options))
+Allowed CORS Origins. Passed as the `origin` option in
+[cors](https://github.com/expressjs/cors#configuration-options).
 
-#### `COMPANION_CLIENT_ORIGINS_REGEX`
+Note this is used for both CORS’ `Access-Control-Allow-Origin` header, and for
+the
+[`targetOrigin`](https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage#targetorigin)
+for `postMessage` calls in the context of OAuth.
+
+Setting it to `true` treats any origin as a trusted one, making it easier to
+impersonate your brand. Setting it to `false` disables cross-origin supports,
+use this if you’re serving Companion and Uppy from the same domain name.
+
+##### `COMPANION_CLIENT_ORIGINS`
+
+A comma-separated string of origins, or `'true'` (which will be interpreted as
+the boolean value `true`), or `'false'` (which will be interpreted as the
+boolean value `false`).
+
+##### `COMPANION_CLIENT_ORIGINS_REGEX`
+
+:::note
+
+In most cases, you should not be using a regex, and instead provide the list of
+accepted origins to `COMPANION_CLIENT_ORIGINS`. If you have to use this option,
+have in mind that this regex will be used to parse unfiltered user input, so
+make sure you’re validating the entirety of the string.
+
+:::
 
 Like COMPANION_CLIENT_ORIGINS, but allows a single regex instead.
 `COMPANION_CLIENT_ORIGINS` will be ignored if this is used. This is a

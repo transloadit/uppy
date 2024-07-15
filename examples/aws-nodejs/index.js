@@ -58,6 +58,7 @@ function getS3Client() {
       accessKeyId: process.env.COMPANION_AWS_KEY,
       secretAccessKey: process.env.COMPANION_AWS_SECRET,
     },
+    forcePathStyle: process.env.COMPANION_AWS_FORCE_PATH_STYLE === 'true',
   })
   return s3Client
 }

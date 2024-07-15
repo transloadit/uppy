@@ -1,11 +1,11 @@
 import type { Uppy } from '@uppy/core'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
-import type { PluginOpts } from '@uppy/core/lib/BasePlugin'
+import type { PluginOpts } from '@uppy/core/lib/BasePlugin.js'
 import type {
   RequestOptions,
   CompanionClientProvider,
 } from '@uppy/utils/lib/CompanionClientProvider'
-import type { UnknownProviderPlugin } from '@uppy/core/lib/Uppy'
+import type { UnknownProviderPlugin } from '@uppy/core/lib/Uppy.js'
 import RequestClient, { authErrorStatusCode } from './RequestClient.ts'
 import type { CompanionPluginOptions } from './index.js'
 
@@ -166,6 +166,7 @@ export default class Provider<M extends Meta, B extends Body>
   }): string {
     const params = new URLSearchParams({
       ...query,
+      // This is only used for Companion instances configured to accept multiple origins.
       state: btoa(JSON.stringify({ origin: getOrigin() })),
       ...this.authQuery({ authFormData }),
     })

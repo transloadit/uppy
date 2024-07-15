@@ -1,6 +1,6 @@
 {
   "name": "@uppy/vue",
-  "version": "2.0.0-beta.3",
+  "version": "2.0.0",
   "license": "MIT",
   "type": "module",
   "main": "lib/index.js",
@@ -38,6 +38,5 @@
   },
   "publishConfig": {
     "access": "public"
-  },
-  "stableVersion": "1.1.2"
+  }
 }

@@ -57,7 +57,7 @@ jobs:
       - name: Publish to the npm registry
         run:
           corepack yarn workspaces foreach --all --no-private npm publish
-          --access public --tag next --tolerate-republish
+          --access public --tolerate-republish
         env:
           YARN_NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Merge PR
@@ -85,7 +85,6 @@ jobs:
         run:
           gh release create uppy@${{ steps.uppyVersion.outputs.version }} -t
           "Uppy ${{ steps.uppyVersion.outputs.version }}" -F CHANGELOG.diff.md
-          --prerelease
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload `uppy` to CDN
@@ -113,10 +112,9 @@ jobs:
           }}/git/refs/heads/release-candidate || echo "Already deleted"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Remove release-beta branch
+      - name: Remove release branch
         run:
-          gh api -X DELETE repos/${{ github.repository
-          }}/git/refs/heads/release-beta
+          gh api -X DELETE repos/${{ github.repository }}/git/refs/heads/release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Disable Release workflow
@@ -153,7 +151,7 @@ jobs:
             type=semver,pattern={{version}},value=${{ needs.release.outputs.companionWasReleased }}
             # set latest tag for default branch
             type=raw,value=latest,enable=true
-      - uses: docker/setup-qemu-action@68827325e0b33c7199eb31dd4e31fbe9023e06e3 # v3.0.0
+      - uses: docker/setup-qemu-action@5927c834f5b4fdf503fca6f4c7eccda82949e1ee # v3.1.0
       - uses: docker/setup-buildx-action@v3
       - name: Log in to DockerHub
         uses: docker/login-action@0d4c9c5ea7693da7b068278f7b52bda2a190a446 # v3.2.0
@@ -161,7 +159,7 @@ jobs:
           username: ${{secrets.DOCKER_USERNAME}}
           password: ${{secrets.DOCKER_PASSWORD}}
       - name: Build and push
-        uses: docker/build-push-action@ca052bb54ab0790a636c9b5f226502c73d547a25 # v5.4.0
+        uses: docker/build-push-action@1a162644f9a7e87d8f4b053101d1d9a712edc18c # v6.3.0
         with:
           push: true
           context: .

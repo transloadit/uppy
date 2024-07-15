@@ -67,6 +67,7 @@ const startCompanion = ({ name, port }) => {
       COMPANION_ALLOW_LOCAL_URLS: 'true',
       COMPANION_ENABLE_URL_ENDPOINT: 'true',
       COMPANION_LOGGER_PROCESS_NAME: name,
+      COMPANION_CLIENT_ORIGINS: 'true',
     },
   })
   // Adding a `then` property so the return value is awaitable:

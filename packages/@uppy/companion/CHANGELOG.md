@@ -1,5 +1,30 @@
 # @uppy/companion
 
+## 5.0.0
+
+Released: 2024-07-10
+Included in: Uppy v4.0.0
+
+- @uppy/companion: make streaming upload default to `true` (Mikael Finstad / #5315)
+- @uppy/companion: remove `oauthOrigin` (Antoine du Hamel / #5311)
+- @uppy/companion: do not list Node.js 20.12 as compatible (Antoine du Hamel / #5309)
+- examples,@uppy/companion: Release: uppy@3.27.3 (github-actions[bot] / #5304)
+- @uppy/companion: fix `TypeError` when parsing request (Antoine du Hamel / #5303)
+
+## 5.0.0-beta.12
+
+Released: 2024-07-02
+Included in: Uppy v4.0.0-beta.14
+
+- @uppy/companion: make `oauthOrigin` option required (Mikael Finstad / #5276)
+
+## 5.0.0-beta.11
+
+Released: 2024-06-27
+Included in: Uppy v4.0.0-beta.13
+
+- @uppy/companion: implement facebook app secret proof (Mikael Finstad / #5249)
+
 ## 5.0.0-beta.10
 
 Released: 2024-06-18
@@ -73,6 +98,21 @@ Included in: Uppy v4.0.0-beta.1
 
 - @uppy/companion: improve error msg (Mikael Finstad / #5010)
 - @uppy/companion: crash if trying to set path to / (Mikael Finstad / #5003)
+
+## 4.15.1
+
+Released: 2024-07-03
+Included in: Uppy v3.27.3
+
+- @uppy/companion: fix `TypeError` when parsing request (Antoine du Hamel / #5303)
+
+## 4.15.0
+
+Released: 2024-07-02
+Included in: Uppy v3.27.2
+
+- @uppy/companion: add `s3.forcePathStyle` option (Nadeem Reinhardt / #5066)
+- @uppy/companion: add `oauthOrigin` option (Antoine du Hamel / #5297)
 
 ## 4.14.0
 

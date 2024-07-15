@@ -2,7 +2,7 @@ import type {
   PartialTreeFile,
   PartialTreeFolderNode,
   PartialTreeId,
-} from '@uppy/core/lib/Uppy'
+} from '@uppy/core/lib/Uppy.js'
 import { h } from 'preact'
 import ItemIcon from './ItemIcon.tsx'
 

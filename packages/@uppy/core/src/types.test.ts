@@ -1,8 +1,8 @@
 import { expectTypeOf, test } from 'vitest'
 
 import type { Body, InternalMetadata, Meta } from '@uppy/utils/lib/UppyFile'
-import Uppy, { type UnknownPlugin } from './Uppy'
-import UIPlugin, { type UIPluginOptions } from './UIPlugin'
+import Uppy, { type UnknownPlugin } from './Uppy.ts'
+import UIPlugin, { type UIPluginOptions } from './UIPlugin.ts'
 
 interface Opts extends UIPluginOptions {
   foo: string

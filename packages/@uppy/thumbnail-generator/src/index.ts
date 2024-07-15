@@ -6,7 +6,7 @@ import isPreviewSupported from '@uppy/utils/lib/isPreviewSupported'
 // @ts-ignore untyped
 import { rotation } from 'exifr/dist/mini.esm.mjs'
 
-import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin'
+import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin.js'
 import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
 import locale from './locale.ts'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment

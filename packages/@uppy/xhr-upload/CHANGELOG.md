@@ -42,6 +42,13 @@ Included in: Uppy v4.0.0-beta.1
 
 - @uppy/aws-s3-multipart,@uppy/tus,@uppy/utils,@uppy/xhr-upload: Make `allowedMetaFields` consistent (Merlijn Vos / #5011)
 
+## 3.6.8
+
+Released: 2024-06-27
+Included in: Uppy v3.27.1
+
+- @uppy/xhr-upload: add `'PATCH'` as valid method (Quinn Daley / #5279)
+
 ## 3.6.7
 
 Released: 2024-05-23

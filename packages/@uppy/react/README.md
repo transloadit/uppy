@@ -16,7 +16,8 @@ a versatile file encoding service.
 
 <!-- eslint-disable react/state-in-constructor -->
 
-```js
+```jsx
+/** @jsx React */
 import React from 'react'
 import Uppy from '@uppy/core'
 import { DashboardModal } from '@uppy/react'
@@ -27,10 +28,11 @@ class Example extends React.Component {
   state = { open: false }
 
   render() {
+    const { open } = this.state
     return (
       <DashboardModal
         uppy={uppy}
-        open={this.state.open}
+        open={open}
         onRequestClose={this.handleClose}
       />
     )
