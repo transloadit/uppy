@@ -25,22 +25,6 @@ import getAllowedMetaFields from '@uppy/utils/lib/getAllowedMetaFields'
 import packageJson from '../package.json'
 import locale from './locale.ts'
 
-declare module '@uppy/utils/lib/UppyFile' {
-  // eslint-disable-next-line no-shadow, @typescript-eslint/no-unused-vars
-  export interface UppyFile<M extends Meta, B extends Body> {
-    // TODO: figure out what else is in this type
-    xhrUpload?: { headers: Record<string, string> }
-  }
-}
-
-declare module '@uppy/core' {
-  // eslint-disable-next-line no-shadow, @typescript-eslint/no-unused-vars
-  export interface State<M extends Meta, B extends Body> {
-    // TODO: figure out what else is in this type
-    xhrUpload?: { headers: Record<string, string> }
-  }
-}
-
 export interface XhrUploadOpts<M extends Meta, B extends Body>
   extends PluginOpts {
   endpoint: string
@@ -73,6 +57,20 @@ export interface XhrUploadOpts<M extends Meta, B extends Body>
   onAfterResponse?: FetcherOptions['onAfterResponse']
   allowedMetaFields?: boolean | string[]
   bundle?: boolean
+}
+
+declare module '@uppy/utils/lib/UppyFile' {
+  // eslint-disable-next-line no-shadow
+  export interface UppyFile<M extends Meta, B extends Body> {
+    xhrUpload?: XhrUploadOpts<M, B>
+  }
+}
+
+declare module '@uppy/core' {
+  // eslint-disable-next-line no-shadow
+  export interface State<M extends Meta, B extends Body> {
+    xhrUpload?: XhrUploadOpts<M, B>
+  }
 }
 
 function buildResponseError(
