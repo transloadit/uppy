@@ -42,7 +42,7 @@ describe('XHRUpload', () => {
       xhrUpload: {
         // Test that we don't have a TS error for setting endpoint
         // on metadata
-        endpoint: 'http://localhost:3000',
+        endpoint: 'https://fake-endpoint.uppy.io',
       },
     })
     return core.upload().then(() => {
