@@ -64,7 +64,7 @@
     "supports-color": "8.x",
     "tus-js-client": "^4.1.0",
     "validator": "^13.0.0",
-    "ws": "8.17.0"
+    "ws": "8.17.1"
   },
   "devDependencies": {
     "@types/compression": "1.7.0",
