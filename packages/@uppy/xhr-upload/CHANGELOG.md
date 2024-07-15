@@ -1,5 +1,12 @@
 # @uppy/xhr-upload
 
+## 4.0.1
+
+Released: 2024-07-15
+Included in: Uppy v4.0.3
+
+- @uppy/xhr-upload: correctly type xhrUpload meta (Merlijn Vos / #5344)
+
 ## 4.0.0-beta.6
 
 Released: 2024-06-04

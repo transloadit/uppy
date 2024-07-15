@@ -12,6 +12,20 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 4.0.3
+
+Released: 2024-07-15
+
+| Package          | Version | Package          | Version |
+| ---------------- | ------- | ---------------- | ------- |
+| @uppy/companion  |   5.0.3 | @uppy/xhr-upload |   4.0.1 |
+| @uppy/locales    |   4.0.2 | uppy             |   4.0.3 |
+
+- @uppy/companion: Improve error message when `window.opener == null` (Mikael Finstad / #5340)
+- @uppy/xhr-upload: correctly type xhrUpload meta (Merlijn Vos / #5344)
+- meta: fix require path in `upload-to-cdn` (Antoine du Hamel / #5343)
+
+
 ## 4.0.2
 
 Released: 2024-07-15
