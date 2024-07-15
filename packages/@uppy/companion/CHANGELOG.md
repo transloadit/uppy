@@ -1,5 +1,12 @@
 # @uppy/companion
 
+## 5.0.1
+
+Released: 2024-07-15
+Included in: Uppy v4.0.1
+
+- @uppy/companion: bump `ws` from 8.17.0 to 8.17.1 (dependabot[bot] / #5324)
+
 ## 5.0.0
 
 Released: 2024-07-10

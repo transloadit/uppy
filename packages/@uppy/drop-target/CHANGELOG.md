@@ -1,5 +1,12 @@
 # @uppy/drop-target
 
+## 3.0.1
+
+Released: 2024-07-15
+Included in: Uppy v4.0.1
+
+- @uppy/dashboard,@uppy/drag-drop,@uppy/drop-target: `<Dashboard/>`, `<DragDrop/>`, `drop-target` - new anti-flickering solution (Evgenia Karunus / #5326)
+
 ## 3.0.0-beta.5
 
 Released: 2024-06-04

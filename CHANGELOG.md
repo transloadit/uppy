@@ -12,6 +12,29 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 4.0.1
+
+Released: 2024-07-15
+
+| Package           | Version | Package           | Version |
+| ----------------- | ------- | ----------------- | ------- |
+| @uppy/companion   |   5.0.1 | @uppy/drop-target |   3.0.1 |
+| @uppy/core        |   4.0.1 | @uppy/react       |   4.0.1 |
+| @uppy/dashboard   |   4.0.1 | uppy              |   4.0.1 |
+| @uppy/drag-drop   |   4.0.1 |                   |         |
+
+- @uppy/dashboard: propagate `setOptions` to `StatusBar` (Mikael Finstad / #5260)
+- meta: add missing lint rule for `.ts` files (Antoine du Hamel / #5335)
+- @uppy/companion: bump `ws` from 8.17.0 to 8.17.1 (dependabot[bot] / #5324)
+- @uppy/dashboard,@uppy/drag-drop,@uppy/drop-target: `<Dashboard/>`, `<DragDrop/>`, `drop-target` - new anti-flickering solution (Evgenia Karunus / #5326)
+- docs: add css import for url plugin (Tyler Nieman / #5333)
+- meta: Bump fast-loops from 1.1.3 to 1.1.4 (dependabot[bot] / #5327)
+- @uppy/core: make `Meta` generic optional (Merlijn Vos / #5330)
+- meta: update `manual-cdn` workflow (Antoine du Hamel / #5329)
+- docs: Fix lint (Murderlon)
+- docs: Correct mistake in migration guide (Murderlon)
+
+
 ## 4.0.0
 
 Released: 2024-07-10
