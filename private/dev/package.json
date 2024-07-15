@@ -13,8 +13,6 @@
     "autoprefixer": "^10.2.6",
     "postcss-dir-pseudo-class": "^6.0.0",
     "postcss-logical": "^5.0.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
     "vite": "^5.0.0"
   },
   "private": true,
