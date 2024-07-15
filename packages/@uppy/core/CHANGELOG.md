@@ -1,5 +1,12 @@
 # @uppy/core
 
+## 4.0.1
+
+Released: 2024-07-15
+Included in: Uppy v4.0.1
+
+- @uppy/core: make `Meta` generic optional (Merlijn Vos / #5330)
+
 ## 4.0.0
 
 Released: 2024-07-10
