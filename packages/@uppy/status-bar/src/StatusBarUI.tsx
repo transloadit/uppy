@@ -133,24 +133,12 @@ export default function StatusBarUI<M extends Meta, B extends Body>({
     }
   }
 
-  function getIsHidden(): boolean | undefined {
-    if (recoveredState) {
-      return false
-    }
-
-    switch (uploadState) {
-      case STATE_WAITING:
-        return hideUploadButton || newFiles === 0
-      case STATE_COMPLETE:
-        return hideAfterFinish
-      default:
-        return false
-    }
-  }
-
   const progressValue = getProgressValue()
 
-  const isHidden = getIsHidden()
+  const isHidden =
+    !recoveredState &&
+    ((uploadState === STATE_WAITING && (hideUploadButton || newFiles === 0)) ||
+      (uploadState === STATE_COMPLETE && hideAfterFinish))
 
   const width = progressValue ?? 100
 
