@@ -1,5 +1,12 @@
 # @uppy/companion
 
+## 5.0.3
+
+Released: 2024-07-15
+Included in: Uppy v4.0.3
+
+- @uppy/companion: Improve error message when `window.opener == null` (Mikael Finstad / #5340)
+
 ## 5.0.1
 
 Released: 2024-07-15
