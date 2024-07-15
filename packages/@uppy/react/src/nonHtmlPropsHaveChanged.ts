@@ -1,4 +1,4 @@
-import getHTMLProps from './getHTMLProps'
+import getHTMLProps from './getHTMLProps.ts'
 
 export default function nonHtmlPropsHaveChanged<
   T extends Record<string, unknown>,
