@@ -67,7 +67,7 @@ describe('XHRUpload', () => {
         id: 'XHRUpload',
         endpoint: 'https://fake-endpoint.uppy.io',
         headers: (file) => ({
-          'x-sample-header': file.name as string,
+          'x-sample-header': file.name!,
         }),
       })
       core.addFile({
