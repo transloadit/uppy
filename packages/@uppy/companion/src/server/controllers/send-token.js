@@ -16,7 +16,7 @@ const htmlContent = (token, origin) => {
         <script>
           'use strict';
 
-          function sendToken() {
+          (function() {
             var data = ${serialize({ token })};
             var origin = ${serialize(origin)};
 
@@ -29,13 +29,11 @@ const htmlContent = (token, origin) => {
 
               console.warn('Unable to send the authentication token to the web app. This probably means that the web app was served from a HTTP server that includes the \`Cross-Origin-Opener-Policy: same-origin\` header. Make sure that the Uppy app is served from a server that does not send this header, or set to \`same-origin-allow-popups\`.')
 
-              addEventListener("DOMContentLoaded", () => {
-                document.body.append(document.createTextNode('Something went wrong. Please contact the site administrator. You may now exit this page.'))
+              addEventListener("DOMContentLoaded", function() {
+                document.body.appendChild(document.createTextNode('Something went wrong. Please contact the site administrator. You may now exit this page.'))
               });
             }
-          }
-
-          sendToken();
+          })();
         </script>
     </head>
     <body>
