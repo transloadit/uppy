@@ -133,7 +133,7 @@ async function main (packageName, version) {
 
   const packagePath = remote
     ? `${packageName}@${version}`
-    : path.join(__dirname, '..', 'packages', packageName)
+    : path.join(__dirname, '..', '..', 'packages', packageName)
 
   // uppy → releases/uppy/
   // @uppy/robodog → releases/uppy/robodog/
