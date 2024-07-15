@@ -453,6 +453,7 @@ module.exports = {
           selector: 'ImportDeclaration[source.value=/^@uppy\\x2Futils\\x2Flib\\x2F.+\\.[mc]?[jt]sx?$/]',
           message: 'Do not use file extension when importing from @uppy/utils',
         }],
+        'import/extensions': ['error', 'ignorePackages'],
         'import/prefer-default-export': 'off',
         '@typescript-eslint/no-empty-function': 'off',
         '@typescript-eslint/no-explicit-any': 'off',
