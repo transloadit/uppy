@@ -1,5 +1,6 @@
 {
   "name": "@uppy-dev/upload-to-cdn",
+  "private": true,
   "devDependencies": {
     "@aws-sdk/client-s3": "^3.338.0",
     "adm-zip": "^0.5.5",
