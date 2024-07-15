@@ -14,8 +14,14 @@ const htmlContent = (token, origin) => {
     <head>
         <meta charset="utf-8" />
         <script>
-          window.opener.postMessage(${serialize({ token })}, ${serialize(origin)})
-          window.close()
+          if (window.opener != null) {
+            window.opener.postMessage(${serialize({ token })}, ${serialize(origin)})
+            window.close()
+          } else {
+            addEventListener("DOMContentLoaded", () => {
+              document.body.append(document.createTextNode('Unable to send the authentication token to the web app. This probably means that the web app was served from a HTTP server that includes the \`Cross-Origin-Opener-Policy: same-origin\` header. Make sure that the Uppy app is served from a server that does not send this header, or set to \`same-origin-allow-popups\`.'))
+            });
+          }
         </script>
     </head>
     <body></body>
