@@ -12,6 +12,18 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 4.0.2
+
+Released: 2024-07-15
+
+| Package         | Version | Package         | Version |
+| --------------- | ------- | --------------- | ------- |
+| @uppy/locales   |   4.0.1 | uppy            |   4.0.2 |
+| @uppy/companion |   5.0.2 |                 |         |
+
+- meta: mark `@uppy-dev/upload-to-cdn` as private (Antoine du Hamel / #5341)
+
+
 ## 4.0.1
 
 Released: 2024-07-15
