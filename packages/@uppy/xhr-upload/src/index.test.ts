@@ -31,13 +31,20 @@ describe('XHRUpload', () => {
       onBeforeRequest,
       onAfterResponse,
     })
-    core.addFile({
+    const id = core.addFile({
       type: 'image/png',
       source: 'test',
       name: 'test.jpg',
       data: new Blob([new Uint8Array(8192)]),
     })
 
+    core.setFileState(id, {
+      xhrUpload: {
+        // Test that we don't have a TS error for setting endpoint
+        // on metadata
+        endpoint: 'http://localhost:3000',
+      },
+    })
     return core.upload().then(() => {
       expect(shouldRetry).toHaveBeenCalledTimes(1)
       expect(onAfterResponse).toHaveBeenCalledTimes(2)
@@ -60,7 +67,7 @@ describe('XHRUpload', () => {
         id: 'XHRUpload',
         endpoint: 'https://fake-endpoint.uppy.io',
         headers: (file) => ({
-          'x-sample-header': file.name,
+          'x-sample-header': file.name as string,
         }),
       })
       core.addFile({
