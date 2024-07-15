@@ -46,19 +46,8 @@ describe('test authentication callback', () => {
       .get(`/dropbox/send-token?uppyAuthToken=${token}`)
       .expect(200)
       .expect((res) => {
-        const body = `
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <meta charset="utf-8" />
-        <script>
-          window.opener.postMessage({"token":"${token}"}, "http:\\u002F\\u002Flocalhost:3020")
-          window.close()
-        </script>
-    </head>
-    <body></body>
-    </html>`
-        expect(res.text).toBe(body)
+        expect(res.text).toMatch(`var data = {"token":"${token}"};`)
+        expect(res.text).toMatch(`var origin = "http:\\u002F\\u002Flocalhost:3020";`)
       })
   })
 })
