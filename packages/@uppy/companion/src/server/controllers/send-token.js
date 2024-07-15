@@ -14,9 +14,9 @@ const htmlContent = (token, origin) => {
     <head>
         <meta charset="utf-8" />
         <script>
-          'use strict';
-
           (function() {
+            'use strict';
+
             var data = ${serialize({ token })};
             var origin = ${serialize(origin)};
 
