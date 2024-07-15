@@ -135,11 +135,6 @@ export default function StatusBarUI<M extends Meta, B extends Body>({
 
   const progressValue = getProgressValue()
 
-  const isHidden =
-    !recoveredState &&
-    ((uploadState === STATE_WAITING && (hideUploadButton || newFiles === 0)) ||
-      (uploadState === STATE_COMPLETE && hideAfterFinish))
-
   const width = progressValue ?? 100
 
   const showUploadBtn =
@@ -218,6 +213,17 @@ export default function StatusBarUI<M extends Meta, B extends Body>({
     }
   })()
 
+  const atLeastOneAction =
+    showUploadBtn ||
+    showRetryBtn ||
+    showPauseResumeBtn ||
+    showCancelBtn ||
+    showDoneBtn
+  const thereIsNothingInside = !atLeastOneAction && !progressBarStateEl
+
+  const isHidden =
+    thereIsNothingInside || (uploadState === STATE_COMPLETE && hideAfterFinish)
+
   return (
     <div className={statusBarClassNames} aria-hidden={isHidden}>
       <div
@@ -234,7 +240,7 @@ export default function StatusBarUI<M extends Meta, B extends Body>({
       {progressBarStateEl}
 
       <div className="uppy-StatusBar-actions">
-        {recoveredState || showUploadBtn ?
+        {showUploadBtn ?
           <UploadBtn
             newFiles={newFiles}
             isUploadStarted={isUploadStarted}
