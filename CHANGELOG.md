@@ -12,6 +12,18 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 4.0.4
+
+Released: 2024-07-15
+
+| Package         | Version | Package         | Version |
+| --------------- | ------- | --------------- | ------- |
+| @uppy/companion |   5.0.4 | uppy            |   4.0.4 |
+| @uppy/locales   |   4.0.3 |                 |         |
+
+- meta: fixup! meta: fix require path in `upload-to-cdn` (Antoine du Hamel / #5343)
+
+
 ## 4.0.3
 
 Released: 2024-07-15
