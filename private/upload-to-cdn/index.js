@@ -120,7 +120,7 @@ async function main (packageName, version) {
   const remote = !!version
   if (!remote) {
     // eslint-disable-next-line import/no-dynamic-require, global-require, no-param-reassign
-    version = require(`../packages/${packageName}/package.json`).version
+    version = require(`../../packages/${packageName}/package.json`).version
   }
 
   // Warn if uploading a local build not from CI:
