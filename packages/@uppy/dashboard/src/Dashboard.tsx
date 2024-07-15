@@ -1302,26 +1302,42 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
   }
 
   #getStatusBarOpts() {
+    const {
+      hideUploadButton,
+      hideRetryButton,
+      hidePauseResumeButton,
+      hideCancelButton,
+      showProgressDetails,
+      hideProgressAfterFinish,
+      locale: l,
+      doneButtonHandler,
+    } = this.opts
     return {
-      hideUploadButton: this.opts.hideUploadButton,
-      hideRetryButton: this.opts.hideRetryButton,
-      hidePauseResumeButton: this.opts.hidePauseResumeButton,
-      hideCancelButton: this.opts.hideCancelButton,
-      showProgressDetails: this.opts.showProgressDetails,
-      hideAfterFinish: this.opts.hideProgressAfterFinish,
-      locale: this.opts.locale,
-      doneButtonHandler: this.opts.doneButtonHandler,
+      hideUploadButton,
+      hideRetryButton,
+      hidePauseResumeButton,
+      hideCancelButton,
+      showProgressDetails,
+      hideAfterFinish: hideProgressAfterFinish,
+      locale: l,
+      doneButtonHandler,
     }
   }
 
   #getThumbnailGeneratorOpts() {
+    const {
+      thumbnailWidth,
+      thumbnailHeight,
+      thumbnailType,
+      waitForThumbnailsBeforeUpload,
+    } = this.opts
     return {
-      thumbnailWidth: this.opts.thumbnailWidth,
-      thumbnailHeight: this.opts.thumbnailHeight,
-      thumbnailType: this.opts.thumbnailType,
-      waitForThumbnailsBeforeUpload: this.opts.waitForThumbnailsBeforeUpload,
+      thumbnailWidth,
+      thumbnailHeight,
+      thumbnailType,
+      waitForThumbnailsBeforeUpload,
       // If we don't block on thumbnails, we can lazily generate them
-      lazy: !this.opts.waitForThumbnailsBeforeUpload,
+      lazy: !waitForThumbnailsBeforeUpload,
     }
   }
 
