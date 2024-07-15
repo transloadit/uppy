@@ -563,6 +563,17 @@ app.use(
 When signing on the client, this function will only be called for multipart
 uploads.
 
+##### `s3.acl`
+
+Specify the
+[Canned ACL](https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#canned-acl).
+
+##### `s3.serverSideEncryption`
+
+Specify the
+[Server-Side Encryption](https://docs.aws.amazon.com/AmazonS3/latest/dev/serv-side-encryption.html)
+method.
+
 #### `COMPANION_AWS_USE_ACCELERATE_ENDPOINT`
 
 Enable S3
