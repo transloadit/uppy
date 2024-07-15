@@ -109,15 +109,15 @@ class VirtualList<T> extends Component<
     window.removeEventListener('resize', this.handleResize)
   }
 
-  handleScroll = (): void => {
+  private handleScroll = () => {
     this.setState({ offset: (this.base! as HTMLElement).scrollTop })
   }
 
-  handleResize = (): void => {
+  private handleResize = () => {
     this.resize()
   }
 
-  resize(): void {
+  private resize() {
     const { height } = this.state
 
     if (height !== (this.base! as HTMLElement).offsetHeight) {
