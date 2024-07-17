@@ -12,9 +12,9 @@ export default (props: PermissionsScreenProps) => {
   return (
     <div className="uppy-Audio-permissons">
       <div className="uppy-Audio-permissonsIcon">{icon()}</div>
-      <h1 className="uppy-Audio-title">
+      <div className="uppy-Audio-title">
         {hasAudio ? i18n('allowAudioAccessTitle') : i18n('noAudioTitle')}
-      </h1>
+      </div>
       <p>
         {hasAudio ?
           i18n('allowAudioAccessDescription')
