@@ -23,6 +23,6 @@ export type UploadPartBytesResult = {
   location?: string
 }
 
-export interface Body extends _Body {
+export interface AwsBody extends _Body {
   location: string
 }
