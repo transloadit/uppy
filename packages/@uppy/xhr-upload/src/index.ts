@@ -55,6 +55,7 @@ export interface XhrUploadOpts<M extends Meta, B extends Body>
   onBeforeRequest?: FetcherOptions['onBeforeRequest']
   shouldRetry?: FetcherOptions['shouldRetry']
   onAfterResponse?: FetcherOptions['onAfterResponse']
+  getResponseData?: (xhr: XMLHttpRequest) => B | Promise<B>
   allowedMetaFields?: boolean | string[]
   bundle?: boolean
 }
@@ -218,7 +219,15 @@ export default class XHRUpload<
             },
           })
 
-          const body = JSON.parse(res.responseText) as B
+          let body = await this.opts.getResponseData?.(res)
+          try {
+            body ??= JSON.parse(res.responseText) as B
+          } catch {
+            throw new Error(
+              '@uppy/xhr-upload expects a JSON response (with a `url` property). To parse non-JSON responses, use `getResponseData` to turn your response into JSON.',
+            )
+          }
+
           const uploadURL = typeof body?.url === 'string' ? body.url : undefined
 
           for (const file of files) {
