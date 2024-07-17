@@ -175,7 +175,7 @@ Uppy always puts the response to an upload in `file.response.body`. If you want
 this to be type safe with `@uppy/aws-s3`, you can import the `AwsBody` type and
 pass it as the second genric to `Uppy`.
 
-```js {3,12} showLineNumbers
+```ts {3,12} showLineNumbers
 import Uppy from '@uppy/core';
 import Dashboard from '@uppy/dashboard';
 import AwsS3, { type AwsBody } from '@uppy/aws-s3';
@@ -185,7 +185,7 @@ import '@uppy/dashboard/dist/style.min.css';
 
 // Set this to `any` or `Record<string, unknown>`
 // if you do not set any metadata yourself
-type Meta = { license: string }
+type Meta = { license: string };
 
 const uppy = new Uppy<Meta, AwsBody>()
 	.use(Dashboard, { inline: true, target: 'body' })
@@ -196,7 +196,7 @@ const id = uppy.addFile(/* ... */);
 await uppy.upload();
 
 const body = uppy.getFile(id).response.body!;
-const { location } = body // This is now type safe
+const { location } = body; // This is now type safe
 ```
 
 ## API
