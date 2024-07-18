@@ -69,7 +69,6 @@ export default async function pickSemverness (
         { title: 'Skip this package', value: '' },
         { title: 'Patch', value: 'patch' },
         { title: 'Minor', value: 'minor' },
-        { title: 'Major', value: 'major' },
       ],
       initial: 2,
     })
