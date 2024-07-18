@@ -1,5 +1,12 @@
 # @uppy/xhr-upload
 
+## 4.0.2
+
+Released: 2024-07-18
+Included in: Uppy v4.0.5
+
+- @uppy/xhr-upload: bring back getResponseData (Merlijn Vos / #5354)
+
 ## 4.0.1
 
 Released: 2024-07-15
