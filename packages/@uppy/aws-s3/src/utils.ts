@@ -1,5 +1,5 @@
 import { createAbortError } from '@uppy/utils/lib/AbortController'
-import type { Body as _Body } from '@uppy/utils/lib/UppyFile'
+import type { Body } from '@uppy/utils/lib/UppyFile'
 
 import type { AwsS3Part } from './index.js'
 
@@ -23,6 +23,6 @@ export type UploadPartBytesResult = {
   location?: string
 }
 
-export interface AwsBody extends _Body {
+export interface AwsBody extends Body {
   location: string
 }
