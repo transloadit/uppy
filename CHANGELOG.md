@@ -12,6 +12,20 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 4.0.5
+
+Released: 2024-07-18
+
+| Package          | Version | Package          | Version |
+| ---------------- | ------- | ---------------- | ------- |
+| @uppy/aws-s3     |   4.0.1 | uppy             |   4.0.5 |
+| @uppy/xhr-upload |   4.0.2 |                  |         |
+
+- @uppy/aws-s3: use default `Body` generic & export `AwsBody` (Merlijn Vos / #5353)
+- @uppy/xhr-upload: bring back getResponseData (Merlijn Vos / #5354)
+- @uppy/aws-s3: only send `PartNumber` and `ETag` in completion request (Antoine du Hamel / #5356)
+
+
 ## 4.0.4
 
 Released: 2024-07-15
