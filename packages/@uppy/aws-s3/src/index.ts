@@ -524,7 +524,7 @@ export default class AwsS3Multipart<
     return this.#client
       .post<B>(
         `s3/multipart/${uploadIdEnc}/complete?key=${filename}`,
-        { parts },
+        { parts: parts.map(({ ETag, PartNumber }) => ({ ETag, PartNumber })) },
         { signal },
       )
       .then(assertServerError)
