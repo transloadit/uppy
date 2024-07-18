@@ -1,4 +1,4 @@
-import type { Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
+import type { Meta, Body, UppyFile } from '@uppy/utils/lib/UppyFile'
 import type {
   RateLimitedQueue,
   WrapPromiseFunctionType,
@@ -6,7 +6,7 @@ import type {
 import { pausingUploadReason, type Chunk } from './MultipartUploader.ts'
 import type AwsS3Multipart from './index.js'
 import { throwIfAborted } from './utils.ts'
-import type { Body, UploadPartBytesResult, UploadResult } from './utils.js'
+import type { UploadPartBytesResult, UploadResult } from './utils.js'
 import type { AwsS3MultipartOptions, uploadPartBytes } from './index.js'
 
 function removeMetadataFromURL(urlString: string) {

@@ -4,7 +4,7 @@ import BasePlugin, {
 } from '@uppy/core/lib/BasePlugin.js'
 import { RequestClient } from '@uppy/companion-client'
 import type { RequestOptions } from '@uppy/utils/lib/CompanionClientProvider'
-import type { Body as _Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
+import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
 import type { Uppy } from '@uppy/core'
 import EventManager from '@uppy/core/lib/EventManager.js'
 import { RateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
@@ -21,7 +21,6 @@ import type {
   UploadResultWithSignal,
   MultipartUploadResultWithSignal,
   UploadPartBytesResult,
-  Body,
 } from './utils.js'
 import createSignedURL from './createSignedURL.ts'
 import { HTTPCommunicationQueue } from './HTTPCommunicationQueue.ts'
@@ -33,13 +32,13 @@ interface MultipartFile<M extends Meta, B extends Body> extends UppyFile<M, B> {
   s3Multipart: UploadResult
 }
 
-type PartUploadedCallback<M extends Meta, B extends _Body> = (
+type PartUploadedCallback<M extends Meta, B extends Body> = (
   file: UppyFile<M, B>,
   part: { PartNumber: number; ETag: string },
 ) => void
 
 declare module '@uppy/core' {
-  export interface UppyEventMap<M extends Meta, B extends _Body> {
+  export interface UppyEventMap<M extends Meta, B extends Body> {
     's3-multipart:part-uploaded': PartUploadedCallback<M, B>
   }
 }
@@ -288,6 +287,8 @@ const defaultOptions = {
     (file.size! >> 10) >> 10 > 100) as any as true,
   retryDelays: [0, 1000, 3000, 5000],
 } satisfies Partial<AwsS3MultipartOptions<any, any>>
+
+export type { AwsBody } from './utils.ts'
 
 export default class AwsS3Multipart<
   M extends Meta,
@@ -839,7 +840,7 @@ export default class AwsS3Multipart<
             ...result,
           },
           status: 200,
-          uploadURL: result.location,
+          uploadURL: result.location as string,
         }
 
         this.resetUploaderReferences(file.id)

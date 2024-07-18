@@ -3,8 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import 'whatwg-fetch'
 import nock from 'nock'
 import Core from '@uppy/core'
-import AwsS3Multipart from './index.ts'
-import type { Body } from './utils.js'
+import AwsS3Multipart, { type AwsBody } from './index.ts'
 
 const KB = 1024
 const MB = KB * KB
@@ -13,20 +12,18 @@ describe('AwsS3Multipart', () => {
   beforeEach(() => nock.disableNetConnect())
 
   it('Registers AwsS3Multipart upload plugin', () => {
-    const core = new Core<any, Body>()
-    core.use(AwsS3Multipart)
+    const core = new Core().use(AwsS3Multipart)
 
     // @ts-expect-error private property
     const pluginNames = core[Symbol.for('uppy test: getPlugins')](
       'uploader',
-    ).map((plugin: AwsS3Multipart<any, Body>) => plugin.constructor.name)
+    ).map((plugin: AwsS3Multipart<any, AwsBody>) => plugin.constructor.name)
     expect(pluginNames).toContain('AwsS3Multipart')
   })
 
   describe('companionUrl assertion', () => {
     it('Throws an error for main functions if configured without companionUrl', () => {
-      const core = new Core<any, Body>()
-      core.use(AwsS3Multipart)
+      const core = new Core().use(AwsS3Multipart)
       const awsS3Multipart = core.getPlugin('AwsS3Multipart')!
 
       const err = 'Expected a `endpoint` option'
@@ -47,8 +44,7 @@ describe('AwsS3Multipart', () => {
 
   describe('non-multipart upload', () => {
     it('should handle POST uploads', async () => {
-      const core = new Core<any, Body>()
-      core.use(AwsS3Multipart, {
+      const core = new Core().use(AwsS3Multipart, {
         shouldUseMultipart: false,
         limit: 0,
         getUploadParameters: () => ({
@@ -103,11 +99,11 @@ describe('AwsS3Multipart', () => {
   })
 
   describe('without companionUrl (custom main functions)', () => {
-    let core: Core<any, Body>
-    let awsS3Multipart: AwsS3Multipart<any, Body>
+    let core: Core<any, AwsBody>
+    let awsS3Multipart: AwsS3Multipart<any, AwsBody>
 
     beforeEach(() => {
-      core = new Core<any, Body>()
+      core = new Core<any, AwsBody>()
       core.use(AwsS3Multipart, {
         shouldUseMultipart: true,
         limit: 0,
@@ -254,7 +250,7 @@ describe('AwsS3Multipart', () => {
     })
 
     it('retries uploadPartBytes when it fails once', async () => {
-      const core = new Core<any, Body>().use(AwsS3Multipart, {
+      const core = new Core().use(AwsS3Multipart, {
         shouldUseMultipart: true,
         createMultipartUpload,
         completeMultipartUpload: vi.fn(async () => ({ location: 'test' })),
@@ -287,7 +283,7 @@ describe('AwsS3Multipart', () => {
     })
 
     it('calls `upload-error` when uploadPartBytes fails after all retries', async () => {
-      const core = new Core<any, Body>().use(AwsS3Multipart, {
+      const core = new Core().use(AwsS3Multipart, {
         shouldUseMultipart: true,
         retryDelays: [10],
         createMultipartUpload,
@@ -328,7 +324,7 @@ describe('AwsS3Multipart', () => {
     const newToken = 'new token'
 
     beforeEach(() => {
-      core = new Core<any, Body>()
+      core = new Core()
       core.use(AwsS3Multipart, {
         endpoint: '',
         headers: {
@@ -358,19 +354,17 @@ describe('AwsS3Multipart', () => {
   })
 
   describe('dynamic companionHeader using setOption', () => {
-    let core: Core<any, Body>
-    let awsS3Multipart: AwsS3Multipart<any, Body>
+    let core: Core<any, AwsBody>
+    let awsS3Multipart: AwsS3Multipart<any, AwsBody>
     const newToken = 'new token'
 
     it('companionHeader is updated before uploading file', async () => {
-      core = new Core<any, Body>()
+      core = new Core()
       core.use(AwsS3Multipart)
       /* Set up preprocessor */
       core.addPreProcessor(() => {
-        awsS3Multipart = core.getPlugin('AwsS3Multipart') as AwsS3Multipart<
-          any,
-          Body
-        >
+        awsS3Multipart =
+          core.getPlugin<AwsS3Multipart<any, AwsBody>>('AwsS3Multipart')!
         awsS3Multipart.setOptions({
           endpoint: 'http://localhost',
           headers: {
@@ -391,7 +385,7 @@ describe('AwsS3Multipart', () => {
   })
 
   describe('file metadata across custom main functions', () => {
-    let core: Core<any, Body>
+    let core: Core
     const createMultipartUpload = vi.fn((file) => {
       core.setFileMeta(file.id, {
         ...file.meta,
@@ -459,7 +453,7 @@ describe('AwsS3Multipart', () => {
     })
 
     it('preserves file metadata if upload is completed', async () => {
-      core = new Core<any, Body>().use(AwsS3Multipart, {
+      core = new Core().use(AwsS3Multipart, {
         shouldUseMultipart: true,
         createMultipartUpload,
         signPart,
@@ -520,7 +514,7 @@ describe('AwsS3Multipart', () => {
         }
       })
 
-      core = new Core<any, Body>().use(AwsS3Multipart, {
+      core = new Core().use(AwsS3Multipart, {
         shouldUseMultipart: true,
         createMultipartUpload,
         signPart: signPartWithAbort,
@@ -590,7 +584,7 @@ describe('AwsS3Multipart', () => {
         }
       })
 
-      core = new Core<any, Body>().use(AwsS3Multipart, {
+      core = new Core().use(AwsS3Multipart, {
         shouldUseMultipart: true,
         createMultipartUpload,
         signPart: signPartWithPause,
