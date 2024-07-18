@@ -245,6 +245,16 @@ export default {
 };
 ```
 
+#### `getResponseData`
+
+An optional function to turn your non-JSON response into JSON with a `url`
+property pointing to the uploaded file
+(`(xhr: XMLHttpRequest) => { url: string }`).
+
+You can also return properties other than `url` and they will end up in
+`file.response.body`. If you do, make sure to set the `Body` generic on `Uppy`
+to make it typesafe when using TS.
+
 ## Frequently Asked Questions
 
 ### How can I refresh auth tokens after they expire?

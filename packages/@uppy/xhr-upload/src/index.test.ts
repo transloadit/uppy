@@ -4,7 +4,7 @@ import Core from '@uppy/core'
 import XHRUpload from './index.ts'
 
 describe('XHRUpload', () => {
-  it('should leverage hooks from fetcher', () => {
+  it('should leverage hooks from fetcher', async () => {
     nock('https://fake-endpoint.uppy.io')
       .defaultReplyHeaders({
         'access-control-allow-method': 'POST',
@@ -17,12 +17,16 @@ describe('XHRUpload', () => {
       .options('/')
       .reply(204, {})
       .post('/')
-      .reply(200, {})
+      .reply(200, 'https://fake-endpoint.uppy.io/random-id')
 
-    const core = new Core()
+    const core = new Core<any, { url: string }>()
     const shouldRetry = vi.fn(() => true)
     const onBeforeRequest = vi.fn(() => {})
     const onAfterResponse = vi.fn(() => {})
+    // Test that we can turn a text response into a JSON response.
+    const getResponseData = vi.fn((xhr: XMLHttpRequest) => ({
+      url: xhr.responseText,
+    }))
 
     core.use(XHRUpload, {
       id: 'XHRUpload',
@@ -30,6 +34,7 @@ describe('XHRUpload', () => {
       shouldRetry,
       onBeforeRequest,
       onAfterResponse,
+      getResponseData,
     })
     const id = core.addFile({
       type: 'image/png',
@@ -45,10 +50,14 @@ describe('XHRUpload', () => {
         endpoint: 'https://fake-endpoint.uppy.io',
       },
     })
-    return core.upload().then(() => {
-      expect(shouldRetry).toHaveBeenCalledTimes(1)
-      expect(onAfterResponse).toHaveBeenCalledTimes(2)
-      expect(onBeforeRequest).toHaveBeenCalledTimes(2)
+
+    await core.upload()
+
+    expect(shouldRetry).toHaveBeenCalledTimes(1)
+    expect(onAfterResponse).toHaveBeenCalledTimes(2)
+    expect(onBeforeRequest).toHaveBeenCalledTimes(2)
+    expect(core.getFile(id).response!.body).toEqual({
+      url: 'https://fake-endpoint.uppy.io/random-id',
     })
   })
 
