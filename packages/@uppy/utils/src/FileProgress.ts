@@ -12,6 +12,7 @@ export type FileProcessingInfo =
   | IndeterminateFileProcessing
   | DeterminateFileProcessing
 
+// TODO explore whether all of these properties need to be optional
 interface FileProgressBase {
   uploadComplete?: boolean
   percentage?: number

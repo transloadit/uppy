@@ -1,9 +1,28 @@
+/* eslint-disable react/no-unused-prop-types */
 /* eslint-disable react/destructuring-assignment */
+import type { State, Uppy, UppyFile } from '@uppy/core'
+import type { I18n } from '@uppy/utils/lib/Translator'
+import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import { h, type ComponentChild } from 'preact'
 
-type $TSFixMe = any
+interface Props<M extends Meta, B extends Body> {
+  uppy: Uppy<M, B>
+  children: ComponentChild
+  file: UppyFile<M, B>
+  isUploaded: boolean
+  error: string | false
+  recoveredState: State<M, B>['recoveredState']
+  hideRetryButton: boolean
+  hidePauseResumeButton: boolean
+  hideCancelButton: boolean
+  resumableUploads: boolean
+  individualCancellation: boolean
+  i18n: I18n
+}
 
-function onPauseResumeCancelRetry(props: $TSFixMe) {
+function onPauseResumeCancelRetry<M extends Meta, B extends Body>(
+  props: Props<M, B>,
+) {
   if (props.isUploaded) return
 
   if (props.error && !props.hideRetryButton) {
@@ -18,7 +37,9 @@ function onPauseResumeCancelRetry(props: $TSFixMe) {
   }
 }
 
-function progressIndicatorTitle(props: $TSFixMe) {
+function progressIndicatorTitle<M extends Meta, B extends Body>(
+  props: Props<M, B>,
+) {
   if (props.isUploaded) {
     return props.i18n('uploadComplete')
   }
@@ -40,7 +61,9 @@ function progressIndicatorTitle(props: $TSFixMe) {
   return ''
 }
 
-function ProgressIndicatorButton(props: $TSFixMe) {
+function ProgressIndicatorButton<M extends Meta, B extends Body>(
+  props: Props<M, B>,
+) {
   return (
     <div className="uppy-Dashboard-Item-progress">
       <button
@@ -56,7 +79,7 @@ function ProgressIndicatorButton(props: $TSFixMe) {
   )
 }
 
-function ProgressCircleContainer({ children }: $TSFixMe) {
+function ProgressCircleContainer({ children }: { children: ComponentChild }) {
   return (
     <svg
       aria-hidden="true"
@@ -71,7 +94,7 @@ function ProgressCircleContainer({ children }: $TSFixMe) {
   )
 }
 
-function ProgressCircle({ progress }: $TSFixMe) {
+function ProgressCircle({ progress }: { progress: number }) {
   // circle length equals 2 * PI * R
   const circleLength = 2 * Math.PI * 15
 
@@ -100,9 +123,15 @@ function ProgressCircle({ progress }: $TSFixMe) {
   )
 }
 
-export default function FileProgress(props: $TSFixMe): ComponentChild {
+export default function FileProgress<M extends Meta, B extends Body>(
+  props: Props<M, B>,
+): ComponentChild {
   // Nothing if upload has not started
   if (!props.file.progress.uploadStarted) {
+    return null
+  }
+
+  if (props.file.progress.percentage === undefined) {
     return null
   }
 
