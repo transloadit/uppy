@@ -24,7 +24,6 @@ function chunks(list: $TSFixMe, size: $TSFixMe) {
 
 export default function FileList({
   id,
-  error,
   i18n,
   uppy,
   files,
@@ -35,7 +34,6 @@ export default function FileList({
   hideCancelButton,
   showLinkToFileUploadResult,
   showRemoveButtonAfterComplete,
-  isWide,
   metaFields,
   isSingleFile,
   toggleFileCard,
@@ -78,11 +76,9 @@ export default function FileList({
       {row.map((fileID: $TSFixMe) => (
         <FileItem
           key={fileID}
-          // @ts-expect-error it's fine
           uppy={uppy}
           // FIXME This is confusing, it's actually the Dashboard's plugin ID
           id={id}
-          error={error}
           // TODO move this to context
           i18n={i18n}
           // features
@@ -95,7 +91,6 @@ export default function FileList({
           hideCancelButton={hideCancelButton}
           showLinkToFileUploadResult={showLinkToFileUploadResult}
           showRemoveButtonAfterComplete={showRemoveButtonAfterComplete}
-          isWide={isWide}
           metaFields={metaFields}
           recoveredState={recoveredState}
           isSingleFile={isSingleFile}

@@ -7,7 +7,6 @@ import { h, type ComponentChild } from 'preact'
 
 interface Props<M extends Meta, B extends Body> {
   uppy: Uppy<M, B>
-  children: ComponentChild
   file: UppyFile<M, B>
   isUploaded: boolean
   error: string | false
@@ -62,7 +61,7 @@ function progressIndicatorTitle<M extends Meta, B extends Body>(
 }
 
 function ProgressIndicatorButton<M extends Meta, B extends Body>(
-  props: Props<M, B>,
+  props: Props<M, B> & { children: ComponentChild },
 ) {
   return (
     <div className="uppy-Dashboard-Item-progress">
