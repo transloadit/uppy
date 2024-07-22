@@ -125,7 +125,7 @@ function ProgressCircle({ progress }: { progress: number }) {
 
 export default function FileProgress<M extends Meta, B extends Body>(
   props: Props<M, B>,
-): ComponentChild {
+) {
   // Nothing if upload has not started
   if (!props.file.progress.uploadStarted) {
     return null
@@ -154,7 +154,7 @@ export default function FileProgress<M extends Meta, B extends Body>(
   }
 
   if (props.recoveredState) {
-    return undefined
+    return null
   }
 
   // Retry button for error

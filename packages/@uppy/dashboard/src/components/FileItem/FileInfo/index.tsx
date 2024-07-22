@@ -1,5 +1,5 @@
 /* eslint-disable react/destructuring-assignment */
-import { h, Fragment, type ComponentChild } from 'preact'
+import { h, Fragment } from 'preact'
 import prettierBytes from '@transloadit/prettier-bytes'
 import truncateString from '@uppy/utils/lib/truncateString'
 import MetaErrorMessage from '../MetaErrorMessage.tsx'
@@ -100,7 +100,7 @@ const ErrorButton = ({ file, onClick }: $TSFixMe) => {
   return null
 }
 
-export default function FileInfo(props: $TSFixMe): ComponentChild {
+export default function FileInfo(props: $TSFixMe) {
   const { file } = props
   return (
     <div

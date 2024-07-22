@@ -1,4 +1,4 @@
-import { h, type ComponentChild } from 'preact'
+import { h } from 'preact'
 import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
 import type Uppy from '@uppy/core'
 import type { I18n } from '@uppy/utils/lib/Translator'
@@ -152,7 +152,7 @@ type ButtonsProps<M extends Meta, B extends Body> = {
 
 export default function Buttons<M extends Meta, B extends Body>(
   props: ButtonsProps<M, B>,
-): ComponentChild {
+) {
   const {
     uppy,
     file,
