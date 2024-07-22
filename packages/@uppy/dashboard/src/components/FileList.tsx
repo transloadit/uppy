@@ -67,12 +67,15 @@ export default function FileList({
     return chunks(fileIds, itemsPerRow)
   }, [files, itemsPerRow, recoveredState])
 
-  const renderRow = (
-    row: $TSFixMe, // The `role="presentation` attribute ensures that the list items are properly
-  ) => (
-    // associated with the `VirtualList` element.
-    // We use the first file ID as the key—this should not change across scroll rerenders
-    <div class="uppy-Dashboard-filesInner" role="presentation" key={row[0]}>
+  const renderRow = (row: $TSFixMe) => (
+    <div
+      class="uppy-Dashboard-filesInner"
+      // The `role="presentation` attribute ensures that the list items are properly
+      // associated with the `VirtualList` element.
+      role="presentation"
+      // We use the first file ID as the key — this should not change across scroll rerenders.
+      key={row[0]}
+    >
       {row.map((fileID: $TSFixMe) => (
         <FileItem
           key={fileID}
