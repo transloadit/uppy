@@ -9,14 +9,11 @@ import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import FileItem from './FileItem/index.tsx'
 import type { DashboardState } from '../Dashboard.js'
 
-type $TSFixMe = any
-
 type FileListProps<M extends Meta, B extends Body> = {
   id: string
   i18n: I18n
   uppy: Uppy<M, B>
   files: State<M, B>['files']
-  acquirers: $TSFixMe[]
   resumableUploads: boolean
   hideRetryButton: boolean
   hidePauseResumeButton: boolean
@@ -58,7 +55,6 @@ export default function FileList<M extends Meta, B extends Body>({
   i18n,
   uppy,
   files,
-  acquirers,
   resumableUploads,
   hideRetryButton,
   hidePauseResumeButton,
@@ -116,7 +112,6 @@ export default function FileList<M extends Meta, B extends Body>({
           // TODO move this to context
           i18n={i18n}
           // features
-          acquirers={acquirers}
           resumableUploads={resumableUploads}
           individualCancellation={individualCancellation}
           // visual options

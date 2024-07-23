@@ -173,7 +173,6 @@ export default function Dashboard(props: $TSFixMe) {
                 i18n={props.i18n}
                 uppy={props.uppy}
                 files={props.files}
-                acquirers={props.acquirers}
                 resumableUploads={props.resumableUploads}
                 hideRetryButton={props.hideRetryButton}
                 hidePauseResumeButton={props.hidePauseResumeButton}
