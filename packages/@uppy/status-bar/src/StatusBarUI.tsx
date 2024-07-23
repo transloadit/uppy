@@ -133,24 +133,7 @@ export default function StatusBarUI<M extends Meta, B extends Body>({
     }
   }
 
-  function getIsHidden(): boolean | undefined {
-    if (recoveredState) {
-      return false
-    }
-
-    switch (uploadState) {
-      case STATE_WAITING:
-        return hideUploadButton || newFiles === 0
-      case STATE_COMPLETE:
-        return hideAfterFinish
-      default:
-        return false
-    }
-  }
-
   const progressValue = getProgressValue()
-
-  const isHidden = getIsHidden()
 
   const width = progressValue ?? 100
 
@@ -186,6 +169,61 @@ export default function StatusBarUI<M extends Meta, B extends Body>({
     { 'has-ghosts': isSomeGhost },
   )
 
+  const progressBarStateEl = (() => {
+    switch (uploadState) {
+      case STATE_PREPROCESSING:
+      case STATE_POSTPROCESSING:
+        return (
+          <ProgressBarProcessing
+            progress={calculateProcessingProgress(files)}
+          />
+        )
+      case STATE_COMPLETE:
+        return <ProgressBarComplete i18n={i18n} />
+      case STATE_ERROR:
+        return (
+          <ProgressBarError
+            error={error}
+            i18n={i18n}
+            numUploads={numUploads}
+            complete={complete}
+          />
+        )
+      case STATE_UPLOADING:
+        return (
+          <ProgressBarUploading
+            i18n={i18n}
+            supportsUploadProgress={supportsUploadProgress}
+            totalProgress={totalProgress}
+            showProgressDetails={showProgressDetails}
+            isUploadStarted={isUploadStarted}
+            isAllComplete={isAllComplete}
+            isAllPaused={isAllPaused}
+            newFiles={newFiles}
+            numUploads={numUploads}
+            complete={complete}
+            totalUploadedSize={totalUploadedSize}
+            totalSize={totalSize}
+            totalETA={totalETA}
+            startUpload={startUpload}
+          />
+        )
+      default:
+        return null
+    }
+  })()
+
+  const atLeastOneAction =
+    showUploadBtn ||
+    showRetryBtn ||
+    showPauseResumeBtn ||
+    showCancelBtn ||
+    showDoneBtn
+  const thereIsNothingInside = !atLeastOneAction && !progressBarStateEl
+
+  const isHidden =
+    thereIsNothingInside || (uploadState === STATE_COMPLETE && hideAfterFinish)
+
   return (
     <div className={statusBarClassNames} aria-hidden={isHidden}>
       <div
@@ -199,52 +237,10 @@ export default function StatusBarUI<M extends Meta, B extends Body>({
         aria-valuenow={progressValue!}
       />
 
-      {(() => {
-        switch (uploadState) {
-          case STATE_PREPROCESSING:
-          case STATE_POSTPROCESSING:
-            return (
-              <ProgressBarProcessing
-                progress={calculateProcessingProgress(files)}
-              />
-            )
-          case STATE_COMPLETE:
-            return <ProgressBarComplete i18n={i18n} />
-          case STATE_ERROR:
-            return (
-              <ProgressBarError
-                error={error}
-                i18n={i18n}
-                numUploads={numUploads}
-                complete={complete}
-              />
-            )
-          case STATE_UPLOADING:
-            return (
-              <ProgressBarUploading
-                i18n={i18n}
-                supportsUploadProgress={supportsUploadProgress}
-                totalProgress={totalProgress}
-                showProgressDetails={showProgressDetails}
-                isUploadStarted={isUploadStarted}
-                isAllComplete={isAllComplete}
-                isAllPaused={isAllPaused}
-                newFiles={newFiles}
-                numUploads={numUploads}
-                complete={complete}
-                totalUploadedSize={totalUploadedSize}
-                totalSize={totalSize}
-                totalETA={totalETA}
-                startUpload={startUpload}
-              />
-            )
-          default:
-            return null
-        }
-      })()}
+      {progressBarStateEl}
 
       <div className="uppy-StatusBar-actions">
-        {recoveredState || showUploadBtn ?
+        {showUploadBtn ?
           <UploadBtn
             newFiles={newFiles}
             isUploadStarted={isUploadStarted}
