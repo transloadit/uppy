@@ -168,8 +168,6 @@ export default function Dashboard(props: $TSFixMe) {
 
           {
             showFileList ?
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore
               <FileList
                 id={props.id}
                 i18n={props.i18n}
@@ -195,6 +193,8 @@ export default function Dashboard(props: $TSFixMe) {
                 toggleAddFilesPanel={props.toggleAddFilesPanel}
                 isSingleFile={isSingleFile}
                 itemsPerRow={itemsPerRow}
+                containerWidth={props.containerWidth}
+                containerHeight={props.containerHeight}
               />
               // eslint-disable-next-line react/jsx-props-no-spreading
             : <AddFiles {...props} isSizeMD={isSizeMD} />
