@@ -12,8 +12,6 @@ import FileInfo from './FileInfo/index.tsx'
 import Buttons from './Buttons/index.tsx'
 import type { DashboardState } from '../../Dashboard.js'
 
-type $TSFixMe = any
-
 type Props<M extends Meta, B extends Body> = {
   file: UppyFile<M, B>
   handleRequestThumbnail: (file: UppyFile<M, B>) => void
@@ -28,7 +26,6 @@ type Props<M extends Meta, B extends Body> = {
   toggleFileCard: (show: boolean, fileId: string) => void
   metaFields: DashboardState<M, B>['metaFields']
   id: string
-  acquirers: $TSFixMe[]
   containerWidth: number
   containerHeight: number
   toggleAddFilesPanel: () => void
@@ -140,8 +137,6 @@ export default class FileItem<M extends Meta, B extends Body> extends Component<
         <div className="uppy-Dashboard-Item-fileInfoAndButtons">
           <FileInfo
             file={file}
-            id={this.props.id}
-            acquirers={this.props.acquirers}
             containerWidth={this.props.containerWidth}
             containerHeight={this.props.containerHeight}
             i18n={this.props.i18n}
