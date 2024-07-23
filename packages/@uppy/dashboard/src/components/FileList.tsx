@@ -3,14 +3,45 @@ import { useMemo } from 'preact/hooks'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore untyped
 import VirtualList from '@uppy/utils/lib/VirtualList'
+import type { UppyFile, Uppy, State } from '@uppy/core'
+import type { I18n } from '@uppy/utils/lib/Translator'
+import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import FileItem from './FileItem/index.tsx'
+import type { DashboardState } from '../Dashboard.js'
 
 type $TSFixMe = any
 
-function chunks(list: $TSFixMe, size: $TSFixMe) {
-  const chunked: $TSFixMe[] = []
-  let currentChunk: $TSFixMe[] = []
-  list.forEach((item: $TSFixMe) => {
+type FileListProps<M extends Meta, B extends Body> = {
+  id: string
+  i18n: I18n
+  uppy: Uppy<M, B>
+  files: State<M, B>['files']
+  acquirers: $TSFixMe[]
+  resumableUploads: boolean
+  hideRetryButton: boolean
+  hidePauseResumeButton: boolean
+  hideCancelButton: boolean
+  showLinkToFileUploadResult: boolean
+  showRemoveButtonAfterComplete: boolean
+  metaFields: DashboardState<M, B>['metaFields']
+  isSingleFile: boolean
+  toggleFileCard: (show: boolean, fileId: string) => void
+  handleRequestThumbnail: (file: UppyFile<M, B>) => void
+  handleCancelThumbnail: (file: UppyFile<M, B>) => void
+  recoveredState: State<M, B>['recoveredState']
+  individualCancellation: boolean
+  itemsPerRow: number
+  openFileEditor: (file: UppyFile<M, B>) => void
+  canEditFile: (file: UppyFile<M, B>) => boolean
+  toggleAddFilesPanel: () => void
+  containerWidth: number
+  containerHeight: number
+}
+
+function chunks<T>(list: T[], size: number): T[][] {
+  const chunked: T[][] = []
+  let currentChunk: T[] = []
+  list.forEach((item: T) => {
     if (currentChunk.length < size) {
       currentChunk.push(item)
     } else {
@@ -22,7 +53,7 @@ function chunks(list: $TSFixMe, size: $TSFixMe) {
   return chunked
 }
 
-export default function FileList({
+export default function FileList<M extends Meta, B extends Body>({
   id,
   i18n,
   uppy,
@@ -47,7 +78,7 @@ export default function FileList({
   toggleAddFilesPanel,
   containerWidth,
   containerHeight,
-}: $TSFixMe) {
+}: FileListProps<M, B>) {
   // It's not great that this is hardcoded!
   // It's ESPECIALLY not great that this is checking against `itemsPerRow`!
   const rowHeight =
@@ -59,15 +90,15 @@ export default function FileList({
 
   // Sort files by file.isGhost, ghost files first, only if recoveredState is present
   const rows = useMemo(() => {
-    const sortByGhostComesFirst = (file1: $TSFixMe, file2: $TSFixMe) =>
-      files[file2].isGhost - files[file1].isGhost
+    const sortByGhostComesFirst = (file1: string, file2: string) =>
+      Number(files[file2].isGhost) - Number(files[file1].isGhost)
 
     const fileIds = Object.keys(files)
     if (recoveredState) fileIds.sort(sortByGhostComesFirst)
     return chunks(fileIds, itemsPerRow)
   }, [files, itemsPerRow, recoveredState])
 
-  const renderRow = (row: $TSFixMe) => (
+  const renderRow = (row: string[]) => (
     <div
       class="uppy-Dashboard-filesInner"
       // The `role="presentation` attribute ensures that the list items are properly
@@ -76,7 +107,7 @@ export default function FileList({
       // We use the first file ID as the key — this should not change across scroll rerenders.
       key={row[0]}
     >
-      {row.map((fileID: $TSFixMe) => (
+      {row.map((fileID: string) => (
         <FileItem
           key={fileID}
           uppy={uppy}

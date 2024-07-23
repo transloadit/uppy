@@ -168,9 +168,10 @@ export default function Dashboard(props: $TSFixMe) {
 
           {
             showFileList ?
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore
               <FileList
                 id={props.id}
-                error={props.error}
                 i18n={props.i18n}
                 uppy={props.uppy}
                 files={props.files}
@@ -183,7 +184,6 @@ export default function Dashboard(props: $TSFixMe) {
                 showRemoveButtonAfterComplete={
                   props.showRemoveButtonAfterComplete
                 }
-                isWide={props.isWide}
                 metaFields={props.metaFields}
                 toggleFileCard={props.toggleFileCard}
                 handleRequestThumbnail={props.handleRequestThumbnail}
