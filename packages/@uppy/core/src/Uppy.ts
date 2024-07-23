@@ -34,6 +34,7 @@ import type {
 } from '@uppy/utils/lib/Translator'
 import supportsUploadProgress from './supportsUploadProgress.ts'
 import getFileName from './getFileName.ts'
+import getFilePlugins from './getFilePlugins.ts'
 import { justErrorsLogger, debugLogger } from './loggers.ts'
 import {
   Restricter,
@@ -387,9 +388,11 @@ export class Uppy<
 
   #preProcessors: Set<Processor> = new Set()
 
-  #uploaders: Set<Processor> = new Set()
+  #uploaders: Map<Processor, string> = new Map()
 
   #postProcessors: Set<Processor> = new Set()
+
+  #installingPlugin?: string
 
   defaultLocale: Locale
 
@@ -676,7 +679,7 @@ export class Uppy<
   }
 
   addUploader(fn: Processor): void {
-    this.#uploaders.add(fn)
+    this.#uploaders.set(fn, this.#installingPlugin ?? '')
   }
 
   removeUploader(fn: Processor): boolean {
@@ -956,6 +959,7 @@ export class Uppy<
 
     const fileType = getFileType(file)
     const fileName = getFileName(fileType, file)
+    const filePlugins = getFilePlugins(file)
     const fileExtension = getFileNameAndExtension(fileName).extension
     const id = getSafeFileId(file, this.getID())
 
@@ -971,6 +975,7 @@ export class Uppy<
       source: file.source || '',
       id,
       name: fileName,
+      plugins: filePlugins,
       extension: fileExtension || '',
       meta: {
         ...this.getState().meta,
@@ -1814,7 +1819,12 @@ export class Uppy<
     } else {
       this.#plugins[plugin.type] = [plugin]
     }
+
+    this.#installingPlugin = pluginId
+
     plugin.install()
+
+    this.#installingPlugin = undefined
 
     this.emit('plugin-added', plugin)
 
@@ -2099,7 +2109,7 @@ export class Uppy<
 
     const steps = [
       ...this.#preProcessors,
-      ...this.#uploaders,
+      ...this.#uploaders.keys(),
       ...this.#postProcessors,
     ]
     try {
@@ -2120,12 +2130,22 @@ export class Uppy<
         })
 
         const { fileIDs } = currentUpload
-
+        let uploaderFileIds = fileIDs
+        const uploaderPlugin = this.#uploaders.get(fn)
+        if (uploaderPlugin) {
+          const files = this.getFilesByIds(uploaderFileIds)
+          uploaderFileIds = files
+            .filter(
+              (file) =>
+                file.plugins?.includes(uploaderPlugin) ||
+                file.plugins?.length === 0,
+            )
+            .map((file) => file.id)
+        }
         // TODO give this the `updatedUpload` object as its only parameter maybe?
         // Otherwise when more metadata may be added to the upload this would keep getting more parameters
-        await fn(fileIDs, uploadID)
+        await fn(uploaderFileIds, uploadID)
 
-        // Update currentUpload value in case it was modified asynchronously.
         currentUpload = getCurrentUpload()
       }
     } catch (err) {

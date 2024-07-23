@@ -17,6 +17,7 @@ export interface UppyFile<M extends Meta, B extends Body> {
   isGhost: boolean
   meta: InternalMetadata & M
   name?: string
+  plugins?: string[]
   preview?: string
   progress: FileProgress
   missingRequiredMetaFields?: string[]
