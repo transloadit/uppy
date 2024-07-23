@@ -642,6 +642,7 @@ export default class AwsS3Multipart<
     file: UppyFile<M, B>,
     options: RequestOptions,
   ): Promise<AwsS3UploadParameters> {
+    this.#assertHost('getUploadParameters')
     const { meta } = file
     const { type, name: filename } = meta
     const allowedMetaFields = getAllowedMetaFields(
