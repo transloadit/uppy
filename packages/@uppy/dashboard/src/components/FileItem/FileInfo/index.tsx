@@ -76,7 +76,7 @@ const renderFileSize = (props: { file: UppyFile<any, any> }) =>
 
 const ReSelectButton = (props: {
   file: UppyFile<any, any>
-  toggleAddFilesPanel: () => void
+  toggleAddFilesPanel: (show: boolean) => void
   i18n: I18n
 }) =>
   props.file.isGhost && (
@@ -85,7 +85,7 @@ const ReSelectButton = (props: {
       <button
         className="uppy-u-reset uppy-c-btn uppy-Dashboard-Item-reSelect"
         type="button"
-        onClick={props.toggleAddFilesPanel}
+        onClick={() => props.toggleAddFilesPanel(true)}
       >
         {props.i18n('reSelect')}
       </button>
@@ -121,7 +121,7 @@ type FileInfoProps = {
   containerWidth: number
   containerHeight: number
   i18n: I18n
-  toggleAddFilesPanel: () => void
+  toggleAddFilesPanel: (show: boolean) => void
   toggleFileCard: (show: boolean, fileId: string) => void
   metaFields: DashboardState<any, any>['metaFields']
   isSingleFile: boolean
