@@ -96,7 +96,7 @@ interface Target {
   type: string
 }
 
-interface TargetWithRender extends Target {
+export interface TargetWithRender extends Target {
   icon: ComponentChild
   render: () => ComponentChild
 }
@@ -109,6 +109,12 @@ export interface DashboardState<M extends Meta, B extends Body> {
   fileCardFor: string | null
   showFileEditor: boolean
   metaFields?: MetaField[] | ((file: UppyFile<M, B>) => MetaField[])
+  isHidden: boolean
+  isClosing: boolean
+  containerWidth: number
+  containerHeight: number
+  areInsidesReadyToBeVisible: boolean
+  isDraggingOver: boolean
   [key: string]: unknown
 }
 
