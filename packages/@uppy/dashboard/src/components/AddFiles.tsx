@@ -58,19 +58,23 @@ class AddFiles extends Component<AddFilesProps> {
     event.target.value = null // eslint-disable-line no-param-reassign
   }
 
-  private renderHiddenInput = (isFolder: $TSFixMe, refCallback: $TSFixMe) => {
+  private renderHiddenInput = (
+    isFolder: boolean,
+    refCallback: (ref: HTMLInputElement | null) => void,
+  ) => {
     return (
       <input
         className="uppy-Dashboard-input"
         hidden
         aria-hidden="true"
         tabIndex={-1}
+        // @ts-expect-error default types don't yet know about the `webkitdirectory` property
         webkitdirectory={isFolder}
         type="file"
         name="files[]"
         multiple={this.props.maxNumberOfFiles !== 1}
         onChange={this.onFileInputChange}
-        accept={this.props.allowedFileTypes}
+        accept={this.props.allowedFileTypes || undefined}
         ref={refCallback}
       />
     )
