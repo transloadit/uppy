@@ -28,7 +28,7 @@ type Props<M extends Meta, B extends Body> = {
   id: string
   containerWidth: number
   containerHeight: number
-  toggleAddFilesPanel: () => void
+  toggleAddFilesPanel: (show: boolean) => void
   isSingleFile: boolean
   hideRetryButton: boolean
   hideCancelButton: boolean
