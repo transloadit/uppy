@@ -65,7 +65,7 @@ type DashboardUIProps<M extends Meta, B extends Body> = {
   id: string
   closeModal: () => void
   handleClickOutside: () => void
-  handleInputChange: (event: InputEvent) => void
+  handleInputChange: (event: Event) => void
   handlePaste: (event: ClipboardEvent) => void
   inline: boolean
   showPanel: (id: string) => void
@@ -259,38 +259,54 @@ export default function Dashboard<M extends Meta, B extends Body>(
             </div>
           )}
 
-          {
-            showFileList ?
-              <FileList
-                id={props.id}
-                i18n={props.i18n}
-                uppy={props.uppy}
-                files={props.files}
-                resumableUploads={props.resumableUploads}
-                hideRetryButton={props.hideRetryButton}
-                hidePauseResumeButton={props.hidePauseResumeButton}
-                hideCancelButton={props.hideCancelButton}
-                showLinkToFileUploadResult={props.showLinkToFileUploadResult}
-                showRemoveButtonAfterComplete={
-                  props.showRemoveButtonAfterComplete
-                }
-                metaFields={props.metaFields}
-                toggleFileCard={props.toggleFileCard}
-                handleRequestThumbnail={props.handleRequestThumbnail}
-                handleCancelThumbnail={props.handleCancelThumbnail}
-                recoveredState={props.recoveredState}
-                individualCancellation={props.individualCancellation}
-                openFileEditor={props.openFileEditor}
-                canEditFile={props.canEditFile}
-                toggleAddFilesPanel={props.toggleAddFilesPanel}
-                isSingleFile={isSingleFile}
-                itemsPerRow={itemsPerRow}
-                containerWidth={props.containerWidth}
-                containerHeight={props.containerHeight}
-              />
-              // eslint-disable-next-line react/jsx-props-no-spreading
-              // @ts-expect-error TODO we need to specify these props one by one and see which ones are needed
-            : <AddFiles {...props} isSizeMD={isSizeMD} />
+          {showFileList ?
+            <FileList
+              id={props.id}
+              i18n={props.i18n}
+              uppy={props.uppy}
+              files={props.files}
+              resumableUploads={props.resumableUploads}
+              hideRetryButton={props.hideRetryButton}
+              hidePauseResumeButton={props.hidePauseResumeButton}
+              hideCancelButton={props.hideCancelButton}
+              showLinkToFileUploadResult={props.showLinkToFileUploadResult}
+              showRemoveButtonAfterComplete={
+                props.showRemoveButtonAfterComplete
+              }
+              metaFields={props.metaFields}
+              toggleFileCard={props.toggleFileCard}
+              handleRequestThumbnail={props.handleRequestThumbnail}
+              handleCancelThumbnail={props.handleCancelThumbnail}
+              recoveredState={props.recoveredState}
+              individualCancellation={props.individualCancellation}
+              openFileEditor={props.openFileEditor}
+              canEditFile={props.canEditFile}
+              toggleAddFilesPanel={props.toggleAddFilesPanel}
+              isSingleFile={isSingleFile}
+              itemsPerRow={itemsPerRow}
+              containerWidth={props.containerWidth}
+              containerHeight={props.containerHeight}
+            />
+          : <AddFiles
+              i18n={props.i18n}
+              i18nArray={props.i18nArray}
+              acquirers={props.acquirers}
+              handleInputChange={props.handleInputChange}
+              maxNumberOfFiles={props.maxNumberOfFiles}
+              // @ts-expect-error TODO
+              allowedFileTypes={props.allowedFileTypes}
+              showNativePhotoCameraButton={props.showNativePhotoCameraButton}
+              showNativeVideoCameraButton={props.showNativeVideoCameraButton}
+              // @ts-expect-error TODO
+              nativeCameraFacingMode={props.nativeCameraFacingMode}
+              showPanel={props.showPanel}
+              // @ts-expect-error TODO
+              activePickerPanel={props.activePickerPanel}
+              disableLocalFiles={props.disableLocalFiles}
+              fileManagerSelectionType={props.fileManagerSelectionType}
+              note={props.note}
+              proudlyDisplayPoweredByUppy={props.proudlyDisplayPoweredByUppy}
+            />
           }
 
           <Slide>

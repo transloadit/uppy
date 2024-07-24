@@ -1,12 +1,27 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck Typing this file requires more work, skipping it to unblock the rest of the transition.
-
 /* eslint-disable react/destructuring-assignment */
 import { h, Component, Fragment, type ComponentChild } from 'preact'
 
 type $TSFixMe = any
 
-class AddFiles extends Component {
+interface AddFilesProps {
+  i18n: (key: string) => string
+  i18nArray: (key: string, options?: Record<string, any>) => any
+  acquirers: any[]
+  handleInputChange: (event: Event) => void
+  maxNumberOfFiles: number | null
+  allowedFileTypes: string | null
+  showNativePhotoCameraButton: boolean
+  showNativeVideoCameraButton: boolean
+  nativeCameraFacingMode: string | undefined
+  showPanel: (id: string) => void
+  activePickerPanel: { id: string } | null
+  disableLocalFiles: boolean
+  fileManagerSelectionType: string
+  note: string | null
+  proudlyDisplayPoweredByUppy: boolean
+}
+
+class AddFiles extends Component<AddFilesProps> {
   fileInput: $TSFixMe
 
   folderInput: $TSFixMe
@@ -208,7 +223,7 @@ class AddFiles extends Component {
     )
   }
 
-  private renderDropPasteBrowseTagline = (numberOfAcquirers: $TSFixMe) => {
+  private renderDropPasteBrowseTagline = (numberOfAcquirers: number) => {
     const browseFiles = this.renderBrowseButton(
       this.props.i18n('browseFiles'),
       this.triggerFileInputClick,
@@ -439,8 +454,7 @@ class AddFiles extends Component {
           {this.props.note && (
             <div className="uppy-Dashboard-note">{this.props.note}</div>
           )}
-          {this.props.proudlyDisplayPoweredByUppy &&
-            this.renderPoweredByUppy(this.props)}
+          {this.props.proudlyDisplayPoweredByUppy && this.renderPoweredByUppy()}
         </div>
       </div>
     )
