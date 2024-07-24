@@ -22,28 +22,28 @@ interface AddFilesProps {
 }
 
 class AddFiles extends Component<AddFilesProps> {
-  fileInput: $TSFixMe
+  fileInput: HTMLInputElement | null = null
 
-  folderInput: $TSFixMe
+  folderInput: HTMLInputElement | null = null
 
-  mobilePhotoFileInput: $TSFixMe
+  mobilePhotoFileInput: HTMLInputElement | null = null
 
-  mobileVideoFileInput: $TSFixMe
+  mobileVideoFileInput: HTMLInputElement | null = null
 
   private triggerFileInputClick = () => {
-    this.fileInput.click()
+    this.fileInput?.click()
   }
 
   private triggerFolderInputClick = () => {
-    this.folderInput.click()
+    this.folderInput?.click()
   }
 
   private triggerVideoCameraInputClick = () => {
-    this.mobileVideoFileInput.click()
+    this.mobileVideoFileInput?.click()
   }
 
   private triggerPhotoCameraInputClick = () => {
-    this.mobilePhotoFileInput.click()
+    this.mobilePhotoFileInput?.click()
   }
 
   private onFileInputChange = (event: Event) => {
@@ -383,7 +383,7 @@ class AddFiles extends Component<AddFilesProps> {
   }
 
   private renderPoweredByUppy() {
-    const { i18nArray } = this.props as $TSFixMe
+    const { i18nArray } = this.props
 
     const uppyBranding = (
       <span>
@@ -428,17 +428,17 @@ class AddFiles extends Component<AddFilesProps> {
 
     return (
       <div className="uppy-Dashboard-AddFiles">
-        {this.renderHiddenInput(false, (ref: $TSFixMe) => {
+        {this.renderHiddenInput(false, (ref) => {
           this.fileInput = ref
         })}
-        {this.renderHiddenInput(true, (ref: $TSFixMe) => {
+        {this.renderHiddenInput(true, (ref) => {
           this.folderInput = ref
         })}
         {showNativePhotoCameraButton &&
           this.renderHiddenCameraInput(
             'photo',
             nativeCameraFacingMode,
-            (ref: $TSFixMe) => {
+            (ref) => {
               this.mobilePhotoFileInput = ref
             },
           )}
@@ -446,7 +446,7 @@ class AddFiles extends Component<AddFilesProps> {
           this.renderHiddenCameraInput(
             'video',
             nativeCameraFacingMode,
-            (ref: $TSFixMe) => {
+            (ref) => {
               this.mobileVideoFileInput = ref
             },
           )}
