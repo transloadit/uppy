@@ -213,7 +213,10 @@ class AddFiles extends Component<AddFilesProps> {
     )
   }
 
-  private renderBrowseButton = (text: $TSFixMe, onClickFn: $TSFixMe) => {
+  private renderBrowseButton = (
+    text: string,
+    onClickFn: (event: Event) => void,
+  ) => {
     const numberOfAcquirers = this.props.acquirers.length
     return (
       <button
