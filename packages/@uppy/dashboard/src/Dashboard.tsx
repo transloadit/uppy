@@ -101,7 +101,7 @@ interface TargetWithRender extends Target {
   render: () => ComponentChild
 }
 
-interface DashboardState<M extends Meta, B extends Body> {
+export interface DashboardState<M extends Meta, B extends Body> {
   targets: Target[]
   activePickerPanel: Target | undefined
   showAddFilesPanel: boolean
