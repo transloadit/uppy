@@ -46,7 +46,7 @@ class AddFiles extends Component<AddFilesProps> {
     this.mobilePhotoFileInput.click()
   }
 
-  private onFileInputChange = (event: $TSFixMe) => {
+  private onFileInputChange = (event: Event) => {
     this.props.handleInputChange(event)
 
     // We clear the input after a file is selected, because otherwise
@@ -55,7 +55,7 @@ class AddFiles extends Component<AddFilesProps> {
     // ___Why not use value="" on <input/> instead?
     //    Because if we use that method of clearing the input,
     //    Chrome will not trigger change if we drop the same file twice (Issue #768).
-    event.target.value = null // eslint-disable-line no-param-reassign
+    ;(event.target as HTMLInputElement).value = '' // eslint-disable-line no-param-reassign
   }
 
   private renderHiddenInput = (
@@ -81,9 +81,9 @@ class AddFiles extends Component<AddFilesProps> {
   }
 
   private renderHiddenCameraInput = (
-    type: $TSFixMe,
-    nativeCameraFacingMode: $TSFixMe,
-    refCallback: $TSFixMe,
+    type: 'photo' | 'video',
+    nativeCameraFacingMode: string | undefined,
+    refCallback: (ref: HTMLInputElement | null) => void,
   ) => {
     const typeToAccept = { photo: 'image/*', video: 'video/*' }
     const accept = typeToAccept[type]
