@@ -773,7 +773,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     }
   }
 
-  private handleInputChange = (event: InputEvent) => {
+  private handleInputChange = (event: Event) => {
     event.preventDefault()
     const files = toArray((event.target as HTMLInputElement).files!)
     if (files.length > 0) {
