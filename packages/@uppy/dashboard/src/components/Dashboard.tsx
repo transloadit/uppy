@@ -298,7 +298,6 @@ export default function Dashboard<M extends Meta, B extends Body>(
               showNativeVideoCameraButton={props.showNativeVideoCameraButton}
               nativeCameraFacingMode={props.nativeCameraFacingMode}
               showPanel={props.showPanel}
-              // @ts-expect-error TODO
               activePickerPanel={props.activePickerPanel}
               disableLocalFiles={props.disableLocalFiles}
               fileManagerSelectionType={props.fileManagerSelectionType}

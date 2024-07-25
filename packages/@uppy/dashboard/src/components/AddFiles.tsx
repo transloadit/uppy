@@ -1,5 +1,6 @@
 /* eslint-disable react/destructuring-assignment */
 import { h, Component, Fragment, type ComponentChild } from 'preact'
+import type { DashboardState } from '../Dashboard.js'
 
 type $TSFixMe = any
 
@@ -14,7 +15,7 @@ interface AddFilesProps {
   showNativeVideoCameraButton: boolean
   nativeCameraFacingMode: 'user' | 'environment' | ''
   showPanel: (id: string) => void
-  activePickerPanel: { id: string } | null
+  activePickerPanel: DashboardState<any, any>['activePickerPanel']
   disableLocalFiles: boolean
   fileManagerSelectionType: string
   note: string | null
