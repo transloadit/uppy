@@ -28,8 +28,6 @@ const HEIGHT_MD = 330
 // const HEIGHT_LG = 400
 // const HEIGHT_XL = 460
 
-type $TSFixMe = any
-
 type DashboardUIProps<M extends Meta, B extends Body> = {
   state: State<M, B>
   isHidden: boolean
@@ -47,7 +45,7 @@ type DashboardUIProps<M extends Meta, B extends Body> = {
   totalFileCount: number
   totalProgress: number
   allowNewUpload: boolean
-  acquirers: $TSFixMe[]
+  acquirers: TargetWithRender[]
   theme: string
   disabled: boolean
   disableLocalFiles: boolean

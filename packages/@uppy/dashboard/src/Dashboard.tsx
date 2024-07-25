@@ -97,7 +97,7 @@ interface Target {
 }
 
 export interface TargetWithRender extends Target {
-  icon: ComponentChild
+  icon: () => ComponentChild
   render: () => ComponentChild
 }
 

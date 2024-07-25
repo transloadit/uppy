@@ -1,13 +1,11 @@
 /* eslint-disable react/destructuring-assignment */
 import { h, Component, Fragment, type ComponentChild } from 'preact'
-import type { DashboardState } from '../Dashboard.js'
-
-type $TSFixMe = any
+import type { DashboardState, TargetWithRender } from '../Dashboard.js'
 
 interface AddFilesProps {
   i18n: (key: string) => string
   i18nArray: (key: string, options?: Record<string, any>) => any
-  acquirers: any[]
+  acquirers: TargetWithRender[]
   handleInputChange: (event: Event) => void
   maxNumberOfFiles: number | null
   allowedFileTypes: string[] | null
@@ -281,7 +279,7 @@ class AddFiles extends Component<AddFilesProps> {
     this.props.i18nArray('dropPasteImportFolders')
   }
 
-  private renderAcquirer = (acquirer: $TSFixMe) => {
+  private renderAcquirer = (acquirer: TargetWithRender) => {
     return (
       <div
         className="uppy-DashboardTab"
@@ -306,7 +304,7 @@ class AddFiles extends Component<AddFilesProps> {
     )
   }
 
-  private renderAcquirers = (acquirers: $TSFixMe) => {
+  private renderAcquirers = (acquirers: TargetWithRender[]) => {
     // Group last two buttons, so we don’t end up with
     // just one button on a new line
     const acquirersWithoutLastTwo = [...acquirers]
@@ -328,18 +326,22 @@ class AddFiles extends Component<AddFilesProps> {
   }
 
   private renderSourcesList = (
-    acquirers: $TSFixMe,
-    disableLocalFiles: $TSFixMe,
+    acquirers: TargetWithRender[],
+    disableLocalFiles: boolean,
   ) => {
     const { showNativePhotoCameraButton, showNativeVideoCameraButton } =
       this.props
 
-    let list = []
+    type RenderListItem = { key: string; elements: ComponentChild }
+    let list: RenderListItem[] = []
 
     const myDeviceKey = 'myDevice'
 
     if (!disableLocalFiles)
-      list.push({ key: myDeviceKey, elements: this.renderMyDeviceAcquirer() })
+      list.push({
+        key: myDeviceKey,
+        elements: this.renderMyDeviceAcquirer(),
+      })
     if (showNativePhotoCameraButton)
       list.push({
         key: 'nativePhotoCameraButton',
@@ -351,7 +353,7 @@ class AddFiles extends Component<AddFilesProps> {
         elements: this.renderVideoCamera(),
       })
     list.push(
-      ...acquirers.map((acquirer: $TSFixMe) => ({
+      ...acquirers.map((acquirer: TargetWithRender) => ({
         key: acquirer.id,
         elements: this.renderAcquirer(acquirer),
       })),
@@ -366,20 +368,19 @@ class AddFiles extends Component<AddFilesProps> {
     const listWithoutLastTwo = [...list]
     const lastTwo = listWithoutLastTwo.splice(list.length - 2, list.length)
 
-    const renderList = (l: $TSFixMe) =>
-      l.map(({ key, elements }: $TSFixMe) => (
-        <Fragment key={key}>{elements}</Fragment>
-      ))
-
     return (
       <>
         {this.renderDropPasteBrowseTagline(list.length)}
 
         <div className="uppy-Dashboard-AddFiles-list" role="tablist">
-          {renderList(listWithoutLastTwo)}
+          {listWithoutLastTwo.map(({ key, elements }) => (
+            <Fragment key={key}>{elements}</Fragment>
+          ))}
 
           <span role="presentation" style={{ 'white-space': 'nowrap' }}>
-            {renderList(lastTwo)}
+            {lastTwo.map(({ key, elements }) => (
+              <Fragment key={key}>{elements}</Fragment>
+            ))}
           </span>
         </div>
       </>
