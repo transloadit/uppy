@@ -12,7 +12,7 @@ interface AddFilesProps {
   allowedFileTypes: string[] | null
   showNativePhotoCameraButton: boolean
   showNativeVideoCameraButton: boolean
-  nativeCameraFacingMode: string | undefined
+  nativeCameraFacingMode: 'user' | 'environment' | ''
   showPanel: (id: string) => void
   activePickerPanel: { id: string } | null
   disableLocalFiles: boolean
@@ -82,7 +82,7 @@ class AddFiles extends Component<AddFilesProps> {
 
   private renderHiddenCameraInput = (
     type: 'photo' | 'video',
-    nativeCameraFacingMode: string | undefined,
+    nativeCameraFacingMode: 'user' | 'environment' | '',
     refCallback: (ref: HTMLInputElement | null) => void,
   ) => {
     const typeToAccept = { photo: 'image/*', video: 'video/*' }

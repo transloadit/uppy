@@ -151,7 +151,7 @@ interface DashboardMiscOptions<M extends Meta, B extends Body>
   hideRetryButton?: boolean
   hideUploadButton?: boolean
   metaFields?: MetaField[] | ((file: UppyFile<M, B>) => MetaField[])
-  nativeCameraFacingMode?: ConstrainDOMString
+  nativeCameraFacingMode?: 'user' | 'environment' | ''
   note?: string | null
   onDragLeave?: (event: DragEvent) => void
   onDragOver?: (event: DragEvent) => void
@@ -217,6 +217,7 @@ const defaultOptions = {
   autoOpen: null,
   disabled: false,
   disableLocalFiles: false,
+  nativeCameraFacingMode: '',
 
   // Dynamic default options, they have to be defined in the constructor (because
   // they require access to the `this` keyword), but we still want them to

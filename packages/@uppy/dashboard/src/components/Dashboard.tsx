@@ -105,7 +105,7 @@ type DashboardUIProps<M extends Meta, B extends Body> = {
   showSelectedFiles: boolean
   showNativePhotoCameraButton: boolean
   showNativeVideoCameraButton: boolean
-  nativeCameraFacingMode?: ConstrainDOMString
+  nativeCameraFacingMode: 'user' | 'environment' | ''
   singleFileFullScreen: boolean
   handleCancelRestore: () => void
   handleRequestThumbnail: (file: UppyFile<M, B>) => void
@@ -296,7 +296,6 @@ export default function Dashboard<M extends Meta, B extends Body>(
               allowedFileTypes={props.allowedFileTypes}
               showNativePhotoCameraButton={props.showNativePhotoCameraButton}
               showNativeVideoCameraButton={props.showNativeVideoCameraButton}
-              // @ts-expect-error TODO
               nativeCameraFacingMode={props.nativeCameraFacingMode}
               showPanel={props.showPanel}
               // @ts-expect-error TODO
