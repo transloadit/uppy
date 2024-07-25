@@ -1,10 +1,12 @@
 /* eslint-disable react/destructuring-assignment */
 import { h, Component, Fragment, type ComponentChild } from 'preact'
+import type { I18n } from '@uppy/utils/lib/Translator'
+import type Translator from '@uppy/utils/lib/Translator'
 import type { DashboardState, TargetWithRender } from '../Dashboard.js'
 
 interface AddFilesProps {
-  i18n: (key: string) => string
-  i18nArray: (key: string, options?: Record<string, any>) => any
+  i18n: I18n
+  i18nArray: Translator['translateArray']
   acquirers: TargetWithRender[]
   handleInputChange: (event: Event) => void
   maxNumberOfFiles: number | null
