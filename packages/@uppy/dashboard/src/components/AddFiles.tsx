@@ -9,7 +9,7 @@ interface AddFilesProps {
   acquirers: any[]
   handleInputChange: (event: Event) => void
   maxNumberOfFiles: number | null
-  allowedFileTypes: string | null
+  allowedFileTypes: string[] | null
   showNativePhotoCameraButton: boolean
   showNativeVideoCameraButton: boolean
   nativeCameraFacingMode: string | undefined
@@ -74,7 +74,7 @@ class AddFiles extends Component<AddFilesProps> {
         name="files[]"
         multiple={this.props.maxNumberOfFiles !== 1}
         onChange={this.onFileInputChange}
-        accept={this.props.allowedFileTypes || undefined}
+        accept={this.props.allowedFileTypes?.join(', ')}
         ref={refCallback}
       />
     )

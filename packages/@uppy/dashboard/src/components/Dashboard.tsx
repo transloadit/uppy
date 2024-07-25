@@ -293,7 +293,6 @@ export default function Dashboard<M extends Meta, B extends Body>(
               acquirers={props.acquirers}
               handleInputChange={props.handleInputChange}
               maxNumberOfFiles={props.maxNumberOfFiles}
-              // @ts-expect-error TODO
               allowedFileTypes={props.allowedFileTypes}
               showNativePhotoCameraButton={props.showNativePhotoCameraButton}
               showNativeVideoCameraButton={props.showNativeVideoCameraButton}
