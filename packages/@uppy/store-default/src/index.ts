@@ -10,10 +10,18 @@ export type Listener<T> = (
   patch?: Partial<T>,
 ) => void
 
+export interface Store<T extends GenericState> {
+  getState: () => T
+
+  setState(patch?: Partial<T>): void
+
+  subscribe(listener: Listener<T>): () => void
+}
+
 /**
  * Default store that keeps state in a simple object.
  */
-class DefaultStore<T extends GenericState = GenericState> {
+class DefaultStore<T extends GenericState = GenericState> implements Store<T> {
   static VERSION = packageJson.version
 
   public state: T = {} as T
