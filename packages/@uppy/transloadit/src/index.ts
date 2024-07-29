@@ -283,7 +283,7 @@ export default class Transloadit<
 
   restored: Promise<void> | null = null
 
-  constructor(uppy: Uppy<M, B>, opts: TransloaditOptions<M, B>) {
+  constructor(uppy: Uppy<M, B>, opts?: TransloaditOptions<M, B>) {
     super(uppy, { ...defaultOptions, ...opts })
     this.type = 'uploader'
     this.id = this.opts.id || 'Transloadit'
