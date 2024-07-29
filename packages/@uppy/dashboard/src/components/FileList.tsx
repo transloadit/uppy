@@ -30,7 +30,7 @@ type FileListProps<M extends Meta, B extends Body> = {
   itemsPerRow: number
   openFileEditor: (file: UppyFile<M, B>) => void
   canEditFile: (file: UppyFile<M, B>) => boolean
-  toggleAddFilesPanel: () => void
+  toggleAddFilesPanel: (show: boolean) => void
   containerWidth: number
   containerHeight: number
 }
