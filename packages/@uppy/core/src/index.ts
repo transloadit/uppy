@@ -1,6 +1,7 @@
 export { default } from './Uppy.ts'
 export {
   default as Uppy,
+  type Store,
   type State,
   type UnknownPlugin,
   type UnknownProviderPlugin,

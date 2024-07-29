@@ -8,7 +8,7 @@ import Translator from '@uppy/utils/lib/Translator'
 import ee from 'namespace-emitter'
 import { nanoid } from 'nanoid/non-secure'
 import throttle from 'lodash/throttle.js'
-import DefaultStore from '@uppy/store-default'
+import DefaultStore, { type Listener } from '@uppy/store-default'
 import getFileType from '@uppy/utils/lib/getFileType'
 import getFileNameAndExtension from '@uppy/utils/lib/getFileNameAndExtension'
 import { getSafeFileId } from '@uppy/utils/lib/generateFileID'
@@ -236,6 +236,14 @@ export interface State<M extends Meta, B extends Body>
   companion?: Record<string, string>
 }
 
+export interface Store<M extends Meta, B extends Body> {
+  getState: () => State<M, B>
+
+  setState(patch?: Partial<State<M, B>>): void
+
+  subscribe(listener: Listener<State<M, B>>): () => void
+}
+
 export interface UppyOptions<M extends Meta, B extends Body> {
   id?: string
   autoProceed?: boolean
@@ -256,7 +264,7 @@ export interface UppyOptions<M extends Meta, B extends Body> {
     [key: string]: UppyFile<M, B>
   }) => { [key: string]: UppyFile<M, B> } | boolean
   locale?: Locale
-  store?: DefaultStore<State<M, B>>
+  store?: Store<M, B>
   infoTimeout?: number
 }
 
