@@ -1,5 +1,12 @@
 # @uppy/remote-sources
 
+## 2.1.0
+
+Released: 2024-07-30
+Included in: Uppy v4.1.0
+
+- @uppy/remote-sources: fix options type (Merlijn Vos / #5364)
+
 ## 2.0.0-beta.4
 
 Released: 2024-05-03

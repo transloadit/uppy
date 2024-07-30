@@ -1,5 +1,12 @@
 # @uppy/status-bar
 
+## 4.0.1
+
+Released: 2024-07-30
+Included in: Uppy v4.1.0
+
+- @uppy/status-bar: GoldenRetriever + `hideUploadButton=true` (Evgenia Karunus / #5350)
+
 ## 4.0.0-beta.9
 
 Released: 2024-06-04

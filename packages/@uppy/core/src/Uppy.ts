@@ -8,7 +8,7 @@ import Translator from '@uppy/utils/lib/Translator'
 import ee from 'namespace-emitter'
 import { nanoid } from 'nanoid/non-secure'
 import throttle from 'lodash/throttle.js'
-import DefaultStore from '@uppy/store-default'
+import DefaultStore, { type Store } from '@uppy/store-default'
 import getFileType from '@uppy/utils/lib/getFileType'
 import getFileNameAndExtension from '@uppy/utils/lib/getFileNameAndExtension'
 import { getSafeFileId } from '@uppy/utils/lib/generateFileID'
@@ -256,7 +256,7 @@ export interface UppyOptions<M extends Meta, B extends Body> {
     [key: string]: UppyFile<M, B>
   }) => { [key: string]: UppyFile<M, B> } | boolean
   locale?: Locale
-  store?: DefaultStore<State<M, B>>
+  store?: Store<State<M, B>>
   infoTimeout?: number
 }
 
