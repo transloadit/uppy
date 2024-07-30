@@ -228,8 +228,8 @@ const defaultOptions = <M extends Meta, B extends Body>(): DashboardMiscOptions<
   onDragOver: () => {},
   onDrop: () => {},
   thumbnailHeight: undefined,
-  // TODO these should be something else
   plugins: [],
+  // TODO these should be something else
   trigger: '',
 })
 
@@ -1303,7 +1303,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
   }
 
   #addSpecifiedPluginsFromOptions = () => {
-    const plugins = this.opts.plugins || []
+    const { plugins } = this.opts
 
     plugins.forEach((pluginID) => {
       const plugin = this.uppy.getPlugin(pluginID)
@@ -1503,7 +1503,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
       if (thumbnail) this.uppy.removePlugin(thumbnail)
     }
 
-    const plugins = this.opts.plugins || []
+    const { plugins } = this.opts
     plugins.forEach((pluginID) => {
       const plugin = this.uppy.getPlugin(pluginID)
       if (plugin) (plugin as any).unmount()
