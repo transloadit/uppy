@@ -148,7 +148,7 @@ interface DashboardMiscOptions<M extends Meta, B extends Body>
   showSelectedFiles: boolean
   singleFileFullScreen: boolean
   theme: 'auto' | 'dark' | 'light'
-  thumbnailHeight: number
+  thumbnailHeight: number | undefined
   thumbnailType: string
   thumbnailWidth: number
   trigger: string | Element
@@ -227,9 +227,9 @@ const defaultOptions = <M extends Meta, B extends Body>(): DashboardMiscOptions<
   onDragLeave: () => {},
   onDragOver: () => {},
   onDrop: () => {},
+  thumbnailHeight: undefined,
   // TODO these should be something else
   plugins: [],
-  thumbnailHeight: 0,
   trigger: '',
 })
 
