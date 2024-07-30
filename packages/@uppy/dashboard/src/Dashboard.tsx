@@ -224,10 +224,10 @@ const defaultOptions = <M extends Meta, B extends Body>(): DashboardMiscOptions<
   doneButtonHandler: () => {},
   onRequestCloseModal: () => {},
 
-  // TODO these should be something else
   onDragLeave: () => {},
   onDragOver: () => {},
   onDrop: () => {},
+  // TODO these should be something else
   plugins: [],
   thumbnailHeight: 0,
   trigger: '',
@@ -865,7 +865,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
 
     this.setPluginState({ isDraggingOver: true })
 
-    this.opts.onDragOver?.(event)
+    this.opts.onDragOver(event)
   }
 
   private handleDragLeave = (event: DragEvent) => {
@@ -874,7 +874,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
 
     this.setPluginState({ isDraggingOver: false })
 
-    this.opts.onDragLeave?.(event)
+    this.opts.onDragLeave(event)
   }
 
   private handleDrop = async (event: DragEvent) => {
@@ -913,7 +913,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
       this.addFiles(files)
     }
 
-    this.opts.onDrop?.(event)
+    this.opts.onDrop(event)
   }
 
   private handleRequestThumbnail = (file: UppyFile<M, B>) => {
