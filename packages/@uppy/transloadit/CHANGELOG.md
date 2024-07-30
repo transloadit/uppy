@@ -1,5 +1,12 @@
 # @uppy/transloadit
 
+## 4.0.1
+
+Released: 2024-07-30
+Included in: Uppy v4.1.0
+
+- @uppy/transloadit: do not mark `opts` as mandatory (Antoine du Hamel / #5375)
+
 ## 4.0.0-beta.10
 
 Released: 2024-06-27

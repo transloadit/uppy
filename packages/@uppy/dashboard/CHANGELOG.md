@@ -1,5 +1,13 @@
 # @uppy/dashboard
 
+## 4.0.2
+
+Released: 2024-07-30
+Included in: Uppy v4.1.0
+
+- @uppy/dashboard: make `toggleAddFilesPanel` args consistent (Evgenia Karunus / #5365)
+- @uppy/dashboard: Dashboard - convert some files to typescript (Evgenia Karunus / #5359)
+
 ## 4.0.1
 
 Released: 2024-07-15

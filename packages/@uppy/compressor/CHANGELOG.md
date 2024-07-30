@@ -1,5 +1,12 @@
 # @uppy/compressor
 
+## 2.0.1
+
+Released: 2024-07-30
+Included in: Uppy v4.1.0
+
+- @uppy/compressor: mark `quality` as optional (Antoine du Hamel / #5374)
+
 ## 2.0.0-beta.5
 
 Released: 2024-05-03
