@@ -294,9 +294,9 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     passedOpts: Partial<DashboardOptions<M, B>> = {},
   ) {
     const options: DashboardOptions<M, B> =
-      passedOpts.inline ?
-        { ...defaultInlineOptions(), ...passedOpts, inline: true }
-      : { ...defaultModalOptions(), ...passedOpts, inline: false }
+      passedOpts.inline === false || passedOpts.inline === undefined ?
+        { ...defaultModalOptions(), ...passedOpts, inline: false }
+      : { ...defaultInlineOptions(), ...passedOpts, inline: true }
 
     super(uppy, options)
     this.id = this.opts.id || 'Dashboard'
