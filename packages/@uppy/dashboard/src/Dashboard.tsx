@@ -180,9 +180,13 @@ interface DashboardInlineOptions<M extends Meta, B extends Body>
   width: string | number
 }
 
-export type DashboardOptions<M extends Meta, B extends Body> =
+type Options<M extends Meta, B extends Body> =
   | DashboardModalOptions<M, B>
   | DashboardInlineOptions<M, B>
+
+export type DashboardOptions<M extends Meta, B extends Body> = Partial<
+  Options<M, B>
+>
 
 const defaultOptions = <M extends Meta, B extends Body>(): DashboardMiscOptions<
   M,
@@ -259,7 +263,7 @@ const defaultInlineOptions = <
  * Dashboard UI with previews, metadata editing, tabs for various services and more
  */
 export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
-  DashboardOptions<M, B>,
+  Options<M, B>,
   M,
   B,
   DashboardState<M, B>
@@ -289,11 +293,8 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     typeof setTimeout
   >
 
-  constructor(
-    uppy: Uppy<M, B>,
-    passedOpts: Partial<DashboardOptions<M, B>> = {},
-  ) {
-    const options: DashboardOptions<M, B> =
+  constructor(uppy: Uppy<M, B>, passedOpts: DashboardOptions<M, B> = {}) {
+    const options: Options<M, B> =
       passedOpts.inline === false || passedOpts.inline === undefined ?
         { ...defaultModalOptions(), ...passedOpts, inline: false }
       : { ...defaultInlineOptions(), ...passedOpts, inline: true }
@@ -1384,7 +1385,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     }
   }
 
-  setOptions(opts: Partial<DashboardOptions<M, B>>) {
+  setOptions(opts: DashboardOptions<M, B>) {
     super.setOptions(opts)
     this.uppy
       .getPlugin(this.#getStatusBarId())
