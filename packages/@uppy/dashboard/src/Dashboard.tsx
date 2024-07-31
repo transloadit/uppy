@@ -151,7 +151,6 @@ interface DashboardMiscOptions<M extends Meta, B extends Body>
   thumbnailHeight: number | undefined
   thumbnailType: string
   thumbnailWidth: number
-  trigger: string | Element
   waitForThumbnailsBeforeUpload: boolean
 
   // Dynamic default options
@@ -171,6 +170,7 @@ interface DashboardModalOptions<M extends Meta, B extends Body>
   closeAfterFinish: boolean
   closeModalOnClickOutside: boolean
   disablePageScrollWhenModalOpen: boolean
+  trigger: string | Element | null
 }
 
 interface DashboardInlineOptions<M extends Meta, B extends Body>
@@ -229,8 +229,6 @@ const defaultOptions = <M extends Meta, B extends Body>(): DashboardMiscOptions<
   onDrop: () => {},
   thumbnailHeight: undefined,
   plugins: [],
-  // TODO these should be something else
-  trigger: '',
 })
 
 const defaultModalOptions = <
@@ -244,6 +242,7 @@ const defaultModalOptions = <
   closeAfterFinish: false,
   closeModalOnClickOutside: false,
   disablePageScrollWhenModalOpen: true,
+  trigger: null,
 })
 
 const defaultInlineOptions = <
@@ -1008,10 +1007,10 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
 
   initEvents = (): void => {
     // Modal open button
-    if (this.opts.trigger && !this.opts.inline) {
-      const showModalTrigger = findAllDOMElements(this.opts.trigger)
-      if (showModalTrigger) {
-        showModalTrigger.forEach((trigger) =>
+    if (!this.opts.inline && this.opts.trigger) {
+      const triggerEls = findAllDOMElements(this.opts.trigger)
+      if (triggerEls) {
+        triggerEls.forEach((trigger) =>
           trigger.addEventListener('click', this.openModal),
         )
       } else {
@@ -1049,11 +1048,13 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
   }
 
   removeEvents = (): void => {
-    const showModalTrigger = findAllDOMElements(this.opts.trigger)
-    if (!this.opts.inline && showModalTrigger) {
-      showModalTrigger.forEach((trigger) =>
-        trigger.removeEventListener('click', this.openModal),
-      )
+    if (!this.opts.inline && this.opts.trigger) {
+      const triggerEls = findAllDOMElements(this.opts.trigger)
+      if (triggerEls) {
+        triggerEls.forEach((trigger) =>
+          trigger.removeEventListener('click', this.openModal),
+        )
+      }
     }
 
     this.stopListeningToResize()
