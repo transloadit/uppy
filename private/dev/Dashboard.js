@@ -79,7 +79,15 @@ function getCompanionKeysParams (name) {
 
 export default () => {
   const restrictions = undefined
-  // const restrictions = { requiredMetaFields: ['caption'], maxNumberOfFiles: 3 }
+  // const restrictions = {
+  //   maxFileSize:      1 * 1000000, // 1mb
+  //   minFileSize:      1 * 1000000, // 1mb
+  //   maxTotalFileSize: 1 * 1000000, // 1mb
+  //   maxNumberOfFiles: 3,
+  //   minNumberOfFiles: 1,
+  //   allowedFileTypes: ['image/*', '.jpg', '.jpeg', '.png', '.gif'],
+  //   requiredMetaFields: ['caption'],
+  // }
 
   const uppyDashboard = new Uppy({
     logger: debugLogger,
