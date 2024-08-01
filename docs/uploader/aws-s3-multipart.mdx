@@ -420,9 +420,6 @@ upload as query parameters.
 - Set it to `['name']` to only send the `name` field.
 - Set it to `true` (the default) to send _all_ metadata fields.
 
-<details>
-<summary>Deprecated options</summary>
-
 #### `getTemporarySecurityCredentials(options)`
 
 :::note
@@ -483,8 +480,6 @@ uppy.use(AwsS3, {
 	shouldUseMultipart: (file) => file.size > 100 * 2 ** 20,
 });
 ```
-
-</details>
 
 [`gettemporarysecuritycredentials`]: #gettemporarysecuritycredentialsoptions
 [`shouldusemultipart`]: #shouldusemultipartfile
