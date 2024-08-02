@@ -183,9 +183,6 @@ export type DashboardOptions<
 const defaultOptions = {
   target: 'body',
   metaFields: [],
-  inline: false as boolean,
-  width: 750,
-  height: 550,
   thumbnailWidth: 280,
   thumbnailType: 'image/jpeg',
   waitForThumbnailsBeforeUpload: false,
@@ -198,19 +195,14 @@ const defaultOptions = {
   hidePauseResumeButton: false,
   hideProgressAfterFinish: false,
   note: null,
-  closeModalOnClickOutside: false,
-  closeAfterFinish: false,
   singleFileFullScreen: true,
   disableStatusBar: false,
   disableInformer: false,
   disableThumbnailGenerator: false,
-  disablePageScrollWhenModalOpen: true,
-  animateOpenClose: true,
   fileManagerSelectionType: 'files',
   proudlyDisplayPoweredByUppy: true,
   showSelectedFiles: true,
   showRemoveButtonAfterComplete: false,
-  browserBackButtonClose: false,
   showNativePhotoCameraButton: false,
   showNativeVideoCameraButton: false,
   theme: 'light',
@@ -225,7 +217,18 @@ const defaultOptions = {
   doneButtonHandler: undefined as any,
   onRequestCloseModal: null as any,
 
+  // defaultModalOptions
+  inline: false as boolean,
+  animateOpenClose: true,
+  browserBackButtonClose: false,
+  closeAfterFinish: false,
+  closeModalOnClickOutside: false,
+  disablePageScrollWhenModalOpen: true,
   trigger: null,
+
+  // defaultInlineOptions
+  width: 750,
+  height: 550,
 } satisfies Partial<DashboardOptions<any, any>>
 
 /**
