@@ -170,7 +170,7 @@ interface DashboardMiscOptions<M extends Meta, B extends Body>
   thumbnailHeight?: number
   thumbnailType?: string
   thumbnailWidth?: number
-  trigger?: string | Element
+  trigger?: string | Element | null
   waitForThumbnailsBeforeUpload?: boolean
 }
 
@@ -224,6 +224,8 @@ const defaultOptions = {
   // appear in the default options so TS knows they'll be defined.
   doneButtonHandler: undefined as any,
   onRequestCloseModal: null as any,
+
+  trigger: null,
 } satisfies Partial<DashboardOptions<any, any>>
 
 /**
