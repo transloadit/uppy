@@ -2,7 +2,7 @@ import { UIPlugin, type Uppy } from '@uppy/core'
 import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin.js'
 import type { UIPluginOptions } from '@uppy/core/lib/UIPlugin.js'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
-import type { ChangeEvent } from 'preact/compat'
+import type { TargetedEvent } from 'preact/compat'
 import toArray from '@uppy/utils/lib/toArray'
 import isDragDropSupported from '@uppy/utils/lib/isDragDropSupported'
 import getDroppedFiles from '@uppy/utils/lib/getDroppedFiles'
@@ -80,22 +80,17 @@ export default class DragDrop<M extends Meta, B extends Body> extends UIPlugin<
     }
   }
 
-  private onInputChange = (event: ChangeEvent) => {
-    const files = toArray((event.target as HTMLInputElement).files!)
+  private onInputChange = (event: TargetedEvent<HTMLInputElement, Event>) => {
+    const files = toArray(event.currentTarget.files || [])
     if (files.length > 0) {
       this.uppy.log('[DragDrop] Files selected through input')
       this.addFiles(files)
     }
 
-    // We clear the input after a file is selected, because otherwise
-    // change event is not fired in Chrome and Safari when a file
-    // with the same name is selected.
-    // ___Why not use value="" on <input/> instead?
-    //    Because if we use that method of clearing the input,
-    //    Chrome will not trigger change if we drop the same file twice (Issue #768).
-    // @ts-expect-error TS freaks out, but this is fine
+    // Clear the input so that Chrome can detect file section when the same file is repeatedly selected
+    // (see https://github.com/transloadit/uppy/issues/768#issuecomment-2264825273)
     // eslint-disable-next-line no-param-reassign
-    event.target.value = null
+    event.currentTarget.value = ''
   }
 
   private handleDragOver = (event: DragEvent) => {
