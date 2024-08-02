@@ -53,7 +53,7 @@ export interface TusOpts<M extends Meta, B extends Body>
     err: tus.DetailedError,
     retryAttempt: number,
     options: TusOpts<M, B>,
-    next: (e: tus.DetailedError) => void,
+    next: (e: tus.DetailedError) => boolean,
   ) => boolean
   retryDelays?: number[]
   withCredentials?: boolean
