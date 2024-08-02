@@ -96,10 +96,6 @@ export default class FileInput<M extends Meta, B extends Body> extends UIPlugin<
     } satisfies h.JSX.IntrinsicElements['input']['style']
 
     const { restrictions } = this.uppy.opts
-    const accept =
-      restrictions.allowedFileTypes ?
-        restrictions.allowedFileTypes.join(',')
-      : undefined
 
     return (
       <div className="uppy-FileInput-container">
@@ -110,7 +106,7 @@ export default class FileInput<M extends Meta, B extends Body> extends UIPlugin<
           name={this.opts.inputName}
           onChange={this.handleInputChange}
           multiple={restrictions.maxNumberOfFiles !== 1}
-          accept={accept}
+          accept={restrictions.allowedFileTypes?.join(', ')}
           ref={(input) => {
             this.input = input as HTMLFileInputElement
           }}
