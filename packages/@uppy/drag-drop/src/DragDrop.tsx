@@ -88,7 +88,7 @@ export default class DragDrop<M extends Meta, B extends Body> extends UIPlugin<
     }
 
     // Clear the input so that Chrome can detect file section when the same file is repeatedly selected
-    // (see https://github.com/transloadit/uppy/issues/768#issuecomment-2264825273)
+    // (see https://github.com/transloadit/uppy/issues/768#issuecomment-2264902758)
     // eslint-disable-next-line no-param-reassign
     event.currentTarget.value = ''
   }
