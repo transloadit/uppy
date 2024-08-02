@@ -210,6 +210,10 @@ const defaultOptions = {
   disabled: false,
   disableLocalFiles: false,
   nativeCameraFacingMode: '',
+  onDragLeave: () => {},
+  onDragOver: () => {},
+  onDrop: () => {},
+  plugins: [],
 
   // Dynamic default options, they have to be defined in the constructor (because
   // they require access to the `this` keyword), but we still want them to
@@ -833,7 +837,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
 
     this.setPluginState({ isDraggingOver: true })
 
-    this.opts.onDragOver?.(event)
+    this.opts.onDragOver(event)
   }
 
   private handleDragLeave = (event: DragEvent) => {
@@ -842,7 +846,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
 
     this.setPluginState({ isDraggingOver: false })
 
-    this.opts.onDragLeave?.(event)
+    this.opts.onDragLeave(event)
   }
 
   private handleDrop = async (event: DragEvent) => {
@@ -881,7 +885,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
       this.addFiles(files)
     }
 
-    this.opts.onDrop?.(event)
+    this.opts.onDrop(event)
   }
 
   private handleRequestThumbnail = (file: UppyFile<M, B>) => {
@@ -1269,7 +1273,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
   }
 
   #addSpecifiedPluginsFromOptions = () => {
-    const plugins = this.opts.plugins || []
+    const { plugins } = this.opts
 
     plugins.forEach((pluginID) => {
       const plugin = this.uppy.getPlugin(pluginID)
@@ -1475,7 +1479,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
       if (thumbnail) this.uppy.removePlugin(thumbnail)
     }
 
-    const plugins = this.opts.plugins || []
+    const { plugins } = this.opts
     plugins.forEach((pluginID) => {
       const plugin = this.uppy.getPlugin(pluginID)
       if (plugin) (plugin as any).unmount()
