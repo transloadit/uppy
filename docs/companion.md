@@ -644,14 +644,15 @@ the
 for `postMessage` calls in the context of OAuth.
 
 Setting it to `true` treats any origin as a trusted one, making it easier to
-impersonate your brand. Setting it to `false` disables cross-origin supports,
-use this if you’re serving Companion and Uppy from the same domain name.
+impersonate your brand. Setting it to `false` disables cross-origin support, use
+this if you’re serving Companion and Uppy from the same domain name.
 
 ##### `COMPANION_CLIENT_ORIGINS`
 
-A comma-separated string of origins, or `'true'` (which will be interpreted as
-the boolean value `true`), or `'false'` (which will be interpreted as the
-boolean value `false`).
+Stand-alone alternative to the `corsOrigins` option. A comma-separated string of
+origins, or `'true'` (which will be interpreted as the boolean value `true`), or
+`'false'` (which will be interpreted as the boolean value `false`).
+`COMPANION_CLIENT_ORIGINS_REGEX` will be ignored if this option is used.
 
 ##### `COMPANION_CLIENT_ORIGINS_REGEX`
 
@@ -664,9 +665,8 @@ make sure you’re validating the entirety of the string.
 
 :::
 
-Like COMPANION_CLIENT_ORIGINS, but allows a single regex instead.
-`COMPANION_CLIENT_ORIGINS` will be ignored if this is used. This is a
-standalone-only option.
+Stand-alone alternative to the `corsOrigins` option. Like
+`COMPANION_CLIENT_ORIGINS`, but allows a single regex instead.
 
 #### `chunkSize` `COMPANION_CHUNK_SIZE`
 
