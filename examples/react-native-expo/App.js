@@ -4,6 +4,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import Uppy from '@uppy/core'
 import Tus from '@uppy/tus'
 import FilePicker  from '@uppy/react-native'
+// todo broken?
+// eslint-disable-next-line import/no-unresolved
 import  useUppy  from '@uppy/react/lib/useUppy'
 import FileList from './FileList'
 import PauseResumeButton from './PauseResumeButton'

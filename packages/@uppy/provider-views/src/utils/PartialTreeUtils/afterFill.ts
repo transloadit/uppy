@@ -6,6 +6,7 @@ import type {
   PartialTreeId,
 } from '@uppy/core/lib/Uppy.js'
 import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
+// eslint-disable-next-line import/no-unresolved
 import PQueue from 'p-queue'
 import shallowClone from './shallowClone.ts'
 
