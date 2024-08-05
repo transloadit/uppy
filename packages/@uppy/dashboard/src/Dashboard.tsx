@@ -96,8 +96,8 @@ interface Target {
   type: string
 }
 
-interface TargetWithRender extends Target {
-  icon: ComponentChild
+export interface TargetWithRender extends Target {
+  icon: () => ComponentChild
   render: () => ComponentChild
 }
 
@@ -109,6 +109,12 @@ export interface DashboardState<M extends Meta, B extends Body> {
   fileCardFor: string | null
   showFileEditor: boolean
   metaFields?: MetaField[] | ((file: UppyFile<M, B>) => MetaField[])
+  isHidden: boolean
+  isClosing: boolean
+  containerWidth: number
+  containerHeight: number
+  areInsidesReadyToBeVisible: boolean
+  isDraggingOver: boolean
   [key: string]: unknown
 }
 
@@ -145,7 +151,7 @@ interface DashboardMiscOptions<M extends Meta, B extends Body>
   hideRetryButton?: boolean
   hideUploadButton?: boolean
   metaFields?: MetaField[] | ((file: UppyFile<M, B>) => MetaField[])
-  nativeCameraFacingMode?: ConstrainDOMString
+  nativeCameraFacingMode?: 'user' | 'environment' | ''
   note?: string | null
   onDragLeave?: (event: DragEvent) => void
   onDragOver?: (event: DragEvent) => void
@@ -211,6 +217,7 @@ const defaultOptions = {
   autoOpen: null,
   disabled: false,
   disableLocalFiles: false,
+  nativeCameraFacingMode: '',
 
   // Dynamic default options, they have to be defined in the constructor (because
   // they require access to the `this` keyword), but we still want them to
@@ -766,7 +773,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     }
   }
 
-  private handleInputChange = (event: InputEvent) => {
+  private handleInputChange = (event: Event) => {
     event.preventDefault()
     const files = toArray((event.target as HTMLInputElement).files!)
     if (files.length > 0) {
