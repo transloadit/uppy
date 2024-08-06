@@ -10,7 +10,7 @@ import FilePreviewAndLink from './FilePreviewAndLink/index.tsx'
 import FileProgress from './FileProgress/index.tsx'
 import FileInfo from './FileInfo/index.tsx'
 import Buttons from './Buttons/index.tsx'
-import type { DashboardState } from '../../Dashboard.js'
+import type { DashboardState } from '../../Dashboard.ts'
 
 type Props<M extends Meta, B extends Body> = {
   file: UppyFile<M, B>

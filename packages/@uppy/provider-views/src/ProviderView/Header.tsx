@@ -6,7 +6,7 @@ import type { PartialTreeFolder } from '@uppy/core/lib/Uppy.js'
 import classNames from 'classnames'
 import User from './User.tsx'
 import Breadcrumbs from '../Breadcrumbs.tsx'
-import type ProviderView from './ProviderView.js'
+import type ProviderView from './ProviderView.ts'
 
 type HeaderProps<M extends Meta, B extends Body> = {
   showBreadcrumbs: boolean

@@ -1,4 +1,4 @@
-import type NetworkError from './NetworkError.js'
+import type NetworkError from './NetworkError.ts'
 import hasProperty from './hasProperty.ts'
 
 class ErrorWithCause extends Error {
