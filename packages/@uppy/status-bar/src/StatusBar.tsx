@@ -11,7 +11,7 @@ import StatusBarUI, { type StatusBarUIProps } from './StatusBarUI.tsx'
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'
 import locale from './locale.ts'
-import type { StatusBarOptions } from './StatusBarOptions.js'
+import type { StatusBarOptions } from './StatusBarOptions.ts'
 
 const speedFilterHalfLife = 2000
 const ETAFilterHalfLife = 2000

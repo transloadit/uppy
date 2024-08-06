@@ -5,7 +5,7 @@ import truncateString from '@uppy/utils/lib/truncateString'
 import type { I18n } from '@uppy/utils/lib/Translator'
 import type { UppyFile } from '@uppy/core'
 import MetaErrorMessage from '../MetaErrorMessage.tsx'
-import type { DashboardState } from '../../../Dashboard.js'
+import type { DashboardState } from '../../../Dashboard.ts'
 
 const renderFileName = (props: {
   file: UppyFile<any, any>

@@ -3,7 +3,7 @@ import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
 import type Uppy from '@uppy/core'
 import type { I18n } from '@uppy/utils/lib/Translator'
 import copyToClipboard from '../../../utils/copyToClipboard.ts'
-import type { DashboardState } from '../../../Dashboard.js'
+import type { DashboardState } from '../../../Dashboard.ts'
 
 type $TSFixMe = any
 

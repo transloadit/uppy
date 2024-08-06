@@ -1,4 +1,4 @@
-import type { CompanionFile } from './CompanionFile.js'
+import type { CompanionFile } from './CompanionFile.ts'
 
 export type RequestOptions = {
   method?: string
