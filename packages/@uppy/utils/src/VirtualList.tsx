@@ -26,7 +26,8 @@
  * - Tweaked styles for Uppy's Dashboard use case
  */
 
-import {  h, Component  } from 'preact'
+import { h, Component } from 'preact'
+import type { HTMLAttributes } from 'preact/compat'
 
 const STYLE_INNER = {
   position: 'relative',
@@ -51,8 +52,21 @@ const STYLE_CONTENT = {
   overflow: 'visible',
 }
 
-class VirtualList extends Component {
-  constructor (props) {
+type Props<T> = Omit<HTMLAttributes<HTMLDivElement>, 'data'> & {
+  data: T[]
+  rowHeight: number
+  renderRow: (item: T) => h.JSX.Element
+  // eslint-disable-next-line react/require-default-props
+  overscanCount?: number | undefined
+}
+
+class VirtualList<T> extends Component<
+  Props<T>,
+  { offset: number; height: number }
+> {
+  focusElement: HTMLElement | null
+
+  constructor(props: Props<T>) {
     super(props)
 
     // The currently focused node, used to retain focus when the visible rows change.
@@ -65,58 +79,61 @@ class VirtualList extends Component {
     }
   }
 
-  componentDidMount () {
+  componentDidMount(): void {
     this.resize()
     window.addEventListener('resize', this.handleResize)
   }
 
   // TODO: refactor to stable lifecycle method
   // eslint-disable-next-line
-  componentWillUpdate () {
-    if (this.base.contains(document.activeElement)) {
-      this.focusElement = document.activeElement
+  componentWillUpdate() {
+    if (this.base!.contains(document.activeElement)) {
+      this.focusElement = document.activeElement as HTMLElement
     }
   }
 
-  componentDidUpdate () {
+  componentDidUpdate(): void {
     // Maintain focus when rows are added and removed.
-    if (this.focusElement && this.focusElement.parentNode
-        && document.activeElement !== this.focusElement) {
-      this.focusElement.focus()
+    if (
+      this.focusElement &&
+      this.focusElement.parentNode &&
+      document.activeElement !== this.focusElement
+    ) {
+      this.focusElement!.focus()
     }
     this.focusElement = null
     this.resize()
   }
 
-  componentWillUnmount () {
+  componentWillUnmount(): void {
     window.removeEventListener('resize', this.handleResize)
   }
 
-  handleScroll = () => {
-    this.setState({ offset: this.base.scrollTop })
+  private handleScroll = () => {
+    this.setState({ offset: (this.base! as HTMLElement).scrollTop })
   }
 
-  handleResize = () => {
+  private handleResize = () => {
     this.resize()
   }
 
-  resize () {
+  private resize() {
     const { height } = this.state
 
-    if (height !== this.base.offsetHeight) {
+    if (height !== (this.base! as HTMLElement).offsetHeight) {
       this.setState({
-        height: this.base.offsetHeight,
+        height: (this.base! as HTMLElement).offsetHeight,
       })
     }
   }
 
-  render ({
+  render({
     data,
     rowHeight,
     renderRow,
     overscanCount = 10,
     ...props
-  }) {
+  }: Props<T>): h.JSX.Element {
     const { offset, height } = this.state
     // first visible row index
     let start = Math.floor(offset / rowHeight)
