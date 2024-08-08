@@ -67,6 +67,42 @@ files to arrive at Transloadit servers, much like Uppy.
 
 :::
 
+To do so each provider plugin must be configured with Transloadit’s Companion
+URLs:
+
+```js
+import { COMPANION_URL, COMPANION_ALLOWED_HOSTS } from '@uppy/transloadit';
+import Dropbox from '@uppy/dropbox';
+
+uppy.use(Dropbox, {
+	companionUrl: COMPANION_URL,
+	companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
+});
+```
+
+You may also hit rate limits, because the OAuth application is shared between
+everyone using Transloadit.
+
+To solve that, you can use your own OAuth keys with Transloadit’s hosted
+Companion servers by using Transloadit Template Credentials. [Create a Template
+Credential][template-credentials] on the Transloadit site. Select “Companion
+OAuth” for the service, and enter the key and secret for the provider you want
+to use. Then you can pass the name of the new credentials to that provider:
+
+```js
+import { COMPANION_URL, COMPANION_ALLOWED_HOSTS } from '@uppy/transloadit';
+import Dropbox from '@uppy/dropbox';
+
+uppy.use(Dropbox, {
+	companionUrl: COMPANION_URL,
+	companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
+	companionKeysParams: {
+		key: 'YOUR_TRANSLOADIT_API_KEY',
+		credentialsName: 'my_companion_dropbox_creds',
+	},
+});
+```
+
 ## Installation & use
 
 Companion is installed from npm. Depending on how you want to run Companion, the
@@ -949,3 +985,5 @@ automatically restart when files are changed.
 [url]: /docs/url
 [zoom]: /docs/zoom
 [transloadit]: https://transloadit.com
+[template-credentials]:
+	https://transloadit.com/docs/#how-to-create-template-credentials
