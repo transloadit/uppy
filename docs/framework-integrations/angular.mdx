@@ -96,8 +96,11 @@ decorator. You can find the CSS import statements in the docs of the UI plugin
 you want to use. For instance, for `@uppy/dashboard`:
 
 ```typescript
+import { Component, ViewEncapsulation } from '@angular/core';
+//...
 @Component({
   // ...
+  encapsulation: ViewEncapsulation.None,
   styleUrls: [
     '../node_modules/@uppy/core/dist/style.css',
     '../node_modules/@uppy/dashboard/dist/style.css',
