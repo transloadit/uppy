@@ -703,20 +703,21 @@ export default class Transloadit<
       this.#connectAssembly(this.assembly!)
     }
 
-    // Force-update all Assemblies to check for missed events.
-    const updateAssemblies = () => {
+    // Force-update Assembly to check for missed events.
+    const updateAssembly = () => {
       return this.assembly?.update()
     }
 
     // Restore all Assembly state.
-    this.restored = Promise.resolve().then(() => {
+    this.restored = (async () => {
       restoreState()
       restoreAssemblies()
-      updateAssemblies()
-    })
-
-    this.restored.then(() => {
+      await updateAssembly()
       this.restored = null
+    })()
+
+    this.restored.catch((err) => {
+      this.uppy.log('Failed to restore', err) // or we risk unhandled rejection
     })
   }
 
