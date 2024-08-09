@@ -416,7 +416,6 @@ export default class Transloadit<
           .getFiles()
           .filter(({ id }) => fileIDs.includes(id))
 
-          console.log(files)
         if (files.length === 0) {
           // All files have been removed, cancelling.
           await this.client.cancelAssembly(newAssembly)
