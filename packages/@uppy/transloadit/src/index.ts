@@ -400,64 +400,64 @@ export default class Transloadit<
     return newFile
   }
 
-  #createAssembly(
+  async #createAssembly(
     fileIDs: string[],
     assemblyOptions: OptionsWithRestructuredFields,
   ) {
     this.uppy.log('[Transloadit] Create Assembly')
 
-    return this.client
-      .createAssembly({
+    try {
+      const newAssembly = await this.client.createAssembly({
         ...assemblyOptions,
         expectedFiles: fileIDs.length,
       })
-      .then(async (newAssembly) => {
-        const files = this.uppy
-          .getFiles()
-          .filter(({ id }) => fileIDs.includes(id))
-        if (files.length === 0) {
-          // All files have been removed, cancelling.
-          await this.client.cancelAssembly(newAssembly)
-          return null
-        }
 
-        const assembly = new Assembly(newAssembly, this.#rateLimitedQueue)
-        const { status } = assembly
-        const assemblyID = status.assembly_id
+      const files = this.uppy
+        .getFiles()
+        .filter(({ id }) => fileIDs.includes(id))
 
-        const updatedFiles: Record<string, UppyFile<M, B>> = {}
-        files.forEach((file) => {
-          updatedFiles[file.id] = this.#attachAssemblyMetadata(file, status)
-        })
+      if (files.length === 0) {
+        // All files have been removed, cancelling.
+        await this.client.cancelAssembly(newAssembly)
+        return null
+      }
 
-        this.uppy.setState({
-          files: {
-            ...this.uppy.getState().files,
-            ...updatedFiles,
-          },
-        })
+      const assembly = new Assembly(newAssembly, this.#rateLimitedQueue)
+      const { status } = assembly
+      const assemblyID = status.assembly_id
 
-        this.uppy.emit('transloadit:assembly-created', status, fileIDs)
-
-        this.uppy.log(`[Transloadit] Created Assembly ${assemblyID}`)
-        return assembly
+      const updatedFiles: Record<string, UppyFile<M, B>> = {}
+      files.forEach((file) => {
+        updatedFiles[file.id] = this.#attachAssemblyMetadata(file, status)
       })
-      .catch((err) => {
-        // TODO: use AssemblyError?
-        const wrapped = new ErrorWithCause(
-          `${this.i18n('creatingAssemblyFailed')}: ${err.message}`,
-          { cause: err },
-        )
-        if ('details' in err) {
-          // @ts-expect-error details is not in the Error type
-          wrapped.details = err.details
-        }
-        if ('assembly' in err) {
-          // @ts-expect-error assembly is not in the Error type
-          wrapped.assembly = err.assembly
-        }
-        throw wrapped
+
+      this.uppy.setState({
+        files: {
+          ...this.uppy.getState().files,
+          ...updatedFiles,
+        },
       })
+
+      this.uppy.emit('transloadit:assembly-created', status, fileIDs)
+
+      this.uppy.log(`[Transloadit] Created Assembly ${assemblyID}`)
+      return assembly
+    } catch (err) {
+      // TODO: use AssemblyError?
+      const wrapped = new ErrorWithCause(
+        `${this.i18n('creatingAssemblyFailed')}: ${err.message}`,
+        { cause: err },
+      )
+      if ('details' in err) {
+        // @ts-expect-error details is not in the Error type
+        wrapped.details = err.details
+      }
+      if ('assembly' in err) {
+        // @ts-expect-error assembly is not in the Error type
+        wrapped.assembly = err.assembly
+      }
+      throw wrapped
+    }
   }
 
   #createAssemblyWatcher(idOrArrayOfIds: string | string[]) {
@@ -801,8 +801,11 @@ export default class Transloadit<
     try {
       const assembly =
         // this.assembly can already be defined if we recovered files with Golden Retriever (this.#onRestored)
-        (this.assembly ??
-          (await this.#createAssembly(fileIDs, assemblyOptions)))!
+        this.assembly ?? (await this.#createAssembly(fileIDs, assemblyOptions))
+
+      if (assembly == null)
+        throw new Error('All files were canceled after assembly was created')
+
       if (this.opts.importFromUploadURLs) {
         await this.#reserveFiles(assembly, fileIDs)
       }
