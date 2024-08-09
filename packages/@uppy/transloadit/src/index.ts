@@ -616,6 +616,7 @@ export default class Transloadit<
     await this.client.cancelAssembly(assembly)
     // TODO bubble this through AssemblyWatcher so its event handlers can clean up correctly
     this.uppy.emit('transloadit:assembly-cancelled', assembly)
+    this.assembly = undefined
   }
 
   /**
@@ -823,29 +824,54 @@ export default class Transloadit<
     }
   }
 
-  #afterUpload = (fileIDs: string[], uploadID: string): Promise<void> => {
-    const files = fileIDs.map((fileID) => this.uppy.getFile(fileID))
-    // Only use files without errors
-    const filteredFileIDs = files
-      .filter((file) => !file.error)
-      .map((file) => file.id)
+  #afterUpload = async (fileIDs: string[], uploadID: string): Promise<void> => {
+    try {
+      // If we're still restoring state, wait for that to be done.
+      await this.restored
 
-    // If we're still restoring state, wait for that to be done.
-    if (this.restored) {
-      return this.restored.then(() => {
-        return this.#afterUpload(filteredFileIDs, uploadID)
+      const files = fileIDs
+        .map((fileID) => this.uppy.getFile(fileID))
+        // Only use files without errors
+        .filter((file) => !file.error)
+
+      const assemblyID = this.assembly?.status.assembly_id
+
+      const closeSocketConnections = () => {
+        this.assembly?.close()
+      }
+
+      // If we don't have to wait for encoding metadata or results, we can close
+      // the socket immediately and finish the upload.
+      if (!this.#shouldWaitAfterUpload()) {
+        closeSocketConnections()
+        const status = this.assembly?.status
+        if (status != null) {
+          this.uppy.addResultData(uploadID, {
+            transloadit: [status],
+          })
+        }
+        return
+      }
+
+      // If no Assemblies were created for this upload, we also do not have to wait.
+      // There's also no sockets or anything to close, so just return immediately.
+      if (!assemblyID) {
+        this.uppy.addResultData(uploadID, { transloadit: [] })
+        return
+      }
+
+      const incompleteFiles = files.filter(
+        (file) => !hasProperty(this.completedFiles, file.id),
+      )
+      incompleteFiles.forEach((file) => {
+        this.uppy.emit('postprocess-progress', file, {
+          mode: 'indeterminate',
+          message: this.i18n('encoding'),
+        })
       })
-    }
 
-    const assemblyID = this.assembly?.status.assembly_id
-
-    const closeSocketConnections = () => {
-      this.assembly?.close()
-    }
-
-    // If we don't have to wait for encoding metadata or results, we can close
-    // the socket immediately and finish the upload.
-    if (!this.#shouldWaitAfterUpload()) {
+      await this.#watcher.promise
+      // assembly is now done processing!
       closeSocketConnections()
       const status = this.assembly?.status
       if (status != null) {
@@ -853,35 +879,12 @@ export default class Transloadit<
           transloadit: [status],
         })
       }
-      return Promise.resolve()
+    } finally {
+      // in case allowMultipleUploadBatches is true and the user wants to upload again,
+      // we need to allow a new assembly to be created.
+      // see https://github.com/transloadit/uppy/issues/5397
+      this.assembly = undefined
     }
-
-    // If no Assemblies were created for this upload, we also do not have to wait.
-    // There's also no sockets or anything to close, so just return immediately.
-    if (!assemblyID) {
-      this.uppy.addResultData(uploadID, { transloadit: [] })
-      return Promise.resolve()
-    }
-
-    const incompleteFiles = files.filter(
-      (file) => !hasProperty(this.completedFiles, file.id),
-    )
-    incompleteFiles.forEach((file) => {
-      this.uppy.emit('postprocess-progress', file, {
-        mode: 'indeterminate',
-        message: this.i18n('encoding'),
-      })
-    })
-
-    return this.#watcher.promise.then(() => {
-      closeSocketConnections()
-      const status = this.assembly?.status
-      if (status != null) {
-        this.uppy.addResultData(uploadID, {
-          transloadit: [status],
-        })
-      }
-    })
   }
 
   #closeAssemblyIfExists = () => {
