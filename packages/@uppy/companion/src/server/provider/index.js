@@ -52,7 +52,7 @@ module.exports.getProviderMiddleware = (providers, grantConfig) => {
         req.companion.providerGrantConfig = providerGrantConfig
       }
 
-      const { secret } = providerOptions[providerName]
+      const secret = providerOptions[providerName]?.secret
       req.companion.provider = new ProviderClass({ secret, providerName, providerGrantConfig, allowLocalUrls })
       req.companion.providerClass = ProviderClass
     } else {
