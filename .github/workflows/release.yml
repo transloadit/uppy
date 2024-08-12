@@ -159,7 +159,7 @@ jobs:
           username: ${{secrets.DOCKER_USERNAME}}
           password: ${{secrets.DOCKER_PASSWORD}}
       - name: Build and push
-        uses: docker/build-push-action@1ca370b3a9802c92e886402e0dd88098a2533b12 # v6.4.1
+        uses: docker/build-push-action@16ebe778df0e7752d2cfcbd924afdbbd89c1a755 # v6.6.1
         with:
           push: true
           context: .
