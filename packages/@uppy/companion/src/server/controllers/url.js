@@ -17,14 +17,6 @@ const trustedCAs = [
   ...tls.rootCertificates,
   ca
 ]
-// const vidl = require('vimeo-downloader');
-
-function matchVimeoUrl(url) {
-  if (/https:\/\/vimeo.com\/\d{16}(?=\b|\/)/.test(url)) { 
-    return true
-  }
-  return false
-}
 
 function matchYoutubeUrl(url) {
   var p = /^(?:https?:\/\/)?(?:m\.|www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
@@ -69,9 +61,13 @@ const downloadURL = async (url, blockLocalIPs, traceId) => {
 
 function fetchYouTubeVideoMetadata(videoUrl) {
   const endpoints = [
-    'https://us-east4-maestro-218920.cloudfunctions.net/getYoutubeURLMeta',
-    'https://us-east4-maestro-218920.cloudfunctions.net/getYoutubeURLMeta2'
-  ];
+    "https://us-east4-maestro-218920.cloudfunctions.net/getYoutubeURLMeta2",
+    "https://us-east4-maestro-218920.cloudfunctions.net/getYoutubeURLMeta",
+    // "https://us-east4-maestro-218920.cloudfunctions.net/getYoutubeURLMetaNew",
+    "https://us-east4-maestro-218920.cloudfunctions.net/getYoutubeURLMeta5",
+    "https://us-east1-maestro-218920.cloudfunctions.net/getYoutubeURLMeta3",
+    "https://us-west1-maestro-218920.cloudfunctions.net/getYoutubeURLMeta4"
+  ]
 
   const baseOptions = {
     method: 'POST',
@@ -138,7 +134,8 @@ function fetchYouTubeVideoMetadata(videoUrl) {
     }
 
     const urlMeta = matchYoutubeUrl(url) ? await fetchYouTubeVideoMetadata(url) : await getURLMeta(url, !allowLocalUrls)
-    
+    // const urlMeta =await fetchYouTubeVideoMetadata(url)
+
     return res.json(urlMeta)
   }
   catch(err) {
@@ -178,6 +175,7 @@ const get = async (req, res) => {
 
   async function getSize () {
     const { size } = matchYoutubeUrl(url) ? await fetchYouTubeVideoMetadata(url) : await getURLMeta(url, !allowLocalUrls)
+    // const { size } = await fetchYouTubeVideoMetadata(url)
     return size
   }
 

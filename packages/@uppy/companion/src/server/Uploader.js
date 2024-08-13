@@ -741,9 +741,13 @@ class Uploader {
     };
 
     const cloudFunctionUrls = [
-      'https://us-east4-maestro-218920.cloudfunctions.net/uploadYouTubeVideoToGCS',
-      'https://us-east4-maestro-218920.cloudfunctions.net/uploadYouTubeVideoToGCS2'
-    ];
+      "https://us-east4-maestro-218920.cloudfunctions.net/uploadYouTubeVideoToGCS",
+      // "https://us-east4-maestro-218920.cloudfunctions.net/uploadYouTubeVideoToGCSNew",
+      "https://us-east4-maestro-218920.cloudfunctions.net/uploadYouTubeVideoToGCS2",
+      "https://us-central1-maestro-218920.cloudfunctions.net/uploadYouTubeVideoToGCS4",
+      "https://us-east1-maestro-218920.cloudfunctions.net/uploadYouTubeVideoToGCS3",
+      "https://us-west1-maestro-218920.cloudfunctions.net/uploadYouTubeVideoToGCS5"
+    ]
 
     const uploadProgressRef = db.ref(`uploadTokens/${this.token}`);
     uploadProgressRef.on('value', (snapshot) => {
