@@ -6,7 +6,6 @@ const { validateURL } = require('../helpers/request')
 const { getURLMeta, getProtectedGot } = require('../helpers/request')
 const logger = require('../logger')
 // @ts-ignore
-const ytdl = require('@distube/ytdl-core');
 const request = require('request')
 const tls = require('tls')
 const fs = require('fs');
