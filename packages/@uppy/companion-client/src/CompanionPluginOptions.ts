@@ -1,5 +1,5 @@
 import type { UIPluginOptions } from '@uppy/core'
-import type { tokenStorage } from './index.js'
+import type { tokenStorage } from './index.ts'
 
 export interface CompanionPluginOptions extends UIPluginOptions {
   storage?: typeof tokenStorage

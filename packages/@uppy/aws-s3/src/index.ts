@@ -21,7 +21,7 @@ import type {
   UploadResultWithSignal,
   MultipartUploadResultWithSignal,
   UploadPartBytesResult,
-} from './utils.js'
+} from './utils.ts'
 import createSignedURL from './createSignedURL.ts'
 import { HTTPCommunicationQueue } from './HTTPCommunicationQueue.ts'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment

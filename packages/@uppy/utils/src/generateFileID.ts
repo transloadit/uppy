@@ -1,4 +1,4 @@
-import type { MinimalRequiredUppyFile, UppyFile } from './UppyFile.js'
+import type { MinimalRequiredUppyFile, UppyFile } from './UppyFile.ts'
 import getFileType from './getFileType.ts'
 
 function encodeCharacter(character: string): string {
