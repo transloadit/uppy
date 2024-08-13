@@ -4,7 +4,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import Uppy from '@uppy/core'
 import Tus from '@uppy/tus'
 import FilePicker  from '@uppy/react-native'
-import  useUppy  from '@uppy/react/lib/useUppy'
 import FileList from './FileList'
 import PauseResumeButton from './PauseResumeButton'
 import ProgressBar from './ProgressBar'
@@ -27,15 +26,13 @@ export default function App () {
 
   const setState = useCallback((newState) => _setState((oldState) => ({ ...oldState, ...newState })), [])
 
-  const uppy = useUppy(() => {
-    return new Uppy({ autoProceed: true, debug: true })
+  const [uppy] = useState(() => new Uppy({ autoProceed: true, debug: true })
       .use(Tus, {
         endpoint: 'https://tusd.tusdemo.net/files/',
         urlStorage: AsyncStorage,
         fileReader: getTusFileReader,
         chunkSize: 10 * 1024 * 1024, // keep the chunk size small to avoid memory exhaustion
-      })
-  })
+      }));
 
   useEffect(() => {
     uppy.on('upload-progress', (file, progress) => {
