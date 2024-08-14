@@ -704,7 +704,7 @@ uppy.removeFile('uppyteamkongjpg1501851828779');
 #### `clear()`
 
 Clear the state. Can be useful for manually resetting Uppy after a successful
-upload.
+upload. Note that this method might throw an error if you try to call it while an upload is ongoing.
 
 Upload plugins may choose to throw an error if called during an upload.
 
@@ -773,7 +773,7 @@ Retry all uploads (after an error, for example).
 
 #### `cancelAll()`
 
-Cancel all uploads, reset progress and remove all files. If you are using the Transloadit plugin, this will also cancel all running assemblies.
+Cancel all uploads, reset progress and remove all files. If you are using the Transloadit plugin, this will also cancel all running assemblies, even after an upload has finished. If you only want reset the Uppy instance so that you can start a new upload, you probably want to use `clear()` method instead.
 
 #### `setState(patch)`
 
