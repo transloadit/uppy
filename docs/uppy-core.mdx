@@ -773,7 +773,7 @@ Retry all uploads (after an error, for example).
 
 #### `cancelAll()`
 
-Cancel all uploads, reset progress and remove all files. If you are using the Transloadit plugin, this will also cancel all running assemblies, even after an upload has finished. If you only want reset the Uppy instance so that you can start a new upload, you probably want to use `clear()` method instead.
+Cancel all uploads, reset progress and remove all files. If you are using the Transloadit plugin, this will also cancel all running assemblies, even after an upload has finished.
 
 #### `setState(patch)`
 
@@ -881,6 +881,7 @@ uppy.getPlugin('Dashboard').setOptions({
 
 Uninstall all plugins and close down this Uppy instance. Also runs
 `uppy.cancelAll()` before uninstalling. Note that this method should not normally be used.
+If you only want reset the Uppy instance so that you can start a new upload, you probably want to use `clear()` method instead.
 
 #### `logout()`
 
