@@ -8,7 +8,7 @@ function preauth (req, res) {
   }
 
   const providerConfig = req.companion.options.providerOptions[req.params.providerName]
-  if (!providerConfig.credentialsURL) {
+  if (!providerConfig?.credentialsURL) {
     return res.sendStatus(501)
   }
 
