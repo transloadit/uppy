@@ -23307,13 +23307,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"p-queue@npm:^8.0.0":
+"p-queue@npm:8.0.1":
   version: 8.0.1
   resolution: "p-queue@npm:8.0.1"
   dependencies:
     eventemitter3: "npm:^5.0.1"
     p-timeout: "npm:^6.1.2"
   checksum: 10/8dcf8fbb8339675eba7d369f6eebac9e249e2412280ad73938403b83a28a2627a2072c732890d22ef98837cef89ff09eecd839cbac358cdc532d00ef4f736d0d
+  languageName: node
+  linkType: hard
+
+"p-queue@patch:p-queue@npm%3A8.0.1#~/.yarn/patches/p-queue-npm-8.0.1-fe1ddcd827.patch":
+  version: 8.0.1
+  resolution: "p-queue@patch:p-queue@npm%3A8.0.1#~/.yarn/patches/p-queue-npm-8.0.1-fe1ddcd827.patch::version=8.0.1&hash=48e686"
+  dependencies:
+    eventemitter3: "npm:^5.0.1"
+    p-timeout: "npm:^6.1.2"
+  checksum: 10/564a7b04bc2bfe826381fd509bf83e178a06fd00e41b4e102fb435f4c71044707d97a784f50069cab1ed22f6d3e9631f0e1dad8e44b6ed2944750ab60916bc9d
   languageName: node
   linkType: hard
 
