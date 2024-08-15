@@ -400,64 +400,64 @@ export default class Transloadit<
     return newFile
   }
 
-  #createAssembly(
+  async #createAssembly(
     fileIDs: string[],
     assemblyOptions: OptionsWithRestructuredFields,
   ) {
     this.uppy.log('[Transloadit] Create Assembly')
 
-    return this.client
-      .createAssembly({
+    try {
+      const newAssembly = await this.client.createAssembly({
         ...assemblyOptions,
         expectedFiles: fileIDs.length,
       })
-      .then(async (newAssembly) => {
-        const files = this.uppy
-          .getFiles()
-          .filter(({ id }) => fileIDs.includes(id))
-        if (files.length === 0) {
-          // All files have been removed, cancelling.
-          await this.client.cancelAssembly(newAssembly)
-          return null
-        }
 
-        const assembly = new Assembly(newAssembly, this.#rateLimitedQueue)
-        const { status } = assembly
-        const assemblyID = status.assembly_id
+      const files = this.uppy
+        .getFiles()
+        .filter(({ id }) => fileIDs.includes(id))
 
-        const updatedFiles: Record<string, UppyFile<M, B>> = {}
-        files.forEach((file) => {
-          updatedFiles[file.id] = this.#attachAssemblyMetadata(file, status)
-        })
+      if (files.length === 0) {
+        // All files have been removed, cancelling.
+        await this.client.cancelAssembly(newAssembly)
+        return null
+      }
 
-        this.uppy.setState({
-          files: {
-            ...this.uppy.getState().files,
-            ...updatedFiles,
-          },
-        })
+      const assembly = new Assembly(newAssembly, this.#rateLimitedQueue)
+      const { status } = assembly
+      const assemblyID = status.assembly_id
 
-        this.uppy.emit('transloadit:assembly-created', status, fileIDs)
-
-        this.uppy.log(`[Transloadit] Created Assembly ${assemblyID}`)
-        return assembly
+      const updatedFiles: Record<string, UppyFile<M, B>> = {}
+      files.forEach((file) => {
+        updatedFiles[file.id] = this.#attachAssemblyMetadata(file, status)
       })
-      .catch((err) => {
-        // TODO: use AssemblyError?
-        const wrapped = new ErrorWithCause(
-          `${this.i18n('creatingAssemblyFailed')}: ${err.message}`,
-          { cause: err },
-        )
-        if ('details' in err) {
-          // @ts-expect-error details is not in the Error type
-          wrapped.details = err.details
-        }
-        if ('assembly' in err) {
-          // @ts-expect-error assembly is not in the Error type
-          wrapped.assembly = err.assembly
-        }
-        throw wrapped
+
+      this.uppy.setState({
+        files: {
+          ...this.uppy.getState().files,
+          ...updatedFiles,
+        },
       })
+
+      this.uppy.emit('transloadit:assembly-created', status, fileIDs)
+
+      this.uppy.log(`[Transloadit] Created Assembly ${assemblyID}`)
+      return assembly
+    } catch (err) {
+      // TODO: use AssemblyError?
+      const wrapped = new ErrorWithCause(
+        `${this.i18n('creatingAssemblyFailed')}: ${err.message}`,
+        { cause: err },
+      )
+      if ('details' in err) {
+        // @ts-expect-error details is not in the Error type
+        wrapped.details = err.details
+      }
+      if ('assembly' in err) {
+        // @ts-expect-error assembly is not in the Error type
+        wrapped.assembly = err.assembly
+      }
+      throw wrapped
+    }
   }
 
   #createAssemblyWatcher(idOrArrayOfIds: string | string[]) {
@@ -616,6 +616,7 @@ export default class Transloadit<
     await this.client.cancelAssembly(assembly)
     // TODO bubble this through AssemblyWatcher so its event handlers can clean up correctly
     this.uppy.emit('transloadit:assembly-cancelled', assembly)
+    this.assembly = undefined
   }
 
   /**
@@ -702,20 +703,21 @@ export default class Transloadit<
       this.#connectAssembly(this.assembly!)
     }
 
-    // Force-update all Assemblies to check for missed events.
-    const updateAssemblies = () => {
+    // Force-update Assembly to check for missed events.
+    const updateAssembly = () => {
       return this.assembly?.update()
     }
 
     // Restore all Assembly state.
-    this.restored = Promise.resolve().then(() => {
+    this.restored = (async () => {
       restoreState()
       restoreAssemblies()
-      updateAssemblies()
-    })
-
-    this.restored.then(() => {
+      await updateAssembly()
       this.restored = null
+    })()
+
+    this.restored.catch((err) => {
+      this.uppy.log('Failed to restore', err)
     })
   }
 
@@ -800,8 +802,11 @@ export default class Transloadit<
     try {
       const assembly =
         // this.assembly can already be defined if we recovered files with Golden Retriever (this.#onRestored)
-        (this.assembly ??
-          (await this.#createAssembly(fileIDs, assemblyOptions)))!
+        this.assembly ?? (await this.#createAssembly(fileIDs, assemblyOptions))
+
+      if (assembly == null)
+        throw new Error('All files were canceled after assembly was created')
+
       if (this.opts.importFromUploadURLs) {
         await this.#reserveFiles(assembly, fileIDs)
       }
@@ -823,29 +828,54 @@ export default class Transloadit<
     }
   }
 
-  #afterUpload = (fileIDs: string[], uploadID: string): Promise<void> => {
-    const files = fileIDs.map((fileID) => this.uppy.getFile(fileID))
-    // Only use files without errors
-    const filteredFileIDs = files
-      .filter((file) => !file.error)
-      .map((file) => file.id)
+  #afterUpload = async (fileIDs: string[], uploadID: string): Promise<void> => {
+    try {
+      // If we're still restoring state, wait for that to be done.
+      await this.restored
 
-    // If we're still restoring state, wait for that to be done.
-    if (this.restored) {
-      return this.restored.then(() => {
-        return this.#afterUpload(filteredFileIDs, uploadID)
+      const files = fileIDs
+        .map((fileID) => this.uppy.getFile(fileID))
+        // Only use files without errors
+        .filter((file) => !file.error)
+
+      const assemblyID = this.assembly?.status.assembly_id
+
+      const closeSocketConnections = () => {
+        this.assembly?.close()
+      }
+
+      // If we don't have to wait for encoding metadata or results, we can close
+      // the socket immediately and finish the upload.
+      if (!this.#shouldWaitAfterUpload()) {
+        closeSocketConnections()
+        const status = this.assembly?.status
+        if (status != null) {
+          this.uppy.addResultData(uploadID, {
+            transloadit: [status],
+          })
+        }
+        return
+      }
+
+      // If no Assemblies were created for this upload, we also do not have to wait.
+      // There's also no sockets or anything to close, so just return immediately.
+      if (!assemblyID) {
+        this.uppy.addResultData(uploadID, { transloadit: [] })
+        return
+      }
+
+      const incompleteFiles = files.filter(
+        (file) => !hasProperty(this.completedFiles, file.id),
+      )
+      incompleteFiles.forEach((file) => {
+        this.uppy.emit('postprocess-progress', file, {
+          mode: 'indeterminate',
+          message: this.i18n('encoding'),
+        })
       })
-    }
 
-    const assemblyID = this.assembly?.status.assembly_id
-
-    const closeSocketConnections = () => {
-      this.assembly?.close()
-    }
-
-    // If we don't have to wait for encoding metadata or results, we can close
-    // the socket immediately and finish the upload.
-    if (!this.#shouldWaitAfterUpload()) {
+      await this.#watcher.promise
+      // assembly is now done processing!
       closeSocketConnections()
       const status = this.assembly?.status
       if (status != null) {
@@ -853,35 +883,12 @@ export default class Transloadit<
           transloadit: [status],
         })
       }
-      return Promise.resolve()
+    } finally {
+      // in case allowMultipleUploadBatches is true and the user wants to upload again,
+      // we need to allow a new assembly to be created.
+      // see https://github.com/transloadit/uppy/issues/5397
+      this.assembly = undefined
     }
-
-    // If no Assemblies were created for this upload, we also do not have to wait.
-    // There's also no sockets or anything to close, so just return immediately.
-    if (!assemblyID) {
-      this.uppy.addResultData(uploadID, { transloadit: [] })
-      return Promise.resolve()
-    }
-
-    const incompleteFiles = files.filter(
-      (file) => !hasProperty(this.completedFiles, file.id),
-    )
-    incompleteFiles.forEach((file) => {
-      this.uppy.emit('postprocess-progress', file, {
-        mode: 'indeterminate',
-        message: this.i18n('encoding'),
-      })
-    })
-
-    return this.#watcher.promise.then(() => {
-      closeSocketConnections()
-      const status = this.assembly?.status
-      if (status != null) {
-        this.uppy.addResultData(uploadID, {
-          transloadit: [status],
-        })
-      }
-    })
   }
 
   #closeAssemblyIfExists = () => {
