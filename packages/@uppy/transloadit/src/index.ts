@@ -717,7 +717,7 @@ export default class Transloadit<
     })()
 
     this.restored.catch((err) => {
-      this.uppy.log('Failed to restore', err) // or we risk unhandled rejection
+      this.uppy.log('Failed to restore', err)
     })
   }
 
