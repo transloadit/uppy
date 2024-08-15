@@ -415,7 +415,6 @@ export default class Transloadit<
         const files = this.uppy
           .getFiles()
           .filter(({ id }) => fileIDs.includes(id))
-
         if (files.length === 0) {
           // All files have been removed, cancelling.
           await this.client.cancelAssembly(newAssembly)
