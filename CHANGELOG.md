@@ -12,6 +12,40 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 4.1.1
+
+Released: 2024-08-15
+
+| Package                | Version | Package                | Version |
+| ---------------------- | ------- | ---------------------- | ------- |
+| @uppy/aws-s3           |   4.0.3 | @uppy/provider-views   |   4.0.1 |
+| @uppy/companion        |   5.0.5 | @uppy/status-bar       |   4.0.2 |
+| @uppy/companion-client |   4.0.1 | @uppy/transloadit      |   4.0.2 |
+| @uppy/core             |   4.1.1 | @uppy/tus              |   4.0.1 |
+| @uppy/dashboard        |   4.0.3 | @uppy/utils            |   6.0.2 |
+| @uppy/drag-drop        |   4.0.2 | @uppy/vue              |   2.0.1 |
+| @uppy/file-input       |   4.0.1 | uppy                   |   4.1.1 |
+| @uppy/image-editor     |   3.0.1 |                        |         |
+
+- @uppy/transloadit: fix issue with `allowMultipleUploadBatches` (Mikael Finstad / #5400)
+- meta: Bump elliptic from 6.5.5 to 6.5.7 (dependabot[bot] / #5410)
+- meta: add back patch for `p-queue` (Antoine du Hamel / #5409)
+- @uppy/transloadit: fix many lurking `TypeError` (Mikael Finstad / #5399)
+- docs: improve `corsOrigins` documentation (Mikael Finstad / #5390)
+- docs: add `ViewEncapsulation` to Angular example (Aaron Russell / #5395)
+- @uppy/companion: fix code for custom providers (Mikael Finstad / #5398)
+- docs: add note about throwing in `cancelAll` and `destroy()` (Mikael Finstad / #5408)
+- meta: Bump docker/login-action from 3.2.0 to 3.3.0 (dependabot[bot] / #5372)
+- meta: Bump docker/setup-qemu-action from 3.1.0 to 3.2.0 (dependabot[bot] / #5370)
+- docs: make hosted Companion more clear (Merlijn Vos / #5394)
+- meta: Bump docker/build-push-action from 6.4.1 to 6.6.1 (dependabot[bot] / #5403)
+- meta: bump p-queue to latest, remove patch (Mikael Finstad / #5391)
+- meta: enforce `.ts` extension for relative import types (Antoine du Hamel / #5393)
+- @uppy/tus: Fix onShouldRetry type signature (Trent Nadeau / #5387)
+- @uppy/dashboard,@uppy/drag-drop,@uppy/file-input: Transform the `accept` prop into a string everywhere (Evgenia Karunus / #5380)
+- docs: fix getTemporarySecurityCredentials in aws-s3 (Merlijn Vos / #5363)
+
+
 ## 4.1.0
 
 Released: 2024-07-30

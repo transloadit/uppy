@@ -1,5 +1,12 @@
 # @uppy/tus
 
+## 4.0.1
+
+Released: 2024-08-15
+Included in: Uppy v4.1.1
+
+- @uppy/tus: Fix onShouldRetry type signature (Trent Nadeau / #5387)
+
 ## 4.0.0-beta.6
 
 Released: 2024-06-04

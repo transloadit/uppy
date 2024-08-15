@@ -1,5 +1,13 @@
 # @uppy/transloadit
 
+## 4.0.2
+
+Released: 2024-08-15
+Included in: Uppy v4.1.1
+
+- @uppy/transloadit: fix issue with `allowMultipleUploadBatches` (Mikael Finstad / #5400)
+- @uppy/transloadit: fix many lurking `TypeError` (Mikael Finstad / #5399)
+
 ## 4.0.1
 
 Released: 2024-07-30
