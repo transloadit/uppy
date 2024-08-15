@@ -603,10 +603,11 @@ export default class Transloadit<
    * When an Assembly has finished processing, get the final state
    * and emit it.
    */
-  #onAssemblyFinished(status: AssemblyResponse) {
-    const url = status.assembly_ssl_url
+  #onAssemblyFinished(assembly: Assembly) {
+    const url = assembly.status.assembly_ssl_url
     this.client.getAssemblyStatus(url).then((finalStatus) => {
-      this.assembly!.status = finalStatus
+      // eslint-disable-next-line no-param-reassign
+      assembly.status = finalStatus
       this.uppy.emit('transloadit:complete', finalStatus)
     })
   }
@@ -621,8 +622,9 @@ export default class Transloadit<
    * When all files are removed, cancel in-progress Assemblies.
    */
   #onCancelAll = async () => {
+    if (!this.assembly) return
     try {
-      await this.#cancelAssembly(this.assembly!.status)
+      await this.#cancelAssembly(this.assembly.status)
     } catch (err) {
       this.uppy.log(err)
     }
@@ -702,7 +704,7 @@ export default class Transloadit<
 
     // Force-update all Assemblies to check for missed events.
     const updateAssemblies = () => {
-      return this.assembly!.update()
+      return this.assembly?.update()
     }
 
     // Restore all Assembly state.
@@ -768,11 +770,11 @@ export default class Transloadit<
 
     if (this.opts.waitForEncoding) {
       assembly.on('finished', () => {
-        this.#onAssemblyFinished(assembly.status)
+        this.#onAssemblyFinished(assembly)
       })
     } else if (this.opts.waitForMetadata) {
       assembly.on('metadata', () => {
-        this.#onAssemblyFinished(assembly.status)
+        this.#onAssemblyFinished(assembly)
       })
     }
 
@@ -835,19 +837,22 @@ export default class Transloadit<
       })
     }
 
-    const assemblyID = this.assembly!.status.assembly_id
+    const assemblyID = this.assembly?.status.assembly_id
 
     const closeSocketConnections = () => {
-      this.assembly!.close()
+      this.assembly?.close()
     }
 
     // If we don't have to wait for encoding metadata or results, we can close
     // the socket immediately and finish the upload.
     if (!this.#shouldWaitAfterUpload()) {
       closeSocketConnections()
-      this.uppy.addResultData(uploadID, {
-        transloadit: [this.assembly!.status],
-      })
+      const status = this.assembly?.status
+      if (status != null) {
+        this.uppy.addResultData(uploadID, {
+          transloadit: [status],
+        })
+      }
       return Promise.resolve()
     }
 
@@ -870,9 +875,12 @@ export default class Transloadit<
 
     return this.#watcher.promise.then(() => {
       closeSocketConnections()
-      this.uppy.addResultData(uploadID, {
-        transloadit: [this.assembly!.status],
-      })
+      const status = this.assembly?.status
+      if (status != null) {
+        this.uppy.addResultData(uploadID, {
+          transloadit: [status],
+        })
+      }
     })
   }
 
@@ -982,7 +990,7 @@ export default class Transloadit<
   }
 
   getAssembly(): AssemblyResponse | undefined {
-    return this.assembly!.status
+    return this.assembly?.status
   }
 
   getAssemblyFiles(assemblyID: string): UppyFile<M, B>[] {
