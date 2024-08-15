@@ -699,8 +699,7 @@ export default class Transloadit<
     // Set up the Assembly instances and AssemblyWatchers for existing Assemblies.
     const restoreAssemblies = () => {
       this.#createAssemblyWatcher(previousAssembly.assembly_id)
-      if (this.assembly == null) throw new Error('Assembly was nullish')
-      this.#connectAssembly(this.assembly)
+      this.#connectAssembly(this.assembly!)
     }
 
     // Force-update all Assemblies to check for missed events.
