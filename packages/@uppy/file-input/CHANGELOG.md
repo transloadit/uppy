@@ -1,5 +1,12 @@
 # @uppy/file-input
 
+## 4.0.1
+
+Released: 2024-08-15
+Included in: Uppy v4.1.1
+
+- @uppy/dashboard,@uppy/drag-drop,@uppy/file-input: Transform the `accept` prop into a string everywhere (Evgenia Karunus / #5380)
+
 ## 4.0.0-beta.4
 
 Released: 2024-04-29

@@ -1,5 +1,12 @@
 # @uppy/companion
 
+## 5.0.5
+
+Released: 2024-08-15
+Included in: Uppy v4.1.1
+
+- @uppy/companion: fix code for custom providers (Mikael Finstad / #5398)
+
 ## 5.0.3
 
 Released: 2024-07-15
