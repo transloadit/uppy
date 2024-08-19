@@ -124,8 +124,6 @@ object.
 ## Documentation
 
 - [Uppy](https://uppy.io/docs/uppy/) — full list of options, methods and events
-- [Plugins](https://uppy.io/docs/plugins/) — list of Uppy plugins and their
-  options
 - [Companion](https://uppy.io/docs/companion/) — setting up and running a
   Companion instance, which adds support for Instagram, Dropbox, Box, Google
   Drive and remote URLs
@@ -135,8 +133,6 @@ object.
   to write a plugin for Uppy
 
 ## Plugins
-
-[List of plugins and their common options](https://uppy.io/docs/plugins/)
 
 ### UI Elements
 
