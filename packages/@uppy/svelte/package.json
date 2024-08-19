@@ -10,7 +10,7 @@
   },
   "exports": {
     ".": {
-      "svelte": "./src/index.js",
+      "svelte": "./lib/index.js",
       "default": "./lib/index.js"
     },
     "./package.json": "./package.json"
