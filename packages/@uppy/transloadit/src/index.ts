@@ -73,6 +73,7 @@ export interface AssemblyResponse {
   has_dupe_jobs: boolean
   execution_start: string
   execution_duration: number
+  execution_progress?: number
   queue_duration: number
   jobs_queue_duration: number
   notify_start?: any
