@@ -1,5 +1,12 @@
 # @uppy/status-bar
 
+## 4.0.3
+
+Released: 2024-08-20
+Included in: Uppy v4.2.0
+
+- @uppy/status-bar: show upload button when files are recovered (Merlijn Vos / #5418)
+
 ## 4.0.1
 
 Released: 2024-07-30

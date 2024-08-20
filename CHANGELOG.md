@@ -12,6 +12,25 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 4.2.0
+
+Released: 2024-08-20
+
+| Package           | Version | Package           | Version |
+| ----------------- | ------- | ----------------- | ------- |
+| @uppy/core        |   4.1.2 | @uppy/transloadit |   4.1.0 |
+| @uppy/status-bar  |   4.0.3 | uppy              |   4.2.0 |
+| @uppy/svelte      |   4.0.1 |                   |         |
+
+- @uppy/status-bar: show upload button when files are recovered (Merlijn Vos / #5418)
+- meta: Bump docker/build-push-action from 6.6.1 to 6.7.0 (dependabot[bot] / #5413)
+- docs: remove stale reference to plugins page (Merlijn Vos / #5414)
+- @uppy/transloadit: add execution_progress to AssemblyResponse type (Merlijn Vos / #5420)
+- @uppy/svelte: fix exports condition (Merlijn Vos / #5416)
+- @uppy/transloadit: fix check if all files have been removed (Merlijn Vos / #5419)
+- examples: remove `useUppy` from React Native example (Mikael Finstad / #5405)
+
+
 ## 4.1.1
 
 Released: 2024-08-15
