@@ -416,10 +416,12 @@ export default class Transloadit<
         .getFiles()
         .filter(({ id }) => fileIDs.includes(id))
 
-      if (files.length === 0) {
-        // All files have been removed, cancelling.
-        await this.client.cancelAssembly(newAssembly)
-        return null
+      if (files.length !== fileIDs.length) {
+        if (files.length === 0) {
+          // All files have been removed, cancelling.
+          await this.client.cancelAssembly(newAssembly)
+          return null
+        }
       }
 
       const assembly = new Assembly(newAssembly, this.#rateLimitedQueue)
