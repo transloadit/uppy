@@ -10,8 +10,8 @@
   },
   "exports": {
     ".": {
-      "svelte": "./src/index.js",
-      "default": "./lib/index.js"
+      "types": "./lib/index.d.ts",
+      "svelte": "./lib/index.js"
     },
     "./package.json": "./package.json"
   },
