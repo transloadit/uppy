@@ -1799,7 +1799,7 @@ export class Uppy<
       const msg =
         `Already found a plugin named '${existsPluginAlready.id}'. ` +
         `Tried to use: '${pluginId}'.\n` +
-        'Uppy plugins must have unique `id` options. See https://uppy.io/docs/plugins/#id.'
+        'Uppy plugins must have unique `id` options.'
       throw new Error(msg)
     }
 
