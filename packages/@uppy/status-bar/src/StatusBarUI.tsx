@@ -140,8 +140,7 @@ export default function StatusBarUI<M extends Meta, B extends Body>({
   const showUploadBtn =
     !error &&
     newFiles &&
-    !isUploadInProgress &&
-    !isAllPaused &&
+    ((!isUploadInProgress && !isAllPaused) || recoveredState) &&
     allowNewUpload &&
     !hideUploadButton
 
