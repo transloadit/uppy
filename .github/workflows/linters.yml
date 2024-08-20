@@ -86,6 +86,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: transloadit/uppy.io
+          ref: dc4b10f27118f13eca9a695cc632270456db772e # commit from just before Uppy.io was updated for Uppy 4.0.0.
       - run: rm -rf docs # the other PR has not landed
       - name: Checkout docs
         uses: actions/checkout@v4
