@@ -1,5 +1,12 @@
 # @uppy/svelte
 
+## 4.0.1
+
+Released: 2024-08-20
+Included in: Uppy v4.2.0
+
+- @uppy/svelte: fix exports condition (Merlijn Vos / #5416)
+
 ## 4.0.0-beta.2
 
 Released: 2024-04-29
