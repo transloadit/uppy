@@ -1,5 +1,12 @@
 # @uppy/transloadit
 
+## 3.8.1
+
+Released: 2024-08-21
+Included in: Uppy v3.27.4
+
+- @uppy/transloadit: fix check if all files have been removed (Merlijn Vos / #5419)
+
 ## 3.8.0
 
 Released: 2024-06-18
