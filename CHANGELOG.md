@@ -12,6 +12,20 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 3.27.4
+
+Released: 2024-08-21
+
+| Package           | Version | Package           | Version |
+| ----------------- | ------- | ----------------- | ------- |
+| @uppy/transloadit |   3.8.1 | uppy              |  3.27.4 |
+
+- @uppy/transloadit: fix check if all files have been removed (Merlijn Vos / #5419)
+- meta: enable CI on `3.x` branch (Antoine du Hamel)
+- meta: pin uppy.io repo to the commit before Uppy 4.0.0 (Antoine du Hamel)
+- meta: prepare release workflow for 3.x versions (Antoine du Hamel)
+
+
 ## 3.27.3
 
 Released: 2024-07-03
