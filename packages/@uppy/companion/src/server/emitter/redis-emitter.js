@@ -1,4 +1,5 @@
 const { EventEmitter } = require('node:events')
+const util = require('node:util')
 
 const logger = require('../logger')
 
@@ -141,7 +142,7 @@ module.exports = (redisClient, redisPubSubScope) => {
    * @param {string} eventName name of the event
    */
   function emit (eventName, ...args) {
-    runWhenConnected(() => publisher.publish(getPrefixedEventName(eventName), JSON.stringify(args)))
+    runWhenConnected(() => publisher.publish(getPrefixedEventName(eventName), util.inspect(args)))
   }
 
   /**
