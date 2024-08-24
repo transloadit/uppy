@@ -2,7 +2,7 @@ const Uploader = require('../Uploader')
 const logger = require('../logger')
 const { respondWithError } = require('../provider/error')
 
-async function startDownUpload({ req, res, getSize, download, youtubeUrl }) {
+async function startDownUpload({ req, res, getSize, download, externalUrl, urlType }) {
   try {
     const size = await getSize()
     const { clientSocketConnectTimeout } = req.companion.options
@@ -11,7 +11,7 @@ async function startDownUpload({ req, res, getSize, download, youtubeUrl }) {
     const uploader = new Uploader(Uploader.reqToOptions(req, size))
 
     logger.debug('Starting download stream.', null, req.id)
-    if (!youtubeUrl) {
+    if (!externalUrl) {
       stream = await download()
     }
 
@@ -23,7 +23,7 @@ async function startDownUpload({ req, res, getSize, download, youtubeUrl }) {
         await uploader.awaitReady(clientSocketConnectTimeout)
         logger.debug('Socket connection received. Starting remote download/upload.', null, req.id)
 
-        await uploader.tryUploadStream(stream, youtubeUrl)
+        await uploader.tryUploadStream(stream, externalUrl, urlType)
       })().catch((err) => logger.error(err))
 
 

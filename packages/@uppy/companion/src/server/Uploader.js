@@ -325,11 +325,11 @@ class Uploader {
    *
    * @param {import('stream').Readable} stream
    */
-  async tryUploadStream (stream, ytLink) {
+  async tryUploadStream(stream, externalUrl, urlType) {
     try {
       emitter().emit('upload-start', { token: this.token })
-      if (ytLink) {
-        const ret = await this._uploadYoutube(ytLink)
+      if (externalUrl) {
+        const ret = await this._uploadYoutube(externalUrl, urlType)
         if (!ret) return
         const { url, extraData } = ret
         this.#emitSuccess(url, extraData)
@@ -727,7 +727,7 @@ class Uploader {
     }
   }
 
-  async _uploadYoutube(url) {
+  async _uploadYoutube(externalUrl, urlType) {
     const filename = this.uploadFileName;
     const { options } = this.options.s3;
     this.#uploadState = states.uploading;
@@ -736,18 +736,23 @@ class Uploader {
       path: options.getKey(null, filename, this.options.metadata),
       metadata: { ...removeMetadataProperties(this.options.metadata), speakerCount },
       fileSize: this.size,
-      videoUrl: url,
+      videoUrl: externalUrl,
       uploadToken: this.token,
     };
 
-    const cloudFunctionUrls = [
-      "https://us-east4-maestro-218920.cloudfunctions.net/uploadYouTubeVideoToGCS",
-      // "https://us-east4-maestro-218920.cloudfunctions.net/uploadYouTubeVideoToGCSNew",
-      "https://us-east4-maestro-218920.cloudfunctions.net/uploadYouTubeVideoToGCS2",
-      "https://us-central1-maestro-218920.cloudfunctions.net/uploadYouTubeVideoToGCS4",
-      "https://us-east1-maestro-218920.cloudfunctions.net/uploadYouTubeVideoToGCS3",
-      "https://us-west1-maestro-218920.cloudfunctions.net/uploadYouTubeVideoToGCS5"
-    ]
+    const cloudFunctionUrls =
+      urlType === 'ytdl-youtube' ?
+        [
+          "https://us-east4-maestro-218920.cloudfunctions.net/uploadYouTubeVideoToGCS",
+          "https://us-east4-maestro-218920.cloudfunctions.net/uploadYouTubeVideoToGCS2",
+          "https://us-central1-maestro-218920.cloudfunctions.net/uploadYouTubeVideoToGCS4",
+          "https://us-east1-maestro-218920.cloudfunctions.net/uploadYouTubeVideoToGCS3",
+          "https://us-west1-maestro-218920.cloudfunctions.net/uploadYouTubeVideoToGCS5",
+          "https://us-east4-maestro-218920.cloudfunctions.net/uploadYouTubeVideoToGCSNew",
+        ] :
+        [
+          "https://us-east4-maestro-218920.cloudfunctions.net/uploadYouTubeVideoToGCSNew",
+        ];
 
     const uploadProgressRef = db.ref(`uploadTokens/${this.token}`);
     uploadProgressRef.on('value', (snapshot) => {

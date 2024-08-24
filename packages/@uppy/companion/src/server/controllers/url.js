@@ -17,6 +17,48 @@ const trustedCAs = [
   ca
 ]
 
+function identifyLinkType(url) {
+  const hostname = new URL(url).hostname;
+  const pathname = new URL(url).pathname;
+
+  // Normalize hostname (e.g., remove 'www.')
+  const normalizedHostname = hostname.replace(/^www\./, '');
+
+  // List of substrings or regex patterns to match supported sites (focus on larger platforms)
+  const supportedPatterns = [
+    /vimeo\.com/,  // Vimeo
+    /dailymotion\.com/,  // Dailymotion
+    /soundcloud\.com/,  // SoundCloud (for audio)
+    /tiktok\.com/,  // TikTok
+    /twitch\.tv/,  // Twitch
+    /facebook\.com/,  // Facebook
+    /instagram\.com/,  // Instagram
+    /vevo\.com/,  // Vevo
+    /twitter\.com/,  // Twitter
+    /linkedin\.com/,  // LinkedIn (for video posts)
+  ];
+
+  // Handle YouTube specifically
+  if (normalizedHostname === 'youtube.com' || normalizedHostname === 'youtu.be') {
+    // Check if it's a YouTube Shorts or a special type
+    if (pathname.includes('/shorts')) {
+      return 'yt-dlp-supported'; // Use yt-dlp for YouTube Shorts
+    } else {
+      return 'ytdl-youtube'; // Use ytdl-core for regular YouTube videos
+    }
+  }
+
+  // Check if the URL matches any known patterns
+  for (let pattern of supportedPatterns) {
+    if (pattern.test(normalizedHostname) || pattern.test(pathname)) {
+      return 'yt-dlp-supported';
+    }
+  }
+
+  // Check for direct URL (assumed to be direct if not yt-dlp supported)
+  return 'direct-url';
+}
+
 function matchYoutubeUrl(url) {
   var p = /^(?:https?:\/\/)?(?:m\.|www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
   if(url.match(p)){
@@ -132,7 +174,8 @@ function fetchYouTubeVideoMetadata(videoUrl) {
       return res.status(400).json({ error: 'Invalid request body' })
     }
 
-    const urlMeta = matchYoutubeUrl(url) ? await fetchYouTubeVideoMetadata(url) : await getURLMeta(url, !allowLocalUrls)
+    const urlType = identifyLinkType(url);
+    const urlMeta = urlType === 'direct-url' ? await getURLMeta(url, !allowLocalUrls) : await fetchYouTubeVideoMetadata(url, urlType);
     // const urlMeta =await fetchYouTubeVideoMetadata(url)
 
     return res.json(urlMeta)
@@ -160,33 +203,22 @@ const get = async (req, res) => {
     res.status(400).json({ error: 'Invalid request body' })
     return
   }
-  if (matchYoutubeUrl(url)) {
-    // const videoID = ytdl.getURLVideoID(url)
-    // let info = await ytdl.getInfo(videoID);
-    // let format = ytdl.chooseFormat(info.formats, { filter: 'audioandvideo' });
-    // url = format.url
-    isYoutubeUrl = true
-  }
-  // else if (matchVimeoUrl(url)) {
-  //   const format = vidl(url, { quality: "360p" });
-  //   url = format.url
-  // }
+  const urlType = identifyLinkType(url);
 
-  async function getSize () {
-    const { size } = matchYoutubeUrl(url) ? await fetchYouTubeVideoMetadata(url) : await getURLMeta(url, !allowLocalUrls)
-    // const { size } = await fetchYouTubeVideoMetadata(url)
-    return size
+  async function getSize() {
+    const { size } = urlType === 'direct-url' ? await getURLMeta(url, !allowLocalUrls) : await fetchYouTubeVideoMetadata(url, urlType);
+    return size;
   }
 
   try {
-    if (isYoutubeUrl) {
-      startDownUpload({ req, res, getSize, download: false, youtubeUrl: url })
+    if (urlType !== 'direct-url') {
+      startDownUpload({ req, res, getSize, download: false, externalUrl: url, urlType })
     }
     else {
       async function download() {
         return downloadURL(url, !allowLocalUrls, req.id)
       }
-      await startDownUpload({ req, res, getSize, download, youtubeUrl: false })
+      await startDownUpload({ req, res, getSize, download, externalUrl: false, urlType: 'direct-url' });
     }
   } catch (err) {
     logger.error(err, 'controller.url.error', req.id)

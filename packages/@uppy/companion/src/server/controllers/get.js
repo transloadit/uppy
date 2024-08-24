@@ -17,13 +17,13 @@ async function get (req, res) {
   }
 
   try {
-    await startDownUpload({ req, res, getSize, download, youtubeUrl: false })
+    await startDownUpload({ req, res, getSize, download, externalUrl: false, urlType: 'direct-url' })
   } catch (err) {
     logger.error(err, 'controller.get.error', req.id)
     res.status(500).json({ message: 'Failed to download file' })
   }
 
-  startDownUpload({ req, res, getSize, download, youtubeUrl: false })
+  startDownUpload({ req, res, getSize, download, externalUrl: false, urlType: 'direct-url' })
 }
 
 module.exports = get
