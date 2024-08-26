@@ -12,6 +12,18 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 4.2.1
+
+Released: 2024-08-26
+
+| Package     | Version | Package     | Version |
+| ----------- | ------- | ----------- | ------- |
+| @uppy/react |   4.0.2 | uppy        |   4.2.1 |
+
+- @uppy/react: fix `use-sync-external-store` import (Merlijn Vos / #5426)
+- docs: fix Golden Retriever service worker import (mkabatek / #5425)
+
+
 ## 4.2.0
 
 Released: 2024-08-20
