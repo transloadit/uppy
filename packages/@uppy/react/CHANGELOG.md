@@ -1,5 +1,12 @@
 # @uppy/react
 
+## 4.0.2
+
+Released: 2024-08-26
+Included in: Uppy v4.2.1
+
+- @uppy/react: fix `use-sync-external-store` import (Merlijn Vos / #5426)
+
 ## 4.0.0
 
 Released: 2024-07-10
