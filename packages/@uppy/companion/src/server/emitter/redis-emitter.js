@@ -1,7 +1,12 @@
 const { EventEmitter } = require('node:events')
-const util = require('node:util')
+const { default: safeStringify } = require('fast-safe-stringify')
 
 const logger = require('../logger')
+
+function replacer(key, value) {
+  // Remove the circular structure and internal ones
+  return key[0] === '_' || value === '[Circular]' ? undefined : value
+}
 
 /**
  * This module simulates the builtin events.EventEmitter but with the use of redis.
@@ -142,7 +147,10 @@ module.exports = (redisClient, redisPubSubScope) => {
    * @param {string} eventName name of the event
    */
   function emit (eventName, ...args) {
-    runWhenConnected(() => publisher.publish(getPrefixedEventName(eventName), util.inspect(args)))
+    runWhenConnected(
+      () => publisher.publish(getPrefixedEventName(eventName),
+      safeStringify(args, replacer)),
+    )
   }
 
   /**
