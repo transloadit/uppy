@@ -60,6 +60,7 @@ export interface TusOpts<M extends Meta, B extends Body>
   allowedMetaFields?: boolean | string[]
   rateLimitedQueue?: RateLimitedQueue
 }
+export type { TusOpts as TusOptions }
 
 /**
  * Extracted from https://github.com/tus/tus-js-client/blob/master/lib/upload.js#L13

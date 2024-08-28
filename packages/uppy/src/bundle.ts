@@ -1,3 +1,4 @@
+/* eslint-disable import/first */
 // Core
 export { default as Uppy, debugLogger } from '@uppy/core'
 
@@ -8,7 +9,7 @@ export { default as BasePlugin } from '@uppy/core/lib/BasePlugin.js'
 /**
  * @deprecated Use `Uppy` instead of `Core`
  */
-export function Core () {
+export function Core() {
   throw new Error('Core has been renamed to Uppy')
 }
 
@@ -16,10 +17,12 @@ export function Core () {
 export * as server from '@uppy/companion-client'
 
 import * as ProviderView from '@uppy/provider-views'
+
 export const views = { ProviderView }
 
 // Stores
 export { default as DefaultStore } from '@uppy/store-default'
+// @ts-expect-error untyped
 export { default as ReduxStore } from '@uppy/store-redux'
 
 // UI plugins
@@ -50,7 +53,6 @@ export { default as Zoom } from '@uppy/zoom'
 
 // Uploaders
 export { default as AwsS3 } from '@uppy/aws-s3'
-export { default as AwsS3Multipart } from '@uppy/aws-s3-multipart'
 export { default as Transloadit } from '@uppy/transloadit'
 export { default as Tus } from '@uppy/tus'
 export { default as XHRUpload } from '@uppy/xhr-upload'
@@ -59,12 +61,19 @@ export { default as XHRUpload } from '@uppy/xhr-upload'
 export { default as Compressor } from '@uppy/compressor'
 export { default as Form } from '@uppy/form'
 export { default as GoldenRetriever } from '@uppy/golden-retriever'
+// @ts-expect-error untyped
 export { default as ReduxDevTools } from '@uppy/redux-dev-tools'
 export { default as ThumbnailGenerator } from '@uppy/thumbnail-generator'
 
 // Special hack for Transloadit static exports
-import Transloadit, { COMPANION_URL, COMPANION_ALLOWED_HOSTS } from '@uppy/transloadit'
+import Transloadit, {
+  COMPANION_URL,
+  COMPANION_ALLOWED_HOSTS,
+} from '@uppy/transloadit'
+
+// @ts-expect-error monkey patching
 Transloadit.COMPANION_URL = COMPANION_URL
+// @ts-expect-error monkey patching
 Transloadit.COMPANION_ALLOWED_HOSTS = COMPANION_ALLOWED_HOSTS
 
 export const locales = {}

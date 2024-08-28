@@ -60,6 +60,8 @@ export interface XhrUploadOpts<M extends Meta, B extends Body>
   bundle?: boolean
 }
 
+export type { XhrUploadOpts as XHRUploadOptions }
+
 declare module '@uppy/utils/lib/UppyFile' {
   // eslint-disable-next-line no-shadow
   export interface UppyFile<M extends Meta, B extends Body> {

@@ -277,6 +277,8 @@ export type AwsS3MultipartOptions<
     | AWSS3MaybeMultipartWithoutCompanion<M, B>
   )
 
+export type { AwsS3MultipartOptions as AwsS3Options }
+
 const defaultOptions = {
   allowedMetaFields: true,
   limit: 6,

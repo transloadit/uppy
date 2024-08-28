@@ -34,7 +34,7 @@ await fs.mkdir(new URL('./uppy/dist', PACKAGES_ROOT), { recursive: true })
 
 const methods = [
   buildBundle(
-    './packages/uppy/index.mjs',
+    './packages/uppy/src/bundle.ts',
     './packages/uppy/dist/uppy.min.mjs',
     { standalone: 'Uppy (ESM)', format: 'esm' },
   ),
