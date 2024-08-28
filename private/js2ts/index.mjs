@@ -31,7 +31,7 @@ const packageJSON = JSON.parse(
 )
 
 if (packageJSON.type !== 'module') {
-  throw new Error('Cannot convert non-ESM package to TS')
+  // throw new Error('Cannot convert non-ESM package to TS')
 }
 
 const uppyDeps = new Set(
@@ -48,7 +48,7 @@ const paths = Object.fromEntries(
     for (const pkg of uppyDeps) {
       const nickname = pkg.slice('@uppy/'.length)
       // eslint-disable-next-line import/no-dynamic-require
-      const pkgJson = require(`../${nickname}/package.json`)
+      const pkgJson = require(`../@uppy/${nickname}/package.json`)
       if (pkgJson.main) {
         yield [
           pkg,
@@ -60,7 +60,7 @@ const paths = Object.fromEntries(
   })(),
 )
 const references = Array.from(uppyDeps, (pkg) => ({
-  path: `../${pkg.slice('@uppy/'.length)}/tsconfig.build.json`,
+  path: `../${pkg}/tsconfig.build.json`,
 }))
 
 const depsNotYetConvertedToTS = references.filter(

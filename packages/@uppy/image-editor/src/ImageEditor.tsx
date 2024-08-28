@@ -36,7 +36,7 @@ declare module '@uppy/core' {
   }
 }
 
-interface Opts extends UIPluginOptions {
+export interface Opts extends UIPluginOptions {
   quality?: number
   cropperOptions?: Cropper.Options & {
     croppedCanvasOptions?: Cropper.GetCroppedCanvasOptions
