@@ -1,6 +1,9 @@
-const en_US = {
-  pluralize (count) {
-    if (count === 1) {
+import type { Locale } from '@uppy/utils/lib/Translator'
+
+const en_US: Locale<0 | 1> = {
+  strings: {},
+  pluralize(n) {
+    if (n === 1) {
       return 0
     }
     return 1
