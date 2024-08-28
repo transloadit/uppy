@@ -21,6 +21,8 @@ export interface CompressorOpts extends PluginOpts, CompressorJS.Options {
   limit?: number
 }
 
+export type { CompressorOpts as CompressorOptions }
+
 const defaultOptions = {
   quality: 0.6,
   limit: 10,
