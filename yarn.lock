@@ -8081,6 +8081,7 @@ __metadata:
   resolution: "@uppy-dev/dev@workspace:private/dev"
   dependencies:
     "@uppy/companion": "workspace:^"
+    "@uppy/locales": "workspace:^"
     autoprefixer: "npm:^10.2.6"
     postcss-dir-pseudo-class: "npm:^6.0.0"
     postcss-logical: "npm:^5.0.0"
@@ -8855,7 +8856,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/locales@workspace:packages/@uppy/locales":
+"@uppy/locales@workspace:^, @uppy/locales@workspace:packages/@uppy/locales":
   version: 0.0.0-use.local
   resolution: "@uppy/locales@workspace:packages/@uppy/locales"
   dependencies:
