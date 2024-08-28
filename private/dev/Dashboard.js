@@ -7,7 +7,6 @@ import ScreenCapture from '@uppy/screen-capture'
 import GoldenRetriever from '@uppy/golden-retriever'
 import Tus from '@uppy/tus'
 import AwsS3 from '@uppy/aws-s3'
-import AwsS3Multipart from '@uppy/aws-s3-multipart'
 import XHRUpload from '@uppy/xhr-upload'
 import Transloadit from '@uppy/transloadit'
 import Form from '@uppy/form'
@@ -167,7 +166,7 @@ export default () => {
       uppyDashboard.use(AwsS3, { companionUrl: COMPANION_URL, limit: 6 })
       break
     case 's3-multipart':
-      uppyDashboard.use(AwsS3Multipart, { companionUrl: COMPANION_URL })
+      uppyDashboard.use(AwsS3, { companionUrl: COMPANION_URL, shouldUseMultipart: true })
       break
     case 'xhr':
       uppyDashboard.use(XHRUpload, {
