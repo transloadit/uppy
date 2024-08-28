@@ -32,14 +32,33 @@ const availablePlugins = {
   Zoom,
 }
 
-export interface RemoteSourcesOptions extends CompanionPluginOptions {
-  sources?: Array<keyof Omit<typeof availablePlugins, '__proto__'>>
+type AvailablePluginsKeys =
+  | 'Box'
+  | 'Dropbox'
+  | 'Facebook'
+  | 'GoogleDrive'
+  | 'GooglePhotos'
+  | 'Instagram'
+  | 'OneDrive'
+  | 'Unsplash'
+  | 'Url'
+  | 'Zoom'
+
+type NestedCompanionKeysParams = {
+  [key in AvailablePluginsKeys]?: CompanionPluginOptions['companionKeysParams']
+}
+
+export interface RemoteSourcesOptions
+  extends Omit<CompanionPluginOptions, 'companionKeysParams'> {
+  sources?: Array<AvailablePluginsKeys>
+  // Individual remote source plugins set the `key` and `credentialsName`
+  // in `companionKeysParams` but because this is a preset we need to change
+  // this to a record of plugin IDs to their respective `companionKeysParams`.
+  companionKeysParams?: NestedCompanionKeysParams
 }
 
 const defaultOptions = {
-  sources: Object.keys(availablePlugins) as Array<
-    keyof Omit<typeof availablePlugins, '__proto__'>
-  >,
+  sources: Object.keys(availablePlugins) as Array<AvailablePluginsKeys>,
 } satisfies Partial<RemoteSourcesOptions>
 
 type Opts = DefinePluginOpts<RemoteSourcesOptions, keyof typeof defaultOptions>
@@ -72,7 +91,12 @@ export default class RemoteSources<
 
   install(): void {
     this.opts.sources.forEach((pluginId) => {
-      const optsForRemoteSourcePlugin = { ...this.opts, sources: undefined }
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { sources, ...rest } = this.opts
+      const optsForRemoteSourcePlugin: CompanionPluginOptions = {
+        ...rest,
+        companionKeysParams: this.opts.companionKeysParams?.[pluginId],
+      }
       const plugin = availablePlugins[pluginId]
       if (plugin == null) {
         const pluginNames = Object.keys(availablePlugins)

@@ -81,6 +81,42 @@ new Uppy();
   .use(RemoteSources, { companionUrl: 'https://your-companion-url' });
 ```
 
+### Use with Transloadit
+
+```js
+import { COMPANION_URL, COMPANION_ALLOWED_HOSTS } from '@uppy/transloadit';
+import RemoteSources from '@uppy/remote-sources';
+
+uppy.use(RemoteSources, {
+	companionUrl: COMPANION_URL,
+	companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
+});
+```
+
+You may also hit rate limits, because the OAuth application is shared between
+everyone using Transloadit.
+
+To solve that, you can use your own OAuth keys with Transloadit’s hosted
+Companion servers by using Transloadit Template Credentials. [Create a Template
+Credential][template-credentials] on the Transloadit site. Select “Companion
+OAuth” for the service, and enter the key and secret for the provider you want
+to use. Then you can pass the name of the new credentials to that provider:
+
+```js
+import { COMPANION_URL, COMPANION_ALLOWED_HOSTS } from '@uppy/transloadit';
+import RemoteSources from '@uppy/remote-sources';
+
+uppy.use(RemoteSources, {
+	companionUrl: COMPANION_URL,
+	companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
+	companionKeysParams: {
+		GoogleDrive: { key: '...', credentialsName: '...' },
+		Dropbox: { key: '...', credentialsName: '...' },
+		// ...etc
+	},
+});
+```
+
 ## API
 
 ### Options
