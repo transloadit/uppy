@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import type { Locale } from '@uppy/utils/lib/Translator'
 
 const en_US: Locale<0 | 1> = {
@@ -12,7 +13,9 @@ const en_US: Locale<0 | 1> = {
 
 en_US.strings = {}
 
+// @ts-ignore untyped
 if (typeof Uppy !== 'undefined') {
+  // @ts-ignore untyped
   globalThis.Uppy.locales.en_US = en_US
 }
 

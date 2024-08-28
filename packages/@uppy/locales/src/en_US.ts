@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import type { Locale } from '@uppy/utils/lib/Translator'
 
 const en_US: Locale<0 | 1> = {
@@ -98,9 +99,6 @@ en_US.strings = {
     '1': 'Added %{smart_count} files from %{folder}',
   },
   folderAlreadyAdded: 'The folder "%{folder}" was already added',
-  generateImage: 'Generate image',
-  generateImagePlaceholder:
-    'A serene sunset over a mountain lake, with pine trees reflecting in the water and a small wooden cabin on the shore."',
   generatingThumbnails: 'Generating thumbnails...',
   import: 'Import',
   importFiles: 'Import files from:',
@@ -236,7 +234,9 @@ en_US.strings = {
   zoomOut: 'Zoom out',
 }
 
+// @ts-ignore untyped
 if (typeof Uppy !== 'undefined') {
+  // @ts-ignore untyped
   globalThis.Uppy.locales.en_US = en_US
 }
 
