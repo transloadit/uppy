@@ -1,5 +1,12 @@
 # @uppy/dashboard
 
+## 4.1.0
+
+Released: 2024-08-29
+Included in: Uppy v4.3.0
+
+- @uppy/core,@uppy/dashboard: Pass container to `UIPlugin.render` for non-Preact integration (Merlijn Vos / #5437)
+
 ## 4.0.3
 
 Released: 2024-08-15

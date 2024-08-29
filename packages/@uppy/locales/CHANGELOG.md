@@ -1,5 +1,12 @@
 # @uppy/locales
 
+## 4.1.0
+
+Released: 2024-08-29
+Included in: Uppy v4.3.0
+
+- @uppy/locales: Fix locale-pack for en_US (Merlijn Vos / #5431)
+
 ## 4.0.0-beta.4
 
 Released: 2024-06-18

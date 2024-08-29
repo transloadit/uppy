@@ -1,5 +1,12 @@
 # @uppy/remote-sources
 
+## 2.2.0
+
+Released: 2024-08-29
+Included in: Uppy v4.3.0
+
+- @uppy/remote-sources: support companionKeysParams (Merlijn Vos / #5434)
+
 ## 2.1.0
 
 Released: 2024-07-30
