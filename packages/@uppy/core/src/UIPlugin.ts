@@ -1,5 +1,5 @@
 /* eslint-disable class-methods-use-this */
-import { render, type ComponentChild } from 'preact'
+import { render } from 'preact'
 import findDOMElement from '@uppy/utils/lib/findDOMElement'
 import getTextDirection from '@uppy/utils/lib/getTextDirection'
 
@@ -112,7 +112,7 @@ class UIPlugin<
         // so it could still be called even after uppy.removePlugin or uppy.destroy
         // hence the check
         if (!this.uppy.getPlugin(this.id)) return
-        render(this.render(state), uppyRootElement)
+        render(this.render(state, uppyRootElement), uppyRootElement)
         this.afterUpdate()
       })
 
@@ -127,7 +127,10 @@ class UIPlugin<
         targetElement.innerHTML = ''
       }
 
-      render(this.render(this.uppy.getState()), uppyRootElement)
+      render(
+        this.render(this.uppy.getState(), uppyRootElement),
+        uppyRootElement,
+      )
       this.el = uppyRootElement
       targetElement.appendChild(uppyRootElement)
 
@@ -176,8 +179,12 @@ class UIPlugin<
    * so this.el and this.parent might not be available in `install`.
    * This is the case with @uppy/react plugins, for example.
    */
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  render(state: Record<string, unknown>): ComponentChild {
+  render(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    state: Record<string, unknown>,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    container: HTMLElement,
+  ): any {
     throw new Error(
       'Extend the render method to add your plugin to a DOM element',
     )
