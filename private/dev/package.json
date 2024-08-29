@@ -7,8 +7,7 @@
     }
   },
   "dependencies": {
-    "@uppy/companion": "workspace:^",
-    "@uppy/locales": "workspace:^"
+    "@uppy/companion": "workspace:^"
   },
   "devDependencies": {
     "autoprefixer": "^10.2.6",
