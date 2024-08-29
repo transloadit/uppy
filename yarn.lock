@@ -29414,7 +29414,6 @@ __metadata:
   dependencies:
     "@uppy/audio": "workspace:^"
     "@uppy/aws-s3": "workspace:^"
-    "@uppy/aws-s3-multipart": "workspace:^"
     "@uppy/box": "workspace:^"
     "@uppy/companion-client": "workspace:^"
     "@uppy/compressor": "workspace:^"
