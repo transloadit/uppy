@@ -15,6 +15,7 @@ import DropTarget from '@uppy/drop-target'
 import Audio from '@uppy/audio'
 import Compressor from '@uppy/compressor'
 import GoogleDrive from '@uppy/google-drive'
+import english from '@uppy/locales/lib/en_US.js'
 /* eslint-enable import/no-extraneous-dependencies */
 
 import generateSignatureIfSecret from './generateSignatureIfSecret.js'
@@ -89,6 +90,7 @@ export default () => {
   // }
 
   const uppyDashboard = new Uppy({
+    locale: english,
     logger: debugLogger,
     meta: {
       username: 'John',
