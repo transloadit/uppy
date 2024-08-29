@@ -8627,6 +8627,7 @@ __metadata:
     express-interceptor: "npm:1.2.0"
     express-prom-bundle: "npm:7.0.0"
     express-session: "npm:1.18.0"
+    fast-safe-stringify: "npm:^2.1.1"
     got: "npm:^13.0.0"
     grant: "npm:5.4.22"
     helmet: "npm:^7.1.0"
