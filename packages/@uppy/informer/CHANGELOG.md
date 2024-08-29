@@ -1,5 +1,12 @@
 # @uppy/informer
 
+## 4.1.0
+
+Released: 2024-08-29
+Included in: Uppy v4.3.0
+
+- @uppy/aws-s3,@uppy/box,@uppy/compressor,@uppy/dropbox,@uppy/facebook,@uppy/google-drive,@uppy/google-photos,@uppy/image-editor,@uppy/informer,@uppy/instagram,@uppy/onedrive,@uppy/screen-capture,@uppy/tus,@uppy/unsplash,@uppy/url,@uppy/xhr-upload,@uppy/zoom: export plugin options (Antoine du Hamel / #5433)
+
 ## 3.1.0
 
 Released: 2024-02-28

@@ -1,5 +1,12 @@
 # @uppy/companion
 
+## 5.1.0
+
+Released: 2024-08-29
+Included in: Uppy v4.3.0
+
+- @uppy/companion: do not use unsafe call to `JSON.stringify` (Antoine du Hamel / #5422)
+
 ## 5.0.5
 
 Released: 2024-08-15

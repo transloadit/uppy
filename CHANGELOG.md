@@ -12,6 +12,35 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 4.3.0
+
+Released: 2024-08-29
+
+| Package                | Version | Package                | Version |
+| ---------------------- | ------- | ---------------------- | ------- |
+| @uppy/aws-s3           |   4.1.0 | @uppy/informer         |   4.1.0 |
+| @uppy/box              |   3.1.0 | @uppy/instagram        |   4.1.0 |
+| @uppy/companion        |   5.1.0 | @uppy/locales          |   4.1.0 |
+| @uppy/companion-client |   4.1.0 | @uppy/onedrive         |   4.1.0 |
+| @uppy/compressor       |   2.1.0 | @uppy/remote-sources   |   2.2.0 |
+| @uppy/core             |   4.2.0 | @uppy/screen-capture   |   4.1.0 |
+| @uppy/dashboard        |   4.1.0 | @uppy/tus              |   4.1.0 |
+| @uppy/dropbox          |   4.1.0 | @uppy/unsplash         |   4.1.0 |
+| @uppy/facebook         |   4.1.0 | @uppy/url              |   4.1.0 |
+| @uppy/google-drive     |   4.1.0 | @uppy/xhr-upload       |   4.1.0 |
+| @uppy/google-photos    |   0.3.0 | @uppy/zoom             |   3.1.0 |
+| @uppy/image-editor     |   3.1.0 | uppy                   |   4.3.0 |
+
+- @uppy/core,@uppy/dashboard: Pass container to `UIPlugin.render` for non-Preact integration (Merlijn Vos / #5437)
+- @uppy/companion: do not use unsafe call to `JSON.stringify` (Antoine du Hamel / #5422)
+- meta: Fix yarn.lock (Murderlon)
+- @uppy/locales: Fix locale-pack for en_US (Merlijn Vos / #5431)
+- meta: Add tsconfig to packages in private/ (Merlijn Vos / #5432)
+- @uppy/remote-sources: support companionKeysParams (Merlijn Vos / #5434)
+- @uppy/aws-s3,@uppy/box,@uppy/compressor,@uppy/dropbox,@uppy/facebook,@uppy/google-drive,@uppy/google-photos,@uppy/image-editor,@uppy/informer,@uppy/instagram,@uppy/onedrive,@uppy/screen-capture,@uppy/tus,@uppy/unsplash,@uppy/url,@uppy/xhr-upload,@uppy/zoom: export plugin options (Antoine du Hamel / #5433)
+- docs: correctly list exported components (Merlijn Vos / #5417)
+
+
 ## 4.2.1
 
 Released: 2024-08-26
