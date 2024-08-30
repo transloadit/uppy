@@ -8424,7 +8424,7 @@ __metadata:
     "@uppy/xhr-upload": "workspace:*"
     formidable: "npm:^3.5.1"
     npm-run-all: "npm:^4.1.5"
-    svelte: "npm:^4.2.7"
+    svelte: "npm:^4.2.19"
     svelte-check: "npm:^3.6.0"
     tslib: "npm:^2.4.1"
     typescript: "npm:~5.4"
@@ -9036,7 +9036,7 @@ __metadata:
     rollup: "npm:^4.0.0"
     rollup-plugin-svelte: "npm:^7.0.0"
     rollup-plugin-svelte-types: "npm:^1.0.6"
-    svelte: "npm:^4.0.0"
+    svelte: "npm:^4.2.19"
     svelte-check: "npm:^3.0.0"
     svelte-preprocess: "npm:^5.0.0"
   peerDependencies:
@@ -28151,9 +28151,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"svelte@npm:^4.0.0, svelte@npm:^4.2.7":
-  version: 4.2.18
-  resolution: "svelte@npm:4.2.18"
+"svelte@npm:^4.2.19":
+  version: 4.2.19
+  resolution: "svelte@npm:4.2.19"
   dependencies:
     "@ampproject/remapping": "npm:^2.2.1"
     "@jridgewell/sourcemap-codec": "npm:^1.4.15"
@@ -28169,7 +28169,7 @@ __metadata:
     locate-character: "npm:^3.0.0"
     magic-string: "npm:^0.30.4"
     periscopic: "npm:^3.1.0"
-  checksum: 10/281790609d4ad86b93131858e5b94bef6faa9959018198ea78d9fff3cdc367294fd85e5dc43ccfc7e88e8110dc60bce664ff7f1a72a04624e7487f2f5444bd6d
+  checksum: 10/6da99f43ccc0de5879925becc6e53b49fbaffffbd7c9bac018f24a9e76e6d95826ee9564daa205cb17037ffb776fe0d93a3098c148bfe84bc88c918937be6f23
   languageName: node
   linkType: hard
 
