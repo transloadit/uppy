@@ -22,7 +22,7 @@ OAuth.
 ## When should I use it?
 
 If you want to let users download files from [Box][], [Dropbox][], [Facebook][],
-[Google Drive][googledrive], [Google Photos][googlephotos], [Instagram][],
+[Google Drive][googledrive], [Google Photos][googlephotos], [Google Picker][googlepicker], [Instagram][],
 [OneDrive][], [Unsplash][], [Import from URL][url], or [Zoom][] — you need
 Companion.
 
@@ -476,6 +476,7 @@ the secret, nothing else.
 | Facebook      | `facebook`     | `COMPANION_FACEBOOK_KEY`, `COMPANION_FACEBOOK_SECRET`, `COMPANION_FACEBOOK_SECRET_FILE`                                                                                                                                                |
 | Google Drive  | `drive`        | `COMPANION_GOOGLE_KEY`, `COMPANION_GOOGLE_SECRET`, `COMPANION_GOOGLE_SECRET_FILE`                                                                                                                                                      |
 | Google Photos | `googlephotos` | `COMPANION_GOOGLE_KEY`, `COMPANION_GOOGLE_SECRET`, `COMPANION_GOOGLE_SECRET_FILE`                                                                                                                                                      |
+| Google Picker | `googlepicker` | `COMPANION_GOOGLE_PICKER_CLIENT_ID`, `COMPANION_GOOGLE_PICKER_API_KEY`, `COMPANION_GOOGLE_PICKER_APP_ID`                                                                                                                                                     |
 | Instagram     | `instagram`    | `COMPANION_INSTAGRAM_KEY`, `COMPANION_INSTAGRAM_SECRET`, `COMPANION_INSTAGRAM_SECRET_FILE`                                                                                                                                             |
 | OneDrive      | `onedrive`     | `COMPANION_ONEDRIVE_KEY`, `COMPANION_ONEDRIVE_SECRET`, `COMPANION_ONEDRIVE_SECRET_FILE`, `COMPANION_ONEDRIVE_DOMAIN_VALIDATION` (Settings this variable to `true` enables a route that can be used to validate your app with OneDrive) |
 | Zoom          | `zoom`         | `COMPANION_ZOOM_KEY`, `COMPANION_ZOOM_SECRET`, `COMPANION_ZOOM_SECRET_FILE`, `COMPANION_ZOOM_VERIFICATION_TOKEN`                                                                                                                       |
@@ -979,6 +980,7 @@ automatically restart when files are changed.
 [facebook]: /docs/facebook
 [googledrive]: /docs/google-drive
 [googlephotos]: /docs/google-photos
+[googlepicker]: /docs/google-picker
 [instagram]: /docs/instagram
 [onedrive]: /docs/onedrive
 [unsplash]: /docs/unsplash

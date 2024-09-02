@@ -1,14 +1,17 @@
 {
-  "name": "@uppy/provider-views",
-  "description": "View library for Uppy remote provider plugins.",
-  "version": "4.0.1",
+  "name": "@uppy/google-picker",
+  "description": "The Google Picker plugin for Uppy lets users import files from their Google Drive account",
+  "version": "0.1.0",
   "license": "MIT",
   "main": "lib/index.js",
-  "style": "dist/style.min.css",
   "type": "module",
   "keywords": [
     "file uploader",
-    "uppy"
+    "google drive",
+    "google picker",
+    "cloud storage",
+    "uppy",
+    "uppy-plugin"
   ],
   "homepage": "https://uppy.io",
   "bugs": {
@@ -19,17 +22,10 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
+    "@uppy/companion-client": "workspace:^",
+    "@uppy/provider-views": "workspace:^",
     "@uppy/utils": "workspace:^",
-    "classnames": "^2.2.6",
-    "nanoid": "^5.0.0",
-    "p-queue": "^8.0.0",
     "preact": "^10.5.13"
-  },
-  "devDependencies": {
-    "@types/gapi": "^0.0.47",
-    "@types/google.accounts": "^0.0.14",
-    "@types/google.picker": "^0.0.42",
-    "vitest": "^1.6.0"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^"

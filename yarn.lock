@@ -7405,6 +7405,27 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/gapi@npm:^0.0.47":
+  version: 0.0.47
+  resolution: "@types/gapi@npm:0.0.47"
+  checksum: 10/b8104688ef132190cb661b461b912a3f6f07ce589eb90ab4bff4acdfaa9bbb8a6321be1119e865db89bf46dfc00cab2141764839535518cf63a8e2caa19f475e
+  languageName: node
+  linkType: hard
+
+"@types/google.accounts@npm:^0.0.14":
+  version: 0.0.14
+  resolution: "@types/google.accounts@npm:0.0.14"
+  checksum: 10/0332acd210eaad1904d28a9de2081da796cb8c22e4f61bbe0768729c71d1de1606355abc0615907505b9f4ac28694911b9722a6a4e6ee563c21f747e9e1c32b5
+  languageName: node
+  linkType: hard
+
+"@types/google.picker@npm:^0.0.42":
+  version: 0.0.42
+  resolution: "@types/google.picker@npm:0.0.42"
+  checksum: 10/7e428495807c840f30ff3eab63fbfc4b9760ba20cbf977b94915f2222f678bb29c5bf73eff6f285f661b293127ddfbbedd4d8b2075d102c272ab941f63fa7d78
+  languageName: node
+  linkType: hard
+
 "@types/graceful-fs@npm:^4.1.2, @types/graceful-fs@npm:^4.1.3":
   version: 4.1.9
   resolution: "@types/graceful-fs@npm:4.1.9"
@@ -8644,6 +8665,7 @@ __metadata:
     nock: "npm:^13.1.3"
     node-schedule: "npm:2.1.1"
     prom-client: "npm:15.1.2"
+    safe-stringify: "npm:^1.1.1"
     serialize-error: "npm:^11.0.0"
     serialize-javascript: "npm:^6.0.0"
     supertest: "npm:6.2.4"
@@ -8820,6 +8842,19 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@uppy/google-picker@workspace:^, @uppy/google-picker@workspace:packages/@uppy/google-picker":
+  version: 0.0.0-use.local
+  resolution: "@uppy/google-picker@workspace:packages/@uppy/google-picker"
+  dependencies:
+    "@uppy/companion-client": "workspace:^"
+    "@uppy/provider-views": "workspace:^"
+    "@uppy/utils": "workspace:^"
+    preact: "npm:^10.5.13"
+  peerDependencies:
+    "@uppy/core": "workspace:^"
+  languageName: unknown
+  linkType: soft
+
 "@uppy/image-editor@workspace:*, @uppy/image-editor@workspace:^, @uppy/image-editor@workspace:packages/@uppy/image-editor":
   version: 0.0.0-use.local
   resolution: "@uppy/image-editor@workspace:packages/@uppy/image-editor"
@@ -8892,6 +8927,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/provider-views@workspace:packages/@uppy/provider-views"
   dependencies:
+    "@types/gapi": "npm:^0.0.47"
+    "@types/google.accounts": "npm:^0.0.14"
+    "@types/google.picker": "npm:^0.0.42"
     "@uppy/utils": "workspace:^"
     classnames: "npm:^2.2.6"
     nanoid: "npm:^5.0.0"
@@ -8972,6 +9010,7 @@ __metadata:
     "@uppy/facebook": "workspace:^"
     "@uppy/google-drive": "workspace:^"
     "@uppy/google-photos": "workspace:^"
+    "@uppy/google-picker": "workspace:^"
     "@uppy/instagram": "workspace:^"
     "@uppy/onedrive": "workspace:^"
     "@uppy/unsplash": "workspace:^"
@@ -13404,6 +13443,7 @@ __metadata:
     "@uppy/golden-retriever": "workspace:^"
     "@uppy/google-drive": "workspace:^"
     "@uppy/google-photos": "workspace:^"
+    "@uppy/google-picker": "workspace:^"
     "@uppy/image-editor": "workspace:^"
     "@uppy/informer": "workspace:^"
     "@uppy/instagram": "workspace:^"
@@ -26303,6 +26343,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"safe-stringify@npm:^1.1.1":
+  version: 1.1.1
+  resolution: "safe-stringify@npm:1.1.1"
+  checksum: 10/5f06510a8adfa9fbc3045021b31e9eb8b5e68f5525d0ea75cb64ceaf7cf7c449abd562f2f5dbd1e5318b046159eaece2d834f4047ccedb941574a9186c0eeb70
+  languageName: node
+  linkType: hard
+
 "safer-buffer@npm:>= 2.1.2 < 3, safer-buffer@npm:>= 2.1.2 < 3.0.0, safer-buffer@npm:^2.0.2, safer-buffer@npm:^2.1.0, safer-buffer@npm:~2.1.0":
   version: 2.1.2
   resolution: "safer-buffer@npm:2.1.2"
@@ -29429,6 +29476,7 @@ __metadata:
     "@uppy/golden-retriever": "workspace:^"
     "@uppy/google-drive": "workspace:^"
     "@uppy/google-photos": "workspace:^"
+    "@uppy/google-picker": "workspace:^"
     "@uppy/image-editor": "workspace:^"
     "@uppy/informer": "workspace:^"
     "@uppy/instagram": "workspace:^"
