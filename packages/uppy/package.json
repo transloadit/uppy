@@ -48,6 +48,7 @@
     "@uppy/google-drive": "workspace:^",
     "@uppy/google-photos": "workspace:^",
     "@uppy/image-editor": "workspace:^",
+    "@uppy/image-generator": "workspace:^",
     "@uppy/informer": "workspace:^",
     "@uppy/instagram": "workspace:^",
     "@uppy/onedrive": "workspace:^",

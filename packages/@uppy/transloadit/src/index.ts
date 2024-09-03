@@ -274,6 +274,9 @@ export default class Transloadit<
 
   #rateLimitedQueue: RateLimitedQueue
 
+  // Internal fields to send along in the Assembly
+  #fields: Record<string, string | number> = {}
+
   client: Client<M, B>
 
   assembly?: Assembly
@@ -797,7 +800,10 @@ export default class Transloadit<
         await this.opts.assemblyOptions()
       : this.opts.assemblyOptions) as OptionsWithRestructuredFields
 
-    assemblyOptions.fields ??= {}
+    assemblyOptions.fields = {
+      ...(assemblyOptions.fields || {}),
+      ...this.#fields,
+    }
     validateParams(assemblyOptions.params)
 
     try {
@@ -1005,6 +1011,10 @@ export default class Transloadit<
     return this.uppy.getFiles().filter((file) => {
       return file?.transloadit?.assembly === assemblyID
     })
+  }
+
+  setFields(fields: Record<string, string | number>): void {
+    this.#fields = fields
   }
 }
 

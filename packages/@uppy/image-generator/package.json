@@ -1,0 +1,37 @@
+{
+  "name": "@uppy/image-generator",
+  "description": "AI-powered image generation for Uppy",
+  "version": "0.0.0",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "style": "dist/style.min.css",
+  "type": "module",
+  "keywords": [
+    "file uploader",
+    "upload",
+    "uppy",
+    "uppy-plugin",
+    "ai",
+    "image generation"
+  ],
+  "homepage": "https://uppy.io",
+  "bugs": {
+    "url": "https://github.com/transloadit/uppy/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/transloadit/uppy.git"
+  },
+  "dependencies": {
+    "@uppy/provider-views": "workspace:^",
+    "@uppy/utils": "workspace:^",
+    "preact": "^10.5.13"
+  },
+  "peerDependencies": {
+    "@uppy/core": "workspace:^",
+    "@uppy/transloadit": "workspace:^"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

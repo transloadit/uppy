@@ -11,6 +11,7 @@ import XHRUpload from '@uppy/xhr-upload'
 import Transloadit from '@uppy/transloadit'
 import Form from '@uppy/form'
 import ImageEditor from '@uppy/image-editor'
+import ImageGenerator from '@uppy/image-generator'
 import DropTarget from '@uppy/drop-target'
 import Audio from '@uppy/audio'
 import Compressor from '@uppy/compressor'
@@ -91,7 +92,7 @@ export default () => {
 
   const uppyDashboard = new Uppy({
     locale: english,
-    logger: debugLogger,
+    // logger: debugLogger,
     meta: {
       username: 'John',
       license: 'Creative Commons',
@@ -152,6 +153,7 @@ export default () => {
     .use(ScreenCapture, { target: Dashboard })
     .use(Form, { target: '#upload-form' })
     .use(ImageEditor, { target: Dashboard })
+    .use(ImageGenerator, { target: Dashboard })
     .use(DropTarget, {
       target: document.body,
     })
@@ -168,7 +170,10 @@ export default () => {
       uppyDashboard.use(AwsS3, { companionUrl: COMPANION_URL, limit: 6 })
       break
     case 's3-multipart':
-      uppyDashboard.use(AwsS3, { companionUrl: COMPANION_URL, shouldUseMultipart: true })
+      uppyDashboard.use(AwsS3, {
+        companionUrl: COMPANION_URL,
+        shouldUseMultipart: true,
+      })
       break
     case 'xhr':
       uppyDashboard.use(XHRUpload, {

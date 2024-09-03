@@ -8832,6 +8832,19 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@uppy/image-generator@workspace:^, @uppy/image-generator@workspace:packages/@uppy/image-generator":
+  version: 0.0.0-use.local
+  resolution: "@uppy/image-generator@workspace:packages/@uppy/image-generator"
+  dependencies:
+    "@uppy/provider-views": "workspace:^"
+    "@uppy/utils": "workspace:^"
+    preact: "npm:^10.5.13"
+  peerDependencies:
+    "@uppy/core": "workspace:^"
+    "@uppy/transloadit": "workspace:^"
+  languageName: unknown
+  linkType: soft
+
 "@uppy/informer@workspace:^, @uppy/informer@workspace:packages/@uppy/informer":
   version: 0.0.0-use.local
   resolution: "@uppy/informer@workspace:packages/@uppy/informer"
@@ -29430,6 +29443,7 @@ __metadata:
     "@uppy/google-drive": "workspace:^"
     "@uppy/google-photos": "workspace:^"
     "@uppy/image-editor": "workspace:^"
+    "@uppy/image-generator": "workspace:^"
     "@uppy/informer": "workspace:^"
     "@uppy/instagram": "workspace:^"
     "@uppy/onedrive": "workspace:^"

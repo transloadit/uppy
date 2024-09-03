@@ -1,0 +1,38 @@
+@import '@uppy/core/src/_utils.scss';
+@import '@uppy/core/src/_variables.scss';
+
+.uppy-ImageGenerator-root {
+  height: 100%;
+}
+
+.uppy-ImageGenerator-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  overflow-y: scroll;
+  gap: 16px;
+  margin: 0;
+  padding: 16px;
+
+  li {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    input[type='checkbox'] {
+      position: absolute;
+      clip: rect(0, 0, 0, 0);
+
+      label {
+        position: relative;
+      }
+    }
+
+    input[type='checkbox']:focus + label img {
+      box-shadow: $focus-shadow;
+    }
+
+    input[type='checkbox']:checked + label img {
+      box-shadow: $focus-shadow;
+    }
+  }
+}
