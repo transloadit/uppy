@@ -3,20 +3,17 @@ import resolve from '@rollup/plugin-node-resolve'
 import preprocess from 'svelte-preprocess'
 import svelteDts from 'rollup-plugin-svelte-types';
 
-const globals = {
-  '@uppy/dashboard': 'Dashboard',
-  '@uppy/drag-drop': 'DragDrop',
-  '@uppy/progress-bar': 'ProgressBar',
-  '@uppy/status-bar': 'StatusBar',
-}
-
 export default {
+  external: [
+    /^@uppy\//,
+    /node_modules/,
+  ],
   input: 'src/index.ts',
   output: [
     {
       file: 'lib/index.js',
       format: 'es',
-      globals,
+      sourcemap: 'inline',
     },
   ],
   plugins: [
@@ -25,7 +22,9 @@ export default {
       preprocess: preprocess(),
     }),
     resolve({
-      resolveOnly: ['svelte'],
+      browser: true,
+      exportConditions: ['svelte'],
+      extensions: ['.svelte']
     }),
     svelteDts.default({
       declarationDir: './lib/'
