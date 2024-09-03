@@ -16,7 +16,7 @@
     "@sveltejs/vite-plugin-svelte": "^3.0.0",
     "@types/formidable": "^3",
     "npm-run-all": "^4.1.5",
-    "svelte": "^4.2.7",
+    "svelte": "^4.2.19",
     "svelte-check": "^3.6.0",
     "tslib": "^2.4.1",
     "typescript": "~5.4",
