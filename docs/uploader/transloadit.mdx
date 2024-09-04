@@ -242,7 +242,7 @@ signature and return your configuration.
 
 ```js
 uppy.use(Transloadit, {
-	async assemblyOptions(file) {
+	async assemblyOptions() {
 		const res = await fetch('/transloadit-params');
 		return res.json();
 	},
