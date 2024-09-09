@@ -24,14 +24,6 @@ import getFingerprint from './getFingerprint.ts'
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'
 
-declare module '@uppy/utils/lib/UppyFile' {
-  // eslint-disable-next-line no-shadow, @typescript-eslint/no-unused-vars
-  export interface UppyFile<M extends Meta, B extends Body> {
-    // TODO: figure out what else is in this type
-    tus?: { uploadUrl?: string | null }
-  }
-}
-
 type RestTusUploadOptions = Omit<
   tus.UploadOptions,
   'onShouldRetry' | 'onBeforeRequest' | 'headers'
@@ -42,7 +34,7 @@ export type TusDetailedError = tus.DetailedError
 export interface TusOpts<M extends Meta, B extends Body>
   extends PluginOpts,
     RestTusUploadOptions {
-  endpoint: string
+  endpoint?: string
   headers?:
     | Record<string, string>
     | ((file: UppyFile<M, B>) => Record<string, string>)
@@ -101,6 +93,13 @@ type Opts<M extends Meta, B extends Body> = DefinePluginOpts<
   TusOpts<M, B>,
   keyof typeof defaultOptions
 >
+
+declare module '@uppy/utils/lib/UppyFile' {
+  // eslint-disable-next-line no-shadow, @typescript-eslint/no-unused-vars
+  export interface UppyFile<M extends Meta, B extends Body> {
+    tus?: TusOpts<M, B>
+  }
+}
 
 /**
  * Tus resumable file uploader
