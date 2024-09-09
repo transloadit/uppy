@@ -3,7 +3,7 @@ import ErrorWithCause from '@uppy/utils/lib/ErrorWithCause'
 import { RateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
 import BasePlugin from '@uppy/core/lib/BasePlugin.js'
 import type { DefinePluginOpts, PluginOpts } from '@uppy/core/lib/BasePlugin.js'
-import Tus, { type TusDetailedError } from '@uppy/tus'
+import Tus, { type TusDetailedError, type TusOpts } from '@uppy/tus'
 import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
 import type { Uppy } from '@uppy/core'
 import Assembly from './Assembly.ts'
@@ -219,7 +219,7 @@ declare module '@uppy/utils/lib/UppyFile' {
   // eslint-disable-next-line no-shadow, @typescript-eslint/no-unused-vars
   export interface UppyFile<M extends Meta, B extends Body> {
     transloadit?: { assembly: string }
-    tus?: { uploadUrl?: string | null }
+    tus?: TusOpts<M, B>
   }
 }
 
@@ -936,7 +936,6 @@ export default class Transloadit<
       this.uppy.on('upload-success', this.#onFileUploadURLAvailable)
     } else {
       // we don't need it here.
-      // @ts-expect-error `endpoint` is required but we first have to fetch
       // the regional endpoint from the Transloadit API before we can set it.
       this.uppy.use(Tus, {
         // Disable tus-js-client fingerprinting, otherwise uploading the same file at different times
