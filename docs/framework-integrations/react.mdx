@@ -221,7 +221,7 @@ function createUppy() {
 		async assemblyOptions() {
 			// You can send meta data along for use in your template.
 			// https://transloadit.com/docs/topics/assembly-instructions/#form-fields-in-instructions
-      const { meta } uppy.getState()
+      const { meta } = uppy.getState()
 			const body = JSON.stringify({ userId: meta.userId });
 			const res = await fetch('/transloadit-params', { method: 'POST', body });
 			return response.json();
