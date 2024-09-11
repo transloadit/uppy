@@ -2,6 +2,10 @@ import type { FileProgress } from './FileProgress.ts'
 
 export type Meta = Record<string, unknown>
 
+/** The response of the uploader.
+ * This is emitted in the upload-success event
+ * and it put on UppyFile.response.body.
+ */
 export type Body = Record<string, unknown>
 
 export type InternalMetadata = { name: string; type?: string }

@@ -31,6 +31,8 @@ type RestTusUploadOptions = Omit<
 
 export type TusDetailedError = tus.DetailedError
 
+export type TusBody = { xhr: XMLHttpRequest }
+
 export interface TusOpts<M extends Meta, B extends Body>
   extends PluginOpts,
     RestTusUploadOptions {
@@ -307,11 +309,19 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
         })
       }
 
-      uploadOptions.onSuccess = () => {
-        const uploadResp = {
+      uploadOptions.onSuccess = (payload) => {
+        const uploadResp: UppyFile<M, B>['response'] = {
           uploadURL: upload.url ?? undefined,
           status: 200,
-          body: {} as B,
+          body: {
+            // We have to put `as XMLHttpRequest` because tus-js-client
+            // returns `any`, as the type differs in Node.js and the browser.
+            // In the browser it's always `XMLHttpRequest`.
+            xhr: payload.lastResponse.getUnderlyingObject() as XMLHttpRequest,
+            // Body extends Record<string, unknown> and thus `xhr` is not known
+            // but we export the `TusBody` type, which people pass as a generic into the Uppy class,
+            // so on the implementer side it works as expected.
+          } as unknown as B,
         }
 
         this.resetUploaderReferences(file.id)
@@ -325,7 +335,7 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
           this.uppy.log(`Download ${name} from ${upload.url}`)
         }
         if (typeof opts.onSuccess === 'function') {
-          opts.onSuccess()
+          opts.onSuccess(payload)
         }
 
         resolve(upload)

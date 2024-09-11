@@ -81,6 +81,30 @@ new Uppy()
 	.use(Tus, { endpoint: 'https://tusd.tusdemo.net/files/' });
 ```
 
+### TypeScript
+
+If you want the `response` argument on the `upload-success` event and
+`file.response.body` to be typed, you have to pass a generic to the Uppy class.
+
+```ts showLineNumbers
+// ...
+import Tus, { type TusBody } from '@uppy/tus';
+
+type MyMeta = {
+	/* your added meta data */
+};
+
+const uppy = new Uppy<MyMeta, TusBody>().use(Tus, {
+	endpoint: 'https://tusd.tusdemo.net/files/',
+});
+
+const [firstFile] = uppy.getFiles();
+
+// Correctly typed as XMLHttpRequest.
+// Populated after uppy.upload()
+firstFile.response.body.xhr;
+```
+
 ## API
 
 ### Options

@@ -9084,7 +9084,7 @@ __metadata:
   dependencies:
     "@uppy/companion-client": "workspace:^"
     "@uppy/utils": "workspace:^"
-    tus-js-client: "npm:^4.1.0"
+    tus-js-client: "npm:^4.2.0"
     vitest: "npm:^1.2.1"
   peerDependencies:
     "@uppy/core": "workspace:^"
@@ -28686,6 +28686,21 @@ __metadata:
     proper-lockfile: "npm:^4.1.2"
     url-parse: "npm:^1.5.7"
   checksum: 10/52447563822025e43715fc3518793a2175995053c7309caf60c82d401835e3ff97f224d5d247c722724923913dacbd0fadb007a55fd20557c182698d44569649
+  languageName: node
+  linkType: hard
+
+"tus-js-client@npm:^4.2.0":
+  version: 4.2.1
+  resolution: "tus-js-client@npm:4.2.1"
+  dependencies:
+    buffer-from: "npm:^1.1.2"
+    combine-errors: "npm:^3.0.3"
+    is-stream: "npm:^2.0.0"
+    js-base64: "npm:^3.7.2"
+    lodash.throttle: "npm:^4.1.1"
+    proper-lockfile: "npm:^4.1.2"
+    url-parse: "npm:^1.5.7"
+  checksum: 10/aaf90b54aba61ee8efb7f584f9d25a991aa0edd0ef72aa94b817a0401fbbc12e17118669e7d60e880d23d3f82398734c3efab2b0480856aabeac116fc7897698
   languageName: node
   linkType: hard
 
