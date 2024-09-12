@@ -103,7 +103,7 @@ module.exports.app = (optionsArg = {}) => {
   // override provider credentials at request time
   // Making `POST` request to the `/connect/:provider/:override?` route requires a form body parser middleware:
   // See https://github.com/simov/grant#dynamic-http
-  app.use('/connect/:oauthProvider/:override?', express.urlencoded({ extended: false }), getCredentialsOverrideMiddleware(providers, options))
+  app.use('/connect/:oauthProvider/:override', express.urlencoded({ extended: false }), getCredentialsOverrideMiddleware(providers, options))
   app.use(Grant(grantConfig))
 
   app.use((req, res, next) => {
@@ -117,7 +117,7 @@ module.exports.app = (optionsArg = {}) => {
   app.use(middlewares.cors(options))
 
   // add uppy options to the request object so it can be accessed by subsequent handlers.
-  app.use('*', middlewares.getCompanionMiddleware(options))
+  app.use(/(.*)/, middlewares.getCompanionMiddleware(options))
   app.use('/s3', s3(options.s3))
   if (options.enableUrlEndpoint) app.use('/url', url())
 
@@ -132,7 +132,7 @@ module.exports.app = (optionsArg = {}) => {
 
   app.post('/:providerName/simple-auth', express.json(), middlewares.hasSessionAndProvider, middlewares.hasBody, middlewares.hasSimpleAuthProvider, controllers.simpleAuth)
 
-  app.get('/:providerName/list/:id?', middlewares.hasSessionAndProvider, middlewares.verifyToken, controllers.list)
+  app.get('/:providerName/list/:id', middlewares.hasSessionAndProvider, middlewares.verifyToken, controllers.list)
   // backwards compat:
   app.get('/search/:providerName/list', middlewares.hasSessionAndProvider, middlewares.verifyToken, controllers.list)
 
