@@ -345,7 +345,7 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
           }
         } else if (
           status != null &&
-          status > 400 &&
+          status >= 400 &&
           status < 500 &&
           status !== 409 &&
           status !== 423
