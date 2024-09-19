@@ -215,21 +215,24 @@ params.
 
 ```js
 // ...
-function createUppy(userId) {
-	return new Uppy({ meta: { userId } }).use(Transloadit, {
-		async assemblyOptions(file) {
+function createUppy() {
+	const uppy = new Uppy();
+	uppy.use(Transloadit, {
+		async assemblyOptions() {
 			// You can send meta data along for use in your template.
 			// https://transloadit.com/docs/topics/assembly-instructions/#form-fields-in-instructions
-			const body = JSON.stringify({ userId: file.meta.userId });
+			const { meta } = uppy.getState();
+			const body = JSON.stringify({ userId: meta.userId });
 			const res = await fetch('/transloadit-params', { method: 'POST', body });
 			return response.json();
 		},
 	});
+	return uppy;
 }
 
 function Component({ userId }) {
 	// IMPORTANT: passing an initializer function to prevent Uppy from being reinstantiated on every render.
-	const [uppy] = useState(() => createUppy(userId));
+	const [uppy] = useState(createUppy);
 
 	useEffect(() => {
 		if (userId) {
