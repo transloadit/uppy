@@ -165,10 +165,16 @@ export default () => {
       uppyDashboard.use(Tus, { endpoint: TUS_ENDPOINT, limit: 6 })
       break
     case 's3':
-      uppyDashboard.use(AwsS3, { companionUrl: COMPANION_URL, limit: 6 })
+      uppyDashboard.use(AwsS3, {
+        endpoint: COMPANION_URL,
+        shouldUseMultipart: false,
+      })
       break
     case 's3-multipart':
-      uppyDashboard.use(AwsS3, { companionUrl: COMPANION_URL, shouldUseMultipart: true })
+      uppyDashboard.use(AwsS3, {
+        endpoint: COMPANION_URL,
+        shouldUseMultipart: true,
+      })
       break
     case 'xhr':
       uppyDashboard.use(XHRUpload, {
