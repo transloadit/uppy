@@ -6,7 +6,7 @@
     "@uppy/aws-s3": "workspace:*",
     "@uppy/core": "workspace:*",
     "@uppy/dashboard": "workspace:*",
-    "body-parser": "^1.18.3",
+    "body-parser": "^1.20.3",
     "cors": "^2.8.5"
   },
   "devDependencies": {
