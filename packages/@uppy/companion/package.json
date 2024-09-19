@@ -41,7 +41,7 @@
     "cors": "^2.8.5",
     "escape-goat": "3.0.0",
     "escape-string-regexp": "4.0.0",
-    "express": "4.19.2",
+    "express": "4.20.0",
     "express-interceptor": "1.2.0",
     "express-prom-bundle": "7.0.0",
     "express-session": "1.18.0",
