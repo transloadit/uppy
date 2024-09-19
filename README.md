@@ -91,9 +91,8 @@ Add CSS
 either to your HTML page’s `<head>` or include in JS, if your bundler of choice
 supports it.
 
-Alternatively, you can also use a pre-built bundle from Transloadit’s CDN:
-Edgly. In that case `Uppy` will attach itself to the global `window.Uppy`
-object.
+Alternatively, you can also use a pre-built bundle from Transloadit’s CDN: Smart
+CDN. In that case `Uppy` will attach itself to the global `window.Uppy` object.
 
 > ⚠️ The bundle consists of most Uppy plugins, so this method is not recommended
 > for production, as your users will have to download all plugins when you are

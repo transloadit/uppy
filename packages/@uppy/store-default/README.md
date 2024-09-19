@@ -31,8 +31,8 @@ $ npm install @uppy/store-default
 ```
 
 Alternatively, you can also use this package in a pre-built bundle from
-Transloadit’s CDN: Edgly. In that case `Uppy` will attach itself to the global
-`window.Uppy` object. See the
+Transloadit’s CDN: Smart CDN. In that case `Uppy` will attach itself to the
+global `window.Uppy` object. See the
 [main Uppy documentation](https://uppy.io/docs/#Installation) for instructions.
 
 ## Documentation
