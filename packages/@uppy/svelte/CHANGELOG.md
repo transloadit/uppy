@@ -1,5 +1,13 @@
 # @uppy/svelte
 
+## 4.0.2
+
+Released: 2024-09-20
+Included in: Uppy v4.4.0
+
+- @uppy/svelte: fix generated module to not bundle Svelte (Antoine du Hamel / #5446)
+- examples,@uppy/svelte: Bump svelte from 4.2.18 to 4.2.19 (dependabot[bot] / #5440)
+
 ## 4.0.1
 
 Released: 2024-08-20
