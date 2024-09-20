@@ -1,5 +1,12 @@
 # @uppy/xhr-upload
 
+## 4.2.0
+
+Released: 2024-09-20
+Included in: Uppy v4.4.0
+
+- @uppy/xhr-upload: pass files to onBeforeRequest (Merlijn Vos / #5447)
+
 ## 4.1.0
 
 Released: 2024-08-29

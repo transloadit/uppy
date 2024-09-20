@@ -12,6 +12,33 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 4.4.0
+
+Released: 2024-09-20
+
+| Package           | Version | Package           | Version |
+| ----------------- | ------- | ----------------- | ------- |
+| @uppy/companion   |   5.1.1 | @uppy/tus         |   4.1.1 |
+| @uppy/svelte      |   4.0.2 | @uppy/xhr-upload  |   4.2.0 |
+| @uppy/transloadit |   4.1.1 | uppy              |   4.4.0 |
+
+- @uppy/tus: fix retry check for status code 400 (Merlijn Vos / #5461)
+- meta: Merge branch 'main' of https://github.com/transloadit/uppy (Murderlon)
+- meta: fix AwsS3 endpoint option in private/dev (Murderlon)
+- examples: build(deps): bump body-parser from 1.20.2 to 1.20.3 (dependabot[bot] / #5462)
+- examples: build(deps-dev): bump vite from 5.3.1 to 5.3.6 (dependabot[bot] / #5459)
+- @uppy/tus: set response from tus-js-client (Merlijn Vos / #5456)
+- docs: fix assemblyOptions example for React (Merlijn Vos / #5450)
+- docs: rename Edgly to Smart CDN (Merlijn Vos / #5449)
+- @uppy/tus: correctly type tus on UppyFile (Merlijn Vos / #5454)
+- docs: remove old legacy CDN reference (Murderlon)
+- @uppy/xhr-upload: pass files to onBeforeRequest (Merlijn Vos / #5447)
+- @uppy/svelte: fix generated module to not bundle Svelte (Antoine du Hamel / #5446)
+- examples,@uppy/svelte: Bump svelte from 4.2.18 to 4.2.19 (dependabot[bot] / #5440)
+- meta: bump Yarn to 4.4.1 (Antoine du Hamel / #5445)
+- docs: fix broken links in locale docs (Serghei Cebotari / #5441)
+
+
 ## 4.3.0
 
 Released: 2024-08-29

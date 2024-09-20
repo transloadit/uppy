@@ -1,5 +1,14 @@
 # @uppy/tus
 
+## 4.1.1
+
+Released: 2024-09-20
+Included in: Uppy v4.4.0
+
+- @uppy/tus: fix retry check for status code 400 (Merlijn Vos / #5461)
+- @uppy/tus: set response from tus-js-client (Merlijn Vos / #5456)
+- @uppy/tus: correctly type tus on UppyFile (Merlijn Vos / #5454)
+
 ## 4.1.0
 
 Released: 2024-08-29
