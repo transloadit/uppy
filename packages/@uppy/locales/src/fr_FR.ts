@@ -97,7 +97,7 @@ fr_FR.strings = {
   logOut: 'Déconnexion',
   micDisabled: 'Accès au micro refusé par l’utilisateur',
   myDevice: 'Mon Appareil',
-  noCameraDescription: 'Pour prendre des photos ou enregistrer une vidéo, veuillez connecter un appareil photo',
+  noCameraDescription: 'Pour prendre des photos ou enregistrer une vidéo, veuillez connecter une caméra',
   noDuplicates: 'Impossible d’ajouter le fichier "%{fileName}", il existe déjà',
   noFilesFound: 'Vous n’avez aucun fichier ou dossier ici',
   noInternetConnection: 'Pas de connexion à Internet',
