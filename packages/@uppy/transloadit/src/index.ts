@@ -802,7 +802,6 @@ export default class Transloadit<
     validateParams(assemblyOptions.params)
 
     try {
-      console.log('assembly exists', this.assembly)
       const assembly =
         // this.assembly can already be defined if we recovered files with Golden Retriever (this.#onRestored)
         this.assembly ?? (await this.#createAssembly(fileIDs, assemblyOptions))
