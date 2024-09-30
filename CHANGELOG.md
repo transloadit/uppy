@@ -12,6 +12,22 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 4.4.1
+
+Released: 2024-09-30
+
+| Package           | Version | Package           | Version |
+| ----------------- | ------- | ----------------- | ------- |
+| @uppy/core        |   4.2.1 | uppy              |   4.4.1 |
+| @uppy/transloadit |   4.1.2 |                   |         |
+
+- @uppy/transloadit: fix multiple upload batches & run again (Merlijn Vos / #5478)
+- meta: build(deps): bump docker/build-push-action from 6.7.0 to 6.8.0 (dependabot[bot] / #5477)
+- meta: build(deps): bump vite from 5.2.11 to 5.4.8 (dependabot[bot] / #5471)
+- @uppy/svelte: build(deps-dev): bump rollup from 4.18.0 to 4.22.4 (dependabot[bot] / #5470)
+- meta: build(deps): bump vite from 5.2.11 to 5.4.6 (dependabot[bot] / #5466)
+
+
 ## 4.4.0
 
 Released: 2024-09-20
