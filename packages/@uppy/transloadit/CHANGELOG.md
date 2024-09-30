@@ -1,5 +1,12 @@
 # @uppy/transloadit
 
+## 4.1.2
+
+Released: 2024-09-30
+Included in: Uppy v4.4.1
+
+- @uppy/transloadit: fix multiple upload batches & run again (Merlijn Vos / #5478)
+
 ## 4.1.0
 
 Released: 2024-08-20
