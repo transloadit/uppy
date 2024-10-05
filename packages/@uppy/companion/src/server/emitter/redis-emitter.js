@@ -49,8 +49,9 @@ module.exports = (redisClient, redisPubSubScope) => {
     }
   }
 
+  // because each event can have multiple listeners, we need to keep track of them
   /** @type {Map<string, Map<() => unknown, () => unknown>>} */
-  const handlersByEvent = new Map()
+  const handlersByEventName = new Map()
 
   /**
    * Remove an event listener
@@ -64,17 +65,17 @@ module.exports = (redisClient, redisPubSubScope) => {
       return
     }
 
-    const thisEventNameActualHandlerByHandler = handlersByEvent.get(eventName)
-    if (thisEventNameActualHandlerByHandler == null) return
+    const actualHandlerByHandler = handlersByEventName.get(eventName)
+    if (actualHandlerByHandler == null) return
 
-    const actualHandler = thisEventNameActualHandlerByHandler.get(handler)
+    const actualHandler = actualHandlerByHandler.get(handler)
     if (actualHandler == null) return
 
-    thisEventNameActualHandlerByHandler.delete(handler)
+    actualHandlerByHandler.delete(handler)
 
-    const didRemoveLastListener = thisEventNameActualHandlerByHandler.size === 0
+    const didRemoveLastListener = actualHandlerByHandler.size === 0
     if (didRemoveLastListener) {
-      handlersByEvent.delete(eventName)
+      handlersByEventName.delete(eventName)
     }
 
     await runWhenConnected(async ({ subscriber }) => {
@@ -115,12 +116,12 @@ module.exports = (redisClient, redisPubSubScope) => {
       handler(...args)
     }
 
-    let thisEventNameActualHandlerByHandler = handlersByEvent.get(eventName)
-    if (thisEventNameActualHandlerByHandler == null) {
-      thisEventNameActualHandlerByHandler = new Map()
-      handlersByEvent.set(eventName, thisEventNameActualHandlerByHandler)
+    let actualHandlerByHandler = handlersByEventName.get(eventName)
+    if (actualHandlerByHandler == null) {
+      actualHandlerByHandler = new Map()
+      handlersByEventName.set(eventName, actualHandlerByHandler)
     }
-    thisEventNameActualHandlerByHandler.set(handler, actualHandler)
+    actualHandlerByHandler.set(handler, actualHandler)
 
     await runWhenConnected(async ({ subscriber }) => {
       subscriber.on('pmessage', actualHandler)
@@ -180,9 +181,9 @@ module.exports = (redisClient, redisPubSubScope) => {
       return
     }
 
-    const thisEventNameActualHandlerByHandler = handlersByEvent.get(eventName)
-    if (thisEventNameActualHandlerByHandler != null) {
-      for (const handler of thisEventNameActualHandlerByHandler.keys()) {
+    const actualHandlerByHandler = handlersByEventName.get(eventName)
+    if (actualHandlerByHandler != null) {
+      for (const handler of actualHandlerByHandler.keys()) {
         await removeListener(eventName, handler)
       }
     }
