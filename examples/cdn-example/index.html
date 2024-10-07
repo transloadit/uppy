@@ -19,9 +19,12 @@
         Dashboard,
         Webcam,
         Tus,
+        ImageEditor,
+
       } from 'https://releases.transloadit.com/uppy/v4.4.1/uppy.min.mjs'
 
       const uppy = new Uppy({ debug: true, autoProceed: false })
+        .use(ImageEditor, { target: Dashboard })
         .use(Dashboard, { trigger: '#uppyModalOpener' })
         .use(Webcam, { target: Dashboard })
         .use(Tus, { endpoint: 'https://tusd.tusdemo.net/files/' })
