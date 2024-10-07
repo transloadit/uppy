@@ -7,9 +7,11 @@
 ![CI status for Companion tests](https://github.com/transloadit/uppy/workflows/Companion/badge.svg)
 ![CI status for browser tests](https://github.com/transloadit/uppy/workflows/End-to-end%20tests/badge.svg)
 
-The Tus plugin brings [tus.io][] resumable file uploading to Uppy by wrapping the [tus-js-client][].
+The Tus plugin brings [tus.io][] resumable file uploading to Uppy by wrapping
+the [tus-js-client][].
 
-Uppy is being developed by the folks at [Transloadit](https://transloadit.com), a versatile file encoding service.
+Uppy is being developed by the folks at [Transloadit](https://transloadit.com),
+a versatile file encoding service.
 
 ## Example
 
@@ -31,16 +33,19 @@ uppy.use(Tus, {
 $ npm install @uppy/tus
 ```
 
-Alternatively, you can also use this plugin in a pre-built bundle from Transloadit’s CDN: Edgly. In that case `Uppy` will attach itself to the global `window.Uppy` object. See the [main Uppy documentation](https://uppy.io/docs/#Installation) for instructions.
+Alternatively, you can also use this plugin in a pre-built bundle from
+Transloadit’s CDN: Smart CDN. In that case `Uppy` will attach itself to the
+global `window.Uppy` object. See the
+[main Uppy documentation](https://uppy.io/docs/#Installation) for instructions.
 
 ## Documentation
 
-Documentation for this plugin can be found on the [Uppy website](https://uppy.io/docs/tus).
+Documentation for this plugin can be found on the
+[Uppy website](https://uppy.io/docs/tus).
 
 ## License
 
 [The MIT License](./LICENSE).
 
 [tus.io]: https://tus.io
-
 [tus-js-client]: https://github.com/tus/tus-js-client

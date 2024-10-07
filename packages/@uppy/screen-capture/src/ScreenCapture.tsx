@@ -1,7 +1,7 @@
 import { h, type ComponentChild } from 'preact'
 import { UIPlugin, Uppy, type UIPluginOptions } from '@uppy/core'
 import getFileTypeExtension from '@uppy/utils/lib/getFileTypeExtension'
-import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin'
+import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin.js'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import ScreenRecIcon from './ScreenRecIcon.tsx'
 import RecorderScreen from './RecorderScreen.tsx'
@@ -23,7 +23,6 @@ function getMediaDevices() {
 }
 
 export interface ScreenCaptureOptions extends UIPluginOptions {
-  title?: string
   displayMediaConstraints?: MediaStreamConstraints
   userMediaConstraints?: MediaStreamConstraints
   preferredVideoMimeType?: string
@@ -84,17 +83,17 @@ export default class ScreenCapture<
     type: string
   }
 
-  videoStream: null | MediaStream
+  videoStream: null | MediaStream = null
 
-  audioStream: null | MediaStream
+  audioStream: null | MediaStream = null
 
-  userDenied: boolean
+  userDenied: boolean = false
 
-  recorder: null | MediaRecorder
+  recorder: null | MediaRecorder = null
 
-  outputStream: null | MediaStream
+  outputStream: null | MediaStream = null
 
-  recordingChunks: Blob[] | null
+  recordingChunks: Blob[] | null = null
 
   constructor(uppy: Uppy<M, B>, opts?: ScreenCaptureOptions) {
     super(uppy, { ...defaultOptions, ...opts })
@@ -102,14 +101,13 @@ export default class ScreenCapture<
     // eslint-disable-next-line no-restricted-globals
     this.protocol = location.protocol === 'https:' ? 'https' : 'http'
     this.id = this.opts.id || 'ScreenCapture'
-    this.title = this.opts.title || 'Screencast'
     this.type = 'acquirer'
     this.icon = ScreenRecIcon
 
     this.defaultLocale = locale
 
-    // i18n
     this.i18nInit()
+    this.title = this.i18n('pluginNameScreenCapture')
 
     // uppy plugin class related
     this.install = this.install.bind(this)

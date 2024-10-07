@@ -1,85 +1,68 @@
-/* eslint-disable react/require-default-props */
+/* eslint-disable react/jsx-props-no-spreading */
 import { h } from 'preact'
 
 import classNames from 'classnames'
 import type { I18n } from '@uppy/utils/lib/Translator'
-import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
-import type { RestrictionError } from '@uppy/core/lib/Restricter'
-import type { Meta, Body } from '@uppy/utils/lib/UppyFile'
-import ItemIcon from './components/ItemIcon.tsx'
-import GridListItem from './components/GridLi.tsx'
-import ListItem from './components/ListLi.tsx'
+import type {
+  PartialTreeFile,
+  PartialTreeFolderNode,
+  PartialTreeId,
+} from '@uppy/core/lib/Uppy.js'
+import GridItem from './components/GridItem.tsx'
+import ListItem from './components/ListItem.tsx'
 
-type ItemProps<M extends Meta, B extends Body> = {
+type ItemProps = {
+  file: PartialTreeFile | PartialTreeFolderNode
+  openFolder: (folderId: PartialTreeId) => void
+  toggleCheckbox: (event: Event) => void
+  viewType: string
   showTitles: boolean
   i18n: I18n
-  id: string
-  title: string
-  toggleCheckbox: (event: Event) => void
-  recordShiftKeyPress: (event: KeyboardEvent | MouseEvent) => void
-  handleFolderClick?: () => void
-  restrictionError?: RestrictionError<M, B> | null
-  isCheckboxDisabled: boolean
-  type: 'folder' | 'file'
-  author?: CompanionFile['author']
-  getItemIcon: () => string
-  isChecked: boolean
-  isDisabled: boolean
-  viewType: string
 }
 
-export default function Item<M extends Meta, B extends Body>(
-  props: ItemProps<M, B>,
-): h.JSX.Element {
-  const { author, getItemIcon, isChecked, isDisabled, viewType } = props
-  const itemIconString = getItemIcon()
+export default function Item(props: ItemProps): h.JSX.Element {
+  const { viewType, toggleCheckbox, showTitles, i18n, openFolder, file } = props
 
-  const className = classNames(
-    'uppy-ProviderBrowserItem',
-    { 'uppy-ProviderBrowserItem--selected': isChecked },
-    { 'uppy-ProviderBrowserItem--disabled': isDisabled },
-    { 'uppy-ProviderBrowserItem--noPreview': itemIconString === 'video' },
-  )
+  const restrictionError = file.type === 'folder' ? null : file.restrictionError
+  const isDisabled = !!restrictionError && file.status !== 'checked'
 
-  const itemIconEl = <ItemIcon itemIconString={itemIconString} />
+  const ourProps = {
+    file,
+    openFolder,
+    toggleCheckbox,
+
+    i18n,
+    viewType,
+    showTitles,
+    className: classNames(
+      'uppy-ProviderBrowserItem',
+      { 'uppy-ProviderBrowserItem--disabled': isDisabled },
+      { 'uppy-ProviderBrowserItem--noPreview': file.data.icon === 'video' },
+      { 'uppy-ProviderBrowserItem--is-checked': file.status === 'checked' },
+      { 'uppy-ProviderBrowserItem--is-partial': file.status === 'partial' },
+    ),
+    isDisabled,
+    restrictionError,
+  }
 
   switch (viewType) {
     case 'grid':
-      return (
-        <GridListItem<M, B>
-          // eslint-disable-next-line react/jsx-props-no-spreading
-          {...props}
-          className={className}
-          itemIconEl={itemIconEl}
-        />
-      )
+      return <GridItem {...ourProps} />
     case 'list':
-      return (
-        <ListItem<M, B>
-          // eslint-disable-next-line react/jsx-props-no-spreading
-          {...props}
-          className={className}
-          itemIconEl={itemIconEl}
-        />
-      )
+      return <ListItem {...ourProps} />
     case 'unsplash':
       return (
-        <GridListItem<M, B>
-          // eslint-disable-next-line react/jsx-props-no-spreading
-          {...props}
-          className={className}
-          itemIconEl={itemIconEl}
-        >
+        <GridItem {...ourProps}>
           <a
-            href={`${author!.url}?utm_source=Companion&utm_medium=referral`}
+            href={`${file.data.author!.url}?utm_source=Companion&utm_medium=referral`}
             target="_blank"
             rel="noopener noreferrer"
             className="uppy-ProviderBrowserItem-author"
             tabIndex={-1}
           >
-            {author!.name}
+            {file.data.author!.name}
           </a>
-        </GridListItem>
+        </GridItem>
       )
     default:
       throw new Error(`There is no such type ${viewType}`)

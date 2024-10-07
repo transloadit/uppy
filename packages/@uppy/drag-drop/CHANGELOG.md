@@ -1,5 +1,19 @@
 # @uppy/drag-drop
 
+## 4.0.2
+
+Released: 2024-08-15
+Included in: Uppy v4.1.1
+
+- @uppy/dashboard,@uppy/drag-drop,@uppy/file-input: Transform the `accept` prop into a string everywhere (Evgenia Karunus / #5380)
+
+## 4.0.1
+
+Released: 2024-07-15
+Included in: Uppy v4.0.1
+
+- @uppy/dashboard,@uppy/drag-drop,@uppy/drop-target: `<Dashboard/>`, `<DragDrop/>`, `drop-target` - new anti-flickering solution (Evgenia Karunus / #5326)
+
 ## 4.0.0-beta.1
 
 Released: 2024-03-28
@@ -8,6 +22,13 @@ Included in: Uppy v4.0.0-beta.1
 - @uppy/drag-drop: refine type of private variables (Antoine du Hamel / #5026)
 - @uppy/drag-drop,@uppy/progress-bar: add missing exports (Antoine du Hamel / #5009)
 - @uppy/drag-drop: refactor to TypeScript (Antoine du Hamel / #4983)
+
+## 3.1.1
+
+Released: 2024-07-02
+Included in: Uppy v3.27.2
+
+- docs,@uppy/drag-drop: `uppy.io/docs` - fix typos/broken links (Evgenia Karunus / #5296)
 
 ## 3.1.0
 

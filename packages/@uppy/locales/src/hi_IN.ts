@@ -196,11 +196,4 @@ hi_IN.strings = {
   zoomOut: 'ज़ूम आउट',
 }
 
-// TODO: remove this in the next major?
-// @ts-expect-error Uppy can be a global in legacy bundle
-if (typeof Uppy !== 'undefined') {
-  // @ts-expect-error Uppy can be a global in legacy bundle
-  globalThis.Uppy.locales.hi_IN = hi_IN
-}
-
 export default hi_IN

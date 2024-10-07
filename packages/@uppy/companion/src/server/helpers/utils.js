@@ -146,9 +146,9 @@ module.exports.decrypt = (encrypted, secret) => {
   return decrypted
 }
 
-module.exports.defaultGetKey = (req, filename) => `${crypto.randomUUID()}-${filename}`
+module.exports.defaultGetKey = ({ filename }) => `${crypto.randomUUID()}-${filename}`
 
-class StreamHttpJsonError extends Error {
+class HttpError extends Error {
   statusCode
 
   responseJson
@@ -157,23 +157,26 @@ class StreamHttpJsonError extends Error {
     super(`Request failed with status ${statusCode}`)
     this.statusCode = statusCode
     this.responseJson = responseJson
-    this.name = 'StreamHttpJsonError'
+    this.name = 'HttpError'
   }
 }
 
-module.exports.StreamHttpJsonError = StreamHttpJsonError
+module.exports.HttpError = HttpError
 
 module.exports.prepareStream = async (stream) => new Promise((resolve, reject) => {
   stream
-    .on('response', () => {
+    .on('response', (response) => {
+      const contentLengthStr = response.headers['content-length']
+      const contentLength = parseInt(contentLengthStr, 10);
+      const size = !Number.isNaN(contentLength) && contentLength >= 0 ? contentLength : undefined;
       // Don't allow any more data to flow yet.
       // https://github.com/request/request/issues/1990#issuecomment-184712275
       stream.pause()
-      resolve()
+      resolve({ size })
     })
     .on('error', (err) => {
       // In this case the error object is not a normal GOT HTTPError where json is already parsed,
-      // we create our own StreamHttpJsonError error for this case
+      // we create our own HttpError error for this case
       if (typeof err.response?.body === 'string' && typeof err.response?.statusCode === 'number') {
         let responseJson
         try {
@@ -183,7 +186,7 @@ module.exports.prepareStream = async (stream) => new Promise((resolve, reject) =
           return
         }
 
-        reject(new StreamHttpJsonError({ statusCode: err.response.statusCode, responseJson }))
+        reject(new HttpError({ statusCode: err.response.statusCode, responseJson }))
         return
       }
 
@@ -207,8 +210,22 @@ module.exports.rfc2047EncodeMetadata = (metadata) => (
   Object.fromEntries(Object.entries(metadata).map((entry) => entry.map(rfc2047Encode)))
 )
 
-module.exports.getBucket = (bucketOrFn, req, metadata) => {
-  const bucket = typeof bucketOrFn === 'function' ? bucketOrFn(req, metadata) : bucketOrFn
+/**
+ * 
+ * @param {{
+ * bucketOrFn: string | ((a: {
+ * req: import('express').Request,
+ * metadata: Record<string, string>,
+ * filename: string | undefined,
+ * }) => string),
+ * req: import('express').Request,
+ * metadata?: Record<string, string>,
+ * filename?: string,
+ * }} param0 
+ * @returns 
+ */
+module.exports.getBucket = ({ bucketOrFn, req, metadata, filename }) => {
+  const bucket = typeof bucketOrFn === 'function' ? bucketOrFn({ req, metadata, filename }) : bucketOrFn
 
   if (typeof bucket !== 'string' || bucket === '') {
     // This means a misconfiguration or bug

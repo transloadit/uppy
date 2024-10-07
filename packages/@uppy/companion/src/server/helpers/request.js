@@ -46,7 +46,7 @@ module.exports.validateURL = validateURL
 /**
  * Returns http Agent that will prevent requests to private IPs (to prevent SSRF)
  */
-const getProtectedHttpAgent = ({ protocol, blockLocalIPs }) => {
+const getProtectedHttpAgent = ({ protocol, allowLocalIPs }) => {
   function dnsLookup (hostname, options, callback) {
     dns.lookup(hostname, options, (err, addresses, maybeFamily) => {
       if (err) {
@@ -58,7 +58,7 @@ const getProtectedHttpAgent = ({ protocol, blockLocalIPs }) => {
       // because dns.lookup seems to be called with option `all: true`, if we are on an ipv6 system,
       // `addresses` could contain a list of ipv4 addresses as well as ipv6 mapped addresses (rfc6052) which we cannot allow
       // however we should still allow any valid ipv4 addresses, so we filter out the invalid addresses
-      const validAddresses = !blockLocalIPs ? toValidate : toValidate.filter(({ address }) => !isDisallowedIP(address))
+      const validAddresses = allowLocalIPs ? toValidate : toValidate.filter(({ address }) => !isDisallowedIP(address))
 
       // and check if there's anything left after we filtered:
       if (validAddresses.length === 0) {
@@ -73,7 +73,7 @@ const getProtectedHttpAgent = ({ protocol, blockLocalIPs }) => {
 
   return class HttpAgent extends (protocol.startsWith('https') ? https : http).Agent {
     createConnection (options, callback) {
-      if (ipaddr.isValid(options.host) && blockLocalIPs && isDisallowedIP(options.host)) {
+      if (ipaddr.isValid(options.host) && !allowLocalIPs && isDisallowedIP(options.host)) {
         callback(new Error(FORBIDDEN_IP_ADDRESS))
         return undefined
       }
@@ -85,9 +85,9 @@ const getProtectedHttpAgent = ({ protocol, blockLocalIPs }) => {
 
 module.exports.getProtectedHttpAgent = getProtectedHttpAgent
 
-async function getProtectedGot ({ blockLocalIPs }) {
-  const HttpAgent = getProtectedHttpAgent({ protocol: 'http', blockLocalIPs })
-  const HttpsAgent = getProtectedHttpAgent({ protocol: 'https', blockLocalIPs })
+async function getProtectedGot ({ allowLocalIPs }) {
+  const HttpAgent = getProtectedHttpAgent({ protocol: 'http', allowLocalIPs })
+  const HttpsAgent = getProtectedHttpAgent({ protocol: 'https', allowLocalIPs })
   const httpAgent = new HttpAgent()
   const httpsAgent = new HttpsAgent()
 
@@ -102,12 +102,12 @@ module.exports.getProtectedGot = getProtectedGot
  * Gets the size and content type of a url's content
  *
  * @param {string} url
- * @param {boolean} blockLocalIPs
+ * @param {boolean} allowLocalIPs
  * @returns {Promise<{name: string, type: string, size: number}>}
  */
-exports.getURLMeta = async (url, blockLocalIPs = false) => {
+exports.getURLMeta = async (url, allowLocalIPs = false) => {
   async function requestWithMethod (method) {
-    const protectedGot = await getProtectedGot({ blockLocalIPs })
+    const protectedGot = await getProtectedGot({ allowLocalIPs })
     const stream = protectedGot.stream(url, { method, throwHttpErrors: false })
 
     return new Promise((resolve, reject) => (
@@ -120,7 +120,7 @@ exports.getURLMeta = async (url, blockLocalIPs = false) => {
           // we add random string to avoid duplicate files
           const filename = response.headers['content-disposition']
             ? contentDisposition.parse(response.headers['content-disposition']).parameters.filename
-            : path.basename(response.request.requestUrl)
+            : path.basename(`${response.request.requestUrl}`)
 
           // No need to get the rest of the response, as we only want header (not really relevant for HEAD, but why not)
           stream.destroy()

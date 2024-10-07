@@ -1,5 +1,59 @@
 # @uppy/transloadit
 
+## 4.1.2
+
+Released: 2024-09-30
+Included in: Uppy v4.4.1
+
+- @uppy/transloadit: fix multiple upload batches & run again (Merlijn Vos / #5478)
+
+## 4.1.0
+
+Released: 2024-08-20
+Included in: Uppy v4.2.0
+
+- @uppy/transloadit: add execution_progress to AssemblyResponse type (Merlijn Vos / #5420)
+- @uppy/transloadit: fix check if all files have been removed (Merlijn Vos / #5419)
+
+## 4.0.2
+
+Released: 2024-08-15
+Included in: Uppy v4.1.1
+
+- @uppy/transloadit: fix issue with `allowMultipleUploadBatches` (Mikael Finstad / #5400)
+- @uppy/transloadit: fix many lurking `TypeError` (Mikael Finstad / #5399)
+
+## 4.0.1
+
+Released: 2024-07-30
+Included in: Uppy v4.1.0
+
+- @uppy/transloadit: do not mark `opts` as mandatory (Antoine du Hamel / #5375)
+
+## 4.0.0-beta.10
+
+Released: 2024-06-27
+Included in: Uppy v4.0.0-beta.13
+
+- @uppy/transloadit: fix strict type errors (Antoine du Hamel / #5271)
+- @uppy/transloadit: simplify plugin to always run a single assembly (Merlijn Vos / #5158)
+
+## 4.0.0-beta.9
+
+Released: 2024-06-18
+Included in: Uppy v4.0.0-beta.12
+
+- @uppy/transloadit: also fix outdated assembly transloadit:result (Merlijn Vos / #5246)
+- examples,@uppy/locales,@uppy/provider-views,@uppy/transloadit: Release: uppy@3.26.1 (github-actions[bot] / #5242)
+- @uppy/transloadit: fix transloadit:result event (Merlijn Vos / #5231)
+
+## 4.0.0-beta.6
+
+Released: 2024-05-23
+Included in: Uppy v4.0.0-beta.9
+
+- @uppy/transloadit: do not cancel assembly when removing all files (Merlijn Vos / #5191)
+
 ## 4.0.0-beta.2
 
 Released: 2024-04-11
@@ -13,6 +67,34 @@ Released: 2024-03-28
 Included in: Uppy v4.0.0-beta.1
 
 - @uppy/transloadit: migrate to TS (Merlijn Vos / #4987)
+
+## 3.8.0
+
+Released: 2024-06-18
+Included in: Uppy v3.27.0
+
+- @uppy/transloadit: also fix outdated assembly transloadit:result (Merlijn Vos / #5246)
+
+## 3.7.1
+
+Released: 2024-06-11
+Included in: Uppy v3.26.1
+
+- @uppy/transloadit: fix transloadit:result event (Merlijn Vos / #5231)
+
+## 3.7.0
+
+Released: 2024-06-04
+Included in: Uppy v3.26.0
+
+- @uppy/transloadit: remove `updateNumberOfFilesInAssembly` (Merlijn Vos / #5202)
+
+## 3.6.2
+
+Released: 2024-05-23
+Included in: Uppy v3.25.5
+
+- @uppy/transloadit: do not cancel assembly when removing all files (Merlijn Vos / #5191)
 
 ## 3.6.0
 

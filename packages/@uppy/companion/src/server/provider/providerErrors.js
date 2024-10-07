@@ -43,7 +43,7 @@ async function withProviderErrorHandling({
     if (err?.name === 'HTTPError') {
       statusCode = err.response?.statusCode
       body = err.response?.body
-    } else if (err?.name === 'StreamHttpJsonError') {
+    } else if (err?.name === 'HttpError') {
       statusCode = err.statusCode
       body = err.responseJson
     }
@@ -68,4 +68,17 @@ async function withProviderErrorHandling({
   }
 }
 
-module.exports = { withProviderErrorHandling }
+async function withGoogleErrorHandling (providerName, tag, fn) {
+  return withProviderErrorHandling({
+    fn,
+    tag,
+    providerName,
+    isAuthError: (response) => (
+      response.statusCode === 401
+      || (response.statusCode === 400 && response.body?.error === 'invalid_grant') // Refresh token has expired or been revoked
+    ),
+    getJsonErrorMessage: (body) => body?.error?.message,
+  })
+}
+
+module.exports = { withProviderErrorHandling, withGoogleErrorHandling }

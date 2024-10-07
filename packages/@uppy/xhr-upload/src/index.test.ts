@@ -4,88 +4,60 @@ import Core from '@uppy/core'
 import XHRUpload from './index.ts'
 
 describe('XHRUpload', () => {
-  describe('getResponseData', () => {
-    it('has the XHRUpload options as its `this`', () => {
-      nock('https://fake-endpoint.uppy.io')
-        .defaultReplyHeaders({
-          'access-control-allow-method': 'POST',
-          'access-control-allow-origin': '*',
-        })
-        .options('/')
-        .reply(200, {})
-        .post('/')
-        .reply(200, {})
+  it('should leverage hooks from fetcher', async () => {
+    nock('https://fake-endpoint.uppy.io')
+      .defaultReplyHeaders({
+        'access-control-allow-method': 'POST',
+        'access-control-allow-origin': '*',
+      })
+      .options('/')
+      .reply(204, {})
+      .post('/')
+      .reply(401, {})
+      .options('/')
+      .reply(204, {})
+      .post('/')
+      .reply(200, 'https://fake-endpoint.uppy.io/random-id')
 
-      const core = new Core()
-      const getResponseData = vi.fn(function getResponseData() {
-        // @ts-expect-error TS can't know the type
-        expect(this.some).toEqual('option')
-        return {}
-      })
-      core.use(XHRUpload, {
-        id: 'XHRUpload',
-        endpoint: 'https://fake-endpoint.uppy.io',
-        // @ts-expect-error that option does not exist
-        some: 'option',
-        getResponseData,
-      })
-      core.addFile({
-        type: 'image/png',
-        source: 'test',
-        name: 'test.jpg',
-        data: new Blob([new Uint8Array(8192)]),
-      })
+    const core = new Core<any, { url: string }>()
+    const shouldRetry = vi.fn(() => true)
+    const onBeforeRequest = vi.fn(() => {})
+    const onAfterResponse = vi.fn(() => {})
+    // Test that we can turn a text response into a JSON response.
+    const getResponseData = vi.fn((xhr: XMLHttpRequest) => ({
+      url: xhr.responseText,
+    }))
 
-      return core.upload().then(() => {
-        expect(getResponseData).toHaveBeenCalled()
-      })
+    core.use(XHRUpload, {
+      id: 'XHRUpload',
+      endpoint: 'https://fake-endpoint.uppy.io',
+      shouldRetry,
+      onBeforeRequest,
+      onAfterResponse,
+      getResponseData,
     })
-  })
+    const id = core.addFile({
+      type: 'image/png',
+      source: 'test',
+      name: 'test.jpg',
+      data: new Blob([new Uint8Array(8192)]),
+    })
 
-  describe('validateStatus', () => {
-    it('emit upload error under status code 200', () => {
-      nock('https://fake-endpoint.uppy.io')
-        .defaultReplyHeaders({
-          'access-control-allow-method': 'POST',
-          'access-control-allow-origin': '*',
-        })
-        .options('/')
-        .reply(200, {})
-        .post('/')
-        .reply(200, {
-          code: 40000,
-          message: 'custom upload error',
-        })
-
-      const core = new Core()
-      const validateStatus = vi.fn((status, responseText) => {
-        return JSON.parse(responseText).code !== 40000
-      })
-
-      core.use(XHRUpload, {
-        id: 'XHRUpload',
+    core.setFileState(id, {
+      xhrUpload: {
+        // Test that we don't have a TS error for setting endpoint
+        // on metadata
         endpoint: 'https://fake-endpoint.uppy.io',
-        // @ts-expect-error that option doesn't exist
-        some: 'option',
-        validateStatus,
-        getResponseError(responseText) {
-          return JSON.parse(responseText).message
-        },
-      })
-      core.addFile({
-        type: 'image/png',
-        source: 'test',
-        name: 'test.jpg',
-        data: new Blob([new Uint8Array(8192)]),
-      })
+      },
+    })
 
-      return core.upload().then((result) => {
-        expect(validateStatus).toHaveBeenCalled()
-        expect(result!.failed!.length).toBeGreaterThan(0)
-        result!.failed!.forEach((file) => {
-          expect(file.error).toEqual('custom upload error')
-        })
-      })
+    await core.upload()
+
+    expect(shouldRetry).toHaveBeenCalledTimes(1)
+    expect(onAfterResponse).toHaveBeenCalledTimes(2)
+    expect(onBeforeRequest).toHaveBeenCalledTimes(2)
+    expect(core.getFile(id).response!.body).toEqual({
+      url: 'https://fake-endpoint.uppy.io/random-id',
     })
   })
 
@@ -104,7 +76,7 @@ describe('XHRUpload', () => {
         id: 'XHRUpload',
         endpoint: 'https://fake-endpoint.uppy.io',
         headers: (file) => ({
-          'x-sample-header': file.name,
+          'x-sample-header': file.name!,
         }),
       })
       core.addFile({

@@ -48,7 +48,7 @@ yarn add @uppy/core @uppy/dashboard @uppy/image-editor
         import { Uppy, Dashboard, ImageEditor } from "{{UPPY_JS_URL}}"
         const uppy = new Uppy()
         uppy.use(Dashboard, { target: '#uppy', inline: true })
-        uppy.use(ImageEditor, { target: Uppy.Dashboard })
+        uppy.use(ImageEditor)
       `}
     </UppyCdnExample>
   </TabItem>
@@ -67,7 +67,7 @@ import '@uppy/image-editor/dist/style.min.css';
 
 new Uppy()
 	.use(Dashboard, { inline: true, target: '#dashboard' })
-	.use(ImageEditor, { target: Dashboard });
+	.use(ImageEditor);
 ```
 
 ## API

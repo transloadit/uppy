@@ -14,6 +14,8 @@
       "@uppy/facebook/lib/*": ["../facebook/src/*"],
       "@uppy/google-drive": ["../google-drive/src/index.js"],
       "@uppy/google-drive/lib/*": ["../google-drive/src/*"],
+      "@uppy/google-photos": ["../google-photos/src/index.js"],
+      "@uppy/google-photos/lib/*": ["../google-photos/src/*"],
       "@uppy/instagram": ["../instagram/src/index.js"],
       "@uppy/instagram/lib/*": ["../instagram/src/*"],
       "@uppy/onedrive": ["../onedrive/src/index.js"],
@@ -44,6 +46,9 @@
     },
     {
       "path": "../google-drive/tsconfig.build.json",
+    },
+    {
+      "path": "../google-photos/tsconfig.build.json",
     },
     {
       "path": "../instagram/tsconfig.build.json",

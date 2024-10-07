@@ -10,10 +10,10 @@
     "@uppy/remote-sources": "workspace:*",
     "@uppy/transloadit": "workspace:*",
     "@uppy/webcam": "workspace:*",
-    "marked": "^4.0.18"
+    "marked": "^12.0.0"
   },
   "devDependencies": {
-    "vite": "^5.0.0"
+    "vite": "^5.3.6"
   },
   "private": true,
   "scripts": {

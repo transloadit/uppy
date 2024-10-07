@@ -2,6 +2,224 @@
 
 These cover all the major Uppy versions and how to migrate to them.
 
+## Migrate from Companion 4.x to 5.x
+
+- End-of-Life versions of Node.js are no longer supported (use latest 18.x LTS,
+  20.x LTS, or 22.x current).
+- Setting the `corsOrigin` (`COMPANION_CLIENT_ORIGINS`) option is now required.
+  You should define the list of origins you expect your app to be served from,
+  otherwise it can be impersonated from a different origin you don’t control.
+  Set it to `true` if you don’t care about impersonating.
+- `COMPANION_REDIS_EXPRESS_SESSION_PREFIX` now defaults to `companion-session:`
+  (before `sess:`). To revert keep backwards compatibility, set the environment
+  variable `COMPANION_REDIS_EXPRESS_SESSION_PREFIX=sess:`.
+- The URL endpoint (used by the `Url`/`Link` plugin) is now turned off by
+  default and must be explicitly enabled with
+  `COMPANION_ENABLE_URL_ENDPOINT=true` or `enableUrlEndpoint: true`.
+- The option `streamingUpload` / `COMPANION_STREAMING_UPLOAD` now defaults to
+  `true`.
+- The option `getKey(req, filename, metadata)` has changed signature to
+  `getKey({ filename, metadata, req })`.
+- The option `bucket(req, metadata)` has changed signature to
+  `bucketOrFn({ req, metadata, filename })`.
+- Custom provider breaking changes. If you have not implemented a custom
+  provider, you should not be affected.
+  - The static `getExtraConfig` property has been renamed to
+    `getExtraGrantConfig`.
+  - The static `authProvider` property has been renamed to `oauthProvider`.
+- Endpoint `GET /s3/params` now returns `{ method: "POST" }` instead of
+  `{ method: "post" }`. This will not affect most people.
+- `access-control-allow-headers` is no longer included in
+  `Access-Control-Expose-Headers`, and `uppy-versions` is no longer an allowed
+  header. We are not aware of any issues this might cause.
+- Internal refactoring (probably won’t affect you)
+  - `getProtectedGot` parameter `blockLocalIPs` changed to `allowLocalIPs`
+    (inverted boolean).
+  - `getURLMeta` 2nd (boolean) argument inverted.
+  - `getProtectedHttpAgent` parameter `blockLocalIPs` changed to `allowLocalIPs`
+    (inverted boolean).
+  - `downloadURL` 2nd (boolean) argument inverted.
+  - `StreamHttpJsonError` renamed to `HttpError`.
+- Removed the `oauthOrigin` option, as well as the (undocumented) option
+  `clients`. Use `corsOrigin` instead.
+
+### `@uppy/companion-client`
+
+:::info
+
+Unless you built a custom provider, you don’t use `@uppy/companion-client`
+directly but through provider plugins such as `@uppy/google-drive`. In which
+case you don’t have to do anything.
+
+:::
+
+- `supportsRefreshToken` now defaults to `false` instead of `true`. If you have
+  implemented a custom provider, this might affect you.
+- `Socket` class is no longer in use and has been removed. Unless you used this
+  class you don’t need to do anything.
+- Remove deprecated options `serverUrl` and `serverPattern` (they were merely
+  defined in Typescript, not in use).
+- `RequestClient` methods `get`, `post`, `delete` no longer accepts a boolean as
+  the third argument. Instead, pass `{ skipPostResponse: true | false }`. This
+  won’t affect you unless you’ve been using `RequestClient`.
+- When pausing uploads, the WebSocket towards companion will no longer be
+  closed. This allows paused uploads to be cancelled, but once a file has been
+  paused it will still occupy its place in the concurrency queue.
+
+## Migrate from Uppy 3.x to 4.x
+
+### TypeScript rewrite
+
+Almost all plugins have been completely rewritten in TypeScript! This means you
+may run into type error all over the place, but the types now accurately show
+Uppy’s state and files.
+
+There are too many small changes to cover, so you have to upgrade and see where
+TypeScript complains.
+
+One important thing to note are the new generics on `@uppy/core`.
+
+<!-- eslint-disable @typescript-eslint/no-unused-vars -->
+
+<!-- eslint-disable @typescript-eslint/no-non-null-assertion -->
+
+```ts
+import Uppy from '@uppy/core';
+// xhr-upload is for uploading to your own backend.
+import XHRUpload from '@uppy/xhr-upload';
+
+// Your own metadata on files
+type Meta = { myCustomMetadata: string };
+// The response from your server
+type Body = { someThingMyBackendReturns: string };
+
+const uppy = new Uppy<Meta, Body>().use(XHRUpload, {
+	endpoint: '/upload',
+});
+
+const id = uppy.addFile({
+	name: 'example.jpg',
+	data: new Blob(),
+	meta: { myCustomMetadata: 'foo' },
+});
+
+// This is now typed
+const { myCustomMetadata } = uppy.getFile(id).meta;
+
+await uppy.upload();
+
+// This is strictly typed too
+const { someThingMyBackendReturns } = uppy.getFile(id).response.body!;
+```
+
+### `@uppy/aws-s3` and `@uppy/aws-s3-multipart`
+
+- `@uppy/aws-s3` and `@uppy/aws-s3-multipart` have been combined into a single
+  plugin. You should now only use `@uppy/aws-s3` with the new option,
+  [`shouldUseMultipart()`](/docs/aws-s3-multipart/#shouldusemultipartfile), to
+  allow you to switch between regular and multipart uploads. You can read more
+  about this in the
+  [plugin docs](https://uppy.io/docs/aws-s3-multipart/#when-should-i-use-it).
+- Remove deprecated `prepareUploadParts` option.
+- Companion’s options (`companionUrl`, `companionHeaders`, and
+  `companionCookieRules`) are renamed to more generic names (`endpoint`,
+  `headers`, and `cookieRules`).
+
+  Using Companion with the `@uppy/aws-s3` plugin only makes sense if you already
+  need Companion for remote providers (such as Google Drive). When using your
+  own backend, you can let Uppy do all the heavy lifting on the client which it
+  would normally do for Companion, so you don’t have to implement that yourself.
+
+  As long as you return the JSON for the expected endpoints (see our
+  [server example](https://github.com/transloadit/uppy/blob/main/examples/aws-nodejs/index.js)),
+  you only need to set `endpoint`.
+
+  If you are using Companion, rename the options. If you have a lot of
+  client-side complexity (`createMultipartUpload`, `signPart`, etc), consider
+  letting Uppy do this for you.
+
+### `@uppy/core`
+
+- The `close()` method has been renamed to `destroy()` to more accurately
+  reflect you can not recover from it without creating a new `Uppy` instance.
+- The `clearUploadedFiles()` method has been renamed to `clear()` as a
+  convenience method to clear all the state. This can be useful when a user
+  navigates away and you want to clear the state on success.
+- `bytesUploaded`, in `file.progress.bytesUploaded`, is now always a `boolean`,
+  instead of a `boolean` or `number`.
+
+### `@uppy/xhr-upload`
+
+Before the plugin had the options `getResponseData`, `getResponseError`,
+`validateStatus` and `responseUrlFieldName`. These were inflexible and too
+specific. Now we have hooks similar to `@uppy/tus`:
+
+- `onBeforeRequest` to manipulate the request before it is sent.
+- `shouldRetry` to determine if a request should be retried. By default 3
+  retries with exponential backoff. After three attempts it will throw an error,
+  regardless of whether you returned `true`.
+- `onAfterResponse` called after a successful response but before Uppy resolves
+  the upload.
+
+Checkout the [docs](/docs/xhr-upload/) for more info.
+
+### `@uppy/transloadit`
+
+The options `signature`, `params`, `fields`, and `getAssemblyOptions` have been
+removed in favor of [`assemblyOptions`](/docs/transloadit/#assemblyoptions),
+which can be an object or an (async) function returning an object.
+
+When using `assemblyOptions()` as a function, it is now called only once for all
+files, instead of per file. Before `@uppy/transloadit` was trying to be too
+smart, creating multiple assemblies in which each assembly has files with
+identical `fields`. This was done so you can use `fields` dynamically in your
+template per file, instead of per assembly.
+
+Now we sent all metadata of a file inside the tus upload (which
+`@uppy/transloadit` uses under the hood) and make it accessible in your
+Transloadit template as `file_user_meta`. You should use `fields` for global
+values in your template and `file_user_meta` for per file values.
+
+Another benefit of running `assemblyOptions()` only once, is that when
+generating a
+[secret](https://transloadit.com/docs/topics/signature-authentication/) on your
+server (which you should), a network request is made only once for all files,
+instead of per file.
+
+### CDN
+
+- We no longer build and serve the legacy build, made for IE11, on our CDN.
+
+### Miscellaneous
+
+- All uploaders plugins now consistently use
+  [`allowedMetaFields`](/docs/xhr-upload/#allowedmetafields). Before there were
+  inconsistencies between plugins.
+- All plugin `titles` (what you see in the Dashboard when you open a plugin) are
+  now set from the `locale` option. See the
+  [docs](/docs/locales/#overriding-locale-strings-for-a-specific-plugin) on how
+  to overide a string.
+
+### `@uppy/angular`
+
+- Upgrade to Angular 18.x (17.x is still supported too) and to TS 5.4
+
+### `@uppy/react`
+
+- Remove deprecated `useUppy`
+- You can no longer set `inline` on the `Dashboard` component, use `Dashboard`
+  or `DashboardModal` components respectively.
+
+### `@uppy/svelte`
+
+- Make Svelte 5 the peer dependency
+- Remove UMD output
+
+### `@uppy/vue`
+
+- Migrate to Composition API with TypeScript & drop Vue 2 support
+- Drop Vue 2 support
+
 ## Migrate from Robodog to Uppy plugins
 
 Uppy is flexible and extensible through plugins. But the integration code could
@@ -10,9 +228,9 @@ the same features, but with a more ergonomic and minimal API.
 
 But, it didn’t come with its own set of new problems:
 
-* It tries to do the exact same, but it looks like a different product.
-* It’s confusing for users whether they want to use Robodog or Uppy directly.
-* Robodog is more ergonomic because it’s limited. When you hit such a limit, you
+- It tries to do the exact same, but it looks like a different product.
+- It’s confusing for users whether they want to use Robodog or Uppy directly.
+- Robodog is more ergonomic because it’s limited. When you hit such a limit, you
   need to refactor everything to Uppy with plugins.
 
 This has now led us to deprecating Robodog and embrace Uppy for its strong
@@ -60,16 +278,14 @@ new Uppy()
 		companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
 	})
 	.use(Webcam, {
-		target: Dashboard,
 		showVideoSourceDropdown: true,
 		showRecordingLength: true,
 	})
 	.use(Audio, {
-		target: Dashboard,
 		showRecordingLength: true,
 	})
-	.use(ScreenCapture, { target: Dashboard })
-	.use(ImageEditor, { target: Dashboard })
+	.use(ScreenCapture)
+	.use(ImageEditor)
 	.use(Transloadit, {
 		service: 'https://api2.transloadit.com',
 		async getAssemblyOptions(file) {
@@ -238,8 +454,8 @@ To migrate: use exposed options only.
 
 ### Known issues
 
-* [`ERESOLVE could not resolve` on npm install](https://github.com/transloadit/uppy/issues/4057).
-* [@uppy/svelte reports a broken dependency with the Vite bundler](https://github.com/transloadit/uppy/issues/4069).
+- [`ERESOLVE could not resolve` on npm install](https://github.com/transloadit/uppy/issues/4057).
+- [@uppy/svelte reports a broken dependency with the Vite bundler](https://github.com/transloadit/uppy/issues/4069).
 
 ## Migrate from Companion 3.x to 4.x
 
@@ -319,11 +535,11 @@ bundle size is **25% smaller**! If you want your app to still support older
 browsers (such as IE11), you may need to add the following polyfills to your
 bundle:
 
-* [abortcontroller-polyfill](https://github.com/mo/abortcontroller-polyfill)
-* [core-js](https://github.com/zloirock/core-js)
-* [md-gum-polyfill](https://github.com/mozdevs/mediaDevices-getUserMedia-polyfill)
-* [resize-observer-polyfill](https://github.com/que-etc/resize-observer-polyfill)
-* [whatwg-fetch](https://github.com/github/fetch)
+- [abortcontroller-polyfill](https://github.com/mo/abortcontroller-polyfill)
+- [core-js](https://github.com/zloirock/core-js)
+- [md-gum-polyfill](https://github.com/mozdevs/mediaDevices-getUserMedia-polyfill)
+- [resize-observer-polyfill](https://github.com/que-etc/resize-observer-polyfill)
+- [whatwg-fetch](https://github.com/github/fetch)
 
 If you’re using a bundler, you need import these before Uppy:
 
@@ -589,7 +805,8 @@ obsolete too.
 
 ### That’s it!
 
-Uppy 1.0 will continue to receive bug fixes for three more months (until <time datetime="2021-12-01">1 December 2021</time>), security fixes for one more
+Uppy 1.0 will continue to receive bug fixes for three more months (until
+<time datetime="2021-12-01">1 December 2021</time>), security fixes for one more
 year (until <time datetime="2022-09-01">1 September 2022</time>), but no more
 new features after today. Exceptions are unlikely, but _can_ be made – to
 accommodate those with commercial support contracts, for example.
@@ -627,25 +844,22 @@ to:
 
 <div class="table-responsive">
 
-| Provider     | New Redirect URI                                  |
-| ------------ | ------------------------------------------------- |
-| Dropbox      | `https://$COMPANION_HOST_NAME/dropbox/redirect`   |
-| Google Drive | `https://$COMPANION_HOST_NAME/drive/redirect`     |
-| OneDrive     | `https://$COMPANION_HOST_NAME/onedrive/redirect`  |
-| Box          | `https://$YOUR_COMPANION_HOST_NAME/box/redirect`  |
-| Facebook     | `https://$COMPANION_HOST_NAME/facebook/redirect`  |
-| Instagram    | `https://$COMPANION_HOST_NAME/instagram/redirect` |
+| Provider      | New Redirect URI                                     |
+| ------------- | ---------------------------------------------------- |
+| Dropbox       | `https://$COMPANION_HOST_NAME/dropbox/redirect`      |
+| Google Drive  | `https://$COMPANION_HOST_NAME/drive/redirect`        |
+| Google Photos | `https://$COMPANION_HOST_NAME/googlephotos/redirect` |
+| OneDrive      | `https://$COMPANION_HOST_NAME/onedrive/redirect`     |
+| Box           | `https://$YOUR_COMPANION_HOST_NAME/box/redirect`     |
+| Facebook      | `https://$COMPANION_HOST_NAME/facebook/redirect`     |
+| Instagram     | `https://$COMPANION_HOST_NAME/instagram/redirect`    |
 
 </div>
 
 <!-- definitions -->
 
 [core]: /docs/uppy/
-
 [xhr]: /docs/xhr-upload/
-
 [dashboard]: /docs/dashboard/
-
 [aws-s3-multipart]: /docs/aws-s3-multipart/
-
 [tus]: /docs/tus/

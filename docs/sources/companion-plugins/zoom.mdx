@@ -9,20 +9,23 @@ import UppyCdnExample from '/src/components/UppyCdnExample';
 
 # Zoom
 
-The `@uppy/zoom` plugin lets users import files from their
-[Zoom](https://zoom.com) account.
+The `@uppy/zoom` plugin lets users import cloud video recordings from their
+[Zoom](https://zoom.com) account. Note that
+[only licensed](https://support.zoom.com/hc/en/article?id=zm_kb&sysparm_article=KB0063923)
+Zoom accounts can store their recordings in the cloud, so this functionality
+will only be available to users with a paid Zoom account.
 
 :::tip
 
 [Try out the live example](/examples) or take it for a spin in
-[CodeSandbox](https://codesandbox.io/s/uppy-dashboard-xpxuhd).
+[StackBlitz](https://stackblitz.com/edit/vitejs-vite-zaqyaf?file=main.js).
 
 :::
 
 ## When should I use this?
 
-When you want to let users import files from their [Zoom](https://zoom.com)
-account.
+When you want to let users import cloud video recordings from their
+[Zoom](https://zoom.com) account.
 
 A [Companion](/docs/companion) instance is required for the Zoom plugin to work.
 Companion handles authentication with Zoom, downloads the files, and uploads
@@ -76,34 +79,94 @@ import Zoom from '@uppy/zoom';
 import '@uppy/core/dist/style.min.css';
 import '@uppy/dashboard/dist/style.min.css';
 
-new Uppy().use(Dashboard, { inline: true, target: '#dashboard' }).use(Zoom, {
-	target: Dashboard,
-	companionUrl: 'https://your-companion.com',
+new Uppy()
+	.use(Dashboard, { inline: true, target: '#dashboard' })
+	.use(Zoom, { companionUrl: 'https://your-companion.com' });
+```
+
+### Use with Transloadit
+
+```js
+import { COMPANION_URL, COMPANION_ALLOWED_HOSTS } from '@uppy/transloadit';
+import Zoom from '@uppy/zoom';
+
+uppy.use(Zoom, {
+	companionUrl: COMPANION_URL,
+	companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
+});
+```
+
+You may also hit rate limits, because the OAuth application is shared between
+everyone using Transloadit.
+
+To solve that, you can use your own OAuth keys with Transloadit’s hosted
+Companion servers by using Transloadit Template Credentials. [Create a Template
+Credential][template-credentials] on the Transloadit site. Select “Companion
+OAuth” for the service, and enter the key and secret for the provider you want
+to use. Then you can pass the name of the new credentials to that provider:
+
+```js
+import { COMPANION_URL, COMPANION_ALLOWED_HOSTS } from '@uppy/transloadit';
+import Zoom from '@uppy/zoom';
+
+uppy.use(Zoom, {
+	companionUrl: COMPANION_URL,
+	companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
+	companionKeysParams: {
+		key: 'YOUR_TRANSLOADIT_API_KEY',
+		credentialsName: 'my_companion_dropbox_creds',
+	},
 });
 ```
 
 ### Use in Companion
 
-Configure the Zoom key and secret. With the standalone Companion server, specify
-environment variables:
+To sign up for API keys, go through the following steps:
 
-```shell
-export COMPANION_ZOOM_KEY="Zoom API key"
-export COMPANION_ZOOM_SECRET="Zoom API secret"
-```
+1. Sign up on [Zoom Marketplace](https://marketplace.zoom.us)
 
-When using the Companion Node.js API, configure these options:
+2. Go to [https://marketplace.zoom.us](https://marketplace.zoom.us). There will
+   be a dropdown in the header called “Develop”. From that dropdown, select
+   “Build app”.
 
-```js
-companion.app({
-	providerOptions: {
-		zoom: {
-			key: 'Zoom API key',
-			secret: 'Zoom API secret',
-		},
-	},
-});
-```
+3. In the “Basic Information” tab, Zoom shows your new “Client ID” and “Client
+   Secret” - copy them.
+
+   With the standalone Companion server, specify environment variables:
+
+   ```shell
+   export COMPANION_ZOOM_KEY="Zoom API key"
+   export COMPANION_ZOOM_SECRET="Zoom API secret"
+   ```
+
+   When using the Companion Node.js API, configure these options:
+
+   ```js
+   companion.app({
+   	providerOptions: {
+   		zoom: {
+   			key: 'Zoom API key',
+   			secret: 'Zoom API secret',
+   		},
+   	},
+   });
+   ```
+
+4. In the “Basic Information” tab, set “OAuth Redirect URL” input field to:
+
+   ```
+   https://$YOUR_COMPANION_HOST_NAME/zoom/redirect
+   ```
+
+   If you are using Transloadit hosted Companion:
+
+   ```
+   https://api2.transloadit.com/companion/zoom/redirect
+   ```
+
+5. In the “Scopes” tab, add “cloud_recording:read:list_user_recordings” and
+   “user:read:user” scopes. If Zoom asks for further permissions when you
+   interact with your Zoom integration - add those too.
 
 ## API
 
@@ -121,7 +184,8 @@ Title / name shown in the UI, such as Dashboard tabs (`string`, default:
 #### `target`
 
 DOM element, CSS selector, or plugin to place the drag and drop area into
-(`string` or `Element`, default: `null`).
+(`string`, `Element`, `Function`, or `UIPlugin`, default:
+[`Dashboard`](/docs/dashboard)).
 
 #### `companionUrl`
 
@@ -158,3 +222,6 @@ export default {
 	},
 };
 ```
+
+[template-credentials]:
+	https://transloadit.com/docs/#how-to-create-template-credentials

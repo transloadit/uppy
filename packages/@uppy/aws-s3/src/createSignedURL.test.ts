@@ -8,7 +8,7 @@ import {
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 import createSignedURL from './createSignedURL.ts'
 
-const bucketName = 'some-bucket'
+const bucketName = 'some-bucket.with.dots'
 const s3ClientOptions = {
   region: 'us-bar-1',
   credentials: {

@@ -25,7 +25,7 @@ const HEIGHT_MD = 330
 
 type $TSFixMe = any
 
-export default function Dashboard(props: $TSFixMe): JSX.Element {
+export default function Dashboard(props: $TSFixMe) {
   const isNoFiles = props.totalFileCount === 0
   const isSingleFile = props.totalFileCount === 1
   const isSizeMD = props.containerWidth > WIDTH_MD
@@ -170,11 +170,9 @@ export default function Dashboard(props: $TSFixMe): JSX.Element {
             showFileList ?
               <FileList
                 id={props.id}
-                error={props.error}
                 i18n={props.i18n}
                 uppy={props.uppy}
                 files={props.files}
-                acquirers={props.acquirers}
                 resumableUploads={props.resumableUploads}
                 hideRetryButton={props.hideRetryButton}
                 hidePauseResumeButton={props.hidePauseResumeButton}
@@ -183,7 +181,6 @@ export default function Dashboard(props: $TSFixMe): JSX.Element {
                 showRemoveButtonAfterComplete={
                   props.showRemoveButtonAfterComplete
                 }
-                isWide={props.isWide}
                 metaFields={props.metaFields}
                 toggleFileCard={props.toggleFileCard}
                 handleRequestThumbnail={props.handleRequestThumbnail}
@@ -195,6 +192,8 @@ export default function Dashboard(props: $TSFixMe): JSX.Element {
                 toggleAddFilesPanel={props.toggleAddFilesPanel}
                 isSingleFile={isSingleFile}
                 itemsPerRow={itemsPerRow}
+                containerWidth={props.containerWidth}
+                containerHeight={props.containerHeight}
               />
               // eslint-disable-next-line react/jsx-props-no-spreading
             : <AddFiles {...props} isSizeMD={isSizeMD} />

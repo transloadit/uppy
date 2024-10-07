@@ -7,7 +7,7 @@ import {
   type State,
 } from '@uppy/core'
 import type { ComponentChild, VNode } from 'preact'
-import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin'
+import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin.js'
 import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
 import StatusBar from '@uppy/status-bar'
 import Informer from '@uppy/informer'
@@ -101,7 +101,7 @@ interface TargetWithRender extends Target {
   render: () => ComponentChild
 }
 
-interface DashboardState<M extends Meta, B extends Body> {
+export interface DashboardState<M extends Meta, B extends Body> {
   targets: Target[]
   activePickerPanel: Target | undefined
   showAddFilesPanel: boolean
@@ -131,15 +131,13 @@ export interface DashboardInlineOptions {
 interface DashboardMiscOptions<M extends Meta, B extends Body>
   extends UIPluginOptions {
   autoOpen?: 'metaEditor' | 'imageEditor' | null
-  /** @deprecated use option autoOpen instead */
-  autoOpenFileEditor?: boolean
   defaultPickerIcon?: typeof defaultPickerIcon
   disabled?: boolean
   disableInformer?: boolean
   disableLocalFiles?: boolean
   disableStatusBar?: boolean
   disableThumbnailGenerator?: boolean
-  doneButtonHandler?: () => void
+  doneButtonHandler?: null | (() => void)
   fileManagerSelectionType?: 'files' | 'folders' | 'both'
   hideCancelButton?: boolean
   hidePauseResumeButton?: boolean
@@ -166,7 +164,7 @@ interface DashboardMiscOptions<M extends Meta, B extends Body>
   thumbnailHeight?: number
   thumbnailType?: string
   thumbnailWidth?: number
-  trigger?: string
+  trigger?: string | Element
   waitForThumbnailsBeforeUpload?: boolean
 }
 
@@ -211,14 +209,13 @@ const defaultOptions = {
   showNativeVideoCameraButton: false,
   theme: 'light',
   autoOpen: null,
-  autoOpenFileEditor: false,
   disabled: false,
   disableLocalFiles: false,
 
   // Dynamic default options, they have to be defined in the constructor (because
   // they require access to the `this` keyword), but we still want them to
   // appear in the default options so TS knows they'll be defined.
-  doneButtonHandler: null as any,
+  doneButtonHandler: undefined as any,
   onRequestCloseModal: null as any,
 } satisfies Partial<DashboardOptions<any, any>>
 
@@ -262,19 +259,8 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     typeof setTimeout
   >
 
-  private removeDragOverClassTimeout!: ReturnType<typeof setTimeout>
-
   constructor(uppy: Uppy<M, B>, opts?: DashboardOptions<M, B>) {
-    // support for the legacy `autoOpenFileEditor` option,
-    // TODO: we can remove this code when we update the Uppy major version
-    let autoOpen: DashboardOptions<M, B>['autoOpen']
-    if (!opts) {
-      autoOpen = null
-    } else if (opts.autoOpen === undefined) {
-      autoOpen = opts.autoOpenFileEditor ? 'imageEditor' : null
-    } else {
-      autoOpen = opts.autoOpen
-    }
+    const autoOpen = opts?.autoOpen ?? null
     super(uppy, { ...defaultOptions, ...opts, autoOpen })
     this.id = this.opts.id || 'Dashboard'
     this.title = 'Dashboard'
@@ -283,9 +269,13 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     this.defaultLocale = locale
 
     // Dynamic default options:
-    this.opts.doneButtonHandler ??= () => {
-      this.uppy.clearUploadedFiles()
-      this.requestCloseModal()
+    if (this.opts.doneButtonHandler === undefined) {
+      // `null` means "do not display a Done button", while `undefined` means
+      // "I want the default behavior". For this reason, we need to differentiate `null` and `undefined`.
+      this.opts.doneButtonHandler = () => {
+        this.uppy.clear()
+        this.requestCloseModal()
+      }
     }
     this.opts.onRequestCloseModal ??= () => this.closeModal()
 
@@ -821,7 +811,6 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
       !this.uppy.getState().allowNewUpload
     ) {
       event.dataTransfer!.dropEffect = 'none' // eslint-disable-line no-param-reassign
-      clearTimeout(this.removeDragOverClassTimeout)
       return
     }
 
@@ -830,7 +819,6 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     // browser, https://github.com/transloadit/uppy/issues/1978).
     event.dataTransfer!.dropEffect = 'copy' // eslint-disable-line no-param-reassign
 
-    clearTimeout(this.removeDragOverClassTimeout)
     this.setPluginState({ isDraggingOver: true })
 
     this.opts.onDragOver?.(event)
@@ -840,12 +828,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     event.preventDefault()
     event.stopPropagation()
 
-    clearTimeout(this.removeDragOverClassTimeout)
-    // Timeout against flickering, this solution is taken from drag-drop library.
-    // Solution with 'pointer-events: none' didn't work across browsers.
-    this.removeDragOverClassTimeout = setTimeout(() => {
-      this.setPluginState({ isDraggingOver: false })
-    }, 50)
+    this.setPluginState({ isDraggingOver: false })
 
     this.opts.onDragLeave?.(event)
   }
@@ -853,8 +836,6 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
   private handleDrop = async (event: DragEvent) => {
     event.preventDefault()
     event.stopPropagation()
-
-    clearTimeout(this.removeDragOverClassTimeout)
 
     this.setPluginState({ isDraggingOver: false })
 
@@ -1148,7 +1129,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
       .map(this.#attachRenderFunctionToTarget)
   })
 
-  render = (state: State<M, B>): JSX.Element => {
+  render = (state: State<M, B>) => {
     const pluginState = this.getPluginState()
     const { files, capabilities, allowNewUpload } = state
     const {
@@ -1162,7 +1143,6 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
 
       isUploadStarted,
       isAllComplete,
-      isAllErrored,
       isAllPaused,
     } = this.uppy.getObjectOfFilesPerState()
 
@@ -1201,7 +1181,6 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
       processingFiles,
       isUploadStarted,
       isAllComplete,
-      isAllErrored,
       isAllPaused,
       totalFileCount: Object.keys(files).length,
       totalProgress: state.totalProgress,
@@ -1257,7 +1236,6 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
       containerWidth: pluginState.containerWidth,
       containerHeight: pluginState.containerHeight,
       areInsidesReadyToBeVisible: pluginState.areInsidesReadyToBeVisible,
-      isTargetDOMEl: this.isTargetDOMEl,
       parentElement: this.el,
       allowedFileTypes: this.uppy.opts.restrictions.allowedFileTypes,
       maxNumberOfFiles: this.uppy.opts.restrictions.maxNumberOfFiles,
@@ -1312,6 +1290,76 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     }
   }
 
+  #getStatusBarOpts() {
+    const {
+      hideUploadButton,
+      hideRetryButton,
+      hidePauseResumeButton,
+      hideCancelButton,
+      showProgressDetails,
+      hideProgressAfterFinish,
+      locale: l,
+      doneButtonHandler,
+    } = this.opts
+    return {
+      hideUploadButton,
+      hideRetryButton,
+      hidePauseResumeButton,
+      hideCancelButton,
+      showProgressDetails,
+      hideAfterFinish: hideProgressAfterFinish,
+      locale: l,
+      doneButtonHandler,
+    }
+  }
+
+  #getThumbnailGeneratorOpts() {
+    const {
+      thumbnailWidth,
+      thumbnailHeight,
+      thumbnailType,
+      waitForThumbnailsBeforeUpload,
+    } = this.opts
+    return {
+      thumbnailWidth,
+      thumbnailHeight,
+      thumbnailType,
+      waitForThumbnailsBeforeUpload,
+      // If we don't block on thumbnails, we can lazily generate them
+      lazy: !waitForThumbnailsBeforeUpload,
+    }
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  #getInformerOpts() {
+    return {
+      // currently no options
+    }
+  }
+
+  setOptions(opts: Partial<DashboardOptions<M, B>>) {
+    super.setOptions(opts)
+    this.uppy
+      .getPlugin(this.#getStatusBarId())
+      ?.setOptions(this.#getStatusBarOpts())
+
+    this.uppy
+      .getPlugin(this.#getThumbnailGeneratorId())
+      ?.setOptions(this.#getThumbnailGeneratorOpts())
+  }
+
+  #getStatusBarId() {
+    return `${this.id}:StatusBar`
+  }
+
+  #getThumbnailGeneratorId() {
+    return `${this.id}:ThumbnailGenerator`
+  }
+
+  #getInformerId() {
+    return `${this.id}:Informer`
+  }
+
   install = (): void => {
     // Set default state for Dashboard
     this.setPluginState({
@@ -1354,35 +1402,24 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
 
     if (!this.opts.disableStatusBar) {
       this.uppy.use(StatusBar, {
-        id: `${this.id}:StatusBar`,
+        id: this.#getStatusBarId(),
         target: this,
-        hideUploadButton: this.opts.hideUploadButton,
-        hideRetryButton: this.opts.hideRetryButton,
-        hidePauseResumeButton: this.opts.hidePauseResumeButton,
-        hideCancelButton: this.opts.hideCancelButton,
-        showProgressDetails: this.opts.showProgressDetails,
-        hideAfterFinish: this.opts.hideProgressAfterFinish,
-        locale: this.opts.locale,
-        doneButtonHandler: this.opts.doneButtonHandler,
+        ...this.#getStatusBarOpts(),
       })
     }
 
     if (!this.opts.disableInformer) {
       this.uppy.use(Informer, {
-        id: `${this.id}:Informer`,
+        id: this.#getInformerId(),
         target: this,
+        ...this.#getInformerOpts(),
       })
     }
 
     if (!this.opts.disableThumbnailGenerator) {
       this.uppy.use(ThumbnailGenerator, {
-        id: `${this.id}:ThumbnailGenerator`,
-        thumbnailWidth: this.opts.thumbnailWidth,
-        thumbnailHeight: this.opts.thumbnailHeight,
-        thumbnailType: this.opts.thumbnailType,
-        waitForThumbnailsBeforeUpload: this.opts.waitForThumbnailsBeforeUpload,
-        // If we don't block on thumbnails, we can lazily generate them
-        lazy: !this.opts.waitForThumbnailsBeforeUpload,
+        id: this.#getThumbnailGeneratorId(),
+        ...this.#getThumbnailGeneratorOpts(),
       })
     }
 

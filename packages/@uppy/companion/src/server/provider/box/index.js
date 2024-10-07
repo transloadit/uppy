@@ -34,7 +34,7 @@ class Box extends Provider {
     this.needsCookieAuth = true
   }
 
-  static get authProvider () {
+  static get oauthProvider () {
     return 'box'
   }
 
@@ -119,7 +119,7 @@ class Box extends Provider {
     return withProviderErrorHandling({
       fn,
       tag,
-      providerName: Box.authProvider,
+      providerName: Box.oauthProvider,
       isAuthError: (response) => response.statusCode === 401,
       getJsonErrorMessage: (body) => body?.message,
     })

@@ -1,6 +1,6 @@
 ---
 sidebar_position: 4
-slug: /aws-s3-multipart
+slug: /aws-s3
 ---
 
 import Tabs from '@theme/Tabs';
@@ -41,8 +41,8 @@ milliseconds on uploading.
 
 **In short**
 
-- We recommend to set [`shouldUseMultipart`][] to enable multipart uploads only
-  for large files.
+- We recommend the default value of [`shouldUseMultipart`][], which enable
+  multipart uploads only for large files.
 - If you prefer to have less overhead (+20% upload speed) you can use temporary
   S3 credentials with [`getTemporarySecurityCredentials`][]. This means users
   get a single token which allows them to do bucket operations for longer,
@@ -166,9 +166,38 @@ import '@uppy/dashboard/dist/style.min.css';
 const uppy = new Uppy()
 	.use(Dashboard, { inline: true, target: 'body' })
 	.use(AwsS3, {
-		shouldUseMultipart: (file) => file.size > 100 * 2 ** 20,
-		companionUrl: 'https://companion.uppy.io',
+		endpoint: 'https://companion.uppy.io',
 	});
+```
+
+### Use with TypeScript
+
+Uppy always puts the response to an upload in `file.response.body`. If you want
+this to be type safe with `@uppy/aws-s3`, you can import the `AwsBody` type and
+pass it as the second genric to `Uppy`.
+
+```ts {3,12} showLineNumbers
+import Uppy from '@uppy/core';
+import Dashboard from '@uppy/dashboard';
+import AwsS3, { type AwsBody } from '@uppy/aws-s3';
+
+import '@uppy/core/dist/style.min.css';
+import '@uppy/dashboard/dist/style.min.css';
+
+// Set this to `any` or `Record<string, unknown>`
+// if you do not set any metadata yourself
+type Meta = { license: string };
+
+const uppy = new Uppy<Meta, AwsBody>()
+	.use(Dashboard, { inline: true, target: 'body' })
+	.use(AwsS3, { endpoint: '...' });
+
+const id = uppy.addFile(/* ... */);
+
+await uppy.upload();
+
+const body = uppy.getFile(id).response.body!;
+const { location } = body; // This is now type safe
 ```
 
 ## API
@@ -177,21 +206,11 @@ const uppy = new Uppy()
 
 #### `shouldUseMultipart(file)`
 
-:::warning
-
-Until the next major version, not setting this option uses the
-[legacy version of this plugin](../aws-s3/). This is a suboptimal experience for
-some of your user’s uploads. It’s best for speed and stability to upload large
-(100&nbsp;MiB+) files with multipart and small files with regular uploads.
-
-:::
-
 A boolean, or a function that returns a boolean which is called for each file
 that is uploaded with the corresponding `UppyFile` instance as argument.
 
-By default, all files are uploaded as multipart. In a future version, all files
-with a `file.size` ≤ 100&nbsp;MiB will be uploaded in a single chunk, all files
-larger than that as multipart.
+By default, all files with a `file.size` ≤ 100&nbsp;MiB will be uploaded in a
+single chunk, all files larger than that as multipart.
 
 Here’s how to use it:
 
@@ -226,22 +245,23 @@ uploaded.
 
 :::
 
-#### `companionUrl`
+#### `endpoint`
 
-URL to a [Companion](/docs/companion) instance (`string`, default: `null`).
+URL to your backend or to [Companion](/docs/companion) (`string`, default:
+`null`).
 
-#### `companionHeaders`
+#### `headers`
 
-Custom headers that should be sent along to [Companion](/docs/companion) on
-every request (`Object`, default: `{}`).
+Custom headers that should be sent along to the [`endpoint`](#endpoint) on every
+request (`Object`, default: `{}`).
 
-#### `companionCookiesRule`
+#### `cookiesRule`
 
 This option correlates to the
 [RequestCredentials value](https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials)
 (`string`, default: `'same-origin'`).
 
-This tells the plugin whether to send cookies to [Companion](/docs/companion).
+This tells the plugin whether to send cookies to the [`endpoint`](#endpoint).
 
 #### `retryDelays`
 
@@ -254,12 +274,12 @@ disable automatic retries, and fail instantly if any chunk fails to upload.
 #### `getChunkSize(file)`
 
 A function that returns the minimum chunk size to use when uploading the given
-file.
+file as multipart.
 
-The S3 Multipart plugin uploads files in chunks. Chunks are sent in batches to
-have presigned URLs generated with [`signPart()`](#signpartfile-partdata). To
-reduce the amount of requests for large files, you can choose a larger chunk
-size, at the cost of having to re-upload more data if one chunk fails to upload.
+For multipart uploads, chunks are sent in batches to have presigned URLs
+generated with [`signPart()`](#signpartfile-partdata). To reduce the amount of
+requests for large files, you can choose a larger chunk size, at the cost of
+having to re-upload more data if one chunk fails to upload.
 
 S3 requires a minimum chunk size of 5MiB, and supports at most 10,000 chunks per
 multipart upload. If `getChunkSize()` returns a size that’s too small, Uppy will
@@ -397,63 +417,9 @@ The default implementation calls out to Companion’s S3 signing endpoints.
 Pass an array of field names to limit the metadata fields that will be added to
 upload as query parameters.
 
-- Set this to `['name']` to only send the `name` field.
-- Set this to `null` (the default) to send _all_ metadata fields.
-- Set this to an empty array `[]` to not send any fields.
-
-<details>
-<summary>Deprecated options</summary>
-
-#### `prepareUploadParts(file, partData)`
-
-A function that generates a batch of signed URLs for the specified part numbers.
-
-Receives the `file` object from Uppy’s state. The `partData` argument is an
-object with keys:
-
-- `uploadId` - The UploadID of this Multipart upload.
-- `key` - The object key in the S3 bucket.
-- `parts` - An array of objects with the part number and chunk
-  (`Array<{ number: number, chunk: blob }>`). `number` can’t be zero.
-
-`prepareUploadParts` should return a `Promise` with an `Object` with keys:
-
-- `presignedUrls` - A JavaScript object with the part numbers as keys and the
-  presigned URL for each part as the value.
-- `headers` - **(Optional)** Custom headers to send along with every request per
-  part (`{ 1: { 'Content-MD5': 'hash' }}`). These are (1-based) indexed by part
-  number too so you can for instance send the MD5 hash validation for each part
-  to S3.
-
-An example of what the return value should look like:
-
-```json
-{
-	"presignedUrls": {
-		"1": "https://bucket.region.amazonaws.com/path/to/file.jpg?partNumber=1&...",
-		"2": "https://bucket.region.amazonaws.com/path/to/file.jpg?partNumber=2&...",
-		"3": "https://bucket.region.amazonaws.com/path/to/file.jpg?partNumber=3&..."
-	},
-	"headers": {
-		"1": { "Content-MD5": "foo" },
-		"2": { "Content-MD5": "bar" },
-		"3": { "Content-MD5": "baz" }
-	}
-}
-```
-
-If an error occurred, reject the `Promise` with an `Object` with the following
-keys:
-
-```json
-{ "source": { "status": 500 } }
-```
-
-`status` is the HTTP code and is required for determining whether to retry the
-request. `prepareUploadParts` will be retried if the code is `0`, `409`, `423`,
-or between `500` and `600`.
-
-</details>
+- Set it to `false` to not send any fields (or an empty array).
+- Set it to `['name']` to only send the `name` field.
+- Set it to `true` (the default) to send _all_ metadata fields.
 
 #### `getTemporarySecurityCredentials(options)`
 
@@ -494,7 +460,7 @@ upload sources), you can pass a boolean:
 ```js
 uppy.use(AwsS3, {
 	// This is an example using Companion:
-	companionUrl: 'http://companion.uppy.io',
+	endpoint: 'http://companion.uppy.io',
 	getTemporarySecurityCredentials: true,
 	shouldUseMultipart: (file) => file.size > 100 * 2 ** 20,
 });

@@ -1,7 +1,7 @@
 {
   "name": "@uppy/aws-s3",
   "description": "Upload to Amazon S3 with Uppy",
-  "version": "4.0.0-beta.2",
+  "version": "4.1.0",
   "license": "MIT",
   "main": "lib/index.js",
   "type": "module",
@@ -35,6 +35,5 @@
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^"
-  },
-  "stableVersion": "3.6.2"
+  }
 }

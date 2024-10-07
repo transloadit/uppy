@@ -1,7 +1,7 @@
 import { createAbortError } from '@uppy/utils/lib/AbortController'
-import type { Body as _Body } from '@uppy/utils/lib/UppyFile'
+import type { Body } from '@uppy/utils/lib/UppyFile'
 
-import type { AwsS3Part } from './index'
+import type { AwsS3Part } from './index.ts'
 
 export function throwIfAborted(signal?: AbortSignal | null): void {
   if (signal?.aborted) {
@@ -23,6 +23,6 @@ export type UploadPartBytesResult = {
   location?: string
 }
 
-export interface Body extends _Body {
+export interface AwsBody extends Body {
   location: string
 }

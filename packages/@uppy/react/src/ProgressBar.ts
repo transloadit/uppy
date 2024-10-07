@@ -17,9 +17,9 @@ interface ProgressBarProps<M extends Meta, B extends Body>
 class ProgressBar<M extends Meta, B extends Body> extends Component<
   ProgressBarProps<M, B>
 > {
-  private container: HTMLElement
+  private container!: HTMLElement
 
-  private plugin: UnknownPlugin<M, B>
+  private plugin!: UnknownPlugin<M, B>
 
   componentDidMount(): void {
     this.installPlugin()
@@ -42,9 +42,9 @@ class ProgressBar<M extends Meta, B extends Body> extends Component<
   }
 
   installPlugin(): void {
-    const { uppy, fixed, hideAfterFinish } = this.props
+    const { uppy, fixed, hideAfterFinish, id } = this.props
     const options = {
-      id: 'react:ProgressBar',
+      id: id || 'ProgressBar',
       fixed,
       hideAfterFinish,
       target: this.container,
@@ -61,7 +61,8 @@ class ProgressBar<M extends Meta, B extends Body> extends Component<
     uppy.removePlugin(this.plugin)
   }
 
-  render(): JSX.Element {
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+  render() {
     return h('div', {
       className: 'uppy-Container',
       ref: (container: HTMLElement) => {

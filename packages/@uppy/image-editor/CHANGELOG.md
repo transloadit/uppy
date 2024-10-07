@@ -1,5 +1,34 @@
 # @uppy/image-editor
 
+## 3.1.0
+
+Released: 2024-08-29
+Included in: Uppy v4.3.0
+
+- @uppy/aws-s3,@uppy/box,@uppy/compressor,@uppy/dropbox,@uppy/facebook,@uppy/google-drive,@uppy/google-photos,@uppy/image-editor,@uppy/informer,@uppy/instagram,@uppy/onedrive,@uppy/screen-capture,@uppy/tus,@uppy/unsplash,@uppy/url,@uppy/xhr-upload,@uppy/zoom: export plugin options (Antoine du Hamel / #5433)
+
+## 3.0.0-beta.2
+
+Released: 2024-04-29
+Included in: Uppy v4.0.0-beta.4
+
+- @uppy/image-editor: fix label definitions (Antoine du Hamel / #5111)
+
+## 2.4.6
+
+Released: 2024-05-14
+Included in: Uppy v3.25.3
+
+- @uppy/image-editor: fix tooltips (Avneet Singh Malhotra / #5156)
+- @uppy/image-editor: Remove `target` option from examples and document consistently (Merlijn Vos / #5146)
+
+## 2.4.5
+
+Released: 2024-04-29
+Included in: Uppy v3.25.0
+
+- @uppy/image-editor: fix label definitions (Antoine du Hamel / #5111)
+
 ## 2.4.4
 
 Released: 2024-02-28

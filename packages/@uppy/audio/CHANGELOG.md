@@ -1,5 +1,27 @@
 # @uppy/audio
 
+## 2.0.1
+
+Released: 2024-07-30
+Included in: Uppy v4.1.0
+
+- @uppy/audio,@uppy/webcam: Don't use `<h1>` in Uppy markup (Evgenia Karunus / #5355)
+
+## 2.0.0-beta.6
+
+Released: 2024-06-04
+Included in: Uppy v4.0.0-beta.10
+
+- @uppy/audio: remove unused component props (Antoine du Hamel / #5209)
+- @uppy/audio: move internal property to private field (Antoine du Hamel / #5207)
+
+## 2.0.0-beta.5
+
+Released: 2024-05-03
+Included in: Uppy v4.0.0-beta.5
+
+- @uppy/audio,@uppy/compressor,@uppy/core,@uppy/dashboard,@uppy/remote-sources,@uppy/tus,@uppy/utils: Format (Murderlon)
+
 ## 2.0.0-beta.1
 
 Released: 2024-03-28

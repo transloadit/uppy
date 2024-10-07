@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [main, 4.x]
+    branches: [main]
     paths-ignore:
       - '**.md'
       - 'assets/**'
@@ -37,7 +37,7 @@ jobs:
         node-version: [18.x, 20.x]
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run:
@@ -70,7 +70,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run:

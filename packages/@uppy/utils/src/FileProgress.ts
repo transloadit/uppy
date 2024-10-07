@@ -12,6 +12,7 @@ export type FileProcessingInfo =
   | IndeterminateFileProcessing
   | DeterminateFileProcessing
 
+// TODO explore whether all of these properties need to be optional
 interface FileProgressBase {
   uploadComplete?: boolean
   percentage?: number
@@ -28,7 +29,6 @@ export type FileProgressStarted = FileProgressBase & {
 }
 export type FileProgressNotStarted = FileProgressBase & {
   uploadStarted: null
-  // TODO: remove `|0` (or maybe `false|`?)
-  bytesUploaded: false | 0
+  bytesUploaded: false
 }
 export type FileProgress = FileProgressStarted | FileProgressNotStarted

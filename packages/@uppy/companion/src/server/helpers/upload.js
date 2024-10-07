@@ -4,14 +4,22 @@ const { respondWithError } = require('../provider/error')
 
 async function startDownUpload({ req, res, getSize, download }) {
   try {
-    const size = await getSize()
+    logger.debug('Starting download stream.', null, req.id)
+    const { stream, size: maybeSize } = await download()
+
+    let size
+    // if the provider already knows the size, we can use that
+    if (typeof maybeSize === 'number' && !Number.isNaN(maybeSize) && maybeSize > 0) {
+      size = maybeSize
+    }
+    // if not we need to get the size
+    if (size == null) {
+      size = await getSize()
+    }
     const { clientSocketConnectTimeout } = req.companion.options
 
     logger.debug('Instantiating uploader.', null, req.id)
     const uploader = new Uploader(Uploader.reqToOptions(req, size))
-
-    logger.debug('Starting download stream.', null, req.id)
-    const stream = await download()
 
       // "Forking" off the upload operation to background, so we can return the http request:
       ; (async () => {
@@ -21,7 +29,7 @@ async function startDownUpload({ req, res, getSize, download }) {
         await uploader.awaitReady(clientSocketConnectTimeout)
         logger.debug('Socket connection received. Starting remote download/upload.', null, req.id)
 
-        await uploader.tryUploadStream(stream)
+        await uploader.tryUploadStream(stream, req)
       })().catch((err) => logger.error(err))
 
     // Respond the request

@@ -1,4 +1,5 @@
 import { createElement as h, Component } from 'react'
+import type React from 'react'
 import type { UnknownPlugin, Uppy } from '@uppy/core'
 import DashboardPlugin from '@uppy/dashboard'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
@@ -25,9 +26,9 @@ export interface DashboardProps<M extends Meta, B extends Body>
 class Dashboard<M extends Meta, B extends Body> extends Component<
   DashboardProps<M, B>
 > {
-  private container: HTMLElement
+  private container!: HTMLElement
 
-  private plugin: UnknownPlugin<M, B>
+  private plugin!: UnknownPlugin<M, B>
 
   componentDidMount(): void {
     this.installPlugin()
@@ -51,9 +52,9 @@ class Dashboard<M extends Meta, B extends Body> extends Component<
 
   installPlugin(): void {
     const { uppy, ...options } = {
-      id: 'react:Dashboard',
-      inline: true,
+      id: 'Dashboard',
       ...this.props,
+      inline: true,
       target: this.container,
     }
     uppy.use(DashboardPlugin<M, B>, options)
@@ -67,7 +68,8 @@ class Dashboard<M extends Meta, B extends Body> extends Component<
     uppy.removePlugin(this.plugin)
   }
 
-  render(): JSX.Element {
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+  render() {
     return h('div', {
       className: 'uppy-Container',
       ref: (container: HTMLElement): void => {

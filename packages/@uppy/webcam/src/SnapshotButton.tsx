@@ -10,7 +10,7 @@ interface SnapshotButtonProps {
 export default function SnapshotButton({
   onSnapshot,
   i18n,
-}: SnapshotButtonProps): JSX.Element {
+}: SnapshotButtonProps) {
   return (
     <button
       className="uppy-u-reset uppy-c-btn uppy-Webcam-button uppy-Webcam-button--picture"

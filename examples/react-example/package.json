@@ -5,11 +5,8 @@
   "dependencies": {
     "@uppy/core": "workspace:*",
     "@uppy/dashboard": "workspace:*",
-    "@uppy/drag-drop": "workspace:*",
-    "@uppy/file-input": "workspace:*",
-    "@uppy/google-drive": "workspace:*",
-    "@uppy/progress-bar": "workspace:*",
     "@uppy/react": "workspace:*",
+    "@uppy/remote-sources": "workspace:*",
     "@uppy/tus": "workspace:*",
     "react": "^18.0.0",
     "react-dom": "^18.0.0"
@@ -22,6 +19,6 @@
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.0.0",
-    "vite": "^5.0.0"
+    "vite": "^5.3.6"
   }
 }

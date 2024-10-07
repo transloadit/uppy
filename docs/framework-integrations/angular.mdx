@@ -11,7 +11,7 @@ import TabItem from '@theme/TabItem';
 
 ## When should I use it?
 
-When you are using the Angular framework and you wouldl like to use on of the UI
+When you are using the Angular framework and you would like to use one of the UI
 components.
 
 ## Install
@@ -48,10 +48,16 @@ instance can be passed into components as a `props` prop.
 
 The following plugins are available as Angular component wrappers:
 
-- `<uppy-dashboard />` renders [`@uppy/dashboard`](/docs/dashboard)
-- `<uppy-drag-drop />` renders [`@uppy/drag-drop`](/docs/drag-drop)
-- `<uppy-progress-bar />` renders [`@uppy/progress-bar`](/docs/progress-bar)
-- `<uppy-status-bar />` renders [`@uppy/status-bar`](/docs/status-bar)
+- Import `UppyAngularDashboardModule` used as `<uppy-dashboard>` renders
+  [`@uppy/dashboard`](/docs/dashboard)
+- Import `UppyAngularDashboardModalModule` used as `<uppy-dashboard-modal>`
+  renders [`@uppy/dashboard`](/docs/dashboard) as a modal
+- Import `UppyAngularProgressBarModule` used as `<uppy-progress-bar>` renders
+  [`@uppy/progress-bar`](/docs/progress-bar)
+- Import `UppyAngularStatusBarModule` used as `<uppy-status-bar>` renders
+  [`@uppy/status-bar`](/docs/status-bar)
+- Import `UppyAngularDragDropModule` used as `<uppy-drag-drop>` renders
+  [`@uppy/drag-drop`](/docs/drag-drop)
 
 Each component takes a `props` prop that will be passed to the UI Plugin.
 
@@ -96,8 +102,11 @@ decorator. You can find the CSS import statements in the docs of the UI plugin
 you want to use. For instance, for `@uppy/dashboard`:
 
 ```typescript
+import { Component, ViewEncapsulation } from '@angular/core';
+//...
 @Component({
   // ...
+  encapsulation: ViewEncapsulation.None,
   styleUrls: [
     '../node_modules/@uppy/core/dist/style.css',
     '../node_modules/@uppy/dashboard/dist/style.css',

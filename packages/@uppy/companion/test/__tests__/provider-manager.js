@@ -5,7 +5,7 @@ const { setDefaultEnv } = require('../mockserver')
 let grantConfig
 let companionOptions
 
-const getAuthProvider = (providerName) => providerManager.getDefaultProviders()[providerName]?.authProvider
+const getOauthProvider = (providerName) => providerManager.getDefaultProviders()[providerName]?.oauthProvider
 
 describe('Test Provider options', () => {
   beforeEach(() => {
@@ -16,15 +16,18 @@ describe('Test Provider options', () => {
   })
 
   test('adds provider options', () => {
-    providerManager.addProviderOptions(companionOptions, grantConfig, getAuthProvider)
+    providerManager.addProviderOptions(companionOptions, grantConfig, getOauthProvider)
     expect(grantConfig.dropbox.key).toBe('dropbox_key')
     expect(grantConfig.dropbox.secret).toBe('dropbox_secret')
 
     expect(grantConfig.box.key).toBe('box_key')
     expect(grantConfig.box.secret).toBe('box_secret')
 
-    expect(grantConfig.google.key).toBe('google_key')
-    expect(grantConfig.google.secret).toBe('google_secret')
+    expect(grantConfig.googledrive.key).toBe('google_key')
+    expect(grantConfig.googledrive.secret).toBe('google_secret')
+
+    expect(grantConfig.googlephotos.key).toBe('google_key')
+    expect(grantConfig.googledrive.secret).toBe('google_secret')
 
     expect(grantConfig.instagram.key).toBe('instagram_key')
     expect(grantConfig.instagram.secret).toBe('instagram_secret')
@@ -35,7 +38,7 @@ describe('Test Provider options', () => {
 
   test('adds extra provider config', () => {
     process.env.COMPANION_INSTAGRAM_KEY = '123456'
-    providerManager.addProviderOptions(getCompanionOptions(), grantConfig, getAuthProvider)
+    providerManager.addProviderOptions(getCompanionOptions(), grantConfig, getOauthProvider)
     expect(grantConfig.instagram).toEqual({
       transport: 'session',
       callback: '/instagram/callback',
@@ -69,7 +72,12 @@ describe('Test Provider options', () => {
       callback: '/box/callback',
     })
 
-    expect(grantConfig.google).toEqual({
+    expect(grantConfig.googledrive).toEqual({
+      access_url: "https://oauth2.googleapis.com/token",
+      authorize_url: "https://accounts.google.com/o/oauth2/v2/auth",
+      oauth: 2,
+      scope_delimiter: " ",
+
       key: 'google_key',
       secret: 'google_secret',
       transport: 'session',
@@ -83,6 +91,25 @@ describe('Test Provider options', () => {
         prompt: 'consent',
       },
     })
+
+    expect(grantConfig.googlephotos).toEqual({
+      access_url: "https://oauth2.googleapis.com/token",
+      authorize_url: "https://accounts.google.com/o/oauth2/v2/auth",
+      oauth: 2,
+      scope_delimiter: " ",
+
+      key: 'google_key',
+      secret: 'google_secret',
+      transport: 'session',
+      redirect_uri: 'http://localhost:3020/googlephotos/redirect',
+      scope: ['https://www.googleapis.com/auth/photoslibrary.readonly', 'https://www.googleapis.com/auth/userinfo.email'],
+      callback: '/googlephotos/callback',
+      custom_params: {
+        access_type: 'offline',
+        prompt: 'consent',
+      },
+    })
+
     expect(grantConfig.zoom).toEqual({
       key: 'zoom_key',
       secret: 'zoom_secret',
@@ -104,11 +131,12 @@ describe('Test Provider options', () => {
 
     companionOptions = getCompanionOptions()
 
-    providerManager.addProviderOptions(companionOptions, grantConfig, getAuthProvider)
+    providerManager.addProviderOptions(companionOptions, grantConfig, getOauthProvider)
 
     expect(grantConfig.dropbox.secret).toBe('xobpord')
     expect(grantConfig.box.secret).toBe('xwbepqd')
-    expect(grantConfig.google.secret).toBe('elgoog')
+    expect(grantConfig.googledrive.secret).toBe('elgoog')
+    expect(grantConfig.googlephotos.secret).toBe('elgoog')
     expect(grantConfig.instagram.secret).toBe('margatsni')
     expect(grantConfig.zoom.secret).toBe('u8Z5ceq')
     expect(companionOptions.providerOptions.zoom.verificationToken).toBe('o0u8Z5c')
@@ -118,15 +146,18 @@ describe('Test Provider options', () => {
     delete companionOptions.server.host
     delete companionOptions.server.protocol
 
-    providerManager.addProviderOptions(companionOptions, grantConfig, getAuthProvider)
+    providerManager.addProviderOptions(companionOptions, grantConfig, getOauthProvider)
     expect(grantConfig.dropbox.key).toBeUndefined()
     expect(grantConfig.dropbox.secret).toBeUndefined()
 
     expect(grantConfig.box.key).toBeUndefined()
     expect(grantConfig.box.secret).toBeUndefined()
 
-    expect(grantConfig.google.key).toBeUndefined()
-    expect(grantConfig.google.secret).toBeUndefined()
+    expect(grantConfig.googledrive.key).toBeUndefined()
+    expect(grantConfig.googledrive.secret).toBeUndefined()
+
+    expect(grantConfig.googlephotos.key).toBeUndefined()
+    expect(grantConfig.googlephotos.secret).toBeUndefined()
 
     expect(grantConfig.instagram.key).toBeUndefined()
     expect(grantConfig.instagram.secret).toBeUndefined()
@@ -137,11 +168,12 @@ describe('Test Provider options', () => {
 
   test('sets a main redirect uri, if oauthDomain is set', () => {
     companionOptions.server.oauthDomain = 'domain.com'
-    providerManager.addProviderOptions(companionOptions, grantConfig, getAuthProvider)
+    providerManager.addProviderOptions(companionOptions, grantConfig, getOauthProvider)
 
     expect(grantConfig.dropbox.redirect_uri).toBe('http://domain.com/dropbox/redirect')
     expect(grantConfig.box.redirect_uri).toBe('http://domain.com/box/redirect')
-    expect(grantConfig.google.redirect_uri).toBe('http://domain.com/drive/redirect')
+    expect(grantConfig.googledrive.redirect_uri).toBe('http://domain.com/drive/redirect')
+    expect(grantConfig.googlephotos.redirect_uri).toBe('http://domain.com/googlephotos/redirect')
     expect(grantConfig.instagram.redirect_uri).toBe('http://domain.com/instagram/redirect')
     expect(grantConfig.zoom.redirect_uri).toBe('http://domain.com/zoom/redirect')
   })
@@ -156,7 +188,7 @@ describe('Test Custom Provider options', () => {
           key: 'foo_key',
           secret: 'foo_secret',
         },
-        module: { authProvider: 'some_provider' },
+        module: { oauthProvider: 'some_provider' },
       },
     }, providers, grantConfig)
 

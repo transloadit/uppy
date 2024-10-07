@@ -1,4 +1,4 @@
-import type { Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
+import type { Meta, Body, UppyFile } from '@uppy/utils/lib/UppyFile'
 import type {
   RateLimitedQueue,
   WrapPromiseFunctionType,
@@ -6,7 +6,7 @@ import type {
 import { pausingUploadReason, type Chunk } from './MultipartUploader.ts'
 import type AwsS3Multipart from './index.ts'
 import { throwIfAborted } from './utils.ts'
-import type { Body, UploadPartBytesResult, UploadResult } from './utils.ts'
+import type { UploadPartBytesResult, UploadResult } from './utils.ts'
 import type { AwsS3MultipartOptions, uploadPartBytes } from './index.ts'
 
 function removeMetadataFromURL(urlString: string) {
@@ -17,37 +17,37 @@ function removeMetadataFromURL(urlString: string) {
 }
 
 export class HTTPCommunicationQueue<M extends Meta, B extends Body> {
-  #abortMultipartUpload: WrapPromiseFunctionType<
+  #abortMultipartUpload!: WrapPromiseFunctionType<
     AwsS3Multipart<M, B>['abortMultipartUpload']
   >
 
   #cache = new WeakMap()
 
-  #createMultipartUpload: WrapPromiseFunctionType<
+  #createMultipartUpload!: WrapPromiseFunctionType<
     AwsS3Multipart<M, B>['createMultipartUpload']
   >
 
-  #fetchSignature: WrapPromiseFunctionType<AwsS3Multipart<M, B>['signPart']>
+  #fetchSignature!: WrapPromiseFunctionType<AwsS3Multipart<M, B>['signPart']>
 
-  #getUploadParameters: WrapPromiseFunctionType<
+  #getUploadParameters!: WrapPromiseFunctionType<
     AwsS3Multipart<M, B>['getUploadParameters']
   >
 
-  #listParts: WrapPromiseFunctionType<AwsS3Multipart<M, B>['listParts']>
+  #listParts!: WrapPromiseFunctionType<AwsS3Multipart<M, B>['listParts']>
 
-  #previousRetryDelay: number
+  #previousRetryDelay!: number
 
   #requests
 
-  #retryDelays: { values: () => Iterator<number> }
+  #retryDelays!: { values: () => Iterator<number> }
 
-  #sendCompletionRequest: WrapPromiseFunctionType<
+  #sendCompletionRequest!: WrapPromiseFunctionType<
     AwsS3Multipart<M, B>['completeMultipartUpload']
   >
 
   #setS3MultipartState
 
-  #uploadPartBytes: WrapPromiseFunctionType<uploadPartBytes>
+  #uploadPartBytes!: WrapPromiseFunctionType<uploadPartBytes>
 
   #getFile
 

@@ -224,10 +224,4 @@ fa_IR.strings = {
   zoomOut: 'کوچک‌نمایی',
 }
 
-// TODO: remove this in the next major?
-// @ts-expect-error Uppy can be a global in legacy bundle
-if (typeof Uppy !== 'undefined') {
-  // @ts-expect-error Uppy can be a global in legacy bundle
-  globalThis.Uppy.locales.fa_IR = fa_IR
-}
 export default fa_IR

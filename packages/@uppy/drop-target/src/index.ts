@@ -1,5 +1,5 @@
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
-import type { Uppy } from '@uppy/core/lib/Uppy'
+import type { Uppy } from '@uppy/core/lib/Uppy.js'
 import type { DefinePluginOpts, PluginOpts } from '@uppy/core/lib/BasePlugin.js'
 import BasePlugin from '@uppy/core/lib/BasePlugin.js'
 import getDroppedFiles from '@uppy/utils/lib/getDroppedFiles'
@@ -42,16 +42,12 @@ export default class DropTarget<
 > {
   static VERSION = packageJson.version
 
-  private removeDragOverClassTimeout: ReturnType<typeof setTimeout>
-
   private nodes?: Array<HTMLElement>
 
   constructor(uppy: Uppy<M, B>, opts?: DropTargetOptions) {
     super(uppy, { ...defaultOpts, ...opts })
     this.type = 'acquirer'
     this.id = this.opts.id || 'DropTarget'
-    // @ts-expect-error TODO: remove in major
-    this.title = 'Drop Target'
   }
 
   addFiles = (files: Array<File>): void => {
@@ -81,7 +77,6 @@ export default class DropTarget<
 
     event.preventDefault()
     event.stopPropagation()
-    clearTimeout(this.removeDragOverClassTimeout)
 
     // Remove dragover class
     ;(event.currentTarget as HTMLElement)?.classList.remove('uppy-is-drag-over')
@@ -129,8 +124,6 @@ export default class DropTarget<
     // (and prevent browsers from interpreting this as files being _moved_ into the browser,
     // https://github.com/transloadit/uppy/issues/1978)
     event.dataTransfer.dropEffect = 'copy' // eslint-disable-line no-param-reassign
-
-    clearTimeout(this.removeDragOverClassTimeout)
     ;(event.currentTarget as HTMLElement).classList.add('uppy-is-drag-over')
     this.setPluginState({ isDraggingOver: true })
     this.opts.onDragOver?.(event)
@@ -144,15 +137,9 @@ export default class DropTarget<
     event.preventDefault()
     event.stopPropagation()
 
-    const { currentTarget } = event
+    this.setPluginState({ isDraggingOver: false })
+    ;(event.currentTarget as HTMLElement)?.classList.remove('uppy-is-drag-over')
 
-    clearTimeout(this.removeDragOverClassTimeout)
-    // Timeout against flickering, this solution is taken from drag-drop library.
-    // Solution with 'pointer-events: none' didn't work across browsers.
-    this.removeDragOverClassTimeout = setTimeout(() => {
-      ;(currentTarget as HTMLElement).classList.remove('uppy-is-drag-over')
-      this.setPluginState({ isDraggingOver: false })
-    }, 50)
     this.opts.onDragLeave?.(event)
   }
 

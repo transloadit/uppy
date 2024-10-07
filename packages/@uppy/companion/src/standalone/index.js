@@ -1,10 +1,10 @@
 const express = require('express')
 const qs = require('node:querystring')
+const { randomUUID } = require('node:crypto')
 const helmet = require('helmet')
 const morgan = require('morgan')
 const { URL } = require('node:url')
 const session = require('express-session')
-const addRequestId = require('express-request-id')()
 const RedisStore = require('connect-redis').default
 
 const logger = require('../server/logger')
@@ -22,8 +22,8 @@ module.exports = function server(inputCompanionOptions) {
 
   companion.setLoggerProcessName(companionOptions)
 
-  if (!companionOptions.secret) companionOptions.secret = generateSecret()
-  if (!companionOptions.preAuthSecret) companionOptions.preAuthSecret = generateSecret()
+  if (!companionOptions.secret) companionOptions.secret = generateSecret('secret')
+  if (!companionOptions.preAuthSecret) companionOptions.preAuthSecret = generateSecret('preAuthSecret')
 
   const app = express()
 
@@ -71,7 +71,13 @@ module.exports = function server(inputCompanionOptions) {
     return { query, censored }
   }
 
-  router.use(addRequestId)
+  router.use((request, response, next) => {
+    const headerName = 'X-Request-Id'
+		const oldValue = request.get(headerName);
+    response.set(headerName, oldValue ?? randomUUID());
+
+		next();
+	})
   // log server requests.
   router.use(morgan('combined'))
   morgan.token('url', (req) => {
@@ -111,8 +117,7 @@ module.exports = function server(inputCompanionOptions) {
 
   const redisClient = redis.client(companionOptions)
   if (redisClient) {
-    // todo next major: change default prefix to something like "companion-session:" and possibly remove this option
-    sessionOptions.store = new RedisStore({ client: redisClient, prefix: process.env.COMPANION_REDIS_EXPRESS_SESSION_PREFIX || 'sess:' })
+    sessionOptions.store = new RedisStore({ client: redisClient, prefix: process.env.COMPANION_REDIS_EXPRESS_SESSION_PREFIX || 'companion-session:' })
   }
 
   if (process.env.COMPANION_COOKIE_DOMAIN) {

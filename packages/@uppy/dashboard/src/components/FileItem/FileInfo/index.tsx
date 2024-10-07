@@ -1,12 +1,18 @@
 /* eslint-disable react/destructuring-assignment */
-import { h, Fragment, type ComponentChild } from 'preact'
+import { h } from 'preact'
 import prettierBytes from '@transloadit/prettier-bytes'
 import truncateString from '@uppy/utils/lib/truncateString'
+import type { I18n } from '@uppy/utils/lib/Translator'
+import type { UppyFile } from '@uppy/core'
 import MetaErrorMessage from '../MetaErrorMessage.tsx'
+import type { DashboardState } from '../../../Dashboard.ts'
 
-type $TSFixMe = any
-
-const renderFileName = (props: $TSFixMe) => {
+const renderFileName = (props: {
+  file: UppyFile<any, any>
+  isSingleFile: boolean
+  containerHeight: number
+  containerWidth: number
+}) => {
   const { author, name } = props.file.meta
 
   function getMaxNameLength() {
@@ -32,7 +38,7 @@ const renderFileName = (props: $TSFixMe) => {
   )
 }
 
-const renderAuthor = (props: $TSFixMe) => {
+const renderAuthor = (props: { file: UppyFile<any, any> }) => {
   const { author } = props.file.meta
   const providerName = props.file.remote?.providerName
   const dot = `\u00B7`
@@ -61,28 +67,38 @@ const renderAuthor = (props: $TSFixMe) => {
   )
 }
 
-const renderFileSize = (props: $TSFixMe) =>
+const renderFileSize = (props: { file: UppyFile<any, any> }) =>
   props.file.size && (
     <div className="uppy-Dashboard-Item-statusSize">
       {prettierBytes(props.file.size)}
     </div>
   )
 
-const ReSelectButton = (props: $TSFixMe) =>
+const ReSelectButton = (props: {
+  file: UppyFile<any, any>
+  toggleAddFilesPanel: (show: boolean) => void
+  i18n: I18n
+}) =>
   props.file.isGhost && (
     <span>
       {' \u2022 '}
       <button
         className="uppy-u-reset uppy-c-btn uppy-Dashboard-Item-reSelect"
         type="button"
-        onClick={props.toggleAddFilesPanel}
+        onClick={() => props.toggleAddFilesPanel(true)}
       >
         {props.i18n('reSelect')}
       </button>
     </span>
   )
 
-const ErrorButton = ({ file, onClick }: $TSFixMe) => {
+const ErrorButton = ({
+  file,
+  onClick,
+}: {
+  file: UppyFile<any, any>
+  onClick: () => void
+}) => {
   if (file.error) {
     return (
       <button
@@ -100,31 +116,52 @@ const ErrorButton = ({ file, onClick }: $TSFixMe) => {
   return null
 }
 
-export default function FileInfo(props: $TSFixMe): ComponentChild {
-  const { file } = props
+type FileInfoProps = {
+  file: UppyFile<any, any>
+  containerWidth: number
+  containerHeight: number
+  i18n: I18n
+  toggleAddFilesPanel: (show: boolean) => void
+  toggleFileCard: (show: boolean, fileId: string) => void
+  metaFields: DashboardState<any, any>['metaFields']
+  isSingleFile: boolean
+}
+
+export default function FileInfo(props: FileInfoProps) {
+  const {
+    file,
+    i18n,
+    toggleFileCard,
+    metaFields,
+    toggleAddFilesPanel,
+    isSingleFile,
+    containerHeight,
+    containerWidth,
+  } = props
   return (
     <div
       className="uppy-Dashboard-Item-fileInfo"
       data-uppy-file-source={file.source}
     >
       <div className="uppy-Dashboard-Item-fileName">
-        {renderFileName(props)}
-        <ErrorButton
-          file={props.file}
-          // eslint-disable-next-line no-alert
-          onClick={() => alert(props.file.error)} // TODO: move to a custom alert implementation
-        />
+        {renderFileName({
+          file,
+          isSingleFile,
+          containerHeight,
+          containerWidth,
+        })}
+        <ErrorButton file={file} onClick={() => alert(file.error)} />
       </div>
       <div className="uppy-Dashboard-Item-status">
-        {renderAuthor(props)}
-        {renderFileSize(props)}
-        {ReSelectButton(props)}
+        {renderAuthor({ file })}
+        {renderFileSize({ file })}
+        {ReSelectButton({ file, toggleAddFilesPanel, i18n })}
       </div>
       <MetaErrorMessage
-        file={props.file}
-        i18n={props.i18n}
-        toggleFileCard={props.toggleFileCard}
-        metaFields={props.metaFields}
+        file={file}
+        i18n={i18n}
+        toggleFileCard={toggleFileCard}
+        metaFields={metaFields}
       />
     </div>
   )

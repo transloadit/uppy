@@ -1,15 +1,12 @@
 const schedule = require('node-schedule')
 const fs = require('node:fs')
 const path = require('node:path')
-const { promisify } = require('node:util')
+const { setTimeout: sleep } = require('node:timers/promises')
 
 const got = require('./got')
 
 const { FILE_NAME_PREFIX } = require('./Uploader')
 const logger = require('./logger')
-
-// TODO rewrite to use require('timers/promises').setTimeout when we support newer node versions
-const sleep = promisify(setTimeout)
 
 const cleanUpFinishedUploads = (dirPath) => {
   logger.info(`running clean up job for path: ${dirPath}`, 'jobs.cleanup.progress.read')

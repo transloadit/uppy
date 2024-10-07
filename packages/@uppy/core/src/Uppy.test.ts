@@ -7,6 +7,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import prettierBytes from '@transloadit/prettier-bytes'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
+import type { Locale } from '@uppy/utils/lib/Translator'
 import Core from './index.ts'
 import UIPlugin from './UIPlugin.ts'
 import BasePlugin, {
@@ -23,8 +24,8 @@ import InvalidPluginWithoutType from './mocks/invalidPluginWithoutType.ts'
 import DeepFrozenStore from '../../../../e2e/cypress/fixtures/DeepFrozenStore.mjs'
 import type { State } from './Uppy.ts'
 
-// eslint-disable-next-line no-restricted-globals
 const sampleImage = fs.readFileSync(
+  // eslint-disable-next-line no-restricted-globals
   path.join(__dirname, '../../../../e2e/cypress/fixtures/images/image.jpg'),
 )
 
@@ -362,7 +363,7 @@ describe('src/Core', () => {
     core.cancelAll()
 
     expect(coreCancelEventMock).toHaveBeenCalledWith(
-      { reason: 'user' },
+      undefined,
       undefined,
       undefined,
       undefined,
@@ -491,7 +492,7 @@ describe('src/Core', () => {
 
     assert.throws(
       () => core.removeFile(fileIDs[0]),
-      /individualCancellation is disabled/,
+      /The installed uploader plugin does not allow removing files during an upload/,
     )
 
     expect(core.getState().currentUploads[id]).toBeDefined()
@@ -551,10 +552,10 @@ describe('src/Core', () => {
     core.on('cancel-all', coreCancelEventMock)
     core.on('state-update', coreStateUpdateEventMock)
 
-    core.close()
+    core.destroy()
 
     expect(coreCancelEventMock).toHaveBeenCalledWith(
-      { reason: 'user' },
+      undefined,
       undefined,
       undefined,
       undefined,
@@ -691,7 +692,7 @@ describe('src/Core', () => {
       })
       expect(core.getFile(fileId).progress).toEqual({
         percentage: 0,
-        bytesUploaded: 0,
+        bytesUploaded: false,
         bytesTotal: 17175,
         uploadComplete: false,
         uploadStarted: null,
@@ -718,7 +719,7 @@ describe('src/Core', () => {
       })
       expect(core.getFile(fileID).progress).toEqual({
         percentage: 0,
-        bytesUploaded: 0,
+        bytesUploaded: false,
         bytesTotal: 17175,
         uploadComplete: false,
         uploadStarted: null,
@@ -787,7 +788,7 @@ describe('src/Core', () => {
       })
       expect(core.getFile(fileId).progress).toEqual({
         percentage: 0,
-        bytesUploaded: 0,
+        bytesUploaded: false,
         bytesTotal: 17175,
         uploadComplete: false,
         uploadStarted: null,
@@ -814,7 +815,7 @@ describe('src/Core', () => {
       })
       expect(core.getFile(fileId).progress).toEqual({
         percentage: 0,
-        bytesUploaded: 0,
+        bytesUploaded: false,
         bytesTotal: 17175,
         uploadComplete: false,
         uploadStarted: null,
@@ -918,12 +919,12 @@ describe('src/Core', () => {
         isGhost: false,
         progress: {
           bytesTotal: 17175,
-          bytesUploaded: 0,
+          bytesUploaded: false,
           percentage: 0,
           uploadComplete: false,
           uploadStarted: null,
         },
-        remote: '',
+        remote: undefined,
         size: 17175,
         source: 'vi',
         type: 'image/jpeg',
@@ -1541,6 +1542,18 @@ describe('src/Core', () => {
     })
 
     it('should change restrictions on the fly', () => {
+      const fr_FR: Locale<0 | 1> = {
+        strings: {
+          youCanOnlyUploadFileTypes:
+            'Vous pouvez seulement téléverser: %{types}',
+        },
+        pluralize(n) {
+          if (n <= 1) {
+            return 0
+          }
+          return 1
+        },
+      }
       const core = new Core({
         restrictions: {
           allowedFileTypes: ['image/jpeg'],
@@ -1561,6 +1574,25 @@ describe('src/Core', () => {
       }
 
       core.setOptions({
+        locale: fr_FR,
+      })
+
+      try {
+        core.addFile({
+          source: 'vi',
+          name: 'foo1.png',
+          type: 'image/png',
+          // @ts-ignore
+          data: new File([sampleImage], { type: 'image/png' }),
+        })
+      } catch (err) {
+        expect(err).toMatchObject(
+          new Error('Vous pouvez seulement téléverser: image/jpeg'),
+        )
+      }
+
+      core.setOptions({
+        locale: fr_FR,
         restrictions: {
           allowedFileTypes: ['image/png'],
         },
@@ -1734,10 +1766,7 @@ describe('src/Core', () => {
 
       const uploadPromise = core.upload()
       await Promise.all([
-        // @ts-ignore deprecated
         new Promise((resolve) => core.once('upload-start', resolve)),
-        // todo backward compat: remove in next major
-        new Promise((resolve) => core.once('upload-started', resolve)),
       ])
 
       expect(core.getFiles()[0].size).toBeNull()
@@ -1776,7 +1805,7 @@ describe('src/Core', () => {
 
       await uploadPromise
 
-      core.close()
+      core.destroy()
     })
 
     it('should estimate progress for unsized files', () => {
@@ -1820,7 +1849,7 @@ describe('src/Core', () => {
       // foo.jpg at 35%, bar.jpg at 0%
       expect(core.getState().totalProgress).toBe(18)
 
-      core.close()
+      core.destroy()
     })
 
     it('should calculate the total progress of all file uploads', () => {
@@ -1870,10 +1899,8 @@ describe('src/Core', () => {
       expect(core.getState().totalProgress).toEqual(66)
     })
 
-    it('should reset the progress', () => {
-      const resetProgressEvent = vi.fn()
+    it('should emit the progress', () => {
       const core = new Core()
-      core.on('reset-progress', resetProgressEvent)
 
       core.addFile({
         source: 'vi',
@@ -1914,29 +1941,60 @@ describe('src/Core', () => {
       core.calculateProgress.flush()
 
       expect(core.getState().totalProgress).toEqual(66)
-
-      core.resetProgress()
-
-      expect(core.getFile(file1.id).progress).toEqual({
-        percentage: 0,
-        bytesUploaded: 0,
-        bytesTotal: 17175,
-        uploadComplete: false,
-        uploadStarted: null,
-      })
-      expect(core.getFile(file2.id).progress).toEqual({
-        percentage: 0,
-        bytesUploaded: 0,
-        bytesTotal: 17175,
-        uploadComplete: false,
-        uploadStarted: null,
-      })
-      expect(core.getState().totalProgress).toEqual(0)
       expect(core.getState().allowNewUpload).toEqual(true)
       expect(core.getState().error).toEqual(null)
       expect(core.getState().recoveredState).toEqual(null)
+    })
+  })
 
-      expect(resetProgressEvent.mock.calls.length).toEqual(1)
+  describe('clear', () => {
+    it('should reset state to default', () => {
+      const core = new Core()
+      core.addFile({
+        source: 'vi',
+        name: 'foo.jpg',
+        type: 'image/jpeg',
+        data: testImage,
+      })
+      core.addFile({
+        source: 'vi',
+        name: 'foo2.jpg',
+        type: 'image/jpeg',
+        data: testImage,
+      })
+      core.clear()
+      expect(core.getState()).toMatchObject({
+        totalProgress: 0,
+        allowNewUpload: true,
+        error: null,
+        recoveredState: null,
+        files: {},
+      })
+    })
+
+    it('should throw error if plugin does not allow removing files during an upload', () => {
+      const core = new Core()
+      const newState = {
+        capabilities: {
+          individualCancellation: false,
+          uploadProgress: true,
+          resumableUploads: false,
+        },
+        currentUploads: {
+          upload1: {
+            fileIDs: [
+              'uppy-file1/jpg-1e-image/jpeg',
+              'uppy-file2/jpg-1e-image/jpeg',
+              'uppy-file3/jpg-1e-image/jpeg',
+            ],
+          },
+        },
+      }
+      // @ts-ignore
+      core.setState(newState)
+      expect(() => {
+        core.clear()
+      }).toThrowError()
     })
   })
 
@@ -2128,7 +2186,7 @@ describe('src/Core', () => {
     it('should enforce the maxTotalFileSize rule', () => {
       const core = new Core({
         restrictions: {
-          maxTotalFileSize: 34000,
+          maxTotalFileSize: 20000,
         },
       })
 
@@ -2147,11 +2205,13 @@ describe('src/Core', () => {
           data: testImage,
         })
       }).toThrowError(
-        new Error('foo1.jpg exceeds maximum allowed size of 33 KB'),
+        new Error(
+          'You selected 34 KB of files, but maximum allowed size is 20 KB',
+        ),
       )
     })
 
-    it('should check if a file validateRestrictions', () => {
+    it('should report error on validateSingleFile', () => {
       const core = new Core({
         restrictions: {
           minFileSize: 300000,
@@ -2176,17 +2236,13 @@ describe('src/Core', () => {
         size: 270733,
       }
 
-      // @ts-ignore
-      const validateRestrictions1 = core.validateRestrictions(newFile)
-      // @ts-ignore
-      const validateRestrictions2 = core2.validateRestrictions(newFile)
+      const validateRestrictions1 = core.validateSingleFile(newFile)
+      const validateRestrictions2 = core2.validateSingleFile(newFile)
 
-      expect(validateRestrictions1!.message).toEqual(
+      expect(validateRestrictions1).toEqual(
         'This file is smaller than the allowed size of 293 KB',
       )
-      expect(validateRestrictions2!.message).toEqual(
-        'You can only upload: image/png',
-      )
+      expect(validateRestrictions2).toEqual('You can only upload: image/png')
     })
 
     it('should emit `restriction-failed` event when some rule is violated', () => {

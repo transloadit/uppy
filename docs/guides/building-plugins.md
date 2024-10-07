@@ -8,12 +8,12 @@ You can find already a few useful Uppy plugins out there, but there might come a
 time when you will want to build your own. Plugins can hook into the upload
 process or render a custom UI, typically to:
 
-* Render some custom UI element, such as [StatusBar](/docs/status-bar) or
+- Render some custom UI element, such as [StatusBar](/docs/status-bar) or
   [Dashboard](/docs/dashboard).
-* Do the actual uploading, such as [XHRUpload](/docs/xhr-upload) or
+- Do the actual uploading, such as [XHRUpload](/docs/xhr-upload) or
   [Tus](/docs/tus).
-* Do work before the upload, like compressing an image or calling external API.
-* Interact with a third-party service to process uploads correctly, such as
+- Do work before the upload, like compressing an image or calling external API.
+- Interact with a third-party service to process uploads correctly, such as
   [Transloadit](/docs/transloadit) or [AwsS3](/docs/aws-s3).
 
 See a [full example of a plugin](#example-of-a-custom-plugin) below.
@@ -33,7 +33,7 @@ The plugin constructor receives the Uppy instance in the first parameter, and
 any options passed to `uppy.use()` in the second parameter.
 
 ```js
-import BasePlugin from '@uppy/core/lib/BasePlugin.js';
+import BasePlugin from '@uppy/core';
 
 export default class MyPlugin extends BasePlugin {
 	constructor(uppy, opts) {
@@ -220,9 +220,9 @@ encrypting a large file. In those situations, determinate progress is suitable.
 
 Here are the relevant events:
 
-* [`preprocess-progress`](/docs/uppy#preprocess-progress)
-* [`upload-progress`](/docs/uppy#upload-progress)
-* [`postprocess-progress`](/docs/uppy#postprocess-progress)
+- [`preprocess-progress`](/docs/uppy#preprocess-progress)
+- [`upload-progress`](/docs/uppy#upload-progress)
+- [`postprocess-progress`](/docs/uppy#postprocess-progress)
 
 ## JSX
 

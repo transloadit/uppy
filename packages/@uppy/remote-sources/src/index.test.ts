@@ -47,7 +47,22 @@ describe('RemoteSources', () => {
         sources: ['Webcam'],
       })
     }).toThrow(
-      'Invalid plugin: "Webcam" is not one of: Box, Dropbox, Facebook, GoogleDrive, Instagram, OneDrive, Unsplash, Url, or Zoom.',
+      'Invalid plugin: "Webcam" is not one of: Box, Dropbox, Facebook, GoogleDrive, GooglePhotos, Instagram, OneDrive, Unsplash, Url, or Zoom.',
+    )
+  })
+
+  it('should pass companionKeysParams', () => {
+    const core = new Core()
+    const companionKeysParams = {
+      GoogleDrive: { key: 'google', credentialsName: 'google' },
+    }
+    core.use(Dashboard)
+    core.use(RemoteSources, {
+      companionUrl: 'https://example.com',
+      companionKeysParams,
+    })
+    expect(core.getPlugin('GoogleDrive')?.opts.companionKeysParams).toEqual(
+      companionKeysParams.GoogleDrive,
     )
   })
 })

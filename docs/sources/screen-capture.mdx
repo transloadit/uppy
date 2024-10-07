@@ -16,7 +16,7 @@ save it as a video.
 :::tip
 
 [Try out the live example](/examples) or take it for a spin in
-[CodeSandbox](https://codesandbox.io/s/uppy-dashboard-xpxuhd).
+[StackBlitz](https://stackblitz.com/edit/vitejs-vite-zaqyaf?file=main.js).
 
 :::
 
@@ -62,7 +62,7 @@ yarn add @uppy/screen-capture
         import { Uppy, Dashboard, ScreenCapture } from "{{UPPY_JS_URL}}"
         const uppy = new Uppy()
         uppy.use(Dashboard, { inline: true, target: 'body' })
-        uppy.use(ScreenCapture, { target: Uppy.Dashboard })
+        uppy.use(ScreenCapture)
       `}
     </UppyCdnExample>
   </TabItem>
@@ -79,9 +79,7 @@ import '@uppy/core/dist/style.min.css';
 import '@uppy/dashboard/dist/style.min.css';
 import '@uppy/screen-capture/dist/style.min.css';
 
-new Uppy()
-	.use(Dashboard, { inline: true, target: 'body' })
-	.use(ScreenCapture, { target: Dashboard });
+new Uppy().use(Dashboard, { inline: true, target: 'body' }).use(ScreenCapture);
 ```
 
 ### API
@@ -99,8 +97,9 @@ Configures the title / name shown in the UI, for instance, on Dashboard tabs
 
 #### `target`
 
-DOM element, CSS selector, or plugin to place the screen capture into (`string`
-or `Element`, default: `null`).
+DOM element, CSS selector, or plugin to place the drag and drop area into
+(`string`, `Element`, `Function`, or `UIPlugin`, default:
+[`Dashboard`](/docs/dashboard)).
 
 #### `displayMediaConstraints`
 

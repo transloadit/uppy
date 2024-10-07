@@ -26,7 +26,7 @@ async function logout (req, res, next) {
     const { accessToken } = providerUserSession
     const data = await companion.provider.logout({ token: accessToken, providerUserSession, companion })
     delete companion.providerUserSession
-    tokenService.removeFromCookies(res, companion.options, companion.providerClass.authProvider)
+    tokenService.removeFromCookies(res, companion.options, companion.providerClass.oauthProvider)
     cleanSession()
     res.json({ ok: true, ...data })
   } catch (err) {

@@ -1,6 +1,6 @@
 import throttle from 'lodash/throttle.js'
-import type { UppyFile } from './UppyFile'
-import type { FileProgress } from './FileProgress'
+import type { UppyFile } from './UppyFile.ts'
+import type { FileProgress } from './FileProgress.ts'
 
 function emitSocketProgress(
   uploader: any,
@@ -15,8 +15,7 @@ function emitSocketProgress(
   if (progress) {
     uploader.uppy.log(`Upload progress: ${progress}`)
     uploader.uppy.emit('upload-progress', file, {
-      // @ts-expect-error todo remove in next major
-      uploader,
+      uploadStarted: file.progress.uploadStarted ?? 0,
       bytesUploaded,
       bytesTotal,
     } satisfies FileProgress)

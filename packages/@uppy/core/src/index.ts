@@ -7,9 +7,14 @@ export {
   type UnknownSearchProviderPlugin,
   type UploadResult,
   type UppyEventMap,
+  type UppyOptions,
 } from './Uppy.ts'
 export { default as UIPlugin } from './UIPlugin.ts'
 export { default as BasePlugin } from './BasePlugin.ts'
 export { debugLogger } from './loggers.ts'
 
+export type { Store } from '@uppy/store-default'
+
 export type { UIPluginOptions } from './UIPlugin.ts'
+
+export type { UppyFile, Meta, Body } from '@uppy/utils/lib/UppyFile'

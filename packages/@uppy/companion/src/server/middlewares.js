@@ -23,7 +23,7 @@ exports.hasSessionAndProvider = (req, res, next) => {
   return next()
 }
 
-const isOAuthProviderReq = (req) => isOAuthProvider(req.companion.providerClass.authProvider)
+const isOAuthProviderReq = (req) => isOAuthProvider(req.companion.providerClass.oauthProvider)
 const isSimpleAuthProviderReq = (req) => !!req.companion.providerClass.hasSimpleAuth
 
 /**
@@ -92,14 +92,15 @@ exports.verifyToken = (req, res, next) => {
   if (!isOAuthProviderReq(req)) {
     const { providerOptions } = req.companion.options
     const { providerName } = req.params
-    if (!providerOptions[providerName] || !providerOptions[providerName].key) {
+    const key = providerOptions[providerName]?.key;
+    if (!key) {
       logger.info(`unconfigured credentials for ${providerName}`, 'non.oauth.token.load.unset', req.id)
       res.sendStatus(501)
       return
     }
 
     req.companion.providerUserSession = {
-      accessToken: providerOptions[providerName].key,
+      accessToken: key,
     }
     next()
   }
@@ -122,7 +123,7 @@ exports.gentleVerifyToken = (req, res, next) => {
 }
 
 exports.cookieAuthToken = (req, res, next) => {
-  req.companion.authToken = req.cookies[`uppyAuthToken--${req.companion.providerClass.authProvider}`]
+  req.companion.authToken = req.cookies[`uppyAuthToken--${req.companion.providerClass.oauthProvider}`]
   return next()
 }
 
@@ -133,14 +134,11 @@ exports.cors = (options = {}) => (req, res, next) => {
   const existingExposeHeaders = res.get('Access-Control-Expose-Headers')
   const exposeHeadersSet = new Set(existingExposeHeaders?.split(',')?.map((method) => method.trim().toLowerCase()))
 
-  // exposed so it can be accessed for our custom uppy client preflight
-  exposeHeadersSet.add('access-control-allow-headers') // todo remove in next major, see https://github.com/transloadit/uppy/pull/4462
   if (options.sendSelfEndpoint) exposeHeadersSet.add('i-am')
 
   // Needed for basic operation: https://github.com/transloadit/uppy/issues/3021
   const allowedHeaders = [
     'uppy-auth-token',
-    'uppy-versions', // todo remove in the future? see https://github.com/transloadit/uppy/pull/4462
     'uppy-credentials-params',
     'authorization',
     'origin',

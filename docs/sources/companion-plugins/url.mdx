@@ -15,7 +15,7 @@ URL and it will be added!
 :::tip
 
 [Try out the live example](/examples) or take it for a spin in
-[CodeSandbox](https://codesandbox.io/s/uppy-dashboard-xpxuhd).
+[StackBlitz](https://stackblitz.com/edit/vitejs-vite-zaqyaf?file=main.js).
 
 :::
 
@@ -82,17 +82,52 @@ import Url from '@uppy/url';
 
 import '@uppy/core/dist/style.min.css';
 import '@uppy/dashboard/dist/style.min.css';
+import '@uppy/url/dist/style.min.css';
 
-new Uppy().use(Dashboard, { inline: true, target: '#dashboard' }).use(Url, {
-	target: Dashboard,
-	companionUrl: 'https://your-companion.com',
+new Uppy()
+	.use(Dashboard, { inline: true, target: '#dashboard' })
+	.use(Url, { companionUrl: 'https://your-companion.com' });
+```
+
+### Use with Transloadit
+
+```js
+import { COMPANION_URL, COMPANION_ALLOWED_HOSTS } from '@uppy/transloadit';
+import Url from '@uppy/url';
+
+uppy.use(Url, {
+	companionUrl: COMPANION_URL,
+	companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
+});
+```
+
+You may also hit rate limits, because the OAuth application is shared between
+everyone using Transloadit.
+
+To solve that, you can use your own OAuth keys with Transloadit’s hosted
+Companion servers by using Transloadit Template Credentials. [Create a Template
+Credential][template-credentials] on the Transloadit site. Select “Companion
+OAuth” for the service, and enter the key and secret for the provider you want
+to use. Then you can pass the name of the new credentials to that provider:
+
+```js
+import { COMPANION_URL, COMPANION_ALLOWED_HOSTS } from '@uppy/transloadit';
+import Url from '@uppy/url';
+
+uppy.use(Url, {
+	companionUrl: COMPANION_URL,
+	companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
+	companionKeysParams: {
+		key: 'YOUR_TRANSLOADIT_API_KEY',
+		credentialsName: 'my_companion_dropbox_creds',
+	},
 });
 ```
 
 ### Use in Companion
 
-Companion supports this plugin out-of-the-box so integration is required on this
-side.
+Companion supports this plugin out-of-the-box, however it must be enabled in
+Companion with the `enableUrlEndpoint` / `COMPANION_ENABLE_URL_ENDPOINT` option.
 
 ## API
 
@@ -110,7 +145,8 @@ Title / name shown in the UI, such as Dashboard tabs (`string`, default:
 #### `target`
 
 DOM element, CSS selector, or plugin to place the drag and drop area into
-(`string` or `Element`, default: `null`).
+(`string`, `Element`, `Function`, or `UIPlugin`, default:
+[`Dashboard`](/docs/dashboard)).
 
 #### `companionUrl`
 
@@ -147,3 +183,6 @@ export default {
 	},
 };
 ```
+
+[template-credentials]:
+	https://transloadit.com/docs/#how-to-create-template-credentials

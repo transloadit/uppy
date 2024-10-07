@@ -143,11 +143,4 @@ tr_TR.strings = {
   openFolderNamed: 'Açık dosya %{name}',
 }
 
-// TODO: remove this in the next major?
-// @ts-expect-error Uppy can be a global in legacy bundle
-if (typeof Uppy !== 'undefined') {
-  // @ts-expect-error Uppy can be a global in legacy bundle
-  globalThis.Uppy.locales.tr_TR = tr_TR
-}
-
 export default tr_TR

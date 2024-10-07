@@ -2,7 +2,7 @@ name: Test different bundlers with Uppy
 
 on:
   push:
-    branches: [main, 4.x]
+    branches: [main]
   pull_request:
     # We want all branches so we configure types to be the GH default again
     types: [opened, synchronize, reopened]
@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run:
@@ -69,11 +69,12 @@ jobs:
           EOF
       - name: Eject public packages from repo
         run:
-          mkdir /tmp/artifacts && corepack yarn workspaces foreach --no-private
-          pack --install-if-needed -o /tmp/artifacts/%s-${{ github.sha }}.tgz
+          mkdir /tmp/artifacts && corepack yarn workspaces foreach --all
+          --no-private pack --install-if-needed -o /tmp/artifacts/%s-${{
+          github.sha }}.tgz
       - name: Upload artifact
         if: success()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: packages
           path: /tmp/artifacts/
@@ -87,7 +88,7 @@ jobs:
         bundler-version: [latest]
     steps:
       - name: Download uppy tarball
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: /tmp/
       - name: Extract tarball
@@ -104,7 +105,7 @@ jobs:
           } from "@rollup/plugin-node-resolve";
 
           export default {
-            input: "./index.mjs",
+            input: "./lib/index.js",
             output: {
               file: "/dev/null",
             },
@@ -125,7 +126,7 @@ jobs:
         bundler-version: [latest]
     steps:
       - name: Download uppy tarball
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: /tmp/
       - name: Extract tarball
@@ -136,9 +137,9 @@ jobs:
       - run: npx webpack --version
       - name: Create Webpack config file
         run:
-          echo
-          'module.exports={mode:"production",target:"web",entry:"./index.mjs"}'
-          > webpack.config.js
+          echo 'export default
+          {mode:"production",target:"web",entry:"./lib/index.js"}' >
+          webpack.config.js
       - name: Bundle
         run: npx webpack
 
@@ -151,7 +152,7 @@ jobs:
         bundler-version: [latest]
     steps:
       - name: Download uppy tarball
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: /tmp/
       - name: Extract tarball
@@ -170,7 +171,7 @@ jobs:
         run: npm i --save-dev parcel@${{matrix.bundler-version}}
       - run: npx parcel --version
       - name: Bundle
-        run: npx parcel build index.mjs
+        run: npx parcel build lib/index.js
 
   vite:
     needs: isolate_uppy
@@ -181,7 +182,7 @@ jobs:
         bundler-version: [latest]
     steps:
       - name: Download uppy tarball
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: /tmp/
       - name: Extract tarball
@@ -193,7 +194,7 @@ jobs:
       - name: Create index.html
         run:
           echo '<!doctype html><html><head><script type="module"
-          src="./index.mjs"></script></head></html>' > index.html
+          src="./lib/index.js"></script></head></html>' > index.html
       - name: Bundle
         run: npx vite build
 
@@ -206,7 +207,7 @@ jobs:
         bundler-version: [latest]
     steps:
       - name: Download uppy tarball
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: /tmp/
       - name: Extract tarball
@@ -216,6 +217,6 @@ jobs:
         run: npm i --save-dev esbuild@${{matrix.bundler-version}}
       - run: npx esbuild --version
       - name: Bundle
-        run: npx esbuild index.mjs --bundle --outfile=/dev/null
+        run: npx esbuild lib/index.js --bundle --outfile=/dev/null
 
   # Browserify: doesn't support ESM.

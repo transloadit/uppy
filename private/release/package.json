@@ -5,7 +5,6 @@
   "type": "module",
   "devDependencies": {
     "globby": "^13.0.0",
-    "node-fetch": "^3.1.0",
     "prompts": "^2.4.2"
   },
   "scripts": {

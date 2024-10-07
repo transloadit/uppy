@@ -1,5 +1,33 @@
 # @uppy/form
 
+## 4.0.0-beta.4
+
+Released: 2024-06-04
+Included in: Uppy v4.0.0-beta.10
+
+- @uppy/form: move internal property to private field (Antoine du Hamel / #5214)
+
+## 4.0.0-beta.2
+
+Released: 2024-04-29
+Included in: Uppy v4.0.0-beta.4
+
+- @uppy/form: fix `submitOnSuccess` and `triggerUploadOnSubmit` combination (Merlijn Vos / #5058)
+
+## 3.2.2
+
+Released: 2024-07-02
+Included in: Uppy v3.27.2
+
+- @uppy/form: do not emit `'submit'` event more than once (Merlijn Vos / #5299)
+
+## 3.2.1
+
+Released: 2024-04-29
+Included in: Uppy v3.25.0
+
+- @uppy/form: fix `submitOnSuccess` and `triggerUploadOnSubmit` combination (Merlijn Vos / #5058)
+
 ## 3.2.0
 
 Released: 2024-02-28

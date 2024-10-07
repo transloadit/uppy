@@ -1,8 +1,7 @@
 import type { Uppy } from '@uppy/core'
 import { AbortController } from '@uppy/utils/lib/AbortController'
-import type { Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
-import type { HTTPCommunicationQueue } from './HTTPCommunicationQueue'
-import type { Body } from './utils'
+import type { Meta, Body, UppyFile } from '@uppy/utils/lib/UppyFile'
+import type { HTTPCommunicationQueue } from './HTTPCommunicationQueue.ts'
 
 const MB = 1024 * 1024
 
@@ -67,9 +66,9 @@ class MultipartUploader<M extends Meta, B extends Body> {
 
   #abortController = new AbortController()
 
-  #chunks: Array<Chunk | null>
+  #chunks: Array<Chunk | null> = []
 
-  #chunkState: { uploaded: number; etag?: string; done?: boolean }[]
+  #chunkState: { uploaded: number; etag?: string; done?: boolean }[] = []
 
   /**
    * The (un-chunked) data to upload.
@@ -131,7 +130,7 @@ class MultipartUploader<M extends Meta, B extends Body> {
     if (shouldUseMultipart && fileSize > this.#minPartSize) {
       // At least 5MB per request:
       let chunkSize = Math.max(
-        this.options.getChunkSize(this.#data),
+        this.options.getChunkSize(this.#data) as number, // Math.max can take undefined but TS does not think so
         this.#minPartSize,
       )
       let arraySize = Math.floor(fileSize / chunkSize)
@@ -257,9 +256,8 @@ class MultipartUploader<M extends Meta, B extends Body> {
     else this.pause()
   }
 
-  // TODO: remove this in the next major
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  get chunkState() {
+  private [Symbol.for('uppy test: getChunkState')]() {
     return this.#chunkState
   }
 }

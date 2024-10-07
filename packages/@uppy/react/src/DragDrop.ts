@@ -18,9 +18,9 @@ interface DragDropProps<M extends Meta, B extends Body>
 class DragDrop<M extends Meta, B extends Body> extends Component<
   DragDropProps<M, B>
 > {
-  private container: HTMLElement
+  private container!: HTMLElement
 
-  private plugin: UnknownPlugin<M, B>
+  private plugin!: UnknownPlugin<M, B>
 
   componentDidMount(): void {
     this.installPlugin()
@@ -43,9 +43,9 @@ class DragDrop<M extends Meta, B extends Body> extends Component<
   }
 
   installPlugin(): void {
-    const { uppy, locale, inputName, width, height, note } = this.props
+    const { uppy, locale, inputName, width, height, note, id } = this.props
     const options = {
-      id: 'react:DragDrop',
+      id: id || 'DragDrop',
       locale,
       inputName,
       width,
@@ -65,7 +65,8 @@ class DragDrop<M extends Meta, B extends Body> extends Component<
     uppy.removePlugin(this.plugin)
   }
 
-  render(): JSX.Element {
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+  render() {
     return h('div', {
       className: 'uppy-Container',
       ref: (container: HTMLElement) => {

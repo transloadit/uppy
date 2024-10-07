@@ -20,7 +20,7 @@ type RecorderScreenProps<M extends Meta, B extends Body> = {
 class RecorderScreen<M extends Meta, B extends Body> extends Component<
   RecorderScreenProps<M, B>
 > {
-  videoElement: HTMLVideoElement | null
+  videoElement: HTMLVideoElement | null = null
 
   componentWillUnmount(): void {
     const { onStop } = this.props

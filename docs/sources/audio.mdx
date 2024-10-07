@@ -17,7 +17,7 @@ time sound wavelength when recording.
 :::tip
 
 [Try out the live example](/examples) or take it for a spin in
-[CodeSandbox](https://codesandbox.io/s/uppy-dashboard-xpxuhd).
+[StackBlitz](https://stackblitz.com/edit/vitejs-vite-zaqyaf?file=main.js).
 
 :::
 
@@ -50,7 +50,7 @@ yarn add @uppy/audio
         import { Uppy, Dashboard, Audio } from "{{UPPY_JS_URL}}"
         const uppy = new Uppy()
         uppy.use(Dashboard, { inline: true, target: 'body' })
-        uppy.use(Audio, { target: Uppy.Dashboard })
+        uppy.use(Audio)
       `}
     </UppyCdnExample>
   </TabItem>
@@ -67,9 +67,7 @@ import '@uppy/core/dist/style.min.css';
 import '@uppy/dashboard/dist/style.min.css';
 import '@uppy/audio/dist/style.min.css';
 
-new Uppy()
-	.use(Dashboard, { inline: true, target: 'body' })
-	.use(Audio, { target: Dashboard });
+new Uppy().use(Dashboard, { inline: true, target: 'body' }).use(Audio);
 ```
 
 ### API
@@ -87,8 +85,9 @@ Configures the title / name shown in the UI, for instance, on Dashboard tabs
 
 #### `target`
 
-DOM element, CSS selector, or plugin to place the audio into (`string` or
-`Element`, default: `null`).
+DOM element, CSS selector, or plugin to place the drag and drop area into
+(`string`, `Element`, `Function`, or `UIPlugin`, default:
+[`Dashboard`](/docs/dashboard)).
 
 #### `showAudioSourceDropdown`
 

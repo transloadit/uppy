@@ -1,7 +1,7 @@
 import type { ComponentChild } from 'preact'
 import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
-import type { Uppy, State } from '@uppy/core/lib/Uppy'
-import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin'
+import type { Uppy, State } from '@uppy/core/lib/Uppy.js'
+import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin.js'
 import { UIPlugin } from '@uppy/core'
 import emaFilter from '@uppy/utils/lib/emaFilter'
 import getTextDirection from '@uppy/utils/lib/getTextDirection'
@@ -167,7 +167,6 @@ export default class StatusBar<M extends Meta, B extends Body> extends UIPlugin<
 
       isUploadStarted,
       isAllComplete,
-      isAllErrored,
       isAllPaused,
       isUploadInProgress,
       isSomeGhost,
@@ -207,8 +206,6 @@ export default class StatusBar<M extends Meta, B extends Body> extends UIPlugin<
       totalUploadedSize,
       isAllComplete: false,
       isAllPaused,
-      // @ts-expect-error TODO: remove this in 4.x branch
-      isAllErrored,
       isUploadStarted,
       isUploadInProgress,
       isSomeGhost,
@@ -230,8 +227,6 @@ export default class StatusBar<M extends Meta, B extends Body> extends UIPlugin<
       hidePauseResumeButton: this.opts.hidePauseResumeButton,
       hideCancelButton: this.opts.hideCancelButton,
       hideAfterFinish: this.opts.hideAfterFinish,
-      // ts-expect-error TODO: remove this in 4.x branch
-      isTargetDOMEl: this.isTargetDOMEl,
     })
   }
 

@@ -2,13 +2,13 @@ import { h, type ComponentChild } from 'preact'
 
 import { UIPlugin } from '@uppy/core'
 import type { Uppy, UIPluginOptions } from '@uppy/core'
-import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin'
+import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin.js'
 import type {
   Body,
   Meta,
   MinimalRequiredUppyFile,
-} from '@uppy/utils/lib/UppyFile.ts'
-import type { PluginTarget } from '@uppy/core/lib/UIPlugin'
+} from '@uppy/utils/lib/UppyFile'
+import type { PluginTarget } from '@uppy/core/lib/UIPlugin.js'
 import getFileTypeExtension from '@uppy/utils/lib/getFileTypeExtension'
 import mimeTypes from '@uppy/utils/lib/mimeTypes'
 import isMobile from 'is-mobile'
@@ -67,9 +67,6 @@ export interface WebcamOptions<M extends Meta, B extends Body>
   modes?: Array<'video-audio' | 'video-only' | 'audio-only' | 'picture'>
   mirror?: boolean
   showVideoSourceDropdown?: boolean
-  /** @deprecated */
-  facingMode?: MediaTrackConstraints['facingMode'] // @TODO: remove in the next major
-  title?: string
   videoConstraints?: MediaTrackConstraints
   showRecordingLength?: boolean
   preferredImageMimeType?: string | null
@@ -83,7 +80,8 @@ interface WebcamState {
   cameraError: null
   recordingLengthSeconds: number
   videoSources: MediaDeviceInfo[]
-  currentDeviceId: null | string
+  currentDeviceId: string | MediaStreamTrack | null | undefined
+  recordedVideo: null | string
   isRecording: boolean
   [key: string]: unknown
 }
@@ -95,7 +93,6 @@ const defaultOptions = {
   modes: ['video-audio', 'video-only', 'audio-only', 'picture'] as any,
   mirror: true,
   showVideoSourceDropdown: false,
-  facingMode: 'user', // @TODO: remove in the next major
   preferredImageMimeType: null,
   preferredVideoMimeType: null,
   showRecordingLength: false,
@@ -125,19 +122,19 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
 
   private capturedMediaFile: MinimalRequiredUppyFile<M, B> | null
 
-  private icon: () => JSX.Element
+  private icon: () => h.JSX.Element
 
   private webcamActive
 
-  private stream: MediaStream | null
+  private stream: MediaStream | null = null
 
-  private recorder: MediaRecorder | null
+  private recorder: MediaRecorder | null = null
 
-  private recordingChunks: Blob[] | null
+  private recordingChunks: Blob[] | null = null
 
-  private recordingLengthTimer: ReturnType<typeof setInterval>
+  private recordingLengthTimer?: ReturnType<typeof setInterval>
 
-  private captureInProgress: boolean
+  private captureInProgress: boolean = false
 
   constructor(uppy: Uppy<M, B>, opts?: WebcamOptions<M, B>) {
     super(uppy, { ...defaultOptions, ...opts })
@@ -242,10 +239,8 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
         this.opts.modes.indexOf('picture') !== -1)
 
     const videoConstraints = {
-      ...(this.opts.videoConstraints || { facingMode: this.opts.facingMode }),
-      // facingMode takes precedence over deviceId, and not needed
-      // when specific device is selected
-      ...(deviceId ? { deviceId, facingMode: null as any as undefined } : {}),
+      ...(this.opts.videoConstraints || {}),
+      ...(deviceId != null && { deviceId }),
     }
 
     return {
@@ -711,8 +706,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
   }
 
   install(): void {
-    const { mobileNativeCamera, modes, facingMode, videoConstraints } =
-      this.opts
+    const { mobileNativeCamera, modes, videoConstraints } = this.opts
 
     const { target } = this.opts
     if (mobileNativeCamera && target) {
@@ -721,7 +715,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
           isModeAvailable(modes, 'video-only') ||
           isModeAvailable(modes, 'video-audio'),
         showNativePhotoCameraButton: isModeAvailable(modes, 'picture'),
-        nativeCameraFacingMode: videoConstraints?.facingMode || facingMode,
+        nativeCameraFacingMode: videoConstraints?.facingMode,
       })
       return
     }

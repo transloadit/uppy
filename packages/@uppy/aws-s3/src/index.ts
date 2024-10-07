@@ -4,7 +4,7 @@ import BasePlugin, {
 } from '@uppy/core/lib/BasePlugin.js'
 import { RequestClient } from '@uppy/companion-client'
 import type { RequestOptions } from '@uppy/utils/lib/CompanionClientProvider'
-import type { Body as _Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
+import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
 import type { Uppy } from '@uppy/core'
 import EventManager from '@uppy/core/lib/EventManager.js'
 import { RateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
@@ -21,7 +21,6 @@ import type {
   UploadResultWithSignal,
   MultipartUploadResultWithSignal,
   UploadPartBytesResult,
-  Body,
 } from './utils.ts'
 import createSignedURL from './createSignedURL.ts'
 import { HTTPCommunicationQueue } from './HTTPCommunicationQueue.ts'
@@ -33,13 +32,13 @@ interface MultipartFile<M extends Meta, B extends Body> extends UppyFile<M, B> {
   s3Multipart: UploadResult
 }
 
-type PartUploadedCallback<M extends Meta, B extends _Body> = (
+type PartUploadedCallback<M extends Meta, B extends Body> = (
   file: UppyFile<M, B>,
   part: { PartNumber: number; ETag: string },
 ) => void
 
 declare module '@uppy/core' {
-  export interface UppyEventMap<M extends Meta, B extends _Body> {
+  export interface UppyEventMap<M extends Meta, B extends Body> {
     's3-multipart:part-uploaded': PartUploadedCallback<M, B>
   }
 }
@@ -143,9 +142,15 @@ export interface AwsS3Part {
 }
 
 type AWSS3WithCompanion = {
-  companionUrl: string
-  companionHeaders?: Record<string, string>
-  companionCookiesRule?: string
+  endpoint: ConstructorParameters<
+    typeof RequestClient<any, any>
+  >[1]['companionUrl']
+  headers?: ConstructorParameters<
+    typeof RequestClient<any, any>
+  >[1]['companionHeaders']
+  cookiesRule?: ConstructorParameters<
+    typeof RequestClient<any, any>
+  >[1]['companionCookiesRule']
   getTemporarySecurityCredentials?: true
 }
 type AWSS3WithoutCompanion = {
@@ -198,7 +203,7 @@ type AWSS3MultipartWithoutCompanionMandatorySignPart<
   ) => MaybePromise<AwsS3UploadParameters>
 }
 type AWSS3MultipartWithoutCompanionMandatory<M extends Meta, B extends Body> = {
-  getChunkSize?: (file: UppyFile<M, B>) => number
+  getChunkSize?: (file: { size: number }) => number
   createMultipartUpload: (file: UppyFile<M, B>) => MaybePromise<UploadResult>
   listParts: (
     file: UppyFile<M, B>,
@@ -253,11 +258,7 @@ type AWSS3MaybeMultipartWithoutCompanion<
     shouldUseMultipart: (file: UppyFile<M, B>) => boolean
   }
 
-type RequestClientOptions = Partial<
-  ConstructorParameters<typeof RequestClient<any, any>>[1]
->
-
-interface _AwsS3MultipartOptions extends PluginOpts, RequestClientOptions {
+interface _AwsS3MultipartOptions extends PluginOpts {
   allowedMetaFields?: string[] | boolean
   limit?: number
   retryDelays?: number[] | null
@@ -276,6 +277,8 @@ export type AwsS3MultipartOptions<
     | AWSS3MaybeMultipartWithoutCompanion<M, B>
   )
 
+export type { AwsS3MultipartOptions as AwsS3Options }
+
 const defaultOptions = {
   allowedMetaFields: true,
   limit: 6,
@@ -285,8 +288,9 @@ const defaultOptions = {
     // eslint-disable-next-line no-bitwise
     (file.size! >> 10) >> 10 > 100) as any as true,
   retryDelays: [0, 1000, 3000, 5000],
-  companionHeaders: {},
 } satisfies Partial<AwsS3MultipartOptions<any, any>>
+
+export type { AwsBody } from './utils.ts'
 
 export default class AwsS3Multipart<
   M extends Meta,
@@ -303,6 +307,7 @@ export default class AwsS3Multipart<
       | 'completeMultipartUpload'
     > &
     Required<Pick<AWSS3WithoutCompanion, 'uploadPartBytes'>> &
+    Partial<AWSS3WithCompanion> &
     AWSS3MultipartWithoutCompanionMandatorySignPart<M, B> &
     AWSS3NonMultipartWithoutCompanionMandatory<M, B>,
   M,
@@ -312,15 +317,13 @@ export default class AwsS3Multipart<
 
   #companionCommunicationQueue
 
-  #client: RequestClient<M, B>
+  #client!: RequestClient<M, B>
 
   protected requests: any
 
   protected uploaderEvents: Record<string, EventManager<M, B> | null>
 
   protected uploaders: Record<string, MultipartUploader<M, B> | null>
-
-  protected uploaderSockets: Record<string, never>
 
   constructor(uppy: Uppy<M, B>, opts?: AwsS3MultipartOptions<M, B>) {
     super(uppy, {
@@ -337,8 +340,7 @@ export default class AwsS3Multipart<
     // We need the `as any` here because of the dynamic default options.
     this.type = 'uploader'
     this.id = this.opts.id || 'AwsS3Multipart'
-    // TODO: only initiate `RequestClient` is `companionUrl` is defined.
-    this.#client = new RequestClient(uppy, opts as any)
+    this.#setClient(opts)
 
     const dynamicDefaultOptions = {
       createMultipartUpload: this.createMultipartUpload,
@@ -381,17 +383,65 @@ export default class AwsS3Multipart<
 
     this.uploaders = Object.create(null)
     this.uploaderEvents = Object.create(null)
-    this.uploaderSockets = Object.create(null)
   }
 
   private [Symbol.for('uppy test: getClient')]() {
     return this.#client
   }
 
+  #setClient(opts?: Partial<AwsS3MultipartOptions<M, B>>) {
+    if (
+      opts == null ||
+      !(
+        'endpoint' in opts ||
+        'companionUrl' in opts ||
+        'headers' in opts ||
+        'companionHeaders' in opts ||
+        'cookiesRule' in opts ||
+        'companionCookiesRule' in opts
+      )
+    )
+      return
+    if ('companionUrl' in opts && !('endpoint' in opts)) {
+      this.uppy.log(
+        '`companionUrl` option has been removed in @uppy/aws-s3, use `endpoint` instead.',
+        'warning',
+      )
+    }
+    if ('companionHeaders' in opts && !('headers' in opts)) {
+      this.uppy.log(
+        '`companionHeaders` option has been removed in @uppy/aws-s3, use `headers` instead.',
+        'warning',
+      )
+    }
+    if ('companionCookiesRule' in opts && !('cookiesRule' in opts)) {
+      this.uppy.log(
+        '`companionCookiesRule` option has been removed in @uppy/aws-s3, use `cookiesRule` instead.',
+        'warning',
+      )
+    }
+    if ('endpoint' in opts) {
+      this.#client = new RequestClient(this.uppy, {
+        pluginId: this.id,
+        provider: 'AWS',
+        companionUrl: this.opts.endpoint!,
+        companionHeaders: this.opts.headers,
+        companionCookiesRule: this.opts.cookiesRule,
+      })
+    } else {
+      if ('headers' in opts) {
+        this.#setCompanionHeaders()
+      }
+      if ('cookiesRule' in opts) {
+        this.#client.opts.companionCookiesRule = opts.cookiesRule
+      }
+    }
+  }
+
   setOptions(newOptions: Partial<AwsS3MultipartOptions<M, B>>): void {
     this.#companionCommunicationQueue.setOptions(newOptions)
-    super.setOptions(newOptions)
-    this.#setCompanionHeaders()
+    super.setOptions(newOptions as any)
+    this.#setClient(newOptions)
   }
 
   /**
@@ -410,19 +460,12 @@ export default class AwsS3Multipart<
       this.uploaderEvents[fileID]!.remove()
       this.uploaderEvents[fileID] = null
     }
-    if (this.uploaderSockets[fileID]) {
-      // @ts-expect-error TODO: remove this block in the next major
-      this.uploaderSockets[fileID].close()
-      // @ts-expect-error TODO: remove this block in the next major
-      this.uploaderSockets[fileID] = null
-    }
   }
 
-  // TODO: make this a private method in the next major
-  assertHost(method: string): void {
-    if (!this.opts.companionUrl) {
+  #assertHost(method: string): void {
+    if (!this.#client) {
       throw new Error(
-        `Expected a \`companionUrl\` option containing a Companion address, or if you are not using Companion, a custom \`${method}\` implementation.`,
+        `Expected a \`endpoint\` option containing a URL, or if you are not using Companion, a custom \`${method}\` implementation.`,
       )
     }
   }
@@ -431,7 +474,7 @@ export default class AwsS3Multipart<
     file: UppyFile<M, B>,
     signal?: AbortSignal,
   ): Promise<UploadResult> {
-    this.assertHost('createMultipartUpload')
+    this.#assertHost('createMultipartUpload')
     throwIfAborted(signal)
 
     const allowedMetaFields = getAllowedMetaFields(
@@ -459,12 +502,14 @@ export default class AwsS3Multipart<
     oldSignal?: AbortSignal,
   ): Promise<AwsS3Part[]> {
     signal ??= oldSignal // eslint-disable-line no-param-reassign
-    this.assertHost('listParts')
+    this.#assertHost('listParts')
     throwIfAborted(signal)
 
     const filename = encodeURIComponent(key)
     return this.#client
-      .get<AwsS3Part[]>(`s3/multipart/${uploadId}?key=${filename}`, { signal })
+      .get<
+        AwsS3Part[]
+      >(`s3/multipart/${encodeURIComponent(uploadId)}?key=${filename}`, { signal })
       .then(assertServerError)
   }
 
@@ -474,7 +519,7 @@ export default class AwsS3Multipart<
     oldSignal?: AbortSignal,
   ): Promise<B> {
     signal ??= oldSignal // eslint-disable-line no-param-reassign
-    this.assertHost('completeMultipartUpload')
+    this.#assertHost('completeMultipartUpload')
     throwIfAborted(signal)
 
     const filename = encodeURIComponent(key)
@@ -482,27 +527,30 @@ export default class AwsS3Multipart<
     return this.#client
       .post<B>(
         `s3/multipart/${uploadIdEnc}/complete?key=${filename}`,
-        { parts },
+        { parts: parts.map(({ ETag, PartNumber }) => ({ ETag, PartNumber })) },
         { signal },
       )
       .then(assertServerError)
   }
 
-  #cachedTemporaryCredentials: MaybePromise<AwsS3STSResponse>
+  #cachedTemporaryCredentials?: MaybePromise<AwsS3STSResponse>
 
   async #getTemporarySecurityCredentials(options?: RequestOptions) {
     throwIfAborted(options?.signal)
 
     if (this.#cachedTemporaryCredentials == null) {
+      const { getTemporarySecurityCredentials } = this.opts
       // We do not await it just yet, so concurrent calls do not try to override it:
-      if (this.opts.getTemporarySecurityCredentials === true) {
-        this.assertHost('getTemporarySecurityCredentials')
+      if (getTemporarySecurityCredentials === true) {
+        this.#assertHost('getTemporarySecurityCredentials')
         this.#cachedTemporaryCredentials = this.#client
           .get<AwsS3STSResponse>('s3/sts', options)
           .then(assertServerError)
       } else {
         this.#cachedTemporaryCredentials =
-          this.opts.getTemporarySecurityCredentials(options)
+          (getTemporarySecurityCredentials as AWSS3WithoutCompanion['getTemporarySecurityCredentials'])!(
+            options,
+          )
       }
       this.#cachedTemporaryCredentials = await this.#cachedTemporaryCredentials
       setTimeout(
@@ -559,7 +607,7 @@ export default class AwsS3Multipart<
     file: UppyFile<M, B>,
     { uploadId, key, partNumber, signal }: SignPartOptions,
   ): Promise<AwsS3UploadParameters> {
-    this.assertHost('signPart')
+    this.#assertHost('signPart')
     throwIfAborted(signal)
 
     if (uploadId == null || key == null || partNumber == null) {
@@ -571,7 +619,7 @@ export default class AwsS3Multipart<
     const filename = encodeURIComponent(key)
     return this.#client
       .get<AwsS3UploadParameters>(
-        `s3/multipart/${uploadId}/${partNumber}?key=${filename}`,
+        `s3/multipart/${encodeURIComponent(uploadId)}/${partNumber}?key=${filename}`,
         { signal },
       )
       .then(assertServerError)
@@ -580,11 +628,8 @@ export default class AwsS3Multipart<
   abortMultipartUpload(
     file: UppyFile<M, B>,
     { key, uploadId, signal }: UploadResultWithSignal,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    oldSignal?: AbortSignal, // TODO: remove in next major
   ): Promise<void> {
-    signal ??= oldSignal // eslint-disable-line no-param-reassign
-    this.assertHost('abortMultipartUpload')
+    this.#assertHost('abortMultipartUpload')
 
     const filename = encodeURIComponent(key)
     const uploadIdEnc = encodeURIComponent(uploadId)
@@ -599,6 +644,7 @@ export default class AwsS3Multipart<
     file: UppyFile<M, B>,
     options: RequestOptions,
   ): Promise<AwsS3UploadParameters> {
+    this.#assertHost('getUploadParameters')
     const { meta } = file
     const { type, name: filename } = meta
     const allowedMetaFields = getAllowedMetaFields(
@@ -697,12 +743,22 @@ export default class AwsS3Multipart<
           return
         }
 
-        // todo make a proper onProgress API (breaking change)
         onProgress?.({ loaded: size, lengthComputable: true })
 
-        // NOTE This must be allowed by CORS.
-        const etag = xhr.getResponseHeader('ETag')
-        const location = xhr.getResponseHeader('Location')
+        // https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/getAllResponseHeaders#examples
+        const arr = xhr
+          .getAllResponseHeaders()
+          .trim()
+          .split(/[\r\n]+/)
+        // @ts-expect-error null is allowed to avoid inherited properties
+        const headersMap: Record<string, string> = { __proto__: null }
+        for (const line of arr) {
+          const parts = line.split(': ')
+          const header = parts.shift()!
+          const value = parts.join(': ')
+          headersMap[header] = value
+        }
+        const { etag, location } = headersMap
 
         if (method.toUpperCase() === 'POST' && location === null) {
           // Not being able to read the Location header is not a fatal error.
@@ -722,8 +778,8 @@ export default class AwsS3Multipart<
 
         onComplete?.(etag)
         resolve({
-          ETag: etag,
-          ...(location ? { location } : undefined),
+          ...headersMap,
+          ETag: etag, // keep capitalised ETag for backwards compatiblity
         })
       })
 
@@ -765,9 +821,9 @@ export default class AwsS3Multipart<
   #uploadLocalFile(file: UppyFile<M, B>) {
     return new Promise<void | string>((resolve, reject) => {
       const onProgress = (bytesUploaded: number, bytesTotal: number) => {
-        this.uppy.emit('upload-progress', this.uppy.getFile(file.id), {
-          // @ts-expect-error TODO: figure out if we need this
-          uploader: this,
+        const latestFile = this.uppy.getFile(file.id)
+        this.uppy.emit('upload-progress', latestFile, {
+          uploadStarted: latestFile.progress.uploadStarted ?? 0,
           bytesUploaded,
           bytesTotal,
         })
@@ -787,7 +843,7 @@ export default class AwsS3Multipart<
             ...result,
           },
           status: 200,
-          uploadURL: result.location,
+          uploadURL: result.location as string,
         }
 
         this.resetUploaderReferences(file.id)
@@ -807,7 +863,9 @@ export default class AwsS3Multipart<
 
         log: (...args: Parameters<Uppy<M, B>['log']>) => this.uppy.log(...args),
         getChunkSize:
-          this.opts.getChunkSize ? this.opts.getChunkSize.bind(this) : null,
+          this.opts.getChunkSize ?
+            this.opts.getChunkSize.bind(this)
+          : undefined,
 
         onProgress,
         onError,
@@ -836,11 +894,9 @@ export default class AwsS3Multipart<
         resolve(`upload ${removed} was removed`)
       })
 
-      eventManager.onCancelAll(file.id, (options) => {
-        if (options?.reason === 'user') {
-          upload.abort()
-          this.resetUploaderReferences(file.id, { abort: true })
-        }
+      eventManager.onCancelAll(file.id, () => {
+        upload.abort()
+        this.resetUploaderReferences(file.id, { abort: true })
         resolve(`upload ${file.id} was canceled`)
       })
 
@@ -922,7 +978,7 @@ export default class AwsS3Multipart<
   }
 
   #setCompanionHeaders = () => {
-    this.#client.setCompanionHeaders(this.opts.companionHeaders)
+    this.#client?.setCompanionHeaders(this.opts.headers!)
   }
 
   #setResumableUploadsCapability = (boolean: boolean) => {

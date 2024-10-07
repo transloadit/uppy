@@ -2,7 +2,7 @@ name: Lockfile checks
 
 on:
   push:
-    branches: [main, 4.x]
+    branches: [main]
     paths:
       - yarn.lock
   pull_request:
@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run:

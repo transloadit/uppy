@@ -1,20 +1,15 @@
 import type { Uppy } from '@uppy/core'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
-import type { PluginOpts } from '@uppy/core/lib/BasePlugin'
+import type { PluginOpts } from '@uppy/core/lib/BasePlugin.js'
 import type {
   RequestOptions,
   CompanionClientProvider,
 } from '@uppy/utils/lib/CompanionClientProvider'
-import type { UnknownProviderPlugin } from '@uppy/core/lib/Uppy'
+import type { UnknownProviderPlugin } from '@uppy/core/lib/Uppy.js'
 import RequestClient, { authErrorStatusCode } from './RequestClient.ts'
-import type { CompanionPluginOptions } from '.'
+import type { CompanionPluginOptions } from './index.ts'
 
-// TODO: remove deprecated options in next major release
 export interface Opts extends PluginOpts, CompanionPluginOptions {
-  /** @deprecated */
-  serverUrl?: string
-  /** @deprecated */
-  serverPattern?: string
   pluginId: string
   name?: string
   supportsRefreshToken?: boolean
@@ -87,7 +82,7 @@ export default class Provider<M extends Meta, B extends Body>
     this.tokenKey = `companion-${this.pluginId}-auth-token`
     this.companionKeysParams = this.opts.companionKeysParams
     this.preAuthToken = null
-    this.supportsRefreshToken = opts.supportsRefreshToken ?? true // todo false in next major
+    this.supportsRefreshToken = !!opts.supportsRefreshToken
   }
 
   async headers(): Promise<Record<string, string>> {
@@ -171,6 +166,7 @@ export default class Provider<M extends Meta, B extends Body>
   }): string {
     const params = new URLSearchParams({
       ...query,
+      // This is only used for Companion instances configured to accept multiple origins.
       state: btoa(JSON.stringify({ origin: getOrigin() })),
       ...this.authQuery({ authFormData }),
     })
@@ -371,7 +367,7 @@ export default class Provider<M extends Meta, B extends Body>
   }
 
   list<ResBody>(
-    directory: string | undefined,
+    directory: string | null,
     options: RequestOptions,
   ): Promise<ResBody> {
     return this.get<ResBody>(`${this.id}/list/${directory || ''}`, options)

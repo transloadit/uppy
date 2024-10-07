@@ -91,6 +91,7 @@ it_IT.strings = {
   resumeUpload: "Riprendi l'upload",
   retry: 'Riprova',
   retryUpload: "Riprova l'upload",
+  save: 'Salva',
   saveChanges: 'Salva le modifiche',
   selectX: {
     '0': 'Seleziona %{smart_count}',
@@ -139,13 +140,6 @@ it_IT.strings = {
   selectFileNamed: 'Seleziona il file %{name}',
   unselectFileNamed: 'Deseleziona il file %{name}',
   openFolderNamed: 'Cartella aperta %{name}',
-}
-
-// TODO: remove this in the next major?
-// @ts-expect-error Uppy can be a global in legacy bundle
-if (typeof Uppy !== 'undefined') {
-  // @ts-expect-error Uppy can be a global in legacy bundle
-  globalThis.Uppy.locales.it_IT = it_IT
 }
 
 export default it_IT

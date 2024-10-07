@@ -1,5 +1,26 @@
 # @uppy/webcam
 
+## 4.0.1
+
+Released: 2024-07-30
+Included in: Uppy v4.1.0
+
+- @uppy/audio,@uppy/webcam: Don't use `<h1>` in Uppy markup (Evgenia Karunus / #5355)
+
+## 4.0.0-beta.8
+
+Released: 2024-06-04
+Included in: Uppy v4.0.0-beta.10
+
+- @uppy/webcam: remove `facingMode` option (Mikael Finstad / #5200)
+
+## 4.0.0-beta.6
+
+Released: 2024-05-14
+Included in: Uppy v4.0.0-beta.7
+
+- @uppy/companion-client,@uppy/dropbox,@uppy/screen-capture,@uppy/unsplash,@uppy/url,@uppy/webcam: Use `title` consistently from locales (Merlijn Vos / #5134)
+
 ## 4.0.0-beta.1
 
 Released: 2024-03-28
@@ -7,6 +28,13 @@ Included in: Uppy v4.0.0-beta.1
 
 - @uppy/audio,@uppy/dashboard,@uppy/drop-target,@uppy/webcam: add missing exports (Antoine du Hamel / #5014)
 - @uppy/webcam: refactor to TypeScript (Antoine du Hamel / #4870)
+
+## 3.4.2
+
+Released: 2024-06-04
+Included in: Uppy v3.26.0
+
+- @uppy/webcam: add missing types for `recordedVideo` (Antoine du Hamel / #5208)
 
 ## 3.4.0
 

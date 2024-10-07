@@ -1,5 +1,27 @@
 # @uppy/status-bar
 
+## 4.0.3
+
+Released: 2024-08-20
+Included in: Uppy v4.2.0
+
+- @uppy/status-bar: show upload button when files are recovered (Merlijn Vos / #5418)
+
+## 4.0.1
+
+Released: 2024-07-30
+Included in: Uppy v4.1.0
+
+- @uppy/status-bar: GoldenRetriever + `hideUploadButton=true` (Evgenia Karunus / #5350)
+
+## 4.0.0-beta.9
+
+Released: 2024-06-04
+Included in: Uppy v4.0.0-beta.10
+
+- @uppy/status-bar: remove unused component props (Antoine du Hamel / #5211)
+- @uppy/status-bar: rename `StatusBar` to `StatusBarUI` (Mikael Finstad / #5200)
+
 ## 4.0.0-beta.1
 
 Released: 2024-03-28
@@ -9,6 +31,13 @@ Included in: Uppy v4.0.0-beta.1
 - @uppy/status-bar: remove default target (Antoine du Hamel / #4970)
 - @uppy/status-bar: refine type of private variables (Antoine du Hamel / #5025)
 - @uppy/status-bar: fix `recoveredState` type (Antoine du Hamel / #4996)
+
+## 3.3.3
+
+Released: 2024-05-07
+Included in: Uppy v3.25.2
+
+- @uppy/compressor,@uppy/core,@uppy/dashboard,@uppy/status-bar: Upgrade @transloadit/prettier-bytes (Merlijn Vos / #5150)
 
 ## 3.3.1
 

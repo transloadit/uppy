@@ -1,7 +1,7 @@
 import { defineComponent, ref, h, type PropType } from 'vue'
 import StatusBarPlugin, { type StatusBarOptions } from '@uppy/status-bar'
 import { Uppy } from '@uppy/core'
-import useUppy from './useUppy'
+import useUppy from './useUppy.ts'
 
 export default defineComponent({
   name: 'StatusBar',
@@ -22,7 +22,7 @@ export default defineComponent({
       const { uppy } = props
       const options = {
         id: 'StatusBar',
-        ...props,
+        ...props.props,
         target: containerRef.value,
       }
       uppy.use(StatusBarPlugin, options)

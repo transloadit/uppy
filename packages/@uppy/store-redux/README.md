@@ -7,12 +7,13 @@
 ![CI status for Companion tests](https://github.com/transloadit/uppy/workflows/Companion/badge.svg)
 ![CI status for browser tests](https://github.com/transloadit/uppy/workflows/End-to-end%20tests/badge.svg)
 
-The `ReduxStore` stores Uppy state on a key in an existing Redux store.
-The `ReduxStore` dispatches `uppy/STATE_UPDATE` actions to update state.
-When the state in Redux changes, it notifies Uppy.
-This way, you get most of the benefits of Redux, including support for the Redux Devtools and time traveling!
+The `ReduxStore` stores Uppy state on a key in an existing Redux store. The
+`ReduxStore` dispatches `uppy/STATE_UPDATE` actions to update state. When the
+state in Redux changes, it notifies Uppy. This way, you get most of the benefits
+of Redux, including support for the Redux Devtools and time traveling!
 
-Uppy is being developed by the folks at [Transloadit](https://transloadit.com), a versatile file encoding service.
+Uppy is being developed by the folks at [Transloadit](https://transloadit.com),
+a versatile file encoding service.
 
 ## Example
 
@@ -21,8 +22,11 @@ import Uppy from '@uppy/core'
 import * as ReduxStore from '@uppy/store-redux'
 import * as Redux from 'redux'
 
-function createStore (reducers = {}) {
-  const reducer = Redux.combineReducers({ ...reducers, uppy: ReduxStore.reducer })
+function createStore(reducers = {}) {
+  const reducer = Redux.combineReducers({
+    ...reducers,
+    uppy: ReduxStore.reducer,
+  })
   return Redux.createStore(reducer)
 }
 
@@ -36,11 +40,15 @@ const uppy = new Uppy({ store })
 $ npm install @uppy/store-redux
 ```
 
-Alternatively, you can also use this plugin in a pre-built bundle from Transloadit’s CDN: Edgly. In that case `Uppy` will attach itself to the global `window.Uppy` object. See the [main Uppy documentation](https://uppy.io/docs/#Installation) for instructions.
+Alternatively, you can also use this plugin in a pre-built bundle from
+Transloadit’s CDN: Smart CDN. In that case `Uppy` will attach itself to the
+global `window.Uppy` object. See the
+[main Uppy documentation](https://uppy.io/docs/#Installation) for instructions.
 
 ## Documentation
 
-Documentation for this plugin can be found on the [Uppy website](https://uppy.io/docs/stores#ReduxStore).
+Documentation for this plugin can be found on the
+[Uppy website](https://uppy.io/docs/stores#ReduxStore).
 
 ## License
 

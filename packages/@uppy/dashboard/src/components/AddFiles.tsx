@@ -55,7 +55,7 @@ class AddFiles extends Component {
         name="files[]"
         multiple={this.props.maxNumberOfFiles !== 1}
         onChange={this.onFileInputChange}
-        accept={this.props.allowedFileTypes}
+        accept={this.props.allowedFileTypes?.join(', ')}
         ref={refCallback}
       />
     )

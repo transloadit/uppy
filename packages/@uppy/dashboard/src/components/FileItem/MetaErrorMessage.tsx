@@ -8,7 +8,7 @@ const metaFieldIdToName = (metaFieldId: $TSFixMe, metaFields: $TSFixMe) => {
   return field[0].name
 }
 
-export default function MetaErrorMessage(props: $TSFixMe): JSX.Element {
+export default function MetaErrorMessage(props: $TSFixMe) {
   const { file, toggleFileCard, i18n, metaFields } = props
   const { missingRequiredMetaFields } = file
   if (!missingRequiredMetaFields?.length) {

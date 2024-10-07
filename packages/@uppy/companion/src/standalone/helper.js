@@ -28,8 +28,8 @@ const getSecret = (baseEnvVar) => {
  *
  * @returns {string}
  */
-exports.generateSecret = () => {
-  logger.warn('auto-generating server secret because none was specified', 'startup.secret')
+exports.generateSecret = (secretName) => {
+  logger.warn(`auto-generating server ${secretName} because none was specified`, 'startup.secret')
   return crypto.randomBytes(64).toString('hex')
 }
 
@@ -45,9 +45,17 @@ const companionProtocol = process.env.COMPANION_PROTOCOL || 'http'
 
 function getCorsOrigins () {
   if (process.env.COMPANION_CLIENT_ORIGINS) {
-    return process.env.COMPANION_CLIENT_ORIGINS
-      .split(',')
-      .map((url) => (hasProtocol(url) ? url : `${companionProtocol}://${url}`))
+    switch (process.env.COMPANION_CLIENT_ORIGINS) {
+
+      case 'true': return true
+      case 'false': return false
+      case '*': return '*'
+
+      default:
+      return process.env.COMPANION_CLIENT_ORIGINS
+        .split(',')
+        .map((url) => (hasProtocol(url) ? url : `${companionProtocol}://${url}`))
+  }
   }
   if (process.env.COMPANION_CLIENT_ORIGINS_REGEX) {
     return new RegExp(process.env.COMPANION_CLIENT_ORIGINS_REGEX)
@@ -77,6 +85,11 @@ const getConfigFromEnv = () => {
   return {
     providerOptions: {
       drive: {
+        key: process.env.COMPANION_GOOGLE_KEY,
+        secret: getSecret('COMPANION_GOOGLE_SECRET'),
+        credentialsURL: process.env.COMPANION_GOOGLE_KEYS_ENDPOINT,
+      },
+      googlephotos: {
         key: process.env.COMPANION_GOOGLE_KEY,
         secret: getSecret('COMPANION_GOOGLE_SECRET'),
         credentialsURL: process.env.COMPANION_GOOGLE_KEYS_ENDPOINT,
@@ -128,6 +141,7 @@ const getConfigFromEnv = () => {
       process.env.COMPANION_AWS_USE_ACCELERATE_ENDPOINT === 'true',
       expires: parseInt(process.env.COMPANION_AWS_EXPIRES || '800', 10),
       acl: process.env.COMPANION_AWS_ACL,
+      forcePathStyle: process.env.COMPANION_AWS_FORCE_PATH_STYLE === 'true',
     },
     server: {
       host: process.env.COMPANION_DOMAIN,
@@ -137,8 +151,7 @@ const getConfigFromEnv = () => {
       oauthDomain: process.env.COMPANION_OAUTH_DOMAIN,
       validHosts,
     },
-    // todo next major make this default false
-    enableUrlEndpoint: process.env.COMPANION_ENABLE_URL_ENDPOINT == null || process.env.COMPANION_ENABLE_URL_ENDPOINT === 'true',
+    enableUrlEndpoint: process.env.COMPANION_ENABLE_URL_ENDPOINT === 'true',
     periodicPingUrls: process.env.COMPANION_PERIODIC_PING_URLS ? process.env.COMPANION_PERIODIC_PING_URLS.split(',') : [],
     periodicPingInterval: process.env.COMPANION_PERIODIC_PING_INTERVAL
       ? parseInt(process.env.COMPANION_PERIODIC_PING_INTERVAL, 10) : undefined,
@@ -147,9 +160,9 @@ const getConfigFromEnv = () => {
     periodicPingCount: process.env.COMPANION_PERIODIC_PING_COUNT
       ? parseInt(process.env.COMPANION_PERIODIC_PING_COUNT, 10) : undefined,
     filePath: process.env.COMPANION_DATADIR,
-    redisUrl: process.env.COMPANION_REDIS_URL,
     redisPubSubScope: process.env.COMPANION_REDIS_PUBSUB_SCOPE,
-    //  redisOptions refers to https://www.npmjs.com/package/redis#options-object-properties
+    redisUrl: process.env.COMPANION_REDIS_URL,
+    //  redisOptions refers to https://redis.github.io/ioredis/index.html#RedisOptions
     redisOptions: (() => {
       try {
         if (!process.env.COMPANION_REDIS_OPTIONS) {
@@ -168,7 +181,7 @@ const getConfigFromEnv = () => {
     allowLocalUrls: process.env.COMPANION_ALLOW_LOCAL_URLS === 'true',
     // cookieDomain is kind of a hack to support distributed systems. This should be improved but we never got so far.
     cookieDomain: process.env.COMPANION_COOKIE_DOMAIN,
-    streamingUpload: process.env.COMPANION_STREAMING_UPLOAD === 'true',
+    streamingUpload: process.env.COMPANION_STREAMING_UPLOAD ? process.env.COMPANION_STREAMING_UPLOAD === 'true' : undefined,
     maxFileSize: process.env.COMPANION_MAX_FILE_SIZE ? parseInt(process.env.COMPANION_MAX_FILE_SIZE, 10) : undefined,
     chunkSize: process.env.COMPANION_CHUNK_SIZE ? parseInt(process.env.COMPANION_CHUNK_SIZE, 10) : undefined,
     clientSocketConnectTimeout: process.env.COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT

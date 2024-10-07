@@ -1,16 +1,27 @@
-import { h, type ComponentChild } from 'preact'
+import { h } from 'preact'
+import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
+import type Uppy from '@uppy/core'
+import type { I18n } from '@uppy/utils/lib/Translator'
 import copyToClipboard from '../../../utils/copyToClipboard.ts'
+import type { DashboardState } from '../../../Dashboard.ts'
 
 type $TSFixMe = any
 
-function EditButton({
+function EditButton<M extends Meta, B extends Body>({
   file,
   uploadInProgressOrComplete,
   metaFields,
   canEditFile,
   i18n,
   onClick,
-}: $TSFixMe) {
+}: {
+  file: UppyFile<M, B>
+  uploadInProgressOrComplete: boolean
+  metaFields: DashboardState<M, B>['metaFields']
+  canEditFile: (f: UppyFile<M, B>) => boolean
+  i18n: I18n
+  onClick: () => void
+}) {
   if (
     (!uploadInProgressOrComplete && metaFields && metaFields.length > 0) ||
     (!uploadInProgressOrComplete && canEditFile(file))
@@ -49,7 +60,15 @@ function EditButton({
   return null
 }
 
-function RemoveButton({ i18n, onClick, file }: $TSFixMe) {
+function RemoveButton<M extends Meta, B extends Body>({
+  i18n,
+  onClick,
+  file,
+}: {
+  i18n: I18n
+  onClick: () => void
+  file: UppyFile<M, B>
+}) {
   return (
     <button
       className="uppy-u-reset uppy-Dashboard-Item-action uppy-Dashboard-Item-action--remove"
@@ -76,22 +95,25 @@ function RemoveButton({ i18n, onClick, file }: $TSFixMe) {
   )
 }
 
-const copyLinkToClipboard = (event: $TSFixMe, props: $TSFixMe) => {
-  copyToClipboard(
-    props.file.uploadURL,
-    props.i18n('copyLinkToClipboardFallback'),
-  )
-    .then(() => {
-      props.uppy.log('Link copied to clipboard.')
-      props.uppy.info(props.i18n('copyLinkToClipboardSuccess'), 'info', 3000)
-    })
-    .catch(props.uppy.log)
-    // avoid losing focus
-    .then(() => event.target.focus({ preventScroll: true }))
-}
-
-function CopyLinkButton(props: $TSFixMe) {
-  const { i18n } = props
+function CopyLinkButton<M extends Meta, B extends Body>({
+  file,
+  uppy,
+  i18n,
+}: {
+  file: UppyFile<M, B>
+  uppy: Uppy<M, B>
+  i18n: I18n
+}) {
+  const copyLinkToClipboard = (event: $TSFixMe) => {
+    copyToClipboard(file.uploadURL, i18n('copyLinkToClipboardFallback'))
+      .then(() => {
+        uppy.log('Link copied to clipboard.')
+        uppy.info(i18n('copyLinkToClipboardSuccess'), 'info', 3000)
+      })
+      .catch(uppy.log)
+      // avoid losing focus
+      .then(() => event.target.focus({ preventScroll: true }))
+  }
 
   return (
     <button
@@ -99,7 +121,7 @@ function CopyLinkButton(props: $TSFixMe) {
       type="button"
       aria-label={i18n('copyLink')}
       title={i18n('copyLink')}
-      onClick={(event) => copyLinkToClipboard(event, props)}
+      onClick={(event) => copyLinkToClipboard(event)}
     >
       <svg
         aria-hidden="true"
@@ -115,7 +137,22 @@ function CopyLinkButton(props: $TSFixMe) {
   )
 }
 
-export default function Buttons(props: $TSFixMe): ComponentChild {
+type ButtonsProps<M extends Meta, B extends Body> = {
+  uppy: Uppy<M, B>
+  file: UppyFile<M, B>
+  i18n: I18n
+  uploadInProgressOrComplete: boolean
+  canEditFile: (file: UppyFile<M, B>) => boolean
+  metaFields: DashboardState<M, B>['metaFields']
+  showLinkToFileUploadResult: boolean
+  showRemoveButton: boolean
+  toggleFileCard: (show: boolean, fileId: string) => void
+  openFileEditor: (file: UppyFile<M, B>) => void
+}
+
+export default function Buttons<M extends Meta, B extends Body>(
+  props: ButtonsProps<M, B>,
+) {
   const {
     uppy,
     file,
@@ -128,7 +165,6 @@ export default function Buttons(props: $TSFixMe): ComponentChild {
     toggleFileCard,
     openFileEditor,
   } = props
-
   const editAction = () => {
     if (metaFields && metaFields.length > 0) {
       toggleFileCard(true, file.id)
@@ -154,8 +190,7 @@ export default function Buttons(props: $TSFixMe): ComponentChild {
         <RemoveButton
           i18n={i18n}
           file={file}
-          uppy={uppy}
-          onClick={() => uppy.removeFile(file.id, 'removed-by-user')}
+          onClick={() => uppy.removeFile(file.id)}
         />
       : null}
     </div>

@@ -1,4 +1,5 @@
 import { createElement as h, Component } from 'react'
+import type React from 'react'
 import DashboardPlugin, { type DashboardOptions } from '@uppy/dashboard'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import type { Uppy } from '@uppy/core'
@@ -31,9 +32,9 @@ class DashboardModal<M extends Meta, B extends Body> extends Component<
     onRequestClose: undefined,
   }
 
-  private container: HTMLElement
+  private container!: HTMLElement
 
-  private plugin: DashboardPlugin<M, B>
+  private plugin!: DashboardPlugin<M, B>
 
   componentDidMount(): void {
     this.installPlugin()
@@ -73,8 +74,8 @@ class DashboardModal<M extends Meta, B extends Body> extends Component<
       ...rest
     } = this.props
     const options = {
+      id: 'DashboardModal',
       ...rest,
-      id: 'react:DashboardModal',
       inline: false,
       target,
       open,
@@ -95,7 +96,8 @@ class DashboardModal<M extends Meta, B extends Body> extends Component<
     uppy.removePlugin(this.plugin)
   }
 
-  render(): JSX.Element {
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+  render() {
     return h('div', {
       className: 'uppy-Container',
       ref: (container: HTMLElement) => {

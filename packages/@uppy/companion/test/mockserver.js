@@ -31,6 +31,9 @@ const defaultEnv = {
   COMPANION_INSTAGRAM_KEY: 'instagram_key',
   COMPANION_INSTAGRAM_SECRET: 'instagram_secret',
 
+  COMPANION_FACEBOOK_KEY: 'facebook_key',
+  COMPANION_FACEBOOK_SECRET: 'facebook_secret',
+
   COMPANION_ZOOM_KEY: localZoomKey,
   COMPANION_ZOOM_SECRET: localZoomSecret,
   COMPANION_ZOOM_VERIFICATION_TOKEN: localZoomVerificationToken,
@@ -40,6 +43,10 @@ const defaultEnv = {
   COMPANION_PERIODIC_PING_URLS: '',
 
   COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT: '',
+
+  COMPANION_ENABLE_URL_ENDPOINT: 'true',
+
+  COMPANION_CLIENT_ORIGINS: 'true',
 }
 
 function updateEnv (env) {

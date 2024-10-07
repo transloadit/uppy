@@ -7,7 +7,7 @@ import prettierBytes from '@transloadit/prettier-bytes'
 import CompressorJS from 'compressorjs'
 
 import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
-import type { PluginOpts } from '@uppy/core/lib/BasePlugin'
+import type { DefinePluginOpts, PluginOpts } from '@uppy/core/lib/BasePlugin.js'
 
 import locale from './locale.ts'
 
@@ -18,29 +18,32 @@ declare module '@uppy/core' {
 }
 
 export interface CompressorOpts extends PluginOpts, CompressorJS.Options {
-  quality: number
   limit?: number
 }
+
+export type { CompressorOpts as CompressorOptions }
+
+const defaultOptions = {
+  quality: 0.6,
+  limit: 10,
+} satisfies Partial<CompressorOpts>
 
 export default class Compressor<
   M extends Meta,
   B extends Body,
-> extends BasePlugin<CompressorOpts, M, B> {
+> extends BasePlugin<
+  DefinePluginOpts<CompressorOpts, keyof typeof defaultOptions>,
+  M,
+  B
+> {
   #RateLimitedQueue
 
-  constructor(uppy: Uppy<M, B>, opts: CompressorOpts) {
-    super(uppy, opts)
+  constructor(uppy: Uppy<M, B>, opts?: CompressorOpts) {
+    super(uppy, { ...defaultOptions, ...opts })
     this.id = this.opts.id || 'Compressor'
     this.type = 'modifier'
 
     this.defaultLocale = locale
-
-    const defaultOptions = {
-      quality: 0.6,
-      limit: 10,
-    }
-
-    this.opts = { ...defaultOptions, ...opts }
 
     this.#RateLimitedQueue = new RateLimitedQueue(this.opts.limit)
 
@@ -73,7 +76,7 @@ export default class Compressor<
             `[Image Compressor] Image ${file.id} compressed by ${prettierBytes(compressedSavingsSize)}`,
           )
           totalCompressedSize += compressedSavingsSize
-          const { name, type, size } = compressedBlob
+          const { name, type, size } = compressedBlob as File
 
           const compressedFileName = getFileNameAndExtension(name)
           const metaFileName = getFileNameAndExtension(file.meta.name)

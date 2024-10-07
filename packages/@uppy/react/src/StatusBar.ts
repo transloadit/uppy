@@ -18,9 +18,9 @@ interface StatusBarProps<M extends Meta, B extends Body>
 class StatusBar<M extends Meta, B extends Body> extends Component<
   StatusBarProps<M, B>
 > {
-  private container: HTMLElement
+  private container!: HTMLElement
 
-  private plugin: UnknownPlugin<M, B>
+  private plugin!: UnknownPlugin<M, B>
 
   componentDidMount(): void {
     this.installPlugin()
@@ -52,9 +52,10 @@ class StatusBar<M extends Meta, B extends Body> extends Component<
       showProgressDetails,
       hideAfterFinish,
       doneButtonHandler,
+      id,
     } = this.props
     const options = {
-      id: 'react:StatusBar',
+      id: id || 'StatusBar',
       hideUploadButton,
       hideRetryButton,
       hidePauseResumeButton,
@@ -76,7 +77,8 @@ class StatusBar<M extends Meta, B extends Body> extends Component<
     uppy.removePlugin(this.plugin)
   }
 
-  render(): JSX.Element {
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+  render() {
     return h('div', {
       className: 'uppy-Container',
       ref: (container: HTMLElement) => {

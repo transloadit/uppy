@@ -1,7 +1,7 @@
 import type { Uppy } from '@uppy/core'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import Emitter from 'component-emitter'
-import type { AssemblyResponse } from '.'
+import type { AssemblyResponse } from './index.ts'
 
 /**
  * Track completion of multiple assemblies.
@@ -21,9 +21,9 @@ class TransloaditAssemblyWatcher<
 
   promise: Promise<void>
 
-  #resolve: () => void
+  #resolve!: () => void
 
-  #reject: (reason?: string) => void
+  #reject!: (reason?: string) => void
 
   #uppy
 

@@ -213,11 +213,4 @@ de_DE.strings = {
   zoomOut: 'Verkleinern',
 }
 
-// TODO: remove this in the next major?
-// @ts-expect-error Uppy can be a global in legacy bundle
-if (typeof Uppy !== 'undefined') {
-  // @ts-expect-error Uppy can be a global in legacy bundle
-  globalThis.Uppy.locales.de_DE = de_DE
-}
-
 export default de_DE

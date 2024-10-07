@@ -13,7 +13,7 @@ export default function RecordButton({
   onStartRecording,
   onStopRecording,
   i18n,
-}: RecordButtonProps): JSX.Element {
+}: RecordButtonProps) {
   if (recording) {
     return (
       <button

@@ -38,13 +38,13 @@ export type FetcherOptions = {
   shouldRetry?: (xhr: XMLHttpRequest) => boolean
 
   /** Called after the response has succeeded or failed but before the promise is resolved. */
-  onAfterRequest?: (
+  onAfterResponse?: (
     xhr: XMLHttpRequest,
     retryCount: number,
   ) => void | Promise<void>
 
   /** Called when no XMLHttpRequest upload progress events have been received for `timeout` ms. */
-  onTimeout?: () => void
+  onTimeout?: (timeout: number) => void
 
   /** Signal to abort the upload. */
   signal?: AbortSignal
@@ -67,7 +67,7 @@ export function fetcher(
     onBeforeRequest = noop,
     onUploadProgress = noop,
     shouldRetry = () => true,
-    onAfterRequest = noop,
+    onAfterResponse = noop,
     onTimeout = noop,
     responseType,
     retries = 3,
@@ -99,7 +99,7 @@ export function fetcher(
       })
 
       xhr.onload = async () => {
-        await onAfterRequest(xhr, retryCount)
+        await onAfterResponse(xhr, retryCount)
 
         if (xhr.status >= 200 && xhr.status < 300) {
           timer.done()

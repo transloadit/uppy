@@ -1,7 +1,7 @@
 import { h } from 'preact'
 
 export interface AudioSourceSelectProps {
-  currentDeviceId: string
+  currentDeviceId: string | MediaStreamTrack | null | undefined
   audioSources: MediaDeviceInfo[]
   onChangeSource: (value: string) => void
 }
@@ -10,7 +10,7 @@ export default ({
   currentDeviceId,
   audioSources,
   onChangeSource,
-}: AudioSourceSelectProps): JSX.Element => {
+}: AudioSourceSelectProps) => {
   return (
     <div className="uppy-Audio-videoSource">
       <select

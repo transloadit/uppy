@@ -1,8 +1,8 @@
 import { defineComponent, ref, h, type PropType } from 'vue'
 import DashboardPlugin, { type DashboardOptions } from '@uppy/dashboard'
 import type { Uppy } from '@uppy/core'
-import type { Meta, Body } from '../../utils/src/UppyFile'
-import useUppy from './useUppy'
+import type { Meta, Body } from '@uppy/utils/lib/UppyFile'
+import useUppy from './useUppy.ts'
 
 type DashboardInlineOptions<M extends Meta, B extends Body> = Omit<
   DashboardOptions<M, B> & { inline: true },
@@ -29,7 +29,7 @@ export default defineComponent({
       const options = {
         id: 'Dashboard',
         inline: true,
-        ...props,
+        ...props.props,
         target: containerRef.value,
       }
       uppy.use(DashboardPlugin, options)

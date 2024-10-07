@@ -9,13 +9,15 @@
 
 React component wrappers around Uppy’s officially maintained UI plugins.
 
-Uppy is being developed by the folks at [Transloadit](https://transloadit.com), a versatile file encoding service.
+Uppy is being developed by the folks at [Transloadit](https://transloadit.com),
+a versatile file encoding service.
 
 ## Example
 
 <!-- eslint-disable react/state-in-constructor -->
 
-```js
+```jsx
+/** @jsx React */
 import React from 'react'
 import Uppy from '@uppy/core'
 import { DashboardModal } from '@uppy/react'
@@ -25,11 +27,12 @@ const uppy = new Uppy()
 class Example extends React.Component {
   state = { open: false }
 
-  render () {
+  render() {
+    const { open } = this.state
     return (
       <DashboardModal
         uppy={uppy}
-        open={this.state.open}
+        open={open}
         onRequestClose={this.handleClose}
       />
     )
@@ -44,11 +47,15 @@ class Example extends React.Component {
 $ npm install @uppy/react
 ```
 
-Alternatively, you can also use this plugin in a pre-built bundle from Transloadit’s CDN: Edgly. In that case `Uppy` will attach itself to the global `window.Uppy` object. See the [main Uppy documentation](https://uppy.io/docs/#Installation) for instructions.
+Alternatively, you can also use this plugin in a pre-built bundle from
+Transloadit’s CDN: Smart CDN. In that case `Uppy` will attach itself to the
+global `window.Uppy` object. See the
+[main Uppy documentation](https://uppy.io/docs/#Installation) for instructions.
 
 ## Documentation
 
-Documentation for this plugin can be found on the [Uppy website](https://uppy.io/docs/react).
+Documentation for this plugin can be found on the
+[Uppy website](https://uppy.io/docs/react).
 
 ## License
 

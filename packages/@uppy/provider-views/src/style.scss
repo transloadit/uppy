@@ -346,8 +346,8 @@
 .uppy-ProviderBrowser-footer {
   display: flex;
   align-items: center;
-  height: 65px;
-  padding: 0 15px;
+  justify-content: space-between;
+  padding: 15px;
   background-color: $white;
   border-top: 1px solid $gray-200;
 
@@ -358,5 +358,24 @@
   [data-uppy-theme='dark'] & {
     background-color: $gray-900;
     border-top: 1px solid $gray-800;
+  }
+}
+
+.uppy-ProviderBrowser-footer-buttons {
+  flex-shrink: 0;
+}
+
+.uppy-ProviderBrowser-footer-error {
+  color: $red;
+  line-height: 18px;
+}
+
+@media (max-width: 426px) {
+  .uppy-ProviderBrowser-footer {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+  .uppy-ProviderBrowser-footer-error {
+    padding-bottom: 10px;
   }
 }

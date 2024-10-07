@@ -1,5 +1,53 @@
 # @uppy/aws-s3
 
+## 4.1.0
+
+Released: 2024-08-29
+Included in: Uppy v4.3.0
+
+- @uppy/aws-s3,@uppy/box,@uppy/compressor,@uppy/dropbox,@uppy/facebook,@uppy/google-drive,@uppy/google-photos,@uppy/image-editor,@uppy/informer,@uppy/instagram,@uppy/onedrive,@uppy/screen-capture,@uppy/tus,@uppy/unsplash,@uppy/url,@uppy/xhr-upload,@uppy/zoom: export plugin options (Antoine du Hamel / #5433)
+
+## 4.0.2
+
+Released: 2024-07-30
+Included in: Uppy v4.1.0
+
+- @uppy/aws-s3: improve error when `endpoint` is not provided (Antoine du Hamel / #5361)
+
+## 4.0.1
+
+Released: 2024-07-18
+Included in: Uppy v4.0.5
+
+- @uppy/aws-s3: use default `Body` generic & export `AwsBody` (Merlijn Vos / #5353)
+- @uppy/aws-s3: only send `PartNumber` and `ETag` in completion request (Antoine du Hamel / #5356)
+
+## 4.0.0
+
+Released: 2024-07-10
+Included in: Uppy v4.0.0
+
+- @uppy/aws-s3: fix signing on client for bucket name with dots (Antoine du Hamel / #5312)
+
+## 4.0.0-beta.7
+
+Released: 2024-06-18
+Included in: Uppy v4.0.0-beta.12
+
+- @uppy/aws-s3: add `endpoint` option (Antoine du Hamel / #5173)
+
+## 4.0.0-beta.5
+
+Released: 2024-06-04
+Included in: Uppy v4.0.0-beta.10
+
+- @uppy/aws-s3: remove todo (Mikael Finstad / #5200)
+- @uppy/aws-s3: do not expose internal `assertHost` method (Mikael Finstad / #5200)
+- @uppy/aws-s3: make passing `signal` consistent (Mikael Finstad / #5200)
+- @uppy/aws-s3: remove `chunkState` getter (Mikael Finstad / #5200)
+- @uppy/aws-s3: remove `uploaderSockets` (Mikael Finstad / #5200)
+- @uppy/aws-s3,@uppy/tus,@uppy/utils,@uppy/xhr-upload: remove `uploader` from `upload-progress` event (Mikael Finstad / #5200)
+
 ## 4.0.0-beta.2
 
 Released: 2024-04-11

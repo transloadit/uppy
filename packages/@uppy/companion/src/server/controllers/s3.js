@@ -52,10 +52,11 @@ module.exports = function s3 (config) {
     const client = getS3Client(req, res)
     if (!client) return
 
-    const bucket = getBucket(config.bucket, req)
+    const { metadata = {}, filename } = req.query
 
-    const metadata = req.query.metadata || {}
-    const key = config.getKey(req, req.query.filename, metadata)
+    const bucket = getBucket({ bucketOrFn: config.bucket, req, filename, metadata })
+
+    const key = config.getKey({ req, filename, metadata })
     if (typeof key !== 'string') {
       res.status(500).json({ error: 'S3 uploads are misconfigured: filename returned from `getKey` must be a string' })
       return
@@ -80,7 +81,7 @@ module.exports = function s3 (config) {
       Key: key,
     }).then(data => {
       res.json({
-        method: 'post', // TODO: switch to the uppercase 'POST' in the next major
+        method: 'POST',
         url: data.url,
         fields: data.fields,
         expires: config.expires,
@@ -106,8 +107,12 @@ module.exports = function s3 (config) {
     const client = getS3Client(req, res)
     if (!client) return
 
-    const key = config.getKey(req, req.body.filename, req.body.metadata || {})
-    const { type, metadata } = req.body
+    const { type, metadata = {}, filename } = req.body
+
+    const key = config.getKey({ req, filename, metadata })
+
+    const bucket = getBucket({ bucketOrFn: config.bucket, req, filename, metadata })
+
     if (typeof key !== 'string') {
       res.status(500).json({ error: 's3: filename returned from `getKey` must be a string' })
       return
@@ -116,7 +121,6 @@ module.exports = function s3 (config) {
       res.status(400).json({ error: 's3: content type must be a string' })
       return
     }
-    const bucket = getBucket(config.bucket, req)
 
     const params = {
       Bucket: bucket,
@@ -160,7 +164,7 @@ module.exports = function s3 (config) {
       return
     }
 
-    const bucket = getBucket(config.bucket, req)
+    const bucket = getBucket({ bucketOrFn: config.bucket, req })
 
     const parts = []
 
@@ -211,7 +215,7 @@ module.exports = function s3 (config) {
       return
     }
 
-    const bucket = getBucket(config.bucket, req)
+    const bucket = getBucket({ bucketOrFn: config.bucket, req })
 
     getSignedUrl(client, new UploadPartCommand({
       Bucket: bucket,
@@ -260,7 +264,7 @@ module.exports = function s3 (config) {
       return
     }
 
-    const bucket = getBucket(config.bucket, req)
+    const bucket = getBucket({ bucketOrFn: config.bucket, req })
 
     Promise.all(
       partNumbersArray.map((partNumber) => {
@@ -303,7 +307,7 @@ module.exports = function s3 (config) {
       return
     }
 
-    const bucket = getBucket(config.bucket, req)
+    const bucket = getBucket({ bucketOrFn: config.bucket, req })
 
     client.send(new AbortMultipartUploadCommand({
       Bucket: bucket,
@@ -344,7 +348,7 @@ module.exports = function s3 (config) {
       return
     }
 
-    const bucket = getBucket(config.bucket, req)
+    const bucket = getBucket({ bucketOrFn: config.bucket, req })
 
     client.send(new CompleteMultipartUploadCommand({
       Bucket: bucket,

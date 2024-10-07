@@ -8,7 +8,7 @@ exports[`src/Core > plugins > should not be able to add an invalid plugin 1`] = 
 
 exports[`src/Core > plugins > should prevent the same plugin from being added more than once 1`] = `
 [Error: Already found a plugin named 'TestSelector1'. Tried to use: 'TestSelector1'.
-Uppy plugins must have unique \`id\` options. See https://uppy.io/docs/plugins/#id.]
+Uppy plugins must have unique \`id\` options.]
 `;
 
 exports[`src/Core > uploading a file > should only upload files that are not already assigned to another upload id 1`] = `
@@ -29,12 +29,12 @@ exports[`src/Core > uploading a file > should only upload files that are not alr
       "preview": undefined,
       "progress": {
         "bytesTotal": null,
-        "bytesUploaded": 0,
+        "bytesUploaded": false,
         "percentage": 0,
         "uploadComplete": false,
         "uploadStarted": null,
       },
-      "remote": "",
+      "remote": undefined,
       "size": null,
       "source": "vi",
       "type": "image/jpeg",
@@ -53,12 +53,12 @@ exports[`src/Core > uploading a file > should only upload files that are not alr
       "preview": undefined,
       "progress": {
         "bytesTotal": null,
-        "bytesUploaded": 0,
+        "bytesUploaded": false,
         "percentage": 0,
         "uploadComplete": false,
         "uploadStarted": null,
       },
-      "remote": "",
+      "remote": undefined,
       "size": null,
       "source": "vi",
       "type": "image/jpeg",

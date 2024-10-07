@@ -1,10 +1,5 @@
 import type { Meta, Body, UppyFile } from '@uppy/utils/lib/UppyFile'
-import type {
-  DeprecatedUppyEventMap,
-  Uppy,
-  UppyEventMap,
-  _UppyEventMap,
-} from './Uppy'
+import type { Uppy, UppyEventMap, _UppyEventMap } from './Uppy.ts'
 
 /**
  * Create a wrapper around an event emitter with a `remove` method to remove
@@ -22,12 +17,6 @@ export default class EventManager<M extends Meta, B extends Body> {
   on<K extends keyof _UppyEventMap<M, B>>(
     event: K,
     fn: _UppyEventMap<M, B>[K],
-  ): Uppy<M, B>
-
-  /** @deprecated */
-  on<K extends keyof DeprecatedUppyEventMap<M, B>>(
-    event: K,
-    fn: DeprecatedUppyEventMap<M, B>[K],
   ): Uppy<M, B>
 
   on<K extends keyof UppyEventMap<M, B>>(
@@ -48,8 +37,8 @@ export default class EventManager<M extends Meta, B extends Body> {
     fileID: UppyFile<M, B>['id'],
     cb: (isPaused: boolean) => void,
   ): void {
-    this.on('upload-pause', (targetFileID, isPaused) => {
-      if (fileID === targetFileID) {
+    this.on('upload-pause', (file, isPaused) => {
+      if (fileID === file?.id) {
         cb(isPaused)
       }
     })
@@ -65,8 +54,8 @@ export default class EventManager<M extends Meta, B extends Body> {
   }
 
   onPause(fileID: UppyFile<M, B>['id'], cb: (isPaused: boolean) => void): void {
-    this.on('upload-pause', (targetFileID, isPaused) => {
-      if (fileID === targetFileID) {
+    this.on('upload-pause', (file, isPaused) => {
+      if (fileID === file?.id) {
         // const isPaused = this.#uppy.pauseResume(fileID)
         cb(isPaused)
       }
@@ -74,8 +63,8 @@ export default class EventManager<M extends Meta, B extends Body> {
   }
 
   onRetry(fileID: UppyFile<M, B>['id'], cb: () => void): void {
-    this.on('upload-retry', (targetFileID) => {
-      if (fileID === targetFileID) {
+    this.on('upload-retry', (file) => {
+      if (fileID === file?.id) {
         cb()
       }
     })

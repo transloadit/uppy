@@ -1,11 +1,102 @@
 # @uppy/xhr-upload
 
+## 4.2.0
+
+Released: 2024-09-20
+Included in: Uppy v4.4.0
+
+- @uppy/xhr-upload: pass files to onBeforeRequest (Merlijn Vos / #5447)
+
+## 4.1.0
+
+Released: 2024-08-29
+Included in: Uppy v4.3.0
+
+- @uppy/aws-s3,@uppy/box,@uppy/compressor,@uppy/dropbox,@uppy/facebook,@uppy/google-drive,@uppy/google-photos,@uppy/image-editor,@uppy/informer,@uppy/instagram,@uppy/onedrive,@uppy/screen-capture,@uppy/tus,@uppy/unsplash,@uppy/url,@uppy/xhr-upload,@uppy/zoom: export plugin options (Antoine du Hamel / #5433)
+
+## 4.0.2
+
+Released: 2024-07-18
+Included in: Uppy v4.0.5
+
+- @uppy/xhr-upload: bring back getResponseData (Merlijn Vos / #5354)
+
+## 4.0.1
+
+Released: 2024-07-15
+Included in: Uppy v4.0.3
+
+- @uppy/xhr-upload: correctly type xhrUpload meta (Merlijn Vos / #5344)
+
+## 4.0.0-beta.6
+
+Released: 2024-06-04
+Included in: Uppy v4.0.0-beta.10
+
+- @uppy/aws-s3,@uppy/tus,@uppy/utils,@uppy/xhr-upload: remove `uploader` from `upload-progress` event (Mikael Finstad / #5200)
+
+## 4.0.0-beta.5
+
+Released: 2024-05-23
+Included in: Uppy v4.0.0-beta.9
+
+- @uppy/xhr-upload: fix regression for lowercase HTTP methods (Antoine du Hamel / #5179)
+
+## 4.0.0-beta.4
+
+Released: 2024-05-14
+Included in: Uppy v4.0.0-beta.7
+
+- @uppy/xhr-upload: introduce hooks similar to tus (Merlijn Vos / #5094)
+
+## 4.0.0-beta.3
+
+Released: 2024-05-03
+Included in: Uppy v4.0.0-beta.5
+
+- @uppy/xhr-upload: do not throw when res is missing url (Merlijn Vos / #5132)
+
+## 4.0.0-beta.2
+
+Released: 2024-04-29
+Included in: Uppy v4.0.0-beta.4
+
+- @uppy/xhr-upload: refactor to use `fetcher` (Merlijn Vos / #5074)
+
 ## 4.0.0-beta.1
 
 Released: 2024-03-28
 Included in: Uppy v4.0.0-beta.1
 
 - @uppy/aws-s3-multipart,@uppy/tus,@uppy/utils,@uppy/xhr-upload: Make `allowedMetaFields` consistent (Merlijn Vos / #5011)
+
+## 3.6.8
+
+Released: 2024-06-27
+Included in: Uppy v3.27.1
+
+- @uppy/xhr-upload: add `'PATCH'` as valid method (Quinn Daley / #5279)
+
+## 3.6.7
+
+Released: 2024-05-23
+Included in: Uppy v3.25.5
+
+- @uppy/xhr-upload: fix regression for lowercase HTTP methods (Antoine du Hamel / #5179)
+
+## 3.6.6
+
+Released: 2024-05-03
+Included in: Uppy v3.25.1
+
+- @uppy/xhr-upload: do not throw when res is missing url (Merlijn Vos / #5132)
+
+## 3.6.5
+
+Released: 2024-04-29
+Included in: Uppy v3.25.0
+
+- @uppy/xhr-upload: refactor to use `fetcher` (Merlijn Vos / #5074)
 
 ## 3.6.4
 

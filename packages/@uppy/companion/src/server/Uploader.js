@@ -2,11 +2,11 @@
 const tus = require('tus-js-client')
 const { randomUUID } = require('node:crypto')
 const validator = require('validator')
-const { pipeline: pipelineCb } = require('node:stream')
+const { pipeline } = require('node:stream/promises')
 const { join } = require('node:path')
 const fs = require('node:fs')
-const { promisify } = require('node:util')
 const throttle = require('lodash/throttle')
+const { once } = require('node:events')
 
 const { Upload } = require('@aws-sdk/lib-storage')
 
@@ -14,17 +14,9 @@ const { rfc2047EncodeMetadata, getBucket } = require('./helpers/utils')
 
 const got = require('./got')
 
-// TODO move to `require('streams/promises').pipeline` when dropping support for Node.js 14.x.
-const pipeline = promisify(pipelineCb)
-
 const { createReadStream, createWriteStream, ReadStream } = fs
 const { stat, unlink } = fs.promises
 
-/** @type {any} */
-// @ts-ignore - typescript resolves this this to a hoisted version of
-// serialize-error that ships with a declaration file, we are using a version
-// here that does not have a declaration file
-const serializeError = require('serialize-error') // eslint-disable-line import/order
 const emitter = require('./emitter')
 const { jsonStringify, hasMatch } = require('./helpers/utils')
 const logger = require('./logger')
@@ -45,23 +37,8 @@ function exceedsMaxFileSize(maxFileSize, size) {
   return maxFileSize && size && size > maxFileSize
 }
 
-// TODO remove once we migrate away from form-data
-function sanitizeMetadata(inputMetadata) {
-  if (inputMetadata == null) return {}
-
-  const outputMetadata = {}
-  Object.keys(inputMetadata).forEach((key) => {
-    outputMetadata[key] = String(inputMetadata[key])
-  })
-  return outputMetadata
-}
-
 class ValidationError extends Error {
-  constructor(message) {
-    super(message)
-
-    this.name = 'ValidationError'
-  }
+  name = 'ValidationError'
 }
 
 /**
@@ -158,6 +135,9 @@ class StreamableBlob {
 }
 
 class Uploader {
+  /** @type {import('ioredis').Redis} */
+  storage
+
   /**
    * Uploads file to destination based on the supplied protocol (tus, s3-multipart, multipart)
    * For tus uploads, the deferredLength option is enabled, because file size value can be unreliable
@@ -187,7 +167,7 @@ class Uploader {
     this.options = options
     this.token = randomUUID()
     this.fileName = `${Uploader.FILE_NAME_PREFIX}-${this.token}`
-    this.options.metadata = sanitizeMetadata(this.options.metadata)
+    this.options.metadata = this.options.metadata || {}
     this.options.fieldname = this.options.fieldname || DEFAULT_FIELD_NAME
     this.size = options.size
     this.uploadFileName = this.options.metadata.name
@@ -240,7 +220,7 @@ class Uploader {
     if (this.readStream) this.readStream.destroy(err)
   }
 
-  async _uploadByProtocol() {
+  async _uploadByProtocol(req) {
     // todo a default protocol should not be set. We should ensure that the user specifies their protocol.
     // after we drop old versions of uppy client we can remove this
     const protocol = this.options.protocol || PROTOCOLS.multipart
@@ -249,7 +229,7 @@ class Uploader {
       case PROTOCOLS.multipart:
         return this.#uploadMultipart(this.readStream)
       case PROTOCOLS.s3Multipart:
-        return this.#uploadS3Multipart(this.readStream)
+        return this.#uploadS3Multipart(this.readStream, req)
       case PROTOCOLS.tus:
         return this.#uploadTus(this.readStream)
       default:
@@ -291,8 +271,9 @@ class Uploader {
   /**
    *
    * @param {import('stream').Readable} stream
+   * @param {import('express').Request} req
    */
-  async uploadStream(stream) {
+  async uploadStream(stream, req) {
     try {
       if (this.#uploadState !== states.idle) throw new Error('Can only start an upload in the idle state')
       if (this.readStream) throw new Error('Already uploading')
@@ -310,7 +291,7 @@ class Uploader {
       if (this.#uploadState !== states.uploading) return undefined
 
       const { url, extraData } = await Promise.race([
-        this._uploadByProtocol(),
+        this._uploadByProtocol(req),
         // If we don't handle stream errors, we get unhandled error in node.
         new Promise((resolve, reject) => this.readStream.on('error', reject)),
       ])
@@ -330,12 +311,13 @@ class Uploader {
   /**
    *
    * @param {import('stream').Readable} stream
+   * @param {import('express').Request} req
    */
-  async tryUploadStream(stream) {
+  async tryUploadStream(stream, req) {
     try {
       emitter().emit('upload-start', { token: this.token })
 
-      const ret = await this.uploadStream(stream)
+      const ret = await this.uploadStream(stream, req)
       if (!ret) return
       const { url, extraData } = ret
       this.#emitSuccess(url, extraData)
@@ -345,7 +327,7 @@ class Uploader {
         return
       }
       logger.error(err, 'uploader.error', this.shortToken)
-      this.#emitError(err)
+      await this.#emitError(err)
     } finally {
       emitter().removeAllListeners(`pause:${this.token}`)
       emitter().removeAllListeners(`resume:${this.token}`)
@@ -405,33 +387,9 @@ class Uploader {
   async awaitReady(timeout) {
     logger.debug('waiting for socket connection', 'uploader.socket.wait', this.shortToken)
 
-    // TODO: replace the Promise constructor call when dropping support for Node.js <16 with
-    // await once(emitter, eventName, timeout && { signal: AbortSignal.timeout(timeout) })
-    await new Promise((resolve, reject) => {
-      const eventName = `connection:${this.token}`
-      let timer
-      let onEvent
-
-      function cleanup() {
-        emitter().removeListener(eventName, onEvent)
-        clearTimeout(timer)
-      }
-
-      if (timeout) {
-        // Need to timeout after a while, or we could leak emitters
-        timer = setTimeout(() => {
-          cleanup()
-          reject(new Error('Timed out waiting for socket connection'))
-        }, timeout)
-      }
-
-      onEvent = () => {
-        cleanup()
-        resolve()
-      }
-
-      emitter().once(eventName, onEvent)
-    })
+    const eventName = `connection:${this.token}`
+    // eslint-disable-next-line compat/compat
+    await once(emitter(), eventName, timeout && { signal: AbortSignal.timeout(timeout) })
 
     logger.debug('socket connection received', 'uploader.socket.wait', this.shortToken)
   }
@@ -446,9 +404,7 @@ class Uploader {
     // https://github.com/transloadit/uppy/issues/3748
     const keyExpirySec = 60 * 60 * 24
     const redisKey = `${Uploader.STORAGE_PREFIX}:${this.token}`
-    this.storage.set(redisKey, jsonStringify(state), {
-      EX: keyExpirySec,
-    })
+    this.storage.set(redisKey, jsonStringify(state), 'EX', keyExpirySec)
   }
 
   throttledEmitProgress = throttle((dataToEmit) => {
@@ -516,15 +472,15 @@ class Uploader {
    *
    * @param {Error} err
    */
-  #emitError(err) {
+  async #emitError(err) {
     // delete stack to avoid sending server info to client
-    // todo remove also extraData from serializedErr in next major,
     // see PR discussion https://github.com/transloadit/uppy/pull/3832
+    // @ts-ignore
+    const { serializeError } = await import('serialize-error')
     const { stack, ...serializedErr } = serializeError(err)
     const dataToEmit = {
       action: 'error',
-      // @ts-ignore
-      payload: { ...err.extraData, error: serializedErr },
+      payload: { error: serializedErr },
     }
     this.saveState(dataToEmit)
     emitter().emit(this.token, dataToEmit)
@@ -683,7 +639,7 @@ class Uploader {
   /**
    * Upload the file to S3 using a Multipart upload.
    */
-  async #uploadS3Multipart(stream) {
+  async #uploadS3Multipart(stream, req) {
     if (!this.options.s3) {
       throw new Error('The S3 client is not configured on this companion instance.')
     }
@@ -693,13 +649,14 @@ class Uploader {
      * @type {{client: import('@aws-sdk/client-s3').S3Client, options: Record<string, any>}}
      */
     const s3Options = this.options.s3
+    const { metadata } = this.options
     const { client, options } = s3Options
 
     const params = {
-      Bucket: getBucket(options.bucket, null, this.options.metadata),
-      Key: options.getKey(null, filename, this.options.metadata),
-      ContentType: this.options.metadata.type,
-      Metadata: rfc2047EncodeMetadata(this.options.metadata),
+      Bucket: getBucket({ bucketOrFn: options.bucket, req, metadata }),
+      Key: options.getKey({ req, filename, metadata }),
+      ContentType: metadata.type,
+      Metadata: rfc2047EncodeMetadata(metadata),
       Body: stream,
     }
 
@@ -719,7 +676,6 @@ class Uploader {
 
     const data = await upload.done()
     return {
-      // @ts-expect-error For some reason `|| null` is not enough for TS
       url: data?.Location || null,
       extraData: {
         response: {

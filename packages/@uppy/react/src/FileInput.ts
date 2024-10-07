@@ -1,10 +1,11 @@
 import { createElement as h, Component } from 'react'
-import type { UnknownPlugin, Uppy } from '@uppy/core'
+import type { UIPluginOptions, UnknownPlugin, Uppy } from '@uppy/core'
 import FileInputPlugin from '@uppy/file-input'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import type { Locale } from '@uppy/utils/lib/Translator'
 
-interface FileInputProps<M extends Meta, B extends Body> {
+interface FileInputProps<M extends Meta, B extends Body>
+  extends UIPluginOptions {
   uppy: Uppy<M, B>
   locale?: Locale
   pretty?: boolean
@@ -26,9 +27,9 @@ class FileInput<M extends Meta, B extends Body> extends Component<
     inputName: 'files[]',
   }
 
-  private container: HTMLElement
+  private container!: HTMLElement
 
-  private plugin: UnknownPlugin<M, B>
+  private plugin?: UnknownPlugin<M, B>
 
   componentDidMount(): void {
     this.installPlugin()
@@ -47,9 +48,9 @@ class FileInput<M extends Meta, B extends Body> extends Component<
   }
 
   installPlugin(): void {
-    const { uppy, locale, pretty, inputName } = this.props
+    const { uppy, locale, pretty, inputName, id } = this.props
     const options = {
-      id: 'react:FileInput',
+      id: id || 'FileInput',
       locale,
       pretty,
       inputName,
@@ -64,10 +65,11 @@ class FileInput<M extends Meta, B extends Body> extends Component<
   uninstallPlugin(props = this.props): void {
     const { uppy } = props
 
-    uppy.removePlugin(this.plugin)
+    uppy.removePlugin(this.plugin!)
   }
 
-  render(): JSX.Element {
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+  render() {
     return h('div', {
       className: 'uppy-Container',
       ref: (container: HTMLElement) => {

@@ -1,18 +1,46 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck Typing this file requires more work, skipping it to unblock the rest of the transition.
-
 /* eslint-disable react/destructuring-assignment */
 import { h, Component, type ComponentChild } from 'preact'
 import classNames from 'classnames'
-import shallowEqual from 'is-shallow-equal'
+import { shallowEqualObjects } from 'shallow-equal'
+import type { UppyFile, Body, Meta } from '@uppy/utils/lib/UppyFile'
+import type { I18n } from '@uppy/utils/lib/Translator'
+import type Uppy from '@uppy/core'
+import type { State } from '@uppy/core'
 import FilePreviewAndLink from './FilePreviewAndLink/index.tsx'
 import FileProgress from './FileProgress/index.tsx'
 import FileInfo from './FileInfo/index.tsx'
 import Buttons from './Buttons/index.tsx'
+import type { DashboardState } from '../../Dashboard.ts'
 
-type $TSFixMe = any
+type Props<M extends Meta, B extends Body> = {
+  file: UppyFile<M, B>
+  handleRequestThumbnail: (file: UppyFile<M, B>) => void
+  handleCancelThumbnail: (file: UppyFile<M, B>) => void
+  individualCancellation: boolean
+  showRemoveButtonAfterComplete: boolean
+  recoveredState: State<M, B>['recoveredState']
+  resumableUploads: boolean
+  i18n: I18n
+  role: string
+  showLinkToFileUploadResult: boolean
+  toggleFileCard: (show: boolean, fileId: string) => void
+  metaFields: DashboardState<M, B>['metaFields']
+  id: string
+  containerWidth: number
+  containerHeight: number
+  toggleAddFilesPanel: (show: boolean) => void
+  isSingleFile: boolean
+  hideRetryButton: boolean
+  hideCancelButton: boolean
+  hidePauseResumeButton: boolean
+  canEditFile: (file: UppyFile<M, B>) => boolean
+  openFileEditor: (file: UppyFile<M, B>) => void
+  uppy: Uppy<M, B>
+}
 
-export default class FileItem extends Component {
+export default class FileItem<M extends Meta, B extends Body> extends Component<
+  Props<M, B>
+> {
   componentDidMount(): void {
     const { file } = this.props
     if (!file.preview) {
@@ -20,8 +48,8 @@ export default class FileItem extends Component {
     }
   }
 
-  shouldComponentUpdate(nextProps: $TSFixMe): boolean {
-    return !shallowEqual(this.props, nextProps)
+  shouldComponentUpdate(nextProps: Props<M, B>): boolean {
+    return !shallowEqualObjects(this.props, nextProps)
   }
 
   // VirtualList mounts FileItems again and they emit `thumbnail:request`
@@ -45,9 +73,9 @@ export default class FileItem extends Component {
 
     const isProcessing = file.progress.preprocess || file.progress.postprocess
     const isUploaded =
-      file.progress.uploadComplete && !isProcessing && !file.error
+      !!file.progress.uploadComplete && !isProcessing && !file.error
     const uploadInProgressOrComplete =
-      file.progress.uploadStarted || isProcessing
+      !!file.progress.uploadStarted || !!isProcessing
     const uploadInProgress =
       (file.progress.uploadStarted && !file.progress.uploadComplete) ||
       isProcessing
@@ -91,7 +119,7 @@ export default class FileItem extends Component {
             toggleFileCard={this.props.toggleFileCard}
             metaFields={this.props.metaFields}
           />
-          <FileProgress
+          <FileProgress<M, B>
             uppy={this.props.uppy}
             file={file}
             error={error}
@@ -100,9 +128,6 @@ export default class FileItem extends Component {
             hideCancelButton={this.props.hideCancelButton}
             hidePauseResumeButton={this.props.hidePauseResumeButton}
             recoveredState={this.props.recoveredState}
-            showRemoveButtonAfterComplete={
-              this.props.showRemoveButtonAfterComplete
-            }
             resumableUploads={this.props.resumableUploads}
             individualCancellation={this.props.individualCancellation}
             i18n={this.props.i18n}
@@ -112,8 +137,6 @@ export default class FileItem extends Component {
         <div className="uppy-Dashboard-Item-fileInfoAndButtons">
           <FileInfo
             file={file}
-            id={this.props.id}
-            acquirers={this.props.acquirers}
             containerWidth={this.props.containerWidth}
             containerHeight={this.props.containerHeight}
             i18n={this.props.i18n}

@@ -25,6 +25,7 @@
     "@uppy/form": "workspace:^",
     "@uppy/golden-retriever": "workspace:^",
     "@uppy/google-drive": "workspace:^",
+    "@uppy/google-photos": "workspace:^",
     "@uppy/image-editor": "workspace:^",
     "@uppy/informer": "workspace:^",
     "@uppy/instagram": "workspace:^",
@@ -47,7 +48,7 @@
   "devDependencies": {
     "@parcel/transformer-vue": "^2.9.3",
     "cypress": "^13.0.0",
-    "cypress-terminal-report": "^5.0.0",
+    "cypress-terminal-report": "^6.0.0",
     "deep-freeze": "^0.0.1",
     "parcel": "^2.9.3",
     "process": "^0.11.10",

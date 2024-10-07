@@ -25,10 +25,11 @@ const OAUTH_STATE = 'some-cool-nice-encrytpion'
 const providers = require('../../src/server/provider').getDefaultProviders()
 
 const providerNames = Object.keys(providers)
-const AUTH_PROVIDERS = {
-  drive: 'google',
-  onedrive: 'microsoft',
-}
+const oauthProviders = Object.fromEntries(
+  Object.entries(providers).flatMap(([name, provider]) => (
+    provider.oauthProvider != null ? [[name, provider.oauthProvider]] : []
+  ))
+)
 const authData = {}
 providerNames.forEach((provider) => {
   authData[provider] = { accessToken: 'token value' }
@@ -55,37 +56,33 @@ afterAll(() => {
 
 describe('list provider files', () => {
   async function runTest (providerName) {
-    const providerFixtures = fixtures.providers[providerName].expects
+    const providerFixture = fixtures.providers[providerName]?.expects ?? {}
     return request(authServer)
-      .get(`/${providerName}/list/${providerFixtures.listPath || ''}`)
+      .get(`/${providerName}/list/${providerFixture.listPath || ''}`)
       .set('uppy-auth-token', token)
       .expect(200)
       .then((res) => {
         expect(res.header['i-am']).toBe('http://localhost:3020')
-        expect(res.body.username).toBe(defaults.USERNAME)
 
-        const items = [...res.body.items]
-
-        // Drive has a virtual "shared-with-me" folder as the first item
-        if (providerName === 'drive') {
-          const item0 = items.shift()
-          expect(item0.isFolder).toBe(true)
-          expect(item0.name).toBe('Shared with me')
-          expect(item0.mimeType).toBe('application/vnd.google-apps.folder')
-          expect(item0.id).toBe('shared-with-me')
-          expect(item0.requestPath).toBe('shared-with-me')
-          expect(item0.icon).toBe('folder')
+        return {
+          username: res.body.username,
+          items: res.body.items,
+          providerFixture,
         }
-
-        const item = items[0]
-        expect(item.isFolder).toBe(false)
-        expect(item.name).toBe(providerFixtures.itemName || defaults.ITEM_NAME)
-        expect(item.mimeType).toBe(providerFixtures.itemMimeType || defaults.MIME_TYPE)
-        expect(item.id).toBe(providerFixtures.itemId || defaults.ITEM_ID)
-        expect(item.size).toBe(thisOrThat(providerFixtures.itemSize, defaults.FILE_SIZE))
-        expect(item.requestPath).toBe(providerFixtures.itemRequestPath || defaults.ITEM_ID)
-        expect(item.icon).toBe(providerFixtures.itemIcon || defaults.THUMBNAIL_URL)
       })
+  }
+
+  function expect1({ username, items, providerFixture }) {
+    expect(username).toBe(defaults.USERNAME)
+
+    const item = items[0]
+    expect(item.isFolder).toBe(false)
+    expect(item.name).toBe(providerFixture.itemName || defaults.ITEM_NAME)
+    expect(item.mimeType).toBe(providerFixture.itemMimeType || defaults.MIME_TYPE)
+    expect(item.id).toBe(providerFixture.itemId || defaults.ITEM_ID)
+    expect(item.size).toBe(thisOrThat(providerFixture.itemSize, defaults.FILE_SIZE))
+    expect(item.requestPath).toBe(providerFixture.itemRequestPath || defaults.ITEM_ID)
+    expect(item.icon).toBe(providerFixture.itemIcon || defaults.THUMBNAIL_URL)
   }
 
   test('dropbox', async () => {
@@ -130,7 +127,8 @@ describe('list provider files', () => {
       has_more: false,
     })
 
-    await runTest('dropbox')
+    const { username, items, providerFixture } = await runTest('dropbox')
+    expect1({ username, items, providerFixture })
   })
 
   test('box', async () => {
@@ -149,7 +147,8 @@ describe('list provider files', () => {
       ],
     })
 
-    await runTest('box')
+    const { username, items, providerFixture } = await runTest('box')
+    expect1({ username, items, providerFixture })
   })
 
   test('drive', async () => {
@@ -157,7 +156,7 @@ describe('list provider files', () => {
       kind: 'drive#driveList', drives: [],
     })
 
-    nock('https://www.googleapis.com').get('/drive/v3/files?fields=kind%2CnextPageToken%2CincompleteSearch%2Cfiles%28kind%2Cid%2CimageMediaMetadata%2Cname%2CmimeType%2CownedByMe%2Csize%2CmodifiedTime%2CiconLink%2CthumbnailLink%2CteamDriveId%2CvideoMediaMetadata%2CshortcutDetails%28targetId%2CtargetMimeType%29%29&q=%28%27root%27+in+parents%29+and+trashed%3Dfalse&pageSize=1000&orderBy=folder%2Cname&includeItemsFromAllDrives=true&supportsAllDrives=true').reply(200, {
+    nock('https://www.googleapis.com').get('/drive/v3/files?fields=kind%2CnextPageToken%2CincompleteSearch%2Cfiles%28kind%2Cid%2CimageMediaMetadata%2Cname%2CmimeType%2CownedByMe%2Csize%2CmodifiedTime%2CiconLink%2CthumbnailLink%2CteamDriveId%2CvideoMediaMetadata%2CexportLinks%2CshortcutDetails%28targetId%2CtargetMimeType%29%29&q=%28%27root%27+in+parents%29+and+trashed%3Dfalse&pageSize=1000&orderBy=folder%2Cname&includeItemsFromAllDrives=true&supportsAllDrives=true').reply(200, {
       kind: 'drive#fileList',
       nextPageToken: defaults.NEXT_PAGE_TOKEN,
       files: [
@@ -178,35 +177,104 @@ describe('list provider files', () => {
 
     nock('https://www.googleapis.com').get((uri) => uri.includes('about')).reply(200, { user: { emailAddress: 'john.doe@transloadit.com' } })
 
-    await runTest('drive')
+    const { username, items, providerFixture } = await runTest('drive')
+
+    // Drive has a virtual "shared-with-me" folder as the first item
+    const [item0, ...rest] = items
+    expect(item0.isFolder).toBe(true)
+    expect(item0.name).toBe('Shared with me')
+    expect(item0.mimeType).toBe('application/vnd.google-apps.folder')
+    expect(item0.id).toBe('shared-with-me')
+    expect(item0.requestPath).toBe('shared-with-me')
+    expect(item0.icon).toBe('folder')
+
+    expect1({ username, items: rest, providerFixture })
+  })
+
+  test('googlephotos', async () => {
+    nock('https://photoslibrary.googleapis.com').get('/v1/albums?pageSize=50').reply(200, {
+      albums: [
+        {
+          coverPhotoBaseUrl: 'https://test',
+          title: 'album',
+          id: '1',
+        }
+      ]
+    })
+
+    nock('https://photoslibrary.googleapis.com').get('/v1/sharedAlbums?pageSize=50').reply(200, {
+      sharedAlbums: [
+        {
+          coverPhotoBaseUrl: 'https://test2',
+          title: 'shared album',
+          id: '2',
+        }
+      ]
+    })
+
+    nock('https://www.googleapis.com').get('/oauth2/v1/userinfo').reply(200, {
+      email: defaults.USERNAME,
+    })
+
+    const { items } = await runTest('googlephotos')
+
+    expect(items[0].isFolder).toBe(true)
+    expect(items[0].name).toBe('album')
+    expect(items[0].id).toBe('1')
+    expect(items[0].requestPath).toBe('1')
+    expect(items[0].icon).toBe('https://drive-thirdparty.googleusercontent.com/32/type/application/vnd.google-apps.folder')
+    expect(items[0].thumbnail).toBe('https://test=w300-h300-c')
+
+    expect(items[1].isFolder).toBe(true)
+    expect(items[1].name).toBe('shared album')
+    expect(items[1].id).toBe('2')
+    expect(items[1].requestPath).toBe('2')
+    expect(items[1].icon).toBe('https://drive-thirdparty.googleusercontent.com/32/type/application/vnd.google-apps.folder')
+    expect(items[1].thumbnail).toBe('https://test2=w300-h300-c')
   })
 
   test('facebook', async () => {
-    nock('https://graph.facebook.com').get('/me?fields=email').reply(200, {
-      name: 'Fiona Fox',
-      birthday: '01/01/1985',
-      email: defaults.USERNAME,
-    })
-    nock('https://graph.facebook.com').get('/ALBUM-ID/photos?fields=icon%2Cimages%2Cname%2Cwidth%2Cheight%2Ccreated_time').reply(200, {
-      data: [
-        {
-          images: [
+    nock('https://graph.facebook.com').post('/',
+    [
+      'access_token=token+value',
+      'appsecret_proof=ee28d8152093b877f193f5fe84a34544ec27160e7f34c7645d02930b3fa95160',
+      `batch=${encodeURIComponent('[{"method":"GET","relative_url":"me?fields=email"},{"method":"GET","relative_url":"ALBUM-ID/photos?fields=icon%2Cimages%2Cname%2Cwidth%2Cheight%2Ccreated_time"}]')}`,
+    ].join('&')
+  ).reply(200,
+    [
+      {
+        code: 200,
+        body: JSON.stringify({
+          name: 'Fiona Fox',
+          birthday: '01/01/1985',
+          email: defaults.USERNAME,
+        }),
+      },
+      {
+        code: 200,
+        body: JSON.stringify({
+          data: [
             {
-              height: 1365,
-              source: defaults.THUMBNAIL_URL,
-              width: 2048,
+              images: [
+                {
+                  height: 1365,
+                  source: defaults.THUMBNAIL_URL,
+                  width: 2048,
+                },
+              ],
+              width: 720,
+              height: 479,
+              created_time: '2015-07-17T17:26:50+0000',
+              id: defaults.ITEM_ID,
             },
           ],
-          width: 720,
-          height: 479,
-          created_time: '2015-07-17T17:26:50+0000',
-          id: defaults.ITEM_ID,
-        },
-      ],
-      paging: {},
-    })
+          paging: {},
+        }),
+      },
+    ])
 
-    await runTest('facebook')
+    const { username, items, providerFixture } = await runTest('facebook')
+    expect1({ username, items, providerFixture })
   })
 
   test('instagram', async () => {
@@ -225,7 +293,8 @@ describe('list provider files', () => {
       ],
     })
 
-    await runTest('instagram')
+    const { username, items, providerFixture } = await runTest('instagram')
+    expect1({ username, items, providerFixture })
   })
 
   test('onedrive', async () => {
@@ -271,7 +340,8 @@ describe('list provider files', () => {
       ],
     })
 
-    await runTest('onedrive')
+    const { username, items, providerFixture } = await runTest('onedrive')
+    expect1({ username, items, providerFixture })
   })
 
   test('zoom', async () => {
@@ -291,15 +361,16 @@ describe('list provider files', () => {
     })
     nockZoomRecordings()
 
-    await runTest('zoom')
+    const { username, items, providerFixture } = await runTest('zoom')
+    expect1({ username, items, providerFixture })
   })
 })
 
 describe('provider file gets downloaded from', () => {
   async function runTest (providerName) {
-    const providerFixtures = fixtures.providers[providerName].expects
+    const providerFixture = fixtures.providers[providerName]?.expects ?? {}
     const res = await request(authServer)
-      .post(`/${providerName}/get/${providerFixtures.itemRequestPath || defaults.ITEM_ID}`)
+      .post(`/${providerName}/get/${providerFixture.itemRequestPath || defaults.ITEM_ID}`)
       .set('uppy-auth-token', token)
       .set('Content-Type', 'application/json')
       .send({
@@ -324,23 +395,43 @@ describe('provider file gets downloaded from', () => {
   })
 
   test('drive', async () => {
-    // times(2) because of size request
-    nockGoogleDownloadFile({ times: 2 })
+    nockGoogleDownloadFile()
     await runTest('drive')
+  })
+
+  test('googlephotos', async () => {
+    nock('https://photoslibrary.googleapis.com').get(`/v1/mediaItems/${defaults.ITEM_ID}`).reply(200, {
+      baseUrl: 'https://lh3.googleusercontent.com/test',
+    })
+
+    nock('https://lh3.googleusercontent.com').get(`/test=d`).reply(200, ' ', { 'content-length': 1 })
+
+    await runTest('googlephotos')
   })
 
   test('facebook', async () => {
     // times(2) because of size request
-    nock('https://graph.facebook.com').get(`/${defaults.ITEM_ID}?fields=images`).times(2).reply(200, {
-      images: [
-        {
-          height: 1365,
-          source: defaults.THUMBNAIL_URL,
-          width: 2048,
-        },
-      ],
-      id: defaults.ITEM_ID,
-    })
+    nock('https://graph.facebook.com').post('/',
+      [
+        'access_token=token+value',
+        'appsecret_proof=ee28d8152093b877f193f5fe84a34544ec27160e7f34c7645d02930b3fa95160',
+        `batch=${encodeURIComponent('[{"method":"GET","relative_url":"DUMMY-FILE-ID?fields=images"}]')}`,
+      ].join('&')
+    ).times(2).reply(200,
+      [{
+        code: 200,
+        body: JSON.stringify({
+          images: [
+            {
+              height: 1365,
+              source: defaults.THUMBNAIL_URL,
+              width: 2048,
+            },
+          ],
+          id: defaults.ITEM_ID,
+        }),
+      }])
+
     await runTest('facebook')
   })
 
@@ -372,16 +463,16 @@ describe('provider file gets downloaded from', () => {
 })
 
 describe('connect to provider', () => {
-  test.each(providerNames)('connect to %s via grant.js endpoint', (providerName) => {
-    const authProvider = AUTH_PROVIDERS[providerName] || providerName
+  test.each(providerNames)('connect to %s via grant.js endpoint', async (providerName) => {
+    const oauthProvider = oauthProviders[providerName]
 
-    if (authProvider.authProvider == null) return
+    if (oauthProvider == null) return
 
-    request(authServer)
+    await request(authServer)
       .get(`/${providerName}/connect?foo=bar`)
       .set('uppy-auth-token', token)
       .expect(302)
-      .expect('Location', `http://localhost:3020/connect/${authProvider}?state=${OAUTH_STATE}`)
+      .expect('Location', `http://localhost:3020/connect/${oauthProvider}?state=${OAUTH_STATE}`)
   })
 })
 
@@ -393,7 +484,7 @@ describe('logout of provider', () => {
       .expect(200)
 
     // only some providers can actually be revoked
-    const expectRevoked = ['box', 'dropbox', 'drive', 'facebook', 'zoom'].includes(providerName)
+    const expectRevoked = ['box', 'dropbox', 'drive', 'googlephotos', 'facebook', 'zoom'].includes(providerName)
 
     expect(res.body).toMatchObject({
       ok: true,
@@ -421,8 +512,25 @@ describe('logout of provider', () => {
     await runTest('drive')
   })
 
+  test('googlephotos', async () => {
+    nock('https://accounts.google.com').post('/o/oauth2/revoke?token=token+value').reply(200, {})
+    await runTest('googlephotos')
+  })
+
   test('facebook', async () => {
-    nock('https://graph.facebook.com').delete('/me/permissions').reply(200, {})
+        // times(2) because of size request
+        nock('https://graph.facebook.com').post('/',
+        [
+          'access_token=token+value',
+          'appsecret_proof=ee28d8152093b877f193f5fe84a34544ec27160e7f34c7645d02930b3fa95160',
+          `batch=${encodeURIComponent('[{"method":"DELETE","relative_url":"me/permissions"}]')}`,
+        ].join('&')
+      ).reply(200,
+        [{
+          code: 200,
+          body: JSON.stringify({}),
+        }])
+  
     await runTest('facebook')
   })
 

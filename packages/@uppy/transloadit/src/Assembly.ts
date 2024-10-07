@@ -8,7 +8,7 @@ import type {
   RateLimitedQueue,
   WrapPromiseFunctionType,
 } from '@uppy/utils/lib/RateLimitedQueue'
-import type { AssemblyResponse } from '.'
+import type { AssemblyResponse } from './index.ts'
 
 const ASSEMBLY_UPLOADING = 'ASSEMBLY_UPLOADING'
 const ASSEMBLY_EXECUTING = 'ASSEMBLY_EXECUTING'
@@ -37,7 +37,7 @@ class TransloaditAssembly extends Emitter {
 
   #previousFetchStatusStillPending = false
 
-  #sse: EventSource | null
+  #sse: EventSource | null = null
 
   status: AssemblyResponse
 
@@ -104,14 +104,14 @@ class TransloaditAssembly extends Emitter {
 
     this.#sse.addEventListener('assembly_upload_finished', (e) => {
       const file = JSON.parse(e.data)
-      this.emit('upload', file)
       this.status.uploads.push(file)
+      this.emit('upload', file)
     })
 
     this.#sse.addEventListener('assembly_result_finished', (e) => {
       const [stepName, result] = JSON.parse(e.data)
-      this.emit('result', stepName, result)
       ;(this.status.results[stepName] ??= []).push(result)
+      this.emit('result', stepName, result)
     })
 
     this.#sse.addEventListener('assembly_execution_progress', (e) => {

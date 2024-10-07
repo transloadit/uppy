@@ -11,7 +11,7 @@ corepack yarn build
 corepack yarn workspace @uppy-example/react dev
 ```
 
-If you'd like to use a different package manager than Yarn  (e.g. npm) to work
+If you'd like to use a different package manager than Yarn (e.g. npm) to work
 with this example, you can extract it from the workspace like this:
 
 ```sh
