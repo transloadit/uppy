@@ -1,3 +1,5 @@
+import type { h } from 'preact'
+
 // We're using a generic because languages have different plural rules.
 export interface Locale<T extends number = number> {
   strings: Record<string, string | Record<T, string>>
@@ -14,7 +16,7 @@ export type I18n = Translator['translate']
 type Options = {
   smart_count?: number
 } & {
-  [key: string]: string | number
+  [key: string]: string | number | h.JSX.Element
 }
 
 function insertReplacement(
