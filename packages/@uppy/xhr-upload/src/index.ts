@@ -262,6 +262,7 @@ export default class XHRUpload<
                 'upload-error',
                 file,
                 buildResponseError(request, error),
+                request,
               )
             }
           }
