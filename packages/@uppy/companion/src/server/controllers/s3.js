@@ -131,6 +131,8 @@ module.exports = function s3 (config) {
 
     if (config.acl != null) params.ACL = config.acl
 
+    if (config.serverSideEncryption != null) params.ServerSideEncryption = config.serverSideEncryption
+
     client.send(new CreateMultipartUploadCommand(params)).then((data) => {
       res.json({
         key: data.Key,
