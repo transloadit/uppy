@@ -49,14 +49,3 @@ window.ResizeObserver ??= ResizeObserver;
 export { default } from '@uppy/core';
 export * from '@uppy/core';
 ```
-
-## Legacy CDN bundle
-
-<UppyCdnExample uppyJsName="uppy.legacy.min.js">
-	{`
-    import { Uppy, DragDrop, Tus } from "{{UPPY_JS_URL}}"
-    const uppy = new Uppy()
-    uppy.use(DragDrop, { target: '#uppy' })
-    uppy.use(Tus, { endpoint: '//tusd.tusdemo.net/files/' })
-  `}
-</UppyCdnExample>

@@ -6,6 +6,7 @@ import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
 import type { State, UIPlugin, UIPluginOptions, Uppy } from '@uppy/core'
 import type { I18n } from '@uppy/utils/lib/Translator'
 import type Translator from '@uppy/utils/lib/Translator'
+import type { TargetedEvent } from 'preact/compat'
 import FileList from './FileList.tsx'
 import AddFiles from './AddFiles.tsx'
 import AddFilesPanel from './AddFilesPanel.tsx'
@@ -14,7 +15,7 @@ import EditorPanel from './EditorPanel.tsx'
 import PanelTopBar from './PickerPanelTopBar.tsx'
 import FileCard from './FileCard/index.tsx'
 import Slide from './Slide.tsx'
-import type { DashboardState, TargetWithRender } from '../Dashboard.js'
+import type { DashboardState, TargetWithRender } from '../Dashboard'
 
 // http://dev.edenspiekermann.com/2016/02/11/introducing-accessible-modal-dialog
 // https://github.com/ghosh/micromodal
@@ -63,7 +64,7 @@ type DashboardUIProps<M extends Meta, B extends Body> = {
   id: string
   closeModal: () => void
   handleClickOutside: () => void
-  handleInputChange: (event: Event) => void
+  handleInputChange: (event: TargetedEvent<HTMLInputElement, Event>) => void
   handlePaste: (event: ClipboardEvent) => void
   inline: boolean
   showPanel: (id: string) => void

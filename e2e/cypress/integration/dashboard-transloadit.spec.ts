@@ -65,14 +65,14 @@ describe('Dashboard with Transloadit', () => {
       cy.get('.uppy-StatusBar-actionBtn--upload').click()
 
       cy.wait(['@createAssemblies', '@tusCreate']).then(() => {
-        const plugin = getPlugin(uppy)
+        const { assembly } = getPlugin(uppy)
 
-        expect(plugin.assembly.closed).to.be.false
+        expect(assembly.closed).to.be.false
 
         uppy.cancelAll()
 
         cy.wait(['@delete', '@tusDelete']).then(() => {
-          expect(plugin.assembly.closed).to.be.true
+          expect(assembly.closed).to.be.true
         })
       })
     })

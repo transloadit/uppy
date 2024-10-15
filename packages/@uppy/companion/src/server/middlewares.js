@@ -92,14 +92,15 @@ exports.verifyToken = (req, res, next) => {
   if (!isOAuthProviderReq(req)) {
     const { providerOptions } = req.companion.options
     const { providerName } = req.params
-    if (!providerOptions[providerName] || !providerOptions[providerName].key) {
+    const key = providerOptions[providerName]?.key;
+    if (!key) {
       logger.info(`unconfigured credentials for ${providerName}`, 'non.oauth.token.load.unset', req.id)
       res.sendStatus(501)
       return
     }
 
     req.companion.providerUserSession = {
-      accessToken: providerOptions[providerName].key,
+      accessToken: key,
     }
     next()
   }

@@ -1,5 +1,5 @@
 diff --git a/package.json b/package.json
-index 8367745346fffd144a817ccf04912bb799e18b66..66dd17a4cd736089a332d72a70040701b0cd9c93 100644
+index d4133284745349488cf0e623b983c78fd7cc7fb7..52433fa0ecea99ebbfe5b94a8023f73350896f7d 100644
 --- a/package.json
 +++ b/package.json
 @@ -6,6 +6,7 @@
@@ -7,6 +7,6 @@ index 8367745346fffd144a817ccf04912bb799e18b66..66dd17a4cd736089a332d72a70040701
  	"funding": "https://github.com/sponsors/sindresorhus",
  	"type": "module",
 +	"main": "./dist/index.js",
- 	"exports": "./dist/index.js",
- 	"engines": {
- 		"node": ">=12"
+ 	"exports": {
+ 		"types": "./dist/index.d.ts",
+ 		"default": "./dist/index.js"

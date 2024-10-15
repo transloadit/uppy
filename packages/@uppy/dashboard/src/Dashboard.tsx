@@ -17,6 +17,7 @@ import toArray from '@uppy/utils/lib/toArray'
 import getDroppedFiles from '@uppy/utils/lib/getDroppedFiles'
 import { defaultPickerIcon } from '@uppy/provider-views'
 
+import type { TargetedEvent } from 'preact/compat'
 import { nanoid } from 'nanoid/non-secure'
 import memoizeOne from 'memoize-one'
 import * as trapFocus from './utils/trapFocus.ts'
@@ -782,9 +783,11 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     }
   }
 
-  private handleInputChange = (event: Event) => {
+  private handleInputChange = (
+    event: TargetedEvent<HTMLInputElement, Event>,
+  ) => {
     event.preventDefault()
-    const files = toArray((event.target as HTMLInputElement).files!)
+    const files = toArray(event.currentTarget.files || [])
     if (files.length > 0) {
       this.uppy.log('[Dashboard] Files selected through input')
       this.addFiles(files)

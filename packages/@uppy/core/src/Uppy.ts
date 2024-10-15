@@ -45,8 +45,8 @@ import {
 import packageJson from '../package.json'
 import locale from './locale.ts'
 
-import type BasePlugin from './BasePlugin.js'
-import type { Restrictions, ValidateableFile } from './Restricter.js'
+import type BasePlugin from './BasePlugin.ts'
+import type { Restrictions, ValidateableFile } from './Restricter.ts'
 
 type Processor = (
   fileIDs: string[],
@@ -639,6 +639,11 @@ export class Uppy<
           ...files[fileID].progress,
           ...defaultProgress,
         },
+        // @ts-expect-error these typed are inserted
+        // into the namespace in their respective packages
+        // but core isn't ware of those
+        tus: undefined,
+        transloadit: undefined,
       }
     })
 
@@ -1799,7 +1804,7 @@ export class Uppy<
       const msg =
         `Already found a plugin named '${existsPluginAlready.id}'. ` +
         `Tried to use: '${pluginId}'.\n` +
-        'Uppy plugins must have unique `id` options. See https://uppy.io/docs/plugins/#id.'
+        'Uppy plugins must have unique `id` options.'
       throw new Error(msg)
     }
 

@@ -1,5 +1,6 @@
 import { h } from 'preact'
 import classNames from 'classnames'
+import { useRef } from 'preact/hooks'
 import ignoreEvent from '../utils/ignoreEvent.ts'
 
 type $TSFixMe = any
@@ -12,6 +13,7 @@ function PickerPanelContent({
   state,
   uppy,
 }: $TSFixMe) {
+  const ref = useRef<HTMLDivElement>(null)
   return (
     <div
       className={classNames('uppy-DashboardContent-panel', className)}
@@ -39,8 +41,9 @@ function PickerPanelContent({
           {i18n('cancel')}
         </button>
       </div>
-      <div className="uppy-DashboardContent-panelBody">
-        {uppy.getPlugin(activePickerPanel.id).render(state)}
+
+      <div ref={ref} className="uppy-DashboardContent-panelBody">
+        {uppy.getPlugin(activePickerPanel.id).render(state, ref.current)}
       </div>
     </div>
   )

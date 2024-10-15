@@ -67,6 +67,42 @@ files to arrive at Transloadit servers, much like Uppy.
 
 :::
 
+To do so each provider plugin must be configured with Transloadit’s Companion
+URLs:
+
+```js
+import { COMPANION_URL, COMPANION_ALLOWED_HOSTS } from '@uppy/transloadit';
+import Dropbox from '@uppy/dropbox';
+
+uppy.use(Dropbox, {
+	companionUrl: COMPANION_URL,
+	companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
+});
+```
+
+You may also hit rate limits, because the OAuth application is shared between
+everyone using Transloadit.
+
+To solve that, you can use your own OAuth keys with Transloadit’s hosted
+Companion servers by using Transloadit Template Credentials. [Create a Template
+Credential][template-credentials] on the Transloadit site. Select “Companion
+OAuth” for the service, and enter the key and secret for the provider you want
+to use. Then you can pass the name of the new credentials to that provider:
+
+```js
+import { COMPANION_URL, COMPANION_ALLOWED_HOSTS } from '@uppy/transloadit';
+import Dropbox from '@uppy/dropbox';
+
+uppy.use(Dropbox, {
+	companionUrl: COMPANION_URL,
+	companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
+	companionKeysParams: {
+		key: 'YOUR_TRANSLOADIT_API_KEY',
+		credentialsName: 'my_companion_dropbox_creds',
+	},
+});
+```
+
 ## Installation & use
 
 Companion is installed from npm. Depending on how you want to run Companion, the
@@ -644,14 +680,15 @@ the
 for `postMessage` calls in the context of OAuth.
 
 Setting it to `true` treats any origin as a trusted one, making it easier to
-impersonate your brand. Setting it to `false` disables cross-origin supports,
-use this if you’re serving Companion and Uppy from the same domain name.
+impersonate your brand. Setting it to `false` disables cross-origin support, use
+this if you’re serving Companion and Uppy from the same domain name.
 
 ##### `COMPANION_CLIENT_ORIGINS`
 
-A comma-separated string of origins, or `'true'` (which will be interpreted as
-the boolean value `true`), or `'false'` (which will be interpreted as the
-boolean value `false`).
+Stand-alone alternative to the `corsOrigins` option. A comma-separated string of
+origins, or `'true'` (which will be interpreted as the boolean value `true`), or
+`'false'` (which will be interpreted as the boolean value `false`).
+`COMPANION_CLIENT_ORIGINS_REGEX` will be ignored if this option is used.
 
 ##### `COMPANION_CLIENT_ORIGINS_REGEX`
 
@@ -664,9 +701,8 @@ make sure you’re validating the entirety of the string.
 
 :::
 
-Like COMPANION_CLIENT_ORIGINS, but allows a single regex instead.
-`COMPANION_CLIENT_ORIGINS` will be ignored if this is used. This is a
-standalone-only option.
+Stand-alone alternative to the `corsOrigins` option. Like
+`COMPANION_CLIENT_ORIGINS`, but allows a single regex instead.
 
 #### `chunkSize` `COMPANION_CHUNK_SIZE`
 
@@ -949,3 +985,5 @@ automatically restart when files are changed.
 [url]: /docs/url
 [zoom]: /docs/zoom
 [transloadit]: https://transloadit.com
+[template-credentials]:
+	https://transloadit.com/docs/#how-to-create-template-credentials

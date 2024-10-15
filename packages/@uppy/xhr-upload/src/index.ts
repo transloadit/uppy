@@ -52,13 +52,20 @@ export interface XhrUploadOpts<M extends Meta, B extends Body>
   limit?: number
   responseType?: XMLHttpRequestResponseType
   withCredentials?: boolean
-  onBeforeRequest?: FetcherOptions['onBeforeRequest']
+  onBeforeRequest?: (
+    xhr: XMLHttpRequest,
+    retryCount: number,
+    /** The files to be uploaded. When `bundle` is `false` only one file is in the array.  */
+    files: UppyFile<M, B>[],
+  ) => void | Promise<void>
   shouldRetry?: FetcherOptions['shouldRetry']
   onAfterResponse?: FetcherOptions['onAfterResponse']
   getResponseData?: (xhr: XMLHttpRequest) => B | Promise<B>
   allowedMetaFields?: boolean | string[]
   bundle?: boolean
 }
+
+export type { XhrUploadOpts as XHRUploadOptions }
 
 declare module '@uppy/utils/lib/UppyFile' {
   // eslint-disable-next-line no-shadow
@@ -192,13 +199,16 @@ export default class XHRUpload<
      */
     this.#getFetcher = (files: UppyFile<M, B>[]) => {
       return async (
-        url: Parameters<typeof fetcher>[0],
-        options: NonNullable<Parameters<typeof fetcher>[1]>,
+        url: string,
+        options: Omit<FetcherOptions, 'onBeforeRequest'> & {
+          onBeforeRequest?: Opts<M, B>['onBeforeRequest']
+        },
       ) => {
         try {
           const res = await fetcher(url, {
             ...options,
-            onBeforeRequest: this.opts.onBeforeRequest,
+            onBeforeRequest: (xhr, retryCount) =>
+              this.opts.onBeforeRequest?.(xhr, retryCount, files),
             shouldRetry: this.opts.shouldRetry,
             onAfterResponse: this.opts.onAfterResponse,
             onTimeout: (timeout) => {
@@ -252,6 +262,7 @@ export default class XHRUpload<
                 'upload-error',
                 file,
                 buildResponseError(request, error),
+                request,
               )
             }
           }

@@ -151,15 +151,15 @@ jobs:
             type=semver,pattern={{version}},value=${{ needs.release.outputs.companionWasReleased }}
             # set latest tag for default branch
             type=raw,value=latest,enable=true
-      - uses: docker/setup-qemu-action@5927c834f5b4fdf503fca6f4c7eccda82949e1ee # v3.1.0
+      - uses: docker/setup-qemu-action@49b3bc8e6bdd4a60e6116a5414239cba5943d3cf # v3.2.0
       - uses: docker/setup-buildx-action@v3
       - name: Log in to DockerHub
-        uses: docker/login-action@0d4c9c5ea7693da7b068278f7b52bda2a190a446 # v3.2.0
+        uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567 # v3.3.0
         with:
           username: ${{secrets.DOCKER_USERNAME}}
           password: ${{secrets.DOCKER_PASSWORD}}
       - name: Build and push
-        uses: docker/build-push-action@1ca370b3a9802c92e886402e0dd88098a2533b12 # v6.4.1
+        uses: docker/build-push-action@4f58ea79222b3b9dc2c8bbdd6debcef730109a75 # v6.9.0
         with:
           push: true
           context: .

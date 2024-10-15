@@ -12,6 +12,143 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 4.4.1
+
+Released: 2024-09-30
+
+| Package           | Version | Package           | Version |
+| ----------------- | ------- | ----------------- | ------- |
+| @uppy/core        |   4.2.1 | uppy              |   4.4.1 |
+| @uppy/transloadit |   4.1.2 |                   |         |
+
+- @uppy/transloadit: fix multiple upload batches & run again (Merlijn Vos / #5478)
+- meta: build(deps): bump docker/build-push-action from 6.7.0 to 6.8.0 (dependabot[bot] / #5477)
+- meta: build(deps): bump vite from 5.2.11 to 5.4.8 (dependabot[bot] / #5471)
+- @uppy/svelte: build(deps-dev): bump rollup from 4.18.0 to 4.22.4 (dependabot[bot] / #5470)
+- meta: build(deps): bump vite from 5.2.11 to 5.4.6 (dependabot[bot] / #5466)
+
+
+## 4.4.0
+
+Released: 2024-09-20
+
+| Package           | Version | Package           | Version |
+| ----------------- | ------- | ----------------- | ------- |
+| @uppy/companion   |   5.1.1 | @uppy/tus         |   4.1.1 |
+| @uppy/svelte      |   4.0.2 | @uppy/xhr-upload  |   4.2.0 |
+| @uppy/transloadit |   4.1.1 | uppy              |   4.4.0 |
+
+- @uppy/tus: fix retry check for status code 400 (Merlijn Vos / #5461)
+- meta: Merge branch 'main' of https://github.com/transloadit/uppy (Murderlon)
+- meta: fix AwsS3 endpoint option in private/dev (Murderlon)
+- examples: build(deps): bump body-parser from 1.20.2 to 1.20.3 (dependabot[bot] / #5462)
+- examples: build(deps-dev): bump vite from 5.3.1 to 5.3.6 (dependabot[bot] / #5459)
+- @uppy/tus: set response from tus-js-client (Merlijn Vos / #5456)
+- docs: fix assemblyOptions example for React (Merlijn Vos / #5450)
+- docs: rename Edgly to Smart CDN (Merlijn Vos / #5449)
+- @uppy/tus: correctly type tus on UppyFile (Merlijn Vos / #5454)
+- docs: remove old legacy CDN reference (Murderlon)
+- @uppy/xhr-upload: pass files to onBeforeRequest (Merlijn Vos / #5447)
+- @uppy/svelte: fix generated module to not bundle Svelte (Antoine du Hamel / #5446)
+- examples,@uppy/svelte: Bump svelte from 4.2.18 to 4.2.19 (dependabot[bot] / #5440)
+- meta: bump Yarn to 4.4.1 (Antoine du Hamel / #5445)
+- docs: fix broken links in locale docs (Serghei Cebotari / #5441)
+
+
+## 4.3.0
+
+Released: 2024-08-29
+
+| Package                | Version | Package                | Version |
+| ---------------------- | ------- | ---------------------- | ------- |
+| @uppy/aws-s3           |   4.1.0 | @uppy/informer         |   4.1.0 |
+| @uppy/box              |   3.1.0 | @uppy/instagram        |   4.1.0 |
+| @uppy/companion        |   5.1.0 | @uppy/locales          |   4.1.0 |
+| @uppy/companion-client |   4.1.0 | @uppy/onedrive         |   4.1.0 |
+| @uppy/compressor       |   2.1.0 | @uppy/remote-sources   |   2.2.0 |
+| @uppy/core             |   4.2.0 | @uppy/screen-capture   |   4.1.0 |
+| @uppy/dashboard        |   4.1.0 | @uppy/tus              |   4.1.0 |
+| @uppy/dropbox          |   4.1.0 | @uppy/unsplash         |   4.1.0 |
+| @uppy/facebook         |   4.1.0 | @uppy/url              |   4.1.0 |
+| @uppy/google-drive     |   4.1.0 | @uppy/xhr-upload       |   4.1.0 |
+| @uppy/google-photos    |   0.3.0 | @uppy/zoom             |   3.1.0 |
+| @uppy/image-editor     |   3.1.0 | uppy                   |   4.3.0 |
+
+- @uppy/core,@uppy/dashboard: Pass container to `UIPlugin.render` for non-Preact integration (Merlijn Vos / #5437)
+- @uppy/companion: do not use unsafe call to `JSON.stringify` (Antoine du Hamel / #5422)
+- meta: Fix yarn.lock (Murderlon)
+- @uppy/locales: Fix locale-pack for en_US (Merlijn Vos / #5431)
+- meta: Add tsconfig to packages in private/ (Merlijn Vos / #5432)
+- @uppy/remote-sources: support companionKeysParams (Merlijn Vos / #5434)
+- @uppy/aws-s3,@uppy/box,@uppy/compressor,@uppy/dropbox,@uppy/facebook,@uppy/google-drive,@uppy/google-photos,@uppy/image-editor,@uppy/informer,@uppy/instagram,@uppy/onedrive,@uppy/screen-capture,@uppy/tus,@uppy/unsplash,@uppy/url,@uppy/xhr-upload,@uppy/zoom: export plugin options (Antoine du Hamel / #5433)
+- docs: correctly list exported components (Merlijn Vos / #5417)
+
+
+## 4.2.1
+
+Released: 2024-08-26
+
+| Package     | Version | Package     | Version |
+| ----------- | ------- | ----------- | ------- |
+| @uppy/react |   4.0.2 | uppy        |   4.2.1 |
+
+- @uppy/react: fix `use-sync-external-store` import (Merlijn Vos / #5426)
+- docs: fix Golden Retriever service worker import (mkabatek / #5425)
+
+
+## 4.2.0
+
+Released: 2024-08-20
+
+| Package           | Version | Package           | Version |
+| ----------------- | ------- | ----------------- | ------- |
+| @uppy/core        |   4.1.2 | @uppy/transloadit |   4.1.0 |
+| @uppy/status-bar  |   4.0.3 | uppy              |   4.2.0 |
+| @uppy/svelte      |   4.0.1 |                   |         |
+
+- @uppy/status-bar: show upload button when files are recovered (Merlijn Vos / #5418)
+- meta: Bump docker/build-push-action from 6.6.1 to 6.7.0 (dependabot[bot] / #5413)
+- docs: remove stale reference to plugins page (Merlijn Vos / #5414)
+- @uppy/transloadit: add execution_progress to AssemblyResponse type (Merlijn Vos / #5420)
+- @uppy/svelte: fix exports condition (Merlijn Vos / #5416)
+- @uppy/transloadit: fix check if all files have been removed (Merlijn Vos / #5419)
+- examples: remove `useUppy` from React Native example (Mikael Finstad / #5405)
+
+
+## 4.1.1
+
+Released: 2024-08-15
+
+| Package                | Version | Package                | Version |
+| ---------------------- | ------- | ---------------------- | ------- |
+| @uppy/aws-s3           |   4.0.3 | @uppy/provider-views   |   4.0.1 |
+| @uppy/companion        |   5.0.5 | @uppy/status-bar       |   4.0.2 |
+| @uppy/companion-client |   4.0.1 | @uppy/transloadit      |   4.0.2 |
+| @uppy/core             |   4.1.1 | @uppy/tus              |   4.0.1 |
+| @uppy/dashboard        |   4.0.3 | @uppy/utils            |   6.0.2 |
+| @uppy/drag-drop        |   4.0.2 | @uppy/vue              |   2.0.1 |
+| @uppy/file-input       |   4.0.1 | uppy                   |   4.1.1 |
+| @uppy/image-editor     |   3.0.1 |                        |         |
+
+- @uppy/transloadit: fix issue with `allowMultipleUploadBatches` (Mikael Finstad / #5400)
+- meta: Bump elliptic from 6.5.5 to 6.5.7 (dependabot[bot] / #5410)
+- meta: add back patch for `p-queue` (Antoine du Hamel / #5409)
+- @uppy/transloadit: fix many lurking `TypeError` (Mikael Finstad / #5399)
+- docs: improve `corsOrigins` documentation (Mikael Finstad / #5390)
+- docs: add `ViewEncapsulation` to Angular example (Aaron Russell / #5395)
+- @uppy/companion: fix code for custom providers (Mikael Finstad / #5398)
+- docs: add note about throwing in `cancelAll` and `destroy()` (Mikael Finstad / #5408)
+- meta: Bump docker/login-action from 3.2.0 to 3.3.0 (dependabot[bot] / #5372)
+- meta: Bump docker/setup-qemu-action from 3.1.0 to 3.2.0 (dependabot[bot] / #5370)
+- docs: make hosted Companion more clear (Merlijn Vos / #5394)
+- meta: Bump docker/build-push-action from 6.4.1 to 6.6.1 (dependabot[bot] / #5403)
+- meta: bump p-queue to latest, remove patch (Mikael Finstad / #5391)
+- meta: enforce `.ts` extension for relative import types (Antoine du Hamel / #5393)
+- @uppy/tus: Fix onShouldRetry type signature (Trent Nadeau / #5387)
+- @uppy/dashboard,@uppy/drag-drop,@uppy/file-input: Transform the `accept` prop into a string everywhere (Evgenia Karunus / #5380)
+- docs: fix getTemporarySecurityCredentials in aws-s3 (Merlijn Vos / #5363)
+
+
 ## 4.1.0
 
 Released: 2024-07-30
@@ -6060,7 +6197,7 @@ Released: 2018-02-11.
 - dashboard: Use more accessible tip lib microtip (#536 / @arturi)
 - docs: Add PHP snippets to XHRUpload docs (#567 / @goto-bus-stop)
 - meta: Added instruction to fork the repo first (#512 / muhammadInam)
-- meta: Automatically host releases on edgly and use that as our main CDN (#558 / @kvz)
+- meta: Automatically host releases on Smart CDN and use that as our main CDN (#558 / @kvz)
 - meta: Dependency version updates (#523 / @goto-bus-stop)
 - meta: Remove unused files from published package (#586 / @goto-bus-stop)
 - s3: Respect `limit` option for upload parameter requests too; fix isXml() check when no content-type is available (#545, #544, #528 / @goto-bus-stop)

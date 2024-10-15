@@ -150,7 +150,7 @@ module.exports.app = (optionsArg = {}) => {
       logger.info(`Returning dynamic OAuth2 credentials for ${providerName}`)
       // for simplicity, we just return the normal credentials for the provider, but in a real-world scenario,
       // we would query based on parameters
-      const { key, secret } = options.providerOptions[providerName]
+      const { key, secret } = options.providerOptions[providerName] ?? { __proto__: null }
 
       function getRedirectUri() {
         const oauthProvider = getOauthProvider(providerName)

@@ -1,5 +1,28 @@
 # @uppy/transloadit
 
+## 4.1.2
+
+Released: 2024-09-30
+Included in: Uppy v4.4.1
+
+- @uppy/transloadit: fix multiple upload batches & run again (Merlijn Vos / #5478)
+
+## 4.1.0
+
+Released: 2024-08-20
+Included in: Uppy v4.2.0
+
+- @uppy/transloadit: add execution_progress to AssemblyResponse type (Merlijn Vos / #5420)
+- @uppy/transloadit: fix check if all files have been removed (Merlijn Vos / #5419)
+
+## 4.0.2
+
+Released: 2024-08-15
+Included in: Uppy v4.1.1
+
+- @uppy/transloadit: fix issue with `allowMultipleUploadBatches` (Mikael Finstad / #5400)
+- @uppy/transloadit: fix many lurking `TypeError` (Mikael Finstad / #5399)
+
 ## 4.0.1
 
 Released: 2024-07-30

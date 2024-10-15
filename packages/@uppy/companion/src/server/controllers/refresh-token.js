@@ -8,7 +8,7 @@ const logger = require('../logger')
 async function refreshToken (req, res, next) {
   const { providerName } = req.params
 
-  const { key: clientId, secret: clientSecret } = req.companion.options.providerOptions[providerName]
+  const { key: clientId, secret: clientSecret } = req.companion.options.providerOptions[providerName] ?? { __proto__: null }
   const { redirect_uri: redirectUri } = req.companion.providerGrantConfig
 
   const { providerUserSession } = req.companion

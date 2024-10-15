@@ -1,5 +1,28 @@
 # @uppy/tus
 
+## 4.1.1
+
+Released: 2024-09-20
+Included in: Uppy v4.4.0
+
+- @uppy/tus: fix retry check for status code 400 (Merlijn Vos / #5461)
+- @uppy/tus: set response from tus-js-client (Merlijn Vos / #5456)
+- @uppy/tus: correctly type tus on UppyFile (Merlijn Vos / #5454)
+
+## 4.1.0
+
+Released: 2024-08-29
+Included in: Uppy v4.3.0
+
+- @uppy/aws-s3,@uppy/box,@uppy/compressor,@uppy/dropbox,@uppy/facebook,@uppy/google-drive,@uppy/google-photos,@uppy/image-editor,@uppy/informer,@uppy/instagram,@uppy/onedrive,@uppy/screen-capture,@uppy/tus,@uppy/unsplash,@uppy/url,@uppy/xhr-upload,@uppy/zoom: export plugin options (Antoine du Hamel / #5433)
+
+## 4.0.1
+
+Released: 2024-08-15
+Included in: Uppy v4.1.1
+
+- @uppy/tus: Fix onShouldRetry type signature (Trent Nadeau / #5387)
+
 ## 4.0.0-beta.6
 
 Released: 2024-06-04

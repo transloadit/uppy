@@ -4,10 +4,10 @@ import type {
   WrapPromiseFunctionType,
 } from '@uppy/utils/lib/RateLimitedQueue'
 import { pausingUploadReason, type Chunk } from './MultipartUploader.ts'
-import type AwsS3Multipart from './index.js'
+import type AwsS3Multipart from './index.ts'
 import { throwIfAborted } from './utils.ts'
-import type { UploadPartBytesResult, UploadResult } from './utils.js'
-import type { AwsS3MultipartOptions, uploadPartBytes } from './index.js'
+import type { UploadPartBytesResult, UploadResult } from './utils.ts'
+import type { AwsS3MultipartOptions, uploadPartBytes } from './index.ts'
 
 function removeMetadataFromURL(urlString: string) {
   const urlObject = new URL(urlString)

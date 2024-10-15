@@ -24,14 +24,6 @@ import getFingerprint from './getFingerprint.ts'
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'
 
-declare module '@uppy/utils/lib/UppyFile' {
-  // eslint-disable-next-line no-shadow, @typescript-eslint/no-unused-vars
-  export interface UppyFile<M extends Meta, B extends Body> {
-    // TODO: figure out what else is in this type
-    tus?: { uploadUrl?: string | null }
-  }
-}
-
 type RestTusUploadOptions = Omit<
   tus.UploadOptions,
   'onShouldRetry' | 'onBeforeRequest' | 'headers'
@@ -39,10 +31,12 @@ type RestTusUploadOptions = Omit<
 
 export type TusDetailedError = tus.DetailedError
 
+export type TusBody = { xhr: XMLHttpRequest }
+
 export interface TusOpts<M extends Meta, B extends Body>
   extends PluginOpts,
     RestTusUploadOptions {
-  endpoint: string
+  endpoint?: string
   headers?:
     | Record<string, string>
     | ((file: UppyFile<M, B>) => Record<string, string>)
@@ -53,13 +47,14 @@ export interface TusOpts<M extends Meta, B extends Body>
     err: tus.DetailedError,
     retryAttempt: number,
     options: TusOpts<M, B>,
-    next: (e: tus.DetailedError) => void,
+    next: (e: tus.DetailedError) => boolean,
   ) => boolean
   retryDelays?: number[]
   withCredentials?: boolean
   allowedMetaFields?: boolean | string[]
   rateLimitedQueue?: RateLimitedQueue
 }
+export type { TusOpts as TusOptions }
 
 /**
  * Extracted from https://github.com/tus/tus-js-client/blob/master/lib/upload.js#L13
@@ -100,6 +95,13 @@ type Opts<M extends Meta, B extends Body> = DefinePluginOpts<
   TusOpts<M, B>,
   keyof typeof defaultOptions
 >
+
+declare module '@uppy/utils/lib/UppyFile' {
+  // eslint-disable-next-line no-shadow, @typescript-eslint/no-unused-vars
+  export interface UppyFile<M extends Meta, B extends Body> {
+    tus?: TusOpts<M, B>
+  }
+}
 
 /**
  * Tus resumable file uploader
@@ -287,7 +289,6 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
         this.resetUploaderReferences(file.id)
         queuedRequest?.abort()
 
-        this.uppy.emit('upload-error', file, err)
         if (typeof opts.onError === 'function') {
           opts.onError(err)
         }
@@ -307,11 +308,19 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
         })
       }
 
-      uploadOptions.onSuccess = () => {
-        const uploadResp = {
+      uploadOptions.onSuccess = (payload) => {
+        const uploadResp: UppyFile<M, B>['response'] = {
           uploadURL: upload.url ?? undefined,
           status: 200,
-          body: {} as B,
+          body: {
+            // We have to put `as XMLHttpRequest` because tus-js-client
+            // returns `any`, as the type differs in Node.js and the browser.
+            // In the browser it's always `XMLHttpRequest`.
+            xhr: payload.lastResponse.getUnderlyingObject() as XMLHttpRequest,
+            // Body extends Record<string, unknown> and thus `xhr` is not known
+            // but we export the `TusBody` type, which people pass as a generic into the Uppy class,
+            // so on the implementer side it works as expected.
+          } as unknown as B,
         }
 
         this.resetUploaderReferences(file.id)
@@ -325,7 +334,7 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
           this.uppy.log(`Download ${name} from ${upload.url}`)
         }
         if (typeof opts.onSuccess === 'function') {
-          opts.onSuccess()
+          opts.onSuccess(payload)
         }
 
         resolve(upload)
@@ -345,7 +354,7 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
           }
         } else if (
           status != null &&
-          status > 400 &&
+          status >= 400 &&
           status < 500 &&
           status !== 409 &&
           status !== 423

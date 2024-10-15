@@ -2,6 +2,6 @@
 
 'use strict'
 
-import * as Uppy from './index.mjs'
+import * as Uppy from './src/index.ts'
 
 globalThis.Uppy = Uppy

@@ -21,7 +21,7 @@ import type {
   UploadResultWithSignal,
   MultipartUploadResultWithSignal,
   UploadPartBytesResult,
-} from './utils.js'
+} from './utils.ts'
 import createSignedURL from './createSignedURL.ts'
 import { HTTPCommunicationQueue } from './HTTPCommunicationQueue.ts'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -276,6 +276,8 @@ export type AwsS3MultipartOptions<
     | AWSS3MaybeMultipartWithCompanion<M, B>
     | AWSS3MaybeMultipartWithoutCompanion<M, B>
   )
+
+export type { AwsS3MultipartOptions as AwsS3Options }
 
 const defaultOptions = {
   allowedMetaFields: true,

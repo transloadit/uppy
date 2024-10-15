@@ -1,16 +1,60 @@
 /* eslint-disable */
 import React from 'react'
-import Uppy from '@uppy/core'
+import { createRoot } from 'react-dom/client'
+import Uppy, {
+  UIPlugin,
+  type Meta,
+  type Body,
+  type UIPluginOptions,
+  type State,
+} from '@uppy/core'
 import Tus from '@uppy/tus'
 import Webcam from '@uppy/webcam'
-import RemoteSources from '@uppy/remote-sources'
 import { Dashboard, useUppyState } from '@uppy/react'
 
 import '@uppy/core/dist/style.css'
 import '@uppy/dashboard/dist/style.css'
-import '@uppy/drag-drop/dist/style.css'
-import '@uppy/file-input/dist/style.css'
-import '@uppy/progress-bar/dist/style.css'
+import '@uppy/webcam/dist/style.css'
+
+interface MyPluginOptions extends UIPluginOptions {}
+
+interface MyPluginState extends Record<string, unknown> {}
+
+// Custom plugin example inside React
+class MyPlugin<M extends Meta, B extends Body> extends UIPlugin<
+  MyPluginOptions,
+  M,
+  B,
+  MyPluginState
+> {
+  container!: HTMLElement
+
+  constructor(uppy: Uppy<M, B>, opts?: MyPluginOptions) {
+    super(uppy, opts)
+    this.type = 'acquirer'
+    this.id = this.opts.id || 'TEST'
+    this.title = 'Test'
+  }
+
+  override install() {
+    const { target } = this.opts
+    if (target) {
+      this.mount(target, this)
+    }
+  }
+
+  override uninstall() {
+    this.unmount()
+  }
+
+  override render(state: State<M, B>, container: HTMLElement) {
+    // Important: during the initial render is not defined. Safely return.
+    if (!container) return
+    createRoot(container).render(
+      <h2>React component inside Uppy's Preact UI</h2>,
+    )
+  }
+}
 
 const metaFields = [
   { id: 'license', name: 'License', placeholder: 'specify license' },
@@ -20,9 +64,7 @@ function createUppy() {
   return new Uppy({ restrictions: { requiredMetaFields: ['license'] } })
     .use(Tus, { endpoint: 'https://tusd.tusdemo.net/files/' })
     .use(Webcam)
-    .use(RemoteSources, {
-      companionUrl: 'https://companion.uppy.io',
-    })
+    .use(MyPlugin)
 }
 
 export default function App() {
