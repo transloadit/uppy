@@ -1,5 +1,12 @@
 # @uppy/svelte
 
+## 4.1.0
+
+Released: 2024-10-15
+Included in: Uppy v4.5.0
+
+- @uppy/svelte: use SvelteKit as the build tool (Merlijn Vos / #5484)
+
 ## 4.0.2
 
 Released: 2024-09-20

@@ -12,6 +12,30 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 4.5.0
+
+Released: 2024-10-15
+
+| Package          | Version | Package          | Version |
+| ---------------- | ------- | ---------------- | ------- |
+| @uppy/companion  |   5.1.2 | @uppy/svelte     |   4.1.0 |
+| @uppy/core       |   4.2.2 | @uppy/tus        |   4.1.2 |
+| @uppy/dashboard  |   4.1.1 | @uppy/utils      |   6.0.3 |
+| @uppy/drag-drop  |   4.0.3 | @uppy/xhr-upload |   4.2.1 |
+| @uppy/file-input |   4.0.2 | uppy             |   4.5.0 |
+| @uppy/locales    |   4.2.0 |                  |         |
+
+- @uppy/dashboard: Dashboard - convert some files to typescript  (Evgenia Karunus / #5367)
+- @uppy/dashboard,@uppy/drag-drop,@uppy/file-input:  `.handleInputChange()` - use `.currentTarget`; clear the input using `''` (Evgenia Karunus / #5381)
+- meta: build(deps): bump @blakeembrey/template from 1.1.0 to 1.2.0 (dependabot[bot] / #5448)
+- @uppy/locales: Update packages/@uppy/locales/src/fr_FR.ts (Zéfyx / #5472)
+- @uppy/svelte: use SvelteKit as the build tool (Merlijn Vos / #5484)
+- @uppy/xhr-upload: add response to upload-error callback (Caleb Hardin / #5486)
+- @uppy/tus: tus: Avoid duplicate `upload-error` event (Marius / #5485)
+- @uppy/companion: Fix redis emitter (Mikael Finstad / #5474)
+- meta: build(deps): bump docker/build-push-action from 6.8.0 to 6.9.0 (dependabot[bot] / #5483)
+
+
 ## 4.4.1
 
 Released: 2024-09-30

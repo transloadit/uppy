@@ -1,5 +1,12 @@
 # @uppy/tus
 
+## 4.1.2
+
+Released: 2024-10-15
+Included in: Uppy v4.5.0
+
+- @uppy/tus: tus: Avoid duplicate `upload-error` event (Marius / #5485)
+
 ## 4.1.1
 
 Released: 2024-09-20

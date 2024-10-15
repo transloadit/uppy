@@ -1,5 +1,12 @@
 # @uppy/locales
 
+## 4.2.0
+
+Released: 2024-10-15
+Included in: Uppy v4.5.0
+
+- @uppy/locales: Update packages/@uppy/locales/src/fr_FR.ts (Zéfyx / #5472)
+
 ## 4.1.0
 
 Released: 2024-08-29
