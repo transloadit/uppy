@@ -289,7 +289,6 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
         this.resetUploaderReferences(file.id)
         queuedRequest?.abort()
 
-        this.uppy.emit('upload-error', file, err)
         if (typeof opts.onError === 'function') {
           opts.onError(err)
         }
