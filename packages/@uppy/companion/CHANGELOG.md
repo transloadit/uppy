@@ -1,5 +1,12 @@
 # @uppy/companion
 
+## 5.1.2
+
+Released: 2024-10-15
+Included in: Uppy v4.5.0
+
+- @uppy/companion: Fix redis emitter (Mikael Finstad / #5474)
+
 ## 5.1.0
 
 Released: 2024-08-29

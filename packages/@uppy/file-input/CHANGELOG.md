@@ -1,5 +1,12 @@
 # @uppy/file-input
 
+## 4.0.2
+
+Released: 2024-10-15
+Included in: Uppy v4.5.0
+
+- @uppy/dashboard,@uppy/drag-drop,@uppy/file-input:  `.handleInputChange()` - use `.currentTarget`; clear the input using `''` (Evgenia Karunus / #5381)
+
 ## 4.0.1
 
 Released: 2024-08-15

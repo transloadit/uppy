@@ -1,5 +1,12 @@
 # @uppy/xhr-upload
 
+## 4.2.1
+
+Released: 2024-10-15
+Included in: Uppy v4.5.0
+
+- @uppy/xhr-upload: add response to upload-error callback (Caleb Hardin / #5486)
+
 ## 4.2.0
 
 Released: 2024-09-20
