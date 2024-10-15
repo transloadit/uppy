@@ -12,13 +12,17 @@ const fr_FR: Locale<0 | 1> = {
 
 fr_FR.strings = {
   addBulkFilesFailed: {
-    '0': 'L’ajout de %{smart_count} fichier a échoué',
-    '1': 'L’ajout de %{smart_count} fichiers a échoué',
+    '0': 'L’ajout de %{smart_count} fichier a échoué en raison d’une erreur interne',
+    '1': 'L’ajout de %{smart_count} fichiers a échoué en raison d’erreurs internes',
   },
   addedNumFiles: '%{numFiles} fichier(s) ajouté(s)',
   addingMoreFiles: 'Ajout de fichiers',
+  additionalRestrictionsFailed:
+    '%{count} restrictions supplémentaires n’ont pas été respectées',
   addMore: 'Ajouter d’autres',
   addMoreFiles: 'Ajouter d’autres fichiers',
+  aggregateExceedsSize:
+    'Vous avez sélectionné %{size} de fichiers, mais la taille maximale autorisée est %{sizeAllowed}',
   allFilesFromFolderNamed: 'Tous les fichiers du dossier %{name}',
   allowAccessDescription:
     'Pour prendre des photos ou enregistrer une vidéo, veuillez autoriser l’accès à votre caméra pour ce site.',
@@ -29,7 +33,8 @@ fr_FR.strings = {
     'Veuillez vous authentifier avec %{pluginName} pour sélectionner les fichiers',
   back: 'Retour',
   browse: 'naviguer',
-  browseFiles: 'naviguer',
+  browseFiles: 'naviguer dans les fichiers',
+  browseFolders: 'naviguer dans les dossiers',
   cancel: 'Annuler',
   cancelUpload: 'Annuler le téléversement',
   chooseFiles: 'Choisir des fichiers',
@@ -71,7 +76,8 @@ fr_FR.strings = {
   enterCorrectUrl:
     'Lien incorrect: Assurez-vous que vous entrez un lien direct vers le fichier',
   enterUrlToImport: 'Entrez le lien pour importer un fichier',
-  exceedsSize: 'Ce fichier dépasse la taille maximale autorisée de %{size}',
+  exceedsSize:
+    'Le fichier %{file} dépasse la taille maximale autorisée de %{size}',
   failedToFetch:
     'Companion a échoué à récupérer ce lien, assurez-vous qu’il est correct',
   failedToUpload: 'Le téléversement de %{file} a échoué',
@@ -89,15 +95,20 @@ fr_FR.strings = {
   generatingThumbnails: 'Génération des vignettes…',
   import: 'Importer',
   importFrom: 'Importer de %{name}',
+  inferiorSize: 'Ce fichier est plus petit que la taille autorisée de %{size}',
   loading: 'Chargement…',
   logOut: 'Déconnexion',
   micDisabled: 'Accès au micro refusé par l’utilisateur',
   myDevice: 'Mon Appareil',
+  noCameraDescription:
+    'Pour prendre des photos ou enregistrer une vidéo, veuillez connecter une caméra',
   noDuplicates: 'Impossible d’ajouter le fichier "%{fileName}", il existe déjà',
   noFilesFound: 'Vous n’avez aucun fichier ou dossier ici',
   noInternetConnection: 'Pas de connexion à Internet',
   noMoreFilesAllowed:
     'Impossible d’ajouter de nouveaux fichiers: en cours de chargement ',
+  noSearchResults:
+    'Malheureusement, il n’y a aucun résultat pour cette recherche',
   openFolderNamed: 'Ouvrir %{name}',
   pause: 'Pause',
   pauseUpload: 'Mettre en pause le téléversement',
@@ -111,12 +122,19 @@ fr_FR.strings = {
   recordingLength: 'Durée d’enregistrement %{recording_length}',
   recordingStoppedMaxSize:
     'L’enregistrement s’est arrété car la taille du fichier dépasse la limite',
+  recoveredAllFiles:
+    'Nous avons restauré tous les fichiers. Vous pouvez maintenant reprendre le téléversement.',
+  recoveredXFiles: {
+    '0': 'Nous n’avons pas pu récupérer entièrement 1 fichier. Veuillez le resélectionner et reprendre le téléversement.',
+    '1': 'Nous n’avons pas pu récupérer entièrement %{smart_count} fichiers. Veuillez les resélectionner et reprendre le téléversement.',
+  },
   removeFile: 'Effacer le fichier %{file}',
   resetFilter: 'Réinitialiser filtre',
   resume: 'Reprendre',
   resumeUpload: 'Reprendre le téléversement',
   retry: 'Réessayer',
   retryUpload: 'Réessayer le téléversement',
+  reSelect: 'Resélectionner',
   save: 'Sauvegarder',
   saveChanges: 'Sauvegarder les modifications',
   selectFileNamed: 'Sélectionner le fichier %{name}',
@@ -124,6 +142,8 @@ fr_FR.strings = {
     '0': 'Sélectionner %{smart_count}',
     '1': 'Sélectionner %{smart_count}',
   },
+  sessionRestored: 'Session restaurée',
+  signInWithGoogle: 'Se connecter avec Google',
   smile: 'Souriez !',
   startRecording: 'Commencer l’enregistrement vidéo',
   stopRecording: 'Arrêter l’enregistrement vidéo',
