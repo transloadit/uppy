@@ -501,6 +501,14 @@ module.exports = {
       },
     },
     {
+      files: [
+        'packages/@uppy/svelte/**',
+      ],
+      parserOptions: {
+        sourceType: 'module',
+      },
+    },
+    {
       files: ['e2e/**/*.ts'],
       extends: ['plugin:cypress/recommended'],
     },
