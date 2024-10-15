@@ -183,7 +183,7 @@ class UIPlugin<
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     state: Record<string, unknown>,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    container: HTMLElement,
+    container?: HTMLElement,
   ): any {
     throw new Error(
       'Extend the render method to add your plugin to a DOM element',
