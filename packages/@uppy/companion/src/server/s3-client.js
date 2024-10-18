@@ -29,7 +29,7 @@ module.exports = (companionOptions, createPresignedPostMode = false) => {
     /** @type {import('@aws-sdk/client-s3').S3ClientConfig} */
     let s3ClientOptions = {
       region: s3.region,
-      forcePathStyle: Boolean(s3.forcePathStyle)
+      forcePathStyle: s3.forcePathStyle
     }
 
     if (s3.useAccelerateEndpoint) {
