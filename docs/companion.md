@@ -327,6 +327,7 @@ const options = {
 	logClientVersion: true,
 	periodicPingUrls: [],
 	streamingUpload: true,
+	streamingUploadSizeless: false,
 	clientSocketConnectTimeout: 60000,
 	metrics: true,
 };
@@ -637,6 +638,13 @@ A boolean flag to tell Companion whether to enable streaming uploads. If
 enabled, it will lead to _faster uploads_ because companion will start uploading
 at the same time as downloading using `stream.pipe`. If `false`, files will be
 fully downloaded first, then uploaded. Defaults to `true`.
+
+#### `streamingUploadSizeless` `COMPANION_STREAMING_UPLOAD_SIZELESS`
+
+A boolean flag to tell Companion whether to also upload files that have an
+unknown size. Currently this is only supported for Tus uploads. Note that this
+requires an optional extension on the Tus server. Default is `false`. If set to
+`true`, `streamingUpload` has to be also set to `true`.
 
 #### `maxFileSize` `COMPANION_MAX_FILE_SIZE`
 
