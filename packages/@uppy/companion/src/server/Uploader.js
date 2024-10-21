@@ -269,14 +269,10 @@ class Uploader {
   }
 
   _canStream() {
-    const protocol = this._getUploadProtocol()
-
     return this.options.companionOptions.streamingUpload && (
       this.options.size
       // only tus uploads can be streamed without size, TODO: add also others
-      || (this.options.companionOptions.streamingUploadSizeless && (
-        protocol === PROTOCOLS.tus
-      ))
+      || this.options.companionOptions.streamingUploadSizeless
     )
   }
 
@@ -619,7 +615,7 @@ class Uploader {
 
       const response = await runRequest(url, reqOptions)
 
-      if (bytesUploaded !== this.size) {
+      if (this.size != null && bytesUploaded !== this.size) {
         const errMsg = `uploaded only ${bytesUploaded} of ${this.size} with status: ${response.statusCode}`
         logger.error(errMsg, 'upload.multipart.mismatch.error')
         throw new Error(errMsg)
