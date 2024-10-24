@@ -3,7 +3,7 @@
 <img src="https://uppy.io/img/logo.svg" width="120" alt="Uppy logo: a smiling puppy above a pink upwards arrow" align="right">
 
 [![npm version](https://img.shields.io/npm/v/@uppy/companion-client.svg?style=flat-square)](https://www.npmjs.com/package/@uppy/companion-client)
-![CI status for Uppy tests](https://github.com/transloadit/uppy/workflows/Tests/badge.svg)
+![CI status for Uppy tests](https://github.com/transloadit/uppy/workflows/CI/badge.svg)
 ![CI status for Companion tests](https://github.com/transloadit/uppy/workflows/Companion/badge.svg)
 ![CI status for browser tests](https://github.com/transloadit/uppy/workflows/End-to-end%20tests/badge.svg)
 
@@ -45,11 +45,10 @@ socket.on('progress', () => {})
 $ npm install @uppy/companion-client
 ```
 
-<!-- Undocumented currently
 ## Documentation
 
-Documentation for this plugin can be found on the [Uppy website](https://uppy.io/docs/DOC_PAGE_HERE).
--->
+Documentation for this plugin can be found on the
+[Uppy website](https://uppy.io/docs/companion).
 
 ## License
 
