@@ -65,6 +65,7 @@ const defaultOptions = {
   showProgressDetails: false,
   hideAfterFinish: true,
   doneButtonHandler: null,
+  theme: 'light',
 } satisfies StatusBarOptions
 
 /**
@@ -77,6 +78,8 @@ export default class StatusBar<M extends Meta, B extends Body> extends UIPlugin<
   B
 > {
   static VERSION = packageJson.version
+
+  private darkModeMediaQuery!: MediaQueryList | null
 
   #lastUpdateTime!: ReturnType<typeof performance.now>
 
@@ -231,12 +234,44 @@ export default class StatusBar<M extends Meta, B extends Body> extends UIPlugin<
   }
 
   onMount(): void {
-    // Set the text direction if the page has not defined one.
+    const { capabilities } = this.uppy.getState()
     const element = this.el!
+
+    // Set the text direction if the page has not defined one.
     const direction = getTextDirection(element)
     if (!direction) {
       element.dir = 'ltr'
     }
+
+    // Set the theme
+    let theme
+    if (this.opts.theme === 'auto') {
+      theme = capabilities.darkMode ? 'dark' : 'light'
+    } else {
+      theme = this.opts.theme
+    }
+
+    element.dataset.uppyTheme = theme
+  }
+
+  setDarkModeCapability = (isDarkModeOn: boolean): void => {
+    const { capabilities } = this.uppy.getState()
+    this.uppy.setState({
+      capabilities: {
+        ...capabilities,
+        darkMode: isDarkModeOn,
+      },
+    })
+  }
+
+  private handleSystemDarkModeChange = (event: MediaQueryListEvent) => {
+    const isDarkModeOnNow = event.matches
+    this.uppy.log(`[Dashboard] Dark mode is ${isDarkModeOnNow ? 'on' : 'off'}`)
+    this.setDarkModeCapability(isDarkModeOnNow)
+
+    const element = this.el!
+    const theme = isDarkModeOnNow ? 'dark' : 'light'
+    element.dataset.uppyTheme = theme
   }
 
   #onUploadStart = (): void => {
@@ -267,6 +302,23 @@ export default class StatusBar<M extends Meta, B extends Body> extends UIPlugin<
     }
     this.uppy.on('upload', this.#onUploadStart)
 
+    // Dark Mode / theme
+    this.darkModeMediaQuery =
+      typeof window !== 'undefined' && window.matchMedia ?
+        window.matchMedia('(prefers-color-scheme: dark)')
+      : null
+
+    const isDarkModeOnFromTheStart =
+      this.darkModeMediaQuery ? this.darkModeMediaQuery.matches : false
+    this.uppy.log(
+      `[Dashboard] Dark mode is ${isDarkModeOnFromTheStart ? 'on' : 'off'}`,
+    )
+    this.setDarkModeCapability(isDarkModeOnFromTheStart)
+
+    if (this.opts.theme === 'auto') {
+      this.darkModeMediaQuery?.addListener(this.handleSystemDarkModeChange)
+    }
+
     // To cover the use case where the status bar is installed while the upload
     // has started, we set `lastUpdateTime` right away.
     this.#lastUpdateTime = performance.now()
@@ -276,6 +328,10 @@ export default class StatusBar<M extends Meta, B extends Body> extends UIPlugin<
   }
 
   uninstall(): void {
+    if (this.opts.theme === 'auto') {
+      this.darkModeMediaQuery?.removeListener(this.handleSystemDarkModeChange)
+    }
+
     this.unmount()
     this.uppy.off('upload', this.#onUploadStart)
   }

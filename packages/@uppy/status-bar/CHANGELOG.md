@@ -1,5 +1,12 @@
 # @uppy/status-bar
 
+## 4.0.4
+
+Released: 2024-10-24
+<!-- Included in: Uppy v4.2.1 -->
+
+- @uppy/status-bar: Add theme option (Anthony Veaudry / #5490)
+
 ## 4.0.3
 
 Released: 2024-08-20

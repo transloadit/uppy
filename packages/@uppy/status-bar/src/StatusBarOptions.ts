@@ -10,4 +10,5 @@ export interface StatusBarOptions extends UIPluginOptions {
   hideCancelButton?: boolean
   doneButtonHandler?: (() => void) | null
   locale?: typeof StatusBarLocale
+  theme?: 'auto' | 'dark' | 'light'
 }

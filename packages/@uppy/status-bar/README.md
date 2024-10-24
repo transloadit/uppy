@@ -27,6 +27,7 @@ import StatusBar from '@uppy/status-bar'
 const uppy = new Uppy()
 uppy.use(StatusBar, {
   target: 'body',
+  theme: 'light',
   hideUploadButton: false,
   showProgressDetails: false,
   hideAfterFinish: true,
