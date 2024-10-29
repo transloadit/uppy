@@ -27,7 +27,7 @@
   },
   "dependencies": {
     "@uppy/utils": "workspace:^",
-    "cropperjs": "1.5.7",
+    "cropperjs": "^1.6.2",
     "preact": "^10.5.13"
   },
   "peerDependencies": {
