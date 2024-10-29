@@ -8903,7 +8903,7 @@ __metadata:
   resolution: "@uppy/image-editor@workspace:packages/@uppy/image-editor"
   dependencies:
     "@uppy/utils": "workspace:^"
-    cropperjs: "npm:1.5.7"
+    cropperjs: "npm:^1.6.2"
     preact: "npm:^10.5.13"
   peerDependencies:
     "@uppy/core": "workspace:^"
@@ -12430,10 +12430,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cropperjs@npm:1.5.7":
-  version: 1.5.7
-  resolution: "cropperjs@npm:1.5.7"
-  checksum: 10/8270930d1edb0db4f88f1d873f3fbaedbf750cc7a4d4017884494c337ec6464c84784f1b338d76eadc7eaefef9d7493dd93dbacf32659349fec7a8a0f6a2ea14
+"cropperjs@npm:^1.6.2":
+  version: 1.6.2
+  resolution: "cropperjs@npm:1.6.2"
+  checksum: 10/4b97ac27b7fd65316a531372dd96ce1073b4620c1b012fbad5acb0fdc28952112466bc333a98c510fe2bc9dcdeee58f5c8619522c045c6166300621673e3d759
   languageName: node
   linkType: hard
 
