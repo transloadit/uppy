@@ -12,6 +12,39 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 4.6.0
+
+Released: 2024-10-31
+
+| Package                   | Version | Package                   | Version |
+| ------------------------- | ------- | ------------------------- | ------- |
+| @uppy/aws-s3              |   4.1.1 | @uppy/provider-views      |   4.0.2 |
+| @uppy/box                 |   3.1.1 | @uppy/react               |   4.0.3 |
+| @uppy/companion           |   5.1.3 | @uppy/react-native        |   0.6.1 |
+| @uppy/companion-client    |   4.1.1 | @uppy/redux-dev-tools     |   4.0.1 |
+| @uppy/core                |   4.2.3 | @uppy/screen-capture      |   4.1.1 |
+| @uppy/dashboard           |   4.1.2 | @uppy/status-bar          |   4.0.4 |
+| @uppy/drag-drop           |   4.0.4 | @uppy/store-default       |   4.1.1 |
+| @uppy/dropbox             |   4.1.1 | @uppy/store-redux         |   4.0.1 |
+| @uppy/facebook            |   4.1.1 | @uppy/svelte              |   4.1.1 |
+| @uppy/file-input          |   4.0.3 | @uppy/thumbnail-generator |   4.0.1 |
+| @uppy/form                |   4.0.1 | @uppy/transloadit         |   4.1.3 |
+| @uppy/golden-retriever    |   4.0.1 | @uppy/tus                 |   4.1.3 |
+| @uppy/google-drive        |   4.1.1 | @uppy/unsplash            |   4.1.1 |
+| @uppy/google-photos       |   0.3.1 | @uppy/url                 |   4.1.1 |
+| @uppy/image-editor        |   3.2.0 | @uppy/utils               |   6.0.4 |
+| @uppy/informer            |   4.1.1 | @uppy/vue                 |   2.0.2 |
+| @uppy/instagram           |   4.1.1 | @uppy/webcam              |   4.0.2 |
+| @uppy/locales             |   4.2.1 | @uppy/xhr-upload          |   4.2.2 |
+| @uppy/onedrive            |   4.1.1 | @uppy/zoom                |   3.1.1 |
+| @uppy/progress-bar        |   4.0.1 | uppy                      |   4.6.0 |
+
+- @uppy/xhr-upload: fix stale file references in events (Merlijn Vos / #5499)
+- @uppy/image-editor: upgrade cropperjs (Merlijn Vos / #5497)
+- @uppy/aws-s3,@uppy/box,@uppy/companion-client,@uppy/core,@uppy/dashboard,@uppy/drag-drop,@uppy/dropbox,@uppy/facebook,@uppy/file-input,@uppy/form,@uppy/golden-retriever,@uppy/google-drive,@uppy/google-photos,@uppy/image-editor,@uppy/informer,@uppy/instagram,@uppy/locales,@uppy/onedrive,@uppy/progress-bar,@uppy/provider-views,@uppy/react-native,@uppy/react,@uppy/redux-dev-tools,@uppy/screen-capture,@uppy/status-bar,@uppy/store-default,@uppy/store-redux,@uppy/svelte,@uppy/thumbnail-generator,@uppy/transloadit,@uppy/tus,@uppy/unsplash,@uppy/url,@uppy/utils,@uppy/vue,@uppy/webcam,@uppy/xhr-upload,@uppy/zoom: Fix links (Anthony Veaudry / #5492)
+- docs,@uppy/companion: disallow corsOrigins "*" (Mikael Finstad / #5496)
+
+
 ## 4.5.0
 
 Released: 2024-10-15
