@@ -218,7 +218,8 @@ export default class XHRUpload<
             },
             onUploadProgress: (event) => {
               if (event.lengthComputable) {
-                for (const file of files) {
+                for (const { id } of files) {
+                  const file = this.uppy.getFile(id)
                   this.uppy.emit('upload-progress', file, {
                     uploadStarted: file.progress.uploadStarted ?? 0,
                     bytesUploaded: (event.loaded / event.total) * file.size!,
@@ -241,8 +242,8 @@ export default class XHRUpload<
 
           const uploadURL = typeof body?.url === 'string' ? body.url : undefined
 
-          for (const file of files) {
-            this.uppy.emit('upload-success', file, {
+          for (const { id } of files) {
+            this.uppy.emit('upload-success', this.uppy.getFile(id), {
               status: res.status,
               body,
               uploadURL,
@@ -260,7 +261,7 @@ export default class XHRUpload<
             for (const file of files) {
               this.uppy.emit(
                 'upload-error',
-                file,
+                this.uppy.getFile(file.id),
                 buildResponseError(request, error),
                 request,
               )

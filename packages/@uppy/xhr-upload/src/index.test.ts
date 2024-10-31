@@ -1,6 +1,6 @@
 import { vi, describe, it, expect } from 'vitest'
 import nock from 'nock'
-import Core from '@uppy/core'
+import Core, { type UppyEventMap } from '@uppy/core'
 import XHRUpload from './index.ts'
 
 describe('XHRUpload', () => {
@@ -59,6 +59,58 @@ describe('XHRUpload', () => {
     expect(core.getFile(id).response!.body).toEqual({
       url: 'https://fake-endpoint.uppy.io/random-id',
     })
+  })
+
+  it('should send response object over upload-error event', async () => {
+    nock('https://fake-endpoint.uppy.io')
+      .defaultReplyHeaders({
+        'access-control-allow-method': 'POST',
+        'access-control-allow-origin': '*',
+      })
+      .options('/')
+      .reply(204, {})
+      .post('/')
+      .reply(400, { status: 400, message: 'Oh no' })
+
+    const core = new Core()
+    const shouldRetry = vi.fn(() => false)
+
+    core.use(XHRUpload, {
+      id: 'XHRUpload',
+      endpoint: 'https://fake-endpoint.uppy.io',
+      shouldRetry,
+    })
+    const id = core.addFile({
+      type: 'image/png',
+      source: 'test',
+      name: 'test.jpg',
+      data: new Blob([new Uint8Array(8192)]),
+    })
+
+    const event = new Promise<
+      Parameters<UppyEventMap<any, any>['upload-error']>
+    >((resolve) => {
+      core.once('upload-error', (...args) => resolve(args))
+    })
+
+    await Promise.all([
+      core.upload(),
+      event.then(([file, , response]) => {
+        const newFile = core.getFile(id)
+        // error and response are set inside upload-error in core.
+        // When we subscribe to upload-error it is emitted before
+        // these properties are set in core. Ideally we'd have an internal
+        // emitter which calls an external one but it is what it is.
+        delete newFile.error
+        delete newFile.response
+        // This is still useful to test because other properties
+        // might have changed in the meantime
+        expect(file).toEqual(newFile)
+        expect(response).toBeInstanceOf(XMLHttpRequest)
+      }),
+    ])
+
+    expect(shouldRetry).toHaveBeenCalledTimes(1)
   })
 
   describe('headers', () => {
