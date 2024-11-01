@@ -18,8 +18,7 @@ ms_MY.strings = {
   },
   addedNumFiles: '%{numFiles} fail berhasil ditambah',
   addingMoreFiles: 'Menambah lebih banyak fail',
-  additionalRestrictionsFailed:
-    '%{count} sekatan tambahan tidak dipenuhi',
+  additionalRestrictionsFailed: '%{count} sekatan tambahan tidak dipenuhi',
   addMore: 'Tambah lagi',
   addMoreFiles: 'Tambah lebih banyak fail',
   aggregateExceedsSize:
@@ -36,8 +35,7 @@ ms_MY.strings = {
   aspectRatioSquare: 'Pangkas segi empat',
   authAborted: 'Pengesahan dibatalkan',
   authenticateWith: 'Sambung ke %{pluginName}',
-  authenticateWithTitle:
-    'Sila sahkan dengan %{pluginName} untuk memilih fail',
+  authenticateWithTitle: 'Sila sahkan dengan %{pluginName} untuk memilih fail',
   back: 'Kembali',
   browse: 'semak imbas',
   browseFiles: 'semak imbas fail',
@@ -59,7 +57,8 @@ ms_MY.strings = {
   creatingAssembly: 'Menyediakan muat naik...',
   creatingAssemblyFailed: 'Transloadit: Tidak dapat membuat Perhimpunan',
   dashboardTitle: 'Papan Pemuka Uppy',
-  dashboardWindowTitle: 'Tetingkap Papan Pemuka Uppy (Tekan escape untuk menutup)',
+  dashboardWindowTitle:
+    'Tetingkap Papan Pemuka Uppy (Tekan escape untuk menutup)',
   dataUploadedOfTotal: '%{complete} dari %{total}',
   discardRecordedFile: 'Buang fail yang dirakam',
   done: 'Selesai',
@@ -70,8 +69,10 @@ ms_MY.strings = {
   dropPasteFolders: 'Letakkan folder di sini atau %{browseFolders}',
   dropPasteImportBoth:
     'Letakkan folder di sini, %{browseFiles}, %{browseFolders} atau import daripada:',
-  dropPasteImportFiles: 'Letakkan fail di sini, %{browseFiles} atau import daripada:',
-  dropPasteImportFolders: 'Letakkan fail di sini, %{browseFolders} atau import daripada:',
+  dropPasteImportFiles:
+    'Letakkan fail di sini, %{browseFiles} atau import daripada:',
+  dropPasteImportFolders:
+    'Letakkan fail di sini, %{browseFolders} atau import daripada:',
   editFile: 'Edit fail',
   editFileWithFilename: 'Edit fail %{file}',
   editImage: 'Edit gambar',
@@ -84,8 +85,7 @@ ms_MY.strings = {
   enterUrlToImport: 'Masukkan URL untuk mengimport fail',
   error: 'Ralat',
   exceedsSize: '%{file} melebihi saiz maksimum yang dibenarkan iaitu %{size}',
-  failedToFetch:
-    'Companion gagal mengambil URL ini, sila pastikan URL betul',
+  failedToFetch: 'Companion gagal mengambil URL ini, sila pastikan URL betul',
   failedToUpload: 'Gagal memuat naik %{file}',
   filesUploadedOfTotal: {
     '0': '%{complete} dari %{smart_count} fail dimuat naik',
@@ -103,13 +103,15 @@ ms_MY.strings = {
   import: 'Import',
   importFiles: 'Import fail dari:',
   importFrom: 'Import dari %{name}',
-  inferiorSize: 'Fail ini lebih kecil daripada saiz yang dibenarkan iaitu %{size}',
+  inferiorSize:
+    'Fail ini lebih kecil daripada saiz yang dibenarkan iaitu %{size}',
   loadedXFiles: '%{numFiles} fail telah dimuatkan',
   loading: 'Memuatkan...',
   logOut: 'Log keluar',
   micDisabled: 'Akses mikrofon dinafikan oleh pengguna',
   missingRequiredMetaField: 'Medan meta yang diperlukan tiada',
-  missingRequiredMetaFieldOnFile: 'Tiada medan meta yang diperlukan dalam %{fileName}',
+  missingRequiredMetaFieldOnFile:
+    'Tiada medan meta yang diperlukan dalam %{fileName}',
   missingRequiredMetaFields: {
     '0': 'Medan meta yang diperlukan tiada: %{fields}.',
     '1': 'Medan meta yang diperlukan tiada: %{fields}.',
@@ -154,7 +156,8 @@ ms_MY.strings = {
   recordingStoppedMaxSize:
     'Rakaman dihentikan kerana saiz fail hampir melebihi had',
   recordVideoBtn: 'Rakam Video',
-  recoveredAllFiles: 'Kami memulihkan semua fail. Anda kini boleh menyambung semula muat naik.',
+  recoveredAllFiles:
+    'Kami memulihkan semua fail. Anda kini boleh menyambung semula muat naik.',
   recoveredXFiles: {
     '0': 'Kami tidak dapat memulihkan 1 fail sepenuhnya. Sila pilih semula dan sambung muat naik.',
     '1': 'Kami tidak dapat memulihkan %{smart_count} fail sepenuhnya. Sila pilih semula dan sambung muat naik.',
