@@ -1,5 +1,12 @@
 # @uppy/companion
 
+## 5.1.3
+
+Released: 2024-10-31
+Included in: Uppy v4.6.0
+
+- docs,@uppy/companion: disallow corsOrigins "*" (Mikael Finstad / #5496)
+
 ## 5.1.2
 
 Released: 2024-10-15

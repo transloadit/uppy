@@ -477,7 +477,7 @@ You can likely use whatever code generation tool for your framework (ex.
 of `@uppy/core` to this as your peer dependency required, or you may run into
 strange issues. Try to include all the components are some of their
 functionality.
-[The React example](https://github.com/transloadit/uppy/blob/main/examples/react-example/App.js)
+[The React example](https://github.com/transloadit/uppy/blob/main/examples/react-example/App.tsx)
 is a great... well example of how to do this well.
 
 ### Integrating the build system

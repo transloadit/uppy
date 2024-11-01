@@ -9,7 +9,10 @@ These cover all the major Uppy versions and how to migrate to them.
 - Setting the `corsOrigin` (`COMPANION_CLIENT_ORIGINS`) option is now required.
   You should define the list of origins you expect your app to be served from,
   otherwise it can be impersonated from a different origin you don’t control.
-  Set it to `true` if you don’t care about impersonating.
+  Set it to `true` if you don’t care about impersonating. If you’re using
+  Companion as an express middleware, do **not** use the `cors` module in your
+  project, because Companion already includes it. Use the `corsOrigins`
+  Companion option to customise CORS behavior.
 - `COMPANION_REDIS_EXPRESS_SESSION_PREFIX` now defaults to `companion-session:`
   (before `sess:`). To revert keep backwards compatibility, set the environment
   variable `COMPANION_REDIS_EXPRESS_SESSION_PREFIX=sess:`.
