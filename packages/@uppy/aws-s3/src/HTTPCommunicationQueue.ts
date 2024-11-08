@@ -280,7 +280,7 @@ export class HTTPCommunicationQueue<M extends Meta, B extends Body> {
     return 'location' in result ? result : (
         {
           // todo `url` is not really the final location URL of the resulting file, it's just the base URL of the bucket
-          // https://github.com/transloadit/uppy/issues/5494
+          // https://github.com/transloadit/uppy/issues/5388
           location: removeMetadataFromURL(url),
           ...result,
         }
