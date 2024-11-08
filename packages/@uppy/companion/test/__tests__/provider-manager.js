@@ -41,6 +41,7 @@ describe('Test Provider options', () => {
     providerManager.addProviderOptions(getCompanionOptions(), grantConfig, getOauthProvider)
     expect(grantConfig.instagram).toEqual({
       transport: 'session',
+      "state": true,
       callback: '/instagram/callback',
       redirect_uri: 'http://localhost:3020/instagram/redirect',
       key: '123456',
@@ -53,6 +54,7 @@ describe('Test Provider options', () => {
       key: 'dropbox_key',
       secret: 'dropbox_secret',
       transport: 'session',
+      "state": true,
       redirect_uri: 'http://localhost:3020/dropbox/redirect',
       authorize_url: 'https://www.dropbox.com/oauth2/authorize',
       access_url: 'https://api.dropbox.com/oauth2/token',
@@ -66,6 +68,7 @@ describe('Test Provider options', () => {
       key: 'box_key',
       secret: 'box_secret',
       transport: 'session',
+      "state": true,
       redirect_uri: 'http://localhost:3020/box/redirect',
       authorize_url: 'https://account.box.com/api/oauth2/authorize',
       access_url: 'https://api.box.com/oauth2/token',
@@ -81,6 +84,7 @@ describe('Test Provider options', () => {
       key: 'google_key',
       secret: 'google_secret',
       transport: 'session',
+      "state": true,
       redirect_uri: 'http://localhost:3020/drive/redirect',
       scope: [
         'https://www.googleapis.com/auth/drive.readonly',
@@ -101,6 +105,7 @@ describe('Test Provider options', () => {
       key: 'google_key',
       secret: 'google_secret',
       transport: 'session',
+      "state": true,
       redirect_uri: 'http://localhost:3020/googlephotos/redirect',
       scope: ['https://www.googleapis.com/auth/photoslibrary.readonly', 'https://www.googleapis.com/auth/userinfo.email'],
       callback: '/googlephotos/callback',
@@ -114,6 +119,7 @@ describe('Test Provider options', () => {
       key: 'zoom_key',
       secret: 'zoom_secret',
       transport: 'session',
+      "state": true,
       authorize_url: 'https://zoom.us/oauth/authorize',
       redirect_uri: 'http://localhost:3020/zoom/redirect',
       access_url: 'https://zoom.us/oauth/token',
