@@ -1270,7 +1270,7 @@ export class Uppy<
     }
 
     this.setState(stateUpdate)
-    this.#updateTotalProgress()
+    this.#updateTotalProgressThrottled()
 
     const removedFileIDs = Object.keys(removedFiles)
     removedFileIDs.forEach((fileID) => {
@@ -1416,6 +1416,67 @@ export class Uppy<
     })
   }
 
+  #handleUploadProgress = (
+    file: UppyFile<M, B> | undefined,
+    progress: FileProgressStarted,
+  ) => {
+    const fileInState = file ? this.getFile(file.id) : undefined
+    if (file == null || !fileInState) {
+      this.log(
+        `Not setting progress for a file that has been removed: ${file?.id}`,
+      )
+      return
+    }
+
+    if (fileInState.progress.percentage === 100) {
+      this.log(
+        `Not setting progress for a file that has been already uploaded: ${file.id}`,
+      )
+      return
+    }
+
+    const newProgress = {
+      bytesTotal: progress.bytesTotal,
+      // bytesTotal may be null or zero; in that case we can't divide by it
+      percentage:
+        (
+          progress.bytesTotal != null &&
+          Number.isFinite(progress.bytesTotal) &&
+          progress.bytesTotal > 0
+        ) ?
+          Math.round((progress.bytesUploaded / progress.bytesTotal) * 100)
+        : 0,
+    }
+
+    if (fileInState.progress.uploadStarted != null) {
+      this.setFileState(file.id, {
+        progress: {
+          ...fileInState.progress,
+          bytesUploaded: progress.bytesUploaded,
+          ...newProgress,
+        },
+      })
+    } else {
+      this.setFileState(file.id, {
+        progress: {
+          ...fileInState.progress,
+          ...newProgress,
+        },
+      })
+    }
+
+    this.#updateTotalProgressThrottled()
+  }
+
+  #updateTotalProgress() {
+    let totalProgress = Math.round(this.#calculateTotalProgress() * 100)
+    if (totalProgress > 100) totalProgress = 100
+    else if (totalProgress < 0) totalProgress = 0
+
+    this.emit('progress', totalProgress)
+    this.setState({ totalProgress })
+  }
+
   // ___Why throttle at 500ms?
   //    - We must throttle at >250ms for superfocus in Dashboard to work well
   //    (because animation takes 0.25s, and we want to wait for all animations to be over before refocusing).
@@ -1423,51 +1484,11 @@ export class Uppy<
   //    and click 'ADD MORE FILES', - focus won't activate in Firefox.
   //    - We must throttle at around >500ms to avoid performance lags.
   //    [Practical Check] Firefox, try to upload a big file for a prolonged period of time. Laptop will start to heat up.
-  // todo when uploading multiple files, this will cause problems because they share the same throttle,
-  // meaning some files might never get their progress reported (eaten up by progress events from other files)
-  calculateProgress = throttle(
-    (file, data) => {
-      const fileInState = this.getFile(file?.id)
-      if (file == null || !fileInState) {
-        this.log(
-          `Not setting progress for a file that has been removed: ${file?.id}`,
-        )
-        return
-      }
-
-      if (fileInState.progress.percentage === 100) {
-        this.log(
-          `Not setting progress for a file that has been already uploaded: ${file.id}`,
-        )
-        return
-      }
-
-      // bytesTotal may be null or zero; in that case we can't divide by it
-      const canHavePercentage =
-        Number.isFinite(data.bytesTotal) && data.bytesTotal > 0
-      this.setFileState(file.id, {
-        progress: {
-          ...fileInState.progress,
-          bytesUploaded: data.bytesUploaded,
-          bytesTotal: data.bytesTotal,
-          percentage:
-            canHavePercentage ?
-              Math.round((data.bytesUploaded / data.bytesTotal) * 100)
-            : 0,
-        },
-      })
-
-      this.#updateTotalProgress()
-    },
+  #updateTotalProgressThrottled = throttle(
+    () => this.#updateTotalProgress(),
     500,
     { leading: true, trailing: true },
   )
-
-  #updateTotalProgress() {
-    const totalProgress = this.#calculateTotalProgress()
-    this.emit('progress', totalProgress)
-    this.setState({ totalProgress })
-  }
 
   // eslint-disable-next-line class-methods-use-this, @typescript-eslint/explicit-module-boundary-types
   private [Symbol.for('uppy test: updateTotalProgress')]() {
@@ -1476,10 +1497,10 @@ export class Uppy<
 
   #calculateTotalProgress() {
     // calculate total progress, using the number of files currently uploading,
-    // multiplied by 100 and the summ of individual progress of each file
+    // between 0 and 1 and sum of individual progress of each file
     const files = this.getFiles()
 
-    const inProgress = files.filter((file) => {
+    const filesInProgress = files.filter((file) => {
       return (
         file.progress.uploadStarted ||
         file.progress.preprocess ||
@@ -1487,50 +1508,41 @@ export class Uppy<
       )
     })
 
-    if (inProgress.length === 0) {
+    if (filesInProgress.length === 0) {
       return 0
     }
 
-    const sizedFiles = inProgress.filter(
+    const sizedFiles = filesInProgress.filter(
       (file) => file.progress.bytesTotal != null,
     )
-    const unsizedFiles = inProgress.filter(
+    const unsizedFiles = filesInProgress.filter(
       (file) => file.progress.bytesTotal == null,
     )
 
     if (sizedFiles.length === 0) {
-      const progressMax = inProgress.length * 100
-      const currentProgress = unsizedFiles.reduce((acc, file) => {
-        return acc + (file.progress.percentage as number)
-      }, 0)
-      const totalProgress = Math.round((currentProgress / progressMax) * 100)
-      return totalProgress
+      const totalUnsizedProgress = unsizedFiles.reduce(
+        (acc, file) => acc + (file.progress.percentage ?? 0) / 100,
+        0,
+      )
+
+      return totalUnsizedProgress / unsizedFiles.length
     }
 
-    let totalSize = sizedFiles.reduce((acc, file) => {
+    let totalFilesSize = sizedFiles.reduce((acc, file) => {
       return (acc + (file.progress.bytesTotal ?? 0)) as number
     }, 0)
-    const averageSize = totalSize / sizedFiles.length
-    totalSize += averageSize * unsizedFiles.length
+    const averageSize = totalFilesSize / sizedFiles.length
+    totalFilesSize += averageSize * unsizedFiles.length
 
-    let uploadedSize = 0
+    let totalUploadedSize = 0
     sizedFiles.forEach((file) => {
-      uploadedSize += file.progress.bytesUploaded as number
+      totalUploadedSize += file.progress.bytesUploaded || 0
     })
     unsizedFiles.forEach((file) => {
-      uploadedSize += (averageSize * (file.progress.percentage || 0)) / 100
+      totalUploadedSize += averageSize * ((file.progress.percentage ?? 0) / 100)
     })
 
-    let totalProgress =
-      totalSize === 0 ? 0 : Math.round((uploadedSize / totalSize) * 100)
-
-    // hot fix, because:
-    // uploadedSize ended up larger than totalSize, resulting in 1325% total
-    if (totalProgress > 100) {
-      totalProgress = 100
-    }
-
-    return totalProgress
+    return totalFilesSize === 0 ? 0 : totalUploadedSize / totalFilesSize
   }
 
   /**
@@ -1629,7 +1641,7 @@ export class Uppy<
 
     this.on('upload-start', onUploadStarted)
 
-    this.on('upload-progress', this.calculateProgress)
+    this.on('upload-progress', this.#handleUploadProgress)
 
     this.on('upload-success', (file, uploadResp) => {
       if (file == null || !this.getFile(file.id)) {
@@ -1666,7 +1678,7 @@ export class Uppy<
         })
       }
 
-      this.#updateTotalProgress()
+      this.#updateTotalProgressThrottled()
     })
 
     this.on('preprocess-progress', (file, progress) => {
@@ -1736,7 +1748,7 @@ export class Uppy<
 
     this.on('restored', () => {
       // Files may have changed--ensure progress is still accurate.
-      this.#updateTotalProgress()
+      this.#updateTotalProgressThrottled()
     })
 
     // @ts-expect-error should fix itself when dashboard it typed (also this doesn't belong here)

@@ -1,4 +1,3 @@
-import throttle from 'lodash/throttle.js'
 import type { Uppy } from '@uppy/core'
 import type { UppyFile } from './UppyFile.ts'
 
@@ -22,7 +21,4 @@ function emitSocketProgress(
   }
 }
 
-export default throttle(emitSocketProgress, 300, {
-  leading: true,
-  trailing: true,
-})
+export default emitSocketProgress

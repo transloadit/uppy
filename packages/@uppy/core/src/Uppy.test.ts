@@ -1187,7 +1187,7 @@ describe('src/Core', () => {
       core.addUploader((fileIDs) => {
         fileIDs.forEach((fileID) => {
           const file = core.getFile(fileID)
-          if (/bar/.test(file.name)) {
+          if (file.name != null && /bar/.test(file.name)) {
             // @ts-ignore
             core.emit(
               'upload-error',
@@ -1701,6 +1701,9 @@ describe('src/Core', () => {
 
       const fileId = Object.keys(core.getState().files)[0]
       const file = core.getFile(fileId)
+
+      core.emit('upload-start', [core.getFile(fileId)])
+
       // @ts-ignore
       core.emit('upload-progress', file, {
         bytesUploaded: 12345,
@@ -1711,7 +1714,7 @@ describe('src/Core', () => {
         bytesUploaded: 12345,
         bytesTotal: 17175,
         uploadComplete: false,
-        uploadStarted: null,
+        uploadStarted: expect.any(Number),
       })
 
       // @ts-ignore
@@ -1720,14 +1723,12 @@ describe('src/Core', () => {
         bytesTotal: 17175,
       })
 
-      core.calculateProgress.flush()
-
       expect(core.getFile(fileId).progress).toEqual({
         percentage: 100,
         bytesUploaded: 17175,
         bytesTotal: 17175,
         uploadComplete: false,
-        uploadStarted: null,
+        uploadStarted: expect.any(Number),
       })
     })
 
@@ -1897,7 +1898,6 @@ describe('src/Core', () => {
 
       // @ts-ignore
       core[Symbol.for('uppy test: updateTotalProgress')]()
-      core.calculateProgress.flush()
 
       expect(core.getState().totalProgress).toEqual(66)
     })
@@ -1942,7 +1942,6 @@ describe('src/Core', () => {
 
       // @ts-ignore
       core[Symbol.for('uppy test: updateTotalProgress')]()
-      core.calculateProgress.flush()
 
       expect(core.getState().totalProgress).toEqual(66)
       expect(core.getState().allowNewUpload).toEqual(true)
