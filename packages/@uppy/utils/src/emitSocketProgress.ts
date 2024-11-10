@@ -1,9 +1,9 @@
 import throttle from 'lodash/throttle.js'
+import type { Uppy } from '@uppy/core'
 import type { UppyFile } from './UppyFile.ts'
-import type { FileProgress } from './FileProgress.ts'
 
 function emitSocketProgress(
-  uploader: any,
+  uploader: { uppy: Uppy<any, any> },
   progressData: {
     progress: string // pre-formatted percentage
     bytesTotal: number
@@ -18,7 +18,7 @@ function emitSocketProgress(
       uploadStarted: file.progress.uploadStarted ?? 0,
       bytesUploaded,
       bytesTotal,
-    } satisfies FileProgress)
+    })
   }
 }
 
