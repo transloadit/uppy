@@ -1270,7 +1270,7 @@ export class Uppy<
     }
 
     this.setState(stateUpdate)
-    this.calculateTotalProgress()
+    this.#updateTotalProgress()
 
     const removedFileIDs = Object.keys(removedFiles)
     removedFileIDs.forEach((fileID) => {
@@ -1457,13 +1457,24 @@ export class Uppy<
         },
       })
 
-      this.calculateTotalProgress()
+      this.#updateTotalProgress()
     },
     500,
     { leading: true, trailing: true },
   )
 
-  calculateTotalProgress(): void {
+  #updateTotalProgress() {
+    const totalProgress = this.#calculateTotalProgress()
+    this.emit('progress', totalProgress)
+    this.setState({ totalProgress })
+  }
+
+  // eslint-disable-next-line class-methods-use-this, @typescript-eslint/explicit-module-boundary-types
+  private [Symbol.for('uppy test: updateTotalProgress')]() {
+    return this.#updateTotalProgress()
+  }
+
+  #calculateTotalProgress() {
     // calculate total progress, using the number of files currently uploading,
     // multiplied by 100 and the summ of individual progress of each file
     const files = this.getFiles()
@@ -1477,9 +1488,7 @@ export class Uppy<
     })
 
     if (inProgress.length === 0) {
-      this.emit('progress', 0)
-      this.setState({ totalProgress: 0 })
-      return
+      return 0
     }
 
     const sizedFiles = inProgress.filter(
@@ -1495,8 +1504,7 @@ export class Uppy<
         return acc + (file.progress.percentage as number)
       }, 0)
       const totalProgress = Math.round((currentProgress / progressMax) * 100)
-      this.setState({ totalProgress })
-      return
+      return totalProgress
     }
 
     let totalSize = sizedFiles.reduce((acc, file) => {
@@ -1522,8 +1530,7 @@ export class Uppy<
       totalProgress = 100
     }
 
-    this.setState({ totalProgress })
-    this.emit('progress', totalProgress)
+    return totalProgress
   }
 
   /**
@@ -1659,7 +1666,7 @@ export class Uppy<
         })
       }
 
-      this.calculateTotalProgress()
+      this.#updateTotalProgress()
     })
 
     this.on('preprocess-progress', (file, progress) => {
@@ -1729,7 +1736,7 @@ export class Uppy<
 
     this.on('restored', () => {
       // Files may have changed--ensure progress is still accurate.
-      this.calculateTotalProgress()
+      this.#updateTotalProgress()
     })
 
     // @ts-expect-error should fix itself when dashboard it typed (also this doesn't belong here)

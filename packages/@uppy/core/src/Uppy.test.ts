@@ -1762,7 +1762,8 @@ describe('src/Core', () => {
         data: {},
       })
 
-      core.calculateTotalProgress()
+      // @ts-ignore
+      core[Symbol.for('uppy test: updateTotalProgress')]()
 
       const uploadPromise = core.upload()
       await Promise.all([
@@ -1844,7 +1845,8 @@ describe('src/Core', () => {
         data: {},
       })
 
-      core.calculateTotalProgress()
+      // @ts-ignore
+      core[Symbol.for('uppy test: updateTotalProgress')]()
 
       // foo.jpg at 35%, bar.jpg at 0%
       expect(core.getState().totalProgress).toBe(18)
@@ -1893,7 +1895,8 @@ describe('src/Core', () => {
         bytesTotal: 17175,
       })
 
-      core.calculateTotalProgress()
+      // @ts-ignore
+      core[Symbol.for('uppy test: updateTotalProgress')]()
       core.calculateProgress.flush()
 
       expect(core.getState().totalProgress).toEqual(66)
@@ -1937,7 +1940,8 @@ describe('src/Core', () => {
         bytesTotal: 17175,
       })
 
-      core.calculateTotalProgress()
+      // @ts-ignore
+      core[Symbol.for('uppy test: updateTotalProgress')]()
       core.calculateProgress.flush()
 
       expect(core.getState().totalProgress).toEqual(66)
