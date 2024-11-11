@@ -282,6 +282,7 @@ describe('src/Core', () => {
         meta: {},
         plugins: {},
         totalProgress: 0,
+        progress: null,
         recoveredState: null,
       }
 
@@ -316,6 +317,7 @@ describe('src/Core', () => {
         meta: {},
         plugins: {},
         totalProgress: 0,
+        progress: null,
         recoveredState: null,
       })
       // new state
@@ -335,6 +337,7 @@ describe('src/Core', () => {
         meta: {},
         plugins: {},
         totalProgress: 0,
+        progress: null,
         recoveredState: null,
       })
     })
@@ -386,6 +389,7 @@ describe('src/Core', () => {
       meta: {},
       plugins: {},
       totalProgress: 0,
+      progress: null,
       recoveredState: null,
     })
   })
@@ -577,6 +581,7 @@ describe('src/Core', () => {
       meta: {},
       plugins: {},
       totalProgress: 0,
+      progress: null,
       recoveredState: null,
     })
     expect(plugin.mocks.uninstall.mock.calls.length).toEqual(1)
@@ -1776,7 +1781,6 @@ describe('src/Core', () => {
         bytesUploaded: 0,
         // null indicates unsized
         bytesTotal: null,
-        percentage: 0,
       })
 
       // @ts-ignore
@@ -1849,8 +1853,8 @@ describe('src/Core', () => {
       // @ts-ignore
       core[Symbol.for('uppy test: updateTotalProgress')]()
 
-      // foo.jpg at 35%, bar.jpg at 0%
-      expect(core.getState().totalProgress).toBe(18)
+      // foo.jpg at 35%, bar.jpg has unknown size and will not be counted
+      expect(core.getState().totalProgress).toBe(36)
 
       core.destroy()
     })

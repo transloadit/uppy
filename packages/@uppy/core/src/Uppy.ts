@@ -232,7 +232,8 @@ export interface State<M extends Meta, B extends Body>
     details?: string | Record<string, string> | null
   }>
   plugins: Plugins
-  totalProgress: number
+  totalProgress: number // todo remove backward compat
+  progress: number | null
   companion?: Record<string, string>
 }
 
@@ -361,6 +362,7 @@ type OmitFirstArg<T> = T extends [any, ...infer U] ? U : never
 
 const defaultUploadState = {
   totalProgress: 0,
+  progress: null,
   allowNewUpload: true,
   error: null,
   recoveredState: null,
@@ -758,7 +760,7 @@ export class Uppy<
     isUploadInProgress: boolean
     isSomeGhost: boolean
   } {
-    const { files: filesObject, totalProgress, error } = this.getState()
+    const { files: filesObject, progress: totalProgress, error } = this.getState()
     const files = Object.values(filesObject)
 
     const inProgressFiles: UppyFile<M, B>[] = []
@@ -1445,15 +1447,15 @@ export class Uppy<
           progress.bytesTotal > 0
         ) ?
           Math.round((progress.bytesUploaded / progress.bytesTotal) * 100)
-        : 0,
+        : undefined,
     }
 
     if (fileInState.progress.uploadStarted != null) {
       this.setFileState(file.id, {
         progress: {
           ...fileInState.progress,
-          bytesUploaded: progress.bytesUploaded,
           ...newProgress,
+          bytesUploaded: progress.bytesUploaded,
         },
       })
     } else {
@@ -1469,12 +1471,19 @@ export class Uppy<
   }
 
   #updateTotalProgress() {
-    let totalProgress = Math.round(this.#calculateTotalProgress() * 100)
-    if (totalProgress > 100) totalProgress = 100
-    else if (totalProgress < 0) totalProgress = 0
+    const totalProgress = this.#calculateTotalProgress()
+    let totalProgressPercent: number | null = null;
+    if (totalProgress != null) {
+      totalProgressPercent = Math.round(totalProgress * 100)
+      if (totalProgressPercent > 100) totalProgressPercent = 100
+      else if (totalProgressPercent < 0) totalProgressPercent = 0
+    }
 
-    this.emit('progress', totalProgress)
-    this.setState({ totalProgress })
+    this.emit('progress', totalProgressPercent ?? 0) // todo remove `?? 0` in next major
+    this.setState({
+      totalProgress: totalProgressPercent ?? 0, // todo remove backward compat in next major
+      progress: totalProgressPercent,
+    })
   }
 
   // ___Why throttle at 500ms?
@@ -1512,35 +1521,31 @@ export class Uppy<
       return 0
     }
 
-    const sizedFiles = filesInProgress.filter(
-      (file) => file.progress.bytesTotal != null,
-    )
-    const unsizedFiles = filesInProgress.filter(
-      (file) => file.progress.bytesTotal == null,
+    const sizedFilesInProgress = filesInProgress.filter(
+      (file) => file.progress.bytesTotal != null && file.progress.bytesTotal !== 0,
     )
 
-    if (sizedFiles.length === 0) {
-      const totalUnsizedProgress = unsizedFiles.reduce(
-        (acc, file) => acc + (file.progress.percentage ?? 0) / 100,
-        0,
-      )
-
-      return totalUnsizedProgress / unsizedFiles.length
+    if (sizedFilesInProgress.length === 0) {
+      return null // we don't have any files that we can know the percentage progress of
     }
 
-    let totalFilesSize = sizedFiles.reduce((acc, file) => {
-      return (acc + (file.progress.bytesTotal ?? 0)) as number
-    }, 0)
-    const averageSize = totalFilesSize / sizedFiles.length
-    totalFilesSize += averageSize * unsizedFiles.length
+    if (sizedFilesInProgress.every((file) => file.progress.uploadComplete)) {
+      // If every uploading file is complete, and we're still getting progress, it means either
+      // 1. there's a bug somewhere in some progress reporting code (maybe not even ours)
+      // and we're still getting progress, so let's just ignore it
+      // 2. there are files with unknown size (bytesTotal == null), still uploading,
+      // and we cannot say anything about their progress
+      // In any case, return null because it doesn't make any sense to show a progress
+      return null
+    }
 
-    let totalUploadedSize = 0
-    sizedFiles.forEach((file) => {
-      totalUploadedSize += file.progress.bytesUploaded || 0
-    })
-    unsizedFiles.forEach((file) => {
-      totalUploadedSize += averageSize * ((file.progress.percentage ?? 0) / 100)
-    })
+    const totalFilesSize = sizedFilesInProgress.reduce((acc, file) => (
+      acc + (file.progress.bytesTotal ?? 0)
+    ), 0)
+
+    const totalUploadedSize = sizedFilesInProgress.reduce((acc, file) => (
+      acc + (file.progress.bytesUploaded || 0)
+    ), 0)
 
     return totalFilesSize === 0 ? 0 : totalUploadedSize / totalFilesSize
   }
@@ -1628,7 +1633,6 @@ export class Uppy<
             progress: {
               uploadStarted: Date.now(),
               uploadComplete: false,
-              percentage: 0,
               bytesUploaded: 0,
               bytesTotal: file.size,
             } as FileProgressStarted,

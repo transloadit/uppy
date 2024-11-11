@@ -40,7 +40,7 @@ export interface StatusBarUIProps<M extends Meta, B extends Body> {
   hideRetryButton?: boolean
   recoveredState: State<M, B>['recoveredState']
   uploadState: (typeof statusBarStates)[keyof typeof statusBarStates]
-  totalProgress: number
+  totalProgress: number | null
   files: Record<string, UppyFile<M, B>>
   supportsUploadProgress: boolean
   hideAfterFinish?: boolean
@@ -55,7 +55,7 @@ export interface StatusBarUIProps<M extends Meta, B extends Body> {
   numUploads: number
   complete: number
   totalSize: number
-  totalETA: number
+  totalETA: number | null
   totalUploadedSize: number
 }
 

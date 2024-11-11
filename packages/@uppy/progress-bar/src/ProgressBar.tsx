@@ -40,10 +40,10 @@ export default class ProgressBar<
   }
 
   render(state: State<M, B>): ComponentChild {
-    const progress = state.totalProgress || 0
+    const { progress } = state
     // before starting and after finish should be hidden if specified in the options
     const isHidden =
-      (progress === 0 || progress === 100) && this.opts.hideAfterFinish
+      (progress == null || progress === 0 || progress === 100) && this.opts.hideAfterFinish
     return (
       <div
         className="uppy uppy-ProgressBar"

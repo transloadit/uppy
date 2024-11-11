@@ -44,7 +44,7 @@ type DashboardUIProps<M extends Meta, B extends Body> = {
   isAllComplete: boolean
   isAllPaused: boolean
   totalFileCount: number
-  totalProgress: number
+  totalProgress: number | null
   allowNewUpload: boolean
   acquirers: TargetWithRender[]
   theme: string

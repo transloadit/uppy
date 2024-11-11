@@ -102,11 +102,15 @@ export default class StatusBar<M extends Meta, B extends Body> extends UIPlugin<
 
   #computeSmoothETA(totalBytes: {
     uploaded: number
-    total: number
-    remaining: number
-  }): number {
-    if (totalBytes.total === 0 || totalBytes.remaining === 0) {
-      return 0
+    total: number | null // null means indeterminate
+  }) {
+    if (totalBytes.total == null || totalBytes.total === 0) {
+      return null
+    }
+
+    const remaining = totalBytes.total - totalBytes.uploaded
+    if (remaining <= 0) {
+      return null
     }
 
     // When state is restored, lastUpdateTime is still nullish at this point.
@@ -131,7 +135,7 @@ export default class StatusBar<M extends Meta, B extends Body> extends UIPlugin<
         currentSpeed
       : emaFilter(currentSpeed, this.#previousSpeed, speedFilterHalfLife, dt)
     this.#previousSpeed = filteredSpeed
-    const instantETA = totalBytes.remaining / filteredSpeed
+    const instantETA = remaining / filteredSpeed
 
     const updatedPreviousETA = Math.max(this.#previousETA! - dt, 0)
     const filteredETA =
@@ -155,7 +159,7 @@ export default class StatusBar<M extends Meta, B extends Body> extends UIPlugin<
       capabilities,
       files,
       allowNewUpload,
-      totalProgress,
+      progress: totalProgress,
       error,
       recoveredState,
     } = state
@@ -182,14 +186,21 @@ export default class StatusBar<M extends Meta, B extends Body> extends UIPlugin<
     let totalSize = 0
     let totalUploadedSize = 0
 
+    // If at least one file has an unknown size, it doesn't make sense to display a total size
+    if (startedFiles.every((f) => f.progress.bytesTotal != null && f.progress.bytesTotal !== 0)) {
+      startedFiles.forEach((file) => {
+        totalSize += file.progress.bytesTotal || 0
+        totalUploadedSize += file.progress.bytesUploaded || 0
+      })
+    }
+
     startedFiles.forEach((file) => {
-      totalSize += file.progress.bytesTotal || 0
       totalUploadedSize += file.progress.bytesUploaded || 0
     })
+
     const totalETA = this.#computeSmoothETA({
       uploaded: totalUploadedSize,
       total: totalSize,
-      remaining: totalSize - totalUploadedSize,
     })
 
     return StatusBarUI({

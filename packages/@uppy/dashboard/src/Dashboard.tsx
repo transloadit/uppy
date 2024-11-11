@@ -1202,7 +1202,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
       isAllComplete,
       isAllPaused,
       totalFileCount: Object.keys(files).length,
-      totalProgress: state.totalProgress,
+      totalProgress: state.progress,
       allowNewUpload,
       acquirers,
       theme,

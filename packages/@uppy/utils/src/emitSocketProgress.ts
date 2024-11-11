@@ -1,10 +1,10 @@
-import type { Uppy } from '@uppy/core'
+import type { Uppy } from '@uppy/core/src/Uppy.js'
 import type { UppyFile } from './UppyFile.ts'
 
 function emitSocketProgress(
   uploader: { uppy: Uppy<any, any> },
   progressData: {
-    progress: string // pre-formatted percentage
+    progress: string // pre-formatted percentage number as a string
     bytesTotal: number
     bytesUploaded: number
   },
