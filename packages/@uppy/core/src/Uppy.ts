@@ -760,7 +760,11 @@ export class Uppy<
     isUploadInProgress: boolean
     isSomeGhost: boolean
   } {
-    const { files: filesObject, progress: totalProgress, error } = this.getState()
+    const {
+      files: filesObject,
+      progress: totalProgress,
+      error,
+    } = this.getState()
     const files = Object.values(filesObject)
 
     const inProgressFiles: UppyFile<M, B>[] = []
@@ -1472,7 +1476,7 @@ export class Uppy<
 
   #updateTotalProgress() {
     const totalProgress = this.#calculateTotalProgress()
-    let totalProgressPercent: number | null = null;
+    let totalProgressPercent: number | null = null
     if (totalProgress != null) {
       totalProgressPercent = Math.round(totalProgress * 100)
       if (totalProgressPercent > 100) totalProgressPercent = 100
@@ -1522,7 +1526,8 @@ export class Uppy<
     }
 
     const sizedFilesInProgress = filesInProgress.filter(
-      (file) => file.progress.bytesTotal != null && file.progress.bytesTotal !== 0,
+      (file) =>
+        file.progress.bytesTotal != null && file.progress.bytesTotal !== 0,
     )
 
     if (sizedFilesInProgress.length === 0) {
@@ -1539,13 +1544,15 @@ export class Uppy<
       return null
     }
 
-    const totalFilesSize = sizedFilesInProgress.reduce((acc, file) => (
-      acc + (file.progress.bytesTotal ?? 0)
-    ), 0)
+    const totalFilesSize = sizedFilesInProgress.reduce(
+      (acc, file) => acc + (file.progress.bytesTotal ?? 0),
+      0,
+    )
 
-    const totalUploadedSize = sizedFilesInProgress.reduce((acc, file) => (
-      acc + (file.progress.bytesUploaded || 0)
-    ), 0)
+    const totalUploadedSize = sizedFilesInProgress.reduce(
+      (acc, file) => acc + (file.progress.bytesUploaded || 0),
+      0,
+    )
 
     return totalFilesSize === 0 ? 0 : totalUploadedSize / totalFilesSize
   }

@@ -277,7 +277,6 @@ function ProgressDetails(props: ProgressDetailsProps) {
 
   const totalUploadedSizeStr = prettierBytes(totalUploadedSize)
 
-
   return (
     <div className="uppy-StatusBar-statusSecondary">
       {ifShowFilesUploadedOfTotal &&
@@ -292,16 +291,19 @@ function ProgressDetails(props: ProgressDetailsProps) {
         */}
         {ifShowFilesUploadedOfTotal && renderDot()}
 
-        {totalSize !== 0 ? i18n('dataUploadedOfTotal', {
-          complete: totalUploadedSizeStr,
-          total: prettierBytes(totalSize),
-        }) : totalUploadedSizeStr}
+        {totalSize !== 0 ?
+          i18n('dataUploadedOfTotal', {
+            complete: totalUploadedSizeStr,
+            total: prettierBytes(totalSize),
+          })
+        : totalUploadedSizeStr}
 
         {renderDot()}
 
-        {totalETA != null && i18n('xTimeLeft', {
-          time: prettyETA(totalETA),
-        })}
+        {totalETA != null &&
+          i18n('xTimeLeft', {
+            time: prettyETA(totalETA),
+          })}
       </span>
     </div>
   )
@@ -430,7 +432,9 @@ function ProgressBarUploading(props: ProgressBarUploadingProps) {
       : null}
       <div className="uppy-StatusBar-status">
         <div className="uppy-StatusBar-statusPrimary">
-          {supportsUploadProgress && totalProgress != null ? `${title}: ${totalProgress}%` : title}
+          {supportsUploadProgress && totalProgress != null ?
+            `${title}: ${totalProgress}%`
+          : title}
         </div>
 
         {renderProgressDetails()}

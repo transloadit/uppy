@@ -187,7 +187,11 @@ export default class StatusBar<M extends Meta, B extends Body> extends UIPlugin<
     let totalUploadedSize = 0
 
     // If at least one file has an unknown size, it doesn't make sense to display a total size
-    if (startedFiles.every((f) => f.progress.bytesTotal != null && f.progress.bytesTotal !== 0)) {
+    if (
+      startedFiles.every(
+        (f) => f.progress.bytesTotal != null && f.progress.bytesTotal !== 0,
+      )
+    ) {
       startedFiles.forEach((file) => {
         totalSize += file.progress.bytesTotal || 0
         totalUploadedSize += file.progress.bytesUploaded || 0

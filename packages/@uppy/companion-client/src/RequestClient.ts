@@ -100,7 +100,6 @@ function emitSocketProgress(
   }
 }
 
-
 export default class RequestClient<M extends Meta, B extends Body> {
   static VERSION = packageJson.version
 
