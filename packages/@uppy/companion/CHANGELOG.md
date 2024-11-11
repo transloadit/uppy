@@ -1,5 +1,12 @@
 # @uppy/companion
 
+## 5.1.4
+
+Released: 2024-11-11
+Included in: Uppy v4.7.0
+
+- @uppy/companion: Enable CSRF protection in grant (OAuth2) (Mikael Finstad / #5504)
+
 ## 5.1.3
 
 Released: 2024-10-31

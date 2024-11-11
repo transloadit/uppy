@@ -1,5 +1,12 @@
 # @uppy/locales
 
+## 4.3.0
+
+Released: 2024-11-11
+Included in: Uppy v4.7.0
+
+- @uppy/locales: Add ms_MY (Malay) locale (Salimi / #5488)
+
 ## 4.2.1
 
 Released: 2024-10-31
