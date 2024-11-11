@@ -242,7 +242,7 @@ export class HTTPCommunicationQueue<M extends Meta, B extends Body> {
     file: UppyFile<M, B>,
     chunk: Chunk,
     signal?: AbortSignal,
-  ): Promise<UploadPartBytesResult & B> {
+  ) {
     const {
       method = 'POST',
       url,
@@ -252,7 +252,7 @@ export class HTTPCommunicationQueue<M extends Meta, B extends Body> {
       signal,
     }).abortOn(signal)
 
-    let body
+    let body: FormData | Blob
     const data = chunk.getData()
     if (method.toUpperCase() === 'POST') {
       const formData = new FormData()
@@ -267,21 +267,24 @@ export class HTTPCommunicationQueue<M extends Meta, B extends Body> {
 
     const { onProgress, onComplete } = chunk
 
-    const result = await this.#uploadPartBytes({
+    const result = (await this.#uploadPartBytes({
       signature: { url, headers, method } as any,
       body,
       size: data.size,
       onProgress,
       onComplete,
       signal,
-    }).abortOn(signal)
+    }).abortOn(signal)) as unknown as B // todo this doesn't make sense
 
-    return 'location' in result ?
-        (result as UploadPartBytesResult & B)
-      : ({
+    // location will be missing from result if CORS is not correctly set up on the bucket.
+    return 'location' in result ? result : (
+        {
+          // todo `url` is not really the final location URL of the resulting file, it's just the base URL of the bucket
+          // https://github.com/transloadit/uppy/issues/5388
           location: removeMetadataFromURL(url),
           ...result,
-        } as any)
+        }
+      )
   }
 
   async uploadFile(
