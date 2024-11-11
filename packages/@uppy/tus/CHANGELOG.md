@@ -1,5 +1,12 @@
 # @uppy/tus
 
+## 4.1.4
+
+Released: 2024-11-11
+Included in: Uppy v4.7.0
+
+- @uppy/tus: fix event upload-success response.body.xhr (ItsOnlyBinary / #5503)
+
 ## 4.1.3
 
 Released: 2024-10-31

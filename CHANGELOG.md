@@ -12,6 +12,22 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 4.7.0
+
+Released: 2024-11-11
+
+| Package         | Version | Package         | Version |
+| --------------- | ------- | --------------- | ------- |
+| @uppy/aws-s3    |   4.1.2 | @uppy/tus       |   4.1.4 |
+| @uppy/companion |   5.1.4 | uppy            |   4.7.0 |
+| @uppy/locales   |   4.3.0 |                 |         |
+
+- @uppy/aws-s3: clarify and warn when incorrect buckets settings are used (Mikael Finstad / #5505)
+- @uppy/tus: fix event upload-success response.body.xhr (ItsOnlyBinary / #5503)
+- @uppy/companion: Enable CSRF protection in grant (OAuth2) (Mikael Finstad / #5504)
+- @uppy/locales: Add ms_MY (Malay) locale (Salimi / #5488)
+
+
 ## 4.6.0
 
 Released: 2024-10-31

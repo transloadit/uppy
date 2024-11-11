@@ -1,5 +1,12 @@
 # @uppy/aws-s3
 
+## 4.1.2
+
+Released: 2024-11-11
+Included in: Uppy v4.7.0
+
+- @uppy/aws-s3: clarify and warn when incorrect buckets settings are used (Mikael Finstad / #5505)
+
 ## 4.1.1
 
 Released: 2024-10-31
