@@ -17,6 +17,7 @@ on:
 
 env:
   YARN_ENABLE_GLOBAL_CACHE: false
+  SKIP_YARN_COREPACK_CHECK: true
 
 jobs:
   lint_js:
