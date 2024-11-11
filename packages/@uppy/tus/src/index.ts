@@ -323,10 +323,10 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
           } as unknown as B,
         }
 
+        this.uppy.emit('upload-success', this.uppy.getFile(file.id), uploadResp)
+
         this.resetUploaderReferences(file.id)
         queuedRequest.done()
-
-        this.uppy.emit('upload-success', this.uppy.getFile(file.id), uploadResp)
 
         if (upload.url) {
           // @ts-expect-error not typed in tus-js-client

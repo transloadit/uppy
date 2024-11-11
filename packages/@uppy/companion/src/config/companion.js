@@ -113,6 +113,10 @@ const validateConfig = (companionOptions) => {
     throw new TypeError('Option corsOrigins is required. To disable security, pass true')
   }
 
+  if (companionOptions.corsOrigins === '*') {
+    throw new TypeError('Option corsOrigins cannot be "*". To disable security, pass true')
+  }
+
   if (periodicPingUrls != null && (
     !Array.isArray(periodicPingUrls)
     || periodicPingUrls.some((url2) => !isURL(url2, { protocols: ['http', 'https'], require_protocol: true, require_tld: false }))
