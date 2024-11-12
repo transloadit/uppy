@@ -74,7 +74,7 @@ times, this is needed if you are building a custom UI for Uppy in React.
 const [uppy] = useState(() => new Uppy());
 
 const files = useUppyState(uppy, (state) => state.files);
-const totalProgress = useUppyState(uppy, (state) => state.totalProgress);
+const totalProgress = useUppyState(uppy, (state) => state.progress);
 // We can also get specific plugin state.
 // Note that the value on `plugins` depends on the `id` of the plugin.
 const metaFields = useUppyState(

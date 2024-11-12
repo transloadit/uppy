@@ -361,7 +361,7 @@ describe('src/Core', () => {
     const coreStateUpdateEventMock = vi.fn()
     core.on('cancel-all', coreCancelEventMock)
     core.on('state-update', coreStateUpdateEventMock)
-    core.setState({ foo: 'bar', totalProgress: 30 })
+    core.setState({ foo: 'bar', totalProgress: 30, progress: 30 })
 
     core.cancelAll()
 
@@ -1382,6 +1382,7 @@ describe('src/Core', () => {
       expect(core.getFiles().length).toEqual(1)
       core.setState({
         totalProgress: 50,
+        progress: 30,
       })
 
       const file = core.getFile(fileId)
@@ -1390,6 +1391,7 @@ describe('src/Core', () => {
       expect(core.getFiles().length).toEqual(0)
       expect(fileRemovedEventMock.mock.calls[0][0]).toEqual(file)
       expect(core.getState().totalProgress).toEqual(0)
+      expect(core.getState().progress).toEqual(0)
     })
   })
 
@@ -1796,6 +1798,7 @@ describe('src/Core', () => {
       })
 
       expect(core.getState().totalProgress).toBe(36)
+      expect(core.getState().progress).toBe(36)
 
       // @ts-ignore
       finishUpload()
@@ -1855,6 +1858,7 @@ describe('src/Core', () => {
 
       // foo.jpg at 35%, bar.jpg has unknown size and will not be counted
       expect(core.getState().totalProgress).toBe(36)
+      expect(core.getState().progress).toBe(36)
 
       core.destroy()
     })
@@ -1904,6 +1908,7 @@ describe('src/Core', () => {
       core[Symbol.for('uppy test: updateTotalProgress')]()
 
       expect(core.getState().totalProgress).toEqual(66)
+      expect(core.getState().progress).toBe(66)
     })
 
     it('should emit the progress', () => {
@@ -1948,6 +1953,7 @@ describe('src/Core', () => {
       core[Symbol.for('uppy test: updateTotalProgress')]()
 
       expect(core.getState().totalProgress).toEqual(66)
+      expect(core.getState().progress).toEqual(66)
       expect(core.getState().allowNewUpload).toEqual(true)
       expect(core.getState().error).toEqual(null)
       expect(core.getState().recoveredState).toEqual(null)
@@ -1972,6 +1978,7 @@ describe('src/Core', () => {
       core.clear()
       expect(core.getState()).toMatchObject({
         totalProgress: 0,
+        progress: null,
         allowNewUpload: true,
         error: null,
         recoveredState: null,

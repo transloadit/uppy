@@ -77,7 +77,7 @@ export default function App() {
     uppy,
     (state) => Object.keys(state.files).length,
   )
-  const totalProgress = useUppyState(uppy, (state) => state.totalProgress)
+  const totalProgress = useUppyState(uppy, (state) => state.progress)
   // Also possible to get the state of all plugins.
   const plugins = useUppyState(uppy, (state) => state.plugins)
 
