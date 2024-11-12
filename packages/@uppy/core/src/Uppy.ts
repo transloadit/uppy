@@ -1513,6 +1513,7 @@ export class Uppy<
     // between 0 and 1 and sum of individual progress of each file
     const files = this.getFiles()
 
+    // note: also includes files that have completed uploading:
     const filesInProgress = files.filter((file) => {
       return (
         file.progress.uploadStarted ||
@@ -1525,20 +1526,28 @@ export class Uppy<
       return 0
     }
 
-    const sizedFilesInProgress = filesInProgress.filter(
-      (file) =>
-        file.progress.bytesTotal != null && file.progress.bytesTotal !== 0,
-    )
-
-    if (sizedFilesInProgress.length === 0) {
-      return null // we don't have any files that we can know the percentage progress of
+    if (filesInProgress.every((file) => file.progress.uploadComplete)) {
+      // If every uploading file is complete, and we're still getting progress, it probably means
+      // there's a bug somewhere in some progress reporting code (maybe not even our code)
+      // and we're still getting progress, so let's just assume it means a 100% progress
+      return 1
     }
 
-    if (sizedFilesInProgress.every((file) => file.progress.uploadComplete)) {
-      // If every uploading file is complete, and we're still getting progress, it means either
-      // 1. there's a bug somewhere in some progress reporting code (maybe not even ours)
-      // and we're still getting progress, so let's just ignore it
-      // 2. there are files with unknown size (bytesTotal == null), still uploading,
+    const isSizedFile = (file: UppyFile<M, B>) =>
+      file.progress.bytesTotal != null && file.progress.bytesTotal !== 0
+
+    const sizedFilesInProgress = filesInProgress.filter(isSizedFile)
+    const unsizedFilesInProgress = filesInProgress.filter(
+      (file) => !isSizedFile(file),
+    )
+
+    if (
+      sizedFilesInProgress.every((file) => file.progress.uploadComplete) &&
+      unsizedFilesInProgress.length > 0 &&
+      !unsizedFilesInProgress.every((file) => file.progress.uploadComplete)
+    ) {
+      // we are done with uploading all files of known size, however
+      // there is at least one file with unknown size still uploading,
       // and we cannot say anything about their progress
       // In any case, return null because it doesn't make any sense to show a progress
       return null

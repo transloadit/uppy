@@ -54,7 +54,7 @@ export interface StatusBarUIProps<M extends Meta, B extends Body> {
   showProgressDetails?: boolean
   numUploads: number
   complete: number
-  totalSize: number
+  totalSize: number | null
   totalETA: number | null
   totalUploadedSize: number
 }

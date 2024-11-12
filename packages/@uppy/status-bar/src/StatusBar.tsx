@@ -183,21 +183,23 @@ export default class StatusBar<M extends Meta, B extends Body> extends UIPlugin<
     const resumableUploads = !!capabilities.resumableUploads
     const supportsUploadProgress = capabilities.uploadProgress !== false
 
-    let totalSize = 0
+    let totalSize: number | null = null
     let totalUploadedSize = 0
 
-    // If at least one file has an unknown size, it doesn't make sense to display a total size
+    // Only if all files have a known size, does it make sense to display a total size
     if (
       startedFiles.every(
         (f) => f.progress.bytesTotal != null && f.progress.bytesTotal !== 0,
       )
     ) {
+      totalSize = 0
       startedFiles.forEach((file) => {
-        totalSize += file.progress.bytesTotal || 0
+        totalSize! += file.progress.bytesTotal || 0
         totalUploadedSize += file.progress.bytesUploaded || 0
       })
     }
 
+    // however uploaded size we will always have
     startedFiles.forEach((file) => {
       totalUploadedSize += file.progress.bytesUploaded || 0
     })

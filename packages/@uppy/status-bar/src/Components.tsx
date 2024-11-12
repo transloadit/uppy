@@ -265,7 +265,7 @@ interface ProgressDetailsProps {
   numUploads: number
   complete: number
   totalUploadedSize: number
-  totalSize: number
+  totalSize: number | null
   totalETA: number | null
 }
 
@@ -291,7 +291,7 @@ function ProgressDetails(props: ProgressDetailsProps) {
         */}
         {ifShowFilesUploadedOfTotal && renderDot()}
 
-        {totalSize !== 0 ?
+        {totalSize != null ?
           i18n('dataUploadedOfTotal', {
             complete: totalUploadedSizeStr,
             total: prettierBytes(totalSize),
@@ -369,7 +369,7 @@ interface ProgressBarUploadingProps {
   numUploads: number
   complete: number
   totalUploadedSize: number
-  totalSize: number
+  totalSize: number | null
   totalETA: number | null
   startUpload: () => void
 }
