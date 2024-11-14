@@ -217,7 +217,10 @@ credentials (`boolean`, default: `false`).
 #### `onBeforeRequest`
 
 An optional function that will be called before a HTTP request is sent out
-(`(xhr: XMLHttpRequest, retryCount: number) => void | Promise<void>`).
+(`(xhr: XMLHttpRequest, retryCount: number, files: UppyFile<M, B>[]) => void | Promise<void>`).
+
+The third argument, `files`, is an array of all Uppy files when `bundle` is
+`true`. When `false`, it only contains one file.
 
 #### `shouldRetry`
 

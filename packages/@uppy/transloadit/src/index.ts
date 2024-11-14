@@ -3,7 +3,7 @@ import ErrorWithCause from '@uppy/utils/lib/ErrorWithCause'
 import { RateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
 import BasePlugin from '@uppy/core/lib/BasePlugin.js'
 import type { DefinePluginOpts, PluginOpts } from '@uppy/core/lib/BasePlugin.js'
-import Tus, { type TusDetailedError } from '@uppy/tus'
+import Tus, { type TusDetailedError, type TusOpts } from '@uppy/tus'
 import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
 import type { Uppy } from '@uppy/core'
 import Assembly from './Assembly.ts'
@@ -219,7 +219,7 @@ declare module '@uppy/utils/lib/UppyFile' {
   // eslint-disable-next-line no-shadow, @typescript-eslint/no-unused-vars
   export interface UppyFile<M extends Meta, B extends Body> {
     transloadit?: { assembly: string }
-    tus?: { uploadUrl?: string | null }
+    tus?: TusOpts<M, B>
   }
 }
 
@@ -697,12 +697,13 @@ export default class Transloadit<
       this.assembly = new Assembly(previousAssembly, this.#rateLimitedQueue)
       this.assembly.status = previousAssembly
       this.setPluginState({ files, results })
+      return files
     }
 
     // Set up the Assembly instances and AssemblyWatchers for existing Assemblies.
-    const restoreAssemblies = () => {
+    const restoreAssemblies = (ids: string[]) => {
       this.#createAssemblyWatcher(previousAssembly.assembly_id)
-      this.#connectAssembly(this.assembly!)
+      this.#connectAssembly(this.assembly!, ids)
     }
 
     // Force-update Assembly to check for missed events.
@@ -712,8 +713,8 @@ export default class Transloadit<
 
     // Restore all Assembly state.
     this.restored = (async () => {
-      restoreState()
-      restoreAssemblies()
+      const files = restoreState()
+      restoreAssemblies(Object.keys(files))
       await updateAssembly()
       this.restored = null
     })()
@@ -723,7 +724,7 @@ export default class Transloadit<
     })
   }
 
-  #connectAssembly(assembly: Assembly) {
+  #connectAssembly(assembly: Assembly, ids: UppyFile<M, B>['id'][]) {
     const { status } = assembly
     const id = status.assembly_id
     this.assembly = assembly
@@ -755,7 +756,7 @@ export default class Transloadit<
           // per-file progress as well. We cannot use this here or otherwise progress from
           // imported files would not be counted towards the total progress because imported
           // files are not registered with Uppy.
-          for (const file of this.uppy.getFiles()) {
+          for (const file of this.uppy.getFilesByIds(ids)) {
             this.uppy.emit('postprocess-progress', file, {
               mode: 'determinate',
               value: details.progress_combined / 100,
@@ -817,7 +818,7 @@ export default class Transloadit<
         this.uppy.emit('preprocess-complete', file)
       })
       this.#createAssemblyWatcher(assembly.status.assembly_id)
-      this.#connectAssembly(assembly)
+      this.#connectAssembly(assembly, fileIDs)
     } catch (err) {
       fileIDs.forEach((fileID) => {
         const file = this.uppy.getFile(fileID)
@@ -937,7 +938,6 @@ export default class Transloadit<
       this.uppy.on('upload-success', this.#onFileUploadURLAvailable)
     } else {
       // we don't need it here.
-      // @ts-expect-error `endpoint` is required but we first have to fetch
       // the regional endpoint from the Transloadit API before we can set it.
       this.uppy.use(Tus, {
         // Disable tus-js-client fingerprinting, otherwise uploading the same file at different times

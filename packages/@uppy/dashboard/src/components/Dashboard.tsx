@@ -2,6 +2,11 @@
 import { h } from 'preact'
 import classNames from 'classnames'
 import isDragDropSupported from '@uppy/utils/lib/isDragDropSupported'
+import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
+import type { State, UIPlugin, UIPluginOptions, Uppy } from '@uppy/core'
+import type { I18n } from '@uppy/utils/lib/Translator'
+import type Translator from '@uppy/utils/lib/Translator'
+import type { TargetedEvent } from 'preact/compat'
 import FileList from './FileList.tsx'
 import AddFiles from './AddFiles.tsx'
 import AddFilesPanel from './AddFilesPanel.tsx'
@@ -10,6 +15,7 @@ import EditorPanel from './EditorPanel.tsx'
 import PanelTopBar from './PickerPanelTopBar.tsx'
 import FileCard from './FileCard/index.tsx'
 import Slide from './Slide.tsx'
+import type { DashboardState, TargetWithRender } from '../Dashboard'
 
 // http://dev.edenspiekermann.com/2016/02/11/introducing-accessible-modal-dialog
 // https://github.com/ghosh/micromodal
@@ -23,9 +29,95 @@ const HEIGHT_MD = 330
 // const HEIGHT_LG = 400
 // const HEIGHT_XL = 460
 
-type $TSFixMe = any
+type DashboardUIProps<M extends Meta, B extends Body> = {
+  state: State<M, B>
+  isHidden: boolean
+  files: State<M, B>['files']
+  newFiles: UppyFile<M, B>[]
+  uploadStartedFiles: UppyFile<M, B>[]
+  completeFiles: UppyFile<M, B>[]
+  erroredFiles: UppyFile<M, B>[]
+  inProgressFiles: UppyFile<M, B>[]
+  inProgressNotPausedFiles: UppyFile<M, B>[]
+  processingFiles: UppyFile<M, B>[]
+  isUploadStarted: boolean
+  isAllComplete: boolean
+  isAllPaused: boolean
+  totalFileCount: number
+  totalProgress: number
+  allowNewUpload: boolean
+  acquirers: TargetWithRender[]
+  theme: string
+  disabled: boolean
+  disableLocalFiles: boolean
+  direction: UIPluginOptions['direction']
+  activePickerPanel: DashboardState<M, B>['activePickerPanel']
+  showFileEditor: boolean
+  saveFileEditor: () => void
+  closeFileEditor: () => void
+  disableInteractiveElements: (disable: boolean) => void
+  animateOpenClose: boolean
+  isClosing: boolean
+  progressindicators: TargetWithRender[]
+  editors: TargetWithRender[]
+  autoProceed: boolean
+  id: string
+  closeModal: () => void
+  handleClickOutside: () => void
+  handleInputChange: (event: TargetedEvent<HTMLInputElement, Event>) => void
+  handlePaste: (event: ClipboardEvent) => void
+  inline: boolean
+  showPanel: (id: string) => void
+  hideAllPanels: () => void
+  i18n: I18n
+  i18nArray: Translator['translateArray']
+  uppy: Uppy<M, B>
+  note: string | null
+  recoveredState: State<M, B>['recoveredState']
+  metaFields: DashboardState<M, B>['metaFields']
+  resumableUploads: boolean
+  individualCancellation: boolean
+  isMobileDevice?: boolean
+  fileCardFor: string | null
+  toggleFileCard: (show: boolean, fileID: string) => void
+  toggleAddFilesPanel: (show: boolean) => void
+  showAddFilesPanel: boolean
+  saveFileCard: (meta: M, fileID: string) => void
+  openFileEditor: (file: UppyFile<M, B>) => void
+  canEditFile: (file: UppyFile<M, B>) => boolean
+  width: string | number
+  height: string | number
+  showLinkToFileUploadResult: boolean
+  fileManagerSelectionType: string
+  proudlyDisplayPoweredByUppy: boolean
+  hideCancelButton: boolean
+  hideRetryButton: boolean
+  hidePauseResumeButton: boolean
+  showRemoveButtonAfterComplete: boolean
+  containerWidth: number
+  containerHeight: number
+  areInsidesReadyToBeVisible: boolean
+  parentElement: HTMLElement | null
+  allowedFileTypes: string[] | null
+  maxNumberOfFiles: number | null
+  requiredMetaFields: any
+  showSelectedFiles: boolean
+  showNativePhotoCameraButton: boolean
+  showNativeVideoCameraButton: boolean
+  nativeCameraFacingMode: 'user' | 'environment' | ''
+  singleFileFullScreen: boolean
+  handleCancelRestore: () => void
+  handleRequestThumbnail: (file: UppyFile<M, B>) => void
+  handleCancelThumbnail: (file: UppyFile<M, B>) => void
+  isDraggingOver: boolean
+  handleDragOver: (event: DragEvent) => void
+  handleDragLeave: (event: DragEvent) => void
+  handleDrop: (event: DragEvent) => void
+}
 
-export default function Dashboard(props: $TSFixMe) {
+export default function Dashboard<M extends Meta, B extends Body>(
+  props: DashboardUIProps<M, B>,
+) {
   const isNoFiles = props.totalFileCount === 0
   const isSingleFile = props.totalFileCount === 1
   const isSizeMD = props.containerWidth > WIDTH_MD
@@ -70,10 +162,10 @@ export default function Dashboard(props: $TSFixMe) {
     props.files ?
       Object.keys(props.files).filter((fileID) => props.files[fileID].isGhost)
         .length
-    : null
+    : 0
 
   const renderRestoredText = () => {
-    if (numberOfGhosts! > 0) {
+    if (numberOfGhosts > 0) {
       return props.i18n('recoveredXFiles', {
         smart_count: numberOfGhosts,
       })
@@ -166,37 +258,51 @@ export default function Dashboard(props: $TSFixMe) {
             </div>
           )}
 
-          {
-            showFileList ?
-              <FileList
-                id={props.id}
-                i18n={props.i18n}
-                uppy={props.uppy}
-                files={props.files}
-                resumableUploads={props.resumableUploads}
-                hideRetryButton={props.hideRetryButton}
-                hidePauseResumeButton={props.hidePauseResumeButton}
-                hideCancelButton={props.hideCancelButton}
-                showLinkToFileUploadResult={props.showLinkToFileUploadResult}
-                showRemoveButtonAfterComplete={
-                  props.showRemoveButtonAfterComplete
-                }
-                metaFields={props.metaFields}
-                toggleFileCard={props.toggleFileCard}
-                handleRequestThumbnail={props.handleRequestThumbnail}
-                handleCancelThumbnail={props.handleCancelThumbnail}
-                recoveredState={props.recoveredState}
-                individualCancellation={props.individualCancellation}
-                openFileEditor={props.openFileEditor}
-                canEditFile={props.canEditFile}
-                toggleAddFilesPanel={props.toggleAddFilesPanel}
-                isSingleFile={isSingleFile}
-                itemsPerRow={itemsPerRow}
-                containerWidth={props.containerWidth}
-                containerHeight={props.containerHeight}
-              />
-              // eslint-disable-next-line react/jsx-props-no-spreading
-            : <AddFiles {...props} isSizeMD={isSizeMD} />
+          {showFileList ?
+            <FileList
+              id={props.id}
+              i18n={props.i18n}
+              uppy={props.uppy}
+              files={props.files}
+              resumableUploads={props.resumableUploads}
+              hideRetryButton={props.hideRetryButton}
+              hidePauseResumeButton={props.hidePauseResumeButton}
+              hideCancelButton={props.hideCancelButton}
+              showLinkToFileUploadResult={props.showLinkToFileUploadResult}
+              showRemoveButtonAfterComplete={
+                props.showRemoveButtonAfterComplete
+              }
+              metaFields={props.metaFields}
+              toggleFileCard={props.toggleFileCard}
+              handleRequestThumbnail={props.handleRequestThumbnail}
+              handleCancelThumbnail={props.handleCancelThumbnail}
+              recoveredState={props.recoveredState}
+              individualCancellation={props.individualCancellation}
+              openFileEditor={props.openFileEditor}
+              canEditFile={props.canEditFile}
+              toggleAddFilesPanel={props.toggleAddFilesPanel}
+              isSingleFile={isSingleFile}
+              itemsPerRow={itemsPerRow}
+              containerWidth={props.containerWidth}
+              containerHeight={props.containerHeight}
+            />
+          : <AddFiles
+              i18n={props.i18n}
+              i18nArray={props.i18nArray}
+              acquirers={props.acquirers}
+              handleInputChange={props.handleInputChange}
+              maxNumberOfFiles={props.maxNumberOfFiles}
+              allowedFileTypes={props.allowedFileTypes}
+              showNativePhotoCameraButton={props.showNativePhotoCameraButton}
+              showNativeVideoCameraButton={props.showNativeVideoCameraButton}
+              nativeCameraFacingMode={props.nativeCameraFacingMode}
+              showPanel={props.showPanel}
+              activePickerPanel={props.activePickerPanel}
+              disableLocalFiles={props.disableLocalFiles}
+              fileManagerSelectionType={props.fileManagerSelectionType}
+              note={props.note}
+              proudlyDisplayPoweredByUppy={props.proudlyDisplayPoweredByUppy}
+            />
           }
 
           <Slide>
@@ -228,8 +334,13 @@ export default function Dashboard(props: $TSFixMe) {
           </Slide>
 
           <div className="uppy-Dashboard-progressindicators">
-            {props.progressindicators.map((target: $TSFixMe) => {
-              return props.uppy.getPlugin(target.id).render(props.state)
+            {props.progressindicators.map((target: TargetWithRender) => {
+              // TODO
+              // Here we're telling typescript all `this.type = 'progressindicator'` plugins inherit from `UIPlugin`
+              // This is factually true in Uppy right now, but maybe it doesn't have to be
+              return (
+                props.uppy.getPlugin(target.id) as UIPlugin<any, any, any>
+              ).render(props.state)
             })}
           </div>
         </div>

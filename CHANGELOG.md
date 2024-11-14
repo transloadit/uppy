@@ -12,6 +12,122 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 4.7.0
+
+Released: 2024-11-11
+
+| Package         | Version | Package         | Version |
+| --------------- | ------- | --------------- | ------- |
+| @uppy/aws-s3    |   4.1.2 | @uppy/tus       |   4.1.4 |
+| @uppy/companion |   5.1.4 | uppy            |   4.7.0 |
+| @uppy/locales   |   4.3.0 |                 |         |
+
+- @uppy/aws-s3: clarify and warn when incorrect buckets settings are used (Mikael Finstad / #5505)
+- @uppy/tus: fix event upload-success response.body.xhr (ItsOnlyBinary / #5503)
+- @uppy/companion: Enable CSRF protection in grant (OAuth2) (Mikael Finstad / #5504)
+- @uppy/locales: Add ms_MY (Malay) locale (Salimi / #5488)
+
+
+## 4.6.0
+
+Released: 2024-10-31
+
+| Package                   | Version | Package                   | Version |
+| ------------------------- | ------- | ------------------------- | ------- |
+| @uppy/aws-s3              |   4.1.1 | @uppy/provider-views      |   4.0.2 |
+| @uppy/box                 |   3.1.1 | @uppy/react               |   4.0.3 |
+| @uppy/companion           |   5.1.3 | @uppy/react-native        |   0.6.1 |
+| @uppy/companion-client    |   4.1.1 | @uppy/redux-dev-tools     |   4.0.1 |
+| @uppy/core                |   4.2.3 | @uppy/screen-capture      |   4.1.1 |
+| @uppy/dashboard           |   4.1.2 | @uppy/status-bar          |   4.0.4 |
+| @uppy/drag-drop           |   4.0.4 | @uppy/store-default       |   4.1.1 |
+| @uppy/dropbox             |   4.1.1 | @uppy/store-redux         |   4.0.1 |
+| @uppy/facebook            |   4.1.1 | @uppy/svelte              |   4.1.1 |
+| @uppy/file-input          |   4.0.3 | @uppy/thumbnail-generator |   4.0.1 |
+| @uppy/form                |   4.0.1 | @uppy/transloadit         |   4.1.3 |
+| @uppy/golden-retriever    |   4.0.1 | @uppy/tus                 |   4.1.3 |
+| @uppy/google-drive        |   4.1.1 | @uppy/unsplash            |   4.1.1 |
+| @uppy/google-photos       |   0.3.1 | @uppy/url                 |   4.1.1 |
+| @uppy/image-editor        |   3.2.0 | @uppy/utils               |   6.0.4 |
+| @uppy/informer            |   4.1.1 | @uppy/vue                 |   2.0.2 |
+| @uppy/instagram           |   4.1.1 | @uppy/webcam              |   4.0.2 |
+| @uppy/locales             |   4.2.1 | @uppy/xhr-upload          |   4.2.2 |
+| @uppy/onedrive            |   4.1.1 | @uppy/zoom                |   3.1.1 |
+| @uppy/progress-bar        |   4.0.1 | uppy                      |   4.6.0 |
+
+- @uppy/xhr-upload: fix stale file references in events (Merlijn Vos / #5499)
+- @uppy/image-editor: upgrade cropperjs (Merlijn Vos / #5497)
+- @uppy/aws-s3,@uppy/box,@uppy/companion-client,@uppy/core,@uppy/dashboard,@uppy/drag-drop,@uppy/dropbox,@uppy/facebook,@uppy/file-input,@uppy/form,@uppy/golden-retriever,@uppy/google-drive,@uppy/google-photos,@uppy/image-editor,@uppy/informer,@uppy/instagram,@uppy/locales,@uppy/onedrive,@uppy/progress-bar,@uppy/provider-views,@uppy/react-native,@uppy/react,@uppy/redux-dev-tools,@uppy/screen-capture,@uppy/status-bar,@uppy/store-default,@uppy/store-redux,@uppy/svelte,@uppy/thumbnail-generator,@uppy/transloadit,@uppy/tus,@uppy/unsplash,@uppy/url,@uppy/utils,@uppy/vue,@uppy/webcam,@uppy/xhr-upload,@uppy/zoom: Fix links (Anthony Veaudry / #5492)
+- docs,@uppy/companion: disallow corsOrigins "*" (Mikael Finstad / #5496)
+
+
+## 4.5.0
+
+Released: 2024-10-15
+
+| Package          | Version | Package          | Version |
+| ---------------- | ------- | ---------------- | ------- |
+| @uppy/companion  |   5.1.2 | @uppy/svelte     |   4.1.0 |
+| @uppy/core       |   4.2.2 | @uppy/tus        |   4.1.2 |
+| @uppy/dashboard  |   4.1.1 | @uppy/utils      |   6.0.3 |
+| @uppy/drag-drop  |   4.0.3 | @uppy/xhr-upload |   4.2.1 |
+| @uppy/file-input |   4.0.2 | uppy             |   4.5.0 |
+| @uppy/locales    |   4.2.0 |                  |         |
+
+- @uppy/dashboard: Dashboard - convert some files to typescript  (Evgenia Karunus / #5367)
+- @uppy/dashboard,@uppy/drag-drop,@uppy/file-input:  `.handleInputChange()` - use `.currentTarget`; clear the input using `''` (Evgenia Karunus / #5381)
+- meta: build(deps): bump @blakeembrey/template from 1.1.0 to 1.2.0 (dependabot[bot] / #5448)
+- @uppy/locales: Update packages/@uppy/locales/src/fr_FR.ts (Zéfyx / #5472)
+- @uppy/svelte: use SvelteKit as the build tool (Merlijn Vos / #5484)
+- @uppy/xhr-upload: add response to upload-error callback (Caleb Hardin / #5486)
+- @uppy/tus: tus: Avoid duplicate `upload-error` event (Marius / #5485)
+- @uppy/companion: Fix redis emitter (Mikael Finstad / #5474)
+- meta: build(deps): bump docker/build-push-action from 6.8.0 to 6.9.0 (dependabot[bot] / #5483)
+
+
+## 4.4.1
+
+Released: 2024-09-30
+
+| Package           | Version | Package           | Version |
+| ----------------- | ------- | ----------------- | ------- |
+| @uppy/core        |   4.2.1 | uppy              |   4.4.1 |
+| @uppy/transloadit |   4.1.2 |                   |         |
+
+- @uppy/transloadit: fix multiple upload batches & run again (Merlijn Vos / #5478)
+- meta: build(deps): bump docker/build-push-action from 6.7.0 to 6.8.0 (dependabot[bot] / #5477)
+- meta: build(deps): bump vite from 5.2.11 to 5.4.8 (dependabot[bot] / #5471)
+- @uppy/svelte: build(deps-dev): bump rollup from 4.18.0 to 4.22.4 (dependabot[bot] / #5470)
+- meta: build(deps): bump vite from 5.2.11 to 5.4.6 (dependabot[bot] / #5466)
+
+
+## 4.4.0
+
+Released: 2024-09-20
+
+| Package           | Version | Package           | Version |
+| ----------------- | ------- | ----------------- | ------- |
+| @uppy/companion   |   5.1.1 | @uppy/tus         |   4.1.1 |
+| @uppy/svelte      |   4.0.2 | @uppy/xhr-upload  |   4.2.0 |
+| @uppy/transloadit |   4.1.1 | uppy              |   4.4.0 |
+
+- @uppy/tus: fix retry check for status code 400 (Merlijn Vos / #5461)
+- meta: Merge branch 'main' of https://github.com/transloadit/uppy (Murderlon)
+- meta: fix AwsS3 endpoint option in private/dev (Murderlon)
+- examples: build(deps): bump body-parser from 1.20.2 to 1.20.3 (dependabot[bot] / #5462)
+- examples: build(deps-dev): bump vite from 5.3.1 to 5.3.6 (dependabot[bot] / #5459)
+- @uppy/tus: set response from tus-js-client (Merlijn Vos / #5456)
+- docs: fix assemblyOptions example for React (Merlijn Vos / #5450)
+- docs: rename Edgly to Smart CDN (Merlijn Vos / #5449)
+- @uppy/tus: correctly type tus on UppyFile (Merlijn Vos / #5454)
+- docs: remove old legacy CDN reference (Murderlon)
+- @uppy/xhr-upload: pass files to onBeforeRequest (Merlijn Vos / #5447)
+- @uppy/svelte: fix generated module to not bundle Svelte (Antoine du Hamel / #5446)
+- examples,@uppy/svelte: Bump svelte from 4.2.18 to 4.2.19 (dependabot[bot] / #5440)
+- meta: bump Yarn to 4.4.1 (Antoine du Hamel / #5445)
+- docs: fix broken links in locale docs (Serghei Cebotari / #5441)
+
+
 ## 4.3.0
 
 Released: 2024-08-29
@@ -6154,7 +6270,7 @@ Released: 2018-02-11.
 - dashboard: Use more accessible tip lib microtip (#536 / @arturi)
 - docs: Add PHP snippets to XHRUpload docs (#567 / @goto-bus-stop)
 - meta: Added instruction to fork the repo first (#512 / muhammadInam)
-- meta: Automatically host releases on edgly and use that as our main CDN (#558 / @kvz)
+- meta: Automatically host releases on Smart CDN and use that as our main CDN (#558 / @kvz)
 - meta: Dependency version updates (#523 / @goto-bus-stop)
 - meta: Remove unused files from published package (#586 / @goto-bus-stop)
 - s3: Respect `limit` option for upload parameter requests too; fix isXml() check when no content-type is available (#545, #544, #528 / @goto-bus-stop)

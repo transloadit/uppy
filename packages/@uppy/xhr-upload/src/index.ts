@@ -52,7 +52,12 @@ export interface XhrUploadOpts<M extends Meta, B extends Body>
   limit?: number
   responseType?: XMLHttpRequestResponseType
   withCredentials?: boolean
-  onBeforeRequest?: FetcherOptions['onBeforeRequest']
+  onBeforeRequest?: (
+    xhr: XMLHttpRequest,
+    retryCount: number,
+    /** The files to be uploaded. When `bundle` is `false` only one file is in the array.  */
+    files: UppyFile<M, B>[],
+  ) => void | Promise<void>
   shouldRetry?: FetcherOptions['shouldRetry']
   onAfterResponse?: FetcherOptions['onAfterResponse']
   getResponseData?: (xhr: XMLHttpRequest) => B | Promise<B>
@@ -194,13 +199,16 @@ export default class XHRUpload<
      */
     this.#getFetcher = (files: UppyFile<M, B>[]) => {
       return async (
-        url: Parameters<typeof fetcher>[0],
-        options: NonNullable<Parameters<typeof fetcher>[1]>,
+        url: string,
+        options: Omit<FetcherOptions, 'onBeforeRequest'> & {
+          onBeforeRequest?: Opts<M, B>['onBeforeRequest']
+        },
       ) => {
         try {
           const res = await fetcher(url, {
             ...options,
-            onBeforeRequest: this.opts.onBeforeRequest,
+            onBeforeRequest: (xhr, retryCount) =>
+              this.opts.onBeforeRequest?.(xhr, retryCount, files),
             shouldRetry: this.opts.shouldRetry,
             onAfterResponse: this.opts.onAfterResponse,
             onTimeout: (timeout) => {
@@ -210,7 +218,8 @@ export default class XHRUpload<
             },
             onUploadProgress: (event) => {
               if (event.lengthComputable) {
-                for (const file of files) {
+                for (const { id } of files) {
+                  const file = this.uppy.getFile(id)
                   this.uppy.emit('upload-progress', file, {
                     uploadStarted: file.progress.uploadStarted ?? 0,
                     bytesUploaded: (event.loaded / event.total) * file.size!,
@@ -233,8 +242,8 @@ export default class XHRUpload<
 
           const uploadURL = typeof body?.url === 'string' ? body.url : undefined
 
-          for (const file of files) {
-            this.uppy.emit('upload-success', file, {
+          for (const { id } of files) {
+            this.uppy.emit('upload-success', this.uppy.getFile(id), {
               status: res.status,
               body,
               uploadURL,
@@ -252,8 +261,9 @@ export default class XHRUpload<
             for (const file of files) {
               this.uppy.emit(
                 'upload-error',
-                file,
+                this.uppy.getFile(file.id),
                 buildResponseError(request, error),
+                request,
               )
             }
           }

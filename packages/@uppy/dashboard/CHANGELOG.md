@@ -1,5 +1,20 @@
 # @uppy/dashboard
 
+## 4.1.2
+
+Released: 2024-10-31
+Included in: Uppy v4.6.0
+
+- @uppy/aws-s3,@uppy/box,@uppy/companion-client,@uppy/core,@uppy/dashboard,@uppy/drag-drop,@uppy/dropbox,@uppy/facebook,@uppy/file-input,@uppy/form,@uppy/golden-retriever,@uppy/google-drive,@uppy/google-photos,@uppy/image-editor,@uppy/informer,@uppy/instagram,@uppy/locales,@uppy/onedrive,@uppy/progress-bar,@uppy/provider-views,@uppy/react-native,@uppy/react,@uppy/redux-dev-tools,@uppy/screen-capture,@uppy/status-bar,@uppy/store-default,@uppy/store-redux,@uppy/svelte,@uppy/thumbnail-generator,@uppy/transloadit,@uppy/tus,@uppy/unsplash,@uppy/url,@uppy/utils,@uppy/vue,@uppy/webcam,@uppy/xhr-upload,@uppy/zoom: Fix links (Anthony Veaudry / #5492)
+
+## 4.1.1
+
+Released: 2024-10-15
+Included in: Uppy v4.5.0
+
+- @uppy/dashboard: Dashboard - convert some files to typescript  (Evgenia Karunus / #5367)
+- @uppy/dashboard,@uppy/drag-drop,@uppy/file-input:  `.handleInputChange()` - use `.currentTarget`; clear the input using `''` (Evgenia Karunus / #5381)
+
 ## 4.1.0
 
 Released: 2024-08-29

@@ -54,11 +54,7 @@ module.exports = {
       ignore: svgPresentationAttributes,
     }],
 
-    // Special rules for CI:
-    ...(process.env.CI && {
-      // Some imports are available only after a full build, which we don't do on CI.
-      'import/no-unresolved': 'off',
-    }),
+    'import/no-unresolved': 'off',
 
     // rules we want to enforce
     'array-callback-return': 'error',
@@ -498,6 +494,14 @@ module.exports = {
         'no-lone-blocks': 'off',
         'no-unused-expressions': 'off',
         'no-unused-vars': 'off',
+      },
+    },
+    {
+      files: [
+        'packages/@uppy/svelte/**',
+      ],
+      parserOptions: {
+        sourceType: 'module',
       },
     },
     {

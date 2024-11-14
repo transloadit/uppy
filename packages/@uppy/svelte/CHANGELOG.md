@@ -1,5 +1,27 @@
 # @uppy/svelte
 
+## 4.1.1
+
+Released: 2024-10-31
+Included in: Uppy v4.6.0
+
+- @uppy/aws-s3,@uppy/box,@uppy/companion-client,@uppy/core,@uppy/dashboard,@uppy/drag-drop,@uppy/dropbox,@uppy/facebook,@uppy/file-input,@uppy/form,@uppy/golden-retriever,@uppy/google-drive,@uppy/google-photos,@uppy/image-editor,@uppy/informer,@uppy/instagram,@uppy/locales,@uppy/onedrive,@uppy/progress-bar,@uppy/provider-views,@uppy/react-native,@uppy/react,@uppy/redux-dev-tools,@uppy/screen-capture,@uppy/status-bar,@uppy/store-default,@uppy/store-redux,@uppy/svelte,@uppy/thumbnail-generator,@uppy/transloadit,@uppy/tus,@uppy/unsplash,@uppy/url,@uppy/utils,@uppy/vue,@uppy/webcam,@uppy/xhr-upload,@uppy/zoom: Fix links (Anthony Veaudry / #5492)
+
+## 4.1.0
+
+Released: 2024-10-15
+Included in: Uppy v4.5.0
+
+- @uppy/svelte: use SvelteKit as the build tool (Merlijn Vos / #5484)
+
+## 4.0.2
+
+Released: 2024-09-20
+Included in: Uppy v4.4.0
+
+- @uppy/svelte: fix generated module to not bundle Svelte (Antoine du Hamel / #5446)
+- examples,@uppy/svelte: Bump svelte from 4.2.18 to 4.2.19 (dependabot[bot] / #5440)
+
 ## 4.0.1
 
 Released: 2024-08-20

@@ -183,7 +183,9 @@ npm install @uppy/companion
 
 To plug Companion into an existing server, call its `.app` method, passing in an
 [options](#options) object as a parameter. This returns a server instance that
-you can mount on a route in your Express app.
+you can mount on a route in your Express app. Note: do **not** use the `cors`
+module in your project, because Companion already includes it. Use the
+`corsOrigins` Companion option to customise CORS behavior.
 
 ```js
 import express from 'express';
