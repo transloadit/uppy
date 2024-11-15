@@ -22,7 +22,9 @@ export const views = { ProviderView }
 
 // Stores
 export { default as DefaultStore } from '@uppy/store-default'
-// @ts-expect-error untyped
+// not yet typed
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 export { default as ReduxStore } from '@uppy/store-redux'
 
 // UI plugins
@@ -63,7 +65,9 @@ export { default as XHRUpload } from '@uppy/xhr-upload'
 export { default as Compressor } from '@uppy/compressor'
 export { default as Form } from '@uppy/form'
 export { default as GoldenRetriever } from '@uppy/golden-retriever'
-// @ts-expect-error untyped
+// not yet typed
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 export { default as ReduxDevTools } from '@uppy/redux-dev-tools'
 export { default as ThumbnailGenerator } from '@uppy/thumbnail-generator'
 
