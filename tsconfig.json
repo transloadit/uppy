@@ -50,7 +50,10 @@
       "path": "./packages/@uppy/google-photos/tsconfig.build.json",
     },
     {
-      "path": "./packages/@uppy/google-picker/tsconfig.build.json",
+      "path": "./packages/@uppy/google-drive-picker/tsconfig.build.json",
+    },
+    {
+      "path": "./packages/@uppy/google-photos-picker/tsconfig.build.json",
     },
     {
       "path": "./packages/@uppy/image-editor/tsconfig.build.json",

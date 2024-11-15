@@ -41,6 +41,9 @@ export default {
     openFolderNamed: 'Open folder %{name}',
     cancel: 'Cancel',
     logOut: 'Log out',
+    logIn: 'Log in',
+    pickFiles: 'Pick files',
+    pickPhotos: 'Pick photos',
     filter: 'Filter',
     resetFilter: 'Reset filter',
     loading: 'Loading...',
@@ -63,5 +66,6 @@ export default {
     additionalRestrictionsFailed:
       '%{count} additional restrictions were not fulfilled',
     unnamed: 'Unnamed',
+    pleaseWait: 'Please wait',
   },
 }

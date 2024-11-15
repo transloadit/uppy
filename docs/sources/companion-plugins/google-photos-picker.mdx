@@ -1,0 +1,120 @@
+---
+slug: /google-photos-picker
+---
+
+# Google Photos Picker
+
+The `@uppy/google-photos` plugin lets users import files from their
+[Google Photos](https://photos.google.com) account using the new
+[Picker API](https://developers.google.com/photos/picker). The benefit of using
+this API over the traditional Google Photos API (which the
+[Google Photos plugin](./google-photos.mdx) uses) is that the Picker API
+requires less verification from Google. Drawbacks of the Picker API include less
+control and inability to select shared albums. See also
+[Google Drive Picker](./google-drive-picker.mdx).
+
+## When should I use this?
+
+When you want to let users import files from their
+[Google Photos](https://photos.google.com) account.
+
+A [Companion](/docs/companion) instance is required for the Google Photos Picker
+plugin to work. Companion downloads the files from Google Photos, and uploads
+them to the destination. This saves the user bandwidth, especially helpful if
+they are on a mobile connection.
+
+You can self-host Companion or get a hosted version with any
+[Transloadit plan](https://transloadit.com/pricing/).
+
+<Tabs>
+  <TabItem value="npm" label="NPM" default>
+
+```shell
+npm install @uppy/google-photos-picker
+```
+
+  </TabItem>
+
+  <TabItem value="yarn" label="Yarn">
+
+```shell
+yarn add @uppy/google-photos-picker
+```
+
+  </TabItem>
+
+  <TabItem value="cdn" label="CDN">
+    <UppyCdnExample>
+      {`
+        import { Uppy, GooglePhotosPicker } from "{{UPPY_JS_URL}}"
+        const uppy = new Uppy()
+        uppy.use(GooglePhotosPicker, {
+          // Options
+        })
+      `}
+    </UppyCdnExample>
+  </TabItem>
+</Tabs>
+
+## Use
+
+Using Google Photos Picker requires setup in both Uppy and Companion.
+
+### Initial setup
+
+To sign up for API keys, go to the
+[Google Developer Console](https://console.developers.google.com/).
+
+Create a project for your app if you don’t have one yet.
+
+- On the project’s dashboard, enable the Google Photos Picker API.
+- Create an OAuth 2.0 Client ID with the correct Authorized JavaScript origins.
+
+### Use in Uppy
+
+```js {10-13} showLineNumbers
+import Uppy from '@uppy/core';
+import Dashboard from '@uppy/dashboard';
+import GooglePhotosPicker from '@uppy/google-photos-picker';
+
+import '@uppy/core/dist/style.min.css';
+import '@uppy/dashboard/dist/style.min.css';
+
+new Uppy()
+	.use(Dashboard, { inline: true, target: '#dashboard' })
+	.use(GooglePhotosPicker, {
+		companionUrl: 'https://your-companion.com',
+		clientId: 'From Google Developer Console',
+	});
+```
+
+### Use with Transloadit
+
+```js
+import { COMPANION_URL, COMPANION_ALLOWED_HOSTS } from '@uppy/transloadit';
+import GooglePhotosPicker from '@uppy/google-photos-picker';
+
+uppy.use(GooglePhotosPicker, {
+	companionUrl: COMPANION_URL,
+	companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
+	clientId: 'From Google Developer Console',
+});
+```
+
+### Use in Companion
+
+Companion is used to download/upload the picked files. Companion supports this
+plugin out-of-the-box, however it must be enabled in Companion with the
+`enableGooglePickerEndpoint` / `COMPANION_ENABLE_GOOGLE_PICKER_ENDPOINT` option.
+For this plugin, all credentials are public (non-secret) and provided in the
+frontend.
+
+## API
+
+### Options
+
+#### [Common Companion options...](./companion-options.mdx)
+
+#### `clientId`
+
+The client ID from the [Initial setup](#initial-setup) (`string`).

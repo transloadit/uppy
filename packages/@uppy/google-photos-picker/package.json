@@ -1,13 +1,13 @@
 {
-  "name": "@uppy/google-picker",
-  "description": "The Google Picker plugin for Uppy lets users import files from their Google Drive account",
+  "name": "@uppy/google-photos-picker",
+  "description": "The Google Photos Picker plugin for Uppy lets users import files from their Google Photos account",
   "version": "0.1.0",
   "license": "MIT",
   "main": "lib/index.js",
   "type": "module",
   "keywords": [
     "file uploader",
-    "google drive",
+    "google photos",
     "google picker",
     "cloud storage",
     "uppy",

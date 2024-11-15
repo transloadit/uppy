@@ -16,7 +16,8 @@ import Audio from '@uppy/audio'
 import Compressor from '@uppy/compressor'
 import GoogleDrive from '@uppy/google-drive'
 import english from '@uppy/locales/lib/en_US.js'
-import GooglePicker from '@uppy/google-picker'
+import GoogleDrivePicker from '@uppy/google-drive-picker'
+import GooglePhotosPicker from '@uppy/google-photos-picker'
 /* eslint-enable import/no-extraneous-dependencies */
 
 import generateSignatureIfSecret from './generateSignatureIfSecret.js'
@@ -129,13 +130,19 @@ export default () => {
     // .use(Zoom, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })
     // .use(Url, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })
     // .use(Unsplash, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })
-    .use(GooglePicker, {
+    .use(GoogleDrivePicker, {
       target: Dashboard,
       companionUrl: COMPANION_URL,
       companionAllowedHosts,
       clientId: GOOGLE_PICKER_CLIENT_ID,
       apiKey: GOOGLE_PICKER_API_KEY,
       appId: GOOGLE_PICKER_APP_ID,
+    })
+    .use(GooglePhotosPicker, {
+      target: Dashboard,
+      companionUrl: COMPANION_URL,
+      companionAllowedHosts,
+      clientId: GOOGLE_PICKER_CLIENT_ID,
     })
     .use(RemoteSources, {
       companionUrl: COMPANION_URL,

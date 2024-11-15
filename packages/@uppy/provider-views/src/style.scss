@@ -379,3 +379,11 @@
     padding-bottom: 10px;
   }
 }
+
+/* https://stackoverflow.com/a/33082658/6519037 */
+.picker-dialog-bg {
+  z-index: 20000 !important;
+}
+.picker-dialog {
+  z-index: 20001 !important;
+}

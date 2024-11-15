@@ -1,0 +1,69 @@
+---
+slug: /companion-options
+---
+
+# Common Companion options
+
+These are the options common to all Uppy plugins that use Companion.
+
+## `id`
+
+A unique identifier for this plugin (`string`, default is a unique ID for each
+plugin).
+
+## `title`
+
+Title / name shown in the UI, such as Dashboard tabs (`string`, default is the
+name of the plugin).
+
+## `target`
+
+DOM element, CSS selector, or plugin to place the drag and drop area into
+(`string`, `Element`, `Function`, or `UIPlugin`, default:
+[`Dashboard`](/docs/dashboard)).
+
+## `companionUrl`
+
+URL to a [Companion](/docs/companion) instance (`string`, default: `null`).
+
+## `companionHeaders`
+
+Custom headers that should be sent along to [Companion](/docs/companion) on
+every request (`Object`, default: `{}`).
+
+## `companionAllowedHosts`
+
+The valid and authorised URL(s) from which OAuth responses should be accepted
+(`string` or `RegExp` or `Array`, default: `companionUrl`).
+
+This value can be a `string`, a `RegExp` pattern, or an `Array` of both. This is
+useful when you have your [Companion](/docs/companion) running on several hosts.
+Otherwise, the default value should do fine.
+
+## `companionCookiesRule`
+
+This option correlates to the
+[RequestCredentials value](https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials)
+(`string`, default: `'same-origin'`).
+
+This tells the plugin whether to send cookies to [Companion](/docs/companion).
+
+## `locale`
+
+An object with `strings` property containing additional i18n strings. The key is
+the i18n key and the value is the English string.
+
+Example:
+
+```js
+{
+	strings: {
+		someKey: 'Some English string',
+	},
+}
+```
+
+## `storage`
+
+A custom storage to be used for the plugin’s persistent data. Type `AsyncStore`,
+default is `LocalStorage`.

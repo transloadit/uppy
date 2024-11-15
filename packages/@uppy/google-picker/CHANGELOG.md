@@ -1,1 +1,0 @@
-# @uppy/google-picker
