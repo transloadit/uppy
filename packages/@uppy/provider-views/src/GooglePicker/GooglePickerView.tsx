@@ -3,7 +3,7 @@ import { Fragment } from 'preact/compat'
 import type { UIPlugin, Uppy } from '@uppy/core'
 import useStore from '@uppy/core/lib/useStore.js'
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
-import { useUppyPluginState } from '@uppy/core/lib/useUppyState'
+import { useUppyPluginState } from '@uppy/core/lib/useUppyState.js'
 import type { AsyncStore } from '@uppy/core/lib/Uppy.js'
 
 export type PluginState = {
