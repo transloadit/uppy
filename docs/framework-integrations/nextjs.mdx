@@ -7,8 +7,10 @@ import TabItem from '@theme/TabItem';
 
 # Next.js
 
-Integration guide for the [React][] components for the Uppy UI plugins and
-hooks.
+Integration guide for [Next.js][] featuring the [dashboard](/docs/dashboard),
+the [tus](/docs/tus) uploader, [transloadit](/docs/transloadit), multipart
+uploads to a Next.js route, the Uppy UI components, and the
+[React hooks](/docs/react).
 
 :::tip
 
@@ -116,7 +118,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 
 Before continuing you should have a [Transloadit](https://transloadit.com)
 account and a
-[template](https://transloadit.com/docs/getting-started/my-first-app/) setup.
+[Template](https://transloadit.com/docs/getting-started/my-first-app/) setup.
 
 :::
 
@@ -138,6 +140,8 @@ Generating a signature should be done on the server to avoid leaking secrets.
 <Tabs>
   <TabItem value="app" label="App Router" default>
 
+`/app/api/transloadit/route.ts`
+
 ```ts
 import { NextResponse, NextRequest } from 'next/server';
 import crypto from 'crypto';
@@ -157,6 +161,7 @@ export async function POST(request: NextRequest) {
 	const authSecret = process.env.TRANSLOADIT_SECRET;
 	const templateId = process.env.TRANSLOADIT_TEMPLATE_ID;
 
+	// Typically, here you would also deny generating a signature for improper use
 	if (!authKey || !authSecret || !templateId) {
 		return NextResponse.json(
 			{ error: 'Missing Transloadit credentials' },
@@ -172,8 +177,9 @@ export async function POST(request: NextRequest) {
 		},
 		template_id: templateId,
 		fields: {
-			// You can use this in your template.
-			userId: body.userId,
+			// This becomes available in your Template as `${fields.customValue}`
+			// and could be used to have a storage directory per user for example
+			customValue: body.customValue,
 		},
 		// your other params like notify_url, etc.
 	});
@@ -194,6 +200,8 @@ export async function POST(request: NextRequest) {
 
   <TabItem value="pages" label="Pages Router">
 
+`/pages/api/transloadit/params.ts`
+
 ```ts
 import type { NextApiRequest, NextApiResponse } from 'next';
 import crypto from 'node:crypto';
@@ -207,6 +215,7 @@ function utcDateString(ms: number): string {
 }
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
+	// Typically, here you would also deny generating a signature for improper use
 	if (req.method !== 'POST') {
 		return res.status(405).json({ error: 'Method Not Allowed' });
 	}
@@ -228,8 +237,9 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 		},
 		template_id: templateId,
 		fields: {
-			// You can use this in your template.
-			userId: req.body.userId,
+			// This becomes available in your Template as `${fields.customValue}`
+			// and could be used to have a storage directory per user for example
+			customValue: req.body.customValue,
 		},
 		// your other params like notify_url, etc.
 	});
@@ -263,7 +273,7 @@ function createUppy() {
 			// You can send meta data along for use in your template.
 			// https://transloadit.com/docs/topics/assembly-instructions/#form-fields-in-instructions
 			const { meta } = uppy.getState();
-			const body = JSON.stringify({ userId: meta.userId });
+			const body = JSON.stringify({ customValue: meta.customValue });
 			const res = await fetch('/transloadit-params', { method: 'POST', body });
 			return response.json();
 		},
@@ -271,15 +281,15 @@ function createUppy() {
 	return uppy;
 }
 
-function Component({ userId }) {
+function Component({ customValue }) {
 	// IMPORTANT: passing an initializer function to prevent the state from recreating.
 	const [uppy] = useState(createUppy);
 
 	useEffect(() => {
-		if (userId) {
-			uppy.setOptions({ meta: { userId } });
+		if (customValue) {
+			uppy.setOptions({ meta: { customValue } });
 		}
-	}, [uppy, userId]);
+	}, [uppy, customValue]);
 }
 ```
 
@@ -290,7 +300,7 @@ language, you can use [`@uppy/xhr-upload`](/docs/xhr-upload).
 
 :::warning
 
-The server-side examples are simplified for demostration purposes and assume a
+The server-side examples are simplified for demonstration purposes and assume a
 regular file upload while `@uppy/xhr-upload` can also send `FormData` through
 the `formData` or `bundle` options.
 
@@ -418,6 +428,7 @@ export default function UppyDashboard() {
 [transloadit-concepts]: https://transloadit.com/docs/getting-started/concepts/
 [transloadit-services]: https://transloadit.com/services/
 [react]: https://facebook.github.io/react
+[Next.js]: https://nextjs.org/
 [tus]: https://tus.io/
 [tus Node.js]: https://github.com/tus/tus-node-server
 [`@tus/server`]:
