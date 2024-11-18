@@ -1,7 +1,6 @@
 {
   "extends": "../../tsconfig.shared",
   "compilerOptions": {
-    "noImplicitAny": false,
     "outDir": "./lib",
     "paths": {
       "@uppy/audio": ["../audio/src/index.js"],
@@ -74,8 +73,7 @@
       "@uppy/zoom/lib/*": ["../zoom/src/*"]
     },
     "resolveJsonModule": false,
-    "rootDir": "./src",
-    "skipLibCheck": true
+    "rootDir": "./src"
   },
   "include": ["./src/**/*.*"],
   "exclude": ["./src/**/*.test.ts"],

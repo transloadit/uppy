@@ -1,0 +1,434 @@
+---
+slug: /nextjs
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Next.js
+
+Integration guide for [Next.js][] featuring the [dashboard](/docs/dashboard),
+the [tus](/docs/tus) uploader, [transloadit](/docs/transloadit), multipart
+uploads to a Next.js route, the Uppy UI components, and the
+[React hooks](/docs/react).
+
+:::tip
+
+Uppy also has hooks and more React examples in the [React docs](/docs/react).
+
+:::
+
+## Install
+
+<Tabs>
+  <TabItem value="npm" label="NPM" default>
+
+```shell
+npm install @uppy/core @uppy/dashboard @uppy/react
+```
+
+  </TabItem>
+
+  <TabItem value="yarn" label="Yarn">
+
+```shell
+yarn add @uppy/core @uppy/dashboard @uppy/react
+```
+
+  </TabItem>
+</Tabs>
+
+## Tus
+
+[Tus][tus] is an open protocol for resumable uploads built on HTTP. This means
+accidentally closing your tab or losing connection let’s you continue, for
+instance, your 10GB upload instead of starting all over.
+
+Tus supports any language, any platform, and any network. It requires a client
+and server integration to work. We will be using [tus Node.js][].
+
+Checkout the [`@uppy/tus` docs](/docs/tus) for more information.
+
+```tsx
+'use client';
+
+import Uppy from '@uppy/core';
+// For now, if you do not want to install UI components you
+// are not using import from lib directly.
+import Dashboard from '@uppy/react/lib/Dashboard';
+import Tus from '@uppy/tus';
+import { useState } from 'react';
+
+import '@uppy/core/dist/style.min.css';
+import '@uppy/dashboard/dist/style.min.css';
+
+function createUppy() {
+	return new Uppy().use(Tus, { endpoint: '/api/upload' });
+}
+
+export default function UppyDashboard() {
+	// Important: use an initializer function to prevent the state from recreating.
+	const [uppy] = useState(createUppy);
+
+	return <Dashboard theme="dark" uppy={uppy} />;
+}
+```
+
+[`@tus/server`][] does not not support the Next.js app router yet, which is
+based on the fetch `Request` API instead of `http.IncomingMessage` and
+`http.ServerResponse`.
+
+Even if you are fully comitting to the app router, there is no downside to still
+having the pages router next to it for some Node.js style API routes.
+
+Attach the tus server handler to a Next.js route handler in an
+[optional catch-all route file](https://nextjs.org/docs/pages/building-your-application/routing/dynamic-routes#optional-catch-all-routes).
+
+`/pages/api/upload/[[...file]].ts`
+
+```ts
+import type { NextApiRequest, NextApiResponse } from 'next';
+import { Server, Upload } from '@tus/server';
+import { FileStore } from '@tus/file-store';
+
+/**
+ * !Important. This will tell Next.js NOT Parse the body as tus requires
+ * @see https://nextjs.org/docs/api-routes/request-helpers
+ */
+export const config = {
+	api: {
+		bodyParser: false,
+	},
+};
+
+const tusServer = new Server({
+	// `path` needs to match the route declared by the next file router
+	path: '/api/upload',
+	datastore: new FileStore({ directory: './files' }),
+});
+
+export default function handler(req: NextApiRequest, res: NextApiResponse) {
+	return tusServer.handle(req, res);
+}
+```
+
+## Transloadit
+
+:::note
+
+Before continuing you should have a [Transloadit](https://transloadit.com)
+account and a
+[Template](https://transloadit.com/docs/getting-started/my-first-app/) setup.
+
+:::
+
+Transloadit’s strength is versatility. By doing video, audio, images, documents,
+and more, you only need one vendor for [all your file processing
+needs][transloadit-services]. The [`@uppy/transloadit`](/docs/transloadit)
+plugin directly uploads to Transloadit so you only have to worry about creating
+a [template][transloadit-concepts]. It uses
+[Tus](#i-want-reliable-resumable-uploads) under the hood so you don’t have to
+sacrifice reliable, resumable uploads for convenience.
+
+When you go to production always make sure to set the `signature`. **Not using
+[Signature Authentication](https://transloadit.com/docs/topics/signature-authentication/)
+can be a security risk**. Signature Authentication is a security measure that
+can prevent outsiders from tampering with your Assembly Instructions.
+
+Generating a signature should be done on the server to avoid leaking secrets.
+
+<Tabs>
+  <TabItem value="app" label="App Router" default>
+
+`/app/api/transloadit/route.ts`
+
+```ts
+import { NextResponse, NextRequest } from 'next/server';
+import crypto from 'crypto';
+
+function utcDateString(ms: number): string {
+	return new Date(ms)
+		.toISOString()
+		.replace(/-/g, '/')
+		.replace(/T/, ' ')
+		.replace(/\.\d+Z$/, '+00:00');
+}
+
+export async function POST(request: NextRequest) {
+	// expire 1 hour from now (this must be milliseconds)
+	const expires = utcDateString(Date.now() + 1 * 60 * 60 * 1000);
+	const authKey = process.env.TRANSLOADIT_KEY;
+	const authSecret = process.env.TRANSLOADIT_SECRET;
+	const templateId = process.env.TRANSLOADIT_TEMPLATE_ID;
+
+	// Typically, here you would also deny generating a signature for improper use
+	if (!authKey || !authSecret || !templateId) {
+		return NextResponse.json(
+			{ error: 'Missing Transloadit credentials' },
+			{ status: 500 },
+		);
+	}
+
+	const body = await request.json();
+	const params = JSON.stringify({
+		auth: {
+			key: authKey,
+			expires,
+		},
+		template_id: templateId,
+		fields: {
+			// This becomes available in your Template as `${fields.customValue}`
+			// and could be used to have a storage directory per user for example
+			customValue: body.customValue,
+		},
+		// your other params like notify_url, etc.
+	});
+
+	const signatureBytes = crypto
+		.createHmac('sha384', authSecret)
+		.update(Buffer.from(params, 'utf-8'));
+	// The final signature needs the hash name in front, so
+	// the hashing algorithm can be updated in a backwards-compatible
+	// way when old algorithms become insecure.
+	const signature = `sha384:${signatureBytes.digest('hex')}`;
+
+	return NextResponse.json({ expires, signature, params });
+}
+```
+
+  </TabItem>
+
+  <TabItem value="pages" label="Pages Router">
+
+`/pages/api/transloadit/params.ts`
+
+```ts
+import type { NextApiRequest, NextApiResponse } from 'next';
+import crypto from 'node:crypto';
+
+function utcDateString(ms: number): string {
+	return new Date(ms)
+		.toISOString()
+		.replace(/-/g, '/')
+		.replace(/T/, ' ')
+		.replace(/\.\d+Z$/, '+00:00');
+}
+
+export default function handler(req: NextApiRequest, res: NextApiResponse) {
+	// Typically, here you would also deny generating a signature for improper use
+	if (req.method !== 'POST') {
+		return res.status(405).json({ error: 'Method Not Allowed' });
+	}
+
+	// expire 1 hour from now (this must be milliseconds)
+	const expires = utcDateString(Date.now() + 1 * 60 * 60 * 1000);
+	const authKey = process.env.TRANSLOADIT_KEY;
+	const authSecret = process.env.TRANSLOADIT_SECRET;
+	const templateId = process.env.TRANSLOADIT_TEMPLATE_ID;
+
+	if (!authKey || !authSecret || !templateId) {
+		return res.status(500).json({ error: 'Missing Transloadit credentials' });
+	}
+
+	const params = JSON.stringify({
+		auth: {
+			key: authKey,
+			expires,
+		},
+		template_id: templateId,
+		fields: {
+			// This becomes available in your Template as `${fields.customValue}`
+			// and could be used to have a storage directory per user for example
+			customValue: req.body.customValue,
+		},
+		// your other params like notify_url, etc.
+	});
+
+	const signatureBytes = crypto
+		.createHmac('sha384', authSecret)
+		.update(Buffer.from(params, 'utf-8'));
+	// The final signature needs the hash name in front, so
+	// the hashing algorithm can be updated in a backwards-compatible
+	// way when old algorithms become insecure.
+	const signature = `sha384:${signatureBytes.digest('hex')}`;
+
+	res.status(200).json({ expires, signature, params });
+}
+```
+
+  </TabItem>
+</Tabs>
+
+On the client we want to fetch the signature and params from the server. You may
+want to send values from React state along to your endpoint, for instance to add
+[`fields`](https://transloadit.com/docs/topics/assembly-variables/) which you
+can use in your template as global variables.
+
+```js
+// ...
+function createUppy() {
+	const uppy = new Uppy();
+	uppy.use(Transloadit, {
+		async assemblyOptions() {
+			// You can send meta data along for use in your template.
+			// https://transloadit.com/docs/topics/assembly-instructions/#form-fields-in-instructions
+			const { meta } = uppy.getState();
+			const body = JSON.stringify({ customValue: meta.customValue });
+			const res = await fetch('/transloadit-params', { method: 'POST', body });
+			return response.json();
+		},
+	});
+	return uppy;
+}
+
+function Component({ customValue }) {
+	// IMPORTANT: passing an initializer function to prevent the state from recreating.
+	const [uppy] = useState(createUppy);
+
+	useEffect(() => {
+		if (customValue) {
+			uppy.setOptions({ meta: { customValue } });
+		}
+	}, [uppy, customValue]);
+}
+```
+
+## HTTP uploads to your backend
+
+If you want to handle uploads yourself, in Next.js or another server in any
+language, you can use [`@uppy/xhr-upload`](/docs/xhr-upload).
+
+:::warning
+
+The server-side examples are simplified for demonstration purposes and assume a
+regular file upload while `@uppy/xhr-upload` can also send `FormData` through
+the `formData` or `bundle` options.
+
+:::
+
+<Tabs>
+  <TabItem value="app" label="App Router" default>
+
+```ts
+import { NextRequest, NextResponse } from 'next/server';
+import { writeFile } from 'node:fs/promises';
+import path from 'node:path';
+
+export const config = {
+	api: {
+		bodyParser: false,
+	},
+};
+
+export async function POST(request: NextRequest) {
+	const formData = await request.formData();
+	const file = formData.get('file') as File | null;
+
+	if (!file) {
+		return NextResponse.json({ error: 'No file uploaded' }, { status: 400 });
+	}
+
+	const buffer = Buffer.from(await file.arrayBuffer());
+	const filename = file.name.replace(/\s/g, '-');
+	const filepath = path.join(process.cwd(), 'public', 'uploads', filename);
+
+	try {
+		await writeFile(filepath, buffer);
+		return NextResponse.json({
+			message: 'File uploaded successfully',
+			filename,
+		});
+	} catch (error) {
+		console.error('Error saving file:', error);
+		return NextResponse.json({ error: 'Error saving file' }, { status: 500 });
+	}
+}
+```
+
+  </TabItem>
+
+  <TabItem value="pages" label="Pages Router">
+
+```ts
+import type { NextApiRequest, NextApiResponse } from 'next';
+import { createWriteStream } from 'fs';
+import { pipeline } from 'stream/promises';
+import path from 'path';
+
+export const config = {
+	api: {
+		bodyParser: false,
+	},
+};
+
+export default async function handler(
+	req: NextApiRequest,
+	res: NextApiResponse,
+) {
+	if (req.method !== 'POST') {
+		return res.status(405).json({ error: 'Method Not Allowed' });
+	}
+
+	try {
+		const filename = `file-${Date.now()}.txt`;
+		const filepath = path.join(process.cwd(), 'public', 'uploads', filename);
+		const writeStream = createWriteStream(filepath);
+
+		await pipeline(req, writeStream);
+
+		res.status(200).json({ message: 'File uploaded successfully', filename });
+	} catch (error) {
+		console.error('Error saving file:', error);
+		res.status(500).json({ error: 'Error saving file' });
+	}
+}
+```
+
+  </TabItem>
+</Tabs>
+
+```tsx
+'use client';
+
+import Uppy from '@uppy/core';
+// For now, if you do not want to install UI components you
+// are not using import from lib directly.
+import Dashboard from '@uppy/react/lib/Dashboard';
+import Xhr from '@uppy/xhr-upload';
+import { useState } from 'react';
+
+import '@uppy/core/dist/style.min.css';
+import '@uppy/dashboard/dist/style.min.css';
+
+function createUppy() {
+	return new Uppy().use(Xhr, { endpoint: '/api/upload' });
+}
+
+export default function UppyDashboard() {
+	// Important: use an initializer function to prevent the state from recreating.
+	const [uppy] = useState(createUppy);
+
+	return <Dashboard theme="dark" uppy={uppy} />;
+}
+```
+
+## Next steps
+
+- Add client-side file [restrictions](/docs/uppy/#restrictions).
+- Upload files together with other form fields with [`@uppy/form`](/docs/form).
+- Use your [language of choice](/docs/locales) instead of English.
+- Add an [image editor](docs/image-editor) for cropping and resizing images.
+- Download files from remote sources, such as [Google Drive](docs/google-drive)
+  and [Dropbox](docs/dropbox), with [Companion](/docs/companion).
+- Add [Golden Retriever](/docs/golden-retriever) to save selected files in your
+  browser cache, so that if the browser crashes, or the user accidentally closes
+  the tab, Uppy can restore everything and continue uploading as if nothing
+  happened.
+
+[transloadit-concepts]: https://transloadit.com/docs/getting-started/concepts/
+[transloadit-services]: https://transloadit.com/services/
+[Next.js]: https://nextjs.org/
+[tus]: https://tus.io/
+[tus Node.js]: https://github.com/tus/tus-node-server
+[`@tus/server`]:
+	https://github.com/tus/tus-node-server/tree/main/packages/server

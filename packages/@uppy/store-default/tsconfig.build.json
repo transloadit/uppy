@@ -3,9 +3,7 @@
   "compilerOptions": {
     "outDir": "./lib",
     "rootDir": "./src",
-    "resolveJsonModule": false,
-    "noImplicitAny": false,
-    "skipLibCheck": true
+    "resolveJsonModule": false
   },
   "include": ["./src/**/*.*"],
   "exclude": ["./src/**/*.test.ts"],
