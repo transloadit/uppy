@@ -768,10 +768,9 @@ export default class AwsS3Multipart<
           )
         }
         if (etag == null) {
-          reject(
-            new Error(
-              'AwsS3/Multipart: Could not read the ETag header. This likely means CORS is not configured correctly on the S3 Bucket. See https://uppy.io/docs/aws-s3-multipart#S3-Bucket-Configuration for instructions.',
-            ),
+          // eslint-disable-next-line no-console
+          console.error(
+            '@uppy/aws-s3: Could not read the ETag header. This likely means CORS is not configured correctly on the S3 Bucket. See https://uppy.io/docs/aws-s3/#setting-up-your-s3-bucket',
           )
           return
         }
