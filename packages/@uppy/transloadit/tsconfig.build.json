@@ -1,7 +1,6 @@
 {
   "extends": "../../../tsconfig.shared",
   "compilerOptions": {
-    "noImplicitAny": false,
     "outDir": "./lib",
     "paths": {
       "@uppy/companion-client": ["../companion-client/src/index.js"],
@@ -15,8 +14,7 @@
       "@uppy/core/lib/*": ["../core/src/*"]
     },
     "resolveJsonModule": false,
-    "rootDir": "./src",
-    "skipLibCheck": true
+    "rootDir": "./src"
   },
   "include": ["./src/**/*.*"],
   "exclude": ["./src/**/*.test.ts"],

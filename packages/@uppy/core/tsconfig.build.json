@@ -4,13 +4,11 @@
     "outDir": "./lib",
     "rootDir": "./src",
     "resolveJsonModule": false,
-    "noImplicitAny": false,
     "paths": {
       "@uppy/store-default": ["../store-default/src/index.js"],
       "@uppy/store-default/lib/*": ["../store-default/src/*"],
       "@uppy/utils/lib/*": ["../utils/src/*"]
-    },
-    "skipLibCheck": true
+    }
   },
   "include": ["./src/**/*.*"],
   "exclude": ["./src/**/*.test.ts"],

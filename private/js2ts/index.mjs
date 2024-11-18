@@ -140,12 +140,10 @@ await writeFile(
     {
       extends: '../../../tsconfig.shared',
       compilerOptions: {
-        noImplicitAny: false,
         outDir: './lib',
         paths,
         resolveJsonModule: false,
         rootDir: './src',
-        skipLibCheck: true,
       },
       include: ['./src/**/*.*'],
       exclude: ['./src/**/*.test.ts'],
