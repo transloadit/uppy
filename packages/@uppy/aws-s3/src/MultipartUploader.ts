@@ -7,6 +7,7 @@ const MB = 1024 * 1024
 
 interface MultipartUploaderOptions<M extends Meta, B extends Body> {
   getChunkSize?: (file: { size: number }) => number
+  getChunkData?: (start: number, end: number, opts: { chunkSize: number }) => Promise<Blob>
   onProgress?: (bytesUploaded: number, bytesTotal: number) => void
   onPartComplete?: (part: { PartNumber: number; ETag: string }) => void
   shouldUseMultipart?: boolean | ((file: UppyFile<M, B>) => boolean)
@@ -33,7 +34,7 @@ const defaultOptions = {
 } satisfies Partial<MultipartUploaderOptions<any, any>>
 
 export interface Chunk {
-  getData: () => Blob
+  getData: () => Promise<Blob>
   onProgress: (ev: ProgressEvent) => void
   onComplete: (etag: string) => void
   shouldUseMultipart: boolean
@@ -146,9 +147,10 @@ class MultipartUploader<M extends Meta, B extends Body> {
         const end = Math.min(fileSize, offset + chunkSize)
 
         // Defer data fetching/slicing until we actually need the data, because it's slow if we have a lot of files
-        const getData = () => {
+        const getData = async () => {
           const i2 = offset
-          return this.#data.slice(i2, end)
+          return this.options.getChunkData ? this.options.getChunkData(i2, end, { chunkSize }) :
+            this.#data.slice(i2, end)
         }
 
         this.#chunks[j] = {
@@ -171,7 +173,7 @@ class MultipartUploader<M extends Meta, B extends Body> {
     } else {
       this.#chunks = [
         {
-          getData: () => this.#data,
+          getData: async () => this.#data,
           onProgress: this.#onPartProgress(0),
           onComplete: this.#onPartComplete(0),
           shouldUseMultipart,
