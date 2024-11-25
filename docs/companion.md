@@ -329,7 +329,6 @@ const options = {
 	logClientVersion: true,
 	periodicPingUrls: [],
 	streamingUpload: true,
-	streamingUploadSizeless: false,
 	clientSocketConnectTimeout: 60000,
 	metrics: true,
 };
@@ -639,16 +638,10 @@ Prometheus metrics (by default metrics are enabled.)
 A boolean flag to tell Companion whether to enable streaming uploads. If
 enabled, it will lead to _faster uploads_ because companion will start uploading
 at the same time as downloading using `stream.pipe`. If `false`, files will be
-fully downloaded first, then uploaded. Defaults to `true`.
-
-#### `streamingUploadSizeless` `COMPANION_STREAMING_UPLOAD_SIZELESS`
-
-A boolean flag to tell Companion whether to also upload files that have an
-unknown size using streaming. If disabled, files of unknown size will be fully
-downloaded first. Note that for Tus, this requires an optional extension on the
-Tus server if using Tus uploads. For form multipart uploads it requres a server
-that can handle `transfer-encoding: chunked`. Default is `false`. If set to
-`true`, `streamingUpload` also has to be set to `true`.
+fully downloaded first, then uploaded. Note that for Tus, this requires an
+optional extension on the Tus server if using Tus uploads. For form multipart
+uploads it requres a server that can handle `transfer-encoding: chunked`.
+Defaults to `true`.
 
 #### `maxFileSize` `COMPANION_MAX_FILE_SIZE`
 

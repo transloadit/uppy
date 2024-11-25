@@ -269,11 +269,7 @@ class Uploader {
   }
 
   _canStream() {
-    return this.options.companionOptions.streamingUpload && (
-      this.options.size
-      // only tus uploads can be streamed without size, TODO: add also others
-      || this.options.companionOptions.streamingUploadSizeless
-    )
+    return this.options.companionOptions.streamingUpload
   }
 
   /**
