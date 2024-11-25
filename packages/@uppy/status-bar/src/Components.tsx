@@ -296,7 +296,7 @@ function ProgressDetails(props: ProgressDetailsProps) {
             complete: totalUploadedSizeStr,
             total: prettierBytes(totalSize),
           })
-        : totalUploadedSizeStr}
+        : i18n('dataUploadedOfUnknown', { complete: totalUploadedSizeStr })}
 
         {renderDot()}
 
