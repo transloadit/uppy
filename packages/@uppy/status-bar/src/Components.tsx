@@ -360,7 +360,7 @@ function UploadNewlyAddedFiles(props: UploadNewlyAddedFilesProps) {
 interface ProgressBarUploadingProps {
   i18n: I18n
   supportsUploadProgress: boolean
-  totalProgress: number | null
+  totalProgress: number
   showProgressDetails: boolean | undefined
   isUploadStarted: boolean
   isAllComplete: boolean
@@ -432,7 +432,7 @@ function ProgressBarUploading(props: ProgressBarUploadingProps) {
       : null}
       <div className="uppy-StatusBar-status">
         <div className="uppy-StatusBar-statusPrimary">
-          {supportsUploadProgress && totalProgress != null ?
+          {supportsUploadProgress && totalProgress !== 0 ?
             `${title}: ${totalProgress}%`
           : title}
         </div>

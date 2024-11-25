@@ -39,7 +39,7 @@ export default function App () {
       setState({
         progress: progress.bytesUploaded,
         total: progress.bytesTotal,
-        totalProgress: uppy.state.progress,
+        totalProgress: uppy.state.totalProgress,
         uploadStarted: true,
       })
     })

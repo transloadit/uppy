@@ -13,23 +13,13 @@ describe('useUppyState', () => {
     const { result, rerender } = renderHook(() =>
       useUppyState(uppy, (state) => state.totalProgress),
     )
-    const { result: result2, rerender: rerender2 } = renderHook(() =>
-      useUppyState(uppy, (state) => state.progress),
-    )
     expectTypeOf(result.current).toEqualTypeOf<number>()
-    expectTypeOf(result2.current).toEqualTypeOf<number | null>()
     expect(result.current).toBe(0)
-    expect(result2.current).toBe(null)
-    act(() => uppy.setState({ progress: 50 }))
     act(() => uppy.setState({ totalProgress: 50 }))
     rerender()
-    rerender2()
     expect(result.current).toBe(50)
-    expect(result2.current).toBe(50)
     rerender()
-    rerender2()
     expect(result.current).toBe(50)
-    expect(result2.current).toBe(50)
   })
 
   it('does not re-render unnecessarily', () => {

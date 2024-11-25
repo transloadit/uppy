@@ -159,7 +159,7 @@ export default class StatusBar<M extends Meta, B extends Body> extends UIPlugin<
       capabilities,
       files,
       allowNewUpload,
-      progress: totalProgress,
+      totalProgress,
       error,
       recoveredState,
     } = state

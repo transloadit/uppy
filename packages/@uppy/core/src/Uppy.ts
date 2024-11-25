@@ -232,8 +232,7 @@ export interface State<M extends Meta, B extends Body>
     details?: string | Record<string, string> | null
   }>
   plugins: Plugins
-  totalProgress: number // todo remove backward compat
-  progress: number | null
+  totalProgress: number
   companion?: Record<string, string>
 }
 
@@ -362,7 +361,6 @@ type OmitFirstArg<T> = T extends [any, ...infer U] ? U : never
 
 const defaultUploadState = {
   totalProgress: 0,
-  progress: null,
   allowNewUpload: true,
   error: null,
   recoveredState: null,
@@ -760,11 +758,7 @@ export class Uppy<
     isUploadInProgress: boolean
     isSomeGhost: boolean
   } {
-    const {
-      files: filesObject,
-      progress: totalProgress,
-      error,
-    } = this.getState()
+    const { files: filesObject, totalProgress, error } = this.getState()
     const files = Object.values(filesObject)
 
     const inProgressFiles: UppyFile<M, B>[] = []
@@ -1483,10 +1477,9 @@ export class Uppy<
       else if (totalProgressPercent < 0) totalProgressPercent = 0
     }
 
-    this.emit('progress', totalProgressPercent ?? 0) // todo remove `?? 0` in next major
+    this.emit('progress', totalProgressPercent ?? 0)
     this.setState({
-      totalProgress: totalProgressPercent ?? 0, // todo remove backward compat in next major
-      progress: totalProgressPercent,
+      totalProgress: totalProgressPercent ?? 0,
     })
   }
 

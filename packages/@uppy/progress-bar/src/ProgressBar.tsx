@@ -40,10 +40,10 @@ export default class ProgressBar<
   }
 
   render(state: State<M, B>): ComponentChild {
-    const { progress } = state
+    const { totalProgress } = state
     // before starting and after finish should be hidden if specified in the options
     const isHidden =
-      (progress == null || progress === 0 || progress === 100) &&
+      (totalProgress === 0 || totalProgress === 100) &&
       this.opts.hideAfterFinish
     return (
       <div
@@ -53,9 +53,9 @@ export default class ProgressBar<
       >
         <div
           className="uppy-ProgressBar-inner"
-          style={{ width: `${progress}%` }}
+          style={{ width: `${totalProgress}%` }}
         />
-        <div className="uppy-ProgressBar-percentage">{progress}</div>
+        <div className="uppy-ProgressBar-percentage">{totalProgress}</div>
       </div>
     )
   }
