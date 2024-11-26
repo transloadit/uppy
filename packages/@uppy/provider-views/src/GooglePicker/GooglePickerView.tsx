@@ -111,6 +111,28 @@ async function injectScript(src: string) {
   injectedScripts.add(src)
 }
 
+async function isTokenValid(accessToken: string): Promise<boolean> {
+  try {
+    const response = await fetch(
+      `https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=${encodeURIComponent(accessToken)}`,
+    )
+    if (response.ok) {
+      await response.json()
+      return true
+    }
+    console.warn(
+      'Token is invalid or expired:',
+      response.status,
+      await response.text(),
+    )
+    // Token is invalid or expired
+    return false
+  } catch (error) {
+    console.error('Error checking token validity:', error)
+    return false
+  }
+}
+
 export type GooglePickerViewProps = {
   plugin: UIPlugin<any, any, any, PluginState>
   uppy: Uppy<any, any>
@@ -307,11 +329,19 @@ export default function GooglePickerView({
     })()
   }, [pickerType, setPluginState, uppy])
 
-  const showPicker = useCallback(() => {
+  const showPicker = useCallback(async () => {
     if (accessToken === undefined) return // not yet loaded
     if (accessToken === null) {
       authorize()
-    } else if (pickerType === 'drive') {
+      return
+    }
+    // google drive picker will crash hard if given an invalid token, so we need to check it first
+    // https://github.com/transloadit/uppy/pull/5443#pullrequestreview-2452439265
+    if (!(await isTokenValid(accessToken))) {
+      authorize()
+      return
+    }
+    if (pickerType === 'drive') {
       showDrivePicker(accessToken)
     } else {
       showPhotosPicker(accessToken)
@@ -376,7 +406,7 @@ export default function GooglePickerView({
 
   useEffect(() => {
     // if we have a session, poll it until it either times out, or the user selects some photos
-    // note that the user can also just close the page, but we have no indication of that,
+    // note that the user can also just close the page, but we get no indication of that from Google when polling,
     // so we just have to continue polling, in case the user opens the photo selector again
     if (pickingSession == null || accessToken == null) return undefined
 
