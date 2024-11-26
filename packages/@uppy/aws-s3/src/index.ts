@@ -760,18 +760,19 @@ export default class AwsS3Multipart<
         }
         const { etag, location } = headersMap
 
+        // More info bucket settings when this is not present:
+        // https://github.com/transloadit/uppy/issues/5388#issuecomment-2464885562
         if (method.toUpperCase() === 'POST' && location == null) {
           // Not being able to read the Location header is not a fatal error.
           // eslint-disable-next-line no-console
-          console.warn(
-            'AwsS3/Multipart: Could not read the Location header. This likely means CORS is not configured correctly on the S3 Bucket. See https://uppy.io/docs/aws-s3-multipart#S3-Bucket-Configuration for instructions.',
+          console.error(
+            '@uppy/aws-s3: Could not read the Location header. This likely means CORS is not configured correctly on the S3 Bucket. See https://uppy.io/docs/aws-s3/#setting-up-your-s3-bucket',
           )
         }
         if (etag == null) {
-          reject(
-            new Error(
-              'AwsS3/Multipart: Could not read the ETag header. This likely means CORS is not configured correctly on the S3 Bucket. See https://uppy.io/docs/aws-s3-multipart#S3-Bucket-Configuration for instructions.',
-            ),
+          // eslint-disable-next-line no-console
+          console.error(
+            '@uppy/aws-s3: Could not read the ETag header. This likely means CORS is not configured correctly on the S3 Bucket. See https://uppy.io/docs/aws-s3/#setting-up-your-s3-bucket',
           )
           return
         }
