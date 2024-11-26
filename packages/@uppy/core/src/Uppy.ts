@@ -722,8 +722,7 @@ export class Uppy<
     const updatedFiles = { ...this.getState().files }
     if (!updatedFiles[fileID]) {
       this.log(
-        'Was trying to set metadata for a file that has been removed: ',
-        fileID,
+        `Was trying to set metadata for a file that has been removed: ${fileID}`,
       )
       return
     }
@@ -1958,7 +1957,7 @@ export class Uppy<
    * Passes messages to a function, provided in `opts.logger`.
    * If `opts.logger: Uppy.debugLogger` or `opts.debug: true`, logs to the browser console.
    */
-  log(message: string | Record<any, any> | Error, type?: string): void {
+  log(message: unknown, type?: 'error' | 'warning'): void {
     const { logger } = this.opts
     switch (type) {
       case 'error':

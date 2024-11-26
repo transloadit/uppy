@@ -320,10 +320,7 @@ export default class Provider<M extends Meta, B extends Body>
         // Once a refresh token operation has started, we need all other request to wait for this operation (atomically)
         this.#refreshingTokenPromise = (async () => {
           try {
-            this.uppy.log(
-              `[CompanionClient] Refreshing expired auth token`,
-              'info',
-            )
+            this.uppy.log(`[CompanionClient] Refreshing expired auth token`)
             const response = await super.request<{ uppyAuthToken: string }>({
               path: this.refreshTokenUrl(),
               method: 'POST',
