@@ -1,7 +1,7 @@
 import { h } from 'preact'
 import { UIPlugin, Uppy } from '@uppy/core'
 import { GooglePickerView } from '@uppy/provider-views'
-import { GooglePhotosIcon } from '@uppy/provider-views/src/GooglePicker/icons.js'
+import { GooglePhotosIcon } from '@uppy/provider-views/lib/GooglePicker/icons.js'
 import {
   RequestClient,
   type CompanionPluginOptions,
