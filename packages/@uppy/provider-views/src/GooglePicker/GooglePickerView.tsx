@@ -72,7 +72,6 @@ export default function GooglePickerView({
 
   const showPicker = useCallback(
     async (signal?: AbortSignal) => {
-      shownPickerRef.current = true
       let newAccessToken = accessToken
 
       const doShowPicker = async (token: string) => {
@@ -105,6 +104,7 @@ export default function GooglePickerView({
           if (newAccessToken == null) throw new Error()
 
           await doShowPicker(newAccessToken)
+          shownPickerRef.current = true
           setAccessToken(newAccessToken)
         } catch (err) {
           if (err instanceof InvalidTokenError) {
@@ -116,6 +116,7 @@ export default function GooglePickerView({
             })
             // now try again:
             await doShowPicker(newAccessToken)
+            shownPickerRef.current = true
             setAccessToken(newAccessToken)
           } else {
             throw err
@@ -173,7 +174,10 @@ export default function GooglePickerView({
 
     showPicker(abortController.signal)
 
-    return () => abortController.abort()
+    return () => {
+      // only abort the picker if it's not yet shown
+      if (!shownPickerRef.current) abortController.abort()
+    }
   }, [accessToken, showPicker])
 
   const handleLogoutClick = useCallback(async () => {
