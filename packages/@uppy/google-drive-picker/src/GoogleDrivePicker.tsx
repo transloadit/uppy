@@ -1,6 +1,7 @@
 import { h } from 'preact'
 import { UIPlugin, Uppy } from '@uppy/core'
 import { GooglePickerView } from '@uppy/provider-views'
+import { GoogleDriveIcon } from '@uppy/provider-views/src/GooglePicker/icons.js'
 import {
   RequestClient,
   type CompanionPluginOptions,
@@ -15,43 +16,6 @@ import type { AsyncStore, BaseProviderPlugin } from '@uppy/core/lib/Uppy.js'
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'
 import locale from './locale.ts'
-
-const Icon = () => (
-  <svg
-    aria-hidden="true"
-    focusable="false"
-    width="32"
-    height="32"
-    viewBox="0 0 32 32"
-  >
-    <g fillRule="nonzero" fill="none">
-      <path
-        d="M6.663 22.284l.97 1.62c.202.34.492.609.832.804l3.465-5.798H5c0 .378.1.755.302 1.096l1.361 2.278z"
-        fill="#0066DA"
-      />
-      <path
-        d="M16 12.09l-3.465-5.798c-.34.195-.63.463-.832.804l-6.4 10.718A2.15 2.15 0 005 18.91h6.93L16 12.09z"
-        fill="#00AC47"
-      />
-      <path
-        d="M23.535 24.708c.34-.195.63-.463.832-.804l.403-.67 1.928-3.228c.201-.34.302-.718.302-1.096h-6.93l1.474 2.802 1.991 2.996z"
-        fill="#EA4335"
-      />
-      <path
-        d="M16 12.09l3.465-5.798A2.274 2.274 0 0018.331 6h-4.662c-.403 0-.794.11-1.134.292L16 12.09z"
-        fill="#00832D"
-      />
-      <path
-        d="M20.07 18.91h-8.14l-3.465 5.798c.34.195.73.292 1.134.292h12.802c.403 0 .794-.11 1.134-.292L20.07 18.91z"
-        fill="#2684FC"
-      />
-      <path
-        d="M23.497 12.455l-3.2-5.359a2.252 2.252 0 00-.832-.804L16 12.09l4.07 6.82h6.917c0-.377-.1-.755-.302-1.096l-3.188-5.359z"
-        fill="#FFBA00"
-      />
-    </g>
-  </svg>
-)
 
 export type GoogleDrivePickerOptions = CompanionPluginOptions & {
   clientId: string
@@ -72,7 +36,7 @@ export default class GoogleDrivePicker<
 
   type = 'acquirer'
 
-  icon = Icon
+  icon = GoogleDriveIcon
 
   storage: AsyncStore
 

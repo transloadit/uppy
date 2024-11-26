@@ -1,6 +1,7 @@
 import { h } from 'preact'
 import { UIPlugin, Uppy } from '@uppy/core'
 import { GooglePickerView } from '@uppy/provider-views'
+import { GooglePhotosIcon } from '@uppy/provider-views/src/GooglePicker/icons.js'
 import {
   RequestClient,
   type CompanionPluginOptions,
@@ -15,38 +16,6 @@ import type { AsyncStore, BaseProviderPlugin } from '@uppy/core/lib/Uppy.js'
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'
 import locale from './locale.ts'
-
-const Icon = () => (
-  <svg
-    aria-hidden="true"
-    focusable="false"
-    width="32"
-    height="32"
-    viewBox="-7 -7 73 73"
-  >
-    <g fill="none" fill-rule="evenodd">
-      <path d="M-3-3h64v64H-3z" />
-      <g fill-rule="nonzero">
-        <path
-          fill="#FBBC04"
-          d="M14.8 13.4c8.1 0 14.7 6.6 14.7 14.8v1.3H1.3c-.7 0-1.3-.6-1.3-1.3C0 20 6.6 13.4 14.8 13.4z"
-        />
-        <path
-          fill="#EA4335"
-          d="M45.6 14.8c0 8.1-6.6 14.7-14.8 14.7h-1.3V1.3c0-.7.6-1.3 1.3-1.3C39 0 45.6 6.6 45.6 14.8z"
-        />
-        <path
-          fill="#4285F4"
-          d="M44.3 45.6c-8.2 0-14.8-6.6-14.8-14.8v-1.3h28.2c.7 0 1.3.6 1.3 1.3 0 8.2-6.6 14.8-14.8 14.8z"
-        />
-        <path
-          fill="#34A853"
-          d="M13.4 44.3c0-8.2 6.6-14.8 14.8-14.8h1.3v28.2c0 .7-.6 1.3-1.3 1.3-8.2 0-14.8-6.6-14.8-14.8z"
-        />
-      </g>
-    </g>
-  </svg>
-)
 
 export type GooglePhotosPickerOptions = CompanionPluginOptions & {
   clientId: string
@@ -65,7 +34,7 @@ export default class GooglePhotosPicker<
 
   type = 'acquirer'
 
-  icon = Icon
+  icon = GooglePhotosIcon
 
   storage: AsyncStore
 

@@ -1,5 +1,4 @@
 import { h } from 'preact'
-import { Fragment } from 'preact/compat'
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
 
 import type { Uppy } from '@uppy/core'
@@ -17,6 +16,8 @@ import {
   type PickedItem,
   type PickingSession,
 } from './googlePicker.js'
+import AuthView from '../ProviderView/AuthView.js'
+import { GoogleDriveIcon, GooglePhotosIcon } from './icons.js'
 
 export type GooglePickerViewProps = {
   uppy: Uppy<any, any>
@@ -189,22 +190,41 @@ export default function GooglePickerView({
 
   if (accessToken == null) {
     return (
-      <button type="button" disabled={loading} onClick={() => showPicker()}>
-        {uppy.i18n('logIn')}
-      </button>
+      <AuthView
+        pluginName={
+          pickerType === 'drive' ?
+            uppy.i18n('pluginNameGoogleDrive')
+          : uppy.i18n('pluginNameGooglePhotos')
+        }
+        pluginIcon={pickerType === 'drive' ? GoogleDriveIcon : GooglePhotosIcon}
+        handleAuth={showPicker}
+        i18n={uppy.i18nArray}
+        loading={loading}
+      />
     )
   }
 
   return (
-    <>
-      <button type="button" disabled={loading} onClick={() => showPicker()}>
+    <div style={{ textAlign: 'center' }}>
+      <button
+        type="button"
+        className="uppy-u-reset uppy-c-btn uppy-c-btn-primary"
+        style={{ display: 'block', marginBottom: '1em' }}
+        disabled={loading}
+        onClick={() => showPicker()}
+      >
         {pickerType === 'drive' ?
           uppy.i18n('pickFiles')
         : uppy.i18n('pickPhotos')}
       </button>
-      <button type="button" disabled={loading} onClick={handleLogoutClick}>
+      <button
+        type="button"
+        className="uppy-u-reset uppy-c-btn"
+        disabled={loading}
+        onClick={handleLogoutClick}
+      >
         {uppy.i18n('logOut')}
       </button>
-    </>
+    </div>
   )
 }
