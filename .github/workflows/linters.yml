@@ -57,24 +57,3 @@ jobs:
         run: corepack yarn workspaces focus @uppy-dev/build
       - name: Run linter
         run: corepack yarn run lint:markdown
-
-  lint_docs:
-    name: Lint Docs
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Uppy.io sources
-        uses: actions/checkout@v4
-        with:
-          repository: transloadit/uppy.io
-      - run: rm -rf docs # the other PR has not landed
-      - name: Checkout docs
-        uses: actions/checkout@v4
-        with:
-          path: uppy
-      - run: mv uppy /tmp/uppy && ln -s /tmp/uppy/docs docs
-      - name: Install dependencies
-        run: corepack yarn --immutable
-      - name: Lint files
-        run: corepack yarn lint
-      - name: Test build website
-        run: corepack yarn build
