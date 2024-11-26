@@ -385,14 +385,7 @@ module.exports = {
       processor: 'markdown/markdown',
     },
     {
-      files: ['docs/**/*.md/*.js'],
-      parserOptions: {
-        sourceType: 'module',
-      },
-    },
-    {
       files: ['**/*.md/*.js', '**/*.md/*.javascript'],
-      excludedFiles: ["docs/**/*"],
       parserOptions: {
         sourceType: 'module',
       },
@@ -443,7 +436,7 @@ module.exports = {
       rules: {
         'no-extra-semi': 'off',
         'no-restricted-syntax': ['error', {
-          selector: 'ImportDeclaration[importKind="type"][source.value=/^@uppy\\x2F[a-z-0-9]+\\x2F/]:not([source.value=/^@uppy\\x2Futils\\x2F/]):not([source.value=/\\.js$/])',
+          selector: 'ImportDeclaration[source.value=/^@uppy\\x2F[a-z-0-9]+\\x2F/]:not([source.value=/^@uppy\\x2Futils\\x2F/]):not([source.value=/\\.(js|css)$/])',
           message: 'Use ".js" file extension for import type declarations from a different package',
         }, {
           selector: 'ImportDeclaration[importKind="type"][source.value=/^\\.\\.?\\x2F.+\\.js$/]',

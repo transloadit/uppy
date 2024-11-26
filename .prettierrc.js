@@ -13,13 +13,6 @@ module.exports = {
       },
     },
     {
-      files: 'docs/**',
-      options: {
-        semi: true,
-        useTabs: true,
-      },
-    },
-    {
       files: ['tsconfig.json'],
       options: {
         parser: 'jsonc',

@@ -1,7 +1,6 @@
 {
   "extends": "../../../tsconfig.shared",
   "compilerOptions": {
-    "noImplicitAny": false,
     "outDir": "./lib",
     "paths": {
       "@uppy/box": ["../box/src/index.js"],
@@ -30,8 +29,7 @@
       "@uppy/core/lib/*": ["../core/src/*"]
     },
     "resolveJsonModule": false,
-    "rootDir": "./src",
-    "skipLibCheck": true
+    "rootDir": "./src"
   },
   "include": ["./src/**/*.*"],
   "exclude": ["./src/**/*.test.ts"],

@@ -3,8 +3,7 @@
   "compilerOptions": {
     "outDir": "./lib",
     "rootDir": "./src",
-    "allowJs": true,
-    "skipLibCheck": true
+    "allowJs": true
   },
   "include": ["./src/**/*.*"],
   "exclude": ["./src/**/*.test.ts"],
