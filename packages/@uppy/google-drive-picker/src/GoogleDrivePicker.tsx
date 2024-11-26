@@ -7,11 +7,8 @@ import {
   tokenStorage,
 } from '@uppy/companion-client'
 
+import type { PickedItem } from '@uppy/provider-views/lib/GooglePicker/googlePicker.js'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
-import {
-  type PickedItem,
-  type PluginState,
-} from '@uppy/provider-views/lib/GooglePicker/GooglePickerView.js'
 import type { AsyncStore, BaseProviderPlugin } from '@uppy/core/lib/Uppy.js'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -66,7 +63,7 @@ export default class GoogleDrivePicker<
     M extends Meta & { width: number; height: number },
     B extends Body,
   >
-  extends UIPlugin<GoogleDrivePickerOptions, M, B, PluginState>
+  extends UIPlugin<GoogleDrivePickerOptions, M, B>
   implements BaseProviderPlugin
 {
   static VERSION = packageJson.version
@@ -144,7 +141,6 @@ export default class GoogleDrivePicker<
     <GooglePickerView
       storage={this.storage}
       pickerType="drive"
-      plugin={this}
       uppy={this.uppy}
       clientId={this.opts.clientId}
       apiKey={this.opts.apiKey}
