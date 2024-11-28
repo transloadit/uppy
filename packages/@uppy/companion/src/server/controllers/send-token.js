@@ -1,4 +1,5 @@
 const serialize = require('serialize-javascript')
+const { isOriginAllowed } = require('./connect')
 
 const oAuthState = require('../helpers/oauth-state')
 
@@ -46,18 +47,30 @@ const htmlContent = (token, origin) => {
 
 /**
  *
- * @param {object} req
- * @param {object} res
- * @param {Function} next
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @param {import('express').NextFunction} next
  */
-module.exports = function sendToken (req, res, next) {
-  const uppyAuthToken = req.companion.authToken
+module.exports = function sendToken(req, res, next) {
+  // @ts-expect-error untyped
+  const {companion} = req
+  const uppyAuthToken = companion.authToken
 
   const { state } = oAuthState.getGrantDynamicFromRequest(req)
-  if (state) {
-    const origin = oAuthState.getFromState(state, 'origin', req.companion.options.secret)
-    res.send(htmlContent(uppyAuthToken, origin))
-    return
+
+  if (!state) {
+    return next()
   }
-  next()
+
+  const decoded = oAuthState.decodeState(state, companion.options.secret)
+  const { origin: clientOrigin, customerDefinedAllowedOrigins } = decoded
+
+  if (
+    customerDefinedAllowedOrigins &&
+    !isOriginAllowed(clientOrigin, customerDefinedAllowedOrigins)
+  ) {
+    return next()
+  }
+
+  return res.send(htmlContent(uppyAuthToken, clientOrigin))
 }
