@@ -9,6 +9,7 @@ const instagram = require('./instagram/graph')
 const facebook = require('./facebook')
 const onedrive = require('./onedrive')
 const unsplash = require('./unsplash')
+const webdav = require('./webdav')
 const zoom = require('./zoom')
 const { getURLBuilder } = require('../helpers/utils')
 const logger = require('../logger')
@@ -68,7 +69,7 @@ module.exports.getProviderMiddleware = (providers, grantConfig) => {
  * @returns {Record<string, typeof Provider>}
  */
 module.exports.getDefaultProviders = () => {
-  const providers = { dropbox, box, drive: Drive, googlephotos, facebook, onedrive, zoom, instagram, unsplash }
+  const providers = { dropbox, box, drive: Drive, googlephotos, facebook, onedrive, zoom, instagram, unsplash, webdav }
 
   return providers
 }

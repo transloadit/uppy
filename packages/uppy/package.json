@@ -67,6 +67,7 @@
     "@uppy/unsplash": "workspace:^",
     "@uppy/url": "workspace:^",
     "@uppy/webcam": "workspace:^",
+    "@uppy/webdav": "workspace:^",
     "@uppy/xhr-upload": "workspace:^",
     "@uppy/zoom": "workspace:^"
   }
