@@ -15,10 +15,6 @@ class WebdavProvider extends Provider {
     return true
   }
 
-  async getUsername () { // eslint-disable-line class-methods-use-this
-    return null
-  }
-
   // eslint-disable-next-line class-methods-use-this
   isAuthenticated ({ providerUserSession }) {
     return providerUserSession.webdavUrl != null
@@ -98,16 +94,15 @@ class WebdavProvider extends Provider {
     })
   }
 
-  async list ({ directory, token, providerUserSession }) {
+  async list ({ directory, providerUserSession }) {
     return this.withErrorHandling('provider.webdav.list.error', async () => {
       // @ts-ignore
       if (!this.isAuthenticated({ providerUserSession })) {
         throw new ProviderAuthError()
       }
 
-      const username = await this.getUsername({ token, providerUserSession })
-      const data = { username, items: [] }
-      const client = await this.getClient({ username, token, providerUserSession })
+      const data = { items: [] }
+      const client = await this.getClient({ providerUserSession })
 
       /** @type {any} */
       const dir = await client.getDirectoryContents(directory || '/')
@@ -134,11 +129,9 @@ class WebdavProvider extends Provider {
     })
   }
 
-  async download ({ id, token, providerUserSession }) {
+  async download ({ id, providerUserSession }) {
     return this.withErrorHandling('provider.webdav.download.error', async () => {
-      // maybe we can avoid this by putting the username in front of the request path/id
-      const username = await this.getUsername({ token, providerUserSession })
-      const client = await this.getClient({ username, token, providerUserSession })
+      const client = await this.getClient({ providerUserSession })
       const stream = client.createReadStream(`/${id}`)
       return { stream }
     })
@@ -155,8 +148,7 @@ class WebdavProvider extends Provider {
   // eslint-disable-next-line
   async size ({ id, token, providerUserSession }) {
     return this.withErrorHandling('provider.webdav.size.error', async () => {
-      const username = await this.getUsername({ token, providerUserSession })
-      const client = await this.getClient({ username, token, providerUserSession })
+      const client = await this.getClient({ providerUserSession })
 
       /** @type {any} */
       const stat = await client.stat(id)
