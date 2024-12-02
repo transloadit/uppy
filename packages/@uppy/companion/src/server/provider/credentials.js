@@ -113,7 +113,7 @@ exports.getCredentialsOverrideMiddleware = (providers, companionOptions) => {
       // token through window.postMessage (see comment in connect.js).
       // postMessage happens in send-token.js, which is a different request, so we need to put the allowed origins
       // on the encrypted session state to access it later there.
-      if (credentials.origins) {
+      if (Array.isArray(credentials.origins) && credentials.origins.length > 0) {
         const decodedState = oAuthState.decodeState(state, companionOptions.secret)
         decodedState.customerDefinedAllowedOrigins = credentials.origins
         const newState = oAuthState.encodeState(decodedState, companionOptions.secret)

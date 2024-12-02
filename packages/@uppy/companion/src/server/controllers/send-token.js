@@ -53,7 +53,7 @@ const htmlContent = (token, origin) => {
  */
 module.exports = function sendToken(req, res, next) {
   // @ts-expect-error untyped
-  const {companion} = req
+  const { companion } = req
   const uppyAuthToken = companion.authToken
 
   const { state } = oAuthState.getGrantDynamicFromRequest(req)
@@ -62,8 +62,8 @@ module.exports = function sendToken(req, res, next) {
     return next()
   }
 
-  const decoded = oAuthState.decodeState(state, companion.options.secret)
-  const { origin: clientOrigin, customerDefinedAllowedOrigins } = decoded
+  const clientOrigin = oAuthState.getFromState(state, 'origin', companion.options.secret)
+  const customerDefinedAllowedOrigins = oAuthState.getFromState(state, 'customerDefinedAllowedOrigins', companion.options.secret)
 
   if (
     customerDefinedAllowedOrigins &&
