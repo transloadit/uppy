@@ -105,10 +105,10 @@ module.exports.getProtectedGot = getProtectedGot
  * @param {boolean} allowLocalIPs
  * @returns {Promise<{name: string, type: string, size: number}>}
  */
-exports.getURLMeta = async (url, allowLocalIPs = false) => {
+exports.getURLMeta = async (url, allowLocalIPs = false, options = undefined) => {
   async function requestWithMethod (method) {
     const protectedGot = await getProtectedGot({ allowLocalIPs })
-    const stream = protectedGot.stream(url, { method, throwHttpErrors: false })
+    const stream = protectedGot.stream(url, { method, throwHttpErrors: false, ...options })
 
     return new Promise((resolve, reject) => (
       stream

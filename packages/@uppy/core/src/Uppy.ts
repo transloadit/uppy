@@ -142,8 +142,25 @@ export type UnknownProviderPluginState = {
   currentFolderId: PartialTreeId
   username: string | null
 }
+
+export interface AsyncStore {
+  getItem: (key: string) => Promise<string | null>
+  setItem: (key: string, value: string) => Promise<void>
+  removeItem: (key: string) => Promise<void>
+}
+
+/**
+ * This is a base for a provider that does not necessarily use the Companion-assisted OAuth2 flow
+ */
+export interface BaseProviderPlugin {
+  title: string
+  icon: () => h.JSX.Element
+  storage: AsyncStore
+}
+
 /*
- * UnknownProviderPlugin can be any Companion plugin (such as Google Drive).
+ * UnknownProviderPlugin can be any Companion plugin (such as Google Drive)
+ * that uses the Companion-assisted OAuth flow.
  * As the plugins are passed around throughout Uppy we need a generic type for this.
  * It may seems like duplication, but this type safe. Changing the type of `storage`
  * will error in the `Provider` class of @uppy/companion-client and vice versa.
@@ -154,18 +171,12 @@ export type UnknownProviderPluginState = {
 export type UnknownProviderPlugin<
   M extends Meta,
   B extends Body,
-> = UnknownPlugin<M, B, UnknownProviderPluginState> & {
-  title: string
-  rootFolderId: string | null
-  files: UppyFile<M, B>[]
-  icon: () => h.JSX.Element
-  provider: CompanionClientProvider
-  storage: {
-    getItem: (key: string) => Promise<string | null>
-    setItem: (key: string, value: string) => Promise<void>
-    removeItem: (key: string) => Promise<void>
+> = UnknownPlugin<M, B, UnknownProviderPluginState> &
+  BaseProviderPlugin & {
+    rootFolderId: string | null
+    files: UppyFile<M, B>[]
+    provider: CompanionClientProvider
   }
-}
 
 /*
  * UnknownSearchProviderPlugin can be any search Companion plugin (such as Unsplash).
@@ -185,11 +196,10 @@ export type UnknownSearchProviderPluginState = {
 export type UnknownSearchProviderPlugin<
   M extends Meta,
   B extends Body,
-> = UnknownPlugin<M, B, UnknownSearchProviderPluginState> & {
-  title: string
-  icon: () => h.JSX.Element
-  provider: CompanionClientSearchProvider
-}
+> = UnknownPlugin<M, B, UnknownSearchProviderPluginState> &
+  BaseProviderPlugin & {
+    provider: CompanionClientSearchProvider
+  }
 
 export interface UploadResult<M extends Meta, B extends Body> {
   successful?: UppyFile<M, B>[]
@@ -712,8 +722,7 @@ export class Uppy<
     const updatedFiles = { ...this.getState().files }
     if (!updatedFiles[fileID]) {
       this.log(
-        'Was trying to set metadata for a file that has been removed: ',
-        fileID,
+        `Was trying to set metadata for a file that has been removed: ${fileID}`,
       )
       return
     }
@@ -1948,7 +1957,7 @@ export class Uppy<
    * Passes messages to a function, provided in `opts.logger`.
    * If `opts.logger: Uppy.debugLogger` or `opts.debug: true`, logs to the browser console.
    */
-  log(message: string | Record<any, any> | Error, type?: string): void {
+  log(message: unknown, type?: 'error' | 'warning'): void {
     const { logger } = this.opts
     switch (type) {
       case 'error':

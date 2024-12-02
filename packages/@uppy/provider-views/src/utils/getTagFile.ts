@@ -34,7 +34,6 @@ const getTagFile = <M extends Meta, B extends Body>(
     },
     remote: {
       companionUrl: plugin.opts.companionUrl,
-      // @ts-expect-error untyped for now
       url: `${provider.fileUrl(file.requestPath)}`,
       body: {
         fileId: file.id,

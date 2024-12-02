@@ -26,6 +26,9 @@
     "preact": "^10.5.13"
   },
   "devDependencies": {
+    "@types/gapi": "^0.0.47",
+    "@types/google.accounts": "^0.0.14",
+    "@types/google.picker": "^0.0.42",
     "vitest": "^1.6.0"
   },
   "peerDependencies": {

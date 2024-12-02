@@ -505,7 +505,7 @@ export default class RequestClient<M extends Meta, B extends Body> {
                     })
 
                     const closeSocket = () => {
-                      this.uppy.log(`Closing socket ${file.id}`, 'info')
+                      this.uppy.log(`Closing socket ${file.id}`)
                       clearTimeout(activityTimeout)
                       if (socket) socket.close()
                       socket = undefined
@@ -524,7 +524,7 @@ export default class RequestClient<M extends Meta, B extends Body> {
                   signal: socketAbortController.signal,
                   onFailedAttempt: () => {
                     if (socketAbortController.signal.aborted) return // don't log in this case
-                    this.uppy.log(`Retrying websocket ${file.id}`, 'info')
+                    this.uppy.log(`Retrying websocket ${file.id}`)
                   },
                 })
               })()
@@ -547,14 +547,14 @@ export default class RequestClient<M extends Meta, B extends Body> {
           if (targetFile.id !== file.id) return
           socketSend('cancel')
           socketAbortController?.abort?.()
-          this.uppy.log(`upload ${file.id} was removed`, 'info')
+          this.uppy.log(`upload ${file.id} was removed`)
           resolve()
         }
 
         const onCancelAll = () => {
           socketSend('cancel')
           socketAbortController?.abort?.()
-          this.uppy.log(`upload ${file.id} was canceled`, 'info')
+          this.uppy.log(`upload ${file.id} was canceled`)
           resolve()
         }
 

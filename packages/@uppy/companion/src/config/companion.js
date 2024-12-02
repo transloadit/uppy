@@ -17,6 +17,7 @@ const defaultOptions = {
     expires: 800, // seconds
   },
   enableUrlEndpoint: false,
+  enableGooglePickerEndpoint: false,
   allowLocalUrls: false,
   periodicPingUrls: [],
   streamingUpload: true,

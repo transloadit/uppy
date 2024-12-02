@@ -9,7 +9,11 @@ import { SearchProviderViews } from '@uppy/provider-views'
 import { h, type ComponentChild } from 'preact'
 
 import type { UppyFile, Body, Meta } from '@uppy/utils/lib/UppyFile'
-import type { UnknownSearchProviderPluginState } from '@uppy/core/lib/Uppy.js'
+import type {
+  AsyncStore,
+  UnknownSearchProviderPlugin,
+  UnknownSearchProviderPluginState,
+} from '@uppy/core/lib/Uppy.js'
 import locale from './locale.ts'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
@@ -17,12 +21,10 @@ import packageJson from '../package.json'
 
 export type UnsplashOptions = CompanionPluginOptions
 
-export default class Unsplash<M extends Meta, B extends Body> extends UIPlugin<
-  UnsplashOptions,
-  M,
-  B,
-  UnknownSearchProviderPluginState
-> {
+export default class Unsplash<M extends Meta, B extends Body>
+  extends UIPlugin<UnsplashOptions, M, B, UnknownSearchProviderPluginState>
+  implements UnknownSearchProviderPlugin<M, B>
+{
   static VERSION = packageJson.version
 
   icon: () => h.JSX.Element
@@ -31,7 +33,7 @@ export default class Unsplash<M extends Meta, B extends Body> extends UIPlugin<
 
   view!: SearchProviderViews<M, B>
 
-  storage: typeof tokenStorage
+  storage: AsyncStore
 
   files: UppyFile<M, B>[]
 
