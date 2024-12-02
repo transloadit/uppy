@@ -1,5 +1,5 @@
 import { h } from 'preact'
-import { useCallback, useState } from 'preact/hooks'
+import { useState } from 'preact/hooks'
 
 import { UIPlugin } from '@uppy/core'
 import { Provider, tokenStorage } from '@uppy/companion-client'
@@ -22,13 +22,10 @@ class WebdavSimpleAuthProvider extends Provider {
 const AuthForm = ({ loading, i18n, onAuth }) => {
   const [webdavUrl, setWebdavUrl] = useState('')
 
-  const onSubmit = useCallback(
-    (e) => {
-      e.preventDefault()
-      onAuth({ webdavUrl: webdavUrl.trim() })
-    },
-    [onAuth, webdavUrl],
-  )
+  const onSubmit = (event) => {
+    event.preventDefault()
+    onAuth({ webdavUrl: webdavUrl.trim() })
+  }
 
   return (
     <form onSubmit={onSubmit}>
@@ -65,7 +62,6 @@ export default class Webdav extends UIPlugin {
 
     this.defaultLocale = locale
 
-    console.log(locale)
     this.i18nInit()
 
     this.title = this.i18n('pluginNameWebdav')
