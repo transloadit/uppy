@@ -124,6 +124,7 @@ jobs:
           to test')
         run: |
           git checkout FETCH_HEAD -- packages
+      - run: corepack yarn install
       - run: corepack yarn build:js:typeless
       - name: Store output file
         run: tar cf /tmp/newVersion.tar packages/@uppy/*/lib
