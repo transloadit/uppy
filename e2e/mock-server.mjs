@@ -13,6 +13,31 @@ const requestListener = (req, res) => {
     }
     case '/file-no-headers':
       break
+    
+    case '/unknown-size': {
+      res.setHeader('Content-Type', 'text/html; charset=UTF-8');
+      res.setHeader('Transfer-Encoding', 'chunked');
+      const chunkSize = 1e5;
+      if (req.method === 'GET') {
+        let i = 0;
+        const interval = setInterval(() => {
+          if (i >= 10) { // 1MB
+            clearInterval(interval);
+            res.end();
+            return;
+          }
+          res.write(Buffer.from(Array.from({ length: chunkSize }, () => '1').join('')));
+          res.write('\n');
+          i++;
+        }, 10);
+      } else if (req.method === 'HEAD') {
+        res.end();
+      } else {
+        throw new Error('Unhandled method')
+      }
+    }
+    break;
+    
     default:
       res.writeHead(404).end('Unhandled request')
   }
