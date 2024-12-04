@@ -115,7 +115,7 @@ Authenticates and Uploads from Dropbox through Companion:
 
 ### Unit tests
 
-Unit tests are using Jest and can be run with:
+Unit tests are using Vitest and can be run with:
 
 ```bash
 yarn test:unit
