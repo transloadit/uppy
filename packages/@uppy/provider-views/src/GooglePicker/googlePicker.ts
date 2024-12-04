@@ -154,7 +154,7 @@ export async function authorize({
     (resolve, reject) => {
       const scopes =
         pickerType === 'drive' ?
-          ['https://www.googleapis.com/auth/drive.readonly']
+          ['https://www.googleapis.com/auth/drive.file']
         : ['https://www.googleapis.com/auth/photospicker.mediaitems.readonly']
 
       const tokenClient = google.accounts.oauth2.initTokenClient({
