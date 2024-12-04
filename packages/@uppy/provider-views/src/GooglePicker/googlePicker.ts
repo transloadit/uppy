@@ -240,7 +240,8 @@ export async function showDrivePicker({
         .setIncludeFolders(true)
         // Note: setEnableDrives doesn't seem to work
         // .setEnableDrives(true)
-        .setSelectFolderEnabled(false),
+        .setSelectFolderEnabled(false)
+        .setMode(google.picker.DocsViewMode.LIST),
     )
     // NOTE: photos is broken and results in an error being returned from Google
     // I think it's the old Picasa photos
