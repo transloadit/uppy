@@ -41,7 +41,6 @@ export default function getAllowedHosts(
   // if it does not start with https://, prefix it (and remove any leading slashes)
   let ret = companionUrl
   if (/^(?!https?:\/\/).*$/i.test(ret)) {
-    // todo shouldn't this also be wrapped in new URL(companionUrl).origin ?
     ret = `https://${companionUrl.replace(/^\/\//, '')}`
   }
   ret = new URL(ret).origin
