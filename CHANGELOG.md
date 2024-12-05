@@ -12,6 +12,49 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 4.8.0
+
+Released: 2024-12-05
+
+| Package                    | Version | Package                    | Version |
+| -------------------------- | ------- | -------------------------- | ------- |
+| @uppy/audio                |   2.0.2 | @uppy/instagram            |   4.1.2 |
+| @uppy/aws-s3               |   4.1.3 | @uppy/locales              |   4.3.1 |
+| @uppy/box                  |   3.1.2 | @uppy/onedrive             |   4.1.2 |
+| @uppy/companion            |   5.2.0 | @uppy/progress-bar         |   4.0.2 |
+| @uppy/companion-client     |   4.2.0 | @uppy/provider-views       |   4.1.0 |
+| @uppy/compressor           |   2.1.1 | @uppy/react                |   4.0.4 |
+| @uppy/core                 |   4.3.0 | @uppy/remote-sources       |   2.2.1 |
+| @uppy/dashboard            |   4.1.3 | @uppy/screen-capture       |   4.1.2 |
+| @uppy/drag-drop            |   4.0.5 | @uppy/status-bar           |   4.0.5 |
+| @uppy/drop-target          |   3.0.2 | @uppy/store-default        |   4.1.2 |
+| @uppy/dropbox              |   4.1.2 | @uppy/thumbnail-generator  |   4.0.2 |
+| @uppy/facebook             |   4.1.2 | @uppy/transloadit          |   4.1.4 |
+| @uppy/file-input           |   4.0.4 | @uppy/tus                  |   4.1.5 |
+| @uppy/form                 |   4.0.2 | @uppy/unsplash             |   4.1.2 |
+| @uppy/golden-retriever     |   4.0.2 | @uppy/url                  |   4.1.2 |
+| @uppy/google-drive         |   4.2.0 | @uppy/utils                |   6.0.5 |
+| @uppy/google-drive-picker  |   0.2.0 | @uppy/vue                  |   2.0.3 |
+| @uppy/google-photos        |   0.4.0 | @uppy/webcam               |   4.0.3 |
+| @uppy/google-photos-picker |   0.2.0 | @uppy/xhr-upload           |   4.2.3 |
+| @uppy/image-editor         |   3.2.1 | @uppy/zoom                 |   3.1.2 |
+| @uppy/informer             |   4.1.2 | uppy                       |   4.8.0 |
+
+- @uppy/companion-client: Fix allowed origins (Mikael Finstad / #5536)
+- meta: Build lib refactor to esm (Mikael Finstad / #5537)
+- @uppy/provider-views: Google picker scope (Mikael Finstad / #5535)
+- @uppy/core,@uppy/provider-views: move useStore out of core (Mikael Finstad / #5533)
+- @uppy/companion,@uppy/google-drive-picker,@uppy/google-photos-picker: Google Picker (Mikael Finstad / #5443)
+- @uppy/aws-s3: console.error instead of throw for missing etag (Merlijn Vos / #5521)
+- docs: Put docs back in uppy.io repository where they belong (Merlijn Vos / #5527)
+- docs: typo (Azhar Rizqullah / #5523)
+- @uppy/audio,@uppy/aws-s3,@uppy/box,@uppy/companion-client,@uppy/compressor,@uppy/core,@uppy/dashboard,@uppy/drag-drop,@uppy/drop-target,@uppy/dropbox,@uppy/facebook,@uppy/file-input,@uppy/form,@uppy/golden-retriever,@uppy/google-drive,@uppy/google-photos,@uppy/image-editor,@uppy/informer,@uppy/instagram,@uppy/locales,@uppy/onedrive,@uppy/progress-bar,@uppy/provider-views,@uppy/react,@uppy/remote-sources,@uppy/screen-capture,@uppy/status-bar,@uppy/store-default,@uppy/thumbnail-generator,@uppy/transloadit,@uppy/tus,@uppy/unsplash,@uppy/url,@uppy/utils,@uppy/vue,@uppy/webcam,@uppy/xhr-upload,@uppy/zoom: cleanup tsconfig (Mikael Finstad / #5520)
+- meta: fix missing lint (Mikael Finstad / #5519)
+- docs: Add Next.js docs (Merlijn Vos / #5502)
+- e2e: try to fix flaky test (Mikael Finstad / #5512)
+- meta: Fix broken lint on CI (Mikael Finstad / #5507)
+
+
 ## 4.7.0
 
 Released: 2024-11-11
