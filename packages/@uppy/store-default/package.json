@@ -1,7 +1,7 @@
 {
   "name": "@uppy/store-default",
   "description": "The default simple object-based store for Uppy.",
-  "version": "4.1.1",
+  "version": "4.1.2",
   "license": "MIT",
   "main": "lib/index.js",
   "type": "module",
