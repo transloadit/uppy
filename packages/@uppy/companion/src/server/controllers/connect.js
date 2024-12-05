@@ -3,8 +3,8 @@ const oAuthState = require('../helpers/oauth-state')
 /**
  * Derived from `cors` npm package.
  * @see https://github.com/expressjs/cors/blob/791983ebc0407115bc8ae8e64830d440da995938/lib/index.js#L19-L34
- * @param {string} origin 
- * @param {*} allowedOrigins 
+ * @param {string} origin
+ * @param {*} allowedOrigins
  * @returns {boolean}
  */
 function isOriginAllowed(origin, allowedOrigins) {
@@ -16,7 +16,6 @@ function isOriginAllowed(origin, allowedOrigins) {
   }
   return allowedOrigins.test?.(origin) ?? !!allowedOrigins;
 }
-
 
 const queryString = (params, prefix = '?') => {
   const str = new URLSearchParams(params).toString()
@@ -66,7 +65,7 @@ function getClientOrigin(base64EncodedState) {
  *
  * The client has open a new tab and is about to be redirected to the auth
  * provider. When the user will return to companion, we'll have to send the auth
- * token back to Uppy with `window.postMessage()`. 
+ * token back to Uppy with `window.postMessage()`.
  * To prevent other tabs and unauthorized origins from accessing that token, we
  * reuse origin(s) from `corsOrigins` to limit the scope of `postMessage()`, which
  * has `targetOrigin` parameter, required for cross-origin messages (i.e. if Uppy
@@ -113,3 +112,4 @@ module.exports = function connect(req, res, next) {
   }
   encodeStateAndRedirect(req, res, stateObj)
 }
+module.exports.isOriginAllowed = isOriginAllowed
