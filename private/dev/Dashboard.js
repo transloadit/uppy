@@ -48,7 +48,7 @@ console.log(import.meta.env)
 // DEV CONFIG: enable or disable Golden Retriever
 
 const RESTORE = false
-const COMPRESS = false
+const COMPRESS = true
 
 async function assemblyOptions() {
   return generateSignatureIfSecret(TRANSLOADIT_SECRET, {
