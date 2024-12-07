@@ -4,7 +4,6 @@ import pRetry, { AbortError } from 'p-retry'
 
 import fetchWithNetworkError from '@uppy/utils/lib/fetchWithNetworkError'
 import ErrorWithCause from '@uppy/utils/lib/ErrorWithCause'
-import emitSocketProgress from '@uppy/utils/lib/emitSocketProgress'
 import getSocketHost from '@uppy/utils/lib/getSocketHost'
 
 import type Uppy from '@uppy/core'
@@ -79,6 +78,26 @@ async function handleJSONResponse<ResJson>(res: Response): Promise<ResJson> {
   }
 
   throw new HttpError({ statusCode: res.status, message: errMsg })
+}
+
+function emitSocketProgress(
+  uploader: { uppy: Uppy<any, any> },
+  progressData: {
+    progress: string // pre-formatted percentage number as a string
+    bytesTotal: number
+    bytesUploaded: number
+  },
+  file: UppyFile<any, any>,
+): void {
+  const { progress, bytesUploaded, bytesTotal } = progressData
+  if (progress) {
+    uploader.uppy.log(`Upload progress: ${progress}`)
+    uploader.uppy.emit('upload-progress', file, {
+      uploadStarted: file.progress.uploadStarted ?? 0,
+      bytesUploaded,
+      bytesTotal,
+    })
+  }
 }
 
 export default class RequestClient<M extends Meta, B extends Body> {

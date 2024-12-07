@@ -27,6 +27,7 @@ export default {
     },
     // When `showProgressDetails` is set, shows the amount of bytes that have been uploaded so far.
     dataUploadedOfTotal: '%{complete} of %{total}',
+    dataUploadedOfUnknown: '%{complete} of unknown',
     // When `showProgressDetails` is set, shows an estimation of how long the upload will take to complete.
     xTimeLeft: '%{time} left',
     // Used as the label for the button that starts an upload.

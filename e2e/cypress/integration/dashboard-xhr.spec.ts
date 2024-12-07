@@ -1,5 +1,6 @@
 import {
   interceptCompanionUrlMetaRequest,
+  interceptCompanionUrlRequest,
   runRemoteUrlImageUploadTest,
   runRemoteUnsplashUploadTest,
 } from './reusable-tests.ts'
@@ -54,6 +55,17 @@ describe('Dashboard with XHR', () => {
     cy.wait('@url-meta').then(() => {
       cy.get('.uppy-Dashboard-Item-name').should('contain', 'file-with')
       cy.get('.uppy-Dashboard-Item-status').should('contain', '123 B')
+    })
+  })
+
+  it('should upload unknown size files', () => {
+    cy.get('[data-cy="Url"]').click()
+    cy.get('.uppy-Url-input').type('http://localhost:4678/unknown-size')
+    cy.get('.uppy-Url-importButton').click()
+    interceptCompanionUrlRequest()
+    cy.get('.uppy-StatusBar-actionBtn--upload').click()
+    cy.wait('@url').then(() => {
+      cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Complete')
     })
   })
 

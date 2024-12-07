@@ -220,10 +220,14 @@ class Uploader {
     if (this.readStream) this.readStream.destroy(err)
   }
 
-  async _uploadByProtocol(req) {
+  _getUploadProtocol() {
     // todo a default protocol should not be set. We should ensure that the user specifies their protocol.
     // after we drop old versions of uppy client we can remove this
-    const protocol = this.options.protocol || PROTOCOLS.multipart
+    return this.options.protocol || PROTOCOLS.multipart
+  }
+
+  async _uploadByProtocol(req) {
+    const protocol = this._getUploadProtocol()
 
     switch (protocol) {
       case PROTOCOLS.multipart:
@@ -264,8 +268,8 @@ class Uploader {
     this.readStream = fileStream
   }
 
-  _needDownloadFirst() {
-    return !this.options.size || !this.options.companionOptions.streamingUpload
+  _canStream() {
+    return this.options.companionOptions.streamingUpload
   }
 
   /**
@@ -281,7 +285,8 @@ class Uploader {
       this.#uploadState = states.uploading
 
       this.readStream = stream
-      if (this._needDownloadFirst()) {
+
+      if (!this._canStream()) {
         logger.debug('need to download the whole file first', 'controller.get.provider.size', this.shortToken)
         // Some streams need to be downloaded entirely first, because we don't know their size from the provider
         // This is true for zoom and drive (exported files) or some URL downloads.
@@ -429,7 +434,7 @@ class Uploader {
     // If fully downloading before uploading, combine downloaded and uploaded bytes
     // This will make sure that the user sees half of the progress before upload starts (while downloading)
     let combinedBytes = bytesUploaded
-    if (this._needDownloadFirst()) {
+    if (!this._canStream()) {
       combinedBytes = Math.floor((combinedBytes + (this.downloadedBytes || 0)) / 2)
     }
 
@@ -606,7 +611,7 @@ class Uploader {
 
       const response = await runRequest(url, reqOptions)
 
-      if (bytesUploaded !== this.size) {
+      if (this.size != null && bytesUploaded !== this.size) {
         const errMsg = `uploaded only ${bytesUploaded} of ${this.size} with status: ${response.statusCode}`
         logger.error(errMsg, 'upload.multipart.mismatch.error')
         throw new Error(errMsg)
