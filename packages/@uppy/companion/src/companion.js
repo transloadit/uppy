@@ -165,6 +165,7 @@ module.exports.app = (optionsArg = {}) => {
           key,
           secret,
           redirect_uri: getRedirectUri(),
+          origins: ['http://localhost:5173'],
         },
       })
     })

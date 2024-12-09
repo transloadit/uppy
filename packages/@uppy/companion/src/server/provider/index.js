@@ -136,7 +136,7 @@ module.exports.addProviderOptions = (companionOptions, grantConfig, getOauthProv
       grantConfig[oauthProvider].secret = providerOptions[providerName].secret
       if (providerOptions[providerName].credentialsURL) {
         // eslint-disable-next-line no-param-reassign
-        grantConfig[oauthProvider].dynamic = ['key', 'secret', 'redirect_uri']
+        grantConfig[oauthProvider].dynamic = ['key', 'secret', 'redirect_uri', 'origins']
       }
 
       const provider = exports.getDefaultProviders()[providerName]
