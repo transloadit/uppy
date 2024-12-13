@@ -22,10 +22,13 @@ class WebdavSimpleAuthProvider extends Provider {
 const AuthForm = ({ loading, i18n, onAuth }) => {
   const [webdavUrl, setWebdavUrl] = useState('')
 
-  const onSubmit = (event) => {
-    event.preventDefault()
-    onAuth({ webdavUrl: webdavUrl.trim() })
-  }
+  const onSubmit = useCallback(
+    (e) => {
+      e.preventDefault()
+      onAuth({ webdavUrl: webdavUrl.trim() })
+    },
+    [onAuth, webdavUrl],
+  )
 
   return (
     <form onSubmit={onSubmit}>

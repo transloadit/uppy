@@ -27,8 +27,8 @@ class WebdavProvider extends Provider {
       throw new Error('invalid public link url')
     }
 
-    // dynamic import because Comanion currently uses CommonJS and webdav is shipped as ESM
-    // can be implemented as regular require as soon as Node 20.17 or 22 is required
+    // dynamic import because Companion currently uses CommonJS and webdav is shipped as ESM
+    // todo implement as regular require as soon as Node 20.17 or 22 is required
     // or as regular import when Companion is ported to ESM
     const { AuthType } = await import('webdav') // eslint-disable-line import/no-unresolved
 
@@ -84,8 +84,8 @@ class WebdavProvider extends Provider {
     const { protocol } = new URL(url)
     const HttpAgentClass = getProtectedHttpAgent({ protocol, allowLocalIPs: !allowLocalUrls })
 
-    // dynamic import because Comanion currently uses CommonJS and webdav is shipped as ESM
-    // can be implemented as regular require as soon as Node 20.17 or 22 is required
+    // dynamic import because Companion currently uses CommonJS and webdav is shipped as ESM
+    // todo implement as regular require as soon as Node 20.17 or 22 is required
     // or as regular import when Companion is ported to ESM
     const { createClient } = await import('webdav')
     return createClient(url, {
@@ -110,12 +110,19 @@ class WebdavProvider extends Provider {
       dir.forEach(item => {
         const isFolder = item.type === 'directory'
         const requestPath = encodeURIComponent(`${directory || ''}/${item.basename}`)
+
+        let modifiedDate
+        try {
+         modifiedDate = new Date(item.lastmod).toISOString()
+        } catch (e) {
+          // ignore invalid date from server
+        }
+
         data.items.push({
           isFolder,
           id: requestPath,
           name: item.basename,
-          requestPath, // TODO FIXME
-          modifiedDate: item.lastmod, // TODO FIXME: convert  'Tue, 04 Jul 2023 13:09:47 GMT' to  ISO 8601
+          modifiedDate,
           ...(!isFolder && {
             mimeType: item.mime,
             size: item.size,
@@ -144,7 +151,6 @@ class WebdavProvider extends Provider {
     throw new Error('call to thumbnail is not implemented')
   }
 
-  // todo fixme implement
   // eslint-disable-next-line
   async size ({ id, token, providerUserSession }) {
     return this.withErrorHandling('provider.webdav.size.error', async () => {
