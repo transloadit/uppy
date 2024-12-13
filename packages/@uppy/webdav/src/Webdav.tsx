@@ -1,5 +1,5 @@
 import { h } from 'preact'
-import { useState } from 'preact/hooks'
+import { useState, useCallback } from 'preact/hooks'
 
 import { UIPlugin } from '@uppy/core'
 import { Provider, tokenStorage } from '@uppy/companion-client'

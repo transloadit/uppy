@@ -123,6 +123,7 @@ class WebdavProvider extends Provider {
           id: requestPath,
           name: item.basename,
           modifiedDate,
+          requestPath,
           ...(!isFolder && {
             mimeType: item.mime,
             size: item.size,
