@@ -27,6 +27,12 @@ fr_FR.strings = {
   allowAccessDescription:
     'Pour prendre des photos ou enregistrer une vidéo, veuillez autoriser l’accès à votre caméra pour ce site.',
   allowAccessTitle: 'Veuillez autoriser l’accès à votre caméra',
+  allowAudioAccessDescription:
+    'Pour enregistrer de l’audio, veuillez autoriser l’accès au microphone pour ce site.',
+  allowAudioAccessTitle: 'Veuillez autoriser l’accès au microphone',
+  aspectRatioLandscape: 'Recadrer en paysage (16:9)',
+  aspectRatioPortrait: 'Recadrer en portrait (9:16)',
+  aspectRatioSquare: 'Recadrer pour obtenir une photo carrée',
   authAborted: 'Authentification interrompue',
   authenticateWith: 'Se connecter à %{pluginName}',
   authenticateWithTitle:
@@ -55,6 +61,7 @@ fr_FR.strings = {
   dashboardWindowTitle:
     'Fenêtre de téléversement de fichiers (Appuyez sur Échap pour fermer)',
   dataUploadedOfTotal: '%{complete} sur %{total}',
+  discardRecordedFile: 'Supprimer le fichier enregistré',
   done: 'Terminé',
   dropHereOr: 'Déposer les fichiers ici ou %{browse}',
   dropHint: 'Déposez vos fichiers ici',
@@ -75,7 +82,9 @@ fr_FR.strings = {
   encoding: 'Traitement…',
   enterCorrectUrl:
     'Lien incorrect: Assurez-vous que vous entrez un lien direct vers le fichier',
+  enterTextToSearch: 'Entrez un texte pour rechercher des images',
   enterUrlToImport: 'Entrez le lien pour importer un fichier',
+  error: 'Erreur',
   exceedsSize:
     'Le fichier %{file} dépasse la taille maximale autorisée de %{size}',
   failedToFetch:
@@ -88,18 +97,32 @@ fr_FR.strings = {
   },
   filter: 'Filtrer',
   finishEditingFile: 'Terminer l’édition du fichier',
+  flipHorizontal: 'Retourner horizontalement',
   folderAdded: {
     '0': '%{smart_count} fichier ajouté de %{folder}',
     '1': '%{smart_count} fichiers ajoutés de %{folder}',
   },
+  folderAlreadyAdded: 'Le dossier "%{folder}" a déjà été ajouté',
   generatingThumbnails: 'Génération des vignettes…',
   import: 'Importer',
+  importFiles: 'Importer des fichiers depuis :',
   importFrom: 'Importer de %{name}',
   inferiorSize: 'Ce fichier est plus petit que la taille autorisée de %{size}',
+  loadedXFiles: 'Chargé %{numFiles} fichiers',
   loading: 'Chargement…',
   logOut: 'Déconnexion',
   micDisabled: 'Accès au micro refusé par l’utilisateur',
+  missingRequiredMetaField: 'Champ méta requis manquant',
+  missingRequiredMetaFieldOnFile:
+    'Champs méta requis manquants dans %{fileName}',
+  missingRequiredMetaFields: {
+    '0': 'Champ méta requis manquant : %{fields}.',
+    '1': 'Champs méta requis manquants : %{fields}.',
+  },
   myDevice: 'Mon Appareil',
+  noAudioDescription:
+    'Pour enregistrer de l’audio, veuillez connecter un microphone ou un autre appareil d’entrée audio',
+  noAudioTitle: 'Microphone non disponible',
   noCameraDescription:
     'Pour prendre des photos ou enregistrer une vidéo, veuillez connecter une caméra',
   noDuplicates: 'Impossible d’ajouter le fichier "%{fileName}", il existe déjà',
@@ -122,6 +145,7 @@ fr_FR.strings = {
   recordingLength: 'Durée d’enregistrement %{recording_length}',
   recordingStoppedMaxSize:
     'L’enregistrement s’est arrété car la taille du fichier dépasse la limite',
+  recordVideoBtn: 'Enregistrer une vidéo',
   recoveredAllFiles:
     'Nous avons restauré tous les fichiers. Vous pouvez maintenant reprendre le téléversement.',
   recoveredXFiles: {
@@ -151,6 +175,7 @@ fr_FR.strings = {
   streamPassive: 'Stream passif',
   submitRecordedFile: 'Envoyer la vidéo enregistrée',
   takePicture: 'Prendre une photo',
+  takePictureBtn: 'Prendre une photo',
   timedOut: 'Téléversement bloqué durant %{seconds} secondes, annulation.',
   unselectFileNamed: 'Désélectionner le fichier %{name}',
   upload: 'Téléverser',
