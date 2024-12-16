@@ -10,10 +10,10 @@ import type {
 } from '@uppy/core/lib/Uppy.js'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
-import type Translator from '@uppy/utils/lib/Translator'
 import classNames from 'classnames'
 import type { ValidateableFile } from '@uppy/core/lib/Restricter.js'
 import remoteFileObjToLocal from '@uppy/utils/lib/remoteFileObjToLocal'
+import type { I18n } from '@uppy/utils/lib/Translator'
 import AuthView from './AuthView.tsx'
 import Header from './Header.tsx'
 import Browser from '../Browser.tsx'
@@ -75,7 +75,7 @@ export interface Opts<M extends Meta, B extends Body> {
   loadAllFiles: boolean
   renderAuthForm?: (args: {
     pluginName: string
-    i18n: Translator['translateArray']
+    i18n: I18n
     loading: boolean | string
     onAuth: (authFormData: unknown) => Promise<void>
   }) => h.JSX.Element
@@ -434,7 +434,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
           pluginName={this.plugin.title}
           pluginIcon={pluginIcon}
           handleAuth={this.handleAuth}
-          i18n={this.plugin.uppy.i18nArray}
+          i18n={this.plugin.uppy.i18n}
           renderForm={opts.renderAuthForm}
           loading={loading}
         />

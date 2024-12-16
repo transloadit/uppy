@@ -1,7 +1,7 @@
 import { h } from 'preact'
 import { useCallback } from 'preact/hooks'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
-import type Translator from '@uppy/utils/lib/Translator'
+import type { I18n } from '@uppy/utils/lib/Translator'
 import type { Opts } from './ProviderView.ts'
 import type ProviderViews from './ProviderView.ts'
 
@@ -9,7 +9,7 @@ type AuthViewProps<M extends Meta, B extends Body> = {
   loading: boolean | string
   pluginName: string
   pluginIcon: () => h.JSX.Element
-  i18n: Translator['translateArray']
+  i18n: I18n
   handleAuth: ProviderViews<M, B>['handleAuth']
   renderForm?: Opts<M, B>['renderAuthForm']
 }
@@ -56,7 +56,7 @@ function DefaultForm<M extends Meta, B extends Body>({
   onAuth,
 }: {
   pluginName: string
-  i18n: Translator['translateArray']
+  i18n: I18n
   onAuth: AuthViewProps<M, B>['handleAuth']
 }) {
   // In order to comply with Google's brand we need to create a different button
@@ -100,7 +100,7 @@ const defaultRenderForm = ({
   onAuth,
 }: {
   pluginName: string
-  i18n: Translator['translateArray']
+  i18n: I18n
   onAuth: AuthViewProps<Meta, Body>['handleAuth']
 }) => <DefaultForm pluginName={pluginName} i18n={i18n} onAuth={onAuth} />
 
@@ -121,9 +121,7 @@ export default function AuthView<M extends Meta, B extends Body>({
         })}
       </div>
 
-      <div className="uppy-Provider-authForm">
-        {renderForm({ pluginName, i18n, loading, onAuth: handleAuth })}
-      </div>
+      {renderForm({ pluginName, i18n, loading, onAuth: handleAuth })}
     </div>
   )
 }

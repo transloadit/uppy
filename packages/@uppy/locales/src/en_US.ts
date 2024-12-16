@@ -35,6 +35,7 @@ en_US.strings = {
   aspectRatioPortrait: 'Crop portrait (9:16)',
   aspectRatioSquare: 'Crop square',
   authAborted: 'Authentication aborted',
+  authenticate: 'Connect',
   authenticateWith: 'Connect to %{pluginName}',
   authenticateWithTitle:
     'Please authenticate with %{pluginName} to select files',
@@ -149,14 +150,12 @@ en_US.strings = {
   pluginNameUrl: 'Link',
   pluginNameWebdav: 'WebDAV',
   pluginNameZoom: 'Zoom',
+  pluginWebdavInputLabel: 'WebDAV, ownCloud, or Nextcloud URL',
   poweredBy: 'Powered by %{uppy}',
   processingXFiles: {
     '0': 'Processing %{smart_count} file',
     '1': 'Processing %{smart_count} files',
   },
-  publicLinkURLDescription:
-    'WebDAV url or an ownCloud or Nextcloud public link',
-  publicLinkURLLabel: 'URL',
   recording: 'Recording',
   recordingLength: 'Recording length %{recording_length}',
   recordingStoppedMaxSize:

@@ -13,14 +13,20 @@ import {
   tokenStorage,
   type CompanionPluginOptions,
 } from '@uppy/companion-client'
-import { defaultPickerIcon, ProviderViews } from '@uppy/provider-views'
+import {
+  SearchInput,
+  defaultPickerIcon,
+  ProviderViews,
+} from '@uppy/provider-views'
 
 import type {
   AsyncStore,
   UnknownProviderPluginState,
   Uppy,
 } from '@uppy/core/lib/Uppy.js'
-import type Translator from '@uppy/utils/lib/Translator'
+import type { I18n } from '@uppy/utils/lib/Translator'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'
 import locale from './locale.ts'
 
@@ -50,49 +56,30 @@ class WebdavSimpleAuthProvider<M extends Meta, B extends Body> extends Provider<
 }
 
 const AuthForm = ({
-  loading,
   i18n,
   onAuth,
 }: {
-  loading: boolean | string
-  i18n: Translator['translateArray']
+  i18n: I18n
   onAuth: (arg: { webdavUrl: string }) => void
 }) => {
   const [webdavUrl, setWebdavUrl] = useState('')
 
-  const onSubmit = useCallback(
-    (e: Event) => {
-      e.preventDefault()
-      onAuth({ webdavUrl: webdavUrl.trim() })
-    },
-    [onAuth, webdavUrl],
-  )
+  const onSubmit = useCallback(() => {
+    onAuth({ webdavUrl: webdavUrl.trim() })
+  }, [onAuth, webdavUrl])
 
   return (
-    <form onSubmit={onSubmit}>
-      <label htmlFor="uppy-Provider-publicLinkURL">
-        <span style={{ display: 'block' }}>{i18n('publicLinkURLLabel')}</span>
-        <input
-          id="uppy-Provider-publicLinkURL"
-          name="webdavUrl"
-          type="text"
-          value={webdavUrl}
-          onChange={(e) => setWebdavUrl((e.target as HTMLInputElement).value)}
-          disabled={Boolean(loading)}
-        />
-      </label>
-      <span style={{ display: 'block' }}>
-        {i18n('publicLinkURLDescription')}
-      </span>
-
-      <button
-        style={{ display: 'block' }}
-        disabled={Boolean(loading)}
-        type="submit"
-      >
-        Submit
-      </button>
-    </form>
+    <SearchInput
+      searchString={webdavUrl}
+      setSearchString={setWebdavUrl}
+      submitSearchString={onSubmit}
+      inputLabel={i18n('pluginWebdavInputLabel')}
+      buttonLabel={i18n('authenticate')}
+      wrapperClassName="uppy-SearchProvider"
+      inputClassName="uppy-c-textInput uppy-SearchProvider-input"
+      showButton
+      buttonCSSClassName="uppy-SearchProvider-searchButton"
+    />
   )
 }
 
@@ -150,8 +137,8 @@ export default class Webdav<M extends Meta, B extends Body>
       showTitles: true,
       showFilter: true,
       showBreadcrumbs: true,
-      renderAuthForm: ({ i18n, loading, onAuth }) => (
-        <AuthForm loading={loading} onAuth={onAuth} i18n={i18n} />
+      renderAuthForm: ({ i18n, onAuth }) => (
+        <AuthForm onAuth={onAuth} i18n={i18n} />
       ),
     })
 
