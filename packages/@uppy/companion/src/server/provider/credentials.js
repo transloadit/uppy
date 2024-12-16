@@ -120,10 +120,10 @@ exports.getCredentialsOverrideMiddleware = (providers, companionOptions) => {
         // @ts-expect-error untyped
         req.session.grant = {
           // @ts-expect-error untyped
-          ...(req.session.grant || {}),
+          ...req.session.grant,
           dynamic: {
             // @ts-expect-error untyped
-            ...(req.session.grant?.dynamic || {}),
+            ...req.session.grant?.dynamic,
             state: newState,
           },
         }
