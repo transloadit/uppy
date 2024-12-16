@@ -122,6 +122,9 @@
       "path": "./packages/@uppy/zoom/tsconfig.build.json",
     },
     {
+      "path": "./packages/@uppy/webdav/tsconfig.build.json",
+    },
+    {
       "path": "./packages/uppy/tsconfig.build.json",
     },
   ],
