@@ -1,3 +1,5 @@
 export default {
-  strings: {},
+  strings: {
+    pluginNameGooglePhotos: 'Google Photos',
+  },
 }
