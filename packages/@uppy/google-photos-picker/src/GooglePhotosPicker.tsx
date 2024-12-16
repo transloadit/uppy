@@ -21,10 +21,7 @@ export type GooglePhotosPickerOptions = CompanionPluginOptions & {
   clientId: string
 }
 
-export default class GooglePhotosPicker<
-    M extends Meta & { width: number; height: number },
-    B extends Body,
-  >
+export default class GooglePhotosPicker<M extends Meta, B extends Body>
   extends UIPlugin<GooglePhotosPickerOptions, M, B>
   implements BaseProviderPlugin
 {

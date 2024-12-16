@@ -23,10 +23,7 @@ export type GoogleDrivePickerOptions = CompanionPluginOptions & {
   appId: string
 }
 
-export default class GoogleDrivePicker<
-    M extends Meta & { width: number; height: number },
-    B extends Body,
-  >
+export default class GoogleDrivePicker<M extends Meta, B extends Body>
   extends UIPlugin<GoogleDrivePickerOptions, M, B>
   implements BaseProviderPlugin
 {
