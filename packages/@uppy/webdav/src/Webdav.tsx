@@ -1,29 +1,67 @@
-import { h } from 'preact'
+import { h, type ComponentChild } from 'preact'
 import { useState, useCallback } from 'preact/hooks'
 
-import { UIPlugin } from '@uppy/core'
-import { Provider, tokenStorage } from '@uppy/companion-client'
-import { ProviderViews } from '@uppy/provider-views'
+import {
+  UIPlugin,
+  type Body,
+  type Meta,
+  type UnknownProviderPlugin,
+  type UppyFile,
+} from '@uppy/core'
+import {
+  Provider,
+  tokenStorage,
+  type CompanionPluginOptions,
+} from '@uppy/companion-client'
+import { defaultPickerIcon, ProviderViews } from '@uppy/provider-views'
 
+import type {
+  AsyncStore,
+  UnknownProviderPluginState,
+  Uppy,
+} from '@uppy/core/lib/Uppy.js'
+import type Translator from '@uppy/utils/lib/Translator'
 import packageJson from '../package.json'
 import locale from './locale.ts'
 
-class WebdavSimpleAuthProvider extends Provider {
-  async login({ authFormData, uppyVersions, signal }) {
+class WebdavSimpleAuthProvider<M extends Meta, B extends Body> extends Provider<
+  M,
+  B
+> {
+  async login({
+    authFormData,
+    uppyVersions,
+    signal,
+  }: {
+    uppyVersions: string
+    authFormData: unknown
+    signal: AbortSignal
+  }) {
     return this.loginSimpleAuth({ uppyVersions, authFormData, signal })
   }
 
-  async logout() {
-    this.removeAuthToken()
-    return { ok: true, revoked: true }
+  async logout<ResBody>(): Promise<ResBody> {
+    await this.removeAuthToken()
+    return {
+      ok: true,
+      revoked: true,
+    } as unknown as ResBody
   }
 }
 
-const AuthForm = ({ loading, i18n, onAuth }) => {
+const AuthForm = ({
+  loading,
+  i18n,
+  onAuth,
+}: {
+  loading: boolean | string
+  i18n: Translator['translateArray']
+  onAuth: (arg: { webdavUrl: string }) => void
+}) => {
   const [webdavUrl, setWebdavUrl] = useState('')
 
   const onSubmit = useCallback(
-    (e) => {
+    (e: Event) => {
       e.preventDefault()
       onAuth({ webdavUrl: webdavUrl.trim() })
     },
@@ -39,28 +77,50 @@ const AuthForm = ({ loading, i18n, onAuth }) => {
           name="webdavUrl"
           type="text"
           value={webdavUrl}
-          onChange={(e) => setWebdavUrl(e.target.value)}
-          disabled={loading}
+          onChange={(e) => setWebdavUrl((e.target as HTMLInputElement).value)}
+          disabled={Boolean(loading)}
         />
       </label>
       <span style={{ display: 'block' }}>
         {i18n('publicLinkURLDescription')}
       </span>
 
-      <button style={{ display: 'block' }} disabled={loading} type="submit">
+      <button
+        style={{ display: 'block' }}
+        disabled={Boolean(loading)}
+        type="submit"
+      >
         Submit
       </button>
     </form>
   )
 }
 
-export default class Webdav extends UIPlugin {
+export type WebdavOptions = CompanionPluginOptions
+
+export default class Webdav<M extends Meta, B extends Body>
+  extends UIPlugin<WebdavOptions, M, B, UnknownProviderPluginState>
+  implements UnknownProviderPlugin<M, B>
+{
   static VERSION = packageJson.version
 
-  constructor(uppy, opts) {
+  icon: () => h.JSX.Element = defaultPickerIcon
+
+  provider: Provider<M, B>
+
+  view!: ProviderViews<M, B>
+
+  storage: AsyncStore
+
+  files: UppyFile<M, B>[]
+
+  rootFolderId: string | null = null
+
+  constructor(uppy: Uppy<M, B>, opts: WebdavOptions) {
     super(uppy, opts)
-    this.id = this.opts.id || 'webdav'
+    this.id = this.opts.id || 'WebDav'
     this.type = 'acquirer'
+    this.files = []
     this.storage = this.opts.storage || tokenStorage
 
     this.defaultLocale = locale
@@ -79,7 +139,7 @@ export default class Webdav extends UIPlugin {
       supportsRefreshToken: false,
     })
 
-    this.onFirstRender = this.onFirstRender.bind(this)
+    // this.onFirstRender = this.onFirstRender.bind(this)
     this.render = this.render.bind(this)
   }
 
@@ -106,11 +166,7 @@ export default class Webdav extends UIPlugin {
     this.unmount()
   }
 
-  onFirstRender() {
-    return this.view.getFolder()
-  }
-
-  render(state) {
+  render(state: unknown): ComponentChild {
     return this.view.render(state)
   }
 }
