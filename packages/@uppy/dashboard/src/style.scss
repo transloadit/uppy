@@ -586,6 +586,14 @@
   }
 }
 
+.uppy-DashboardTab-iconWebdav {
+  color: #111;
+
+  [data-uppy-theme='dark'] & {
+    color: $gray-200;
+  }
+}
+
 .uppy-DashboardTab-iconScreenRec {
   color: #2c3e50;
 
