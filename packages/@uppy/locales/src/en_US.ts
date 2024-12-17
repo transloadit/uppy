@@ -150,7 +150,8 @@ en_US.strings = {
   pluginNameUrl: 'Link',
   pluginNameWebdav: 'WebDAV',
   pluginNameZoom: 'Zoom',
-  pluginWebdavInputLabel: 'WebDAV, ownCloud, or Nextcloud URL',
+  pluginWebdavInputLabel:
+    'WebDAV URL for a file (e.g. from ownCloud or Nextcloud)',
   poweredBy: 'Powered by %{uppy}',
   processingXFiles: {
     '0': 'Processing %{smart_count} file',

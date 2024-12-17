@@ -2,6 +2,7 @@ export default {
   strings: {
     pluginNameWebdav: 'WebDAV',
     authenticate: 'Connect',
-    pluginWebdavInputLabel: 'WebDAV, ownCloud, or Nextcloud URL',
+    pluginWebdavInputLabel:
+      'WebDAV URL for a file (e.g. from ownCloud or Nextcloud)',
   },
 }
