@@ -13,11 +13,7 @@ import {
   tokenStorage,
   type CompanionPluginOptions,
 } from '@uppy/companion-client'
-import {
-  SearchInput,
-  defaultPickerIcon,
-  ProviderViews,
-} from '@uppy/provider-views'
+import { SearchInput, ProviderViews } from '@uppy/provider-views'
 
 import type {
   AsyncStore,
@@ -91,7 +87,7 @@ export default class Webdav<M extends Meta, B extends Body>
 {
   static VERSION = packageJson.version
 
-  icon: () => h.JSX.Element = defaultPickerIcon
+  icon: () => h.JSX.Element
 
   provider: Provider<M, B>
 
@@ -111,10 +107,22 @@ export default class Webdav<M extends Meta, B extends Body>
     this.storage = this.opts.storage || tokenStorage
 
     this.defaultLocale = locale
-
     this.i18nInit()
-
     this.title = this.i18n('pluginNameWebdav')
+    this.icon = () => (
+      <svg
+        className="uppy-DashboardTab-iconWebdav"
+        width="32"
+        height="32"
+        viewBox="0 0 32 32"
+      >
+        <path
+          fill="currentcolor"
+          fill-rule="nonzero"
+          d="m22.484 10.456 1.661 7.152s1.799-6.175 1.89-6.519c.094-.356-.173-.553-.274-.614l-.036-.02H28s-.796 2.444-1.56 4.854l-.182.577c-.632 2.006-1.194 3.85-1.194 4.062 0 .709.346 1.052.346 1.052h-2.78v-.087a5 5 0 0 0-.115-1.007c-.058-.24-.679-2.248-1.321-4.32l-.184-.592c-.642-2.068-1.255-4.038-1.299-4.202-.08-.305-.222-.334-.253-.336zM10.266 10c1.898 0 4.496 1.236 3.206 5.836C12.327 19.916 9.957 21 8.367 21H4s.18-.049.326-.532c.07-.237.582-2.502 1.095-4.801l.14-.626c.488-2.186.942-4.237.981-4.42.086-.393-.009-.621-.009-.621Zm7.936.456s-.137.287 0 .675c.063.178.71 2.28 1.39 4.5l.266.87 1.296 4.237.06.194.02.068h-2.697l-.518-2.129h-2.61L14.788 21h-2.064l.026-.1c.127-.476.69-2.586 1.256-4.72l.162-.61c.564-2.125 1.092-4.12 1.153-4.377.137-.574-.06-.737-.06-.737zM9.896 11.58h-.911L7.07 19.36h1.143c.755 0 1.89-.942 2.616-3.362.725-2.42.147-4.416-.934-4.416m6.806 2.45-1.09 3.289h2.133z"
+        />
+      </svg>
+    )
 
     this.provider = new WebdavSimpleAuthProvider(uppy, {
       companionUrl: this.opts.companionUrl,
