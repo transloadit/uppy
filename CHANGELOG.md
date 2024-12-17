@@ -12,6 +12,27 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 4.9.0
+
+Released: 2024-12-17
+
+| Package                    | Version | Package                    | Version |
+| -------------------------- | ------- | -------------------------- | ------- |
+| @uppy/companion            |   5.3.0 | @uppy/progress-bar         |   4.1.0 |
+| @uppy/companion-client     |   4.3.0 | @uppy/provider-views       |   4.2.0 |
+| @uppy/core                 |   4.3.1 | @uppy/status-bar           |   4.0.6 |
+| @uppy/google-drive-picker  |   0.2.1 | @uppy/utils                |   6.0.6 |
+| @uppy/google-photos-picker |   0.2.1 | @uppy/webdav               |   0.1.0 |
+| @uppy/locales              |   4.4.0 | uppy                       |   4.9.0 |
+
+- @uppy/webdav: Add @uppy/webdav (Merlijn Vos / #5551)
+- @uppy/google-drive-picker,@uppy/google-photos-picker,@uppy/locales: Add missing Google Picker locale entries (Merlijn Vos / #5552)
+- @uppy/core: bring back validateRestrictions (Merlijn Vos / #5538)
+- @uppy/google-drive-picker,@uppy/google-photos-picker: Fix TS generics on new Google Picker plugins (Merlijn Vos / #5550)
+- @uppy/locales: Add missing French locale entries (Steven SAN / #5549)
+- e2e,@uppy/status-bar,@uppy/utils: Companion stream upload unknown size files (Mikael Finstad / #5489)
+
+
 ## 4.8.0
 
 Released: 2024-12-05

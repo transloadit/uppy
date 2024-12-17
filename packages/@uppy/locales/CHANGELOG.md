@@ -1,5 +1,13 @@
 # @uppy/locales
 
+## 4.4.0
+
+Released: 2024-12-17
+Included in: Uppy v4.9.0
+
+- @uppy/google-drive-picker,@uppy/google-photos-picker,@uppy/locales: Add missing Google Picker locale entries (Merlijn Vos / #5552)
+- @uppy/locales: Add missing French locale entries (Steven SAN / #5549)
+
 ## 4.3.1
 
 Released: 2024-12-05
