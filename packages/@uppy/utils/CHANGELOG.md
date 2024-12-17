@@ -1,5 +1,12 @@
 # @uppy/utils
 
+## 6.0.6
+
+Released: 2024-12-17
+Included in: Uppy v4.9.0
+
+- e2e,@uppy/status-bar,@uppy/utils: Companion stream upload unknown size files (Mikael Finstad / #5489)
+
 ## 6.0.5
 
 Released: 2024-12-05

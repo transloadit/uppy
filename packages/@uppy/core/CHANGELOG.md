@@ -1,5 +1,12 @@
 # @uppy/core
 
+## 4.3.1
+
+Released: 2024-12-17
+Included in: Uppy v4.9.0
+
+- @uppy/core: bring back validateRestrictions (Merlijn Vos / #5538)
+
 ## 4.3.0
 
 Released: 2024-12-05
