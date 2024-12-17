@@ -226,7 +226,7 @@ export default function GooglePickerView({
         }
         pluginIcon={pickerType === 'drive' ? GoogleDriveIcon : GooglePhotosIcon}
         handleAuth={showPicker}
-        i18n={uppy.i18nArray}
+        i18n={uppy.i18n}
         loading={loading}
       />
     )

@@ -15,6 +15,7 @@ import DropTarget from '@uppy/drop-target'
 import Audio from '@uppy/audio'
 import Compressor from '@uppy/compressor'
 import GoogleDrive from '@uppy/google-drive'
+import Webdav from '@uppy/webdav'
 import english from '@uppy/locales/lib/en_US.js'
 import GoogleDrivePicker from '@uppy/google-drive-picker'
 import GooglePhotosPicker from '@uppy/google-photos-picker'
@@ -163,6 +164,11 @@ export default () => {
       target: Dashboard,
       showVideoSourceDropdown: true,
       showRecordingLength: true,
+    })
+    .use(Webdav, {
+      target: Dashboard,
+      companionUrl: COMPANION_URL,
+      companionAllowedHosts
     })
     .use(Audio, {
       target: Dashboard,

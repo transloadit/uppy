@@ -5,4 +5,6 @@ export {
 
 export { default as SearchProviderViews } from './SearchProviderView/index.ts'
 
+export { default as SearchInput } from './SearchInput.tsx'
+
 export { default as GooglePickerView } from './GooglePicker/GooglePickerView.tsx'
