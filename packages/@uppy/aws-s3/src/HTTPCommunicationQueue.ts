@@ -253,7 +253,7 @@ export class HTTPCommunicationQueue<M extends Meta, B extends Body> {
     }).abortOn(signal)
 
     let body: FormData | Blob
-    const data = chunk.getData()
+    const data = await chunk.getData()
     if (method.toUpperCase() === 'POST') {
       const formData = new FormData()
       Object.entries(fields!).forEach(([key, value]) =>
@@ -387,7 +387,7 @@ export class HTTPCommunicationQueue<M extends Meta, B extends Body> {
 
     for (;;) {
       throwIfAborted(signal)
-      const chunkData = chunk.getData()
+      const chunkData = await chunk.getData()
       const { onProgress, onComplete } = chunk
       let signature
 
