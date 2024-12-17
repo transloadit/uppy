@@ -1,6 +1,6 @@
 # @uppy/webdav
 
-## 0.2.0
+## 0.1.0
 
 Released: 2024-12-17
 Included in: Uppy v4.9.0

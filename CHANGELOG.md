@@ -22,7 +22,7 @@ Released: 2024-12-17
 | @uppy/companion-client     |   4.3.0 | @uppy/provider-views       |   4.2.0 |
 | @uppy/core                 |   4.3.1 | @uppy/status-bar           |   4.0.6 |
 | @uppy/google-drive-picker  |   0.2.1 | @uppy/utils                |   6.0.6 |
-| @uppy/google-photos-picker |   0.2.1 | @uppy/webdav               |   0.2.0 |
+| @uppy/google-photos-picker |   0.2.1 | @uppy/webdav               |   0.1.0 |
 | @uppy/locales              |   4.4.0 | uppy                       |   4.9.0 |
 
 - @uppy/webdav: Add @uppy/webdav (Merlijn Vos / #5551)
