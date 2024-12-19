@@ -231,6 +231,7 @@ export interface State<M extends Meta, B extends Body>
   currentUploads: Record<string, CurrentUpload<M, B>>
   allowNewUpload: boolean
   recoveredState: null | Required<Pick<State<M, B>, 'files' | 'currentUploads'>>
+  remoteUploader?: 'tus' | 's3-multipart' | 'multipart'
   error: string | null
   files: {
     [key: string]: UppyFile<M, B>
