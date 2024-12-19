@@ -204,6 +204,7 @@ type AWSS3MultipartWithoutCompanionMandatorySignPart<
 }
 type AWSS3MultipartWithoutCompanionMandatory<M extends Meta, B extends Body> = {
   getChunkSize?: (file: { size: number }) => number
+  getChunkData?: (start: number, end: number, opts: { chunkSize: number }) => Promise<Blob>
   createMultipartUpload: (file: UppyFile<M, B>) => MaybePromise<UploadResult>
   listParts: (
     file: UppyFile<M, B>,
@@ -301,6 +302,7 @@ export default class AwsS3Multipart<
     Pick<
       AWSS3MultipartWithoutCompanionMandatory<M, B>,
       | 'getChunkSize'
+      | 'getChunkData'
       | 'createMultipartUpload'
       | 'listParts'
       | 'abortMultipartUpload'
@@ -867,7 +869,10 @@ export default class AwsS3Multipart<
           this.opts.getChunkSize ?
             this.opts.getChunkSize.bind(this)
           : undefined,
-
+        getChunkData:
+          this.opts.getChunkData ?
+            this.opts.getChunkData.bind(this)
+            : undefined,
         onProgress,
         onError,
         onSuccess,
