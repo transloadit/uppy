@@ -42,7 +42,10 @@ export interface TusOpts<M extends Meta, B extends Body>
     | ((file: UppyFile<M, B>) => Record<string, string>)
   limit?: number
   chunkSize?: number
-  onBeforeRequest?: (req: tus.HttpRequest, file: UppyFile<M, B>) => void
+  onBeforeRequest?: (
+    req: tus.HttpRequest,
+    file: UppyFile<M, B>,
+  ) => void | Promise<void>
   onShouldRetry?: (
     err: tus.DetailedError,
     retryAttempt: number,
