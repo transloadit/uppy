@@ -1,2 +1,2 @@
-export { default } from './Dashboard.tsx'
-export type { DashboardOptions } from './Dashboard.tsx'
+export { default } from './Dashboard.jsx'
+export type { DashboardOptions } from './Dashboard.jsx'

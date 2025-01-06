@@ -14,16 +14,16 @@ import {
 } from '@uppy/utils/lib/fileFilters'
 import { createAbortError } from '@uppy/utils/lib/AbortController'
 import getAllowedMetaFields from '@uppy/utils/lib/getAllowedMetaFields'
-import MultipartUploader from './MultipartUploader.ts'
-import { throwIfAborted } from './utils.ts'
+import MultipartUploader from './MultipartUploader.js'
+import { throwIfAborted } from './utils.js'
 import type {
   UploadResult,
   UploadResultWithSignal,
   MultipartUploadResultWithSignal,
   UploadPartBytesResult,
-} from './utils.ts'
-import createSignedURL from './createSignedURL.ts'
-import { HTTPCommunicationQueue } from './HTTPCommunicationQueue.ts'
+} from './utils.js'
+import createSignedURL from './createSignedURL.js'
+import { HTTPCommunicationQueue } from './HTTPCommunicationQueue.js'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'
@@ -290,7 +290,7 @@ const defaultOptions = {
   retryDelays: [0, 1000, 3000, 5000],
 } satisfies Partial<AwsS3MultipartOptions<any, any>>
 
-export type { AwsBody } from './utils.ts'
+export type { AwsBody } from './utils.js'
 
 export default class AwsS3Multipart<
   M extends Meta,

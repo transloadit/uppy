@@ -3,11 +3,11 @@ import Cropper from 'cropperjs'
 import { h, Component } from 'preact'
 import type { Meta, Body, UppyFile } from '@uppy/utils/lib/UppyFile'
 import type { I18n } from '@uppy/utils/lib/Translator'
-import getCanvasDataThatFitsPerfectlyIntoContainer from './utils/getCanvasDataThatFitsPerfectlyIntoContainer.ts'
-import getScaleFactorThatRemovesDarkCorners from './utils/getScaleFactorThatRemovesDarkCorners.ts'
-import limitCropboxMovementOnMove from './utils/limitCropboxMovementOnMove.ts'
-import limitCropboxMovementOnResize from './utils/limitCropboxMovementOnResize.ts'
-import type ImageEditor from './ImageEditor.ts'
+import getCanvasDataThatFitsPerfectlyIntoContainer from './utils/getCanvasDataThatFitsPerfectlyIntoContainer.js'
+import getScaleFactorThatRemovesDarkCorners from './utils/getScaleFactorThatRemovesDarkCorners.js'
+import limitCropboxMovementOnMove from './utils/limitCropboxMovementOnMove.js'
+import limitCropboxMovementOnResize from './utils/limitCropboxMovementOnResize.js'
+import type ImageEditor from './ImageEditor.js'
 
 type Props<M extends Meta, B extends Body> = {
   currentImage: UppyFile<M, B>

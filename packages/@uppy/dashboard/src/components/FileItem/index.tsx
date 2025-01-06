@@ -6,11 +6,11 @@ import type { UppyFile, Body, Meta } from '@uppy/utils/lib/UppyFile'
 import type { I18n } from '@uppy/utils/lib/Translator'
 import type Uppy from '@uppy/core'
 import type { State } from '@uppy/core'
-import FilePreviewAndLink from './FilePreviewAndLink/index.tsx'
-import FileProgress from './FileProgress/index.tsx'
-import FileInfo from './FileInfo/index.tsx'
-import Buttons from './Buttons/index.tsx'
-import type { DashboardState } from '../../Dashboard.ts'
+import FilePreviewAndLink from './FilePreviewAndLink/index.jsx'
+import FileProgress from './FileProgress/index.jsx'
+import FileInfo from './FileInfo/index.jsx'
+import Buttons from './Buttons/index.jsx'
+import type { DashboardState } from '../../Dashboard.js'
 
 type Props<M extends Meta, B extends Body> = {
   file: UppyFile<M, B>

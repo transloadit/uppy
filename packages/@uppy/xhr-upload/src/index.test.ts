@@ -1,7 +1,7 @@
 import { vi, describe, it, expect } from 'vitest'
 import nock from 'nock'
 import Core, { type UppyEventMap } from '@uppy/core'
-import XHRUpload from './index.ts'
+import XHRUpload from './index.js'
 
 describe('XHRUpload', () => {
   it('should leverage hooks from fetcher', async () => {

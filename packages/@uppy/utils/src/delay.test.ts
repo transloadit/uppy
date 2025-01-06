@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { AbortController } from './AbortController.ts'
-import delay from './delay.ts'
+import { AbortController } from './AbortController.js'
+import delay from './delay.js'
 
 describe('delay', () => {
   it('should wait for the specified time', async () => {

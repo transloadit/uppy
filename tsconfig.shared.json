@@ -7,7 +7,6 @@
     "lib": ["dom", "ESnext"],
     "resolveJsonModule": true,
     "useUnknownInCatchVariables": false,
-    "allowImportingTsExtensions": true,
     "allowJs": false,
     "declaration": true,
     "emitDeclarationOnly": true,

@@ -6,7 +6,7 @@ import type {
 import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
 import type { Meta, Body, TagFile } from '@uppy/utils/lib/UppyFile'
 import { getSafeFileId } from '@uppy/utils/lib/generateFileID'
-import getTagFile from './getTagFile.ts'
+import getTagFile from './getTagFile.js'
 
 const addFiles = <M extends Meta, B extends Body>(
   companionFiles: CompanionFile[],

@@ -10,7 +10,7 @@ import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
 // We can safely ignore it because bundlers will happily use the `"exports"` field instead.
 // eslint-disable-next-line import/no-unresolved
 import PQueue from 'p-queue'
-import shallowClone from './shallowClone.ts'
+import shallowClone from './shallowClone.js'
 
 export interface ApiList {
   (directory: PartialTreeId): Promise<{

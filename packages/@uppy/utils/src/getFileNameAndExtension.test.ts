@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import getFileNameAndExtension from './getFileNameAndExtension.ts'
+import getFileNameAndExtension from './getFileNameAndExtension.js'
 
 describe('getFileNameAndExtension', () => {
   it('should return the filename and extension as an array', () => {

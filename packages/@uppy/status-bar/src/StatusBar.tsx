@@ -5,13 +5,13 @@ import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin.js'
 import { UIPlugin } from '@uppy/core'
 import emaFilter from '@uppy/utils/lib/emaFilter'
 import getTextDirection from '@uppy/utils/lib/getTextDirection'
-import statusBarStates from './StatusBarStates.ts'
-import StatusBarUI, { type StatusBarUIProps } from './StatusBarUI.tsx'
+import statusBarStates from './StatusBarStates.js'
+import StatusBarUI, { type StatusBarUIProps } from './StatusBarUI.jsx'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'
-import locale from './locale.ts'
-import type { StatusBarOptions } from './StatusBarOptions.ts'
+import locale from './locale.js'
+import type { StatusBarOptions } from './StatusBarOptions.js'
 
 const speedFilterHalfLife = 2000
 const ETAFilterHalfLife = 2000

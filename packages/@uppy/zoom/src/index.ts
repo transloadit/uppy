@@ -1,2 +1,2 @@
-export { default } from './Zoom.tsx'
-export type { ZoomOptions } from './Zoom.tsx'
+export { default } from './Zoom.jsx'
+export type { ZoomOptions } from './Zoom.jsx'

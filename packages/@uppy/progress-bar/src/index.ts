@@ -1,3 +1,3 @@
-export { default } from './ProgressBar.tsx'
+export { default } from './ProgressBar.jsx'
 
-export type { ProgressBarOptions } from './ProgressBar.tsx'
+export type { ProgressBarOptions } from './ProgressBar.jsx'

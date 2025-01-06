@@ -1,2 +1,2 @@
-export { default } from './Informer.tsx'
-export type { InformerOptions } from './Informer.tsx'
+export { default } from './Informer.jsx'
+export type { InformerOptions } from './Informer.jsx'

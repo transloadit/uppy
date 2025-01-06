@@ -13,19 +13,19 @@ import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
 import classNames from 'classnames'
 import type { ValidateableFile } from '@uppy/core/lib/Restricter.js'
 import remoteFileObjToLocal from '@uppy/utils/lib/remoteFileObjToLocal'
-import SearchInput from '../SearchInput.tsx'
-import Browser from '../Browser.tsx'
+import SearchInput from '../SearchInput.jsx'
+import Browser from '../Browser.jsx'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../../package.json'
-import PartialTreeUtils from '../utils/PartialTreeUtils/index.ts'
-import shouldHandleScroll from '../utils/shouldHandleScroll.ts'
-import handleError from '../utils/handleError.ts'
-import getClickedRange from '../utils/getClickedRange.ts'
-import FooterActions from '../FooterActions.tsx'
-import addFiles from '../utils/addFiles.ts'
-import getCheckedFilesWithPaths from '../utils/PartialTreeUtils/getCheckedFilesWithPaths.ts'
+import PartialTreeUtils from '../utils/PartialTreeUtils/index.js'
+import shouldHandleScroll from '../utils/shouldHandleScroll.js'
+import handleError from '../utils/handleError.js'
+import getClickedRange from '../utils/getClickedRange.js'
+import FooterActions from '../FooterActions.jsx'
+import addFiles from '../utils/addFiles.js'
+import getCheckedFilesWithPaths from '../utils/PartialTreeUtils/getCheckedFilesWithPaths.js'
 
 const defaultState: UnknownSearchProviderPluginState = {
   loading: false,

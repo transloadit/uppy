@@ -10,8 +10,8 @@ import type {
   PartialTreeFolderNode,
 } from '@uppy/core/lib/Uppy.js'
 import { useEffect, useState } from 'preact/hooks'
-import Item from './Item/index.tsx'
-import ProviderView from './ProviderView/ProviderView.tsx'
+import Item from './Item/index.jsx'
+import ProviderView from './ProviderView/ProviderView.jsx'
 
 type BrowserProps<M extends Meta, B extends Body> = {
   displayedPartialTree: (PartialTreeFile | PartialTreeFolderNode)[]

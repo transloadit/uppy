@@ -1,5 +1,5 @@
-import NetworkError from './NetworkError.ts'
-import ProgressTimeout from './ProgressTimeout.ts'
+import NetworkError from './NetworkError.js'
+import ProgressTimeout from './ProgressTimeout.js'
 
 const noop = (): void => {}
 

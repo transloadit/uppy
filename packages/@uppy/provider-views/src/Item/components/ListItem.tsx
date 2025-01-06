@@ -4,7 +4,7 @@ import type {
   PartialTreeId,
 } from '@uppy/core/lib/Uppy.js'
 import { h } from 'preact'
-import ItemIcon from './ItemIcon.tsx'
+import ItemIcon from './ItemIcon.jsx'
 
 // if folder:
 //   + checkbox (selects all files from folder)

@@ -1,4 +1,4 @@
-import getFilesAndDirectoriesFromDirectory from './getFilesAndDirectoriesFromDirectory.ts'
+import getFilesAndDirectoriesFromDirectory from './getFilesAndDirectoriesFromDirectory.js'
 
 interface FileSystemFileHandle extends FileSystemHandle {
   getFile(): Promise<File>
