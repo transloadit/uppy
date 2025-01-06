@@ -6,8 +6,8 @@ import VirtualList from '@uppy/utils/lib/VirtualList'
 import type { UppyFile, Uppy, State } from '@uppy/core'
 import type { I18n } from '@uppy/utils/lib/Translator'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
-import FileItem from './FileItem/index.tsx'
-import type { DashboardState } from '../Dashboard.ts'
+import FileItem from './FileItem/index.jsx'
+import type { DashboardState } from '../Dashboard.js'
 
 type FileListProps<M extends Meta, B extends Body> = {
   id: string

@@ -5,7 +5,7 @@ import { renderHook, act } from '@testing-library/react'
 
 import Uppy from '@uppy/core'
 import type { Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
-import { useUppyEvent } from './index.ts'
+import { useUppyEvent } from './index.js'
 
 describe('useUppyEvent', () => {
   it('should return and update value with the correct type', () => {

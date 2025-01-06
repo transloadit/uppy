@@ -1,7 +1,7 @@
 import { h } from 'preact'
-import FilePreview from '../../FilePreview.tsx'
-import MetaErrorMessage from '../MetaErrorMessage.tsx'
-import getFileTypeIcon from '../../../utils/getFileTypeIcon.tsx'
+import FilePreview from '../../FilePreview.jsx'
+import MetaErrorMessage from '../MetaErrorMessage.jsx'
+import getFileTypeIcon from '../../../utils/getFileTypeIcon.jsx'
 
 type $TSFixMe = any
 

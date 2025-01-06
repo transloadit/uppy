@@ -1,4 +1,4 @@
-import type { UppyFile } from './UppyFile.ts'
+import type { UppyFile } from './UppyFile.js'
 
 export function filterNonFailedFiles(
   files: UppyFile<any, any>[],

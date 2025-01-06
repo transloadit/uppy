@@ -1,4 +1,4 @@
-import isDOMElement from './isDOMElement.ts'
+import isDOMElement from './isDOMElement.js'
 
 function findDOMElement<T>(
   element: T,

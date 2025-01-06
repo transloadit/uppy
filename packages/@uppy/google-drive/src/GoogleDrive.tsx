@@ -14,8 +14,8 @@ import type {
   UnknownProviderPlugin,
   UnknownProviderPluginState,
 } from '@uppy/core/lib/Uppy.js'
-import DriveProviderViews from './DriveProviderViews.ts'
-import locale from './locale.ts'
+import DriveProviderViews from './DriveProviderViews.js'
+import locale from './locale.js'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'

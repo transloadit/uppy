@@ -7,7 +7,7 @@ import fetchWithNetworkError from '@uppy/utils/lib/fetchWithNetworkError'
 import type {
   AssemblyResponse,
   OptionsWithRestructuredFields,
-} from './index.ts'
+} from './index.js'
 
 const ASSEMBLIES_ENDPOINT = '/assemblies'
 

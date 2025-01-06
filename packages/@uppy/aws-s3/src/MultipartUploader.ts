@@ -1,7 +1,7 @@
 import type { Uppy } from '@uppy/core'
 import { AbortController } from '@uppy/utils/lib/AbortController'
 import type { Meta, Body, UppyFile } from '@uppy/utils/lib/UppyFile'
-import type { HTTPCommunicationQueue } from './HTTPCommunicationQueue.ts'
+import type { HTTPCommunicationQueue } from './HTTPCommunicationQueue.js'
 
 const MB = 1024 * 1024
 

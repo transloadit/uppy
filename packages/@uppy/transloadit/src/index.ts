@@ -6,11 +6,11 @@ import type { DefinePluginOpts, PluginOpts } from '@uppy/core/lib/BasePlugin.js'
 import Tus, { type TusDetailedError, type TusOpts } from '@uppy/tus'
 import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
 import type { Uppy } from '@uppy/core'
-import Assembly from './Assembly.ts'
-import Client, { AssemblyError } from './Client.ts'
-import AssemblyWatcher from './AssemblyWatcher.ts'
+import Assembly from './Assembly.js'
+import Client, { AssemblyError } from './Client.js'
+import AssemblyWatcher from './AssemblyWatcher.js'
 
-import locale from './locale.ts'
+import locale from './locale.js'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'

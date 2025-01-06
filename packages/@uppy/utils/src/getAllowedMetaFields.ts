@@ -1,4 +1,4 @@
-import type { Meta } from './UppyFile.ts'
+import type { Meta } from './UppyFile.js'
 
 export default function getAllowedMetaFields<M extends Meta>(
   fields: string[] | boolean,

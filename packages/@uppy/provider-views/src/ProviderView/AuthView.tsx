@@ -2,8 +2,8 @@ import { h } from 'preact'
 import { useCallback } from 'preact/hooks'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import type { I18n } from '@uppy/utils/lib/Translator'
-import type { Opts } from './ProviderView.ts'
-import type ProviderViews from './ProviderView.ts'
+import type { Opts } from './ProviderView.js'
+import type ProviderViews from './ProviderView.js'
 
 type AuthViewProps<M extends Meta, B extends Body> = {
   loading: boolean | string

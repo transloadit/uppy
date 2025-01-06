@@ -7,7 +7,7 @@ import classNames from 'classnames'
 import prettierBytes from '@transloadit/prettier-bytes'
 import prettyETA from '@uppy/utils/lib/prettyETA'
 
-import statusBarStates from './StatusBarStates.ts'
+import statusBarStates from './StatusBarStates.js'
 
 const DOT = `\u00B7`
 const renderDot = (): string => ` ${DOT} `

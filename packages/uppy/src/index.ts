@@ -1,4 +1,4 @@
-export * from './bundle.ts'
+export * from './bundle.js'
 
 // Core
 export type { UppyOptions, UIPluginOptions } from '@uppy/core'

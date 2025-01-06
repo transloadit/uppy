@@ -2,14 +2,14 @@
 import type { I18n } from '@uppy/utils/lib/Translator'
 import { h, Component, type ComponentChild } from 'preact'
 import type { HTMLAttributes } from 'preact/compat'
-import SnapshotButton from './SnapshotButton.tsx'
-import RecordButton from './RecordButton.tsx'
-import RecordingLength from './RecordingLength.tsx'
+import SnapshotButton from './SnapshotButton.jsx'
+import RecordButton from './RecordButton.jsx'
+import RecordingLength from './RecordingLength.jsx'
 import VideoSourceSelect, {
   type VideoSourceSelectProps,
-} from './VideoSourceSelect.tsx'
-import SubmitButton from './SubmitButton.tsx'
-import DiscardButton from './DiscardButton.tsx'
+} from './VideoSourceSelect.jsx'
+import SubmitButton from './SubmitButton.jsx'
+import DiscardButton from './DiscardButton.jsx'
 
 function isModeAvailable<T>(modes: T[], mode: any): mode is T {
   return modes.includes(mode)

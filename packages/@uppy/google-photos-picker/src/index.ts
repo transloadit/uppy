@@ -1,1 +1,1 @@
-export { default } from './GooglePhotosPicker.tsx'
+export { default } from './GooglePhotosPicker.jsx'

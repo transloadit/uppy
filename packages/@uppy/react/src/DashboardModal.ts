@@ -3,8 +3,8 @@ import type React from 'react'
 import DashboardPlugin, { type DashboardOptions } from '@uppy/dashboard'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import type { Uppy } from '@uppy/core'
-import getHTMLProps from './getHTMLProps.ts'
-import nonHtmlPropsHaveChanged from './nonHtmlPropsHaveChanged.ts'
+import getHTMLProps from './getHTMLProps.js'
+import nonHtmlPropsHaveChanged from './nonHtmlPropsHaveChanged.js'
 
 type DashboardInlineOptions<M extends Meta, B extends Body> = Omit<
   DashboardOptions<M, B> & { inline: false },

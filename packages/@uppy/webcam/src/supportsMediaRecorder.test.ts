@@ -1,6 +1,6 @@
 /* eslint-disable max-classes-per-file, class-methods-use-this, @typescript-eslint/ban-ts-comment */
 import { describe, expect, it } from 'vitest'
-import supportsMediaRecorder from './supportsMediaRecorder.ts'
+import supportsMediaRecorder from './supportsMediaRecorder.js'
 
 describe('supportsMediaRecorder', () => {
   it('should return true if MediaRecorder is supported', () => {

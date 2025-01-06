@@ -11,7 +11,7 @@ import WebcamPlugin from '@uppy/webcam'
 import Url from '@uppy/url'
 
 import resizeObserverPolyfill from 'resize-observer-polyfill'
-import DashboardPlugin from './index.ts'
+import DashboardPlugin from './index.js'
 
 type $TSFixMe = any
 

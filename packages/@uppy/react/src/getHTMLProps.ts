@@ -1,5 +1,5 @@
 // List taken from React.HTMLAttributes supported properties:
-// https://unpkg.com/@types/react@17.0.22/index.d.ts:1821
+// https://unpkg.com/@types/react@17.0.22/index.d.js:1821
 const reactSupportedHtmlAttr = [
   // React-specific Attributes
   'defaultChecked',

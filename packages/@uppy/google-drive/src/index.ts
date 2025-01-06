@@ -1,2 +1,2 @@
-export { default } from './GoogleDrive.tsx'
-export type { GoogleDriveOptions } from './GoogleDrive.tsx'
+export { default } from './GoogleDrive.jsx'
+export type { GoogleDriveOptions } from './GoogleDrive.jsx'

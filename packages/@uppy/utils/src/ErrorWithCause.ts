@@ -1,5 +1,5 @@
-import type NetworkError from './NetworkError.ts'
-import hasProperty from './hasProperty.ts'
+import type NetworkError from './NetworkError.js'
+import hasProperty from './hasProperty.js'
 
 class ErrorWithCause extends Error {
   public isNetworkError: boolean
