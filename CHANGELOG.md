@@ -12,6 +12,24 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 4.10.0
+
+Released: 2025-01-06
+
+| Package              | Version | Package              | Version |
+| -------------------- | ------- | -------------------- | ------- |
+| @uppy/companion      |   5.4.0 | @uppy/store-redux    |   4.0.2 |
+| @uppy/core           |   4.3.2 | @uppy/url            |   4.1.3 |
+| @uppy/dashboard      |   4.2.0 | @uppy/webdav         |   0.2.0 |
+| @uppy/provider-views |   4.2.1 | uppy                 |  4.10.0 |
+| @uppy/react          |   4.1.0 |                      |         |
+
+- @uppy/react: allow React 19 as peer dependency (Shubs / #5556)
+- @uppy/webdav: add plugin icon (Merlijn Vos / #5555)
+- @uppy/companion: pass fetched origins to window.postMessage() (Merlijn Vos / #5529)
+- @uppy/core,@uppy/dashboard,@uppy/provider-views,@uppy/store-redux,@uppy/url: build(deps): bump nanoid from 5.0.7 to 5.0.9 (dependabot[bot] / #5544)
+
+
 ## 4.9.0
 
 Released: 2024-12-17
