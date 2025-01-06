@@ -1,5 +1,12 @@
 # @uppy/svelte
 
+## 4.2.0
+
+Released: 2025-01-06
+Included in: Uppy v4.11.0
+
+- examples,@uppy/svelte: build(deps-dev): bump @sveltejs/kit from 2.5.17 to 2.8.3 (dependabot[bot] / #5526)
+
 ## 4.1.1
 
 Released: 2024-10-31
