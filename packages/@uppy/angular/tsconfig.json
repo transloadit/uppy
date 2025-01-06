@@ -2,9 +2,6 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "paths": {
-      "@uppy/angular": ["dist/uppy/angular"],
-    },
     "baseUrl": "./",
     "outDir": "./dist/out-tsc",
     "forceConsistentCasingInFileNames": true,

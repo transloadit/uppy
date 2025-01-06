@@ -3,11 +3,6 @@
   "compilerOptions": {
     "emitDeclarationOnly": false,
     "noEmit": true,
-    "paths": {
-      "@uppy/store-default": ["../store-default/src/index.js"],
-      "@uppy/store-default/lib/*": ["../store-default/src/*"],
-      "@uppy/utils/lib/*": ["../utils/src/*"],
-    },
   },
   "include": ["./package.json", "./src/**/*.*"],
   "references": [
