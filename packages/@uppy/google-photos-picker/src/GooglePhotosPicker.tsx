@@ -42,6 +42,7 @@ export default class GooglePhotosPicker<M extends Meta, B extends Body>
     this.id = this.opts.id || 'GooglePhotosPicker'
     this.storage = this.opts.storage || tokenStorage
 
+    this.defaultLocale = locale
     this.i18nInit()
     this.title = this.i18n('pluginNameGooglePhotos')
 
