@@ -105,9 +105,10 @@ function fetchYouTubeVideoMetadata(videoUrl) {
     "https://us-east4-maestro-218920.cloudfunctions.net/getYoutubeURLMeta2",
     "https://us-east4-maestro-218920.cloudfunctions.net/getYoutubeURLMeta",
     // "https://us-east4-maestro-218920.cloudfunctions.net/getYoutubeURLMetaNew",
-    "https://us-east4-maestro-218920.cloudfunctions.net/getYoutubeURLMeta5",
+    "https://us-central1-maestro-218920.cloudfunctions.net/getYoutubeURLMeta5",
     "https://us-east1-maestro-218920.cloudfunctions.net/getYoutubeURLMeta3",
-    "https://us-west1-maestro-218920.cloudfunctions.net/getYoutubeURLMeta4"
+    "https://us-west1-maestro-218920.cloudfunctions.net/getYoutubeURLMeta4",
+    "https://us-east4-maestro-218920.cloudfunctions.net/getYoutubeURLMetaNew",
   ]
 
   const baseOptions = {
@@ -175,7 +176,7 @@ function fetchYouTubeVideoMetadata(videoUrl) {
     }
 
     const urlType = identifyLinkType(url);
-    const urlMeta = urlType === 'direct-url' ? await getURLMeta(url, !allowLocalUrls) : await fetchYouTubeVideoMetadata(url, urlType);
+    const urlMeta = urlType === 'direct-url' ? await getURLMeta(url, !allowLocalUrls) : await fetchYouTubeVideoMetadata(url);
     // const urlMeta =await fetchYouTubeVideoMetadata(url)
 
     return res.json(urlMeta)
@@ -206,7 +207,7 @@ const get = async (req, res) => {
   const urlType = identifyLinkType(url);
 
   async function getSize() {
-    const { size } = urlType === 'direct-url' ? await getURLMeta(url, !allowLocalUrls) : await fetchYouTubeVideoMetadata(url, urlType);
+    const { size } = urlType === 'direct-url' ? await getURLMeta(url, !allowLocalUrls) : await fetchYouTubeVideoMetadata(url);
     return size;
   }
 
