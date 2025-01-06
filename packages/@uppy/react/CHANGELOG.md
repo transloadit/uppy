@@ -1,5 +1,12 @@
 # @uppy/react
 
+## 4.1.0
+
+Released: 2025-01-06
+Included in: Uppy v4.10.0
+
+- @uppy/react: allow React 19 as peer dependency (Shubs / #5556)
+
 ## 4.0.4
 
 Released: 2024-12-05

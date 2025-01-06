@@ -1,5 +1,12 @@
 # @uppy/companion
 
+## 5.4.0
+
+Released: 2025-01-06
+Included in: Uppy v4.10.0
+
+- @uppy/companion: pass fetched origins to window.postMessage() (Merlijn Vos / #5529)
+
 ## 5.2.0
 
 Released: 2024-12-05
