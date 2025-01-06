@@ -265,8 +265,8 @@ interface ProgressDetailsProps {
   numUploads: number
   complete: number
   totalUploadedSize: number
-  totalSize: number
-  totalETA: number
+  totalSize: number | null
+  totalETA: number | null
 }
 
 function ProgressDetails(props: ProgressDetailsProps) {
@@ -274,6 +274,8 @@ function ProgressDetails(props: ProgressDetailsProps) {
     props
 
   const ifShowFilesUploadedOfTotal = numUploads > 1
+
+  const totalUploadedSizeStr = prettierBytes(totalUploadedSize)
 
   return (
     <div className="uppy-StatusBar-statusSecondary">
@@ -289,16 +291,19 @@ function ProgressDetails(props: ProgressDetailsProps) {
         */}
         {ifShowFilesUploadedOfTotal && renderDot()}
 
-        {i18n('dataUploadedOfTotal', {
-          complete: prettierBytes(totalUploadedSize),
-          total: prettierBytes(totalSize),
-        })}
+        {totalSize != null ?
+          i18n('dataUploadedOfTotal', {
+            complete: totalUploadedSizeStr,
+            total: prettierBytes(totalSize),
+          })
+        : i18n('dataUploadedOfUnknown', { complete: totalUploadedSizeStr })}
 
         {renderDot()}
 
-        {i18n('xTimeLeft', {
-          time: prettyETA(totalETA),
-        })}
+        {totalETA != null &&
+          i18n('xTimeLeft', {
+            time: prettyETA(totalETA),
+          })}
       </span>
     </div>
   )
@@ -364,8 +369,8 @@ interface ProgressBarUploadingProps {
   numUploads: number
   complete: number
   totalUploadedSize: number
-  totalSize: number
-  totalETA: number
+  totalSize: number | null
+  totalETA: number | null
   startUpload: () => void
 }
 
@@ -427,7 +432,9 @@ function ProgressBarUploading(props: ProgressBarUploadingProps) {
       : null}
       <div className="uppy-StatusBar-status">
         <div className="uppy-StatusBar-statusPrimary">
-          {supportsUploadProgress ? `${title}: ${totalProgress}%` : title}
+          {supportsUploadProgress && totalProgress !== 0 ?
+            `${title}: ${totalProgress}%`
+          : title}
         </div>
 
         {renderProgressDetails()}

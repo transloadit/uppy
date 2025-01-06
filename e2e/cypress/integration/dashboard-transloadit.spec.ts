@@ -348,7 +348,12 @@ describe('Dashboard with Transloadit', () => {
 
   it('should complete when resuming after pause', () => {
     cy.intercept({ path: '/assemblies', method: 'POST' }).as('createAssemblies')
-    cy.intercept('/resumable/*').as('resumable')
+    cy.intercept({ path: '/resumable/files/', method: 'POST' }).as(
+      'firstUpload',
+    )
+    cy.intercept({ path: '/resumable/files/*', method: 'PATCH' }).as(
+      'secondUpload',
+    )
 
     cy.get('@file-input').selectFile(
       [
@@ -361,12 +366,16 @@ describe('Dashboard with Transloadit', () => {
 
     cy.wait('@createAssemblies')
 
-    cy.get('button[data-cy=togglePauseResume]').click()
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(300) // Wait an arbitrary amount of time as a user would do.
+    // wait for the upload to start, then pause
+    cy.wait('@firstUpload')
     cy.get('button[data-cy=togglePauseResume]').click()
 
-    cy.wait('@resumable')
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(300) // Wait an arbitrary amount of time as a user would do.
+
+    cy.get('button[data-cy=togglePauseResume]').click()
+
+    cy.wait('@secondUpload')
 
     cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Complete')
   })

@@ -1,6 +1,6 @@
 /* global cy */
 
-const interceptCompanionUrlRequest = () =>
+export const interceptCompanionUrlRequest = () =>
   cy
     .intercept({ method: 'POST', url: 'http://localhost:3020/url/get' })
     .as('url')

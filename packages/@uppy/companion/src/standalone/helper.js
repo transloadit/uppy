@@ -152,6 +152,7 @@ const getConfigFromEnv = () => {
       validHosts,
     },
     enableUrlEndpoint: process.env.COMPANION_ENABLE_URL_ENDPOINT === 'true',
+    enableGooglePickerEndpoint: process.env.COMPANION_ENABLE_GOOGLE_PICKER_ENDPOINT === 'true',
     periodicPingUrls: process.env.COMPANION_PERIODIC_PING_URLS ? process.env.COMPANION_PERIODIC_PING_URLS.split(',') : [],
     periodicPingInterval: process.env.COMPANION_PERIODIC_PING_INTERVAL
       ? parseInt(process.env.COMPANION_PERIODIC_PING_INTERVAL, 10) : undefined,

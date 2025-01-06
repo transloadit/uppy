@@ -43,6 +43,53 @@ async function getStats ({ id, token }) {
   return stats
 }
 
+
+async function streamGoogleFile({ token, id: idIn }) {
+  const client = await getClient({ token })
+
+  const { mimeType, id, exportLinks } = await getStats({ id: idIn, token })
+
+  let stream
+
+  if (isGsuiteFile(mimeType)) {
+    const mimeType2 = getGsuiteExportType(mimeType)
+    logger.info(`calling google file export for ${id} to ${mimeType2}`, 'provider.drive.export')
+
+    // GSuite files exported with large converted size results in error using standard export method.
+    // Error message: "This file is too large to be exported.".
+    // Issue logged in Google APIs: https://github.com/googleapis/google-api-nodejs-client/issues/3446
+    // Implemented based on the answer from StackOverflow: https://stackoverflow.com/a/59168288
+    const mimeTypeExportLink = exportLinks?.[mimeType2]
+    if (mimeTypeExportLink) {
+      const gSuiteFilesClient = (await got).extend({
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      })
+      stream = gSuiteFilesClient.stream.get(mimeTypeExportLink, { responseType: 'json' })
+    } else {
+      stream = client.stream.get(`files/${encodeURIComponent(id)}/export`, { searchParams: { supportsAllDrives: true, mimeType: mimeType2 }, responseType: 'json' })
+    }
+  } else {
+    stream = client.stream.get(`files/${encodeURIComponent(id)}`, { searchParams: { alt: 'media', supportsAllDrives: true }, responseType: 'json' })
+  }
+
+  await prepareStream(stream)
+  return { stream }
+}
+
+async function getGoogleFileSize({ id, token }) {
+  const { mimeType, size } = await getStats({ id, token })
+
+  if (isGsuiteFile(mimeType)) {
+    // GSuite file sizes cannot be predetermined (but are max 10MB)
+    // e.g. Transfer-Encoding: chunked
+    return undefined
+  }
+
+  return parseInt(size, 10)
+}
+
 /**
  * Adapter for API https://developers.google.com/drive/api/v3/
  */
@@ -124,7 +171,7 @@ class Drive extends Provider {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  async download ({ id: idIn, token }) {
+  async download ({ id, token }) {
     if (mockAccessTokenExpiredError != null) {
       logger.warn(`Access token: ${token}`)
 
@@ -135,57 +182,23 @@ class Drive extends Provider {
     }
 
     return withGoogleErrorHandling(Drive.oauthProvider, 'provider.drive.download.error', async () => {
-      const client = await getClient({ token })
-
-      const { mimeType, id, exportLinks } = await getStats({ id: idIn, token })
-
-      let stream
-
-      if (isGsuiteFile(mimeType)) {
-        const mimeType2 = getGsuiteExportType(mimeType)
-        logger.info(`calling google file export for ${id} to ${mimeType2}`, 'provider.drive.export')
-
-        // GSuite files exported with large converted size results in error using standard export method.
-        // Error message: "This file is too large to be exported.".
-        // Issue logged in Google APIs: https://github.com/googleapis/google-api-nodejs-client/issues/3446
-        // Implemented based on the answer from StackOverflow: https://stackoverflow.com/a/59168288
-        const mimeTypeExportLink = exportLinks?.[mimeType2]
-        if (mimeTypeExportLink) {
-          const gSuiteFilesClient = (await got).extend({
-            headers: {
-              authorization: `Bearer ${token}`,
-            },
-          })
-          stream = gSuiteFilesClient.stream.get(mimeTypeExportLink, { responseType: 'json' })
-        } else {
-          stream = client.stream.get(`files/${encodeURIComponent(id)}/export`, { searchParams: { supportsAllDrives: true, mimeType: mimeType2 }, responseType: 'json' })
-        }
-      } else {
-        stream = client.stream.get(`files/${encodeURIComponent(id)}`, { searchParams: { alt: 'media', supportsAllDrives: true }, responseType: 'json' })
-      }
-
-      await prepareStream(stream)
-      return { stream }
+      return streamGoogleFile({ token, id })
     })
   }
 
   // eslint-disable-next-line class-methods-use-this
   async size ({ id, token }) {
-    return withGoogleErrorHandling(Drive.oauthProvider, 'provider.drive.size.error', async () => {
-      const { mimeType, size } = await getStats({ id, token })
-
-      if (isGsuiteFile(mimeType)) {
-        // GSuite file sizes cannot be predetermined (but are max 10MB)
-        // e.g. Transfer-Encoding: chunked
-        return undefined
-      }
-
-      return parseInt(size, 10)
-    })
+    return withGoogleErrorHandling(Drive.oauthProvider, 'provider.drive.size.error', async () => (
+      getGoogleFileSize({ id, token })
+    ))
   }
 }
 
 Drive.prototype.logout = logout
 Drive.prototype.refreshToken = refreshToken
 
-module.exports = Drive
+module.exports = {
+  Drive,
+  streamGoogleFile,
+  getGoogleFileSize,
+}

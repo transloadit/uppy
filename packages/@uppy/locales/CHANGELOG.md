@@ -1,5 +1,41 @@
 # @uppy/locales
 
+## 4.4.0
+
+Released: 2024-12-17
+Included in: Uppy v4.9.0
+
+- @uppy/google-drive-picker,@uppy/google-photos-picker,@uppy/locales: Add missing Google Picker locale entries (Merlijn Vos / #5552)
+- @uppy/locales: Add missing French locale entries (Steven SAN / #5549)
+
+## 4.3.1
+
+Released: 2024-12-05
+Included in: Uppy v4.8.0
+
+- @uppy/audio,@uppy/aws-s3,@uppy/box,@uppy/companion-client,@uppy/compressor,@uppy/core,@uppy/dashboard,@uppy/drag-drop,@uppy/drop-target,@uppy/dropbox,@uppy/facebook,@uppy/file-input,@uppy/form,@uppy/golden-retriever,@uppy/google-drive,@uppy/google-photos,@uppy/image-editor,@uppy/informer,@uppy/instagram,@uppy/locales,@uppy/onedrive,@uppy/progress-bar,@uppy/provider-views,@uppy/react,@uppy/remote-sources,@uppy/screen-capture,@uppy/status-bar,@uppy/store-default,@uppy/thumbnail-generator,@uppy/transloadit,@uppy/tus,@uppy/unsplash,@uppy/url,@uppy/utils,@uppy/vue,@uppy/webcam,@uppy/xhr-upload,@uppy/zoom: cleanup tsconfig (Mikael Finstad / #5520)
+
+## 4.3.0
+
+Released: 2024-11-11
+Included in: Uppy v4.7.0
+
+- @uppy/locales: Add ms_MY (Malay) locale (Salimi / #5488)
+
+## 4.2.1
+
+Released: 2024-10-31
+Included in: Uppy v4.6.0
+
+- @uppy/aws-s3,@uppy/box,@uppy/companion-client,@uppy/core,@uppy/dashboard,@uppy/drag-drop,@uppy/dropbox,@uppy/facebook,@uppy/file-input,@uppy/form,@uppy/golden-retriever,@uppy/google-drive,@uppy/google-photos,@uppy/image-editor,@uppy/informer,@uppy/instagram,@uppy/locales,@uppy/onedrive,@uppy/progress-bar,@uppy/provider-views,@uppy/react-native,@uppy/react,@uppy/redux-dev-tools,@uppy/screen-capture,@uppy/status-bar,@uppy/store-default,@uppy/store-redux,@uppy/svelte,@uppy/thumbnail-generator,@uppy/transloadit,@uppy/tus,@uppy/unsplash,@uppy/url,@uppy/utils,@uppy/vue,@uppy/webcam,@uppy/xhr-upload,@uppy/zoom: Fix links (Anthony Veaudry / #5492)
+
+## 4.2.0
+
+Released: 2024-10-15
+Included in: Uppy v4.5.0
+
+- @uppy/locales: Update packages/@uppy/locales/src/fr_FR.ts (Zéfyx / #5472)
+
 ## 4.1.0
 
 Released: 2024-08-29

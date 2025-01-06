@@ -334,6 +334,8 @@ export default class Transloadit<
     addPluginVersion('Facebook', 'uppy-facebook')
     addPluginVersion('GoogleDrive', 'uppy-google-drive')
     addPluginVersion('GooglePhotos', 'uppy-google-photos')
+    addPluginVersion('GoogleDrivePicker', 'uppy-google-drive-picker')
+    addPluginVersion('GooglePhotosPicker', 'uppy-google-photos-picker')
     addPluginVersion('Instagram', 'uppy-instagram')
     addPluginVersion('OneDrive', 'uppy-onedrive')
     addPluginVersion('Zoom', 'uppy-zoom')
@@ -696,12 +698,13 @@ export default class Transloadit<
       this.assembly = new Assembly(previousAssembly, this.#rateLimitedQueue)
       this.assembly.status = previousAssembly
       this.setPluginState({ files, results })
+      return files
     }
 
     // Set up the Assembly instances and AssemblyWatchers for existing Assemblies.
-    const restoreAssemblies = () => {
+    const restoreAssemblies = (ids: string[]) => {
       this.#createAssemblyWatcher(previousAssembly.assembly_id)
-      this.#connectAssembly(this.assembly!)
+      this.#connectAssembly(this.assembly!, ids)
     }
 
     // Force-update Assembly to check for missed events.
@@ -711,8 +714,8 @@ export default class Transloadit<
 
     // Restore all Assembly state.
     this.restored = (async () => {
-      restoreState()
-      restoreAssemblies()
+      const files = restoreState()
+      restoreAssemblies(Object.keys(files))
       await updateAssembly()
       this.restored = null
     })()
@@ -722,7 +725,7 @@ export default class Transloadit<
     })
   }
 
-  #connectAssembly(assembly: Assembly) {
+  #connectAssembly(assembly: Assembly, ids: UppyFile<M, B>['id'][]) {
     const { status } = assembly
     const id = status.assembly_id
     this.assembly = assembly
@@ -754,7 +757,7 @@ export default class Transloadit<
           // per-file progress as well. We cannot use this here or otherwise progress from
           // imported files would not be counted towards the total progress because imported
           // files are not registered with Uppy.
-          for (const file of this.uppy.getFiles()) {
+          for (const file of this.uppy.getFilesByIds(ids)) {
             this.uppy.emit('postprocess-progress', file, {
               mode: 'determinate',
               value: details.progress_combined / 100,
@@ -816,7 +819,7 @@ export default class Transloadit<
         this.uppy.emit('preprocess-complete', file)
       })
       this.#createAssemblyWatcher(assembly.status.assembly_id)
-      this.#connectAssembly(assembly)
+      this.#connectAssembly(assembly, fileIDs)
     } catch (err) {
       fileIDs.forEach((fileID) => {
         const file = this.uppy.getFile(fileID)

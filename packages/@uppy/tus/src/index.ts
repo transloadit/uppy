@@ -31,6 +31,8 @@ type RestTusUploadOptions = Omit<
 
 export type TusDetailedError = tus.DetailedError
 
+export type TusBody = { xhr: XMLHttpRequest }
+
 export interface TusOpts<M extends Meta, B extends Body>
   extends PluginOpts,
     RestTusUploadOptions {
@@ -40,7 +42,10 @@ export interface TusOpts<M extends Meta, B extends Body>
     | ((file: UppyFile<M, B>) => Record<string, string>)
   limit?: number
   chunkSize?: number
-  onBeforeRequest?: (req: tus.HttpRequest, file: UppyFile<M, B>) => void
+  onBeforeRequest?: (
+    req: tus.HttpRequest,
+    file: UppyFile<M, B>,
+  ) => void | Promise<void>
   onShouldRetry?: (
     err: tus.DetailedError,
     retryAttempt: number,
@@ -287,7 +292,6 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
         this.resetUploaderReferences(file.id)
         queuedRequest?.abort()
 
-        this.uppy.emit('upload-error', file, err)
         if (typeof opts.onError === 'function') {
           opts.onError(err)
         }
@@ -307,17 +311,25 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
         })
       }
 
-      uploadOptions.onSuccess = () => {
-        const uploadResp = {
+      uploadOptions.onSuccess = (payload) => {
+        const uploadResp: UppyFile<M, B>['response'] = {
           uploadURL: upload.url ?? undefined,
           status: 200,
-          body: {} as B,
+          body: {
+            // We have to put `as XMLHttpRequest` because tus-js-client
+            // returns `any`, as the type differs in Node.js and the browser.
+            // In the browser it's always `XMLHttpRequest`.
+            xhr: payload.lastResponse.getUnderlyingObject() as XMLHttpRequest,
+            // Body extends Record<string, unknown> and thus `xhr` is not known
+            // but we export the `TusBody` type, which people pass as a generic into the Uppy class,
+            // so on the implementer side it works as expected.
+          } as unknown as B,
         }
+
+        this.uppy.emit('upload-success', this.uppy.getFile(file.id), uploadResp)
 
         this.resetUploaderReferences(file.id)
         queuedRequest.done()
-
-        this.uppy.emit('upload-success', this.uppy.getFile(file.id), uploadResp)
 
         if (upload.url) {
           // @ts-expect-error not typed in tus-js-client
@@ -325,7 +337,7 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
           this.uppy.log(`Download ${name} from ${upload.url}`)
         }
         if (typeof opts.onSuccess === 'function') {
-          opts.onSuccess()
+          opts.onSuccess(payload)
         }
 
         resolve(upload)
@@ -345,7 +357,7 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
           }
         } else if (
           status != null &&
-          status > 400 &&
+          status >= 400 &&
           status < 500 &&
           status !== 409 &&
           status !== 423

@@ -1,9 +1,9 @@
 const express = require('express')
 
 const { startDownUpload } = require('../helpers/upload')
-const { prepareStream } = require('../helpers/utils')
+const { downloadURL } = require('../download')
 const { validateURL } = require('../helpers/request')
-const { getURLMeta, getProtectedGot } = require('../helpers/request')
+const { getURLMeta } = require('../helpers/request')
 const logger = require('../logger')
 
 /**
@@ -11,27 +11,6 @@ const logger = require('../logger')
  * @param {Error} err
  * @param {string | Buffer | Buffer[]} chunk
  */
-
-/**
- * Downloads the content in the specified url, and passes the data
- * to the callback chunk by chunk.
- *
- * @param {string} url
- * @param {boolean} allowLocalIPs
- * @param {string} traceId
- * @returns {Promise}
- */
-const downloadURL = async (url, allowLocalIPs, traceId) => {
-  try {
-    const protectedGot = await getProtectedGot({ allowLocalIPs })
-    const stream = protectedGot.stream.get(url, { responseType: 'json' })
-    const { size } = await prepareStream(stream)
-    return { stream, size }
-  } catch (err) {
-    logger.error(err, 'controller.url.download.error', traceId)
-    throw err
-  }
-}
 
 /**
  * Fetches the size and content type of a URL

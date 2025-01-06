@@ -108,10 +108,32 @@ exports.getCredentialsOverrideMiddleware = (providers, companionOptions) => {
 
       const credentials = await fetchProviderKeys(providerName, companionOptions, payload)
 
+      // Besides the key and secret the fetched credentials can also contain `origins`,
+      // which is an array of strings of allowed origins to prevent any origin from getting the OAuth
+      // token through window.postMessage (see comment in connect.js).
+      // postMessage happens in send-token.js, which is a different request, so we need to put the allowed origins
+      // on the encrypted session state to access it later there.
+      if (Array.isArray(credentials.origins) && credentials.origins.length > 0) {
+        const decodedState = oAuthState.decodeState(state, companionOptions.secret)
+        decodedState.customerDefinedAllowedOrigins = credentials.origins
+        const newState = oAuthState.encodeState(decodedState, companionOptions.secret)
+        // @ts-expect-error untyped
+        req.session.grant = {
+          // @ts-expect-error untyped
+          ...req.session.grant,
+          dynamic: {
+            // @ts-expect-error untyped
+            ...req.session.grant?.dynamic,
+            state: newState,
+          },
+        }
+      }
+
       res.locals.grant = {
         dynamic: {
           key: credentials.key,
           secret: credentials.secret,
+          origins: credentials.origins,
         },
       }
 

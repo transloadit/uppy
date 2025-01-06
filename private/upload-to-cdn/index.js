@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Upload Uppy releases to Edgly.net CDN. Copyright (c) 2018, Transloadit Ltd.
+// Upload Uppy releases to tlcdn.com (CDN). Copyright (c) 2018, Transloadit Ltd.
 //
 // This file:
 //

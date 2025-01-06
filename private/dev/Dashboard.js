@@ -15,7 +15,10 @@ import DropTarget from '@uppy/drop-target'
 import Audio from '@uppy/audio'
 import Compressor from '@uppy/compressor'
 import GoogleDrive from '@uppy/google-drive'
+import Webdav from '@uppy/webdav'
 import english from '@uppy/locales/lib/en_US.js'
+import GoogleDrivePicker from '@uppy/google-drive-picker'
+import GooglePhotosPicker from '@uppy/google-photos-picker'
 /* eslint-enable import/no-extraneous-dependencies */
 
 import generateSignatureIfSecret from './generateSignatureIfSecret.js'
@@ -30,6 +33,9 @@ const {
   VITE_TRANSLOADIT_SECRET: TRANSLOADIT_SECRET,
   VITE_TRANSLOADIT_TEMPLATE: TRANSLOADIT_TEMPLATE,
   VITE_TRANSLOADIT_SERVICE_URL: TRANSLOADIT_SERVICE_URL,
+  VITE_GOOGLE_PICKER_API_KEY: GOOGLE_PICKER_API_KEY,
+  VITE_GOOGLE_PICKER_CLIENT_ID: GOOGLE_PICKER_CLIENT_ID,
+  VITE_GOOGLE_PICKER_APP_ID: GOOGLE_PICKER_APP_ID,
 } = import.meta.env
 
 const companionAllowedHosts =
@@ -125,6 +131,20 @@ export default () => {
     // .use(Zoom, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })
     // .use(Url, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })
     // .use(Unsplash, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })
+    .use(GoogleDrivePicker, {
+      target: Dashboard,
+      companionUrl: COMPANION_URL,
+      companionAllowedHosts,
+      clientId: GOOGLE_PICKER_CLIENT_ID,
+      apiKey: GOOGLE_PICKER_API_KEY,
+      appId: GOOGLE_PICKER_APP_ID,
+    })
+    .use(GooglePhotosPicker, {
+      target: Dashboard,
+      companionUrl: COMPANION_URL,
+      companionAllowedHosts,
+      clientId: GOOGLE_PICKER_CLIENT_ID,
+    })
     .use(RemoteSources, {
       companionUrl: COMPANION_URL,
       sources: [
@@ -144,6 +164,11 @@ export default () => {
       target: Dashboard,
       showVideoSourceDropdown: true,
       showRecordingLength: true,
+    })
+    .use(Webdav, {
+      target: Dashboard,
+      companionUrl: COMPANION_URL,
+      companionAllowedHosts
     })
     .use(Audio, {
       target: Dashboard,
@@ -165,10 +190,16 @@ export default () => {
       uppyDashboard.use(Tus, { endpoint: TUS_ENDPOINT, limit: 6 })
       break
     case 's3':
-      uppyDashboard.use(AwsS3, { companionUrl: COMPANION_URL, limit: 6 })
+      uppyDashboard.use(AwsS3, {
+        endpoint: COMPANION_URL,
+        shouldUseMultipart: false,
+      })
       break
     case 's3-multipart':
-      uppyDashboard.use(AwsS3, { companionUrl: COMPANION_URL, shouldUseMultipart: true })
+      uppyDashboard.use(AwsS3, {
+        endpoint: COMPANION_URL,
+        shouldUseMultipart: true,
+      })
       break
     case 'xhr':
       uppyDashboard.use(XHRUpload, {

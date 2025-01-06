@@ -8,6 +8,7 @@ import type {
 import type { UnknownProviderPlugin } from '@uppy/core/lib/Uppy.js'
 import RequestClient, { authErrorStatusCode } from './RequestClient.ts'
 import type { CompanionPluginOptions } from './index.ts'
+import { isOriginAllowed } from './getAllowedHosts.ts'
 
 export interface Opts extends PluginOpts, CompanionPluginOptions {
   pluginId: string
@@ -26,29 +27,6 @@ const getName = (id: string) => {
 function getOrigin() {
   // eslint-disable-next-line no-restricted-globals
   return location.origin
-}
-
-function getRegex(value?: string | RegExp) {
-  if (typeof value === 'string') {
-    return new RegExp(`^${value}$`)
-  }
-  if (value instanceof RegExp) {
-    return value
-  }
-  return undefined
-}
-
-function isOriginAllowed(
-  origin: string,
-  allowedOrigin: string | RegExp | Array<string | RegExp> | undefined,
-) {
-  const patterns =
-    Array.isArray(allowedOrigin) ?
-      allowedOrigin.map(getRegex)
-    : [getRegex(allowedOrigin)]
-  return patterns.some(
-    (pattern) => pattern?.test(origin) || pattern?.test(`${origin}/`),
-  ) // allowing for trailing '/'
 }
 
 export default class Provider<M extends Meta, B extends Body>
@@ -320,10 +298,7 @@ export default class Provider<M extends Meta, B extends Body>
         // Once a refresh token operation has started, we need all other request to wait for this operation (atomically)
         this.#refreshingTokenPromise = (async () => {
           try {
-            this.uppy.log(
-              `[CompanionClient] Refreshing expired auth token`,
-              'info',
-            )
+            this.uppy.log(`[CompanionClient] Refreshing expired auth token`)
             const response = await super.request<{ uppyAuthToken: string }>({
               path: this.refreshTokenUrl(),
               method: 'POST',

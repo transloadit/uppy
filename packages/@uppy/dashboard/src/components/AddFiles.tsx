@@ -1,55 +1,75 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck Typing this file requires more work, skipping it to unblock the rest of the transition.
-
 /* eslint-disable react/destructuring-assignment */
 import { h, Component, Fragment, type ComponentChild } from 'preact'
+import type { I18n } from '@uppy/utils/lib/Translator'
+import type Translator from '@uppy/utils/lib/Translator'
+import type { TargetedEvent } from 'preact/compat'
+import type { DashboardState, TargetWithRender } from '../Dashboard'
 
-type $TSFixMe = any
+interface AddFilesProps {
+  i18n: I18n
+  i18nArray: Translator['translateArray']
+  acquirers: TargetWithRender[]
+  handleInputChange: (event: TargetedEvent<HTMLInputElement, Event>) => void
+  maxNumberOfFiles: number | null
+  allowedFileTypes: string[] | null
+  showNativePhotoCameraButton: boolean
+  showNativeVideoCameraButton: boolean
+  nativeCameraFacingMode: 'user' | 'environment' | ''
+  showPanel: (id: string) => void
+  activePickerPanel: DashboardState<any, any>['activePickerPanel']
+  disableLocalFiles: boolean
+  fileManagerSelectionType: string
+  note: string | null
+  proudlyDisplayPoweredByUppy: boolean
+}
 
-class AddFiles extends Component {
-  fileInput: $TSFixMe
+class AddFiles extends Component<AddFilesProps> {
+  fileInput: HTMLInputElement | null = null
 
-  folderInput: $TSFixMe
+  folderInput: HTMLInputElement | null = null
 
-  mobilePhotoFileInput: $TSFixMe
+  mobilePhotoFileInput: HTMLInputElement | null = null
 
-  mobileVideoFileInput: $TSFixMe
+  mobileVideoFileInput: HTMLInputElement | null = null
 
   private triggerFileInputClick = () => {
-    this.fileInput.click()
+    this.fileInput?.click()
   }
 
   private triggerFolderInputClick = () => {
-    this.folderInput.click()
+    this.folderInput?.click()
   }
 
   private triggerVideoCameraInputClick = () => {
-    this.mobileVideoFileInput.click()
+    this.mobileVideoFileInput?.click()
   }
 
   private triggerPhotoCameraInputClick = () => {
-    this.mobilePhotoFileInput.click()
+    this.mobilePhotoFileInput?.click()
   }
 
-  private onFileInputChange = (event: $TSFixMe) => {
+  private onFileInputChange = (
+    event: TargetedEvent<HTMLInputElement, Event>,
+  ) => {
     this.props.handleInputChange(event)
 
-    // We clear the input after a file is selected, because otherwise
-    // change event is not fired in Chrome and Safari when a file
-    // with the same name is selected.
-    // ___Why not use value="" on <input/> instead?
-    //    Because if we use that method of clearing the input,
-    //    Chrome will not trigger change if we drop the same file twice (Issue #768).
-    event.target.value = null // eslint-disable-line no-param-reassign
+    // Clear the input so that Chrome/Safari/etc. can detect file section when the same file is repeatedly selected
+    // (see https://github.com/transloadit/uppy/issues/768#issuecomment-2264902758)
+    // eslint-disable-next-line no-param-reassign
+    event.currentTarget.value = ''
   }
 
-  private renderHiddenInput = (isFolder: $TSFixMe, refCallback: $TSFixMe) => {
+  private renderHiddenInput = (
+    isFolder: boolean,
+    refCallback: (ref: HTMLInputElement | null) => void,
+  ) => {
     return (
       <input
         className="uppy-Dashboard-input"
         hidden
         aria-hidden="true"
         tabIndex={-1}
+        // @ts-expect-error default types don't yet know about the `webkitdirectory` property
         webkitdirectory={isFolder}
         type="file"
         name="files[]"
@@ -62,9 +82,9 @@ class AddFiles extends Component {
   }
 
   private renderHiddenCameraInput = (
-    type: $TSFixMe,
-    nativeCameraFacingMode: $TSFixMe,
-    refCallback: $TSFixMe,
+    type: 'photo' | 'video',
+    nativeCameraFacingMode: 'user' | 'environment' | '',
+    refCallback: (ref: HTMLInputElement | null) => void,
   ) => {
     const typeToAccept = { photo: 'image/*', video: 'video/*' }
     const accept = typeToAccept[type]
@@ -194,7 +214,10 @@ class AddFiles extends Component {
     )
   }
 
-  private renderBrowseButton = (text: $TSFixMe, onClickFn: $TSFixMe) => {
+  private renderBrowseButton = (
+    text: string,
+    onClickFn: (event: Event) => void,
+  ) => {
     const numberOfAcquirers = this.props.acquirers.length
     return (
       <button
@@ -208,7 +231,7 @@ class AddFiles extends Component {
     )
   }
 
-  private renderDropPasteBrowseTagline = (numberOfAcquirers: $TSFixMe) => {
+  private renderDropPasteBrowseTagline = (numberOfAcquirers: number) => {
     const browseFiles = this.renderBrowseButton(
       this.props.i18n('browseFiles'),
       this.triggerFileInputClick,
@@ -258,7 +281,7 @@ class AddFiles extends Component {
     this.props.i18nArray('dropPasteImportFolders')
   }
 
-  private renderAcquirer = (acquirer: $TSFixMe) => {
+  private renderAcquirer = (acquirer: TargetWithRender) => {
     return (
       <div
         className="uppy-DashboardTab"
@@ -283,7 +306,7 @@ class AddFiles extends Component {
     )
   }
 
-  private renderAcquirers = (acquirers: $TSFixMe) => {
+  private renderAcquirers = (acquirers: TargetWithRender[]) => {
     // Group last two buttons, so we don’t end up with
     // just one button on a new line
     const acquirersWithoutLastTwo = [...acquirers]
@@ -305,18 +328,22 @@ class AddFiles extends Component {
   }
 
   private renderSourcesList = (
-    acquirers: $TSFixMe,
-    disableLocalFiles: $TSFixMe,
+    acquirers: TargetWithRender[],
+    disableLocalFiles: boolean,
   ) => {
     const { showNativePhotoCameraButton, showNativeVideoCameraButton } =
       this.props
 
-    let list = []
+    type RenderListItem = { key: string; elements: ComponentChild }
+    let list: RenderListItem[] = []
 
     const myDeviceKey = 'myDevice'
 
     if (!disableLocalFiles)
-      list.push({ key: myDeviceKey, elements: this.renderMyDeviceAcquirer() })
+      list.push({
+        key: myDeviceKey,
+        elements: this.renderMyDeviceAcquirer(),
+      })
     if (showNativePhotoCameraButton)
       list.push({
         key: 'nativePhotoCameraButton',
@@ -328,7 +355,7 @@ class AddFiles extends Component {
         elements: this.renderVideoCamera(),
       })
     list.push(
-      ...acquirers.map((acquirer: $TSFixMe) => ({
+      ...acquirers.map((acquirer: TargetWithRender) => ({
         key: acquirer.id,
         elements: this.renderAcquirer(acquirer),
       })),
@@ -343,20 +370,19 @@ class AddFiles extends Component {
     const listWithoutLastTwo = [...list]
     const lastTwo = listWithoutLastTwo.splice(list.length - 2, list.length)
 
-    const renderList = (l: $TSFixMe) =>
-      l.map(({ key, elements }: $TSFixMe) => (
-        <Fragment key={key}>{elements}</Fragment>
-      ))
-
     return (
       <>
         {this.renderDropPasteBrowseTagline(list.length)}
 
         <div className="uppy-Dashboard-AddFiles-list" role="tablist">
-          {renderList(listWithoutLastTwo)}
+          {listWithoutLastTwo.map(({ key, elements }) => (
+            <Fragment key={key}>{elements}</Fragment>
+          ))}
 
           <span role="presentation" style={{ 'white-space': 'nowrap' }}>
-            {renderList(lastTwo)}
+            {lastTwo.map(({ key, elements }) => (
+              <Fragment key={key}>{elements}</Fragment>
+            ))}
           </span>
         </div>
       </>
@@ -364,7 +390,7 @@ class AddFiles extends Component {
   }
 
   private renderPoweredByUppy() {
-    const { i18nArray } = this.props as $TSFixMe
+    const { i18nArray } = this.props
 
     const uppyBranding = (
       <span>
@@ -409,17 +435,17 @@ class AddFiles extends Component {
 
     return (
       <div className="uppy-Dashboard-AddFiles">
-        {this.renderHiddenInput(false, (ref: $TSFixMe) => {
+        {this.renderHiddenInput(false, (ref) => {
           this.fileInput = ref
         })}
-        {this.renderHiddenInput(true, (ref: $TSFixMe) => {
+        {this.renderHiddenInput(true, (ref) => {
           this.folderInput = ref
         })}
         {showNativePhotoCameraButton &&
           this.renderHiddenCameraInput(
             'photo',
             nativeCameraFacingMode,
-            (ref: $TSFixMe) => {
+            (ref) => {
               this.mobilePhotoFileInput = ref
             },
           )}
@@ -427,7 +453,7 @@ class AddFiles extends Component {
           this.renderHiddenCameraInput(
             'video',
             nativeCameraFacingMode,
-            (ref: $TSFixMe) => {
+            (ref) => {
               this.mobileVideoFileInput = ref
             },
           )}
@@ -439,8 +465,7 @@ class AddFiles extends Component {
           {this.props.note && (
             <div className="uppy-Dashboard-note">{this.props.note}</div>
           )}
-          {this.props.proudlyDisplayPoweredByUppy &&
-            this.renderPoweredByUppy(this.props)}
+          {this.props.proudlyDisplayPoweredByUppy && this.renderPoweredByUppy()}
         </div>
       </div>
     )

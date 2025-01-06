@@ -9,7 +9,11 @@ import {
 import { h, type ComponentChild } from 'preact'
 
 import type { UppyFile, Body, Meta } from '@uppy/utils/lib/UppyFile'
-import type { UnknownProviderPluginState } from '@uppy/core/lib/Uppy.js'
+import type {
+  AsyncStore,
+  UnknownProviderPlugin,
+  UnknownProviderPluginState,
+} from '@uppy/core/lib/Uppy.js'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
@@ -18,10 +22,10 @@ import locale from './locale.ts'
 
 export type GooglePhotosOptions = CompanionPluginOptions
 
-export default class GooglePhotos<
-  M extends Meta,
-  B extends Body,
-> extends UIPlugin<GooglePhotosOptions, M, B, UnknownProviderPluginState> {
+export default class GooglePhotos<M extends Meta, B extends Body>
+  extends UIPlugin<GooglePhotosOptions, M, B, UnknownProviderPluginState>
+  implements UnknownProviderPlugin<M, B>
+{
   static VERSION = packageJson.version
 
   icon: () => h.JSX.Element
@@ -30,7 +34,7 @@ export default class GooglePhotos<
 
   view!: ProviderViews<M, B>
 
-  storage: typeof tokenStorage
+  storage: AsyncStore
 
   files: UppyFile<M, B>[]
 

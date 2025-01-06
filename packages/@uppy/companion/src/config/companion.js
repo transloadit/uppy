@@ -17,6 +17,7 @@ const defaultOptions = {
     expires: 800, // seconds
   },
   enableUrlEndpoint: false,
+  enableGooglePickerEndpoint: false,
   allowLocalUrls: false,
   periodicPingUrls: [],
   streamingUpload: true,
@@ -110,6 +111,10 @@ const validateConfig = (companionOptions) => {
 
   if (companionOptions.corsOrigins == null) {
     throw new TypeError('Option corsOrigins is required. To disable security, pass true')
+  }
+
+  if (companionOptions.corsOrigins === '*') {
+    throw new TypeError('Option corsOrigins cannot be "*". To disable security, pass true')
   }
 
   if (periodicPingUrls != null && (

@@ -4,7 +4,7 @@ import { UIPlugin, Uppy, type UIPluginOptions } from '@uppy/core'
 import toArray from '@uppy/utils/lib/toArray'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin.js'
-
+import type { TargetedEvent } from 'preact/compat'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'
@@ -65,19 +65,15 @@ export default class FileInput<M extends Meta, B extends Body> extends UIPlugin<
     }
   }
 
-  private handleInputChange(event: Event) {
+  private handleInputChange(event: TargetedEvent<HTMLInputElement, Event>) {
     this.uppy.log('[FileInput] Something selected through input...')
-    const files = toArray((event.target as HTMLFileInputElement).files)
+    const files = toArray(event.currentTarget.files || [])
     this.addFiles(files)
 
-    // We clear the input after a file is selected, because otherwise
-    // change event is not fired in Chrome and Safari when a file
-    // with the same name is selected.
-    // ___Why not use value="" on <input/> instead?
-    //    Because if we use that method of clearing the input,
-    //    Chrome will not trigger change if we drop the same file twice (Issue #768).
-    // @ts-expect-error yes
-    event.target.value = null // eslint-disable-line no-param-reassign
+    // Clear the input so that Chrome can detect file section when the same file is repeatedly selected
+    // (see https://github.com/transloadit/uppy/issues/768#issuecomment-2264902758)
+    // eslint-disable-next-line no-param-reassign
+    event.currentTarget.value = ''
   }
 
   private handleClick() {

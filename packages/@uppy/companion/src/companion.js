@@ -10,6 +10,7 @@ const providerManager = require('./server/provider')
 const controllers = require('./server/controllers')
 const s3 = require('./server/controllers/s3')
 const url = require('./server/controllers/url')
+const googlePicker = require('./server/controllers/googlePicker')
 const createEmitter = require('./server/emitter')
 const redis = require('./server/redis')
 const jobs = require('./server/jobs')
@@ -120,6 +121,7 @@ module.exports.app = (optionsArg = {}) => {
   app.use(/(.*)/, middlewares.getCompanionMiddleware(options))
   app.use('/s3', s3(options.s3))
   if (options.enableUrlEndpoint) app.use('/url', url())
+  if (options.enableGooglePickerEndpoint) app.use('/google-picker', googlePicker())
 
   app.post('/:providerName/preauth', express.json(), express.urlencoded({ extended: false }), middlewares.hasSessionAndProvider, middlewares.hasBody, middlewares.hasOAuthProvider, controllers.preauth)
   app.get('/:providerName/connect', middlewares.hasSessionAndProvider, middlewares.hasOAuthProvider, controllers.connect)
@@ -163,6 +165,7 @@ module.exports.app = (optionsArg = {}) => {
           key,
           secret,
           redirect_uri: getRedirectUri(),
+          origins: ['http://localhost:5173'],
         },
       })
     })

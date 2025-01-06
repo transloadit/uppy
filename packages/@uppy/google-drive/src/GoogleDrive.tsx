@@ -9,7 +9,11 @@ import { ProviderViews } from '@uppy/provider-views'
 import { h, type ComponentChild } from 'preact'
 
 import type { UppyFile, Body, Meta } from '@uppy/utils/lib/UppyFile'
-import type { UnknownProviderPluginState } from '@uppy/core/lib/Uppy.js'
+import type {
+  AsyncStore,
+  UnknownProviderPlugin,
+  UnknownProviderPluginState,
+} from '@uppy/core/lib/Uppy.js'
 import DriveProviderViews from './DriveProviderViews.ts'
 import locale from './locale.ts'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -18,10 +22,10 @@ import packageJson from '../package.json'
 
 export type GoogleDriveOptions = CompanionPluginOptions
 
-export default class GoogleDrive<
-  M extends Meta,
-  B extends Body,
-> extends UIPlugin<GoogleDriveOptions, M, B, UnknownProviderPluginState> {
+export default class GoogleDrive<M extends Meta, B extends Body>
+  extends UIPlugin<GoogleDriveOptions, M, B, UnknownProviderPluginState>
+  implements UnknownProviderPlugin<M, B>
+{
   static VERSION = packageJson.version
 
   icon: () => h.JSX.Element
@@ -30,7 +34,7 @@ export default class GoogleDrive<
 
   view!: ProviderViews<M, B>
 
-  storage: typeof tokenStorage
+  storage: AsyncStore
 
   files: UppyFile<M, B>[]
 

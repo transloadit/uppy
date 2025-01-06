@@ -1,7 +1,7 @@
 {
   "name": "@uppy/provider-views",
   "description": "View library for Uppy remote provider plugins.",
-  "version": "4.0.1",
+  "version": "4.2.1",
   "license": "MIT",
   "main": "lib/index.js",
   "style": "dist/style.min.css",
@@ -21,11 +21,14 @@
   "dependencies": {
     "@uppy/utils": "workspace:^",
     "classnames": "^2.2.6",
-    "nanoid": "^5.0.0",
+    "nanoid": "^5.0.9",
     "p-queue": "^8.0.0",
     "preact": "^10.5.13"
   },
   "devDependencies": {
+    "@types/gapi": "^0.0.47",
+    "@types/google.accounts": "^0.0.14",
+    "@types/google.picker": "^0.0.42",
     "vitest": "^1.6.0"
   },
   "peerDependencies": {

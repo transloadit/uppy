@@ -1,7 +1,7 @@
 {
   "name": "@uppy/dashboard",
   "description": "Universal UI plugin for Uppy.",
-  "version": "4.1.0",
+  "version": "4.2.0",
   "license": "MIT",
   "main": "lib/index.js",
   "style": "dist/style.min.css",
@@ -31,7 +31,7 @@
     "classnames": "^2.2.6",
     "lodash": "^4.17.21",
     "memoize-one": "^6.0.0",
-    "nanoid": "^5.0.0",
+    "nanoid": "^5.0.9",
     "preact": "^10.5.13",
     "shallow-equal": "^3.0.0"
   },
