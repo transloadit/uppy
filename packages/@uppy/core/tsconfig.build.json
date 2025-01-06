@@ -3,12 +3,7 @@
   "compilerOptions": {
     "outDir": "./lib",
     "rootDir": "./src",
-    "resolveJsonModule": false,
-    "paths": {
-      "@uppy/store-default": ["../store-default/src/index.js"],
-      "@uppy/store-default/lib/*": ["../store-default/src/*"],
-      "@uppy/utils/lib/*": ["../utils/src/*"]
-    }
+    "resolveJsonModule": false
   },
   "include": ["./src/**/*.*"],
   "exclude": ["./src/**/*.test.ts"],
