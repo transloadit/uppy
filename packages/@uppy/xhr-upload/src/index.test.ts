@@ -79,7 +79,14 @@ describe('XHRUpload', () => {
       id: 'XHRUpload',
       endpoint: 'https://fake-endpoint.uppy.io',
       shouldRetry,
+      async onAfterResponse(xhr) {
+        if (xhr.status === 400) {
+          // We want to test that we can define our own error message
+          throw new Error(JSON.parse(xhr.responseText).message)
+        }
+      },
     })
+
     const id = core.addFile({
       type: 'image/png',
       source: 'test',
@@ -95,7 +102,7 @@ describe('XHRUpload', () => {
 
     await Promise.all([
       core.upload(),
-      event.then(([file, , response]) => {
+      event.then(([file, error, response]) => {
         const newFile = core.getFile(id)
         // error and response are set inside upload-error in core.
         // When we subscribe to upload-error it is emitted before
@@ -107,6 +114,7 @@ describe('XHRUpload', () => {
         // might have changed in the meantime
         expect(file).toEqual(newFile)
         expect(response).toBeInstanceOf(XMLHttpRequest)
+        expect(error.message).toEqual('Oh no')
       }),
     ])
 

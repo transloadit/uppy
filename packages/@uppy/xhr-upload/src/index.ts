@@ -82,7 +82,7 @@ declare module '@uppy/core' {
 }
 
 function buildResponseError(
-  xhr: XMLHttpRequest,
+  xhr?: XMLHttpRequest,
   err?: string | Error | NetworkError,
 ) {
   let error = err
@@ -255,17 +255,15 @@ export default class XHRUpload<
           if (error.name === 'AbortError') {
             return undefined
           }
-          if (error instanceof NetworkError) {
-            const request = error.request!
+          const request = error.request as XMLHttpRequest | undefined
 
-            for (const file of files) {
-              this.uppy.emit(
-                'upload-error',
-                this.uppy.getFile(file.id),
-                buildResponseError(request, error),
-                request,
-              )
-            }
+          for (const file of files) {
+            this.uppy.emit(
+              'upload-error',
+              this.uppy.getFile(file.id),
+              buildResponseError(request, error),
+              request,
+            )
           }
 
           throw error
