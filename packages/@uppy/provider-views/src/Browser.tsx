@@ -24,6 +24,7 @@ type BrowserProps<M extends Meta, B extends Body> = {
   openFolder: ProviderView<M, B>['openFolder']
   noResultsLabel: string
   virtualList: boolean
+  utmSource: string
 }
 
 function Browser<M extends Meta, B extends Body>(props: BrowserProps<M, B>) {
@@ -38,6 +39,7 @@ function Browser<M extends Meta, B extends Body>(props: BrowserProps<M, B>) {
     openFolder,
     noResultsLabel,
     virtualList,
+    utmSource,
   } = props
 
   const [isShiftKeyPressed, setIsShiftKeyPressed] = useState(false)
@@ -88,6 +90,7 @@ function Browser<M extends Meta, B extends Body>(props: BrowserProps<M, B>) {
       i18n={i18n}
       openFolder={openFolder}
       file={item}
+      utmSource={utmSource}
     />
   )
 
