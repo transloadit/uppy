@@ -551,7 +551,7 @@ class Uploader {
         },
       }
 
-      if (this.options.companionOptions.deferredUploadLength && !isFileStream) {
+      if (this.options.companionOptions.tusDeferredUploadLength && !isFileStream) {
         tusOptions.uploadLengthDeferred = true
       } else {
         tusOptions.uploadLengthDeferred = false
