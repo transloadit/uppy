@@ -8,9 +8,9 @@ import { UIPlugin, Uppy } from '@uppy/core'
 import { ProviderViews } from '@uppy/provider-views'
 import { h, type ComponentChild } from 'preact'
 
-import type { AsyncStore } from '@uppy/core/src/Uppy.js'
 import type { UppyFile, Body, Meta } from '@uppy/utils/lib/UppyFile'
 import type {
+  AsyncStore,
   UnknownProviderPlugin,
   UnknownProviderPluginState,
 } from '@uppy/core/lib/Uppy.js'
