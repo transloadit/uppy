@@ -1,5 +1,12 @@
 # @uppy/xhr-upload
 
+## 4.3.1
+
+Released: 2025-01-08
+Included in: Uppy v4.12.0
+
+- @uppy/xhr-upload: allow custom error message in onAfterResponse (Merlijn Vos / #5578)
+
 ## 4.3.0
 
 Released: 2025-01-06

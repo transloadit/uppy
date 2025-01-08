@@ -1,5 +1,12 @@
 # @uppy/unsplash
 
+## 4.3.0
+
+Released: 2025-01-08
+Included in: Uppy v4.12.0
+
+- @uppy/unsplash,@uppy/provider-views: add utmSource option (Merlijn Vos / #5580)
+
 ## 4.2.0
 
 Released: 2025-01-06

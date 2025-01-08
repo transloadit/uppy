@@ -12,6 +12,24 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 4.12.0
+
+Released: 2025-01-08
+
+| Package                    | Version | Package                    | Version |
+| -------------------------- | ------- | -------------------------- | ------- |
+| @uppy/google-drive-picker  |   0.3.1 | @uppy/unsplash             |   4.3.0 |
+| @uppy/google-photos-picker |   0.3.1 | @uppy/utils                |   6.1.1 |
+| @uppy/onedrive             |   4.2.1 | @uppy/xhr-upload           |   4.3.1 |
+| @uppy/provider-views       |   4.4.0 | uppy                       |  4.12.0 |
+| @uppy/svelte               |   4.3.0 |                            |         |
+
+- @uppy/unsplash,@uppy/provider-views: add utmSource option (Merlijn Vos / #5580)
+- @uppy/xhr-upload: allow custom error message in onAfterResponse (Merlijn Vos / #5578)
+- @uppy/onedrive: fix AsyncStore import (Merlijn Vos / #5579)
+- @uppy/google-drive-picker,@uppy/google-photos-picker: Fix Google Picker plugins locale (Merlijn Vos / #5575)
+
+
 ## 4.11.0
 
 Released: 2025-01-06
