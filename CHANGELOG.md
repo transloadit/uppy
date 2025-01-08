@@ -12,6 +12,17 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 4.12.1
+
+Released: 2025-01-08
+
+| Package         | Version | Package         | Version |
+| --------------- | ------- | --------------- | ------- |
+| @uppy/companion |   5.4.1 | uppy            |  4.12.1 |
+
+- @uppy/companion: upgrade express & express-session (Merlijn Vos / #5582)
+
+
 ## 4.12.0
 
 Released: 2025-01-08

@@ -1,5 +1,12 @@
 # @uppy/companion
 
+## 5.4.1
+
+Released: 2025-01-08
+Included in: Uppy v4.12.1
+
+- @uppy/companion: upgrade express & express-session (Merlijn Vos / #5582)
+
 ## 5.4.0
 
 Released: 2025-01-06
