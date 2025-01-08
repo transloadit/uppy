@@ -554,6 +554,9 @@ class Uploader {
       if (this.options.companionOptions.tusDeferredUploadLength && !isFileStream) {
         tusOptions.uploadLengthDeferred = true
       } else {
+        if (!this.size) {
+          reject(new Error('tusDeferredUploadLength needs to be enabled if no file size is provided by the provider'))
+        }
         tusOptions.uploadLengthDeferred = false
         tusOptions.uploadSize = this.size
       }
