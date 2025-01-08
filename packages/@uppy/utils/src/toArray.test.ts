@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import toArray from './toArray.ts'
+import toArray from './toArray.js'
 
 describe('toArray', () => {
   it('should convert a array-like object into an array', () => {

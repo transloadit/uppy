@@ -1,6 +1,6 @@
 import { h } from 'preact'
 import type { I18n } from '@uppy/utils/lib/Translator'
-import formatSeconds from './formatSeconds.ts'
+import formatSeconds from './formatSeconds.js'
 
 interface RecordingLengthProps {
   recordingLengthSeconds: number

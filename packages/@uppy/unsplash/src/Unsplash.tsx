@@ -14,12 +14,12 @@ import type {
   UnknownSearchProviderPlugin,
   UnknownSearchProviderPluginState,
 } from '@uppy/core/lib/Uppy.js'
-import locale from './locale.ts'
+import locale from './locale.js'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'
 
-export type UnsplashOptions = CompanionPluginOptions
+export type UnsplashOptions = { utmSource: string } & CompanionPluginOptions
 
 export default class Unsplash<M extends Meta, B extends Body>
   extends UIPlugin<UnsplashOptions, M, B, UnknownSearchProviderPluginState>
@@ -91,6 +91,7 @@ export default class Unsplash<M extends Meta, B extends Body>
       provider: this.provider,
       viewType: 'unsplash',
       showFilter: true,
+      utmSource: this.opts.utmSource,
     })
 
     const { target } = this.opts

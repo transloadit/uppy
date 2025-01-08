@@ -3,13 +3,13 @@ import { UIPlugin, Uppy, type UIPluginOptions } from '@uppy/core'
 import getFileTypeExtension from '@uppy/utils/lib/getFileTypeExtension'
 import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin.js'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
-import ScreenRecIcon from './ScreenRecIcon.tsx'
-import RecorderScreen from './RecorderScreen.tsx'
+import ScreenRecIcon from './ScreenRecIcon.jsx'
+import RecorderScreen from './RecorderScreen.jsx'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'
-import locale from './locale.ts'
+import locale from './locale.js'
 
 // Check if screen capturing is supported.
 // mediaDevices is supprted on mobile Safari, getDisplayMedia is not

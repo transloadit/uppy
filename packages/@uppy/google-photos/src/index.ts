@@ -1,2 +1,2 @@
-export { default } from './GooglePhotos.tsx'
-export type { GooglePhotosOptions } from './GooglePhotos.tsx'
+export { default } from './GooglePhotos.jsx'
+export type { GooglePhotosOptions } from './GooglePhotos.jsx'

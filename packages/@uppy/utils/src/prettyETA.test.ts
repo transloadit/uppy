@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import prettyETA from './prettyETA.ts'
+import prettyETA from './prettyETA.js'
 
 describe('prettyETA', () => {
   it('should convert the specified number of seconds to a pretty ETA', () => {

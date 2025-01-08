@@ -1,7 +1,7 @@
 import { h } from 'preact'
 import classNames from 'classnames'
 import { useRef } from 'preact/hooks'
-import ignoreEvent from '../utils/ignoreEvent.ts'
+import ignoreEvent from '../utils/ignoreEvent.js'
 
 type $TSFixMe = any
 

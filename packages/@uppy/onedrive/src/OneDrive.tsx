@@ -8,13 +8,13 @@ import { UIPlugin, Uppy } from '@uppy/core'
 import { ProviderViews } from '@uppy/provider-views'
 import { h, type ComponentChild } from 'preact'
 
-import type { AsyncStore } from '@uppy/core/src/Uppy.js'
 import type { UppyFile, Body, Meta } from '@uppy/utils/lib/UppyFile'
 import type {
+  AsyncStore,
   UnknownProviderPlugin,
   UnknownProviderPluginState,
 } from '@uppy/core/lib/Uppy.js'
-import locale from './locale.ts'
+import locale from './locale.js'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'

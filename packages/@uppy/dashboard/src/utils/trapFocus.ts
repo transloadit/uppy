@@ -2,7 +2,7 @@ import toArray from '@uppy/utils/lib/toArray'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore untyped
 import FOCUSABLE_ELEMENTS from '@uppy/utils/lib/FOCUSABLE_ELEMENTS'
-import getActiveOverlayEl from './getActiveOverlayEl.ts'
+import getActiveOverlayEl from './getActiveOverlayEl.js'
 
 type $TSFixMe = any
 

@@ -3,7 +3,7 @@ import type {
   PartialTreeFile,
   PartialTreeFolderNode,
 } from '@uppy/core/lib/Uppy.js'
-import ItemIcon from './ItemIcon.tsx'
+import ItemIcon from './ItemIcon.jsx'
 
 type GridItemProps = {
   file: PartialTreeFile | PartialTreeFolderNode

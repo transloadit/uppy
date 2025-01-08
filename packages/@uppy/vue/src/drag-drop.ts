@@ -1,7 +1,7 @@
 import { defineComponent, ref, h, type PropType } from 'vue'
 import DragDropPlugin, { type DragDropOptions } from '@uppy/drag-drop'
 import { Uppy } from '@uppy/core'
-import useUppy from './useUppy.ts'
+import useUppy from './useUppy.js'
 
 export default defineComponent({
   name: 'DragDrop',

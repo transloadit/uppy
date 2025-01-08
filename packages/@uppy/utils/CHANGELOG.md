@@ -1,5 +1,12 @@
 # @uppy/utils
 
+## 6.1.0
+
+Released: 2025-01-06
+Included in: Uppy v4.11.0
+
+- @uppy/utils: Use .js(x) for all imports instead .ts(x) (Merlijn Vos / #5573)
+
 ## 6.0.6
 
 Released: 2024-12-17

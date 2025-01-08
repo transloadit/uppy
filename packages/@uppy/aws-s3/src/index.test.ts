@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import 'whatwg-fetch'
 import nock from 'nock'
 import Core from '@uppy/core'
-import AwsS3Multipart, { type AwsBody } from './index.ts'
+import AwsS3Multipart, { type AwsBody } from './index.js'
 
 const KB = 1024
 const MB = KB * KB

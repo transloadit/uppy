@@ -1,2 +1,2 @@
-export { default } from './ImageEditor.tsx'
-export type { Opts as ImageEditorOptions } from './ImageEditor.tsx'
+export { default } from './ImageEditor.jsx'
+export type { Opts as ImageEditorOptions } from './ImageEditor.jsx'

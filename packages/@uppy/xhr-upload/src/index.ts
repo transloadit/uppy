@@ -23,7 +23,7 @@ import getAllowedMetaFields from '@uppy/utils/lib/getAllowedMetaFields'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'
-import locale from './locale.ts'
+import locale from './locale.js'
 
 export interface XhrUploadOpts<M extends Meta, B extends Body>
   extends PluginOpts {
@@ -82,7 +82,7 @@ declare module '@uppy/core' {
 }
 
 function buildResponseError(
-  xhr: XMLHttpRequest,
+  xhr?: XMLHttpRequest,
   err?: string | Error | NetworkError,
 ) {
   let error = err
@@ -255,17 +255,15 @@ export default class XHRUpload<
           if (error.name === 'AbortError') {
             return undefined
           }
-          if (error instanceof NetworkError) {
-            const request = error.request!
+          const request = error.request as XMLHttpRequest | undefined
 
-            for (const file of files) {
-              this.uppy.emit(
-                'upload-error',
-                this.uppy.getFile(file.id),
-                buildResponseError(request, error),
-                request,
-              )
-            }
+          for (const file of files) {
+            this.uppy.emit(
+              'upload-error',
+              this.uppy.getFile(file.id),
+              buildResponseError(request, error),
+              request,
+            )
           }
 
           throw error

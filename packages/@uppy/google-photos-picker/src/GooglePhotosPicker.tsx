@@ -15,7 +15,7 @@ import type { AsyncStore, BaseProviderPlugin } from '@uppy/core/lib/Uppy.js'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'
-import locale from './locale.ts'
+import locale from './locale.js'
 
 export type GooglePhotosPickerOptions = CompanionPluginOptions & {
   clientId: string
@@ -42,6 +42,7 @@ export default class GooglePhotosPicker<M extends Meta, B extends Body>
     this.id = this.opts.id || 'GooglePhotosPicker'
     this.storage = this.opts.storage || tokenStorage
 
+    this.defaultLocale = locale
     this.i18nInit()
     this.title = this.i18n('pluginNameGooglePhotos')
 

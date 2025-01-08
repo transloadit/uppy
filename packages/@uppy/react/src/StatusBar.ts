@@ -2,8 +2,8 @@ import { createElement as h, Component } from 'react'
 import type { UnknownPlugin, Uppy } from '@uppy/core'
 import StatusBarPlugin, { type StatusBarOptions } from '@uppy/status-bar'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
-import getHTMLProps from './getHTMLProps.ts'
-import nonHtmlPropsHaveChanged from './nonHtmlPropsHaveChanged.ts'
+import getHTMLProps from './getHTMLProps.js'
+import nonHtmlPropsHaveChanged from './nonHtmlPropsHaveChanged.js'
 
 interface StatusBarProps<M extends Meta, B extends Body>
   extends StatusBarOptions {
