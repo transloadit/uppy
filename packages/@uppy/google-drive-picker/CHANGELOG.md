@@ -1,5 +1,12 @@
 # @uppy/google-drive-picker
 
+## 0.3.1
+
+Released: 2025-01-08
+Included in: Uppy v4.12.0
+
+- @uppy/google-drive-picker,@uppy/google-photos-picker: Fix Google Picker plugins locale (Merlijn Vos / #5575)
+
 ## 0.3.0
 
 Released: 2025-01-06

@@ -1,5 +1,12 @@
 # @uppy/onedrive
 
+## 4.2.1
+
+Released: 2025-01-08
+Included in: Uppy v4.12.0
+
+- @uppy/onedrive: fix AsyncStore import (Merlijn Vos / #5579)
+
 ## 4.2.0
 
 Released: 2025-01-06
