@@ -488,6 +488,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
           showTitles={opts.showTitles}
           i18n={this.plugin.uppy.i18n}
           isLoading={loading}
+          utmSource="Companion"
         />
 
         <FooterActions

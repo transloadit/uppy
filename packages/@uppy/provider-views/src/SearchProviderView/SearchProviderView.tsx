@@ -13,6 +13,7 @@ import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
 import classNames from 'classnames'
 import type { ValidateableFile } from '@uppy/core/lib/Restricter.js'
 import remoteFileObjToLocal from '@uppy/utils/lib/remoteFileObjToLocal'
+import type { DefinePluginOpts } from '@uppy/core/src/BasePlugin.js'
 import SearchInput from '../SearchInput.jsx'
 import Browser from '../Browser.jsx'
 
@@ -42,28 +43,27 @@ const defaultState: UnknownSearchProviderPluginState = {
   isInputMode: true,
 }
 
-type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>
-
 interface Opts<M extends Meta, B extends Body> {
   provider: UnknownSearchProviderPlugin<M, B>['provider']
-  viewType: 'list' | 'grid' | 'unsplash'
-  showTitles: boolean
-  showFilter: boolean
+  viewType?: 'list' | 'grid' | 'unsplash'
+  showTitles?: boolean
+  showFilter?: boolean
+  utmSource?: string
 }
-type PassedOpts<M extends Meta, B extends Body> = Optional<
-  Opts<M, B>,
-  'viewType' | 'showTitles' | 'showFilter'
->
-type DefaultOpts<M extends Meta, B extends Body> = Omit<Opts<M, B>, 'provider'>
-type RenderOpts<M extends Meta, B extends Body> = Omit<
-  PassedOpts<M, B>,
-  'provider'
->
+
+type RenderOpts<M extends Meta, B extends Body> = Omit<Opts<M, B>, 'provider'>
 
 type Res = {
   items: CompanionFile[]
   nextPageQuery: string | null
   searchedFor: string
+}
+
+const defaultOptions = {
+  viewType: 'grid' as const,
+  showTitles: true,
+  showFilter: true,
+  utmSource: 'Companion',
 }
 
 /**
@@ -77,23 +77,15 @@ export default class SearchProviderView<M extends Meta, B extends Body> {
 
   provider: UnknownSearchProviderPlugin<M, B>['provider']
 
-  opts: Opts<M, B>
+  opts: DefinePluginOpts<Opts<M, B>, keyof typeof defaultOptions>
 
   isHandlingScroll: boolean = false
 
   lastCheckbox: string | null = null
 
-  constructor(
-    plugin: UnknownSearchProviderPlugin<M, B>,
-    opts: PassedOpts<M, B>,
-  ) {
+  constructor(plugin: UnknownSearchProviderPlugin<M, B>, opts: Opts<M, B>) {
     this.plugin = plugin
     this.provider = opts.provider
-    const defaultOptions: DefaultOpts<M, B> = {
-      viewType: 'grid',
-      showTitles: true,
-      showFilter: true,
-    }
     this.opts = { ...defaultOptions, ...opts }
 
     this.setSearchString = this.setSearchString.bind(this)
@@ -286,7 +278,7 @@ export default class SearchProviderView<M extends Meta, B extends Body> {
     const { isInputMode, searchString, loading, partialTree } =
       this.plugin.getPluginState()
     const { i18n } = this.plugin.uppy
-    const opts: Opts<M, B> = { ...this.opts, ...viewOptions }
+    const opts = { ...this.opts, ...viewOptions }
 
     if (isInputMode) {
       return (
@@ -334,6 +326,7 @@ export default class SearchProviderView<M extends Meta, B extends Body> {
           isLoading={loading}
           i18n={i18n}
           virtualList={false}
+          utmSource={this.opts.utmSource}
         />
 
         <FooterActions
