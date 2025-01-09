@@ -1,23 +1,22 @@
-export { default } from './Uppy.js'
-export {
-  default as Uppy,
-  type State,
-  type BaseProviderPlugin,
-  type PartialTree,
-  type PartialTreeFile,
-  type PartialTreeFolder,
-  type PartialTreeFolderNode,
-  type PartialTreeFolderRoot,
-  type PartialTreeId,
-  type UnknownPlugin,
-  type UnknownProviderPlugin,
-  type UnknownProviderPluginState,
-  type UnknownSearchProviderPlugin,
-  type UnknownSearchProviderPluginState,
-  type UploadResult,
-  type UppyEventMap,
-  type UppyOptions,
-  type AsyncStore,
+export { default, default as Uppy } from './Uppy.js'
+export type {
+  State,
+  BaseProviderPlugin,
+  PartialTree,
+  PartialTreeFile,
+  PartialTreeFolder,
+  PartialTreeFolderNode,
+  PartialTreeFolderRoot,
+  PartialTreeId,
+  UnknownPlugin,
+  UnknownProviderPlugin,
+  UnknownProviderPluginState,
+  UnknownSearchProviderPlugin,
+  UnknownSearchProviderPluginState,
+  UploadResult,
+  UppyEventMap,
+  UppyOptions,
+  AsyncStore,
 } from './Uppy.js'
 
 export { default as UIPlugin } from './UIPlugin.js'
