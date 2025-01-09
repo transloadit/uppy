@@ -441,6 +441,10 @@ module.exports = {
         }, {
           selector: 'ImportDeclaration[source.value=/^@uppy\\x2Futils\\x2Flib\\x2F.+\\.[mc]?[jt]sx?$/]',
           message: 'Do not use file extension when importing from @uppy/utils',
+        },
+        {
+          selector: 'ImportDeclaration[source.value=/^@uppy\\x2F[a-z-0-9]+\\x2Fsrc\\x2F/]',
+          message: 'Importing from "src/" is not allowed. Import from root or from "lib/" if you must.',
         }],
         'import/extensions': ['error', 'ignorePackages'],
         'import/prefer-default-export': 'off',
