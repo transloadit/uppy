@@ -1,7 +1,7 @@
 {
   "name": "@uppy/status-bar",
   "description": "A progress bar for Uppy, with many bells and whistles.",
-  "version": "4.1.0",
+  "version": "4.1.1",
   "license": "MIT",
   "main": "lib/index.js",
   "style": "dist/style.min.css",

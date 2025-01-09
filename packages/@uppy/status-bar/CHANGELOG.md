@@ -1,5 +1,12 @@
 # @uppy/status-bar
 
+## 4.1.1
+
+Released: 2025-01-09
+Included in: Uppy v4.12.2
+
+- @uppy/status-bar: fix double upload progress (Mikael Finstad / #5587)
+
 ## 4.1.0
 
 Released: 2025-01-06
