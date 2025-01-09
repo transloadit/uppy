@@ -9,8 +9,7 @@ import {
 } from '@uppy/companion-client'
 
 import type { PickedItem } from '@uppy/provider-views/lib/GooglePicker/googlePicker.js'
-import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
-import type { AsyncStore, BaseProviderPlugin } from '@uppy/core/lib/Uppy.js'
+import type { Body, Meta, AsyncStore, BaseProviderPlugin } from '@uppy/core'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json

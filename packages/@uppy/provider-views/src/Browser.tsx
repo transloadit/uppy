@@ -3,12 +3,13 @@ import { h } from 'preact'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore untyped
 import VirtualList from '@uppy/utils/lib/VirtualList'
-import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
-import type { I18n } from '@uppy/utils/lib/Translator'
 import type {
+  Body,
+  Meta,
   PartialTreeFile,
   PartialTreeFolderNode,
-} from '@uppy/core/lib/Uppy.js'
+} from '@uppy/core'
+import type { I18n } from '@uppy/utils/lib/Translator'
 import { useEffect, useState } from 'preact/hooks'
 import Item from './Item/index.jsx'
 import ProviderView from './ProviderView/ProviderView.jsx'

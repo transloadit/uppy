@@ -1,4 +1,4 @@
-import type { PartialTree } from '@uppy/core/lib/Uppy.js'
+import type { PartialTree } from '@uppy/core'
 
 /**
  * We're interested in all 'checked' leaves of this tree,

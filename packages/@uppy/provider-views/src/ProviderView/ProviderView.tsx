@@ -7,8 +7,9 @@ import type {
   UnknownProviderPluginState,
   PartialTreeId,
   PartialTree,
-} from '@uppy/core/lib/Uppy.js'
-import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
+  Body,
+  Meta,
+} from '@uppy/core'
 import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
 import classNames from 'classnames'
 import type { ValidateableFile } from '@uppy/core/lib/Restricter.js'

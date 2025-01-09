@@ -1,11 +1,14 @@
-import type { Uppy } from '@uppy/core'
-import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
-import type { PluginOpts } from '@uppy/core/lib/BasePlugin.js'
+import type {
+  Uppy,
+  Body,
+  Meta,
+  PluginOpts,
+  UnknownProviderPlugin,
+} from '@uppy/core'
 import type {
   RequestOptions,
   CompanionClientProvider,
 } from '@uppy/utils/lib/CompanionClientProvider'
-import type { UnknownProviderPlugin } from '@uppy/core/lib/Uppy.js'
 import RequestClient, { authErrorStatusCode } from './RequestClient.js'
 import type { CompanionPluginOptions } from './index.js'
 import { isOriginAllowed } from './getAllowedHosts.js'

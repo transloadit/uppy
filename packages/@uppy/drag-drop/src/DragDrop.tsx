@@ -1,7 +1,11 @@
-import { UIPlugin, type Uppy } from '@uppy/core'
-import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin.js'
-import type { UIPluginOptions } from '@uppy/core/lib/UIPlugin.js'
-import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
+import { UIPlugin } from '@uppy/core'
+import type {
+  UIPluginOptions,
+  Uppy,
+  DefinePluginOpts,
+  Body,
+  Meta,
+} from '@uppy/core'
 import type { TargetedEvent } from 'preact/compat'
 import toArray from '@uppy/utils/lib/toArray'
 import isDragDropSupported from '@uppy/utils/lib/isDragDropSupported'

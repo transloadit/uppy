@@ -5,7 +5,8 @@ import {
   type CompanionPluginOptions,
 } from '@uppy/companion-client'
 import toArray from '@uppy/utils/lib/toArray'
-import type { TagFile, Meta, Body } from '@uppy/utils/lib/UppyFile'
+import type { Meta, Body } from '@uppy/core'
+import type { TagFile } from '@uppy/utils/lib/UppyFile'
 import UrlUI from './UrlUI.jsx'
 import forEachDroppedOrPastedUrl from './utils/forEachDroppedOrPastedUrl.js'
 

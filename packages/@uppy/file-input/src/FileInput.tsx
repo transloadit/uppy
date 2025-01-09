@@ -1,9 +1,14 @@
 import { h, type ComponentChild } from 'preact'
 
-import { UIPlugin, Uppy, type UIPluginOptions } from '@uppy/core'
+import { UIPlugin } from '@uppy/core'
+import type {
+  Uppy,
+  UIPluginOptions,
+  Body,
+  Meta,
+  DefinePluginOpts,
+} from '@uppy/core'
 import toArray from '@uppy/utils/lib/toArray'
-import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
-import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin.js'
 import type { TargetedEvent } from 'preact/compat'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json

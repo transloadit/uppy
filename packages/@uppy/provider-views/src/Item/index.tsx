@@ -7,7 +7,7 @@ import type {
   PartialTreeFile,
   PartialTreeFolderNode,
   PartialTreeId,
-} from '@uppy/core/lib/Uppy.js'
+} from '@uppy/core'
 import GridItem from './components/GridItem.jsx'
 import ListItem from './components/ListItem.jsx'
 

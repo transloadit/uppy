@@ -1,5 +1,5 @@
 import { h } from 'preact'
-import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
+import type { Body, Meta, UppyFile } from '@uppy/core'
 import type Uppy from '@uppy/core'
 import type { I18n } from '@uppy/utils/lib/Translator'
 import copyToClipboard from '../../../utils/copyToClipboard.js'

@@ -1,12 +1,15 @@
 import { h, type ComponentChild } from 'preact'
 import { useState, useCallback } from 'preact/hooks'
 
-import {
-  UIPlugin,
-  type Body,
-  type Meta,
-  type UnknownProviderPlugin,
-  type UppyFile,
+import { UIPlugin } from '@uppy/core'
+import type {
+  Body,
+  Meta,
+  UnknownProviderPlugin,
+  UppyFile,
+  AsyncStore,
+  UnknownProviderPluginState,
+  Uppy,
 } from '@uppy/core'
 import {
   Provider,
@@ -15,11 +18,6 @@ import {
 } from '@uppy/companion-client'
 import { SearchInput, ProviderViews } from '@uppy/provider-views'
 
-import type {
-  AsyncStore,
-  UnknownProviderPluginState,
-  Uppy,
-} from '@uppy/core/lib/Uppy.js'
 import type { I18n } from '@uppy/utils/lib/Translator'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json

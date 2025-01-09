@@ -1,8 +1,13 @@
 import { h, type ComponentChild } from 'preact'
-import { UIPlugin, Uppy, type UIPluginOptions } from '@uppy/core'
+import { UIPlugin } from '@uppy/core'
+import type {
+  Uppy,
+  UIPluginOptions,
+  DefinePluginOpts,
+  Body,
+  Meta,
+} from '@uppy/core'
 import getFileTypeExtension from '@uppy/utils/lib/getFileTypeExtension'
-import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin.js'
-import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import ScreenRecIcon from './ScreenRecIcon.jsx'
 import RecorderScreen from './RecorderScreen.jsx'
 

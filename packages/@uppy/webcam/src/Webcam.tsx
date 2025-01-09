@@ -1,13 +1,14 @@
 import { h, type ComponentChild } from 'preact'
 
 import { UIPlugin } from '@uppy/core'
-import type { Uppy, UIPluginOptions } from '@uppy/core'
-import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin.js'
 import type {
+  Uppy,
+  UIPluginOptions,
+  DefinePluginOpts,
   Body,
   Meta,
   MinimalRequiredUppyFile,
-} from '@uppy/utils/lib/UppyFile'
+} from '@uppy/core'
 import type { PluginTarget } from '@uppy/core/lib/UIPlugin.js'
 import getFileTypeExtension from '@uppy/utils/lib/getFileTypeExtension'
 import mimeTypes from '@uppy/utils/lib/mimeTypes'

@@ -1,6 +1,5 @@
-import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
+import type { Body, Meta, UppyFile, Uppy, State } from '@uppy/core'
 import type { I18n } from '@uppy/utils/lib/Translator'
-import type { Uppy, State } from '@uppy/core/lib/Uppy.js'
 import { h } from 'preact'
 import classNames from 'classnames'
 import statusBarStates from './StatusBarStates.js'

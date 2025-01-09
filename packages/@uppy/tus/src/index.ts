@@ -1,7 +1,12 @@
-import BasePlugin, {
-  type DefinePluginOpts,
-  type PluginOpts,
-} from '@uppy/core/lib/BasePlugin.js'
+import { BasePlugin } from '@uppy/core'
+import type {
+  Uppy,
+  DefinePluginOpts,
+  PluginOpts,
+  Meta,
+  Body,
+  UppyFile,
+} from '@uppy/core'
 import * as tus from 'tus-js-client'
 import EventManager from '@uppy/core/lib/EventManager.js'
 import NetworkError from '@uppy/utils/lib/NetworkError'
@@ -14,8 +19,6 @@ import {
   filterNonFailedFiles,
   filterFilesToEmitUploadStarted,
 } from '@uppy/utils/lib/fileFilters'
-import type { Meta, Body, UppyFile } from '@uppy/utils/lib/UppyFile'
-import type { Uppy } from '@uppy/core'
 import type { RequestClient } from '@uppy/companion-client'
 import getAllowedMetaFields from '@uppy/utils/lib/getAllowedMetaFields'
 import getFingerprint from './getFingerprint.js'

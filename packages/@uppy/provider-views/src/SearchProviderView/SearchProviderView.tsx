@@ -1,19 +1,20 @@
 import { h } from 'preact'
 
-import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import type {
+  Body,
+  Meta,
+  DefinePluginOpts,
   PartialTree,
   PartialTreeFile,
   PartialTreeFolderNode,
   PartialTreeFolderRoot,
   UnknownSearchProviderPlugin,
   UnknownSearchProviderPluginState,
-} from '@uppy/core/lib/Uppy.js'
+} from '@uppy/core'
 import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
 import classNames from 'classnames'
 import type { ValidateableFile } from '@uppy/core/lib/Restricter.js'
 import remoteFileObjToLocal from '@uppy/utils/lib/remoteFileObjToLocal'
-import type { DefinePluginOpts } from '@uppy/core'
 import SearchInput from '../SearchInput.jsx'
 import Browser from '../Browser.jsx'
 

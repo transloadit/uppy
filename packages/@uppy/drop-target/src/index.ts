@@ -1,7 +1,5 @@
-import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
-import type { Uppy } from '@uppy/core/lib/Uppy.js'
-import type { DefinePluginOpts, PluginOpts } from '@uppy/core/lib/BasePlugin.js'
-import BasePlugin from '@uppy/core/lib/BasePlugin.js'
+import type { Uppy, Body, Meta, DefinePluginOpts, PluginOpts } from '@uppy/core'
+import { BasePlugin } from '@uppy/core'
 import getDroppedFiles from '@uppy/utils/lib/getDroppedFiles'
 import toArray from '@uppy/utils/lib/toArray'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment

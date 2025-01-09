@@ -1,7 +1,12 @@
 import type { ComponentChild } from 'preact'
-import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
-import type { Uppy, State } from '@uppy/core/lib/Uppy.js'
-import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin.js'
+import type {
+  Body,
+  Meta,
+  UppyFile,
+  DefinePluginOpts,
+  Uppy,
+  State,
+} from '@uppy/core'
 import { UIPlugin } from '@uppy/core'
 import emaFilter from '@uppy/utils/lib/emaFilter'
 import getTextDirection from '@uppy/utils/lib/getTextDirection'
