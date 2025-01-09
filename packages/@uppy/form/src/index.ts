@@ -1,4 +1,12 @@
-import BasePlugin, { type DefinePluginOpts } from '@uppy/core/lib/BasePlugin.js'
+import { BasePlugin } from '@uppy/core'
+import type {
+  DefinePluginOpts,
+  UIPluginOptions,
+  Uppy,
+  UppyEventMap,
+  Body,
+  Meta,
+} from '@uppy/core'
 import findDOMElement from '@uppy/utils/lib/findDOMElement'
 import toArray from '@uppy/utils/lib/toArray'
 
@@ -6,8 +14,6 @@ import toArray from '@uppy/utils/lib/toArray'
 // @ts-ignore untyped
 import getFormData from 'get-form-data'
 
-import type { UIPluginOptions, Uppy, UppyEventMap } from '@uppy/core'
-import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'

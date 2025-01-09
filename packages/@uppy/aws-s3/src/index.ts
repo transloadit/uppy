@@ -1,11 +1,12 @@
-import BasePlugin, {
+import {
   type DefinePluginOpts,
   type PluginOpts,
-} from '@uppy/core/lib/BasePlugin.js'
+  Uppy,
+  BasePlugin,
+} from '@uppy/core'
 import { RequestClient } from '@uppy/companion-client'
 import type { RequestOptions } from '@uppy/utils/lib/CompanionClientProvider'
 import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
-import type { Uppy } from '@uppy/core'
 import EventManager from '@uppy/core/lib/EventManager.js'
 import { RateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
 import {

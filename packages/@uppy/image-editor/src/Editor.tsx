@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import Cropper from 'cropperjs'
 import { h, Component } from 'preact'
-import type { Meta, Body, UppyFile } from '@uppy/utils/lib/UppyFile'
+import type { Meta, Body, UppyFile } from '@uppy/core'
 import type { I18n } from '@uppy/utils/lib/Translator'
 import getCanvasDataThatFitsPerfectlyIntoContainer from './utils/getCanvasDataThatFitsPerfectlyIntoContainer.js'
 import getScaleFactorThatRemovesDarkCorners from './utils/getScaleFactorThatRemovesDarkCorners.js'

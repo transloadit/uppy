@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import { h, Component, type ComponentChild } from 'preact'
-import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
+import type { Body, Meta } from '@uppy/core'
 import RecordButton from './RecordButton.jsx'
 import SubmitButton from './SubmitButton.jsx'
 import StopWatch from './StopWatch.jsx'

@@ -1,9 +1,15 @@
-import { UIPlugin, type UIPluginOptions, type Uppy } from '@uppy/core'
-import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin.js'
+import { UIPlugin } from '@uppy/core'
+import type {
+  UIPluginOptions,
+  Uppy,
+  DefinePluginOpts,
+  Meta,
+  Body,
+  UppyFile,
+} from '@uppy/core'
 import type Cropper from 'cropperjs'
 import { h } from 'preact'
 
-import type { Meta, Body, UppyFile } from '@uppy/utils/lib/UppyFile'
 import Editor from './Editor.jsx'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json

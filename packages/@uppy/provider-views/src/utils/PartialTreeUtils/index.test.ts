@@ -7,7 +7,7 @@ import type {
   PartialTreeFolderNode,
   PartialTreeFolderRoot,
   PartialTreeId,
-} from '@uppy/core/lib/Uppy.js'
+} from '@uppy/core'
 import afterToggleCheckbox from './afterToggleCheckbox.js'
 import afterOpenFolder from './afterOpenFolder.js'
 import afterScrollFolder from './afterScrollFolder.js'

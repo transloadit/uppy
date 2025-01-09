@@ -2,8 +2,7 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { h, type ComponentChild } from 'preact'
 import { UIPlugin } from '@uppy/core'
-import type { State, UIPluginOptions, Uppy } from '@uppy/core'
-import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
+import type { State, UIPluginOptions, Uppy, Body, Meta } from '@uppy/core'
 import FadeIn from './FadeIn.jsx'
 import TransitionGroup from './TransitionGroup.js'
 

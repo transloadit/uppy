@@ -1,8 +1,7 @@
 /* eslint-disable react/destructuring-assignment */
 import { h } from 'preact'
 import type { I18n } from '@uppy/utils/lib/Translator'
-import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
-import type { PartialTreeFolder } from '@uppy/core/lib/Uppy.js'
+import type { Body, Meta, PartialTreeFolder } from '@uppy/core'
 import classNames from 'classnames'
 import User from './User.jsx'
 import Breadcrumbs from '../Breadcrumbs.jsx'

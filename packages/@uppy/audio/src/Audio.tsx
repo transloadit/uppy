@@ -1,12 +1,13 @@
 import { h } from 'preact'
 
-import { UIPlugin, type UIPluginOptions } from '@uppy/core'
+import { UIPlugin } from '@uppy/core'
 import type {
+  Uppy,
+  UIPluginOptions,
   Body,
   Meta,
   MinimalRequiredUppyFile,
-} from '@uppy/utils/lib/UppyFile'
-import type { Uppy } from '@uppy/core/lib/Uppy.js'
+} from '@uppy/core'
 
 import getFileTypeExtension from '@uppy/utils/lib/getFileTypeExtension'
 import supportsMediaRecorder from './supportsMediaRecorder.js'

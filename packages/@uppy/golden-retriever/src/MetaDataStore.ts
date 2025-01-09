@@ -1,5 +1,4 @@
-import type { State as UppyState } from '@uppy/core'
-import type { Meta, Body } from '@uppy/utils/lib/UppyFile'
+import type { State as UppyState, Meta, Body } from '@uppy/core'
 
 export type StoredState<M extends Meta, B extends Body> = {
   expires: number

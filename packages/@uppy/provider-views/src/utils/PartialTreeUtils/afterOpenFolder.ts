@@ -3,7 +3,7 @@ import type {
   PartialTreeFile,
   PartialTreeFolder,
   PartialTreeFolderNode,
-} from '@uppy/core/lib/Uppy.js'
+} from '@uppy/core'
 import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
 
 const afterOpenFolder = (

@@ -1,7 +1,6 @@
 import { createElement as h, Component } from 'react'
-import type { UnknownPlugin, Uppy } from '@uppy/core'
+import type { UnknownPlugin, Uppy, Body, Meta } from '@uppy/core'
 import DragDropPlugin, { type DragDropOptions } from '@uppy/drag-drop'
-import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import getHTMLProps from './getHTMLProps.js'
 import nonHtmlPropsHaveChanged from './nonHtmlPropsHaveChanged.js'
 

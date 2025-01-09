@@ -1,8 +1,5 @@
 import { h } from 'preact'
-import type {
-  PartialTreeFile,
-  PartialTreeFolderNode,
-} from '@uppy/core/lib/Uppy.js'
+import type { PartialTreeFile, PartialTreeFolderNode } from '@uppy/core'
 import ItemIcon from './ItemIcon.jsx'
 
 type GridItemProps = {

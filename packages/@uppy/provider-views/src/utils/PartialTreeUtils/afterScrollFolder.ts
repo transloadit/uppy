@@ -4,7 +4,7 @@ import type {
   PartialTreeFolder,
   PartialTreeFolderNode,
   PartialTreeId,
-} from '@uppy/core/lib/Uppy.js'
+} from '@uppy/core'
 import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
 
 const afterScrollFolder = (

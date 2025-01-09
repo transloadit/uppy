@@ -2,8 +2,15 @@
 import { h } from 'preact'
 import classNames from 'classnames'
 import isDragDropSupported from '@uppy/utils/lib/isDragDropSupported'
-import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
-import type { State, UIPlugin, UIPluginOptions, Uppy } from '@uppy/core'
+import type {
+  Body,
+  Meta,
+  UppyFile,
+  State,
+  UIPlugin,
+  UIPluginOptions,
+  Uppy,
+} from '@uppy/core'
 import type { I18n } from '@uppy/utils/lib/Translator'
 import type Translator from '@uppy/utils/lib/Translator'
 import type { TargetedEvent } from 'preact/compat'

@@ -1,5 +1,4 @@
-import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
-import type { State, Uppy } from '@uppy/core/lib/Uppy.js'
+import type { Body, Meta, State, Uppy } from '@uppy/core'
 import type { FileProcessingInfo } from '@uppy/utils/lib/FileProgress'
 import type { I18n } from '@uppy/utils/lib/Translator'
 import { h } from 'preact'

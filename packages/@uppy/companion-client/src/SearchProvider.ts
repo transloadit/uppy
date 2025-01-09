@@ -1,5 +1,4 @@
-import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
-import type { Uppy } from '@uppy/core'
+import type { Body, Meta, Uppy } from '@uppy/core'
 import type { CompanionClientSearchProvider } from '@uppy/utils/lib/CompanionClientProvider'
 import RequestClient, { type Opts } from './RequestClient.js'
 

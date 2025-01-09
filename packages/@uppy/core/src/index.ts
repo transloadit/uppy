@@ -1,13 +1,22 @@
-export { default } from './Uppy.js'
-export {
-  default as Uppy,
-  type State,
-  type UnknownPlugin,
-  type UnknownProviderPlugin,
-  type UnknownSearchProviderPlugin,
-  type UploadResult,
-  type UppyEventMap,
-  type UppyOptions,
+export { default, default as Uppy } from './Uppy.js'
+export type {
+  State,
+  BaseProviderPlugin,
+  PartialTree,
+  PartialTreeFile,
+  PartialTreeFolder,
+  PartialTreeFolderNode,
+  PartialTreeFolderRoot,
+  PartialTreeId,
+  UnknownPlugin,
+  UnknownProviderPlugin,
+  UnknownProviderPluginState,
+  UnknownSearchProviderPlugin,
+  UnknownSearchProviderPluginState,
+  UploadResult,
+  UppyEventMap,
+  UppyOptions,
+  AsyncStore,
 } from './Uppy.js'
 
 export { default as UIPlugin } from './UIPlugin.js'
@@ -20,4 +29,9 @@ export { debugLogger } from './loggers.js'
 
 export type { Store } from '@uppy/store-default'
 
-export type { UppyFile, Meta, Body } from '@uppy/utils/lib/UppyFile'
+export type {
+  UppyFile,
+  MinimalRequiredUppyFile,
+  Meta,
+  Body,
+} from '@uppy/utils/lib/UppyFile'

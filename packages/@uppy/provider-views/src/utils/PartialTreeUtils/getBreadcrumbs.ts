@@ -3,7 +3,7 @@ import type {
   PartialTreeFolder,
   PartialTreeFolderNode,
   PartialTreeId,
-} from '@uppy/core/lib/Uppy.js'
+} from '@uppy/core'
 
 const getBreadcrumbs = (
   partialTree: PartialTree,

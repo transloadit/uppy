@@ -4,7 +4,7 @@ export { default as Uppy, debugLogger } from '@uppy/core'
 
 // Plugin base classes
 export { default as UIPlugin } from '@uppy/core/lib/UIPlugin.js'
-export { default as BasePlugin } from '@uppy/core/lib/BasePlugin.js'
+export { default as BasePlugin } from '@uppy/core'
 
 /**
  * @deprecated Use `Uppy` instead of `Core`

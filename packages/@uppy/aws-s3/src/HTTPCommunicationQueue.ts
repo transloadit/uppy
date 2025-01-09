@@ -1,4 +1,4 @@
-import type { Meta, Body, UppyFile } from '@uppy/utils/lib/UppyFile'
+import type { Meta, Body, UppyFile } from '@uppy/core'
 import type {
   RateLimitedQueue,
   WrapPromiseFunctionType,
