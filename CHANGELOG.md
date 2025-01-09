@@ -12,6 +12,38 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 4.12.2
+
+Released: 2025-01-09
+
+| Package                    | Version | Package                    | Version |
+| -------------------------- | ------- | -------------------------- | ------- |
+| @uppy/audio                |   2.1.1 | @uppy/instagram            |   4.2.1 |
+| @uppy/aws-s3               |   4.2.1 | @uppy/onedrive             |   4.2.2 |
+| @uppy/box                  |   3.2.1 | @uppy/progress-bar         |   4.2.1 |
+| @uppy/companion-client     |   4.4.1 | @uppy/provider-views       |   4.4.1 |
+| @uppy/compressor           |   2.2.1 | @uppy/react                |   4.2.1 |
+| @uppy/core                 |   4.4.1 | @uppy/remote-sources       |   2.3.1 |
+| @uppy/dashboard            |   4.3.1 | @uppy/screen-capture       |   4.2.1 |
+| @uppy/drag-drop            |   4.1.1 | @uppy/status-bar           |   4.1.1 |
+| @uppy/drop-target          |   3.1.1 | @uppy/thumbnail-generator  |   4.1.1 |
+| @uppy/dropbox              |   4.2.1 | @uppy/transloadit          |   4.2.1 |
+| @uppy/facebook             |   4.2.1 | @uppy/tus                  |   4.2.1 |
+| @uppy/file-input           |   4.1.1 | @uppy/unsplash             |   4.3.1 |
+| @uppy/form                 |   4.1.1 | @uppy/url                  |   4.2.1 |
+| @uppy/golden-retriever     |   4.1.1 | @uppy/vue                  |   2.1.1 |
+| @uppy/google-drive         |   4.3.1 | @uppy/webcam               |   4.1.1 |
+| @uppy/google-drive-picker  |   0.3.2 | @uppy/webdav               |   0.3.1 |
+| @uppy/google-photos        |   0.5.1 | @uppy/xhr-upload           |   4.3.2 |
+| @uppy/google-photos-picker |   0.3.2 | @uppy/zoom                 |   3.2.1 |
+| @uppy/image-editor         |   3.3.1 | uppy                       |  4.12.2 |
+| @uppy/informer             |   4.2.1 |                            |         |
+
+- @uppy/provider-views: Import types consistently from @uppy/core (Merlijn Vos / #5589)
+- @uppy/status-bar: fix double upload progress (Mikael Finstad / #5587)
+- @uppy/provider-views: fix incorrect import (Merlijn Vos / #5588)
+
+
 ## 4.12.1
 
 Released: 2025-01-08

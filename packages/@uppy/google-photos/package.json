@@ -1,7 +1,7 @@
 {
   "name": "@uppy/google-photos",
   "description": "The Google Photos plugin for Uppy lets users import photos from their Google Photos account",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "license": "MIT",
   "main": "lib/index.js",
   "type": "module",

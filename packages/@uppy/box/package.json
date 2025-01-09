@@ -1,7 +1,7 @@
 {
   "name": "@uppy/box",
   "description": "Import files from Box, into Uppy.",
-  "version": "3.2.0",
+  "version": "3.2.1",
   "license": "MIT",
   "main": "lib/index.js",
   "type": "module",

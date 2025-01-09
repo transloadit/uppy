@@ -1,7 +1,7 @@
 {
   "name": "@uppy/tus",
   "description": "Resumable uploads for Uppy using Tus.io",
-  "version": "4.2.0",
+  "version": "4.2.1",
   "license": "MIT",
   "main": "lib/index.js",
   "type": "module",

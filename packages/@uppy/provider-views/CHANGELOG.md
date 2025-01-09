@@ -1,5 +1,13 @@
 # @uppy/provider-views
 
+## 4.4.1
+
+Released: 2025-01-09
+Included in: Uppy v4.12.2
+
+- @uppy/provider-views: Import types consistently from @uppy/core (Merlijn Vos / #5589)
+- @uppy/provider-views: fix incorrect import (Merlijn Vos / #5588)
+
 ## 4.4.0
 
 Released: 2025-01-08
