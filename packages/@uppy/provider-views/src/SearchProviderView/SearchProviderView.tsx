@@ -13,7 +13,7 @@ import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
 import classNames from 'classnames'
 import type { ValidateableFile } from '@uppy/core/lib/Restricter.js'
 import remoteFileObjToLocal from '@uppy/utils/lib/remoteFileObjToLocal'
-import type { DefinePluginOpts } from '@uppy/core/src/BasePlugin.js'
+import type { DefinePluginOpts } from '@uppy/core'
 import SearchInput from '../SearchInput.jsx'
 import Browser from '../Browser.jsx'
 
