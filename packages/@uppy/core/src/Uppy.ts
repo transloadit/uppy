@@ -649,9 +649,6 @@ export class Uppy<
           ...files[fileID].progress,
           ...defaultProgress,
         },
-        // @ts-expect-error these typed are inserted
-        // into the namespace in their respective packages
-        // but core isn't ware of those
         tus: undefined,
         transloadit: undefined,
       }
@@ -899,7 +896,9 @@ export class Uppy<
     try {
       this.#restricter.validateSingleFile(file)
     } catch (err) {
-      return err.message
+      if (err instanceof Error) {
+        return err.message
+      }
     }
     return null
   }
@@ -911,7 +910,9 @@ export class Uppy<
     try {
       this.#restricter.validateAggregateRestrictions(existingFiles, files)
     } catch (err) {
-      return err.message
+      if (err instanceof Error) {
+        return err.message
+      }
     }
     return null
   }
