@@ -30,6 +30,8 @@ class ProviderUserError extends ProviderApiError {
 /**
  * AuthError is error returned when an adapter encounters
  * an authorization error while communication with its corresponding provider
+ * this signals to the client that the access token is invalid and needs to be
+ * refreshed or the user needs to re-authenticate
  */
 class ProviderAuthError extends ProviderApiError {
   constructor() {
@@ -43,6 +45,7 @@ class ProviderAuthError extends ProviderApiError {
  * Convert an error instance to an http response if possible
  *
  * @param {Error | ProviderApiError} err the error instance to convert to an http json response
+ * @returns {object | undefined} an object with a code and json field if the error can be converted to a response
  */
 function errorToResponse(err) {
   // @ts-ignore
