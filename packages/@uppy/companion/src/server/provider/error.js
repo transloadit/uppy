@@ -41,6 +41,22 @@ class ProviderAuthError extends ProviderApiError {
   }
 }
 
+function parseHttpError(err) {
+  if (err?.name === 'HTTPError') {
+    return {
+      statusCode: err.response?.statusCode,
+      body: err.response?.body,
+    }
+  }
+  if (err?.name === 'HttpError') {
+    return {
+      statusCode: err.statusCode,
+      body: err.responseJson,
+    }
+  }
+  return undefined
+}
+
 /**
  * Convert an error instance to an http response if possible
  *
@@ -51,6 +67,10 @@ function errorToResponse(err) {
   // @ts-ignore
   if (err?.isAuthError) {
     return { code: 401, json: { message: err.message } }
+  }
+
+  if (err?.name === 'ValidationError') {
+    return { code: 400, json: { message: err.message } }
   }
 
   if (err?.name === 'ProviderUserError') {
@@ -77,6 +97,11 @@ function errorToResponse(err) {
     }
   }
 
+  const httpError = parseHttpError(err)
+  if (httpError) {
+    return { code: 500, json: { statusCode: httpError.statusCode, body: httpError.body } }
+  }
+
   return undefined
 }
 
@@ -89,4 +114,4 @@ function respondWithError(err, res) {
   return false
 }
 
-module.exports = { ProviderAuthError, ProviderApiError, ProviderUserError, respondWithError }
+module.exports = { ProviderAuthError, ProviderApiError, ProviderUserError, respondWithError, parseHttpError }

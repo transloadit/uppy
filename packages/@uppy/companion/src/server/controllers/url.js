@@ -5,6 +5,7 @@ const { downloadURL } = require('../download')
 const { validateURL } = require('../helpers/request')
 const { getURLMeta } = require('../helpers/request')
 const logger = require('../logger')
+const { respondWithError } = require('../provider/error')
 
 /**
  * @callback downloadCallback
@@ -24,14 +25,16 @@ const meta = async (req, res) => {
     const { allowLocalUrls } = req.companion.options
     if (!validateURL(req.body.url, allowLocalUrls)) {
       logger.debug('Invalid request body detected. Exiting url meta handler.', null, req.id)
-      return res.status(400).json({ error: 'Invalid request body' })
+      res.status(400).json({ error: 'Invalid request body' })
+      return
     }
 
     const urlMeta = await getURLMeta(req.body.url, allowLocalUrls)
-    return res.json(urlMeta)
+    res.json(urlMeta)
   } catch (err) {
     logger.error(err, 'controller.url.meta.error', req.id)
-    return res.status(err.status || 500).json({ message: 'failed to fetch URL metadata' })
+    if (respondWithError(err, res)) return
+    res.status(500).json({ message: 'failed to fetch URL metadata' })
   }
 }
 
@@ -62,7 +65,8 @@ const get = async (req, res) => {
     await startDownUpload({ req, res, getSize, download })
   } catch (err) {
     logger.error(err, 'controller.url.error', req.id)
-    res.status(err.status || 500).json({ message: 'failed to fetch URL' })
+    if (respondWithError(err, res)) return
+    res.status(500).json({ message: 'failed to fetch URL' })
   }
 }
 
