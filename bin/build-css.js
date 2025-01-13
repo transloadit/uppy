@@ -73,6 +73,7 @@ async function compileCSS () {
     }
     await mkdir(outdir, { recursive: true })
     await writeFile(outfile, postcssResult.css)
+    await writeFile(path.join(outdir, 'style.d.css.ts'), 'export {}\n')
     console.info(
       chalk.green('✓ Built Uppy CSS:'),
       chalk.magenta(path.relative(cwd, outfile)),
@@ -85,6 +86,7 @@ async function compileCSS () {
       console.warn(warn.toString())
     })
     await writeFile(outfile.replace(/\.css$/, '.min.css'), minifiedResult.css)
+    await writeFile(path.join(outdir, 'style.min.d.css.ts'), 'export {}\n')
     console.info(
       chalk.green('✓ Minified Bundle CSS:'),
       chalk.magenta(path.relative(cwd, outfile).replace(/\.css$/, '.min.css')),
