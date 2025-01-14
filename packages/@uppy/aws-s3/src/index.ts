@@ -510,7 +510,7 @@ export default class AwsS3Multipart<
     return this.#client
       .get<
         AwsS3Part[]
-      >(`s3/multipart/${encodeURIComponent(uploadId)}?key=${filename}`, { signal })
+      >(`s3/multipart/${encodeURIComponent(uploadId!)}?key=${filename}`, { signal })
       .then(assertServerError)
   }
 
@@ -524,7 +524,7 @@ export default class AwsS3Multipart<
     throwIfAborted(signal)
 
     const filename = encodeURIComponent(key)
-    const uploadIdEnc = encodeURIComponent(uploadId)
+    const uploadIdEnc = encodeURIComponent(uploadId!)
     return this.#client
       .post<B>(
         `s3/multipart/${uploadIdEnc}/complete?key=${filename}`,
@@ -633,7 +633,7 @@ export default class AwsS3Multipart<
     this.#assertHost('abortMultipartUpload')
 
     const filename = encodeURIComponent(key)
-    const uploadIdEnc = encodeURIComponent(uploadId)
+    const uploadIdEnc = encodeURIComponent(uploadId!)
     return this.#client
       .delete<void>(`s3/multipart/${uploadIdEnc}?key=${filename}`, undefined, {
         signal,

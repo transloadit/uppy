@@ -11,7 +11,7 @@ export function throwIfAborted(signal?: AbortSignal | null): void {
   }
 }
 
-export type UploadResult = { key: string; uploadId: string }
+export type UploadResult = { key: string; uploadId?: string; bucket?: string }
 export type UploadResultWithSignal = UploadResult & { signal?: AbortSignal }
 export type MultipartUploadResult = UploadResult & { parts: AwsS3Part[] }
 export type MultipartUploadResultWithSignal = MultipartUploadResult & {
@@ -25,4 +25,6 @@ export type UploadPartBytesResult = {
 
 export interface AwsBody extends Body {
   location: string
+  key: string
+  bucket: string
 }
