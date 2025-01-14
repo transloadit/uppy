@@ -278,16 +278,17 @@ export class HTTPCommunicationQueue<M extends Meta, B extends Body> {
 
     const key = fields?.key
     if (!key) {
-      throw new Error(
+      console.error(
         'Expected `fields.key` to be returend but the backend/Companion',
       )
     }
-    this.#setS3MultipartState(file, { key })
+    this.#setS3MultipartState(file, { key: key! })
 
     return {
       ...result,
-      location: removeMetadataFromURL(url),
-      bucket: fields.bucket,
+      location:
+        (result.location as string | undefined) ?? removeMetadataFromURL(url),
+      bucket: fields?.bucket,
       key,
     }
   }

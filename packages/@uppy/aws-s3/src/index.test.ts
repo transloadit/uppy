@@ -50,7 +50,10 @@ describe('AwsS3Multipart', () => {
         getUploadParameters: () => ({
           method: 'POST',
           url: 'https://bucket.s3.us-east-2.amazonaws.com/',
-          fields: {},
+          fields: {
+            key: 'file',
+            bucket: 'https://bucket.s3.us-east-2.amazonaws.com/',
+          },
         }),
       })
       const scope = nock(
@@ -89,6 +92,8 @@ describe('AwsS3Multipart', () => {
           ETag: 'test',
           etag: 'test',
           location: 'http://example.com',
+          key: 'file',
+          bucket: 'https://bucket.s3.us-east-2.amazonaws.com/',
         },
         status: 200,
         uploadURL: 'http://example.com',
