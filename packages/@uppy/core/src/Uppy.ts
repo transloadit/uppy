@@ -649,6 +649,9 @@ export class Uppy<
           ...files[fileID].progress,
           ...defaultProgress,
         },
+        // these types are inserted into the namespace in their
+        // respective packages but core isn't aware of those
+        // @ts-expect-error 
         tus: undefined,
         transloadit: undefined,
       }
