@@ -99,6 +99,7 @@ function errorToResponse(err) {
 
   const httpError = parseHttpError(err)
   if (httpError) {
+    // We proxy the response purely for ease of debugging
     return { code: 500, json: { statusCode: httpError.statusCode, body: httpError.body } }
   }
 
