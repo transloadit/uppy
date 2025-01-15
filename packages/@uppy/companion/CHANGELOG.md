@@ -1,5 +1,13 @@
 # @uppy/companion
 
+## 5.5.0
+
+Released: 2025-01-15
+Included in: Uppy v4.13.0
+
+- @uppy/companion: fix forcePathStyle boolean conversion (Mikael Finstad / #5308)
+- @uppy/companion: add COMPANION_TUS_DEFERRED_UPLOAD_LENGTH (Dominik Schmidt / #5561)
+
 ## 5.4.1
 
 Released: 2025-01-08

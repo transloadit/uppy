@@ -1,5 +1,13 @@
 # @uppy/aws-s3
 
+## 4.2.2
+
+Released: 2025-01-15
+Included in: Uppy v4.13.0
+
+- @uppy/aws-s3: always set S3 meta to UppyFile & include key (Merlijn Vos / #5602)
+- @uppy/aws-s3: allow uploads to fail/succeed independently (Merlijn Vos / #5603)
+
 ## 4.2.0
 
 Released: 2025-01-06
