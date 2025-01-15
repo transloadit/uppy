@@ -136,10 +136,26 @@ jobs:
         run: npm i --save-dev webpack-cli webpack@${{matrix.bundler-version}}
       - run: npx webpack --version
       - name: Create Webpack config file
-        run:
-          echo 'export default
-          {mode:"production",target:"web",entry:"./lib/index.js"}' >
-          webpack.config.js
+        run: |
+          echo 'export default {
+            mode: "production",
+            target: "web",
+            entry: "./lib/index.js",
+            resolve: {
+              fallback: {
+                fs: false,
+                path: false,
+                stream: false,
+                util: false,
+                assert: false,
+                constants: false,
+                crypto: false,
+                http: false,
+                https: false,
+                url: false
+              }
+            }
+          }' > webpack.config.js
       - name: Bundle
         run: npx webpack
 
