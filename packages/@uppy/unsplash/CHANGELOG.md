@@ -1,5 +1,12 @@
 # @uppy/unsplash
 
+## 4.3.2
+
+Released: 2025-01-15
+Included in: Uppy v4.13.0
+
+- @uppy/unsplash: make utmSource optional (Merlijn Vos / #5601)
+
 ## 4.3.0
 
 Released: 2025-01-08

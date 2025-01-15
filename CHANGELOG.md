@@ -12,6 +12,26 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 4.13.0
+
+Released: 2025-01-15
+
+| Package         | Version | Package         | Version |
+| --------------- | ------- | --------------- | ------- |
+| @uppy/aws-s3    |   4.2.2 | @uppy/unsplash  |   4.3.2 |
+| @uppy/companion |   5.5.0 | uppy            |  4.13.0 |
+
+- @uppy/aws-s3: always set S3 meta to UppyFile & include key (Merlijn Vos / #5602)
+- @uppy/companion: fix forcePathStyle boolean conversion (Mikael Finstad / #5308)
+- meta: Fix Webpack CI (Merlijn Vos / #5604)
+- @uppy/aws-s3: allow uploads to fail/succeed independently (Merlijn Vos / #5603)
+- meta: Add types for css files (Merlijn Vos / #5591)
+- @uppy/unsplash: make utmSource optional (Merlijn Vos / #5601)
+- meta: build(deps): bump docker/setup-qemu-action from 3.2.0 to 3.3.0 (dependabot[bot] / #5599)
+- meta: build(deps): bump docker/build-push-action from 6.10.0 to 6.11.0 (dependabot[bot] / #5600)
+- @uppy/companion: add COMPANION_TUS_DEFERRED_UPLOAD_LENGTH (Dominik Schmidt / #5561)
+
+
 ## 4.12.2
 
 Released: 2025-01-09
