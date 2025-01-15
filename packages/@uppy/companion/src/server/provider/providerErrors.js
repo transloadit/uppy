@@ -1,5 +1,5 @@
 const logger = require('../logger')
-const { ProviderApiError, ProviderUserError, ProviderAuthError } = require('./error')
+const { ProviderApiError, ProviderUserError, ProviderAuthError, parseHttpError } = require('./error')
 
 /**
  * 
@@ -37,18 +37,11 @@ async function withProviderErrorHandling({
   try {
     return await fn()
   } catch (err) {
-    let statusCode
-    let body
+    const httpError = parseHttpError(err)
 
-    if (err?.name === 'HTTPError') {
-      statusCode = err.response?.statusCode
-      body = err.response?.body
-    } else if (err?.name === 'HttpError') {
-      statusCode = err.statusCode
-      body = err.responseJson
-    }
-
-    if (statusCode != null) {
+    // Wrap all HTTP errors according to the provider's desired error handling
+    if (httpError) {
+      const { statusCode, body } = httpError
       let knownErr
       if (isAuthError({ statusCode, body })) {
         knownErr = new ProviderAuthError()
@@ -62,8 +55,8 @@ async function withProviderErrorHandling({
       throw knownErr
     }
 
+    // non HTTP errors will be passed through
     logger.error(err, tag)
-
     throw err
   }
 }
@@ -81,4 +74,4 @@ async function withGoogleErrorHandling (providerName, tag, fn) {
   })
 }
 
-module.exports = { withProviderErrorHandling, withGoogleErrorHandling }
+module.exports = { withProviderErrorHandling, withGoogleErrorHandling, parseHttpError }

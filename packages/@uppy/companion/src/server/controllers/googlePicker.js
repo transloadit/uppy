@@ -7,6 +7,7 @@ const { getURLMeta } = require('../helpers/request')
 const logger = require('../logger')
 const { downloadURL } = require('../download')
 const { getGoogleFileSize, streamGoogleFile } = require('../provider/google/drive');
+const { respondWithError } = require('../provider/error')
 
 
 const getAuthHeader = (token) => ({ authorization: `Bearer ${token}` });
@@ -49,7 +50,8 @@ const get = async (req, res) => {
     await startDownUpload({ req, res, getSize, download })
   } catch (err) {
     logger.error(err, 'controller.googlePicker.error', req.id)
-    res.status(err.status || 500).json({ message: 'failed to fetch Google Picker URL' })
+    if (respondWithError(err, res)) return
+    res.status(500).json({ message: 'failed to fetch Google Picker URL' })
   }
 }
 

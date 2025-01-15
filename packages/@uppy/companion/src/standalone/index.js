@@ -182,10 +182,10 @@ module.exports = function server(inputCompanionOptions) {
       } else {
         logger.error(err, 'root.error', req.id)
       }
-      res.status(err.status || 500).json({ message: 'Something went wrong', requestId: req.id })
+      res.status(500).json({ message: 'Something went wrong', requestId: req.id })
     } else {
       logger.error(err, 'root.error', req.id)
-      res.status(err.status || 500).json({ message: err.message, error: err, requestId: req.id })
+      res.status(500).json({ message: err.message, error: err, requestId: req.id })
     }
   })
 
