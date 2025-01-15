@@ -276,15 +276,21 @@ export class HTTPCommunicationQueue<M extends Meta, B extends Body> {
       signal,
     }).abortOn(signal)) as unknown as B // todo this doesn't make sense
 
-    // location will be missing from result if CORS is not correctly set up on the bucket.
-    return 'location' in result ? result : (
-        {
-          // todo `url` is not really the final location URL of the resulting file, it's just the base URL of the bucket
-          // https://github.com/transloadit/uppy/issues/5388
-          location: removeMetadataFromURL(url),
-          ...result,
-        }
+    const key = fields?.key
+    if (!key) {
+      console.error(
+        'Expected `fields.key` to be returend but the backend/Companion',
       )
+    }
+    this.#setS3MultipartState(file, { key: key! })
+
+    return {
+      ...result,
+      location:
+        (result.location as string | undefined) ?? removeMetadataFromURL(url),
+      bucket: fields?.bucket,
+      key,
+    }
   }
 
   async uploadFile(
@@ -393,7 +399,8 @@ export class HTTPCommunicationQueue<M extends Meta, B extends Body> {
 
       try {
         signature = await this.#fetchSignature(this.#getFile(file), {
-          uploadId,
+          // Always defined for multipart uploads
+          uploadId: uploadId!,
           key,
           partNumber,
           body: chunkData,

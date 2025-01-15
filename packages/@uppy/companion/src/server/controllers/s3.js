@@ -135,6 +135,7 @@ module.exports = function s3 (config) {
       res.json({
         key: data.Key,
         uploadId: data.UploadId,
+        bucket: data.Bucket
       })
     }, next)
   }
@@ -360,6 +361,8 @@ module.exports = function s3 (config) {
     })).then(data => {
       res.json({
         location: data.Location,
+        key: data.Key,
+        bucket: data.Bucket
       })
     }, next)
   }

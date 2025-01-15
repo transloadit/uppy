@@ -16,7 +16,7 @@ interface MultipartUploaderOptions<M extends Meta, B extends Body> {
   file: UppyFile<M, B>
   log: Uppy<M, B>['log']
 
-  uploadId: string
+  uploadId?: string
   key: string
 }
 
