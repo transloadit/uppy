@@ -276,12 +276,9 @@ export class HTTPCommunicationQueue<M extends Meta, B extends Body> {
       signal,
     }).abortOn(signal)) as unknown as B // todo this doesn't make sense
 
+    // Note: `fields.key` is not returned by old Companion versions.
+    // See https://github.com/transloadit/uppy/pull/5602
     const key = fields?.key
-    if (!key) {
-      console.error(
-        'Expected `fields.key` to be returend but the backend/Companion',
-      )
-    }
     this.#setS3MultipartState(file, { key: key! })
 
     return {
