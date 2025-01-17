@@ -207,6 +207,9 @@ const get = async (req, res) => {
   const urlType = identifyLinkType(url);
 
   async function getSize() {
+    if (req.body.size) {
+      return req.body.size //early exit with front end cached data
+    }
     const { size } = urlType === 'direct-url' ? await getURLMeta(url, !allowLocalUrls) : await fetchYouTubeVideoMetadata(url);
     return size;
   }
