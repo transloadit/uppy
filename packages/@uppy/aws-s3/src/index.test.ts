@@ -2,8 +2,11 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import 'whatwg-fetch'
 import nock from 'nock'
-import Core from '@uppy/core'
-import AwsS3Multipart, { type AwsBody } from './index.js'
+import Core, { type UppyFile } from '@uppy/core'
+import AwsS3Multipart, {
+  type AwsBody,
+  type AwsS3MultipartOptions,
+} from './index.js'
 
 const KB = 1024
 const MB = KB * KB
@@ -19,6 +22,92 @@ describe('AwsS3Multipart', () => {
       'uploader',
     ).map((plugin: AwsS3Multipart<any, AwsBody>) => plugin.constructor.name)
     expect(pluginNames).toContain('AwsS3Multipart')
+  })
+
+  describe('defaultOptions', () => {
+    let opts: Partial<AwsS3MultipartOptions<any, any>>
+
+    beforeEach(() => {
+      const core = new Core<any, AwsBody>().use(AwsS3Multipart)
+      const awsS3Multipart = core.getPlugin('AwsS3Multipart') as any
+      opts = awsS3Multipart.opts
+    })
+
+    it('allowedMetaFields is true', () => {
+      expect(opts.allowedMetaFields).toBe(true)
+    })
+
+    it('limit is 6', () => {
+      expect(opts.limit).toBe(6)
+    })
+
+    it('getTemporarySecurityCredentials is false', () => {
+      expect(opts.getTemporarySecurityCredentials).toBe(false)
+    })
+
+    describe('shouldUseMultipart', () => {
+      const MULTIPART_THRESHOLD = 100 * MB
+
+      let shouldUseMultipart: (file: UppyFile<any, AwsBody>) => boolean
+
+      beforeEach(() => {
+        shouldUseMultipart = opts.shouldUseMultipart as (
+          file: UppyFile<any, AwsBody>,
+        ) => boolean
+      })
+
+      const createFile = (size: number): UppyFile<any, any> => ({
+        size,
+        data: new Blob(),
+        extension: '',
+        id: '',
+        isRemote: false,
+        isGhost: false,
+        meta: undefined,
+        progress: {
+          percentage: 0,
+          bytesUploaded: 0,
+          bytesTotal: size,
+          uploadComplete: false,
+          uploadStarted: 0,
+        },
+        type: '',
+      })
+
+      it('returns true for files larger than 100MB', () => {
+        const file = createFile(MULTIPART_THRESHOLD + 1)
+        expect(shouldUseMultipart(file)).toBe(true)
+      })
+
+      it('returns false for files exactly 100MB', () => {
+        const file = createFile(MULTIPART_THRESHOLD)
+        expect(shouldUseMultipart(file)).toBe(false)
+      })
+
+      it('returns false for files smaller than 100MB', () => {
+        const file = createFile(MULTIPART_THRESHOLD - 1)
+        expect(shouldUseMultipart(file)).toBe(false)
+      })
+
+      it('returns true for large files (~70GB)', () => {
+        const file = createFile(70 * 1024 * MB)
+        expect(shouldUseMultipart(file)).toBe(true)
+      })
+
+      it('returns true for very large files (~400GB)', () => {
+        const file = createFile(400 * 1024 * MB)
+        expect(shouldUseMultipart(file)).toBe(true)
+      })
+
+      it('returns false for files with size 0', () => {
+        const file = createFile(0)
+        expect(shouldUseMultipart(file)).toBe(false)
+      })
+    })
+
+    it('retryDelays is [0, 1000, 3000, 5000]', () => {
+      expect(opts.retryDelays).toEqual([0, 1000, 3000, 5000])
+    })
   })
 
   describe('companionUrl assertion', () => {

@@ -284,10 +284,8 @@ const defaultOptions = {
   allowedMetaFields: true,
   limit: 6,
   getTemporarySecurityCredentials: false as any,
-  // eslint-disable-next-line no-bitwise
   shouldUseMultipart: ((file: UppyFile<any, any>) =>
-    // eslint-disable-next-line no-bitwise
-    (file.size! >> 10) >> 10 > 100) as any as true,
+    (file.size || 0) > 100 * 1024 * 1024) as any as true,
   retryDelays: [0, 1000, 3000, 5000],
 } satisfies Partial<AwsS3MultipartOptions<any, any>>
 
