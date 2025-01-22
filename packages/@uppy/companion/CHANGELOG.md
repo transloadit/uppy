@@ -1,5 +1,12 @@
 # @uppy/companion
 
+## 5.5.1
+
+Released: 2025-01-22
+Included in: Uppy v4.13.1
+
+- @uppy/companion: unify http error responses (Mikael Finstad / #5595)
+
 ## 5.5.0
 
 Released: 2025-01-15

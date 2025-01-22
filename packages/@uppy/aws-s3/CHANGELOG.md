@@ -1,5 +1,13 @@
 # @uppy/aws-s3
 
+## 4.2.3
+
+Released: 2025-01-22
+Included in: Uppy v4.13.1
+
+- @uppy/aws-s3: Fixed default shouldUseMultipart (Mika Laitinen / #5613)
+- @uppy/aws-s3: remove console.error (Mikael Finstad / #5607)
+
 ## 4.2.2
 
 Released: 2025-01-15
