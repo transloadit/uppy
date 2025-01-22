@@ -1,5 +1,12 @@
 # @uppy/tus
 
+## 4.2.2
+
+Released: 2025-01-22
+Included in: Uppy v4.13.1
+
+- @uppy/tus: fix resumeFromPreviousUpload race condition (Merlijn Vos / #5616)
+
 ## 4.2.0
 
 Released: 2025-01-06

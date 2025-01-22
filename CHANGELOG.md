@@ -12,6 +12,22 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 4.13.1
+
+Released: 2025-01-22
+
+| Package         | Version | Package         | Version |
+| --------------- | ------- | --------------- | ------- |
+| @uppy/aws-s3    |   4.2.3 | @uppy/tus       |   4.2.2 |
+| @uppy/companion |   5.5.1 | uppy            |  4.13.1 |
+
+- @uppy/tus: fix resumeFromPreviousUpload race condition (Merlijn Vos / #5616)
+- @uppy/aws-s3: Fixed default shouldUseMultipart (Mika Laitinen / #5613)
+- meta: build(deps): bump docker/build-push-action from 6.11.0 to 6.12.0 (dependabot[bot] / #5611)
+- @uppy/aws-s3: remove console.error (Mikael Finstad / #5607)
+- @uppy/companion: unify http error responses (Mikael Finstad / #5595)
+
+
 ## 4.13.0
 
 Released: 2025-01-15
