@@ -472,9 +472,8 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
           )
           upload.resumeFromPreviousUpload(previousUpload)
         }
+        queuedRequest = this.requests.run(qRequest)
       })
-
-      queuedRequest = this.requests.run(qRequest)
 
       eventManager.onFileRemove(file.id, (targetFileID) => {
         queuedRequest.abort()
