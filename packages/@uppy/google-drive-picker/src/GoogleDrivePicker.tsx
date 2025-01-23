@@ -45,7 +45,7 @@ export default class GoogleDrivePicker<M extends Meta, B extends Body>
 
     this.defaultLocale = locale
     this.i18nInit()
-    this.title = this.i18n('pluginNameGoogleDrive')
+    this.title = this.i18n('pluginNameGoogleDrivePicker')
 
     const client = new RequestClient(uppy, {
       pluginId: this.id,

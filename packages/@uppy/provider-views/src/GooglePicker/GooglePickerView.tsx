@@ -220,8 +220,8 @@ export default function GooglePickerView({
       <AuthView
         pluginName={
           pickerType === 'drive' ?
-            uppy.i18n('pluginNameGoogleDrive')
-          : uppy.i18n('pluginNameGooglePhotos')
+            uppy.i18n('pluginNameGoogleDrivePicker')
+          : uppy.i18n('pluginNameGooglePhotosPicker')
         }
         pluginIcon={pickerType === 'drive' ? GoogleDriveIcon : GooglePhotosIcon}
         handleAuth={showPicker}
