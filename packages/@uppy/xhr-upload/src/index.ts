@@ -440,7 +440,7 @@ export default class XHRUpload<
       opts.allowedMetaFields,
       file.meta,
     )
-    // When you .use(XHR) with .use(Transloadit, { companionOnly: true }),
+    // When you .use(XHR) with .use(Transloadit, { onlyRemoteFiles: true }),
     // local files are uploaded with this plugin and remote files with the Transloadit plugin.
     // Since the Transloadit plugin uses the tus plugin underneath, it's possible to have file.tus
     // even though we are in this plugin.

@@ -924,7 +924,7 @@ export default class AwsS3Multipart<
   #getCompanionClientArgs(file: UppyFile<M, B>) {
     const opts = { ...this.opts }
 
-    // When you .use(AwsS3) with .use(Transloadit, { companionOnly: true }),
+    // When you .use(AwsS3) with .use(Transloadit, { onlyRemoteFiles: true }),
     // local files are uploaded with this plugin and remote files with the Transloadit plugin.
     // Since the Transloadit plugin uses the tus plugin underneath, it's possible to have file.tus
     // even though we are in this plugin.
@@ -933,10 +933,10 @@ export default class AwsS3Multipart<
 
     return {
       ...file.remote?.body,
-      endpoint: tusOpts.endpoint ?? opts.endpoint,
       protocol: this.uppy.getState().remoteUploader || 's3-multipart',
-      size: file.data.size,
+      endpoint: tusOpts.endpoint ?? opts.endpoint,
       headers: { ...opts.headers, ...tusOpts.headers },
+      size: file.data.size,
       metadata: file.meta,
     }
   }

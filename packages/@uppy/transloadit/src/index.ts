@@ -140,7 +140,7 @@ export interface TransloaditOptions<M extends Meta, B extends Body>
    * Enabling this means you have to install another plugin for local files,
    * such as @uppy/aws-s3 or @uppy/xhr-upload.
    */
-  companionOnly?: boolean
+  onlyRemoteFiles?: boolean
   limit?: number
   clientName?: string | null
   retryDelays?: number[]
@@ -156,7 +156,7 @@ const defaultOptions = {
   waitForMetadata: false,
   alwaysRunAssembly: false,
   importFromUploadURLs: false,
-  companionOnly: false,
+  onlyRemoteFiles: false,
   limit: 20,
   retryDelays: [7_000, 10_000, 15_000, 20_000],
   clientName: null,
@@ -307,7 +307,7 @@ export default class Transloadit<
 
     this.i18nInit()
 
-    if (this.opts.companionOnly) {
+    if (this.opts.onlyRemoteFiles) {
       // Transloadit is only a pre and post processor.
       // To let Transloadit hosted Companion download the file,
       // we instruct any other upload plugin to use tus for remote uploads.
@@ -822,7 +822,7 @@ export default class Transloadit<
     assemblyOptions.fields ??= {}
     validateParams(assemblyOptions.params)
     const ids =
-      this.opts.companionOnly ?
+      this.opts.onlyRemoteFiles ?
         fileIDs.filter((id) => this.uppy.getFile(id).isRemote)
       : fileIDs
 
@@ -960,9 +960,9 @@ export default class Transloadit<
     if (this.opts.importFromUploadURLs) {
       // No uploader needed when importing; instead we take the upload URL from an existing uploader.
       this.uppy.on('upload-success', this.#onFileUploadURLAvailable)
-      // If companionOnly is true, another uploader plugin is installed for local uploads
+      // If onlyRemoteFiles is true, another uploader plugin is installed for local uploads
       // and we only use Transloadit to create an assembly for the remote files.
-    } else if (!this.opts.companionOnly) {
+    } else if (!this.opts.onlyRemoteFiles) {
       this.uppy.use(Tus, {
         // Disable tus-js-client fingerprinting, otherwise uploading the same file at different times
         // will upload to an outdated Assembly, and we won't get socket events for it.

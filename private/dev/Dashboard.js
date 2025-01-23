@@ -201,7 +201,7 @@ export default () => {
         service: TRANSLOADIT_SERVICE_URL,
         waitForEncoding: true,
         assemblyOptions,
-        companionOnly: true,
+        onlyRemoteFiles: true,
       })
       break
     case 's3-multipart':
@@ -215,12 +215,6 @@ export default () => {
         endpoint: XHR_ENDPOINT,
         limit: 6,
         bundle: false,
-      })
-      uppyDashboard.use(Transloadit, {
-        service: TRANSLOADIT_SERVICE_URL,
-        waitForEncoding: true,
-        assemblyOptions,
-        companionOnly: true,
       })
       break
     case 'transloadit':
@@ -236,7 +230,7 @@ export default () => {
         waitForEncoding: true,
         importFromUploadURLs: true,
         assemblyOptions,
-        companionOnly: true,
+        onlyRemoteFiles: true,
       })
       break
     case 'transloadit-xhr':
