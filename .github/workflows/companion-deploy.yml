@@ -81,6 +81,10 @@ jobs:
       - name: Alter dockerfile
         run: |
           sed -i 's/^EXPOSE 3020$/EXPOSE $PORT/g' Dockerfile
+      # https://github.com/AkhileshNS/heroku-deploy/issues/188
+      - name: Install Heroku CLI
+        run: |
+          curl https://cli-assets.heroku.com/install.sh | sh
       - name: Deploy to heroku
         uses: akhileshns/heroku-deploy@581dd286c962b6972d427fcf8980f60755c15520 # v3.13.15
         with:
