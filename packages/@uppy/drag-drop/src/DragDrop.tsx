@@ -1,7 +1,11 @@
-import { UIPlugin, type Uppy } from '@uppy/core'
-import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin.js'
-import type { UIPluginOptions } from '@uppy/core/lib/UIPlugin.js'
-import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
+import { UIPlugin } from '@uppy/core'
+import type {
+  UIPluginOptions,
+  Uppy,
+  DefinePluginOpts,
+  Body,
+  Meta,
+} from '@uppy/core'
 import type { TargetedEvent } from 'preact/compat'
 import toArray from '@uppy/utils/lib/toArray'
 import isDragDropSupported from '@uppy/utils/lib/isDragDropSupported'
@@ -11,7 +15,7 @@ import { h, type ComponentChild } from 'preact'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'
-import locale from './locale.ts'
+import locale from './locale.js'
 
 export interface DragDropOptions extends UIPluginOptions {
   inputName?: string

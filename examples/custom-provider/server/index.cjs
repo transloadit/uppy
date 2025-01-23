@@ -71,7 +71,7 @@ app.use((req, res) => {
 // handle server errors
 app.use((err, req, res) => {
   console.error('\x1b[31m', err.stack, '\x1b[0m')
-  res.status(err.status || 500).json({ message: err.message, error: err })
+  res.status(500).json({ message: err.message, error: err })
 })
 
 uppy.socket(app.listen(3020), uppyOptions)

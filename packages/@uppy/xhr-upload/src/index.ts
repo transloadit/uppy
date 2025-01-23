@@ -1,5 +1,13 @@
-import BasePlugin from '@uppy/core/lib/BasePlugin.js'
-import type { DefinePluginOpts, PluginOpts } from '@uppy/core/lib/BasePlugin.js'
+import { BasePlugin } from '@uppy/core'
+import type {
+  State,
+  Uppy,
+  DefinePluginOpts,
+  PluginOpts,
+  Meta,
+  Body,
+  UppyFile,
+} from '@uppy/core'
 import type { RequestClient } from '@uppy/companion-client'
 import EventManager from '@uppy/core/lib/EventManager.js'
 import {
@@ -15,15 +23,11 @@ import {
   filterNonFailedFiles,
   filterFilesToEmitUploadStarted,
 } from '@uppy/utils/lib/fileFilters'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore We don't want TS to generate types for the package.json
-import type { Meta, Body, UppyFile } from '@uppy/utils/lib/UppyFile'
-import type { State, Uppy } from '@uppy/core'
 import getAllowedMetaFields from '@uppy/utils/lib/getAllowedMetaFields'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'
-import locale from './locale.ts'
+import locale from './locale.js'
 
 export interface XhrUploadOpts<M extends Meta, B extends Body>
   extends PluginOpts {
@@ -82,7 +86,7 @@ declare module '@uppy/core' {
 }
 
 function buildResponseError(
-  xhr: XMLHttpRequest,
+  xhr?: XMLHttpRequest,
   err?: string | Error | NetworkError,
 ) {
   let error = err
@@ -255,17 +259,15 @@ export default class XHRUpload<
           if (error.name === 'AbortError') {
             return undefined
           }
-          if (error instanceof NetworkError) {
-            const request = error.request!
+          const request = error.request as XMLHttpRequest | undefined
 
-            for (const file of files) {
-              this.uppy.emit(
-                'upload-error',
-                this.uppy.getFile(file.id),
-                buildResponseError(request, error),
-                request,
-              )
-            }
+          for (const file of files) {
+            this.uppy.emit(
+              'upload-error',
+              this.uppy.getFile(file.id),
+              buildResponseError(request, error),
+              request,
+            )
           }
 
           throw error

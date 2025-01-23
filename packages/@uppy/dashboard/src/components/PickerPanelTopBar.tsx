@@ -1,4 +1,4 @@
-import type { UppyFile } from '@uppy/utils/lib/UppyFile'
+import type { UppyFile } from '@uppy/core'
 import { h } from 'preact'
 
 type $TSFixMe = any

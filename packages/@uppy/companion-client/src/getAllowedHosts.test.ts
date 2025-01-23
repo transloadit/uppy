@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import getAllowedHosts, { isOriginAllowed } from './getAllowedHosts.ts'
+import getAllowedHosts, { isOriginAllowed } from './getAllowedHosts.js'
 
 describe('getAllowedHosts', () => {
   it('can convert companionAllowedHosts', () => {

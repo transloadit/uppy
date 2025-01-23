@@ -1,6 +1,6 @@
 /* eslint-disable max-classes-per-file, compat/compat */
 import { describe, expect, it } from 'vitest'
-import supportsMediaRecorder from './supportsMediaRecorder.ts'
+import supportsMediaRecorder from './supportsMediaRecorder.js'
 
 describe('supportsMediaRecorder', () => {
   it('should return true if MediaRecorder is supported', () => {

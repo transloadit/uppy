@@ -1,5 +1,28 @@
 # @uppy/aws-s3
 
+## 4.2.3
+
+Released: 2025-01-22
+Included in: Uppy v4.13.1
+
+- @uppy/aws-s3: Fixed default shouldUseMultipart (Mika Laitinen / #5613)
+- @uppy/aws-s3: remove console.error (Mikael Finstad / #5607)
+
+## 4.2.2
+
+Released: 2025-01-15
+Included in: Uppy v4.13.0
+
+- @uppy/aws-s3: always set S3 meta to UppyFile & include key (Merlijn Vos / #5602)
+- @uppy/aws-s3: allow uploads to fail/succeed independently (Merlijn Vos / #5603)
+
+## 4.2.0
+
+Released: 2025-01-06
+Included in: Uppy v4.11.0
+
+- @uppy/angular,@uppy/audio,@uppy/aws-s3,@uppy/box,@uppy/companion-client,@uppy/compressor,@uppy/core,@uppy/dashboard,@uppy/drag-drop,@uppy/drop-target,@uppy/dropbox,@uppy/facebook,@uppy/file-input,@uppy/form,@uppy/golden-retriever,@uppy/google-drive-picker,@uppy/google-drive,@uppy/google-photos-picker,@uppy/google-photos,@uppy/image-editor,@uppy/informer,@uppy/instagram,@uppy/locales,@uppy/onedrive,@uppy/progress-bar,@uppy/provider-views,@uppy/react,@uppy/remote-sources,@uppy/screen-capture,@uppy/status-bar,@uppy/thumbnail-generator,@uppy/transloadit,@uppy/tus,@uppy/unsplash,@uppy/url,@uppy/vue,@uppy/webcam,@uppy/webdav,@uppy/xhr-upload,@uppy/zoom: Remove "paths" from all tsconfig's (Merlijn Vos / #5572)
+
 ## 4.1.3
 
 Released: 2024-12-05

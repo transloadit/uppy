@@ -509,9 +509,7 @@ class Uploader {
       const tusOptions = {
         endpoint: this.options.endpoint,
         uploadUrl: this.options.uploadUrl,
-        uploadLengthDeferred: !isFileStream,
         retryDelays: [0, 1000, 3000, 5000],
-        uploadSize: isFileStream ? this.size : undefined,
         chunkSize,
         headers: headerSanitize(this.options.headers),
         addRequestId: true,
@@ -551,6 +549,16 @@ class Uploader {
         onSuccess() {
           resolve({ url: uploader.tus.url })
         },
+      }
+
+      if (this.options.companionOptions.tusDeferredUploadLength && !isFileStream) {
+        tusOptions.uploadLengthDeferred = true
+      } else {
+        if (!this.size) {
+          reject(new Error('tusDeferredUploadLength needs to be enabled if no file size is provided by the provider'))
+        }
+        tusOptions.uploadLengthDeferred = false
+        tusOptions.uploadSize = this.size
       }
 
       this.tus = new tus.Upload(stream, tusOptions)

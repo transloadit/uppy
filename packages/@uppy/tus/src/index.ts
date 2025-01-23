@@ -1,7 +1,12 @@
-import BasePlugin, {
-  type DefinePluginOpts,
-  type PluginOpts,
-} from '@uppy/core/lib/BasePlugin.js'
+import { BasePlugin } from '@uppy/core'
+import type {
+  Uppy,
+  DefinePluginOpts,
+  PluginOpts,
+  Meta,
+  Body,
+  UppyFile,
+} from '@uppy/core'
 import * as tus from 'tus-js-client'
 import EventManager from '@uppy/core/lib/EventManager.js'
 import NetworkError from '@uppy/utils/lib/NetworkError'
@@ -14,11 +19,9 @@ import {
   filterNonFailedFiles,
   filterFilesToEmitUploadStarted,
 } from '@uppy/utils/lib/fileFilters'
-import type { Meta, Body, UppyFile } from '@uppy/utils/lib/UppyFile'
-import type { Uppy } from '@uppy/core'
 import type { RequestClient } from '@uppy/companion-client'
 import getAllowedMetaFields from '@uppy/utils/lib/getAllowedMetaFields'
-import getFingerprint from './getFingerprint.ts'
+import getFingerprint from './getFingerprint.js'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
@@ -42,7 +45,10 @@ export interface TusOpts<M extends Meta, B extends Body>
     | ((file: UppyFile<M, B>) => Record<string, string>)
   limit?: number
   chunkSize?: number
-  onBeforeRequest?: (req: tus.HttpRequest, file: UppyFile<M, B>) => void
+  onBeforeRequest?: (
+    req: tus.HttpRequest,
+    file: UppyFile<M, B>,
+  ) => void | Promise<void>
   onShouldRetry?: (
     err: tus.DetailedError,
     retryAttempt: number,
@@ -466,9 +472,8 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
           )
           upload.resumeFromPreviousUpload(previousUpload)
         }
+        queuedRequest = this.requests.run(qRequest)
       })
-
-      queuedRequest = this.requests.run(qRequest)
 
       eventManager.onFileRemove(file.id, (targetFileID) => {
         queuedRequest.abort()

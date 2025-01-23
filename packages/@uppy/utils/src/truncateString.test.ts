@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import truncateString from './truncateString.ts'
+import truncateString from './truncateString.js'
 
 describe('truncateString', () => {
   it('should truncate the string to the length', () => {

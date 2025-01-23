@@ -2,19 +2,26 @@
 import { h } from 'preact'
 import classNames from 'classnames'
 import isDragDropSupported from '@uppy/utils/lib/isDragDropSupported'
-import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
-import type { State, UIPlugin, UIPluginOptions, Uppy } from '@uppy/core'
+import type {
+  Body,
+  Meta,
+  UppyFile,
+  State,
+  UIPlugin,
+  UIPluginOptions,
+  Uppy,
+} from '@uppy/core'
 import type { I18n } from '@uppy/utils/lib/Translator'
 import type Translator from '@uppy/utils/lib/Translator'
 import type { TargetedEvent } from 'preact/compat'
-import FileList from './FileList.tsx'
-import AddFiles from './AddFiles.tsx'
-import AddFilesPanel from './AddFilesPanel.tsx'
-import PickerPanelContent from './PickerPanelContent.tsx'
-import EditorPanel from './EditorPanel.tsx'
-import PanelTopBar from './PickerPanelTopBar.tsx'
-import FileCard from './FileCard/index.tsx'
-import Slide from './Slide.tsx'
+import FileList from './FileList.jsx'
+import AddFiles from './AddFiles.jsx'
+import AddFilesPanel from './AddFilesPanel.jsx'
+import PickerPanelContent from './PickerPanelContent.jsx'
+import EditorPanel from './EditorPanel.jsx'
+import PanelTopBar from './PickerPanelTopBar.jsx'
+import FileCard from './FileCard/index.jsx'
+import Slide from './Slide.jsx'
 import type { DashboardState, TargetWithRender } from '../Dashboard'
 
 // http://dev.edenspiekermann.com/2016/02/11/introducing-accessible-modal-dialog

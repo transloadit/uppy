@@ -32,21 +32,21 @@ import type {
   I18n,
   OptionalPluralizeLocale,
 } from '@uppy/utils/lib/Translator'
-import supportsUploadProgress from './supportsUploadProgress.ts'
-import getFileName from './getFileName.ts'
-import { justErrorsLogger, debugLogger } from './loggers.ts'
+import supportsUploadProgress from './supportsUploadProgress.js'
+import getFileName from './getFileName.js'
+import { justErrorsLogger, debugLogger } from './loggers.js'
 import {
   Restricter,
   defaultOptions as defaultRestrictionOptions,
   RestrictionError,
-} from './Restricter.ts'
+} from './Restricter.js'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'
-import locale from './locale.ts'
+import locale from './locale.js'
 
-import type BasePlugin from './BasePlugin.ts'
-import type { Restrictions, ValidateableFile } from './Restricter.ts'
+import type BasePlugin from './BasePlugin.js'
+import type { Restrictions, ValidateableFile } from './Restricter.js'
 
 type Processor = (
   fileIDs: string[],

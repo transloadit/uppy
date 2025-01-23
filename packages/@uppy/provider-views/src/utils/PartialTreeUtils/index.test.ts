@@ -7,14 +7,14 @@ import type {
   PartialTreeFolderNode,
   PartialTreeFolderRoot,
   PartialTreeId,
-} from '@uppy/core/lib/Uppy.js'
-import afterToggleCheckbox from './afterToggleCheckbox.ts'
-import afterOpenFolder from './afterOpenFolder.ts'
-import afterScrollFolder from './afterScrollFolder.ts'
-import afterFill from './afterFill.ts'
-import getCheckedFilesWithPaths from './getCheckedFilesWithPaths.ts'
-import getNumberOfSelectedFiles from './getNumberOfSelectedFiles.ts'
-import getBreadcrumbs from './getBreadcrumbs.ts'
+} from '@uppy/core'
+import afterToggleCheckbox from './afterToggleCheckbox.js'
+import afterOpenFolder from './afterOpenFolder.js'
+import afterScrollFolder from './afterScrollFolder.js'
+import afterFill from './afterFill.js'
+import getCheckedFilesWithPaths from './getCheckedFilesWithPaths.js'
+import getNumberOfSelectedFiles from './getNumberOfSelectedFiles.js'
+import getBreadcrumbs from './getBreadcrumbs.js'
 
 const _root = (id: string, options: any = {}): PartialTreeFolderRoot => ({
   type: 'root',

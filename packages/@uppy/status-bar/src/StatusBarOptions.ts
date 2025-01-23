@@ -1,5 +1,5 @@
 import type { UIPluginOptions } from '@uppy/core/lib/UIPlugin.js'
-import type StatusBarLocale from './locale.ts'
+import type StatusBarLocale from './locale.js'
 
 export interface StatusBarOptions extends UIPluginOptions {
   showProgressDetails?: boolean

@@ -1,5 +1,4 @@
-import type { Uppy, State } from '@uppy/core'
-import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
+import type { Uppy, State, Body, Meta } from '@uppy/core'
 import { useMemo, useCallback } from 'react'
 import { useSyncExternalStoreWithSelector } from 'use-sync-external-store/with-selector.js'
 

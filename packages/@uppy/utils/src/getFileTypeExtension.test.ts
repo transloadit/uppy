@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import getFileTypeExtension from './getFileTypeExtension.ts'
+import getFileTypeExtension from './getFileTypeExtension.js'
 
 describe('getFileTypeExtension', () => {
   it('should return the filetype based on the specified mime type', () => {

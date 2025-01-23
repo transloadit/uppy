@@ -1,5 +1,4 @@
-import type { Uppy, UppyEventMap } from '@uppy/core'
-import type { Meta, Body } from '@uppy/utils/lib/UppyFile'
+import type { Meta, Body, Uppy, UppyEventMap } from '@uppy/core'
 import { useEffect, useState } from 'react'
 
 type EventResults<

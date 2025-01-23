@@ -7,29 +7,30 @@ import type {
   UnknownProviderPluginState,
   PartialTreeId,
   PartialTree,
-} from '@uppy/core/lib/Uppy.js'
-import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
+  Body,
+  Meta,
+} from '@uppy/core'
 import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
 import classNames from 'classnames'
 import type { ValidateableFile } from '@uppy/core/lib/Restricter.js'
 import remoteFileObjToLocal from '@uppy/utils/lib/remoteFileObjToLocal'
 import type { I18n } from '@uppy/utils/lib/Translator'
-import AuthView from './AuthView.tsx'
-import Header from './Header.tsx'
-import Browser from '../Browser.tsx'
+import AuthView from './AuthView.jsx'
+import Header from './Header.jsx'
+import Browser from '../Browser.jsx'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../../package.json'
-import PartialTreeUtils from '../utils/PartialTreeUtils/index.ts'
-import shouldHandleScroll from '../utils/shouldHandleScroll.ts'
-import handleError from '../utils/handleError.ts'
-import getClickedRange from '../utils/getClickedRange.ts'
-import SearchInput from '../SearchInput.tsx'
-import FooterActions from '../FooterActions.tsx'
-import addFiles from '../utils/addFiles.ts'
-import getCheckedFilesWithPaths from '../utils/PartialTreeUtils/getCheckedFilesWithPaths.ts'
-import getBreadcrumbs from '../utils/PartialTreeUtils/getBreadcrumbs.ts'
+import PartialTreeUtils from '../utils/PartialTreeUtils/index.js'
+import shouldHandleScroll from '../utils/shouldHandleScroll.js'
+import handleError from '../utils/handleError.js'
+import getClickedRange from '../utils/getClickedRange.js'
+import SearchInput from '../SearchInput.jsx'
+import FooterActions from '../FooterActions.jsx'
+import addFiles from '../utils/addFiles.js'
+import getCheckedFilesWithPaths from '../utils/PartialTreeUtils/getCheckedFilesWithPaths.js'
+import getBreadcrumbs from '../utils/PartialTreeUtils/getBreadcrumbs.js'
 
 export function defaultPickerIcon(): h.JSX.Element {
   return (
@@ -488,6 +489,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
           showTitles={opts.showTitles}
           i18n={this.plugin.uppy.i18n}
           isLoading={loading}
+          utmSource="Companion"
         />
 
         <FooterActions

@@ -1,8 +1,7 @@
 import { h } from 'preact'
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
 
-import type { Uppy } from '@uppy/core'
-import type { AsyncStore } from '@uppy/core/lib/Uppy.js'
+import type { Uppy, AsyncStore } from '@uppy/core'
 
 import {
   authorize,

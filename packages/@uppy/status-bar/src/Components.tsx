@@ -1,5 +1,4 @@
-import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
-import type { State, Uppy } from '@uppy/core/lib/Uppy.js'
+import type { Body, Meta, State, Uppy } from '@uppy/core'
 import type { FileProcessingInfo } from '@uppy/utils/lib/FileProgress'
 import type { I18n } from '@uppy/utils/lib/Translator'
 import { h } from 'preact'
@@ -7,7 +6,7 @@ import classNames from 'classnames'
 import prettierBytes from '@transloadit/prettier-bytes'
 import prettyETA from '@uppy/utils/lib/prettyETA'
 
-import statusBarStates from './StatusBarStates.ts'
+import statusBarStates from './StatusBarStates.js'
 
 const DOT = `\u00B7`
 const renderDot = (): string => ` ${DOT} `

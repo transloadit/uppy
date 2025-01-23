@@ -1,14 +1,16 @@
-import {
-  UIPlugin,
-  type UIPluginOptions,
-  type UnknownPlugin,
-  type Uppy,
-  type UploadResult,
-  type State,
-} from '@uppy/core'
 import type { ComponentChild, VNode } from 'preact'
-import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin.js'
-import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
+import { UIPlugin } from '@uppy/core'
+import type {
+  Body,
+  Meta,
+  UppyFile,
+  UIPluginOptions,
+  UnknownPlugin,
+  Uppy,
+  UploadResult,
+  State,
+  DefinePluginOpts,
+} from '@uppy/core'
 import StatusBar from '@uppy/status-bar'
 import Informer from '@uppy/informer'
 import ThumbnailGenerator from '@uppy/thumbnail-generator'
@@ -20,14 +22,14 @@ import { defaultPickerIcon } from '@uppy/provider-views'
 import type { TargetedEvent } from 'preact/compat'
 import { nanoid } from 'nanoid/non-secure'
 import memoizeOne from 'memoize-one'
-import * as trapFocus from './utils/trapFocus.ts'
-import createSuperFocus from './utils/createSuperFocus.ts'
-import DashboardUI from './components/Dashboard.tsx'
+import * as trapFocus from './utils/trapFocus.js'
+import createSuperFocus from './utils/createSuperFocus.js'
+import DashboardUI from './components/Dashboard.jsx'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'
-import locale from './locale.ts'
+import locale from './locale.js'
 
 type GenericEventCallback = () => void
 export type DashboardFileEditStartCallback<M extends Meta, B extends Body> = (

@@ -1,18 +1,19 @@
 import { h } from 'preact'
 
-import { UIPlugin, type UIPluginOptions } from '@uppy/core'
+import { UIPlugin } from '@uppy/core'
 import type {
+  Uppy,
+  UIPluginOptions,
   Body,
   Meta,
   MinimalRequiredUppyFile,
-} from '@uppy/utils/lib/UppyFile'
-import type { Uppy } from '@uppy/core/lib/Uppy.js'
+} from '@uppy/core'
 
 import getFileTypeExtension from '@uppy/utils/lib/getFileTypeExtension'
-import supportsMediaRecorder from './supportsMediaRecorder.ts'
-import RecordingScreen from './RecordingScreen.tsx'
-import PermissionsScreen from './PermissionsScreen.tsx'
-import locale from './locale.ts'
+import supportsMediaRecorder from './supportsMediaRecorder.js'
+import RecordingScreen from './RecordingScreen.jsx'
+import PermissionsScreen from './PermissionsScreen.jsx'
+import locale from './locale.js'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'

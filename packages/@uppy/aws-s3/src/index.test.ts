@@ -2,8 +2,11 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import 'whatwg-fetch'
 import nock from 'nock'
-import Core from '@uppy/core'
-import AwsS3Multipart, { type AwsBody } from './index.ts'
+import Core, { type UppyFile } from '@uppy/core'
+import AwsS3Multipart, {
+  type AwsBody,
+  type AwsS3MultipartOptions,
+} from './index.js'
 
 const KB = 1024
 const MB = KB * KB
@@ -19,6 +22,92 @@ describe('AwsS3Multipart', () => {
       'uploader',
     ).map((plugin: AwsS3Multipart<any, AwsBody>) => plugin.constructor.name)
     expect(pluginNames).toContain('AwsS3Multipart')
+  })
+
+  describe('defaultOptions', () => {
+    let opts: Partial<AwsS3MultipartOptions<any, any>>
+
+    beforeEach(() => {
+      const core = new Core<any, AwsBody>().use(AwsS3Multipart)
+      const awsS3Multipart = core.getPlugin('AwsS3Multipart') as any
+      opts = awsS3Multipart.opts
+    })
+
+    it('allowedMetaFields is true', () => {
+      expect(opts.allowedMetaFields).toBe(true)
+    })
+
+    it('limit is 6', () => {
+      expect(opts.limit).toBe(6)
+    })
+
+    it('getTemporarySecurityCredentials is false', () => {
+      expect(opts.getTemporarySecurityCredentials).toBe(false)
+    })
+
+    describe('shouldUseMultipart', () => {
+      const MULTIPART_THRESHOLD = 100 * MB
+
+      let shouldUseMultipart: (file: UppyFile<any, AwsBody>) => boolean
+
+      beforeEach(() => {
+        shouldUseMultipart = opts.shouldUseMultipart as (
+          file: UppyFile<any, AwsBody>,
+        ) => boolean
+      })
+
+      const createFile = (size: number): UppyFile<any, any> => ({
+        size,
+        data: new Blob(),
+        extension: '',
+        id: '',
+        isRemote: false,
+        isGhost: false,
+        meta: undefined,
+        progress: {
+          percentage: 0,
+          bytesUploaded: 0,
+          bytesTotal: size,
+          uploadComplete: false,
+          uploadStarted: 0,
+        },
+        type: '',
+      })
+
+      it('returns true for files larger than 100MB', () => {
+        const file = createFile(MULTIPART_THRESHOLD + 1)
+        expect(shouldUseMultipart(file)).toBe(true)
+      })
+
+      it('returns false for files exactly 100MB', () => {
+        const file = createFile(MULTIPART_THRESHOLD)
+        expect(shouldUseMultipart(file)).toBe(false)
+      })
+
+      it('returns false for files smaller than 100MB', () => {
+        const file = createFile(MULTIPART_THRESHOLD - 1)
+        expect(shouldUseMultipart(file)).toBe(false)
+      })
+
+      it('returns true for large files (~70GB)', () => {
+        const file = createFile(70 * 1024 * MB)
+        expect(shouldUseMultipart(file)).toBe(true)
+      })
+
+      it('returns true for very large files (~400GB)', () => {
+        const file = createFile(400 * 1024 * MB)
+        expect(shouldUseMultipart(file)).toBe(true)
+      })
+
+      it('returns false for files with size 0', () => {
+        const file = createFile(0)
+        expect(shouldUseMultipart(file)).toBe(false)
+      })
+    })
+
+    it('retryDelays is [0, 1000, 3000, 5000]', () => {
+      expect(opts.retryDelays).toEqual([0, 1000, 3000, 5000])
+    })
   })
 
   describe('companionUrl assertion', () => {
@@ -50,7 +139,10 @@ describe('AwsS3Multipart', () => {
         getUploadParameters: () => ({
           method: 'POST',
           url: 'https://bucket.s3.us-east-2.amazonaws.com/',
-          fields: {},
+          fields: {
+            key: 'file',
+            bucket: 'https://bucket.s3.us-east-2.amazonaws.com/',
+          },
         }),
       })
       const scope = nock(
@@ -89,6 +181,8 @@ describe('AwsS3Multipart', () => {
           ETag: 'test',
           etag: 'test',
           location: 'http://example.com',
+          key: 'file',
+          bucket: 'https://bucket.s3.us-east-2.amazonaws.com/',
         },
         status: 200,
         uploadURL: 'http://example.com',
@@ -239,7 +333,7 @@ describe('AwsS3Multipart', () => {
 
     const signPart = vi.fn(async (file, { partNumber }) => {
       return {
-        url: `https://bucket.s3.us-east-2.amazonaws.com/test/upload/multitest.dat?partNumber=${partNumber}&uploadId=6aeb1980f3fc7ce0b5454d25b71992&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIATEST%2F20210729%2Fus-east-2%2Fs3%2Faws4_request&X-Amz-Date=20210729T014044Z&X-Amz-Expires=600&X-Amz-SignedHeaders=host&X-Amz-Signature=test`,
+        url: `https://bucket.s3.us-east-2.amazonaws.com/test/upload/${file.name}?partNumber=${partNumber}&uploadId=6aeb1980f3fc7ce0b5454d25b71992&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIATEST%2F20210729%2Fus-east-2%2Fs3%2Faws4_request&X-Amz-Date=20210729T014044Z&X-Amz-Expires=600&X-Amz-SignedHeaders=host&X-Amz-Signature=test`,
       }
     })
 
@@ -286,34 +380,61 @@ describe('AwsS3Multipart', () => {
       const core = new Core().use(AwsS3Multipart, {
         shouldUseMultipart: true,
         retryDelays: [10],
-        createMultipartUpload,
+        createMultipartUpload: vi.fn((file) => ({
+          uploadId: '6aeb1980f3fc7ce0b5454d25b71992',
+          key: `test/upload/${file.name}`,
+        })),
         completeMultipartUpload: vi.fn(async () => ({ location: 'test' })),
         abortMultipartUpload: vi.fn(),
         signPart,
-        uploadPartBytes: uploadPartBytes.mockImplementation(() =>
+        uploadPartBytes: uploadPartBytes.mockImplementation((options) => {
+          if (options.signature.url.includes('succeed.dat')) {
+            return new Promise((resolve) => {
+              // delay until after multitest.dat has failed.
+              setTimeout(() => resolve({ status: 200 }), 100)
+            })
+          }
           // eslint-disable-next-line prefer-promise-reject-errors
-          Promise.reject({ source: { status: 500 } }),
-        ),
+          return Promise.reject({ source: { status: 500 } })
+        }),
         listParts: undefined as any,
       })
-      const awsS3Multipart = core.getPlugin('AwsS3Multipart')!
       const fileSize = 5 * MB + 1 * MB
-      const mock = vi.fn()
-      core.on('upload-error', mock)
+      const awsS3Multipart = core.getPlugin('AwsS3Multipart')!
+      const uploadErrorMock = vi.fn()
+      const uploadSuccessMock = vi.fn()
+      core.on('upload-error', uploadErrorMock)
+      core.on('upload-success', uploadSuccessMock)
 
       core.addFile({
         source: 'vi',
-        name: 'multitest.dat',
+        name: 'fail.dat',
         type: 'application/octet-stream',
         data: new File([new Uint8Array(fileSize)], '', {
           type: 'application/octet-stream',
         }),
       })
 
-      await expect(core.upload()).rejects.toEqual({ source: { status: 500 } })
+      core.addFile({
+        source: 'vi',
+        name: 'succeed.dat',
+        type: 'application/octet-stream',
+        data: new File([new Uint8Array(fileSize)], '', {
+          type: 'application/octet-stream',
+        }),
+      })
 
-      expect(awsS3Multipart.opts.uploadPartBytes.mock.calls.length).toEqual(3)
-      expect(mock.mock.calls.length).toEqual(1)
+      try {
+        const results = await core.upload()
+        expect(results!.successful!.length).toEqual(1)
+        expect(results!.failed!.length).toEqual(1)
+      } catch {
+        // Catch Promise.all reject
+      }
+
+      expect(awsS3Multipart.opts.uploadPartBytes.mock.calls.length).toEqual(5)
+      expect(uploadErrorMock.mock.calls.length).toEqual(1)
+      expect(uploadSuccessMock.mock.calls.length).toEqual(1) // This fails for me becuase upload returned early.
     })
   })
 

@@ -1,5 +1,34 @@
 # @uppy/companion
 
+## 5.5.1
+
+Released: 2025-01-22
+Included in: Uppy v4.13.1
+
+- @uppy/companion: unify http error responses (Mikael Finstad / #5595)
+
+## 5.5.0
+
+Released: 2025-01-15
+Included in: Uppy v4.13.0
+
+- @uppy/companion: fix forcePathStyle boolean conversion (Mikael Finstad / #5308)
+- @uppy/companion: add COMPANION_TUS_DEFERRED_UPLOAD_LENGTH (Dominik Schmidt / #5561)
+
+## 5.4.1
+
+Released: 2025-01-08
+Included in: Uppy v4.12.1
+
+- @uppy/companion: upgrade express & express-session (Merlijn Vos / #5582)
+
+## 5.4.0
+
+Released: 2025-01-06
+Included in: Uppy v4.10.0
+
+- @uppy/companion: pass fetched origins to window.postMessage() (Merlijn Vos / #5529)
+
 ## 5.2.0
 
 Released: 2024-12-05

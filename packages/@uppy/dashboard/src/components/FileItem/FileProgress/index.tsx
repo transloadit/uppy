@@ -1,8 +1,7 @@
 /* eslint-disable react/no-unused-prop-types */
 /* eslint-disable react/destructuring-assignment */
-import type { State, Uppy, UppyFile } from '@uppy/core'
+import type { Body, Meta, State, Uppy, UppyFile } from '@uppy/core'
 import type { I18n } from '@uppy/utils/lib/Translator'
-import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import { h, type ComponentChild } from 'preact'
 
 interface Props<M extends Meta, B extends Body> {

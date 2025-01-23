@@ -4,13 +4,13 @@ import type {
   PartialTreeFile,
   PartialTreeFolderNode,
   PartialTreeId,
-} from '@uppy/core/lib/Uppy.js'
+} from '@uppy/core'
 import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
 // p-queue does not have a `"main"` field in its `package.json`, and that makes `import/no-unresolved` freak out.
 // We can safely ignore it because bundlers will happily use the `"exports"` field instead.
 // eslint-disable-next-line import/no-unresolved
 import PQueue from 'p-queue'
-import shallowClone from './shallowClone.ts'
+import shallowClone from './shallowClone.js'
 
 export interface ApiList {
   (directory: PartialTreeId): Promise<{

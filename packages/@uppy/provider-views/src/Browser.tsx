@@ -3,15 +3,16 @@ import { h } from 'preact'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore untyped
 import VirtualList from '@uppy/utils/lib/VirtualList'
-import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
-import type { I18n } from '@uppy/utils/lib/Translator'
 import type {
+  Body,
+  Meta,
   PartialTreeFile,
   PartialTreeFolderNode,
-} from '@uppy/core/lib/Uppy.js'
+} from '@uppy/core'
+import type { I18n } from '@uppy/utils/lib/Translator'
 import { useEffect, useState } from 'preact/hooks'
-import Item from './Item/index.tsx'
-import ProviderView from './ProviderView/ProviderView.tsx'
+import Item from './Item/index.jsx'
+import ProviderView from './ProviderView/ProviderView.jsx'
 
 type BrowserProps<M extends Meta, B extends Body> = {
   displayedPartialTree: (PartialTreeFile | PartialTreeFolderNode)[]
@@ -24,6 +25,7 @@ type BrowserProps<M extends Meta, B extends Body> = {
   openFolder: ProviderView<M, B>['openFolder']
   noResultsLabel: string
   virtualList: boolean
+  utmSource: string
 }
 
 function Browser<M extends Meta, B extends Body>(props: BrowserProps<M, B>) {
@@ -38,6 +40,7 @@ function Browser<M extends Meta, B extends Body>(props: BrowserProps<M, B>) {
     openFolder,
     noResultsLabel,
     virtualList,
+    utmSource,
   } = props
 
   const [isShiftKeyPressed, setIsShiftKeyPressed] = useState(false)
@@ -88,6 +91,7 @@ function Browser<M extends Meta, B extends Body>(props: BrowserProps<M, B>) {
       i18n={i18n}
       openFolder={openFolder}
       file={item}
+      utmSource={utmSource}
     />
   )
 

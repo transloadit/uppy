@@ -1,5 +1,12 @@
 # @uppy/store-redux
 
+## 4.0.2
+
+Released: 2025-01-06
+Included in: Uppy v4.10.0
+
+- @uppy/core,@uppy/dashboard,@uppy/provider-views,@uppy/store-redux,@uppy/url: build(deps): bump nanoid from 5.0.7 to 5.0.9 (dependabot[bot] / #5544)
+
 ## 4.0.1
 
 Released: 2024-10-31

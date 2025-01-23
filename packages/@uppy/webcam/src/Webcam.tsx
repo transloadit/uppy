@@ -1,26 +1,27 @@
 import { h, type ComponentChild } from 'preact'
 
 import { UIPlugin } from '@uppy/core'
-import type { Uppy, UIPluginOptions } from '@uppy/core'
-import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin.js'
 import type {
+  Uppy,
+  UIPluginOptions,
+  DefinePluginOpts,
   Body,
   Meta,
   MinimalRequiredUppyFile,
-} from '@uppy/utils/lib/UppyFile'
+} from '@uppy/core'
 import type { PluginTarget } from '@uppy/core/lib/UIPlugin.js'
 import getFileTypeExtension from '@uppy/utils/lib/getFileTypeExtension'
 import mimeTypes from '@uppy/utils/lib/mimeTypes'
 import isMobile from 'is-mobile'
 import canvasToBlob from '@uppy/utils/lib/canvasToBlob'
-import supportsMediaRecorder from './supportsMediaRecorder.ts'
-import CameraIcon from './CameraIcon.tsx'
-import CameraScreen from './CameraScreen.tsx'
-import PermissionsScreen from './PermissionsScreen.tsx'
+import supportsMediaRecorder from './supportsMediaRecorder.js'
+import CameraIcon from './CameraIcon.jsx'
+import CameraScreen from './CameraScreen.jsx'
+import PermissionsScreen from './PermissionsScreen.jsx'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'
-import locale from './locale.ts'
+import locale from './locale.js'
 
 /**
  * Normalize a MIME type or file extension into a MIME type.

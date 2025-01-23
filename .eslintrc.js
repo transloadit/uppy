@@ -439,11 +439,12 @@ module.exports = {
           selector: 'ImportDeclaration[source.value=/^@uppy\\x2F[a-z-0-9]+\\x2F/]:not([source.value=/^@uppy\\x2Futils\\x2F/]):not([source.value=/\\.(js|css)$/])',
           message: 'Use ".js" file extension for import type declarations from a different package',
         }, {
-          selector: 'ImportDeclaration[importKind="type"][source.value=/^\\.\\.?\\x2F.+\\.js$/]',
-          message: 'Do not use ".js" file extension for relative import type declarations',
-        }, {
           selector: 'ImportDeclaration[source.value=/^@uppy\\x2Futils\\x2Flib\\x2F.+\\.[mc]?[jt]sx?$/]',
           message: 'Do not use file extension when importing from @uppy/utils',
+        },
+        {
+          selector: 'ImportDeclaration[source.value=/^@uppy\\x2F[a-z-0-9]+\\x2Fsrc\\x2F/]',
+          message: 'Importing from "src/" is not allowed. Import from root or from "lib/" if you must.',
         }],
         'import/extensions': ['error', 'ignorePackages'],
         'import/prefer-default-export': 'off',

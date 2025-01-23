@@ -2,10 +2,7 @@
   "extends": "../../../tsconfig.shared",
   "compilerOptions": {
     "outDir": "./lib",
-    "rootDir": "./src",
-    "paths": {
-      "@uppy/utils/lib/*": ["../utils/src/*"]
-    }
+    "rootDir": "./src"
   },
   "include": ["./src/**/*.*"],
   "references": [

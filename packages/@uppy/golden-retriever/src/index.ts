@@ -1,14 +1,19 @@
 import throttle from 'lodash/throttle.js'
-import BasePlugin from '@uppy/core/lib/BasePlugin.js'
-import type { PluginOpts, DefinePluginOpts } from '@uppy/core/lib/BasePlugin.js'
-import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
-import type Uppy from '@uppy/core'
-import type { UploadResult } from '@uppy/core'
+import { BasePlugin } from '@uppy/core'
+import type {
+  Body,
+  Meta,
+  UppyFile,
+  Uppy,
+  UploadResult,
+  PluginOpts,
+  DefinePluginOpts,
+} from '@uppy/core'
 import ServiceWorkerStore, {
   type ServiceWorkerStoredFile,
-} from './ServiceWorkerStore.ts'
-import IndexedDBStore from './IndexedDBStore.ts'
-import MetaDataStore from './MetaDataStore.ts'
+} from './ServiceWorkerStore.js'
+import IndexedDBStore from './IndexedDBStore.js'
+import MetaDataStore from './MetaDataStore.js'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json

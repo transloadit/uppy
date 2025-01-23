@@ -1,7 +1,7 @@
 import type { Uppy } from '@uppy/core'
 import { AbortController } from '@uppy/utils/lib/AbortController'
 import type { Meta, Body, UppyFile } from '@uppy/utils/lib/UppyFile'
-import type { HTTPCommunicationQueue } from './HTTPCommunicationQueue.ts'
+import type { HTTPCommunicationQueue } from './HTTPCommunicationQueue.js'
 
 const MB = 1024 * 1024
 
@@ -16,7 +16,7 @@ interface MultipartUploaderOptions<M extends Meta, B extends Body> {
   file: UppyFile<M, B>
   log: Uppy<M, B>['log']
 
-  uploadId: string
+  uploadId?: string
   key: string
 }
 

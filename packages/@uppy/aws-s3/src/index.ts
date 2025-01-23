@@ -1,11 +1,12 @@
-import BasePlugin, {
+import {
   type DefinePluginOpts,
   type PluginOpts,
-} from '@uppy/core/lib/BasePlugin.js'
+  Uppy,
+  BasePlugin,
+} from '@uppy/core'
 import { RequestClient } from '@uppy/companion-client'
 import type { RequestOptions } from '@uppy/utils/lib/CompanionClientProvider'
 import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
-import type { Uppy } from '@uppy/core'
 import EventManager from '@uppy/core/lib/EventManager.js'
 import { RateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
 import {
@@ -14,16 +15,16 @@ import {
 } from '@uppy/utils/lib/fileFilters'
 import { createAbortError } from '@uppy/utils/lib/AbortController'
 import getAllowedMetaFields from '@uppy/utils/lib/getAllowedMetaFields'
-import MultipartUploader from './MultipartUploader.ts'
-import { throwIfAborted } from './utils.ts'
+import MultipartUploader from './MultipartUploader.js'
+import { throwIfAborted } from './utils.js'
 import type {
   UploadResult,
   UploadResultWithSignal,
   MultipartUploadResultWithSignal,
   UploadPartBytesResult,
-} from './utils.ts'
-import createSignedURL from './createSignedURL.ts'
-import { HTTPCommunicationQueue } from './HTTPCommunicationQueue.ts'
+} from './utils.js'
+import createSignedURL from './createSignedURL.js'
+import { HTTPCommunicationQueue } from './HTTPCommunicationQueue.js'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'
@@ -283,14 +284,12 @@ const defaultOptions = {
   allowedMetaFields: true,
   limit: 6,
   getTemporarySecurityCredentials: false as any,
-  // eslint-disable-next-line no-bitwise
   shouldUseMultipart: ((file: UppyFile<any, any>) =>
-    // eslint-disable-next-line no-bitwise
-    (file.size! >> 10) >> 10 > 100) as any as true,
+    (file.size || 0) > 100 * 1024 * 1024) as any as true,
   retryDelays: [0, 1000, 3000, 5000],
 } satisfies Partial<AwsS3MultipartOptions<any, any>>
 
-export type { AwsBody } from './utils.ts'
+export type { AwsBody } from './utils.js'
 
 export default class AwsS3Multipart<
   M extends Meta,
@@ -509,7 +508,7 @@ export default class AwsS3Multipart<
     return this.#client
       .get<
         AwsS3Part[]
-      >(`s3/multipart/${encodeURIComponent(uploadId)}?key=${filename}`, { signal })
+      >(`s3/multipart/${encodeURIComponent(uploadId!)}?key=${filename}`, { signal })
       .then(assertServerError)
   }
 
@@ -523,7 +522,7 @@ export default class AwsS3Multipart<
     throwIfAborted(signal)
 
     const filename = encodeURIComponent(key)
-    const uploadIdEnc = encodeURIComponent(uploadId)
+    const uploadIdEnc = encodeURIComponent(uploadId!)
     return this.#client
       .post<B>(
         `s3/multipart/${uploadIdEnc}/complete?key=${filename}`,
@@ -632,7 +631,7 @@ export default class AwsS3Multipart<
     this.#assertHost('abortMultipartUpload')
 
     const filename = encodeURIComponent(key)
-    const uploadIdEnc = encodeURIComponent(uploadId)
+    const uploadIdEnc = encodeURIComponent(uploadId!)
     return this.#client
       .delete<void>(`s3/multipart/${uploadIdEnc}?key=${filename}`, undefined, {
         signal,
@@ -985,7 +984,7 @@ export default class AwsS3Multipart<
       return this.#uploadLocalFile(file)
     })
 
-    const upload = await Promise.all(promises)
+    const upload = await Promise.allSettled(promises)
     // After the upload is done, another upload may happen with only local files.
     // We reset the capability so that the next upload can use resumable uploads.
     this.#setResumableUploadsCapability(true)

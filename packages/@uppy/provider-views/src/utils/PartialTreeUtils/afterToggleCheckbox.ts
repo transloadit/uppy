@@ -5,8 +5,8 @@ import type {
   PartialTreeFolder,
   PartialTreeFolderNode,
   PartialTreeId,
-} from '@uppy/core/lib/Uppy.js'
-import shallowClone from './shallowClone.ts'
+} from '@uppy/core'
+import shallowClone from './shallowClone.js'
 
 /*
   FROM        | TO

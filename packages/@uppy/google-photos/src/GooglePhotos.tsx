@@ -8,17 +8,19 @@ import {
 } from '@uppy/companion-client'
 import { h, type ComponentChild } from 'preact'
 
-import type { UppyFile, Body, Meta } from '@uppy/utils/lib/UppyFile'
 import type {
+  UppyFile,
+  Body,
+  Meta,
   AsyncStore,
   UnknownProviderPlugin,
   UnknownProviderPluginState,
-} from '@uppy/core/lib/Uppy.js'
+} from '@uppy/core'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'
-import locale from './locale.ts'
+import locale from './locale.js'
 
 export type GooglePhotosOptions = CompanionPluginOptions
 

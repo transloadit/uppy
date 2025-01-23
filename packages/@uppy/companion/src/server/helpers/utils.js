@@ -148,6 +148,9 @@ module.exports.decrypt = (encrypted, secret) => {
 
 module.exports.defaultGetKey = ({ filename }) => `${crypto.randomUUID()}-${filename}`
 
+/**
+ * Our own HttpError in cases where we can't use `got`'s `HTTPError`
+ */
 class HttpError extends Error {
   statusCode
 
@@ -176,7 +179,7 @@ module.exports.prepareStream = async (stream) => new Promise((resolve, reject) =
     })
     .on('error', (err) => {
       // In this case the error object is not a normal GOT HTTPError where json is already parsed,
-      // we create our own HttpError error for this case
+      // we use our own HttpError error for this scenario.
       if (typeof err.response?.body === 'string' && typeof err.response?.statusCode === 'number') {
         let responseJson
         try {

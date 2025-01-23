@@ -1,13 +1,13 @@
-import type { Meta, Body, UppyFile } from '@uppy/utils/lib/UppyFile'
+import type { Meta, Body, UppyFile } from '@uppy/core'
 import type {
   RateLimitedQueue,
   WrapPromiseFunctionType,
 } from '@uppy/utils/lib/RateLimitedQueue'
-import { pausingUploadReason, type Chunk } from './MultipartUploader.ts'
-import type AwsS3Multipart from './index.ts'
-import { throwIfAborted } from './utils.ts'
-import type { UploadPartBytesResult, UploadResult } from './utils.ts'
-import type { AwsS3MultipartOptions, uploadPartBytes } from './index.ts'
+import { pausingUploadReason, type Chunk } from './MultipartUploader.js'
+import type AwsS3Multipart from './index.js'
+import { throwIfAborted } from './utils.js'
+import type { UploadPartBytesResult, UploadResult } from './utils.js'
+import type { AwsS3MultipartOptions, uploadPartBytes } from './index.js'
 
 function removeMetadataFromURL(urlString: string) {
   const urlObject = new URL(urlString)
@@ -276,15 +276,18 @@ export class HTTPCommunicationQueue<M extends Meta, B extends Body> {
       signal,
     }).abortOn(signal)) as unknown as B // todo this doesn't make sense
 
-    // location will be missing from result if CORS is not correctly set up on the bucket.
-    return 'location' in result ? result : (
-        {
-          // todo `url` is not really the final location URL of the resulting file, it's just the base URL of the bucket
-          // https://github.com/transloadit/uppy/issues/5388
-          location: removeMetadataFromURL(url),
-          ...result,
-        }
-      )
+    // Note: `fields.key` is not returned by old Companion versions.
+    // See https://github.com/transloadit/uppy/pull/5602
+    const key = fields?.key
+    this.#setS3MultipartState(file, { key: key! })
+
+    return {
+      ...result,
+      location:
+        (result.location as string | undefined) ?? removeMetadataFromURL(url),
+      bucket: fields?.bucket,
+      key,
+    }
   }
 
   async uploadFile(
@@ -393,7 +396,8 @@ export class HTTPCommunicationQueue<M extends Meta, B extends Body> {
 
       try {
         signature = await this.#fetchSignature(this.#getFile(file), {
-          uploadId,
+          // Always defined for multipart uploads
+          uploadId: uploadId!,
           key,
           partNumber,
           body: chunkData,

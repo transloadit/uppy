@@ -1,4 +1,5 @@
-import { UIPlugin, Uppy, type UIPluginOptions } from '@uppy/core'
+import { UIPlugin } from '@uppy/core'
+import type { Uppy, UIPluginOptions, DefinePluginOpts } from '@uppy/core'
 import dataURItoBlob from '@uppy/utils/lib/dataURItoBlob'
 import isObjectURL from '@uppy/utils/lib/isObjectURL'
 import isPreviewSupported from '@uppy/utils/lib/isPreviewSupported'
@@ -6,9 +7,8 @@ import isPreviewSupported from '@uppy/utils/lib/isPreviewSupported'
 // @ts-ignore untyped
 import { rotation } from 'exifr/dist/mini.esm.mjs'
 
-import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin.js'
 import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
-import locale from './locale.ts'
+import locale from './locale.js'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'

@@ -1,17 +1,22 @@
 import type { ComponentChild } from 'preact'
-import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
-import type { Uppy, State } from '@uppy/core/lib/Uppy.js'
-import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin.js'
+import type {
+  Body,
+  Meta,
+  UppyFile,
+  DefinePluginOpts,
+  Uppy,
+  State,
+} from '@uppy/core'
 import { UIPlugin } from '@uppy/core'
 import emaFilter from '@uppy/utils/lib/emaFilter'
 import getTextDirection from '@uppy/utils/lib/getTextDirection'
-import statusBarStates from './StatusBarStates.ts'
-import StatusBarUI, { type StatusBarUIProps } from './StatusBarUI.tsx'
+import statusBarStates from './StatusBarStates.js'
+import StatusBarUI, { type StatusBarUIProps } from './StatusBarUI.jsx'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'
-import locale from './locale.ts'
-import type { StatusBarOptions } from './StatusBarOptions.ts'
+import locale from './locale.js'
+import type { StatusBarOptions } from './StatusBarOptions.js'
 
 const speedFilterHalfLife = 2000
 const ETAFilterHalfLife = 2000
@@ -197,12 +202,12 @@ export default class StatusBar<M extends Meta, B extends Body> extends UIPlugin<
         totalSize! += file.progress.bytesTotal || 0
         totalUploadedSize += file.progress.bytesUploaded || 0
       })
+    } else {
+      // however uploaded size we will always have
+      startedFiles.forEach((file) => {
+        totalUploadedSize += file.progress.bytesUploaded || 0
+      })
     }
-
-    // however uploaded size we will always have
-    startedFiles.forEach((file) => {
-      totalUploadedSize += file.progress.bytesUploaded || 0
-    })
 
     const totalETA = this.#computeSmoothETA({
       uploaded: totalUploadedSize,
