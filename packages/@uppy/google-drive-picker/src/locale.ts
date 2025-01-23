@@ -1,5 +1,5 @@
 export default {
   strings: {
-    pluginNameGoogleDrive: 'Google Drive',
+    pluginNameGoogleDrivePicker: 'Google Drive',
   },
 }

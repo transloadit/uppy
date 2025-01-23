@@ -144,6 +144,8 @@ en_US.strings = {
   pluginNameFacebook: 'Facebook',
   pluginNameGoogleDrive: 'Google Drive',
   pluginNameGooglePhotos: 'Google Photos',
+  pluginNameGoogleDrivePicker: 'Google Drive',
+  pluginNameGooglePhotosPicker: 'Google Photos',
   pluginNameInstagram: 'Instagram',
   pluginNameOneDrive: 'OneDrive',
   pluginNameScreenCapture: 'Screencast',
