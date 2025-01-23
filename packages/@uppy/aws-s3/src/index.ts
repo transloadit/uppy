@@ -929,17 +929,14 @@ export default class AwsS3Multipart<
     // Since the Transloadit plugin uses the tus plugin underneath, it's possible to have file.tus
     // even though we are in this plugin.
     // @ts-expect-error typed in @uppy/tus
-    if (file.tus) {
-      // @ts-expect-error typed in @uppy/tus
-      Object.assign(opts, file.tus)
-    }
+    const tusOpts = file.tus
 
     return {
       ...file.remote?.body,
-      endpoint: opts.endpoint,
+      endpoint: tusOpts.endpoint ?? opts.endpoint,
       protocol: this.uppy.getState().remoteUploader || 's3-multipart',
       size: file.data.size,
-      headers: opts.headers,
+      headers: { ...opts.headers, ...tusOpts.headers },
       metadata: file.meta,
     }
   }

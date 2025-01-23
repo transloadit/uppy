@@ -440,20 +440,18 @@ export default class XHRUpload<
       opts.allowedMetaFields,
       file.meta,
     )
-    // When you .use(AwsS3) with .use(Transloadit, { companionOnly: true }),
+    // When you .use(XHR) with .use(Transloadit, { companionOnly: true }),
     // local files are uploaded with this plugin and remote files with the Transloadit plugin.
     // Since the Transloadit plugin uses the tus plugin underneath, it's possible to have file.tus
     // even though we are in this plugin.
     // @ts-expect-error typed in @uppy/tus
-    if (file.tus) {
-      // @ts-expect-error typed in @uppy/tus
-      Object.assign(opts, file.tus)
-    }
+    const tusOpts = file.tus
 
     return {
       ...file.remote?.body,
       protocol: this.uppy.getState().remoteUploader || 'multipart',
-      endpoint: opts.endpoint,
+      endpoint: tusOpts.endpoint ?? opts.endpoint,
+      headers: { ...opts.headers, ...tusOpts.headers },
       size: file.data.size,
       fieldname: opts.fieldName,
       metadata: Object.fromEntries(
@@ -461,7 +459,6 @@ export default class XHRUpload<
       ),
       httpMethod: opts.method,
       useFormData: opts.formData,
-      headers: opts.headers,
     }
   }
 
