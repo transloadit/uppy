@@ -103,6 +103,7 @@ export default class GoogleDrivePicker<M extends Meta, B extends Body>
       storage={this.storage}
       pickerType="drive"
       uppy={this.uppy}
+      i18n={this.i18n}
       clientId={this.opts.clientId}
       apiKey={this.opts.apiKey}
       appId={this.opts.appId}
