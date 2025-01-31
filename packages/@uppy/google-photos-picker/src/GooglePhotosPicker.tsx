@@ -101,6 +101,7 @@ export default class GooglePhotosPicker<M extends Meta, B extends Body>
       storage={this.storage}
       pickerType="photos"
       uppy={this.uppy}
+      i18n={this.i18n}
       clientId={this.opts.clientId}
       onFilesPicked={this.handleFilesPicked}
     />
