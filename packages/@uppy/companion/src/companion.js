@@ -98,6 +98,7 @@ module.exports.app = (optionsArg = {}) => {
   }
 
   app.use(cookieParser()) // server tokens are added to cookies
+  app.get('/health', (req, res) => res.send('OK'))
 
   app.use(interceptGrantErrorResponse)
 
