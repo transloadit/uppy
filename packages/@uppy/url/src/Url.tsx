@@ -129,12 +129,18 @@ export default class Url<M extends Meta, B extends Body> extends UIPlugin<
     protocollessUrl: string,
     optionalMeta?: M,
   ): Promise<string | undefined> => {
+    // Do not process local files
+    if (protocollessUrl.startsWith('blob')) {
+      return undefined
+    }
     const url = addProtocolToURL(protocollessUrl)
     if (!checkIfCorrectURL(url)) {
       this.uppy.log(`[URL] Incorrect URL entered: ${url}`)
       this.uppy.info(this.i18n('enterCorrectUrl'), 'error', 4000)
       return undefined
     }
+
+    this.uppy.log(`[URL] Adding file from dropped/pasted url: ${url}`)
 
     try {
       const meta = await this.getMeta(url)
@@ -187,14 +193,12 @@ export default class Url<M extends Meta, B extends Body> extends UIPlugin<
 
   private handleRootDrop = (e: DragEvent) => {
     forEachDroppedOrPastedUrl(e.dataTransfer!, 'drop', (url) => {
-      this.uppy.log(`[URL] Adding file from dropped url: ${url}`)
       this.addFile(url)
     })
   }
 
   private handleRootPaste = (e: ClipboardEvent) => {
     forEachDroppedOrPastedUrl(e.clipboardData!, 'paste', (url) => {
-      this.uppy.log(`[URL] Adding file from pasted url: ${url}`)
       this.addFile(url)
     })
   }
