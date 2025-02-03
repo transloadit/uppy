@@ -103,6 +103,7 @@ cs_CZ.strings = {
   resumeUpload: 'Pokračovat v nahrávání',
   retry: 'Opakovat',
   retryUpload: 'Opakovat nahrávání',
+  save: 'Uložit',
   saveChanges: 'Uložit změny',
   selectFileNamed: 'Vybrat soubor %{name}',
   selectX: {
