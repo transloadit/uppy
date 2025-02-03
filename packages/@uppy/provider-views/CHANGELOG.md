@@ -1,5 +1,13 @@
 # @uppy/provider-views
 
+## 4.4.2
+
+Released: 2025-02-03
+Included in: Uppy v4.13.2
+
+- @uppy/provider-views: fix google photos picker videos (Mikael Finstad / #5635)
+- @uppy/core,@uppy/google-drive-picker,@uppy/google-photos-picker,@uppy/provider-views:
+
 ## 4.4.1
 
 Released: 2025-01-09

@@ -1,5 +1,12 @@
 # @uppy/url
 
+## 4.2.2
+
+Released: 2025-02-03
+Included in: Uppy v4.13.2
+
+- @uppy/url: skip drag/dropped local files (Merlijn Vos / #5626)
+
 ## 4.2.0
 
 Released: 2025-01-06
