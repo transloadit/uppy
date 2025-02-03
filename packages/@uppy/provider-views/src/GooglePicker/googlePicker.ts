@@ -337,6 +337,7 @@ async function resolvePickedPhotos({
   return mediaItems.map(
     ({
       id,
+      type,
       // we want the original resolution, so we don't append any parameter to the baseUrl
       // https://developers.google.com/photos/library/guides/access-media-items#base-urls
       mediaFile: { mimeType, filename, baseUrl },
@@ -344,7 +345,7 @@ async function resolvePickedPhotos({
       platform: 'photos' as const,
       id,
       mimeType,
-      url: baseUrl,
+      url: type === 'VIDEO' ? `${baseUrl}=dv` : baseUrl, // dv to download video
       name: filename,
     }),
   )

@@ -3,6 +3,8 @@ import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
 
 import type { Uppy, AsyncStore } from '@uppy/core'
 
+import type { I18n } from '@uppy/utils/lib/Translator'
+
 import {
   authorize,
   ensureScriptsInjected,
@@ -44,6 +46,7 @@ function useStore(
 
 export type GooglePickerViewProps = {
   uppy: Uppy<any, any>
+  i18n: I18n
   clientId: string
   onFilesPicked: (files: PickedItem[], accessToken: string) => void
   storage: AsyncStore
@@ -62,6 +65,7 @@ export type GooglePickerViewProps = {
 
 export default function GooglePickerView({
   uppy,
+  i18n,
   clientId,
   onFilesPicked,
   pickerType,
@@ -212,7 +216,7 @@ export default function GooglePickerView({
   }, [accessToken, setAccessToken])
 
   if (loading) {
-    return <div>{uppy.i18n('pleaseWait')}...</div>
+    return <div>{i18n('pleaseWait')}...</div>
   }
 
   if (accessToken == null) {
@@ -220,12 +224,12 @@ export default function GooglePickerView({
       <AuthView
         pluginName={
           pickerType === 'drive' ?
-            uppy.i18n('pluginNameGoogleDrive')
-          : uppy.i18n('pluginNameGooglePhotos')
+            i18n('pluginNameGoogleDrivePicker')
+          : i18n('pluginNameGooglePhotosPicker')
         }
         pluginIcon={pickerType === 'drive' ? GoogleDriveIcon : GooglePhotosIcon}
         handleAuth={showPicker}
-        i18n={uppy.i18n}
+        i18n={i18n}
         loading={loading}
       />
     )
@@ -240,9 +244,7 @@ export default function GooglePickerView({
         disabled={loading}
         onClick={() => showPicker()}
       >
-        {pickerType === 'drive' ?
-          uppy.i18n('pickFiles')
-        : uppy.i18n('pickPhotos')}
+        {pickerType === 'drive' ? i18n('pickFiles') : i18n('pickPhotos')}
       </button>
       <button
         type="button"
@@ -250,7 +252,7 @@ export default function GooglePickerView({
         disabled={loading}
         onClick={handleLogoutClick}
       >
-        {uppy.i18n('logOut')}
+        {i18n('logOut')}
       </button>
     </div>
   )

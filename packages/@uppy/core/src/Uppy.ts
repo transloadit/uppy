@@ -411,6 +411,7 @@ export class Uppy<
 
   store: NonNullableUppyOptions<M, B>['store']
 
+  // Warning: do not use this from a plugin, as it will cause the plugins' translations to be missing
   i18n!: I18n
 
   i18nArray!: Translator['translateArray']
