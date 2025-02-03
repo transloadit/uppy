@@ -7,6 +7,10 @@ describe('getSocketHost', () => {
       'wss://foo.bar/a/b/cd?e=fghi&l=k&m=n',
     )
 
+    expect(getSocketHost('https://www.foo.bar/a/b/cd?e=fghi&l=k&m=n')).toEqual(
+      'wss://www.foo.bar/a/b/cd?e=fghi&l=k&m=n',
+    )
+
     expect(getSocketHost('Https://foo.bar/a/b/cd?e=fghi&l=k&m=n')).toEqual(
       'wss://foo.bar/a/b/cd?e=fghi&l=k&m=n',
     )
