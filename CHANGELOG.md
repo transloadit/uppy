@@ -12,6 +12,24 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 4.13.2
+
+Released: 2025-02-03
+
+| Package                    | Version | Package                    | Version |
+| -------------------------- | ------- | -------------------------- | ------- |
+| @uppy/core                 |   4.4.2 | @uppy/provider-views       |   4.4.2 |
+| @uppy/google-drive-picker  |   0.3.3 | @uppy/url                  |   4.2.2 |
+| @uppy/google-photos-picker |   0.3.3 | @uppy/utils                |   6.1.2 |
+| @uppy/locales              |   4.5.1 | uppy                       |  4.13.2 |
+
+- @uppy/utils: do not strip www in getSocketHost (Merlijn Vos / #5621)
+- @uppy/url: skip drag/dropped local files (Merlijn Vos / #5626)
+- @uppy/provider-views: fix google photos picker videos (Mikael Finstad / #5635)
+- @uppy/core,@uppy/google-drive-picker,@uppy/google-photos-picker,@uppy/provider-views:
+  fix google picker i18n (Mikael Finstad / #5632)
+
+
 ## 4.13.1
 
 Released: 2025-01-22

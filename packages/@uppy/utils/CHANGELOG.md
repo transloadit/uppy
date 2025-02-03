@@ -1,5 +1,12 @@
 # @uppy/utils
 
+## 6.1.2
+
+Released: 2025-02-03
+Included in: Uppy v4.13.2
+
+- @uppy/utils: do not strip www in getSocketHost (Merlijn Vos / #5621)
+
 ## 6.1.0
 
 Released: 2025-01-06

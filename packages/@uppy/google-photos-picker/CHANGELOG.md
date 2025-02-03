@@ -1,5 +1,12 @@
 # @uppy/google-photos-picker
 
+## 0.3.3
+
+Released: 2025-02-03
+Included in: Uppy v4.13.2
+
+- @uppy/core,@uppy/google-drive-picker,@uppy/google-photos-picker,@uppy/provider-views:
+
 ## 0.3.1
 
 Released: 2025-01-08
