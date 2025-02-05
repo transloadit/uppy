@@ -51,7 +51,7 @@ async function list({ directory, query, token, rootNamespaceId }) {
 }
 
 async function userInfo ({ token }) {
-  return (await getClient({ token })).post('users/get_current_account', { responseType: 'json' }).json()
+  return (await getClient({ token, rootNamespaceId: null })).post('users/get_current_account', { responseType: 'json' }).json()
 }
 
 /**
