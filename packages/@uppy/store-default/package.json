@@ -15,7 +15,7 @@
     "url": "https://github.com/transloadit/uppy/issues"
   },
   "devDependencies": {
-    "vitest": "^1.2.1"
+    "vitest": "^1.6.1"
   },
   "repository": {
     "type": "git",
