@@ -65,7 +65,7 @@
     "chalk": "^5.0.0",
     "cssnano": "^7.0.0",
     "dotenv": "^16.0.0",
-    "esbuild": "^0.21.2",
+    "esbuild": "^0.25.0",
     "esbuild-plugin-babel": "^0.2.3",
     "eslint": "^8.0.0",
     "eslint-config-prettier": "^9.0.0",
