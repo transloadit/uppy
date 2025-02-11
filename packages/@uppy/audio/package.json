@@ -29,7 +29,7 @@
     "preact": "^10.5.13"
   },
   "devDependencies": {
-    "vitest": "^1.2.1"
+    "vitest": "^1.6.1"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^"

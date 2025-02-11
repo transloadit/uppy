@@ -37,7 +37,7 @@
     "@uppy/core": "workspace:^"
   },
   "devDependencies": {
-    "vitest": "^1.2.1",
+    "vitest": "^1.6.1",
     "whatwg-fetch": "^3.6.2"
   }
 }
