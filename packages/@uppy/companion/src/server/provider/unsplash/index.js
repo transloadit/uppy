@@ -1,5 +1,4 @@
 const Provider = require('../Provider')
-const { getURLMeta } = require('../../helpers/request')
 const adaptData = require('./adapter')
 const { withProviderErrorHandling } = require('../providerErrors')
 const { prepareStream } = require('../../helpers/utils')
@@ -52,14 +51,6 @@ class Unsplash extends Provider {
 
       // finally, stream on!
       return { stream, size }
-    })
-  }
-
-  async size ({ id, token }) {
-    return this.#withErrorHandling('provider.unsplash.size.error', async () => {
-      const { links: { download: url } } = await getPhotoMeta(await getClient({ token }), id)
-      const { size } = await getURLMeta(url)
-      return size
     })
   }
 

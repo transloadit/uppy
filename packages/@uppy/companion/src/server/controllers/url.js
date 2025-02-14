@@ -54,15 +54,10 @@ const get = async (req, res) => {
     return
   }
 
-  async function getSize () {
-    const { size } = await getURLMeta(req.body.url, allowLocalUrls)
-    return size
-  }
-
   const download = () => downloadURL(req.body.url, allowLocalUrls, req.id)
 
   try {
-    await startDownUpload({ req, res, getSize, download })
+    await startDownUpload({ req, res, download, getSize: undefined })
   } catch (err) {
     logger.error(err, 'controller.url.error', req.id)
     if (respondWithError(err, res)) return

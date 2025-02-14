@@ -1,7 +1,6 @@
 const crypto = require('node:crypto');
 
 const Provider = require('../Provider')
-const { getURLMeta } = require('../../helpers/request')
 const logger = require('../../logger')
 const { adaptData, sortImages } = require('./adapter')
 const { withProviderErrorHandling } = require('../providerErrors')
@@ -102,14 +101,6 @@ class Facebook extends Provider {
     // not implementing this because a public thumbnail from facebook will be used instead
     logger.error('call to thumbnail is not implemented', 'provider.facebook.thumbnail.error')
     throw new Error('call to thumbnail is not implemented')
-  }
-
-  async size ({ id, token }) {
-    return this.#withErrorHandling('provider.facebook.size.error', async () => {
-      const url = await getMediaUrl({ secret: this.secret, token, id })
-      const { size } = await getURLMeta(url)
-      return size
-    })
   }
 
   async logout ({ token }) {

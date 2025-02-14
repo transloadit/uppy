@@ -78,18 +78,6 @@ async function streamGoogleFile({ token, id: idIn }) {
   return { stream, size }
 }
 
-async function getGoogleFileSize({ id, token }) {
-  const { mimeType, size } = await getStats({ id, token })
-
-  if (isGsuiteFile(mimeType)) {
-    // GSuite file sizes cannot be predetermined (but are max 10MB)
-    // e.g. Transfer-Encoding: chunked
-    return undefined
-  }
-
-  return parseInt(size, 10)
-}
-
 /**
  * Adapter for API https://developers.google.com/drive/api/v3/
  */
@@ -185,13 +173,6 @@ class Drive extends Provider {
       return streamGoogleFile({ token, id })
     })
   }
-
-  // eslint-disable-next-line class-methods-use-this
-  async size ({ id, token }) {
-    return withGoogleErrorHandling(Drive.oauthProvider, 'provider.drive.size.error', async () => (
-      getGoogleFileSize({ id, token })
-    ))
-  }
 }
 
 Drive.prototype.logout = logout
@@ -200,5 +181,4 @@ Drive.prototype.refreshToken = refreshToken
 module.exports = {
   Drive,
   streamGoogleFile,
-  getGoogleFileSize,
 }

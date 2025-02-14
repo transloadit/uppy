@@ -58,14 +58,16 @@ class Provider {
   }
 
   /**
-   * get the size of a certain file in the provider account
+   * first Companion will try to get the size from the content-length response header,
+   * if that fails, it will call this method to get the size.
+   * So if your provider has a different method for getting the size, you can return the size here
    *
    * @param {object} options
    * @returns {Promise}
    */
   // eslint-disable-next-line class-methods-use-this,no-unused-vars
   async size (options) {
-    throw new Error('method not implemented')
+    return undefined
   }
 
   /**

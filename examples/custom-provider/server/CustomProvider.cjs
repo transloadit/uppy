@@ -61,26 +61,14 @@ class MyCustomProvider {
       },
     })
 
-    if (!resp.ok) {
-      throw new Error(`Errornous HTTP response (${resp.status} ${resp.statusText})`)
-    }
-    return { stream: Readable.fromWeb(resp.body) }
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  async size ({ id, token }) {
-    const resp = await fetch(`${BASE_URL}/photos/${id}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
+    const contentLengthStr = resp.headers['content-length']
+    const contentLength = parseInt(contentLengthStr, 10);
+    const size = !Number.isNaN(contentLength) && contentLength >= 0 ? contentLength : undefined;
 
     if (!resp.ok) {
       throw new Error(`Errornous HTTP response (${resp.status} ${resp.statusText})`)
     }
-
-    const { size } = await resp.json()
-    return size
+    return { stream: Readable.fromWeb(resp.body), size }
   }
 }
 

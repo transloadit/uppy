@@ -3,10 +3,9 @@ const assert = require('node:assert')
 
 const { startDownUpload } = require('../helpers/upload')
 const { validateURL } = require('../helpers/request')
-const { getURLMeta } = require('../helpers/request')
 const logger = require('../logger')
 const { downloadURL } = require('../download')
-const { getGoogleFileSize, streamGoogleFile } = require('../provider/google/drive');
+const { streamGoogleFile } = require('../provider/google/drive');
 const { respondWithError } = require('../provider/error')
 
 
@@ -26,14 +25,6 @@ const get = async (req, res) => {
     const { accessToken, platform, fileId } = req.body
 
     assert(platform === 'drive' || platform === 'photos');
-
-    const getSize = async () => {
-      if (platform === 'drive') {
-        return getGoogleFileSize({ id: fileId, token: accessToken })
-      }
-      const { size } = await getURLMeta(req.body.url, allowLocalUrls, { headers: getAuthHeader(accessToken) })
-      return size
-    }
     
     if (platform === 'photos' && !validateURL(req.body.url, allowLocalUrls)) {
       res.status(400).json({ error: 'Invalid URL' })
@@ -47,7 +38,7 @@ const get = async (req, res) => {
       return downloadURL(req.body.url, allowLocalUrls, req.id, { headers: getAuthHeader(accessToken) })
     }
 
-    await startDownUpload({ req, res, getSize, download })
+    await startDownUpload({ req, res, download, getSize: undefined })
   } catch (err) {
     logger.error(err, 'controller.googlePicker.error', req.id)
     if (respondWithError(err, res)) return
