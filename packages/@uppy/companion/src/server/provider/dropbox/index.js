@@ -96,8 +96,8 @@ class DropBox extends Provider {
         responseType: 'json',
       })
 
-      await prepareStream(stream)
-      return { stream }
+      const { size } = await prepareStream(stream)
+      return { stream, size }
     })
   }
 

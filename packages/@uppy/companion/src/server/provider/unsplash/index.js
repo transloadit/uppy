@@ -43,7 +43,7 @@ class Unsplash extends Provider {
       const { links: { download: url, download_location: attributionUrl } } = await getPhotoMeta(client, id)
 
       const stream = (await got).stream.get(url, { responseType: 'json' })
-      await prepareStream(stream)
+      const { size } = await prepareStream(stream)
 
       // To attribute the author of the image, we call the `download_location`
       // endpoint to increment the download count on Unsplash.
@@ -51,7 +51,7 @@ class Unsplash extends Provider {
       await client.get(attributionUrl, { prefixUrl: '', responseType: 'json' })
 
       // finally, stream on!
-      return { stream }
+      return { stream, size }
     })
   }
 

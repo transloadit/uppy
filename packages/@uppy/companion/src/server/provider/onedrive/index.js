@@ -61,8 +61,8 @@ class OneDrive extends Provider {
   async download ({ id, token, query }) {
     return this.#withErrorHandling('provider.onedrive.download.error', async () => {
       const stream = (await getClient({ token })).stream.get(`${getRootPath(query)}/items/${id}/content`, { responseType: 'json' })
-      await prepareStream(stream)
-      return { stream }
+      const { size } = await prepareStream(stream)
+      return { stream, size }
     })
   }
 

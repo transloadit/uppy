@@ -94,8 +94,8 @@ class Zoom extends Provider {
       if (!url) throw new Error('Download URL not found')
 
       const stream = client.stream.get(`${url}?access_token=${token}`, { prefixUrl: '', responseType: 'json' })
-      await prepareStream(stream)
-      return { stream }
+      const { size } = await prepareStream(stream)
+      return { stream, size }
     })
   }
 

@@ -55,8 +55,8 @@ class Instagram extends Provider {
     return this.#withErrorHandling('provider.instagram.download.error', async () => {
       const url = await getMediaUrl({ token, id })
       const stream = (await got).stream.get(url, { responseType: 'json' })
-      await prepareStream(stream)
-      return { stream }
+      const { size } = await prepareStream(stream)
+      return { stream, size }
     })
   }
 

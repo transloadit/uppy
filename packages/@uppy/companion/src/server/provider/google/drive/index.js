@@ -74,8 +74,8 @@ async function streamGoogleFile({ token, id: idIn }) {
     stream = client.stream.get(`files/${encodeURIComponent(id)}`, { searchParams: { alt: 'media', supportsAllDrives: true }, responseType: 'json' })
   }
 
-  await prepareStream(stream)
-  return { stream }
+  const { size } = await prepareStream(stream)
+  return { stream, size }
 }
 
 async function getGoogleFileSize({ id, token }) {

@@ -92,8 +92,8 @@ class Facebook extends Provider {
     return this.#withErrorHandling('provider.facebook.download.error', async () => {
       const url = await getMediaUrl({ secret: this.secret, token, id })
       const stream = (await got).stream.get(url, { responseType: 'json' })
-      await prepareStream(stream)
-      return { stream }
+      const { size } = await prepareStream(stream)
+      return { stream, size }
     })
   }
 
