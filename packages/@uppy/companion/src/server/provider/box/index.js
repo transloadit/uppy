@@ -62,8 +62,8 @@ class Box extends Provider {
     return this.#withErrorHandling('provider.box.download.error', async () => {
       const stream = (await getClient({ token })).stream.get(`files/${id}/content`, { responseType: 'json' })
 
-      await prepareStream(stream)
-      return { stream }
+      const { size } = await prepareStream(stream)
+      return { stream, size }
     })
   }
 

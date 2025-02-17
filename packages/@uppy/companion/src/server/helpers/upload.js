@@ -6,12 +6,14 @@ async function startDownUpload({ req, res, getSize, download }) {
   const { stream, size: maybeSize } = await download()
 
   let size
-  // if the provider already knows the size, we can use that
+  // if we already know the size from the GET response content-length header, we can use that
   if (typeof maybeSize === 'number' && !Number.isNaN(maybeSize) && maybeSize > 0) {
     size = maybeSize
   }
-  // if not we need to get the size
-  if (size == null) {
+  // if not, we may need to explicitly get the size
+  // note that getSize might also return undefined/null, which is usually fine, it just means that
+  // the size is unknown and we cannot send the size to the Uploader
+  if (size == null && getSize != null) {
     size = await getSize()
   }
   const { clientSocketConnectTimeout } = req.companion.options

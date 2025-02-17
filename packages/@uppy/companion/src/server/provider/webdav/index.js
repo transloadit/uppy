@@ -140,8 +140,10 @@ class WebdavProvider extends Provider {
   async download ({ id, providerUserSession }) {
     return this.withErrorHandling('provider.webdav.download.error', async () => {
       const client = await this.getClient({ providerUserSession })
+      /** @type {any} */
+      const stat = await client.stat(id)
       const stream = client.createReadStream(`/${id}`)
-      return { stream }
+      return { stream, size: stat.size }
     })
   }
 
@@ -150,17 +152,6 @@ class WebdavProvider extends Provider {
     // not implementing this because a public thumbnail from webdav will be used instead
     logger.error('call to thumbnail is not implemented', 'provider.webdav.thumbnail.error')
     throw new Error('call to thumbnail is not implemented')
-  }
-
-  // eslint-disable-next-line
-  async size ({ id, token, providerUserSession }) {
-    return this.withErrorHandling('provider.webdav.size.error', async () => {
-      const client = await this.getClient({ providerUserSession })
-
-      /** @type {any} */
-      const stat = await client.stat(id)
-      return stat.size
-    })
   }
 
   // eslint-disable-next-line class-methods-use-this

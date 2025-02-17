@@ -1,5 +1,4 @@
 const Provider = require('../../Provider')
-const { getURLMeta } = require('../../../helpers/request')
 const logger = require('../../../logger')
 const adaptData = require('./adapter')
 const { withProviderErrorHandling } = require('../../providerErrors')
@@ -55,8 +54,8 @@ class Instagram extends Provider {
     return this.#withErrorHandling('provider.instagram.download.error', async () => {
       const url = await getMediaUrl({ token, id })
       const stream = (await got).stream.get(url, { responseType: 'json' })
-      await prepareStream(stream)
-      return { stream }
+      const { size } = await prepareStream(stream)
+      return { stream, size }
     })
   }
 
@@ -65,14 +64,6 @@ class Instagram extends Provider {
     // not implementing this because a public thumbnail from instagram will be used instead
     logger.error('call to thumbnail is not implemented', 'provider.instagram.thumbnail.error')
     throw new Error('call to thumbnail is not implemented')
-  }
-
-  async size ({ id, token }) {
-    return this.#withErrorHandling('provider.instagram.size.error', async () => {
-      const url = await getMediaUrl({ token, id })
-      const { size } = await getURLMeta(url)
-      return size
-    })
   }
 
   // eslint-disable-next-line class-methods-use-this
