@@ -504,8 +504,7 @@ class Uploader {
     // https://github.com/tus/tus-js-client/blob/4479b78032937ac14da9b0542e489ac6fe7e0bc7/lib/node/fileReader.js#L50
     const chunkSize = this.options.chunkSize || (isFileStream ? Infinity : 50e6)
 
-    return new Promise((resolve, reject) => {
-
+    const tusRet = await new Promise((resolve, reject) => {
       const tusOptions = {
         endpoint: this.options.endpoint,
         uploadUrl: this.options.uploadUrl,
@@ -565,6 +564,14 @@ class Uploader {
 
       this.tus.start()
     })
+
+    // @ts-ignore
+    if (this.size != null && this.tus._size !== this.size) {
+      // @ts-ignore
+      logger.warn(`Tus uploaded size ${this.tus._size} different from reported URL size ${this.size}`, 'upload.tus.mismatch.error')
+    }
+
+    return tusRet;
   }
 
   async #uploadMultipart(stream) {
