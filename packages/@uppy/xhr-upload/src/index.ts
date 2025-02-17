@@ -235,13 +235,18 @@ export default class XHRUpload<
           })
 
           let body = await this.opts.getResponseData?.(res)
-          try {
-            body ??= JSON.parse(res.responseText) as B
-          } catch (cause) {
-            throw new Error(
-              '@uppy/xhr-upload expects a JSON response (with a `url` property). To parse non-JSON responses, use `getResponseData` to turn your response into JSON.',
-              { cause },
-            )
+
+          if (res.responseType === 'json') {
+            body ??= res.response
+          } else {
+            try {
+              body ??= JSON.parse(res.responseText) as B
+            } catch (cause) {
+              throw new Error(
+                '@uppy/xhr-upload expects a JSON response (with a `url` property). To parse non-JSON responses, use `getResponseData` to turn your response into JSON.',
+                { cause },
+              )
+            }
           }
 
           const uploadURL = typeof body?.url === 'string' ? body.url : undefined
