@@ -440,10 +440,18 @@ export default class XHRUpload<
       opts.allowedMetaFields,
       file.meta,
     )
+    // When you .use(XHR) with .use(Transloadit, { onlyRemoteFiles: true }),
+    // local files are uploaded with this plugin and remote files with the Transloadit plugin.
+    // Since the Transloadit plugin uses the tus plugin underneath, it's possible to have file.tus
+    // even though we are in this plugin.
+    // @ts-expect-error typed in @uppy/tus
+    const tusOpts = file.tus
+
     return {
       ...file.remote?.body,
-      protocol: 'multipart',
-      endpoint: opts.endpoint,
+      protocol: this.uppy.getState().remoteUploader || 'multipart',
+      endpoint: tusOpts.endpoint ?? opts.endpoint,
+      headers: { ...opts.headers, ...tusOpts.headers },
       size: file.data.size,
       fieldname: opts.fieldName,
       metadata: Object.fromEntries(
@@ -451,7 +459,6 @@ export default class XHRUpload<
       ),
       httpMethod: opts.method,
       useFormData: opts.formData,
-      headers: opts.headers,
     }
   }
 

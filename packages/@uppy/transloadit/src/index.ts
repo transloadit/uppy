@@ -135,6 +135,12 @@ export interface TransloaditOptions<M extends Meta, B extends Body>
   waitForMetadata?: boolean
   importFromUploadURLs?: boolean
   alwaysRunAssembly?: boolean
+  /**
+   * Only use Transloadit for remote file uploads (such as from Google Drive).
+   * Enabling this means you have to install another plugin for local files,
+   * such as @uppy/aws-s3 or @uppy/xhr-upload.
+   */
+  onlyRemoteFiles?: boolean
   limit?: number
   clientName?: string | null
   retryDelays?: number[]
@@ -150,6 +156,7 @@ const defaultOptions = {
   waitForMetadata: false,
   alwaysRunAssembly: false,
   importFromUploadURLs: false,
+  onlyRemoteFiles: false,
   limit: 20,
   retryDelays: [7_000, 10_000, 15_000, 20_000],
   clientName: null,
@@ -299,6 +306,13 @@ export default class Transloadit<
     this.#rateLimitedQueue = new RateLimitedQueue(this.opts.limit)
 
     this.i18nInit()
+
+    if (this.opts.onlyRemoteFiles) {
+      // Transloadit is only a pre and post processor.
+      // To let Transloadit hosted Companion download the file,
+      // we instruct any other upload plugin to use tus for remote uploads.
+      this.uppy.setState({ remoteUploader: 'tus' })
+    }
 
     this.client = new Client({
       service: this.opts.service,
@@ -807,26 +821,30 @@ export default class Transloadit<
 
     assemblyOptions.fields ??= {}
     validateParams(assemblyOptions.params)
+    const ids =
+      this.opts.onlyRemoteFiles ?
+        fileIDs.filter((id) => this.uppy.getFile(id).isRemote)
+      : fileIDs
 
     try {
       const assembly =
         // this.assembly can already be defined if we recovered files with Golden Retriever (this.#onRestored)
-        this.assembly ?? (await this.#createAssembly(fileIDs, assemblyOptions))
+        this.assembly ?? (await this.#createAssembly(ids, assemblyOptions))
 
       if (assembly == null)
         throw new Error('All files were canceled after assembly was created')
 
       if (this.opts.importFromUploadURLs) {
-        await this.#reserveFiles(assembly, fileIDs)
+        await this.#reserveFiles(assembly, ids)
       }
-      fileIDs.forEach((fileID) => {
+      ids.forEach((fileID) => {
         const file = this.uppy.getFile(fileID)
         this.uppy.emit('preprocess-complete', file)
       })
       this.#createAssemblyWatcher(assembly.status.assembly_id)
-      this.#connectAssembly(assembly, fileIDs)
+      this.#connectAssembly(assembly, ids)
     } catch (err) {
-      fileIDs.forEach((fileID) => {
+      ids.forEach((fileID) => {
         const file = this.uppy.getFile(fileID)
         // Clear preprocessing state when the Assembly could not be created,
         // otherwise the UI gets confused about the lingering progress keys
@@ -942,9 +960,9 @@ export default class Transloadit<
     if (this.opts.importFromUploadURLs) {
       // No uploader needed when importing; instead we take the upload URL from an existing uploader.
       this.uppy.on('upload-success', this.#onFileUploadURLAvailable)
-    } else {
-      // we don't need it here.
-      // the regional endpoint from the Transloadit API before we can set it.
+      // If onlyRemoteFiles is true, another uploader plugin is installed for local uploads
+      // and we only use Transloadit to create an assembly for the remote files.
+    } else if (!this.opts.onlyRemoteFiles) {
       this.uppy.use(Tus, {
         // Disable tus-js-client fingerprinting, otherwise uploading the same file at different times
         // will upload to an outdated Assembly, and we won't get socket events for it.
@@ -959,7 +977,6 @@ export default class Transloadit<
         // Send all metadata to Transloadit. Metadata set by the user
         // ends up as in the template as `file.user_meta`
         allowedMetaFields: true,
-        // Pass the limit option to @uppy/tus
         limit: this.opts.limit,
         rateLimitedQueue: this.#rateLimitedQueue,
         retryDelays: this.opts.retryDelays,
