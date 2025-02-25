@@ -62,12 +62,8 @@ const uppy = new Uppy()
 and its plugins.
 
 ## Table of Contents
-- [Installation](#installation)
 - [Features](#features)
-- [Configuration](#configuration)
-  - [Setting Restrictions](#setting-restrictions)
-- [Why Choose Uppy?](#why-choose-uppy)
-- [Used By](#used-by)
+- [Installation](#installation)
 - [Documentation](#documentation)
 - [Plugins](#plugins)
   - [UI Elements](#ui-elements)
@@ -77,9 +73,30 @@ and its plugins.
   - [Mischellaneous](#miscellaneous)
 - [React](#react)
 - [Browser Support](#browser-support)
-- [Contributions welcome!](#contributions-welcome)
 - [FAQ](#faq)
+- [Contributions are welcome](#contributions-are-welcome)
+- [Used By](#used-by)
+- [Contributors](#contributors)
 - [License](#license)
+
+## Features
+
+- Lightweight, modular plugin-based architecture, light on dependencies :zap:
+- Resumable file uploads via the open [tus](https://tus.io/) standard, so large
+  uploads survive network hiccups
+- Supports picking files from: Webcam, Dropbox, Box, Google Drive, Instagram,
+  bypassing the user’s device where possible, syncing between servers directly
+  via [@uppy/companion](https://uppy.io/docs/companion)
+- Works great with file encoding and processing backends, such as
+  [Transloadit](https://transloadit.com), works great without (all you need is
+  to roll your own Apache/Nginx/Node/FFmpeg/etc backend)
+- Sleek user interface :sparkles:
+- Optional file recovery (after a browser crash) with
+  [Golden Retriever](https://uppy.io/docs/golden-retriever/)
+- Speaks several languages (i18n) :earth_africa:
+- Built with accessibility in mind
+- Free for the world, forever (as in beer 🍺, pizza 🍕, and liberty 🗽)
+- Cute as a puppy, also accepts cat pictures :dog:
 
 ## Installation
 
@@ -120,73 +137,6 @@ CDN. In that case `Uppy` will attach itself to the global `window.Uppy` object.
   uppy.use(Tus, { endpoint: 'https://tusd.tusdemo.net/files/' })
 </script>
 ```
-
-## Features
-
-- Lightweight, modular plugin-based architecture, light on dependencies :zap:
-- Resumable file uploads via the open [tus](https://tus.io/) standard, so large
-  uploads survive network hiccups
-- Supports picking files from: Webcam, Dropbox, Box, Google Drive, Instagram,
-  bypassing the user’s device where possible, syncing between servers directly
-  via [@uppy/companion](https://uppy.io/docs/companion)
-- Works great with file encoding and processing backends, such as
-  [Transloadit](https://transloadit.com), works great without (all you need is
-  to roll your own Apache/Nginx/Node/FFmpeg/etc backend)
-- Sleek user interface :sparkles:
-- Optional file recovery (after a browser crash) with
-  [Golden Retriever](https://uppy.io/docs/golden-retriever/)
-- Speaks several languages (i18n) :earth_africa:
-- Built with accessibility in mind
-- Free for the world, forever (as in beer 🍺, pizza 🍕, and liberty 🗽)
-- Cute as a puppy, also accepts cat pictures :dog:
-
-## Configuration
-
-Uppy provides various configuration options to suit different use cases. Here are a few examples:
-
-### Setting Restrictions
-```js
-const uppy = new Uppy({
-  restrictions: {
-    maxFileSize: 5000000, // 5MB
-    maxNumberOfFiles: 3,
-    allowedFileTypes: ['image/*', '.pdf']
-  }
-});
-```
-Uppy allows setting restrictions on file uploads to enhance security and control user input. These restrictions include:
-- **maxFileSize**: Limit file size (in bytes) to prevent oversized uploads.
-- **maxNumberOfFiles**: Restrict the number of files uploaded at once.
-- **allowedFileTypes**: Define acceptable file formats.
-
-For further details, see the [official documentation](https://uppy.io/docs/uppy/#new-uppyoptions).
-
-### Adding Custom Metadata
-```js
-uppy.on('file-added', (file) => {
-  uppy.setFileMeta(file.id, { author: 'John Doe', license: 'MIT' });
-});
-```
-For more configuration options, see the [official documentation](https://uppy.io/docs/).
-
-## Why Choose Uppy?
-
-Unlike a basic `<input type="file">`, Uppy offers:
-- **Resumable uploads** to prevent failures due to connection issues
-- **Direct cloud file imports** (Dropbox, Google Drive, etc.)
-- **Pre-upload image cropping & metadata editing**
-- **Accurate progress reporting** and UI customization
-- **Optimized workflows** for web and mobile users
-
-## Used By
-
-Uppy is trusted by companies like:
-- [Photobox](http://photobox.com)
-- [Issuu](https://issuu.com/)
-- [Law Insider](https://lawinsider.com)
-- [Cool Tabs](https://cool-tabs.com)
-
-Using Uppy in your project? [Let us know!](https://github.com/transloadit/uppy/issues/769)
 
 ## Documentation
 
@@ -276,13 +226,8 @@ server-side component, is needed for a plugin to work.
 
 We aim to support recent versions of Chrome, Firefox, and Safari.
 
-## Contributions welcome!
-
-- Contributor’s guide in [`.github/CONTRIBUTING.md`](.github/CONTRIBUTING.md)
-- Changelog to track our release progress (we aim to roll out a release every
-  month): [`CHANGELOG.md`](CHANGELOG.md)
-
 ## FAQ
+
 ### Why not use `<input type="file">`?
 
 Having no JavaScript beats having a lot of it, so that’s a fair question!
@@ -350,6 +295,21 @@ And you’ll need [`@uppy/companion`](https://uppy.io/docs/companion) if you’d
 like your users to be able to pick files from Instagram, Google Drive, Dropbox
 or via direct URLs (with more services coming).
 
+## Contributions are welcome
+
+- Contributor’s guide in [`.github/CONTRIBUTING.md`](.github/CONTRIBUTING.md)
+- Changelog to track our release progress (we aim to roll out a release every
+  month): [`CHANGELOG.md`](CHANGELOG.md)
+
+## Used by
+
+Uppy is used by: [Photobox](http://photobox.com), [Issuu](https://issuu.com/),
+[Law Insider](https://lawinsider.com), [Cool Tabs](https://cool-tabs.com),
+[Soundoff](https://soundoff.io), [Scrumi](https://www.scrumi.io/),
+[Crive](https://crive.co/) and others.
+
+Use Uppy in your project?
+[Let us know](https://github.com/transloadit/uppy/issues/769)!
 
 ## Contributors
 
