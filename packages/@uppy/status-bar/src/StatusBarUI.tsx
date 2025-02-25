@@ -222,8 +222,12 @@ export default function StatusBarUI<M extends Meta, B extends Body>({
   const isHidden =
     thereIsNothingInside || (uploadState === STATE_COMPLETE && hideAfterFinish)
 
+  if (isHidden) {
+    return null
+  }
+
   return (
-    <div className={statusBarClassNames} aria-hidden={isHidden}>
+    <div className={statusBarClassNames}>
       <div
         className={progressClassNames}
         style={{ width: `${width}%` }}
