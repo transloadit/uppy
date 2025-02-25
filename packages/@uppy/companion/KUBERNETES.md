@@ -89,6 +89,12 @@ spec:
                 name: companion-env
           ports:
             - containerPort: 3020
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3020
+            initialDelaySeconds: 3
+            periodSeconds: 5
           volumeMounts:
             - name: companion-data
               mountPath: /mnt/companion-data
