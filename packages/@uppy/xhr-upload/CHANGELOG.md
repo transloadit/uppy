@@ -1,5 +1,12 @@
 # @uppy/xhr-upload
 
+## 4.3.3
+
+Released: 2025-02-25
+Included in: Uppy v4.13.3
+
+- @uppy/xhr-upload: fix when responseType is set to JSON (Merlijn Vos / #5651)
+
 ## 4.3.1
 
 Released: 2025-01-08

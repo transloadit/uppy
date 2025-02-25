@@ -12,6 +12,29 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 4.13.3
+
+Released: 2025-02-25
+
+| Package          | Version | Package          | Version |
+| ---------------- | ------- | ---------------- | ------- |
+| @uppy/companion  |   5.5.2 | @uppy/xhr-upload |   4.3.3 |
+| @uppy/dashboard  |   4.3.2 | uppy             |  4.13.3 |
+| @uppy/status-bar |   4.1.2 |                  |         |
+
+- @uppy/dashboard: do not allow drag&drop of file preview (Merlijn Vos / #5650)
+- @uppy/xhr-upload: fix when responseType is set to JSON (Merlijn Vos / #5651)
+- meta: build(deps): bump akhileshns/heroku-deploy from 3.13.15 to 3.14.15 (dependabot[bot] / #5659)
+- meta: build(deps): bump docker/build-push-action from 6.13.0 to 6.14.0 (dependabot[bot] / #5660)
+- @uppy/status-bar: fix aria-hidden warning (Merlijn Vos / #5663)
+- @uppy/companion: log when tus uploaded size differs (Mikael Finstad / #5647)
+- @uppy/companion: remove redundant HEAD request for file size  (Mikael Finstad / #5648)
+- meta: build(deps): bump elliptic from 6.6.0 to 6.6.1 (dependabot[bot] / #5649)
+- examples: build(deps-dev): bump esbuild from 0.21.5 to 0.25.0 (dependabot[bot] / #5643)
+- meta: build(deps-dev): bump vitest from 1.6.0 to 1.6.1 (dependabot[bot] / #5641)
+- meta: build(deps): bump docker/setup-qemu-action from 3.3.0 to 3.4.0 (dependabot[bot] / #5640)
+
+
 ## 4.13.2
 
 Released: 2025-02-03
