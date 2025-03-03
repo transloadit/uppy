@@ -18,10 +18,13 @@ function httpHeaderSafeJson (v) {
     })
 }
 
-const getClient = async ({ token }) => (await got).extend({
+const getClient = async ({ token, rootNamespaceId }) => (await got).extend({
   prefixUrl: 'https://api.dropboxapi.com/2',
   headers: {
-    authorization: `Bearer ${token}`,
+      authorization: `Bearer ${token}`,
+      ...(rootNamespaceId && {
+          'Dropbox-API-Path-Root': httpHeaderSafeJson({ ".tag": "root", "root": rootNamespaceId })
+      }),
   },
 })
 
@@ -29,8 +32,8 @@ const getOauthClient = async () => (await got).extend({
   prefixUrl: 'https://api.dropboxapi.com/oauth2',
 })
 
-async function list ({ directory, query, token }) {
-  const client = await getClient({ token })
+async function list({ directory, query, token, rootNamespaceId }) {
+  const client = await getClient({ token, rootNamespaceId })
   if (query.cursor) {
     return client.post('files/list_folder/continue', { json: { cursor: query.cursor }, responseType: 'json' }).json()
   }
@@ -48,7 +51,7 @@ async function list ({ directory, query, token }) {
 }
 
 async function userInfo ({ token }) {
-  return (await getClient({ token })).post('users/get_current_account', { responseType: 'json' }).json()
+  return (await getClient({ token, rootNamespaceId: null })).post('users/get_current_account', { responseType: 'json' }).json()
 }
 
 /**
@@ -58,6 +61,7 @@ class DropBox extends Provider {
   constructor (options) {
     super(options)
     this.needsCookieAuth = true
+    this.rootNamespaceId = null
   }
 
   static get oauthProvider () {
@@ -74,19 +78,31 @@ class DropBox extends Provider {
    */
   async list (options) {
     return this.#withErrorHandling('provider.dropbox.list.error', async () => {
-      const responses = await Promise.all([
-        list(options),
-        userInfo(options),
-      ])
-      // @ts-ignore
-      const [stats, { email }] = responses
+      const userInfoResponse = await userInfo(options)
+      const { email, root_info } = userInfoResponse
+        
+      // Store rootNamespaceId as class member
+      this.rootNamespaceId = root_info?.root_namespace_id
+
+      // Then call list with the directory path and root namespace
+      const stats = await list({
+        ...options,
+        rootNamespaceId: this.rootNamespaceId,
+      })
+
       return adaptData(stats, email, options.companion.buildURL)
     })
   }
 
   async download ({ id, token }) {
     return this.#withErrorHandling('provider.dropbox.download.error', async () => {
-      const stream = (await getClient({ token })).stream.post('files/download', {
+      // Fetch rootNamespaceId if not already set
+      if (!this.rootNamespaceId) {
+          const userInfoResponse = await userInfo({ token })
+          this.rootNamespaceId = userInfoResponse.root_info?.root_namespace_id
+      }
+
+      const stream = (await getClient({ token, rootNamespaceId: this.rootNamespaceId })).stream.post('files/download', {
         prefixUrl: 'https://content.dropboxapi.com/2',
         headers: {
           'Dropbox-API-Arg': httpHeaderSafeJson({ path: String(id) }),
@@ -103,7 +119,13 @@ class DropBox extends Provider {
 
   async thumbnail ({ id, token }) {
     return this.#withErrorHandling('provider.dropbox.thumbnail.error', async () => {
-      const stream = (await getClient({ token })).stream.post('files/get_thumbnail_v2', {
+      // Fetch rootNamespaceId if not already set
+      if (!this.rootNamespaceId) {
+          const userInfoResponse = await userInfo({ token })
+          this.rootNamespaceId = userInfoResponse.root_info?.root_namespace_id
+      }
+
+      const stream = (await getClient({ token, rootNamespaceId: this.rootNamespaceId })).stream.post('files/get_thumbnail_v2', {
         prefixUrl: 'https://content.dropboxapi.com/2',
         headers: { 'Dropbox-API-Arg': httpHeaderSafeJson({ resource: { '.tag': 'path', path: `${id}` }, size: 'w256h256', format: 'jpeg' }) },
         body: Buffer.alloc(0),
@@ -117,14 +139,26 @@ class DropBox extends Provider {
 
   async size ({ id, token }) {
     return this.#withErrorHandling('provider.dropbox.size.error', async () => {
-      const { size } = await (await getClient({ token })).post('files/get_metadata', { json: { path: id }, responseType: 'json' }).json()
+      // Fetch rootNamespaceId if not already set
+      if (!this.rootNamespaceId) {
+        const userInfoResponse = await userInfo({ token })
+        this.rootNamespaceId = userInfoResponse.root_info?.root_namespace_id
+      }
+
+      const { size } = await (await getClient({ token, rootNamespaceId: this.rootNamespaceId })).post('files/get_metadata', { json: { path: id }, responseType: 'json' }).json()
       return parseInt(size, 10)
     })
   }
 
   async logout ({ token }) {
     return this.#withErrorHandling('provider.dropbox.logout.error', async () => {
-      await (await getClient({ token })).post('auth/token/revoke', { responseType: 'json' })
+      // Fetch rootNamespaceId if not already set
+      if (!this.rootNamespaceId) {
+        const userInfoResponse = await userInfo({ token })
+        this.rootNamespaceId = userInfoResponse.root_info?.root_namespace_id
+      }    
+      await (await getClient({ token, rootNamespaceId: this.rootNamespaceId })).post('auth/token/revoke', { responseType: 'json' })
+
       return { revoked: true }
     })
   }
