@@ -275,7 +275,7 @@ export default class XHRUpload<
             )
           }
 
-          throw error
+          return undefined
         }
       }
     }

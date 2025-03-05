@@ -1619,6 +1619,7 @@ export class Uppy<
         ) as any // we may want a new custom error here
         newError.isUserFacing = true // todo maybe don't do this with all errors?
         newError.details = error.message
+        newError.file = file
         if (error.details) {
           newError.details += ` ${error.details}`
         }
@@ -2296,9 +2297,21 @@ export class Uppy<
           const file = this.getFile(fileID)
           // if the file hasn't started uploading and hasn't already been assigned to an upload..
           if (
-            !file.progress.uploadStarted &&
+            (!file.progress.uploadStarted || file.error) &&
             currentlyUploadingFiles.indexOf(fileID) === -1
           ) {
+            if (file.error) {
+              this.setFileState(file.id, {
+                error: file.error,
+                progress: {
+                  ...file.progress,
+                  uploadStarted: null,
+                  bytesUploaded: false,
+                  percentage: 0,
+                  uploadComplete: false,
+                },
+              })
+            }
             waitingFileIDs.push(file.id)
           }
         })
