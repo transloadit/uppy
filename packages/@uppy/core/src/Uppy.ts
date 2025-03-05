@@ -1619,6 +1619,7 @@ export class Uppy<
         ) as any // we may want a new custom error here
         newError.isUserFacing = true // todo maybe don't do this with all errors?
         newError.details = error.message
+        newError.file = file
         if (error.details) {
           newError.details += ` ${error.details}`
         }
