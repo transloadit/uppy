@@ -1336,6 +1336,74 @@ describe('src/Core', () => {
       })
       await expect(core.upload()).resolves.toBeDefined()
     })
+
+    it('upload() is idempotent when called multiple times', async () => {
+      const onUpload = vi.fn()
+      const onRetryAll = vi.fn()
+      const onUploadError = vi.fn()
+      const core = new Core()
+      let hasError = false
+
+      core.addUploader((fileIDs) => {
+        fileIDs.forEach((fileID) => {
+          const file = core.getFile(fileID)
+          if (!hasError) {
+            // @ts-ignore
+            core.emit('upload-error', file, new Error('foo'))
+            hasError = true
+          }
+        })
+        return Promise.resolve()
+      })
+      core.on('upload', onUpload)
+      core.on('retry-all', onRetryAll)
+      core.on('upload-error', onUploadError)
+
+      const firstFileID = core.addFile({
+        source: 'vi',
+        name: 'foo.jpg',
+        type: 'image/jpeg',
+        data: testImage,
+      })
+      // First time 'upload' and 'upload-error' should be emitted
+      await core.upload()
+      expect(onRetryAll).not.toHaveBeenCalled()
+      expect(onUpload).toHaveBeenCalled()
+      expect(onUploadError).toHaveBeenCalled()
+
+      // One failed file in memory but we add a new one before uploading
+      const secondFileID = core.addFile({
+        source: 'vi',
+        name: 'bar.jpg',
+        type: 'image/jpeg',
+        data: testImage,
+      })
+      const onComplete = vi.fn()
+      core.on('complete', onComplete)
+      // Second time 'upload' and 'retry-all' should be emitted
+      // but only the error file should have been uploaded, not the new one as well.
+      await core.upload()
+      expect(onRetryAll).toHaveBeenCalled()
+      expect(onUpload).toBeCalledTimes(2) // one more
+      expect(onUploadError).toBeCalledTimes(1) // still the same
+      expect(onComplete).toHaveBeenCalled()
+      const result = onComplete.mock.calls[0][0]
+      expect(result.successful?.length).toBe(1)
+      expect(result.failed?.length).toBe(0)
+      expect(result.successful?.[0].id).toBe(firstFileID)
+
+      // Third time 'upload' should be emitted and succeed with the newly added file
+      await core.upload()
+      expect(onRetryAll).toHaveBeenCalledTimes(1) // still one
+      expect(onUpload).toBeCalledTimes(3) // one more
+      expect(onUploadError).toBeCalledTimes(1) // still one
+      expect(onComplete).toBeCalledTimes(2) // one more
+      const result2 = onComplete.mock.calls[1][0]
+      // Even though it's another upload the file from the previous upload is included again
+      expect(result2.successful?.length).toBe(2)
+      expect(result2.failed?.length).toBe(0)
+      expect(result2.successful?.[1].id).toBe(secondFileID)
+    })
   })
 
   describe('removing a file', () => {
