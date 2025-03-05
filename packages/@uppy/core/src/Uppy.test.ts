@@ -821,27 +821,6 @@ describe('src/Core', () => {
         uploadStarted: null,
       })
     })
-
-    it('should report an error if post-processing a file fails', () => {
-      const core = new Core()
-
-      core.addFile({
-        source: 'vi',
-        name: 'foo.jpg',
-        type: 'image/jpeg',
-        data: testImage,
-      })
-
-      const fileId = Object.keys(core.getState().files)[0]
-      const file = core.getFile(fileId)
-      core.emit('error', new Error('foooooo'), file)
-
-      expect(core.getState().error).toEqual('foooooo')
-
-      expect(core.upload()).resolves.toMatchObject({
-        failed: [{ name: 'foo.jpg' }],
-      })
-    })
   })
 
   describe('uploaders', () => {

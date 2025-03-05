@@ -2272,13 +2272,6 @@ export class Uppy<
 
       this.emit('retry-all', Object.values(updatedFiles))
 
-      if (filesToRetry.length === 0) {
-        return Promise.resolve({
-          successful: [],
-          failed: [],
-        })
-      }
-
       const uploadID = this.#createUpload(filesToRetry, {
         forceAllowNewUpload: true, // create new upload even if allowNewUpload: false
       })
@@ -2340,13 +2333,6 @@ export class Uppy<
             waitingFileIDs.push(file.id)
           }
         })
-
-        if (waitingFileIDs.length === 0) {
-          return Promise.resolve({
-            successful: [],
-            failed: [],
-          })
-        }
 
         const uploadID = this.#createUpload(waitingFileIDs)
         return this.#runUpload(uploadID)
