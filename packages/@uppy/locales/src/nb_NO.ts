@@ -53,10 +53,10 @@ nb_NO.strings = {
   dropHereOr: 'Dra filer hit eller %{browse}',
   dropHint: 'Dra filer hit',
   dropPasteBoth: 'Dra filer hit, %{browseFiles} eller %{browseFolders}',
-  dropPasteFiles: 'Dra filer hit, eller %{browseFiles}',
-  dropPasteFolders: 'Dra filer hit, eller %{browseFolders}',
+  dropPasteFiles: 'Dra filer hit eller %{browseFiles}',
+  dropPasteFolders: 'Dra filer hit eller %{browseFolders}',
   dropPasteImportBoth:
-    'Dra filer hit %{browseFiles}, %{browseFolders} eller importer fra:',
+    'Dra filer hit, %{browseFiles}, %{browseFolders} eller importer fra:',
   dropPasteImportFiles: 'Dra filer hit, %{browseFiles} eller importer fra:',
   dropPasteImportFolders: 'Dra filer hit, %{browseFolders} eller importer fra:',
   editFile: 'Rediger fil',
