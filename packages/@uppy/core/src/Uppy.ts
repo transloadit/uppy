@@ -2241,7 +2241,7 @@ export class Uppy<
   /**
    * Start an upload for all the files that are not currently being uploaded.
    */
-  upload(): Promise<NonNullable<UploadResult<M, B>> | undefined> {
+  async upload(): Promise<NonNullable<UploadResult<M, B>> | undefined> {
     if (!this.#plugins['uploader']?.length) {
       this.log('No uploader type plugins are used', 'warning')
     }
@@ -2275,7 +2275,15 @@ export class Uppy<
       const uploadID = this.#createUpload(filesToRetry, {
         forceAllowNewUpload: true, // create new upload even if allowNewUpload: false
       })
-      return this.#runUpload(uploadID)
+      const result = await this.#runUpload(uploadID)
+      const hasNewFiles = this.getFiles().filter(
+        (file) => file.progress.uploadStarted == null,
+      )
+
+      if (!hasNewFiles) {
+        return result
+      }
+      files = this.getState().files
     }
 
     // If no files to retry, proceed with original upload() behavior for new files
