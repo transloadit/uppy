@@ -2241,13 +2241,52 @@ export class Uppy<
   /**
    * Start an upload for all the files that are not currently being uploaded.
    */
-  upload(): Promise<NonNullable<UploadResult<M, B>> | undefined> {
+  async upload(): Promise<NonNullable<UploadResult<M, B>> | undefined> {
     if (!this.#plugins['uploader']?.length) {
       this.log('No uploader type plugins are used', 'warning')
     }
 
     let { files } = this.getState()
 
+    // Check if we have files with errors (for retry behavior)
+    const filesToRetry = Object.keys(files).filter(
+      (fileID) => files[fileID].error,
+    )
+    const hasFilesToRetry = filesToRetry.length > 0
+
+    // If we have files to retry, behave like retryAll() and ignore any new files
+    if (hasFilesToRetry) {
+      const updatedFiles = { ...files }
+      filesToRetry.forEach((fileID) => {
+        updatedFiles[fileID] = {
+          ...updatedFiles[fileID],
+          isPaused: false,
+          error: null,
+        }
+      })
+
+      this.setState({
+        files: updatedFiles,
+        error: null,
+      })
+
+      this.emit('retry-all', Object.values(updatedFiles))
+
+      const uploadID = this.#createUpload(filesToRetry, {
+        forceAllowNewUpload: true, // create new upload even if allowNewUpload: false
+      })
+      const result = await this.#runUpload(uploadID)
+      const hasNewFiles = this.getFiles().filter(
+        (file) => file.progress.uploadStarted == null,
+      )
+
+      if (!hasNewFiles) {
+        return result
+      }
+      files = this.getState().files
+    }
+
+    // If no files to retry, proceed with original upload() behavior for new files
     const onBeforeUploadResult = this.opts.onBeforeUpload(files)
 
     if (onBeforeUploadResult === false) {
