@@ -158,6 +158,7 @@ class Uploader {
    * @property {string} [httpMethod]
    * @property {boolean} [useFormData]
    * @property {number} [chunkSize]
+   * @property {any} [clientRequest]
    *
    * @param {UploaderOptions} options
    */
@@ -175,6 +176,8 @@ class Uploader {
       : this.fileName
 
     this.storage = options.storage
+
+    this.clientRequest = options.clientRequest
 
     this.downloadedBytes = 0
 
@@ -365,6 +368,7 @@ class Uploader {
       uploadUrl: req.body.uploadUrl,
       metadata: req.body.metadata,
       fieldname: req.body.fieldname,
+      clientRequest: req,
       useFormData,
 
       // Info coming from companion server configuration:
@@ -377,6 +381,7 @@ class Uploader {
         options: req.companion.options.s3,
       } : null,
       chunkSize: req.companion.options.chunkSize,
+      uploaderOptions: req.companion.options.uploaderOptions,
     }
   }
 
@@ -574,8 +579,24 @@ class Uploader {
     return tusRet;
   }
 
+  static buildRequestHeaders(clientRequest, additionalHeaders, uploaderOptions) {
+    const finalHeaders = headerSanitize(additionalHeaders || {});
+
+    if (uploaderOptions.proxyAuth === "true") {
+      const authCookie = clientRequest.cookies[uploaderOptions.proxyAuthCookieName]
+      if (authCookie) {
+        finalHeaders[uploaderOptions.proxyAuthHeaderName] = `Bearer ${authCookie}`
+      }
+    }
+
+    return finalHeaders
+  }
+
   async #uploadMultipart(stream) {
-    if (!this.options.endpoint) {
+    const uploaderOptions = this.options.uploaderOptions || {}
+    const {endpoint} = uploaderOptions
+
+    if (!endpoint) {
       throw new Error('No multipart endpoint set')
     }
 
@@ -598,9 +619,8 @@ class Uploader {
       this.onProgress(bytesUploaded, undefined)
     })
 
-    const url = this.options.endpoint
     const reqOptions = {
-      headers: headerSanitize(this.options.headers),
+      headers: Uploader.buildRequestHeaders(this.options.clientRequest, this.options.headers, uploaderOptions),
     }
 
     if (this.options.useFormData) {
@@ -624,7 +644,7 @@ class Uploader {
       const httpMethod = (this.options.httpMethod || '').toUpperCase() === 'PUT' ? 'put' : 'post'
       const runRequest = (await got)[httpMethod]
 
-      const response = await runRequest(url, reqOptions)
+      const response = await runRequest(endpoint, reqOptions)
 
       if (this.size != null && bytesUploaded !== this.size) {
         const errMsg = `uploaded only ${bytesUploaded} of ${this.size} with status: ${response.statusCode}`
