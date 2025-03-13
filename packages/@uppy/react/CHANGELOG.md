@@ -1,5 +1,12 @@
 # @uppy/react
 
+## 4.2.2
+
+Released: 2025-03-13
+Included in: Uppy v4.13.4
+
+- @uppy/react: pass getServerSnapshot to useSyncExternalStoreWithSelector (Merlijn Vos / #5685)
+
 ## 4.2.0
 
 Released: 2025-01-06

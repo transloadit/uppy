@@ -12,6 +12,23 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 4.13.4
+
+Released: 2025-03-13
+
+| Package     | Version | Package     | Version |
+| ----------- | ------- | ----------- | ------- |
+| @uppy/core  |   4.4.3 | uppy        |  4.13.4 |
+| @uppy/react |   4.2.2 |             |         |
+
+- @uppy/core: make upload() idempotent (Merlijn Vos / #5677)
+- @uppy/react: pass getServerSnapshot to useSyncExternalStoreWithSelector (Merlijn Vos / #5685)
+- meta: Fix BasePlugin export for CDN bundle (Merlijn Vos / #5684)
+- meta: build(deps): bump docker/build-push-action from 6.14.0 to 6.15.0 (dependabot[bot] / #5673)
+- meta: build(deps): bump docker/setup-qemu-action from 3.4.0 to 3.6.0 (dependabot[bot] / #5675)
+- meta: build(deps): bump docker/metadata-action from 5.6.1 to 5.7.0 (dependabot[bot] / #5674)
+
+
 ## 4.13.3
 
 Released: 2025-02-25

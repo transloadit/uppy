@@ -1,5 +1,12 @@
 # @uppy/core
 
+## 4.4.3
+
+Released: 2025-03-13
+Included in: Uppy v4.13.4
+
+- @uppy/core: make upload() idempotent (Merlijn Vos / #5677)
+
 ## 4.4.2
 
 Released: 2025-02-03
