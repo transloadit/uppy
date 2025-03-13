@@ -85,6 +85,7 @@ cs_CZ.strings = {
   loading: 'Nahrávání...',
   logOut: 'Odhlásit',
   myDevice: 'Moje zařízení',
+  noDuplicates: "Nelze znovu přidat stejný soubor '%{fileName}'",
   noFilesFound: 'Nenalezeny žádné soubory ani adresáře',
   noInternetConnection: 'Nepřipojeno k internetu',
   openFolderNamed: 'Otevřít adresář %{name}',
