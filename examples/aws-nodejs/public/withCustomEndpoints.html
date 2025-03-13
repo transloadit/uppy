@@ -43,7 +43,18 @@
         // return JSON.stringify(data)
         // You'd also have to add `Content-Type` header with value `application/json`.
       }
+      async function computeHash(blob) {
+        const hashBuffer = await crypto.subtle.digest(
+          'SHA-256',
+          await blob.arrayBuffer(),
+        )
+        const stringifiedHash = String.fromCharCode(
+          ...new Uint8Array(hashBuffer),
+        )
+        return btoa(stringifiedHash)
+      }
       {
+        const cache = Object.create(null)
         const MiB = 0x10_00_00
 
         const uppy = new Uppy()
@@ -57,17 +68,6 @@
             // Files that are more than 100MiB should be uploaded in multiple parts.
             shouldUseMultipart: (file) => file.size > 100 * MiB,
 
-            /**
-             * This method tells Uppy how to retrieve a temporary token for signing on the client.
-             * Signing on the client is optional, you can also do the signing from the server.
-             */
-            async getTemporarySecurityCredentials({ signal }) {
-              const response = await fetch('/s3/sts', { signal })
-              if (!response.ok)
-                throw new Error('Unsuccessful request', { cause: response })
-              return response.json()
-            },
-
             // ========== Non-Multipart Uploads ==========
 
             /**
@@ -76,13 +76,7 @@
              * you don't need to implement it.
              */
             async getUploadParameters(file, options) {
-              if (typeof crypto?.subtle === 'object') {
-                // If WebCrypto is available, let's do signing from the client.
-                return uppy
-                  .getPlugin('myAWSPlugin')
-                  .createSignedURL(file, options)
-              }
-
+              const ChecksumSHA256 = await computeHash(file.data)
               // Send a request to our Express.js signing endpoint.
               const response = await fetch('/s3/sign', {
                 method: 'POST',
@@ -92,6 +86,7 @@
                 body: serialize({
                   filename: file.name,
                   contentType: file.type,
+                  ChecksumSHA256,
                 }),
                 signal: options.signal,
               })
@@ -110,6 +105,8 @@
                 // Provide content type header required by S3
                 headers: {
                   'Content-Type': file.type,
+                  'x-amz-checksum-sha256': ChecksumSHA256,
+                  'x-amz-sdk-checksum-algorithm': 'SHA256',
                 },
               }
             },
@@ -170,14 +167,7 @@
             },
 
             async signPart(file, options) {
-              if (typeof crypto?.subtle === 'object') {
-                // If WebCrypto, let's do signing from the client.
-                return uppy
-                  .getPlugin('myAWSPlugin')
-                  .createSignedURL(file, options)
-              }
-
-              const { uploadId, key, partNumber, signal } = options
+              const { uploadId, key, partNumber, signal, body } = options
 
               signal?.throwIfAborted()
 
@@ -186,10 +176,12 @@
                   'Cannot sign without a key, an uploadId, and a partNumber',
                 )
               }
+              const sha256 = await computeHash(body)
+              cache[uploadId + partNumber] = sha256
 
               const filename = encodeURIComponent(key)
               const response = await fetch(
-                `/s3/multipart/${uploadId}/${partNumber}?key=${filename}`,
+                `/s3/multipart/${uploadId}/${partNumber}?key=${filename}&sha256=${encodeURIComponent(sha256)}`,
                 { signal },
               )
 
@@ -234,7 +226,13 @@
                   headers: {
                     accept: 'application/json',
                   },
-                  body: serialize({ parts }),
+                  body: serialize({
+                    parts: parts.map(({ ETag, PartNumber }) => {
+                      const ChecksumSHA256 = cache[uploadId + PartNumber]
+                      delete cache[uploadId + PartNumber]
+                      return { ETag, PartNumber, ChecksumSHA256 }
+                    }),
+                  }),
                   signal,
                 },
               )
