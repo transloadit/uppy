@@ -8,7 +8,6 @@ import type {
 } from '@uppy/core'
 import Dropbox from '@uppy/dropbox'
 import GoogleDrive from '@uppy/google-drive'
-import GooglePhotos from '@uppy/google-photos'
 import Instagram from '@uppy/instagram'
 import Facebook from '@uppy/facebook'
 import OneDrive from '@uppy/onedrive'
@@ -29,7 +28,6 @@ const availablePlugins = {
   Dropbox,
   Facebook,
   GoogleDrive,
-  GooglePhotos,
   Instagram,
   OneDrive,
   Unsplash,
@@ -42,7 +40,6 @@ type AvailablePluginsKeys =
   | 'Dropbox'
   | 'Facebook'
   | 'GoogleDrive'
-  | 'GooglePhotos'
   | 'Instagram'
   | 'OneDrive'
   | 'Unsplash'
