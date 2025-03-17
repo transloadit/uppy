@@ -4,7 +4,6 @@
 const dropbox = require('./dropbox')
 const box = require('./box')
 const { Drive } = require('./google/drive')
-const googlephotos = require('./google/googlephotos')
 const instagram = require('./instagram/graph')
 const facebook = require('./facebook')
 const onedrive = require('./onedrive')
@@ -69,7 +68,7 @@ module.exports.getProviderMiddleware = (providers, grantConfig) => {
  * @returns {Record<string, typeof Provider>}
  */
 module.exports.getDefaultProviders = () => {
-  const providers = { dropbox, box, drive: Drive, googlephotos, facebook, onedrive, zoom, instagram, unsplash, webdav }
+  const providers = { dropbox, box, drive: Drive, facebook, onedrive, zoom, instagram, unsplash, webdav }
 
   return providers
 }

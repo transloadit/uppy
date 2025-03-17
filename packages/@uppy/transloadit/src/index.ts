@@ -338,7 +338,6 @@ export default class Transloadit<
     addPluginVersion('Box', 'uppy-box')
     addPluginVersion('Facebook', 'uppy-facebook')
     addPluginVersion('GoogleDrive', 'uppy-google-drive')
-    addPluginVersion('GooglePhotos', 'uppy-google-photos')
     addPluginVersion('GoogleDrivePicker', 'uppy-google-drive-picker')
     addPluginVersion('GooglePhotosPicker', 'uppy-google-photos-picker')
     addPluginVersion('Instagram', 'uppy-instagram')

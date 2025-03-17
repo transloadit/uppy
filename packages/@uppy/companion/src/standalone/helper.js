@@ -89,11 +89,6 @@ const getConfigFromEnv = () => {
         secret: getSecret('COMPANION_GOOGLE_SECRET'),
         credentialsURL: process.env.COMPANION_GOOGLE_KEYS_ENDPOINT,
       },
-      googlephotos: {
-        key: process.env.COMPANION_GOOGLE_KEY,
-        secret: getSecret('COMPANION_GOOGLE_SECRET'),
-        credentialsURL: process.env.COMPANION_GOOGLE_KEYS_ENDPOINT,
-      },
       dropbox: {
         key: process.env.COMPANION_DROPBOX_KEY,
         secret: getSecret('COMPANION_DROPBOX_SECRET'),

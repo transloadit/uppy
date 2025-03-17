@@ -23,7 +23,6 @@
     "@uppy/core": "workspace:*",
     "@uppy/drag-drop": "workspace:*",
     "@uppy/google-drive": "workspace:*",
-    "@uppy/google-photos": "workspace:*",
     "@uppy/progress-bar": "workspace:*",
     "@uppy/tus": "workspace:*",
     "@uppy/webcam": "workspace:*",

@@ -80,7 +80,6 @@ here.
 
 ### New providers
 
-- [ ] Google Photos (#2163)
 - [ ] MediaLibrary provider which shows you files that have already been
       uploaded #450, #1121, #1112 #362
 - [ ] Giphy image search (on top of Unsplash plugin) ()

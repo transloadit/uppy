@@ -148,7 +148,6 @@ export default () => {
     .use(RemoteSources, {
       companionUrl: COMPANION_URL,
       sources: [
-        'GooglePhotos',
         'Box',
         'Dropbox',
         'Facebook',
