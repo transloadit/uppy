@@ -93,10 +93,7 @@ jobs:
           EDGLY_KEY: ${{secrets.EDGLY_KEY}}
           EDGLY_SECRET: ${{secrets.EDGLY_SECRET}}
       - name: Upload `@uppy/locales` to CDN if it was released
-        run:
-          git diff --exit-code --quiet HEAD^ --
-          packages/@uppy/locales/package.json ||corepack yarn run uploadcdn
-          @uppy/locales
+        run: corepack yarn run uploadcdn @uppy/locales
         env:
           EDGLY_KEY: ${{secrets.EDGLY_KEY}}
           EDGLY_SECRET: ${{secrets.EDGLY_SECRET}}
