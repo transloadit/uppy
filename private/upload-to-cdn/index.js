@@ -85,8 +85,7 @@ async function getLocalDistFiles (packageName) {
 
   console.log('Making local package from', packagePath)
 
-  // @uppy/locales doesn't have a dist build step
-  const prefix = packageName === '@uppy/locales' ? 'lib' : 'dist'
+  const prefix = 'dist'
 
   const files = (await packlist({ path: packagePath }))
     .flatMap((f) => {
