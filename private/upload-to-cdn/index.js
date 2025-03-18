@@ -83,11 +83,21 @@ async function getLocalDistFiles (packageName) {
   // Base file path of the package, eg. ./packages/@uppy/locales
   const packagePath = path.join(__dirname, '..', '..', 'packages', packageName)
 
-  console.log('Making package from', packagePath)
+  console.log('Making local package from', packagePath)
+
+  // @uppy/locales doesn't have a dist build step
+  const prefix = packageName === '@uppy/locales' ? 'lib/' : 'dist/'
 
   const files = (await packlist({ path: packagePath }))
-    .filter(f => f.startsWith('dist/'))
-    .map(f => f.replace(/^dist\//, ''))
+    .flatMap((f) => {
+      if (f.startsWith(prefix)) {
+        const name = f.split(prefix)[1]
+        if (name.length > 0) {
+          return [name]
+        }
+      }
+      return []
+    })
 
   const entries = await Promise.all(
     files.map(async (f) => [
