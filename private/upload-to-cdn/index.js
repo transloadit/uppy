@@ -49,8 +49,10 @@ from npm and filtering it down to package/dist/ files.
  * @returns a Map<string, Buffer>, filename → content
  */
 async function getRemoteDistFiles (packageName, version) {
+  const package = `${packageName}@${version}`
+  console.log('Using npm package', package)
   const files = new Map()
-  const tarball = await pacote.tarball.stream(`${packageName}@${version}`, stream => pipeline(stream, new tar.Parse()))
+  const tarball = await pacote.tarball.stream(package, stream => pipeline(stream, new tar.Parse()))
 
   tarball.on('entry', (readEntry) => {
     if (readEntry.path.startsWith('package/dist/')) {
@@ -74,18 +76,34 @@ async function getRemoteDistFiles (packageName, version) {
  * Get local dist/ files by asking npm-packlist what files would be added
  * to an npm package during publish, and filtering those down to just dist/ files.
  *
- * @param {string} packagePath Base file path of the package, eg. ./packages/@uppy/locales
+ * @param {string} packageName Name of package, eg. @uppy/locales
  * @returns a Map<string, Buffer>, filename → content
  */
-async function getLocalDistFiles (packagePath) {
+async function getLocalDistFiles (packageName) {
+  // Base file path of the package, eg. ./packages/@uppy/locales
+  const packagePath = path.join(__dirname, '..', '..', 'packages', packageName)
+
+  console.log('Making local package from', packagePath)
+
+  const prefix = 'dist'
+
   const files = (await packlist({ path: packagePath }))
-    .filter(f => f.startsWith('dist/'))
-    .map(f => f.replace(/^dist\//, ''))
+    .flatMap((f) => {
+      const prefixSlash = `${prefix}/`
+
+      if (f.startsWith(prefixSlash)) {
+        const name = f.split(prefixSlash)[1]
+        if (name.length > 0) {
+          return [name]
+        }
+      }
+      return []
+    })
 
   const entries = await Promise.all(
     files.map(async (f) => [
       f,
-      await readFile(path.join(packagePath, 'dist', f)),
+      await readFile(path.join(packagePath, prefix, f)),
     ]),
   )
 
@@ -118,6 +136,8 @@ async function main (packageName, version) {
   })
 
   const remote = !!version
+
+  console.log('Using', remote ? 'Remote' : 'Local', 'build')
   if (!remote) {
     // eslint-disable-next-line import/no-dynamic-require, global-require, no-param-reassign
     version = require(`../../packages/${packageName}/package.json`).version
@@ -131,10 +151,6 @@ async function main (packageName, version) {
     await delay(3000)
   }
 
-  const packagePath = remote
-    ? `${packageName}@${version}`
-    : path.join(__dirname, '..', '..', 'packages', packageName)
-
   // uppy → releases/uppy/
   // @uppy/robodog → releases/uppy/robodog/
   // @uppy/locales → releases/uppy/locales/
@@ -142,11 +158,11 @@ async function main (packageName, version) {
     ? packageName.replace(/^@/, '')
     : 'uppy'
 
-  const outputPath = path.posix.join(dirName, `v${version}`)
+  const s3Dir = path.posix.join(dirName, `v${version}`)
 
   const { Contents: existing } = await s3Client.send(new ListObjectsV2Command({
     Bucket: AWS_BUCKET,
-    Prefix: outputPath,
+    Prefix: s3Dir,
   }))
 
   if (existing?.length > 0) {
@@ -160,10 +176,11 @@ async function main (packageName, version) {
 
   const files = remote
     ? await getRemoteDistFiles(packageName, version)
-    : await getLocalDistFiles(packagePath)
+    : await getLocalDistFiles(packageName)
 
   if (packageName === 'uppy') {
-    // Create downloadable zip archive
+    console.log('Creating downloadable zip archive')
+
     const zip = new AdmZip()
     for (const [filename, buffer] of files.entries()) {
       zip.addFile(filename, buffer)
@@ -172,8 +189,10 @@ async function main (packageName, version) {
     files.set(`uppy-v${version}.zip`, zip.toBuffer())
   }
 
+  if (files.size === 0) console.warn('No files to upload')
+
   for (const [filename, buffer] of files.entries()) {
-    const key = path.posix.join(outputPath, filename)
+    const key = path.posix.join(s3Dir, filename)
     console.log(`pushing s3://${AWS_BUCKET}/${key}`)
     await s3Client.send(new PutObjectCommand({
       Bucket: AWS_BUCKET,
