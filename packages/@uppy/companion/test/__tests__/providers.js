@@ -191,48 +191,6 @@ describe('list provider files', () => {
     expect1({ username, items: rest, providerFixture })
   })
 
-  test('googlephotos', async () => {
-    nock('https://photoslibrary.googleapis.com').get('/v1/albums?pageSize=50').reply(200, {
-      albums: [
-        {
-          coverPhotoBaseUrl: 'https://test',
-          title: 'album',
-          id: '1',
-        }
-      ]
-    })
-
-    nock('https://photoslibrary.googleapis.com').get('/v1/sharedAlbums?pageSize=50').reply(200, {
-      sharedAlbums: [
-        {
-          coverPhotoBaseUrl: 'https://test2',
-          title: 'shared album',
-          id: '2',
-        }
-      ]
-    })
-
-    nock('https://www.googleapis.com').get('/oauth2/v1/userinfo').reply(200, {
-      email: defaults.USERNAME,
-    })
-
-    const { items } = await runTest('googlephotos')
-
-    expect(items[0].isFolder).toBe(true)
-    expect(items[0].name).toBe('album')
-    expect(items[0].id).toBe('1')
-    expect(items[0].requestPath).toBe('1')
-    expect(items[0].icon).toBe('https://drive-thirdparty.googleusercontent.com/32/type/application/vnd.google-apps.folder')
-    expect(items[0].thumbnail).toBe('https://test=w300-h300-c')
-
-    expect(items[1].isFolder).toBe(true)
-    expect(items[1].name).toBe('shared album')
-    expect(items[1].id).toBe('2')
-    expect(items[1].requestPath).toBe('2')
-    expect(items[1].icon).toBe('https://drive-thirdparty.googleusercontent.com/32/type/application/vnd.google-apps.folder')
-    expect(items[1].thumbnail).toBe('https://test2=w300-h300-c')
-  })
-
   test('facebook', async () => {
     nock('https://graph.facebook.com').post('/',
     [
@@ -399,16 +357,6 @@ describe('provider file gets downloaded from', () => {
     await runTest('drive')
   })
 
-  test('googlephotos', async () => {
-    nock('https://photoslibrary.googleapis.com').get(`/v1/mediaItems/${defaults.ITEM_ID}`).reply(200, {
-      baseUrl: 'https://lh3.googleusercontent.com/test',
-    })
-
-    nock('https://lh3.googleusercontent.com').get(`/test=d`).reply(200, ' ', { 'content-length': 1 })
-
-    await runTest('googlephotos')
-  })
-
   test('facebook', async () => {
     // times(2) because of size request
     nock('https://graph.facebook.com').post('/',
@@ -484,7 +432,7 @@ describe('logout of provider', () => {
       .expect(200)
 
     // only some providers can actually be revoked
-    const expectRevoked = ['box', 'dropbox', 'drive', 'googlephotos', 'facebook', 'zoom'].includes(providerName)
+    const expectRevoked = ['box', 'dropbox', 'drive', 'facebook', 'zoom'].includes(providerName)
 
     expect(res.body).toMatchObject({
       ok: true,
@@ -510,11 +458,6 @@ describe('logout of provider', () => {
   test('drive', async () => {
     nock('https://accounts.google.com').post('/o/oauth2/revoke?token=token+value').reply(200, {})
     await runTest('drive')
-  })
-
-  test('googlephotos', async () => {
-    nock('https://accounts.google.com').post('/o/oauth2/revoke?token=token+value').reply(200, {})
-    await runTest('googlephotos')
   })
 
   test('facebook', async () => {

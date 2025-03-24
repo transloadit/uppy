@@ -47,9 +47,6 @@
       "path": "./packages/@uppy/google-drive/tsconfig.build.json",
     },
     {
-      "path": "./packages/@uppy/google-photos/tsconfig.build.json",
-    },
-    {
       "path": "./packages/@uppy/google-drive-picker/tsconfig.build.json",
     },
     {

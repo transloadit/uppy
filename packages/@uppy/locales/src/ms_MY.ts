@@ -139,7 +139,6 @@ ms_MY.strings = {
   pluginNameDropbox: 'Dropbox',
   pluginNameFacebook: 'Facebook',
   pluginNameGoogleDrive: 'Google Drive',
-  pluginNameGooglePhotos: 'Google Photos',
   pluginNameInstagram: 'Instagram',
   pluginNameOneDrive: 'OneDrive',
   pluginNameScreenCapture: 'Screencast',

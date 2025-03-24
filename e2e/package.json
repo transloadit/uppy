@@ -26,7 +26,6 @@
     "@uppy/golden-retriever": "workspace:^",
     "@uppy/google-drive": "workspace:^",
     "@uppy/google-drive-picker": "workspace:^",
-    "@uppy/google-photos": "workspace:^",
     "@uppy/google-photos-picker": "workspace:^",
     "@uppy/image-editor": "workspace:^",
     "@uppy/informer": "workspace:^",

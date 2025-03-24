@@ -47,7 +47,7 @@ describe('RemoteSources', () => {
         sources: ['Webcam'],
       })
     }).toThrow(
-      'Invalid plugin: "Webcam" is not one of: Box, Dropbox, Facebook, GoogleDrive, GooglePhotos, Instagram, OneDrive, Unsplash, Url, or Zoom.',
+      'Invalid plugin: "Webcam" is not one of: Box, Dropbox, Facebook, GoogleDrive, Instagram, OneDrive, Unsplash, Url, or Zoom.',
     )
   })
 

@@ -52,9 +52,6 @@
       "path": "../@uppy/google-drive/tsconfig.build.json",
     },
     {
-      "path": "../@uppy/google-photos/tsconfig.build.json",
-    },
-    {
       "path": "../@uppy/image-editor/tsconfig.build.json",
     },
     {
