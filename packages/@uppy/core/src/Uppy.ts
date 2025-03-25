@@ -2280,7 +2280,7 @@ export class Uppy<
         (file) => file.progress.uploadStarted == null,
       )
 
-      if (!hasNewFiles) {
+      if (!hasNewFiles.length) {
         return result
       }
       files = this.getState().files
