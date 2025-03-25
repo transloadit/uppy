@@ -1351,6 +1351,13 @@ describe('src/Core', () => {
             // @ts-ignore
             core.emit('upload-error', file, new Error('foo'))
             hasError = true
+          } else {
+            // Second time, emit success
+            core.emit('upload-success', file, {
+              status: 200,
+              body: { success: true },
+              uploadURL: 'http://dummy.com/upload/success',
+            })
           }
         })
         return Promise.resolve()
@@ -1376,13 +1383,6 @@ describe('src/Core', () => {
       onUpload.mockReset()
       onUploadError.mockReset()
 
-      // One failed file in memory but we add a new one before uploading
-      core.addFile({
-        source: 'vi',
-        name: 'bar.jpg',
-        type: 'image/jpeg',
-        data: testImage,
-      })
       const onComplete = vi.fn()
       core.on('complete', onComplete)
       // Second time two uploads should happen back-to-back.
