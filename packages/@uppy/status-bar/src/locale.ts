@@ -49,4 +49,4 @@ export default {
     },
     showErrorDetails: 'Show error details',
   } as Locale<0 | 1>['strings'],
-} as any as Locale
+}
