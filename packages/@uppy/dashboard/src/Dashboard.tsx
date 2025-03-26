@@ -175,6 +175,7 @@ interface DashboardMiscOptions<M extends Meta, B extends Body>
   thumbnailWidth?: number
   trigger?: string | Element | null
   waitForThumbnailsBeforeUpload?: boolean
+  locale?: typeof locale
 }
 
 export type DashboardOptions<
