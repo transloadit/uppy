@@ -27,6 +27,7 @@ export default {
   mov: 'video/quicktime' as const,
   dicom: 'application/dicom' as const,
   doc: 'application/msword' as const,
+  msg: 'application/vnd.ms-outlook' as const,
   docm: 'application/vnd.ms-word.document.macroenabled.12' as const,
   docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' as const,
   dot: 'application/msword' as const,
