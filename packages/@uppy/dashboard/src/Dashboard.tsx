@@ -18,6 +18,7 @@ import findAllDOMElements from '@uppy/utils/lib/findAllDOMElements'
 import toArray from '@uppy/utils/lib/toArray'
 import getDroppedFiles from '@uppy/utils/lib/getDroppedFiles'
 import { defaultPickerIcon } from '@uppy/provider-views'
+import type StatusBarLocale from '@uppy/status-bar/lib/locale.js'
 
 import type { TargetedEvent } from 'preact/compat'
 import { nanoid } from 'nanoid/non-secure'
@@ -175,7 +176,7 @@ interface DashboardMiscOptions<M extends Meta, B extends Body>
   thumbnailWidth?: number
   trigger?: string | Element | null
   waitForThumbnailsBeforeUpload?: boolean
-  locale?: typeof locale
+  locale?: typeof locale & typeof StatusBarLocale
 }
 
 export type DashboardOptions<
