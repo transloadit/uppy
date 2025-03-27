@@ -1,6 +1,6 @@
-import type { Locale } from '@uppy/utils/lib/Translator'
+import type { OptionalPluralizeLocale } from '@uppy/utils/lib/Translator'
 
-export default {
+const locale: OptionalPluralizeLocale = {
   strings: {
     pluginNameAudio: 'Audio',
     // Used as the label for the button that starts an audio recording.
@@ -31,5 +31,7 @@ export default {
     // Used as the label for the discard cross button.
     // This is not visibly rendered but is picked up by screen readers.
     discardRecordedFile: 'Discard recorded file',
-  } as Locale<0>['strings'],
-} as any as Locale
+  },
+}
+
+export default locale
