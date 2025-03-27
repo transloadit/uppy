@@ -31,6 +31,7 @@ export interface ScreenCaptureOptions extends UIPluginOptions {
   displayMediaConstraints?: MediaStreamConstraints
   userMediaConstraints?: MediaStreamConstraints
   preferredVideoMimeType?: string
+  locale?: typeof locale
 }
 
 // https://developer.mozilla.org/en-US/docs/Web/API/MediaStreamConstraints

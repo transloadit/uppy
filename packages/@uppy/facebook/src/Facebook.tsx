@@ -21,7 +21,9 @@ import locale from './locale.js'
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'
 
-export type FacebookOptions = CompanionPluginOptions
+export type FacebookOptions = CompanionPluginOptions & {
+  locale?: typeof locale
+}
 
 export default class Facebook<M extends Meta, B extends Body>
   extends UIPlugin<FacebookOptions, M, B, UnknownProviderPluginState>

@@ -1,5 +1,3 @@
-import type { Locale } from '@uppy/utils/lib/Translator'
-
 export default {
   strings: {
     // Shown in the status bar while files are being uploaded.
@@ -48,5 +46,5 @@ export default {
       1: '%{smart_count} more files added',
     },
     showErrorDetails: 'Show error details',
-  } as Locale<0 | 1>['strings'],
-} as any as Locale
+  },
+}

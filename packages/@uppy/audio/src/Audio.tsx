@@ -20,6 +20,7 @@ import packageJson from '../package.json'
 
 export interface AudioOptions extends UIPluginOptions {
   showAudioSourceDropdown?: boolean
+  locale?: typeof locale
 }
 interface AudioState {
   audioReady: boolean

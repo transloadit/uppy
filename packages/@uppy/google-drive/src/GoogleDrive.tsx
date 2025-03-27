@@ -22,7 +22,9 @@ import locale from './locale.js'
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'
 
-export type GoogleDriveOptions = CompanionPluginOptions
+export type GoogleDriveOptions = CompanionPluginOptions & {
+  locale?: typeof locale
+}
 
 export default class GoogleDrive<M extends Meta, B extends Body>
   extends UIPlugin<GoogleDriveOptions, M, B, UnknownProviderPluginState>

@@ -58,6 +58,7 @@ export interface Opts extends UIPluginOptions {
     cropWidescreen?: boolean
     cropWidescreenVertical?: boolean
   }
+  locale?: typeof locale
 }
 export type { Opts as ImageEditorOptions }
 

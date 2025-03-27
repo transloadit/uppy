@@ -71,7 +71,7 @@ type MetaResponse = {
   statusCode: number
 }
 
-export type UrlOptions = CompanionPluginOptions
+export type UrlOptions = CompanionPluginOptions & { locale?: typeof locale }
 
 export default class Url<M extends Meta, B extends Body> extends UIPlugin<
   UrlOptions,

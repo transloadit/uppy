@@ -21,7 +21,9 @@ import locale from './locale.js'
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'
 
-export type OneDriveOptions = CompanionPluginOptions
+export type OneDriveOptions = CompanionPluginOptions & {
+  locale?: typeof locale
+}
 
 export default class OneDrive<M extends Meta, B extends Body>
   extends UIPlugin<OneDriveOptions, M, B, UnknownProviderPluginState>

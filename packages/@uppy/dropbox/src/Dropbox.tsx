@@ -21,7 +21,7 @@ import locale from './locale.js'
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'
 
-export type DropboxOptions = CompanionPluginOptions
+export type DropboxOptions = CompanionPluginOptions & { locale?: typeof locale }
 
 export default class Dropbox<M extends Meta, B extends Body>
   extends UIPlugin<DropboxOptions, M, B, UnknownProviderPluginState>

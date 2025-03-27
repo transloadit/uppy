@@ -77,7 +77,7 @@ const AuthForm = ({
   )
 }
 
-export type WebdavOptions = CompanionPluginOptions
+export type WebdavOptions = CompanionPluginOptions & { locale?: typeof locale }
 
 export default class Webdav<M extends Meta, B extends Body>
   extends UIPlugin<WebdavOptions, M, B, UnknownProviderPluginState>

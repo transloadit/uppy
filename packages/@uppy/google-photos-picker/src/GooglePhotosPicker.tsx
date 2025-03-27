@@ -18,6 +18,7 @@ import locale from './locale.js'
 
 export type GooglePhotosPickerOptions = CompanionPluginOptions & {
   clientId: string
+  locale?: typeof locale
 }
 
 export default class GooglePhotosPicker<M extends Meta, B extends Body>
