@@ -1,4 +1,6 @@
-export default {
+import type { OptionalPluralizeLocale } from '@uppy/utils/lib/Translator'
+
+const locale: OptionalPluralizeLocale = {
   strings: {
     addBulkFilesFailed: {
       0: 'Failed to add %{smart_count} file due to an internal error',
@@ -69,3 +71,5 @@ export default {
     pleaseWait: 'Please wait',
   },
 }
+
+export default locale

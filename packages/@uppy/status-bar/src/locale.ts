@@ -1,6 +1,6 @@
-import type { Locale } from '@uppy/utils/lib/Translator'
+import type { OptionalPluralizeLocale } from '@uppy/utils/lib/Translator'
 
-export default {
+const locale: OptionalPluralizeLocale = {
   strings: {
     // Shown in the status bar while files are being uploaded.
     uploading: 'Uploading',
@@ -48,5 +48,7 @@ export default {
       1: '%{smart_count} more files added',
     },
     showErrorDetails: 'Show error details',
-  } as Locale<0 | 1>['strings'],
-} as any as Locale
+  },
+}
+
+export default locale

@@ -401,7 +401,7 @@ export class Uppy<
 
   #postProcessors: Set<Processor> = new Set()
 
-  defaultLocale: Locale
+  defaultLocale: OptionalPluralizeLocale
 
   locale!: Locale
 
@@ -424,7 +424,7 @@ export class Uppy<
    * Instantiate Uppy
    */
   constructor(opts?: UppyOptionsWithOptionalRestrictions<M, B>) {
-    this.defaultLocale = locale as any as Locale
+    this.defaultLocale = locale
 
     const defaultOptions: UppyOptions<Record<string, unknown>, B> = {
       id: 'uppy',
