@@ -42,7 +42,8 @@ async function getClient({ token, namespaced }) {
   // https://www.dropboxforum.com/discussions/101000014/how-to-list-the-contents-of-a-team-folder/258310
   // https://developers.dropbox.com/dbx-team-files-guide#namespaces
   // https://www.dropbox.com/developers/reference/path-root-header-modes
-  if (namespaced && userInfo.root_info.root_namespace_id !== userInfo.root_info.home_namespace_id) {
+  if (namespaced && userInfo.root_info != null &&
+    userInfo.root_info.root_namespace_id !== userInfo.root_info.home_namespace_id) {
     logger.debug('using root_namespace_id', userInfo.root_info.root_namespace_id)
     client = makeClient(userInfo.root_info.root_namespace_id)
   }
