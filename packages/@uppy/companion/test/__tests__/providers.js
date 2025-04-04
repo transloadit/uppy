@@ -44,6 +44,24 @@ const thisOrThat = (value1, value2) => {
   return value2
 }
 
+function nockGetCurrentAccount(times = 1) {
+  nock('https://api.dropboxapi.com').post('/2/users/get_current_account').times(times).reply(200, {
+    name: {
+      given_name: 'Franz',
+      surname: 'Ferdinand',
+      familiar_name: 'Franz',
+      display_name: 'Franz Ferdinand (Personal)',
+      abbreviated_name: 'FF',
+    },
+    email: defaults.USERNAME,
+    email_verified: true,
+    disabled: false,
+    locale: 'en',
+    referral_link: 'https://db.tt/ZITNuhtI',
+    is_paired: true,
+  })
+}
+
 beforeAll(() => {
   const url = new URL(defaults.THUMBNAIL_URL)
   nock(url.origin).get(url.pathname).reply(200, () => '').persist()
@@ -86,21 +104,7 @@ describe('list provider files', () => {
   }
 
   test('dropbox', async () => {
-    nock('https://api.dropboxapi.com').post('/2/users/get_current_account').reply(200, {
-      name: {
-        given_name: 'Franz',
-        surname: 'Ferdinand',
-        familiar_name: 'Franz',
-        display_name: 'Franz Ferdinand (Personal)',
-        abbreviated_name: 'FF',
-      },
-      email: defaults.USERNAME,
-      email_verified: true,
-      disabled: false,
-      locale: 'en',
-      referral_link: 'https://db.tt/ZITNuhtI',
-      is_paired: true,
-    })
+    nockGetCurrentAccount()
     nock('https://api.dropboxapi.com').post('/2/files/list_folder').reply(200, {
       entries: [
         {
@@ -341,6 +345,7 @@ describe('provider file gets downloaded from', () => {
   }
 
   test('dropbox', async () => {
+    nockGetCurrentAccount(2)
     nock('https://api.dropboxapi.com').post('/2/files/get_metadata').reply(200, { size: defaults.FILE_SIZE })
     nock('https://content.dropboxapi.com').post('/2/files/download').reply(200, {})
     await runTest('dropbox')
@@ -441,6 +446,7 @@ describe('logout of provider', () => {
   }
 
   test('dropbox', async () => {
+    nockGetCurrentAccount(2)
     nock('https://api.dropboxapi.com').post('/2/auth/token/revoke').reply(200, {})
     await runTest('dropbox')
   })
