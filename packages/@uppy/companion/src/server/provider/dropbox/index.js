@@ -146,7 +146,7 @@ class DropBox extends Provider {
 
   async logout ({ token }) {
     return this.#withErrorHandling('provider.dropbox.logout.error', async () => {
-      await (await getClient({ token })).client.post('auth/token/revoke', { responseType: 'json' })
+      await (await getClient({ token, namespaced: false })).client.post('auth/token/revoke', { responseType: 'json' })
       return { revoked: true }
     })
   }
