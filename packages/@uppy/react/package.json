@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "@uppy/utils": "workspace:^",
+    "preact": "^10.26.4",
     "use-sync-external-store": "^1.2.0"
   },
   "devDependencies": {
@@ -33,6 +34,7 @@
     "react-dom": "^18.2.0"
   },
   "peerDependencies": {
+    "@uppy/components": "workspace:^",
     "@uppy/core": "workspace:^",
     "@uppy/dashboard": "workspace:^",
     "@uppy/drag-drop": "workspace:^",

@@ -1,0 +1,59 @@
+{
+  "name": "@uppy/components",
+  "description": "Headless Uppy components, made in Preact",
+  "version": "0.0.0",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "type": "module",
+  "keywords": [
+    "uppy",
+    "uppy-plugin",
+    "headless",
+    "components",
+    "preact"
+  ],
+  "homepage": "https://uppy.io",
+  "bugs": {
+    "url": "https://github.com/transloadit/uppy/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/transloadit/uppy.git"
+  },
+  "scripts": {
+    "build:tailwind": "npx @tailwindcss/cli -i ./src/input.css -o ./dist/styles.css"
+  },
+  "dependencies": {
+    "@tailwindcss/cli": "^4.0.6",
+    "clsx": "^2.1.1",
+    "preact": "^10.5.13",
+    "pretty-bytes": "^6.1.1",
+    "tailwindcss": "^4.0.6"
+  },
+  "peerDependencies": {
+    "@uppy/audio": "workspace:^",
+    "@uppy/core": "workspace:^",
+    "@uppy/google-drive-picker": "workspace:^",
+    "@uppy/image-editor": "workspace:^",
+    "@uppy/screen-capture": "workspace:^",
+    "@uppy/webcam": "workspace:^",
+    "react": "^18.0.0 || ^19.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@uppy/audio": {
+      "optional": true
+    },
+    "@uppy/google-drive-picker": {
+      "optional": true
+    },
+    "@uppy/image-editor": {
+      "optional": true
+    },
+    "@uppy/screen-capture": {
+      "optional": true
+    },
+    "@uppy/webcam": {
+      "optional": true
+    }
+  }
+}
