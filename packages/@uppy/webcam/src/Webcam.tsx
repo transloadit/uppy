@@ -73,6 +73,7 @@ export interface WebcamOptions<M extends Meta, B extends Body>
   preferredImageMimeType?: string | null
   preferredVideoMimeType?: string | null
   mobileNativeCamera?: boolean
+  locale?: typeof locale
 }
 
 interface WebcamState {

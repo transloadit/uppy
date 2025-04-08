@@ -56,9 +56,9 @@ nb_NO.strings = {
   dropPasteFiles: 'Dra filer hit eller %{browseFiles}',
   dropPasteFolders: 'Dra filer hit eller %{browseFolders}',
   dropPasteImportBoth:
-    'Dra filer hit %{browseFiles}, %{browseFolders} eller importer fra:',
-  dropPasteImportFiles: 'Dra filer hit %{browseFiles} eller importer fra:',
-  dropPasteImportFolders: 'Dra filer hit %{browseFolders} eller importer fra:',
+    'Dra filer hit, %{browseFiles}, %{browseFolders} eller importer fra:',
+  dropPasteImportFiles: 'Dra filer hit, %{browseFiles} eller importer fra:',
+  dropPasteImportFolders: 'Dra filer hit, %{browseFolders} eller importer fra:',
   editFile: 'Rediger fil',
   editImage: 'Rediger bilde',
   editing: 'Redigerer %{file}',

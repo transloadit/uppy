@@ -44,6 +44,24 @@ const thisOrThat = (value1, value2) => {
   return value2
 }
 
+function nockGetCurrentAccount(times = 1) {
+  nock('https://api.dropboxapi.com').post('/2/users/get_current_account').times(times).reply(200, {
+    name: {
+      given_name: 'Franz',
+      surname: 'Ferdinand',
+      familiar_name: 'Franz',
+      display_name: 'Franz Ferdinand (Personal)',
+      abbreviated_name: 'FF',
+    },
+    email: defaults.USERNAME,
+    email_verified: true,
+    disabled: false,
+    locale: 'en',
+    referral_link: 'https://db.tt/ZITNuhtI',
+    is_paired: true,
+  })
+}
+
 beforeAll(() => {
   const url = new URL(defaults.THUMBNAIL_URL)
   nock(url.origin).get(url.pathname).reply(200, () => '').persist()
@@ -86,21 +104,7 @@ describe('list provider files', () => {
   }
 
   test('dropbox', async () => {
-    nock('https://api.dropboxapi.com').post('/2/users/get_current_account').reply(200, {
-      name: {
-        given_name: 'Franz',
-        surname: 'Ferdinand',
-        familiar_name: 'Franz',
-        display_name: 'Franz Ferdinand (Personal)',
-        abbreviated_name: 'FF',
-      },
-      email: defaults.USERNAME,
-      email_verified: true,
-      disabled: false,
-      locale: 'en',
-      referral_link: 'https://db.tt/ZITNuhtI',
-      is_paired: true,
-    })
+    nockGetCurrentAccount()
     nock('https://api.dropboxapi.com').post('/2/files/list_folder').reply(200, {
       entries: [
         {
@@ -189,48 +193,6 @@ describe('list provider files', () => {
     expect(item0.icon).toBe('folder')
 
     expect1({ username, items: rest, providerFixture })
-  })
-
-  test('googlephotos', async () => {
-    nock('https://photoslibrary.googleapis.com').get('/v1/albums?pageSize=50').reply(200, {
-      albums: [
-        {
-          coverPhotoBaseUrl: 'https://test',
-          title: 'album',
-          id: '1',
-        }
-      ]
-    })
-
-    nock('https://photoslibrary.googleapis.com').get('/v1/sharedAlbums?pageSize=50').reply(200, {
-      sharedAlbums: [
-        {
-          coverPhotoBaseUrl: 'https://test2',
-          title: 'shared album',
-          id: '2',
-        }
-      ]
-    })
-
-    nock('https://www.googleapis.com').get('/oauth2/v1/userinfo').reply(200, {
-      email: defaults.USERNAME,
-    })
-
-    const { items } = await runTest('googlephotos')
-
-    expect(items[0].isFolder).toBe(true)
-    expect(items[0].name).toBe('album')
-    expect(items[0].id).toBe('1')
-    expect(items[0].requestPath).toBe('1')
-    expect(items[0].icon).toBe('https://drive-thirdparty.googleusercontent.com/32/type/application/vnd.google-apps.folder')
-    expect(items[0].thumbnail).toBe('https://test=w300-h300-c')
-
-    expect(items[1].isFolder).toBe(true)
-    expect(items[1].name).toBe('shared album')
-    expect(items[1].id).toBe('2')
-    expect(items[1].requestPath).toBe('2')
-    expect(items[1].icon).toBe('https://drive-thirdparty.googleusercontent.com/32/type/application/vnd.google-apps.folder')
-    expect(items[1].thumbnail).toBe('https://test2=w300-h300-c')
   })
 
   test('facebook', async () => {
@@ -383,6 +345,7 @@ describe('provider file gets downloaded from', () => {
   }
 
   test('dropbox', async () => {
+    nockGetCurrentAccount(2)
     nock('https://api.dropboxapi.com').post('/2/files/get_metadata').reply(200, { size: defaults.FILE_SIZE })
     nock('https://content.dropboxapi.com').post('/2/files/download').reply(200, {})
     await runTest('dropbox')
@@ -397,16 +360,6 @@ describe('provider file gets downloaded from', () => {
   test('drive', async () => {
     nockGoogleDownloadFile()
     await runTest('drive')
-  })
-
-  test('googlephotos', async () => {
-    nock('https://photoslibrary.googleapis.com').get(`/v1/mediaItems/${defaults.ITEM_ID}`).reply(200, {
-      baseUrl: 'https://lh3.googleusercontent.com/test',
-    })
-
-    nock('https://lh3.googleusercontent.com').get(`/test=d`).reply(200, ' ', { 'content-length': 1 })
-
-    await runTest('googlephotos')
   })
 
   test('facebook', async () => {
@@ -484,7 +437,7 @@ describe('logout of provider', () => {
       .expect(200)
 
     // only some providers can actually be revoked
-    const expectRevoked = ['box', 'dropbox', 'drive', 'googlephotos', 'facebook', 'zoom'].includes(providerName)
+    const expectRevoked = ['box', 'dropbox', 'drive', 'facebook', 'zoom'].includes(providerName)
 
     expect(res.body).toMatchObject({
       ok: true,
@@ -493,6 +446,7 @@ describe('logout of provider', () => {
   }
 
   test('dropbox', async () => {
+    nockGetCurrentAccount(2)
     nock('https://api.dropboxapi.com').post('/2/auth/token/revoke').reply(200, {})
     await runTest('dropbox')
   })
@@ -510,11 +464,6 @@ describe('logout of provider', () => {
   test('drive', async () => {
     nock('https://accounts.google.com').post('/o/oauth2/revoke?token=token+value').reply(200, {})
     await runTest('drive')
-  })
-
-  test('googlephotos', async () => {
-    nock('https://accounts.google.com').post('/o/oauth2/revoke?token=token+value').reply(200, {})
-    await runTest('googlephotos')
   })
 
   test('facebook', async () => {

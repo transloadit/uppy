@@ -1395,7 +1395,7 @@ export class Uppy<
       error: null,
     })
 
-    this.emit('retry-all', Object.values(updatedFiles))
+    this.emit('retry-all', this.getFilesByIds(filesToRetry))
 
     if (filesToRetry.length === 0) {
       return {
@@ -1407,7 +1407,9 @@ export class Uppy<
     const uploadID = this.#createUpload(filesToRetry, {
       forceAllowNewUpload: true, // create new upload even if allowNewUpload: false
     })
-    return this.#runUpload(uploadID)
+    const result = await this.#runUpload(uploadID)
+    this.emit('complete', result!)
+    return result
   }
 
   cancelAll(): void {
@@ -2231,8 +2233,6 @@ export class Uppy<
     let result
     if (currentUpload) {
       result = currentUpload.result
-      this.emit('complete', result)
-
       this.#removeUpload(uploadID)
     }
     if (result == null) {
@@ -2258,12 +2258,13 @@ export class Uppy<
     if (filesToRetry.length > 0) {
       const retryResult = await this.retryAll()
 
-      const hasNewFiles = this.getFiles().filter(
-        (file) => file.progress.uploadStarted == null,
-      )
+      const hasNewFiles =
+        this.getFiles().filter((file) => file.progress.uploadStarted == null)
+          .length > 0
 
       // if no new files, make it idempotent and return
       if (!hasNewFiles) {
+        this.emit('complete', retryResult!)
         return retryResult
       }
       // reload files which might have  changed after retry
@@ -2307,7 +2308,7 @@ export class Uppy<
         // missing fields error here.
         throw err
       })
-      .then(() => {
+      .then(async () => {
         const { currentUploads } = this.getState()
         // get a list of files that are currently assigned to uploads
         const currentlyUploadingFiles = Object.values(currentUploads).flatMap(
@@ -2327,7 +2328,9 @@ export class Uppy<
         })
 
         const uploadID = this.#createUpload(waitingFileIDs)
-        return this.#runUpload(uploadID)
+        const result = await this.#runUpload(uploadID)
+        this.emit('complete', result!)
+        return result
       })
       .catch((err) => {
         this.emit('error', err)
