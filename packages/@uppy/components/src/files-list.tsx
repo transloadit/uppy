@@ -1,22 +1,32 @@
 /* eslint-disable react/destructuring-assignment */
-import { h, type ComponentChild } from 'preact'
-import { useState, useContext, useEffect } from 'preact/hooks'
+import { Fragment, h } from 'preact'
+import { useState, useEffect, useRef } from 'preact/hooks'
 
 import type { Meta, Body, UppyEventMap, UppyFile } from '@uppy/core'
 import prettyBytes from 'pretty-bytes'
 import { clsx } from 'clsx'
-import { UppyContext, Thumbnail } from './index.js'
+import { Thumbnail } from './index.js'
+import type { UppyContext } from './uppy.context.js'
 
-type FilesListProps = {
+export type FilesListProps = {
   editFile: (file: UppyFile<Meta, Body>) => void
-  actions?: ComponentChild
-  children: ComponentChild
+  ctx: UppyContext
+  item?: (file: UppyFile<Meta, Body>) => any
+  render: (root: Element | null, node: any) => void
 }
 
 function FilesList(props: FilesListProps) {
   const [files, setFiles] = useState<UppyFile<any, any>[]>(() => [])
+  const ref = useRef<HTMLDivElement>(null)
 
-  const ctx = useContext(UppyContext)
+  function shouldRenderDefault(
+    item: FilesListProps['item'],
+    file: UppyFile<Meta, Body>,
+  ) {
+    if (!item) return true
+    props.render(ref.current, item(file))
+    return false
+  }
 
   useEffect(() => {
     const onStateUpdate: UppyEventMap<any, any>['state-update'] = (
@@ -28,20 +38,20 @@ function FilesList(props: FilesListProps) {
         setFiles(Object.values(patch.files))
       }
     }
-    ctx.uppy?.on('state-update', onStateUpdate)
+    props.ctx.uppy?.on('state-update', onStateUpdate)
     return () => {
-      ctx.uppy?.off('state-update', onStateUpdate)
+      props.ctx.uppy?.off('state-update', onStateUpdate)
     }
-  }, [ctx.uppy])
+  }, [props.ctx.uppy])
 
   return (
     <div className="uppy-reset uppy:my-4">
       <ul className="">
         {files?.map((file) => (
           <li key={file.id}>
-            <>
-              {props.children || (
-                <>
+            <div ref={ref}>
+              {shouldRenderDefault(props.item, file) && (
+                <Fragment>
                   <div className="uppy:flex uppy:items-center uppy:gap-2">
                     <div className="uppy:w-[32px] uppy:h-[32px]">
                       <Thumbnail width="32px" height="32px" file={file} />
@@ -50,30 +60,26 @@ function FilesList(props: FilesListProps) {
                     <p className="uppy:text-gray-500 uppy:tabular-nums uppy:min-w-18 uppy:text-right uppy:ml-auto">
                       {prettyBytes(file.size || 0)}
                     </p>
-                    <>
-                      {props.actions || (
-                        <>
-                          <button
-                            type="button"
-                            className="uppy:flex uppy:rounded uppy:text-blue-500 uppy:hover:text-blue-700 uppy:bg-transparent uppy:transition-colors"
-                            onClick={() => {
-                              props.editFile(file)
-                            }}
-                          >
-                            edit
-                          </button>
-                          <button
-                            type="button"
-                            className="uppy:flex uppy:rounded uppy:text-blue-500 uppy:hover:text-blue-700 uppy:bg-transparent uppy:transition-colors"
-                            onClick={() => {
-                              ctx.uppy?.removeFile(file.id)
-                            }}
-                          >
-                            remove
-                          </button>
-                        </>
-                      )}
-                    </>
+                    <Fragment>
+                      <button
+                        type="button"
+                        className="uppy:flex uppy:rounded uppy:text-blue-500 uppy:hover:text-blue-700 uppy:bg-transparent uppy:transition-colors"
+                        onClick={() => {
+                          props.editFile(file)
+                        }}
+                      >
+                        edit
+                      </button>
+                      <button
+                        type="button"
+                        className="uppy:flex uppy:rounded uppy:text-blue-500 uppy:hover:text-blue-700 uppy:bg-transparent uppy:transition-colors"
+                        onClick={() => {
+                          props.ctx.uppy?.removeFile(file.id)
+                        }}
+                      >
+                        remove
+                      </button>
+                    </Fragment>
                   </div>
                   <progress
                     max="100"
@@ -90,9 +96,9 @@ function FilesList(props: FilesListProps) {
                     )}
                     value={file.progress?.percentage || 0}
                   />
-                </>
+                </Fragment>
               )}
-            </>
+            </div>
           </li>
         ))}
       </ul>

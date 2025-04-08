@@ -1,10 +1,16 @@
+/* eslint-disable max-len */
 /* eslint-disable react/button-has-type */
 /* eslint-disable react/react-in-jsx-scope */
 import React, { useState } from 'react'
 // import { Dialog, DialogBackdrop, DialogPanel } from '@headlessui/react'
 import Uppy from '@uppy/core'
 import Tus from '@uppy/tus'
-import { UppyContextProvider, UploadButton } from '@uppy/react'
+import {
+  UppyContextProvider,
+  UploadButton,
+  FilesList,
+  NewDragDrop,
+} from '@uppy/react'
 
 import './app.css'
 import '@uppy/components/dist/styles.css'
@@ -48,6 +54,13 @@ function App() {
       <main style={{ padding: '20px', maxWidth: '32em', margin: '0 auto' }}>
         <h1 className="text-4xl font-bold">Welcome to React.</h1>
 
+        <NewDragDrop />
+        <FilesList
+          editFile={() => {}}
+          item={(file) => {
+            return <div>{file.name}</div>
+          }}
+        />
         <UploadButton />
       </main>
     </UppyContextProvider>

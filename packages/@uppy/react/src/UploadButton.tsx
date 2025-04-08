@@ -1,5 +1,6 @@
 import { useEffect, useRef, createElement as h, useContext } from 'react'
-import { render } from 'preact'
+import { h as preactH } from 'preact'
+import { render as preactRender } from 'preact/compat'
 import { UploadButton as PreactUploadButton } from '@uppy/components'
 import { UppyContext } from './UppyContextProvider.js'
 
@@ -9,7 +10,7 @@ export default function UploadButton() {
 
   useEffect(() => {
     if (ref.current) {
-      render(PreactUploadButton({ ctx }), ref.current)
+      preactRender(preactH(PreactUploadButton, { ctx }), ref.current)
     }
   }, [ctx])
 

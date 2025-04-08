@@ -1,26 +1,28 @@
 import { h } from 'preact'
-import { useState, useContext, useRef, useEffect } from 'preact/hooks'
+import { useState, useRef, useEffect } from 'preact/hooks'
 import { clsx } from 'clsx'
-import { UppyContext } from './index.js'
+import type { UppyContext } from './uppy.context.js'
 
-type DragDropProps = {
+export type DragDropProps = {
   width?: string
   height?: string
   note?: string
   noClick?: boolean
-  children?: any
+  test?: () => any
+  render?: (root: Element | null, node: any) => void
+  ctx: UppyContext
 }
 
 function DragDrop(props: DragDropProps) {
   const dropAreaRef = useRef<HTMLDivElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const childRef = useRef<HTMLDivElement>(null)
   const [isDragging, setIsDragging] = useState(() => false)
-  const ctx = useContext(UppyContext)
-  const { width, height, note, noClick, children } = props
+  const { width, height, note, noClick, test, render, ctx } = props
 
   useEffect(() => {
     const element = dropAreaRef.current
-    if (!element) return
+    if (!element) return undefined
 
     const handleDrop = (event: DragEvent) => {
       event.preventDefault()
@@ -66,7 +68,6 @@ function DragDrop(props: DragDropProps) {
     element.addEventListener('dragleave', handleDragLeave)
     element.addEventListener('click', handleClick)
 
-    // eslint-disable-next-line consistent-return
     return () => {
       element.removeEventListener('drop', handleDrop)
       element.removeEventListener('dragover', handleDragOver)
@@ -75,6 +76,12 @@ function DragDrop(props: DragDropProps) {
       element.removeEventListener('click', handleClick)
     }
   }, [ctx.uppy, noClick])
+
+  useEffect(() => {
+    if (test) {
+      render?.(childRef.current, test())
+    }
+  }, [test, render])
 
   function handleFileInputChange(event: Event) {
     const input = event.target as HTMLInputElement
@@ -121,13 +128,13 @@ function DragDrop(props: DragDropProps) {
         )}
       >
         <div className="uppy:flex uppy:flex-col uppy:items-center uppy:justify-center uppy:h-full uppy:space-y-3">
-          <>
-            {children || (
+          <div ref={childRef}>
+            {!test && (
               <p className="uppy:text-gray-600">
                 Drop files here or click to add them
               </p>
             )}
-          </>
+          </div>
           {note ?
             <div className="uppy:text-sm uppy:text-gray-500">{note}</div>
           : null}

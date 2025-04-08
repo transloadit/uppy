@@ -10131,7 +10131,7 @@ __metadata:
     "@types/react": "npm:^18.0.8"
     "@types/use-sync-external-store": "npm:^0.0.6"
     "@uppy/utils": "workspace:^"
-    preact: "npm:^10.26.4"
+    preact: "npm:^10.5.13"
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
     use-sync-external-store: "npm:^1.2.0"
@@ -10144,6 +10144,7 @@ __metadata:
     "@uppy/progress-bar": "workspace:^"
     "@uppy/status-bar": "workspace:^"
     react: ^18.0.0 || ^19.0.0
+    react-dom: ^18.0.0 || ^19.0.0
   peerDependenciesMeta:
     "@uppy/dashboard":
       optional: true
