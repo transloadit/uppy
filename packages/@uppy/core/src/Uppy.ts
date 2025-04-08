@@ -1378,7 +1378,7 @@ export class Uppy<
     })
   }
 
-  async doRetryAll(): Promise<UploadResult<M, B> | undefined> {
+  async #doRetryAll(): Promise<UploadResult<M, B> | undefined> {
     const filesToRetry = this.#getFilesToRetry()
 
     const updatedFiles = { ...this.getState().files }
@@ -1411,7 +1411,7 @@ export class Uppy<
   }
 
   async retryAll(): Promise<UploadResult<M, B> | undefined> {
-    const result = await this.doRetryAll()
+    const result = await this.#doRetryAll()
     this.emit('complete', result!)
     return result
   }
@@ -2260,7 +2260,7 @@ export class Uppy<
     // retry any failed files from a previous upload() call
     const filesToRetry = this.#getFilesToRetry()
     if (filesToRetry.length > 0) {
-      const retryResult = await this.doRetryAll() // we don't want the complete event to fire
+      const retryResult = await this.#doRetryAll() // we don't want the complete event to fire
 
       const hasNewFiles =
         this.getFiles().filter((file) => file.progress.uploadStarted == null)
