@@ -1,5 +1,5 @@
 {
-  "extends": "../../../tsconfig.shared",
+  "extends": "../../tsconfig.shared",
   "compilerOptions": {
     "emitDeclarationOnly": false,
     "noEmit": true,
