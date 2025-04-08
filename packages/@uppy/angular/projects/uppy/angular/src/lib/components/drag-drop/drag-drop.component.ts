@@ -1,4 +1,12 @@
-import { Component, ChangeDetectionStrategy, Input, OnDestroy, OnChanges, SimpleChanges, ElementRef, inject } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  Input,
+  OnDestroy,
+  OnChanges,
+  SimpleChanges,
+  ElementRef,
+} from '@angular/core';
 import { Uppy } from '@uppy/core';
 import DragDrop from '@uppy/drag-drop';
 import type { DragDropOptions } from '@uppy/drag-drop';
@@ -14,15 +22,10 @@ export class DragDropComponent<M extends Meta, B extends Body>
   extends UppyAngularWrapper<M, B, DragDropOptions>
   implements OnDestroy, OnChanges
 {
-  el = inject(ElementRef);
-
   @Input() uppy: Uppy<M, B> = new Uppy();
   @Input() props: DragDropOptions = {};
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
-
-  constructor() {
+  constructor(public el: ElementRef) {
     super();
   }
 
