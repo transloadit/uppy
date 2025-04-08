@@ -1,5 +1,12 @@
 # @uppy/utils
 
+## 6.1.3
+
+Released: 2025-04-08
+Included in: Uppy v4.14.0
+
+- @uppy/utils: add msg mimetype (Merlijn Vos / #5699)
+
 ## 6.1.2
 
 Released: 2025-02-03
