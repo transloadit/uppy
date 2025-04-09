@@ -6,13 +6,12 @@ import type {
   Body,
   Meta,
 } from '@uppy/core'
-import FileInputPlugin from '@uppy/file-input'
-import type { Locale } from '@uppy/utils/lib/Translator'
+import FileInputPlugin, { type FileInputOptions } from '@uppy/file-input'
 
 interface FileInputProps<M extends Meta, B extends Body>
   extends UIPluginOptions {
   uppy: Uppy<M, B>
-  locale?: Locale
+  locale?: FileInputOptions['locale']
   pretty?: boolean
   inputName?: string
 }

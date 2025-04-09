@@ -11,7 +11,7 @@ export default async function commit (spawnOptions, ...files) {
     message: 'Ready to commit?',
     initial: true,
     active: 'yes',
-    inactive: 'yes',
+    inactive: 'no',
   })
 
   spawnSync('git', ['add', ...files.map(url => fileURLToPath(url))], spawnOptions)

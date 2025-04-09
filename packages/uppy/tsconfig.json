@@ -1,5 +1,5 @@
 {
-  "extends": "../../../tsconfig.shared",
+  "extends": "../../tsconfig.shared",
   "compilerOptions": {
     "emitDeclarationOnly": false,
     "noEmit": true,
@@ -52,7 +52,10 @@
       "path": "../@uppy/google-drive/tsconfig.build.json",
     },
     {
-      "path": "../@uppy/google-photos/tsconfig.build.json",
+      "path": "../@uppy/google-drive-picker/tsconfig.build.json",
+    },
+    {
+      "path": "../@uppy/google-photos-picker/tsconfig.build.json",
     },
     {
       "path": "../@uppy/image-editor/tsconfig.build.json",

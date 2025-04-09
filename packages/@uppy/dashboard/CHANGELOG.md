@@ -1,5 +1,12 @@
 # @uppy/dashboard
 
+## 4.3.2
+
+Released: 2025-02-25
+Included in: Uppy v4.13.3
+
+- @uppy/dashboard: do not allow drag&drop of file preview (Merlijn Vos / #5650)
+
 ## 4.3.0
 
 Released: 2025-01-06

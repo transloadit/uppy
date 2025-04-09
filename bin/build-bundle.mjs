@@ -32,6 +32,15 @@ function buildBundle (srcFile, bundleFile, { minify = true, standalone = '', plu
 
 await fs.mkdir(new URL('./uppy/dist', PACKAGES_ROOT), { recursive: true })
 
+await fs.mkdir(new URL('./@uppy/locales/dist', PACKAGES_ROOT), { recursive: true })
+
+const locales = (await fs.readdir(new URL('./@uppy/locales/lib', PACKAGES_ROOT))).flatMap((file) => {
+  if (file.endsWith('.js')) {
+    return [file.replace(/\.js$/, '')]
+  }
+  return []
+});
+
 const methods = [
   buildBundle(
     './packages/uppy/src/bundle.ts',
@@ -43,7 +52,12 @@ const methods = [
     './packages/uppy/dist/uppy.min.js',
     { standalone: 'Uppy', format: 'iife' },
   ),
-]
+  ...locales.map((locale) => buildBundle(
+    `./packages/@uppy/locales/lib/${locale}.js`,
+    `./packages/@uppy/locales/dist/${locale}.min.js`,
+    { standalone: `Uppy Locale ${locale}`, format: 'iife' },
+  )),
+];
 
 // Add BUNDLE-README.MD
 methods.push(

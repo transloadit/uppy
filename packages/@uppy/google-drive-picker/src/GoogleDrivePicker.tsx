@@ -20,6 +20,7 @@ export type GoogleDrivePickerOptions = CompanionPluginOptions & {
   clientId: string
   apiKey: string
   appId: string
+  locale?: typeof locale
 }
 
 export default class GoogleDrivePicker<M extends Meta, B extends Body>

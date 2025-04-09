@@ -1,5 +1,12 @@
 # @uppy/status-bar
 
+## 4.1.2
+
+Released: 2025-02-25
+Included in: Uppy v4.13.3
+
+- @uppy/status-bar: fix aria-hidden warning (Merlijn Vos / #5663)
+
 ## 4.1.1
 
 Released: 2025-01-09
