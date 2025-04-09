@@ -1371,38 +1371,47 @@ export class Uppy<
     this.emit('resume-all')
   }
 
-  async retryAll(): Promise<UploadResult<M, B> | undefined> {
-    const updatedFiles = { ...this.getState().files }
-    const filesToRetry = Object.keys(updatedFiles).filter((file) => {
-      return updatedFiles[file].error
+  #getFilesToRetry() {
+    const { files } = this.getState()
+    return Object.keys(files).filter((file) => {
+      return files[file].error
     })
+  }
 
-    filesToRetry.forEach((file) => {
-      const updatedFile = {
-        ...updatedFiles[file],
+  async #doRetryAll(): Promise<UploadResult<M, B> | undefined> {
+    const filesToRetry = this.#getFilesToRetry()
+
+    const updatedFiles = { ...this.getState().files }
+    filesToRetry.forEach((fileID) => {
+      updatedFiles[fileID] = {
+        ...updatedFiles[fileID],
         isPaused: false,
         error: null,
       }
-      updatedFiles[file] = updatedFile
     })
+
     this.setState({
       files: updatedFiles,
       error: null,
     })
 
-    this.emit('retry-all', Object.values(updatedFiles))
+    this.emit('retry-all', this.getFilesByIds(filesToRetry))
 
     if (filesToRetry.length === 0) {
-      return Promise.resolve({
+      return {
         successful: [],
         failed: [],
-      })
+      }
     }
 
     const uploadID = this.#createUpload(filesToRetry, {
       forceAllowNewUpload: true, // create new upload even if allowNewUpload: false
     })
-    const result = await this.#runUpload(uploadID)
+    return this.#runUpload(uploadID)
+  }
+
+  async retryAll(): Promise<UploadResult<M, B> | undefined> {
+    const result = await this.#doRetryAll()
     this.emit('complete', result!)
     return result
   }
@@ -2248,44 +2257,22 @@ export class Uppy<
 
     let { files } = this.getState()
 
-    // Check if we have files with errors (for retry behavior)
-    const filesToRetry = Object.keys(files).filter(
-      (fileID) => files[fileID].error,
-    )
-    const hasFilesToRetry = filesToRetry.length > 0
+    // retry any failed files from a previous upload() call
+    const filesToRetry = this.#getFilesToRetry()
+    if (filesToRetry.length > 0) {
+      const retryResult = await this.#doRetryAll() // we don't want the complete event to fire
 
-    // If we have files to retry, behave like retryAll() and ignore any new files
-    if (hasFilesToRetry) {
-      const updatedFiles = { ...files }
-      filesToRetry.forEach((fileID) => {
-        updatedFiles[fileID] = {
-          ...updatedFiles[fileID],
-          isPaused: false,
-          error: null,
-        }
-      })
-
-      this.setState({
-        files: updatedFiles,
-        error: null,
-      })
-
-      this.emit('retry-all', this.getFilesByIds(filesToRetry))
-
-      const uploadID = this.#createUpload(filesToRetry, {
-        forceAllowNewUpload: true, // create new upload even if allowNewUpload: false
-      })
-      const result = await this.#runUpload(uploadID)
       const hasNewFiles =
         this.getFiles().filter((file) => file.progress.uploadStarted == null)
           .length > 0
 
+      // if no new files, make it idempotent and return
       if (!hasNewFiles) {
-        this.emit('complete', result!)
-
-        return result
+        this.emit('complete', retryResult!)
+        return retryResult
       }
-      files = this.getState().files
+      // reload files which might have  changed after retry
+      ;({ files } = this.getState())
     }
 
     // If no files to retry, proceed with original upload() behavior for new files

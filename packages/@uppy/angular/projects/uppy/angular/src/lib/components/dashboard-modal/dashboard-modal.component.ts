@@ -1,12 +1,4 @@
-import {
-  Component,
-  ChangeDetectionStrategy,
-  ElementRef,
-  Input,
-  OnDestroy,
-  OnChanges,
-  SimpleChanges,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, ElementRef, Input, OnDestroy, OnChanges, SimpleChanges, inject } from '@angular/core';
 import Dashboard from '@uppy/dashboard';
 import type { DashboardOptions } from '@uppy/dashboard';
 import { Uppy } from '@uppy/core';
@@ -22,11 +14,16 @@ export class DashboardModalComponent<M extends Meta, B extends Body>
   extends UppyAngularWrapper<M, B, DashboardOptions<M, B>, Dashboard<M, B>>
   implements OnDestroy, OnChanges
 {
+  el = inject(ElementRef);
+
   @Input() uppy: Uppy<M, B> = new Uppy();
   @Input() props: DashboardOptions<M, B> = {};
   @Input() open: boolean = false;
 
-  constructor(public el: ElementRef) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
     super();
   }
 

@@ -44,7 +44,7 @@ describe('getFileType', () => {
     } as any as UppyFile<any, any>
     const toUpper = (file: UppyFile<any, any>) => ({
       ...file,
-      name: file.name.toUpperCase(),
+      name: file.name!.toUpperCase(),
     })
     expect(getFileType(fileMP3)).toEqual('audio/mp3')
     expect(getFileType(toUpper(fileMP3))).toEqual('audio/mp3')
