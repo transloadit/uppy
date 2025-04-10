@@ -345,7 +345,7 @@ async function resolvePickedPhotos({
       platform: 'photos' as const,
       id,
       mimeType,
-      url: type === 'VIDEO' ? `${baseUrl}=dv` : baseUrl, // dv to download video
+      url: type === 'VIDEO' ? `${baseUrl}=dv` : `${baseUrl}=d`, // dv to download video, d to get original image (non cropped)
       name: filename,
     }),
   )
