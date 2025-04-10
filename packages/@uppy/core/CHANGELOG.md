@@ -1,5 +1,21 @@
 # @uppy/core
 
+## 4.4.4
+
+Released: 2025-04-08
+Included in: Uppy v4.14.0
+
+- @uppy/core: dry retryAll() and upload() (Mikael Finstad / #5691)
+- @uppy/core: fix locale type for plugins (Merlijn Vos / #5700)
+- @uppy/core: fix events when retrying with upload() (Prakash / #5696)
+
+## 4.4.3
+
+Released: 2025-03-13
+Included in: Uppy v4.13.4
+
+- @uppy/core: make upload() idempotent (Merlijn Vos / #5677)
+
 ## 4.4.2
 
 Released: 2025-02-03

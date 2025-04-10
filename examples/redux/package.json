@@ -12,7 +12,7 @@
     "redux-logger": "^3.0.6"
   },
   "devDependencies": {
-    "vite": "^5.4.12"
+    "vite": "^5.4.17"
   },
   "private": true,
   "scripts": {

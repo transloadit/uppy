@@ -21,7 +21,7 @@
     "express": "^4.19.2",
     "express-session": "^1.15.6",
     "npm-run-all": "^4.1.2",
-    "vite": "^5.4.12"
+    "vite": "^5.4.17"
   },
   "private": true,
   "scripts": {

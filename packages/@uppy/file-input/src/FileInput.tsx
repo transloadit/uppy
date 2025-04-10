@@ -18,6 +18,7 @@ import locale from './locale.js'
 export interface FileInputOptions extends UIPluginOptions {
   pretty?: boolean
   inputName?: string
+  locale?: typeof locale
 }
 const defaultOptions = {
   pretty: true,

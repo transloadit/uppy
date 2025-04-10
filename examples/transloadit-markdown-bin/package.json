@@ -13,7 +13,7 @@
     "marked": "^12.0.0"
   },
   "devDependencies": {
-    "vite": "^5.4.12"
+    "vite": "^5.4.17"
   },
   "private": true,
   "scripts": {

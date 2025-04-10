@@ -12,6 +12,60 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 4.14.0
+
+Released: 2025-04-08
+
+| Package                    | Version | Package                    | Version |
+| -------------------------- | ------- | -------------------------- | ------- |
+| @uppy/audio                |   2.1.2 | @uppy/locales              |   4.5.2 |
+| @uppy/box                  |   3.2.2 | @uppy/onedrive             |   4.2.3 |
+| @uppy/companion            |   5.6.0 | @uppy/react                |   4.2.3 |
+| @uppy/core                 |   4.4.4 | @uppy/remote-sources       |   2.3.2 |
+| @uppy/dashboard            |   4.3.3 | @uppy/screen-capture       |   4.2.2 |
+| @uppy/drag-drop            |   4.1.2 | @uppy/status-bar           |   4.1.3 |
+| @uppy/dropbox              |   4.2.2 | @uppy/transloadit          |   4.2.2 |
+| @uppy/facebook             |   4.2.2 | @uppy/unsplash             |   4.3.3 |
+| @uppy/file-input           |   4.1.2 | @uppy/url                  |   4.2.3 |
+| @uppy/google-drive         |   4.3.2 | @uppy/utils                |   6.1.3 |
+| @uppy/google-drive-picker  |   0.3.4 | @uppy/webcam               |   4.1.2 |
+| @uppy/google-photos-picker |   0.3.4 | @uppy/webdav               |   0.3.2 |
+| @uppy/image-editor         |   3.3.2 | @uppy/zoom                 |   3.2.2 |
+| @uppy/instagram            |   4.2.2 | uppy                       |  4.14.0 |
+
+- @uppy/core: dry retryAll() and upload() (Mikael Finstad / #5691)
+- @uppy/angular: Revert "Support Angular 19" (Mikael Finstad / #5710)
+- @uppy/angular: Support Angular 19 (Arnaud Flaesch / #5709)
+- @uppy/companion: implement dropbox business teams (Mikael Finstad / #5708)
+- @uppy/utils: add msg mimetype (Merlijn Vos / #5699)
+- @uppy/core: fix locale type for plugins (Merlijn Vos / #5700)
+- examples: build(deps-dev): bump vite from 5.4.14 to 5.4.15 (dependabot[bot] / #5703)
+- @uppy/locales: Update nb_NO.ts (Tore Sinding Bekkedal / #5678)
+- meta: build(deps): bump docker/login-action from 3.3.0 to 3.4.0 (dependabot[bot] / #5689)
+- examples: @uppy-example/aws-nodejs: fix fileType not present in S3 objects (Prakash / #5680)
+- @uppy/core: fix events when retrying with upload() (Prakash / #5696)
+- meta: Fix locales building (Mikael Finstad / #5693)
+- @uppy/google-photos: remove google photos 😢 (Mikael Finstad / #5690)
+- @uppy/locales: Update cs_CZ.ts (David Petrásek / #5658)
+
+
+## 4.13.4
+
+Released: 2025-03-13
+
+| Package     | Version | Package     | Version |
+| ----------- | ------- | ----------- | ------- |
+| @uppy/core  |   4.4.3 | uppy        |  4.13.4 |
+| @uppy/react |   4.2.2 |             |         |
+
+- @uppy/core: make upload() idempotent (Merlijn Vos / #5677)
+- @uppy/react: pass getServerSnapshot to useSyncExternalStoreWithSelector (Merlijn Vos / #5685)
+- meta: Fix BasePlugin export for CDN bundle (Merlijn Vos / #5684)
+- meta: build(deps): bump docker/build-push-action from 6.14.0 to 6.15.0 (dependabot[bot] / #5673)
+- meta: build(deps): bump docker/setup-qemu-action from 3.4.0 to 3.6.0 (dependabot[bot] / #5675)
+- meta: build(deps): bump docker/metadata-action from 5.6.1 to 5.7.0 (dependabot[bot] / #5674)
+
+
 ## 4.13.3
 
 Released: 2025-02-25

@@ -74,6 +74,27 @@ function getSTSClient() {
   return stsClient
 }
 
+// Generate a unique S3 key for the file
+const generateS3Key = (filename) => `${crypto.randomUUID()}-${filename}`
+
+// Extract the file parameters from the request
+const extractFileParameters = (req) => {
+  const isPostRequest = req.method === 'POST'
+  const params = isPostRequest ? req.body : req.query
+
+  return {
+    filename: params.filename,
+    contentType: params.type
+  }
+}
+
+// Validate the file parameters
+const validateFileParameters = (filename, contentType) => {
+  if (!filename || !contentType) {
+    throw new Error('Missing required parameters: filename and content type are required')
+  }
+}
+
 app.use(bodyParser.urlencoded({ extended: true }), bodyParser.json())
 
 app.get('/s3/sts', (req, res, next) => {
@@ -109,8 +130,11 @@ const signOnServer = (req, res, next) => {
   // are authorized to perform that operation, and if the request is legit.
   // For the sake of simplification, we skip that check in this example.
 
-  const Key = `${crypto.randomUUID()}-${req.body.filename}`
-  const { contentType } = req.body
+  const { filename, contentType } = extractFileParameters(req)
+  validateFileParameters(filename, contentType)
+
+  // Generate S3 key and prepare command
+  const Key = generateS3Key(filename)
 
   getSignedUrl(
     getS3Client(),

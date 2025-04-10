@@ -1,5 +1,12 @@
 # @uppy/companion
 
+## 5.6.0
+
+Released: 2025-04-08
+Included in: Uppy v4.14.0
+
+- @uppy/companion: implement dropbox business teams (Mikael Finstad / #5708)
+
 ## 5.5.2
 
 Released: 2025-02-25

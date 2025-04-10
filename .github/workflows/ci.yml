@@ -95,5 +95,4 @@ jobs:
         env:
           # https://docs.cypress.io/guides/references/advanced-installation#Skipping-installation
           CYPRESS_INSTALL_BINARY: 0
-      - name: Attempt building TS packages
-        run: corepack yarn run build:ts
+      - run: corepack yarn run test:ts
