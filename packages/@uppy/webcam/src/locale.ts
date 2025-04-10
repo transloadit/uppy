@@ -1,5 +1,3 @@
-import type { Locale } from '@uppy/utils/lib/Translator'
-
 export default {
   strings: {
     pluginNameCamera: 'Camera',
@@ -29,5 +27,5 @@ export default {
     // Description on the “allow access” screen
     allowAccessDescription:
       'In order to take pictures or record video with your camera, please allow camera access for this site.',
-  } as Locale<0>['strings'],
-} as any as Locale
+  },
+}

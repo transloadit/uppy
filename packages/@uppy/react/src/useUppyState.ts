@@ -15,8 +15,8 @@ export default function useUppyState<
 
   return useSyncExternalStoreWithSelector(
     subscribe,
-    getSnapshot,
-    null,
+    getSnapshot, // client
+    getSnapshot, // server
     selector,
   )
 }

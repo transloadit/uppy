@@ -26,7 +26,6 @@ describe('Test Provider options', () => {
     expect(grantConfig.googledrive.key).toBe('google_key')
     expect(grantConfig.googledrive.secret).toBe('google_secret')
 
-    expect(grantConfig.googlephotos.key).toBe('google_key')
     expect(grantConfig.googledrive.secret).toBe('google_secret')
 
     expect(grantConfig.instagram.key).toBe('instagram_key')
@@ -96,25 +95,6 @@ describe('Test Provider options', () => {
       },
     })
 
-    expect(grantConfig.googlephotos).toEqual({
-      access_url: "https://oauth2.googleapis.com/token",
-      authorize_url: "https://accounts.google.com/o/oauth2/v2/auth",
-      oauth: 2,
-      scope_delimiter: " ",
-
-      key: 'google_key',
-      secret: 'google_secret',
-      transport: 'session',
-      "state": true,
-      redirect_uri: 'http://localhost:3020/googlephotos/redirect',
-      scope: ['https://www.googleapis.com/auth/photoslibrary.readonly', 'https://www.googleapis.com/auth/userinfo.email'],
-      callback: '/googlephotos/callback',
-      custom_params: {
-        access_type: 'offline',
-        prompt: 'consent',
-      },
-    })
-
     expect(grantConfig.zoom).toEqual({
       key: 'zoom_key',
       secret: 'zoom_secret',
@@ -142,7 +122,6 @@ describe('Test Provider options', () => {
     expect(grantConfig.dropbox.secret).toBe('xobpord')
     expect(grantConfig.box.secret).toBe('xwbepqd')
     expect(grantConfig.googledrive.secret).toBe('elgoog')
-    expect(grantConfig.googlephotos.secret).toBe('elgoog')
     expect(grantConfig.instagram.secret).toBe('margatsni')
     expect(grantConfig.zoom.secret).toBe('u8Z5ceq')
     expect(companionOptions.providerOptions.zoom.verificationToken).toBe('o0u8Z5c')
@@ -162,9 +141,6 @@ describe('Test Provider options', () => {
     expect(grantConfig.googledrive.key).toBeUndefined()
     expect(grantConfig.googledrive.secret).toBeUndefined()
 
-    expect(grantConfig.googlephotos.key).toBeUndefined()
-    expect(grantConfig.googlephotos.secret).toBeUndefined()
-
     expect(grantConfig.instagram.key).toBeUndefined()
     expect(grantConfig.instagram.secret).toBeUndefined()
 
@@ -179,7 +155,6 @@ describe('Test Provider options', () => {
     expect(grantConfig.dropbox.redirect_uri).toBe('http://domain.com/dropbox/redirect')
     expect(grantConfig.box.redirect_uri).toBe('http://domain.com/box/redirect')
     expect(grantConfig.googledrive.redirect_uri).toBe('http://domain.com/drive/redirect')
-    expect(grantConfig.googlephotos.redirect_uri).toBe('http://domain.com/googlephotos/redirect')
     expect(grantConfig.instagram.redirect_uri).toBe('http://domain.com/instagram/redirect')
     expect(grantConfig.zoom.redirect_uri).toBe('http://domain.com/zoom/redirect')
   })

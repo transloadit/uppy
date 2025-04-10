@@ -3,8 +3,7 @@
 export { default as Uppy, debugLogger } from '@uppy/core'
 
 // Plugin base classes
-export { default as UIPlugin } from '@uppy/core/lib/UIPlugin.js'
-export { default as BasePlugin } from '@uppy/core'
+export { BasePlugin, UIPlugin } from '@uppy/core'
 
 /**
  * @deprecated Use `Uppy` instead of `Core`
@@ -43,7 +42,6 @@ export { default as Box } from '@uppy/box'
 export { default as Dropbox } from '@uppy/dropbox'
 export { default as Facebook } from '@uppy/facebook'
 export { default as GoogleDrive } from '@uppy/google-drive'
-export { default as GooglePhotos } from '@uppy/google-photos'
 export { default as GoogleDrivePicker } from '@uppy/google-drive-picker'
 export { default as GooglePhotosPicker } from '@uppy/google-photos-picker'
 export { default as Instagram } from '@uppy/instagram'

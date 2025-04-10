@@ -93,10 +93,7 @@ jobs:
           EDGLY_KEY: ${{secrets.EDGLY_KEY}}
           EDGLY_SECRET: ${{secrets.EDGLY_SECRET}}
       - name: Upload `@uppy/locales` to CDN if it was released
-        run:
-          git diff --exit-code --quiet HEAD^ --
-          packages/@uppy/locales/package.json ||corepack yarn run uploadcdn
-          @uppy/locales
+        run: corepack yarn run uploadcdn @uppy/locales
         env:
           EDGLY_KEY: ${{secrets.EDGLY_KEY}}
           EDGLY_SECRET: ${{secrets.EDGLY_SECRET}}
@@ -154,7 +151,7 @@ jobs:
       - uses: docker/setup-qemu-action@29109295f81e9208d7d86ff1c6c12d2833863392 # v3.6.0
       - uses: docker/setup-buildx-action@v3
       - name: Log in to DockerHub
-        uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567 # v3.3.0
+        uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3.4.0
         with:
           username: ${{secrets.DOCKER_USERNAME}}
           password: ${{secrets.DOCKER_PASSWORD}}

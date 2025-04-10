@@ -15,6 +15,14 @@ class TestPlugin<M extends Meta, B extends Body> extends UIPlugin<Opts, M, B> {
   }
 }
 
+test('can add locale strings without type error', async () => {
+  new Uppy().use(TestPlugin, {
+    foo: 'bar',
+    // unfortunately strings are not typed yet but at leasdt you can pass strings
+    locale: { strings: { foo: '' } },
+  })
+})
+
 test('can use Uppy class without generics', async () => {
   const core = new Uppy()
   expectTypeOf(core).toEqualTypeOf<Uppy<Meta, Record<string, never>>>()

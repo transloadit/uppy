@@ -821,27 +821,6 @@ describe('src/Core', () => {
         uploadStarted: null,
       })
     })
-
-    it('should report an error if post-processing a file fails', () => {
-      const core = new Core()
-
-      core.addFile({
-        source: 'vi',
-        name: 'foo.jpg',
-        type: 'image/jpeg',
-        data: testImage,
-      })
-
-      const fileId = Object.keys(core.getState().files)[0]
-      const file = core.getFile(fileId)
-      core.emit('error', new Error('foooooo'), file)
-
-      expect(core.getState().error).toEqual('foooooo')
-
-      expect(core.upload()).resolves.toMatchObject({
-        failed: [{ name: 'foo.jpg' }],
-      })
-    })
   })
 
   describe('uploaders', () => {
@@ -1356,6 +1335,76 @@ describe('src/Core', () => {
         data: testImage,
       })
       await expect(core.upload()).resolves.toBeDefined()
+    })
+
+    it('upload() is idempotent when called multiple times', async () => {
+      const onUpload = vi.fn()
+      const onRetryAll = vi.fn()
+      const onUploadError = vi.fn()
+      const core = new Core()
+      let hasError = false
+
+      core.addUploader((fileIDs) => {
+        fileIDs.forEach((fileID) => {
+          const file = core.getFile(fileID)
+          if (!hasError) {
+            // @ts-ignore
+            core.emit('upload-error', file, new Error('foo'))
+            hasError = true
+          }
+        })
+        return Promise.resolve()
+      })
+      core.on('upload', onUpload)
+      core.on('retry-all', onRetryAll)
+      core.on('upload-error', onUploadError)
+
+      const firstFileID = core.addFile({
+        source: 'vi',
+        name: 'foo.jpg',
+        type: 'image/jpeg',
+        data: testImage,
+      })
+      // First time 'upload' and 'upload-error' should be emitted
+      await core.upload()
+      expect(onRetryAll).not.toHaveBeenCalled()
+      expect(onUpload).toHaveBeenCalled()
+      expect(onUploadError).toHaveBeenCalled()
+
+      // Reset counters
+      onRetryAll.mockReset()
+      onUpload.mockReset()
+      onUploadError.mockReset()
+
+      const secondFileID = core.addFile({
+        source: 'vi',
+        name: 'bar.jpg',
+        type: 'image/jpeg',
+        data: testImage,
+      })
+      const onComplete = vi.fn()
+      core.on('complete', onComplete)
+      // Second time two uploads should happen back-to-back.
+      // First to retry the failed files, which will emit events, and the second upload
+      // for the new files, which also emits events.
+      const result = await core.upload()
+      expect(result?.successful?.[0].id).toBe(firstFileID)
+      expect(result?.successful?.[1].id).toBe(secondFileID)
+
+      expect(onRetryAll).toBeCalledTimes(1)
+      expect(onUpload).toBeCalledTimes(2)
+      expect(onUploadError).toBeCalledTimes(0)
+      expect(onComplete).toBeCalledTimes(1)
+
+      const retryResult = onRetryAll.mock.calls[0][0]
+      expect(retryResult.length).toBe(1)
+      expect(retryResult[0].id).toBe(firstFileID)
+
+      const completeResult = onComplete.mock.calls[0][0]
+      expect(completeResult.successful?.length).toBe(2)
+      expect(completeResult.failed?.length).toBe(0)
+      expect(completeResult.successful?.[0].id).toBe(firstFileID)
+      expect(completeResult.successful?.[1].id).toBe(secondFileID)
     })
   })
 
