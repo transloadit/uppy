@@ -238,7 +238,10 @@ export default class Provider<M extends Meta, B extends Body>
         }
 
         if (!data.token) {
-          reject(new Error('did not receive token from auth window'))
+          this.uppy.log(
+            `Ignoring malformed data from auth window: ${data}`,
+            'warning',
+          )
           return
         }
 
