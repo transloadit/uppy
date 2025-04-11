@@ -217,10 +217,9 @@ export default class Provider<M extends Meta, B extends Body>
 
         const { companionAllowedHosts } = this.#getPlugin().opts
         if (!isOriginAllowed(e.origin, companionAllowedHosts)) {
-          reject(
-            new Error(
-              `rejecting event from ${e.origin} vs allowed pattern ${companionAllowedHosts}`,
-            ),
+          this.uppy.log(
+            `rejecting event from ${e.origin} vs allowed pattern ${companionAllowedHosts}`,
+            'warning',
           )
           return
         }
@@ -238,10 +237,7 @@ export default class Provider<M extends Meta, B extends Body>
         }
 
         if (!data.token) {
-          this.uppy.log(
-            `Ignoring malformed data from auth window: ${data}`,
-            'warning',
-          )
+          reject(new Error('did not receive token from auth window'))
           return
         }
 
