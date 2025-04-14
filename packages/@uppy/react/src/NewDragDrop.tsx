@@ -1,5 +1,4 @@
 import { useEffect, useRef, useContext, createElement as h } from 'react'
-import { createRoot } from 'react-dom/client'
 import {
   DragDrop as PreactDragDrop,
   type DragDropProps,
@@ -7,11 +6,7 @@ import {
 import { h as preactH } from 'preact'
 import { render as preactRender } from 'preact/compat'
 import { UppyContext } from './UppyContextProvider.js'
-
-const reactRender = (root: Element | null, node: any) => {
-  if (!root) return
-  createRoot(root).render(node)
-}
+import useReactRender from './useReactRender.js'
 
 export default function DragDrop({
   width,
@@ -22,6 +17,7 @@ export default function DragDrop({
 }: Omit<DragDropProps, 'ctx'>) {
   const ref = useRef(null)
   const ctx = useContext(UppyContext)
+  const reactRender = useReactRender()
 
   useEffect(() => {
     if (ref.current) {
@@ -38,7 +34,7 @@ export default function DragDrop({
         ref.current,
       )
     }
-  }, [ctx, width, height, note, noClick, test])
+  }, [ctx, width, height, note, noClick, test, reactRender])
 
   return <div ref={ref} />
 }

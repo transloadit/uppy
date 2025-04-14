@@ -74,9 +74,6 @@
       "path": "./packages/@uppy/provider-views/tsconfig.build.json"
     },
     {
-      "path": "./packages/@uppy/react/tsconfig.build.json"
-    },
-    {
       "path": "./packages/@uppy/remote-sources/tsconfig.build.json"
     },
     {
@@ -123,6 +120,15 @@
     },
     {
       "path": "./packages/uppy/tsconfig.build.json"
+    },
+
+    // The order matters. @uppy/components must come after all other packages
+    // Then the framework implementations must go after @uppy/components
+    {
+      "path": "./packages/@uppy/components/tsconfig.build.json"
+    },
+    {
+      "path": "./packages/@uppy/react/tsconfig.build.json"
     }
   ]
 }

@@ -20,6 +20,12 @@ function DragDrop(props: DragDropProps) {
   const [isDragging, setIsDragging] = useState(() => false)
   const { width, height, note, noClick, test, render, ctx } = props
 
+  function shouldRenderDefault() {
+    if (!test) return true
+    render?.(childRef.current, test())
+    return false
+  }
+
   useEffect(() => {
     const element = dropAreaRef.current
     if (!element) return undefined
@@ -77,12 +83,6 @@ function DragDrop(props: DragDropProps) {
     }
   }, [ctx.uppy, noClick])
 
-  useEffect(() => {
-    if (test) {
-      render?.(childRef.current, test())
-    }
-  }, [test, render])
-
   function handleFileInputChange(event: Event) {
     const input = event.target as HTMLInputElement
     const files = Array.from(input.files || [])
@@ -129,7 +129,7 @@ function DragDrop(props: DragDropProps) {
       >
         <div className="uppy:flex uppy:flex-col uppy:items-center uppy:justify-center uppy:h-full uppy:space-y-3">
           <div ref={childRef}>
-            {!test && (
+            {shouldRenderDefault() && (
               <p className="uppy:text-gray-600">
                 Drop files here or click to add them
               </p>

@@ -5,22 +5,8 @@ import {
   FilesList as PreactFilesList,
   type FilesListProps,
 } from '@uppy/components'
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { createRoot } from 'react-dom/client'
 import { UppyContext } from './UppyContextProvider.js'
-
-function useReactRender() {
-  const rootRef = useRef<ReturnType<typeof createRoot> | null>(null)
-
-  const reactRender = (el: Element | null, node: any) => {
-    if (!rootRef.current && el) {
-      rootRef.current = createRoot(el)
-    }
-    rootRef.current?.render(node)
-  }
-
-  return reactRender
-}
+import useReactRender from './useReactRender.js'
 
 export default function FilesList({
   editFile,
