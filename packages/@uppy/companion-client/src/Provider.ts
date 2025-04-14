@@ -245,7 +245,7 @@ export default class Provider<M extends Meta, B extends Body>
         resolve(this.setAuthToken(data.token))
       }
 
-      let interval: NodeJS.Timeout | null = null
+      let interval: number | null = null
 
       cleanup = () => {
         authWindow?.close()
