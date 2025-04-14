@@ -250,7 +250,7 @@ export default class Provider<M extends Meta, B extends Body>
       cleanup = () => {
         authWindow?.close()
         if (interval) {
-          clearInterval(interval)
+          window.clearInterval(interval)
           interval = null
         }
         window.removeEventListener('message', handleToken)
@@ -258,9 +258,9 @@ export default class Provider<M extends Meta, B extends Body>
       }
 
       if (authWindow) {
-        interval = setInterval(() => {
+        interval = window.setInterval(() => {
           if (authWindow.closed) {
-            this.uppy.log('Auth window closed', 'info')
+            this.uppy.log('Auth window closed')
             cleanup()
             reject(new Error('Auth window was closed by the user'))
           }
