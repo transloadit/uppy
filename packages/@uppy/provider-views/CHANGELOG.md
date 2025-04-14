@@ -1,5 +1,12 @@
 # @uppy/provider-views
 
+## 4.4.3
+
+Released: 2025-04-14
+Included in: Uppy v4.15.0
+
+- @uppy/provider-views: Fix google photos picker (Mikael Finstad / #5717)
+
 ## 4.4.2
 
 Released: 2025-02-03
