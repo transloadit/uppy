@@ -1,7 +1,7 @@
 {
   "name": "@uppy/utils",
   "description": "Shared utility functions for Uppy Core and plugins maintained by the Uppy team.",
-  "version": "6.1.2",
+  "version": "6.1.3",
   "license": "MIT",
   "type": "module",
   "keywords": [

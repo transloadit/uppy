@@ -11,7 +11,7 @@ on:
       - '.github/**'
       - '!.github/workflows/e2e.yml'
   pull_request_target:
-    types: [opened, synchronize, reopened, labeled]
+    types: [opened, synchronize, reopened]
     paths-ignore:
       - '**.md'
       - '**.d.ts'
@@ -23,15 +23,6 @@ on:
     types: [opened, synchronize, reopened]
     paths:
       - .github/workflows/e2e.yml
-
-concurrency:
-  group:
-    ${{ github.workflow }}--${{ github.event.pull_request.head.repo.full_name ||
-    github.repository }} -- ${{ github.head_ref || github.ref }}
-  cancel-in-progress:
-    # For PRs coming from forks, we need the previous job to run until the end
-    # to be sure it can remove the `safe to test` label before it affects the next run.
-    ${{ github.event.pull_request.head.repo.full_name == github.repository }}
 
 permissions:
   pull-requests: write
@@ -45,7 +36,6 @@ jobs:
       DIFF_BUILDER: true
     outputs:
       diff: ${{ steps.diff.outputs.OUTPUT_DIFF }}
-      is_accurate_diff: ${{ steps.diff.outputs.IS_ACCURATE_DIFF }}
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
@@ -54,16 +44,6 @@ jobs:
           ref:
             ${{ github.event.pull_request && format('refs/pull/{0}/merge',
             github.event.pull_request.number) || github.sha }}
-      - name: Check if there are "unsafe" changes
-        id: build_chain_changes
-        # If there are changes in JS script that generates the output, we cannot
-        # test them here without human review to make sure they don't contain
-        # someting "nasty".
-        run: |
-          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
-          echo "MIGHT_CONTAIN_OTHER_CHANGES<<$EOF" >> "$GITHUB_OUTPUT"
-          git --no-pager diff HEAD^ --name-only bin package.json yarn.lock babel.config.js >> "$GITHUB_OUTPUT"
-          echo "$EOF" >> "$GITHUB_OUTPUT"
       - run: git reset HEAD^ --hard
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
@@ -93,35 +73,6 @@ jobs:
       - name: Store output file
         run: tar cf /tmp/previousVersion.tar packages/@uppy/*/lib
       - name: Fetch source from the PR
-        if: steps.build_chain_changes.outputs.MIGHT_CONTAIN_OTHER_CHANGES == ''
-        run: |
-          git checkout FETCH_HEAD -- packages
-          echo 'IS_ACCURATE_DIFF=true' >> "$GITHUB_ENV"
-      - name: Fetch source from the PR
-        if:
-          steps.build_chain_changes.outputs.MIGHT_CONTAIN_OTHER_CHANGES != '' &&
-          (!github.event.pull_request || (github.event.action == 'labeled' &&
-          github.event.label.name == 'safe to test' &&
-          github.event.pull_request.state == 'open') ||
-          (github.event.pull_request.head.repo.full_name == github.repository &&
-          github.event.event_name != 'labeled'))
-        run: |
-          git reset FETCH_HEAD --hard
-          corepack yarn workspaces focus $(\
-            corepack yarn workspaces list --json | \
-            jq -r .name | \
-            awk '/^@uppy-example/{ next } { if ($0!="uppy.io") print $0 }'\
-          )
-          echo 'IS_ACCURATE_DIFF=true' >> "$GITHUB_ENV"
-        env:
-          # https://docs.cypress.io/guides/references/advanced-installation#Skipping-installation
-          CYPRESS_INSTALL_BINARY: 0
-      - name: Fetch source from the PR
-        if:
-          steps.build_chain_changes.outputs.MIGHT_CONTAIN_OTHER_CHANGES != '' &&
-          github.event.pull_request.head.repo.full_name != github.repository &&
-          (github.event.action != 'labeled' || github.event.label.name != 'safe
-          to test')
         run: |
           git checkout FETCH_HEAD -- packages
       - run: corepack yarn build:js:typeless
@@ -154,7 +105,6 @@ jobs:
           echo "OUTPUT_DIFF<<$EOF" >> "$GITHUB_OUTPUT"
           cd /tmp/uppy && git --no-pager diff >> "$GITHUB_OUTPUT"
           echo "$EOF" >> "$GITHUB_OUTPUT"
-          echo "IS_ACCURATE_DIFF=$IS_ACCURATE_DIFF" >> "$GITHUB_OUTPUT"
       - name: Add/update comment
         if: github.event.pull_request
         uses: marocchino/sticky-pull-request-comment@v2
@@ -166,58 +116,9 @@ jobs:
             ${{ steps.diff.outputs.OUTPUT_DIFF || 'No diff' }}
             ```
 
-            ${{ env.IS_ACCURATE_DIFF != 'true' && format(fromJson('"The following build files have been modified and might affect the actual diff:\n\n```\n{0}\n```"'), steps.build_chain_changes.outputs.MIGHT_CONTAIN_OTHER_CHANGES) || '' }}
-
             </details>
-      - name: Remove 'safe to test' label if cancelled
-        if:
-          cancelled() && github.event.pull_request &&
-          github.event.pull_request.head.repo.full_name != github.repository
-        run: gh pr edit "$NUMBER" --remove-label 'safe to test'
-        env:
-          NUMBER: ${{ github.event.pull_request.number }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  toggle-pending-e2e-label:
-    # Add the 'pending end-to-end tests' label for PRs that come from forks.
-    # For those PRs, we want to review the code before running e2e tests.
-    # See https://securitylab.github.com/research/github-actions-preventing-pwn-requests/.
-    needs: [compare_diff]
-    if:
-      github.event.pull_request.state == 'open' &&
-      github.event.pull_request.head.repo.full_name != github.repository
-    runs-on: ubuntu-latest
-    steps:
-      - name: Add label
-        if:
-          (needs.compare_diff.outputs.diff != '' ||
-          !needs.compare_diff.outputs.is_accurate_diff) && (github.event.action
-          != 'labeled' || github.event.label.name != 'safe to test')
-        env:
-          PR_URL: ${{ github.event.pull_request.html_url }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run:
-          gh pr edit "$PR_URL" --repo ${{ github.repository }} --add-label
-          'pending end-to-end tests'
-      - name: Remove label
-        if:
-          needs.compare_diff.outputs.diff == '' &&
-          needs.compare_diff.outputs.is_accurate_diff && github.event.action ==
-          'labeled' && github.event.label.name == 'safe to test'
-        env:
-          PR_URL: ${{ github.event.pull_request.html_url }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run:
-          gh pr edit "$PR_URL" --remove-label 'safe to test' --remove-label
-          'pending end-to-end tests'
 
   e2e:
-    needs: [compare_diff]
-    if:
-      ${{ needs.compare_diff.outputs.diff != '' && (!github.event.pull_request
-      || (github.event.action == 'labeled' && github.event.label.name == 'safe
-      to test' && github.event.pull_request.state == 'open') ||
-      (github.event.pull_request.head.repo.full_name == github.repository &&
-      github.event.event_name != 'labeled')) }}
     name: Browser tests
     runs-on: ubuntu-latest
     steps:
@@ -290,21 +191,3 @@ jobs:
           path: |
             e2e/cypress/videos/
             e2e/cypress/screenshots/
-      - name: Remove labels
-        # Remove the 'pending end-to-end tests' label if tests ran successfully
-        if:
-          github.event.pull_request &&
-          contains(github.event.pull_request.labels.*.name, 'pending end-to-end
-          tests')
-        run: gh pr edit "$NUMBER" --remove-label 'pending end-to-end tests'
-        env:
-          NUMBER: ${{ github.event.pull_request.number }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Remove 'safe to test' label
-        if:
-          always() && github.event.pull_request &&
-          contains(github.event.pull_request.labels.*.name, 'safe to test')
-        run: gh pr edit "$NUMBER" --remove-label 'safe to test'
-        env:
-          NUMBER: ${{ github.event.pull_request.number }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

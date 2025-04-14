@@ -1,7 +1,7 @@
 {
   "name": "@uppy/locales",
   "description": "Uppy language packs",
-  "version": "4.5.1",
+  "version": "4.5.2",
   "license": "MIT",
   "type": "module",
   "keywords": [

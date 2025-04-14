@@ -1,9 +1,4 @@
-import {
-  Component,
-  OnInit,
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-} from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { Uppy } from '@uppy/core';
 import Tus from '@uppy/tus';
 import type {ProgressBarOptions} from '@uppy/progress-bar';
@@ -59,6 +54,8 @@ import { Body, Meta } from '@uppy/utils/lib/UppyFile';
 export class ProgressBarDemoComponent<M extends Meta, B extends Body>
   implements OnInit
 {
+  private cdr = inject(ChangeDetectorRef);
+
   uppyOne!: Uppy<M, B>;
   uppyTwo!: Uppy<M, B>;
   fileListOne: { url: string; fileName: string }[] = [];
@@ -71,7 +68,10 @@ export class ProgressBarDemoComponent<M extends Meta, B extends Body>
     this.uppyTwo.upload();
   }
 
-  constructor(private cdr: ChangeDetectorRef) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   updateFileList =
     (target: string) =>
