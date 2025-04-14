@@ -245,10 +245,26 @@ export default class Provider<M extends Meta, B extends Body>
         resolve(this.setAuthToken(data.token))
       }
 
+      let interval: NodeJS.Timeout | null = null
+
       cleanup = () => {
         authWindow?.close()
+        if (interval) {
+          clearInterval(interval)
+          interval = null
+        }
         window.removeEventListener('message', handleToken)
         signal.removeEventListener('abort', cleanup)
+      }
+
+      if (authWindow) {
+        interval = setInterval(() => {
+          if (authWindow.closed) {
+            this.uppy.log('Auth window closed', 'info')
+            cleanup()
+            reject(new Error('Auth window was closed by the user'))
+          }
+        }, 500)
       }
 
       signal.addEventListener('abort', cleanup)
