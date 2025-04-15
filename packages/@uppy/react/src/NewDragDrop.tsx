@@ -13,8 +13,8 @@ export default function DragDrop({
   height,
   note,
   noClick,
-  test,
-}: Omit<DragDropProps, 'ctx'>) {
+  child,
+}: Omit<DragDropProps, 'ctx' | 'render'>) {
   const ref = useRef(null)
   const ctx = useContext(UppyContext)
   const reactRender = useReactRender()
@@ -28,13 +28,13 @@ export default function DragDrop({
           note,
           noClick,
           ctx,
-          test,
+          child,
           render: reactRender,
         } satisfies DragDropProps),
         ref.current,
       )
     }
-  }, [ctx, width, height, note, noClick, test, reactRender])
+  }, [ctx, width, height, note, noClick, child, reactRender])
 
   return <div ref={ref} />
 }

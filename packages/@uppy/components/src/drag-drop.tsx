@@ -1,30 +1,24 @@
 import { h } from 'preact'
 import { useState, useRef, useEffect } from 'preact/hooks'
 import { clsx } from 'clsx'
-import type { UppyContext } from './uppy.context.js'
+import type { Component, Render, UppyContext } from './types.js'
+import { InjectedOrChildren } from './injected.js'
 
 export type DragDropProps = {
   width?: string
   height?: string
   note?: string
   noClick?: boolean
-  test?: () => any
-  render?: (root: Element | null, node: any) => void
+  child?: () => Component
+  render: Render
   ctx: UppyContext
 }
 
 function DragDrop(props: DragDropProps) {
   const dropAreaRef = useRef<HTMLDivElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const childRef = useRef<HTMLDivElement>(null)
   const [isDragging, setIsDragging] = useState(() => false)
-  const { width, height, note, noClick, test, render, ctx } = props
-
-  function shouldRenderDefault() {
-    if (!test) return true
-    render?.(childRef.current, test())
-    return false
-  }
+  const { width, height, note, noClick, child, render, ctx } = props
 
   useEffect(() => {
     const element = dropAreaRef.current
@@ -128,17 +122,19 @@ function DragDrop(props: DragDropProps) {
         )}
       >
         <div className="uppy:flex uppy:flex-col uppy:items-center uppy:justify-center uppy:h-full uppy:space-y-3">
-          <div ref={childRef}>
-            {shouldRenderDefault() && (
-              <p className="uppy:text-gray-600">
-                Drop files here or click to add them
-              </p>
-            )}
-          </div>
-          {note ?
-            <div className="uppy:text-sm uppy:text-gray-500">{note}</div>
-          : null}
+          <InjectedOrChildren
+            render={render}
+            item={() => child?.()}
+            id="drag-drop"
+          >
+            <p className="uppy:text-gray-600">
+              Drop files here or click to add them
+            </p>
+          </InjectedOrChildren>
         </div>
+        {note ?
+          <div className="uppy:text-sm uppy:text-gray-500">{note}</div>
+        : null}
       </div>
     </div>
   )

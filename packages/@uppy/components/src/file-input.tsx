@@ -1,18 +1,20 @@
 import { h } from 'preact'
-import { useContext, useRef } from 'preact/hooks'
-import { UppyContext } from './index.js'
+import { useRef } from 'preact/hooks'
+import type { Render, UppyContext, Component } from './types.js'
+import { InjectedOrChildren } from './injected.js'
 
-type FileInputProps = {
+export type FileInputProps = {
   multiple?: boolean
   accept?: string
-  children?: any
+  child?: () => Component
+  render: Render
   className?: string
+  ctx: UppyContext
 }
 
 function FileInput(props: FileInputProps) {
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const ctx = useContext(UppyContext)
-  const { multiple, accept, children, className } = props
+  const { multiple, accept, child, className, ctx, render } = props
 
   function handleClick() {
     fileInputRef.current?.click()
@@ -54,7 +56,13 @@ function FileInput(props: FileInputProps) {
         onClick={handleClick}
         className={`uppy:inline-flex uppy:items-center uppy:justify-center ${className}`}
       >
-        {children || 'Select files'}
+        <InjectedOrChildren
+          render={render}
+          item={() => child?.()}
+          id="file-input-button"
+        >
+          Select files
+        </InjectedOrChildren>
       </button>
     </div>
   )

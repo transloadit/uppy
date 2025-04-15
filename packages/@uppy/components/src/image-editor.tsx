@@ -1,26 +1,28 @@
 /* eslint-disable react/destructuring-assignment */
 import { h } from 'preact'
-import { useContext, useRef, useEffect } from 'preact/hooks'
+import { useRef, useEffect } from 'preact/hooks'
 import UppyImageEditor, { type ImageEditorOptions } from '@uppy/image-editor'
 import type { UppyFile, Meta, Body } from '@uppy/core'
-import { UppyContext } from './index.js'
+import type { Component, Render, UppyContext } from './types.js'
+import { InjectedOrChildren } from './injected.js'
 
-type ImageEditorProps = {
+export type ImageEditorProps = {
   file: UppyFile<Meta, Body>
   onSave?: () => void
-  children?: any
+  child?: () => Component
+  render: Render
+  ctx: UppyContext
 } & ImageEditorOptions
 
 function ImageEditor(props: ImageEditorProps) {
-  const ref = useRef<HTMLDivElement>(null)
-
-  const ctx = useContext(UppyContext)
+  const imageEditorRef = useRef<HTMLDivElement>(null)
+  const { ctx, child, render } = props
 
   useEffect(() => {
     if (!ctx.uppy?.getPlugin('ImageEditor')) {
       ctx.uppy?.use(UppyImageEditor, {
         ...props,
-        target: ref.current ?? undefined,
+        target: imageEditorRef.current ?? undefined,
       })
     }
   }, [ctx.uppy, props])
@@ -46,8 +48,12 @@ function ImageEditor(props: ImageEditorProps) {
 
   return (
     <div>
-      <div className="" ref={ref} />
-      {props.children}
+      <div className="" ref={imageEditorRef} />
+      <InjectedOrChildren
+        render={render}
+        item={() => child?.()}
+        id="image-editor"
+      />
     </div>
   )
 }

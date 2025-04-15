@@ -1,12 +1,16 @@
 import { h } from 'preact'
-import { useContext, useRef, useEffect } from 'preact/hooks'
+import { useRef, useEffect } from 'preact/hooks'
 import UppyWebcam, { type WebcamOptions } from '@uppy/webcam'
 import type { Meta, Body } from '@uppy/core'
-import { UppyContext } from './index.js'
+import type { UppyContext } from './types.js'
 
-function Webcam(props: WebcamOptions<Meta, Body>) {
+export type WebcamProps = WebcamOptions<Meta, Body> & {
+  ctx: UppyContext
+}
+
+function Webcam(props: WebcamProps) {
   const ref = useRef<HTMLDivElement>(null)
-  const ctx = useContext(UppyContext)
+  const { ctx } = props
 
   useEffect(() => {
     if (!ctx.uppy?.getPlugin('Webcam')) {

@@ -13,6 +13,7 @@ import {
 } from '@uppy/react'
 
 import './app.css'
+// eslint-disable-next-line import/no-extraneous-dependencies
 import '@uppy/components/dist/styles.css'
 
 // function Modal({ open, onClose, children }) {
@@ -55,12 +56,7 @@ function App() {
         <h1 className="text-4xl font-bold">Welcome to React.</h1>
 
         <NewDragDrop />
-        <FilesList
-          editFile={() => {}}
-          item={(file) => {
-            return <div>{file.name}</div>
-          }}
-        />
+        <FilesList item={(file) => <div>{file.name}</div>} />
         <UploadButton />
       </main>
     </UppyContextProvider>

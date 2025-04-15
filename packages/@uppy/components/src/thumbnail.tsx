@@ -3,7 +3,7 @@ import { h } from 'preact'
 import { useState, useEffect } from 'preact/hooks'
 import type { UppyFile } from '@uppy/core'
 
-type ThumbnailProps = {
+export type ThumbnailProps = {
   file: UppyFile<any, any>
   width?: string
   height?: string

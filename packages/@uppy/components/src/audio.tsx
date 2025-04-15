@@ -1,12 +1,15 @@
 import { h } from 'preact'
-import { useContext, useRef, useEffect } from 'preact/hooks'
+import { useRef, useEffect } from 'preact/hooks'
 import UppyAudio, { type AudioOptions } from '@uppy/audio'
-import { UppyContext } from './index.js'
+import type { UppyContext } from './types.js'
 
-function Audio(props: AudioOptions) {
+export type AudioProps = AudioOptions & {
+  ctx: UppyContext
+}
+
+function Audio(props: AudioProps) {
   const ref = useRef<HTMLDivElement>(null)
-
-  const ctx = useContext(UppyContext)
+  const { ctx } = props
 
   useEffect(() => {
     if (!ctx.uppy?.getPlugin('Audio')) {

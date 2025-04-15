@@ -1,17 +1,17 @@
 import { h } from 'preact'
-import { useContext, useRef, useEffect } from 'preact/hooks'
+import { useRef, useEffect } from 'preact/hooks'
 import UppyGoogleDrivePicker from '@uppy/google-drive-picker'
-import { UppyContext } from './index.js'
+import type { UppyContext } from './types.js'
 
-type GoogleDrivePickerProps = {
+export type GoogleDrivePickerProps = {
   // TODO: GoogleDrivePickerOptions is not exported from the plugin
   [key: string]: any
+  ctx: UppyContext
 }
 
 function GoogleDrivePicker(props: GoogleDrivePickerProps) {
   const ref = useRef<HTMLDivElement>(null)
-
-  const ctx = useContext(UppyContext)
+  const { ctx } = props
 
   useEffect(() => {
     if (!ctx.uppy?.getPlugin('GoogleDrivePicker')) {

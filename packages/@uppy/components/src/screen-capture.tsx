@@ -1,14 +1,17 @@
 import { h } from 'preact'
-import { useContext, useRef, useEffect } from 'preact/hooks'
+import { useRef, useEffect } from 'preact/hooks'
 import UppyScreenCapture, {
   type ScreenCaptureOptions,
 } from '@uppy/screen-capture'
-import { UppyContext } from './index.js'
+import type { UppyContext } from './types.js'
 
-function ScreenCapture(props: ScreenCaptureOptions) {
+export type ScreenCaptureProps = ScreenCaptureOptions & {
+  ctx: UppyContext
+}
+
+function ScreenCapture(props: ScreenCaptureProps) {
   const ref = useRef<HTMLDivElement>(null)
-
-  const ctx = useContext(UppyContext)
+  const { ctx } = props
 
   useEffect(() => {
     if (!ctx.uppy?.getPlugin('ScreenCapture')) {
@@ -39,9 +42,7 @@ function ScreenCapture(props: ScreenCaptureOptions) {
       <style>{`
     #uppy-screen-capture-container video {
         position: initial;
-    }
-
-`}</style>
+    }`}</style>
     </>
   )
 }
