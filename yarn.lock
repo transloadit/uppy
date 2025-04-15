@@ -9924,14 +9924,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sveltejs/kit@npm:^2.8.3":
-  version: 2.8.3
-  resolution: "@sveltejs/kit@npm:2.8.3"
+"@sveltejs/kit@npm:^2.20.6":
+  version: 2.20.6
+  resolution: "@sveltejs/kit@npm:2.20.6"
   dependencies:
     "@types/cookie": "npm:^0.6.0"
     cookie: "npm:^0.6.0"
     devalue: "npm:^5.1.0"
-    esm-env: "npm:^1.0.0"
+    esm-env: "npm:^1.2.2"
     import-meta-resolve: "npm:^4.1.0"
     kleur: "npm:^4.1.5"
     magic-string: "npm:^0.30.5"
@@ -9939,14 +9939,13 @@ __metadata:
     sade: "npm:^1.8.1"
     set-cookie-parser: "npm:^2.6.0"
     sirv: "npm:^3.0.0"
-    tiny-glob: "npm:^0.2.9"
   peerDependencies:
-    "@sveltejs/vite-plugin-svelte": ^3.0.0 || ^4.0.0-next.1
+    "@sveltejs/vite-plugin-svelte": ^3.0.0 || ^4.0.0-next.1 || ^5.0.0
     svelte: ^4.0.0 || ^5.0.0-next.0
-    vite: ^5.0.3
+    vite: ^5.0.3 || ^6.0.0
   bin:
     svelte-kit: svelte-kit.js
-  checksum: 10/ec3e4d66888875497ffb8baded9155de6e02134227bf73bcd28e8501ef2d4222f2a5d4a1ad082a899c21630864ca65b674fb86c2c49c774c1024ea01cf1d1bef
+  checksum: 10/1b8bde9cb3f67fa32d54eaea5fec4d8ef1bf8a4bc70516bd27418f6a9d8ee30875d91f3c107f492dac49f6fb2051f4c568262d2f0e1e35483b4afaa70b76959f
   languageName: node
   linkType: hard
 
@@ -11533,7 +11532,7 @@ __metadata:
   resolution: "@uppy-example/svelte-app@workspace:examples/svelte-example"
   dependencies:
     "@sveltejs/adapter-static": "npm:^3.0.1"
-    "@sveltejs/kit": "npm:^2.8.3"
+    "@sveltejs/kit": "npm:^2.20.6"
     "@sveltejs/vite-plugin-svelte": "npm:^3.0.0"
     "@types/formidable": "npm:^3"
     "@uppy/core": "workspace:*"
@@ -12168,7 +12167,7 @@ __metadata:
   resolution: "@uppy/svelte@workspace:packages/@uppy/svelte"
   dependencies:
     "@sveltejs/adapter-auto": "npm:^3.0.0"
-    "@sveltejs/kit": "npm:^2.8.3"
+    "@sveltejs/kit": "npm:^2.20.6"
     "@sveltejs/package": "npm:^2.0.0"
     "@sveltejs/vite-plugin-svelte": "npm:^3.0.0"
     svelte: "npm:^4.2.7"
@@ -18520,10 +18519,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"esm-env@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "esm-env@npm:1.0.0"
-  checksum: 10/379e34c5bfdfe7004a6ddf492511b619bfe3488520ee5c683a700f5e58942a26dd2220ebb74be83b4d46930c57f26adfd449404edfa1e68231d4b354b23f91be
+"esm-env@npm:^1.2.2":
+  version: 1.2.2
+  resolution: "esm-env@npm:1.2.2"
+  checksum: 10/caf5f3cc2bc7107494585b4e38835787f48ef77b670aeb2d765a5b6b64c41102d20bbdd34bda32474291b6b8d819d4d02ce92570a0886baca6cef70f5fe689f3
   languageName: node
   linkType: hard
 
@@ -20329,13 +20328,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"globalyzer@npm:0.1.0":
-  version: 0.1.0
-  resolution: "globalyzer@npm:0.1.0"
-  checksum: 10/419a0f95ba542534fac0842964d31b3dc2936a479b2b1a8a62bad7e8b61054faa9b0a06ad9f2e12593396b9b2621cac93358d9b3071d33723fb1778608d358a1
-  languageName: node
-  linkType: hard
-
 "globby@npm:^11.1.0":
   version: 11.1.0
   resolution: "globby@npm:11.1.0"
@@ -20381,13 +20373,6 @@ __metadata:
   version: 0.1.4
   resolution: "globjoin@npm:0.1.4"
   checksum: 10/1e7e0f145f6572134e999b5511767698c8196e891f50db76a25189c897f355aec1b7e62f9eeaa0626db55460353470ac6bec4aa118beb710e4543037e705647a
-  languageName: node
-  linkType: hard
-
-"globrex@npm:^0.1.2":
-  version: 0.1.2
-  resolution: "globrex@npm:0.1.2"
-  checksum: 10/81ce62ee6f800d823d6b7da7687f841676d60ee8f51f934ddd862e4057316d26665c4edc0358d4340a923ac00a514f8b67c787e28fe693aae16350f4e60d55e9
   languageName: node
   linkType: hard
 
@@ -33694,16 +33679,6 @@ __metadata:
   version: 0.3.0
   resolution: "timsort@npm:0.3.0"
   checksum: 10/f4b8e0afa770440660b98034d7170333033b96fb6cb32d2fdfab65f78ba7741b9e271e2351631daacfa78a471d33f8ea1f5a29f94e960621f25045bfada46f3f
-  languageName: node
-  linkType: hard
-
-"tiny-glob@npm:^0.2.9":
-  version: 0.2.9
-  resolution: "tiny-glob@npm:0.2.9"
-  dependencies:
-    globalyzer: "npm:0.1.0"
-    globrex: "npm:^0.1.2"
-  checksum: 10/5fb773747f6a8fcae4b8884642901fa7b884879695186c422eb24b2213dfe90645f34225ced586329b3080d850472ea938646ab1c8b3a2989f9fa038fef8eee3
   languageName: node
   linkType: hard
 
