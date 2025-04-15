@@ -6,9 +6,9 @@ Uppy is a sleek, modular JavaScript file uploader that integrates seamlessly
 with any application. It’s fast, has a comprehensible API and lets you worry
 about more important problems than building a file uploader.
 
-- **Fetch** files from local disk, remote URLs, Google Drive, Dropbox, Box,
+- **Fetch** files from local disk, remote URLs, Google Drive, Dropbox, Box, Instagram, or capture with a camera
   Instagram or snap and record selfies with a camera
-- **Preview** and edit metadata with a nice interface
+- **Preview & Edit** metadata before uploading with an intuitive interface
 - **Upload** to the final destination, optionally process/encode
 
 <img src="https://github.com/transloadit/uppy/raw/main/assets/uppy-2-0-demo-aug-2021.gif">
@@ -60,6 +60,24 @@ const uppy = new Uppy()
 **[Try it online](https://uppy.io/examples/dashboard/)** or
 **[read the docs](https://uppy.io/docs)** for more details on how to use Uppy
 and its plugins.
+
+## Table of Contents
+- [Features](#features)
+- [Installation](#installation)
+- [Documentation](#documentation)
+- [Plugins](#plugins)
+  - [UI Elements](#ui-elements)
+  - [Sources](#sources)
+  - [Destinations](#destinations)
+  - [File Processing](#file-processing)
+  - [Mischellaneous](#miscellaneous)
+- [React](#react)
+- [Browser Support](#browser-support)
+- [FAQ](#faq)
+- [Contributions are welcome](#contributions-are-welcome)
+- [Used By](#used-by)
+- [Contributors](#contributors)
+- [License](#license)
 
 ## Features
 
