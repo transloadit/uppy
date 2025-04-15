@@ -90,14 +90,6 @@ function createIv() {
   return crypto.randomBytes(ivLength)
 }
 
-function urlEncode(unencoded) {
-  return unencoded.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '~')
-}
-
-function urlDecode(encoded) {
-  return encoded.replace(/-/g, '+').replace(/_/g, '/').replace(/~/g, '=')
-}
-
 /**
  * Encrypt a buffer or string with AES256 and a random iv.
  *
@@ -108,11 +100,11 @@ function urlDecode(encoded) {
 module.exports.encrypt = (input, secret) => {
   const iv = createIv()
   const cipher = crypto.createCipheriv('aes-256-ccm', createSecret(secret), iv, {authTagLength: 16})
-  let encrypted = cipher.update(input, 'utf8', 'base64')
-  encrypted += cipher.final('base64')
-  encrypted += cipher.getAuthTag().toString('base64')
+  let encrypted = cipher.update(input, 'utf8', 'base64url')
+  encrypted += cipher.final('base64url')
+  encrypted += cipher.getAuthTag().toString('base64url')
   // add iv to encrypted string to use for decryption
-  return iv.toString('hex') + urlEncode(encrypted)
+  return iv.toString('hex') + encrypted
 }
 
 /**
@@ -145,10 +137,10 @@ module.exports.decrypt = (encrypted, secret) => {
 
   // The last 22 bytes of the encrypted data are actually the authentication tag
   // (22 is the base64url size of a 16 bytes value encoded with base64url)
-  const encryptionWithoutIvAndTag = encryptionWithoutIv.slice(0, encryptionWithoutIv.length - 24)
-  const authTag = encryptionWithoutIv.slice(encryptionWithoutIv.length - 24)
-  decipher.setAuthTag(Buffer.from(authTag, 'base64'))
-  let decrypted = decipher.update(urlDecode(encryptionWithoutIvAndTag), 'base64', 'utf8')
+  const encryptionWithoutIvAndTag = encryptionWithoutIv.slice(0, encryptionWithoutIv.length - 22)
+  const authTag = encryptionWithoutIv.slice(encryptionWithoutIv.length - 22)
+  decipher.setAuthTag(Buffer.from(authTag, 'base64url'))
+  let decrypted = decipher.update(encryptionWithoutIvAndTag, 'base64url', 'utf8')
   decrypted += decipher.final('utf8')
   return decrypted
 }
