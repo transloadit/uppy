@@ -188,6 +188,12 @@ const getConfigFromEnv = () => {
     corsOrigins: getCorsOrigins(),
     testDynamicOauthCredentials: process.env.COMPANION_TEST_DYNAMIC_OAUTH_CREDENTIALS === 'true',
     testDynamicOauthCredentialsSecret: process.env.COMPANION_TEST_DYNAMIC_OAUTH_CREDENTIALS_SECRET,
+    endpointOptions: {
+      endpoint: process.env.COMPANION_UPLOADER_ENDPOINT,
+      proxyAuth: process.env.COMPANION_UPLOADER_PROXY_AUTH,
+      proxyAuthCookieName: process.env.COMPANION_UPLOADER_PROXY_AUTH_COOKIE_NAME || "__s__",
+      proxyAuthHeaderName: process.env.COMPANION_UPLOADER_PROXY_AUTH_HEADER_NAME || "Authorization",
+    }
   }
 }
 
