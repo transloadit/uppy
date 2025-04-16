@@ -1,5 +1,6 @@
 const crypto = require('node:crypto')
 
+const ivLength = 12
 /**
  *
  * @param {string} value
@@ -86,15 +87,7 @@ function createSecret(secret) {
  * @returns {Buffer}
  */
 function createIv() {
-  return crypto.randomBytes(16)
-}
-
-function urlEncode(unencoded) {
-  return unencoded.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '~')
-}
-
-function urlDecode(encoded) {
-  return encoded.replace(/-/g, '+').replace(/_/g, '/').replace(/~/g, '=')
+  return crypto.randomBytes(ivLength)
 }
 
 /**
@@ -106,11 +99,12 @@ function urlDecode(encoded) {
  */
 module.exports.encrypt = (input, secret) => {
   const iv = createIv()
-  const cipher = crypto.createCipheriv('aes256', createSecret(secret), iv)
-  let encrypted = cipher.update(input, 'utf8', 'base64')
-  encrypted += cipher.final('base64')
+  const cipher = crypto.createCipheriv('aes-256-ccm', createSecret(secret), iv, {authTagLength: 16})
+  let encrypted = cipher.update(input, 'utf8', 'base64url')
+  encrypted += cipher.final('base64url')
+  encrypted += cipher.getAuthTag().toString('base64url')
   // add iv to encrypted string to use for decryption
-  return iv.toString('hex') + urlEncode(encrypted)
+  return iv.toString('hex') + encrypted
 }
 
 /**
@@ -122,17 +116,17 @@ module.exports.encrypt = (input, secret) => {
  */
 module.exports.decrypt = (encrypted, secret) => {
   // Need at least 32 chars for the iv
-  if (encrypted.length < 32) {
+  if (encrypted.length < ivLength*2) {
     throw new Error('Invalid encrypted value. Maybe it was generated with an old Companion version?')
   }
 
   // NOTE: The first 32 characters are the iv, in hex format. The rest is the encrypted string, in base64 format.
-  const iv = Buffer.from(encrypted.slice(0, 32), 'hex')
-  const encryptionWithoutIv = encrypted.slice(32)
+  const iv = Buffer.from(encrypted.slice(0, ivLength*2), 'hex')
+  const encryptionWithoutIv = encrypted.slice(ivLength*2)
 
   let decipher
   try {
-    decipher = crypto.createDecipheriv('aes256', createSecret(secret), iv)
+    decipher = crypto.createDecipheriv('aes-256-ccm', createSecret(secret), iv, {authTagLength: 16})
   } catch (err) {
     if (err.code === 'ERR_CRYPTO_INVALID_IV') {
       throw new Error('Invalid initialization vector')
@@ -141,7 +135,12 @@ module.exports.decrypt = (encrypted, secret) => {
     }
   }
 
-  let decrypted = decipher.update(urlDecode(encryptionWithoutIv), 'base64', 'utf8')
+  // The last 22 bytes of the encrypted data are actually the authentication tag
+  // (22 is the base64url size of a 16 bytes value encoded with base64url)
+  const encryptionWithoutIvAndTag = encryptionWithoutIv.slice(0, encryptionWithoutIv.length - 22)
+  const authTag = encryptionWithoutIv.slice(encryptionWithoutIv.length - 22)
+  decipher.setAuthTag(Buffer.from(authTag, 'base64url'))
+  let decrypted = decipher.update(encryptionWithoutIvAndTag, 'base64url', 'utf8')
   decrypted += decipher.final('utf8')
   return decrypted
 }
