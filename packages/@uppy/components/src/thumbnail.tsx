@@ -1,10 +1,10 @@
 /* eslint-disable react/destructuring-assignment */
 import { h } from 'preact'
 import { useState, useEffect } from 'preact/hooks'
-import type { UppyFile } from '@uppy/core'
+import type { Body, Meta, UppyFile } from '@uppy/core'
 
 export type ThumbnailProps = {
-  file: UppyFile<any, any>
+  file: UppyFile<Meta, Body>
   width?: string
   height?: string
   images?: boolean
