@@ -12167,7 +12167,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/components@workspace:packages/@uppy/components":
+"@uppy/components@workspace:^, @uppy/components@workspace:packages/@uppy/components":
   version: 0.0.0-use.local
   resolution: "@uppy/components@workspace:packages/@uppy/components"
   dependencies:
@@ -12691,6 +12691,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/vue@workspace:packages/@uppy/vue"
   dependencies:
+    "@uppy/components": "workspace:^"
+    preact: "npm:^10.5.13"
     shallow-equal: "npm:^3.0.0"
     vue: "npm:^3.4.21"
   peerDependencies:
