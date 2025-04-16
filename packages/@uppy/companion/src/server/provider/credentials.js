@@ -2,6 +2,7 @@ const { htmlEscape } = require('escape-goat')
 const logger = require('../logger')
 const oAuthState = require('../helpers/oauth-state')
 const tokenService = require('../helpers/jwt')
+const { getURLBuilder, getRedirectPath } = require('../helpers/utils')
 // eslint-disable-next-line
 const Provider = require('./Provider')
 
@@ -137,8 +138,10 @@ exports.getCredentialsOverrideMiddleware = (providers, companionOptions) => {
         },
       }
 
-      if (credentials.redirect_uri) {
-        res.locals.grant.dynamic.redirect_uri = credentials.redirect_uri
+      if (credentials.transloadit_gateway) {
+        const redirectPath = getRedirectPath(providerName)
+        const fullRedirectPath = getURLBuilder(companionOptions)(redirectPath, true)
+        res.locals.grant.dynamic.redirect_uri = `${credentials.transloadit_gateway}${fullRedirectPath}`
       }
 
       next()
