@@ -10,7 +10,7 @@ const onedrive = require('./onedrive')
 const unsplash = require('./unsplash')
 const webdav = require('./webdav')
 const zoom = require('./zoom')
-const { getURLBuilder } = require('../helpers/utils')
+const { getURLBuilder, getRedirectPath } = require('../helpers/utils')
 const logger = require('../logger')
 const { getCredentialsResolver } = require('./credentials')
 const Provider = require('./Provider')
@@ -144,7 +144,7 @@ module.exports.addProviderOptions = (companionOptions, grantConfig, getOauthProv
 
       // override grant.js redirect uri with companion's custom redirect url
       const isExternal = !!server.implicitPath
-      const redirectPath = `/${providerName}/redirect`
+      const redirectPath = getRedirectPath(providerName)
       // eslint-disable-next-line no-param-reassign
       grantConfig[oauthProvider].redirect_uri = getURLBuilder(companionOptions)(redirectPath, isExternal)
       if (oauthDomain) {

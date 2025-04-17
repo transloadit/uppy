@@ -68,6 +68,8 @@ module.exports.getURLBuilder = (options) => {
   return buildURL
 }
 
+module.exports.getRedirectPath = (providerName) => `/${providerName}/redirect`;
+
 /**
  * Ensure that a user-provided `secret` is 32 bytes long (the length required
  * for an AES256 key) by hashing it with SHA256.
