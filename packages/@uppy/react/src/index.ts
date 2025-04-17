@@ -8,4 +8,7 @@ export { default as useUppyState } from './useUppyState.js'
 export { default as useUppyEvent } from './useUppyEvent.js'
 
 // Headless components
-export { UppyContext, UppyContextProvider } from './UppyContextProvider.js'
+export {
+  UppyContext,
+  UppyContextProvider,
+} from './headless/UppyContextProvider.js'

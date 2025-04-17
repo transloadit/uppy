@@ -5,4 +5,4 @@ export { default as ProgressBar } from './components/ProgressBar.svelte'
 export { default as StatusBar } from './components/StatusBar.svelte'
 
 // Headless components
-export { default as UppyContextProvider } from './components/UppyContextProvider.svelte'
+export { default as UppyContextProvider } from './components/headless/UppyContextProvider.svelte'

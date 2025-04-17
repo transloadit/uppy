@@ -10,9 +10,9 @@ const rootDir = path.resolve(scriptDir, '..');
 
 // Define paths
 const COMPONENTS_DIR = path.join(rootDir, 'packages/@uppy/components/src');
-const REACT_DIR = path.join(rootDir, 'packages/@uppy/react/src');
-const VUE_DIR = path.join(rootDir, 'packages/@uppy/vue/src');
-const SVELTE_DIR = path.join(rootDir, 'packages/@uppy/svelte/src/lib/components');
+const REACT_DIR = path.join(rootDir, 'packages/@uppy/react/src/headless');
+const VUE_DIR = path.join(rootDir, 'packages/@uppy/vue/src/headless');
+const SVELTE_DIR = path.join(rootDir, 'packages/@uppy/svelte/src/lib/components/headless');
 
 // Templates
 const REACT_TEMPLATE = `import { useEffect, useRef, useContext, createElement as h } from 'react'
@@ -160,6 +160,11 @@ async function generateWrappers() {
     
     console.log(`Found ${tsxFiles.length} Preact component(s) to process`);
     
+    // Track generated components for index files
+    const reactComponents = [];
+    const vueComponents = [];
+    const svelteComponents = [];
+    
     // Process each tsx file
     for (const file of tsxFiles) {
       try {
@@ -197,6 +202,11 @@ async function generateWrappers() {
         await fs.writeFile(vueFilePath, vueContent);
         await fs.writeFile(svelteFilePath, svelteContent);
         
+        // Add to component lists for index files
+        reactComponents.push(componentName);
+        vueComponents.push(componentName);
+        svelteComponents.push(componentName);
+        
         console.log(`  Generated wrappers for ${componentName}:`);
         console.log(`    - React: ${reactFilePath}`);
         console.log(`    - Vue: ${vueFilePath}`);
@@ -206,7 +216,32 @@ async function generateWrappers() {
       }
     }
     
-    console.log('All wrappers generated successfully!');
+    // Generate index files
+    if (reactComponents.length > 0) {
+      const reactIndexContent = reactComponents
+        .map(name => `export { default as ${name} } from './${name}.js'`)
+        .join('\n');
+      await fs.writeFile(path.join(REACT_DIR, 'index.ts'), reactIndexContent);
+      console.log(`Generated React index file with ${reactComponents.length} components`);
+    }
+    
+    if (vueComponents.length > 0) {
+      const vueIndexContent = vueComponents
+        .map(name => `export { default as ${name} } from './${name}.js'`)
+        .join('\n');
+      await fs.writeFile(path.join(VUE_DIR, 'index.ts'), vueIndexContent);
+      console.log(`Generated Vue index file with ${vueComponents.length} components`);
+    }
+    
+    if (svelteComponents.length > 0) {
+      const svelteIndexContent = svelteComponents
+        .map(name => `export { default as ${name} } from './${name}.svelte'`)
+        .join('\n');
+      await fs.writeFile(path.join(SVELTE_DIR, 'index.ts'), svelteIndexContent);
+      console.log(`Generated Svelte index file with ${svelteComponents.length} components`);
+    }
+    
+    console.log('All wrappers and index files generated successfully!');
   } catch (error) {
     console.error('Error generating wrappers:', error);
     process.exit(1);
