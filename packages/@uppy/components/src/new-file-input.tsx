@@ -1,7 +1,7 @@
 import { h } from 'preact'
 import { useRef } from 'preact/hooks'
 import type { Component, InjectedProps } from './types.js'
-import { InjectedOrChildren } from './injected.js'
+import { InjectedOrChildren } from './internal/injected.js'
 
 export type NewFileInputProps = {
   multiple?: boolean

@@ -1,6 +1,6 @@
 import { Fragment, h, type ComponentChild } from 'preact'
 import { useRef, useEffect } from 'preact/hooks'
-import type { Render, Component } from './types'
+import type { Render, Component } from '../types'
 
 export function InjectedOrChildren(props: {
   render: Render

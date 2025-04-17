@@ -9,7 +9,7 @@ import {
   UppyContextProvider,
   UploadButton,
   FilesList,
-  NewDragDrop,
+  Dropzone,
 } from '@uppy/react'
 
 import './app.css'
@@ -55,7 +55,7 @@ function App() {
       <main style={{ padding: '20px', maxWidth: '32em', margin: '0 auto' }}>
         <h1 className="text-4xl font-bold">Welcome to React.</h1>
 
-        <NewDragDrop />
+        <Dropzone />
         <FilesList item={(file) => <div>{file.name}</div>} />
         <UploadButton />
       </main>

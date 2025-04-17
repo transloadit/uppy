@@ -7,7 +7,7 @@ import prettyBytes from 'pretty-bytes'
 import { clsx } from 'clsx'
 import { Thumbnail } from './index.js'
 import type { Component, InjectedProps } from './types.js'
-import { InjectedOrChildren } from './injected.js'
+import { InjectedOrChildren } from './internal/injected.js'
 
 export type FilesGridProps = {
   item?: (file: UppyFile<Meta, Body>) => Component

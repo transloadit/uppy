@@ -1,6 +1,6 @@
 <script lang="ts">
   import Uppy from '@uppy/core'
-  import { UppyContextProvider, NewDragDrop, FilesList } from '@uppy/svelte'
+  import { UppyContextProvider, Dropzone, FilesList } from '@uppy/svelte'
 
   import '@uppy/components/dist/styles.css'
 
@@ -10,7 +10,7 @@
 <main class="mx-auto my-12 max-w-2xl">
   <h1>Welcome to SvelteKit</h1>
   <UppyContextProvider {uppy}>
-    <NewDragDrop />
+    <Dropzone />
     <FilesList />
   </UppyContextProvider>
 </main>

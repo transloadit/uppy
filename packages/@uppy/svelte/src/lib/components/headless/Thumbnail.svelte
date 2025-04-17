@@ -1,0 +1,34 @@
+<script lang="ts">
+  import { getContext, mount } from 'svelte'
+  import {
+    Thumbnail as PreactThumbnail,
+    type ThumbnailProps,
+    type UppyContext,
+  } from '@uppy/components'
+  import { h as preactH } from 'preact'
+  import { render as preactRender } from 'preact/compat'
+  import { UppyContextKey } from './UppyContextProvider.svelte'
+
+  const props: Omit<ThumbnailProps, 'ctx' | 'render'> = $props()
+  const ctx = getContext<UppyContext>(UppyContextKey)
+  let container: HTMLElement
+
+  $effect(() => {
+    if (container) {
+      preactRender(
+        preactH(PreactThumbnail, {
+          ...props,
+          ctx,
+          render: (el, node) => {
+            if (el) {
+              mount(node, { target: el })
+            }
+          },
+        } satisfies ThumbnailProps),
+        container,
+      )
+    }
+  })
+</script>
+
+<div bind:this={container}></div>

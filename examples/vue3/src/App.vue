@@ -2,14 +2,14 @@
   <div style="width: 30em; margin: 5rem auto">
     <h1>Uppy Vue Demo</h1>
     <UppyContextProvider :uppy="uppy">
-      <NewDragDrop />
+      <Dropzone />
       <FilesList />
     </UppyContextProvider>
   </div>
 </template>
 
 <script setup>
-import { UppyContextProvider, NewDragDrop, FilesList } from '@uppy/vue'
+import { UppyContextProvider, Dropzone, FilesList } from '@uppy/vue'
 </script>
 
 <script>

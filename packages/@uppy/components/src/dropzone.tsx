@@ -2,7 +2,7 @@ import { h } from 'preact'
 import { useState, useRef, useEffect } from 'preact/hooks'
 import { clsx } from 'clsx'
 import type { Component, InjectedProps } from './types.js'
-import { InjectedOrChildren } from './injected.js'
+import { InjectedOrChildren } from './internal/injected.js'
 
 export type DropzoneProps = {
   width?: string
