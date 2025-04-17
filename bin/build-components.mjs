@@ -117,7 +117,7 @@ const SVELTE_TEMPLATE = `<script lang="ts">
         preactH(%%PreactComponentName%%, {
           ...props,
           ctx,
-          render: (el, node) => {
+          render: (el: Element | null, node: any) => {
             if (el) {
               mount(node, { target: el })
             }
