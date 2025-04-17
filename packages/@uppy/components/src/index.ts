@@ -26,4 +26,4 @@ export {
   type GoogleDrivePickerProps,
 } from './google-drive-picker.jsx'
 
-export type { UppyContext } from './types.js'
+export type { UppyContext, UploadStatus } from './types.js'

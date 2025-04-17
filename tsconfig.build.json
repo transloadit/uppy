@@ -129,6 +129,6 @@
     },
     {
       "path": "./packages/@uppy/vue/tsconfig.build.json"
-    },
+    }
   ]
 }

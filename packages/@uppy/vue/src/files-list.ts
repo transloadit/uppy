@@ -1,8 +1,6 @@
 import { defineComponent, ref, watch, onMounted, h, type PropType } from 'vue'
-import {
-  FilesList as PreactFilesList
-} from '@uppy/components'
-import { h as preactH  } from 'preact'
+import { FilesList as PreactFilesList } from '@uppy/components'
+import { h as preactH } from 'preact'
 import { render as preactRender } from 'preact/compat'
 import type { UppyFile, Meta, Body } from '@uppy/core'
 import { useUppyContext } from './useUppyContext.js'
@@ -13,19 +11,17 @@ export default defineComponent({
   props: {
     editFile: {
       type: Function as PropType<(file: UppyFile<Meta, Body>) => void>,
-      default: undefined
+      default: undefined,
     },
     item: {
       type: Function as PropType<(file: UppyFile<Meta, Body>) => any>,
-      default: undefined
-    }
+      default: undefined,
+    },
   },
   setup(props) {
     const containerRef = ref<HTMLElement | null>(null)
     const ctx = useUppyContext()
     const vueRender = useVueRender()
-
-    console.log(ctx)
 
     function renderFilesList() {
       if (containerRef.value) {
@@ -34,9 +30,9 @@ export default defineComponent({
             editFile: props.editFile,
             item: props.item,
             ctx,
-            render: vueRender
+            render: vueRender,
           }),
-          containerRef.value
+          containerRef.value,
         )
       }
     }
@@ -49,9 +45,9 @@ export default defineComponent({
       () => [props.editFile, props.item],
       () => {
         renderFilesList()
-      }
+      },
     )
 
     return () => h('div', { ref: containerRef })
-  }
+  },
 })

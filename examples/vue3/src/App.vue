@@ -1,5 +1,5 @@
 <template>
-  <div style="width: 30em; margin: 5rem auto;">
+  <div style="width: 30em; margin: 5rem auto">
     <h1>Uppy Vue Demo</h1>
     <UppyContextProvider :uppy="uppy">
       <NewDragDrop />
@@ -22,10 +22,7 @@ const { VITE_TUS_ENDPOINT: TUS_ENDPOINT } = import.meta.env
 
 export default defineComponent({
   computed: {
-    uppy: () =>
-      new Uppy()
-        .use(Tus, { endpoint: TUS_ENDPOINT })
-        .use(Webcam),
+    uppy: () => new Uppy().use(Tus, { endpoint: TUS_ENDPOINT }).use(Webcam),
   },
 })
 </script>

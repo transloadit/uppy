@@ -1,4 +1,11 @@
-import { defineComponent, provide, reactive, ref, onMounted, onBeforeUnmount } from 'vue'
+import {
+  defineComponent,
+  provide,
+  reactive,
+  ref,
+  onMounted,
+  onBeforeUnmount,
+} from 'vue'
 import type { PropType } from 'vue'
 import type Uppy from '@uppy/core'
 
@@ -23,8 +30,8 @@ export const UppyContextProvider = defineComponent({
   props: {
     uppy: {
       type: Object as PropType<Uppy>,
-      required: true
-    }
+      required: true,
+    },
   },
   setup(props, { slots }) {
     const status = ref<UploadStatus>('init')
@@ -33,7 +40,7 @@ export const UppyContextProvider = defineComponent({
     const uppyContext = reactive<UppyContext>({
       uppy: props.uppy,
       status: 'init',
-      progress: 0
+      progress: 0,
     })
 
     // Provide the context immediately instead of in onMounted
@@ -82,7 +89,7 @@ export const UppyContextProvider = defineComponent({
     onMounted(() => {
       if (!props.uppy) {
         throw new Error(
-          'UppyContextProvider: passing `uppy` as a prop is required'
+          'UppyContextProvider: passing `uppy` as a prop is required',
         )
       }
 
@@ -110,7 +117,7 @@ export const UppyContextProvider = defineComponent({
     })
 
     return () => slots.default?.()
-  }
+  },
 })
 
 export default UppyContextProvider

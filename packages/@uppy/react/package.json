@@ -21,6 +21,7 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
+    "@uppy/components": "workspace:^",
     "@uppy/utils": "workspace:^",
     "preact": "^10.5.13",
     "use-sync-external-store": "^1.2.0"
@@ -34,14 +35,13 @@
     "react-dom": "^18.2.0"
   },
   "peerDependencies": {
-    "@uppy/components": "workspace:^",
     "@uppy/core": "workspace:^",
     "@uppy/dashboard": "workspace:^",
     "@uppy/drag-drop": "workspace:^",
     "@uppy/file-input": "workspace:^",
     "@uppy/progress-bar": "workspace:^",
-    "@uppy/status-bar": "workspace:^",
     "@uppy/screen-capture": "workspace:^",
+    "@uppy/status-bar": "workspace:^",
     "@uppy/webcam": "workspace:^",
     "react": "^18.0.0 || ^19.0.0",
     "react-dom": "^18.0.0 || ^19.0.0"
@@ -59,10 +59,10 @@
     "@uppy/progress-bar": {
       "optional": true
     },
-    "@uppy/status-bar": {
+    "@uppy/screen-capture": {
       "optional": true
     },
-    "@uppy/screen-capture": {
+    "@uppy/status-bar": {
       "optional": true
     },
     "@uppy/webcam": {

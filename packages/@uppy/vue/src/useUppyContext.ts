@@ -3,15 +3,14 @@ import { UppyContextSymbol, type UppyContext } from './context-provider.js'
 
 export function useUppyContext(): UppyContext {
   const context = inject<UppyContext>(UppyContextSymbol)
-  console.log('useUppyContext', context)
 
   if (!context) {
     return {
       uppy: undefined,
       status: 'init',
-      progress: 0
+      progress: 0,
     }
   }
-  
+
   return context
-} 
+}
