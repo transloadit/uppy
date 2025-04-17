@@ -6,5 +6,3 @@ export { default as StatusBar } from './status-bar.js'
 export { default as FileInput } from './file-input.js'
 
 export { UppyContextProvider } from './context-provider.js'
-export { default as NewDragDrop } from './new-drag-drop.js'
-export { default as FilesList } from './files-list.js'
