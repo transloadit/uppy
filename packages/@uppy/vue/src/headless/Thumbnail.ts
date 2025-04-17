@@ -1,0 +1,47 @@
+import { defineComponent, ref, watch, onMounted, h } from 'vue'
+import {
+  Thumbnail as PreactThumbnail,
+  type ThumbnailProps,
+} from '@uppy/components'
+import { h as preactH } from 'preact'
+import { render as preactRender } from 'preact/compat'
+import { shallowEqualObjects } from 'shallow-equal'
+import { useUppyContext } from './useUppyContext.js'
+import { useVueRender } from './useVueRender.js'
+
+export default defineComponent<ThumbnailProps>({
+  name: 'Thumbnail',
+  setup(props) {
+    const containerRef = ref<HTMLElement | null>(null)
+    const ctx = useUppyContext()
+    const vueRender = useVueRender()
+
+    function renderThumbnail() {
+      if (containerRef.value) {
+        preactRender(
+          preactH(PreactThumbnail, {
+            ...props,
+            ctx,
+            render: vueRender,
+          } satisfies ThumbnailProps),
+          containerRef.value,
+        )
+      }
+    }
+
+    onMounted(() => {
+      renderThumbnail()
+    })
+
+    watch(
+      () => props,
+      (current, old) => {
+        if (!shallowEqualObjects(current, old)) {
+          renderThumbnail()
+        }
+      },
+    )
+
+    return () => h('div', { ref: containerRef })
+  },
+})
