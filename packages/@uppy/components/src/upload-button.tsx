@@ -8,7 +8,7 @@ export type UploadButtonProps = {
   ctx: UppyContext
 }
 
-function UploadButton(props: UploadButtonProps) {
+export default function UploadButton(props: UploadButtonProps) {
   const { ctx } = props
 
   return (
@@ -103,5 +103,3 @@ function UploadButton(props: UploadButtonProps) {
     </div>
   )
 }
-
-export default UploadButton

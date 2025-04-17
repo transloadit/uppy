@@ -9,7 +9,7 @@ export type ScreenCaptureProps = ScreenCaptureOptions & {
   ctx: UppyContext
 }
 
-function ScreenCapture(props: ScreenCaptureProps) {
+export default function ScreenCapture(props: ScreenCaptureProps) {
   const ref = useRef<HTMLDivElement>(null)
   const { ctx } = props
 
@@ -46,5 +46,3 @@ function ScreenCapture(props: ScreenCaptureProps) {
     </>
   )
 }
-
-export default ScreenCapture

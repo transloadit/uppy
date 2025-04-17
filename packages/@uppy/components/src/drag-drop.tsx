@@ -14,7 +14,7 @@ export type DragDropProps = {
   ctx: UppyContext
 }
 
-function DragDrop(props: DragDropProps) {
+export default function DragDrop(props: DragDropProps) {
   const dropAreaRef = useRef<HTMLDivElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [isDragging, setIsDragging] = useState(() => false)
@@ -139,5 +139,3 @@ function DragDrop(props: DragDropProps) {
     </div>
   )
 }
-
-export default DragDrop

@@ -12,7 +12,7 @@ export type FileInputProps = {
   ctx: UppyContext
 }
 
-function FileInput(props: FileInputProps) {
+export default function FileInput(props: FileInputProps) {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const { multiple, accept, child, className, ctx, render } = props
 
@@ -67,5 +67,3 @@ function FileInput(props: FileInputProps) {
     </div>
   )
 }
-
-export default FileInput

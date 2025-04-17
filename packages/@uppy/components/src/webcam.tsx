@@ -8,7 +8,7 @@ export type WebcamProps = WebcamOptions<Meta, Body> & {
   ctx: UppyContext
 }
 
-function Webcam(props: WebcamProps) {
+export default function Webcam(props: WebcamProps) {
   const ref = useRef<HTMLDivElement>(null)
   const { ctx } = props
 
@@ -47,5 +47,3 @@ function Webcam(props: WebcamProps) {
     </>
   )
 }
-
-export default Webcam

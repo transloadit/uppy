@@ -14,7 +14,7 @@ export type ImageEditorProps = {
   ctx: UppyContext
 } & ImageEditorOptions
 
-function ImageEditor(props: ImageEditorProps) {
+export default function ImageEditor(props: ImageEditorProps) {
   const imageEditorRef = useRef<HTMLDivElement>(null)
   const { ctx, child, render } = props
 
@@ -57,5 +57,3 @@ function ImageEditor(props: ImageEditorProps) {
     </div>
   )
 }
-
-export default ImageEditor

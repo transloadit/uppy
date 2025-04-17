@@ -6,7 +6,7 @@ export type ProviderIconProps = {
   fill?: string
 }
 
-function ProviderIcon(props: ProviderIconProps) {
+export default function ProviderIcon(props: ProviderIconProps) {
   switch (props.provider) {
     case 'device':
       return (
@@ -51,5 +51,3 @@ function ProviderIcon(props: ProviderIconProps) {
       return null
   }
 }
-
-export default ProviderIcon

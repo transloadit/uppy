@@ -16,7 +16,7 @@ export type FilesListProps = {
   render: Render
 }
 
-function FilesList(props: FilesListProps) {
+export default function FilesList(props: FilesListProps) {
   const [files, setFiles] = useState<UppyFile<any, any>[]>(() => [])
   const { ctx, item, render, editFile } = props
 
@@ -101,5 +101,3 @@ function FilesList(props: FilesListProps) {
     </div>
   )
 }
-
-export default FilesList

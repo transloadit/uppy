@@ -17,7 +17,7 @@ export type FilesGridProps = {
   columns?: number
 }
 
-function FilesGrid(props: FilesGridProps) {
+export default function FilesGrid(props: FilesGridProps) {
   const [files, setFiles] = useState<UppyFile<Meta, Body>[]>(() => [])
   const { ctx, item, render, editFile } = props
 
@@ -108,5 +108,3 @@ function FilesGrid(props: FilesGridProps) {
     </div>
   )
 }
-
-export default FilesGrid

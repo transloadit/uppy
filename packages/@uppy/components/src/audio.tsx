@@ -7,7 +7,7 @@ export type AudioProps = AudioOptions & {
   ctx: UppyContext
 }
 
-function Audio(props: AudioProps) {
+export default function Audio(props: AudioProps) {
   const ref = useRef<HTMLDivElement>(null)
   const { ctx } = props
 
@@ -47,5 +47,3 @@ function Audio(props: AudioProps) {
     </>
   )
 }
-
-export default Audio

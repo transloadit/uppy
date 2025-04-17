@@ -10,7 +10,7 @@ export type ThumbnailProps = {
   images?: boolean
 }
 
-function Thumbnail(props: ThumbnailProps) {
+export default function Thumbnail(props: ThumbnailProps) {
   const [objectUrl, setObjectUrl] = useState('')
   const [isImage, setIsImage] = useState(false)
 
@@ -202,5 +202,3 @@ function Thumbnail(props: ThumbnailProps) {
     </div>
   )
 }
-
-export default Thumbnail

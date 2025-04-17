@@ -9,7 +9,7 @@ export type GoogleDrivePickerProps = {
   ctx: UppyContext
 }
 
-function GoogleDrivePicker(props: GoogleDrivePickerProps) {
+export default function GoogleDrivePicker(props: GoogleDrivePickerProps) {
   const ref = useRef<HTMLDivElement>(null)
   const { ctx } = props
 
@@ -37,5 +37,3 @@ function GoogleDrivePicker(props: GoogleDrivePickerProps) {
 
   return <div className="" ref={ref} />
 }
-
-export default GoogleDrivePicker
