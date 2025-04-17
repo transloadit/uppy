@@ -104,9 +104,6 @@
       "path": "./packages/@uppy/utils/tsconfig.json",
     },
     {
-      "path": "./packages/@uppy/vue/tsconfig.json",
-    },
-    {
       "path": "./packages/@uppy/webcam/tsconfig.json",
     },
     {
@@ -128,6 +125,9 @@
     },
     {
       "path": "./packages/@uppy/react/tsconfig.build.json",
+    },
+    {
+      "path": "./packages/@uppy/vue/tsconfig.build.json",
     },
   ],
 }
