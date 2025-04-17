@@ -2,11 +2,9 @@ import { h } from 'preact'
 import { useRef, useEffect } from 'preact/hooks'
 import UppyWebcam, { type WebcamOptions } from '@uppy/webcam'
 import type { Meta, Body } from '@uppy/core'
-import type { UppyContext } from './types.js'
+import type { InjectedProps } from './types.js'
 
-export type WebcamProps = WebcamOptions<Meta, Body> & {
-  ctx: UppyContext
-}
+export type WebcamProps = WebcamOptions<Meta, Body> & InjectedProps
 
 export default function Webcam(props: WebcamProps) {
   const ref = useRef<HTMLDivElement>(null)

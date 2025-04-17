@@ -6,15 +6,13 @@ import type { Meta, Body, UppyEventMap, UppyFile } from '@uppy/core'
 import prettyBytes from 'pretty-bytes'
 import { clsx } from 'clsx'
 import { Thumbnail } from './index.js'
-import type { Component, Render, UppyContext } from './types.js'
+import type { Component, InjectedProps } from './types.js'
 import { InjectedOrChildren } from './injected.js'
 
 export type FilesListProps = {
   editFile?: (file: UppyFile<Meta, Body>) => void
-  ctx: UppyContext
   item?: (file: UppyFile<Meta, Body>) => Component
-  render: Render
-}
+} & InjectedProps
 
 export default function FilesList(props: FilesListProps) {
   const [files, setFiles] = useState<UppyFile<any, any>[]>(() => [])

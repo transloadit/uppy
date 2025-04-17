@@ -3,11 +3,9 @@ import { useRef, useEffect } from 'preact/hooks'
 import UppyScreenCapture, {
   type ScreenCaptureOptions,
 } from '@uppy/screen-capture'
-import type { UppyContext } from './types.js'
+import type { InjectedProps } from './types.js'
 
-export type ScreenCaptureProps = ScreenCaptureOptions & {
-  ctx: UppyContext
-}
+export type ScreenCaptureProps = ScreenCaptureOptions & InjectedProps
 
 export default function ScreenCapture(props: ScreenCaptureProps) {
   const ref = useRef<HTMLDivElement>(null)

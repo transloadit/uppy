@@ -3,16 +3,15 @@ import { h } from 'preact'
 import { useRef, useEffect } from 'preact/hooks'
 import UppyImageEditor, { type ImageEditorOptions } from '@uppy/image-editor'
 import type { UppyFile, Meta, Body } from '@uppy/core'
-import type { Component, Render, UppyContext } from './types.js'
+import type { Component, InjectedProps } from './types.js'
 import { InjectedOrChildren } from './injected.js'
 
 export type ImageEditorProps = {
   file: UppyFile<Meta, Body>
   onSave?: () => void
   child?: () => Component
-  render: Render
-  ctx: UppyContext
-} & ImageEditorOptions
+} & ImageEditorOptions &
+  InjectedProps
 
 export default function ImageEditor(props: ImageEditorProps) {
   const imageEditorRef = useRef<HTMLDivElement>(null)

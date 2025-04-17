@@ -1,7 +1,7 @@
 export { default as Thumbnail, type ThumbnailProps } from './thumbnail.jsx'
 export { default as FilesList, type FilesListProps } from './files-list.jsx'
 export { default as FilesGrid, type FilesGridProps } from './files-grid.jsx'
-export { default as DragDrop, type DragDropProps } from './drag-drop.jsx'
+export { default as Dropzone, type DropzoneProps } from './dropzone.js'
 export {
   default as UploadButton,
   type UploadButtonProps,
@@ -10,7 +10,10 @@ export {
   default as ImageEditor,
   type ImageEditorProps,
 } from './image-editor.jsx'
-export { default as FileInput, type FileInputProps } from './file-input.jsx'
+export {
+  default as NewFileInput,
+  type NewFileInputProps,
+} from './new-file-input.js'
 export {
   default as ProviderIcon,
   type ProviderIconProps,

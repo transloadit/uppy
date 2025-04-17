@@ -2,11 +2,9 @@
 /* eslint-disable react/destructuring-assignment */
 import { h } from 'preact'
 import { clsx } from 'clsx'
-import type { UppyContext } from './types.js'
+import type { InjectedProps } from './types.js'
 
-export type UploadButtonProps = {
-  ctx: UppyContext
-}
+export type UploadButtonProps = InjectedProps
 
 export default function UploadButton(props: UploadButtonProps) {
   const { ctx } = props

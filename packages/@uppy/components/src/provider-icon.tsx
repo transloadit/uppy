@@ -1,10 +1,11 @@
 /* eslint-disable react/destructuring-assignment */
 import { h } from 'preact'
+import type { InjectedProps } from './types'
 
 export type ProviderIconProps = {
   provider: 'device' | 'camera' | 'screen-capture' | 'audio'
   fill?: string
-}
+} & Partial<InjectedProps>
 
 export default function ProviderIcon(props: ProviderIconProps) {
   switch (props.provider) {

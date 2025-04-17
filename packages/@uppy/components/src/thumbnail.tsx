@@ -2,13 +2,14 @@
 import { h } from 'preact'
 import { useState, useEffect } from 'preact/hooks'
 import type { Body, Meta, UppyFile } from '@uppy/core'
+import type { InjectedProps } from './types'
 
 export type ThumbnailProps = {
   file: UppyFile<Meta, Body>
   width?: string
   height?: string
   images?: boolean
-}
+} & Partial<InjectedProps>
 
 export default function Thumbnail(props: ThumbnailProps) {
   const [objectUrl, setObjectUrl] = useState('')

@@ -1,20 +1,18 @@
 import { h } from 'preact'
 import { useState, useRef, useEffect } from 'preact/hooks'
 import { clsx } from 'clsx'
-import type { Component, Render, UppyContext } from './types.js'
+import type { Component, InjectedProps } from './types.js'
 import { InjectedOrChildren } from './injected.js'
 
-export type DragDropProps = {
+export type DropzoneProps = {
   width?: string
   height?: string
   note?: string
   noClick?: boolean
   child?: () => Component
-  render: Render
-  ctx: UppyContext
-}
+} & InjectedProps
 
-export default function DragDrop(props: DragDropProps) {
+export default function Dropzone(props: DropzoneProps) {
   const dropAreaRef = useRef<HTMLDivElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [isDragging, setIsDragging] = useState(() => false)

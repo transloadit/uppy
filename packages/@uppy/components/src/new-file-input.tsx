@@ -1,18 +1,16 @@
 import { h } from 'preact'
 import { useRef } from 'preact/hooks'
-import type { Render, UppyContext, Component } from './types.js'
+import type { Component, InjectedProps } from './types.js'
 import { InjectedOrChildren } from './injected.js'
 
-export type FileInputProps = {
+export type NewFileInputProps = {
   multiple?: boolean
   accept?: string
   child?: () => Component
-  render: Render
   className?: string
-  ctx: UppyContext
-}
+} & InjectedProps
 
-export default function FileInput(props: FileInputProps) {
+export default function NewFileInput(props: NewFileInputProps) {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const { multiple, accept, child, className, ctx, render } = props
 

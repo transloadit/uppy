@@ -6,16 +6,14 @@ import type { Body, Meta, UppyEventMap, UppyFile } from '@uppy/core'
 import prettyBytes from 'pretty-bytes'
 import { clsx } from 'clsx'
 import { Thumbnail } from './index.js'
-import type { Component, Render, UppyContext } from './types.js'
+import type { Component, InjectedProps } from './types.js'
 import { InjectedOrChildren } from './injected.js'
 
 export type FilesGridProps = {
   item?: (file: UppyFile<Meta, Body>) => Component
   editFile?: (file: UppyFile<Meta, Body>) => void
-  render: Render
-  ctx: UppyContext
   columns?: number
-}
+} & InjectedProps
 
 export default function FilesGrid(props: FilesGridProps) {
   const [files, setFiles] = useState<UppyFile<Meta, Body>[]>(() => [])

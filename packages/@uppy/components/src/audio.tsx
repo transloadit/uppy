@@ -1,11 +1,9 @@
 import { h } from 'preact'
 import { useRef, useEffect } from 'preact/hooks'
 import UppyAudio, { type AudioOptions } from '@uppy/audio'
-import type { UppyContext } from './types.js'
+import type { InjectedProps } from './types.js'
 
-export type AudioProps = AudioOptions & {
-  ctx: UppyContext
-}
+export type AudioProps = AudioOptions & InjectedProps
 
 export default function Audio(props: AudioProps) {
   const ref = useRef<HTMLDivElement>(null)
