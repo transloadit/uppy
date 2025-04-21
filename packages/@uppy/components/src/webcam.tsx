@@ -1,4 +1,4 @@
-import { h } from 'preact'
+import { Fragment, h } from 'preact'
 import { useRef, useEffect } from 'preact/hooks'
 import UppyWebcam, { type WebcamOptions } from '@uppy/webcam'
 import type { Meta, Body } from '@uppy/core'
@@ -33,7 +33,7 @@ export default function Webcam(props: WebcamProps) {
   }, [ctx.uppy])
 
   return (
-    <>
+    <Fragment>
       <div id="uppy-webcam-container" ref={ref} />
 
       <style>{`
@@ -42,6 +42,6 @@ export default function Webcam(props: WebcamProps) {
     }
 
 `}</style>
-    </>
+    </Fragment>
   )
 }

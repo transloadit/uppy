@@ -7,7 +7,7 @@ import type { Component, InjectedProps } from './types.js'
 import { InjectedOrChildren } from './internal/injected.js'
 
 export type ImageEditorProps = {
-  file: UppyFile<Meta, Body>
+  file?: UppyFile<Meta, Body>
   onSave?: () => void
   child?: () => Component
 } & ImageEditorOptions &

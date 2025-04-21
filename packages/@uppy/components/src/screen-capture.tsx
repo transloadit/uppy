@@ -1,4 +1,4 @@
-import { h } from 'preact'
+import { Fragment, h } from 'preact'
 import { useRef, useEffect } from 'preact/hooks'
 import UppyScreenCapture, {
   type ScreenCaptureOptions,
@@ -34,13 +34,13 @@ export default function ScreenCapture(props: ScreenCaptureProps) {
   }, [ctx.uppy])
 
   return (
-    <>
+    <Fragment>
       <div id="uppy-screen-capture-container" ref={ref} />
 
       <style>{`
     #uppy-screen-capture-container video {
         position: initial;
     }`}</style>
-    </>
+    </Fragment>
   )
 }
