@@ -24,9 +24,4 @@ export {
   type ScreenCaptureProps,
 } from './screen-capture.jsx'
 export { default as Audio, type AudioProps } from './audio.jsx'
-export {
-  default as GoogleDrivePicker,
-  type GoogleDrivePickerProps,
-} from './google-drive-picker.jsx'
-
 export type { UppyContext, UploadStatus } from './types.js'

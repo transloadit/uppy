@@ -33,7 +33,6 @@
   "peerDependencies": {
     "@uppy/audio": "workspace:^",
     "@uppy/core": "workspace:^",
-    "@uppy/google-drive-picker": "workspace:^",
     "@uppy/image-editor": "workspace:^",
     "@uppy/screen-capture": "workspace:^",
     "@uppy/webcam": "workspace:^",
