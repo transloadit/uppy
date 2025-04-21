@@ -248,7 +248,10 @@ try {
   }
 
   // Copy CSS file
-  const CSS_SOURCE_PATH = path.join(rootDir, 'packages/@uppy/components/dist/styles.css')
+  const CSS_SOURCE_PATH = path.join(
+    rootDir,
+    'packages/@uppy/components/dist/styles.css',
+  )
   const FRAMEWORK_DIRS_FOR_CSS = [
     path.join(rootDir, 'packages/@uppy/react/dist'),
     path.join(rootDir, 'packages/@uppy/vue/dist'),
@@ -267,7 +270,9 @@ try {
       }),
     )
   } catch (cssError) {
-    console.error(`${CSS_SOURCE_PATH} does not exist yet. Run \`yarn build\` first.`)
+    console.error(
+      `${CSS_SOURCE_PATH} does not exist yet. Run \`yarn build\` first.`,
+    )
   }
 
   console.log('\nAll wrappers and index files generated successfully!')
