@@ -8,6 +8,7 @@ import { UIPlugin, Uppy } from '@uppy/core'
 import { ProviderViews } from '@uppy/provider-views'
 import { h, type ComponentChild } from 'preact'
 
+import type { LocaleStrings } from '@uppy/utils/lib/Translator'
 import type {
   UppyFile,
   Body,
@@ -22,7 +23,7 @@ import locale from './locale.js'
 import packageJson from '../package.json'
 
 export type OneDriveOptions = CompanionPluginOptions & {
-  locale?: typeof locale
+  locale?: LocaleStrings<typeof locale>
 }
 
 export default class OneDrive<M extends Meta, B extends Body>

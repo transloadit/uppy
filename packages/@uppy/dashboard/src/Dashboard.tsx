@@ -1,5 +1,6 @@
 import type { ComponentChild, VNode } from 'preact'
 import { UIPlugin } from '@uppy/core'
+import type { LocaleStrings } from '@uppy/utils/lib/Translator'
 import type {
   Body,
   Meta,
@@ -176,7 +177,7 @@ interface DashboardMiscOptions<M extends Meta, B extends Body>
   thumbnailWidth?: number
   trigger?: string | Element | null
   waitForThumbnailsBeforeUpload?: boolean
-  locale?: typeof locale & typeof StatusBarLocale
+  locale?: LocaleStrings<typeof locale> & typeof StatusBarLocale
 }
 
 export type DashboardOptions<

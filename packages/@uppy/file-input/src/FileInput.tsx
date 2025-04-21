@@ -1,6 +1,7 @@
 import { h, type ComponentChild } from 'preact'
 
 import { UIPlugin } from '@uppy/core'
+import type { LocaleStrings } from '@uppy/utils/lib/Translator'
 import type {
   Uppy,
   UIPluginOptions,
@@ -18,7 +19,7 @@ import locale from './locale.js'
 export interface FileInputOptions extends UIPluginOptions {
   pretty?: boolean
   inputName?: string
-  locale?: typeof locale
+  locale?: LocaleStrings<typeof locale>
 }
 const defaultOptions = {
   pretty: true,

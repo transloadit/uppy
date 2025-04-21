@@ -12,6 +12,7 @@ import isDragDropSupported from '@uppy/utils/lib/isDragDropSupported'
 import getDroppedFiles from '@uppy/utils/lib/getDroppedFiles'
 import { h, type ComponentChild } from 'preact'
 
+import type { LocaleStrings } from '@uppy/utils/lib/Translator'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'
@@ -26,7 +27,7 @@ export interface DragDropOptions extends UIPluginOptions {
   onDragOver?: (event: DragEvent) => void
   onDragLeave?: (event: DragEvent) => void
   onDrop?: (event: DragEvent) => void
-  locale?: typeof locale
+  locale?: LocaleStrings<typeof locale>
 }
 
 const defaultOptions = {
