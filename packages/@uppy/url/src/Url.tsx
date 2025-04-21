@@ -7,6 +7,7 @@ import {
 import toArray from '@uppy/utils/lib/toArray'
 import type { Meta, Body } from '@uppy/core'
 import type { TagFile } from '@uppy/utils/lib/UppyFile'
+import type { LocaleStrings } from '@uppy/utils/lib/Translator'
 import UrlUI from './UrlUI.jsx'
 import forEachDroppedOrPastedUrl from './utils/forEachDroppedOrPastedUrl.js'
 
@@ -71,7 +72,9 @@ type MetaResponse = {
   statusCode: number
 }
 
-export type UrlOptions = CompanionPluginOptions & { locale?: typeof locale }
+export type UrlOptions = CompanionPluginOptions & {
+  locale?: LocaleStrings<typeof locale>
+}
 
 export default class Url<M extends Meta, B extends Body> extends UIPlugin<
   UrlOptions,

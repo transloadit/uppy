@@ -9,6 +9,7 @@ import type {
   MinimalRequiredUppyFile,
 } from '@uppy/core'
 
+import type { LocaleStrings } from '@uppy/utils/lib/Translator'
 import getFileTypeExtension from '@uppy/utils/lib/getFileTypeExtension'
 import supportsMediaRecorder from './supportsMediaRecorder.js'
 import RecordingScreen from './RecordingScreen.jsx'
@@ -20,7 +21,7 @@ import packageJson from '../package.json'
 
 export interface AudioOptions extends UIPluginOptions {
   showAudioSourceDropdown?: boolean
-  locale?: typeof locale
+  locale?: LocaleStrings<typeof locale>
 }
 interface AudioState {
   audioReady: boolean
