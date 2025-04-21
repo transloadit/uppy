@@ -13,8 +13,7 @@ import {
 } from '@uppy/react'
 
 import './app.css'
-// eslint-disable-next-line import/no-extraneous-dependencies
-import '@uppy/components/dist/styles.css'
+import '@uppy/react/dist/styles.css'
 
 // function Modal({ open, onClose, children }) {
 //   return (

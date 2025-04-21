@@ -111,6 +111,7 @@
   "scripts": {
     "start:companion": "bash bin/companion.sh",
     "start:companion:with-loadbalancer": "e2e/start-companion-with-load-balancer.mjs",
+    "build:components": "node bin/build-components.mjs",
     "build:bundle": "yarn node ./bin/build-bundle.mjs",
     "build:clean": "cp .gitignore .gitignore.bak && printf '!node_modules\n!**/node_modules/**/*\n' >> .gitignore; git clean -Xfd packages e2e .parcel-cache coverage; mv .gitignore.bak .gitignore",
     "build:companion": "yarn workspace @uppy/companion build",

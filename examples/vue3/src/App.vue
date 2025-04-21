@@ -27,4 +27,4 @@ export default defineComponent({
 })
 </script>
 
-<style src="@uppy/components/dist/styles.css"></style>
+<style src="@uppy/vue/dist/styles.css"></style>

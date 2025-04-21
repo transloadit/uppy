@@ -2,7 +2,7 @@
   import Uppy from '@uppy/core'
   import { UppyContextProvider, Dropzone, FilesList } from '@uppy/svelte'
 
-  import '@uppy/components/dist/styles.css'
+  import '@uppy/svelte/dist/styles.css'
 
   const uppy = new Uppy()
 </script>

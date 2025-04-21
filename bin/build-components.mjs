@@ -247,6 +247,29 @@ try {
     console.log(`Exporting Svelte components from ${SVELTE_DIR}`)
   }
 
+  // Copy CSS file
+  const CSS_SOURCE_PATH = path.join(rootDir, 'packages/@uppy/components/dist/styles.css')
+  const FRAMEWORK_DIRS_FOR_CSS = [
+    path.join(rootDir, 'packages/@uppy/react/dist'),
+    path.join(rootDir, 'packages/@uppy/vue/dist'),
+    path.join(rootDir, 'packages/@uppy/svelte/dist'),
+  ]
+
+  try {
+    await fs.access(CSS_SOURCE_PATH) // Check if source CSS exists
+    await Promise.all(
+      FRAMEWORK_DIRS_FOR_CSS.map(async (destDir) => {
+        if (!existsSync(destDir)) {
+          await fs.mkdir(destDir, { recursive: true })
+        }
+        const destPath = path.join(destDir, 'styles.css')
+        await fs.copyFile(CSS_SOURCE_PATH, destPath)
+      }),
+    )
+  } catch (cssError) {
+    console.error(`${CSS_SOURCE_PATH} does not exist yet. Run \`yarn build\` first.`)
+  }
+
   console.log('\nAll wrappers and index files generated successfully!')
 } catch (error) {
   console.error('Error generating wrappers:', error)
