@@ -1,24 +1,30 @@
-import { h } from 'preact'
-import { useEffect, useRef, useState } from 'preact/hooks'
-import UppyWebcam, { type WebcamOptions, type WebcamState } from '@uppy/webcam'
+import { Fragment, h } from 'preact'
+import { useEffect, useMemo, useRef, useState } from 'preact/hooks'
+import UppyWebcam, {
+  type WebcamOptions,
+  type WebcamState,
+  defaultOptions,
+} from '@uppy/webcam'
 import type { Meta, Body, UppyEventMap } from '@uppy/core'
 import type { InjectedProps } from './types.js'
 
 export type WebcamProps = WebcamOptions<Meta, Body> & InjectedProps
 
 export default function Webcam(props: WebcamProps) {
-  const { ctx, mirror, modes } = props
+  const options = useMemo(() => ({ ...defaultOptions, ...props }), [props])
+  const { ctx, mirror, modes } = options
   const videoRef = useRef<HTMLVideoElement>(null)
   const plugin = ctx.uppy?.getPlugin<UppyWebcam<any, any>>('Webcam')
+  if (plugin) {
+    plugin.getVideoElement = () => videoRef.current
+  }
   const [state, setState] = useState<WebcamState | undefined>(
     plugin?.getPluginState(),
   )
 
   useEffect(() => {
     if (!plugin) {
-      ctx.uppy?.use(UppyWebcam, {
-        ...props,
-      })
+      ctx.uppy?.use(UppyWebcam, options)
     }
     // Start the camera if it's not active
     if (plugin && !plugin.webcamActive) {
@@ -31,11 +37,11 @@ export default function Webcam(props: WebcamProps) {
         ctx.uppy?.removePlugin(plugin as any)
       }
     }
-  }, [ctx.uppy, props, plugin])
+  }, [ctx.uppy, options, plugin])
 
   useEffect(() => {
-    ctx.uppy?.getPlugin('Webcam')?.setOptions(props)
-  }, [ctx.uppy, props])
+    ctx.uppy?.getPlugin('Webcam')?.setOptions(options)
+  }, [ctx.uppy, options])
 
   // Listen to state updates
   useEffect(() => {
@@ -56,19 +62,8 @@ export default function Webcam(props: WebcamProps) {
 
   // Connect video stream to our element when ready
   useEffect(() => {
-    if (state?.cameraReady && videoRef.current) {
-      if (plugin?.stream) {
-        try {
-          if (videoRef.current.srcObject !== plugin.stream) {
-            videoRef.current.srcObject = plugin.stream
-          }
-        } catch (err) {
-          // Creating object URLs from MediaStream is deprecated but kept as fallback
-          // Using a type assertion to avoid type checking for this fallback case
-          const blobUrl = URL.createObjectURL(plugin.stream)
-          videoRef.current.src = blobUrl
-        }
-      }
+    if (state?.cameraReady && videoRef.current && plugin) {
+      videoRef.current.srcObject = plugin.stream
     }
   }, [state?.cameraReady, ctx.uppy, plugin])
 
@@ -129,7 +124,7 @@ export default function Webcam(props: WebcamProps) {
           Take photo
         </button>
         {modes && modes.includes('video-only') && (
-          <>
+          <Fragment>
             <button
               className={`uppy:flex-1 uppy:py-2 uppy:px-4 uppy:font-medium uppy:rounded-md uppy:transition-colors uppy:focus:outline-none ${
                 state.isRecording ?
@@ -158,7 +153,7 @@ export default function Webcam(props: WebcamProps) {
             >
               Stop
             </button>
-          </>
+          </Fragment>
         )}
       </div>
     </div>

@@ -79,7 +79,7 @@ export interface WebcamOptions<M extends Meta, B extends Body>
 export interface WebcamState {
   hasCamera: boolean
   cameraReady: boolean
-  cameraError: null
+  cameraError: null | Error
   recordingLengthSeconds: number
   videoSources: MediaDeviceInfo[]
   currentDeviceId: string | MediaStreamTrack | null | undefined
@@ -89,7 +89,7 @@ export interface WebcamState {
 }
 
 // set default options
-const defaultOptions = {
+export const defaultOptions = {
   onBeforeSnapshot: () => Promise.resolve(),
   countdown: false,
   modes: ['video-audio', 'video-only', 'audio-only', 'picture'] as any,
