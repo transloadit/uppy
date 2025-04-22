@@ -76,7 +76,7 @@ export interface WebcamOptions<M extends Meta, B extends Body>
   locale?: typeof locale
 }
 
-interface WebcamState {
+export interface WebcamState {
   hasCamera: boolean
   cameraReady: boolean
   cameraError: null
@@ -126,9 +126,9 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
 
   private icon: () => h.JSX.Element
 
-  private webcamActive
+  public webcamActive
 
-  private stream: MediaStream | null = null
+  public stream: MediaStream | null = null
 
   private recorder: MediaRecorder | null = null
 
