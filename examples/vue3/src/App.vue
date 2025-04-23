@@ -3,7 +3,13 @@
     <h1>Uppy Vue Demo</h1>
     <UppyContextProvider :uppy="uppy">
       <Dropzone />
-      <FilesList />
+      <FilesList>
+        <template v-slot:item="{ file }">
+          <div class="my-custom-item">
+            Custom: {{ file.name }} ({{ file.size }})
+          </div>
+        </template>
+      </FilesList>
     </UppyContextProvider>
   </div>
 </template>
@@ -16,7 +22,7 @@ import { UppyContextProvider, Dropzone, FilesList } from '@uppy/vue'
 import Uppy from '@uppy/core'
 import Tus from '@uppy/tus'
 import Webcam from '@uppy/webcam'
-import { defineComponent } from 'vue'
+import { defineComponent, h } from 'vue'
 
 const { VITE_TUS_ENDPOINT: TUS_ENDPOINT } = import.meta.env
 

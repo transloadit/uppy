@@ -1,7 +1,14 @@
-import { defineComponent, ref, watch, onMounted, h } from 'vue'
+import {
+  defineComponent,
+  ref,
+  watch,
+  onMounted,
+  h,
+  type SetupContext,
+} from 'vue'
 import {
   FilesList as PreactFilesList,
-  type FilesListProps,
+  type FilesListProps as PreactFilesListProps,
 } from '@uppy/components'
 import { h as preactH } from 'preact'
 import { render as preactRender } from 'preact/compat'
@@ -9,9 +16,9 @@ import { shallowEqualObjects } from 'shallow-equal'
 import { useUppyContext } from './useUppyContext.js'
 import { useVueRender } from './useVueRender.js'
 
-export default defineComponent<FilesListProps>({
+export default defineComponent<PreactFilesListProps>({
   name: 'FilesList',
-  setup(props) {
+  setup(props, { slots }: SetupContext) {
     const containerRef = ref<HTMLElement | null>(null)
     const ctx = useUppyContext()
     const vueRender = useVueRender()
@@ -21,9 +28,11 @@ export default defineComponent<FilesListProps>({
         preactRender(
           preactH(PreactFilesList, {
             ...props,
+            item:
+              slots.item ? (file: any) => slots.item?.({ file }) : undefined,
             ctx,
             render: vueRender,
-          } satisfies FilesListProps),
+          } satisfies PreactFilesListProps),
           containerRef.value,
         )
       }
@@ -40,6 +49,7 @@ export default defineComponent<FilesListProps>({
           renderFilesList()
         }
       },
+      { deep: false },
     )
 
     return () => h('div', { ref: containerRef })
