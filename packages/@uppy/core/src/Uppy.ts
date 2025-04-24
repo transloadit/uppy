@@ -2243,6 +2243,11 @@ export class Uppy<
       this.log(
         `Not setting result for an upload that has been removed: ${uploadID}`,
       )
+      result = {
+        successful: [],
+        failed: [],
+        uploadID,
+      }
     }
     return result
   }
