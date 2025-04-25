@@ -4,14 +4,12 @@ import { h as preactH } from 'preact'
 import { render as preactRender } from 'preact/compat'
 import { shallowEqualObjects } from 'shallow-equal'
 import { useUppyContext } from './useUppyContext.js'
-import { useVueRender } from './useVueRender.js'
 
 export default defineComponent<WebcamProps>({
   name: 'Webcam',
   setup(props) {
     const containerRef = ref<HTMLElement | null>(null)
     const ctx = useUppyContext()
-    const vueRender = useVueRender()
 
     function renderWebcam() {
       if (containerRef.value) {
@@ -19,7 +17,6 @@ export default defineComponent<WebcamProps>({
           preactH(PreactWebcam, {
             ...props,
             ctx,
-            render: vueRender,
           } satisfies WebcamProps),
           containerRef.value,
         )

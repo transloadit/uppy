@@ -25,6 +25,7 @@
     "dist"
   ],
   "exports": {
+    "./dist/styles.css": "./dist/styles.css",
     ".": {
       "types": "./dist/index.d.ts",
       "svelte": "./dist/index.js"

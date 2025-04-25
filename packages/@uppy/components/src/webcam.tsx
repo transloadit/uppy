@@ -6,9 +6,12 @@ import UppyWebcam, {
   defaultOptions,
 } from '@uppy/webcam'
 import type { Meta, Body, UppyEventMap } from '@uppy/core'
-import type { InjectedProps } from './types.js'
+import type { UppyContext } from './types'
 
-export type WebcamProps = WebcamOptions<Meta, Body> & InjectedProps
+export type WebcamProps = WebcamOptions<Meta, Body> & {
+  // eslint-disable-next-line react/no-unused-prop-types
+  ctx: UppyContext
+}
 
 export default function Webcam(props: WebcamProps) {
   const options = useMemo(() => ({ ...defaultOptions, ...props }), [props])

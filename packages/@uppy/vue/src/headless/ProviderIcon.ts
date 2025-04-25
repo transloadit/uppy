@@ -7,14 +7,12 @@ import { h as preactH } from 'preact'
 import { render as preactRender } from 'preact/compat'
 import { shallowEqualObjects } from 'shallow-equal'
 import { useUppyContext } from './useUppyContext.js'
-import { useVueRender } from './useVueRender.js'
 
 export default defineComponent<ProviderIconProps>({
   name: 'ProviderIcon',
   setup(props) {
     const containerRef = ref<HTMLElement | null>(null)
     const ctx = useUppyContext()
-    const vueRender = useVueRender()
 
     function renderProviderIcon() {
       if (containerRef.value) {
@@ -22,7 +20,6 @@ export default defineComponent<ProviderIconProps>({
           preactH(PreactProviderIcon, {
             ...props,
             ctx,
-            render: vueRender,
           } satisfies ProviderIconProps),
           containerRef.value,
         )

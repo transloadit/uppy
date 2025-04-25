@@ -5,18 +5,16 @@ import { useState, useEffect } from 'preact/hooks'
 import type { Meta, Body, UppyEventMap, UppyFile } from '@uppy/core'
 import prettyBytes from 'pretty-bytes'
 import { clsx } from 'clsx'
-import { Thumbnail } from './index.js'
-import type { Component, InjectedProps } from './types.js'
-import { InjectedOrChildren } from './internal/injected.js'
+import { Thumbnail, type UppyContext } from './index.js'
 
 export type FilesListProps = {
   editFile?: (file: UppyFile<Meta, Body>) => void
-  item?: (file: UppyFile<Meta, Body>) => Component
-} & InjectedProps
+  ctx: UppyContext
+}
 
 export default function FilesList(props: FilesListProps) {
   const [files, setFiles] = useState<UppyFile<any, any>[]>(() => [])
-  const { ctx, item, render, editFile } = props
+  const { ctx, editFile } = props
 
   useEffect(() => {
     const onStateUpdate: UppyEventMap<any, any>['state-update'] = (
@@ -45,16 +43,10 @@ export default function FilesList(props: FilesListProps) {
                   <Thumbnail width="32px" height="32px" file={file} />
                 </div>
 
-                <InjectedOrChildren
-                  render={render}
-                  item={() => item?.(file)}
-                  id={file.id}
-                >
-                  <p className="uppy:truncate">{file.name}</p>
-                  <p className="uppy:text-gray-500 uppy:tabular-nums uppy:min-w-18 uppy:text-right uppy:ml-auto">
-                    {prettyBytes(file.size || 0)}
-                  </p>
-                </InjectedOrChildren>
+                <p className="uppy:truncate">{file.name}</p>
+                <p className="uppy:text-gray-500 uppy:tabular-nums uppy:min-w-18 uppy:text-right uppy:ml-auto">
+                  {prettyBytes(file.size || 0)}
+                </p>
 
                 <Fragment>
                   {editFile && (

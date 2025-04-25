@@ -7,10 +7,6 @@ export {
   type UploadButtonProps,
 } from './upload-button.jsx'
 export {
-  default as ImageEditor,
-  type ImageEditorProps,
-} from './image-editor.jsx'
-export {
   default as NewFileInput,
   type NewFileInputProps,
 } from './new-file-input.js'
@@ -19,9 +15,4 @@ export {
   type ProviderIconProps,
 } from './provider-icon.jsx'
 export { default as Webcam, type WebcamProps } from './webcam.jsx'
-export {
-  default as ScreenCapture,
-  type ScreenCaptureProps,
-} from './screen-capture.jsx'
-export { default as Audio, type AudioProps } from './audio.jsx'
 export type { UppyContext, UploadStatus } from './types.js'

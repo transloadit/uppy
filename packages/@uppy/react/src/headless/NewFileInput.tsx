@@ -6,14 +6,10 @@ import {
 import { h as preactH } from 'preact'
 import { render as preactRender } from 'preact/compat'
 import { UppyContext } from './UppyContextProvider.js'
-import useReactRender from './useReactRender.js'
 
-export default function NewFileInput(
-  props: Omit<NewFileInputProps, 'ctx' | 'render'>,
-) {
+export default function NewFileInput(props: NewFileInputProps) {
   const ref = useRef(null)
   const ctx = useContext(UppyContext)
-  const reactRender = useReactRender()
 
   useEffect(() => {
     if (ref.current) {
@@ -21,12 +17,11 @@ export default function NewFileInput(
         preactH(PreactNewFileInput, {
           ...props,
           ctx,
-          render: reactRender,
         } satisfies NewFileInputProps),
         ref.current,
       )
     }
-  }, [ctx, props, reactRender])
+  }, [ctx, props])
 
   return <div ref={ref} />
 }

@@ -6,14 +6,10 @@ import {
 import { h as preactH } from 'preact'
 import { render as preactRender } from 'preact/compat'
 import { UppyContext } from './UppyContextProvider.js'
-import useReactRender from './useReactRender.js'
 
-export default function FilesGrid(
-  props: Omit<FilesGridProps, 'ctx' | 'render'>,
-) {
+export default function FilesGrid(props: FilesGridProps) {
   const ref = useRef(null)
   const ctx = useContext(UppyContext)
-  const reactRender = useReactRender()
 
   useEffect(() => {
     if (ref.current) {
@@ -21,12 +17,11 @@ export default function FilesGrid(
         preactH(PreactFilesGrid, {
           ...props,
           ctx,
-          render: reactRender,
         } satisfies FilesGridProps),
         ref.current,
       )
     }
-  }, [ctx, props, reactRender])
+  }, [ctx, props])
 
   return <div ref={ref} />
 }

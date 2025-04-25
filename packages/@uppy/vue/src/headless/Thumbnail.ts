@@ -7,14 +7,12 @@ import { h as preactH } from 'preact'
 import { render as preactRender } from 'preact/compat'
 import { shallowEqualObjects } from 'shallow-equal'
 import { useUppyContext } from './useUppyContext.js'
-import { useVueRender } from './useVueRender.js'
 
 export default defineComponent<ThumbnailProps>({
   name: 'Thumbnail',
   setup(props) {
     const containerRef = ref<HTMLElement | null>(null)
     const ctx = useUppyContext()
-    const vueRender = useVueRender()
 
     function renderThumbnail() {
       if (containerRef.value) {
@@ -22,7 +20,6 @@ export default defineComponent<ThumbnailProps>({
           preactH(PreactThumbnail, {
             ...props,
             ctx,
-            render: vueRender,
           } satisfies ThumbnailProps),
           containerRef.value,
         )

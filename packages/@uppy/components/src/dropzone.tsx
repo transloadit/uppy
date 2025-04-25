@@ -1,22 +1,21 @@
 import { h } from 'preact'
 import { useState, useRef, useEffect } from 'preact/hooks'
 import { clsx } from 'clsx'
-import type { Component, InjectedProps } from './types.js'
-import { InjectedOrChildren } from './internal/injected.js'
+import type { UppyContext } from './types.js'
 
 export type DropzoneProps = {
   width?: string
   height?: string
   note?: string
   noClick?: boolean
-  child?: () => Component
-} & InjectedProps
+  ctx: UppyContext
+}
 
 export default function Dropzone(props: DropzoneProps) {
   const dropAreaRef = useRef<HTMLDivElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [isDragging, setIsDragging] = useState(() => false)
-  const { width, height, note, noClick, child, render, ctx } = props
+  const { width, height, note, noClick, ctx } = props
 
   useEffect(() => {
     const element = dropAreaRef.current
@@ -120,15 +119,9 @@ export default function Dropzone(props: DropzoneProps) {
         )}
       >
         <div className="uppy:flex uppy:flex-col uppy:items-center uppy:justify-center uppy:h-full uppy:space-y-3">
-          <InjectedOrChildren
-            render={render}
-            item={() => child?.()}
-            id="drag-drop"
-          >
-            <p className="uppy:text-gray-600">
-              Drop files here or click to add them
-            </p>
-          </InjectedOrChildren>
+          <p className="uppy:text-gray-600">
+            Drop files here or click to add them
+          </p>
         </div>
         {note ?
           <div className="uppy:text-sm uppy:text-gray-500">{note}</div>

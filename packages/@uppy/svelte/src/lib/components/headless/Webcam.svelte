@@ -5,11 +5,11 @@
     type WebcamProps,
     type UppyContext,
   } from '@uppy/components'
-  import { h as preactH } from 'preact'
-  import { render as preactRender } from 'preact/compat'
+import { h as preactH } from 'preact'
+import { render as preactRender } from 'preact/compat'
   import { UppyContextKey } from './UppyContextProvider.svelte'
 
-  const props: Omit<WebcamProps, 'ctx' | 'render'> = $props()
+  const props: WebcamProps = $props()
   const ctx = getContext<UppyContext>(UppyContextKey)
   let container: HTMLElement
 
@@ -19,11 +19,6 @@
         preactH(PreactWebcam, {
           ...props,
           ctx,
-          render: (el: Element | null, node: any) => {
-            if (el) {
-              mount(node, { target: el })
-            }
-          },
         } satisfies WebcamProps),
         container,
       )

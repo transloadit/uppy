@@ -27,12 +27,10 @@ import {
 import { h as preactH } from 'preact'
 import { render as preactRender } from 'preact/compat'
 import { UppyContext } from './UppyContextProvider.js'
-import useReactRender from './useReactRender.js'
 
-export default function %%ComponentName%%(props: Omit<%%PropsTypeName%%, 'ctx' | 'render'>) {
+export default function %%ComponentName%%(props: %%PropsTypeName%%) {
   const ref = useRef(null)
   const ctx = useContext(UppyContext)
-  const reactRender = useReactRender()
 
   useEffect(() => {
     if (ref.current) {
@@ -40,12 +38,11 @@ export default function %%ComponentName%%(props: Omit<%%PropsTypeName%%, 'ctx' |
         preactH(%%PreactComponentName%%, {
           ...props,
           ctx,
-          render: reactRender,
         } satisfies %%PropsTypeName%%),
         ref.current,
       )
     }
-  }, [ctx, props, reactRender])
+  }, [ctx, props])
 
   return <div ref={ref} />
 }
@@ -60,14 +57,12 @@ import { h as preactH } from 'preact'
 import { render as preactRender } from 'preact/compat'
 import { shallowEqualObjects } from 'shallow-equal'
 import { useUppyContext } from './useUppyContext.js'
-import { useVueRender } from './useVueRender.js'
 
 export default defineComponent<%%PropsTypeName%%>({
   name: '%%ComponentName%%',
   setup(props) {
     const containerRef = ref<HTMLElement | null>(null)
     const ctx = useUppyContext()
-    const vueRender = useVueRender()
 
     function render%%ComponentName%%() {
       if (containerRef.value) {
@@ -75,7 +70,6 @@ export default defineComponent<%%PropsTypeName%%>({
           preactH(%%PreactComponentName%%, {
             ...props,
             ctx,
-            render: vueRender,
           } satisfies %%PropsTypeName%%),
           containerRef.value,
         )
@@ -107,11 +101,11 @@ const SVELTE_TEMPLATE = `<script lang="ts">
     type %%PropsTypeName%%,
     type UppyContext,
   } from '@uppy/components'
-  import { h as preactH } from 'preact'
-  import { render as preactRender } from 'preact/compat'
+import { h as preactH } from 'preact'
+import { render as preactRender } from 'preact/compat'
   import { UppyContextKey } from './UppyContextProvider.svelte'
 
-  const props: Omit<%%PropsTypeName%%, 'ctx' | 'render'> = $props()
+  const props: %%PropsTypeName%% = $props()
   const ctx = getContext<UppyContext>(UppyContextKey)
   let container: HTMLElement
 
@@ -121,11 +115,6 @@ const SVELTE_TEMPLATE = `<script lang="ts">
         preactH(%%PreactComponentName%%, {
           ...props,
           ctx,
-          render: (el: Element | null, node: any) => {
-            if (el) {
-              mount(node, { target: el })
-            }
-          },
         } satisfies %%PropsTypeName%%),
         container,
       )

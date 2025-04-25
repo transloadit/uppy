@@ -1,11 +1,13 @@
 /* eslint-disable react/destructuring-assignment */
 import { h } from 'preact'
-import type { InjectedProps } from './types'
+import type { UppyContext } from './types'
 
 export type ProviderIconProps = {
   provider: 'device' | 'camera' | 'screen-capture' | 'audio'
   fill?: string
-} & Partial<InjectedProps>
+  // eslint-disable-next-line react/no-unused-prop-types
+  ctx?: UppyContext
+}
 
 export default function ProviderIcon(props: ProviderIconProps) {
   switch (props.provider) {
