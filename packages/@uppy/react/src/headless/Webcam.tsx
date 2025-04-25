@@ -4,7 +4,7 @@ import { h as preactH } from 'preact'
 import { render as preactRender } from 'preact/compat'
 import { UppyContext } from './UppyContextProvider.js'
 
-export default function Webcam(props: WebcamProps) {
+export default function Webcam(props: Omit<WebcamProps, 'ctx'>) {
   const ref = useRef(null)
   const ctx = useContext(UppyContext)
 

@@ -28,7 +28,7 @@ import { h as preactH } from 'preact'
 import { render as preactRender } from 'preact/compat'
 import { UppyContext } from './UppyContextProvider.js'
 
-export default function %%ComponentName%%(props: %%PropsTypeName%%) {
+export default function %%ComponentName%%(props: Omit<%%PropsTypeName%%, 'ctx'>) {
   const ref = useRef(null)
   const ctx = useContext(UppyContext)
 
@@ -58,7 +58,7 @@ import { render as preactRender } from 'preact/compat'
 import { shallowEqualObjects } from 'shallow-equal'
 import { useUppyContext } from './useUppyContext.js'
 
-export default defineComponent<%%PropsTypeName%%>({
+export default defineComponent<Omit<%%PropsTypeName%%, 'ctx'>>({
   name: '%%ComponentName%%',
   setup(props) {
     const containerRef = ref<HTMLElement | null>(null)
@@ -105,7 +105,7 @@ import { h as preactH } from 'preact'
 import { render as preactRender } from 'preact/compat'
   import { UppyContextKey } from './UppyContextProvider.svelte'
 
-  const props: %%PropsTypeName%% = $props()
+  const props: Omit<%%PropsTypeName%%, 'ctx'> = $props()
   const ctx = getContext<UppyContext>(UppyContextKey)
   let container: HTMLElement
 

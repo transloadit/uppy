@@ -8,7 +8,7 @@ import { render as preactRender } from 'preact/compat'
 import { shallowEqualObjects } from 'shallow-equal'
 import { useUppyContext } from './useUppyContext.js'
 
-export default defineComponent<ThumbnailProps>({
+export default defineComponent<Omit<ThumbnailProps, 'ctx'>>({
   name: 'Thumbnail',
   setup(props) {
     const containerRef = ref<HTMLElement | null>(null)

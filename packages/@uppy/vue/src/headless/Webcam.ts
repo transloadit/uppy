@@ -5,7 +5,7 @@ import { render as preactRender } from 'preact/compat'
 import { shallowEqualObjects } from 'shallow-equal'
 import { useUppyContext } from './useUppyContext.js'
 
-export default defineComponent<WebcamProps>({
+export default defineComponent<Omit<WebcamProps, 'ctx'>>({
   name: 'Webcam',
   setup(props) {
     const containerRef = ref<HTMLElement | null>(null)

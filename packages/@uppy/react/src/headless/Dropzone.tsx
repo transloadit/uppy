@@ -7,7 +7,7 @@ import { h as preactH } from 'preact'
 import { render as preactRender } from 'preact/compat'
 import { UppyContext } from './UppyContextProvider.js'
 
-export default function Dropzone(props: DropzoneProps) {
+export default function Dropzone(props: Omit<DropzoneProps, 'ctx'>) {
   const ref = useRef(null)
   const ctx = useContext(UppyContext)
 

@@ -9,7 +9,7 @@ import { h as preactH } from 'preact'
 import { render as preactRender } from 'preact/compat'
   import { UppyContextKey } from './UppyContextProvider.svelte'
 
-  const props: FilesGridProps = $props()
+  const props: Omit<FilesGridProps, 'ctx'> = $props()
   const ctx = getContext<UppyContext>(UppyContextKey)
   let container: HTMLElement
 

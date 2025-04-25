@@ -8,7 +8,7 @@ import { render as preactRender } from 'preact/compat'
 import { shallowEqualObjects } from 'shallow-equal'
 import { useUppyContext } from './useUppyContext.js'
 
-export default defineComponent<FilesGridProps>({
+export default defineComponent<Omit<FilesGridProps, 'ctx'>>({
   name: 'FilesGrid',
   setup(props) {
     const containerRef = ref<HTMLElement | null>(null)

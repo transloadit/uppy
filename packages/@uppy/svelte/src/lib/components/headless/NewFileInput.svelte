@@ -9,7 +9,7 @@ import { h as preactH } from 'preact'
 import { render as preactRender } from 'preact/compat'
   import { UppyContextKey } from './UppyContextProvider.svelte'
 
-  const props: NewFileInputProps = $props()
+  const props: Omit<NewFileInputProps, 'ctx'> = $props()
   const ctx = getContext<UppyContext>(UppyContextKey)
   let container: HTMLElement
 

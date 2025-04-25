@@ -7,7 +7,7 @@ import { h as preactH } from 'preact'
 import { render as preactRender } from 'preact/compat'
 import { UppyContext } from './UppyContextProvider.js'
 
-export default function Thumbnail(props: ThumbnailProps) {
+export default function Thumbnail(props: Omit<ThumbnailProps, 'ctx'>) {
   const ref = useRef(null)
   const ctx = useContext(UppyContext)
 

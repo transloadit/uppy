@@ -8,7 +8,7 @@ import { render as preactRender } from 'preact/compat'
 import { shallowEqualObjects } from 'shallow-equal'
 import { useUppyContext } from './useUppyContext.js'
 
-export default defineComponent<DropzoneProps>({
+export default defineComponent<Omit<DropzoneProps, 'ctx'>>({
   name: 'Dropzone',
   setup(props) {
     const containerRef = ref<HTMLElement | null>(null)

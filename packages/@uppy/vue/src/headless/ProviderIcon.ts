@@ -8,7 +8,7 @@ import { render as preactRender } from 'preact/compat'
 import { shallowEqualObjects } from 'shallow-equal'
 import { useUppyContext } from './useUppyContext.js'
 
-export default defineComponent<ProviderIconProps>({
+export default defineComponent<Omit<ProviderIconProps, 'ctx'>>({
   name: 'ProviderIcon',
   setup(props) {
     const containerRef = ref<HTMLElement | null>(null)

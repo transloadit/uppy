@@ -7,7 +7,7 @@ import { h as preactH } from 'preact'
 import { render as preactRender } from 'preact/compat'
 import { UppyContext } from './UppyContextProvider.js'
 
-export default function FilesList(props: FilesListProps) {
+export default function FilesList(props: Omit<FilesListProps, 'ctx'>) {
   const ref = useRef(null)
   const ctx = useContext(UppyContext)
 
