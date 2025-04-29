@@ -30,6 +30,10 @@ export default defineComponent<Omit<FilesListProps, 'ctx'>>({
       renderFilesList()
     })
 
+    watch(ctx, () => {
+      renderFilesList()
+    })
+
     watch(
       () => props,
       (current, old) => {

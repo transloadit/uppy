@@ -30,6 +30,10 @@ export default defineComponent<Omit<UploadButtonProps, 'ctx'>>({
       renderUploadButton()
     })
 
+    watch(ctx, () => {
+      renderUploadButton()
+    })
+
     watch(
       () => props,
       (current, old) => {

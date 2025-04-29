@@ -30,6 +30,10 @@ export default defineComponent<Omit<ProviderIconProps, 'ctx'>>({
       renderProviderIcon()
     })
 
+    watch(ctx, () => {
+      renderProviderIcon()
+    })
+
     watch(
       () => props,
       (current, old) => {

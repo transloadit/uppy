@@ -48,6 +48,7 @@ export const UppyContextProvider = defineComponent({
 
     // Define event handlers first so they can be referenced in lifecycle hooks
     const onFileAdded = () => {
+      console.log('onFileAdded')
       status.value = 'ready'
       uppyContext.status = 'ready'
     }

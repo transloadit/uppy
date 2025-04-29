@@ -80,6 +80,10 @@ export default defineComponent<Omit<%%PropsTypeName%%, 'ctx'>>({
       render%%ComponentName%%()
     })
 
+    watch(ctx, () => {
+      render%%ComponentName%%()
+    })
+
     watch(
       () => props,
       (current, old) => {

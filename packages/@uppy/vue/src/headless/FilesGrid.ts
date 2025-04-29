@@ -30,6 +30,10 @@ export default defineComponent<Omit<FilesGridProps, 'ctx'>>({
       renderFilesGrid()
     })
 
+    watch(ctx, () => {
+      renderFilesGrid()
+    })
+
     watch(
       () => props,
       (current, old) => {

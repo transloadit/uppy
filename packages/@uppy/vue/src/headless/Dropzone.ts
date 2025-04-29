@@ -30,6 +30,10 @@ export default defineComponent<Omit<DropzoneProps, 'ctx'>>({
       renderDropzone()
     })
 
+    watch(ctx, () => {
+      renderDropzone()
+    })
+
     watch(
       () => props,
       (current, old) => {

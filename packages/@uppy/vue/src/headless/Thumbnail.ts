@@ -30,6 +30,10 @@ export default defineComponent<Omit<ThumbnailProps, 'ctx'>>({
       renderThumbnail()
     })
 
+    watch(ctx, () => {
+      renderThumbnail()
+    })
+
     watch(
       () => props,
       (current, old) => {
