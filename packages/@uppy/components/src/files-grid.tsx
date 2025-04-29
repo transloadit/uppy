@@ -49,6 +49,7 @@ export default function FilesGrid(props: FilesGridProps) {
 
   return (
     <div
+      data-uppy-element="files-grid"
       className={clsx(
         'uppy:reset uppy:my-4 uppy:grid uppy:gap-4',
         gridColsClass(),
@@ -61,7 +62,7 @@ export default function FilesGrid(props: FilesGridProps) {
         >
           <Fragment>
             <Thumbnail images file={file} />
-            <div className="uppy:w-full">
+            <div className="uppy:w-full uppy-reset">
               <p className="uppy:font-medium uppy:truncate" title={file.name}>
                 {file.name}
               </p>

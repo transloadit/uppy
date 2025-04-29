@@ -74,6 +74,7 @@ export default function Thumbnail(props: ThumbnailProps) {
 
   return (
     <div
+      data-uppy-element="thumbnail"
       className="uppy:relative uppy:overflow-hidden uppy:bg-gray-100 uppy:rounded-lg uppy:flex uppy:items-center uppy:justify-center"
       style={{
         width: width(),

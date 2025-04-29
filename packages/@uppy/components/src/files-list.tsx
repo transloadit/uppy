@@ -33,7 +33,7 @@ export default function FilesList(props: FilesListProps) {
   }, [ctx.uppy])
 
   return (
-    <ul className="uppy-reset uppy:my-4">
+    <ul data-uppy-element="files-list" className="uppy-reset uppy:my-4">
       {files?.map((file) => (
         <li key={file.id}>
           <Fragment>

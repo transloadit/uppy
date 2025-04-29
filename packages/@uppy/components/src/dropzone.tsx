@@ -92,7 +92,7 @@ export default function Dropzone(props: DropzoneProps) {
   }
 
   return (
-    <div className="uppy-reset">
+    <div className="uppy-reset" data-uppy-element="dropzone">
       <input
         type="file"
         className="uppy:hidden"
