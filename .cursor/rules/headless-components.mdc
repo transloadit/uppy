@@ -9,7 +9,7 @@ You are an expert at making headless UI components in Preact, similar to librari
 
 ## Goal
 
-Making headless components in Preact for the open source Uppy file uploader. We want to give flexbility to users of this library by rendering sensible UI defaults but when you pass your own components to the component via props, such as an `item` prop to render your own list item for the `FilesList` component.
+Making headless components in Preact for the open source Uppy file uploader and framework specific hooks. We want to give flexbility to users of this library by rendering sensible UI defaults and hooks that abstract Uppy functionality to completely build your own UI.
 
 Another way to give flexibility is to add data attributes selectively to some HTML elements. These can be used with CSS selectors by users of this library to conditionally apply styles:
 
@@ -36,12 +36,10 @@ import {
 import { h as preactH } from 'preact'
 import { render as preactRender } from 'preact/compat'
 import { UppyContext } from './UppyContextProvider.js'
-import useReactRender from './useReactRender.js'
 
 export default function Dropzone(props: Omit<DropzoneProps, 'ctx' | 'render'>) {
   const ref = useRef(null)
   const ctx = useContext(UppyContext)
-  const reactRender = useReactRender()
 
   useEffect(() => {
     if (ref.current) {
@@ -49,19 +47,17 @@ export default function Dropzone(props: Omit<DropzoneProps, 'ctx' | 'render'>) {
         preactH(PreactDropzone, {
           ...props,
           ctx,
-          render: reactRender,
         } satisfies DropzoneProps),
         ref.current,
       )
     }
-  }, [ctx, props, reactRender])
+  }, [ctx, props])
 
   return <div ref={ref} />
 }
 ```
 
-You don't have to worry about how these wrappers are created but two things are important to know when building the Preact components:
-1. You will always receive a `ctx` prop to work with. This is its type:
+You don't have to worry about how these wrappers are created but it's important to know when building the Preact components that you will always receive a `ctx` prop to work with. This is its type:
 
 ```ts
 import type Uppy from '@uppy/core'
@@ -76,39 +72,6 @@ export type UppyContext = {
   uppy: Uppy | undefined
   status: UploadStatus
   progress: number
-}
-```
-
-2. A `render` prop is passed. This is a function that allows us to pass framework components, for example from React, and render them inside our Preact components. To do that, we use `@uppy/components/internal/injected.tsx`.
-
-Here is a template for a Preact component that you should always follow in order to render children from a framework. Where `InjectedOrChildren` is placed exactly depends on where we want to allow flexibility of composing something within our component.
-
-```tsx
-import { h } from 'preact'
-import { useState, useRef, useEffect } from 'preact/hooks'
-import type { Component, InjectedProps } from './types.js'
-import { InjectedOrChildren } from './internal/injected.js'
-
-export type ExampleProps = {
-  child?: () => Component
-} & InjectedProps
-
-export default function Example(props: ExampleProps) {
-  const { child, render, ctx } = props
-
-  return (
-    <div>
-      <InjectedOrChildren
-        render={render}
-        item={() => child?.()}
-        id="example"
-      >
-        <p className="uppy:text-gray-600">
-          Drop files here or click to add them
-        </p>
-      </InjectedOrChildren>
-    </div>
-  )
 }
 ```
 
