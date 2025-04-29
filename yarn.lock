@@ -12379,6 +12379,7 @@ __metadata:
     "@types/use-sync-external-store": "npm:^0.0.6"
     "@uppy/components": "workspace:^"
     "@uppy/utils": "workspace:^"
+    clsx: "npm:^2.1.1"
     preact: "npm:^10.5.13"
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"

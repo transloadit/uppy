@@ -1,7 +1,9 @@
+/* eslint-disable react/jsx-props-no-spreading */
 import { h } from 'preact'
-import { useState, useRef, useEffect } from 'preact/hooks'
+import { useRef, useEffect, useState } from 'preact/hooks'
 import { clsx } from 'clsx'
 import type { UppyContext } from './types.js'
+import { createDropzone } from './hooks/dropzone.js'
 
 export type DropzoneProps = {
   width?: string
@@ -12,96 +14,27 @@ export type DropzoneProps = {
 }
 
 export default function Dropzone(props: DropzoneProps) {
-  const dropAreaRef = useRef<HTMLDivElement>(null)
-  const fileInputRef = useRef<HTMLInputElement>(null)
-  const [isDragging, setIsDragging] = useState(() => false)
   const { width, height, note, noClick, ctx } = props
+  const [isDragging, setIsDragging] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement | null>(null)
+
+  const { rootProps, inputProps, setFileInputRef } = createDropzone(ctx, {
+    noClick,
+    onDragEnter: () => setIsDragging(true),
+    onDragLeave: () => setIsDragging(false),
+    onDrop: () => setIsDragging(false),
+  })
 
   useEffect(() => {
-    const element = dropAreaRef.current
-    if (!element) return undefined
-
-    const handleDrop = (event: DragEvent) => {
-      event.preventDefault()
-      event.stopPropagation()
-      setIsDragging(false)
-      const files = Array.from(event.dataTransfer?.files || [])
-      if (!files.length) return
-      ctx.uppy?.addFiles(
-        files.map((file) => ({
-          source: 'drag-drop',
-          name: file.name,
-          type: file.type,
-          data: file,
-        })),
-      )
-    }
-
-    const handleDragOver = (event: DragEvent) => {
-      event.preventDefault()
-      event.stopPropagation()
-    }
-
-    const handleDragEnter = (event: DragEvent) => {
-      event.preventDefault()
-      event.stopPropagation()
-      setIsDragging(true)
-    }
-
-    const handleDragLeave = (event: DragEvent) => {
-      event.preventDefault()
-      event.stopPropagation()
-      setIsDragging(false)
-    }
-
-    const handleClick = () => {
-      if (noClick) return
-      fileInputRef.current?.click()
-    }
-
-    element.addEventListener('drop', handleDrop)
-    element.addEventListener('dragover', handleDragOver)
-    element.addEventListener('dragenter', handleDragEnter)
-    element.addEventListener('dragleave', handleDragLeave)
-    element.addEventListener('click', handleClick)
-
-    return () => {
-      element.removeEventListener('drop', handleDrop)
-      element.removeEventListener('dragover', handleDragOver)
-      element.removeEventListener('dragenter', handleDragEnter)
-      element.removeEventListener('dragleave', handleDragLeave)
-      element.removeEventListener('click', handleClick)
-    }
-  }, [ctx.uppy, noClick])
-
-  function handleFileInputChange(event: Event) {
-    const input = event.target as HTMLInputElement
-    const files = Array.from(input.files || [])
-    if (!files.length) return
-    ctx.uppy?.addFiles(
-      files.map((file) => ({
-        source: 'drag-drop',
-        name: file.name,
-        type: file.type,
-        data: file,
-      })),
-    )
-
-    // Reset the input value so the same file can be selected again
-    input.value = ''
-  }
+    setFileInputRef(fileInputRef.current)
+  }, [setFileInputRef])
 
   return (
     <div className="uppy-reset" data-uppy-element="dropzone">
-      <input
-        type="file"
-        className="uppy:hidden"
-        ref={fileInputRef}
-        multiple
-        onChange={(event) => handleFileInputChange(event)}
-      />
+      <input {...inputProps} className="uppy:hidden" ref={fileInputRef} />
       <div
-        ref={dropAreaRef}
+        {...rootProps}
+        role="button"
         style={{
           width: width || '100%',
           height: height || '100%',

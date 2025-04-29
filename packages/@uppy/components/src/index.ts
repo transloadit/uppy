@@ -1,7 +1,12 @@
 export { default as Thumbnail, type ThumbnailProps } from './thumbnail.jsx'
 export { default as FilesList, type FilesListProps } from './files-list.jsx'
 export { default as FilesGrid, type FilesGridProps } from './files-grid.jsx'
-export { default as Dropzone, type DropzoneProps } from './dropzone.js'
+export {
+  createDropzone,
+  type DropzoneAPI,
+  type DropzoneOptions,
+} from './hooks/dropzone.js'
+export { default as Dropzone, type DropzoneProps } from './dropzone.jsx'
 export {
   default as UploadButton,
   type UploadButtonProps,
