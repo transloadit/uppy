@@ -60,7 +60,7 @@ import { useUppyContext } from './useUppyContext.js'
 
 export default defineComponent<Omit<%%PropsTypeName%%, 'ctx'>>({
   name: '%%ComponentName%%',
-  setup(props) {
+  setup(props, { attrs }) {
     const containerRef = ref<HTMLElement | null>(null)
     const ctx = useUppyContext()
 
@@ -68,7 +68,7 @@ export default defineComponent<Omit<%%PropsTypeName%%, 'ctx'>>({
       if (containerRef.value) {
         preactRender(
           preactH(%%PreactComponentName%%, {
-            ...props,
+            ...(attrs as %%PropsTypeName%%),
             ctx,
           } satisfies %%PropsTypeName%%),
           containerRef.value,

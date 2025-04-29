@@ -10,7 +10,7 @@ import { useUppyContext } from './useUppyContext.js'
 
 export default defineComponent<Omit<FilesGridProps, 'ctx'>>({
   name: 'FilesGrid',
-  setup(props) {
+  setup(props, { attrs }) {
     const containerRef = ref<HTMLElement | null>(null)
     const ctx = useUppyContext()
 
@@ -18,7 +18,7 @@ export default defineComponent<Omit<FilesGridProps, 'ctx'>>({
       if (containerRef.value) {
         preactRender(
           preactH(PreactFilesGrid, {
-            ...props,
+            ...(attrs as FilesGridProps),
             ctx,
           } satisfies FilesGridProps),
           containerRef.value,

@@ -10,7 +10,7 @@ import { useUppyContext } from './useUppyContext.js'
 
 export default defineComponent<Omit<UploadButtonProps, 'ctx'>>({
   name: 'UploadButton',
-  setup(props) {
+  setup(props, { attrs }) {
     const containerRef = ref<HTMLElement | null>(null)
     const ctx = useUppyContext()
 
@@ -18,7 +18,7 @@ export default defineComponent<Omit<UploadButtonProps, 'ctx'>>({
       if (containerRef.value) {
         preactRender(
           preactH(PreactUploadButton, {
-            ...props,
+            ...(attrs as UploadButtonProps),
             ctx,
           } satisfies UploadButtonProps),
           containerRef.value,

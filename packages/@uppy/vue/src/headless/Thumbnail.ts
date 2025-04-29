@@ -10,7 +10,7 @@ import { useUppyContext } from './useUppyContext.js'
 
 export default defineComponent<Omit<ThumbnailProps, 'ctx'>>({
   name: 'Thumbnail',
-  setup(props) {
+  setup(props, { attrs }) {
     const containerRef = ref<HTMLElement | null>(null)
     const ctx = useUppyContext()
 
@@ -18,7 +18,7 @@ export default defineComponent<Omit<ThumbnailProps, 'ctx'>>({
       if (containerRef.value) {
         preactRender(
           preactH(PreactThumbnail, {
-            ...props,
+            ...(attrs as ThumbnailProps),
             ctx,
           } satisfies ThumbnailProps),
           containerRef.value,

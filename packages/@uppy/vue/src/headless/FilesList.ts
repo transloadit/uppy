@@ -10,7 +10,7 @@ import { useUppyContext } from './useUppyContext.js'
 
 export default defineComponent<Omit<FilesListProps, 'ctx'>>({
   name: 'FilesList',
-  setup(props) {
+  setup(props, { attrs }) {
     const containerRef = ref<HTMLElement | null>(null)
     const ctx = useUppyContext()
 
@@ -18,7 +18,7 @@ export default defineComponent<Omit<FilesListProps, 'ctx'>>({
       if (containerRef.value) {
         preactRender(
           preactH(PreactFilesList, {
-            ...props,
+            ...(attrs as FilesListProps),
             ctx,
           } satisfies FilesListProps),
           containerRef.value,

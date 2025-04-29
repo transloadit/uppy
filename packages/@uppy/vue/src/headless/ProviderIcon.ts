@@ -10,7 +10,7 @@ import { useUppyContext } from './useUppyContext.js'
 
 export default defineComponent<Omit<ProviderIconProps, 'ctx'>>({
   name: 'ProviderIcon',
-  setup(props) {
+  setup(props, { attrs }) {
     const containerRef = ref<HTMLElement | null>(null)
     const ctx = useUppyContext()
 
@@ -18,7 +18,7 @@ export default defineComponent<Omit<ProviderIconProps, 'ctx'>>({
       if (containerRef.value) {
         preactRender(
           preactH(PreactProviderIcon, {
-            ...props,
+            ...(attrs as ProviderIconProps),
             ctx,
           } satisfies ProviderIconProps),
           containerRef.value,

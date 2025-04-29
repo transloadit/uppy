@@ -10,7 +10,7 @@ import { useUppyContext } from './useUppyContext.js'
 
 export default defineComponent<Omit<DropzoneProps, 'ctx'>>({
   name: 'Dropzone',
-  setup(props) {
+  setup(props, { attrs }) {
     const containerRef = ref<HTMLElement | null>(null)
     const ctx = useUppyContext()
 
@@ -18,7 +18,7 @@ export default defineComponent<Omit<DropzoneProps, 'ctx'>>({
       if (containerRef.value) {
         preactRender(
           preactH(PreactDropzone, {
-            ...props,
+            ...(attrs as DropzoneProps),
             ctx,
           } satisfies DropzoneProps),
           containerRef.value,
