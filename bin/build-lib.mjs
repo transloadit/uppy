@@ -8,11 +8,11 @@ import path from 'node:path'
 
 const glob = promisify(globRaw)
 
+
 const PACKAGE_JSON_IMPORT = /^\..*\/package.json$/
 const SOURCE = 'packages/{*,@uppy/*}/src/**/*.{js,ts}?(x)'
 // Files not to build (such as tests)
-const IGNORE =
-  /\.test\.jsx?$|\.test\.tsx?$|__mocks__|svelte|angular|companion\//
+const IGNORE = /\.test\.jsx?$|\.test\.tsx?$|__mocks__|svelte|angular|companion\//;
 // Files that should trigger a rebuild of everything on change
 const META_FILES = [
   'babel.config.js',
@@ -22,37 +22,29 @@ const META_FILES = [
   'bin/build-lib.js',
 ]
 
-function lastModified(file, createParentDir = false) {
-  return stat(file).then(
-    (s) => s.mtime,
-    async (err) => {
-      if (err.code === 'ENOENT') {
-        if (createParentDir) {
-          await mkdir(path.dirname(file), { recursive: true })
-        }
-        return 0
+function lastModified (file, createParentDir = false) {
+  return stat(file).then((s) => s.mtime, async (err) => {
+    if (err.code === 'ENOENT') {
+      if (createParentDir) {
+        await mkdir(path.dirname(file), { recursive: true })
       }
-      throw err
-    },
-  )
+      return 0
+    }
+    throw err
+  })
 }
 
 const versionCache = new Map()
 
 // eslint-disable-next-line no-underscore-dangle
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-async function preparePackage(file) {
+async function preparePackage (file) {
   const packageFolder = file.slice(0, file.indexOf('/src/'))
   if (versionCache.has(packageFolder)) return
 
   // eslint-disable-next-line import/no-dynamic-require, global-require
-  const { version } = JSON.parse(
-    await readFile(
-      path.join(__dirname, '..', packageFolder, 'package.json'),
-      'utf8',
-    ),
-  )
+  const { version } = JSON.parse(await readFile(path.join(__dirname, '..', packageFolder, 'package.json'), 'utf8'))
   if (process.env.FRESH) {
     // in case it hasn't been done before.
     await mkdir(path.join(packageFolder, 'lib'), { recursive: true })
@@ -62,7 +54,7 @@ async function preparePackage(file) {
 
 const nonJSImport = /^\.\.?\/.+\.([jt]sx|ts)$/
 // eslint-disable-next-line no-shadow
-function rewriteNonJSImportsToJS(path) {
+function rewriteNonJSImportsToJS (path) {
   const match = nonJSImport.exec(path.node.source.value)
   if (match) {
     // eslint-disable-next-line no-param-reassign
@@ -70,21 +62,9 @@ function rewriteNonJSImportsToJS(path) {
   }
 }
 
-console.log(
-  'Using Babel version:',
-  JSON.parse(
-    await readFile(
-      fileURLToPath(import.meta.resolve('@babel/core/package.json')),
-      'utf8',
-    ),
-  ).version,
-)
+console.log('Using Babel version:', JSON.parse(await readFile(fileURLToPath(import.meta.resolve('@babel/core/package.json')), 'utf8')).version)
 
-const metaMtimes = await Promise.all(
-  META_FILES.map((filename) =>
-    lastModified(path.join(__dirname, '..', filename)),
-  ),
-)
+const metaMtimes = await Promise.all(META_FILES.map((filename) => lastModified(path.join(__dirname, '..', filename))))
 const metaMtime = Math.max(...metaMtimes)
 
 const files = await glob(SOURCE)
@@ -108,61 +88,45 @@ for (const file of files) {
     }
   }
 
-  const plugins = [
-    {
-      visitor: {
-        // eslint-disable-next-line no-shadow
-        ImportDeclaration(path) {
-          rewriteNonJSImportsToJS(path)
-          if (
-            PACKAGE_JSON_IMPORT.test(path.node.source.value) &&
-            path.node.specifiers.length === 1 &&
-            path.node.specifiers[0].type === 'ImportDefaultSpecifier'
-          ) {
-            // Vendor-in version number from package.json files:
-            const version = versionCache.get(
-              file.slice(0, file.indexOf('/src/')),
+  const plugins = [{
+    visitor: {
+      // eslint-disable-next-line no-shadow
+      ImportDeclaration (path) {
+        rewriteNonJSImportsToJS(path)
+        if (PACKAGE_JSON_IMPORT.test(path.node.source.value)
+            && path.node.specifiers.length === 1
+            && path.node.specifiers[0].type === 'ImportDefaultSpecifier') {
+          // Vendor-in version number from package.json files:
+          const version = versionCache.get(file.slice(0, file.indexOf('/src/')))
+          if (version != null) {
+            const [{ local }] = path.node.specifiers
+            path.replaceWith(
+              t.variableDeclaration('const', [t.variableDeclarator(local,
+                t.objectExpression([
+                  t.objectProperty(t.stringLiteral('version'), t.stringLiteral(version)),
+                ]))]),
             )
-            if (version != null) {
-              const [{ local }] = path.node.specifiers
-              path.replaceWith(
-                t.variableDeclaration('const', [
-                  t.variableDeclarator(
-                    local,
-                    t.objectExpression([
-                      t.objectProperty(
-                        t.stringLiteral('version'),
-                        t.stringLiteral(version),
-                      ),
-                    ]),
-                  ),
-                ]),
-              )
-            }
           }
-        },
+        }
+      },
 
-        ExportAllDeclaration: rewriteNonJSImportsToJS,
-        // eslint-disable-next-line no-shadow
-        ExportNamedDeclaration(path) {
-          if (path.node.source != null) {
-            rewriteNonJSImportsToJS(path)
-          }
-        },
+      ExportAllDeclaration: rewriteNonJSImportsToJS,
+      // eslint-disable-next-line no-shadow
+      ExportNamedDeclaration (path) {
+        if (path.node.source != null) {
+          rewriteNonJSImportsToJS(path)
+        }
       },
     },
-  ]
+  }]
   const isTSX = file.endsWith('.tsx')
   if (isTSX || file.endsWith('.ts')) {
-    plugins.push([
-      '@babel/plugin-transform-typescript',
-      {
-        disallowAmbiguousJSXLike: true,
-        isTSX,
-        jsxPragma: 'h',
-        jsxPragmaFrag: 'Fragment',
-      },
-    ])
+    plugins.push(['@babel/plugin-transform-typescript', {
+      disallowAmbiguousJSXLike: true,
+      isTSX,
+      jsxPragma: 'h',
+      jsxPragmaFrag: 'Fragment',
+    }])
   }
 
   const { code, map } = await babel.transformFileAsync(file, {

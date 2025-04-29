@@ -3,7 +3,6 @@ node_modules/
 *.jsx
 *.cjs
 *.mjs
-!bin/*.mjs
 !private/js2ts/*
 !examples/svelte-example/*
 *.lock
