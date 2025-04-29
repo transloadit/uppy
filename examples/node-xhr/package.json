@@ -7,7 +7,7 @@
     "@uppy/dashboard": "workspace:*",
     "@uppy/webcam": "workspace:*",
     "@uppy/xhr-upload": "workspace:*",
-    "formidable": "^3.2.4"
+    "formidable": "^3.5.4"
   },
   "devDependencies": {
     "npm-run-all": "^4.1.3",

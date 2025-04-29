@@ -30,7 +30,7 @@
     "@uppy/svelte": "workspace:*",
     "@uppy/webcam": "workspace:*",
     "@uppy/xhr-upload": "workspace:*",
-    "formidable": "^3.5.1"
+    "formidable": "^3.5.4"
   },
   "type": "module",
   "private": true
