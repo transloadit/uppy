@@ -8,6 +8,13 @@ export {
   type DropzoneOptions,
 } from './hooks/dropzone.js'
 export {
+  createWebcamController,
+  type WebcamState,
+  type WebcamStatus,
+  type WebcamController,
+} from './hooks/webcam.js'
+
+export {
   default as UploadButton,
   type UploadButtonProps,
 } from './UploadButton.js'

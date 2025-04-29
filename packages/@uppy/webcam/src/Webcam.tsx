@@ -119,7 +119,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
 
   private mediaDevices
 
-  private supportsUserMedia
+  public supportsUserMedia
 
   private protocol: 'http' | 'https'
 
