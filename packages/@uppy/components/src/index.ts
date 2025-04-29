@@ -7,12 +7,8 @@ export {
   type UploadButtonProps,
 } from './upload-button.jsx'
 export {
-  default as NewFileInput,
-  type NewFileInputProps,
-} from './new-file-input.js'
-export {
   default as ProviderIcon,
   type ProviderIconProps,
 } from './provider-icon.jsx'
-export { default as Webcam, type WebcamProps } from './webcam.jsx'
+
 export type { UppyContext, UploadStatus } from './types.js'
