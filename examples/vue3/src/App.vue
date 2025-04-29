@@ -1,36 +1,42 @@
 <template>
-  <div style="width: 30em; margin: 5rem auto">
-    <h1>Uppy Vue Demo</h1>
-    <UppyContextProvider :uppy="uppy">
-      <Dropzone />
-      <FilesList>
-        <template v-slot:item="{ file }">
-          <div class="my-custom-item">
-            Custom: {{ file.name }} ({{ file.size }})
-          </div>
-        </template>
-      </FilesList>
-    </UppyContextProvider>
-  </div>
+  <UppyContextProvider :uppy="uppy">
+    <main class="p-5 max-w-xl mx-auto">
+      <h1 class="text-4xl font-bold">Welcome to Vue.</h1>
+
+      <article>
+        <h2 class="text-2xl my-4">With list</h2>
+        <Dropzone />
+        <FilesList />
+        <UploadButton />
+      </article>
+
+      <article>
+        <h2 class="text-2xl my-4">With grid</h2>
+        <Dropzone />
+        <FilesGrid :columns="2" />
+        <UploadButton />
+      </article>
+    </main>
+  </UppyContextProvider>
 </template>
 
-<script setup>
-import { UppyContextProvider, Dropzone, FilesList } from '@uppy/vue'
-</script>
-
-<script>
+<script setup lang="ts">
+import { computed } from 'vue'
 import Uppy from '@uppy/core'
 import Tus from '@uppy/tus'
-import Webcam from '@uppy/webcam'
-import { defineComponent, h } from 'vue'
+import {
+  UppyContextProvider,
+  Dropzone,
+  FilesList,
+  FilesGrid,
+  UploadButton,
+} from '@uppy/vue'
 
-const { VITE_TUS_ENDPOINT: TUS_ENDPOINT } = import.meta.env
-
-export default defineComponent({
-  computed: {
-    uppy: () => new Uppy().use(Tus, { endpoint: TUS_ENDPOINT }).use(Webcam),
-  },
-})
+const uppy = computed(() =>
+  new Uppy().use(Tus, {
+    endpoint: 'https://tusd.tusdemo.net/files/',
+  }),
+)
 </script>
 
 <style src="@uppy/vue/dist/styles.css"></style>
