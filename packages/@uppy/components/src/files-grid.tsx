@@ -48,51 +48,54 @@ export default function FilesGrid(props: FilesGridProps) {
   }, [ctx.uppy])
 
   return (
-    <div className="uppy-reset uppy:my-4">
-      <div className={clsx('uppy:grid uppy:gap-4', gridColsClass())}>
-        {files?.map((file) => (
-          <div
-            className="uppy:flex uppy:flex-col uppy:items-center uppy:gap-2"
-            key={file.id}
-          >
-            <Fragment>
-              <Thumbnail images file={file} />
-              <div className="uppy:w-full">
-                <p className="uppy:font-medium uppy:truncate" title={file.name}>
-                  {file.name}
+    <div
+      className={clsx(
+        'uppy:reset uppy:my-4 uppy:grid uppy:gap-4',
+        gridColsClass(),
+      )}
+    >
+      {files?.map((file) => (
+        <div
+          className="uppy:flex uppy:flex-col uppy:items-center uppy:gap-2"
+          key={file.id}
+        >
+          <Fragment>
+            <Thumbnail images file={file} />
+            <div className="uppy:w-full">
+              <p className="uppy:font-medium uppy:truncate" title={file.name}>
+                {file.name}
+              </p>
+              <div className="uppy:flex uppy:items-center uppy:gap-2">
+                <p className=" uppy:text-gray-500 uppy:tabular-nums ">
+                  {prettyBytes(file.size || 0)}
                 </p>
-                <div className="uppy:flex uppy:items-center uppy:gap-2">
-                  <p className=" uppy:text-gray-500 uppy:tabular-nums ">
-                    {prettyBytes(file.size || 0)}
-                  </p>
 
-                  {editFile && (
-                    <button
-                      type="button"
-                      className="uppy:flex uppy:rounded uppy:text-blue-500 uppy:hover:text-blue-700 uppy:bg-transparent uppy:transition-colors"
-                      onClick={() => {
-                        editFile(file)
-                      }}
-                    >
-                      edit
-                    </button>
-                  )}
-
+                {editFile && (
                   <button
                     type="button"
                     className="uppy:flex uppy:rounded uppy:text-blue-500 uppy:hover:text-blue-700 uppy:bg-transparent uppy:transition-colors"
                     onClick={() => {
-                      ctx.uppy?.removeFile(file.id)
+                      editFile(file)
                     }}
                   >
-                    remove
+                    edit
                   </button>
-                </div>
+                )}
+
+                <button
+                  type="button"
+                  className="uppy:flex uppy:rounded uppy:text-blue-500 uppy:hover:text-blue-700 uppy:bg-transparent uppy:transition-colors"
+                  onClick={() => {
+                    ctx.uppy?.removeFile(file.id)
+                  }}
+                >
+                  remove
+                </button>
               </div>
-            </Fragment>
-          </div>
-        ))}
-      </div>
+            </div>
+          </Fragment>
+        </div>
+      ))}
     </div>
   )
 }

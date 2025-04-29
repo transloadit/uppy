@@ -20,6 +20,7 @@
 * Put under a @layer to prevent specificity issues.
 */
 @layer components {
+  .uppy-reset,
   .uppy-reset * {
     box-sizing: border-box;
     margin: 0;
