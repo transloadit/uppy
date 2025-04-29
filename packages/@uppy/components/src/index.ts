@@ -1,11 +1,19 @@
 export { default as Thumbnail, type ThumbnailProps } from './thumbnail.jsx'
 export { default as FilesList, type FilesListProps } from './files-list.jsx'
 export { default as FilesGrid, type FilesGridProps } from './files-grid.jsx'
+
 export {
   createDropzone,
   type DropzoneAPI,
   type DropzoneOptions,
 } from './hooks/dropzone.js'
+export {
+  createWebcamController,
+  type WebcamState,
+  type WebcamStatus,
+  type WebcamController,
+} from './hooks/webcam.js'
+
 export { default as Dropzone, type DropzoneProps } from './dropzone.jsx'
 export {
   default as UploadButton,
