@@ -96,7 +96,6 @@ export function createWebcamController(uppy: Uppy): WebcamController {
     // Check for lack of camera/support after other checks
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     if (
-      // @ts-expect-error private
       !plugin.supportsUserMedia ||
       (state.hasCamera === false && !state.cameraReady)
     )
