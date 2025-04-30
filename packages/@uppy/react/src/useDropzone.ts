@@ -5,7 +5,6 @@ import type {
   MouseEvent as ReactMouseEvent,
 } from 'react'
 import { createDropzone, type DropzoneOptions } from '@uppy/components'
-import type { UppyContext as UppyContextType } from '@uppy/components/lib/types.js'
 import { UppyContext } from './headless/UppyContextProvider.js'
 
 export interface UseDropzoneResult {
@@ -29,11 +28,15 @@ export interface UseDropzoneResult {
 export function useDropzone(
   options: Omit<DropzoneOptions, 'onDragEnter' | 'onDragLeave'> = {},
 ): UseDropzoneResult {
-  const ctx = useContext(UppyContext) as UppyContextType
+  const ctx = useContext(UppyContext)
   const [isDragging, setIsDragging] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const dropzoneAPI = createDropzone(ctx, {
+  if (!ctx.uppy) {
+    throw new Error('useDropzone must be called within a UppyContextProvider')
+  }
+
+  const dropzone = createDropzone(ctx, {
     ...options,
     onDragEnter: () => setIsDragging(true),
     onDragLeave: () => setIsDragging(false),
@@ -41,24 +44,24 @@ export function useDropzone(
 
   useEffect(() => {
     if (fileInputRef.current) {
-      dropzoneAPI.setFileInputRef(fileInputRef.current)
+      dropzone.setFileInputRef(fileInputRef.current)
     }
-  }, [dropzoneAPI])
+  }, [dropzone])
 
   const handleReactDrop = useCallback(
     (event: React.DragEvent<HTMLDivElement>) => {
       event.preventDefault()
       event.stopPropagation()
-      dropzoneAPI.rootProps.onDrop(event.nativeEvent as DragEvent)
+      dropzone.rootProps.onDrop(event.nativeEvent as DragEvent)
     },
-    [dropzoneAPI.rootProps],
+    [dropzone.rootProps],
   )
 
   const handleReactChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
-      dropzoneAPI.inputProps.onChange(event.nativeEvent as Event)
+      dropzone.inputProps.onChange(event.nativeEvent as Event)
     },
-    [dropzoneAPI.inputProps],
+    [dropzone.inputProps],
   )
 
   return {
@@ -66,17 +69,17 @@ export function useDropzone(
     getRootProps: () => ({
       onDrop: handleReactDrop,
       onDragEnter: (e: ReactDragEvent<HTMLDivElement>) =>
-        dropzoneAPI.rootProps.onDragEnter(e.nativeEvent as DragEvent),
+        dropzone.rootProps.onDragEnter(e.nativeEvent as DragEvent),
       onDragOver: (e: ReactDragEvent<HTMLDivElement>) =>
-        dropzoneAPI.rootProps.onDragOver(e.nativeEvent as DragEvent),
+        dropzone.rootProps.onDragOver(e.nativeEvent as DragEvent),
       onDragLeave: (e: ReactDragEvent<HTMLDivElement>) =>
-        dropzoneAPI.rootProps.onDragLeave(e.nativeEvent as DragEvent),
-      onClick: () => dropzoneAPI.rootProps.onClick(),
+        dropzone.rootProps.onDragLeave(e.nativeEvent as DragEvent),
+      onClick: () => dropzone.rootProps.onClick(),
     }),
     getInputProps: () => ({
       type: 'file',
-      multiple: dropzoneAPI.inputProps.multiple,
-      style: dropzoneAPI.inputProps.style,
+      multiple: dropzone.inputProps.multiple,
+      style: dropzone.inputProps.style,
       ref: fileInputRef,
       onChange: handleReactChange,
     }),

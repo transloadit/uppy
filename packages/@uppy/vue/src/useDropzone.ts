@@ -1,24 +1,31 @@
-import { ref, inject, onMounted, type Ref } from 'vue'
+import { ref, onMounted, type Ref } from 'vue'
 import {
   createDropzone,
   type DropzoneOptions,
   type DropzoneAPI,
 } from '@uppy/components'
-import type { UppyContext } from '@uppy/components/lib/types.js'
+import { useUppyContext } from './headless/useUppyContext.js'
+
+type InputPropsResult = DropzoneAPI['inputProps'] & {
+  ref: Ref<HTMLInputElement | null>
+}
 
 export interface UseDropzoneResult {
   isDragging: Ref<boolean>
-  rootProps: DropzoneAPI['rootProps']
-  inputProps: DropzoneAPI['inputProps']
-  fileInputRef: Ref<HTMLInputElement | null>
+  getRootProps: () => DropzoneAPI['rootProps']
+  getInputProps: () => InputPropsResult
 }
 
 export function useDropzone(
   options: Omit<DropzoneOptions, 'onDragEnter' | 'onDragLeave'> = {},
 ): UseDropzoneResult {
-  const ctx = inject('uppy') as UppyContext
+  const ctx = useUppyContext()
   const isDragging = ref(false)
   const fileInputRef = ref<HTMLInputElement | null>(null)
+
+  if (!ctx) {
+    throw new Error('useDropzone must be called within a UppyContextProvider')
+  }
 
   const dropzoneAPI = createDropzone(ctx, {
     ...options,
@@ -38,8 +45,10 @@ export function useDropzone(
 
   return {
     isDragging,
-    rootProps: dropzoneAPI.rootProps,
-    inputProps: dropzoneAPI.inputProps,
-    fileInputRef,
+    getRootProps: () => dropzoneAPI.rootProps,
+    getInputProps: () => ({
+      ...dropzoneAPI.inputProps,
+      ref: fileInputRef,
+    }),
   }
 }
