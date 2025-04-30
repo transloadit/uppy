@@ -110,7 +110,6 @@ export default class RemoteSources<
           `Invalid plugin: "${pluginId}" is not one of: ${formatter.format(pluginNames)}.`,
         )
       }
-      // @ts-expect-error different locale strings (const type) from all plugins confuse TS here
       this.uppy.use(plugin, optsForRemoteSourcePlugin)
       // `plugin` is a class, but we want to track the instance object
       // so we have to do `getPlugin` here.

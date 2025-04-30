@@ -18,7 +18,7 @@ import {
 } from '@uppy/companion-client'
 import { SearchInput, ProviderViews } from '@uppy/provider-views'
 
-import type { I18n } from '@uppy/utils/lib/Translator'
+import type { I18n, LocaleStrings } from '@uppy/utils/lib/Translator'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'
@@ -77,7 +77,9 @@ const AuthForm = ({
   )
 }
 
-export type WebdavOptions = CompanionPluginOptions & { locale?: typeof locale }
+export type WebdavOptions = CompanionPluginOptions & {
+  locale?: LocaleStrings<typeof locale>
+}
 
 export default class Webdav<M extends Meta, B extends Body>
   extends UIPlugin<WebdavOptions, M, B, UnknownProviderPluginState>

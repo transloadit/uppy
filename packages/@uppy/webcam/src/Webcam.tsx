@@ -1,6 +1,7 @@
 import { h, type ComponentChild } from 'preact'
 
 import { UIPlugin } from '@uppy/core'
+import type { LocaleStrings } from '@uppy/utils/lib/Translator'
 import type {
   Uppy,
   UIPluginOptions,
@@ -73,7 +74,7 @@ export interface WebcamOptions<M extends Meta, B extends Body>
   preferredImageMimeType?: string | null
   preferredVideoMimeType?: string | null
   mobileNativeCamera?: boolean
-  locale?: typeof locale
+  locale?: LocaleStrings<typeof locale>
 }
 
 export interface WebcamState {

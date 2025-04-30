@@ -1,11 +1,13 @@
 import { expectTypeOf, test } from 'vitest'
 
 import type { Body, InternalMetadata, Meta } from '@uppy/utils/lib/UppyFile'
+import type { LocaleStrings } from '@uppy/utils/lib/Translator'
 import Uppy, { type UnknownPlugin } from './Uppy.js'
 import UIPlugin, { type UIPluginOptions } from './UIPlugin.js'
 
 interface Opts extends UIPluginOptions {
   foo: string
+  locale?: LocaleStrings<{ strings: { bar: string; baz: string } }>
 }
 class TestPlugin<M extends Meta, B extends Body> extends UIPlugin<Opts, M, B> {
   constructor(uppy: Uppy<M, B>, opts?: Opts) {
@@ -18,8 +20,7 @@ class TestPlugin<M extends Meta, B extends Body> extends UIPlugin<Opts, M, B> {
 test('can add locale strings without type error', async () => {
   new Uppy().use(TestPlugin, {
     foo: 'bar',
-    // unfortunately strings are not typed yet but at leasdt you can pass strings
-    locale: { strings: { foo: '' } },
+    locale: { strings: { bar: '' } },
   })
 })
 

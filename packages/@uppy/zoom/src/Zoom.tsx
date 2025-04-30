@@ -8,6 +8,7 @@ import { UIPlugin, Uppy } from '@uppy/core'
 import { ProviderViews } from '@uppy/provider-views'
 import { h, type ComponentChild } from 'preact'
 
+import type { LocaleStrings } from '@uppy/utils/lib/Translator'
 import type {
   UppyFile,
   Body,
@@ -21,7 +22,9 @@ import locale from './locale.js'
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'
 
-export type ZoomOptions = CompanionPluginOptions & { locale?: typeof locale }
+export type ZoomOptions = CompanionPluginOptions & {
+  locale?: LocaleStrings<typeof locale>
+}
 
 export default class Zoom<M extends Meta, B extends Body>
   extends UIPlugin<ZoomOptions, M, B, UnknownProviderPluginState>
