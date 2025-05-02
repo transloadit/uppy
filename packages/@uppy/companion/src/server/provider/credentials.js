@@ -140,8 +140,10 @@ exports.getCredentialsOverrideMiddleware = (providers, companionOptions) => {
 
       if (credentials.transloadit_gateway) {
         const redirectPath = getRedirectPath(providerName)
-        const fullRedirectPath = getURLBuilder(companionOptions)(redirectPath, true)
-        res.locals.grant.dynamic.redirect_uri = new URL(fullRedirectPath, credentials.transloadit_gateway).toString()
+        const fullRedirectPath = getURLBuilder(companionOptions)(redirectPath, true, true)
+        const redirectUri = new URL(fullRedirectPath, credentials.transloadit_gateway).toString()
+        logger.info('Using redirect URI from transloadit_gateway', redirectUri)
+        res.locals.grant.dynamic.redirect_uri = redirectUri
       }
 
       next()
