@@ -7,6 +7,7 @@ import StopWatch from './StopWatch.jsx'
 import StreamStatus from './StreamStatus.jsx'
 
 import ScreenCapture, { type ScreenCaptureState } from './ScreenCapture.jsx'
+import ScreenshotButton from './ScreenshotButton.js'
 
 type RecorderScreenProps<M extends Meta, B extends Body> = {
   onStartRecording: ScreenCapture<M, B>['startRecording']
@@ -30,7 +31,12 @@ class RecorderScreen<M extends Meta, B extends Body> extends Component<
   }
 
   render(): ComponentChild {
-    const { recording, stream: videoStream, recordedVideo } = this.props
+    const {
+      recording,
+      stream: videoStream,
+      recordedVideo,
+      enableScreenshots,
+    } = this.props
 
     const videoProps: {
       muted?: boolean
@@ -78,6 +84,7 @@ class RecorderScreen<M extends Meta, B extends Body> extends Component<
         </div>
 
         <div className="uppy-ScreenCapture-buttonContainer">
+          {enableScreenshots && <ScreenshotButton {...this.props} />}
           <RecordButton {...this.props} />
           <SubmitButton {...this.props} />
         </div>
