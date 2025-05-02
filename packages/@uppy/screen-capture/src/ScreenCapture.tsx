@@ -27,12 +27,14 @@ function isScreenRecordingSupported() {
 function getMediaDevices() {
   return window.MediaRecorder && navigator.mediaDevices // eslint-disable-line compat/compat
 }
-
 export interface ScreenCaptureOptions extends UIPluginOptions {
   displayMediaConstraints?: MediaStreamConstraints
   userMediaConstraints?: MediaStreamConstraints
   preferredVideoMimeType?: string
+  preferredImageMimeType?: string // Added for screenshot format preference
+  screenshotQuality?: number // Added for screenshot quality control (0-1)
   locale?: LocaleStrings<typeof locale>
+  enableScreenshots?: boolean // Added for enabling/disabling screenshot functionality
 }
 
 // https://developer.mozilla.org/en-US/docs/Web/API/MediaStreamConstraints
@@ -65,6 +67,7 @@ export type ScreenCaptureState = {
   recording: boolean
   recordedVideo: string | null
   screenRecError: string | null
+  capturedScreenshotUrl: string | null
 }
 
 export default class ScreenCapture<
@@ -423,9 +426,16 @@ export default class ScreenCapture<
       this.outputStream = null
     }
 
+    // Clean up screenshot URL
+    const { capturedScreenshotUrl } = this.getPluginState()
+    if (capturedScreenshotUrl) {
+      URL.revokeObjectURL(capturedScreenshotUrl)
+    }
+
     // remove preview video
     this.setPluginState({
       recordedVideo: null,
+      capturedScreenshotUrl: null,
     })
 
     this.captureActive = false
@@ -458,6 +468,95 @@ export default class ScreenCapture<
     }
 
     return Promise.resolve(file)
+  }
+
+  async captureScreenshot(): Promise<void> {
+    if (!this.mediaDevices?.getDisplayMedia) {
+      throw new Error('Screen capture is not supported')
+    }
+
+    try {
+      let stream = this.videoStream
+
+      // Only request new stream if we don't have one
+      if (!stream) {
+        const newStream = await this.selectVideoStreamSource()
+        if (!newStream) {
+          throw new Error('Failed to get screen capture stream')
+        }
+        stream = newStream
+      }
+
+      const video = document.createElement('video')
+      video.srcObject = stream
+
+      await new Promise((resolve) => {
+        video.onloadedmetadata = () => {
+          video.play()
+          resolve(null)
+        }
+      })
+
+      const canvas = document.createElement('canvas')
+      canvas.width = video.videoWidth
+      canvas.height = video.videoHeight
+
+      const ctx = canvas.getContext('2d')
+      if (!ctx) {
+        throw new Error('Failed to get canvas context')
+      }
+
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
+
+      // Convert to Blob with configured quality
+      const mimeType = this.opts.preferredImageMimeType || 'image/png'
+      const quality = this.opts.screenshotQuality || 0.92
+
+      return new Promise((resolve, reject) => {
+        canvas.toBlob(
+          (blob) => {
+            if (!blob) {
+              reject(new Error('Failed to create screenshot blob'))
+              return
+            }
+
+            const file = {
+              source: this.id,
+              name: `Screenshot ${new Date().toISOString()}.${getFileTypeExtension(mimeType) || 'png'}`,
+              type: mimeType,
+              data: blob,
+            }
+
+            try {
+              const screenshotUrl = URL.createObjectURL(blob)
+              this.setPluginState({
+                capturedScreenshotUrl: screenshotUrl,
+              })
+              this.uppy.addFile(file)
+              resolve()
+            } catch (err) {
+              if (this.getPluginState().capturedScreenshotUrl) {
+                this.setPluginState({ capturedScreenshotUrl: null })
+              }
+              if (!err.isRestriction) {
+                this.uppy.log(err, 'error')
+              }
+              reject(err)
+            } finally {
+              // Cleanup
+              video.srcObject = null
+              canvas.remove()
+              video.remove()
+            }
+          },
+          mimeType,
+          quality,
+        )
+      })
+    } catch (err) {
+      this.uppy.log(err, 'error')
+      throw err
+    }
   }
 
   render(): ComponentChild {
