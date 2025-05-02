@@ -15,6 +15,8 @@ type RecorderScreenProps<M extends Meta, B extends Body> = {
   onSubmit: ScreenCapture<M, B>['submit']
   i18n: ScreenCapture<M, B>['i18n']
   stream: ScreenCapture<M, B>['videoStream']
+  onScreenshot: ScreenCapture<M, B>['captureScreenshot']
+  enableScreenshots: boolean
 } & ScreenCaptureState
 
 class RecorderScreen<M extends Meta, B extends Body> extends Component<

@@ -57,6 +57,9 @@ const defaultOptions = {
     audio: true,
   },
   preferredVideoMimeType: 'video/webm',
+  preferredImageMimeType: 'image/png',
+  screenshotQuality: 0.92,
+  enableScreenshots: false,
 }
 
 type Opts = DefinePluginOpts<ScreenCaptureOptions, keyof typeof defaultOptions>
@@ -131,6 +134,7 @@ export default class ScreenCapture<
     this.stopRecording = this.stopRecording.bind(this)
     this.submit = this.submit.bind(this)
     this.streamInterrupted = this.streamInactivated.bind(this)
+    this.captureScreenshot = this.captureScreenshot.bind(this)
 
     // initialize
     this.captureActive = false
@@ -576,6 +580,8 @@ export default class ScreenCapture<
         {...recorderState} // eslint-disable-line react/jsx-props-no-spreading
         onStartRecording={this.startRecording}
         onStopRecording={this.stopRecording}
+        enableScreenshots={this.opts.enableScreenshots}
+        onScreenshot={this.captureScreenshot}
         onStop={this.stop}
         onSubmit={this.submit}
         i18n={this.i18n}
