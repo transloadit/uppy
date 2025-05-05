@@ -8,6 +8,6 @@ export default {
     streamPassive: 'Stream passive',
     micDisabled: 'Microphone access denied by user',
     recording: 'Recording',
-    takeScreenshot: 'Take screenshot',
+    takeScreenshot: 'Take Screenshot',
   },
 }
