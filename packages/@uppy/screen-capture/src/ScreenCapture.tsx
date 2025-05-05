@@ -517,7 +517,7 @@ export default class ScreenCapture<
 
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
 
-      // Validate and set image MIME type
+      // Validate and set fallback for preferred image mime type
       let mimeType = this.opts.preferredImageMimeType
       if (!mimeType || !SUPPORTED_IMAGE_TYPES.includes(mimeType)) {
         this.uppy.log(
@@ -527,11 +527,21 @@ export default class ScreenCapture<
         mimeType = 'image/png'
       }
 
-      // Validate and set quality
-      const quality = Math.min(
-        Math.max(this.opts.screenshotQuality ?? 0.92, 0),
-        1,
-      )
+      // Validate and set fallback for screenshot quality
+      let quality = 0.92
+      if (this.opts.screenshotQuality != null) {
+        if (
+          this.opts.screenshotQuality >= 0 &&
+          this.opts.screenshotQuality <= 1
+        ) {
+          quality = this.opts.screenshotQuality
+        } else {
+          this.uppy.log(
+            `Invalid quality value "${this.opts.screenshotQuality}", value must be between 0 and 1. Falling back to ${quality}`,
+            'warning',
+          )
+        }
+      }
 
       return new Promise((resolve, reject) => {
         canvas.toBlob(
