@@ -8,6 +8,7 @@ const mimeToExtensions = {
   'image/heic': 'heic',
   'image/heif': 'heif',
   'image/jpeg': 'jpg',
+  'image/webp': 'webp',
   'image/png': 'png',
   'image/svg+xml': 'svg',
   'video/mp4': 'mp4',
