@@ -75,6 +75,8 @@ module.exports.getURLBuilder = (options) => {
   return buildURL
 }
 
+module.exports.getRedirectPath = (providerName) => `/${providerName}/redirect`;
+
 /**
  * Create an AES-CCM encryption key and initialization vector from the provided secret
  * and a random nonce.
