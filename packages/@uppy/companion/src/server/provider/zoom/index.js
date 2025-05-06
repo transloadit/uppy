@@ -47,20 +47,18 @@ class Zoom extends Provider {
       const userTz = timezone || 'UTC'
 
       if (meetingId) {
-        // 1. Fetch files for a specific meeting
         const recordingInfo = await client.get(`meetings/${encodeURIComponent(meetingId)}/recordings`, { responseType: 'json' }).json()
         return adaptData(user, recordingInfo)
       }
 
       if (requestedYear) {
-        // 2. Fetch all meetings for the requested year
         const yearStartDate = moment.tz({ year: requestedYear, month: 0, day: 1 }, userTz).startOf('day')
         const yearEndDate = moment.tz({ year: requestedYear, month: 11, day: 31 }, userTz).endOf('day')
 
         const allMeetingsInYear = []
         let currentToDate = yearEndDate.clone()
 
-        // Loop backwards in 30-day chunks within the year
+        // Loop backwards in 30-day chunks within the year as Zoom API only allows 30 days at a time
         while (currentToDate.isSameOrAfter(yearStartDate)) {
           // Ensure chunk start doesn't go before year start
           const potentialFromDate = currentToDate.clone().subtract(29, 'days').startOf('day')
@@ -93,7 +91,6 @@ class Zoom extends Provider {
         return adaptData(user, finalResult)
       }
 
-      // 3. Initial view: Create year folders (implicit else)
       const accountCreationDate = moment.utc(user.created_at)
       const startYear = accountCreationDate.year()
       const currentYear = moment.tz(userTz).year()
@@ -113,11 +110,10 @@ class Zoom extends Provider {
         })
       }
 
-      // Return folder list directly, without adaptData
       return {
         username: user.email,
         items: years,
-        nextPagePath: null, // No pagination for year list itself
+        nextPagePath: null,
       }
     })
   }
