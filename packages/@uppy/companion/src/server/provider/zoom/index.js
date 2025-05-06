@@ -1,7 +1,7 @@
 const moment = require('moment-timezone')
 
 const Provider = require('../Provider')
-const { initializeData, adaptData } = require('./adapter')
+const { adaptData } = require('./adapter')
 const { withProviderErrorHandling } = require('../providerErrors')
 const { prepareStream, getBasicAuthHeader } = require('../../helpers/utils')
 
@@ -34,50 +34,91 @@ class Zoom extends Provider {
     return 'zoom'
   }
 
-  /*
-  - returns list of months by default
-  - drill down for specific files in each month
-  */
   async list (options) {
     return this.#withErrorHandling('provider.zoom.list.error', async () => {
       const { token } = options
       const query = options.query || {}
-      const { cursor, from, to } = query
       const meetingId = options.directory || ''
+      const requestedYear = query.year ? parseInt(query.year, 10) : null
 
       const client = await getClient({ token })
       const user = await client.get('users/me', { responseType: 'json' }).json()
-
       const { timezone } = user
-
-      if (!from && !to && !meetingId) {
-        const end = cursor && moment.utc(cursor).endOf('day').tz(timezone || 'UTC')
-        return initializeData(user, end)
-      }
-
-      if (from && to) {
-        /*  we need to convert local datetime to UTC date for Zoom query
-        eg: user in PST (UTC-08:00) wants 2020-08-01 (00:00) to 2020-08-31 (23:59)
-        => in UTC, that's 2020-07-31 (16:00) to 2020-08-31 (15:59)
-        */
-        const searchParams = {
-          page_size: PAGE_SIZE,
-          from: moment.tz(from, timezone || 'UTC').startOf('day').tz('UTC').format('YYYY-MM-DD'),
-          to: moment.tz(to, timezone || 'UTC').endOf('day').tz('UTC').format('YYYY-MM-DD'),
-        }
-        if (cursor) searchParams.next_page_token = cursor
-
-        const meetingsInfo = await client.get('users/me/recordings', { searchParams, responseType: 'json' }).json()
-
-        return adaptData(user, meetingsInfo, query)
-      }
+      const userTz = timezone || 'UTC'
 
       if (meetingId) {
+        // 1. Fetch files for a specific meeting
         const recordingInfo = await client.get(`meetings/${encodeURIComponent(meetingId)}/recordings`, { responseType: 'json' }).json()
-        return adaptData(user, recordingInfo, query)
+        return adaptData(user, recordingInfo)
       }
 
-      throw new Error('Invalid list() arguments')
+      if (requestedYear) {
+        // 2. Fetch all meetings for the requested year
+        const yearStartDate = moment.tz({ year: requestedYear, month: 0, day: 1 }, userTz).startOf('day')
+        const yearEndDate = moment.tz({ year: requestedYear, month: 11, day: 31 }, userTz).endOf('day')
+
+        const allMeetingsInYear = []
+        let currentToDate = yearEndDate.clone()
+
+        // Loop backwards in 30-day chunks within the year
+        while (currentToDate.isSameOrAfter(yearStartDate)) {
+          // Ensure chunk start doesn't go before year start
+          const potentialFromDate = currentToDate.clone().subtract(29, 'days').startOf('day')
+          const currentFromDate = potentialFromDate.isBefore(yearStartDate) ? yearStartDate.clone() : potentialFromDate
+
+          const searchParams = {
+            page_size: PAGE_SIZE,
+            from: currentFromDate.clone().tz('UTC').format('YYYY-MM-DD'), 
+            to: currentToDate.clone().tz('UTC').format('YYYY-MM-DD'),   
+            next_page_token: null, 
+          }
+
+          let currentChunkMeetingsInfo
+          do {
+            if (searchParams.next_page_token === null) delete searchParams.next_page_token
+            currentChunkMeetingsInfo = await client.get('users/me/recordings', { searchParams, responseType: 'json' }).json()
+            if (currentChunkMeetingsInfo.meetings && currentChunkMeetingsInfo.meetings.length > 0) {
+              allMeetingsInYear.push(...currentChunkMeetingsInfo.meetings)
+            }
+            searchParams.next_page_token = currentChunkMeetingsInfo.next_page_token || null
+          } while (searchParams.next_page_token)
+
+          // Prepare for the next chunk (previous period)
+          // If the current chunk already started at the year start, we're done.
+          if (currentFromDate.isSame(yearStartDate)) break;
+          currentToDate = currentFromDate.subtract(1, 'day').endOf('day')
+        }
+
+        const finalResult = { meetings: allMeetingsInYear }
+        return adaptData(user, finalResult)
+      }
+
+      // 3. Initial view: Create year folders (implicit else)
+      const accountCreationDate = moment.utc(user.created_at)
+      const startYear = accountCreationDate.year()
+      const currentYear = moment.tz(userTz).year()
+      const years = []
+
+      for (let year = currentYear; year >= startYear; year--) {
+        years.push({
+          isFolder: true,
+          icon: 'folder',
+          name: `${year}`,
+          mimeType: null,
+          id: `${year}`,
+          thumbnail: null,
+          requestPath: `?year=${year}`,
+          modifiedDate: `${year}-12-31`, // Representive date
+          size: null,
+        })
+      }
+
+      // Return folder list directly, without adaptData
+      return {
+        username: user.email,
+        items: years,
+        nextPagePath: null, // No pagination for year list itself
+      }
     })
   }
 
