@@ -1,4 +1,4 @@
-import { useMemo, useContext } from 'react'
+import { useMemo, useContext, useEffect } from 'react'
 import { useSyncExternalStore } from 'use-sync-external-store/shim/index.js'
 import type { Uppy } from '@uppy/core'
 import { createWebcamController, type WebcamController } from '@uppy/components'
@@ -6,7 +6,7 @@ import { UppyContext } from './headless/UppyContextProvider.js'
 
 type UseWebcamResult = Omit<
   WebcamController,
-  'destroy' | 'subscribe' | 'getSnapshot'
+  'destroy' | 'subscribe' | 'getSnapshot' | 'start'
 > & {
   status: WebcamController['getSnapshot']['prototype']['status']
   recordedVideo: WebcamController['getSnapshot']['prototype']['recordedVideo']
@@ -31,22 +31,28 @@ export function useWebcam(uppyInstance?: Uppy): UseWebcamResult {
 
   const controller = useMemo(() => createWebcamController(uppy), [uppy])
 
-  const { status, recordedVideo, error } = useSyncExternalStore(
+  const { status, cameraError, recordedVideo } = useSyncExternalStore(
     controller.subscribe,
     controller.getSnapshot,
     controller.getSnapshot, // Server snapshot (can be same as client initially)
   )
 
+  useEffect(() => {
+    controller.start()
+    return () => {
+      controller.destroy()
+    }
+  }, [controller])
+
   return {
     status,
+    error: cameraError,
     recordedVideo,
-    error,
     getVideoProps: controller.getVideoProps,
     getSnapshotButtonProps: controller.getSnapshotButtonProps,
     getRecordButtonProps: controller.getRecordButtonProps,
     getStopRecordingButtonProps: controller.getStopRecordingButtonProps,
     getSubmitButtonProps: controller.getSubmitButtonProps,
     getDiscardButtonProps: controller.getDiscardButtonProps,
-    getVideoSourceSelectProps: controller.getVideoSourceSelectProps,
   }
 }

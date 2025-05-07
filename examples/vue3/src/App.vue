@@ -3,6 +3,8 @@
     <main class="p-5 max-w-xl mx-auto">
       <h1 class="text-4xl font-bold">Welcome to Vue.</h1>
 
+      <CustomDropzone />
+
       <article>
         <h2 class="text-2xl my-4">With list</h2>
         <Dropzone />
@@ -31,6 +33,7 @@ import {
   FilesGrid,
   UploadButton,
 } from '@uppy/vue'
+import CustomDropzone from './Dropzone.vue'
 
 const uppy = computed(() =>
   new Uppy().use(Tus, {
