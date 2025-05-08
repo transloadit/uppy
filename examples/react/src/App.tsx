@@ -1,11 +1,15 @@
+/* eslint-disable jsx-a11y/media-has-caption */
+/* eslint-disable react/button-has-type */
+/* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable react/react-in-jsx-scope */
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import {
   Dropzone,
   FilesGrid,
   FilesList,
   UploadButton,
   UppyContextProvider,
+  useWebcam,
 } from '@uppy/react'
 import Uppy from '@uppy/core'
 import Tus from '@uppy/tus'
