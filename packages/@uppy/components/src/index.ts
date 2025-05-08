@@ -7,12 +7,6 @@ export {
   type DropzoneAPI,
   type DropzoneOptions,
 } from './hooks/dropzone.js'
-export {
-  createWebcamController,
-  type WebcamStatus,
-  type WebcamController,
-  type WebcamSnapshot,
-} from './hooks/webcam.js'
 
 export { default as Dropzone, type DropzoneProps } from './dropzone.jsx'
 export {
