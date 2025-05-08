@@ -52,8 +52,8 @@ class Zoom extends Provider {
       }
 
       if (requestedYear) {
-        const yearStartDate = moment.tz({ year: requestedYear, month: 0, day: 1 }, userTz).startOf('day')
-        const yearEndDate = moment.tz({ year: requestedYear, month: 11, day: 31 }, userTz).endOf('day')
+        const yearStartDate = moment.tz({ year: requestedYear, month: 0, day: 1 }, userTz).startOf('year')
+        const yearEndDate = yearStartDate.clone().endOf('year')
 
         const allMeetingsInYear = []
         let currentToDate = yearEndDate.clone()
@@ -61,30 +61,23 @@ class Zoom extends Provider {
         // Loop backwards in 30-day chunks within the year as Zoom API only allows 30 days at a time
         while (currentToDate.isSameOrAfter(yearStartDate)) {
           // Ensure chunk start doesn't go before year start
-          const potentialFromDate = currentToDate.clone().subtract(29, 'days').startOf('day')
-          const currentFromDate = potentialFromDate.isBefore(yearStartDate) ? yearStartDate.clone() : potentialFromDate
+          const currentFromDate = currentToDate.clone().startOf('month')
 
           const searchParams = {
             page_size: PAGE_SIZE,
             from: currentFromDate.clone().tz('UTC').format('YYYY-MM-DD'), 
             to: currentToDate.clone().tz('UTC').format('YYYY-MM-DD'),   
-            next_page_token: null, 
           }
 
-          let currentChunkMeetingsInfo
           do {
-            if (searchParams.next_page_token === null) delete searchParams.next_page_token
-            currentChunkMeetingsInfo = await client.get('users/me/recordings', { searchParams, responseType: 'json' }).json()
-            if (currentChunkMeetingsInfo.meetings && currentChunkMeetingsInfo.meetings.length > 0) {
-              allMeetingsInYear.push(...currentChunkMeetingsInfo.meetings)
-            }
-            searchParams.next_page_token = currentChunkMeetingsInfo.next_page_token || null
+            const currentChunkMeetingsInfo = await client.get('users/me/recordings', { searchParams, responseType: 'json' }).json()
+            allMeetingsInYear.push(...(currentChunkMeetingsInfo.meetings ?? []))
+            searchParams.next_page_token = currentChunkMeetingsInfo.next_page_token
           } while (searchParams.next_page_token)
 
-          // Prepare for the next chunk (previous period)
+          // Prepare for the next chunk (previous month)
           // If the current chunk already started at the year start, we're done.
-          if (currentFromDate.isSame(yearStartDate)) break;
-          currentToDate = currentFromDate.subtract(1, 'day').endOf('day')
+          currentToDate = currentToDate.clone().subtract(1, 'month').endOf('month')
         }
 
         const finalResult = { meetings: allMeetingsInYear }
@@ -105,7 +98,7 @@ class Zoom extends Provider {
           id: `${year}`,
           thumbnail: null,
           requestPath: `?year=${year}`,
-          modifiedDate: `${year}-12-31`, // Representive date
+          modifiedDate: `${year}-12-31`, // Representative date
           size: null,
         })
       }
