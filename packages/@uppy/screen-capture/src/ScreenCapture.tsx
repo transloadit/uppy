@@ -28,11 +28,18 @@ function getMediaDevices() {
   return window.MediaRecorder && navigator.mediaDevices // eslint-disable-line compat/compat
 }
 
+// Add supported image types
+const SUPPORTED_IMAGE_TYPES = ['image/png', 'image/jpeg', 'image/webp'] as const
+type SupportedImageType = (typeof SUPPORTED_IMAGE_TYPES)[number]
+
 export interface ScreenCaptureOptions extends UIPluginOptions {
   displayMediaConstraints?: MediaStreamConstraints
   userMediaConstraints?: MediaStreamConstraints
   preferredVideoMimeType?: string
+  preferredImageMimeType?: SupportedImageType
+  screenshotQuality?: number
   locale?: LocaleStrings<typeof locale>
+  enableScreenshots?: boolean
 }
 
 // https://developer.mozilla.org/en-US/docs/Web/API/MediaStreamConstraints
@@ -55,6 +62,9 @@ const defaultOptions = {
     audio: true,
   },
   preferredVideoMimeType: 'video/webm',
+  preferredImageMimeType: 'image/png' as SupportedImageType,
+  screenshotQuality: 0.92,
+  enableScreenshots: false,
 }
 
 type Opts = DefinePluginOpts<ScreenCaptureOptions, keyof typeof defaultOptions>
@@ -65,6 +75,7 @@ export type ScreenCaptureState = {
   recording: boolean
   recordedVideo: string | null
   screenRecError: string | null
+  capturedScreenshotUrl: string | null
 }
 
 export default class ScreenCapture<
@@ -128,6 +139,7 @@ export default class ScreenCapture<
     this.stopRecording = this.stopRecording.bind(this)
     this.submit = this.submit.bind(this)
     this.streamInterrupted = this.streamInactivated.bind(this)
+    this.captureScreenshot = this.captureScreenshot.bind(this)
 
     // initialize
     this.captureActive = false
@@ -423,9 +435,16 @@ export default class ScreenCapture<
       this.outputStream = null
     }
 
+    // Clean up screenshot URL
+    const { capturedScreenshotUrl } = this.getPluginState()
+    if (capturedScreenshotUrl) {
+      URL.revokeObjectURL(capturedScreenshotUrl)
+    }
+
     // remove preview video
     this.setPluginState({
       recordedVideo: null,
+      capturedScreenshotUrl: null,
     })
 
     this.captureActive = false
@@ -460,6 +479,118 @@ export default class ScreenCapture<
     return Promise.resolve(file)
   }
 
+  async captureScreenshot(): Promise<void> {
+    if (!this.mediaDevices?.getDisplayMedia) {
+      throw new Error('Screen capture is not supported')
+    }
+
+    try {
+      let stream = this.videoStream
+
+      // Only request new stream if we don't have one
+      if (!stream) {
+        const newStream = await this.selectVideoStreamSource()
+        if (!newStream) {
+          throw new Error('Failed to get screen capture stream')
+        }
+        stream = newStream
+      }
+
+      const video = document.createElement('video')
+      video.srcObject = stream
+
+      await new Promise((resolve) => {
+        video.onloadedmetadata = () => {
+          video.play()
+          resolve(null)
+        }
+      })
+
+      const canvas = document.createElement('canvas')
+      canvas.width = video.videoWidth
+      canvas.height = video.videoHeight
+
+      const ctx = canvas.getContext('2d')
+      if (!ctx) {
+        throw new Error('Failed to get canvas context')
+      }
+
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
+
+      // Validate and set fallback for preferred image mime type
+      let mimeType = this.opts.preferredImageMimeType
+      if (!mimeType || !SUPPORTED_IMAGE_TYPES.includes(mimeType)) {
+        this.uppy.log(
+          `Unsupported image type "${mimeType}", falling back to image/png`,
+          'warning',
+        )
+        mimeType = 'image/png'
+      }
+
+      // Validate and set fallback for screenshot quality
+      let quality = 0.92
+      if (this.opts.screenshotQuality != null) {
+        if (
+          this.opts.screenshotQuality >= 0 &&
+          this.opts.screenshotQuality <= 1
+        ) {
+          quality = this.opts.screenshotQuality
+        } else {
+          this.uppy.log(
+            `Invalid quality value "${this.opts.screenshotQuality}", value must be between 0 and 1. Falling back to ${quality}`,
+            'warning',
+          )
+        }
+      }
+
+      return new Promise((resolve, reject) => {
+        canvas.toBlob(
+          (blob) => {
+            if (!blob) {
+              reject(new Error('Failed to create screenshot blob'))
+              return
+            }
+
+            const fileExtension = getFileTypeExtension(mimeType) || 'png'
+            const file = {
+              source: this.id,
+              name: `Screenshot ${new Date().toISOString()}.${fileExtension}`,
+              type: mimeType,
+              data: blob,
+            }
+
+            try {
+              const screenshotUrl = URL.createObjectURL(blob)
+              this.setPluginState({
+                capturedScreenshotUrl: screenshotUrl,
+              })
+              this.uppy.addFile(file)
+              resolve()
+            } catch (err) {
+              if (this.getPluginState().capturedScreenshotUrl) {
+                this.setPluginState({ capturedScreenshotUrl: null })
+              }
+              if (!err.isRestriction) {
+                this.uppy.log(err, 'error')
+              }
+              reject(err)
+            } finally {
+              // Cleanup
+              video.srcObject = null
+              canvas.remove()
+              video.remove()
+            }
+          },
+          mimeType,
+          quality,
+        )
+      })
+    } catch (err) {
+      this.uppy.log(err, 'error')
+      throw err
+    }
+  }
+
   render(): ComponentChild {
     // get screen recorder state
     const recorderState = this.getPluginState()
@@ -477,6 +608,8 @@ export default class ScreenCapture<
         {...recorderState} // eslint-disable-line react/jsx-props-no-spreading
         onStartRecording={this.startRecording}
         onStopRecording={this.stopRecording}
+        enableScreenshots={this.opts.enableScreenshots}
+        onScreenshot={this.captureScreenshot}
         onStop={this.stop}
         onSubmit={this.submit}
         i18n={this.i18n}

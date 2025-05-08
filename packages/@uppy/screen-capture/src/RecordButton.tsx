@@ -1,7 +1,13 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { h } from 'preact'
+import type { I18n } from '@uppy/utils/lib/Translator'
 
-type $TSFixMe = any
+interface RecordButtonProps {
+  recording: boolean | undefined
+  onStartRecording: () => void
+  onStopRecording: () => Promise<void>
+  i18n: I18n
+}
 
 /**
  * Control screen capture recording. Will show record or stop button.
@@ -11,7 +17,7 @@ export default function RecordButton({
   onStartRecording,
   onStopRecording,
   i18n,
-}: $TSFixMe) {
+}: RecordButtonProps): h.JSX.Element {
   if (recording) {
     return (
       <button
