@@ -1,0 +1,27 @@
+import { useEffect, useRef, useContext, createElement as h } from 'react'
+import {
+  FilesGrid as PreactFilesGrid,
+  type FilesGridProps,
+} from '@uppy/components'
+import { h as preactH } from 'preact'
+import { render as preactRender } from 'preact/compat'
+import { UppyContext } from './UppyContextProvider.js'
+
+export default function FilesGrid(props: Omit<FilesGridProps, 'ctx'>) {
+  const ref = useRef(null)
+  const ctx = useContext(UppyContext)
+
+  useEffect(() => {
+    if (ref.current) {
+      preactRender(
+        preactH(PreactFilesGrid, {
+          ...props,
+          ctx,
+        } satisfies FilesGridProps),
+        ref.current,
+      )
+    }
+  }, [ctx, props])
+
+  return <div ref={ref} />
+}

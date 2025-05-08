@@ -1,0 +1,114 @@
+---
+description: 
+globs: packages/@uppy/components/src/**
+alwaysApply: false
+---
+# Headless components
+
+You are an expert at making headless UI components in Preact, similar to libraries like shadcn, except we don't rely on packages like radix.
+
+## Goal
+
+Making headless components in Preact for the open source Uppy file uploader and framework specific hooks. We want to give flexbility to users of this library by rendering sensible UI defaults and hooks that abstract Uppy functionality to completely build your own UI.
+
+Another way to give flexibility is to add data attributes selectively to some HTML elements. These can be used with CSS selectors by users of this library to conditionally apply styles:
+
+```html
+<button
+  type="button"
+  data-uppy-element="upload-button"
+  data-state={ctx.status}
+></button>
+```
+
+## How to build these components
+
+It's important to understand that an automated build script (bin/build-components.mjs) generates framework-specific wrappers for these Preact components.
+
+Here is an example from the React wrapper created by the script.
+
+```tsx
+import { useEffect, useRef, useContext, createElement as h } from 'react'
+import {
+  Dropzone as PreactDropzone,
+  type DropzoneProps,
+} from '@uppy/components'
+import { h as preactH } from 'preact'
+import { render as preactRender } from 'preact/compat'
+import { UppyContext } from './UppyContextProvider.js'
+
+export default function Dropzone(props: Omit<DropzoneProps, 'ctx' | 'render'>) {
+  const ref = useRef(null)
+  const ctx = useContext(UppyContext)
+
+  useEffect(() => {
+    if (ref.current) {
+      preactRender(
+        preactH(PreactDropzone, {
+          ...props,
+          ctx,
+        } satisfies DropzoneProps),
+        ref.current,
+      )
+    }
+  }, [ctx, props])
+
+  return <div ref={ref} />
+}
+```
+
+You don't have to worry about how these wrappers are created but it's important to know when building the Preact components that you will always receive a `ctx` prop to work with. This is its type:
+
+```ts
+import type Uppy from '@uppy/core'
+export type UploadStatus =
+  | 'init'
+  | 'ready'
+  | 'uploading'
+  | 'paused'
+  | 'error'
+  | 'complete'
+export type UppyContext = {
+  uppy: Uppy | undefined
+  status: UploadStatus
+  progress: number
+}
+```
+
+## Styling
+
+Styling is done with Tailwind CSS 4.x. There is no Tailwind config file.
+
+**IMPORTANT**: all classes have the `uppy:` prefix. Example: `bg-red-500` should become `uppy:bg-red-500`.
+
+Use `clsx` for conditional styles.
+
+```js
+import clsx from 'clsx';
+// or
+import { clsx } from 'clsx';
+
+// Strings (variadic)
+clsx('foo', true && 'bar', 'baz');
+//=> 'foo bar baz'
+
+// Objects
+clsx({ foo:true, bar:false, baz:isTrue() });
+//=> 'foo baz'
+
+// Objects (variadic)
+clsx({ foo:true }, { bar:false }, null, { '--foobar':'hello' });
+//=> 'foo --foobar'
+
+// Arrays
+clsx(['foo', 0, false, 'bar']);
+//=> 'foo bar'
+
+// Arrays (variadic)
+clsx(['foo'], ['', 0, false, 'bar'], [['baz', [['hello'], 'there']]]);
+//=> 'foo bar baz hello there'
+
+// Kitchen sink (with nesting)
+clsx('foo', [1 && 'bar', { baz:false, bat:null }, ['hello', ['world']]], 'cya');
+//=> 'foo bar hello world cya'
+```

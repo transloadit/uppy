@@ -1,0 +1,27 @@
+import { useEffect, useRef, useContext, createElement as h } from 'react'
+import {
+  Thumbnail as PreactThumbnail,
+  type ThumbnailProps,
+} from '@uppy/components'
+import { h as preactH } from 'preact'
+import { render as preactRender } from 'preact/compat'
+import { UppyContext } from './UppyContextProvider.js'
+
+export default function Thumbnail(props: Omit<ThumbnailProps, 'ctx'>) {
+  const ref = useRef(null)
+  const ctx = useContext(UppyContext)
+
+  useEffect(() => {
+    if (ref.current) {
+      preactRender(
+        preactH(PreactThumbnail, {
+          ...props,
+          ctx,
+        } satisfies ThumbnailProps),
+        ref.current,
+      )
+    }
+  }, [ctx, props])
+
+  return <div ref={ref} />
+}

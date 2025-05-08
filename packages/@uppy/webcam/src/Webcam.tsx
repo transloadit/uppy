@@ -77,10 +77,10 @@ export interface WebcamOptions<M extends Meta, B extends Body>
   locale?: LocaleStrings<typeof locale>
 }
 
-interface WebcamState {
+export interface WebcamState {
   hasCamera: boolean
   cameraReady: boolean
-  cameraError: null
+  cameraError: null | Error
   recordingLengthSeconds: number
   videoSources: MediaDeviceInfo[]
   currentDeviceId: string | MediaStreamTrack | null | undefined
@@ -90,7 +90,7 @@ interface WebcamState {
 }
 
 // set default options
-const defaultOptions = {
+export const defaultOptions = {
   onBeforeSnapshot: () => Promise.resolve(),
   countdown: false,
   modes: ['video-audio', 'video-only', 'audio-only', 'picture'] as any,
@@ -127,9 +127,9 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
 
   private icon: () => h.JSX.Element
 
-  private webcamActive
+  public webcamActive
 
-  private stream: MediaStream | null = null
+  public stream: MediaStream | null = null
 
   private recorder: MediaRecorder | null = null
 

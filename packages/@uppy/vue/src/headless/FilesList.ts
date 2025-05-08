@@ -1,0 +1,48 @@
+import { defineComponent, ref, watch, onMounted, h } from 'vue'
+import {
+  FilesList as PreactFilesList,
+  type FilesListProps,
+} from '@uppy/components'
+import { h as preactH } from 'preact'
+import { render as preactRender } from 'preact/compat'
+import { shallowEqualObjects } from 'shallow-equal'
+import { useUppyContext } from './useUppyContext.js'
+
+export default defineComponent<Omit<FilesListProps, 'ctx'>>({
+  name: 'FilesList',
+  setup(props, { attrs }) {
+    const containerRef = ref<HTMLElement | null>(null)
+    const ctx = useUppyContext()
+
+    function renderFilesList() {
+      if (containerRef.value) {
+        preactRender(
+          preactH(PreactFilesList, {
+            ...(attrs as FilesListProps),
+            ctx,
+          } satisfies FilesListProps),
+          containerRef.value,
+        )
+      }
+    }
+
+    onMounted(() => {
+      renderFilesList()
+    })
+
+    watch(ctx, () => {
+      renderFilesList()
+    })
+
+    watch(
+      () => props,
+      (current, old) => {
+        if (!shallowEqualObjects(current, old)) {
+          renderFilesList()
+        }
+      },
+    )
+
+    return () => h('div', { ref: containerRef })
+  },
+})

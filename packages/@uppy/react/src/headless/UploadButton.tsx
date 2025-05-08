@@ -1,0 +1,27 @@
+import { useEffect, useRef, useContext, createElement as h } from 'react'
+import {
+  UploadButton as PreactUploadButton,
+  type UploadButtonProps,
+} from '@uppy/components'
+import { h as preactH } from 'preact'
+import { render as preactRender } from 'preact/compat'
+import { UppyContext } from './UppyContextProvider.js'
+
+export default function UploadButton(props: Omit<UploadButtonProps, 'ctx'>) {
+  const ref = useRef(null)
+  const ctx = useContext(UppyContext)
+
+  useEffect(() => {
+    if (ref.current) {
+      preactRender(
+        preactH(PreactUploadButton, {
+          ...props,
+          ctx,
+        } satisfies UploadButtonProps),
+        ref.current,
+      )
+    }
+  }, [ctx, props])
+
+  return <div ref={ref} />
+}
