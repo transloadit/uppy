@@ -1,7 +1,7 @@
 const moment = require('moment-timezone')
 
 const Provider = require('../Provider')
-const { initializeData, adaptData } = require('./adapter')
+const { adaptData } = require('./adapter')
 const { withProviderErrorHandling } = require('../providerErrors')
 const { prepareStream, getBasicAuthHeader } = require('../../helpers/utils')
 
@@ -34,50 +34,80 @@ class Zoom extends Provider {
     return 'zoom'
   }
 
-  /*
-  - returns list of months by default
-  - drill down for specific files in each month
-  */
   async list (options) {
     return this.#withErrorHandling('provider.zoom.list.error', async () => {
       const { token } = options
       const query = options.query || {}
-      const { cursor, from, to } = query
       const meetingId = options.directory || ''
+      const requestedYear = query.year ? parseInt(query.year, 10) : null
 
       const client = await getClient({ token })
       const user = await client.get('users/me', { responseType: 'json' }).json()
-
       const { timezone } = user
-
-      if (!from && !to && !meetingId) {
-        const end = cursor && moment.utc(cursor).endOf('day').tz(timezone || 'UTC')
-        return initializeData(user, end)
-      }
-
-      if (from && to) {
-        /*  we need to convert local datetime to UTC date for Zoom query
-        eg: user in PST (UTC-08:00) wants 2020-08-01 (00:00) to 2020-08-31 (23:59)
-        => in UTC, that's 2020-07-31 (16:00) to 2020-08-31 (15:59)
-        */
-        const searchParams = {
-          page_size: PAGE_SIZE,
-          from: moment.tz(from, timezone || 'UTC').startOf('day').tz('UTC').format('YYYY-MM-DD'),
-          to: moment.tz(to, timezone || 'UTC').endOf('day').tz('UTC').format('YYYY-MM-DD'),
-        }
-        if (cursor) searchParams.next_page_token = cursor
-
-        const meetingsInfo = await client.get('users/me/recordings', { searchParams, responseType: 'json' }).json()
-
-        return adaptData(user, meetingsInfo, query)
-      }
+      const userTz = timezone || 'UTC'
 
       if (meetingId) {
         const recordingInfo = await client.get(`meetings/${encodeURIComponent(meetingId)}/recordings`, { responseType: 'json' }).json()
-        return adaptData(user, recordingInfo, query)
+        return adaptData(user, recordingInfo)
       }
 
-      throw new Error('Invalid list() arguments')
+      if (requestedYear) {
+        const yearStartDate = moment.tz({ year: requestedYear, month: 0, day: 1 }, userTz).startOf('year')
+        const yearEndDate = yearStartDate.clone().endOf('year')
+
+        const allMeetingsInYear = []
+        let currentToDate = yearEndDate.clone()
+
+        // Loop backwards in 30-day chunks within the year as Zoom API only allows 30 days at a time
+        while (currentToDate.isSameOrAfter(yearStartDate)) {
+          // Ensure chunk start doesn't go before year start
+          const currentFromDate = currentToDate.clone().startOf('month')
+
+          const searchParams = {
+            page_size: PAGE_SIZE,
+            from: currentFromDate.clone().tz('UTC').format('YYYY-MM-DD'), 
+            to: currentToDate.clone().tz('UTC').format('YYYY-MM-DD'),   
+          }
+
+          do {
+            const currentChunkMeetingsInfo = await client.get('users/me/recordings', { searchParams, responseType: 'json' }).json()
+            allMeetingsInYear.push(...(currentChunkMeetingsInfo.meetings ?? []))
+            searchParams.next_page_token = currentChunkMeetingsInfo.next_page_token
+          } while (searchParams.next_page_token)
+
+          // Prepare for the next chunk (previous month)
+          // If the current chunk already started at the year start, we're done.
+          currentToDate = currentToDate.clone().subtract(1, 'month').endOf('month')
+        }
+
+        const finalResult = { meetings: allMeetingsInYear }
+        return adaptData(user, finalResult)
+      }
+
+      const accountCreationDate = moment.utc(user.created_at)
+      const startYear = accountCreationDate.year()
+      const currentYear = moment.tz(userTz).year()
+      const years = []
+
+      for (let year = currentYear; year >= startYear; year--) {
+        years.push({
+          isFolder: true,
+          icon: 'folder',
+          name: `${year}`,
+          mimeType: null,
+          id: `${year}`,
+          thumbnail: null,
+          requestPath: `?year=${year}`,
+          modifiedDate: `${year}-12-31`, // Representative date
+          size: null,
+        })
+      }
+
+      return {
+        username: user.email,
+        items: years,
+        nextPagePath: null,
+      }
     })
   }
 

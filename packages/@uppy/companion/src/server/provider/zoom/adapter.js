@@ -1,7 +1,5 @@
 const moment = require('moment-timezone')
 
-const DEFAULT_RANGE_MOS = 23
-
 const MIMETYPES = {
   MP4: 'video/mp4',
   M4A: 'audio/mp4',
@@ -28,40 +26,10 @@ const ICONS = {
   TIMELINE: 'file',
 }
 
-const getDateName = (start, end) => {
-  return `${start.format('YYYY-MM-DD')} - ${end.format('YYYY-MM-DD')}`
-}
-
-const getAccountCreationDate = (results) => {
-  return moment.utc(results.created_at)
-}
-
 const getUserEmail = (results) => {
   return results.email
 }
 
-const getDateFolderId = (start, end) => {
-  return `${start.format('YYYY-MM-DD')}_${end.format('YYYY-MM-DD')}`
-}
-
-const getDateFolderRequestPath = (start, end) => {
-  return `?from=${start.format('YYYY-MM-DD')}&to=${end.format('YYYY-MM-DD')}`
-}
-
-const getDateFolderModified = (end) => {
-  return end.format('YYYY-MM-DD')
-}
-
-const getDateNextPagePath = (end) => {
-  return `?cursor=${end.format('YYYY-MM-DD')}`
-}
-
-const getNextPagePath = (results) => {
-  if (results.next_page_token) {
-    return `?cursor=${results.next_page_token}&from=${results.from}&to=${results.to}`
-  }
-  return null
-}
 // we rely on the file_type attribute to differentiate a recording file from other items
 const getIsFolder = (item) => {
   return !item.file_type
@@ -135,67 +103,31 @@ const getItemTopic = (item) => {
   return item.topic
 }
 
-exports.initializeData = (body, initialEnd = null) => {
-  let end = initialEnd || moment.utc().tz(body.timezone || 'UTC')
-  const accountCreation = getAccountCreationDate(body).tz(body.timezone || 'UTC').startOf('day')
-  const defaultLimit = end.clone().subtract(DEFAULT_RANGE_MOS, 'months').date(1).startOf('day')
-  const allResultsShown = accountCreation > defaultLimit
-  const limit = allResultsShown ? accountCreation : defaultLimit
-  // if the limit is mid-month, keep that exact date
-  let start = (end.isSame(limit, 'month') && limit.date() !== 1) ? limit.clone() : end.clone().date(1).startOf('day')
-
-  const data = {
-    items: [],
-    username: getUserEmail(body),
-  }
-
-  while (end.isAfter(limit)) {
-    data.items.push({
-      isFolder: true,
-      icon: 'folder',
-      name: getDateName(start, end),
-      mimeType: null,
-      id: getDateFolderId(start, end),
-      thumbnail: null,
-      requestPath: getDateFolderRequestPath(start, end),
-      modifiedDate: getDateFolderModified(end),
-      size: null,
-    })
-    end = start.clone().subtract(1, 'days').endOf('day')
-    start = (end.isSame(limit, 'month') && limit.date() !== 1) ? limit.clone() : end.clone().date(1).startOf('day')
-  }
-  data.nextPagePath = allResultsShown ? null : getDateNextPagePath(end)
-  return data
-}
-
-exports.adaptData = (userResponse, results, query) => {
+exports.adaptData = (userResponse, results) => {
   if (!results) {
     return { items: [] }
   }
 
-  // we query the zoom api by date (from 00:00 - 23:59 UTC) which may include
-  // extra results for 00:00 - 23:59 local time that we want to filter out.
-  const utcFrom = moment.tz(query.from, userResponse.timezone || 'UTC').startOf('day').tz('UTC')
-  const utcTo = moment.tz(query.to, userResponse.timezone || 'UTC').endOf('day').tz('UTC')
-
   const data = {
-    nextPagePath: getNextPagePath(results),
+    nextPagePath: null,
     items: [],
     username: getUserEmail(userResponse),
   }
 
-  let items = []
+  let itemsToProcess = []
   if (results.meetings) {
-    items = results.meetings
-      .map(item => { return { ...item, utcStart: moment.utc(item.start_time) } })
-      .filter(item => moment.utc(item.start_time).isAfter(utcFrom) && moment.utc(item.start_time).isBefore(utcTo))
-  } else {
-    items = results.recording_files
+    itemsToProcess = results.meetings
+      .filter(meeting =>
+        meeting.recording_files &&
+        meeting.recording_files.some(file => !file.deleted_time && file.status === 'completed' && file.download_url)
+      )
+  } else if (results.recording_files) {
+    itemsToProcess = results.recording_files
       .map(item => { return { ...item, topic: results.topic } })
-      .filter(file => file.file_type !== 'TIMELINE')
+      .filter(file => file.file_type !== 'TIMELINE' && !file.deleted_time && file.status === 'completed' && file.download_url)
   }
 
-  items.forEach(item => {
+  itemsToProcess.forEach(item => {
     data.items.push({
       isFolder: getIsFolder(item),
       icon: getIcon(item),
