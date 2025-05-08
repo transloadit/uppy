@@ -9,10 +9,10 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.0.9",
-    "@uppy/core": "^4.4.2",
-    "@uppy/react": "workspace:^",
-    "@uppy/tus": "^4.2.2",
-    "@uppy/webcam": "^4.1.1",
+    "@uppy/core": "workspace:*",
+    "@uppy/react": "workspace:*",
+    "@uppy/tus": "workspace:*",
+    "@uppy/webcam": "workspace:*",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "tailwindcss": "^4.0.9"
