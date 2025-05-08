@@ -1,27 +1,20 @@
 import { useMemo, useContext, useEffect } from 'react'
 import { useSyncExternalStore } from 'use-sync-external-store/shim/index.js'
-import type { Uppy } from '@uppy/core'
-import { createWebcamController, type WebcamController } from '@uppy/components'
+import {
+  createWebcamController,
+  type WebcamController,
+  type WebcamSnapshot,
+} from '@uppy/components'
 import { UppyContext } from './headless/UppyContextProvider.js'
 
 type UseWebcamResult = Omit<
   WebcamController,
   'destroy' | 'subscribe' | 'getSnapshot' | 'start'
-> & {
-  status: WebcamController['getSnapshot']['prototype']['status']
-  recordedVideo: WebcamController['getSnapshot']['prototype']['recordedVideo']
-  error: WebcamController['getSnapshot']['prototype']['error']
-}
+> &
+  WebcamSnapshot
 
-/**
- * React hook to manage the Webcam component.
- *
- * @param uppyInstance - Optional Uppy instance. If not provided, it will be obtained from UppyContext.
- * @returns An object with webcam status, state, and prop getters.
- */
-export function useWebcam(uppyInstance?: Uppy): UseWebcamResult {
-  const ctx = useContext(UppyContext)
-  const uppy = uppyInstance ?? ctx.uppy
+export function useWebcam(): UseWebcamResult {
+  const { uppy } = useContext(UppyContext)
 
   if (!uppy) {
     throw new Error(
@@ -46,7 +39,7 @@ export function useWebcam(uppyInstance?: Uppy): UseWebcamResult {
 
   return {
     status,
-    error: cameraError,
+    cameraError,
     recordedVideo,
     getVideoProps: controller.getVideoProps,
     getSnapshotButtonProps: controller.getSnapshotButtonProps,

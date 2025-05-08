@@ -1,30 +1,45 @@
 import type { Uppy, UppyEventMap } from '@uppy/core'
 import type { WebcamState, WebcamStatus } from '@uppy/webcam'
 import Webcam from '@uppy/webcam'
-import type { HTMLAttributes } from 'preact/compat'
+
+export type { WebcamStatus }
+
+export type WebcamSnapshot = {
+  status: WebcamStatus
+  recordedVideo: string | null
+  cameraError: Error | null
+}
+
+type ButtonProps = {
+  type: 'button'
+  onClick: () => void
+  disabled: boolean
+}
 
 // Define the controller function's return type
 // No longer exports state directly, that's handled by getSnapshot
 export type WebcamController = {
   status: WebcamStatus
-  getVideoProps: (
-    ref: HTMLVideoElement | null,
-  ) => HTMLAttributes<HTMLVideoElement>
-  getSnapshotButtonProps: () => HTMLAttributes<HTMLButtonElement>
-  getRecordButtonProps: () => HTMLAttributes<HTMLButtonElement>
-  getStopRecordingButtonProps: () => HTMLAttributes<HTMLButtonElement>
-  getSubmitButtonProps: () => HTMLAttributes<HTMLButtonElement>
-  getDiscardButtonProps: () => HTMLAttributes<HTMLButtonElement>
+  getVideoProps: (ref: HTMLVideoElement | null) => {
+    style?: {
+      transform: string
+    }
+    playsInline: boolean
+    autoPlay?: boolean
+    muted: boolean
+    controls?: boolean | undefined
+    src?: string
+  }
+  getSnapshotButtonProps: () => ButtonProps
+  getRecordButtonProps: () => ButtonProps
+  getStopRecordingButtonProps: () => ButtonProps
+  getSubmitButtonProps: () => ButtonProps
+  getDiscardButtonProps: () => ButtonProps
   destroy: () => void
   subscribe: (listener: () => void) => () => void
-  getSnapshot: () => {
-    status: WebcamStatus
-    recordedVideo: string | null
-    cameraError: Error | null
-  }
+  getSnapshot: () => WebcamSnapshot
   start: () => void
 }
-
 // Define the controller function
 export function createWebcamController(uppy: Uppy): WebcamController {
   const plugin = uppy.getPlugin<Webcam<any, any>>('Webcam')
@@ -99,35 +114,33 @@ export function createWebcamController(uppy: Uppy): WebcamController {
     }
   }
 
-  const getSnapshotButtonProps = (): HTMLAttributes<HTMLButtonElement> => ({
-    type: 'button',
+  const getSnapshotButtonProps = () => ({
+    type: 'button' as const,
     onClick: async () => {
       await plugin.takeSnapshot()
       await plugin.stop()
     },
-    // Disable if not ready, or if currently recording (even if ready)
     disabled: getSnapshot().status !== 'ready' || currentState.isRecording,
   })
 
-  const getRecordButtonProps = (): HTMLAttributes<HTMLButtonElement> => ({
-    type: 'button',
+  const getRecordButtonProps = () => ({
+    type: 'button' as const,
     onClick: () => {
       plugin.startRecording()
     },
     disabled: getSnapshot().status !== 'ready' || currentState.isRecording,
   })
 
-  const getStopRecordingButtonProps =
-    (): HTMLAttributes<HTMLButtonElement> => ({
-      type: 'button',
-      onClick: () => {
-        plugin.stopRecording()
-      },
-      disabled: getSnapshot().status !== 'recording',
-    })
+  const getStopRecordingButtonProps = () => ({
+    type: 'button' as const,
+    onClick: () => {
+      plugin.stopRecording()
+    },
+    disabled: getSnapshot().status !== 'recording',
+  })
 
-  const getSubmitButtonProps = (): HTMLAttributes<HTMLButtonElement> => ({
-    type: 'button',
+  const getSubmitButtonProps = () => ({
+    type: 'button' as const,
     onClick: () => {
       plugin.submit()
       plugin.stop()
@@ -136,8 +149,8 @@ export function createWebcamController(uppy: Uppy): WebcamController {
     disabled: getSnapshot().status !== 'captured',
   })
 
-  const getDiscardButtonProps = (): HTMLAttributes<HTMLButtonElement> => ({
-    type: 'button',
+  const getDiscardButtonProps = () => ({
+    type: 'button' as const,
     onClick: () => {
       plugin.discardRecordedVideo()
       currentState.recordedVideo = null
@@ -149,7 +162,7 @@ export function createWebcamController(uppy: Uppy): WebcamController {
     uppy.off('state-update', onStateUpdate)
     listeners.clear()
     if (plugin.webcamActive || currentState.isRecording) {
-      plugin.stop().catch((err) => console.error('Error stopping webcam:', err))
+      plugin.stop()
     }
   }
 
@@ -158,9 +171,6 @@ export function createWebcamController(uppy: Uppy): WebcamController {
     plugin.start()
   }
 
-  // Return the controller interface
-  // We use getters to ensure consumers always get the latest value
-  // No longer returning state getters
   return {
     status: currentState.status,
     getVideoProps,
