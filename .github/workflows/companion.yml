@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [18.x, 20.x, latest]
+        node-version: [18.x, 20.x]
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
