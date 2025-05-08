@@ -7,6 +7,7 @@ export {
   type DropzoneAPI,
   type DropzoneOptions,
 } from './hooks/dropzone.js'
+export type { FileInputProps, FileInputFunctions } from './hooks/file-input.js'
 
 export {
   default as UploadButton,
