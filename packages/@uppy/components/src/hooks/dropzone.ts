@@ -18,10 +18,10 @@ export type DropzoneReturn<DragEventType, ChangeEventType> = {
     onClick: () => void
   }
   getInputProps: () => {
+    id: string
     type: 'file'
     multiple: boolean
     onChange: (event: ChangeEventType) => void
-    style?: { display: 'none' }
   }
 }
 
@@ -125,7 +125,6 @@ export function createDropzone<
       type: 'file',
       multiple: true,
       onChange: handleFileInputChange,
-      style: { display: 'none' },
     }),
   }
 }

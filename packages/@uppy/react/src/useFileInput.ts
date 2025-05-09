@@ -1,46 +1,23 @@
-import { useRef, useContext, type ChangeEvent } from 'react'
-import type { FileInputProps, FileInputFunctions } from '@uppy/components'
+import { useContext, useMemo, type ChangeEvent } from 'react'
+import { type FileInputProps, type FileInputFunctions } from '@uppy/components'
+import { createFileInput } from '@uppy/components'
 import { UppyContext } from './headless/UppyContextProvider.js'
+
+type TEvent = Event & ChangeEvent<HTMLInputElement>
 
 export function useFileInput(
   props?: FileInputProps,
-): FileInputFunctions<ChangeEvent<HTMLInputElement>> {
-  const fileInputRef = useRef<HTMLInputElement>(null)
+): FileInputFunctions<TEvent> {
   const ctx = useContext(UppyContext)
 
-  function handleClick() {
-    fileInputRef.current!.click()
+  if (!ctx.uppy) {
+    throw new Error('useFileInput must be called within a UppyContextProvider')
   }
 
-  function handleFileInputChange(event: ChangeEvent<HTMLInputElement>) {
-    const input = event.target as HTMLInputElement
-    const files = Array.from(input.files || [])
-    if (!files.length) return
-    ctx.uppy?.addFiles(
-      files.map((file) => ({
-        source: 'file-input',
-        name: file.name,
-        type: file.type,
-        data: file,
-      })),
-    )
+  const fileInput = useMemo(
+    () => createFileInput<TEvent>(ctx, props),
+    [ctx, props],
+  )
 
-    // Reset the input value so the same file can be selected again
-    input.value = ''
-  }
-
-  return {
-    getInputProps: () => ({
-      type: 'file',
-      style: { display: 'none' },
-      ref: fileInputRef,
-      multiple: props?.multiple || true,
-      accept: props?.accept,
-      onChange: handleFileInputChange,
-    }),
-    getButtonProps: () => ({
-      type: 'button',
-      onClick: handleClick,
-    }),
-  }
+  return fileInput
 }

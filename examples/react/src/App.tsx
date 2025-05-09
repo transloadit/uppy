@@ -26,14 +26,14 @@ function CustomDropzone() {
 
   return (
     <div>
-      <input {...getInputProps()} className="uppy:hidden" />
+      <input {...getInputProps()} className="hidden" />
       <div
         {...getRootProps()}
         role="button"
         className={`border-2 border-dashed border-gray-300 rounded-lg p-6 bg-gray-50 transition-colors duration-200 ${isDragging ? 'bg-blue-50' : ''}`}
       >
         <div className="flex flex-col items-center justify-center h-full space-y-3">
-          <input {...getFileInputProps()} />
+          <input {...getFileInputProps()} className="hidden" />
           <button
             {...getButtonProps()}
             className="hover:bg-gray-100 transition-colors p-2 rounded-md flex flex-col items-center gap-2 text-sm"
