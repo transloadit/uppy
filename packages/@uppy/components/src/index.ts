@@ -4,7 +4,7 @@ export { default as FilesGrid, type FilesGridProps } from './FilesGrid.js'
 export { default as Dropzone, type DropzoneProps } from './Dropzone.js'
 export {
   createDropzone,
-  type DropzoneAPI,
+  type DropzoneReturn,
   type DropzoneOptions,
 } from './hooks/dropzone.js'
 export type { FileInputProps, FileInputFunctions } from './hooks/file-input.js'

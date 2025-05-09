@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable react/jsx-props-no-spreading */
 import { h } from 'preact'
-import { useRef, useEffect, useState } from 'preact/hooks'
+import { useMemo } from 'preact/hooks'
 import { clsx } from 'clsx'
 import type { UppyContext } from './types.js'
 import { createDropzone } from './hooks/dropzone.js'
@@ -16,25 +16,18 @@ export type DropzoneProps = {
 
 export default function Dropzone(props: DropzoneProps) {
   const { width, height, note, noClick, ctx } = props
-  const [isDragging, setIsDragging] = useState(false)
-  const fileInputRef = useRef<HTMLInputElement | null>(null)
 
-  const { rootProps, inputProps, setFileInputRef } = createDropzone(ctx, {
-    noClick,
-    onDragEnter: () => setIsDragging(true),
-    onDragLeave: () => setIsDragging(false),
-    onDrop: () => setIsDragging(false),
-  })
-
-  useEffect(() => {
-    setFileInputRef(fileInputRef.current)
-  }, [setFileInputRef])
+  const { isDragging, getRootProps, getInputProps } = useMemo(
+    () => createDropzone(ctx, { noClick }),
+    [ctx, noClick],
+  )
 
   return (
     <div className="uppy-reset" data-uppy-element="dropzone">
-      <input {...inputProps} className="uppy:hidden" ref={fileInputRef} />
+      <input {...getInputProps()} className="uppy:hidden" />
       <div
-        {...rootProps}
+        {...getRootProps()}
+        role="button"
         style={{
           width: width || '100%',
           height: height || '100%',

@@ -8,30 +8,33 @@ export type DropzoneOptions = {
   onFileInputChange?: (files: File[]) => void
 }
 
-export type DropzoneAPI = {
+export type DropzoneReturn<DragEventType, ChangeEventType> = {
   isDragging: boolean
-  rootProps: {
-    onDragEnter: (event: DragEvent) => void
-    onDragOver: (event: DragEvent) => void
-    onDragLeave: (event: DragEvent) => void
-    onDrop: (event: DragEvent) => void
+  getRootProps: () => {
+    onDragEnter: (event: DragEventType) => void
+    onDragOver: (event: DragEventType) => void
+    onDragLeave: (event: DragEventType) => void
+    onDrop: (event: DragEventType) => void
     onClick: () => void
   }
-  inputProps: {
+  getInputProps: () => {
     type: 'file'
     multiple: boolean
-    onChange: (event: Event) => void
+    onChange: (event: ChangeEventType) => void
     style?: { display: 'none' }
   }
-  setFileInputRef: (element: HTMLInputElement | null) => void
 }
 
-export function createDropzone(
+const fileInputId = 'uppy-dropzone-file-input' as const
+
+export function createDropzone<
+  DragEventType extends DragEvent,
+  ChangeEventType extends Event,
+>(
   ctx: UppyContext,
   options: DropzoneOptions = {},
-): DropzoneAPI {
+): DropzoneReturn<DragEventType, ChangeEventType> {
   let isDragging = false
-  let fileInputRef: HTMLInputElement | null = null
 
   const setIsDragging = (value: boolean) => {
     isDragging = value
@@ -42,7 +45,7 @@ export function createDropzone(
     }
   }
 
-  const handleDrop = (event: DragEvent) => {
+  const handleDrop = (event: DragEventType) => {
     event.preventDefault()
     event.stopPropagation()
     setIsDragging(false)
@@ -56,7 +59,6 @@ export function createDropzone(
 
     ctx.uppy?.addFiles(
       files.map((file) => ({
-        source: 'drag-drop',
         name: file.name,
         type: file.type,
         data: file,
@@ -64,18 +66,18 @@ export function createDropzone(
     )
   }
 
-  const handleDragOver = (event: DragEvent) => {
+  const handleDragOver = (event: DragEventType) => {
     event.preventDefault()
     event.stopPropagation()
   }
 
-  const handleDragEnter = (event: DragEvent) => {
+  const handleDragEnter = (event: DragEventType) => {
     event.preventDefault()
     event.stopPropagation()
     setIsDragging(true)
   }
 
-  const handleDragLeave = (event: DragEvent) => {
+  const handleDragLeave = (event: DragEventType) => {
     event.preventDefault()
     event.stopPropagation()
     setIsDragging(false)
@@ -83,10 +85,11 @@ export function createDropzone(
 
   const handleClick = () => {
     if (options.noClick) return
-    fileInputRef?.click()
+    const input = document.getElementById(fileInputId) as HTMLInputElement
+    input?.click()
   }
 
-  const handleFileInputChange = (event: Event) => {
+  const handleFileInputChange = (event: ChangeEventType) => {
     const input = event.target as HTMLInputElement
     const files = Array.from(input.files || [])
     if (!files.length) return
@@ -110,21 +113,19 @@ export function createDropzone(
 
   return {
     isDragging,
-    rootProps: {
+    getRootProps: () => ({
       onDragEnter: handleDragEnter,
       onDragOver: handleDragOver,
       onDragLeave: handleDragLeave,
       onDrop: handleDrop,
       onClick: handleClick,
-    },
-    inputProps: {
+    }),
+    getInputProps: () => ({
+      id: fileInputId,
       type: 'file',
       multiple: true,
       onChange: handleFileInputChange,
       style: { display: 'none' },
-    },
-    setFileInputRef: (element: HTMLInputElement | null) => {
-      fileInputRef = element
-    },
+    }),
   }
 }
