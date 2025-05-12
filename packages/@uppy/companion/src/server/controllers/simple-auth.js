@@ -19,7 +19,7 @@ async function simpleAuth (req, res, next) {
       req.companion.options.secret, req.companion.providerClass.authStateExpiry,
     )
 
-    tokenService.addToCookiesIfNeeded(req, res, uppyAuthToken, req.companion.providerClass.authStateExpiry)
+    tokenService.addToCookiesIfNeeded(req, res, uppyAuthToken, req.companion.providerClass.authStateExpiry * 1000)
 
     res.send({ uppyAuthToken })
   } catch (err) {
