@@ -37,7 +37,6 @@ export interface ScreenCaptureOptions extends UIPluginOptions {
   userMediaConstraints?: MediaStreamConstraints
   preferredVideoMimeType?: string
   preferredImageMimeType?: SupportedImageType
-  screenshotQuality?: number
   locale?: LocaleStrings<typeof locale>
   enableScreenshots?: boolean
 }
@@ -63,8 +62,7 @@ const defaultOptions = {
   },
   preferredVideoMimeType: 'video/webm',
   preferredImageMimeType: 'image/png' as SupportedImageType,
-  screenshotQuality: 0.92,
-  enableScreenshots: false,
+  enableScreenshots: true,
 }
 
 type Opts = DefinePluginOpts<ScreenCaptureOptions, keyof typeof defaultOptions>
@@ -527,21 +525,7 @@ export default class ScreenCapture<
         mimeType = 'image/png'
       }
 
-      // Validate and set fallback for screenshot quality
-      let quality = 0.92
-      if (this.opts.screenshotQuality != null) {
-        if (
-          this.opts.screenshotQuality >= 0 &&
-          this.opts.screenshotQuality <= 1
-        ) {
-          quality = this.opts.screenshotQuality
-        } else {
-          this.uppy.log(
-            `Invalid quality value "${this.opts.screenshotQuality}", value must be between 0 and 1. Falling back to ${quality}`,
-            'warning',
-          )
-        }
-      }
+      const quality = 1
 
       return new Promise((resolve, reject) => {
         canvas.toBlob(
