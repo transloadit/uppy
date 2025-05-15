@@ -72,14 +72,14 @@ class RecorderScreen<M extends Meta, B extends Body> extends Component<
 
     return (
       <div className="uppy uppy-ScreenCapture-container">
-        <div className="uppy-ScreenCapture-videoContainer">
+        <div className="uppy-ScreenCapture-mediaContainer">
           <StreamStatus {...this.props} />
           {
             capturedScreenshotUrl && !recording && !recordedVideo ?
               <div className="uppy-ScreenCapture-imageContainer">
                 <img
                   src={capturedScreenshotUrl}
-                  className="uppy-ScreenCapture-video"
+                  className="uppy-ScreenCapture-media"
                   alt="screenshotPreview"
                 />
               </div>
@@ -88,7 +88,7 @@ class RecorderScreen<M extends Meta, B extends Body> extends Component<
                 ref={(videoElement) => {
                   this.videoElement = videoElement
                 }}
-                className="uppy-ScreenCapture-video"
+                className="uppy-ScreenCapture-media"
                 {...videoProps}
               />
 
