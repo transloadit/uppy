@@ -7,6 +7,7 @@ import StopWatch from './StopWatch.jsx'
 import StreamStatus from './StreamStatus.jsx'
 
 import ScreenCapture, { type ScreenCaptureState } from './ScreenCapture.jsx'
+import ScreenshotButton from './ScreenshotButton.js'
 
 type RecorderScreenProps<M extends Meta, B extends Body> = {
   onStartRecording: ScreenCapture<M, B>['startRecording']
@@ -15,6 +16,9 @@ type RecorderScreenProps<M extends Meta, B extends Body> = {
   onSubmit: ScreenCapture<M, B>['submit']
   i18n: ScreenCapture<M, B>['i18n']
   stream: ScreenCapture<M, B>['videoStream']
+  onScreenshot: ScreenCapture<M, B>['captureScreenshot']
+  enableScreenshots: boolean
+  capturedScreenshotUrl: ScreenCaptureState['capturedScreenshotUrl']
 } & ScreenCaptureState
 
 class RecorderScreen<M extends Meta, B extends Body> extends Component<
@@ -28,7 +32,13 @@ class RecorderScreen<M extends Meta, B extends Body> extends Component<
   }
 
   render(): ComponentChild {
-    const { recording, stream: videoStream, recordedVideo } = this.props
+    const {
+      recording,
+      stream: videoStream,
+      recordedVideo,
+      enableScreenshots,
+      capturedScreenshotUrl,
+    } = this.props
 
     const videoProps: {
       muted?: boolean
@@ -62,20 +72,38 @@ class RecorderScreen<M extends Meta, B extends Body> extends Component<
 
     return (
       <div className="uppy uppy-ScreenCapture-container">
-        <div className="uppy-ScreenCapture-videoContainer">
+        <div className="uppy-ScreenCapture-mediaContainer">
           <StreamStatus {...this.props} />
-          {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
-          <video
-            ref={(videoElement) => {
-              this.videoElement = videoElement
-            }}
-            className="uppy-ScreenCapture-video"
-            {...videoProps}
-          />
-          <StopWatch {...this.props} />
+          {
+            capturedScreenshotUrl && !recording && !recordedVideo ?
+              <div className="uppy-ScreenCapture-imageContainer">
+                <img
+                  src={capturedScreenshotUrl}
+                  className="uppy-ScreenCapture-media"
+                  alt="screenshotPreview"
+                />
+              </div>
+              // eslint-disable-next-line jsx-a11y/media-has-caption
+            : <video
+                ref={(videoElement) => {
+                  this.videoElement = videoElement
+                }}
+                className="uppy-ScreenCapture-media"
+                {...videoProps}
+              />
+
+          }
+          <div>
+            <StopWatch {...this.props} />
+          </div>
         </div>
 
         <div className="uppy-ScreenCapture-buttonContainer">
+          {enableScreenshots &&
+            !recording &&
+            !(recordedVideo || capturedScreenshotUrl) && (
+              <ScreenshotButton {...this.props} />
+            )}
           <RecordButton {...this.props} />
           <SubmitButton {...this.props} />
         </div>
