@@ -7,6 +7,7 @@ interface SubmitButtonProps {
   recordedVideo: string | null
   onSubmit: () => void
   i18n: I18n
+  capturedScreenshotUrl?: string | null
 }
 
 /**
@@ -16,9 +17,10 @@ export default function SubmitButton({
   recording,
   recordedVideo,
   onSubmit,
+  capturedScreenshotUrl,
   i18n,
 }: SubmitButtonProps): h.JSX.Element | null {
-  if (recordedVideo && !recording) {
+  if ((recordedVideo || capturedScreenshotUrl) && !recording) {
     return (
       <button
         className="uppy-u-reset uppy-c-btn uppy-ScreenCapture-button uppy-ScreenCapture-button--submit"

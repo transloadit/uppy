@@ -544,11 +544,11 @@ export default class ScreenCapture<
             }
 
             try {
+              this.capturedMediaFile = file
               const screenshotUrl = URL.createObjectURL(blob)
               this.setPluginState({
                 capturedScreenshotUrl: screenshotUrl,
               })
-              this.uppy.addFile(file)
               resolve()
             } catch (err) {
               if (this.getPluginState().capturedScreenshotUrl) {

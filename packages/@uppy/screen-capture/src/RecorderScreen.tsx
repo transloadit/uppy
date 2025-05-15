@@ -18,6 +18,7 @@ type RecorderScreenProps<M extends Meta, B extends Body> = {
   stream: ScreenCapture<M, B>['videoStream']
   onScreenshot: ScreenCapture<M, B>['captureScreenshot']
   enableScreenshots: boolean
+  capturedScreenshotUrl: ScreenCaptureState['capturedScreenshotUrl']
 } & ScreenCaptureState
 
 class RecorderScreen<M extends Meta, B extends Body> extends Component<
@@ -36,6 +37,7 @@ class RecorderScreen<M extends Meta, B extends Body> extends Component<
       stream: videoStream,
       recordedVideo,
       enableScreenshots,
+      capturedScreenshotUrl,
     } = this.props
 
     const videoProps: {
@@ -72,15 +74,28 @@ class RecorderScreen<M extends Meta, B extends Body> extends Component<
       <div className="uppy uppy-ScreenCapture-container">
         <div className="uppy-ScreenCapture-videoContainer">
           <StreamStatus {...this.props} />
-          {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
-          <video
-            ref={(videoElement) => {
-              this.videoElement = videoElement
-            }}
-            className="uppy-ScreenCapture-video"
-            {...videoProps}
-          />
-          <StopWatch {...this.props} />
+          {
+            capturedScreenshotUrl && !recording && !recordedVideo ?
+              <div className="uppy-ScreenCapture-imageContainer">
+                <img
+                  src={capturedScreenshotUrl}
+                  className="uppy-ScreenCapture-video"
+                  alt="screenshotPreview"
+                />
+              </div>
+              // eslint-disable-next-line jsx-a11y/media-has-caption
+            : <video
+                ref={(videoElement) => {
+                  this.videoElement = videoElement
+                }}
+                className="uppy-ScreenCapture-video"
+                {...videoProps}
+              />
+
+          }
+          <div>
+            <StopWatch {...this.props} />
+          </div>
         </div>
 
         <div className="uppy-ScreenCapture-buttonContainer">
