@@ -144,6 +144,7 @@ cs_CZ.strings = {
   missingRequiredMetaFields: {
     '0': 'Chybí povinné pole metadat: %{fields}.',
     '1': 'Chybí povinná pole metadat: %{fields}.',
+    '2': 'Chybí povinná pole metadat: %{fields}.',
   },
   myDevice: 'Moje zařízení',
   noAudioDescription:
@@ -177,7 +178,8 @@ cs_CZ.strings = {
   recoveredAllFiles: 'Obnovili jsme všechny soubory. Nyní můžete pokračovat v nahrávání.',
   recoveredXFiles: {
     '0': 'Nepodařilo se nám plně obnovit 1 soubor. Vyberte jej znovu a obnovte nahrávání.',
-    '1': 'Nepodařilo se nám plně obnovit soubory %{smart_count}. Vyberte je znovu a obnovte nahrávání.',
+    '1': 'Nepodařilo se nám plně obnovit %{smart_count} soubory. Vyberte je znovu a obnovte nahrávání.',
+    '2': 'Nepodařilo se nám plně obnovit %{smart_count} souborů. Vyberte je znovu a obnovte nahrávání.',
   },
   removeFile: 'Odebrat soubor',
   reSelect: 'Re-výběr',
