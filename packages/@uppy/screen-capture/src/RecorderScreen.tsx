@@ -99,7 +99,11 @@ class RecorderScreen<M extends Meta, B extends Body> extends Component<
         </div>
 
         <div className="uppy-ScreenCapture-buttonContainer">
-          {enableScreenshots && <ScreenshotButton {...this.props} />}
+          {enableScreenshots &&
+            !recording &&
+            !(recordedVideo || capturedScreenshotUrl) && (
+              <ScreenshotButton {...this.props} />
+            )}
           <RecordButton {...this.props} />
           <SubmitButton {...this.props} />
         </div>
