@@ -83,12 +83,14 @@ jobs:
           jq -r '"version="+.version' < packages/uppy/package.json >>
           $GITHUB_OUTPUT
       - name: Create GitHub release
-        run:
-          if ! gh release view uppy@${{ steps.uppyVersion.outputs.version }} >
-          /dev/null 2>&1; then gh release create uppy@${{
-          steps.uppyVersion.outputs.version }} -t "Uppy ${{
-          steps.uppyVersion.outputs.version }}" -F CHANGELOG.diff.md else echo
-          "Release $TAG_NAME already exists. Skipping." fi
+        run: |
+          if ! gh release view uppy@${{ steps.uppyVersion.outputs.version }} > /dev/null 2>&1; then
+            gh release create uppy@${{ steps.uppyVersion.outputs.version }} \
+              -t "Uppy ${{ steps.uppyVersion.outputs.version }}" \
+              -F CHANGELOG.diff.md
+          else
+            echo "Release ${{ steps.uppyVersion.outputs.version }} already exists. Skipping."
+          fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload `uppy` to CDN
