@@ -1,5 +1,13 @@
 # @uppy/companion
 
+## 5.7.0
+
+Released: 2025-05-18
+Included in: Uppy v4.16.0
+
+- @uppy/companion: implement credentials param `transloadit_gateway` (Mikael Finstad / #5725)
+- @uppy/companion: Fix AES key wear-out (Florian Maury / #5724)
+
 ## 5.6.0
 
 Released: 2025-04-08
