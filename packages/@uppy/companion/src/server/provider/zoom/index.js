@@ -7,6 +7,8 @@ const { prepareStream, getBasicAuthHeader } = require('../../helpers/utils')
 
 const got = require('../../got')
 
+const pMap = import('p-map')
+
 const BASE_URL = 'https://zoom.us/v2'
 const PAGE_SIZE = 300
 const DEAUTH_EVENT_NAME = 'app_deauthorized'
@@ -52,33 +54,31 @@ class Zoom extends Provider {
       }
 
       if (requestedYear) {
-        const yearStartDate = moment.tz({ year: requestedYear, month: 0, day: 1 }, userTz).startOf('year')
-        const yearEndDate = yearStartDate.clone().endOf('year')
+        const now = moment.tz(userTz)
+        const numMonths = now.get('year') === requestedYear ? now.get('month') + 1 : 12
+        const monthsToCheck = Array.from({ length: numMonths }, (_, i) => i) // in moment, months are 0-indexed
 
-        const allMeetingsInYear = []
-        let currentToDate = yearEndDate.clone()
-
-        // Loop backwards in 30-day chunks within the year as Zoom API only allows 30 days at a time
-        while (currentToDate.isSameOrAfter(yearStartDate)) {
-          // Ensure chunk start doesn't go before year start
-          const currentFromDate = currentToDate.clone().startOf('month')
+        // Run each month in parallel:
+        const allMeetingsInYear = (await (await pMap).default(monthsToCheck, async (month) => {
+          const startDate = moment.tz({ year: requestedYear, month, day: 1 }, userTz).startOf('month')
+          const endDate = startDate.clone().endOf('month')
 
           const searchParams = {
             page_size: PAGE_SIZE,
-            from: currentFromDate.clone().tz('UTC').format('YYYY-MM-DD'), 
-            to: currentToDate.clone().tz('UTC').format('YYYY-MM-DD'),   
+            from: startDate.clone().tz('UTC').format('YYYY-MM-DD'), 
+            to: endDate.clone().tz('UTC').format('YYYY-MM-DD'),   
           }
 
+          const paginatedMeetings = []
           do {
             const currentChunkMeetingsInfo = await client.get('users/me/recordings', { searchParams, responseType: 'json' }).json()
-            allMeetingsInYear.push(...(currentChunkMeetingsInfo.meetings ?? []))
+            paginatedMeetings.push(...(currentChunkMeetingsInfo.meetings ?? []))
             searchParams.next_page_token = currentChunkMeetingsInfo.next_page_token
           } while (searchParams.next_page_token)
 
-          // Prepare for the next chunk (previous month)
-          // If the current chunk already started at the year start, we're done.
-          currentToDate = currentToDate.clone().subtract(1, 'month').endOf('month')
-        }
+            return paginatedMeetings
+        }, { concurrency: 3 })).flat() // this is effectively a flatMap
+        // concurrency 3 seems like a sensible number...
 
         const finalResult = { meetings: allMeetingsInYear }
         return adaptData(user, finalResult)

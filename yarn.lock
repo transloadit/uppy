@@ -11764,6 +11764,7 @@ __metadata:
     ms: "npm:2.1.3"
     nock: "npm:^13.1.3"
     node-schedule: "npm:2.1.1"
+    p-map: "npm:^7.0.3"
     prom-client: "npm:15.1.2"
     serialize-error: "npm:^11.0.0"
     serialize-javascript: "npm:^6.0.0"
@@ -27944,7 +27945,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"p-map@npm:^7.0.2":
+"p-map@npm:^7.0.2, p-map@npm:^7.0.3":
   version: 7.0.3
   resolution: "p-map@npm:7.0.3"
   checksum: 10/2ef48ccfc6dd387253d71bf502604f7893ed62090b2c9d73387f10006c342606b05233da0e4f29388227b61eb5aeface6197e166520c465c234552eeab2fe633

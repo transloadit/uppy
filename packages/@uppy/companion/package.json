@@ -59,6 +59,7 @@
     "morgan": "1.10.0",
     "ms": "2.1.3",
     "node-schedule": "2.1.1",
+    "p-map": "^7.0.3",
     "prom-client": "15.1.2",
     "serialize-error": "^11.0.0",
     "serialize-javascript": "^6.0.0",
