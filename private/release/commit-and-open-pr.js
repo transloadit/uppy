@@ -5,7 +5,7 @@ import { REPO_OWNER, REPO_NAME } from './config.js'
 
 export default async function commit (spawnOptions, ...files) {
   console.log(`Now is the time to do manual edits to:`)
-  files.forEach((f) => console.log(f))
+  files.forEach((f) => console.log(f.toString()))
   console.log()
 
   await prompts({
