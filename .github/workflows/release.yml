@@ -70,6 +70,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Create tags
+        continue-on-error: true
         run: |
           git --no-pager diff --name-only HEAD^ | awk '$0 ~ /^packages\/.+\/package\.json$/ { print "jq -r '"'"'\"gh api /repos/{owner}/{repo}/git/refs -f ref=\\\"refs/tags/\"+.name+\"@\"+.version+\"\\\" -f sha=${{ steps.merge.outputs.sha }}\"'"'"' < " $0 }' > createTags.sh
           cat createTags.sh
@@ -83,8 +84,11 @@ jobs:
           $GITHUB_OUTPUT
       - name: Create GitHub release
         run:
-          gh release create uppy@${{ steps.uppyVersion.outputs.version }} -t
-          "Uppy ${{ steps.uppyVersion.outputs.version }}" -F CHANGELOG.diff.md
+          if ! gh release view uppy@${{ steps.uppyVersion.outputs.version }} >
+          /dev/null 2>&1; then gh release create uppy@${{
+          steps.uppyVersion.outputs.version }} -t "Uppy ${{
+          steps.uppyVersion.outputs.version }}" -F CHANGELOG.diff.md else echo
+          "Release $TAG_NAME already exists. Skipping." fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload `uppy` to CDN
