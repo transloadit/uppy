@@ -89,6 +89,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Enable Release workflow
-        run: gh workflow enable Release --repo ${{ github.repository }}
+        run:
+          gh workflow enable "Release candidate" --repo ${{ github.repository }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

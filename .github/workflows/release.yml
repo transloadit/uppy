@@ -115,7 +115,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Disable Release workflow
-        run: gh workflow disable Release --repo ${{ github.repository }}
+        run:
+          gh workflow disable "Release candidate" --repo ${{ github.repository
+          }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: In case of failure
