@@ -12,6 +12,33 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 4.16.0
+
+Released: 2025-05-18
+
+| Package                    | Version | Package                    | Version |
+| -------------------------- | ------- | -------------------------- | ------- |
+| @uppy/audio                |   2.1.3 | @uppy/image-editor         |   3.3.3 |
+| @uppy/box                  |   3.2.3 | @uppy/instagram            |   4.2.3 |
+| @uppy/companion            |   5.7.0 | @uppy/onedrive             |   4.2.4 |
+| @uppy/companion-client     |   4.4.2 | @uppy/remote-sources       |   2.3.3 |
+| @uppy/core                 |   4.4.5 | @uppy/screen-capture       |   4.2.3 |
+| @uppy/dashboard            |   4.3.4 | @uppy/unsplash             |   4.3.4 |
+| @uppy/drag-drop            |   4.1.3 | @uppy/url                  |   4.2.4 |
+| @uppy/dropbox              |   4.2.3 | @uppy/utils                |   6.1.4 |
+| @uppy/facebook             |   4.2.3 | @uppy/webcam               |   4.1.3 |
+| @uppy/file-input           |   4.1.3 | @uppy/webdav               |   0.3.3 |
+| @uppy/google-drive         |   4.3.3 | @uppy/zoom                 |   3.2.3 |
+| @uppy/google-drive-picker  |   0.3.5 | uppy                       |  4.16.0 |
+| @uppy/google-photos-picker |   0.3.5 |                            |         |
+
+- @uppy/companion-client: don't reject on incorrect origin (Mikael Finstad / #5736)
+- @uppy/companion: implement credentials param `transloadit_gateway` (Mikael Finstad / #5725)
+- @uppy/companion: Fix AES key wear-out (Florian Maury / #5724)
+- @uppy/core: fix undefined reference when cancelling an upload (Prakash / #5730)
+- @uppy/audio,@uppy/box,@uppy/core,@uppy/dashboard,@uppy/drag-drop,@uppy/dropbox,@uppy/facebook,@uppy/file-input,@uppy/google-drive-picker,@uppy/google-drive,@uppy/google-photos-picker,@uppy/image-editor,@uppy/instagram,@uppy/onedrive,@uppy/remote-sources,@uppy/screen-capture,@uppy/unsplash,@uppy/url,@uppy/utils,@uppy/webcam,@uppy/webdav,@uppy/zoom: ts: make locale strings optional (Merlijn Vos / #5728)
+
+
 ## 4.15.0
 
 Released: 2025-04-14
