@@ -9947,7 +9947,6 @@ __metadata:
     express: "npm:^4.19.2"
     express-session: "npm:^1.15.6"
     light-server: "npm:^2.4.0"
-    upload-server: "npm:^1.1.6"
   languageName: unknown
   linkType: soft
 
@@ -14512,15 +14511,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"debug@npm:~2.2.0":
-  version: 2.2.0
-  resolution: "debug@npm:2.2.0"
-  dependencies:
-    ms: "npm:0.7.1"
-  checksum: 10/19387e1b6da7757297c2ea835f16f0df2d325687a311fdd57e43851190492fe770b991fc5ca1b8b53b007bf3126acd14ed75f2f1eef864ceb49a6bb8177988f7
-  languageName: node
-  linkType: hard
-
 "debug@npm:~4.3.1, debug@npm:~4.3.2, debug@npm:~4.3.4":
   version: 4.3.5
   resolution: "debug@npm:4.3.5"
@@ -15183,13 +15173,6 @@ __metadata:
   dependencies:
     safe-buffer: "npm:^5.0.1"
   checksum: 10/878e1aab8a42773320bc04c6de420bee21aebd71810e40b1799880a8a1c4594bcd6adc3d4213a0fb8147d4c3f529d8f9a618d7f59ad5a9a41b142058aceda23f
-  languageName: node
-  linkType: hard
-
-"ee-first@npm:1.1.0":
-  version: 1.1.0
-  resolution: "ee-first@npm:1.1.0"
-  checksum: 10/2c2fe9699bdb044e1396e4895c40c5fdd7516ccb0539a1201c2b8bb46a4f0f574ed87721bd1f2a56d8da45cc1cb176308f47005dceb941bb996bd6456e818157
   languageName: node
   linkType: hard
 
@@ -15967,13 +15950,6 @@ __metadata:
   version: 3.0.0
   resolution: "escape-goat@npm:3.0.0"
   checksum: 10/6719196d073cc72d0bbe079646d6fa32f226f24fd7d00c1a71fa375bd4c5b8999050021d9e62c232a8874230328ebf89a5c8bd76fb72f7ccd6229efbe5abd04e
-  languageName: node
-  linkType: hard
-
-"escape-html@npm:1.0.1":
-  version: 1.0.1
-  resolution: "escape-html@npm:1.0.1"
-  checksum: 10/5e8de9fb50e5739f7e09ebcfbc7effc04bf9776e49c1987085121144e7b11bbe7d9ff16bb2771ccb8bea79883ac07a66bedcb39698c469972b857ff4489d4cc6
   languageName: node
   linkType: hard
 
@@ -16957,16 +16933,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"express-directory@npm:0.0.2":
-  version: 0.0.2
-  resolution: "express-directory@npm:0.0.2"
-  dependencies:
-    finalhandler: "npm:^0.3.0"
-    serve-static: "npm:^1.6.3"
-  checksum: 10/4f73a2a354b664fd9ba1b986360fe51e589af06dc76c4cfa5d5c8aa31069d505c727f3138036ba1ecd08e6ac9c7c1fb2a741372961de7885bec849fe0ee87c04
-  languageName: node
-  linkType: hard
-
 "express-interceptor@npm:1.2.0":
   version: 1.2.0
   resolution: "express-interceptor@npm:1.2.0"
@@ -17006,7 +16972,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"express@npm:4.21.2, express@npm:^4.14.0, express@npm:^4.17.3, express@npm:^4.18.2, express@npm:^4.19.2, express@npm:^4.21.2":
+"express@npm:4.21.2, express@npm:^4.17.3, express@npm:^4.18.2, express@npm:^4.19.2, express@npm:^4.21.2":
   version: 4.21.2
   resolution: "express@npm:4.21.2"
   dependencies:
@@ -17432,17 +17398,6 @@ __metadata:
     statuses: "npm:2.0.1"
     unpipe: "npm:~1.0.0"
   checksum: 10/4babe72969b7373b5842bc9f75c3a641a4d0f8eb53af6b89fa714d4460ce03fb92b28de751d12ba415e96e7e02870c436d67412120555e2b382640535697305b
-  languageName: node
-  linkType: hard
-
-"finalhandler@npm:^0.3.0":
-  version: 0.3.6
-  resolution: "finalhandler@npm:0.3.6"
-  dependencies:
-    debug: "npm:~2.2.0"
-    escape-html: "npm:1.0.1"
-    on-finished: "npm:~2.2.1"
-  checksum: 10/ada81f07e13fcaffb4d56ee353d8fadd4d7c0fbf76004b759e66a7e76c3af82b70892b5b087ad8e16e8b3040f05016f4642e1b04c39dde4c6782fa6410568c19
   languageName: node
   linkType: hard
 
@@ -24242,13 +24197,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ms@npm:0.7.1":
-  version: 0.7.1
-  resolution: "ms@npm:0.7.1"
-  checksum: 10/73b453879f26fe14ae41388cb3fb7483aa81e478950b3feff8433959a8e693b20797b0ed85e20fbe86ec65f094b283360987e05817979721513e7ec622dcde96
-  languageName: node
-  linkType: hard
-
 "ms@npm:2.0.0":
   version: 2.0.0
   resolution: "ms@npm:2.0.0"
@@ -24313,7 +24261,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"multer@npm:^1.2.1, multer@npm:^1.4.1":
+"multer@npm:^1.4.1":
   version: 1.4.4
   resolution: "multer@npm:1.4.4"
   dependencies:
@@ -25417,15 +25365,6 @@ __metadata:
   dependencies:
     ee-first: "npm:1.1.1"
   checksum: 10/8e81472c5028125c8c39044ac4ab8ba51a7cdc19a9fbd4710f5d524a74c6d8c9ded4dd0eed83f28d3d33ac1d7a6a439ba948ccb765ac6ce87f30450a26bfe2ea
-  languageName: node
-  linkType: hard
-
-"on-finished@npm:~2.2.1":
-  version: 2.2.1
-  resolution: "on-finished@npm:2.2.1"
-  dependencies:
-    ee-first: "npm:1.1.0"
-  checksum: 10/6e7c723f8b12475e7026fa8118c7842d0eb3f851055d4cb60c6b714be7ac9fde1d4c8e74c03375e61818f19682e287faf7182b0dd73c70ec7d408e6b0e02ed4a
   languageName: node
   linkType: hard
 
@@ -29238,7 +29177,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"serve-index@npm:^1.9.0, serve-index@npm:^1.9.1":
+"serve-index@npm:^1.9.1":
   version: 1.9.1
   resolution: "serve-index@npm:1.9.1"
   dependencies:
@@ -29253,7 +29192,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"serve-static@npm:1.16.2, serve-static@npm:^1.13.1, serve-static@npm:^1.6.3":
+"serve-static@npm:1.16.2, serve-static@npm:^1.13.1":
   version: 1.16.2
   resolution: "serve-static@npm:1.16.2"
   dependencies:
@@ -32147,22 +32086,6 @@ __metadata:
   bin:
     update-browserslist-db: cli.js
   checksum: 10/87af2776054ffb9194cf95e0201547d041f72ee44ce54b144da110e65ea7ca01379367407ba21de5c9edd52c74d95395366790de67f3eb4cc4afa0fe4424e76f
-  languageName: node
-  linkType: hard
-
-"upload-server@npm:^1.1.6":
-  version: 1.1.6
-  resolution: "upload-server@npm:1.1.6"
-  dependencies:
-    express: "npm:^4.14.0"
-    express-directory: "npm:0.0.2"
-    ip: "npm:^1.1.5"
-    minimist: "npm:^1.2.0"
-    multer: "npm:^1.2.1"
-    serve-index: "npm:^1.9.0"
-  bin:
-    upload-server: index.js
-  checksum: 10/41bf4d5271c33b5377bf3f9270b347c93a39dec26c00f84e38d942eb1f7c15939ebc228b1b1abaa3b592e2de6f36bb3928edd5f41883ef7297799e6ec79ffaf1
   languageName: node
   linkType: hard
 
