@@ -1,4 +1,11 @@
 const crypto = require('node:crypto')
+const logger = require('../logger.js')
+
+
+const authTagLength = 16
+const nonceLength = 16
+const encryptionKeyLength = 32
+const ivLength = 12
 
 /**
  *
@@ -68,33 +75,22 @@ module.exports.getURLBuilder = (options) => {
   return buildURL
 }
 
+module.exports.getRedirectPath = (providerName) => `/${providerName}/redirect`;
+
 /**
- * Ensure that a user-provided `secret` is 32 bytes long (the length required
- * for an AES256 key) by hashing it with SHA256.
+ * Create an AES-CCM encryption key and initialization vector from the provided secret
+ * and a random nonce.
  *
  * @param {string|Buffer} secret
+ * @param {Buffer|undefined} nonce
  */
-function createSecret(secret) {
-  const hash = crypto.createHash('sha256')
-  hash.update(secret)
-  return hash.digest()
-}
-
-/**
- * Create an initialization vector for AES256.
- *
- * @returns {Buffer}
- */
-function createIv() {
-  return crypto.randomBytes(16)
-}
-
-function urlEncode(unencoded) {
-  return unencoded.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '~')
-}
-
-function urlDecode(encoded) {
-  return encoded.replace(/-/g, '+').replace(/_/g, '/').replace(/~/g, '=')
+function createSecrets(secret, nonce) {
+  const key = crypto.hkdfSync('sha256', secret, new Uint8Array(32), nonce, encryptionKeyLength + ivLength)
+  const buf = Buffer.from(key)
+  return {
+    key: buf.subarray(0, encryptionKeyLength),
+    iv: buf.subarray(encryptionKeyLength, encryptionKeyLength + ivLength),
+  }
 }
 
 /**
@@ -105,22 +101,20 @@ function urlDecode(encoded) {
  * @returns {string} Ciphertext as a hex string, prefixed with 32 hex characters containing the iv.
  */
 module.exports.encrypt = (input, secret) => {
-  const iv = createIv()
-  const cipher = crypto.createCipheriv('aes256', createSecret(secret), iv)
-  let encrypted = cipher.update(input, 'utf8', 'base64')
-  encrypted += cipher.final('base64')
-  // add iv to encrypted string to use for decryption
-  return iv.toString('hex') + urlEncode(encrypted)
+  const nonce = crypto.randomBytes(nonceLength)
+  const { key, iv } = createSecrets(secret, nonce)
+  const cipher = crypto.createCipheriv('aes-256-ccm', key, iv, { authTagLength })
+  const encrypted = Buffer.concat([
+    cipher.update(input, 'utf8'),
+    cipher.final(),
+    cipher.getAuthTag(),
+  ])
+  // add nonce to encrypted string to use for decryption
+  return `${nonce.toString('hex')}${encrypted.toString('base64url')}`
 }
 
-/**
- * Decrypt an iv-prefixed or string with AES256. The iv should be in the first 32 hex characters.
- *
- * @param {string} encrypted
- * @param {string|Buffer} secret
- * @returns {string} Decrypted value.
- */
-module.exports.decrypt = (encrypted, secret) => {
+// todo backwards compat for old tokens - remove in the future
+function compatDecrypt(encrypted, secret) {
   // Need at least 32 chars for the iv
   if (encrypted.length < 32) {
     throw new Error('Invalid encrypted value. Maybe it was generated with an old Companion version?')
@@ -132,7 +126,9 @@ module.exports.decrypt = (encrypted, secret) => {
 
   let decipher
   try {
-    decipher = crypto.createDecipheriv('aes256', createSecret(secret), iv)
+    const secretHashed = crypto.createHash('sha256')
+    secretHashed.update(secret)
+    decipher = crypto.createDecipheriv('aes256', secretHashed.digest(), iv)
   } catch (err) {
     if (err.code === 'ERR_CRYPTO_INVALID_IV') {
       throw new Error('Invalid initialization vector')
@@ -141,9 +137,51 @@ module.exports.decrypt = (encrypted, secret) => {
     }
   }
 
+  const urlDecode = (encoded) => encoded.replace(/-/g, '+').replace(/_/g, '/').replace(/~/g, '=')
   let decrypted = decipher.update(urlDecode(encryptionWithoutIv), 'base64', 'utf8')
   decrypted += decipher.final('utf8')
   return decrypted
+}
+
+/**
+ * Decrypt an iv-prefixed or string with AES256. The iv should be in the first 32 hex characters.
+ *
+ * @param {string} encrypted hex encoded string of encrypted data
+ * @param {string|Buffer} secret
+ * @returns {string} Decrypted value.
+ */
+module.exports.decrypt = (encrypted, secret) => {
+  try {
+    const nonceHexLength = nonceLength * 2 // because hex encoding uses 2 bytes per byte
+
+    // NOTE: The first 32 characters are the nonce, in hex format.
+    const nonce = Buffer.from(encrypted.slice(0, nonceHexLength), 'hex')
+    // The rest is the encrypted string, in base64url format.
+    const encryptionWithoutNonce = Buffer.from(encrypted.slice(nonceHexLength), 'base64url')
+    // The last 16 bytes of the rest is the authentication tag
+    const authTag = encryptionWithoutNonce.subarray(-authTagLength)
+    // and the rest (from beginning) is the encrypted data
+    const encryptionWithoutNonceAndTag = encryptionWithoutNonce.subarray(0, -authTagLength)
+    
+    if (nonce.length < nonceLength) {
+      throw new Error('Invalid encrypted value. Maybe it was generated with an old Companion version?')
+    }
+    
+    const { key, iv } = createSecrets(secret, nonce)
+
+    const decipher = crypto.createDecipheriv('aes-256-ccm', key, iv, { authTagLength })
+    decipher.setAuthTag(authTag)
+
+    const decrypted = Buffer.concat([
+      decipher.update(encryptionWithoutNonceAndTag),
+      decipher.final(),
+    ])
+    return decrypted.toString('utf8')
+  } catch (err) {
+    // todo backwards compat for old tokens - remove in the future
+    logger.info('Failed to decrypt - trying old encryption format instead', err)
+    return compatDecrypt(encrypted, secret)
+  }
 }
 
 module.exports.defaultGetKey = ({ filename }) => `${crypto.randomUUID()}-${filename}`
@@ -214,7 +252,7 @@ module.exports.rfc2047EncodeMetadata = (metadata) => (
 )
 
 /**
- * 
+ *
  * @param {{
  * bucketOrFn: string | ((a: {
  * req: import('express').Request,
@@ -224,8 +262,8 @@ module.exports.rfc2047EncodeMetadata = (metadata) => (
  * req: import('express').Request,
  * metadata?: Record<string, string>,
  * filename?: string,
- * }} param0 
- * @returns 
+ * }} param0
+ * @returns
  */
 module.exports.getBucket = ({ bucketOrFn, req, metadata, filename }) => {
   const bucket = typeof bucketOrFn === 'function' ? bucketOrFn({ req, metadata, filename }) : bucketOrFn

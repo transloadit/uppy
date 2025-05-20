@@ -34,7 +34,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [18.x, 20.x]
+        # fix node versions so we don't get sudden unrelated CI breakage
+        node-version: [18.20.8, 20.19.1]
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
