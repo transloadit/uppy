@@ -14,7 +14,7 @@ jobs:
       - name: Checkout sources
         uses: actions/checkout@v4
         with:
-          branch: release
+          ref: release
       - name: Rebase
         run: |
           git fetch origin HEAD --depth=1
@@ -89,6 +89,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Enable Release workflow
-        run: gh workflow enable Release --repo ${{ github.repository }}
+        run: gh workflow enable 15329895 --repo ${{ github.repository }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

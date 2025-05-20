@@ -1,5 +1,12 @@
 # @uppy/companion-client
 
+## 4.4.2
+
+Released: 2025-05-18
+Included in: Uppy v4.16.0
+
+- @uppy/companion-client: don't reject on incorrect origin (Mikael Finstad / #5736)
+
 ## 4.4.0
 
 Released: 2025-01-06
