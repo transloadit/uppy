@@ -129,14 +129,6 @@ import { render as preactRender } from 'preact/compat'
 <div bind:this={container}></div>
 `
 
-// Helper function to convert kebab-case to PascalCase
-function kebabToPascal(kebabCase) {
-  return kebabCase
-    .split('-')
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join('')
-}
-
 try {
   // Check if components directory exists
   await fs.access(COMPONENTS_DIR).catch(() => {
@@ -166,8 +158,7 @@ try {
   // Process each tsx file
   for (const file of tsxFiles) {
     try {
-      const baseName = path.basename(file, '.tsx')
-      const componentName = kebabToPascal(baseName)
+      const componentName = path.basename(file, '.tsx')
       const propsTypeName = `${componentName}Props`
       const preactComponentName = `Preact${componentName}`
 
