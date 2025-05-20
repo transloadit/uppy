@@ -108,10 +108,10 @@ function getCommonCookieOptions ({ companionOptions }) {
 
 const getCookieName = (oauthProvider) => `uppyAuthToken--${oauthProvider}`
 
-const addToCookies = ({ res, token, companionOptions, oauthProvider, maxAge = MAX_AGE_24H * 1000 }) => {
+const addToCookies = ({ res, token, companionOptions, oauthProvider, maxAge = MAX_AGE_24H }) => {
   const cookieOptions = {
     ...getCommonCookieOptions({ companionOptions }),
-    maxAge,
+    maxAge: maxAge * 1000,
   }
 
   // send signed token to client.

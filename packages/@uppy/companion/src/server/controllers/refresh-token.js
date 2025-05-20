@@ -36,7 +36,7 @@ async function refreshToken (req, res, next) {
       req.companion.options.secret, req.companion.providerClass.authStateExpiry,
     )
 
-    tokenService.addToCookiesIfNeeded(req, res, uppyAuthToken, req.companion.providerClass.authStateExpiry * 1000)
+    tokenService.addToCookiesIfNeeded(req, res, uppyAuthToken, req.companion.providerClass.authStateExpiry)
 
     res.send({ uppyAuthToken })
   } catch (err) {
