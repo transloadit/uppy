@@ -1,5 +1,4 @@
 .DS_Store
 /dist/
 /src/empty.*
-.svelte-kit
 !src/lib

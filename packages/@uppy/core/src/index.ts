@@ -35,3 +35,7 @@ export type {
   Meta,
   Body,
 } from '@uppy/utils/lib/UppyFile'
+
+export type { UploadStatus } from './uppyEventAdapter.js'
+
+export { createUppyEventAdapter } from './uppyEventAdapter.js'

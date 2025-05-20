@@ -11,4 +11,4 @@ export {
   type ProviderIconProps,
 } from './ProviderIcon.js'
 
-export type { UppyContext, UploadStatus } from './types.js'
+export type { UppyContext } from './types.js'

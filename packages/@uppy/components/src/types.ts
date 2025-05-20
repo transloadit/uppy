@@ -1,12 +1,5 @@
 import type Uppy from '@uppy/core'
-
-export type UploadStatus =
-  | 'init'
-  | 'ready'
-  | 'uploading'
-  | 'paused'
-  | 'error'
-  | 'complete'
+import type { UploadStatus } from '@uppy/core'
 
 export type UppyContext = {
   uppy: Uppy | undefined
