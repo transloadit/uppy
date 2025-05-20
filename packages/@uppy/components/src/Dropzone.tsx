@@ -17,7 +17,7 @@ export type DropzoneProps = {
 export default function Dropzone(props: DropzoneProps) {
   const { width, height, note, noClick, ctx } = props
 
-  const { isDragging, getRootProps, getInputProps } = useMemo(
+  const { getRootProps, getInputProps } = useMemo(
     () => createDropzone(ctx, { noClick }),
     [ctx, noClick],
   )
@@ -36,9 +36,6 @@ export default function Dropzone(props: DropzoneProps) {
           'uppy:border-2 uppy:border-dashed uppy:border-gray-300',
           'uppy:rounded-lg uppy:p-6 uppy:bg-gray-50',
           'uppy:transition-colors uppy:duration-200',
-          {
-            'uppy:bg-blue-50': isDragging,
-          },
           {
             'uppy:cursor-pointer uppy:hover:bg-blue-50': !noClick,
           },
