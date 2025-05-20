@@ -65,7 +65,7 @@ function Webcam() {
 }
 
 function CustomDropzone() {
-  const { getRootProps, getInputProps, isDragging } = useDropzone({
+  const { getRootProps, getInputProps } = useDropzone({
     noClick: true,
   })
   const { getButtonProps, getInputProps: getFileInputProps } = useFileInput()
@@ -76,7 +76,7 @@ function CustomDropzone() {
       <div
         {...getRootProps()}
         role="button"
-        className={`border-2 border-dashed border-gray-300 rounded-lg p-6 bg-gray-50 transition-colors duration-200 ${isDragging ? 'bg-blue-50' : ''}`}
+        className="border-2 border-dashed border-gray-300 rounded-lg p-6 bg-gray-50 transition-colors duration-200"
       >
         <div className="flex flex-col items-center justify-center h-full space-y-3">
           <input {...getFileInputProps()} className="hidden" />

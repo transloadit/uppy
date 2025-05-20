@@ -16,5 +16,24 @@ export function useFileInput(
     throw new Error('useFileInput must be called within a UppyContextProvider')
   }
 
-  return createFileInput<Event>(ctx, props)
+  const fileinput = createFileInput<Event>(ctx, props)
+
+  return {
+    // Only Svelte uses lowercase event names so we want to remap them
+    ...fileinput,
+    getButtonProps: () => {
+      const props = fileinput.getButtonProps()
+      return {
+        ...props,
+        onclick: props.onClick,
+      }
+    },
+    getInputProps: () => {
+      const props = fileinput.getInputProps()
+      return {
+        ...props,
+        onchange: props.onChange,
+      }
+    },
+  }
 }

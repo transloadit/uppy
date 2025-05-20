@@ -4,7 +4,6 @@
     <div
       v-bind="getRootProps()"
       class="border-2 border-dashed border-gray-300 rounded-lg p-6 bg-gray-50 transition-colors duration-200"
-      :class="{ 'bg-blue-50': isDragging }"
     >
       <div class="flex flex-col items-center justify-center h-full space-y-3">
         <input v-bind="getFileInputProps()" class="hidden" />
@@ -24,7 +23,7 @@
 
 <script setup lang="ts">
 import { useDropzone, useFileInput, ProviderIcon } from '@uppy/vue'
-const { getRootProps, getInputProps, isDragging } = useDropzone({
+const { getRootProps, getInputProps } = useDropzone({
   noClick: true,
 })
 const { getInputProps: getFileInputProps, getButtonProps } = useFileInput()
