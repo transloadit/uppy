@@ -1,6 +1,6 @@
 /* eslint-disable react/destructuring-assignment */
 import { h } from 'preact'
-import { useState, useEffect } from 'preact/hooks'
+import { useMemo, useEffect } from 'preact/hooks'
 import type { Body, Meta, UppyFile } from '@uppy/core'
 import type { UppyContext } from './types'
 
@@ -14,27 +14,14 @@ export type ThumbnailProps = {
 }
 
 export default function Thumbnail(props: ThumbnailProps) {
-  const [objectUrl, setObjectUrl] = useState('')
-  const [isImage, setIsImage] = useState(false)
-
-  function width() {
-    return props.width || '100%'
-  }
-
-  function height() {
-    return props.height || '100%'
-  }
-
-  function fileTypeGeneral() {
-    return props.file.type?.split('/')[0] || ''
-  }
-
-  function fileTypeSpecific() {
-    return props.file.type?.split('/')[1] || ''
-  }
-
-  function isArchive() {
-    const archiveTypes = [
+  const width = props.width || '100%'
+  const height = props.height || '100%'
+  const fileTypeGeneral = props.file.type?.split('/')[0] || ''
+  const fileTypeSpecific = props.file.type?.split('/')[1] || ''
+  const isImage = props.file.type.startsWith('image/')
+  const isArchive =
+    fileTypeGeneral === 'application' &&
+    [
       'zip',
       'x-7z-compressed',
       'x-zip-compressed',
@@ -42,27 +29,14 @@ export default function Thumbnail(props: ThumbnailProps) {
       'x-tar',
       'x-gzip',
       'x-apple-diskimage',
-    ]
-    return (
-      fileTypeGeneral() === 'application' &&
-      archiveTypes.includes(fileTypeSpecific())
-    )
-  }
+    ].includes(fileTypeSpecific)
+  const isPDF = fileTypeGeneral === 'application' && fileTypeSpecific === 'pdf'
 
-  function isPDF() {
-    return fileTypeGeneral() === 'application' && fileTypeSpecific() === 'pdf'
-  }
-
-  function showThumbnail() {
-    return props.images && isImage && objectUrl
-  }
-
-  useEffect(() => {
-    if (props.images) {
-      setObjectUrl(URL.createObjectURL(props.file.data))
-    }
-    setIsImage(props.file.type.startsWith('image/'))
-  }, [props.file.data, props.file.type, props.images])
+  const objectUrl = useMemo(() => {
+    if (!props.images) return ''
+    return URL.createObjectURL(props.file.data)
+  }, [props.file.data, props.images])
+  const showThumbnail = props.images && isImage && objectUrl
 
   useEffect(() => {
     return () => {
@@ -77,19 +51,19 @@ export default function Thumbnail(props: ThumbnailProps) {
       data-uppy-element="thumbnail"
       className="uppy:relative uppy:overflow-hidden uppy:bg-gray-100 uppy:rounded-lg uppy:flex uppy:items-center uppy:justify-center"
       style={{
-        width: width(),
-        height: height(),
+        width,
+        height,
         aspectRatio: '1',
       }}
     >
-      {showThumbnail() ?
+      {showThumbnail ?
         <img
           className="uppy:w-full uppy:h-full uppy:object-cover"
           src={objectUrl}
           alt={props.file.name}
         />
       : null}
-      {!showThumbnail() ?
+      {!showThumbnail ?
         <div className="uppy:flex uppy:flex-col uppy:items-center uppy:justify-center uppy:w-full uppy:h-full">
           <div className="uppy:flex-1 uppy:flex uppy:items-center uppy:justify-center uppy:w-full">
             {!props.file.type ?
@@ -104,7 +78,7 @@ export default function Thumbnail(props: ThumbnailProps) {
                 </g>
               </svg>
             : null}
-            {fileTypeGeneral() === 'text' ?
+            {fileTypeGeneral === 'text' ?
               <svg
                 aria-hidden="true"
                 className="uppy:w-3/4 uppy:h-3/4"
@@ -117,7 +91,7 @@ export default function Thumbnail(props: ThumbnailProps) {
                 />
               </svg>
             : null}
-            {fileTypeGeneral() === 'image' && !showThumbnail() ?
+            {fileTypeGeneral === 'image' && !showThumbnail ?
               <svg
                 aria-hidden="true"
                 className="uppy:w-3/4 uppy:h-3/4"
@@ -136,7 +110,7 @@ export default function Thumbnail(props: ThumbnailProps) {
                 </g>
               </svg>
             : null}
-            {fileTypeGeneral() === 'audio' ?
+            {fileTypeGeneral === 'audio' ?
               <svg
                 aria-hidden="true"
                 className="uppy:w-3/4 uppy:h-3/4"
@@ -149,7 +123,7 @@ export default function Thumbnail(props: ThumbnailProps) {
                 />
               </svg>
             : null}
-            {fileTypeGeneral() === 'video' ?
+            {fileTypeGeneral === 'video' ?
               <svg
                 aria-hidden="true"
                 className="uppy:w-3/4 uppy:h-3/4"
@@ -162,7 +136,7 @@ export default function Thumbnail(props: ThumbnailProps) {
                 />
               </svg>
             : null}
-            {isPDF() ?
+            {isPDF ?
               <svg
                 aria-hidden="true"
                 className="uppy:w-3/4 uppy:h-3/4"
@@ -175,7 +149,7 @@ export default function Thumbnail(props: ThumbnailProps) {
                 />
               </svg>
             : null}
-            {isArchive() ?
+            {isArchive ?
               <svg
                 aria-hidden="true"
                 className="uppy:w-3/4 uppy:h-3/4"
@@ -188,7 +162,7 @@ export default function Thumbnail(props: ThumbnailProps) {
                 />
               </svg>
             : null}
-            {props.file.type && !fileTypeGeneral() && !isPDF() && !isArchive() ?
+            {props.file.type && !fileTypeGeneral && !isPDF && !isArchive ?
               <svg
                 aria-hidden="true"
                 className="uppy:w-3/4 uppy:h-3/4"

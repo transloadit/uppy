@@ -4,7 +4,10 @@ import prompts from 'prompts'
 import { REPO_OWNER, REPO_NAME } from './config.js'
 
 export default async function commit (spawnOptions, ...files) {
-  console.log(`Now is the time to do manual edits to ${files.join(',')}.`)
+  console.log(`Now is the time to do manual edits to:`)
+  files.forEach((f) => console.log(f.toString()))
+  console.log()
+
   await prompts({
     type: 'toggle',
     name: 'value',

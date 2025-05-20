@@ -1,7 +1,9 @@
 <template>
   <UppyContextProvider :uppy="uppy">
     <main class="p-5 max-w-xl mx-auto">
-      <h1 class="text-4xl font-bold">Welcome to Vue.</h1>
+      <h1 class="text-4xl font-bold my-4">Welcome to Vue.</h1>
+
+      <UploadButton />
 
       <CustomDropzone />
 
@@ -9,14 +11,17 @@
         <h2 class="text-2xl my-4">With list</h2>
         <Dropzone />
         <FilesList />
-        <UploadButton />
       </article>
 
       <article>
         <h2 class="text-2xl my-4">With grid</h2>
         <Dropzone />
         <FilesGrid :columns="2" />
-        <UploadButton />
+      </article>
+
+      <article>
+        <h2 class="text-2xl my-4">With custom dropzone</h2>
+        <CustomDropzone />
       </article>
     </main>
   </UppyContextProvider>

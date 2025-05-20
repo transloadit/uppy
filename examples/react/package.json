@@ -8,7 +8,6 @@
     "serve": "vite preview"
   },
   "dependencies": {
-    "@headlessui/react": "^2.2.0",
     "@tailwindcss/vite": "^4.0.9",
     "@uppy/core": "workspace:*",
     "@uppy/react": "workspace:*",

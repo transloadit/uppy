@@ -19,6 +19,7 @@ const middlewares = require('./server/middlewares')
 const { getMaskableSecrets, defaultOptions, validateConfig } = require('./config/companion')
 const { ProviderApiError, ProviderUserError, ProviderAuthError } = require('./server/provider/error')
 const { getCredentialsOverrideMiddleware } = require('./server/provider/credentials')
+const { getURLBuilder } = require('./server/helpers/utils')
 // @ts-ignore
 const { version } = require('../package.json')
 const { isOAuthProvider } = require('./server/provider/Provider')
@@ -149,25 +150,28 @@ module.exports.app = (optionsArg = {}) => {
     app.post('/:providerName/test-dynamic-oauth-credentials', (req, res) => {
       if (req.query.secret !== options.testDynamicOauthCredentialsSecret) throw new Error('Invalid secret')
       const { providerName } = req.params
-      logger.info(`Returning dynamic OAuth2 credentials for ${providerName}`)
       // for simplicity, we just return the normal credentials for the provider, but in a real-world scenario,
       // we would query based on parameters
       const { key, secret } = options.providerOptions[providerName] ?? { __proto__: null }
 
-      function getRedirectUri() {
+      function getTransloaditGateway() {
         const oauthProvider = getOauthProvider(providerName)
         if (!isOAuthProvider(oauthProvider)) return undefined
-        return grantConfig[oauthProvider]?.redirect_uri
+        return getURLBuilder(options)('', true)
       }
 
-      res.send({
+      const response = {
         credentials: {
           key,
           secret,
-          redirect_uri: getRedirectUri(),
+          transloadit_gateway: getTransloaditGateway(),
           origins: ['http://localhost:5173'],
         },
-      })
+      }
+
+      logger.info(`Returning dynamic OAuth2 credentials for ${providerName}`, JSON.stringify(response))
+
+      res.send(response)
     })
   }
 
