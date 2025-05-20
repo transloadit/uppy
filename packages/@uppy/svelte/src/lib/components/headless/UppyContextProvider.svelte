@@ -1,6 +1,6 @@
 <script context="module" lang="ts">
   import type Uppy from '@uppy/core';
-  import { createUppyEventAdapter, type UploadStatus } from '@uppy/core'
+  import { createUppyEventAdapter, type UploadStatus } from '@uppy/components'
 
   export const UppyContextKey = 'uppy-context';
   export type { UppyContext } from '@uppy/components';

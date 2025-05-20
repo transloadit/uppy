@@ -1,4 +1,4 @@
-import Uppy from './Uppy.js'
+import Uppy from '@uppy/core'
 
 export type UploadStatus =
   | 'init'

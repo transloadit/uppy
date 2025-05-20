@@ -8,8 +8,8 @@ import {
 } from 'vue'
 import type { PropType } from 'vue'
 import type Uppy from '@uppy/core'
-import { createUppyEventAdapter } from '@uppy/core'
-import type { UploadStatus } from '@uppy/core'
+import { createUppyEventAdapter } from '@uppy/components'
+import type { UploadStatus } from '@uppy/components'
 
 export interface UppyContext {
   uppy: Uppy | undefined

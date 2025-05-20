@@ -5,7 +5,7 @@ import React, {
   createElement as h,
 } from 'react'
 import type Uppy from '@uppy/core'
-import { createUppyEventAdapter, type UploadStatus } from '@uppy/core'
+import { createUppyEventAdapter, type UploadStatus } from '@uppy/components'
 
 interface UppyContextValue {
   uppy: Uppy | undefined
