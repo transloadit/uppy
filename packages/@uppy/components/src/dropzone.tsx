@@ -1,5 +1,6 @@
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 import { h } from 'preact'
-import { useState, useRef, useEffect } from 'preact/hooks'
+import { useState, useRef } from 'preact/hooks'
 import { clsx } from 'clsx'
 import type { UppyContext } from './types.js'
 
@@ -12,67 +13,47 @@ export type DropzoneProps = {
 }
 
 export default function Dropzone(props: DropzoneProps) {
-  const dropAreaRef = useRef<HTMLDivElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [isDragging, setIsDragging] = useState(() => false)
   const { width, height, note, noClick, ctx } = props
 
-  useEffect(() => {
-    const element = dropAreaRef.current
-    if (!element) return undefined
+  function handleDrop(event: DragEvent) {
+    event.preventDefault()
+    event.stopPropagation()
+    setIsDragging(false)
+    const files = Array.from(event.dataTransfer?.files || [])
+    if (!files.length) return
+    ctx.uppy?.addFiles(
+      files.map((file) => ({
+        source: 'drag-drop',
+        name: file.name,
+        type: file.type,
+        data: file,
+      })),
+    )
+  }
 
-    const handleDrop = (event: DragEvent) => {
-      event.preventDefault()
-      event.stopPropagation()
-      setIsDragging(false)
-      const files = Array.from(event.dataTransfer?.files || [])
-      if (!files.length) return
-      ctx.uppy?.addFiles(
-        files.map((file) => ({
-          source: 'drag-drop',
-          name: file.name,
-          type: file.type,
-          data: file,
-        })),
-      )
-    }
+  function handleDragOver(event: DragEvent) {
+    event.preventDefault()
+    event.stopPropagation()
+  }
 
-    const handleDragOver = (event: DragEvent) => {
-      event.preventDefault()
-      event.stopPropagation()
-    }
+  function handleDragEnter(event: DragEvent) {
+    event.preventDefault()
+    event.stopPropagation()
+    setIsDragging(true)
+  }
 
-    const handleDragEnter = (event: DragEvent) => {
-      event.preventDefault()
-      event.stopPropagation()
-      setIsDragging(true)
-    }
+  function handleDragLeave(event: DragEvent) {
+    event.preventDefault()
+    event.stopPropagation()
+    setIsDragging(false)
+  }
 
-    const handleDragLeave = (event: DragEvent) => {
-      event.preventDefault()
-      event.stopPropagation()
-      setIsDragging(false)
-    }
-
-    const handleClick = () => {
-      if (noClick) return
-      fileInputRef.current?.click()
-    }
-
-    element.addEventListener('drop', handleDrop)
-    element.addEventListener('dragover', handleDragOver)
-    element.addEventListener('dragenter', handleDragEnter)
-    element.addEventListener('dragleave', handleDragLeave)
-    element.addEventListener('click', handleClick)
-
-    return () => {
-      element.removeEventListener('drop', handleDrop)
-      element.removeEventListener('dragover', handleDragOver)
-      element.removeEventListener('dragenter', handleDragEnter)
-      element.removeEventListener('dragleave', handleDragLeave)
-      element.removeEventListener('click', handleClick)
-    }
-  }, [ctx.uppy, noClick])
+  function handleClick() {
+    if (noClick) return
+    fileInputRef.current?.click()
+  }
 
   function handleFileInputChange(event: Event) {
     const input = event.target as HTMLInputElement
@@ -98,10 +79,11 @@ export default function Dropzone(props: DropzoneProps) {
         className="uppy:hidden"
         ref={fileInputRef}
         multiple
-        onChange={(event) => handleFileInputChange(event)}
+        onChange={handleFileInputChange}
       />
       <div
-        ref={dropAreaRef}
+        role="button"
+        tabIndex={0}
         style={{
           width: width || '100%',
           height: height || '100%',
@@ -117,6 +99,11 @@ export default function Dropzone(props: DropzoneProps) {
             'uppy:cursor-pointer uppy:hover:bg-blue-50': !noClick,
           },
         )}
+        onDrop={handleDrop}
+        onDragOver={handleDragOver}
+        onDragEnter={handleDragEnter}
+        onDragLeave={handleDragLeave}
+        onClick={handleClick}
       >
         <div className="uppy:flex uppy:flex-col uppy:items-center uppy:justify-center uppy:h-full uppy:space-y-3">
           <p className="uppy:text-gray-600">

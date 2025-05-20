@@ -2,12 +2,11 @@
 
 /*
 * Split up tailwind imports to not import the preflight styles
-* as we don't want our components to effect the entire website of the user.
+* as we don't want our components to affect the entire website of the user.
 */
 @import 'tailwindcss/theme.css' layer(theme) prefix(uppy);
 @import 'tailwindcss/utilities.css' layer(utilities) prefix(uppy);
 
-/* TODO: do not put these here */
 @import '@uppy/core/dist/style.min.css';
 @import '@uppy/image-editor/dist/style.min.css';
 @import '@uppy/webcam/dist/style.min.css';
