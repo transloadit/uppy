@@ -15,5 +15,28 @@ export function useDropzone(
   if (!ctx?.uppy) {
     throw new Error('useDropzone must be called within a UppyContextProvider')
   }
-  return createDropzone(ctx, options)
+  const dropzone = createDropzone(ctx, options)
+
+  return {
+    // Only Svelte uses lowercase event names so we want to remap them
+    ...dropzone,
+    getRootProps: () => {
+      const props = dropzone.getRootProps()
+      return {
+        ...props,
+        ondragenter: props.onDragEnter,
+        ondragover: props.onDragOver,
+        ondragleave: props.onDragLeave,
+        ondrop: props.onDrop,
+        onclick: props.onClick,
+      }
+    },
+    getInputProps: () => {
+      const props = dropzone.getInputProps()
+      return {
+        ...props,
+        onchange: props.onChange,
+      }
+    },
+  }
 }
