@@ -14,4 +14,4 @@ export {
 export type { UppyContext } from './types.js'
 
 export { createUppyEventAdapter } from './uppyEventAdapter.js'
-export type { UploadStatus } from './uppyEventAdapter.js'
+export type { UploadStatus } from './types.js'

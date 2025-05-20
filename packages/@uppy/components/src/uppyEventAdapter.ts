@@ -1,12 +1,5 @@
 import Uppy from '@uppy/core'
-
-export type UploadStatus =
-  | 'init'
-  | 'ready'
-  | 'uploading'
-  | 'paused'
-  | 'error'
-  | 'complete'
+import type { UploadStatus } from './types'
 
 export function createUppyEventAdapter({
   uppy,
