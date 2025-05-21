@@ -2,7 +2,7 @@
 /* eslint-disable react/button-has-type */
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable react/react-in-jsx-scope */
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import {
   Dropzone,
   FilesGrid,
@@ -31,15 +31,9 @@ function Webcam() {
     getDiscardButtonProps,
   } = useWebcam()
 
-  const ref = useRef<HTMLVideoElement>(null)
-
   return (
     <div className="">
-      <video
-        className="border-2 w-full"
-        {...getVideoProps(ref.current)}
-        ref={ref}
-      />
+      <video className="border-2 w-full" {...getVideoProps()} />
       <div className="flex gap-4">
         <button className="disabled:opacity-50" {...getSnapshotButtonProps()}>
           Snapshot

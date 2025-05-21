@@ -1,4 +1,4 @@
-import { computed, inject, onMounted, type ComputedRef } from 'vue'
+import { inject, onMounted, type ShallowRef } from 'vue'
 import { createWebcamStore, type WebcamSnapshot } from '@uppy/components'
 import {
   UppyContextSymbol,
@@ -6,18 +6,7 @@ import {
 } from './headless/context-provider.js'
 import { useExternalStore } from './useSyncExternalStore.js'
 
-type UseWebcamResult = {
-  state: ComputedRef<WebcamSnapshot['state']>
-  getVideoProps: ComputedRef<WebcamSnapshot['getVideoProps']>
-  getSnapshotButtonProps: ComputedRef<WebcamSnapshot['getSnapshotButtonProps']>
-  getRecordButtonProps: ComputedRef<WebcamSnapshot['getRecordButtonProps']>
-  getStopRecordingButtonProps: ComputedRef<
-    WebcamSnapshot['getStopRecordingButtonProps']
-  >
-  getSubmitButtonProps: ComputedRef<WebcamSnapshot['getSubmitButtonProps']>
-  getDiscardButtonProps: ComputedRef<WebcamSnapshot['getSubmitButtonProps']>
-}
-export function useWebcam(): UseWebcamResult {
+export function useWebcam(): ShallowRef<WebcamSnapshot> {
   const ctx = inject<UppyContext>(UppyContextSymbol)
 
   if (!ctx?.uppy) {
@@ -38,15 +27,5 @@ export function useWebcam(): UseWebcamResult {
     }
   })
 
-  return {
-    state: computed(() => store.value.state),
-    getVideoProps: computed(() => store.value.getVideoProps),
-    getSnapshotButtonProps: computed(() => store.value.getSnapshotButtonProps),
-    getRecordButtonProps: computed(() => store.value.getRecordButtonProps),
-    getStopRecordingButtonProps: computed(
-      () => store.value.getStopRecordingButtonProps,
-    ),
-    getSubmitButtonProps: computed(() => store.value.getSubmitButtonProps),
-    getDiscardButtonProps: computed(() => store.value.getDiscardButtonProps),
-  }
+  return store
 }

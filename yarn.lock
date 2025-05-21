@@ -12456,7 +12456,7 @@ __metadata:
     "@uppy/components": "workspace:^"
     preact: "npm:^10.5.13"
     shallow-equal: "npm:^3.0.0"
-    vue: "npm:^3.4.21"
+    vue: "npm:^3.5.14"
   peerDependencies:
     "@uppy/core": "workspace:^"
     "@uppy/dashboard": "workspace:^"
@@ -35314,7 +35314,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"vue@npm:^3.2.33, vue@npm:^3.4.21":
+"vue@npm:^3.2.33":
   version: 3.4.29
   resolution: "vue@npm:3.4.29"
   dependencies:

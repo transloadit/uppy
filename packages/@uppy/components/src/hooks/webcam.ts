@@ -12,7 +12,7 @@ type ButtonProps = {
 
 export type WebcamSnapshot = {
   state: WebcamState
-  getVideoProps: (ref: HTMLVideoElement | null) => {
+  getVideoProps: () => {
     style?: {
       transform: string
     }
@@ -35,6 +35,8 @@ export type WebcamStore = {
   getSnapshot: () => WebcamSnapshot
   start: () => void
 }
+
+const videoId = 'uppy-webcam-video'
 
 export function createWebcamStore(uppy: Uppy): WebcamStore {
   const plugin = uppy.getPlugin<Webcam<any, any>>('Webcam')
@@ -83,7 +85,8 @@ export function createWebcamStore(uppy: Uppy): WebcamStore {
   const getSnapshot = () => {
     return {
       state: plugin.getPluginState(),
-      getVideoProps: (ref: HTMLVideoElement | null) => {
+      getVideoProps: () => {
+        const ref = document.getElementById(videoId) as HTMLVideoElement | null
         plugin.getVideoElement = () => ref
         const { status, recordedVideo } = plugin.getPluginState()
         if (status === 'captured' && recordedVideo) {
@@ -92,6 +95,7 @@ export function createWebcamStore(uppy: Uppy): WebcamStore {
             ref.srcObject = null
           }
           return {
+            id: videoId,
             playsInline: true,
             controls: true,
             muted: false,
@@ -107,6 +111,7 @@ export function createWebcamStore(uppy: Uppy): WebcamStore {
 
         // Live preview
         return {
+          id: videoId,
           style: {
             transform: 'scaleX(-1)',
           },

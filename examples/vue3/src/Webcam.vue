@@ -1,27 +1,35 @@
 <template>
   <div class="">
-    <video
-      class="border-2 w-full"
-      ref="videoRef"
-      v-bind="getVideoProps(videoRef)"
-    />
+    <video class="border-2 w-full" v-bind="webcam.getVideoProps()" />
     <div class="flex gap-4">
-      <button class="disabled:opacity-50" v-bind="getSnapshotButtonProps()">
+      <button
+        class="disabled:opacity-50"
+        v-bind="webcam.getSnapshotButtonProps()"
+      >
         Snapshot
       </button>
-      <button class="disabled:opacity-50" v-bind="getRecordButtonProps()">
+      <button
+        class="disabled:opacity-50"
+        v-bind="webcam.getRecordButtonProps()"
+      >
         Record
       </button>
       <button
         class="disabled:opacity-50"
-        v-bind="getStopRecordingButtonProps()"
+        v-bind="webcam.getStopRecordingButtonProps()"
       >
         Stop
       </button>
-      <button class="disabled:opacity-50" v-bind="getSubmitButtonProps()">
+      <button
+        class="disabled:opacity-50"
+        v-bind="webcam.getSubmitButtonProps()"
+      >
         Submit
       </button>
-      <button class="disabled:opacity-50" v-bind="getDiscardButtonProps()">
+      <button
+        class="disabled:opacity-50"
+        v-bind="webcam.getDiscardButtonProps()"
+      >
         Discard
       </button>
     </div>
@@ -30,16 +38,6 @@
 
 <script setup lang="ts">
 import { useWebcam } from '@uppy/vue'
-import { useTemplateRef } from 'vue'
 
-const videoRef = useTemplateRef('videoRef')
-
-const {
-  getVideoProps,
-  getSnapshotButtonProps,
-  getRecordButtonProps,
-  getStopRecordingButtonProps,
-  getSubmitButtonProps,
-  getDiscardButtonProps,
-} = useWebcam()
+const webcam = useWebcam()
 </script>
