@@ -101,8 +101,7 @@ cs_CZ.strings = {
   editing: 'Upravujete %{file}',
   emptyFolderAdded: 'Nebyly přidány žádné soubory, adresář je prázdný',
   encoding: 'Převádění...',
-  enterCorrectUrl:
-    'Chybná URL: Ujistěte se, že vkládáte přímý odkaz na soubor',
+  enterCorrectUrl: 'Chybná URL: Ujistěte se, že vkládáte přímý odkaz na soubor',
   enterTextToSearch: 'Vložte text pro vyhledání obrázků',
   enterUrlToImport: 'Vložte URL pro import souboru',
   error: 'Chyba',
@@ -175,7 +174,8 @@ cs_CZ.strings = {
   recordingStoppedMaxSize:
     'Nahrávání bylo zastaveno, protože velikost souboru brzy překročí limit',
   recordVideoBtn: 'Záznam videa',
-  recoveredAllFiles: 'Obnovili jsme všechny soubory. Nyní můžete pokračovat v nahrávání.',
+  recoveredAllFiles:
+    'Obnovili jsme všechny soubory. Nyní můžete pokračovat v nahrávání.',
   recoveredXFiles: {
     '0': 'Nepodařilo se nám plně obnovit 1 soubor. Vyberte jej znovu a obnovte nahrávání.',
     '1': 'Nepodařilo se nám plně obnovit %{smart_count} soubory. Vyberte je znovu a obnovte nahrávání.',
