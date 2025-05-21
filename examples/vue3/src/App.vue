@@ -5,7 +5,7 @@
 
       <UploadButton />
 
-      <CustomDropzone />
+      <Webcam />
 
       <article>
         <h2 class="text-2xl my-4">With list</h2>
@@ -39,11 +39,15 @@ import {
   UploadButton,
 } from '@uppy/vue'
 import CustomDropzone from './Dropzone.vue'
+import Webcam from './Webcam.vue'
+import UppyWebcam from '@uppy/webcam'
 
 const uppy = computed(() =>
-  new Uppy().use(Tus, {
-    endpoint: 'https://tusd.tusdemo.net/files/',
-  }),
+  new Uppy()
+    .use(Tus, {
+      endpoint: 'https://tusd.tusdemo.net/files/',
+    })
+    .use(UppyWebcam),
 )
 </script>
 

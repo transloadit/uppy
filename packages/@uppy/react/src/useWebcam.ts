@@ -1,19 +1,9 @@
 import { useMemo, useContext, useEffect } from 'react'
 import { useSyncExternalStore } from 'use-sync-external-store/shim/index.js'
-import {
-  createWebcamController,
-  type WebcamController,
-  type WebcamSnapshot,
-} from '@uppy/components'
+import { createWebcamStore, type WebcamSnapshot } from '@uppy/components'
 import { UppyContext } from './headless/UppyContextProvider.js'
 
-type UseWebcamResult = Omit<
-  WebcamController,
-  'destroy' | 'subscribe' | 'getSnapshot' | 'start'
-> &
-  WebcamSnapshot
-
-export function useWebcam(): UseWebcamResult {
+export function useWebcam(): WebcamSnapshot {
   const { uppy } = useContext(UppyContext)
 
   if (!uppy) {
@@ -22,30 +12,27 @@ export function useWebcam(): UseWebcamResult {
     )
   }
 
-  const controller = useMemo(() => createWebcamController(uppy), [uppy])
-
-  const { status, cameraError, recordedVideo } = useSyncExternalStore(
-    controller.subscribe,
-    controller.getSnapshot,
-    controller.getSnapshot, // Server snapshot (can be same as client initially)
+  const webcam = useMemo(() => createWebcamStore(uppy), [uppy])
+  const store = useSyncExternalStore(
+    webcam.subscribe,
+    webcam.getSnapshot,
+    webcam.getSnapshot,
   )
 
   useEffect(() => {
-    controller.start()
+    webcam.start()
     return () => {
-      controller.destroy()
+      webcam.destroy()
     }
-  }, [controller])
+  }, [webcam])
 
   return {
-    status,
-    cameraError,
-    recordedVideo,
-    getVideoProps: controller.getVideoProps,
-    getSnapshotButtonProps: controller.getSnapshotButtonProps,
-    getRecordButtonProps: controller.getRecordButtonProps,
-    getStopRecordingButtonProps: controller.getStopRecordingButtonProps,
-    getSubmitButtonProps: controller.getSubmitButtonProps,
-    getDiscardButtonProps: controller.getDiscardButtonProps,
+    state: store.state,
+    getVideoProps: store.getVideoProps,
+    getSnapshotButtonProps: store.getSnapshotButtonProps,
+    getRecordButtonProps: store.getRecordButtonProps,
+    getStopRecordingButtonProps: store.getStopRecordingButtonProps,
+    getSubmitButtonProps: store.getSubmitButtonProps,
+    getDiscardButtonProps: store.getDiscardButtonProps,
   }
 }

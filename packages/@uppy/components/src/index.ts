@@ -23,8 +23,8 @@ export {
   type FileInputFunctions,
 } from './hooks/file-input.js'
 export {
-  createWebcamController,
-  type WebcamController,
+  createWebcamStore,
+  type WebcamStore,
   type WebcamStatus,
   type WebcamSnapshot,
 } from './hooks/webcam.js'
