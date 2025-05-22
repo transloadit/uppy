@@ -1,0 +1,27 @@
+import { useEffect, useRef, useContext, createElement as h } from 'react'
+import {
+  FilesList as PreactFilesList,
+  type FilesListProps,
+} from '@uppy/components'
+import { h as preactH } from 'preact'
+import { render as preactRender } from 'preact/compat'
+import { UppyContext } from './UppyContextProvider.js'
+
+export default function FilesList(props: Omit<FilesListProps, 'ctx'>) {
+  const ref = useRef(null)
+  const ctx = useContext(UppyContext)
+
+  useEffect(() => {
+    if (ref.current) {
+      preactRender(
+        preactH(PreactFilesList, {
+          ...props,
+          ctx,
+        } satisfies FilesListProps),
+        ref.current,
+      )
+    }
+  }, [ctx, props])
+
+  return <div ref={ref} />
+}

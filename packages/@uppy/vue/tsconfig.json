@@ -10,6 +10,9 @@
       "path": "../core/tsconfig.build.json",
     },
     {
+      "path": "../components/tsconfig.build.json",
+    },
+    {
       "path": "../dashboard/tsconfig.build.json",
     },
     {
