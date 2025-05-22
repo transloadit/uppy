@@ -38,6 +38,12 @@
 
 <script setup lang="ts">
 import { useWebcam } from '@uppy/vue'
+import { onMounted } from 'vue'
 
 const webcam = useWebcam()
+
+onMounted(() => {
+  webcam.value.start()
+  return () => webcam.value.stop()
+})
 </script>

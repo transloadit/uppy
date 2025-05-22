@@ -2,7 +2,7 @@
 /* eslint-disable react/button-has-type */
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable react/react-in-jsx-scope */
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   Dropzone,
   FilesGrid,
@@ -23,6 +23,8 @@ import '@uppy/react/dist/styles.css'
 
 function Webcam() {
   const {
+    start,
+    stop,
     getVideoProps,
     getSnapshotButtonProps,
     getRecordButtonProps,
@@ -30,6 +32,11 @@ function Webcam() {
     getSubmitButtonProps,
     getDiscardButtonProps,
   } = useWebcam()
+
+  useEffect(() => {
+    start()
+    return () => stop()
+  }, [start, stop])
 
   return (
     <div className="">

@@ -12,6 +12,8 @@ type ButtonProps = {
 
 export type WebcamSnapshot = {
   state: WebcamState
+  stop: () => void
+  start: () => void
   getVideoProps: () => {
     style?: {
       transform: string
@@ -30,15 +32,32 @@ export type WebcamSnapshot = {
 }
 
 export type WebcamStore = {
-  destroy: () => void
   subscribe: (listener: () => void) => () => void
   getSnapshot: () => WebcamSnapshot
-  start: () => void
 }
 
 const videoId = 'uppy-webcam-video'
 
-export function createWebcamStore(uppy: Uppy): WebcamStore {
+class Subscribers {
+  private subscribers: Set<() => void> = new Set()
+
+  add = (listener: () => void): (() => void) => {
+    this.subscribers.add(listener)
+    return () => this.subscribers.delete(listener)
+  }
+
+  emit = (): void => {
+    for (const listener of this.subscribers) {
+      listener()
+    }
+  }
+
+  clear = (): void => {
+    this.subscribers.clear()
+  }
+}
+
+export function createWebcamController(uppy: Uppy): WebcamStore {
   const plugin = uppy.getPlugin<Webcam<any, any>>('Webcam')
 
   if (!plugin) {
@@ -47,15 +66,7 @@ export function createWebcamStore(uppy: Uppy): WebcamStore {
     )
   }
 
-  // --- Store subscription logic ---
-  const listeners: Set<() => void> = new Set()
-  const subscribe = (listener: () => void): (() => void) => {
-    listeners.add(listener)
-    return () => listeners.delete(listener)
-  }
-  const emitChange = () => {
-    listeners.forEach((listener) => listener())
-  }
+  const subscribers = new Subscribers()
 
   const onStateUpdate: UppyEventMap<any, any>['state-update'] = (
     prev,
@@ -64,14 +75,14 @@ export function createWebcamStore(uppy: Uppy): WebcamStore {
   ) => {
     const webcamPatch = patch?.plugins?.Webcam as WebcamState | undefined
     if (webcamPatch) {
-      emitChange()
+      subscribers.emit()
     }
   }
   uppy.on('state-update', onStateUpdate)
 
-  const destroy = () => {
+  const stop = () => {
     uppy.off('state-update', onStateUpdate)
-    listeners.clear()
+    subscribers.clear()
     if (plugin.webcamActive || plugin.getPluginState().isRecording) {
       plugin.stop()
     }
@@ -172,6 +183,8 @@ export function createWebcamStore(uppy: Uppy): WebcamStore {
   let cachedState = plugin.getPluginState()
   let snapshot: WebcamSnapshot = {
     state: cachedState,
+    stop,
+    start,
     getVideoProps,
     getSnapshotButtonProps,
     getRecordButtonProps,
@@ -195,10 +208,5 @@ export function createWebcamStore(uppy: Uppy): WebcamStore {
     return snapshot
   }
 
-  return {
-    destroy,
-    subscribe,
-    getSnapshot,
-    start,
-  }
+  return { subscribe: subscribers.add, getSnapshot }
 }

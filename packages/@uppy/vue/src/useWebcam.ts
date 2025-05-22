@@ -1,5 +1,5 @@
-import { inject, onMounted, type ShallowRef } from 'vue'
-import { createWebcamStore, type WebcamSnapshot } from '@uppy/components'
+import { inject, type ShallowRef } from 'vue'
+import { createWebcamController, type WebcamSnapshot } from '@uppy/components'
 import {
   UppyContextSymbol,
   type UppyContext,
@@ -13,19 +13,11 @@ export function useWebcam(): ShallowRef<WebcamSnapshot> {
     throw new Error('useWebcam must be called within a UppyContextProvider')
   }
 
-  const webcam = createWebcamStore(ctx.uppy)
+  const controller = createWebcamController(ctx.uppy)
   const store = useExternalStore<WebcamSnapshot>(
-    webcam.getSnapshot,
-    webcam.subscribe,
+    controller.getSnapshot,
+    controller.subscribe,
   )
-
-  onMounted(() => {
-    webcam.start()
-
-    return () => {
-      webcam.destroy()
-    }
-  })
 
   return store
 }

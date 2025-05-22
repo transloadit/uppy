@@ -1,6 +1,6 @@
-import { useMemo, useContext, useEffect } from 'react'
+import { useMemo, useContext } from 'react'
 import { useSyncExternalStore } from 'use-sync-external-store/shim/index.js'
-import { createWebcamStore, type WebcamSnapshot } from '@uppy/components'
+import { createWebcamController, type WebcamSnapshot } from '@uppy/components'
 import { UppyContext } from './headless/UppyContextProvider.js'
 
 export function useWebcam(): WebcamSnapshot {
@@ -12,21 +12,12 @@ export function useWebcam(): WebcamSnapshot {
     )
   }
 
-  const webcam = useMemo(() => createWebcamStore(uppy), [uppy])
+  const controller = useMemo(() => createWebcamController(uppy), [uppy])
   const store = useSyncExternalStore(
-    webcam.subscribe,
-    webcam.getSnapshot,
-    webcam.getSnapshot,
+    controller.subscribe,
+    controller.getSnapshot,
+    controller.getSnapshot,
   )
-
-  console.log('state', store.state)
-
-  useEffect(() => {
-    webcam.start()
-    return () => {
-      webcam.destroy()
-    }
-  }, [webcam])
 
   return store
 }
