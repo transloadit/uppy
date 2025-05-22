@@ -831,7 +831,16 @@ export default class AwsS3Multipart<
 
       const onError = (err: unknown) => {
         this.uppy.log(err as Error)
-        this.uppy.emit('upload-error', file, err as Error)
+
+        const errorResponse: UppyFile<M, B>['response'] = {
+          status: (err as any)?.status || 500,
+          body: {
+            message: err instanceof Error ? err.message : 'Unknown error',
+          } as unknown as B,
+          bytesUploaded: file?.progress?.bytesUploaded || 0,
+        }
+
+        this.uppy.emit('upload-error', file, err as Error, errorResponse)
 
         this.resetUploaderReferences(file.id)
         reject(err)
