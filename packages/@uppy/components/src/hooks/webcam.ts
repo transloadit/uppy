@@ -57,7 +57,10 @@ class Subscribers {
   }
 }
 
-export function createWebcamController(uppy: Uppy): WebcamStore {
+export function createWebcamController(
+  uppy: Uppy,
+  onSubmit: () => void,
+): WebcamStore {
   const plugin = uppy.getPlugin<Webcam<any, any>>('Webcam')
 
   if (!plugin) {
@@ -78,11 +81,9 @@ export function createWebcamController(uppy: Uppy): WebcamStore {
       subscribers.emit()
     }
   }
-  uppy.on('state-update', onStateUpdate)
 
   const stop = () => {
     uppy.off('state-update', onStateUpdate)
-    subscribers.clear()
     if (plugin.webcamActive || plugin.getPluginState().isRecording) {
       plugin.stop()
     }
@@ -134,6 +135,7 @@ export function createWebcamController(uppy: Uppy): WebcamStore {
     onClick: async () => {
       await plugin.takeSnapshot()
       await plugin.stop()
+      onSubmit()
     },
     disabled:
       plugin.getPluginState().status !== 'ready' ||
@@ -163,6 +165,7 @@ export function createWebcamController(uppy: Uppy): WebcamStore {
     onClick: () => {
       plugin.submit()
       plugin.stop()
+      onSubmit()
     },
     disabled: plugin.getPluginState().status !== 'captured',
   })

@@ -3,7 +3,11 @@ import { useSyncExternalStore } from 'use-sync-external-store/shim/index.js'
 import { createWebcamController, type WebcamSnapshot } from '@uppy/components'
 import { UppyContext } from './headless/UppyContextProvider.js'
 
-export function useWebcam(): WebcamSnapshot {
+type WebcamProps = {
+  onSubmit: () => void
+}
+
+export function useWebcam({ onSubmit }: WebcamProps): WebcamSnapshot {
   const { uppy } = useContext(UppyContext)
 
   if (!uppy) {
@@ -12,7 +16,10 @@ export function useWebcam(): WebcamSnapshot {
     )
   }
 
-  const controller = useMemo(() => createWebcamController(uppy), [uppy])
+  const controller = useMemo(
+    () => createWebcamController(uppy, onSubmit),
+    [uppy, onSubmit],
+  )
   const store = useSyncExternalStore(
     controller.subscribe,
     controller.getSnapshot,

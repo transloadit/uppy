@@ -2,7 +2,7 @@
 /* eslint-disable react/button-has-type */
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable react/react-in-jsx-scope */
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import {
   Dropzone,
   FilesGrid,
@@ -21,7 +21,12 @@ import UppyWebcam from '@uppy/webcam'
 import './app.css'
 import '@uppy/react/dist/styles.css'
 
-function Webcam() {
+interface WebcamProps {
+  isOpen: boolean
+  close: () => void
+}
+
+function Webcam({ isOpen, close }: WebcamProps) {
   const {
     start,
     stop,
@@ -31,33 +36,56 @@ function Webcam() {
     getStopRecordingButtonProps,
     getSubmitButtonProps,
     getDiscardButtonProps,
-  } = useWebcam()
+  } = useWebcam({ onSubmit: close })
 
   useEffect(() => {
-    start()
-    return () => stop()
-  }, [start, stop])
+    if (isOpen) {
+      start()
+    }
+
+    return () => {
+      stop()
+    }
+  }, [start, stop, isOpen])
 
   return (
-    <div className="">
-      <video className="border-2 w-full" {...getVideoProps()} />
-      <div className="flex gap-4">
-        <button className="disabled:opacity-50" {...getSnapshotButtonProps()}>
+    <div className="p-4 max-w-lg w-full">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-xl font-bold">Camera</h2>
+        <button onClick={close} className="text-gray-500 hover:text-gray-700">
+          ✕
+        </button>
+      </div>
+      <video className="border-2 w-full rounded-lg" {...getVideoProps()} />
+      <div className="flex gap-4 mt-4">
+        <button
+          className="bg-blue-500 text-white px-4 py-2 rounded-md disabled:opacity-50 disabled:bg-blue-300"
+          {...getSnapshotButtonProps()}
+        >
           Snapshot
         </button>
-        <button className="disabled:opacity-50" {...getRecordButtonProps()}>
+        <button
+          className="bg-blue-500 text-white px-4 py-2 rounded-md disabled:opacity-50 disabled:bg-blue-300"
+          {...getRecordButtonProps()}
+        >
           Record
         </button>
         <button
-          className="disabled:opacity-50"
+          className="bg-red-500 text-white px-4 py-2 rounded-md disabled:opacity-50 disabled:bg-red-300"
           {...getStopRecordingButtonProps()}
         >
           Stop
         </button>
-        <button className="disabled:opacity-50" {...getSubmitButtonProps()}>
+        <button
+          className="bg-green-500 text-white px-4 py-2 rounded-md disabled:opacity-50 disabled:bg-green-300"
+          {...getSubmitButtonProps()}
+        >
           Submit
         </button>
-        <button className="disabled:opacity-50" {...getDiscardButtonProps()}>
+        <button
+          className="bg-gray-500 text-white px-4 py-2 rounded-md disabled:opacity-50 disabled:bg-gray-300"
+          {...getDiscardButtonProps()}
+        >
           Discard
         </button>
       </div>
@@ -65,7 +93,11 @@ function Webcam() {
   )
 }
 
-function CustomDropzone() {
+interface CustomDropzoneProps {
+  openWebcamModal: () => void
+}
+
+function CustomDropzone({ openWebcamModal }: CustomDropzoneProps) {
   const { getRootProps, getInputProps } = useDropzone({
     noClick: true,
   })
@@ -79,16 +111,26 @@ function CustomDropzone() {
         role="button"
         className="border-2 border-dashed border-gray-300 rounded-lg p-6 bg-gray-50 transition-colors duration-200"
       >
-        <div className="flex flex-col items-center justify-center h-full space-y-3">
+        <div className="flex items-center justify-center gap-4">
           <input {...getFileInputProps()} className="hidden" />
           <button
             {...getButtonProps()}
             className="hover:bg-gray-100 transition-colors p-2 rounded-md flex flex-col items-center gap-2 text-sm"
           >
             <div className="bg-white shadow-md rounded-md p-1">
-              <ProviderIcon provider="device" fill="#02B383" />
+              <ProviderIcon provider="device" fill="#1269cf" />
             </div>
             Device
+          </button>
+
+          <button
+            onClick={openWebcamModal}
+            className="hover:bg-gray-100 transition-colors p-2 rounded-md flex flex-col items-center gap-2 text-sm"
+          >
+            <div className="bg-white shadow-md rounded-md p-1">
+              <ProviderIcon provider="camera" fill="#02B383" />
+            </div>
+            Webcam
           </button>
         </div>
       </div>
@@ -105,6 +147,19 @@ function App() {
       .use(UppyWebcam),
   )
 
+  const webcamDialogRef = useRef<HTMLDialogElement>(null)
+  const [isWebcamOpen, setIsWebcamOpen] = useState(false)
+
+  function openWebcamModal() {
+    setIsWebcamOpen(true)
+    webcamDialogRef.current?.showModal()
+  }
+
+  function closeWebcamModal() {
+    setIsWebcamOpen(false)
+    webcamDialogRef.current?.close()
+  }
+
   return (
     <UppyContextProvider uppy={uppy}>
       <main className="p-5 max-w-xl mx-auto">
@@ -112,7 +167,12 @@ function App() {
 
         <UploadButton />
 
-        <Webcam />
+        <dialog
+          ref={webcamDialogRef}
+          className="backdrop:bg-gray-500/50 rounded-lg shadow-xl p-0 fixed inset-0 m-auto"
+        >
+          <Webcam isOpen={isWebcamOpen} close={() => closeWebcamModal()} />
+        </dialog>
 
         <article>
           <h2 className="text-2xl my-4">With list</h2>
@@ -128,7 +188,7 @@ function App() {
 
         <article>
           <h2 className="text-2xl my-4">With custom dropzone</h2>
-          <CustomDropzone />
+          <CustomDropzone openWebcamModal={() => openWebcamModal()} />
         </article>
       </main>
     </UppyContextProvider>
