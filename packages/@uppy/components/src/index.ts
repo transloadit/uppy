@@ -12,7 +12,6 @@ export {
   type FileInputProps,
   type FileInputFunctions,
 } from './hooks/file-input.js'
-
 export {
   default as UploadButton,
   type UploadButtonProps,
@@ -23,3 +22,4 @@ export {
 } from './ProviderIcon.js'
 
 export type { UppyContext, UploadStatus } from './types.js'
+export { createUppyEventAdapter } from './uppyEventAdapter.js'
