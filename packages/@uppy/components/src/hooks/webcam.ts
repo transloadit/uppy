@@ -167,8 +167,11 @@ export function createWebcamStore(uppy: Uppy): WebcamStore {
     disabled: plugin.getPluginState().status !== 'captured',
   })
 
-  const snapshot: WebcamSnapshot = {
-    state: plugin.getPluginState(),
+  // Keep a cached snapshot so that the reference stays stable when nothing
+  // has changed, as expected by `useSyncExternalStore` from React
+  let cachedState = plugin.getPluginState()
+  let snapshot: WebcamSnapshot = {
+    state: cachedState,
     getVideoProps,
     getSnapshotButtonProps,
     getRecordButtonProps,
@@ -178,7 +181,17 @@ export function createWebcamStore(uppy: Uppy): WebcamStore {
   }
 
   const getSnapshot = () => {
-    snapshot.state = plugin.getPluginState()
+    const nextState = plugin.getPluginState()
+
+    // If the reference hasn't changed we can safely return the cached
+    // snapshot to avoid unnecessary re-renders.
+    if (nextState === cachedState) return snapshot
+
+    cachedState = nextState
+    snapshot = {
+      ...snapshot,
+      state: nextState,
+    }
     return snapshot
   }
 
