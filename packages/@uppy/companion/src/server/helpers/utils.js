@@ -184,7 +184,14 @@ module.exports.decrypt = (encrypted, secret) => {
   }
 }
 
-module.exports.defaultGetKey = ({ filename }) => `${crypto.randomUUID()}-${filename}`
+module.exports.defaultGetKey = ({ filename }) => {
+  if (!filename) {
+    // If the filename has been truncated down to 0 character
+    // then use the UUID directly
+    return crypto.randomUUID();
+  }
+  return `${crypto.randomUUID()}-${filename}`
+}
 
 /**
  * Our own HttpError in cases where we can't use `got`'s `HTTPError`
@@ -273,4 +280,19 @@ module.exports.getBucket = ({ bucketOrFn, req, metadata, filename }) => {
     throw new TypeError('s3: bucket key must be a string or a function resolving the bucket string')
   }
   return bucket
+}
+
+/**
+ * Truncate filename to a maximum length.
+ *
+ * @param {string} filename
+ * @param {number} maxFilenameLength
+ * @param {boolean} isTruncateFromEnd
+ * @returns {string}
+ */
+module.exports.truncateFilename = (filename, maxFilenameLength, isTruncateFromEnd) => {
+  if (filename.length <= maxFilenameLength) {
+    return filename
+  }
+  return isTruncateFromEnd ? filename.slice(0, maxFilenameLength) : filename.slice(maxFilenameLength * -1)
 }
