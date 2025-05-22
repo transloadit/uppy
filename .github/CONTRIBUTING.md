@@ -187,6 +187,30 @@ release a new Uppy version:
 If you don’t have access to the transloadit.com source code ping @arturi or
 @goto-bus-stop and we’ll pick it up. :sparkles:
 
+### Fixing a broken release
+
+If the `Release` job fails, it will merge the release PR and deletes the branch
+and there’s no way of going back with that PR. Instead you have to reverse the
+release commit and run the Release candidate job again to create a new release
+PR:
+
+1. Checkout `main` locally and reverse the automatically release commit
+2. Do whatever changes need to be done on `main`
+3. Commit and push `main`
+4. Now checkout the `release` branch and rebase it onto `main`, then push it
+5. A new release PR will now be created and you can start over
+6. Delete tags for the original release commit (`COMMIT_ID`):
+
+```bash
+git tag --points-at COMMIT_ID | tee /dev/tty | xargs -n 1 git tag -d
+```
+
+7. Push the deleted tags:
+
+```bash
+git tag --points-at COMMIT_ID | xargs -n 1 -I {} echo ":refs/tags/{}" | xargs git push origin
+```
+
 ### Releasing hotfix patch
 
 #### Companion hotfix
