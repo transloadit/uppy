@@ -59,7 +59,7 @@ class Subscribers {
 
 export function createWebcamController(
   uppy: Uppy,
-  onSubmit: () => void,
+  onSubmit?: () => void,
 ): WebcamStore {
   const plugin = uppy.getPlugin<Webcam<any, any>>('Webcam')
 
@@ -135,7 +135,7 @@ export function createWebcamController(
     onClick: async () => {
       await plugin.takeSnapshot()
       await plugin.stop()
-      onSubmit()
+      onSubmit?.()
     },
     disabled:
       plugin.getPluginState().status !== 'ready' ||
@@ -165,7 +165,7 @@ export function createWebcamController(
     onClick: () => {
       plugin.submit()
       plugin.stop()
-      onSubmit()
+      onSubmit?.()
     },
     disabled: plugin.getPluginState().status !== 'captured',
   })
