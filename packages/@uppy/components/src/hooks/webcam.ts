@@ -82,94 +82,104 @@ export function createWebcamStore(uppy: Uppy): WebcamStore {
     plugin.start()
   }
 
-  const getSnapshot = () => {
-    return {
-      state: plugin.getPluginState(),
-      getVideoProps: () => {
-        const ref = document.getElementById(videoId) as HTMLVideoElement | null
-        plugin.getVideoElement = () => ref
-        const { status, recordedVideo } = plugin.getPluginState()
-        if (status === 'captured' && recordedVideo) {
-          if (ref) {
-            // eslint-disable-next-line no-param-reassign
-            ref.srcObject = null
-          }
-          return {
-            id: videoId,
-            playsInline: true,
-            controls: true,
-            muted: false,
-            src: recordedVideo,
-            autoPlay: undefined,
-          }
-        }
-
-        if (ref) {
-          // eslint-disable-next-line no-param-reassign
-          ref.srcObject = plugin.stream
-        }
-
-        // Live preview
-        return {
-          id: videoId,
-          style: {
-            transform: 'scaleX(-1)',
-          },
-          playsInline: true,
-          autoPlay: true,
-          muted: true,
-          controls: undefined,
-        }
-      },
-
-      getSnapshotButtonProps: () => ({
-        type: 'button' as const,
-        onClick: async () => {
-          await plugin.takeSnapshot()
-          await plugin.stop()
-        },
-        disabled:
-          plugin.getPluginState().status !== 'ready' ||
-          plugin.getPluginState().isRecording,
-      }),
-
-      getRecordButtonProps: () => ({
-        type: 'button' as const,
-        onClick: () => {
-          plugin.startRecording()
-        },
-        disabled:
-          plugin.getPluginState().status !== 'ready' ||
-          plugin.getPluginState().isRecording,
-      }),
-
-      getStopRecordingButtonProps: () => ({
-        type: 'button' as const,
-        onClick: () => {
-          plugin.stopRecording()
-        },
-        disabled: plugin.getPluginState().status !== 'recording',
-      }),
-
-      getSubmitButtonProps: () => ({
-        type: 'button' as const,
-        onClick: () => {
-          plugin.submit()
-          plugin.stop()
-          plugin.getPluginState().recordedVideo = null
-        },
-        disabled: plugin.getPluginState().status !== 'captured',
-      }),
-
-      getDiscardButtonProps: () => ({
-        type: 'button' as const,
-        onClick: () => {
-          plugin.discardRecordedVideo()
-          plugin.getPluginState().recordedVideo = null
-        },
-        disabled: plugin.getPluginState().status !== 'captured',
-      }),
+  const getVideoProps = () => {
+    const ref = document.getElementById(videoId) as HTMLVideoElement | null
+    plugin.getVideoElement = () => ref
+    const { status, recordedVideo } = plugin.getPluginState()
+    if (status === 'captured' && recordedVideo) {
+      if (ref) {
+        // eslint-disable-next-line no-param-reassign
+        ref.srcObject = null
+      }
+      return {
+        id: videoId,
+        playsInline: true,
+        controls: true,
+        muted: false,
+        src: recordedVideo,
+        autoPlay: undefined,
+      }
     }
+
+    if (ref) {
+      // eslint-disable-next-line no-param-reassign
+      ref.srcObject = plugin.stream
+    }
+
+    // Live preview
+    return {
+      id: videoId,
+      style: {
+        transform: 'scaleX(-1)',
+      },
+      playsInline: true,
+      autoPlay: true,
+      muted: true,
+      controls: undefined,
+    }
+  }
+
+  const getSnapshotButtonProps = () => ({
+    type: 'button' as const,
+    onClick: async () => {
+      await plugin.takeSnapshot()
+      await plugin.stop()
+    },
+    disabled:
+      plugin.getPluginState().status !== 'ready' ||
+      plugin.getPluginState().isRecording,
+  })
+
+  const getRecordButtonProps = () => ({
+    type: 'button' as const,
+    onClick: () => {
+      plugin.startRecording()
+    },
+    disabled:
+      plugin.getPluginState().status !== 'ready' ||
+      plugin.getPluginState().isRecording,
+  })
+
+  const getStopRecordingButtonProps = () => ({
+    type: 'button' as const,
+    onClick: () => {
+      plugin.stopRecording()
+    },
+    disabled: plugin.getPluginState().status !== 'recording',
+  })
+
+  const getSubmitButtonProps = () => ({
+    type: 'button' as const,
+    onClick: () => {
+      plugin.submit()
+      plugin.stop()
+      plugin.getPluginState().recordedVideo = null
+    },
+    disabled: plugin.getPluginState().status !== 'captured',
+  })
+
+  const getDiscardButtonProps = () => ({
+    type: 'button' as const,
+    onClick: () => {
+      plugin.discardRecordedVideo()
+      plugin.getPluginState().recordedVideo = null
+    },
+    disabled: plugin.getPluginState().status !== 'captured',
+  })
+
+  const snapshot: WebcamSnapshot = {
+    state: plugin.getPluginState(),
+    getVideoProps,
+    getSnapshotButtonProps,
+    getRecordButtonProps,
+    getStopRecordingButtonProps,
+    getSubmitButtonProps,
+    getDiscardButtonProps,
+  }
+
+  const getSnapshot = () => {
+    snapshot.state = plugin.getPluginState()
+    return snapshot
   }
 
   return {

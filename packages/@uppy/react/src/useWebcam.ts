@@ -19,6 +19,8 @@ export function useWebcam(): WebcamSnapshot {
     webcam.getSnapshot,
   )
 
+  console.log('state', store.state)
+
   useEffect(() => {
     webcam.start()
     return () => {
@@ -26,13 +28,5 @@ export function useWebcam(): WebcamSnapshot {
     }
   }, [webcam])
 
-  return {
-    state: store.state,
-    getVideoProps: store.getVideoProps,
-    getSnapshotButtonProps: store.getSnapshotButtonProps,
-    getRecordButtonProps: store.getRecordButtonProps,
-    getStopRecordingButtonProps: store.getStopRecordingButtonProps,
-    getSubmitButtonProps: store.getSubmitButtonProps,
-    getDiscardButtonProps: store.getDiscardButtonProps,
-  }
+  return store
 }
