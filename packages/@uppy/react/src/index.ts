@@ -6,6 +6,8 @@ export { default as StatusBar } from './StatusBar.js'
 export { default as FileInput } from './FileInput.js'
 export { default as useUppyState } from './useUppyState.js'
 export { default as useUppyEvent } from './useUppyEvent.js'
+export { useDropzone } from './useDropzone.js'
+export { useFileInput } from './useFileInput.js'
 
 // Headless components
 export {
