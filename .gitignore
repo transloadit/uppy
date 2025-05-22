@@ -16,6 +16,7 @@ yarn-error.log
 .env
 tsconfig.tsbuildinfo
 tsconfig.build.tsbuildinfo
+.svelte-kit
 
 dist/
 lib/

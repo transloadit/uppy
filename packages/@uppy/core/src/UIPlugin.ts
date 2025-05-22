@@ -1,5 +1,5 @@
 /* eslint-disable class-methods-use-this */
-import { render } from 'preact'
+import { render } from 'preact/compat'
 import findDOMElement from '@uppy/utils/lib/findDOMElement'
 import getTextDirection from '@uppy/utils/lib/getTextDirection'
 

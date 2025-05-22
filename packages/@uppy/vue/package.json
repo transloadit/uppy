@@ -5,6 +5,8 @@
   "type": "module",
   "main": "lib/index.js",
   "dependencies": {
+    "@uppy/components": "workspace:^",
+    "preact": "^10.5.13",
     "shallow-equal": "^3.0.0"
   },
   "devDependencies": {
