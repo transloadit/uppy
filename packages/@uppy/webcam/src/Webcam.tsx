@@ -496,7 +496,6 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
 
   async stop(): Promise<void> {
     if (this.stream) {
-      console.log('stopping stream')
       const audioTracks = this.stream.getAudioTracks()
       const videoTracks = this.stream.getVideoTracks()
 
@@ -504,7 +503,6 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
     }
 
     if (this.recorder) {
-      console.log('stopping recorder')
       await new Promise((resolve) => {
         this.recorder!.addEventListener('stop', resolve, { once: true })
         this.recorder!.stop()

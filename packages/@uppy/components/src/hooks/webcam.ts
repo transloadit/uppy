@@ -99,7 +99,7 @@ export function createWebcamController(uppy: Uppy): WebcamStore {
     const { status, recordedVideo } = plugin.getPluginState()
     if (status === 'captured' && recordedVideo) {
       if (ref) {
-        // eslint-disable-next-line no-param-reassign
+        // Remove preview image/video
         ref.srcObject = null
       }
       return {
@@ -113,7 +113,6 @@ export function createWebcamController(uppy: Uppy): WebcamStore {
     }
 
     if (ref) {
-      // eslint-disable-next-line no-param-reassign
       ref.srcObject = plugin.stream
     }
 
@@ -164,7 +163,6 @@ export function createWebcamController(uppy: Uppy): WebcamStore {
     onClick: () => {
       plugin.submit()
       plugin.stop()
-      plugin.getPluginState().recordedVideo = null
     },
     disabled: plugin.getPluginState().status !== 'captured',
   })
@@ -173,7 +171,6 @@ export function createWebcamController(uppy: Uppy): WebcamStore {
     type: 'button' as const,
     onClick: () => {
       plugin.discardRecordedVideo()
-      plugin.getPluginState().recordedVideo = null
     },
     disabled: plugin.getPluginState().status !== 'captured',
   })
