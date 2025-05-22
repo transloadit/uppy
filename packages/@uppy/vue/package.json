@@ -10,7 +10,7 @@
     "shallow-equal": "^3.0.0"
   },
   "devDependencies": {
-    "vue": "^3.4.21"
+    "vue": "^3.5.14"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^",
