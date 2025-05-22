@@ -184,7 +184,14 @@ module.exports.decrypt = (encrypted, secret) => {
   }
 }
 
-module.exports.defaultGetKey = ({ filename }) => `${crypto.randomUUID()}-${filename}`
+module.exports.defaultGetKey = ({ filename }) => {
+  if (!filename) {
+    // If the filename has been truncated down to 0 character
+    // then use the UUID directly
+    return crypto.randomUUID();
+  }
+  return `${crypto.randomUUID()}-${filename}`
+}
 
 /**
  * Our own HttpError in cases where we can't use `got`'s `HTTPError`

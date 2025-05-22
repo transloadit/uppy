@@ -54,9 +54,13 @@ module.exports = function s3 (config) {
 
     const { metadata = {}, filename } = req.query
 
-    const bucket = getBucket({ bucketOrFn: config.bucket, req, filename, metadata })
+    const truncatedFilename = config.maxFilenameLength
+      ? filename?.slice(0, config.maxFilenameLength)
+      : filename
 
-    const key = config.getKey({ req, filename, metadata })
+    const bucket = getBucket({ bucketOrFn: config.bucket, req, filename: truncatedFilename, metadata })
+
+    const key = config.getKey({ req, filename: truncatedFilename, metadata })
     if (typeof key !== 'string') {
       res.status(500).json({ error: 'S3 uploads are misconfigured: filename returned from `getKey` must be a string' })
       return
@@ -109,9 +113,13 @@ module.exports = function s3 (config) {
 
     const { type, metadata = {}, filename } = req.body
 
-    const key = config.getKey({ req, filename, metadata })
+    const truncatedFilename = config.maxFilenameLength
+      ? filename?.slice(0, config.maxFilenameLength)
+      : filename
 
-    const bucket = getBucket({ bucketOrFn: config.bucket, req, filename, metadata })
+    const key = config.getKey({ req, filename: truncatedFilename, metadata })
+
+    const bucket = getBucket({ bucketOrFn: config.bucket, req, filename: truncatedFilename, metadata })
 
     if (typeof key !== 'string') {
       res.status(500).json({ error: 's3: filename returned from `getKey` must be a string' })

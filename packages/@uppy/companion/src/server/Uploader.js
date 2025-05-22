@@ -25,7 +25,7 @@ const redis = require('./redis')
 
 // Need to limit length or we can get
 // "MetadataTooLarge: Your metadata headers exceed the maximum allowed metadata size" in tus / S3
-const MAX_FILENAME_LENGTH = 500
+const MAX_FILENAME_LENGTH = 500 // Default value, can be overridden by companionOptions.maxFilenameLength
 const DEFAULT_FIELD_NAME = 'files[]'
 const PROTOCOLS = Object.freeze({
   multipart: 'multipart',
@@ -170,8 +170,11 @@ class Uploader {
     this.options.metadata = this.options.metadata || {}
     this.options.fieldname = this.options.fieldname || DEFAULT_FIELD_NAME
     this.size = options.size
+    const maxFilenameLength = options.companionOptions.maxFilenameLength ?? MAX_FILENAME_LENGTH
     this.uploadFileName = this.options.metadata.name
-      ? this.options.metadata.name.substring(0, MAX_FILENAME_LENGTH)
+      ? maxFilenameLength
+        ? this.options.metadata.name.substring(0, maxFilenameLength) 
+        : this.token // If max length is 0, we use the token(UUID) as filename
       : this.fileName
 
     this.storage = options.storage
