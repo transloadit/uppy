@@ -10,7 +10,7 @@ const { once } = require('node:events')
 
 const { Upload } = require('@aws-sdk/lib-storage')
 
-const { rfc2047EncodeMetadata, getBucket } = require('./helpers/utils')
+const { rfc2047EncodeMetadata, getBucket, truncateFilename } = require('./helpers/utils')
 
 const got = require('./got')
 
@@ -170,10 +170,10 @@ class Uploader {
     this.options.metadata = this.options.metadata || {}
     this.options.fieldname = this.options.fieldname || DEFAULT_FIELD_NAME
     this.size = options.size
-    const maxFilenameLength = options.companionOptions.maxFilenameLength ?? MAX_FILENAME_LENGTH
+    const maxFilenameLength = this.options.companionOptions.maxFilenameLength ?? MAX_FILENAME_LENGTH
     this.uploadFileName = this.options.metadata.name
       ? maxFilenameLength
-        ? this.options.metadata.name.substring(0, maxFilenameLength) 
+        ? truncateFilename(this.options.metadata.name, maxFilenameLength, this.options.companionOptions.isFilenameTruncateFromEnd)
         : this.token // If max length is 0, we use the token(UUID) as filename
       : this.fileName
 

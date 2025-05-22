@@ -14,7 +14,7 @@ const {
 const { createPresignedPost } = require('@aws-sdk/s3-presigned-post')
 const { getSignedUrl } = require('@aws-sdk/s3-request-presigner')
 
-const { rfc2047EncodeMetadata, getBucket } = require('../helpers/utils')
+const { rfc2047EncodeMetadata, getBucket, truncateFilename } = require('../helpers/utils')
 
 module.exports = function s3 (config) {
   if (typeof config.acl !== 'string' && config.acl != null) {
@@ -54,9 +54,7 @@ module.exports = function s3 (config) {
 
     const { metadata = {}, filename } = req.query
 
-    const truncatedFilename = config.maxFilenameLength
-      ? filename?.slice(0, config.maxFilenameLength)
-      : filename
+    const truncatedFilename = truncateFilename(filename, req.companion.options.maxFilenameLength, req.companion.options.isFilenameTruncateFromEnd)
 
     const bucket = getBucket({ bucketOrFn: config.bucket, req, filename: truncatedFilename, metadata })
 
@@ -113,9 +111,7 @@ module.exports = function s3 (config) {
 
     const { type, metadata = {}, filename } = req.body
 
-    const truncatedFilename = config.maxFilenameLength
-      ? filename?.slice(0, config.maxFilenameLength)
-      : filename
+    const truncatedFilename = truncateFilename(filename, req.companion.options.maxFilenameLength, req.companion.options.isFilenameTruncateFromEnd)
 
     const key = config.getKey({ req, filename: truncatedFilename, metadata })
 
