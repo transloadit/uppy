@@ -23,13 +23,13 @@
     "vite": "^5.4.17"
   },
   "dependencies": {
-    "@uppy/core": "^4.0.0",
-    "@uppy/dashboard": "^4.0.0",
-    "@uppy/drag-drop": "^4.0.0",
-    "@uppy/progress-bar": "^4.0.0",
-    "@uppy/svelte": "^4.0.0",
-    "@uppy/webcam": "^4.0.0",
-    "@uppy/xhr-upload": "^4.0.0",
+    "@uppy/core": "workspace:*",
+    "@uppy/dashboard": "workspace:*",
+    "@uppy/drag-drop": "workspace:*",
+    "@uppy/progress-bar": "workspace:*",
+    "@uppy/svelte": "workspace:*",
+    "@uppy/webcam": "workspace:*",
+    "@uppy/xhr-upload": "workspace:*",
     "formidable": "^3.5.1"
   },
   "type": "module",
