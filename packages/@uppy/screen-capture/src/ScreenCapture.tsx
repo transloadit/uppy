@@ -138,6 +138,7 @@ export default class ScreenCapture<
     this.submit = this.submit.bind(this)
     this.streamInterrupted = this.streamInactivated.bind(this)
     this.captureScreenshot = this.captureScreenshot.bind(this)
+    this.discardRecordedMedia = this.discardRecordedMedia.bind(this)
 
     // initialize
     this.captureActive = false
@@ -385,6 +386,24 @@ export default class ScreenCapture<
       )
   }
 
+  discardRecordedMedia(): void {
+    const { capturedScreenshotUrl, recordedVideo } = this.getPluginState()
+
+    if (capturedScreenshotUrl) {
+      URL.revokeObjectURL(capturedScreenshotUrl)
+    }
+    if (recordedVideo) {
+      URL.revokeObjectURL(recordedVideo)
+    }
+
+    this.capturedMediaFile = null
+
+    this.setPluginState({
+      recordedVideo: null,
+      capturedScreenshotUrl: null,
+    })
+  }
+
   submit(): void {
     try {
       // add recorded file to uppy
@@ -434,13 +453,19 @@ export default class ScreenCapture<
     }
 
     // Clean up screenshot URL
-    const { capturedScreenshotUrl } = this.getPluginState()
+    const { capturedScreenshotUrl, recordedVideo } = this.getPluginState()
     if (capturedScreenshotUrl) {
       URL.revokeObjectURL(capturedScreenshotUrl)
     }
 
+    if (recordedVideo) {
+      URL.revokeObjectURL(recordedVideo)
+    }
     // remove preview video
     this.setPluginState({
+      recording: false,
+      streamActive: false,
+      audioStreamActive: false,
       recordedVideo: null,
       capturedScreenshotUrl: null,
     })
@@ -598,6 +623,7 @@ export default class ScreenCapture<
         onSubmit={this.submit}
         i18n={this.i18n}
         stream={this.videoStream}
+        onDiscard={this.discardRecordedMedia}
       />
     )
   }

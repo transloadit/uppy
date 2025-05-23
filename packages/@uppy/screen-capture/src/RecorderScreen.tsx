@@ -1,10 +1,11 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import { h, Component, type ComponentChild } from 'preact'
+import { h, Component, type ComponentChild, Fragment } from 'preact'
 import type { Body, Meta } from '@uppy/core'
 import RecordButton from './RecordButton.jsx'
 import SubmitButton from './SubmitButton.jsx'
 import StopWatch from './StopWatch.jsx'
 import StreamStatus from './StreamStatus.jsx'
+import DiscardButton from './DiscardButton.jsx'
 
 import ScreenCapture, { type ScreenCaptureState } from './ScreenCapture.jsx'
 import ScreenshotButton from './ScreenshotButton.js'
@@ -19,6 +20,7 @@ type RecorderScreenProps<M extends Meta, B extends Body> = {
   onScreenshot: ScreenCapture<M, B>['captureScreenshot']
   enableScreenshots: boolean
   capturedScreenshotUrl: ScreenCaptureState['capturedScreenshotUrl']
+  onDiscard: ScreenCapture<M, B>['discardRecordedMedia']
 } & ScreenCaptureState
 
 class RecorderScreen<M extends Meta, B extends Body> extends Component<
@@ -99,13 +101,18 @@ class RecorderScreen<M extends Meta, B extends Body> extends Component<
         </div>
 
         <div className="uppy-ScreenCapture-buttonContainer">
-          {enableScreenshots &&
-            !recording &&
-            !(recordedVideo || capturedScreenshotUrl) && (
-              <ScreenshotButton {...this.props} />
-            )}
-          <RecordButton {...this.props} />
-          <SubmitButton {...this.props} />
+          {recordedVideo || capturedScreenshotUrl ?
+            <Fragment>
+              <DiscardButton {...this.props} />
+              <SubmitButton {...this.props} />
+            </Fragment>
+          : <Fragment>
+              {enableScreenshots && !recording && (
+                <ScreenshotButton {...this.props} />
+              )}
+              <RecordButton {...this.props} />
+            </Fragment>
+          }
         </div>
       </div>
     )

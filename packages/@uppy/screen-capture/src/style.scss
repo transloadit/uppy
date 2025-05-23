@@ -105,6 +105,18 @@
   }
 }
 
+.uppy-ScreenCapture-button--discard {
+  background-color: $red;
+
+  svg {
+    fill: $white;
+  }
+
+  &:hover {
+    background-color: darken($red, 10%);
+  }
+}
+
 .uppy-ScreenCapture-title {
   max-width: 500px;
   margin: 0;

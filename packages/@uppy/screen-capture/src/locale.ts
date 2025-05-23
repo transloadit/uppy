@@ -9,5 +9,6 @@ export default {
     micDisabled: 'Microphone access denied by user',
     recording: 'Recording',
     takeScreenshot: 'Take Screenshot',
+    discardRecordedFile: 'Discard',
   },
 }
