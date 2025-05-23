@@ -1,7 +1,14 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { h } from 'preact'
+import type { I18n } from '@uppy/utils/lib/Translator'
 
-type $TSFixMe = any
+interface SubmitButtonProps {
+  recording: boolean
+  recordedVideo: string | null
+  onSubmit: () => void
+  i18n: I18n
+  capturedScreenshotUrl?: string | null
+}
 
 /**
  * Submit recorded video to uppy. Enabled when file is available
@@ -10,9 +17,10 @@ export default function SubmitButton({
   recording,
   recordedVideo,
   onSubmit,
+  capturedScreenshotUrl,
   i18n,
-}: $TSFixMe) {
-  if (recordedVideo && !recording) {
+}: SubmitButtonProps): h.JSX.Element | null {
+  if ((recordedVideo || capturedScreenshotUrl) && !recording) {
     return (
       <button
         className="uppy-u-reset uppy-c-btn uppy-ScreenCapture-button uppy-ScreenCapture-button--submit"
