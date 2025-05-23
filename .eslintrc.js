@@ -288,6 +288,7 @@ module.exports = {
         // TODO: update those to more modern code when switch to ESM is complete
         'examples/react-native-expo/*.js',
         'examples/svelte-example/**/*.js',
+        'examples/sveltekit/**/*.js',
         'examples/vue/**/*.js',
         'examples/vue3/**/*.js',
       ],
