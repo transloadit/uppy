@@ -57,7 +57,6 @@ module.exports = function s3 (config) {
     const truncatedFilename = truncateFilename(
       filename, 
       req.companion.options.maxFilenameLength, 
-      req.companion.options.isFilenameTruncateFromEnd
     )
 
     const bucket = getBucket({ bucketOrFn: config.bucket, req, filename: truncatedFilename, metadata })
@@ -118,7 +117,6 @@ module.exports = function s3 (config) {
     const truncatedFilename = truncateFilename(
       filename, 
       req.companion.options.maxFilenameLength, 
-      req.companion.options.isFilenameTruncateFromEnd
     )
 
     const key = config.getKey({ req, filename: truncatedFilename, metadata })

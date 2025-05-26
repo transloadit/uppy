@@ -182,7 +182,6 @@ const getConfigFromEnv = () => {
     maxFileSize: process.env.COMPANION_MAX_FILE_SIZE ? parseInt(process.env.COMPANION_MAX_FILE_SIZE, 10) : undefined,
     maxFilenameLength: process.env.COMPANION_MAX_FILENAME_LENGTH 
       ? parseInt(process.env.COMPANION_MAX_FILENAME_LENGTH, 10) : undefined,
-    isFilenameTruncateFromEnd: process.env.COMPANION_FILENAME_TRUNCATE_FROM_END === 'true',
     chunkSize: process.env.COMPANION_CHUNK_SIZE ? parseInt(process.env.COMPANION_CHUNK_SIZE, 10) : undefined,
     clientSocketConnectTimeout: process.env.COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT
       ? parseInt(process.env.COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT, 10) : undefined,

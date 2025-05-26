@@ -179,7 +179,6 @@ class Uploader {
       this.uploadFileName = truncateFilename(
         this.options.metadata.name, 
         maxFilenameLength, 
-        this.options.companionOptions.isFilenameTruncateFromEnd
       )
     } else {
       // If max length is 0, we use the token(UUID) as filename

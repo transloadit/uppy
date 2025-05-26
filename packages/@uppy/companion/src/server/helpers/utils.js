@@ -287,12 +287,8 @@ module.exports.getBucket = ({ bucketOrFn, req, metadata, filename }) => {
  *
  * @param {string} filename
  * @param {number} maxFilenameLength
- * @param {boolean} isTruncateFromEnd
  * @returns {string}
  */
-module.exports.truncateFilename = (filename, maxFilenameLength, isTruncateFromEnd) => {
-  if (filename.length <= maxFilenameLength) {
-    return filename
-  }
-  return isTruncateFromEnd ? filename.slice(0, maxFilenameLength) : filename.slice(maxFilenameLength * -1)
+module.exports.truncateFilename = (filename, maxFilenameLength) => {
+  return filename.slice(maxFilenameLength * -1)
 }
