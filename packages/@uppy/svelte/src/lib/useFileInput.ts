@@ -3,6 +3,7 @@ import {
   type UppyContext,
   type FileInputProps,
   type FileInputFunctions,
+  type NonNullableUppyContext,
 } from '@uppy/components'
 import { createFileInput } from '@uppy/components'
 import { UppyContextKey } from './components/headless/UppyContextProvider.svelte'
@@ -28,7 +29,10 @@ export function useFileInput(props?: FileInputProps): SvelteFileInputFunctions {
     throw new Error('useFileInput must be called within a UppyContextProvider')
   }
 
-  const fileinput = createFileInput<Event>(ctx, props)
+  const fileinput = createFileInput<Event>(
+    ctx as NonNullableUppyContext, // covered by the if statement above
+    props,
+  )
 
   return {
     // Only Svelte uses lowercase event names so we want to remap them
