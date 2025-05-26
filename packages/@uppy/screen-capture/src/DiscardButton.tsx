@@ -14,8 +14,8 @@ export default function DiscardButton({
     <button
       className="uppy-u-reset uppy-c-btn uppy-ScreenCapture-button uppy-ScreenCapture-button--discard"
       type="button"
-      title={i18n('discardRecordedFile')}
-      aria-label={i18n('discardRecordedFile')}
+      title={i18n('discardMediaFile')}
+      aria-label={i18n('discardMediaFile')}
       onClick={onDiscard}
       data-uppy-super-focusable
     >
