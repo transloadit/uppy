@@ -3,36 +3,52 @@ import {
   type UppyContext,
   type FileInputProps,
   type FileInputFunctions,
+  type NonNullableUppyContext,
 } from '@uppy/components'
 import { createFileInput } from '@uppy/components'
 import { UppyContextKey } from './components/headless/UppyContextProvider.svelte'
 
-export function useFileInput(
-  props?: FileInputProps,
-): FileInputFunctions<Event> {
+export type SvelteFileInputFunctions = {
+  getInputProps: () => {
+    id: string
+    type: 'file'
+    multiple: boolean
+    accept?: string
+    onchange: (event: Event) => void
+  }
+  getButtonProps: () => {
+    type: 'button'
+    onclick: () => void
+  }
+}
+
+export function useFileInput(props?: FileInputProps): SvelteFileInputFunctions {
   const ctx = getContext<UppyContext>(UppyContextKey)
 
   if (!ctx?.uppy) {
     throw new Error('useFileInput must be called within a UppyContextProvider')
   }
 
-  const fileinput = createFileInput<Event>(ctx, props)
+  const fileinput = createFileInput<Event>(
+    ctx as NonNullableUppyContext, // covered by the if statement above
+    props,
+  )
 
   return {
     // Only Svelte uses lowercase event names so we want to remap them
     ...fileinput,
     getButtonProps: () => {
-      const props = fileinput.getButtonProps()
+      const { onClick, ...rest } = fileinput.getButtonProps()
       return {
-        ...props,
-        onclick: props.onClick,
+        ...rest,
+        onclick: onClick,
       }
     },
     getInputProps: () => {
-      const props = fileinput.getInputProps()
+      const { onChange, ...rest } = fileinput.getInputProps()
       return {
-        ...props,
-        onchange: props.onChange,
+        ...rest,
+        onchange: onChange,
       }
     },
   }

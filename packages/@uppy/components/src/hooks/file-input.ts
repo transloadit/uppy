@@ -1,4 +1,4 @@
-import type { UppyContext } from '../types.js'
+import type { NonNullableUppyContext } from '../types.js'
 
 export type FileInputProps = {
   multiple?: boolean
@@ -23,7 +23,7 @@ const fileInputId = 'uppy-file-input' as const
 
 // Use a more generic constraint that works with both DOM Events and React/Vue Events
 export function createFileInput<EventType extends Event>(
-  ctx: UppyContext,
+  ctx: NonNullableUppyContext,
   props: FileInputProps = {},
 ): FileInputFunctions<EventType> {
   const handleClick = () => {
@@ -36,7 +36,7 @@ export function createFileInput<EventType extends Event>(
     const files = Array.from(input.files || [])
     if (!files.length) return
 
-    ctx.uppy?.addFiles(
+    ctx.uppy.addFiles(
       files.map((file) => ({
         name: file.name,
         type: file.type,

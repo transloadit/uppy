@@ -7,6 +7,7 @@ import {
   createDropzone,
   type DropzoneOptions,
   type DropzoneReturn,
+  type NonNullableUppyContext,
 } from '@uppy/components'
 import { UppyContext } from './headless/UppyContextProvider.js'
 
@@ -23,8 +24,22 @@ export function useDropzone(
   }
 
   const dropzone = useMemo(
-    () => createDropzone<TDragEvent, TChangeEvent>(ctx, options),
-    [ctx, options],
+    () =>
+      createDropzone<TDragEvent, TChangeEvent>(
+        ctx as NonNullableUppyContext, // covered by the if statement above
+        options,
+      ),
+    // We need every value on options to be memoized to avoid re-creating the dropzone on every render
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [
+      ctx,
+      options?.noClick,
+      options?.onDragOver,
+      options?.onDragEnter,
+      options?.onDragLeave,
+      options?.onDrop,
+      options?.onFileInputChange,
+    ],
   )
 
   return dropzone

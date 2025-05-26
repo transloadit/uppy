@@ -23,7 +23,6 @@
   "dependencies": {
     "@uppy/components": "workspace:^",
     "@uppy/utils": "workspace:^",
-    "clsx": "^2.1.1",
     "preact": "^10.5.13",
     "use-sync-external-store": "^1.2.0"
   },

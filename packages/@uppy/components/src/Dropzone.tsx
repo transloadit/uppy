@@ -3,7 +3,7 @@
 import { h } from 'preact'
 import { useMemo } from 'preact/hooks'
 import { clsx } from 'clsx'
-import type { UppyContext } from './types.js'
+import type { NonNullableUppyContext, UppyContext } from './types.js'
 import { createDropzone } from './hooks/dropzone.js'
 
 export type DropzoneProps = {
@@ -17,8 +17,12 @@ export type DropzoneProps = {
 export default function Dropzone(props: DropzoneProps) {
   const { width, height, note, noClick, ctx } = props
 
+  if (!ctx.uppy) {
+    throw new Error('Dropzone must be used within a UppyContextProvider')
+  }
+
   const { getRootProps, getInputProps } = useMemo(
-    () => createDropzone(ctx, { noClick }),
+    () => createDropzone(ctx as NonNullableUppyContext, { noClick }),
     [ctx, noClick],
   )
 

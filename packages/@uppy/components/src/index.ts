@@ -31,5 +31,9 @@ export {
 } from './hooks/webcam.js'
 
 // Types and utils
-export type { UppyContext, UploadStatus } from './types.js'
+export type {
+  UppyContext,
+  UploadStatus,
+  NonNullableUppyContext,
+} from './types.js'
 export { createUppyEventAdapter } from './uppyEventAdapter.js'
