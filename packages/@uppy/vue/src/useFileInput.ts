@@ -1,5 +1,9 @@
 import { inject } from 'vue'
-import { type FileInputProps, type FileInputFunctions } from '@uppy/components'
+import {
+  type FileInputProps,
+  type FileInputFunctions,
+  type NonNullableUppyContext,
+} from '@uppy/components'
 import { createFileInput } from '@uppy/components'
 import {
   UppyContextSymbol,
@@ -15,5 +19,8 @@ export function useFileInput(
     throw new Error('useFileInput must be called within a UppyContextProvider')
   }
 
-  return createFileInput<Event>(ctx, props)
+  return createFileInput<Event>(
+    ctx as NonNullableUppyContext, // covered by the if statement above
+    props,
+  )
 }

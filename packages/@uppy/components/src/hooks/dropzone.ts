@@ -1,4 +1,4 @@
-import type { UppyContext } from '../types.js'
+import type { NonNullableUppyContext } from '../types.js'
 
 export type DropzoneOptions = {
   noClick?: boolean
@@ -31,21 +31,19 @@ export function createDropzone<
   DragEventType extends DragEvent,
   ChangeEventType extends Event,
 >(
-  ctx: UppyContext,
+  ctx: NonNullableUppyContext,
   options: DropzoneOptions = {},
 ): DropzoneReturn<DragEventType, ChangeEventType> {
   const handleDrop = (event: DragEventType) => {
     event.preventDefault()
     event.stopPropagation()
 
-    const files = Array.from(event.dataTransfer?.files || [])
+    const files = Array.from(event.dataTransfer?.files ?? [])
     if (!files.length) return
 
-    if (options.onDrop) {
-      options.onDrop(files)
-    }
+    options.onDrop?.(files)
 
-    ctx.uppy?.addFiles(
+    ctx.uppy.addFiles(
       files.map((file) => ({
         name: file.name,
         type: file.type,
@@ -57,25 +55,19 @@ export function createDropzone<
   const handleDragOver = (event: DragEventType) => {
     event.preventDefault()
     event.stopPropagation()
-    if (options.onDragOver) {
-      options.onDragOver(event)
-    }
+    options.onDragOver?.(event)
   }
 
   const handleDragEnter = (event: DragEventType) => {
     event.preventDefault()
     event.stopPropagation()
-    if (options.onDragEnter) {
-      options.onDragEnter(event)
-    }
+    options.onDragEnter?.(event)
   }
 
   const handleDragLeave = (event: DragEventType) => {
     event.preventDefault()
     event.stopPropagation()
-    if (options.onDragLeave) {
-      options.onDragLeave(event)
-    }
+    options.onDragLeave?.(event)
   }
 
   const handleClick = () => {
@@ -86,14 +78,12 @@ export function createDropzone<
 
   const handleFileInputChange = (event: ChangeEventType) => {
     const input = event.target as HTMLInputElement
-    const files = Array.from(input.files || [])
+    const files = Array.from(input.files ?? [])
     if (!files.length) return
 
-    if (options.onFileInputChange) {
-      options.onFileInputChange(files)
-    }
+    options.onFileInputChange?.(files)
 
-    ctx.uppy?.addFiles(
+    ctx.uppy.addFiles(
       files.map((file) => ({
         source: 'drag-drop',
         name: file.name,
