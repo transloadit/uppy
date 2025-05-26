@@ -180,7 +180,8 @@ const getConfigFromEnv = () => {
     streamingUpload: process.env.COMPANION_STREAMING_UPLOAD ? process.env.COMPANION_STREAMING_UPLOAD === 'true' : undefined,
     tusDeferredUploadLength: process.env.COMPANION_TUS_DEFERRED_UPLOAD_LENGTH ? process.env.COMPANION_TUS_DEFERRED_UPLOAD_LENGTH === 'true' : true,
     maxFileSize: process.env.COMPANION_MAX_FILE_SIZE ? parseInt(process.env.COMPANION_MAX_FILE_SIZE, 10) : undefined,
-    maxFilenameLength: process.env.COMPANION_MAX_FILENAME_LENGTH ? parseInt(process.env.COMPANION_MAX_FILENAME_LENGTH, 10) : undefined,
+    maxFilenameLength: process.env.COMPANION_MAX_FILENAME_LENGTH 
+      ? parseInt(process.env.COMPANION_MAX_FILENAME_LENGTH, 10) : undefined,
     isFilenameTruncateFromEnd: process.env.COMPANION_FILENAME_TRUNCATE_FROM_END === 'true',
     chunkSize: process.env.COMPANION_CHUNK_SIZE ? parseInt(process.env.COMPANION_CHUNK_SIZE, 10) : undefined,
     clientSocketConnectTimeout: process.env.COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT

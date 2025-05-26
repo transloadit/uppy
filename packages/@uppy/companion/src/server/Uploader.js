@@ -171,11 +171,20 @@ class Uploader {
     this.options.fieldname = this.options.fieldname || DEFAULT_FIELD_NAME
     this.size = options.size
     const maxFilenameLength = this.options.companionOptions.maxFilenameLength ?? MAX_FILENAME_LENGTH
-    this.uploadFileName = this.options.metadata.name
-      ? maxFilenameLength
-        ? truncateFilename(this.options.metadata.name, maxFilenameLength, this.options.companionOptions.isFilenameTruncateFromEnd)
-        : this.token // If max length is 0, we use the token(UUID) as filename
-      : this.fileName
+    
+    // Define upload file name
+    if (!this.options.metadata.name) {
+      this.uploadFileName = this.fileName
+    } else if (maxFilenameLength) {
+      this.uploadFileName = truncateFilename(
+        this.options.metadata.name, 
+        maxFilenameLength, 
+        this.options.companionOptions.isFilenameTruncateFromEnd
+      )
+    } else {
+      // If max length is 0, we use the token(UUID) as filename
+      this.uploadFileName = this.token
+    }
 
     this.storage = options.storage
 
