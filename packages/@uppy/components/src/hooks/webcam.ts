@@ -15,9 +15,6 @@ export type WebcamSnapshot = {
   stop: () => void
   start: () => void
   getVideoProps: () => {
-    style?: {
-      transform: string
-    }
     playsInline: boolean
     autoPlay?: boolean
     muted: boolean
@@ -98,6 +95,7 @@ export function createWebcamController(
     const ref = document.getElementById(videoId) as HTMLVideoElement | null
     plugin.getVideoElement = () => ref
     const { status, recordedVideo } = plugin.getPluginState()
+
     if (status === 'captured' && recordedVideo) {
       if (ref) {
         // Remove preview image/video
@@ -105,6 +103,7 @@ export function createWebcamController(
       }
       return {
         id: videoId,
+        'data-uppy-mirrored': false,
         playsInline: true,
         controls: true,
         muted: false,
@@ -120,9 +119,7 @@ export function createWebcamController(
     // Live preview
     return {
       id: videoId,
-      style: {
-        transform: 'scaleX(-1)',
-      },
+      'data-uppy-mirrored': true,
       playsInline: true,
       autoPlay: true,
       muted: true,

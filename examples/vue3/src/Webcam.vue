@@ -6,7 +6,10 @@
         ✕
       </button>
     </div>
-    <video class="border-2 w-full rounded-lg" v-bind="webcam.getVideoProps()" />
+    <video
+      class="border-2 w-full rounded-lg data-[uppy-mirrored=true]:scale-x-[-1]"
+      v-bind="webcam.getVideoProps()"
+    />
     <div class="flex gap-4 mt-4">
       <button
         class="bg-blue-500 text-white px-4 py-2 rounded-md disabled:opacity-50 disabled:bg-blue-300"
