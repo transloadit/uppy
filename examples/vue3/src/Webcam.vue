@@ -2,7 +2,7 @@
   <div class="p-4 max-w-lg w-full">
     <div class="flex justify-between items-center mb-4">
       <h2 class="text-xl font-bold">Camera</h2>
-      <button @click="close" class="text-gray-500 hover:text-gray-700">
+      <button @click="props.close" class="text-gray-500 hover:text-gray-700">
         ✕
       </button>
     </div>

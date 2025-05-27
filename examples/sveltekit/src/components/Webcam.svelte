@@ -11,8 +11,8 @@
   const webcamStore = useWebcam({ onSubmit: close })
 
   $effect(() => {
-    console.log('🔄 Webcam effect:', isOpen ? 'opening' : 'closing')
     if (isOpen) {
+      // Use untrack to not trigger the effect again
       untrack(() => webcamStore.start())
     } else {
       untrack(() => webcamStore.stop())
