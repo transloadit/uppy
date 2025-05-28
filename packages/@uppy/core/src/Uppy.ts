@@ -927,7 +927,9 @@ export class Uppy<
       this.emit('restriction-failed', file, error)
       return false
     }
-    this.setFileState(file.id, { missingRequiredMetaFields: [] })
+    if (missingFields.length === 0 && file.missingRequiredMetaFields) {
+      this.setFileState(file.id, { missingRequiredMetaFields: [] })
+    }
     return true
   }
 
