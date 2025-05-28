@@ -181,7 +181,7 @@ const getConfigFromEnv = () => {
     tusDeferredUploadLength: process.env.COMPANION_TUS_DEFERRED_UPLOAD_LENGTH ? process.env.COMPANION_TUS_DEFERRED_UPLOAD_LENGTH === 'true' : true,
     maxFileSize: process.env.COMPANION_MAX_FILE_SIZE ? parseInt(process.env.COMPANION_MAX_FILE_SIZE, 10) : undefined,
     maxFilenameLength: process.env.COMPANION_MAX_FILENAME_LENGTH 
-      ? parseInt(process.env.COMPANION_MAX_FILENAME_LENGTH, 10) : undefined,
+      ? parseInt(process.env.COMPANION_MAX_FILENAME_LENGTH, 10) : 500,
     chunkSize: process.env.COMPANION_CHUNK_SIZE ? parseInt(process.env.COMPANION_CHUNK_SIZE, 10) : undefined,
     clientSocketConnectTimeout: process.env.COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT
       ? parseInt(process.env.COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT, 10) : undefined,

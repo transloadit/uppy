@@ -123,6 +123,10 @@ const validateConfig = (companionOptions) => {
   )) {
     throw new TypeError('Invalid periodicPingUrls')
   }
+
+  if (companionOptions.maxFilenameLength <= 0) {
+    throw new TypeError('Option maxFilenameLength must be greater than 0')
+  }
 }
 
 module.exports = {
