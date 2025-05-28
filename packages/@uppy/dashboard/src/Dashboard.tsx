@@ -1107,8 +1107,8 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     this.superFocusOnEachUpdate()
   }
 
-  saveFileCard = (meta: Meta, fileID: string): void => {
-    this.uppy.setFileMeta(fileID, meta as M)
+  saveFileCard = (meta: M, fileID: string): void => {
+    this.uppy.setFileMeta(fileID, meta)
     this.toggleFileCard(false, fileID)
   }
 
