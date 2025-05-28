@@ -1107,8 +1107,42 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     this.superFocusOnEachUpdate()
   }
 
-  saveFileCard = (meta: M, fileID: string): void => {
-    this.uppy.setFileMeta(fileID, meta)
+  saveFileCard = (meta: Meta, fileID: string): void => {
+    this.uppy.setFileMeta(fileID, meta as M)
+
+    // After setting the new meta, get the updated file object
+    const file = this.uppy.getFile(fileID)
+    if (file) {
+      const { requiredMetaFields } = this.uppy.opts.restrictions
+      const stillMissingFields: string[] = []
+
+      if (requiredMetaFields && requiredMetaFields.length > 0) {
+        for (const field of requiredMetaFields) {
+          if (
+            !Object.hasOwn(file.meta, field) ||
+            file.meta[field] == null ||
+            String(file.meta[field]).trim() === ''
+          ) {
+            stillMissingFields.push(field)
+          }
+        }
+      }
+
+      // If no fields are missing anymore, clear the missingRequiredMetaFields state
+      if (
+        stillMissingFields.length === 0 &&
+        file.missingRequiredMetaFields &&
+        file.missingRequiredMetaFields.length > 0
+      ) {
+        this.uppy.setFileState(fileID, { missingRequiredMetaFields: [] })
+      } else if (stillMissingFields.length > 0) {
+        // If some fields are still missing, sync the state
+        this.uppy.setFileState(fileID, {
+          missingRequiredMetaFields: stillMissingFields,
+        })
+      }
+    }
+
     this.toggleFileCard(false, fileID)
   }
 
