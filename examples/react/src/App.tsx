@@ -191,7 +191,7 @@ function App() {
           className="backdrop:bg-gray-500/50 rounded-lg shadow-xl p-0 fixed inset-0 m-auto"
         >
           {modalPlugin === 'webcam' && <Webcam close={() => closeModal()} />}
-          {modalPlugin === 'dropbox' && <Dropbox />}
+          {modalPlugin === 'dropbox' && <Dropbox close={() => closeModal()} />}
         </dialog>
 
         <article>

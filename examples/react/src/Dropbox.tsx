@@ -3,7 +3,7 @@
 import { type PartialTreeFile, PartialTreeFolderNode } from '@uppy/core'
 import { useRemoteSources } from '@uppy/react'
 
-function FileItem({
+function File({
   item,
   checkbox,
 }: {
@@ -32,7 +32,7 @@ function FileItem({
     </li>
   )
 }
-function FolderItem({
+function Folder({
   item,
   checkbox,
   open,
@@ -62,7 +62,7 @@ function FolderItem({
   )
 }
 
-export function Dropbox() {
+export function Dropbox({ close }: { close: () => void }) {
   const { state, login, logout, checkbox, open, done, cancel } =
     useRemoteSources('Dropbox')
 
@@ -105,7 +105,10 @@ export function Dropbox() {
           <button
             type="button"
             className="text-blue-500"
-            onClick={() => logout()}
+            onClick={() => {
+              logout()
+              close()
+            }}
           >
             Logout
           </button>
@@ -115,11 +118,11 @@ export function Dropbox() {
       <ul className="p-4">
         {state.partialTree.map((item) => {
           if (item.type === 'file') {
-            return <FileItem key={item.id} item={item} checkbox={checkbox} />
+            return <File key={item.id} item={item} checkbox={checkbox} />
           }
           if (item.type === 'folder') {
             return (
-              <FolderItem
+              <Folder
                 key={item.id}
                 item={item}
                 checkbox={checkbox}
@@ -136,14 +139,19 @@ export function Dropbox() {
           <button
             type="button"
             className="text-blue-500"
-            onClick={() => done()}
+            onClick={() => {
+              done()
+              close()
+            }}
           >
             Done
           </button>
           <button
             type="button"
             className="text-blue-500"
-            onClick={() => cancel()}
+            onClick={() => {
+              cancel()
+            }}
           >
             Cancel
           </button>
