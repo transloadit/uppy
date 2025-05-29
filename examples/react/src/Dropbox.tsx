@@ -1,0 +1,157 @@
+/* eslint-disable no-shadow */
+/* eslint-disable react/react-in-jsx-scope */
+import { type PartialTreeFile, PartialTreeFolderNode } from '@uppy/core'
+import { useRemoteSources } from '@uppy/react'
+
+function FileItem({
+  item,
+  checkbox,
+}: {
+  item: PartialTreeFile
+  checkbox: (item: PartialTreeFile, checked: boolean) => void
+}) {
+  const dtf = new Intl.DateTimeFormat('en-US', {
+    dateStyle: 'short',
+    timeStyle: 'short',
+  })
+
+  return (
+    <li key={item.id} className="flex items-center gap-2 mb-2">
+      <input
+        type="checkbox"
+        onChange={() => checkbox(item, false)}
+        checked={item.status === 'checked'}
+      />
+      {item.data.thumbnail && (
+        <img src={item.data.thumbnail} alt="" className="w-5 h-5" />
+      )}
+      <div className="truncate">{item.data.name}</div>
+      <p className="text-gray-500 text-sm ml-auto min-w-28 text-right">
+        {dtf.format(new Date(item.data.modifiedDate))}
+      </p>
+    </li>
+  )
+}
+function FolderItem({
+  item,
+  checkbox,
+  open,
+}: {
+  item: PartialTreeFolderNode
+  checkbox: (item: PartialTreeFolderNode, checked: boolean) => void
+  open: (folderId: string | null) => Promise<void>
+}) {
+  return (
+    <li key={item.id} className="flex items-center gap-2 mb-2">
+      <input
+        type="checkbox"
+        onChange={() => checkbox(item, false)}
+        checked={item.status === 'checked'}
+      />
+      <button
+        type="button"
+        className="text-blue-500"
+        onClick={() => open(item.id)}
+      >
+        <span aria-hidden className="w-5 h-5">
+          📁
+        </span>{' '}
+        {item.data.name}
+      </button>
+    </li>
+  )
+}
+
+export function Dropbox() {
+  const { state, login, logout, checkbox, open, done, cancel } =
+    useRemoteSources('Dropbox')
+
+  if (!state.authenticated) {
+    return (
+      <div className="p-4 pt-0 min-w-xl min-h-96">
+        <button
+          type="button"
+          className="block ml-auto text-blue-500"
+          onClick={() => login()}
+        >
+          Login
+        </button>
+      </div>
+    )
+  }
+
+  return (
+    <div className="w-screen h-screen max-w-3xl max-h-96 relative">
+      <div className="flex justify-between items-center gap-2 bg-gray-100 pb-2 px-4 py-2">
+        {state.breadcrumbs.map((breadcrumb, index) => (
+          <>
+            {index > 0 && <span className="text-gray-500">&gt;</span>}{' '}
+            {index === state.breadcrumbs.length - 1 ?
+              <span>
+                {breadcrumb.type === 'root' ? 'Dropbox' : breadcrumb.data.name}
+              </span>
+            : <button
+                type="button"
+                className="text-blue-500"
+                key={breadcrumb.id}
+                onClick={() => open(breadcrumb.id)}
+              >
+                {breadcrumb.type === 'root' ? 'Dropbox' : breadcrumb.data.name}
+              </button>
+            }
+          </>
+        ))}
+        <div className="flex items-center gap-2 ml-auto">
+          <button
+            type="button"
+            className="text-blue-500"
+            onClick={() => logout()}
+          >
+            Logout
+          </button>
+        </div>
+      </div>
+
+      <ul className="p-4">
+        {state.partialTree.map((item) => {
+          if (item.type === 'file') {
+            return <FileItem key={item.id} item={item} checkbox={checkbox} />
+          }
+          if (item.type === 'folder') {
+            return (
+              <FolderItem
+                key={item.id}
+                item={item}
+                checkbox={checkbox}
+                open={open}
+              />
+            )
+          }
+          return null
+        })}
+      </ul>
+
+      {state.selectedAmount > 0 && (
+        <div className="flex items-center gap-4 bg-gray-100 mt-auto py-2 px-4 absolute bottom-0 left-0 right-0">
+          <button
+            type="button"
+            className="text-blue-500"
+            onClick={() => done()}
+          >
+            Done
+          </button>
+          <button
+            type="button"
+            className="text-blue-500"
+            onClick={() => cancel()}
+          >
+            Cancel
+          </button>
+          <p className="text-gray-500 text-sm">
+            Selected {state.selectedAmount} items
+          </p>
+        </div>
+      )}
+    </div>
+  )
+}

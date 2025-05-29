@@ -11,9 +11,7 @@ export function useWebcam({ onSubmit }: WebcamProps): WebcamSnapshot {
   const { uppy } = useContext(UppyContext)
 
   if (!uppy) {
-    throw new Error(
-      'Uppy instance is not available. Please provide it directly or through UppyContext.',
-    )
+    throw new Error('useWebcam must be called within a UppyContextProvider')
   }
 
   const controller = useMemo(

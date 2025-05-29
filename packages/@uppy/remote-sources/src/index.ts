@@ -21,7 +21,7 @@ import type { CompanionPluginOptions } from '@uppy/companion-client'
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'
 
-const availablePlugins = {
+export const availablePlugins = {
   // Using a null-prototype object to avoid prototype pollution.
   __proto__: null,
   Box,
@@ -35,7 +35,7 @@ const availablePlugins = {
   Zoom,
 }
 
-type AvailablePluginsKeys =
+export type AvailablePluginsKeys =
   | 'Box'
   | 'Dropbox'
   | 'Facebook'

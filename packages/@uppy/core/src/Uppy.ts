@@ -176,6 +176,7 @@ export type UnknownProviderPlugin<
     rootFolderId: string | null
     files: UppyFile<M, B>[]
     provider: CompanionClientProvider
+    view: any
   }
 
 /*

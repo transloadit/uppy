@@ -1,3 +1,4 @@
+/* eslint-disable no-shadow */
 /* eslint-disable jsx-a11y/media-has-caption */
 /* eslint-disable react/button-has-type */
 /* eslint-disable react/jsx-props-no-spreading */
@@ -17,16 +18,18 @@ import {
 import Uppy from '@uppy/core'
 import Tus from '@uppy/tus'
 import UppyWebcam from '@uppy/webcam'
+import UppyRemoteSources from '@uppy/remote-sources'
+
+import { Dropbox } from './Dropbox.js'
 
 import './app.css'
 import '@uppy/react/dist/styles.css'
 
 interface WebcamProps {
-  isOpen: boolean
   close: () => void
 }
 
-function Webcam({ isOpen, close }: WebcamProps) {
+function Webcam({ close }: WebcamProps) {
   const {
     start,
     stop,
@@ -39,14 +42,12 @@ function Webcam({ isOpen, close }: WebcamProps) {
   } = useWebcam({ onSubmit: close })
 
   useEffect(() => {
-    if (isOpen) {
-      start()
-    }
+    start()
 
     return () => {
       stop()
     }
-  }, [start, stop, isOpen])
+  }, [start, stop])
 
   return (
     <div className="p-4 max-w-lg w-full">
@@ -97,10 +98,10 @@ function Webcam({ isOpen, close }: WebcamProps) {
 }
 
 interface CustomDropzoneProps {
-  openWebcamModal: () => void
+  openModal: (plugin: 'webcam' | 'dropbox') => void
 }
 
-function CustomDropzone({ openWebcamModal }: CustomDropzoneProps) {
+function CustomDropzone({ openModal }: CustomDropzoneProps) {
   const { getRootProps, getInputProps } = useDropzone({
     noClick: true,
   })
@@ -127,13 +128,25 @@ function CustomDropzone({ openWebcamModal }: CustomDropzoneProps) {
           </button>
 
           <button
-            onClick={openWebcamModal}
+            type="button"
+            onClick={() => openModal('webcam')}
             className="hover:bg-gray-100 transition-colors p-2 rounded-md flex flex-col items-center gap-2 text-sm"
           >
             <div className="bg-white shadow-md rounded-md p-1">
               <ProviderIcon provider="camera" fill="#02B383" />
             </div>
             Webcam
+          </button>
+
+          <button
+            type="button"
+            onClick={() => openModal('dropbox')}
+            className="hover:bg-gray-100 transition-colors p-2 rounded-md flex flex-col items-center gap-2 text-sm"
+          >
+            <div className="bg-white shadow-md rounded-md p-1">
+              <ProviderIcon provider="dropbox" />
+            </div>
+            Dropbox
           </button>
         </div>
       </div>
@@ -147,20 +160,23 @@ function App() {
       .use(Tus, {
         endpoint: 'https://tusd.tusdemo.net/files/',
       })
-      .use(UppyWebcam),
+      .use(UppyWebcam)
+      .use(UppyRemoteSources, { companionUrl: 'http://localhost:3020' }),
   )
 
-  const webcamDialogRef = useRef<HTMLDialogElement>(null)
-  const [isWebcamOpen, setIsWebcamOpen] = useState(false)
+  const dialogRef = useRef<HTMLDialogElement>(null)
+  const [modalPlugin, setModalPlugin] = useState<'webcam' | 'dropbox' | null>(
+    null,
+  )
 
-  function openWebcamModal() {
-    setIsWebcamOpen(true)
-    webcamDialogRef.current?.showModal()
+  function openModal(plugin: 'webcam' | 'dropbox') {
+    setModalPlugin(plugin)
+    dialogRef.current?.showModal()
   }
 
-  function closeWebcamModal() {
-    setIsWebcamOpen(false)
-    webcamDialogRef.current?.close()
+  function closeModal() {
+    setModalPlugin(null)
+    dialogRef.current?.close()
   }
 
   return (
@@ -171,10 +187,11 @@ function App() {
         <UploadButton />
 
         <dialog
-          ref={webcamDialogRef}
+          ref={dialogRef}
           className="backdrop:bg-gray-500/50 rounded-lg shadow-xl p-0 fixed inset-0 m-auto"
         >
-          <Webcam isOpen={isWebcamOpen} close={() => closeWebcamModal()} />
+          {modalPlugin === 'webcam' && <Webcam close={() => closeModal()} />}
+          {modalPlugin === 'dropbox' && <Dropbox />}
         </dialog>
 
         <article>
@@ -191,7 +208,7 @@ function App() {
 
         <article>
           <h2 className="text-2xl my-4">With custom dropzone</h2>
-          <CustomDropzone openWebcamModal={() => openWebcamModal()} />
+          <CustomDropzone openModal={(plugin) => openModal(plugin)} />
         </article>
       </main>
     </UppyContextProvider>
