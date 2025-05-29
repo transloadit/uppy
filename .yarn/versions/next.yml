@@ -1,0 +1,12 @@
+releases:
+  "@uppy/companion": minor
+  "@uppy/components": prerelease
+  "@uppy/core": patch
+  "@uppy/locales": patch
+  "@uppy/react": minor
+  "@uppy/screen-capture": minor
+  "@uppy/svelte": minor
+  "@uppy/utils": patch
+  "@uppy/vue": minor
+  "@uppy/webcam": minor
+  "uppy": minor

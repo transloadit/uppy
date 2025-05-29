@@ -1,0 +1,8 @@
+- @uppy/companion: add max filename length env var (Freeman / #5763)
+- @uppy/core: fix missing required meta field error not updating (Prakash / #5766)
+- @uppy/screen-capture: add screenshot button (Prakash / #5737)
+- @uppy/locales: Update cs_CZ.ts (Martin Štorek / #5749)
+- examples: Headless components (Merlijn Vos / #5727)
+- @uppy/companion: fix cookie maxAge to milliseconds  (zolotarov@brights.io / #5746)
+- meta: document how to fix a broken release (Mikael Finstad / #5755)
+- @uppy/companion: improve Zoom folder structure (Merlijn Vos / #5739)
