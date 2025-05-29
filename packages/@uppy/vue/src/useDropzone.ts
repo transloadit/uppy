@@ -1,9 +1,5 @@
-import {
-  createDropzone,
-  type DropzoneOptions,
-  type NonNullableUppyContext,
-} from '@uppy/components'
-import { useUppyContext } from './headless/useUppyContext.js'
+import { createDropzone, type DropzoneOptions } from '@uppy/components'
+import { injectUppyContext } from './headless/context-provider.js'
 
 export type VueDropzoneReturn = {
   getRootProps: () => {
@@ -22,16 +18,9 @@ export type VueDropzoneReturn = {
 }
 
 export function useDropzone(options?: DropzoneOptions): VueDropzoneReturn {
-  const ctx = useUppyContext()
+  const ctx = injectUppyContext()
 
-  if (!ctx?.uppy) {
-    throw new Error('useDropzone must be called within a UppyContextProvider')
-  }
-
-  const dropzone = createDropzone(
-    ctx as NonNullableUppyContext, // covered by the if statement above
-    options,
-  )
+  const dropzone = createDropzone(ctx, options)
 
   return {
     // Vue.js uses lowercase event names when using v-bind so we need to remap them

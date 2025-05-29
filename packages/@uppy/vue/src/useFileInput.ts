@@ -1,13 +1,6 @@
-import { inject } from 'vue'
-import {
-  type FileInputProps,
-  type NonNullableUppyContext,
-} from '@uppy/components'
+import { type FileInputProps } from '@uppy/components'
 import { createFileInput } from '@uppy/components'
-import {
-  UppyContextSymbol,
-  type UppyContext,
-} from './headless/context-provider.js'
+import { injectUppyContext } from './headless/context-provider.js'
 
 export type VueFileInputFunctions = {
   getInputProps: () => {
@@ -24,16 +17,9 @@ export type VueFileInputFunctions = {
 }
 
 export function useFileInput(props?: FileInputProps): VueFileInputFunctions {
-  const ctx = inject<UppyContext>(UppyContextSymbol)
+  const ctx = injectUppyContext()
 
-  if (!ctx?.uppy) {
-    throw new Error('useFileInput must be called within a UppyContextProvider')
-  }
-
-  const fileinput = createFileInput<Event>(
-    ctx as NonNullableUppyContext, // covered by the if statement above
-    props,
-  )
+  const fileinput = createFileInput<Event>(ctx, props)
 
   return {
     // Vue.js uses lowercase event names when using v-bind so we need to remap them

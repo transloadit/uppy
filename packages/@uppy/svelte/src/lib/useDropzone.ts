@@ -2,11 +2,9 @@ import { getContext } from 'svelte'
 import {
   createDropzone,
   type DropzoneOptions,
-  type NonNullableUppyContext,
-  type UppyContext,
 } from '@uppy/components'
 
-import { UppyContextKey } from './components/headless/UppyContextProvider.svelte'
+import { getUppyContext } from './components/headless/uppyContext.js'
 
 export type SvelteDropzoneReturn = {
   getRootProps: () => {
@@ -25,12 +23,8 @@ export type SvelteDropzoneReturn = {
 }
 
 export function useDropzone(options?: DropzoneOptions): SvelteDropzoneReturn {
-  const ctx = getContext<UppyContext>(UppyContextKey)
-
-  if (!ctx?.uppy) {
-    throw new Error('useDropzone must be called within a UppyContextProvider')
-  }
-  const dropzone = createDropzone(ctx as NonNullableUppyContext, options)
+  const ctx = getUppyContext()
+  const dropzone = createDropzone(ctx, options)
 
   return {
     // Only Svelte uses lowercase event names so we want to remap them
