@@ -1,7 +1,7 @@
 {
   "name": "@uppy/components",
   "description": "Headless Uppy components, made in Preact",
-  "version": "0.0.0",
+  "version": "0.0.1-0",
   "license": "MIT",
   "main": "lib/index.js",
   "type": "module",
@@ -53,5 +53,6 @@
     "@uppy/webcam": {
       "optional": true
     }
-  }
+  },
+  "stableVersion": "0.0.0"
 }
