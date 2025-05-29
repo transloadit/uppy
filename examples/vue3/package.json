@@ -16,7 +16,7 @@
     "@uppy/tus": "workspace:*",
     "@uppy/vue": "workspace:*",
     "@uppy/webcam": "workspace:*",
-    "vue": "^3.2.33"
+    "vue": "^3.5.14"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.0.0",
