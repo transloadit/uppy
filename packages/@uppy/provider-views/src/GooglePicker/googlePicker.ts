@@ -308,8 +308,15 @@ async function resolvePickedPhotos({
   let mediaItems: MediaItem[] = []
   do {
     const pageSize = 100
+    const params: Record<string, string> = {
+      sessionId: pickingSession.id,
+      pageSize: String(pageSize),
+    }
+    if (pageToken) {
+      params.pageToken = pageToken
+    }
     const response = await fetch(
-      `https://photospicker.googleapis.com/v1/mediaItems?${new URLSearchParams({ sessionId: pickingSession.id, pageSize: String(pageSize) }).toString()}`,
+      `https://photospicker.googleapis.com/v1/mediaItems?${new URLSearchParams(params).toString()}`,
       { headers, signal },
     )
     if (!response.ok) throw new Error('Failed to get a media items')
