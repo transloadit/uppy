@@ -13,3 +13,7 @@ export type UppyContext = {
   status: UploadStatus
   progress: number
 }
+
+export type NonNullableUppyContext = UppyContext & {
+  uppy: Uppy
+}

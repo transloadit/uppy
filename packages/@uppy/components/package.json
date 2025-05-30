@@ -21,7 +21,7 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "scripts": {
-    "build:tailwind": "npx @tailwindcss/cli -i ./src/input.css -o ./dist/styles.css"
+    "build:tailwind": "tailwindcss -i ./src/input.css -o ./dist/styles.css"
   },
   "dependencies": {
     "@tailwindcss/cli": "^4.0.6",

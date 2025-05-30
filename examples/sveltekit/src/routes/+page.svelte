@@ -10,6 +10,8 @@
   } from '@uppy/svelte'
   import '@uppy/svelte/dist/styles.css'
 
+  import CustomDropzone from '../components/CustomDropzone.svelte'
+
   const uppy = new Uppy().use(Tus, {
     endpoint: 'https://tusd.tusdemo.net/files/',
   })
@@ -17,20 +19,25 @@
 
 <UppyContextProvider {uppy}>
   <main class="p-5 max-w-xl mx-auto">
-    <h1 class="text-4xl font-bold">Welcome to SvelteKit.</h1>
+    <h1 class="text-4xl font-bold my-4">Welcome to SvelteKit.</h1>
+
+    <UploadButton />
 
     <article>
       <h2 class="text-2xl my-4">With list</h2>
       <Dropzone />
       <FilesList />
-      <UploadButton />
     </article>
 
     <article>
       <h2 class="text-2xl my-4">With grid</h2>
       <Dropzone />
       <FilesGrid columns={2} />
-      <UploadButton />
+    </article>
+
+    <article>
+      <h2 class="text-2xl my-4">With custom dropzone</h2>
+      <CustomDropzone />
     </article>
   </main>
 </UppyContextProvider>
