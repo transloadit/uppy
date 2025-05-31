@@ -6,6 +6,27 @@ export interface MediaItemBase {
   createTime: string
 }
 
+// Shared metadata interface to avoid duplication
+export interface MediaMetadata {
+  // Base metadata
+  createTime?: string
+  width?: number
+  height?: number
+  cameraMake?: string
+  cameraModel?: string
+
+  // Photo-specific metadata
+  focalLength?: number
+  apertureFNumber?: number
+  isoEquivalent?: number
+  exposureTime?: string
+
+  // Video-specific metadata
+  fps?: number
+  processingStatus?: 'UNSPECIFIED' | 'PROCESSING' | 'READY' | 'FAILED'
+}
+
+// Original interfaces kept for compatibility
 interface MediaFileMetadataBase {
   width: number
   height: number
@@ -77,21 +98,7 @@ export interface PickedDriveItem extends PickedItemBase {
 export interface PickedPhotosItem extends PickedItemBase {
   platform: 'photos'
   url: string
-  metadata?: {
-    createTime?: string
-    width?: number
-    height?: number
-    cameraMake?: string
-    cameraModel?: string
-    // Photo-specific metadata
-    focalLength?: number
-    apertureFNumber?: number
-    isoEquivalent?: number
-    exposureTime?: string
-    // Video-specific metadata
-    fps?: number
-    processingStatus?: 'UNSPECIFIED' | 'PROCESSING' | 'READY' | 'FAILED'
-  }
+  metadata?: MediaMetadata
 }
 
 export type PickedItem = PickedPhotosItem | PickedDriveItem
@@ -315,9 +322,9 @@ function extractMediaMetadata(
   mediaFile: MediaFileBase & { mediaFileMetadata?: any },
   type: 'PHOTO' | 'VIDEO' | 'TYPE_UNSPECIFIED',
   createTime?: string,
-): Record<string, any> {
+): MediaMetadata {
   // Base metadata with createTime (if available)
-  const baseMetadata: Record<string, any> = {}
+  const baseMetadata: MediaMetadata = {}
   if (createTime) {
     baseMetadata.createTime = createTime
   }
@@ -329,7 +336,7 @@ function extractMediaMetadata(
 
   // Add basic media metadata
   const { mediaFileMetadata } = mediaFile
-  const mediaMetadata = {
+  const mediaMetadata: MediaMetadata = {
     ...baseMetadata,
     width: mediaFileMetadata.width,
     height: mediaFileMetadata.height,
@@ -344,12 +351,10 @@ function extractMediaMetadata(
     mediaFileMetadata.photoMetadata
   ) {
     const { photoMetadata } = mediaFileMetadata
-    Object.assign(mediaMetadata, {
-      focalLength: photoMetadata.focalLength,
-      apertureFNumber: photoMetadata.apertureFNumber,
-      isoEquivalent: photoMetadata.isoEquivalent,
-      exposureTime: photoMetadata.exposureTime,
-    })
+    mediaMetadata.focalLength = photoMetadata.focalLength
+    mediaMetadata.apertureFNumber = photoMetadata.apertureFNumber
+    mediaMetadata.isoEquivalent = photoMetadata.isoEquivalent
+    mediaMetadata.exposureTime = photoMetadata.exposureTime
   }
 
   // Add video-specific metadata if available
@@ -359,10 +364,8 @@ function extractMediaMetadata(
     mediaFileMetadata.videoMetadata
   ) {
     const { videoMetadata } = mediaFileMetadata
-    Object.assign(mediaMetadata, {
-      fps: videoMetadata.fps,
-      processingStatus: videoMetadata.processingStatus,
-    })
+    mediaMetadata.fps = videoMetadata.fps
+    mediaMetadata.processingStatus = videoMetadata.processingStatus
   }
 
   return mediaMetadata
