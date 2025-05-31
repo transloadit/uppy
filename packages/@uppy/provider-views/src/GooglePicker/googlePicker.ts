@@ -6,6 +6,27 @@ export interface MediaItemBase {
   createTime: string
 }
 
+// Shared metadata interface to avoid duplication
+export interface MediaMetadata {
+  // Base metadata
+  createTime?: string
+  width?: number
+  height?: number
+  cameraMake?: string
+  cameraModel?: string
+
+  // Photo-specific metadata
+  focalLength?: number
+  apertureFNumber?: number
+  isoEquivalent?: number
+  exposureTime?: string
+
+  // Video-specific metadata
+  fps?: number
+  processingStatus?: 'UNSPECIFIED' | 'PROCESSING' | 'READY' | 'FAILED'
+}
+
+// Original interfaces kept for compatibility
 interface MediaFileMetadataBase {
   width: number
   height: number
@@ -77,6 +98,7 @@ export interface PickedDriveItem extends PickedItemBase {
 export interface PickedPhotosItem extends PickedItemBase {
   platform: 'photos'
   url: string
+  metadata?: MediaMetadata
 }
 
 export type PickedItem = PickedPhotosItem | PickedDriveItem
@@ -293,6 +315,62 @@ export async function showPhotosPicker({
   signal?.addEventListener('abort', () => w?.close())
 }
 
+/**
+ * Extract metadata from a media item, handling different types and edge cases
+ */
+function extractMediaMetadata(
+  mediaFile: MediaFileBase & { mediaFileMetadata?: any },
+  type: 'PHOTO' | 'VIDEO' | 'TYPE_UNSPECIFIED',
+  createTime?: string,
+): MediaMetadata {
+  // Base metadata with createTime (if available)
+  const baseMetadata: MediaMetadata = {}
+  if (createTime) {
+    baseMetadata.createTime = createTime
+  }
+
+  // Early return if no mediaFileMetadata exists
+  if (!('mediaFileMetadata' in mediaFile) || !mediaFile.mediaFileMetadata) {
+    return baseMetadata
+  }
+
+  // Add basic media metadata
+  const { mediaFileMetadata } = mediaFile
+  const mediaMetadata: MediaMetadata = {
+    ...baseMetadata,
+    width: mediaFileMetadata.width,
+    height: mediaFileMetadata.height,
+    cameraMake: mediaFileMetadata.cameraMake,
+    cameraModel: mediaFileMetadata.cameraModel,
+  }
+
+  // Add photo-specific metadata if available
+  if (
+    type === 'PHOTO' &&
+    'photoMetadata' in mediaFileMetadata &&
+    mediaFileMetadata.photoMetadata
+  ) {
+    const { photoMetadata } = mediaFileMetadata
+    mediaMetadata.focalLength = photoMetadata.focalLength
+    mediaMetadata.apertureFNumber = photoMetadata.apertureFNumber
+    mediaMetadata.isoEquivalent = photoMetadata.isoEquivalent
+    mediaMetadata.exposureTime = photoMetadata.exposureTime
+  }
+
+  // Add video-specific metadata if available
+  if (
+    type === 'VIDEO' &&
+    'videoMetadata' in mediaFileMetadata &&
+    mediaFileMetadata.videoMetadata
+  ) {
+    const { videoMetadata } = mediaFileMetadata
+    mediaMetadata.fps = videoMetadata.fps
+    mediaMetadata.processingStatus = videoMetadata.processingStatus
+  }
+
+  return mediaMetadata
+}
+
 async function resolvePickedPhotos({
   accessToken,
   pickingSession,
@@ -322,7 +400,7 @@ async function resolvePickedPhotos({
     mediaItems.push(...batchMediaItems)
   } while (pageToken)
 
-  // todo show alert instead about invalid picked files?
+  // Filter out items that aren't fully processed or ready
   mediaItems = mediaItems.flatMap((i) =>
     (
       i.type === 'PHOTO' ||
@@ -334,20 +412,27 @@ async function resolvePickedPhotos({
     : [],
   )
 
+  // Transform media items into picked items with appropriate metadata
   return mediaItems.map(
     ({
       id,
       type,
+      mediaFile,
+      createTime,
       // we want the original resolution, so we don't append any parameter to the baseUrl
       // https://developers.google.com/photos/library/guides/access-media-items#base-urls
-      mediaFile: { mimeType, filename, baseUrl },
-    }) => ({
-      platform: 'photos' as const,
-      id,
-      mimeType,
-      url: type === 'VIDEO' ? `${baseUrl}=dv` : `${baseUrl}=d`, // dv to download video, d to get original image (non cropped)
-      name: filename,
-    }),
+    }) => {
+      const { mimeType, filename, baseUrl } = mediaFile
+
+      return {
+        platform: 'photos' as const,
+        id,
+        mimeType,
+        url: type === 'VIDEO' ? `${baseUrl}=dv` : `${baseUrl}=d`, // dv to download video, d to get original image (non cropped)
+        name: filename,
+        metadata: extractMediaMetadata(mediaFile, type, createTime),
+      }
+    },
   )
 }
 
