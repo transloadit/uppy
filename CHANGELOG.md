@@ -12,6 +12,29 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 4.17.0
+
+Released: 2025-05-29
+
+| Package              | Version | Package              | Version |
+| -------------------- | ------- | -------------------- | ------- |
+| @uppy/companion      |   5.8.0 | @uppy/svelte         |   4.4.0 |
+| @uppy/components     | 0.0.1-0 | @uppy/utils          |   6.1.5 |
+| @uppy/core           |   4.4.6 | @uppy/vue            |   2.2.0 |
+| @uppy/locales        |   4.5.3 | @uppy/webcam         |   4.2.0 |
+| @uppy/react          |   4.3.0 | uppy                 |  4.17.0 |
+| @uppy/screen-capture |   4.3.0 |                      |         |
+
+- @uppy/companion: add max filename length env var (Freeman / #5763)
+- @uppy/core: fix missing required meta field error not updating (Prakash / #5766)
+- @uppy/screen-capture: add screenshot button (Prakash / #5737)
+- @uppy/locales: Update cs_CZ.ts (Martin Štorek / #5749)
+- examples: Headless components (Merlijn Vos / #5727)
+- @uppy/companion: fix cookie maxAge to milliseconds  (zolotarov@brights.io / #5746)
+- meta: document how to fix a broken release (Mikael Finstad / #5755)
+- @uppy/companion: improve Zoom folder structure (Merlijn Vos / #5739)
+
+
 ## 4.16.0
 
 Released: 2025-05-18
