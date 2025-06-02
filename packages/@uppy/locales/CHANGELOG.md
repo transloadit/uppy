@@ -1,5 +1,12 @@
 # @uppy/locales
 
+## 4.5.3
+
+Released: 2025-06-02
+Included in: Uppy v4.17.0
+
+- @uppy/locales: Update cs_CZ.ts (Martin Štorek / #5749)
+
 ## 4.5.2
 
 Released: 2025-04-08

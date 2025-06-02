@@ -1,5 +1,12 @@
 # @uppy/screen-capture
 
+## 4.3.0
+
+Released: 2025-06-02
+Included in: Uppy v4.17.0
+
+- @uppy/screen-capture: add screenshot button (Prakash / #5737)
+
 ## 4.2.3
 
 Released: 2025-05-18
