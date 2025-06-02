@@ -1,5 +1,12 @@
 # @uppy/core
 
+## 4.4.6
+
+Released: 2025-06-02
+Included in: Uppy v4.17.0
+
+- @uppy/core: fix missing required meta field error not updating (Prakash / #5766)
+
 ## 4.4.5
 
 Released: 2025-05-18
