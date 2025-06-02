@@ -15,4 +15,4 @@ export {
   UppyContext,
   UppyContextProvider,
 } from './headless/UppyContextProvider.js'
-export * from './headless/index.js'
+export * from './headless/generated/index.js'
