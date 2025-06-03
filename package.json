@@ -115,7 +115,7 @@
     "build:bundle": "yarn node ./bin/build-bundle.mjs",
     "build:clean": "cp .gitignore .gitignore.bak && printf '!node_modules\n!**/node_modules/**/*\n' >> .gitignore; git clean -Xfd packages e2e .parcel-cache coverage; mv .gitignore.bak .gitignore",
     "build:companion": "yarn workspace @uppy/companion build",
-    "build:css": "yarn workspace @uppy/components build:tailwind && yarn node ./bin/copy-tailwind-css.mjs && yarn node ./bin/build-css.js",
+    "build:css": "yarn node ./bin/build-css.js && yarn workspace @uppy/components build:tailwind && yarn node ./bin/copy-tailwind-css.mjs",
     "build:svelte": "yarn workspace @uppy/svelte build",
     "build:angular": "yarn workspace angular build",
     "build:js:typeless": "npm-run-all build:lib build:companion build:svelte",
