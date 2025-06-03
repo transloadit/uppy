@@ -8,8 +8,15 @@ export type UploadStatus =
   | 'error'
   | 'complete'
 
-export type UppyContext = {
-  uppy: Uppy | undefined
+export type UppyState = {
   status: UploadStatus
   progress: number
+}
+
+export type UppyContext = UppyState & {
+  uppy: Uppy | undefined
+}
+
+export type NonNullableUppyContext = UppyContext & {
+  uppy: Uppy
 }

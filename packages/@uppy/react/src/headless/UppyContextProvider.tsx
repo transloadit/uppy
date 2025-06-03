@@ -3,9 +3,14 @@ import React, {
   useState,
   useEffect,
   createElement as h,
+  useContext,
 } from 'react'
 import type Uppy from '@uppy/core'
-import { createUppyEventAdapter, type UploadStatus } from '@uppy/components'
+import {
+  createUppyEventAdapter,
+  type UploadStatus,
+  type NonNullableUppyContext,
+} from '@uppy/components'
 
 interface UppyContextValue {
   uppy: Uppy | undefined
@@ -62,3 +67,13 @@ export function UppyContextProvider({ uppy, children }: Props) {
 }
 
 export default UppyContextProvider
+
+export function useUppyContext(): NonNullableUppyContext {
+  const ctx = useContext(UppyContext)
+
+  if (!ctx.uppy) {
+    throw new Error('useDropzone must be called within a UppyContextProvider')
+  }
+
+  return ctx as NonNullableUppyContext // covered by the if statement above
+}

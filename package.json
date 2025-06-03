@@ -115,13 +115,13 @@
     "build:bundle": "yarn node ./bin/build-bundle.mjs",
     "build:clean": "cp .gitignore .gitignore.bak && printf '!node_modules\n!**/node_modules/**/*\n' >> .gitignore; git clean -Xfd packages e2e .parcel-cache coverage; mv .gitignore.bak .gitignore",
     "build:companion": "yarn workspace @uppy/companion build",
-    "build:css": "yarn node ./bin/build-css.js && yarn workspace @uppy/components build:tailwind",
+    "build:css": "yarn node ./bin/build-css.js && yarn workspace @uppy/components build:tailwind && yarn node ./bin/copy-tailwind-css.mjs",
     "build:svelte": "yarn workspace @uppy/svelte build",
     "build:angular": "yarn workspace angular build",
     "build:js:typeless": "npm-run-all build:lib build:companion build:svelte",
     "build:js": "npm-run-all build:js:typeless build:locale-pack build:angular build:bundle",
     "build:ts": "yarn tsc -b tsconfig.build.json && yarn workspace @uppy/svelte build",
-    "build:lib": "yarn node ./bin/build-lib.mjs",
+    "build:lib": "yarn build:ts && yarn node ./bin/build-lib.mjs && yarn build:css",
     "build:locale-pack": "yarn workspace @uppy-dev/locale-pack build && eslint packages/@uppy/locales/src/en_US.ts --fix && yarn workspace @uppy-dev/locale-pack test unused",
     "build": "npm-run-all --serial build:ts --parallel build:js build:css --serial build:components size",
     "contributors:save": "yarn node ./bin/update-contributors.mjs",
@@ -157,11 +157,9 @@
     "test": "npm-run-all lint test:locale-packs:unused test:unit test:companion",
     "uploadcdn": "yarn node ./private/upload-to-cdn/index.js",
     "version": "yarn node ./bin/after-version-bump.js",
-    "watch:css": "onchange 'packages/{@uppy/,}*/src/*.{scss,css}' --initial --verbose -- yarn run build:css",
-    "watch:js:bundle": "onchange 'packages/{@uppy/,}*/src/**/*.{js,ts,jsx,tsx}' --initial --verbose -- yarn run build:bundle",
-    "watch:js:lib": "onchange 'packages/{@uppy/,}*/src/**/*.{js,ts,jsx,tsx}' --initial --verbose -- yarn run build:lib",
-    "watch:js": "npm-run-all --parallel watch:js:bundle watch:js:lib",
-    "watch": "npm-run-all --parallel watch:css watch:js"
+    "watch:js:bundle": "onchange 'packages/{@uppy/,}*/src/**/*.{js,ts,jsx,tsx,svelte,scss,css}' --initial --verbose -- yarn run build:bundle",
+    "watch:js:lib": "onchange 'packages/{@uppy/,}*/src/**/*.{js,ts,jsx,tsx,svelte,scss,css}' --initial --verbose -- yarn run build:lib",
+    "watch": "npm-run-all --parallel watch:js:bundle watch:js:lib"
   },
   "alias": {
     "preact/jsx-dev-runtime": "preact/jsx-runtime"
