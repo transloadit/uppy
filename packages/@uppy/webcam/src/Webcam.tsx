@@ -61,6 +61,13 @@ function isModeAvailable<T>(modes: T[], mode: unknown): mode is T {
   return modes.includes(mode as T)
 }
 
+export type WebcamStatus =
+  | 'init' // before any permissions request
+  | 'ready' // live preview streaming
+  | 'recording' // currently recording
+  | 'captured' // snapshot or video captured, preview available
+  | 'error' // fatal error (e.g. no camera, permission error)
+
 export interface WebcamOptions<M extends Meta, B extends Body>
   extends UIPluginOptions {
   target?: PluginTarget<M, B>
@@ -86,6 +93,7 @@ export interface WebcamState {
   currentDeviceId: string | MediaStreamTrack | null | undefined
   recordedVideo: null | string
   isRecording: boolean
+  status: WebcamStatus
   [key: string]: unknown
 }
 
@@ -119,7 +127,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
 
   private mediaDevices
 
-  private supportsUserMedia
+  public supportsUserMedia
 
   private protocol: 'http' | 'https'
 
@@ -200,6 +208,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
       recordingLengthSeconds: 0,
       videoSources: [],
       currentDeviceId: null,
+      status: 'init',
     })
   }
 
@@ -304,12 +313,14 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
           this.setPluginState({
             currentDeviceId,
             cameraReady: true,
+            status: 'ready',
           })
         })
         .catch((err) => {
           this.setPluginState({
             cameraReady: false,
             cameraError: err,
+            status: 'error',
           })
           this.uppy.info(err.message, 'error')
         })
@@ -405,6 +416,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
 
     this.setPluginState({
       isRecording: true,
+      status: 'recording',
     })
   }
 
@@ -436,6 +448,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
           this.setPluginState({
             // eslint-disable-next-line compat/compat
             recordedVideo: URL.createObjectURL(file.data as Blob),
+            status: 'captured',
           })
           this.#enableMirror = false
         } catch (err) {
@@ -459,7 +472,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
   }
 
   discardRecordedVideo(): void {
-    this.setPluginState({ recordedVideo: null })
+    this.setPluginState({ recordedVideo: null, status: 'ready' })
 
     if (this.opts.mirror) {
       this.#enableMirror = true
@@ -509,6 +522,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
       recordedVideo: null,
       isRecording: false,
       recordingLengthSeconds: 0,
+      status: 'init',
     })
   }
 
@@ -540,38 +554,31 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
     })
   }
 
-  takeSnapshot(): void {
+  async takeSnapshot(): Promise<void> {
     if (this.captureInProgress) return
 
     this.captureInProgress = true
 
-    this.opts
-      .onBeforeSnapshot()
-      .catch((err) => {
-        const message = typeof err === 'object' ? err.message : err
-        this.uppy.info(message, 'error', 5000)
-        return Promise.reject(new Error(`onBeforeSnapshot: ${message}`))
-      })
-      .then(() => {
-        return this.getImage()
-      })
-      .then(
-        (tagFile) => {
-          this.captureInProgress = false
-          try {
-            this.uppy.addFile(tagFile)
-          } catch (err) {
-            // Logging the error, except restrictions, which is handled in Core
-            if (!err.isRestriction) {
-              this.uppy.log(err)
-            }
-          }
-        },
-        (error) => {
-          this.captureInProgress = false
-          throw error
-        },
-      )
+    try {
+      await this.opts.onBeforeSnapshot()
+    } catch (err) {
+      const message = typeof err === 'object' ? err.message : err
+      this.uppy.info(message, 'error', 5000)
+      throw new Error(`onBeforeSnapshot: ${message}`)
+    }
+
+    try {
+      const tagFile = await this.getImage()
+      this.captureInProgress = false
+      this.uppy.addFile(tagFile)
+      this.setPluginState({ status: 'captured' })
+    } catch (error) {
+      // Logging the error, except restrictions, which is handled in Core
+      this.captureInProgress = false
+      if (!error.isRestriction) {
+        this.uppy.log(error)
+      }
+    }
   }
 
   getImage(): Promise<MinimalRequiredUppyFile<M, B>> {
@@ -720,12 +727,16 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
         showNativePhotoCameraButton: isModeAvailable(modes, 'picture'),
         nativeCameraFacingMode: videoConstraints?.facingMode,
       })
+      // For mobile native camera, the webcam plugin itself isn't really "started"
+      // so 'init' might be the most appropriate status.
+      this.setPluginState({ status: 'init' })
       return
     }
 
     this.setPluginState({
       cameraReady: false,
       recordingLengthSeconds: 0,
+      status: 'init',
     })
 
     if (target) {
