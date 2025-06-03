@@ -114,14 +114,16 @@ const SVELTE_TEMPLATE = `\
   import {
     %%ComponentName%% as %%PreactComponentName%%,
     type %%PropsTypeName%%,
-    type UppyContext,
+    type UppyState,
   } from '@uppy/components'
-import { h as preactH } from 'preact'
-import { render as preactRender } from 'preact/compat'
-  import { UppyContextKey } from '../UppyContextProvider.svelte'
+  import { h as preactH } from 'preact'
+  import { render as preactRender } from 'preact/compat'
+  import { UppyContextKey, UppyStateKey } from '../UppyContextProvider.svelte'
+  import type Uppy from '@uppy/core'
 
   const props: Omit<%%PropsTypeName%%, 'ctx'> = $props()
-  const ctx = getContext<UppyContext>(UppyContextKey)
+  const uppy = getContext<Uppy | undefined>(UppyContextKey)
+  const state = getContext<UppyState>(UppyStateKey)
   let container: HTMLElement
 
   $effect(() => {
@@ -129,7 +131,10 @@ import { render as preactRender } from 'preact/compat'
       preactRender(
         preactH(%%PreactComponentName%%, {
           ...props,
-          ctx,
+          ctx: {
+            ...state,
+            uppy,
+          },
         } satisfies %%PropsTypeName%%),
         container,
       )
