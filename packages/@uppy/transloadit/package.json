@@ -28,6 +28,7 @@
   },
   "dependencies": {
     "@uppy/companion-client": "workspace:^",
+    "@uppy/core": "workspace:*",
     "@uppy/provider-views": "workspace:^",
     "@uppy/tus": "workspace:^",
     "@uppy/utils": "workspace:^",

@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "@uppy/companion-client": "workspace:^",
+    "@uppy/core": "workspace:*",
     "@uppy/utils": "workspace:^",
     "tus-js-client": "^4.2.3"
   },

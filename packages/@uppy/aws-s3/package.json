@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "@uppy/companion-client": "workspace:^",
+    "@uppy/core": "workspace:*",
     "@uppy/utils": "workspace:^"
   },
   "devDependencies": {

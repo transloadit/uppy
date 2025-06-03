@@ -23,6 +23,7 @@
     "expo": "~43.0.2",
     "expo-file-system": "~13.0.3",
     "expo-status-bar": "~1.1.0",
+    "preact": "^10.5.13",
     "preact-render-to-string": "^5.1.0",
     "react": "17.0.1",
     "react-dom": "17.0.1",

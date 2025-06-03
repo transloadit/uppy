@@ -7,7 +7,8 @@
     }
   },
   "dependencies": {
-    "@uppy/companion": "workspace:^"
+    "@uppy/companion": "workspace:^",
+    "postcss": "^8.5.3"
   },
   "devDependencies": {
     "autoprefixer": "^10.2.6",

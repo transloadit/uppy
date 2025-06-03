@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "@uppy/companion-client": "workspace:^",
+    "@uppy/core": "workspace:*",
     "@uppy/utils": "workspace:^",
     "nanoid": "^5.0.9",
     "preact": "^10.5.13"
