@@ -1,17 +1,18 @@
 import { getContext } from 'svelte'
 import {
   type UppyContext,
-  type NonNullableUppyContext,
 } from '@uppy/components'
 
-import { UppyContextKey } from './UppyContextProvider.svelte'
+import { UppyContextKey, UppyStateKey } from './UppyContextProvider.svelte'
+import type Uppy from '@uppy/core'
 
-export function getUppyContext(): NonNullableUppyContext {
-  const ctx = getContext<UppyContext>(UppyContextKey)
+export function getUppyContext() {
+  const uppy = getContext<Uppy | undefined>(UppyContextKey)
+  const state = getContext<UppyContext>(UppyStateKey)
 
-  if (!ctx?.uppy) {
+  if (!uppy) {
     throw new Error('Component must be called within a UppyContextProvider')
   }
 
-  return ctx as NonNullableUppyContext // covered by the if statement above
+  return { ...state, uppy }
 }

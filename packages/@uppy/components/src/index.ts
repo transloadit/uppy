@@ -33,6 +33,7 @@ export {
 // Types and utils
 export type {
   UppyContext,
+  UppyState,
   UploadStatus,
   NonNullableUppyContext,
 } from './types.js'

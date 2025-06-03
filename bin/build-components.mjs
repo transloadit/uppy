@@ -114,14 +114,16 @@ const SVELTE_TEMPLATE = `\
   import {
     %%ComponentName%% as %%PreactComponentName%%,
     type %%PropsTypeName%%,
-    type UppyContext,
+    type UppyState,
   } from '@uppy/components'
-import { h as preactH } from 'preact'
-import { render as preactRender } from 'preact/compat'
-  import { UppyContextKey } from '../UppyContextProvider.svelte'
+  import { h as preactH } from 'preact'
+  import { render as preactRender } from 'preact/compat'
+  import { UppyContextKey, UppyStateKey } from '../UppyContextProvider.svelte'
+  import type Uppy from '@uppy/core'
 
   const props: Omit<%%PropsTypeName%%, 'ctx'> = $props()
-  const ctx = getContext<UppyContext>(UppyContextKey)
+  const uppy = getContext<Uppy | undefined>(UppyContextKey)
+  const state = getContext<UppyState>(UppyStateKey)
   let container: HTMLElement
 
   $effect(() => {
@@ -129,7 +131,10 @@ import { render as preactRender } from 'preact/compat'
       preactRender(
         preactH(%%PreactComponentName%%, {
           ...props,
-          ctx,
+          ctx: {
+            ...state,
+            uppy,
+          },
         } satisfies %%PropsTypeName%%),
         container,
       )
@@ -240,34 +245,6 @@ try {
       .join('\n')
     await fs.writeFile(path.join(SVELTE_DIR, 'index.ts'), `${svelteIndexContent}\n`)
     console.log(`Exporting Svelte components from ${SVELTE_DIR}`)
-  }
-
-  // Copy CSS file
-  const CSS_SOURCE_PATH = path.join(
-    rootDir,
-    'packages/@uppy/components/dist/styles.css',
-  )
-  const FRAMEWORK_DIRS_FOR_CSS = [
-    path.join(rootDir, 'packages/@uppy/react/dist'),
-    path.join(rootDir, 'packages/@uppy/vue/dist'),
-    path.join(rootDir, 'packages/@uppy/svelte/dist'),
-  ]
-
-  try {
-    await fs.access(CSS_SOURCE_PATH) // Check if source CSS exists
-    await Promise.all(
-      FRAMEWORK_DIRS_FOR_CSS.map(async (destDir) => {
-        if (!existsSync(destDir)) {
-          await fs.mkdir(destDir, { recursive: true })
-        }
-        const destPath = path.join(destDir, 'styles.css')
-        await fs.copyFile(CSS_SOURCE_PATH, destPath)
-      }),
-    )
-  } catch (cssError) {
-    console.error(
-      `${CSS_SOURCE_PATH} does not exist yet. Run \`yarn build\` first.`,
-    )
   }
 
   console.log('\nAll wrappers and index files generated successfully!')
