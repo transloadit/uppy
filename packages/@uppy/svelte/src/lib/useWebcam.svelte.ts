@@ -1,11 +1,9 @@
-import { getContext } from 'svelte'
 import {
   createWebcamController,
   type WebcamSnapshot,
-  type UppyContext,
 } from '@uppy/components'
-import { UppyContextKey } from './components/headless/UppyContextProvider.svelte'
 import { useExternalStore } from './useSyncExternalStore.svelte.js'
+import { getUppyContext } from './components/headless/uppyContext.js'
 
 type WebcamProps = {
   onSubmit?: () => void
@@ -30,11 +28,7 @@ type SvelteWebcamSnapshot = {
 }
 
 export function useWebcam(props?: WebcamProps): SvelteWebcamSnapshot {
-  const ctx = getContext<UppyContext>(UppyContextKey)
-
-  if (!ctx?.uppy) {
-    throw new Error('useWebcam must be called within a UppyContextProvider')
-  }
+  const ctx = getUppyContext()
 
   const controller = createWebcamController(ctx.uppy, props?.onSubmit)
   const store = useExternalStore<WebcamSnapshot>(
