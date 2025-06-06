@@ -76,7 +76,7 @@ export default class GoogleDrivePicker<M extends Meta, B extends Body>
     accessToken: string,
   ) => {
     this.uppy.addFiles(
-      files.map(({ id, mimeType, name, ...rest }) => {
+      files.map(({ id, mimeType, name, platform, ...rest }) => {
         return {
           source: this.id,
           name,
@@ -91,10 +91,14 @@ export default class GoogleDrivePicker<M extends Meta, B extends Body>
             body: {
               fileId: id,
               accessToken,
-              ...rest,
+              platform,
+              ...('url' in rest && { url: rest.url }),
             },
             requestClientId: GoogleDrivePicker.requestClientId,
           },
+          ...(('metadata' in rest && {
+            meta: rest.metadata,
+          }) as Meta), // dunno how to type this
         }
       }),
     )
