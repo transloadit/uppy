@@ -1,37 +1,15 @@
 import { type MutableRef } from 'preact/hooks'
 
 // https://developers.google.com/photos/picker/reference/rest/v1/mediaItems
+// Note that the google api doc is not correct, hence some things are optional here but not in their docs
 export interface MediaItemBase {
   id: string
   createTime: string
 }
 
-// Shared metadata interface to avoid duplication
-export interface MediaMetadata {
-  // Base metadata
-  createTime?: string
-  width?: number
-  height?: number
-  cameraMake?: string
-  cameraModel?: string
-
-  // Photo-specific metadata
-  focalLength?: number
-  apertureFNumber?: number
-  isoEquivalent?: number
-  exposureTime?: string
-
-  // Video-specific metadata
-  fps?: number
-  processingStatus?: 'UNSPECIFIED' | 'PROCESSING' | 'READY' | 'FAILED'
-}
-
-// Original interfaces kept for compatibility
 interface MediaFileMetadataBase {
   width: number
   height: number
-  cameraMake: string
-  cameraModel: string
 }
 
 interface MediaFileBase {
@@ -45,7 +23,9 @@ export interface VideoMediaItem extends MediaItemBase {
   mediaFile: MediaFileBase & {
     mediaFileMetadata: MediaFileMetadataBase & {
       videoMetadata: {
-        fps: number
+        cameraMake?: string
+        cameraModel?: string
+        fps?: number
         processingStatus: 'UNSPECIFIED' | 'PROCESSING' | 'READY' | 'FAILED'
       }
     }
@@ -56,11 +36,13 @@ export interface PhotoMediaItem extends MediaItemBase {
   type: 'PHOTO'
   mediaFile: MediaFileBase & {
     mediaFileMetadata: MediaFileMetadataBase & {
-      photoMetadata: {
-        focalLength: number
-        apertureFNumber: number
-        isoEquivalent: number
-        exposureTime: string
+      photoMetadata?: {
+        cameraMake?: string
+        cameraModel?: string
+        focalLength?: number
+        apertureFNumber?: number
+        isoEquivalent?: number
+        exposureTime?: string
       }
     }
   }
@@ -68,10 +50,14 @@ export interface PhotoMediaItem extends MediaItemBase {
 
 export interface UnspecifiedMediaItem extends MediaItemBase {
   type: 'TYPE_UNSPECIFIED'
-  mediaFile: MediaFileBase
+  mediaFile: MediaFileBase & {
+    mediaFileMetadata: MediaFileMetadataBase
+  }
 }
 
 export type MediaItem = VideoMediaItem | PhotoMediaItem | UnspecifiedMediaItem
+
+export type MediaType = MediaItem['type']
 
 // https://developers.google.com/photos/picker/reference/rest/v1/sessions
 export interface PickingSession {
@@ -98,7 +84,7 @@ export interface PickedDriveItem extends PickedItemBase {
 export interface PickedPhotosItem extends PickedItemBase {
   platform: 'photos'
   url: string
-  metadata?: MediaMetadata
+  metadata?: Record<string, string | number> // I think string and number is OK in Companion
 }
 
 export type PickedItem = PickedPhotosItem | PickedDriveItem
@@ -315,62 +301,6 @@ export async function showPhotosPicker({
   signal?.addEventListener('abort', () => w?.close())
 }
 
-/**
- * Extract metadata from a media item, handling different types and edge cases
- */
-function extractMediaMetadata(
-  mediaFile: MediaFileBase & { mediaFileMetadata?: any },
-  type: 'PHOTO' | 'VIDEO' | 'TYPE_UNSPECIFIED',
-  createTime?: string,
-): MediaMetadata {
-  // Base metadata with createTime (if available)
-  const baseMetadata: MediaMetadata = {}
-  if (createTime) {
-    baseMetadata.createTime = createTime
-  }
-
-  // Early return if no mediaFileMetadata exists
-  if (!('mediaFileMetadata' in mediaFile) || !mediaFile.mediaFileMetadata) {
-    return baseMetadata
-  }
-
-  // Add basic media metadata
-  const { mediaFileMetadata } = mediaFile
-  const mediaMetadata: MediaMetadata = {
-    ...baseMetadata,
-    width: mediaFileMetadata.width,
-    height: mediaFileMetadata.height,
-    cameraMake: mediaFileMetadata.cameraMake,
-    cameraModel: mediaFileMetadata.cameraModel,
-  }
-
-  // Add photo-specific metadata if available
-  if (
-    type === 'PHOTO' &&
-    'photoMetadata' in mediaFileMetadata &&
-    mediaFileMetadata.photoMetadata
-  ) {
-    const { photoMetadata } = mediaFileMetadata
-    mediaMetadata.focalLength = photoMetadata.focalLength
-    mediaMetadata.apertureFNumber = photoMetadata.apertureFNumber
-    mediaMetadata.isoEquivalent = photoMetadata.isoEquivalent
-    mediaMetadata.exposureTime = photoMetadata.exposureTime
-  }
-
-  // Add video-specific metadata if available
-  if (
-    type === 'VIDEO' &&
-    'videoMetadata' in mediaFileMetadata &&
-    mediaFileMetadata.videoMetadata
-  ) {
-    const { videoMetadata } = mediaFileMetadata
-    mediaMetadata.fps = videoMetadata.fps
-    mediaMetadata.processingStatus = videoMetadata.processingStatus
-  }
-
-  return mediaMetadata
-}
-
 async function resolvePickedPhotos({
   accessToken,
   pickingSession,
@@ -413,27 +343,59 @@ async function resolvePickedPhotos({
   )
 
   // Transform media items into picked items with appropriate metadata
-  return mediaItems.map(
-    ({
+  return mediaItems.map((mediaItem) => {
+    const {
       id,
       type,
-      mediaFile,
-      createTime,
+      mediaFile: { mimeType, filename, baseUrl },
+    } = mediaItem
+
+    return {
+      platform: 'photos' as const,
+      id,
+      mimeType,
       // we want the original resolution, so we don't append any parameter to the baseUrl
       // https://developers.google.com/photos/library/guides/access-media-items#base-urls
-    }) => {
-      const { mimeType, filename, baseUrl } = mediaFile
+      url: type === 'VIDEO' ? `${baseUrl}=dv` : `${baseUrl}=d`, // dv to download video, d to get original image (non cropped)
+      name: filename,
+      metadata: {
+        // Note that metadata keys `filename` and `type` have special meanings in Companion
+        // and should not be overridden
+        googlePhotosFileType: mediaItem.type,
+        createTime: mediaItem.createTime,
 
-      return {
-        platform: 'photos' as const,
-        id,
-        mimeType,
-        url: type === 'VIDEO' ? `${baseUrl}=dv` : `${baseUrl}=d`, // dv to download video, d to get original image (non cropped)
-        name: filename,
-        metadata: extractMediaMetadata(mediaFile, type, createTime),
-      }
-    },
-  )
+        width: mediaItem.mediaFile.mediaFileMetadata.width,
+        height: mediaItem.mediaFile.mediaFileMetadata.height,
+
+        ...(mediaItem.type === 'PHOTO' && {
+          cameraMake:
+            mediaItem.mediaFile.mediaFileMetadata.photoMetadata?.cameraMake,
+          cameraModel:
+            mediaItem.mediaFile.mediaFileMetadata.photoMetadata?.cameraModel,
+          focalLength:
+            mediaItem.mediaFile.mediaFileMetadata.photoMetadata?.focalLength,
+          apertureFNumber:
+            mediaItem.mediaFile.mediaFileMetadata.photoMetadata
+              ?.apertureFNumber,
+          isoEquivalent:
+            mediaItem.mediaFile.mediaFileMetadata.photoMetadata?.isoEquivalent,
+          exposureTime:
+            mediaItem.mediaFile.mediaFileMetadata.photoMetadata?.exposureTime,
+        }),
+
+        ...(mediaItem.type === 'VIDEO' && {
+          cameraMake:
+            mediaItem.mediaFile.mediaFileMetadata.videoMetadata.cameraMake,
+          cameraModel:
+            mediaItem.mediaFile.mediaFileMetadata.videoMetadata.cameraModel,
+          fps: mediaItem.mediaFile.mediaFileMetadata.videoMetadata.fps,
+          processingStatus:
+            mediaItem.mediaFile.mediaFileMetadata.videoMetadata
+              .processingStatus,
+        }),
+      },
+    }
+  })
 }
 
 export async function pollPickingSession({
