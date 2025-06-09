@@ -6,10 +6,15 @@
       <UploadButton />
 
       <dialog
-        ref="webcamDialogRef"
+        ref="dialogRef"
         class="backdrop:bg-gray-500/50 rounded-lg shadow-xl p-0 fixed inset-0 m-auto"
       >
-        <Webcam :isOpen="isWebcamOpen" :close="closeWebcamModal" />
+        <Webcam
+          v-if="modalPlugin === 'webcam'"
+          :isOpen="modalPlugin === 'webcam'"
+          :close="closeModal"
+        />
+        <Dropbox v-if="modalPlugin === 'dropbox'" :close="closeModal" />
       </dialog>
 
       <article>
@@ -26,7 +31,7 @@
 
       <article>
         <h2 class="text-2xl my-4">With custom dropzone</h2>
-        <CustomDropzone :openWebcamModal="openWebcamModal" />
+        <CustomDropzone :openModal="openModal" />
       </article>
     </main>
   </UppyContextProvider>
@@ -45,19 +50,21 @@ import {
 } from '@uppy/vue'
 import CustomDropzone from './Dropzone.vue'
 import Webcam from './Webcam.vue'
+import Dropbox from './Dropbox.vue'
 import UppyWebcam from '@uppy/webcam'
+import UppyRemoteSources from '@uppy/remote-sources'
 
-const webcamDialogRef = ref<HTMLDialogElement | null>(null)
-const isWebcamOpen = ref(false)
+const dialogRef = ref<HTMLDialogElement | null>(null)
+const modalPlugin = ref<'webcam' | 'dropbox' | null>(null)
 
-function openWebcamModal() {
-  isWebcamOpen.value = true
-  webcamDialogRef.value?.showModal()
+function openModal(plugin: 'webcam' | 'dropbox') {
+  modalPlugin.value = plugin
+  dialogRef.value?.showModal()
 }
 
-function closeWebcamModal() {
-  isWebcamOpen.value = false
-  webcamDialogRef.value?.close()
+function closeModal() {
+  modalPlugin.value = null
+  dialogRef.value?.close()
 }
 
 const uppy = computed(() =>
@@ -65,7 +72,8 @@ const uppy = computed(() =>
     .use(Tus, {
       endpoint: 'https://tusd.tusdemo.net/files/',
     })
-    .use(UppyWebcam),
+    .use(UppyWebcam)
+    .use(UppyRemoteSources, { companionUrl: 'http://localhost:3020' }),
 )
 </script>
 
