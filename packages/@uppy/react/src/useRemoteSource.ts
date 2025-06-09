@@ -1,22 +1,16 @@
-import { useMemo, useContext, useEffect } from 'react'
+import { useMemo, useEffect } from 'react'
 import { useSyncExternalStore } from 'use-sync-external-store/shim/index.js'
 import {
   createRemoteSourceController,
   type RemoteSourceSnapshot,
   type RemoteSourceKeys,
 } from '@uppy/components'
-import { UppyContext } from './headless/UppyContextProvider.js'
+import { useUppyContext } from './headless/UppyContextProvider.js'
 
 export function useRemoteSource(
   sourceId: RemoteSourceKeys,
 ): RemoteSourceSnapshot {
-  const { uppy } = useContext(UppyContext)
-
-  if (!uppy) {
-    throw new Error(
-      'useRemoteSources must be called within a UppyContextProvider',
-    )
-  }
+  const { uppy } = useUppyContext()
 
   const controller = useMemo(
     () => createRemoteSourceController(uppy, sourceId),
