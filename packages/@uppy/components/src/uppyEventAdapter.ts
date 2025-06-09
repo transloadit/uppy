@@ -1,4 +1,4 @@
-import Uppy from '@uppy/core'
+import Uppy, { type UppyEventMap } from '@uppy/core'
 import type { UploadStatus } from './types'
 
 export function createUppyEventAdapter({
@@ -19,9 +19,13 @@ export function createUppyEventAdapter({
   const onResumeAll = () => {
     onStatusChange('uploading')
   }
-  const onComplete = () => {
-    onStatusChange('complete')
-    onProgressChange(0)
+  const onComplete: UppyEventMap<any, any>['complete'] = (result) => {
+    // If there are no uploads in failed or successful 'cancel-all' was called.
+    // Because 'complete' is called afterwards, we don't want to set the status to 'complete'
+    if (result?.failed?.length || result?.successful?.length) {
+      onStatusChange('complete')
+      onProgressChange(0)
+    }
   }
   const onError = () => {
     onStatusChange('error')
