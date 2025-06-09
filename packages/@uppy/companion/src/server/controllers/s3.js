@@ -14,7 +14,7 @@ const {
 const { createPresignedPost } = require('@aws-sdk/s3-presigned-post')
 const { getSignedUrl } = require('@aws-sdk/s3-request-presigner')
 
-const { rfc2047EncodeMetadata, getBucket } = require('../helpers/utils')
+const { rfc2047EncodeMetadata, getBucket, truncateFilename } = require('../helpers/utils')
 
 module.exports = function s3 (config) {
   if (typeof config.acl !== 'string' && config.acl != null) {
@@ -54,9 +54,14 @@ module.exports = function s3 (config) {
 
     const { metadata = {}, filename } = req.query
 
-    const bucket = getBucket({ bucketOrFn: config.bucket, req, filename, metadata })
+    const truncatedFilename = truncateFilename(
+      filename, 
+      req.companion.options.maxFilenameLength, 
+    )
 
-    const key = config.getKey({ req, filename, metadata })
+    const bucket = getBucket({ bucketOrFn: config.bucket, req, filename: truncatedFilename, metadata })
+
+    const key = config.getKey({ req, filename: truncatedFilename, metadata })
     if (typeof key !== 'string') {
       res.status(500).json({ error: 'S3 uploads are misconfigured: filename returned from `getKey` must be a string' })
       return
@@ -109,9 +114,14 @@ module.exports = function s3 (config) {
 
     const { type, metadata = {}, filename } = req.body
 
-    const key = config.getKey({ req, filename, metadata })
+    const truncatedFilename = truncateFilename(
+      filename, 
+      req.companion.options.maxFilenameLength, 
+    )
 
-    const bucket = getBucket({ bucketOrFn: config.bucket, req, filename, metadata })
+    const key = config.getKey({ req, filename: truncatedFilename, metadata })
+
+    const bucket = getBucket({ bucketOrFn: config.bucket, req, filename: truncatedFilename, metadata })
 
     if (typeof key !== 'string') {
       res.status(500).json({ error: 's3: filename returned from `getKey` must be a string' })

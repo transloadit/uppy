@@ -1,5 +1,14 @@
 # @uppy/companion
 
+## 5.8.0
+
+Released: 2025-06-02
+Included in: Uppy v4.17.0
+
+- @uppy/companion: add max filename length env var (Freeman / #5763)
+- @uppy/companion: fix cookie maxAge to milliseconds  (zolotarov@brights.io / #5746)
+- @uppy/companion: improve Zoom folder structure (Merlijn Vos / #5739)
+
 ## 5.7.0
 
 Released: 2025-05-18

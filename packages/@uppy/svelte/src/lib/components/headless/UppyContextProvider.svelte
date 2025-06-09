@@ -1,9 +1,11 @@
 <script module lang="ts">
-  import type Uppy from '@uppy/core'
-  import { createUppyEventAdapter, type UploadStatus } from '@uppy/components'
+  import {
+    createUppyEventAdapter,
+    type UploadStatus,
+    type UppyContext,
+  } from '@uppy/components'
 
   export const UppyContextKey = 'uppy-context'
-  export const UppyStateKey = 'uppy-state'
   export type { UppyContext } from '@uppy/components'
 </script>
 
@@ -12,8 +14,10 @@
 
   let { uppy, children } = $props()
 
-  const state: { status: UploadStatus, progress: number } = $state({
-    status: 'init',
+  // Create a single reactive context object
+  const contextValue: UppyContext = $state({
+    uppy,
+    status: 'init' as UploadStatus,
     progress: 0,
   })
 
@@ -25,19 +29,18 @@
     const uppyEventAdapter = createUppyEventAdapter({
       uppy,
       onStatusChange: (newStatus: UploadStatus) => {
-        state.status = newStatus
+        contextValue.status = newStatus
       },
       onProgressChange: (newProgress: number) => {
-        state.progress = newProgress
+        contextValue.progress = newProgress
       },
     })
 
     return () => uppyEventAdapter.cleanup()
   })
 
-  // Set the context for child components to use
-  setContext(UppyContextKey, uppy)
-  setContext(UppyStateKey, state)
+  // Set the single context for child components to use
+  setContext(UppyContextKey, contextValue)
 </script>
 
 {@render children()}
