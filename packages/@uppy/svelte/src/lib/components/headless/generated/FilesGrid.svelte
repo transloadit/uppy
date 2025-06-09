@@ -5,16 +5,14 @@
   import {
     FilesGrid as PreactFilesGrid,
     type FilesGridProps,
-    type UppyState,
+    type UppyContext,
   } from '@uppy/components'
   import { h as preactH } from 'preact'
   import { render as preactRender } from 'preact/compat'
-  import { UppyContextKey, UppyStateKey } from '../UppyContextProvider.svelte'
-  import type Uppy from '@uppy/core'
+  import { UppyContextKey } from '../UppyContextProvider.svelte'
 
   const props: Omit<FilesGridProps, 'ctx'> = $props()
-  const uppy = getContext<Uppy | undefined>(UppyContextKey)
-  const state = getContext<UppyState>(UppyStateKey)
+  const ctx = getContext<UppyContext>(UppyContextKey)
   let container: HTMLElement
 
   $effect(() => {
@@ -22,10 +20,7 @@
       preactRender(
         preactH(PreactFilesGrid, {
           ...props,
-          ctx: {
-            ...state,
-            uppy,
-          },
+          ctx,
         } satisfies FilesGridProps),
         container,
       )
