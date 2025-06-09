@@ -10,9 +10,9 @@ import { dequal } from 'dequal/lite'
 import type { ProviderViews } from '@uppy/provider-views'
 import { Subscribers } from './utils.js'
 
-export type { AvailablePluginsKeys as RemoteSourcesKeys }
+export type { AvailablePluginsKeys as RemoteSourceKeys }
 
-export type RemoteSourcesSnapshot = {
+export type RemoteSourceSnapshot = {
   state: UnknownProviderPluginState & {
     breadcrumbs: PartialTreeFolder[]
     selectedAmount: number
@@ -26,17 +26,17 @@ export type RemoteSourcesSnapshot = {
   cancel: ProviderViews<any, any>['cancelSelection']
 }
 
-export type RemoteSourcesStore = {
+export type RemoteSourceStore = {
   subscribe: (listener: () => void) => () => void
-  getSnapshot: () => RemoteSourcesSnapshot
+  getSnapshot: () => RemoteSourceSnapshot
   mount: () => void
   unmount: () => void
 }
 
-export function createRemoteSourcesController(
+export function createRemoteSourceController(
   uppy: Uppy,
   sourceId: AvailablePluginsKeys,
-): RemoteSourcesStore {
+): RemoteSourceStore {
   const plugin = uppy.getPlugin<UnknownProviderPlugin<any, any>>(sourceId)
   if (!plugin) {
     throw new Error(
@@ -57,23 +57,9 @@ export function createRemoteSourcesController(
     }
   }
 
-  // getBreadcrumbs returns `PartialTreeFolderNode | PartialTreeFolderRoot,
-  // of which only the Node has a `data` property which contains the name of the folder.
-  // This is annoying for consumers, they want the root to have a name too so
-  // we convert the root to a node here and add the sourceId as the name.
-  // const breadcrumbs = () => {
-  //   const crumbs = view.getBreadcrumbs()
-  //   const root = crumbs.shift()
-
-  //   return [
-  //     { ...root, data: { name: sourceId } } as PartialTreeFolderNode,
-  //     ...(crumbs as PartialTreeFolderNode[]),
-  //   ]
-  // }
-
   // Keep a cached snapshot so that the reference stays stable when nothing
   // has changed, as expected by `useSyncExternalStore` from React
-  let cachedSnapshot: RemoteSourcesSnapshot = {
+  let cachedSnapshot: RemoteSourceSnapshot = {
     state: {
       ...plugin.getPluginState(),
       // By default the partialTree is an array of all folders you have opened at some point,

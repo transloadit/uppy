@@ -30,11 +30,11 @@ export {
   type WebcamSnapshot,
 } from './hooks/webcam.js'
 export {
-  createRemoteSourcesController,
-  type RemoteSourcesStore,
-  type RemoteSourcesSnapshot,
-  type RemoteSourcesKeys,
-} from './hooks/remote-sources.js'
+  createRemoteSourceController,
+  type RemoteSourceStore,
+  type RemoteSourceSnapshot,
+  type RemoteSourceKeys,
+} from './hooks/remote-source.js'
 
 // Types and utils
 export type {

@@ -1,15 +1,15 @@
 import { useMemo, useContext, useEffect } from 'react'
 import { useSyncExternalStore } from 'use-sync-external-store/shim/index.js'
 import {
-  createRemoteSourcesController,
-  type RemoteSourcesSnapshot,
-  type RemoteSourcesKeys,
+  createRemoteSourceController,
+  type RemoteSourceSnapshot,
+  type RemoteSourceKeys,
 } from '@uppy/components'
 import { UppyContext } from './headless/UppyContextProvider.js'
 
-export function useRemoteSources(
-  sourceId: RemoteSourcesKeys,
-): RemoteSourcesSnapshot {
+export function useRemoteSource(
+  sourceId: RemoteSourceKeys,
+): RemoteSourceSnapshot {
   const { uppy } = useContext(UppyContext)
 
   if (!uppy) {
@@ -19,7 +19,7 @@ export function useRemoteSources(
   }
 
   const controller = useMemo(
-    () => createRemoteSourcesController(uppy, sourceId),
+    () => createRemoteSourceController(uppy, sourceId),
     [uppy, sourceId],
   )
   const store = useSyncExternalStore(

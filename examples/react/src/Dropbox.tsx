@@ -1,7 +1,7 @@
 /* eslint-disable no-shadow */
 /* eslint-disable react/react-in-jsx-scope */
 import { type PartialTreeFile, PartialTreeFolderNode } from '@uppy/core'
-import { useRemoteSources } from '@uppy/react'
+import { useRemoteSource } from '@uppy/react'
 
 function File({
   item,
@@ -64,7 +64,7 @@ function Folder({
 
 export function Dropbox({ close }: { close: () => void }) {
   const { state, login, logout, checkbox, open, done, cancel } =
-    useRemoteSources('Dropbox')
+    useRemoteSource('Dropbox')
 
   if (!state.authenticated) {
     return (
