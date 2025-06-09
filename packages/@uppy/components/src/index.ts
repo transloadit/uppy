@@ -3,6 +3,16 @@ export { default as FilesList, type FilesListProps } from './FilesList.js'
 export { default as FilesGrid, type FilesGridProps } from './FilesGrid.js'
 export { default as Dropzone, type DropzoneProps } from './Dropzone.js'
 export {
+  createDropzone,
+  type DropzoneReturn,
+  type DropzoneOptions,
+} from './hooks/dropzone.js'
+export {
+  createFileInput,
+  type FileInputProps,
+  type FileInputFunctions,
+} from './hooks/file-input.js'
+export {
   default as UploadButton,
   type UploadButtonProps,
 } from './UploadButton.js'
@@ -11,7 +21,11 @@ export {
   type ProviderIconProps,
 } from './ProviderIcon.js'
 
-export type { UppyContext } from './types.js'
-
+// Types and utils
+export type {
+  UppyContext,
+  UppyState,
+  UploadStatus,
+  NonNullableUppyContext,
+} from './types.js'
 export { createUppyEventAdapter } from './uppyEventAdapter.js'
-export type { UploadStatus } from './types.js'
