@@ -1,12 +1,8 @@
-import { getContext } from 'svelte'
 import {
-  type UppyContext,
   type FileInputProps,
-  type FileInputFunctions,
-  type NonNullableUppyContext,
 } from '@uppy/components'
 import { createFileInput } from '@uppy/components'
-import { UppyContextKey } from './components/headless/UppyContextProvider.svelte'
+import { getUppyContext } from './components/headless/uppyContext.js'
 
 export type SvelteFileInputFunctions = {
   getInputProps: () => {
@@ -23,14 +19,10 @@ export type SvelteFileInputFunctions = {
 }
 
 export function useFileInput(props?: FileInputProps): SvelteFileInputFunctions {
-  const ctx = getContext<UppyContext>(UppyContextKey)
-
-  if (!ctx?.uppy) {
-    throw new Error('useFileInput must be called within a UppyContextProvider')
-  }
+  const ctx = getUppyContext()
 
   const fileinput = createFileInput<Event>(
-    ctx as NonNullableUppyContext, // covered by the if statement above
+    ctx,
     props,
   )
 

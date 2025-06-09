@@ -1,6 +1,9 @@
-<script context="module" lang="ts">
-  import type Uppy from '@uppy/core'
-  import { createUppyEventAdapter, type UploadStatus } from '@uppy/components'
+<script module lang="ts">
+  import {
+    createUppyEventAdapter,
+    type UploadStatus,
+    type UppyContext,
+  } from '@uppy/components'
 
   export const UppyContextKey = 'uppy-context'
   export type { UppyContext } from '@uppy/components'
@@ -9,10 +12,14 @@
 <script lang="ts">
   import { setContext, onMount } from 'svelte'
 
-  export let uppy: Uppy
+  let { uppy, children } = $props()
 
-  let status: UploadStatus = 'init'
-  let progress = 0
+  // Create a single reactive context object
+  const contextValue: UppyContext = $state({
+    uppy,
+    status: 'init' as UploadStatus,
+    progress: 0,
+  })
 
   onMount(() => {
     if (!uppy) {
@@ -22,25 +29,18 @@
     const uppyEventAdapter = createUppyEventAdapter({
       uppy,
       onStatusChange: (newStatus: UploadStatus) => {
-        status = newStatus
+        contextValue.status = newStatus
       },
       onProgressChange: (newProgress: number) => {
-        progress = newProgress
+        contextValue.progress = newProgress
       },
     })
 
     return () => uppyEventAdapter.cleanup()
   })
 
-  // Create a reactive store from our context values
-  $: contextValue = {
-    uppy,
-    status,
-    progress,
-  }
-
-  // Set the context for child components to use
-  $: setContext(UppyContextKey, contextValue)
+  // Set the single context for child components to use
+  setContext(UppyContextKey, contextValue)
 </script>
 
-<slot />
+{@render children()}

@@ -14267,11 +14267,11 @@ __metadata:
   linkType: hard
 
 "base-x@npm:^3.0.8":
-  version: 3.0.9
-  resolution: "base-x@npm:3.0.9"
+  version: 3.0.11
+  resolution: "base-x@npm:3.0.11"
   dependencies:
     safe-buffer: "npm:^5.0.1"
-  checksum: 10/957101d6fd09e1903e846fd8f69fd7e5e3e50254383e61ab667c725866bec54e5ece5ba49ce385128ae48f9ec93a26567d1d5ebb91f4d56ef4a9cc0d5a5481e8
+  checksum: 10/c2e3c443fd07cb9b9d3e179a9e9c581daa31881005841fe8d6a834e534505890fedf03465ccf14512da60e3f7be00fe66167806b159ba076d2c03952ae7460c4
   languageName: node
   linkType: hard
 

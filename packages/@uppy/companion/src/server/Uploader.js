@@ -10,7 +10,7 @@ const { once } = require('node:events')
 
 const { Upload } = require('@aws-sdk/lib-storage')
 
-const { rfc2047EncodeMetadata, getBucket } = require('./helpers/utils')
+const { rfc2047EncodeMetadata, getBucket, truncateFilename } = require('./helpers/utils')
 
 const got = require('./got')
 
@@ -25,7 +25,6 @@ const redis = require('./redis')
 
 // Need to limit length or we can get
 // "MetadataTooLarge: Your metadata headers exceed the maximum allowed metadata size" in tus / S3
-const MAX_FILENAME_LENGTH = 500
 const DEFAULT_FIELD_NAME = 'files[]'
 const PROTOCOLS = Object.freeze({
   multipart: 'multipart',
@@ -170,9 +169,10 @@ class Uploader {
     this.options.metadata = this.options.metadata || {}
     this.options.fieldname = this.options.fieldname || DEFAULT_FIELD_NAME
     this.size = options.size
-    this.uploadFileName = this.options.metadata.name
-      ? this.options.metadata.name.substring(0, MAX_FILENAME_LENGTH)
-      : this.fileName
+    const { maxFilenameLength } = this.options.companionOptions
+    
+    // Define upload file name
+    this.uploadFileName = truncateFilename(this.options.metadata.name || this.fileName, maxFilenameLength)
 
     this.storage = options.storage
 

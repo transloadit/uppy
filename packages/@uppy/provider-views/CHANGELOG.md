@@ -1,5 +1,12 @@
 # @uppy/provider-views
 
+## 4.4.4
+
+Released: 2025-06-02
+Included in: Uppy v4.17.0
+
+- @uppy/provider-views: fix: handle pagination for Google Photos picker (fixes #5765) (ben rosenbaum / #5768)
+
 ## 4.4.3
 
 Released: 2025-04-14

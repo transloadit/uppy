@@ -10,7 +10,7 @@
   height: 100%;
 }
 
-.uppy-ScreenCapture-videoContainer {
+.uppy-ScreenCapture-mediaContainer {
   position: relative;
   flex: 1;
   flex-grow: 1;
@@ -24,7 +24,7 @@
   }
 }
 
-.uppy-ScreenCapture-video {
+.uppy-ScreenCapture-media {
   position: absolute;
   top: 0;
   right: 0;
@@ -88,7 +88,6 @@
 }
 
 .uppy-ScreenCapture-button--submit {
-  margin-left: 12px;
   background-color: $blue;
 
   &:hover {
@@ -102,6 +101,19 @@
 
   &:disabled:hover {
     background-color: $gray-200;
+  }
+}
+
+.uppy-ScreenCapture-button--discard {
+  margin-left: 8px;
+  background-color: $red;
+
+  svg {
+    fill: $white;
+  }
+
+  &:hover {
+    background-color: darken($red, 10%);
   }
 }
 
@@ -152,5 +164,36 @@
 
   &:hover {
     background-color: darken($red, 10%);
+  }
+}
+
+.uppy-ScreenCapture-button--screenshot {
+  margin-right: 8px;
+  background-color: $gray-500;
+  color: $white;
+  outline: none;
+
+  [data-uppy-theme='dark'] & {
+    background-color: $gray-700;
+  }
+
+  svg {
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    max-width: 100%;
+    max-height: 100%;
+    overflow: hidden;
+    vertical-align: text-top;
+    fill: currentColor;
+  }
+
+  &:hover {
+    background-color: darken($gray-500, 10%);
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: none;
   }
 }
