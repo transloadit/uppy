@@ -53,7 +53,6 @@ export function createRemoteSourceController(
     patch,
   ) => {
     if (patch?.plugins?.[sourceId]) {
-      console.log('onStateUpdate', patch)
       subscribers.emit()
     }
   }
@@ -96,8 +95,6 @@ export function createRemoteSourceController(
     if (!dequal(cachedSnapshot.state, nextSnapshot.state)) {
       cachedSnapshot = nextSnapshot
     }
-
-    console.log('cachedSnapshot', cachedSnapshot)
 
     return cachedSnapshot
   }

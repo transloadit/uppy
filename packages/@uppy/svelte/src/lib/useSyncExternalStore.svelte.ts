@@ -3,7 +3,7 @@ import { onDestroy } from 'svelte'
 export function useExternalStore<T>(
   getSnapshot: () => T,
   subscribe: (callback: () => void) => () => void,
-): T {
+): { value: T } {
   let value = $state(getSnapshot())
 
   // Subscribe immediately instead of waiting for mount
@@ -15,5 +15,9 @@ export function useExternalStore<T>(
     unsubscribe()
   })
 
-  return value
+  return {
+    get value() {
+      return value
+    },
+  }
 }
