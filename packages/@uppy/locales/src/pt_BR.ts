@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import type { Locale } from '@uppy/utils/lib/Translator'
 
 const pt_BR: Locale<0 | 1> = {
@@ -18,7 +19,7 @@ pt_BR.strings = {
   "addedNumFiles": "%{numFiles} arquivo(s) adicionado(s)",
   "addingMoreFiles": "Adicionando mais arquivos",
   "additionalRestrictionsFailed": "%{count} restrições adicionais não foram cumpridas",
-  "addMore": "Adicione mais",
+  "addMore": "Adicionar mais",
   "addMoreFiles": "Adicionar mais arquivos",
   "aggregateExceedsSize": "Você selecionou %{size} de arquivos, mas o tamanho máximo permitido é %{sizeAllowed}",
   "allFilesFromFolderNamed": "Todos os arquivos da pasta %{name}",
@@ -35,8 +36,8 @@ pt_BR.strings = {
   "authenticateWithTitle": "Por favor conecte com %{pluginName} para selecionar arquivos",
   "back": "Voltar",
   "browse": "navegar",
-  "browseFiles": "navegar por arquivos",
-  "browseFolders": "navegar por pastas",
+  "browseFiles": "selecionar arquivos",
+  "browseFolders": "selecionar pastas",
   "cancel": "Cancelar",
   "cancelUpload": "Cancelar envio",
   "chooseFiles": "Selecionar arquivos",
@@ -59,14 +60,14 @@ pt_BR.strings = {
   "discardMediaFile": "Descartar mídia",
   "discardRecordedFile": "Descartar gravação",
   "done": "Concluído",
-  "dropHereOr": "Solte arquivos aqui ou %{browse}",
-  "dropHint": "Solte seus arquivos aqui",
-  "dropPasteBoth": "Solte arquivos aqui, %{browseFiles} ou %{browseFolders}",
-  "dropPasteFiles": "Solte arquivos aqui ou %{browseFiles}",
-  "dropPasteFolders": "Solte arquivos aqui ou %{browseFolders}",
-  "dropPasteImportBoth": "Solte arquivos aqui, %{browseFiles}, %{browseFolders} ou importe de:",
-  "dropPasteImportFiles": "Solte arquivos aqui ou %{browseFiles} ou importe de:",
-  "dropPasteImportFolders": "Solte arquivos aqui ou %{browseFolders} ou importe de:",
+  "dropHereOr": "Solte ou cole arquivos aqui ou %{browse}",
+  "dropHint": "Solte ou cole seus arquivos aqui",
+  "dropPasteBoth": "Solte ou cole arquivos aqui, %{browseFiles} ou %{browseFolders}",
+  "dropPasteFiles": "Solte ou cole arquivos aqui ou %{browseFiles}",
+  "dropPasteFolders": "Solte ou cole arquivos aqui ou %{browseFolders}",
+  "dropPasteImportBoth": "Solte ou cole arquivos aqui, %{browseFiles}, %{browseFolders} ou importe de:",
+  "dropPasteImportFiles": "Solte ou cole arquivos aqui ou %{browseFiles} ou importe de:",
+  "dropPasteImportFolders": "Solte ou cole arquivos aqui ou %{browseFolders} ou importe de:",
   "editFile": "Editar arquivo",
   "editFileWithFilename": "Editar arquivo %{file}",
   "editImage": "Editar imagem",
@@ -165,6 +166,8 @@ pt_BR.strings = {
   "retryUpload": "Tentar enviar novamente",
   "revert": "Reverter",
   "rotate": "Girar",
+  "save": "Salvar",
+  "saveChanges": "Salvar alterações",
   "search": "Buscar",
   "searchImages": "Buscar por imagens",
   "selectX": {
@@ -181,6 +184,8 @@ pt_BR.strings = {
   "stopAudioRecording": "Parar gravação de áudio",
   "stopCapturing": "Parar captura de tela",
   "stopRecording": "Parar gravação de vídeo",
+  "streamActive": "Stream ativo",
+  "streamPassive": "Stream inativo",
   "submitRecordedFile": "Enviar arquivo gravado",
   "takePicture": "Tirar uma foto",
   "takePictureBtn": "Tirar foto",
@@ -224,6 +229,12 @@ pt_BR.strings = {
   },
   "zoomIn": "Aumentar o zoom",
   "zoomOut": "Diminuir o zoom"
+}
+
+// @ts-ignore untyped
+if (typeof Uppy !== 'undefined') {
+  // @ts-ignore untyped
+  globalThis.Uppy.locales.pt_BR = pt_BR
 }
 
 export default pt_BR
