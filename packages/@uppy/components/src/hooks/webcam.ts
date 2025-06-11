@@ -177,19 +177,21 @@ export function createWebcamController(
   // Keep a cached snapshot so that the reference stays stable when nothing
   // has changed, as expected by `useSyncExternalStore` from React
   let cachedState = plugin.getPluginState()
-  let snapshot: WebcamSnapshot = {
-    state: cachedState,
-    stop,
-    start,
-    getVideoProps,
-    getSnapshotButtonProps,
-    getRecordButtonProps,
-    getStopRecordingButtonProps,
-    getSubmitButtonProps,
-    getDiscardButtonProps,
-  }
 
   const getSnapshot = () => {
+    const snapshot: WebcamSnapshot = {
+      state: cachedState,
+      stop,
+      start,
+      getVideoProps,
+      getSnapshotButtonProps,
+      getRecordButtonProps,
+      getStopRecordingButtonProps,
+      getSubmitButtonProps,
+      getDiscardButtonProps,
+    }
+  
+
     const nextState = plugin.getPluginState()
 
     // If the reference hasn't changed we can safely return the cached
@@ -197,11 +199,10 @@ export function createWebcamController(
     if (nextState === cachedState) return snapshot
 
     cachedState = nextState
-    snapshot = {
+    return {
       ...snapshot,
       state: nextState,
     }
-    return snapshot
   }
 
   return { subscribe: subscribers.add, getSnapshot }
