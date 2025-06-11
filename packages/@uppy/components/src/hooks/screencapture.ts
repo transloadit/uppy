@@ -199,9 +199,8 @@ export function createScreenCaptureController(
     }
   }
 
-  let cachedState = plugin.getPluginState()
-  let snapshot: ScreenCaptureSnapshot = {
-    state: cachedState,
+  const getSnapshot = (): ScreenCaptureSnapshot => ({
+    state: plugin.getPluginState(),
     stop,
     start,
     getVideoProps,
@@ -210,15 +209,16 @@ export function createScreenCaptureController(
     getStopRecordingButtonProps,
     getSubmitButtonProps,
     getDiscardButtonProps,
+  })
+
+  let cachedSnapshot = getSnapshot()
+
+  const getCachedSnapshot = () => {
+    const nextSnapshot = getSnapshot()
+    if (nextSnapshot.state === cachedSnapshot.state) return cachedSnapshot
+    cachedSnapshot = nextSnapshot
+    return cachedSnapshot
   }
 
-  const getSnapshot = () => {
-    const nextState = plugin.getPluginState()
-    if (nextState === cachedState) return snapshot
-    cachedState = nextState
-    snapshot = { ...snapshot, state: nextState }
-    return snapshot
-  }
-
-  return { subscribe: subscribers.add, getSnapshot }
+  return { subscribe: subscribers.add, getSnapshot: getCachedSnapshot }
 }
