@@ -32,6 +32,14 @@ function getMediaDevices() {
 const SUPPORTED_IMAGE_TYPES = ['image/png', 'image/jpeg', 'image/webp'] as const
 type SupportedImageType = (typeof SUPPORTED_IMAGE_TYPES)[number]
 
+
+export type ScreenCaptureStatus =
+  | 'init'
+  | 'ready'
+  | 'recording'
+  | 'captured'
+  | 'error'
+
 export interface ScreenCaptureOptions extends UIPluginOptions {
   displayMediaConstraints?: MediaStreamConstraints
   userMediaConstraints?: MediaStreamConstraints
@@ -42,7 +50,7 @@ export interface ScreenCaptureOptions extends UIPluginOptions {
 }
 
 // https://developer.mozilla.org/en-US/docs/Web/API/MediaStreamConstraints
-const defaultOptions = {
+export const defaultOptions = {
   // https://developer.mozilla.org/en-US/docs/Web/API/MediaTrackConstraints#Properties_of_shared_screen_tracks
   displayMediaConstraints: {
     video: {
