@@ -2,6 +2,13 @@
 /* eslint-disable react/react-in-jsx-scope */
 import { type PartialTreeFile, PartialTreeFolderNode } from '@uppy/core'
 import { useRemoteSource } from '@uppy/react'
+import type { AvailablePluginsKeys } from '@uppy/remote-sources'
+import { useEffect, useRef } from 'react'
+
+const dtf = new Intl.DateTimeFormat('en-US', {
+  dateStyle: 'short',
+  timeStyle: 'short',
+})
 
 function File({
   item,
@@ -10,11 +17,6 @@ function File({
   item: PartialTreeFile
   checkbox: (item: PartialTreeFile, checked: boolean) => void
 }) {
-  const dtf = new Intl.DateTimeFormat('en-US', {
-    dateStyle: 'short',
-    timeStyle: 'short',
-  })
-
   return (
     <li key={item.id} className="flex items-center gap-2 mb-2">
       <input
@@ -41,9 +43,19 @@ function Folder({
   checkbox: (item: PartialTreeFolderNode, checked: boolean) => void
   open: (folderId: string | null) => Promise<void>
 }) {
+  const ref = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    if (ref.current && item.status === 'partial') {
+      // Can only be set via JS
+      ref.current.indeterminate = true
+    }
+  }, [item.status])
+
   return (
     <li key={item.id} className="flex items-center gap-2 mb-2">
       <input
+        ref={ref}
         type="checkbox"
         onChange={() => checkbox(item, false)}
         checked={item.status === 'checked'}
@@ -62,9 +74,15 @@ function Folder({
   )
 }
 
-export function Dropbox({ close }: { close: () => void }) {
+export function RemoteSource({
+  close,
+  id,
+}: {
+  close: () => void
+  id: AvailablePluginsKeys
+}) {
   const { state, login, logout, checkbox, open, done, cancel } =
-    useRemoteSource('Dropbox')
+    useRemoteSource(id)
 
   if (!state.authenticated) {
     return (
@@ -81,7 +99,7 @@ export function Dropbox({ close }: { close: () => void }) {
   }
 
   return (
-    <div className="w-screen h-screen max-w-3xl max-h-96 relative">
+    <div className="w-screen h-screen max-w-3xl max-h-96 relative flex flex-col">
       <div className="flex justify-between items-center gap-2 bg-gray-100 pb-2 px-4 py-2">
         {state.breadcrumbs.map((breadcrumb, index) => (
           <>
@@ -115,27 +133,30 @@ export function Dropbox({ close }: { close: () => void }) {
         </div>
       </div>
 
-      <ul className="p-4">
-        {state.partialTree.map((item) => {
-          if (item.type === 'file') {
-            return <File key={item.id} item={item} checkbox={checkbox} />
-          }
-          if (item.type === 'folder') {
-            return (
-              <Folder
-                key={item.id}
-                item={item}
-                checkbox={checkbox}
-                open={open}
-              />
-            )
-          }
-          return null
-        })}
+      <ul className="p-4 flex-1 overflow-y-auto">
+        {state.loading ?
+          <p>loading...</p>
+        : state.partialTree.map((item) => {
+            if (item.type === 'file') {
+              return <File key={item.id} item={item} checkbox={checkbox} />
+            }
+            if (item.type === 'folder') {
+              return (
+                <Folder
+                  key={item.id}
+                  item={item}
+                  checkbox={checkbox}
+                  open={open}
+                />
+              )
+            }
+            return null
+          })
+        }
       </ul>
 
       {state.selectedAmount > 0 && (
-        <div className="flex items-center gap-4 bg-gray-100 mt-auto py-2 px-4 absolute bottom-0 left-0 right-0">
+        <div className="flex items-center gap-4 bg-gray-100 py-2 px-4 absolute bottom-0 left-0 right-0">
           <button
             type="button"
             className="text-blue-500"

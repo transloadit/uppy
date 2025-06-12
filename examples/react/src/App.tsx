@@ -20,7 +20,7 @@ import Tus from '@uppy/tus'
 import UppyWebcam from '@uppy/webcam'
 import UppyRemoteSources from '@uppy/remote-sources'
 
-import { Dropbox } from './Dropbox.js'
+import { RemoteSource } from './RemoteSource.js'
 
 import './app.css'
 import '@uppy/react/dist/styles.css'
@@ -191,7 +191,9 @@ function App() {
           className="backdrop:bg-gray-500/50 rounded-lg shadow-xl p-0 fixed inset-0 m-auto"
         >
           {modalPlugin === 'webcam' && <Webcam close={() => closeModal()} />}
-          {modalPlugin === 'dropbox' && <Dropbox close={() => closeModal()} />}
+          {modalPlugin === 'dropbox' && (
+            <RemoteSource id="Dropbox" close={() => closeModal()} />
+          )}
         </dialog>
 
         <article>
