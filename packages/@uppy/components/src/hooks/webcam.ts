@@ -94,7 +94,8 @@ export function createWebcamController(
   const getVideoProps = () => {
     const ref = document.getElementById(videoId) as HTMLVideoElement | null
     plugin.getVideoElement = () => ref
-    const { status, recordedVideo } = plugin.getPluginState()
+    const { recordedVideo } = plugin.getPluginState()
+    const status = plugin.getStatus()
 
     if (status === 'captured' && recordedVideo) {
       if (ref) {
@@ -135,8 +136,7 @@ export function createWebcamController(
       onSubmit?.()
     },
     disabled:
-      plugin.getPluginState().status !== 'ready' ||
-      plugin.getPluginState().isRecording,
+      plugin.getStatus() !== 'ready' || plugin.getPluginState().isRecording,
   })
 
   const getRecordButtonProps = () => ({
@@ -145,8 +145,7 @@ export function createWebcamController(
       plugin.startRecording()
     },
     disabled:
-      plugin.getPluginState().status !== 'ready' ||
-      plugin.getPluginState().isRecording,
+      plugin.getStatus() !== 'ready' || plugin.getPluginState().isRecording,
   })
 
   const getStopRecordingButtonProps = () => ({
@@ -154,7 +153,7 @@ export function createWebcamController(
     onClick: () => {
       plugin.stopRecording()
     },
-    disabled: plugin.getPluginState().status !== 'recording',
+    disabled: plugin.getStatus() !== 'recording',
   })
 
   const getSubmitButtonProps = () => ({
@@ -164,7 +163,7 @@ export function createWebcamController(
       plugin.stop()
       onSubmit?.()
     },
-    disabled: plugin.getPluginState().status !== 'captured',
+    disabled: plugin.getStatus() !== 'captured',
   })
 
   const getDiscardButtonProps = () => ({
@@ -172,25 +171,26 @@ export function createWebcamController(
     onClick: () => {
       plugin.discardRecordedVideo()
     },
-    disabled: plugin.getPluginState().status !== 'captured',
+    disabled: plugin.getStatus() !== 'captured',
   })
 
   // Keep a cached snapshot so that the reference stays stable when nothing
   // has changed, as expected by `useSyncExternalStore` from React
   let cachedState = plugin.getPluginState()
-  let snapshot: WebcamSnapshot = {
-    state: cachedState,
-    stop,
-    start,
-    getVideoProps,
-    getSnapshotButtonProps,
-    getRecordButtonProps,
-    getStopRecordingButtonProps,
-    getSubmitButtonProps,
-    getDiscardButtonProps,
-  }
 
   const getSnapshot = () => {
+    const snapshot: WebcamSnapshot = {
+      state: cachedState,
+      stop,
+      start,
+      getVideoProps,
+      getSnapshotButtonProps,
+      getRecordButtonProps,
+      getStopRecordingButtonProps,
+      getSubmitButtonProps,
+      getDiscardButtonProps,
+    }
+
     const nextState = plugin.getPluginState()
 
     // If the reference hasn't changed we can safely return the cached
@@ -198,11 +198,10 @@ export function createWebcamController(
     if (nextState === cachedState) return snapshot
 
     cachedState = nextState
-    snapshot = {
+    return {
       ...snapshot,
       state: nextState,
     }
-    return snapshot
   }
 
   return { subscribe: subscribers.add, getSnapshot }
