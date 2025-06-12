@@ -93,6 +93,7 @@ export interface WebcamState {
   currentDeviceId: string | MediaStreamTrack | null | undefined
   recordedVideo: null | string
   isRecording: boolean
+  status: WebcamStatus
   [key: string]: unknown
 }
 
@@ -126,7 +127,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
 
   private mediaDevices
 
-  private supportsUserMedia
+  public supportsUserMedia
 
   private protocol: 'http' | 'https'
 
@@ -207,22 +208,8 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
       recordingLengthSeconds: 0,
       videoSources: [],
       currentDeviceId: null,
+      status: 'init',
     })
-  }
-
-  getStatus(): WebcamStatus {
-    const {
-      recordedVideo,
-      capturedSnapshot,
-      isRecording,
-      cameraReady,
-      cameraError,
-    } = this.getPluginState()
-    if (isRecording) return 'recording'
-    if (recordedVideo != null || capturedSnapshot != null) return 'captured'
-    if (cameraReady) return 'ready'
-    if (cameraError) return 'error'
-    return 'init'
   }
 
   setOptions(newOpts: Partial<WebcamOptions<M, B>>): void {
@@ -326,12 +313,14 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
           this.setPluginState({
             currentDeviceId,
             cameraReady: true,
+            status: 'ready',
           })
         })
         .catch((err) => {
           this.setPluginState({
             cameraReady: false,
             cameraError: err,
+            status: 'error',
           })
           this.uppy.info(err.message, 'error')
         })
@@ -427,6 +416,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
 
     this.setPluginState({
       isRecording: true,
+      status: 'recording',
     })
   }
 
@@ -458,6 +448,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
           this.setPluginState({
             // eslint-disable-next-line compat/compat
             recordedVideo: URL.createObjectURL(file.data as Blob),
+            status: 'captured',
           })
           this.#enableMirror = false
         } catch (err) {
@@ -481,7 +472,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
   }
 
   discardRecordedVideo(): void {
-    this.setPluginState({ recordedVideo: null })
+    this.setPluginState({ recordedVideo: null, status: 'ready' })
 
     if (this.opts.mirror) {
       this.#enableMirror = true
@@ -531,6 +522,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
       recordedVideo: null,
       isRecording: false,
       recordingLengthSeconds: 0,
+      status: 'init',
     })
   }
 
@@ -579,6 +571,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
       const tagFile = await this.getImage()
       this.captureInProgress = false
       this.uppy.addFile(tagFile)
+      this.setPluginState({ status: 'captured' })
     } catch (error) {
       // Logging the error, except restrictions, which is handled in Core
       this.captureInProgress = false
@@ -734,12 +727,16 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
         showNativePhotoCameraButton: isModeAvailable(modes, 'picture'),
         nativeCameraFacingMode: videoConstraints?.facingMode,
       })
+      // For mobile native camera, the webcam plugin itself isn't really "started"
+      // so 'init' might be the most appropriate status.
+      this.setPluginState({ status: 'init' })
       return
     }
 
     this.setPluginState({
       cameraReady: false,
       recordingLengthSeconds: 0,
+      status: 'init',
     })
 
     if (target) {
