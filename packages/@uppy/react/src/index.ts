@@ -9,6 +9,7 @@ export { default as useUppyEvent } from './useUppyEvent.js'
 export { useDropzone } from './useDropzone.js'
 export { useWebcam } from './useWebcam.js'
 export { useFileInput } from './useFileInput.js'
+export { useScreenCapture } from './useScreenCapture.js'
 
 // Headless components
 export {

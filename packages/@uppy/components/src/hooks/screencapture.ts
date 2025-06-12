@@ -24,7 +24,7 @@ export type ScreenCaptureSnapshot = {
     autoPlay?: boolean
     muted: boolean
     controls?: boolean | undefined
-    src?: string | null
+    src?: string
   }
   getScreenshotButtonProps: () => ButtonProps
   getRecordButtonProps: () => ButtonProps
