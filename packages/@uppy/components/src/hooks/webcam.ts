@@ -1,6 +1,7 @@
 import type { Uppy, UppyEventMap } from '@uppy/core'
 import type { WebcamState, WebcamStatus } from '@uppy/webcam'
 import Webcam from '@uppy/webcam'
+import { Subscribers } from './utils.js'
 
 export type { WebcamStatus }
 
@@ -34,25 +35,6 @@ export type WebcamStore = {
 }
 
 const videoId = 'uppy-webcam-video'
-
-class Subscribers {
-  private subscribers: Set<() => void> = new Set()
-
-  add = (listener: () => void): (() => void) => {
-    this.subscribers.add(listener)
-    return () => this.subscribers.delete(listener)
-  }
-
-  emit = (): void => {
-    for (const listener of this.subscribers) {
-      listener()
-    }
-  }
-
-  clear = (): void => {
-    this.subscribers.clear()
-  }
-}
 
 export function createWebcamController(
   uppy: Uppy,

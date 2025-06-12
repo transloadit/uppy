@@ -18,13 +18,23 @@
       </button>
 
       <button
-        @click="props.openWebcamModal"
+        @click="() => props.openModal('webcam')"
         class="hover:bg-gray-100 transition-colors p-2 rounded-md flex flex-col items-center gap-2 text-sm"
       >
         <div class="bg-white shadow-md rounded-md p-1">
           <ProviderIcon provider="camera" fill="#02B383" />
         </div>
         Webcam
+      </button>
+
+      <button
+        @click="() => props.openModal('dropbox')"
+        class="hover:bg-gray-100 transition-colors p-2 rounded-md flex flex-col items-center gap-2 text-sm"
+      >
+        <div class="bg-white shadow-md rounded-md p-1">
+          <ProviderIcon provider="dropbox" />
+        </div>
+        Dropbox
       </button>
     </div>
   </div>
@@ -34,7 +44,7 @@
 import { useDropzone, useFileInput, ProviderIcon } from '@uppy/vue'
 
 const props = defineProps<{
-  openWebcamModal: () => void
+  openModal: (plugin: 'webcam' | 'dropbox') => void
 }>()
 
 const { getRootProps, getInputProps } = useDropzone({
