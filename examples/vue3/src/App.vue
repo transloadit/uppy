@@ -5,6 +5,13 @@
 
       <UploadButton />
 
+      <dialog
+        ref="webcamDialogRef"
+        class="backdrop:bg-gray-500/50 rounded-lg shadow-xl p-0 fixed inset-0 m-auto"
+      >
+        <Webcam :isOpen="isWebcamOpen" :close="closeWebcamModal" />
+      </dialog>
+
       <article>
         <h2 class="text-2xl my-4">With list</h2>
         <Dropzone />
@@ -19,14 +26,14 @@
 
       <article>
         <h2 class="text-2xl my-4">With custom dropzone</h2>
-        <CustomDropzone />
+        <CustomDropzone :openWebcamModal="openWebcamModal" />
       </article>
     </main>
   </UppyContextProvider>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import Uppy from '@uppy/core'
 import Tus from '@uppy/tus'
 import {
@@ -37,11 +44,28 @@ import {
   UploadButton,
 } from '@uppy/vue'
 import CustomDropzone from './Dropzone.vue'
+import Webcam from './Webcam.vue'
+import UppyWebcam from '@uppy/webcam'
+
+const webcamDialogRef = ref<HTMLDialogElement | null>(null)
+const isWebcamOpen = ref(false)
+
+function openWebcamModal() {
+  isWebcamOpen.value = true
+  webcamDialogRef.value?.showModal()
+}
+
+function closeWebcamModal() {
+  isWebcamOpen.value = false
+  webcamDialogRef.value?.close()
+}
 
 const uppy = computed(() =>
-  new Uppy().use(Tus, {
-    endpoint: 'https://tusd.tusdemo.net/files/',
-  }),
+  new Uppy()
+    .use(Tus, {
+      endpoint: 'https://tusd.tusdemo.net/files/',
+    })
+    .use(UppyWebcam),
 )
 </script>
 

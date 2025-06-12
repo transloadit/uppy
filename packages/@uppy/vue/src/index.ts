@@ -10,3 +10,4 @@ export * from './headless/generated/index.js'
 
 export * from './useDropzone.js'
 export * from './useFileInput.js'
+export * from './useWebcam.js'

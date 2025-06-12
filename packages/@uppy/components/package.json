@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "@tailwindcss/cli": "^4.0.6",
+    "@webcam/core": "^1.0.1",
     "clsx": "^2.1.1",
     "preact": "^10.5.13",
     "pretty-bytes": "^6.1.1",
