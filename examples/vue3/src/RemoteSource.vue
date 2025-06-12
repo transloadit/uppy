@@ -12,7 +12,10 @@
     </button>
   </div>
 
-  <div v-else class="w-screen h-screen max-w-3xl max-h-96 relative">
+  <div
+    v-else
+    class="w-screen h-screen max-w-3xl max-h-96 relative flex flex-col"
+  >
     <div
       class="flex justify-between items-center gap-2 bg-gray-100 pb-2 px-4 py-2"
     >
@@ -22,7 +25,7 @@
       >
         <span v-if="index > 0" class="text-gray-500">&gt;</span>
         <span v-if="index === remoteSource.state.breadcrumbs.length - 1">
-          {{ breadcrumb.type === 'root' ? 'Dropbox' : breadcrumb.data.name }}
+          {{ breadcrumb.type === 'root' ? props.id : breadcrumb.data.name }}
         </span>
         <button
           v-else
@@ -30,7 +33,7 @@
           class="text-blue-500"
           @click="() => remoteSource.open(breadcrumb.id)"
         >
-          {{ breadcrumb.type === 'root' ? 'Dropbox' : breadcrumb.data.name }}
+          {{ breadcrumb.type === 'root' ? props.id : breadcrumb.data.name }}
         </button>
       </template>
       <div class="flex items-center gap-2 ml-auto">
@@ -49,8 +52,13 @@
       </div>
     </div>
 
-    <ul class="p-4">
-      <template v-for="item in remoteSource.state.partialTree" :key="item.id">
+    <ul class="p-4 flex-1 overflow-y-auto">
+      <p v-if="remoteSource.state.loading">loading...</p>
+      <template
+        v-else
+        v-for="item in remoteSource.state.partialTree"
+        :key="item.id"
+      >
         <!-- File Item -->
         <li v-if="item.type === 'file'" class="flex items-center gap-2 mb-2">
           <input
@@ -77,6 +85,7 @@
         >
           <input
             type="checkbox"
+            :ref="(el) => setIndeterminate(el as HTMLInputElement, item)"
             @change="() => remoteSource.checkbox(item, false)"
             :checked="item.status === 'checked'"
           />
@@ -94,7 +103,7 @@
 
     <div
       v-if="remoteSource.state.selectedAmount > 0"
-      class="flex items-center gap-4 bg-gray-100 mt-auto py-2 px-4 absolute bottom-0 left-0 right-0"
+      class="flex items-center gap-4 bg-gray-100 py-2 px-4 absolute bottom-0 left-0 right-0"
     >
       <button
         type="button"
@@ -124,15 +133,25 @@
 
 <script setup lang="ts">
 import { useRemoteSource } from '@uppy/vue'
+import type { AvailablePluginsKeys } from '@uppy/remote-sources'
+import { PartialTreeFolderNode } from '@uppy/core'
 
 const props = defineProps<{
   close: () => void
+  id: AvailablePluginsKeys
 }>()
 
-const remoteSource = useRemoteSource('Dropbox')
-
+const remoteSource = useRemoteSource(props.id)
 const dtf = new Intl.DateTimeFormat('en-US', {
   dateStyle: 'short',
   timeStyle: 'short',
 })
+const setIndeterminate = (
+  el: HTMLInputElement | null,
+  item: PartialTreeFolderNode,
+) => {
+  if (el && item.status === 'partial') {
+    el.indeterminate = true
+  }
+}
 </script>

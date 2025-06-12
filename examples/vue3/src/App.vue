@@ -14,7 +14,11 @@
           :isOpen="modalPlugin === 'webcam'"
           :close="closeModal"
         />
-        <Dropbox v-if="modalPlugin === 'dropbox'" :close="closeModal" />
+        <RemoteSource
+          v-if="modalPlugin === 'dropbox'"
+          id="Dropbox"
+          :close="closeModal"
+        />
       </dialog>
 
       <article>
@@ -50,7 +54,7 @@ import {
 } from '@uppy/vue'
 import CustomDropzone from './Dropzone.vue'
 import Webcam from './Webcam.vue'
-import Dropbox from './Dropbox.vue'
+import RemoteSource from './RemoteSource.vue'
 import UppyWebcam from '@uppy/webcam'
 import UppyRemoteSources from '@uppy/remote-sources'
 

@@ -14,7 +14,7 @@
 
   import CustomDropzone from '../components/CustomDropzone.svelte'
   import Webcam from '../components/Webcam.svelte'
-  import Dropbox from '../components/Dropbox.svelte'
+  import RemoteSource from '../components/RemoteSource.svelte'
 
   const uppy = new Uppy()
     .use(Tus, {
@@ -51,7 +51,7 @@
         <Webcam isOpen={modalPlugin === 'webcam'} close={closeModal} />
       {/if}
       {#if modalPlugin === 'dropbox'}
-        <Dropbox close={closeModal} />
+        <RemoteSource id="Dropbox" close={closeModal} />
       {/if}
     </dialog>
 
