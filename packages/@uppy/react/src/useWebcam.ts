@@ -1,5 +1,4 @@
-import { useMemo } from 'react'
-import { useSyncExternalStore } from 'use-sync-external-store/shim/index.js'
+import { useMemo, useSyncExternalStore } from 'react'
 import { createWebcamController, type WebcamSnapshot } from '@uppy/components'
 import { useUppyContext } from './headless/UppyContextProvider.js'
 
