@@ -190,7 +190,6 @@ export function createWebcamController(
       getSubmitButtonProps,
       getDiscardButtonProps,
     }
-  
 
     const nextState = plugin.getPluginState()
 
