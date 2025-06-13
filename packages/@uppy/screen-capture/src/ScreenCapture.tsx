@@ -38,6 +38,7 @@ export type ScreenCaptureStatus =
   | 'ready'
   | 'recording'
   | 'captured'
+  | 'recorded'
   | 'error'
 
 export interface ScreenCaptureOptions extends UIPluginOptions {
@@ -82,6 +83,7 @@ export type ScreenCaptureState = {
   recordedVideo: string | null
   screenRecError: string | null
   capturedScreenshotUrl: string | null
+  status: ScreenCaptureStatus
 }
 
 export default class ScreenCapture<
@@ -151,6 +153,15 @@ export default class ScreenCapture<
     // initialize
     this.captureActive = false
     this.capturedMediaFile = null
+    this.setPluginState({
+      streamActive: false,
+      audioStreamActive: false,
+      recording: false,
+      recordedVideo: null,
+      screenRecError: null,
+      capturedScreenshotUrl: null,
+      status: 'init',
+    })
   }
 
   install(): null | undefined {
@@ -162,6 +173,10 @@ export default class ScreenCapture<
     this.setPluginState({
       streamActive: false,
       audioStreamActive: false,
+      // Keep other state like recordedVideo, capturedScreenshotUrl, screenRecError
+      // if the plugin was uninstalled and reinstalled.
+      // status should be re-initialized.
+      status: 'init',
     })
 
     const { target } = this.opts
@@ -224,6 +239,8 @@ export default class ScreenCapture<
 
         this.setPluginState({
           streamActive: true,
+          status: 'ready',
+          screenRecError: null, // Clear any previous error
         })
 
         return videoStream
@@ -231,6 +248,7 @@ export default class ScreenCapture<
       .catch((err) => {
         this.setPluginState({
           screenRecError: err,
+          status: 'error',
         })
 
         this.userDenied = true
@@ -319,18 +337,23 @@ export default class ScreenCapture<
         // set plugin state to recording
         this.setPluginState({
           recording: true,
+          status: 'recording',
         })
       })
       .catch((err) => {
         this.uppy.log(err, 'error')
+        this.setPluginState({ screenRecError: err.message, status: 'error' })
       })
   }
 
   streamInactivated(): void {
     // get screen recorder state
-    const { recordedVideo, recording } = { ...this.getPluginState() }
+    const { recordedVideo, recording, status } = { ...this.getPluginState() }
 
-    if (!recordedVideo && !recording) {
+    if (recording) {
+      this.uppy.log('Capture stream inactive — stop recording')
+      this.stopRecording() // This will set status to 'captured'
+    } else if (!recordedVideo && !recording) {
       // Close the Dashboard panel if plugin is installed
       // into Dashboard (could be other parent UI plugin)
       // @ts-expect-error we can't know Dashboard types here
@@ -338,18 +361,17 @@ export default class ScreenCapture<
         // @ts-expect-error we can't know Dashboard types here
         this.parent.hideAllPanels()
       }
-    } else if (recording) {
-      // stop recorder if it is active
-      this.uppy.log('Capture stream inactive — stop recording')
-      this.stopRecording()
+      this.setPluginState({ status: 'init' }) // Or 'error' if it's unexpected
     }
 
+
     this.videoStream = null
-    this.audioStream = null
+    this.audioStream = null // Assuming audio stream also becomes invalid
 
     this.setPluginState({
       streamActive: false,
-      audioStreamActive: false,
+      audioStreamActive: false, // Assuming audio stream also becomes invalid
+      // status is handled above or by stopRecording
     })
   }
 
@@ -367,6 +389,7 @@ export default class ScreenCapture<
         // recording stopped
         this.setPluginState({
           recording: false,
+          // status will be set to 'captured' after getVideo
         })
         // get video file after recorder stopped
         return this.getVideo()
@@ -379,6 +402,7 @@ export default class ScreenCapture<
         this.setPluginState({
           // eslint-disable-next-line compat/compat
           recordedVideo: URL.createObjectURL(file.data),
+          status: 'recorded',
         })
       })
       .then(
@@ -409,6 +433,7 @@ export default class ScreenCapture<
     this.setPluginState({
       recordedVideo: null,
       capturedScreenshotUrl: null,
+      status: this.getPluginState().streamActive ? 'ready' : 'init',
     })
   }
 
@@ -476,6 +501,7 @@ export default class ScreenCapture<
       audioStreamActive: false,
       recordedVideo: null,
       capturedScreenshotUrl: null,
+      status: 'init',
     })
 
     this.captureActive = false
@@ -581,6 +607,7 @@ export default class ScreenCapture<
               const screenshotUrl = URL.createObjectURL(blob)
               this.setPluginState({
                 capturedScreenshotUrl: screenshotUrl,
+                status: 'captured',
               })
               resolve()
             } catch (err) {
