@@ -50,7 +50,7 @@ export interface ScreenCaptureOptions extends UIPluginOptions {
 }
 
 // https://developer.mozilla.org/en-US/docs/Web/API/MediaStreamConstraints
-export const defaultOptions = {
+const defaultOptions = {
   // https://developer.mozilla.org/en-US/docs/Web/API/MediaTrackConstraints#Properties_of_shared_screen_tracks
   displayMediaConstraints: {
     video: {
@@ -236,7 +236,7 @@ export default class ScreenCapture<
         this.setPluginState({
           streamActive: true,
           status: 'ready',
-          screenRecError: null, // Clear any previous error
+          screenRecError: null,
         })
 
         return videoStream
@@ -346,10 +346,7 @@ export default class ScreenCapture<
     // get screen recorder state
     const { recordedVideo, recording } = { ...this.getPluginState() }
 
-    if (recording) {
-      this.uppy.log('Capture stream inactive — stop recording')
-      this.stopRecording()
-    } else if (!recordedVideo && !recording) {
+    if (!recordedVideo && !recording) {
       // Close the Dashboard panel if plugin is installed
       // into Dashboard (could be other parent UI plugin)
       // @ts-expect-error we can't know Dashboard types here
@@ -358,15 +355,18 @@ export default class ScreenCapture<
         this.parent.hideAllPanels()
       }
       this.setPluginState({ status: 'init' })
+    } else if (recording) {
+      // stop recorder if it is active
+      this.uppy.log('Capture stream inactive — stop recording')
+      this.stopRecording()
     }
 
     this.videoStream = null
-    this.audioStream = null // Assuming audio stream also becomes invalid
+    this.audioStream = null
 
     this.setPluginState({
       streamActive: false,
-      audioStreamActive: false, // Assuming audio stream also becomes invalid
-      // status is handled above or by stopRecording
+      audioStreamActive: false,
     })
   }
 

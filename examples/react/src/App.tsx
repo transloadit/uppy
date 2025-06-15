@@ -235,7 +235,7 @@ function App() {
               max: 5,
             },
           },
-          audio: false, // Disable audio for screenshots
+          audio: false,
         },
         enableScreenshots: true,
         preferredImageMimeType: 'image/webp',
