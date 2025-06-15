@@ -107,7 +107,7 @@ function ScreenCapture({ isOpen, close }: ScreenCaptureProps) {
   const {
     start,
     stop,
-    getVideoProps,
+    getMediaProps,
     getScreenshotButtonProps,
     getRecordButtonProps,
     getStopRecordingButtonProps,
@@ -135,7 +135,7 @@ function ScreenCapture({ isOpen, close }: ScreenCaptureProps) {
       </div>
       <video
         className="border-2 w-full rounded-lg data-[uppy-mirrored=true]:scale-x-[-1]"
-        {...getVideoProps()}
+        {...getMediaProps()}
       />
       <div className="flex gap-2.5 flex-wrap mt-4">
         <button

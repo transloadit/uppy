@@ -20,7 +20,7 @@ export type ScreenCaptureSnapshot = {
   state: ScreenCaptureState
   stop: () => void
   start: () => void
-  getVideoProps: () => {
+  getMediaProps: () => {
     playsInline: boolean
     autoPlay?: boolean
     muted: boolean
@@ -66,7 +66,9 @@ export function createScreenCaptureController(
 ): ScreenCaptureStore {
   const plugin = uppy.getPlugin<ScreenCapture<any, any>>('ScreenCapture')
   if (!plugin) {
-    throw new Error('ScreenCapture plugin is not installed. Install @uppy/screen-capture and add it to the Uppy instance with `uppy.use(ScreenCapture)`.')
+    throw new Error(
+      'ScreenCapture plugin is not installed. Install @uppy/screen-capture and add it to the Uppy instance with `uppy.use(ScreenCapture)`.',
+    )
   }
   const subscribers = new Subscribers()
 
@@ -74,8 +76,10 @@ export function createScreenCaptureController(
     prev,
     next,
     patch,
-  ) : void => {
-    const screenCapturePatch = patch?.plugins?.ScreenCapture as ScreenCaptureState | undefined
+  ): void => {
+    const screenCapturePatch = patch?.plugins?.ScreenCapture as
+      | ScreenCaptureState
+      | undefined
 
     if (screenCapturePatch) {
       subscribers.emit()
@@ -92,10 +96,10 @@ export function createScreenCaptureController(
     plugin.start()
   }
 
-  const getVideoProps = () => {
+  const getMediaProps = () => {
     const ref = document.getElementById(videoId) as HTMLVideoElement | null
-    // plugin.getVideoElement = () => ref // Not needed for screen capture
-    const { status, recordedVideo , capturedScreenshotUrl,  } = plugin.getPluginState()
+    const { status, recordedVideo, capturedScreenshotUrl } =
+      plugin.getPluginState()
     if (status === 'recorded' && recordedVideo) {
       if (ref) {
         ref.srcObject = null
@@ -108,7 +112,8 @@ export function createScreenCaptureController(
         src: recordedVideo,
         autoPlay: undefined,
       }
-    } if (status === 'captured' && capturedScreenshotUrl) {
+    }
+    if (status === 'captured' && capturedScreenshotUrl) {
       if (ref) {
         ref.srcObject = null
       }
@@ -121,7 +126,11 @@ export function createScreenCaptureController(
         autoPlay: undefined,
       }
     }
-    if (ref && plugin.videoStream && !(capturedScreenshotUrl || recordedVideo)) {
+    if (
+      ref &&
+      plugin.videoStream &&
+      !(capturedScreenshotUrl || recordedVideo)
+    ) {
       ref.srcObject = plugin.videoStream
     }
 
@@ -143,7 +152,7 @@ export function createScreenCaptureController(
       },
       disabled: status !== 'ready',
     }
-}
+  }
 
   const getRecordButtonProps = () => {
     const { status } = plugin.getPluginState()
@@ -159,41 +168,44 @@ export function createScreenCaptureController(
   const getStopRecordingButtonProps = () => {
     const { status } = plugin.getPluginState()
     return {
-    type: 'button' as const,
-    onClick: () => {
-      plugin.stopRecording()
-    },
-    disabled: status !== 'recording',
-  }}
+      type: 'button' as const,
+      onClick: () => {
+        plugin.stopRecording()
+      },
+      disabled: status !== 'recording',
+    }
+  }
 
   const getSubmitButtonProps = () => {
     const { status } = plugin.getPluginState()
     return {
-    type: 'button' as const,
-    onClick: () => {
-      plugin.submit()
-      plugin.stop()
-      onSubmit?.()
-    },
-    disabled: !(status === 'captured' || status === 'recorded'),
-  }}
+      type: 'button' as const,
+      onClick: () => {
+        plugin.submit()
+        plugin.stop()
+        onSubmit?.()
+      },
+      disabled: !(status === 'captured' || status === 'recorded'),
+    }
+  }
 
   const getDiscardButtonProps = () => {
     const { status } = plugin.getPluginState()
     return {
-    type: 'button' as const,
-    onClick: () => {
-      plugin.discardRecordedMedia()
-    },
-    disabled: !(status === 'captured' || status === 'recorded'),
-  }}
+      type: 'button' as const,
+      onClick: () => {
+        plugin.discardRecordedMedia()
+      },
+      disabled: !(status === 'captured' || status === 'recorded'),
+    }
+  }
 
   let cachedState = plugin.getPluginState()
   let snapshot: ScreenCaptureSnapshot = {
     state: cachedState,
     stop,
     start,
-    getVideoProps,
+    getMediaProps,
     getScreenshotButtonProps,
     getRecordButtonProps,
     getStopRecordingButtonProps,
