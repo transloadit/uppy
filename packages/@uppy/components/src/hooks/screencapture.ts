@@ -2,14 +2,6 @@ import type { Uppy, UppyEventMap } from '@uppy/core'
 import type { ScreenCaptureState } from '@uppy/screen-capture'
 import ScreenCapture from '@uppy/screen-capture'
 
-// export type ScreenCaptureStatus =
-//   | 'init'
-//   | 'ready'
-//   | 'recording'
-//   | 'captured'
-//   | 'error'
-//   | 'recorded'
-
 type ButtonProps = {
   type: 'button'
   onClick: () => void

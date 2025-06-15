@@ -172,9 +172,6 @@ export default class ScreenCapture<
     this.setPluginState({
       streamActive: false,
       audioStreamActive: false,
-      // Keep other state like recordedVideo, capturedScreenshotUrl, screenRecError
-      // if the plugin was uninstalled and reinstalled.
-      // status should be re-initialized.
       status: 'init',
     })
 
@@ -351,7 +348,7 @@ export default class ScreenCapture<
 
     if (recording) {
       this.uppy.log('Capture stream inactive — stop recording')
-      this.stopRecording() // This will set status to 'captured'
+      this.stopRecording()
     } else if (!recordedVideo && !recording) {
       // Close the Dashboard panel if plugin is installed
       // into Dashboard (could be other parent UI plugin)
@@ -360,7 +357,7 @@ export default class ScreenCapture<
         // @ts-expect-error we can't know Dashboard types here
         this.parent.hideAllPanels()
       }
-      this.setPluginState({ status: 'init' }) // Or 'error' if it's unexpected
+      this.setPluginState({ status: 'init' })
     }
 
     this.videoStream = null
@@ -387,7 +384,6 @@ export default class ScreenCapture<
         // recording stopped
         this.setPluginState({
           recording: false,
-          // status will be set to 'captured' after getVideo
         })
         // get video file after recorder stopped
         return this.getVideo()
