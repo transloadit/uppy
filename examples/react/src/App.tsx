@@ -20,7 +20,6 @@ import Tus from '@uppy/tus'
 import UppyWebcam from '@uppy/webcam'
 import UppyScreenCapture from '@uppy/screen-capture'
 
-
 import './app.css'
 import '@uppy/react/dist/styles.css'
 
@@ -100,8 +99,8 @@ function Webcam({ isOpen, close }: WebcamProps) {
 }
 
 interface ScreenCaptureProps {
-  isOpen: boolean;
-  close: () => void;
+  isOpen: boolean
+  close: () => void
 }
 
 function ScreenCapture({ isOpen, close }: ScreenCaptureProps) {
@@ -114,17 +113,17 @@ function ScreenCapture({ isOpen, close }: ScreenCaptureProps) {
     getStopRecordingButtonProps,
     getSubmitButtonProps,
     getDiscardButtonProps,
-  } = useScreenCapture({ onSubmit: close });
+  } = useScreenCapture({ onSubmit: close })
 
   useEffect(() => {
     if (isOpen) {
-      start();
+      start()
     }
 
     return () => {
-      stop();
-    };
-  }, [start, stop, isOpen]);
+      stop()
+    }
+  }, [start, stop, isOpen])
 
   return (
     <div className="p-4 max-w-lg w-full">
@@ -171,7 +170,7 @@ function ScreenCapture({ isOpen, close }: ScreenCaptureProps) {
         </button>
       </div>
     </div>
-  );
+  )
 }
 
 interface CustomDropzoneProps {
@@ -236,17 +235,18 @@ function App() {
               max: 5,
             },
           },
-      audio: false // Disable audio for screenshots
-    },
-    enableScreenshots: true,
-    preferredImageMimeType: 'image/webp',
-  }).use(UppyWebcam)
-)
+          audio: false, // Disable audio for screenshots
+        },
+        enableScreenshots: true,
+        preferredImageMimeType: 'image/webp',
+      })
+      .use(UppyWebcam),
+  )
 
   const webcamDialogRef = useRef<HTMLDialogElement>(null)
-  const screenCaptureDialogRef = useRef<HTMLDialogElement>(null);
+  const screenCaptureDialogRef = useRef<HTMLDialogElement>(null)
   const [isWebcamOpen, setIsWebcamOpen] = useState(false)
-  const [isScreenCaptureOpen, setIsScreenCaptureOpen] = useState(false);
+  const [isScreenCaptureOpen, setIsScreenCaptureOpen] = useState(false)
 
   function openWebcamModal() {
     setIsWebcamOpen(true)
@@ -259,13 +259,13 @@ function App() {
   }
 
   function openScreenCaptureModal() {
-    setIsScreenCaptureOpen(true);
-    screenCaptureDialogRef.current?.showModal();
+    setIsScreenCaptureOpen(true)
+    screenCaptureDialogRef.current?.showModal()
   }
 
   function closeScreenCaptureModal() {
-    setIsScreenCaptureOpen(false);
-    screenCaptureDialogRef.current?.close();
+    setIsScreenCaptureOpen(false)
+    screenCaptureDialogRef.current?.close()
   }
 
   return (
@@ -286,7 +286,10 @@ function App() {
           ref={screenCaptureDialogRef}
           className="backdrop:bg-gray-500/50 rounded-lg shadow-xl p-0 fixed inset-0 m-auto"
         >
-          <ScreenCapture isOpen={isScreenCaptureOpen} close={() => closeScreenCaptureModal()} />
+          <ScreenCapture
+            isOpen={isScreenCaptureOpen}
+            close={() => closeScreenCaptureModal()}
+          />
         </dialog>
 
         <article>

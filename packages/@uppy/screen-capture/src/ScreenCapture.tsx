@@ -32,7 +32,6 @@ function getMediaDevices() {
 const SUPPORTED_IMAGE_TYPES = ['image/png', 'image/jpeg', 'image/webp'] as const
 type SupportedImageType = (typeof SUPPORTED_IMAGE_TYPES)[number]
 
-
 export type ScreenCaptureStatus =
   | 'init'
   | 'ready'
@@ -348,7 +347,7 @@ export default class ScreenCapture<
 
   streamInactivated(): void {
     // get screen recorder state
-    const { recordedVideo, recording, status } = { ...this.getPluginState() }
+    const { recordedVideo, recording } = { ...this.getPluginState() }
 
     if (recording) {
       this.uppy.log('Capture stream inactive — stop recording')
@@ -363,7 +362,6 @@ export default class ScreenCapture<
       }
       this.setPluginState({ status: 'init' }) // Or 'error' if it's unexpected
     }
-
 
     this.videoStream = null
     this.audioStream = null // Assuming audio stream also becomes invalid
