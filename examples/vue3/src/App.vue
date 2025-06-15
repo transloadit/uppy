@@ -12,21 +12,40 @@
         <Webcam :isOpen="isWebcamOpen" :close="closeWebcamModal" />
       </dialog>
 
+      <dialog
+        ref="screenCaptureDialogRef"
+        class="backdrop:bg-gray-500/50 rounded-lg shadow-xl p-0 fixed inset-0 m-auto"
+      >
+        <ScreenCapture
+          :isOpen="isScreenCaptureOpen"
+          :close="closeScreenCaptureModal"
+        />
+      </dialog>
+
       <article>
         <h2 class="text-2xl my-4">With list</h2>
-        <Dropzone />
+        <Dropzone
+          :openWebcamModal="openWebcamModal"
+          :openScreenCaptureModal="openScreenCaptureModal"
+        />
         <FilesList />
       </article>
 
       <article>
         <h2 class="text-2xl my-4">With grid</h2>
-        <Dropzone />
+        <Dropzone
+          :openWebcamModal="openWebcamModal"
+          :openScreenCaptureModal="openScreenCaptureModal"
+        />
         <FilesGrid :columns="2" />
       </article>
 
       <article>
         <h2 class="text-2xl my-4">With custom dropzone</h2>
-        <CustomDropzone :openWebcamModal="openWebcamModal" />
+        <CustomDropzone
+          :openWebcamModal="openWebcamModal"
+          :openScreenCaptureModal="openScreenCaptureModal"
+        />
       </article>
     </main>
   </UppyContextProvider>
@@ -45,10 +64,14 @@ import {
 } from '@uppy/vue'
 import CustomDropzone from './Dropzone.vue'
 import Webcam from './Webcam.vue'
+import ScreenCapture from './ScreenCapture.vue'
 import UppyWebcam from '@uppy/webcam'
+import UppyScreenCapture from '@uppy/screen-capture'
 
 const webcamDialogRef = ref<HTMLDialogElement | null>(null)
 const isWebcamOpen = ref(false)
+const screenCaptureDialogRef = ref<HTMLDialogElement | null>(null)
+const isScreenCaptureOpen = ref(false)
 
 function openWebcamModal() {
   isWebcamOpen.value = true
@@ -60,12 +83,23 @@ function closeWebcamModal() {
   webcamDialogRef.value?.close()
 }
 
+function openScreenCaptureModal() {
+  isScreenCaptureOpen.value = true
+  screenCaptureDialogRef.value?.showModal()
+}
+
+function closeScreenCaptureModal() {
+  isScreenCaptureOpen.value = false
+  screenCaptureDialogRef.value?.close()
+}
+
 const uppy = computed(() =>
   new Uppy()
     .use(Tus, {
       endpoint: 'https://tusd.tusdemo.net/files/',
     })
-    .use(UppyWebcam),
+    .use(UppyWebcam)
+    .use(UppyScreenCapture),
 )
 </script>
 
