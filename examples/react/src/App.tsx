@@ -126,9 +126,6 @@ function ScreenCapture({ isOpen, close }: ScreenCaptureProps) {
     };
   }, [start, stop, isOpen]);
 
-  console.log("useVideoProps inside App.tsx -----> ", getVideoProps())
-
-
   return (
     <div className="p-4 max-w-lg w-full">
       <div className="flex justify-between items-center mb-4">

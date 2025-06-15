@@ -95,9 +95,8 @@ export function createScreenCaptureController(
   const getVideoProps = () => {
     const ref = document.getElementById(videoId) as HTMLVideoElement | null
     // plugin.getVideoElement = () => ref // Not needed for screen capture
-    const { recordedVideo } = plugin.getPluginState()
-    const { capturedScreenshotUrl } = plugin.getPluginState()
-    if (recordedVideo) {
+    const { status, recordedVideo , capturedScreenshotUrl,  } = plugin.getPluginState()
+    if (status === 'recorded' && recordedVideo) {
       if (ref) {
         ref.srcObject = null
       }
@@ -109,7 +108,7 @@ export function createScreenCaptureController(
         src: recordedVideo,
         autoPlay: undefined,
       }
-    } if (capturedScreenshotUrl) {
+    } if (status === 'captured' && capturedScreenshotUrl) {
       if (ref) {
         ref.srcObject = null
       }
@@ -123,11 +122,9 @@ export function createScreenCaptureController(
       }
     }
     if (ref && plugin.videoStream && !(capturedScreenshotUrl || recordedVideo)) {
-      console.log("<------ if ref exits and setting ref.srcObject to plugin.videoStream ------>")
       ref.srcObject = plugin.videoStream
     }
 
-    console.log("logging the ref object getting returned --> ", ref)
     return {
       id: videoId,
       playsInline: true,
