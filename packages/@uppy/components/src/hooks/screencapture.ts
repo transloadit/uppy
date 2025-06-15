@@ -122,10 +122,12 @@ export function createScreenCaptureController(
         autoPlay: undefined,
       }
     }
-    if (ref && plugin.videoStream) {
-      console.log("if ref exits and setting ref.srcObject to plugin.videoStream")
+    if (ref && plugin.videoStream && !(capturedScreenshotUrl || recordedVideo)) {
+      console.log("<------ if ref exits and setting ref.srcObject to plugin.videoStream ------>")
       ref.srcObject = plugin.videoStream
     }
+
+    console.log("logging the ref object getting returned --> ", ref)
     return {
       id: videoId,
       playsInline: true,
