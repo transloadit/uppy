@@ -1,13 +1,18 @@
 import { useMemo } from 'react'
 import { useSyncExternalStore } from 'use-sync-external-store/shim/index.js'
-import { createScreenCaptureController, type ScreenCaptureSnapshot } from '@uppy/components'
+import {
+  createScreenCaptureController,
+  type ScreenCaptureSnapshot,
+} from '@uppy/components'
 import { useUppyContext } from './headless/UppyContextProvider.js'
 
 type ScreenCaptureProps = {
   onSubmit: () => void
 }
 
-export function useScreenCapture({ onSubmit }: ScreenCaptureProps): ScreenCaptureSnapshot {
+export function useScreenCapture({
+  onSubmit,
+}: ScreenCaptureProps): ScreenCaptureSnapshot {
   const { uppy } = useUppyContext()
   const controller = useMemo(
     () => createScreenCaptureController(uppy, onSubmit),
