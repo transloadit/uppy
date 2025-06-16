@@ -175,9 +175,13 @@ function ScreenCapture({ isOpen, close }: ScreenCaptureProps) {
 
 interface CustomDropzoneProps {
   openWebcamModal: () => void
+  openScreenCaptureModal: () => void
 }
 
-function CustomDropzone({ openWebcamModal }: CustomDropzoneProps) {
+function CustomDropzone({
+  openWebcamModal,
+  openScreenCaptureModal,
+}: CustomDropzoneProps) {
   const { getRootProps, getInputProps } = useDropzone({
     noClick: true,
   })
@@ -211,6 +215,16 @@ function CustomDropzone({ openWebcamModal }: CustomDropzoneProps) {
               <ProviderIcon provider="camera" fill="#02B383" />
             </div>
             Webcam
+          </button>
+
+          <button
+            onClick={openScreenCaptureModal}
+            className="hover:bg-gray-100 transition-colors p-2 rounded-md flex flex-col items-center gap-2 text-sm"
+          >
+            <div className="bg-white shadow-md rounded-md p-1">
+              <ProviderIcon provider="screen-capture" fill="#FF5733" />
+            </div>
+            Screen Capture
           </button>
         </div>
       </div>
@@ -306,16 +320,11 @@ function App() {
 
         <article>
           <h2 className="text-2xl my-4">With custom dropzone</h2>
-          <CustomDropzone openWebcamModal={() => openWebcamModal()} />
-          <button
-            onClick={openScreenCaptureModal}
-            className="hover:bg-gray-100 transition-colors p-2 rounded-md flex flex-col items-center gap-2 text-sm"
-          >
-            <div className="bg-white shadow-md rounded-md p-1">
-              <ProviderIcon provider="screen-capture" fill="#FF5733" />
-            </div>
-            Screen Capture
-          </button>
+          <CustomDropzone
+            openWebcamModal={() => openWebcamModal()}
+            openScreenCaptureModal={() => openScreenCaptureModal()}
+          />
+          <FilesList />
         </article>
       </main>
     </UppyContextProvider>

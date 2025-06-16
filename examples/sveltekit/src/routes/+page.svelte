@@ -72,13 +72,13 @@
 
     <article>
       <h2 class="text-2xl my-4">With list</h2>
-      <Dropzone {openWebcamModal} {openScreenCaptureModal}/>
+      <Dropzone />
       <FilesList />
     </article>
 
     <article>
       <h2 class="text-2xl my-4">With grid</h2>
-      <Dropzone {openWebcamModal} {openScreenCaptureModal}/>
+      <Dropzone />
       <FilesGrid columns={2} />
     </article>
 
