@@ -11683,6 +11683,7 @@ __metadata:
     "@uppy/dashboard": "workspace:*"
     "@uppy/drag-drop": "workspace:*"
     "@uppy/progress-bar": "workspace:*"
+    "@uppy/screen-capture": "workspace:*"
     "@uppy/svelte": "workspace:*"
     "@uppy/tus": "workspace:*"
     "@uppy/webcam": "workspace:*"
