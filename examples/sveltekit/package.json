@@ -18,7 +18,8 @@
     "@uppy/progress-bar": "workspace:*",
     "@uppy/svelte": "workspace:*",
     "@uppy/tus": "workspace:*",
-    "@uppy/webcam": "workspace:*"
+    "@uppy/webcam": "workspace:*",
+    "@uppy/screen-capture": "workspace:*"
   },
   "devDependencies": {
     "@sveltejs/adapter-auto": "^4.0.0",
