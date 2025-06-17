@@ -68,7 +68,7 @@ describe('Dashboard with Transloadit', () => {
 
         uppy.cancelAll()
 
-        cy.wait(['@delete', '@tusDelete']).then(() => {
+        cy.wait(['@delete']).then(() => {
           expect(assembly.closed).to.be.true
         })
       })
