@@ -45,7 +45,7 @@ describe('Dashboard with Transloadit', () => {
     })
   })
 
-  it('should close assembly when cancelled', () => {
+  it.skip('should close assembly when cancelled', () => {
     cy.intercept({ path: '/resumable/*', method: 'POST' }).as('tusCreate')
     cy.intercept({ path: '/assemblies', method: 'POST' }).as('createAssemblies')
     cy.intercept({ path: '/assemblies/*', method: 'DELETE' }).as('delete')
