@@ -49,9 +49,6 @@ describe('Dashboard with Transloadit', () => {
     cy.intercept({ path: '/resumable/*', method: 'POST' }).as('tusCreate')
     cy.intercept({ path: '/assemblies', method: 'POST' }).as('createAssemblies')
     cy.intercept({ path: '/assemblies/*', method: 'DELETE' }).as('delete')
-    cy.intercept({ path: '/resumable/files/*', method: 'DELETE' }).as(
-      'tusDelete',
-    )
 
     cy.window().then(({ uppy }) => {
       cy.get('@file-input').selectFile(
