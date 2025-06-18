@@ -27,6 +27,7 @@
     "@tailwindcss/cli": "^4.0.6",
     "@webcam/core": "^1.0.1",
     "clsx": "^2.1.1",
+    "dequal": "^2.0.3",
     "preact": "^10.5.13",
     "pretty-bytes": "^6.1.1",
     "tailwindcss": "^4.0.6"
@@ -35,6 +36,7 @@
     "@uppy/audio": "workspace:^",
     "@uppy/core": "workspace:^",
     "@uppy/image-editor": "workspace:^",
+    "@uppy/remote-sources": "workspace:^",
     "@uppy/screen-capture": "workspace:^",
     "@uppy/webcam": "workspace:^"
   },
@@ -46,6 +48,9 @@
       "optional": true
     },
     "@uppy/image-editor": {
+      "optional": true
+    },
+    "@uppy/remote-sources": {
       "optional": true
     },
     "@uppy/screen-capture": {

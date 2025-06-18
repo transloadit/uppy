@@ -33,9 +33,9 @@ export default function Thumbnail(props: ThumbnailProps) {
   const isPDF = fileTypeGeneral === 'application' && fileTypeSpecific === 'pdf'
 
   const objectUrl = useMemo(() => {
-    if (!props.images) return ''
+    if (!props.images || props.file.isRemote) return ''
     return URL.createObjectURL(props.file.data)
-  }, [props.file.data, props.images])
+  }, [props.file.data, props.images, props.file.isRemote])
   const showThumbnail = props.images && isImage && objectUrl
 
   useEffect(() => {
