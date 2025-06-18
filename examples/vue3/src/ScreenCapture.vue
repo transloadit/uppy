@@ -36,7 +36,7 @@
         Submit
       </button>
       <button
-        class="bg-gray-500 text-white px-4 py-2 rounded-md"
+        class="bg-gray-500 text-white px-4 py-2 rounded-md disabled:opacity-50 disabled:bg-gray-300"
         v-bind="screenCapture.getDiscardButtonProps()"
       >
         Discard
