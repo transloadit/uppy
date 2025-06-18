@@ -12,7 +12,7 @@ export type ScreenCaptureSnapshot = {
   state: ScreenCaptureState
   stop: () => void
   start: () => void
-  getMediaProps: () => {
+  getVideoProps: () => {
     playsInline: boolean
     autoPlay?: boolean
     muted: boolean
@@ -88,7 +88,7 @@ export function createScreenCaptureController(
     plugin.start()
   }
 
-  const getMediaProps = () => {
+  const getVideoProps = () => {
     const ref = document.getElementById(videoId) as HTMLVideoElement | null
     const { status, recordedVideo, capturedScreenshotUrl } =
       plugin.getPluginState()
@@ -204,7 +204,7 @@ export function createScreenCaptureController(
     state: cachedState,
     stop,
     start,
-    getMediaProps,
+    getVideoProps,
     getScreenshotButtonProps,
     getRecordButtonProps,
     getStopRecordingButtonProps,

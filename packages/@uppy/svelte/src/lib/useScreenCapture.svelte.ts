@@ -19,7 +19,7 @@ type SvelteScreenCaptureSnapshot = {
   state: ScreenCaptureSnapshot['state']
   stop: () => void
   start: () => void
-  getMediaProps: () => ReturnType<ScreenCaptureSnapshot['getMediaProps']>
+  getVideoProps: () => ReturnType<ScreenCaptureSnapshot['getVideoProps']>
   getScreenshotButtonProps: () => ButtonProps
   getRecordButtonProps: () => ButtonProps
   getStopRecordingButtonProps: () => ButtonProps
@@ -46,8 +46,8 @@ export function useScreenCapture(props?: ScreenCaptureProps): SvelteScreenCaptur
     get start() {
       return store.value.start
     },
-    get getMediaProps() {
-      return store.value.getMediaProps
+    get getVideoProps() {
+      return store.value.getVideoProps
     },
     getScreenshotButtonProps: () => {
       const { onClick, ...rest } = store.value.getScreenshotButtonProps()

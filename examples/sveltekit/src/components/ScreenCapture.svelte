@@ -34,7 +34,7 @@
   </div>
   <video
     class="border-2 w-full rounded-lg"
-    {...screenCaptureStore.getMediaProps()}
+    {...screenCaptureStore.getVideoProps()}
   ></video>
   <div class="flex flex-wrap gap-2.5 mt-4">
     <button

@@ -8,7 +8,7 @@
     </div>
     <video
       class="border-2 w-full rounded-lg"
-      v-bind="screenCapture.getMediaProps()"
+      v-bind="screenCapture.getVideoProps()"
     />
     <div class="flex gap-2.5 flex-wrap mt-4">
       <button
