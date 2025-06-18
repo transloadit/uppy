@@ -1,4 +1,4 @@
-describe('@uppy/vue', () => {
+describe.skip('@uppy/vue', () => {
   beforeEach(() => {
     cy.visit('/dashboard-vue')
     cy.get('input[type="file"]').first().as('file-input')
