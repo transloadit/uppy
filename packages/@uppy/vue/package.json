@@ -6,6 +6,7 @@
   "main": "lib/index.js",
   "dependencies": {
     "@uppy/components": "workspace:^",
+    "@uppy/core": "workspace:*",
     "preact": "^10.5.13",
     "shallow-equal": "^3.0.0"
   },

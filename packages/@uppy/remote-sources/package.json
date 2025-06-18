@@ -27,6 +27,7 @@
   },
   "dependencies": {
     "@uppy/box": "workspace:^",
+    "@uppy/core": "workspace:*",
     "@uppy/dashboard": "workspace:^",
     "@uppy/dropbox": "workspace:^",
     "@uppy/facebook": "workspace:^",

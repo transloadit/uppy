@@ -38,6 +38,7 @@
   },
   "dependencies": {
     "@uppy/components": "workspace:^",
+    "@uppy/core": "workspace:*",
     "preact": "^10.26.5"
   },
   "devDependencies": {

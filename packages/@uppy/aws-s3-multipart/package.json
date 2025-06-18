@@ -23,6 +23,7 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
-    "@uppy/aws-s3": "workspace:^"
+    "@uppy/aws-s3": "workspace:^",
+    "@uppy/core": "workspace:*"
   }
 }

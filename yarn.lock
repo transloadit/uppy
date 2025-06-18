@@ -11191,6 +11191,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@typescript-eslint/scope-manager@npm:7.18.0":
+  version: 7.18.0
+  resolution: "@typescript-eslint/scope-manager@npm:7.18.0"
+  dependencies:
+    "@typescript-eslint/types": "npm:7.18.0"
+    "@typescript-eslint/visitor-keys": "npm:7.18.0"
+  checksum: 10/9eb2ae5d69d9f723e706c16b2b97744fc016996a5473bed596035ac4d12429b3d24e7340a8235d704efa57f8f52e1b3b37925ff7c2e3384859d28b23a99b8bcc
+  languageName: node
+  linkType: hard
+
 "@typescript-eslint/type-utils@npm:7.13.1":
   version: 7.13.1
   resolution: "@typescript-eslint/type-utils@npm:7.13.1"
@@ -11215,6 +11225,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@typescript-eslint/types@npm:7.18.0, @typescript-eslint/types@npm:^7.18.0":
+  version: 7.18.0
+  resolution: "@typescript-eslint/types@npm:7.18.0"
+  checksum: 10/0e30c73a3cc3c67dd06360a5a12fd12cee831e4092750eec3d6c031bdc4feafcb0ab1d882910a73e66b451a4f6e1dd015e9e2c4d45bf6bf716a474e5d123ddf0
+  languageName: node
+  linkType: hard
+
 "@typescript-eslint/typescript-estree@npm:7.13.1":
   version: 7.13.1
   resolution: "@typescript-eslint/typescript-estree@npm:7.13.1"
@@ -11234,6 +11251,25 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@typescript-eslint/typescript-estree@npm:7.18.0":
+  version: 7.18.0
+  resolution: "@typescript-eslint/typescript-estree@npm:7.18.0"
+  dependencies:
+    "@typescript-eslint/types": "npm:7.18.0"
+    "@typescript-eslint/visitor-keys": "npm:7.18.0"
+    debug: "npm:^4.3.4"
+    globby: "npm:^11.1.0"
+    is-glob: "npm:^4.0.3"
+    minimatch: "npm:^9.0.4"
+    semver: "npm:^7.6.0"
+    ts-api-utils: "npm:^1.3.0"
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  checksum: 10/b01e66235a91aa4439d02081d4a5f8b4a7cf9cb24f26b334812f657e3c603493e5f41e5c1e89cf4efae7d64509fa1f73affc16afc5e15cb7f83f724577c82036
+  languageName: node
+  linkType: hard
+
 "@typescript-eslint/utils@npm:7.13.1, @typescript-eslint/utils@npm:^6.0.0 || ^7.0.0":
   version: 7.13.1
   resolution: "@typescript-eslint/utils@npm:7.13.1"
@@ -11248,6 +11284,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@typescript-eslint/utils@npm:^7.13.1":
+  version: 7.18.0
+  resolution: "@typescript-eslint/utils@npm:7.18.0"
+  dependencies:
+    "@eslint-community/eslint-utils": "npm:^4.4.0"
+    "@typescript-eslint/scope-manager": "npm:7.18.0"
+    "@typescript-eslint/types": "npm:7.18.0"
+    "@typescript-eslint/typescript-estree": "npm:7.18.0"
+  peerDependencies:
+    eslint: ^8.56.0
+  checksum: 10/f43fedb4f4d2e3836bdf137889449063a55c0ece74fdb283929cd376197b992313be8ef4df920c1c801b5c3076b92964c84c6c3b9b749d263b648d0011f5926e
+  languageName: node
+  linkType: hard
+
 "@typescript-eslint/visitor-keys@npm:7.13.1":
   version: 7.13.1
   resolution: "@typescript-eslint/visitor-keys@npm:7.13.1"
@@ -11255,6 +11305,16 @@ __metadata:
     "@typescript-eslint/types": "npm:7.13.1"
     eslint-visitor-keys: "npm:^3.4.3"
   checksum: 10/811e9642851359b5197d45a9878143c4c608aaef887a20c26f57f8b012ce9e316d232b82a311bdd52a2af0c8b8da5d4bd9401ce565fc7bdb43cd44556e76d225
+  languageName: node
+  linkType: hard
+
+"@typescript-eslint/visitor-keys@npm:7.18.0":
+  version: 7.18.0
+  resolution: "@typescript-eslint/visitor-keys@npm:7.18.0"
+  dependencies:
+    "@typescript-eslint/types": "npm:7.18.0"
+    eslint-visitor-keys: "npm:^3.4.3"
+  checksum: 10/b7cfe6fdeae86c507357ac6b2357813c64fb2fbf1aaf844393ba82f73a16e2599b41981b34200d9fc7765d70bc3a8181d76b503051e53f04bcb7c9afef637eab
   languageName: node
   linkType: hard
 
@@ -11342,6 +11402,7 @@ __metadata:
   dependencies:
     "@uppy/companion": "workspace:^"
     autoprefixer: "npm:^10.2.6"
+    postcss: "npm:^8.5.3"
     postcss-dir-pseudo-class: "npm:^6.0.0"
     postcss-logical: "npm:^5.0.0"
     vite: "npm:^5.4.17"
@@ -11434,12 +11495,16 @@ __metadata:
     "@types/jasmine": "npm:~5.1.0"
     "@typescript-eslint/eslint-plugin": "npm:^7.2.0"
     "@typescript-eslint/parser": "npm:^7.2.0"
+    "@typescript-eslint/utils": "npm:^7.13.1"
     "@uppy/angular": "workspace:*"
     "@uppy/core": "workspace:*"
+    "@uppy/dashboard": "workspace:*"
     "@uppy/drag-drop": "workspace:*"
     "@uppy/google-drive": "workspace:*"
     "@uppy/progress-bar": "workspace:*"
+    "@uppy/status-bar": "workspace:*"
     "@uppy/tus": "workspace:*"
+    "@uppy/utils": "workspace:*"
     "@uppy/webcam": "workspace:*"
     eslint: "npm:^8.57.0"
     jasmine-core: "npm:~5.1.0"
@@ -11448,6 +11513,7 @@ __metadata:
     karma-coverage: "npm:~2.2.0"
     karma-jasmine: "npm:~5.1.0"
     karma-jasmine-html-reporter: "npm:~2.1.0"
+    preact: "npm:^10.5.13"
     rxjs: "npm:~7.8.0"
     tslib: "npm:^2.3.0"
     typescript: "npm:~5.4"
@@ -11627,6 +11693,7 @@ __metadata:
     expo: "npm:~43.0.2"
     expo-file-system: "npm:~13.0.3"
     expo-status-bar: "npm:~1.1.0"
+    preact: "npm:^10.5.13"
     preact-render-to-string: "npm:^5.1.0"
     react: "npm:17.0.1"
     react-dom: "npm:17.0.1"
@@ -11682,6 +11749,7 @@ __metadata:
     "@uppy/dashboard": "workspace:*"
     "@uppy/drag-drop": "workspace:*"
     "@uppy/progress-bar": "workspace:*"
+    "@uppy/status-bar": "workspace:*"
     "@uppy/svelte": "workspace:*"
     "@uppy/tus": "workspace:*"
     "@uppy/webcam": "workspace:*"
@@ -11809,6 +11877,7 @@ __metadata:
   resolution: "@uppy/aws-s3-multipart@workspace:packages/@uppy/aws-s3-multipart"
   dependencies:
     "@uppy/aws-s3": "workspace:^"
+    "@uppy/core": "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -11819,6 +11888,7 @@ __metadata:
     "@aws-sdk/client-s3": "npm:^3.362.0"
     "@aws-sdk/s3-request-presigner": "npm:^3.362.0"
     "@uppy/companion-client": "workspace:^"
+    "@uppy/core": "workspace:*"
     "@uppy/utils": "workspace:^"
     nock: "npm:^13.1.0"
     vitest: "npm:^1.6.1"
@@ -11833,6 +11903,7 @@ __metadata:
   resolution: "@uppy/box@workspace:packages/@uppy/box"
   dependencies:
     "@uppy/companion-client": "workspace:^"
+    "@uppy/core": "workspace:*"
     "@uppy/provider-views": "workspace:^"
     "@uppy/utils": "workspace:^"
     preact: "npm:^10.5.13"
@@ -11987,6 +12058,7 @@ __metadata:
   resolution: "@uppy/dashboard@workspace:packages/@uppy/dashboard"
   dependencies:
     "@transloadit/prettier-bytes": "npm:^0.3.4"
+    "@uppy/core": "workspace:*"
     "@uppy/google-drive": "workspace:^"
     "@uppy/informer": "workspace:^"
     "@uppy/provider-views": "workspace:^"
@@ -12034,6 +12106,7 @@ __metadata:
   resolution: "@uppy/dropbox@workspace:packages/@uppy/dropbox"
   dependencies:
     "@uppy/companion-client": "workspace:^"
+    "@uppy/core": "workspace:*"
     "@uppy/provider-views": "workspace:^"
     "@uppy/utils": "workspace:^"
     preact: "npm:^10.5.13"
@@ -12047,6 +12120,7 @@ __metadata:
   resolution: "@uppy/facebook@workspace:packages/@uppy/facebook"
   dependencies:
     "@uppy/companion-client": "workspace:^"
+    "@uppy/core": "workspace:*"
     "@uppy/provider-views": "workspace:^"
     "@uppy/utils": "workspace:^"
     preact: "npm:^10.5.13"
@@ -12093,6 +12167,7 @@ __metadata:
   resolution: "@uppy/google-drive-picker@workspace:packages/@uppy/google-drive-picker"
   dependencies:
     "@uppy/companion-client": "workspace:^"
+    "@uppy/core": "workspace:*"
     "@uppy/provider-views": "workspace:^"
     "@uppy/utils": "workspace:^"
     preact: "npm:^10.5.13"
@@ -12106,6 +12181,7 @@ __metadata:
   resolution: "@uppy/google-drive@workspace:packages/@uppy/google-drive"
   dependencies:
     "@uppy/companion-client": "workspace:^"
+    "@uppy/core": "workspace:*"
     "@uppy/provider-views": "workspace:^"
     "@uppy/utils": "workspace:^"
     preact: "npm:^10.5.13"
@@ -12119,6 +12195,7 @@ __metadata:
   resolution: "@uppy/google-photos-picker@workspace:packages/@uppy/google-photos-picker"
   dependencies:
     "@uppy/companion-client": "workspace:^"
+    "@uppy/core": "workspace:*"
     "@uppy/provider-views": "workspace:^"
     "@uppy/utils": "workspace:^"
     preact: "npm:^10.5.13"
@@ -12155,6 +12232,7 @@ __metadata:
   resolution: "@uppy/instagram@workspace:packages/@uppy/instagram"
   dependencies:
     "@uppy/companion-client": "workspace:^"
+    "@uppy/core": "workspace:*"
     "@uppy/provider-views": "workspace:^"
     "@uppy/utils": "workspace:^"
     preact: "npm:^10.5.13"
@@ -12176,6 +12254,7 @@ __metadata:
   resolution: "@uppy/onedrive@workspace:packages/@uppy/onedrive"
   dependencies:
     "@uppy/companion-client": "workspace:^"
+    "@uppy/core": "workspace:*"
     "@uppy/provider-views": "workspace:^"
     "@uppy/utils": "workspace:^"
     preact: "npm:^10.5.13"
@@ -12220,8 +12299,11 @@ __metadata:
     "@uppy/core": "workspace:*"
     "@uppy/instagram": "workspace:^"
     "@uppy/url": "workspace:^"
+    expo: "npm:43.0.5"
     expo-document-picker: "npm:^10.3.0"
     expo-image-picker: "npm:^13.3.1"
+    react: "npm:17.0.1"
+    react-native: "npm:0.64.3"
     react-native-super-grid: "npm:*"
   peerDependencies:
     expo: ">=33.0.0"
@@ -12239,6 +12321,7 @@ __metadata:
     "@types/react": "npm:^18.0.8"
     "@types/use-sync-external-store": "npm:^0.0.6"
     "@uppy/components": "workspace:^"
+    "@uppy/core": "workspace:*"
     "@uppy/utils": "workspace:^"
     preact: "npm:^10.5.13"
     react: "npm:^18.2.0"
@@ -12286,6 +12369,7 @@ __metadata:
   resolution: "@uppy/remote-sources@workspace:packages/@uppy/remote-sources"
   dependencies:
     "@uppy/box": "workspace:^"
+    "@uppy/core": "workspace:*"
     "@uppy/dashboard": "workspace:^"
     "@uppy/dropbox": "workspace:^"
     "@uppy/facebook": "workspace:^"
@@ -12313,7 +12397,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/status-bar@workspace:^, @uppy/status-bar@workspace:packages/@uppy/status-bar":
+"@uppy/status-bar@workspace:*, @uppy/status-bar@workspace:^, @uppy/status-bar@workspace:packages/@uppy/status-bar":
   version: 0.0.0-use.local
   resolution: "@uppy/status-bar@workspace:packages/@uppy/status-bar"
   dependencies:
@@ -12353,6 +12437,7 @@ __metadata:
     "@sveltejs/package": "npm:^2.3.11"
     "@sveltejs/vite-plugin-svelte": "npm:^5.0.3"
     "@uppy/components": "workspace:^"
+    "@uppy/core": "workspace:*"
     preact: "npm:^10.26.5"
     svelte: "npm:^5.27.0"
     svelte-check: "npm:^4.1.6"
@@ -12387,6 +12472,7 @@ __metadata:
   resolution: "@uppy/transloadit@workspace:packages/@uppy/transloadit"
   dependencies:
     "@uppy/companion-client": "workspace:^"
+    "@uppy/core": "workspace:*"
     "@uppy/provider-views": "workspace:^"
     "@uppy/tus": "workspace:^"
     "@uppy/utils": "workspace:^"
@@ -12403,6 +12489,7 @@ __metadata:
   resolution: "@uppy/tus@workspace:packages/@uppy/tus"
   dependencies:
     "@uppy/companion-client": "workspace:^"
+    "@uppy/core": "workspace:*"
     "@uppy/utils": "workspace:^"
     tus-js-client: "npm:^4.2.3"
     vitest: "npm:^1.6.1"
@@ -12416,6 +12503,7 @@ __metadata:
   resolution: "@uppy/unsplash@workspace:packages/@uppy/unsplash"
   dependencies:
     "@uppy/companion-client": "workspace:^"
+    "@uppy/core": "workspace:*"
     "@uppy/provider-views": "workspace:^"
     "@uppy/utils": "workspace:^"
     preact: "npm:^10.5.13"
@@ -12429,6 +12517,7 @@ __metadata:
   resolution: "@uppy/url@workspace:packages/@uppy/url"
   dependencies:
     "@uppy/companion-client": "workspace:^"
+    "@uppy/core": "workspace:*"
     "@uppy/utils": "workspace:^"
     nanoid: "npm:^5.0.9"
     preact: "npm:^10.5.13"
@@ -12437,7 +12526,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/utils@workspace:^, @uppy/utils@workspace:packages/@uppy/utils":
+"@uppy/utils@workspace:*, @uppy/utils@workspace:^, @uppy/utils@workspace:packages/@uppy/utils":
   version: 0.0.0-use.local
   resolution: "@uppy/utils@workspace:packages/@uppy/utils"
   dependencies:
@@ -12453,6 +12542,7 @@ __metadata:
   resolution: "@uppy/vue@workspace:packages/@uppy/vue"
   dependencies:
     "@uppy/components": "workspace:^"
+    "@uppy/core": "workspace:*"
     preact: "npm:^10.5.13"
     shallow-equal: "npm:^3.0.0"
     vue: "npm:^3.5.14"
@@ -12496,6 +12586,7 @@ __metadata:
   resolution: "@uppy/webdav@workspace:packages/@uppy/webdav"
   dependencies:
     "@uppy/companion-client": "workspace:^"
+    "@uppy/core": "workspace:*"
     "@uppy/provider-views": "workspace:^"
     "@uppy/utils": "workspace:^"
     preact: "npm:^10.5.13"
@@ -12509,6 +12600,7 @@ __metadata:
   resolution: "@uppy/xhr-upload@workspace:packages/@uppy/xhr-upload"
   dependencies:
     "@uppy/companion-client": "workspace:^"
+    "@uppy/core": "workspace:*"
     "@uppy/utils": "workspace:^"
     nock: "npm:^13.1.0"
     vitest: "npm:^1.6.1"
@@ -12522,6 +12614,7 @@ __metadata:
   resolution: "@uppy/zoom@workspace:packages/@uppy/zoom"
   dependencies:
     "@uppy/companion-client": "workspace:^"
+    "@uppy/core": "workspace:*"
     "@uppy/provider-views": "workspace:^"
     "@uppy/utils": "workspace:^"
     preact: "npm:^10.5.13"
@@ -13308,6 +13401,9 @@ __metadata:
     "@types/jasmine": "npm:~5.1.0"
     "@typescript-eslint/eslint-plugin": "npm:^7.2.0"
     "@typescript-eslint/parser": "npm:^7.2.0"
+    "@typescript-eslint/types": "npm:^7.18.0"
+    "@typescript-eslint/utils": "npm:^7.13.1"
+    eslint: "npm:8.57.0"
     jasmine-core: "npm:~5.1.0"
     karma: "npm:~6.4.0"
     karma-chrome-launcher: "npm:~3.2.0"
@@ -18497,7 +18593,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint@npm:^8.0.0, eslint@npm:^8.2.0, eslint@npm:^8.57.0":
+"eslint@npm:8.57.0, eslint@npm:^8.0.0, eslint@npm:^8.2.0, eslint@npm:^8.57.0":
   version: 8.57.0
   resolution: "eslint@npm:8.57.0"
   dependencies:
@@ -18988,7 +19084,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"expo@npm:~43.0.2":
+"expo@npm:43.0.5, expo@npm:~43.0.2":
   version: 43.0.5
   resolution: "expo@npm:43.0.5"
   dependencies:
