@@ -105,6 +105,13 @@ export function createScreenCaptureController(
         autoPlay: undefined,
       }
     }
+
+    /*
+     * If the status is 'captured', we use the capturedScreenshotUrl as the poster
+     * for the video element. This allows us to display the screenshot as a static image
+     * disabling controls and autoplay helps disguise the video element
+     * as a result we're using the same video element for both the screenshot and the recorded video.
+     */
     if (status === 'captured' && capturedScreenshotUrl) {
       if (ref) {
         ref.srcObject = null
