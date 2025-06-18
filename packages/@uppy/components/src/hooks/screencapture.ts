@@ -92,7 +92,7 @@ export function createScreenCaptureController(
     const ref = document.getElementById(videoId) as HTMLVideoElement | null
     const { status, recordedVideo, capturedScreenshotUrl } =
       plugin.getPluginState()
-    if (status === 'recorded' && recordedVideo) {
+    if (status === 'captured' && recordedVideo) {
       if (ref) {
         ref.srcObject = null
       }
@@ -184,7 +184,7 @@ export function createScreenCaptureController(
         plugin.stop()
         onSubmit?.()
       },
-      disabled: !(status === 'captured' || status === 'recorded'),
+      disabled: !(status === 'captured'),
     }
   }
 
@@ -195,7 +195,7 @@ export function createScreenCaptureController(
       onClick: () => {
         plugin.discardRecordedMedia()
       },
-      disabled: !(status === 'captured' || status === 'recorded'),
+      disabled: !(status === 'captured'),
     }
   }
 

@@ -37,7 +37,6 @@ export type ScreenCaptureStatus =
   | 'ready'
   | 'recording'
   | 'captured'
-  | 'recorded'
   | 'error'
 
 export interface ScreenCaptureOptions extends UIPluginOptions {
@@ -396,7 +395,7 @@ export default class ScreenCapture<
         this.setPluginState({
           // eslint-disable-next-line compat/compat
           recordedVideo: URL.createObjectURL(file.data),
-          status: 'recorded',
+          status: 'captured',
         })
       })
       .then(
