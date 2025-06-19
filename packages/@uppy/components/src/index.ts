@@ -30,6 +30,12 @@ export {
   type WebcamSnapshot,
 } from './hooks/webcam.js'
 
+export {
+  createScreenCaptureController,
+  type ScreenCaptureStore,
+  type ScreenCaptureSnapshot,
+} from './hooks/screencapture.js'
+
 // Types and utils
 export type {
   UppyContext,

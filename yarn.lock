@@ -11644,6 +11644,7 @@ __metadata:
     "@types/react-dom": "npm:^19.0.4"
     "@uppy/core": "workspace:*"
     "@uppy/react": "workspace:*"
+    "@uppy/screen-capture": "workspace:*"
     "@uppy/tus": "workspace:*"
     "@uppy/webcam": "workspace:*"
     "@vitejs/plugin-react": "npm:^4.3.4"
@@ -11682,6 +11683,7 @@ __metadata:
     "@uppy/dashboard": "workspace:*"
     "@uppy/drag-drop": "workspace:*"
     "@uppy/progress-bar": "workspace:*"
+    "@uppy/screen-capture": "workspace:*"
     "@uppy/svelte": "workspace:*"
     "@uppy/tus": "workspace:*"
     "@uppy/webcam": "workspace:*"
@@ -11750,6 +11752,7 @@ __metadata:
     "@uppy/dashboard": "workspace:*"
     "@uppy/drag-drop": "workspace:*"
     "@uppy/progress-bar": "workspace:*"
+    "@uppy/screen-capture": "workspace:*"
     "@uppy/tus": "workspace:*"
     "@uppy/vue": "workspace:*"
     "@uppy/webcam": "workspace:*"
@@ -12302,7 +12305,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/screen-capture@workspace:^, @uppy/screen-capture@workspace:packages/@uppy/screen-capture":
+"@uppy/screen-capture@workspace:*, @uppy/screen-capture@workspace:^, @uppy/screen-capture@workspace:packages/@uppy/screen-capture":
   version: 0.0.0-use.local
   resolution: "@uppy/screen-capture@workspace:packages/@uppy/screen-capture"
   dependencies:

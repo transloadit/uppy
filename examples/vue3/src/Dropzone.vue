@@ -26,6 +26,16 @@
         </div>
         Webcam
       </button>
+
+      <button
+        @click="props.openScreenCaptureModal"
+        class="hover:bg-gray-100 transition-colors p-2 rounded-md flex flex-col items-center gap-2 text-sm"
+      >
+        <div class="bg-white shadow-md rounded-md p-1">
+          <ProviderIcon provider="screen-capture" fill="#FF69B4" />
+        </div>
+        Screen Capture
+      </button>
     </div>
   </div>
 </template>
@@ -35,6 +45,7 @@ import { useDropzone, useFileInput, ProviderIcon } from '@uppy/vue'
 
 const props = defineProps<{
   openWebcamModal: () => void
+  openScreenCaptureModal: () => void
 }>()
 
 const { getRootProps, getInputProps } = useDropzone({
