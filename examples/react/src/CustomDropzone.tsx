@@ -26,7 +26,6 @@ export function CustomDropzone({
         <div className="flex items-center justify-center gap-4">
           <input {...getFileInputProps()} className="hidden" />
           <button
-            type="button"
             {...getButtonProps()}
             className="hover:bg-gray-100 transition-colors p-2 rounded-md flex flex-col items-center gap-2 text-sm"
           >
