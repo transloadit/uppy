@@ -157,7 +157,8 @@ th_TH.strings = {
     '1': '%{smart_count} ไฟล์ที่สามารถเพิ่มได้',
   },
   xTimeLeft: 'เหลืออีก %{time}',
-  youCanOnlyUploadFileTypes: 'คุณสามารถอัพโหลดได้แค่: %{types}',
+  youCanOnlyUploadFileTypes:
+    '%{file} ไม่รองรับ คุณสามารถอัพโหลดได้แค่: %{types}',
   youCanOnlyUploadX: {
     '0': 'คุณสามารถอัพโหลดได้แค่ %{smart_count} ไฟล์',
     '1': 'คุณสามารถอัพโหลดได้แค่ %{smart_count} ไฟล์',

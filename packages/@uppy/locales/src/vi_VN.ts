@@ -214,7 +214,8 @@ vi_VN.strings = {
     '1': 'Thêm %{smart_count} tệp',
   },
   xTimeLeft: 'Còn lại %{time}',
-  youCanOnlyUploadFileTypes: 'Bạn chỉ có thể tải lên: %{types}',
+  youCanOnlyUploadFileTypes:
+    '%{file} không được hỗ trợ. Bạn chỉ có thể tải lên: %{types}',
   youCanOnlyUploadX: {
     '0': 'Bạn chỉ có thể tải lên %{smart_count} tệp',
     '1': 'Bạn chỉ có thể tải lên %{smart_count} tệp',

@@ -131,7 +131,8 @@ sr_RS_Latin.strings = {
     '1': 'Broj dodatih datoteka: %{smart_count}',
   },
   xTimeLeft: 'Preostalo vreme %{time} ',
-  youCanOnlyUploadFileTypes: 'Možete da otpremite samo: %{types}',
+  youCanOnlyUploadFileTypes:
+    '%{file} nije podržan. Možete da otpremite samo: %{types}',
   youCanOnlyUploadX: {
     '0': 'Dozvoljeni broj datoteka za otpremanje: %{smart_count}',
     '1': 'Dozvoljeni broj datoteka za otpremanje: %{smart_count}',

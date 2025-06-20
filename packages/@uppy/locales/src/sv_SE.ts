@@ -134,7 +134,8 @@ sv_SE.strings = {
     '1': '%{smart_count} filer tillagda',
   },
   xTimeLeft: '%{time} återstår',
-  youCanOnlyUploadFileTypes: 'Du kan endast ladda upp: %{types}',
+  youCanOnlyUploadFileTypes:
+    '%{file} stöds inte. Du kan endast ladda upp: %{types}',
   youCanOnlyUploadX: {
     '0': 'Du kan endast ladda upp %{smart_count} fil',
     '1': 'Du kan endast ladda upp %{smart_count} filer',

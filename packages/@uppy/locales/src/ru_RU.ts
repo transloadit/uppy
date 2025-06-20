@@ -240,7 +240,8 @@ ru_RU.strings = {
     '2': '%{smart_count} дополнительных файлов добавлено',
   },
   xTimeLeft: 'осталось %{time}',
-  youCanOnlyUploadFileTypes: 'Вы можете загрузить только: %{types}',
+  youCanOnlyUploadFileTypes:
+    '%{file} не поддерживается. Вы можете загрузить только: %{types}',
   youCanOnlyUploadX: {
     '0': 'Вы можете загрузить только %{smart_count} файл',
     '1': 'Вы можете загрузить только %{smart_count} файла',

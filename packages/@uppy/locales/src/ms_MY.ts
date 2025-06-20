@@ -223,7 +223,8 @@ ms_MY.strings = {
     '1': '%{smart_count} lagi fail ditambah',
   },
   xTimeLeft: '%{time} lagi tinggal',
-  youCanOnlyUploadFileTypes: 'Anda hanya boleh muat naik: %{types}',
+  youCanOnlyUploadFileTypes:
+    '%{file} tidak disokong. Anda hanya boleh muat naik: %{types}',
   youCanOnlyUploadX: {
     '0': 'Anda hanya boleh muat naik %{smart_count} fail',
     '1': 'Anda hanya boleh muat naik %{smart_count} fail',

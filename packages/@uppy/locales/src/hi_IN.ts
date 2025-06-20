@@ -183,7 +183,8 @@ hi_IN.strings = {
     '1': '%{smart_count} और फ़ाइलें जोड़ी गई',
   },
   xTimeLeft: '%{time} शेष',
-  youCanOnlyUploadFileTypes: 'आप केवल %{types} अपलोड कर सकते हैं',
+  youCanOnlyUploadFileTypes:
+    '%{file} समर्थित नहीं है। आप केवल %{types} अपलोड कर सकते हैं',
   youCanOnlyUploadX: {
     '0': 'आप केवल %{smart_count} फ़ाइल अपलोड कर सकते हैं',
     '1': 'आप केवल %{smart_count} फ़ाइलें अपलोड कर सकते हैं',
