@@ -136,7 +136,8 @@ ja_JP.strings = {
     '1': '%{smart_count} ファイルを追加',
   },
   xTimeLeft: '残り %{time}',
-  youCanOnlyUploadFileTypes: '許可されているファイル形式は次の物です: %{types}',
+  youCanOnlyUploadFileTypes:
+    '%{file}はサポートされていません。アップロードできるのは次の形式のみです: %{types}',
   youCanOnlyUploadX: {
     '0': '%{smart_count} ファイル数のみアップロード可能です',
     '1': '%{smart_count} ファイル数のみアップロード可能です',

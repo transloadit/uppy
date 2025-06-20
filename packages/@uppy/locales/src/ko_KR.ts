@@ -105,7 +105,8 @@ ko_KR.strings = {
   xFilesSelected: '%{smart_count}개의 파일 선택됨',
   xMoreFilesAdded: '%{smart_count}개의 파일이 더 추가 됨',
   xTimeLeft: '%{time} 남음',
-  youCanOnlyUploadFileTypes: '업로드 가능 형식: %{types}',
+  youCanOnlyUploadFileTypes:
+    '%{file}은(는) 지원되지 않습니다. 업로드 가능 형식: %{types}',
   youCanOnlyUploadX: '%{smart_count}개의 파일만 업로드할 수 있습니다',
   youHaveToAtLeastSelectX: '최소 %{smart_count}개의 파일을 선택해야 합니다',
 }

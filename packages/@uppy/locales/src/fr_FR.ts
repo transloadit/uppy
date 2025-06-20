@@ -206,7 +206,8 @@ fr_FR.strings = {
     '1': '%{smart_count} autres fichiers ajoutés',
   },
   xTimeLeft: '%{time} restantes',
-  youCanOnlyUploadFileTypes: 'Vous pouvez seulement téléverser: %{types}',
+  youCanOnlyUploadFileTypes:
+    '%{file} n’est pas pris en charge. Vous pouvez seulement téléverser: %{types}',
   youCanOnlyUploadX: {
     '0': 'Vous pouvez seulement téléverser %{smart_count} fichier',
     '1': 'Vous pouvez seulement téléverser %{smart_count} fichiers',

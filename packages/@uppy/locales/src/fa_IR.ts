@@ -211,7 +211,8 @@ fa_IR.strings = {
     '1': '%{smart_count} فایل دیگر افزوده شد',
   },
   xTimeLeft: '%{time} left',
-  youCanOnlyUploadFileTypes: 'فایل‌های قابل قبول: %{types}',
+  youCanOnlyUploadFileTypes:
+    '%{types}: پشتیبانی نمی‌شود. فقط می‌توانید این نوع فایل‌ها را بارگذاری کنید %{file}',
   youCanOnlyUploadX: {
     '0': 'فقط می‌توانید %{smart_count} فایل انتخاب کنید',
     '1': 'فقط می‌توانید %{smart_count} فایل انتخاب کنید',

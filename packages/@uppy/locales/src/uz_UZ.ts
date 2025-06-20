@@ -211,7 +211,8 @@ uz_UZ.strings = {
     '1': 'Yana %{smart_count} ta fayl qo‘shildi',
   },
   xTimeLeft: '%{time} chap',
-  youCanOnlyUploadFileTypes: 'Siz faqat yuklashingiz mumkin: %{types}',
+  youCanOnlyUploadFileTypes:
+    '%{file} qo‘llab-quvvatlanmaydi. Siz faqat yuklashingiz mumkin: %{types}',
   youCanOnlyUploadX: {
     '0': 'Siz faqat %{smart_count} faylni yuklashingiz mumkin',
     '1': 'Siz faqat %{smart_count} ta faylni yuklashingiz mumkin',

@@ -129,7 +129,8 @@ tr_TR.strings = {
     '1': '%{smart_count} dosya daha eklendi',
   },
   xTimeLeft: 'kalan süre %{time}',
-  youCanOnlyUploadFileTypes: 'Sadece %{types} yükleyebilirsiniz',
+  youCanOnlyUploadFileTypes:
+    '%{file} desteklenmiyor. Sadece %{types} yükleyebilirsiniz',
   youCanOnlyUploadX: {
     '0': 'Sadece %{smart_count} dosya yükleyebilirsiniz',
     '1': 'Sadece %{smart_count} dosya yükleyebilirsiniz',

@@ -202,7 +202,8 @@ nl_NL.strings = {
     '1': '%{smart_count} extra bestanden toegevoegd',
   },
   xTimeLeft: '%{time} over',
-  youCanOnlyUploadFileTypes: 'Je kan enkel volgende types uploaden: %{types}',
+  youCanOnlyUploadFileTypes:
+    '%{file} wordt niet ondersteund. Je kan enkel volgende types uploaden: %{types}',
   youCanOnlyUploadX: {
     '0': 'Je kan slechts %{smart_count} bestand uploaden',
     '1': 'Je kan slechts %{smart_count} bestanden uploaden',

@@ -114,7 +114,7 @@ zh_CN.strings = {
   xFilesSelected: '%{smart_count} 个文件待上传',
   xMoreFilesAdded: '又有 %{smart_count} 个文件被添加',
   xTimeLeft: '剩余 %{time}',
-  youCanOnlyUploadFileTypes: '您只能上传这些文件类型：%{types}',
+  youCanOnlyUploadFileTypes: '不支持 %{file}. 您只能上传这些文件类型：%{types}',
   youCanOnlyUploadX: '您只能上传 %{smart_count} 个文件',
   youHaveToAtLeastSelectX: '您至少要选择 %{smart_count} 个文件',
 }

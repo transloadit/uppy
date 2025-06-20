@@ -1594,7 +1594,7 @@ describe('src/Core', () => {
       const fr_FR: Locale<0 | 1> = {
         strings: {
           youCanOnlyUploadFileTypes:
-            'Vous pouvez seulement téléverser: %{types}',
+            "%{file} n'est pas pris en charge. Vous pouvez seulement téléverser: %{types}",
         },
         pluralize(n) {
           if (n <= 1) {
@@ -1619,7 +1619,11 @@ describe('src/Core', () => {
           data: new File([sampleImage], { type: 'image/png' }),
         })
       } catch (err) {
-        expect(err).toMatchObject(new Error('You can only upload: image/jpeg'))
+        expect(err).toMatchObject(
+          new Error(
+            'foo1.png is not supported. You can only upload: image/jpeg',
+          ),
+        )
       }
 
       core.setOptions({
@@ -1636,7 +1640,9 @@ describe('src/Core', () => {
         })
       } catch (err) {
         expect(err).toMatchObject(
-          new Error('Vous pouvez seulement téléverser: image/jpeg'),
+          new Error(
+            "foo1.png n'est pas pris en charge. Vous pouvez seulement téléverser: image/jpeg",
+          ),
         )
       }
 
@@ -2126,10 +2132,12 @@ describe('src/Core', () => {
         throw new Error('should have thrown')
       } catch (err) {
         expect(err).toMatchObject(
-          new Error('You can only upload: image/gif, image/png'),
+          new Error(
+            'foo2.jpg is not supported. You can only upload: image/gif, image/png',
+          ),
         )
         expect(core.getState().info[0].message).toEqual(
-          'You can only upload: image/gif, image/png',
+          'foo2.jpg is not supported. You can only upload: image/gif, image/png',
         )
       }
     })
@@ -2167,10 +2175,12 @@ describe('src/Core', () => {
         throw new Error('should have thrown')
       } catch (err) {
         expect(err).toMatchObject(
-          new Error('You can only upload: .gif, .jpg, .jpeg'),
+          new Error(
+            'foo2.png is not supported. You can only upload: .gif, .jpg, .jpeg',
+          ),
         )
         expect(core.getState().info[0].message).toEqual(
-          'You can only upload: .gif, .jpg, .jpeg',
+          'foo2.png is not supported. You can only upload: .gif, .jpg, .jpeg',
         )
       }
 
@@ -2293,7 +2303,9 @@ describe('src/Core', () => {
       expect(validateRestrictions1).toEqual(
         'This file is smaller than the allowed size of 293 KB',
       )
-      expect(validateRestrictions2).toEqual('You can only upload: image/png')
+      expect(validateRestrictions2).toEqual(
+        'foo1.jpg is not supported. You can only upload: image/png',
+      )
     })
 
     it('should emit `restriction-failed` event when some rule is violated', () => {

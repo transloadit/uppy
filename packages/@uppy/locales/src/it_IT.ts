@@ -128,7 +128,8 @@ it_IT.strings = {
     '1': '%{smart_count} altri file aggiunti',
   },
   xTimeLeft: '%{time} rimasto',
-  youCanOnlyUploadFileTypes: 'Puoi caricare solamente: %{types}',
+  youCanOnlyUploadFileTypes:
+    '%{file} non è supportato. Puoi caricare solamente: %{types}',
   youCanOnlyUploadX: {
     '0': 'Puoi caricare %{smart_count} solo file',
     '1': 'Puoi caricare solo %{smart_count} file',

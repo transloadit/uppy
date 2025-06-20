@@ -136,7 +136,8 @@ is_IS.strings = {
     '1': '%{smart_count} fleiri skrám bætt við',
   },
   xTimeLeft: '%{time} eftir',
-  youCanOnlyUploadFileTypes: 'Þú getur aðeins upphalað: %{types}',
+  youCanOnlyUploadFileTypes:
+    '%{file} er ekki stutt. Þú getur aðeins upphalað: %{types}',
   youCanOnlyUploadX: {
     '0': 'Þú getur aðeins upphalað %{smart_count} skrá',
     '1': 'Þú getur aðeins upphalað %{smart_count} skrám',

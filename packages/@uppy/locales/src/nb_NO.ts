@@ -164,7 +164,8 @@ nb_NO.strings = {
     '1': '%{smart_count} filer lagt til',
   },
   xTimeLeft: '%{time} igjen',
-  youCanOnlyUploadFileTypes: 'Du kan bare laste opp: %{types}',
+  youCanOnlyUploadFileTypes:
+    '%{file} støttes ikke. Du kan bare laste opp: %{types}',
   youCanOnlyUploadX: {
     '0': 'Du kan bare laste opp %{smart_count} fil',
     '1': 'Du kan bare laste opp %{smart_count} filer',

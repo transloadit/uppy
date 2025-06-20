@@ -145,7 +145,8 @@ ro_RO.strings = {
     '1': '%{smart_count} fișiere adăugate',
   },
   xTimeLeft: '%{time} rămas(e)',
-  youCanOnlyUploadFileTypes: 'Poți încărca doar: %{types}',
+  youCanOnlyUploadFileTypes:
+    '%{file} nu este acceptat. Poți încărca doar: %{types}',
   youCanOnlyUploadX: {
     '0': 'Poți încărca doar %{smart_count} fișier',
     '1': 'Poți încărca doar %{smart_count} fișiere',

@@ -131,7 +131,8 @@ id_ID.strings = {
     '1': '%{smart_count} berkas lagi ditambahkan',
   },
   xTimeLeft: 'Tersisa %{time}',
-  youCanOnlyUploadFileTypes: 'Anda hanya dapat menggunggah: %{types}',
+  youCanOnlyUploadFileTypes:
+    '%{file} tidak didukung. Anda hanya dapat mengunggah: %{types}',
   youCanOnlyUploadX: {
     '0': 'Anda hanya dapat mengunggah %{smart_count} berkas',
     '1': 'Anda hanya dapat mengunggah %{smart_count} berkas',

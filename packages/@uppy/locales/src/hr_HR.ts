@@ -131,7 +131,8 @@ hr_HR.strings = {
     '1': 'Broj dodatih datoteka: %{smart_count}',
   },
   xTimeLeft: 'Preostalo vrijeme %{time} ',
-  youCanOnlyUploadFileTypes: 'Moguće je prenijeti samo: %{types}',
+  youCanOnlyUploadFileTypes:
+    '%{file} nije podržan. Moguće je prenijeti samo: %{types}',
   youCanOnlyUploadX: {
     '0': 'Dozvoljeni broj datoteka za prijenos: %{smart_count}',
     '1': 'Dozvoljeni broj datoteka za prijenos: %{smart_count}',

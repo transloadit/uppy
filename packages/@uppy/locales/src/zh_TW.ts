@@ -162,7 +162,7 @@ zh_TW.strings = {
   xFilesSelected: '已選擇 %{smart_count} 個檔案',
   xMoreFilesAdded: '又新增 %{smart_count} 個檔案',
   xTimeLeft: '還剩下 %{time}',
-  youCanOnlyUploadFileTypes: '您只能上傳這些檔案類型：%{types}',
+  youCanOnlyUploadFileTypes: '不支援 %{fie}. 您只能上傳這些檔案類型：%{types}',
   youCanOnlyUploadX: '您只能上傳 %{smart_count} 個檔案',
   youHaveToAtLeastSelectX: '您至少要選擇 %{smart_count} 個檔案',
   zoomIn: '放大',

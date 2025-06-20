@@ -130,7 +130,7 @@ he_IL.strings = {
     '1': 'עוד %{smart_count} קבצים נוספו',
   },
   xTimeLeft: '%{time} left',
-  youCanOnlyUploadFileTypes: 'You can only upload: %{types}',
+  youCanOnlyUploadFileTypes: '%{file} אינו נתמך. ניתן להעלות רק: %{types}',
   youCanOnlyUploadX: {
     '0': 'ניתן העלות רק קובץ %{smart_count}',
     '1': 'ניתן להעלות רק %{smart_count} קבצים',

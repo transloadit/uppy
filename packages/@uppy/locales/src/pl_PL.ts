@@ -142,7 +142,8 @@ pl_PL.strings = {
     '1': 'dodano %{smart_count} pliki więcej',
   },
   xTimeLeft: '%{time} zostało',
-  youCanOnlyUploadFileTypes: 'Możesz przesłać tylko: %{types}',
+  youCanOnlyUploadFileTypes:
+    '%{file} nie jest obsługiwany. Możesz przesłać tylko: %{types}',
   youCanOnlyUploadX: {
     '0': 'Możesz wgrać tylko %{smart_count} plik',
     '1': 'Możesz wgrać tylko %{smart_count} pliki',

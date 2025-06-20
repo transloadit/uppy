@@ -99,7 +99,8 @@ hu_HU.strings = {
   xFilesSelected: '%{smart_count} fájl kiválasztva',
   xMoreFilesAdded: 'további %{smart_count} fájl hozzáadva',
   xTimeLeft: '%{time} van hátra',
-  youCanOnlyUploadFileTypes: 'Feltölthető formátumok: %{types}',
+  youCanOnlyUploadFileTypes:
+    '%{file} nem támogatott. Csak a következő formátumokat töltheti fel: %{types}',
   youCanOnlyUploadX: 'Csak %{smart_count} fájl tölthető fel',
   youHaveToAtLeastSelectX: 'Legalább %{smart_count} fájlt ki kell választania',
   selectFileNamed: 'Válaszd ki a fájlt %{name}',

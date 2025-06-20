@@ -130,7 +130,8 @@ fi_FI.strings = {
     '1': '%{smart_count} tiedostoa added',
   },
   xTimeLeft: '%{time} jäljellä',
-  youCanOnlyUploadFileTypes: 'Sallitut tiedostomuodot: %{types}',
+  youCanOnlyUploadFileTypes:
+    '%{file} ei ole tuettu. Voit lähettää vain: %{types}',
   youCanOnlyUploadX: {
     '0': 'Voit lähettää vain %{smart_count} tiedosto',
     '1': 'Voit lähettää vain %{smart_count} tiedostoa',

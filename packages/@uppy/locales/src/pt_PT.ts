@@ -128,7 +128,8 @@ pt_PT.strings = {
     '1': '%{smart_count} ficheiros adicionados',
   },
   xTimeLeft: '%{time} restantes',
-  youCanOnlyUploadFileTypes: 'Só pode enviar ficheiros: %{types}',
+  youCanOnlyUploadFileTypes:
+    '%{file} não é suportado. Só pode enviar: %{types}',
   youCanOnlyUploadX: {
     '0': 'Só pode enviar %{smart_count} ficheiro',
     '1': 'Só pode enviar %{smart_count} ficheiros',

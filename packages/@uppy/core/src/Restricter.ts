@@ -136,6 +136,7 @@ class Restricter<M extends Meta, B extends Body> {
         const allowedFileTypesString = allowedFileTypes.join(', ')
         throw new RestrictionError(
           this.getI18n()('youCanOnlyUploadFileTypes', {
+            file: file.name ?? this.getI18n()('unnamed'),
             types: allowedFileTypesString,
           }),
           { file } as { file: UppyFile<M, B> },
