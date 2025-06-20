@@ -167,7 +167,7 @@ export default () => {
     .use(Webdav, {
       target: Dashboard,
       companionUrl: COMPANION_URL,
-      companionAllowedHosts
+      companionAllowedHosts,
     })
     .use(Audio, {
       target: Dashboard,
@@ -192,6 +192,15 @@ export default () => {
       uppyDashboard.use(AwsS3, {
         endpoint: COMPANION_URL,
         shouldUseMultipart: false,
+      })
+      break
+    case 's3-with-transloadit-companion':
+      uppyDashboard.use(AwsS3, { endpoint: COMPANION_URL })
+      uppyDashboard.use(Transloadit, {
+        service: TRANSLOADIT_SERVICE_URL,
+        waitForEncoding: true,
+        assemblyOptions,
+        onlyRemoteFiles: true,
       })
       break
     case 's3-multipart':
@@ -220,6 +229,7 @@ export default () => {
         waitForEncoding: true,
         importFromUploadURLs: true,
         assemblyOptions,
+        onlyRemoteFiles: true,
       })
       break
     case 'transloadit-xhr':
