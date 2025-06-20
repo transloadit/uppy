@@ -9,6 +9,7 @@
     "allowSyntheticDefaultImports": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
+    "allowImportingTsExtensions": true,
     "module": "ESNext",
     "moduleResolution": "Node",
     "resolveJsonModule": true,

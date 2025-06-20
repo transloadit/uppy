@@ -11,3 +11,5 @@ export * from './components/headless/generated/index.js'
 // Hooks
 export * from './useDropzone.js'
 export * from './useFileInput.js'
+export * from './useWebcam.svelte.js'
+export * from './useScreenCapture.svelte.js'
