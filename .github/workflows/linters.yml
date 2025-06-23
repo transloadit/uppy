@@ -41,19 +41,3 @@ jobs:
         run: corepack yarn run lint
       - name: Run Prettier
         run: corepack yarn run format:check-diff
-
-  lint_md:
-    name: Lint Markdown
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout sources
-        uses: actions/checkout@v4
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: lts/*
-          cache: yarn
-      - name: Install dependencies
-        run: corepack yarn workspaces focus @uppy-dev/build
-      - name: Run linter
-        run: corepack yarn run lint:markdown
