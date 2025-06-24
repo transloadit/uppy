@@ -1,38 +1,9 @@
 {
-  "private": true,
   "name": "@uppy-dev/build",
   "version": "0.0.0",
+  "private": true,
   "description": "Extensible JavaScript file upload widget with support for drag&drop, resumable uploads, previews, restrictions, file processing/encoding, remote providers like Instagram, Dropbox, Google Drive, S3 and more :dog:",
-  "lint-staged": {
-    "*.{js,mjs,cjs,jsx}": "eslint --fix",
-    "*.{ts,mts,cts,tsx}": [
-      "eslint --fix",
-      "prettier -w",
-      "eslint"
-    ],
-    "*.{css,html,json,scss,vue,yaml,yml}": "prettier -w",
-    "*.md": [
-      "remark --silently-ignore -i .remarkignore -foq",
-      "eslint --fix",
-      "prettier -w",
-      "eslint"
-    ],
-    "*.mdx": [
-      "prettier -w"
-    ]
-  },
-  "remarkConfig": {
-    "plugins": [
-      "@uppy-dev/remark-lint-uppy"
-    ]
-  },
-  "pre-commit": "lint:staged",
   "license": "MIT",
-  "engines": {
-    "node": "^16.15.0 || >=18.0.0",
-    "yarn": "3.6.1"
-  },
-  "packageManager": "yarn@4.4.1+sha224.fd21d9eb5fba020083811af1d4953acc21eeb9f6ff97efd1b3f9d4de",
   "workspaces": [
     "examples/*",
     "packages/@uppy/*",
@@ -42,6 +13,90 @@
     "test/endtoend",
     "e2e"
   ],
+  "scripts": {
+    "build": "npm-run-all --serial build:ts --parallel build:js build:css --serial build:components size",
+    "build:angular": "yarn workspace angular build",
+    "build:bundle": "yarn node ./bin/build-bundle.mjs",
+    "build:clean": "cp .gitignore .gitignore.bak && printf '!node_modules\n!**/node_modules/**/*\n' >> .gitignore; git clean -Xfd packages e2e .parcel-cache coverage; mv .gitignore.bak .gitignore",
+    "build:companion": "yarn workspace @uppy/companion build",
+    "build:components": "node bin/build-components.mjs",
+    "build:css": "yarn node ./bin/build-css.js && yarn workspace @uppy/components build:tailwind && yarn node ./bin/copy-tailwind-css.mjs",
+    "build:js": "npm-run-all build:js:typeless build:locale-pack build:angular build:bundle",
+    "build:js:typeless": "npm-run-all build:lib build:companion build:svelte",
+    "build:lib": "yarn build:ts && yarn node ./bin/build-lib.mjs && yarn build:css",
+    "build:locale-pack": "yarn workspace @uppy-dev/locale-pack build && eslint packages/@uppy/locales/src/en_US.ts --fix && yarn workspace @uppy-dev/locale-pack test unused",
+    "build:svelte": "yarn workspace @uppy/svelte build",
+    "build:ts": "yarn tsc -b tsconfig.build.json && yarn workspace @uppy/svelte build",
+    "contributors:save": "yarn node ./bin/update-contributors.mjs",
+    "dev": "yarn workspace @uppy-dev/dev dev",
+    "dev:with-companion": "npm-run-all --parallel start:companion dev",
+    "e2e": "yarn build:clean && yarn build && yarn e2e:skip-build",
+    "e2e:ci": "start-server-and-test 'npm-run-all --parallel e2e:client start:companion:with-loadbalancer' '1234|3020' e2e:headless",
+    "e2e:client": "yarn workspace e2e client:start",
+    "e2e:cypress": "yarn workspace e2e cypress:open",
+    "e2e:generate": "yarn workspace e2e generate-test",
+    "e2e:headless": "yarn workspace e2e cypress:headless",
+    "e2e:skip-build": "npm-run-all --parallel watch:js:lib e2e:client start:companion:with-loadbalancer e2e:cypress",
+    "format": "prettier  -w .",
+    "format:check": "prettier  -c .",
+    "format:check-diff": "yarn format:check || (yarn format:show-diff && false)",
+    "format:show-diff": "git diff --quiet || (echo 'Unable to show a diff because there are unstaged changes'; false) && (prettier . -w --loglevel silent && git --no-pager diff; git restore .)",
+    "lint": "eslint . --cache",
+    "lint:css": "stylelint ./packages/**/*.scss",
+    "lint:css:fix": "stylelint ./packages/**/*.scss --fix",
+    "lint:fix": "yarn lint --fix",
+    "lint:staged": "lint-staged",
+    "release": "PACKAGES=$(yarn workspaces list --json) yarn workspace @uppy-dev/release interactive",
+    "size": "echo 'JS Bundle mingz:' && cat ./packages/uppy/dist/uppy.min.js | gzip | wc -c && echo 'CSS Bundle mingz:' && cat ./packages/uppy/dist/uppy.min.css | gzip | wc -c",
+    "start:companion": "bash bin/companion.sh",
+    "start:companion:with-loadbalancer": "e2e/start-companion-with-load-balancer.mjs",
+    "test": "npm-run-all lint test:locale-packs:unused test:unit test:companion",
+    "test:companion": "yarn workspace @uppy/companion test",
+    "test:companion:watch": "yarn workspace @uppy/companion test --watch",
+    "test:locale-packs": "yarn locale-packs:unused && yarn locale-packs:warnings",
+    "test:locale-packs:unused": "yarn workspace @uppy-dev/locale-pack test unused",
+    "test:locale-packs:warnings": "yarn workspace @uppy-dev/locale-pack test warnings",
+    "test:ts": "yarn tsc -b && yarn workspace @uppy/svelte check",
+    "test:unit": "yarn run build:lib && yarn test:watch --run",
+    "test:watch": "vitest --environment jsdom --dir packages/@uppy",
+    "uploadcdn": "yarn node ./private/upload-to-cdn/index.js",
+    "version": "yarn node ./bin/after-version-bump.js",
+    "watch": "npm-run-all --parallel watch:js:bundle watch:js:lib",
+    "watch:js:bundle": "onchange 'packages/{@uppy/,}*/src/**/*.{js,ts,jsx,tsx,svelte,scss,css}' --initial --verbose -- yarn run build:bundle",
+    "watch:js:lib": "onchange 'packages/{@uppy/,}*/src/**/*.{js,ts,jsx,tsx,svelte,scss,css}' --initial --verbose -- yarn run build:lib"
+  },
+  "pre-commit": "lint:staged",
+  "lint-staged": {
+    "*.{js,mjs,cjs,jsx}": "eslint --fix",
+    "*.{ts,mts,cts,tsx}": [
+      "eslint --fix",
+      "prettier -w",
+      "eslint"
+    ],
+    "*.{css,html,json,scss,vue,yaml,yml}": "prettier -w",
+    "*.md": [
+      "eslint --fix",
+      "prettier -w",
+      "eslint"
+    ],
+    "*.mdx": [
+      "prettier -w"
+    ]
+  },
+  "resolutions": {
+    "@types/eslint@^7.2.13": "^8.2.0",
+    "@types/react": "^18",
+    "@types/webpack-dev-server": "^4",
+    "@vitest/utils": "patch:@vitest/utils@npm%3A1.2.1#./.yarn/patches/@vitest-utils-npm-1.2.1-3028846845.patch",
+    "p-queue": "patch:p-queue@npm%3A8.0.1#~/.yarn/patches/p-queue-npm-8.0.1-fe1ddcd827.patch",
+    "pre-commit": "patch:pre-commit@npm:1.2.2#.yarn/patches/pre-commit-npm-1.2.2-f30af83877.patch",
+    "preact": "patch:preact@npm:10.10.0#.yarn/patches/preact-npm-10.10.0-dd04de05e8.patch",
+    "resize-observer-polyfill": "patch:resize-observer-polyfill@npm%3A1.5.1#./.yarn/patches/resize-observer-polyfill-npm-1.5.1-603120e8a0.patch",
+    "start-server-and-test": "patch:start-server-and-test@npm:1.14.0#.yarn/patches/start-server-and-test-npm-1.14.0-841aa34fdf.patch",
+    "stylelint-order": "^6.0.0",
+    "stylelint@^9.10.1": "^16.0.0",
+    "uuid@^8.3.2": "patch:uuid@npm:8.3.2#.yarn/patches/uuid-npm-8.3.2-eca0baba53.patch"
+  },
   "devDependencies": {
     "@babel/cli": "^7.14.5",
     "@babel/core": "^7.14.6",
@@ -59,7 +114,6 @@
     "@types/jasminewd2": "file:./private/@types/jasmine",
     "@typescript-eslint/eslint-plugin": "^7.0.0",
     "@typescript-eslint/parser": "^7.0.0",
-    "@uppy-dev/remark-lint-uppy": "workspace:*",
     "autoprefixer": "^10.2.6",
     "babel-plugin-inline-package-json": "^2.0.0",
     "chalk": "^5.0.0",
@@ -96,7 +150,6 @@
     "postcss-logical": "^5.0.0",
     "pre-commit": "^1.2.2",
     "prettier": "^3.0.3",
-    "remark-cli": "^12.0.0",
     "resolve": "^1.17.0",
     "sass": "^1.29.0",
     "start-server-and-test": "^1.14.0",
@@ -108,74 +161,12 @@
     "vitest": "^1.6.1",
     "vue-template-compiler": "workspace:*"
   },
-  "scripts": {
-    "start:companion": "bash bin/companion.sh",
-    "start:companion:with-loadbalancer": "e2e/start-companion-with-load-balancer.mjs",
-    "build:components": "node bin/build-components.mjs",
-    "build:bundle": "yarn node ./bin/build-bundle.mjs",
-    "build:clean": "cp .gitignore .gitignore.bak && printf '!node_modules\n!**/node_modules/**/*\n' >> .gitignore; git clean -Xfd packages e2e .parcel-cache coverage; mv .gitignore.bak .gitignore",
-    "build:companion": "yarn workspace @uppy/companion build",
-    "build:css": "yarn node ./bin/build-css.js && yarn workspace @uppy/components build:tailwind && yarn node ./bin/copy-tailwind-css.mjs",
-    "build:svelte": "yarn workspace @uppy/svelte build",
-    "build:angular": "yarn workspace angular build",
-    "build:js:typeless": "npm-run-all build:lib build:companion build:svelte",
-    "build:js": "npm-run-all build:js:typeless build:locale-pack build:angular build:bundle",
-    "build:ts": "yarn tsc -b tsconfig.build.json && yarn workspace @uppy/svelte build",
-    "build:lib": "yarn build:ts && yarn node ./bin/build-lib.mjs && yarn build:css",
-    "build:locale-pack": "yarn workspace @uppy-dev/locale-pack build && eslint packages/@uppy/locales/src/en_US.ts --fix && yarn workspace @uppy-dev/locale-pack test unused",
-    "build": "npm-run-all --serial build:ts --parallel build:js build:css --serial build:components size",
-    "contributors:save": "yarn node ./bin/update-contributors.mjs",
-    "dev:with-companion": "npm-run-all --parallel start:companion dev",
-    "dev": "yarn workspace @uppy-dev/dev dev",
-    "lint:fix": "yarn lint --fix",
-    "lint:markdown": "remark -f -q -i .remarkignore . .github/CONTRIBUTING.md",
-    "lint:staged": "lint-staged",
-    "lint:css": "stylelint ./packages/**/*.scss",
-    "lint:css:fix": "stylelint ./packages/**/*.scss --fix",
-    "lint": "eslint . --cache",
-    "format:show-diff": "git diff --quiet || (echo 'Unable to show a diff because there are unstaged changes'; false) && (prettier . -w --loglevel silent && git --no-pager diff; git restore .)",
-    "format:check": "prettier  -c .",
-    "format:check-diff": "yarn format:check || (yarn format:show-diff && false)",
-    "format": "prettier  -w .",
-    "release": "PACKAGES=$(yarn workspaces list --json) yarn workspace @uppy-dev/release interactive",
-    "size": "echo 'JS Bundle mingz:' && cat ./packages/uppy/dist/uppy.min.js | gzip | wc -c && echo 'CSS Bundle mingz:' && cat ./packages/uppy/dist/uppy.min.css | gzip | wc -c",
-    "e2e": "yarn build:clean && yarn build && yarn e2e:skip-build",
-    "e2e:skip-build": "npm-run-all --parallel watch:js:lib e2e:client start:companion:with-loadbalancer e2e:cypress",
-    "e2e:ci": "start-server-and-test 'npm-run-all --parallel e2e:client start:companion:with-loadbalancer' '1234|3020' e2e:headless",
-    "e2e:client": "yarn workspace e2e client:start",
-    "e2e:cypress": "yarn workspace e2e cypress:open",
-    "e2e:headless": "yarn workspace e2e cypress:headless",
-    "e2e:generate": "yarn workspace e2e generate-test",
-    "test:companion": "yarn workspace @uppy/companion test",
-    "test:companion:watch": "yarn workspace @uppy/companion test --watch",
-    "test:locale-packs": "yarn locale-packs:unused && yarn locale-packs:warnings",
-    "test:locale-packs:unused": "yarn workspace @uppy-dev/locale-pack test unused",
-    "test:locale-packs:warnings": "yarn workspace @uppy-dev/locale-pack test warnings",
-    "test:unit": "yarn run build:lib && yarn test:watch --run",
-    "test:ts": "yarn tsc -b && yarn workspace @uppy/svelte check",
-    "test:watch": "vitest --environment jsdom --dir packages/@uppy",
-    "test": "npm-run-all lint test:locale-packs:unused test:unit test:companion",
-    "uploadcdn": "yarn node ./private/upload-to-cdn/index.js",
-    "version": "yarn node ./bin/after-version-bump.js",
-    "watch:js:bundle": "onchange 'packages/{@uppy/,}*/src/**/*.{js,ts,jsx,tsx,svelte,scss,css}' --initial --verbose -- yarn run build:bundle",
-    "watch:js:lib": "onchange 'packages/{@uppy/,}*/src/**/*.{js,ts,jsx,tsx,svelte,scss,css}' --initial --verbose -- yarn run build:lib",
-    "watch": "npm-run-all --parallel watch:js:bundle watch:js:lib"
+  "packageManager": "yarn@4.4.1+sha224.fd21d9eb5fba020083811af1d4953acc21eeb9f6ff97efd1b3f9d4de",
+  "engines": {
+    "node": "^16.15.0 || >=18.0.0",
+    "yarn": "3.6.1"
   },
   "alias": {
     "preact/jsx-dev-runtime": "preact/jsx-runtime"
-  },
-  "resolutions": {
-    "@types/eslint@^7.2.13": "^8.2.0",
-    "@types/react": "^18",
-    "@types/webpack-dev-server": "^4",
-    "@vitest/utils": "patch:@vitest/utils@npm%3A1.2.1#./.yarn/patches/@vitest-utils-npm-1.2.1-3028846845.patch",
-    "p-queue": "patch:p-queue@npm%3A8.0.1#~/.yarn/patches/p-queue-npm-8.0.1-fe1ddcd827.patch",
-    "pre-commit": "patch:pre-commit@npm:1.2.2#.yarn/patches/pre-commit-npm-1.2.2-f30af83877.patch",
-    "preact": "patch:preact@npm:10.10.0#.yarn/patches/preact-npm-10.10.0-dd04de05e8.patch",
-    "start-server-and-test": "patch:start-server-and-test@npm:1.14.0#.yarn/patches/start-server-and-test-npm-1.14.0-841aa34fdf.patch",
-    "stylelint@^9.10.1": "^16.0.0",
-    "stylelint-order": "^6.0.0",
-    "uuid@^8.3.2": "patch:uuid@npm:8.3.2#.yarn/patches/uuid-npm-8.3.2-eca0baba53.patch",
-    "resize-observer-polyfill": "patch:resize-observer-polyfill@npm%3A1.5.1#./.yarn/patches/resize-observer-polyfill-npm-1.5.1-603120e8a0.patch"
   }
 }

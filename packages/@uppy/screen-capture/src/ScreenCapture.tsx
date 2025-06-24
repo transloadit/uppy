@@ -32,6 +32,13 @@ function getMediaDevices() {
 const SUPPORTED_IMAGE_TYPES = ['image/png', 'image/jpeg', 'image/webp'] as const
 type SupportedImageType = (typeof SUPPORTED_IMAGE_TYPES)[number]
 
+export type ScreenCaptureStatus =
+  | 'init'
+  | 'ready'
+  | 'recording'
+  | 'captured'
+  | 'error'
+
 export interface ScreenCaptureOptions extends UIPluginOptions {
   displayMediaConstraints?: MediaStreamConstraints
   userMediaConstraints?: MediaStreamConstraints
@@ -74,6 +81,7 @@ export type ScreenCaptureState = {
   recordedVideo: string | null
   screenRecError: string | null
   capturedScreenshotUrl: string | null
+  status: ScreenCaptureStatus
 }
 
 export default class ScreenCapture<
@@ -143,6 +151,15 @@ export default class ScreenCapture<
     // initialize
     this.captureActive = false
     this.capturedMediaFile = null
+    this.setPluginState({
+      streamActive: false,
+      audioStreamActive: false,
+      recording: false,
+      recordedVideo: null,
+      screenRecError: null,
+      capturedScreenshotUrl: null,
+      status: 'init',
+    })
   }
 
   install(): null | undefined {
@@ -154,6 +171,7 @@ export default class ScreenCapture<
     this.setPluginState({
       streamActive: false,
       audioStreamActive: false,
+      status: 'init',
     })
 
     const { target } = this.opts
@@ -216,6 +234,8 @@ export default class ScreenCapture<
 
         this.setPluginState({
           streamActive: true,
+          status: 'ready',
+          screenRecError: null,
         })
 
         return videoStream
@@ -223,6 +243,7 @@ export default class ScreenCapture<
       .catch((err) => {
         this.setPluginState({
           screenRecError: err,
+          status: 'error',
         })
 
         this.userDenied = true
@@ -311,10 +332,12 @@ export default class ScreenCapture<
         // set plugin state to recording
         this.setPluginState({
           recording: true,
+          status: 'recording',
         })
       })
       .catch((err) => {
         this.uppy.log(err, 'error')
+        this.setPluginState({ screenRecError: err.message, status: 'error' })
       })
   }
 
@@ -330,6 +353,7 @@ export default class ScreenCapture<
         // @ts-expect-error we can't know Dashboard types here
         this.parent.hideAllPanels()
       }
+      this.setPluginState({ status: 'init' })
     } else if (recording) {
       // stop recorder if it is active
       this.uppy.log('Capture stream inactive — stop recording')
@@ -371,6 +395,7 @@ export default class ScreenCapture<
         this.setPluginState({
           // eslint-disable-next-line compat/compat
           recordedVideo: URL.createObjectURL(file.data),
+          status: 'captured',
         })
       })
       .then(
@@ -401,6 +426,7 @@ export default class ScreenCapture<
     this.setPluginState({
       recordedVideo: null,
       capturedScreenshotUrl: null,
+      status: this.getPluginState().streamActive ? 'ready' : 'init',
     })
   }
 
@@ -468,6 +494,7 @@ export default class ScreenCapture<
       audioStreamActive: false,
       recordedVideo: null,
       capturedScreenshotUrl: null,
+      status: 'init',
     })
 
     this.captureActive = false
@@ -573,6 +600,7 @@ export default class ScreenCapture<
               const screenshotUrl = URL.createObjectURL(blob)
               this.setPluginState({
                 capturedScreenshotUrl: screenshotUrl,
+                status: 'captured',
               })
               resolve()
             } catch (err) {

@@ -9,14 +9,14 @@
         ref="dialogRef"
         class="backdrop:bg-gray-500/50 rounded-lg shadow-xl p-0 fixed inset-0 m-auto"
       >
-        <Webcam
-          v-if="modalPlugin === 'webcam'"
-          :isOpen="modalPlugin === 'webcam'"
-          :close="closeModal"
-        />
+        <Webcam v-if="modalPlugin === 'webcam'" :close="closeModal" />
         <RemoteSource
           v-if="modalPlugin === 'dropbox'"
           id="Dropbox"
+          :close="closeModal"
+        />
+        <ScreenCapture
+          v-if="modalPlugin === 'screen-capture'"
           :close="closeModal"
         />
       </dialog>
@@ -55,13 +55,15 @@ import {
 import CustomDropzone from './Dropzone.vue'
 import Webcam from './Webcam.vue'
 import RemoteSource from './RemoteSource.vue'
+import ScreenCapture from './ScreenCapture.vue'
 import UppyWebcam from '@uppy/webcam'
 import UppyRemoteSources from '@uppy/remote-sources'
+import UppyScreenCapture from '@uppy/screen-capture'
 
 const dialogRef = ref<HTMLDialogElement | null>(null)
-const modalPlugin = ref<'webcam' | 'dropbox' | null>(null)
+const modalPlugin = ref<'webcam' | 'dropbox' | 'screen-capture' | null>(null)
 
-function openModal(plugin: 'webcam' | 'dropbox') {
+function openModal(plugin: 'webcam' | 'dropbox' | 'screen-capture') {
   modalPlugin.value = plugin
   dialogRef.value?.showModal()
 }
@@ -77,6 +79,7 @@ const uppy = computed(() =>
       endpoint: 'https://tusd.tusdemo.net/files/',
     })
     .use(UppyWebcam)
+    .use(UppyScreenCapture)
     .use(UppyRemoteSources, { companionUrl: 'http://localhost:3020' }),
 )
 </script>

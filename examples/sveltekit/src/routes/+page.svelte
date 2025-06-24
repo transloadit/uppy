@@ -3,6 +3,7 @@
   import Tus from '@uppy/tus'
   import UppyWebcam from '@uppy/webcam'
   import UppyRemoteSources from '@uppy/remote-sources'
+  import UppyScreenCapture from '@uppy/screen-capture'
   import {
     UppyContextProvider,
     Dropzone,
@@ -15,18 +16,20 @@
   import CustomDropzone from '../components/CustomDropzone.svelte'
   import Webcam from '../components/Webcam.svelte'
   import RemoteSource from '../components/RemoteSource.svelte'
+  import ScreenCapture from '../components/ScreenCapture.svelte'
 
   const uppy = new Uppy()
     .use(Tus, {
       endpoint: 'https://tusd.tusdemo.net/files/',
     })
     .use(UppyWebcam)
+    .use(UppyScreenCapture)
     .use(UppyRemoteSources, { companionUrl: 'http://localhost:3020' })
 
   let dialogRef: HTMLDialogElement
-  let modalPlugin = $state<'webcam' | 'dropbox' | null>(null)
+  let modalPlugin = $state<'webcam' | 'dropbox' | 'screen-capture' | null>(null)
 
-  function openModal(plugin: 'webcam' | 'dropbox') {
+  function openModal(plugin: 'webcam' | 'dropbox' | 'screen-capture') {
     modalPlugin = plugin
     dialogRef?.showModal()
   }
@@ -48,10 +51,13 @@
       class="backdrop:bg-gray-500/50 rounded-lg shadow-xl p-0 fixed inset-0 m-auto"
     >
       {#if modalPlugin === 'webcam'}
-        <Webcam isOpen={modalPlugin === 'webcam'} close={closeModal} />
+        <Webcam close={closeModal} />
       {/if}
       {#if modalPlugin === 'dropbox'}
         <RemoteSource id="Dropbox" close={closeModal} />
+      {/if}
+      {#if modalPlugin === 'screen-capture'}
+        <ScreenCapture close={closeModal} />
       {/if}
     </dialog>
 

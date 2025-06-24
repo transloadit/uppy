@@ -2,7 +2,7 @@
   import { useDropzone, useFileInput, ProviderIcon } from '@uppy/svelte'
 
   interface Props {
-    openModal: (plugin: 'webcam' | 'dropbox') => void
+    openModal: (plugin: 'webcam' | 'dropbox' | 'screen-capture') => void
   }
 
   const { openModal }: Props = $props()
@@ -38,6 +38,16 @@
           <ProviderIcon provider="camera" fill="#02B383" />
         </div>
         Webcam
+      </button>
+
+      <button
+        onclick={() => openModal('screen-capture')}
+        class="hover:bg-gray-100 transition-colors p-2 rounded-md flex flex-col items-center gap-2 text-sm"
+      >
+        <div class="bg-white shadow-md rounded-md p-1">
+          <ProviderIcon provider="screen-capture" fill="#FF69B4" />
+        </div>
+        Screen Capture
       </button>
 
       <button

@@ -12,6 +12,7 @@
     "@uppy/core": "workspace:*",
     "@uppy/react": "workspace:*",
     "@uppy/remote-sources": "workspace:*",
+    "@uppy/screen-capture": "workspace:*",
     "@uppy/tus": "workspace:*",
     "@uppy/webcam": "workspace:*",
     "react": "^19.0.0",

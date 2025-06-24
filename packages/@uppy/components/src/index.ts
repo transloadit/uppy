@@ -36,6 +36,12 @@ export {
   type RemoteSourceKeys,
 } from './hooks/remote-source.js'
 
+export {
+  createScreenCaptureController,
+  type ScreenCaptureStore,
+  type ScreenCaptureSnapshot,
+} from './hooks/screencapture.js'
+
 // Types and utils
 export type {
   UppyContext,
