@@ -31,6 +31,7 @@ import FooterActions from '../FooterActions.jsx'
 import addFiles from '../utils/addFiles.js'
 import getCheckedFilesWithPaths from '../utils/PartialTreeUtils/getCheckedFilesWithPaths.js'
 import getBreadcrumbs from '../utils/PartialTreeUtils/getBreadcrumbs.js'
+import getNumberOfSelectedFiles from '../utils/PartialTreeUtils/getNumberOfSelectedFiles.js'
 
 export function defaultPickerIcon(): h.JSX.Element {
   return (
@@ -407,6 +408,16 @@ export default class ProviderView<M extends Meta, B extends Body> {
     return filtered
   }
 
+  getBreadcrumbs = (): PartialTreeFolder[] => {
+    const { partialTree, currentFolderId } = this.plugin.getPluginState()
+    return getBreadcrumbs(partialTree, currentFolderId)
+  }
+
+  getSelectedAmount = (): number => {
+    const { partialTree } = this.plugin.getPluginState()
+    return getNumberOfSelectedFiles(partialTree)
+  }
+
   validateAggregateRestrictions = (partialTree: PartialTree) => {
     const checkedFiles = partialTree.filter(
       (item) => item.type === 'file' && item.status === 'checked',
@@ -442,9 +453,8 @@ export default class ProviderView<M extends Meta, B extends Body> {
       )
     }
 
-    const { partialTree, currentFolderId, username, searchString } =
-      this.plugin.getPluginState()
-    const breadcrumbs = getBreadcrumbs(partialTree, currentFolderId)
+    const { partialTree, username, searchString } = this.plugin.getPluginState()
+    const breadcrumbs = this.getBreadcrumbs()
 
     return (
       <div

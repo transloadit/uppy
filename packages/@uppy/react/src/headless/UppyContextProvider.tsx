@@ -72,7 +72,7 @@ export function useUppyContext(): NonNullableUppyContext {
   const ctx = useContext(UppyContext)
 
   if (!ctx.uppy) {
-    throw new Error('useDropzone must be called within a UppyContextProvider')
+    throw new Error('Uppy hooks must be called within a UppyContextProvider')
   }
 
   return ctx as NonNullableUppyContext // covered by the if statement above

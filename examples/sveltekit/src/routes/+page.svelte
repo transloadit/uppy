@@ -2,6 +2,7 @@
   import Uppy from '@uppy/core'
   import Tus from '@uppy/tus'
   import UppyWebcam from '@uppy/webcam'
+  import UppyRemoteSources from '@uppy/remote-sources'
   import UppyScreenCapture from '@uppy/screen-capture'
   import {
     UppyContextProvider,
@@ -14,6 +15,7 @@
 
   import CustomDropzone from '../components/CustomDropzone.svelte'
   import Webcam from '../components/Webcam.svelte'
+  import RemoteSource from '../components/RemoteSource.svelte'
   import ScreenCapture from '../components/ScreenCapture.svelte'
 
   const uppy = new Uppy()
@@ -22,31 +24,19 @@
     })
     .use(UppyWebcam)
     .use(UppyScreenCapture)
+    .use(UppyRemoteSources, { companionUrl: 'http://localhost:3020' })
 
-  let webcamDialogRef: HTMLDialogElement
-  let isWebcamOpen = $state(false)
+  let dialogRef: HTMLDialogElement
+  let modalPlugin = $state<'webcam' | 'dropbox' | 'screen-capture' | null>(null)
 
-  let screenCaptureDialogRef: HTMLDialogElement
-  let isScreenCaptureOpen = $state(false)
-
-  function openWebcamModal() {
-    isWebcamOpen = true
-    webcamDialogRef?.showModal()
+  function openModal(plugin: 'webcam' | 'dropbox' | 'screen-capture') {
+    modalPlugin = plugin
+    dialogRef?.showModal()
   }
 
-  function closeWebcamModal() {
-    isWebcamOpen = false
-    webcamDialogRef?.close()
-  }
-
-  function openScreenCaptureModal() {
-    isScreenCaptureOpen = true
-    screenCaptureDialogRef?.showModal()
-  }
-
-  function closeScreenCaptureModal() {
-    isScreenCaptureOpen = false
-    screenCaptureDialogRef?.close()
+  function closeModal() {
+    modalPlugin = null
+    dialogRef?.close()
   }
 </script>
 
@@ -57,17 +47,18 @@
     <UploadButton />
 
     <dialog
-      bind:this={webcamDialogRef}
+      bind:this={dialogRef}
       class="backdrop:bg-gray-500/50 rounded-lg shadow-xl p-0 fixed inset-0 m-auto"
     >
-      <Webcam isOpen={isWebcamOpen} close={closeWebcamModal} />
-    </dialog>
-
-    <dialog
-      bind:this={screenCaptureDialogRef}
-      class="backdrop:bg-gray-500/50 rounded-lg shadow-xl p-0 fixed inset-0 m-auto"
-    >
-      <ScreenCapture isOpen={isScreenCaptureOpen} close={closeScreenCaptureModal} />
+      {#if modalPlugin === 'webcam'}
+        <Webcam close={closeModal} />
+      {/if}
+      {#if modalPlugin === 'dropbox'}
+        <RemoteSource id="Dropbox" close={closeModal} />
+      {/if}
+      {#if modalPlugin === 'screen-capture'}
+        <ScreenCapture close={closeModal} />
+      {/if}
     </dialog>
 
     <article>
@@ -84,7 +75,7 @@
 
     <article>
       <h2 class="text-2xl my-4">With custom dropzone</h2>
-      <CustomDropzone {openWebcamModal} {openScreenCaptureModal} />
+      <CustomDropzone {openModal} />
     </article>
   </main>
 </UppyContextProvider>

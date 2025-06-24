@@ -29,6 +29,12 @@ export {
   type WebcamStatus,
   type WebcamSnapshot,
 } from './hooks/webcam.js'
+export {
+  createRemoteSourceController,
+  type RemoteSourceStore,
+  type RemoteSourceSnapshot,
+  type RemoteSourceKeys,
+} from './hooks/remote-source.js'
 
 export {
   createScreenCaptureController,

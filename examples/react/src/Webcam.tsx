@@ -5,11 +5,10 @@ import { useWebcam } from '@uppy/react'
 import MediaCapture from './MediaCapture.tsx'
 
 export interface WebcamProps {
-  isOpen: boolean
   close: () => void
 }
 
-export function Webcam({ isOpen, close }: WebcamProps) {
+export function Webcam({ close }: WebcamProps) {
   const {
     start,
     stop,
@@ -22,13 +21,11 @@ export function Webcam({ isOpen, close }: WebcamProps) {
   } = useWebcam({ onSubmit: close })
 
   useEffect(() => {
-    if (isOpen) {
-      start()
-    }
+    start()
     return () => {
       stop()
     }
-  }, [start, stop, isOpen])
+  }, [start, stop])
 
   return (
     <MediaCapture

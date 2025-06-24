@@ -11476,6 +11476,7 @@ __metadata:
     "@types/react-dom": "npm:^19.0.4"
     "@uppy/core": "workspace:*"
     "@uppy/react": "workspace:*"
+    "@uppy/remote-sources": "workspace:*"
     "@uppy/screen-capture": "workspace:*"
     "@uppy/tus": "workspace:*"
     "@uppy/webcam": "workspace:*"
@@ -11584,6 +11585,7 @@ __metadata:
     "@uppy/dashboard": "workspace:*"
     "@uppy/drag-drop": "workspace:*"
     "@uppy/progress-bar": "workspace:*"
+    "@uppy/remote-sources": "workspace:*"
     "@uppy/screen-capture": "workspace:*"
     "@uppy/tus": "workspace:*"
     "@uppy/vue": "workspace:*"
@@ -11763,6 +11765,7 @@ __metadata:
     "@tailwindcss/cli": "npm:^4.0.6"
     "@webcam/core": "npm:^1.0.1"
     clsx: "npm:^2.1.1"
+    dequal: "npm:^2.0.3"
     preact: "npm:^10.5.13"
     pretty-bytes: "npm:^6.1.1"
     tailwindcss: "npm:^4.0.6"
@@ -11770,6 +11773,7 @@ __metadata:
     "@uppy/audio": "workspace:^"
     "@uppy/core": "workspace:^"
     "@uppy/image-editor": "workspace:^"
+    "@uppy/remote-sources": "workspace:^"
     "@uppy/screen-capture": "workspace:^"
     "@uppy/webcam": "workspace:^"
   peerDependenciesMeta:
@@ -11778,6 +11782,8 @@ __metadata:
     "@uppy/google-drive-picker":
       optional: true
     "@uppy/image-editor":
+      optional: true
+    "@uppy/remote-sources":
       optional: true
     "@uppy/screen-capture":
       optional: true

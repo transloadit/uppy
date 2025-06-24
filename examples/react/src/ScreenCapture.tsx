@@ -4,11 +4,10 @@ import { useScreenCapture } from '@uppy/react'
 import MediaCapture from './MediaCapture.tsx'
 
 export interface ScreenCaptureProps {
-  isOpen: boolean
   close: () => void
 }
 
-export function ScreenCapture({ isOpen, close }: ScreenCaptureProps) {
+export function ScreenCapture({ close }: ScreenCaptureProps) {
   const {
     start,
     stop,
@@ -21,13 +20,11 @@ export function ScreenCapture({ isOpen, close }: ScreenCaptureProps) {
   } = useScreenCapture({ onSubmit: close })
 
   useEffect(() => {
-    if (isOpen) {
-      start()
-    }
+    start()
     return () => {
       stop()
     }
-  }, [start, stop, isOpen])
+  }, [start, stop])
 
   return (
     <MediaCapture
