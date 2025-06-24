@@ -6,6 +6,9 @@
   "main": "lib/index.js",
   "style": "dist/style.min.css",
   "type": "module",
+  "scripts": {
+    "build": "tsc --build tsconfig.build.json"
+  },
   "keywords": [
     "file uploader",
     "uppy",
@@ -41,6 +44,7 @@
     "@uppy/url": "workspace:^",
     "@uppy/webcam": "workspace:^",
     "resize-observer-polyfill": "^1.5.0",
+    "typescript": "^5.8.3",
     "vitest": "^1.6.1"
   },
   "peerDependencies": {

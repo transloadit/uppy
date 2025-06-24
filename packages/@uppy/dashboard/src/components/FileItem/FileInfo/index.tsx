@@ -150,6 +150,7 @@ export default function FileInfo(props: FileInfoProps) {
           containerHeight,
           containerWidth,
         })}
+        {/* eslint-disable-next-line no-alert */}
         <ErrorButton file={file} onClick={() => alert(file.error)} />
       </div>
       <div className="uppy-Dashboard-Item-status">

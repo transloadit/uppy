@@ -47,6 +47,7 @@ export type AvailablePluginsKeys =
   | 'Zoom'
 
 type NestedCompanionKeysParams = {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   [key in AvailablePluginsKeys]?: CompanionPluginOptions['companionKeysParams']
 }
 

@@ -165,7 +165,6 @@ export default class Audio<M extends Meta, B extends Body> extends UIPlugin<
 
   #startRecording = (): void => {
     // only used if supportsMediaRecorder() returned true
-    // eslint-disable-next-line compat/compat
     this.#recorder = new MediaRecorder(this.#stream!)
     this.#recordingChunks = []
     let stoppingBecauseOfMaxSize = false

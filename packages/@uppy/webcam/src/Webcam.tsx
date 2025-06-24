@@ -53,7 +53,7 @@ function isImageMimeType(mimeType?: string): boolean {
 
 function getMediaDevices() {
   // bug in the compatibility data
-  // eslint-disable-next-line compat/compat
+
   return navigator.mediaDevices
 }
 
@@ -372,7 +372,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
 
   startRecording(): void {
     // only used if supportsMediaRecorder() returned true
-    // eslint-disable-next-line compat/compat
+
     this.recorder = new MediaRecorder(
       this.stream!,
       this.getMediaRecorderOptions(),
@@ -456,7 +456,6 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
           this.capturedMediaFile = file
           // create object url for capture result preview
           this.setPluginState({
-            // eslint-disable-next-line compat/compat
             recordedVideo: URL.createObjectURL(file.data as Blob),
           })
           this.#enableMirror = false

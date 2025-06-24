@@ -12,7 +12,7 @@ switch (window.location.pathname.toLowerCase()) {
 }
 
 if ('serviceWorker' in navigator) {
-  // eslint-disable-next-line compat/compat
+  
   navigator.serviceWorker
     .register('/sw.js')
     .then((registration) => {

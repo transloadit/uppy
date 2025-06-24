@@ -57,7 +57,6 @@ uppy.on('complete', (result) => {
 
 // uncomment if you enable Golden Retriever
 //
-/* eslint-disable compat/compat */
 // if ('serviceWorker' in navigator) {
 //   navigator.serviceWorker
 //     .register('/sw.js')

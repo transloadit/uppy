@@ -69,5 +69,8 @@
     "@uppy/webdav": "workspace:^",
     "@uppy/xhr-upload": "workspace:^",
     "@uppy/zoom": "workspace:^"
+  },
+  "scripts": {
+    "build": "tsc --build tsconfig.build.json"
   }
 }

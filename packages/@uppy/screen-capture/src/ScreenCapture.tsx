@@ -20,12 +20,12 @@ import locale from './locale.js'
 // Check if screen capturing is supported.
 // mediaDevices is supprted on mobile Safari, getDisplayMedia is not
 function isScreenRecordingSupported() {
-  return window.MediaRecorder && navigator.mediaDevices?.getDisplayMedia // eslint-disable-line compat/compat
+  return window.MediaRecorder && navigator.mediaDevices?.getDisplayMedia
 }
 
 // Adapted from: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
 function getMediaDevices() {
-  return window.MediaRecorder && navigator.mediaDevices // eslint-disable-line compat/compat
+  return window.MediaRecorder && navigator.mediaDevices
 }
 
 // Add supported image types
@@ -221,7 +221,7 @@ export default class ScreenCapture<
     }
 
     // ask user to select source to record and get mediastream from that
-    // eslint-disable-next-line compat/compat
+
     return this.mediaDevices
       .getDisplayMedia(this.opts.displayMediaConstraints)
       .then((videoStream) => {
@@ -263,7 +263,7 @@ export default class ScreenCapture<
     }
 
     // ask user to select source to record and get mediastream from that
-    // eslint-disable-next-line compat/compat
+
     return this.mediaDevices
       .getUserMedia(this.opts.userMediaConstraints)
       .then((audioStream) => {
@@ -314,11 +314,11 @@ export default class ScreenCapture<
         }
 
         // create new stream from video and audio
-        // eslint-disable-next-line compat/compat
+
         this.outputStream = new MediaStream(tracks)
 
         // initialize mediarecorder
-        // eslint-disable-next-line compat/compat
+
         this.recorder = new MediaRecorder(this.outputStream, options)
 
         // push data to buffer when data available
@@ -393,7 +393,6 @@ export default class ScreenCapture<
 
         // create object url for capture result preview
         this.setPluginState({
-          // eslint-disable-next-line compat/compat
           recordedVideo: URL.createObjectURL(file.data),
           status: 'captured',
         })
