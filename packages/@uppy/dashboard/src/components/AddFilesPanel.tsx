@@ -1,7 +1,7 @@
 /* eslint-disable react/destructuring-assignment */
 import { h } from 'preact'
 import classNames from 'classnames'
-import AddFiles from './AddFiles.jsx'
+import AddFiles from './AddFiles.js'
 
 type $TSFixMe = any
 

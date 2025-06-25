@@ -4,7 +4,7 @@ import type { Meta, Body, PartialTree } from '@uppy/core'
 import classNames from 'classnames'
 import { useMemo } from 'preact/hooks'
 import getNumberOfSelectedFiles from './utils/PartialTreeUtils/getNumberOfSelectedFiles.js'
-import ProviderView from './ProviderView/ProviderView.jsx'
+import ProviderView from './ProviderView/ProviderView.js'
 
 export default function FooterActions<M extends Meta, B extends Body>({
   cancelSelection,

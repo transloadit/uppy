@@ -3,7 +3,7 @@
 import { h, type ComponentChild } from 'preact'
 import { UIPlugin } from '@uppy/core'
 import type { State, UIPluginOptions, Uppy, Body, Meta } from '@uppy/core'
-import FadeIn from './FadeIn.jsx'
+import FadeIn from './FadeIn.js'
 import TransitionGroup from './TransitionGroup.js'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment

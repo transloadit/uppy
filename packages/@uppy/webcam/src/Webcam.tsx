@@ -16,9 +16,9 @@ import mimeTypes from '@uppy/utils/lib/mimeTypes'
 import { isMobile } from 'is-mobile'
 import canvasToBlob from '@uppy/utils/lib/canvasToBlob'
 import supportsMediaRecorder from './supportsMediaRecorder.js'
-import CameraIcon from './CameraIcon.jsx'
-import CameraScreen from './CameraScreen.jsx'
-import PermissionsScreen from './PermissionsScreen.jsx'
+import CameraIcon from './CameraIcon.js'
+import CameraScreen from './CameraScreen.js'
+import PermissionsScreen from './PermissionsScreen.js'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'

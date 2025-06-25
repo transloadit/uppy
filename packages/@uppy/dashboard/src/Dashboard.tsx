@@ -25,7 +25,7 @@ import type { TargetedEvent } from 'preact/compat'
 import { nanoid } from 'nanoid/non-secure'
 import * as trapFocus from './utils/trapFocus.js'
 import createSuperFocus from './utils/createSuperFocus.js'
-import DashboardUI from './components/Dashboard.jsx'
+import DashboardUI from './components/Dashboard.js'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json

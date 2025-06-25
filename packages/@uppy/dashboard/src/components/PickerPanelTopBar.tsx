@@ -104,7 +104,7 @@ function PanelTopBar(props: $TSFixMe) {
     uppy,
   } = props
   let { allowNewUpload } = props
-  // TODO maybe this should be done in ../Dashboard.jsx, then just pass that down as `allowNewUpload`
+  // TODO maybe this should be done in ../Dashboard.js, then just pass that down as `allowNewUpload`
   if (allowNewUpload && maxNumberOfFiles) {
     // eslint-disable-next-line react/destructuring-assignment
     allowNewUpload = props.totalFileCount < props.maxNumberOfFiles

@@ -8,8 +8,8 @@ import type {
   PartialTreeFolderNode,
   PartialTreeId,
 } from '@uppy/core'
-import GridItem from './components/GridItem.jsx'
-import ListItem from './components/ListItem.jsx'
+import GridItem from './components/GridItem.js'
+import ListItem from './components/ListItem.js'
 
 type ItemProps = {
   file: PartialTreeFile | PartialTreeFolderNode

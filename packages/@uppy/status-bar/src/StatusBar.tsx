@@ -11,7 +11,7 @@ import { UIPlugin } from '@uppy/core'
 import emaFilter from '@uppy/utils/lib/emaFilter'
 import getTextDirection from '@uppy/utils/lib/getTextDirection'
 import statusBarStates from './StatusBarStates.js'
-import StatusBarUI, { type StatusBarUIProps } from './StatusBarUI.jsx'
+import StatusBarUI, { type StatusBarUIProps } from './StatusBarUI.js'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../package.json'
