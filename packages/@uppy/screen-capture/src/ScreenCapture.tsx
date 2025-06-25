@@ -12,9 +12,7 @@ import getFileTypeExtension from '@uppy/utils/lib/getFileTypeExtension'
 import ScreenRecIcon from './ScreenRecIcon.js'
 import RecorderScreen from './RecorderScreen.js'
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore We don't want TS to generate types for the package.json
-import packageJson from '../package.json'
+import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'
 
 // Check if screen capturing is supported.

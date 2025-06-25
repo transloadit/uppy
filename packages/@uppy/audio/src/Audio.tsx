@@ -15,9 +15,7 @@ import supportsMediaRecorder from './supportsMediaRecorder.js'
 import RecordingScreen from './RecordingScreen.js'
 import PermissionsScreen from './PermissionsScreen.js'
 import locale from './locale.js'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore We don't want TS to generate types for the package.json
-import packageJson from '../package.json'
+import packageJson from '../package.json' with { type: 'json' }
 
 export interface AudioOptions extends UIPluginOptions {
   showAudioSourceDropdown?: boolean
