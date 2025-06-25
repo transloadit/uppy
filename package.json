@@ -77,9 +77,6 @@
       "eslint --fix",
       "prettier -w",
       "eslint"
-    ],
-    "*.mdx": [
-      "prettier -w"
     ]
   },
   "resolutions": {
