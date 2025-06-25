@@ -33,7 +33,6 @@
     "@uppy/utils": "workspace:^",
     "classnames": "^2.2.6",
     "lodash": "^4.17.21",
-    "memoize-one": "^6.0.0",
     "nanoid": "^5.0.9",
     "preact": "^10.5.13",
     "shallow-equal": "^3.0.0"

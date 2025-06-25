@@ -13,7 +13,7 @@ import type {
 import type { PluginTarget } from '@uppy/core/lib/UIPlugin.js'
 import getFileTypeExtension from '@uppy/utils/lib/getFileTypeExtension'
 import mimeTypes from '@uppy/utils/lib/mimeTypes'
-import isMobile from 'is-mobile'
+import { isMobile } from 'is-mobile'
 import canvasToBlob from '@uppy/utils/lib/canvasToBlob'
 import supportsMediaRecorder from './supportsMediaRecorder.js'
 import CameraIcon from './CameraIcon.jsx'

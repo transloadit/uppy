@@ -2,7 +2,7 @@
 /* eslint-disable react/destructuring-assignment */
 import { h } from 'preact'
 import { clsx } from 'clsx'
-import type { UppyContext } from './types'
+import type { UppyContext } from './types.js'
 
 export type UploadButtonProps = {
   ctx: UppyContext

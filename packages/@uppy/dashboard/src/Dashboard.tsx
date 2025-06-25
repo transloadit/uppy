@@ -23,7 +23,6 @@ import type StatusBarLocale from '@uppy/status-bar/lib/locale.js'
 
 import type { TargetedEvent } from 'preact/compat'
 import { nanoid } from 'nanoid/non-secure'
-import memoizeOne from 'memoize-one'
 import * as trapFocus from './utils/trapFocus.js'
 import createSuperFocus from './utils/createSuperFocus.js'
 import DashboardUI from './components/Dashboard.jsx'
@@ -59,8 +58,6 @@ interface PromiseWithResolvers<T> {
   resolve: (value: T | PromiseLike<T>) => void
   reject: (reason?: any) => void
 }
-
-const memoize = ((memoizeOne as any).default as false) || memoizeOne
 
 const TAB_KEY = 9
 const ESC_KEY = 27
@@ -1132,26 +1129,26 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     return plugin.isSupported()
   }
 
-  #getAcquirers = memoize((targets: Target[]) => {
+  #getAcquirers = (targets: Target[]) => {
     return targets
       .filter(
         (target) =>
           target.type === 'acquirer' && this.#isTargetSupported(target),
       )
       .map(this.#attachRenderFunctionToTarget)
-  })
+  }
 
-  #getProgressIndicators = memoize((targets: Target[]) => {
+  #getProgressIndicators = (targets: Target[]) => {
     return targets
       .filter((target) => target.type === 'progressindicator')
       .map(this.#attachRenderFunctionToTarget)
-  })
+  }
 
-  #getEditors = memoize((targets: Target[]) => {
+  #getEditors = (targets: Target[]) => {
     return targets
       .filter((target) => target.type === 'editor')
       .map(this.#attachRenderFunctionToTarget)
-  })
+  }
 
   render = (state: State<M, B>) => {
     const pluginState = this.getPluginState()

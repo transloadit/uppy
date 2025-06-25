@@ -1,7 +1,6 @@
 /* eslint-disable jsx-a11y/media-has-caption */
 import type { I18n } from '@uppy/utils/lib/Translator'
-import { h, Component, type ComponentChild } from 'preact'
-import type { HTMLAttributes } from 'preact/compat'
+import { h, Component, type ComponentChild, type ComponentProps } from 'preact'
 import SnapshotButton from './SnapshotButton.jsx'
 import RecordButton from './RecordButton.jsx'
 import RecordingLength from './RecordingLength.jsx'
@@ -85,7 +84,7 @@ class CameraScreen extends Component<CameraScreenProps> {
     const shouldShowVideoSourceDropdown =
       showVideoSourceDropdown && videoSources && videoSources.length > 1
 
-    const videoProps: HTMLAttributes<HTMLVideoElement> = {
+    const videoProps: ComponentProps<'video'> = {
       playsInline: true,
     }
 
@@ -101,7 +100,6 @@ class CameraScreen extends Component<CameraScreenProps> {
     } else {
       videoProps.muted = true
       videoProps.autoPlay = true
-      // @ts-expect-error srcObject does not exist on <video> props
       videoProps.srcObject = src
     }
 

@@ -28144,17 +28144,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"preact@npm:10.10.0":
-  version: 10.10.0
-  resolution: "preact@npm:10.10.0"
-  checksum: 10/fb92482918ff4b5d4e5c6d03372bec2559242c68632a47b050fc81822d6efc9b12ab045db2610467120e73f7b0aa3f5392c99029943f2348e9ef113428b831e0
-  languageName: node
-  linkType: hard
-
-"preact@patch:preact@npm:10.10.0#.yarn/patches/preact-npm-10.10.0-dd04de05e8.patch::locator=%40uppy-dev%2Fbuild%40workspace%3A.":
-  version: 10.10.0
-  resolution: "preact@patch:preact@npm%3A10.10.0#.yarn/patches/preact-npm-10.10.0-dd04de05e8.patch::version=10.10.0&hash=513c63&locator=%40uppy-dev%2Fbuild%40workspace%3A."
-  checksum: 10/4b9526ed86b296084e3818e369a0169c28ba85dbccfdb1b2234156e3f49af0592d847f38b39cd60558f901f681fe3ddb0d2a71732f56aa8ff66365f12c60b1b0
+"preact@npm:^10.26.5, preact@npm:^10.5.13":
+  version: 10.26.9
+  resolution: "preact@npm:10.26.9"
+  checksum: 10/277da0b5fea5dbf5445244b90cbf5cdca4e80cad85a681910754bb743e6a91db54dc4846d66db8877183a7c31ddf6f184ec53ba6841d2a57edbed32313c95770
   languageName: node
   linkType: hard
 
@@ -32903,6 +32896,9 @@ __metadata:
     "@uppy/webdav": "workspace:^"
     "@uppy/xhr-upload": "workspace:^"
     "@uppy/zoom": "workspace:^"
+    chalk: "npm:^5.0.0"
+    esbuild: "npm:^0.25.0"
+    typescript: "npm:^5.8.3"
   languageName: unknown
   linkType: soft
 

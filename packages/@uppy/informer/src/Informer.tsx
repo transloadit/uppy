@@ -43,7 +43,8 @@ export default class Informer<M extends Meta, B extends Body> extends UIPlugin<
                 {info.message}{' '}
                 {info.details && (
                   <span
-                    aria-label={info.details}
+                    // TODO: fix this type
+                    aria-label={info.details as string}
                     data-microtip-position="top-left"
                     data-microtip-size="medium"
                     role="tooltip"

@@ -22,7 +22,7 @@ import EditorPanel from './EditorPanel.jsx'
 import PanelTopBar from './PickerPanelTopBar.jsx'
 import FileCard from './FileCard/index.jsx'
 import Slide from './Slide.jsx'
-import type { DashboardState, TargetWithRender } from '../Dashboard'
+import type { DashboardState, TargetWithRender } from '../Dashboard.js'
 
 // http://dev.edenspiekermann.com/2016/02/11/introducing-accessible-modal-dialog
 // https://github.com/ghosh/micromodal

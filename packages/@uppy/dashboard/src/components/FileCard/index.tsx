@@ -89,7 +89,7 @@ export default function FileCard(props: $TSFixMe) {
         <div
           className="uppy-DashboardContent-title"
           role="heading"
-          aria-level="1"
+          aria-level={1}
         >
           {i18nArray('editing', {
             file: (

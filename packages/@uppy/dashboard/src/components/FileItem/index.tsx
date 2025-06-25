@@ -108,7 +108,7 @@ export default class FileItem<M extends Meta, B extends Body> extends Component<
       <div
         className={dashboardItemClass}
         id={`uppy_${file.id}`}
-        role={this.props.role}
+        role={this.props.role as h.JSX.AriaRole}
       >
         <div className="uppy-Dashboard-Item-preview">
           <FilePreviewAndLink

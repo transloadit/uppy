@@ -14,9 +14,10 @@
     "e2e"
   ],
   "scripts": {
-    "build": "tsc --build tsconfig.build.json && npm-run-all --parallel build:js build:css --serial build:components size",
+    "build": "yarn build:lib && npm-run-all --parallel build:js build:css --serial build:components size",
+    "build:lib": "tsc --build tsconfig.build.json",
     "build:angular": "yarn workspace angular build",
-    "build:bundle": "yarn node ./bin/build-bundle.mjs",
+    "build:bundle": "yarn workspace uppy build:bundle",
     "build:clean": "cp .gitignore .gitignore.bak && printf '!node_modules\n!**/node_modules/**/*\n' >> .gitignore; git clean -Xfd packages e2e .parcel-cache coverage; mv .gitignore.bak .gitignore",
     "build:companion": "yarn workspace @uppy/companion build",
     "build:components": "node bin/build-components.mjs",
@@ -88,7 +89,6 @@
     "@vitest/utils": "patch:@vitest/utils@npm%3A1.2.1#./.yarn/patches/@vitest-utils-npm-1.2.1-3028846845.patch",
     "p-queue": "patch:p-queue@npm%3A8.0.1#~/.yarn/patches/p-queue-npm-8.0.1-fe1ddcd827.patch",
     "pre-commit": "patch:pre-commit@npm:1.2.2#.yarn/patches/pre-commit-npm-1.2.2-f30af83877.patch",
-    "preact": "patch:preact@npm:10.10.0#.yarn/patches/preact-npm-10.10.0-dd04de05e8.patch",
     "resize-observer-polyfill": "patch:resize-observer-polyfill@npm%3A1.5.1#./.yarn/patches/resize-observer-polyfill-npm-1.5.1-603120e8a0.patch",
     "start-server-and-test": "patch:start-server-and-test@npm:1.14.0#.yarn/patches/start-server-and-test-npm-1.14.0-841aa34fdf.patch",
     "stylelint-order": "^6.0.0",
@@ -150,8 +150,5 @@
   "engines": {
     "node": "^16.15.0 || >=18.0.0",
     "yarn": "3.6.1"
-  },
-  "alias": {
-    "preact/jsx-dev-runtime": "preact/jsx-runtime"
   }
 }
