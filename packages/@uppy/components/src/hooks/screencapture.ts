@@ -90,8 +90,8 @@ export function createScreenCaptureController(
 
   const getVideoProps = () => {
     const ref = document.getElementById(videoId) as HTMLVideoElement | null
-    const { status, recordedVideo, capturedScreenshotUrl } =
-      plugin.getPluginState()
+    const { recordedVideo, capturedScreenshotUrl } = plugin.getPluginState()
+    const status = plugin.getStatus()
     if (status === 'captured' && recordedVideo) {
       if (ref) {
         ref.srcObject = null
@@ -143,40 +143,36 @@ export function createScreenCaptureController(
   }
 
   const getScreenshotButtonProps = () => {
-    const { status } = plugin.getPluginState()
     return {
       type: 'button' as const,
       onClick: async () => {
         await plugin.captureScreenshot()
       },
-      disabled: status !== 'ready',
+      disabled: plugin.getStatus() !== 'ready',
     }
   }
 
   const getRecordButtonProps = () => {
-    const { status } = plugin.getPluginState()
     return {
       type: 'button' as const,
       onClick: () => {
         plugin.startRecording()
       },
-      disabled: status !== 'ready',
+      disabled: plugin.getStatus() !== 'ready',
     }
   }
 
   const getStopRecordingButtonProps = () => {
-    const { status } = plugin.getPluginState()
     return {
       type: 'button' as const,
       onClick: () => {
         plugin.stopRecording()
       },
-      disabled: status !== 'recording',
+      disabled: plugin.getStatus() !== 'recording',
     }
   }
 
   const getSubmitButtonProps = () => {
-    const { status } = plugin.getPluginState()
     return {
       type: 'button' as const,
       onClick: () => {
@@ -184,18 +180,17 @@ export function createScreenCaptureController(
         plugin.stop()
         onSubmit?.()
       },
-      disabled: !(status === 'captured'),
+      disabled: plugin.getStatus() !== 'captured',
     }
   }
 
   const getDiscardButtonProps = () => {
-    const { status } = plugin.getPluginState()
     return {
       type: 'button' as const,
       onClick: () => {
         plugin.discardRecordedMedia()
       },
-      disabled: !(status === 'captured'),
+      disabled: plugin.getStatus() !== 'captured',
     }
   }
 
