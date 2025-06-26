@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-/* eslint no-console: "off", no-restricted-syntax: "off" */
-
 import assert from 'node:assert'
 import fs from 'node:fs'
 import path from 'node:path'
@@ -25,7 +22,6 @@ import UIPlugin from './UIPlugin.js'
 import type { State } from './Uppy.js'
 
 const sampleImage = fs.readFileSync(
-  // eslint-disable-next-line no-restricted-globals
   path.join(__dirname, '../../../../e2e/cypress/fixtures/images/image.jpg'),
 )
 
@@ -2547,7 +2543,6 @@ describe('src/Core', () => {
         data: testImage,
       })
 
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore accessing private method
       core[Symbol.for('uppy test: createUpload')](
         Object.keys(core.getState().files),

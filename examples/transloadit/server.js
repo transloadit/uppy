@@ -41,7 +41,6 @@ function FormFields(fields) {
     let isValueJSON = false
     if (value.startsWith('{') || value.startsWith('[')) {
       try {
-        // eslint-disable-next-line no-param-reassign
         value = JSON.stringify(JSON.parse(value), null, 2)
         isValueJSON = true
       } catch {

@@ -11,7 +11,6 @@ const getOauthProvider = (providerName) =>
 describe('Test Provider options', () => {
   beforeEach(() => {
     setDefaultEnv()
-    // eslint-disable-next-line global-require
     grantConfig = require('../../src/config/grant')()
     companionOptions = getCompanionOptions()
   })

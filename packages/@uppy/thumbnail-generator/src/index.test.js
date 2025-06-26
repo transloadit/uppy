@@ -34,18 +34,18 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
   })
 
   it('should accept the thumbnailWidth and thumbnailHeight option and override the default', () => {
-    const plugin1 = new ThumbnailGeneratorPlugin(new MockCore()) // eslint-disable-line no-new
+    const plugin1 = new ThumbnailGeneratorPlugin(new MockCore())
     expect(plugin1.opts.thumbnailWidth).toEqual(null)
     expect(plugin1.opts.thumbnailHeight).toEqual(null)
 
     const plugin2 = new ThumbnailGeneratorPlugin(new MockCore(), {
       thumbnailWidth: 100,
-    }) // eslint-disable-line no-new
+    })
     expect(plugin2.opts.thumbnailWidth).toEqual(100)
 
     const plugin3 = new ThumbnailGeneratorPlugin(new MockCore(), {
       thumbnailHeight: 100,
-    }) // eslint-disable-line no-new
+    })
     expect(plugin3.opts.thumbnailHeight).toEqual(100)
   })
 

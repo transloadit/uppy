@@ -1,5 +1,3 @@
-/* eslint-disable react/destructuring-assignment */
-
 import classNames from 'classnames'
 import { h } from 'preact'
 import AddFiles from './AddFiles.js'
@@ -29,7 +27,7 @@ const AddFilesPanel = (props: $TSFixMe): $TSFixMe => {
           {props.i18n('back')}
         </button>
       </div>
-      {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+      {}
       <AddFiles {...props} />
     </div>
   )

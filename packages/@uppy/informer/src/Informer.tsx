@@ -1,6 +1,3 @@
-/* eslint-disable jsx-a11y/no-noninteractive-element-interactions  */
-/* eslint-disable jsx-a11y/click-events-have-key-events */
-
 import type { Body, Meta, State, UIPluginOptions, Uppy } from '@uppy/core'
 import { UIPlugin } from '@uppy/core'
 import { type ComponentChild, h } from 'preact'
@@ -47,7 +44,6 @@ export default class Informer<M extends Meta, B extends Body> extends UIPlugin<
                     data-microtip-size="medium"
                     role="tooltip"
                     onClick={() =>
-                      // eslint-disable-next-line no-alert
                       alert(`${info.message} \n\n ${info.details}`)
                     }
                   >

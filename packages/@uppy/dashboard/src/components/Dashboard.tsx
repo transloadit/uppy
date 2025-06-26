@@ -1,5 +1,3 @@
-/* eslint-disable react/destructuring-assignment, react/jsx-props-no-spreading */
-
 import type {
   Body,
   Meta,
@@ -235,7 +233,6 @@ export default function Dashboard<M extends Meta, B extends Body>(
             {props.i18n('dropHint')}
           </div>
 
-          {/* eslint-disable-next-line react/jsx-props-no-spreading */}
           {showFileList && <PanelTopBar {...props} />}
 
           {numberOfFilesForRecovery && (
@@ -315,26 +312,22 @@ export default function Dashboard<M extends Meta, B extends Body>(
           )}
 
           <Slide>
-            {/* eslint-disable-next-line react/jsx-props-no-spreading */}
             {props.showAddFilesPanel ? (
               <AddFilesPanel key="AddFiles" {...props} isSizeMD={isSizeMD} />
             ) : null}
           </Slide>
 
           <Slide>
-            {/* eslint-disable-next-line react/jsx-props-no-spreading */}
             {props.fileCardFor ? <FileCard key="FileCard" {...props} /> : null}
           </Slide>
 
           <Slide>
-            {/* eslint-disable-next-line react/jsx-props-no-spreading */}
             {props.activePickerPanel ? (
               <PickerPanelContent key="Picker" {...props} />
             ) : null}
           </Slide>
 
           <Slide>
-            {/* eslint-disable-next-line react/jsx-props-no-spreading */}
             {props.showFileEditor ? (
               <EditorPanel key="Editor" {...props} />
             ) : null}

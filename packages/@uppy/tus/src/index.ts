@@ -17,7 +17,6 @@ import getAllowedMetaFields from '@uppy/utils/lib/getAllowedMetaFields'
 import hasProperty from '@uppy/utils/lib/hasProperty'
 import isNetworkError from '@uppy/utils/lib/isNetworkError'
 import NetworkError from '@uppy/utils/lib/NetworkError'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore untyped
 import { RateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
 import * as tus from 'tus-js-client'
@@ -100,7 +99,6 @@ type Opts<M extends Meta, B extends Body> = DefinePluginOpts<
 >
 
 declare module '@uppy/utils/lib/UppyFile' {
-  // eslint-disable-next-line no-shadow, @typescript-eslint/no-unused-vars
   export interface UppyFile<M extends Meta, B extends Body> {
     tus?: TusOpts<M, B>
   }
@@ -252,7 +250,6 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
           if (!queuedRequest.shouldBeRequeued) return Promise.reject()
           // TODO: switch to `Promise.withResolvers` on the next major if available.
           let done: () => void
-          // eslint-disable-next-line promise/param-names
           const p = new Promise<void>((res) => {
             done = res
           })
@@ -285,7 +282,6 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
             ? (err as tus.DetailedError).originalRequest.getUnderlyingObject()
             : null
         if (isNetworkError(xhr)) {
-          // eslint-disable-next-line no-param-reassign
           err = new NetworkError(err, xhr)
         }
 
@@ -415,7 +411,6 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
         destProp: string,
       ) => {
         if (hasProperty(obj, srcProp) && !hasProperty(obj, destProp)) {
-          // eslint-disable-next-line no-param-reassign
           obj[destProp] = obj[srcProp]
         }
       }
@@ -447,7 +442,6 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
       const eventManager = new EventManager(this.uppy)
       this.uploaderEvents[file.id] = eventManager
 
-      // eslint-disable-next-line prefer-const
       qRequest = () => {
         if (!file.isPaused) {
           upload.start()

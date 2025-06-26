@@ -30,7 +30,6 @@ class Provider {
    * @param {object} options
    * @returns {Promise}
    */
-  // eslint-disable-next-line class-methods-use-this,no-unused-vars
   async list(options) {
     throw new Error('method not implemented')
   }
@@ -41,7 +40,6 @@ class Provider {
    * @param {object} options
    * @returns {Promise}
    */
-  // eslint-disable-next-line class-methods-use-this,no-unused-vars
   async download(options) {
     throw new Error('method not implemented')
   }
@@ -52,7 +50,6 @@ class Provider {
    * @param {object} options
    * @returns {Promise}
    */
-  // eslint-disable-next-line class-methods-use-this,no-unused-vars
   async thumbnail(options) {
     throw new Error('method not implemented')
   }
@@ -65,7 +62,6 @@ class Provider {
    * @param {object} options
    * @returns {Promise}
    */
-  // eslint-disable-next-line class-methods-use-this,no-unused-vars
   async size(options) {
     return undefined
   }
@@ -76,7 +72,6 @@ class Provider {
    * @param {object} options
    * @returns {Promise}
    */
-  // eslint-disable-next-line class-methods-use-this,no-unused-vars
   async deauthorizationCallback(options) {
     // @todo consider doing something like throw new NotImplementedError() instead
     throw new Error('method not implemented')
@@ -85,7 +80,6 @@ class Provider {
   /**
    * Generate a new access token based on the refresh token
    */
-  // eslint-disable-next-line class-methods-use-this,no-unused-vars
   async refreshToken(options) {
     throw new Error('method not implemented')
   }
@@ -94,7 +88,6 @@ class Provider {
    * @param {any} param0
    * @returns {Promise<any>}
    */
-  // eslint-disable-next-line no-unused-vars, class-methods-use-this
   async simpleAuth({ requestBody }) {
     throw new Error('method not implemented')
   }
@@ -108,7 +101,6 @@ class Provider {
     return undefined
   }
 
-  // eslint-disable-next-line no-unused-vars
   static grantDynamicToUserSession({ grantDynamic }) {
     return {}
   }

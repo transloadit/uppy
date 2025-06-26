@@ -5,7 +5,6 @@ import fetchWithNetworkError from '@uppy/utils/lib/fetchWithNetworkError'
 import getSocketHost from '@uppy/utils/lib/getSocketHost'
 import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
 import UserFacingApiError from '@uppy/utils/lib/UserFacingApiError'
-// eslint-disable-next-line import/no-extraneous-dependencies
 import pRetry, { AbortError } from 'p-retry'
 import packageJson from '../package.json' with { type: 'json' }
 import AuthError from './AuthError.js'
@@ -439,7 +438,6 @@ export default class RequestClient<M extends Meta, B extends Body> {
             await queue
               .wrapPromiseFunction(async () => {
                 const reconnectWebsocket = async () =>
-                  // eslint-disable-next-line promise/param-names
                   new Promise((_, rejectSocket) => {
                     socket = new WebSocket(`${host}/api/${token}`)
 

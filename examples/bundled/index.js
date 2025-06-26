@@ -70,4 +70,3 @@ uppy.on('complete', (result) => {
 //       console.log('Registration failed with ' + error)
 //     })
 // }
-/* eslint-enable */

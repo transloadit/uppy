@@ -148,7 +148,6 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
     super(uppy, { ...defaultOptions, ...opts })
     this.mediaDevices = getMediaDevices()
     this.supportsUserMedia = !!this.mediaDevices
-    // eslint-disable-next-line no-restricted-globals
     this.protocol = location.protocol.match(/https/i) ? 'https' : 'http'
     this.id = this.opts.id || 'Webcam'
     this.type = 'acquirer'
@@ -272,7 +271,6 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
     }
   }
 
-  // eslint-disable-next-line consistent-return
   start(
     options: {
       deviceId: string
@@ -359,7 +357,6 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
         preferredVideoMimeTypes.filter(filterSupportedTypes)
 
       if (acceptableMimeTypes.length > 0) {
-        // eslint-disable-next-line prefer-destructuring
         options.mimeType = acceptableMimeTypes[0]
       }
     }
@@ -538,7 +535,6 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
     return new Promise((resolve, reject) => {
       let count = this.opts.countdown
 
-      // eslint-disable-next-line consistent-return
       const countDown = setInterval(() => {
         if (!this.webcamActive) {
           clearInterval(countDown)
@@ -696,7 +692,6 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
 
     return (
       <CameraScreen
-        // eslint-disable-next-line react/jsx-props-no-spreading
         {...webcamState}
         onChangeVideoSource={this.changeVideoSource}
         onSnapshot={this.takeSnapshot}

@@ -1,11 +1,8 @@
 // The @uppy/ dependencies are resolved from source
-/* eslint-disable import/no-extraneous-dependencies */
 import Uppy from '@uppy/core'
 import DragDrop from '@uppy/drag-drop'
 import ProgressBar from '@uppy/progress-bar'
 import Tus from '@uppy/tus'
-
-/* eslint-enable import/no-extraneous-dependencies */
 
 // DEV CONFIG: create a .env file in the project root directory to customize those values.
 const { VITE_TUS_ENDPOINT: TUS_ENDPOINT } = import.meta.env

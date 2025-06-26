@@ -1,10 +1,8 @@
 import Core, { type UIPlugin } from '@uppy/core'
 import GoogleDrivePlugin from '@uppy/google-drive'
 import StatusBarPlugin from '@uppy/status-bar'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore untyped
 import Url from '@uppy/url'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore untyped
 import WebcamPlugin from '@uppy/webcam'
 import resizeObserverPolyfill from 'resize-observer-polyfill'
@@ -15,7 +13,6 @@ type $TSFixMe = any
 
 describe('Dashboard', () => {
   beforeAll(() => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore we're touching globals for the test
     globalThis.ResizeObserver =
       (resizeObserverPolyfill as any).default || resizeObserverPolyfill

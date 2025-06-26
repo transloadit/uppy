@@ -13,7 +13,6 @@ class Upload {
     setTimeout(this._triggerProgressThenSuccess.bind(this), 100)
   }
 
-  // eslint-disable-next-line class-methods-use-this
   abort() {
     // noop
   }

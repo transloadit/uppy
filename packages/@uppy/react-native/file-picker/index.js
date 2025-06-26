@@ -81,7 +81,6 @@ export default class UppyReactNativeFilePicker extends React.Component {
         this.props.onRequestClose()
       })
       .catch((err) => {
-        // eslint-disable-next-line no-console
         console.log(err)
       })
   }
@@ -98,7 +97,6 @@ export default class UppyReactNativeFilePicker extends React.Component {
         this.props.onRequestClose()
       })
       .catch((err) => {
-        // eslint-disable-next-line no-console
         console.log(err)
       })
   }
@@ -114,7 +112,6 @@ export default class UppyReactNativeFilePicker extends React.Component {
         this.props.onRequestClose()
       })
       .catch((err) => {
-        // eslint-disable-next-line no-console
         console.log(err)
       })
   }
@@ -190,7 +187,6 @@ export default class UppyReactNativeFilePicker extends React.Component {
                 })
                 this.props.onRequestClose()
               }}
-              // eslint-disable-next-line react/jsx-props-no-spreading
               {...this.props}
             />
           : this.renderSourceList()}

@@ -132,7 +132,7 @@ async function main(packageName, version) {
   // version should only be a positional arg and semver string
   // this deals with usage like `npm run uploadcdn uppy -- --force`
   // where we force push a local build
-  if (version?.startsWith('-')) version = undefined // eslint-disable-line no-param-reassign
+  if (version?.startsWith('-')) version = undefined
 
   const s3Client = new S3Client({
     credentials: {
@@ -146,7 +146,6 @@ async function main(packageName, version) {
 
   console.log('Using', remote ? 'Remote' : 'Local', 'build')
   if (!remote) {
-    // eslint-disable-next-line import/no-dynamic-require, global-require, no-param-reassign
     version = require(`../../packages/${packageName}/package.json`).version
   }
 

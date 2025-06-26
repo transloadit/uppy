@@ -1,4 +1,3 @@
-// eslint-disable-next-line max-classes-per-file
 const http = require('node:http')
 const https = require('node:https')
 const dns = require('node:dns')

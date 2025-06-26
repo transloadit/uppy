@@ -4,14 +4,12 @@ import dataURItoBlob from '@uppy/utils/lib/dataURItoBlob'
 import isObjectURL from '@uppy/utils/lib/isObjectURL'
 import isPreviewSupported from '@uppy/utils/lib/isPreviewSupported'
 import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore untyped
 import { rotation } from 'exifr/dist/mini.esm.mjs'
 import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'
 
 declare module '@uppy/core' {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   export interface UppyEventMap<M extends Meta, B extends Body> {
     'thumbnail:all-generated': () => void
     'thumbnail:generated': (file: UppyFile<M, B>, preview: string) => void
@@ -254,7 +252,6 @@ export default class ThumbnailGenerator<
     height: number | null,
     deg: number,
   ): { width: number; height: number } {
-    // eslint-disable-line no-shadow
     let aspect = img.width / img.height
     if (deg === 90 || deg === 270) {
       aspect = img.height / img.width
@@ -285,7 +282,6 @@ export default class ThumbnailGenerator<
    *
    * Returns a Canvas with the resized image on it.
    */
-  // eslint-disable-next-line class-methods-use-this
   resizeImage(
     image: HTMLCanvasElement,
     targetWidth: number,
@@ -344,7 +340,7 @@ export default class ThumbnailGenerator<
         return Promise.resolve()
       }
       return this.requestThumbnail(current)
-        .catch(() => {}) // eslint-disable-line node/handle-callback-err
+        .catch(() => {})
         .then(() => this.processQueue())
     }
     this.queueProcessing = false

@@ -3,7 +3,6 @@ import React from 'react'
 import { AsyncStorage, FlatList, Image, View, WebView } from 'react-native'
 
 function getQueryParamValueFromUrl(name, url) {
-  // eslint-disable-next-line no-param-reassign
   name = name.replace(/[[]/, '\\[').replace(/[\]]/, '\\]')
   const regexS = `[\\?&]${name}=([^&#]*)`
   const regex = new RegExp(regexS)
@@ -68,7 +67,6 @@ export default class UppyRNInstagram extends React.Component {
     uppy.removePlugin(this.plugin)
   }
 
-  // eslint-disable-next-line class-methods-use-this
   renderGrid(items) {
     return (
       <View style={styles.container}>

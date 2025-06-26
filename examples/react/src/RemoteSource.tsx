@@ -1,5 +1,3 @@
-/* eslint-disable no-shadow */
-/* eslint-disable react/react-in-jsx-scope */
 import type { PartialTreeFile, PartialTreeFolderNode } from '@uppy/core'
 import { useRemoteSource } from '@uppy/react'
 import type { AvailablePluginsKeys } from '@uppy/remote-sources'

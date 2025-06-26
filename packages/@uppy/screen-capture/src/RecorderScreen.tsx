@@ -1,5 +1,3 @@
-/* eslint-disable react/jsx-props-no-spreading */
-
 import type { Body, Meta } from '@uppy/core'
 import { Component, type ComponentChild, Fragment, h } from 'preact'
 import DiscardButton from './DiscardButton.js'
@@ -86,7 +84,6 @@ class RecorderScreen<M extends Meta, B extends Body> extends Component<
               />
             </div>
           ) : (
-            // eslint-disable-next-line jsx-a11y/media-has-caption
             <video
               ref={(videoElement) => {
                 this.videoElement = videoElement

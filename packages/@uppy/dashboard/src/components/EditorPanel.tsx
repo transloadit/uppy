@@ -1,5 +1,3 @@
-/* eslint-disable react/destructuring-assignment */
-
 import classNames from 'classnames'
 import { h } from 'preact'
 

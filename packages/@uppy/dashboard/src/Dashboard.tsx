@@ -525,10 +525,8 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     if (manualClose) {
       if (this.opts.browserBackButtonClose) {
         // Make sure that the latest entry in the history state is our modal name
-        // eslint-disable-next-line no-restricted-globals
         if (history.state?.[this.modalName]) {
           // Go back in history to clear out the entry we created (ultimately closing the modal)
-          // eslint-disable-next-line no-restricted-globals
           history.back()
         }
       }
@@ -712,13 +710,10 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
 
   private updateBrowserHistory = () => {
     // Ensure history state does not already contain our modal name to avoid double-pushing
-    // eslint-disable-next-line no-restricted-globals
     if (!history.state?.[this.modalName]) {
       // Push to history so that the page is not lost on browser back button press
-      // eslint-disable-next-line no-restricted-globals
       history.pushState(
         {
-          // eslint-disable-next-line no-restricted-globals
           ...history.state,
           [this.modalName]: true,
         },
@@ -743,7 +738,6 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     // modal is open, and then the modal gets manually closed.
     // Solves PR #575 (https://github.com/transloadit/uppy/pull/575)
     if (!this.isModalOpen() && event.state?.[this.modalName]) {
-      // eslint-disable-next-line no-restricted-globals
       history.back()
     }
   }
@@ -827,14 +821,14 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
         (hasFiles || !somePluginCanHandleRootDrop)) ||
       !this.uppy.getState().allowNewUpload
     ) {
-      event.dataTransfer!.dropEffect = 'none' // eslint-disable-line no-param-reassign
+      event.dataTransfer!.dropEffect = 'none'
       return
     }
 
     // Add a small (+) icon on drop
     // (and prevent browsers from interpreting this as files being _moved_ into the
     // browser, https://github.com/transloadit/uppy/issues/1978).
-    event.dataTransfer!.dropEffect = 'copy' // eslint-disable-line no-param-reassign
+    event.dataTransfer!.dropEffect = 'copy'
 
     this.setPluginState({ isDraggingOver: true })
 
@@ -1179,7 +1173,6 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
       0
     ) {
       this.opts.fileManagerSelectionType = 'files'
-      // eslint-disable-next-line no-console
       console.warn(
         `Unsupported option for "fileManagerSelectionType". Using default of "${this.opts.fileManagerSelectionType}".`,
       )
@@ -1347,7 +1340,6 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     }
   }
 
-  // eslint-disable-next-line class-methods-use-this
   #getInformerOpts() {
     return {
       // currently no options

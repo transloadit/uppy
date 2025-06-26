@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-
 import Uppy from '@uppy/core'
 import { describe, expect, it } from 'vitest'
 import Webcam from './index.js'

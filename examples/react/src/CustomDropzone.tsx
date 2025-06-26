@@ -1,6 +1,3 @@
-/* eslint-disable react/jsx-props-no-spreading */
-/* eslint-disable react/react-in-jsx-scope */
-/* eslint-disable react/button-has-type */
 import { ProviderIcon, useDropzone, useFileInput } from '@uppy/react'
 
 export interface CustomDropzoneProps {

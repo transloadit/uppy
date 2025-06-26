@@ -11,21 +11,18 @@ const VERSION_URL =
 const gitStatus = spawn('git', ['status', '--porcelain'])
 
 for await (const line of readLines(gitStatus.stdout)) {
-  // eslint-disable-next-line no-continue
   if (!line.startsWith('UU ')) continue
 
   const file = line.slice(3)
   if (file === 'yarn.lock') {
     console.log('corepack yarn install')
     console.log('git add yarn.lock')
-    // eslint-disable-next-line no-continue
     continue
   }
 
   if (file.endsWith('/package.json')) {
     console.log(`git checkout --ours ${file}`)
     console.log(`git add ${file}`)
-    // eslint-disable-next-line no-continue
     continue
   }
 
@@ -34,7 +31,6 @@ for await (const line of readLines(gitStatus.stdout)) {
   let containsCDNChanges = true
   let currentConflictContainsCDNChanges = false
 
-  // eslint-disable-next-line no-shadow
   for await (const line of readLines(gitDiff.stdout)) {
     if (conflictHasStarted) {
       if (line.startsWith('++>>>>>>>')) {

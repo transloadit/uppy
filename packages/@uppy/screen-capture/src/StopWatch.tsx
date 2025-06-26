@@ -1,10 +1,8 @@
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { Component, h } from 'preact'
 
 type $TSFixMe = any
 
 function fmtMSS(s: number) {
-  // eslint-disable-next-line no-return-assign, no-param-reassign
   return (s - (s %= 60)) / 60 + (s > 9 ? ':' : ':0') + s
 }
 

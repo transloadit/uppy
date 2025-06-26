@@ -1,9 +1,3 @@
-/* eslint-disable no-shadow */
-/* eslint-disable jsx-a11y/media-has-caption */
-/* eslint-disable react/button-has-type */
-/* eslint-disable react/jsx-props-no-spreading */
-/* eslint-disable react/react-in-jsx-scope */
-
 import Uppy from '@uppy/core'
 import {
   Dropzone,

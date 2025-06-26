@@ -119,7 +119,6 @@ export default class ScreenCapture<
   constructor(uppy: Uppy<M, B>, opts?: ScreenCaptureOptions) {
     super(uppy, { ...defaultOptions, ...opts })
     this.mediaDevices = getMediaDevices()
-    // eslint-disable-next-line no-restricted-globals
     this.protocol = location.protocol === 'https:' ? 'https' : 'http'
     this.id = this.opts.id || 'ScreenCapture'
     this.type = 'acquirer'
@@ -638,7 +637,7 @@ export default class ScreenCapture<
 
     return (
       <RecorderScreen<M, B>
-        {...recorderState} // eslint-disable-line react/jsx-props-no-spreading
+        {...recorderState}
         onStartRecording={this.startRecording}
         onStopRecording={this.stopRecording}
         enableScreenshots={this.opts.enableScreenshots}

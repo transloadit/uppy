@@ -51,7 +51,7 @@ export default async function formatChangeLog(
     spawnOptions,
   )
   const expectedFormat =
-    /^"([a-f0-9]+)::(?:((?:@uppy\/[a-z0-9-]+(?:,@uppy\/[a-z0-9-]+)*)|meta|docs|e2e|examples):\s?)?(.+?)(\s\(#\d+\))?::(.+)"$/ // eslint-disable-line max-len
+    /^"([a-f0-9]+)::(?:((?:@uppy\/[a-z0-9-]+(?:,@uppy\/[a-z0-9-]+)*)|meta|docs|e2e|examples):\s?)?(.+?)(\s\(#\d+\))?::(.+)"$/
   for await (const log of createInterface({ input: gitLog.stdout })) {
     const [, sha, packageName, title, PR, authorName] = expectedFormat.exec(log)
 

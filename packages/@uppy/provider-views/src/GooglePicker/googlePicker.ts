@@ -451,12 +451,10 @@ export async function pollPickingSession({
             pickingSession,
             signal,
           })
-          // eslint-disable-next-line no-param-reassign
           pickingSessionRef.current = undefined
           onFilesPicked(resolvedPhotos, accessToken)
         }
         if (pickingSession.pollingConfig.timeoutIn === '0s') {
-          // eslint-disable-next-line no-param-reassign
           pickingSessionRef.current = undefined
         }
       }

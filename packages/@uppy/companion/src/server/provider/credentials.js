@@ -3,7 +3,6 @@ const logger = require('../logger')
 const oAuthState = require('../helpers/oauth-state')
 const tokenService = require('../helpers/jwt')
 const { getURLBuilder, getRedirectPath } = require('../helpers/utils')
-// eslint-disable-next-line
 const Provider = require('./Provider')
 
 const got = require('../got')

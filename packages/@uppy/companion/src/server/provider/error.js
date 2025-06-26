@@ -1,4 +1,3 @@
-/* eslint-disable max-classes-per-file */
 /**
  * ProviderApiError is error returned when an adapter encounters
  * an http error while communication with its corresponding provider

@@ -280,7 +280,6 @@ module.exports.getBasicAuthHeader = (key, secret) => {
 
 const rfc2047Encode = (dataIn) => {
   const data = `${dataIn}`
-  // eslint-disable-next-line no-control-regex
   if (/^[\x00-\x7F]*$/.test(data)) return data // we return ASCII as is
   return `=?UTF-8?B?${Buffer.from(data).toString('base64')}?=` // We encode non-ASCII strings
 }

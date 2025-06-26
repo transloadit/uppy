@@ -29,7 +29,6 @@ const closePageHtml = (origin) => `
  * @param {Function} next
  */
 module.exports = function callback(req, res, next) {
-  // eslint-disable-line no-unused-vars
   const { providerName } = req.params
 
   const grant = req.session.grant || {}

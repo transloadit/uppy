@@ -123,7 +123,6 @@ export type OptionsWithRestructuredFields = Omit<AssemblyOptions, 'fields'> & {
   fields: Record<string, string | number>
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export interface TransloaditOptions<M extends Meta, B extends Body>
   extends PluginOpts {
   service?: string
@@ -178,7 +177,6 @@ type PersistentState = {
 }
 
 declare module '@uppy/core' {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   export interface UppyEventMap<M extends Meta, B extends Body> {
     // We're also overriding the `restored` event as it is now populated with Transloadit state.
     restored: (pluginData: Record<string, TransloaditState>) => void
@@ -218,7 +216,6 @@ declare module '@uppy/core' {
 }
 
 declare module '@uppy/utils/lib/UppyFile' {
-  // eslint-disable-next-line no-shadow, @typescript-eslint/no-unused-vars
   export interface UppyFile<M extends Meta, B extends Body> {
     transloadit?: { assembly: string }
     tus?: TusOpts<M, B>
@@ -229,7 +226,6 @@ const sendErrorToConsole = (originalErr: Error) => (err: Error) => {
   const error = new ErrorWithCause('Failed to send error to the client', {
     cause: err,
   })
-  // eslint-disable-next-line no-console
   console.error(error, originalErr)
 }
 
@@ -240,7 +236,6 @@ function validateParams(params?: AssemblyParameters | null): void {
 
   if (typeof params === 'string') {
     try {
-      // eslint-disable-next-line no-param-reassign
       params = JSON.parse(params)
     } catch (err) {
       // Tell the user that this is not an Uppy bug!
@@ -589,7 +584,7 @@ export default class Transloadit<
     const state = this.getPluginState()
     const file = state.files[result.original_id]
     // The `file` may not exist if an import robot was used instead of a file upload.
-    result.localId = file ? file.id : null // eslint-disable-line no-param-reassign
+    result.localId = file ? file.id : null
 
     const entry = {
       result,
@@ -611,7 +606,6 @@ export default class Transloadit<
   #onAssemblyFinished(assembly: Assembly) {
     const url = assembly.status.assembly_ssl_url
     this.client.getAssemblyStatus(url).then((finalStatus) => {
-      // eslint-disable-next-line no-param-reassign
       assembly.status = finalStatus
       this.uppy.emit('transloadit:complete', finalStatus)
     })
@@ -735,7 +729,7 @@ export default class Transloadit<
       this.#onFileUploadComplete(id, file)
     })
     assembly.on('error', (error: AssemblyError) => {
-      error.assembly = assembly.status // eslint-disable-line no-param-reassign
+      error.assembly = assembly.status
       this.uppy.emit('transloadit:assembly-error', assembly.status, error)
     })
 

@@ -1,5 +1,3 @@
-/* eslint-disable jsx-a11y/label-has-associated-control */
-
 import type { Body, Meta, UppyFile } from '@uppy/core'
 import type { I18n } from '@uppy/utils/lib/Translator'
 import Cropper from 'cropperjs'
@@ -15,8 +13,7 @@ type Props<M extends Meta, B extends Body> = {
   storeCropperInstance: (cropper: Cropper) => void
   opts: ImageEditor<M, B>['opts']
   i18n: I18n
-  // eslint-disable-next-line react/no-unused-prop-types
-  save: () => void // eslint confused
+  save: () => void
 }
 
 type State = {
@@ -63,7 +60,6 @@ export default class Editor<M extends Meta, B extends Body> extends Component<
     this.imgElement.removeEventListener('cropend', this.limitCropboxMovement)
   }
 
-  // eslint-disable-next-line react/sort-comp
   storePrevCropboxData(): void {
     this.setState({ prevCropboxData: this.cropper.getCropBoxData() })
   }

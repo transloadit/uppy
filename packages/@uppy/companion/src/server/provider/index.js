@@ -112,12 +112,10 @@ module.exports.addCustomProviders = (
   Object.keys(customProviders).forEach((providerName) => {
     const customProvider = customProviders[providerName]
 
-    // eslint-disable-next-line no-param-reassign
     providers[providerName] = customProvider.module
     const { oauthProvider } = customProvider.module
 
     if (isOAuthProvider(oauthProvider)) {
-      // eslint-disable-next-line no-param-reassign
       grantConfig[oauthProvider] = {
         ...customProvider.config,
         // todo: consider setting these options from a universal point also used
@@ -150,7 +148,6 @@ module.exports.addProviderOptions = (
     return
   }
 
-  // eslint-disable-next-line no-param-reassign
   grantConfig.defaults = {
     host: server.host,
     protocol: server.protocol,
@@ -164,12 +161,9 @@ module.exports.addProviderOptions = (
 
     if (isOAuthProvider(oauthProvider) && grantConfig[oauthProvider]) {
       // explicitly add providerOptions so users don't override other providerOptions.
-      // eslint-disable-next-line no-param-reassign
       grantConfig[oauthProvider].key = providerOptions[providerName].key
-      // eslint-disable-next-line no-param-reassign
       grantConfig[oauthProvider].secret = providerOptions[providerName].secret
       if (providerOptions[providerName].credentialsURL) {
-        // eslint-disable-next-line no-param-reassign
         grantConfig[oauthProvider].dynamic = [
           'key',
           'secret',
@@ -184,7 +178,6 @@ module.exports.addProviderOptions = (
       // override grant.js redirect uri with companion's custom redirect url
       const isExternal = !!server.implicitPath
       const redirectPath = getRedirectPath(providerName)
-      // eslint-disable-next-line no-param-reassign
       grantConfig[oauthProvider].redirect_uri = getURLBuilder(companionOptions)(
         redirectPath,
         isExternal,
@@ -195,18 +188,15 @@ module.exports.addProviderOptions = (
           isExternal,
           true,
         )
-        // eslint-disable-next-line no-param-reassign
         grantConfig[oauthProvider].redirect_uri =
           `${server.protocol}://${oauthDomain}${fullRedirectPath}`
       }
 
       if (server.implicitPath) {
         // no url builder is used for this because grant internally adds the path
-        // eslint-disable-next-line no-param-reassign
         grantConfig[oauthProvider].callback =
           `${server.implicitPath}${grantConfig[oauthProvider].callback}`
       } else if (server.path) {
-        // eslint-disable-next-line no-param-reassign
         grantConfig[oauthProvider].callback =
           `${server.path}${grantConfig[oauthProvider].callback}`
       }

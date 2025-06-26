@@ -1,5 +1,3 @@
-/* eslint-disable react/destructuring-assignment */
-
 import type Uppy from '@uppy/core'
 import type { Body, Meta, State, UppyFile } from '@uppy/core'
 import type { I18n } from '@uppy/utils/lib/Translator'

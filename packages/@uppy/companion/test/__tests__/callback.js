@@ -1,6 +1,5 @@
 const mockOauthState = require('../mockoauthstate')()
 
-// eslint-disable-next-line import/order
 const request = require('supertest')
 const tokenService = require('../../src/server/helpers/jwt')
 const { getServer, grantToken } = require('../mockserver')

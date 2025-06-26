@@ -1,5 +1,3 @@
-/* eslint-disable react/destructuring-assignment */
-
 import type { Body, Meta, UppyFile } from '@uppy/core'
 import { h } from 'preact'
 import { useEffect, useMemo } from 'preact/hooks'
@@ -10,7 +8,6 @@ export type ThumbnailProps = {
   width?: string
   height?: string
   images?: boolean
-  // eslint-disable-next-line react/no-unused-prop-types
   ctx?: UppyContext
 }
 

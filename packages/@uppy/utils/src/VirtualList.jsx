@@ -71,7 +71,6 @@ class VirtualList extends Component {
   }
 
   // TODO: refactor to stable lifecycle method
-  // eslint-disable-next-line
   componentWillUpdate() {
     if (this.base.contains(document.activeElement)) {
       this.focusElement = document.activeElement
@@ -140,7 +139,6 @@ class VirtualList extends Component {
     // The `role="presentation"` attributes ensure that these wrapper elements are not treated as list
     // items by accessibility and outline tools.
     return (
-      // eslint-disable-next-line react/jsx-props-no-spreading
       <div onScroll={this.handleScroll} {...props}>
         <div role="presentation" style={styleInner}>
           <div role="presentation" style={styleContent}>

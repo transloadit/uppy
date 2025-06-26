@@ -349,12 +349,10 @@ describe('AwsS3Multipart', () => {
         createMultipartUpload,
         completeMultipartUpload: vi.fn(async () => ({ location: 'test' })),
         abortMultipartUpload: vi.fn(() => {
-          // eslint-disable-next-line no-throw-literal
           throw 'should ignore'
         }),
         signPart,
         uploadPartBytes: uploadPartBytes.mockImplementationOnce(() =>
-          // eslint-disable-next-line prefer-promise-reject-errors
           Promise.reject({ source: { status: 500 } }),
         ),
         listParts: undefined as any,
@@ -394,7 +392,6 @@ describe('AwsS3Multipart', () => {
               setTimeout(() => resolve({ status: 200 }), 100)
             })
           }
-          // eslint-disable-next-line prefer-promise-reject-errors
           return Promise.reject({ source: { status: 500 } })
         }),
         listParts: undefined as any,

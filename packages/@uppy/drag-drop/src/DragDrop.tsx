@@ -92,7 +92,6 @@ export default class DragDrop<M extends Meta, B extends Body> extends UIPlugin<
 
     // Clear the input so that Chrome can detect file section when the same file is repeatedly selected
     // (see https://github.com/transloadit/uppy/issues/768#issuecomment-2264902758)
-    // eslint-disable-next-line no-param-reassign
     event.currentTarget.value = ''
   }
 
@@ -105,7 +104,6 @@ export default class DragDrop<M extends Meta, B extends Body> extends UIPlugin<
     const hasFiles = types.some((type) => type === 'Files')
     const { allowNewUpload } = this.uppy.getState()
     if (!hasFiles || !allowNewUpload) {
-      // eslint-disable-next-line no-param-reassign
       event.dataTransfer!.dropEffect = 'none'
       return
     }
@@ -114,7 +112,6 @@ export default class DragDrop<M extends Meta, B extends Body> extends UIPlugin<
     // (and prevent browsers from interpreting this as files being _moved_ into the browser
     // https://github.com/transloadit/uppy/issues/1978)
     //
-    // eslint-disable-next-line no-param-reassign
     event.dataTransfer!.dropEffect = 'copy'
 
     this.setPluginState({ isDraggingOver: true })

@@ -1,6 +1,3 @@
-/* eslint-disable no-nested-ternary */
-/* eslint-disable react/destructuring-assignment */
-
 import { clsx } from 'clsx'
 import { h } from 'preact'
 import type { UppyContext } from './types.js'

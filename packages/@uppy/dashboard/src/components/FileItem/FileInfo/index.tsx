@@ -1,5 +1,3 @@
-/* eslint-disable react/destructuring-assignment */
-
 import prettierBytes from '@transloadit/prettier-bytes'
 import type { UppyFile } from '@uppy/core'
 import type { I18n } from '@uppy/utils/lib/Translator'
@@ -151,7 +149,7 @@ export default function FileInfo(props: FileInfoProps) {
           containerHeight,
           containerWidth,
         })}
-        {/* eslint-disable-next-line no-alert */}
+        {}
         <ErrorButton file={file} onClick={() => alert(file.error)} />
       </div>
       <div className="uppy-Dashboard-Item-status">

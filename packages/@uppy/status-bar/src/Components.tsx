@@ -492,7 +492,6 @@ function ProgressBarError(props: ProgressBarErrorProps) {
 
   function displayErrorAlert(): void {
     const errorMessage = `${i18n('uploadFailed')} \n\n ${error}`
-    // eslint-disable-next-line no-alert
     alert(errorMessage) // TODO: move to custom alert implementation
   }
 

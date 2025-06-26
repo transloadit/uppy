@@ -1,5 +1,3 @@
-/* eslint-disable class-methods-use-this */
-
 /**
  * Core plugin logic that all plugins share.
  *
@@ -22,7 +20,6 @@ export type PluginOpts = {
 export type OnlyOptionals<T> = Pick<
   T,
   {
-    // eslint-disable-next-line @typescript-eslint/ban-types
     [K in keyof T]-?: {} extends Pick<T, K> ? K : never
   }[keyof T]
 >
@@ -105,7 +102,6 @@ export default class BasePlugin<
    * making them not conditional in use, such as `if (this.afterUpdate)`.
    */
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   addTarget(plugin: UnknownPlugin<M, B>): HTMLElement | null {
     throw new Error(
       "Extend the addTarget method to add your plugin to another plugin's target",
@@ -116,7 +112,6 @@ export default class BasePlugin<
 
   uninstall(): void {}
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   update(state: Partial<State<M, B>>): void {}
 
   // Called after every state update, after everything's mounted. Debounced.

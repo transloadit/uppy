@@ -90,7 +90,6 @@ export default class Client<M extends Meta, B extends Body> {
           throw error
         },
         (err) => {
-          // eslint-disable-next-line no-param-reassign
           err.cause = serverError
           throw err
         },

@@ -1,4 +1,3 @@
-/* eslint-disable max-classes-per-file */
 /* global AggregateError */
 
 import DefaultStore, { type Store } from '@uppy/store-default'
@@ -27,7 +26,6 @@ import type {
   UppyFile,
 } from '@uppy/utils/lib/UppyFile'
 import throttle from 'lodash/throttle.js'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore untyped
 import ee from 'namespace-emitter'
 import { nanoid } from 'nanoid/non-secure'
@@ -214,7 +212,6 @@ interface CurrentUpload<M extends Meta, B extends Body> {
 }
 
 // TODO: can we use namespaces in other plugins to populate this?
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface Plugins extends Record<string, Record<string, unknown> | undefined> {}
 
 export interface State<M extends Meta, B extends Body>
@@ -497,7 +494,6 @@ export class Uppy<
 
     // Exposing uppy object on window for debugging and testing
     if (this.opts.debug && typeof window !== 'undefined') {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore Mutating the global object for debug purposes
       window[this.opts.id] = this
     }
@@ -1531,7 +1527,6 @@ export class Uppy<
     { leading: true, trailing: true },
   )
 
-  // eslint-disable-next-line class-methods-use-this, @typescript-eslint/explicit-module-boundary-types
   private [Symbol.for('uppy test: updateTotalProgress')]() {
     return this.#updateTotalProgress()
   }

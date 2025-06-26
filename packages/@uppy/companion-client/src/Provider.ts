@@ -28,7 +28,6 @@ const getName = (id: string) => {
 }
 
 function getOrigin() {
-  // eslint-disable-next-line no-restricted-globals
   return location.origin
 }
 
@@ -132,7 +131,6 @@ export default class Provider<M extends Meta, B extends Body>
     }
   }
 
-  // eslint-disable-next-line class-methods-use-this, @typescript-eslint/no-unused-vars
   authQuery(data: unknown): Record<string, string> {
     return {}
   }

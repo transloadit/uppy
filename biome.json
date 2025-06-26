@@ -6,21 +6,28 @@
     "useIgnoreFile": true
   },
   "files": {
-    "ignoreUnknown": true
+    "ignoreUnknown": true,
+    "includes": [
+      "packages/**",
+      "examples/**",
+      "bin/**",
+      "e2e/**",
+      "private/**",
+      "!packages/**/{dist,lib}/**",
+      "!node_modules",
+      "!.svelte-kit",
+      "!**/*.vue",
+      "!**/*.svelte",
+      "!packages/@uppy/components/src/input.css"
+    ]
   },
   "formatter": {
     "enabled": true,
     "indentStyle": "space",
-    "formatWithErrors": true,
-    "includes": ["!packages/@uppy/components/src/input.css"]
+    "formatWithErrors": true
   },
   "linter": {
     "enabled": true,
-    "includes": [
-      "!*.vue",
-      "!*.svelte",
-      "!packages/@uppy/components/src/input.css"
-    ],
     "rules": {
       "recommended": true,
       "suspicious": {

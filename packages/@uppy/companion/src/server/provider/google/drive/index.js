@@ -113,7 +113,6 @@ class Drive extends Provider {
     return MAX_AGE_REFRESH_TOKEN
   }
 
-  // eslint-disable-next-line class-methods-use-this
   async list(options) {
     return withGoogleErrorHandling(
       Drive.oauthProvider,
@@ -205,7 +204,6 @@ class Drive extends Provider {
     )
   }
 
-  // eslint-disable-next-line class-methods-use-this
   async download({ id, token }) {
     if (mockAccessTokenExpiredError != null) {
       logger.warn(`Access token: ${token}`)

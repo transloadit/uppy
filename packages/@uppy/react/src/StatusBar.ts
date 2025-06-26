@@ -26,12 +26,10 @@ class StatusBar<M extends Meta, B extends Body> extends Component<
   }
 
   componentDidUpdate(prevProps: StatusBar<M, B>['props']): void {
-    // eslint-disable-next-line react/destructuring-assignment
     if (prevProps.uppy !== this.props.uppy) {
       this.uninstallPlugin(prevProps)
       this.installPlugin()
     } else if (nonHtmlPropsHaveChanged(this.props, prevProps)) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { uppy, ...options } = { ...this.props, target: this.container }
       this.plugin.setOptions(options)
     }
@@ -76,7 +74,6 @@ class StatusBar<M extends Meta, B extends Body> extends Component<
     uppy.removePlugin(this.plugin)
   }
 
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   render() {
     return h('div', {
       className: 'uppy-Container',

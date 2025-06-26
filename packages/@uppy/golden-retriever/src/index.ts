@@ -17,7 +17,6 @@ import ServiceWorkerStore, {
 } from './ServiceWorkerStore.js'
 
 declare module '@uppy/core' {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   export interface UppyEventMap<M extends Meta, B extends Body> {
     // TODO: remove this event
     'restore:get-data': (fn: (data: Record<string, unknown>) => void) => void

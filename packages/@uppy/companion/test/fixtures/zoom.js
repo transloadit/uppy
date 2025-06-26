@@ -52,7 +52,6 @@ module.exports.nockZoomRecordings = ({ times = 1 } = {}) => {
 }
 
 module.exports.nockZoomRevoke = ({ key, secret }) => {
-  // eslint-disable-next-line func-names
   nock('https://zoom.us')
     .post('/oauth/revoke?token=token+value')
     .reply(function () {

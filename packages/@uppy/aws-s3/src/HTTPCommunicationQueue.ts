@@ -184,7 +184,6 @@ export class HTTPCommunicationQueue<M extends Meta, B extends Body> {
     // As the cache is updated asynchronously, there could be a race condition
     // where we just miss a new result so we loop here until we get nothing back,
     // at which point it's out turn to create a new cache entry.
-    // eslint-disable-next-line no-cond-assign
     while ((cachedResult = this.#cache.get(file.data)) != null) {
       try {
         return await cachedResult
@@ -409,7 +408,6 @@ export class HTTPCommunicationQueue<M extends Meta, B extends Body> {
           throw err
         }
         await new Promise((resolve) => setTimeout(resolve, timeout))
-        // eslint-disable-next-line no-continue
         continue
       }
 

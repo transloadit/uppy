@@ -14,7 +14,6 @@ class WebdavProvider extends Provider {
     return true
   }
 
-  // eslint-disable-next-line class-methods-use-this
   isAuthenticated({ providerUserSession }) {
     return providerUserSession.webdavUrl != null
   }
@@ -29,7 +28,7 @@ class WebdavProvider extends Provider {
     // dynamic import because Companion currently uses CommonJS and webdav is shipped as ESM
     // todo implement as regular require as soon as Node 20.17 or 22 is required
     // or as regular import when Companion is ported to ESM
-    const { AuthType } = await import('webdav') // eslint-disable-line import/no-unresolved
+    const { AuthType } = await import('webdav')
 
     // Is this an ownCloud or Nextcloud public link URL? e.g. https://example.com/s/kFy9Lek5sm928xP
     // they have specific urls that we can identify
@@ -53,7 +52,6 @@ class WebdavProvider extends Provider {
   }
 
   async logout() {
-    // eslint-disable-line class-methods-use-this
     return { revoked: true }
   }
 
@@ -154,7 +152,6 @@ class WebdavProvider extends Provider {
     )
   }
 
-  // eslint-disable-next-line
   async thumbnail({ id, providerUserSession }) {
     // not implementing this because a public thumbnail from webdav will be used instead
     logger.error(
@@ -164,7 +161,6 @@ class WebdavProvider extends Provider {
     throw new Error('call to thumbnail is not implemented')
   }
 
-  // eslint-disable-next-line class-methods-use-this
   async withErrorHandling(tag, fn) {
     try {
       return await fn()

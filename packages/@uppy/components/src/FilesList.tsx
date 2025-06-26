@@ -1,5 +1,3 @@
-/* eslint-disable react/destructuring-assignment */
-
 import type { Body, Meta, UppyEventMap, UppyFile } from '@uppy/core'
 import { clsx } from 'clsx'
 import { Fragment, h } from 'preact'

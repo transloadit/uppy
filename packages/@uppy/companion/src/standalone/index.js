@@ -181,7 +181,6 @@ module.exports = function server(inputCompanionOptions) {
         })
         res.header('Content-Length', `${Buffer.byteLength(content, 'utf8')}`)
         // use writeHead to prevent 'charset' from being appended
-        // eslint-disable-next-line max-len
         // https://docs.microsoft.com/en-us/azure/active-directory/develop/howto-configure-publisher-domain#to-select-a-verified-domain
         res.writeHead(200, { 'Content-Type': 'application/json' })
         res.write(content)
@@ -195,7 +194,6 @@ module.exports = function server(inputCompanionOptions) {
   })
 
   app.use((err, req, res, next) => {
-    // eslint-disable-line no-unused-vars
     if (app.get('env') === 'production') {
       // if the error is a URIError from the requested URL we only log the error message
       // to avoid uneccessary error alerts

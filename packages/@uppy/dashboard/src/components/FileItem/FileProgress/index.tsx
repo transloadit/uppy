@@ -1,5 +1,3 @@
-/* eslint-disable react/no-unused-prop-types */
-/* eslint-disable react/destructuring-assignment */
 import type { Body, Meta, State, Uppy, UppyFile } from '@uppy/core'
 import type { I18n } from '@uppy/utils/lib/Translator'
 import { type ComponentChild, h } from 'preact'
@@ -158,7 +156,6 @@ export default function FileProgress<M extends Meta, B extends Body>(
   // Retry button for error
   if (props.error && !props.hideRetryButton) {
     return (
-      // eslint-disable-next-line react/jsx-props-no-spreading
       <ProgressIndicatorButton {...props}>
         <svg
           aria-hidden="true"
@@ -180,7 +177,6 @@ export default function FileProgress<M extends Meta, B extends Body>(
   // Pause/resume button for resumable uploads
   if (props.resumableUploads && !props.hidePauseResumeButton) {
     return (
-      // eslint-disable-next-line react/jsx-props-no-spreading
       <ProgressIndicatorButton {...props}>
         <ProgressCircleContainer>
           <ProgressCircle progress={props.file.progress.percentage} />
@@ -211,7 +207,6 @@ export default function FileProgress<M extends Meta, B extends Body>(
     !props.hideCancelButton
   ) {
     return (
-      // eslint-disable-next-line react/jsx-props-no-spreading
       <ProgressIndicatorButton {...props}>
         <ProgressCircleContainer>
           <ProgressCircle progress={props.file.progress.percentage} />

@@ -1,6 +1,6 @@
 import React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
-import { FlatGrid } from 'react-native-super-grid' // eslint-disable-line import/no-unresolved
+import { FlatGrid } from 'react-native-super-grid'
 
 const styles = StyleSheet.create({
   gridView: {

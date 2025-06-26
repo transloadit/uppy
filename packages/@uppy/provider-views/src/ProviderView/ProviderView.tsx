@@ -15,7 +15,6 @@ import remoteFileObjToLocal from '@uppy/utils/lib/remoteFileObjToLocal'
 import type { I18n } from '@uppy/utils/lib/Translator'
 import classNames from 'classnames'
 import type { h } from 'preact'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../../package.json'
 import Browser from '../Browser.js'
@@ -154,7 +153,6 @@ export default class ProviderView<M extends Meta, B extends Body> {
     this.plugin.setPluginState(getDefaultState(this.plugin.rootFolderId))
   }
 
-  // eslint-disable-next-line class-methods-use-this
   tearDown(): void {
     // Nothing.
   }

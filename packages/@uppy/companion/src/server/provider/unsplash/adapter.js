@@ -1,7 +1,6 @@
 const querystring = require('node:querystring')
 
 const isFolder = (item) => {
-  // eslint-disable-line no-unused-vars
   return false
 }
 
@@ -22,7 +21,6 @@ const getItemName = (item) => {
 }
 
 const getMimeType = (item) => {
-  // eslint-disable-line no-unused-vars
   return 'image/jpeg'
 }
 

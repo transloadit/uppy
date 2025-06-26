@@ -36,7 +36,6 @@ export default function copyToClipboard(
 
     const magicCopyFailed = () => {
       document.body.removeChild(textArea)
-      // eslint-disable-next-line no-alert
       window.prompt(fallbackString, textToCopy)
       resolve()
     }

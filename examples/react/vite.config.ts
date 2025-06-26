@@ -1,5 +1,3 @@
-/* eslint-disable import/no-extraneous-dependencies */
-
 // @ts-expect-error untyped for some reason but fine
 import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'

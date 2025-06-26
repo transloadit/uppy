@@ -1,7 +1,5 @@
 #!/usr/bin/env node
 
-/* eslint-disable no-console */
-
 import { mkdir } from 'node:fs/promises'
 import http from 'node:http'
 import { fileURLToPath } from 'node:url'

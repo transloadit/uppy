@@ -1,5 +1,3 @@
-/* eslint-disable react/destructuring-assignment */
-
 import type { Body, Meta, PartialTreeFolder } from '@uppy/core'
 import type { I18n } from '@uppy/utils/lib/Translator'
 import classNames from 'classnames'

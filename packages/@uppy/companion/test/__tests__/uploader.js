@@ -49,7 +49,6 @@ describe('uploader with tus protocol', () => {
       },
     }
 
-    // eslint-disable-next-line no-new
     new Uploader(opts) // no validation error
   })
 
@@ -62,7 +61,6 @@ describe('uploader with tus protocol', () => {
       },
     }
 
-    // eslint-disable-next-line no-new
     new Uploader(opts) // no validation error
   })
 
@@ -240,7 +238,6 @@ describe('uploader with tus protocol', () => {
     }
   })
 
-  // eslint-disable-next-line max-len
   const formDataNoMetaMatch =
     /^--form-data-boundary-[a-z0-9]+\r\nContent-Disposition: form-data; name="files\[\]"; filename="uppy-file-[^"]+"\r\nContent-Type: application\/octet-stream\r\n\r\nSome file content\r\n--form-data-boundary-[a-z0-9]+--\r\n\r\n$/
 
@@ -296,7 +293,6 @@ describe('uploader with tus protocol', () => {
       endpoint: 'http://localhost',
     }
 
-    // eslint-disable-next-line no-new
     new Uploader({ ...opts, metadata: { key: 'string value' } })
 
     expect(() => new Uploader({ ...opts, metadata: '' })).toThrow(
@@ -323,7 +319,6 @@ describe('uploader with tus protocol', () => {
       size: 99,
     }
 
-    // eslint-disable-next-line no-new
     new Uploader(opts) // no validation error
   })
 

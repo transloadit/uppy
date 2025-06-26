@@ -1,7 +1,5 @@
 // INFO: not typing copy pasted libarary code
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
-/* eslint-disable */
 /**
  * @source https://github.com/developit/preact-transition-group
  */

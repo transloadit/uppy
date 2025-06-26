@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-/* eslint-disable max-classes-per-file, class-methods-use-this */
 import prettierBytes from '@transloadit/prettier-bytes'
 import type { I18n } from '@uppy/utils/lib/Translator'
 import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'

@@ -496,7 +496,7 @@ export default class AwsS3Multipart<
     { key, uploadId, signal }: UploadResultWithSignal,
     oldSignal?: AbortSignal,
   ): Promise<AwsS3Part[]> {
-    signal ??= oldSignal // eslint-disable-line no-param-reassign
+    signal ??= oldSignal
     this.#assertHost('listParts')
     throwIfAborted(signal)
 
@@ -514,7 +514,7 @@ export default class AwsS3Multipart<
     { key, uploadId, parts, signal }: MultipartUploadResultWithSignal,
     oldSignal?: AbortSignal,
   ): Promise<B> {
-    signal ??= oldSignal // eslint-disable-line no-param-reassign
+    signal ??= oldSignal
     this.#assertHost('completeMultipartUpload')
     throwIfAborted(signal)
 
@@ -760,13 +760,11 @@ export default class AwsS3Multipart<
         // https://github.com/transloadit/uppy/issues/5388#issuecomment-2464885562
         if (method.toUpperCase() === 'POST' && location == null) {
           // Not being able to read the Location header is not a fatal error.
-          // eslint-disable-next-line no-console
           console.error(
             '@uppy/aws-s3: Could not read the Location header. This likely means CORS is not configured correctly on the S3 Bucket. See https://uppy.io/docs/aws-s3/#setting-up-your-s3-bucket',
           )
         }
         if (etag == null) {
-          // eslint-disable-next-line no-console
           console.error(
             '@uppy/aws-s3: Could not read the ETag header. This likely means CORS is not configured correctly on the S3 Bucket. See https://uppy.io/docs/aws-s3/#setting-up-your-s3-bucket',
           )
@@ -916,7 +914,6 @@ export default class AwsS3Multipart<
     })
   }
 
-  // eslint-disable-next-line class-methods-use-this
   #getCompanionClientArgs(file: UppyFile<M, B>) {
     return {
       ...file.remote?.body,

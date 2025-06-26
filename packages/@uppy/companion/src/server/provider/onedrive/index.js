@@ -80,7 +80,6 @@ class OneDrive extends Provider {
     )
   }
 
-  // eslint-disable-next-line class-methods-use-this
   async thumbnail() {
     // not implementing this because a public thumbnail from onedrive will be used instead
     logger.error(
@@ -99,7 +98,6 @@ class OneDrive extends Provider {
     })
   }
 
-  // eslint-disable-next-line class-methods-use-this
   async logout() {
     // apparently M$ doesn't support programmatic oauth2 revoke
     return {
@@ -129,7 +127,6 @@ class OneDrive extends Provider {
     )
   }
 
-  // eslint-disable-next-line class-methods-use-this
   async #withErrorHandling(tag, fn) {
     return withProviderErrorHandling({
       fn,

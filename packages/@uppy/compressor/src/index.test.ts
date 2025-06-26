@@ -17,7 +17,6 @@ CompressorPlugin.prototype.compress = async (blob: File) => {
 }
 
 const sampleImage = fs.readFileSync(
-  // eslint-disable-next-line no-restricted-globals
   path.join(__dirname, '../../../../e2e/cypress/fixtures/images/image.jpg'),
 )
 

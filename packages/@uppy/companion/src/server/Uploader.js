@@ -1,4 +1,3 @@
-// eslint-disable-next-line max-classes-per-file
 const tus = require('tus-js-client')
 const { randomUUID } = require('node:crypto')
 const validator = require('validator')
@@ -138,7 +137,6 @@ class StreamableBlob {
     return this.#stream
   }
 
-  // eslint-disable-next-line class-methods-use-this
   get [Symbol.toStringTag]() {
     return 'File'
   }
@@ -590,10 +588,8 @@ class Uploader {
           // previously made to providers. Deleting the field would prevent it from getting leaked
           // to the frontend etc.
           // @ts-ignore
-          // eslint-disable-next-line no-param-reassign
           delete error.originalRequest
           // @ts-ignore
-          // eslint-disable-next-line no-param-reassign
           delete error.originalResponse
           reject(error)
         },

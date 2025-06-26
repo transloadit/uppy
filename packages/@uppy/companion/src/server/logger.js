@@ -74,7 +74,6 @@ const log = ({ arg, tag = '', level, traceId = '', color = [] }) => {
 
   const msgString = msgToString()
   const masked = maskMessage(msgString)
-  // eslint-disable-next-line no-console
   console.log(
     styleText(
       color,

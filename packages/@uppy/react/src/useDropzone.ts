@@ -21,7 +21,6 @@ export function useDropzone(
   const dropzone = useMemo(
     () => createDropzone<TDragEvent, TChangeEvent>(ctx, options),
     // We need every value on options to be memoized to avoid re-creating the dropzone on every render
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [
       ctx,
       options?.noClick,

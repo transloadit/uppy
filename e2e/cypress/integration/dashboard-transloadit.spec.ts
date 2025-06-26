@@ -367,7 +367,6 @@ describe('Dashboard with Transloadit', () => {
     cy.wait('@firstUpload')
     cy.get('button[data-cy=togglePauseResume]').click()
 
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(300) // Wait an arbitrary amount of time as a user would do.
 
     cy.get('button[data-cy=togglePauseResume]').click()

@@ -33,9 +33,7 @@ function getExpiration(future) {
 export default async function generateSignatureIfSecret(secret, params) {
   let signature
   if (secret) {
-    // eslint-disable-next-line no-param-reassign
     params.auth.expires = getExpiration(5 * 60 * 1000)
-    // eslint-disable-next-line no-param-reassign
     params = JSON.stringify(params)
     signature = await sign(secret, params)
   }

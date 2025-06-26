@@ -19,7 +19,6 @@ function matchFilesAndThumbs(results) {
   const thumbsById = {}
 
   for (const [stepName, result] of Object.entries(results)) {
-    // eslint-disable-next-line no-shadow
     result.forEach((result) => {
       if (stepName === 'thumbnails') {
         thumbsById[result.original_id] = result
@@ -175,9 +174,7 @@ document.querySelector('#new').addEventListener('submit', (event) => {
   saveSnippet(title, text)
   renderSnippet(title, text)
 
-  // eslint-disable-next-line no-param-reassign
   event.target.querySelector('input').value = ''
-  // eslint-disable-next-line no-param-reassign
   event.target.querySelector('textarea').value = ''
 })
 

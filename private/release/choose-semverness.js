@@ -1,5 +1,3 @@
-/* eslint-disable no-continue */
-
 import { spawnSync } from 'node:child_process'
 import { createWriteStream, mkdirSync } from 'node:fs'
 

@@ -107,11 +107,7 @@ export default function App() {
     <View style={styles.root}>
       <Text style={styles.title}>Uppy in React Native</Text>
       <View style={{ alignItems: 'center' }}>
-        <Image
-          style={styles.logo}
-          // eslint-disable-next-line global-require
-          source={require('./assets/uppy-logo.png')}
-        />
+        <Image style={styles.logo} source={require('./assets/uppy-logo.png')} />
       </View>
       <SelectFiles showFilePicker={showFilePicker} />
 

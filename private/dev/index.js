@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
 import 'uppy/src/style.scss'
 
 import Dashboard from './Dashboard.js'

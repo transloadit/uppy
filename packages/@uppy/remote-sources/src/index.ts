@@ -44,7 +44,6 @@ export type AvailablePluginsKeys =
   | 'Zoom'
 
 type NestedCompanionKeysParams = {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   [key in AvailablePluginsKeys]?: CompanionPluginOptions['companionKeysParams']
 }
 
@@ -91,7 +90,6 @@ export default class RemoteSources<
 
   install(): void {
     this.opts.sources.forEach((pluginId) => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { sources, ...rest } = this.opts
       const optsForRemoteSourcePlugin: CompanionPluginOptions = {
         ...rest,

@@ -113,7 +113,6 @@ export default class Audio<M extends Meta, B extends Body> extends UIPlugin<
     })
   }
 
-  // eslint-disable-next-line consistent-return
   #start = (options?: { deviceId?: string }): Promise<never> | void => {
     if (!this.#supportsUserMedia) {
       return Promise.reject(new Error('Microphone access not supported'))
@@ -367,7 +366,6 @@ export default class Audio<M extends Meta, B extends Body> extends UIPlugin<
 
     return (
       <RecordingScreen
-        // eslint-disable-next-line react/jsx-props-no-spreading
         {...audioState}
         onChangeSource={this.#changeSource}
         onStartRecording={this.#startRecording}

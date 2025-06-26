@@ -2,7 +2,6 @@ import prettierBytes from '@transloadit/prettier-bytes'
 import type { DefinePluginOpts, PluginOpts } from '@uppy/core'
 import { BasePlugin, type Uppy } from '@uppy/core'
 import getFileNameAndExtension from '@uppy/utils/lib/getFileNameAndExtension'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { RateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
 
@@ -55,7 +54,6 @@ export default class Compressor<
 
   compress(blob: Blob): Promise<Blob | File> {
     return new Promise((resolve, reject) => {
-      /* eslint-disable no-new */
       new CompressorJS(blob, {
         ...this.opts,
         success: resolve,

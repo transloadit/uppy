@@ -14,7 +14,6 @@ import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
 import remoteFileObjToLocal from '@uppy/utils/lib/remoteFileObjToLocal'
 import classNames from 'classnames'
 import type { h } from 'preact'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../../package.json'
 import Browser from '../Browser.js'
@@ -109,7 +108,6 @@ export default class SearchProviderView<M extends Meta, B extends Body> {
     )
   }
 
-  // eslint-disable-next-line class-methods-use-this
   tearDown(): void {
     // Nothing.
   }

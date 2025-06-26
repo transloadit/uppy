@@ -18,7 +18,6 @@ async function replaceInFile(filename, replacements) {
   let hasBeenModified = false
   let exec
   while ((exec = VERSION_URL.exec(content))) {
-    // eslint-disable-next-line no-loop-func
     const pkg = Object.keys(replacements).find(
       (pkgName) =>
         content.slice(exec.index - pkgName.length, exec.index) === pkgName,

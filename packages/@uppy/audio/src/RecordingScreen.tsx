@@ -1,5 +1,3 @@
-/* eslint-disable jsx-a11y/media-has-caption */
-
 import type { I18n } from '@uppy/utils/lib/Translator'
 import { h } from 'preact'
 import { useEffect, useRef } from 'preact/hooks'

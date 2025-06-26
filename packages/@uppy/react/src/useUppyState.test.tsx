@@ -1,6 +1,3 @@
-/* eslint-disable react/react-in-jsx-scope */
-/* eslint-disable import/no-extraneous-dependencies */
-
 import { act, render, renderHook } from '@testing-library/react'
 import Uppy from '@uppy/core'
 import React from 'react'

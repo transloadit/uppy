@@ -195,7 +195,6 @@ app.post('/s3/multipart', (req, res, next) => {
 })
 
 function validatePartNumber(partNumber) {
-  // eslint-disable-next-line no-param-reassign
   partNumber = Number(partNumber)
   return Number.isInteger(partNumber) && partNumber >= 1 && partNumber <= 10_000
 }

@@ -39,7 +39,6 @@ describe('test protected request Agent', () => {
   })
 
   test('blocks various private IP addresses', async () => {
-    // eslint-disable-next-line max-len
     // taken from: https://github.com/transloadit/uppy/blob/4aeef4dac0490ebb1d1fccd5582ba42c6c0fb87d/packages/%40uppy/companion/src/server/helpers/request.js#L14
     const ipv4s = [
       '0.0.0.0',

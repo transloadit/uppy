@@ -139,7 +139,6 @@ export default class ImageEditor<
     this.i18nInit()
   }
 
-  // eslint-disable-next-line class-methods-use-this
   canEditFile(file: UppyFile<M, B>): boolean {
     if (!file.type || file.isRemote) {
       return false
