@@ -1,1 +1,1 @@
-export { default, defaultPickerIcon } from './ProviderView.jsx'
+export { default, defaultPickerIcon } from './ProviderView.js'

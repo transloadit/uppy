@@ -10,9 +10,7 @@ import type Uppy from '@uppy/core'
 import type { UppyFile, Meta, Body } from '@uppy/utils/lib/UppyFile'
 import type { RequestOptions } from '@uppy/utils/lib/CompanionClientProvider'
 import AuthError from './AuthError.js'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore We don't want TS to generate types for the package.json
-import packageJson from '../package.json'
+import packageJson from '../package.json' with { type: 'json' }
 
 type CompanionHeaders = Record<string, string> | undefined
 

@@ -5,7 +5,7 @@ import chalk from 'chalk'
 
 import esbuild from 'esbuild'
 
-const UPPY_ROOT = new URL('../', import.meta.url)
+const UPPY_ROOT = new URL('../../', import.meta.url)
 const PACKAGES_ROOT = new URL('./packages/', UPPY_ROOT)
 
 function buildBundle (srcFile, bundleFile, { minify = true, standalone = '', plugins, target, format } = {}) {
@@ -30,7 +30,7 @@ function buildBundle (srcFile, bundleFile, { minify = true, standalone = '', plu
   })
 }
 
-await fs.mkdir(new URL('./uppy/dist', PACKAGES_ROOT), { recursive: true })
+await fs.mkdir(new URL('./dist', import.meta.url), { recursive: true })
 
 await fs.mkdir(new URL('./@uppy/locales/dist', PACKAGES_ROOT), { recursive: true })
 
@@ -43,18 +43,18 @@ const locales = (await fs.readdir(new URL('./@uppy/locales/lib', PACKAGES_ROOT))
 
 const methods = [
   buildBundle(
-    './packages/uppy/src/bundle.ts',
-    './packages/uppy/dist/uppy.min.mjs',
+    './src/bundle.ts',
+    './dist/uppy.min.mjs',
     { standalone: 'Uppy (ESM)', format: 'esm' },
   ),
   buildBundle(
-    './packages/uppy/bundle.mjs',
-    './packages/uppy/dist/uppy.min.js',
+    './bundle.mjs',
+    './dist/uppy.min.js',
     { standalone: 'Uppy', format: 'iife' },
   ),
   ...locales.map((locale) => buildBundle(
-    `./packages/@uppy/locales/lib/${locale}.js`,
-    `./packages/@uppy/locales/dist/${locale}.min.js`,
+    `../../packages/@uppy/locales/lib/${locale}.js`,
+    `../../packages/@uppy/locales/dist/${locale}.min.js`,
     { standalone: `Uppy Locale ${locale}`, format: 'iife' },
   )),
 ];
@@ -62,8 +62,8 @@ const methods = [
 // Add BUNDLE-README.MD
 methods.push(
   fs.copyFile(
-    new URL('./BUNDLE-README.md', UPPY_ROOT),
-    new URL('./uppy/dist/README.md', PACKAGES_ROOT),
+    new URL('../../BUNDLE-README.md', import.meta.url),
+    new URL('./dist/README.md', import.meta.url),
   ),
 )
 
@@ -71,4 +71,4 @@ await Promise.all(methods).then(() => {
   console.info(chalk.yellow('✓ JS bundles 🎉'))
 }, (err) => {
   console.error(chalk.red('✗ Error:'), chalk.red(err.message))
-})
+}) 

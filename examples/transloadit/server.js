@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-/* eslint-disable compat/compat */
+
 import http from 'node:http'
 import qs from 'node:querystring'
 import he from 'he'

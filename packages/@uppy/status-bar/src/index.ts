@@ -1,2 +1,2 @@
-export { default } from './StatusBar.jsx'
+export { default } from './StatusBar.js'
 export type { StatusBarOptions } from './StatusBarOptions.js'

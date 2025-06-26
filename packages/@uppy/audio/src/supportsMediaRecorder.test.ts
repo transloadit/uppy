@@ -1,4 +1,4 @@
-/* eslint-disable max-classes-per-file, compat/compat */
+/* eslint-disable max-classes-per-file */
 import { describe, expect, it } from 'vitest'
 import supportsMediaRecorder from './supportsMediaRecorder.js'
 

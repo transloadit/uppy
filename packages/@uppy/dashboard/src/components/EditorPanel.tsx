@@ -23,7 +23,7 @@ function EditorPanel(props: $TSFixMe) {
         <div
           className="uppy-DashboardContent-title"
           role="heading"
-          aria-level="1"
+          aria-level={1}
         >
           {props.i18nArray('editing', {
             file: (

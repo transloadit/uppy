@@ -3,12 +3,10 @@
 import { h, type ComponentChild } from 'preact'
 import { UIPlugin } from '@uppy/core'
 import type { State, UIPluginOptions, Uppy, Body, Meta } from '@uppy/core'
-import FadeIn from './FadeIn.jsx'
+import FadeIn from './FadeIn.js'
 import TransitionGroup from './TransitionGroup.js'
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore We don't want TS to generate types for the package.json
-import packageJson from '../package.json'
+import packageJson from '../package.json' with { type: 'json' }
 
 export type InformerOptions = UIPluginOptions
 
@@ -43,7 +41,8 @@ export default class Informer<M extends Meta, B extends Body> extends UIPlugin<
                 {info.message}{' '}
                 {info.details && (
                   <span
-                    aria-label={info.details}
+                    // TODO: fix this type
+                    aria-label={info.details as string}
                     data-microtip-position="top-left"
                     data-microtip-size="medium"
                     role="tooltip"

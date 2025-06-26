@@ -2,7 +2,7 @@
 import { h } from 'preact'
 import { useMemo, useEffect } from 'preact/hooks'
 import type { Body, Meta, UppyFile } from '@uppy/core'
-import type { UppyContext } from './types'
+import type { UppyContext } from './types.js'
 
 export type ThumbnailProps = {
   file: UppyFile<Meta, Body>

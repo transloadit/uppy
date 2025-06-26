@@ -22,7 +22,6 @@ module.exports = {
     window: true,
   },
   plugins: [
-    '@babel/eslint-plugin',
     'jest',
     'markdown',
     'node',
@@ -30,12 +29,11 @@ module.exports = {
     'promise',
     'react',
     // extra:
-    'compat',
     'jsdoc',
     'no-only-tests',
     'unicorn',
   ],
-  parser: '@babel/eslint-parser',
+  parser: '@typescript-eslint/parser',
   parserOptions: {
     sourceType: 'script',
     ecmaVersion: 2022,
@@ -106,9 +104,6 @@ module.exports = {
     'jsx-a11y/no-interactive-element-to-noninteractive-role': 'error',
     'jsx-a11y/no-noninteractive-element-interactions': 'error',
     'jsx-a11y/no-static-element-interactions': 'error',
-
-    // compat
-    'compat/compat': ['error'],
 
     // jsdoc
     'jsdoc/check-alignment': 'error',
@@ -308,17 +303,6 @@ module.exports = {
       files: ['./packages/@uppy/companion/**/*.js'],
       rules: {
         'no-underscore-dangle': 'off',
-      },
-    },
-    {
-      files: [
-        '*.test.js',
-        '*.test.ts',
-        'test/endtoend/*.js',
-        'bin/**.js',
-      ],
-      rules: {
-        'compat/compat': ['off'],
       },
     },
     {

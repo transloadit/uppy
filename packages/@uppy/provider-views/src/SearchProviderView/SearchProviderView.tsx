@@ -15,8 +15,8 @@ import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
 import classNames from 'classnames'
 import type { ValidateableFile } from '@uppy/core/lib/Restricter.js'
 import remoteFileObjToLocal from '@uppy/utils/lib/remoteFileObjToLocal'
-import SearchInput from '../SearchInput.jsx'
-import Browser from '../Browser.jsx'
+import SearchInput from '../SearchInput.js'
+import Browser from '../Browser.js'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
@@ -25,7 +25,7 @@ import PartialTreeUtils from '../utils/PartialTreeUtils/index.js'
 import shouldHandleScroll from '../utils/shouldHandleScroll.js'
 import handleError from '../utils/handleError.js'
 import getClickedRange from '../utils/getClickedRange.js'
-import FooterActions from '../FooterActions.jsx'
+import FooterActions from '../FooterActions.js'
 import addFiles from '../utils/addFiles.js'
 import getCheckedFilesWithPaths from '../utils/PartialTreeUtils/getCheckedFilesWithPaths.js'
 

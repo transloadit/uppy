@@ -1,2 +1,2 @@
-export { default } from './Unsplash.jsx'
-export type { UnsplashOptions } from './Unsplash.jsx'
+export { default } from './Unsplash.js'
+export type { UnsplashOptions } from './Unsplash.js'

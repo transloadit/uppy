@@ -3,7 +3,7 @@ function isFunction(v: any): v is Function {
   return typeof v === 'function'
 }
 
-function result<T>(v: T): T extends (...args: any) => any ? ReturnType<T> : T {
+function result<T>(v: T | (() => T)): T {
   return isFunction(v) ? v() : v
 }
 

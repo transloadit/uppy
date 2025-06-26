@@ -1,15 +1,14 @@
 /* eslint-disable jsx-a11y/media-has-caption */
 import type { I18n } from '@uppy/utils/lib/Translator'
-import { h, Component, type ComponentChild } from 'preact'
-import type { HTMLAttributes } from 'preact/compat'
-import SnapshotButton from './SnapshotButton.jsx'
-import RecordButton from './RecordButton.jsx'
-import RecordingLength from './RecordingLength.jsx'
+import { h, Component, type ComponentChild, type ComponentProps } from 'preact'
+import SnapshotButton from './SnapshotButton.js'
+import RecordButton from './RecordButton.js'
+import RecordingLength from './RecordingLength.js'
 import VideoSourceSelect, {
   type VideoSourceSelectProps,
-} from './VideoSourceSelect.jsx'
-import SubmitButton from './SubmitButton.jsx'
-import DiscardButton from './DiscardButton.jsx'
+} from './VideoSourceSelect.js'
+import SubmitButton from './SubmitButton.js'
+import DiscardButton from './DiscardButton.js'
 
 function isModeAvailable<T>(modes: T[], mode: any): mode is T {
   return modes.includes(mode)
@@ -85,7 +84,7 @@ class CameraScreen extends Component<CameraScreenProps> {
     const shouldShowVideoSourceDropdown =
       showVideoSourceDropdown && videoSources && videoSources.length > 1
 
-    const videoProps: HTMLAttributes<HTMLVideoElement> = {
+    const videoProps: ComponentProps<'video'> = {
       playsInline: true,
     }
 
@@ -101,7 +100,6 @@ class CameraScreen extends Component<CameraScreenProps> {
     } else {
       videoProps.muted = true
       videoProps.autoPlay = true
-      // @ts-expect-error srcObject does not exist on <video> props
       videoProps.srcObject = src
     }
 

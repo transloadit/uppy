@@ -2,8 +2,8 @@
   "extends": "../../../tsconfig.shared",
   "compilerOptions": {
     "outDir": "./lib",
-    "resolveJsonModule": false,
-    "rootDir": "./src"
+    "rootDir": "./src",
+    "types": ["google.accounts", "google.picker", "gapi"]
   },
   "include": ["./src/**/*.*"],
   "exclude": ["./src/**/*.test.ts"],

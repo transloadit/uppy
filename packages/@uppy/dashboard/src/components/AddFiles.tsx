@@ -3,7 +3,7 @@ import { h, Component, Fragment, type ComponentChild } from 'preact'
 import type { I18n } from '@uppy/utils/lib/Translator'
 import type Translator from '@uppy/utils/lib/Translator'
 import type { TargetedEvent } from 'preact/compat'
-import type { DashboardState, TargetWithRender } from '../Dashboard'
+import type { DashboardState, TargetWithRender } from '../Dashboard.js'
 
 interface AddFilesProps {
   i18n: I18n
@@ -98,7 +98,9 @@ class AddFiles extends Component<AddFilesProps> {
         type="file"
         name={`camera-${type}`}
         onChange={this.onFileInputChange}
-        capture={nativeCameraFacingMode}
+        capture={
+          nativeCameraFacingMode === '' ? 'environment' : nativeCameraFacingMode
+        }
         accept={accept}
         ref={refCallback}
       />

@@ -3,7 +3,6 @@
   "compilerOptions": {
     "noImplicitAny": false,
     "outDir": "./lib",
-    "resolveJsonModule": false,
     "rootDir": "./src",
     "skipLibCheck": true
   },

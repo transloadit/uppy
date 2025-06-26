@@ -393,7 +393,6 @@ class Uploader {
     logger.debug('waiting for socket connection', 'uploader.socket.wait', this.shortToken)
 
     const eventName = `connection:${this.token}`
-    // eslint-disable-next-line compat/compat
     await once(emitter(), eventName, timeout && { signal: AbortSignal.timeout(timeout) })
 
     logger.debug('socket connection received', 'uploader.socket.wait', this.shortToken)

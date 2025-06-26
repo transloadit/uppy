@@ -5,6 +5,9 @@
   "license": "MIT",
   "main": "lib/index.js",
   "type": "module",
+  "scripts": {
+    "build": "tsc --build tsconfig.build.json"
+  },
   "keywords": [
     "file uploader",
     "restore files",
@@ -28,5 +31,8 @@
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3"
   }
 }

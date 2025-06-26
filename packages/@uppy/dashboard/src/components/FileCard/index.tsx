@@ -2,10 +2,10 @@ import { h } from 'preact'
 import { useEffect, useState, useCallback } from 'preact/hooks'
 import classNames from 'classnames'
 import { nanoid } from 'nanoid/non-secure'
-import getFileTypeIcon from '../../utils/getFileTypeIcon.jsx'
+import getFileTypeIcon from '../../utils/getFileTypeIcon.js'
 import ignoreEvent from '../../utils/ignoreEvent.js'
-import FilePreview from '../FilePreview.jsx'
-import RenderMetaFields from './RenderMetaFields.jsx'
+import FilePreview from '../FilePreview.js'
+import RenderMetaFields from './RenderMetaFields.js'
 
 type $TSFixMe = any
 
@@ -89,7 +89,7 @@ export default function FileCard(props: $TSFixMe) {
         <div
           className="uppy-DashboardContent-title"
           role="heading"
-          aria-level="1"
+          aria-level={1}
         >
           {i18nArray('editing', {
             file: (

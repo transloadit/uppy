@@ -5,6 +5,6 @@ export {
 
 export { default as SearchProviderViews } from './SearchProviderView/index.js'
 
-export { default as SearchInput } from './SearchInput.jsx'
+export { default as SearchInput } from './SearchInput.js'
 
-export { default as GooglePickerView } from './GooglePicker/GooglePickerView.jsx'
+export { default as GooglePickerView } from './GooglePicker/GooglePickerView.js'

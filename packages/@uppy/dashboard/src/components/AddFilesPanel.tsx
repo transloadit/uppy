@@ -1,7 +1,7 @@
 /* eslint-disable react/destructuring-assignment */
 import { h } from 'preact'
 import classNames from 'classnames'
-import AddFiles from './AddFiles.jsx'
+import AddFiles from './AddFiles.js'
 
 type $TSFixMe = any
 
@@ -16,7 +16,7 @@ const AddFilesPanel = (props: $TSFixMe): $TSFixMe => {
         <div
           className="uppy-DashboardContent-title"
           role="heading"
-          aria-level="1"
+          aria-level={1}
         >
           {props.i18n('addingMoreFiles')}
         </div>

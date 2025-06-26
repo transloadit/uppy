@@ -7,7 +7,6 @@ import RemoteSources from './index.js'
 describe('RemoteSources', () => {
   beforeAll(() => {
     globalThis.ResizeObserver =
-      // @ts-expect-error .default is fine
       resizeObserverPolyfill.default || resizeObserverPolyfill
   })
 

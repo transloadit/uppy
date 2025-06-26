@@ -4,7 +4,7 @@ import prettierBytes from '@transloadit/prettier-bytes'
 import truncateString from '@uppy/utils/lib/truncateString'
 import type { I18n } from '@uppy/utils/lib/Translator'
 import type { UppyFile } from '@uppy/core'
-import MetaErrorMessage from '../MetaErrorMessage.jsx'
+import MetaErrorMessage from '../MetaErrorMessage.js'
 import type { DashboardState } from '../../../Dashboard.js'
 
 const renderFileName = (props: {
@@ -150,6 +150,7 @@ export default function FileInfo(props: FileInfoProps) {
           containerHeight,
           containerWidth,
         })}
+        {/* eslint-disable-next-line no-alert */}
         <ErrorButton file={file} onClick={() => alert(file.error)} />
       </div>
       <div className="uppy-Dashboard-Item-status">

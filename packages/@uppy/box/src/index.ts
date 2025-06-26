@@ -1,2 +1,2 @@
-export { default } from './Box.jsx'
-export type { BoxOptions } from './Box.jsx'
+export { default } from './Box.js'
+export type { BoxOptions } from './Box.js'

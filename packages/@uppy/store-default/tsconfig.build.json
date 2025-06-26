@@ -2,8 +2,7 @@
   "extends": "../../../tsconfig.shared",
   "compilerOptions": {
     "outDir": "./lib",
-    "rootDir": "./src",
-    "resolveJsonModule": false
+    "rootDir": "./src"
   },
   "include": ["./src/**/*.*"],
   "exclude": ["./src/**/*.test.ts"],

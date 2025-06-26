@@ -15,7 +15,7 @@ import {
   ProgressBarError,
   ProgressBarUploading,
   ProgressBarComplete,
-} from './Components.jsx'
+} from './Components.js'
 
 const {
   STATE_ERROR,

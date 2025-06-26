@@ -171,7 +171,6 @@ export default class Editor<M extends Meta, B extends Body> extends Component<
 
     return (
       <button
-        role="button tooltip"
         data-microtip-position="top"
         type="button"
         className="uppy-u-reset uppy-c-btn"
@@ -203,7 +202,6 @@ export default class Editor<M extends Meta, B extends Body> extends Component<
 
     return (
       <button
-        role="button tooltip"
         data-microtip-position="top"
         type="button"
         className="uppy-u-reset uppy-c-btn"
@@ -229,7 +227,6 @@ export default class Editor<M extends Meta, B extends Body> extends Component<
 
     return (
       <button
-        role="button tooltip"
         data-microtip-position="top"
         type="button"
         className="uppy-u-reset uppy-c-btn"
@@ -257,7 +254,6 @@ export default class Editor<M extends Meta, B extends Body> extends Component<
 
     return (
       <button
-        role="button tooltip"
         data-microtip-position="top"
         type="button"
         className="uppy-u-reset uppy-c-btn"
@@ -284,7 +280,6 @@ export default class Editor<M extends Meta, B extends Body> extends Component<
 
     return (
       <button
-        role="button tooltip"
         data-microtip-position="top"
         type="button"
         className="uppy-u-reset uppy-c-btn"
@@ -310,7 +305,6 @@ export default class Editor<M extends Meta, B extends Body> extends Component<
 
     return (
       <button
-        role="button tooltip"
         data-microtip-position="top"
         type="button"
         className="uppy-u-reset uppy-c-btn"
@@ -336,7 +330,6 @@ export default class Editor<M extends Meta, B extends Body> extends Component<
 
     return (
       <button
-        role="button tooltip"
         data-microtip-position="top"
         type="button"
         className="uppy-u-reset uppy-c-btn"
@@ -362,7 +355,6 @@ export default class Editor<M extends Meta, B extends Body> extends Component<
 
     return (
       <button
-        role="button tooltip"
         data-microtip-position="top"
         type="button"
         aria-label={i18n('aspectRatioPortrait')}

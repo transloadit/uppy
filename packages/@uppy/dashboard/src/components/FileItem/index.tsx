@@ -5,10 +5,10 @@ import { shallowEqualObjects } from 'shallow-equal'
 import type { UppyFile, Body, Meta, State } from '@uppy/core'
 import type { I18n } from '@uppy/utils/lib/Translator'
 import type Uppy from '@uppy/core'
-import FilePreviewAndLink from './FilePreviewAndLink/index.jsx'
-import FileProgress from './FileProgress/index.jsx'
-import FileInfo from './FileInfo/index.jsx'
-import Buttons from './Buttons/index.jsx'
+import FilePreviewAndLink from './FilePreviewAndLink/index.js'
+import FileProgress from './FileProgress/index.js'
+import FileInfo from './FileInfo/index.js'
+import Buttons from './Buttons/index.js'
 import type { DashboardState } from '../../Dashboard.js'
 
 type Props<M extends Meta, B extends Body> = {
@@ -108,7 +108,7 @@ export default class FileItem<M extends Meta, B extends Body> extends Component<
       <div
         className={dashboardItemClass}
         id={`uppy_${file.id}`}
-        role={this.props.role}
+        role={this.props.role as h.JSX.AriaRole}
       >
         <div className="uppy-Dashboard-Item-preview">
           <FilePreviewAndLink
