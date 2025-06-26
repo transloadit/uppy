@@ -14,7 +14,8 @@ import getFileTypeExtension from '@uppy/utils/lib/getFileTypeExtension'
 import mimeTypes from '@uppy/utils/lib/mimeTypes'
 import type { LocaleStrings } from '@uppy/utils/lib/Translator'
 import { isMobile } from 'is-mobile'
-import type { ComponentChild, h } from 'preact'
+// biome-ignore lint/style/useImportType: h is not a type
+import { type ComponentChild, h } from 'preact'
 import packageJson from '../package.json' with { type: 'json' }
 import CameraIcon from './CameraIcon.js'
 import CameraScreen from './CameraScreen.js'

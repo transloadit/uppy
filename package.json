@@ -27,7 +27,7 @@
     "build:locale-pack": "yarn workspace @uppy-dev/locale-pack build && yarn workspace @uppy-dev/locale-pack test unused",
     "build:svelte": "yarn workspace @uppy/svelte build",
     "check": "yarn exec biome check --write",
-    "check:ci": "yarn exec biome check",
+    "check:ci": "yarn exec biome ci",
     "contributors:save": "yarn node ./bin/update-contributors.mjs",
     "dev": "yarn workspace @uppy-dev/dev dev",
     "dev:with-companion": "npm-run-all --parallel start:companion dev",

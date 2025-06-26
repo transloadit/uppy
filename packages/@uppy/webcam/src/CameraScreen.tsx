@@ -106,6 +106,7 @@ class CameraScreen extends Component<CameraScreenProps> {
       <div className="uppy uppy-Webcam-container">
         <div className="uppy-Webcam-videoContainer">
           <video
+            // biome-ignore lint/suspicious/noAssignInExpressions: ...
             ref={(videoElement) => (this.videoElement = videoElement!)}
             className={`uppy-Webcam-video  ${
               mirror ? 'uppy-Webcam-video--mirrored' : ''
@@ -146,7 +147,6 @@ class CameraScreen extends Component<CameraScreenProps> {
             {shouldShowRecordingLength && (
               <RecordingLength
                 recordingLengthSeconds={recordingLengthSeconds}
-                i18n={i18n}
               />
             )}
           </div>

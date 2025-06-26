@@ -123,12 +123,7 @@ function PanelTopBar(props: $TSFixMe) {
         <div />
       )}
 
-      <div
-        className="uppy-DashboardContent-title"
-        role="heading"
-        aria-level={1}
-      >
-        {}
+      <div className="uppy-DashboardContent-title">
         <UploadStatus {...props} />
       </div>
 

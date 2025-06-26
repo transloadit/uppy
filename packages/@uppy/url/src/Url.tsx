@@ -7,7 +7,8 @@ import { UIPlugin, type Uppy } from '@uppy/core'
 import type { LocaleStrings } from '@uppy/utils/lib/Translator'
 import toArray from '@uppy/utils/lib/toArray'
 import type { TagFile } from '@uppy/utils/lib/UppyFile'
-import type { ComponentChild, h } from 'preact'
+// biome-ignore lint/style/useImportType: h is not a type
+import { type ComponentChild, h } from 'preact'
 import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'
 import UrlUI from './UrlUI.js'
