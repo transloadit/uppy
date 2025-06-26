@@ -77,6 +77,7 @@ export default function FileCard(props: $TSFixMe) {
   }, [form, handleSave])
 
   return (
+    // biome-ignore lint/a11y/noStaticElementInteractions: ...
     <div
       className={classNames('uppy-Dashboard-FileCard', className)}
       data-uppy-panelType="FileCard"
@@ -88,6 +89,7 @@ export default function FileCard(props: $TSFixMe) {
       <div className="uppy-DashboardContent-bar">
         <div
           className="uppy-DashboardContent-title"
+          // biome-ignore lint/a11y/useSemanticElements: ...
           role="heading"
           aria-level={1}
         >

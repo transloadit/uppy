@@ -3,6 +3,7 @@ import { Component, h } from 'preact'
 type $TSFixMe = any
 
 function fmtMSS(s: number) {
+  // biome-ignore lint/suspicious/noAssignInExpressions: ...
   return (s - (s %= 60)) / 60 + (s > 9 ? ':' : ':0') + s
 }
 

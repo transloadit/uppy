@@ -109,6 +109,7 @@ class TransloaditAssembly extends Emitter {
 
     this.#sse.addEventListener('assembly_result_finished', (e) => {
       const [stepName, result] = JSON.parse(e.data)
+      // biome-ignore lint/suspicious/noAssignInExpressions: ...
       ;(this.status.results[stepName] ??= []).push(result)
       this.emit('result', stepName, result)
     })

@@ -212,7 +212,9 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
     // Create a new tus upload
     return new Promise<tus.Upload | string>((resolve, reject) => {
       let queuedRequest: ReturnType<RateLimitedQueue['run']>
+      // biome-ignore lint/style/useConst: ...
       let qRequest: () => () => void
+      // biome-ignore lint/style/useConst: ...
       let upload: tus.Upload
 
       const opts = {
@@ -241,7 +243,7 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
         const xhr = req.getUnderlyingObject()
         xhr.withCredentials = !!opts.withCredentials
 
-        let userProvidedPromise
+        let userProvidedPromise: Promise<void> | void
         if (typeof onBeforeRequest === 'function') {
           userProvidedPromise = onBeforeRequest(req, file)
         }
@@ -268,9 +270,11 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
           // This means we can hold the Tus retry here with a `Promise.all`,
           // together with the returned value of the user provided
           // `onBeforeRequest` option callback (in case it returns a promise).
+          // @ts-expect-error it's fine
           await Promise.all([p, userProvidedPromise])
           return undefined
         }
+        // @ts-expect-error it's fine
         return userProvidedPromise
       }
 

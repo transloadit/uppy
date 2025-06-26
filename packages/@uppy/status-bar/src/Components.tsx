@@ -425,7 +425,7 @@ function ProgressBarUploading(props: ProgressBarUploadingProps) {
   }
 
   return (
-    <div className="uppy-StatusBar-content" aria-label={title} title={title}>
+    <div className="uppy-StatusBar-content" title={title}>
       {!isAllPaused ? <LoadingSpinner /> : null}
       <div className="uppy-StatusBar-status">
         <div className="uppy-StatusBar-statusPrimary">
@@ -458,6 +458,7 @@ function ProgressBarComplete(props: ProgressBarCompleteProps) {
   return (
     <div
       className="uppy-StatusBar-content"
+      // biome-ignore lint/a11y/useSemanticElements: ...
       role="status"
       title={i18n('complete')}
     >

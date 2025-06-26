@@ -23,6 +23,7 @@ describe('createSignedURL', () => {
   beforeEach(() => {
     const now_ms = OriginalDate.now()
     // @ts-expect-error we're touching globals for test purposes.
+    // biome-ignore lint/suspicious/noShadowRestrictedNames: ...
     globalThis.Date = function Date() {
       if (new.target) {
         return Reflect.construct(OriginalDate, [now_ms])

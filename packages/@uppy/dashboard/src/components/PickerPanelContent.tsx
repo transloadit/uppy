@@ -28,6 +28,7 @@ function PickerPanelContent({
       <div className="uppy-DashboardContent-bar">
         <div
           className="uppy-DashboardContent-title"
+          // biome-ignore lint/a11y/useSemanticElements: ...
           role="heading"
           aria-level={1}
         >

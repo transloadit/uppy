@@ -31,14 +31,21 @@
     "rules": {
       "recommended": true,
       "suspicious": {
-        "noExplicitAny": "off"
+        "noExplicitAny": "off",
+        "noAsyncPromiseExecutor": "off"
       },
       "nursery": {
         "useUniqueElementIds": "off"
       },
       "correctness": {
         "noUnusedImports": "off",
-        "noUnusedFunctionParameters": "off"
+        "noUnusedFunctionParameters": "off",
+        "noUnusedVariables": {
+          "level": "error",
+          "options": {
+            "ignoreRestSiblings": true
+          }
+        }
       },
       "style": {
         "noNonNullAssertion": "off"

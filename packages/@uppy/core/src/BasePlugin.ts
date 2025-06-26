@@ -20,6 +20,7 @@ export type PluginOpts = {
 export type OnlyOptionals<T> = Pick<
   T,
   {
+    // biome-ignore lint/complexity/noBannedTypes: ...
     [K in keyof T]-?: {} extends Pick<T, K> ? K : never
   }[keyof T]
 >

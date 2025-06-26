@@ -89,6 +89,7 @@ export default function RecordingScreen(props: RecordingScreenProps) {
     <div className="uppy-Audio-container">
       <div className="uppy-Audio-audioContainer">
         {hasRecordedAudio ? (
+          // biome-ignore lint/a11y/useMediaCaption: ...
           <audio className="uppy-Audio-player" controls src={recordedAudio} />
         ) : (
           <canvas ref={canvasEl} className="uppy-Audio-canvas" />
@@ -117,10 +118,7 @@ export default function RecordingScreen(props: RecordingScreenProps) {
 
         <div className="uppy-Audio-recordingLength">
           {!hasRecordedAudio && (
-            <RecordingLength
-              recordingLengthSeconds={recordingLengthSeconds}
-              i18n={i18n}
-            />
+            <RecordingLength recordingLengthSeconds={recordingLengthSeconds} />
           )}
         </div>
       </div>

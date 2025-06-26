@@ -540,7 +540,6 @@ class Uploader {
     // see PR discussion https://github.com/transloadit/uppy/pull/3832
     // @ts-ignore
     const { serializeError } = await import('serialize-error')
-    // biome-ignore lint/correctness/noUnusedVariables: destructure
     const { stack, ...serializedErr } = serializeError(err)
     const dataToEmit = {
       action: 'error',
@@ -650,9 +649,7 @@ class Uploader {
     function getRespObj(response) {
       // remove browser forbidden headers
       const {
-        // biome-ignore lint/correctness/noUnusedVariables: destructure
         'set-cookie': deleted,
-        // biome-ignore lint/correctness/noUnusedVariables: destructure
         'set-cookie2': deleted2,
         ...responseHeaders
       } = response.headers

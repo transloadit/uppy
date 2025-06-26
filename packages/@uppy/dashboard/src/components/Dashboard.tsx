@@ -181,6 +181,7 @@ export default function Dashboard<M extends Meta, B extends Body>(
   }
 
   const dashboard = (
+    // biome-ignore lint/a11y/useAriaPropsSupportedByRole: ...
     <div
       className={dashboardClassName}
       data-uppy-theme={props.theme}
@@ -209,7 +210,6 @@ export default function Dashboard<M extends Meta, B extends Body>(
 
       <div
         className="uppy-Dashboard-inner"
-        aria-modal={!props.inline && 'true'}
         role={props.inline ? undefined : 'dialog'}
         style={{
           width: props.inline && props.width ? props.width : '',

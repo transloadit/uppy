@@ -94,6 +94,7 @@ export default async function* getFilesFromDataTransfer(
   // https://github.com/transloadit/uppy/pull/3998
   const fileSystemHandles = await Promise.all(
     Array.from(dataTransfer.items, async (item) => {
+      // biome-ignore lint/style/useConst: ...
       let fileSystemHandle:
         | FileSystemFileHandle
         | FileSystemDirectoryHandle
