@@ -1,12 +1,12 @@
-import { createElement as h, Component } from 'react'
 import type {
+  Body,
+  Meta,
   UIPluginOptions,
   UnknownPlugin,
   Uppy,
-  Body,
-  Meta,
 } from '@uppy/core'
 import FileInputPlugin, { type FileInputOptions } from '@uppy/file-input'
+import { Component, createElement as h } from 'react'
 
 interface FileInputProps<M extends Meta, B extends Body>
   extends UIPluginOptions {
@@ -40,7 +40,6 @@ class FileInput<M extends Meta, B extends Body> extends Component<
   }
 
   componentDidUpdate(prevProps: FileInputProps<M, B>): void {
-    // eslint-disable-next-line react/destructuring-assignment
     if (prevProps.uppy !== this.props.uppy) {
       this.uninstallPlugin(prevProps)
       this.installPlugin()
@@ -72,7 +71,6 @@ class FileInput<M extends Meta, B extends Body> extends Component<
     uppy.removePlugin(this.plugin!)
   }
 
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   render() {
     return h('div', {
       className: 'uppy-Container',

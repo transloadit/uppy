@@ -13,7 +13,11 @@ jest.mock('../../src/server/helpers/oauth-state', () => mockOauthState())
 
 const fixtures = require('../fixtures')
 const { nockGoogleDownloadFile } = require('../fixtures/drive')
-const { nockZoomRecordings, nockZoomRevoke, expects: { localZoomKey, localZoomSecret } } = require('../fixtures/zoom')
+const {
+  nockZoomRecordings,
+  nockZoomRevoke,
+  expects: { localZoomKey, localZoomSecret },
+} = require('../fixtures/zoom')
 const defaults = require('../fixtures/constants')
 
 const tokenService = require('../../src/server/helpers/jwt')
@@ -26,15 +30,18 @@ const providers = require('../../src/server/provider').getDefaultProviders()
 
 const providerNames = Object.keys(providers)
 const oauthProviders = Object.fromEntries(
-  Object.entries(providers).flatMap(([name, provider]) => (
-    provider.oauthProvider != null ? [[name, provider.oauthProvider]] : []
-  ))
+  Object.entries(providers).flatMap(([name, provider]) =>
+    provider.oauthProvider != null ? [[name, provider.oauthProvider]] : [],
+  ),
 )
 const authData = {}
 providerNames.forEach((provider) => {
   authData[provider] = { accessToken: 'token value' }
 })
-const token = tokenService.generateEncryptedAuthToken(authData, process.env.COMPANION_SECRET)
+const token = tokenService.generateEncryptedAuthToken(
+  authData,
+  process.env.COMPANION_SECRET,
+)
 
 const thisOrThat = (value1, value2) => {
   if (value1 !== undefined) {
@@ -45,26 +52,32 @@ const thisOrThat = (value1, value2) => {
 }
 
 function nockGetCurrentAccount(times = 1) {
-  nock('https://api.dropboxapi.com').post('/2/users/get_current_account').times(times).reply(200, {
-    name: {
-      given_name: 'Franz',
-      surname: 'Ferdinand',
-      familiar_name: 'Franz',
-      display_name: 'Franz Ferdinand (Personal)',
-      abbreviated_name: 'FF',
-    },
-    email: defaults.USERNAME,
-    email_verified: true,
-    disabled: false,
-    locale: 'en',
-    referral_link: 'https://db.tt/ZITNuhtI',
-    is_paired: true,
-  })
+  nock('https://api.dropboxapi.com')
+    .post('/2/users/get_current_account')
+    .times(times)
+    .reply(200, {
+      name: {
+        given_name: 'Franz',
+        surname: 'Ferdinand',
+        familiar_name: 'Franz',
+        display_name: 'Franz Ferdinand (Personal)',
+        abbreviated_name: 'FF',
+      },
+      email: defaults.USERNAME,
+      email_verified: true,
+      disabled: false,
+      locale: 'en',
+      referral_link: 'https://db.tt/ZITNuhtI',
+      is_paired: true,
+    })
 }
 
 beforeAll(() => {
   const url = new URL(defaults.THUMBNAIL_URL)
-  nock(url.origin).get(url.pathname).reply(200, () => '').persist()
+  nock(url.origin)
+    .get(url.pathname)
+    .reply(200, () => '')
+    .persist()
 })
 
 afterAll(() => {
@@ -73,7 +86,7 @@ afterAll(() => {
 })
 
 describe('list provider files', () => {
-  async function runTest (providerName) {
+  async function runTest(providerName) {
     const providerFixture = fixtures.providers[providerName]?.expects ?? {}
     return request(authServer)
       .get(`/${providerName}/list/${providerFixture.listPath || ''}`)
@@ -96,40 +109,48 @@ describe('list provider files', () => {
     const item = items[0]
     expect(item.isFolder).toBe(false)
     expect(item.name).toBe(providerFixture.itemName || defaults.ITEM_NAME)
-    expect(item.mimeType).toBe(providerFixture.itemMimeType || defaults.MIME_TYPE)
+    expect(item.mimeType).toBe(
+      providerFixture.itemMimeType || defaults.MIME_TYPE,
+    )
     expect(item.id).toBe(providerFixture.itemId || defaults.ITEM_ID)
-    expect(item.size).toBe(thisOrThat(providerFixture.itemSize, defaults.FILE_SIZE))
-    expect(item.requestPath).toBe(providerFixture.itemRequestPath || defaults.ITEM_ID)
+    expect(item.size).toBe(
+      thisOrThat(providerFixture.itemSize, defaults.FILE_SIZE),
+    )
+    expect(item.requestPath).toBe(
+      providerFixture.itemRequestPath || defaults.ITEM_ID,
+    )
     expect(item.icon).toBe(providerFixture.itemIcon || defaults.THUMBNAIL_URL)
   }
 
   test('dropbox', async () => {
     nockGetCurrentAccount()
-    nock('https://api.dropboxapi.com').post('/2/files/list_folder').reply(200, {
-      entries: [
-        {
-          '.tag': 'file',
-          name: defaults.ITEM_NAME,
-          id: defaults.ITEM_ID,
-          client_modified: '2015-05-12T15:50:38Z',
-          server_modified: '2015-05-12T15:50:38Z',
-          rev: 'a1c10ce0dd78',
-          size: defaults.FILE_SIZE,
-          path_lower: '/homework/math/prime_numbers.txt',
-          path_display: '/Homework/math/Prime_Numbers.txt',
-          is_downloadable: true,
-          has_explicit_shared_members: false,
-          content_hash: 'e3b0c44298fc1c149afbf41e4649b934ca49',
-          file_lock_info: {
-            is_lockholder: true,
-            lockholder_name: 'Imaginary User',
-            created: '2015-05-12T15:50:38Z',
+    nock('https://api.dropboxapi.com')
+      .post('/2/files/list_folder')
+      .reply(200, {
+        entries: [
+          {
+            '.tag': 'file',
+            name: defaults.ITEM_NAME,
+            id: defaults.ITEM_ID,
+            client_modified: '2015-05-12T15:50:38Z',
+            server_modified: '2015-05-12T15:50:38Z',
+            rev: 'a1c10ce0dd78',
+            size: defaults.FILE_SIZE,
+            path_lower: '/homework/math/prime_numbers.txt',
+            path_display: '/Homework/math/Prime_Numbers.txt',
+            is_downloadable: true,
+            has_explicit_shared_members: false,
+            content_hash: 'e3b0c44298fc1c149afbf41e4649b934ca49',
+            file_lock_info: {
+              is_lockholder: true,
+              lockholder_name: 'Imaginary User',
+              created: '2015-05-12T15:50:38Z',
+            },
           },
-        },
-      ],
-      cursor: 'ZtkX9_EHj3x7PMkVuFIhwKYXEpwpLwyxp9vMKomUhllil9q7eWiAu',
-      has_more: false,
-    })
+        ],
+        cursor: 'ZtkX9_EHj3x7PMkVuFIhwKYXEpwpLwyxp9vMKomUhllil9q7eWiAu',
+        has_more: false,
+      })
 
     const { username, items, providerFixture } = await runTest('dropbox')
     expect1({ username, items, providerFixture })
@@ -139,47 +160,61 @@ describe('list provider files', () => {
     nock('https://api.box.com').get('/2.0/users/me').reply(200, {
       login: defaults.USERNAME,
     })
-    nock('https://api.box.com').get('/2.0/folders/0/items?fields=id%2Cmodified_at%2Cname%2Cpermissions%2Csize%2Ctype&limit=1000').reply(200, {
-      entries: [
-        {
-          type: 'file',
-          name: defaults.ITEM_NAME,
-          id: defaults.ITEM_ID,
-          modified_at: '2015-05-12T15:50:38Z',
-          size: defaults.FILE_SIZE,
-        },
-      ],
-    })
+    nock('https://api.box.com')
+      .get(
+        '/2.0/folders/0/items?fields=id%2Cmodified_at%2Cname%2Cpermissions%2Csize%2Ctype&limit=1000',
+      )
+      .reply(200, {
+        entries: [
+          {
+            type: 'file',
+            name: defaults.ITEM_NAME,
+            id: defaults.ITEM_ID,
+            modified_at: '2015-05-12T15:50:38Z',
+            size: defaults.FILE_SIZE,
+          },
+        ],
+      })
 
     const { username, items, providerFixture } = await runTest('box')
     expect1({ username, items, providerFixture })
   })
 
   test('drive', async () => {
-    nock('https://www.googleapis.com').get('/drive/v3/drives?fields=*&pageToken=&pageSize=100').reply(200, {
-      kind: 'drive#driveList', drives: [],
-    })
+    nock('https://www.googleapis.com')
+      .get('/drive/v3/drives?fields=*&pageToken=&pageSize=100')
+      .reply(200, {
+        kind: 'drive#driveList',
+        drives: [],
+      })
 
-    nock('https://www.googleapis.com').get('/drive/v3/files?fields=kind%2CnextPageToken%2CincompleteSearch%2Cfiles%28kind%2Cid%2CimageMediaMetadata%2Cname%2CmimeType%2CownedByMe%2Csize%2CmodifiedTime%2CiconLink%2CthumbnailLink%2CteamDriveId%2CvideoMediaMetadata%2CexportLinks%2CshortcutDetails%28targetId%2CtargetMimeType%29%29&q=%28%27root%27+in+parents%29+and+trashed%3Dfalse&pageSize=1000&orderBy=folder%2Cname&includeItemsFromAllDrives=true&supportsAllDrives=true').reply(200, {
-      kind: 'drive#fileList',
-      nextPageToken: defaults.NEXT_PAGE_TOKEN,
-      files: [
-        {
-          kind: 'drive#file',
-          id: defaults.ITEM_ID,
-          name: defaults.ITEM_NAME,
-          mimeType: defaults.MIME_TYPE,
-          iconLink: 'https://drive-thirdparty.googleusercontent.com/16/type/video/mp4',
-          thumbnailLink: defaults.THUMBNAIL_URL,
-          modifiedTime: '2016-07-10T20:00:08.096Z',
-          ownedByMe: true,
-          permissions: [{ role: 'owner', emailAddress: defaults.USERNAME }],
-          size: '758051',
-        },
-      ],
-    })
+    nock('https://www.googleapis.com')
+      .get(
+        '/drive/v3/files?fields=kind%2CnextPageToken%2CincompleteSearch%2Cfiles%28kind%2Cid%2CimageMediaMetadata%2Cname%2CmimeType%2CownedByMe%2Csize%2CmodifiedTime%2CiconLink%2CthumbnailLink%2CteamDriveId%2CvideoMediaMetadata%2CexportLinks%2CshortcutDetails%28targetId%2CtargetMimeType%29%29&q=%28%27root%27+in+parents%29+and+trashed%3Dfalse&pageSize=1000&orderBy=folder%2Cname&includeItemsFromAllDrives=true&supportsAllDrives=true',
+      )
+      .reply(200, {
+        kind: 'drive#fileList',
+        nextPageToken: defaults.NEXT_PAGE_TOKEN,
+        files: [
+          {
+            kind: 'drive#file',
+            id: defaults.ITEM_ID,
+            name: defaults.ITEM_NAME,
+            mimeType: defaults.MIME_TYPE,
+            iconLink:
+              'https://drive-thirdparty.googleusercontent.com/16/type/video/mp4',
+            thumbnailLink: defaults.THUMBNAIL_URL,
+            modifiedTime: '2016-07-10T20:00:08.096Z',
+            ownedByMe: true,
+            permissions: [{ role: 'owner', emailAddress: defaults.USERNAME }],
+            size: '758051',
+          },
+        ],
+      })
 
-    nock('https://www.googleapis.com').get((uri) => uri.includes('about')).reply(200, { user: { emailAddress: 'john.doe@transloadit.com' } })
+    nock('https://www.googleapis.com')
+      .get((uri) => uri.includes('about'))
+      .reply(200, { user: { emailAddress: 'john.doe@transloadit.com' } })
 
     const { username, items, providerFixture } = await runTest('drive')
 
@@ -196,44 +231,46 @@ describe('list provider files', () => {
   })
 
   test('facebook', async () => {
-    nock('https://graph.facebook.com').post('/',
-    [
-      'access_token=token+value',
-      'appsecret_proof=ee28d8152093b877f193f5fe84a34544ec27160e7f34c7645d02930b3fa95160',
-      `batch=${encodeURIComponent('[{"method":"GET","relative_url":"me?fields=email"},{"method":"GET","relative_url":"ALBUM-ID/photos?fields=icon%2Cimages%2Cname%2Cwidth%2Cheight%2Ccreated_time"}]')}`,
-    ].join('&')
-  ).reply(200,
-    [
-      {
-        code: 200,
-        body: JSON.stringify({
-          name: 'Fiona Fox',
-          birthday: '01/01/1985',
-          email: defaults.USERNAME,
-        }),
-      },
-      {
-        code: 200,
-        body: JSON.stringify({
-          data: [
-            {
-              images: [
-                {
-                  height: 1365,
-                  source: defaults.THUMBNAIL_URL,
-                  width: 2048,
-                },
-              ],
-              width: 720,
-              height: 479,
-              created_time: '2015-07-17T17:26:50+0000',
-              id: defaults.ITEM_ID,
-            },
-          ],
-          paging: {},
-        }),
-      },
-    ])
+    nock('https://graph.facebook.com')
+      .post(
+        '/',
+        [
+          'access_token=token+value',
+          'appsecret_proof=ee28d8152093b877f193f5fe84a34544ec27160e7f34c7645d02930b3fa95160',
+          `batch=${encodeURIComponent('[{"method":"GET","relative_url":"me?fields=email"},{"method":"GET","relative_url":"ALBUM-ID/photos?fields=icon%2Cimages%2Cname%2Cwidth%2Cheight%2Ccreated_time"}]')}`,
+        ].join('&'),
+      )
+      .reply(200, [
+        {
+          code: 200,
+          body: JSON.stringify({
+            name: 'Fiona Fox',
+            birthday: '01/01/1985',
+            email: defaults.USERNAME,
+          }),
+        },
+        {
+          code: 200,
+          body: JSON.stringify({
+            data: [
+              {
+                images: [
+                  {
+                    height: 1365,
+                    source: defaults.THUMBNAIL_URL,
+                    width: 2048,
+                  },
+                ],
+                width: 720,
+                height: 479,
+                created_time: '2015-07-17T17:26:50+0000',
+                id: defaults.ITEM_ID,
+              },
+            ],
+            paging: {},
+          }),
+        },
+      ])
 
     const { username, items, providerFixture } = await runTest('facebook')
     expect1({ username, items, providerFixture })
@@ -244,16 +281,20 @@ describe('list provider files', () => {
       id: '17841405793187218',
       username: defaults.USERNAME,
     })
-    nock('https://graph.instagram.com').get('/me/media?fields=id%2Cmedia_type%2Cthumbnail_url%2Cmedia_url%2Ctimestamp%2Cchildren%7Bmedia_type%2Cmedia_url%2Cthumbnail_url%2Ctimestamp%7D').reply(200, {
-      data: [
-        {
-          id: defaults.ITEM_ID,
-          media_type: 'IMAGE',
-          timestamp: '2017-08-31T18:10:00+0000',
-          media_url: defaults.THUMBNAIL_URL,
-        },
-      ],
-    })
+    nock('https://graph.instagram.com')
+      .get(
+        '/me/media?fields=id%2Cmedia_type%2Cthumbnail_url%2Cmedia_url%2Ctimestamp%2Cchildren%7Bmedia_type%2Cmedia_url%2Cthumbnail_url%2Ctimestamp%7D',
+      )
+      .reply(200, {
+        data: [
+          {
+            id: defaults.ITEM_ID,
+            media_type: 'IMAGE',
+            timestamp: '2017-08-31T18:10:00+0000',
+            media_url: defaults.THUMBNAIL_URL,
+          },
+        ],
+      })
 
     const { username, items, providerFixture } = await runTest('instagram')
     expect1({ username, items, providerFixture })
@@ -264,43 +305,47 @@ describe('list provider files', () => {
       userPrincipalName: defaults.USERNAME,
       mail: defaults.USERNAME,
     })
-    nock('https://graph.microsoft.com').get('/v1.0/me/drive/root/children?%24expand=thumbnails&%24top=999').reply(200, {
-      value: [
-        {
-          createdDateTime: '2020-01-31T15:40:26.197Z',
-          id: defaults.ITEM_ID,
-          lastModifiedDateTime: '2020-01-31T15:40:38.723Z',
-          name: defaults.ITEM_NAME,
-          size: defaults.FILE_SIZE,
-          parentReference: {
-            driveId: 'DUMMY-DRIVE-ID',
-            driveType: 'personal',
-            path: '/drive/root:',
+    nock('https://graph.microsoft.com')
+      .get('/v1.0/me/drive/root/children?%24expand=thumbnails&%24top=999')
+      .reply(200, {
+        value: [
+          {
+            createdDateTime: '2020-01-31T15:40:26.197Z',
+            id: defaults.ITEM_ID,
+            lastModifiedDateTime: '2020-01-31T15:40:38.723Z',
+            name: defaults.ITEM_NAME,
+            size: defaults.FILE_SIZE,
+            parentReference: {
+              driveId: 'DUMMY-DRIVE-ID',
+              driveType: 'personal',
+              path: '/drive/root:',
+            },
+            file: {
+              mimeType: defaults.MIME_TYPE,
+            },
+            thumbnails: [
+              {
+                id: '0',
+                large: {
+                  height: 452,
+                  url: defaults.THUMBNAIL_URL,
+                  width: 800,
+                },
+                medium: {
+                  height: 100,
+                  url: defaults.THUMBNAIL_URL,
+                  width: 176,
+                },
+                small: {
+                  height: 54,
+                  url: defaults.THUMBNAIL_URL,
+                  width: 96,
+                },
+              },
+            ],
           },
-          file: {
-            mimeType: defaults.MIME_TYPE,
-          },
-          thumbnails: [{
-            id: '0',
-            large: {
-              height: 452,
-              url: defaults.THUMBNAIL_URL,
-              width: 800,
-            },
-            medium: {
-              height: 100,
-              url: defaults.THUMBNAIL_URL,
-              width: 176,
-            },
-            small: {
-              height: 54,
-              url: defaults.THUMBNAIL_URL,
-              width: 96,
-            },
-          }],
-        },
-      ],
-    })
+        ],
+      })
 
     const { username, items, providerFixture } = await runTest('onedrive')
     expect1({ username, items, providerFixture })
@@ -329,10 +374,12 @@ describe('list provider files', () => {
 })
 
 describe('provider file gets downloaded from', () => {
-  async function runTest (providerName) {
+  async function runTest(providerName) {
     const providerFixture = fixtures.providers[providerName]?.expects ?? {}
     const res = await request(authServer)
-      .post(`/${providerName}/get/${providerFixture.itemRequestPath || defaults.ITEM_ID}`)
+      .post(
+        `/${providerName}/get/${providerFixture.itemRequestPath || defaults.ITEM_ID}`,
+      )
       .set('uppy-auth-token', token)
       .set('Content-Type', 'application/json')
       .send({
@@ -346,14 +393,22 @@ describe('provider file gets downloaded from', () => {
 
   test('dropbox', async () => {
     nockGetCurrentAccount(2)
-    nock('https://api.dropboxapi.com').post('/2/files/get_metadata').reply(200, { size: defaults.FILE_SIZE })
-    nock('https://content.dropboxapi.com').post('/2/files/download').reply(200, {})
+    nock('https://api.dropboxapi.com')
+      .post('/2/files/get_metadata')
+      .reply(200, { size: defaults.FILE_SIZE })
+    nock('https://content.dropboxapi.com')
+      .post('/2/files/download')
+      .reply(200, {})
     await runTest('dropbox')
   })
 
   test('box', async () => {
-    nock('https://api.box.com').get(`/2.0/files/${defaults.ITEM_ID}`).reply(200, { size: defaults.FILE_SIZE })
-    nock('https://api.box.com').get(`/2.0/files/${defaults.ITEM_ID}/content`).reply(200, { size: defaults.FILE_SIZE })
+    nock('https://api.box.com')
+      .get(`/2.0/files/${defaults.ITEM_ID}`)
+      .reply(200, { size: defaults.FILE_SIZE })
+    nock('https://api.box.com')
+      .get(`/2.0/files/${defaults.ITEM_ID}/content`)
+      .reply(200, { size: defaults.FILE_SIZE })
     await runTest('box')
   })
 
@@ -364,80 +419,106 @@ describe('provider file gets downloaded from', () => {
 
   test('facebook', async () => {
     // times(2) because of size request
-    nock('https://graph.facebook.com').post('/',
-      [
-        'access_token=token+value',
-        'appsecret_proof=ee28d8152093b877f193f5fe84a34544ec27160e7f34c7645d02930b3fa95160',
-        `batch=${encodeURIComponent('[{"method":"GET","relative_url":"DUMMY-FILE-ID?fields=images"}]')}`,
-      ].join('&')
-    ).times(2).reply(200,
-      [{
-        code: 200,
-        body: JSON.stringify({
-          images: [
-            {
-              height: 1365,
-              source: defaults.THUMBNAIL_URL,
-              width: 2048,
-            },
-          ],
-          id: defaults.ITEM_ID,
-        }),
-      }])
+    nock('https://graph.facebook.com')
+      .post(
+        '/',
+        [
+          'access_token=token+value',
+          'appsecret_proof=ee28d8152093b877f193f5fe84a34544ec27160e7f34c7645d02930b3fa95160',
+          `batch=${encodeURIComponent('[{"method":"GET","relative_url":"DUMMY-FILE-ID?fields=images"}]')}`,
+        ].join('&'),
+      )
+      .times(2)
+      .reply(200, [
+        {
+          code: 200,
+          body: JSON.stringify({
+            images: [
+              {
+                height: 1365,
+                source: defaults.THUMBNAIL_URL,
+                width: 2048,
+              },
+            ],
+            id: defaults.ITEM_ID,
+          }),
+        },
+      ])
 
     await runTest('facebook')
   })
 
   test('instagram', async () => {
     // times(2) because of size request
-    nock('https://graph.instagram.com').get(`/${defaults.ITEM_ID}?fields=media_url`).times(2).reply(200, {
-      id: defaults.ITEM_ID,
-      media_type: 'IMAGE',
-      media_url: defaults.THUMBNAIL_URL,
-      timestamp: '2017-08-31T18:10:00+0000',
-    })
+    nock('https://graph.instagram.com')
+      .get(`/${defaults.ITEM_ID}?fields=media_url`)
+      .times(2)
+      .reply(200, {
+        id: defaults.ITEM_ID,
+        media_type: 'IMAGE',
+        media_url: defaults.THUMBNAIL_URL,
+        timestamp: '2017-08-31T18:10:00+0000',
+      })
     await runTest('instagram')
   })
 
   test('onedrive', async () => {
-    nock('https://graph.microsoft.com').get(`/v1.0/drives/DUMMY-DRIVE-ID/items/${defaults.ITEM_ID}`).reply(200, {
-      size: defaults.FILE_SIZE,
-    })
-    nock('https://graph.microsoft.com').get(`/v1.0/drives/DUMMY-DRIVE-ID/items/${defaults.ITEM_ID}/content`).reply(200, {})
+    nock('https://graph.microsoft.com')
+      .get(`/v1.0/drives/DUMMY-DRIVE-ID/items/${defaults.ITEM_ID}`)
+      .reply(200, {
+        size: defaults.FILE_SIZE,
+      })
+    nock('https://graph.microsoft.com')
+      .get(`/v1.0/drives/DUMMY-DRIVE-ID/items/${defaults.ITEM_ID}/content`)
+      .reply(200, {})
     await runTest('onedrive')
   })
 
   test('zoom', async () => {
     // times(2) because of size request
     nockZoomRecordings({ times: 2 })
-    nock('https://us02web.zoom.us').get('/rec/download/DUMMY-DOWNLOAD-PATH?access_token=token%20value').reply(200, {})
+    nock('https://us02web.zoom.us')
+      .get('/rec/download/DUMMY-DOWNLOAD-PATH?access_token=token%20value')
+      .reply(200, {})
     await runTest('zoom')
   })
 })
 
 describe('connect to provider', () => {
-  test.each(providerNames)('connect to %s via grant.js endpoint', async (providerName) => {
-    const oauthProvider = oauthProviders[providerName]
+  test.each(providerNames)(
+    'connect to %s via grant.js endpoint',
+    async (providerName) => {
+      const oauthProvider = oauthProviders[providerName]
 
-    if (oauthProvider == null) return
+      if (oauthProvider == null) return
 
-    await request(authServer)
-      .get(`/${providerName}/connect?foo=bar`)
-      .set('uppy-auth-token', token)
-      .expect(302)
-      .expect('Location', `http://localhost:3020/connect/${oauthProvider}?state=${OAUTH_STATE}`)
-  })
+      await request(authServer)
+        .get(`/${providerName}/connect?foo=bar`)
+        .set('uppy-auth-token', token)
+        .expect(302)
+        .expect(
+          'Location',
+          `http://localhost:3020/connect/${oauthProvider}?state=${OAUTH_STATE}`,
+        )
+    },
+  )
 })
 
 describe('logout of provider', () => {
-  async function runTest (providerName) {
+  async function runTest(providerName) {
     const res = await request(authServer)
       .get(`/${providerName}/logout/`)
       .set('uppy-auth-token', token)
       .expect(200)
 
     // only some providers can actually be revoked
-    const expectRevoked = ['box', 'dropbox', 'drive', 'facebook', 'zoom'].includes(providerName)
+    const expectRevoked = [
+      'box',
+      'dropbox',
+      'drive',
+      'facebook',
+      'zoom',
+    ].includes(providerName)
 
     expect(res.body).toMatchObject({
       ok: true,
@@ -447,7 +528,9 @@ describe('logout of provider', () => {
 
   test('dropbox', async () => {
     nockGetCurrentAccount(2)
-    nock('https://api.dropboxapi.com').post('/2/auth/token/revoke').reply(200, {})
+    nock('https://api.dropboxapi.com')
+      .post('/2/auth/token/revoke')
+      .reply(200, {})
     await runTest('dropbox')
   })
 
@@ -457,29 +540,37 @@ describe('logout of provider', () => {
   })
 
   test('dropbox', async () => {
-    nock('https://api.dropboxapi.com').post('/2/auth/token/revoke').reply(200, {})
+    nock('https://api.dropboxapi.com')
+      .post('/2/auth/token/revoke')
+      .reply(200, {})
     await runTest('dropbox')
   })
 
   test('drive', async () => {
-    nock('https://accounts.google.com').post('/o/oauth2/revoke?token=token+value').reply(200, {})
+    nock('https://accounts.google.com')
+      .post('/o/oauth2/revoke?token=token+value')
+      .reply(200, {})
     await runTest('drive')
   })
 
   test('facebook', async () => {
-        // times(2) because of size request
-        nock('https://graph.facebook.com').post('/',
+    // times(2) because of size request
+    nock('https://graph.facebook.com')
+      .post(
+        '/',
         [
           'access_token=token+value',
           'appsecret_proof=ee28d8152093b877f193f5fe84a34544ec27160e7f34c7645d02930b3fa95160',
           `batch=${encodeURIComponent('[{"method":"DELETE","relative_url":"me/permissions"}]')}`,
-        ].join('&')
-      ).reply(200,
-        [{
+        ].join('&'),
+      )
+      .reply(200, [
+        {
           code: 200,
           body: JSON.stringify({}),
-        }])
-  
+        },
+      ])
+
     await runTest('facebook')
   })
 

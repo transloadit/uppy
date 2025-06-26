@@ -1,19 +1,18 @@
-import { h, type ComponentChild } from 'preact'
-import { UIPlugin } from '@uppy/core'
-import type { LocaleStrings } from '@uppy/utils/lib/Translator'
 import type {
-  Uppy,
-  UIPluginOptions,
-  DefinePluginOpts,
   Body,
+  DefinePluginOpts,
   Meta,
+  UIPluginOptions,
+  Uppy,
 } from '@uppy/core'
+import { UIPlugin } from '@uppy/core'
 import getFileTypeExtension from '@uppy/utils/lib/getFileTypeExtension'
-import ScreenRecIcon from './ScreenRecIcon.js'
-import RecorderScreen from './RecorderScreen.js'
-
+import type { LocaleStrings } from '@uppy/utils/lib/Translator'
+import { type ComponentChild, h } from 'preact'
 import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'
+import RecorderScreen from './RecorderScreen.js'
+import ScreenRecIcon from './ScreenRecIcon.js'
 
 // Check if screen capturing is supported.
 // mediaDevices is supprted on mobile Safari, getDisplayMedia is not
@@ -120,7 +119,6 @@ export default class ScreenCapture<
   constructor(uppy: Uppy<M, B>, opts?: ScreenCaptureOptions) {
     super(uppy, { ...defaultOptions, ...opts })
     this.mediaDevices = getMediaDevices()
-    // eslint-disable-next-line no-restricted-globals
     this.protocol = location.protocol === 'https:' ? 'https' : 'http'
     this.id = this.opts.id || 'ScreenCapture'
     this.type = 'acquirer'
@@ -203,7 +201,7 @@ export default class ScreenCapture<
         // Close the Dashboard panel if plugin is installed
         // into Dashboard (could be other parent UI plugin)
         // @ts-expect-error we can't know Dashboard types here
-        if (this.parent && this.parent.hideAllPanels) {
+        if (this.parent?.hideAllPanels) {
           // @ts-expect-error we can't know Dashboard types here
           this.parent.hideAllPanels()
           this.captureActive = false
@@ -347,7 +345,7 @@ export default class ScreenCapture<
       // Close the Dashboard panel if plugin is installed
       // into Dashboard (could be other parent UI plugin)
       // @ts-expect-error we can't know Dashboard types here
-      if (this.parent && this.parent.hideAllPanels) {
+      if (this.parent?.hideAllPanels) {
         // @ts-expect-error we can't know Dashboard types here
         this.parent.hideAllPanels()
       }
@@ -639,7 +637,7 @@ export default class ScreenCapture<
 
     return (
       <RecorderScreen<M, B>
-        {...recorderState} // eslint-disable-line react/jsx-props-no-spreading
+        {...recorderState}
         onStartRecording={this.startRecording}
         onStopRecording={this.stopRecording}
         enableScreenshots={this.opts.enableScreenshots}

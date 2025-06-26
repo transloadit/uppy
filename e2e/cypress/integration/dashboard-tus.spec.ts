@@ -1,6 +1,6 @@
 import {
-  runRemoteUrlImageUploadTest,
   runRemoteUnsplashUploadTest,
+  runRemoteUrlImageUploadTest,
 } from './reusable-tests.ts'
 
 // NOTE: we have to use different files to upload per test

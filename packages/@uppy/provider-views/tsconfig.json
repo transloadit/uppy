@@ -3,15 +3,15 @@
   "compilerOptions": {
     "emitDeclarationOnly": false,
     "noEmit": true,
-    "types": ["google.accounts", "google.picker", "gapi"],
+    "types": ["google.accounts", "google.picker", "gapi"]
   },
   "include": ["./package.json", "./src/**/*.*"],
   "references": [
     {
-      "path": "../utils/tsconfig.build.json",
+      "path": "../utils/tsconfig.build.json"
     },
     {
-      "path": "../core/tsconfig.build.json",
-    },
-  ],
+      "path": "../core/tsconfig.build.json"
+    }
+  ]
 }

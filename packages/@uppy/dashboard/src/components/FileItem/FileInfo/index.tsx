@@ -1,11 +1,10 @@
-/* eslint-disable react/destructuring-assignment */
-import { h } from 'preact'
 import prettierBytes from '@transloadit/prettier-bytes'
-import truncateString from '@uppy/utils/lib/truncateString'
-import type { I18n } from '@uppy/utils/lib/Translator'
 import type { UppyFile } from '@uppy/core'
-import MetaErrorMessage from '../MetaErrorMessage.js'
+import type { I18n } from '@uppy/utils/lib/Translator'
+import truncateString from '@uppy/utils/lib/truncateString'
+import { h } from 'preact'
 import type { DashboardState } from '../../../Dashboard.js'
+import MetaErrorMessage from '../MetaErrorMessage.js'
 
 const renderFileName = (props: {
   file: UppyFile<any, any>
@@ -56,13 +55,13 @@ const renderAuthor = (props: { file: UppyFile<any, any> }) => {
       >
         {truncateString(author.name, 13)}
       </a>
-      {providerName ?
+      {providerName ? (
         <>
           {` ${dot} `}
           {providerName}
           {` ${dot} `}
         </>
-      : null}
+      ) : null}
     </div>
   )
 }
@@ -150,7 +149,7 @@ export default function FileInfo(props: FileInfoProps) {
           containerHeight,
           containerWidth,
         })}
-        {/* eslint-disable-next-line no-alert */}
+        {}
         <ErrorButton file={file} onClick={() => alert(file.error)} />
       </div>
       <div className="uppy-Dashboard-Item-status">

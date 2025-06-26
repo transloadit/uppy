@@ -21,16 +21,16 @@
 </template>
 
 <script>
-import Vue from 'vue'
 import Uppy from '@uppy/core'
 import Tus from '@uppy/tus'
 import {
-  UppyContextProvider,
   Dropzone,
-  FilesList,
   FilesGrid,
+  FilesList,
   UploadButton,
+  UppyContextProvider,
 } from '@uppy/vue'
+import Vue from 'vue'
 
 export default {
   name: 'App',

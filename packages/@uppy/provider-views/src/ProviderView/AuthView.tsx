@@ -1,9 +1,9 @@
-import { h } from 'preact'
-import { useCallback } from 'preact/hooks'
 import type { Body, Meta } from '@uppy/core'
 import type { I18n } from '@uppy/utils/lib/Translator'
-import type { Opts } from './ProviderView.js'
+import type { h } from 'preact'
+import { useCallback } from 'preact/hooks'
 import type ProviderViews from './ProviderView.js'
+import type { Opts } from './ProviderView.js'
 
 type AuthViewProps<M extends Meta, B extends Body> = {
   loading: boolean | string
@@ -73,7 +73,7 @@ function DefaultForm<M extends Meta, B extends Body>({
 
   return (
     <form onSubmit={onSubmit}>
-      {isGoogleDrive ?
+      {isGoogleDrive ? (
         <button
           type="submit"
           className="uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-Provider-authBtn uppy-Provider-btn-google"
@@ -82,14 +82,15 @@ function DefaultForm<M extends Meta, B extends Body>({
           <GoogleIcon />
           {i18n('signInWithGoogle')}
         </button>
-      : <button
+      ) : (
+        <button
           type="submit"
           className="uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-Provider-authBtn"
           data-uppy-super-focusable
         >
           {i18n('authenticateWith', { pluginName })}
         </button>
-      }
+      )}
     </form>
   )
 }

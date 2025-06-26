@@ -1,7 +1,6 @@
 declare global {
   namespace Cypress {
     interface Chainable {
-      // eslint-disable-next-line no-use-before-define
       createFakeFile: typeof createFakeFile
     }
   }
@@ -20,11 +19,9 @@ export function createFakeFile(
   b64?: string,
 ): File {
   if (!b64) {
-    // eslint-disable-next-line no-param-reassign
     b64 =
       'PHN2ZyB2aWV3Qm94PSIwIDAgMTIwIDEyMCI+CiAgPGNpcmNsZSBjeD0iNjAiIGN5PSI2MCIgcj0iNTAiLz4KPC9zdmc+Cg=='
   }
-  // eslint-disable-next-line no-param-reassign
   if (!type) type = 'image/svg+xml'
 
   // https://stackoverflow.com/questions/16245767/creating-a-blob-from-a-base64-string-in-javascript

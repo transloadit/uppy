@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { h } from 'preact'
 
 export default function ScreenRecIcon() {

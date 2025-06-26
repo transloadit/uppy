@@ -1,16 +1,15 @@
-import { BasePlugin } from '@uppy/core'
 import type {
+  Body,
   DefinePluginOpts,
+  Meta,
   UIPluginOptions,
   Uppy,
   UppyEventMap,
-  Body,
-  Meta,
 } from '@uppy/core'
+import { BasePlugin } from '@uppy/core'
 import findDOMElement from '@uppy/utils/lib/findDOMElement'
 import toArray from '@uppy/utils/lib/toArray'
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore untyped
 import getFormData from 'get-form-data'
 
@@ -100,7 +99,7 @@ export default class Form<M extends Meta, B extends Body> extends BasePlugin<
           (el.tagName === 'INPUT' &&
             (el as HTMLButtonElement).type === 'submit')
         if (isButton && !(el as HTMLButtonElement).disabled) {
-          ;(el as HTMLButtonElement).disabled = true // eslint-disable-line no-param-reassign
+          ;(el as HTMLButtonElement).disabled = true
           disabledByUppy.push(el as HTMLButtonElement)
         }
       })
@@ -109,12 +108,12 @@ export default class Form<M extends Meta, B extends Body> extends BasePlugin<
         .then(
           () => {
             disabledByUppy.forEach((button) => {
-              button.disabled = false // eslint-disable-line no-param-reassign
+              button.disabled = false
             })
           },
           (err) => {
             disabledByUppy.forEach((button) => {
-              button.disabled = false // eslint-disable-line no-param-reassign
+              button.disabled = false
             })
             return Promise.reject(err)
           },
@@ -136,10 +135,10 @@ export default class Form<M extends Meta, B extends Body> extends BasePlugin<
       // Append new result to the previous result array.
       // If the previous result is empty, or not an array,
       // set it to an empty array.
-      let updatedResult
+      let updatedResult: any
       try {
         updatedResult = JSON.parse(resultInput.value)
-      } catch (err) {
+      } catch (_err) {
         // Nothing, since we check for array below anyway
       }
 

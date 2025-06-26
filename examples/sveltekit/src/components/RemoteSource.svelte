@@ -1,32 +1,32 @@
 <script lang="ts">
-  import { useRemoteSource } from '@uppy/svelte'
-  import type { AvailablePluginsKeys } from '@uppy/remote-sources'
-  import type { PartialTreeFolderNode } from '@uppy/core'
+import type { PartialTreeFolderNode } from '@uppy/core'
+import type { AvailablePluginsKeys } from '@uppy/remote-sources'
+import { useRemoteSource } from '@uppy/svelte'
 
-  interface Props {
-    close: () => void
-    id: AvailablePluginsKeys
+interface Props {
+  close: () => void
+  id: AvailablePluginsKeys
+}
+
+const { close, id }: Props = $props()
+
+// Use the value directly, destructuring looses reactivity
+const remoteSource = useRemoteSource(id)
+
+const dtf = new Intl.DateTimeFormat('en-US', {
+  dateStyle: 'short',
+  timeStyle: 'short',
+})
+
+function setFolderCheckboxIndeterminate(
+  node: HTMLInputElement,
+  item: PartialTreeFolderNode,
+) {
+  if (item.status === 'partial') {
+    // Can only be set via JS
+    node.indeterminate = true
   }
-
-  const { close, id }: Props = $props()
-
-  // Use the value directly, destructuring looses reactivity
-  const remoteSource = useRemoteSource(id)
-
-  const dtf = new Intl.DateTimeFormat('en-US', {
-    dateStyle: 'short',
-    timeStyle: 'short',
-  })
-
-  function setFolderCheckboxIndeterminate(
-    node: HTMLInputElement,
-    item: PartialTreeFolderNode,
-  ) {
-    if (item.status === 'partial') {
-      // Can only be set via JS
-      node.indeterminate = true
-    }
-  }
+}
 </script>
 
 {#if !remoteSource.state.authenticated}

@@ -1,7 +1,4 @@
-/* eslint-disable react/jsx-props-no-spreading */
-/* eslint-disable react/react-in-jsx-scope */
-/* eslint-disable react/button-has-type */
-import { useDropzone, useFileInput, ProviderIcon } from '@uppy/react'
+import { ProviderIcon, useDropzone, useFileInput } from '@uppy/react'
 
 export interface CustomDropzoneProps {
   openModal: (plugin: 'webcam' | 'dropbox' | 'screen-capture') => void
@@ -16,7 +13,6 @@ export function CustomDropzone({ openModal }: CustomDropzoneProps) {
       <input {...getInputProps()} className="hidden" />
       <div
         {...getRootProps()}
-        role="button"
         className="border-2 border-dashed border-gray-300 rounded-lg p-6 bg-gray-50 transition-colors duration-200"
       >
         <div className="flex items-center justify-center gap-4">

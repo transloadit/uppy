@@ -14,7 +14,6 @@ export type LocaleStrings<T extends NonNullable<OptionalPluralizeLocale>> = {
   strings: Partial<T['strings']>
 }
 
-// eslint-disable-next-line no-use-before-define
 export type I18n = Translator['translate']
 
 type Options = {

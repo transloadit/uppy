@@ -1,8 +1,8 @@
 import type {
-  PartialTreeFile,
-  PartialTreeFolderNode,
   Body,
   Meta,
+  PartialTreeFile,
+  PartialTreeFolderNode,
 } from '@uppy/core'
 import { ProviderViews } from '@uppy/provider-views'
 

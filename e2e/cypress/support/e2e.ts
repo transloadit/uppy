@@ -19,7 +19,6 @@ import './commands.ts'
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
 
-// eslint-disable-next-line
 // @ts-ignore
 import installLogsCollector from 'cypress-terminal-report/src/installLogsCollector.js'
 

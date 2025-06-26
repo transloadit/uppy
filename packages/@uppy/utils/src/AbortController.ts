@@ -1,4 +1,4 @@
-import hasOwnProperty from './hasProperty.js'
+import hasProperty from './hasProperty.js'
 /**
  * Little AbortController proxy module so we can swap out the implementation easily later.
  */
@@ -9,7 +9,7 @@ export const createAbortError = (
   options?: Parameters<typeof Error>[1],
 ): DOMException => {
   const err = new DOMException(message, 'AbortError')
-  if (options != null && hasOwnProperty(options, 'cause')) {
+  if (options != null && hasProperty(options, 'cause')) {
     Object.defineProperty(err, 'cause', {
       // @ts-expect-error TS is drunk
       __proto__: null,

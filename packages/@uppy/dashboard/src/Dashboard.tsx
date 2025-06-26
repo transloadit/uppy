@@ -1,34 +1,32 @@
-import type { ComponentChild, VNode } from 'preact'
-import { UIPlugin } from '@uppy/core'
-import type { LocaleStrings } from '@uppy/utils/lib/Translator'
 import type {
   Body,
+  DefinePluginOpts,
   Meta,
-  UppyFile,
+  State,
   UIPluginOptions,
   UnknownPlugin,
-  Uppy,
   UploadResult,
-  State,
-  DefinePluginOpts,
+  Uppy,
+  UppyFile,
 } from '@uppy/core'
-import StatusBar from '@uppy/status-bar'
+import { UIPlugin } from '@uppy/core'
 import Informer from '@uppy/informer'
+import { defaultPickerIcon } from '@uppy/provider-views'
+import StatusBar from '@uppy/status-bar'
+import type StatusBarLocale from '@uppy/status-bar/lib/locale.js'
 import ThumbnailGenerator from '@uppy/thumbnail-generator'
 import findAllDOMElements from '@uppy/utils/lib/findAllDOMElements'
-import toArray from '@uppy/utils/lib/toArray'
 import getDroppedFiles from '@uppy/utils/lib/getDroppedFiles'
-import { defaultPickerIcon } from '@uppy/provider-views'
-import type StatusBarLocale from '@uppy/status-bar/lib/locale.js'
-
-import type { TargetedEvent } from 'preact/compat'
+import type { LocaleStrings } from '@uppy/utils/lib/Translator'
+import toArray from '@uppy/utils/lib/toArray'
 import { nanoid } from 'nanoid/non-secure'
-import * as trapFocus from './utils/trapFocus.js'
-import createSuperFocus from './utils/createSuperFocus.js'
-import DashboardUI from './components/Dashboard.js'
-
+import type { ComponentChild, VNode } from 'preact'
+import type { TargetedEvent } from 'preact/compat'
 import packageJson from '../package.json' with { type: 'json' }
+import DashboardUI from './components/Dashboard.js'
 import locale from './locale.js'
+import createSuperFocus from './utils/createSuperFocus.js'
+import * as trapFocus from './utils/trapFocus.js'
 
 type GenericEventCallback = () => void
 export type DashboardFileEditStartCallback<M extends Meta, B extends Body> = (
@@ -527,10 +525,8 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     if (manualClose) {
       if (this.opts.browserBackButtonClose) {
         // Make sure that the latest entry in the history state is our modal name
-        // eslint-disable-next-line no-restricted-globals
         if (history.state?.[this.modalName]) {
           // Go back in history to clear out the entry we created (ultimately closing the modal)
-          // eslint-disable-next-line no-restricted-globals
           history.back()
         }
       }
@@ -714,13 +710,10 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
 
   private updateBrowserHistory = () => {
     // Ensure history state does not already contain our modal name to avoid double-pushing
-    // eslint-disable-next-line no-restricted-globals
     if (!history.state?.[this.modalName]) {
       // Push to history so that the page is not lost on browser back button press
-      // eslint-disable-next-line no-restricted-globals
       history.pushState(
         {
-          // eslint-disable-next-line no-restricted-globals
           ...history.state,
           [this.modalName]: true,
         },
@@ -745,7 +738,6 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     // modal is open, and then the modal gets manually closed.
     // Solves PR #575 (https://github.com/transloadit/uppy/pull/575)
     if (!this.isModalOpen() && event.state?.[this.modalName]) {
-      // eslint-disable-next-line no-restricted-globals
       history.back()
     }
   }
@@ -829,14 +821,14 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
         (hasFiles || !somePluginCanHandleRootDrop)) ||
       !this.uppy.getState().allowNewUpload
     ) {
-      event.dataTransfer!.dropEffect = 'none' // eslint-disable-line no-param-reassign
+      event.dataTransfer!.dropEffect = 'none'
       return
     }
 
     // Add a small (+) icon on drop
     // (and prevent browsers from interpreting this as files being _moved_ into the
     // browser, https://github.com/transloadit/uppy/issues/1978).
-    event.dataTransfer!.dropEffect = 'copy' // eslint-disable-line no-param-reassign
+    event.dataTransfer!.dropEffect = 'copy'
 
     this.setPluginState({ isDraggingOver: true })
 
@@ -1169,7 +1161,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     const progressindicators = this.#getProgressIndicators(pluginState.targets)
     const editors = this.#getEditors(pluginState.targets)
 
-    let theme
+    let theme: 'auto' | 'dark' | 'light'
     if (this.opts.theme === 'auto') {
       theme = capabilities.darkMode ? 'dark' : 'light'
     } else {
@@ -1181,7 +1173,6 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
       0
     ) {
       this.opts.fileManagerSelectionType = 'files'
-      // eslint-disable-next-line no-console
       console.warn(
         `Unsupported option for "fileManagerSelectionType". Using default of "${this.opts.fileManagerSelectionType}".`,
       )
@@ -1349,7 +1340,6 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     }
   }
 
-  // eslint-disable-next-line class-methods-use-this
   #getInformerOpts() {
     return {
       // currently no options
@@ -1444,12 +1434,13 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
 
     // Dark Mode / theme
     this.darkModeMediaQuery =
-      typeof window !== 'undefined' && window.matchMedia ?
-        window.matchMedia('(prefers-color-scheme: dark)')
-      : null
+      typeof window !== 'undefined' && window.matchMedia
+        ? window.matchMedia('(prefers-color-scheme: dark)')
+        : null
 
-    const isDarkModeOnFromTheStart =
-      this.darkModeMediaQuery ? this.darkModeMediaQuery.matches : false
+    const isDarkModeOnFromTheStart = this.darkModeMediaQuery
+      ? this.darkModeMediaQuery.matches
+      : false
     this.uppy.log(
       `[Dashboard] Dark mode is ${isDarkModeOnFromTheStart ? 'on' : 'off'}`,
     )

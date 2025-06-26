@@ -1,4 +1,4 @@
-import { type MutableRef } from 'preact/hooks'
+import type { MutableRef } from 'preact/hooks'
 
 // https://developers.google.com/photos/picker/reference/rest/v1/mediaItems
 // Note that the google api doc is not correct, hence some things are optional here but not in their docs
@@ -161,9 +161,9 @@ export async function authorize({
   const response = await new Promise<google.accounts.oauth2.TokenResponse>(
     (resolve, reject) => {
       const scopes =
-        pickerType === 'drive' ?
-          ['https://www.googleapis.com/auth/drive.file']
-        : ['https://www.googleapis.com/auth/photospicker.mediaitems.readonly']
+        pickerType === 'drive'
+          ? ['https://www.googleapis.com/auth/drive.file']
+          : ['https://www.googleapis.com/auth/photospicker.mediaitems.readonly']
 
       const tokenClient = google.accounts.oauth2.initTokenClient({
         client_id: clientId,
@@ -226,11 +226,11 @@ export async function showDrivePicker({
     if (picked.action === google.picker.Action.PICKED) {
       // console.log('Picker response', JSON.stringify(picked, null, 2));
       onFilesPicked(
-        picked['docs'].map((doc) => ({
+        picked.docs.map((doc) => ({
           platform: 'drive',
-          id: doc['id'],
-          name: doc['name'],
-          mimeType: doc['mimeType'],
+          id: doc.id,
+          name: doc.name,
+          mimeType: doc.mimeType,
         })),
         token,
       )
@@ -332,14 +332,11 @@ async function resolvePickedPhotos({
 
   // Filter out items that aren't fully processed or ready
   mediaItems = mediaItems.flatMap((i) =>
-    (
-      i.type === 'PHOTO' ||
-      (i.type === 'VIDEO' &&
-        i.mediaFile.mediaFileMetadata.videoMetadata.processingStatus ===
-          'READY')
-    ) ?
-      [i]
-    : [],
+    i.type === 'PHOTO' ||
+    (i.type === 'VIDEO' &&
+      i.mediaFile.mediaFileMetadata.videoMetadata.processingStatus === 'READY')
+      ? [i]
+      : [],
   )
 
   // Transform media items into picked items with appropriate metadata
@@ -454,12 +451,10 @@ export async function pollPickingSession({
             pickingSession,
             signal,
           })
-          // eslint-disable-next-line no-param-reassign
           pickingSessionRef.current = undefined
           onFilesPicked(resolvedPhotos, accessToken)
         }
         if (pickingSession.pollingConfig.timeoutIn === '0s') {
-          // eslint-disable-next-line no-param-reassign
           pickingSessionRef.current = undefined
         }
       }

@@ -1,16 +1,16 @@
+import type { NonNullableUppyContext, UploadStatus } from '@uppy/components'
+import { createUppyEventAdapter } from '@uppy/components'
+import type Uppy from '@uppy/core'
+import type { PropType } from 'vue'
 import {
   defineComponent,
+  inject,
+  onBeforeUnmount,
+  onMounted,
   provide,
   reactive,
   ref,
-  onMounted,
-  onBeforeUnmount,
-  inject,
 } from 'vue'
-import type { PropType } from 'vue'
-import type Uppy from '@uppy/core'
-import { createUppyEventAdapter } from '@uppy/components'
-import type { NonNullableUppyContext, UploadStatus } from '@uppy/components'
 
 export interface UppyContext {
   uppy: Uppy | undefined

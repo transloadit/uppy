@@ -1,21 +1,21 @@
 <script lang="ts">
-  import MediaCapture from './MediaCapture.svelte'
-  import { untrack } from 'svelte'
-  import { useWebcam } from '@uppy/svelte'
+import { useWebcam } from '@uppy/svelte'
+import { untrack } from 'svelte'
+import MediaCapture from './MediaCapture.svelte'
 
-  interface Props {
-    close: () => void
+interface Props {
+  close: () => void
+}
+
+const { close }: Props = $props()
+const webcamStore = useWebcam({ onSubmit: close })
+
+$effect(() => {
+  untrack(() => webcamStore.start())
+  return () => {
+    untrack(() => webcamStore.stop())
   }
-
-  const { close }: Props = $props()
-  const webcamStore = useWebcam({ onSubmit: close })
-
-  $effect(() => {
-    untrack(() => webcamStore.start())
-    return () => {
-      untrack(() => webcamStore.stop())
-    }
-  })
+})
 </script>
 
 <MediaCapture

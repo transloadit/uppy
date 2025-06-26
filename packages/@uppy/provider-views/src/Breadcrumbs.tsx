@@ -1,5 +1,5 @@
-import type { PartialTreeFolder, Body, Meta } from '@uppy/core'
-import { h, Fragment } from 'preact'
+import type { Body, Meta, PartialTreeFolder } from '@uppy/core'
+import { Fragment, type h } from 'preact'
 import type ProviderView from './ProviderView/index.js'
 
 type BreadcrumbsProps<M extends Meta, B extends Body> = {
@@ -26,9 +26,9 @@ export default function Breadcrumbs<M extends Meta, B extends Body>(
             className="uppy-u-reset uppy-c-btn"
             onClick={() => openFolder(folder.id)}
           >
-            {folder.type === 'root' ?
-              title
-            : folder.data.name ?? i18n('unnamed')}
+            {folder.type === 'root'
+              ? title
+              : (folder.data.name ?? i18n('unnamed'))}
           </button>
           {breadcrumbs.length === index + 1 ? '' : ' / '}
         </Fragment>

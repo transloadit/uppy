@@ -1,13 +1,13 @@
 import type Uppy from '@uppy/core'
-import { type AvailablePluginsKeys } from '@uppy/remote-sources'
 import type {
   PartialTreeFolder,
   UnknownProviderPlugin,
   UnknownProviderPluginState,
   UppyEventMap,
 } from '@uppy/core'
-import { dequal } from 'dequal/lite'
 import type { ProviderViews } from '@uppy/provider-views'
+import type { AvailablePluginsKeys } from '@uppy/remote-sources'
+import { dequal } from 'dequal/lite'
 import { Subscribers } from './utils.js'
 
 export type { AvailablePluginsKeys as RemoteSourceKeys }

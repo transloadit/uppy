@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import UIPlugin from './UIPlugin.js'
 import Core from './index.js'
+import UIPlugin from './UIPlugin.js'
 
 describe('UIPlugin', () => {
   describe('getPluginState', () => {

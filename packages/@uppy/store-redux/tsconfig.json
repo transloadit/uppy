@@ -2,7 +2,7 @@
   "extends": "../../../tsconfig.shared",
   "compilerOptions": {
     "noEmit": true,
-    "allowJs": true,
+    "allowJs": true
   },
-  "include": ["./package.json", "./src/**/*.*"],
+  "include": ["./package.json", "./src/**/*.*"]
 }

@@ -35,8 +35,7 @@ th_TH.strings = {
   chooseFiles: 'เลือกไฟล์',
   closeModal: 'ปิดหน้าต่างนี้',
   companionError: 'การเชื่อมต่อกับ Companion ล้มเหลว',
-  companionUnauthorizeHint:
-    'หากคุณต้องการลงชื่อออกจาก %{provider}, กรุณาไปที่ %{url}',
+  companionUnauthorizeHint: 'หากคุณต้องการลงชื่อออกจาก %{provider}, กรุณาไปที่ %{url}',
   complete: 'สำเร็จ',
   connectedToInternet: 'เชื่อมต่อกับอินเทอร์เน็ตสำเร็จ',
   copyLink: 'คัดลอกลิงค์',
@@ -64,8 +63,7 @@ th_TH.strings = {
   enterCorrectUrl: 'URL ไม่ถูกต้อง: โปรดตรวจสอบให้แน่ใจว่าคุณป้อน direct link',
   enterUrlToImport: 'ป้อน URL เพื่อนำเข้าไฟล์',
   exceedsSize: 'ไฟล์นี้มีขนาดเกินขนาดสูงสุดที่อนุญาต %{size}',
-  failedToFetch:
-    'Companion ไม่สามารถเรียก URL นี้ได้, กรุณาตรวจสอบว่า URL ถูกต้อง',
+  failedToFetch: 'Companion ไม่สามารถเรียก URL นี้ได้, กรุณาตรวจสอบว่า URL ถูกต้อง',
   failedToUpload: 'ไม่สามารถอัปโหลด %{file}',
   fileSource: 'ตำแหน่งของไฟล์: %{name}',
   filesUploadedOfTotal: {

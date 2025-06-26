@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
-import { createReadStream, promises as fs } from 'node:fs'
-import { createInterface } from 'node:readline'
 import { Buffer } from 'node:buffer'
+import { createReadStream, promises as fs } from 'node:fs'
 import process from 'node:process'
+import { createInterface } from 'node:readline'
 
 const ROOT = new URL('../../', import.meta.url)
 const PACKAGES_FOLDER = new URL('./packages/', ROOT)
@@ -21,13 +21,24 @@ const changelogContent = await changelog.readFile()
 
 const mostRecentReleaseHeading = changelogContent.indexOf('\n## ')
 
-function* makeTable (versions) {
-  const pkgNameMaxLength = Math.max('Package'.length, ...versions.map(pkg => pkg.ident.length))
-  const pkgVersionMaxLength = Math.max('Version'.length, ...versions.map(pkg => pkg.newVersion.length))
-  const makeRow = (...cells) => `| ${cells.map((cell, i) => cell[i % 2 ? 'padStart' : 'padEnd'](i % 2 ? pkgVersionMaxLength : pkgNameMaxLength)).join(' | ')} |`
+function* makeTable(versions) {
+  const pkgNameMaxLength = Math.max(
+    'Package'.length,
+    ...versions.map((pkg) => pkg.ident.length),
+  )
+  const pkgVersionMaxLength = Math.max(
+    'Version'.length,
+    ...versions.map((pkg) => pkg.newVersion.length),
+  )
+  const makeRow = (...cells) =>
+    `| ${cells.map((cell, i) => cell[i % 2 ? 'padStart' : 'padEnd'](i % 2 ? pkgVersionMaxLength : pkgNameMaxLength)).join(' | ')} |`
 
   yield makeRow('Package', 'Version', 'Package', 'Version')
-  yield makeRow(...Array.from({ length:4 }, (_, i) => '-'.repeat(i % 2 ? pkgVersionMaxLength : pkgNameMaxLength)))
+  yield makeRow(
+    ...Array.from({ length: 4 }, (_, i) =>
+      '-'.repeat(i % 2 ? pkgVersionMaxLength : pkgNameMaxLength),
+    ),
+  )
 
   const mid = Math.ceil(versions.length / 2)
   for (let i = 0; i < mid; i++) {
@@ -43,7 +54,7 @@ function* makeTable (versions) {
  * @param {string} pkg Package name
  * @returns {Promise<fs.FileHandle>}
  */
-async function updateSubPackageChangelog (pkg, lines, subsetOfLines) {
+async function updateSubPackageChangelog(pkg, lines, subsetOfLines) {
   const packageReleaseInfo = releases.find(({ ident }) => ident === pkg)
   if (packageReleaseInfo == null) {
     console.warn(pkg, 'is not being released')
@@ -65,16 +76,24 @@ async function updateSubPackageChangelog (pkg, lines, subsetOfLines) {
     fh = await fs.open(url, 'wx')
     await fh.writeFile(heading)
   }
-  const { bytesWritten } = await fh.write(`
+  const { bytesWritten } = await fh.write(
+    `
 ## ${newVersion}
 
 Released: ${releasedDate}
 Included in: Uppy v${uppyRelease.newVersion}
 
-${subsetOfLines.map(index => lines[index]).join('\n')}
-`, heading.byteLength)
+${subsetOfLines.map((index) => lines[index]).join('\n')}
+`,
+    heading.byteLength,
+  )
   if (oldContent != null) {
-    await fh.write(oldContent, heading.byteLength, undefined, bytesWritten + heading.byteLength)
+    await fh.write(
+      oldContent,
+      heading.byteLength,
+      undefined,
+      bytesWritten + heading.byteLength,
+    )
   }
   console.log(`packages/${pkg}/CHANGELOG.md`) // outputing the relative path of the file to git add it.
   return fh.close()
@@ -92,7 +111,8 @@ for await (const line of createInterface({
   }
 }
 
-await changelog.write(`
+await changelog.write(
+  `
 ## ${uppyRelease.newVersion}
 
 Released: ${releasedDate}
@@ -101,11 +121,14 @@ ${Array.from(makeTable(releases)).join('\n')}
 
 ${lines.join('\n')}
 
-${changelogContent.slice(mostRecentReleaseHeading)}`, mostRecentReleaseHeading)
+${changelogContent.slice(mostRecentReleaseHeading)}`,
+  mostRecentReleaseHeading,
+)
 console.log('CHANGELOG.md') // outputing the relative path of the file to git add it.
 await changelog.close()
 
 await Promise.all(
-  Object.entries(subPackagesChangelogs)
-    .map(([pkg, subsetOfLines]) => updateSubPackageChangelog(pkg, lines, subsetOfLines)),
+  Object.entries(subPackagesChangelogs).map(([pkg, subsetOfLines]) =>
+    updateSubPackageChangelog(pkg, lines, subsetOfLines),
+  ),
 )

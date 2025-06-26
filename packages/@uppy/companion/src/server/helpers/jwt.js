@@ -49,7 +49,11 @@ const verifyToken = (token, secret) => {
  * @param {*} payload
  * @param {string} secret
  */
-module.exports.generateEncryptedToken = (payload, secret, maxAge = MAX_AGE_24H) => {
+module.exports.generateEncryptedToken = (
+  payload,
+  secret,
+  maxAge = MAX_AGE_24H,
+) => {
   // return payload // for easier debugging
   return encrypt(generateToken(payload, secret, maxAge), secret)
 }
@@ -59,7 +63,11 @@ module.exports.generateEncryptedToken = (payload, secret, maxAge = MAX_AGE_24H) 
  * @param {string} secret
  */
 module.exports.generateEncryptedAuthToken = (payload, secret, maxAge) => {
-  return module.exports.generateEncryptedToken(JSON.stringify(payload), secret, maxAge)
+  return module.exports.generateEncryptedToken(
+    JSON.stringify(payload),
+    secret,
+    maxAge,
+  )
 }
 
 /**
@@ -81,11 +89,12 @@ module.exports.verifyEncryptedToken = (token, secret) => {
 module.exports.verifyEncryptedAuthToken = (token, secret, providerName) => {
   const json = module.exports.verifyEncryptedToken(token, secret)
   const tokens = JSON.parse(json)
-  if (!tokens[providerName]) throw new Error(`Missing token payload for provider ${providerName}`)
+  if (!tokens[providerName])
+    throw new Error(`Missing token payload for provider ${providerName}`)
   return tokens
 }
 
-function getCommonCookieOptions ({ companionOptions }) {
+function getCommonCookieOptions({ companionOptions }) {
   const cookieOptions = {
     httpOnly: true,
   }
@@ -108,7 +117,13 @@ function getCommonCookieOptions ({ companionOptions }) {
 
 const getCookieName = (oauthProvider) => `uppyAuthToken--${oauthProvider}`
 
-const addToCookies = ({ res, token, companionOptions, oauthProvider, maxAge = MAX_AGE_24H }) => {
+const addToCookies = ({
+  res,
+  token,
+  companionOptions,
+  oauthProvider,
+  maxAge = MAX_AGE_24H,
+}) => {
   const cookieOptions = {
     ...getCommonCookieOptions({ companionOptions }),
     maxAge: maxAge * 1000,

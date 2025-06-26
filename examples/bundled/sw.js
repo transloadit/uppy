@@ -3,11 +3,10 @@
 // https://uppy.io/docs/golden-retriever/
 
 /* globals clients */
-/* eslint-disable no-restricted-globals */
 
 const fileCache = Object.create(null)
 
-function getCache (name) {
+function getCache(name) {
   if (!fileCache[name]) {
     fileCache[name] = Object.create(null)
   }
@@ -17,15 +16,14 @@ function getCache (name) {
 self.addEventListener('install', (event) => {
   console.log('Installing Uppy Service Worker...')
 
-  event.waitUntil(Promise.resolve()
-    .then(() => self.skipWaiting()))
+  event.waitUntil(Promise.resolve().then(() => self.skipWaiting()))
 })
 
 self.addEventListener('activate', (event) => {
   event.waitUntil(self.clients.claim())
 })
 
-function sendMessageToAllClients (msg) {
+function sendMessageToAllClients(msg) {
   clients.matchAll().then((clients) => {
     clients.forEach((client) => {
       client.postMessage(msg)
@@ -33,17 +31,17 @@ function sendMessageToAllClients (msg) {
   })
 }
 
-function addFile (store, file) {
+function addFile(store, file) {
   getCache(store)[file.id] = file.data
   console.log('Added file blob to service worker cache:', file.data)
 }
 
-function removeFile (store, fileID) {
+function removeFile(store, fileID) {
   delete getCache(store)[fileID]
   console.log('Removed file blob from service worker cache:', fileID)
 }
 
-function getFiles (store) {
+function getFiles(store) {
   sendMessageToAllClients({
     type: 'uppy/ALL_FILES',
     store,
@@ -63,6 +61,7 @@ self.addEventListener('message', (event) => {
       getFiles(event.data.store)
       break
 
-    default: throw new Error('unreachable')
+    default:
+      throw new Error('unreachable')
   }
 })

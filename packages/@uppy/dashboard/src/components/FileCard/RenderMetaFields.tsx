@@ -23,7 +23,7 @@ export default function RenderMetaFields(props: $TSFixMe) {
         <label className="uppy-Dashboard-FileCard-label" htmlFor={id}>
           {field.name}
         </label>
-        {field.render !== undefined ?
+        {field.render !== undefined ? (
           field.render(
             {
               value: formState[field.id],
@@ -34,7 +34,8 @@ export default function RenderMetaFields(props: $TSFixMe) {
             },
             h,
           )
-        : <input
+        ) : (
+          <input
             className={fieldCSSClasses.text}
             id={id}
             form={form.id}
@@ -47,7 +48,7 @@ export default function RenderMetaFields(props: $TSFixMe) {
             }
             data-uppy-super-focusable
           />
-        }
+        )}
       </fieldset>
     )
   })

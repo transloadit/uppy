@@ -1,29 +1,28 @@
-import { BasePlugin } from '@uppy/core'
+import type { RequestClient } from '@uppy/companion-client'
 import type {
+  Body,
+  DefinePluginOpts,
+  Meta,
+  PluginOpts,
   State,
   Uppy,
-  DefinePluginOpts,
-  PluginOpts,
-  Meta,
-  Body,
   UppyFile,
 } from '@uppy/core'
-import type { RequestClient } from '@uppy/companion-client'
+import { BasePlugin } from '@uppy/core'
 import EventManager from '@uppy/core/lib/EventManager.js'
+import { type FetcherOptions, fetcher } from '@uppy/utils/lib/fetcher'
 import {
-  RateLimitedQueue,
-  internalRateLimitedQueue,
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore untyped
-} from '@uppy/utils/lib/RateLimitedQueue'
-import NetworkError from '@uppy/utils/lib/NetworkError'
-import isNetworkError from '@uppy/utils/lib/isNetworkError'
-import { fetcher, type FetcherOptions } from '@uppy/utils/lib/fetcher'
-import {
-  filterNonFailedFiles,
   filterFilesToEmitUploadStarted,
+  filterNonFailedFiles,
 } from '@uppy/utils/lib/fileFilters'
 import getAllowedMetaFields from '@uppy/utils/lib/getAllowedMetaFields'
+import isNetworkError from '@uppy/utils/lib/isNetworkError'
+import NetworkError from '@uppy/utils/lib/NetworkError'
+import {
+  internalRateLimitedQueue,
+  RateLimitedQueue,
+  // @ts-ignore untyped
+} from '@uppy/utils/lib/RateLimitedQueue'
 import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'
 
@@ -70,14 +69,12 @@ export interface XhrUploadOpts<M extends Meta, B extends Body>
 export type { XhrUploadOpts as XHRUploadOptions }
 
 declare module '@uppy/utils/lib/UppyFile' {
-  // eslint-disable-next-line no-shadow
   export interface UppyFile<M extends Meta, B extends Body> {
     xhrUpload?: XhrUploadOpts<M, B>
   }
 }
 
 declare module '@uppy/core' {
-  // eslint-disable-next-line no-shadow
   export interface State<M extends Meta, B extends Body> {
     xhrUpload?: XhrUploadOpts<M, B>
   }
@@ -144,7 +141,6 @@ export default class XHRUpload<
   M extends Meta,
   B extends Body,
 > extends BasePlugin<Opts<M, B>, M, B> {
-  // eslint-disable-next-line global-require
   static VERSION = packageJson.version
 
   #getFetcher
@@ -168,7 +164,6 @@ export default class XHRUpload<
 
     // Simultaneous upload limiting is shared across all uploads with this plugin.
     if (internalRateLimitedQueue in this.opts) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore untyped internal
       this.requests = this.opts[internalRateLimitedQueue]
     } else {
@@ -311,7 +306,6 @@ export default class XHRUpload<
     return opts
   }
 
-  // eslint-disable-next-line class-methods-use-this
   addMetadata(
     formData: FormData,
     meta: State<M, B>['meta'],
@@ -374,8 +368,9 @@ export default class XHRUpload<
     const uppyFetch = this.requests.wrapPromiseFunction(async () => {
       const opts = this.getOptions(file)
       const fetch = this.#getFetcher([file])
-      const body =
-        opts.formData ? this.createFormDataUpload(file, opts) : file.data
+      const body = opts.formData
+        ? this.createFormDataUpload(file, opts)
+        : file.data
       return fetch(opts.endpoint, {
         ...opts,
         body,
@@ -500,7 +495,6 @@ export default class XHRUpload<
 
     // No limit configured by the user, and no RateLimitedQueue passed in by a "parent" plugin
     // (basically just AwsS3) using the internal symbol
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore untyped internal
     if (this.opts.limit === 0 && !this.opts[internalRateLimitedQueue]) {
       this.uppy.log(

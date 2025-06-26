@@ -15,7 +15,9 @@ const { getServer } = require('../mockserver')
 const mockServer = getServer({ COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT: '0' })
 
 beforeAll(() => {
-  nock('http://url.myendpoint.com').get('/files').reply(200, () => '')
+  nock('http://url.myendpoint.com')
+    .get('/files')
+    .reply(200, () => '')
 })
 
 afterAll(() => {
@@ -25,11 +27,13 @@ afterAll(() => {
 
 const invalids = [
   // no url at all or unsupported protocol
-  null, '', 'ftp://url.myendpoint.com/files',
+  null,
+  '',
+  'ftp://url.myendpoint.com/files',
 ]
 
 describe('url meta', () => {
-  test('return a url\'s meta data', () => {
+  test("return a url's meta data", () => {
     return request(mockServer)
       .post('/url/meta')
       .set('Content-Type', 'application/json')
@@ -69,16 +73,19 @@ describe('url get', () => {
       .then((res) => expect(res.body.token).toBeTruthy())
   })
 
-  test.each(invalids)('downloads are not instantiated for invalid urls', (urlCase) => {
-    return request(mockServer)
-      .post('/url/get')
-      .set('Content-Type', 'application/json')
-      .send({
-        url: urlCase,
-        endpoint: 'http://tusd.tusdemo.net/files',
-        protocol: 'tus',
-      })
-      .expect(400)
-      .then((res) => expect(res.body.error).toBe('Invalid request body'))
-  })
+  test.each(invalids)(
+    'downloads are not instantiated for invalid urls',
+    (urlCase) => {
+      return request(mockServer)
+        .post('/url/get')
+        .set('Content-Type', 'application/json')
+        .send({
+          url: urlCase,
+          endpoint: 'http://tusd.tusdemo.net/files',
+          protocol: 'tus',
+        })
+        .expect(400)
+        .then((res) => expect(res.body.error).toBe('Invalid request body'))
+    },
+  )
 })

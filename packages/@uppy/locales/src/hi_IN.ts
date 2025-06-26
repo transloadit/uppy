@@ -25,8 +25,7 @@ hi_IN.strings = {
   aspectRatioPortrait: 'पोर्ट्रेट क्रॉप करें (9:16)',
   aspectRatioSquare: 'वर्ग क्रॉप करें',
   authenticateWith: '%{pluginName} से कनेक्ट करें',
-  authenticateWithTitle:
-    '%{pluginName} के साथ सत्यापित करें ताकि फ़ाइलें चुन सकें',
+  authenticateWithTitle: '%{pluginName} के साथ सत्यापित करें ताकि फ़ाइलें चुन सकें',
   back: 'वापस',
   backToSearch: 'खोज पर वापस जाएं',
   browse: 'ब्राउज़ करें',
@@ -58,10 +57,8 @@ hi_IN.strings = {
   dropPasteFolders: 'यहाँ फ़ाइलें ड्रॉप करें या %{browseFolders}',
   dropPasteImportBoth:
     'यहां फ़ाइलें ड्रॉप करें, %{browseFiles}, %{browseFolders} या इससे आयात करें:',
-  dropPasteImportFiles:
-    'यहां फ़ाइलें ड्रॉप करें, %{browseFiles} या इससे आयात करें:',
-  dropPasteImportFolders:
-    'यहां फ़ाइलें ड्रॉप करें, %{browseFolders} या इससे आयात करें:',
+  dropPasteImportFiles: 'यहां फ़ाइलें ड्रॉप करें, %{browseFiles} या इससे आयात करें:',
+  dropPasteImportFolders: 'यहां फ़ाइलें ड्रॉप करें, %{browseFolders} या इससे आयात करें:',
   editFile: 'फ़ाइल संपादित करें',
   editImage: 'छवि संपादित करें',
   editing: 'संपादन %{file}',
@@ -100,8 +97,7 @@ hi_IN.strings = {
   noCameraDescription:
     'तस्वीरें लेने या वीडियो रिकॉर्ड करने के लिए, कृपया कैमरा डिवाइस कनेक्ट करें',
   noCameraTitle: 'कैमरा उपलब्ध नहीं है',
-  noDuplicates:
-    "डुप्लिकेट फ़ाइल '%{fileName}' नहीं जोड़ सकते, यह पहले से मौजूद है",
+  noDuplicates: "डुप्लिकेट फ़ाइल '%{fileName}' नहीं जोड़ सकते, यह पहले से मौजूद है",
   noFilesFound: 'यहां आपके पास कोई फ़ाइल या फ़ोल्डर नहीं है',
   noInternetConnection: 'इंटरनेट कनेक्शन नहीं',
   noNewAlreadyUploading: 'नई फ़ाइलें नहीं जोड़ सकते: पहले से अपलोड कर रहे हैं',
@@ -154,8 +150,7 @@ hi_IN.strings = {
   submitRecordedFile: 'रिकॉर्ड की गई फ़ाइल सबमिट करें',
   takePicture: 'एक तस्वीर लें',
   timedOut: 'अपलोड %{seconds} सेकंड के लिए अवरुद्ध हुआ, निरस्त कर रहा है।',
-  unselectAllFilesFromFolderNamed:
-    'फ़ोल्डर %{name} से सभी फ़ाइलों को अचयनित करें',
+  unselectAllFilesFromFolderNamed: 'फ़ोल्डर %{name} से सभी फ़ाइलों को अचयनित करें',
   unselectFileNamed: 'फ़ाइल %{name} को अचयनित करें',
   upload: 'अपलोड',
   uploadComplete: 'अपलोड पूरा हुआ',

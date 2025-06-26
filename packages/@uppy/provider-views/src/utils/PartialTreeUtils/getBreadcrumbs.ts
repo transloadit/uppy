@@ -14,7 +14,6 @@ const getBreadcrumbs = (
   ) as PartialTreeFolder
 
   let breadcrumbs: PartialTreeFolder[] = []
-  // eslint-disable-next-line no-constant-condition
   while (true) {
     breadcrumbs = [folder, ...breadcrumbs]
 

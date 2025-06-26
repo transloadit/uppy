@@ -1,7 +1,7 @@
 import Uppy from '@uppy/core'
+import Dashboard from '@uppy/dashboard'
 import GoogleDrive from '@uppy/google-drive'
 import Tus from '@uppy/tus'
-import Dashboard from '@uppy/dashboard'
 import MyCustomProvider from './MyCustomProvider.jsx'
 
 import '@uppy/core/dist/style.css'

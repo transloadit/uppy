@@ -1,5 +1,3 @@
-/* eslint-disable react/jsx-props-no-spreading, react/button-has-type */
-/* eslint-disable react/react-in-jsx-scope */
 import React from 'react'
 
 type ButtonProps = {

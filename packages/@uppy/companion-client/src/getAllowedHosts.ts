@@ -53,9 +53,8 @@ export function isOriginAllowed(
   origin: string,
   allowedOrigin: string | RegExp | Array<string | RegExp> | undefined,
 ): boolean {
-  const patterns =
-    Array.isArray(allowedOrigin) ?
-      allowedOrigin.map(wrapInRegex)
+  const patterns = Array.isArray(allowedOrigin)
+    ? allowedOrigin.map(wrapInRegex)
     : [wrapInRegex(allowedOrigin)]
   return patterns.some(
     (pattern) => pattern?.test(origin) || pattern?.test(`${origin}/`),

@@ -1,10 +1,8 @@
-/* eslint-disable react/destructuring-assignment */
-import { Fragment, h } from 'preact'
-import { useState, useEffect } from 'preact/hooks'
-
 import type { Body, Meta, UppyEventMap, UppyFile } from '@uppy/core'
-import prettyBytes from 'pretty-bytes'
 import { clsx } from 'clsx'
+import { Fragment, h } from 'preact'
+import { useEffect, useState } from 'preact/hooks'
+import prettyBytes from 'pretty-bytes'
 import { Thumbnail } from './index.js'
 import type { UppyContext } from './types.js'
 

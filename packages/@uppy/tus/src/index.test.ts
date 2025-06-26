@@ -1,5 +1,5 @@
-import { describe, expect, expectTypeOf, it } from 'vitest'
 import Core from '@uppy/core'
+import { describe, expect, expectTypeOf, it } from 'vitest'
 import Tus, { type TusBody } from './index.js'
 
 describe('Tus', () => {

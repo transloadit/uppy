@@ -1,5 +1,5 @@
-import webkitGetAsEntryApi from './utils/webkitGetAsEntryApi/index.js'
 import fallbackApi from './utils/fallbackApi.js'
+import webkitGetAsEntryApi from './utils/webkitGetAsEntryApi/index.js'
 
 /**
  * Returns a promise that resolves to the array of dropped files (if a folder is

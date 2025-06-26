@@ -1,17 +1,17 @@
 import type {
-  Uppy,
   Body,
   Meta,
   PluginOpts,
   UnknownProviderPlugin,
+  Uppy,
 } from '@uppy/core'
 import type {
-  RequestOptions,
   CompanionClientProvider,
+  RequestOptions,
 } from '@uppy/utils/lib/CompanionClientProvider'
-import RequestClient, { authErrorStatusCode } from './RequestClient.js'
-import type { CompanionPluginOptions } from './index.js'
 import { isOriginAllowed } from './getAllowedHosts.js'
+import type { CompanionPluginOptions } from './index.js'
+import RequestClient, { authErrorStatusCode } from './RequestClient.js'
 
 export interface Opts extends PluginOpts, CompanionPluginOptions {
   pluginId: string
@@ -28,7 +28,6 @@ const getName = (id: string) => {
 }
 
 function getOrigin() {
-  // eslint-disable-next-line no-restricted-globals
   return location.origin
 }
 
@@ -88,9 +87,8 @@ export default class Provider<M extends Meta, B extends Body>
     super.onReceiveResponse(response)
     const plugin = this.#getPlugin()
     const oldAuthenticated = plugin.getPluginState().authenticated
-    const authenticated =
-      oldAuthenticated ?
-        response.status !== authErrorStatusCode
+    const authenticated = oldAuthenticated
+      ? response.status !== authErrorStatusCode
       : response.status < 400
     plugin.setPluginState({ authenticated })
     return response
@@ -133,7 +131,6 @@ export default class Provider<M extends Meta, B extends Body>
     }
   }
 
-  // eslint-disable-next-line class-methods-use-this, @typescript-eslint/no-unused-vars
   authQuery(data: unknown): Record<string, string> {
     return {}
   }
@@ -206,7 +203,7 @@ export default class Provider<M extends Meta, B extends Body>
               // then we don’t have to manually do these things like json stringify when logging.
               // the logger should never throw an error.
               jsonData = JSON.stringify(e.data)
-            } catch (err) {
+            } catch (_err) {
               // in case JSON.stringify fails (ignored)
             }
             this.uppy.log(

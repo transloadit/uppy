@@ -1,4 +1,3 @@
-// eslint-disable-next-line max-classes-per-file
 const http = require('node:http')
 const https = require('node:https')
 const dns = require('node:dns')
@@ -14,7 +13,8 @@ const FORBIDDEN_IP_ADDRESS = 'Forbidden IP address'
 // Example scary IPs that should return false (ipv6-to-ipv4 mapped):
 // ::FFFF:127.0.0.1
 // ::ffff:7f00:1
-const isDisallowedIP = (ipAddress) => ipaddr.parse(ipAddress).range() !== 'unicast'
+const isDisallowedIP = (ipAddress) =>
+  ipaddr.parse(ipAddress).range() !== 'unicast'
 
 module.exports.FORBIDDEN_IP_ADDRESS = FORBIDDEN_IP_ADDRESS
 
@@ -47,33 +47,50 @@ module.exports.validateURL = validateURL
  * Returns http Agent that will prevent requests to private IPs (to prevent SSRF)
  */
 const getProtectedHttpAgent = ({ protocol, allowLocalIPs }) => {
-  function dnsLookup (hostname, options, callback) {
+  function dnsLookup(hostname, options, callback) {
     dns.lookup(hostname, options, (err, addresses, maybeFamily) => {
       if (err) {
         callback(err, addresses, maybeFamily)
         return
       }
 
-      const toValidate = Array.isArray(addresses) ? addresses : [{ address: addresses }]
+      const toValidate = Array.isArray(addresses)
+        ? addresses
+        : [{ address: addresses }]
       // because dns.lookup seems to be called with option `all: true`, if we are on an ipv6 system,
       // `addresses` could contain a list of ipv4 addresses as well as ipv6 mapped addresses (rfc6052) which we cannot allow
       // however we should still allow any valid ipv4 addresses, so we filter out the invalid addresses
-      const validAddresses = allowLocalIPs ? toValidate : toValidate.filter(({ address }) => !isDisallowedIP(address))
+      const validAddresses = allowLocalIPs
+        ? toValidate
+        : toValidate.filter(({ address }) => !isDisallowedIP(address))
 
       // and check if there's anything left after we filtered:
       if (validAddresses.length === 0) {
-        callback(new Error(`Forbidden resolved IP address ${hostname} -> ${toValidate.map(({ address }) => address).join(', ')}`), addresses, maybeFamily)
+        callback(
+          new Error(
+            `Forbidden resolved IP address ${hostname} -> ${toValidate.map(({ address }) => address).join(', ')}`,
+          ),
+          addresses,
+          maybeFamily,
+        )
         return
       }
 
-      const ret = Array.isArray(addresses) ? validAddresses : validAddresses[0].address;
+      const ret = Array.isArray(addresses)
+        ? validAddresses
+        : validAddresses[0].address
       callback(err, ret, maybeFamily)
     })
   }
 
-  return class HttpAgent extends (protocol.startsWith('https') ? https : http).Agent {
-    createConnection (options, callback) {
-      if (ipaddr.isValid(options.host) && !allowLocalIPs && isDisallowedIP(options.host)) {
+  return class HttpAgent extends (protocol.startsWith('https') ? https : http)
+    .Agent {
+    createConnection(options, callback) {
+      if (
+        ipaddr.isValid(options.host) &&
+        !allowLocalIPs &&
+        isDisallowedIP(options.host)
+      ) {
         callback(new Error(FORBIDDEN_IP_ADDRESS))
         return undefined
       }
@@ -85,12 +102,14 @@ const getProtectedHttpAgent = ({ protocol, allowLocalIPs }) => {
 
 module.exports.getProtectedHttpAgent = getProtectedHttpAgent
 
-async function getProtectedGot ({ allowLocalIPs }) {
+async function getProtectedGot({ allowLocalIPs }) {
   const HttpAgent = getProtectedHttpAgent({ protocol: 'http', allowLocalIPs })
-  const HttpsAgent = getProtectedHttpAgent({ protocol: 'https', allowLocalIPs })
+  const HttpsAgent = getProtectedHttpAgent({
+    protocol: 'https',
+    allowLocalIPs,
+  })
   const httpAgent = new HttpAgent()
   const httpsAgent = new HttpsAgent()
-
 
   // @ts-ignore
   return (await got).extend({ agent: { http: httpAgent, https: httpsAgent } })
@@ -105,12 +124,20 @@ module.exports.getProtectedGot = getProtectedGot
  * @param {boolean} allowLocalIPs
  * @returns {Promise<{name: string, type: string, size: number}>}
  */
-exports.getURLMeta = async (url, allowLocalIPs = false, options = undefined) => {
-  async function requestWithMethod (method) {
+exports.getURLMeta = async (
+  url,
+  allowLocalIPs = false,
+  options = undefined,
+) => {
+  async function requestWithMethod(method) {
     const protectedGot = await getProtectedGot({ allowLocalIPs })
-    const stream = protectedGot.stream(url, { method, throwHttpErrors: false, ...options })
+    const stream = protectedGot.stream(url, {
+      method,
+      throwHttpErrors: false,
+      ...options,
+    })
 
-    return new Promise((resolve, reject) => (
+    return new Promise((resolve, reject) =>
       stream
         .on('response', (response) => {
           // Can be undefined for unknown length URLs, e.g. transfer-encoding: chunked
@@ -119,7 +146,8 @@ exports.getURLMeta = async (url, allowLocalIPs = false, options = undefined) => 
           // but if multiple files are served via query params like foo.com?file=file-1, foo.com?file=file-2,
           // we add random string to avoid duplicate files
           const filename = response.headers['content-disposition']
-            ? contentDisposition.parse(response.headers['content-disposition']).parameters.filename
+            ? contentDisposition.parse(response.headers['content-disposition'])
+                .parameters.filename
             : path.basename(`${response.request.requestUrl}`)
 
           // No need to get the rest of the response, as we only want header (not really relevant for HEAD, but why not)
@@ -134,8 +162,8 @@ exports.getURLMeta = async (url, allowLocalIPs = false, options = undefined) => 
         })
         .on('error', (err) => {
           reject(err)
-        })
-    ))
+        }),
+    )
   }
 
   // We prefer to use a HEAD request, as it doesn't download the content. If the URL doesn't

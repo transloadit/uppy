@@ -1,12 +1,9 @@
 import React from 'react'
-import { Text, TouchableHighlight, StyleSheet } from 'react-native'
+import { StyleSheet, Text, TouchableHighlight } from 'react-native'
 
-export default function SelectFiles ({ showFilePicker }) {
+export default function SelectFiles({ showFilePicker }) {
   return (
-    <TouchableHighlight
-      onPress={showFilePicker}
-      style={styles.button}
-    >
+    <TouchableHighlight onPress={showFilePicker} style={styles.button}>
       <Text style={styles.text}>Select files</Text>
     </TouchableHighlight>
   )

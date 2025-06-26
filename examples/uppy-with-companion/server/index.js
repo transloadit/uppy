@@ -6,11 +6,13 @@ const companion = require('@uppy/companion')
 const app = express()
 
 app.use(bodyParser.json())
-app.use(session({
-  secret: 'some-secret',
-  resave: true,
-  saveUninitialized: true,
-}))
+app.use(
+  session({
+    secret: 'some-secret',
+    resave: true,
+    saveUninitialized: true,
+  }),
+)
 
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*')

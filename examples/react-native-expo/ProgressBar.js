@@ -1,19 +1,21 @@
 import React from 'react'
-import { View, Text, StyleSheet } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native'
 
 const colorGreen = '#0b8600'
 const colorBlue = '#006bb7'
 
-export default function ProgressBar ({ progress }) {
+export default function ProgressBar({ progress }) {
   return (
     <View style={styles.root}>
-      <View
-        style={styles.wrapper}
-      >
-        <View style={[styles.bar, {
-          backgroundColor: progress === 100 ? colorGreen : colorBlue,
-          width: `${progress}%`,
-        }]}
+      <View style={styles.wrapper}>
+        <View
+          style={[
+            styles.bar,
+            {
+              backgroundColor: progress === 100 ? colorGreen : colorBlue,
+              width: `${progress}%`,
+            },
+          ]}
         />
       </View>
       <Text>{progress ? `${progress}%` : null}</Text>
@@ -26,7 +28,7 @@ const styles = StyleSheet.create({
     marginTop: 15,
     marginBottom: 15,
   },
-  wrapper:{
+  wrapper: {
     height: 5,
     overflow: 'hidden',
     backgroundColor: '#dee1e3',

@@ -1,6 +1,6 @@
-import { vi, describe, it, expect } from 'vitest'
-import nock from 'nock'
 import Core, { type UppyEventMap } from '@uppy/core'
+import nock from 'nock'
+import { describe, expect, it, vi } from 'vitest'
 import XHRUpload from './index.js'
 
 describe('XHRUpload', () => {

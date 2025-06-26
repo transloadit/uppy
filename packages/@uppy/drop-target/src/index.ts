@@ -1,4 +1,4 @@
-import type { Uppy, Body, Meta, DefinePluginOpts, PluginOpts } from '@uppy/core'
+import type { Body, DefinePluginOpts, Meta, PluginOpts, Uppy } from '@uppy/core'
 import { BasePlugin } from '@uppy/core'
 import getDroppedFiles from '@uppy/utils/lib/getDroppedFiles'
 import toArray from '@uppy/utils/lib/toArray'
@@ -119,7 +119,7 @@ export default class DropTarget<
     // Add a small (+) icon on drop
     // (and prevent browsers from interpreting this as files being _moved_ into the browser,
     // https://github.com/transloadit/uppy/issues/1978)
-    event.dataTransfer.dropEffect = 'copy' // eslint-disable-line no-param-reassign
+    event.dataTransfer.dropEffect = 'copy'
     ;(event.currentTarget as HTMLElement).classList.add('uppy-is-drag-over')
     this.setPluginState({ isDraggingOver: true })
     this.opts.onDragOver?.(event)

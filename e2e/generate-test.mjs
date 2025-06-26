@@ -1,25 +1,37 @@
 #!/usr/bin/env node
-import prompts from 'prompts'
 import fs from 'node:fs/promises'
+import prompts from 'prompts'
 
 /**
  * Utility function that strips indentation from multi-line strings.
  * Inspired from https://github.com/dmnd/dedent.
  */
-function dedent (strings, ...parts) {
+function dedent(strings, ...parts) {
   const nonSpacingChar = /\S/m.exec(strings[0])
   if (nonSpacingChar == null) return ''
 
-  const indent = nonSpacingChar.index - strings[0].lastIndexOf('\n', nonSpacingChar.index) - 1
-  const dedentEachLine = str => str.split('\n').map((line, i) => line.slice(i && indent)).join('\n')
-  let returnLines = dedentEachLine(strings[0].slice(nonSpacingChar.index), indent)
+  const indent =
+    nonSpacingChar.index -
+    strings[0].lastIndexOf('\n', nonSpacingChar.index) -
+    1
+  const dedentEachLine = (str) =>
+    str
+      .split('\n')
+      .map((line, i) => line.slice(i && indent))
+      .join('\n')
+  let returnLines = dedentEachLine(
+    strings[0].slice(nonSpacingChar.index),
+    indent,
+  )
   for (let i = 1; i < strings.length; i++) {
     returnLines += String(parts[i - 1]) + dedentEachLine(strings[i], indent)
   }
   return returnLines
 }
 
-const packageNames = await fs.readdir(new URL('../packages/@uppy', import.meta.url))
+const packageNames = await fs.readdir(
+  new URL('../packages/@uppy', import.meta.url),
+)
 const unwantedPackages = ['core', 'companion', 'redux-dev-tools', 'utils']
 
 const { name } = await prompts({
@@ -39,9 +51,10 @@ const { packages } = await prompts({
     .map((pkg) => ({ title: pkg, value: pkg })),
 })
 
-const camelcase = (str) => str
-  .toLowerCase()
-  .replace(/([-][a-z])/g, (group) => group.toUpperCase().replace('-', ''))
+const camelcase = (str) =>
+  str
+    .toLowerCase()
+    .replace(/([-][a-z])/g, (group) => group.toUpperCase().replace('-', ''))
 
 const testUrl = new URL(`cypress/integration/${name}.spec.ts`, import.meta.url)
 const test = dedent`

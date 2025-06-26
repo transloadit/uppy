@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import getTimeStamp from '@uppy/utils/lib/getTimeStamp'
 
 // Swallow all logs, except errors.

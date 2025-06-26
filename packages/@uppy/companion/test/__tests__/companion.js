@@ -37,7 +37,10 @@ const authData = {
   box: { accessToken: 'token value' },
   drive: { accessToken: 'token value' },
 }
-const token = tokenService.generateEncryptedAuthToken(authData, process.env.COMPANION_SECRET)
+const token = tokenService.generateEncryptedAuthToken(
+  authData,
+  process.env.COMPANION_SECRET,
+)
 const OAUTH_STATE = 'some-cool-nice-encrytpion'
 
 afterAll(() => {
@@ -52,16 +55,24 @@ describe('validate upload data', () => {
       mimeType: 'video/mp4',
       id: defaults.ITEM_ID,
     }
-    nock('https://www.googleapis.com').get(`/drive/v3/files/${defaults.ITEM_ID}`).query(() => true).reply(200, meta)
+    nock('https://www.googleapis.com')
+      .get(`/drive/v3/files/${defaults.ITEM_ID}`)
+      .query(() => true)
+      .reply(200, meta)
 
-    nock('https://www.googleapis.com').get(`/drive/v3/files/${defaults.ITEM_ID}?alt=media&supportsAllDrives=true`).reply(401, {
-      "error": {
-        "code": 401,
-        "message": "Request had invalid authentication credentials. Expected OAuth 2 access token, login cookie or other valid authentication credential. See https://developers.google.com/identity/sign-in/web/devconsole-project.",
-        "status": "UNAUTHENTICATED"
-      }
-    })
-  
+    nock('https://www.googleapis.com')
+      .get(
+        `/drive/v3/files/${defaults.ITEM_ID}?alt=media&supportsAllDrives=true`,
+      )
+      .reply(401, {
+        error: {
+          code: 401,
+          message:
+            'Request had invalid authentication credentials. Expected OAuth 2 access token, login cookie or other valid authentication credential. See https://developers.google.com/identity/sign-in/web/devconsole-project.',
+          status: 'UNAUTHENTICATED',
+        },
+      })
+
     return request(authServer)
       .post('/drive/get/DUMMY-FILE-ID')
       .set('uppy-auth-token', token)
@@ -72,7 +83,11 @@ describe('validate upload data', () => {
         httpMethod: 'POST',
       })
       .expect(401)
-      .then((res) => expect(res.body.message).toBe('HTTP 401: invalid access token detected by Provider'))
+      .then((res) =>
+        expect(res.body.message).toBe(
+          'HTTP 401: invalid access token detected by Provider',
+        ),
+      )
   })
 
   test('invalid upload protocol gets rejected', () => {
@@ -87,7 +102,9 @@ describe('validate upload data', () => {
         protocol: 'tusInvalid',
       })
       .expect(400)
-      .then((res) => expect(res.body.message).toBe('unsupported protocol specified'))
+      .then((res) =>
+        expect(res.body.message).toBe('unsupported protocol specified'),
+      )
   })
 
   test('invalid upload fieldname gets rejected', () => {
@@ -103,7 +120,9 @@ describe('validate upload data', () => {
         fieldname: 390,
       })
       .expect(400)
-      .then((res) => expect(res.body.message).toBe('fieldname must be a string'))
+      .then((res) =>
+        expect(res.body.message).toBe('fieldname must be a string'),
+      )
   })
 
   test('invalid upload metadata gets rejected', () => {
@@ -119,7 +138,9 @@ describe('validate upload data', () => {
         metadata: 'I am a string instead of object',
       })
       .expect(400)
-      .then((res) => expect(res.body.message).toBe('metadata must be an object'))
+      .then((res) =>
+        expect(res.body.message).toBe('metadata must be an object'),
+      )
   })
 
   test('invalid upload headers get rejected', () => {
@@ -151,7 +172,9 @@ describe('validate upload data', () => {
         httpMethod: 'DELETE',
       })
       .expect(400)
-      .then((res) => expect(res.body.message).toBe('unsupported HTTP METHOD specified'))
+      .then((res) =>
+        expect(res.body.message).toBe('unsupported HTTP METHOD specified'),
+      )
   })
 
   test('valid upload data is allowed - tus', () => {
@@ -208,7 +231,10 @@ describe('handle main oauth redirect', () => {
       .get(`/dropbox/redirect?state=${OAUTH_STATE}`)
       .set('uppy-auth-token', token)
       .expect(302)
-      .expect('Location', `http://localhost:3020/connect/dropbox/callback?state=${OAUTH_STATE}`)
+      .expect(
+        'Location',
+        `http://localhost:3020/connect/dropbox/callback?state=${OAUTH_STATE}`,
+      )
   })
 
   test('do not redirect to invalid uppy instances', () => {
@@ -221,11 +247,15 @@ describe('handle main oauth redirect', () => {
 })
 
 it('periodically pings', (done) => {
-  nock('http://localhost').post('/ping', (body) => (
-    body.some === 'value'
-    && body.version === version
-    && typeof body.processId === 'string'
-  )).reply(200, () => done())
+  nock('http://localhost')
+    .post(
+      '/ping',
+      (body) =>
+        body.some === 'value' &&
+        body.version === version &&
+        typeof body.processId === 'string',
+    )
+    .reply(200, () => done())
 
   getServer({
     COMPANION_PERIODIC_PING_URLS: 'http://localhost/ping',
@@ -235,27 +265,23 @@ it('periodically pings', (done) => {
   })
 }, 3000)
 
-async function runUrlMetaTest (url) {
+async function runUrlMetaTest(url) {
   const server = getServer()
 
-  return request(server)
-    .post('/url/meta')
-    .send({ url })
+  return request(server).post('/url/meta').send({ url })
 }
 
-async function runUrlGetTest (url) {
+async function runUrlGetTest(url) {
   const server = getServer()
 
-  return request(server)
-    .post('/url/get')
-    .send({
-      fileId: url,
-      metadata: {},
-      endpoint: 'http://url.myendpoint.com/files',
-      protocol: 'tus',
-      size: null,
-      url,
-    })
+  return request(server).post('/url/get').send({
+    fileId: url,
+    metadata: {},
+    endpoint: 'http://url.myendpoint.com/files',
+    protocol: 'tus',
+    size: null,
+    url,
+  })
 }
 
 it('respects allowLocalUrls, localhost', async () => {

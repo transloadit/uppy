@@ -1,18 +1,17 @@
-import { UIPlugin } from '@uppy/core'
 import type {
-  UIPluginOptions,
-  Uppy,
+  Body,
   DefinePluginOpts,
   Meta,
-  Body,
+  UIPluginOptions,
+  Uppy,
   UppyFile,
 } from '@uppy/core'
+import { UIPlugin } from '@uppy/core'
+import type { LocaleStrings } from '@uppy/utils/lib/Translator'
 import type Cropper from 'cropperjs'
 import { h } from 'preact'
-
-import type { LocaleStrings } from '@uppy/utils/lib/Translator'
-import Editor from './Editor.js'
 import packageJson from '../package.json' with { type: 'json' }
+import Editor from './Editor.js'
 import locale from './locale.js'
 
 declare global {
@@ -140,7 +139,6 @@ export default class ImageEditor<
     this.i18nInit()
   }
 
-  // eslint-disable-next-line class-methods-use-this
   canEditFile(file: UppyFile<M, B>): boolean {
     if (!file.type || file.isRemote) {
       return false

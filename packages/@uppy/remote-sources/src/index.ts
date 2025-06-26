@@ -1,22 +1,21 @@
-import { BasePlugin } from '@uppy/core'
+import Box from '@uppy/box'
+import type { CompanionPluginOptions } from '@uppy/companion-client'
 import type {
-  Uppy,
-  UnknownProviderPlugin,
-  DefinePluginOpts,
   Body,
+  DefinePluginOpts,
   Meta,
+  UnknownProviderPlugin,
+  Uppy,
 } from '@uppy/core'
+import { BasePlugin } from '@uppy/core'
 import Dropbox from '@uppy/dropbox'
+import Facebook from '@uppy/facebook'
 import GoogleDrive from '@uppy/google-drive'
 import Instagram from '@uppy/instagram'
-import Facebook from '@uppy/facebook'
 import OneDrive from '@uppy/onedrive'
-import Box from '@uppy/box'
 import Unsplash from '@uppy/unsplash'
 import Url from '@uppy/url'
 import Zoom from '@uppy/zoom'
-
-import type { CompanionPluginOptions } from '@uppy/companion-client'
 import packageJson from '../package.json' with { type: 'json' }
 
 export const availablePlugins = {
@@ -45,7 +44,6 @@ export type AvailablePluginsKeys =
   | 'Zoom'
 
 type NestedCompanionKeysParams = {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   [key in AvailablePluginsKeys]?: CompanionPluginOptions['companionKeysParams']
 }
 
@@ -92,7 +90,6 @@ export default class RemoteSources<
 
   install(): void {
     this.opts.sources.forEach((pluginId) => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { sources, ...rest } = this.opts
       const optsForRemoteSourcePlugin: CompanionPluginOptions = {
         ...rest,

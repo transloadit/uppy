@@ -61,7 +61,7 @@ export default function forEachDroppedOrPastedUrl(
 ): void {
   const items = toArray(dataTransfer.items)
 
-  let urlItems
+  let urlItems: DataTransferItem[]
 
   switch (isDropOrPaste) {
     case 'paste': {

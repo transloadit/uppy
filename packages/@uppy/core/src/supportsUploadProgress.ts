@@ -4,7 +4,6 @@
 export default function supportsUploadProgress(userAgent?: string): boolean {
   // Allow passing in userAgent for tests
   if (userAgent == null && typeof navigator !== 'undefined') {
-    // eslint-disable-next-line no-param-reassign
     userAgent = navigator.userAgent
   }
   // Assume it works because basically everything supports progress events.

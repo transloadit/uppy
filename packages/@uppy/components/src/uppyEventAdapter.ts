@@ -1,4 +1,5 @@
-import Uppy, { type UppyEventMap } from '@uppy/core'
+import type Uppy from '@uppy/core'
+import type { UppyEventMap } from '@uppy/core'
 import type { UploadStatus } from './types.js'
 
 export function createUppyEventAdapter({

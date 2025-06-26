@@ -1,9 +1,9 @@
-import { h } from 'preact'
-import type { Body, Meta, UppyFile } from '@uppy/core'
 import type Uppy from '@uppy/core'
+import type { Body, Meta, UppyFile } from '@uppy/core'
 import type { I18n } from '@uppy/utils/lib/Translator'
-import copyToClipboard from '../../../utils/copyToClipboard.js'
+import { h } from 'preact'
 import type { DashboardState } from '../../../Dashboard.js'
+import copyToClipboard from '../../../utils/copyToClipboard.js'
 
 type $TSFixMe = any
 
@@ -183,16 +183,16 @@ export default function Buttons<M extends Meta, B extends Body>(
         metaFields={metaFields}
         onClick={editAction}
       />
-      {showLinkToFileUploadResult && file.uploadURL ?
+      {showLinkToFileUploadResult && file.uploadURL ? (
         <CopyLinkButton file={file} uppy={uppy} i18n={i18n} />
-      : null}
-      {showRemoveButton ?
+      ) : null}
+      {showRemoveButton ? (
         <RemoveButton
           i18n={i18n}
           file={file}
           onClick={() => uppy.removeFile(file.id)}
         />
-      : null}
+      ) : null}
     </div>
   )
 }

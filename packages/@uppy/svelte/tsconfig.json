@@ -11,8 +11,8 @@
     "sourceMap": true,
     "strict": true,
     "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "moduleResolution": "NodeNext"
   },
   "include": ["./package.json", "./src/**/*.*"],
-  "exclude": ["node_modules/*", "./src/lib/empty.ts"],
+  "exclude": ["node_modules/*", "./src/lib/empty.ts"]
 }

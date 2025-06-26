@@ -1,6 +1,6 @@
-import { defineComponent, ref, h, type PropType } from 'vue'
+import type { Body, Meta, Uppy } from '@uppy/core'
 import DashboardPlugin, { type DashboardOptions } from '@uppy/dashboard'
-import type { Uppy, Meta, Body } from '@uppy/core'
+import { defineComponent, h, type PropType, ref } from 'vue'
 import useUppy from './useUppy.js'
 
 type DashboardInlineOptions<M extends Meta, B extends Body> = Omit<

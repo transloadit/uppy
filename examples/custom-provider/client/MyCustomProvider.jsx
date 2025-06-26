@@ -1,7 +1,7 @@
 /** @jsx h */
 
+import { getAllowedHosts, Provider, tokenStorage } from '@uppy/companion-client'
 import { UIPlugin } from '@uppy/core'
-import { Provider, getAllowedHosts, tokenStorage } from '@uppy/companion-client'
 import { ProviderViews } from '@uppy/provider-views'
 import { h } from 'preact'
 

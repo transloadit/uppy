@@ -1,11 +1,11 @@
-import Transloadit, { COMPANION_URL } from '@uppy/transloadit'
 import Uppy from '@uppy/core'
-import Form from '@uppy/form'
 import Dashboard from '@uppy/dashboard'
-import RemoteSources from '@uppy/remote-sources'
+import Form from '@uppy/form'
 import ImageEditor from '@uppy/image-editor'
-import Webcam from '@uppy/webcam'
 import ProgressBar from '@uppy/progress-bar'
+import RemoteSources from '@uppy/remote-sources'
+import Transloadit, { COMPANION_URL } from '@uppy/transloadit'
+import Webcam from '@uppy/webcam'
 
 import '@uppy/core/dist/style.css'
 import '@uppy/dashboard/dist/style.css'
@@ -59,13 +59,11 @@ const formUppy = new Uppy({
   })
 
 formUppy.on('error', (err) => {
-  document.querySelector('#test-form .error')
-    .textContent = err.message
+  document.querySelector('#test-form .error').textContent = err.message
 })
 
 formUppy.on('upload-error', (file, err) => {
-  document.querySelector('#test-form .error')
-    .textContent = err.message
+  document.querySelector('#test-form .error').textContent = err.message
 })
 
 formUppy.on('complete', ({ transloadit }) => {
@@ -163,15 +161,13 @@ const dashboardModal = new Uppy({
 
 dashboardModal.on('complete', ({ transloadit, successful, failed }) => {
   if (failed?.length !== 0) {
-    // eslint-disable-next-line no-console
     console.error('it failed', failed)
   } else {
-    // eslint-disable-next-line no-console
     console.log('success', { transloadit, successful })
   }
 })
 
-function openModal () {
+function openModal() {
   dashboardModal.getPlugin('Dashboard').openModal()
 }
 
@@ -208,7 +204,7 @@ window.doUpload = (event) => {
     errorEl.classList.add('hidden')
     resultEl.textContent = JSON.stringify(transloadit[0].results, null, 2)
 
-    const resizedUrl = transloadit[0].results['resize'][0]['ssl_url']
+    const resizedUrl = transloadit[0].results.resize[0].ssl_url
     const img = document.createElement('img')
     img.src = resizedUrl
     document.getElementById('upload-result-image').appendChild(img)

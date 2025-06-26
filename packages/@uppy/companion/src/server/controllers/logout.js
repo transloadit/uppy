@@ -6,7 +6,7 @@ const { respondWithError } = require('../provider/error')
  * @param {object} req
  * @param {object} res
  */
-async function logout (req, res, next) {
+async function logout(req, res, next) {
   const cleanSession = () => {
     if (req.session.grant) {
       req.session.grant.state = null
@@ -24,9 +24,17 @@ async function logout (req, res, next) {
 
   try {
     const { accessToken } = providerUserSession
-    const data = await companion.provider.logout({ token: accessToken, providerUserSession, companion })
+    const data = await companion.provider.logout({
+      token: accessToken,
+      providerUserSession,
+      companion,
+    })
     delete companion.providerUserSession
-    tokenService.removeFromCookies(res, companion.options, companion.providerClass.oauthProvider)
+    tokenService.removeFromCookies(
+      res,
+      companion.options,
+      companion.providerClass.oauthProvider,
+    )
     cleanSession()
     res.json({ ok: true, ...data })
   } catch (err) {

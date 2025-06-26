@@ -1,28 +1,27 @@
-/* eslint-disable react/destructuring-assignment, react/jsx-props-no-spreading */
-import { h } from 'preact'
-import classNames from 'classnames'
-import isDragDropSupported from '@uppy/utils/lib/isDragDropSupported'
 import type {
   Body,
   Meta,
-  UppyFile,
   State,
   UIPlugin,
   UIPluginOptions,
   Uppy,
+  UppyFile,
 } from '@uppy/core'
-import type { I18n } from '@uppy/utils/lib/Translator'
+import isDragDropSupported from '@uppy/utils/lib/isDragDropSupported'
 import type Translator from '@uppy/utils/lib/Translator'
+import type { I18n } from '@uppy/utils/lib/Translator'
+import classNames from 'classnames'
+import { h } from 'preact'
 import type { TargetedEvent } from 'preact/compat'
-import FileList from './FileList.js'
+import type { DashboardState, TargetWithRender } from '../Dashboard.js'
 import AddFiles from './AddFiles.js'
 import AddFilesPanel from './AddFilesPanel.js'
-import PickerPanelContent from './PickerPanelContent.js'
 import EditorPanel from './EditorPanel.js'
-import PanelTopBar from './PickerPanelTopBar.js'
 import FileCard from './FileCard/index.js'
+import FileList from './FileList.js'
+import PickerPanelContent from './PickerPanelContent.js'
+import PanelTopBar from './PickerPanelTopBar.js'
 import Slide from './Slide.js'
-import type { DashboardState, TargetWithRender } from '../Dashboard.js'
 
 // http://dev.edenspiekermann.com/2016/02/11/introducing-accessible-modal-dialog
 // https://github.com/ghosh/micromodal
@@ -163,11 +162,11 @@ export default function Dashboard<M extends Meta, B extends Body>(
 
   const showFileList = props.showSelectedFiles && !isNoFiles
 
-  const numberOfFilesForRecovery =
-    props.recoveredState ? Object.keys(props.recoveredState.files).length : null
-  const numberOfGhosts =
-    props.files ?
-      Object.keys(props.files).filter((fileID) => props.files[fileID].isGhost)
+  const numberOfFilesForRecovery = props.recoveredState
+    ? Object.keys(props.recoveredState.files).length
+    : null
+  const numberOfGhosts = props.files
+    ? Object.keys(props.files).filter((fileID) => props.files[fileID].isGhost)
         .length
     : 0
 
@@ -182,6 +181,7 @@ export default function Dashboard<M extends Meta, B extends Body>(
   }
 
   const dashboard = (
+    // biome-ignore lint/a11y/useAriaPropsSupportedByRole: ...
     <div
       className={dashboardClassName}
       data-uppy-theme={props.theme}
@@ -192,9 +192,9 @@ export default function Dashboard<M extends Meta, B extends Body>(
       aria-hidden={props.inline ? 'false' : props.isHidden}
       aria-disabled={props.disabled}
       aria-label={
-        !props.inline ?
-          props.i18n('dashboardWindowTitle')
-        : props.i18n('dashboardTitle')
+        !props.inline
+          ? props.i18n('dashboardWindowTitle')
+          : props.i18n('dashboardTitle')
       }
       onPaste={props.handlePaste}
       onDragOver={props.handleDragOver}
@@ -210,14 +210,13 @@ export default function Dashboard<M extends Meta, B extends Body>(
 
       <div
         className="uppy-Dashboard-inner"
-        aria-modal={!props.inline && 'true'}
         role={props.inline ? undefined : 'dialog'}
         style={{
           width: props.inline && props.width ? props.width : '',
           height: props.inline && props.height ? props.height : '',
         }}
       >
-        {!props.inline ?
+        {!props.inline ? (
           <button
             className="uppy-u-reset uppy-Dashboard-close"
             type="button"
@@ -227,14 +226,13 @@ export default function Dashboard<M extends Meta, B extends Body>(
           >
             <span aria-hidden="true">&times;</span>
           </button>
-        : null}
+        ) : null}
 
         <div className="uppy-Dashboard-innerWrap">
           <div className="uppy-Dashboard-dropFilesHereHint">
             {props.i18n('dropHint')}
           </div>
 
-          {/* eslint-disable-next-line react/jsx-props-no-spreading */}
           {showFileList && <PanelTopBar {...props} />}
 
           {numberOfFilesForRecovery && (
@@ -265,7 +263,7 @@ export default function Dashboard<M extends Meta, B extends Body>(
             </div>
           )}
 
-          {showFileList ?
+          {showFileList ? (
             <FileList
               id={props.id}
               i18n={props.i18n}
@@ -293,7 +291,8 @@ export default function Dashboard<M extends Meta, B extends Body>(
               containerWidth={props.containerWidth}
               containerHeight={props.containerHeight}
             />
-          : <AddFiles
+          ) : (
+            <AddFiles
               i18n={props.i18n}
               i18nArray={props.i18nArray}
               acquirers={props.acquirers}
@@ -310,34 +309,28 @@ export default function Dashboard<M extends Meta, B extends Body>(
               note={props.note}
               proudlyDisplayPoweredByUppy={props.proudlyDisplayPoweredByUppy}
             />
-          }
+          )}
 
           <Slide>
-            {/* eslint-disable-next-line react/jsx-props-no-spreading */}
-            {props.showAddFilesPanel ?
+            {props.showAddFilesPanel ? (
               <AddFilesPanel key="AddFiles" {...props} isSizeMD={isSizeMD} />
-            : null}
+            ) : null}
           </Slide>
 
           <Slide>
-            {/* eslint-disable-next-line react/jsx-props-no-spreading */}
-            {props.fileCardFor ?
-              <FileCard key="FileCard" {...props} />
-            : null}
+            {props.fileCardFor ? <FileCard key="FileCard" {...props} /> : null}
           </Slide>
 
           <Slide>
-            {/* eslint-disable-next-line react/jsx-props-no-spreading */}
-            {props.activePickerPanel ?
+            {props.activePickerPanel ? (
               <PickerPanelContent key="Picker" {...props} />
-            : null}
+            ) : null}
           </Slide>
 
           <Slide>
-            {/* eslint-disable-next-line react/jsx-props-no-spreading */}
-            {props.showFileEditor ?
+            {props.showFileEditor ? (
               <EditorPanel key="Editor" {...props} />
-            : null}
+            ) : null}
           </Slide>
 
           <div className="uppy-Dashboard-progressindicators">

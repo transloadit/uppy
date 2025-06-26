@@ -1,4 +1,3 @@
-/* eslint-disable max-classes-per-file */
 /**
  * ProviderApiError is error returned when an adapter encounters
  * an http error while communication with its corresponding provider
@@ -100,7 +99,10 @@ function errorToResponse(err) {
   const httpError = parseHttpError(err)
   if (httpError) {
     // We proxy the response purely for ease of debugging
-    return { code: 500, json: { statusCode: httpError.statusCode, body: httpError.body } }
+    return {
+      code: 500,
+      json: { statusCode: httpError.statusCode, body: httpError.body },
+    }
   }
 
   return undefined
@@ -115,4 +117,10 @@ function respondWithError(err, res) {
   return false
 }
 
-module.exports = { ProviderAuthError, ProviderApiError, ProviderUserError, respondWithError, parseHttpError }
+module.exports = {
+  ProviderAuthError,
+  ProviderApiError,
+  ProviderUserError,
+  respondWithError,
+  parseHttpError,
+}

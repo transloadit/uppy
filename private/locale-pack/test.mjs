@@ -1,11 +1,11 @@
 /* eslint-disable no-console, prefer-arrow-callback */
+
+import fs from 'node:fs'
 import path from 'node:path'
 import process from 'node:process'
-import fs from 'node:fs'
 import { fileURLToPath } from 'node:url'
-
-import glob from 'glob'
 import chalk from 'chalk'
+import glob from 'glob'
 
 import { getLocales, getPaths, omit } from './helpers.mjs'
 
@@ -16,10 +16,10 @@ const pluginLocaleDependencies = {
   core: ['provider-views', 'companion-client'],
 }
 
-function getAllFilesPerPlugin (pluginNames) {
+function getAllFilesPerPlugin(pluginNames) {
   const filesPerPlugin = {}
 
-  function getFiles (name) {
+  function getFiles(name) {
     return glob
       .sync(`${root}/packages/@uppy/${name}/lib/**/*.js`)
       .filter((filePath) => !filePath.includes('locale.js'))
@@ -39,7 +39,7 @@ function getAllFilesPerPlugin (pluginNames) {
   return filesPerPlugin
 }
 
-async function unused (filesPerPlugin, data) {
+async function unused(filesPerPlugin, data) {
   for (const [name, fileStrings] of Object.entries(filesPerPlugin)) {
     const fileString = fileStrings.join('\n')
     const localePath = path.join(
@@ -58,7 +58,9 @@ async function unused (filesPerPlugin, data) {
         'g',
       )
       if (!fileString.match(regPat)) {
-        return Promise.reject(new Error(`Unused locale key "${key}" in @uppy/${name}`))
+        return Promise.reject(
+          new Error(`Unused locale key "${key}" in @uppy/${name}`),
+        )
       }
     }
   }
@@ -66,7 +68,7 @@ async function unused (filesPerPlugin, data) {
   return data
 }
 
-function warnings ({ leadingLocale, followerLocales }) {
+function warnings({ leadingLocale, followerLocales }) {
   const entries = Object.entries(followerLocales)
   const logs = []
 
@@ -113,18 +115,27 @@ function warnings ({ leadingLocale, followerLocales }) {
   console.log(logs.join('\n'))
 }
 
-function test () {
+function test() {
   switch (mode) {
     case 'unused':
-      return getPaths(`${root}/packages/@uppy/**/src/locale.js`)
-        .then((paths) => unused(getAllFilesPerPlugin(paths.map((filePath) => path.basename(path.join(filePath, '..', '..'))))))
+      return getPaths(`${root}/packages/@uppy/**/src/locale.js`).then((paths) =>
+        unused(
+          getAllFilesPerPlugin(
+            paths.map((filePath) =>
+              path.basename(path.join(filePath, '..', '..')),
+            ),
+          ),
+        ),
+      )
 
     case 'warnings':
-      return getLocales(`${root}/packages/@uppy/locales/src/*.js`)
-        .then((locales) => warnings({
-          leadingLocale: locales[leadingLocaleName],
-          followerLocales: omit(locales, leadingLocaleName),
-        }))
+      return getLocales(`${root}/packages/@uppy/locales/src/*.js`).then(
+        (locales) =>
+          warnings({
+            leadingLocale: locales[leadingLocaleName],
+            followerLocales: omit(locales, leadingLocaleName),
+          }),
+      )
 
     default:
       return Promise.reject(new Error(`Invalid mode "${mode}"`))

@@ -3,7 +3,7 @@ const logger = require('../logger')
 const oAuthState = require('../helpers/oauth-state')
 const tokenService = require('../helpers/jwt')
 const { getURLBuilder, getRedirectPath } = require('../helpers/utils')
-// eslint-disable-next-line
+// biome-ignore lint/correctness/noUnusedVariables: used in types
 const Provider = require('./Provider')
 
 const got = require('../got')
@@ -13,11 +13,13 @@ const got = require('../got')
  * @param {string} providerName
  * @param {object|null} credentialRequestParams - null asks for default credentials.
  */
-async function fetchKeys (url, providerName, credentialRequestParams) {
+async function fetchKeys(url, providerName, credentialRequestParams) {
   try {
-    const { credentials } = await (await got).post(url, {
-      json: { provider: providerName, parameters: credentialRequestParams },
-    }).json()
+    const { credentials } = await (await got)
+      .post(url, {
+        json: { provider: providerName, parameters: credentialRequestParams },
+      })
+      .json()
 
     if (!credentials) throw new Error('Received no remote credentials')
     return credentials
@@ -37,10 +39,14 @@ async function fetchKeys (url, providerName, credentialRequestParams) {
  * @param {object} companionOptions the companion options object
  * @param {object} credentialRequestParams the params that should be sent if an http request is required.
  */
-async function fetchProviderKeys (providerName, companionOptions, credentialRequestParams) {
+async function fetchProviderKeys(
+  providerName,
+  companionOptions,
+  credentialRequestParams,
+) {
   let providerConfig = companionOptions.providerOptions[providerName]
   if (!providerConfig) {
-    providerConfig = (companionOptions.customProviders[providerName] || {}).config
+    providerConfig = companionOptions.customProviders[providerName]?.config
   }
 
   if (!providerConfig) {
@@ -58,7 +64,11 @@ async function fetchProviderKeys (providerName, companionOptions, credentialRequ
     return providerConfig
   }
 
-  return fetchKeys(providerConfig.credentialsURL, providerName, credentialRequestParams || null)
+  return fetchKeys(
+    providerConfig.credentialsURL,
+    providerName,
+    credentialRequestParams || null,
+  )
 }
 
 /**
@@ -73,7 +83,9 @@ exports.getCredentialsOverrideMiddleware = (providers, companionOptions) => {
   return async (req, res, next) => {
     try {
       const { oauthProvider, override } = req.params
-      const [providerName] = Object.keys(providers).filter((name) => providers[name].oauthProvider === oauthProvider)
+      const [providerName] = Object.keys(providers).filter(
+        (name) => providers[name].oauthProvider === oauthProvider,
+      )
       if (!providerName) {
         next()
         return
@@ -93,7 +105,11 @@ exports.getCredentialsOverrideMiddleware = (providers, companionOptions) => {
         return
       }
 
-      const preAuthToken = oAuthState.getFromState(state, 'preAuthToken', companionOptions.secret)
+      const preAuthToken = oAuthState.getFromState(
+        state,
+        'preAuthToken',
+        companionOptions.secret,
+      )
       if (!preAuthToken) {
         next()
         return
@@ -101,23 +117,39 @@ exports.getCredentialsOverrideMiddleware = (providers, companionOptions) => {
 
       let payload
       try {
-        payload = tokenService.verifyEncryptedToken(preAuthToken, companionOptions.preAuthSecret)
-      } catch (err) {
+        payload = tokenService.verifyEncryptedToken(
+          preAuthToken,
+          companionOptions.preAuthSecret,
+        )
+      } catch (_err) {
         next()
         return
       }
 
-      const credentials = await fetchProviderKeys(providerName, companionOptions, payload)
+      const credentials = await fetchProviderKeys(
+        providerName,
+        companionOptions,
+        payload,
+      )
 
       // Besides the key and secret the fetched credentials can also contain `origins`,
       // which is an array of strings of allowed origins to prevent any origin from getting the OAuth
       // token through window.postMessage (see comment in connect.js).
       // postMessage happens in send-token.js, which is a different request, so we need to put the allowed origins
       // on the encrypted session state to access it later there.
-      if (Array.isArray(credentials.origins) && credentials.origins.length > 0) {
-        const decodedState = oAuthState.decodeState(state, companionOptions.secret)
+      if (
+        Array.isArray(credentials.origins) &&
+        credentials.origins.length > 0
+      ) {
+        const decodedState = oAuthState.decodeState(
+          state,
+          companionOptions.secret,
+        )
         decodedState.customerDefinedAllowedOrigins = credentials.origins
-        const newState = oAuthState.encodeState(decodedState, companionOptions.secret)
+        const newState = oAuthState.encodeState(
+          decodedState,
+          companionOptions.secret,
+        )
         // @ts-expect-error untyped
         req.session.grant = {
           // @ts-expect-error untyped
@@ -140,8 +172,15 @@ exports.getCredentialsOverrideMiddleware = (providers, companionOptions) => {
 
       if (credentials.transloadit_gateway) {
         const redirectPath = getRedirectPath(providerName)
-        const fullRedirectPath = getURLBuilder(companionOptions)(redirectPath, true, true)
-        const redirectUri = new URL(fullRedirectPath, credentials.transloadit_gateway).toString()
+        const fullRedirectPath = getURLBuilder(companionOptions)(
+          redirectPath,
+          true,
+          true,
+        )
+        const redirectUri = new URL(
+          fullRedirectPath,
+          credentials.transloadit_gateway,
+        ).toString()
         logger.info('Using redirect URI from transloadit_gateway', redirectUri)
         res.locals.grant.dynamic.redirect_uri = redirectUri
       }
@@ -178,19 +217,29 @@ exports.getCredentialsOverrideMiddleware = (providers, companionOptions) => {
  * @param {object} req the express request object for the said request
  * @returns {(providerName: string, companionOptions: object, credentialRequestParams?: object) => Promise}
  */
-module.exports.getCredentialsResolver = (providerName, companionOptions, req) => {
+module.exports.getCredentialsResolver = (
+  providerName,
+  companionOptions,
+  req,
+) => {
   const credentialsResolver = () => {
     const encodedCredentialsParams = req.header('uppy-credentials-params')
     let credentialRequestParams = null
     if (encodedCredentialsParams) {
       try {
-        credentialRequestParams = JSON.parse(atob(encodedCredentialsParams)).params
+        credentialRequestParams = JSON.parse(
+          atob(encodedCredentialsParams),
+        ).params
       } catch (error) {
         logger.error(error, 'credentials.resolve.fail', req.id)
       }
     }
 
-    return fetchProviderKeys(providerName, companionOptions, credentialRequestParams)
+    return fetchProviderKeys(
+      providerName,
+      companionOptions,
+      credentialRequestParams,
+    )
   }
 
   return credentialsResolver

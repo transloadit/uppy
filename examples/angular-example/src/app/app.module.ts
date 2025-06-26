@@ -2,11 +2,11 @@ import { NgModule } from '@angular/core'
 import { BrowserModule } from '@angular/platform-browser'
 
 import {
+  UppyAngularDashboardModalModule,
   UppyAngularDashboardModule,
-  UppyAngularStatusBarModule,
   UppyAngularDragDropModule,
   UppyAngularProgressBarModule,
-  UppyAngularDashboardModalModule,
+  UppyAngularStatusBarModule,
 } from '@uppy/angular'
 import { AppComponent } from './app.component'
 

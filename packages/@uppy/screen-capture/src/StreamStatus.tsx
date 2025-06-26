@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { h } from 'preact'
 
 type $TSFixMe = any
@@ -8,7 +7,6 @@ export default function StreamStatus({ streamActive, i18n }: $TSFixMe) {
     return (
       <div
         title={i18n('streamActive')}
-        aria-label={i18n('streamActive')}
         className="uppy-ScreenCapture-icon--stream uppy-ScreenCapture-icon--streamActive"
       >
         <svg
@@ -28,7 +26,6 @@ export default function StreamStatus({ streamActive, i18n }: $TSFixMe) {
   return (
     <div
       title={i18n('streamPassive')}
-      aria-label={i18n('streamPassive')}
       className="uppy-ScreenCapture-icon--stream"
     >
       <svg

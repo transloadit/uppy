@@ -1,6 +1,6 @@
-import { createElement as h, Component } from 'react'
-import type { UnknownPlugin, Uppy, Body, Meta } from '@uppy/core'
+import type { Body, Meta, UnknownPlugin, Uppy } from '@uppy/core'
 import DragDropPlugin, { type DragDropOptions } from '@uppy/drag-drop'
+import { Component, createElement as h } from 'react'
 import getHTMLProps from './getHTMLProps.js'
 import nonHtmlPropsHaveChanged from './nonHtmlPropsHaveChanged.js'
 
@@ -26,12 +26,10 @@ class DragDrop<M extends Meta, B extends Body> extends Component<
   }
 
   componentDidUpdate(prevProps: DragDrop<M, B>['props']): void {
-    // eslint-disable-next-line react/destructuring-assignment
     if (prevProps.uppy !== this.props.uppy) {
       this.uninstallPlugin(prevProps)
       this.installPlugin()
     } else if (nonHtmlPropsHaveChanged(this.props, prevProps)) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { uppy, ...options } = { ...this.props, target: this.container }
       this.plugin.setOptions(options)
     }
@@ -64,7 +62,6 @@ class DragDrop<M extends Meta, B extends Body> extends Component<
     uppy.removePlugin(this.plugin)
   }
 
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   render() {
     return h('div', {
       className: 'uppy-Container',

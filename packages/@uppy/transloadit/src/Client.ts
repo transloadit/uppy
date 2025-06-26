@@ -1,9 +1,9 @@
+import fetchWithNetworkError from '@uppy/utils/lib/fetchWithNetworkError'
 import type {
   RateLimitedQueue,
   WrapPromiseFunctionType,
 } from '@uppy/utils/lib/RateLimitedQueue'
 import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
-import fetchWithNetworkError from '@uppy/utils/lib/fetchWithNetworkError'
 import type {
   AssemblyResponse,
   OptionsWithRestructuredFields,
@@ -90,7 +90,6 @@ export default class Client<M extends Meta, B extends Body> {
           throw error
         },
         (err) => {
-          // eslint-disable-next-line no-param-reassign
           err.cause = serverError
           throw err
         },
@@ -204,8 +203,9 @@ export default class Client<M extends Meta, B extends Body> {
       assembly?: string
     } = {},
   ): Promise<AssemblyResponse> {
-    const message =
-      err.details ? `${err.message} (${err.details})` : err.message
+    const message = err.details
+      ? `${err.message} (${err.details})`
+      : err.message
 
     return this.#fetchJSON('https://transloaditstatus.com/client_error', {
       method: 'POST',

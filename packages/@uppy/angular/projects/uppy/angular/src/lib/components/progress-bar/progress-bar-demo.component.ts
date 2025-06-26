@@ -1,12 +1,18 @@
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
-import { Uppy } from '@uppy/core';
-import Tus from '@uppy/tus';
-import type {ProgressBarOptions} from '@uppy/progress-bar';
-import { Body, Meta } from '@uppy/utils/lib/UppyFile';
+import {
+	ChangeDetectionStrategy,
+	ChangeDetectorRef,
+	Component,
+	inject,
+	type OnInit,
+} from "@angular/core";
+import { Uppy } from "@uppy/core";
+import type { ProgressBarOptions } from "@uppy/progress-bar";
+import Tus from "@uppy/tus";
+import type { Body, Meta } from "@uppy/utils/lib/UppyFile";
 
 @Component({
-  selector: 'uppy-progress-bar-demo',
-  template: `
+	selector: "uppy-progress-bar-demo",
+	template: `
     <section class="example-one">
       <h5>autoProceed is on</h5>
 
@@ -49,46 +55,46 @@ import { Body, Meta } from '@uppy/utils/lib/UppyFile';
       </div>
     </section>
   `,
-  changeDetection: ChangeDetectionStrategy.OnPush,
+	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProgressBarDemoComponent<M extends Meta, B extends Body>
-  implements OnInit
+	implements OnInit
 {
-  private cdr = inject(ChangeDetectorRef);
+	private cdr = inject(ChangeDetectorRef);
 
-  uppyOne!: Uppy<M, B>;
-  uppyTwo!: Uppy<M, B>;
-  fileListOne: { url: string; fileName: string }[] = [];
-  fileListTwo: { url: string; fileName: string }[] = [];
-  props: ProgressBarOptions = {
-    hideAfterFinish: false,
-  };
+	uppyOne!: Uppy<M, B>;
+	uppyTwo!: Uppy<M, B>;
+	fileListOne: { url: string; fileName: string }[] = [];
+	fileListTwo: { url: string; fileName: string }[] = [];
+	props: ProgressBarOptions = {
+		hideAfterFinish: false,
+	};
 
-  upload(): void {
-    this.uppyTwo.upload();
-  }
+	upload(): void {
+		this.uppyTwo.upload();
+	}
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
+	/** Inserted by Angular inject() migration for backwards compatibility */
+	constructor(...args: unknown[]);
 
-  constructor() {}
+	constructor() {}
 
-  updateFileList =
-    (target: string) =>
-    (file, response): void => {
-      this[target] = [
-        ...this[target],
-        { url: response.uploadURL, fileName: file.name },
-      ];
-      this.cdr.markForCheck();
-    };
+	updateFileList =
+		(target: string) =>
+		(file, response): void => {
+			this[target] = [
+				...this[target],
+				{ url: response.uploadURL, fileName: file.name },
+			];
+			this.cdr.markForCheck();
+		};
 
-  ngOnInit(): void {
-    this.uppyOne = new Uppy<M, B>({ debug: true, autoProceed: true })
-      .use(Tus, { endpoint: 'https://master.tus.io/files/' })
-      .on('upload-success', this.updateFileList('fileListOne'));
-    this.uppyTwo = new Uppy<M, B>({ debug: true, autoProceed: false })
-      .use(Tus, { endpoint: 'https://master.tus.io/files/' })
-      .on('upload-success', this.updateFileList('fileListTwo'));
-  }
+	ngOnInit(): void {
+		this.uppyOne = new Uppy<M, B>({ debug: true, autoProceed: true })
+			.use(Tus, { endpoint: "https://master.tus.io/files/" })
+			.on("upload-success", this.updateFileList("fileListOne"));
+		this.uppyTwo = new Uppy<M, B>({ debug: true, autoProceed: false })
+			.use(Tus, { endpoint: "https://master.tus.io/files/" })
+			.on("upload-success", this.updateFileList("fileListTwo"));
+	}
 }

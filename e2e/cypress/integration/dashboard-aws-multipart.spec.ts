@@ -201,14 +201,12 @@ describe('Dashboard with @uppy/aws-s3-multipart', () => {
     cy.wait('@post')
 
     cy.get('button[data-cy=togglePauseResume]').click()
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(300) // Wait an arbitrary amount of time as a user would do.
     cy.get('button[data-cy=togglePauseResume]').click()
 
     cy.wait('@get')
 
     cy.get('button[data-cy=togglePauseResume]').click()
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(300) // Wait an arbitrary amount of time as a user would do.
     cy.get('button[data-cy=togglePauseResume]').click()
 

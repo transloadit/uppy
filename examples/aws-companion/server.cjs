@@ -8,18 +8,22 @@ const app = require('express')()
 
 const DATA_DIR = path.join(__dirname, 'tmp')
 
-app.use(require('cors')({
-  origin: 'http://localhost:3000',
-  methods: ['GET', 'POST', 'OPTIONS'],
-  credentials: true,
-}))
+app.use(
+  require('cors')({
+    origin: 'http://localhost:3000',
+    methods: ['GET', 'POST', 'OPTIONS'],
+    credentials: true,
+  }),
+)
 app.use(require('cookie-parser')())
 app.use(require('body-parser').json())
-app.use(require('express-session')({
-  secret: 'hello planet',
-  saveUninitialized: false,
-  resave: false,
-}))
+app.use(
+  require('express-session')({
+    secret: 'hello planet',
+    saveUninitialized: false,
+    resave: false,
+  }),
+)
 
 const options = {
   providerOptions: {
@@ -46,7 +50,7 @@ const options = {
 // Create the data directory here for the sake of the example.
 try {
   fs.accessSync(DATA_DIR)
-} catch (err) {
+} catch (_err) {
   fs.mkdirSync(DATA_DIR)
 }
 process.on('exit', () => {

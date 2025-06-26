@@ -1,18 +1,18 @@
-import { h, type ComponentChild } from 'preact'
-import { UIPlugin, Uppy } from '@uppy/core'
 import {
-  RequestClient,
   type CompanionPluginOptions,
+  RequestClient,
 } from '@uppy/companion-client'
-import toArray from '@uppy/utils/lib/toArray'
-import type { Meta, Body } from '@uppy/core'
-import type { TagFile } from '@uppy/utils/lib/UppyFile'
+import type { Body, Meta } from '@uppy/core'
+import { UIPlugin, type Uppy } from '@uppy/core'
 import type { LocaleStrings } from '@uppy/utils/lib/Translator'
-import UrlUI from './UrlUI.js'
-import forEachDroppedOrPastedUrl from './utils/forEachDroppedOrPastedUrl.js'
-
+import toArray from '@uppy/utils/lib/toArray'
+import type { TagFile } from '@uppy/utils/lib/UppyFile'
+// biome-ignore lint/style/useImportType: h is not a type
+import { type ComponentChild, h } from 'preact'
 import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'
+import UrlUI from './UrlUI.js'
+import forEachDroppedOrPastedUrl from './utils/forEachDroppedOrPastedUrl.js'
 
 function UrlIcon() {
   return (

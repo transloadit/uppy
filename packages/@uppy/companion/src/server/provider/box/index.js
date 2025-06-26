@@ -8,33 +8,45 @@ const got = require('../../got')
 const BOX_FILES_FIELDS = 'id,modified_at,name,permissions,size,type'
 const BOX_THUMBNAIL_SIZE = 256
 
-const getClient = async ({ token }) => (await got).extend({
-  prefixUrl: 'https://api.box.com/2.0',
-  headers: {
-    authorization: `Bearer ${token}`,
-  },
-})
+const getClient = async ({ token }) =>
+  (await got).extend({
+    prefixUrl: 'https://api.box.com/2.0',
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+  })
 
-async function getUserInfo ({ token }) {
-  return (await getClient({ token })).get('users/me', { responseType: 'json' }).json()
+async function getUserInfo({ token }) {
+  return (await getClient({ token }))
+    .get('users/me', { responseType: 'json' })
+    .json()
 }
 
-async function list ({ directory, query, token }) {
+async function list({ directory, query, token }) {
   const rootFolderID = '0'
-  return (await getClient({ token })).get(`folders/${directory || rootFolderID}/items`, { searchParams: { fields: BOX_FILES_FIELDS, offset: query.cursor, limit: 1000 }, responseType: 'json' }).json()
+  return (await getClient({ token }))
+    .get(`folders/${directory || rootFolderID}/items`, {
+      searchParams: {
+        fields: BOX_FILES_FIELDS,
+        offset: query.cursor,
+        limit: 1000,
+      },
+      responseType: 'json',
+    })
+    .json()
 }
 
 /**
  * Adapter for API https://developer.box.com/reference/
  */
 class Box extends Provider {
-  constructor (options) {
+  constructor(options) {
     super(options)
     // needed for the thumbnails fetched via companion
     this.needsCookieAuth = true
   }
 
-  static get oauthProvider () {
+  static get oauthProvider() {
     return 'box'
   }
 
@@ -47,7 +59,7 @@ class Box extends Provider {
    * @param {string} options.token
    * @param {unknown} options.companion
    */
-  async list ({ directory, token, query, companion }) {
+  async list({ directory, token, query, companion }) {
     return this.#withErrorHandling('provider.box.list.error', async () => {
       const [userInfo, files] = await Promise.all([
         getUserInfo({ token }),
@@ -58,16 +70,19 @@ class Box extends Provider {
     })
   }
 
-  async download ({ id, token }) {
+  async download({ id, token }) {
     return this.#withErrorHandling('provider.box.download.error', async () => {
-      const stream = (await getClient({ token })).stream.get(`files/${id}/content`, { responseType: 'json' })
+      const stream = (await getClient({ token })).stream.get(
+        `files/${id}/content`,
+        { responseType: 'json' },
+      )
 
       const { size } = await prepareStream(stream)
       return { stream, size }
     })
   }
 
-  async thumbnail ({ id, token }) {
+  async thumbnail({ id, token }) {
     return this.#withErrorHandling('provider.box.thumbnail.error', async () => {
       const extension = 'jpg' // you can set this to png to more easily reproduce http 202 retry-after
 
@@ -80,24 +95,32 @@ class Box extends Provider {
       // At that time, retry this endpoint to retrieve the thumbnail.
       //
       // This can be reproduced more easily by changing extension to png and trying on a newly uploaded image
-      const stream = (await getClient({ token })).stream.get(`files/${id}/thumbnail.${extension}`, {
-        searchParams: { max_height: BOX_THUMBNAIL_SIZE, max_width: BOX_THUMBNAIL_SIZE },
-        responseType: 'json',
-      })
+      const stream = (await getClient({ token })).stream.get(
+        `files/${id}/thumbnail.${extension}`,
+        {
+          searchParams: {
+            max_height: BOX_THUMBNAIL_SIZE,
+            max_width: BOX_THUMBNAIL_SIZE,
+          },
+          responseType: 'json',
+        },
+      )
 
       await prepareStream(stream)
       return { stream, contentType: 'image/jpeg' }
     })
   }
 
-  async size ({ id, token }) {
+  async size({ id, token }) {
     return this.#withErrorHandling('provider.box.size.error', async () => {
-      const { size } = await (await getClient({ token })).get(`files/${id}`, { responseType: 'json' }).json()
+      const { size } = await (await getClient({ token }))
+        .get(`files/${id}`, { responseType: 'json' })
+        .json()
       return parseInt(size, 10)
     })
   }
 
-  logout ({ companion, token }) {
+  logout({ companion, token }) {
     return this.#withErrorHandling('provider.box.logout.error', async () => {
       const { key, secret } = companion.options.providerOptions.box
       await (await getClient({ token })).post('oauth2/revoke', {
@@ -114,8 +137,7 @@ class Box extends Provider {
     })
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  async #withErrorHandling (tag, fn) {
+  async #withErrorHandling(tag, fn) {
     return withProviderErrorHandling({
       fn,
       tag,

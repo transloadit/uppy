@@ -1,6 +1,7 @@
 /* eslint-disable no-console, prefer-arrow-callback */
-import path from 'node:path'
+
 import { readFile, writeFile } from 'node:fs/promises'
+import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 import { getLocales, sortObjectAlphabetically } from './helpers.mjs'
