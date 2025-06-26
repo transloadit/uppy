@@ -32,7 +32,7 @@ export default function Header<M extends Meta, B extends Body>(
           <Breadcrumbs
             openFolder={props.openFolder}
             breadcrumbs={props.breadcrumbs}
-            breadcrumbsIcon={props.pluginIcon && props.pluginIcon()}
+            breadcrumbsIcon={props.pluginIcon?.()}
             title={props.title}
             i18n={props.i18n}
           />

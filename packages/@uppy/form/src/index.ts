@@ -138,7 +138,7 @@ export default class Form<M extends Meta, B extends Body> extends BasePlugin<
       let updatedResult
       try {
         updatedResult = JSON.parse(resultInput.value)
-      } catch (err) {
+      } catch (_err) {
         // Nothing, since we check for array below anyway
       }
 

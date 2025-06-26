@@ -122,15 +122,13 @@ exports.adaptData = (userResponse, results) => {
 
   let itemsToProcess = []
   if (results.meetings) {
-    itemsToProcess = results.meetings.filter(
-      (meeting) =>
-        meeting.recording_files &&
-        meeting.recording_files.some(
-          (file) =>
-            !file.deleted_time &&
-            file.status === 'completed' &&
-            file.download_url,
-        ),
+    itemsToProcess = results.meetings.filter((meeting) =>
+      meeting.recording_files?.some(
+        (file) =>
+          !file.deleted_time &&
+          file.status === 'completed' &&
+          file.download_url,
+      ),
     )
   } else if (results.recording_files) {
     itemsToProcess = results.recording_files

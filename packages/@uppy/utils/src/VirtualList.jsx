@@ -80,8 +80,7 @@ class VirtualList extends Component {
   componentDidUpdate() {
     // Maintain focus when rows are added and removed.
     if (
-      this.focusElement &&
-      this.focusElement.parentNode &&
+      this.focusElement?.parentNode &&
       document.activeElement !== this.focusElement
     ) {
       this.focusElement.focus()

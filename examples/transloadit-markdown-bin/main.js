@@ -168,7 +168,7 @@ function loadSnippets() {
 document.querySelector('#new').addEventListener('submit', (event) => {
   event.preventDefault()
 
-  const title = event.target.elements['title'].value || 'Unnamed Snippet'
+  const title = event.target.elements.title.value || 'Unnamed Snippet'
   const text = textarea.element.value
 
   saveSnippet(title, text)

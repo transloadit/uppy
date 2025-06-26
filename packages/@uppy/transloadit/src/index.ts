@@ -123,7 +123,7 @@ export type OptionsWithRestructuredFields = Omit<AssemblyOptions, 'fields'> & {
   fields: Record<string, string | number>
 }
 
-export interface TransloaditOptions<M extends Meta, B extends Body>
+export interface TransloaditOptions<_M extends Meta, _B extends Body>
   extends PluginOpts {
   service?: string
   errorReporting?: boolean
@@ -177,6 +177,7 @@ type PersistentState = {
 }
 
 declare module '@uppy/core' {
+  // biome-ignore lint/correctness/noUnusedVariables: must be defined
   export interface UppyEventMap<M extends Meta, B extends Body> {
     // We're also overriding the `restored` event as it is now populated with Transloadit state.
     restored: (pluginData: Record<string, TransloaditState>) => void
@@ -644,7 +645,7 @@ export default class Transloadit<
 
   #onRestored = (pluginData: Record<string, unknown>) => {
     const savedState = (
-      pluginData && pluginData[this.id] ? pluginData[this.id] : {}
+      pluginData?.[this.id] ? pluginData[this.id] : {}
     ) as PersistentState
     const previousAssembly = savedState.assemblyResponse
 

@@ -112,7 +112,7 @@ module.exports = (redisClient, redisPubSubScope) => {
       let args
       try {
         args = JSON.parse(message)
-      } catch (ex) {
+      } catch (_ex) {
         handleError(
           new Error(
             `Invalid JSON received! Channel: ${eventName} Message: ${message}`,

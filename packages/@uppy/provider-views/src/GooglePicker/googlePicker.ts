@@ -226,11 +226,11 @@ export async function showDrivePicker({
     if (picked.action === google.picker.Action.PICKED) {
       // console.log('Picker response', JSON.stringify(picked, null, 2));
       onFilesPicked(
-        picked['docs'].map((doc) => ({
+        picked.docs.map((doc) => ({
           platform: 'drive',
-          id: doc['id'],
-          name: doc['name'],
-          mimeType: doc['mimeType'],
+          id: doc.id,
+          name: doc.name,
+          mimeType: doc.mimeType,
         })),
         token,
       )

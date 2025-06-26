@@ -275,7 +275,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
     options: {
       deviceId: string
     } | null = null,
-  ): Promise<never> | void {
+  ): Promise<never> | undefined {
     if (!this.supportsUserMedia) {
       return Promise.reject(new Error('Webcam access not supported'))
     }

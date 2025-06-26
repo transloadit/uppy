@@ -57,7 +57,7 @@ async function handleJSONResponse<ResJson>(res: Response): Promise<ResJson> {
   }
 
   let errMsg = `Failed request with status: ${res.status}. ${res.statusText}`
-  let errData
+  let errData: any
   try {
     errData = await res.json()
 
@@ -122,7 +122,7 @@ export default class RequestClient<M extends Meta, B extends Body> {
   get hostname(): string {
     const { companion } = this.uppy.getState()
     const host = this.opts.companionUrl
-    return stripSlash(companion && companion[host] ? companion[host] : host)
+    return stripSlash(companion?.[host] ? companion[host] : host)
   }
 
   async headers(emptyBody = false): Promise<Record<string, string>> {

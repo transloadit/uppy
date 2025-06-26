@@ -255,7 +255,7 @@ module.exports.prepareStream = async (stream) =>
           let responseJson
           try {
             responseJson = JSON.parse(err.response.body)
-          } catch (err2) {
+          } catch (_err2) {
             reject(err)
             return
           }

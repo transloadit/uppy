@@ -47,7 +47,7 @@ export default function copyToClipboard(
       }
       document.body.removeChild(textArea)
       return resolve()
-    } catch (err) {
+    } catch (_err) {
       document.body.removeChild(textArea)
       return magicCopyFailed()
     }

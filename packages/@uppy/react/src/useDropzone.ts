@@ -29,6 +29,7 @@ export function useDropzone(
       options?.onDragLeave,
       options?.onDrop,
       options?.onFileInputChange,
+      options,
     ],
   )
 

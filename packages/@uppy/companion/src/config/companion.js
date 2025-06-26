@@ -40,10 +40,7 @@ function getMaskableSecrets(companionOptions) {
 
   if (customProviders) {
     Object.keys(customProviders).forEach((provider) => {
-      if (
-        customProviders[provider].config &&
-        customProviders[provider].config.secret
-      ) {
+      if (customProviders[provider].config?.secret) {
         secrets.push(customProviders[provider].config.secret)
       }
     })
@@ -87,7 +84,7 @@ const validateConfig = (companionOptions) => {
   try {
     // @ts-ignore
     fs.accessSync(`${companionOptions.filePath}`, fs.R_OK | fs.W_OK)
-  } catch (err) {
+  } catch (_err) {
     throw new Error(
       `No access to "${companionOptions.filePath}". Please ensure the directory exists and with read/write permissions.`,
     )
@@ -95,7 +92,7 @@ const validateConfig = (companionOptions) => {
 
   const { providerOptions, periodicPingUrls, server } = companionOptions
 
-  if (server && server.path) {
+  if (server?.path) {
     // see https://github.com/transloadit/uppy/issues/4271
     // todo fix the code so we can allow `/`
     if (server.path === '/')

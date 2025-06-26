@@ -3,6 +3,7 @@ const logger = require('../logger')
 const oAuthState = require('../helpers/oauth-state')
 const tokenService = require('../helpers/jwt')
 const { getURLBuilder, getRedirectPath } = require('../helpers/utils')
+// biome-ignore lint/correctness/noUnusedVariables: used in types
 const Provider = require('./Provider')
 
 const got = require('../got')
@@ -45,8 +46,7 @@ async function fetchProviderKeys(
 ) {
   let providerConfig = companionOptions.providerOptions[providerName]
   if (!providerConfig) {
-    providerConfig = (companionOptions.customProviders[providerName] || {})
-      .config
+    providerConfig = companionOptions.customProviders[providerName]?.config
   }
 
   if (!providerConfig) {
@@ -121,7 +121,7 @@ exports.getCredentialsOverrideMiddleware = (providers, companionOptions) => {
           preAuthToken,
           companionOptions.preAuthSecret,
         )
-      } catch (err) {
+      } catch (_err) {
         next()
         return
       }

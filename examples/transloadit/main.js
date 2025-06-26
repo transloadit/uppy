@@ -204,7 +204,7 @@ window.doUpload = (event) => {
     errorEl.classList.add('hidden')
     resultEl.textContent = JSON.stringify(transloadit[0].results, null, 2)
 
-    const resizedUrl = transloadit[0].results['resize'][0]['ssl_url']
+    const resizedUrl = transloadit[0].results.resize[0].ssl_url
     const img = document.createElement('img')
     img.src = resizedUrl
     document.getElementById('upload-result-image').appendChild(img)

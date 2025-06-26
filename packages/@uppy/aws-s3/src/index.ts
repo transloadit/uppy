@@ -166,6 +166,7 @@ type AWSS3WithoutCompanion = {
   }) => Promise<UploadPartBytesResult>
 }
 
+// biome-ignore lint/complexity/noBannedTypes: ...
 type AWSS3NonMultipartWithCompanionMandatory = {
   // No related options
 }
@@ -814,7 +815,7 @@ export default class AwsS3Multipart<
   }
 
   #uploadLocalFile(file: UppyFile<M, B>) {
-    return new Promise<void | string>((resolve, reject) => {
+    return new Promise<undefined | string>((resolve, reject) => {
       const onProgress = (bytesUploaded: number, bytesTotal: number) => {
         const latestFile = this.uppy.getFile(file.id)
         this.uppy.emit('upload-progress', latestFile, {
@@ -849,7 +850,7 @@ export default class AwsS3Multipart<
           this.uppy.log(`Download ${file.name} from ${result.location}`)
         }
 
-        resolve()
+        resolve(undefined)
       }
 
       const upload = new MultipartUploader<M, B>(file.data, {

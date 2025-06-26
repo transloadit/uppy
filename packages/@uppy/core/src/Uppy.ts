@@ -46,6 +46,7 @@ import supportsUploadProgress from './supportsUploadProgress.js'
 type Processor = (
   fileIDs: string[],
   uploadID: string,
+  // biome-ignore lint/suspicious/noConfusingVoidType: ...
 ) => Promise<unknown> | void
 
 type LogLevel = 'info' | 'warning' | 'error' | 'success'
@@ -446,18 +447,18 @@ export class Uppy<
       ...merged,
       restrictions: {
         ...(defaultOptions.restrictions as Restrictions),
-        ...(opts && opts.restrictions),
+        ...opts?.restrictions,
       },
     }
 
     // Support debug: true for backwards-compatability, unless logger is set in opts
     // opts instead of this.opts to avoid comparing objects — we set logger: justErrorsLogger in defaultOptions
-    if (opts && opts.logger && opts.debug) {
+    if (opts?.logger && opts.debug) {
       this.log(
         'You are using a custom `logger`, but also set `debug: true`, which uses built-in logger to output logs to console. Ignoring `debug: true` and using your custom `logger`.',
         'warning',
       )
-    } else if (opts && opts.debug) {
+    } else if (opts?.debug) {
       this.opts.logger = debugLogger
     }
 
@@ -2214,7 +2215,7 @@ export class Uppy<
       // postprocessing completion, we do it instead.
       currentUpload.fileIDs.forEach((fileID) => {
         const file = this.getFile(fileID)
-        if (file && file.progress.postprocess) {
+        if (file?.progress.postprocess) {
           this.emit('postprocess-complete', file)
         }
       })
@@ -2231,7 +2232,7 @@ export class Uppy<
     // This is in a separate function so that the `currentUploads` variable
     // always refers to the latest state. In the handler right above it refers
     // to an outdated object without the `.result` property.
-    let result
+    let result: UploadResult<M, B> | undefined
     if (currentUpload) {
       result = currentUpload.result
       this.#removeUpload(uploadID)
@@ -2253,7 +2254,7 @@ export class Uppy<
    * Start an upload for all the files that are not currently being uploaded.
    */
   async upload(): Promise<NonNullable<UploadResult<M, B>> | undefined> {
-    if (!this.#plugins['uploader']?.length) {
+    if (!this.#plugins.uploader?.length) {
       this.log('No uploader type plugins are used', 'warning')
     }
 

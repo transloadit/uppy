@@ -13,7 +13,7 @@ export function useFileInput(
   const fileInput = useMemo(
     () => createFileInput<TEvent>(ctx, props),
     // We need every value on props to be memoized to avoid re-creating the file input on every render
-    [ctx, props?.accept, props?.multiple],
+    [ctx, props?.accept, props?.multiple, props],
   )
 
   return fileInput

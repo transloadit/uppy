@@ -203,7 +203,7 @@ export default class Provider<M extends Meta, B extends Body>
               // then we don’t have to manually do these things like json stringify when logging.
               // the logger should never throw an error.
               jsonData = JSON.stringify(e.data)
-            } catch (err) {
+            } catch (_err) {
               // in case JSON.stringify fails (ignored)
             }
             this.uppy.log(

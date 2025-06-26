@@ -37,7 +37,7 @@ const cleanUpFinishedUploads = (dirPath) => {
           // but we also log the error
           logger.error(err2, 'jobs.cleanup.stat.error')
           // @ts-ignore
-        } else if (new Date() - stats.mtime < twelveHoursAgo) {
+        } else if (Date.now() - stats.mtime < twelveHoursAgo) {
           logger.info(`skipping file ${file}`, 'jobs.cleanup.skip')
           return
         }

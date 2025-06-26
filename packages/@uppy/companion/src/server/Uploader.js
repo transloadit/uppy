@@ -540,6 +540,7 @@ class Uploader {
     // see PR discussion https://github.com/transloadit/uppy/pull/3832
     // @ts-ignore
     const { serializeError } = await import('serialize-error')
+    // biome-ignore lint/correctness/noUnusedVariables: destructure
     const { stack, ...serializedErr } = serializeError(err)
     const dataToEmit = {
       action: 'error',
@@ -632,6 +633,7 @@ class Uploader {
     if (this.size != null && this.tus._size !== this.size) {
       // @ts-ignore
       logger.warn(
+        // @ts-expect-error _size is not typed
         `Tus uploaded size ${this.tus._size} different from reported URL size ${this.size}`,
         'upload.tus.mismatch.error',
       )
@@ -648,7 +650,9 @@ class Uploader {
     function getRespObj(response) {
       // remove browser forbidden headers
       const {
+        // biome-ignore lint/correctness/noUnusedVariables: destructure
         'set-cookie': deleted,
+        // biome-ignore lint/correctness/noUnusedVariables: destructure
         'set-cookie2': deleted2,
         ...responseHeaders
       } = response.headers

@@ -50,7 +50,7 @@ const options = {
 // Create the data directory here for the sake of the example.
 try {
   fs.accessSync(DATA_DIR)
-} catch (err) {
+} catch (_err) {
   fs.mkdirSync(DATA_DIR)
 }
 process.on('exit', () => {

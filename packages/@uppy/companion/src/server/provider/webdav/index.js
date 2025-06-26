@@ -117,7 +117,7 @@ class WebdavProvider extends Provider {
         let modifiedDate
         try {
           modifiedDate = new Date(item.lastmod).toISOString()
-        } catch (e) {
+        } catch (_e) {
           // ignore invalid date from server
         }
 

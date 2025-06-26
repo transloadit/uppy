@@ -14,6 +14,7 @@ class Provider {
     this.allowLocalUrls = allowLocalUrls
     this.providerGrantConfig = providerGrantConfig
     this.secret = secret
+    // biome-ignore lint/correctness/noConstructorReturn: ...
     return this
   }
 

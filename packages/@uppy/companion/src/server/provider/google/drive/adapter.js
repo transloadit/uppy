@@ -5,7 +5,7 @@ const getUsername = (data) => {
 }
 
 exports.isGsuiteFile = (mimeType) => {
-  return mimeType && mimeType.startsWith('application/vnd.google')
+  return mimeType?.startsWith('application/vnd.google')
 }
 
 const isSharedDrive = (item) => {
@@ -137,26 +137,19 @@ const getNextPagePath = (data, currentQuery, currentPath) => {
   return `${currentPath}?${querystring.stringify(query)}`
 }
 
-const getImageHeight = (item) =>
-  item.imageMediaMetadata && item.imageMediaMetadata.height
+const getImageHeight = (item) => item.imageMediaMetadata?.height
 
-const getImageWidth = (item) =>
-  item.imageMediaMetadata && item.imageMediaMetadata.width
+const getImageWidth = (item) => item.imageMediaMetadata?.width
 
-const getImageRotation = (item) =>
-  item.imageMediaMetadata && item.imageMediaMetadata.rotation
+const getImageRotation = (item) => item.imageMediaMetadata?.rotation
 
-const getImageDate = (item) =>
-  item.imageMediaMetadata && item.imageMediaMetadata.date
+const getImageDate = (item) => item.imageMediaMetadata?.date
 
-const getVideoHeight = (item) =>
-  item.videoMediaMetadata && item.videoMediaMetadata.height
+const getVideoHeight = (item) => item.videoMediaMetadata?.height
 
-const getVideoWidth = (item) =>
-  item.videoMediaMetadata && item.videoMediaMetadata.width
+const getVideoWidth = (item) => item.videoMediaMetadata?.width
 
-const getVideoDurationMillis = (item) =>
-  item.videoMediaMetadata && item.videoMediaMetadata.durationMillis
+const getVideoDurationMillis = (item) => item.videoMediaMetadata?.durationMillis
 
 // Hopefully this name will not be used by Google
 exports.VIRTUAL_SHARED_DIR = 'shared-with-me'

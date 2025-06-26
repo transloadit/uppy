@@ -201,7 +201,7 @@ export default class ScreenCapture<
         // Close the Dashboard panel if plugin is installed
         // into Dashboard (could be other parent UI plugin)
         // @ts-expect-error we can't know Dashboard types here
-        if (this.parent && this.parent.hideAllPanels) {
+        if (this.parent?.hideAllPanels) {
           // @ts-expect-error we can't know Dashboard types here
           this.parent.hideAllPanels()
           this.captureActive = false
@@ -345,7 +345,7 @@ export default class ScreenCapture<
       // Close the Dashboard panel if plugin is installed
       // into Dashboard (could be other parent UI plugin)
       // @ts-expect-error we can't know Dashboard types here
-      if (this.parent && this.parent.hideAllPanels) {
+      if (this.parent?.hideAllPanels) {
         // @ts-expect-error we can't know Dashboard types here
         this.parent.hideAllPanels()
       }

@@ -17,6 +17,7 @@ import ServiceWorkerStore, {
 } from './ServiceWorkerStore.js'
 
 declare module '@uppy/core' {
+  // biome-ignore lint/correctness/noUnusedVariables: must be defined
   export interface UppyEventMap<M extends Meta, B extends Body> {
     // TODO: remove this event
     'restore:get-data': (fn: (data: Record<string, unknown>) => void) => void
