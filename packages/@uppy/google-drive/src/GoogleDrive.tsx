@@ -1,25 +1,25 @@
 import {
-  Provider,
-  getAllowedHosts,
-  tokenStorage,
   type CompanionPluginOptions,
+  getAllowedHosts,
+  Provider,
+  tokenStorage,
 } from '@uppy/companion-client'
-import { UIPlugin, Uppy } from '@uppy/core'
-import { ProviderViews } from '@uppy/provider-views'
-import { h, type ComponentChild } from 'preact'
-
-import type { LocaleStrings } from '@uppy/utils/lib/Translator'
 import type {
-  UppyFile,
+  AsyncStore,
   Body,
   Meta,
-  AsyncStore,
   UnknownProviderPlugin,
   UnknownProviderPluginState,
+  UppyFile,
 } from '@uppy/core'
+import { UIPlugin, type Uppy } from '@uppy/core'
+import type { ProviderViews } from '@uppy/provider-views'
+
+import type { LocaleStrings } from '@uppy/utils/lib/Translator'
+import type { ComponentChild, h } from 'preact'
+import packageJson from '../package.json' with { type: 'json' }
 import DriveProviderViews from './DriveProviderViews.js'
 import locale from './locale.js'
-import packageJson from '../package.json' with { type: 'json' }
 
 export type GoogleDriveOptions = CompanionPluginOptions & {
   locale?: LocaleStrings<typeof locale>

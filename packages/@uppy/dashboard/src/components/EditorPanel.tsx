@@ -1,6 +1,7 @@
 /* eslint-disable react/destructuring-assignment */
-import { h } from 'preact'
+
 import classNames from 'classnames'
+import { h } from 'preact'
 
 type $TSFixMe = any
 

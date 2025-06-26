@@ -1,8 +1,8 @@
-import { describe, expect, it } from 'vitest'
-import Core from '@uppy/core'
-import getFileNameAndExtension from '@uppy/utils/lib/getFileNameAndExtension'
 import fs from 'node:fs'
 import path from 'node:path'
+import Core from '@uppy/core'
+import getFileNameAndExtension from '@uppy/utils/lib/getFileNameAndExtension'
+import { describe, expect, it } from 'vitest'
 import CompressorPlugin from './index.js'
 
 // Compressor uses browser canvas API, so need to mock compress()

@@ -1,11 +1,11 @@
 /* eslint-disable class-methods-use-this */
-import { render } from 'preact/compat'
+
 import findDOMElement from '@uppy/utils/lib/findDOMElement'
 import getTextDirection from '@uppy/utils/lib/getTextDirection'
-
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
-import BasePlugin from './BasePlugin.js'
+import { render } from 'preact/compat'
 import type { PluginOpts } from './BasePlugin.js'
+import BasePlugin from './BasePlugin.js'
 import type { State } from './Uppy.js'
 
 /**

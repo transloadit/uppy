@@ -1,10 +1,10 @@
 /* eslint-disable react/destructuring-assignment */
-import { Fragment, h } from 'preact'
-import { useState, useEffect } from 'preact/hooks'
 
-import type { Meta, Body, UppyEventMap, UppyFile } from '@uppy/core'
-import prettyBytes from 'pretty-bytes'
+import type { Body, Meta, UppyEventMap, UppyFile } from '@uppy/core'
 import { clsx } from 'clsx'
+import { Fragment, h } from 'preact'
+import { useEffect, useState } from 'preact/hooks'
+import prettyBytes from 'pretty-bytes'
 import { Thumbnail, type UppyContext } from './index.js'
 
 export type FilesListProps = {

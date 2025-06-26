@@ -1,6 +1,7 @@
 /* eslint-disable react/react-in-jsx-scope */
-import React, { useEffect } from 'react'
+
 import { useScreenCapture } from '@uppy/react'
+import React, { useEffect } from 'react'
 import MediaCapture from './MediaCapture.tsx'
 
 export interface ScreenCaptureProps {

@@ -1,10 +1,10 @@
 import Uppy from '@uppy/core'
 import Dashboard from '@uppy/dashboard'
-import Instagram from '@uppy/instagram'
 import GoogleDrive from '@uppy/google-drive'
+import Instagram from '@uppy/instagram'
+import Tus from '@uppy/tus'
 import Url from '@uppy/url'
 import Webcam from '@uppy/webcam'
-import Tus from '@uppy/tus'
 
 import '@uppy/core/dist/style.css'
 import '@uppy/dashboard/dist/style.css'
@@ -33,7 +33,10 @@ const uppy = new Uppy({
     note: '2 files, images and video only',
     restrictions: { requiredMetaFields: ['caption'] },
   })
-  .use(GoogleDrive, { target: Dashboard, companionUrl: 'http://localhost:3020' })
+  .use(GoogleDrive, {
+    target: Dashboard,
+    companionUrl: 'http://localhost:3020',
+  })
   .use(Instagram, { target: Dashboard, companionUrl: 'http://localhost:3020' })
   .use(Url, { target: Dashboard, companionUrl: 'http://localhost:3020' })
   .use(Webcam, { target: Dashboard })

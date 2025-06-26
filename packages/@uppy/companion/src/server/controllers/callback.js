@@ -28,21 +28,33 @@ const closePageHtml = (origin) => `
  * @param {object} res
  * @param {Function} next
  */
-module.exports = function callback (req, res, next) { // eslint-disable-line no-unused-vars
+module.exports = function callback(req, res, next) {
+  // eslint-disable-line no-unused-vars
   const { providerName } = req.params
 
   const grant = req.session.grant || {}
 
   const grantDynamic = oAuthState.getGrantDynamicFromRequest(req)
-  const origin = grantDynamic.state && oAuthState.getFromState(grantDynamic.state, 'origin', req.companion.options.secret)
+  const origin =
+    grantDynamic.state &&
+    oAuthState.getFromState(
+      grantDynamic.state,
+      'origin',
+      req.companion.options.secret,
+    )
 
   if (!grant.response?.access_token) {
-    logger.debug(`Did not receive access token for provider ${providerName}`, null, req.id)
+    logger.debug(
+      `Did not receive access token for provider ${providerName}`,
+      null,
+      req.id,
+    )
     logger.debug(grant.response, 'callback.oauth.resp', req.id)
     return res.status(400).send(closePageHtml(origin))
   }
 
-  const { access_token: accessToken, refresh_token: refreshToken } = grant.response
+  const { access_token: accessToken, refresh_token: refreshToken } =
+    grant.response
 
   req.companion.providerUserSession = {
     accessToken,
@@ -50,13 +62,28 @@ module.exports = function callback (req, res, next) { // eslint-disable-line no-
     ...req.companion.providerClass.grantDynamicToUserSession({ grantDynamic }),
   }
 
-  logger.debug(`Generating auth token for provider ${providerName}. refreshToken: ${refreshToken ? 'yes' : 'no'}`, null, req.id)
+  logger.debug(
+    `Generating auth token for provider ${providerName}. refreshToken: ${refreshToken ? 'yes' : 'no'}`,
+    null,
+    req.id,
+  )
   const uppyAuthToken = tokenService.generateEncryptedAuthToken(
     { [providerName]: req.companion.providerUserSession },
-    req.companion.options.secret, req.companion.providerClass.authStateExpiry,
+    req.companion.options.secret,
+    req.companion.providerClass.authStateExpiry,
   )
 
-  tokenService.addToCookiesIfNeeded(req, res, uppyAuthToken, req.companion.providerClass.authStateExpiry)
+  tokenService.addToCookiesIfNeeded(
+    req,
+    res,
+    uppyAuthToken,
+    req.companion.providerClass.authStateExpiry,
+  )
 
-  return res.redirect(req.companion.buildURL(`/${providerName}/send-token?uppyAuthToken=${uppyAuthToken}`, true))
+  return res.redirect(
+    req.companion.buildURL(
+      `/${providerName}/send-token?uppyAuthToken=${uppyAuthToken}`,
+      true,
+    ),
+  )
 }

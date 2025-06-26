@@ -1,11 +1,11 @@
-import { describe, it, beforeEach, afterEach } from 'vitest'
 import assert from 'node:assert'
 import {
+  PutObjectCommand,
   S3Client,
   UploadPartCommand,
-  PutObjectCommand,
 } from '@aws-sdk/client-s3'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
+import { afterEach, beforeEach, describe, it } from 'vitest'
 import createSignedURL from './createSignedURL.js'
 
 const bucketName = 'some-bucket.with.dots'

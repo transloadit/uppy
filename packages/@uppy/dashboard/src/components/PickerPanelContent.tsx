@@ -1,5 +1,5 @@
-import { h } from 'preact'
 import classNames from 'classnames'
+import { h } from 'preact'
 import { useRef } from 'preact/hooks'
 import ignoreEvent from '../utils/ignoreEvent.js'
 

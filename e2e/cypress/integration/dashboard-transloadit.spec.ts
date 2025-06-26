@@ -1,5 +1,5 @@
-import Uppy from '@uppy/core'
-import Transloadit from '@uppy/transloadit'
+import type Uppy from '@uppy/core'
+import type Transloadit from '@uppy/transloadit'
 
 function getPlugin<M = any, B = any>(uppy: Uppy<M, B>) {
   return uppy.getPlugin<Transloadit<M, B>>('Transloadit')!

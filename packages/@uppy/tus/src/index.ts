@@ -1,29 +1,28 @@
-import { BasePlugin } from '@uppy/core'
+import type { RequestClient } from '@uppy/companion-client'
 import type {
-  Uppy,
-  DefinePluginOpts,
-  PluginOpts,
-  Meta,
   Body,
+  DefinePluginOpts,
+  Meta,
+  PluginOpts,
+  Uppy,
   UppyFile,
 } from '@uppy/core'
-import * as tus from 'tus-js-client'
+import { BasePlugin } from '@uppy/core'
 import EventManager from '@uppy/core/lib/EventManager.js'
-import NetworkError from '@uppy/utils/lib/NetworkError'
+import {
+  filterFilesToEmitUploadStarted,
+  filterNonFailedFiles,
+} from '@uppy/utils/lib/fileFilters'
+import getAllowedMetaFields from '@uppy/utils/lib/getAllowedMetaFields'
+import hasProperty from '@uppy/utils/lib/hasProperty'
 import isNetworkError from '@uppy/utils/lib/isNetworkError'
+import NetworkError from '@uppy/utils/lib/NetworkError'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore untyped
 import { RateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
-import hasProperty from '@uppy/utils/lib/hasProperty'
-import {
-  filterNonFailedFiles,
-  filterFilesToEmitUploadStarted,
-} from '@uppy/utils/lib/fileFilters'
-import type { RequestClient } from '@uppy/companion-client'
-import getAllowedMetaFields from '@uppy/utils/lib/getAllowedMetaFields'
-import getFingerprint from './getFingerprint.js'
-
+import * as tus from 'tus-js-client'
 import packageJson from '../package.json' with { type: 'json' }
+import getFingerprint from './getFingerprint.js'
 
 type RestTusUploadOptions = Omit<
   tus.UploadOptions,
@@ -282,9 +281,9 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
         this.uppy.log(err)
 
         const xhr =
-          (err as tus.DetailedError).originalRequest != null ?
-            (err as tus.DetailedError).originalRequest.getUnderlyingObject()
-          : null
+          (err as tus.DetailedError).originalRequest != null
+            ? (err as tus.DetailedError).originalRequest.getUnderlyingObject()
+            : null
         if (isNetworkError(xhr)) {
           // eslint-disable-next-line no-param-reassign
           err = new NetworkError(err, xhr)

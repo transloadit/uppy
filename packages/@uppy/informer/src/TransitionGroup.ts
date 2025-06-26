@@ -40,7 +40,7 @@ function mergeChildMappings(prev, next) {
   next = next || {}
 
   const getValueForKey = (key) =>
-    next.hasOwnProperty(key) ? next[key] : prev[key]
+    Object.hasOwn(next, key) ? next[key] : prev[key]
 
   // For each key of `next`, the list of keys to insert before that key in
   // the combined list
@@ -48,7 +48,7 @@ function mergeChildMappings(prev, next) {
 
   let pendingKeys = []
   for (const prevKey in prev) {
-    if (next.hasOwnProperty(prevKey)) {
+    if (Object.hasOwn(next, prevKey)) {
       if (pendingKeys.length) {
         nextKeysPending[prevKey] = pendingKeys
         pendingKeys = []
@@ -60,7 +60,7 @@ function mergeChildMappings(prev, next) {
 
   const childMapping = {}
   for (const nextKey in next) {
-    if (nextKeysPending.hasOwnProperty(nextKey)) {
+    if (Object.hasOwn(nextKeysPending, nextKey)) {
       for (let i = 0; i < nextKeysPending[nextKey].length; i++) {
         const pendingNextKey = nextKeysPending[nextKey][i]
         childMapping[nextKeysPending[nextKey][i]] =
@@ -127,8 +127,8 @@ class TransitionGroup extends Component {
     let key
 
     for (key in nextChildMapping) {
-      if (nextChildMapping.hasOwnProperty(key)) {
-        const hasPrev = prevChildMapping && prevChildMapping.hasOwnProperty(key)
+      if (Object.hasOwn(nextChildMapping, key)) {
+        const hasPrev = prevChildMapping && Object.hasOwn(prevChildMapping, key)
         // We should re-enter the component and abort its leave function
         if (
           nextChildMapping[key] &&
@@ -148,8 +148,8 @@ class TransitionGroup extends Component {
     }
 
     for (key in prevChildMapping) {
-      if (prevChildMapping.hasOwnProperty(key)) {
-        const hasNext = nextChildMapping && nextChildMapping.hasOwnProperty(key)
+      if (Object.hasOwn(prevChildMapping, key)) {
+        const hasNext = nextChildMapping && Object.hasOwn(nextChildMapping, key)
         if (
           prevChildMapping[key] &&
           !hasNext &&
@@ -203,7 +203,7 @@ class TransitionGroup extends Component {
       toChildArray(this.props.children) || [],
     )
 
-    if (!currentChildMapping || !currentChildMapping.hasOwnProperty(key)) {
+    if (!currentChildMapping || !Object.hasOwn(currentChildMapping, key)) {
       // This was removed before it had fully appeared. Remove it.
       this.performLeave(key)
     }
@@ -234,7 +234,7 @@ class TransitionGroup extends Component {
       toChildArray(this.props.children) || [],
     )
 
-    if (!currentChildMapping || !currentChildMapping.hasOwnProperty(key)) {
+    if (!currentChildMapping || !Object.hasOwn(currentChildMapping, key)) {
       // This was removed before it had fully entered. Remove it.
       this.performLeave(key)
     }
@@ -281,7 +281,7 @@ class TransitionGroup extends Component {
       toChildArray(this.props.children) || [],
     )
 
-    if (currentChildMapping && currentChildMapping.hasOwnProperty(key)) {
+    if (currentChildMapping && Object.hasOwn(currentChildMapping, key)) {
       // This entered again before it fully left. Add it again.
       this.performEnter(key)
     } else {

@@ -1,11 +1,11 @@
-import { marked } from 'marked'
 import Uppy from '@uppy/core'
-import DropTarget from '@uppy/drop-target'
 import Dashboard from '@uppy/dashboard'
-import Transloadit from '@uppy/transloadit'
-import RemoteSources from '@uppy/remote-sources'
-import Webcam from '@uppy/webcam'
+import DropTarget from '@uppy/drop-target'
 import ImageEditor from '@uppy/image-editor'
+import RemoteSources from '@uppy/remote-sources'
+import Transloadit from '@uppy/transloadit'
+import Webcam from '@uppy/webcam'
+import { marked } from 'marked'
 
 import '@uppy/core/dist/style.css'
 import '@uppy/dashboard/dist/style.css'
@@ -14,13 +14,13 @@ import '@uppy/image-editor/dist/style.css'
 const TRANSLOADIT_EXAMPLE_KEY = '35c1aed03f5011e982b6afe82599b6a0'
 const TRANSLOADIT_EXAMPLE_TEMPLATE = '0b2ee2bc25dc43619700c2ce0a75164a'
 
-function matchFilesAndThumbs (results) {
+function matchFilesAndThumbs(results) {
   const filesById = {}
   const thumbsById = {}
 
   for (const [stepName, result] of Object.entries(results)) {
     // eslint-disable-next-line no-shadow
-    result.forEach(result => {
+    result.forEach((result) => {
       if (stepName === 'thumbnails') {
         thumbsById[result.original_id] = result
       } else {
@@ -39,7 +39,7 @@ function matchFilesAndThumbs (results) {
  * A textarea for markdown text, with support for file attachments.
  */
 class MarkdownTextarea {
-  constructor (element) {
+  constructor(element) {
     this.element = element
     this.controls = document.createElement('div')
     this.controls.classList.add('mdtxt-controls')
@@ -52,7 +52,7 @@ class MarkdownTextarea {
     )
   }
 
-  install () {
+  install() {
     const { element } = this
     const wrapper = document.createElement('div')
     wrapper.classList.add('mdtxt')
@@ -82,11 +82,9 @@ class MarkdownTextarea {
     this.uppy.on('complete', (result) => {
       const { successful, failed, transloadit } = result
       if (successful.length !== 0) {
-        this.insertAttachments(
-          matchFilesAndThumbs(transloadit[0].results),
-        )
+        this.insertAttachments(matchFilesAndThumbs(transloadit[0].results))
       } else {
-        failed.forEach(error => {
+        failed.forEach((error) => {
           console.error(error)
           this.reportUploadError(error)
         })
@@ -95,14 +93,14 @@ class MarkdownTextarea {
     })
   }
 
-  reportUploadError (err) {
+  reportUploadError(err) {
     this.uploadLine.classList.add('error')
     const message = document.createElement('span')
     message.appendChild(document.createTextNode(err.message))
     this.uploadLine.insertChild(message, this.uploadLine.firstChild)
   }
 
-  unreportUploadError () {
+  unreportUploadError() {
     this.uploadLine.classList.remove('error')
     const message = this.uploadLine.querySelector('message')
     if (message) {
@@ -110,13 +108,16 @@ class MarkdownTextarea {
     }
   }
 
-  insertAttachments (attachments) {
+  insertAttachments(attachments) {
     attachments.forEach((attachment) => {
       const { file, thumb } = attachment
       const link = `\n[LABEL](${file.ssl_url})\n`
       const labelText = `View File ${file.basename}`
       if (thumb) {
-        this.element.value += link.replace('LABEL', `![${labelText}](${thumb.ssl_url})`)
+        this.element.value += link.replace(
+          'LABEL',
+          `![${labelText}](${thumb.ssl_url})`,
+        )
       } else {
         this.element.value += link.replace('LABEL', labelText)
       }
@@ -124,7 +125,7 @@ class MarkdownTextarea {
   }
 
   uploadFiles = (files) => {
-    const filesForUppy = files.map(file => {
+    const filesForUppy = files.map((file) => {
       return {
         data: file,
         type: file.type,
@@ -139,7 +140,7 @@ class MarkdownTextarea {
 const textarea = new MarkdownTextarea(document.querySelector('#new textarea'))
 textarea.install()
 
-function renderSnippet (title, text) {
+function renderSnippet(title, text) {
   const template = document.querySelector('#snippet')
   const newSnippet = document.importNode(template.content, true)
   const titleEl = newSnippet.querySelector('.snippet-title')
@@ -152,13 +153,13 @@ function renderSnippet (title, text) {
   list.insertBefore(newSnippet, list.firstChild)
 }
 
-function saveSnippet (title, text) {
+function saveSnippet(title, text) {
   const id = parseInt(localStorage.numSnippets || 0, 10)
   localStorage[`snippet_${id}`] = JSON.stringify({ title, text })
   localStorage.numSnippets = id + 1
 }
 
-function loadSnippets () {
+function loadSnippets() {
   for (let id = 0; localStorage[`snippet_${id}`] != null; id += 1) {
     const { title, text } = JSON.parse(localStorage[`snippet_${id}`])
     renderSnippet(title, text)
@@ -168,8 +169,7 @@ function loadSnippets () {
 document.querySelector('#new').addEventListener('submit', (event) => {
   event.preventDefault()
 
-  const title = event.target.elements['title'].value
-    || 'Unnamed Snippet'
+  const title = event.target.elements['title'].value || 'Unnamed Snippet'
   const text = textarea.element.value
 
   saveSnippet(title, text)

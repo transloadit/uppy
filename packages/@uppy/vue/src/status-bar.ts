@@ -1,6 +1,6 @@
-import { defineComponent, ref, h, type PropType } from 'vue'
-import StatusBarPlugin, { type StatusBarOptions } from '@uppy/status-bar'
 import { Uppy } from '@uppy/core'
+import StatusBarPlugin, { type StatusBarOptions } from '@uppy/status-bar'
+import { defineComponent, h, type PropType, ref } from 'vue'
 import useUppy from './useUppy.js'
 
 export default defineComponent({

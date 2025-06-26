@@ -1,6 +1,6 @@
-import { describe, expect, it } from 'vitest'
 import assert from 'node:assert'
-import DefaultStore, { type Listener, type GenericState } from './index.js'
+import { describe, expect, it } from 'vitest'
+import DefaultStore, { type GenericState, type Listener } from './index.js'
 
 describe('DefaultStore', () => {
   it('cannot be created without new', () => {

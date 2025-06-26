@@ -1,20 +1,20 @@
 class Upload {
-  constructor (file, options) {
+  constructor(file, options) {
     this.url = 'https://tus.endpoint/files/foo-bar'
     this.options = options
   }
 
-  _triggerProgressThenSuccess () {
+  _triggerProgressThenSuccess() {
     this.options.onProgress(this.options.uploadSize, this.options.uploadSize)
     setTimeout(() => this.options.onSuccess(), 100)
   }
 
-  start () {
+  start() {
     setTimeout(this._triggerProgressThenSuccess.bind(this), 100)
   }
 
   // eslint-disable-next-line class-methods-use-this
-  abort () {
+  abort() {
     // noop
   }
 }

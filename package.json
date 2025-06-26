@@ -24,8 +24,9 @@
     "build:css": "yarn node ./bin/build-css.js && yarn workspace @uppy/components build:tailwind && yarn node ./bin/copy-tailwind-css.mjs",
     "build:js": "npm-run-all build:js:typeless build:locale-pack build:angular build:bundle",
     "build:js:typeless": "npm-run-all build:companion build:svelte",
-    "build:locale-pack": "yarn workspace @uppy-dev/locale-pack build && eslint packages/@uppy/locales/src/en_US.ts --fix && yarn workspace @uppy-dev/locale-pack test unused",
+    "build:locale-pack": "yarn workspace @uppy-dev/locale-pack build && yarn workspace @uppy-dev/locale-pack test unused",
     "build:svelte": "yarn workspace @uppy/svelte build",
+    "check": "yarn exec biome check --write",
     "contributors:save": "yarn node ./bin/update-contributors.mjs",
     "dev": "yarn workspace @uppy-dev/dev dev",
     "dev:with-companion": "npm-run-all --parallel start:companion dev",
@@ -56,7 +57,6 @@
     "watch:js:lib": "onchange 'packages/{@uppy/,}*/src/**/*.{js,ts,jsx,tsx,svelte,scss,css}' --initial --verbose -- yarn run build"
   },
   "resolutions": {
-    "@types/eslint@^7.2.13": "^8.2.0",
     "@types/react": "^18",
     "@types/webpack-dev-server": "^4",
     "@vitest/utils": "patch:@vitest/utils@npm%3A1.2.1#./.yarn/patches/@vitest-utils-npm-1.2.1-3028846845.patch",

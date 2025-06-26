@@ -1,11 +1,11 @@
-import Transloadit, { COMPANION_URL } from '@uppy/transloadit'
 import Uppy from '@uppy/core'
-import Form from '@uppy/form'
 import Dashboard from '@uppy/dashboard'
-import RemoteSources from '@uppy/remote-sources'
+import Form from '@uppy/form'
 import ImageEditor from '@uppy/image-editor'
-import Webcam from '@uppy/webcam'
 import ProgressBar from '@uppy/progress-bar'
+import RemoteSources from '@uppy/remote-sources'
+import Transloadit, { COMPANION_URL } from '@uppy/transloadit'
+import Webcam from '@uppy/webcam'
 
 import '@uppy/core/dist/style.css'
 import '@uppy/dashboard/dist/style.css'
@@ -59,13 +59,11 @@ const formUppy = new Uppy({
   })
 
 formUppy.on('error', (err) => {
-  document.querySelector('#test-form .error')
-    .textContent = err.message
+  document.querySelector('#test-form .error').textContent = err.message
 })
 
 formUppy.on('upload-error', (file, err) => {
-  document.querySelector('#test-form .error')
-    .textContent = err.message
+  document.querySelector('#test-form .error').textContent = err.message
 })
 
 formUppy.on('complete', ({ transloadit }) => {
@@ -171,7 +169,7 @@ dashboardModal.on('complete', ({ transloadit, successful, failed }) => {
   }
 })
 
-function openModal () {
+function openModal() {
   dashboardModal.getPlugin('Dashboard').openModal()
 }
 

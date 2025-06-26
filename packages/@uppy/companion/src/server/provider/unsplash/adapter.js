@@ -1,6 +1,7 @@
 const querystring = require('node:querystring')
 
-const isFolder = (item) => { // eslint-disable-line no-unused-vars
+const isFolder = (item) => {
+  // eslint-disable-line no-unused-vars
   return false
 }
 
@@ -20,7 +21,8 @@ const getItemName = (item) => {
   return undefined
 }
 
-const getMimeType = (item) => { // eslint-disable-line no-unused-vars
+const getMimeType = (item) => {
+  // eslint-disable-line no-unused-vars
   return 'image/jpeg'
 }
 
@@ -77,8 +79,6 @@ module.exports = (body, currentQuery) => {
       author: getAuthor(item),
       size: null,
     })),
-    nextPageQuery: hasNextPage
-      ? getNextPageQuery(currentQuery)
-      : null,
+    nextPageQuery: hasNextPage ? getNextPageQuery(currentQuery) : null,
   }
 }

@@ -1,7 +1,8 @@
 /* eslint-disable react/destructuring-assignment */
-import { h, Component, Fragment, type ComponentChild } from 'preact'
-import type { I18n } from '@uppy/utils/lib/Translator'
+
 import type Translator from '@uppy/utils/lib/Translator'
+import type { I18n } from '@uppy/utils/lib/Translator'
+import { Component, type ComponentChild, Fragment, h } from 'preact'
 import type { TargetedEvent } from 'preact/compat'
 import type { DashboardState, TargetWithRender } from '../Dashboard.js'
 
@@ -254,20 +255,19 @@ class AddFiles extends Component<AddFilesProps> {
       <div class="uppy-Dashboard-AddFiles-title">
         {
           // eslint-disable-next-line no-nested-ternary
-          this.props.disableLocalFiles ?
-            this.props.i18n('importFiles')
-          : numberOfAcquirers > 0 ?
-            this.props.i18nArray(`dropPasteImport${camelFMSelectionType}`, {
-              browseFiles,
-              browseFolders,
-              browse: browseFiles,
-            })
-          : this.props.i18nArray(`dropPaste${camelFMSelectionType}`, {
-              browseFiles,
-              browseFolders,
-              browse: browseFiles,
-            })
-
+          this.props.disableLocalFiles
+            ? this.props.i18n('importFiles')
+            : numberOfAcquirers > 0
+              ? this.props.i18nArray(`dropPasteImport${camelFMSelectionType}`, {
+                  browseFiles,
+                  browseFolders,
+                  browse: browseFiles,
+                })
+              : this.props.i18nArray(`dropPaste${camelFMSelectionType}`, {
+                  browseFiles,
+                  browseFolders,
+                  browse: browseFiles,
+                })
         }
       </div>
     )

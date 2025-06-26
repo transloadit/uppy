@@ -10,7 +10,11 @@ const RedisStore = require('connect-redis').default
 const logger = require('../server/logger')
 const redis = require('../server/redis')
 const companion = require('../companion')
-const { getCompanionOptions, generateSecret, buildHelpfulStartupMessage } = require('./helper')
+const {
+  getCompanionOptions,
+  generateSecret,
+  buildHelpfulStartupMessage,
+} = require('./helper')
 
 /**
  * Configures an Express app for running Companion standalone
@@ -22,8 +26,10 @@ module.exports = function server(inputCompanionOptions) {
 
   companion.setLoggerProcessName(companionOptions)
 
-  if (!companionOptions.secret) companionOptions.secret = generateSecret('secret')
-  if (!companionOptions.preAuthSecret) companionOptions.preAuthSecret = generateSecret('preAuthSecret')
+  if (!companionOptions.secret)
+    companionOptions.secret = generateSecret('secret')
+  if (!companionOptions.preAuthSecret)
+    companionOptions.preAuthSecret = generateSecret('preAuthSecret')
 
   const app = express()
 
@@ -73,16 +79,18 @@ module.exports = function server(inputCompanionOptions) {
 
   router.use((request, response, next) => {
     const headerName = 'X-Request-Id'
-		const oldValue = request.get(headerName);
-    response.set(headerName, oldValue ?? randomUUID());
+    const oldValue = request.get(headerName)
+    response.set(headerName, oldValue ?? randomUUID())
 
-		next();
-	})
+    next()
+  })
   // log server requests.
   router.use(morgan('combined'))
   morgan.token('url', (req) => {
     const { query, censored } = censorQuery(req.query)
-    return censored ? `${req.path}?${qs.stringify(query)}` : req.originalUrl || req.url
+    return censored
+      ? `${req.path}?${qs.stringify(query)}`
+      : req.originalUrl || req.url
   })
 
   morgan.token('referrer', (req) => {
@@ -96,7 +104,9 @@ module.exports = function server(inputCompanionOptions) {
       }
       const rawQuery = qs.parse(parsed.search.replace('?', ''))
       const { query, censored } = censorQuery(rawQuery)
-      return censored ? `${parsed.href.split('?')[0]}?${qs.stringify(query)}` : parsed.href
+      return censored
+        ? `${parsed.href.split('?')[0]}?${qs.stringify(query)}`
+        : parsed.href
     }
     return undefined
   })
@@ -117,7 +127,12 @@ module.exports = function server(inputCompanionOptions) {
 
   const redisClient = redis.client(companionOptions)
   if (redisClient) {
-    sessionOptions.store = new RedisStore({ client: redisClient, prefix: process.env.COMPANION_REDIS_EXPRESS_SESSION_PREFIX || 'companion-session:' })
+    sessionOptions.store = new RedisStore({
+      client: redisClient,
+      prefix:
+        process.env.COMPANION_REDIS_EXPRESS_SESSION_PREFIX ||
+        'companion-session:',
+    })
   }
 
   if (process.env.COMPANION_COOKIE_DOMAIN) {
@@ -152,28 +167,35 @@ module.exports = function server(inputCompanionOptions) {
   // correct value for COMPANION_ONEDRIVE_KEY (i.e application ID). If there's a slightest possiblilty
   // that you might have mixed the values for COMPANION_ONEDRIVE_KEY and COMPANION_ONEDRIVE_SECRET,
   // please DO NOT set any value for COMPANION_ONEDRIVE_DOMAIN_VALIDATION
-  if (process.env.COMPANION_ONEDRIVE_DOMAIN_VALIDATION === 'true' && process.env.COMPANION_ONEDRIVE_KEY) {
-    router.get('/.well-known/microsoft-identity-association.json', (req, res) => {
-      const content = JSON.stringify({
-        associatedApplications: [
-          { applicationId: process.env.COMPANION_ONEDRIVE_KEY },
-        ],
-      })
-      res.header('Content-Length', `${Buffer.byteLength(content, 'utf8')}`)
-      // use writeHead to prevent 'charset' from being appended
-      // eslint-disable-next-line max-len
-      // https://docs.microsoft.com/en-us/azure/active-directory/develop/howto-configure-publisher-domain#to-select-a-verified-domain
-      res.writeHead(200, { 'Content-Type': 'application/json' })
-      res.write(content)
-      res.end()
-    })
+  if (
+    process.env.COMPANION_ONEDRIVE_DOMAIN_VALIDATION === 'true' &&
+    process.env.COMPANION_ONEDRIVE_KEY
+  ) {
+    router.get(
+      '/.well-known/microsoft-identity-association.json',
+      (req, res) => {
+        const content = JSON.stringify({
+          associatedApplications: [
+            { applicationId: process.env.COMPANION_ONEDRIVE_KEY },
+          ],
+        })
+        res.header('Content-Length', `${Buffer.byteLength(content, 'utf8')}`)
+        // use writeHead to prevent 'charset' from being appended
+        // eslint-disable-next-line max-len
+        // https://docs.microsoft.com/en-us/azure/active-directory/develop/howto-configure-publisher-domain#to-select-a-verified-domain
+        res.writeHead(200, { 'Content-Type': 'application/json' })
+        res.write(content)
+        res.end()
+      },
+    )
   }
 
   app.use((req, res) => {
     return res.status(404).json({ message: 'Not Found' })
   })
 
-  app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
+  app.use((err, req, res, next) => {
+    // eslint-disable-line no-unused-vars
     if (app.get('env') === 'production') {
       // if the error is a URIError from the requested URL we only log the error message
       // to avoid uneccessary error alerts
@@ -182,10 +204,14 @@ module.exports = function server(inputCompanionOptions) {
       } else {
         logger.error(err, 'root.error', req.id)
       }
-      res.status(500).json({ message: 'Something went wrong', requestId: req.id })
+      res
+        .status(500)
+        .json({ message: 'Something went wrong', requestId: req.id })
     } else {
       logger.error(err, 'root.error', req.id)
-      res.status(500).json({ message: err.message, error: err, requestId: req.id })
+      res
+        .status(500)
+        .json({ message: err.message, error: err, requestId: req.id })
     }
   })
 

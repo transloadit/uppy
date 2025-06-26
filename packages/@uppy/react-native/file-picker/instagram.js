@@ -1,14 +1,8 @@
-import React from 'react'
-import {
-  AsyncStorage,
-  View,
-  FlatList,
-  Image,
-  WebView,
-} from 'react-native'
 import Instagram from '@uppy/instagram'
+import React from 'react'
+import { AsyncStorage, FlatList, Image, View, WebView } from 'react-native'
 
-function getQueryParamValueFromUrl (name, url) {
+function getQueryParamValueFromUrl(name, url) {
   // eslint-disable-next-line no-param-reassign
   name = name.replace(/[[]/, '\\[').replace(/[\]]/, '\\]')
   const regexS = `[\\?&]${name}=([^&#]*)`
@@ -32,7 +26,7 @@ const styles = StyleSheet.create({
 
 // how instagram provider can be render, not ready
 export default class UppyRNInstagram extends React.Component {
-  constructor () {
+  constructor() {
     super()
 
     this.state = {
@@ -53,7 +47,7 @@ export default class UppyRNInstagram extends React.Component {
     }
   }
 
-  componentDidMount () {
+  componentDidMount() {
     const { uppy } = this.props
     const options = {
       id: 'uppyRN:Instagram',
@@ -69,13 +63,13 @@ export default class UppyRNInstagram extends React.Component {
     })
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     const { uppy } = this.props
     uppy.removePlugin(this.plugin)
   }
 
   // eslint-disable-next-line class-methods-use-this
-  renderGrid (items) {
+  renderGrid(items) {
     return (
       <View style={styles.container}>
         <FlatList
@@ -92,7 +86,7 @@ export default class UppyRNInstagram extends React.Component {
     )
   }
 
-  renderInstagram () {
+  renderInstagram() {
     return (
       <WebView
         source={{ uri: this.state.authUrl }}
@@ -107,7 +101,7 @@ export default class UppyRNInstagram extends React.Component {
     )
   }
 
-  render () {
+  render() {
     return this.renderInstagram()
   }
 }

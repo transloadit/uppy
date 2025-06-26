@@ -1,12 +1,12 @@
-import { createElement as h, Component } from 'react'
 import type {
+  Body,
+  Meta,
   UIPluginOptions,
   UnknownPlugin,
   Uppy,
-  Body,
-  Meta,
 } from '@uppy/core'
 import FileInputPlugin, { type FileInputOptions } from '@uppy/file-input'
+import { Component, createElement as h } from 'react'
 
 interface FileInputProps<M extends Meta, B extends Body>
   extends UIPluginOptions {

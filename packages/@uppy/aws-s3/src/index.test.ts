@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import 'whatwg-fetch'
-import nock from 'nock'
 import Core, { type UppyFile } from '@uppy/core'
+import nock from 'nock'
 import AwsS3Multipart, {
   type AwsBody,
   type AwsS3MultipartOptions,

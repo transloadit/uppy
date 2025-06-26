@@ -47,16 +47,29 @@ module.exports.getProviderMiddleware = (providers, grantConfig) => {
 
       let providerGrantConfig
       if (isOAuthProvider(oauthProvider)) {
-        req.companion.getProviderCredentials = getCredentialsResolver(providerName, req.companion.options, req)
+        req.companion.getProviderCredentials = getCredentialsResolver(
+          providerName,
+          req.companion.options,
+          req,
+        )
         providerGrantConfig = grantConfig[oauthProvider]
         req.companion.providerGrantConfig = providerGrantConfig
       }
 
       const secret = providerOptions[providerName]?.secret
-      req.companion.provider = new ProviderClass({ secret, providerName, providerGrantConfig, allowLocalUrls })
+      req.companion.provider = new ProviderClass({
+        secret,
+        providerName,
+        providerGrantConfig,
+        allowLocalUrls,
+      })
       req.companion.providerClass = ProviderClass
     } else {
-      logger.warn('invalid provider options detected. Provider will not be loaded', 'provider.middleware.invalid', req.id)
+      logger.warn(
+        'invalid provider options detected. Provider will not be loaded',
+        'provider.middleware.invalid',
+        req.id,
+      )
     }
     next()
   }
@@ -68,7 +81,17 @@ module.exports.getProviderMiddleware = (providers, grantConfig) => {
  * @returns {Record<string, typeof Provider>}
  */
 module.exports.getDefaultProviders = () => {
-  const providers = { dropbox, box, drive: Drive, facebook, onedrive, zoom, instagram, unsplash, webdav }
+  const providers = {
+    dropbox,
+    box,
+    drive: Drive,
+    facebook,
+    onedrive,
+    zoom,
+    instagram,
+    unsplash,
+    webdav,
+  }
 
   return providers
 }
@@ -81,7 +104,11 @@ module.exports.getDefaultProviders = () => {
  * @param {Record<string, typeof Provider>} providers
  * @param {object} grantConfig
  */
-module.exports.addCustomProviders = (customProviders, providers, grantConfig) => {
+module.exports.addCustomProviders = (
+  customProviders,
+  providers,
+  grantConfig,
+) => {
   Object.keys(customProviders).forEach((providerName) => {
     const customProvider = customProviders[providerName]
 
@@ -109,10 +136,17 @@ module.exports.addCustomProviders = (customProviders, providers, grantConfig) =>
  * @param {object} grantConfig
  * @param {(a: string) => string} getOauthProvider
  */
-module.exports.addProviderOptions = (companionOptions, grantConfig, getOauthProvider) => {
+module.exports.addProviderOptions = (
+  companionOptions,
+  grantConfig,
+  getOauthProvider,
+) => {
   const { server, providerOptions } = companionOptions
   if (!validOptions({ server })) {
-    logger.warn('invalid provider options detected. Providers will not be loaded', 'provider.options.invalid')
+    logger.warn(
+      'invalid provider options detected. Providers will not be loaded',
+      'provider.options.invalid',
+    )
     return
   }
 
@@ -136,7 +170,12 @@ module.exports.addProviderOptions = (companionOptions, grantConfig, getOauthProv
       grantConfig[oauthProvider].secret = providerOptions[providerName].secret
       if (providerOptions[providerName].credentialsURL) {
         // eslint-disable-next-line no-param-reassign
-        grantConfig[oauthProvider].dynamic = ['key', 'secret', 'redirect_uri', 'origins']
+        grantConfig[oauthProvider].dynamic = [
+          'key',
+          'secret',
+          'redirect_uri',
+          'origins',
+        ]
       }
 
       const provider = exports.getDefaultProviders()[providerName]
@@ -146,20 +185,30 @@ module.exports.addProviderOptions = (companionOptions, grantConfig, getOauthProv
       const isExternal = !!server.implicitPath
       const redirectPath = getRedirectPath(providerName)
       // eslint-disable-next-line no-param-reassign
-      grantConfig[oauthProvider].redirect_uri = getURLBuilder(companionOptions)(redirectPath, isExternal)
+      grantConfig[oauthProvider].redirect_uri = getURLBuilder(companionOptions)(
+        redirectPath,
+        isExternal,
+      )
       if (oauthDomain) {
-        const fullRedirectPath = getURLBuilder(companionOptions)(redirectPath, isExternal, true)
+        const fullRedirectPath = getURLBuilder(companionOptions)(
+          redirectPath,
+          isExternal,
+          true,
+        )
         // eslint-disable-next-line no-param-reassign
-        grantConfig[oauthProvider].redirect_uri = `${server.protocol}://${oauthDomain}${fullRedirectPath}`
+        grantConfig[oauthProvider].redirect_uri =
+          `${server.protocol}://${oauthDomain}${fullRedirectPath}`
       }
 
       if (server.implicitPath) {
         // no url builder is used for this because grant internally adds the path
         // eslint-disable-next-line no-param-reassign
-        grantConfig[oauthProvider].callback = `${server.implicitPath}${grantConfig[oauthProvider].callback}`
+        grantConfig[oauthProvider].callback =
+          `${server.implicitPath}${grantConfig[oauthProvider].callback}`
       } else if (server.path) {
         // eslint-disable-next-line no-param-reassign
-        grantConfig[oauthProvider].callback = `${server.path}${grantConfig[oauthProvider].callback}`
+        grantConfig[oauthProvider].callback =
+          `${server.path}${grantConfig[oauthProvider].callback}`
       }
     }
   })

@@ -1,7 +1,7 @@
-import { createElement as h, Component } from 'react'
-import type React from 'react'
-import DashboardPlugin, { type DashboardOptions } from '@uppy/dashboard'
 import type { Body, Meta, Uppy } from '@uppy/core'
+import DashboardPlugin, { type DashboardOptions } from '@uppy/dashboard'
+import type React from 'react'
+import { Component, createElement as h } from 'react'
 import getHTMLProps from './getHTMLProps.js'
 import nonHtmlPropsHaveChanged from './nonHtmlPropsHaveChanged.js'
 

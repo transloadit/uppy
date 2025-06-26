@@ -1,16 +1,14 @@
+import type Uppy from '@uppy/core'
+import type { RequestOptions } from '@uppy/utils/lib/CompanionClientProvider'
+import ErrorWithCause from '@uppy/utils/lib/ErrorWithCause'
+import fetchWithNetworkError from '@uppy/utils/lib/fetchWithNetworkError'
+import getSocketHost from '@uppy/utils/lib/getSocketHost'
+import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
 import UserFacingApiError from '@uppy/utils/lib/UserFacingApiError'
 // eslint-disable-next-line import/no-extraneous-dependencies
 import pRetry, { AbortError } from 'p-retry'
-
-import fetchWithNetworkError from '@uppy/utils/lib/fetchWithNetworkError'
-import ErrorWithCause from '@uppy/utils/lib/ErrorWithCause'
-import getSocketHost from '@uppy/utils/lib/getSocketHost'
-
-import type Uppy from '@uppy/core'
-import type { UppyFile, Meta, Body } from '@uppy/utils/lib/UppyFile'
-import type { RequestOptions } from '@uppy/utils/lib/CompanionClientProvider'
-import AuthError from './AuthError.js'
 import packageJson from '../package.json' with { type: 'json' }
+import AuthError from './AuthError.js'
 
 type CompanionHeaders = Record<string, string> | undefined
 
@@ -131,12 +129,12 @@ export default class RequestClient<M extends Meta, B extends Body> {
   async headers(emptyBody = false): Promise<Record<string, string>> {
     const defaultHeaders = {
       Accept: 'application/json',
-      ...(emptyBody ? undefined : (
-        {
-          // Passing those headers on requests with no data forces browsers to first make a preflight request.
-          'Content-Type': 'application/json',
-        }
-      )),
+      ...(emptyBody
+        ? undefined
+        : {
+            // Passing those headers on requests with no data forces browsers to first make a preflight request.
+            'Content-Type': 'application/json',
+          }),
     }
 
     return {
@@ -496,8 +494,9 @@ export default class RequestClient<M extends Meta, B extends Body> {
                               {
                                 uploadURL: payload.url,
                                 status: payload.response?.status ?? 200,
-                                body:
-                                  text ? (JSON.parse(text) as B) : undefined,
+                                body: text
+                                  ? (JSON.parse(text) as B)
+                                  : undefined,
                               },
                             )
                             socketAbortController?.abort?.()

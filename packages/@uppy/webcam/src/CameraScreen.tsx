@@ -1,14 +1,14 @@
 /* eslint-disable jsx-a11y/media-has-caption */
 import type { I18n } from '@uppy/utils/lib/Translator'
-import { h, Component, type ComponentChild, type ComponentProps } from 'preact'
-import SnapshotButton from './SnapshotButton.js'
+import { Component, type ComponentChild, type ComponentProps, h } from 'preact'
+import DiscardButton from './DiscardButton.js'
 import RecordButton from './RecordButton.js'
 import RecordingLength from './RecordingLength.js'
+import SnapshotButton from './SnapshotButton.js'
+import SubmitButton from './SubmitButton.js'
 import VideoSourceSelect, {
   type VideoSourceSelectProps,
 } from './VideoSourceSelect.js'
-import SubmitButton from './SubmitButton.js'
-import DiscardButton from './DiscardButton.js'
 
 function isModeAvailable<T>(modes: T[], mode: any): mode is T {
   return modes.includes(mode)
@@ -118,9 +118,9 @@ class CameraScreen extends Component<CameraScreenProps> {
         </div>
         <div className="uppy-Webcam-footer">
           <div className="uppy-Webcam-videoSourceContainer">
-            {shouldShowVideoSourceDropdown ?
-              VideoSourceSelect(this.props)
-            : null}
+            {shouldShowVideoSourceDropdown
+              ? VideoSourceSelect(this.props)
+              : null}
           </div>
           <div className="uppy-Webcam-buttonContainer">
             {shouldShowSnapshotButton && (

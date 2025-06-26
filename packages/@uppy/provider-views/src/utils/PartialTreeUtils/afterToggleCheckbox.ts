@@ -31,9 +31,9 @@ const percolateDown = (
   ) as (PartialTreeFolderNode | PartialTreeFile)[]
   children.forEach((item) => {
     item.status =
-      shouldMarkAsChecked && !(item.type === 'file' && item.restrictionError) ?
-        'checked'
-      : 'unchecked'
+      shouldMarkAsChecked && !(item.type === 'file' && item.restrictionError)
+        ? 'checked'
+        : 'unchecked'
     percolateDown(tree, item.id, shouldMarkAsChecked)
   })
 }

@@ -2,10 +2,11 @@
 
 // Usage: autoFixConflicts.js | sh
 
-import { createInterface as readLines } from 'node:readline'
 import { spawn } from 'node:child_process'
+import { createInterface as readLines } from 'node:readline'
 
-const VERSION_URL = /(?<=https:\/\/\S+\/v)\d+\.\d+\.\d+(?:-(?:alpha|beta)(?:[.-]\d+)?)?(?=\/)/
+const VERSION_URL =
+  /(?<=https:\/\/\S+\/v)\d+\.\d+\.\d+(?:-(?:alpha|beta)(?:[.-]\d+)?)?(?=\/)/
 
 const gitStatus = spawn('git', ['status', '--porcelain'])
 
@@ -50,7 +51,5 @@ for await (const line of readLines(gitStatus.stdout)) {
   if (containsCDNChanges) {
     console.log(`git checkout --ours ${file}`)
     console.log(`git add ${file}`)
-    // eslint-disable-next-line no-continue
-    continue
   }
 }

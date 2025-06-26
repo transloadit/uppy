@@ -1,34 +1,32 @@
-import type { ComponentChild, VNode } from 'preact'
-import { UIPlugin } from '@uppy/core'
-import type { LocaleStrings } from '@uppy/utils/lib/Translator'
 import type {
   Body,
+  DefinePluginOpts,
   Meta,
-  UppyFile,
+  State,
   UIPluginOptions,
   UnknownPlugin,
-  Uppy,
   UploadResult,
-  State,
-  DefinePluginOpts,
+  Uppy,
+  UppyFile,
 } from '@uppy/core'
-import StatusBar from '@uppy/status-bar'
+import { UIPlugin } from '@uppy/core'
 import Informer from '@uppy/informer'
+import { defaultPickerIcon } from '@uppy/provider-views'
+import StatusBar from '@uppy/status-bar'
+import type StatusBarLocale from '@uppy/status-bar/lib/locale.js'
 import ThumbnailGenerator from '@uppy/thumbnail-generator'
 import findAllDOMElements from '@uppy/utils/lib/findAllDOMElements'
-import toArray from '@uppy/utils/lib/toArray'
 import getDroppedFiles from '@uppy/utils/lib/getDroppedFiles'
-import { defaultPickerIcon } from '@uppy/provider-views'
-import type StatusBarLocale from '@uppy/status-bar/lib/locale.js'
-
-import type { TargetedEvent } from 'preact/compat'
+import type { LocaleStrings } from '@uppy/utils/lib/Translator'
+import toArray from '@uppy/utils/lib/toArray'
 import { nanoid } from 'nanoid/non-secure'
-import * as trapFocus from './utils/trapFocus.js'
-import createSuperFocus from './utils/createSuperFocus.js'
-import DashboardUI from './components/Dashboard.js'
-
+import type { ComponentChild, VNode } from 'preact'
+import type { TargetedEvent } from 'preact/compat'
 import packageJson from '../package.json' with { type: 'json' }
+import DashboardUI from './components/Dashboard.js'
 import locale from './locale.js'
+import createSuperFocus from './utils/createSuperFocus.js'
+import * as trapFocus from './utils/trapFocus.js'
 
 type GenericEventCallback = () => void
 export type DashboardFileEditStartCallback<M extends Meta, B extends Body> = (
@@ -1444,12 +1442,13 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
 
     // Dark Mode / theme
     this.darkModeMediaQuery =
-      typeof window !== 'undefined' && window.matchMedia ?
-        window.matchMedia('(prefers-color-scheme: dark)')
-      : null
+      typeof window !== 'undefined' && window.matchMedia
+        ? window.matchMedia('(prefers-color-scheme: dark)')
+        : null
 
-    const isDarkModeOnFromTheStart =
-      this.darkModeMediaQuery ? this.darkModeMediaQuery.matches : false
+    const isDarkModeOnFromTheStart = this.darkModeMediaQuery
+      ? this.darkModeMediaQuery.matches
+      : false
     this.uppy.log(
       `[Dashboard] Dark mode is ${isDarkModeOnFromTheStart ? 'on' : 'off'}`,
     )

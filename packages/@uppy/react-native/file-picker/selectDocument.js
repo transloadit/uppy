@@ -1,6 +1,6 @@
 import * as DocumentPicker from 'expo-document-picker' // eslint-disable-line import/no-unresolved
 
-function selectDocumentWithExpo () {
+function selectDocumentWithExpo() {
   return DocumentPicker.getDocumentAsync({
     copyToCacheDirectory: false,
   }).then((result) => {

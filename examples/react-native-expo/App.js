@@ -1,16 +1,16 @@
-import React, { useEffect, useState, useCallback } from 'react'
-import { Text, View, Image, StyleSheet } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import Uppy from '@uppy/core'
+import FilePicker from '@uppy/react-native'
 import Tus from '@uppy/tus'
-import FilePicker  from '@uppy/react-native'
+import React, { useCallback, useEffect, useState } from 'react'
+import { Image, StyleSheet, Text, View } from 'react-native'
 import FileList from './FileList'
 import PauseResumeButton from './PauseResumeButton'
 import ProgressBar from './ProgressBar'
 import SelectFiles from './SelectFilesButton'
 import getTusFileReader from './tusFileReader'
 
-export default function App () {
+export default function App() {
   const [state, _setState] = useState({
     progress: 0,
     total: 0,
@@ -24,15 +24,19 @@ export default function App () {
     totalProgress: 0,
   })
 
-  const setState = useCallback((newState) => _setState((oldState) => ({ ...oldState, ...newState })), [])
+  const setState = useCallback(
+    (newState) => _setState((oldState) => ({ ...oldState, ...newState })),
+    [],
+  )
 
-  const [uppy] = useState(() => new Uppy({ autoProceed: true, debug: true })
-      .use(Tus, {
-        endpoint: 'https://tusd.tusdemo.net/files/',
-        urlStorage: AsyncStorage,
-        fileReader: getTusFileReader,
-        chunkSize: 10 * 1024 * 1024, // keep the chunk size small to avoid memory exhaustion
-      }));
+  const [uppy] = useState(() =>
+    new Uppy({ autoProceed: true, debug: true }).use(Tus, {
+      endpoint: 'https://tusd.tusdemo.net/files/',
+      urlStorage: AsyncStorage,
+      fileReader: getTusFileReader,
+      chunkSize: 10 * 1024 * 1024, // keep the chunk size small to avoid memory exhaustion
+    }),
+  )
 
   useEffect(() => {
     uppy.on('upload-progress', (file, progress) => {
@@ -48,7 +52,9 @@ export default function App () {
     })
     uppy.on('complete', (result) => {
       setState({
-        status: result.successful[0] ? 'Upload complete ✅' : 'Upload errored ❌',
+        status: result.successful[0]
+          ? 'Upload complete ✅'
+          : 'Upload errored ❌',
         uploadURL: result.successful[0] ? result.successful[0].uploadURL : null,
         uploadComplete: true,
         uploadStarted: false,
@@ -98,14 +104,8 @@ export default function App () {
   }
 
   return (
-    <View
-      style={styles.root}
-    >
-      <Text
-        style={styles.title}
-      >
-        Uppy in React Native
-      </Text>
+    <View style={styles.root}>
+      <Text style={styles.title}>Uppy in React Native</Text>
       <View style={{ alignItems: 'center' }}>
         <Image
           style={styles.logo}
@@ -115,17 +115,17 @@ export default function App () {
       </View>
       <SelectFiles showFilePicker={showFilePicker} />
 
-      {state.info ? (
-        <Text
-          style={{
-            marginBottom: 10,
-            marginTop: 10,
-            color: '#b8006b',
-          }}
-        >
-          {state.info.message}
-        </Text>
-      ) : null}
+      {state.info
+        ? <Text
+            style={{
+              marginBottom: 10,
+              marginTop: 10,
+              color: '#b8006b',
+            }}
+          >
+            {state.info.message}
+          </Text>
+        : null}
 
       <ProgressBar progress={state.totalProgress} />
 
@@ -148,7 +148,9 @@ export default function App () {
       {uppy && <FileList uppy={uppy} />}
 
       {state.status && <Text>Status: {state.status}</Text>}
-      <Text>{state.progress} of {state.total}</Text>
+      <Text>
+        {state.progress} of {state.total}
+      </Text>
     </View>
   )
 }

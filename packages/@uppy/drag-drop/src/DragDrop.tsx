@@ -1,18 +1,17 @@
-import { UIPlugin } from '@uppy/core'
 import type {
+  Body,
+  DefinePluginOpts,
+  Meta,
   UIPluginOptions,
   Uppy,
-  DefinePluginOpts,
-  Body,
-  Meta,
 } from '@uppy/core'
-import type { TargetedEvent } from 'preact/compat'
-import toArray from '@uppy/utils/lib/toArray'
-import isDragDropSupported from '@uppy/utils/lib/isDragDropSupported'
+import { UIPlugin } from '@uppy/core'
 import getDroppedFiles from '@uppy/utils/lib/getDroppedFiles'
-import { h, type ComponentChild } from 'preact'
-
+import isDragDropSupported from '@uppy/utils/lib/isDragDropSupported'
 import type { LocaleStrings } from '@uppy/utils/lib/Translator'
+import toArray from '@uppy/utils/lib/toArray'
+import { type ComponentChild, h } from 'preact'
+import type { TargetedEvent } from 'preact/compat'
 import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'
 

@@ -1,21 +1,21 @@
-import { h } from 'preact'
-
-import { UIPlugin } from '@uppy/core'
 import type {
-  Uppy,
-  UIPluginOptions,
   Body,
   Meta,
   MinimalRequiredUppyFile,
+  UIPluginOptions,
+  Uppy,
 } from '@uppy/core'
 
-import type { LocaleStrings } from '@uppy/utils/lib/Translator'
+import { UIPlugin } from '@uppy/core'
 import getFileTypeExtension from '@uppy/utils/lib/getFileTypeExtension'
-import supportsMediaRecorder from './supportsMediaRecorder.js'
-import RecordingScreen from './RecordingScreen.js'
-import PermissionsScreen from './PermissionsScreen.js'
-import locale from './locale.js'
+
+import type { LocaleStrings } from '@uppy/utils/lib/Translator'
+import { h } from 'preact'
 import packageJson from '../package.json' with { type: 'json' }
+import locale from './locale.js'
+import PermissionsScreen from './PermissionsScreen.js'
+import RecordingScreen from './RecordingScreen.js'
+import supportsMediaRecorder from './supportsMediaRecorder.js'
 
 export interface AudioOptions extends UIPluginOptions {
   showAudioSourceDropdown?: boolean

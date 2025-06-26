@@ -13,7 +13,7 @@ import packageJson from '../package.json'
 export default class ReduxDevTools extends UIPlugin {
   static VERSION = packageJson.version
 
-  constructor (uppy, opts) {
+  constructor(uppy, opts) {
     super(uppy, opts)
     this.type = 'debugger'
     this.id = this.opts.id || 'ReduxDevTools'
@@ -29,11 +29,11 @@ export default class ReduxDevTools extends UIPlugin {
     this.initDevTools = this.initDevTools.bind(this)
   }
 
-  handleStateChange (prevState, nextState) {
+  handleStateChange(prevState, nextState) {
     this.devTools.send('UPPY_STATE_UPDATE', nextState)
   }
 
-  initDevTools () {
+  initDevTools() {
     this.devTools = window.devToolsExtension.connect()
     this.devToolsUnsubscribe = this.devTools.subscribe((message) => {
       if (message.type === 'DISPATCH') {
@@ -44,13 +44,19 @@ export default class ReduxDevTools extends UIPlugin {
             return
           case 'IMPORT_STATE': {
             const { computedStates } = message.payload.nextLiftedState
-            this.uppy.store.state = { ...this.uppy.getState(), ...computedStates[computedStates.length - 1].state }
+            this.uppy.store.state = {
+              ...this.uppy.getState(),
+              ...computedStates[computedStates.length - 1].state,
+            }
             this.uppy.updateAll(this.uppy.getState())
             return
           }
           case 'JUMP_TO_STATE':
           case 'JUMP_TO_ACTION':
-            this.uppy.store.state = { ...this.uppy.getState(), ...JSON.parse(message.state) }
+            this.uppy.store.state = {
+              ...this.uppy.getState(),
+              ...JSON.parse(message.state),
+            }
             this.uppy.updateAll(this.uppy.getState())
             break
 
@@ -60,16 +66,17 @@ export default class ReduxDevTools extends UIPlugin {
     })
   }
 
-  install () {
+  install() {
     // eslint-disable-next-line no-underscore-dangle
-    this.withDevTools = typeof window !== 'undefined' && window.__REDUX_DEVTOOLS_EXTENSION__
+    this.withDevTools =
+      typeof window !== 'undefined' && window.__REDUX_DEVTOOLS_EXTENSION__
     if (this.withDevTools) {
       this.initDevTools()
       this.uppy.on('state-update', this.handleStateChange)
     }
   }
 
-  uninstall () {
+  uninstall() {
     if (this.withDevTools) {
       this.devToolsUnsubscribe()
       this.uppy.off('state-update', this.handleStateUpdate)

@@ -15,7 +15,10 @@ const authData = {
   dropbox: { accessToken: 'token value' },
   drive: { accessToken: 'token value' },
 }
-const token = tokenService.generateEncryptedAuthToken(authData, process.env.COMPANION_SECRET)
+const token = tokenService.generateEncryptedAuthToken(
+  authData,
+  process.env.COMPANION_SECRET,
+)
 
 describe('test authentication callback', () => {
   test('authentication callback redirects to send-token url', () => {
@@ -23,7 +26,9 @@ describe('test authentication callback', () => {
       .get('/drive/callback')
       .expect(302)
       .expect((res) => {
-        expect(res.header.location).toContain('http://localhost:3020/drive/send-token?uppyAuthToken=')
+        expect(res.header.location).toContain(
+          'http://localhost:3020/drive/send-token?uppyAuthToken=',
+        )
       })
   })
 
@@ -33,9 +38,19 @@ describe('test authentication callback', () => {
       .get('/dropbox/callback')
       .expect(302)
       .expect((res) => {
-        expect(res.header.location).toContain('http://localhost:3020/dropbox/send-token?uppyAuthToken=')
-        const authToken = decodeURIComponent(res.header['set-cookie'][0].split(';')[0].split('uppyAuthToken--dropbox=')[1])
-        const payload = tokenService.verifyEncryptedAuthToken(authToken, process.env.COMPANION_SECRET, 'dropbox')
+        expect(res.header.location).toContain(
+          'http://localhost:3020/dropbox/send-token?uppyAuthToken=',
+        )
+        const authToken = decodeURIComponent(
+          res.header['set-cookie'][0]
+            .split(';')[0]
+            .split('uppyAuthToken--dropbox=')[1],
+        )
+        const payload = tokenService.verifyEncryptedAuthToken(
+          authToken,
+          process.env.COMPANION_SECRET,
+          'dropbox',
+        )
         expect(payload).toEqual({ dropbox: { accessToken: grantToken } })
       })
   })
@@ -47,7 +62,9 @@ describe('test authentication callback', () => {
       .expect(200)
       .expect((res) => {
         expect(res.text).toMatch(`var data = {"token":"${token}"};`)
-        expect(res.text).toMatch(`var origin = "http:\\u002F\\u002Flocalhost:3020";`)
+        expect(res.text).toMatch(
+          `var origin = "http:\\u002F\\u002Flocalhost:3020";`,
+        )
       })
   })
 })

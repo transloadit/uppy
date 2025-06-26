@@ -1,7 +1,6 @@
 const crypto = require('node:crypto')
 const logger = require('../logger.js')
 
-
 const authTagLength = 16
 const nonceLength = 16
 const encryptionKeyLength = 32
@@ -15,7 +14,7 @@ const ivLength = 12
  */
 exports.hasMatch = (value, criteria) => {
   return criteria.some((i) => {
-    return value === i || (new RegExp(i)).test(value)
+    return value === i || new RegExp(i).test(value)
   })
 }
 
@@ -75,7 +74,7 @@ module.exports.getURLBuilder = (options) => {
   return buildURL
 }
 
-module.exports.getRedirectPath = (providerName) => `/${providerName}/redirect`;
+module.exports.getRedirectPath = (providerName) => `/${providerName}/redirect`
 
 /**
  * Create an AES-CCM encryption key and initialization vector from the provided secret
@@ -85,7 +84,13 @@ module.exports.getRedirectPath = (providerName) => `/${providerName}/redirect`;
  * @param {Buffer|undefined} nonce
  */
 function createSecrets(secret, nonce) {
-  const key = crypto.hkdfSync('sha256', secret, new Uint8Array(32), nonce, encryptionKeyLength + ivLength)
+  const key = crypto.hkdfSync(
+    'sha256',
+    secret,
+    new Uint8Array(32),
+    nonce,
+    encryptionKeyLength + ivLength,
+  )
   const buf = Buffer.from(key)
   return {
     key: buf.subarray(0, encryptionKeyLength),
@@ -103,7 +108,9 @@ function createSecrets(secret, nonce) {
 module.exports.encrypt = (input, secret) => {
   const nonce = crypto.randomBytes(nonceLength)
   const { key, iv } = createSecrets(secret, nonce)
-  const cipher = crypto.createCipheriv('aes-256-ccm', key, iv, { authTagLength })
+  const cipher = crypto.createCipheriv('aes-256-ccm', key, iv, {
+    authTagLength,
+  })
   const encrypted = Buffer.concat([
     cipher.update(input, 'utf8'),
     cipher.final(),
@@ -117,7 +124,9 @@ module.exports.encrypt = (input, secret) => {
 function compatDecrypt(encrypted, secret) {
   // Need at least 32 chars for the iv
   if (encrypted.length < 32) {
-    throw new Error('Invalid encrypted value. Maybe it was generated with an old Companion version?')
+    throw new Error(
+      'Invalid encrypted value. Maybe it was generated with an old Companion version?',
+    )
   }
 
   // NOTE: The first 32 characters are the iv, in hex format. The rest is the encrypted string, in base64 format.
@@ -137,8 +146,13 @@ function compatDecrypt(encrypted, secret) {
     }
   }
 
-  const urlDecode = (encoded) => encoded.replace(/-/g, '+').replace(/_/g, '/').replace(/~/g, '=')
-  let decrypted = decipher.update(urlDecode(encryptionWithoutIv), 'base64', 'utf8')
+  const urlDecode = (encoded) =>
+    encoded.replace(/-/g, '+').replace(/_/g, '/').replace(/~/g, '=')
+  let decrypted = decipher.update(
+    urlDecode(encryptionWithoutIv),
+    'base64',
+    'utf8',
+  )
   decrypted += decipher.final('utf8')
   return decrypted
 }
@@ -157,19 +171,29 @@ module.exports.decrypt = (encrypted, secret) => {
     // NOTE: The first 32 characters are the nonce, in hex format.
     const nonce = Buffer.from(encrypted.slice(0, nonceHexLength), 'hex')
     // The rest is the encrypted string, in base64url format.
-    const encryptionWithoutNonce = Buffer.from(encrypted.slice(nonceHexLength), 'base64url')
+    const encryptionWithoutNonce = Buffer.from(
+      encrypted.slice(nonceHexLength),
+      'base64url',
+    )
     // The last 16 bytes of the rest is the authentication tag
     const authTag = encryptionWithoutNonce.subarray(-authTagLength)
     // and the rest (from beginning) is the encrypted data
-    const encryptionWithoutNonceAndTag = encryptionWithoutNonce.subarray(0, -authTagLength)
-    
+    const encryptionWithoutNonceAndTag = encryptionWithoutNonce.subarray(
+      0,
+      -authTagLength,
+    )
+
     if (nonce.length < nonceLength) {
-      throw new Error('Invalid encrypted value. Maybe it was generated with an old Companion version?')
+      throw new Error(
+        'Invalid encrypted value. Maybe it was generated with an old Companion version?',
+      )
     }
-    
+
     const { key, iv } = createSecrets(secret, nonce)
 
-    const decipher = crypto.createDecipheriv('aes-256-ccm', key, iv, { authTagLength })
+    const decipher = crypto.createDecipheriv('aes-256-ccm', key, iv, {
+      authTagLength,
+    })
     decipher.setAuthTag(authTag)
 
     const decrypted = Buffer.concat([
@@ -206,36 +230,48 @@ class HttpError extends Error {
 
 module.exports.HttpError = HttpError
 
-module.exports.prepareStream = async (stream) => new Promise((resolve, reject) => {
-  stream
-    .on('response', (response) => {
-      const contentLengthStr = response.headers['content-length']
-      const contentLength = parseInt(contentLengthStr, 10);
-      const size = !Number.isNaN(contentLength) && contentLength >= 0 ? contentLength : undefined;
-      // Don't allow any more data to flow yet.
-      // https://github.com/request/request/issues/1990#issuecomment-184712275
-      stream.pause()
-      resolve({ size })
-    })
-    .on('error', (err) => {
-      // In this case the error object is not a normal GOT HTTPError where json is already parsed,
-      // we use our own HttpError error for this scenario.
-      if (typeof err.response?.body === 'string' && typeof err.response?.statusCode === 'number') {
-        let responseJson
-        try {
-          responseJson = JSON.parse(err.response.body)
-        } catch (err2) {
-          reject(err)
+module.exports.prepareStream = async (stream) =>
+  new Promise((resolve, reject) => {
+    stream
+      .on('response', (response) => {
+        const contentLengthStr = response.headers['content-length']
+        const contentLength = parseInt(contentLengthStr, 10)
+        const size =
+          !Number.isNaN(contentLength) && contentLength >= 0
+            ? contentLength
+            : undefined
+        // Don't allow any more data to flow yet.
+        // https://github.com/request/request/issues/1990#issuecomment-184712275
+        stream.pause()
+        resolve({ size })
+      })
+      .on('error', (err) => {
+        // In this case the error object is not a normal GOT HTTPError where json is already parsed,
+        // we use our own HttpError error for this scenario.
+        if (
+          typeof err.response?.body === 'string' &&
+          typeof err.response?.statusCode === 'number'
+        ) {
+          let responseJson
+          try {
+            responseJson = JSON.parse(err.response.body)
+          } catch (err2) {
+            reject(err)
+            return
+          }
+
+          reject(
+            new HttpError({
+              statusCode: err.response.statusCode,
+              responseJson,
+            }),
+          )
           return
         }
 
-        reject(new HttpError({ statusCode: err.response.statusCode, responseJson }))
-        return
-      }
-
-      reject(err)
-    })
-})
+        reject(err)
+      })
+  })
 
 module.exports.getBasicAuthHeader = (key, secret) => {
   const base64 = Buffer.from(`${key}:${secret}`, 'binary').toString('base64')
@@ -249,9 +285,10 @@ const rfc2047Encode = (dataIn) => {
   return `=?UTF-8?B?${Buffer.from(data).toString('base64')}?=` // We encode non-ASCII strings
 }
 
-module.exports.rfc2047EncodeMetadata = (metadata) => (
-  Object.fromEntries(Object.entries(metadata).map((entry) => entry.map(rfc2047Encode)))
-)
+module.exports.rfc2047EncodeMetadata = (metadata) =>
+  Object.fromEntries(
+    Object.entries(metadata).map((entry) => entry.map(rfc2047Encode)),
+  )
 
 /**
  *
@@ -268,11 +305,16 @@ module.exports.rfc2047EncodeMetadata = (metadata) => (
  * @returns
  */
 module.exports.getBucket = ({ bucketOrFn, req, metadata, filename }) => {
-  const bucket = typeof bucketOrFn === 'function' ? bucketOrFn({ req, metadata, filename }) : bucketOrFn
+  const bucket =
+    typeof bucketOrFn === 'function'
+      ? bucketOrFn({ req, metadata, filename })
+      : bucketOrFn
 
   if (typeof bucket !== 'string' || bucket === '') {
     // This means a misconfiguration or bug
-    throw new TypeError('s3: bucket key must be a string or a function resolving the bucket string')
+    throw new TypeError(
+      's3: bucket key must be a string or a function resolving the bucket string',
+    )
   }
   return bucket
 }

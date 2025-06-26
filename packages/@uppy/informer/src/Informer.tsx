@@ -1,12 +1,12 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions  */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import { h, type ComponentChild } from 'preact'
+
+import type { Body, Meta, State, UIPluginOptions, Uppy } from '@uppy/core'
 import { UIPlugin } from '@uppy/core'
-import type { State, UIPluginOptions, Uppy, Body, Meta } from '@uppy/core'
+import { type ComponentChild, h } from 'preact'
+import packageJson from '../package.json' with { type: 'json' }
 import FadeIn from './FadeIn.js'
 import TransitionGroup from './TransitionGroup.js'
-
-import packageJson from '../package.json' with { type: 'json' }
 
 export type InformerOptions = UIPluginOptions
 

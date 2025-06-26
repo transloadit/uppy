@@ -26,7 +26,7 @@
  * - Tweaked styles for Uppy's Dashboard use case
  */
 
-import {  h, Component  } from 'preact'
+import { Component, h } from 'preact'
 
 const STYLE_INNER = {
   position: 'relative',
@@ -52,7 +52,7 @@ const STYLE_CONTENT = {
 }
 
 class VirtualList extends Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
 
     // The currently focused node, used to retain focus when the visible rows change.
@@ -65,30 +65,33 @@ class VirtualList extends Component {
     }
   }
 
-  componentDidMount () {
+  componentDidMount() {
     this.resize()
     window.addEventListener('resize', this.handleResize)
   }
 
   // TODO: refactor to stable lifecycle method
   // eslint-disable-next-line
-  componentWillUpdate () {
+  componentWillUpdate() {
     if (this.base.contains(document.activeElement)) {
       this.focusElement = document.activeElement
     }
   }
 
-  componentDidUpdate () {
+  componentDidUpdate() {
     // Maintain focus when rows are added and removed.
-    if (this.focusElement && this.focusElement.parentNode
-        && document.activeElement !== this.focusElement) {
+    if (
+      this.focusElement &&
+      this.focusElement.parentNode &&
+      document.activeElement !== this.focusElement
+    ) {
       this.focusElement.focus()
     }
     this.focusElement = null
     this.resize()
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     window.removeEventListener('resize', this.handleResize)
   }
 
@@ -100,7 +103,7 @@ class VirtualList extends Component {
     this.resize()
   }
 
-  resize () {
+  resize() {
     const { height } = this.state
 
     if (height !== this.base.offsetHeight) {
@@ -110,13 +113,7 @@ class VirtualList extends Component {
     }
   }
 
-  render ({
-    data,
-    rowHeight,
-    renderRow,
-    overscanCount = 10,
-    ...props
-  }) {
+  render({ data, rowHeight, renderRow, overscanCount = 10, ...props }) {
     const { offset, height } = this.state
     // first visible row index
     let start = Math.floor(offset / rowHeight)

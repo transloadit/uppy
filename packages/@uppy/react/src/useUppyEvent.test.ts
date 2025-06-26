@@ -1,10 +1,10 @@
 /* eslint-disable react/react-in-jsx-scope */
 /* eslint-disable import/no-extraneous-dependencies */
-import { describe, expect, expectTypeOf, it, vi } from 'vitest'
-import { renderHook, act } from '@testing-library/react'
 
+import { act, renderHook } from '@testing-library/react'
 import Uppy from '@uppy/core'
 import type { Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
+import { describe, expect, expectTypeOf, it, vi } from 'vitest'
 import { useUppyEvent } from './index.js'
 
 describe('useUppyEvent', () => {

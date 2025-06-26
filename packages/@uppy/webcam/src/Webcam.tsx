@@ -1,26 +1,26 @@
-import { h, type ComponentChild } from 'preact'
-
-import { UIPlugin } from '@uppy/core'
-import type { LocaleStrings } from '@uppy/utils/lib/Translator'
 import type {
-  Uppy,
-  UIPluginOptions,
-  DefinePluginOpts,
   Body,
+  DefinePluginOpts,
   Meta,
   MinimalRequiredUppyFile,
+  UIPluginOptions,
+  Uppy,
 } from '@uppy/core'
+
+import { UIPlugin } from '@uppy/core'
 import type { PluginTarget } from '@uppy/core/lib/UIPlugin.js'
+import canvasToBlob from '@uppy/utils/lib/canvasToBlob'
 import getFileTypeExtension from '@uppy/utils/lib/getFileTypeExtension'
 import mimeTypes from '@uppy/utils/lib/mimeTypes'
+import type { LocaleStrings } from '@uppy/utils/lib/Translator'
 import { isMobile } from 'is-mobile'
-import canvasToBlob from '@uppy/utils/lib/canvasToBlob'
-import supportsMediaRecorder from './supportsMediaRecorder.js'
+import type { ComponentChild, h } from 'preact'
+import packageJson from '../package.json' with { type: 'json' }
 import CameraIcon from './CameraIcon.js'
 import CameraScreen from './CameraScreen.js'
-import PermissionsScreen from './PermissionsScreen.js'
-import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'
+import PermissionsScreen from './PermissionsScreen.js'
+import supportsMediaRecorder from './supportsMediaRecorder.js'
 
 /**
  * Normalize a MIME type or file extension into a MIME type.
@@ -303,9 +303,8 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
           this.stream = stream
 
           let currentDeviceId = null
-          const tracks =
-            this.isAudioOnly() ?
-              stream.getAudioTracks()
+          const tracks = this.isAudioOnly()
+            ? stream.getAudioTracks()
             : stream.getVideoTracks()
 
           if (!options || !options.deviceId) {

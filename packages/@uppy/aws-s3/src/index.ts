@@ -1,31 +1,31 @@
+import { RequestClient } from '@uppy/companion-client'
 import {
+  BasePlugin,
   type DefinePluginOpts,
   type PluginOpts,
-  Uppy,
-  BasePlugin,
+  type Uppy,
 } from '@uppy/core'
-import { RequestClient } from '@uppy/companion-client'
-import type { RequestOptions } from '@uppy/utils/lib/CompanionClientProvider'
-import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
 import EventManager from '@uppy/core/lib/EventManager.js'
-import { RateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
-import {
-  filterNonFailedFiles,
-  filterFilesToEmitUploadStarted,
-} from '@uppy/utils/lib/fileFilters'
 import { createAbortError } from '@uppy/utils/lib/AbortController'
+import type { RequestOptions } from '@uppy/utils/lib/CompanionClientProvider'
+import {
+  filterFilesToEmitUploadStarted,
+  filterNonFailedFiles,
+} from '@uppy/utils/lib/fileFilters'
 import getAllowedMetaFields from '@uppy/utils/lib/getAllowedMetaFields'
-import MultipartUploader from './MultipartUploader.js'
-import { throwIfAborted } from './utils.js'
-import type {
-  UploadResult,
-  UploadResultWithSignal,
-  MultipartUploadResultWithSignal,
-  UploadPartBytesResult,
-} from './utils.js'
+import { RateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
+import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
+import packageJson from '../package.json' with { type: 'json' }
 import createSignedURL from './createSignedURL.js'
 import { HTTPCommunicationQueue } from './HTTPCommunicationQueue.js'
-import packageJson from '../package.json' with { type: 'json' }
+import MultipartUploader from './MultipartUploader.js'
+import type {
+  MultipartUploadResultWithSignal,
+  UploadPartBytesResult,
+  UploadResult,
+  UploadResultWithSignal,
+} from './utils.js'
+import { throwIfAborted } from './utils.js'
 
 interface MultipartFile<M extends Meta, B extends Body> extends UppyFile<M, B> {
   s3Multipart: UploadResult
@@ -344,13 +344,11 @@ export default class AwsS3Multipart<
       listParts: this.listParts,
       abortMultipartUpload: this.abortMultipartUpload,
       completeMultipartUpload: this.completeMultipartUpload,
-      signPart:
-        opts?.getTemporarySecurityCredentials ?
-          this.createSignedURL
+      signPart: opts?.getTemporarySecurityCredentials
+        ? this.createSignedURL
         : this.signPart,
-      getUploadParameters:
-        opts?.getTemporarySecurityCredentials ?
-          (this.createSignedURL as any)
+      getUploadParameters: opts?.getTemporarySecurityCredentials
+        ? (this.createSignedURL as any)
         : this.getUploadParameters,
     } satisfies Partial<AwsS3MultipartOptions<M, B>>
 
@@ -504,9 +502,10 @@ export default class AwsS3Multipart<
 
     const filename = encodeURIComponent(key)
     return this.#client
-      .get<
-        AwsS3Part[]
-      >(`s3/multipart/${encodeURIComponent(uploadId!)}?key=${filename}`, { signal })
+      .get<AwsS3Part[]>(
+        `s3/multipart/${encodeURIComponent(uploadId!)}?key=${filename}`,
+        { signal },
+      )
       .then(assertServerError)
   }
 
@@ -860,9 +859,8 @@ export default class AwsS3Multipart<
         companionComm: this.#companionCommunicationQueue,
 
         log: (...args: Parameters<Uppy<M, B>['log']>) => this.uppy.log(...args),
-        getChunkSize:
-          this.opts.getChunkSize ?
-            this.opts.getChunkSize.bind(this)
+        getChunkSize: this.opts.getChunkSize
+          ? this.opts.getChunkSize.bind(this)
           : undefined,
 
         onProgress,

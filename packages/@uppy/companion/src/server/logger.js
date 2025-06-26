@@ -39,10 +39,9 @@ exports.setProcessName = (newProcessName) => {
 }
 
 const styleText =
-  typeof util.styleText === "function" && supportsColors.stderr ?
-    util.styleText
-  : (style, text) => text;
-
+  typeof util.styleText === 'function' && supportsColors.stderr
+    ? util.styleText
+    : (style, text) => text
 
 /**
  * message log
@@ -62,7 +61,11 @@ const log = ({ arg, tag = '', level, traceId = '', color = [] }) => {
     // We don't need to log stack trace on special errors that we ourselves have produced
     // (to reduce log noise)
     // @ts-ignore
-    if ((arg instanceof Error && arg.name === 'ProviderApiError') && typeof arg.message === 'string') {
+    if (
+      arg instanceof Error &&
+      arg.name === 'ProviderApiError' &&
+      typeof arg.message === 'string'
+    ) {
       return arg.message
     }
     if (typeof arg === 'string') return arg
@@ -72,7 +75,13 @@ const log = ({ arg, tag = '', level, traceId = '', color = [] }) => {
   const msgString = msgToString()
   const masked = maskMessage(msgString)
   // eslint-disable-next-line no-console
-  console.log(styleText(color, `${processName}: ${time} [${level}] ${traceId}${whitespace}${tag}`), styleText(color, masked))
+  console.log(
+    styleText(
+      color,
+      `${processName}: ${time} [${level}] ${traceId}${whitespace}${tag}`,
+    ),
+    styleText(color, masked),
+  )
 }
 
 /**

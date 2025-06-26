@@ -11,7 +11,7 @@
     "checkJs": true,
     "skipLibCheck": true,
     "noEmitOnError": true,
-    "skipLibCheck": true,
+    "skipLibCheck": true
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*"]
 }

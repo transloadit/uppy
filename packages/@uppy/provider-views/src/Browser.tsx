@@ -1,8 +1,3 @@
-import { h } from 'preact'
-
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore untyped
-import VirtualList from '@uppy/utils/lib/VirtualList'
 import type {
   Body,
   Meta,
@@ -10,9 +5,13 @@ import type {
   PartialTreeFolderNode,
 } from '@uppy/core'
 import type { I18n } from '@uppy/utils/lib/Translator'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore untyped
+import VirtualList from '@uppy/utils/lib/VirtualList'
+import { h } from 'preact'
 import { useEffect, useState } from 'preact/hooks'
 import Item from './Item/index.js'
-import ProviderView from './ProviderView/ProviderView.js'
+import type ProviderView from './ProviderView/ProviderView.js'
 
 type BrowserProps<M extends Meta, B extends Body> = {
   displayedPartialTree: (PartialTreeFile | PartialTreeFolderNode)[]

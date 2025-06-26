@@ -1,10 +1,10 @@
+import prettierBytes from '@transloadit/prettier-bytes'
 import type { Body, Meta, State, Uppy } from '@uppy/core'
 import type { FileProcessingInfo } from '@uppy/utils/lib/FileProgress'
-import type { I18n } from '@uppy/utils/lib/Translator'
-import { h } from 'preact'
-import classNames from 'classnames'
-import prettierBytes from '@transloadit/prettier-bytes'
 import prettyETA from '@uppy/utils/lib/prettyETA'
+import type { I18n } from '@uppy/utils/lib/Translator'
+import classNames from 'classnames'
+import { h } from 'preact'
 
 import statusBarStates from './StatusBarStates.js'
 
@@ -46,9 +46,9 @@ function UploadBtn<M extends Meta, B extends Body>(
   )
 
   const uploadBtnText =
-    newFiles && isUploadStarted && !recoveredState ?
-      i18n('uploadXNewFiles', { smart_count: newFiles })
-    : i18n('uploadXFiles', { smart_count: newFiles })
+    newFiles && isUploadStarted && !recoveredState
+      ? i18n('uploadXNewFiles', { smart_count: newFiles })
+      : i18n('uploadXFiles', { smart_count: newFiles })
 
   return (
     <button
@@ -193,9 +193,9 @@ function PauseResumeButton<M extends Meta, B extends Body>(
           <path
             fill="#FFF"
             d={
-              isAllPaused ?
-                'M6 4.25L11.5 8 6 11.75z'
-              : 'M5 4.5h2v7H5v-7zm4 0h2v7H9v-7z'
+              isAllPaused
+                ? 'M6 4.25L11.5 8 6 11.75z'
+                : 'M5 4.5h2v7H5v-7zm4 0h2v7H9v-7z'
             }
           />
         </g>
@@ -290,12 +290,12 @@ function ProgressDetails(props: ProgressDetailsProps) {
         */}
         {ifShowFilesUploadedOfTotal && renderDot()}
 
-        {totalSize != null ?
-          i18n('dataUploadedOfTotal', {
-            complete: totalUploadedSizeStr,
-            total: prettierBytes(totalSize),
-          })
-        : i18n('dataUploadedOfUnknown', { complete: totalUploadedSizeStr })}
+        {totalSize != null
+          ? i18n('dataUploadedOfTotal', {
+              complete: totalUploadedSizeStr,
+              total: prettierBytes(totalSize),
+            })
+          : i18n('dataUploadedOfUnknown', { complete: totalUploadedSizeStr })}
 
         {renderDot()}
 
@@ -426,25 +426,23 @@ function ProgressBarUploading(props: ProgressBarUploadingProps) {
 
   return (
     <div className="uppy-StatusBar-content" aria-label={title} title={title}>
-      {!isAllPaused ?
-        <LoadingSpinner />
-      : null}
+      {!isAllPaused ? <LoadingSpinner /> : null}
       <div className="uppy-StatusBar-status">
         <div className="uppy-StatusBar-statusPrimary">
-          {supportsUploadProgress && totalProgress !== 0 ?
-            `${title}: ${totalProgress}%`
-          : title}
+          {supportsUploadProgress && totalProgress !== 0
+            ? `${title}: ${totalProgress}%`
+            : title}
         </div>
 
         {renderProgressDetails()}
 
-        {showUploadNewlyAddedFiles ?
+        {showUploadNewlyAddedFiles ? (
           <UploadNewlyAddedFiles
             i18n={i18n}
             newFiles={newFiles}
             startUpload={startUpload}
           />
-        : null}
+        ) : null}
       </div>
     </div>
   )

@@ -1,6 +1,5 @@
 /* eslint-disable no-underscore-dangle */
-import { describe, expect, it, vi } from 'vitest'
-import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
+
 import type {
   PartialTree,
   PartialTreeFile,
@@ -8,13 +7,15 @@ import type {
   PartialTreeFolderRoot,
   PartialTreeId,
 } from '@uppy/core'
-import afterToggleCheckbox from './afterToggleCheckbox.js'
+import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
+import { describe, expect, it, vi } from 'vitest'
+import afterFill from './afterFill.js'
 import afterOpenFolder from './afterOpenFolder.js'
 import afterScrollFolder from './afterScrollFolder.js'
-import afterFill from './afterFill.js'
+import afterToggleCheckbox from './afterToggleCheckbox.js'
+import getBreadcrumbs from './getBreadcrumbs.js'
 import getCheckedFilesWithPaths from './getCheckedFilesWithPaths.js'
 import getNumberOfSelectedFiles from './getNumberOfSelectedFiles.js'
-import getBreadcrumbs from './getBreadcrumbs.js'
 
 const _root = (id: string, options: any = {}): PartialTreeFolderRoot => ({
   type: 'root',
@@ -69,14 +70,14 @@ describe('afterFill()', () => {
     // prettier-ignore
     const tree: PartialTree = [
       _root('ourRoot'),
-          _folder('1', { parentId: 'ourRoot' }),
-          _folder('2', { parentId: 'ourRoot', cached: true }),
-              _file('2_1', { parentId: '2' }),
-              _file('2_2', { parentId: '2', status: 'checked' }),
-              _file('2_3', { parentId: '2' }),
-              _folder('2_4', { parentId: '2' }),
-          _file('3', { parentId: 'ourRoot' }),
-          _file('4', { parentId: 'ourRoot' }),
+      _folder('1', { parentId: 'ourRoot' }),
+      _folder('2', { parentId: 'ourRoot', cached: true }),
+      _file('2_1', { parentId: '2' }),
+      _file('2_2', { parentId: '2', status: 'checked' }),
+      _file('2_3', { parentId: '2' }),
+      _folder('2_4', { parentId: '2' }),
+      _file('3', { parentId: 'ourRoot' }),
+      _file('4', { parentId: 'ourRoot' }),
     ]
     const mock = vi.fn()
     const enrichedTree = await afterFill(
@@ -100,8 +101,8 @@ describe('afterFill()', () => {
     // prettier-ignore
     const tree: PartialTree = [
       _root('ourRoot'),
-          _folder('1', { parentId: 'ourRoot' }),
-          _folder('2', { parentId: 'ourRoot', cached: false, status: 'checked' }),
+      _folder('1', { parentId: 'ourRoot' }),
+      _folder('2', { parentId: 'ourRoot', cached: false, status: 'checked' }),
     ]
     const mock = (path: PartialTreeId) => {
       if (path === '2') {
@@ -132,13 +133,13 @@ describe('afterFill()', () => {
     // prettier-ignore
     const tree: PartialTree = [
       _root('ourRoot'),
-          _folder('1', { parentId: 'ourRoot' }),
-          _folder('2', {
-            parentId: 'ourRoot',
-            cached: true,
-            nextPagePath: '666',
-            status: 'checked',
-          }),
+      _folder('1', { parentId: 'ourRoot' }),
+      _folder('2', {
+        parentId: 'ourRoot',
+        cached: true,
+        nextPagePath: '666',
+        status: 'checked',
+      }),
     ]
     const mock = (path: PartialTreeId) => {
       if (path === '666') {
@@ -165,15 +166,15 @@ describe('afterFill()', () => {
     // prettier-ignore
     const tree: PartialTree = [
       _root('ourRoot'),
-          _folder('1', { parentId: 'ourRoot' }),
-          _folder('2', {
-              parentId: 'ourRoot',
-              cached: true,
-              nextPagePath: '2_next',
-              status: 'checked',
-          }),
-              _file('2_1', { parentId: '2', status: 'checked' }),
-              _file('2_2', { parentId: '2', status: 'checked' }),
+      _folder('1', { parentId: 'ourRoot' }),
+      _folder('2', {
+        parentId: 'ourRoot',
+        cached: true,
+        nextPagePath: '2_next',
+        status: 'checked',
+      }),
+      _file('2_1', { parentId: '2', status: 'checked' }),
+      _file('2_2', { parentId: '2', status: 'checked' }),
     ]
     const mock = (path: PartialTreeId) => {
       if (path === '2_next') {
@@ -210,22 +211,22 @@ describe('afterFill()', () => {
     // prettier-ignore
     const tree: PartialTree = [
       _root('ourRoot'),
-          _folder('1', { parentId: 'ourRoot' }),
-          // folder we'll be recursively fetching really deeply
-          _folder('2', {
-            parentId: 'ourRoot',
-            cached: true,
-            nextPagePath: '2_next',
-            status: 'checked',
-          }),
-              _file('2_1', { parentId: '2', status: 'checked' }),
-              _file('2_2', { parentId: '2', status: 'checked' }),
-          // folder with only some files checked
-          _folder('3', { parentId: 'ourRoot', cached: true, status: 'partial' }),
-              // empty folder
-              _folder('0', { parentId: '3', cached: false, status: 'checked' }),
-              _file('3_1', { parentId: '3', status: 'checked' }),
-              _file('3_2', { parentId: '3', status: 'unchecked' }),
+      _folder('1', { parentId: 'ourRoot' }),
+      // folder we'll be recursively fetching really deeply
+      _folder('2', {
+        parentId: 'ourRoot',
+        cached: true,
+        nextPagePath: '2_next',
+        status: 'checked',
+      }),
+      _file('2_1', { parentId: '2', status: 'checked' }),
+      _file('2_2', { parentId: '2', status: 'checked' }),
+      // folder with only some files checked
+      _folder('3', { parentId: 'ourRoot', cached: true, status: 'partial' }),
+      // empty folder
+      _folder('0', { parentId: '3', cached: false, status: 'checked' }),
+      _file('3_1', { parentId: '3', status: 'checked' }),
+      _file('3_2', { parentId: '3', status: 'unchecked' }),
     ]
     const mock = (path: PartialTreeId) => {
       if (path === '2_next') {
@@ -282,8 +283,8 @@ describe('afterOpenFolder()', () => {
     // prettier-ignore
     const oldPartialTree: PartialTree = [
       _root('ourRoot'),
-          _folder('1', { parentId: 'ourRoot' }),
-          _folder('2', { parentId: 'ourRoot', cached: false, status: 'checked' }),
+      _folder('1', { parentId: 'ourRoot' }),
+      _folder('2', { parentId: 'ourRoot', cached: false, status: 'checked' }),
     ]
 
     const fakeCompanionFiles = [
@@ -313,8 +314,8 @@ describe('afterOpenFolder()', () => {
     // prettier-ignore
     const oldPartialTree: PartialTree = [
       _root('ourRoot'),
-          _folder('1', { parentId: 'ourRoot' }),
-          _folder('2', { parentId: 'ourRoot', cached: false, status: 'unchecked' }),
+      _folder('1', { parentId: 'ourRoot' }),
+      _folder('2', { parentId: 'ourRoot', cached: false, status: 'unchecked' }),
     ]
 
     const fakeCompanionFiles = [
@@ -346,11 +347,11 @@ describe('afterScrollFolder()', () => {
     // prettier-ignore
     const oldPartialTree: PartialTree = [
       _root('ourRoot'),
-          _folder('1', { parentId: 'ourRoot' }),
-          _folder('2', { parentId: 'ourRoot', cached: true, status: 'checked' }),
-              _file('2_1', { parentId: '2' }),
-              _file('2_2', { parentId: '2' }),
-              _file('2_3', { parentId: '2' }),
+      _folder('1', { parentId: 'ourRoot' }),
+      _folder('2', { parentId: 'ourRoot', cached: true, status: 'checked' }),
+      _file('2_1', { parentId: '2' }),
+      _file('2_2', { parentId: '2' }),
+      _file('2_3', { parentId: '2' }),
     ]
 
     const fakeCompanionFiles = [
@@ -376,11 +377,11 @@ describe('afterScrollFolder()', () => {
     // prettier-ignore
     const oldPartialTree: PartialTree = [
       _root('ourRoot'),
-          _folder('1', { parentId: 'ourRoot' }),
-          _folder('2', { parentId: 'ourRoot', cached: true, status: 'unchecked' }),
-              _file('2_1', { parentId: '2' }),
-              _file('2_2', { parentId: '2' }),
-              _file('2_3', { parentId: '2' }),
+      _folder('1', { parentId: 'ourRoot' }),
+      _folder('2', { parentId: 'ourRoot', cached: true, status: 'unchecked' }),
+      _file('2_1', { parentId: '2' }),
+      _file('2_2', { parentId: '2' }),
+      _file('2_3', { parentId: '2' }),
     ]
 
     const fakeCompanionFiles = [
@@ -407,17 +408,17 @@ describe('afterToggleCheckbox()', () => {
   // prettier-ignore
   const oldPartialTree: PartialTree = [
     _root('ourRoot'),
-        _folder('1', { parentId: 'ourRoot' }),
-        _folder('2', { parentId: 'ourRoot' }),
-            _file('2_1', { parentId: '2' }),
-            _file('2_2', { parentId: '2' }),
-            _file('2_3', { parentId: '2' }),
-            _folder('2_4', { parentId: '2' }), // click
-                _file('2_4_1', { parentId: '2_4' }),
-                _file('2_4_2', { parentId: '2_4' }),
-                _file('2_4_3', { parentId: '2_4' }),
-        _file('3', { parentId: 'ourRoot' }),
-        _file('4', { parentId: 'ourRoot' }),
+    _folder('1', { parentId: 'ourRoot' }),
+    _folder('2', { parentId: 'ourRoot' }),
+    _file('2_1', { parentId: '2' }),
+    _file('2_2', { parentId: '2' }),
+    _file('2_3', { parentId: '2' }),
+    _folder('2_4', { parentId: '2' }), // click
+    _file('2_4_1', { parentId: '2_4' }),
+    _file('2_4_2', { parentId: '2_4' }),
+    _file('2_4_3', { parentId: '2_4' }),
+    _file('3', { parentId: 'ourRoot' }),
+    _file('4', { parentId: 'ourRoot' }),
   ]
 
   it('check folder: percolates up and down', () => {
@@ -505,14 +506,14 @@ describe('getNumberOfSelectedFiles()', () => {
     // prettier-ignore
     const tree: PartialTree = [
       _root('ourRoot'),
-          // leaf .checked folder
-          _folder('1', { parentId: 'ourRoot', cached: false, status: 'checked' }),
-          // NON-left .checked folder
-          _folder('2', { parentId: 'ourRoot', status: 'checked' }),
-              // leaf .checked file
-              _file('2_1', { parentId: '2', status: 'checked' }),
-              // leaf .checked file
-              _file('2_2', { parentId: '2', status: 'checked' }),
+      // leaf .checked folder
+      _folder('1', { parentId: 'ourRoot', cached: false, status: 'checked' }),
+      // NON-left .checked folder
+      _folder('2', { parentId: 'ourRoot', status: 'checked' }),
+      // leaf .checked file
+      _file('2_1', { parentId: '2', status: 'checked' }),
+      // leaf .checked file
+      _file('2_2', { parentId: '2', status: 'checked' }),
     ]
     const result = getNumberOfSelectedFiles(tree)
 
@@ -523,8 +524,8 @@ describe('getNumberOfSelectedFiles()', () => {
     // prettier-ignore
     const tree: PartialTree = [
       _root('ourRoot'),
-          // empty .checked .cached folder
-          _folder('1', { parentId: 'ourRoot', cached: true, status: 'checked' }),
+      // empty .checked .cached folder
+      _folder('1', { parentId: 'ourRoot', cached: true, status: 'checked' }),
     ]
     const result = getNumberOfSelectedFiles(tree)
     // This should be "1" for more pleasant UI - if the user unchecks this folder,
@@ -538,17 +539,17 @@ describe('getCheckedFilesWithPaths()', () => {
   // prettier-ignore
   const tree: PartialTree = [
     _root('ourRoot'),
-        _folder('1', { parentId: 'ourRoot' }),
-        _folder('2', { parentId: 'ourRoot' }),
-            _file('2_1', { parentId: '2' }),
-            _file('2_2', { parentId: '2', status: 'checked' }),
-            _file('2_3', { parentId: '2' }),
-            _folder('2_4', { parentId: '2', status: 'checked' }),
-                _file('2_4_1', { parentId: '2_4', status: 'checked' }),
-                _file('2_4_2', { parentId: '2_4', status: 'checked' }),
-                _file('2_4_3', { parentId: '2_4', status: 'checked' }),
-        _file('3', { parentId: 'ourRoot' }),
-        _file('4', { parentId: 'ourRoot' }),
+    _folder('1', { parentId: 'ourRoot' }),
+    _folder('2', { parentId: 'ourRoot' }),
+    _file('2_1', { parentId: '2' }),
+    _file('2_2', { parentId: '2', status: 'checked' }),
+    _file('2_3', { parentId: '2' }),
+    _folder('2_4', { parentId: '2', status: 'checked' }),
+    _file('2_4_1', { parentId: '2_4', status: 'checked' }),
+    _file('2_4_2', { parentId: '2_4', status: 'checked' }),
+    _file('2_4_3', { parentId: '2_4', status: 'checked' }),
+    _file('3', { parentId: 'ourRoot' }),
+    _file('4', { parentId: 'ourRoot' }),
   ]
 
   // These test cases are based on documentation for .absolutePath and .relativePath (https://uppy.io/docs/uppy/#filemeta)
@@ -597,17 +598,17 @@ describe('getBreadcrumbs()', () => {
   // prettier-ignore
   const tree: PartialTree = [
     _root('ourRoot'),
-        _folder('1', { parentId: 'ourRoot' }),
-        _folder('2', { parentId: 'ourRoot' }),
-            _file('2_1', { parentId: '2' }),
-            _file('2_2', { parentId: '2' }),
-            _file('2_3', { parentId: '2' }),
-            _folder('2_4', { parentId: '2' }),
-                _file('2_4_1', { parentId: '2_4' }),
-                _file('2_4_2', { parentId: '2_4' }),
-                _file('2_4_3', { parentId: '2_4' }),
-        _file('3', { parentId: 'ourRoot' }),
-        _file('4', { parentId: 'ourRoot' }),
+    _folder('1', { parentId: 'ourRoot' }),
+    _folder('2', { parentId: 'ourRoot' }),
+    _file('2_1', { parentId: '2' }),
+    _file('2_2', { parentId: '2' }),
+    _file('2_3', { parentId: '2' }),
+    _folder('2_4', { parentId: '2' }),
+    _file('2_4_1', { parentId: '2_4' }),
+    _file('2_4_2', { parentId: '2_4' }),
+    _file('2_4_3', { parentId: '2_4' }),
+    _file('3', { parentId: 'ourRoot' }),
+    _file('4', { parentId: 'ourRoot' }),
   ]
 
   it('returns root folder: "/ourRoot"', () => {
@@ -629,7 +630,7 @@ describe('getBreadcrumbs()', () => {
     // prettier-ignore
     const treeWithNullRoot: PartialTree = [
       _root(null!),
-          _folder('1', { parentId: null })
+      _folder('1', { parentId: null }),
     ]
     const result = getBreadcrumbs(treeWithNullRoot, null)
     expect(result.map((f) => f.id)).toEqual([null])

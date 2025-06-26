@@ -1,37 +1,36 @@
-import { h } from 'preact'
 import type {
-  UnknownProviderPlugin,
-  PartialTreeFolder,
-  PartialTreeFolderNode,
-  PartialTreeFile,
-  UnknownProviderPluginState,
-  PartialTreeId,
-  PartialTree,
   Body,
   Meta,
+  PartialTree,
+  PartialTreeFile,
+  PartialTreeFolder,
+  PartialTreeFolderNode,
+  PartialTreeId,
+  UnknownProviderPlugin,
+  UnknownProviderPluginState,
 } from '@uppy/core'
-import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
-import classNames from 'classnames'
 import type { ValidateableFile } from '@uppy/core/lib/Restricter.js'
+import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
 import remoteFileObjToLocal from '@uppy/utils/lib/remoteFileObjToLocal'
 import type { I18n } from '@uppy/utils/lib/Translator'
-import AuthView from './AuthView.js'
-import Header from './Header.js'
-import Browser from '../Browser.js'
-
+import classNames from 'classnames'
+import type { h } from 'preact'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../../package.json'
+import Browser from '../Browser.js'
+import FooterActions from '../FooterActions.js'
+import SearchInput from '../SearchInput.js'
+import addFiles from '../utils/addFiles.js'
+import getClickedRange from '../utils/getClickedRange.js'
+import handleError from '../utils/handleError.js'
+import getBreadcrumbs from '../utils/PartialTreeUtils/getBreadcrumbs.js'
+import getCheckedFilesWithPaths from '../utils/PartialTreeUtils/getCheckedFilesWithPaths.js'
+import getNumberOfSelectedFiles from '../utils/PartialTreeUtils/getNumberOfSelectedFiles.js'
 import PartialTreeUtils from '../utils/PartialTreeUtils/index.js'
 import shouldHandleScroll from '../utils/shouldHandleScroll.js'
-import handleError from '../utils/handleError.js'
-import getClickedRange from '../utils/getClickedRange.js'
-import SearchInput from '../SearchInput.js'
-import FooterActions from '../FooterActions.js'
-import addFiles from '../utils/addFiles.js'
-import getCheckedFilesWithPaths from '../utils/PartialTreeUtils/getCheckedFilesWithPaths.js'
-import getBreadcrumbs from '../utils/PartialTreeUtils/getBreadcrumbs.js'
-import getNumberOfSelectedFiles from '../utils/PartialTreeUtils/getNumberOfSelectedFiles.js'
+import AuthView from './AuthView.js'
+import Header from './Header.js'
 
 export function defaultPickerIcon(): h.JSX.Element {
   return (
@@ -396,14 +395,14 @@ export default class ProviderView<M extends Meta, B extends Body> {
       (item) => item.type !== 'root' && item.parentId === currentFolderId,
     ) as (PartialTreeFile | PartialTreeFolderNode)[]
     const filtered =
-      searchString === '' ? inThisFolder : (
-        inThisFolder.filter(
-          (item) =>
-            (item.data.name ?? this.plugin.uppy.i18n('unnamed'))
-              .toLowerCase()
-              .indexOf(searchString.toLowerCase()) !== -1,
-        )
-      )
+      searchString === ''
+        ? inThisFolder
+        : inThisFolder.filter(
+            (item) =>
+              (item.data.name ?? this.plugin.uppy.i18n('unnamed'))
+                .toLowerCase()
+                .indexOf(searchString.toLowerCase()) !== -1,
+          )
 
     return filtered
   }

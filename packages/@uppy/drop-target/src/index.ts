@@ -1,4 +1,4 @@
-import type { Uppy, Body, Meta, DefinePluginOpts, PluginOpts } from '@uppy/core'
+import type { Body, DefinePluginOpts, Meta, PluginOpts, Uppy } from '@uppy/core'
 import { BasePlugin } from '@uppy/core'
 import getDroppedFiles from '@uppy/utils/lib/getDroppedFiles'
 import toArray from '@uppy/utils/lib/toArray'

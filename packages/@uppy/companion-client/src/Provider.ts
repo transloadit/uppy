@@ -1,17 +1,17 @@
 import type {
-  Uppy,
   Body,
   Meta,
   PluginOpts,
   UnknownProviderPlugin,
+  Uppy,
 } from '@uppy/core'
 import type {
-  RequestOptions,
   CompanionClientProvider,
+  RequestOptions,
 } from '@uppy/utils/lib/CompanionClientProvider'
-import RequestClient, { authErrorStatusCode } from './RequestClient.js'
-import type { CompanionPluginOptions } from './index.js'
 import { isOriginAllowed } from './getAllowedHosts.js'
+import type { CompanionPluginOptions } from './index.js'
+import RequestClient, { authErrorStatusCode } from './RequestClient.js'
 
 export interface Opts extends PluginOpts, CompanionPluginOptions {
   pluginId: string
@@ -88,9 +88,8 @@ export default class Provider<M extends Meta, B extends Body>
     super.onReceiveResponse(response)
     const plugin = this.#getPlugin()
     const oldAuthenticated = plugin.getPluginState().authenticated
-    const authenticated =
-      oldAuthenticated ?
-        response.status !== authErrorStatusCode
+    const authenticated = oldAuthenticated
+      ? response.status !== authErrorStatusCode
       : response.status < 400
     plugin.setPluginState({ authenticated })
     return response

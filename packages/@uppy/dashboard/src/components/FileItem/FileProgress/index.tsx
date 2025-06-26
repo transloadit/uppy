@@ -2,7 +2,7 @@
 /* eslint-disable react/destructuring-assignment */
 import type { Body, Meta, State, Uppy, UppyFile } from '@uppy/core'
 import type { I18n } from '@uppy/utils/lib/Translator'
-import { h, type ComponentChild } from 'preact'
+import { type ComponentChild, h } from 'preact'
 
 interface Props<M extends Meta, B extends Body> {
   uppy: Uppy<M, B>
@@ -184,20 +184,21 @@ export default function FileProgress<M extends Meta, B extends Body>(
       <ProgressIndicatorButton {...props}>
         <ProgressCircleContainer>
           <ProgressCircle progress={props.file.progress.percentage} />
-          {props.file.isPaused ?
+          {props.file.isPaused ? (
             <polygon
               className="uppy-Dashboard-Item-progressIcon--play"
               transform="translate(3, 3)"
               points="12 20 12 10 20 15"
             />
-          : <g
+          ) : (
+            <g
               className="uppy-Dashboard-Item-progressIcon--pause"
               transform="translate(14.5, 13)"
             >
               <rect x="0" y="0" width="2" height="10" rx="0" />
               <rect x="5" y="0" width="2" height="10" rx="0" />
             </g>
-          }
+          )}
         </ProgressCircleContainer>
       </ProgressIndicatorButton>
     )

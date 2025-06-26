@@ -42,14 +42,17 @@ const getItemThumbnailUrl = (item) => {
 }
 
 const getNextPagePath = (data) => {
-  if (data.total_count < data.limit || data.offset + data.limit > data.total_count) {
+  if (
+    data.total_count < data.limit ||
+    data.offset + data.limit > data.total_count
+  ) {
     return null
   }
   const query = { cursor: data.offset + data.limit }
   return `?${querystring.stringify(query)}`
 }
 
-module.exports = function adaptData (res, username, companion) {
+module.exports = function adaptData(res, username, companion) {
   const data = { username, items: [] }
   const items = getItemSubList(res)
   items.forEach((item) => {

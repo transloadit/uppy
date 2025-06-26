@@ -1,24 +1,25 @@
 /* eslint-disable import/no-extraneous-dependencies */
+
+import Audio from '@uppy/audio'
+import AwsS3 from '@uppy/aws-s3'
+import Compressor from '@uppy/compressor'
 import Uppy, { debugLogger } from '@uppy/core'
 import Dashboard from '@uppy/dashboard'
-import RemoteSources from '@uppy/remote-sources'
-import Webcam from '@uppy/webcam'
-import ScreenCapture from '@uppy/screen-capture'
-import GoldenRetriever from '@uppy/golden-retriever'
-import Tus from '@uppy/tus'
-import AwsS3 from '@uppy/aws-s3'
-import XHRUpload from '@uppy/xhr-upload'
-import Transloadit from '@uppy/transloadit'
-import Form from '@uppy/form'
-import ImageEditor from '@uppy/image-editor'
 import DropTarget from '@uppy/drop-target'
-import Audio from '@uppy/audio'
-import Compressor from '@uppy/compressor'
+import Form from '@uppy/form'
+import GoldenRetriever from '@uppy/golden-retriever'
 import GoogleDrive from '@uppy/google-drive'
-import Webdav from '@uppy/webdav'
-import english from '@uppy/locales/lib/en_US.js'
 import GoogleDrivePicker from '@uppy/google-drive-picker'
 import GooglePhotosPicker from '@uppy/google-photos-picker'
+import ImageEditor from '@uppy/image-editor'
+import english from '@uppy/locales/lib/en_US.js'
+import RemoteSources from '@uppy/remote-sources'
+import ScreenCapture from '@uppy/screen-capture'
+import Transloadit from '@uppy/transloadit'
+import Tus from '@uppy/tus'
+import Webcam from '@uppy/webcam'
+import Webdav from '@uppy/webdav'
+import XHRUpload from '@uppy/xhr-upload'
 /* eslint-enable import/no-extraneous-dependencies */
 
 import generateSignatureIfSecret from './generateSignatureIfSecret.js'
@@ -167,7 +168,7 @@ export default () => {
     .use(Webdav, {
       target: Dashboard,
       companionUrl: COMPANION_URL,
-      companionAllowedHosts
+      companionAllowedHosts,
     })
     .use(Audio, {
       target: Dashboard,

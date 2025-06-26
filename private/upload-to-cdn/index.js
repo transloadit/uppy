@@ -24,7 +24,11 @@
 const path = require('node:path')
 const { pipeline, finished } = require('node:stream/promises')
 const { readFile } = require('node:fs/promises')
-const { S3Client, ListObjectsV2Command, PutObjectCommand } = require('@aws-sdk/client-s3');
+const {
+  S3Client,
+  ListObjectsV2Command,
+  PutObjectCommand,
+} = require('@aws-sdk/client-s3')
 
 const packlist = require('npm-packlist')
 const tar = require('tar')
@@ -33,8 +37,8 @@ const concat = require('concat-stream')
 const mime = require('mime-types')
 const AdmZip = require('adm-zip')
 
-function delay (ms) {
-  return new Promise(resolve => setTimeout(resolve, ms))
+function delay(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
 const AWS_REGION = 'us-east-1'
@@ -48,18 +52,22 @@ from npm and filtering it down to package/dist/ files.
  * @param {string} version eg. 1.8.0
  * @returns a Map<string, Buffer>, filename → content
  */
-async function getRemoteDistFiles (packageName, version) {
-  const package = `${packageName}@${version}`
-  console.log('Using npm package', package)
+async function getRemoteDistFiles(packageName, version) {
+  const pkg = `${packageName}@${version}`
+  console.log('Using npm package', pkg)
   const files = new Map()
-  const tarball = await pacote.tarball.stream(package, stream => pipeline(stream, new tar.Parse()))
+  const tarball = await pacote.tarball.stream(pkg, (stream) =>
+    pipeline(stream, new tar.Parse()),
+  )
 
   tarball.on('entry', (readEntry) => {
     if (readEntry.path.startsWith('package/dist/')) {
       readEntry
-        .pipe(concat((buf) => {
-          files.set(readEntry.path.replace(/^package\/dist\//, ''), buf)
-        }))
+        .pipe(
+          concat((buf) => {
+            files.set(readEntry.path.replace(/^package\/dist\//, ''), buf)
+          }),
+        )
         .on('error', (err) => {
           tarball.emit('error', err)
         })
@@ -79,7 +87,7 @@ async function getRemoteDistFiles (packageName, version) {
  * @param {string} packageName Name of package, eg. @uppy/locales
  * @returns a Map<string, Buffer>, filename → content
  */
-async function getLocalDistFiles (packageName) {
+async function getLocalDistFiles(packageName) {
   // Base file path of the package, eg. ./packages/@uppy/locales
   const packagePath = path.join(__dirname, '..', '..', 'packages', packageName)
 
@@ -87,18 +95,17 @@ async function getLocalDistFiles (packageName) {
 
   const prefix = 'dist'
 
-  const files = (await packlist({ path: packagePath }))
-    .flatMap((f) => {
-      const prefixSlash = `${prefix}/`
+  const files = (await packlist({ path: packagePath })).flatMap((f) => {
+    const prefixSlash = `${prefix}/`
 
-      if (f.startsWith(prefixSlash)) {
-        const name = f.split(prefixSlash)[1]
-        if (name.length > 0) {
-          return [name]
-        }
+    if (f.startsWith(prefixSlash)) {
+      const name = f.split(prefixSlash)[1]
+      if (name.length > 0) {
+        return [name]
       }
-      return []
-    })
+    }
+    return []
+  })
 
   const entries = await Promise.all(
     files.map(async (f) => [
@@ -110,7 +117,7 @@ async function getLocalDistFiles (packageName) {
   return new Map(entries)
 }
 
-async function main (packageName, version) {
+async function main(packageName, version) {
   if (!packageName) {
     console.error('usage: upload-to-cdn <packagename> [version]')
     console.error('Must provide a package name')
@@ -147,7 +154,9 @@ async function main (packageName, version) {
   // - If we're on CI, this should be a release commit.
   // - If we're local, normally we should upload a released version, not a local build.
   if (!remote && !process.env.CI) {
-    console.log('Warning, writing a local build to the CDN, this is usually not what you want. Sleeping 3s. Press CTRL+C!')
+    console.log(
+      'Warning, writing a local build to the CDN, this is usually not what you want. Sleeping 3s. Press CTRL+C!',
+    )
     await delay(3000)
   }
 
@@ -160,16 +169,22 @@ async function main (packageName, version) {
 
   const s3Dir = path.posix.join(dirName, `v${version}`)
 
-  const { Contents: existing } = await s3Client.send(new ListObjectsV2Command({
-    Bucket: AWS_BUCKET,
-    Prefix: s3Dir,
-  }))
+  const { Contents: existing } = await s3Client.send(
+    new ListObjectsV2Command({
+      Bucket: AWS_BUCKET,
+      Prefix: s3Dir,
+    }),
+  )
 
   if (existing?.length > 0) {
     if (process.argv.includes('--force')) {
-      console.warn(`WARN Release files for ${dirName} v${version} already exist, overwriting...`)
+      console.warn(
+        `WARN Release files for ${dirName} v${version} already exist, overwriting...`,
+      )
     } else {
-      console.error(`Release files for ${dirName} v${version} already exist, exiting...`)
+      console.error(
+        `Release files for ${dirName} v${version} already exist, exiting...`,
+      )
       process.exit(1)
     }
   }
@@ -194,12 +209,14 @@ async function main (packageName, version) {
   for (const [filename, buffer] of files.entries()) {
     const key = path.posix.join(s3Dir, filename)
     console.log(`pushing s3://${AWS_BUCKET}/${key}`)
-    await s3Client.send(new PutObjectCommand({
-      Bucket: AWS_BUCKET,
-      Key: key,
-      ContentType: mime.lookup(filename),
-      Body: buffer,
-    }))
+    await s3Client.send(
+      new PutObjectCommand({
+        Bucket: AWS_BUCKET,
+        Key: key,
+        ContentType: mime.lookup(filename),
+        Body: buffer,
+      }),
+    )
   }
 }
 

@@ -1,11 +1,12 @@
 /* eslint-disable react/destructuring-assignment */
-import { h } from 'preact'
-import type { I18n } from '@uppy/utils/lib/Translator'
+
 import type { Body, Meta, PartialTreeFolder } from '@uppy/core'
+import type { I18n } from '@uppy/utils/lib/Translator'
 import classNames from 'classnames'
-import User from './User.js'
+import type { h } from 'preact'
 import Breadcrumbs from '../Breadcrumbs.js'
 import type ProviderView from './ProviderView.js'
+import User from './User.js'
 
 type HeaderProps<M extends Meta, B extends Body> = {
   showBreadcrumbs: boolean

@@ -1,16 +1,14 @@
-import { afterAll, beforeAll, describe, it, expect } from 'vitest'
-
-import Core, { UIPlugin } from '@uppy/core'
-import StatusBarPlugin from '@uppy/status-bar'
+import Core, { type UIPlugin } from '@uppy/core'
 import GoogleDrivePlugin from '@uppy/google-drive'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore untyped
-import WebcamPlugin from '@uppy/webcam'
+import StatusBarPlugin from '@uppy/status-bar'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore untyped
 import Url from '@uppy/url'
-
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore untyped
+import WebcamPlugin from '@uppy/webcam'
 import resizeObserverPolyfill from 'resize-observer-polyfill'
+import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import DashboardPlugin from './index.js'
 
 type $TSFixMe = any

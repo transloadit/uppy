@@ -4,8 +4,8 @@ import type {
   CompanionClientSearchProvider,
 } from '@uppy/utils/lib/CompanionClientProvider'
 import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
-import type { Meta, Body, TagFile } from '@uppy/utils/lib/UppyFile'
 import { getSafeFileId } from '@uppy/utils/lib/generateFileID'
+import type { Body, Meta, TagFile } from '@uppy/utils/lib/UppyFile'
 import getTagFile from './getTagFile.js'
 
 const addFiles = <M extends Meta, B extends Body>(

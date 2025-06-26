@@ -1,24 +1,23 @@
-import { h, type ComponentChild } from 'preact'
-import { useState, useCallback } from 'preact/hooks'
-
-import { UIPlugin } from '@uppy/core'
+import {
+  type CompanionPluginOptions,
+  Provider,
+  tokenStorage,
+} from '@uppy/companion-client'
 import type {
+  AsyncStore,
   Body,
   Meta,
   UnknownProviderPlugin,
-  UppyFile,
-  AsyncStore,
   UnknownProviderPluginState,
   Uppy,
+  UppyFile,
 } from '@uppy/core'
-import {
-  Provider,
-  tokenStorage,
-  type CompanionPluginOptions,
-} from '@uppy/companion-client'
-import { SearchInput, ProviderViews } from '@uppy/provider-views'
 
+import { UIPlugin } from '@uppy/core'
+import { ProviderViews, SearchInput } from '@uppy/provider-views'
 import type { I18n, LocaleStrings } from '@uppy/utils/lib/Translator'
+import type { ComponentChild, h } from 'preact'
+import { useCallback, useState } from 'preact/hooks'
 import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'
 

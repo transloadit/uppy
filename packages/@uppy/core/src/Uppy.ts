@@ -1,50 +1,49 @@
 /* eslint-disable max-classes-per-file */
 /* global AggregateError */
 
-import type { h } from 'preact'
-import Translator from '@uppy/utils/lib/Translator'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore untyped
-import ee from 'namespace-emitter'
-import { nanoid } from 'nanoid/non-secure'
-import throttle from 'lodash/throttle.js'
 import DefaultStore, { type Store } from '@uppy/store-default'
-import getFileType from '@uppy/utils/lib/getFileType'
-import getFileNameAndExtension from '@uppy/utils/lib/getFileNameAndExtension'
-import { getSafeFileId } from '@uppy/utils/lib/generateFileID'
-import type {
-  UppyFile,
-  Meta,
-  Body,
-  MinimalRequiredUppyFile,
-} from '@uppy/utils/lib/UppyFile'
-import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
 import type {
   CompanionClientProvider,
   CompanionClientSearchProvider,
 } from '@uppy/utils/lib/CompanionClientProvider'
+import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
 import type {
   FileProgressNotStarted,
   FileProgressStarted,
 } from '@uppy/utils/lib/FileProgress'
+import { getSafeFileId } from '@uppy/utils/lib/generateFileID'
+import getFileNameAndExtension from '@uppy/utils/lib/getFileNameAndExtension'
+import getFileType from '@uppy/utils/lib/getFileType'
 import type {
-  Locale,
   I18n,
+  Locale,
   OptionalPluralizeLocale,
 } from '@uppy/utils/lib/Translator'
-import supportsUploadProgress from './supportsUploadProgress.js'
+import Translator from '@uppy/utils/lib/Translator'
+import type {
+  Body,
+  Meta,
+  MinimalRequiredUppyFile,
+  UppyFile,
+} from '@uppy/utils/lib/UppyFile'
+import throttle from 'lodash/throttle.js'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore untyped
+import ee from 'namespace-emitter'
+import { nanoid } from 'nanoid/non-secure'
+import type { h } from 'preact'
+import packageJson from '../package.json' with { type: 'json' }
+import type BasePlugin from './BasePlugin.js'
 import getFileName from './getFileName.js'
-import { justErrorsLogger, debugLogger } from './loggers.js'
+import locale from './locale.js'
+import { debugLogger, justErrorsLogger } from './loggers.js'
+import type { Restrictions, ValidateableFile } from './Restricter.js'
 import {
-  Restricter,
   defaultOptions as defaultRestrictionOptions,
+  Restricter,
   RestrictionError,
 } from './Restricter.js'
-import packageJson from '../package.json' with { type: 'json' }
-import locale from './locale.js'
-
-import type BasePlugin from './BasePlugin.js'
-import type { Restrictions, ValidateableFile } from './Restricter.js'
+import supportsUploadProgress from './supportsUploadProgress.js'
 
 type Processor = (
   fileIDs: string[],
@@ -975,14 +974,15 @@ export class Uppy<
     // If the actual File object is passed from input[type=file] or drag-drop,
     // we normalize it to match Uppy file object
     const file = (
-      fileDescriptorOrFile instanceof File ?
-        {
-          name: fileDescriptorOrFile.name,
-          type: fileDescriptorOrFile.type,
-          size: fileDescriptorOrFile.size,
-          data: fileDescriptorOrFile,
-        }
-      : fileDescriptorOrFile) as UppyFile<M, B>
+      fileDescriptorOrFile instanceof File
+        ? {
+            name: fileDescriptorOrFile.name,
+            type: fileDescriptorOrFile.type,
+            size: fileDescriptorOrFile.size,
+            data: fileDescriptorOrFile,
+          }
+        : fileDescriptorOrFile
+    ) as UppyFile<M, B>
 
     const fileType = getFileType(file)
     const fileName = getFileName(fileType, file)
@@ -994,8 +994,9 @@ export class Uppy<
     meta.type = fileType
 
     // `null` means the size is unknown.
-    const size =
-      Number.isFinite(file.data.size) ? file.data.size : (null as never)
+    const size = Number.isFinite(file.data.size)
+      ? file.data.size
+      : (null as never)
 
     return {
       source: file.source || '',
@@ -1475,13 +1476,11 @@ export class Uppy<
       bytesTotal: progress.bytesTotal,
       // bytesTotal may be null or zero; in that case we can't divide by it
       percentage:
-        (
-          progress.bytesTotal != null &&
-          Number.isFinite(progress.bytesTotal) &&
-          progress.bytesTotal > 0
-        ) ?
-          Math.round((progress.bytesUploaded / progress.bytesTotal) * 100)
-        : undefined,
+        progress.bytesTotal != null &&
+        Number.isFinite(progress.bytesTotal) &&
+        progress.bytesTotal > 0
+          ? Math.round((progress.bytesUploaded / progress.bytesTotal) * 100)
+          : undefined,
     }
 
     if (fileInState.progress.uploadStarted != null) {
@@ -1705,11 +1704,11 @@ export class Uppy<
         progress: {
           ...currentProgress,
           postprocess:
-            this.#postProcessors.size > 0 ?
-              {
-                mode: 'indeterminate',
-              }
-            : undefined,
+            this.#postProcessors.size > 0
+              ? {
+                  mode: 'indeterminate',
+                }
+              : undefined,
           uploadComplete: true,
           percentage: 100,
           bytesUploaded: currentProgress.bytesTotal,

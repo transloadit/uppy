@@ -12,10 +12,10 @@ function replacer(key, value) {
  * This module simulates the builtin events.EventEmitter but with the use of redis.
  * This is useful for when companion is running on multiple instances and events need
  * to be distributed across.
- * 
- * @param {import('ioredis').Redis} redisClient 
- * @param {string} redisPubSubScope 
- * @returns 
+ *
+ * @param {import('ioredis').Redis} redisClient
+ * @param {string} redisPubSubScope
+ * @returns
  */
 module.exports = (redisClient, redisPubSubScope) => {
   const prefix = redisPubSubScope ? `${redisPubSubScope}:` : ''
@@ -26,9 +26,13 @@ module.exports = (redisClient, redisPubSubScope) => {
 
   async function makeRedis() {
     const publisher = redisClient.duplicate({ lazyConnect: true })
-    publisher.on('error', err => logger.error('publisher redis error', err.toString()))
+    publisher.on('error', (err) =>
+      logger.error('publisher redis error', err.toString()),
+    )
     const subscriber = publisher.duplicate()
-    subscriber.on('error', err => logger.error('subscriber redis error', err.toString()))
+    subscriber.on('error', (err) =>
+      logger.error('subscriber redis error', err.toString()),
+    )
     await publisher.connect()
     await subscriber.connect()
     return { subscriber, publisher }
@@ -38,10 +42,10 @@ module.exports = (redisClient, redisPubSubScope) => {
   redisPromise.catch((err) => handleError(err))
 
   /**
-   * 
-   * @param {(a: Awaited<typeof redisPromise>) => void} fn 
+   *
+   * @param {(a: Awaited<typeof redisPromise>) => void} fn
    */
-  async function runWhenConnected (fn) {
+  async function runWhenConnected(fn) {
     try {
       await fn(await redisPromise)
     } catch (err) {
@@ -59,7 +63,7 @@ module.exports = (redisClient, redisPubSubScope) => {
    * @param {string} eventName name of the event
    * @param {any} handler the handler of the event to remove
    */
-  async function removeListener (eventName, handler) {
+  async function removeListener(eventName, handler) {
     if (eventName === 'error') {
       errorEmitter.removeListener('error', handler)
       return
@@ -87,19 +91,19 @@ module.exports = (redisClient, redisPubSubScope) => {
   }
 
   /**
-   * 
-   * @param {string} eventName 
-   * @param {*} handler 
-   * @param {*} _once 
+   *
+   * @param {string} eventName
+   * @param {*} handler
+   * @param {*} _once
    */
-  async function addListener (eventName, handler, _once = false) {
+  async function addListener(eventName, handler, _once = false) {
     if (eventName === 'error') {
       if (_once) errorEmitter.once('error', handler)
       else errorEmitter.addListener('error', handler)
       return
     }
 
-    function actualHandler (pattern, channel, message) {
+    function actualHandler(pattern, channel, message) {
       if (pattern !== getPrefixedEventName(eventName)) {
         return
       }
@@ -109,7 +113,11 @@ module.exports = (redisClient, redisPubSubScope) => {
       try {
         args = JSON.parse(message)
       } catch (ex) {
-        handleError(new Error(`Invalid JSON received! Channel: ${eventName} Message: ${message}`))
+        handleError(
+          new Error(
+            `Invalid JSON received! Channel: ${eventName} Message: ${message}`,
+          ),
+        )
         return
       }
 
@@ -135,7 +143,7 @@ module.exports = (redisClient, redisPubSubScope) => {
    * @param {string} eventName name of the event
    * @param {any} handler the handler of the event
    */
-  async function on (eventName, handler) {
+  async function on(eventName, handler) {
     await addListener(eventName, handler)
   }
 
@@ -145,7 +153,7 @@ module.exports = (redisClient, redisPubSubScope) => {
    * @param {string} eventName name of the event
    * @param {any} handler the handler of the event
    */
-  async function off (eventName, handler) {
+  async function off(eventName, handler) {
     await removeListener(eventName, handler)
   }
 
@@ -155,7 +163,7 @@ module.exports = (redisClient, redisPubSubScope) => {
    * @param {string} eventName name of the event
    * @param {any} handler the handler of the event
    */
-  async function once (eventName, handler) {
+  async function once(eventName, handler) {
     await addListener(eventName, handler, true)
   }
 
@@ -164,10 +172,13 @@ module.exports = (redisClient, redisPubSubScope) => {
    *
    * @param {string} eventName name of the event
    */
-  async function emit (eventName, ...args) {
-    await runWhenConnected(async ({ publisher }) => (
-      publisher.publish(getPrefixedEventName(eventName), safeStringify(args, replacer))
-    ))
+  async function emit(eventName, ...args) {
+    await runWhenConnected(async ({ publisher }) =>
+      publisher.publish(
+        getPrefixedEventName(eventName),
+        safeStringify(args, replacer),
+      ),
+    )
   }
 
   /**
@@ -175,7 +186,7 @@ module.exports = (redisClient, redisPubSubScope) => {
    *
    * @param {string} eventName name of the event
    */
-  async function removeAllListeners (eventName) {
+  async function removeAllListeners(eventName) {
     if (eventName === 'error') {
       errorEmitter.removeAllListeners(eventName)
       return

@@ -1,15 +1,14 @@
+import type { DefinePluginOpts, UIPluginOptions, Uppy } from '@uppy/core'
 import { UIPlugin } from '@uppy/core'
-import type { Uppy, UIPluginOptions, DefinePluginOpts } from '@uppy/core'
 import dataURItoBlob from '@uppy/utils/lib/dataURItoBlob'
 import isObjectURL from '@uppy/utils/lib/isObjectURL'
 import isPreviewSupported from '@uppy/utils/lib/isPreviewSupported'
+import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore untyped
 import { rotation } from 'exifr/dist/mini.esm.mjs'
-
-import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
-import locale from './locale.js'
 import packageJson from '../package.json' with { type: 'json' }
+import locale from './locale.js'
 
 declare module '@uppy/core' {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

@@ -1,8 +1,8 @@
 import { spawnSync } from 'node:child_process'
 import prompts from 'prompts'
-import { TARGET_BRANCH, REPO_NAME, REPO_OWNER } from './config.js'
+import { REPO_NAME, REPO_OWNER, TARGET_BRANCH } from './config.js'
 
-async function apiCall (endpoint, errorMessage) {
+async function apiCall(endpoint, errorMessage) {
   const response = await fetch(
     `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}${endpoint}`,
   )
@@ -13,7 +13,7 @@ async function apiCall (endpoint, errorMessage) {
   throw new Error(errorMessage)
 }
 
-export async function getRemoteHEAD () {
+export async function getRemoteHEAD() {
   return (
     await apiCall(
       `/git/ref/heads/${TARGET_BRANCH}`,
@@ -22,9 +22,14 @@ export async function getRemoteHEAD () {
   ).object.sha
 }
 
-async function getLatestReleaseSHA () {
-  const response = await fetch(`https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${TARGET_BRANCH}/packages/uppy/package.json`)
-  if (!response.ok) throw new Error(`Network call failed: ${response.status} ${response.statusText}`)
+async function getLatestReleaseSHA() {
+  const response = await fetch(
+    `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${TARGET_BRANCH}/packages/uppy/package.json`,
+  )
+  if (!response.ok)
+    throw new Error(
+      `Network call failed: ${response.status} ${response.statusText}`,
+    )
   const { version } = await response.json()
   const tag_name = `uppy@${version}`
   console.log(`Last release was ${tag_name}.`)
@@ -36,17 +41,20 @@ async function getLatestReleaseSHA () {
   ).object.sha
 }
 
-async function getLocalHEAD () {
+async function getLocalHEAD() {
   return spawnSync('git', ['rev-parse', 'HEAD']).stdout.toString().trim()
 }
 
-export function rewindGitHistory (spawnOptions, sha) {
+export function rewindGitHistory(spawnOptions, sha) {
   return spawnSync('git', ['reset', sha, '--hard'], spawnOptions).status === 0
 }
 
-export async function validateGitStatus (spawnOptions) {
+export async function validateGitStatus(spawnOptions) {
   const latestRelease = getLatestReleaseSHA() // run in parallel to speed things up
-  const [REMOTE_HEAD, LOCAL_HEAD] = await Promise.all([getRemoteHEAD(), getLocalHEAD()])
+  const [REMOTE_HEAD, LOCAL_HEAD] = await Promise.all([
+    getRemoteHEAD(),
+    getLocalHEAD(),
+  ])
 
   const { status, stderr } = spawnSync(
     'git',
@@ -58,11 +66,13 @@ export async function validateGitStatus (spawnOptions) {
     console.log(
       `git repository is not clean and/or not in sync with ${REPO_OWNER}/${REPO_NAME}`,
     )
-    if (spawnSync(
-      'git',
-      ['diff', '--exit-code', '--quiet', LOCAL_HEAD, '--', '.'],
-      spawnOptions,
-    ).status !== 0) {
+    if (
+      spawnSync(
+        'git',
+        ['diff', '--exit-code', '--quiet', LOCAL_HEAD, '--', '.'],
+        spawnOptions,
+      ).status !== 0
+    ) {
       const { value } = await prompts({
         type: 'confirm',
         name: 'value',
@@ -91,7 +101,9 @@ export async function validateGitStatus (spawnOptions) {
       if (status) {
         console.log(stdout.toString())
         console.error(stderr.toString())
-        throw new Error('Failed to fetch, please ensure manually that your local repository is up to date')
+        throw new Error(
+          'Failed to fetch, please ensure manually that your local repository is up to date',
+        )
       }
     }
 

@@ -1,8 +1,13 @@
 const logger = require('../logger')
-const { ProviderApiError, ProviderUserError, ProviderAuthError, parseHttpError } = require('./error')
+const {
+  ProviderApiError,
+  ProviderUserError,
+  ProviderAuthError,
+  parseHttpError,
+} = require('./error')
 
 /**
- * 
+ *
  * @param {{
  *   fn: () => any,
  *   tag: string,
@@ -10,8 +15,8 @@ const { ProviderApiError, ProviderUserError, ProviderAuthError, parseHttpError }
  *   isAuthError?: (a: { statusCode: number, body?: object }) => boolean,
  * isUserFacingError?: (a: { statusCode: number, body?: object }) => boolean,
  *   getJsonErrorMessage: (a: object) => string
- * }} param0 
- * @returns 
+ * }} param0
+ * @returns
  */
 async function withProviderErrorHandling({
   fn,
@@ -46,9 +51,14 @@ async function withProviderErrorHandling({
       if (isAuthError({ statusCode, body })) {
         knownErr = new ProviderAuthError()
       } else if (isUserFacingError({ statusCode, body })) {
-        knownErr = new ProviderUserError({ message: getErrorMessage({ statusCode, body }) })
+        knownErr = new ProviderUserError({
+          message: getErrorMessage({ statusCode, body }),
+        })
       } else {
-        knownErr = new ProviderApiError(getErrorMessage({ statusCode, body }), statusCode)
+        knownErr = new ProviderApiError(
+          getErrorMessage({ statusCode, body }),
+          statusCode,
+        )
       }
 
       logger.error(knownErr, tag)
@@ -61,17 +71,20 @@ async function withProviderErrorHandling({
   }
 }
 
-async function withGoogleErrorHandling (providerName, tag, fn) {
+async function withGoogleErrorHandling(providerName, tag, fn) {
   return withProviderErrorHandling({
     fn,
     tag,
     providerName,
-    isAuthError: (response) => (
-      response.statusCode === 401
-      || (response.statusCode === 400 && response.body?.error === 'invalid_grant') // Refresh token has expired or been revoked
-    ),
+    isAuthError: (response) =>
+      response.statusCode === 401 ||
+      (response.statusCode === 400 && response.body?.error === 'invalid_grant'), // Refresh token has expired or been revoked
     getJsonErrorMessage: (body) => body?.error?.message,
   })
 }
 
-module.exports = { withProviderErrorHandling, withGoogleErrorHandling, parseHttpError }
+module.exports = {
+  withProviderErrorHandling,
+  withGoogleErrorHandling,
+  parseHttpError,
+}

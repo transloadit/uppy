@@ -1,12 +1,12 @@
 /* eslint-disable no-continue */
 
-import { createWriteStream, mkdirSync } from 'node:fs'
 import { spawnSync } from 'node:child_process'
+import { createWriteStream, mkdirSync } from 'node:fs'
 
 import prompts from 'prompts'
 import { TARGET_BRANCH } from './config.js'
 
-function maxSemverness (a, b) {
+function maxSemverness(a, b) {
   if (a === 'major' || b === 'major') return 'major'
   if (a === 'premajor' || b === 'premajor') return 'premajor'
   if (a === 'minor' || b === 'minor') return 'minor'
@@ -16,7 +16,7 @@ function maxSemverness (a, b) {
   return 'patch'
 }
 
-export default async function pickSemverness (
+export default async function pickSemverness(
   spawnOptions,
   LAST_RELEASE_COMMIT,
   releaseFileUrl,
@@ -83,7 +83,8 @@ export default async function pickSemverness (
     uppySemverness = maxSemverness(uppySemverness, response.value)
   }
 
-  if (uppySemverness == null) throw new Error('No package to release, aborting.')
+  if (uppySemverness == null)
+    throw new Error('No package to release, aborting.')
 
   releaseFile.write(`  "uppy": ${uppySemverness}\n`)
   releaseFile.close()

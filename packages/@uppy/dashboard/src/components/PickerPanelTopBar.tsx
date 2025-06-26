@@ -112,7 +112,7 @@ function PanelTopBar(props: $TSFixMe) {
 
   return (
     <div className="uppy-DashboardContent-bar">
-      {!isAllComplete && !hideCancelButton ?
+      {!isAllComplete && !hideCancelButton ? (
         <button
           className="uppy-DashboardContent-back"
           type="button"
@@ -120,7 +120,9 @@ function PanelTopBar(props: $TSFixMe) {
         >
           {i18n('cancel')}
         </button>
-      : <div />}
+      ) : (
+        <div />
+      )}
 
       <div
         className="uppy-DashboardContent-title"
@@ -131,7 +133,7 @@ function PanelTopBar(props: $TSFixMe) {
         <UploadStatus {...props} />
       </div>
 
-      {allowNewUpload ?
+      {allowNewUpload ? (
         <button
           className="uppy-DashboardContent-addMore"
           type="button"
@@ -153,7 +155,9 @@ function PanelTopBar(props: $TSFixMe) {
             {i18n('addMore')}
           </span>
         </button>
-      : <div />}
+      ) : (
+        <div />
+      )}
     </div>
   )
 }

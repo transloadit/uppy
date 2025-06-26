@@ -1,15 +1,15 @@
-import { h, type ComponentChild } from 'preact'
+import type {
+  Body,
+  DefinePluginOpts,
+  Meta,
+  UIPluginOptions,
+  Uppy,
+} from '@uppy/core'
 
 import { UIPlugin } from '@uppy/core'
 import type { LocaleStrings } from '@uppy/utils/lib/Translator'
-import type {
-  Uppy,
-  UIPluginOptions,
-  Body,
-  Meta,
-  DefinePluginOpts,
-} from '@uppy/core'
 import toArray from '@uppy/utils/lib/toArray'
+import type { ComponentChild, h } from 'preact'
 import type { TargetedEvent } from 'preact/compat'
 import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'

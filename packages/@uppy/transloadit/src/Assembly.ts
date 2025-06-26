@@ -1,13 +1,13 @@
-import Emitter from 'component-emitter'
+import fetchWithNetworkError from '@uppy/utils/lib/fetchWithNetworkError'
 import has from '@uppy/utils/lib/hasProperty'
 import NetworkError from '@uppy/utils/lib/NetworkError'
-import fetchWithNetworkError from '@uppy/utils/lib/fetchWithNetworkError'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore untyped
 import type {
   RateLimitedQueue,
   WrapPromiseFunctionType,
 } from '@uppy/utils/lib/RateLimitedQueue'
+import Emitter from 'component-emitter'
 import type { AssemblyResponse } from './index.js'
 
 const ASSEMBLY_UPLOADING = 'ASSEMBLY_UPLOADING'

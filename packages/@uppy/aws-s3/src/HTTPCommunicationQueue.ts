@@ -1,13 +1,13 @@
-import type { Meta, Body, UppyFile } from '@uppy/core'
+import type { Body, Meta, UppyFile } from '@uppy/core'
 import type {
   RateLimitedQueue,
   WrapPromiseFunctionType,
 } from '@uppy/utils/lib/RateLimitedQueue'
-import { pausingUploadReason, type Chunk } from './MultipartUploader.js'
 import type AwsS3Multipart from './index.js'
-import { throwIfAborted } from './utils.js'
-import type { UploadPartBytesResult, UploadResult } from './utils.js'
 import type { AwsS3MultipartOptions, uploadPartBytes } from './index.js'
+import { type Chunk, pausingUploadReason } from './MultipartUploader.js'
+import type { UploadPartBytesResult, UploadResult } from './utils.js'
+import { throwIfAborted } from './utils.js'
 
 function removeMetadataFromURL(urlString: string) {
   const urlObject = new URL(urlString)

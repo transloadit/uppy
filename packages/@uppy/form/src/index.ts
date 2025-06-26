@@ -1,12 +1,12 @@
-import { BasePlugin } from '@uppy/core'
 import type {
+  Body,
   DefinePluginOpts,
+  Meta,
   UIPluginOptions,
   Uppy,
   UppyEventMap,
-  Body,
-  Meta,
 } from '@uppy/core'
+import { BasePlugin } from '@uppy/core'
 import findDOMElement from '@uppy/utils/lib/findDOMElement'
 import toArray from '@uppy/utils/lib/toArray'
 

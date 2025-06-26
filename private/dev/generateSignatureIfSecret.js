@@ -1,12 +1,22 @@
 const enc = new TextEncoder('utf-8')
-async function sign (secret, body) {
+async function sign(secret, body) {
   const algorithm = { name: 'HMAC', hash: 'SHA-384' }
 
-  const key = await crypto.subtle.importKey('raw', enc.encode(secret), algorithm, false, ['sign', 'verify'])
-  const signature = await crypto.subtle.sign(algorithm.name, key, enc.encode(body))
-  return `sha384:${Array.from(new Uint8Array(signature), x => x.toString(16).padStart(2, '0')).join('')}`
+  const key = await crypto.subtle.importKey(
+    'raw',
+    enc.encode(secret),
+    algorithm,
+    false,
+    ['sign', 'verify'],
+  )
+  const signature = await crypto.subtle.sign(
+    algorithm.name,
+    key,
+    enc.encode(body),
+  )
+  return `sha384:${Array.from(new Uint8Array(signature), (x) => x.toString(16).padStart(2, '0')).join('')}`
 }
-function getExpiration (future) {
+function getExpiration(future) {
   return new Date(Date.now() + future)
     .toISOString()
     .replace('T', ' ')
@@ -20,7 +30,7 @@ function getExpiration (future) {
  * @param {object} params
  * @returns {Promise<{ params: string, signature?: string }>}
  */
-export default async function generateSignatureIfSecret (secret, params) {
+export default async function generateSignatureIfSecret(secret, params) {
   let signature
   if (secret) {
     // eslint-disable-next-line no-param-reassign

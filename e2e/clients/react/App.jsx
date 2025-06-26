@@ -1,10 +1,10 @@
 /* eslint-disable react/react-in-jsx-scope */
 import Uppy from '@uppy/core'
+import { Dashboard, DashboardModal, DragDrop } from '@uppy/react'
+import RemoteSources from '@uppy/remote-sources'
+import ThumbnailGenerator from '@uppy/thumbnail-generator'
 /* eslint-disable-next-line no-unused-vars */
 import React, { useState } from 'react'
-import { Dashboard, DashboardModal, DragDrop } from '@uppy/react'
-import ThumbnailGenerator from '@uppy/thumbnail-generator'
-import RemoteSources from '@uppy/remote-sources'
 
 import '@uppy/core/dist/style.css'
 import '@uppy/dashboard/dist/style.css'

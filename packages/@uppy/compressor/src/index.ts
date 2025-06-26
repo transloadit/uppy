@@ -1,13 +1,13 @@
-import { BasePlugin, Uppy } from '@uppy/core'
+import prettierBytes from '@transloadit/prettier-bytes'
+import type { DefinePluginOpts, PluginOpts } from '@uppy/core'
+import { BasePlugin, type Uppy } from '@uppy/core'
+import getFileNameAndExtension from '@uppy/utils/lib/getFileNameAndExtension'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { RateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
-import getFileNameAndExtension from '@uppy/utils/lib/getFileNameAndExtension'
-import prettierBytes from '@transloadit/prettier-bytes'
-import CompressorJS from 'compressorjs'
 
 import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
-import type { DefinePluginOpts, PluginOpts } from '@uppy/core'
+import CompressorJS from 'compressorjs'
 
 import locale from './locale.js'
 

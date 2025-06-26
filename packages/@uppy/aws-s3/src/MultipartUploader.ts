@@ -1,6 +1,6 @@
 import type { Uppy } from '@uppy/core'
 import { AbortController } from '@uppy/utils/lib/AbortController'
-import type { Meta, Body, UppyFile } from '@uppy/utils/lib/UppyFile'
+import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
 import type { HTTPCommunicationQueue } from './HTTPCommunicationQueue.js'
 
 const MB = 1024 * 1024
@@ -123,9 +123,9 @@ class MultipartUploader<M extends Meta, B extends Body> {
   #initChunks() {
     const fileSize = this.#data.size
     const shouldUseMultipart =
-      typeof this.#shouldUseMultipart === 'function' ?
-        this.#shouldUseMultipart(this.#file)
-      : Boolean(this.#shouldUseMultipart)
+      typeof this.#shouldUseMultipart === 'function'
+        ? this.#shouldUseMultipart(this.#file)
+        : Boolean(this.#shouldUseMultipart)
 
     if (shouldUseMultipart && fileSize > this.#minPartSize) {
       // At least 5MB per request:

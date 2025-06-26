@@ -1,4 +1,4 @@
-import type { UIPluginOptions, AsyncStore } from '@uppy/core'
+import type { AsyncStore, UIPluginOptions } from '@uppy/core'
 
 export interface CompanionPluginOptions extends UIPluginOptions {
   storage?: AsyncStore

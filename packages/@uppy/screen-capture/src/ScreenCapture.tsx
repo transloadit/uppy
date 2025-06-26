@@ -1,19 +1,18 @@
-import { h, type ComponentChild } from 'preact'
-import { UIPlugin } from '@uppy/core'
-import type { LocaleStrings } from '@uppy/utils/lib/Translator'
 import type {
-  Uppy,
-  UIPluginOptions,
-  DefinePluginOpts,
   Body,
+  DefinePluginOpts,
   Meta,
+  UIPluginOptions,
+  Uppy,
 } from '@uppy/core'
+import { UIPlugin } from '@uppy/core'
 import getFileTypeExtension from '@uppy/utils/lib/getFileTypeExtension'
-import ScreenRecIcon from './ScreenRecIcon.js'
-import RecorderScreen from './RecorderScreen.js'
-
+import type { LocaleStrings } from '@uppy/utils/lib/Translator'
+import { type ComponentChild, h } from 'preact'
 import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'
+import RecorderScreen from './RecorderScreen.js'
+import ScreenRecIcon from './ScreenRecIcon.js'
 
 // Check if screen capturing is supported.
 // mediaDevices is supprted on mobile Safari, getDisplayMedia is not

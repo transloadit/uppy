@@ -2,42 +2,42 @@
   "extends": "../../../tsconfig.shared",
   "compilerOptions": {
     "emitDeclarationOnly": false,
-    "noEmit": true,
+    "noEmit": true
   },
   "include": ["./package.json", "./src/**/*.*"],
   "references": [
     {
-      "path": "../box/tsconfig.build.json",
+      "path": "../box/tsconfig.build.json"
     },
     {
-      "path": "../dashboard/tsconfig.build.json",
+      "path": "../dashboard/tsconfig.build.json"
     },
     {
-      "path": "../dropbox/tsconfig.build.json",
+      "path": "../dropbox/tsconfig.build.json"
     },
     {
-      "path": "../facebook/tsconfig.build.json",
+      "path": "../facebook/tsconfig.build.json"
     },
     {
-      "path": "../google-drive/tsconfig.build.json",
+      "path": "../google-drive/tsconfig.build.json"
     },
     {
-      "path": "../instagram/tsconfig.build.json",
+      "path": "../instagram/tsconfig.build.json"
     },
     {
-      "path": "../onedrive/tsconfig.build.json",
+      "path": "../onedrive/tsconfig.build.json"
     },
     {
-      "path": "../unsplash/tsconfig.build.json",
+      "path": "../unsplash/tsconfig.build.json"
     },
     {
-      "path": "../url/tsconfig.build.json",
+      "path": "../url/tsconfig.build.json"
     },
     {
-      "path": "../zoom/tsconfig.build.json",
+      "path": "../zoom/tsconfig.build.json"
     },
     {
-      "path": "../core/tsconfig.build.json",
-    },
-  ],
+      "path": "../core/tsconfig.build.json"
+    }
+  ]
 }

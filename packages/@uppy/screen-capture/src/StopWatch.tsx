@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-import { h, Component } from 'preact'
+import { Component, h } from 'preact'
 
 type $TSFixMe = any
 

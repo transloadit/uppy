@@ -1,21 +1,20 @@
-import throttle from 'lodash/throttle.js'
-import { BasePlugin } from '@uppy/core'
 import type {
   Body,
-  Meta,
-  UppyFile,
-  Uppy,
-  UploadResult,
-  PluginOpts,
   DefinePluginOpts,
+  Meta,
+  PluginOpts,
+  UploadResult,
+  Uppy,
+  UppyFile,
 } from '@uppy/core'
+import { BasePlugin } from '@uppy/core'
+import throttle from 'lodash/throttle.js'
+import packageJson from '../package.json' with { type: 'json' }
+import IndexedDBStore from './IndexedDBStore.js'
+import MetaDataStore from './MetaDataStore.js'
 import ServiceWorkerStore, {
   type ServiceWorkerStoredFile,
 } from './ServiceWorkerStore.js'
-import IndexedDBStore from './IndexedDBStore.js'
-import MetaDataStore from './MetaDataStore.js'
-
-import packageJson from '../package.json' with { type: 'json' }
 
 declare module '@uppy/core' {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -171,17 +170,17 @@ export default class GoldenRetriever<
     const filesToSaveWithoutData = Object.fromEntries(
       fileToSaveEntries.map(([id, fileInfo]) => [
         id,
-        fileInfo.isRemote ?
-          {
-            ...fileInfo,
-            isRestored: true,
-          }
-        : {
-            ...fileInfo,
-            isRestored: true,
-            data: null,
-            preview: null,
-          },
+        fileInfo.isRemote
+          ? {
+              ...fileInfo,
+              isRestored: true,
+            }
+          : {
+              ...fileInfo,
+              isRestored: true,
+              data: null,
+              preview: null,
+            },
       ]),
     )
 

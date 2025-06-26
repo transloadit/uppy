@@ -1,22 +1,21 @@
-import hasProperty from '@uppy/utils/lib/hasProperty'
-import ErrorWithCause from '@uppy/utils/lib/ErrorWithCause'
-import { RateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
-import Tus, { type TusDetailedError, type TusOpts } from '@uppy/tus'
-import { BasePlugin } from '@uppy/core'
 import type {
+  Body,
   DefinePluginOpts,
+  Meta,
   PluginOpts,
   Uppy,
-  Body,
-  Meta,
   UppyFile,
 } from '@uppy/core'
-import Assembly from './Assembly.js'
-import Client, { AssemblyError } from './Client.js'
-import AssemblyWatcher from './AssemblyWatcher.js'
-
-import locale from './locale.js'
+import { BasePlugin } from '@uppy/core'
+import Tus, { type TusDetailedError, type TusOpts } from '@uppy/tus'
+import ErrorWithCause from '@uppy/utils/lib/ErrorWithCause'
+import hasProperty from '@uppy/utils/lib/hasProperty'
+import { RateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
 import packageJson from '../package.json' with { type: 'json' }
+import Assembly from './Assembly.js'
+import AssemblyWatcher from './AssemblyWatcher.js'
+import Client, { type AssemblyError } from './Client.js'
+import locale from './locale.js'
 
 export interface AssemblyFile {
   id: string
@@ -467,8 +466,9 @@ export default class Transloadit<
 
   #createAssemblyWatcher(idOrArrayOfIds: string | string[]) {
     // AssemblyWatcher tracks completion states of all Assemblies in this upload.
-    const ids =
-      Array.isArray(idOrArrayOfIds) ? idOrArrayOfIds : [idOrArrayOfIds]
+    const ids = Array.isArray(idOrArrayOfIds)
+      ? idOrArrayOfIds
+      : [idOrArrayOfIds]
     const watcher = new AssemblyWatcher(this.uppy, ids)
 
     watcher.on('assembly-complete', (id: string) => {
@@ -650,9 +650,8 @@ export default class Transloadit<
 
   #onRestored = (pluginData: Record<string, unknown>) => {
     const savedState = (
-      pluginData && pluginData[this.id] ?
-        pluginData[this.id]
-      : {}) as PersistentState
+      pluginData && pluginData[this.id] ? pluginData[this.id] : {}
+    ) as PersistentState
     const previousAssembly = savedState.assemblyResponse
 
     if (!previousAssembly) {
@@ -798,9 +797,10 @@ export default class Transloadit<
 
   #prepareUpload = async (fileIDs: string[]) => {
     const assemblyOptions = (
-      typeof this.opts.assemblyOptions === 'function' ?
-        await this.opts.assemblyOptions()
-      : this.opts.assemblyOptions) as OptionsWithRestructuredFields
+      typeof this.opts.assemblyOptions === 'function'
+        ? await this.opts.assemblyOptions()
+        : this.opts.assemblyOptions
+    ) as OptionsWithRestructuredFields
 
     assemblyOptions.fields ??= {}
     validateParams(assemblyOptions.params)
