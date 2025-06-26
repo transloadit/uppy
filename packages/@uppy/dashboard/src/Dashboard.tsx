@@ -1161,7 +1161,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     const progressindicators = this.#getProgressIndicators(pluginState.targets)
     const editors = this.#getEditors(pluginState.targets)
 
-    let theme
+    let theme: 'auto' | 'dark' | 'light'
     if (this.opts.theme === 'auto') {
       theme = capabilities.darkMode ? 'dark' : 'light'
     } else {

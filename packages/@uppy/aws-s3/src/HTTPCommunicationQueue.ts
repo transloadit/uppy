@@ -4,7 +4,11 @@ import type {
   WrapPromiseFunctionType,
 } from '@uppy/utils/lib/RateLimitedQueue'
 import type AwsS3Multipart from './index.js'
-import type { AwsS3MultipartOptions, uploadPartBytes } from './index.js'
+import type {
+  AwsS3MultipartOptions,
+  AwsS3UploadParameters,
+  uploadPartBytes,
+} from './index.js'
 import { type Chunk, pausingUploadReason } from './MultipartUploader.js'
 import type { UploadPartBytesResult, UploadResult } from './utils.js'
 import { throwIfAborted } from './utils.js'
@@ -180,11 +184,13 @@ export class HTTPCommunicationQueue<M extends Meta, B extends Body> {
     file: UppyFile<M, B>,
     signal: AbortSignal,
   ): Promise<UploadResult> {
-    let cachedResult
+    let cachedResult: Promise<UploadResult> | UploadResult | undefined
     // As the cache is updated asynchronously, there could be a race condition
     // where we just miss a new result so we loop here until we get nothing back,
     // at which point it's out turn to create a new cache entry.
-    while ((cachedResult = this.#cache.get(file.data)) != null) {
+    for (;;) {
+      cachedResult = this.#cache.get(file.data)
+      if (cachedResult == null) break
       try {
         return await cachedResult
       } catch {
@@ -227,7 +233,7 @@ export class HTTPCommunicationQueue<M extends Meta, B extends Body> {
     // use the soon-to-be aborted cached values.
     this.#cache.delete(file.data)
     this.#setS3MultipartState(file, Object.create(null))
-    let awaitedResult
+    let awaitedResult: UploadResult
     try {
       awaitedResult = await result
     } catch {
@@ -391,7 +397,7 @@ export class HTTPCommunicationQueue<M extends Meta, B extends Body> {
       throwIfAborted(signal)
       const chunkData = chunk.getData()
       const { onProgress, onComplete } = chunk
-      let signature
+      let signature: AwsS3UploadParameters
 
       try {
         signature = await this.#fetchSignature(this.#getFile(file), {

@@ -1,4 +1,12 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  type Mock,
+  vi,
+} from 'vitest'
 
 import 'whatwg-fetch'
 import Core, { type UppyFile } from '@uppy/core'
@@ -256,8 +264,8 @@ describe('AwsS3Multipart', () => {
       scope.persist()
 
       // Spy on the busy/done state of the test chunk (part 7, chunk index 6)
-      let busySpy
-      let doneSpy
+      let busySpy: Mock
+      let doneSpy: Mock
       awsS3Multipart.setOptions({
         shouldUseMultipart: true,
         retryDelays: [10],

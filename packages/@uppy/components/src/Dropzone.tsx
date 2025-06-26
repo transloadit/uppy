@@ -29,7 +29,6 @@ export default function Dropzone(props: DropzoneProps) {
       <input {...getInputProps()} className="uppy:hidden" />
       <div
         {...getRootProps()}
-        role="button"
         style={{
           width: width || '100%',
           height: height || '100%',

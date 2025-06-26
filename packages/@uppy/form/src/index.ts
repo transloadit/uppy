@@ -135,7 +135,7 @@ export default class Form<M extends Meta, B extends Body> extends BasePlugin<
       // Append new result to the previous result array.
       // If the previous result is empty, or not an array,
       // set it to an empty array.
-      let updatedResult
+      let updatedResult: any
       try {
         updatedResult = JSON.parse(resultInput.value)
       } catch (_err) {

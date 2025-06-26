@@ -13,9 +13,11 @@ function getKey(vnode, fallback) {
   return vnode?.key ?? fallback
 }
 function linkRef(component, name) {
+  // biome-ignore lint/suspicious/noAssignInExpressions: ...
   const cache = component._ptgLinkedRefs || (component._ptgLinkedRefs = {})
   return (
     cache[name] ||
+    // biome-ignore lint/suspicious/noAssignInExpressions: ...
     (cache[name] = (c) => {
       component.refs[name] = c
     })
@@ -122,7 +124,7 @@ class TransitionGroup extends Component {
       children: mergeChildMappings(prevState.children, nextChildMapping),
     }))
 
-    let key
+    let key: string
 
     for (key in nextChildMapping) {
       if (Object.hasOwn(nextChildMapping, key)) {

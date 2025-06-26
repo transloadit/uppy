@@ -17,7 +17,8 @@ async function replaceInFile(filename, replacements) {
 
   let hasBeenModified = false
   let exec
-  while ((exec = VERSION_URL.exec(content))) {
+  exec = VERSION_URL.exec(content)
+  while (exec) {
     const pkg = Object.keys(replacements).find(
       (pkgName) =>
         content.slice(exec.index - pkgName.length, exec.index) === pkgName,
@@ -29,6 +30,7 @@ async function replaceInFile(filename, replacements) {
         replacements[pkg] +
         content.slice(VERSION_URL.lastIndex)
     }
+    exec = VERSION_URL.exec(content)
   }
 
   if (hasBeenModified) {

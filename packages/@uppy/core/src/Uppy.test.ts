@@ -1779,8 +1779,8 @@ describe('src/Core', () => {
 
     it('should work with unsized files', async () => {
       const core = new Core()
-      let proceedUpload
-      let finishUpload
+      let proceedUpload: (value?: unknown) => void
+      let finishUpload: (value?: unknown) => void
       const promise = new Promise((resolve) => {
         proceedUpload = resolve
       })

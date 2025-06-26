@@ -55,7 +55,7 @@ class UIPlugin<
   getTargetPlugin<Me extends Meta, Bo extends Body>(
     target: PluginTarget<Me, Bo>,
   ): UIPlugin<any, Me, Bo> | undefined {
-    let targetPlugin
+    let targetPlugin: any
     if (typeof (target as UIPlugin<any, any, any>)?.addTarget === 'function') {
       // Targeting a plugin *instance*
       targetPlugin = target as UIPlugin<any, any, any>
