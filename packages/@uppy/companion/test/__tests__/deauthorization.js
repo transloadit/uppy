@@ -20,7 +20,6 @@ describe('handle deauthorization callback', () => {
         .send({
           foo: 'bar',
         })
-        // @todo consider receiving 501 instead
         .expect(500)
     )
   })

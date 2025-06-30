@@ -81,7 +81,6 @@ function validateOptions(options) {
   }
 
   // validate protocol
-  // @todo this validation should not be conditional once the protocol field is mandatory
   if (
     options.protocol &&
     !Object.keys(PROTOCOLS).some((key) => PROTOCOLS[key] === options.protocol)
@@ -237,8 +236,6 @@ class Uploader {
   }
 
   _getUploadProtocol() {
-    // todo a default protocol should not be set. We should ensure that the user specifies their protocol.
-    // after we drop old versions of uppy client we can remove this
     return this.options.protocol || PROTOCOLS.multipart
   }
 
