@@ -21,6 +21,7 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "scripts": {
+    "build": "tsc --build tsconfig.build.json",
     "build:tailwind": "tailwindcss -i ./src/input.css -o ./dist/styles.css"
   },
   "dependencies": {
@@ -59,5 +60,8 @@
     "@uppy/webcam": {
       "optional": true
     }
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3"
   }
 }

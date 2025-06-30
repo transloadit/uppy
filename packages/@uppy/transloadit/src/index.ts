@@ -16,9 +16,7 @@ import Client, { AssemblyError } from './Client.js'
 import AssemblyWatcher from './AssemblyWatcher.js'
 
 import locale from './locale.js'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore We don't want TS to generate types for the package.json
-import packageJson from '../package.json'
+import packageJson from '../package.json' with { type: 'json' }
 
 export interface AssemblyFile {
   id: string

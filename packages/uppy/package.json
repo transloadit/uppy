@@ -69,5 +69,14 @@
     "@uppy/webdav": "workspace:^",
     "@uppy/xhr-upload": "workspace:^",
     "@uppy/zoom": "workspace:^"
+  },
+  "scripts": {
+    "build": "tsc --build tsconfig.build.json",
+    "build:bundle": "node build-bundle.mjs"
+  },
+  "devDependencies": {
+    "chalk": "^5.0.0",
+    "esbuild": "^0.25.0",
+    "typescript": "^5.8.3"
   }
 }

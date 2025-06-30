@@ -24,7 +24,7 @@ interface FileInputProps<M extends Meta, B extends Body>
 class FileInput<M extends Meta, B extends Body> extends Component<
   FileInputProps<M, B>
 > {
-  // Must be kept in sync with @uppy/file-input/src/FileInput.jsx
+  // Must be kept in sync with @uppy/file-input/src/FileInput.js
   static defaultProps = {
     locale: undefined,
     pretty: true,

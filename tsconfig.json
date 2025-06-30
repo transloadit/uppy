@@ -118,6 +118,12 @@
     {
       "path": "./packages/uppy/tsconfig.json",
     },
+    {
+      "path": "./packages/@uppy/store-redux/tsconfig.build.json",
+    },
+    {
+      "path": "./packages/@uppy/redux-dev-tools/tsconfig.build.json",
+    },
     // The order matters. @uppy/components must come after all other packages
     // Then the framework implementations must go after @uppy/components
     {

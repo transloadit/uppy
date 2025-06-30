@@ -5,6 +5,9 @@
   "license": "MIT",
   "main": "lib/index.js",
   "type": "module",
+  "scripts": {
+    "build": "tsc --build tsconfig.build.json"
+  },
   "keywords": [
     "file uploader",
     "uppy",
@@ -15,6 +18,7 @@
     "url": "https://github.com/transloadit/uppy/issues"
   },
   "devDependencies": {
+    "typescript": "^5.8.3",
     "vitest": "^1.6.1"
   },
   "repository": {

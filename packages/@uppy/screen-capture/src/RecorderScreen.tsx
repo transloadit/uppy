@@ -1,13 +1,13 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import { h, Component, type ComponentChild, Fragment } from 'preact'
 import type { Body, Meta } from '@uppy/core'
-import RecordButton from './RecordButton.jsx'
-import SubmitButton from './SubmitButton.jsx'
-import StopWatch from './StopWatch.jsx'
-import StreamStatus from './StreamStatus.jsx'
-import DiscardButton from './DiscardButton.jsx'
+import RecordButton from './RecordButton.js'
+import SubmitButton from './SubmitButton.js'
+import StopWatch from './StopWatch.js'
+import StreamStatus from './StreamStatus.js'
+import DiscardButton from './DiscardButton.js'
 
-import ScreenCapture, { type ScreenCaptureState } from './ScreenCapture.jsx'
+import ScreenCapture, { type ScreenCaptureState } from './ScreenCapture.js'
 import ScreenshotButton from './ScreenshotButton.js'
 
 type RecorderScreenProps<M extends Meta, B extends Body> = {
