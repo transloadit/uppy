@@ -50,8 +50,8 @@ jobs:
           releases.json | xargs git add
       - name: Update contributors table
         run:
-          corepack yarn contributors:save && corepack yarn remark -foq README.md
-          && corepack yarn prettier -w README.md && git add README.md
+          corepack yarn contributors:save && corepack yarn prettier -w README.md
+          && git add README.md
       - name: Update CDN URLs
         run:
           corepack yarn workspace @uppy-dev/release update-version-URLs | xargs
