@@ -1,5 +1,4 @@
 const crypto = require('node:crypto')
-const logger = require('../logger.js')
 
 const authTagLength = 16
 const nonceLength = 16
@@ -120,43 +119,6 @@ module.exports.encrypt = (input, secret) => {
   return `${nonce.toString('hex')}${encrypted.toString('base64url')}`
 }
 
-// todo backwards compat for old tokens - remove in the future
-function compatDecrypt(encrypted, secret) {
-  // Need at least 32 chars for the iv
-  if (encrypted.length < 32) {
-    throw new Error(
-      'Invalid encrypted value. Maybe it was generated with an old Companion version?',
-    )
-  }
-
-  // NOTE: The first 32 characters are the iv, in hex format. The rest is the encrypted string, in base64 format.
-  const iv = Buffer.from(encrypted.slice(0, 32), 'hex')
-  const encryptionWithoutIv = encrypted.slice(32)
-
-  let decipher
-  try {
-    const secretHashed = crypto.createHash('sha256')
-    secretHashed.update(secret)
-    decipher = crypto.createDecipheriv('aes256', secretHashed.digest(), iv)
-  } catch (err) {
-    if (err.code === 'ERR_CRYPTO_INVALID_IV') {
-      throw new Error('Invalid initialization vector')
-    } else {
-      throw err
-    }
-  }
-
-  const urlDecode = (encoded) =>
-    encoded.replace(/-/g, '+').replace(/_/g, '/').replace(/~/g, '=')
-  let decrypted = decipher.update(
-    urlDecode(encryptionWithoutIv),
-    'base64',
-    'utf8',
-  )
-  decrypted += decipher.final('utf8')
-  return decrypted
-}
-
 /**
  * Decrypt an iv-prefixed or string with AES256. The iv should be in the first 32 hex characters.
  *
@@ -165,47 +127,31 @@ function compatDecrypt(encrypted, secret) {
  * @returns {string} Decrypted value.
  */
 module.exports.decrypt = (encrypted, secret) => {
-  try {
-    const nonceHexLength = nonceLength * 2 // because hex encoding uses 2 bytes per byte
+  const nonceHexLength = nonceLength * 2 // because hex encoding uses 2 bytes per byte
 
-    // NOTE: The first 32 characters are the nonce, in hex format.
-    const nonce = Buffer.from(encrypted.slice(0, nonceHexLength), 'hex')
-    // The rest is the encrypted string, in base64url format.
-    const encryptionWithoutNonce = Buffer.from(
-      encrypted.slice(nonceHexLength),
-      'base64url',
-    )
-    // The last 16 bytes of the rest is the authentication tag
-    const authTag = encryptionWithoutNonce.subarray(-authTagLength)
-    // and the rest (from beginning) is the encrypted data
-    const encryptionWithoutNonceAndTag = encryptionWithoutNonce.subarray(
-      0,
-      -authTagLength,
-    )
-
-    if (nonce.length < nonceLength) {
-      throw new Error(
-        'Invalid encrypted value. Maybe it was generated with an old Companion version?',
-      )
-    }
-
-    const { key, iv } = createSecrets(secret, nonce)
-
-    const decipher = crypto.createDecipheriv('aes-256-ccm', key, iv, {
-      authTagLength,
-    })
-    decipher.setAuthTag(authTag)
-
-    const decrypted = Buffer.concat([
-      decipher.update(encryptionWithoutNonceAndTag),
-      decipher.final(),
-    ])
-    return decrypted.toString('utf8')
-  } catch (err) {
-    // todo backwards compat for old tokens - remove in the future
-    logger.info('Failed to decrypt - trying old encryption format instead', err)
-    return compatDecrypt(encrypted, secret)
+  // NOTE: The first 32 characters are the nonce, in hex format.
+  const nonce = Buffer.from(encrypted.slice(0, nonceHexLength), 'hex')
+  // The rest is the encrypted string, in base64url format.
+  const encryptionWithoutNonce = Buffer.from(encrypted.slice(nonceHexLength), 'base64url')
+  // The last 16 bytes of the rest is the authentication tag
+  const authTag = encryptionWithoutNonce.subarray(-authTagLength)
+  // and the rest (from beginning) is the encrypted data
+  const encryptionWithoutNonceAndTag = encryptionWithoutNonce.subarray(0, -authTagLength)
+  
+  if (nonce.length < nonceLength) {
+    throw new Error('Invalid encrypted value. Maybe it was generated with an old Companion version?')
   }
+  
+  const { key, iv } = createSecrets(secret, nonce)
+
+  const decipher = crypto.createDecipheriv('aes-256-ccm', key, iv, { authTagLength })
+  decipher.setAuthTag(authTag)
+
+  const decrypted = Buffer.concat([
+    decipher.update(encryptionWithoutNonceAndTag),
+    decipher.final(),
+  ])
+  return decrypted.toString('utf8')
 }
 
 module.exports.defaultGetKey = ({ filename }) => {
