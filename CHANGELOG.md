@@ -12,6 +12,38 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 4.18.0
+
+Released: 2025-06-30
+
+| Package                    | Version | Package                    | Version |
+| -------------------------- | ------- | -------------------------- | ------- |
+| @uppy/components           |   0.2.0 | @uppy/remote-sources       |   2.3.4 |
+| @uppy/core                 |   4.4.7 | @uppy/screen-capture       |   4.3.1 |
+| @uppy/google-drive-picker  |   0.3.6 | @uppy/svelte               |   4.5.0 |
+| @uppy/google-photos-picker |   0.3.6 | @uppy/vue                  |   2.3.0 |
+| @uppy/locales              |   4.6.0 | @uppy/webcam               |   4.2.1 |
+| @uppy/provider-views       |   4.4.5 | uppy                       |  4.18.0 |
+| @uppy/react                |   4.4.0 |                            |         |
+
+- meta: Remove remark reference from CI (Murderlon)
+- @uppy/components,@uppy/screen-capture: useScreenCapture fixes (Prakash / #5793)
+- examples: Add useRemoteSource (Merlijn Vos / #5778)
+- @uppy/components: Use webcam fixes2 (Mikael Finstad / #5791)
+- meta: Remove remark (Merlijn Vos / #5790)
+- meta: Delete old, unused files (Merlijn Vos / #5788)
+- meta: Sort package.json (Murderlon)
+- examples: Headless Hooks: Add useScreenCapture (Prakash / #5784)
+- @uppy/locales: Update pt_BR localization (Gabriel Pereira / #5780)
+- e2e: Skip for now then (Murderlon)
+- e2e: fixup! Fix CI for now (Murderlon)
+- e2e: Fix CI for now (Murderlon)
+- examples: Add useWebcam (Merlijn Vos / #5741)
+- @uppy/react,@uppy/svelte,@uppy/vue: Add useDropzone & useFileInput (Merlijn Vos / #5735)
+- meta: build(deps): bump base-x from 3.0.9 to 3.0.11 (dependabot[bot] / #5772)
+- @uppy/provider-views: improve metadata handling in Google Photos Picker (ben rosenbaum / #5769)
+
+
 ## 4.17.0
 
 Released: 2025-06-02
