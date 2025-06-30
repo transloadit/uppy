@@ -30,6 +30,12 @@ First of all, install Uppy dependencies:
 yarn install
 ```
 
+### Upgrade Typescript
+
+```bash
+yarn workspaces foreach up typescript
+```
+
 ### Basic
 
 To run a basic development version of Uppy, run:
